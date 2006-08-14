@@ -57,14 +57,6 @@ namespace Microsoft.Win32
 		// FIXME this is hard coded on Mono, can it be determined dynamically? 
 		readonly int NativeBytesPerCharacter = Marshal.SystemDefaultCharSize;
 
-		internal enum RegistryType {
-			String = 1,
-			EnvironmentString = 2,
-			Binary = 3,
-			Dword = 4,
-			StringArray = 7,
-		}
-		
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegCreateKey")]
 		static extern int RegCreateKey (IntPtr keyBase, string keyName, out IntPtr keyHandle);
 	       
@@ -92,41 +84,41 @@ namespace Microsoft.Win32
 		private static extern int RegEnumValue (IntPtr keyBase, 
 				int index, StringBuilder nameBuffer, 
 				ref int nameLength, IntPtr reserved, 
-				ref RegistryType type, IntPtr data, IntPtr dataLength);
+				ref RegistryValueKind type, IntPtr data, IntPtr dataLength);
 
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegSetValueEx")]
 		private static extern int RegSetValueEx (IntPtr keyBase, 
-				string valueName, IntPtr reserved, RegistryType type,
+				string valueName, IntPtr reserved, RegistryValueKind type,
 				StringBuilder data, int rawDataLength);
 
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegSetValueEx")]
 		private static extern int RegSetValueEx (IntPtr keyBase, 
-				string valueName, IntPtr reserved, RegistryType type,
+				string valueName, IntPtr reserved, RegistryValueKind type,
 				string data, int rawDataLength);
 
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegSetValueEx")]
 		private static extern int RegSetValueEx (IntPtr keyBase, 
-				string valueName, IntPtr reserved, RegistryType type,
+				string valueName, IntPtr reserved, RegistryValueKind type,
 				byte[] rawData, int rawDataLength);
 
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegSetValueEx")]
 		private static extern int RegSetValueEx (IntPtr keyBase, 
-				string valueName, IntPtr reserved, RegistryType type,
+				string valueName, IntPtr reserved, RegistryValueKind type,
 				ref int data, int rawDataLength);
 
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegQueryValueEx")]
 		private static extern int RegQueryValueEx (IntPtr keyBase,
-				string valueName, IntPtr reserved, ref RegistryType type,
+				string valueName, IntPtr reserved, ref RegistryValueKind type,
 				IntPtr zero, ref int dataSize);
 
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegQueryValueEx")]
 		private static extern int RegQueryValueEx (IntPtr keyBase,
-				string valueName, IntPtr reserved, ref RegistryType type,
+				string valueName, IntPtr reserved, ref RegistryValueKind type,
 				[Out] byte[] data, ref int dataSize);
 
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegQueryValueEx")]
 		private static extern int RegQueryValueEx (IntPtr keyBase,
-				string valueName, IntPtr reserved, ref RegistryType type,
+				string valueName, IntPtr reserved, ref RegistryValueKind type,
 				ref int data, ref int dataSize);
 
 		// Returns our handle from the RegistryKey
@@ -142,7 +134,7 @@ namespace Microsoft.Win32
 		/// </summary>
 		public object GetValue (RegistryKey rkey, string name, bool returnDefaultValue, object defaultValue)
 		{
-			RegistryType type = 0;
+			RegistryValueKind type = 0;
 			int size = 0;
 			object obj = null;
 			IntPtr handle = GetHandle (rkey);
@@ -159,19 +151,19 @@ namespace Microsoft.Win32
 				GenerateException (result);
 			}
 			
-			if (type == RegistryType.String || type == RegistryType.EnvironmentString) {
+			if (type == RegistryValueKind.String || type == RegistryValueKind.ExpandString) {
 				byte[] data;
 				result = GetBinaryValue (rkey, name, type, out data, size);
 				obj = RegistryKey.DecodeString (data);
-			} else if (type == RegistryType.Dword) {
+			} else if (type == RegistryValueKind.DWord) {
 				int data = 0;
 				result = RegQueryValueEx (handle, name, IntPtr.Zero, ref type, ref data, ref size);
 				obj = data;
-			} else if (type == RegistryType.Binary) {
+			} else if (type == RegistryValueKind.Binary) {
 				byte[] data;
 				result = GetBinaryValue (rkey, name, type, out data, size);
 				obj = data;
-			} else if (type == RegistryType.StringArray) {
+			} else if (type == RegistryValueKind.MultiString) {
 				obj = null;
 				byte[] data;
 				result = GetBinaryValue (rkey, name, type, out data, size);
@@ -193,6 +185,56 @@ namespace Microsoft.Win32
 			return obj;
 		}
 
+#if NET_2_0
+		//
+		// This version has to do extra checking, make sure that the requested
+		// valueKind matches the type of the value being stored
+		//
+		public void SetValue (RegistryKey rkey, string name, object value, RegistryValueKind valueKind)
+		{
+			Type type = value.GetType ();
+			int result;
+			IntPtr handle = GetHandle (rkey);
+
+			if (valueKind == RegistryValueKind.DWord && type == typeof (int)) {
+				int rawValue = (int)value;
+				result = RegSetValueEx (handle, name, IntPtr.Zero, RegistryValueKind.DWord, ref rawValue, Int32ByteSize); 
+			} else if (valueKind == RegistryValueKind.Binary && type == typeof (byte[])) {
+				byte[] rawValue = (byte[]) value;
+				result = RegSetValueEx (handle, name, IntPtr.Zero, RegistryValueKind.Binary, rawValue, rawValue.Length);
+			} else if (valueKind == RegistryValueKind.MultiString && type == typeof (string[])) {
+				string[] vals = (string[]) value;
+				StringBuilder fullStringValue = new StringBuilder ();
+				foreach (string v in vals)
+				{
+					fullStringValue.Append (v);
+					fullStringValue.Append ('\0');
+				}
+				fullStringValue.Append ('\0');
+
+				byte[] rawValue = Encoding.Unicode.GetBytes (fullStringValue.ToString ());
+			
+				result = RegSetValueEx (handle, name, IntPtr.Zero, RegistryValueKind.MultiString, rawValue, rawValue.Length); 
+			} else if ((valueKind == RegistryValueKind.String || valueKind == RegistryValueKind.ExpandString) &&
+				   type == typeof (string)){
+				string rawValue = String.Format ("{0}{1}", value, '\0');
+				result = RegSetValueEx (handle, name, IntPtr.Zero, valueKind, rawValue,
+							rawValue.Length * NativeBytesPerCharacter);
+				
+			} else if (type.IsArray) {
+				throw new ArgumentException ("Only string and byte arrays can written as registry values");
+			} else {
+				throw new ArgumentException ("Type does not match the valueKind");
+			}
+
+			// handle the result codes
+			if (result != Win32ResultCode.Success)
+			{
+				GenerateException (result);
+			}
+		}
+#endif
+	
 		public void SetValue (RegistryKey rkey, string name, object value)
 		{
 			Type type = value.GetType ();
@@ -201,10 +243,10 @@ namespace Microsoft.Win32
 
 			if (type == typeof (int)) {
 				int rawValue = (int)value;
-				result = RegSetValueEx (handle, name, IntPtr.Zero, RegistryType.Dword, ref rawValue, Int32ByteSize); 
+				result = RegSetValueEx (handle, name, IntPtr.Zero, RegistryValueKind.DWord, ref rawValue, Int32ByteSize); 
 			} else if (type == typeof (byte[])) {
 				byte[] rawValue = (byte[]) value;
-				result = RegSetValueEx (handle, name, IntPtr.Zero, RegistryType.Binary, rawValue, rawValue.Length);
+				result = RegSetValueEx (handle, name, IntPtr.Zero, RegistryValueKind.Binary, rawValue, rawValue.Length);
 			} else if (type == typeof (string[])) {
 				string[] vals = (string[]) value;
 				StringBuilder fullStringValue = new StringBuilder ();
@@ -217,12 +259,12 @@ namespace Microsoft.Win32
 
 				byte[] rawValue = Encoding.Unicode.GetBytes (fullStringValue.ToString ());
 			
-				result = RegSetValueEx (handle, name, IntPtr.Zero, RegistryType.StringArray, rawValue, rawValue.Length); 
+				result = RegSetValueEx (handle, name, IntPtr.Zero, RegistryValueKind.MultiString, rawValue, rawValue.Length); 
 			} else if (type.IsArray) {
 				throw new ArgumentException ("Only string and byte arrays can written as registry values");
 			} else {
 				string rawValue = String.Format ("{0}{1}", value, '\0');
-				result = RegSetValueEx (handle, name, IntPtr.Zero, RegistryType.String, rawValue,
+				result = RegSetValueEx (handle, name, IntPtr.Zero, RegistryValueKind.String, rawValue,
 							rawValue.Length * NativeBytesPerCharacter);
 			}
 
@@ -236,7 +278,7 @@ namespace Microsoft.Win32
 		/// <summary>
 		///	Get a binary value.
 		/// </summary>
-		private int GetBinaryValue (RegistryKey rkey, string name, RegistryType type, out byte[] data, int size)
+		private int GetBinaryValue (RegistryKey rkey, string name, RegistryValueKind type, out byte[] data, int size)
 		{
 			byte[] internalData = new byte [size];
 			IntPtr handle = GetHandle (rkey);
@@ -275,7 +317,7 @@ namespace Microsoft.Win32
 		public int ValueCount (RegistryKey rkey)
 		{
 			int index, result, bufferCapacity;
-			RegistryType type;
+			RegistryValueKind type;
 			StringBuilder buffer = new StringBuilder (BufferMaxLength);
 			
 			IntPtr handle = GetHandle (rkey);
@@ -408,7 +450,7 @@ namespace Microsoft.Win32
 			{
 				StringBuilder buffer = new StringBuilder (BufferMaxLength);
 				int bufferCapacity = buffer.Capacity;
-				RegistryType type = 0;
+				RegistryValueKind type = 0;
 				
 				int result = RegEnumValue (handle, index, buffer, ref bufferCapacity,
 							IntPtr.Zero, ref type, IntPtr.Zero, IntPtr.Zero);

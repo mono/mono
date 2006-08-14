@@ -1,3 +1,17 @@
+2006-08-14  Miguel de Icaza  <miguel@novell.com>
+
+	* RegistryValueKind.cs: Make this public in 2.0, and rename from
+	previous version.
+
+	* Win32RegistryApi.cs: Include version to check for version;
+	Eliminate old internal enum, and instead use the new 2.0 enum.
+
+	* UnixRegistryApi.cs: Add support for typed versions of values.
+
+	Add support for ExpandString.
+
+	* Registry.cs (SetValue): implement version with type arguments.
+
 2006-08-13  Miguel de Icaza  <miguel@novell.com>
 
 	* Registry.cs (SetValue, GetValue): implement.

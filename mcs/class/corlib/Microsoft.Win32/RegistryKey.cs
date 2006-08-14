@@ -181,7 +181,21 @@ namespace Microsoft.Win32
 			RegistryApi.SetValue (this, name, value);
 		}
 
-		
+#if NET_2_0
+		public void SetValue (string name, object value, RegistryValueKind valueKind)
+		{
+			AssertKeyStillValid ();
+			
+			if (value == null)
+				throw new ArgumentNullException ();
+
+			if (isRoot)
+				throw new UnauthorizedAccessException ();
+			
+			RegistryApi.SetValue (this, name, value, valueKind);
+		}
+#endif
+	
 		/// <summary>
 		///	Open the sub key specified, for read access.
 		/// </summary>

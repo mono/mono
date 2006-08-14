@@ -117,6 +117,18 @@ namespace Microsoft.Win32
 
 			key.SetValue (valueName, value);
 		}
+
+		public static void SetValue (string keyName, string valueName, object value, RegistryValueKind valueKind)
+		{
+			RegistryKey key = ToKey (keyName, true);
+			if (valueName.Length > 255)
+				throw new ArgumentException ("valueName is larger than 255 characters", "valueName");
+
+			if (key == null)
+				throw new ArgumentException ("cant locate that keyName", "keyName");
+
+			key.SetValue (valueName, value, valueKind);
+		}
 		
 		public static object GetValue (string keyName, string valueName, object defaultValue)
 		{

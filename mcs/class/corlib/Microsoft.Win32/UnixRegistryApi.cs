@@ -46,6 +46,45 @@ using System.Threading;
 
 namespace Microsoft.Win32 {
 
+	class ExpandString {
+		string value;
+		
+		public ExpandString (string s)
+		{
+			value = s;
+		}
+
+		public override string ToString ()
+		{
+			return value;
+		}
+
+		public string Expand ()
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			for (int i = 0; i < value.Length; i++){
+				if (value [i] == '%'){
+					int j = i + 1;
+					for (; j < value.Length; j++){
+						if (value [j] == '%'){
+							string key = value.Substring (i + 1, j - i - 1);
+
+							sb.Append (Environment.GetEnvironmentVariable (key));
+							i += j;
+							break;
+						}
+					}
+					if (j == value.Length){
+						sb.Append ('%');
+					}
+				} else {
+					sb.Append (value [i]);
+				}		
+			}
+			return sb.ToString ();
+		}
+	}
 	class KeyHandler {
 		static Hashtable key_to_handler = new Hashtable ();
 		static Hashtable dir_to_key = new Hashtable ();
@@ -55,7 +94,7 @@ namespace Microsoft.Win32 {
 		public Hashtable values;
 		string file;
 		bool dirty;
-		bool valid;
+		bool valid = true;
 		
 		KeyHandler (RegistryKey rkey, string basedir)
 		{
@@ -119,6 +158,9 @@ namespace Microsoft.Win32 {
 					break;
 				case "string":
 					values [name] = se.Text;
+					break;
+				case "expand":
+					values [name] = new ExpandString (se.Text);
 					break;
 				case "qword":
 					values [name] = Int64.Parse (se.Text);
@@ -234,6 +276,72 @@ namespace Microsoft.Win32 {
 			SetDirty ();
 		}
 
+#if NET_2_0
+		//
+		// This version has to do argument validation based on the valueKind
+		//
+		public void SetValue (string name, object value, RegistryValueKind valueKind)
+		{
+			SetDirty ();
+			switch (valueKind){
+			case RegistryValueKind.String:
+				if (value is string){
+					values [name] = value;
+					return;
+				}
+				break;
+			case RegistryValueKind.ExpandString:
+				if (value is string){
+					Console.WriteLine ("SETTING THIS BAD BOY {0} to {1}", name, "Exp");
+					values [name] = new ExpandString ((string)value);
+					return;
+				}
+				break;
+				
+			case RegistryValueKind.Binary:
+				if (value is byte []){
+					values [name] = value;
+					return;
+				}
+				break;
+				
+			case RegistryValueKind.DWord:
+				if (value is long &&
+				    (((long) value) < Int32.MaxValue) &&
+				    (((long) value) > Int32.MinValue)){
+					values [name] = (int) ((long)value);
+					return;
+				}
+				if (value is int){
+					values [name] = value;
+					return;
+				}
+				break;
+				
+			case RegistryValueKind.MultiString:
+				if (value is string []){
+					values [name] = value;
+					return;
+				}
+				break;
+				
+			case RegistryValueKind.QWord:
+				if (value is int){
+					values [name] = (long) ((int) value);
+					return;
+				}
+				if (value is long){
+					values [name] = value;
+					return;
+				}
+				break;
+			default:
+				throw new ArgumentException ("unknown value", "valueKind");
+			}
+			throw new ArgumentException ("Value could not be converted to specified type", "valueKind");
+		}
+#endif
+		
 		void SetDirty ()
 		{
 			lock (typeof (KeyHandler)){
@@ -252,8 +360,8 @@ namespace Microsoft.Win32 {
 		public void Flush ()
 		{
 			lock (typeof (KeyHandler)){
-				dirty = false;
 				Save ();
+				dirty = false;
 			}
 		}
 
@@ -289,6 +397,9 @@ namespace Microsoft.Win32 {
 				} else if (val is byte []){
 					value.AddAttribute ("type", "bytearray");
 					value.Text = Convert.ToBase64String ((byte[]) val);
+				} else if (val is ExpandString){
+					value.AddAttribute ("type", "expand");
+					value.Text = val.ToString ();
 				} else if (val is string []){
 					value.AddAttribute ("type", "string-array");
 
@@ -376,8 +487,15 @@ namespace Microsoft.Win32 {
 		{
 			KeyHandler self = KeyHandler.Lookup (rkey);
 
-			if (self.values.Contains (name))
-				return self.values [name];
+			if (self.values.Contains (name)){
+				object r = self.values [name];
+
+				if (r is ExpandString){
+					return ((ExpandString)r).Expand ();
+				}
+				
+				return r;
+			}
 			if (return_default_value)
 				return default_value;
 			return null;
@@ -389,6 +507,14 @@ namespace Microsoft.Win32 {
 			self.SetValue (name, value);
 		}
 
+#if NET_2_0
+		public void SetValue (RegistryKey rkey, string name, object value, RegistryValueKind valueKind)
+		{
+			KeyHandler self = KeyHandler.Lookup (rkey);
+			self.SetValue (name, value, valueKind);
+		}
+#endif
+	
 		public int SubKeyCount (RegistryKey rkey)
 		{
 			KeyHandler self = KeyHandler.Lookup (rkey);
