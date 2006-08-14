@@ -42,6 +42,7 @@ System.Web.UI.Design/HtmlControlDesigner.cs
 System.Web.UI.Design/HtmlIntrinsicControlDesigner.cs
 System.Web.UI.Design/HyperLinkDataBindingHandler.cs
 System.Web.UI.Design/IControlDesignerBehaviour.cs
+System.Web.UI.Design/IDataSourceFieldSchema.cs
 System.Web.UI.Design/IDataSourceProvider.cs
 System.Web.UI.Design/IHtmlControlDesignerBehavior.cs
 System.Web.UI.Design/ImageUrlEditor.cs

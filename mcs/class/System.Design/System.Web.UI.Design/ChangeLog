@@ -1,3 +1,7 @@
+2006-08-14  Raja R Harinath  <rharinath@novell.com>
+
+	* IDataSourceFieldSchema.cs: New.  Used by dll in #79012 testcase.
+
 2006-01-22  Chris Toshok  <toshok@ximian.com>
 
 	* IProjectItem.cs: new interface.
