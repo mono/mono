@@ -611,8 +611,9 @@ namespace System.IO.Ports
 					current++;
 					if (current == byte_value.Length)
 						return encoding.GetString (seen.ToArray (), 0, seen.Count - byte_value.Length);
-				} else
-					current = 0;
+				} else {
+					current = (byte_value [0] == n) ? 1 : 0;
+				}
 			}
 			return encoding.GetString (seen.ToArray ());
 		}
