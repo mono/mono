@@ -462,7 +462,6 @@ namespace System.IO.Ports
 				List<string> serial_ports = new List<string> ();
 				
 				foreach (string dev in ttys){
-					Console.WriteLine (dev);
 					if (dev.StartsWith ("/dev/ttyS") || dev.StartsWith ("/dev/ttyUSB"))
 						serial_ports.Add (dev);
 						
