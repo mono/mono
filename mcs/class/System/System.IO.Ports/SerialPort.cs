@@ -295,6 +295,7 @@ namespace System.IO.Ports
 			}
 		}
 
+		
 		public string PortName {
 			get {
 				return port_name;
@@ -311,6 +312,7 @@ namespace System.IO.Ports
 			}
 		}
 
+		[DefaultValueAttribute(DefaultReadBufferSize)]
 		public int ReadBufferSize {
 			get {
 				return readBufferSize;
@@ -327,6 +329,7 @@ namespace System.IO.Ports
 			}
 		}
 
+		[DefaultValueAttribute(InfiniteTimeout)]
 		public int ReadTimeout {
 			get {
 				return read_timeout;
@@ -343,6 +346,7 @@ namespace System.IO.Ports
 		}
 
 		[MonoTODO("Not implemented")]
+		[DefaultValueAttribute(1)]
 		public int ReceivedBytesThreshold {
 			get {
 				throw new NotImplementedException ();
@@ -355,6 +359,7 @@ namespace System.IO.Ports
 			}
 		}
 
+		[DefaultValueAttribute(false)]
 		public bool RtsEnable {
 			get {
 				return rts_enable;
@@ -369,6 +374,7 @@ namespace System.IO.Ports
 			}
 		}
 
+		[DefaultValueAttribute(DefaultStopBits)]
 		public StopBits StopBits {
 			get {
 				return stop_bits;
@@ -384,6 +390,7 @@ namespace System.IO.Ports
 			}
 		}
 
+		[DefaultValueAttribute(DefaultWriteBufferSize)]
 		public int WriteBufferSize {
 			get {
 				return writeBufferSize;
@@ -400,6 +407,7 @@ namespace System.IO.Ports
 			}
 		}
 
+		[DefaultValueAttribute(InfiniteTimeout)]
 		public int WriteTimeout {
 			get {
 				return write_timeout;
