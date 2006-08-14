@@ -1,3 +1,7 @@
+2006-08-14  Andrew Skiba  <andrews@mainsoft.com>
+
+	* Makefile: support net_2_0 PROFILE
+
 2006-04-03  Andrew Skiba  <andrews@mainsoft.com>
 
 	* W3C.vmwcsproj, W3C.sln: use project reference for nunit

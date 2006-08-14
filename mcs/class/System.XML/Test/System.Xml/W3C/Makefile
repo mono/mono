@@ -2,12 +2,19 @@
 
 RUNTIME=mono
 XMLCONF_OPTIONS=
-CSCOMPILE=mcs
+
+ifeq ($(PROFILE), net_2_0)
+	nunit_MONO_PATH="../../../../../class/lib/net_2_0"
+	CSCOMPILE=gmcs
+else
+	nunit_MONO_PATH="../../../../../class/lib/default"
+	CSCOMPILE=mcs
+endif
+
 REFERENCES=-d:NUNIT_SUPPORT -r:nunit.core -r:nunit.framework
 TEST_ARCHIVE=xmlts20031210.zip
 TEST_CATALOG=xmlconf/xmlconf.xml
 TEST_PROG=xmlconf.dll
-nunit_MONO_PATH="../../../../../class/lib/default"
 mono_wrapper_PATH="../../../../../../mono/runtime/mono-wrapper"
 NUNIT_CONSOLE=$(mono_wrapper_PATH) --debug $(nunit_MONO_PATH)/nunit-console.exe
 
