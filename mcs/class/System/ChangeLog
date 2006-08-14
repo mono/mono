@@ -1,3 +1,8 @@
+2006-08-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.dll.sources : reverted all recent changes on EventLogs.
+	  It does not work at all.
+
 2006-08-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.dll.sources: Added UnixEventLog.cs and Win32EventLog.cs.

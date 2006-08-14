@@ -482,8 +482,6 @@ System.Diagnostics/TraceLevel.cs
 System.Diagnostics/TraceListenerCollection.cs
 System.Diagnostics/TraceListener.cs
 System.Diagnostics/TraceSwitch.cs
-System.Diagnostics/UnixEventLog.cs
-System.Diagnostics/Win32EventLog.cs
 System/FileStyleUriParser.cs
 System/FtpStyleUriParser.cs
 System/GenericUriParser.cs

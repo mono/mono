@@ -1,3 +1,10 @@
+2006-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UnixEventLog.cs, EventLogEntry.cs, EventSourceCreationData.cs,
+	  EventLogImpl.cs, Win32EventLog.cs, EventLogEntryCollection.cs,
+	  EventLog.cs:
+	  Reverted previous two changes that does not work at all.
+
 2006-08-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* EventLog.cs: For now, Use null implementation.

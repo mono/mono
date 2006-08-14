@@ -1,10 +1,10 @@
 //
 // System.Diagnostics.EventSourceCreationData
 //
-// Author:
-//	Gert Driesen <driesen@users.sourceforge.net>
+// Authors:
+//	Gert Driesen (drieseng@users.sourceforge.net)
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// (C) 2006 Novell
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -52,11 +52,7 @@ namespace System.Diagnostics
 		internal EventSourceCreationData (string source, string logName, string machineName)
 		{
 			_source = source;
-			if (logName == null || logName.Length == 0) {
-				_logName = "Application";
-			} else {
-				_logName = logName;
-			}
+			_logName = logName;
 			_machineName = machineName;
 		}
 
