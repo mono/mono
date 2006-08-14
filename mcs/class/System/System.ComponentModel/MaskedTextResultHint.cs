@@ -25,7 +25,7 @@
 //
 
 #if NET_2_0
-namespace System.Windows.Forms {
+namespace System.ComponentModel {
 	public enum MaskedTextResultHint {
 	      PositionOutOfRange = -55,
 	      NonEditPosition = -54,
