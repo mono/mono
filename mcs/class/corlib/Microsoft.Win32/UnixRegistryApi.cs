@@ -4,13 +4,17 @@
 // Authors:
 //	Miguel de Icaza (miguel@gnome.org)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005, 2006 Novell, Inc (http://www.novell.com)
 // 
 // MISSING:
 //   Someone could the same subkey twice: once read/write once readonly,
 //   currently since we use a unique hash based on the file name, we are unable
 //   to have two versions of the same key and hence unable to throw an exception
 //   if the user tries to write to a read-only key.
+//
+//   It would also be useful if we do case-insensitive expansion of variables,
+//   the registry is very windows specific, so we probably should default to
+//   those semantics in expanding environment variables, for example %path%
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
