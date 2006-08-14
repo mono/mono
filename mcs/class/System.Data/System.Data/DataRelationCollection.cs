@@ -475,6 +475,11 @@ namespace System.Data {
 				Add (relation);
 		}
 
+		public void CopyTo (DataRelation [] array, int index)
+		{
+			CopyTo ((Array) array, index);
+		}
+
 		internal virtual void PostAddRange ()
 		{
 		}

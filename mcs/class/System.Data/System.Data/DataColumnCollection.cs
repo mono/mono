@@ -158,6 +158,11 @@ namespace System.Data {
 			return column;
 		}
 
+		public void CopyTo (DataColumn [] array, int index)
+		{
+			CopyTo ((Array) array, index);
+		}
+
 		internal void RegisterName(string name, DataColumn column)
 		{
 			if (columnFromName.Contains(name))

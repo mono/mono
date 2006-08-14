@@ -1,3 +1,8 @@
+2006-08-14  Konstantin Triger <kostat@mainsoft.com>
+
+	* DataTableCollection.cs, DataRelationCollection.cs, DataRowCollection.cs,
+		DataColumnCollection.cs: implemented specialized CopyTo() method.
+
 2006-07-26  Nagappan A  <anagappan@novell.com>
 
 	* DataTable.cs (GetIndex): Fixes memory explode on

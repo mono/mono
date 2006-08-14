@@ -188,6 +188,11 @@ namespace System.Data
 			return Find (keys) != null;
 		}
 
+		public void CopyTo (DataRow [] array, int index)
+		{
+			CopyTo ((Array) array, index);
+		}
+
 		/// <summary>
 		/// Gets the row specified by the primary key value.
 		/// </summary>

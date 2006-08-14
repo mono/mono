@@ -227,6 +227,11 @@ namespace System.Data {
 		}
 #endif
 
+		public void CopyTo (DataTable [] array, int index)
+		{
+			CopyTo ((Array) array, index);
+		}
+
 		public
 #if !NET_2_0
 		virtual
