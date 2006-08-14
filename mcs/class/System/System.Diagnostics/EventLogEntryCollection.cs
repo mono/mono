@@ -39,8 +39,10 @@ namespace System.Diagnostics {
 
 		private ArrayList eventLogs = new ArrayList ();
 
-		internal EventLogEntryCollection()
+		internal EventLogEntryCollection(IEnumerable entries)
 		{
+			foreach (object entry in entries)
+				eventLogs.Add (entry);
 		}
 
 		public int Count {

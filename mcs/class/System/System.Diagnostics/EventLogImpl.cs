@@ -3,8 +3,10 @@
 //
 // Authors:
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Atsushi Enomoto  <atsushi@ximian.com>
 //
 // (C) 2003 Andreas Nahr
+// (C) 2006 Novell, Inc.
 //
 
 //
@@ -32,89 +34,131 @@ using System;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.ComponentModel.Design;
+using System.Collections;
+using System.Globalization;
+using System.IO;
+using System.Net;
 
 namespace System.Diagnostics
 {
-
-// FIXME set a symbol for every implementation and include the implementation
-#if (EVENTLOG_WIN32)
-
-	// TODO implement the EventLog for Win32 platforms
-
-#elif (EVENTLOG_GENERIC)
-
-	// TODO implement a generic (XML - based?) Eventlog for non - Win32 platforms
-
-#else
-	// Empty implementation that does not need any specific platform
-	// but should be enough to get applications to run that WRITE to eventlog
-	internal class EventLogImpl
+	internal abstract class EventLogImpl
 	{
-		public EventLogImpl (EventLog coreEventLog)
+		static EventLogFactory factory;
+
+		static EventLogImpl ()
 		{
+			factory = GetFactory ();
+		}
+
+		static EventLogFactory GetFactory ()
+		{
+			if (LocalFileEventLogUtil.IsEnabled)
+				return new LocalFileEventLogFactory ();
+
+			//throw new NotSupportedException (String.Format ("No EventLog implementation is supported. Consider setting MONO_LOCAL_EVENTLOG_PATH environment variable."));
+			return new NullEventLogFactory ();
+		}
+
+		EventLog log;
+
+		protected EventLogImpl (EventLog coreEventLog)
+		{
+			this.log = coreEventLog;
+		}
+
+		public static EventLogImpl Create (EventLog source)
+		{
+			return factory.Create (source);
 		}
 
 		public static event EntryWrittenEventHandler EntryWritten;
 
-		public EventLogEntryCollection Entries {
-			get {return new EventLogEntryCollection ();}
+		public abstract EventLogEntryCollection Entries { get; }
+
+		public abstract string LogDisplayName { get; }
+
+		public abstract void BeginInit ();
+
+		public abstract void Clear ();
+
+		public abstract void Close ();
+
+		public static void CreateEventSource (string source, string logName, string machineName)
+		{
+			factory.CreateEventSource (source, logName, machineName);
 		}
 
-		public string LogDisplayName {
-			get {return "";}
+		public static void Delete (string logName, string machineName)
+		{
+			factory.Delete (logName, machineName);
 		}
 
-		public void BeginInit () {}
+		public static void DeleteEventSource (string source, string machineName)
+		{
+			factory.DeleteEventSource (source, machineName);
+		}
 
-		public void Clear () {}
+		public abstract void Dispose (bool disposing);
 
-		public void Close () {}
-
-		public static void CreateEventSource (string source, string logName, string machineName) {}
-
-		public static void Delete (string logName, string machineName) {}
-
-		public static void DeleteEventSource (string source, string machineName) {}
-
-		public void Dispose (bool disposing) {}
-
-		public void EndInit () {}
+		public abstract void EndInit ();
 
 		public static bool Exists (string logName, string machineName)
 		{
-			return false;
+			return factory.Exists (logName, machineName);
 		}
 
 		public static EventLog[] GetEventLogs (string machineName)
 		{
-			return new EventLog[0];
+			return factory.GetEventLogs (machineName);
 		}
 
 		public static string LogNameFromSourceName (string source, string machineName)
 		{
-			return String.Empty;
+			return factory.LogNameFromSourceName (source, machineName);
 		}
 
 		public static bool SourceExists (string source, string machineName)
 		{
-			return false;
+			return factory.SourceExists (source, machineName);
 		}
 
 		public void WriteEntry (string message, EventLogEntryType type, int eventID, short category, byte[] rawData)
 		{
-			WriteEntry ("", message, type, eventID, category, rawData);
+			WriteEntry (log.Source, message, type, eventID, category, rawData);
 		}
 
 		public static void WriteEntry (string source, string message, EventLogEntryType type, int eventID, short category, byte[] rawData)
 		{
-			EventLogEntry Entry;
-			Entry = new EventLogEntry ("", category, 0, eventID, message, source, 
-				"", "", type, DateTime.Now, DateTime.Now, rawData, null);
-			if (EntryWritten != null)
-				EntryWritten (null, new EntryWrittenEventArgs (Entry));
+			factory.WriteEntry (source, message, type, eventID, category, rawData);
+			if (EntryWritten != null) {
+				// FIXME: some arguments are improper.
+				EventLogEntry e = new EventLogEntry ("",
+					category, 0, eventID, message, source,
+					"", ".", type, DateTime.Now, DateTime.Now,
+					rawData, null);
+				EntryWritten (null, new EntryWrittenEventArgs (e));
+			}
 		}
 	}
 
-#endif
+	internal abstract class EventLogFactory
+	{
+		public abstract EventLogImpl Create (EventLog source);
 
+		public abstract void CreateEventSource (string source, string logName, string machineName);
+
+		public abstract void Delete (string logName, string machineName);
+
+		public abstract void DeleteEventSource (string source, string machineName);
+
+		public abstract bool Exists (string logName, string machineName);
+
+		public abstract EventLog[] GetEventLogs (string machineName);
+
+		public abstract string LogNameFromSourceName (string source, string machineName);
+
+		public abstract bool SourceExists (string source, string machineName);
+
+		public abstract void WriteEntry (string source, string message, EventLogEntryType type, int eventID, short category, byte[] rawData);
+	}
 }

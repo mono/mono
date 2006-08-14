@@ -1,5 +1,14 @@
 2006-08-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* EventLogImpl.cs, EventLogEntryCollection.cs, EventLog.cs :
+	  some rework to support actual event log implementations.
+	* NullEventLog.cs, LocalFileEventLog.cs :
+	  new files. The former (default) implementation does nothing for
+	  any event log features. The latter implements local file based
+	  event logs.
+
+2006-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* UnixEventLog.cs, EventLogEntry.cs, EventSourceCreationData.cs,
 	  EventLogImpl.cs, Win32EventLog.cs, EventLogEntryCollection.cs,
 	  EventLog.cs:

@@ -72,7 +72,7 @@ namespace System.Diagnostics
 			this.machineName = machineName;
 			this.logName = logName;
 
-			this.Impl = new EventLogImpl (this);
+			this.Impl = EventLogImpl.Create (this);
 			EventLogImpl.EntryWritten += new EntryWrittenEventHandler (EntryWrittenHandler);
 		}
 

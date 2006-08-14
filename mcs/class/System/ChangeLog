@@ -1,4 +1,8 @@
-2006-08-11  Atsushi Enomoto  <atsushi@ximian.com>
+2006-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.dll.sources : added LocalFileEventLog.cs and NullEventLog.cs.
+
+2006-08-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.dll.sources : reverted all recent changes on EventLogs.
 	  It does not work at all.

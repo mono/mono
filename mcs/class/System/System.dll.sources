@@ -450,7 +450,9 @@ System.Diagnostics/ICollectData.cs
 System.Diagnostics/InstanceDataCollectionCollection.cs
 System.Diagnostics/InstanceDataCollection.cs
 System.Diagnostics/InstanceData.cs
+System.Diagnostics/LocalFileEventLog.cs
 System.Diagnostics/MonitoringDescriptionAttribute.cs
+System.Diagnostics/NullEventLog.cs
 System.Diagnostics/OverflowAction.cs
 System.Diagnostics/PerformanceCounterCategory.cs
 System.Diagnostics/PerformanceCounter.cs
