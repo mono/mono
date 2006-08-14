@@ -32,6 +32,7 @@ using System.IO;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using MonoTests.SystemWeb.Framework;
 
 using NUnit.Framework;
 
@@ -66,6 +67,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 	public class TableTest {
 
 		private const string imageUrl = "http://www.mono-project.com/stylesheets/images.wiki.png";
+		private const string localImageUrl = "foo.jpg";
 
 		private HtmlTextWriter GetWriter ()
 		{
@@ -288,8 +290,30 @@ namespace MonoTests.System.Web.UI.WebControls {
 			t.BackImageUrl = imageUrl;
 			s = t.Render ();
 			Assert.AreEqual ("<table border=\"0\" style=\"background-image:url(http://www.mono-project.com/stylesheets/images.wiki.png);\">\n\n</table>", s, "BackImageUrl");
+			t.BackImageUrl = localImageUrl;
+			s = t.Render ();
+			Assert.AreEqual ("<table border=\"0\" style=\"background-image:url(foo.jpg);\">\n\n</table>", s, "BackImageUrl");
 			t.BackImageUrl = String.Empty;
 		}
+
+#if NET_2_0
+		[Test]
+		public void RenderInAspxPage ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (RenderInAspxPage_OnLoad));
+			string res = t.Run ();
+			Assert.IsTrue (res.IndexOf ("<table id=\"MagicID_A1C3\" border=\"0\" style=\"background-image:url(foo.jpg);\"")!= -1, res);
+		}
+
+		public static void RenderInAspxPage_OnLoad (Page p)
+		{
+			Table t = new Table ();
+			t.BackImageUrl = "foo.jpg";
+			t.ID = "MagicID_A1C3";
+			p.Form.Controls.Add (t);
+			p.Controls.Add (t);
+		}
+#endif
 
 		[Test]
 		public void CreateControlStyle ()

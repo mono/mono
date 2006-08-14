@@ -227,8 +227,10 @@ namespace System.Web.UI.WebControls {
 			string s = BackImageUrl;
 			if (s.Length > 0) {
 				if (owner != null)
-					s = owner.ResolveUrl (s);
-#if ONLY_1_1
+					s = owner.ResolveClientUrl (s);
+#if NET_2_0
+				s = s.Replace (" ", "%20");
+#else
 				s = String.Concat ("url(", s, ")");
 #endif
 				writer.AddStyleAttribute (HtmlTextWriterStyle.BackgroundImage, s);

@@ -1,3 +1,8 @@
+2006-08-14 Andrew Skiba <andrews@mainsoft.com>
+
+	* TableStyle.cs: replace ResolveUrl with ResolveClientUrl to match
+	MS.NET's behaviour.
+
 2006-08-14 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Menu.cs: fixed databinding feature:

@@ -1,3 +1,7 @@
+2006-08-14 Andrew Skiba <andrews@mainsoft.com>
+
+	* TableTest.cs: new test added.
+
 2006-08-14 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* MenuTest.cs: added test showing that items initialization should occurs only once
