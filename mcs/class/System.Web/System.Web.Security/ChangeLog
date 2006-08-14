@@ -1,6 +1,11 @@
+2006-08-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FormsAuthentication.cs: set the Secure attribute of the authentication
+	cookie when required.
+
 2006-07-06	Konstantin Triger <kostat@mainsoft.com>
 
-        * FormsAuthentication.cs: Ensure initialized, fix url mapping.
+	* FormsAuthentication.cs: Ensure initialized, fix url mapping.
 
 2006-05-03  Chris Toshok  <toshok@ximian.com>
 

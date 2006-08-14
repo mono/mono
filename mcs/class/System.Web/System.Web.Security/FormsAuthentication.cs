@@ -304,7 +304,10 @@ namespace System.Web.Security
 			if (!createPersistentCookie)
 				then = DateTime.MinValue;
 
-			return new HttpCookie (cookieName, Encrypt (ticket), strCookiePath, then);
+			HttpCookie cookie = new HttpCookie (cookieName, Encrypt (ticket), strCookiePath, then);
+			if (requireSSL)
+				cookie.Secure = true;
+			return cookie;
 		}
 
 		public static string GetRedirectUrl (string userName, bool createPersistentCookie)
