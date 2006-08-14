@@ -321,6 +321,26 @@ namespace MonoTests.System {
 		{
 			Assert.IsNull (Type.GetType (String.Format (SystemPermissionPattern, "9.99.999.9999")));
 		}
+
+		class foo2<T, U> {}
+		class foo1<T> : foo2<T, int> {}
+
+		[Test, ExpectedException (typeof (ArgumentException))]
+		public void GenericType_Open1 ()
+		{
+			Activator.CreateInstance (typeof (foo2<,>));
+		}
+		[Test, ExpectedException (typeof (ArgumentException))]
+		public void GenericType_Open2 ()
+		{
+			Activator.CreateInstance (typeof (foo1<>));
+		}
+		[Test]
+		public void GenericTypes_Closed ()
+		{
+			Assert.IsNotNull (Activator.CreateInstance (typeof (foo1<int>)), "foo1<int>");
+			Assert.IsNotNull (Activator.CreateInstance (typeof (foo2<long, int>)), "foo2<long, int>");
+		}
 #endif
 	}
 }

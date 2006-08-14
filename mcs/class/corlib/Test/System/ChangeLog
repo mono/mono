@@ -1,3 +1,8 @@
+2006-08-14  Raja R Harinath  <rharinath@novell.com>
+
+	* ActivatorTest.cs (GenericType_Open1): New test based on #78943.
+	(GenericType_Open2, GenericTypes_Closed): Likewise.
+
 2006-08-05  Duncan Mak  <duncan@novell.com>
 
 	* CharTest.cs (TestTryParseValid, TestTryParseInvalid): Added

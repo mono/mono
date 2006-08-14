@@ -181,7 +181,11 @@ namespace System
 		                                     CultureInfo culture, object [] activationAttributes)
 		{
 			CheckType (type);
-		
+
+#if NET_2_0
+			if (type.ContainsGenericParameters)
+				throw new ArgumentException (type + " is an open generic type", "type");
+#endif
 			// It seems to apply the same rules documented for InvokeMember: "If the type of lookup
 			// is omitted, BindingFlags.Public | BindingFlags.Instance will apply".
 			if ((bindingAttr & _accessFlags) == 0)
@@ -229,6 +233,10 @@ namespace System
 		public static object CreateInstance (Type type, bool nonPublic)
 		{ 
 			CheckType (type);
+#if NET_2_0
+			if (type.ContainsGenericParameters)
+				throw new ArgumentException (type + " is an open generic type", "type");
+#endif
 			CheckAbstractType (type);
 
 			BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;

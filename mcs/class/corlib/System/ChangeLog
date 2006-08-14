@@ -1,3 +1,9 @@
+2006-08-14  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #78943
+	* Activator.cs (CreateInstance): Throw ArgumentException on open
+	generic types.
+
 2006-08-14  Miguel de Icaza  <miguel@novell.com>
 
 	* MonoType.cs: Do the argument testinf for SetField later,
