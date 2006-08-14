@@ -4278,6 +4278,7 @@ namespace System.Windows.Forms {
 		internal override void SetWindowMinMax(IntPtr handle, Rectangle maximized, Size min, Size max) {
 			Hwnd		hwnd;
 			XSizeHints	hints;
+			IntPtr		dummy;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 			if (hwnd == null) {
@@ -4285,6 +4286,8 @@ namespace System.Windows.Forms {
 			}
 
 			hints = new XSizeHints();
+
+			XGetWMNormalHints(DisplayHandle, hwnd.whole_window, ref hints, out dummy);
 			if ((min != Size.Empty) && (min.Width > 0) && (min.Height > 0)) {
 				hints.flags = (IntPtr)((int)hints.flags | (int)XSizeHintsFlags.PMinSize);
 				hints.min_width = min.Width;
@@ -4496,6 +4499,7 @@ namespace System.Windows.Forms {
 
 			if (SystrayMgrWindow != IntPtr.Zero) {
 				XSizeHints	size_hints;
+				IntPtr		dummy;
 				Hwnd		hwnd;
 
 				hwnd = Hwnd.ObjectFromHandle(handle);
@@ -4511,6 +4515,7 @@ namespace System.Windows.Forms {
 
 				size_hints = new XSizeHints();
 
+				XGetWMNormalHints(DisplayHandle, hwnd.whole_window, ref size_hints, out dummy);
 				size_hints.flags = (IntPtr)(XSizeHintsFlags.PMinSize | XSizeHintsFlags.PMaxSize | XSizeHintsFlags.PBaseSize);
 				size_hints.min_width = icon.Width;
 				size_hints.min_height = icon.Height;
@@ -4861,6 +4866,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XUngrabServer")]
 		internal extern static void XUngrabServer(IntPtr display);
+
+		[DllImport ("libX11", EntryPoint="XGetWMNormalHints")]
+		internal extern static void XGetWMNormalHints(IntPtr display, IntPtr window, ref XSizeHints hints, out IntPtr supplied_return);
 
 		[DllImport ("libX11", EntryPoint="XSetWMNormalHints")]
 		internal extern static void XSetWMNormalHints(IntPtr display, IntPtr window, ref XSizeHints hints);

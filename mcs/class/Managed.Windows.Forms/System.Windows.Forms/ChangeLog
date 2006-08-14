@@ -1,3 +1,8 @@
+2006-08-14  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUIX11.cs: When setting normal hints, take into consideration
+	  an different hints previously set so we don't delete them (fixes #78866)
+
 2006-08-12  Chris Toshok  <toshok@ximian.com>
 
 	* ToolBarButton.cs: make Layout return a boolean, if something to
