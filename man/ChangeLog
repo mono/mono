@@ -1,5 +1,9 @@
 2006-08-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* mono.1 : MONO_LOCAL_EVENTLOG_PATH -> MONO_EVENTLOG_PATH.
+
+2006-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* mono.1 : description on MONO_LOCAL_EVENTLOG_PATH.
 
 2006-03-15  Miguel de Icaza  <miguel@novell.com>
