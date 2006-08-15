@@ -44,7 +44,7 @@ using System.Windows.Forms.VisualStyles;
 
 namespace System.Windows.Forms {
 	public sealed class Application {
-		private class MWFThread {
+		internal class MWFThread {
 			#region Fields
 			private ApplicationContext	context;
 			private bool			messageloop_started;
