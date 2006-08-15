@@ -1,3 +1,8 @@
+2006-08-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_init): Fix registration of idiv/imul opcodes which can throw
+	exceptions.
+
 2006-08-10  Jonathan Chambers  <joncham@gmail.com>
 
 	* mini.c: Don't verify COM proxy invoke calls
