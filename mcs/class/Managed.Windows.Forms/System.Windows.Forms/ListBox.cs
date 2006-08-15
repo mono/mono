@@ -1941,6 +1941,7 @@ namespace System.Windows.Forms
 						throw new ArgumentOutOfRangeException ("Index of out range");
 
 					object_items[index] = value;
+					owner.CollectionChanged ();
 				}
 			}
 

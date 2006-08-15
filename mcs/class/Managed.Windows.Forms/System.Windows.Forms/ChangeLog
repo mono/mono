@@ -1,5 +1,11 @@
 2006-08-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListBox.cs: Call CollectionChanged when modifying
+	an item from Items indexer, to update the actual items
+	in the list box.
+
+2006-08-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* PrintDialog.cs: Small fixes for focus and a pair of checks,
 	to match .Net behaviour.
 
