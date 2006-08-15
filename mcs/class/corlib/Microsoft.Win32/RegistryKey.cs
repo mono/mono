@@ -4,8 +4,8 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Erik LeBel (eriklebel@yahoo.ca)
+//   Gert Driesen (drieseng@users.sourceforge.net)
 //
-
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -50,11 +50,16 @@ namespace Microsoft.Win32
 		//
 		internal object Data;
 		
-		string qname;	// the fully qualified registry key name
-		bool isRoot;	// is the an instance of a root key?
+		readonly string qname;	// the fully qualified registry key name
+		readonly bool isRoot;	// is the an instance of a root key?
+		readonly bool isWritable;	// is the key openen in writable mode
 
 		internal bool IsRoot {
 			get { return isRoot; }
+		}
+
+		internal bool IsWritable {
+			get { return isWritable; }
 		}
 		
 		static readonly IRegistryApi RegistryApi;
@@ -75,16 +80,18 @@ namespace Microsoft.Win32
 			Data = hiveId;
 			qname = keyName;
 			isRoot = true;
+			isWritable = true; // always consider root writable
 		}
 		
 		/// <summary>
 		///	Construct an instance of a registry key entry.
 		/// </summary>
-		internal RegistryKey (object data, string keyName)
+		internal RegistryKey (object data, string keyName, bool writable)
 		{
 			Data = data;
 			qname = keyName;
 			isRoot = false;
+			isWritable = writable;
 		}
 
 		#region PublicAPI
@@ -95,8 +102,8 @@ namespace Microsoft.Win32
 		/// </summary>
 		void IDisposable.Dispose ()
 		{
-			Close ();
 			GC.SuppressFinalize (this);
+			Close ();
 		}
 
 		
@@ -128,11 +135,13 @@ namespace Microsoft.Win32
 		
 		
 		/// <summary>
-		///	Close the current registry key. This may not 
-		///	flush the state of the registry right away.
+		///	Close the current registry key and flushes the state of the registry
+		/// right away.
 		/// </summary>
 		public void Close()
 		{
+			Flush ();
+
 			if (isRoot)
 				return;
 			
@@ -171,13 +180,13 @@ namespace Microsoft.Win32
 		public void SetValue (string name, object value)
 		{
 			AssertKeyStillValid ();
-			
-			if (value == null)
-				throw new ArgumentNullException ();
 
-			if (isRoot)
-				throw new UnauthorizedAccessException ();
-			
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
+			if (!IsWritable)
+				throw new UnauthorizedAccessException ("Cannot write to the registry key.");
+
 			RegistryApi.SetValue (this, name, value);
 		}
 
@@ -189,13 +198,13 @@ namespace Microsoft.Win32
 			if (value == null)
 				throw new ArgumentNullException ();
 
-			if (isRoot)
-				throw new UnauthorizedAccessException ();
-			
+			if (!IsWritable)
+				throw new UnauthorizedAccessException ("Cannot write to the registry key.");
+
 			RegistryApi.SetValue (this, name, value, valueKind);
 		}
 #endif
-	
+
 		/// <summary>
 		///	Open the sub key specified, for read access.
 		/// </summary>
@@ -247,6 +256,9 @@ namespace Microsoft.Win32
 			AssertKeyNameNotNull (subkey);
 			if (subkey.Length > 255)
 				throw new ArgumentException ("keyName length is larger than 255 characters", subkey);
+
+			if (!IsWritable)
+				throw new UnauthorizedAccessException ("Cannot write to the registry key.");
 			return RegistryApi.CreateSubKey (this, subkey);
 		}
 		
@@ -268,16 +280,21 @@ namespace Microsoft.Win32
 			AssertKeyStillValid ();
 			AssertKeyNameNotNull (subkey);
 
+			if (!IsWritable)
+				throw new UnauthorizedAccessException ("Cannot write to the registry key.");
+
 			RegistryKey child = OpenSubKey (subkey);
 			
 			if (child == null) {
 				if (throwOnMissingSubKey)
-					throw new ArgumentException ("key missing: " + subkey, "subkey");
+					throw new ArgumentException ("Cannot delete a subkey tree"
+						+ " because the subkey does not exist.");
 				return;
 			}
 
 			if (child.SubKeyCount > 0){
-				throw new InvalidOperationException ("key " + subkey + " has sub keys");
+				throw new InvalidOperationException ("Registry key has subkeys"
+					+ " and recursive removes are not supported by this method.");
 			}
 			
 			child.Close ();
@@ -300,7 +317,8 @@ namespace Microsoft.Win32
 			
 			RegistryKey child = OpenSubKey (keyName, true);
 			if (child == null)
-				throw new ArgumentException ("key " + keyName + " at " + Name);
+				throw new ArgumentException ("Cannot delete a subkey tree"
+					+ " because the subkey does not exist.");
 
 			child.DeleteChildKeysAndValues ();
 			child.Close ();
@@ -324,6 +342,9 @@ namespace Microsoft.Win32
 		{
 			AssertKeyStillValid ();
 			AssertKeyNameNotNull (value);
+
+			if (!IsWritable)
+				throw new UnauthorizedAccessException ("Cannot write to the registry key.");
 
 			RegistryApi.DeleteValue (this, value, shouldThrowWhenKeyMissing);
 		}
@@ -423,10 +444,17 @@ namespace Microsoft.Win32
 		{
 			string stringRep = Encoding.Unicode.GetString (data);
 			int idx = stringRep.IndexOf ('\0');
-			if (idx >= 0)
-				stringRep = stringRep.Substring (0, idx);
+			if (idx != -1)
+				stringRep = stringRep.TrimEnd ('\0');
 			return stringRep;
 		}
+
+		static internal IOException CreateMarkedForDeletionException ()
+		{
+			throw new IOException ("Illegal operation attempted on a"
+				+ " registry key that has been marked for deletion.");
+		}
+
 	}
 }
 

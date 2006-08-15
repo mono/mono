@@ -1,3 +1,39 @@
+2006-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Win32ResultCode.cs: Added error code for attempting to perform an
+	operation on registry key that is marked for deletion.
+	* RegistryKey.cs: Keep writable state. Automatically flush changes to
+	disk when closing key (to match MS). Allow values to be set on root
+	keys. Throw UnauthorizedAccessException when attempting to set/delete
+	value or create/delete sub key on registry key that is openen 
+	read-only. Fixed DecodeString to only strip trailing nullchars (as
+	documented).
+	* Win32RegistryApi.cs: For a key that is marked for deletion, return
+	null when attempting to get a value of that key (and no default value
+	was specified) or open a subkey. Throw an IOException when attempting
+	to perform the following operation on a key that is marked for
+	deletion:
+		1) set value on key
+	 	2) obtain SubKeyCount
+		3) obtain ValueCount
+		4) create a sub key
+		5) obtain value names
+	and ignore deleting a value. Ignore flushing changes of a key and
+	closing a when the key is closed.
+	* UnixRegistryApi.cs: Maintain handler cache per directory instead of
+	caching registry keys. This allows both a single key to be in memory
+	in both read-only and read-write key configuration, while sharing the
+	KeyHandler. Use case-insensitive hashtable for mapping directory to
+	KeyHandler. Added support for keys that have been marked for deletion
+	by another operation (eg. DeleteSubKeyTree). Allow different file store
+	for machine-level and user-level hives (but have them use the same
+	file store, needs further discussion). Allow KeyHandler failure when
+	create directory, or saving values file to bubble up. Do not save
+	values file when key is marked for deletion. Encapsulate access to
+	values collection. When setting value with null name, use zero-length
+	name instead. Treat key name case-insensitive in DeleteKey to match
+	OpenSubKey.
+
 2006-08-14  Miguel de Icaza  <miguel@novell.com>
 
 	* RegistryValueKind.cs: Make this public in 2.0, and rename from

@@ -3,15 +3,19 @@
 //
 // Authors:
 //	mei (mei@work.email.ne.jp)
-//      Robert Jordan (robertj@gmx.net)
+//	Robert Jordan (robertj@gmx.net)
+//	Gert Driesen (drieseng@users.sourceforge.net)
 //
 // (C) 2005 mei
 // (C) 2004, 2005 Novell (http://www.novell.com)
 //
 
-using NUnit.Framework;
-using Microsoft.Win32;
 using System;
+using System.IO;
+
+using Microsoft.Win32;
+
+using NUnit.Framework;
 
 namespace MonoTests.Microsoft.Win32
 {
@@ -54,7 +58,7 @@ namespace MonoTests.Microsoft.Win32
 		}
 
 		[Test]
-		public void OpenSubKeyTest ()
+		public void OpenSubKey ()
 		{
 			RegistryKey key = Registry.LocalMachine;
 
@@ -79,7 +83,74 @@ namespace MonoTests.Microsoft.Win32
 		}
 
 		[Test]
-		public void CreateSubKeyTest ()
+		public void OpenSubKey_Key_DoesNotExist ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+			Assert.IsNull (Registry.CurrentUser.OpenSubKey (subKeyName), "#1"); // read-only
+			Assert.IsNull (Registry.CurrentUser.OpenSubKey (subKeyName, true), "#2"); // writable
+		}
+
+		[Test]
+		public void OpenSubKey_Key_Removed ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					// check if key was successfully created
+					Assert.IsNotNull (createdKey, "#1");
+					RegistryKey subKey = createdKey.CreateSubKey ("monotemp");
+					subKey.Close ();
+				}
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName, true)) {
+					Assert.IsNotNull (createdKey, "#2");
+					using (RegistryKey subKey = createdKey.OpenSubKey ("monotemp")) {
+						Assert.IsNotNull (createdKey, "#3");
+					}
+					Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+
+					// read-only
+					Assert.IsNull (Registry.CurrentUser.OpenSubKey (subKeyName), "#4");
+					Assert.IsNull (createdKey.OpenSubKey ("monotemp"), "#5"); // read-only
+					// writable
+					Assert.IsNull (Registry.CurrentUser.OpenSubKey (subKeyName, true), "#6");
+					Assert.IsNull (createdKey.OpenSubKey ("monotemp", true), "#7"); 
+				}
+			} finally {
+				try {
+					RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+					if (createdKey != null) {
+						createdKey.Close ();
+						Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void OpenSubKey_Name_Null ()
+		{
+			Registry.CurrentUser.OpenSubKey (null);
+		}
+
+		[Test]
+		[Category ("NotWorking")] // MS should not allow this
+		public void OpenSubKey_Name_Empty ()
+		{
+			// read-only
+			using (RegistryKey emptyKey = Registry.CurrentUser.OpenSubKey (string.Empty)) {
+				Assert.IsNotNull (emptyKey, "#1");
+			}
+			// writable
+			using (RegistryKey emptyKey = Registry.CurrentUser.OpenSubKey (string.Empty, true)) {
+				Assert.IsNotNull (emptyKey, "#1");
+			}
+		}
+
+		[Test]
+		public void CreateSubKey ()
 		{
 			string subKeyName = Guid.NewGuid ().ToString ();
 
@@ -92,6 +163,1058 @@ namespace MonoTests.Microsoft.Win32
 			} finally {
 				// clean-up
 				Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+			}
+		}
+
+		[Test]
+		public void CreateSubKey_Key_ReadOnly ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			using (RegistryKey softwareKey = Registry.CurrentUser.OpenSubKey ("software")) {
+				RegistryKey createdKey = null;
+				try {
+					try {
+						createdKey = softwareKey.CreateSubKey (subKeyName);
+						Assert.Fail ("#1");
+					} catch (UnauthorizedAccessException ex) {
+						// Cannot write to the registry key.
+						Assert.AreEqual (typeof (UnauthorizedAccessException), ex.GetType (), "#2");
+						Assert.IsNotNull (ex.Message, "#3");
+						Assert.IsNull (ex.InnerException, "#4");
+					}
+				} finally {
+					if (createdKey != null)
+						createdKey.Close ();
+				}
+			}
+		}
+
+		[Test]
+		public void CreateSubKey_Key_Removed ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			using (RegistryKey softwareKey = Registry.CurrentUser.OpenSubKey ("software", true)) {
+				try {
+					using (RegistryKey createdKey = softwareKey.CreateSubKey (subKeyName)) {
+						softwareKey.DeleteSubKeyTree (subKeyName);
+						Assert.IsNull (softwareKey.OpenSubKey (subKeyName), "#1");
+						try {
+							createdKey.CreateSubKey ("test");
+							Assert.Fail ("#2");
+						} catch (IOException ex) {
+							// Illegal operation attempted on a registry key that
+							// has been marked for deletion
+							Assert.AreEqual (typeof (IOException), ex.GetType (), "#3");
+							Assert.IsNotNull (ex.Message, "#4");
+							Assert.IsNull (ex.InnerException, "#5");
+						}
+					}
+				} finally {
+					try {
+						RegistryKey createdKey = softwareKey.OpenSubKey (subKeyName);
+						if (createdKey != null) {
+							createdKey.Close ();
+							softwareKey.DeleteSubKeyTree (subKeyName);
+						}
+					} catch {
+					}
+				}
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")] // MS should not allow this
+		public void CreateSubKey_Name_Empty ()
+		{
+			using (RegistryKey softwareKey = Registry.CurrentUser.OpenSubKey ("software", true)) {
+				using (RegistryKey emptyKey = softwareKey.CreateSubKey (string.Empty)) {
+					Assert.IsNotNull (emptyKey, "#1");
+					emptyKey.SetValue ("name1", "value1");
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void CreateSubKey_Name_Null ()
+		{
+			using (RegistryKey softwareKey = Registry.CurrentUser.OpenSubKey ("software", true)) {
+				softwareKey.CreateSubKey (null);
+			}
+		}
+
+		[Test]
+		public void DeleteSubKey ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					// check if key was successfully created
+					Assert.IsNotNull (createdKey, "#1");
+				}
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					Assert.IsNotNull (createdKey, "#2");
+					Registry.CurrentUser.DeleteSubKey (subKeyName);
+				}
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					Assert.IsNull (createdKey, "#3");
+				}
+			} finally {
+				try {
+					RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+					if (createdKey != null) {
+						createdKey.Close ();
+						Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
+			}
+		}
+
+		[Test]
+		public void DeleteSubKey_Key_HasChildKeys ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					// check if key was successfully created
+					Assert.IsNotNull (createdKey, "#1");
+					RegistryKey subKey = createdKey.CreateSubKey ("monotemp");
+					subKey.Close ();
+				}
+				try {
+					Registry.CurrentUser.DeleteSubKey (subKeyName);
+					Assert.Fail ("#2");
+				} catch (InvalidOperationException ex) {
+					// Registry key has subkeys and recursive removes are not
+					// supported by this method.
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsNull (ex.InnerException, "#5");
+				}
+			} finally {
+				try {
+					RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+					if (createdKey != null) {
+						createdKey.Close ();
+						Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
+			}
+		}
+
+		[Test]
+		public void DeleteSubKey_Key_ReadOnly ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey softwareKey = Registry.CurrentUser.OpenSubKey ("software", true)) {
+					RegistryKey createdKey = softwareKey.CreateSubKey (subKeyName);
+					createdKey.Close ();
+				}
+
+				using (RegistryKey softwareKey = Registry.CurrentUser.OpenSubKey ("software")) {
+					try {
+						softwareKey.DeleteSubKey (subKeyName);
+						Assert.Fail ("#1");
+					} catch (UnauthorizedAccessException ex) {
+						// Cannot write to the registry key
+						Assert.AreEqual (typeof (UnauthorizedAccessException), ex.GetType (), "#2");
+						Assert.IsNotNull (ex.Message, "#3");
+						Assert.IsNull (ex.InnerException, "#4");
+					}
+				}
+			} finally {
+				try {
+					using (RegistryKey softwareKey = Registry.CurrentUser.OpenSubKey ("software", true)) {
+						RegistryKey createdKey = softwareKey.OpenSubKey (subKeyName);
+						if (createdKey != null) {
+							createdKey.Close ();
+							softwareKey.DeleteSubKeyTree (subKeyName);
+						}
+					}
+				} catch {
+				}
+			}
+		}
+
+		[Test]
+		public void DeleteSubKey_Key_DoesNotExist ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				Registry.CurrentUser.DeleteSubKey (subKeyName);
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Cannot delete a subkey tree because the subkey does not exist
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNotNull (ex.Message, "#A3");
+				Assert.IsNull (ex.InnerException, "#A4");
+			}
+
+			try {
+				Registry.CurrentUser.DeleteSubKey (subKeyName, true);
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// Cannot delete a subkey tree because the subkey does not exist
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+				Assert.IsNull (ex.InnerException, "#B4");
+			}
+
+			Registry.CurrentUser.DeleteSubKey (subKeyName, false);
+		}
+
+		[Test]
+		public void DeleteSubKey_Key_Removed ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					// check if key was successfully created
+					Assert.IsNotNull (createdKey, "#1");
+					RegistryKey subKey = createdKey.CreateSubKey ("monotemp");
+					subKey.Close ();
+				}
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName, true)) {
+					Assert.IsNotNull (createdKey, "#2");
+					using (RegistryKey subKey = createdKey.OpenSubKey ("monotemp")) {
+						Assert.IsNotNull (createdKey, "#3");
+					}
+					Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					Assert.IsNull (Registry.CurrentUser.OpenSubKey (subKeyName), "#4");
+					try {
+						createdKey.DeleteSubKey ("monotemp");
+						Assert.Fail ("#5");
+					} catch (ArgumentException ex) {
+						// Cannot delete a subkey tree because the subkey does
+						// not exist
+						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#6");
+						Assert.IsNotNull (ex.Message, "#7");
+						Assert.IsNull (ex.InnerException, "#8");
+					}
+				}
+			} finally {
+				try {
+					RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+					if (createdKey != null) {
+						createdKey.Close ();
+						Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")] // MS should not allow this
+		public void DeleteSubKey_Name_Empty ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			using (RegistryKey softwareKey = Registry.CurrentUser.OpenSubKey ("software", true)) {
+				try {
+					RegistryKey createdKey = softwareKey.CreateSubKey (subKeyName);
+					createdKey.DeleteSubKey (string.Empty);
+					createdKey.Close ();
+
+					createdKey = softwareKey.OpenSubKey (subKeyName);
+					Assert.IsNull (createdKey, "#1");
+				} finally {
+					try {
+						RegistryKey createdKey = softwareKey.OpenSubKey (subKeyName);
+						if (createdKey != null)
+							createdKey.Close ();
+						softwareKey.DeleteSubKeyTree (subKeyName);
+					} catch {
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void DeleteSubKey_Name_Null ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			using (RegistryKey softwareKey = Registry.CurrentUser.OpenSubKey ("software", true)) {
+				try {
+					RegistryKey createdKey = softwareKey.CreateSubKey (subKeyName);
+					try {
+						createdKey.DeleteSubKey (null);
+						Assert.Fail ("#1");
+					} catch (ArgumentNullException ex) {
+						// Value cannot be null. Parameter name: subkey
+						Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+						Assert.IsNotNull (ex.Message, "#3");
+						Assert.IsNull (ex.InnerException, "#4");
+					}
+				} finally {
+					try {
+						RegistryKey createdKey = softwareKey.OpenSubKey (subKeyName);
+						if (createdKey != null)
+							createdKey.Close ();
+						softwareKey.DeleteSubKeyTree (subKeyName);
+					} catch {
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void DeleteSubKeyTree ()
+		{
+			// TODO: 
+			// - remove key with subkeys
+			// - remove key of which some subkeys are marked for deletion
+			// - remove key with values
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void DeleteSubKeyTree_Key_DoesNotExist ()
+		{
+			// Cannot delete a subkey tree because the subkey does not exist
+			string subKeyName = Guid.NewGuid ().ToString ();
+			Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+		}
+
+		[Test]
+		public void DeleteSubKeyTree_Key_ReadOnly ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey softwareKey = Registry.CurrentUser.OpenSubKey ("software", true)) {
+					RegistryKey createdKey = softwareKey.CreateSubKey (subKeyName);
+					createdKey.Close ();
+				}
+
+				using (RegistryKey softwareKey = Registry.CurrentUser.OpenSubKey ("software")) {
+					try {
+						softwareKey.DeleteSubKeyTree (subKeyName);
+						Assert.Fail ("#1");
+					} catch (UnauthorizedAccessException ex) {
+						// Cannot write to the registry key
+						Assert.AreEqual (typeof (UnauthorizedAccessException), ex.GetType (), "#2");
+						Assert.IsNotNull (ex.Message, "#3");
+						Assert.IsNull (ex.InnerException, "#4");
+					}
+				}
+			} finally {
+				try {
+					using (RegistryKey softwareKey = Registry.CurrentUser.OpenSubKey ("software", true)) {
+						RegistryKey createdKey = softwareKey.OpenSubKey (subKeyName);
+						if (createdKey != null)
+							createdKey.Close ();
+						softwareKey.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
+			}
+		}
+
+		[Test]
+		public void DeleteSubKeyTree_Key_Removed ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					// check if key was successfully created
+					Assert.IsNotNull (createdKey, "#1");
+					RegistryKey subKey = createdKey.CreateSubKey ("monotemp");
+					subKey.Close ();
+				}
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName, true)) {
+					Assert.IsNotNull (createdKey, "#2");
+					using (RegistryKey subKey = createdKey.OpenSubKey ("monotemp")) {
+						Assert.IsNotNull (createdKey, "#3");
+					}
+					Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					Assert.IsNull (Registry.CurrentUser.OpenSubKey (subKeyName), "#4");
+					try {
+						createdKey.DeleteSubKeyTree ("monotemp");
+						Assert.Fail ("#5");
+					} catch (ArgumentException ex) {
+						// Cannot delete a subkey tree because the subkey does
+						// not exist
+						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#6");
+						Assert.IsNotNull (ex.Message, "#7");
+						Assert.IsNull (ex.InnerException, "#8");
+					}
+				}
+			} finally {
+				try {
+					RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+					if (createdKey != null) {
+						createdKey.Close ();
+						Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")] // MS should not allow this
+		public void DeleteSubKeyTree_Name_Empty ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			using (RegistryKey softwareKey = Registry.CurrentUser.OpenSubKey ("software", true)) {
+				try {
+					RegistryKey createdKey = softwareKey.CreateSubKey (subKeyName);
+					createdKey.DeleteSubKeyTree (string.Empty);
+					createdKey.Close ();
+
+					createdKey = softwareKey.OpenSubKey (subKeyName);
+					Assert.IsNull (createdKey, "#1");
+				} finally {
+					try {
+						RegistryKey createdKey = softwareKey.OpenSubKey (subKeyName);
+						if (createdKey != null)
+							createdKey.Close ();
+						softwareKey.DeleteSubKeyTree (subKeyName);
+					} catch {
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void DeleteSubKeyTree_Name_Null ()
+		{
+			using (RegistryKey softwareKey = Registry.CurrentUser.OpenSubKey ("software", true)) {
+				try {
+					softwareKey.DeleteSubKeyTree (null);
+					Assert.Fail ("#1");
+				} catch (ArgumentNullException ex) {
+					// Value cannot be null. Parameter name: subkey
+					Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+					Assert.IsNotNull (ex.Message, "#3");
+					Assert.IsNull (ex.InnerException, "#4");
+				}
+			}
+		}
+
+		[Test]
+		public void DeleteValue ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					// check if key was successfully created
+					Assert.IsNotNull (createdKey, "#A1");
+					createdKey.SetValue ("name1", "value1");
+					createdKey.SetValue ("name2", "value2");
+					string [] names = createdKey.GetValueNames ();
+					Assert.IsNotNull (names, "#A2");
+					Assert.AreEqual (2, names.Length, "#A3");
+					Assert.IsNotNull (names [0], "#A4");
+					Assert.AreEqual ("name1", names [0], "#A5");
+					Assert.IsNotNull (createdKey.GetValue ("name1"), "#A6");
+					Assert.AreEqual ("value1", createdKey.GetValue ("name1"), "#A7");
+					Assert.AreEqual ("name2", names [1], "#A8");
+					Assert.IsNotNull (createdKey.GetValue ("name2"), "#A9");
+					Assert.AreEqual ("value2", createdKey.GetValue ("name2"), "#A10");
+				}
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName, true)) {
+					Assert.IsNotNull (createdKey, "#B1");
+					createdKey.DeleteValue ("name1");
+					string [] names = createdKey.GetValueNames ();
+					Assert.IsNotNull (names, "#B2");
+					Assert.AreEqual (1, names.Length, "#B3");
+					Assert.IsNotNull (names [0], "#B4");
+					Assert.AreEqual ("name2", names [0], "#B5");
+					Assert.IsNotNull (createdKey.GetValue ("name2"), "#B6");
+					Assert.AreEqual ("value2", createdKey.GetValue ("name2"), "#B7");
+				}
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					string [] names = createdKey.GetValueNames ();
+					Assert.IsNotNull (names, "#C1");
+					Assert.AreEqual (1, names.Length, "#C2");
+					Assert.IsNotNull (names [0], "#C3");
+					Assert.AreEqual ("name2", names [0], "#C4");
+					Assert.IsNotNull (createdKey.GetValue ("name2"), "#C5");
+					Assert.AreEqual ("value2", createdKey.GetValue ("name2"), "#C6");
+				}
+			} finally {
+				try {
+					RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+					if (createdKey != null) {
+						createdKey.Close ();
+						Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
+			}
+		}
+
+		[Test]
+		public void DeleteValue_Key_ReadOnly ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					createdKey.SetValue ("name1", "value1");
+				}
+
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					try {
+						// deleting value that exists
+						createdKey.DeleteValue ("name1");
+						Assert.Fail ("#A1");
+					} catch (UnauthorizedAccessException ex) {
+						// Cannot write to the registry key
+						Assert.AreEqual (typeof (UnauthorizedAccessException), ex.GetType (), "#A2");
+						Assert.IsNotNull (ex.Message, "#A3");
+						Assert.IsNull (ex.InnerException, "#A4");
+					}
+
+					try {
+						// deleting value that exists
+						createdKey.DeleteValue ("name1", true);
+						Assert.Fail ("#B1");
+					} catch (UnauthorizedAccessException ex) {
+						// Cannot write to the registry key
+						Assert.AreEqual (typeof (UnauthorizedAccessException), ex.GetType (), "#B2");
+						Assert.IsNotNull (ex.Message, "#B3");
+						Assert.IsNull (ex.InnerException, "#B4");
+					}
+
+					try {
+						// deleting value that exists
+						createdKey.DeleteValue ("name1", false);
+						Assert.Fail ("#C1");
+					} catch (UnauthorizedAccessException ex) {
+						// Cannot write to the registry key
+						Assert.AreEqual (typeof (UnauthorizedAccessException), ex.GetType (), "#C2");
+						Assert.IsNotNull (ex.Message, "#C3");
+						Assert.IsNull (ex.InnerException, "#C4");
+					}
+
+					try {
+						// deleting value that does not exist
+						createdKey.DeleteValue ("name2");
+						Assert.Fail ("#D1");
+					} catch (UnauthorizedAccessException ex) {
+						// Cannot write to the registry key
+						Assert.AreEqual (typeof (UnauthorizedAccessException), ex.GetType (), "#D2");
+						Assert.IsNotNull (ex.Message, "#D3");
+						Assert.IsNull (ex.InnerException, "#D4");
+					}
+
+					try {
+						// deleting value that does not exist
+						createdKey.DeleteValue ("name2", true);
+						Assert.Fail ("#E1");
+					} catch (UnauthorizedAccessException ex) {
+						// Cannot write to the registry key
+						Assert.AreEqual (typeof (UnauthorizedAccessException), ex.GetType (), "#E2");
+						Assert.IsNotNull (ex.Message, "#E3");
+						Assert.IsNull (ex.InnerException, "#E4");
+					}
+
+					try {
+						// deleting value that does not exist
+						createdKey.DeleteValue ("name2", false);
+						Assert.Fail ("#F1");
+					} catch (UnauthorizedAccessException ex) {
+						// Cannot write to the registry key
+						Assert.AreEqual (typeof (UnauthorizedAccessException), ex.GetType (), "#F2");
+						Assert.IsNotNull (ex.Message, "#F3");
+						Assert.IsNull (ex.InnerException, "#F4");
+					}
+				}
+			} finally {
+				try {
+					RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+					if (createdKey != null) {
+						createdKey.Close ();
+						Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
+			}
+		}
+
+		[Test]
+		public void DeleteValue_Key_Removed ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					// check if key was successfully created
+					Assert.IsNotNull (createdKey, "#1");
+					createdKey.SetValue ("name1", "value1");
+				}
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName, true)) {
+					Assert.IsNotNull (createdKey, "#2");
+					Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					Assert.IsNull (Registry.CurrentUser.OpenSubKey (subKeyName), "#3");
+
+					createdKey.DeleteValue ("name1");
+					createdKey.DeleteValue ("name1", true);
+					createdKey.DeleteValue ("name1", false);
+				}
+			} finally {
+				try {
+					RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+					if (createdKey != null) {
+						createdKey.Close ();
+						Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
+			}
+		}
+
+		[Test]
+		public void DeleteValue_Value_DoesNotExist ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					// check if key was successfully created
+					Assert.IsNotNull (createdKey, "#A1");
+					createdKey.SetValue ("name1", "value1");
+
+					try {
+						createdKey.DeleteValue ("name2");
+						Assert.Fail ("#B1");
+					} catch (ArgumentException ex) {
+						// No value exists with that name
+						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+						Assert.IsNotNull (ex.Message, "#B3");
+						Assert.IsNull (ex.InnerException, "#B4");
+					}
+
+					try {
+						createdKey.DeleteValue ("name2", true);
+						Assert.Fail ("#C1");
+					} catch (ArgumentException ex) {
+						// No value exists with that name
+						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+						Assert.IsNotNull (ex.Message, "#C3");
+						Assert.IsNull (ex.InnerException, "#C4");
+					}
+
+					createdKey.DeleteValue ("name2", false);
+				}
+			} finally {
+				try {
+					RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+					if (createdKey != null) {
+						createdKey.Close ();
+						Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
+			}
+		}
+
+		[Test]
+		public void DeleteValue_Name_Empty ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					createdKey.SetValue ("name1", "value1");
+					createdKey.SetValue (string.Empty, "value2");
+
+					string [] names = createdKey.GetValueNames ();
+					Assert.IsNotNull (names, "#A1");
+					Assert.AreEqual (2, names.Length, "#A2");
+					Assert.IsNotNull (names [0], "#A3");
+					/*
+					Assert.AreEqual ("name1", names [0], "#A4");
+					*/
+					Assert.IsNotNull (createdKey.GetValue ("name1"), "#A5");
+					Assert.AreEqual ("value1", createdKey.GetValue ("name1"), "#A6");
+					Assert.IsNotNull (names [1], "#A7");
+					/*
+					Assert.AreEqual (string.Empty, names [1], "#A8");
+					*/
+					Assert.IsNotNull (createdKey.GetValue (string.Empty), "#A9");
+					Assert.AreEqual ("value2", createdKey.GetValue (string.Empty), "#A10");
+
+					createdKey.DeleteValue (string.Empty);
+
+					names = createdKey.GetValueNames ();
+					Assert.IsNotNull (names, "#B1");
+					Assert.AreEqual (1, names.Length, "#B2");
+					Assert.IsNotNull (names [0], "#B3");
+					Assert.AreEqual ("name1", names [0], "#B4");
+					Assert.IsNotNull (createdKey.GetValue ("name1"), "#B5");
+					Assert.AreEqual ("value1", createdKey.GetValue ("name1"), "#B6");
+
+					try {
+						createdKey.DeleteValue (string.Empty);
+						Assert.Fail ("#C1");
+					} catch (ArgumentException ex) {
+						// No value exists with that name
+						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+						Assert.IsNotNull (ex.Message, "#C3");
+						Assert.IsNull (ex.InnerException, "#C4");
+					}
+
+					try {
+						createdKey.DeleteValue (string.Empty, true);
+						Assert.Fail ("#D1");
+					} catch (ArgumentException ex) {
+						// No value exists with that name
+						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
+						Assert.IsNotNull (ex.Message, "#D3");
+						Assert.IsNull (ex.InnerException, "#D4");
+					}
+
+					createdKey.DeleteValue (string.Empty, false);
+
+					names = createdKey.GetValueNames ();
+					Assert.IsNotNull (names, "#E1");
+					Assert.AreEqual (1, names.Length, "#E2");
+					Assert.IsNotNull (names [0], "#E3");
+					Assert.AreEqual ("name1", names [0], "#E4");
+					Assert.IsNotNull (createdKey.GetValue ("name1"), "#E5");
+					Assert.AreEqual ("value1", createdKey.GetValue ("name1"), "#E6");
+				}
+			} finally {
+				try {
+					RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+					if (createdKey != null) {
+						createdKey.Close ();
+						Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
+			}
+		}
+
+		[Test]
+		public void DeleteValue_Name_Null ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					createdKey.SetValue ("name1", "value1");
+					createdKey.SetValue (null, "value2");
+
+					string [] names = createdKey.GetValueNames ();
+					Assert.IsNotNull (names, "#A1");
+					Assert.AreEqual (2, names.Length, "#A2");
+					Assert.IsNotNull (names [0], "#A3");
+					/*
+					Assert.AreEqual ("name1", names [0], "#A4");
+					*/
+					Assert.IsNotNull (createdKey.GetValue ("name1"), "#A5");
+					Assert.AreEqual ("value1", createdKey.GetValue ("name1"), "#A6");
+					Assert.IsNotNull (names [1], "#A7");
+					/*
+					Assert.AreEqual (string.Empty, names [1], "#A8");
+					*/
+					Assert.IsNotNull (createdKey.GetValue (null), "#A9");
+					Assert.AreEqual ("value2", createdKey.GetValue (null), "#A10");
+
+					try {
+						createdKey.DeleteValue (null);
+						Assert.Fail ("#B1");
+					} catch (ArgumentNullException ex) {
+						// Value cannot be null. Parameter name: name
+						Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+						Assert.IsNotNull (ex.Message, "#B3");
+						Assert.IsNull (ex.InnerException, "#B4");
+					}
+
+					try {
+						createdKey.DeleteValue (null, true);
+						Assert.Fail ("#C1");
+					} catch (ArgumentNullException ex) {
+						// Value cannot be null. Parameter name: name
+						Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#C2");
+						Assert.IsNotNull (ex.Message, "#C3");
+						Assert.IsNull (ex.InnerException, "#C4");
+					}
+
+					try {
+						createdKey.DeleteValue (null, false);
+						Assert.Fail ("#D1");
+					} catch (ArgumentNullException ex) {
+						// Value cannot be null. Parameter name: name
+						Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#D2");
+						Assert.IsNotNull (ex.Message, "#D3");
+						Assert.IsNull (ex.InnerException, "#D4");
+					}
+				}
+			} finally {
+				try {
+					RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+					if (createdKey != null) {
+						createdKey.Close ();
+						Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
+			}
+		}
+
+		[Test]
+		public void GetValue ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					createdKey.SetValue ("name1", "value1");
+					createdKey.SetValue ("name2", "value2");
+				}
+
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					Assert.IsNotNull (createdKey.GetValue ("name1"), "#1");
+					Assert.AreEqual ("value1", createdKey.GetValue ("name1"), "#2");
+					Assert.IsNotNull (createdKey.GetValue ("name2"), "#3");
+					Assert.AreEqual ("value2", createdKey.GetValue ("name2"), "#4");
+					Assert.IsNull (createdKey.GetValue ("name3"), "#5");
+					Assert.AreEqual ("value3", createdKey.GetValue ("name3", "value3"), "#6");
+					Assert.IsNull (createdKey.GetValue ("name3", null), "#7");
+				}
+			} finally {
+				try {
+					RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+					if (createdKey != null) {
+						createdKey.Close ();
+						Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
+			}
+		}
+
+		[Test]
+		public void GetValue_Key_Removed ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					createdKey.SetValue ("name1", "value1");
+					createdKey.SetValue ("name2", "value2");
+				}
+
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+
+					Assert.IsNull (createdKey.GetValue ("name1"), "#1");
+					Assert.IsNotNull (createdKey.GetValue ("name1", "default"), "#2");
+					Assert.AreEqual ("default", createdKey.GetValue ("name1", "default"), "#3");
+					Assert.IsNull (createdKey.GetValue ("name3"), "#3");
+					Assert.IsNotNull (createdKey.GetValue ("name3", "default"), "#4");
+					Assert.AreEqual ("default", createdKey.GetValue ("name3", "default"), "#5");
+				}
+			} finally {
+				try {
+					RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+					if (createdKey != null) {
+						createdKey.Close ();
+						Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
+			}
+		}
+
+		[Test]
+		public void GetValue_Name_Empty ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					createdKey.SetValue ("name1", "value1");
+					createdKey.SetValue ("name2", "value2");
+
+					Assert.IsNull (createdKey.GetValue (string.Empty), "#A1");
+					Assert.IsNotNull (createdKey.GetValue (string.Empty, "default"), "#A2");
+					Assert.AreEqual ("default", createdKey.GetValue (string.Empty, "default"), "#A3");
+					Assert.IsNull (createdKey.GetValue (string.Empty, null), "#A4");
+				}
+
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					Assert.IsNull (createdKey.GetValue (string.Empty), "#B1");
+					Assert.IsNotNull (createdKey.GetValue (string.Empty, "default"), "#B2");
+					Assert.AreEqual ("default", createdKey.GetValue (string.Empty, "default"), "#B3");
+					Assert.IsNull (createdKey.GetValue (string.Empty, null), "#B4");
+				}
+
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName, true)) {
+					createdKey.SetValue (string.Empty, "value1");
+					Assert.IsNotNull (createdKey.GetValue (string.Empty), "#C1");
+					Assert.AreEqual ("value1", createdKey.GetValue (string.Empty), "#C2");
+					Assert.AreEqual ("value1", createdKey.GetValue (string.Empty, "default"), "#C3");
+					Assert.AreEqual ("value1", createdKey.GetValue (string.Empty, null), "#C4");
+				}
+
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					Assert.IsNotNull (createdKey.GetValue (string.Empty), "#D1");
+					Assert.AreEqual ("value1", createdKey.GetValue (string.Empty), "#D2");
+					Assert.AreEqual ("value1", createdKey.GetValue (string.Empty, "default"), "#D3");
+					Assert.AreEqual ("value1", createdKey.GetValue (string.Empty, null), "#D4");
+				}
+			} finally {
+				try {
+					RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+					if (createdKey != null) {
+						createdKey.Close ();
+						Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
+			}
+		}
+
+		[Test]
+		public void GetValue_Name_Null ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					createdKey.SetValue ("name1", "value1");
+					createdKey.SetValue ("name2", "value2");
+
+					Assert.IsNull (createdKey.GetValue (null), "#A1");
+					Assert.IsNotNull (createdKey.GetValue (null, "default"), "#A2");
+					Assert.AreEqual ("default", createdKey.GetValue (null, "default"), "#A3");
+					Assert.IsNull (createdKey.GetValue (null, null), "#A4");
+				}
+
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					Assert.IsNull (createdKey.GetValue (null), "#B1");
+					Assert.IsNotNull (createdKey.GetValue (null, "default"), "#B2");
+					Assert.AreEqual ("default", createdKey.GetValue (null, "default"), "#B3");
+					Assert.IsNull (createdKey.GetValue (null, null), "#B4");
+				}
+
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName, true)) {
+					createdKey.SetValue (string.Empty, "value1");
+					Assert.IsNotNull (createdKey.GetValue (null), "#C1");
+					Assert.AreEqual ("value1", createdKey.GetValue (null), "#C2");
+					Assert.AreEqual ("value1", createdKey.GetValue (null, "default"), "#C3");
+					Assert.AreEqual ("value1", createdKey.GetValue (null, null), "#C4");
+				}
+
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					Assert.IsNotNull (createdKey.GetValue (null), "#D1");
+					Assert.AreEqual ("value1", createdKey.GetValue (null), "#D2");
+					Assert.AreEqual ("value1", createdKey.GetValue (null, "default"), "#D3");
+					Assert.AreEqual ("value1", createdKey.GetValue (null, null), "#D4");
+				}
+			} finally {
+				try {
+					RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+					if (createdKey != null) {
+						createdKey.Close ();
+						Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
+			}
+		}
+
+		[Test]
+		public void GetValueNames ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					string [] names = createdKey.GetValueNames ();
+					Assert.IsNotNull (names, "#A1");
+					Assert.AreEqual (0, names.Length, "#A2");
+
+					createdKey.SetValue ("name1", "value1");
+					createdKey.SetValue ("name2", "value2");
+
+					names = createdKey.GetValueNames ();
+					Assert.IsNotNull (names, "#B1");
+					Assert.AreEqual (2, names.Length, "#B2");
+					// TODO: check content, but Mono uses hashtable so names
+					// are not returned in order
+				}
+
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					string [] names = createdKey.GetValueNames ();
+					Assert.IsNotNull (names, "#C1");
+					Assert.AreEqual (2, names.Length, "#C2");
+				}
+			} finally {
+				try {
+					RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+					if (createdKey != null) {
+						createdKey.Close ();
+						Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
+			}
+		}
+
+		[Test]
+		public void GetValueNames_Key_Removed ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					createdKey.SetValue ("name1", "value1");
+					createdKey.SetValue ("name2", "value2");
+
+					string [] names = createdKey.GetValueNames ();
+					Assert.IsNotNull (names, "#A1");
+					Assert.AreEqual (2, names.Length, "#A2");
+				}
+
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					string [] names = createdKey.GetValueNames ();
+					Assert.IsNotNull (names, "#B1");
+					Assert.AreEqual (2, names.Length, "#B2");
+
+					Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+
+					try {
+						createdKey.GetValueNames ();
+						Assert.Fail ("#C1");
+					} catch (IOException ex) {
+						// Illegal operation attempted on a registry key that
+						// has been marked for deletion
+						Assert.AreEqual (typeof (IOException), ex.GetType (), "#C2");
+						Assert.IsNotNull (ex.Message, "#C3");
+						Assert.IsNull (ex.InnerException, "#C4");
+					}
+				}
+			} finally {
+				try {
+					RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+					if (createdKey != null) {
+						createdKey.Close ();
+						Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
 			}
 		}
 
@@ -115,6 +1238,74 @@ namespace MonoTests.Microsoft.Win32
 					createdKey.DeleteSubKeyTree (name);
 				}
 				Assert.AreEqual (0, createdKey.SubKeyCount, "#7");
+			} finally {
+				// clean-up
+				Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+			}
+		}
+
+		[Test]
+		public void SetValue_Name_Null ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName);
+			try {
+				createdKey.SetValue (null, "value1");
+				string [] names = createdKey.GetValueNames ();
+				Assert.IsNotNull (names, "#A1");
+				Assert.AreEqual (1, names.Length, "#A2");
+				Assert.IsNotNull (names [0], "#A3");
+				Assert.AreEqual (string.Empty, names [0], "#A4");
+				Assert.IsNotNull (createdKey.GetValue (string.Empty), "#A5");
+				Assert.AreEqual ("value1", createdKey.GetValue (string.Empty), "#A6");
+				Assert.IsNotNull (createdKey.GetValue (null), "#A7");
+				Assert.AreEqual ("value1", createdKey.GetValue (null), "#A8");
+
+				createdKey.SetValue (string.Empty, "value2");
+				names = createdKey.GetValueNames ();
+				Assert.IsNotNull (names, "#B1");
+				Assert.AreEqual (1, names.Length, "#B2");
+				Assert.IsNotNull (names [0], "#B3");
+				Assert.AreEqual (string.Empty, names [0], "#B4");
+				Assert.IsNotNull (createdKey.GetValue (string.Empty), "#B5");
+				Assert.AreEqual ("value2", createdKey.GetValue (string.Empty), "#B6");
+				Assert.IsNotNull (createdKey.GetValue (null), "#B7");
+				Assert.AreEqual ("value2", createdKey.GetValue (null), "#B8");
+			} finally {
+				// clean-up
+				Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+			}
+		}
+
+		[Test]
+		public void SetValue_Name_Empty ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName);
+			try {
+				createdKey.SetValue (string.Empty, "value1");
+				string [] names = createdKey.GetValueNames ();
+				Assert.IsNotNull (names, "#A1");
+				Assert.AreEqual (1, names.Length, "#A2");
+				Assert.IsNotNull (names [0], "#A3");
+				Assert.AreEqual (string.Empty, names [0], "#A4");
+				Assert.IsNotNull (createdKey.GetValue (string.Empty), "#A5");
+				Assert.AreEqual ("value1", createdKey.GetValue (string.Empty), "#A6");
+				Assert.IsNotNull (createdKey.GetValue (null), "#A7");
+				Assert.AreEqual ("value1", createdKey.GetValue (null), "#A8");
+
+				createdKey.SetValue (null, "value2");
+				names = createdKey.GetValueNames ();
+				Assert.IsNotNull (names, "#B1");
+				Assert.AreEqual (1, names.Length, "#B2");
+				Assert.IsNotNull (names [0], "#B3");
+				Assert.AreEqual (string.Empty, names [0], "#B4");
+				Assert.IsNotNull (createdKey.GetValue (string.Empty), "#B5");
+				Assert.AreEqual ("value2", createdKey.GetValue (string.Empty), "#B6");
+				Assert.IsNotNull (createdKey.GetValue (null), "#B7");
+				Assert.AreEqual ("value2", createdKey.GetValue (null), "#B8");
 			} finally {
 				// clean-up
 				Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
@@ -336,6 +1527,485 @@ namespace MonoTests.Microsoft.Win32
 			} finally {
 				// clean-up
 				Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+			}
+		}
+
+		[Test]
+		public void SetValue_Key_ReadOnly ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			using (RegistryKey softwareKey = Registry.CurrentUser.OpenSubKey ("software")) {
+				try {
+					softwareKey.SetValue ("name1", "value1");
+					Assert.Fail ("#1");
+				} catch (UnauthorizedAccessException ex) {
+					// Cannot write to the registry key
+					Assert.AreEqual (typeof (UnauthorizedAccessException), ex.GetType (), "#2");
+					Assert.IsNotNull (ex.Message, "#3");
+					Assert.IsNull (ex.InnerException, "#4");
+				}
+			}
+
+			using (RegistryKey softwareKey = Registry.CurrentUser.OpenSubKey ("software", true)) {
+				try {
+					using (RegistryKey createdKey = softwareKey.CreateSubKey (subKeyName)) {
+					}
+
+					using (RegistryKey createdKey = softwareKey.OpenSubKey (subKeyName)) {
+						try {
+							createdKey.SetValue ("name1", "value1");
+							Assert.Fail ("#1");
+						} catch (UnauthorizedAccessException ex) {
+							// Cannot write to the registry key.
+							Assert.AreEqual (typeof (UnauthorizedAccessException), ex.GetType (), "#2");
+							Assert.IsNotNull (ex.Message, "#3");
+							Assert.IsNull (ex.InnerException, "#4");
+						}
+					}
+				} finally {
+					try {
+						RegistryKey createdKey = softwareKey.OpenSubKey (subKeyName);
+						if (createdKey != null) {
+							createdKey.Close ();
+							softwareKey.DeleteSubKeyTree (subKeyName);
+						}
+					} catch {
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void SetValue_Key_Removed ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			using (RegistryKey softwareKey = Registry.CurrentUser.OpenSubKey ("software", true)) {
+				try {
+					using (RegistryKey createdKey = softwareKey.CreateSubKey (subKeyName)) {
+						softwareKey.DeleteSubKeyTree (subKeyName);
+						Assert.IsNull (softwareKey.OpenSubKey (subKeyName), "#1");
+						try {
+							createdKey.SetValue ("name1", "value1");
+							Assert.Fail ("#2");
+						} catch (IOException ex) {
+							// Illegal operation attempted on a registry key that
+							// has been marked for deletion
+							Assert.AreEqual (typeof (IOException), ex.GetType (), "#3");
+							Assert.IsNotNull (ex.Message, "#4");
+							Assert.IsNull (ex.InnerException, "#5");
+						}
+					}
+				} finally {
+					try {
+						RegistryKey createdKey = softwareKey.OpenSubKey (subKeyName);
+						if (createdKey != null) {
+							createdKey.Close ();
+							softwareKey.DeleteSubKeyTree (subKeyName);
+						}
+					} catch {
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void SubKeyCount ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					// check if key was successfully created
+					Assert.IsNotNull (createdKey, "#A1");
+					using (RegistryKey subKey = createdKey.CreateSubKey ("monotemp1")) {
+						subKey.Close ();
+					}
+					Assert.AreEqual (1, createdKey.SubKeyCount, "#A2");
+					using (RegistryKey subKey = createdKey.CreateSubKey ("monotemp2")) {
+						subKey.Close ();
+					}
+					Assert.AreEqual (2, createdKey.SubKeyCount, "#A3");
+				}
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					Assert.IsNotNull (createdKey, "#B1");
+					Assert.AreEqual (2, createdKey.SubKeyCount, "#B2");
+
+					using (RegistryKey createdKey2 = Registry.CurrentUser.OpenSubKey (subKeyName, true)) {
+						Assert.IsNotNull (createdKey2, "#B3");
+						Assert.AreEqual (2, createdKey2.SubKeyCount, "#B4");
+						createdKey2.DeleteSubKey ("monotemp1");
+						Assert.AreEqual (1, createdKey2.SubKeyCount, "#B5");
+					}
+					Assert.AreEqual (1, createdKey.SubKeyCount, "#B6");
+				}
+			} finally {
+				try {
+					RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+					if (createdKey != null) {
+						createdKey.Close ();
+						Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
+			}
+		}
+
+		[Test]
+		public void SubKeyCount_Key_Removed ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					// check if key was successfully created
+					Assert.IsNotNull (createdKey, "#A1");
+					using (RegistryKey subKey = createdKey.CreateSubKey ("monotemp1")) {
+						subKey.Close ();
+					}
+					Assert.AreEqual (1, createdKey.SubKeyCount, "#A2");
+					using (RegistryKey subKey = createdKey.CreateSubKey ("monotemp2")) {
+						subKey.Close ();
+					}
+					Assert.AreEqual (2, createdKey.SubKeyCount, "#A3");
+				}
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					Assert.IsNotNull (createdKey, "#B1");
+					Assert.AreEqual (2, createdKey.SubKeyCount, "#B2");
+
+					// remove created key
+					Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+
+					try {
+						Assert.Fail ("#C1: " + createdKey.SubKeyCount);
+					} catch (IOException ex) {
+						// Illegal operation attempted on a registry key that
+						// has been marked for deletion
+						Assert.AreEqual (typeof (IOException), ex.GetType (), "#14");
+						Assert.IsNotNull (ex.Message, "#15");
+						Assert.IsNull (ex.InnerException, "#16");
+					}
+				}
+			} finally {
+				try {
+					RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+					if (createdKey != null) {
+						createdKey.Close ();
+						Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
+			}
+		}
+
+		[Test]
+		public void ValueCount ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					// check if key was successfully created
+					Assert.IsNotNull (createdKey, "#A1");
+					Assert.AreEqual (0, createdKey.ValueCount, "#A2");
+					createdKey.SetValue ("name1", "value1");
+					Assert.AreEqual (1, createdKey.ValueCount, "#A3");
+					createdKey.SetValue ("name2", "value2");
+					Assert.AreEqual (2, createdKey.ValueCount, "#A4");
+					createdKey.SetValue ("name2", "value2b");
+					Assert.AreEqual (2, createdKey.ValueCount, "#A5");
+					createdKey.SetValue ("name3", "value3");
+					Assert.AreEqual (3, createdKey.ValueCount, "#A6");
+				}
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					Assert.IsNotNull (createdKey, "#B1");
+					Assert.AreEqual (3, createdKey.ValueCount, "#B2");
+
+					using (RegistryKey createdKey2 = Registry.CurrentUser.OpenSubKey (subKeyName, true)) {
+						Assert.IsNotNull (createdKey2, "#B3");
+						Assert.AreEqual (3, createdKey2.ValueCount, "#B4");
+						createdKey2.DeleteValue ("name2");
+						Assert.AreEqual (2, createdKey2.ValueCount, "#B5");
+					}
+					Assert.AreEqual (2, createdKey.ValueCount, "#B6");
+				}
+			} finally {
+				try {
+					RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+					if (createdKey != null) {
+						createdKey.Close ();
+						Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
+			}
+		}
+
+		[Test]
+		public void ValueCount_Key_Removed ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					// check if key was successfully created
+					Assert.IsNotNull (createdKey, "#A1");
+					Assert.AreEqual (0, createdKey.ValueCount, "#A2");
+					createdKey.SetValue ("name1", "value1");
+					Assert.AreEqual (1, createdKey.ValueCount, "#A3");
+					createdKey.SetValue ("name2", "value2");
+					Assert.AreEqual (2, createdKey.ValueCount, "#A4");
+					createdKey.SetValue ("name2", "value2b");
+					Assert.AreEqual (2, createdKey.ValueCount, "#A5");
+					createdKey.SetValue ("name3", "value3");
+					Assert.AreEqual (3, createdKey.ValueCount, "#A6");
+				}
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					Assert.IsNotNull (createdKey, "#B1");
+					Assert.AreEqual (3, createdKey.ValueCount, "#B2");
+
+					// remove created key
+					Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+
+					try {
+						Assert.Fail ("#C1: " + createdKey.ValueCount);
+					} catch (IOException ex) {
+						// Illegal operation attempted on a registry key that
+						// has been marked for deletion
+						Assert.AreEqual (typeof (IOException), ex.GetType (), "#14");
+						Assert.IsNotNull (ex.Message, "#15");
+						Assert.IsNull (ex.InnerException, "#16");
+					}
+				}
+			} finally {
+				try {
+					RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+					if (createdKey != null) {
+						createdKey.Close ();
+						Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
+			}
+		}
+
+		[Test]
+		public void bug79051 ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			using (RegistryKey softwareKey = Registry.CurrentUser.OpenSubKey ("software", true)) {
+				try {
+					using (RegistryKey createdKey = softwareKey.CreateSubKey (subKeyName)) {
+						createdKey.SetValue ("test", "whatever");
+						createdKey.Close ();
+						softwareKey.DeleteSubKeyTree (subKeyName);
+					}
+				} finally {
+					try {
+						RegistryKey createdKey = softwareKey.OpenSubKey (subKeyName);
+						if (createdKey != null) {
+							createdKey.Close ();
+							softwareKey.DeleteSubKeyTree (subKeyName);
+						}
+					} catch {
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void bug79059 ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			using (RegistryKey softwareKey = Registry.CurrentUser.OpenSubKey ("software", true)) {
+				try {
+					using (RegistryKey createdKey = softwareKey.CreateSubKey (subKeyName)) {
+						using (RegistryKey softwareKey2 = Registry.CurrentUser.OpenSubKey ("software")) {
+						}
+						createdKey.Close ();
+						softwareKey.DeleteSubKeyTree (subKeyName);
+					}
+				} finally {
+					try {
+						RegistryKey createdKey = softwareKey.OpenSubKey (subKeyName);
+						if (createdKey != null) {
+							createdKey.Close ();
+							softwareKey.DeleteSubKeyTree (subKeyName);
+						}
+					} catch {
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void bugnew1 ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			using (RegistryKey softwareKey = Registry.CurrentUser.OpenSubKey ("software", true)) {
+				try {
+					using (RegistryKey createdKey = softwareKey.CreateSubKey (subKeyName)) {
+						createdKey.SetValue ("name1", "value1");
+
+						RegistryKey testKey = null;
+						try {
+							testKey = createdKey.OpenSubKey ("test", true);
+							if (testKey == null)
+								testKey = createdKey.CreateSubKey ("test");
+							testKey.SetValue ("another", "one");
+						} finally {
+							if (testKey != null)
+								testKey.Close ();
+						}
+
+						createdKey.SetValue ("name2", "value2");
+						Assert.IsNotNull (createdKey.GetValue ("name1"), "#2");
+						Assert.AreEqual ("value1", createdKey.GetValue ("name1"), "#3");
+						Assert.IsNotNull (createdKey.GetValue ("name2"), "#4");
+						Assert.AreEqual ("value2", createdKey.GetValue ("name2"), "#5");
+
+						string [] names = createdKey.GetValueNames ();
+						Assert.IsNotNull (names, "#6");
+						Assert.AreEqual (2, names.Length, "#7");
+						Assert.AreEqual ("name1", names [0], "#8");
+						Assert.AreEqual ("name2", names [1], "#9");
+
+						softwareKey.DeleteSubKeyTree (subKeyName);
+
+						using (RegistryKey openedKey = softwareKey.OpenSubKey (subKeyName, true)) {
+							Assert.IsNull (openedKey, "#10");
+						}
+
+						Assert.IsNull (createdKey.GetValue ("name1"), "#11");
+						Assert.IsNull (createdKey.GetValue ("name2"), "#12");
+
+						try {
+							createdKey.GetValueNames ();
+							Assert.Fail ("#13");
+						} catch (IOException ex) {
+							// Illegal operation attempted on a registry key that
+							// has been marked for deletion
+							Assert.AreEqual (typeof (IOException), ex.GetType (), "#14");
+							Assert.IsNotNull (ex.Message, "#15");
+							Assert.IsNull (ex.InnerException, "#16");
+						}
+
+						try {
+							createdKey.SetValue ("name1", "value1");
+							Assert.Fail ("#17");
+						} catch (IOException ex) {
+							// Illegal operation attempted on a registry key that
+							// has been marked for deletion
+							Assert.AreEqual (typeof (IOException), ex.GetType (), "#18");
+							Assert.IsNotNull (ex.Message, "#19");
+							Assert.IsNull (ex.InnerException, "#20");
+						}
+
+						try {
+							createdKey.SetValue ("newname", "value1");
+							Assert.Fail ("#21");
+						} catch (IOException ex) {
+							// Illegal operation attempted on a registry key that
+							// has been marked for deletion
+							Assert.AreEqual (typeof (IOException), ex.GetType (), "#22");
+							Assert.IsNotNull (ex.Message, "#23");
+							Assert.IsNull (ex.InnerException, "#24");
+						}
+
+						Assert.IsNull (createdKey.OpenSubKey ("test"), "#25");
+						Assert.IsNull (createdKey.OpenSubKey ("test", true), "#26");
+						Assert.IsNull (createdKey.OpenSubKey ("new"), "#27");
+						Assert.IsNull (createdKey.OpenSubKey ("new", true), "#28");
+
+						try {
+							createdKey.CreateSubKey ("new");
+							Assert.Fail ("#29");
+						} catch (IOException ex) {
+							// Illegal operation attempted on a registry key that
+							// has been marked for deletion
+							Assert.AreEqual (typeof (IOException), ex.GetType (), "#30");
+							Assert.IsNotNull (ex.Message, "#31");
+							Assert.IsNull (ex.InnerException, "#32");
+						}
+					}
+				} finally {
+					try {
+						RegistryKey createdKey = softwareKey.OpenSubKey (subKeyName);
+						if (createdKey != null) {
+							createdKey.Close ();
+							softwareKey.DeleteSubKeyTree (subKeyName);
+						}
+					} catch {
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void bugnew2 () // values cannot be written on registry root (hive)
+		{
+			string [] names = Registry.CurrentUser.GetValueNames ();
+			Assert.IsNotNull (names, "#1");
+			Registry.CurrentUser.SetValue ("name1", "value1");
+			Assert.IsNotNull (Registry.CurrentUser.GetValue ("name1"), "#2");
+			Assert.AreEqual ("value1", Registry.CurrentUser.GetValue ("name1"), "#3");
+			string [] newNames = Registry.CurrentUser.GetValueNames ();
+			Assert.IsNotNull (newNames, "#4");
+			Assert.AreEqual (names.Length + 1, newNames.Length, "#5");
+			Registry.CurrentUser.DeleteValue ("name1");
+		}
+
+		[Test]
+		public void bugnew3 () // on Windows, key cannot be closed twice
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					createdKey.Close ();
+				}
+
+				RegistryKey openedKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+				openedKey.Close ();
+				openedKey.Close ();
+			} finally {
+				try {
+					RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+					if (createdKey != null) {
+						createdKey.Close ();
+						Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
+			}
+		}
+
+		[Test]
+		public void bugnew4 () // Key cannot be flushed once it has been closed
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					createdKey.Close ();
+				}
+
+				RegistryKey openedKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+				openedKey.Close ();
+				openedKey.Flush ();
+			} finally {
+				try {
+					RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+					if (createdKey != null) {
+						createdKey.Close ();
+						Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
 			}
 		}
 	}

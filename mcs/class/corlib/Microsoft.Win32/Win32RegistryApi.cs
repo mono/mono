@@ -128,6 +128,11 @@ namespace Microsoft.Win32
 				: (IntPtr) key.Data;
 		}
 
+		static bool IsHandleValid (RegistryKey key)
+		{
+			return key.Data != null;
+		}
+
 		/// <summary>
 		///	Acctually read a registry value. Requires knoledge of the
 		///	value's type and size.
@@ -140,7 +145,7 @@ namespace Microsoft.Win32
 			IntPtr handle = GetHandle (rkey);
 			int result = RegQueryValueEx (handle, name, IntPtr.Zero, ref type, IntPtr.Zero, ref size);
 
-			if (result == Win32ResultCode.FileNotFound) {
+			if (result == Win32ResultCode.FileNotFound || result == Win32ResultCode.MarkedForDeletion) {
 				if (returnDefaultValue) {
 					return defaultValue;
 				}
@@ -268,6 +273,9 @@ namespace Microsoft.Win32
 							rawValue.Length * NativeBytesPerCharacter);
 			}
 
+			if (result == Win32ResultCode.MarkedForDeletion)
+				throw RegistryKey.CreateMarkedForDeletionException ();
+
 			// handle the result codes
 			if (result != Win32ResultCode.Success)
 			{
@@ -301,7 +309,10 @@ namespace Microsoft.Win32
 			
 			for (index = 0; true; index ++) {
 				result = RegEnumKey (handle, index, stringBuffer, BufferMaxLength);
-				
+
+				if (result == Win32ResultCode.MarkedForDeletion)
+					throw RegistryKey.CreateMarkedForDeletionException ();
+
 				if (result == Win32ResultCode.Success)
 					continue;
 				
@@ -328,7 +339,10 @@ namespace Microsoft.Win32
 						       buffer, ref bufferCapacity,
 						       IntPtr.Zero, ref type, 
 						       IntPtr.Zero, IntPtr.Zero);
-				
+
+				if (result == Win32ResultCode.MarkedForDeletion)
+					throw RegistryKey.CreateMarkedForDeletionException ();
+
 				if (result == Win32ResultCode.Success || result == Win32ResultCode.MoreData)
 					continue;
 				
@@ -341,32 +355,36 @@ namespace Microsoft.Win32
 			return index;
 		}
 		
-		public RegistryKey OpenSubKey (RegistryKey rkey, string keyName, bool writtable)
+		public RegistryKey OpenSubKey (RegistryKey rkey, string keyName, bool writable)
 		{
 			int access = OpenRegKeyRead;
-			if (writtable) access |= OpenRegKeyWrite;
+			if (writable) access |= OpenRegKeyWrite;
 			IntPtr handle = GetHandle (rkey);
 			
 			IntPtr subKeyHandle;
 			int result = RegOpenKeyEx (handle, keyName, IntPtr.Zero, access, out subKeyHandle);
 
-			if (result == Win32ResultCode.FileNotFound)
+			if (result == Win32ResultCode.FileNotFound || result == Win32ResultCode.MarkedForDeletion)
 				return null;
 			
 			if (result != Win32ResultCode.Success)
 				GenerateException (result);
 			
-			return new RegistryKey (subKeyHandle, CombineName (rkey, keyName));
+			return new RegistryKey (subKeyHandle, CombineName (rkey, keyName), writable);
 		}
 
 		public void Flush (RegistryKey rkey)
 		{
+			if (!IsHandleValid (rkey))
+				return;
 			IntPtr handle = GetHandle (rkey);
 			RegFlushKey (handle);
 		}
 
 		public void Close (RegistryKey rkey)
 		{
+			if (!IsHandleValid (rkey))
+				return;
 			IntPtr handle = GetHandle (rkey);
 			RegCloseKey (handle);
 		}
@@ -377,13 +395,15 @@ namespace Microsoft.Win32
 			IntPtr subKeyHandle;
 			int result = RegCreateKey (handle , keyName, out subKeyHandle);
 
+			if (result == Win32ResultCode.MarkedForDeletion)
+				throw RegistryKey.CreateMarkedForDeletionException ();
+
 			if (result != Win32ResultCode.Success) {
 				GenerateException (result);
 			}
 			
-			RegistryKey subKey = new RegistryKey (subKeyHandle, CombineName (rkey, keyName));
-
-			return subKey;
+			return new RegistryKey (subKeyHandle, CombineName (rkey, keyName),
+				true);
 		}
 
 		public void DeleteKey (RegistryKey rkey, string keyName, bool shouldThrowWhenKeyMissing)
@@ -405,7 +425,10 @@ namespace Microsoft.Win32
 		{
 			IntPtr handle = GetHandle (rkey);
 			int result = RegDeleteValue (handle, value);
-			
+
+			if (result == Win32ResultCode.MarkedForDeletion)
+				return;
+
 			if (result == Win32ResultCode.FileNotFound){
 				if (shouldThrowWhenKeyMissing)
 					throw new ArgumentException ("value " + value);
@@ -462,7 +485,10 @@ namespace Microsoft.Win32
 				
 				if (result == Win32ResultCode.NoMoreEntries)
 					break;
-					
+
+				if (result == Win32ResultCode.MarkedForDeletion)
+					throw RegistryKey.CreateMarkedForDeletionException ();
+
 				GenerateException (result);
 			}
 

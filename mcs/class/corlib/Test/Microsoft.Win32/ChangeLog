@@ -1,3 +1,7 @@
+2006-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* RegistryKeyTest.cs: Added large batch of tests.
+
 2006-05-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* RegistryKeyTest.cs: Added test for bug #78519.
