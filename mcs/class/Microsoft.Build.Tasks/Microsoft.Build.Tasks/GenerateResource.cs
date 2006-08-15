@@ -33,6 +33,7 @@ using System;
 using System.Text;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using System.Resources;
 using System.Reflection;
 using Microsoft.Build.Framework;
@@ -61,7 +62,7 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
-			ArrayList temporaryFilesWritten = new ArrayList ();
+			List  <ITaskItem> temporaryFilesWritten = new List <ITaskItem> ();
 			if (sources.Length != outputResources.Length) {
 				Log.LogErrorFromException (new Exception ("Sources count is different than OutputResources count."));
 				return false;
@@ -74,13 +75,13 @@ namespace Microsoft.Build.Tasks {
 					CompileResourceFile (sourceFile, outputFile);
 				}
 			} else {
-				IEnumerator sourceEnum, outputEnum;
-				sourceEnum = sources.GetEnumerator ();
-				outputEnum = outputResources.GetEnumerator ();
+				IEnumerator <ITaskItem> sourceEnum, outputEnum;
+				sourceEnum = (IEnumerator <ITaskItem>) sources.GetEnumerator ();
+				outputEnum = (IEnumerator <ITaskItem>) outputResources.GetEnumerator ();
 				while (sourceEnum.MoveNext ()) {
 					outputEnum.MoveNext ();
-					string sourceFile = ((ITaskItem) sourceEnum.Current).ItemSpec;
-					string outputFile = ((ITaskItem) outputEnum.Current).ItemSpec;
+					string sourceFile = sourceEnum.Current.ItemSpec;
+					string outputFile = outputEnum.Current.ItemSpec;
 					if (outputFile == String.Empty) {
 						Log.LogErrorFromException (new Exception ("Filename of output can not be empty."));
 						return false;
@@ -93,10 +94,7 @@ namespace Microsoft.Build.Tasks {
 				}
 			}
 			
-			filesWritten = new ITaskItem [temporaryFilesWritten.Count];
-			int i = 0;
-			foreach (ITaskItem item in temporaryFilesWritten)
-				filesWritten [i++] = item;
+			filesWritten = temporaryFilesWritten.ToArray ();
 			
 			return true;
 		}

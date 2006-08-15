@@ -28,7 +28,7 @@
 #if NET_2_0
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Tasks;
@@ -47,21 +47,19 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
-			if ( file == null)
-				throw new ArgumentNullException ("File", "File property must be set.");
-
 			try {
-				streamReader = new StreamReader(file.GetMetadata ("FullPath"));
+				if ( file == null)
+					throw new ArgumentNullException ("File", "File property must be set.");
+
+				streamReader = new StreamReader (file.GetMetadata ("FullPath"));
 				string line;
-				ArrayList temporaryLines = new ArrayList ();
+				List <ITaskItem> temporaryLines = new List <ITaskItem> ();
 				while ((line = streamReader.ReadLine ()) != null) {
-					temporaryLines.Add (line);
+					temporaryLines.Add (new TaskItem (line));
 				}
-				this.lines = new TaskItem [temporaryLines.Count];
-				int i = 0;
-				foreach (string s in temporaryLines) {
-					this.lines [i++] = new TaskItem (s);
-				}
+				
+				lines = temporaryLines.ToArray ();
+
 				return true;
 			}
 			catch (Exception ex) {

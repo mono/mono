@@ -28,7 +28,7 @@
 #if NET_2_0
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.Build.Framework;
 
@@ -46,8 +46,8 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
-			ArrayList temporaryInPath = new ArrayList ();
-			ArrayList temporaryOutOfPath = new ArrayList ();
+			List <ITaskItem> temporaryInPath = new List <ITaskItem> ();
+			List <ITaskItem> temporaryOutOfPath = new List <ITaskItem> ();
 			
 			if (path == null) {
 				Log.LogError (null, null, null, BuildEngine.ProjectFileOfTaskNode,
@@ -82,15 +82,9 @@ namespace Microsoft.Build.Tasks {
 				}
 			}
 			
-			inPath = new ITaskItem [temporaryInPath.Count];
-			int i = 0;
-			foreach (ITaskItem file in temporaryInPath)
-				inPath [i++] = file;
-			outOfPath = new ITaskItem [temporaryOutOfPath.Count];
-			i = 0;
-			foreach (ITaskItem file in temporaryOutOfPath)
-				outOfPath [i++] = file;
-			
+			inPath = temporaryInPath.ToArray ();
+			outOfPath = temporaryOutOfPath.ToArray ();
+
 			return true;
 		}
 

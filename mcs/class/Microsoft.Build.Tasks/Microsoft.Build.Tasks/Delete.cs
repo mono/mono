@@ -28,7 +28,7 @@
 #if NET_2_0
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Security;
 using Microsoft.Build.Framework;
@@ -47,7 +47,7 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
-			ArrayList temporaryDeletedFiles = new ArrayList ();
+			List <ITaskItem> temporaryDeletedFiles = new List <ITaskItem> ();
 		
 			foreach (ITaskItem file in files) {
 				try {
@@ -80,10 +80,7 @@ namespace Microsoft.Build.Tasks {
 				}
 			}
 			
-			deletedFiles = new ITaskItem [temporaryDeletedFiles.Count];
-			int i = 0;
-			foreach (ITaskItem file in temporaryDeletedFiles)
-				deletedFiles [i++] = file;
+			deletedFiles = temporaryDeletedFiles.ToArray ();
 			
 			return true;
 		}

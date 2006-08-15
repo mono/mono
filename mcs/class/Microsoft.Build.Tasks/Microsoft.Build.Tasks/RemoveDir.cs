@@ -28,7 +28,7 @@
 #if NET_2_0
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Security;
 using Microsoft.Build.Framework;
@@ -45,7 +45,7 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
-			ArrayList temporaryRemovedDirectories = new ArrayList ();
+			List <ITaskItem> temporaryRemovedDirectories = new List <ITaskItem> ();
 			
 			foreach (ITaskItem directory in directories) {
 				try {
@@ -75,10 +75,7 @@ namespace Microsoft.Build.Tasks {
 				}
 			}
 			
-			removedDirectories = new ITaskItem [temporaryRemovedDirectories.Count];
-			int i = 0;
-			foreach (ITaskItem directory in temporaryRemovedDirectories)
-				removedDirectories [i++] = directory;
+			removedDirectories = temporaryRemovedDirectories.ToArray ();
 			
 			return true;
 		}

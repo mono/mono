@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -49,7 +50,7 @@ namespace Microsoft.Build.Tasks {
 		public override bool Execute ()
 		{
 			bool returnBoolean = false;
-			ArrayList successfulFiles = new ArrayList ();
+			List <ITaskItem> successfulFiles = new List <ITaskItem> ();
 			Stream stream = null;
 			
 			foreach (ITaskItem file in files) {
@@ -77,10 +78,8 @@ namespace Microsoft.Build.Tasks {
 					} else {
 						;
 					}
-					touchedFiles = new TaskItem [successfulFiles.Count];
-					int i = 0;
-					foreach (ITaskItem item in successfulFiles)
-						touchedFiles [i++] = item;
+
+					touchedFiles = successfulFiles.ToArray ();
 				}
 				catch (Exception ex) {
 					Log.LogErrorFromException (ex);

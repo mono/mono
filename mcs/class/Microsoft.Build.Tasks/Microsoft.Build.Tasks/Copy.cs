@@ -28,7 +28,7 @@
 #if NET_2_0
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -49,22 +49,22 @@ namespace Microsoft.Build.Tasks {
 		public override bool Execute ()
 		{
 			try {
-				ArrayList temporaryCopiedFiles = new ArrayList ();
+				List <ITaskItem> temporaryCopiedFiles = new List <ITaskItem> ();
 			
 				if (sourceFiles.Length != destinationFiles.Length)
 					throw new Exception ("Number of source files is different than number of destination files.");
 				if (destinationFiles != null && destinationFolder != null)
 					throw new Exception ("You must specify only one attribute from DestinationFiles and DestinationFolder");
 				if (destinationFiles != null) {
-					IEnumerator source, destination;
-					source = sourceFiles.GetEnumerator ();
-					destination = destinationFiles.GetEnumerator ();
+					IEnumerator <ITaskItem> source, destination;
+					source = (IEnumerator <ITaskItem>) sourceFiles.GetEnumerator ();
+					destination = (IEnumerator <ITaskItem>) destinationFiles.GetEnumerator ();
 					source.Reset ();
 					destination.Reset ();
 					while (source.MoveNext ()) {
 						destination.MoveNext ();
-						ITaskItem sourceItem = (ITaskItem) source.Current;
-						ITaskItem destinationItem = (ITaskItem) destination.Current;
+						ITaskItem sourceItem = source.Current;
+						ITaskItem destinationItem = destination.Current;
 						string sourceFile = sourceItem.GetMetadata ("FullPath");
 						string destinationFile = destinationItem.GetMetadata ("FullPath");
 
@@ -87,11 +87,11 @@ namespace Microsoft.Build.Tasks {
 						directoryCreated = true;
 					}
 					
-					IEnumerator source;
-					source = sourceFiles.GetEnumerator ();
+					IEnumerator <ITaskItem> source;
+					source = (IEnumerator <ITaskItem>) sourceFiles.GetEnumerator ();
 					source.Reset ();
 					while (source.MoveNext ()) {
-						ITaskItem sourceItem = (ITaskItem) source.Current;
+						ITaskItem sourceItem = source.Current;
 						string sourceFile = sourceItem.GetMetadata ("FullPath");
 						string filename = sourceItem.GetMetadata ("Filename") + sourceItem.GetMetadata ("Extension");
 						string destinationFile = Path.Combine (destinationDirectory,filename);
@@ -109,10 +109,9 @@ namespace Microsoft.Build.Tasks {
 				} else {
 					throw new Exception ("You must specify DestinationFolder or DestinationFiles attribute.");
 				}
-				copiedFiles = new ITaskItem [temporaryCopiedFiles.Count];
-				int i  = 0;
-				foreach (ITaskItem file in temporaryCopiedFiles)
-					copiedFiles [i++] = file;
+				
+				copiedFiles = temporaryCopiedFiles.ToArray ();
+
 				return true;
 			}
 			catch (Exception ex) {

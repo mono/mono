@@ -28,7 +28,7 @@
 #if NET_2_0
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.Build.Framework;
 
@@ -44,22 +44,24 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
-			ArrayList temporaryDirectoriesCreated = new ArrayList ();
+			bool result = true;
+
+			List <ITaskItem> temporaryDirectoriesCreated = new List  <ITaskItem> ();
 			
 			foreach (ITaskItem directory in directories) {
 				try {
 					Directory.CreateDirectory (directory.GetMetadata ("FullPath"));
 					temporaryDirectoriesCreated.Add (directory);
 				}
-				catch (Exception) {
+				catch (Exception ex) {
+					Log.LogErrorFromException (ex);
+					result = false;
 				}
 			}
 			
-			directoriesCreated = new ITaskItem [temporaryDirectoriesCreated.Count];
-			int i = 0;
-			foreach (ITaskItem directory in temporaryDirectoriesCreated)
-				directoriesCreated [i++] = directory;
-			return true;
+			directoriesCreated = temporaryDirectoriesCreated.ToArray ();
+
+			return result;
 		}
 
 		[Required]

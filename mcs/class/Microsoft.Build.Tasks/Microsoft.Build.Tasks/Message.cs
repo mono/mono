@@ -44,9 +44,6 @@ namespace Microsoft.Build.Tasks {
 		{
 			MessageImportance	messageImportance;
 			
-
-			
-			
 			if (importance == null)
 				messageImportance = MessageImportance.Normal;
 			else if (importance.ToLower () == "low")
@@ -58,8 +55,6 @@ namespace Microsoft.Build.Tasks {
 			else {
 				return false;
 			}
-
-			
 			
 			Log.LogMessage (messageImportance, text, null);
 
@@ -67,21 +62,13 @@ namespace Microsoft.Build.Tasks {
 		}
 		
 		public string Importance {
-			get {
-				return importance;
-			}
-			set {
-				importance = value;
-			}
+			get { return importance; }
+			set { importance = value; }
 		}
 
 		public string Text {
-			get {
-				return text;
-			}
-			set {
-				text = value;
-			}
+			get { return text; }
+			set { text = value; }
 		}
 	}
 }
