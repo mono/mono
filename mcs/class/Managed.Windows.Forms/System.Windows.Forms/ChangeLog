@@ -1,3 +1,7 @@
+2006-08-15  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUIX11.cs (SetZOrder): Handle raising toplevel windows
+
 2006-08-15  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Control.cs: Handle BringToFront for toplevel windows (Fixes #78737)

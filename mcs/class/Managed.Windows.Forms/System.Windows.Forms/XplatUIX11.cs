@@ -480,6 +480,12 @@ namespace System.Windows.Forms {
 		#endregion	// Internal Methods
 
 		#region Private Methods
+		private int unixtime() {
+			TimeSpan t = (DateTime.UtcNow - new DateTime(1970, 1, 1));
+
+			return (int) t.TotalSeconds;
+		}
+
 		private static void SetupAtoms() {
 			NetAtoms = new IntPtr[(int)NA.LAST_NET_ATOM];
 
@@ -4478,9 +4484,20 @@ namespace System.Windows.Forms {
 				XWindowChanges	values = new XWindowChanges();
 
 				if (after_hwnd == null) {
-					throw new ArgumentNullException("after_handle", "Need sibling to adjust z-order");
+					// Work around metacity 'issues'
+					int[]	atoms;
+
+					atoms = new int[2];
+					atoms[0] = unixtime();
+					XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_USER_TIME], (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, atoms, 1);
+
+					XRaiseWindow(DisplayHandle, hwnd.whole_window);
+					SendNetWMMessage(hwnd.whole_window, NetAtoms[(int)NA._NET_ACTIVE_WINDOW], IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+					return true;
+					//throw new ArgumentNullException("after_handle", "Need sibling to adjust z-order");
 				}
-				values.sibling = after_hwnd.whole_window;
+
+				values.sibling = RootWindow;
 				values.stack_mode = StackMode.Below;
 
 				lock (XlibLock) {
