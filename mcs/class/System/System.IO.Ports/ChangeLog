@@ -1,3 +1,7 @@
+2006-08-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SerialPort.cs: allow settings StopBits.None.
+
 2006-08-14  Chris Toshok  <toshok@ximian.com>
 
 	* SerialPort.cs: the paths returned by Directory.GetFiles have the
