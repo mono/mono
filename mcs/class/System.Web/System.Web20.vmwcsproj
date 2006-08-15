@@ -372,9 +372,6 @@
 		<Compile Include="System.Web.Security\SqlRoleProvider.cs"/>
 		<Compile Include="System.Web.Security\UrlAuthorizationModule.cs"/>
 		<Compile Include="System.Web.Security\ValidatePasswordEventArgs.cs"/>
-		<Compile Include="System.Web.Security\WindowsAuthenticationEventArgs.cs"/>
-		<Compile Include="System.Web.Security\WindowsAuthenticationEventHandler.cs"/>
-		<Compile Include="System.Web.Security\WindowsAuthenticationModule.cs"/>
 		<Compile Include="System.Web.SessionState\IHttpSessionState.cs"/>
 		<Compile Include="System.Web.SessionState\IReadOnlySessionState.cs"/>
 		<Compile Include="System.Web.SessionState\IRequiresSessionState.cs"/>
