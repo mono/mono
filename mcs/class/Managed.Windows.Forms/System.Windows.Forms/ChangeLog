@@ -1,3 +1,7 @@
+2006-08-15  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Control.cs: Handle BringToFront for toplevel windows (Fixes #78737)
+
 2006-08-15  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* MessageBox.cs: Prevent potential NRE exception.

@@ -2663,6 +2663,8 @@ namespace System.Windows.Forms
 			if (parent != null) {
 				parent.child_controls.SetChildIndex(this, 0);
 				parent.Refresh();
+			} else {
+				XplatUI.SetZOrder(Handle, IntPtr.Zero, false, false);
 			}
 		}
 
