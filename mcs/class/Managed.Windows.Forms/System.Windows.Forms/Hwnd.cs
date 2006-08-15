@@ -462,7 +462,7 @@ namespace System.Windows.Forms {
 				}
 
 				if (parent != null) {
-					return parent.mapped;
+					return parent.Mapped;
 				}
 
 				return true;

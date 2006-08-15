@@ -1,3 +1,7 @@
+2006-08-15  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Hwnd.cs (Mapped): Properly traverse the tree
+
 2006-08-15  Chris Toshok  <toshok@ximian.com>
 
 	* Binding.cs: fix PullData/SetPropertyValue.  We don't want to
