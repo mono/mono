@@ -380,7 +380,7 @@ namespace System.IO.Ports
 				return stop_bits;
 			}
 			set {
-				if (value < StopBits.None || value > StopBits.OnePointFive)
+				if (value < StopBits.One || value > StopBits.OnePointFive)
 					throw new ArgumentOutOfRangeException ("value");
 				
 				if (is_open)
