@@ -630,8 +630,175 @@ namespace MonoTests.System.Web.UI.WebControls
 			copy.DoLoadViewState (state);
 		        Assert.AreEqual ("10pt", copy.Font.Size.ToString() , "ViewState#7");			
 		}
-		 
-		 // Rendering Menu controll with some possible options, styles and items
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Menu_ViewStateItems () {
+			PokerMenu b = new PokerMenu ();
+			MenuItem R = new MenuItem ("root", "value-root");
+			MenuItem N1 = new MenuItem ("node1", "value-node1");
+			MenuItem N2 = new MenuItem ("node2", "value-node2");
+			R.ChildItems.Add (N1);
+			R.ChildItems.Add (N2);
+			b.Items.Add (R);
+			PokerMenu copy = new PokerMenu ();
+			object state = b.DoSaveViewState ();
+			copy.DoLoadViewState (state);
+			Assert.AreEqual (1, copy.Items.Count, "ViewStateItems#1");
+			Assert.AreEqual (2, copy.Items [0].ChildItems.Count, "ViewStateItems#2");
+			Assert.AreEqual (0, copy.Items [0].ChildItems [0].ChildItems.Count, "ViewStateItems#3");
+			Assert.AreEqual ("node1", copy.Items [0].ChildItems [0].Text, "ViewStateItems#4");
+			Assert.AreEqual ("value-node1", copy.Items [0].ChildItems [0].Value, "ViewStateItems#5");
+			Assert.AreEqual (false, copy.Items [0].ChildItems [0].DataBound, "ViewStateItems#6");
+			Assert.AreEqual ("", copy.Items [0].ChildItems [0].DataPath, "ViewStateItems#7");
+		}
+
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Menu_ViewStateDataBoundItems () {
+			PokerMenu b = new PokerMenu ();
+			SetDataBindings (b);
+			b.DataSource = CreateXmlDataSource ();
+			b.DataBind ();
+			PokerMenu copy = new PokerMenu ();
+			object state = b.DoSaveViewState ();
+			copy.DoLoadViewState (state);
+			CheckMenuItems (copy);
+		}
+
+		private static void CheckMenuItems (Menu m) {
+			Assert.AreEqual (1, m.Items.Count, "CheckMenuItems#1");
+			Assert.AreEqual (3, m.Items [0].ChildItems.Count, "CheckMenuItems#2");
+			Assert.AreEqual (0, m.Items [0].ChildItems [0].ChildItems.Count, "CheckMenuItems#3");
+			Assert.AreEqual (true, m.Items [0].ChildItems [0].DataBound, "CheckMenuItems#4");
+			Assert.AreEqual ("/*[position()=1]/*[position()=1]", m.Items [0].ChildItems [0].DataPath, "CheckMenuItems#5");
+
+			Assert.AreEqual (false, m.Items [0].Enabled, "CheckMenuItems_Enabled#1");
+			Assert.AreEqual (true, m.Items [0].ChildItems [0].Enabled, "CheckMenuItems_Enabled#2");
+			Assert.AreEqual (false, m.Items [0].ChildItems [1].Enabled, "CheckMenuItems_Enabled#3");
+			Assert.AreEqual (false, m.Items [0].ChildItems [2].Enabled, "CheckMenuItems_Enabled#4");
+			Assert.AreEqual (true, m.Items [0].ChildItems [2].ChildItems [0].Enabled, "CheckMenuItems_Enabled#5");
+
+			Assert.AreEqual ("img#root", m.Items [0].ImageUrl, "CheckMenuItems_ImageUrl#1");
+			Assert.AreEqual ("img#1", m.Items [0].ChildItems [0].ImageUrl, "CheckMenuItems_ImageUrl#2");
+			Assert.AreEqual ("img#2", m.Items [0].ChildItems [1].ImageUrl, "CheckMenuItems_ImageUrl#3");
+			Assert.AreEqual ("img#default", m.Items [0].ChildItems [2].ImageUrl, "CheckMenuItems_ImageUrl#4");
+			Assert.AreEqual ("", m.Items [0].ChildItems [2].ChildItems [0].ImageUrl, "CheckMenuItems_ImageUrl#5");
+
+			Assert.AreEqual ("url#root", m.Items [0].NavigateUrl, "CheckMenuItems_NavigateUrl#1");
+			Assert.AreEqual ("url#1", m.Items [0].ChildItems [0].NavigateUrl, "CheckMenuItems_NavigateUrl#2");
+			Assert.AreEqual ("url#2", m.Items [0].ChildItems [1].NavigateUrl, "CheckMenuItems_NavigateUrl#3");
+			Assert.AreEqual ("url#default", m.Items [0].ChildItems [2].NavigateUrl, "CheckMenuItems_NavigateUrl#4");
+			Assert.AreEqual ("", m.Items [0].ChildItems [2].ChildItems [0].NavigateUrl, "CheckMenuItems_NavigateUrl#5");
+
+			Assert.AreEqual ("popoutimg#root", m.Items [0].PopOutImageUrl, "CheckMenuItems_PopOutImageUrl#1");
+			Assert.AreEqual ("popoutimg#1", m.Items [0].ChildItems [0].PopOutImageUrl, "CheckMenuItems_PopOutImageUrl#2");
+			Assert.AreEqual ("popoutimg#2", m.Items [0].ChildItems [1].PopOutImageUrl, "CheckMenuItems_PopOutImageUrl#3");
+			Assert.AreEqual ("popoutimg#default", m.Items [0].ChildItems [2].PopOutImageUrl, "CheckMenuItems_PopOutImageUrl#4");
+			Assert.AreEqual ("", m.Items [0].ChildItems [2].ChildItems [0].PopOutImageUrl, "CheckMenuItems_PopOutImageUrl#5");
+
+			Assert.AreEqual (false, m.Items [0].Selectable, "CheckMenuItems_Selectable#1");
+			Assert.AreEqual (true, m.Items [0].ChildItems [0].Selectable, "CheckMenuItems_Selectable#2");
+			Assert.AreEqual (false, m.Items [0].ChildItems [1].Selectable, "CheckMenuItems_Selectable#3");
+			Assert.AreEqual (false, m.Items [0].ChildItems [2].Selectable, "CheckMenuItems_Selectable#4");
+			Assert.AreEqual (true, m.Items [0].ChildItems [2].ChildItems [0].Selectable, "CheckMenuItems_Selectable#5");
+
+			Assert.AreEqual ("separatorimg#root", m.Items [0].SeparatorImageUrl, "CheckMenuItems_SeparatorImageUrl#1");
+			Assert.AreEqual ("separatorimg#1", m.Items [0].ChildItems [0].SeparatorImageUrl, "CheckMenuItems_SeparatorImageUrl#2");
+			Assert.AreEqual ("separatorimg#2", m.Items [0].ChildItems [1].SeparatorImageUrl, "CheckMenuItems_SeparatorImageUrl#3");
+			Assert.AreEqual ("separatorimg#default", m.Items [0].ChildItems [2].SeparatorImageUrl, "CheckMenuItems_SeparatorImageUrl#4");
+			Assert.AreEqual ("", m.Items [0].ChildItems [2].ChildItems [0].SeparatorImageUrl, "CheckMenuItems_SeparatorImageUrl#5");
+
+			Assert.AreEqual ("target#root", m.Items [0].Target, "CheckMenuItems_Target#1");
+			Assert.AreEqual ("target#1", m.Items [0].ChildItems [0].Target, "CheckMenuItems_Target#2");
+			Assert.AreEqual ("target#2", m.Items [0].ChildItems [1].Target, "CheckMenuItems_Target#3");
+			Assert.AreEqual ("target#default", m.Items [0].ChildItems [2].Target, "CheckMenuItems_Target#4");
+			Assert.AreEqual ("", m.Items [0].ChildItems [2].ChildItems [0].Target, "CheckMenuItems_Target#5");
+
+			Assert.AreEqual ("text#root", m.Items [0].Text, "CheckMenuItems_Text#1");
+			Assert.AreEqual ("text#1", m.Items [0].ChildItems [0].Text, "CheckMenuItems_Text#2");
+			Assert.AreEqual ("text#2", m.Items [0].ChildItems [1].Text, "CheckMenuItems_Text#3");
+			Assert.AreEqual ("text#", m.Items [0].ChildItems [2].Text, "CheckMenuItems_Text#4");
+			Assert.AreEqual ("subnode", m.Items [0].ChildItems [2].ChildItems [0].Text, "CheckMenuItems_Text#5");
+
+			Assert.AreEqual ("tooltip#root", m.Items [0].ToolTip, "CheckMenuItems_ToolTip#1");
+			Assert.AreEqual ("tooltip#1", m.Items [0].ChildItems [0].ToolTip, "CheckMenuItems_ToolTip#2");
+			Assert.AreEqual ("tooltip#2", m.Items [0].ChildItems [1].ToolTip, "CheckMenuItems_ToolTip#3");
+			Assert.AreEqual ("tooltip#default", m.Items [0].ChildItems [2].ToolTip, "CheckMenuItems_ToolTip#4");
+			Assert.AreEqual ("", m.Items [0].ChildItems [2].ChildItems [0].ToolTip, "CheckMenuItems_ToolTip#5");
+
+			Assert.AreEqual ("value#root", m.Items [0].Value, "CheckMenuItems_Value#1");
+			Assert.AreEqual ("value#1", m.Items [0].ChildItems [0].Value, "CheckMenuItems_Value#2");
+			Assert.AreEqual ("value#2", m.Items [0].ChildItems [1].Value, "CheckMenuItems_Value#3");
+			Assert.AreEqual ("value#default", m.Items [0].ChildItems [2].Value, "CheckMenuItems_Value#4");
+			Assert.AreEqual ("subnode", m.Items [0].ChildItems [2].ChildItems [0].Value, "CheckMenuItems_Value#5");
+		}
+
+		void SetDataBindings (Menu menu) {
+			MenuItemBinding b = new MenuItemBinding ();
+			b.DataMember = "node";
+			b.EnabledField = "enabled";
+			b.Enabled = false;
+			b.ImageUrlField = "img";
+			b.ImageUrl = "img#default";
+			b.NavigateUrlField = "url";
+			b.NavigateUrl = "url#default";
+			b.PopOutImageUrlField = "popoutimg";
+			b.PopOutImageUrl = "popoutimg#default";
+			b.SelectableField = "selectable";
+			b.Selectable = false;
+			b.SeparatorImageUrlField = "separatorimg";
+			b.SeparatorImageUrl = "separatorimg#default";
+			b.TargetField = "target";
+			b.Target = "target#default";
+			b.FormatString = "text#{0}";
+			b.TextField = "text";
+			b.Text = "text#default";
+			b.ToolTipField = "tooltip";
+			b.ToolTip = "tooltip#default";
+			b.ValueField = "value";
+			b.Value = "value#default";
+			menu.DataBindings.Add (b);
+
+			b = new MenuItemBinding ();
+			b.DataMember = "root";
+			b.Enabled = false;
+			b.ImageUrl = "img#root";
+			b.NavigateUrl = "url#root";
+			b.PopOutImageUrl = "popoutimg#root";
+			b.Selectable = false;
+			b.SeparatorImageUrl = "separatorimg#root";
+			b.Target = "target#root";
+			b.Text = "text#root";
+			b.ToolTip = "tooltip#root";
+			b.Value = "value#root";
+			menu.DataBindings.Add (b);
+		}
+
+		XmlDataSource CreateXmlDataSource () {
+			XmlDataSource xmlDs = new XmlDataSource ();
+			xmlDs.ID = "XmlDataSource";
+			xmlDs.Data = "<root>"+
+				"<node url=\"url#1\" img=\"img#1\" enabled=\"true\" selectable=\"true\" popoutimg=\"popoutimg#1\" separatorimg=\"separatorimg#1\" target=\"target#1\" text=\"1\" tooltip=\"tooltip#1\" value=\"value#1\" />" +
+				"<node url=\"url#2\" img=\"img#2\" enabled=\"false\" selectable=\"false\" popoutimg=\"popoutimg#2\" separatorimg=\"separatorimg#2\" target=\"target#2\" text=\"2\" tooltip=\"tooltip#2\" value=\"value#2\" />" +
+				"<node url=\"\" img=\"\" enabled=\"\" selectable=\"\" popoutimg=\"\" separatorimg=\"\" target=\"\" text=\"\" tooltip=\"\" value=\"\">" +
+				"<subnode url=\"url#unreachable\" img=\"img#unreachable\" enabled=\"false\" selectable=\"false\" popoutimg=\"popoutimg#unreachable\" separatorimg=\"separatorimg#unreachable\" target=\"target#unreachable\" text=\"text#unreachable\" tooltip=\"tooltip#unreachable\" value=\"value#unreachable\" />" +
+				"<subnode /></node></root>";
+			return xmlDs;
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Menu_DataBindings () {
+			Menu m = new Menu ();
+			SetDataBindings (m);
+			m.DataSource = CreateXmlDataSource ();
+			m.DataBind ();
+			CheckMenuItems (m);
+		}
+
+		// Rendering Menu controll with some possible options, styles and items
 		 
 
 		[Test]
@@ -787,14 +954,28 @@ namespace MonoTests.System.Web.UI.WebControls
 		        Assert.AreEqual (true, OnMenuItemDataBound, "AfterMenuItemDataBound");
 		}
 		[Test]
-		[Category ("NotWorking")] // NotImplementedException
-		public void Menu_BubbleEvent()
-		{
-		        PokerMenu pm = new PokerMenu ();
-		        CommandEventArgs commandarg = new CommandEventArgs (Menu.MenuItemClickCommandName, null);
-		        Assert.AreEqual (true, pm.DoOnBubbleEvent (commandarg), "Bubble Event#1");
-		        Assert.AreEqual (false, pm.DoOnBubbleEvent (new EventArgs ()), "Bubble Event#2");
+		[Category ("NotWorking")]
+		public void Menu_BubbleEvent () {
+			PokerMenu pm = new PokerMenu ();
+			MenuItem item = new MenuItem ("Root");
+			pm.Items.Add (item);
+			pm.MenuItemClick += new MenuEventHandler (pm_MenuItemClick);
+			_MenuItemClick = false;
+			MenuEventArgs clickCommandArg = new MenuEventArgs (item, null, new CommandEventArgs (Menu.MenuItemClickCommandName, null));
+			CommandEventArgs notClickCommandArg = new CommandEventArgs (Menu.MenuItemClickCommandName + "No", null);
+			Assert.AreEqual (true, pm.DoOnBubbleEvent (notClickCommandArg), "Bubble Event#1");
+			Assert.AreEqual (false, _MenuItemClick, "MenuItemClick Bubbled");
+			Assert.AreEqual (true, pm.DoOnBubbleEvent (clickCommandArg), "Bubble Event#2");
+			Assert.AreEqual (true, _MenuItemClick, "MenuItemClick Bubbled");
+			Assert.AreEqual (false, pm.DoOnBubbleEvent (new EventArgs ()), "Bubble Event#3");
 		}
+
+		bool _MenuItemClick;
+
+		void pm_MenuItemClick (object sender, MenuEventArgs e) {
+			_MenuItemClick = true;
+		}
+
 		[Test]
 		[Category ("NunitWeb")]
 		public void Menu_PreRenderEvent ()

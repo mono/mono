@@ -1,3 +1,7 @@
+2006-08-15 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* MenuTest.cs: new tests were added.
+
 2006-08-14 Andrew Skiba <andrews@mainsoft.com>
 
 	* TableTest.cs: new test added.
