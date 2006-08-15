@@ -4497,7 +4497,7 @@ namespace System.Windows.Forms {
 					//throw new ArgumentNullException("after_handle", "Need sibling to adjust z-order");
 				}
 
-				values.sibling = RootWindow;
+				values.sibling = after_hwnd.whole_window;
 				values.stack_mode = StackMode.Below;
 
 				lock (XlibLock) {
