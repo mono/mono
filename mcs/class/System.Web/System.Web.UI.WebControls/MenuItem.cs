@@ -50,8 +50,6 @@ namespace System.Web.UI.WebControls
 		string path;
 		int depth = -1;
 		
-		bool dataBound;
-		string dataPath;
 		object dataItem;
 		IHierarchyData hierarchyData;
 		
@@ -130,14 +128,15 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (false)]
 		[Browsable (false)]
 		public bool DataBound {
-			get { return dataBound; }
+			get { return ViewState ["DataBound"] == null ? false : (bool) ViewState ["DataBound"]; }
+			private set { ViewState ["DataBound"] = value; }
 		}
 		
 		[DefaultValue (null)]
 		[Browsable (false)]
 		public object DataItem {
 			get {
-				if (!dataBound) throw new InvalidOperationException ("MenuItem is not data bound.");
+				if (!DataBound) throw new InvalidOperationException ("MenuItem is not data bound.");
 				return dataItem;
 			}
 		}
@@ -147,8 +146,10 @@ namespace System.Web.UI.WebControls
 		[Browsable (false)]
 		public string DataPath {
 			get {
-				if (!dataBound) throw new InvalidOperationException ("MenuItem is not data bound.");
-				return dataPath;
+				return ViewState ["DataPath"] == null ? String.Empty : (String) ViewState ["DataPath"];
+			}
+			set {
+				ViewState ["DataPath"] = value;
 			}
 		}
 		
@@ -172,17 +173,7 @@ namespace System.Web.UI.WebControls
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public string ImageUrl {
 			get {
-				object o = ViewState ["ImageUrl"];
-				if (o != null) return (string)o;
-				if (DataBound) {
-					MenuItemBinding bin = GetBinding ();
-					if (bin != null) {
-						if (bin.ImageUrlField != "")
-							return (string) GetBoundPropertyValue (bin.ImageUrlField);
-						return bin.ImageUrl;
-					}
-				}
-				return "";
+				return ViewState ["ImageUrl"] == null ? String.Empty : (String) ViewState ["ImageUrl"];
 			}
 			set {
 				ViewState ["ImageUrl"] = value;
@@ -194,17 +185,7 @@ namespace System.Web.UI.WebControls
 		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public string NavigateUrl {
 			get {
-				object o = ViewState ["NavigateUrl"];
-				if (o != null) return (string)o;
-				if (DataBound) {
-					MenuItemBinding bin = GetBinding ();
-					if (bin != null) {
-						if (bin.NavigateUrlField != "")
-							return (string) GetBoundPropertyValue (bin.NavigateUrlField);
-						return bin.NavigateUrl;
-					}
-				}
-				return "";
+				return ViewState ["NavigateUrl"] == null ? String.Empty : (String) ViewState ["NavigateUrl"];
 			}
 			set {
 				ViewState ["NavigateUrl"] = value;
@@ -216,17 +197,7 @@ namespace System.Web.UI.WebControls
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public string PopOutImageUrl {
 			get {
-				object o = ViewState ["PopOutImageUrl"];
-				if (o != null) return (string)o;
-				if (DataBound) {
-					MenuItemBinding bin = GetBinding ();
-					if (bin != null) {
-						if (bin.PopOutImageUrlField != "")
-							return (string) GetBoundPropertyValue (bin.PopOutImageUrlField);
-						return bin.PopOutImageUrl;
-					}
-				}
-				return "";
+				return ViewState ["PopOutImageUrl"] == null ? String.Empty : (String) ViewState ["PopOutImageUrl"];
 			}
 			set {
 				ViewState ["PopOutImageUrl"] = value;
@@ -236,17 +207,7 @@ namespace System.Web.UI.WebControls
 		[DefaultValue ("")]
 		public string Target {
 			get {
-				object o = ViewState ["Target"];
-				if(o != null) return (string)o;
-				if (DataBound) {
-					MenuItemBinding bin = GetBinding ();
-					if (bin != null) {
-						if (bin.TargetField != "")
-							return (string) GetBoundPropertyValue (bin.TargetField);
-						return bin.Target;
-					}
-				}
-				return "";
+				return ViewState ["Target"] == null ? String.Empty : (String) ViewState ["Target"];
 			}
 			set {
 				ViewState ["Target"] = value;
@@ -257,26 +218,7 @@ namespace System.Web.UI.WebControls
 		[DefaultValue ("")]
 		public string Text {
 			get {
-				object o = ViewState ["Text"];
-				if (o != null) return (string)o;
-				if (DataBound) {
-					MenuItemBinding bin = GetBinding ();
-					if (bin != null) {
-						string text;
-						if (bin.TextField != "")
-							text = (string) GetBoundPropertyValue (bin.TextField);
-						else if (bin.Text != "")
-							text = bin.Text;
-						else
-							text = GetDefaultBoundText ();
-							
-						if (bin.FormatString.Length != 0)
-							text = string.Format (bin.FormatString, text);
-						return text;
-					}
-					return GetDefaultBoundText ();
-				}
-				return "";
+				return ViewState ["Text"] == null ? String.Empty : (String) ViewState ["Text"];
 			}
 			set {
 				ViewState ["Text"] = value;
@@ -287,17 +229,7 @@ namespace System.Web.UI.WebControls
 		[DefaultValue ("")]
 		public string ToolTip {
 			get {
-				object o = ViewState ["ToolTip"];
-				if(o != null) return (string)o;
-				if (DataBound) {
-					MenuItemBinding bin = GetBinding ();
-					if (bin != null) {
-						if (bin.ToolTipField != "")
-							return (string) GetBoundPropertyValue (bin.ToolTipField);
-						return bin.ToolTip;
-					}
-				}
-				return "";
+				return ViewState ["ToolTip"] == null ? String.Empty : (String) ViewState ["ToolTip"];
 			}
 			set {
 				ViewState ["ToolTip"] = value;
@@ -308,19 +240,7 @@ namespace System.Web.UI.WebControls
 		[DefaultValue ("")]
 		public string Value {
 			get {
-				object o = ViewState ["Value"];
-				if(o != null) return (string)o;
-				if (DataBound) {
-					MenuItemBinding bin = GetBinding ();
-					if (bin != null) {
-						if (bin.ValueField != "")
-							return (string) GetBoundPropertyValue (bin.ValueField);
-						if (bin.Value != "")
-							return bin.Value;
-					}
-					return GetDefaultBoundText ();
-				}
-				return "";
+				return ViewState ["Value"] == null ? String.Empty : (String) ViewState ["Value"];
 			}
 			set {
 				ViewState ["Value"] = value;
@@ -332,17 +252,7 @@ namespace System.Web.UI.WebControls
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public string SeparatorImageUrl {
 			get {
-				object o = ViewState ["SeparatorImageUrl"];
-				if (o != null) return (string)o;
-				if (DataBound) {
-					MenuItemBinding bin = GetBinding ();
-					if (bin != null) {
-						if (bin.SeparatorImageUrlField != "")
-							return (string) GetBoundPropertyValue (bin.SeparatorImageUrlField);
-						return bin.SeparatorImageUrl;
-					}
-				}
-				return "";
+				return ViewState ["SeparatorImageUrl"] == null ? String.Empty : (String) ViewState ["SeparatorImageUrl"];
 			}
 			set {
 				ViewState ["SeparatorImageUrl"] = value;
@@ -353,17 +263,7 @@ namespace System.Web.UI.WebControls
 	    [DefaultValueAttribute (true)]
 		public bool Selectable {
 			get {
-				object o = ViewState ["Selectable"];
-				if (o != null) return (bool)o;
-				if (DataBound) {
-					MenuItemBinding bin = GetBinding ();
-					if (bin != null) {
-						if (bin.SelectableField != "")
-							return (bool) GetBoundPropertyValue (bin.SelectableField);
-						return bin.Selectable;
-					}
-				}
-				return true;
+				return ViewState ["Selectable"] == null ? true : (bool) ViewState ["Selectable"];
 			}
 			set {
 				ViewState ["Selectable"] = value;
@@ -374,17 +274,7 @@ namespace System.Web.UI.WebControls
 	    [DefaultValueAttribute (true)]
 		public bool Enabled {
 			get {
-				object o = ViewState ["Enabled"];
-				if (o != null) return (bool)o;
-				if (DataBound) {
-					MenuItemBinding bin = GetBinding ();
-					if (bin != null) {
-						if (bin.EnabledField != "")
-							return (bool) GetBoundPropertyValue (bin.EnabledField);
-						return bin.Enabled;
-					}
-				}
-				return true;
+				return ViewState ["Enabled"] == null ? true : (bool) ViewState ["Enabled"];
 			}
 			set {
 				ViewState ["Enabled"] = value;
@@ -509,6 +399,8 @@ namespace System.Web.UI.WebControls
 		internal void SetDirty ()
 		{
 			ViewState.SetDirty (true);
+			if (items != null)
+				items.SetDirty ();
 		}
 		
 		object ICloneable.Clone ()
@@ -526,9 +418,128 @@ namespace System.Web.UI.WebControls
 		internal void Bind (IHierarchyData hierarchyData)
 		{
 			this.hierarchyData = hierarchyData;
-			dataBound = true;
-			dataPath = hierarchyData.Path;
+			DataBound = true;
+			DataPath = hierarchyData.Path;
 			dataItem = hierarchyData.Item;
+
+			MenuItemBinding bin = GetBinding ();
+			if (bin != null) {
+
+				// Bind Enabled property
+
+				if (bin.EnabledField != "")
+					try { Enabled = Convert.ToBoolean (GetBoundPropertyValue (bin.EnabledField)); }
+					catch { Enabled = bin.Enabled; }
+				else
+					Enabled = bin.Enabled;
+
+				// Bind ImageUrl property
+
+				if (bin.ImageUrlField.Length > 0) {
+					ImageUrl = Convert.ToString (GetBoundPropertyValue (bin.ImageUrlField));
+					if (ImageUrl.Length == 0)
+						ImageUrl = bin.ImageUrl;
+				}
+				else if (bin.ImageUrl.Length > 0)
+					ImageUrl = bin.ImageUrl;
+
+				// Bind NavigateUrl property
+
+				if (bin.NavigateUrlField.Length > 0) {
+					NavigateUrl = Convert.ToString (GetBoundPropertyValue (bin.NavigateUrlField));
+					if (NavigateUrl.Length == 0)
+						NavigateUrl = bin.NavigateUrl;
+				}
+				else if (bin.NavigateUrl.Length > 0)
+					NavigateUrl = bin.NavigateUrl;
+
+				// Bind PopOutImageUrl property
+
+				if (bin.PopOutImageUrlField.Length > 0) {
+					PopOutImageUrl = Convert.ToString (GetBoundPropertyValue (bin.PopOutImageUrlField));
+					if (PopOutImageUrl.Length == 0)
+						PopOutImageUrl = bin.PopOutImageUrl;
+				}
+				else if (bin.PopOutImageUrl.Length > 0)
+					PopOutImageUrl = bin.PopOutImageUrl;
+
+				// Bind Selectable property
+
+				if (bin.SelectableField != "")
+					try { Selectable = Convert.ToBoolean (GetBoundPropertyValue (bin.SelectableField)); }
+					catch { Selectable = bin.Selectable; }
+				else
+					Selectable = bin.Selectable;
+
+				// Bind SeparatorImageUrl property
+
+				if (bin.SeparatorImageUrlField.Length > 0) {
+					SeparatorImageUrl = Convert.ToString (GetBoundPropertyValue (bin.SeparatorImageUrlField));
+					if (SeparatorImageUrl.Length == 0)
+						SeparatorImageUrl = bin.SeparatorImageUrl;
+				}
+				else if (bin.SeparatorImageUrl.Length > 0)
+					SeparatorImageUrl = bin.SeparatorImageUrl;
+
+				// Bind Target property
+
+				if (bin.SeparatorImageUrlField.Length > 0) {
+					Target = Convert.ToString (GetBoundPropertyValue (bin.TargetField));
+					if (Target.Length == 0)
+						Target = bin.Target;
+				}
+				else if (bin.Target.Length > 0)
+					Target = bin.Target;
+
+				// Bind Target property
+
+				if (bin.ToolTipField.Length > 0) {
+					ToolTip = Convert.ToString (GetBoundPropertyValue (bin.ToolTipField));
+					if (ToolTip.Length == 0)
+						ToolTip = bin.ToolTip;
+				}
+				else if (bin.ToolTip.Length > 0)
+					ToolTip = bin.ToolTip;
+
+				// Bind Value property
+
+				if (bin.ValueField.Length > 0) {
+					Value = Convert.ToString (GetBoundPropertyValue (bin.ValueField));
+					if (Value.Length == 0)
+						Value = bin.Value;
+					if (Value.Length == 0)
+						Value = bin.Text;
+				}
+				else if (bin.Value.Length > 0)
+					Value = bin.Value;
+				else if (bin.Text.Length > 0)
+					Value = bin.Text;
+				else
+					Value = GetDefaultBoundText ();
+				
+				// Bind Text property
+
+				if (bin.TextField.Length > 0) {
+					Text = Convert.ToString (GetBoundPropertyValue (bin.TextField));
+					if (bin.FormatString.Length > 0)
+						Text = string.Format (bin.FormatString, Text);
+					if (Text.Length == 0)
+						Text = bin.Text;
+					if (Text.Length == 0)
+						Text = bin.Value;
+				}
+				else if (bin.Text.Length > 0)
+					Text = bin.Text;
+				else if (bin.Value.Length > 0)
+					Text = bin.Value;
+				else
+					Text = GetDefaultBoundText ();
+
+			}
+			else {
+				Text = Value = GetDefaultBoundText ();
+			}
+
 			INavigateUIData navigateUIData = hierarchyData as INavigateUIData;
 			if (navigateUIData != null) {
 				Text = navigateUIData.ToString ();
@@ -543,12 +554,12 @@ namespace System.Web.UI.WebControls
 		
 		internal void SetDataPath (string path)
 		{
-			dataPath = path;
+			DataPath = path;
 		}
 		
 		internal void SetDataBound (bool bound)
 		{
-			dataBound = bound;
+			DataBound = bound;
 		}
 		
 		string GetDefaultBoundText ()

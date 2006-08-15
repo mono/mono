@@ -632,7 +632,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Menu_ViewStateItems () {
 			PokerMenu b = new PokerMenu ();
 			MenuItem R = new MenuItem ("root", "value-root");
@@ -655,7 +654,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Menu_ViewStateDataBoundItems () {
 			PokerMenu b = new PokerMenu ();
 			SetDataBindings (b);
@@ -669,7 +667,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		private static void CheckMenuItems (Menu m) {
 			Assert.AreEqual (1, m.Items.Count, "CheckMenuItems#1");
-			Assert.AreEqual (3, m.Items [0].ChildItems.Count, "CheckMenuItems#2");
+			Assert.AreEqual (10, m.Items [0].ChildItems.Count, "CheckMenuItems#2");
 			Assert.AreEqual (0, m.Items [0].ChildItems [0].ChildItems.Count, "CheckMenuItems#3");
 			Assert.AreEqual (true, m.Items [0].ChildItems [0].DataBound, "CheckMenuItems#4");
 			Assert.AreEqual ("/*[position()=1]/*[position()=1]", m.Items [0].ChildItems [0].DataPath, "CheckMenuItems#5");
@@ -733,6 +731,25 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("value#2", m.Items [0].ChildItems [1].Value, "CheckMenuItems_Value#3");
 			Assert.AreEqual ("value#default", m.Items [0].ChildItems [2].Value, "CheckMenuItems_Value#4");
 			Assert.AreEqual ("subnode", m.Items [0].ChildItems [2].ChildItems [0].Value, "CheckMenuItems_Value#5");
+
+			Assert.AreEqual ("text#extra1", m.Items [0].ChildItems [3].Text, "CheckMenuItems_Extra1#1");
+			Assert.AreEqual ("text#extra1", m.Items [0].ChildItems [3].Value, "CheckMenuItems_Extra1#2");
+
+			Assert.AreEqual ("value#extra2", m.Items [0].ChildItems [4].Text, "CheckMenuItems_Extra2#1");
+			Assert.AreEqual ("value#extra2", m.Items [0].ChildItems [4].Value, "CheckMenuItems_Extra2#2");
+
+			Assert.AreEqual ("text#extra3", m.Items [0].ChildItems [5].Text, "CheckMenuItems_Extra3#1");
+			Assert.AreEqual ("", m.Items [0].ChildItems [5].Value, "CheckMenuItems_Extra3#2");
+			Assert.AreEqual ("", m.Items [0].ChildItems [6].Text, "CheckMenuItems_Extra3#3");
+			Assert.AreEqual ("value#extra3", m.Items [0].ChildItems [6].Value, "CheckMenuItems_Extra3#4");
+			Assert.AreEqual ("", m.Items [0].ChildItems [7].Text, "CheckMenuItems_Extra3#5");
+			Assert.AreEqual ("", m.Items [0].ChildItems [7].Value, "CheckMenuItems_Extra3#6");
+
+			Assert.AreEqual ("text#extra4", m.Items [0].ChildItems [8].Text, "CheckMenuItems_Extra4#1");
+			Assert.AreEqual ("text#default", m.Items [0].ChildItems [8].Value, "CheckMenuItems_Extra4#2");
+
+			Assert.AreEqual ("value#default", m.Items [0].ChildItems [9].Text, "CheckMenuItems_Extra5#1");
+			Assert.AreEqual ("value#extra5", m.Items [0].ChildItems [9].Value, "CheckMenuItems_Extra5#2");
 		}
 
 		void SetDataBindings (Menu menu) {
@@ -774,6 +791,36 @@ namespace MonoTests.System.Web.UI.WebControls
 			b.ToolTip = "tooltip#root";
 			b.Value = "value#root";
 			menu.DataBindings.Add (b);
+
+			b = new MenuItemBinding ();
+			b.DataMember = "extra1";
+			b.Text = "text#extra1";
+			menu.DataBindings.Add (b);
+
+			b = new MenuItemBinding ();
+			b.DataMember = "extra2";
+			b.Value = "value#extra2";
+			menu.DataBindings.Add (b);
+
+			b = new MenuItemBinding ();
+			b.DataMember = "extra3";
+			b.TextField = "text";
+			b.ValueField = "value";
+			menu.DataBindings.Add (b);
+
+			b = new MenuItemBinding ();
+			b.DataMember = "extra4";
+			b.TextField = "text";
+			b.Text = "text#default";
+			b.ValueField = "value";
+			menu.DataBindings.Add (b);
+
+			b = new MenuItemBinding ();
+			b.DataMember = "extra5";
+			b.TextField = "text";
+			b.Value = "value#default";
+			b.ValueField = "value";
+			menu.DataBindings.Add (b);
 		}
 
 		XmlDataSource CreateXmlDataSource () {
@@ -784,12 +831,18 @@ namespace MonoTests.System.Web.UI.WebControls
 				"<node url=\"url#2\" img=\"img#2\" enabled=\"false\" selectable=\"false\" popoutimg=\"popoutimg#2\" separatorimg=\"separatorimg#2\" target=\"target#2\" text=\"2\" tooltip=\"tooltip#2\" value=\"value#2\" />" +
 				"<node url=\"\" img=\"\" enabled=\"\" selectable=\"\" popoutimg=\"\" separatorimg=\"\" target=\"\" text=\"\" tooltip=\"\" value=\"\">" +
 				"<subnode url=\"url#unreachable\" img=\"img#unreachable\" enabled=\"false\" selectable=\"false\" popoutimg=\"popoutimg#unreachable\" separatorimg=\"separatorimg#unreachable\" target=\"target#unreachable\" text=\"text#unreachable\" tooltip=\"tooltip#unreachable\" value=\"value#unreachable\" />" +
-				"<subnode /></node></root>";
+				"<subnode /></node>"+
+				"<extra1 /><extra2 />"+
+				"<extra3 text=\"text#extra3\" value=\"\" />" +
+				"<extra3 text=\"\" value=\"value#extra3\" />" +
+				"<extra3 text=\"\" value=\"\" />" +
+				"<extra4 text=\"text#extra4\" value=\"\" />" +
+				"<extra5 text=\"\" value=\"value#extra5\" />" +
+				"</root>";
 			return xmlDs;
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Menu_DataBindings () {
 			Menu m = new Menu ();
 			SetDataBindings (m);
@@ -954,7 +1007,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		        Assert.AreEqual (true, OnMenuItemDataBound, "AfterMenuItemDataBound");
 		}
 		[Test]
-		[Category ("NotWorking")]
 		public void Menu_BubbleEvent () {
 			PokerMenu pm = new PokerMenu ();
 			MenuItem item = new MenuItem ("Root");

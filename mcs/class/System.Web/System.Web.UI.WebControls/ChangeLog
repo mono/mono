@@ -1,3 +1,10 @@
+2006-08-15 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Menu.cs: fixed: 
+	OnBubleEvent works properly - controls like Button, LinkButton nested into template
+	can raise MenuItemClick event,
+	ViewState of Items saved and restored properly.
+
 2006-08-14 Andrew Skiba <andrews@mainsoft.com>
 
 	* TableStyle.cs: replace ResolveUrl with ResolveClientUrl to match

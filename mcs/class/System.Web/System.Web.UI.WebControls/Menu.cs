@@ -753,7 +753,9 @@ namespace System.Web.UI.WebControls
 				EnsureChildControlsDataBound ();
 				return;
 			}
-			
+
+			InitializeDataBindings ();
+
 			HierarchicalDataSourceView data = GetData ("");
 
 			if (data == null) {
@@ -1036,10 +1038,15 @@ namespace System.Web.UI.WebControls
 			base.DataBind ();
 		}
 		
-		[MonoTODO]
-		protected override bool OnBubbleEvent (object source, EventArgs e)
+		protected override bool OnBubbleEvent (object source, EventArgs args)
 		{
-			throw new NotImplementedException ();
+			if (!(args is CommandEventArgs))
+				return false;
+
+			MenuEventArgs menuArgs = args as MenuEventArgs;
+			if (menuArgs != null && string.Equals (menuArgs.CommandName, MenuItemClickCommandName))
+				OnMenuItemClick (menuArgs);
+			return true;
 		}
 
 		protected override void OnDataBinding (EventArgs e)
@@ -1109,9 +1116,12 @@ namespace System.Web.UI.WebControls
 			
 			Page.ClientScript.RegisterStartupScript (typeof(Menu), ClientID, script, true);
 
+		}
+
+		void InitializeDataBindings () {
 			if (dataBindings != null && dataBindings.Count > 0) {
 				bindings = new Hashtable ();
-				foreach (TreeNodeBinding bin in dataBindings) {
+				foreach (MenuItemBinding bin in dataBindings) {
 					string key = GetBindingKey (bin.DataMember, bin.Depth);
 					bindings [key] = bin;
 				}

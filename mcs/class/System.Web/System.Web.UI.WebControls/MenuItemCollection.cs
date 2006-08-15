@@ -81,6 +81,12 @@ namespace System.Web.UI.WebControls
 				dirty = true;
 			}
 		}
+
+		internal void SetDirty () {
+			for (int n = 0; n < Count; n++)
+				this [n].SetDirty ();
+			dirty = true;
+		}
 		
 		public void AddAt (int index, MenuItem child)
 		{

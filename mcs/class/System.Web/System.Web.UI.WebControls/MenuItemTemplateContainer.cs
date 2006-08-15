@@ -47,10 +47,15 @@ namespace System.Web.UI.WebControls
 			dataItem = menuItem;
 		}
 		
-		[MonoTODO]
 		protected override bool OnBubbleEvent (object source, EventArgs args)
 		{
-			return base.OnBubbleEvent (source, args);
+			CommandEventArgs command = args as CommandEventArgs;
+			if (command == null)
+				return false;
+
+			MenuEventArgs menuArgs = new MenuEventArgs ((MenuItem) DataItem, source, command);
+			RaiseBubbleEvent (this, menuArgs);
+			return true;
 		}
 		
 		[MonoTODO]

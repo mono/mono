@@ -151,8 +151,8 @@ namespace System.Web.UI.WebControls {
 						prev = prev.PreviousSibling;
 						n++;
 					}
-					
-					sb.Insert (0, "/*[position()=" + n);
+
+					sb.Insert (0, "/*[position()=" + n + "]");
 					nod = nod.ParentNode;
 				} while (nod != null && !(nod is XmlDocument));
 				
