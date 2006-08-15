@@ -540,9 +540,8 @@ namespace System.Windows.Forms {
 					document.Empty();
 					CalculateDocument();
 				}
-				base.Text = value;
-				// Not needed, base.Text already fires it
-				// OnTextChanged(EventArgs.Empty);
+
+				OnTextChanged(EventArgs.Empty);
 			}
 		}
 

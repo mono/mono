@@ -1,3 +1,9 @@
+2006-08-15  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TextBoxBase.cs (set_Text): Don't use base.Text, instead just
+	  fire OnTextChanged by ourselves. There's no point calling base,
+	  we don't set the base value anywhere else. Fixes #78773.
+
 2006-08-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBox.cs: Call CollectionChanged when modifying
