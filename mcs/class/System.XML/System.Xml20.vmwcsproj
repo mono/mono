@@ -377,7 +377,6 @@
 		<Compile Include="System.Xml.XPath\XPathResultType.cs"/>
 		<Compile Include="System.Xml.Xsl\IXsltContextFunction.cs"/>
 		<Compile Include="System.Xml.Xsl\IXsltContextVariable.cs"/>
-		<Compile Include="System.Xml.Xsl\XslCompiledTransform.cs"/>
 		<Compile Include="System.Xml.Xsl\XsltArgumentList.cs"/>
 		<Compile Include="System.Xml.Xsl\XsltCompileException.cs"/>
 		<Compile Include="System.Xml.Xsl\XsltContext.cs"/>
