@@ -11,13 +11,19 @@
 .SUFFIXES: .cs .exe .dll
 
 RUNTIME = mono
-CSCOMPILE = mcs
+
+ifeq ($(PROFILE), net_2_0)
+	nunit_MONO_PATH="../../../../../class/lib/net_2_0"
+	CSCOMPILE=gmcs
+else
+	nunit_MONO_PATH="../../../../../class/lib/default"
+	CSCOMPILE=mcs
+endif
 
 TEST_ARCHIVE = xslt-testsuite-03.ZIP
 CATALOG = testsuite/TESTS/catalog.xml
 FIXED_CATALOG = testsuite/TESTS/catalog-fixed.xml
 
-nunit_MONO_PATH="../../../../../class/lib/default"
 mono_wrapper_PATH="../../../../../../mono/runtime/mono-wrapper"
 NUNIT_CONSOLE=$(mono_wrapper_PATH) --debug $(nunit_MONO_PATH)/nunit-console.exe
 

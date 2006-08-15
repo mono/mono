@@ -1,3 +1,7 @@
+2006-08-15  Andrew Skiba <andrews@mainsoft.com>
+
+	* Makefile: support PROFILE net_2_0
+
 2006-05-31  Andrew Skiba <andrews@mainsoft.com>
 
 	* knownFailures.jvm.cs, xslttest.cs: add jvm specific known failures
