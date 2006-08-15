@@ -229,7 +229,8 @@ namespace System.Windows.Forms
 			else
 				radio_all.Checked = true;
 
-			updown_copies.Value = current_settings.Copies;
+			updown_copies.Value = current_settings.Copies == 0 ? 1 : (int) current_settings.Copies;
+			chkbox_collate.Checked = current_settings.Collate;
 			chkbox_collate.Enabled = (updown_copies.Value > 1) ? true : false;
 
 			if (show_help) {
@@ -350,6 +351,12 @@ namespace System.Windows.Forms
 			chkbox_collate.Enabled = (updown_copies.Value > 1) ? true : false;
 		}
 
+		void OnPagesCheckedChanged (object obj, EventArgs args)
+		{
+			if (radio_pages.Checked && !txtTo.Focused)
+				txtFrom.Focus ();
+		}
+
 		private void CreateFormControls ()
 		{
 			form.SuspendLayout ();
@@ -446,6 +453,7 @@ namespace System.Windows.Forms
 			radio_pages.Location = new Point (20, 46);
 			radio_pages.Text = "Pa&ges";
 			radio_pages.Width = 60;
+			radio_pages.CheckedChanged += new EventHandler (OnPagesCheckedChanged);
 			group_box_range.Controls.Add (radio_pages);
 
 			radio_sel = new RadioButton ();
