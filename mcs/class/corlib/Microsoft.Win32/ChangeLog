@@ -1,5 +1,11 @@
 2006-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* UnixRegistryApi.cs: Undo change for new eventlog implementation that
+	was not rolled back earlier this week, and which does not make sense
+	without that implementation anyway.
+
+2006-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* Win32ResultCode.cs: Added error code for attempting to perform an
 	operation on registry key that is marked for deletion.
 	* RegistryKey.cs: Keep writable state. Automatically flush changes to

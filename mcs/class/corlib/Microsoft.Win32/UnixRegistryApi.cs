@@ -555,13 +555,10 @@ namespace Microsoft.Win32 {
 
 		static bool IsWellKnownKey (string parentKeyName, string keyname)
 		{
-			if (string.Compare ("software", keyname, true, CultureInfo.InvariantCulture) == 0)
-				return (parentKeyName == Registry.CurrentUser.Name ||
-					parentKeyName == Registry.LocalMachine.Name);
-
-			// required for event log support
-			if (string.Compare (@"SYSTEM\CurrentControlSet\Services\EventLog", keyname, true, CultureInfo.InvariantCulture) == 0)
-				return (parentKeyName == Registry.LocalMachine.Name);
+			// FIXME: Add more keys if needed
+			if (parentKeyName == Registry.CurrentUser.Name ||
+				parentKeyName == Registry.LocalMachine.Name)
+				return (0 == String.Compare ("software", keyname, true, CultureInfo.InvariantCulture));
 
 			return false;
 		}
