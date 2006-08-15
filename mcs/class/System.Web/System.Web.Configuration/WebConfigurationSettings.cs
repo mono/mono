@@ -246,9 +246,7 @@ namespace System.Web.Configuration
 				data.DirName = dir;
 				data.LoadFromFile (wcfile);
 				fileToConfig [dir] = data;
-#if !TARGET_JVM // no remoting support yet in Grasshopper
 				RemotingConfiguration.Configure (wcfile);
-#endif
 			}
 
 			return data;
