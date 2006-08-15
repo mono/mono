@@ -4635,7 +4635,7 @@ namespace System.Windows.Forms {
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-			if (!hwnd.visible || !hwnd.expose_pending) {
+			if (!hwnd.visible || !hwnd.expose_pending || !hwnd.Mapped) {
 				return;
 			}
 
