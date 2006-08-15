@@ -1,5 +1,13 @@
 2006-08-15  Chris Toshok  <toshok@ximian.com>
 
+	* Binding.cs: fix PullData/SetPropertyValue.  We don't want to
+	pass manager.Current.GetType() to ParseData.  It has to be the
+	property type.  So, hold off doing the ParseData until we're in
+	SetPropertyValue where we know the type.  This fixes the crash in
+	#78821 but the textbox is still empty.
+
+2006-08-15  Chris Toshok  <toshok@ximian.com>
+
 	* DataGrid.cs:
 	- when we're scrolling, only call Edit() again if the
 	current cell is still unobscured. Fixes bug #78927.

@@ -125,7 +125,7 @@ namespace System.Windows.Forms {
 				return;
 
 			control_property = TypeDescriptor.GetProperties (control).Find (property_name, true);			
-			
+
 			if (control_property == null)
 				throw new ArgumentException (String.Concat ("Cannot bind to property '", property_name, "' on target control."));
 			if (control_property.IsReadOnly)
@@ -143,8 +143,6 @@ namespace System.Windows.Forms {
 			if (control == null || control.BindingContext == null)
 				return;
 
-			Console.WriteLine ("data source  {0}   member name:  {1}",
-					   data_source, data_member);
 			manager = control.BindingContext [data_source, data_member];
 
 			manager.AddBinding (this);
@@ -162,7 +160,6 @@ namespace System.Windows.Forms {
 				return;
 
 			data = control_property.GetValue (control);
-			data = ParseData (data, manager.Current.GetType());
 			SetPropertyValue (data);
 		}
 
@@ -203,10 +200,11 @@ namespace System.Windows.Forms {
 
 		private void SetPropertyValue (object data)
 		{
-			PropertyDescriptor pd = TypeDescriptor.GetProperties (data_source).Find (binding_member_info.BindingField, true);
+			PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (binding_member_info.BindingField, true);
 			if (pd.IsReadOnly)
 				return;
-			pd.SetValue (data_source, data);
+			data = ParseData (data, pd.PropertyType);
+			pd.SetValue (manager.Current, data);
 		}
 
 		private void CurrentChangedHandler (object sender, EventArgs e)
