@@ -1,3 +1,9 @@
+2006-08-15  Marek Safar  <marek.safar@seznam.cz>
+
+	* expression.cs (SizeOf.DoResolve): Check for void type. Fixed enum types
+	support.
+	* class.cs, ecore.cs, statement.cs: Merged to one error message.
+
 2006-08-13  Miguel de Icaza  <miguel@novell.com>
 
 	* assign.cs: Catch attempts to assign to a method groups in += and

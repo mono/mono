@@ -303,6 +303,11 @@ namespace Mono.CSharp {
 
 		}
 
+		public static void Error_VoidInvalidInTheContext (Location loc)
+		{
+			Report.Error (1547, loc, "Keyword `void' cannot be used in this context");
+		}
+
 		public virtual void Error_ValueCannotBeConverted (Location loc, Type target, bool expl)
 		{
 			if (Type.FullName == target.FullName){

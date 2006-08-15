@@ -3274,9 +3274,8 @@ namespace Mono.CSharp {
 
 			foreach (Type partype in parameters){
 				if (partype == TypeManager.void_type) {
-					Report.Error (
-						1547, Location, "Keyword 'void' cannot " +
-						"be used in this context");
+					// TODO: location is wrong
+					Expression.Error_VoidInvalidInTheContext (Location);
 					return false;
 				}
 
@@ -5198,7 +5197,8 @@ namespace Mono.CSharp {
 				return false;
 
 			if (MemberType == TypeManager.void_type) {
-				Report.Error (1547, Location, "Keyword 'void' cannot be used in this context");
+				// TODO: wrong location
+				Expression.Error_VoidInvalidInTheContext (Location);
 				return false;
 			}
 
