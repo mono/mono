@@ -29,7 +29,7 @@
 
 using System;
 using System.Collections;
-using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using System.Xml;
@@ -41,8 +41,8 @@ namespace Microsoft.Build.BuildEngine {
 		bool			isImported;
 		GroupingCollection	parentCollection;
 		Project			parentProject;
-		IList			properties;
-		IDictionary		propertiesByName;
+		List <BuildProperty>	properties;
+		Dictionary <string, BuildProperty>	propertiesByName;
 
 		public BuildPropertyGroup ()
 			: this (null, null)
@@ -58,13 +58,13 @@ namespace Microsoft.Build.BuildEngine {
 			this.propertyGroup = xmlElement;
 
 			if (FromXml) {
-				this.properties = new ArrayList ();
+				this.properties = new List <BuildProperty> ();
 				foreach (XmlElement xe in propertyGroup.ChildNodes) {
 					BuildProperty bp = new BuildProperty (parentProject, xe);
 					AddProperty (bp);
 				} 
 			} else
-				this.propertiesByName = CollectionsUtil.CreateCaseInsensitiveHashtable ();
+				this.propertiesByName = new Dictionary <string, BuildProperty> (StringComparer.InvariantCultureIgnoreCase);
 		}
 
 		public BuildProperty AddNewProperty (string propertyName,
@@ -102,8 +102,8 @@ namespace Microsoft.Build.BuildEngine {
 			if (FromXml) {
 				properties.Add (property);
 			} else {
-				if (propertiesByName.Contains (property.Name)) {
-					BuildProperty existing = (BuildProperty) propertiesByName [property.Name];
+				if (propertiesByName.ContainsKey (property.Name)) {
+					BuildProperty existing = propertiesByName [property.Name];
 					if (property.PropertyType <= existing.PropertyType) {
 						propertiesByName.Remove (property.Name);
 						propertiesByName.Add (property.Name, property);
@@ -132,8 +132,8 @@ namespace Microsoft.Build.BuildEngine {
 				foreach (BuildProperty bp in properties)
 					yield return bp;
 			} else if (propertiesByName != null) {
-				foreach (DictionaryEntry de in propertiesByName)
-					yield return (BuildProperty) de.Value;
+				foreach (KeyValuePair <string, BuildProperty> kvp in propertiesByName)
+					yield return kvp.Value;
 			} else
 				throw new Exception ("PropertyGroup is not initialized.");
 		}
@@ -164,10 +164,10 @@ namespace Microsoft.Build.BuildEngine {
 					 string propertyValue,
 					 bool treatPropertyValueAsLiteral)
 		{
-			if (propertiesByName.Contains (propertyName) == false) {
+			if (!propertiesByName.ContainsKey (propertyName)) {
 				AddNewProperty (propertyName, propertyValue);
 			}
-			((BuildProperty) propertiesByName [propertyName]).Value = propertyValue;
+			propertiesByName [propertyName].Value = propertyValue;
 		}
 		
 		internal void Evaluate ()
@@ -176,7 +176,13 @@ namespace Microsoft.Build.BuildEngine {
 				throw new InvalidOperationException ();
 			}
 			foreach (BuildProperty bp in properties) {
-				bp.Evaluate ();
+				if (bp.Condition == String.Empty)
+					bp.Evaluate ();
+				else {
+					ConditionExpression ce = ConditionParser.ParseCondition (bp.Condition);
+					if (ce.BoolEvaluate (parentProject))
+						bp.Evaluate ();
+				}
 			}
 		}
 		
@@ -222,8 +228,8 @@ namespace Microsoft.Build.BuildEngine {
 				if (FromXml)
 					throw new InvalidOperationException ("Properties in persisted property groups cannot be accessed by name.");
 				
-				if (propertiesByName.Contains (propertyName)) {
-					return (BuildProperty) propertiesByName [propertyName];
+				if (propertiesByName.ContainsKey (propertyName)) {
+					return propertiesByName [propertyName];
 				} else {
 					return null;
 				}

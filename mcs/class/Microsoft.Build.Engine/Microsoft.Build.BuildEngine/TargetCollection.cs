@@ -29,17 +29,18 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Microsoft.Build.BuildEngine {
 	public class TargetCollection : ICollection, IEnumerable {
 		
-		IDictionary	targetsByName;
-		Project		parentProject;
+		Dictionary <string, Target>	targetsByName;
+		Project				parentProject;
 	
 		internal TargetCollection (Project project)
 		{
-			this.targetsByName = new Hashtable ();
+			this.targetsByName = new Dictionary <string, Target> ();
 			this.parentProject = project;
 		}
 
@@ -57,18 +58,18 @@ namespace Microsoft.Build.BuildEngine {
 
 		public void CopyTo (Array array, int index)
 		{
-			targetsByName.Values.CopyTo (array, index);
+			targetsByName.Values.CopyTo ((Target[]) array, index);
 		}
 
 		public bool Exists (string targetName)
 		{
-			return targetsByName.Contains (targetName);
+			return targetsByName.ContainsKey (targetName);
 		}
 
 		public IEnumerator GetEnumerator ()
 		{
-			foreach (DictionaryEntry de in targetsByName) {
-				yield return (Target)de.Key;
+			foreach (KeyValuePair <string, Target> kvp in targetsByName) {
+				yield return kvp.Key;
 			}
 		}
 
@@ -95,9 +96,12 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
-		public Target this[string index] {
+		public Target this [string index] {
 			get {
-				return (Target) targetsByName [index];
+				if (targetsByName.ContainsKey (index))
+					return targetsByName [index];
+				else
+					return null;
 			}
 		}
 	}

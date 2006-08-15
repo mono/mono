@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -169,10 +170,9 @@ namespace Microsoft.Build.BuildEngine {
 		
 		ITaskItem[] ConvertToITaskItemArray ()
 		{
-			ArrayList finalItems = new ArrayList ();
+			List <ITaskItem> finalItems = new List <ITaskItem> ();
 			ArrayList tempItems = new ArrayList ();
 			ITaskItem[] array;
-			ITaskItem[] finalArray;
 			
 			foreach (object o in objects) {
 				if (o is ItemReference) {
@@ -205,11 +205,7 @@ namespace Microsoft.Build.BuildEngine {
 				}
 			}
 			
-			finalArray = new ITaskItem [finalItems.Count];
-			int i = 0;
-			foreach (ITaskItem item in finalItems)
-				finalArray [i++] = item;
-			return finalArray;
+			return finalItems.ToArray ();
 		}
 		
 		ITaskItem[] ConvertToITaskItemArrayFromString (string source)

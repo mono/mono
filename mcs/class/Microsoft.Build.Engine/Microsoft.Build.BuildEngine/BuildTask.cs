@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Reflection;
 using System.Xml;
@@ -76,7 +77,7 @@ namespace Microsoft.Build.BuildEngine {
 			
 			taskEngine = new TaskEngine (parentTarget.Project);
 			
-			taskEngine.Prepare (InitializeTask (), this.taskElement,GetParameters (), this.Type);
+			taskEngine.Prepare (InitializeTask (), this.taskElement, GetParameters (), this.Type);
 			
 			result = taskEngine.Execute ();
 			
@@ -91,9 +92,7 @@ namespace Microsoft.Build.BuildEngine {
 		[MonoTODO]
 		public string[] GetParameterNames ()
 		{
-			int attributesCount = 0;
-			ArrayList tempNames = new ArrayList ();
-			string[] names;
+			List <string> tempNames = new List <string> ();
 			
 			foreach (XmlAttribute xmlAttribute in taskElement.Attributes) {
 				if (xmlAttribute.Name == "Condition")
@@ -102,10 +101,8 @@ namespace Microsoft.Build.BuildEngine {
 					continue;
 				tempNames.Add (xmlAttribute.Name);
 			}
-			names = new string [tempNames.Count];
-			foreach (string name in tempNames)
-				names [attributesCount++] = name;
-			return names;
+			
+			return tempNames.ToArray ();
 		}
 		
 		[MonoTODO]
@@ -155,9 +152,9 @@ namespace Microsoft.Build.BuildEngine {
 			return task;
 		}
 		
-		private IDictionary GetParameters ()
+		private IDictionary <string, string> GetParameters ()
 		{
-			IDictionary parameters = new Hashtable ();
+			Dictionary <string, string> parameters = new Dictionary <string, string> ();
 			
 			string[] parameterNames = GetParameterNames ();
 			

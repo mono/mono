@@ -28,7 +28,7 @@
 #if NET_2_0
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Build.Framework;
 using Mono.XBuild.Framework;
@@ -37,17 +37,17 @@ namespace Microsoft.Build.BuildEngine {
 	internal class TaskDatabase {
 		
 		// full name -> AssemblyLoadInfo
-		IDictionary	assemblyInformation;
+		Dictionary <string, AssemblyLoadInfo>	assemblyInformation;
 		// full name -> Type
-		IDictionary	typesByFullName;
+		Dictionary <string, Type>		typesByFullName;
 		// short name -> Type
-		IDictionary	typesByShortName;
+		Dictionary <string, Type>		typesByShortName;
 	
 		public TaskDatabase ()
 		{
-			assemblyInformation = new Hashtable ();
-			typesByFullName = new Hashtable ();
-			typesByShortName = new Hashtable ();
+			assemblyInformation = new Dictionary <string, AssemblyLoadInfo> ();
+			typesByFullName = new Dictionary <string, Type> ();
+			typesByShortName = new Dictionary <string, Type> ();
 		}
 		
 		public void RegisterTask (string classname, AssemblyLoadInfo assemblyLoadInfo)
@@ -68,24 +68,24 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public Type GetTypeFromClassName (string classname)
 		{
-			if (typesByFullName.Contains (classname) == false) {
-				if (typesByShortName.Contains (classname) == false)
+			if (typesByFullName.ContainsKey (classname) == false) {
+				if (typesByShortName.ContainsKey (classname) == false)
 					throw new Exception ("Not registered task.");
 				else {
-					return (Type) typesByShortName [classname];
+					return typesByShortName [classname];
 				}
 			} else
-				return (Type) typesByFullName [classname];
+				return typesByFullName [classname];
 		}
 		
 		public void CopyTasks (TaskDatabase taskDatabase)
 		{
-			foreach (DictionaryEntry de in taskDatabase.assemblyInformation)
-				assemblyInformation.Add (de.Key, de.Value);
-			foreach (DictionaryEntry de in taskDatabase.typesByFullName)
-				typesByFullName.Add (de.Key, de.Value);
-			foreach (DictionaryEntry de in taskDatabase.typesByShortName)
-				typesByShortName.Add (de.Key, de.Value);
+			foreach (KeyValuePair <string, AssemblyLoadInfo> kvp in taskDatabase.assemblyInformation)
+				assemblyInformation.Add (kvp.Key, kvp.Value);
+			foreach (KeyValuePair <string, Type> kvp in taskDatabase.typesByFullName)
+				typesByFullName.Add (kvp.Key, kvp.Value);
+			foreach (KeyValuePair <string, Type> kvp in taskDatabase.typesByShortName)
+				typesByShortName.Add (kvp.Key, kvp.Value);
 		}
 		
 		private string GetShortName (string fullname)

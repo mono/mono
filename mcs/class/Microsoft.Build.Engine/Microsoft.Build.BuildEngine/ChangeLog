@@ -1,3 +1,10 @@
+2006-08-06  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildTask.cs, UsingTaskCollection.cs, ImportCollection.cs,
+	Target.cs, TaskDatabase.cs, TaskEngine.cs, BuildItemGroup.cs,
+	BuildChoose.cs, DirectoryScanner.cs, BuildPropertyGroup.cs,
+	TargetCollection.cs, Engine.cs, Project.cs: Started to use generics.
+
 2006-06-25  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Token.cs: Changed names: removed "than".

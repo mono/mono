@@ -30,6 +30,7 @@
 using System;
 using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
 using System.Xml;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -39,7 +40,7 @@ namespace Microsoft.Build.BuildEngine {
 	
 		XmlAttribute		condition;
 		bool			isImported;
-		IList			buildItems;
+		List <BuildItem>	buildItems;
 		GroupingCollection	parentCollection;
 		Project			parentProject;
 		XmlElement		itemGroupElement;
@@ -52,7 +53,7 @@ namespace Microsoft.Build.BuildEngine {
 		internal BuildItemGroup (XmlElement xmlElement, Project project)
 		{
 			this.itemGroupElement = xmlElement;
-			this.buildItems = new ArrayList ();
+			this.buildItems = new List <BuildItem> ();
 			this.isImported = false;
 			this.parentProject = project;
 			
@@ -73,7 +74,13 @@ namespace Microsoft.Build.BuildEngine {
 		internal void Evaluate ()
 		{
 			foreach (BuildItem bi in buildItems) {
-				bi.Evaluate ();
+				if (bi.Condition == String.Empty)
+					bi.Evaluate ();
+				else {
+					ConditionExpression ce = ConditionParser.ParseCondition (bi.Condition);
+					if (ce.BoolEvaluate (parentProject))
+						bi.Evaluate ();
+				}
 			}
 		}
 
@@ -110,7 +117,7 @@ namespace Microsoft.Build.BuildEngine {
 		public void Clear ()
 		{
 			//FIXME: should this remove all build items?
-			buildItems = new ArrayList ();
+			buildItems = new List <BuildItem> ();
 		}
 
 		[MonoTODO]
@@ -140,10 +147,7 @@ namespace Microsoft.Build.BuildEngine {
 
 		public BuildItem[] ToArray ()
 		{
-			BuildItem[] array;
-			array = new BuildItem [Count];
-			buildItems.CopyTo (array, 0);
-			return array;
+			return buildItems.ToArray ();
 		}
 		
 		internal string ConvertToString (OldExpression transform,
@@ -202,7 +206,7 @@ namespace Microsoft.Build.BuildEngine {
 
 		public BuildItem this [int index] {
 			get {
-				return (BuildItem) buildItems [index];
+				return buildItems [index];
 			}
 		}
 		

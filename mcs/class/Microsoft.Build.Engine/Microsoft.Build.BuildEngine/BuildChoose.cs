@@ -28,7 +28,7 @@
 #if NET_2_0
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Xml;
 
 namespace Microsoft.Build.BuildEngine {
@@ -37,13 +37,13 @@ namespace Microsoft.Build.BuildEngine {
 		BuildWhen	otherwise;
 		Project		project;
 		XmlElement	xmlElement;
-		IList		whens;
+		List <BuildWhen>	whens;
 		
 		public BuildChoose (XmlElement xmlElement, Project project)
 		{
 			this.xmlElement = xmlElement;
 			this.project = project;
-			this.whens = new ArrayList ();
+			this.whens = new List <BuildWhen> ();
 		}
 		
 		public void Evaluate ()
@@ -60,7 +60,7 @@ namespace Microsoft.Build.BuildEngine {
 			set { otherwise = value; }
 		}
 		
-		public IList Whens {
+		public List <BuildWhen> Whens {
 			get { return whens; }
 			set { whens = value; }
 		}

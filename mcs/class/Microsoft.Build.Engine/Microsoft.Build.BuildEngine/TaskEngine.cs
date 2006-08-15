@@ -28,7 +28,7 @@
 #if NET_2_0
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Reflection;
 using System.Xml;
@@ -58,23 +58,23 @@ namespace Microsoft.Build.BuildEngine {
 		}
 		
 		public void Prepare (ITask task, XmlElement taskElement,
-				     IDictionary parameters, Type taskType)
+				     IDictionary <string, string> parameters, Type taskType)
 		{
-			Hashtable	values;
+			Dictionary <string, object>	values;
 			PropertyInfo	currentProperty;
 			PropertyInfo[]	properties;
-		
+			
 			this.task = task;
 			this.taskElement = taskElement;
 			this.taskType = taskType;
-			values = new Hashtable ();
+			values = new Dictionary <string, object> ();
 			
-			foreach (DictionaryEntry de in parameters) {
-				currentProperty = taskType.GetProperty ((string) de.Key);
+			foreach (KeyValuePair <string, string> de in parameters) {
+				currentProperty = taskType.GetProperty (de.Key);
 				if (currentProperty == null)
 					throw new InvalidProjectFileException (String.Format ("Task does not have property \"{0}\" defined",
 						de.Key));
-				values.Add ((string) de.Key, GetObjectFromString ((string) de.Value, currentProperty.PropertyType)); 
+				values.Add (de.Key, GetObjectFromString (de.Value, currentProperty.PropertyType));
 			}
 			
 			properties = taskType.GetProperties ();

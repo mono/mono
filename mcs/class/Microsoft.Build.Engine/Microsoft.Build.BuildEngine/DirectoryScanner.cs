@@ -28,7 +28,7 @@
 #if NET_2_0
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Microsoft.Build.BuildEngine {
@@ -45,9 +45,9 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public void Scan ()
 		{
-			Hashtable excludedItems;
-			ArrayList includedItems;
-			string[] splittedInclude, splittedExclude;
+			Dictionary <string, bool> excludedItems;
+			List <string> includedItems;
+			string[] splitInclude, splitExclude;
 			
 			if (includes == null)
 				throw new ArgumentNullException ("Includes");
@@ -56,33 +56,33 @@ namespace Microsoft.Build.BuildEngine {
 			if (baseDirectory == null)
 				throw new ArgumentNullException ("BaseDirectory");
 			
-			excludedItems = new Hashtable ();
-			includedItems = new ArrayList ();
+			excludedItems = new Dictionary <string, bool> ();
+			includedItems = new List <string> ();
 			
-			splittedInclude = includes.Split (';');
-			splittedExclude = excludes.Split (';');
+			splitInclude = includes.Split (';');
+			splitExclude = excludes.Split (';');
 			
 			if (excludes != String.Empty) {
-				foreach (string si in splittedExclude) {
+				foreach (string si in splitExclude) {
 					ProcessExclude (si, excludedItems);
 				}
 			}
 			if (includes != String.Empty) {
-				foreach (string si in splittedInclude) {
+				foreach (string si in splitInclude) {
 					ProcessInclude (si, excludedItems, includedItems);
 				}
 			}
 
-			matchedFilenames = (string[])includedItems.ToArray (typeof (string));
+			matchedFilenames = includedItems.ToArray ();
 		}
 		
-		private void ProcessInclude (string name, Hashtable excludedItems, ArrayList includedItems)
+		private void ProcessInclude (string name, Dictionary <string, bool> excludedItems, List <string> includedItems)
 		{
 			string[] separatedPath;
 			FileInfo[] fileInfo;
 
 			if (name.IndexOf ('?') == -1 && name.IndexOf ('*') == -1) {
-				if (!excludedItems.Contains (Path.GetFullPath(name)))
+				if (!excludedItems.ContainsKey (Path.GetFullPath(name)))
 					includedItems.Add (name);
 			} else {
 				if (name.Split (Path.DirectorySeparatorChar).Length > name.Split (Path.AltDirectorySeparatorChar).Length) {
@@ -94,19 +94,19 @@ namespace Microsoft.Build.BuildEngine {
 					return;
 				fileInfo = ParseIncludeExclude (separatedPath, 0, baseDirectory);
 				foreach (FileInfo fi in fileInfo)
-					if (!excludedItems.Contains (fi.FullName))
+					if (!excludedItems.ContainsKey (fi.FullName))
 						includedItems.Add (fi.FullName);
 			}
 		}
 		
-		private void ProcessExclude (string name, Hashtable excludedItems)
+		private void ProcessExclude (string name, Dictionary <string, bool> excludedItems)
 		{
 			string[] separatedPath;
 			FileInfo[] fileInfo;
 			
 			if (name.IndexOf ('?') == -1 && name.IndexOf ('*') == -1) {
-				if (!excludedItems.Contains (Path.GetFullPath (name)))
-					excludedItems.Add (Path.GetFullPath (name), null);
+				if (!excludedItems.ContainsKey (Path.GetFullPath (name)))
+					excludedItems.Add (Path.GetFullPath (name), true);
 			} else {
 				if (name.Split (Path.DirectorySeparatorChar).Length > name.Split (Path.AltDirectorySeparatorChar).Length) {
 					separatedPath = name.Split (Path.DirectorySeparatorChar);
@@ -117,8 +117,8 @@ namespace Microsoft.Build.BuildEngine {
 					return;
 				fileInfo = ParseIncludeExclude (separatedPath, 0, baseDirectory);
 				foreach (FileInfo fi in fileInfo)
-					if (!excludedItems.Contains (fi.FullName))
-						excludedItems.Add (fi.FullName, null);
+					if (!excludedItems.ContainsKey (fi.FullName))
+						excludedItems.Add (fi.FullName, true);
 			}
 		}
 		
@@ -133,7 +133,7 @@ namespace Microsoft.Build.BuildEngine {
 			} else {
 				DirectoryInfo[] di;
 				FileInfo[] fi;
-				ArrayList fileInfos = new ArrayList ();
+				List <FileInfo> fileInfos = new List <FileInfo> ();
 				if (input [ptr] == ".") {
 					di = new DirectoryInfo [1];
 					di [0] = directory;

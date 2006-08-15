@@ -30,19 +30,20 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Microsoft.Build.BuildEngine {
 	public class UsingTaskCollection : ICollection, IEnumerable {
 	
 		Project		parentProject;
 		object		syncRoot;
-		IList		usingTasks;
+		List <UsingTask>	usingTasks;
 		
 		internal UsingTaskCollection (Project parentProject)
 		{
 			this.parentProject = parentProject;
 			this.syncRoot = new Object ();
-			this.usingTasks = new ArrayList ();
+			this.usingTasks = new List <UsingTask> ();
 		}
 		
 		internal void Add (UsingTask usingTask)
@@ -59,7 +60,7 @@ namespace Microsoft.Build.BuildEngine {
 		[MonoTODO]
 		public void CopyTo (Array array, int index)
 		{
-			usingTasks.CopyTo (array, index);
+			usingTasks.CopyTo ((UsingTask[]) array, index);
 		}
 		
 		[MonoTODO]

@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.Build.Framework;
 using Mono.XBuild.Utilities;
@@ -44,10 +45,10 @@ namespace Microsoft.Build.BuildEngine {
 		EventSource		eventSource;
 		bool			buildStarted;
 		BuildPropertyGroup	globalProperties;
-		IDictionary		importedProjects;
-		IList			loggers;
+		//IDictionary		importedProjects;
+		List <ILogger>		loggers;
 		bool			onlyLogCriticalEvents;
-		IDictionary		projects;
+		Dictionary <string, Project>	projects;
 
 		static Engine		globalEngine;
 		static Version		version;
@@ -68,9 +69,9 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			this.binPath = binPath;
 			this.buildEnabled = true;
-			this.projects = new Hashtable ();
+			this.projects = new Dictionary <string, Project> ();
 			this.eventSource = new EventSource ();
-			this.loggers = new ArrayList ();
+			this.loggers = new List <ILogger> ();
 			this.buildStarted = false;
 			this.globalProperties = new BuildPropertyGroup ();
 			
@@ -167,7 +168,7 @@ namespace Microsoft.Build.BuildEngine {
 			bool result;
 			Project project;
 			
-			if (projects.Contains (projectFile)) {
+			if (projects.ContainsKey (projectFile)) {
 				project = (Project) projects [projectFile];
 				LogProjectStarted (project, targetNames);
 				result = project.Build (targetNames, targetOutputs);
@@ -233,7 +234,7 @@ namespace Microsoft.Build.BuildEngine {
 
 		public void UnloadAllProjects ()
 		{
-			foreach (DictionaryEntry e in projects)
+			foreach (KeyValuePair <string, Project> e in projects)
 				UnloadProject ((Project) e.Value);
 		}
 

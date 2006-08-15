@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Xml;
 using Microsoft.Build.Framework;
 
@@ -44,9 +45,8 @@ namespace Microsoft.Build.BuildEngine {
 		string		name;
 		Project		project;
 		XmlElement	targetElement;
-		ArrayList	onErrorElements;
-		
-		ArrayList	buildTasks;
+		List <XmlElement>	onErrorElements;
+		List <BuildTask>	buildTasks;
 		
 		internal Target (XmlElement targetElement, Project project)
 		{
@@ -64,9 +64,9 @@ namespace Microsoft.Build.BuildEngine {
 			this.engine = project.ParentEngine;
 			this.isImported = false;;
 
-			this.onErrorElements  = new ArrayList ();
+			this.onErrorElements  = new List <XmlElement> ();
 			this.buildState = BuildState.NotStarted;
-			this.buildTasks = new ArrayList ();
+			this.buildTasks = new List <BuildTask> ();
 			this.batchingImpl = new BatchingImpl (project, this.targetElement);
 
 			foreach (XmlNode xn in targetElement.ChildNodes) {

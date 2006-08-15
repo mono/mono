@@ -30,18 +30,19 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Xml;
 
 namespace Microsoft.Build.BuildEngine {
 	public class ImportCollection : ICollection, IEnumerable {
 		
-		IList		imports;
+		List <Import>	imports;
 		Project		parentProject;
 		
 		internal ImportCollection (Project parentProject)
 		{
 			this.parentProject = parentProject;
-			this.imports = new ArrayList ();
+			this.imports = new List <Import> ();
 		}
 		
 		internal void Add (Import import)

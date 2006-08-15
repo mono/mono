@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Text;
@@ -41,13 +42,14 @@ namespace Microsoft.Build.BuildEngine {
 	public class Project {
 	
 		bool				buildEnabled;
-		IDictionary			conditionedProperties;
+		//IDictionary			conditionedProperties;
+		Dictionary <string, List <string>>	conditionedProperties;
 		string[]			defaultTargets;
 		Encoding			encoding;
 		BuildItemGroup			evaluatedItems;
 		BuildItemGroup			evaluatedItemsIgnoringCondition;
-		IDictionary			evaluatedItemsByName;
-		IDictionary			evaluatedItemsByNameIgnoringCondition;
+		Dictionary <string, BuildItemGroup>	evaluatedItemsByName;
+		Dictionary <string, BuildItemGroup>	evaluatedItemsByNameIgnoringCondition;
 		BuildPropertyGroup		evaluatedProperties;
 		string				firstTargetName;
 		string				fullFileName;
@@ -200,24 +202,29 @@ namespace Microsoft.Build.BuildEngine {
 			return true;
 		}
 
+		[MonoTODO]
 		public string[] GetConditionedPropertyValues (string propertyName)
 		{
-			StringCollection sc = (StringCollection) conditionedProperties [propertyName];
-			string[] propertyValues = new string [sc.Count];
-			int i  = 0;
-			foreach (string propertyValue in sc)
-				propertyValues [i++] = propertyValue;
-			return propertyValues;
+			if (conditionedProperties.ContainsKey (propertyName))
+				return conditionedProperties [propertyName].ToArray ();
+			else
+				return new string [0];
 		}
 
 		public BuildItemGroup GetEvaluatedItemsByName (string itemName)
 		{
-			return (BuildItemGroup) evaluatedItemsByName [itemName];
+			if (evaluatedItemsByName.ContainsKey (itemName))
+				return evaluatedItemsByName [itemName];
+			else
+				return null;
 		}
 
 		public BuildItemGroup GetEvaluatedItemsByNameIgnoringCondition (string itemName)
 		{
-			return (BuildItemGroup) evaluatedItemsByNameIgnoringCondition [itemName];
+			if (evaluatedItemsByNameIgnoringCondition.ContainsKey (itemName))
+				return evaluatedItemsByNameIgnoringCondition [itemName];
+			else
+				return null;
 		}
 
 		public string GetEvaluatedProperty (string propertyName)
@@ -327,8 +334,8 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			evaluatedItems = new BuildItemGroup (null, this);
 			evaluatedItemsIgnoringCondition = new BuildItemGroup (null, this);
-			evaluatedItemsByName = CollectionsUtil.CreateCaseInsensitiveHashtable ();
-			evaluatedItemsByNameIgnoringCondition = CollectionsUtil.CreateCaseInsensitiveHashtable ();
+			evaluatedItemsByName = new Dictionary <string, BuildItemGroup> (StringComparer.InvariantCultureIgnoreCase);
+			evaluatedItemsByNameIgnoringCondition = new Dictionary <string, BuildItemGroup> (StringComparer.InvariantCultureIgnoreCase);
 			evaluatedProperties = new BuildPropertyGroup ();
 
 			InitializeProperties ();
@@ -342,8 +349,10 @@ namespace Microsoft.Build.BuildEngine {
 						bpg.Evaluate ();
 				}
 			}
+			
 			foreach (Import import in Imports)
 				import.Evaluate ();
+			
 			foreach (BuildItemGroup big in ItemGroups) {
 				if (big.Condition == String.Empty)
 					big.Evaluate ();
@@ -353,6 +362,7 @@ namespace Microsoft.Build.BuildEngine {
 						big.Evaluate ();
 				}
 			}
+			
 			foreach (UsingTask usingTask in UsingTasks)
 				usingTask.Evaluate ();
 		}
