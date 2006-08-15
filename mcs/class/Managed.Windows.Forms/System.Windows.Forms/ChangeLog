@@ -1,3 +1,8 @@
+2006-08-15  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* MessageBox.cs: Prevent potential NRE exception.
+	* TextBoxBase.cs: AutoSize only applies if MultiLine is false. Fixes #78889
+
 2006-08-14  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* MessageBox.cs: Calculate the owner of a messagebox, also make

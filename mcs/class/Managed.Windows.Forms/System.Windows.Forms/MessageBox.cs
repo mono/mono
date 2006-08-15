@@ -99,7 +99,9 @@ namespace System.Windows.Forms
 				if (owner != null) {
 					Owner = Control.FromHandle(owner.Handle).FindForm();
 				} else {
-					Owner = Application.MWFThread.Current.Context.MainForm;
+					if (Application.MWFThread.Current.Context != null) {
+						Owner = Application.MWFThread.Current.Context.MainForm;
+					}
 				}
 				this.Text = caption;
 			}

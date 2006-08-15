@@ -756,7 +756,7 @@ namespace System.Windows.Forms {
 		protected override void OnFontChanged(EventArgs e) {
 			base.OnFontChanged (e);
 
-			if (auto_size) {
+			if (auto_size && !multiline) {
 				if (PreferredHeight != ClientSize.Height) {
 					Height = PreferredHeight;
 				}
