@@ -34,6 +34,7 @@ using Microsoft.Build.Framework;
 namespace Microsoft.Build.Utilities
 {
 	[LoadInSeparateAppDomainAttribute]
+	[MonoTODO]
 	public abstract class AppDomainIsolatedTask : MarshalByRefObject, ITask
 	{
 		IBuildEngine		buildEngine;

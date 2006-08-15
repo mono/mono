@@ -1,3 +1,7 @@
+2006-08-15  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* ReservedNameUtils.cs: Removed redundant function call.
+
 2006-04-14  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* ReservedNameUtils.cs: Added.

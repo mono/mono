@@ -64,7 +64,7 @@ namespace Mono.XBuild.Utilities {
 
 		public static bool IsReservedMetadataName (string metadataName)
 		{
-			return reservedMetadataHash.Contains (metadataName.ToLower ());
+			return reservedMetadataHash.Contains (metadataName);
 		}
 		
 		public static string GetReservedMetadata (string itemSpec,
