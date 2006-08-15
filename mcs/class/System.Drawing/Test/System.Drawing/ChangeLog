@@ -1,3 +1,10 @@
+2006-08-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FontFamilyTest.cs: Ignore test cases if we cannot get any font 
+	family from GDI+.
+	* TestFont.cs: Ignore test cases if we cannot get any font family 
+	from GDI+.
+
 2006-08-14  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* GDIPlusTest.cs: Re-add LOGONT definition as a class (instead of a

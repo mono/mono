@@ -48,8 +48,13 @@ namespace MonoTests.System.Drawing {
 		{
 			bitmap = new Bitmap (10, 10);
 			graphic = Graphics.FromImage (bitmap);
-			using (FontFamily ff = new FontFamily (GenericFontFamilies.Monospace)) {
-				name = ff.Name;
+			try {
+				using (FontFamily ff = new FontFamily (GenericFontFamilies.Monospace)) {
+					name = ff.Name;
+				}
+			}
+			catch (ArgumentException) {
+				Assert.Ignore ("No font family could be found.");
 			}
 		}
 
