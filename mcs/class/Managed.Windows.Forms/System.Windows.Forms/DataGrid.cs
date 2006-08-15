@@ -41,31 +41,10 @@ namespace System.Windows.Forms
 	internal struct DataGridRow {
 		public bool IsSelected;
 		public bool IsExpanded;
-		public int VerticalOffset {
-			get { return verticalOffset; }
-			set { verticalOffset = value; }
-		}
-		public int Height {
-			get { return height; }
-			set { height = value; }
-		}
+		public int VerticalOffset;
+		public int Height;
 		public int RelationHeight;
 		public Rectangle relation_area; /* the Y coordinate of this rectangle is updated as needed */
-
-		int verticalOffset;
-		int height;
-	}
-
-	internal class DataGridParentRow
-	{
-		public string datamember;
-		public DataRowView view;
-
-		public DataGridParentRow (string datamember, DataRowView view)
-		{
-			this.datamember = datamember;
-			this.view = view;
-		}
 	}
 
 	internal class DataGridDataSource
@@ -1430,6 +1409,7 @@ namespace System.Windows.Forms
 				DataGridCell new_cell = new DataGridCell (testinfo.Row, testinfo.Column);
 
 				if ((new_cell.Equals (current_cell) == false) || (!is_editing)) {
+					EnsureCellVisibility (new_cell);
 					CurrentCell = new_cell;
 					Edit ();
 				} else {
@@ -2379,7 +2359,12 @@ namespace System.Windows.Forms
 
 			XplatUI.ScrollWindow (Handle, area, pixels, 0, false);
 
-			Edit ();
+			int pixel_offset = GetColumnStartingPixel (CurrentColumn);
+			int next_pixel_offset = pixel_offset + CurrentTableStyle.GridColumnStyles[CurrentColumn].Width;
+
+			if (pixel_offset >= horiz_pixeloffset
+			    && next_pixel_offset < horiz_pixeloffset + cells_area.Width)
+				Edit ();
 			
 		}
 
@@ -2413,7 +2398,9 @@ namespace System.Windows.Forms
 			/* scroll the window */
 			XplatUI.ScrollWindow (Handle, rows_area, 0, pixels, false);
 
-			Edit ();
+			/* if the row is still */
+			if (CurrentRow >= first_visiblerow && CurrentRow < first_visiblerow + visiblerow_count)
+				Edit ();
 		}
 
 		#endregion Private Instance Methods

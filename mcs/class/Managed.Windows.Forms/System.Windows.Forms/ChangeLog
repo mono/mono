@@ -1,3 +1,14 @@
+2006-08-15  Chris Toshok  <toshok@ximian.com>
+
+	* DataGrid.cs:
+	- when we're scrolling, only call Edit() again if the
+	current cell is still unobscured. Fixes bug #78927.
+	- when handling mousedown on a cell, ensure the cell is visible
+	before calling Edit.
+	- remove the properties from DataGridRow, and remove the
+	DataGridParentRow class altogether.
+	
+
 2006-08-15  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* TextBoxBase.cs (set_Text): Don't use base.Text, instead just
