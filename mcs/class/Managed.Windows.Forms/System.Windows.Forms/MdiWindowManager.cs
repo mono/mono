@@ -56,7 +56,7 @@ namespace System.Windows.Forms {
 			prev_bounds = form.Bounds;
 			prev_window_state = form.window_state;
 			form.GotFocus += new EventHandler (FormGotFocus);
-
+			form.Closed += new EventHandler (FormClosed);
 			draw_maximized_buttons = new PaintEventHandler (DrawMaximizedButtons);
 			CreateIconMenus ();
 		}
@@ -281,7 +281,7 @@ namespace System.Windows.Forms {
 			form.WindowState = FormWindowState.Maximized;
 		}
 
-		protected override void CloseClicked (object sender, EventArgs e)
+		private void FormClosed (object sender, EventArgs e)
 		{
 			mdi_container.CloseChildForm (form);
 			if (form.WindowState == FormWindowState.Maximized)
