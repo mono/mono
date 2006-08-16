@@ -1,3 +1,7 @@
+2006-08-16 Yoni Klain <yonik@mainsoft.com>
+
+	* DataSourceViewTest.cs; DataSourceControlTest.cs : new tests
+
 2006-08-15 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* MenuTest.cs: new test was added, removed NotWorking attributes

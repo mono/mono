@@ -159,6 +159,8 @@ System.Web.UI.WebControls/DataKeyTest.cs
 System.Web.UI.WebControls/DataListItemCollectionTest.cs
 System.Web.UI.WebControls/DataListItemTest.cs
 System.Web.UI.WebControls/DataListTest.cs
+System.Web.UI.WebControls/DataSourceControlTest.cs
+System.Web.UI.WebControls/DataSourceViewTest.cs
 System.Web.UI.WebControls/DetailsViewTest.cs
 System.Web.UI.WebControls/DetailsViewRowTest.cs
 System.Web.UI.WebControls/DetailsViewRowCollectionTest.cs
