@@ -1,3 +1,10 @@
+2006-08-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (get_got_offset): Add a cache for GOT entries, not yet used.
+	
+	* aot-compiler.c (get_plt_index): Add a cache for wrappers too. Simplify the
+	code somewhat.
+
 2006-08-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_init): Fix registration of idiv/imul opcodes which can throw
