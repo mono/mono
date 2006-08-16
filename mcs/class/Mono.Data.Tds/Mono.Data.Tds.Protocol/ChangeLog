@@ -268,7 +268,7 @@
 	* Tds.cs (ProcessEndToken): RecordsAffected was not filled
 	correctly. I've found out that the record count was submitted for
 	TdsPacketSubType.Done. So I changed the behaviour to include this
-	(without deeper knowledge of the TDS protocol). Patch from Jörg
+	(without deeper knowledge of the TDS protocol). Patch from JÃ¶rg
 	Rosenkranz <joergr@voelcker.com>.
 
 	This is part of a fix to bug #40315.

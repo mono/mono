@@ -253,7 +253,7 @@
 
 	* UriTest.cs: Added IsUnc tests for local file paths.
 
-2003-10-10  Pedro MartÌnez Jul·  <yoros.wanadoo.es>
+2003-10-10  Pedro Mart√≠nez Jul√°  <yoros.wanadoo.es>
 
 	* UriTest.cs: added some test for "file://one_file.txt". Uri used to
 	fail with this URIs.

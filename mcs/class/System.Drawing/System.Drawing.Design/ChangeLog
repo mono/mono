@@ -87,7 +87,7 @@
 	* UITypeEditor.cs: Added
 	* PaintValueEventArgs.cs: Fixed typo in namespace
 
-2002-12-01  Alejandro Sánchez Acosta <raciel@es.gnu.org>
+2002-12-01  Alejandro SÃ¡nchez Acosta <raciel@es.gnu.org>
 
 	* PaintValueEventArgs.cs,
 	  ToolboxComponentsCreatingEventArgs.cs,
@@ -102,7 +102,7 @@
 	  ToolboxComponentsCreatedEventHandler.cs
 	  CategoryNameCollection.cs : Added
 	
-2002-11-20  Alejandro Sánchez Acosta <raciel@es.gnu.org>
+2002-11-20  Alejandro SÃ¡nchez Acosta <raciel@es.gnu.org>
 
 	* IPropertyValueUIService.cs: Added
 

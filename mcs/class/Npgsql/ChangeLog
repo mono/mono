@@ -53,7 +53,7 @@ Thu Feb 23 10:29:13 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 2005-12-25  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
-    * NpgsqlTransaction.cs: [#1000491] Fixed transaction isolation level setting. Thanks Ott� Havasv�lgyi for heads up.
+    * NpgsqlTransaction.cs: [#1000491] Fixed transaction isolation level setting. Thanks Ottó Havasvölgyi for heads up.
     * NpgsqlTransaction.cs.resx: Removed unused key.
 
 2005-12-14  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
@@ -222,7 +222,7 @@ Thu Feb 23 10:29:13 CET 2006 Paolo Molaro <lupus@ximian.com>
 2004-12-20  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com>
         * Npgsql/NpgsqlCommand.cs: gborg 1099. Added support for record return type functions. Thanks neri and Michel for heads up and tests.
         * Npgsql/NpgsqlDataReader.cs: Removed type conversions for GetXXX() methods.
-        * Npgsql/NpgsqlCommand.cs: Added IClonable implementation. Also added strong type NpgsqlTransaction property and converted previous interface implementation to implicit interface implementation. Thanks Christopher Gersbo-M�ller (cgm at knowledgelab dot sdu dot dk) for heads up.
+        * Npgsql/NpgsqlCommand.cs: Added IClonable implementation. Also added strong type NpgsqlTransaction property and converted previous interface implementation to implicit interface implementation. Thanks Christopher Gersbo-Møller (cgm at knowledgelab dot sdu dot dk) for heads up.
         
 2004-12-19  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com>
 	* Npgsql/NpgsqlCommand.cs: Fixed gborg 1088 and 1080. Thanks Neri (neri at gborg dot postgresql dot org) for help. Now mapped output parameters are correctly updated regardless their position in Parameters collection.
@@ -615,7 +615,7 @@ connecting using protocol 3.0 version. Thanks Sami Kuhmonen <feenix@iqs.fi> for 
 
 	* NpgslTypes/NpgsqlTypesHelper.cs: Add StringFixedLength type.
 	
-2003-11-23  Pedro Mart�ez Juli� <yoros@wanadoo.es>
+2003-11-23  Pedro Martínez Juliá <yoros@wanadoo.es>
 
 	* Npgsql/HashAlgorithm.cs:
 	* Npgsql/NpgsqlClosedState.cs:
@@ -629,7 +629,7 @@ connecting using protocol 3.0 version. Thanks Sami Kuhmonen <feenix@iqs.fi> for 
 	NpgsqlDataAdapter, NpgsqlConnection, etc... Change a few internal
 	methods to Properties.
 
-2003-11-22  Pedro Mart�ez Juli� <yoros@wanadoo.es>
+2003-11-22  Pedro Martínez Juliá <yoros@wanadoo.es>
 
 	* Npgsql/NpgsqlClosedState.cs:
 	* Npgsql/NpgsqlConnectedState.cs:
@@ -639,22 +639,22 @@ connecting using protocol 3.0 version. Thanks Sami Kuhmonen <feenix@iqs.fi> for 
 	implementation. Now we're using TcpClient for the connection and
 	Stream for the abstraction layer to SslClientStream.
 
-2003-11-11  Pedro Mart�ez Juli� <yoros@wanadoo.es>
+2003-11-11  Pedro Martínez Juliá <yoros@wanadoo.es>
 
 	* Npgsql/NpgsqlDataReader.cs: GetSchemaTable has nothing to do with
 	CanRead because the schema can be readed with or without result
 	rows.
 
-2003-11-10  Pedro Mart�ez Juli� <yoros@wanadoo.es>
+2003-11-10  Pedro Martínez Juliá <yoros@wanadoo.es>
 
 	* Npgsql/NpgsqlDataAdapter.cs: Best use "if" instead of try-catch.
 
-2003-11-10  Pedro Mart�ez Juli� <yoros@wanadoo.es>
+2003-11-10  Pedro Martínez Juliá <yoros@wanadoo.es>
 
 	* Npgsql/NpgsqlDataAdapter.cs: Catch the exception thrown by MS.NET
 	when a mapping is not in the collection.
 
-2003-11-09  Pedro Mart�ez Juli� <yoros@wanadoo.es>
+2003-11-09  Pedro Martínez Juliá <yoros@wanadoo.es>
 
 	* Npgsql/NpgsqlDataAdapter.cs: Do not assing the result of the
 	CommandBuilder to the local data. Local data should be null if the
@@ -662,21 +662,21 @@ connecting using protocol 3.0 version. Thanks Sami Kuhmonen <feenix@iqs.fi> for 
 
 	* Npgsql/NpgsqlCommandBuilder.cs: Mistake in param name fixed.
 
-2003-11-09  Pedro Mart�ez Juli� <yoros@wanadoo.es>
+2003-11-09  Pedro Martínez Juliá <yoros@wanadoo.es>
 
 	* Makefile: Little fix for build the resources.
 
 	* Npgsql/NpgsqlCommandBuilder.cs: Added row version in delete
 	command.
 
-2003-11-08  Pedro Mart�ez Juli� <yoros@wanadoo.es>
+2003-11-08  Pedro Martínez Juliá <yoros@wanadoo.es>
 
 	* Npgsql/NpgsqlCommand.cs: Removed try-catch for Resource Manager
 	calls, the problem is fixed.
 
 	* Makefile: Fix one bug in the build of resources.
 
-2003-11-08  Pedro Mart�ez Juli� <yoros@wanadoo.es>
+2003-11-08  Pedro Martínez Juliá <yoros@wanadoo.es>
 
 	* Npgsql/NpgsqlCommandBuilder.cs: Added the command builder.
 
@@ -690,7 +690,7 @@ connecting using protocol 3.0 version. Thanks Sami Kuhmonen <feenix@iqs.fi> for 
 	* Npgsql/NpgsqlParameter: No more than one call to value.GetType()
 	is more efficient for the deep if structure types.
 
-2003-11-07  Pedro Mart�ez Juli� <yoros@wanadoo.es>
+2003-11-07  Pedro Martínez Juliá <yoros@wanadoo.es>
 
 	* Npgsql/NpgsqlDataAdapter.cs: Fixed the mistake I did in the last
 	change. The Command objects must not be created in the constructor.
@@ -700,12 +700,12 @@ connecting using protocol 3.0 version. Thanks Sami Kuhmonen <feenix@iqs.fi> for 
 	the proper exception (not MissingManifestResourceException). It is
 	thrown in MS.NET and in MONO. (Npgsql compiled with MCS).
 
-2003-11-07  Pedro Mart�ez Juli� <yoros@wanadoo.es>
+2003-11-07  Pedro Martínez Juliá <yoros@wanadoo.es>
 
 	* Npgsql/NpgsqlDataAdapter.cs: Create new Command classes for the
 	different Insrt / Update / Delete commands.
 
-2003-10-20  Pedro Mart�ez Juli� <yoros@wanadoo.es>
+2003-10-20  Pedro Martínez Juliá <yoros@wanadoo.es>
 
 	* Npgsql/NpgsqlClosedState.cs:
 	* Npgsql/NpgsqlConnection.cs:
@@ -718,7 +718,7 @@ connecting using protocol 3.0 version. Thanks Sami Kuhmonen <feenix@iqs.fi> for 
 	* Npgsql/Makefile: Change reference from System.Security.Tls to
 	Mono.Security (now Tls lives there).
 
-2003-10-16  Pedro Mart�ez Juli� <yoros@wanadoo.es>
+2003-10-16  Pedro Martínez Juliá <yoros@wanadoo.es>
 
 	* Npgsql/NpgsqlClosedState.cs:
 	* Npgsql/NpgsqlConnectedState.cs:
@@ -726,7 +726,7 @@ connecting using protocol 3.0 version. Thanks Sami Kuhmonen <feenix@iqs.fi> for 
 	because now it is used TlsSession and it doesn't work without
 	these changes.
 
-2003-10-16  Pedro Mart�ez Juli� <yoros@wanadoo.es>
+2003-10-16  Pedro Martínez Juliá <yoros@wanadoo.es>
 
 	* Makefile: changed reference from Lib/System.Security.Tls.dll to
 	System.Security.Tls because the last will be installed before and
@@ -735,11 +735,11 @@ connecting using protocol 3.0 version. Thanks Sami Kuhmonen <feenix@iqs.fi> for 
 	* Lib: Removed Lib directory, moved System.Security.Tls.dll to
 	Mono.Security.Tls library directory.
 
-2003-10-15  Pedro Mart�ez Juli� <yoros@wanadoo.es>
+2003-10-15  Pedro Martínez Juliá <yoros@wanadoo.es>
 
 	* Makefile: fix building and the install objectives.
 
-2003-04-26  Pedro Mart�ez Juli� <yoros@wanadoo.es>
+2003-04-26  Pedro Martínez Juliá <yoros@wanadoo.es>
 
 	* Npgsql/NpgsqlDataReader.cs: Change GetFloat and GetDouble. Now
 	they works as direct casting from GetValue.
@@ -754,7 +754,7 @@ connecting using protocol 3.0 version. Thanks Sami Kuhmonen <feenix@iqs.fi> for 
 	* Npgsql/NpgsqlDataReader.cs: Fixed an invalid index exception when
 	processing 0 rows queries.
 
-2003-04-26  Pedro Mart�ez Juli� <yoros@wanadoo.es>
+2003-04-26  Pedro Martínez Juliá <yoros@wanadoo.es>
 
 	* Npgsql/NpgsqlDataReader.cs: Now GetDateTime works for "dd/MM/yyyy"
 	date formats. I think that it's needed support to auto-detect

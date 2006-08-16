@@ -11,7 +11,7 @@
 
 	* *.cs                  - Use proper namespace for MonoTODO.
 
-2002-12-05  Alejandro Sánchez Acosta  <raciel@gnome.org>
+2002-12-05  Alejandro SÃ¡nchez Acosta  <raciel@gnome.org>
 
 	* CodeDomSerializer.cs,
 	  IDesignerLoaderService.cs,

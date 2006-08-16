@@ -92,7 +92,7 @@
 	
 	* System.Data.OracleClient/OracleParameter.cs: add support for an output
 	parameter of Cursor to return an Oracle REF CURSOR as an OracleDataReader.
-	Zsolt Petrény - Zsolt.Petreny at sensenet.hu helped contribute to this patch.
+	Zsolt PetrÃ©ny - Zsolt.Petreny at sensenet.hu helped contribute to this patch.
 	
 	* Test/TestOracleClient.cs: add tests for REF CURSOR
 	

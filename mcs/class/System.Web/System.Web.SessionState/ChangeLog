@@ -430,7 +430,7 @@
 	* SessionStateModule.cs: fire application start and session start/end
 	events.
 
-2003-03-31  Stefan Görling <stefan@gorling.se>
+2003-03-31  Stefan GÃ¶rling <stefan@gorling.se>
 
 	* HttpSessionState.cs:
 	* ISessionHandler.cs:

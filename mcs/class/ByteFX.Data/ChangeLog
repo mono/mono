@@ -1,4 +1,4 @@
-2005-09-27  Kornél Pál  <kornelpal@hotmail.com>
+2005-09-27  KornÃ©l PÃ¡l  <kornelpal@hotmail.com>
 
 	* Makefile: Removed /codepage:28591 as it is the default.
 

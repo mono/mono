@@ -222,7 +222,7 @@
 
 	* CollectionBaseTest.cs: Make it a better NUnit v2 example
 
-2003-02-15  Pedro MartÌnez Juli·  <yoros@wanadoo.es>
+2003-02-15  Pedro Mart√≠nez Juli√°  <yoros@wanadoo.es>
 
 	* HashtableTest.cs: Add serialization test.
 

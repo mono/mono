@@ -20,7 +20,7 @@
 	* Microsoft.VisualBasic.dll.sources : removed StringsTest.cs (see
 	  Test/MS.VB/ChangeLog).
 
-2005-09-27  Kornél Pál  <kornelpal@hotmail.com>
+2005-09-27  KornÃ©l PÃ¡l  <kornelpal@hotmail.com>
 
 	* Makefile: Replaced /codepage with CODEPAGE.
 

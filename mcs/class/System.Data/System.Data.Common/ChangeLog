@@ -578,13 +578,13 @@
 2003-11-26  Tim Coleman <tim@timcoleman.com>
 	* DbDataReader.cs: Add new stub class
 
-2003-11-23  Pedro MartÌnez Juli·  <yoros@wanadoo.es>
+2003-11-23  Pedro Mart√≠nez Juli√°  <yoros@wanadoo.es>
 
 	* DbDataAdapter.cs: Call command dispose in self dispose method. We
 	need to dispose the connections and other stuff stored in the
 	commands.
 
-2003-11-10  Pedro MartÌnez Juli·  <yoros@wanadoo.es>
+2003-11-10  Pedro Mart√≠nez Juli√°  <yoros@wanadoo.es>
 
 	* DataColumnMappingCollection.cs: Fix a missing exception when the
 	required mapping is not in the collection. MS.NET throws an
@@ -597,7 +597,7 @@
 	(Fill): the same as above.
 	(SetupSchema): in now return string (the table name). 
 	(GetFillParameters): fix a bug.
-	(BuildSchema) ñ it now return Hashtable. Add columns to the table only if there is a mapping. Build an Hashtable that maps the columns from the table to the column from the reader.
+	(BuildSchema) - it now return Hashtable. Add columns to the table only if there is a mapping. Build an Hashtable that maps the columns from the table to the column from the reader.
 	(Update): first open the connection if needed. Catch an exception of the ExecuteQuery.
 	
 

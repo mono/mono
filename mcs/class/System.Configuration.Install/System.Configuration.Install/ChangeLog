@@ -26,7 +26,7 @@
 	* Installer.cs: added missing attributes, remove
 	setter for Installers, Context
 
-2002-12-01  Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+2002-12-01  Alejandro SÃ¡nchez Acosta  <raciel@es.gnu.org>
 
 	* IManagedInstaller.cs,
 	  Installer.cs,

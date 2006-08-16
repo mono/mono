@@ -133,7 +133,7 @@
 2003-04-03  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* TcpMessageIO.cs: Changed header format to match MS.NET. Based on the patch
-	  sent by Jose Luís Martín.
+	  sent by Jose LuÃ­s MartÃ­n.
 	* TcpClientTransportSink.cs: Improved support for OneWay messages.
 	* BinaryClientFormatterSink.cs: Added Content-Type header.
 

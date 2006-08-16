@@ -2689,7 +2689,7 @@
 	* IDataSources.cs:
 		New 1.2 class added
 
-2003-11-21  Pedro MartÌnez Juli·  <yoros@wanadoo.es>
+2003-11-21  Pedro Mart√≠nez Juli√°  <yoros@wanadoo.es>
 
 	* DataRow.cs: Detached row can be accesible (new rows from data
 	table are detached). Closes but #51263.
@@ -2703,7 +2703,7 @@
 	*UniqueConstraint.cs : throw correct exception.
 	
 
-2003-11-09  Pedro MartÌnez Juli·  <yoros@wanadoo.es>
+2003-11-09  Pedro Mart√≠nez Juli√°  <yoros@wanadoo.es>
 
 	* DataRow.cs: Use RemoveInternal instead of Remove because the last
 	one uses Delete and AcceptChanges.
@@ -2712,7 +2712,7 @@
 	method from the row are called. Added an internal method that will
 	be used by DataRow to "physically" remove the row from the list.
 
-2003-11-09  Pedro MartÌnez Juli·  <yoros@wanadoo.es>
+2003-11-09  Pedro Mart√≠nez Juli√°  <yoros@wanadoo.es>
 
 	* DataRowCollection.cs: To follow the specification: Remove and
 	RemoveAt should remove the row. But needed to call DeletingDataRow
@@ -2721,7 +2721,7 @@
 	* DataRow.cs: Don't call DeletingDataRow when it is called by the
 	method Table.Rows.Remove.
 
-2003-11-09  Pedro MartÌnez Juli·  <yoros@wanadoo.es>
+2003-11-09  Pedro Mart√≠nez Juli√°  <yoros@wanadoo.es>
 
 	* DataRowCollection.cs: Make the row be deleted by itself. If not,
 	it fails because we need to call OnRowDeleting and OnRowDeleted. It
@@ -3274,7 +3274,7 @@
 	is added to collection before it hava TableName. So using 
 	HashTable is impossible.
 	
-2002-11-19  Carlos Guzm·n ¡lvarez <carlosga@telefonica.net>
+2002-11-19  Carlos Guzm√°n √Ålvarez <carlosga@telefonica.net>
 
 	* DataRow.cs: an object that is equal to null 
 	should be allowed to be set in this indexer too

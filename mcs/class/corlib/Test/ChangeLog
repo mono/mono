@@ -56,7 +56,7 @@
 
 	* corlib_test.args: Added EventBuilderTest.cs.	
 
-2003-06-01  Pedro Martínez Juliá  <yoros@wanadoo.es>
+2003-06-01  Pedro MartÃ­nez JuliÃ¡  <yoros@wanadoo.es>
 
 	* corlib_test.args: Added SingleFormatterTest.cs
 

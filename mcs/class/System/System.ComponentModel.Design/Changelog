@@ -67,14 +67,14 @@
 	
 	* ServiceContainer.cs: implementation added
 	  
-2002-12-05  Alejandro Sánchez Acosta  <raciel@gnome.org>
+2002-12-05  Alejandro SÃ¡nchez Acosta  <raciel@gnome.org>
 
 	* ActiveDesignerEventArgs.cs,
 	  ActiveDesignerEventHandler.cs: Added
 	
 
 
-2002-11-30  Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+2002-11-30  Alejandro SÃ¡nchez Acosta  <raciel@es.gnu.org>
 
 	* System.ComponentModel.Design/CommandID.cs
 	  System.ComponentModel.Design/DesignerTransactionCloseEventArgs.cs

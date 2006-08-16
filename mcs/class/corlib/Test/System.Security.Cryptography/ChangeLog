@@ -448,7 +448,7 @@
 2003-10-04  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoStreamTest.cs: Added test case from bugzilla #49323 from
-	Carlos Guzm·n ¡lvarez and some small tests for empty stream with
+	Carlos Guzm√°n √Ålvarez and some small tests for empty stream with
 	different PaddingMode (as found by Lluis Sanchez Gual).
 
 2003-08-05  Sebastien Pouliot  <spouliot@videotron.ca>
@@ -693,5 +693,5 @@
 
 2002-09-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* MD5Test.cs: new test from Eduardo GarcÌa Cebollero (kiwnix@yahoo.es).
+	* MD5Test.cs: new test from Eduardo Garc√≠a Cebollero (kiwnix@yahoo.es).
 	* AllTests.cs: added new test.

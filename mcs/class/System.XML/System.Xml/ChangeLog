@@ -2842,12 +2842,12 @@ Fri Jan 27 20:39:48 CET 2006 Paolo Molaro <lupus@ximian.com>
 	  WriteEndElement() allows open attribute (calles WriteEndAttribute()).
 	  Indentation should be inserted between ">" and "</xxx>" .
 
-2003-11-02  Pedro Martínez Juliá  <yoros@wanadoo.es>
+2003-11-02  Pedro MartÃ­nez JuliÃ¡  <yoros@wanadoo.es>
 
 	* XmlConvert.cs: Only parse INF/-INF/NaN. Other Infinty or NAN
 	numbers are parsed with the respective ::Parse method.
 
-2003-11-01  Pedro Martínez Juliá  <yoros@wanadoo.es>
+2003-11-01  Pedro MartÃ­nez JuliÃ¡  <yoros@wanadoo.es>
 
 	* XmlConvert.cs: Revert my last change. INF and -INF must be
 	processed here because Double::Parse and Single::Parse doesn't
@@ -2866,7 +2866,7 @@ Fri Jan 27 20:39:48 CET 2006 Paolo Molaro <lupus@ximian.com>
 	* XmlAttribute.cs, XmlElement.cs, XmlEntity.cs, XmlEntityReference.cs,
 	  XmlNotation.cs : Now uses OwnerDocument's NameTable.
 
-2003-10-25  Pedro Martínez Juliá  <yoros@wanadoo.es>
+2003-10-25  Pedro MartÃ­nez JuliÃ¡  <yoros@wanadoo.es>
 
 	* XmlConvert.cs: Support for the sign in double and single. The
 	processing of the infinites and nan numbers are more complex than
@@ -3873,7 +3873,7 @@ Fri Jan 27 20:39:48 CET 2006 Paolo Molaro <lupus@ximian.com>
 	  other.
 	* XmlTextReader.cs : ReadInnerXml() now moves to next node correctly.
 
-2003-04-27  Pedro Martínez Juliá  <yoros@wanadoo.es>
+2003-04-27  Pedro MartÃ­nez JuliÃ¡  <yoros@wanadoo.es>
 
 	* XmlNode.cs: ensure to get a valid Uri in BaseUri when loading the
 	source document from a file.
@@ -4496,7 +4496,7 @@ Fri Jan 27 20:39:48 CET 2006 Paolo Molaro <lupus@ximian.com>
 2002-08-16  Jason Diamond <jason@injektilo.org>
 
 	* XmlElement.cs: Fixed writing out qualified elements courtesy of
-	Marcus Bürgel <marcus.buergel@gmx.de>.
+	Marcus BÃ¼rgel <marcus.buergel@gmx.de>.
 
 2002-08-13  Tim Coleman <tim@timcoleman.com>
 	* XmlTextWriter.cs:
@@ -4696,7 +4696,7 @@ Wed Jul 24 13:16:19 CEST 2002 Paolo Molaro <lupus@ximian.com>
 2002-08-16  Jason Diamond <jason@injektilo.org>
 
 	* XmlElement.cs: Fixed writing out qualified elements courtesy of
-	Marcus Bürgel <marcus.buergel@gmx.de>.
+	Marcus BÃ¼rgel <marcus.buergel@gmx.de>.
 
 2002-08-13  Tim Coleman <tim@timcoleman.com>
 	* XmlTextWriter.cs:

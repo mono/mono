@@ -1,4 +1,4 @@
-2005-06-05  Kornél Pál <kornelpal@hotmail.com>
+2005-06-05  KornÃ©l PÃ¡l <kornelpal@hotmail.com>
 
 	* Runtime.cs: Added GetDisplayName:
 	Returns the name and version of the runtime for reporting.

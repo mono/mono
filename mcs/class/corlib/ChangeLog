@@ -130,7 +130,7 @@
 
 	* corlib.dll.sources: Added System.Resources/ResourceManagerTest.cs
 
-2006-01-05  Kornel Pal  <kornelpal@hotmail.com>
+2006-01-05  Kornél Pál  <kornelpal@hotmail.com>
 
 	* corlib.dll.sources: Added DriveNotFoundException.cs in System.IO.
 
@@ -1044,7 +1044,7 @@
 	* corlib.dll.sources: Added 
 		System.Runtime.Serialization.Formatter.Binary.CodeGenerator.cs
 
-2004-02-10 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+2004-02-10 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
 
     * Mono.Security.Cryptography/PKCS1.cs:
 
@@ -1121,7 +1121,7 @@
 	* corlib_test.dll.sources: Added unit tests PaddingMode and X509 
 	using CryptoAPI.
 
-2003-12-14  Pedro Martinez Julia <yoros@wanadoo.es>
+2003-12-14  Pedro Martínez Juliá <yoros@wanadoo.es>
 
 	* DateTime.cs: Be sure that the array access is not out of range
 	when looking for ArgumentOutOfRangeException in the year value.
@@ -1212,7 +1212,7 @@
 	* corlib.dll.sources: Added classes for Authenticode support.
 	* corlib_test.dll.sources: Added unit test for SPC certificates.
 
-2003-09-26  Pedro Martinez Julia <yoros@wanadoo.es>
+2003-09-26  Pedro Martínez Juliá <yoros@wanadoo.es>
 
 	* corlib_test.dll.sources: Remove tests that generate compile
 	errors. The tests are still there but its name is rmoved here.
@@ -1370,7 +1370,7 @@
 
 	* unix.args: Added System.Runtime.Remoting.Activation/AppDomainLevelActivator.cs
 
-2003-03-16  Pedro Martinez Julia <yoros@wanadoo.es>
+2003-03-16  Pedro Martínez Juliá <yoros@wanadoo.es>
 
 	* unix.args: Added "System.FloatingPointFormatter.cs".
 
@@ -1382,7 +1382,7 @@
 	* unix.args: Added
 		System.Runtime.InteropServices/HandleRef.cs
 
-2003-03-04  Pedro Martinez Julia <yoros@wanadoo.es>
+2003-03-04  Pedro Martínez Juliá <yoros@wanadoo.es>
 
 	* unix.args: Added "DoubleFormatter.cs" and "SingleFormatter.cs"
 

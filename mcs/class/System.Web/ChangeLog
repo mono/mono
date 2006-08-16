@@ -16,7 +16,7 @@
 				      add RectangleHotSpotTest.cs
 				      add PolygonHotSpotTest.cs
 
-﻿2006-08-08  Vladimir Krasnov <vladimirk@mainsoft.com>
+2006-08-08  Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* added System.Web.20.vmwcsproj
 

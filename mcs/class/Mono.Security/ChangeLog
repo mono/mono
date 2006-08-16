@@ -420,7 +420,7 @@
 	* Mono.Security.dll.sources: Added new file X509ChainStatusFlags in
 	Mono.Security.X509 namespace.
 
-2004-02-20 Carlos Guzm·n ¡lvarez  <carlosga@telefonica.net>
+2004-02-20 Carlos Guzm√°n √Ålvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/SslClientStream.cs:
 	* Mono.Security.Protocol.Tls/RecordProtocol.cs:
@@ -484,7 +484,7 @@
 
 		- New classes for handle the SSL/TLS record protocol.
 
-2004-02-18 Carlos Guzm·n ¡lvarez  <carlosga@telefonica.net>
+2004-02-18 Carlos Guzm√°n √Ålvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/SslClientStream.cs:
 
@@ -507,7 +507,7 @@
 
 		- Changes on Common Name detection and certificate error handling ( Thanks to Sebastien Pouliot for his feedback ).
 
-2004-02-17 Carlos Guzm·n ¡lvarez  <carlosga@telefonica.net>
+2004-02-17 Carlos Guzm√°n √Ålvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/SslClientStream.cs:
 
@@ -542,13 +542,13 @@
         - Fix for send the close notify alert in the Close method
         only if the Handshake is fully negotiated.
 
-2004-02-16 Carlos Guzm·n ¡lvarez  <carlosga@telefonica.net>
+2004-02-16 Carlos Guzm√°n √Ålvarez  <carlosga@telefonica.net>
 
  	* Mono.Security.Protocol.Tls/TlsCipherSuiteFactory.cs:
 
         - Changed ciphersuites order of preference ( Thanks to Sebastien Pouliot for his feedback ).
 
-2004-02-15 Carlos Guzm·n ¡lvarez  <carlosga@te...>
+2004-02-15 Carlos Guzm√°n √Ålvarez  <carlosga@te...>
  
  	* Mono.Security.Protocol.Tls/SslClientStream.cs:
  
@@ -557,7 +557,7 @@
  
  		- Removed test code.
 
-2004-02-14 Carlos Guzm·n ¡lvarez  <carlosga@telefonica.net>
+2004-02-14 Carlos Guzm√°n √Ålvarez  <carlosga@telefonica.net>
 
     * Mono.Security.Protocol.Tls/SslClientStream.cs:
 
@@ -573,7 +573,7 @@
 	Pieter Philippaerts (mentalis.org) to Mono.Security.Cryptography.
 	* Mono.Security_test.dll.sources: Added Diffie-Hellman unit tests.
 
-2004-02-10 Carlos Guzm·n ¡lvarez  <carlosga@telefonica.net>
+2004-02-10 Carlos Guzm√°n √Ålvarez  <carlosga@telefonica.net>
 
     * Mono.Security.Cryptography/PKCS1.cs:
 
@@ -594,7 +594,7 @@
 	* Mono.Security_test.dll.sources Added Mono.Math BigInteger unit test
 	to the build (as they cannot be executed with corlib).
 
-2004-02-09 Carlos Guzm·n ¡lvarez  <carlosga@telefonica.net>
+2004-02-09 Carlos Guzm√°n √Ålvarez  <carlosga@telefonica.net>
 
     * Changed the license header to all the sources files
     to remove accents.
@@ -707,13 +707,13 @@
 	    - Removed comments from AES ciphersuites.
 
 
-2003-11-17 Carlos Guzm·n ¡lvarez  <carlosga@telefonica.net>
+2003-11-17 Carlos Guzm√°n √Ålvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/SslClientStream.cs:
 
 		Removed ReadByte method, use innerStream.ReadByte() method instead.
 
-2003-11-13 Carlos Guzm·n ¡lvarez  <carlosga@telefonica.net>
+2003-11-13 Carlos Guzm√°n √Ålvarez  <carlosga@telefonica.net>
 
 	* Added implementation of an SslClientStream class similar to the MS .NET Framework 1.2 documentation.
 
@@ -768,11 +768,11 @@
 			- TlsCloseNotifyAlert.cs
 
 		
-2003-11-12 Carlos Guzm·n ¡lvarez  <carlosga@telefonica.net>
+2003-11-12 Carlos Guzm√°n √Ålvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls.Alerts/TlsAlert.cs:
 	
-		- Changes for give full error message only in debug mode ( Thanks to SebastiÈn Pouliot. )
+		- Changes for give full error message only in debug mode ( Thanks to Sebasti√©n Pouliot. )
 		
 	* Mono.Security.Protocol.Tls/TlsProtocol.cs:
 	
@@ -780,7 +780,7 @@
 	
 	* Mono.Security.Cryptography/MD5SHA1CryptoServiceProvider.cs:
 	
-		- Renamed to MD5SHA1.cs ( Thanks to SebastiÈn Pouliot. )
+		- Renamed to MD5SHA1.cs ( Thanks to Sebasti√©n Pouliot. )
 		
 	* Mono.Security.Cryptography/TlsCompressionMethod.cs:
 	
@@ -805,7 +805,7 @@
 		( Not all the properties are implemented yet ).
 
 
-2003-11-10 Carlos Guzm·n ¡lvarez  <carlosga@telefonica.net>
+2003-11-10 Carlos Guzm√°n √Ålvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls.Alerts/TlsAlert.cs:
 
@@ -817,7 +817,7 @@
 	* Mono.Security.Cryptography/MD5SHA1CryptoServiceProvider.cs:
 	* Mono.Security.Protocol.Tls.Handshake.Client/TlsClientCertificateVerify.cs:
 
-		- Changed ( Thanks to SebastiÈn Pouliot for his feedback )
+		- Changed ( Thanks to Sebasti√©n Pouliot for his feedback )
 
 			SHA1CryptoServiceProvider sha = new SHA1CryptoServiceProvider();
 			MD5CryptoServiceProvider sha = new MD5CryptoServiceProvider();
@@ -828,7 +828,7 @@
 			HashAlgorithm md5 = MD5.Create(); 
 
 
-2003-11-04 Carlos Guzm·n ¡lvarez <carlosga@telefonica.net>
+2003-11-04 Carlos Guzm√°n √Ålvarez <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls.Handshake.Client/TlsServerCertificate.cs:
 
@@ -839,18 +839,18 @@
 		- Renamed ServerCertificates property to Certificates.
 
 
-2003-11-04 Carlos Guzm·n ¡lvarez (carlosga@telefonica.net)
+2003-11-04 Carlos Guzm√°n √Ålvarez (carlosga@telefonica.net)
 
 	* Updated SSL/TLS implementation files with unix like line endings.
 
-2003-11-04 Carlos Guzm·n ¡lvarez <carlosga@telefonica.net>
+2003-11-04 Carlos Guzm√°n √Ålvarez <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/CipherSuite.cs:
 
 		- Added custom padding for record encryption.
 
 
-2003-11-03 Carlos Guzm·n ¡lvarez <carlosga@telefonica.net>
+2003-11-03 Carlos Guzm√°n √Ålvarez <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls.Handshake/TlsHandshakeMessages.cs:
 	
@@ -898,7 +898,7 @@
 	
 		- Changed handshakeHashes member to be an TlsStream.
 
-2003-10-28 Carlos Guzm·n ¡lvarez <carlosga@telefonica.net>
+2003-10-28 Carlos Guzm√°n √Ålvarez <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/CipherSuite.cs:
 	* Mono.Security.Protocol.Tls/TlsSessionSettings.cs:
@@ -910,7 +910,7 @@
 
 		- Added changes for make use of X509 classes from mono.
 
-2003-10-23 Carlos Guzm·n ¡lvarez <carlosga@telefonica.net>
+2003-10-23 Carlos Guzm√°n √Ålvarez <carlosga@telefonica.net>
 
 	* Added partial implementation of SSL3 protocol ( not finished yet ) to the TLS sources.
 
@@ -925,11 +925,11 @@
 	TlsCipherSuiteFactory.cs and TlsCompressMethod.cs. This fixes the
 	build.
 
-2003-10-20  Carlos Guzm·n ¡lvarez  <carlosga@telefonica.net>
+2003-10-20  Carlos Guzm√°n √Ålvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.dll.sources: Added references for new Tls files.
 
-2003-10-20  Pedro MartÌnez Juli·  <yoros@wanadoo.es>
+2003-10-20  Pedro Mart√≠nez Juli√°  <yoros@wanadoo.es>
 
 	* Mono.Security.dll.sources: Added references for Tls files.
 

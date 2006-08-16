@@ -174,7 +174,7 @@
 
 	* Registry.cs: Class should be sealed and have a private default ctor.
 
-2002-11-28  Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+2002-11-28  Alejandro SÃ¡nchez Acosta  <raciel@es.gnu.org>
 
 	* Registry.cs: Added missed field.
 

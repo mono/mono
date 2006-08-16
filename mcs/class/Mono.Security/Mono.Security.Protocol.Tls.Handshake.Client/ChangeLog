@@ -87,19 +87,19 @@
 	certificate (identity, usage) and it's chain to a trusted root.
 	Note that the verification is commented for the time being.
 
-2004-02-14 Carlos Guzm·n ¡lvarez  <carlosga@telefonica.net>
+2004-02-14 Carlos Guzm√°n √Ålvarez  <carlosga@telefonica.net>
 
     * Mono.Security.Protocol.Tls.Handshake.Client/TlsServerCertificate.cs:
 
         - Removed test code.
 
-2003-11-17 Carlos Guzm·n ¡lvarez  <carlosga@telefonica.net>
+2003-11-17 Carlos Guzm√°n √Ålvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/SslClientStream.cs:
 
 		Removed ReadByte method, use innerStream.ReadByte() method instead.
 
-2003-11-13 Carlos Guzm·n ¡lvarez  <carlosga@telefonica.net>
+2003-11-13 Carlos Guzm√°n √Ålvarez  <carlosga@telefonica.net>
 
 	* Added implementation of an SslClientStream class similar to the MS .NET Framework 1.2 documentation.
 
@@ -154,11 +154,11 @@
 			- TlsCloseNotifyAlert.cs
 
 		
-2003-11-12 Carlos Guzm·n ¡lvarez  <carlosga@telefonica.net>
+2003-11-12 Carlos Guzm√°n √Ålvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls.Alerts/TlsAlert.cs:
 	
-		- Changes for give full error message only in debug mode ( Thanks to SebastiÈn Pouliot. )
+		- Changes for give full error message only in debug mode ( Thanks to Sebasti√©n Pouliot. )
 		
 	* Mono.Security.Protocol.Tls/TlsProtocol.cs:
 	
@@ -166,7 +166,7 @@
 	
 	* Mono.Security.Cryptography/MD5SHA1CryptoServiceProvider.cs:
 	
-		- Renamed to MD5SHA1.cs ( Thanks to SebastiÈn Pouliot. )
+		- Renamed to MD5SHA1.cs ( Thanks to Sebasti√©n Pouliot. )
 		
 	* Mono.Security.Cryptography/TlsCompressionMethod.cs:
 	
@@ -191,7 +191,7 @@
 		( Not all the properties are implemented yet ).
 
 
-2003-11-10 Carlos Guzm·n ¡lvarez  <carlosga@telefonica.net>
+2003-11-10 Carlos Guzm√°n √Ålvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls.Alerts/TlsAlert.cs:
 
@@ -203,7 +203,7 @@
 	* Mono.Security.Cryptography/MD5SHA1CryptoServiceProvider.cs:
 	* Mono.Security.Protocol.Tls.Handshake.Client/TlsClientCertificateVerify.cs:
 
-		- Changed ( Thanks to SebastiÈn Pouliot for his feedback )
+		- Changed ( Thanks to Sebasti√©n Pouliot for his feedback )
 
 			SHA1CryptoServiceProvider sha = new SHA1CryptoServiceProvider();
 			MD5CryptoServiceProvider sha = new MD5CryptoServiceProvider();
@@ -213,14 +213,14 @@
 			HashAlgorithm sha = SHA1.Create();
 			HashAlgorithm md5 = MD5.Create(); 
 
-2003-11-04 Carlos Guzm·n ¡lvarez <carlosga@telefonica.net>
+2003-11-04 Carlos Guzm√°n √Ålvarez <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/CipherSuite.cs:
 
 		- Added custom padding for record encryption.
 
 
-2003-11-03 Carlos Guzm·n ¡lvarez <carlosga@telefonica.net>
+2003-11-03 Carlos Guzm√°n √Ålvarez <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls.Handshake/TlsHandshakeMessages.cs:
 	
@@ -268,7 +268,7 @@
 	
 		- Changed handshakeHashes member to be an TlsStream.
 
-2003-10-28 Carlos Guzm·n ¡lvarez <carlosga@telefonica.net>
+2003-10-28 Carlos Guzm√°n √Ålvarez <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/CipherSuite.cs:
 	* Mono.Security.Protocol.Tls/TlsSessionSettings.cs:
@@ -280,6 +280,6 @@
 
 		- Added changes for make use of X509 classes from mono.
 
-2003-10-23 Carlos Guzm·n ¡lvarez <carlosga@telefonica.net>
+2003-10-23 Carlos Guzm√°n √Ålvarez <carlosga@telefonica.net>
 
 	* Added partial implementation of SSL3 protocol ( not finished yet ).

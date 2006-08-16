@@ -330,7 +330,7 @@
 	fixes bug #51510.  ftp uses port 21, https uses 443 and 
 	parse the host name properly for UNC path.
 	
-2003-10-10  Pedro MartÌnez Juli·  <yoros@wanadoo.es>
+2003-10-10  Pedro Mart√≠nez Juli√°  <yoros@wanadoo.es>
 
 	* Uri.cs: fixed a problem with some URIs like file://some_file.txt
 	It used to return "/some_file.txt/" instead of "some_file.txt" in

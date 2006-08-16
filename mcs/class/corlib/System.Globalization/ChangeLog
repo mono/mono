@@ -444,7 +444,7 @@ Wed Jun 30 17:06:43 CEST 2004 Paolo Molaro <lupus@ximian.com>
 	* CompareInfo.cs: Fix IndexOf and LastIndexOf so that they work
 	for combining characters.
 
-2003-11-05  Pedro MartÌnez Juli·  <yoros@wanadoo.es>
+2003-11-05  Pedro Mart√≠nez Juli√°  <yoros@wanadoo.es>
 
 	* DateTimeFormatInfo.cs: Hack an era for US culture. We must look
 	for other ways to get the ERA string.
@@ -479,7 +479,7 @@ Wed Jun 30 17:06:43 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* *Calendar.cs: Implemented the TwoDigitYearMax property.
 	
-2003-04-22  Pedro MartÌnez Juli·  <yoros@wanadoo.es>
+2003-04-22  Pedro Mart√≠nez Juli√°  <yoros@wanadoo.es>
 
 	* NumberFormatInfo.cs: Method CurrentInfo now returns the "real"
 	CurrentInfo (Thread.CurrentThread.CurrentCulture.NumberFormat).

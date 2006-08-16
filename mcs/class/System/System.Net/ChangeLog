@@ -1254,13 +1254,13 @@
 	* IPAddress.cs: prevent exceptions when trying to parse the static IPv6
 	addresses.
 
-2003-10-17  Pedro MartÌnez Juli·  <yoros@wanadoo.es>
+2003-10-17  Pedro Mart√≠nez Juli√°  <yoros@wanadoo.es>
 
 	* WebClient.cs: use Path.DirectorySeparator instead of "/" for
 	windows compatibility. Add some checks for file paths like
 	"C:/xxx/yyy/..." and like "/home/xxx/...".
 
-2003-10-16  Pedro MartÌnez Juli·  <yoros@wanadoo.es>
+2003-10-16  Pedro Mart√≠nez Juli√°  <yoros@wanadoo.es>
 
 	* WebClient.cs: added a slash between directory and file names.
 
@@ -1270,11 +1270,11 @@
 	* HttpWebResponse.cs: better abort handling and leave the stream in a
 	stable status on abort.
 
-2003-10-12  Pedro MartÌnez Juli·  <yoros@wanadoo.es>
+2003-10-12  Pedro Mart√≠nez Juli√°  <yoros@wanadoo.es>
 
 	* WebClient.cs: refine reading of local files (like MS.NET).
 
-2003-10-10  Pedro MartÌnez Juli·  <yoros@wanadoo.es>
+2003-10-10  Pedro Mart√≠nez Juli√°  <yoros@wanadoo.es>
 
 	* WebClient.cs: MS.NET works right when we try OpenRead("file.txt")
 	but we didn't. Now, when Uri fails with an exception, it adds
@@ -1299,7 +1299,7 @@
 
 2003-10-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* HttpWebRequest.cs: handle 304 ‡ la MS.
+	* HttpWebRequest.cs: handle 304 √† la MS.
 	* WebConnection.cs: set the response data when reading 0 bytes.
 
 2003-09-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
