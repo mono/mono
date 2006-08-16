@@ -62,7 +62,7 @@ namespace System.Windows.Forms
 		private ColumnHeaderStyle header_style = ColumnHeaderStyle.Clickable;
 		private bool hide_selection = true;
 		private bool hover_selection = false;
-		private IComparer item_sorter;
+		private IComparer item_sorter = new ItemComparer ();
 		private ListViewItemCollection items;
 		private bool label_edit = false;
 		private bool label_wrap = true;
@@ -2062,6 +2062,16 @@ namespace System.Windows.Forms
 					base.WndProc (ref m);
 					break;
 				}
+			}
+		}
+
+		private class ItemComparer : IComparer {
+
+			public int Compare (object x, object y)
+			{
+				ListViewItem item_x = x as ListViewItem;
+				ListViewItem item_y = y as ListViewItem;
+				return String.Compare (item_x.Text, item_y.Text);
 			}
 		}
 

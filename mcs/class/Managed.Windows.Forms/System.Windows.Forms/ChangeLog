@@ -1,3 +1,9 @@
+2006-08-16  Mike Kestner  <mkestner@novell.com> 
+
+	* ListView.cs : add an ItemComparer and default to it for sorting.
+	Fixes #79076, but sorting needs a complete overhaul to be compat with
+	MS.
+
 2006-08-15  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* XplatUIX11.cs (SetZOrder): Fix debugging leftover (fixes #79080)
