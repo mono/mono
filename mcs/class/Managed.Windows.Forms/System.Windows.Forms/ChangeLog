@@ -6,6 +6,7 @@
 	* MdiWindowManager.cs: Do this closing cleanup in a Closed
 	handler, instead of when the button is clicked, so cancelling the
 	close works correctly.
+	* ComboBox.cs: Send the mouse down to the scrollbar.
 
 2006-08-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 

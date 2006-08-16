@@ -1734,6 +1734,12 @@ namespace System.Windows.Forms
 				Refresh ();
 			}			
 
+			protected override void OnMouseDown (MouseEventArgs e)
+			{
+				if (vscrollbar_ctrl != null)
+					vscrollbar_ctrl.FireMouseDown (e);
+			}
+
 			protected override void OnMouseMove (MouseEventArgs e)
 			{						
 				Point pt = PointToClient (Control.MousePosition);
