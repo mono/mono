@@ -1,3 +1,9 @@
+2006-08-16  Jackson Harper  <jackson@ximian.com>
+
+	* Form.cs: Fire the closing events for all the mdi child windows
+	when a window is closed.  If the cancel args are set to true, the
+	main window still gets the event fired, but it doesn't not close.
+
 2006-08-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBox.cs: When passing 'null' to SelectedItem,

@@ -1737,9 +1737,15 @@ namespace System.Windows.Forms {
 						return;
 					}
 
-					if (!is_modal) {
-						CancelEventArgs args = new CancelEventArgs ();
+					CancelEventArgs args = new CancelEventArgs ();
 
+					if (mdi_container != null) {
+						foreach (Form mdi_child in mdi_container.MdiChildren) {
+							mdi_child.OnClosing (args);
+						}
+					}
+
+					if (!is_modal) {
 						OnClosing (args);
 						if (!args.Cancel) {
 							OnClosed (EventArgs.Empty);
@@ -1747,8 +1753,6 @@ namespace System.Windows.Forms {
 						}
 						return;
 					} else {
-						CancelEventArgs args = new CancelEventArgs ();
-
 						OnClosing (args);
 						if (!args.Cancel) {
 							OnClosed (EventArgs.Empty);
