@@ -1,3 +1,8 @@
+2006-08-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileSystemWatcher.cs: avoid argument null when we don't know yet the
+	target of a rename.
+
 2006-08-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* InotifyWatcher.cs: warn about inotify user watches limit.

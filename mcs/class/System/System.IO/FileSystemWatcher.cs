@@ -449,7 +449,7 @@ namespace System.IO {
 				}
 				lastData.OldName = filename;
 				lastData.ChangeType = WatcherChangeTypes.Renamed;
-				renamed = new RenamedEventArgs (WatcherChangeTypes.Renamed, path, null, filename);
+				renamed = new RenamedEventArgs (WatcherChangeTypes.Renamed, path, filename, "");
 				break;
 			case FileAction.RenamedNewName:
 				lastData.Name = filename;
@@ -457,7 +457,7 @@ namespace System.IO {
 				if (renamed != null) {
 					renamed.SetName (filename);
 				} else {
-					renamed = new RenamedEventArgs (WatcherChangeTypes.Renamed, path, filename, null);
+					renamed = new RenamedEventArgs (WatcherChangeTypes.Renamed, path, "", filename);
 				}
 				OnRenamed (renamed);
 				renamed = null;
