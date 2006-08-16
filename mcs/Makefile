@@ -96,6 +96,7 @@ DISTFILES = \
 	LICENSE			\
 	LICENSE.GPL		\
 	LICENSE.LGPL		\
+	LICENSE.MPL		\
 	Makefile		\
 	mkinstalldirs		\
 	MIT.X11			\
