@@ -4,9 +4,7 @@
 // Author:
 //	Ravindra (rkumar@novell.com)
 //
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -40,8 +38,7 @@ namespace MonoTests.System.Drawing.Drawing2D
 {
 	[TestFixture]
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-	public class HatchBrushTest : Assertion
-	{
+	public class HatchBrushTest {
 		Graphics gr;
 		Bitmap bmp;
 		Font font;
@@ -55,11 +52,6 @@ namespace MonoTests.System.Drawing.Drawing2D
 		int length;     // length of the line
 		int penWidth;   // width of the Pen used to draw lines
 
-		[SetUp]
-		public void GetReady () { }
-		
-		[TearDown]
-		public void Clear () { }
 
 		public HatchBrushTest ()
 		{
@@ -80,15 +72,15 @@ namespace MonoTests.System.Drawing.Drawing2D
 		{
 			HatchBrush hbr = new HatchBrush(HatchStyle.SolidDiamond, fgColor);
 
-			AssertEquals ("Props#1", hbr.HatchStyle, HatchStyle.SolidDiamond);
-			AssertEquals ("Props#2", hbr.ForegroundColor.ToArgb(), fgColor.ToArgb());
-			AssertEquals ("Props#3", hbr.BackgroundColor.ToArgb(), Color.Black.ToArgb());
+			Assert.AreEqual (hbr.HatchStyle, HatchStyle.SolidDiamond, "Props#1");
+			Assert.AreEqual (hbr.ForegroundColor.ToArgb (), fgColor.ToArgb (), "Props#2");
+			Assert.AreEqual (hbr.BackgroundColor.ToArgb (), Color.Black.ToArgb (), "Props#3");
 
 			hbr = new HatchBrush(HatchStyle.Cross, fgColor, bgColor);
 
-			AssertEquals ("Props#4", hbr.HatchStyle, HatchStyle.Cross);
-			AssertEquals ("Props#5", hbr.ForegroundColor.ToArgb(), fgColor.ToArgb());
-			AssertEquals ("Props#6", hbr.BackgroundColor.ToArgb(), bgColor.ToArgb());
+			Assert.AreEqual (hbr.HatchStyle, HatchStyle.Cross, "Props#4");
+			Assert.AreEqual (hbr.ForegroundColor.ToArgb (), fgColor.ToArgb (), "Props#5");
+			Assert.AreEqual (hbr.BackgroundColor.ToArgb (), bgColor.ToArgb (), "Props#6");
 		}
 
 		[Test]
@@ -98,9 +90,9 @@ namespace MonoTests.System.Drawing.Drawing2D
 
 			HatchBrush clone = (HatchBrush) hbr.Clone ();
 
-			AssertEquals ("Clone#1", hbr.HatchStyle, clone.HatchStyle);
-			AssertEquals ("Clone#2", hbr.ForegroundColor, clone.ForegroundColor);
-			AssertEquals ("Clone#3", hbr.BackgroundColor, clone.BackgroundColor);
+			Assert.AreEqual (hbr.HatchStyle, clone.HatchStyle, "Clone#1");
+			Assert.AreEqual (hbr.ForegroundColor, clone.ForegroundColor, "Clone#2");
+			Assert.AreEqual (hbr.BackgroundColor, clone.BackgroundColor, "Clone#3");
 		}
 
 		[Test]
@@ -110,7 +102,12 @@ namespace MonoTests.System.Drawing.Drawing2D
 			// to accomodate all the tests
 			bmp = new Bitmap (700, 6000); // width, height
 			gr = Graphics.FromImage (bmp);
-			font = new Font (new FontFamily ("Arial"), fontSize);
+			try {
+				font = new Font (new FontFamily ("Arial"), fontSize);
+			}
+			catch (ArgumentException) {
+				Assert.Ignore ("Arial FontFamily couldn't be found");
+			}
 
 			// make the background white
 			gr.Clear (Color.White);
@@ -611,11 +608,21 @@ namespace MonoTests.System.Drawing.Drawing2D
 		}
 
 		internal string getOutSufix()
-		{			
-			if (Environment.GetEnvironmentVariable("MSNet")==null)
-				return "-mono";
-					
-			return "";
+		{
+			string s;
+
+			int p = (int) Environment.OSVersion.Platform;
+			if ((p == 4) || (p == 128))
+				s = "-unix";
+			else
+				s = "-windows";
+
+			if (Type.GetType ("Mono.Runtime", false) == null)
+				s += "-msnet";
+			else
+				s += "-mono";
+
+			return s;
 		}
 	}
 }

@@ -1095,19 +1095,32 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			gp.Dispose ();
 		}
 
+		private FontFamily GetFontFamily ()
+		{
+			try {
+				return FontFamily.GenericMonospace;
+			}
+			catch (ArgumentException) {
+				Assert.Ignore ("GenericMonospace FontFamily couldn't be found");
+				return null;
+			}
+		}
+
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]
 		public void AddString_NullString ()
 		{
 			GraphicsPath gp = new GraphicsPath ();
-			gp.AddString (null, FontFamily.GenericMonospace, 0, 10, new Point (10, 10), StringFormat.GenericDefault);
+			FontFamily ff = GetFontFamily ();
+			gp.AddString (null, ff, 0, 10, new Point (10, 10), StringFormat.GenericDefault);
 		}
 
 		[Test]
 		public void AddString_EmptyString ()
 		{
 			GraphicsPath gp = new GraphicsPath ();
-			gp.AddString (String.Empty, FontFamily.GenericMonospace, 0, 10, new Point (10, 10), StringFormat.GenericDefault);
+			FontFamily ff = GetFontFamily ();
+			gp.AddString (String.Empty, ff, 0, 10, new Point (10, 10), StringFormat.GenericDefault);
 			Assert.AreEqual (0, gp.PointCount, "PointCount");
 		}
 
@@ -1123,7 +1136,8 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		public void AddString_NegativeSize ()
 		{
 			GraphicsPath gp = new GraphicsPath ();
-			gp.AddString ("mono", FontFamily.GenericMonospace, 0, -10, new Point (10, 10), StringFormat.GenericDefault);
+			FontFamily ff = GetFontFamily ();
+			gp.AddString ("mono", ff, 0, -10, new Point (10, 10), StringFormat.GenericDefault);
 			Assert.IsTrue (gp.PointCount > 0, "PointCount");
 		}
 
@@ -1131,18 +1145,19 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		[Category ("NotWorking")] // StringFormat not yet supported in libgdiplus
 		public void AddString_StringFormat ()
 		{
+			FontFamily ff = GetFontFamily ();
 			// null maps to ?
 			GraphicsPath gp1 = new GraphicsPath ();
-			gp1.AddString ("mono", FontFamily.GenericMonospace, 0, 10, new RectangleF (10, 10, 10, 10), null);
+			gp1.AddString ("mono", ff, 0, 10, new RectangleF (10, 10, 10, 10), null);
 
 			// StringFormat.GenericDefault
 			GraphicsPath gp2 = new GraphicsPath ();
-			gp2.AddString ("mono", FontFamily.GenericMonospace, 0, 10, new RectangleF (10, 10, 10, 10), StringFormat.GenericDefault);
+			gp2.AddString ("mono", ff, 0, 10, new RectangleF (10, 10, 10, 10), StringFormat.GenericDefault);
 			Assert.AreEqual (gp1.PointCount, gp2.PointCount, "GenericDefault");
 
 			// StringFormat.GenericTypographic
 			GraphicsPath gp3 = new GraphicsPath ();
-			gp3.AddString ("mono", FontFamily.GenericMonospace, 0, 10, new RectangleF (10, 10, 10, 10), StringFormat.GenericTypographic);
+			gp3.AddString ("mono", ff, 0, 10, new RectangleF (10, 10, 10, 10), StringFormat.GenericTypographic);
 			Assert.IsFalse (gp1.PointCount == gp3.PointCount, "GenericTypographic");
 		}
 

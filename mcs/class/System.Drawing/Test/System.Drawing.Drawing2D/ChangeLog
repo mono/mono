@@ -1,3 +1,10 @@
+2006-08-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GraphicsPathTest.cs: Ignore some test cases if we cannot get any 
+	font family from GDI+.
+	* TestHatchBrush.cs: Ignore some test cases if we cannot get any font
+	family from GDI+. Update to NUnit 2.2+ and fix getOutSufix method
+
 2006-06-09  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* GraphicsPathTest.cs: Added test cases for IsVisible methods.
