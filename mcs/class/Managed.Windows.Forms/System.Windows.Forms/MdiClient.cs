@@ -44,32 +44,34 @@ namespace System.Windows.Forms {
 		private bool lock_sizing;
 		private int prev_bottom;
 		private LayoutEventHandler initial_layout_handler;
-		
+		internal ArrayList mdi_child_list;
+
 		#endregion	// Local Variables
 
 		#region Public Classes
 		public new class ControlCollection : Control.ControlCollection {
-			MdiClient	owner;
+
+			private MdiClient owner;
 			
 			public ControlCollection(MdiClient owner) : base(owner) {
 				this.owner = owner;
-				controls = new ArrayList ();
+				owner.mdi_child_list = new ArrayList ();
 			}
 
 			public override void Add(Control value) {
 				if ((value is Form) == false || !(((Form)value).IsMdiChild)) {
 					throw new ArgumentException("Form must be MdiChild");
 				}
+				owner.mdi_child_list.Add (value);
 				base.Add (value);
 
 				// newest member is the active one
 				Form form = (Form) value;
 				owner.ActiveMdiChild = form;
-
-				form.LocationChanged += new EventHandler (owner.FormLocationChanged);
 			}
 
 			public override void Remove(Control value) {
+				owner.mdi_child_list.Remove (value);
 				base.Remove (value);
 			}
 		}
@@ -145,14 +147,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public Form[] MdiChildren {
+		public Form [] MdiChildren {
 			get {
-				Form[]	children;
-
-				children = new Form[Controls.Count];
-				Controls.CopyTo(children, 0);
-
-				return children;
+				if (mdi_child_list == null)
+					return new Form [0];
+				return (Form []) mdi_child_list.ToArray (typeof (Form));
 			}
 		}
 		#endregion	// Public Instance Properties

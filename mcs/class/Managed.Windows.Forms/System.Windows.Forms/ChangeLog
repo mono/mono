@@ -1,3 +1,10 @@
+2006-08-16  Jackson Harper  <jackson@ximian.com>
+
+	* Form.cs: Use the MdiClients MdiChildren property to access
+	MdiChildren instead of creating the array from the child controls.
+	* MdiClient.cs: Maintain a separate array of the mdi children, so
+	that insertion order is maintained when the Z-order is changed.
+
 2006-08-16  Mike Kestner  <mkestner@novell.com> 
 
 	* ListView.cs : add an ItemComparer and default to it for sorting.
@@ -292,6 +299,10 @@
 	* ImageListStreamer.cs: generate the MemoryStreams with the exact BMP
 	file size, as otherwise our class libraries fail using windows. Fixes
 	bug #78759.
+
+2006-08-04  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Specificy selection actions.
 
 2006-08-04  Jackson Harper  <jackson@ximian.com>
 

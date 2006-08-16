@@ -493,17 +493,10 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Form[] MdiChildren {
 			get {
-				if (mdi_container != null) {
-					Form[] form_list;
-
-					form_list = new Form[mdi_container.Controls.Count];
-					for (int i = 0; i < mdi_container.Controls.Count; i++) {
-						form_list[i] = (Form)mdi_container.Controls[i];
-					}
-					return form_list;
-				} else {
+				if (mdi_container != null)
+					return mdi_container.MdiChildren;
+				else
 					return new Form[0];
-				}
 			}
 		}
 
