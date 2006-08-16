@@ -1,3 +1,8 @@
+2006-08-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextReader2.cs : Check recursive entity reference.
+	  Fixed bug #79085. It makes W3C standalone tests on NET_2_0 working.
+
 2006-08-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReader.cs : When a whitespace node comes after a text 

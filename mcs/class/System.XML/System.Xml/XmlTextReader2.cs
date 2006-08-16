@@ -48,6 +48,7 @@ namespace System.Xml
 		XmlTextReaderImpl source; // dtd2xsd expects this field's existence.
 		bool entityInsideAttribute;
 		bool insideAttribute;
+		Stack<string> entityNameStack;
 
 		protected XmlTextReader ()
 		{
@@ -457,10 +458,8 @@ namespace System.Xml
 
 		public override void MoveToAttribute (int i)
 		{
-			if (entity != null && entityInsideAttribute) {
-				entity.Close ();
-				entity = null;
-			}
+			if (entity != null && entityInsideAttribute)
+				CloseEntity ();
 			Current.MoveToAttribute (i);
 			insideAttribute = true;
 		}
@@ -471,10 +470,8 @@ namespace System.Xml
 				return entity.MoveToAttribute (name);
 			if (!source.MoveToAttribute (name))
 				return false;
-			if (entity != null && entityInsideAttribute) {
-				entity.Close ();
-				entity = null;
-			}
+			if (entity != null && entityInsideAttribute)
+				CloseEntity ();
 			insideAttribute = true;
 			return true;
 		}
@@ -485,20 +482,16 @@ namespace System.Xml
 				return entity.MoveToAttribute (localName, namespaceName);
 			if (!source.MoveToAttribute (localName, namespaceName))
 				return false;
-			if (entity != null && entityInsideAttribute) {
-				entity.Close ();
-				entity = null;
-			}
+			if (entity != null && entityInsideAttribute)
+				CloseEntity ();
 			insideAttribute = true;
 			return true;
 		}
 
 		public override bool MoveToElement ()
 		{
-			if (entity != null && entityInsideAttribute) {
-				entity.Close ();
-				entity = null;
-			}
+			if (entity != null && entityInsideAttribute)
+				CloseEntity ();
 			if (!Current.MoveToElement ())
 				return false;
 			insideAttribute = false;
@@ -511,10 +504,8 @@ namespace System.Xml
 				return entity.MoveToFirstAttribute ();
 			if (!source.MoveToFirstAttribute ())
 				return false;
-			if (entity != null && entityInsideAttribute) {
-				entity.Close ();
-				entity = null;
-			}
+			if (entity != null && entityInsideAttribute)
+				CloseEntity ();
 			insideAttribute = true;
 			return true;
 		}
@@ -525,10 +516,8 @@ namespace System.Xml
 				return entity.MoveToNextAttribute ();
 			if (!source.MoveToNextAttribute ())
 				return false;
-			if (entity != null && entityInsideAttribute) {
-				entity.Close ();
-				entity = null;
-			}
+			if (entity != null && entityInsideAttribute)
+				CloseEntity ();
 			insideAttribute = true;
 			return true;
 		}
@@ -537,17 +526,14 @@ namespace System.Xml
 		{
 			insideAttribute = false;
 
-			if (entity != null && (entityInsideAttribute || entity.EOF)) {
-				entity.Close ();
-				entity = null;
-			}
+			if (entity != null && (entityInsideAttribute || entity.EOF))
+				CloseEntity ();
 			if (entity != null) {
 				if (entity.Read ())
 					return true;
 				if (EntityHandling == EntityHandling.ExpandEntities) {
 					// EndEntity must be skipped
-					entity.Close ();
-					entity = null;
+					CloseEntity ();
 					return Read ();
 				}
 				else
@@ -568,10 +554,8 @@ namespace System.Xml
 		public override bool ReadAttributeValue ()
 		{
 			if (entity != null && entityInsideAttribute) {
-				if (entity.EOF) {
-					entity.Close ();
-					entity = null;
-				}
+				if (entity.EOF)
+					CloseEntity ();
 				else {
 					entity.Read ();
 					return true; // either success or EndEntity
@@ -603,10 +587,23 @@ namespace System.Xml
 					ParserContext.Dtd.GenerateEntityContentReader (source.Name, ParserContext);
 				if (entReader == null)
 					throw new XmlException (this as IXmlLineInfo, this.BaseURI, String.Format ("Reference to undeclared entity '{0}'.", source.Name));
+				if (entityNameStack == null)
+					entityNameStack = new Stack<string> ();
+				else if (entityNameStack.Contains (Name))
+					throw new XmlException (String.Format ("General entity '{0}' has an invalid recursive reference to itself.", Name));
+				entityNameStack.Push (Name);
 				entity = new XmlTextReader (
 					entReader, insideAttribute);
+				entity.entityNameStack = entityNameStack;
 				entity.CopyProperties (this);
 			}
+		}
+
+		void CloseEntity ()
+		{
+			entity.Close ();
+			entity = null;
+			entityNameStack.Pop ();
 		}
 
 		public override void Skip ()
@@ -620,6 +617,7 @@ namespace System.Xml
 			if (entity != null) {
 				entity.Close ();
 				entity = null;
+				entityNameStack.Pop ();
 			}
 			return source.GetRemainder ();
 		}
