@@ -1,3 +1,10 @@
+2006-08-16  Alp Toker  <alp@atoker.com>
+
+	* metadata/socket-io.c: First half of the fix for #79084.
+	Set sa_size to the length of the content, not that of the struct.
+	Don't add NULL suffix to the content, this should be done in
+	managed code if needed.
+
 2006-08-14  Raja R Harinath  <rharinath@novell.com>
 
 	Fix part of #79012
