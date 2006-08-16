@@ -441,10 +441,10 @@ namespace System.Windows.Forms
 					return null;
 			}
 			set {
-				if (!Items.Contains (value))
+				if (value != null && !Items.Contains (value))
 					return; // FIXME: this is probably an exception
 					
-				SelectedIndex = Items.IndexOf (value);
+				SelectedIndex = value == null ? - 1 : Items.IndexOf (value);
 			}
 		}
 

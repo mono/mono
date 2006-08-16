@@ -1,3 +1,9 @@
+2006-08-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBox.cs: When passing 'null' to SelectedItem,
+	set SelectedIndex to -1, to unselect items. This is the
+	observed behaviour in .Net.
+
 2006-08-16  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* TextBoxBase.cs: Overriding HandleClick to get clicks in spite of
