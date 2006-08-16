@@ -1,10 +1,12 @@
 //
-// Mono.Unix.UnixEndPoint: EndPoint derived class for AF_UNIX family sockets.
+// Mono.Unix.AbstractUnixEndPoint: EndPoint derived class for AF_UNIX family sockets.
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Alp Toker  (alp@atoker.com)
 //
 // (C) 2003 Ximian, Inc (http://www.ximian.com)
+// (C) 2006 Alp Toker
 //
 
 //
@@ -35,26 +37,26 @@ using System.Text;
 namespace Mono.Unix
 {
 	[Serializable]
-	public class UnixEndPoint : EndPoint
+	public class AbstractUnixEndPoint : EndPoint
 	{
-		string filename;
-		
-		public UnixEndPoint (string filename)
-		{
-			if (filename == null)
-				throw new ArgumentNullException ("filename");
+		string path;
 
-			if (filename == "")
-				throw new ArgumentException ("Cannot be empty.", "filename");
-			this.filename = filename;
+		public AbstractUnixEndPoint (string path)
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+
+			if (path == "")
+				throw new ArgumentException ("Cannot be empty.", "path");
+			this.path = path;
 		}
-		
-		public string Filename {
+
+		public string Path {
 			get {
-				return(filename);
+				return(path);
 			}
 			set {
-				filename=value;
+				path=value;
 			}
 		}
 
@@ -77,43 +79,44 @@ namespace Mono.Unix
 
 			byte [] bytes = new byte [socketAddress.Size - 2 - 1];
 			for (int i = 0; i < bytes.Length; i++) {
-				bytes [i] = socketAddress [i + 2];
+				bytes [i] = socketAddress [2 + 1 + i];
 			}
 
 			string name = Encoding.Default.GetString (bytes);
-			return new UnixEndPoint (name);
+			return new AbstractUnixEndPoint (name);
 		}
 
 		public override SocketAddress Serialize ()
 		{
-			byte [] bytes = Encoding.Default.GetBytes (filename);
-			SocketAddress sa = new SocketAddress (AddressFamily, 2 + bytes.Length + 1);
+			byte [] bytes = Encoding.Default.GetBytes (path);
+			SocketAddress sa = new SocketAddress (AddressFamily, 2 + 1 + bytes.Length);
+			//NULL prefix denotes the abstract namespace, see unix(7)
+			//in this case, there is no NULL suffix
+			sa [2] = 0;
+
 			// sa [0] -> family low byte, sa [1] -> family high byte
 			for (int i = 0; i < bytes.Length; i++)
-				sa [2 + i] = bytes [i];
-
-			//NULL suffix for non-abstract path
-			sa[2 + bytes.Length] = 0;
+				sa [i + 2 + 1] = bytes [i];
 
 			return sa;
 		}
 
 		public override string ToString() {
-			return(filename);
+			return(path);
 		}
 
 		public override int GetHashCode ()
 		{
-			return filename.GetHashCode ();
+			return path.GetHashCode ();
 		}
 
 		public override bool Equals (object o)
 		{
-			UnixEndPoint other = o as UnixEndPoint;
+			AbstractUnixEndPoint other = o as AbstractUnixEndPoint;
 			if (other == null)
 				return false;
 
-			return (other.filename == filename);
+			return (other.path == path);
 		}
 	}
 }

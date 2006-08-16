@@ -1,6 +1,7 @@
 ./Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
+./Mono.Unix/AbstractUnixEndPoint.cs
 ./Mono.Unix/Catalog.cs
 ./Mono.Unix/FileAccessPermissions.cs
 ./Mono.Unix/FileAccessPattern.cs

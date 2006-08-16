@@ -1,3 +1,10 @@
+2006-08-16  Alp Toker  <alp@atoker.com>
+
+	* UnixEndPoint.cs:
+	* AbstractUnixEndPoint.cs: Second half of the fix for #79084.
+		Add support for the abstract namespace, and update existing file-based
+		UnixEndPoint (de)serialization to reflect changes in the runtime.
+
 2006-07-02  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* UnixSymbolicLinkInfo.cs: Oops.  CreateSymbolicLinkTo() should create
