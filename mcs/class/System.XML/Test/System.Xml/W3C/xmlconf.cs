@@ -8,10 +8,9 @@ namespace MonoTests.W3C_xmlconf {
 	using NUnit.Core;
 	using NUnit.Framework;
 
-	abstract class BaseTests
+	public abstract class BaseTests
 	{
 		TestSuite _suite;
-
 
 		#region test list fields
 		protected readonly ArrayList ignoredTests = new ArrayList ();
@@ -78,7 +77,7 @@ namespace MonoTests.W3C_xmlconf {
 		}
 	}
 
-	class AllTests: BaseTests
+	public class AllTests: BaseTests
 	{
 		[Suite]
 		static public TestSuite Suite{
@@ -96,7 +95,8 @@ namespace MonoTests.W3C_xmlconf {
 		}
 	}
 
-	class CleanTests: BaseTests {
+	public class CleanTests : BaseTests
+	{
 		[Suite]
 		static public TestSuite Suite{
 			get {
@@ -121,7 +121,8 @@ namespace MonoTests.W3C_xmlconf {
 		}
 	}
 
-	class KnownFailureTests: BaseTests {
+	public class KnownFailureTests : BaseTests
+	{
 		[Suite]
 		static public TestSuite Suite{
 			get {
@@ -150,7 +151,7 @@ namespace MonoTests.W3C_xmlconf {
 		}
 	}
 
-	class TestFromCatalog: NUnit.Core.TestCase
+	public class TestFromCatalog : NUnit.Core.TestCase
 	{
 		XmlElement _test;
 		string _errorString;

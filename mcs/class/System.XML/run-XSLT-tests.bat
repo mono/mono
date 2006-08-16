@@ -1,4 +1,4 @@
-@echo off
+rem @echo off
 REM ********************************************************
 REM This batch file receives the follwing parameters:
 REM build/rebuild (optional): should the solution file be rebuilded 
@@ -10,6 +10,7 @@ REM ********************************************************
 IF "%JAVA_HOME%"=="" GOTO ENVIRONMENT_EXCEPTION
 
 IF "%GH_HOME%"=="" GOTO ENVIRONMENT_EXCEPTION
+IF "%GHROOT%"=="" set GHROOT=%GH_HOME%
 
 REM ********************************************************
 REM Set parameters
@@ -28,16 +29,13 @@ REM @echo Set environment
 REM ********************************************************
 
 set JGAC_PATH=%GH_HOME%\jgac\vmw4j2ee_110\
-
 set RUNTIME_CLASSPATH=%JGAC_PATH%mscorlib.jar;%JGAC_PATH%System.jar;%JGAC_PATH%System.Xml.jar;%JGAC_PATH%J2SE.Helpers.jar;
 set NUNIT_OPTIONS=/fixture=MonoTests.oasis_xslt.SuiteBuilder /include=Clean
-
+set PROJECT_CONFIGURATION=Debug_Java20
 set GH_OUTPUT_XML=XSLT_nunit_results.xml
-
 set NUNIT_PATH=..\..\..\..\..\nunit20\
 set NUNIT_CLASSPATH=%NUNIT_PATH%nunit-console\bin\Debug_Java\nunit.framework.jar;%NUNIT_PATH%nunit-console\bin\Debug_Java\nunit.util.jar;%NUNIT_PATH%nunit-console\bin\Debug_Java\nunit.core.jar;%NUNIT_PATH%nunit-console\bin\Debug_Java\nunit-console.jar
 set CLASSPATH="%RUNTIME_CLASSPATH%;%NUNIT_CLASSPATH%"
-
 set XSLT_DIR=Test\System.Xml.XSL\standalone_tests\
 
 pushd %XSLT_DIR%
@@ -46,8 +44,10 @@ IF "%BUILD_OPTION%"=="nobuild" GOTO RUN
 REM ********************************************************
 @echo Building NUnit solution...
 REM ********************************************************
+
 if "%NUNIT_BUILD%" == "DONE" goto NUNITSKIP
-devenv %NUNIT_PATH%nunit.java.sln /%BUILD_OPTION% Debug_Java >build.log.txt 2<&1
+msbuild %NUNIT_PATH%nunit.java.sln /t:%BUILD_OPTION% /p:configuration=%PROJECT_CONFIGURATION% >build.log.txt 2<&1
+
 goto NUNITREADY
 
 :NUNITSKIP
@@ -62,16 +62,15 @@ REM ********************************************************
 @echo Build XmlTool
 REM ********************************************************
 set XML_TOOL_PATH=..\..\..\..\..\tools\mono-xmltool
-devenv %XML_TOOL_PATH%\XmlTool.sln /%BUILD_OPTION% Debug_Java >>build.log.txt 2<&1
+msbuild %XML_TOOL_PATH%\XmlTool20.sln /p:configuration=Debug >>build.log.txt 2<&1
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 copy %XML_TOOL_PATH%\bin\Debug_Java\xmltool.exe ..\..\..
 copy %XML_TOOL_PATH%\nunit_transform.xslt ..\..\..
 
-
 REM ********************************************************
 @echo Building GH solution...
 REM ********************************************************
-devenv xslt.sln /%BUILD_OPTION% Debug_Java >>build.log.txt 2<&1
+msbuild xslt20.J2EE.sln /t:%BUILD_OPTION% /p:configuration=%PROJECT_CONFIGURATION% >>build.log.txt 2<&1
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
 REM ********************************************************
@@ -97,12 +96,14 @@ REM ********************************************************
 @echo Running GH tests...
 REM ********************************************************
 
+del %GH_OUTPUT_XML%
 @echo on
 "%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi xslt.jar  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML%  >run.log.txt 2<&1
 @echo off
 
 popd
 
+del %GH_OUTPUT_XML%
 copy %XSLT_DIR%\%GH_OUTPUT_XML% .
 
 REM ********************************************************
