@@ -799,7 +799,7 @@ namespace System.Net.Sockets
 			} catch (ThreadAbortException) {
 				if (disposed) {
 					Thread.ResetAbort ();
-					error = 10004;
+					error = (int) SocketError.Interrupted;
 				}
 			} finally {
 				blocking_thread = null;
@@ -847,7 +847,7 @@ namespace System.Net.Sockets
 			if (end_point is IPEndPoint) {
 				IPEndPoint ep = (IPEndPoint) end_point;
 				if (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any)) {
-					req.Complete (new SocketException (10049), true);
+					req.Complete (new SocketException ((int) SocketError.AddressNotAvailable), true);
 					return req;
 				}
 			}
@@ -860,14 +860,14 @@ namespace System.Net.Sockets
 					// succeeded synch
 					connected = true;
 					req.Complete (true);
-				} else if (error != 10036 && error != 10035) {
+				} else if (error != (int) SocketError.InProgress && error != (int) SocketError.WouldBlock) {
 					// error synch
 					connected = false;
 					req.Complete (new SocketException (error), true);
 				}
 			}
 
-			if (blocking || error == 10036 || error == 10035) {
+			if (blocking || error == (int) SocketError.InProgress || error == (int) SocketError.WouldBlock) {
 				// continue asynch
 				connected = false;
 				Worker worker = new Worker (req);
@@ -1077,7 +1077,7 @@ namespace System.Net.Sockets
 			if (remote_end is IPEndPoint) {
 				IPEndPoint ep = (IPEndPoint) remote_end;
 				if (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any))
-					throw new SocketException (10049);
+					throw new SocketException ((int) SocketError.AddressNotAvailable);
 			}
 
 			SocketAddress serial = remote_end.Serialize ();
@@ -1089,7 +1089,7 @@ namespace System.Net.Sockets
 			} catch (ThreadAbortException) {
 				if (disposed) {
 					Thread.ResetAbort ();
-					error = 10004;
+					error = (int) SocketError.Interrupted;
 				}
 			} finally {
 				blocking_thread = null;
@@ -1383,8 +1383,11 @@ namespace System.Net.Sockets
 
 			int ret = Receive_nochecks (buf, 0, buf.Length, flags, out error);
 			
-			if (error != SocketError.Success)
+			if (error != SocketError.Success) {
+				if (error == SocketError.WouldBlock && blocking) // This might happen when ReceiveTimeout is set
+					throw new SocketException ((int) error, "Operation timed out.");
 				throw new SocketException ((int) error);
+			}
 
 			return ret;
 		}
@@ -1404,8 +1407,11 @@ namespace System.Net.Sockets
 
 			int ret = Receive_nochecks (buf, 0, size, flags, out error);
 			
-			if (error != SocketError.Success)
+			if (error != SocketError.Success) {
+				if (error == SocketError.WouldBlock && blocking) // This might happen when ReceiveTimeout is set
+					throw new SocketException ((int) error, "Operation timed out.");
 				throw new SocketException ((int) error);
+			}
 
 			return ret;
 		}
@@ -1428,8 +1434,11 @@ namespace System.Net.Sockets
 
 			int ret = Receive_nochecks (buf, offset, size, flags, out error);
 			
-			if(error != SocketError.Success)
+			if (error != SocketError.Success) {
+				if (error == SocketError.WouldBlock && blocking) // This might happen when ReceiveTimeout is set
+					throw new SocketException ((int) error, "Operation timed out.");
 				throw new SocketException ((int) error);
+			}
 
 			return ret;
 		}
@@ -1560,9 +1569,12 @@ namespace System.Net.Sockets
 
 			cnt = RecvFrom_internal (socket, buf, offset, size, flags, ref sockaddr, out error);
 
-			if (error != 0) {
-				if (error != 10035 && error != 10036) // WSAEWOULDBLOCK && WSAEINPROGRESS
+			SocketError err = (SocketError) error;
+			if (err != 0) {
+				if (err != SocketError.WouldBlock && err != SocketError.InProgress)
 					connected = false;
+				else if (err == SocketError.WouldBlock && blocking) // This might happen when ReceiveTimeout is set
+					throw new SocketException (error, "Operation timed out.");
 
 				throw new SocketException (error);
 			}
@@ -1795,8 +1807,9 @@ namespace System.Net.Sockets
 
 			ret = SendTo_internal (socket, buffer, offset, size, flags, sockaddr, out error);
 
-			if (error != 0) {
-				if (error != 10035 && error != 10036) // WSAEWOULDBLOCK && WSAEINPROGRESS
+			SocketError err = (SocketError) error;
+			if (err != 0) {
+				if (err != SocketError.WouldBlock && err != SocketError.InProgress)
 					connected = false;
 
 				throw new SocketException (error);

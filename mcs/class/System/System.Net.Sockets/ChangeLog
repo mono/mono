@@ -1,3 +1,11 @@
+2006-08-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: replace hardcoded error numbers with the SocketError
+	values. When ReceiveTimeout is set on a blocking socket, correctly
+	report timeouts in the generated exception.
+	
+	* SocketException.cs: add new internal ctor (int, string).
+
 2006-08-12  Miguel de Icaza  <miguel@novell.com>
 
 	* Socket.cs (NoDelay): Implement.

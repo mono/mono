@@ -52,7 +52,13 @@ namespace System.Net.Sockets
 					StreamingContext context)
 			: base (info, context) {
 		}
-		
+
+
+		internal SocketException (int error, string message)
+			: base (error, message)
+		{
+		}
+
 		public override int ErrorCode {
 			get {
 				return NativeErrorCode;
