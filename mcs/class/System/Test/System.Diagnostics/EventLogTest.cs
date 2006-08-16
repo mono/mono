@@ -1143,7 +1143,7 @@ namespace MonoTests.System.Diagnostics
 					Assert.AreEqual (0, entry.Data.Length, "#12");
 					Assert.AreEqual (EventLogEntryType.Information, entry.EntryType, "#13");
 					Assert.AreEqual (0, entry.EventID, "#14");
-#if NET_2_0
+#if false && NET_2_0
 					Assert.AreEqual (entry.EventID, entry.InstanceId, "#15");
 #endif
 					Assert.IsNotNull (entry.MachineName, "#16");
@@ -1229,7 +1229,7 @@ namespace MonoTests.System.Diagnostics
 					Assert.AreEqual (0, entry.Data.Length, "#12");
 					Assert.AreEqual (EventLogEntryType.Information, entry.EntryType, "#13");
 					Assert.AreEqual (0, entry.EventID, "#14");
-#if NET_2_0
+#if false && NET_2_0
 					Assert.AreEqual (entry.EventID, entry.InstanceId, "#15");
 #endif
 					Assert.IsNotNull (entry.MachineName, "#16");
