@@ -67,8 +67,10 @@ namespace MonoTests.System.Drawing {
 
 			IntPtr font_family;
 			GDIPlus.GdipCreateFontFamilyFromName ("Arial", IntPtr.Zero, out font_family);
-			Assert.IsTrue (font_family != IntPtr.Zero, "GDIGdipCreateFontFamilyFromName");
-			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteFontFamily (font_family), "first");
+			if (font_family != IntPtr.Zero)
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteFontFamily (font_family), "first");
+			else
+				Assert.Ignore ("Arial isn't available on this platform");
 		}
 
 		[Test]
@@ -89,7 +91,8 @@ namespace MonoTests.System.Drawing {
 		{
 			IntPtr family;
 			GDIPlus.GdipCreateFontFamilyFromName ("Arial", IntPtr.Zero, out family);
-			Assert.IsTrue (family != IntPtr.Zero, "family");
+			if (family == IntPtr.Zero)
+				Assert.Ignore ("Arial isn't available on this platform");
 
 			IntPtr font;
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreateFont (family, 10f, FontStyle.Regular, GraphicsUnit.Point, out font), "GdipCreateFont");
@@ -305,6 +308,28 @@ namespace MonoTests.System.Drawing {
 			finally {
 				GDIPlus.GdipDisposeImage (image);
 			}
+		}
+
+		[Test]
+		public void Encoder ()
+		{
+			IntPtr image;
+			GDIPlus.GdipCreateBitmapFromScan0 (10, 10, 0, PixelFormat.Format32bppArgb, IntPtr.Zero, out image);
+
+			Guid g = new Guid ();
+			uint size = UInt32.MaxValue;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetEncoderParameterListSize (IntPtr.Zero, ref g, out size), "GdipGetEncoderParameterListSize-null-guid-uint");
+			Assert.AreEqual (UInt32.MaxValue, size, "size-1");
+			// note: can't test a null Guid (it's a struct)
+#if false
+			Assert.AreEqual (Status. FileNotFound, GDIPlus.GdipGetEncoderParameterListSize (image, ref g, out size), "GdipGetEncoderParameterListSize-image-badguid-uint");
+			Assert.AreEqual (UInt32.MaxValue, size, "size-2");
+
+			g = new Guid ("{B96B3CAE-0728-11D3-9D7B-0000F81EF32E}");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetEncoderParameterListSize (image, ref g, out size), "GdipGetEncoderParameterListSize-image-guid-uint");
+			Assert.AreEqual (UInt32.MaxValue, size, "size-3");
+#endif
+			GDIPlus.GdipDisposeImage (image);
 		}
 
 		// PathGradientBrush
