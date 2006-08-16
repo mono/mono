@@ -1,3 +1,8 @@
+2006-08-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* PageSetupDialog.cs : use Yard-Pound units only in en-GB and en-US
+	  cultures. Fixed bug #78399.
+
 2006-08-16  Jackson Harper  <jackson@ximian.com>
 
 	* Form.cs: Use the MdiClients MdiChildren property to access

@@ -31,17 +31,24 @@ using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Printing;
+using System.Globalization;
 using System.Reflection;
 
 namespace System.Windows.Forms {
 
 	[DefaultProperty("Document")]
 	public sealed class PageSetupDialog : CommonDialog {
+		const int yard_pound_default = 100;
+		static readonly int meter_default = (int) Math.Round (10 * 3.937 * 100);
+
 		#region Local variables
 		private PrintDocument document;
 		private PageSettings page_settings;
 		private PrinterSettings printer_settings;
 		private Margins	min_margins;
+		private Margins	default_margins = UseYardPound ?
+			new Margins (yard_pound_default, yard_pound_default, yard_pound_default, yard_pound_default) :
+			new Margins (meter_default, meter_default, meter_default, meter_default);
 		private bool allow_margins;
 		private bool allow_orientation;
 		private bool allow_paper;
@@ -270,7 +277,7 @@ namespace System.Windows.Forms {
 			this.groupbox_margin.Size = new System.Drawing.Size(228, 90);
 			this.groupbox_margin.TabIndex = 2;
 			this.groupbox_margin.TabStop = false;
-			this.groupbox_margin.Text = "Margins (inches)";
+			this.groupbox_margin.Text = LocalizedLengthUnit ();
 			// 
 			// label_left
 			// 
@@ -335,7 +342,7 @@ namespace System.Windows.Forms {
 			this.textbox_left.Name = "textbox_left";
 			this.textbox_left.Size = new System.Drawing.Size(48, 20);
 			this.textbox_left.TabIndex = 4;
-			this.textbox_left.Text = "1";
+			this.textbox_left.Text = ToLocalizedLength (default_margins.Left);
 			// 
 			// textbox_top
 			// 
@@ -343,7 +350,7 @@ namespace System.Windows.Forms {
 			this.textbox_top.Name = "textbox_top";
 			this.textbox_top.Size = new System.Drawing.Size(48, 20);
 			this.textbox_top.TabIndex = 5;
-			this.textbox_top.Text = "1";
+			this.textbox_top.Text = ToLocalizedLength (default_margins.Top);
 			// 
 			// textbox_right
 			// 
@@ -351,7 +358,7 @@ namespace System.Windows.Forms {
 			this.textbox_right.Name = "textbox_right";
 			this.textbox_right.Size = new System.Drawing.Size(48, 20);
 			this.textbox_right.TabIndex = 6;
-			this.textbox_right.Text = "1";
+			this.textbox_right.Text = ToLocalizedLength (default_margins.Right);
 			// 
 			// textbox_bottom
 			// 
@@ -359,7 +366,7 @@ namespace System.Windows.Forms {
 			this.textbox_bottom.Name = "textbox_bottom";
 			this.textbox_bottom.Size = new System.Drawing.Size(48, 20);
 			this.textbox_bottom.TabIndex = 7;
-			this.textbox_bottom.Text = "1";
+			this.textbox_bottom.Text = ToLocalizedLength (default_margins.Bottom);
 			// 
 			// Form3
 			// 
@@ -385,6 +392,30 @@ namespace System.Windows.Forms {
 			this.groupbox_margin.ResumeLayout(false);
 			form.ResumeLayout(false);
 
+		}
+
+		static bool UseYardPound {
+			get {
+				switch (CultureInfo.CurrentUICulture.Name) {
+				case "en-US":
+				case "en-GB":
+					return true;
+				default:
+					return false;
+				}
+			}
+		}
+
+		private string ToLocalizedLength (int marginsUnit)
+		{
+			return (UseYardPound ?
+				marginsUnit / 100 :
+				marginsUnit / 3.937 / 100).ToString ();
+		}
+
+		private string LocalizedLengthUnit ()
+		{
+			return UseYardPound ? "Margins (inches)" : "Margins (millimeters)";
 		}
 		#endregion // Private Helper
 	}
