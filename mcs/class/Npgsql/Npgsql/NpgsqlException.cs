@@ -58,7 +58,7 @@ namespace Npgsql
         internal NpgsqlException(IList errors) : base(((NpgsqlError)errors[0]).ToString())
         {
             NpgsqlEventLog.LogMsg(resman, "Log_ExceptionOccured", LogLevel.Normal, Message);
-            this.errors = errors;
+            this.errors = new ArrayList(errors);
 
         }
         

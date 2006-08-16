@@ -97,9 +97,6 @@
 	<resheader name="writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
-	<data name="Exception_UnsopportedIsolationLevel">
-		<value>Must be Read Committed or Serializable.</value>
-	</data>
 	<data name="Exception_NoTransaction">
 		<value>No transaction in progress.</value>
 	</data>

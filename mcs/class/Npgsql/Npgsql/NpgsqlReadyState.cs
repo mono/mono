@@ -73,7 +73,6 @@ namespace Npgsql
 
             query.WriteToStream(context.Stream, context.Encoding);
             context.Stream.Flush();
-            
 
             ProcessBackendResponses(context);
 

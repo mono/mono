@@ -115,6 +115,10 @@ namespace Npgsql
                             query.Append(" WHERE ");
                             addWhere = false;
                         }
+                        else
+                        {
+                            query.Append(" AND ");
+                        }
                         query.AppendFormat("{0} = :{0}", names[i]);
 
                         command.Parameters.Add(new NpgsqlParameter(names[i], restrictions[i]));

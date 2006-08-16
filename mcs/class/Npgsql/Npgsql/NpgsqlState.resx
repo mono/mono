@@ -137,5 +137,8 @@
     <data name="Exception_Ssl_RequestError">
                 <value>Ssl connection requested. No Ssl enabled connection from this host is configured.</value>
     </data>    
+    <data name="Exception_ConnectionTimeout">
+                <value>Connection establishment timeout. Increase Timeout value in ConnectionString.</value>
+    </data>    
         
 </root>

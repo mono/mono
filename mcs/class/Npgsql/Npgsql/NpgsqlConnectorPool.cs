@@ -496,8 +496,8 @@ namespace Npgsql
 
         if (Connector.State == System.Data.ConnectionState.Open)
             {
-                // Release all plans and portals associated with this connector.
-                Connector.ReleasePlansPortals();
+                // Release all resources associated with this connector.
+                Connector.ReleaseResources();
 
                 Queue.Enqueue(Connector);
             }

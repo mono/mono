@@ -144,7 +144,7 @@ namespace Npgsql
             _oidToNameMapping = new NpgsqlBackendTypeMapping();
             _planIndex = 0;
             _portalIndex = 0;
-            _notificationThreadStopCount = -99;
+            _notificationThreadStopCount = 1;
             _notificationAutoResetEvent = new AutoResetEvent(true);
 
         }
@@ -206,6 +206,21 @@ namespace Npgsql
             }
         }
         
+        internal Int32 ConnectionTimeout
+        {
+            get
+            {
+                return ConnectionString.ToInt32(ConnectionStringKeys.Timeout, ConnectionStringDefaults.Timeout);
+            }
+        }
+
+        internal Int32 CommandTimeout
+        {
+            get
+            {
+                return ConnectionString.ToInt32(ConnectionStringKeys.CommandTimeout, ConnectionStringDefaults.CommandTimeout);
+            }
+        }
         
 
         /// <summary>
@@ -290,6 +305,25 @@ namespace Npgsql
         }
 
 
+
+        /// <summary>
+        /// This method is responsible for releasing all resources associated with this Connector.
+        /// </summary>
+
+        internal void ReleaseResources()
+        {
+            ReleasePlansPortals();
+            ReleaseRegisteredListen();
+
+
+        }
+
+        internal void ReleaseRegisteredListen()
+        {
+            Query(new NpgsqlCommand("unlisten *", this));
+
+        }
+
         /// <summary>
         /// This method is responsible to release all portals used by this Connector.
         /// </summary>
@@ -308,6 +342,8 @@ namespace Npgsql
 
 
         }
+
+        
 
 
 
@@ -349,11 +385,19 @@ namespace Npgsql
         {
             if (Notification != null)
             {
-                foreach (NpgsqlNotificationEventArgs E in _mediator.Notifications)
-                {
-                    Notification(this, E);
+
+                    foreach (NpgsqlNotificationEventArgs E in _mediator.Notifications)
+                    {
+                        // Wrap our notification thread call while running on user land code.
+                        // This prevents our thread of possibly dying there if there is no exception handling.
+                        try
+                        {
+                            Notification(this, E);
+                        }
+                        catch(Exception){}
+                    }
                 }
-            }
+
         }
 
         /// <summary>
@@ -773,7 +817,7 @@ namespace Npgsql
             
             // Special case in order to not get problems with thread synchronization.
             // It will be turned to 0 when synch thread is created.
-            _notificationThreadStopCount = -99;  
+            _notificationThreadStopCount = 1;  
             
         }
         

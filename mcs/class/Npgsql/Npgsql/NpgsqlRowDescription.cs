@@ -28,6 +28,7 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using System.Net;
+using System.Globalization;
 
 using NpgsqlTypes;
 
@@ -66,6 +67,7 @@ namespace Npgsql
 
         private NpgsqlRowDescriptionFieldData[]  fields_data;
         private string[]                fields_index;
+        private Hashtable               field_name_index_table;
 
         private ProtocolVersion          protocol_version;
 
@@ -103,8 +105,12 @@ namespace Npgsql
             // Temporary FieldData object to get data from stream and put in array.
             NpgsqlRowDescriptionFieldData fd;
 
-			fields_data = new NpgsqlRowDescriptionFieldData[num_fields];
-			fields_index = new string[num_fields];
+            fields_data = new NpgsqlRowDescriptionFieldData[num_fields];
+            fields_index = new string[num_fields];
+            
+            field_name_index_table = new Hashtable(num_fields);
+            
+            
             // Now, iterate through each field getting its data.
             for (Int16 i = 0; i < num_fields; i++)
             {
@@ -125,6 +131,9 @@ namespace Npgsql
                 fields_data[i] = fd;
 
                 fields_index[i] = fd.name;
+                
+                if (!field_name_index_table.ContainsKey(fd.name))
+                    field_name_index_table.Add(fd.name, i);
             }
         }
 
@@ -142,8 +151,10 @@ namespace Npgsql
             // Temporary FieldData object to get data from stream and put in array.
             NpgsqlRowDescriptionFieldData fd;
 
-			fields_data = new NpgsqlRowDescriptionFieldData[num_fields];
-			fields_index = new string[num_fields];
+            fields_data = new NpgsqlRowDescriptionFieldData[num_fields];
+            fields_index = new string[num_fields];
+            field_name_index_table = new Hashtable(num_fields);
+            
             for (Int16 i = 0; i < num_fields; i++)
             {
                 fd = new NpgsqlRowDescriptionFieldData();
@@ -157,8 +168,11 @@ namespace Npgsql
                 fd.type_modifier = PGUtil.ReadInt32(input_stream, input_buffer);
                 fd.format_code = (FormatCode)PGUtil.ReadInt16(input_stream, input_buffer);
 
-				fields_data[i] = fd;
-				fields_index[i] = fd.name;
+                fields_data[i] = fd;
+                fields_index[i] = fd.name;
+                
+                if (!field_name_index_table.ContainsKey(fd.name))
+                    field_name_index_table.Add(fd.name, i);
             }
         }
 
@@ -180,24 +194,43 @@ namespace Npgsql
 
         public Int16 FieldIndex(String fieldName)
         {
-			// First try to find the index with IndexOf (case-sensitive)
-			Int16 result = (Int16)Array.IndexOf(fields_index, fieldName, 0, fields_index.Length);
-
-			if (result != -1)
-			{
-				return result;
-			}
-			else
-			{
-				foreach(string name in fields_index)
-				{
-					++result;
-					if (string.Compare(name, fieldName, true) == 0)
-						return result;
-				}
-			}
             
-            throw new ArgumentOutOfRangeException("fieldName", fieldName, "Field name not found");
+            
+            // First try to find with hashtable, case sensitive.
+            
+            Object result1 = field_name_index_table[fieldName];
+            
+            if (result1 != null)
+                return (Int16)result1;
+            
+
+            result1 = field_name_index_table[fieldName.ToLower(CultureInfo.InvariantCulture)];
+
+            if (result1 != null)
+                return (Int16)result1;
+
+            // Then the index with IndexOf (case-sensitive)
+
+            
+            Int16 result = (Int16)Array.IndexOf(fields_index, fieldName, 0, fields_index.Length);
+
+            if (result != -1)
+            {
+                return result;
+            }
+            else
+            {
+            
+                foreach(string name in fields_index)
+                {
+                    ++result;
+                    if (string.Compare(name, fieldName, true, CultureInfo.InvariantCulture) == 0)
+                        return result;
+                }
+            }
+            
+            return -1;
+            
 
         }
 

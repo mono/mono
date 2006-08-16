@@ -193,11 +193,17 @@ namespace Npgsql
             if ((_behavior & CommandBehavior.CloseConnection) == CommandBehavior.CloseConnection)
             {
                 _connection.Close();
-
             }
 
             _isClosed = true;
+            if (this.ReaderClosed != null)
+	            this.ReaderClosed(this, EventArgs.Empty);
         }
+        
+        /// <summary>
+        /// Is raised whenever Close() is called.
+        /// </summary>
+        public event EventHandler ReaderClosed;
 
         /// <summary>
         /// Advances the data reader to the next result, when multiple result sets were returned by the PostgreSQL backend.
@@ -460,7 +466,10 @@ namespace Npgsql
             get
             {
                 NpgsqlEventLog.LogIndexerGet(LogLevel.Debug, CLASSNAME, name);
-                return GetValue(_currentResultset.RowDescription.FieldIndex(name));
+                Int32 fieldIndex = _currentResultset.RowDescription.FieldIndex(name);
+                if (fieldIndex == -1)
+                    throw new IndexOutOfRangeException("Field not found");
+                return GetValue(fieldIndex);
             }
         }
 
@@ -715,13 +724,13 @@ namespace Npgsql
 
                 row["ColumnName"] = GetName(i);
                 row["ColumnOrdinal"] = i + 1;
-                if (rd[i].type_modifier != -1 && (rd[i].type_info.Name == "varchar" || rd[i].type_info.Name == "bpchar"))
+                if (rd[i].type_modifier != -1 && rd[i].type_info != null && (rd[i].type_info.Name == "varchar" || rd[i].type_info.Name == "bpchar"))
                     row["ColumnSize"] = rd[i].type_modifier - 4;
-                else if (rd[i].type_modifier != -1 && (rd[i].type_info.Name == "bit" || rd[i].type_info.Name == "varbit"))
+                else if (rd[i].type_modifier != -1 && rd[i].type_info != null && (rd[i].type_info.Name == "bit" || rd[i].type_info.Name == "varbit"))
                     row["ColumnSize"] = rd[i].type_modifier;
                 else
                     row["ColumnSize"] = (int) rd[i].type_size;
-                if (rd[i].type_modifier != -1 && rd[i].type_info.Name == "numeric")
+                if (rd[i].type_modifier != -1 && rd[i].type_info != null && rd[i].type_info.Name == "numeric")
                 {
                     row["NumericPrecision"] = ((rd[i].type_modifier-4)>>16)&ushort.MaxValue;
                     row["NumericScale"] = (rd[i].type_modifier-4)&ushort.MaxValue;
@@ -739,7 +748,10 @@ namespace Npgsql
                 row["BaseColumnName"] = GetName(i);
                 row["DataType"] = GetFieldType(i);
                 row["AllowDBNull"] = IsNullable(null, i);
-                row["ProviderType"] = rd[i].type_info.Name;
+                if (rd[i].type_info != null)
+                {
+                    row["ProviderType"] = rd[i].type_info.Name;
+                }
                 row["IsAliased"] = false;
                 row["IsExpression"] = false;
                 row["IsIdentity"] = false;
@@ -793,13 +805,13 @@ namespace Npgsql
 
                 row["ColumnName"] = GetName(i);
                 row["ColumnOrdinal"] = i + 1;
-                if (rd[i].type_modifier != -1 && (rd[i].type_info.Name == "varchar" || rd[i].type_info.Name == "bpchar"))
+                if (rd[i].type_modifier != -1 && rd[i].type_info != null && (rd[i].type_info.Name == "varchar" || rd[i].type_info.Name == "bpchar"))
                     row["ColumnSize"] = rd[i].type_modifier - 4;
-                else if (rd[i].type_modifier != -1 && (rd[i].type_info.Name == "bit" || rd[i].type_info.Name == "varbit"))
+                else if (rd[i].type_modifier != -1 && rd[i].type_info != null && (rd[i].type_info.Name == "bit" || rd[i].type_info.Name == "varbit"))
                     row["ColumnSize"] = rd[i].type_modifier;
                 else
                     row["ColumnSize"] = (int) rd[i].type_size;
-                if (rd[i].type_modifier != -1 && rd[i].type_info.Name == "numeric")
+                if (rd[i].type_modifier != -1 && rd[i].type_info != null && rd[i].type_info.Name == "numeric")
                 {
                     row["NumericPrecision"] = ((rd[i].type_modifier-4)>>16)&ushort.MaxValue;
                     row["NumericScale"] = (rd[i].type_modifier-4)&ushort.MaxValue;
@@ -826,7 +838,10 @@ namespace Npgsql
                 row["BaseColumnName"] = baseColumnName;
                 row["DataType"] = GetFieldType(i);
                 row["AllowDBNull"] = IsNullable(columnLookup, i);
-                row["ProviderType"] = rd[i].type_info.Name;
+                if (rd[i].type_info != null)
+                {
+                    row["ProviderType"] = rd[i].type_info.Name;
+                }
                 row["IsAliased"] = string.CompareOrdinal((string)row["ColumnName"], baseColumnName) != 0;
                 row["IsExpression"] = false;
                 row["IsIdentity"] = false;

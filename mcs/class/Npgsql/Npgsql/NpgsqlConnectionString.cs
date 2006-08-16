@@ -394,6 +394,9 @@ namespace Npgsql
         public static readonly String MaxPoolSize           = "MAXPOOLSIZE";
         public static readonly String SyncNotification      = "SYNCNOTIFICATION";
 
+        // These are for the command
+        public static readonly String CommandTimeout        = "COMMANDTIMEOUT";
+
         // A list of aliases for some of the above values.  If one of these aliases is
         // encountered when parsing a connection string, it's real key name will
         // be used instead.  These will be reflected if ToString() is used to inspect
@@ -440,7 +443,8 @@ namespace Npgsql
         public static readonly Int32 MaxPoolSize            = 20;
         public static readonly Int32 Timeout                = 15; // Seconds
         public static readonly Int32 ConnectionLifeTime     = 15; // Seconds
-        public static readonly Boolean SyncNotification     = false; 
+        public static readonly Boolean SyncNotification     = false;
+        public static readonly Int32 CommandTimeout         = 20; // Seconds
     }
     
     internal enum SslMode

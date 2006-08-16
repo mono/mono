@@ -139,12 +139,31 @@ namespace NpgsqlTypes
             return (BackendData.ToLower() == "t" ? true : false);
         }
 
+
+        /// <summary>
+        /// Convert a postgresql bit to a System.Boolean.
+        /// </summary>
+        internal static Object ToBit(NpgsqlBackendTypeInfo TypeInfo, String BackendData, Int16 TypeSize, Int32 TypeModifier)
+        {
+            return (BackendData.ToLower() == "1" ? true : false);
+        }
+
         /// <summary>
         /// Convert a postgresql datetime to a System.DateTime.
         /// </summary>
         internal static Object ToDateTime(NpgsqlBackendTypeInfo TypeInfo, String BackendData, Int16 TypeSize, Int32 TypeModifier)
         {
+            
             // Get the date time parsed in all expected formats for timestamp.
+
+            // First check for special values infinity and -infinity.
+
+            if (BackendData == "infinity")
+                return DateTime.MaxValue;
+
+            if (BackendData == "-infinity")
+                return DateTime.MinValue;
+
             return DateTime.ParseExact(BackendData,
                                         DateTimeFormats,
                                         DateTimeFormatInfo.InvariantInfo,
@@ -220,10 +239,27 @@ namespace NpgsqlTypes
         }
 
         /// <summary>
+        /// Convert to a postgresql bit.
+        /// </summary>
+        internal static String ToBit(NpgsqlNativeTypeInfo TypeInfo, Object NativeData)
+        {
+            // Convert boolean values to bit or convert int32 values to bit - odd values are 1 and
+            // even numbers are 0.
+            if (NativeData is Boolean)
+                return ((Boolean)NativeData) ? "1" : "0";
+            else
+                return (((Int32)NativeData) % 2 == 1) ? "1" : "0";
+        }
+
+        /// <summary>
         /// Convert to a postgresql timestamp.
         /// </summary>
         internal static String ToDateTime(NpgsqlNativeTypeInfo TypeInfo, Object NativeData)
         {
+            if (DateTime.MaxValue.Equals(NativeData))
+                return "infinity";
+            if (DateTime.MinValue.Equals(NativeData))
+                return "-infinity";
             return ((DateTime)NativeData).ToString("yyyy-MM-dd HH:mm:ss.ffffff", DateTimeFormatInfo.InvariantInfo);
         }
 
@@ -251,16 +287,6 @@ namespace NpgsqlTypes
             return "$" + ((IFormattable)NativeData).ToString(null, CultureInfo.InvariantCulture.NumberFormat);
         }
         
-		/// <summary>
-		/// Convert to a postgres inet.
-		/// </summary>
-		internal static String ToIPAddress(NpgsqlNativeTypeInfo TypeInfo, Object NativeData)
-		{
-			if (NativeData is NpgsqlInet)
-				return ((NpgsqlInet)NativeData).ToString();
-			else
-				return ((System.Net.IPAddress)NativeData).ToString();
-		}
 
     }
 
@@ -428,7 +454,7 @@ namespace NpgsqlTypes
         /// </summary>
         internal static Object ToCircle(NpgsqlBackendTypeInfo TypeInfo, String BackendData, Int16 TypeSize, Int32 TypeModifier)
         {
-        	Match m = circleRegex.Match(BackendData);
+            Match m = circleRegex.Match(BackendData);
             return new NpgsqlCircle(
                     new NpgsqlPoint(
                     Single.Parse(m.Groups[1].ToString(), NumberStyles.Any,
@@ -437,6 +463,15 @@ namespace NpgsqlTypes
                                  CultureInfo.InvariantCulture.NumberFormat)),
                     Single.Parse(m.Groups[3].ToString(), NumberStyles.Any,
                                  CultureInfo.InvariantCulture.NumberFormat));
+            
+        }
+
+        /// <summary>
+        /// Inet.
+        /// </summary>
+        internal static Object ToInet(NpgsqlBackendTypeInfo TypeInfo, String BackendData, Int16 TypeSize, Int32 TypeModifier)
+        {
+            return new NpgsqlInet(BackendData);
             
         }
     }
@@ -529,6 +564,17 @@ namespace NpgsqlTypes
         {
             NpgsqlCircle      C = (NpgsqlCircle)NativeData;
             return String.Format(CultureInfo.InvariantCulture, "{0},{1},{2}", C.Center.X, C.Center.Y, C.Radius);
+        }
+
+        /// <summary>
+        /// Convert to a postgres inet.
+        /// </summary>
+        internal static String ToIPAddress(NpgsqlNativeTypeInfo TypeInfo, Object NativeData)
+        {
+                if (NativeData is NpgsqlInet)
+                    return ((NpgsqlInet)NativeData).ToString();
+                else
+                    return ((System.Net.IPAddress)NativeData).ToString();
         }
     }
 }

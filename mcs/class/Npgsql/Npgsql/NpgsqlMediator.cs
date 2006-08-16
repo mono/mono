@@ -74,7 +74,7 @@ namespace Npgsql
             _parameters = new ListDictionary(CaseInsensitiveComparer.Default);
             _backend_key_data = null;
             _sqlSent = String.Empty;
-            _commandTimeout = 0;
+            _commandTimeout = 20;
         }
 
         public void ResetExpectations()
@@ -92,7 +92,7 @@ namespace Npgsql
             _parameters.Clear();
             _backend_key_data = null;
             _sqlSent = String.Empty;
-            _commandTimeout = 0;
+            _commandTimeout = 20;
         }
 
 

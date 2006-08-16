@@ -110,10 +110,11 @@ namespace Npgsql
                 this.connector = connection.Connector;
 
             parameters = new NpgsqlParameterCollection();
-            timeout = 20;
             type = CommandType.Text;
             this.Transaction = transaction;
             commandBehavior = CommandBehavior.Default;
+
+            SetCommandTimeout();
             
             
         }
@@ -134,6 +135,8 @@ namespace Npgsql
             commandBehavior = CommandBehavior.Default;
             
             parameters = new NpgsqlParameterCollection();
+
+            // Internal commands aren't affected by command timeout value provided by user.
             timeout = 20;
         }
 
@@ -168,7 +171,8 @@ namespace Npgsql
         /// <value>The time (in seconds) to wait for the command to execute.
         /// The default is 20 seconds.</value>
         [DefaultValue(20)]
-        public Int32 CommandTimeout {
+        public Int32 CommandTimeout
+        {
             get
             {
                 return timeout;
@@ -190,7 +194,8 @@ namespace Npgsql
         /// </summary>
         /// <value>One of the <see cref="System.Data.CommandType">CommandType</see> values. The default is <see cref="System.Data.CommandType">CommandType.Text</see>.</value>
         [Category("Data"), DefaultValue(CommandType.Text)]
-        public CommandType CommandType {
+        public CommandType CommandType
+        {
             get
             {
                 return type;
@@ -223,7 +228,8 @@ namespace Npgsql
         /// </summary>
         /// <value>The connection to a data source. The default value is a null reference.</value>
         [Category("Behavior"), DefaultValue(null)]
-        public NpgsqlConnection Connection {
+        public NpgsqlConnection Connection
+        {
             get
             {
                 NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "Connection");
@@ -247,11 +253,14 @@ namespace Npgsql
                 if (this.connection != null)
                     connector = this.connection.Connector;
 
+                SetCommandTimeout();
+                
                 NpgsqlEventLog.LogPropertySet(LogLevel.Debug, CLASSNAME, "Connection", value);
             }
         }
 
-        internal NpgsqlConnector Connector {
+        internal NpgsqlConnector Connector
+        {
             get
             {
                 if (this.connection != null)
@@ -276,7 +285,8 @@ namespace Npgsql
         [Category("Data"), DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         #endif
         
-        public NpgsqlParameterCollection Parameters {
+        public NpgsqlParameterCollection Parameters
+        {
             get
             {
                 NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "Parameters");
@@ -502,16 +512,12 @@ namespace Npgsql
                     
                     foreach (NpgsqlParameter p in Parameters)
                     {
-                        try
+                        if (nrs.RowDescription.FieldIndex(p.ParameterName.Substring(1)) > -1)
                         {
-                            if (nrs.RowDescription.FieldIndex(p.ParameterName.Substring(1)) > -1)
-                            {
-                                hasMapping = true;
-                                break;
-                            }
+                            hasMapping = true;
+                            break;
                         }
-                        catch(ArgumentOutOfRangeException)
-                        {}
+                        
                     }
                                         
                     
@@ -522,13 +528,14 @@ namespace Npgsql
                             if (((p.Direction == ParameterDirection.Output) ||
                                 (p.Direction == ParameterDirection.InputOutput)) && (i < nrs.RowDescription.NumFields ))
                             {
-                                try
+                                Int32 fieldIndex = nrs.RowDescription.FieldIndex(p.ParameterName.Substring(1));
+                                
+                                if (fieldIndex > -1)
                                 {
-                                    p.Value = nar[nrs.RowDescription.FieldIndex(p.ParameterName.Substring(1))];
+                                    p.Value = nar[fieldIndex];
                                     i++;
                                 }
-                                catch(ArgumentOutOfRangeException)
-                                {}
+                                
                             }
                         }
                         
@@ -1021,11 +1028,13 @@ namespace Npgsql
         
         private Boolean CheckFunctionReturn(String ReturnType)
         {
-
-            String returnRecordQuery = "select count(*) > 0 from pg_proc where prorettype = ( select oid from pg_type where typname = :typename ) and proargtypes=:proargtypes and proname=:proname;";
+            String returnRecordQuery = "select count(*) > 0 from pg_proc p left join pg_namespace n on p.pronamespace = n.oid where prorettype = ( select oid from pg_type where typname = :typename ) and proargtypes=:proargtypes and proname=:proname and n.nspname=:nspname";
 
             StringBuilder parameterTypes = new StringBuilder("");
 
+            
+            // Process parameters
+            
             foreach(NpgsqlParameter p in Parameters)
             {
                 if ((p.Direction == ParameterDirection.Input) ||
@@ -1035,16 +1044,40 @@ namespace Npgsql
                 }
             }
 
+            
+            // Process schema name.
+            
+            String schemaName = String.Empty;
+            String procedureName = String.Empty;
+            
+            
+            String[] schemaProcedureName = CommandText.Split('.');
+            
+            if (schemaProcedureName.Length == 2)
+            {
+                schemaName = schemaProcedureName[0];
+                procedureName = schemaProcedureName[1];
+            }
+            else
+            {
+                schemaName = "public";
+                procedureName = CommandText;
+            }
+                
+            
+            
 
             NpgsqlCommand c = new NpgsqlCommand(returnRecordQuery, Connection);
             
             c.Parameters.Add(new NpgsqlParameter("typename", NpgsqlDbType.Text));
             c.Parameters.Add(new NpgsqlParameter("proargtypes", NpgsqlDbType.Text));
             c.Parameters.Add(new NpgsqlParameter("proname", NpgsqlDbType.Text));
+            c.Parameters.Add(new NpgsqlParameter("nspname", NpgsqlDbType.Text));
             
             c.Parameters[0].Value = ReturnType;
             c.Parameters[1].Value = parameterTypes.ToString();
-            c.Parameters[2].Value = CommandText;
+            c.Parameters[2].Value = procedureName;
+            c.Parameters[3].Value = schemaName;
             
 
             Boolean ret = (Boolean) c.ExecuteScalar();
@@ -1440,8 +1473,17 @@ namespace Npgsql
                     connector.ResumeNotificationThread();
                 }
             }
+
         }
-        
+
+        private void SetCommandTimeout()
+        {
+            if (Connector != null)
+                timeout = Connector.CommandTimeout;
+            else
+                timeout = ConnectionStringDefaults.CommandTimeout;
+        }
+
         
          
         
