@@ -157,6 +157,14 @@ namespace System.Windows.Forms {
 				return s.ToUpper();
 			}
 		}
+
+		internal override void HandleClick(int clicks, MouseEventArgs me) {
+			// MS seems to fire the click event in spite of the styles they set
+			control_style |= ControlStyles.StandardClick | ControlStyles.StandardDoubleClick;
+			base.HandleClick (clicks, me);
+			control_style ^= ControlStyles.StandardClick | ControlStyles.StandardDoubleClick;
+		}
+
 		#endregion	// Private and Internal Methods
 
 		#region Public Instance Properties
@@ -1245,7 +1253,11 @@ namespace System.Windows.Forms {
 		public event EventHandler	BorderStyleChanged;
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public event EventHandler	Click;
+		public event EventHandler	Click {
+			add { base.Click += value; }
+			remove { base.Click -= value; }
+		}
+
 		public event EventHandler	HideSelectionChanged;
 		public event EventHandler	ModifiedChanged;
 		public event EventHandler	MultilineChanged;

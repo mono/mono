@@ -1255,7 +1255,7 @@ namespace System.Windows.Forms
 			return found;
 		}
 
-		private void HandleClick(int clicks, MouseEventArgs me) {
+		internal virtual void HandleClick(int clicks, MouseEventArgs me) {
 			if (GetStyle(ControlStyles.StandardClick)) {
 				if ((clicks > 1) && GetStyle(ControlStyles.StandardDoubleClick)) {
 #if !NET_2_0

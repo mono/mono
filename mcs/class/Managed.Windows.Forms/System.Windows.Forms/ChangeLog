@@ -1,3 +1,9 @@
+2006-08-16  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* TextBoxBase.cs: Overriding HandleClick to get clicks in spite of
+	  MS flags saying there won't be any. (fixes #78800)
+	* Control.cs (HandleClick): Made virtual
+
 2006-08-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* PageSetupDialog.cs : use Yard-Pound units only in en-GB and en-US
