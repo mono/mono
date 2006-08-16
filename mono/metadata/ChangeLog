@@ -1,6 +1,15 @@
+2006-08-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c:
+	* marshal.c: don't load all the assemblies from a domain into newly
+	created ones. The new domains might have different rules and load
+	assemblies from different locations. Fixes bug #76757.
+
+	Patch by Lluis. Conflicts resolved by Brian Crowell.
+
 2006-08-16  Alp Toker  <alp@atoker.com>
 
-	* metadata/socket-io.c: First half of the fix for #79084.
+	* socket-io.c: First half of the fix for #79084.
 	Set sa_size to the length of the content, not that of the struct.
 	Don't add NULL suffix to the content, this should be done in
 	managed code if needed.
