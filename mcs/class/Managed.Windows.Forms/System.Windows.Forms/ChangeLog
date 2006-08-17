@@ -1,3 +1,7 @@
+2006-08-17  Mike Kestner  <mkestner@novell.com> 
+
+	* ComboBox.cs : don't do mouseover selection in simple mode.
+
 2006-08-16  Jackson Harper  <jackson@ximian.com>
 
 	* Form.cs: Fire the closing events for all the mdi child windows

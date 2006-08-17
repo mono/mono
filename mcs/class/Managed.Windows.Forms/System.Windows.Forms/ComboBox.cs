@@ -1742,6 +1742,9 @@ namespace System.Windows.Forms
 
 			protected override void OnMouseMove (MouseEventArgs e)
 			{						
+				if (owner.DropDownStyle == ComboBoxStyle.Simple)
+					return;
+
 				Point pt = PointToClient (Control.MousePosition);
 				int index = IndexFromPointDisplayRectangle (pt.X, pt.Y);
 
