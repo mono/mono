@@ -17,7 +17,7 @@ IF "%1"=="" GOTO USAGE
 
 IF "%JAVA_HOME%"=="" GOTO ENVIRONMENT_EXCEPTION
 
-IF "%GH_HOME%"=="" GOTO ENVIRONMENT_EXCEPTION
+IF "%GHROOT%"=="" GOTO ENVIRONMENT_EXCEPTION
 
 
 IF "%1"=="" (
@@ -34,9 +34,9 @@ set BUILD_OPTION=%1
 set OUTPUT_FILE_PREFIX=MonoTests.System.Data
 set RUNNING_FIXTURE=MonoTests.System.Data
 
-set TEST_SOLUTION=Test\ProviderTests\System.Data.OleDb.J2EE.sln
-set TEST_ASSEMBLY=System.Data.OleDb.Tests.jar
-set PROJECT_CONFIGURATION=Debug_Java
+set TEST_SOLUTION=Test\ProviderTests\System.Data.OleDb.Tests20.J2EE.sln
+set TEST_ASSEMBLY=System.Data.OleDb.Tests.J2EE.jar
+set PROJECT_CONFIGURATION=Debug_Java20
 set APP_CONFIG_FILE=Test\ProviderTests\System.Data.OleDb.J2EE.config
 
 set RUN_ID=connected
@@ -46,7 +46,7 @@ REM ********************************************************
 REM @echo Set environment
 REM ********************************************************
 
-set JGAC_PATH=%GH_HOME%\jgac\vmw4j2ee_110\
+set JGAC_PATH=%GHROOT%\jgac\vmw4j2ee_110\
 
 set RUNTIME_CLASSPATH=%JGAC_PATH%mscorlib.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.jar
@@ -54,16 +54,16 @@ set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.Xml.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.Data.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%J2SE.Helpers.jar
 
-set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%GH_HOME%\jgac\jdbc\msbase.jar
-set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%GH_HOME%\jgac\jdbc\mssqlserver.jar
-set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%GH_HOME%\jgac\jdbc\msutil.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%GHROOT%\jgac\jdbc\msbase.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%GHROOT%\jgac\jdbc\mssqlserver.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%GHROOT%\jgac\jdbc\msutil.jar
 
-set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%GH_HOME%\jgac\jdbc\postgresql-8.0.309.jdbc3.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%GHROOT%\jgac\jdbc\postgresql-8.0.309.jdbc3.jar
 
-set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%GH_HOME%\jgac\jdbc\ojdbc14.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%GHROOT%\jgac\jdbc\ojdbc14.jar
 
-set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%GH_HOME%\jgac\jdbc\db2jcc.jar
-set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%GH_HOME%\jgac\jdbc\db2jcc_license_cu.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%GHROOT%\jgac\jdbc\db2jcc.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%GHROOT%\jgac\jdbc\db2jcc_license_cu.jar
 
 set NUNIT_OPTIONS=/exclude=NotWorking
 
@@ -71,12 +71,12 @@ set NET_OUTPUT_XML=%OUTPUT_FILE_PREFIX%.Net.xml
 set GH_OUTPUT_XML=%OUTPUT_FILE_PREFIX%.GH.xml
 
 set NUNIT_PATH=..\..\nunit20\
-set NUNIT_CLASSPATH=%NUNIT_PATH%nunit-console\bin\Debug_Java\nunit.framework.jar
-set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%NUNIT_PATH%nunit-console\bin\Debug_Java\nunit.util.jar
-set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%NUNIT_PATH%nunit-console\bin\Debug_Java\nunit.core.jar
-set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%NUNIT_PATH%nunit-console\bin\Debug_Java\nunit-console.jar
+set NUNIT_CLASSPATH=%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.framework.jar
+set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.util.jar
+set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.core.jar
+set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit-console.jar
 set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;.
-set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;System.Data.OleDb.Tests.jar
+set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%TEST_ASSEMBLY%
 
 set CLASSPATH="%RUNTIME_CLASSPATH%;%NUNIT_CLASSPATH%"
 
@@ -84,7 +84,8 @@ REM ********************************************************
 @echo Building GH solution...
 REM ********************************************************
 
-devenv %TEST_SOLUTION% /%BUILD_OPTION% %PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.%RUN_ID%.log.txt 2<&1
+rem devenv %TEST_SOLUTION% /%BUILD_OPTION% %PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.%RUN_ID%.log.txt 2<&1
+msbuild %TEST_SOLUTION% /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.%RUN_ID%.log.txt 2<&1
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
@@ -94,7 +95,8 @@ REM ********************************************************
 
 if "%NUNIT_BUILD%" == "DONE" goto NUNITSKIP
 
-devenv ..\..\nunit20\nunit.java.sln /%BUILD_OPTION% %PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.%RUN_ID%.log.txt 2<&1
+rem devenv ..\..\nunit20\nunit.java.sln /%BUILD_OPTION% %PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.%RUN_ID%.log.txt 2<&1
+msbuild ..\..\nunit20\nunit20.java.sln /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.%RUN_ID%.log.txt 2<&1
 
 goto NUNITREADY
 
@@ -126,7 +128,8 @@ REM ********************************************************
 @echo Build XmlTool
 REM ********************************************************
 set XML_TOOL_PATH=..\..\tools\mono-xmltool
-devenv %XML_TOOL_PATH%\XmlTool.sln /%BUILD_OPTION% Debug_Java >>%RUNNING_FIXTURE%_build.%RUN_ID%.log.txt 2<&1
+rem devenv %XML_TOOL_PATH%\XmlTool.sln /%BUILD_OPTION% %PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.%RUN_ID%.log.txt 2<&1
+msbuild %XML_TOOL_PATH%\XmlTool20.vmwcsproj /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.%RUN_ID%.log.txt 2<&1
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
@@ -144,7 +147,7 @@ xmltool.exe --transform nunit_transform.xslt %GH_OUTPUT_XML%
 GOTO END
 
 :ENVIRONMENT_EXCEPTION
-@echo This test requires environment variables JAVA_HOME and GH_HOME to be defined
+@echo This test requires environment variables JAVA_HOME and GHROOT to be defined
 GOTO END
 
 :BUILD_EXCEPTION
