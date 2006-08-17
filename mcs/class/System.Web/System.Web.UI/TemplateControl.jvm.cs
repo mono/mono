@@ -284,7 +284,13 @@ namespace System.Web.UI {
 		{
 			return t;
 		}
-
+#if NET_2_0
+		[MonoTODO ("is this correct?")]
+		public Object ReadStringResource ()
+		{
+			return this.GetType();
+		}
+#endif
 		[MonoTODO]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected void SetStringResourcePointer (object stringResourcePointer,
@@ -387,56 +393,44 @@ namespace System.Web.UI {
 
 #if NET_2_0
 
-	Stack dataItemCtx;
-	
-	internal void PushDataItemContext (object o)
+	string _appRelativeVirtualPath = "/";
+
+	public string AppRelativeVirtualPath
 	{
-		if (dataItemCtx == null)
-			dataItemCtx = new Stack ();
-		
-		dataItemCtx.Push (o);
-	}
-	
-	internal void PopDataItemContext ()
-	{
-		if (dataItemCtx == null)
-			throw new InvalidOperationException ();
-		
-		dataItemCtx.Pop ();
-	}
-	
-	internal object CurrentDataItem {
-		get {
-			if (dataItemCtx == null || dataItemCtx.Count == 0)
-				throw new InvalidOperationException ("No data item");
-			
-			return dataItemCtx.Peek ();
+		get { return _appRelativeVirtualPath; }
+		set
+		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+			if (!UrlUtils.IsRooted (value) && !(value.Length > 0 && value[0] == '~'))
+				throw new ArgumentException ("The path that is set is not rooted");
+			_appRelativeVirtualPath = value;
 		}
 	}
-	
+
 	protected object Eval (string expression)
 	{
-		return DataBinder.Eval (CurrentDataItem, expression);
+		return DataBinder.Eval (Page.GetDataItem (), expression);
 	}
-	
-	protected object Eval (string expression, string format)
+
+	protected string Eval (string expression, string format)
 	{
-		return DataBinder.Eval (CurrentDataItem, expression, format);
+		return DataBinder.Eval (Page.GetDataItem (), expression, format);
 	}
-	
+
 	protected object XPath (string xpathexpression)
 	{
-		return XPathBinder.Eval (CurrentDataItem, xpathexpression);
+		return XPathBinder.Eval (Page.GetDataItem (), xpathexpression);
 	}
-	
-	protected object XPath (string xpathexpression, string format)
+
+	protected string XPath (string xpathexpression, string format)
 	{
-		return XPathBinder.Eval (CurrentDataItem, xpathexpression, format);
+		return XPathBinder.Eval (Page.GetDataItem (), xpathexpression, format);
 	}
-	
+
 	protected IEnumerable XPathSelect (string xpathexpression)
 	{
-		return XPathBinder.Select (CurrentDataItem, xpathexpression);
+		return XPathBinder.Select (Page.GetDataItem (), xpathexpression);
 	}
 #endif
 

@@ -1,5 +1,10 @@
 2006-08-17  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* TemplateControl.jvm.cs: fixed data binding API, implemented
+	AppRelativeVirtualPath, ReadStringResource
+
+2006-08-17  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* Page.cs: added stubs to run aspx files compiled by .net
 
 2006-08-17  Vladimir Krasnov  <vladimirk@mainsoft.com>
