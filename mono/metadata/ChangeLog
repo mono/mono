@@ -1,3 +1,7 @@
+2006-08-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_class_create_runtime_vtable): Add a FIXME.
+
 2006-08-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* marshal.c: Fix mono_marshal_check_domain_image if an invalid 
