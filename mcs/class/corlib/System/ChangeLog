@@ -1,3 +1,9 @@
+2006-08-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DateTime.cs: Remove last patch to DateTime as the fix wasn't correct
+	and made most x.509 unit tests fails. However the original problem is 
+	back (only on 2.0).
+
 2006-08-14  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #78943

@@ -898,9 +898,6 @@ namespace System
 		{
 			bool useutc = false, use_localtime = true;
 			bool use_invariant = false;
-#if NET_2_0
-			bool fix_z = false;
-#endif
 			bool sloppy_parsing = false;
 			int valuePos = 0;
 			if (format.Length == 1)
@@ -1225,9 +1222,6 @@ namespace System
 					num = 0;
 					num_parsed = 1;
 					useutc = true;
-#if NET_2_0
-					fix_z = true;
-#endif
 					break;
 
 				case ':':
@@ -1396,10 +1390,6 @@ namespace System
 			result = new DateTime (false, new TimeSpan (newticks));
 			if (use_localtime)
 				result = result.ToLocalTime ();
-#if NET_2_0
-			if (fix_z)
-				result = result.ToUniversalTime ();
-#endif
 
 			return true;
 		}
