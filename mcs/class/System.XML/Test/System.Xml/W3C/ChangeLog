@@ -1,3 +1,8 @@
+2006-08-17  Andrew Skiba  <andrews@mainsoft.com>
+
+	* knownFailures.lst: add 3 negative tests w/o analysis, add 2 positive
+	flow tests after openingbugs #79091 and #79090 in bugzilla.
+
 2006-08-14  Andrew Skiba  <andrews@mainsoft.com>
 
 	* Makefile: support net_2_0 PROFILE
