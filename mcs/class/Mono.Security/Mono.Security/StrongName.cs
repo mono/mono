@@ -239,7 +239,7 @@ namespace Mono.Security {
 					byte[] publicKey = PublicKey;
 					if (publicKey == null)
 						return null;
-					HashAlgorithm ha = SHA1.Create (TokenAlgorithm);
+					HashAlgorithm ha = HashAlgorithm.Create (TokenAlgorithm);
 					byte[] hash = ha.ComputeHash (publicKey);
 					// we need the last 8 bytes in reverse order
 					keyToken = new byte [8];
