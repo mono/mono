@@ -57,8 +57,8 @@ Export the public key from the specified CSP container to the specified file.
 Export the assembly public key to the specified output file.
 .TP
 .I "-p keypair.snk output.pub"
-Export the public key from the specified strongname key file (SNK) to the 
-specified output file.
+Export the public key from the specified strongname key file (SNK) or from
+a PKCS#12/PFX password protected file to the specified output file.
 .TP
 .I "-o input output.txt"
 Convert the input file to a CSV file (using decimal).
@@ -81,9 +81,9 @@ even if it's possible, to use length lesser than 1024 bits.
 .TP
 .I "-R assembly keypair.snk"
 Resign the specified assembly using the specified strongname keypair file 
-(SNK). You can only sign an assembly with the private key (SNK) that match 
-the public key inside the assembly (unless it's public key token has been
-remapped in machine.config).
+(SNK) or a PKCS#12/PFX password protected file. You can only sign an 
+assembly with the private key that match the public key inside the assembly
+(unless it's public key token has been remapped in machine.config).
 .TP
 .I "-Rc assembly container"
 Resign the specified assembly using the specified strongname container.

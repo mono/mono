@@ -1,3 +1,8 @@
+2006-08-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* sn.1: Document the (new - 1.1.17) support for PKCS#12/PFX password
+	protected files to sign assemblies.
+
 2006-08-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* mono.1 : MONO_LOCAL_EVENTLOG_PATH -> MONO_EVENTLOG_PATH.
