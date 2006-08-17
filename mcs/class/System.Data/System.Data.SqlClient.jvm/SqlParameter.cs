@@ -157,6 +157,20 @@ namespace System.Data.SqlClient
 			}
 		}
 
+#if NET_2_0
+		public new byte Precision 
+		{ 
+			get { return base.Precision; }
+			set { base.Precision = value; } 
+		}
+
+		public new byte Scale 
+		{ 
+			get { return base.Scale; }
+			set { base.Scale = value; } 
+		}
+#endif
+
 		protected internal override string Placeholder {
 			get {
 				return ParameterName;
