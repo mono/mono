@@ -1820,5 +1820,23 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 	#endif
+
+#if NET_2_0
+	[MonoTODO ("Used by .net aspx parser")]
+	protected object GetWrappedFileDependencies (string [] list)
+	{
+		return null;
+	}
+
+	[MonoTODO ("Used by .net aspx parser")]
+	protected virtual void InitializeCulture ()
+	{
+	}
+
+	[MonoTODO ("Used by .net aspx parser")]
+	protected internal void AddWrappedFileDependencies (object virtualFileDependencies)
+	{
+	}
+#endif
 }
 }
