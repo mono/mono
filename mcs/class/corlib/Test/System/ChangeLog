@@ -1,3 +1,8 @@
+2006-08-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DateTimeTest.cs: Added checks for DateTimeKind (2.0) for the special
+	case of handling X.509 certificate dates.
+
 2006-08-14  Raja R Harinath  <rharinath@novell.com>
 
 	* ActivatorTest.cs (GenericType_Open1): New test based on #78943.

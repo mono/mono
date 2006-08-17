@@ -1073,9 +1073,26 @@ public class DateTimeTest : Assertion
 	public void X509Certificate () 
 	{
 		// if this test fails then *ALL* or *MOST* X509Certificate tests will also fails
-		AssertEquals ("yyyyMMddHHmmssZ", "03/12/1996 18:38:47", DateTime.ParseExact ("19960312183847Z", "yyyyMMddHHmmssZ", null).ToUniversalTime ().ToString ());
+		DateTime dt = DateTime.ParseExact ("19960312183847Z", "yyyyMMddHHmmssZ", null);
+#if NET_2_0
+		AssertEquals ("Kind-Local", DateTimeKind.Local, dt.Kind);
+		dt = dt.ToUniversalTime ();
+		AssertEquals ("Kind-Utc", DateTimeKind.Utc, dt.Kind);
+#else
+		dt = dt.ToUniversalTime ();
+#endif
+		AssertEquals ("yyyyMMddHHmmssZ", "03/12/1996 18:38:47", dt.ToString ());
+
 		// technically this is invalid (PKIX) because of the missing seconds but it exists so...
-		AssertEquals ("yyMMddHHmmZ", "02/23/1996 19:15:00", DateTime.ParseExact ("9602231915Z", "yyMMddHHmmZ", null).ToUniversalTime ().ToString ());
+		dt = DateTime.ParseExact ("9602231915Z", "yyMMddHHmmZ", null);
+#if NET_2_0
+		AssertEquals ("Kind-Local", DateTimeKind.Local, dt.Kind);
+		dt = dt.ToUniversalTime ();
+		AssertEquals ("Kind-Utc", DateTimeKind.Utc, dt.Kind);
+#else
+		dt = dt.ToUniversalTime ();
+#endif
+		AssertEquals ("yyMMddHHmmZ", "02/23/1996 19:15:00", dt.ToString ());
 
 		// However, "Z" and "'Z'" are different.
 		AssertEquals ("Z timezone handling",
