@@ -1,3 +1,8 @@
+2006-08-08 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* FormView.cs: added explicit implementation of
+	IDataItemContainer.DataItemIndex, as documented
+
 2006-08-17 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Style.cs: fixed:

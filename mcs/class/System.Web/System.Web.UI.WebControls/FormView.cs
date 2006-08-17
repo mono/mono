@@ -765,7 +765,11 @@ namespace System.Web.UI.WebControls
 		[BrowsableAttribute (false)]
 		public virtual int DataItemIndex {
 			get { return PageIndex; }
-		}		
+		}
+
+		int IDataItemContainer.DataItemIndex {
+			get { return DataItemIndex; }
+		}
 	
 		int IDataItemContainer.DisplayIndex {
 			get { return PageIndex; }
