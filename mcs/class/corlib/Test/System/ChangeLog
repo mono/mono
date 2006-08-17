@@ -1,7 +1,8 @@
 2006-08-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DateTimeTest.cs: Added checks for DateTimeKind (2.0) for the special
-	case of handling X.509 certificate dates.
+	case of handling X.509 certificate dates. Added more checks (Kind) for
+	the failing test case.
 
 2006-08-14  Raja R Harinath  <rharinath@novell.com>
 
