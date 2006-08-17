@@ -1,5 +1,10 @@
 2006-08-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_layout_fields): Set min_align to a bigger value for
+	small structures. Fixes #78990.
+
+2006-08-17  Zoltan Varga  <vargaz@gmail.com>
+
 	* marshal.c (mono_marshal_get_xappdomain_invoke): Use the new helper functions here.
 
 	* appdomain.c (ves_icall_System_AppDomain_createDomain): Fix a warning.
