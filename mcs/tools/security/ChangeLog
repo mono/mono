@@ -1,3 +1,10 @@
+2006-08-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* sn.cs: Add support for PKCS#12/PFX password protected files (just
+	like available in fx 2.0).
+	* TESTS: Add a test sequence to verify changes in SN.
+	* Makefile: Distribute TESTS in tarballs.
+
 2006-07-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* sn.cs: Catch exceptions, including reporting invalid number of 

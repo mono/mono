@@ -16,6 +16,7 @@ using System.Text;
 
 using Mono.Security;
 using Mono.Security.Cryptography;
+using Mono.Security.X509;
 
 [assembly: AssemblyTitle("Mono StrongName")]
 [assembly: AssemblyDescription("StrongName utility for signing assemblies")]
@@ -116,6 +117,29 @@ namespace Mono.Tools {
 			}
 			return sb.ToString ();
 		}
+
+		static RSA GetKeyFromFile (string filename)
+		{
+			byte[] data = ReadFromFile (filename);
+			try {
+				// for SNK files (including the ECMA pseudo-key)
+				return new StrongName (data).RSA;
+			}
+			catch {
+				if (data [0] != 0x30)
+					throw;
+				// this could be a PFX file
+				Console.Write ("Enter password for private key (will be visible when typed): ");
+				PKCS12 pfx = new PKCS12 (data, Console.ReadLine ());
+				// works only if a single key is present
+				if (pfx.Keys.Count != 1)
+					throw;
+				RSA rsa = (pfx.Keys [0] as RSA);
+				if (rsa == null)
+					throw;
+				return rsa;
+			}
+		}
 #if false
 		// is assembly signed (or delayed signed) ?
 		static bool IsStrongNamed (Assembly assembly) 
@@ -199,7 +223,7 @@ namespace Mono.Tools {
 			}
 
 			// Note: MustVerify is based on the original token (by design). Public key
-			// remapping won't affect if the assebmly is verified or not.
+			// remapping won't affect if the assembly is verified or not.
 			if (forceVerification || StrongNameManager.MustVerify (an)) {
 				RSA rsa = CryptoConvert.FromCapiPublicKeyBlob (publicKey, 12);
 				StrongName sn = new StrongName (rsa);
@@ -375,8 +399,8 @@ namespace Mono.Tools {
 						Console.WriteLine ("Output CVS file is {0} (hexadecimal format)", args [i]);
 					break;
 				case "-p":
-					// Extract public key from SNK file
-					sn = new StrongName (ReadFromFile (args [i++]));
+					// Extract public key from SNK or PKCS#12/PFX file
+					sn = new StrongName (GetKeyFromFile (args [i++]));
 					WriteToFile (args[i], sn.PublicKey);
 					if (!quiet)
 						Console.WriteLine ("Public Key extracted to file {0}", args [i]);
@@ -392,8 +416,7 @@ namespace Mono.Tools {
 					break;
 				case "-R":
 					string filename = args [i++];
-					sn = new StrongName (ReadFromFile (args [i]));
-					if (! ReSign (filename, sn.RSA))
+					if (! ReSign (filename, GetKeyFromFile (args [i])))
 						return 1;
 					break;
 				case "-Rc":

@@ -11,7 +11,7 @@ SECURITY_SOURCES = AssemblyInfo.cs $(topdir)/build/common/Consts.cs StrongNameMa
 
 PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 
-DISTFILES = README $(SECURITY_SOURCES)
+DISTFILES = README TESTS $(SECURITY_SOURCES)
 
 ifeq (net_1_1_bootstrap, $(PROFILE))
 all-local: $(topdir)/class/lib/$(PROFILE)/sn.exe
