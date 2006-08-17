@@ -58,13 +58,22 @@ namespace System.Xml
 		string systemId;
 		string baseUri;
 		XmlLinkedNode lastLinkedChild;
+		bool contentAlreadySet;
 
 		#endregion
 
 		#region Properties
 
 		XmlLinkedNode IHasXmlChildNode.LastLinkedChild {
-			get { return lastLinkedChild; }
+			get {
+				if (lastLinkedChild != null)
+					return lastLinkedChild;
+				if (!contentAlreadySet) {
+					contentAlreadySet = true;
+					SetEntityContent ();
+				}
+				return lastLinkedChild;
+			}
 			set { lastLinkedChild = value; }
 		}
 
@@ -137,9 +146,9 @@ namespace System.Xml
 			// No effect.
 		}
 
-		internal void SetEntityContent ()
+		void SetEntityContent ()
 		{
-			if (FirstChild != null)
+			if (lastLinkedChild != null)
 				return;
 
 			XmlDocumentType doctype = OwnerDocument.DocumentType;

@@ -565,11 +565,8 @@ namespace System.Xml
 					((XmlEntityReference) newChild).SetReferencedEntityContent ();
 					break;
 				case XmlNodeType.Entity:
-					((XmlEntity) newChild).SetEntityContent ();
 					break;
 				case XmlNodeType.DocumentType:
-					foreach (XmlEntity ent in ((XmlDocumentType)newChild).Entities)
-						ent.SetEntityContent ();
 					break;
 				}
 

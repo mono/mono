@@ -1,5 +1,16 @@
 2006-08-17  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlEntity.cs, XmlEntityReference.cs, XmlNode.cs :
+	  create entity content only when its children is being accessed.
+	  It results differently when there is no actual reference in the
+	  document - an invalid entity value (when it is used to create
+	  child nodes) is ignored unless a code tries to access the Value
+	  of an XmlEntity. Fixed bug #79091
+	* DTDReader.cs : the fix above uncovered another bug (ibm66n03.xml).
+	  Check illegal reference name in literal entity value.
+
+2006-08-17  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextReader.cs, XmlTextReader2.cs, DTDReader.cs :
 	  (ResolveExternalEntityReplacementText) need to skip text
 	  declaration in external entities. To make it possible internalize

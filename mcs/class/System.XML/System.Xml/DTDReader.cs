@@ -686,6 +686,8 @@ namespace System.Xml
 
 					} else {
 						name = value.Substring (i, end - i);
+						if (!XmlChar.IsName (name))
+							throw NotWFError (String.Format ("'{0}' is not a valid entity reference name.", name));
 						// don't expand "general" entity.
 						AppendValueChar ('&');
 						valueBuffer.Append (name);
