@@ -1822,7 +1822,7 @@ namespace System.Windows.Forms
 
 			public void Scroll (int delta)
 			{
-				if (delta == 0 || !vscrollbar_ctrl.Visible)
+				if (delta == 0 || vscrollbar_ctrl == null || !vscrollbar_ctrl.Visible)
 					return;
 
 				int max = vscrollbar_ctrl.Maximum;//- (page_size) + 1;

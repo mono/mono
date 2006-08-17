@@ -1,5 +1,9 @@
 2006-08-17  Mike Kestner  <mkestner@novell.com> 
 
+	* ComboBox.cs : some null guarding for ComboListBox.Scroll.
+
+2006-08-17  Mike Kestner  <mkestner@novell.com> 
+
 	* ComboBox.cs : implement scroll wheel support for popped-down
 	state. Fixes #78945. 
 
