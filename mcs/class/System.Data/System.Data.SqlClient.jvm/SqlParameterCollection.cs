@@ -100,6 +100,22 @@ namespace System.Data.SqlClient
             return Add(param);
         }
 
+#if NET_2_0
+		public bool Contains (SqlParameter value)
+		{
+			return base.Contains (value);
+		}
+
+		public void Insert (int index, SqlParameter value)
+		{
+			base.Insert (index, value);
+		}
+
+		public void Remove (SqlParameter value)
+		{
+			base.Remove (value);
+		}
+#endif
 		#endregion // Methods
 
     }

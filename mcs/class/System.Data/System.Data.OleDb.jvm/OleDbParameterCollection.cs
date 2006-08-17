@@ -100,8 +100,24 @@ namespace System.Data.OleDb
         {
             OleDbParameter param = new OleDbParameter(parameterName, sqlDbType, size, sourceColumn);
             return Add(param);
-        }
+		}
 
+#if NET_2_0
+		public bool Contains (OleDbParameter value)
+		{
+			return base.Contains (value);
+		}
+
+		public void Insert (int index, OleDbParameter value)
+		{
+			base.Insert (index, value);
+		}
+
+		public void Remove (OleDbParameter value)
+		{
+			base.Remove (value);
+		}
+#endif
 		#endregion // Methods        
         
     }
