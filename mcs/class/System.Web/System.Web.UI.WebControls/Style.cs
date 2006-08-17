@@ -404,14 +404,20 @@ namespace System.Web.UI.WebControls {
 
 		public virtual void AddAttributesToRender(System.Web.UI.HtmlTextWriter writer, WebControl owner)
 		{
-			if ((styles & Styles.CssClass) != 0) 
-			{
-				string s = (string)viewstate["CssClass"];
-				if (s != string.Empty)
-					writer.AddAttribute (HtmlTextWriterAttribute.Class, s);
+#if NET_2_0
+			if (RegisteredCssClass.Length > 0) {
+				if (CssClass.Length > 0)
+					writer.AddAttribute (HtmlTextWriterAttribute.Class, CssClass + " " + RegisteredCssClass);
+				else
+					writer.AddAttribute (HtmlTextWriterAttribute.Class, RegisteredCssClass);
 			}
-
-			WriteStyleAttributes (writer);
+			else 
+#endif
+			{
+				if (CssClass.Length > 0)
+					writer.AddAttribute (HtmlTextWriterAttribute.Class, CssClass);
+				WriteStyleAttributes (writer);
+			}
 		}
 
 		void WriteStyleAttributes (HtmlTextWriter writer) 

@@ -38,6 +38,8 @@ using refl = System.Reflection;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using MonoTests.SystemWeb.Framework;
+using MonoTests.stand_alone.WebHarness;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -66,7 +68,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 #if NET_2_0
 		public void SetCssClass(string name) {
-			Type style = Type.GetType("System.Web.UI.WebControls.Style, System.Web");
+			Type style = typeof (Style);
 			if (style != null) {	
 				refl.MethodInfo methodInfo = style.GetMethod("SetRegisteredCssClass",refl.BindingFlags.NonPublic | refl.BindingFlags.Instance);
 				if (methodInfo != null) {
@@ -315,10 +317,53 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (String.Empty, s.RegisteredCssClass, "Css1");
 
 			s.SetCssClass ("blah");
-			Assert.AreEqual (String.Empty, s.RegisteredCssClass, "Css2");
+			Assert.AreEqual ("blah", s.RegisteredCssClass, "Css2");
 
 			s.BackColor = Color.AliceBlue;
-			Assert.AreEqual (String.Empty, s.RegisteredCssClass, "Css3");
+			Assert.AreEqual ("blah", s.RegisteredCssClass, "Css3");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void Style_AddRegisteredCssClassAttribute () {
+			new WebTest (PageInvoker.CreateOnLoad (Style_AddRegisteredCssClassAttribute_Load)).Run ();
+		}
+		
+		public static void Style_AddRegisteredCssClassAttribute_Load (Page p) {
+			StringWriter sw = new StringWriter ();
+			HtmlTextWriter tw = new HtmlTextWriter (sw);
+			Style s = new Style ();
+			s.CssClass = "MyClass";
+			s.BackColor = Color.AliceBlue;
+			s.AddAttributesToRender (tw);
+			tw.RenderBeginTag ("span");
+			tw.RenderEndTag ();
+			Assert.AreEqual (true, sw.ToString ().Contains ("class=\"MyClass\""), "AddRegisteredCssClassAttribute#1");
+			Assert.AreEqual (true, sw.ToString ().Contains ("style"), "AddRegisteredCssClassAttribute#2");
+			
+			sw = new StringWriter ();
+			tw = new HtmlTextWriter (sw);
+			s = new Style ();
+			s.BackColor = Color.AliceBlue;
+			p.Header.StyleSheet.RegisterStyle (s, p);
+			s.AddAttributesToRender (tw);
+			tw.RenderBeginTag ("span");
+			tw.RenderEndTag ();
+			Assert.AreEqual (true, sw.ToString ().Contains ("class"), "AddRegisteredCssClassAttribute#3");
+			Assert.AreEqual (false, sw.ToString ().Contains ("style"), "AddRegisteredCssClassAttribute#4");
+			
+			sw = new StringWriter ();
+			tw = new HtmlTextWriter (sw);
+			s = new Style ();
+			s.BackColor = Color.AliceBlue;
+			s.CssClass = "MyClass";
+			p.Header.StyleSheet.RegisterStyle (s, p);
+			s.AddAttributesToRender (tw);
+			tw.RenderBeginTag ("span");
+			tw.RenderEndTag ();
+			Assert.AreEqual (sw.ToString ().LastIndexOf ("class"), sw.ToString ().IndexOf ("class"), "AddRegisteredCssClassAttribute#5");
+			Assert.AreEqual (false, sw.ToString ().Contains ("style"), "AddRegisteredCssClassAttribute#6");
+			Assert.AreEqual (true, sw.ToString ().Contains ("class=\"MyClass "), "AddRegisteredCssClassAttribute#7");
 		}
 #endif
 

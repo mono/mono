@@ -1,3 +1,9 @@
+2006-08-17 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Style.cs: fixed:
+	When style is registered with StyleSheet AddAttributesToRender method
+	adds class attribute but not style to writer 
+
 2006-08-15 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Menu.cs: fixed: 

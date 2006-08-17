@@ -1,3 +1,7 @@
+2006-08-17 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* StyleTest.cs: new test was added, fixed Style_CssClass test
+
 2006-08-16 Yoni Klain <yonik@mainsoft.com>
 
 	* DataSourceViewTest.cs; DataSourceControlTest.cs : new tests
