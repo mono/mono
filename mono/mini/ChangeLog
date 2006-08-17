@@ -1,3 +1,10 @@
+2006-08-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (mono_arch_output_basic_block): Applied patch from Peter Dettman
+	(peter.dettman@iinet.net.au). Fixes #79087.
+
+	* basic-long.cs: Add a test for the above.
+
 2006-08-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (get_got_offset): Add a cache for GOT entries, not yet used.
