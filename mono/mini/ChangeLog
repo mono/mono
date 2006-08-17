@@ -1,5 +1,10 @@
 2006-08-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c aot-runtime.c: Implement sharing of GOT slots for classes/fields.
+	Also remove support for not PIC AOT.
+
+	* mini.h: Bump AOT file format version.
+
 	* objects.cs: Add a test for #78990.
 
 	* mini-x86.c (mono_arch_output_basic_block): Applied patch from Peter Dettman
