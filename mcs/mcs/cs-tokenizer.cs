@@ -1889,6 +1889,7 @@ namespace Mono.CSharp
 			current_location = new Location (ref_line, Col);
 
 			while ((c = getChar ()) != -1) {
+			loop:
 				if (is_identifier_part_character ((char) c)){
 					if (pos == max_id_size){
 						Report.Error (645, Location, "Identifier too long (limit is 512 chars)");
@@ -1897,6 +1898,9 @@ namespace Mono.CSharp
 					
 					id_builder [pos++] = (char) c;
 //					putback_char = -1;
+				} else if (c == '\\') {
+					c = escape (c);
+					goto loop;
 				} else {
 //					putback_char = c;
 					putback (c);
@@ -2066,7 +2070,7 @@ namespace Mono.CSharp
 				}
 
 				
-				if (is_identifier_start_character ((char)c)){
+				if (c == '\\' || is_identifier_start_character ((char)c)){
 					tokens_seen = true;
 					return consume_identifier (c);
 				}

@@ -1,3 +1,9 @@
+2006-08-17  Miguel de Icaza  <miguel@novell.com>
+
+	* cs-tokenizer.cs: Apply patch from Atsushi Enomoto that fixes
+	#52019 and #79064, the use of the \uXXXX sequence in source code
+	to represent unicode characters.
+
 2006-08-15  Marek Safar  <marek.safar@seznam.cz>
 
 	* expression.cs (SizeOf.DoResolve): Check for void type. Fixed enum types
