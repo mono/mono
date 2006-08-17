@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
 		<OutputPath>bin\Release_Java20\</OutputPath>
 		<DefineConstants>TRACE;TARGET_JVM;NET_1_1;NET_2_0;GHT_MARSHAL_BY_REF_OBJECT;GHT_THREAD_ABORT;GHT_ENVIRONMENT_OSVERSION;GHT_ASSEMBLYNAME_VERSION;ASSEMBLY_GETASSEMBLY</DefineConstants>
@@ -45,7 +45,7 @@
 		<ProductVersion>8.0.50727</ProductVersion>
 		<SchemaVersion>2.0</SchemaVersion>
 		<ProjectGuid>{4E3FBF55-6720-43F1-880F-562F851B0221}</ProjectGuid>
-		<OutputType>Library</OutputType>
+		<OutputType>Exe</OutputType>
 		<AppDesignerFolder>Properties</AppDesignerFolder>
 		<RootNamespace>nunit_console</RootNamespace>
 		<AssemblyName>nunit-console</AssemblyName>
