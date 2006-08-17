@@ -356,7 +356,11 @@ namespace System.Web.UI.WebControls {
 		{
 			get 
 			{
+#if NET_2_0
+				return (styles == 0 && (fontinfo == null || fontinfo.IsEmpty) && RegisteredCssClass.Length == 0);
+#else
 				return (styles == 0 && (fontinfo == null || fontinfo.IsEmpty));
+#endif
 			}
 		}
 

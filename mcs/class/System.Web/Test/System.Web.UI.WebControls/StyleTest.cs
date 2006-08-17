@@ -364,6 +364,10 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (sw.ToString ().LastIndexOf ("class"), sw.ToString ().IndexOf ("class"), "AddRegisteredCssClassAttribute#5");
 			Assert.AreEqual (false, sw.ToString ().Contains ("style"), "AddRegisteredCssClassAttribute#6");
 			Assert.AreEqual (true, sw.ToString ().Contains ("class=\"MyClass "), "AddRegisteredCssClassAttribute#7");
+
+			s = new Style ();
+			p.Header.StyleSheet.RegisterStyle (s, p);
+			Assert.AreEqual (false, s.IsEmpty, "AddRegisteredCssClassAttribute#8");
 		}
 #endif
 
