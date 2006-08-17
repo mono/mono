@@ -81,11 +81,12 @@ common_dirs := \
 	Mono.Http			\
 	Microsoft.Vsa			\
 	Mono.Cairo                      \
+	FirebirdSql.Data.Firebird	\
 	IBM.Data.DB2			\
 	Microsoft.JScript		\
 	CustomMarshalers
 
-default_dirs := FirebirdSql.Data.Firebird
+default_dirs := 
 
 net_2_0_dirs := \
 	Microsoft.Build.Framework	\
