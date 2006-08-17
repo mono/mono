@@ -45,6 +45,7 @@ namespace System.Windows.Forms {
 		internal bool nodes_added;
 		private TreeNodeCollection nodes;
 
+		private TreeViewAction selection_action = TreeViewAction.Unknown;
 		internal TreeNode selected_node = null;
 		private TreeNode focused_node = null;
 		private bool select_mmove = false;
@@ -324,10 +325,12 @@ namespace System.Windows.Forms {
 		public TreeNode SelectedNode {
 			get { return selected_node; }
 			set {
-				if (selected_node == value)
+				if (selected_node == value) {
+					selection_action = TreeViewAction.Unknown;
 					return;
+				}
 
-				TreeViewCancelEventArgs e = new TreeViewCancelEventArgs (value, false, TreeViewAction.Unknown);
+				TreeViewCancelEventArgs e = new TreeViewCancelEventArgs (value, false, selection_action);
 				OnBeforeSelect (e);
 
 				if (e.Cancel)
@@ -363,6 +366,7 @@ namespace System.Windows.Forms {
 					selected_node.EnsureVisible ();
 
 				OnAfterSelect (new TreeViewEventArgs (value, TreeViewAction.Unknown));
+				selection_action = TreeViewAction.Unknown;
 			}
 		}
 
@@ -586,8 +590,10 @@ namespace System.Windows.Forms {
 						selected_node.Collapse ();
 					else {
 						TreeNode parent = selected_node.Parent;
-						if (parent != null)
+						if (parent != null) {
+							selection_action = TreeViewAction.ByKeyboard;
 							SelectedNode = parent;
+						}
 					}
 				}
 				break;
@@ -605,22 +611,28 @@ namespace System.Windows.Forms {
 			case Keys.Up:
 				if (selected_node != null) {
 					ne = new OpenTreeNodeEnumerator (selected_node);
-					if (ne.MovePrevious () && ne.MovePrevious ())
+					if (ne.MovePrevious () && ne.MovePrevious ()) {
+						selection_action = TreeViewAction.ByKeyboard;
 						SelectedNode = ne.CurrentNode;
+					}
 				}
 				break;
 			case Keys.Down:
 				if (selected_node != null) {
 					ne = new OpenTreeNodeEnumerator (selected_node);
-					if (ne.MoveNext () && ne.MoveNext ())
+					if (ne.MoveNext () && ne.MoveNext ()) {
+						selection_action = TreeViewAction.ByKeyboard;
 						SelectedNode = ne.CurrentNode;
+					}
 				}
 				break;
 			case Keys.Home:
 				if (root_node.Nodes.Count > 0) {
 					ne = new OpenTreeNodeEnumerator (root_node.Nodes [0]);
-					if (ne.MoveNext ())
+					if (ne.MoveNext ()) {
+						selection_action = TreeViewAction.ByKeyboard;
 						SelectedNode = ne.CurrentNode;
+					}
 				}
 				break;
 			case Keys.End:
@@ -628,6 +640,7 @@ namespace System.Windows.Forms {
 					ne = new OpenTreeNodeEnumerator (root_node.Nodes [0]);
 					while (ne.MoveNext ())
 					{ }
+					selection_action = TreeViewAction.ByKeyboard;
 					SelectedNode = ne.CurrentNode;
 				}
 				break;
@@ -638,6 +651,7 @@ namespace System.Windows.Forms {
 					for (int i = 0; i < move && ne.MoveNext (); i++) {
 						
 					}
+					selection_action = TreeViewAction.ByKeyboard;
 					SelectedNode = ne.CurrentNode;
 				}
 				break;
@@ -647,6 +661,7 @@ namespace System.Windows.Forms {
 					int move = VisibleCount;
 					for (int i = 0; i < move && ne.MovePrevious (); i++)
 					{ }
+					selection_action = TreeViewAction.ByKeyboard;
 					SelectedNode = ne.CurrentNode;
 				}
 				break;
@@ -1460,12 +1475,13 @@ namespace System.Windows.Forms {
 		}
 
 		private void MouseWheelHandler(object sender, MouseEventArgs e) {
+
 			if (vbar == null || !vbar.is_visible) {
 				return;
 			}
 
 			if (e.Delta < 0) {
-				vbar.Value = Math.Min(vbar.Value + SystemInformation.MouseWheelScrollLines, vbar.Maximum);
+				vbar.Value = Math.Min(vbar.Value + SystemInformation.MouseWheelScrollLines, vbar.Maximum - VisibleCount + 1);
 			} else {
 				vbar.Value = Math.Max(0, vbar.Value - SystemInformation.MouseWheelScrollLines);
 			}
@@ -1513,6 +1529,7 @@ namespace System.Windows.Forms {
 				return;
 			} else if (IsSelectableArea (node, e.X) || full_row_select) {
 				TreeNode old_selected = selected_node;
+				selection_action = TreeViewAction.ByMouse;
 				SelectedNode = node;
 				if (label_edit && e.Clicks == 1 && selected_node == old_selected) {
 					BeginEdit (node);

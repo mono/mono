@@ -5,6 +5,13 @@
 
 2006-08-17  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: Specify treeview actions (old patch that didn't get
+	committed for some reason).
+	- Don't let the mouse wheel scroll us too far.  Just want to make
+	the bottom node visible, not scroll it all the ways to the top.
+
+2006-08-17  Jackson Harper  <jackson@ximian.com>
+
 	* XplatUIX11.cs: Mouse wheel events go to the focused window.
 
 2006-08-17  Mike Kestner  <mkestner@novell.com> 
@@ -339,10 +346,6 @@
 	* ImageListStreamer.cs: generate the MemoryStreams with the exact BMP
 	file size, as otherwise our class libraries fail using windows. Fixes
 	bug #78759.
-
-2006-08-04  Jackson Harper  <jackson@ximian.com>
-
-	* TreeView.cs: Specificy selection actions.
 
 2006-08-04  Jackson Harper  <jackson@ximian.com>
 
