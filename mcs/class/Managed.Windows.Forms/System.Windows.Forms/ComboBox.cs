@@ -97,6 +97,7 @@ namespace System.Windows.Forms
 			MouseDown += new MouseEventHandler (OnMouseDownCB);
 			MouseUp += new MouseEventHandler (OnMouseUpCB);
 			MouseMove += new MouseEventHandler (OnMouseMoveCB);
+			MouseWheel += new MouseEventHandler (OnMouseWheelCB);				
 			KeyDown +=new KeyEventHandler(OnKeyDownCB);
 		}
 
@@ -1161,6 +1162,25 @@ namespace System.Windows.Forms
 				listbox_ctrl.Capture = true;
     		}
 
+		private void OnMouseWheelCB (object sender, MouseEventArgs me)
+		{
+			if (Items.Count == 0)
+				return;
+
+			if (listbox_ctrl != null && listbox_ctrl.Visible) {
+				int lines = me.Delta / 120 * SystemInformation.MouseWheelScrollLines;
+				listbox_ctrl.Scroll (-lines);
+			} else {
+				int lines = me.Delta / 120;
+				int index = SelectedIndex - lines;
+				if (index < 0)
+					index = 0;
+				else if (index >= Items.Count)
+					index = Items.Count - 1;
+				SelectedIndex = index;
+			}
+		}
+
 		internal override void OnPaintInternal (PaintEventArgs pevent)
 		{
 			if (suspend_ctrlupdate)
@@ -1494,7 +1514,7 @@ namespace System.Windows.Forms
 				last_item = 0;
 				page_size = 0;
 
-				MouseWheel += new MouseEventHandler (OnMouseWheelCLB);				
+				MouseWheel += new MouseEventHandler (OnMouseWheelCLB);
 
 				SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 				SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
@@ -1800,7 +1820,7 @@ namespace System.Windows.Forms
 				last_item = LastVisibleItem ();
 			}
 
-			private void Scroll (int delta)
+			public void Scroll (int delta)
 			{
 				if (delta == 0 || !vscrollbar_ctrl.Visible)
 					return;
