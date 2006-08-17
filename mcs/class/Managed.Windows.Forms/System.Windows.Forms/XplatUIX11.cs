@@ -3034,12 +3034,14 @@ namespace System.Windows.Forms {
 						}
 
 						case 4: {
+							msg.hwnd = FocusWindow;
 							msg.message=Msg.WM_MOUSEWHEEL;
 							msg.wParam=GetMousewParam(120);
 							break;
 						}
 
 						case 5: {
+							msg.hwnd = FocusWindow;
 							msg.message=Msg.WM_MOUSEWHEEL;
 							msg.wParam=GetMousewParam(-120);
 							break;

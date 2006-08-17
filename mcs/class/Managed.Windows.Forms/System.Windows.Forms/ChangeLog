@@ -1,3 +1,7 @@
+2006-08-17  Jackson Harper  <jackson@ximian.com>
+
+	* XplatUIX11.cs: Mouse wheel events go to the focused window.
+
 2006-08-17  Mike Kestner  <mkestner@novell.com> 
 
 	* ComboBox.cs : don't do mouseover selection in simple mode.
