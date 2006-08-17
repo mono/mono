@@ -87,6 +87,8 @@ namespace System.Windows.Forms {
 					// Generate the leave messages	
 					while (walk != common_container) {
 						walk.FireLeave ();
+						if (walk.CausesValidation && !ValidateControl (walk))
+							return;
 						walk = walk.Parent;
 					}
 
@@ -113,6 +115,19 @@ namespace System.Windows.Forms {
 				// Let the control know it's selected
 				SendControlFocus (value);
 			}
+		}
+
+		private bool ValidateControl (Control c)
+		{
+			CancelEventArgs e = new CancelEventArgs ();
+
+			c.FireValidating (e);
+
+			if (e.Cancel)
+				return false;
+
+			c.FireValidated ();
+			return true;
 		}
 
 		// Just in a separate method to make debugging a little easier,

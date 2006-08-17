@@ -1,3 +1,10 @@
+2006-08-17  Jackson Harper  <jackson@ximian.com>
+
+	* Control.cs:
+	* ContainerControl.cs: Make validation events fire in the correct
+	order.  TODO: For some reason the first validation event is not
+	getting fired.
+
 2006-08-17  Mike Kestner  <mkestner@novell.com> 
 
 	* ComboBox.cs : some null guarding for ComboListBox.Scroll.

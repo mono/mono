@@ -1130,6 +1130,16 @@ namespace System.Windows.Forms
 			OnLeave (EventArgs.Empty);
 		}
 
+		internal void FireValidating (CancelEventArgs ce)
+		{
+			OnValidating (ce);
+		}
+
+		internal void FireValidated ()
+		{
+			OnValidated (EventArgs.Empty);
+		}
+
 		internal virtual bool ProcessControlMnemonic(char charCode) {
 			return ProcessMnemonic(charCode);
 		}
@@ -3298,7 +3308,6 @@ namespace System.Windows.Forms
 
 				OnHandleCreated(EventArgs.Empty);
 			}
-
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -4158,20 +4167,6 @@ namespace System.Windows.Forms
 				}
 
 				case Msg.WM_KILLFOCUS: {
-					if (CausesValidation) {
-						CancelEventArgs e;
-						e = new CancelEventArgs(false);
-
-						OnValidating(e);
-
-						if (e.Cancel) {
-							Focus();
-							return;
-						}
-
-						OnValidated(EventArgs.Empty);
-					}
-
 					this.has_focus = false;
 					OnLostFocusInternal (EventArgs.Empty);
 					return;
