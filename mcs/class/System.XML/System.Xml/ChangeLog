@@ -1,3 +1,10 @@
+2006-08-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextReader.cs, XmlTextReader2.cs, DTDReader.cs :
+	  (ResolveExternalEntityReplacementText) need to skip text
+	  declaration in external entities. To make it possible internalize
+	  SkipTextDeclaration() in XmlTextReader(2). Fixed bug #79090.
+
 2006-08-16  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReader2.cs : Check recursive entity reference.

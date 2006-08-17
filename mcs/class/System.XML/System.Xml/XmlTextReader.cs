@@ -2114,7 +2114,7 @@ namespace System.Xml
 			value = src.Substring (start, idx - start - 1);
 		}
 
-		private void SkipTextDeclaration ()
+		internal void SkipTextDeclaration ()
 		{
 			if (PeekChar () != '<')
 				return;

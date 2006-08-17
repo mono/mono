@@ -409,6 +409,14 @@ namespace System.Xml
 			source.SetNameTable (nameTable);
 		}
 
+		internal void SkipTextDeclaration ()
+		{
+			if (entity != null)
+				entity.SkipTextDeclaration ();
+			else
+				source.SkipTextDeclaration ();
+		}
+
 		// overrides
 
 		public override void Close ()

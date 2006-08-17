@@ -644,6 +644,7 @@ namespace System.Xml
 			if (decl.SystemId != null && decl.SystemId.Length > 0) {
 				// FIXME: not always it should be read in Element context
 				XmlTextReader xtr = new XmlTextReader (decl.LiteralEntityValue, XmlNodeType.Element, null);
+				xtr.SkipTextDeclaration ();
 				if (decl is DTDEntityDeclaration && DTD.EntityDecls [decl.Name] == null) {
 					// GE - also checked as valid contents
 					StringBuilder sb = new StringBuilder ();
