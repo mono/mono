@@ -1,5 +1,7 @@
 2006-08-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* objects.cs: Add a test for #78990.
+
 	* mini-x86.c (mono_arch_output_basic_block): Applied patch from Peter Dettman
 	(peter.dettman@iinet.net.au). Fixes #79087.
 
