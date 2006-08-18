@@ -1,5 +1,7 @@
 2006-08-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* Makefile.am (EXTRA_DIST): Fix make dist.
+
 	* libtool.m4: Removed, should not be in SVN.
 
 2006-07-19  Zoltan Varga  <vargaz@gmail.com>
