@@ -1268,6 +1268,8 @@ namespace System.Windows.Forms
 				set {
 					if (index < 0 || index >= Count)
 						throw new ArgumentOutOfRangeException ("Index of out range");
+					if (value == null)
+						throw new ArgumentNullException ("value");
 
 					object_items[index] = value;
 				}
@@ -1390,6 +1392,9 @@ namespace System.Windows.Forms
 			#region Private Methods
 			private int AddItem (object item)
 			{
+				if (item == null)
+					throw new ArgumentNullException ("item");
+
 				int cnt = object_items.Count;
 				object_items.Add (item);
 				return cnt;

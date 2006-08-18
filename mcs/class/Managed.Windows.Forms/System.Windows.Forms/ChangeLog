@@ -1,3 +1,9 @@
+2006-08-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBox.cs: Throw ArgumentNullException when adding/modifyng
+	null items in ObjectCollection class.
+	* ListBox.cs.: Likewise.
+
 2006-08-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ThemeNice.cs, ThemeClearlooks.cs : remove RadioButton_DrawFocus()
