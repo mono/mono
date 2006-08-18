@@ -1,3 +1,9 @@
+
+Fri Aug 18 19:38:28 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* aot-compiler.c: simplified and refactored the asm-writing code
+	to allow different backends.
+
 2006-08-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h (MONO_AOT_FILE_VERSION): Bump AOT file format version.
