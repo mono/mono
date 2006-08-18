@@ -1,3 +1,7 @@
+2006-08-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* libtool.m4: Removed, should not be in SVN.
+
 2006-07-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* configure.in: Applied patch from Sergey Tikhonov <tsv@solvo.ru>. Beginning
