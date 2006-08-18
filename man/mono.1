@@ -596,7 +596,11 @@ Unix systems and native API calls on Windows, falling back to the
 managed implementation on error.
 .TP
 .I "MONO_PATH"
-Provides a search path to the runtime where to look for library files.
+Provides a search path to the runtime where to look for library
+files.   This is a tool convenient for debugging applications, but
+should not be used by deployed applications as it breaks the assembly
+loader in subtle ways. 
+.Sp
 Directories are separated by the platform path separator (colons on unix). Example:
 .B /home/username/lib:/usr/local/mono/lib
 .TP
