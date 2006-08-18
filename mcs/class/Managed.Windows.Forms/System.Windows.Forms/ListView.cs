@@ -780,6 +780,10 @@ namespace System.Windows.Forms
 				return;
 			}
 
+			// Don't calculate if the view is not displayable
+			if (client_area.Height < 0 || client_area.Width < 0)
+				return;
+
 			// making a scroll bar visible might make
 			// other scroll bar visible			
 			if (layout_wd > client_area.Right) {
