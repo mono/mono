@@ -1,3 +1,9 @@
+2006-08-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_allocate_stack_slots_full): Fix yet another place where byref
+	is not handled because it is stored as a flag and not as a type ctor. Fixes
+	#79016.
+
 2006-08-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c: Fix computation of GOT slot statistics.
