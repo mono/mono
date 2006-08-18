@@ -1,3 +1,11 @@
+2006-08-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Don't run net 2.0 AOT tests.
+
+	* aot-compiler.c (compile_method): Skip methods with tail calls as well.
+	(mono_compile_assembly): Skip net 2.0 assemblies as well.
+
+	* aot-runtime.c (load_patch_info): Fix an uninitialized memory error.
 
 Fri Aug 18 19:38:28 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
