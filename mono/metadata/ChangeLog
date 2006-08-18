@@ -1,3 +1,7 @@
+2006-08-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* image.c: don't fail when the link points to an absolute path.
+
 2006-08-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* decimal.c: Remove dead code (unrequired check) in mono_decimalIncr.
