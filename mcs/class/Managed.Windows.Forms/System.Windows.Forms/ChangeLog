@@ -1,3 +1,8 @@
+2006-08-18  Jackson Harper  <jackson@ximian.com>
+
+	* FileDialog.cs: Paint the selection on the directory combobox the
+	same way as on MS. 
+
 2006-08-17  Jackson Harper  <jackson@ximian.com>
 
 	* ErrorProvider.cs: Don't allow the error control to be selected.

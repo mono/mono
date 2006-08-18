@@ -1719,17 +1719,27 @@ namespace System.Windows.Forms {
 			Color foreColor = e.ForeColor;
 			
 			int xPos = dcbi.XPos;
-			
+
 			if ((e.State & DrawItemState.ComboBoxEdit) != 0)
 				xPos = 0;
-			else
-			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
-				backColor = ThemeEngine.Current.ColorHighlight;
+
+			gr.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (backColor),
+					new Rectangle (0, 0, bmp.Width, bmp.Height));
+			
+			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected &&
+					(!DroppedDown || (e.State & DrawItemState.ComboBoxEdit) != DrawItemState.ComboBoxEdit)) {
 				foreColor = ThemeEngine.Current.ColorHighlightText;
+
+				int w = (int) gr.MeasureString (dcbi.Name, e.Font).Width;
+
+				gr.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHighlight),
+						new Rectangle (xPos + 23, 1, w + 3, e.Bounds.Height - 2));
+				if ((e.State & DrawItemState.Focus) == DrawItemState.Focus) {
+					ControlPaint.DrawFocusRectangle (gr, new Rectangle (xPos + 22, 0, w + 5,
+							e.Bounds.Height), foreColor, ThemeEngine.Current.ColorHighlight);
+				}
 			}
-			
-			gr.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (backColor), new Rectangle (0, 0, bmp.Width, bmp.Height));
-			
+
 			gr.DrawString (dcbi.Name, e.Font , ThemeEngine.Current.ResPool.GetSolidBrush (foreColor), new Point (24 + xPos, (bmp.Height - e.Font.Height) / 2));
 			gr.DrawImage (dcbi.ImageList.Images [dcbi.ImageIndex], new Rectangle (new Point (xPos + 2, 0), new Size (16, 16)));
 			
