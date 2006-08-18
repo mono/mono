@@ -64,10 +64,10 @@ common_dirs := \
 	Microsoft.VisualC		\
 	Cscompmgd			\
 	Managed.Windows.Forms		\
-	Microsoft.VisualBasic		\
 	System.Design			\
 	PEAPI				\
 	Npgsql				\
+	Compat.ICSharpCode.SharpZipLib	\
 	ICSharpCode.SharpZipLib		\
 	Compat.ICSharpCode.SharpZipLib	\
 	ByteFX.Data			\
