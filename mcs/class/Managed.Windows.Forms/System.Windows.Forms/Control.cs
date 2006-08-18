@@ -3619,15 +3619,10 @@ namespace System.Windows.Forms
 
 		protected virtual void Select(bool directed, bool forward) {
 			IContainerControl	container;
-
+			
 			container = GetContainerControl();
-			if (container != null) {
+			if (container != null)
 				container.ActiveControl = this;
-			}
-
-			if (IsHandleCreated) {
-				XplatUI.SetFocus(window.Handle);
-			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]

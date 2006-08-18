@@ -1,5 +1,12 @@
 2006-08-17  Jackson Harper  <jackson@ximian.com>
 
+	* ErrorProvider.cs: Don't allow the error control to be selected.
+	* Control.cs: Don't send the SetFocus messages, the control
+	activation will do this, and if we do it blindly here validation
+	does not work.
+
+2006-08-17  Jackson Harper  <jackson@ximian.com>
+
 	* Control.cs:
 	* ContainerControl.cs: Make validation events fire in the correct
 	order.  TODO: For some reason the first validation event is not

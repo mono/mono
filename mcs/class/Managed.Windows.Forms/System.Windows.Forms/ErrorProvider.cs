@@ -37,6 +37,15 @@ namespace System.Windows.Forms {
 	[ProvideProperty("IconPadding", "System.Windows.Forms.Control, " + Consts.AssemblySystem_Windows_Forms)]
 	[ProvideProperty("Error", "System.Windows.Forms.Control, " + Consts.AssemblySystem_Windows_Forms)]
 	public class ErrorProvider : Component, IExtenderProvider {
+
+		private class ErrorWindow : UserControl {
+
+			public ErrorWindow ()
+			{
+				SetStyle (ControlStyles.Selectable, false);
+			}
+		}
+
 		#region Private Classes
 		private class ErrorProperty {
 			public ErrorIconAlignment	alignment;
@@ -44,7 +53,7 @@ namespace System.Windows.Forms {
 			public string			text;
 			public Control			control;
 			public ErrorProvider		ep;
-			private UserControl		window;
+			private ErrorWindow		window;
 			private bool			visible;
 			private int			blink_count;
 			private EventHandler		tick;
@@ -61,7 +70,7 @@ namespace System.Windows.Forms {
 
 				tick = new EventHandler(window_Tick);
 
-				window = new UserControl();
+				window = new ErrorWindow ();
 				window.Visible = false;
 				window.Width = ep.icon.Width;
 				window.Height = ep.icon.Height;
