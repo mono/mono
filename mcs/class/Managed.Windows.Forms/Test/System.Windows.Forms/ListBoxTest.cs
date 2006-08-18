@@ -349,5 +349,21 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (true, col.Contains ("Item2"), "#H1");
 		}
 
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void IndexerNullTest ()
+		{
+			col.Add ("Item1");
+			col [0] = null;
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void AddNullTest ()
+		{
+			col.Add (null);
+		}
+
+
 	}
 }

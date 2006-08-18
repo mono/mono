@@ -322,6 +322,23 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, col.Count, "#H1");
 			Assert.AreEqual (true, col.Contains ("Item2"), "#H1");
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void AddNullTest ()
+		{
+			ComboBox.ObjectCollection col = new ComboBox.ObjectCollection (new ComboBox ());
+			col.Add (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void IndexerNullTest ()
+		{
+			ComboBox.ObjectCollection col = new ComboBox.ObjectCollection (new ComboBox ());
+			col.Add ("Item1");
+			col [0] = null;
+		}
 	}
 
 }
