@@ -1,5 +1,13 @@
 2006-08-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h (MONO_AOT_FILE_VERSION): Bump AOT file format version.
+
+	* aot-compiler.c aot-runtime.c: Reorg the GOT slot allocation code a 
+	little. Share patches of type TYPE_FROM_HANDLE as well.
+
+	* mini.c (mono_patch_info_equal): New helper function.
+	(mono_patch_info_hash): Ditto.
+
 	* aot-compiler.c (emit_method_code): Fix s390 build.
 
 	* mini.c (mono_allocate_stack_slots_full): Fix yet another place where byref
