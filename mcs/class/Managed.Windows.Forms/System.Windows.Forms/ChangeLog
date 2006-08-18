@@ -18,6 +18,12 @@
 
 2006-08-18  Jackson Harper  <jackson@ximian.com>
 
+	* Binding.cs: When validating if the value entered doesn't convert
+	properly reset to the old value.
+	* RadioButton.cs: Don't fire click when we get focus.
+
+2006-08-18  Jackson Harper  <jackson@ximian.com>
+
 	* FileDialog.cs: Paint the selection on the directory combobox the
 	same way as on MS. 
 

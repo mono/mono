@@ -214,7 +214,16 @@ namespace System.Windows.Forms {
 
 		private void ControlValidatingHandler (object sender, CancelEventArgs e)
 		{
-			PullData ();
+			object old_data = data;
+
+			// If the data doesn't seem to be valid (it can't be converted,
+			// is the wrong type, etc, we reset to the old data value.
+			try {
+				PullData ();
+			} catch {
+				data = old_data;
+				SetControlValue (data);
+			}
 		}
 
 		private void PositionChangedHandler (object sender, EventArgs e)
