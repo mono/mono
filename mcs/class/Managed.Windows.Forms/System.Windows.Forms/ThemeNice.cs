@@ -464,19 +464,6 @@ namespace System.Windows.Forms
 		}
 		#endregion	// ProgressBar
 		
-		#region RadioButton
-		protected override void RadioButton_DrawFocus(RadioButton radio_button, Graphics dc, Rectangle text_rectangle)
-		{
-			if (radio_button.Focused && radio_button.appearance != Appearance.Button) 
-			{
-				if (radio_button.FlatStyle != FlatStyle.Flat && radio_button.FlatStyle != FlatStyle.Popup) 
-				{
-					DrawInnerFocusRectangle (dc, text_rectangle, radio_button.BackColor);
-				} 
-			}
-		}
-		#endregion	// RadioButton
-		
 		#region ScrollBar
 		protected override void ScrollBar_DrawThumb( ScrollBar bar, Rectangle thumb_pos, Rectangle clip, Graphics dc )
 		{

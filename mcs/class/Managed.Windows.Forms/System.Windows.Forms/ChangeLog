@@ -1,3 +1,9 @@
+2006-08-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ThemeNice.cs, ThemeClearlooks.cs : remove RadioButton_DrawFocus()
+	  as the base method in ThemeWin32Classic should work fine.
+	  Fixed bug #78607.
+
 2006-08-18  Jackson Harper  <jackson@ximian.com>
 
 	* FileDialog.cs: Paint the selection on the directory combobox the
