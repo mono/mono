@@ -1,12 +1,13 @@
+2006-08-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Style.cs:
+	* ChangeLog: revert r63894. It modified the 1.x profile, it wasn't
+	submitted for review and it only added tests for the 2.0 profile.
+
 2006-08-08 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* FormView.cs: added explicit implementation of
 	IDataItemContainer.DataItemIndex, as documented
-
-2006-08-17 Igor Zelmanovich <igorz@mainsoft.com>
-
-	* Style.cs: fixed:
-	When empty style is registered IsEmpty returns false. 
 
 2006-08-17 Igor Zelmanovich <igorz@mainsoft.com>
 

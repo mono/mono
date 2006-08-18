@@ -408,20 +408,14 @@ namespace System.Web.UI.WebControls {
 
 		public virtual void AddAttributesToRender(System.Web.UI.HtmlTextWriter writer, WebControl owner)
 		{
-#if NET_2_0
-			if (RegisteredCssClass.Length > 0) {
-				if (CssClass.Length > 0)
-					writer.AddAttribute (HtmlTextWriterAttribute.Class, CssClass + " " + RegisteredCssClass);
-				else
-					writer.AddAttribute (HtmlTextWriterAttribute.Class, RegisteredCssClass);
-			}
-			else 
-#endif
+			if ((styles & Styles.CssClass) != 0) 
 			{
-				if (CssClass.Length > 0)
-					writer.AddAttribute (HtmlTextWriterAttribute.Class, CssClass);
-				WriteStyleAttributes (writer);
+				string s = (string)viewstate["CssClass"];
+				if (s != string.Empty)
+					writer.AddAttribute (HtmlTextWriterAttribute.Class, s);
 			}
+
+			WriteStyleAttributes (writer);
 		}
 
 		void WriteStyleAttributes (HtmlTextWriter writer) 
