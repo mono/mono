@@ -544,7 +544,7 @@ namespace System.Reflection.Emit {
 			// Add missing info
 			if (version_res.Version == "0.0.0.0")
 				version_res.Version = version;
-			if (version_res.FileVersion.Trim () == "" && version != null)
+			if (version_res.FileVersion.Trim () == String.Empty && version != null)
 				version_res.FileVersion = version;
 			version_res.InternalName = Path.GetFileNameWithoutExtension (fileName);
 			version_res.OriginalFilename = fileName;
@@ -556,7 +556,7 @@ namespace System.Reflection.Emit {
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
-			if (name == "")
+			if (name == String.Empty)
 				throw new ArgumentException ("Name can't be null");
 
 			if (modules != null)
@@ -794,9 +794,9 @@ namespace System.Reflection.Emit {
 				throw new ArgumentNullException ("name");
 			if (fileName == null)
 				throw new ArgumentNullException ("fileName");
-			if (name == "")
+			if (name == String.Empty)
 				throw new ArgumentException ("name cannot be empty", "name");
-			if (fileName == "")
+			if (fileName == String.Empty)
 				throw new ArgumentException ("fileName cannot be empty", "fileName");
 			if (Path.GetFileName (fileName) != fileName)
 				throw new ArgumentException ("fileName '" + fileName + "' must not include a path.");

@@ -56,7 +56,7 @@ namespace System.Reflection.Emit {
 			if (extype != null)
 				System.Console.WriteLine (" extype="+extype.ToString());
 			else
-				System.Console.WriteLine ("");
+				System.Console.WriteLine (String.Empty);
 #endif
 		}
 	}

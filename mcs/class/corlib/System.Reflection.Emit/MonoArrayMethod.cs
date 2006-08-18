@@ -121,7 +121,7 @@ namespace System.Reflection {
 		}
 
 		public override string ToString () {
-			string parms = "";
+			string parms = String.Empty;
 			ParameterInfo[] p = GetParameters ();
 			for (int i = 0; i < p.Length; ++i) {
 				if (i > 0)

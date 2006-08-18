@@ -111,7 +111,7 @@ namespace System.Reflection.Emit {
 			res.marshaltype = mtype;
 			res.marshaltyperef = typeref;
 			if (id == Guid.Empty)
-				res.guid = "";
+				res.guid = String.Empty;
 			else
 				res.guid = id.ToString ();
 			return res;

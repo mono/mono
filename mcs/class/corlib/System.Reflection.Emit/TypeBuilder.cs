@@ -107,7 +107,7 @@ namespace System.Reflection.Emit {
 			this.class_size = UnspecifiedTypeSize;
 			this.table_idx = 1;
 			fullname = this.tname = "<Module>";
-			this.nspace = "";
+			this.nspace = String.Empty;
 			pmodule = mb;
 			setup_internal_class (this);
 		}
@@ -125,7 +125,7 @@ namespace System.Reflection.Emit {
 				this.nspace = name.Substring (0, sep_index);
 			} else {
 				this.tname = name;
-				this.nspace = "";
+				this.nspace = String.Empty;
 			}
 			if (interfaces != null) {
 				this.interfaces = new Type[interfaces.Length];
