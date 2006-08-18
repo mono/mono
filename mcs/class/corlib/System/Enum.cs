@@ -505,7 +505,7 @@ namespace System
 
 		static string FormatFlags (Type enumType, object value)
 		{
-			string retVal = "";
+			string retVal = String.Empty;
 			MonoEnumInfo info;
 			MonoEnumInfo.GetInfo (enumType, out info);
 			string asString = value.ToString ();
@@ -527,7 +527,7 @@ namespace System
 						continue;
 
 					if ((flags & enumValue) == enumValue) {
-						retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
+						retVal = info.names[i] + (retVal == String.Empty ? String.Empty : ", ") + retVal;
 						flags -= enumValue;
 					}
 				}
@@ -543,7 +543,7 @@ namespace System
 						continue;
 
 					if ((flags & enumValue) == enumValue) {
-						retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
+						retVal = info.names[i] + (retVal == String.Empty ? String.Empty : ", ") + retVal;
 						flags -= enumValue;
 					}
 				}
@@ -559,7 +559,7 @@ namespace System
 						continue;
 
 					if ((flags & enumValue) == enumValue) {
-						retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
+						retVal = info.names[i] + (retVal == String.Empty ? String.Empty : ", ") + retVal;
 						flags -= enumValue;
 					}
 				}
@@ -575,7 +575,7 @@ namespace System
 						continue;
 
 					if ((flags & enumValue) == enumValue) {
-						retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
+						retVal = info.names[i] + (retVal == String.Empty ? String.Empty : ", ") + retVal;
 						flags -= enumValue;
 					}
 				}
@@ -591,7 +591,7 @@ namespace System
 						continue;
 
 					if ((flags & enumValue) == enumValue) {
-						retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
+						retVal = info.names[i] + (retVal == String.Empty ? String.Empty : ", ") + retVal;
 						flags -= enumValue;
 					}
 				}
@@ -607,7 +607,7 @@ namespace System
 						continue;
 
 					if ((flags & enumValue) == enumValue) {
-						retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
+						retVal = info.names[i] + (retVal == String.Empty ? String.Empty : ", ") + retVal;
 						flags -= enumValue;
 					}
 				}
@@ -623,7 +623,7 @@ namespace System
 						continue;
 
 					if ((flags & enumValue) == enumValue) {
-						retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
+						retVal = info.names[i] + (retVal == String.Empty ? String.Empty : ", ") + retVal;
 						flags -= enumValue;
 					}
 				}
@@ -639,7 +639,7 @@ namespace System
 						continue;
 
 					if ((flags & enumValue) == enumValue) {
-						retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
+						retVal = info.names[i] + (retVal == String.Empty ? String.Empty : ", ") + retVal;
 						flags -= enumValue;
 					}
 				}
@@ -648,7 +648,7 @@ namespace System
 				break;
 			}
 
-			if (retVal == "")
+			if (retVal == String.Empty)
 				return asString;
 
 			return retVal;
@@ -693,7 +693,7 @@ namespace System
 			if ((formatChar == 'f' || formatChar == 'F'))
 				return FormatFlags (enumType, value);
 
-			retVal = "";
+			retVal = String.Empty;
 			switch (formatChar) {
 			case 'X':
 			case 'x':

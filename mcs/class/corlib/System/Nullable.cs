@@ -144,7 +144,7 @@ namespace System {
 			if (has_value)
 				return value.ToString ();
 			else
-				return "";
+				return String.Empty;
 		}
 
 		public static implicit operator Nullable<T> (T value)

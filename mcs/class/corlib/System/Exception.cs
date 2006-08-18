@@ -301,20 +301,20 @@ namespace System
 
 		internal string GetFullNameForStackTrace (MethodBase mi)
 		{
-			string parms = "";
+			string parms = String.Empty;
 			ParameterInfo[] p = mi.GetParameters ();
 			for (int i = 0; i < p.Length; ++i) {
 				if (i > 0)
 					parms = parms + ", ";
-				string paramName = (p [i].Name == null) ? "" : (" " + p [i].Name);
+				string paramName = (p [i].Name == null) ? String.Empty : (" " + p [i].Name);
 				Type pt = p[i].ParameterType;
-				if (pt.IsClass && pt.Namespace != "")
+				if (pt.IsClass && pt.Namespace != String.Empty)
 					parms = parms + pt.Namespace + "." + pt.Name + paramName;
 				else
 					parms = parms + pt.Name + paramName;
 			}
 
-			string generic = "";
+			string generic = String.Empty;
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 			if (mi.IsGenericMethod) {
 				Type[] gen_params = mi.GetGenericArguments ();

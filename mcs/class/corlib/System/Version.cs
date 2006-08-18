@@ -254,7 +254,7 @@ namespace System
 		public string ToString (int fields)
 		{
 			if (fields == 0)
-				return "";
+				return String.Empty;
 			if (fields == 1)
 				return _Major.ToString ();
 			if (fields == 2)

@@ -788,7 +788,7 @@ namespace System
 			int length = 0;
 			CustomInfo.GetActiveSection (format,ref p, ns.ZeroOnly, ref offset, ref length);
 			if (length == 0) {
-				return ns.Positive ? "" : nfi.NegativeSign;
+				return ns.Positive ? String.Empty : nfi.NegativeSign;
 			}
 			ns.Positive = p;
 

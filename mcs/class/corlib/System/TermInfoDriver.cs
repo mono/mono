@@ -37,8 +37,8 @@ namespace System {
 		TermInfoReader reader;
 		int cursorLeft;
 		int cursorTop;
-		string title = "";
-		string titleFormat = "";
+		string title = String.Empty;
+		string titleFormat = String.Empty;
 		bool cursorVisible = true;
 		string csrVisible;
 		string csrInvisible;
@@ -78,7 +78,7 @@ namespace System {
 
 		static string SearchTerminfo (string term)
 		{
-			if (term == null || term == "")
+			if (term == null || term == String.Empty)
 				return null;
 
 			// Ignore TERMINFO and TERMINFO_DIRS by now
@@ -200,7 +200,7 @@ namespace System {
 
 			cursorAddress = reader.Get (TermInfoStrings.CursorAddress);
 			if (cursorAddress != null) {
-				string result = cursorAddress.Replace ("%i", "");
+				string result = cursorAddress.Replace ("%i", String.Empty);
 				home_1_1 = (cursorAddress != result);
 				cursorAddress = MangleParameters (result);
 			}
@@ -654,7 +654,7 @@ namespace System {
 
 		public void SetBufferSize (int width, int height)
 		{
-			throw new NotImplementedException ("");
+			throw new NotImplementedException (String.Empty);
 		}
 
 		public void SetCursorPosition (int left, int top)

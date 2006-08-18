@@ -1290,7 +1290,7 @@ namespace System
 						formatter = provider.GetFormat (typeof (ICustomFormatter))
 							as ICustomFormatter;
 					if (arg == null)
-						str = "";
+						str = String.Empty;
 					else if (formatter != null)
 						str = formatter.Format (arg_format, arg, provider);
 					else if (arg is IFormattable)
@@ -1800,7 +1800,7 @@ namespace System
 				else {
 					width = 0;
 					left_align = false;
-					format = "";
+					format = String.Empty;
 				}
 
 				// F = argument format (string)

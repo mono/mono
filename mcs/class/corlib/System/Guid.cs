@@ -598,7 +598,7 @@ namespace System {
 				else if (f == "n") {
 					h = false;
 				}
-				else if (f != "d" && f != "") {
+				else if (f != "d" && f != String.Empty) {
 					throw new FormatException (Locale.GetText (
 						"Argument to Guid.ToString(string format) should be \"b\", \"B\", \"d\", \"D\", \"n\", \"N\", \"p\" or \"P\""));
 				}

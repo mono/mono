@@ -438,7 +438,7 @@ namespace System {
 			SmallRect region = new SmallRect (sourceLeft, sourceTop, sourceLeft + sourceWidth - 1, sourceTop + sourceHeight - 1);
 			fixed (void *ptr = &buffer [0]) {
 				if (!ReadConsoleOutput (outputHandle, ptr, bsize, bpos, ref region))
-					throw new ArgumentException ("", "Cannot read from the specified coordinates.");
+					throw new ArgumentException (String.Empty, "Cannot read from the specified coordinates.");
 			}
 
 			int written;
@@ -453,7 +453,7 @@ namespace System {
 			bpos = new Coord (0, 0);
 			region = new SmallRect (targetLeft, targetTop, targetLeft + sourceWidth - 1, targetTop + sourceHeight - 1);
 			if (!WriteConsoleOutput (outputHandle, buffer, bsize, bpos, ref region))
-				throw new ArgumentException ("", "Cannot write to the specified coordinates.");
+				throw new ArgumentException (String.Empty, "Cannot write to the specified coordinates.");
 		}
 
 		public ConsoleKeyInfo ReadKey (bool intercept)
