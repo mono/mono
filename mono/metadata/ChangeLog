@@ -1,3 +1,20 @@
+2006-08-17  Miguel de Icaza  <miguel@novell.com>
+
+	* image.c (full_path): A new method used to obtain the actual path
+	of an assembly even in the presence of symbolic links.  
+
+	This is necessary for the case where we are running a binary that
+	has been GACed, but we are using the "published" path name
+	($prefix/mono/1.0/blah.exe) which happens to point to the real
+	file in the GAC.
+
+	This was the source of the failure for the `xsp' command with the
+	recent AppDomain changes, as far as the runtime was concerned,
+	there were two different assemblies: $prefix/mono/1.0/blah.exe and
+	$prefix/mono/gac/blah/version/blah.exe.
+
+	(do_mono_image_open): use full path
+
 2006-08-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* object.c (mono_class_create_runtime_vtable): Add a FIXME.
