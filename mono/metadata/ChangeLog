@@ -1,3 +1,8 @@
+2006-08-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* decimal.c: Remove dead code (unrequired check) in mono_decimalIncr.
+	Fix CID #3.
+
 2006-08-17  Miguel de Icaza  <miguel@novell.com>
 
 	* image.c (full_path): A new method used to obtain the actual path
