@@ -1,3 +1,8 @@
+2006-08-19  Miguel de Icaza  <miguel@novell.com>
+
+	* CultureInfo.cs (GetCultureInfo): implement two of the 2.0
+	overloads, as the vb code depends on this.
+
 2006-07-03  Kornél Pál  <kornelpal@gmail.com>
 
 	* CodePageDataItem.cs: Added.

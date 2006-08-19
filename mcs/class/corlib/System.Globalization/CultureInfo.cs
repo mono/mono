@@ -40,6 +40,7 @@ namespace System.Globalization
 	public class CultureInfo : ICloneable, IFormatProvider
 	{
 		static volatile CultureInfo invariant_culture_info;
+		static object shared_table_lock = new object ();
 		internal static int BootstrapCultureID;
 
 		const int NumOptionalCalendars = 5;
@@ -87,11 +88,11 @@ namespace System.Globalization
 				
 		int m_dataItem;		// MS.NET serializes this.
 		Calendar calendar;	// MS.NET serializes this.
-		
+
 		// Deserialized instances will set this to false
 		[NonSerialized]
 		bool constructed;
-		
+
 		private static readonly string MSG_READONLY = "This instance is read only";
 		
 		static public CultureInfo InvariantCulture {
@@ -450,7 +451,6 @@ namespace System.Globalization
 				return(null);
 			}
 		}
-
 		public bool IsReadOnly 
 		{
 			get {
@@ -615,17 +615,58 @@ namespace System.Globalization
 		// This is used when creating by specific name and creating by
 		// current locale so we can initialize the object without
 		// doing any member initialization
-		private CultureInfo () { constructed = true; } 
-
+		private CultureInfo () { constructed = true; }
 #if NET_2_0
-		[MonoTODO]
-		public static CultureInfo GetCultureInfo (int culture) {
-			throw new NotImplementedException ();
+		static Hashtable shared_by_number, shared_by_name;
+		
+		static void insert_into_shared_tables (CultureInfo c)
+		{
+			if (shared_by_number != null){
+				shared_by_number = new Hashtable ();
+				shared_by_name = new Hashtable ();
+			}
+			shared_by_number [c.cultureID] = c;
+			shared_by_name [c.m_name] = c;
+		}
+		
+		public static CultureInfo GetCultureInfo (int culture)
+		{
+			CultureInfo c;
+			
+			lock (shared_table_lock){
+				if (shared_by_number != null){
+					c = shared_by_number [culture] as CultureInfo;
+
+					if (c != null)
+						return (CultureInfo) c;
+				}
+				c = new CultureInfo (culture);
+				c.m_isReadOnly = true;
+
+				insert_into_shared_tables (c);
+				return c;
+			}
 		}
 
-		[MonoTODO]
-		public static CultureInfo GetCultureInfo (string name) {
-			throw new NotImplementedException ();
+		public static CultureInfo GetCultureInfo (string name)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			CultureInfo c;
+			lock (shared_table_lock){
+				if (shared_by_name != null){
+					c = shared_by_name [name] as CultureInfo;
+
+					if (c != null)
+						return (CultureInfo) c;
+				}
+				c = new CultureInfo (name);
+				c.m_isReadOnly = true;
+				insert_into_shared_tables (c);
+
+				return c;
+			}
 		}
 
 		[MonoTODO]
