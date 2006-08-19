@@ -621,7 +621,7 @@ namespace System.Globalization
 		
 		static void insert_into_shared_tables (CultureInfo c)
 		{
-			if (shared_by_number != null){
+			if (shared_by_number == null){
 				shared_by_number = new Hashtable ();
 				shared_by_name = new Hashtable ();
 			}
