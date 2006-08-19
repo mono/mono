@@ -683,12 +683,14 @@ namespace System {
 
 		public void SetWindowPosition (int left, int top)
 		{
-			throw new NotSupportedException ();
+			// No need to throw exceptions here.
+			//throw new NotSupportedException ();
 		}
 
 		public void SetWindowSize (int width, int height)
 		{
-			throw new NotSupportedException ();
+			// No need to throw exceptions here.
+			//throw new NotSupportedException ();
 		}
 
 
