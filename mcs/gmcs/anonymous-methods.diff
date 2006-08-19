@@ -651,7 +651,7 @@ Index: iterators.cs
  				expr = Convert.ImplicitConversionRequired (
  					ec, expr, iterator.IteratorType, loc);
  				if (expr == null)
-@@ -119,13 +122,239 @@
+@@ -119,13 +122,352 @@
  		}
  	}
  
@@ -715,7 +715,7 @@ Index: iterators.cs
 +			generic_args.Add (iterator_type_expr);
 +
 +			ArrayList list = new ArrayList ();
-+			if (false && Iterator.IsEnumerable) {
++			if (Iterator.IsEnumerable) {
 +				enumerable_type = new TypeExpression (
 +					TypeManager.ienumerable_type, Location);
 +				list.Add (enumerable_type);
@@ -752,6 +752,11 @@ Index: iterators.cs
 +			Define_Dispose ();
 +			Define_Reset ();
 +
++			if (Iterator.IsEnumerable) {
++				Define_GetEnumerator (false);
++				Define_GetEnumerator (true);
++			}
++
 +			return base.DoDefineMembers ();
 +		}
 +
@@ -772,7 +777,7 @@ Index: iterators.cs
 +
 +			MemberName name = new MemberName (left, "Current", null, Location);
 +
-+			ToplevelBlock get_block = new ToplevelBlock (null, Location);
++			ToplevelBlock get_block = new ToplevelBlock (Location);
 +			get_block.AddStatement (new CurrentBlock (this, is_generic));
 +
 +			Accessor getter = new Accessor (get_block, 0, null, Location);
@@ -780,6 +785,73 @@ Index: iterators.cs
 +			Property current = new Property (
 +				this, type, 0, false, name, null, getter, null);
 +			AddProperty (current);
++		}
++
++		void Define_GetEnumerator (bool is_generic)
++		{
++			MemberName left;
++			Expression type;
++			if (is_generic) {
++				left = new MemberName (
++					"System.Collections.Generic.IEnumerable",
++					generic_args, Location);
++				type = generic_enumerator_type;
++			} else {
++				left = new MemberName ("System.Collections.IEnumerable", Location);
++				type = enumerator_type;
++			}
++
++			MemberName name = new MemberName (left, "GetEnumerator", Location);
++
++			Method get_enumerator = new Method (
++				this, null, type, 0, false, name,
++				Parameters.EmptyReadOnlyParameters, null);
++
++			AddMethod (get_enumerator);
++			get_enumerator.Block = new ToplevelBlock (Location);
++			get_enumerator.Block.AddStatement (new GetEnumeratorBlock (this, type, is_generic));
++
++
++#if FIXME
++			Expression ce = new MemberAccess (
++				new SimpleName ("System.Threading.Interlocked", Location),
++				"CompareExchange");
++
++			Expression pc = new FieldExpression (this, pc_field);
++			Expression before = new IntLiteral ((int) State.Running, Location);
++			Expression uninitialized = new IntLiteral ((int) State.Uninitialized, Location);
++
++			ArrayList args = new ArrayList ();
++			args.Add (new Argument (pc, Argument.AType.Ref));
++			args.Add (new Argument (before, Argument.AType.Expression));
++			args.Add (new Argument (uninitialized, Argument.AType.Expression));
++
++			get_enumerator.Block.AddStatement (new If (
++				new Binary (
++					Binary.Operator.Equality,
++					new Invocation (ce, args),
++					uninitialized),
++				new Return (new ThisParameterReference (type.Type, Location),
++					    Location),
++				Location));
++
++			args = new ArrayList ();
++			if (!IsStatic) {
++				args.Add (new Argument (new CapturedThisReference (this, Location)));
++			}
++
++			args.Add (new Argument (new BoolLiteral (true, Location)));
++
++			for (int i = 0; i < parameters.Count; i++) {
++				Expression cp = new CapturedParameterReference (
++					this, parameters.ParameterType (i),
++					parameters.ParameterName (i), Location);
++				args.Add (new Argument (cp));
++			}
++
++			Expression new_expr = new New (current_type, args, Location);
++			get_enumerator.Block.AddStatement (new Return (new_expr, Location));
++#endif
 +		}
 +
 +		void Define_Dispose ()
@@ -824,6 +896,9 @@ Index: iterators.cs
 +			return (ConstructorInfo) mg.Methods [0];
 +		}
 +
++		// protected class IteratorScopeInitializer : ScopeInitializer
++		// { }
++
 +		protected class CurrentBlock : Statement {
 +			IteratorHost host;
 +			bool is_generic;
@@ -863,6 +938,44 @@ Index: iterators.cs
 +			}
 +		}
 +
++		protected class GetEnumeratorBlock : Statement {
++			IteratorHost host;
++			Expression type;
++			Expression initializer, cast;
++			bool is_generic;
++
++			public GetEnumeratorBlock (IteratorHost host, Expression type,
++						   bool is_generic)
++			{
++				this.host = host;
++				this.type = type;
++				this.is_generic = is_generic;
++				loc = host.Location;
++			}
++
++			public override bool Resolve (EmitContext ec)
++			{
++				type = type.ResolveAsTypeTerminal (ec, false);
++				if ((type == null) || (type.Type == null))
++					return false;
++
++				initializer = new ScopeInitializer (host, loc).Resolve (ec);
++				if (initializer == null)
++					return false;
++
++				cast = new ClassCast (initializer, type.Type);
++
++				ec.CurrentBranching.CurrentUsageVector.Return ();
++				return true;
++			}
++
++			protected override void DoEmit (EmitContext ec)
++			{
++				cast.Emit (ec);
++				ec.ig.Emit (OpCodes.Ret);
++			}
++		}
++
 +		protected class DisposeMethod : Statement {
 +			Iterator iterator;
 +
@@ -896,7 +1009,7 @@ Index: iterators.cs
  		public readonly bool IsStatic;
  
  		//
-@@ -139,7 +368,6 @@
+@@ -139,7 +481,6 @@
  		// Context from the original method
  		//
  		GenericMethod generic_method;
@@ -904,7 +1017,7 @@ Index: iterators.cs
  		TypeExpr current_type;
  		Type this_type;
  		Parameters parameters;
-@@ -147,7 +375,7 @@
+@@ -147,7 +488,7 @@
  		IMethodData orig_method;
  
  		MethodInfo dispose_method;
@@ -913,7 +1026,7 @@ Index: iterators.cs
  		Constructor ctor;
  		CaptureContext cc;
  
-@@ -156,25 +384,25 @@
+@@ -156,25 +497,25 @@
  		Expression generic_enumerator_type;
  		Expression generic_enumerable_type;
  		TypeArguments generic_args;
@@ -945,7 +1058,7 @@ Index: iterators.cs
  		{
  			ILGenerator ig = ec.ig;
  
-@@ -192,7 +420,7 @@
+@@ -192,7 +533,7 @@
  			resume_points.Add (entry_point);
  			entry_point.Define (ig);
  
@@ -954,7 +1067,7 @@ Index: iterators.cs
  
  			EmitYieldBreak (ig);
  
-@@ -203,7 +431,7 @@
+@@ -203,7 +544,7 @@
  				labels [i] = ((ResumePoint) resume_points [i]).Label;
  
  			ig.Emit (OpCodes.Ldarg_0);
@@ -963,7 +1076,7 @@ Index: iterators.cs
  			ig.Emit (OpCodes.Switch, labels);
  
  			Label end = ig.DefineLabel ();
-@@ -221,7 +449,7 @@
+@@ -221,7 +562,7 @@
  			ig.BeginFaultBlock ();
  
  			ig.Emit (OpCodes.Ldarg_0);
@@ -972,7 +1085,7 @@ Index: iterators.cs
  
  			ig.EndExceptionBlock ();
  
-@@ -264,12 +492,12 @@
+@@ -264,12 +605,12 @@
  
  			ig.MarkLabel (dispatcher);
  			ig.Emit (OpCodes.Ldarg_0);
@@ -987,7 +1100,7 @@ Index: iterators.cs
  
  			ig.MarkLabel (end);
  		}
-@@ -305,13 +533,13 @@
+@@ -305,13 +646,13 @@
  			// Store the new current
  			ig.Emit (OpCodes.Ldarg_0);
  			expr.Emit (ec);
@@ -1003,7 +1116,7 @@ Index: iterators.cs
  
  			// Return ok
  			ig.Emit (OpCodes.Br, move_next_ok);
-@@ -329,75 +557,57 @@
+@@ -329,75 +670,57 @@
  			pc++;
  			ig.Emit (OpCodes.Ldarg_0);
  			IntConstant.EmitInt (ig, pc);
@@ -1106,7 +1219,7 @@ Index: iterators.cs
  			for (int i = 0; i < original_parameters.Count; i++){
  				Parameter.Modifier mod = original_parameters.ParameterModifier (i);
  				if ((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0){
-@@ -423,12 +633,46 @@
+@@ -423,12 +746,46 @@
  			else
  				this_type = container.TypeBuilder;
  
@@ -1155,7 +1268,7 @@ Index: iterators.cs
  		MethodInfo FetchMethodDispose ()
  		{
  			MemberList dispose_list;
-@@ -447,7 +691,7 @@
+@@ -447,7 +804,7 @@
  		protected override bool DoDefineMembers ()
  		{
  			ec.InIterator = true;
@@ -1164,7 +1277,7 @@ Index: iterators.cs
  			ec.capture_context = cc;
  
  			if (!base.DoDefineMembers ())
-@@ -457,6 +701,8 @@
+@@ -457,6 +814,8 @@
  			if (dispose_method == null)
  				return false;
  
@@ -1173,7 +1286,7 @@ Index: iterators.cs
  			return true;
  		}
  
-@@ -466,7 +712,7 @@
+@@ -466,7 +825,7 @@
  				return false;
  
  			ec.InIterator = true;
@@ -1182,7 +1295,7 @@ Index: iterators.cs
  			ec.capture_context = cc;
  
  			ec.TypeContainer = ec.TypeContainer.Parent;
-@@ -476,7 +722,7 @@
+@@ -476,7 +835,7 @@
  			else
  				ec.ContainerType = ec.TypeContainer.TypeBuilder;
  
@@ -1191,7 +1304,7 @@ Index: iterators.cs
  
  			if (!ctor.Define ())
  				return false;
-@@ -489,38 +735,13 @@
+@@ -489,38 +848,13 @@
  			if (!ec.ResolveTopBlock (null, block, parameters, orig_method, out unreachable))
  				return false;
  
@@ -1233,7 +1346,7 @@ Index: iterators.cs
  		}
  
  		Parameter InflateParameter (Parameter param)
-@@ -587,11 +808,6 @@
+@@ -587,11 +921,6 @@
  			else
  				current_type = new TypeExpression (TypeBuilder, Location);
  
@@ -1245,7 +1358,7 @@ Index: iterators.cs
  			parameters = InflateParameters (original_parameters, ec);
  			if (!parameters.Resolve (ec)) {
  				// TODO:
-@@ -600,7 +816,6 @@
+@@ -600,7 +929,6 @@
  			Define_Fields ();
  			Define_Current (false);
  			Define_Current (true);
@@ -1253,7 +1366,7 @@ Index: iterators.cs
  			Define_Reset ();
  			Define_Dispose ();
  
-@@ -616,14 +831,12 @@
+@@ -616,14 +944,12 @@
  			return base.DefineNestedTypes ();
  		}
  
@@ -1270,7 +1383,7 @@ Index: iterators.cs
  
  			cc = original_block.CaptureContext;
  
-@@ -634,7 +847,7 @@
+@@ -634,7 +960,7 @@
  				Type t = this_type;
  				args.Add (new Argument (
  					new ThisParameterReference (t, Location)));
@@ -1279,7 +1392,7 @@ Index: iterators.cs
  			}
  
  			args.Add (new Argument (new BoolLiteral (false, Location)));
-@@ -647,7 +860,11 @@
+@@ -647,7 +973,11 @@
  				args.Add (new Argument (
  					new SimpleParameterReference (t, first + i, Location)));
  
@@ -1292,7 +1405,7 @@ Index: iterators.cs
  			}
  
  			TypeExpr proxy_type;
-@@ -665,7 +882,7 @@
+@@ -665,7 +995,7 @@
  				proxy_type = current_type;
  
  			Expression new_expr = new New (proxy_type, args, Location);
@@ -1301,7 +1414,7 @@ Index: iterators.cs
  		}
  
  		void Define_Fields ()
-@@ -723,7 +940,8 @@
+@@ -723,7 +1053,8 @@
  				new SetState (this, State.Running, Location),
  				Location));
  
@@ -1311,7 +1424,7 @@ Index: iterators.cs
  		}
  
  		Statement Create_ThrowInvalidOperation ()
-@@ -778,17 +996,6 @@
+@@ -778,17 +1109,6 @@
  			AddProperty (current);
  		}
  
@@ -1329,7 +1442,7 @@ Index: iterators.cs
  		void Define_GetEnumerator (bool is_generic)
  		{
  			MemberName left;
-@@ -820,7 +1027,7 @@
+@@ -820,7 +1140,7 @@
  			get_enumerator.Block = new ToplevelBlock (
  				block, parameters, Location);
  
@@ -1338,7 +1451,7 @@ Index: iterators.cs
  
  			Expression ce = new MemberAccess (
  				new SimpleName ("System.Threading.Interlocked", Location),
-@@ -934,7 +1141,7 @@
+@@ -934,7 +1254,7 @@
  
  			public override void Emit (EmitContext ec)
  			{
@@ -1347,7 +1460,7 @@ Index: iterators.cs
  
  				LocalTemporary dummy = null;
  				
-@@ -995,62 +1202,8 @@
+@@ -995,62 +1315,8 @@
  				throw new InvalidOperationException ();
  			}
  		}
@@ -1411,7 +1524,7 @@ Index: iterators.cs
  		protected class MoveNextStatement : Statement {
  			Iterator iterator;
  
-@@ -1062,19 +1215,16 @@
+@@ -1062,19 +1328,16 @@
  
  			public override bool Resolve (EmitContext ec)
  			{
@@ -1433,7 +1546,7 @@ Index: iterators.cs
  		protected class DisposeMethod : Statement {
  			Iterator iterator;
  
-@@ -1151,27 +1301,6 @@
+@@ -1151,27 +1414,6 @@
  			}
  		}
  
@@ -1461,7 +1574,7 @@ Index: iterators.cs
  		void Define_Reset ()
  		{
  			Method reset = new Method (
-@@ -1182,7 +1311,7 @@
+@@ -1182,7 +1424,7 @@
  
  			reset.Block = new ToplevelBlock (Location);
  			reset.Block = new ToplevelBlock (block, parameters, Location);
@@ -1470,7 +1583,7 @@ Index: iterators.cs
  
  			reset.Block.AddStatement (Create_ThrowNotSupported ());
  		}
-@@ -1196,13 +1325,14 @@
+@@ -1196,13 +1438,14 @@
  			AddMethod (dispose);
  
  			dispose.Block = new ToplevelBlock (block, parameters, Location);
@@ -1487,7 +1600,7 @@ Index: iterators.cs
  		}
  
  		//
-@@ -1212,10 +1342,10 @@
+@@ -1212,10 +1455,10 @@
  		class NoCheckReturn : Statement {
  			public Expression Expr;
  		
@@ -1500,7 +1613,7 @@ Index: iterators.cs
  			}
  
  			public override bool Resolve (EmitContext ec)
-@@ -1236,10 +1366,51 @@
+@@ -1236,10 +1479,51 @@
  			}
  		}
  
