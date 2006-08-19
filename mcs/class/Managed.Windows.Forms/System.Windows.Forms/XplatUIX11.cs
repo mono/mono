@@ -4468,6 +4468,10 @@ namespace System.Windows.Forms {
 		internal override bool SetZOrder(IntPtr handle, IntPtr after_handle, bool top, bool bottom) {
 			Hwnd	hwnd = Hwnd.ObjectFromHandle(handle);
 
+			if (!hwnd.mapped) {
+				return false;
+			}
+
 			if (top) {
 				lock (XlibLock) {
 					XRaiseWindow(DisplayHandle, hwnd.whole_window);

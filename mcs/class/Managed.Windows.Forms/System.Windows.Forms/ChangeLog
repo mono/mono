@@ -1,5 +1,11 @@
 2006-08-19  Chris Toshok  <toshok@ximian.com>
 
+	* XplatUIX11.cs: after further communication with pdb, we get the
+	best of both worlds.  SetZOrder working for un-Mapped windows, and
+	no X errors for un-mapped windows.
+
+2006-08-19  Chris Toshok  <toshok@ximian.com>
+
 	* XplatUIX11.cs (SetZOrder): remove the if (!hwnd.mapped) check,
 	as it was causing pdn toolbars to not have the correct stacking.
 
