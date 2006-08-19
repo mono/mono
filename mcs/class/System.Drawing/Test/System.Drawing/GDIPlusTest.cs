@@ -256,7 +256,116 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreateMatrix (out matrix), "GdipCreateMatrix");
 			Assert.IsTrue (matrix != IntPtr.Zero, "Handle");
 
+			bool result;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipIsMatrixIdentity (IntPtr.Zero, out result), "GdipIsMatrixIdentity-null");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipIsMatrixIdentity (matrix, out result), "GdipIsMatrixIdentity");
+			Assert.IsTrue (result, "identity");
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipIsMatrixInvertible (IntPtr.Zero, out result), "GdipIsMatrixInvertible-null");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipIsMatrixInvertible (matrix, out result), "GdipIsMatrixInvertible");
+			Assert.IsTrue (result, "invertible");
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipInvertMatrix (IntPtr.Zero), "GdipInvertMatrix-null");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipInvertMatrix (matrix), "GdipInvertMatrix");
+
+			PointF[] points = new PointF[1];
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipTransformMatrixPoints (IntPtr.Zero, points, 1), "GdipTransformMatrixPoints-null-points-1");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipTransformMatrixPoints (matrix, null, 1), "GdipTransformMatrixPoints-matrix-points-1");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipTransformMatrixPoints (matrix, points, 0), "GdipTransformMatrixPoints-matrix-points-0");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipTransformMatrixPoints (matrix, points, 1), "GdipTransformMatrixPoints");
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipVectorTransformMatrixPoints (IntPtr.Zero, points, 1), "GdipVectorTransformMatrixPoints-null-points-1");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipVectorTransformMatrixPoints (matrix, null, 1), "GdipVectorTransformMatrixPoints-matrix-points-1");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipVectorTransformMatrixPoints (matrix, points, 0), "GdipVectorTransformMatrixPoints-matrix-points-0");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipVectorTransformMatrixPoints (matrix, points, 1), "GdipVectorTransformMatrixPoints");
+
+			IntPtr clone;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipCloneMatrix (IntPtr.Zero, out clone), "GdipCloneMatrix");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCloneMatrix (matrix, out clone), "GdipCloneMatrix");
+			Assert.IsTrue (clone != IntPtr.Zero, "Handle-clone");
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipIsMatrixEqual (IntPtr.Zero, clone, out result), "GdipIsMatrixEqual-null-clone");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipIsMatrixEqual (matrix, IntPtr.Zero, out result), "GdipIsMatrixEqual-matrix-null");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipIsMatrixEqual (matrix, clone, out result), "GdipIsMatrixEqual-matrix-clone");
+			Assert.IsTrue (result, "equal");
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipMultiplyMatrix (IntPtr.Zero, clone, MatrixOrder.Append), "GdipMultiplyMatrix-null-clone-append");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipMultiplyMatrix (matrix, IntPtr.Zero, MatrixOrder.Prepend), "GdipMultiplyMatrix-matrix-null-prepend");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipMultiplyMatrix (matrix, clone, (MatrixOrder)Int32.MinValue), "GdipMultiplyMatrix-matrix-clone-invalid");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipMultiplyMatrix (matrix, clone, MatrixOrder.Append), "GdipMultiplyMatrix-matrix-clone-append");
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipTranslateMatrix (IntPtr.Zero, 1f, 2f, MatrixOrder.Append), "GdipTranslateMatrix-null-append");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipTranslateMatrix (matrix, Single.NaN, Single.NegativeInfinity, MatrixOrder.Prepend), "GdipTranslateMatrix-nan-append");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipTranslateMatrix (matrix, 1f, 2f, (MatrixOrder) Int32.MinValue), "GdipTranslateMatrix-matrix-invalid");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipTranslateMatrix (matrix, 1f, 2f, MatrixOrder.Append), "GdipTranslateMatrix-matrix-append");
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipScaleMatrix (IntPtr.Zero, 1f, 2f, MatrixOrder.Append), "GdipScaleMatrix-null-append");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipScaleMatrix (matrix, Single.NaN, Single.NegativeInfinity, MatrixOrder.Prepend), "GdipScaleMatrix-nan-append");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipScaleMatrix (matrix, 1f, 2f, (MatrixOrder) Int32.MinValue), "GdipScaleMatrix-matrix-invalid");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipScaleMatrix (matrix, 1f, 2f, MatrixOrder.Append), "GdipScaleMatrix-matrix-append");
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipShearMatrix (IntPtr.Zero, 1f, 2f, MatrixOrder.Append), "GdipShearMatrix-null-append");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipShearMatrix (matrix, Single.NaN, Single.NegativeInfinity, MatrixOrder.Prepend), "GdipShearMatrix-nan-append");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipShearMatrix (matrix, 1f, 2f, (MatrixOrder) Int32.MinValue), "GdipShearMatrix-matrix-invalid");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipShearMatrix (matrix, 1f, 2f, MatrixOrder.Append), "GdipShearMatrix-matrix-append");
+
 			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDeleteMatrix (IntPtr.Zero), "GdipDeleteMatrix-null");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteMatrix (matrix), "GdipDeleteMatrix");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteMatrix (clone), "GdipDeleteMatrix-clone");
+		}
+
+		[Test]
+		public void Matrix2 ()
+		{
+			IntPtr matrix;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreateMatrix2 (Single.MinValue, Single.MaxValue, Single.NegativeInfinity, 
+				Single.PositiveInfinity, Single.NaN, Single.Epsilon, out matrix), "GdipCreateMatrix2");
+			Assert.IsTrue (matrix != IntPtr.Zero, "Handle");
+
+			// check data
+			float[] elements = new float[6];
+			IntPtr data = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (float)) * 6);
+			try {
+				Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetMatrixElements (IntPtr.Zero, data), "GdipSetMatrixElements-null-matrix");
+				Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetMatrixElements (matrix, IntPtr.Zero), "GdipSetMatrixElements-null-data");
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipGetMatrixElements (matrix, data), "GdipSetMatrixElements-null-matrix");
+				Marshal.Copy (data, elements, 0, 6);
+				Assert.AreEqual (Single.MinValue, elements [0], "0");
+				Assert.AreEqual (Single.MaxValue, elements [1], "1");
+				Assert.AreEqual (Single.NegativeInfinity, elements [2], "2");
+				Assert.AreEqual (Single.PositiveInfinity, elements [3], "3");
+				Assert.AreEqual (Single.NaN, elements [4], "4");
+				Assert.AreEqual (Single.Epsilon, elements [5], "5");
+			}
+			finally {
+				Marshal.FreeHGlobal (data);
+			}
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipSetMatrixElements (IntPtr.Zero, 0f, 0f, 0f, 0f, 0f, 0f), "GdipSetMatrixElements-null");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipSetMatrixElements (matrix, 0f, 0f, 0f, 0f, 0f, 0f), "GdipSetMatrixElements");
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteMatrix (matrix), "GdipDeleteMatrix");
+		}
+
+		[Test]
+		public void Matrix3 ()
+		{
+			RectangleF rect = new RectangleF ();
+			IntPtr matrix;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipCreateMatrix3 (ref rect, null, out matrix), "GdipCreateMatrix3-null");
+
+			// provding less than 3 points would results in AccessViolationException under MS 2.0 but can't happen using the managed SD code
+			PointF[] points = new PointF[3];
+			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipCreateMatrix3 (ref rect, points, out matrix), "GdipCreateMatrix3-empty-rect");
+			rect = new RectangleF (10f, 20f, 0f, 40f);
+			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipCreateMatrix3 (ref rect, points, out matrix), "GdipCreateMatrix3-empty-width");
+			rect = new RectangleF (10f, 20f, 30f, 0f);
+			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipCreateMatrix3 (ref rect, points, out matrix), "GdipCreateMatrix3-empty-height");
+
+			rect = new RectangleF (0f, 0f, 30f, 40f);
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreateMatrix3 (ref rect, points, out matrix), "GdipCreateMatrix3-3");
+			Assert.IsTrue (matrix != IntPtr.Zero, "Handle");
+
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteMatrix (matrix), "GdipDeleteMatrix");
 		}
 
@@ -345,6 +454,9 @@ namespace MonoTests.System.Drawing {
 
 			points = new PointF[1];
 			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipCreatePathGradient (points, 1, WrapMode.Clamp, out brush), "one");
+
+			points = null;
+			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipCreatePathGradient (points, 2, WrapMode.Clamp, out brush), "null/two");
 
 			points = new PointF[2] { new PointF (1, 2), new PointF (20, 30) };
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreatePathGradient (points, 2, WrapMode.Clamp, out brush), "two");

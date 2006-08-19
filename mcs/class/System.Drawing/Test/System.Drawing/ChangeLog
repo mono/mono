@@ -1,3 +1,7 @@
+2006-08-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GDIPlusTest.cs: Added more test cases for Matrix functions.
+
 2006-08-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GDIPlusTest.cs: Ignore some test cases if we cannot get any font
