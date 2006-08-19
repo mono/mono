@@ -1,3 +1,8 @@
+2006-08-19  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11.cs (SetZOrder): remove the if (!hwnd.mapped) check,
+	as it was causing pdn toolbars to not have the correct stacking.
+
 2006-08-18  Mike Kestner  <mkestner@novell.com> 
 
 	* ListView.cs : guard against negative ClientArea.Width in scrollbar
