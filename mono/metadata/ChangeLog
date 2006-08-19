@@ -1,3 +1,10 @@
+2006-08-19  Miguel de Icaza  <miguel@novell.com>
+
+	* filewatcher.c: Avoid warnings when building, do not redefine
+	constants that are defined.
+
+	Remove warnings.
+
 2006-08-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* image.c: don't fail when the link points to an absolute path.
