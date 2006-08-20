@@ -48,9 +48,10 @@ namespace System.Web.UI
 		
 		public static MasterPage GetCompiledMasterInstance (string virtualPath, string inputFile, HttpContext context)
 		{
-			Type tmpType = PageMapper.GetObjectType (virtualPath);
+			string resolvedUrl = System.Web.Util.UrlUtils.ResolveVirtualPathFromAppAbsolute (virtualPath);
+			Type tmpType = PageMapper.GetObjectType (resolvedUrl);
 			if (tmpType == null)
-				throw new InvalidOperationException ("Documentation page '" + virtualPath + "' not found");
+				throw new InvalidOperationException ("Master page '" + virtualPath + "' not found");
 
 			Object obj = Activator.CreateInstance (tmpType);
 			return (MasterPage) obj;

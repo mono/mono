@@ -36,6 +36,7 @@ using System.IO;
 using System.Web;
 using System.Web.Compilation;
 using System.Web.Util;
+using System.Web.J2EE;
 
 namespace System.Web.UI
 {
@@ -43,7 +44,13 @@ namespace System.Web.UI
 	{
 		public static PageTheme GetCompiledInstance (string virtualPath, HttpContext context)
 		{
-			return null;
+			string resolvedUrl = System.Web.Util.UrlUtils.ResolveVirtualPathFromAppAbsolute (virtualPath).TrimEnd('/');
+			Type tmpType = PageMapper.GetObjectType (resolvedUrl);
+            if (tmpType == null)
+                throw new InvalidOperationException("ThemeDirectoryCompiler '" + virtualPath + "' not found");
+
+            Object obj = Activator.CreateInstance(tmpType);
+            return (PageTheme)obj;
 		}
 	}
 }
