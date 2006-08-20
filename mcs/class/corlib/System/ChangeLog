@@ -1,5 +1,9 @@
 2006-08-19  Miguel de Icaza  <miguel@novell.com>
 
+	* Attribute.cs: This needs to do a deep compare, not a shallow
+	one.   Ran into this bug with the VBNC compiler that compares two
+	separate attributes for equality using this.
+
 	* String.cs (StartsWith): Fix the overloaded constructor that
 	takes a CultureInfo, if that is null, it means to use the current
 	culture. 

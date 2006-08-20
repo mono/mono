@@ -342,7 +342,11 @@ namespace System
 			if (obj == null || !(obj is Attribute))
 				return false;
 
-			return ((Attribute) obj) == this;
+			//
+			// This is needed because Attribute.Equals does a deep
+			// compare.  Ran into this with vbnc
+			//
+			return ValueType.DefaultEquals (this, obj);
 		}
 
 #if NET_1_1
