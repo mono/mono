@@ -28,6 +28,8 @@
 //
 
 #if NET_2_0
+using System.ComponentModel;
+
 namespace System.Diagnostics
 {
 	public class EventInstance
@@ -43,27 +45,40 @@ namespace System.Diagnostics
 
 		public EventInstance (long instanceId, int categoryId, EventLogEntryType entryType)
 		{
-			_instanceId = instanceId;
-			_categoryId = categoryId;
-			_entryType = entryType;
+			InstanceId = instanceId;
+			CategoryId = categoryId;
+			EntryType = entryType;
 		}
 
 		public int CategoryId
 		{
 			get { return _categoryId; }
-			set { _categoryId = value; }
+			set {
+				if (value < 0 || value > ushort.MaxValue)
+					throw new ArgumentOutOfRangeException ("value");
+				_categoryId = value; 
+			}
 		}
 
 		public EventLogEntryType EntryType
 		{
 			get { return _entryType; }
-			set { _entryType = value; }
+			set {
+				if (!Enum.IsDefined (typeof (EventLogEntryType), value))
+					throw new InvalidEnumArgumentException("value", (int) value,
+						typeof(EventLogEntryType));
+				_entryType = value; 
+			}
 		}
 
 		public long InstanceId
 		{
 			get { return _instanceId; }
-			set { _instanceId = value; }
+			set {
+				if (value < 0 || value > uint.MaxValue)
+					throw new ArgumentOutOfRangeException ("value");
+				_instanceId = value;
+			}
 		}
 	}
 }

@@ -39,8 +39,6 @@ using System.ComponentModel.Design;
 using System.Globalization;
 using System.IO;
 
-using Microsoft.Win32;
-
 namespace System.Diagnostics 
 {
 	[DefaultEvent ("EntryWritten")]

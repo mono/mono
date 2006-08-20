@@ -1,5 +1,9 @@
 2006-08-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* System_test.dll.sources: Added EventInstanceTest.cs
+
+2006-08-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* System.dll.sources: Added Win32EventLog.cs.
 
 2006-08-14  Atsushi Enomoto  <atsushi@ximian.com>

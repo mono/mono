@@ -137,6 +137,7 @@ System.Diagnostics/StopwatchTest.cs
 System.Diagnostics/TraceTest.cs
 System.Diagnostics/SwitchesTest.cs
 System.Diagnostics/DiagnosticsConfigurationHandlerTest.cs
+System.Diagnostics/EventInstanceTest.cs
 System.Diagnostics/EventLogPermissionAttributeTest.cs
 System.Diagnostics/EventLogPermissionTest.cs
 System.Diagnostics/EventSourceCreationDataTest.cs

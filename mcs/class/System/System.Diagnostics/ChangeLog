@@ -1,5 +1,11 @@
 2006-08-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* EventLog.cs: Removed namespace import.
+	* EventInstance.cs: Added range checks and check whether specified
+	entry type is defined.
+
+2006-08-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* EventLogEntry.cs: Added InstanceId property (2.0 only). Moved
 	Obsolete attribute to correct property.
 	* EventSourceCreationData.cs: Updated copyright. For internal ctor,

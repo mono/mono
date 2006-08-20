@@ -1,5 +1,9 @@
 2006-08-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* EventInstanceTest.cs: Added tests for EventInstance.
+
+2006-08-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* EventLogTest.cs: Enable tests. On 2.0 profile, set MONO_EVENTLOG_TYPE
 	environment variable to force local file implementation to be used for
 	unit tests. This avoids permission issues for the unit tests, and
