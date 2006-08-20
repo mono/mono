@@ -639,7 +639,7 @@ namespace Mono.Unix.Native {
 		POLLHUP     = 0x0010, // Hung up
 		POLLNVAL    = 0x0020, // Invalid request; fd not open
 		// XPG4.2 definitions (via _XOPEN_SOURCE)
-		POLLRDNORM  = 0x0040, // Normal data bay be read
+		POLLRDNORM  = 0x0040, // Normal data may be read
 		POLLRDBAND  = 0x0080, // Priority data may be read
 		POLLWRNORM  = 0x0100, // Writing now will not block
 		POLLWRBAND  = 0x0200, // Priority data may be written
