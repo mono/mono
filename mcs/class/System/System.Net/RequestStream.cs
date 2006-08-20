@@ -120,18 +120,19 @@ namespace System.Net {
 			if (available == 0)
 				return 0;
 
-			int nread = FillFromBuffer (buffer, offset, count);
-			if (nread > 0)
-				return nread;
-
 			// Avoid reading past the end of the request to allow
 			// for HTTP pipelining
 			if (available != -1 && count > available)
 				count = (int) available;
-
-			nread = base.Read (buffer, offset, count);
+			
+			int nread = FillFromBuffer (buffer, offset, count);
 			if (available != -1)
 				available -= nread;
+			
+			if (nread > 0)
+				return nread;
+
+			nread = base.Read (buffer, offset, count);
 			return nread;
 		}
 

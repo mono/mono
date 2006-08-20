@@ -1,3 +1,28 @@
+2006-08-20  Miguel de Icaza  <miguel@novell.com>
+
+	* RequestStream.cs (Read): A bug fix for #79112 and what I
+	consider to be an important change.
+
+	The bug fix is that we update the "available" variable as soon as
+	we consume data from Read, this means that a second call into Read
+	wont block.   Available was only being updated on a secondary code
+	path, now we alwaysupdate it after using FillFromBuffer.
+
+	The second component is what I believe the right behavior should
+	be.  There was a check for "if count > available" that set count
+	to available in that case.   The idea was to limit the data read
+	from the buffer that belonged to this particular request, to allow
+	pipelining. 
+
+	But this test was done after FillFromBuffer, which assumed that
+	all the data held in the buffer (the one used by FillFromBuffer)
+	must belong to the this request, and only future data did not.
+
+	I think my change is correct, but it assumes that the initialized
+	RequestStream will be used for other pipelined HTTP requests,
+	which is not something am 100% sure of, so Gonzalo needs to check
+	this. 
+
 2006-08-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Cookie.cs: avoid nullref in GetHashCode and Equals.
