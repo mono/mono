@@ -1,4 +1,5 @@
 CODE
+* add functionality for Mapping URL
 
 * get rid of PageDelegates, unite it with PageInvoker, or give only a single
 	delegate.
