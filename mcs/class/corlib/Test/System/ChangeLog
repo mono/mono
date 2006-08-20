@@ -1,3 +1,7 @@
+2006-08-19  Miguel de Icaza  <miguel@novell.com>
+
+	* StringTest.cs: Add test.
+
 2006-08-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DateTimeTest.cs: Added checks for DateTimeKind (2.0) for the special

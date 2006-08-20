@@ -1,5 +1,9 @@
 2006-08-19  Miguel de Icaza  <miguel@novell.com>
 
+	* String.cs (StartsWith): Fix the overloaded constructor that
+	takes a CultureInfo, if that is null, it means to use the current
+	culture. 
+
 	* TermInfoDriver.cs: Do not throw exceptions on the driver for
 	SetWindowSize and SetWindowPosition, they can be treated as nops.
 

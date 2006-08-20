@@ -1088,6 +1088,9 @@ namespace System
 #endif
 		bool StartsWith (String value, bool ignoreCase, CultureInfo culture)
 		{
+			if (culture == null)
+				culture = CultureInfo.CurrentCulture;
+			
 			return (culture.CompareInfo.IsPrefix (this, value,
 				ignoreCase ? CompareOptions.IgnoreCase :
 				CompareOptions.None));

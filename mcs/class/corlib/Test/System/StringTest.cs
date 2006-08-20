@@ -1784,6 +1784,15 @@ public class StringTest : Assertion
 	}
 
 	[Test]
+	public void StartsWith_WithEmptyCulture ()
+	{
+		// This should not crash
+		string s = "boo";
+
+		s.StartsWith ("this", true, null);
+	}
+	
+	[Test]
 	public void SplitString ()
 	{
 		String[] res;

@@ -627,6 +627,21 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.IsNull (byref_type_param.DeclaringType);
 		}
 
+		[Test]
+		public void Bug79023 ()
+		{
+			ArrayList list = new ArrayList();
+			list.Add("foo");
+
+			// The next line used to throw because we had SetProperty
+			list.GetType().InvokeMember("Item",
+						    BindingFlags.SetField|BindingFlags.SetProperty|
+						    BindingFlags.Instance|BindingFlags.Public,
+						    null, list, new object[] { 0, "bar" });
+			if (!object.Equals("bar", list[0]))
+				throw new ApplicationException();
+		}
+		
 		[ComVisible (true)]
 		public class ComFoo<T> {
 		}
@@ -656,5 +671,6 @@ PublicKeyToken=b77a5c561934e089"));
 			{
 			}
 		}
+
 	}
 }
