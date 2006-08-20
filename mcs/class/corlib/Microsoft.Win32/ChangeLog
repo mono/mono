@@ -1,3 +1,19 @@
+2006-08-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* IRegistryApi.cs: Modified GetValue to take RegistryValueOptions enum
+	and removed obsolete return_default_value argument.
+	* RegistryKey.cs: Added missing ComVisible attribute on SetValue.
+	Use new GetValue method on IRegistryApi that takes RegistryValueOptions
+	enum. Added GetValue overload that takes RegistryValueOptions (2.0).
+	* Win32RegistryApi.cs: Modified GetValue to take RegistryValueOptions
+	enum, and removed obsolete returnDefaultValue argument. Added support
+	for ExpandString value type. Do no expand if DoNotExpand... is set.
+	* UnixRegistryApi.cs: Modified KeyHandler.GetValue to take
+	RegistryValueOptions enum, and do no expand environment variables in
+	an ExpandString if DoNotExpandEnvironmentNames is set. Modified
+	UnixRegistryApi.GetValue to take RegistryValueOptions enum, and 
+	removed obsolete return_default_value argument.
+
 2006-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* UnixRegistryApi.cs: Undo change for new eventlog implementation that

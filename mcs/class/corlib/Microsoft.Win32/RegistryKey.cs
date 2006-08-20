@@ -191,6 +191,7 @@ namespace Microsoft.Win32
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public void SetValue (string name, object value, RegistryValueKind valueKind)
 		{
 			AssertKeyStillValid ();
@@ -231,7 +232,7 @@ namespace Microsoft.Win32
 		/// </summary>
 		public object GetValue (string name)
 		{
-			return RegistryApi.GetValue (this, name, false, null);
+			return GetValue (name, null);
 		}
 
 		
@@ -242,10 +243,20 @@ namespace Microsoft.Win32
 		{
 			AssertKeyStillValid ();
 			
-			return RegistryApi.GetValue (this, name, true, defaultValue);
+			return RegistryApi.GetValue (this, name, defaultValue,
+				RegistryValueOptions.None);
 		}
 
-		
+#if NET_2_0
+		[ComVisible (false)]
+		public object GetValue (string name, object defaultValue, RegistryValueOptions options)
+		{
+			AssertKeyStillValid ();
+
+			return RegistryApi.GetValue (this, name, defaultValue, options);
+		}
+#endif
+
 		/// <summary>
 		///	Create a sub key.
 		/// </summary>

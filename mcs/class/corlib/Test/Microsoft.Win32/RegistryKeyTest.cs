@@ -1135,6 +1135,107 @@ namespace MonoTests.Microsoft.Win32
 			}
 		}
 
+#if NET_2_0
+		[Test]
+		public void GetValue_Expand ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					Environment.SetEnvironmentVariable ("MONO_TEST1", "123");
+					Environment.SetEnvironmentVariable ("MONO_TEST2", "456");
+
+					createdKey.SetValue ("name1", "%MONO_TEST1%/%MONO_TEST2%",
+						RegistryValueKind.ExpandString);
+					createdKey.SetValue ("name2", "%MONO_TEST1%/%MONO_TEST2%");
+					createdKey.SetValue ("name3", "just some text",
+						RegistryValueKind.ExpandString);
+
+					Assert.AreEqual ("123/456", createdKey.GetValue ("name1"), "#A1");
+					Assert.AreEqual ("%MONO_TEST1%/%MONO_TEST2%", createdKey.GetValue ("name2"), "#A2");
+					Assert.AreEqual ("just some text", createdKey.GetValue ("name3"), "#A3");
+					Assert.AreEqual ("%MONO_TEST1%/%MONO_TEST2%", createdKey.GetValue ("name1",
+						null, RegistryValueOptions.DoNotExpandEnvironmentNames), "#A4");
+					Assert.AreEqual ("%MONO_TEST1%/%MONO_TEST2%", createdKey.GetValue ("name2",
+						null, RegistryValueOptions.DoNotExpandEnvironmentNames), "#A5");
+					Assert.AreEqual ("just some text", createdKey.GetValue ("name3",
+						null, RegistryValueOptions.DoNotExpandEnvironmentNames), "#A6");
+					Assert.AreEqual ("123/456", createdKey.GetValue ("name1",
+						null, RegistryValueOptions.None), "#A7");
+					Assert.AreEqual ("%MONO_TEST1%/%MONO_TEST2%", createdKey.GetValue ("name2",
+						null, RegistryValueOptions.None), "#A8");
+					Assert.AreEqual ("just some text", createdKey.GetValue ("name3",
+						null, RegistryValueOptions.None), "#A9");
+
+					Environment.SetEnvironmentVariable ("MONO_TEST1", "789");
+					Environment.SetEnvironmentVariable ("MONO_TEST2", "666");
+
+					Assert.AreEqual ("789/666", createdKey.GetValue ("name1"), "#B1");
+					Assert.AreEqual ("%MONO_TEST1%/%MONO_TEST2%", createdKey.GetValue ("name2"), "#B2");
+					Assert.AreEqual ("just some text", createdKey.GetValue ("name3"), "#B3");
+					Assert.AreEqual ("%MONO_TEST1%/%MONO_TEST2%", createdKey.GetValue ("name1",
+						null, RegistryValueOptions.DoNotExpandEnvironmentNames), "#B4");
+					Assert.AreEqual ("%MONO_TEST1%/%MONO_TEST2%", createdKey.GetValue ("name2",
+						null, RegistryValueOptions.DoNotExpandEnvironmentNames), "#B5");
+					Assert.AreEqual ("just some text", createdKey.GetValue ("name3",
+						null, RegistryValueOptions.DoNotExpandEnvironmentNames), "#B6");
+					Assert.AreEqual ("789/666", createdKey.GetValue ("name1",
+						null, RegistryValueOptions.None), "#B7");
+					Assert.AreEqual ("%MONO_TEST1%/%MONO_TEST2%", createdKey.GetValue ("name2",
+						null, RegistryValueOptions.None), "#B8");
+					Assert.AreEqual ("just some text", createdKey.GetValue ("name3",
+						null, RegistryValueOptions.None), "#B9");
+				}
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					Assert.AreEqual ("789/666", createdKey.GetValue ("name1"), "#C1");
+					Assert.AreEqual ("%MONO_TEST1%/%MONO_TEST2%", createdKey.GetValue ("name2"), "#C2");
+					Assert.AreEqual ("just some text", createdKey.GetValue ("name3"), "#C3");
+					Assert.AreEqual ("%MONO_TEST1%/%MONO_TEST2%", createdKey.GetValue ("name1",
+						null, RegistryValueOptions.DoNotExpandEnvironmentNames), "#C4");
+					Assert.AreEqual ("%MONO_TEST1%/%MONO_TEST2%", createdKey.GetValue ("name2",
+						null, RegistryValueOptions.DoNotExpandEnvironmentNames), "#C5");
+					Assert.AreEqual ("just some text", createdKey.GetValue ("name3",
+						null, RegistryValueOptions.DoNotExpandEnvironmentNames), "#C6");
+					Assert.AreEqual ("789/666", createdKey.GetValue ("name1",
+						null, RegistryValueOptions.None), "#C7");
+					Assert.AreEqual ("%MONO_TEST1%/%MONO_TEST2%", createdKey.GetValue ("name2",
+						null, RegistryValueOptions.None), "#C8");
+					Assert.AreEqual ("just some text", createdKey.GetValue ("name3",
+						null, RegistryValueOptions.None), "#C9");
+
+					Environment.SetEnvironmentVariable ("MONO_TEST1", "123");
+					Environment.SetEnvironmentVariable ("MONO_TEST2", "456");
+
+					Assert.AreEqual ("123/456", createdKey.GetValue ("name1"), "#D1");
+					Assert.AreEqual ("%MONO_TEST1%/%MONO_TEST2%", createdKey.GetValue ("name2"), "#D2");
+					Assert.AreEqual ("just some text", createdKey.GetValue ("name3"), "#D3");
+					Assert.AreEqual ("%MONO_TEST1%/%MONO_TEST2%", createdKey.GetValue ("name1",
+						null, RegistryValueOptions.DoNotExpandEnvironmentNames), "#D4");
+					Assert.AreEqual ("%MONO_TEST1%/%MONO_TEST2%", createdKey.GetValue ("name2",
+						null, RegistryValueOptions.DoNotExpandEnvironmentNames), "#D5");
+					Assert.AreEqual ("just some text", createdKey.GetValue ("name3",
+						null, RegistryValueOptions.DoNotExpandEnvironmentNames), "#D6");
+					Assert.AreEqual ("123/456", createdKey.GetValue ("name1",
+						null, RegistryValueOptions.None), "#D7");
+					Assert.AreEqual ("%MONO_TEST1%/%MONO_TEST2%", createdKey.GetValue ("name2",
+						null, RegistryValueOptions.None), "#D8");
+					Assert.AreEqual ("just some text", createdKey.GetValue ("name3",
+						null, RegistryValueOptions.None), "#D9");
+				}
+			} finally {
+				try {
+					RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName);
+					if (createdKey != null) {
+						createdKey.Close ();
+						Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+					}
+				} catch {
+				}
+			}
+		}
+#endif
+
 		[Test]
 		public void GetValueNames ()
 		{

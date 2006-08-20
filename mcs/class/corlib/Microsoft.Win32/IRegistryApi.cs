@@ -42,7 +42,7 @@ namespace Microsoft.Win32 {
 		void Flush (RegistryKey rkey);
 		void Close (RegistryKey rkey);
 
-		object GetValue (RegistryKey rkey, string name, bool return_default_value, object default_value);
+		object GetValue (RegistryKey rkey, string name, object default_value, RegistryValueOptions options);
 		void SetValue (RegistryKey rkey, string name, object value);
 
 		int SubKeyCount (RegistryKey rkey);

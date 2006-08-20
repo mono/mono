@@ -303,7 +303,7 @@ namespace Microsoft.Win32 {
 			}
 		}
 
-		public object GetValue (string name)
+		public object GetValue (string name, RegistryValueOptions options)
 		{
 			if (IsMarkedForDeletion)
 				return null;
@@ -311,10 +311,13 @@ namespace Microsoft.Win32 {
 			if (name == null)
 				name = string.Empty;
 			object value = values [name];
-			if (value is ExpandString){
-				return ((ExpandString) value).Expand ();
-			}
-			return value;
+			ExpandString exp = value as ExpandString;
+			if (exp == null)
+				return value;
+			if ((options & RegistryValueOptions.DoNotExpandEnvironmentNames) == 0)
+				return exp.Expand ();
+
+			return exp.ToString ();
 		}
 
 		public void SetValue (string name, object value)
@@ -360,7 +363,6 @@ namespace Microsoft.Win32 {
 				break;
 			case RegistryValueKind.ExpandString:
 				if (value is string){
-					Console.WriteLine ("SETTING THIS BAD BOY {0} to {1}", name, "Exp");
 					values [name] = new ExpandString ((string)value);
 					return;
 				}
@@ -599,8 +601,8 @@ namespace Microsoft.Win32 {
 		{
 			KeyHandler.Drop (rkey);
 		}
-		
-		public object GetValue (RegistryKey rkey, string name, bool return_default_value, object default_value)
+
+		public object GetValue (RegistryKey rkey, string name, object default_value, RegistryValueOptions options)
 		{
 			KeyHandler self = KeyHandler.Lookup (rkey, true);
 			if (self == null) {
@@ -609,10 +611,8 @@ namespace Microsoft.Win32 {
 			}
 
 			if (self.ValueExists (name))
-				return self.GetValue (name);
-			if (return_default_value)
-				return default_value;
-			return null;
+				return self.GetValue (name, options);
+			return default_value;
 		}
 		
 		public void SetValue (RegistryKey rkey, string name, object value)

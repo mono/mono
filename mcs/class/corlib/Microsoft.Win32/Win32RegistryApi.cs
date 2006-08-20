@@ -134,10 +134,10 @@ namespace Microsoft.Win32
 		}
 
 		/// <summary>
-		///	Acctually read a registry value. Requires knoledge of the
-		///	value's type and size.
+		/// Acctually read a registry value. Requires knowledge of the
+		/// value's type and size.
 		/// </summary>
-		public object GetValue (RegistryKey rkey, string name, bool returnDefaultValue, object defaultValue)
+		public object GetValue (RegistryKey rkey, string name, object defaultValue, RegistryValueOptions options)
 		{
 			RegistryValueKind type = 0;
 			int size = 0;
@@ -146,20 +146,23 @@ namespace Microsoft.Win32
 			int result = RegQueryValueEx (handle, name, IntPtr.Zero, ref type, IntPtr.Zero, ref size);
 
 			if (result == Win32ResultCode.FileNotFound || result == Win32ResultCode.MarkedForDeletion) {
-				if (returnDefaultValue) {
-					return defaultValue;
-				}
-				return null;
+				return defaultValue;
 			}
 			
 			if (result != Win32ResultCode.MoreData && result != Win32ResultCode.Success ) {
 				GenerateException (result);
 			}
 			
-			if (type == RegistryValueKind.String || type == RegistryValueKind.ExpandString) {
+			if (type == RegistryValueKind.String) {
 				byte[] data;
 				result = GetBinaryValue (rkey, name, type, out data, size);
 				obj = RegistryKey.DecodeString (data);
+			} else if (type == RegistryValueKind.ExpandString) {
+				byte [] data;
+				result = GetBinaryValue (rkey, name, type, out data, size);
+				obj = RegistryKey.DecodeString (data);
+				if ((options & RegistryValueOptions.DoNotExpandEnvironmentNames) == 0)
+					obj = Environment.ExpandEnvironmentVariables ((string) obj);
 			} else if (type == RegistryValueKind.DWord) {
 				int data = 0;
 				result = RegQueryValueEx (handle, name, IntPtr.Zero, ref type, ref data, ref size);

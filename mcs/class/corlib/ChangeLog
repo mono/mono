@@ -1,3 +1,7 @@
+2006-08-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* corlib.dll.sources: Added RegistryValueOptions.cs.
+
 2006-08-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* corlib.dll.sources : added NormalizationTableUtil.cs and
