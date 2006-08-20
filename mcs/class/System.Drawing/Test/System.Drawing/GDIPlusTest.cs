@@ -248,6 +248,164 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeletePen (pen), "GdipDeletePen");
 		}
 
+		// GraphicsPathIterator
+		[Test]
+		public void GraphicsPathIterator ()
+		{
+			IntPtr path;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreatePath (FillMode.Alternate, out path), "GdipCreatePath");
+			
+			IntPtr iter;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreatePathIter (out iter, path), "GdipCreatePathIter");
+
+			int count = -1;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipPathIterGetCount (IntPtr.Zero, out count), "GdipPathIterGetCount-null");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterGetCount (iter, out count), "GdipPathIterGetCount");
+			Assert.AreEqual (0, count, "count-1");
+
+			count = -1;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipPathIterGetSubpathCount (IntPtr.Zero, out count), "GdipPathIterGetSubpathCount-null");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterGetSubpathCount (iter, out count), "GdipPathIterGetSubpathCount");
+			Assert.AreEqual (0, count, "count-2");
+
+			bool curve;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipPathIterHasCurve (IntPtr.Zero, out curve), "GdipPathIterHasCurve-null");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterHasCurve (iter, out curve), "GdipPathIterHasCurve");
+			Assert.IsFalse (curve, "curve");
+
+			int result;
+			PointF[] points = new PointF[count];
+			byte[] types = new byte[count];
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipPathIterEnumerate (IntPtr.Zero, out result, points, types, count), "GdipPathIterEnumerate-iter");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipPathIterEnumerate (iter, out result, null, types, count), "GdipPathIterEnumerate-points");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipPathIterEnumerate (iter, out result, points, null, count), "GdipPathIterEnumerate-types");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterEnumerate (iter, out result, points, types, -1), "GdipPathIterEnumerate-count");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterEnumerate (iter, out result, points, types, count), "GdipPathIterEnumerate");
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipPathIterCopyData (IntPtr.Zero, out result, points, types, 0, 0), "GdipPathIterCopyData-iter");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipPathIterCopyData (iter, out result, null, types, 0, 0), "GdipPathIterCopyData-points");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipPathIterCopyData (iter, out result, points, null, 0, 0), "GdipPathIterCopyData-types");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterCopyData (iter, out result, points, types, -1, 0), "GdipPathIterCopyData-start");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterCopyData (iter, out result, points, types, 0, -1), "GdipPathIterCopyData-end");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterCopyData (iter, out result, points, types, 0, 0), "GdipPathIterCopyData");
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipPathIterNextMarkerPath (IntPtr.Zero, out result, path), "GdipPathIterNextMarkerPath-iter");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterNextMarkerPath (iter, out result, IntPtr.Zero), "GdipPathIterNextMarkerPath-path");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterNextMarkerPath (iter, out result, path), "GdipPathIterNextMarkerPath");
+
+			result = -1;
+			int start = -1;
+			int end = -1;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipPathIterNextMarker (IntPtr.Zero, out result, out start, out end), "GdipPathIterNextMarker-iter");
+			start = -1;
+			end = -1;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterNextMarker (iter, out result, out start, out end), "GdipPathIterNextMarker");
+			Assert.AreEqual (0, result, "result-4");
+			Assert.AreEqual (-1, start, "start-1");
+			Assert.AreEqual (-1, end, "end-1");
+
+			byte pathType = 255;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipPathIterNextPathType (IntPtr.Zero, out result, out pathType, out start, out end), "GdipPathIterNextPathType-iter");
+			pathType = 255;
+			start = -1;
+			end = -1;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterNextPathType (iter, out result, out pathType, out start, out end), "GdipPathIterNextPathType");
+			Assert.AreEqual (0, result, "result-5");
+			Assert.AreEqual (255, pathType, "pathType");
+			Assert.AreEqual (-1, start, "start-2");
+			Assert.AreEqual (-1, end, "end-2");
+
+			bool closed = false;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipPathIterNextSubpathPath (IntPtr.Zero, out result, IntPtr.Zero, out closed), "GdipPathIterNextSubpathPath-iter");
+			closed = false;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterNextSubpathPath (iter, out result, IntPtr.Zero, out closed), "GdipPathIterNextSubpathPath-path");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterNextSubpathPath (iter, out result, path, out closed), "GdipPathIterNextSubpathPath");
+			Assert.IsTrue (closed, "closed");
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipPathIterNextSubpath (IntPtr.Zero, out result, out start, out end, out closed), "GdipPathIterNextSubpath-iter");
+			start = -1;
+			end = -1;
+			closed = false;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterNextSubpath (iter, out result, out start, out end, out closed), "GdipPathIterNextSubpath");
+			Assert.AreEqual (-1, start, "start-3");
+			Assert.AreEqual (-1, end, "end-3");
+			Assert.IsTrue (closed, "closed-2");
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipPathIterRewind (IntPtr.Zero), "GdipPathIterRewind-null");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterRewind (iter), "GdipPathIterRewind");
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDeletePathIter (IntPtr.Zero), "GdipDeletePathIter-null");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeletePathIter (iter), "GdipDeletePathIter");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeletePath (path), "GdipDeletePath");
+		}
+
+		[Test]
+		public void GraphicsPathIterator_WithoutPath ()
+		{
+			// a path isn't required to create an iterator - ensure we never crash for any api
+			IntPtr iter;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreatePathIter (out iter, IntPtr.Zero), "GdipCreatePathIter-null");
+
+			int count = -1;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterGetCount (iter, out count), "GdipPathIterGetCount");
+			Assert.AreEqual (0, count, "count-1");
+
+			count = -1;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterGetSubpathCount (iter, out count), "GdipPathIterGetSubpathCount");
+			Assert.AreEqual (0, count, "count-2");
+
+			bool curve;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterHasCurve (iter, out curve), "GdipPathIterHasCurve");
+
+			int result = -1;
+			PointF[] points = new PointF[count];
+			byte[] types = new byte[count];
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterEnumerate (iter, out result, points, types, count), "GdipPathIterEnumerate");
+			Assert.AreEqual (0, result, "result-1");
+
+			result = -1;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterCopyData (iter, out result, points, types, 0, 0), "GdipPathIterCopyData");
+			Assert.AreEqual (0, result, "result-2");
+
+			result = -1;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterNextMarkerPath (iter, out result, IntPtr.Zero), "GdipPathIterNextMarkerPath");
+			Assert.AreEqual (0, result, "result-3");
+
+			result = -1;
+			int start = -1;
+			int end = -1;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterNextMarker (iter, out result, out start, out end), "GdipPathIterNextMarker");
+			Assert.AreEqual (0, result, "result-4");
+			Assert.AreEqual (-1, start, "start-1");
+			Assert.AreEqual (-1, end, "end-1");
+
+			result = -1;
+			byte pathType = 255;
+			start = -1;
+			end = -1;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterNextPathType (iter, out result, out pathType, out start, out end), "GdipPathIterNextPathType");
+			Assert.AreEqual (0, result, "result-5");
+			Assert.AreEqual (255, pathType, "pathType");
+			Assert.AreEqual (-1, start, "start-2");
+			Assert.AreEqual (-1, end, "end-2");
+
+			bool closed = false;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterNextSubpathPath (iter, out result, IntPtr.Zero, out closed), "GdipPathIterNextSubpathPath");
+			Assert.IsTrue (closed, "closed-1");
+
+			start = -1;
+			end = -1;
+			closed = false;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterNextSubpath (iter, out result, out start, out end, out closed), "GdipPathIterNextSubpath");
+			Assert.AreEqual (-1, start, "start-3");
+			Assert.AreEqual (-1, end, "end-3");
+			Assert.IsTrue (closed, "closed-2");
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterRewind (iter), "GdipPathIterRewind");
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeletePathIter (iter), "GdipDeletePathIter");
+		}
+
 		// Matrix
 		[Test]
 		public void Matrix ()

@@ -1,3 +1,7 @@
+2006-08-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GDIPlusTest.cs: Added new test cases for GraphicsPathIter functions.
+
 2006-08-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GDIPlusTest.cs: Added more test cases for Matrix functions.
