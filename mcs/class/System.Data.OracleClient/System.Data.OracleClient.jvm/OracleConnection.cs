@@ -47,7 +47,6 @@ namespace System.Data.OracleClient {
 		#region Events
 
 		public event OracleInfoMessageEventHandler InfoMessage;
-		public event StateChangeEventHandler StateChange;
 
 		#endregion // Events
 		
@@ -103,22 +102,6 @@ namespace System.Data.OracleClient {
 		protected sealed override void OnSqlWarning(SQLWarning warning) {
 			OracleErrorCollection col = new OracleErrorCollection(warning, this);
 			OnOracleInfoMessage(new OracleInfoMessageEventArgs(col));
-		}
-
-        
-		protected sealed override void OnStateChanged(ConnectionState orig, ConnectionState current) {
-			if(StateChange != null) {
-				StateChange(this, new StateChangeEventArgs(orig, current));
-			}
-		}
-
-		public override void Close() {
-			ConnectionState orig = State;
-			base.Close();
-			ConnectionState current = State;
-			if(current != orig) {
-				OnStateChanged(orig, current);
-			}
 		}
 
 		private void OnOracleInfoMessage (OracleInfoMessageEventArgs value) {

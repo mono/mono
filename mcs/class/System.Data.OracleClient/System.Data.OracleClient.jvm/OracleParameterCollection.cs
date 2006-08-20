@@ -92,6 +92,20 @@ namespace System.Data.OracleClient {
 			return Add(param);
 		}
 
+#if NET_2_0
+		public bool Contains (OracleParameter value) {
+			return base.Contains (value);
+		}
+
+		public void Insert (int index, OracleParameter value) {
+			base.Insert (index, value);
+		}
+
+		public void Remove (OracleParameter value) {
+			base.Remove (value);
+		}
+#endif
+
 		#endregion // Methods        
         
 	}
