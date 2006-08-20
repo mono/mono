@@ -42,7 +42,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Net {
 	[TestFixture]
 	public class HttpListener2Test {
-		class MyNetworkStream : NetworkStream {
+		public class MyNetworkStream : NetworkStream {
 			public MyNetworkStream (Socket sock) : base (sock, true)
 			{
 			}
@@ -53,7 +53,7 @@ namespace MonoTests.System.Net {
 			}
 		}
 
-		HttpListener CreateAndStartListener (string prefix)
+		public static HttpListener CreateAndStartListener (string prefix)
 		{
 			HttpListener listener = new HttpListener ();
 			listener.Prefixes.Add (prefix);
@@ -61,27 +61,27 @@ namespace MonoTests.System.Net {
 			return listener;
 		}
 
-		MyNetworkStream CreateNS (int port)
+		public static MyNetworkStream CreateNS (int port)
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			sock.Connect (new IPEndPoint (IPAddress.Loopback, port));
 			return new MyNetworkStream (sock);
 		}
 
-		void Send (Stream stream, string str)
+		public static void Send (Stream stream, string str)
 		{
 			byte [] bytes = Encoding.ASCII.GetBytes (str);
 			stream.Write (bytes, 0, bytes.Length);
 		}
 
-		string Receive (Stream stream, int size)
+		public static string Receive (Stream stream, int size)
 		{
 			byte [] bytes = new byte [size];
 			int nread = stream.Read (bytes, 0, size);
 			return Encoding.ASCII.GetString (bytes, 0, nread);
 		}
 
-		string ReceiveWithTimeout (Stream stream, int size, int timeout, out bool timed_out)
+		public static string ReceiveWithTimeout (Stream stream, int size, int timeout, out bool timed_out)
 		{
 			byte [] bytes = new byte [size];
 			IAsyncResult ares = stream.BeginRead (bytes, 0, size, null, null);
@@ -92,7 +92,7 @@ namespace MonoTests.System.Net {
 			return Encoding.ASCII.GetString (bytes, 0, nread);
 		}
 
-		HttpListenerContext GetContextWithTimeout (HttpListener listener, int timeout, out bool timed_out)
+		public static HttpListenerContext GetContextWithTimeout (HttpListener listener, int timeout, out bool timed_out)
 		{
 			IAsyncResult ares = listener.BeginGetContext (null, null);
 			timed_out = !ares.AsyncWaitHandle.WaitOne (timeout, false);
@@ -182,7 +182,7 @@ namespace MonoTests.System.Net {
 			Send (ns, "POST /test7/ HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n123");
 			HttpListenerContext ctx = listener.GetContext ();
 			Send (ctx.Response.OutputStream, "%%%OK%%%");
-			string response = Receive (ns, 512);
+			string response = Receive (ns, 1024);
 			ns.Close ();
 			listener.Close ();
 			Assert.IsTrue (response.StartsWith ("HTTP/1.1 200"));
@@ -276,6 +276,55 @@ namespace MonoTests.System.Net {
 			ns.Close ();
 			listener.Close ();
 			Assert.IsTrue (input.StartsWith ("HTTP/1.1 400"));
+		}
+
+	}
+
+	[TestFixture]
+	public class HttpListenerBugs {
+		[Test]
+		public void TestNonChunkedAsync ()
+		{
+			HttpListener listener = HttpListener2Test.CreateAndStartListener ("http://127.0.0.1:9123/");
+
+			listener.BeginGetContext (callback, listener);
+			
+			HttpListener2Test.MyNetworkStream ns = HttpListener2Test.CreateNS (9123);
+			string message = "<script>\n"+
+				" <!-- register the blueprint for our show-headers service -->\n"+
+				" <action verb=\"POST\" path=\"/host/register\">\n" +
+				"    <blueprint>\n" +
+				"      <assembly>dream.tutorial.show-headers</assembly>\n" +
+				"      <class>MindTouch.Dream.Tutorial.ShowHeadersService</class>\n" +
+				"    </blueprint>\n" +
+				"  </action>\n" +
+				"\n" +
+				"  <!-- instantiate it -->\n" +
+				"  <action verb=\"POST\" path=\"/host/start\">\n" +
+				"    <config>\n" +
+				"      <path>show-headers</path>\n" +
+				"      <class>MindTouch.Dream.Tutorial.ShowHeadersService</class>\n" +
+				"    </config>\n" +
+				"  </action>\n" +
+				"</script>";
+			string s = String.Format ("POST / HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Length: {0}\r\n\r\n{1}",
+						message.Length, message);  
+			HttpListener2Test.Send (ns, s);
+			bool timedout;
+			string response = HttpListener2Test.ReceiveWithTimeout (ns, 1024, 3000, out timedout);
+			Assert.IsFalse (timedout);
+		}
+
+		void callback (IAsyncResult ar)
+		{
+			HttpListener l = (HttpListener) ar.AsyncState;
+
+			HttpListenerContext c = l.EndGetContext (ar);
+			HttpListenerRequest request = c.Request;
+
+			StreamReader r = new StreamReader (request.InputStream);
+			string sr =r.ReadToEnd ();
+			HttpListener2Test.Send (c.Response.OutputStream, "Miguel is love");
 		}
 	}
 }
