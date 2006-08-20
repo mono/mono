@@ -1,4 +1,7 @@
 CODE
+* add PostableRequest for Cross Paging functionality. Important test case 
+  and difficult work flow.
+
 * add functionality for Mapping URL
 
 * get rid of PageDelegates, unite it with PageInvoker, or give only a single
