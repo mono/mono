@@ -50,7 +50,6 @@ namespace System.Data.OleDb
 		#region Events
 
 		public event OleDbInfoMessageEventHandler InfoMessage;
-		public event StateChangeEventHandler StateChange;
 
 		#endregion // Events
 		
@@ -199,23 +198,6 @@ namespace System.Data.OleDb
 		{
 			OleDbErrorCollection col = new OleDbErrorCollection(warning, this);
 			OnOleDbInfoMessage(new OleDbInfoMessageEventArgs(col));
-		}
-
-		protected internal sealed override void OnStateChanged(ConnectionState orig, ConnectionState current)
-		{
-			if(StateChange != null) {
-				StateChange(this, new StateChangeEventArgs(orig, current));
-			}
-		}
-
-		public override void Close()
-		{
-			ConnectionState orig = State;
-			base.Close();
-			ConnectionState current = State;
-			if(current != orig) {
-				OnStateChanged(orig, current);
-			}
 		}
 
 		private void OnOleDbInfoMessage (OleDbInfoMessageEventArgs value)

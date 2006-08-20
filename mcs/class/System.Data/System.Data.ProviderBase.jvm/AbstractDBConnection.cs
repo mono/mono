@@ -396,14 +396,13 @@ namespace System.Data.ProviderBase
 
 		protected internal abstract void OnSqlWarning(SQLWarning warning);
 
-		protected internal abstract void OnStateChanged(ConnectionState orig, ConnectionState current);
-
 		protected abstract SystemException CreateException(SQLException e);
 
 		protected abstract SystemException CreateException(string message);
 
 		public override void Close()
 		{
+			ConnectionState orig = State;
 			try {
 				ClearReferences();
 				if (JdbcConnection != null && !JdbcConnection.isClosed()) {
@@ -424,6 +423,10 @@ namespace System.Data.ProviderBase
 					_internalState = ConnectionState.Closed;
 				}
 			}
+
+			ConnectionState current = State;
+			if (current != orig)
+				OnStateChange (new StateChangeEventArgs (orig, current));
 		}
 
 		internal protected virtual void OnSqlException(SQLException exp)
@@ -493,7 +496,7 @@ namespace System.Data.ProviderBase
 
 				IsOpened = true;
 
-				OnStateChanged(ConnectionState.Closed, ConnectionState.Open);
+				OnStateChange (new StateChangeEventArgs (ConnectionState.Closed, ConnectionState.Open));
 			}
 			catch (SQLWarning warning) {
 				OnSqlWarning(warning);

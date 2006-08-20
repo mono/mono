@@ -68,10 +68,6 @@ namespace System.Data.SqlClient
 		[DataSysDescription ("Event triggered when messages arrive from the DataSource.")]
 		public event SqlInfoMessageEventHandler InfoMessage;
 
-		[DataCategory ("StateChange")]
-		[DataSysDescription ("Event triggered when the connection changes state.")]
-		public event StateChangeEventHandler StateChange;
-
 		#endregion // Events
 
 		#region Properties
@@ -166,23 +162,6 @@ namespace System.Data.SqlClient
 		{
 			if (InfoMessage != null) {
 				InfoMessage (this, value);
-			}
-		}
-
-		protected internal sealed override void OnStateChanged(ConnectionState orig, ConnectionState current)
-		{
-			if(StateChange != null) {
-				StateChange(this, new StateChangeEventArgs(orig, current));
-			}
-		}
-
-		public override void Close()
-		{
-			ConnectionState orig = State;
-			base.Close();
-			ConnectionState current = State;
-			if(current != orig) {
-				OnStateChanged(orig, current);
 			}
 		}
 
