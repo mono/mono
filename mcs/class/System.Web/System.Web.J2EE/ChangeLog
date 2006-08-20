@@ -1,5 +1,9 @@
 2006-08-20  Vladimir Krasnov <vladimirk@mainsoft.com>
 
+	* BaseHttpServlet.cs: merged TLS fixes, workaround for thread problem
+
+2006-08-20  Vladimir Krasnov <vladimirk@mainsoft.com>
+
 	* PageMapper.cs: fixes for aspx parser 2.0
 
 2006-03-29  Konstantin Triger <kostat@mainsoft.com>

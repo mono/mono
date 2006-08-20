@@ -60,8 +60,15 @@ namespace System.Web.J2EE
 			try 
 			{
 				AppDomain servletDomain = createServletDomain(config);
+				vmw.@internal.EnvironmentUtils.setAppDomain(servletDomain);
 
 				//GH Infromation Initizalization
+				int nowInt = DateTime.Now.ToString().GetHashCode();
+				servletDomain.SetData(".domainId", nowInt.ToString("x"));
+				nowInt += "/".GetHashCode ();
+				servletDomain.SetData(".appId", nowInt.ToString("x"));
+				servletDomain.SetData(".appName", nowInt.ToString("x"));
+
 				servletDomain.SetData(J2EEConsts.CLASS_LOADER, vmw.common.TypeUtils.ToClass(this).getClassLoader());
 				servletDomain.SetData(J2EEConsts.SERVLET_CONFIG, config);
 				servletDomain.SetData(J2EEConsts.RESOURCE_LOADER, new vmw.@internal.j2ee.ServletResourceLoader(config.getServletContext()));
@@ -71,29 +78,44 @@ namespace System.Web.J2EE
 			finally 
 			{
 				vmw.@internal.EnvironmentUtils.cleanTLS();
+				vmw.@internal.EnvironmentUtils.clearAppDomain();
 			}
 		}
 
-		override protected void service(HttpServletRequest req, HttpServletResponse resp)
+		override protected void service (HttpServletRequest req, HttpServletResponse resp)
 		{
+#if !USE_APPSERVER_THREAD
+			// temporary workaround
+			PersonalServiceThread pt = new PersonalServiceThread (new PersonalServiceThread.ServiceDelegate (service2), req, resp);
+			pt.RunWait ();
+		}
+
+		protected void service2(HttpServletRequest req, HttpServletResponse resp)
+		{
+#endif
 			try 
 			{
 				// Very important - to update Virtual Path!!!
 				AppDomain servletDomain = (AppDomain)this.getServletContext().getAttribute(J2EEConsts.APP_DOMAIN);
 				servletDomain.SetData(IAppDomainConfig.APP_VIRT_DIR, req.getContextPath());
 				servletDomain.SetData(".hostingVirtualPath", req.getContextPath());
+
+				// Put to the TLS current AppDomain of the servlet, so anyone can use it.
+				vmw.@internal.EnvironmentUtils.setAppDomain(servletDomain);
+
 				//put request to the TLS
 				Thread.SetData(_servletRequestSlot, req);
 				//put response to the TLS
 				Thread.SetData(_servletResponseSlot, resp);
 				//put the servlet object to the TLS
 				Thread.SetData(_servletSlot, this);
-				// Put to the TLS current AppDomain of the servlet, so anyone can use it.
-				vmw.@internal.EnvironmentUtils.setAppDomain(servletDomain);
+				
+
+
 				resp.setHeader("X-Powered-By", "ASP.NET");
 				resp.setHeader("X-AspNet-Version", "1.1.4322");
 
-//				PageMapper.LoadFileList();
+				//PageMapper.LoadFileList();
 
 				resp.setContentType("text/html");
 				HttpWorkerRequest gwr = new ServletWorkerRequest(this, req, resp);
@@ -118,7 +140,9 @@ namespace System.Web.J2EE
 			{
 				AppDomain servletDomain = (AppDomain)this.getServletContext().getAttribute(J2EEConsts.APP_DOMAIN);
 				vmw.@internal.EnvironmentUtils.setAppDomain(servletDomain);
+#if DEBUG
 				Console.WriteLine("Destroy of GhHttpServlet");
+#endif
 				base.destroy();
 				HttpRuntime.Close();
 				vmw.@internal.EnvironmentUtils.cleanAllBeforeServletDestroy(this);
@@ -127,8 +151,10 @@ namespace System.Web.J2EE
 			}
 			catch(Exception e) 
 			{
+#if DEBUG
 				Console.WriteLine("ERROR in Servlet Destroy {0},{1}",e.GetType(), e.Message);
 				Console.WriteLine(e.StackTrace);
+#endif
 			}
 			finally
 			{
@@ -147,14 +173,14 @@ namespace System.Web.J2EE
 				domainSetup.ConfigurationFile = rootPath + "/Web.config";
 
 				AppDomain servletDomain = AppDomain.CreateDomain(name, null, domainSetup);
-				int nowInt = DateTime.Now.ToString().GetHashCode();
-				servletDomain.SetData(".domainId", nowInt.ToString("x"));
-				nowInt += "/".GetHashCode ();
-				servletDomain.SetData(".appId", nowInt.ToString("x"));
-				servletDomain.SetData(".appName", nowInt.ToString("x"));
-				//servletDomain.SetData(".appPath", "/"); - Only for Exe
-				//servletDomain.SetData(".appVPath", "/"); - Only for Exe
-		
+
+
+
+
+
+				//servletDomain.SetData(IAppDomainConfig.APP_PHYS_DIR, J2EEUtils.GetApplicationPhysicalPath(config));
+				//servletDomain.SetData(IAppDomainConfig.WEB_APP_DIR, rootPath);
+
 				servletDomain.SetData(IAppDomainConfig.APP_PHYS_DIR, J2EEUtils.GetApplicationPhysicalPath(config));
 				servletDomain.SetData(IAppDomainConfig.WEB_APP_DIR, rootPath);
 
@@ -165,13 +191,14 @@ namespace System.Web.J2EE
 				if (webApp_baseDir == null || webApp_baseDir == "")
 					webApp_baseDir = rootPath;
 				servletDomain.SetData(IAppDomainConfig.APP_BASE_DIR , webApp_baseDir);
+#if DEBUG
 				Console.WriteLine("Initialization of webapp " + webApp_baseDir);
-
+#endif
 				// Mordechai : setting the web app deserializer object.
 				servletDomain.SetData(J2EEConsts.DESERIALIZER_CONST , this.GetDeserializer());
-
+				servletDomain.SetData(vmw.@internal.EnvironmentUtils.GH_DRIVER_UTILS_CONST, this.getDriverUtils());
 				//servletDomain.SetData(".hostingVirtualPath", "/");
-				servletDomain.SetData(".hostingInstallDir", "/");
+				//servletDomain.SetData(".hostingInstallDir", "/");
 				return servletDomain;
 		}
 	
@@ -189,6 +216,13 @@ namespace System.Web.J2EE
 		/// that de-serialize it - thus we end with ClassDefNotFoundException.
 		/// To prevent this situation we delegate the serialization back the the 
 		/// web app (which has the correct class loader...)
+		/// 
+
+		virtual protected vmw.@internal.IDriverUtils getDriverUtils()
+		{
+			//by default no driver utils, the specific servlet will override this method
+			return null;
+		}
 	}
 
 	public class GHWebDeseserializer : vmw.@internal.io.IObjectsDeserializer 
@@ -200,6 +234,36 @@ namespace System.Web.J2EE
 				return obj;
 			}
 	}
+#if !USE_APPSERVER_THREAD
+	public class PersonalServiceThread
+	{
+		public delegate void ServiceDelegate (HttpServletRequest req, HttpServletResponse resp);
+		HttpServletRequest _req = null;
+		HttpServletResponse _resp = null;
+		Thread _worker = null;
+		ServiceDelegate _service = null;
+
+		public PersonalServiceThread (ServiceDelegate service, HttpServletRequest req, HttpServletResponse resp)
+		{
+			_service = service;
+			_req = req;
+			_resp = resp;
+
+			_worker = new Thread (new ThreadStart (Run));
+		}
+
+		public void RunWait ()
+		{
+			_worker.Start ();
+			_worker.Join ();
+		}
+
+		private void Run ()
+		{
+			_service(_req, _resp);
+		}
+	}
+#endif
 
 }
 
