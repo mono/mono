@@ -99,7 +99,7 @@ namespace Mono.Data.SqliteClient
 			get { return encoding; }
 		}
 
-		internal int Version {
+		public int Version {
 			get { return db_version; }
 		}
 

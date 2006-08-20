@@ -1,3 +1,9 @@
+2006-08-20  Joshua Tauberer  <jt@occams.info>
+
+	* SqliteConnection.cs: Changed Version property (which is
+	  read-only) from internal to public so users can know
+	  which version of Sqlite was actually connected to.
+
 2006-05-25  Joshua Tauberer  <tauberer@for.net>
 
 	* SqliteCommand.cs: Unnamed parameters by index weren't
