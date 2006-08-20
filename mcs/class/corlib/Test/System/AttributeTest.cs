@@ -258,6 +258,25 @@ namespace MonoTests.System
 				attributes, typeof(DerivedTestCustomAttributeMultipleInherit)));
 		}
 
+		[Test]
+		public void TestEquality ()
+		{
+			MyCustomAttribute a = new MyCustomAttribute ("one");
+			MyCustomAttribute b = new MyCustomAttribute ("two");
+			MyCustomAttribute c = new MyCustomAttribute ("one");
+			MyCustomAttribute d = a;
+			
+			AssertEquals ("Attribute, TestEquality #1", true,  a.Equals (c));
+			AssertEquals ("Attribute, TestEquality #2", true,  c.Equals (a));
+			AssertEquals ("Attribute, TestEquality #3", false, c.Equals (b));
+			AssertEquals ("Attribute, TestEquality #4", false, b.Equals (a));
+			AssertEquals ("Attribute, TestEquality #5", false, b.Equals (c));
+			AssertEquals ("Attribute, TestEquality #6", true,  a.Equals (a));
+			AssertEquals ("Attribute, TestEquality #7", true,  a.Equals (d));
+
+			AssertEquals ("Attribute, TestEquality #7", false, a.Equals (null));
+		}
+
 		private int GetAttributeCount (object[] attributes, Type attributeType)
 		{
 			int counter = 0;
