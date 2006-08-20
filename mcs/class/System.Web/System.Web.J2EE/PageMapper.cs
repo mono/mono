@@ -270,7 +270,8 @@ namespace System.Web.J2EE
 				&& fileName.ToLower() != "defaultwsdlhelpgenerator.aspx")
 			{
 				string fullFileName = HttpContext.Current.Request.MapPath(_url);
-				if ( File.Exists(fullFileName) ) {
+                
+				if ( File.Exists(fullFileName) || Directory.Exists(fullFileName)) {
 					//type not found - run aspxparser
 					string[] command = GetParserCmd();
 					if (J2EEUtils.RunProc(command) != 0)
@@ -323,7 +324,7 @@ namespace System.Web.J2EE
 		{
 			string[] cmd = new string[5];
 			cmd[0] = GetParser();
-			cmd[1] = "/aspxFiles:" + _url.Trim('/').Replace('/','\\');
+			cmd[1] = "/aspxFiles:" + _url;
 			cmd[2] = "/session:" + _session;
 			cmd[3] = "/appDir:" + (string)AppDomain.CurrentDomain.GetData(IAppDomainConfig.APP_PHYS_DIR);
 			cmd[4] = "/compilepages";
@@ -360,6 +361,9 @@ namespace System.Web.J2EE
 			path = path.Trim('/');
 			string fileName = Path.GetFileName(path);
 			string id = string.Empty;
+
+			path = path.Substring (path.IndexOf ("/") + 1);
+
 			if (path.Length > fileName.Length)
 				id = "." + path.Substring(0,path.Length - fileName.Length).Replace('/','_');
 			return id;	
