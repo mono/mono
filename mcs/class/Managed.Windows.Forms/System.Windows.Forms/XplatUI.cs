@@ -85,7 +85,7 @@ namespace System.Windows.Forms {
 			// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
 			int platform = (int) Environment.OSVersion.Platform;
 			if ((platform == 4) || (platform == 128)) {
-				if (Environment.GetEnvironmentVariable ("MONO_MWF_USE_QUARTZ_BACKEND") != null)
+				if (Environment.GetEnvironmentVariable ("not_supported_MONO_MWF_USE_QUARTZ_BACKEND") != null)
 					driver=XplatUIOSX.GetInstance();
 				else
 					driver=XplatUIX11.GetInstance();
