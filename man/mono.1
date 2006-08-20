@@ -582,12 +582,43 @@ unix). MONO_GAC_PREFIX should point to the top directory of a prefixed
 install. Or to the directory provided in the gacutil /gacdir command. Example:
 .B /home/username/.mono:/usr/local/mono/
 .TP
-.I "MONO_EVENTLOG_PATH"
-It is required to enable local file based System.Diagnostics.EventLog
-implementation. This variable is used to indicate a local directory to
-store event logs (thus it must be writable by the user who runs
-the runtime). By default, a null implementation is used i.e. EventLog
-classes do nothing.
+.I "MONO_EVENTLOG_TYPE"
+Sets the type of event log provider to use (for System.Diagnostics.EventLog).
+.Sp
+Possible values are:
+.RS
+.ne 8
+.TP
+.I "local[:path]"
+.Sp
+Persists event logs and entries to the local file system.
+.Sp
+The directory in which to persit the event logs, event sources and entries
+can be specified as part of the value.
+.Sp
+If the path is not explicitly set, it defaults to "/var/lib/mono/eventlog"
+on unix and "%APPDATA%\mono\eventlog" on Windows.
+.TP
+.I "win32"
+.Sp
+.B *Windows Only*
+Uses the native win32 API to write events and registers event logs and
+event sources in the registry.
+.Sp
+On unix, the directory permission for individual event log and event source
+directories is set to 777 (with +t bit) allowing everyone to read and write
+event log entries while only allowing entries to be deleted by the user(s)
+that created them.
+.TP
+.I "null"
+.Sp
+Silently discards any events.
+.ne
+.ne
+.RE
+.TP
+The default is "null" on unix (and versions of Windows before NT), and 
+"win32" on Windows NT (and higher).
 .TP
 .I "MONO_MANAGED_WATCHER"
 If set to any value, System.IO.FileSystemWatcher will use the default
