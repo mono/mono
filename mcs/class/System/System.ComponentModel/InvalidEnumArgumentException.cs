@@ -29,6 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Globalization;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 
@@ -49,8 +50,9 @@ namespace System.ComponentModel {
 		}
 
 		public InvalidEnumArgumentException (string argumentName, int invalidValue, Type enumClass) :
-			base (argumentName + " is invalid because this value, " + invalidValue + " is not of type " +
-			      enumClass.Name, argumentName)
+			base (string.Format (CultureInfo.CurrentCulture, "Enum argument value"
+					+ " {0} is not valid for {1}. {1} should be a value from {2}.", 
+					invalidValue, argumentName, enumClass.Name), argumentName)
 		{
 		}
 #if NET_2_0

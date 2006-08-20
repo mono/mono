@@ -1,3 +1,7 @@
+2006-08-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* InvalidEnumArgumentException.cs: Beautify error message.
+
 2006-08-14  Raja R Harinath  <rharinath@novell.com>
 
 	* IRaiseItemChangedEvents.cs: Add.  Mentioned in #79012.
