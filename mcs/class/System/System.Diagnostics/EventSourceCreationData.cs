@@ -1,10 +1,10 @@
 //
 // System.Diagnostics.EventSourceCreationData
 //
-// Authors:
-//	Gert Driesen (drieseng@users.sourceforge.net)
+// Author:
+//	Gert Driesen <driesen@users.sourceforge.net>
 //
-// (C) 2006 Novell
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -45,14 +45,20 @@ namespace System.Diagnostics
 		int _categoryCount;
 
 		public EventSourceCreationData (string source, string logName)
-			: this (source, logName, ".")
 		{
+			_source = source;
+			_logName = logName;
+			_machineName = ".";
 		}
 
 		internal EventSourceCreationData (string source, string logName, string machineName)
 		{
 			_source = source;
-			_logName = logName;
+			if (logName == null || logName.Length == 0) {
+				_logName = "Application";
+			} else {
+				_logName = logName;
+			}
 			_machineName = machineName;
 		}
 

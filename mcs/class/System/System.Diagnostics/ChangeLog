@@ -1,3 +1,47 @@
+2006-08-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* EventLogEntry.cs: Added InstanceId property (2.0 only). Moved
+	Obsolete attribute to correct property.
+	* EventSourceCreationData.cs: Updated copyright. For internal ctor,
+	set log name to "Application" if value is null or zero-length string.
+	* EventLogImpl.cs: EventImpl now acts as base class for event log 
+	implemenations.
+	* NullEventLog.cs: Modified to implement new abstract methods of base
+	class. Removed factory class.
+	* EventLog.cs: EventLog implementation that delegates just about 
+	everything to individual eventlog providers. To specify the event log
+	implementation to use, the MONO_EVENTLOG_TYPE environment variable can
+	be used. Possible values are:
+	- win32	: read/write entries using the native win32 eventlog
+	- local[:path] : read/write entries as files to a local directory
+	- null : silently ignore all entries
+	The default is "null" on unix (and versions of Windows before NT,
+	meaning Windows 98, ...), and "win32" on Windows NT (and higher).
+	When "the local" implementation is used, the directory in which to 
+	store the event logs, event sources and entries can be specified as 
+	part of MONO_EVENTLOG_TYPE environment variable using the syntax 
+	"local:<path>" (eg. local:/home/myuser/mono/eventlog).
+	* LocalFileEventLog.cs: Event log implementation which uses a local
+	file store. The directory to use for persistence can be specified
+	as part of the MONO_EVENTLOG_TYPE environment variable (see above).
+	If that directory is not explicitly set, then the following directory
+	will be used for storing eventlog entries:
+	- windows	: %APPDATA%\mono\eventlog
+	- unix		: /var/lib/mono/eventlog
+	On unix, the directory permission for individual eventlog log 
+	directories will be set to 777 (with +t bit) allowing everyone to
+	read and write eventlog entries while only allowing entries to be
+	deleted by the user(s) that created them.
+	Format of log files was modified to allow it contain all necessary
+	information for an event log entry.
+	* Win32EventLog.cs: Event log implementation for Windows NT and 
+	higher which uses the Win32 native event log for reading/writing
+	eventlog entries, and which uses the registry to store event log and
+	event source registration information.
+	* EventLogEntryCollection.cs: Delegate implementation to event log
+	implementation. Use lazy init for enumerating entries. Cache current
+	item in 2.0 profile.
+
 2006-08-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* LocalFileEventLog.cs : change lengthy environment variable name.

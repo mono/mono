@@ -3,6 +3,7 @@
 //
 // Author:
 //   Atsushi Enomoto  <atsushi@ximian.com>
+//   Gert Driesen  <drieseng@users.sourceforge.net>
 //
 // (C) 2006 Novell, Inc.
 //
@@ -30,31 +31,16 @@
 
 using System;
 using System.Diagnostics;
-using System.ComponentModel;
-using System.ComponentModel.Design;
-using System.Collections;
-using System.Globalization;
-using System.IO;
-using System.Net;
 
 namespace System.Diagnostics
 {
+	// Empty implementation that does not need any specific platform
+	// but should be enough to get applications to run that WRITE to eventlog
 	internal class NullEventLog : EventLogImpl
 	{
-		EventLogEntryCollection empty_entries =
-			new EventLogEntryCollection (new EventLogEntry [0]);
-
 		public NullEventLog (EventLog coreEventLog)
 			: base (coreEventLog)
 		{
-		}
-
-		public override EventLogEntryCollection Entries {
-			get { return empty_entries; }
-		}
-
-		public override string LogDisplayName {
-			get { return String.Empty; }
 		}
 
 		public override void BeginInit ()
@@ -69,25 +55,7 @@ namespace System.Diagnostics
 		{
 		}
 
-		public override void Dispose (bool disposing)
-		{
-		}
-
-		public override void EndInit ()
-		{
-		}
-	}
-
-	internal class NullEventLogFactory : EventLogFactory
-	{
-		EventLog [] empty_logs = new EventLog [0];
-
-		public override EventLogImpl Create (EventLog source)
-		{
-			return new NullEventLog (source);
-		}
-
-		public override void CreateEventSource (string source, string logName, string machineName)
+		public override void CreateEventSource (EventSourceCreationData sourceData)
 		{
 		}
 
@@ -99,19 +67,47 @@ namespace System.Diagnostics
 		{
 		}
 
+		public override void Dispose (bool disposing)
+		{
+		}
+
+		public override void EndInit ()
+		{
+		}
+
 		public override bool Exists (string logName, string machineName)
 		{
-			return false;
+			return true;
+		}
+
+		protected override string FormatMessage (string source, uint messageID, string [] replacementStrings)
+		{
+			return string.Join (", ", replacementStrings);
+		}
+
+		protected override int GetEntryCount ()
+		{
+			return 0;
+		}
+
+		protected override EventLogEntry GetEntry (int index)
+		{
+			return null;
 		}
 
 		public override EventLog [] GetEventLogs (string machineName)
 		{
-			return empty_logs;
+			return new EventLog [0];
+		}
+
+		protected override string GetLogDisplayName ()
+		{
+			return CoreEventLog.Log;
 		}
 
 		public override string LogNameFromSourceName (string source, string machineName)
 		{
-			return String.Empty;
+			return null;
 		}
 
 		public override bool SourceExists (string source, string machineName)
@@ -119,7 +115,7 @@ namespace System.Diagnostics
 			return false;
 		}
 
-		public override void WriteEntry (string source, string message, EventLogEntryType type, int eventID, short category, byte[] rawData)
+		public override void WriteEntry (string [] replacementStrings, EventLogEntryType type, uint instanceID, short category, byte [] rawData)
 		{
 		}
 	}

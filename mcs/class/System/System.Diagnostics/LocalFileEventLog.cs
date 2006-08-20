@@ -1,12 +1,12 @@
 //
-// LocalFileEventLog.cs
+// System.Diagnostics.LocalFileEventLog.cs
 //
 // Author:
 //   Atsushi Enomoto  <atsushi@ximian.com>
+//   Gert Driesen  <drieseng@users.sourceforge.net>
 //
-// (C) 2006 Novell, Inc.
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,116 +29,82 @@
 //
 
 using System;
-using System.Diagnostics;
-using System.ComponentModel;
-using System.ComponentModel.Design;
 using System.Collections;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Net;
+using System.Runtime.InteropServices;
+using System.Security;
+using System.Text;
 
 namespace System.Diagnostics
 {
-	class LocalFileEventLogUtil
+	internal class LocalFileEventLog : EventLogImpl
 	{
-		public const string DateFormat = "yyyyMMddHHmmssfff";
+		const string DateFormat = "yyyyMMddHHmmssfff";
+		static readonly object lockObject = new object ();
 
-		static readonly string path;
-
-		static LocalFileEventLogUtil ()
+		public LocalFileEventLog (EventLog coreEventLog) : base (coreEventLog)
 		{
-			string env = Environment.GetEnvironmentVariable ("MONO_EVENTLOG_PATH");
-			if (env != null)
-				path = Path.GetFullPath (env);
 		}
 
-		public static bool IsEnabled {
-			get { return path != null && Directory.Exists (path); }
-		}
-
-		public static string GetSourceDir (string source)
-		{
-			foreach (string log in GetLogDirectories ()) {
-				string sd = Path.Combine (log, source);
-				if (Directory.Exists (sd))
-					return sd;
-			}
-			return null;
-		}
-
-		public static string GetLogDir (string logName)
-		{
-			return Path.Combine (Path.Combine (path, "logs"), logName);
-		}
-
-		public static string [] GetLogDirectories ()
-		{
-			return Directory.GetDirectories (Path.Combine (path, "logs"));
-		}
-	}
-
-	class LocalFileEventLog : EventLogImpl
-	{
-		static readonly string [] empty_strings = new string [0];
-
-		EventLog log;
-		string source_path;
-
-		public LocalFileEventLog (EventLog log)
-			: base (log)
-		{
-			this.log = log;
-			source_path = LocalFileEventLogUtil.GetSourceDir (log.Source);
-			if (!Directory.Exists (source_path))
-				throw new SystemException (String.Format ("INTERNAL ERROR: directory for {0} does not exist.", log.Source));
-		}
-
-		public override EventLogEntryCollection Entries {
-			get {
-				ArrayList list = new ArrayList ();
-				int index = 0;
-				foreach (string file in Directory.GetFiles (source_path, "*.log"))
-					list.Add (LoadLogEntry (file, index++));
-				return new EventLogEntryCollection ((EventLogEntry []) list.ToArray (typeof (EventLogEntry)));
-			}
-		}
-
-		public override string LogDisplayName {
-			get { return log.Log; }
-		}
-
-		EventLogEntry LoadLogEntry (string file, int index)
-		{
-			using (TextReader tr = File.OpenText (file)) {
-				int id = int.Parse (tr.ReadLine ().Substring (9));
-				EventLogEntryType type = (EventLogEntryType)
-					Enum.Parse (typeof (EventLogEntryType), tr.ReadLine ().Substring (11));
-				string category = tr.ReadLine ().Substring (10);
-				int size = int.Parse (tr.ReadLine ().Substring (15));
-				char [] buf = new char [size];
-				tr.Read (buf, 0, size);
-				string filename = Path.GetFileName (file).Substring (0, LocalFileEventLogUtil.DateFormat.Length);
-				DateTime date = DateTime.ParseExact (filename, LocalFileEventLogUtil.DateFormat, CultureInfo.InvariantCulture);
-				byte [] bin = Convert.FromBase64String (tr.ReadToEnd ());
-				// FIXME: categoryNumber, index, userName, two dates
-				return new EventLogEntry (category, 0, index,
-					id, new string (buf), log.Source, "", log.MachineName,
-					type, date, date, bin, empty_strings);
-			}
-		}
-
-		public override void BeginInit ()
-		{
+		public override void BeginInit () {
 		}
 
 		public override void Clear ()
 		{
-			foreach (string file in Directory.GetFiles (source_path, "*.log"))
+			string logDir = FindLogStore (CoreEventLog.Log);
+			if (!Directory.Exists (logDir))
+				return;
+
+			foreach (string file in Directory.GetFiles (logDir, "*.log"))
 				File.Delete (file);
 		}
 
 		public override void Close ()
 		{
+			// we don't hold any unmanaged resources
+		}
+
+		public override void CreateEventSource (EventSourceCreationData sourceData)
+		{
+			// construct path for storing log entries
+			string logDir = FindLogStore (sourceData.LogName);
+			// create event log store (if necessary), and modify access
+			// permissions (unix only)
+			CreateLogStore (logDir, sourceData.LogName);
+			// create directory for event source, so we can check if the event
+			// source already exists
+			string sourceDir = Path.Combine (logDir, sourceData.Source);
+			Directory.CreateDirectory (sourceDir);
+		}
+
+		public override void Delete (string logName, string machineName)
+		{
+			string logDir = FindLogStore (logName);
+			if (!Directory.Exists (logDir))
+				throw new InvalidOperationException (string.Format (
+					CultureInfo.InvariantCulture, "Event Log '{0}'"
+					+ " does not exist on computer '{1}'.", logName,
+					machineName));
+
+			Directory.Delete (logDir, true);
+		}
+
+		public override void DeleteEventSource (string source, string machineName)
+		{
+			if (!Directory.Exists (EventLogStore))
+				throw new ArgumentException (string.Format (
+					CultureInfo.InvariantCulture, "The source '{0}' is not"
+					+ " registered on computer '{1}'.", source, machineName));
+
+			string sourceDir = FindSourceDirectory (source);
+			if (sourceDir == null)
+				throw new ArgumentException (string.Format (
+					CultureInfo.InvariantCulture, "The source '{0}' is not"
+					+ " registered on computer '{1}'.", source, machineName));
+			Directory.Delete (sourceDir);
 		}
 
 		public override void Dispose (bool disposing)
@@ -146,129 +112,275 @@ namespace System.Diagnostics
 			Close ();
 		}
 
-		public override void EndInit ()
-		{
-		}
-	}
-
-	// Creates a log repository at MONO_LOCAL_EVENTLOG_DIR, which consists of
-	// 	- 
-	internal class LocalFileEventLogFactory : EventLogFactory
-	{
-		static readonly IPAddress local_ip = IPAddress.Parse ("127.0.0.1");
-
-		public LocalFileEventLogFactory ()
-		{
-		}
-
-		public override EventLogImpl Create (EventLog log)
-		{
-			if (!SourceExists (log.Source, log.MachineName))
-				CreateEventSource (log.Source, log.Log, log.MachineName);
-			return new LocalFileEventLog (log);
-		}
-
-		void VerifyMachine (string machineName)
-		{
-			if (machineName != ".") {
-				IPHostEntry entry =
-#if NET_2_0
-					Dns.GetHostEntry (machineName);
-#else
-					Dns.Resolve (machineName);
-#endif
-				if (Array.IndexOf (entry.AddressList, local_ip) < 0)
-					throw new NotSupportedException (String.Format ("LocalFileEventLog does not support remote machine: {0}", machineName));
-			}
-		}
-
-		public override void CreateEventSource (string source, string logName, string machineName)
-		{
-			VerifyMachine (machineName);
-
-			string sourceDir = LocalFileEventLogUtil.GetSourceDir (source);
-			if (sourceDir != null)
-				throw new ArgumentException (String.Format ("Source '{0}' already exists on the local machine.", source));
-
-			string logDir = LocalFileEventLogUtil.GetLogDir (logName);
-			if (!Directory.Exists (logDir))
-				Directory.CreateDirectory (logDir);
-			Directory.CreateDirectory (Path.Combine (logDir, source));
-		}
-
-		public override void Delete (string logName, string machineName)
-		{
-			VerifyMachine (machineName);
-
-			string logDir = LocalFileEventLogUtil.GetLogDir (logName);
-			if (Directory.Exists (logDir))
-				Directory.Delete (logDir);
-		}
-
-		public override void DeleteEventSource (string source, string machineName)
-		{
-			VerifyMachine (machineName);
-
-			string sourceDir = LocalFileEventLogUtil.GetSourceDir (source);
-			if (Directory.Exists (sourceDir))
-				Directory.Delete (sourceDir);
-			else
-				throw new ArgumentException (String.Format ("Event source '{0}' does not exist on the local machine."), source);
-		}
+		public override void EndInit () { }
 
 		public override bool Exists (string logName, string machineName)
 		{
-			VerifyMachine (machineName);
-
-			return Directory.Exists (LocalFileEventLogUtil.GetLogDir (logName));
+			string logDir = FindLogStore (logName);
+			return Directory.Exists (logDir);
 		}
 
-		public override EventLog[] GetEventLogs (string machineName)
+		[MonoTODO ("Use MessageTable from PE for lookup")]
+		protected override string FormatMessage (string source, uint eventID, string [] replacementStrings)
 		{
-			VerifyMachine (machineName);
-
-			ArrayList al = new ArrayList ();
-			foreach (string log in LocalFileEventLogUtil.GetLogDirectories ())
-				al.Add (new EventLog (log));
-			return (EventLog []) al.ToArray (typeof (EventLog));
+			return string.Join (", ", replacementStrings);
 		}
 
-		public override string LogNameFromSourceName (string source, string machineName)
+		protected override int GetEntryCount ()
 		{
-			VerifyMachine (machineName);
+			string logDir = FindLogStore (CoreEventLog.Log);
+			if (!Directory.Exists (logDir))
+				return 0;
 
-			string sourceDir = LocalFileEventLogUtil.GetSourceDir (source);
+			string[] logFiles = Directory.GetFiles (logDir, "*.log");
+			return logFiles.Length;
+		}
+
+		protected override EventLogEntry GetEntry (int index)
+		{
+			string logDir = FindLogStore (CoreEventLog.Log);
+
+			// our file names are one-based
+			string file = Path.Combine (logDir, (index + 1).ToString (
+				CultureInfo.InvariantCulture) + ".log");
+
+			using (TextReader tr = File.OpenText (file)) {
+				int eventIndex = int.Parse (Path.GetFileNameWithoutExtension (file),
+					CultureInfo.InvariantCulture);
+				uint instanceID = uint.Parse (tr.ReadLine ().Substring (12),
+					CultureInfo.InvariantCulture);
+				EventLogEntryType type = (EventLogEntryType)
+					Enum.Parse (typeof (EventLogEntryType), tr.ReadLine ().Substring (11));
+				string source = tr.ReadLine ().Substring (8);
+				string category = tr.ReadLine ().Substring (10);
+				short categoryNumber = short.Parse(category, CultureInfo.InvariantCulture);
+				string categoryName = "(" + category + ")";
+				DateTime timeGenerated = DateTime.ParseExact (tr.ReadLine ().Substring (15),
+					DateFormat, CultureInfo.InvariantCulture);
+				DateTime timeWritten = File.GetLastWriteTime (file);
+				int stringNums = int.Parse (tr.ReadLine ().Substring (20));
+				ArrayList replacementTemp = new ArrayList ();
+				StringBuilder sb = new StringBuilder ();
+				while (replacementTemp.Count < stringNums) {
+					char c = (char) tr.Read ();
+					if (c == '\0') {
+						replacementTemp.Add (sb.ToString ());
+						sb.Length = 0;
+					} else {
+						sb.Append (c);
+					}
+				}
+				string [] replacementStrings = new string [replacementTemp.Count];
+				replacementTemp.CopyTo (replacementStrings, 0);
+
+				string message = FormatMessage (source, instanceID, replacementStrings);
+				int eventID = EventLog.GetEventID (instanceID);
+
+				byte [] bin = Convert.FromBase64String (tr.ReadToEnd ());
+				return new EventLogEntry (categoryName, categoryNumber, eventIndex,
+					eventID, source, message, null, Environment.MachineName,
+					type, timeGenerated, timeWritten, bin, replacementStrings,
+					instanceID);
+			}
+		}
+
+		public override EventLog [] GetEventLogs (string machineName)
+		{
+			if (!Directory.Exists (EventLogStore))
+				return new EventLog [0];
+			
+			string [] logDirs = Directory.GetDirectories (EventLogStore, "*");
+			EventLog [] eventLogs = new EventLog [logDirs.Length];
+			for (int i = 0; i < logDirs.Length; i++) {
+				EventLog eventLog = new EventLog (Path.GetFileName (
+					logDirs [i]), machineName);
+				eventLogs [i] = eventLog;
+			}
+			return eventLogs;
+		}
+
+		[MonoTODO]
+		protected override string GetLogDisplayName ()
+		{
+			return CoreEventLog.Log;
+		}
+
+		public override string	LogNameFromSourceName (string source, string machineName)
+		{
+			if (!Directory.Exists (EventLogStore))
+				return string.Empty;
+
+			string sourceDir = FindSourceDirectory (source);
 			if (sourceDir == null)
-				throw new ArgumentException (String.Format ("Event source '{0}' does not exist on the local machine."), source);
-			return Directory.GetParent (sourceDir).Name;
+				return string.Empty;
+			DirectoryInfo info = new DirectoryInfo (sourceDir);
+			return info.Parent.Name;
 		}
 
 		public override bool SourceExists (string source, string machineName)
 		{
-			VerifyMachine (machineName);
-
-			return LocalFileEventLogUtil.GetSourceDir (source) != null;
+			if (!Directory.Exists (EventLogStore))
+				return false;
+			string sourceDir = FindSourceDirectory (source);
+			return (sourceDir != null);
 		}
 
-		public override void WriteEntry (string source, string message, EventLogEntryType type, int eventID, short category, byte[] rawData)
+		public override void WriteEntry (string [] replacementStrings, EventLogEntryType type, uint instanceID, short category, byte [] rawData)
 		{
-			if (!SourceExists (source, "."))
-				throw new ArgumentException (String.Format ("Event source '{0}' does not exist on the local machine."), source);
-			string sourceDir = LocalFileEventLogUtil.GetSourceDir (source);
-			string path = Path.Combine (sourceDir, DateTime.Now.ToString (LocalFileEventLogUtil.DateFormat) + ".log");
-			try {
-				using (TextWriter w = File.CreateText (path)) {
-					w.WriteLine ("EventID: {0}", eventID);
-					w.WriteLine ("EntryType: {0}", type);
-					w.WriteLine ("Category: {0}", category);
-					w.WriteLine ("MessageLength: {0}", message.Length);
-					w.Write (message);
-					if (rawData != null)
+			lock (lockObject) {
+				string logDir = FindLogStore (CoreEventLog.Log);
+
+				int index = GetNewIndex ();
+				string logPath = Path.Combine (logDir, index.ToString (CultureInfo.InvariantCulture) + ".log");
+				try {
+					using (TextWriter w = File.CreateText (logPath)) {
+#if NET_2_0
+						w.WriteLine ("InstanceID: {0}", instanceID.ToString (CultureInfo.InvariantCulture));
+#else
+						w.WriteLine ("InstanceID: {0}", instanceID.ToString (CultureInfo.InvariantCulture));
+#endif
+						w.WriteLine ("EntryType: {0}", (int) type);
+						w.WriteLine ("Source: {0}", CoreEventLog.Source);
+						w.WriteLine ("Category: {0}", category.ToString (CultureInfo.InvariantCulture));
+						w.WriteLine ("TimeGenerated: {0}", DateTime.Now.ToString (
+							DateFormat, CultureInfo.InvariantCulture));
+						w.WriteLine ("ReplacementStrings: {0}", replacementStrings.
+							Length.ToString (CultureInfo.InvariantCulture));
+						StringBuilder sb = new StringBuilder ();
+						for (int i = 0; i < replacementStrings.Length; i++) {
+							string replacement = replacementStrings [i];
+							sb.Append (replacement);
+							sb.Append ('\0');
+						}
+						w.Write (sb.ToString ());
 						w.Write (Convert.ToBase64String (rawData));
+					}
+				} catch (IOException) {
+					File.Delete (logPath);
 				}
-			} catch (IOException) {
-				File.Delete (path);
 			}
+		}
+
+		private string FindSourceDirectory (string source)
+		{
+			string sourceDir = null;
+
+			string [] logDirs = Directory.GetDirectories (EventLogStore, "*");
+			for (int i = 0; i < logDirs.Length; i++) {
+				string [] sourceDirs = Directory.GetDirectories (logDirs [i], "*");
+				for (int j = 0; j < sourceDirs.Length; j++) {
+					string relativeDir = Path.GetFileName (sourceDirs [j]);
+					// use a case-insensitive comparison
+					if (string.Compare (relativeDir, source, true, CultureInfo.InvariantCulture) == 0) {
+						sourceDir = sourceDirs [j];
+						break;
+					}
+				}
+			}
+			return sourceDir;
+		}
+
+		private bool RunningOnLinux {
+			get {
+				return ((int) Environment.OSVersion.Platform == 4 ||
+#if NET_2_0
+					Environment.OSVersion.Platform == PlatformID.Unix);
+#else
+					(int) Environment.OSVersion.Platform == 128);
+#endif
+			}
+		}
+
+		private string FindLogStore (string logName) {
+			// we'll use a case-insensitive lookup to match the MS behaviour
+			// while still allowing the original casing of the log name to be
+			// retained
+			string [] logDirs = Directory.GetDirectories (EventLogStore, "*");
+			for (int i = 0; i < logDirs.Length; i++) {
+				string relativeDir = Path.GetFileName (logDirs [i]);
+				// use a case-insensitive comparison
+				if (string.Compare (relativeDir, logName, true, CultureInfo.InvariantCulture) == 0) {
+					return logDirs [i];
+				}
+			}
+
+			return Path.Combine (EventLogStore, logName);
+		}
+
+		private string EventLogStore {
+			get {
+				// for the local file implementation, the MONO_EVENTLOG_TYPE
+				// environment variable can contain the path of the event log
+				// store by using the following syntax: local:<path>
+				string eventLogType = Environment.GetEnvironmentVariable (EventLog.EVENTLOG_TYPE_VAR);
+				if (eventLogType != null && eventLogType.Length > EventLog.LOCAL_FILE_IMPL.Length + 1)
+					return eventLogType.Substring (EventLog.LOCAL_FILE_IMPL.Length + 1);
+				if (RunningOnLinux) {
+					return "/var/lib/mono/eventlog";
+				} else {
+					return Path.Combine (Environment.GetFolderPath (
+						Environment.SpecialFolder.CommonApplicationData),
+						"mono/eventlog");
+				}
+			}
+		}
+
+		private void CreateLogStore (string logDir, string logName)
+		{
+			if (!Directory.Exists (logDir)) {
+				Directory.CreateDirectory (logDir);
+				// MS does not allow an event source to be named after an already
+				// existing event log. To speed up checking whether a given event
+				// source already exists (either as a event source or event log)
+				// we create an event source directory named after the event log.
+				// This matches what MS does with the registry-based registration.
+				Directory.CreateDirectory (Path.Combine (logDir, logName));
+				if (RunningOnLinux) {
+					ModifyAccessPermissions (logDir, "777");
+					ModifyAccessPermissions (logDir, "+t");
+				}
+			}
+		}
+
+		private int GetNewIndex () {
+			// our file names are one-based
+			int maxIndex = 0;
+			string[] logFiles = Directory.GetFiles (FindLogStore (CoreEventLog.Log), "*.log");
+			for (int i = 0; i < logFiles.Length; i++) {
+				try {
+					string file = logFiles[i];
+					int index = int.Parse (Path.GetFileNameWithoutExtension (
+						file), CultureInfo.InvariantCulture);
+					if (index > maxIndex)
+						maxIndex = index;
+				} catch {
+				}
+			}
+			return ++maxIndex;
+		}
+
+		private static void ModifyAccessPermissions (string path, string permissions)
+		{
+			ProcessStartInfo pi = new ProcessStartInfo ();
+			pi.FileName = "chmod";
+			pi.RedirectStandardOutput = true;
+			pi.RedirectStandardError = true;
+			pi.UseShellExecute = false;
+			pi.Arguments = string.Format ("{0} \"{1}\"", permissions, path);
+
+			Process p = null;
+			try {
+				p = Process.Start (pi);
+			} catch (Exception ex) {
+				throw new SecurityException ("Access permissions could not be modified.", ex);
+			}
+
+			p.WaitForExit ();
+			if (p.ExitCode != 0) {
+				p.Close ();
+				throw new SecurityException ("Access permissions could not be modified.");
+			}
+			p.Close ();
 		}
 	}
 }

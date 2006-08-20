@@ -4,11 +4,11 @@
 // Authors:
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //   Atsushi Enomoto  <atsushi@ximian.com>
+//   Gert Driesen (drieseng@users.sourceforge.net)
 //
 // (C) 2003 Andreas Nahr
 // (C) 2006 Novell, Inc.
 //
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,51 +31,109 @@
 //
 
 using System;
-using System.Diagnostics;
 using System.ComponentModel;
 using System.ComponentModel.Design;
-using System.Collections;
+using System.Diagnostics;
 using System.Globalization;
-using System.IO;
-using System.Net;
+
+using Microsoft.Win32;
 
 namespace System.Diagnostics
 {
 	internal abstract class EventLogImpl
 	{
-		static EventLogFactory factory;
-
-		static EventLogImpl ()
-		{
-			factory = GetFactory ();
-		}
-
-		static EventLogFactory GetFactory ()
-		{
-			if (LocalFileEventLogUtil.IsEnabled)
-				return new LocalFileEventLogFactory ();
-
-			//throw new NotSupportedException (String.Format ("No EventLog implementation is supported. Consider setting MONO_LOCAL_EVENTLOG_PATH environment variable."));
-			return new NullEventLogFactory ();
-		}
-
-		EventLog log;
+		readonly EventLog _coreEventLog;
 
 		protected EventLogImpl (EventLog coreEventLog)
 		{
-			this.log = coreEventLog;
+			_coreEventLog = coreEventLog;
 		}
 
-		public static EventLogImpl Create (EventLog source)
+		public event EntryWrittenEventHandler EntryWritten;
+
+		protected EventLog CoreEventLog {
+			get { return _coreEventLog; }
+		}
+
+		public int EntryCount {
+			get {
+				if (_coreEventLog.Log == null || _coreEventLog.Log.Length == 0) {
+					throw new ArgumentException ("Log property is not set.");
+				}
+
+				if (!EventLog.Exists (_coreEventLog.Log, _coreEventLog.MachineName)) {
+					throw new InvalidOperationException (string.Format (
+						CultureInfo.InvariantCulture, "The event log '{0}' on "
+						+ " computer '{1}' does not exist.", _coreEventLog.Log,
+						_coreEventLog.MachineName));
+				}
+
+				return GetEntryCount ();
+			}
+		}
+
+		public EventLogEntry this[int index] {
+			get {
+				if (_coreEventLog.Log == null || _coreEventLog.Log.Length == 0) {
+					throw new ArgumentException ("Log property is not set.");
+				}
+
+				if (!EventLog.Exists (_coreEventLog.Log, _coreEventLog.MachineName)) {
+					throw new InvalidOperationException (string.Format (
+						CultureInfo.InvariantCulture, "The event log '{0}' on "
+						+ " computer '{1}' does not exist.", _coreEventLog.Log,
+						_coreEventLog.MachineName));
+				}
+
+				if (index < 0 || index >= EntryCount)
+					throw new ArgumentException ("Index out of range");
+
+				return GetEntry (index);
+			}
+		}
+
+		public string LogDisplayName {
+			get {
+#if NET_2_0
+				// to-do perform valid character checks
+				if (_coreEventLog.Log != null && _coreEventLog.Log.Length == 0) {
+					throw new InvalidOperationException ("Event log names must"
+						+ " consist of printable characters and cannot contain"
+						+ " \\, *, ?, or spaces.");
+				}
+#endif
+				if (_coreEventLog.Log != null) {
+					if (!EventLog.Exists (_coreEventLog.Log, _coreEventLog.MachineName)) {
+						throw new InvalidOperationException (string.Format (
+							CultureInfo.InvariantCulture, "Cannot find Log {0}"
+							+ " on computer {1}.", _coreEventLog.Log,
+							_coreEventLog.MachineName));
+					}
+				}
+
+				return GetLogDisplayName ();
+			}
+		}
+
+		public EventLogEntry [] GetEntries ()
 		{
-			return factory.Create (source);
+			string logName = CoreEventLog.Log;
+			if (logName == null || logName.Length == 0)
+				throw new ArgumentException ("Log property value has not been specified.");
+
+			if (!EventLog.Exists (logName))
+				throw new InvalidOperationException (string.Format (
+					CultureInfo.InvariantCulture, "The event log '{0}' on "
+					+ " computer '{1}' does not exist.", logName,
+					_coreEventLog.MachineName));
+
+			int entryCount = GetEntryCount ();
+			EventLogEntry [] entries = new EventLogEntry [entryCount];
+			for (int i = 0; i < entryCount; i++) {
+				entries [i] = GetEntry (i);
+			}
+			return entries;
 		}
-
-		public static event EntryWrittenEventHandler EntryWritten;
-
-		public abstract EventLogEntryCollection Entries { get; }
-
-		public abstract string LogDisplayName { get; }
 
 		public abstract void BeginInit ();
 
@@ -83,82 +141,32 @@ namespace System.Diagnostics
 
 		public abstract void Close ();
 
-		public static void CreateEventSource (string source, string logName, string machineName)
-		{
-			factory.CreateEventSource (source, logName, machineName);
-		}
-
-		public static void Delete (string logName, string machineName)
-		{
-			factory.Delete (logName, machineName);
-		}
-
-		public static void DeleteEventSource (string source, string machineName)
-		{
-			factory.DeleteEventSource (source, machineName);
-		}
-
-		public abstract void Dispose (bool disposing);
-
-		public abstract void EndInit ();
-
-		public static bool Exists (string logName, string machineName)
-		{
-			return factory.Exists (logName, machineName);
-		}
-
-		public static EventLog[] GetEventLogs (string machineName)
-		{
-			return factory.GetEventLogs (machineName);
-		}
-
-		public static string LogNameFromSourceName (string source, string machineName)
-		{
-			return factory.LogNameFromSourceName (source, machineName);
-		}
-
-		public static bool SourceExists (string source, string machineName)
-		{
-			return factory.SourceExists (source, machineName);
-		}
-
-		public void WriteEntry (string message, EventLogEntryType type, int eventID, short category, byte[] rawData)
-		{
-			WriteEntry (log.Source, message, type, eventID, category, rawData);
-		}
-
-		public static void WriteEntry (string source, string message, EventLogEntryType type, int eventID, short category, byte[] rawData)
-		{
-			factory.WriteEntry (source, message, type, eventID, category, rawData);
-			if (EntryWritten != null) {
-				// FIXME: some arguments are improper.
-				EventLogEntry e = new EventLogEntry ("",
-					category, 0, eventID, message, source,
-					"", ".", type, DateTime.Now, DateTime.Now,
-					rawData, null);
-				EntryWritten (null, new EntryWrittenEventArgs (e));
-			}
-		}
-	}
-
-	internal abstract class EventLogFactory
-	{
-		public abstract EventLogImpl Create (EventLog source);
-
-		public abstract void CreateEventSource (string source, string logName, string machineName);
+		public abstract void CreateEventSource (EventSourceCreationData sourceData);
 
 		public abstract void Delete (string logName, string machineName);
 
 		public abstract void DeleteEventSource (string source, string machineName);
 
+		public abstract void Dispose (bool disposing);
+
+		public abstract void EndInit ();
+
 		public abstract bool Exists (string logName, string machineName);
 
-		public abstract EventLog[] GetEventLogs (string machineName);
+		protected abstract int GetEntryCount ();
+
+		protected abstract EventLogEntry GetEntry (int index);
+
+		public abstract EventLog [] GetEventLogs (string machineName);
+
+		protected abstract string GetLogDisplayName ();
 
 		public abstract string LogNameFromSourceName (string source, string machineName);
 
 		public abstract bool SourceExists (string source, string machineName);
 
-		public abstract void WriteEntry (string source, string message, EventLogEntryType type, int eventID, short category, byte[] rawData);
+		public abstract void WriteEntry (string [] replacementStrings, EventLogEntryType type, uint instanceID, short category, byte[] rawData);
+
+		protected abstract string FormatMessage (string source, uint messageID, string [] replacementStrings);
 	}
 }

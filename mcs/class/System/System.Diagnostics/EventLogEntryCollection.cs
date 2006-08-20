@@ -37,44 +37,99 @@ namespace System.Diagnostics {
 
 	public class EventLogEntryCollection : ICollection, IEnumerable {
 
-		private ArrayList eventLogs = new ArrayList ();
+		readonly EventLogImpl _impl;
 
-		internal EventLogEntryCollection(IEnumerable entries)
+		internal EventLogEntryCollection(EventLogImpl impl)
 		{
-			foreach (object entry in entries)
-				eventLogs.Add (entry);
+			_impl = impl;
 		}
 
 		public int Count {
-			get {return eventLogs.Count;}
+			get { return _impl.EntryCount; }
 		}
 
 		public virtual EventLogEntry this [int index] {
-			get {return (EventLogEntry) eventLogs[index];}
+			get { return _impl[index]; }
 		}
 
 		bool ICollection.IsSynchronized {
-			get {return eventLogs.IsSynchronized;}
+			get { return false; }
 		}
 
 		object ICollection.SyncRoot {
-			get {return eventLogs.SyncRoot;}
+			get { return this; }
 		}
 
-		public void CopyTo (EventLogEntry[] eventLogs, int index)
+		public void CopyTo (EventLogEntry[] eventLogEntries, int index)
 		{
-			eventLogs.CopyTo (eventLogs, index);
+			EventLogEntry[] entries = _impl.GetEntries ();
+			Array.Copy (entries, 0, eventLogEntries, index, entries.Length);
 		}
 
 		public IEnumerator GetEnumerator ()
 		{
-			return eventLogs.GetEnumerator ();
+			return new EventLogEntryEnumerator (_impl);
 		}
 
 		void ICollection.CopyTo (Array array, int index)
 		{
-			eventLogs.CopyTo (array, index);
+			EventLogEntry[] entries = _impl.GetEntries ();
+			Array.Copy (entries, 0, array, index, entries.Length);
 		}
-	}
+
+		private class EventLogEntryEnumerator : IEnumerator
+		{
+			internal EventLogEntryEnumerator (EventLogImpl impl)
+			{
+				_impl = impl;
+			}
+
+			object IEnumerator.Current {
+				get { return Current; }
+			}
+
+			public EventLogEntry Current {
+				get {
+#if NET_2_0
+					if (_currentEntry != null)
+						return _currentEntry;
+#else
+					if (_currentIndex >= 0 && _currentIndex < _impl.EntryCount)
+						return _impl [_currentIndex];
+#endif
+
+					throw new InvalidOperationException ("No current EventLog"
+						+ " entry available, cursor is located before the first"
+						+ " or after the last element of the enumeration.");
+				}
+			}
+
+			public bool MoveNext ()
+			{
+				_currentIndex++;
+#if NET_2_0
+				if (_currentIndex >= _impl.EntryCount) {
+					_currentEntry = null;
+					return false;
+				}
+				_currentEntry = _impl [_currentIndex];
+				return true;
+#else
+				return (_currentIndex < _impl.EntryCount);
+#endif
+			}
+
+			public void Reset ()
+			{
+				_currentIndex = - 1;
+			}
+
+			readonly EventLogImpl _impl;
+			int _currentIndex = -1;
+#if NET_2_0
+			EventLogEntry _currentEntry;
+#endif
+		}
+}
 }
 

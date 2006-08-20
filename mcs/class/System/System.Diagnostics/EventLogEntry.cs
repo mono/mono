@@ -31,6 +31,9 @@
 //
 
 using System.ComponentModel;
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 
@@ -56,12 +59,15 @@ namespace System.Diagnostics
 		private DateTime timeGenerated;
 		private DateTime timeWritten;
 		private string userName;
+#if NET_2_0
+		private long instanceId;
+#endif
 
 		internal EventLogEntry (string category, short categoryNumber, int index, 
-					int eventID, string message, string source,
-					string userName, string machineName, EventLogEntryType entryType,
-					DateTime timeGenerated, DateTime timeWritten, byte[] data,
-					string[] replacementStrings)
+					int eventID, string source, string message, string userName, 
+					string machineName, EventLogEntryType entryType, 
+					DateTime timeGenerated, DateTime timeWritten, byte[] data, 
+					string[] replacementStrings, long instanceId)
 		{
 			this.category = category;
 			this.categoryNumber = categoryNumber;
@@ -76,6 +82,9 @@ namespace System.Diagnostics
 			this.timeGenerated = timeGenerated;
 			this.timeWritten = timeWritten;
 			this.userName = userName;
+#if NET_2_0
+			this.instanceId = instanceId;
+#endif
 		}
 
 		[MonoTODO]
@@ -98,14 +107,14 @@ namespace System.Diagnostics
 			get { return data; }
 		}
 
-#if NET_2_0
-		[Obsolete ("Use InstanceId")]
-#endif
 		[MonitoringDescription ("The type of this event entry.")]
 		public EventLogEntryType EntryType {
 			get { return entryType; }
 		}
 
+#if NET_2_0
+		[Obsolete ("Use InstanceId")]
+#endif
 		[MonitoringDescription ("An ID number for this event entry.")]
 		public int EventID {
 			get { return eventID; }
@@ -115,6 +124,13 @@ namespace System.Diagnostics
 		public int Index {
 			get { return index; }
 		}
+
+#if NET_2_0
+		[ComVisible (false)]
+		public long InstanceId {
+			get { return instanceId; }
+		}
+#endif
 
 		[MonitoringDescription ("The Computer on which this event entry occured.")]
 		public string MachineName {

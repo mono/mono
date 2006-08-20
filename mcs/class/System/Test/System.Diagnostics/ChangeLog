@@ -1,3 +1,13 @@
+2006-08-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* EventLogTest.cs: Enable tests. On 2.0 profile, set MONO_EVENTLOG_TYPE
+	environment variable to force local file implementation to be used for
+	unit tests. This avoids permission issues for the unit tests, and
+	allows us to clean up the files/directory that are created during the
+	test run. Skip tests that cannot pass when the null implementation is
+	active (on 1.0 profile). Added tests for all WriteEntry and WriteEvent
+	(2.0 only) overloads, Clear, Entries, Exists and LogNameFromSourceName.
+
 2006-08-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* EventLogTest.cs: new test, currently not enabled due to UnixRegistry
