@@ -68,7 +68,7 @@ copy %XML_TOOL_PATH%\nunit_transform.xslt ..
 REM ********************************************************
 @echo Building GH solution...
 REM ********************************************************
-msbuild TestMonoWeb.J2EE.sln /t:%BUILD_OPTION% /p:configuration=%PROJECT_CONFIGURATION% >>build.log.txt 2<&1
+msbuild TestMonoWeb.J2EE20.sln /t:%BUILD_OPTION% /p:configuration=%PROJECT_CONFIGURATION% >>build.log.txt 2<&1
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
 :RUN
