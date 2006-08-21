@@ -1,4 +1,4 @@
-@echo off
+@echo on
 REM ********************************************************
 REM This batch file receives the follwing parameters:
 REM build/rebuild (optional): should the solution file be rebuilded 
@@ -17,7 +17,7 @@ IF "%1"=="" GOTO USAGE
 
 IF "%JAVA_HOME%"=="" GOTO ENVIRONMENT_EXCEPTION
 
-IF "%GH_HOME%"=="" GOTO ENVIRONMENT_EXCEPTION
+IF "%GHROOT%"=="" GOTO ENVIRONMENT_EXCEPTION
 
 REM ********************************************************
 REM Set parameters
@@ -27,13 +27,16 @@ set BUILD_OPTION=%1
 set SECURE_MODE=%2
 set OUTPUT_FILE_PREFIX=%3
 set RUNNING_FIXTURE=%4
+set TEST_SOLUTION=Test\System.DirectoryServices.Test20.sln
+set TEST_ASSEMBLY=System.DirectoryServices.Test20.jar
+set PROJECT_CONFIGURATION=Debug_Java20
 
 
 REM ********************************************************
 REM @echo Set environment
 REM ********************************************************
 
-set JGAC_PATH=%GH_HOME%\jgac\vmw4j2ee_110\
+set JGAC_PATH=%GHROOT%\jgac\vmw4j2ee_110\
 
 set RUNTIME_CLASSPATH=%JGAC_PATH%mscorlib.jar;%JGAC_PATH%System.jar;%JGAC_PATH%System.Xml.jar;%JGAC_PATH%System.DirectoryServices.jar;%JGAC_PATH%Novell.Directory.Ldap.jar;%JGAC_PATH%J2SE.Helpers.jar
 set NUNIT_OPTIONS=/exclude=NotWorking
@@ -41,7 +44,7 @@ set NUNIT_OPTIONS=/exclude=NotWorking
 set GH_OUTPUT_XML=%OUTPUT_FILE_PREFIX%.GH.%SECURE_MODE%.xml
 
 set NUNIT_PATH=%BACK_TO_ROOT_DIR%..\..\nunit20\
-set NUNIT_CLASSPATH=%NUNIT_PATH%nunit-console\bin\Debug_Java\nunit.framework.jar;%NUNIT_PATH%nunit-console\bin\Debug_Java\nunit.util.jar;%NUNIT_PATH%nunit-console\bin\Debug_Java\nunit.core.jar;%NUNIT_PATH%nunit-console\bin\Debug_Java\nunit-console.jar;.
+set NUNIT_CLASSPATH=%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.framework.jar;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.util.jar;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.core.jar;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit-console.jar;.
 set CLASSPATH="%RUNTIME_CLASSPATH%;%NUNIT_CLASSPATH%"
 
 
@@ -49,7 +52,8 @@ REM ********************************************************
 REM @echo Building GH solution...
 REM ********************************************************
 
-devenv Test\System.DirectoryServices.sln /%BUILD_OPTION% Debug_Java >>%RUNNING_FIXTURE%_build.log.txt 2<&1
+rem devenv Test\System.DirectoryServices.sln /%BUILD_OPTION% Debug_Java >>%RUNNING_FIXTURE%_build.log.txt 2<&1
+msbuild %TEST_SOLUTION% /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.txt 2<&1
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
@@ -59,7 +63,8 @@ REM ********************************************************
 
 if "%NUNIT_BUILD%" == "DONE" goto NUNITSKIP
 
-devenv ..\..\nunit20\nunit.java.sln /%BUILD_OPTION% Debug_Java >>%RUNNING_FIXTURE%_build.log.txt 2<&1
+rem devenv ..\..\nunit20\nunit.java.sln /%BUILD_OPTION% Debug_Java >>%RUNNING_FIXTURE%_build.log.txt 2<&1
+msbuild ..\..\nunit20\nunit20.java.sln /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.txt 2<&1
 
 goto NUNITREADY
 
@@ -79,7 +84,7 @@ REM ********************************************************
 REM @echo Running fixture "%RUNNING_FIXTURE%"
 REM ********************************************************
 
-copy Test\bin\Debug_Java\System.DirectoryServices.Test.jar .
+copy Test\bin\Debug_Java20\%TEST_ASSEMBLY% .
 
 IF "%SECURE_MODE%" NEQ "secure" (
 	copy App.config nunit-console.exe.config 
@@ -90,7 +95,7 @@ IF "%SECURE_MODE%" NEQ "secure" (
 )
 
 REM @echo on
-"%JAVA_HOME%\bin\java" %JVM_OPTIONS%  -cp %CLASSPATH% NUnit.Console.ConsoleUi System.DirectoryServices.Test.jar /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUNNING_FIXTURE%_run.log.txt 2<&1
+"%JAVA_HOME%\bin\java" %JVM_OPTIONS%  -cp %CLASSPATH% NUnit.Console.ConsoleUi %TEST_ASSEMBLY% /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUNNING_FIXTURE%_run.log.txt 2<&1
 REM @echo off
 
 
@@ -98,7 +103,8 @@ REM ********************************************************
 REM @echo Build XmlTool
 REM ********************************************************
 set XML_TOOL_PATH=..\..\tools\mono-xmltool
-devenv %XML_TOOL_PATH%\XmlTool.sln /%BUILD_OPTION% Debug_Java >>%RUNNING_FIXTURE%_build.log.txt 2<&1
+rem devenv %XML_TOOL_PATH%\XmlTool.sln /%BUILD_OPTION% Debug_Java >>%RUNNING_FIXTURE%_build.log.txt 2<&1
+msbuild %XML_TOOL_PATH%\XmlTool20.vmwcsproj /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.txt 2<&1
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
@@ -116,7 +122,7 @@ REM @echo off
 GOTO END
 
 :ENVIRONMENT_EXCEPTION
-@echo This test requires environment variables JAVA_HOME and GH_HOME to be defined
+@echo This test requires environment variables JAVA_HOME and GHROOT to be defined
 GOTO END
 
 :BUILD_EXCEPTION

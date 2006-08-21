@@ -251,7 +251,9 @@ namespace MonoTests.System.DirectoryServices
 			de = new DirectoryEntry();
 
 			Assert.AreEqual(de.AuthenticationType,AuthenticationTypes.None);
-			Assert.AreEqual(de.Password,null);
+#if !NET_2_0
+			Assert.AreEqual (de.Password, null);
+#endif
 			Assert.AreEqual(de.Path,String.Empty);
 			Assert.AreEqual(de.UsePropertyCache,true);
 			Assert.AreEqual(de.Username,null);		
@@ -265,7 +267,9 @@ namespace MonoTests.System.DirectoryServices
 			
 			Assert.AreEqual(de.AuthenticationType,AuthenticationTypes.None);
 			Assert.AreEqual(de.Name,GetName (configuration.BaseDn));
+#if !NET_2_0
 			Assert.AreEqual(de.Password,null);
+#endif
 			Assert.AreEqual(de.Path,configuration.ConnectionString);
 			Assert.AreEqual(de.SchemaClassName,"organization");
 			Assert.AreEqual(de.UsePropertyCache,true);
@@ -293,7 +297,9 @@ namespace MonoTests.System.DirectoryServices
 			//Assert.AreEqual(de.Guid,new Guid("0b045012-1d97-4f94-9d47-87cbf6dada46"));
 			Assert.AreEqual(de.Name,GetName (configuration.BaseDn));
 			//Assert.AreEqual(de.NativeGuid,null);
+#if !NET_2_0
 			Assert.AreEqual(de.Password,configuration.Password);
+#endif
 			Assert.AreEqual(de.Path,configuration.ConnectionString);
 			Assert.AreEqual(de.SchemaClassName,"organization");
 			Assert.AreEqual(de.UsePropertyCache,true);
@@ -313,7 +319,9 @@ namespace MonoTests.System.DirectoryServices
 			//Assert.AreEqual(de.Guid,new Guid("0b045012-1d97-4f94-9d47-87cbf6dada46"));
 			Assert.AreEqual(de.Name,GetName (configuration.BaseDn));
 			//Assert.AreEqual(de.NativeGuid,null);
+#if !NET_2_0
 			Assert.AreEqual(de.Password,configuration.Password);
+#endif
 			Assert.AreEqual(de.Path,configuration.ConnectionString);
 			Assert.AreEqual(de.SchemaClassName,"organization");
 			Assert.AreEqual(de.UsePropertyCache,true);
@@ -352,7 +360,9 @@ namespace MonoTests.System.DirectoryServices
 			//Assert.AreEqual(de.Guid,new Guid("0b045012-1d97-4f94-9d47-87cbf6dada46"));
 			Assert.AreEqual(de.Name,GetName (configuration.BaseDn));
 			//Assert.AreEqual(de.NativeGuid,null);
+#if !NET_2_0
 			Assert.AreEqual(de.Password,configuration.Password);
+#endif
 			Assert.AreEqual(de.Path,configuration.ConnectionString);
 			Assert.AreEqual(de.SchemaClassName,"organization");
 			Assert.AreEqual(de.UsePropertyCache,true);
@@ -372,7 +382,9 @@ namespace MonoTests.System.DirectoryServices
 			//Assert.AreEqual(de.Guid,new Guid("0b045012-1d97-4f94-9d47-87cbf6dada46"));
 			Assert.AreEqual(de.Name,GetName (configuration.BaseDn));
 			//Assert.AreEqual(de.NativeGuid,null);
+#if !NET_2_0
 			Assert.AreEqual(de.Password,configuration.Password);
+#endif
 			Assert.AreEqual(de.Path,configuration.ConnectionString);
 			Assert.AreEqual(de.SchemaClassName,"organization");
 			Assert.AreEqual(de.UsePropertyCache,true);
@@ -392,7 +404,9 @@ namespace MonoTests.System.DirectoryServices
 			//Assert.AreEqual(de.Guid,new Guid("0b045012-1d97-4f94-9d47-87cbf6dada46"));
 			Assert.AreEqual(de.Name,GetName (configuration.BaseDn));
 			//Assert.AreEqual(de.NativeGuid,null);
+#if !NET_2_0
 			Assert.AreEqual(de.Password,configuration.Password);
+#endif
 			Assert.AreEqual(de.Path,configuration.ConnectionString);
 			Assert.AreEqual(de.SchemaClassName,"organization");
 			Assert.AreEqual(de.UsePropertyCache,true);
@@ -412,7 +426,9 @@ namespace MonoTests.System.DirectoryServices
 			//Assert.AreEqual(de.Guid,new Guid("0b045012-1d97-4f94-9d47-87cbf6dada46"));
 			Assert.AreEqual(de.Name,GetName (configuration.BaseDn));
 			//Assert.AreEqual(de.NativeGuid,null);
+#if !NET_2_0
 			Assert.AreEqual(de.Password,configuration.Password);
+#endif
 			Assert.AreEqual(de.Path,configuration.ConnectionString);
 			Assert.AreEqual(de.SchemaClassName,"organization");
 			Assert.AreEqual(de.UsePropertyCache,true);
@@ -470,7 +486,9 @@ namespace MonoTests.System.DirectoryServices
 			//Assert.AreEqual(de.Guid,new Guid("0b045012-1d97-4f94-9d47-87cbf6dada46"));
 			Assert.AreEqual(de.Name,GetName (configuration.BaseDn));
 			//Assert.AreEqual(de.NativeGuid,null);
+#if !NET_2_0
 			Assert.AreEqual(de.Password,configuration.Password);
+#endif
 			Assert.AreEqual(de.Path,configuration.ConnectionString);
 			Assert.AreEqual(de.SchemaClassName,"organization");
 			Assert.AreEqual(de.UsePropertyCache,true);
@@ -490,7 +508,9 @@ namespace MonoTests.System.DirectoryServices
 			//Assert.AreEqual(de.Guid,new Guid("0b045012-1d97-4f94-9d47-87cbf6dada46"));
 			Assert.AreEqual(de.Name,GetName (configuration.BaseDn));
 			//Assert.AreEqual(de.NativeGuid,null);
+#if !NET_2_0
 			Assert.AreEqual(de.Password,configuration.Password);
+#endif
 			Assert.AreEqual(de.Path,configuration.ConnectionString);
 			Assert.AreEqual(de.SchemaClassName,"organization");
 			Assert.AreEqual(de.UsePropertyCache,true);
@@ -1080,7 +1100,7 @@ namespace MonoTests.System.DirectoryServices
 			Assert.AreEqual(de.Parent.Path.ToLower(),(configuration.ServerRoot + "ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn))).ToLower());
 		}
 
-
+#if !NET_2_0
 		[Test]
 		public void DirectoryEntry_Password()
 		{
@@ -1126,7 +1146,7 @@ namespace MonoTests.System.DirectoryServices
 			de.Password = wrongPassword;
 			Assert.AreEqual(de.Password,wrongPassword);
 		}
-
+#endif
 
 		[Test]
 		public void DirectoryEntry_Path()
@@ -1321,7 +1341,9 @@ namespace MonoTests.System.DirectoryServices
 			Assert.AreEqual(schemaEntry.Path.ToLower(),"LDAP://schema/domainDNS".ToLower());
 			Assert.AreEqual(schemaEntry.Name,"domainDNS");
 			Assert.AreEqual(schemaEntry.Username,null);
+#if !NET_2_0
 			Assert.AreEqual(schemaEntry.Password,null);
+#endif
 			Assert.AreEqual(schemaEntry.UsePropertyCache,true);
 			Assert.AreEqual(schemaEntry.SchemaClassName,"Class");
 			Assert.AreEqual(schemaEntry.AuthenticationType,AuthenticationTypes.None);
@@ -1333,7 +1355,9 @@ namespace MonoTests.System.DirectoryServices
 			Assert.AreEqual(schemaEntry.Path,configuration.ServerRoot + "schema/organization");
 			Assert.AreEqual(schemaEntry.Name,"organization");
 			Assert.AreEqual(schemaEntry.Username,null);
+#if !NET_2_0
 			Assert.AreEqual(schemaEntry.Password,null);
+#endif
 			Assert.AreEqual(schemaEntry.UsePropertyCache,true);
 			Assert.AreEqual(schemaEntry.SchemaClassName,"Class");
 			Assert.AreEqual(schemaEntry.AuthenticationType,AuthenticationTypes.None);
@@ -1348,7 +1372,9 @@ namespace MonoTests.System.DirectoryServices
 			Assert.AreEqual(schemaEntry.Path,configuration.ServerRoot + "schema/organization");
 			Assert.AreEqual(schemaEntry.Name,"organization");
 			Assert.AreEqual(schemaEntry.Username,configuration.Username);
+#if !NET_2_0
 			Assert.AreEqual(schemaEntry.Password,configuration.Password);
+#endif
 			Assert.AreEqual(schemaEntry.UsePropertyCache,true);
 			Assert.AreEqual(schemaEntry.SchemaClassName,"Class");
 			Assert.AreEqual(schemaEntry.AuthenticationType,configuration.AuthenticationType);
