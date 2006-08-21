@@ -333,6 +333,39 @@ namespace MonoTests.System.Windows.Forms
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
+		public void AddRangeNullTest ()
+		{
+			ComboBox.ObjectCollection col = new ComboBox.ObjectCollection (new ComboBox ());
+			col.AddRange (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ContainsNullTest ()
+		{
+			ComboBox.ObjectCollection col = new ComboBox.ObjectCollection (new ComboBox ());
+			col.Contains (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void IndexOfNullTest ()
+		{
+			ComboBox.ObjectCollection col = new ComboBox.ObjectCollection (new ComboBox ());
+			col.IndexOf (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void InsertNullTest ()
+		{
+			ComboBox.ObjectCollection col = new ComboBox.ObjectCollection (new ComboBox ());
+			col.Add ("Item1");
+			col.Insert (0, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void IndexerNullTest ()
 		{
 			ComboBox.ObjectCollection col = new ComboBox.ObjectCollection (new ComboBox ());

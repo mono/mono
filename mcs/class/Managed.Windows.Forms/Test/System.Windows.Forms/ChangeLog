@@ -1,3 +1,8 @@
+2006-08-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBoxTest.cs: Add tests for CB.ObjectCollection
+	methods throwing ArgumentNullException.
+
 2006-08-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ComboBoxTest.cs: Add tests for adding/modifying null items
