@@ -70,6 +70,11 @@ namespace System.IO {
 		public int WatchDescriptor;
 		public InotifyMask Mask;
 		public string Name;
+
+		public override string ToString ()
+		{
+			return String.Format ("[Descriptor: {0} Mask: {1} Name: {2}]", WatchDescriptor, Mask, Name);
+		}
 	}
 
 	class InotifyData {
@@ -219,6 +224,7 @@ namespace System.IO {
 				mask |= InotifyMask.Attrib;
 				mask |= InotifyMask.Access;
 				mask |= InotifyMask.Modify;
+				mask |= InotifyMask.CloseWrite;
 			}
 
 			if ((filters & NotifyFilters.LastWrite) != 0) {
@@ -356,6 +362,7 @@ namespace System.IO {
 
 				lock (this) {
 					ProcessEvents (buffer, nread);
+
 				}
 			}
 
@@ -408,6 +415,7 @@ namespace System.IO {
 			} else {
 				evt.Name = null;
 			}
+
 			return 16 + len;
 		}
 
@@ -434,10 +442,11 @@ namespace System.IO {
 			* Create
 			* Delete
 			* DeleteSelf
+			* CloseWrite
 		*/
 		static InotifyMask Interesting = InotifyMask.Modify | InotifyMask.Attrib | InotifyMask.MovedFrom |
 							InotifyMask.MovedTo | InotifyMask.Create | InotifyMask.Delete |
-							InotifyMask.DeleteSelf;
+							InotifyMask.DeleteSelf | InotifyMask.CloseWrite;
 
 		void ProcessEvents (byte [] buffer, int length)
 		{
@@ -470,7 +479,7 @@ namespace System.IO {
 
 					FileSystemWatcher fsw = data.FSW;
 					FileAction action = 0;
-					if ((mask & (InotifyMask.Modify | InotifyMask.Attrib)) != 0) {
+					if ((mask & (InotifyMask.Modify | InotifyMask.CloseWrite | InotifyMask.Attrib)) != 0) {
 						action = FileAction.Modified;
 					} else if ((mask & InotifyMask.Create) != 0) {
 						action = FileAction.Added;
@@ -487,9 +496,11 @@ namespace System.IO {
 						if (i == -1 || (to.Mask & InotifyMask.MovedTo) == 0) {
 							action = FileAction.Removed;
 						} else {
-							action = FileAction.RenamedOldName;
-							new_name_needed = true;
-							renamed = null;
+							nread += i;
+							action = FileAction.RenamedNewName;
+							renamed = new RenamedEventArgs (WatcherChangeTypes.Renamed, data.Directory, evt.Name, to.Name);
+							filename = to.Name;
+							evt = to;
 						}
 					} else if ((mask & InotifyMask.MovedTo) != 0) {
 						action = (new_name_needed) ? FileAction.RenamedNewName : FileAction.Added;
@@ -527,11 +538,14 @@ namespace System.IO {
 						}
 					}
 
-					if (filename != data.Directory && !fsw.Pattern.IsMatch (filename))
+					if (filename != data.Directory && !fsw.Pattern.IsMatch (filename)) {
 						continue;
+					}
 
 					lock (fsw) {
 						fsw.DispatchEvents (action, filename, ref renamed);
+						if (action == FileAction.RenamedNewName)
+							renamed = null;
 						if (fsw.Waiting) {
 							fsw.Waiting = false;
 							System.Threading.Monitor.PulseAll (fsw);
