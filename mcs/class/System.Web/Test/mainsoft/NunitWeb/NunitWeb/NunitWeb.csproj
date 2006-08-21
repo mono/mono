@@ -30,6 +30,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -45,9 +46,7 @@
     <Compile Include="BaseWorkerRequest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MyHost.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="MyHost.cs" />
     <Compile Include="PageDelegates.cs" />
     <Compile Include="PageInvoker.cs" />
     <Compile Include="PostableRequest.cs" />
