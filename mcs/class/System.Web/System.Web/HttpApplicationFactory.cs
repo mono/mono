@@ -200,7 +200,7 @@ namespace System.Web {
 		}
 
 #if !TARGET_JVM
-		static FileSystemWatcher CreateWatcher (string file, FileSystemEventHandler hnd)
+		static FileSystemWatcher CreateWatcher (string file, FileSystemEventHandler hnd, RenamedEventHandler reh)
 		{
 			FileSystemWatcher watcher = new FileSystemWatcher ();
 
@@ -210,10 +210,16 @@ namespace System.Web {
 			watcher.Changed += hnd;
 			watcher.Created += hnd;
 			watcher.Deleted += hnd;
+			watcher.Renamed += reh;
 
 			watcher.EnableRaisingEvents = true;
 
 			return watcher;
+		}
+
+		void OnAppFileRenamed (object sender, RenamedEventArgs args)
+		{
+			OnAppFileChanged (sender, args);
 		}
 
 		void OnAppFileChanged (object sender, FileSystemEventArgs args)
@@ -300,7 +306,7 @@ namespace System.Web {
 			app.SetSession ((HttpSessionState) state);
 			try {
 				method.Invoke (app, new object [] {app, EventArgs.Empty});
-			} catch (Exception e) {
+			} catch (Exception) {
 				// Ignore
 			}
 			RecycleForSessionEnd (app);
@@ -379,8 +385,10 @@ namespace System.Web {
 						string msg = String.Format ("Error compiling application file ({0}).", app_file);
 						throw new ApplicationException (msg);
 					}
-					
-					app_file_watcher = CreateWatcher (app_file, new FileSystemEventHandler (OnAppFileChanged));
+
+					FileSystemEventHandler fseh = new FileSystemEventHandler (OnAppFileChanged);
+					RenamedEventHandler reh = new RenamedEventHandler (OnAppFileRenamed);
+					app_file_watcher = CreateWatcher (app_file, fseh, reh);
 #endif
 				} else {
 					app_type = typeof (System.Web.HttpApplication);
@@ -415,8 +423,10 @@ namespace System.Web {
 						if (Directory.Exists (bin))
 							bin = Path.Combine (bin, "*.dll");
 
+						FileSystemEventHandler fseh = new FileSystemEventHandler (factory.OnAppFileChanged);
+						RenamedEventHandler reh = new RenamedEventHandler (factory.OnAppFileRenamed);
 						// We watch bin or bin/*.dll if the directory exists
-						factory.bin_watcher = CreateWatcher (bin, new FileSystemEventHandler (factory.OnAppFileChanged));
+						factory.bin_watcher = CreateWatcher (bin, fseh, reh);
 #endif
 						app = factory.FireOnAppStart (context);
 						factory.app_start_needed = false;

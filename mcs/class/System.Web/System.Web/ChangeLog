@@ -1,3 +1,7 @@
+2006-08-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplicationFactory.cs: handle the 'renamed' event too.
+
 2006-08-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpApplication.cs: fixed BeginProcessRequest, TARGET_JVM part
