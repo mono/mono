@@ -136,7 +136,11 @@ namespace System.Web.Services.Protocols
 
 				if (key  == "wsdl") GenerateWsdlDocument (context, req.QueryString ["wsdl"]);
 				else if (key == "schema") GenerateSchema (context, req.QueryString ["schema"]);
+#if !TARGET_JVM //code generation is not supported
 				else if (key == "code") GenerateCode (context, req.QueryString ["code"]);
+#else
+				else if (key == "code") throw new Exception("Code generation is not supported.");
+#endif
 				else if (key == "disco") GenerateDiscoDocument (context);
 				else throw new Exception ("This should never happen");
 			}
@@ -237,13 +241,6 @@ namespace System.Web.Services.Protocols
 			}
 
 			return provider;
-		}
-#else
-		void GenerateCode (HttpContext context, string langId) {
-			throw new NotSupportedException();
-		}
-		private CodeDomProvider GetProvider(string langId) {
-			throw new NotSupportedException();
 		}
 #endif
 		
