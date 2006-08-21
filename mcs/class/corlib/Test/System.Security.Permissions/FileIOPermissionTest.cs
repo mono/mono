@@ -338,6 +338,54 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
+		public void Union_Bug79118 ()
+		{
+			string[] f1 = unix ? new string[] { "/tmp/one", "/tmp/two" } : new string[] { "c:\\temp\\one", "c:\\temp\\two" };
+			string[] f2 = unix ? new string[] { "/tmp/two" } : new string[] { "c:\\temp\\two" };
+
+			p = new FileIOPermission (FileIOPermissionAccess.Read, f1);
+			p2 = new FileIOPermission (FileIOPermissionAccess.Read, f2);
+			FileIOPermission union = (FileIOPermission) p.Union (p2);
+
+			string[] paths = union.GetPathList(FileIOPermissionAccess.Read);
+			AssertEquals ("Length", 2, paths.Length);
+			AssertEquals ("0", f1[0], paths[0]);
+			AssertEquals ("1", f1[1], paths[1]);
+		}
+
+		private void Partial (string msg, string[] path1, string[] path2, int expected)
+		{
+			p = new FileIOPermission (FileIOPermissionAccess.Read, path1);
+			p2 = new FileIOPermission (FileIOPermissionAccess.Read, path2);
+			FileIOPermission union = (FileIOPermission) p.Union (p2);
+
+			string[] paths = union.GetPathList(FileIOPermissionAccess.Read);
+			AssertEquals (msg + ".Length", expected, paths.Length);
+			AssertEquals (msg + "[0]", path1[0], paths[0]);
+			if (expected > 1)
+				AssertEquals (msg + "[1]", path2[0], paths[1]);
+		}
+
+		[Test]
+		public void Union_Partial ()
+		{
+			string[] f1 = unix ? new string[] { "/dir/part" } : new string[] { "c:\\dir\\part" };
+			string[] f2 = unix ? new string[] { "/dir/partial" } : new string[] { "c:\\dir\\partial" };
+			Partial ("1", f1, f2, 2);
+			Partial ("2", f2, f1, 2);
+
+			f1 = unix ? new string[] { "/dir/part/" } : new string[] { "c:\\dir\\part\\" };
+			f2 = unix ? new string[] { "/dir/partial/" } : new string[] { "c:\\dir\\partial\\" };
+			Partial ("3", f1, f2, 2);
+			Partial ("4", f2, f1, 2);
+
+			f1 = unix ? new string[] { "/dir/part/ial" } : new string[] { "c:\\dir\\part\\ial" };
+			f2 = unix ? new string[] { "/dir/part/ial" } : new string[] { "c:\\dir\\part\\ial" };
+			Partial ("5", f1, f2, 1);
+			Partial ("6", f2, f1, 1);
+		}
+
+		[Test]
 		public void FromXML ()
 		{
 			p = new FileIOPermission(PermissionState.None);
