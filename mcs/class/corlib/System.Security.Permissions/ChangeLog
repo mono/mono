@@ -1,3 +1,8 @@
+2006-08-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FileIOPermission.cs: Fix union of paths (#79118). Implement subpaths
+	handling correctly. Change some internal methods to static.
+
 2006-05-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeAccessSecurityAttribute.cs: Under 2.0 the ctor is protected.

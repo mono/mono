@@ -434,7 +434,7 @@ namespace System.Security.Permissions {
 				&& (writeList.Count == 0) && (pathList.Count == 0));
 		}
 
-		private FileIOPermission Cast (IPermission target)
+		private static FileIOPermission Cast (IPermission target)
 		{
 			if (target == null)
 				return null;
@@ -447,7 +447,7 @@ namespace System.Security.Permissions {
 			return fiop;
 		}
 
-		internal void ThrowInvalidFlag (FileIOPermissionAccess access, bool context) 
+		internal static void ThrowInvalidFlag (FileIOPermissionAccess access, bool context) 
 		{
 			string msg = null;
 			if (context)
@@ -457,7 +457,7 @@ namespace System.Security.Permissions {
 			throw new ArgumentException (String.Format (msg, access), "access");
 		}
 
-		internal void ThrowIfInvalidPath (string path)
+		internal static void ThrowIfInvalidPath (string path)
 		{
 #if NET_2_0
 			string dir = Path.GetDirectoryName (path);
@@ -484,7 +484,7 @@ namespace System.Security.Permissions {
 			}
 		}
 
-		internal void ThrowIfInvalidPath (string[] paths)
+		internal static void ThrowIfInvalidPath (string[] paths)
 		{
 			foreach (string path in paths)
 				ThrowIfInvalidPath (path);
@@ -504,12 +504,12 @@ namespace System.Security.Permissions {
 		}
 
 		// note: all path in IList are already "full paths"
-		internal bool KeyIsSubsetOf (IList local, IList target)
+		internal static bool KeyIsSubsetOf (IList local, IList target)
 		{
 			bool result = false;
 			foreach (string l in local) {
 				foreach (string t in target) {
-					if (l.StartsWith (t)) {
+					if (Path.IsPathSubsetOf (t, l)) {
 						result = true;
 						break;
 					}
@@ -520,7 +520,7 @@ namespace System.Security.Permissions {
 			return true;
 		}
 
-		internal void UnionKeys (IList list, string[] paths)
+		internal static void UnionKeys (IList list, string[] paths)
 		{
 			foreach (string path in paths) {
 				int len = list.Count;
@@ -528,36 +528,36 @@ namespace System.Security.Permissions {
 					list.Add (path);
 				}
 				else {
-					for (int i=0; i < len; i++) {
+					int i;
+					for (i=0; i < len; i++) {
 						string s = (string) list [i];
-						if (s.StartsWith (path)) {
+						if (Path.IsPathSubsetOf (path, s)) {
 							// replace (with reduced version)
 							list [i] = path;
 							break;
 						}
-						else if (path.StartsWith (s)) {
+						else if (Path.IsPathSubsetOf (s, path)) {
 							// no need to add
 							break;
 						}
-						else {
-							list.Add (path);
-							break;
-						}
+					}
+					if (i == len) {
+						list.Add (path);
 					}
 				}
 			}
 		}
 
-		internal void IntersectKeys (IList local, IList target, IList result)
+		internal static void IntersectKeys (IList local, IList target, IList result)
 		{
 			foreach (string l in local) {
 				foreach (string t in target) {
 					if (t.Length > l.Length) {
-						if (t.StartsWith (l))
+						if (Path.IsPathSubsetOf (l ,t))
 							result.Add (t);
 					}
 					else {
-						if (l.StartsWith (t))
+						if (Path.IsPathSubsetOf (t, l))
 							result.Add (l);
 					}
 				}
