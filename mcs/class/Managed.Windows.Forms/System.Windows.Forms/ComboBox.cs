@@ -381,7 +381,7 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override int SelectedIndex {
-			get { return Items.IndexOf (selected_item); }
+			get { return selected_item == null ? -1 : Items.IndexOf (selected_item); }
 			set {
 				if (value <= -2 || value >= Items.Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
@@ -1311,6 +1311,9 @@ namespace System.Windows.Forms
 
 			public void AddRange (object[] items)
 			{
+				if (items == null)
+					throw new ArgumentNullException ("items");
+
 				foreach (object mi in items)
 					AddItem (mi);
 					
@@ -1327,6 +1330,9 @@ namespace System.Windows.Forms
 			
 			public bool Contains (object obj)
 			{
+				if (obj == null)
+					throw new ArgumentNullException ("obj");
+
 				return object_items.Contains (obj);
 			}
 
@@ -1352,6 +1358,9 @@ namespace System.Windows.Forms
 
 			public int IndexOf (object value)
 			{
+				if (value == null)
+					throw new ArgumentNullException ("value");
+
 				return object_items.IndexOf (value);
 			}
 
@@ -1359,6 +1368,8 @@ namespace System.Windows.Forms
 			{
 				if (index < 0 || index > Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");					
+				if (item == null)
+					throw new ArgumentNullException ("item");
 				
 				owner.BeginUpdate ();
 				
@@ -1369,6 +1380,9 @@ namespace System.Windows.Forms
 
 			public void Remove (object value)
 			{				
+				if (value == null)
+					return;
+
 				if (IndexOf (value) == owner.SelectedIndex)
 					owner.SelectedItem = null;
 				
@@ -1667,7 +1681,7 @@ namespace System.Windows.Forms
 			}
 
 			public int HighlightedIndex {
-				get { return owner.Items.IndexOf (highlighted_item); }
+				get { return highlighted_item == null ? -1 : owner.Items.IndexOf (highlighted_item); }
 				set { 
 					object item = null;
 					if (value != -1)
@@ -1684,11 +1698,11 @@ namespace System.Windows.Forms
 					if (highlighted_item == value)
 						return;
 				
-					int index = owner.Items.IndexOf (highlighted_item);
+					int index = highlighted_item == null ? -1 :  owner.Items.IndexOf (highlighted_item);
     					if (index != -1)
 						Invalidate (GetItemDisplayRectangle (index, top_item));
     					highlighted_item = value;
-				       	index = owner.Items.IndexOf (highlighted_item);
+				       	index = highlighted_item == null ? -1 : owner.Items.IndexOf (highlighted_item);
     					if (index != -1)
 						Invalidate (GetItemDisplayRectangle (index, top_item));
 				}

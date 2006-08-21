@@ -1,3 +1,8 @@
+2006-08-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBox.cs: Some CB.ObjectCollection methods must throw
+	ArgumentNullReferenceException when the argument is null.
+
 2006-08-21  Jackson Harper  <jackson@ximian.com>
 
 	* Timer.cs: Track the thread that the timer is started in (NOT
