@@ -1,3 +1,7 @@
+2006-08-21	Boris Kirzner	<borisk@mainsoft.com>
+
+	* run-tests.test.bat: fixes for NET_2_0 tests run.
+
 2006-07-14  Senganal T  <tsenganal@novell.com>
 
 	* OraclePermission.cs : 2.0 Api fixes.

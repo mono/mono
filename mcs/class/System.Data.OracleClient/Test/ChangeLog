@@ -1,3 +1,9 @@
+2006-08-21	Boris Kirzner	<borisk@mainsoft.com>
+
+	* System.Data.OracleClient.Tests20.J2EE.sln, 
+	System.Data.OracleClient.Tests20.J2EE.vmwcsproj: 
+	added solution and project files for NET_2_0 tests run.
+
 2006-03-13	Boris Kirzner <borisk@mainsoft.com>
 	* System.Data.OracleClient.J2EE.config: added sample app config file
 	for TARGET_JVM tests.
