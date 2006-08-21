@@ -191,7 +191,7 @@ namespace System.Web.Services.Protocols {
 			SimpleWebClientAsyncResult sar = (SimpleWebClientAsyncResult) ar;
 			InvokeCompletedEventArgs args = new InvokeCompletedEventArgs (sar.Exception, false, info.UserState, (object[]) sar.Result);
 			if (info.Context != null)
-				info.Context.SendOrPost (info.Callback, args);
+				info.Context.Send (info.Callback, args);
 			else
 				info.Callback (args);
 		}
