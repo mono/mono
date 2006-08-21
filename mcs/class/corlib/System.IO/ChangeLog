@@ -1,3 +1,8 @@
+2006-08-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Path.cs: Added internal method IsPathSubsetOf required to implement
+	correctly FileIOPermission (better located here).
+
 2006-08-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* File.cs: (Delete) avoid creating the exception object for the 'file
