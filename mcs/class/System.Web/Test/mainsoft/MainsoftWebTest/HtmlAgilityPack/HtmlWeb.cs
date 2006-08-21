@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 using System.Xml.Xsl;
 using Microsoft.Win32;
 
-#if !JAVA
+#if !TARGET_JVM
 namespace HtmlAgilityPack
 {
 	/// <summary>

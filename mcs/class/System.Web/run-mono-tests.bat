@@ -29,7 +29,7 @@ REM @echo Set environment
 REM ********************************************************
 
 set JGAC_PATH=%GH_HOME%\jgac\vmw4j2ee_110
-set RUNTIME_CLASSPATH=%JGAC_PATH%\mscorlib.jar;%JGAC_PATH%\System.jar;%JGAC_PATH%\System.Xml.jar;%JGAC_PATH%\J2SE.Helpers.jar;%JGAC_PATH%\System.Web.jar;%JGAC_PATH%\System.Drawing.jar
+set RUNTIME_CLASSPATH=%JGAC_PATH%\mscorlib.jar;%JGAC_PATH%\System.jar;%JGAC_PATH%\System.Xml.jar;%JGAC_PATH%\J2SE.Helpers.jar;%JGAC_PATH%\System.Web.jar;%JGAC_PATH%\System.Drawing.jar;%JGAC_PATH%\System.Runtime.Serialization.Formatters.Soap.jar
 set PROJECT_CONFIGURATION=Debug_Java20
 set GH_OUTPUT_XML=nunit_results.xml
 set NUNIT_PATH=..\..\..\nunit20
@@ -78,7 +78,7 @@ REM ********************************************************
 
 del %GH_OUTPUT_XML%
 @echo on
-"%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi bin/%PROJECT_CONFIGURATION%/TestMonoWeb.jar /xml=%GH_OUTPUT_XML% /exclude=NunitWeb,CAS,NotWorking  >run.log.txt 2<&1
+"%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi bin/%PROJECT_CONFIGURATION%/TestMonoWeb.jar /xml=%GH_OUTPUT_XML% /exclude=ValueAdd,InetAccess,CAS,NotWorking  >run.log.txt 2<&1
 @echo off
 
 popd

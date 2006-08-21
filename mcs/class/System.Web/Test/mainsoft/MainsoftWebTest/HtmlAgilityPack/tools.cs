@@ -23,7 +23,7 @@ namespace HtmlAgilityPack
 			File.Copy(source, target, true);
 		}
     }
-#if TARGET_JVM
+#if TARGET_JVM1
     internal struct HtmlLibrary
 	{
 		[Conditional("DEBUG")]
