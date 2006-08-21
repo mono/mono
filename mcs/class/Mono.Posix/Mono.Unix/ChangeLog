@@ -1,3 +1,10 @@
+2006-08-21  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* UnixStream.cs: .Close() shouldn't close(2) the fd unless owner==true;
+	  .Flush() should be a no-op (as System.IO.Stream.Flush doesn't gaurantee
+	  that .Flush() actually flush to disk, and .Flush() slows things down a
+	  lot); see: http://joeshaw.org/2006/08/21/415.
+
 2006-08-16  Alp Toker  <alp@atoker.com>
 
 	* UnixEndPoint.cs:
