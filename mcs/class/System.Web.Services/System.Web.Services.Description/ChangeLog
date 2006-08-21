@@ -1,3 +1,9 @@
+2006-08-21  Konstantin Triger <kostat@mainsoft.com>
+
+	* ServiceDescriptionCollection.cs: refactoring for Add(), removing using of
+		ServiceDescriptionImporter for java profile as there is no support for
+		code generation.
+
 2006-07-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ProtocolImporter.cs, ServiceDescriptionImporter.cs :
