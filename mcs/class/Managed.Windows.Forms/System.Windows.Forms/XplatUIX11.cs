@@ -142,9 +142,6 @@ namespace System.Windows.Forms {
 		private static Point		MousePosition;		// Last position of mouse, in screen coords
 		internal static MouseButtons	MouseState;		// Last state of mouse buttons
 
-		// Timers
-		private static ArrayList	TimerList;		// Holds SWF.Timers
-
 		// 'Constants'
 		private static int		DoubleClickInterval;	// msec; max interval between clicks to count as double click
 
@@ -172,7 +169,6 @@ namespace System.Windows.Forms {
 			// Now regular initialization
 			XlibLock = new object ();
 			MessageQueues = new Hashtable(7);
-			TimerList = new ArrayList ();
 			XInitThreads();
 
 			ErrorExceptions = false;
@@ -1080,18 +1076,17 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private int NextTimeout (DateTime now) {
+		private int NextTimeout (ArrayList timers, DateTime now) {
 			int timeout = Int32.MaxValue; 
-			lock (TimerList) {
-				foreach (Timer timer in TimerList) {
-					int next = (int) (timer.Expires - now).TotalMilliseconds;
-					if (next < 0) {
-						return 0; // Have a timer that has already expired
-					}
 
-					if (next < timeout) {
-						timeout = next;
-					}
+			foreach (Timer timer in timers) {
+				int next = (int) (timer.Expires - now).TotalMilliseconds;
+				if (next < 0) {
+					return 0; // Have a timer that has already expired
+				}
+
+				if (next < timeout) {
+					timeout = next;
 				}
 			}
 			if (timeout < Timer.Minimum) {
@@ -1103,25 +1098,22 @@ namespace System.Windows.Forms {
 			return timeout;
 		}
 
-		private void CheckTimers (DateTime now) {
-			lock (TimerList) {
-				int count;
+		private void CheckTimers (ArrayList timers, DateTime now) {
+			int count;
 
-				count = TimerList.Count;
+			count = timers.Count;
 
-				if (count == 0) {
-					return;
-				}
+			if (count == 0)
+				return;
 
-				for (int i = 0; i < TimerList.Count; i++) {
-					Timer timer;
+			for (int i = 0; i < timers.Count; i++) {
+				Timer timer;
 
-					timer = (Timer) TimerList[i];
+				timer = (Timer) timers [i];
 
-					if (timer.Enabled && timer.Expires <= now) {
-						timer.Update (now);
-						timer.FireTick ();
-					}
+				if (timer.Enabled && timer.Expires <= now) {
+					timer.Update (now);
+					timer.FireTick ();
 				}
 			}
 		}
@@ -1174,7 +1166,7 @@ namespace System.Windows.Forms {
 					return;
 				}
 
-				timeout = NextTimeout (now);
+				timeout = NextTimeout (queue.timer_list, now);
 				if (timeout > 0) {
 					#if __MonoCS__
 					Syscall.poll (pollfds, (uint) pollfds.Length, timeout);
@@ -1189,7 +1181,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			CheckTimers (now);
+			CheckTimers (queue.timer_list, now);
 
 			while (true) {
 				XEvent xevent = new XEvent ();
@@ -3696,9 +3688,14 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void KillTimer(Timer timer) {
-			lock (TimerList) {
-				TimerList.Remove(timer);
+			XEventQueue queue = (XEventQueue) MessageQueues [timer.thread];
+
+			if (queue == null) {
+				// This isn't really an error, MS doesn't start the timer if
+				// it has no assosciated queue
+				return;
 			}
+			queue.timer_list.Remove (timer);
 		}
 
 		internal override void MenuToScreen(IntPtr handle, ref int x, ref int y) {
@@ -3814,6 +3811,7 @@ namespace System.Windows.Forms {
 
 		[MonoTODO("Implement filtering and PM_NOREMOVE")]
 		internal override bool PeekMessage(Object queue_id, ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags) {
+			XEventQueue queue = (XEventQueue) queue_id;
 			bool	pending;
 
 			if ((flags & (uint)PeekMessageFlags.PM_REMOVE) == 0) {
@@ -3821,7 +3819,7 @@ namespace System.Windows.Forms {
 			}
 
 			pending = false;
-			if (((XEventQueue)queue_id).Count > 0) {
+			if (queue.Count > 0) {
 				pending = true;
 			} else {
 				// Only call UpdateMessageQueue if real events are pending 
@@ -3834,7 +3832,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			CheckTimers(DateTime.UtcNow);
+			CheckTimers(queue.timer_list, DateTime.UtcNow);
 
 			if (!pending) {
 				return false;
@@ -4226,9 +4224,14 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetTimer (Timer timer) {
-			lock (TimerList) {
-				TimerList.Add(timer);
+			XEventQueue queue = (XEventQueue) MessageQueues [timer.thread];
+
+			if (queue == null) {
+				// This isn't really an error, MS doesn't start the timer if
+				// it has no assosciated queue
+				return;
 			}
+			queue.timer_list.Add (timer);
 			WakeupMain ();
 		}
 

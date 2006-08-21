@@ -37,6 +37,7 @@ namespace System.Windows.Forms {
 		private XQueue		xqueue;
 		private XQueue		lqueue;	// Events inserted from threads other then the main X thread
 		private PaintQueue	paint;	// Paint-only queue
+		internal ArrayList	timer_list;
 		private Thread		thread;
 
 		private static readonly int InitialXEventSize = 100;
@@ -47,6 +48,7 @@ namespace System.Windows.Forms {
 			xqueue = new XQueue (InitialXEventSize);
 			lqueue = new XQueue (InitialLXEventSize);
 			paint = new PaintQueue(InitialPaintSize);
+			timer_list = new ArrayList ();
 			this.thread = thread;
 		}
 

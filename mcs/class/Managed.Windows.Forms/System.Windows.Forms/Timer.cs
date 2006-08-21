@@ -37,6 +37,7 @@ namespace System.Windows.Forms {
 		private IContainer container;
 		private int interval = 100;
 		private DateTime expires;
+		internal Thread thread;
 
 		internal static readonly int Minimum = 15;
 
@@ -61,9 +62,12 @@ namespace System.Windows.Forms {
 					if (value) {
 						// Use AddTicks so we get some rounding
 						expires = DateTime.UtcNow.AddMilliseconds (interval > Minimum ? interval : Minimum);
+
+						thread = Thread.CurrentThread;
 						XplatUI.SetTimer (this);
 					} else {
 						XplatUI.KillTimer (this);
+						thread = null;
 					}
 				}
 			}

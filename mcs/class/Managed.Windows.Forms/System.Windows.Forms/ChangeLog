@@ -1,3 +1,12 @@
+2006-08-21  Jackson Harper  <jackson@ximian.com>
+
+	* Timer.cs: Track the thread that the timer is started in (NOT
+	CREATED), this way messages for it will only be triggered on its
+	queue.
+	* XEventQueue.cs: Track the timers here, this makes timers per
+	thread, like MS.
+	* XplatUIX11.cs: The timers are moved to the XEventQueue.
+
 2006-08-19  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIX11.cs: after further communication with pdb, we get the
