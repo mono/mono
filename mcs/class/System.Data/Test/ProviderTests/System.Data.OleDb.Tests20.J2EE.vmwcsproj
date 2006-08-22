@@ -1,7 +1,7 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
 		<OutputPath>bin\Release_Java20\</OutputPath>
-		<DefineConstants>TRACE;TARGET_JVM;NET_1_1;NET_2_0</DefineConstants>
+		<DefineConstants>TRACE;JAVA;TARGET_JVM;NET_1_1;NET_2_0</DefineConstants>
 		<BaseAddress>285212672</BaseAddress>
 		<Optimize>true</Optimize>
 		<DebugType>pdbonly</DebugType>
@@ -22,7 +22,7 @@
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20|AnyCPU' ">
 		<DebugSymbols>true</DebugSymbols>
 		<OutputPath>bin\Debug_Java20\</OutputPath>
-		<DefineConstants>TRACE;DEBUG;TARGET_JVM;NET_1_1;NET_2_0</DefineConstants>
+		<DefineConstants>TRACE;DEBUG;JAVA;TARGET_JVM;NET_1_1;NET_2_0</DefineConstants>
 		<BaseAddress>285212672</BaseAddress>
 		<DebugType>full</DebugType>
 		<PlatformTarget>AnyCPU</PlatformTarget>
@@ -58,7 +58,7 @@
 		<DebugType>full</DebugType>
 		<Optimize>false</Optimize>
 		<OutputPath>bin\Debug_Java\</OutputPath>
-		<DefineConstants>TRACE;DEBUG;TARGET_JVM;NET_1_1;ONLY_1_1</DefineConstants>
+		<DefineConstants>TRACE;DEBUG;JAVA;TARGET_JVM;NET_1_1;ONLY_1_1</DefineConstants>
 		<ErrorReport>prompt</ErrorReport>
 		<WarningLevel>4</WarningLevel>
 		<BaseAddress>285212672</BaseAddress>
@@ -73,7 +73,7 @@
 		<DebugType>pdbonly</DebugType>
 		<Optimize>true</Optimize>
 		<OutputPath>bin\Release_Java\</OutputPath>
-		<DefineConstants>TRACE;TARGET_JVM;NET_1_1;ONLY_1_1</DefineConstants>
+		<DefineConstants>TRACE;JAVA;TARGET_JVM;NET_1_1;ONLY_1_1</DefineConstants>
 		<ErrorReport>prompt</ErrorReport>
 		<WarningLevel>4</WarningLevel>
 		<BaseAddress>285212672</BaseAddress>
