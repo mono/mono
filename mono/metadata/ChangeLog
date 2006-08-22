@@ -1,3 +1,9 @@
+
+Tue Aug 22 11:10:33 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: recursively check parent's explicit implementations
+	of interface methods (fixes bug #79125).
+
 2006-08-19  Miguel de Icaza  <miguel@novell.com>
 
 	* filewatcher.c: Avoid warnings when building, do not redefine
