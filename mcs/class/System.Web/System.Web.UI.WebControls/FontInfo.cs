@@ -311,11 +311,44 @@ namespace System.Web.UI.WebControls {
 		#region Public Instance Methods
 		public void CopyFrom(FontInfo f) 
 		{
+			//Methods CopyFrom and MergeWith behave differently between 1.1 and 2.0
+			if (f == null || f.IsEmpty)
+				return;
+
 			if (f == this)
 				return;
 
-			this.Reset();
+#if NET_2_0
+			// MS stores the property in the bag if it's value is false
+			if ((f.fontstyles & FontStyles.Bold) != 0) {
+				this.Bold = f.Bold;
+			}
 
+			if ((f.fontstyles & FontStyles.Italic) != 0) {
+				this.Italic = f.Italic;
+			}
+
+			// MS seems to have some weird behaviour, even if f's Name has been set to String.Empty we still get an empty array
+			if ((f.fontstyles & FontStyles.Names) != 0) {
+				this.Names = f.Names;
+			}
+
+			if ((f.fontstyles & FontStyles.Overline) != 0) {
+				this.Overline = f.Overline;
+			}
+
+			if ((f.fontstyles & FontStyles.Size) != 0) {
+				this.Size = f.Size;
+			}
+
+			if ((f.fontstyles & FontStyles.Strikeout) != 0) {
+				this.Strikeout = f.Strikeout;
+			}
+
+			if ((f.fontstyles & FontStyles.Underline) != 0) {
+				this.Underline = f.Underline;
+			}
+#else
 			// MS does not store the property in the bag if it's value is false
 			if (((f.fontstyles & FontStyles.Bold) != 0) && f.Bold) 
 			{
@@ -352,10 +385,41 @@ namespace System.Web.UI.WebControls {
 			{
 				this.Underline = true;
 			}
+#endif
 		}
 
 		public void MergeWith(FontInfo f) 
 		{
+			//Methods CopyFrom and MergeWith behave differently between 1.1 and 2.0
+#if NET_2_0
+			if (((fontstyles & FontStyles.Bold) == 0) && ((f.fontstyles & FontStyles.Bold) != 0)) {
+				this.Bold = f.Bold;
+			}
+
+			if (((fontstyles & FontStyles.Italic) == 0) && ((f.fontstyles & FontStyles.Italic) != 0)) {
+				this.Italic = f.Italic;
+			}
+
+			if (((fontstyles & FontStyles.Names) == 0) && ((f.fontstyles & FontStyles.Names) != 0)) {
+				this.Names = f.Names;
+			}
+
+			if (((fontstyles & FontStyles.Overline) == 0) && ((f.fontstyles & FontStyles.Overline) != 0)) {
+				this.Overline = f.Overline;
+			}
+
+			if (((fontstyles & FontStyles.Size) == 0) && ((f.fontstyles & FontStyles.Size) != 0)) {
+				this.Size = f.Size;
+			}
+
+			if (((fontstyles & FontStyles.Strikeout) == 0) && ((f.fontstyles & FontStyles.Strikeout) != 0)) {
+				this.Strikeout = f.Strikeout;
+			}
+
+			if (((fontstyles & FontStyles.Underline) == 0) && ((f.fontstyles & FontStyles.Underline) != 0)) {
+				this.Underline = f.Underline;
+			}
+#else
 			if (((fontstyles & FontStyles.Bold) == 0) && ((f.fontstyles & FontStyles.Bold) != 0) && f.Bold) 
 			{
 				this.Bold = true;
@@ -390,6 +454,7 @@ namespace System.Web.UI.WebControls {
 			{
 				this.Underline = true;
 			}
+#endif
 		}
 
 		public bool ShouldSerializeNames() 
@@ -406,6 +471,13 @@ namespace System.Web.UI.WebControls {
 
 			return this.Name + ", " + this.Size.ToString();
 		}
+#if NET_2_0
+
+		public void ClearDefaults () {
+			Reset ();
+		}
+
+#endif
 		#endregion	// Public Instance Methods
 
 		#region Private Methods

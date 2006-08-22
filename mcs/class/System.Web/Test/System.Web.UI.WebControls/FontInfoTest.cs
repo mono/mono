@@ -90,6 +90,62 @@ namespace MonoTests.System.Web.UI.WebControls
 			copy.CopyFrom (s);
 			Assert.AreEqual (s.BackColor, Color.Red, "Copy1");
 		}
+
+		[Test]
+		public void FontInfo_CopyFrom () {
+
+			//Methods CopyFrom and MergeWith behave differently between 1.1 and 2.0
+			Style s = new Style ();
+			Style copy = new Style ();
+
+			s.Font.Bold = true;
+			s.Font.Underline = false;
+
+			copy.Font.Italic = true;
+			copy.Font.Underline = true;
+
+			copy.Font.CopyFrom (s.Font);
+
+			Assert.AreEqual (true, copy.Font.Italic, "CopyFrom#1");
+			Assert.AreEqual (true, copy.Font.Bold, "CopyFrom#2");
+#if NET_2_0
+			Assert.AreEqual (false, copy.Font.Underline, "CopyFrom#3");
+#else
+			Assert.AreEqual (true, copy.Font.Underline, "CopyFrom#3");
+#endif
+		}
+		
+		[Test]
+		public void FontInfo_MergeWith () {
+
+			//Methods CopyFrom and MergeWith behave differently between 1.1 and 2.0
+			Style s = new Style ();
+			Style copy = new Style ();
+
+			s.Font.Overline = false;
+			s.Font.Bold = true;
+			s.Font.Underline = true;
+
+			copy.Font.Italic = true;
+			copy.Font.Underline = false;
+
+			copy.Font.MergeWith (s.Font);
+
+			Assert.AreEqual (true, copy.Font.Italic, "MergeWith#1");
+			Assert.AreEqual (true, copy.Font.Bold, "MergeWith#2");
+			Assert.AreEqual (false, copy.Font.Underline, "MergeWith#3");
+			Assert.AreEqual (false, copy.Font.Overline, "MergeWith#4");
+
+			Style copy2 = new Style ();
+			copy2.Font.Overline = true;
+			copy2.Font.CopyFrom (copy.Font);
+
+#if NET_2_0
+			Assert.AreEqual (false, copy2.Font.Overline, "MergeWith#5");
+#else
+			Assert.AreEqual (true, copy2.Font.Overline, "MergeWith#5");
+#endif
+		}
 	}
 }
 

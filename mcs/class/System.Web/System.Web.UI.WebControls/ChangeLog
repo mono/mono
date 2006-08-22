@@ -1,3 +1,9 @@
+2006-08-22 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* FontInfo.cs: 
+	fixed: CopyFrom and MergeWith behave differently between 1.1 and 2.0.
+	added ClearDefaults method for 2.0.
+
 2006-08-08 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* ObjectDataSourceStatusEventArgs.cs: ExceptionHandled default value
