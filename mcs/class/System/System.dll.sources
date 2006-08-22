@@ -216,6 +216,7 @@ System.ComponentModel/DesignerCategoryAttribute.cs
 System.ComponentModel/DesignerSerializationVisibilityAttribute.cs
 System.ComponentModel/DesignerSerializationVisibility.cs
 System.ComponentModel.Design/HelpContextType.cs
+System.ComponentModel.Design/HelpKeywordAttribute.cs
 System.ComponentModel.Design/HelpKeywordType.cs
 System.ComponentModel.Design/IComponentChangeService.cs
 System.ComponentModel.Design/IDesigner.cs
