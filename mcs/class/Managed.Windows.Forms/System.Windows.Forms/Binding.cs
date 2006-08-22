@@ -165,7 +165,7 @@ namespace System.Windows.Forms {
 
 		internal void PushData ()
 		{
-			if (IsBinding == false || manager.Current == null)
+			if (manager == null || manager.IsSuspended || manager.Current == null)
 				return;
 
 			if (is_null_desc != null) {
@@ -179,8 +179,7 @@ namespace System.Windows.Forms {
 			PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (binding_member_info.BindingField, true);
 			if (pd == null) {
 				data = ParseData (manager.Current, manager.Current.GetType ());
-			}
-			else {
+			} else {
 				data = ParseData (pd.GetValue (manager.Current), pd.PropertyType);
 			}
 

@@ -1,3 +1,9 @@
+2006-08-22  Jackson Harper  <jackson@ximian.com>
+
+	* Binding.cs: We don't use IsBinding because it requires the
+	control to be created, which really shouldn't be necessary just to
+	set a property on the control.
+
 2006-08-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ComboBox.cs: Some CB.ObjectCollection methods must throw
