@@ -1,3 +1,8 @@
+2006-08-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Makefile.am:
+	* mono-path.[ch]: new files with functions to handle/resolve paths.
+
 2006-08-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-compiler.h: Fix TLS definitions so libmono can be loaded dynamically as a
