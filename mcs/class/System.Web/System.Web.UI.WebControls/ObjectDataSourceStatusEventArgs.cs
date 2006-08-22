@@ -54,7 +54,7 @@ namespace System.Web.UI.WebControls
 			this.returnVal = returnVal;
 			this.outPutParam = outPutParam;
 			this.exception = e;
-			this.exceptionHandled = true;
+			this.exceptionHandled = false;
 		}
 		
 		public Exception Exception {
