@@ -1,4 +1,9 @@
 
+Tue Aug 22 15:53:29 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c: cope with the target object of a GC handle being NULL
+	(bug #78877).
+
 Tue Aug 22 11:10:33 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: recursively check parent's explicit implementations
