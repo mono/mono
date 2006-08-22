@@ -102,18 +102,15 @@ namespace System
 				return new RuntimeTypeHandle (res);
 		}
 
-		[Obsolete]
 		public RuntimeFieldHandle GetRuntimeFieldHandleFromMetadataToken (int fieldToken) {
 			return ResolveFieldHandle (fieldToken);
 		}
 
-		[Obsolete]
 		public RuntimeMethodHandle GetRuntimeMethodHandleFromMetadataToken (int methodToken)
 		{
 			return ResolveMethodHandle (methodToken);
 		}
 
-		[Obsolete]
 		public RuntimeTypeHandle GetRuntimeTypeHandleFromMetadataToken (int typeToken)
 		{
 			return ResolveTypeHandle (typeToken);

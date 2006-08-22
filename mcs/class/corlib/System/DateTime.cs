@@ -1436,7 +1436,7 @@ namespace System
 			return true;
 		}
 		
-		public static bool TryParse (string s, IFormatProvider provider, DateTimeStyles styles,  DateTime result)
+		public static bool TryParse (string s, IFormatProvider provider, DateTimeStyles styles, out DateTime result)
 		{
 			try {
 				result = Parse (s, provider, styles);

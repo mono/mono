@@ -221,12 +221,6 @@ namespace System {
 			return ToBase64String (inArray, 0, inArray.Length, options);
 		}
 
-		public static string ToBase64String (byte[] inArray, bool insertLineBreaks)
-		{
-			Base64FormattingOptions options = insertLineBreaks ? Base64FormattingOptions.InsertLineBreaks : Base64FormattingOptions.None;
-			return ToBase64String (inArray, options);
-		}
-
 		public static string ToBase64String (byte[] inArray, int offset, int length, Base64FormattingOptions options)
 		{
 			if (inArray == null)
@@ -253,12 +247,6 @@ namespace System {
 			} else {
 				return encoding.GetString (toBase64Transform.InternalTransformFinalBlock (inArray, offset, length));
 			}
-		}
-
-		public static string ToBase64String (byte[] inArray, int offset, int length, bool insertLineBreaks)
-		{
-			Base64FormattingOptions options = insertLineBreaks ? Base64FormattingOptions.InsertLineBreaks : Base64FormattingOptions.None;
-			return ToBase64String (inArray, offset, length, options);
 		}
 #endif
 

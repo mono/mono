@@ -28,6 +28,6 @@
 #if NET_2_0
 namespace System {
 	[CLSCompliant (true)]
-	public delegate D Converter <S,D> (S src);
+	public delegate TOutput Converter <TInput, TOutput> (TInput input);
 }
 #endif

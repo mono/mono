@@ -380,9 +380,12 @@ namespace System
 
 		public override string ToString ()
 		{
-			return ToString ("G", null);
+			return ToString ("G");
 		}
 
+#if NET_2_0
+	[Obsolete("Provider is ignored, just use ToString")]
+#endif
 		public string ToString (IFormatProvider provider)
 		{
 			return ToString ("G", provider);
@@ -390,9 +393,15 @@ namespace System
 
 		public string ToString (String format)
 		{
-			return ToString (format, null);
+			if (format == String.Empty || format == null)
+				format = "G";
+			
+			return Format (this.GetType (), this.get_value (), format);
 		}
 
+#if NET_2_0
+		[Obsolete("Provider is ignored, just use ToString")]
+#endif
 		public string ToString (String format, IFormatProvider provider)
 		{
 			// provider is not used for Enums

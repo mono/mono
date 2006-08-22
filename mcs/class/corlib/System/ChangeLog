@@ -1,3 +1,20 @@
+2006-08-22  Miguel de Icaza  <miguel@novell.com>
+
+	* MulticastDelegate.cs: Make DynamicInvokeImpl internal in 2.0 
+
+	* Converter.cs: update signature to final.
+
+	* ModuleHandle.cs: Removed the [Obsolete] flags as they removed
+	those in the final 2.0
+
+	* DateTime.cs: Fixed the signature. 
+
+	* Convert.cs: Removed API calls that were deprecated in final 2.0
+
+	* Enum.cs: Updated to use the obsoletes flagged in 2.0.
+
+	* ConsoleCancelEventArgs.cs: Updated to 2.0
+
 2006-08-19  Miguel de Icaza  <miguel@novell.com>
 
 	* Attribute.cs: This needs to do a deep compare, not a shallow

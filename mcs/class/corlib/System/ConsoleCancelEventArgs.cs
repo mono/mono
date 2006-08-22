@@ -29,6 +29,7 @@
 //
 #if NET_2_0
 namespace System {
+	[Serializable]
 	public sealed class ConsoleCancelEventArgs : EventArgs {
 		bool cancel;
 		ConsoleSpecialKey specialKey;
@@ -39,12 +40,6 @@ namespace System {
 		}
 
 		public ConsoleSpecialKey SpecialKey {
-			get { return specialKey; }
-			set { specialKey = value; }
-		}
-
-		[Obsolete]
-		public ConsoleSpecialKey SpecialKeys {
 			get { return specialKey; }
 		}
 	}
