@@ -1,3 +1,10 @@
+2006-08-22  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Control.cs: implemented AppRelativeTemplateSourceDirectory for aspx 
+	parser 2.0
+	* TemplateControl.jvm.cs: fixed AppRelativeVirtualPath
+	fixed TemplateSourceDirectory, should not work on master pages. 
+
 2006-08-20  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* MasterPageParser.jvm.cs: fixed path resolving GetCompiledMasterInstance

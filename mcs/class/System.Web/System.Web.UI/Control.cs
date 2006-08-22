@@ -159,18 +159,16 @@ namespace System.Web.UI
 			}
 		}
 
+		string _appRelativeTemplateSourceDirectory = "~/";
+
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string AppRelativeTemplateSourceDirectory 
 		{
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return _appRelativeTemplateSourceDirectory; }
 			[EditorBrowsable (EditorBrowsableState.Never)]
-			set {
-				throw new NotImplementedException ();
-			}
+			set	{ _appRelativeTemplateSourceDirectory = value; }
 		}
 		
 #endif		

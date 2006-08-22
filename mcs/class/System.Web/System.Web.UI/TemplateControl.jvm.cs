@@ -107,13 +107,23 @@ namespace System.Web.UI {
 			get { return null; }
 		}
 
+		[MonoTODO]
+		// This shouldnt be there, Page.TemplateSourceDirectory must know to get 
+		// the right directory of the control.
 		public override string TemplateSourceDirectory 
 		{
 			get {
+#if NET_2_0
+				if (this is MasterPage)
+					// because MasterPage also has implementation of this property,
+					// but not always gets the right directory, in case where master page
+					// is in the root of webapp and the page that uses it is in sub folder.
+					return base.TemplateSourceDirectory;
+#endif
 				int location = 0;
 				if (_templateSourceDir == null)
 				{
-					string tempSrcDir = TemplateSourceDirectory_Private;
+					string tempSrcDir = AppRelativeTemplateSourceDirectory;
 					if (tempSrcDir == null && Parent != null)
 						tempSrcDir = Parent.TemplateSourceDirectory;
 					if (tempSrcDir != null && tempSrcDir.Length > 1)
@@ -393,7 +403,7 @@ namespace System.Web.UI {
 
 #if NET_2_0
 
-	string _appRelativeVirtualPath = "/";
+	string _appRelativeVirtualPath = null;
 
 	public string AppRelativeVirtualPath
 	{
@@ -405,6 +415,9 @@ namespace System.Web.UI {
 			if (!UrlUtils.IsRooted (value) && !(value.Length > 0 && value[0] == '~'))
 				throw new ArgumentException ("The path that is set is not rooted");
 			_appRelativeVirtualPath = value;
+
+			int lastSlash = _appRelativeVirtualPath.LastIndexOf ('/');
+			AppRelativeTemplateSourceDirectory = (lastSlash > 0) ? _appRelativeVirtualPath.Substring (0, lastSlash + 1) : "~/";
 		}
 	}
 
