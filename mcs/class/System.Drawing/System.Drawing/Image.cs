@@ -730,11 +730,11 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	public int Width {
 		get {
-			int width;			
+			uint width;			
 			Status status = GDIPlus.GdipGetImageWidth (nativeObject, out width);		
 			GDIPlus.CheckStatus (status);			
 			
-			return width;
+			return (int)width;
 		}
 	}
 	

@@ -1012,7 +1012,7 @@ namespace System.Drawing
 		internal static extern Status GdipGetImageVerticalResolution ( IntPtr image, out float resolution );
 		
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipGetImageWidth ( IntPtr image, out int width);
+		internal static extern Status GdipGetImageWidth (IntPtr image, out uint width);
 		
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipGetImageBounds ( IntPtr image, out RectangleF source, ref GraphicsUnit unit );

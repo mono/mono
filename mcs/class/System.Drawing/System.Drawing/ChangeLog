@@ -1,3 +1,9 @@
+2006-08-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* gdipFunctions.cs: Fix GdipGetImageWidth to use an uint for it's
+	width out parameter.
+	* Image.cs: Cast the uint into an int for the Width property.
+
 2006-08-12  Duncan Mak  <duncan@novell.com>
 
 	* gdipFunctions.cs (GdipLoadImageFromStream):
