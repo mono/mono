@@ -1,4 +1,8 @@
 
+2006-08-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* image.c: moved 2 functions to ../utils.
+
 Tue Aug 22 15:53:29 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* gc.c: cope with the target object of a GC handle being NULL
