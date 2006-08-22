@@ -2,6 +2,9 @@
 
 	* TreeView.cs: Make sure both scrollbars get displayed and sized
 	correctly when the other bar is visible.
+	- Use the original clip rectangle for checking if the area between
+	the two scrollbars is visible, not the viewport adjusted clipping
+	rectangle.
 
 2006-08-22  Jackson Harper  <jackson@ximian.com>
 

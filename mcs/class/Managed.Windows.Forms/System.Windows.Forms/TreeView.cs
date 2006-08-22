@@ -1013,6 +1013,7 @@ namespace System.Windows.Forms {
 			dash.DashStyle = DashStyle.Dot;
 
 			Rectangle viewport = ViewportRectangle;
+			Rectangle original_clip = clip;
 			if (clip.Bottom > viewport.Bottom)
 				clip.Height = viewport.Bottom - clip.Top;
 
@@ -1033,7 +1034,7 @@ namespace System.Windows.Forms {
 
 			if (hbar.Visible && vbar.Visible) {
 				Rectangle corner = new Rectangle (hbar.Right, vbar.Bottom, vbar.Width, hbar.Height);
-				if (clip.IntersectsWith (corner))
+				if (original_clip.IntersectsWith (corner))
 					dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorControl),
 							corner);
 			}
