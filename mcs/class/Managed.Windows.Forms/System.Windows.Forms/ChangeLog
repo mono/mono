@@ -1,5 +1,10 @@
 2006-08-22  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: Make sure both scrollbars get displayed and sized
+	correctly when the other bar is visible.
+
+2006-08-22  Jackson Harper  <jackson@ximian.com>
+
 	* Binding.cs: We don't use IsBinding because it requires the
 	control to be created, which really shouldn't be necessary just to
 	set a property on the control.

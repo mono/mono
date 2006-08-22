@@ -1324,8 +1324,11 @@ namespace System.Windows.Forms {
 				if (!vbar_bounds_set) {
 					vbar.Bounds = new Rectangle (ClientRectangle.Width - vbar.Width, 0, vbar.Width,
 							ClientRectangle.Height -
-							(hbar.Visible ? SystemInformation.VerticalScrollBarWidth : 0));
+							(horz ? SystemInformation.VerticalScrollBarWidth : 0));
 					vbar_bounds_set = true;
+
+					// We need to recalc the hbar if the vbar is now visible
+					hbar_bounds_set = false;
 				}
 
 				vbar.Visible = true;
@@ -1346,8 +1349,7 @@ namespace System.Windows.Forms {
 
 				if (!hbar_bounds_set) {
 					hbar.Bounds = new Rectangle (0, ClientRectangle.Height - hbar.Height,
-							ClientRectangle.Width - (vbar.Visible ?
-									SystemInformation.HorizontalScrollBarHeight : 0),
+							ClientRectangle.Width - (vert ? SystemInformation.VerticalScrollBarWidth : 0),
 							hbar.Height);
 					hbar_bounds_set = true;
 				}
@@ -1369,12 +1371,12 @@ namespace System.Windows.Forms {
 
 			if (vbar.Visible) {
 				vbar.Bounds = new Rectangle (ClientRectangle.Width - vbar.Width, 0, vbar.Width,
-						ClientRectangle.Height - (hbar.Visible ? SystemInformation.VerticalScrollBarWidth : 0));
+						ClientRectangle.Height - (hbar.Visible ? SystemInformation.HorizontalScrollBarHeight : 0));
 			}
 
 			if (hbar.Visible) {
 				hbar.Bounds = new Rectangle (0, ClientRectangle.Height - hbar.Height,
-						ClientRectangle.Width - (vbar.Visible ? SystemInformation.HorizontalScrollBarHeight : 0), hbar.Height);
+						ClientRectangle.Width - (vbar.Visible ? SystemInformation.VerticalScrollBarWidth : 0), hbar.Height);
 			}
 		}
 
