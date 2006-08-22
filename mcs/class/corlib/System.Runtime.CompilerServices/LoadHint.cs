@@ -32,6 +32,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Runtime.CompilerServices {
 
+	[Serializable]
 	public enum LoadHint {
 		Default = 0,
 

@@ -41,6 +41,7 @@ namespace System.Runtime.CompilerServices
 #endif
 #if NET_2_0
  [ComVisible (true)]
+ [Serializable]
 #endif
 public enum MethodCodeType
 {

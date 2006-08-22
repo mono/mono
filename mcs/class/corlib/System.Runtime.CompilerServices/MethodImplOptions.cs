@@ -45,6 +45,7 @@ namespace System.Runtime.CompilerServices {
 #if NET_2_0
 	[Flags]
 	[ComVisible (true)]
+	[Serializable]
 #endif
 	public enum MethodImplOptions {
 
