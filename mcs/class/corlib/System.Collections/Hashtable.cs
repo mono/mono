@@ -737,11 +737,10 @@ namespace System.Collections {
 			if (key == null)
 				throw new ArgumentNullException ("key", "null key");
 
-			uint size = (uint)this.table.Length;
-			if (this.inUse >= this.threshold) {
+			if (this.inUse >= this.threshold) 
 				this.Rehash ();
-				size = (uint)this.table.Length;
-			}
+
+			uint size = (uint)this.table.Length;
 
 			int h = this.GetHash (key) & Int32.MaxValue;
 			uint spot = (uint)h;
@@ -818,7 +817,9 @@ namespace System.Collections {
 		internal static bool TestPrime (int x)
 		{
 			if ((x & 1) != 0) {
-				for (int n = 3; n< (int)Math.Sqrt (x); n += 2) {
+				int top = (int)Math.Sqrt (x);
+				
+				for (int n = 3; n < top; n += 2) {
 					if ((x % n) == 0)
 						return false;
 				}

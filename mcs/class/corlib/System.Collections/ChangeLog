@@ -1,3 +1,10 @@
+2006-08-16  Miguel de Icaza  <miguel@novell.com>
+
+	* Hashtable.cs (PutImpl): Do not access the table twice, only
+	once. 
+	
+	(TestPrime): optimize, take the sqrt out of the loop.
+
 2006-08-08  Duncan Mak  <duncan@novell.com>
 
 	* ReadOnlyCollectionBase.cs (Count): Mark as virtual in
