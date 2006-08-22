@@ -1,3 +1,8 @@
+2006-08-22 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* SubMenuStyle.cs: fixed:
+	Unit.ToString() already include unit (e.g. "3px")
+
 2006-08-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Style.cs:

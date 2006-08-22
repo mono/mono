@@ -132,12 +132,12 @@ namespace System.Web.UI.WebControls
 		{
 			base.FillStyleAttributes (attributes, urlResolver);
 			if (IsSet (HORZ_PADD)) {
-				attributes.Add (HtmlTextWriterStyle.PaddingLeft, HorizontalPadding.ToString () + "px");
-				attributes.Add (HtmlTextWriterStyle.PaddingRight, HorizontalPadding.ToString () + "px");
+				attributes.Add (HtmlTextWriterStyle.PaddingLeft, HorizontalPadding.ToString ());
+				attributes.Add (HtmlTextWriterStyle.PaddingRight, HorizontalPadding.ToString ());
 			}
 			if (IsSet (VERT_PADD)) {
-				attributes.Add (HtmlTextWriterStyle.PaddingTop, VerticalPadding.ToString () + "px");
-				attributes.Add (HtmlTextWriterStyle.PaddingBottom, VerticalPadding.ToString () + "px");
+				attributes.Add (HtmlTextWriterStyle.PaddingTop, VerticalPadding.ToString ());
+				attributes.Add (HtmlTextWriterStyle.PaddingBottom, VerticalPadding.ToString ());
 			}
 		}
 
