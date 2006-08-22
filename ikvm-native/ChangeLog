@@ -1,3 +1,9 @@
+
+Tue Aug 22 17:16:53 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: link to libgmodule (patch by Alexander Larsson
+	alexl@redhat.com).
+
 2005-06-08  Ben Maurer  <bmaurer@ximian.com>
 
 	* Makefile.am: Avoid versioning. We aren't going to be a strongly
