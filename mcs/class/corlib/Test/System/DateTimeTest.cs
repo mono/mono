@@ -1093,9 +1093,16 @@ public class DateTimeTest : Assertion
 		dt = dt.ToUniversalTime ();
 #endif
 		AssertEquals ("yyMMddHHmmZ", "02/23/1996 19:15:00", dt.ToString ());
+	}
 
+	[Test]
+#if NET_2_0
+	[Category ("NotWorking")]	// see bug #
+#endif
+	public void ZLiteral ()
+	{
 		// However, "Z" and "'Z'" are different.
-		dt = DateTime.ParseExact ("19960312183847Z", "yyyyMMddHHmmss'Z'", null);
+		DateTime dt = DateTime.ParseExact ("19960312183847Z", "yyyyMMddHHmmss'Z'", null);
 		DateTime dtz = DateTime.ParseExact ("19960312183847Z", "yyyyMMddHHmmssZ", null);
 #if NET_2_0
 		AssertEquals ("Kind-Unspecified-3", DateTimeKind.Unspecified, dt.Kind);

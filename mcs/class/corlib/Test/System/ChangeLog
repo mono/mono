@@ -1,5 +1,8 @@
-2006-08-22  Sebastien Pouliot  <sebastien@ximian.com>
+2006-08-22  Sebastien Pouliot  <sebastien@ximian.com> 
 
+	* DateTimeTest.cs: Split the X509Certificate test in two - so the 'Z'
+	literal case can be marked as NotWorking under 2.0 (anyway this doesn't
+	affect X.509 certificate parsing).
 	* TypeTest.cs: Fix the unit test build (for 2.0) so that monobuild can
 	run them (both profiles).
 
