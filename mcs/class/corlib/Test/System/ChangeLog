@@ -1,3 +1,8 @@
+2006-08-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TypeTest.cs: Fix the unit test build (for 2.0) so that monobuild can
+	run them (both profiles).
+
 2006-08-19  Miguel de Icaza  <miguel@novell.com>
 
 	* StringTest.cs: Add test.
