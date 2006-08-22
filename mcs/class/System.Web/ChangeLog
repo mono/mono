@@ -1,3 +1,7 @@
+2006-08-22  Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* System.Web20.vmwcsproj: added AssemblyInfo.cs
+
 2006-08-16 Yoni Klain <yonik@mainsoft.com>
 	
 	* System.Web_test.dll.sources:add new DataSourceViewTest.cs; DataSourceControlTest.cs		 

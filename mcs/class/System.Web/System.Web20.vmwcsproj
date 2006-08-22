@@ -1080,6 +1080,7 @@
 		<Compile Include="..\..\build\common\Consts.cs.in">
 			<Link>Consts.cs.in</Link>
 		</Compile>
+		<Compile Include="Assembly\AssemblyInfo.cs" />
 		<Compile Include="System.Web.Compilation\ILocation.cs">
 			<SubType>Code</SubType>
 		</Compile>
