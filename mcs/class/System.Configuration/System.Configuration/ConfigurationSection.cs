@@ -65,7 +65,9 @@ namespace System.Configuration
 		{
 			// FIXME: this hack is nasty. We should make some
 			// refactory on the entire assembly.
-			if (SectionHandler != null && RawXml != null) {
+			if (SectionHandler != null) {
+				if (RawXml == null)
+					return null;
 				XmlDocument doc = new XmlDocument ();
 				doc.LoadXml (RawXml);
 				return SectionHandler.Create (null, null, doc.DocumentElement);
