@@ -1,3 +1,7 @@
+2006-08-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c: implement support for ShadowCopyFiles.
+
 2006-08-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* string-icalls.c: Add shortcut in ves_icall_System_String_ctor_charp
