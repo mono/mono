@@ -2395,8 +2395,6 @@ namespace System.Windows.Forms
 				rows_area.Width += RowHeaderWidth;
 			}
 
-			rows_area.Height = cells_area.Height - cells_area.Height % RowHeight;
-
 			/* scroll the window */
 			XplatUI.ScrollWindow (Handle, rows_area, 0, pixels, false);
 
@@ -2791,9 +2789,6 @@ namespace System.Windows.Forms
 			visiblerow_count = GetVisibleRowCount (cells_area.Height);
 
 			CalcRowHeaders (); // Height depends on num of visible rows
-
-			// XXX
-			Invalidate ();
 		}
 
 

@@ -1,5 +1,9 @@
 2006-08-23  Chris Toshok  <toshok@ximian.com>
 
+	* DataGrid.cs: fix flickering when scrolling vertically.
+
+2006-08-23  Chris Toshok  <toshok@ximian.com>
+
 	* DataGrid.cs (EndEdit): only invalidate the row header when we
 	need to.
 
