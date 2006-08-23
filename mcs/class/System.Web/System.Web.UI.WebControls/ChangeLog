@@ -1,5 +1,12 @@
 2006-08-23 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Style.cs:
+	* FontInfo.cs: 
+	fixed: AddAttributesToRender method calls FillStyleAttributes,
+	text styles applied correct.
+
+2006-08-23 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* FontInfo.cs: 
 	fixed: when removed the names from the bag also removed FontStyles.Names flag from fontstyles.
 	refactoring: Name and Names properties has same source in bag.

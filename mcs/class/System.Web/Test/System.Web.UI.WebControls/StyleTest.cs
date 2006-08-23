@@ -77,6 +77,15 @@ namespace MonoTests.System.Web.UI.WebControls
 				}
 			}
 		}
+
+		public override void AddAttributesToRender (HtmlTextWriter writer, WebControl owner) {
+			base.AddAttributesToRender (writer, owner);
+		}
+
+		protected override void FillStyleAttributes (CssStyleCollection attributes, IUrlResolutionService urlResolver) {
+			base.FillStyleAttributes (attributes, urlResolver);
+			attributes.Add ("FillStyleAttributes", "FillStyleAttributes");
+		}
 #endif
 
 		public string[] KeyValuePairs() {
@@ -368,6 +377,93 @@ namespace MonoTests.System.Web.UI.WebControls
 			s = new Style ();
 			p.Header.StyleSheet.RegisterStyle (s, p);
 			Assert.AreEqual (false, s.IsEmpty, "AddRegisteredCssClassAttribute#8");
+		}
+
+		[Test]
+		public void Style_AddAttributesToRender_use_FillStyleAttributes () {
+			StringWriter sw = new StringWriter ();
+			HtmlTextWriter tw = new HtmlTextWriter (sw);
+			StyleTestClass s = new StyleTestClass ();
+			s.AddAttributesToRender (tw);
+			tw.RenderBeginTag ("span");
+			tw.RenderEndTag ();
+			HtmlDiff.AssertAreEqual ("<span style=\"FillStyleAttributes:FillStyleAttributes;\" />", sw.ToString (), "AddAttributesToRender_use_FillStyleAttributes#2");
+		}
+
+		[Test]
+		public void Style_GetStyleAttributes () {
+			Style s;
+			CssStyleCollection css;
+
+			s = new Style ();
+			css = s.GetStyleAttributes (null);
+			Assert.AreEqual (0, css.Count, "GetStyleAttributes#1");
+
+			s.Font.Bold = true;
+			s.Font.Italic = true;
+			s.Font.Size = 10;
+			s.Font.Names = new string [] { "Arial", "Veranda" };
+			s.Font.Overline = true;
+			s.Font.Strikeout = true;
+			s.Font.Underline = true;
+			css = s.GetStyleAttributes (null);
+			Assert.AreEqual ("bold", css ["font-weight"], "GetStyleAttributes#2");
+			Assert.AreEqual ("italic", css ["font-style"], "GetStyleAttributes#3");
+			Assert.AreEqual ("10pt", css ["font-size"], "GetStyleAttributes#4");
+			Assert.AreEqual ("Arial,Veranda", css ["font-family"], "GetStyleAttributes#5");
+			Assert.AreEqual (true, css ["text-decoration"].Contains ("overline"), "GetStyleAttributes#6");
+			Assert.AreEqual (true, css ["text-decoration"].Contains ("line-through"), "GetStyleAttributes#7");
+			Assert.AreEqual (true, css ["text-decoration"].Contains ("underline"), "GetStyleAttributes#8");
+
+			s.Font.Names = null;
+			css = s.GetStyleAttributes (null);
+			Assert.AreEqual (null, css ["font-family"], "GetStyleAttributes#9");
+
+			s.Font.Name = "Arial, Veranda";
+			css = s.GetStyleAttributes (null);
+			Assert.AreEqual ("Arial, Veranda", css ["font-family"], "GetStyleAttributes#10");
+
+			s.Font.Name = "";
+			css = s.GetStyleAttributes (null);
+			Assert.AreEqual (null, css ["font-family"], "GetStyleAttributes#11");
+
+			s.Font.Bold = false;
+			s.Font.Italic = false;
+			s.Font.Size = FontUnit.Empty;
+			s.Font.Overline = false;
+			s.Font.Strikeout = false;
+			s.Font.Underline = false;
+			css = s.GetStyleAttributes (null);
+			Assert.AreEqual ("normal", css ["font-weight"], "GetStyleAttributes#12");
+			Assert.AreEqual ("normal", css ["font-style"], "GetStyleAttributes#13");
+			Assert.AreEqual (null, css ["font-size"], "GetStyleAttributes#14");
+			Assert.AreEqual ("none", css ["text-decoration"], "GetStyleAttributes#15");
+
+			s.Reset ();
+			css = s.GetStyleAttributes (null);
+			Assert.AreEqual (0, css.Count, "GetStyleAttributes#16");
+
+			s.Reset ();
+			s.Font.Underline = false;
+			css = s.GetStyleAttributes (null);
+			Assert.AreEqual ("none", css ["text-decoration"], "GetStyleAttributes#17");
+
+			s.Reset ();
+			s.BorderWidth = 1;
+			s.BorderStyle = BorderStyle.Dashed;
+			css = s.GetStyleAttributes (null);
+			Assert.AreEqual ("Dashed", css ["border-style"], "GetStyleAttributes#18");
+			Assert.AreEqual ("1px", css ["border-width"], "GetStyleAttributes#19");
+
+			s.BorderStyle = BorderStyle.NotSet;
+			css = s.GetStyleAttributes (null);
+			Assert.AreEqual ("solid", css ["border-style"], "GetStyleAttributes#20");
+			Assert.AreEqual ("1px", css ["border-width"], "GetStyleAttributes#21");
+
+			s.BorderWidth = 0;
+			css = s.GetStyleAttributes (null);
+			Assert.AreEqual (null, css ["border-style"], "GetStyleAttributes#22");
+			Assert.AreEqual ("0px", css ["border-width"], "GetStyleAttributes#23");
 		}
 #endif
 

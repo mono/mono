@@ -517,6 +517,61 @@ namespace System.Web.UI.WebControls {
 				fontstyles |= FontStyles.Underline;
 			}
 		}
+
+#if NET_2_0
+		internal void FillStyleAttributes (CssStyleCollection attributes, bool alwaysRenderTextDecoration) {
+			if (IsEmpty) {
+				if(alwaysRenderTextDecoration)
+					attributes.Add (HtmlTextWriterStyle.TextDecoration, "none");
+				return;
+			}
+
+			string s;
+			// Fonts are a bit weird
+			s = String.Join (",", Names);
+			if (s.Length > 0) {
+				attributes.Add (HtmlTextWriterStyle.FontFamily, s);
+			}
+
+			if ((fontstyles & FontStyles.Bold) != 0) {
+				attributes.Add (HtmlTextWriterStyle.FontWeight, Bold ? "bold" : "normal");
+			}
+
+			if ((fontstyles & FontStyles.Italic) != 0) {
+				attributes.Add (HtmlTextWriterStyle.FontStyle, Italic ? "italic" : "normal");
+			}
+
+			if (!Size.IsEmpty) {
+				attributes.Add (HtmlTextWriterStyle.FontSize, Size.ToString ());
+			}
+
+			// These styles are munged into a attribute decoration
+			s = string.Empty;
+			bool hasTextDecoration = false;
+
+			if ((fontstyles & FontStyles.Overline) != 0) {
+				if (Overline)
+					s += "overline ";
+				hasTextDecoration = true;
+			}
+
+			if ((fontstyles & FontStyles.Strikeout) != 0) {
+				if (Strikeout)
+					s += "line-through ";
+				hasTextDecoration = true;
+			}
+
+			if ((fontstyles & FontStyles.Underline) != 0) {
+				if (Underline)
+					s += "underline ";
+				hasTextDecoration = true;
+			}
+
+			s = (s.Length > 0) ? s.Trim () : (alwaysRenderTextDecoration || hasTextDecoration) ? "none" : "";
+			if (s.Length > 0)
+				attributes.Add (HtmlTextWriterStyle.TextDecoration, s);
+		}
+#endif
 		#endregion	// Private Methods
 
 

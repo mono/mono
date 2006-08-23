@@ -426,7 +426,14 @@ namespace System.Web.UI.WebControls {
 
 		void WriteStyleAttributes (HtmlTextWriter writer) 
 		{
-			string		s;
+#if NET_2_0
+			CssStyleCollection col = new CssStyleCollection (new StateBag ());
+			FillStyleAttributes (col, null);
+			foreach (string key in col.Keys) {
+				writer.AddStyleAttribute (key, col [key]);
+			}
+#else
+			string s;
 			Color		color;
 			BorderStyle	bs;
 			Unit		u;
@@ -517,11 +524,12 @@ namespace System.Web.UI.WebControls {
 				if (s != "")
 					writer.AddStyleAttribute (HtmlTextWriterStyle.TextDecoration, s);
 			}
+#endif
 		}
 
+#if NET_2_0
 		void FillStyleAttributes (CssStyleCollection attributes) 
 		{
-			string		s;
 			Color		color;
 			BorderStyle	bs;
 			Unit		u;
@@ -540,18 +548,25 @@ namespace System.Web.UI.WebControls {
 					attributes.Add (HtmlTextWriterStyle.BorderColor, ColorTranslator.ToHtml(color));
 			}
 
-			if ((styles & Styles.BorderStyle) != 0) 
-			{
-				bs = (BorderStyle)viewstate["BorderStyle"];
-				if (bs != BorderStyle.NotSet) 
-					attributes.Add (HtmlTextWriterStyle.BorderStyle, bs.ToString());
+			bool have_width = false;
+			if ((styles & Styles.BorderWidth) != 0) {
+				u = (Unit) viewstate ["BorderWidth"];
+				if (!u.IsEmpty) {
+					if (u.Value > 0)
+						have_width = true;
+					attributes.Add (HtmlTextWriterStyle.BorderWidth, u.ToString ());
+				}
 			}
 
-			if ((styles & Styles.BorderWidth) != 0) 
-			{
-				u = (Unit)viewstate["BorderWidth"];
-				if (!u.IsEmpty)
-					attributes.Add (HtmlTextWriterStyle.BorderWidth, u.ToString());
+			if ((styles & Styles.BorderStyle) != 0) {
+				bs = (BorderStyle) viewstate ["BorderStyle"];
+				if (bs != BorderStyle.NotSet)
+					attributes.Add (HtmlTextWriterStyle.BorderStyle, bs.ToString ());
+				else if (have_width)
+						attributes.Add (HtmlTextWriterStyle.BorderStyle, "solid");
+			}
+			else if (have_width) {
+				attributes.Add (HtmlTextWriterStyle.BorderStyle, "solid");
 			}
 
 			if ((styles & Styles.ForeColor) != 0) 
@@ -575,56 +590,9 @@ namespace System.Web.UI.WebControls {
 					attributes.Add (HtmlTextWriterStyle.Width, u.ToString());
 			}
 
-			if (!Font.IsEmpty) {
-				// Fonts are a bit weird
-				if (fontinfo.Name != string.Empty) 
-				{
-					s = fontinfo.Names[0];
-					for (int i = 1; i < fontinfo.Names.Length; i++) 
-					{
-						s += "," + fontinfo.Names[i];
-					}
-					attributes.Add (HtmlTextWriterStyle.FontFamily, s);
-				}
-
-				if (fontinfo.Bold) 
-				{
-					attributes.Add (HtmlTextWriterStyle.FontWeight, "bold");
-				}
-
-				if (fontinfo.Italic) 
-				{
-					attributes.Add (HtmlTextWriterStyle.FontStyle, "italic");
-				}
-
-				if (!fontinfo.Size.IsEmpty) 
-				{
-					attributes.Add (HtmlTextWriterStyle.FontSize, fontinfo.Size.ToString());
-				}
-
-				// These styles are munged into a attribute decoration
-				s = string.Empty;
-
-				if (fontinfo.Overline) 
-				{
-					s += "overline ";
-				}
-
-				if (fontinfo.Strikeout) 
-				{
-					s += "line-through ";
-				}
-
-				if (fontinfo.Underline) 
-				{
-					s += "underline ";
-				}
-
-				s = (s != "") ? s : AlwaysRenderTextDecoration ? "none" : "";
-				if (s != "")
-					attributes.Add (HtmlTextWriterStyle.TextDecoration, s);
-			}
+			Font.FillStyleAttributes (attributes, AlwaysRenderTextDecoration);
 		}
+#endif
 
 		public virtual void CopyFrom(Style s) 
 		{

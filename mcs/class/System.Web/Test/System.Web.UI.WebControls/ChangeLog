@@ -1,5 +1,11 @@
 2006-08-23 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* StyleTest.cs: 
+	added tests ensure that AddAttributesToRender method calls FillStyleAttributes
+	and style attributes work properly.
+
+2006-08-23 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* FontInfoTest.cs: added test 
 
 2006-08-22 Igor Zelmanovich <igorz@mainsoft.com>

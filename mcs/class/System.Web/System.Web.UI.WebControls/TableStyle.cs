@@ -224,17 +224,15 @@ namespace System.Web.UI.WebControls {
 				writer.AddAttribute (HtmlTextWriterAttribute.Border, BorderWidth.Value.ToString (CultureInfo.InvariantCulture));
 			}
 
+#if !NET_2_0
 			string s = BackImageUrl;
 			if (s.Length > 0) {
 				if (owner != null)
 					s = owner.ResolveClientUrl (s);
-#if NET_2_0
-				s = s.Replace (" ", "%20");
-#else
 				s = String.Concat ("url(", s, ")");
-#endif
 				writer.AddStyleAttribute (HtmlTextWriterStyle.BackgroundImage, s);
 			}
+#endif
 		}
 
 		private void Copy (string name, Styles s, Style source)
