@@ -96,14 +96,14 @@ namespace MonoCasTests.System.Web {
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void WriteStringInvalidArg2 ()
 		{
-			writer.Write ("hello", -1, 0);
+			writer.WriteString ("hello", -1, 0);
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void WriteStringInvalidArg3 ()
 		{
-			writer.Write ("hello", 0, 10);
+			writer.WriteString ("hello", 0, 10);
 		}
 	}
 }

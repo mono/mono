@@ -1,3 +1,7 @@
+2006-08-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWriter.cs: call WriteString instead of Write. Fixes the test.
+
 2006-07-10  Andrew Skiba <andrews@mainsoft.com>
 
 	* StaticSiteMapProviderTest.cs: run 3 tests in web context,
