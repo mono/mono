@@ -2348,6 +2348,11 @@ namespace System.Windows.Forms
 				pixels = horiz_pixeloffset - pixel;
 
 			Rectangle area = cells_area;
+
+			if (ColumnHeadersVisible == true) {
+				area.Y -= ColumnHeadersArea.Height;
+				area.Height += ColumnHeadersArea.Height;
+			}
 				
 			horiz_pixeloffset = pixel;
 			UpdateVisibleColumn ();
@@ -2384,6 +2389,11 @@ namespace System.Windows.Forms
 			EndEdit ();
 
 			Rectangle rows_area = cells_area; // Cells area - partial rows space
+
+			if (RowHeadersVisible) {
+				rows_area.X -= RowHeaderWidth;
+				rows_area.Width += RowHeaderWidth;
+			}
 
 			rows_area.Height = cells_area.Height - cells_area.Height % RowHeight;
 
