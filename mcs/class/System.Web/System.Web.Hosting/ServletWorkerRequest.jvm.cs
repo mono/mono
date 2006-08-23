@@ -97,7 +97,15 @@ namespace System.Web.Hosting {
 			_HttpServletRequest = req;
 			_HttpServletResponse = resp;
 
-			_requestUri = HttpUtility.UrlDecode(req.getRequestURI());
+			string contextPath = req.getContextPath();
+			string requestURI = req.getRequestURI();
+			if (String.CompareOrdinal(requestURI, contextPath) == 0 ||
+				(((requestURI.Length - contextPath.Length) == 1) &&
+					requestURI[contextPath.Length] == '/' &&
+					String.CompareOrdinal(requestURI, 0, contextPath, 0, contextPath.Length) == 0 ))
+				requestURI = contextPath + req.getServletPath();	
+
+			_requestUri = HttpUtility.UrlDecode(requestURI);
 			const int dotInvokeLength = 7; //".invoke".Length
 			if (_requestUri.Length > dotInvokeLength &&
 				String.CompareOrdinal(".invoke", 0, _requestUri, 
@@ -154,8 +162,7 @@ namespace System.Web.Hosting {
 		public override string GetAppPath () {
 			return _HttpServletRequest.getContextPath();
 		}
-
-		public override string GetAppPathTranslated () {
+   		public override string GetAppPathTranslated () {
 			return J2EEUtils.GetApplicationRealPath(_HttpServlet.getServletConfig());;
 		}
 
