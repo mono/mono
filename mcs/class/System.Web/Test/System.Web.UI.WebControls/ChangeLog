@@ -1,3 +1,7 @@
+2006-08-23 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* FontInfoTest.cs: added test 
+
 2006-08-22 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* FontInfoTest.cs: added test: CopyFrom and MergeWith behave differently between 1.1 and 2.0 

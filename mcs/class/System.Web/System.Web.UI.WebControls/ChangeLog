@@ -1,5 +1,11 @@
 2006-08-23 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* FontInfo.cs: 
+	fixed: when removed the names from the bag also removed FontStyles.Names flag from fontstyles.
+	refactoring: Name and Names properties has same source in bag.
+
+2006-08-23 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Style.cs: restored r63894: for 1.x is refactoring only
 
 2006-08-22 Igor Zelmanovich <igorz@mainsoft.com>
