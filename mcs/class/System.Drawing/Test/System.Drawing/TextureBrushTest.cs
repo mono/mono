@@ -281,6 +281,7 @@ namespace MonoTests.System.Drawing {
 
 		[Test]
 		[NUnit.Framework.Category ("NotDotNet")] // AccessViolationException under 2.0
+		[ExpectedException (typeof (ArgumentException))]
 		public void Dispose_Image ()
 		{
 			TextureBrush t = new TextureBrush (image);
@@ -329,6 +330,7 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
 		public void RotateTransform ()
 		{
 			TextureBrush t = new TextureBrush (image);
@@ -406,7 +408,6 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (1, elements[5], 0.1, "matrix.5");
 
 			t.TranslateTransform (-1, -1);
-			// strangely lgb.Transform.IsIdentity is false
 			elements = t.Transform.Elements;
 			Assert.AreEqual (1, elements[0], 0.1, "revert.matrix.0");
 			Assert.AreEqual (0, elements[1], 0.1, "revert.matrix.1");
