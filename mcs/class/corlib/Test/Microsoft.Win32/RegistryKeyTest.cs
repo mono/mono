@@ -1249,18 +1249,35 @@ namespace MonoTests.Microsoft.Win32
 
 					createdKey.SetValue ("name1", "value1");
 					createdKey.SetValue ("name2", "value2");
+					createdKey.SetValue ("namelong", "value3");
+					createdKey.SetValue ("name3", "value4");
 
+					Assert.AreEqual (4, createdKey.ValueCount, "#B1");
 					names = createdKey.GetValueNames ();
-					Assert.IsNotNull (names, "#B1");
-					Assert.AreEqual (2, names.Length, "#B2");
-					// TODO: check content, but Mono uses hashtable so names
-					// are not returned in order
+					Assert.IsNotNull (names, "#B2");
+					Assert.AreEqual (4, names.Length, "#B3");
 				}
 
-				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+				using (RegistryKey createdKey = Registry.CurrentUser.OpenSubKey (subKeyName, true)) {
 					string [] names = createdKey.GetValueNames ();
 					Assert.IsNotNull (names, "#C1");
-					Assert.AreEqual (2, names.Length, "#C2");
+					Assert.AreEqual (4, names.Length, "#C2");
+
+					// Mono's Unix registry API uses a hashtable to store the
+					// values (and their names), so names are not returned in
+					// order
+					//
+					// to test whether the names returned by GetValueNames
+					// match what we expect, we use these names to remove the
+					// the values from the created keys and such we should end
+					// up with zero values
+					for (int i = 0; i < names.Length; i++) {
+						string valueName = names [i];
+						createdKey.DeleteValue (valueName);
+					}
+
+					// all values should be removed now
+					Assert.AreEqual (0, createdKey.ValueCount, "#C3");
 				}
 			} finally {
 				try {
@@ -1327,18 +1344,39 @@ namespace MonoTests.Microsoft.Win32
 			RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName);
 			try {
 				// check if key was successfully created
-				Assert.IsNotNull (createdKey, "#1");
+				Assert.IsNotNull (createdKey, "#A");
+
 				RegistryKey subKey = createdKey.CreateSubKey ("foo");
-				Assert.IsNotNull (subKey, "#2");
-				Assert.AreEqual (1, createdKey.SubKeyCount, "#3");
+				Assert.IsNotNull (subKey, "#B1");
+				Assert.AreEqual (1, createdKey.SubKeyCount, "#B2");
 				string[] subKeyNames = createdKey.GetSubKeyNames ();
-				Assert.IsNotNull (subKeyNames, "#4");
-				Assert.AreEqual (1, subKeyNames.Length, "#5");
-				Assert.AreEqual ("foo", subKeyNames[0], "#6");
+				Assert.IsNotNull (subKeyNames, "#B3");
+				Assert.AreEqual (1, subKeyNames.Length, "#B4");
+				Assert.AreEqual ("foo", subKeyNames[0], "#B5");
+
+				subKey = createdKey.CreateSubKey ("longfoo");
+				Assert.IsNotNull (subKey, "#C1");
+				Assert.AreEqual (2, createdKey.SubKeyCount, "#C2");
+				subKeyNames = createdKey.GetSubKeyNames ();
+				Assert.IsNotNull (subKeyNames, "#C3");
+				Assert.AreEqual (2, subKeyNames.Length, "#C4");
+				Assert.AreEqual ("foo", subKeyNames [0], "#C5");
+				Assert.AreEqual ("longfoo", subKeyNames [1], "#C6");
+
+				subKey = createdKey.CreateSubKey ("sfoo");
+				Assert.IsNotNull (subKey, "#D1");
+				Assert.AreEqual (3, createdKey.SubKeyCount, "#D2");
+				subKeyNames = createdKey.GetSubKeyNames ();
+				Assert.IsNotNull (subKeyNames, "#D3");
+				Assert.AreEqual (3, subKeyNames.Length, "#D4");
+				Assert.AreEqual ("foo", subKeyNames [0], "#D5");
+				Assert.AreEqual ("longfoo", subKeyNames [1], "#D6");
+				Assert.AreEqual ("sfoo", subKeyNames [2], "#D7");
+
 				foreach (string name in subKeyNames) {
 					createdKey.DeleteSubKeyTree (name);
 				}
-				Assert.AreEqual (0, createdKey.SubKeyCount, "#7");
+				Assert.AreEqual (0, createdKey.SubKeyCount, "#E");
 			} finally {
 				// clean-up
 				Registry.CurrentUser.DeleteSubKeyTree (subKeyName);

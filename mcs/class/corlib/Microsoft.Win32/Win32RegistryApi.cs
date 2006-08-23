@@ -78,7 +78,7 @@ namespace Microsoft.Win32
 		private static extern int RegDeleteValue (IntPtr keyHandle, string valueName);
 
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegEnumKey")]
-		private static extern int RegEnumKey (IntPtr keyBase, int index, [Out] byte[] nameBuffer, int bufferLength);
+		private static extern int RegEnumKey (IntPtr keyBase, int index, StringBuilder nameBuffer, int bufferLength);
 
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegEnumValue")]
 		private static extern int RegEnumValue (IntPtr keyBase, 
@@ -306,12 +306,13 @@ namespace Microsoft.Win32
 		
 		public int SubKeyCount (RegistryKey rkey)
 		{
-			int index, result;
-			byte[] stringBuffer = new byte [BufferMaxLength];
+			int index;
+			StringBuilder stringBuffer = new StringBuilder (BufferMaxLength);
 			IntPtr handle = GetHandle (rkey);
 			
 			for (index = 0; true; index ++) {
-				result = RegEnumKey (handle, index, stringBuffer, BufferMaxLength);
+				int result = RegEnumKey (handle, index, stringBuffer,
+					stringBuffer.Capacity);
 
 				if (result == Win32ResultCode.MarkedForDeletion)
 					throw RegistryKey.CreateMarkedForDeletionException ();
@@ -445,15 +446,15 @@ namespace Microsoft.Win32
 		public string [] GetSubKeyNames (RegistryKey rkey)
 		{
 			IntPtr handle = GetHandle (rkey);
-			byte[] buffer = new byte [BufferMaxLength];
-			int bufferCapacity = BufferMaxLength;
+			StringBuilder buffer = new StringBuilder (BufferMaxLength);
 			ArrayList keys = new ArrayList ();
 				
 			for (int index = 0; true; index ++) {
-				int result = RegEnumKey (handle, index, buffer, bufferCapacity);
+				int result = RegEnumKey (handle, index, buffer, buffer.Capacity);
 
 				if (result == Win32ResultCode.Success) {
-					keys.Add (RegistryKey.DecodeString (buffer));
+					keys.Add (buffer.ToString ());
+					buffer.Length = 0;
 					continue;
 				}
 

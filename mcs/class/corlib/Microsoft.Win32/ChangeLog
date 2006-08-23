@@ -1,3 +1,9 @@
+2006-08-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Win32RegistryApi.cs: Use a StringBuilder instead of byte [] for
+	RegEnumKey. Fixed issue in GetSubKeyNames where buffer was not cleared
+	while iterating over subkeys.
+
 2006-08-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* RegistryValueOptions.cs: Add the real one.
