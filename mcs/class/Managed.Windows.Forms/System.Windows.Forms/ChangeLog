@@ -1,3 +1,8 @@
+2006-08-23  Chris Toshok  <toshok@ximian.com>
+
+	* ThemeWin32Classic.cs (DataGridPaintRows): calculate the proper
+	width to use when painting the rows.
+
 2006-08-23  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* TextBoxBase.cs:

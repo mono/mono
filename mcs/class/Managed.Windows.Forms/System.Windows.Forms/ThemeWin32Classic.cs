@@ -1131,7 +1131,7 @@ namespace System.Windows.Forms
 				}
 			}
 
-			rect_row.Width = cells.Width;
+			rect_row.Width = cells.Width + grid.RowHeadersArea.Width;
 			for (int r = 0; r < rowcnt; r++) {
 				int row = grid.FirstVisibleRow + r;
 				if (row == grid.Rows.Length - 1)
