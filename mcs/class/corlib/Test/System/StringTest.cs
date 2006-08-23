@@ -7,6 +7,7 @@
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2006 Kornél Pál
+// Copyright (C) 2006 Novell (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -21,58 +22,70 @@ namespace MonoTests.System
 public class StringTest : Assertion
 {
 	[Test]
-	[ExpectedException (typeof (ArgumentNullException))]
-	public void CtrExceptions ()
+	public unsafe void CharArrayConstructor ()
 	{
-		String s = new String ((char[])null, 0, 0);
+		AssertEquals ("char[]", String.Empty, new String ((char[]) null));
+		AssertEquals (String.Empty, new String (new Char [0]));
+		AssertEquals ("A", new String (new Char [1] {'A'}));
 	}
 
-	public void TestConstructors ()
+	[Test]
+	public void CharArrayIntIntConstructor ()
 	{
-		AssertEquals ("", new String ((char[])null));
-		AssertEquals ("", new String (new Char [0]));
-		AssertEquals ("A", new String (new Char [1] {'A'}));
-
-		AssertEquals ("", new String ('A', 0));
-		AssertEquals ("AAA", new String ('A', 3));
-		try {
-			new String ('A', -1);
-			Fail ("Should reject negative count");
-		}
-		catch (ArgumentOutOfRangeException) {
-		}
-
 		char[] arr = new char [3] { 'A', 'B', 'C' };
 		AssertEquals ("BC", new String (arr, 1, 2));
-		try {
-			new String ((char[])null, 1, 0);
-			Fail ();
-		}
-		catch (ArgumentNullException) {
-		}
-		try {
-			new String (arr, -1, 1);
-			Fail ();
-		}
-		catch (ArgumentOutOfRangeException) {
-		}
-		try {
-			new String (arr, 0, -1);
-			Fail ();
-		}
-		catch (ArgumentOutOfRangeException) {
-		}
-		try {
-			new String (arr, 1, 3);
-			Fail ();
-		}
-		catch (ArgumentOutOfRangeException) {
-		}
 	}
-	
-	public unsafe void TestCharPtrConstructors ()
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void CharArray_Null_IntIntConstructor ()
 	{
-		AssertEquals (String.Empty, new String ((char*) null, 0, 0));
+		new String ((char[])null, 0, 0);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void CharArrayInt_Negative_IntConstructor ()
+	{
+		char[] arr = new char [3] { 'A', 'B', 'C' };
+		new String (arr, -1, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void CharArrayIntInt_Negative_Constructor ()
+	{
+		char[] arr = new char [3] { 'A', 'B', 'C' };
+		new String (arr, 0, -1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void CharArrayIntInt_TooLong_Constructor ()
+	{
+		char[] arr = new char [3] { 'A', 'B', 'C' };
+		new String (arr, 1, 3);
+	}
+
+	[Test]
+	public void CharIntConstructor ()
+	{
+		AssertEquals ("", new String ('A', 0));
+		AssertEquals ("AAA", new String ('A', 3));
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void CharInt_NegativeConstructor ()
+	{
+		new String ('A', -1);
+	}
+
+	[Test]
+	public unsafe void CharPtrConstructor ()
+	{
+		AssertEquals ("char*", String.Empty, new String ((char*) null));
+		AssertEquals ("char*,int,int", String.Empty, new String ((char*) null, 0, 0));
 	}
 
 	public unsafe void TestSbytePtrConstructorASCII ()
