@@ -921,9 +921,10 @@ namespace System.Windows.Forms
 			Rectangle rect_columnhdr = new Rectangle ();
 			int col_pixel;
 			Region current_clip;
+			Region prev_clip = g.Clip;
 			rect_columnhdr.Y = columns_area.Y;
 			rect_columnhdr.Height = columns_area.Height;
-			
+
 			int column_cnt = grid.FirstVisibleColumn + grid.VisibleColumnCount;
 			for (int column = grid.FirstVisibleColumn; column < column_cnt; column++) {
 				
@@ -936,7 +937,7 @@ namespace System.Windows.Forms
 
 				current_clip = new Region (rect_columnhdr);
 				current_clip.Intersect (columns_area);
-				current_clip.Intersect (clip);
+				current_clip.Intersect (prev_clip);
 				g.Clip = current_clip;
 
 				grid.CurrentTableStyle.GridColumnStyles[column].PaintHeader (g, rect_columnhdr, column);
@@ -944,7 +945,7 @@ namespace System.Windows.Forms
 				current_clip.Dispose ();
 			}
 
-			g.ResetClip ();
+			g.Clip = prev_clip;
 				
 			Rectangle not_usedarea = columnhdrs_area_complete;				
 			not_usedarea.X = rect_columnhdr.X + rect_columnhdr.Width;
@@ -961,11 +962,10 @@ namespace System.Windows.Forms
 			rect_row.Width = grid.ParentRowsArea.Width;
 			rect_row.Height = (grid.CaptionFont.Height + 3);
 
-			g.SetClip (grid.ParentRowsArea);
-
 			object[] parentRows = grid.dataSourceStack.ToArray();
 			
 			Region current_clip;
+			Region prev_clip = g.Clip;
 			for (int row = 0; row < parentRows.Length; row++) {
 				rect_row.Y = grid.ParentRowsArea.Y + row * rect_row.Height;
 
@@ -973,7 +973,7 @@ namespace System.Windows.Forms
 					continue;
 
 				current_clip = new Region (rect_row);
-				current_clip.Intersect (clip);
+				current_clip.Intersect (prev_clip);
 				g.Clip = current_clip;
 
 				DataGridPaintParentRow (g, rect_row, (DataGridDataSource)parentRows[parentRows.Length - row - 1], grid);
@@ -981,7 +981,7 @@ namespace System.Windows.Forms
 				current_clip.Dispose ();
 			}
 			
-			g.ResetClip ();
+			g.Clip = prev_clip;
 		}
 
 		public override void DataGridPaintParentRow (Graphics g, Rectangle bounds, DataGridDataSource row, DataGrid grid)
@@ -1276,8 +1276,6 @@ namespace System.Windows.Forms
 			int col_pixel;
 			Color backcolor, forecolor;
 			Brush backBrush, foreBrush;
-			Region prev_clip = g.Clip;
-			Region current_clip;
 			Rectangle not_usedarea = new Rectangle ();
 
 			rect_cell.Y = row_rect.Y;
@@ -1302,6 +1300,10 @@ namespace System.Windows.Forms
 
 			// PaintCells at row, column
 			int column_cnt = grid.FirstVisibleColumn + grid.VisibleColumnCount;
+
+			Region prev_clip = g.Clip;
+			Region current_clip;
+
 			for (int column = grid.FirstVisibleColumn; column < column_cnt; column++) {
 
 				col_pixel = grid.GetColumnStartingPixel (column);
@@ -1312,7 +1314,7 @@ namespace System.Windows.Forms
 				if (clip.IntersectsWith (rect_cell)) {
 					current_clip = new Region (rect_cell);
 					current_clip.Intersect (row_rect);
-					current_clip.Intersect (clip);
+					current_clip.Intersect (prev_clip);
 					g.Clip = current_clip;
 
 					if (is_newrow) {

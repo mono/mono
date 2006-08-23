@@ -1,3 +1,8 @@
+2006-08-23  Chris Toshok  <toshok@ximian.com>
+
+	* ThemeWin32Classic.cs: fix the clip munging of the datagrid paint
+	methods.  fixes the flicker when scrolling around.
+
 2006-08-23  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* FileDialog.cs: Making sure the control is created before we get a 
