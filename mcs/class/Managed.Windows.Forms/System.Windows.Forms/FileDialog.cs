@@ -2756,6 +2756,8 @@ namespace System.Windows.Forms {
 				workerThread = null;
 			}
 
+			// Added next line to ensure the control is created before BeginInvoke is called on it
+			calling_control.CreateControl();
 			workerThread = new WorkerThread (fileSystem, the_filters, updateDelegate, calling_control);
 			
 			get_folder_content_thread_start = new ThreadStart (workerThread.GetFolderContentThread);
