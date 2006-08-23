@@ -62,6 +62,7 @@ namespace System.Windows.Forms {
 		internal RichTextBoxScrollBars	scrollbars;
 		internal bool			richtext;
 		internal bool			show_selection;		// set to true to always show selection, even if no focus is set
+		internal int			selection_length;	// set to the user-specified selection length, or -1 if none
 		internal int			requested_height;
 		internal int			canvas_width;
 		internal int			canvas_height;
@@ -439,11 +440,17 @@ namespace System.Windows.Forms {
 			}
 
 			set {
+				if (value < 0) {
+					throw new ArgumentException(String.Format("{0} is not a valid value", value), "value");
+				}
+
 				if (value != 0) {
 					int	start;
 					Line	line;
 					LineTag	tag;
 					int	pos;
+
+					selection_length = value;
 
 					start = document.LineTagToCharIndex(document.selection_start.line, document.selection_start.pos);
 
@@ -451,6 +458,8 @@ namespace System.Windows.Forms {
 					document.SetSelectionEnd(line, pos);
 					document.PositionCaret(line, pos);
 				} else {
+					selection_length = -1;
+
 					document.SetSelectionEnd(document.selection_start.line, document.selection_start.pos);
 					document.PositionCaret(document.selection_start.line, document.selection_start.pos);
 				}
@@ -470,6 +479,11 @@ namespace System.Windows.Forms {
 
 			set {
 				document.SetSelectionStart(value);
+				if (selection_length > -1 ) {
+					document.SetSelectionEnd(value + selection_length);
+				} else {
+					document.SetSelectionEnd(value);
+				}
 				ScrollToCaret();
 			}
 		}
@@ -522,10 +536,12 @@ namespace System.Windows.Forms {
 
 							line = document.GetLine(document.Lines);
 							document.SetSelectionEnd(line, line.text.Length);
+							selection_length = -1;
 							document.PositionCaret(line, line.text.Length);
 						} else {
 							document.SetSelectionStart(line, 0);
 							document.SetSelectionEnd(line, 0);
+							selection_length = -1;
 							document.PositionCaret(line, 0);
 						}
 					} else {
@@ -537,10 +553,12 @@ namespace System.Windows.Forms {
 						if (!Focused) {
 							document.SetSelectionStart(line, 0);
 							document.SetSelectionEnd(line, value.Length);
+							selection_length = -1;
 							document.PositionCaret(line, value.Length);
 						} else {
 							document.SetSelectionStart(line, 0);
 							document.SetSelectionEnd(line, 0);
+							selection_length = -1;
 							document.PositionCaret(line, 0);
 						}
 					}
@@ -632,6 +650,7 @@ namespace System.Windows.Forms {
 			document.MoveCaret(CaretDirection.CtrlEnd);
 			document.SetSelectionStart(document.CaretLine, document.CaretPosition);
 			document.SetSelectionEnd(document.CaretLine, document.CaretPosition);
+			selection_length = -1;
 
 			OnTextChanged(EventArgs.Empty);
 		}
@@ -687,6 +706,7 @@ namespace System.Windows.Forms {
 			last = document.GetLine(document.Lines);
 			document.SetSelectionStart(document.GetLine(1), 0);
 			document.SetSelectionEnd(last, last.text.Length);
+			selection_length = -1;
 		}
 
 		public override string ToString() {

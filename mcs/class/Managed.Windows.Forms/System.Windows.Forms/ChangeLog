@@ -1,3 +1,12 @@
+2006-08-23  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* TextBoxBase.cs:
+	  - Throw ArgumentException if a negative value is passed to SelectionLength
+	  - Update the selection end if start is moved. end needs to be always
+	    after start. (Fixes #79095)
+	  - Track selection length; MS keeps the selection length even if start
+	    is changed; reset on all other operations affection selection
+
 2006-08-22  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Make sure both scrollbars get displayed and sized
