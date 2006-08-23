@@ -3155,7 +3155,7 @@ Index: anonymous.cs
  		
  		ArrayList locals = new ArrayList ();
  		ArrayList children = new ArrayList ();
-@@ -643,40 +844,61 @@
+@@ -643,40 +844,62 @@
  		//
  		// The types and fields generated
  		//
@@ -3189,6 +3189,7 @@ Index: anonymous.cs
  			id = count++;
  
 +			Report.Debug (64, "NEW SCOPE", this);
++			Report.StackTrace ();
 +
  			cc.RegisterCaptureContext ();
 +
@@ -3216,7 +3217,7 @@ Index: anonymous.cs
 -}
 -	
 -		public bool IsCaptured (LocalInfo li)
-+			Report.Debug (64, "NEW SCOPE", this);
++			Report.Debug (64, "NEW ROOT SCOPE", this);
 +
 +			cc.RegisterCaptureContext ();
 +		}
@@ -3238,13 +3239,15 @@ Index: anonymous.cs
  		internal void AddChild (ScopeInfo si)
  		{
  			if (children.Contains (si))
-@@ -703,8 +925,31 @@
+@@ -703,8 +926,33 @@
  					children.Remove (child);
  				}
  			}
 -		} 
 +		}
  
++		protected Field ScopeInstance;
++
 +		protected override bool DefineNestedTypes ()
 +		{
 +			Report.Debug (64, "SCOPE INFO DEFINE NESTED", this, Name, Parent, Parent.Name,
@@ -3271,7 +3274,7 @@ Index: anonymous.cs
  		static int indent = 0;
  
  		void Pad ()
-@@ -719,8 +964,6 @@
+@@ -719,8 +967,6 @@
  			Pad ();
  			Console.WriteLine ("START");
  			indent++;
@@ -3280,7 +3283,7 @@ Index: anonymous.cs
  			foreach (LocalInfo li in locals){
  				Pad ();
  				Console.WriteLine ("var {0}", MakeFieldName (li.Name));
-@@ -733,168 +976,41 @@
+@@ -733,168 +979,41 @@
  			Console.WriteLine ("END");
  		}
  
@@ -3470,7 +3473,7 @@ Index: anonymous.cs
  		public static void CheckCycles (string msg, ScopeInfo s)
  		{
  			ArrayList l = new ArrayList ();
-@@ -935,6 +1051,344 @@
+@@ -935,6 +1054,373 @@
  
  			return sb.ToString ();
  		}
@@ -3633,8 +3636,8 @@ Index: anonymous.cs
 +
 +				Report.Debug (64, "RESOLVE SCOPE INITIALIZER", this, Scope,
 +					      Scope.ParentScope, Scope.ScopeType, ec,
-+					      ec.TypeContainer.Name, ec.DeclContainer.Name,
-+					      ec.DeclContainer.IsGeneric);
++					      ec.TypeContainer.Name, ec.DeclContainer,
++					      ec.DeclContainer.Name, ec.DeclContainer.IsGeneric);
 +
 +				if (ec.DeclContainer.IsGeneric) {
 +					Report.Debug (64, "RESOLVE SCOPE INITIALIZER #1", this, Scope,
@@ -3668,7 +3671,7 @@ Index: anonymous.cs
 +					      Scope.ParentLink != null, Scope.THIS != null, scope_type,
 +					      Scope.ParentType, loc);
 +
-+				scope_instance = new LocalTemporary (type);
++				CreateScopeInstance (ec);
 +				ArrayList cargs = new ArrayList ();
 +				if (Scope.THIS != null)
 +					cargs.Add (new Argument (new SimpleThis (
@@ -3728,9 +3731,38 @@ Index: anonymous.cs
 +
 +			bool initialized;
 +
++			protected void CreateScopeInstance (EmitContext ec)
++			{
++				Report.Debug (64, "CREATE SCOPE INSTANCE", this, ec, Scope,
++					      Scope.ParentScope, Scope.CaptureContext,
++					      Scope.CaptureContext.Host,
++					      Scope.CaptureContext.Host.RootScope,
++					      Scope.CaptureContext.Host.RootScope.GetType (),
++					      scope_type);
++
++				// if (Scope.ScopeInstance == null)
++				scope_instance = new LocalTemporary (scope_type.Type);
++			}
++
 +			protected void EmitScopeInstance (EmitContext ec)
 +			{
-+				scope_instance.Emit (ec);
++				Report.Debug (64, "EMIT SCOPE INSTANCE", this, ec, Scope,
++					      Scope.CaptureContext,
++					      Scope.CaptureContext.Host, scope_type);
++				if (scope_instance == null) {
++					ec.ig.Emit (OpCodes.Ldarg_0);
++					ec.ig.Emit (OpCodes.Ldfld, Scope.ScopeInstance.FieldBuilder);
++				} else
++					scope_instance.Emit (ec);
++			}
++
++			protected void StoreScopeInstance (EmitContext ec)
++			{
++				if (scope_instance == null) {
++					ec.ig.Emit (OpCodes.Ldarg_0);
++					ec.ig.Emit (OpCodes.Stfld, Scope.ScopeInstance.FieldBuilder);
++				} else
++					scope_instance.Store (ec);
 +			}
 +
 +			static int next_id;
@@ -3751,7 +3783,7 @@ Index: anonymous.cs
 +				ec.ig.Emit (OpCodes.Nop);
 +
 +				scope_ctor.Emit (ec);
-+				scope_instance.Store (ec);
++				StoreScopeInstance (ec);
 +
 +				if (Scope.HostsParameters) {
 +					foreach (DictionaryEntry de in captured_params) {
@@ -3815,7 +3847,7 @@ Index: anonymous.cs
  	}
  
  	//
-@@ -952,7 +1406,8 @@
+@@ -952,7 +1438,8 @@
  		//
  		// Points to the toplevel block that owns this CaptureContext
  		//
@@ -3825,7 +3857,7 @@ Index: anonymous.cs
  
  		//
  		// All the scopes we capture
-@@ -965,25 +1420,23 @@
+@@ -965,25 +1452,23 @@
  		ArrayList roots = new ArrayList ();
  		
  		bool have_captured_vars = false;
@@ -3857,7 +3889,7 @@ Index: anonymous.cs
  		}
  
  		void DoPath (StringBuilder sb, CaptureContext cc)
-@@ -995,17 +1448,6 @@
+@@ -995,17 +1480,6 @@
  			sb.Append (cc.cc_id.ToString ());
  		}
  
@@ -3875,7 +3907,7 @@ Index: anonymous.cs
  		public override string ToString ()
  		{
  			StringBuilder sb = new StringBuilder ();
-@@ -1017,7 +1459,7 @@
+@@ -1017,7 +1491,7 @@
  
  		public ToplevelBlock ParentToplevel {
  			get {
@@ -3884,7 +3916,7 @@ Index: anonymous.cs
  			}
  		}
  
-@@ -1029,124 +1471,264 @@
+@@ -1029,124 +1503,264 @@
  			}
  		}
  
@@ -4195,7 +4227,7 @@ Index: anonymous.cs
  		}
  
  		public bool HaveCapturedVariables {
-@@ -1164,21 +1746,23 @@
+@@ -1164,21 +1778,23 @@
  			}
  		}
  
@@ -4226,7 +4258,7 @@ Index: anonymous.cs
  				return true;
  			
  			if (captured_parameters != null)
-@@ -1186,88 +1770,57 @@
+@@ -1186,88 +1802,57 @@
  			return false;
  		}
  
@@ -4343,7 +4375,7 @@ Index: anonymous.cs
  				}
  			}
  		}
-@@ -1275,135 +1828,35 @@
+@@ -1275,135 +1860,35 @@
  		//
  		// Internal routine that loads the instance to reach parameter `name'
  		//
@@ -4489,7 +4521,7 @@ Index: anonymous.cs
  		}
  
  		//
-@@ -1412,7 +1865,10 @@
+@@ -1412,7 +1897,10 @@
  		//
  		bool IsAncestor (ScopeInfo probe, ScopeInfo scope)
  		{
@@ -4500,7 +4532,7 @@ Index: anonymous.cs
  				if (probe.ScopeBlock == b)
  					return true;
  			}
-@@ -1474,7 +1930,7 @@
+@@ -1474,7 +1962,7 @@
  			}
  			return parent;
  		}
@@ -4509,7 +4541,7 @@ Index: anonymous.cs
  		//
  		// Links all the scopes
  		//
-@@ -1483,7 +1939,9 @@
+@@ -1483,7 +1971,9 @@
  		{
  			if (linked)
  				return;
@@ -4520,7 +4552,7 @@ Index: anonymous.cs
  			linked = true;
  			if (ParentCaptureContext != null)
  				ParentCaptureContext.LinkScopes ();
-@@ -1492,9 +1950,14 @@
+@@ -1492,9 +1982,14 @@
  			ScopeInfo [] scope_list = new ScopeInfo [scope_count];
  			scopes.Values.CopyTo (scope_list, 0);
  
@@ -4535,7 +4567,7 @@ Index: anonymous.cs
  				if (parent == null){
  					roots.Add (scope_list [i]);
  					continue;
-@@ -1504,17 +1967,28 @@
+@@ -1504,17 +1999,28 @@
  				parent.AddChild (scope_list [i]);
  			}
  
@@ -4565,7 +4597,7 @@ Index: anonymous.cs
  					found = true;
  					
  					// Found, link all the roots to this root
-@@ -1533,6 +2007,13 @@
+@@ -1533,6 +2039,13 @@
  					throw new Exception ("Internal compiler error: Did not find the parent for the root in the chain");
  				}
  			}
