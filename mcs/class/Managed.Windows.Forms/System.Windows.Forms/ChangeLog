@@ -1,3 +1,11 @@
+2006-08-23  Jackson Harper  <jackson@ximian.com>
+
+	* Form.cs: MdiClient is always at the back of the bus
+	* Control.cs: When the order of items in the collection is changed
+	we need to reset the all_controls array
+	- do the same sorta setup thats done when adding a control when a
+	control is set on the collection.
+
 2006-08-23  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* TextBoxBase.cs (get_Text): Return an empty array if our document

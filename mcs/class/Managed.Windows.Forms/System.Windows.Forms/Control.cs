@@ -553,6 +553,7 @@ namespace System.Windows.Forms
 					return;
 				}
 
+				all_controls = null;
 				list.RemoveAt(old_index);
 
 				if (newIndex>list.Count) {
@@ -579,7 +580,16 @@ namespace System.Windows.Forms
 						throw new ArgumentException("Object of type Control required", "value");
 					}
 
-					list[index]=(Control)value;
+					all_controls = null;
+					Control ctrl = (Control) value;
+					list[index]= ctrl;
+
+					ctrl.ChangeParent(owner);
+
+					ctrl.InitLayout();
+
+					owner.UpdateChildrenZOrder();
+					owner.PerformLayout(ctrl, "Parent");
 				}
 			}
 

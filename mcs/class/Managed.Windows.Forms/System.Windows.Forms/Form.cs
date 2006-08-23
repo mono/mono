@@ -87,6 +87,15 @@ namespace System.Windows.Forms {
 		{
 			default_icon = (Icon)Locale.GetResource("mono.ico");
 		}
+
+		// warning: this is only hooked up when an mdi container is created.
+		private void ControlAddedHandler (object sender, ControlEventArgs e)
+		{
+			if (mdi_container != null) {
+				Console.WriteLine ("SENDING TO BACK");
+				mdi_container.SendToBack ();
+			}
+		}
 		#endregion	// Private & Internal Methods
 
 		#region Public Classes
@@ -416,6 +425,8 @@ namespace System.Windows.Forms {
 				if (value && mdi_container == null) {
 					mdi_container = new MdiClient ();
 					Controls.Add(mdi_container);
+					ControlAdded += new ControlEventHandler (ControlAddedHandler);
+					mdi_container.SendToBack ();
 				} else if (!value && mdi_container != null) {
 					Controls.Remove(mdi_container);
 					mdi_container = null;
