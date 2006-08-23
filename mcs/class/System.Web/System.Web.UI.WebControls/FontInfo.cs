@@ -130,19 +130,10 @@ namespace System.Web.UI.WebControls {
 		{
 			get 
 			{
-				string[] names;
+				string [] names = Names;
 
-				if ((fontstyles & FontStyles.Names) == 0) 
-				{
+				if (names.Length == 0)
 					return string.Empty;
-				}
-
-				names = (string[])bag["Font_Names"];
-
-				if (names.Length == 0) 
-				{
-					return string.Empty;
-				}
 
 				return names[0];
 			}
@@ -152,7 +143,7 @@ namespace System.Web.UI.WebControls {
 				// Seems to be a special case in MS, removing the names from the bag when Name is set to empty, 
 				// but not when setting Names to an empty array
 				if (value == string.Empty) {
-					bag.Remove("Font_Names");
+					Names = null;
 					return;
 				}
 
@@ -192,8 +183,14 @@ namespace System.Web.UI.WebControls {
 
 			set 
 			{
-				fontstyles |= FontStyles.Names;
-				bag["Font_Names"] = value;
+				if (value == null) {
+					fontstyles &= ~FontStyles.Names;
+					bag.Remove ("Font_Names");
+				}
+				else {
+					fontstyles |= FontStyles.Names;
+					bag ["Font_Names"] = value;
+				}
 			}
 		}
 
@@ -329,9 +326,7 @@ namespace System.Web.UI.WebControls {
 			}
 
 			// MS seems to have some weird behaviour, even if f's Name has been set to String.Empty we still get an empty array
-			if ((f.fontstyles & FontStyles.Names) != 0) {
-				this.Names = f.Names;
-			}
+			this.Names = f.Names;
 
 			if ((f.fontstyles & FontStyles.Overline) != 0) {
 				this.Overline = f.Overline;
@@ -361,10 +356,7 @@ namespace System.Web.UI.WebControls {
 			}
 
 			// MS seems to have some weird behaviour, even if f's Name has been set to String.Empty we still get an empty array
-			if (((f.fontstyles & FontStyles.Names) != 0)) 
-			{
-				this.Names = f.Names;
-			}
+			this.Names = f.Names;
 
 			if (((f.fontstyles & FontStyles.Overline) != 0) && f.Overline) 
 			{

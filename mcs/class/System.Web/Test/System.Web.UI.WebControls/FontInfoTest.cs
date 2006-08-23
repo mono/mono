@@ -146,6 +146,32 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (true, copy2.Font.Overline, "MergeWith#5");
 #endif
 		}
+
+		[Test]
+		public void FontInfo_Names () {
+			Style s = new Style ();
+			Assert.AreEqual ("", s.Font.Name, "Names#1");
+			Assert.IsNotNull (s.Font.Names, "Names#2");
+			Assert.AreEqual (0, s.Font.Names.Length, "Names#3");
+
+			s.Font.Names = new string [] { "Arial", "Veranda" };
+			Assert.AreEqual ("Arial", s.Font.Name, "Names#4");
+
+			s.Font.Names = null;
+			Assert.AreEqual ("", s.Font.Name, "Names#5");
+			Assert.IsNotNull (s.Font.Names, "Names#6");
+			Assert.AreEqual (0, s.Font.Names.Length, "Names#7");
+
+			s.Font.Name = "Arial";
+			Assert.IsNotNull (s.Font.Names, "Names#8");
+			Assert.AreEqual (1, s.Font.Names.Length, "Names#9");
+			Assert.AreEqual ("Arial", s.Font.Names [0], "Names#10");
+
+			s.Font.Name = "";
+			Assert.AreEqual ("", s.Font.Name, "Names#11");
+			Assert.IsNotNull (s.Font.Names, "Names#12");
+			Assert.AreEqual (0, s.Font.Names.Length, "Names#13");
+		}
 	}
 }
 
