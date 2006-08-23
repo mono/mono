@@ -37,9 +37,9 @@ function Menu_OverItem (menuId, itemId, parentId) {
 	Menu_Resize (subm, menuId, itemId);
 
 	if (parentId != null && menu.dynamicHover != null)
-		Menu_HilighItem (menuId, itemId, menu.dynamicHover);
+		Menu_HilighItem (menuId, itemId, menu.dynamicHover, menu.dynamicLinkHover);
 	else if (parentId == null && menu.staticHover != null)
-		Menu_HilighItem (menuId, itemId, menu.staticHover);
+		Menu_HilighItem (menuId, itemId, menu.staticHover, menu.staticLinkHover);
 }
 
 function Menu_OverDynamicLeafItem (menuId, itemId, parentId) {
@@ -48,22 +48,27 @@ function Menu_OverDynamicLeafItem (menuId, itemId, parentId) {
 	Menu_SetActive (menu, subm);
 	Menu_ShowMenu (subm);
 	if (menu.dynamicHover != null)
-		Menu_HilighItem (menuId, itemId, menu.dynamicHover);
+		Menu_HilighItem (menuId, itemId, menu.dynamicHover, menu.dynamicLinkHover);
 }
 
 function Menu_OverStaticLeafItem (menuId, itemId) {
 	var menu = getMenu (menuId);
 	Menu_SetActive (menu, null);
 	if (menu.dynamicHover != null)
-		Menu_HilighItem (menuId, itemId, menu.staticHover);
+		Menu_HilighItem (menuId, itemId, menu.staticHover, menu.staticLinkHover);
 }
 
-function Menu_HilighItem (menuId, itemId, hoverClass)
+function Menu_HilighItem (menuId, itemId, hoverClass, hoverLinkClass)
 {
 	var item = getMenuItem (menuId, itemId);
 	if (item.normalClass == null)
 		item.normalClass = item.className;
 	item.className = item.normalClass + " " + hoverClass;
+
+	var itemLink = getMenuItemLink (menuId, itemId);
+	if (itemLink.normalClass == null)
+		itemLink.normalClass = itemLink.className;
+	itemLink.className = itemLink.normalClass + " " + hoverLinkClass;
 }
 
 function Menu_OutItem (menuId, itemId, parentId) {
@@ -76,6 +81,9 @@ function Menu_OutItem (menuId, itemId, parentId) {
 	var item = getMenuItem (menuId, itemId);
 	if (item != null && item.normalClass != null)
 		item.className = item.normalClass;
+	var itemLink = getMenuItemLink (menuId, itemId);
+	if (itemLink != null && itemLink.normalClass != null)
+		itemLink.className = itemLink.normalClass;
 }
 
 function Menu_OverScrollBtn (menuId, parentId, updown) {
@@ -186,5 +194,6 @@ function Menu_Resize (subm, menuId, itemId)
 function getMenu (menuId) { return eval (menuId + "_data"); }
 function getSubMenu (menuId, itemId) { return document.getElementById (menuId + "_" + itemId + "s"); }
 function getMenuItem (menuId, itemId) { return document.getElementById (menuId + "_" + itemId + "i"); }
+function getMenuItemLink (menuId, itemId) { return document.getElementById (menuId + "_" + itemId + "l"); }
 function getMenuScrollBox (menuId, itemId, btn) { return document.getElementById (menuId + "_" + itemId + "c" + btn); }
 

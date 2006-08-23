@@ -20,6 +20,7 @@
 		<input language="" onchange=""/>
 		<table bordercolor=""/>
     <tr onmouseover="" onmouseout=""  onkeyup="" id="" />
+    <td onmouseover="" onmouseout=""  onkeyup="" id="" />
   </IgnoreList>
 
 	<!--delete Java Script attribute value-->

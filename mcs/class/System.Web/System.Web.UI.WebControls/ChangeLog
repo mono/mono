@@ -1,5 +1,10 @@
 2006-08-23 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Menu.cs: corrected rendering of static and dynamic items
+	* Menu.js: 
+
+2006-08-23 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Style.cs:
 	* FontInfo.cs: 
 	fixed: AddAttributesToRender method calls FillStyleAttributes,
