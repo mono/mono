@@ -806,5 +806,27 @@ namespace MonoTests.System.Drawing {
 			GDIPlus.GdipDeleteGraphics (graphics);
 			GDIPlus.GdipDisposeImage (image);
 		}
+
+		// TextureBrush
+		[Test]
+		public void Texture ()
+		{
+			IntPtr image;
+			GDIPlus.GdipCreateBitmapFromScan0 (10, 10, 0, PixelFormat.Format32bppArgb, IntPtr.Zero, out image);
+
+			IntPtr brush;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipCreateTexture (IntPtr.Zero, WrapMode.Tile, out brush), "GdipCreateTexture-image");
+			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipCreateTexture (image, (WrapMode)Int32.MinValue, out brush), "GdipCreateTexture-wrapmode");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreateTexture (image, WrapMode.Tile, out brush), "GdipCreateTexture");
+
+			IntPtr image2;
+// this would throw an AccessViolationException under MS 2.0 (missing null check?)
+//			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetTextureImage (IntPtr.Zero, out image2), "GdipGetTextureImage-brush");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetTextureImage (brush, out image2), "GdipGetTextureImage");
+			Assert.IsFalse (image == image2, "image");
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteBrush (brush), "GdipDeleteBrush");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDisposeImage (image), "GdipDisposeImage");
+		}
 	}
 }
