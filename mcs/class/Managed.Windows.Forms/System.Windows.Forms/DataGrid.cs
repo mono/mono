@@ -1013,9 +1013,11 @@ namespace System.Windows.Forms
 			}
 
 			editingControl = null;
-			is_editing = false;
-			is_changing = false;
-			InvalidateRowHeader (rowNumber);
+			if (is_editing || is_changing) {
+				is_editing = false;
+				is_changing = false;
+				InvalidateRowHeader (rowNumber);
+			}
 			return true;
 		}
 
@@ -2350,11 +2352,6 @@ namespace System.Windows.Forms
 			horiz_pixeloffset = pixel;
 			UpdateVisibleColumn ();
 
-			if (ColumnHeadersVisible == true) {
-				area.Y -= ColumnHeadersArea.Height;
-				area.Height += ColumnHeadersArea.Height;
-			}
-
 			EndEdit ();
 
 			XplatUI.ScrollWindow (Handle, area, pixels, 0, false);
@@ -2365,7 +2362,6 @@ namespace System.Windows.Forms
 			if (pixel_offset >= horiz_pixeloffset
 			    && next_pixel_offset < horiz_pixeloffset + cells_area.Width)
 				Edit ();
-			
 		}
 
 		private void ScrollToRow (int old_row, int new_row)
@@ -2388,10 +2384,6 @@ namespace System.Windows.Forms
 			EndEdit ();
 
 			Rectangle rows_area = cells_area; // Cells area - partial rows space
-			if (RowHeadersVisible) {
-				rows_area.X -= RowHeaderWidth;
-				rows_area.Width += RowHeaderWidth;
-			}
 
 			rows_area.Height = cells_area.Height - cells_area.Height % RowHeight;
 

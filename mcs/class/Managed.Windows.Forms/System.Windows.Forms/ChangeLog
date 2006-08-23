@@ -1,5 +1,10 @@
 2006-08-23  Chris Toshok  <toshok@ximian.com>
 
+	* DataGrid.cs (EndEdit): only invalidate the row header when we
+	need to.
+
+2006-08-23  Chris Toshok  <toshok@ximian.com>
+
 	* ThemeWin32Classic.cs: fix the clip munging of the datagrid paint
 	methods.  fixes the flicker when scrolling around.
 
