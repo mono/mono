@@ -1,3 +1,9 @@
+
+Wed Aug 23 19:24:00 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* aot-compiler.c: added binary writer with ELF backend
+	implementation (only on Linux/x86 for now).
+
 2006-08-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am: Don't run net 2.0 AOT tests.
