@@ -1,5 +1,9 @@
 2006-08-23  Alp Toker  <alp@atoker.com>
 
+	* cilc.cs: Relicense from GPL to MIT License
+
+2006-08-23  Alp Toker  <alp@atoker.com>
+
 	* cilc.cs: Add more GInterface support, both defining and implementing
 
 2005-12-27  Alp Toker  <alp@atoker.com>

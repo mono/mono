@@ -1,6 +1,6 @@
 // cilc -- a CIL-to-C binding generator
 // Copyright (C) 2003, 2004, 2005, 2006 Alp Toker <alp@atoker.com>
-// Licensed under the terms of the GNU GPL
+// Licensed under the terms of the MIT License
 
 using System;
 using System.IO;
