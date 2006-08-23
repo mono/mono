@@ -1,3 +1,10 @@
+2006-08-23  Konstantin Triger <kostat@mainsoft.com>
+
+	* ServiceDescriptionReflector.cs: remove CONFIGURATION_2_0 #if since NET_2_0
+		implies it.
+	* ServiceDescription.cs: Added TARGET_JVM to workaround lack of TARGET_JVM
+		support for 'new T()' in generics.
+
 2006-08-21  Konstantin Triger <kostat@mainsoft.com>
 
 	* ServiceDescriptionCollection.cs: refactoring for Add(), removing using of

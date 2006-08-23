@@ -351,7 +351,13 @@ namespace System.Web.Services.Description
 			if (item == null)
 				return;
 
+#if TARGET_JVM //No support for 'new T()' in generics yet.
+			XmlAttribute[] array = new XmlAttribute[extensible_attributes.Count];
+			extensible_attributes.CopyTo (array);
+			item.ExtensibleAttributes = array;
+#else
 			item.ExtensibleAttributes = extensible_attributes.ToArray ();
+#endif
 			extensible_attributes.Clear ();
 		}
 #endif
