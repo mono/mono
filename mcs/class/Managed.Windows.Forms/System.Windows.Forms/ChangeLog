@@ -1,3 +1,8 @@
+2006-08-23  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TextBoxBase.cs (get_Text): Return an empty array if our document
+	  is empty (fixes #79052)
+
 2006-08-23  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Control.cs: We should call IsInputChar on only on WM_CHAR but not

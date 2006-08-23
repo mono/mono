@@ -294,6 +294,12 @@ namespace System.Windows.Forms {
 				int		l;
 
 				l = document.Lines;
+
+				// Handle empty document
+				if ((l == 1) && (document.GetLine(1).text.Length == 0)) {
+					return new string[0];
+				}
+
 				lines = new string[l];
 
 				for (i = 1; i <= l; i++) {
