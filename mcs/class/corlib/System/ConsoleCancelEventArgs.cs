@@ -34,6 +34,11 @@ namespace System {
 		bool cancel;
 		ConsoleSpecialKey specialKey;
 
+		internal ConsoleCancelEventArgs (ConsoleSpecialKey key)
+		{
+			specialKey = key;
+		}
+
 		public bool Cancel {
 			get { return cancel; }
 			set { cancel = value; }

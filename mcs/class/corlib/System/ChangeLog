@@ -1,3 +1,7 @@
+2006-08-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ConsoleCancelEventArgs.cs: fix my build.
+
 2006-08-22  Miguel de Icaza  <miguel@novell.com>
 
 	* MulticastDelegate.cs: Make DynamicInvokeImpl internal in 2.0 
