@@ -3075,10 +3075,8 @@ namespace System.Windows.Forms
 				if (IsInputChar((char)msg.WParam)) {
 					return false;
 				}
+				return ProcessDialogChar((char)msg.WParam);
 			} else if (msg.Msg == (int)Msg.WM_SYSCHAR) {
-				if (IsInputChar((char)msg.WParam)) {
-					return false;
-				}
 				return ProcessDialogChar((char)msg.WParam);
 			}
 			return false;
