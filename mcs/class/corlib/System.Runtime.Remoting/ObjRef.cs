@@ -69,7 +69,7 @@ namespace System.Runtime.Remoting {
 		{
 			this.uri = uri;
 			channel_info = cinfo;
-			typeInfo = new TypeInfo (Type.GetType (typeName));
+			typeInfo = new TypeInfo (Type.GetType (typeName, true));
 		}
 
 		internal ObjRef (ObjRef o, bool unmarshalAsProxy) {
