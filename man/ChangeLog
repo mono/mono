@@ -1,3 +1,8 @@
+2006-08-23  Wade Berrier <wberrier@novell.com>
+
+	* gacutil.1 : Change automake usage example because we always use $(prefix)/lib 
+	for the gac, even on 64 bit systems.
+
 2006-08-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* mono.1 : Document MONO_EVENTLOG_TYPE, replaces MONO_EVENTLOG_PATH.
