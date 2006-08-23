@@ -527,7 +527,7 @@ namespace System.Configuration
 					value = reader.Value;
 				}
 				else 
-#if NET_2_0 && CONFIGURATION_2_0
+#if NET_2_0
 				if (reader.Name != "type")
 #endif
 					ThrowException ("Unrecognized attribute.", reader);
