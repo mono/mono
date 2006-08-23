@@ -1,3 +1,7 @@
+2006-08-23 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Style.cs: restored r63894: for 1.x is refactoring only
+
 2006-08-22 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* FontInfo.cs: 
