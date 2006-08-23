@@ -1,5 +1,10 @@
 2006-08-22  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* TemplateControl.jvm.cs: fixed WireupAutomaticEvents, removed access
+	modifiers check on event handlers
+
+2006-08-22  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* Control.cs: implemented AppRelativeTemplateSourceDirectory for aspx 
 	parser 2.0
 	* TemplateControl.jvm.cs: fixed AppRelativeVirtualPath
