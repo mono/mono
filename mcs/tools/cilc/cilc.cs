@@ -1,5 +1,5 @@
 // cilc -- a CIL-to-C binding generator
-// Copyright (C) 2003, 2004, 2005 Alp Toker <alp@atoker.com>
+// Copyright (C) 2003, 2004, 2005, 2006 Alp Toker <alp@atoker.com>
 // Licensed under the terms of the GNU GPL
 
 using System;
@@ -293,7 +293,7 @@ public class cilc
 				continue;
 			}
 
-			if (!t.IsClass && !t.IsEnum) {
+			if (!t.IsClass && !t.IsInterface && !t.IsEnum) {
 				//Console.WriteLine ("Ignoring unrecognised type: " + t.Name);
 				warnings_ignored++;
 				continue;
@@ -442,7 +442,10 @@ public class cilc
 		cur_type = NsToC (ns) + "_" + CamelToC (t.Name);
 		//CurType = NsToFlat (ns) + t.Name;
 		CurType = CsTypeToG (t);
-		CurTypeClass = GToGC (CurType);
+		if (t.IsInterface)
+			CurTypeClass = GToGI (CurType);
+		else
+			CurTypeClass = GToGC (CurType);
 
 		//ns = t.Namespace;
 		string fname = NsToFlat (ns).ToLower () + t.Name.ToLower ();
@@ -464,7 +467,7 @@ public class cilc
 
 		H.WriteLine ();
 
-		if (IsRegistered (t.BaseType) && !IsExternal (t.BaseType))
+		if (t.BaseType != null && IsRegistered (t.BaseType) && !IsExternal (t.BaseType))
 			H.WriteLine ("#include \"" + NsToFlat (t.BaseType.Namespace).ToLower () + t.BaseType.Name.ToLower () + ".h\"");
 
 		foreach (string ext_ns in namespaces)
@@ -478,12 +481,25 @@ public class cilc
 		H.WriteLine ();
 
 		C.WriteLine ("#include \"" + fname + ".h" + "\"");
+
+		Type[] ifaces;
+		ifaces = t.GetInterfaces ();
+		foreach (Type iface in ifaces) {
+			if (!IsRegistered (iface))
+				continue;
+
+			string iface_fname = NsToFlat (ns).ToLower () + iface.Name.ToLower ();
+			C.WriteLine ("#include \"" + iface_fname + ".h" + "\"");
+		}
+
 		C.WriteLine ("#include <mono/metadata/object.h>");
 		C.WriteLine ("#include <mono/metadata/debug-helpers.h>");
 		C.WriteLine ("#include <mono/metadata/appdomain.h>");
 		C.WriteLine ();
 
 		if (t.IsClass)
+			ClassGen (t);
+		else if (t.IsInterface)
 			ClassGen (t);
 		else if (t.IsEnum)
 			EnumGen (t);
@@ -536,6 +552,10 @@ public class cilc
 		EventInfo[] events;
 		events = t.GetEvents (BindingFlags.Public|BindingFlags.Instance|BindingFlags.DeclaredOnly);
 
+		//events as signals
+		MethodInfo[] methods;
+		methods = t.GetMethods (BindingFlags.Public|BindingFlags.Instance|BindingFlags.DeclaredOnly);
+
 		Type[] ifaces;
 		ifaces = t.GetInterfaces ();
 
@@ -550,10 +570,15 @@ public class cilc
 
 			H.WriteLine ("#define " + NSTT + " (" + cur_type + "_get_type ())");
 			H.WriteLine ("#define " + NST + "(object) (G_TYPE_CHECK_INSTANCE_CAST ((object), " + NSTT + ", " + CurType + "))");
-			H.WriteLine ("#define " + NST + "_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), " + NSTT + ", " + CurTypeClass + "))");
+			if (!t.IsInterface)
+				H.WriteLine ("#define " + NST + "_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), " + NSTT + ", " + CurTypeClass + "))");
 			H.WriteLine ("#define " + NS + "_IS_" + T + "(object) (G_TYPE_CHECK_INSTANCE_TYPE ((object), " + NSTT + "))");
-			H.WriteLine ("#define " + NS + "_IS_" + T + "_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), " + NSTT + "))");
-			H.WriteLine ("#define " + NST + "_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), " + NSTT + ", " + CurTypeClass + "))");
+			if (!t.IsInterface)
+				H.WriteLine ("#define " + NS + "_IS_" + T + "_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), " + NSTT + "))");
+			if (t.IsInterface)
+				H.WriteLine ("#define " + NST + "_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), " + NSTT + ", " + CurTypeClass + "))");
+			else
+				H.WriteLine ("#define " + NST + "_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), " + NSTT + ", " + CurTypeClass + "))");
 		}
 
 		if (!C.IsDuplicate) {
@@ -563,32 +588,64 @@ public class cilc
 		}
 
 		H.WriteLine ();
+
+		string ParentName;
+		string ParentNameClass;
+
+		if (t.BaseType != null) {
+			ParentName = CsTypeToG (t.BaseType);
+			ParentNameClass = GToGC (ParentName);
+		} else {
+			ParentName = "GType";
+			if (t.IsInterface)
+				ParentNameClass = ParentName + "Interface";
+			else
+				ParentNameClass = ParentName + "Class";
+		}
+
 		//H.WriteLine ("typedef struct _" + CurType + " " + CurType + ";");
 
 		//H.WriteLine ();
 		//H.WriteLine ("typedef struct _" + CurType + "Class " + CurType + "Class;");
-		H.WriteLine ("typedef struct _" + CurType + "Private " + CurType + "Private;");
-		H.WriteLine ();
-		H.WriteLine ("struct _" + CurType);
-		H.WriteLine ("{");
+		if (!t.IsInterface) {
+			H.WriteLine ("typedef struct _" + CurType + "Private " + CurType + "Private;");
+			H.WriteLine ();
+			H.WriteLine ("struct _" + CurType);
+			H.WriteLine ("{");
 
-		string ParentName = CsTypeToG (t.BaseType);
-		string ParentNameClass = GToGC (ParentName);
+			H.WriteLine (ParentName + " parent_instance;");
+			H.WriteLine (CurType + "Private *priv;");
+			H.WriteLine ("};");
+			H.WriteLine ();
+		}
 
-		H.WriteLine (ParentName + " parent_instance;");
-		H.WriteLine (CurType + "Private *priv;");
-		H.WriteLine ("};");
-		H.WriteLine ();
 		H.WriteLine ("struct _" + CurTypeClass);
 		H.WriteLine ("{");
-		H.WriteLine (ParentNameClass + " parent_class;" + " /* inherits " + t.BaseType.Namespace + " " + t.BaseType.Name + " */");
+		//H.WriteLine (ParentNameClass + " parent_class;");
+		H.WriteLine (ParentNameClass + " parent;");
+		if (t.BaseType != null)
+			H.WriteLine ("/* inherits " + t.BaseType.Namespace + " " + t.BaseType.Name + " */");
 
-		if (events.Length != 0)
+		if (events.Length != 0) {
 			H.WriteLine ();
+			H.WriteLine ("/* signals */");
 
-		//TODO: event arguments
-		foreach (EventInfo ei in events)
-			H.WriteLine ("void (* " + CamelToC (ei.Name) + ") (" + CurType + " *thiz" + ");");
+			//FIXME: event arguments
+			foreach (EventInfo ei in events)
+				H.WriteLine ("void (* " + CamelToC (ei.Name) + ") (" + CurType + " *thiz" + ");");
+		}
+
+		if (t.IsInterface) {
+			if (methods.Length != 0) {
+				H.WriteLine ();
+				H.WriteLine ("/* vtable */");
+
+				//FIXME: method arguments
+				//string funcname = ToValidFuncName (CamelToC (imi.Name));
+				foreach (MethodInfo mi in methods)
+					H.WriteLine ("void (* " + CamelToC (mi.Name) + ") (" + CurType + " *thiz" + ");");
+			}
+		}
 
 		H.WriteLine ("};");
 		H.WriteLine ();
@@ -640,44 +697,71 @@ public class cilc
 
 		C.WriteLine ();
 
-		//generate the GObject init function
-		C.WriteLine ("static void " + cur_type + "_init (" + CurType + " *thiz" + ")");
-		C.WriteLine ("{");
-		C.WriteLine ("thiz->priv = g_new0 (" + CurType + "Private, 1);");
-		C.WriteLine ("}");
+		wrap_gobject = TypeIsGObject (t);
+
+		//TODO: generate thin wrappers for interfaces
+
+		//generate constructors
+		ConstructorInfo[] constructors;
+		constructors = t.GetConstructors ();
+		foreach (ConstructorInfo c in constructors)
+			ConstructorGen (c, t);
+
+		//generate static methods
+		//MethodInfo[] methods;
+		methods = t.GetMethods (BindingFlags.Public|BindingFlags.Static|BindingFlags.DeclaredOnly);
+		foreach (MethodInfo m in methods)
+			MethodGen (m, t);
+
+		//generate instance methods
+		methods = t.GetMethods (BindingFlags.Public|BindingFlags.Instance|BindingFlags.DeclaredOnly);
+		foreach (MethodInfo m in methods)
+			MethodGen (m, t);
 
 		C.WriteLine ();
 
+		if (t.IsClass) {
+			//generate the GObject init function
+			C.WriteLine ("static void " + cur_type + "_init (" + CurType + " *thiz" + ")");
+			C.WriteLine ("{");
+			C.WriteLine ("thiz->priv = g_new0 (" + CurType + "Private, 1);");
+			C.WriteLine ("}");
 
-		//generate the GObject class init function
-		C.WriteLine ("static void " + cur_type + "_class_init (" + CurTypeClass + " *klass" + ")");
-		C.WriteLine ("{");
+			C.WriteLine ();
 
-		C.WriteLine ("GObjectClass *object_class = G_OBJECT_CLASS (klass);");
-		C.WriteLine ("parent_class = g_type_class_peek_parent (klass);");
-		//C.WriteLine ("object_class->finalize = _finalize;");
+			//generate the GObject class init function
+			C.WriteLine ("static void " + cur_type + "_class_init (" + CurTypeClass + " *klass" + ")");
+			C.WriteLine ("{");
 
-		foreach (EventInfo ei in events)
-			EventGen (ei, t);
+			C.WriteLine ("GObjectClass *object_class = G_OBJECT_CLASS (klass);");
+			C.WriteLine ("parent_class = g_type_class_peek_parent (klass);");
+			//C.WriteLine ("object_class->finalize = _finalize;");
 
-		C.WriteLine ("}");
+			foreach (EventInfo ei in events)
+				EventGen (ei, t);
 
-		C.WriteLine ();
-		C.WriteLine ("static void " + cur_type + "_interface_init (gpointer g_iface, gpointer iface_data)");
-		C.WriteLine ("{");
-		
-		foreach (Type iface in ifaces) {
-			C.WriteLine ("//" + CsTypeToG (iface) + "Interface" + " *iface = (" + CsTypeToG (iface) + "Interface" + ")g_iface;");
-			foreach (MethodInfo imi in iface.GetMethods (BindingFlags.Public|BindingFlags.Instance|BindingFlags.DeclaredOnly)) {
-				string funcname = ToValidFuncName (CamelToC (imi.Name));
-				C.WriteLine ("//iface->" + funcname + " = " + cur_type + "_" + funcname + ";");
-			}
-			//TODO: properties etc.
+			C.WriteLine ("}");
+
+			C.WriteLine ();
 		}
-		
-		C.WriteLine ("}");
 
-		C.WriteLine ();
+		if (ifaces.Length != 0) {
+			foreach (Type iface in ifaces) {
+				if (!IsRegistered (iface))
+					continue;
+
+				C.WriteLine ("static void " + NsToC (iface.Namespace) + "_" + CamelToC (iface.Name) + "_interface_init (" + GToGI (CsTypeToG (iface)) + " *iface" + ")");
+				C.WriteLine ("{");
+				foreach (MethodInfo imi in iface.GetMethods (BindingFlags.Public|BindingFlags.Instance|BindingFlags.DeclaredOnly)) {
+					string funcname = ToValidFuncName (CamelToC (imi.Name));
+					C.WriteLine ("iface->" + funcname + " = " + cur_type + "_" + funcname + ";");
+				}
+				//TODO: properties etc.
+				C.WriteLine ("}");
+				C.WriteLine ();
+			}
+
+		}
 
 		//generate the GObject get_type function
 		C.WriteLine ("GType " + cur_type + "_get_type (void)", H, ";");
@@ -692,49 +776,54 @@ public class cilc
 		C.WriteLine ("sizeof (" + CurTypeClass + "),");
 		C.WriteLine ("(GBaseInitFunc) NULL, /* base_init */");
 		C.WriteLine ("(GBaseFinalizeFunc) NULL, /* base_finalize */");
-		C.WriteLine ("(GClassInitFunc) " + cur_type + "_class_init, /* class_init */");
+		if (t.IsClass)
+			C.WriteLine ("(GClassInitFunc) " + cur_type + "_class_init, /* class_init */");
+		else
+			C.WriteLine ("NULL, /* class_init */");
 		C.WriteLine ("NULL, /* class_finalize */");
 		C.WriteLine ("NULL, /* class_data */");
-		C.WriteLine ("sizeof (" + CurType + "),");
+		if (t.IsClass)
+			C.WriteLine ("sizeof (" + CurType + "),");
+		else
+			C.WriteLine ("0,");
 		C.WriteLine ("0, /* n_preallocs */");
-		C.WriteLine ("(GInstanceInitFunc) " + cur_type + "_init,");
+		if (t.IsClass)
+			C.WriteLine ("(GInstanceInitFunc) " + cur_type + "_init, /* instance_init */");
+		else
+			C.WriteLine ("NULL, /* instance_init */");
 		C.WriteLine ("};");
 		C.WriteLine ();
 
 		foreach (Type iface in ifaces) {
-			C.WriteLine ("//static const GInterfaceInfo bar_ifoo_info = {};");
+			if (!IsRegistered (iface))
+				continue;
+
+			C.WriteLine ("static const GInterfaceInfo " + CamelToC (iface.Namespace) + "_" + CamelToC (iface.Name) + "_info" + " =");
+			C.WriteLine ("{");
+			C.WriteLine ("(GInterfaceInitFunc) " + NsToC (iface.Namespace) + "_" + CamelToC (iface.Name) + "_interface_init, /* interface_init */");
+			C.WriteLine ("(GInterfaceFinalizeFunc) NULL, /* interface_finalize */");
+			C.WriteLine ("NULL, /* interface_data */");
+			C.WriteLine ("};");
+			C.WriteLine ();
 		}
 
+		if (t.BaseType != null) {
 		string parent_type = "G_TYPE_OBJECT";
 		if (IsRegistered (t.BaseType))
 			parent_type = NsToC (t.BaseType.Namespace).ToUpper () + "_TYPE_" + CamelToC (t.BaseType.Name).ToUpper ();
 
 		C.WriteLine ("object_type = g_type_register_static (" + parent_type + ", \"" + CurType + "\", &object_info, 0);");
+		}
 
-		foreach (Type iface in ifaces)
-			C.WriteLine ("//g_type_add_interface_static (object_type, BAR_IFOO_TYPE, bar_ifoo_info);");
+		foreach (Type iface in ifaces) {
+			if (!IsRegistered (iface))
+				continue;
+
+			C.WriteLine ("g_type_add_interface_static (object_type, " + NsToC (iface.Namespace).ToUpper () + "_TYPE_" + CamelToC (iface.Name).ToUpper () + ", &" + NsToC (iface.Namespace) + "_" + CamelToC (iface.Name) + "_info" + ");");
+		}
 		C.WriteLine ();
 		C.WriteLine ("return object_type;");
 		C.WriteLine ("}");
-
-		wrap_gobject = TypeIsGObject (t);
-
-		//generate constructors
-		ConstructorInfo[] constructors;
-		constructors = t.GetConstructors ();
-		foreach (ConstructorInfo c in constructors)
-			ConstructorGen (c, t);
-
-		//generate static methods
-		MethodInfo[] methods;
-		methods = t.GetMethods (BindingFlags.Public|BindingFlags.Static|BindingFlags.DeclaredOnly);
-		foreach (MethodInfo m in methods)
-			MethodGen (m, t);
-
-		//generate instance methods
-		methods = t.GetMethods (BindingFlags.Public|BindingFlags.Instance|BindingFlags.DeclaredOnly);
-		foreach (MethodInfo m in methods)
-			MethodGen (m, t);
 
 		H.WriteLine ();
 		H.WriteLine ("G_END_DECLS");
@@ -870,6 +959,14 @@ public class cilc
 			return CsTypeToFlat (t);
 
 		return "GObject";
+	}
+
+	static string GToGI (string G)
+	{
+		string possGC = G + "Iface";
+		//TODO: conflict resolution
+
+		return possGC;
 	}
 
 	//static string CsTypeToGC (String tn)
