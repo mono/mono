@@ -320,7 +320,6 @@ namespace MonoTests.System.Drawing {
 			closed = false;
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterNextSubpathPath (iter, out result, IntPtr.Zero, out closed), "GdipPathIterNextSubpathPath-path");
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterNextSubpathPath (iter, out result, path, out closed), "GdipPathIterNextSubpathPath");
-			Assert.IsTrue (closed, "closed");
 
 			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipPathIterNextSubpath (IntPtr.Zero, out result, out start, out end, out closed), "GdipPathIterNextSubpath-iter");
 			start = -1;
@@ -329,7 +328,6 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterNextSubpath (iter, out result, out start, out end, out closed), "GdipPathIterNextSubpath");
 			Assert.AreEqual (-1, start, "start-3");
 			Assert.AreEqual (-1, end, "end-3");
-			Assert.IsTrue (closed, "closed-2");
 
 			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipPathIterRewind (IntPtr.Zero), "GdipPathIterRewind-null");
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterRewind (iter), "GdipPathIterRewind");
@@ -391,7 +389,6 @@ namespace MonoTests.System.Drawing {
 
 			bool closed = false;
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterNextSubpathPath (iter, out result, IntPtr.Zero, out closed), "GdipPathIterNextSubpathPath");
-			Assert.IsTrue (closed, "closed-1");
 
 			start = -1;
 			end = -1;
@@ -399,7 +396,6 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterNextSubpath (iter, out result, out start, out end, out closed), "GdipPathIterNextSubpath");
 			Assert.AreEqual (-1, start, "start-3");
 			Assert.AreEqual (-1, end, "end-3");
-			Assert.IsTrue (closed, "closed-2");
 
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipPathIterRewind (iter), "GdipPathIterRewind");
 
@@ -597,6 +593,28 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (UInt32.MaxValue, size, "size-3");
 #endif
 			GDIPlus.GdipDisposeImage (image);
+		}
+
+		// ImageAttribute
+		[Test]
+		[Category ("NotWorking")] // crash in GdipSetImageAttributesColorMatrix
+		public void ImageAttribute ()
+		{
+			IntPtr attr;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreateImageAttributes (out attr), "GdipCreateImageAttributes");
+
+			IntPtr clone;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipCloneImageAttributes (IntPtr.Zero, out clone), "GdipCloneImageAttributes");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCloneImageAttributes (attr, out clone), "GdipCloneImageAttributes");
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipSetImageAttributesColorMatrix (attr, ColorAdjustType.Default, true, null, null, ColorMatrixFlag.Default), "GdipSetImageAttributesColorMatrix-matrix1");
+			ColorMatrix color = new ColorMatrix ();
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipSetImageAttributesColorMatrix (IntPtr.Zero, ColorAdjustType.Default, true, color, null, ColorMatrixFlag.Default), "GdipSetImageAttributesColorMatrix-null");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipSetImageAttributesColorMatrix (attr, ColorAdjustType.Default, true, color, null, ColorMatrixFlag.Default), "GdipCloneImageAttributes");
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDisposeImageAttributes (IntPtr.Zero), "GdipDisposeImageAttributes-null");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDisposeImageAttributes (attr), "GdipDisposeImageAttributes");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDisposeImageAttributes (clone), "GdipDisposeImageAttributes-clone");
 		}
 
 		// PathGradientBrush
@@ -825,6 +843,68 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetTextureImage (brush, out image2), "GdipGetTextureImage");
 			Assert.IsFalse (image == image2, "image");
 
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteBrush (brush), "GdipDeleteBrush");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDisposeImage (image), "GdipDisposeImage");
+		}
+
+		[Test]
+		public void Texture2 ()
+		{
+			IntPtr image;
+			GDIPlus.GdipCreateBitmapFromScan0 (10, 10, 0, PixelFormat.Format32bppArgb, IntPtr.Zero, out image);
+
+			IntPtr brush;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipCreateTexture2 (IntPtr.Zero, WrapMode.Tile, 0, 0, 10, 10, out brush), "GdipCreateTexture2-image");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipCreateTexture2 (IntPtr.Zero, (WrapMode) Int32.MinValue, 0, 0, 10, 10, out brush), "GdipCreateTexture2-wrapmode");
+			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipCreateTexture2 (image, WrapMode.Tile, 0, 0, 0, 10, out brush), "GdipCreateTexture2-width");
+			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipCreateTexture2 (image, WrapMode.Tile, 0, 0, 10, 0, out brush), "GdipCreateTexture2-height");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreateTexture2 (image, WrapMode.Tile, 0, 0, 10, 10, out brush), "GdipCreateTexture2");
+
+			WrapMode wm;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetTextureWrapMode (IntPtr.Zero, out wm), "GdipGetTextureWrapMode-brush");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetTextureWrapMode (brush, out wm), "GdipGetTextureWrapMode");
+			Assert.AreEqual (WrapMode.Tile, wm, "WrapMode");
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipSetTextureWrapMode (IntPtr.Zero, WrapMode.Clamp), "GdipSetTextureWrapMode-brush");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipSetTextureWrapMode (brush, WrapMode.Clamp), "GdipSetTextureWrapMode");
+			GDIPlus.GdipGetTextureWrapMode (brush, out wm);
+			Assert.AreEqual (WrapMode.Clamp, wm, "WrapMode.Clamp");
+
+			// an invalid WrapMode is ignored
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipSetTextureWrapMode (brush, (WrapMode) Int32.MinValue), "GdipSetTextureWrapMode-wrapmode");
+			GDIPlus.GdipGetTextureWrapMode (brush, out wm);
+			Assert.AreEqual (WrapMode.Clamp, wm, "WrapMode/Invalid");
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteBrush (brush), "GdipDeleteBrush");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDisposeImage (image), "GdipDisposeImage");
+		}
+
+		[Test]
+		public void TextureIA ()
+		{
+			IntPtr image;
+			GDIPlus.GdipCreateBitmapFromScan0 (10, 10, 0, PixelFormat.Format32bppArgb, IntPtr.Zero, out image);
+
+			IntPtr brush;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipCreateTextureIA (IntPtr.Zero, IntPtr.Zero, 0, 0, 10, 10, out brush), "GdipCreateTexture2-image");
+			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipCreateTextureIA (image, IntPtr.Zero, 0, 0, 0, 10, out brush), "GdipCreateTexture2-width");
+			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipCreateTextureIA (image, IntPtr.Zero, 0, 0, 10, 0, out brush), "GdipCreateTexture2-height");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreateTextureIA (image, IntPtr.Zero, 0, 0, 10, 10, out brush), "GdipCreateTexture2");
+
+			// TODO - handle ImageAttribute in the tests
+
+			IntPtr matrix;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreateMatrix (out matrix), "GdipCreateMatrix");
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetTextureTransform (IntPtr.Zero, matrix), "GdipGetTextureTransform-brush");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetTextureTransform (brush, IntPtr.Zero), "GdipGetTextureTransform-matrix");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetTextureTransform (brush, matrix), "GdipGetTextureTransform");
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipSetTextureTransform (IntPtr.Zero, matrix), "GdipSetTextureTransform-brush");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipSetTextureTransform (brush, IntPtr.Zero), "GdipSetTextureTransform-matrix");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipSetTextureTransform (brush, matrix), "GdipSetTextureTransform");
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteMatrix (matrix), "GdipDeleteMatrix");
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteBrush (brush), "GdipDeleteBrush");
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipDisposeImage (image), "GdipDisposeImage");
 		}

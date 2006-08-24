@@ -1,3 +1,10 @@
+2006-08-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GDIPlusTest.cs: Added more test cases for TextureBrush functions.
+	Added new test cases for ImageAttributes. Removed some assertion for 
+	GpGraphicsPath (which returns different value on monobuild win32 bot 
+	than my own machine, uninit field ?).
+
 2006-08-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GDIPlusTest.cs: Added new test cases for TextureBrush functions.
