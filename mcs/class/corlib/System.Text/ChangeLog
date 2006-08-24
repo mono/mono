@@ -4,27 +4,27 @@
 	* Latin1Encoding.cs : IsAlwaysNormalized() does not return false
 	  for FormC.
 
-2006-07-18  Kornel Pal  <kornelpal@gmail.com>
+2006-07-18  Kornél Pál  <kornelpal@gmail.com>
 
 	* ASCIIEncoding.cs: Fixed GetString () methods to use ASCII rather
 	  than new string (sbyte*, int, int) that uses Encoding.Default.
 	* Latin1Encoding.cs: Fixed GetString () methods to use Latin 1 rather
 	  than new string (sbyte*, int, int) that uses Encoding.Default.
 
-2006-07-11  Kornel Pal  <kornelpal@gmail.com>
+2006-07-11  Kornél Pál  <kornelpal@gmail.com>
 
 	* StringBuilder.cs: Pad the string with NULL characters when setting
 	Length. This is now documented:
 	http://msdn2.microsoft.com/en-us/library/system.text.stringbuilder.length.aspx
 
-2006-07-06  Kornel Pal  <kornelpal@gmail.com>
+2006-07-06  Kornél Pál  <kornelpal@gmail.com>
 
 	* CodePageEncoding.cs: Corrected comments.
 	* MLangCodePageEncoding.cs: Corrected comments. Removed unnesessary
 	  ArgumentExceptions in private constructors.
 	* SurrogateEncoder.cs: Corrected comments.
 
-2006-07-05  Kornel Pal  <kornelpal@gmail.com>
+2006-07-05  Kornél Pál  <kornelpal@gmail.com>
 
 	* CodePageEncoding.cs: Return the same real object in subsequent
 	  calls to GetRealObject ().
@@ -35,13 +35,13 @@
 	* SurrogateEncoder.cs: Return the same real object in subsequent
 	  calls to GetRealObject ().
 
-2006-07-04  Kornel Pal  <kornelpal@gmail.com>
+2006-07-04  Kornél Pál  <kornelpal@gmail.com>
 
 	* CodePageEncoding.cs: Added comment on usage.
 	* MLangCodePageEncoding.cs: Added comment on usage.
 	* SurrogateEncoder.cs: Added comment on usage.
 
-2006-07-03  Kornel Pal  <kornelpal@gmail.com>
+2006-07-03  Kornél Pál  <kornelpal@gmail.com>
 
 	* CodePageEncoding.cs: Added.
 	* MLangCodePageEncoding.cs: Added.
@@ -51,17 +51,17 @@
 
 	* EncodingInfo.cs : EncodingName is WebName, not EncodingName.
 
-2006-06-24  Kornel Pal  <kornelpal@gmail.com>
+2006-06-24  Kornél Pál  <kornelpal@gmail.com>
 
 	* UnicodeEncoding.cs: Don't detect byte order. Only readers like
 	  StreamReader should detect byte order marks.
 
-2006-06-21  Kornel Pal  <kornelpal@gmail.com>
+2006-06-21  Kornél Pál  <kornelpal@gmail.com>
 
 	* Encoding.cs: Return big-endian UTF-32 in GetEncodings () and
 	  GetEncoding (int)
 
-2006-06-06  Kornel Pal  <kornelpal@gmail.com>
+2006-06-06  Kornél Pál  <kornelpal@gmail.com>
 
 	* UnicodeEncoding.cs: Override GetString (byte [], int, int) in
 	  profile 1.x as well because performance improvement is worth the
@@ -91,7 +91,7 @@
 	* EncodingInfo.cs, Encoding.cs :
 	  Implemented Encoding.GetEncodings(). It's so hacky!
 
-2006-04-13  Kornel Pal  <kornelpal@gmail.com>
+2006-04-13  Kornél Pál  <kornelpal@gmail.com>
 
 	* Encoding.cs: GetString (byte []): Wrap GetString (byte [], int, int)
 	  as MS.NET does. This is a more reasonable high level wrapper
@@ -119,7 +119,7 @@
 	* UTF8Encoding.cs : made internal implementation as pointer-based,
 	  and added pointer-based converter method overloads.
 
-2006-03-21  Kornel Pal  <kornelpal@gmail.com>
+2006-03-21  Kornél Pál  <kornelpal@gmail.com>
 
 	* UnicodeEncoding.cs: Use unsafe code for copying characters to speed
 	  up conversion.
