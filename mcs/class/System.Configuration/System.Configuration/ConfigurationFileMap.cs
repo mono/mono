@@ -37,9 +37,7 @@ namespace System.Configuration
 		
 		public ConfigurationFileMap ()
 		{
-#if !TARGET_JVM // RuntimeEnvironment.SystemConfigurationFile is not implemented
 			machineConfigFilename = System.Runtime.InteropServices.RuntimeEnvironment.SystemConfigurationFile;
-#endif
 		}
 		
 		public ConfigurationFileMap (string machineConfigFilename)
