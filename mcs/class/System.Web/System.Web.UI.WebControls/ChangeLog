@@ -1,3 +1,8 @@
+2006-08-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TextBox.cs: fix for bugs #76771 and #79020. A test breaks for the 2.0
+	case, but there are many others.
+
 2006-08-23 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Menu.cs: corrected rendering of static and dynamic items
