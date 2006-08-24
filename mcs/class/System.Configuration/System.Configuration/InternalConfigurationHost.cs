@@ -165,6 +165,10 @@ namespace System.Configuration
 		
 		public virtual Stream OpenStreamForRead (string streamName)
 		{
+#if TARGET_JVM
+			if (String.CompareOrdinal (streamName, "/machine.config"))
+				return (Stream) vmw.common.IOUtils.getStreamForGHConfigs (streamName);
+#endif
 			if (!File.Exists (streamName))
 				throw new ConfigurationException ("File '" + streamName + "' not found");
 				
