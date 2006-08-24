@@ -166,6 +166,8 @@ namespace System.Web.UI.WebControls
 			
 			if (bt != null) {
 				IOrderedDictionary values = bt.ExtractValues (cell);
+				if (values == null)
+					return;
 				foreach (DictionaryEntry e in values)
 					dictionary [e.Key] = e.Value; 
 			}

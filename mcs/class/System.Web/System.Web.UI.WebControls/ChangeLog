@@ -1,3 +1,8 @@
+2006-08-08 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* TemplateField.cs: fixed ExtractValuesFromCell, .net aspx parser not
+	always creates ExtractTemplateValuesMethod delegate
+
 2006-08-24 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* TreeNodeBinding.cs: corrected public interface
