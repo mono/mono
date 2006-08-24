@@ -110,11 +110,7 @@ namespace System.Web.Configuration
 		{
 			if (configPath == MachinePath) {
 				if (map == null)
-#if TARGET_JVM
-					return "/machine.config";
-#else
 					return System.Runtime.InteropServices.RuntimeEnvironment.SystemConfigurationFile;
-#endif
 				else
 					return map.MachineConfigFilename;
 			} else if (configPath == MachineWebPath) {
