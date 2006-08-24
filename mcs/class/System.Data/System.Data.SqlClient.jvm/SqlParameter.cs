@@ -173,7 +173,10 @@ namespace System.Data.SqlClient
 
 		protected internal override string Placeholder {
 			get {
-				return ParameterName;
+				if (ParameterName.Length == 0 || ParameterName[0] == '@')
+					return ParameterName;
+
+				return String.Concat("@", ParameterName);	
 			}
 		}
 

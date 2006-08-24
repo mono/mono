@@ -153,7 +153,7 @@ namespace System.Data.SqlClient
 
 			for(int i=0; i < userParametersList.Count; i++) {
 				AbstractDbParameter userParameter = (AbstractDbParameter)userParametersList[i];
-				if (String.Compare(parameterName, userParameter.ParameterName.Trim(), true) == 0) {
+				if (String.Compare(parameterName, userParameter.Placeholder.Trim(), true, System.Globalization.CultureInfo.InvariantCulture) == 0) {
 					return userParameter;
 				}
 			}
