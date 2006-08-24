@@ -1915,7 +1915,7 @@ namespace System.Windows.Forms {
 			rect.right = rectangle.Right;
 			rect.bottom = rectangle.Bottom;
 
-			Win32ScrollWindowEx(hwnd, XAmount, YAmount, ref rect, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, ScrollWindowExFlags.SW_INVALIDATE | ScrollWindowExFlags.SW_ERASE | (with_children ? ScrollWindowExFlags.SW_SCROLLCHILDREN : ScrollWindowExFlags.SW_NONE));
+			Win32ScrollWindowEx(hwnd, XAmount, YAmount, IntPtr.Zero, ref rect, IntPtr.Zero, IntPtr.Zero, ScrollWindowExFlags.SW_INVALIDATE | ScrollWindowExFlags.SW_ERASE | (with_children ? ScrollWindowExFlags.SW_SCROLLCHILDREN : ScrollWindowExFlags.SW_NONE));
 			Win32UpdateWindow(hwnd);
 		}
 
