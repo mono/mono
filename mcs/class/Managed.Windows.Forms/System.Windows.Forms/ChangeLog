@@ -1,3 +1,12 @@
+2006-08-24  Chris Toshok  <toshok@ximian.com>
+
+	* ScrollableControl.cs: fix #78271.  There's a lot of misc stuff
+	in this patch (aggregating setting Left/Top/Width/Height to
+	setting Bounds on the scrollbars), but the crux of the fix is in
+	Recalculate, where we scroll by the remaining scroll_position if
+	we're hiding a scrollbar.  The 2*$5 reward in the comment is
+	serious.
+
 2006-08-24  Jackson Harper  <jackson@ximian.com>
 
 	* MdiClient.cs:

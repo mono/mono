@@ -716,55 +716,63 @@ namespace System.Windows.Forms {
 
 			} while (right_edge != prev_right_edge || bottom_edge != prev_bottom_edge);
 
+			Rectangle hscroll_bounds;
+			Rectangle vscroll_bounds;
+
+			hscroll_bounds = new Rectangle (0, client.Height - SystemInformation.HorizontalScrollBarHeight,
+							ClientRectangle.Width, SystemInformation.HorizontalScrollBarHeight);
+			vscroll_bounds = new Rectangle (client.Width - SystemInformation.VerticalScrollBarWidth, 0,
+							SystemInformation.VerticalScrollBarWidth, ClientRectangle.Height);
+
+			/* the ScrollWindow calls here are needed
+			 * because (this explanation sucks):
+			 * 
+			 * when we transition from having a scrollbar to
+			 * not having one, we won't receive a scrollbar
+			 * moved (value changed) event, so we need to
+			 * manually scroll the canvas.
+			 * 
+			 * if you can fix this without requiring the
+			 * ScrollWindow calls, pdb and toshok will each
+			 * pay you $5.
+			*/
 			if (hscroll_visible) {
-				hscrollbar.Left = 0;
-				hscrollbar.Top = client.Height - SystemInformation.HorizontalScrollBarHeight;
 				hscrollbar.LargeChange = right_edge;
 				hscrollbar.SmallChange = 5;
 				hscrollbar.Maximum = canvas.Width - 1;
 			} else {
+				if (hscrollbar.Visible) {
+					ScrollWindow (- scroll_position.X, 0);
+				}
 				scroll_position.X = 0;
 			}
 
 			if (vscroll_visible) {
-				vscrollbar.Left = client.Width - SystemInformation.VerticalScrollBarWidth;
-				vscrollbar.Top = 0;
-
 				vscrollbar.LargeChange = bottom_edge;
 				vscrollbar.SmallChange = 5;
 				vscrollbar.Maximum = canvas.Height - 1;
 			} else {
+				if (vscrollbar.Visible) {
+					ScrollWindow (0, - scroll_position.Y);
+				}
 				scroll_position.Y = 0;
 			}
 
 			if (hscroll_visible && vscroll_visible) {
-				hscrollbar.Width = ClientRectangle.Width - SystemInformation.VerticalScrollBarWidth;
-				vscrollbar.Height = ClientRectangle.Height - SystemInformation.HorizontalScrollBarHeight;
+				hscroll_bounds.Width -= SystemInformation.VerticalScrollBarWidth;
+				vscroll_bounds.Height -= SystemInformation.HorizontalScrollBarHeight;
 
-				sizegrip.Left =  hscrollbar.Right;
-				sizegrip.Top =  vscrollbar.Bottom;
-				sizegrip.Width = SystemInformation.VerticalScrollBarWidth;
-				sizegrip.Height = SystemInformation.HorizontalScrollBarHeight;
-
-				hscrollbar.Visible = true;
-				vscrollbar.Visible = true;
-				sizegrip.Visible = true;
-			} else {
-				sizegrip.Visible = false;
-				if (hscroll_visible) {
-					hscrollbar.Width = ClientRectangle.Width;
-					hscrollbar.Visible = true;
-				} else {
-					hscrollbar.Visible = false;
-				}
-
-				if (vscroll_visible) {
-					vscrollbar.Height = ClientRectangle.Height;
-					vscrollbar.Visible = true;
-				} else {
-					vscrollbar.Visible = false;
-				}
+				sizegrip.Bounds = new Rectangle (hscroll_bounds.Right,
+								 vscroll_bounds.Bottom,
+								 SystemInformation.VerticalScrollBarWidth,
+								 SystemInformation.HorizontalScrollBarHeight);
 			}
+
+			hscrollbar.Bounds = hscroll_bounds;
+			vscrollbar.Bounds = vscroll_bounds;
+			hscrollbar.Visible = hscroll_visible;
+			vscrollbar.Visible = vscroll_visible;
+			sizegrip.Visible = hscroll_visible && vscroll_visible;
 		}
 
 		private void HandleScrollBar(object sender, EventArgs e) {
