@@ -38,12 +38,9 @@ namespace System.Web.UI {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class WebServiceParser
 	{
-		public static Type GetCompiledType (string url, HttpContext context)
+		public static Type GetCompiledType (string filePath, HttpContext context)
 		{
-			string ghVirualDir = AppDomain.CurrentDomain.GetData(".ghAppPath").ToString();
-			if (ghVirualDir != null && !url.StartsWith(ghVirualDir)) 
-				url = context.Request.MapPath(url);
-			return PageMapper.GetObjectType(url);
+			return PageMapper.GetObjectType(context.Request.FilePath);
 		}
 	}
 }
