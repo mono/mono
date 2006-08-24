@@ -54,8 +54,10 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisible (false)]
 
+#if !TARGET_JVM //TARGET_JVM does not support signing
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile("../msfinal.pub")]
+#endif
 
 #if NET_2_0
 [assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
