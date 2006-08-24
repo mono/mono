@@ -1,16 +1,13 @@
 //
 // System.Drawing.TextureBrush.cs
 //
-// Author:
+// Authors:
 //   Dennis Hayes (dennish@Raytek.com)
 //   Ravindra (rkumar@novell.com)
+//   Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc
-// (C) 2004 Novell, Inc.
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,24 +29,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.ComponentModel;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 
-namespace System.Drawing
-{
-	/// <summary>
-	/// Summary description for TextureBrush.
-	/// </summary>
-	public sealed class TextureBrush : Brush
-	{
-		private Image image;
+namespace System.Drawing {
+
+	public sealed class TextureBrush : Brush {
 
 		internal TextureBrush (IntPtr ptr) : base (ptr)
 		{
-			// get image from IntPtr
-			// image could be Bitmap or Metafile
-			image = Image;
 		}
 
 		public TextureBrush (Image image) : this (image, WrapMode.Tile)
@@ -58,49 +47,71 @@ namespace System.Drawing
 
 		public TextureBrush (Image image, Rectangle dstRect)
 		{
-			this.image = image;
+			if (image == null)
+				throw new ArgumentNullException ("image");
+
 			Status status = GDIPlus.GdipCreateTextureIAI (image.nativeObject, IntPtr.Zero, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
 			GDIPlus.CheckStatus (status);			
 		}
 
 		public TextureBrush (Image image, RectangleF dstRect)
 		{
-			this.image = image;
+			if (image == null)
+				throw new ArgumentNullException ("image");
+
 			Status status = GDIPlus.GdipCreateTextureIA (image.nativeObject, IntPtr.Zero, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
 			GDIPlus.CheckStatus (status);
 		}
 
 		public TextureBrush (Image image, WrapMode wrapMode)
 		{
-			this.image = image;
+			if (image == null)
+				throw new ArgumentNullException ("image");
+			if ((wrapMode < WrapMode.Tile) || (wrapMode > WrapMode.Clamp))
+				throw new InvalidEnumArgumentException ("WrapMode");
+
 			Status status = GDIPlus.GdipCreateTexture (image.nativeObject, wrapMode, out nativeObject);
 			GDIPlus.CheckStatus (status);
 		}
 
 		public TextureBrush (Image image, Rectangle dstRect, ImageAttributes imageAttr)
 		{
-			this.image = image;
-			Status status = GDIPlus.GdipCreateTextureIAI (image.nativeObject, imageAttr.NativeObject, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
+			if (image == null)
+				throw new ArgumentNullException ("image");
+
+			IntPtr attr = imageAttr == null ? IntPtr.Zero : imageAttr.NativeObject;
+			Status status = GDIPlus.GdipCreateTextureIAI (image.nativeObject, attr, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
 			GDIPlus.CheckStatus (status);
 		}
 
 		public TextureBrush (Image image, RectangleF dstRect, ImageAttributes imageAttr)
 		{	
-			this.image = image;
-			Status status = GDIPlus.GdipCreateTextureIA (image.nativeObject, imageAttr.NativeObject, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
+			if (image == null)
+				throw new ArgumentNullException ("image");
+
+			IntPtr attr = imageAttr == null ? IntPtr.Zero : imageAttr.NativeObject;
+			Status status = GDIPlus.GdipCreateTextureIA (image.nativeObject, attr, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
 			GDIPlus.CheckStatus (status);			
 		}
 
 		public TextureBrush (Image image, WrapMode wrapMode, Rectangle dstRect)
 		{
-			this.image = image;
+			if (image == null)
+				throw new ArgumentNullException ("image");
+			if ((wrapMode < WrapMode.Tile) || (wrapMode > WrapMode.Clamp))
+				throw new InvalidEnumArgumentException ("WrapMode");
+
 			Status status = GDIPlus.GdipCreateTexture2I (image.nativeObject, wrapMode, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
 			GDIPlus.CheckStatus (status);
 		}
 
 		public TextureBrush (Image image, WrapMode wrapMode, RectangleF dstRect)
 		{
-			this.image = image;
+			if (image == null)
+				throw new ArgumentNullException ("image");
+			if ((wrapMode < WrapMode.Tile) || (wrapMode > WrapMode.Clamp))
+				throw new InvalidEnumArgumentException ("WrapMode");
+
 			Status status = GDIPlus.GdipCreateTexture2 (image.nativeObject, wrapMode, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
 			GDIPlus.CheckStatus (status);
 		}
@@ -109,13 +120,14 @@ namespace System.Drawing
 
 		public Image Image {
 			get {
-				if (image == null) {
-					IntPtr img;
-					Status status = GDIPlus.GdipGetTextureImage (nativeObject, out img);
-					GDIPlus.CheckStatus (status);
-					image = new Bitmap (img);
-				}
-				return image;
+				// this check is required here as GDI+ doesn't check for it 
+				if (nativeObject == IntPtr.Zero)
+					throw new ArgumentException ("Object was disposed");
+
+				IntPtr img;
+				Status status = GDIPlus.GdipGetTextureImage (nativeObject, out img);
+				GDIPlus.CheckStatus (status);
+				return new Bitmap (img);
 			}
 		}
 
@@ -128,6 +140,9 @@ namespace System.Drawing
 				return matrix;
 			}
 			set {
+				if (value == null)
+					throw new ArgumentNullException ("Transform");
+
 				Status status = GDIPlus.GdipSetTextureTransform (nativeObject, value.nativeMatrix);
 				GDIPlus.CheckStatus (status);
 			}
@@ -135,12 +150,15 @@ namespace System.Drawing
 
 		public WrapMode WrapMode {
 			get {
-				WrapMode mode = WrapMode.Tile;
+				WrapMode mode;
 				Status status = GDIPlus.GdipGetTextureWrapMode (nativeObject, out mode);
 				GDIPlus.CheckStatus (status);
 				return mode;
 			}
 			set {
+				if ((value < WrapMode.Tile) || (value > WrapMode.Clamp))
+					throw new InvalidEnumArgumentException ("WrapMode");
+
 				Status status = GDIPlus.GdipSetTextureWrapMode (nativeObject, value);
 				GDIPlus.CheckStatus (status);
 			}
@@ -154,11 +172,7 @@ namespace System.Drawing
 			Status status = GDIPlus.GdipCloneBrush (nativeObject, out clonePtr);
 			GDIPlus.CheckStatus (status);
 
-			TextureBrush clone = new TextureBrush (clonePtr);
-			if (image != null)
-				clone.image = (Image) image.Clone ();
-			
-			return clone;
+			return new TextureBrush (clonePtr);
 		}
 
 		public void MultiplyTransform (Matrix matrix)
@@ -168,6 +182,9 @@ namespace System.Drawing
 
 		public void MultiplyTransform (Matrix matrix, MatrixOrder order)
 		{
+			if (matrix == null)
+				throw new ArgumentNullException ("matrix");
+
 			Status status = GDIPlus.GdipMultiplyTextureTransform (nativeObject, matrix.nativeMatrix, order);
 			GDIPlus.CheckStatus (status);
 		}

@@ -1,3 +1,10 @@
+2006-08-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TextureBrush.cs: Remove private Image member as we cannot, without
+	cloning it (which removes the advantage of caching it), return it for 
+	the Image property *and* we cannot dispose of it properly (Dispose 
+	isn't overridden).
+
 2006-08-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* gdipFunctions.cs: Fix GdipGetImageWidth to use an uint for it's
