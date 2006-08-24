@@ -532,7 +532,8 @@ namespace System.Windows.Forms {
 							mdi_parent.MdiContainer);
 					mdi_parent.MdiContainer.Controls.Add (this);
 
-					UpdateStyles ();
+					RecreateHandle ();
+
 				} else if (mdi_parent != null) {
 					mdi_parent = null;
 

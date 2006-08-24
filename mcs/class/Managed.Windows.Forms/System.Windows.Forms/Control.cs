@@ -516,8 +516,10 @@ namespace System.Windows.Forms
 				list.Remove(value);
 
 				value.ChangeParent(null);
-				
-				value.Hide ();
+
+				// Removing this temporarily because we have a bug somewhere else
+				// that this exposes
+				// value.Hide ();
 
 				owner.UpdateChildrenZOrder();
 			}
@@ -863,7 +865,7 @@ namespace System.Windows.Forms
 			XplatUI.ClientToScreen (Handle, ref x, ref y);
 		}
 
-		private bool IsRecreating {
+		internal bool IsRecreating {
 			get {
 				if (is_recreating) {
 					return true;

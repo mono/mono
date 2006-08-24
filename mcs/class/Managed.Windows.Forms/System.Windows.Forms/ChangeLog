@@ -1,3 +1,17 @@
+2006-08-24  Jackson Harper  <jackson@ximian.com>
+
+	* Control.cs: Make IsRecreating internal so that the driver can
+	check it
+	- Temporarily remove the Hide when controls are removed, its
+	making a whole bunch of things not work because visibility isn't
+	getting reset elsewhere correctly
+	* Form.cs: Need to do a full handle recreation when the mdi parent
+	is set.
+	* XplatUIX11.cs: If we are recreating handles don't dispose the
+	HWNDs.  What was happening is the handles were being recreated in
+	SendWMDestroyMessages, but then flow continued on in that method
+	and destroyed the new handles.
+
 2006-08-23  Jackson Harper  <jackson@ximian.com>
 
 	* Form.cs: MdiClient is always at the back of the bus

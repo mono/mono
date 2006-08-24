@@ -1500,7 +1500,7 @@ namespace System.Windows.Forms {
 
 				for (i = 0; i < controls.Length; i++) {
 					SendWMDestroyMessages(controls[i]);
-					if (controls[i].IsHandleCreated) {
+					if (!controls[i].IsRecreating && controls[i].IsHandleCreated) {
 						hwnd = Hwnd.ObjectFromHandle(controls[i].Handle);
 						if (hwnd != null) {
 							hwnd.Dispose();
@@ -2114,7 +2114,6 @@ namespace System.Windows.Forms {
 			Rectangle		ClientRect;
 			SetWindowValuemask	ValueMask;
 			int[]			atoms;
-
 
 			hwnd = new Hwnd();
 
