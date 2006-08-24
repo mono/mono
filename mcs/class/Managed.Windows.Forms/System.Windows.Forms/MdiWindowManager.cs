@@ -41,6 +41,7 @@ namespace System.Windows.Forms {
 		private ContextMenu icon_popup_menu;
 		private FormWindowState prev_window_state;
 		private PaintEventHandler draw_maximized_buttons;
+		internal EventHandler form_closed_handler;
 		
 		private MdiClient mdi_container;
 		private Rectangle prev_virtual_position;
@@ -56,7 +57,8 @@ namespace System.Windows.Forms {
 			prev_bounds = form.Bounds;
 			prev_window_state = form.window_state;
 			form.GotFocus += new EventHandler (FormGotFocus);
-			form.Closed += new EventHandler (FormClosed);
+			form_closed_handler = new EventHandler (FormClosed);
+			form.Closed += form_closed_handler;
 			draw_maximized_buttons = new PaintEventHandler (DrawMaximizedButtons);
 			CreateIconMenus ();
 		}

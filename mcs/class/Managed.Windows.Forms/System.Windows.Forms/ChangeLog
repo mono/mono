@@ -1,5 +1,12 @@
 2006-08-24  Jackson Harper  <jackson@ximian.com>
 
+	* MdiClient.cs:
+	* MdiWindowManager.cs: If the form is made a non-mdi window we
+	need to remove the form closed event so that closing forms works
+	correctly.
+
+2006-08-24  Jackson Harper  <jackson@ximian.com>
+
 	* Control.cs: Make IsRecreating internal so that the driver can
 	check it
 	- Temporarily remove the Hide when controls are removed, its

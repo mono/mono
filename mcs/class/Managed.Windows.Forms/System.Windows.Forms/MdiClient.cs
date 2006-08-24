@@ -70,7 +70,16 @@ namespace System.Windows.Forms {
 				owner.ActiveMdiChild = form;
 			}
 
-			public override void Remove(Control value) {
+			public override void Remove(Control value)
+			{
+				Form form = value as Form;
+				if (form != null) {
+					MdiWindowManager wm = form.WindowManager as MdiWindowManager;
+					if (wm != null) {
+						form.Closed -= wm.form_closed_handler;
+					}
+				}
+
 				owner.mdi_child_list.Remove (value);
 				base.Remove (value);
 			}
