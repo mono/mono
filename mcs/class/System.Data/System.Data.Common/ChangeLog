@@ -1,3 +1,8 @@
+2006-08-24  Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* DbProviderFactories.cs: added TARGET_JVM block to not supported
+	functionality
+
 2006-08-06  Konstantin Triger <kostat@mainsoft.com>
 
 	* DbDataReader.cs: DbDataReader.Dipose(bool) - implemented.
