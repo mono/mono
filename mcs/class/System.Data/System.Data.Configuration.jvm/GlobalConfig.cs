@@ -45,7 +45,7 @@ namespace System.Data.Configuration {
 
 		private Switches() {}
 
-		const string SwitchesSection = "system.data/switches";
+		const string SwitchesSection = "Mainsoft.Data.Configuration/switches";
 		const string PrefetchSchemaConfigName = "JDBC.PrefetchSchema";
 		static readonly string AppDomainPrefetchSchemaConfigName = String.Concat(SwitchesSection, "/", PrefetchSchemaConfigName);
 
