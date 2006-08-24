@@ -44,6 +44,11 @@ internal class Latin1Encoding : Encoding
 	public override bool IsSingleByte {
 		get { return true; }
 	}
+
+	public override bool IsAlwaysNormalized (NormalizationForm form)
+	{
+		return form == NormalizationForm.FormC;
+	}
 #endif
 
 	// Get the number of bytes needed to encode a character buffer.

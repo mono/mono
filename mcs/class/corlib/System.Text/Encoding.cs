@@ -582,6 +582,17 @@ public abstract class Encoding
 		}
 		return encoding_infos;
 	}
+
+	public bool IsAlwaysNormalized ()
+	{
+		return IsAlwaysNormalized (NormalizationForm.FormC);
+	}
+
+	public virtual bool IsAlwaysNormalized (NormalizationForm form)
+	{
+		// umm, ASCIIEncoding should have overriden this method, no?
+		return form == NormalizationForm.FormC && this is ASCIIEncoding;
+	}
 #endif
 
 	// Table of builtin web encoding names and the corresponding code pages.
