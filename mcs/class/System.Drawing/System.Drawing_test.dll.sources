@@ -23,6 +23,7 @@ System.Drawing/TestPointF.cs
 System.Drawing/TestRectangle.cs
 System.Drawing/TestRectangleConverter.cs
 System.Drawing/TestRectangleF.cs
+System.Drawing/TestRegion.cs
 System.Drawing/TestSize.cs
 System.Drawing/TestSizeConverter.cs
 System.Drawing/TestSizeFConverter.cs
@@ -34,6 +35,7 @@ System.Drawing/TestImageConverter.cs
 System.Drawing/TestImageFormatConverter.cs
 System.Drawing/TestIconConverter.cs
 System.Drawing/TestIcon.cs
+System.Drawing/TextureBrushTest.cs
 System.Drawing.Drawing2D/GraphicsPathTest.cs
 System.Drawing.Drawing2D/LinearGradientBrushTest.cs
 System.Drawing.Drawing2D/PathDataTest.cs
@@ -42,7 +44,6 @@ System.Drawing.Drawing2D/TestBlend.cs
 System.Drawing.Drawing2D/TestColorBlend.cs
 System.Drawing.Drawing2D/TestHatchBrush.cs
 System.Drawing.Drawing2D/TestMatrix.cs
-System.Drawing/TestRegion.cs
 System.Drawing.Imaging/TestImageCodecInfo.cs
 System.Drawing.Imaging/TestImageFormat.cs
 System.Drawing.Imaging/TestBmpCodec.cs
