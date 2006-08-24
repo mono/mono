@@ -66,9 +66,9 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (0)]
 		[NotifyParentProperty (true)]
-		public int ChildNodesPadding {
+		public Unit ChildNodesPadding {
 			get {
-				return ViewState.GetInt (CHILD_PADD, 0);
+				return ViewState [CHILD_PADD] == null ? 0 : (Unit) ViewState [CHILD_PADD];
 			}
 			set {
 				ViewState [CHILD_PADD] = value;
@@ -77,9 +77,9 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (0)]
 		[NotifyParentProperty (true)]
-		public int HorizontalPadding {
+		public Unit HorizontalPadding {
 			get {
-				return ViewState.GetInt (HORZ_PADD, 0);
+				return ViewState [HORZ_PADD] == null ? 0 : (Unit) ViewState [HORZ_PADD];
 			}
 			set {
 				ViewState[HORZ_PADD] = value;
@@ -88,9 +88,9 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (0)]
 		[NotifyParentProperty (true)]
-		public int VerticalPadding {
+		public Unit VerticalPadding {
 			get {
-				return ViewState.GetInt (VERT_PADD, 0);
+				return ViewState [VERT_PADD] == null ? 0 : (Unit) ViewState [VERT_PADD];
 			}
 			set {
 				ViewState [VERT_PADD] = value;
@@ -99,9 +99,9 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (0)]
 		[NotifyParentProperty (true)]
-		public int NodeSpacing {
+		public Unit NodeSpacing {
 			get {
-				return ViewState.GetInt (SPACING, 0);
+				return ViewState [SPACING] == null ? 0 : (Unit) ViewState [SPACING];
 			}
 			set {
 				ViewState [SPACING] = value;

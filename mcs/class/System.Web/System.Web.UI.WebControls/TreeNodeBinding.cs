@@ -185,11 +185,9 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue (false)]
-		public bool ShowCheckBox {
+		public Nullable<bool> ShowCheckBox {
 			get {
-				object o = ViewState ["ShowCheckBox"];
-				if (o != null) return (bool)o;
-				return false;
+				return (Nullable<bool>) ViewState ["ShowCheckBox"];
 			}
 			set {
 				ViewState ["ShowCheckBox"] = value;
