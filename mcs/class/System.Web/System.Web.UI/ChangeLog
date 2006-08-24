@@ -1,5 +1,12 @@
 2006-08-22  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* Page.cs: fixed ApplyMasterPage, masterPageFile can be empty string
+	if compiled with .net aspx parser
+	fixed OnInit, GetStyleSheets may return null if no css files found by
+	.net aspx parser
+
+2006-08-22  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* TemplateControl.jvm.cs: fixed WireupAutomaticEvents, removed access
 	modifiers check on event handlers
 
@@ -12,7 +19,8 @@
 
 2006-08-20  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
-	* MasterPageParser.jvm.cs: fixed path resolving GetCompiledMasterInstance
+	* MasterPageParser.jvm.cs: fixed path resolving
+	GetCompiledMasterInstance
 
 2006-08-17  Vladimir Krasnov  <vladimirk@mainsoft.com>
 

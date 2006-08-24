@@ -1637,7 +1637,7 @@ public class Page : TemplateControl, IHttpHandler
 	
 	void ApplyMasterPage ()
 	{
-		if (masterPageFile != null) {
+		if (masterPageFile != null && masterPageFile.Length > 0) {
 			ArrayList appliedMasterPageFiles = new ArrayList ();
 
 			if (Master != null) {
@@ -1805,9 +1805,9 @@ public class Page : TemplateControl, IHttpHandler
 
 		ArrayList themes = new ArrayList();
 
-		if (StyleSheetPageTheme != null)
+		if (StyleSheetPageTheme != null && StyleSheetPageTheme.GetStyleSheets () != null)
 			themes.AddRange (StyleSheetPageTheme.GetStyleSheets ());
-		if (PageTheme != null)
+		if (PageTheme != null && PageTheme.GetStyleSheets () != null)
 			themes.AddRange (PageTheme.GetStyleSheets ());
 
 		foreach (string lss in themes) {
