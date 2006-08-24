@@ -193,7 +193,13 @@ public abstract class Encoding
 	{
 		Encoding enc = (obj as Encoding);
 		if (enc != null) {
+#if NET_2_0
+			return codePage == enc.codePage &&
+				DecoderFallback.Equals (enc.DecoderFallback) &&
+				EncoderFallback.Equals (enc.EncoderFallback);
+#else
 			return (codePage == enc.codePage);
+#endif
 		} else {
 			return false;
 		}
@@ -688,7 +694,11 @@ public abstract class Encoding
 	// Get a hash code for this instance.
 	public override int GetHashCode ()
 	{
+#if NET_2_0
+		return DecoderFallback.GetHashCode () << 24 + EncoderFallback.GetHashCode () << 16 + codePage;
+#else
 		return codePage;
+#endif
 	}
 
 	// Get the maximum number of bytes needed to encode a

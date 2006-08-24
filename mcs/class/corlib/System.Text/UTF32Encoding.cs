@@ -340,7 +340,12 @@ public sealed class UTF32Encoding : Encoding
 	// Get the hash code for this object.
 	public override int GetHashCode ()
 	{
-		return base.GetHashCode ();
+		int basis = base.GetHashCode ();
+		if (bigEndian)
+			basis ^= 0x1F;
+		if (byteOrderMark)
+			basis ^= 0x3F;
+		return basis;
 	}
 
 	// UTF32 decoder implementation.
@@ -478,7 +483,48 @@ public sealed class UTF32Encoding : Encoding
 		return base.GetBytes (s);
 	}
 #endif
-	
+
+#if NET_2_0
+	// a bunch of practically missing implementations (but should just work)
+
+	public override int GetByteCount (string s)
+	{
+		return base.GetByteCount (s);
+	}
+
+	[CLSCompliantAttribute (false)]
+	public override unsafe int GetBytes (char *chars, int charCount, byte *bytes, int byteCount)
+	{
+		return base.GetBytes (chars, charCount, bytes, byteCount);
+	}
+
+	public override int GetBytes (string s, int charIndex, int charCount, byte [] bytes, int byteIndex)
+	{
+		return base.GetBytes (s, charIndex, charCount, bytes, byteIndex);
+	}
+
+	[CLSCompliantAttribute (false)]
+	public override unsafe int GetCharCount (byte *bytes, int count)
+	{
+		return base.GetCharCount (bytes, count);
+	}
+
+	[CLSCompliantAttribute (false)]
+	public override unsafe int GetChars (byte *bytes, int byteCount, char* chars, int charCount)
+	{
+		return base.GetChars (bytes, byteCount, chars, charCount);
+	}
+
+	public override string GetString (byte [] bytes, int index, int count)
+	{
+		return base.GetString (bytes, index, count);
+	}
+
+	public override Encoder GetEncoder ()
+	{
+		return base.GetEncoder ();
+	}
+#endif
 
 }; // class UTF32Encoding
 

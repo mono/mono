@@ -109,6 +109,24 @@ class UTF7Encoding : Encoding
 		windows_code_page = UnicodeEncoding.UNICODE_CODE_PAGE;
 	}
 
+#if NET_2_0
+	public override int GetHashCode ()
+	{
+		int basis = base.GetHashCode ();
+		return allowOptionals ? -basis : basis;
+	}
+
+	public override bool Equals (object other)
+	{
+		UTF7Encoding e = other as UTF7Encoding;
+		if (e == null)
+			return false;
+		return allowOptionals == e.allowOptionals &&
+			EncoderFallback.Equals (e.EncoderFallback) &&
+			DecoderFallback.Equals (e.DecoderFallback);
+	}
+#endif
+
 	// Internal version of "GetByteCount" that can handle
 	// a rolling state between calls.
 	private static int InternalGetByteCount
@@ -653,6 +671,50 @@ class UTF7Encoding : Encoding
 		}
 
 	} // class UTF7Encoder
+
+#if NET_2_0
+	// a bunch of practically missing implementations (but should just work)
+
+	[CLSCompliantAttribute (false)]
+	public override unsafe int GetByteCount (char *chars, int count)
+	{
+		return base.GetByteCount (chars, count);
+	}
+
+	public override int GetByteCount (string s)
+	{
+		return base.GetByteCount (s);
+	}
+
+	[CLSCompliantAttribute (false)]
+	public override unsafe int GetBytes (char *chars, int charCount, byte* bytes, int byteCount)
+	{
+		return base.GetBytes (chars, charCount, bytes, byteCount);
+	}
+
+	public override int GetBytes (string s, int charIndex, int charCount, byte [] bytes, int byteIndex)
+	{
+		return base.GetBytes (s, charIndex, charCount, bytes, byteIndex);
+	}
+
+	[CLSCompliantAttribute (false)]
+	public override unsafe int GetCharCount (byte *bytes, int count)
+	{
+		return base.GetCharCount (bytes, count);
+	}
+
+	[CLSCompliantAttribute (false)]
+	public override unsafe int GetChars (byte* bytes, int byteCount, char* chars, int charCount)
+	{
+		return base.GetChars (bytes, byteCount, chars, charCount);
+	}
+
+	public override string GetString (byte [] bytes, int index, int count)
+	{
+		return base.GetString (bytes, index, count);
+	}
+
+#endif
 
 }; // class UTF7Encoding
 

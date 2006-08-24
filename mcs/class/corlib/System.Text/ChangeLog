@@ -1,5 +1,14 @@
 2006-08-24  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Encoding.cs :
+	  Consider DecoderFallback and EncoderFallback in 2.0 Equals()
+	  and GetHashCode().
+	* UTF32Encoding.cs, UTF7Encoding.cs :
+	  Fixed GetHashCode() and Equals() as well.
+	  Added several missing overrides in 2.0.
+
+2006-08-24  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Encoding.cs : implemented IsAlwaysNormalized().
 	* Latin1Encoding.cs : IsAlwaysNormalized() does not return false
 	  for FormC.
