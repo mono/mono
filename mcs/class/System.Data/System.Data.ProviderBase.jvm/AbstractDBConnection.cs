@@ -76,7 +76,7 @@ namespace System.Data.ProviderBase
 				ArrayList collection = new ArrayList();
 				collection.Add(new ObjectNameResolver(NameOrder));
 
-				ObjectNameResolversCollection basic = (ObjectNameResolversCollection)ConfigurationSettings.GetConfig("system.data/objectnameresolution");
+				ObjectNameResolversCollection basic = (ObjectNameResolversCollection) ConfigurationSettings.GetConfig ("Mainsoft.Data.Configuration/objectnameresolution");
 				
 				java.sql.DatabaseMetaData metaData = connection.JdbcConnection.getMetaData();
 				string productName = metaData.getDatabaseProductName();

@@ -1,3 +1,8 @@
+2006-08-24 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* AbstractDBConnection.cs: fixed GetSyntaxPatterns, configuration
+	section moved
+
 2006-05-09 Boris Kirzner <borisk@mainsoft.com>
 	* AbstractDBCommand.cs: only input parameters can be set by specialized methods.
 
