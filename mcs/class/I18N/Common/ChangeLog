@@ -1,3 +1,13 @@
+2006-08-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ByteEncoding.cs : Implemented IsAlwaysNormalized().
+	  (only SingleByte and FormC may return true for IsAlwaysNormalized
+	  on .NET.)
+	  Ask String.Normalize() for every possible single byte character
+	  which is valid for the encoding and see if it has changed the
+	  string (i.e. it returns the value based on the actual
+	  normalization.)
+
 2006-06-13  Kornél Pál  <kornelpal@gmail.com>
 
 	* ByteEncoding.cs: Use unsafe code in GetString() that results in

@@ -48,6 +48,11 @@ public abstract class ByteEncoding : MonoEncoding
 	protected bool isMailNewsDisplay;
 	protected bool isMailNewsSave;
 	protected int windowsCodePage;
+#if NET_2_0
+	static byte [] isNormalized;
+	static byte [] isNormalizedComputed;
+	static byte [] normalization_bytes;
+#endif
 
 	// Constructor.
 	protected ByteEncoding(int codePage, char[] toChars,
@@ -74,6 +79,38 @@ public abstract class ByteEncoding : MonoEncoding
 			}
 
 #if NET_2_0
+	public override bool IsAlwaysNormalized (NormalizationForm form)
+	{
+		if (form != NormalizationForm.FormC)
+			return false;
+
+		if (isNormalized == null)
+			isNormalized = new byte [0x10000 / 8];
+		if (isNormalizedComputed == null)
+			isNormalizedComputed = new byte [0x10000 / 8];
+
+		if (normalization_bytes == null) {
+			normalization_bytes = new byte [0x100];
+			lock (normalization_bytes) {
+				for (int i = 0; i < 0x100; i++)
+					normalization_bytes [i] = (byte) i;
+			}
+		}
+
+		byte offset = (byte) (1 << (CodePage % 8));
+		if ((isNormalizedComputed [CodePage / 8] & offset) == 0) {
+			Encoding e = Clone () as Encoding;
+			e.DecoderFallback = new DecoderReplacementFallback ("");
+			string s = e.GetString (normalization_bytes);
+			// note that the flag only stores FormC information.
+			if (s != s.Normalize (form))
+				isNormalized [CodePage / 8] |= offset;
+			isNormalizedComputed [CodePage / 8] |= offset;
+		}
+
+		return (isNormalized [CodePage / 8] & offset) == 0;
+	}
+
 	public override bool IsSingleByte {
 		get { return true; }
 	}
