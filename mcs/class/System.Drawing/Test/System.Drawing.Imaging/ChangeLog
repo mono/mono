@@ -1,3 +1,8 @@
+2006-08-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestColorMatrix.cs: Add test cases for error handling inside ctor and
+	for testing each field with a different value.
+
 2006-07-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestImageFormat.cs: Added test cases for well known image format
