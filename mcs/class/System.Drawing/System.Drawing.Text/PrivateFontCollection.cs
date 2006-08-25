@@ -57,11 +57,11 @@ namespace System.Drawing.Text {
 			// this ensure the filename is valid (or throw the correct exception)
 			string fname = Path.GetFullPath (filename);
 
-			if (!File.Exists(filename))
+			if (!File.Exists (fname))
 				throw new FileNotFoundException ();
 
 			// note: MS throw the same exception FileNotFoundException if the file exists but isn't a valid font file
-			Status status = GDIPlus.GdipPrivateAddFontFile (nativeFontCollection, filename);
+			Status status = GDIPlus.GdipPrivateAddFontFile (nativeFontCollection, fname);
 			GDIPlus.CheckStatus (status);			
 		}
 
