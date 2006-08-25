@@ -1,6 +1,6 @@
 //
 // Copyright 2002 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,8 +32,6 @@
 //   Dennis Hayes (dennish@raytek.com)
 //   
 
-
-using System;
 using System.Runtime.InteropServices;
 
 namespace System.Drawing.Imaging
@@ -368,5 +366,21 @@ namespace System.Drawing.Imaging
 			set { color44 = value; }
 		}
 
+
+		static internal IntPtr Alloc (ColorMatrix cm)
+		{
+			if (cm == null)
+				return IntPtr.Zero;
+
+			IntPtr result = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (ColorMatrix)));
+			Marshal.StructureToPtr (cm, result, false);
+			return result;
+		}
+
+		static internal void Free (IntPtr cm)
+		{
+			if (cm != IntPtr.Zero)
+				Marshal.FreeHGlobal (cm);
+		}
 	}
 }

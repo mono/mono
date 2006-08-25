@@ -1,3 +1,10 @@
+2006-08-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ColorMatrix.cs: Add Alloc and Free method helpers for interop.
+	* ImageAttributes.cs: Fix all methods accepting a ColorMatrix (i.e.
+	which calls GdipSetImageAttributesColorMatrix) to use IntPtr instead
+	of the ColorMatrix itself.
+
 2006-07-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ImageFormat.cs: Re-fixed ToString method to match MS output when
