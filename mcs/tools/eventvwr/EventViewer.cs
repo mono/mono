@@ -190,6 +190,7 @@ namespace Mono.Tools.EventViewer {
 			// 
 			this.entryList.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.entryList.FullRowSelect = true;
+			this.entryList.HideSelection = false;
 			this.entryList.Location = new System.Drawing.Point(179, 22);
 			this.entryList.MultiSelect = false;
 			this.entryList.Name = "entryList";
@@ -199,7 +200,7 @@ namespace Mono.Tools.EventViewer {
 			this.entryList.TabStop = false;
 			this.entryList.View = System.Windows.Forms.View.Details;
 			this.entryList.DoubleClick += new System.EventHandler(this.entryList_DoubleClick);
-			this.entryList.ColumnClick += new ColumnClickEventHandler (this.entryList_ColumnClick);
+			this.entryList.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.entryList_ColumnClick);
 			// 
 			// listStatusBar
 			// 
