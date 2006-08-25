@@ -292,6 +292,11 @@ namespace System.Diagnostics
 		}
 
 		private string FindLogStore (string logName) {
+			// when the event log store does not yet exist, there's no need
+			// to perform a case-insensitive lookup
+			if (!Directory.Exists (EventLogStore))
+				return Path.Combine (EventLogStore, logName);
+
 			// we'll use a case-insensitive lookup to match the MS behaviour
 			// while still allowing the original casing of the log name to be
 			// retained

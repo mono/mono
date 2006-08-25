@@ -1,3 +1,8 @@
+2006-08-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* LocalFileEventLog.cs: When event log store does not exist, then we
+	do not need to perform a case-insensitive lookup of the log name.
+
 2006-08-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* EventLog.cs: Removed namespace import.
