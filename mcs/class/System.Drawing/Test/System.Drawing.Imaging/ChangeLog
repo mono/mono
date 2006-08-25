@@ -1,3 +1,7 @@
+2006-08-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestBmpCodec.cs: Add pixel value tests to a well known bitmap.
+
 2006-08-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestColorMatrix.cs: Add test cases for error handling inside ctor and
