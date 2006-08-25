@@ -190,8 +190,6 @@ namespace System.Drawing
 
 			f_style = FontStyle.Regular;
 			if (fields.Length > 2) {	// We have style
-				int		eq;
-				string[]	styles;
 				string		compare;
 
 				for (int i = 2; i < fields.Length; i++) {

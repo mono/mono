@@ -1,7 +1,8 @@
-2006-08-25  Sebastien Pouliot  <sebastien@ximian.com>
+2006-08-25  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* gdipFunctions.cs: Change ColorMatrix to IntPtr in method 
 	GdipSetImageAttributesColorMatrix definition.
+	* FontConverter.cs: Fix compiler warnings.
 
 2006-08-24  Sebastien Pouliot  <sebastien@ximian.com>
 
