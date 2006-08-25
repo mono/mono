@@ -479,6 +479,8 @@ namespace MonoTests.System.Drawing{
 			using (Bitmap bmp = new Bitmap (1, 1, PixelFormat.Format24bppRgb))
 			{
 				bmp.SetPixel (0, 0, red);
+				pixel_colour = bmp.GetPixel (0, 0);
+				Assert.AreEqual (red, pixel_colour, "Set/Get-Red");
 
 				data = bmp.LockBits (new Rectangle (0, 0, 1, 1), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 				pixel_value = Marshal.ReadInt32 (data.Scan0);
@@ -487,7 +489,7 @@ namespace MonoTests.System.Drawing{
 				// Disregard alpha information in the test
 				pixel_colour = Color.FromArgb(red.A, pixel_colour.R, pixel_colour.G, pixel_colour.B);
 
-				Assert.AreEqual (red, pixel_colour);
+				Assert.AreEqual (red, pixel_colour, "Red-FromLockedBitmap");
 
 				Marshal.WriteInt32 (data.Scan0, blue.ToArgb ());
 
