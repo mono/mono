@@ -45,7 +45,7 @@ options:
 	--transform stylesheet instance-xml [output-xml]
 	--prettyprint [source] [result]
 
-environment variable that affects on the behavior:
+environment variable that affects behavior:
 
 	MONO_XMLTOOL_ERROR_DETAILS = yes : to get exception details.
 ");
