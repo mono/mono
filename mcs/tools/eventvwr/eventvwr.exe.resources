@@ -1,0 +1,11 @@
+-resource:EventEntryProperties.resources,Mono.Tools.EventViewer.EventEntryProperties.resources
+-resource:EventViewer.resources,Mono.Tools.EventViewer.EventViewer.resources
+-resource:Resources/error.ico,Mono.Tools.EventViewer.Resources.error.ico
+-resource:Resources/info.ico,Mono.Tools.EventViewer.Resources.info.ico
+-resource:Resources/warning.ico,Mono.Tools.EventViewer.Resources.warning.ico
+-resource:Resources/eventlog.ico,Mono.Tools.EventViewer.Resources.eventlog.ico
+-resource:Resources/computer.ico,Mono.Tools.EventViewer.Resources.computer.ico
+-resource:Resources/successaudit.ico,Mono.Tools.EventViewer.Resources.successaudit.ico
+-resource:Resources/failureaudit.ico,Mono.Tools.EventViewer.Resources.failureaudit.ico
+-resource:Resources/refresh.png,Mono.Tools.EventViewer.Resources.refresh.png
+-resource:Resources/properties.png,Mono.Tools.EventViewer.Resources.properties.png

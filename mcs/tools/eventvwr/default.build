@@ -1,0 +1,63 @@
+<project name="EventViewer" default="build">
+	<property name="executable.name" value="eventvwr" />
+
+	<target name="clean" depends="init">
+		<delete>
+			<fileset>
+				<include name="*.exe" />
+				<include name="${output.dir}/${executable.name}.exe" />
+				<include name="${output.dir}/${executable.name}.mdb" />
+				<include name="${output.dir}/${executable.name}.pdb" />
+				<include name="../../build/deps/${executable.name}.exe.response" />
+				<include name="../../build/deps/${profile.name}_${executable.name}.exe.makefrag" />
+				<include name="EventViewer.resources" />
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="init">
+		<call target="init-${framework::get-target-framework()}"  />
+		<property name="output.dir" value="../../class/lib/${profile.name}" />		
+	</target>
+
+	<target name="init-mono-1.0">
+		<property name="csc.defines" value="NET_1_1,ONLY_1_1,MONO" />
+		<property name="profile.name" value="default" />
+	</target>
+
+	<target name="init-mono-2.0">
+		<property name="csc.defines" value="NET_1_1,NET_2_0,ONLY_2_0,MONO" />
+		<property name="profile.name" value="net_2_0" />
+	</target>
+
+	<target name="init-net-1.1">
+		<property name="csc.defines" value="NET_1_1,ONLY_1_1" />
+		<property name="profile.name" value="default" />
+	</target>
+
+	<target name="init-net-2.0">
+		<property name="csc.defines" value="NET_1_1,NET_2_0,ONLY_2_0" />
+		<property name="profile.name" value="net_2_0" />
+	</target>
+
+	<target name="build" depends="init">
+		<csc target="winexe" output="${output.dir}/${executable.name}.exe" define="${csc.defines}" warnaserror="true" win32icon="Resources/eventlog.ico">
+			<sources>
+				<includesfile name="${executable.name}.exe.sources" />
+			</sources>
+			<references>
+				<include name="System.dll" />
+				<include name="System.Drawing.dll" />
+				<include name="System.Windows.Forms.dll" />
+			</references>
+			<resources prefix="Mono.Tools.EventViewer" dynamicprefix="true">
+				<include name="Resources/*" />
+				<include name="**/*.resx" />
+
+				<exclude name="Resources/ChangeLog" />
+			</resources>
+		</csc>
+	</target>
+
+	<target name="rebuild" depends="clean, build" />
+</project>
