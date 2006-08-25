@@ -1,10 +1,14 @@
-thisdir = tools/eventvwr
-SUBDIRS = 
-include ../../build/rules.make
-
 RESX_RESOURCES = \
 	EventEntryProperties.resources	\
 	EventViewer.resources
+
+ifeq (net_2_0, $(PROFILE))
+MCS = gmcs
+RESGEN = resgen2
+else
+MCS = mcs
+RESGEN = resgen
+endif
 
 IMAGES_RESOURCES = \
 	Resources/error.ico		\
@@ -17,23 +21,25 @@ IMAGES_RESOURCES = \
 	Resources/properties.png	\
 	Resources/refresh.png
 
-EXTRA_DISTFILES = \
-	eventvwr.exe.resources	\
-	$(RESX_RESOURCES:.resources=.resx)	\
-	$(IMAGES_RESOURCES)
+all: clean eventvwr.exe
 
-LOCAL_MCS_FLAGS = -target:winexe -r:System.Drawing.dll	\
-	-r:System.Windows.Forms.dll	\
-	-win32icon:Resources/eventlog.ico	\
-	@eventvwr.exe.resources
+eventvwr.exe : $(RESX_RESOURCES) $(IMAGE_RESOURCES)
+	$(MCS) -target:winexe -out:eventvwr.exe \
+		-r:System.Drawing.dll	\
+		-r:System.Windows.Forms.dll	\
+		-win32icon:Resources/eventlog.ico	\
+		@eventvwr.exe.sources	\
+		@eventvwr.exe.resources
 
-PROGRAM = $(topdir)/class/lib/$(PROFILE)/eventvwr.exe
-
-CLEAN_FILES = $(RESX_RESOURCES)
-
-include ../../build/executable.make
+clean:
+	rm -fR eventvwr.exe
+	rm -fR EventViewer.csproj.user
+	rm -fR EventViewer.suo
+	rm -fR bin
+	rm -fR obj
+	for p in $(RESX_RESOURCES) ; do \
+		rm -fR $$p ; \
+	done
 
 $(RESX_RESOURCES): %.resources: %.resx
-	$(RESGEN) `echo $< | $(PLATFORM_CHANGE_SEPARATOR_CMD)`
-
-$(PROGRAM) : $(RESX_RESOURCES) $(IMAGES_RESOURCES)
+	$(RESGEN) $<
