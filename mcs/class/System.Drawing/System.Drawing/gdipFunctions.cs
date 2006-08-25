@@ -1348,8 +1348,8 @@ namespace System.Drawing
 				
                 [DllImport ("gdiplus.dll")]     
                 internal static extern Status GdipSetImageAttributesColorMatrix (IntPtr imageattr,
-                                ColorAdjustType type, bool enableFlag, ColorMatrix colorMatrix,
-                                ColorMatrix grayMatrix,  ColorMatrixFlag flags);                                
+                                ColorAdjustType type, bool enableFlag, IntPtr colorMatrix,
+                                IntPtr grayMatrix,  ColorMatrixFlag flags);                                
 
 		[DllImport ("gdiplus.dll")]     
 		internal static extern Status GdipSetImageAttributesGamma (IntPtr imageattr, 
