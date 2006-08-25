@@ -1,3 +1,7 @@
+2006-08-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GDIPlusTest.cs: Fix ImageAttributes test case.
+
 2006-08-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GDIPlusTest.cs: Added more test cases for TextureBrush functions.

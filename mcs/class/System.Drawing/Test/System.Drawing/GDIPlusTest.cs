@@ -597,7 +597,6 @@ namespace MonoTests.System.Drawing {
 
 		// ImageAttribute
 		[Test]
-		[Category ("NotWorking")] // crash in GdipSetImageAttributesColorMatrix
 		public void ImageAttribute ()
 		{
 			IntPtr attr;
@@ -607,10 +606,19 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipCloneImageAttributes (IntPtr.Zero, out clone), "GdipCloneImageAttributes");
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipCloneImageAttributes (attr, out clone), "GdipCloneImageAttributes");
 
-			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipSetImageAttributesColorMatrix (attr, ColorAdjustType.Default, true, null, null, ColorMatrixFlag.Default), "GdipSetImageAttributesColorMatrix-matrix1");
-			ColorMatrix color = new ColorMatrix ();
-			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipSetImageAttributesColorMatrix (IntPtr.Zero, ColorAdjustType.Default, true, color, null, ColorMatrixFlag.Default), "GdipSetImageAttributesColorMatrix-null");
-			Assert.AreEqual (Status.Ok, GDIPlus.GdipSetImageAttributesColorMatrix (attr, ColorAdjustType.Default, true, color, null, ColorMatrixFlag.Default), "GdipCloneImageAttributes");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipSetImageAttributesColorMatrix (attr, ColorAdjustType.Default, true, IntPtr.Zero, IntPtr.Zero, ColorMatrixFlag.Default), "GdipSetImageAttributesColorMatrix-true-matrix1");
+			// the first color matrix can be null if enableFlag is false
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipSetImageAttributesColorMatrix (attr, ColorAdjustType.Default, false, IntPtr.Zero, IntPtr.Zero, ColorMatrixFlag.Default), "GdipSetImageAttributesColorMatrix-false-matrix1");
+			ColorMatrix cm = new ColorMatrix ();
+			IntPtr color = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (ColorMatrix)));
+			try {
+				Marshal.StructureToPtr (cm, color, false);
+				Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipSetImageAttributesColorMatrix (IntPtr.Zero, ColorAdjustType.Default, true, color, IntPtr.Zero, ColorMatrixFlag.Default), "GdipSetImageAttributesColorMatrix-null");
+				Assert.AreEqual (Status.Ok, GDIPlus.GdipSetImageAttributesColorMatrix (attr, ColorAdjustType.Default, true, color, IntPtr.Zero, ColorMatrixFlag.Default), "GdipCloneImageAttributes");
+			}
+			finally {
+				Marshal.FreeHGlobal (color);
+			}
 
 			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDisposeImageAttributes (IntPtr.Zero), "GdipDisposeImageAttributes-null");
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipDisposeImageAttributes (attr), "GdipDisposeImageAttributes");
@@ -845,6 +853,7 @@ namespace MonoTests.System.Drawing {
 
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteBrush (brush), "GdipDeleteBrush");
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipDisposeImage (image), "GdipDisposeImage");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDisposeImage (image2), "GdipDisposeImage-image2");
 		}
 
 		[Test]
