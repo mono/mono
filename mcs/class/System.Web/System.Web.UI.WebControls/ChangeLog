@@ -1,3 +1,7 @@
+2006-08-25  Kornél Pál  <kornelpal@gmail.com>
+
+	* FileUpload.cs: Use assembly name constants.
+
 2006-08-08 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* TemplateField.cs: fixed ExtractValuesFromCell, .net aspx parser not

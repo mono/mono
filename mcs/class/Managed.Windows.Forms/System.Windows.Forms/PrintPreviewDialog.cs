@@ -36,7 +36,7 @@ using System.Reflection;
 
 namespace System.Windows.Forms {
 	[DefaultProperty("Document")]
-	[Designer("System.ComponentModel.Design.ComponentDesigner, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	[Designer("System.ComponentModel.Design.ComponentDesigner, " + Consts.AssemblySystem_DesignAssemblySystem_Design)]
 	[DesignTimeVisible(true)]
 	[ToolboxItem(true)]
 	public class PrintPreviewDialog : Form {

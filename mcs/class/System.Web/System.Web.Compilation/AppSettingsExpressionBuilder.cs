@@ -39,7 +39,7 @@ using System.Web.UI;
 
 namespace System.Web.Compilation {
 
-	[ExpressionEditor("System.Web.UI.Design.AppSettingsExpressionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	[ExpressionEditor("System.Web.UI.Design.AppSettingsExpressionEditor, " + Consts.AssemblySystem_Design)]
 	[ExpressionPrefix("AppSettings")]
 	public class AppSettingsExpressionBuilder : ExpressionBuilder {
 

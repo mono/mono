@@ -38,7 +38,7 @@ using System.Web.UI;
 
 namespace System.Web.Compilation {
 
-	[ExpressionEditor("System.Web.UI.Design.ConnectionStringsExpressionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	[ExpressionEditor("System.Web.UI.Design.ConnectionStringsExpressionEditor, " + Consts.AssemblySystem_Design)]
 	[ExpressionPrefix("ConnectionStrings")]
 	public class ConnectionStringsExpressionBuilder : ExpressionBuilder {
 

@@ -486,7 +486,7 @@ namespace System.Xml.Serialization {
 			generatedCodeAttribute.Arguments.Add (new CodeAttributeArgument (
 				new CodePrimitiveExpression ("System.Xml")));
 			generatedCodeAttribute.Arguments.Add (new CodeAttributeArgument (
-				new CodePrimitiveExpression ("2.0.50727.42")));
+				new CodePrimitiveExpression (Consts.FxFileVersion)));
 			codeEnum.CustomAttributes.Add (generatedCodeAttribute);
 
 			codeEnum.CustomAttributes.Add (new CodeAttributeDeclaration (
@@ -596,7 +596,7 @@ namespace System.Xml.Serialization {
 			generatedCodeAttribute.Arguments.Add (new CodeAttributeArgument (
 				new CodePrimitiveExpression ("System.Xml")));
 			generatedCodeAttribute.Arguments.Add (new CodeAttributeArgument (
-				new CodePrimitiveExpression ("2.0.50727.42")));
+				new CodePrimitiveExpression (Consts.FxFileVersion)));
 			codeClass.CustomAttributes.Add (generatedCodeAttribute);
 
 			codeClass.CustomAttributes.Add (new CodeAttributeDeclaration (

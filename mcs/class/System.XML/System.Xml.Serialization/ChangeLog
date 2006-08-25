@@ -1,3 +1,7 @@
+2006-08-25  Kornél Pál  <kornelpal@gmail.com>
+
+	* MapCodeGenerator.cs: Use assembly file version constants.
+
 2006-07-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlMappingAccess.cs : new type in 2.0 RTM.

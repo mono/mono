@@ -1,3 +1,7 @@
+2006-08-25  Kornél Pál  <kornelpal@gmail.com>
+
+	* PrintPreviewDialog.cs: Use assembly name constants.
+
 2006-08-23  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUIWin32.cs (ScrollWindow): Use clipping rectangle arg (prevents

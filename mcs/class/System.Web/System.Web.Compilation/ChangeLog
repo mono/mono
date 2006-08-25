@@ -1,3 +1,10 @@
+2006-08-25  Kornél Pál  <kornelpal@gmail.com>
+
+	* AppSettingsExpressionBuilder.cs: Use assembly name constants.
+	* ConnectionStringsExpressionBuilder.cs: Use name reference
+	  constants.
+	* ResourceExpressionBuilder.cs: Use assembly name constants.
+
 2006-08-20  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ThemeDirectoryCompiler.jvm.cs: implemented GetCompiledInstance

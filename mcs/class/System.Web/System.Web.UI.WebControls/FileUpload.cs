@@ -37,7 +37,7 @@ namespace System.Web.UI.WebControls
 {
 	[ControlValueProperty ("FileBytes")]
 	[ValidationProperty ("FileName")]
-	[Designer ("DesignerBaseTypeNameSystem.ComponentModel.Design.IDesignerDesignerTypeNameSystem.Web.UI.Design.WebControls.PreviewControlDesigner, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	[Designer ("DesignerBaseTypeNameSystem.ComponentModel.Design.IDesignerDesignerTypeNameSystem.Web.UI.Design.WebControls.PreviewControlDesigner, " + Consts.AssemblySystem_Design)]
 	[AspNetHostingPermission(SecurityAction.LinkDemand, Level=AspNetHostingPermissionLevel.Minimal, Unrestricted=false)]
 	[AspNetHostingPermissionAttribute(SecurityAction.InheritanceDemand, Level=AspNetHostingPermissionLevel.Minimal, Unrestricted=false)]
 	public class FileUpload : WebControl
