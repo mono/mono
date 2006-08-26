@@ -682,19 +682,21 @@ namespace System.Diagnostics
 			if (hEventLog == IntPtr.Zero) {
 				throw new InvalidOperationException (string.Format (
 					CultureInfo.InvariantCulture, "Event Log '{0}' on computer"
-					+ " '{1}' cannot be opened."), new Win32Exception ());
+					+ " '{1}' cannot be opened.", logName, CoreEventLog.MachineName),
+					new Win32Exception ());
 			}
 			return hEventLog;
 		}
 
 		private IntPtr RegisterEventSource ()
 		{
-			IntPtr hEventLog = PInvoke.OpenEventLog (CoreEventLog.MachineName,
-				CoreEventLog.Source);
+			IntPtr hEventLog = PInvoke.RegisterEventSource (
+				CoreEventLog.MachineName, CoreEventLog.Source);
 			if (hEventLog == IntPtr.Zero) {
 				throw new InvalidOperationException (string.Format (
-					CultureInfo.InvariantCulture, "Event Log '{0}' on computer"
-					+ " '{1}' cannot be opened."), new Win32Exception ());
+					CultureInfo.InvariantCulture, "Event source '{0}' on computer"
+					+ " '{1}' cannot be opened.", CoreEventLog.Source,
+					CoreEventLog.MachineName), new Win32Exception ());
 			}
 			return hEventLog;
 		}

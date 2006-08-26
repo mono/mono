@@ -1,5 +1,10 @@
 2006-08-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* Win32EventLog.cs: Fixed error messages. Use RegisterEventSource
+	pinvoke when opening eventlog for writing entries.
+
+2006-08-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* Win32EventLog.cs: Added and documented workarounds for bug #79117
 	and bug #79152.
 
