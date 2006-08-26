@@ -26,10 +26,6 @@
 
 // NOT COMPLETE - work in progress
 
-// TODO:
-// - select values for font/style/size via the TextBoxes
-// - etc
-
 using System.ComponentModel;
 using System.Drawing;
 using System.Text.RegularExpressions;
@@ -109,6 +105,7 @@ namespace System.Windows.Forms
 			6, 7, 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72
 		};
 		
+		// char set stuff is only here to make me happy :-)
 		private string [] char_sets_names = {
 			"Western",
 			"Symbol",
@@ -230,6 +227,7 @@ namespace System.Windows.Forms
 			fontsizeTextBox.Size = new Size( 52, 21 );
 			fontsizeTextBox.TabIndex = 7;
 			fontsizeTextBox.Text = "";
+			fontsizeTextBox.MaxLength = 2;
 			// schriftartListBox
 			fontListBox.Location = new Point( 16, 47 );
 			fontListBox.Size = new Size( 140, 95 );
@@ -279,7 +277,7 @@ namespace System.Windows.Forms
 			scriptComboBox.Location = new Point( 164, 253 );
 			scriptComboBox.Size = new Size( 172, 21 );
 			scriptComboBox.TabIndex = 14;
-//			scriptComboBox.Text = "-/-";
+			scriptComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
 			// okButton
 			okButton.FlatStyle = FlatStyle.System;
 			okButton.Location = new Point( 352, 26 );
@@ -391,9 +389,13 @@ namespace System.Windows.Forms
 			strikethroughCheckBox.CheckedChanged += new EventHandler( OnCheckedChangedStrikethroughCheckBox );
 			scriptComboBox.SelectedIndexChanged += new EventHandler (OnSelectedIndexChangedScriptComboBox);
 			
-			fontTextBox.KeyUp += new KeyEventHandler (OnFontTextBoxKeyUp);
-			fontstyleTextBox.KeyUp += new KeyEventHandler (OnFontStyleTextBoxKeyUp);
-			fontsizeTextBox.KeyUp += new KeyEventHandler (OnFontSizeTextBoxKeyUp);
+			fontTextBox.KeyPress += new KeyPressEventHandler (OnFontTextBoxKeyPress);
+			fontstyleTextBox.KeyPress += new KeyPressEventHandler (OnFontStyleTextBoxKeyPress);
+			fontsizeTextBox.KeyPress += new KeyPressEventHandler (OnFontSizeTextBoxKeyPress);
+			
+			fontTextBox.TextChanged += new EventHandler (OnFontTextBoxTextChanged);
+			fontstyleTextBox.TextChanged += new EventHandler (OnFontStyleTextTextChanged);
+			fontsizeTextBox.TextChanged += new EventHandler (OnFontSizeTextBoxTextChanged);
 			
 			Font = form.Font;
 		}
@@ -867,8 +869,41 @@ namespace System.Windows.Forms
 			UpdateExamplePanel( );
 		}
 		
-		void OnFontTextBoxKeyUp (object sender, KeyEventArgs e)
+		bool internal_textbox_change = false;
+		
+		void OnFontTextBoxKeyPress (object sender, KeyPressEventArgs e)
 		{
+			internal_textbox_change = true;
+			
+			if (fontListBox.SelectedIndex > -1)
+				fontListBox.SelectedIndex = -1;
+		}
+		
+		void OnFontStyleTextBoxKeyPress (object sender, KeyPressEventArgs e)
+		{
+			internal_textbox_change = true;
+			
+			if (fontstyleListBox.SelectedIndex > -1)
+				fontstyleListBox.SelectedIndex = -1;
+		}
+		
+		void OnFontSizeTextBoxKeyPress (object sender, KeyPressEventArgs e)
+		{
+			if (Char.IsLetter (e.KeyChar) || Char.IsWhiteSpace (e.KeyChar) || Char.IsPunctuation (e.KeyChar) || e.KeyChar == ',') {
+				e.Handled = true;
+				return; 
+			}
+			
+			internal_textbox_change = true;
+		}
+		
+		void OnFontTextBoxTextChanged (object sender, EventArgs e)
+		{
+			if (!internal_textbox_change)
+				return;
+			
+			internal_textbox_change = false;
+			
 			for (int i = 0; i < fontListBox.Items.Count; i++) {
 				string name = fontListBox.Items [i] as string;
 				
@@ -883,24 +918,35 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		void OnFontStyleTextBoxKeyUp (object sender, KeyEventArgs e)
+		void OnFontStyleTextTextChanged (object sender, EventArgs e)
 		{
+			if (!internal_textbox_change)
+				return;
+			
+			internal_textbox_change = false;
+			
 			for (int i = 0; i < fontstyleListBox.Items.Count; i++) {
 				string name = fontstyleListBox.Items [i] as string;
 				
 				if (name.StartsWith(fontstyleTextBox.Text)) {
 					if (name == fontstyleTextBox.Text)
 						fontstyleListBox.SelectedIndex = i;
-					else
-						fontstyleListBox.TopIndex = i;
 					
 					break;
 				}
 			}
 		}
 		
-		void OnFontSizeTextBoxKeyUp (object sender, KeyEventArgs e)
+		void OnFontSizeTextBoxTextChanged (object sender, EventArgs e)
 		{
+			if (!internal_textbox_change)
+				return;
+			
+			internal_textbox_change = false;
+			
+			if (fontsizeTextBox.Text.Length == 0)
+				return;
+			
 			for (int i = 0; i < fontsizeListBox.Items.Count; i++) {
 				string name = fontsizeListBox.Items [i] as string;
 				

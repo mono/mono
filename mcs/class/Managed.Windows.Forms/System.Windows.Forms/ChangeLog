@@ -3,6 +3,8 @@
 	* FileDialog.cs: After reading FileDialog settings from mwf_config
 	  use Desktop prefix only if a real folder doesn't exist anymore.
 	* FontDialog.cs: Added char sets.
+	  It is now possible to select the font, size or style with the
+	  textboxes.
 
 2006-08-25  Kornél Pál  <kornelpal@gmail.com>
 
