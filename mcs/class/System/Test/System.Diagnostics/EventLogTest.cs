@@ -56,7 +56,8 @@ namespace MonoTests.System.Diagnostics
 	public class EventLogTest
 	{
 #if NET_2_0
-		private string _originalEventLogImpl = null;
+		private string _originalEventLogImpl;
+		private string _eventLogStore;
 #endif
 		private const string EVENTLOG_TYPE_VAR = "MONO_EVENTLOG_TYPE";
 
@@ -72,17 +73,17 @@ namespace MonoTests.System.Diagnostics
 			if (Win32EventLogEnabled)
 				return;
 
+			// determine temp directory for eventlog store
+			_eventLogStore = Path.Combine (Path.GetTempPath (),
+				Guid.NewGuid ().ToString ());
+
 			// save original eventlog implementation type (if set)
 			string _originalEventLogImpl = Environment.GetEnvironmentVariable (
 				EVENTLOG_TYPE_VAR);
 
-			// determine event store
-			string eventStore = Path.Combine (Environment.GetFolderPath (
-				Environment.SpecialFolder.Personal), ".mono/eventlog");
-
 			// use local file implementation
 			Environment.SetEnvironmentVariable (EVENTLOG_TYPE_VAR, "local:"
-				+ eventStore);
+				+ _eventLogStore);
 		}
 
 		[TearDown]
@@ -94,6 +95,10 @@ namespace MonoTests.System.Diagnostics
 			// restore original eventlog implementation type
 			Environment.SetEnvironmentVariable (EVENTLOG_TYPE_VAR, 
 				_originalEventLogImpl);
+
+			// delete temp directory for eventlog store
+			if (Directory.Exists (_eventLogStore))
+				Directory.Delete (_eventLogStore, true);
 		}
 #endif
 
@@ -7558,10 +7563,8 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		// IMPORTANT: keep this in sync with System.Diagnostics.EventLog.EventLogImplType
-		private static string EventLogImplType
-		{
-			get
-			{
+		private static string EventLogImplType {
+			get {
 				string implType = Environment.GetEnvironmentVariable (EVENTLOG_TYPE_VAR);
 				if (implType == null) {
 					if (Win32EventLogEnabled)
