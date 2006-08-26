@@ -1,3 +1,8 @@
+2006-08-26  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs: After reading FileDialog settings from mwf_config
+	  use Desktop prefix only if a real folder doesn't exist anymore. 
+
 2006-08-25  Kornél Pál  <kornelpal@gmail.com>
 
 	* PrintPreviewDialog.cs: Use assembly name constants.
