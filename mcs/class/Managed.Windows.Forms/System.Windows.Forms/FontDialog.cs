@@ -106,14 +106,74 @@ namespace System.Windows.Forms
 		private Hashtable fontHash = new Hashtable();
 		
 		private int[] a_sizes = {
-			8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72
+			6, 7, 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72
 		};
+		
+		private string [] char_sets_names = {
+			"Western",
+			"Symbol",
+			"Shift Jis",
+			"Hangul",
+			"GB2312",
+			"BIG5",
+			"Greek",
+			"Turkish",
+			"Hebrew",
+			"Arabic",
+			"Baltic",
+			"Vietname",
+			"Cyrillic",
+			"East European",
+			"Thai",
+			"Johab",
+			"Mac",
+			"OEM",
+			"VISCII",
+			"TCVN",
+			"KOI-8",
+			"ISO-8859-3",
+			"ISO-8859-4",
+			"ISO-8859-10",
+			"Celtic"
+		};
+		
+		private string [] char_sets = {
+			"AaBbYyZz",
+			"Symbol",
+			"Aa" + (char)0x3042 + (char)0x3041 + (char)0x30a2  + (char)0x30a1 + (char)0x4e9c + (char)0x5b87,
+			(char)0xac00 + (char)0xb098 + (char)0xb2e4 + "AaBYyZz",
+			new String(new Char [] {(char)0x5fae, (char)0x8f6f, (char)0x4e2d, (char)0x6587, (char)0x8f6f, (char)0x4ef6}),
+			new String(new Char [] {(char)0x4e2d, (char)0x6587, (char)0x5b57, (char)0x578b, (char)0x7bc4, (char)0x4f8b}),
+			"AaBb" + (char)0x0391 + (char)0x03b1 + (char)0x0392 + (char)0x03b2,
+			"AaBb" + (char)0x011e + (char)0x011f + (char)0x015e + (char)0x015f,
+			"AaBb" + (char)0x05e0 + (char)0x05e1 + (char)0x05e9 + (char)0x05ea,
+			"AaBb" + (char)0x0627 + (char)0x0628 + (char)0x062c + (char)0x062f + (char)0x0647 + (char)0x0648 + (char)0x0632,
+			"AaBbYyZz",
+			"AaBb" + (char)0x01a0 + (char)0x01a1 + (char)0x01af + (char)0x01b0,
+			"AaBb" + (char)0x0411 + (char)0x0431 + (char)0x0424 + (char)0x0444,
+			"AaBb" + (char)0xc1 + (char)0xe1 + (char)0xd4 + (char)0xf4,
+			"AaBb" + (char)0x0e2d + (char)0x0e31 + (char)0x0e01 + (char)0x0e29 + (char)0x0e23 + (char)0x0e44 + (char)0x0e17 +(char)0x0e22,
+			(char)0xac00 + (char)0xb098 + (char)0xb2e4 + "AaBYyZz",
+			"AaBbYyZz",
+			"AaBb" + (char)0xf8 + (char)0xf1 + (char)0xfd,
+			"",
+			"",
+			"",
+			"",
+			"",
+			"",
+			""
+		};
+		
+		private string example_panel_text;
 		
 		private bool internal_change = false;
 		
 		#region Public Constructors
 		public FontDialog( )
 		{
+			example_panel_text = char_sets [0];
+			
 			okButton = new Button( );
 			cancelButton = new Button( );
 			applyButton = new Button( );
@@ -219,7 +279,7 @@ namespace System.Windows.Forms
 			scriptComboBox.Location = new Point( 164, 253 );
 			scriptComboBox.Size = new Size( 172, 21 );
 			scriptComboBox.TabIndex = 14;
-			scriptComboBox.Text = "-/-";
+//			scriptComboBox.Text = "-/-";
 			// okButton
 			okButton.FlatStyle = FlatStyle.System;
 			okButton.Location = new Point( 352, 26 );
@@ -311,6 +371,11 @@ namespace System.Windows.Forms
 			
 			CreateFontSizeListBoxItems ();
 			
+			scriptComboBox.BeginUpdate ();
+			scriptComboBox.Items.AddRange (char_sets_names);
+			scriptComboBox.SelectedIndex = 0;
+			scriptComboBox.EndUpdate ();
+			
 			applyButton.Hide( );
 			helpButton.Hide( );
 			colorComboBox.Hide( );
@@ -324,6 +389,7 @@ namespace System.Windows.Forms
 			fontstyleListBox.SelectedIndexChanged += new EventHandler( OnSelectedIndexChangedFontStyleListBox );
 			underlinedCheckBox.CheckedChanged += new EventHandler( OnCheckedChangedUnderlinedCheckBox );
 			strikethroughCheckBox.CheckedChanged += new EventHandler( OnCheckedChangedStrikethroughCheckBox );
+			scriptComboBox.SelectedIndexChanged += new EventHandler (OnSelectedIndexChangedScriptComboBox);
 			
 			fontTextBox.KeyUp += new KeyEventHandler (OnFontTextBoxKeyUp);
 			fontstyleTextBox.KeyUp += new KeyEventHandler (OnFontStyleTextBoxKeyUp);
@@ -684,9 +750,7 @@ namespace System.Windows.Forms
 			
 			e.Graphics.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush( SystemColors.Control ), 0, 0, 156, 40 );
 			
-			string text = "AaBbYyZz";
-			
-			SizeF fontSizeF = e.Graphics.MeasureString( text, font );
+			SizeF fontSizeF = e.Graphics.MeasureString( example_panel_text, font );
 			
 			int text_width = (int)fontSizeF.Width;
 			int text_height = (int)fontSizeF.Height;
@@ -696,7 +760,7 @@ namespace System.Windows.Forms
 			
 			int y = ( examplePanel.Height / 2 ) - ( text_height / 2 );
 			
-			e.Graphics.DrawString( text, font, brush, new Point( x, y ) );
+			e.Graphics.DrawString( example_panel_text, font, brush, new Point( x, y ) );
 		}
 		
 		void OnSelectedIndexChangedFontListBox( object sender, EventArgs e )
@@ -848,6 +912,17 @@ namespace System.Windows.Forms
 					
 					break;
 				}
+			}
+		}
+		
+		void OnSelectedIndexChangedScriptComboBox (object sender, EventArgs e)
+		{
+			string tmp_str = char_sets [scriptComboBox.SelectedIndex];
+			
+			if (tmp_str.Length > 0) {
+				example_panel_text = tmp_str;
+				
+				UpdateExamplePanel ();
 			}
 		}
 		
