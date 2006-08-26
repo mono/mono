@@ -1,3 +1,8 @@
+2006-08-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Win32EventLog.cs: Added and documented workarounds for bug #79117
+	and bug #79152.
+
 2006-08-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* LocalFileEventLog.cs: When event log store does not exist, then we

@@ -573,9 +573,12 @@ namespace System.Diagnostics
 			// http://www.pinvoke.net/default.aspx/advapi32/LookupAccountSid.html
 			// http://msdn.microsoft.com/library/en-us/secauthz/security/lookupaccountsid.asp
 
-			StringBuilder name = new StringBuilder ();
+			// FIXME: StringBuilders should not have to be initialized with a
+			// specific capacity => bug #79152
+
+			StringBuilder name = new StringBuilder (16);
 			uint cchName = (uint) name.Capacity;
-			StringBuilder referencedDomainName = new StringBuilder ();
+			StringBuilder referencedDomainName = new StringBuilder (16);
 			uint cchReferencedDomainName = (uint) referencedDomainName.Capacity;
 			SidNameUse sidUse;
 
@@ -607,6 +610,9 @@ namespace System.Diagnostics
 			// http://msdn.microsoft.com/library/en-us/debug/base/formatmessage.asp
 			// http://msdn.microsoft.com/msdnmag/issues/02/08/CQA/
 			// http://msdn.microsoft.com/netframework/programming/netcf/cffaq/default.aspx
+
+			// FIXME: we should be using Marshal.StringToHGlobalAuto and 
+			// Marshal.PtrToStringAuto => bug #79117
 
 			IntPtr msgDllHandle = PInvoke.LoadLibraryEx (msgDll, IntPtr.Zero,
 				LoadFlags.LibraryAsDataFile);
@@ -704,7 +710,8 @@ namespace System.Diagnostics
 			[DllImport ("advapi32.dll", SetLastError=true)]
 			public static extern int DeregisterEventSource (IntPtr hEventLog);
 
-			[DllImport ("kernel32.dll", CharSet=CharSet.Auto, SetLastError=true)]
+			// FIXME: CharSet.Unicode can be removed once bug #79117 is fixed
+			[DllImport ("kernel32.dll", CharSet=CharSet.Unicode, SetLastError=true)]
 			public static extern int FormatMessage (FormatMessageFlags dwFlags, IntPtr lpSource, uint dwMessageId, int dwLanguageId, ref IntPtr lpBuffer, int nSize, IntPtr [] arguments);
 
 			[DllImport ("kernel32.dll", SetLastError=true)]
@@ -722,7 +729,8 @@ namespace System.Diagnostics
 			[DllImport ("kernel32.dll", SetLastError=true)]
 			public static extern IntPtr LocalFree (IntPtr hMem);
 
-			[DllImport ("advapi32.dll", CharSet=CharSet.Auto, SetLastError=true)]
+			// FIXME: CharSet.Unicode can be removed once bug #79117 is fixed
+			[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, SetLastError=true)]
 			public static extern bool LookupAccountSid (
 				string lpSystemName,
 				[MarshalAs (UnmanagedType.LPArray)] byte [] Sid,
