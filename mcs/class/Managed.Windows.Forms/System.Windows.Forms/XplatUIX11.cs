@@ -3490,7 +3490,6 @@ namespace System.Windows.Forms {
 					if  (xevent.ClientMessageEvent.message_type == NetAtoms[(int)NA.WM_PROTOCOLS]) {
 						if (xevent.ClientMessageEvent.ptr1 == NetAtoms[(int)NA.WM_DELETE_WINDOW]) {
 							msg.message = Msg.WM_CLOSE;
-							Graphics.FromHdcInternal (IntPtr.Zero);
 							return true;
 						}
 

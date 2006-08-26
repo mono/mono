@@ -1,3 +1,9 @@
+2006-08-23  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUIX11.cs: Don't reset the DisplayHandle that's stored in
+	  System.Drawing when a toplevel window gets closed; there might
+	  be other toplevel windows belonging to the same app (Fixes #78052)
+
 2006-08-26  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: After reading FileDialog settings from mwf_config
