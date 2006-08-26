@@ -733,7 +733,7 @@ namespace System.Windows.Forms
 			bounds.Y=top;
 			bounds.Width=width;
 			bounds.Height=height;
-			SetBoundsCore(left, top, width, height, BoundsSpecified.All);
+			SetBounds(left, top, width, height, BoundsSpecified.All);
 			Text=text;
 		}
 
@@ -746,7 +746,7 @@ namespace System.Windows.Forms
 			bounds.Y=top;
 			bounds.Width=width;
 			bounds.Height=height;
-			SetBoundsCore(left, top, width, height, BoundsSpecified.All);
+			SetBounds(left, top, width, height, BoundsSpecified.All);
 			Text=text;
 		}
 
@@ -1645,7 +1645,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				SetBoundsCore(value.Left, value.Top, value.Width, value.Height, BoundsSpecified.All);
+				SetBounds(value.Left, value.Top, value.Width, value.Height, BoundsSpecified.All);
 			}
 		}
 
@@ -2054,7 +2054,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				SetBoundsCore(bounds.X, bounds.Y, bounds.Width, value, BoundsSpecified.Height);
+				SetBounds(bounds.X, bounds.Y, bounds.Width, value, BoundsSpecified.Height);
 			}
 		}
 
@@ -2137,7 +2137,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				SetBoundsCore(value, bounds.Y, bounds.Width, bounds.Height, BoundsSpecified.X);
+				SetBounds(value, bounds.Y, bounds.Width, bounds.Height, BoundsSpecified.X);
 			}
 		}
 
@@ -2149,7 +2149,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				SetBoundsCore(value.X, value.Y, bounds.Width, bounds.Height, BoundsSpecified.Location);
+				SetBounds(value.X, value.Y, bounds.Width, bounds.Height, BoundsSpecified.Location);
 			}
 		}
 
@@ -2314,7 +2314,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				SetBoundsCore(bounds.X, bounds.Y, value.Width, value.Height, BoundsSpecified.Size);
+				SetBounds(bounds.X, bounds.Y, value.Width, value.Height, BoundsSpecified.Size);
 			}
 		}
 
@@ -2402,7 +2402,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				SetBoundsCore(bounds.X, value, bounds.Width, bounds.Height, BoundsSpecified.Y);
+				SetBounds(bounds.X, value, bounds.Width, bounds.Height, BoundsSpecified.Y);
 			}
 		}
 
@@ -2448,7 +2448,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				SetBoundsCore(bounds.X, bounds.Y, value, bounds.Height, BoundsSpecified.Width);
+				SetBounds(bounds.X, bounds.Y, value, bounds.Height, BoundsSpecified.Width);
 			}
 		}
 
@@ -2921,7 +2921,7 @@ namespace System.Windows.Forms
 				AnchorStyles	anchor;
 				Rectangle	space;
 
-				space= DisplayRectangle;
+				space = DisplayRectangle;
 
 				// Deal with docking; go through in reverse, MS docs say that lowest Z-order is closest to edge
 				Control [] controls = child_controls.GetAllControls ();
@@ -2974,7 +2974,7 @@ namespace System.Windows.Forms
 					}
 				}
 
-				space=DisplayRectangle;
+				space = DisplayRectangle;
 
 				for (int i=0; i < controls.Length; i++) {
 					int left;
@@ -3223,11 +3223,30 @@ namespace System.Windows.Forms
 		}
 
 		public void SetBounds(int x, int y, int width, int height) {
-			SetBoundsCore(x, y, width, height, BoundsSpecified.All);
+			SetBounds(x, y, width, height, BoundsSpecified.All);
 		}
 
 		public void SetBounds(int x, int y, int width, int height, BoundsSpecified specified) {
+			if ((specified & BoundsSpecified.X) != BoundsSpecified.X) {
+				x = Left;
+			}
+
+			if ((specified & BoundsSpecified.Y) != BoundsSpecified.Y) {
+				y = Top;
+			}
+
+			if ((specified & BoundsSpecified.Width) != BoundsSpecified.Width) {
+				width = Width;
+			}
+
+			if ((specified & BoundsSpecified.Height) != BoundsSpecified.Height) {
+				height = Height;
+			}
+
 			SetBoundsCore(x, y, width, height, specified);
+			if (parent != null) {
+				parent.PerformLayout(this, "Bounds");
+			}
 		}
 
 		public void Show() {
@@ -3616,7 +3635,7 @@ namespace System.Windows.Forms
 				size.Height = (int)(size.Height * dy);
 			}
 
-			SetBoundsCore(location.X, location.Y, size.Width, size.Height, BoundsSpecified.All);
+			SetBounds(location.X, location.Y, size.Width, size.Height, BoundsSpecified.All);
 
 			/* Now scale our children */
 			Control [] controls = child_controls.GetAllControls ();
@@ -3638,22 +3657,6 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
 			// SetBoundsCore updates the Win32 control itself. UpdateBounds updates the controls variables and fires events, I'm guessing - pdb
-			if ((specified & BoundsSpecified.X) != BoundsSpecified.X) {
-				x = Left;
-			}
-
-			if ((specified & BoundsSpecified.Y) != BoundsSpecified.Y) {
-				y = Top;
-			}
-
-			if ((specified & BoundsSpecified.Width) != BoundsSpecified.Width) {
-				width = Width;
-			}
-
-			if ((specified & BoundsSpecified.Height) != BoundsSpecified.Height) {
-				height = Height;
-			}
-
 			if (IsHandleCreated) {
 				XplatUI.SetWindowPos(Handle, x, y, width, height);
 			}
@@ -3677,7 +3680,7 @@ namespace System.Windows.Forms
 				return;
 			}
 
-			SetBoundsCore(bounds.X, bounds.Y, WindowRect.Width, WindowRect.Height, BoundsSpecified.Size);
+			SetBounds(bounds.X, bounds.Y, WindowRect.Width, WindowRect.Height, BoundsSpecified.Size);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]

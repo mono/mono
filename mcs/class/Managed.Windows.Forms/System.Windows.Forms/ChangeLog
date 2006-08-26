@@ -1,3 +1,17 @@
+2006-08-23  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Control.cs:
+	  - The size and location setters shouldn't go directly to 
+	    SetBoundsCore, but to SetBounds, which triggers layout on the
+	    parent, then calls SetBoundsCore. (Related to fix for #78835)
+	  - SetBounds: Moved actual location update code into this function
+	    from SetBoundsCore, to match MS. Added call to PerformLayout if
+	    we have a parent (to trigger resizing of anchored parents if the 
+	    child size has changed (see testcase for #78835) 
+	* ListBox.cs, Form.cs: Call SetBounds instead of SetBoundsCore to match 
+	  new control code
+	* ScrollableControl.cs (CalculateCanvasSize): Use shortcut variable
+
 2006-08-23  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs: Don't reset the DisplayHandle that's stored in

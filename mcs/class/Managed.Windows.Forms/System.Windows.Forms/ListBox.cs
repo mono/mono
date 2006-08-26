@@ -1786,7 +1786,7 @@ namespace System.Windows.Forms
 			if (requested_height == -1)
 				return;
 
-			SetBoundsCore (0, 0, 0, requested_height, BoundsSpecified.Height);
+			SetBounds(0, 0, 0, requested_height, BoundsSpecified.Height);
 		}
 
 		private void UpdateScrollBars ()

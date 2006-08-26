@@ -632,8 +632,8 @@ namespace System.Windows.Forms {
 
 				switch(child.Dock) {
 					case DockStyle.Left: {
-						if ((child_controls[i].Right + extra_width) > width) {
-							width = child_controls[i].Right + extra_width;
+						if ((child.Right + extra_width) > width) {
+							width = child.Right + extra_width;
 						}
 						continue;
 					}
@@ -657,8 +657,8 @@ namespace System.Windows.Forms {
 						anchor = child.Anchor;
 
 						if (((anchor & AnchorStyles.Left) != 0) && ((anchor & AnchorStyles.Right) == 0)) {
-							if ((child_controls[i].Right + extra_width) > width) {
-								width = child_controls[i].Right + extra_width;
+							if ((child.Right + extra_width) > width) {
+								width = child.Right + extra_width;
 							}
 						}
 
