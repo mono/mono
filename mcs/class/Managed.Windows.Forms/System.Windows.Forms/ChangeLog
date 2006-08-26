@@ -1,3 +1,13 @@
+2006-08-23  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* ScrollableWindow.cs (ScrollWindow): Don't actually perform layouting
+	  when allowing layout again. Otherwise we re-generate the anchoring 
+	  distance to the border again and actually alter what the user wanted
+	  This is ugly, it'd be better if we used DisplayRectangle instead of
+	  ClientRectangle for Control.UpdateDistances, but that causes us to
+	  have other problems (initial anchoring positons would be wrong)
+	  (Fixes #78835)
+
 2006-08-23  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Control.cs:

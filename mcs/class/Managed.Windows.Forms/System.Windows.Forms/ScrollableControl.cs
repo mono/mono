@@ -806,7 +806,7 @@ namespace System.Windows.Forms {
 			// Should we call XplatUI.ScrollWindow??? If so, we need to position our windows by other means above
 			// Since we're already causing a redraw above
 			Invalidate(false);
-			ResumeLayout();
+			ResumeLayout(false);
 		}
 		#endregion	// Internal & Private Methods
 
