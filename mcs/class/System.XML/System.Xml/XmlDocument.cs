@@ -645,7 +645,10 @@ namespace System.Xml
 		{
 			XmlTextReader reader = new XmlTextReader (inStream, NameTable);
 			reader.XmlResolver = resolver;
-			Load (reader);
+			XmlValidatingReader vr = new XmlValidatingReader (reader);
+			vr.EntityHandling = EntityHandling.ExpandCharEntities;
+			vr.ValidationType = ValidationType.None;
+			Load (vr);
 		}
 
 		public virtual void Load (string filename)
@@ -654,7 +657,10 @@ namespace System.Xml
 			try {
 				xr = new XmlTextReader (filename, NameTable);
 				xr.XmlResolver = resolver;
-				Load (xr);
+				XmlValidatingReader vr = new XmlValidatingReader (xr);
+				vr.EntityHandling = EntityHandling.ExpandCharEntities;
+				vr.ValidationType = ValidationType.None;
+				Load (vr);
 			} finally {
 				if (xr != null)
 					xr.Close ();
@@ -664,8 +670,11 @@ namespace System.Xml
 		public virtual void Load (TextReader txtReader)
 		{
 			XmlTextReader xr = new XmlTextReader (txtReader, NameTable);
+			XmlValidatingReader vr = new XmlValidatingReader (xr);
+			vr.EntityHandling = EntityHandling.ExpandCharEntities;
+			vr.ValidationType = ValidationType.None;
 			xr.XmlResolver = resolver;
-			Load (xr);
+			Load (vr);
 		}
 
 		public virtual void Load (XmlReader xmlReader)

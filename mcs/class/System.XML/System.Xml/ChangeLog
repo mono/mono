@@ -1,3 +1,10 @@
+2006-08-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDocument.cs : use XmlValidatingReader to load TextReader/Stream
+	  so that it could fill default and fixed attributes. This ends up
+	  to fix bug #79163 (it fills fixed "xmlns" attribute and thus
+	  the node's namespace URI becomes that of glade-2.0).
+
 2006-08-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlEntity.cs, XmlEntityReference.cs, XmlNode.cs :

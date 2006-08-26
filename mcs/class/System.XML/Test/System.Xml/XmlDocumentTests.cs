@@ -1164,5 +1164,14 @@ namespace MonoTests.System.Xml
 			AssertEquals (1,
 				doc.DocumentElement.FirstChild.ChildNodes.Count);
 		}
+
+		[Test]
+		public void LoadTreatsFixedAttributesAsIfItExisted ()
+		{
+			string xml = @"<!DOCTYPE foo [<!ELEMENT foo EMPTY><!ATTLIST foo xmlns CDATA #FIXED 'urn:foo'>]><foo />";
+			XmlDocument doc = new XmlDocument ();
+			doc.Load (new StringReader (xml));
+			AssertEquals ("urn:foo", doc.DocumentElement.NamespaceURI);
+		}
 	}
 }
