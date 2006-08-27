@@ -128,6 +128,8 @@ namespace MonoTests.System.Diagnostics
 					Assert.IsTrue (EventLog.SourceExists ("monotempsource", "."), "#A3");
 					Assert.IsTrue (EventLog.SourceExists ("monoothersource", "."), "#A4");
 					Assert.IsTrue (EventLog.Exists ("monologtemp", "."), "#A5");
+					Assert.IsFalse (EventLog.Exists ("monotempsource", "."), "#A6");
+					Assert.IsFalse (EventLog.Exists ("monoothersource", "."), "#A7");
 
 					EventLog.WriteEntry ("monotempsource", "Clear1");
 
@@ -137,6 +139,8 @@ namespace MonoTests.System.Diagnostics
 					Assert.IsTrue (EventLog.SourceExists ("monotempsource", "."), "#B3");
 					Assert.IsTrue (EventLog.SourceExists ("monoothersource", "."), "#B4");
 					Assert.IsTrue (EventLog.Exists ("monologtemp", "."), "#B5");
+					Assert.IsFalse (EventLog.Exists ("monotempsource", "."), "#B6");
+					Assert.IsFalse (EventLog.Exists ("monoothersource", "."), "#B7");
 
 					EventLog.WriteEntry ("monotempsource", "Clear2");
 					eventLog.Clear ();
@@ -147,6 +151,8 @@ namespace MonoTests.System.Diagnostics
 					Assert.IsTrue (EventLog.SourceExists ("monotempsource", "."), "#C2");
 					Assert.IsTrue (EventLog.SourceExists ("monoothersource", "."), "#C3");
 					Assert.IsTrue (EventLog.Exists ("monologtemp", "."), "#C4");
+					Assert.IsFalse (EventLog.Exists ("monotempsource", "."), "#C5");
+					Assert.IsFalse (EventLog.Exists ("monoothersource", "."), "#C6");
 
 					EventLogEntry entry = eventLog.Entries [0];
 					Assert.IsNotNull (entry, "#D1");
@@ -195,6 +201,8 @@ namespace MonoTests.System.Diagnostics
 					Assert.IsTrue (EventLog.SourceExists ("monotempsource", "."), "#F2");
 					Assert.IsTrue (EventLog.SourceExists ("monoothersource", "."), "#F3");
 					Assert.IsTrue (EventLog.Exists ("monologtemp", "."), "#F4");
+					Assert.IsFalse (EventLog.Exists ("monotempsource", "."), "#F5");
+					Assert.IsFalse (EventLog.Exists ("monoothersource", "."), "#F6");
 				}
 			} finally {
 				if (EventLog.Exists ("monologtemp"))
@@ -316,6 +324,8 @@ namespace MonoTests.System.Diagnostics
 					Assert.IsFalse (EventLog.SourceExists ("monoothersource", "."), "#3");
 					Assert.IsTrue (EventLog.SourceExists ("monotempsource", "."), "#4");
 					Assert.IsTrue (EventLog.Exists ("monologtemp", "."), "#5");
+					Assert.IsFalse (EventLog.Exists ("monotempsource", "."), "#6");
+					Assert.IsFalse (EventLog.Exists ("monoothersource", "."), "#7");
 				}
 			} finally {
 				if (EventLog.Exists ("monologtemp"))
@@ -346,6 +356,7 @@ namespace MonoTests.System.Diagnostics
 					Assert.AreEqual (0, eventLog.Entries.Count, "#2");
 					Assert.IsTrue (EventLog.SourceExists ("monotempsource", "."), "#3");
 					Assert.IsTrue (EventLog.Exists ("monologtemp", "."), "#4");
+					Assert.IsFalse (EventLog.Exists ("monotempsource", "."), "#5");
 				}
 			} finally {
 				if (EventLog.Exists ("monologtemp"))
@@ -376,6 +387,7 @@ namespace MonoTests.System.Diagnostics
 					Assert.AreEqual (0, eventLog.Entries.Count, "#2");
 					Assert.IsTrue (EventLog.SourceExists ("monotempsource", "."), "#3");
 					Assert.IsTrue (EventLog.Exists ("monologtemp", "."), "#4");
+					Assert.IsFalse (EventLog.Exists ("monotempsource", "."), "#5");
 				}
 			} finally {
 				if (EventLog.Exists ("monologtemp"))
@@ -934,6 +946,8 @@ namespace MonoTests.System.Diagnostics
 					Assert.IsTrue (EventLog.Exists ("monologtemp"), "#A11");
 					Assert.IsTrue (EventLog.SourceExists ("monoothersource"), "#A12");
 					Assert.IsFalse (EventLog.SourceExists ("monotempsource"), "#A13");
+					Assert.IsFalse (EventLog.Exists ("monotempsource", "."), "#A14");
+					Assert.IsFalse (EventLog.Exists ("monoothersource", "."), "#A15");
 				}
 			} finally {
 				if (EventLog.Exists ("monologtemp"))
@@ -969,6 +983,7 @@ namespace MonoTests.System.Diagnostics
 					Assert.AreEqual (string.Empty, eventLog.Source, "#A10");
 					Assert.IsTrue (EventLog.Exists ("monologtemp"), "#A11");
 					Assert.IsTrue (EventLog.SourceExists ("monotempsource"), "#A12");
+					Assert.IsFalse (EventLog.Exists ("monotempsource", "."), "#A13");
 				}
 			} finally {
 				if (EventLog.Exists ("monologtemp"))
@@ -1003,6 +1018,7 @@ namespace MonoTests.System.Diagnostics
 					Assert.IsNull (eventLog.Source, "#A9");
 					Assert.IsTrue (EventLog.Exists ("monologtemp"), "#A10");
 					Assert.IsTrue (EventLog.SourceExists ("monotempsource"), "#A11");
+					Assert.IsFalse (EventLog.Exists ("monotempsource", "."), "#A12");
 				}
 			} finally {
 				if (EventLog.Exists ("monologtemp"))
@@ -1034,6 +1050,7 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsTrue (EventLog.Exists ("monologtemp", "."), "#A1");
 				Assert.IsTrue (EventLog.SourceExists ("monotempsource", "."), "#A2");
 				Assert.IsTrue (EventLog.SourceExists ("monologtemp", "."), "#A3");
+				Assert.IsFalse (EventLog.Exists ("monotempsource", "."), "#A4");
 
 				using (EventLog eventLog = new EventLog ("monologtemp", ".", "monotempsource")) {
 					Assert.IsFalse (eventLog.EnableRaisingEvents, "#B1");
@@ -1133,6 +1150,239 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test]
+		public void CreateEventSource1_Log_ExistsAsSource ()
+		{
+			if (EventLogImplType == NULL_IMPL)
+				// test cannot pass with NULL implementation
+				return;
+
+			if (EventLog.SourceExists ("monotempsource", "."))
+				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
+
+			if (EventLog.SourceExists ("monologtemp", "."))
+				Assert.Ignore ("Event log source 'monologtemp' should not exist.");
+
+			if (EventLog.Exists ("monologtemp", "."))
+				Assert.Ignore ("Event log 'monologtemp' should not exist.");
+
+			if (EventLog.Exists ("monologother", "."))
+				Assert.Ignore ("Event log 'monologother' should not exist.");
+
+			try {
+				EventLog.CreateEventSource ("monologtemp", "monologother", ".");
+				Assert.IsTrue (EventLog.Exists ("monologother", "."), "#A1");
+				Assert.IsFalse (EventLog.Exists ("monologtemp", "."), "#A2");
+				Assert.IsTrue (EventLog.SourceExists ("monologtemp", "."), "#A3");
+				Assert.IsTrue (EventLog.SourceExists ("monologother", "."), "#A4");
+
+				try {
+					EventLog.CreateEventSource ("monotempsource", "monologtemp", ".");
+					Assert.Fail ("#B1");
+				} catch (ArgumentException ex) {
+					// Log monologtemp has already been registered as a source
+					// on the local computer
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+					Assert.IsNotNull (ex.Message, "#B3");
+					Assert.IsTrue (ex.Message.IndexOf ("monologtemp") != -1, "#B4");
+					Assert.IsNull (ex.InnerException, "#B5");
+				}
+			} finally {
+				if (EventLog.Exists ("monologtemp", "."))
+					EventLog.Delete ("monologtemp", ".");
+
+				if (EventLog.Exists ("monologother", "."))
+					EventLog.Delete ("monologother", ".");
+			}
+		}
+
+		[Test]
+		public void CreateEventSource1_Log_InvalidCustomerLog ()
+		{
+			if (EventLogImplType != NULL_IMPL)
+				// test cannot pass with NULL implementation
+				return;
+
+			if (EventLog.SourceExists ("monotempsource", "."))
+				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
+
+			if (EventLog.Exists ("AppEvent", "."))
+				Assert.Ignore ("Event log 'AppEvent' should not exist.");
+
+			try {
+				EventLog.CreateEventSource ("monotempsource", "AppEvent");
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// The log name: 'AppEvent' is invalid for customer log creation
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNotNull (ex.Message, "#A3");
+				Assert.IsTrue (ex.Message.IndexOf ("'AppEvent'") != -1, "#A4");
+				Assert.IsNull (ex.InnerException, "#A5");
+			}
+
+			try {
+				EventLog.CreateEventSource ("monotempsource", "appevent");
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// The log name: 'appevent' is invalid for customer log creation
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+				Assert.IsTrue (ex.Message.IndexOf ("'appevent'") != -1, "#B4");
+				Assert.IsNull (ex.InnerException, "#B5");
+			}
+
+			if (EventLog.Exists ("SysEvent", "."))
+				Assert.Ignore ("Event log 'SysEvent' should not exist.");
+
+			try {
+				EventLog.CreateEventSource ("monotempsource", "SysEvent");
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// The log name: 'SysEvent' is invalid for customer log creation
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNotNull (ex.Message, "#C3");
+				Assert.IsTrue (ex.Message.IndexOf ("'SysEvent'") != -1, "#C4");
+				Assert.IsNull (ex.InnerException, "#C5");
+			}
+
+			try {
+				EventLog.CreateEventSource ("monotempsource", "sysevent");
+				Assert.Fail ("#D1");
+			} catch (ArgumentException ex) {
+				// The log name: 'sysEvent' is invalid for customer log creation
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
+				Assert.IsNotNull (ex.Message, "#D3");
+				Assert.IsTrue (ex.Message.IndexOf ("'sysevent'") != -1, "#D4");
+				Assert.IsNull (ex.InnerException, "#D5");
+			}
+
+			if (EventLog.Exists ("SecEvent", "."))
+				Assert.Ignore ("Event log 'SecEvent' should not exist.");
+
+			try {
+				EventLog.CreateEventSource ("monotempsource", "SecEvent");
+				Assert.Fail ("#E1");
+			} catch (ArgumentException ex) {
+				// The log name: 'SecEvent' is invalid for customer log creation
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#E2");
+				Assert.IsNotNull (ex.Message, "#E3");
+				Assert.IsTrue (ex.Message.IndexOf ("'SecEvent'") != -1, "#E4");
+				Assert.IsNull (ex.InnerException, "#E5");
+			}
+
+			try {
+				EventLog.CreateEventSource ("monotempsource", "secevent");
+				Assert.Fail ("#F1");
+			} catch (ArgumentException ex) {
+				// The log name: 'secevent' is invalid for customer log creation
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#F2");
+				Assert.IsNotNull (ex.Message, "#F3");
+				Assert.IsTrue (ex.Message.IndexOf ("'secevent'") != -1, "#F4");
+				Assert.IsNull (ex.InnerException, "#F5");
+			}
+
+			if (EventLog.Exists ("AppEventA", "."))
+				Assert.Ignore ("Event log 'AppEventA' should not exist.");
+
+			try {
+				EventLog.CreateEventSource ("monotempsource", "AppEventA");
+				Assert.Fail ("#G1");
+			} catch (ArgumentException ex) {
+				// The log name: 'AppEventA' is invalid for customer log creation
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#G2");
+				Assert.IsNotNull (ex.Message, "#G3");
+				Assert.IsTrue (ex.Message.IndexOf ("'AppEventA'") != -1, "#G4");
+				Assert.IsNull (ex.InnerException, "#G5");
+			}
+
+			if (EventLog.Exists ("SysEventA", "."))
+				Assert.Ignore ("Event log 'SysEventA' should not exist.");
+
+			try {
+				EventLog.CreateEventSource ("monotempsource", "SysEventA");
+				Assert.Fail ("#H1");
+			} catch (ArgumentException ex) {
+				// The log name: 'SysEventA' is invalid for customer log creation
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#H2");
+				Assert.IsNotNull (ex.Message, "#H3");
+				Assert.IsTrue (ex.Message.IndexOf ("'SysEventA'") != -1, "#H4");
+				Assert.IsNull (ex.InnerException, "#H5");
+			}
+
+			if (EventLog.Exists ("SecEventA", "."))
+				Assert.Ignore ("Event log 'SecEventA' should not exist.");
+
+			try {
+				EventLog.CreateEventSource ("monotempsource", "SecEventA");
+				Assert.Fail ("#I1");
+			} catch (ArgumentException ex) {
+				// The log name: 'SecEventA' is invalid for customer log creation
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#I2");
+				Assert.IsNotNull (ex.Message, "#I3");
+				Assert.IsTrue (ex.Message.IndexOf ("'SecEventA'") != -1, "#I4");
+				Assert.IsNull (ex.InnerException, "#I5");
+			}
+		}
+
+		[Test]
+		public void CreateEventSource1_Log_NotUnique ()
+		{
+			if (EventLogImplType != NULL_IMPL)
+				// test cannot pass with NULL implementation
+				return;
+
+			if (EventLog.SourceExists ("monotempsource", "."))
+				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
+
+			if (EventLog.SourceExists ("monotestsource", "."))
+				Assert.Ignore ("Event log source 'monotestsource' should not exist.");
+
+			if (EventLog.SourceExists ("monoothersource", "."))
+				Assert.Ignore ("Event log source 'monotempsource' should not exist.");
+
+			if (EventLog.Exists ("monologtemp", "."))
+				Assert.Ignore ("Event log 'monologtemp' should not exist.");
+
+			if (EventLog.Exists ("monologtest", "."))
+				Assert.Ignore ("Event log 'monologtest' should not exist.");
+
+			if (EventLog.Exists ("monologother", "."))
+				Assert.Ignore ("Event log 'monologother' should not exist.");
+
+			// the 8th character of the log name differs
+			try {
+				EventLog.CreateEventSource ("monoothersource", "monologother");
+				EventLog.CreateEventSource ("monotempsource", "monologtemp");
+			} finally {
+				if (EventLog.Exists ("monologother"))
+					EventLog.Delete ("monologother");
+				if (EventLog.Exists ("monologtemp"))
+					EventLog.Delete ("monologtemp");
+			}
+
+			// the first 8 characters match
+			try {
+				EventLog.CreateEventSource ("monotestsource", "monologtest");
+				EventLog.CreateEventSource ("monotempsource", "monologtemp");
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Only the first eight characters of a custom log name are
+				// significant, and there is already another log on the system
+				// using the  first eight characters of the name given.
+				// Name given: 'monologtemp', name of existing log: 'monologtest'
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+				Assert.IsTrue (ex.Message.IndexOf ("'monologtemp'") != -1, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("'monologtest'") != -1, "#B5");
+				Assert.IsNull (ex.InnerException, "#B6");
+			} finally {
+				if (EventLog.Exists ("monologtest"))
+					EventLog.Delete ("monologtest");
+				if (EventLog.Exists ("monologtemp"))
+					EventLog.Delete ("monologtemp");
+			}
+		}
+
+		[Test]
 		public void CreateEventSource1_Log_Null ()
 		{
 			if (EventLogImplType == NULL_IMPL)
@@ -1186,11 +1436,15 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsTrue (EventLog.Exists ("monologother", "."), "#A2");
 				Assert.IsTrue (EventLog.SourceExists ("monotempsource", "."), "#A3");
 				Assert.IsTrue (EventLog.SourceExists ("monoothersource", "."), "#A4");
+				Assert.IsFalse (EventLog.Exists ("monotempsource", "."), "#A5");
+				Assert.IsFalse (EventLog.Exists ("monoothersource", "."), "#A6");
 				EventLog.Delete ("monologtemp");
-				Assert.IsFalse (EventLog.Exists ("monologtemp", "."), "#A5");
-				Assert.IsTrue (EventLog.Exists ("monologother", "."), "#A6");
-				Assert.IsFalse (EventLog.SourceExists ("monotempsource", "."), "#A7");
-				Assert.IsTrue (EventLog.SourceExists ("monoothersource", "."), "#A8");
+				Assert.IsFalse (EventLog.Exists ("monologtemp", "."), "#A7");
+				Assert.IsTrue (EventLog.Exists ("monologother", "."), "#A8");
+				Assert.IsFalse (EventLog.SourceExists ("monotempsource", "."), "#A9");
+				Assert.IsTrue (EventLog.SourceExists ("monoothersource", "."), "#A10");
+				Assert.IsFalse (EventLog.Exists ("monotempsource", "."), "#A11");
+				Assert.IsFalse (EventLog.Exists ("monoothersource", "."), "#A12");
 
 				EventLog.CreateEventSource ("monotempsource", "monologtemp", ".");
 
@@ -1198,11 +1452,15 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsTrue (EventLog.Exists ("monologother", "."), "#B2");
 				Assert.IsTrue (EventLog.SourceExists ("monotempsource", "."), "#B3");
 				Assert.IsTrue (EventLog.SourceExists ("monoothersource", "."), "#B4");
+				Assert.IsFalse (EventLog.Exists ("monotempsource", "."), "#B5");
+				Assert.IsFalse (EventLog.Exists ("monoothersource", "."), "#B6");
 				EventLog.Delete ("MonoLogTemp");
-				Assert.IsFalse (EventLog.Exists ("monologtemp", "."), "#B5");
-				Assert.IsTrue (EventLog.Exists ("monologother", "."), "#B6");
-				Assert.IsFalse (EventLog.SourceExists ("monotempsource", "."), "#B7");
-				Assert.IsTrue (EventLog.SourceExists ("monoothersource", "."), "#B8");
+				Assert.IsFalse (EventLog.Exists ("monologtemp", "."), "#B7");
+				Assert.IsTrue (EventLog.Exists ("monologother", "."), "#B8");
+				Assert.IsFalse (EventLog.SourceExists ("monotempsource", "."), "#B9");
+				Assert.IsTrue (EventLog.SourceExists ("monoothersource", "."), "#B10");
+				Assert.IsFalse (EventLog.Exists ("monotempsource", "."), "#B11");
+				Assert.IsFalse (EventLog.Exists ("monoothersource", "."), "#B12");
 			} finally {
 				if (EventLog.Exists ("monologother"))
 					EventLog.Delete ("monologother");
@@ -1275,11 +1533,15 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsTrue (EventLog.Exists ("monologother", "."), "#A2");
 				Assert.IsTrue (EventLog.SourceExists ("monotempsource", "."), "#A3");
 				Assert.IsTrue (EventLog.SourceExists ("monoothersource", "."), "#A4");
+				Assert.IsFalse (EventLog.Exists ("monotempsource", "."), "#A5");
+				Assert.IsFalse (EventLog.Exists ("monoothersource", "."), "#A6");
 				EventLog.Delete ("monologtemp", ".");
-				Assert.IsFalse (EventLog.Exists ("monologtemp", "."), "#A5");
-				Assert.IsTrue (EventLog.Exists ("monologother", "."), "#A6");
-				Assert.IsFalse (EventLog.SourceExists ("monotempsource", "."), "#A7");
-				Assert.IsTrue (EventLog.SourceExists ("monoothersource", "."), "#A8");
+				Assert.IsFalse (EventLog.Exists ("monologtemp", "."), "#A7");
+				Assert.IsTrue (EventLog.Exists ("monologother", "."), "#A8");
+				Assert.IsFalse (EventLog.SourceExists ("monotempsource", "."), "#A9");
+				Assert.IsTrue (EventLog.SourceExists ("monoothersource", "."), "#A10");
+				Assert.IsFalse (EventLog.Exists ("monotempsource", "."), "#A11");
+				Assert.IsFalse (EventLog.Exists ("monoothersource", "."), "#A12");
 
 				EventLog.CreateEventSource ("monotempsource", "monologtemp", ".");
 
@@ -1287,11 +1549,15 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsTrue (EventLog.Exists ("monologother", "."), "#B2");
 				Assert.IsTrue (EventLog.SourceExists ("monotempsource", "."), "#B3");
 				Assert.IsTrue (EventLog.SourceExists ("monoothersource", "."), "#B4");
+				Assert.IsFalse (EventLog.Exists ("monotempsource", "."), "#B5");
+				Assert.IsFalse (EventLog.Exists ("monoothersource", "."), "#B6");
 				EventLog.Delete ("MonoLogTemp", ".");
-				Assert.IsFalse (EventLog.Exists ("monologtemp", "."), "#B5");
-				Assert.IsTrue (EventLog.Exists ("monologother", "."), "#B6");
-				Assert.IsFalse (EventLog.SourceExists ("monotempsource", "."), "#B7");
-				Assert.IsTrue (EventLog.SourceExists ("monoothersource", "."), "#B8");
+				Assert.IsFalse (EventLog.Exists ("monologtemp", "."), "#B7");
+				Assert.IsTrue (EventLog.Exists ("monologother", "."), "#B8");
+				Assert.IsFalse (EventLog.SourceExists ("monotempsource", "."), "#B9");
+				Assert.IsTrue (EventLog.SourceExists ("monoothersource", "."), "#B10");
+				Assert.IsFalse (EventLog.Exists ("monotempsource", "."), "#B11");
+				Assert.IsFalse (EventLog.Exists ("monoothersource", "."), "#B12");
 			} finally {
 				if (EventLog.Exists ("monologother"))
 					EventLog.Delete ("monologother");
@@ -1375,6 +1641,8 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsFalse (EventLog.SourceExists ("monotempsource", "."), "#A3");
 				Assert.IsTrue (EventLog.SourceExists ("monoothersource", "."), "#A4");
 				Assert.IsTrue (EventLog.Exists ("monologtemp", "."), "#A5");
+				Assert.IsFalse (EventLog.Exists ("monotempsource", "."), "#A6");
+				Assert.IsFalse (EventLog.Exists ("monoothersource", "."), "#A7");
 
 				EventLog.CreateEventSource ("monotempsource", "monologtemp", ".");
 
@@ -1384,6 +1652,8 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsFalse (EventLog.SourceExists ("monotempsource", "."), "#B3");
 				Assert.IsTrue (EventLog.SourceExists ("monoothersource", "."), "#B4");
 				Assert.IsTrue (EventLog.Exists ("monologtemp", "."), "#B5");
+				Assert.IsFalse (EventLog.Exists ("monotempsource", "."), "#B6");
+				Assert.IsFalse (EventLog.Exists ("monoothersource", "."), "#B7");
 			} finally {
 				if (!monologtempExists) {
 					EventLog.Delete ("monologtemp");
@@ -1459,6 +1729,8 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsFalse (EventLog.SourceExists ("monotempsource", "."), "#A3");
 				Assert.IsTrue (EventLog.SourceExists ("monoothersource", "."), "#A4");
 				Assert.IsTrue (EventLog.Exists ("monologtemp", "."), "#A5");
+				Assert.IsFalse (EventLog.Exists ("monotempsource", "."), "#A6");
+				Assert.IsFalse (EventLog.Exists ("monoothersource", "."), "#A7");
 
 				EventLog.CreateEventSource ("monotempsource", "monologtemp", ".");
 
@@ -1468,6 +1740,8 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsFalse (EventLog.SourceExists ("monotempsource", "."), "#B3");
 				Assert.IsTrue (EventLog.SourceExists ("monoothersource", "."), "#B4");
 				Assert.IsTrue (EventLog.Exists ("monologtemp", "."), "#B5");
+				Assert.IsFalse (EventLog.Exists ("monotempsource", "."), "#B6");
+				Assert.IsFalse (EventLog.Exists ("monoothersource", "."), "#B7");
 			} finally {
 				if (!monologtempExists) {
 					EventLog.Delete ("monologtemp");

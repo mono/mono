@@ -95,14 +95,14 @@ namespace System.Diagnostics
 			return null;
 		}
 
-		public override EventLog [] GetEventLogs (string machineName)
-		{
-			return new EventLog [0];
-		}
-
 		protected override string GetLogDisplayName ()
 		{
 			return CoreEventLog.Log;
+		}
+
+		protected override string [] GetLogNames (string machineName)
+		{
+			return new string [0];
 		}
 
 		public override string LogNameFromSourceName (string source, string machineName)

@@ -1,3 +1,19 @@
+2006-08-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* NullEventLog.cs: Added dummy GetLogNames implementation.
+	* EventLogImpl.cs: Moved GetEventLogs implementation to base class.
+	Added abstract GetLogNames method. Added ValidateCustomerLogName
+	method which should be called by eventlog providers when creating a
+	new log to ensure the significant part of the log name is unique, does
+	not match any of the special log names and does not match an exist event
+	source.
+	* Win32EventLog.cs: Validate customer log name when creating new log.
+	Moved GetEventLogs implementation to base class. Added GetLogNames
+	method.
+	* LocalFileEventLog.cs: Merged CreateLogStore into CreateEventSource.
+	Validate customer log name when creating new log. Moved GetEventLogs
+	implementation to base class. Added GetLogNames method.
+
 2006-08-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Win32EventLog.cs: Fixed error messages. Use RegisterEventSource

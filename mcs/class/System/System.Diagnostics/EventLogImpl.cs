@@ -157,7 +157,16 @@ namespace System.Diagnostics
 
 		protected abstract EventLogEntry GetEntry (int index);
 
-		public abstract EventLog [] GetEventLogs (string machineName);
+		public EventLog [] GetEventLogs (string machineName)
+		{
+			string [] logNames = GetLogNames (machineName);
+			EventLog [] eventLogs = new EventLog [logNames.Length];
+			for (int i = 0; i < logNames.Length; i++) {
+				EventLog eventLog = new EventLog (logNames [i], machineName);
+				eventLogs [i] = eventLog;
+			}
+			return eventLogs;
+		}
 
 		protected abstract string GetLogDisplayName ();
 
@@ -168,5 +177,52 @@ namespace System.Diagnostics
 		public abstract void WriteEntry (string [] replacementStrings, EventLogEntryType type, uint instanceID, short category, byte[] rawData);
 
 		protected abstract string FormatMessage (string source, uint messageID, string [] replacementStrings);
+
+		protected abstract string [] GetLogNames (string machineName);
+
+		protected void ValidateCustomerLogName (string logName, string machineName)
+		{
+			if (logName.Length >= 8) {
+				string significantName = logName.Substring (0, 8);
+				if (string.Compare (significantName, "AppEvent", true) == 0 || string.Compare (significantName, "SysEvent", true) == 0 || string.Compare (significantName, "SecEvent", true) == 0)
+					throw new ArgumentException (string.Format (
+						CultureInfo.InvariantCulture, "The log name: '{0}' is"
+						+ " invalid for customer log creation.", logName));
+
+				// the first 8 characters of the log name are used as  filename
+				// for .evt file and as such no two logs with 8 characters or 
+				// more should have the same first 8 characters (or the .evt
+				// would be overwritten)
+				//
+				// this check is not strictly necessary on unix
+				string [] logs = GetLogNames (machineName);
+				for (int i = 0; i < logs.Length; i++) {
+					string log = logs [i];
+					if (log.Length >= 8 && string.Compare (log, 0, significantName, 0, 8, true) == 0)
+						throw new ArgumentException (string.Format (
+							CultureInfo.InvariantCulture, "Only the first eight"
+							+ " characters of a custom log name are significant,"
+							+ " and there is already another log on the system"
+							+ " using the first eight characters of the name given."
+							+ " Name given: '{0}', name of existing log: '{1}'.",
+							logName, log));
+				}
+			}
+
+			// LAMESPEC: check if the log name matches an existing source
+			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=186552
+			if (SourceExists (logName, machineName)) {
+				if (machineName == ".")
+					throw new ArgumentException (string.Format (
+						CultureInfo.InvariantCulture, "Log {0} has already been"
+						+ " registered as a source on the local computer.", 
+						logName));
+				else
+					throw new ArgumentException (string.Format (
+						CultureInfo.InvariantCulture, "Log {0} has already been"
+						+ " registered as a source on the computer {1}.",
+						logName, machineName));
+			}
+		}
 	}
 }

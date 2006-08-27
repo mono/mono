@@ -82,6 +82,9 @@ namespace System.Diagnostics
 				try {
 					logKey = eventLogKey.OpenSubKey (sourceData.LogName, true);
 					if (logKey == null) {
+						ValidateCustomerLogName (sourceData.LogName, 
+							sourceData.MachineName);
+
 						logKey = eventLogKey.CreateSubKey (sourceData.LogName);
 						logKey.SetValue ("Sources", new string [] { sourceData.LogName,
 							sourceData.Source });
@@ -353,26 +356,20 @@ namespace System.Diagnostics
 			}
 		}
 
-		public override EventLog [] GetEventLogs (string machineName)
-		{
-			using (RegistryKey eventLogKey = GetEventLogKey (machineName, false)) {
-				if (eventLogKey == null) {
-					throw new InvalidOperationException ("TODO");
-				}
-				string [] logNames = eventLogKey.GetSubKeyNames ();
-				EventLog [] eventLogs = new EventLog [logNames.Length];
-				for (int i = 0; i < logNames.Length; i++) {
-					EventLog eventLog = new EventLog (logNames [i], machineName);
-					eventLogs [i] = eventLog;
-				}
-				return eventLogs;
-			}
-		}
-
 		[MonoTODO]
 		protected override string GetLogDisplayName ()
 		{
 			return CoreEventLog.Log;
+		}
+
+		protected override string [] GetLogNames (string machineName)
+		{
+			using (RegistryKey eventLogKey = GetEventLogKey (machineName, true)) {
+				if (eventLogKey == null)
+					return new string [0];
+
+				return eventLogKey.GetSubKeyNames ();
+			}
 		}
 
 		public override string LogNameFromSourceName (string source, string machineName)

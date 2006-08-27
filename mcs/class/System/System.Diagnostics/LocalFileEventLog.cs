@@ -73,7 +73,22 @@ namespace System.Diagnostics
 			string logDir = FindLogStore (sourceData.LogName);
 			// create event log store (if necessary), and modify access
 			// permissions (unix only)
-			CreateLogStore (logDir, sourceData.LogName);
+			if (!Directory.Exists (logDir)) {
+				// ensure the log name is valid for customer logs
+				ValidateCustomerLogName (sourceData.LogName, sourceData.MachineName);
+
+				Directory.CreateDirectory (logDir);
+				// MS does not allow an event source to be named after an already
+				// existing event log. To speed up checking whether a given event
+				// source already exists (either as a event source or event log)
+				// we create an event source directory named after the event log.
+				// This matches what MS does with the registry-based registration.
+				Directory.CreateDirectory (Path.Combine (logDir, sourceData.LogName));
+				if (RunningOnLinux) {
+					ModifyAccessPermissions (logDir, "777");
+					ModifyAccessPermissions (logDir, "+t");
+				}
+			}
 			// create directory for event source, so we can check if the event
 			// source already exists
 			string sourceDir = Path.Combine (logDir, sourceData.Source);
@@ -184,28 +199,25 @@ namespace System.Diagnostics
 			}
 		}
 
-		public override EventLog [] GetEventLogs (string machineName)
-		{
-			if (!Directory.Exists (EventLogStore))
-				return new EventLog [0];
-			
-			string [] logDirs = Directory.GetDirectories (EventLogStore, "*");
-			EventLog [] eventLogs = new EventLog [logDirs.Length];
-			for (int i = 0; i < logDirs.Length; i++) {
-				EventLog eventLog = new EventLog (Path.GetFileName (
-					logDirs [i]), machineName);
-				eventLogs [i] = eventLog;
-			}
-			return eventLogs;
-		}
-
 		[MonoTODO]
 		protected override string GetLogDisplayName ()
 		{
 			return CoreEventLog.Log;
 		}
 
-		public override string	LogNameFromSourceName (string source, string machineName)
+		protected override string [] GetLogNames (string machineName)
+		{
+			if (!Directory.Exists (EventLogStore))
+				return new string [0];
+
+			string [] logDirs = Directory.GetDirectories (EventLogStore, "*");
+			string [] logNames = new string [logDirs.Length];
+			for (int i = 0; i < logDirs.Length; i++)
+				logNames [i] = Path.GetFileName (logDirs [i]);
+			return logNames;
+		}
+
+		public override string LogNameFromSourceName (string source, string machineName)
 		{
 			if (!Directory.Exists (EventLogStore))
 				return string.Empty;
@@ -326,23 +338,6 @@ namespace System.Diagnostics
 					return Path.Combine (Environment.GetFolderPath (
 						Environment.SpecialFolder.CommonApplicationData),
 						"mono/eventlog");
-				}
-			}
-		}
-
-		private void CreateLogStore (string logDir, string logName)
-		{
-			if (!Directory.Exists (logDir)) {
-				Directory.CreateDirectory (logDir);
-				// MS does not allow an event source to be named after an already
-				// existing event log. To speed up checking whether a given event
-				// source already exists (either as a event source or event log)
-				// we create an event source directory named after the event log.
-				// This matches what MS does with the registry-based registration.
-				Directory.CreateDirectory (Path.Combine (logDir, logName));
-				if (RunningOnLinux) {
-					ModifyAccessPermissions (logDir, "777");
-					ModifyAccessPermissions (logDir, "+t");
 				}
 			}
 		}
