@@ -1,3 +1,7 @@
+2006-08-27 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* MenuItem.cs: typo fix
+
 2006-08-27 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* CreateUserWizardStep.cs: fixed validators message display

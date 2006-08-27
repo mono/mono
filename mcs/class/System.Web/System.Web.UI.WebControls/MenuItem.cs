@@ -148,7 +148,7 @@ namespace System.Web.UI.WebControls
 			get {
 				return ViewState ["DataPath"] == null ? String.Empty : (String) ViewState ["DataPath"];
 			}
-			set {
+			private set {
 				ViewState ["DataPath"] = value;
 			}
 		}
@@ -483,7 +483,7 @@ namespace System.Web.UI.WebControls
 
 				// Bind Target property
 
-				if (bin.SeparatorImageUrlField.Length > 0) {
+				if (bin.TargetField.Length > 0) {
 					Target = Convert.ToString (GetBoundPropertyValue (bin.TargetField));
 					if (Target.Length == 0)
 						Target = bin.Target;
@@ -491,7 +491,7 @@ namespace System.Web.UI.WebControls
 				else if (bin.Target.Length > 0)
 					Target = bin.Target;
 
-				// Bind Target property
+				// Bind ToolTip property
 
 				if (bin.ToolTipField.Length > 0) {
 					ToolTip = Convert.ToString (GetBoundPropertyValue (bin.ToolTipField));
