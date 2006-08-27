@@ -1,3 +1,27 @@
+2006-08-27 Hagit Yidov <hagity@mainsoft.com>
+
+	* TreeNodeBindingCollectionTest.cs: New test was added
+	* TreeNodeBindingTest.cs: New test was added
+	* TreeNodeCollectionTest.cs: New test was added
+	* TreeNodeStyleCollectionTest.cs: New test was added
+	* TreeNodeTest.cs: New test was added
+	* TreeViewTest.cs: Test was updated
+
+=======
+=======
+<<<<<<< .mine
+<<<<<<< .mine
+2006-08-10 Hagit Yidov <hagity@mainsoft.com>
+
+	* ImageMapTest.cs: New test was added
+	* HotSpotTest.cs: New test was added
+	* HotSpotCollectionTest.cs: New test was added
+	* CircleHotSpot.cs: New test was added
+	* RectangleHotSpot.cs: New test was added
+	* PolygonHotSpot.cs: New test was added
+
+=======
+=======
 2006-08-23 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* MenuTest.cs: added tests 
@@ -58,10 +82,12 @@
 	* RectangleHotSpot.cs: New test was added
 	* PolygonHotSpot.cs: New test was added
 
+>>>>>>> .r64424
 2006-08-10 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* MenuTest.cs: new tests were added
 
+>>>>>>> .r63580
 2006-08-09 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* HierarchicalDataBoundControlTest.cs: added new tests

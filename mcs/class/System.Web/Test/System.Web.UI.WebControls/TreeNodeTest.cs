@@ -1,0 +1,427 @@
+//
+// Tests for System.Web.UI.WebControls.ImageMap.cs
+//
+// Author:
+//  Hagit Yidov (hagity@mainsoft.com
+//
+// (C) 2005 Mainsoft Corporation (http://www.mainsoft.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
+#if NET_2_0
+using NUnit.Framework;
+using System;
+using System.IO;
+using System.Globalization;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using MonoTests.stand_alone.WebHarness;
+using MonoTests.SystemWeb.Framework;
+using System.Threading;
+
+namespace MonoTests.System.Web.UI.WebControls {
+	class PokerTreeNode : TreeNode {
+		// View state Stuff
+		public PokerTreeNode () {
+			TrackViewState ();
+		}
+
+		public object SaveState () {
+			return SaveViewState ();
+		}
+
+		public void LoadState (object o) {
+			LoadViewState (o);
+		}
+
+		public bool IsTrackingViewStateBase { get { return (base.IsTrackingViewState); } }
+
+		public virtual object CloneBase () {
+			return (base.Clone ());
+		}
+
+		public virtual void RenderPostTextBase (HtmlTextWriter writer) {
+			base.RenderPostText (writer);
+		}
+
+		public virtual void RenderPreTextBase (HtmlTextWriter writer) {
+			base.RenderPreText (writer);
+		}
+
+	}
+
+	[TestFixture]
+	public class TreeNodeTest {
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TreeNode_DefaultProperties () {
+			PokerTreeNode tn = new PokerTreeNode ();
+			Assert.AreEqual (false, tn.Checked, "Checked");
+			Assert.AreEqual (0, tn.ChildNodes.Count, "ChildNodes.Count");
+			Assert.AreEqual (false, tn.DataBound, "DataBound");
+			Assert.AreEqual (null, tn.DataItem, "DataItem");
+			Assert.AreEqual (string.Empty, tn.DataPath, "DataPath");
+			Assert.AreEqual (0, tn.Depth, "Depth");
+			Assert.AreEqual (null, tn.Expanded, "Expanded");
+			Assert.AreEqual (string.Empty, tn.ImageToolTip, "ImageToolTip");
+			Assert.AreEqual (string.Empty, tn.ImageUrl, "ImageUrl");
+			Assert.AreEqual (string.Empty, tn.NavigateUrl, "NavigateUrl");
+			Assert.AreEqual (null, tn.Parent, "Parent");
+			Assert.AreEqual (false, tn.PopulateOnDemand, "PopulateOnDemand");
+			Assert.AreEqual (TreeNodeSelectAction.Select, tn.SelectAction, "SelectAction");
+			Assert.AreEqual (false, tn.Selected, "Selected");
+			Assert.AreEqual (null, tn.ShowCheckBox, "ShowCheckBox");
+			Assert.AreEqual (string.Empty, tn.Target, "Target");
+			Assert.AreEqual (string.Empty, tn.Text, "Text");
+			Assert.AreEqual (string.Empty, tn.Value, "Value");
+			Assert.AreEqual (string.Empty, tn.ToolTip, "ToolTip");
+			Assert.AreEqual (string.Empty, tn.ValuePath, "ValuePath");
+			Assert.AreEqual (true, tn.IsTrackingViewStateBase, "IsTrackingViewState");
+		}
+
+		[Test]
+		public void TreeNode_AssignToDefaultProperties () {
+			PokerTreeNode tn = new PokerTreeNode ();
+			tn.Checked = false;
+			Assert.AreEqual (false, tn.Checked, "Checked");
+			tn.ChildNodes.Add (new TreeNode ());
+			Assert.AreEqual (1, tn.ChildNodes.Count, "ChildNodes.Count");
+			tn.Expanded = false;
+			Assert.AreEqual (false, tn.Expanded, "Expanded");
+			tn.ImageToolTip = string.Empty;
+			Assert.AreEqual (string.Empty, tn.ImageToolTip, "ImageToolTip");
+			tn.ImageUrl = string.Empty;
+			Assert.AreEqual (string.Empty, tn.ImageUrl, "ImageUrl");
+			tn.NavigateUrl = string.Empty;
+			Assert.AreEqual (string.Empty, tn.NavigateUrl, "NavigateUrl");
+			tn.PopulateOnDemand = false;
+			Assert.AreEqual (false, tn.PopulateOnDemand, "PopulateOnDemand");
+			tn.SelectAction = TreeNodeSelectAction.Select;
+			Assert.AreEqual (TreeNodeSelectAction.Select, tn.SelectAction, "SelectAction");
+			tn.Selected = false;
+			Assert.AreEqual (false, tn.Selected, "Selected");
+			tn.ShowCheckBox = false;
+			Assert.AreEqual (false, tn.ShowCheckBox, "ShowCheckBox");
+			tn.Target = string.Empty;
+			Assert.AreEqual (string.Empty, tn.Target, "Target");
+			tn.Text = string.Empty;
+			Assert.AreEqual (string.Empty, tn.Text, "Text");
+			tn.Value = string.Empty;
+			Assert.AreEqual (string.Empty, tn.Value, "Value");
+			tn.ToolTip = string.Empty;
+			Assert.AreEqual (string.Empty, tn.ToolTip, "ToolTip");
+		}
+
+		[Test]
+		public void TreeNode_Method_Select () {
+			PokerTreeNode tn = new PokerTreeNode ();
+			Assert.AreEqual (false, tn.Selected, "BeforeSelect");
+			tn.Select ();
+			Assert.AreEqual (true, tn.Selected, "AfterSelect");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TreeNode_Method_Clone () {
+			PokerTreeNode tn1 = new PokerTreeNode ();
+			TreeNode tn2 = new TreeNode ();
+			tn1.Text = "CloneThisNode";
+			tn1.Value = "111";
+			Assert.AreEqual (string.Empty, tn2.Text, "BeforeClone1");
+			Assert.AreEqual (string.Empty, tn2.Value, "BeforeClone2");
+			tn2 = (TreeNode) tn1.CloneBase ();
+			Assert.AreEqual ("CloneThisNode", tn2.Text, "AfterClone1");
+			Assert.AreEqual ("111", tn2.Value, "AfterClone2");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void TreeNode_PostbackNavigate () {
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadPostbackNavigate));
+			string strTarget =
+@"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=kffkK8wYLPknq-W8AKNdNQ2&amp;t=632883840303269703"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
+	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
+		<tr>
+			<td><img src=""/NunitWeb/WebResource.axd?d=edXX1vkoy5lI0CekgaZ5zZhMbc1ZCZv4nlS9J-l53l41&amp;t=632883840303269703"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""NavigateUrl"" id=""treeview1t0"">TreeNode1</a></td>
+		</tr>
+	</table>
+</div><a id=""treeview1_SkipLink""></a>";
+			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
+			HtmlDiff.AssertAreEqual (strTarget, str, "PostbackNavigate");
+		}
+		private static void pageLoadPostbackNavigate (Page page) {
+			TreeView tv = new TreeView ();
+			tv.ID = "treeview1";
+			PokerTreeNode tn1 = new PokerTreeNode ();
+			tn1.Text = "TreeNode1";
+			tn1.NavigateUrl = "NavigateUrl";
+			tv.Nodes.Add (tn1);
+			LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
+			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
+			page.Form.Controls.Add (lcb);
+			page.Form.Controls.Add (tv);
+			page.Form.Controls.Add (lce);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void TreeNode_PostbackExpand () {
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadPostbackExpand));
+			string strTarget =
+			@"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=kffkK8wYLPknq-W8AKNdNQ2&amp;t=632883840303269703"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
+	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
+		<tr>
+			<td><a id=""treeview1n0"" href=""javascript:TreeView_ToggleNode(treeview1_Data,0,treeview1n0,' ',treeview1n0Nodes)""><img src=""/NunitWeb/WebResource.axd?d=edXX1vkoy5lI0CekgaZ5zczrmaCFckltSZkUNyTPtxw1&amp;t=632883840303269703"" alt=""Expand TreeNode1"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:TreeView_ToggleNode(treeview1_Data,0,treeview1n0,' ',treeview1n0Nodes)"" id=""treeview1t0"">TreeNode1</a></td>
+		</tr>
+	</table><div id=""treeview1n0Nodes"" style=""display:none;"">
+		<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
+			<tr>
+				<td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=edXX1vkoy5lI0CekgaZ5zZhMbc1ZCZv4nlS9J-l53l41&amp;t=632883840303269703"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sTreeNode1\\TreeNode2')"" onclick=""TreeView_SelectNode(treeview1_Data, this,'treeview1t1');"" id=""treeview1t1"">TreeNode2</a></td>
+			</tr>
+		</table>
+	</div>
+</div><a id=""treeview1_SkipLink""></a>";
+			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
+			HtmlDiff.AssertAreEqual (strTarget, str, "PostbackExpand");
+		}
+		private static void pageLoadPostbackExpand (Page page) {
+			TreeView tv = new TreeView ();
+			tv.ID = "treeview1";
+			PokerTreeNode tn1 = new PokerTreeNode ();
+			tn1.Text = "TreeNode1";
+			tn1.NavigateUrl = "";
+			tn1.SelectAction = TreeNodeSelectAction.Expand;
+			PokerTreeNode tn2 = new PokerTreeNode ();
+			tn2.Text = "TreeNode2";
+			tn1.ChildNodes.Add (tn2);
+			tv.Nodes.Add (tn1);
+			tv.CollapseAll ();
+			LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
+			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
+			page.Form.Controls.Add (lcb);
+			page.Form.Controls.Add (tv);
+			page.Form.Controls.Add (lce);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void TreeNode_PostbackNone () {
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadPostbackNone));
+			string strTarget =
+			@"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=kffkK8wYLPknq-W8AKNdNQ2&amp;t=632883840303269703"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
+	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
+		<tr>
+			<td><a id=""treeview1n0"" href=""javascript:TreeView_ToggleNode(treeview1_Data,0,treeview1n0,' ',treeview1n0Nodes)""><img src=""/NunitWeb/WebResource.axd?d=edXX1vkoy5lI0CekgaZ5zczrmaCFckltSZkUNyTPtxw1&amp;t=632883840303269703"" alt=""Expand TreeNode1"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><span class=""treeview1_0"" id=""treeview1t0"">TreeNode1</span></td>
+		</tr>
+	</table><div id=""treeview1n0Nodes"" style=""display:none;"">
+		<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
+			<tr>
+				<td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=edXX1vkoy5lI0CekgaZ5zZhMbc1ZCZv4nlS9J-l53l41&amp;t=632883840303269703"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sTreeNode1\\TreeNode2')"" onclick=""TreeView_SelectNode(treeview1_Data, this,'treeview1t1');"" id=""treeview1t1"">TreeNode2</a></td>
+			</tr>
+		</table>
+	</div>
+</div><a id=""treeview1_SkipLink""></a>";
+			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
+			HtmlDiff.AssertAreEqual (strTarget, str, "PostbackNone");
+		}
+		private static void pageLoadPostbackNone (Page page) {
+			TreeView tv = new TreeView ();
+			tv.ID = "treeview1";
+			PokerTreeNode tn1 = new PokerTreeNode ();
+			tn1.Text = "TreeNode1";
+			tn1.NavigateUrl = "";
+			tn1.SelectAction = TreeNodeSelectAction.None;
+			PokerTreeNode tn2 = new PokerTreeNode ();
+			tn2.Text = "TreeNode2";
+			tn1.ChildNodes.Add (tn2);
+			tv.Nodes.Add (tn1);
+			tv.CollapseAll ();
+			LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
+			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
+			page.Form.Controls.Add (lcb);
+			page.Form.Controls.Add (tv);
+			page.Form.Controls.Add (lce);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void TreeNode_PostbackSelect () {
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadPostbackSelect));
+			t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "tv";
+			fr.Controls["__EVENTARGUMENT"].Value = "sTreeNode1\\TreeNode2";
+			t.Request = fr;
+			string strTarget =
+			@"<a href=""#tv_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=kffkK8wYLPknq-W8AKNdNQ2&amp;t=632883840303269703"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""tv"">
+	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
+		<tr>
+			<td><a id=""tvn0"" href=""javascript:TreeView_ToggleNode(tv_Data,0,tvn0,' ',tvn0Nodes)""><img src=""/NunitWeb/WebResource.axd?d=edXX1vkoy5lI0CekgaZ5zczrmaCFckltSZkUNyTPtxw1&amp;t=632883840303269703"" alt=""Expand TreeNode1"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""tv_0"" href=""javascript:__doPostBack('tv','sTreeNode1')"" onclick=""TreeView_SelectNode(tv_Data, this,'tvt0');"" id=""tvt0"">TreeNode1</a></td>
+		</tr>
+	</table><div id=""tvn0Nodes"" style=""display:none;"">
+		<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
+			<tr>
+				<td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=edXX1vkoy5lI0CekgaZ5zZhMbc1ZCZv4nlS9J-l53l41&amp;t=632883840303269703"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""tv_0"" href=""javascript:__doPostBack('tv','sTreeNode1\\TreeNode2')"" onclick=""TreeView_SelectNode(tv_Data, this,'tvt1');"" id=""tvt1"">TreeNode2</a></td>
+			</tr>
+		</table>
+	</div>
+</div><a id=""tv_SkipLink""></a>";
+			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
+			HtmlDiff.AssertAreEqual (strTarget, str, "PostbackSelect");
+			Assert.AreEqual ("TreeNode2", t.UserData, "PostbackSelectEvent");
+		}
+		private static void pageLoadPostbackSelect (Page page) {
+			WebTest.CurrentTest.UserData = "Init";
+			TreeView tv = new TreeView ();
+			tv.ID = "tv";
+			tv.SelectedNodeChanged += new EventHandler (tv_SelectedNodeChanged);
+			PokerTreeNode tn1 = new PokerTreeNode ();
+			tn1.Text = "TreeNode1";
+			PokerTreeNode tn2 = new PokerTreeNode ();
+			tn2.Text = "TreeNode2";
+			tn2.NavigateUrl = "";
+			tn2.SelectAction = TreeNodeSelectAction.Select;
+			tn1.ChildNodes.Add (tn2);
+			tv.Nodes.Add (tn1);
+			if (page.IsPostBack == false)
+				tv.CollapseAll ();
+			LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
+			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
+			page.Form.Controls.Add (lcb);
+			page.Form.Controls.Add (tv);
+			page.Form.Controls.Add (lce);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void TreeNode_PostbackSelectExpand () {
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadPostbackSelectExpand));
+			t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "tv";
+			fr.Controls["__EVENTARGUMENT"].Value = "sTreeNode1";
+			t.Request = fr;
+			string strTarget =
+@"<a href=""#tv_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=kffkK8wYLPknq-W8AKNdNQ2&amp;t=632883840303269703"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""tv"">
+	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
+		<tr>
+			<td><a id=""tvn0"" href=""javascript:TreeView_ToggleNode(tv_Data,0,tvn0,' ',tvn0Nodes)""><img src=""/NunitWeb/WebResource.axd?d=edXX1vkoy5lI0CekgaZ5zW7-1Af97Wq_r6fRK7PDqP81&amp;t=632883840303269703"" alt=""Collapse TreeNode1"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""tv_0"" href=""javascript:__doPostBack('tv','sTreeNode1')"" onclick=""TreeView_SelectNode(tv_Data, this,'tvt0');"" id=""tvt0"">TreeNode1</a></td>
+		</tr>
+	</table><div id=""tvn0Nodes"" style=""display:block;"">
+		<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
+			<tr>
+				<td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=edXX1vkoy5lI0CekgaZ5zZhMbc1ZCZv4nlS9J-l53l41&amp;t=632883840303269703"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""tv_0"" href=""NavigateUrl"" id=""tvt1"">TreeNode2</a></td>
+			</tr>
+		</table>
+	</div>
+</div><a id=""tv_SkipLink""></a>";
+			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
+			HtmlDiff.AssertAreEqual (strTarget, str, "PostbackSelectExpand");
+			Assert.AreEqual ("TreeNode1", t.UserData, "PostbackSelectEvent");
+		}
+		private static void pageLoadPostbackSelectExpand (Page page) {
+			WebTest.CurrentTest.UserData = "Init";
+			TreeView tv = new TreeView ();
+			tv.ID = "tv";
+			tv.SelectedNodeChanged += new EventHandler (tv_SelectedNodeChanged);
+			PokerTreeNode tn1 = new PokerTreeNode ();
+			tn1.Text = "TreeNode1";
+			tn1.NavigateUrl = "";
+			tn1.SelectAction = TreeNodeSelectAction.SelectExpand;
+			PokerTreeNode tn2 = new PokerTreeNode ();
+			tn2.Text = "TreeNode2";
+			tn2.NavigateUrl = "NavigateUrl";
+			tn1.ChildNodes.Add (tn2);
+			tv.Nodes.Add (tn1);
+			if (page.IsPostBack == false)
+				tv.CollapseAll ();
+			LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
+			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
+			page.Form.Controls.Add (lcb);
+			page.Form.Controls.Add (tv);
+			page.Form.Controls.Add (lce);
+		}
+
+		static void tv_SelectedNodeChanged (object sender, EventArgs e) {
+			TreeView tv = (TreeView) sender;
+			WebTest.CurrentTest.UserData = tv.SelectedNode.Text;
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void TreeNode_Render () {
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadRender));
+			string strTarget =
+@"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=kffkK8wYLPknq-W8AKNdNQ2&amp;t=632883840303269703"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
+	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
+		<tr>
+			<td><a id=""treeview1n0"" href=""javascript:TreeView_ToggleNode(treeview1_Data,0,treeview1n0,' ',treeview1n0Nodes)""><img src=""/NunitWeb/WebResource.axd?d=edXX1vkoy5lI0CekgaZ5zW7-1Af97Wq_r6fRK7PDqP81&amp;t=632883840303269703"" alt=""Collapse text"" style=""border-width:0;"" /></a></td><td><a href=""navigateUrl"" target=""target"" onclick=""javascript:TreeView_SelectNode(treeview1_Data, this,'treeview1t0');javascript:TreeView_ToggleNode(treeview1_Data,0,treeview1n0,' ',treeview1n0Nodes)"" title=""ToolTip"" id=""treeview1t0i""><img src=""imageUrl"" alt=""ImageToolTip"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><input type=""checkbox"" name=""treeview1n0CheckBox"" id=""treeview1n0CheckBox"" checked=""checked"" title=""text"" /><a class=""treeview1_0"" href=""navigateUrl"" target=""target"" onclick=""javascript:TreeView_SelectNode(treeview1_Data, this,'treeview1t0');javascript:TreeView_ToggleNode(treeview1_Data,0,treeview1n0,' ',treeview1n0Nodes)"" title=""ToolTip"" id=""treeview1t0"">text</a></td>
+		</tr>
+	</table><div id=""treeview1n0Nodes"" style=""display:block;"">
+		<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
+			<tr>
+				<td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=edXX1vkoy5lI0CekgaZ5zZhMbc1ZCZv4nlS9J-l53l41&amp;t=632883840303269703"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','svalue\\childenode')"" onclick=""TreeView_SelectNode(treeview1_Data, this,'treeview1t1');"" id=""treeview1t1"">childenode</a></td>
+			</tr>
+		</table>
+	</div>
+</div><a id=""treeview1_SkipLink""></a>";
+			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
+			HtmlDiff.AssertAreEqual (strTarget, str, "Render");
+		}
+		private static void pageLoadRender (Page page) {
+			TreeView tv = new TreeView ();
+			tv.ID = "treeview1";
+			TreeNode tn = new TreeNode
+				("text", "value", "imageUrl", "navigateUrl", "target");
+			tn.Checked = true;
+			tn.ChildNodes.Add (new TreeNode ("childenode"));
+			tn.Expanded = true;
+			tn.ImageToolTip = "ImageToolTip";
+			tn.PopulateOnDemand = false;
+			tn.SelectAction = TreeNodeSelectAction.SelectExpand;
+			tn.Selected = true;
+			tn.ShowCheckBox = true;
+			tn.ToolTip = "ToolTip";
+			tv.Nodes.Add (tn);
+			tv.DataBind ();
+			LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
+			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
+			page.Form.Controls.Add (lcb);
+			page.Form.Controls.Add (tv);
+			page.Form.Controls.Add (lce);
+		}
+	}
+}
+
+
+#endif
