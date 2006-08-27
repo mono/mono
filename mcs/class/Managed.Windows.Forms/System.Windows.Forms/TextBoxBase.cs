@@ -432,6 +432,8 @@ namespace System.Windows.Forms {
 			set {
 				if (!read_only) {
 					document.ReplaceSelection(CaseAdjust(value));
+					document.SetSelectionStart(document.caret.line, document.caret.pos);
+					document.SetSelectionEnd(document.caret.line, document.caret.pos);
 					ScrollToCaret();
 					OnTextChanged(EventArgs.Empty);
 				}

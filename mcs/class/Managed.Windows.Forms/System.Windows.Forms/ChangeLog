@@ -1,3 +1,10 @@
+2006-08-23  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TextControl.cs (Insert): Update the caret position even if we don't
+	  have a handle yet, just don't call the driver in that case.
+	* TextBoxBase.cs (set_SelectedText): Set the Start and End selection
+	  to the end of the new selection text (Fixes #79184)
+
 2006-08-23  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Form.cs (Activate): Only activate if the handle is created)

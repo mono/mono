@@ -2127,14 +2127,16 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 
 			UpdateView(line, insert_lines + 1, pos);
 
-			if (update_caret && owner.IsHandleCreated) {
+			if (update_caret) {
 				// Move caret to the end of the inserted text
 				if (insert_lines > 1) {
 					PositionCaret(GetLine(line.line_no + insert_lines - 1), ins[ins.Length - 1].Length);
 				} else {
 					PositionCaret(line, pos + ins[0].Length);
 				}
-				XplatUI.CaretVisible(owner.Handle, true);
+				if (owner.IsHandleCreated) {
+					XplatUI.CaretVisible(owner.Handle, true);
+				}
 			}
 		}
 
