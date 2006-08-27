@@ -341,6 +341,10 @@ namespace System.Web.UI.WebControls
 			foreach (string key in ViewState.Keys)
 				ViewState.SetItemDirty (key, true);
 		}
+
+		public override string ToString () {
+			return DataMember.Length > 0 ? DataMember : "(Empty)";
+		}
 	}
 }
 

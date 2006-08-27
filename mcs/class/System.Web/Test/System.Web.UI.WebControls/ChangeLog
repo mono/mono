@@ -1,3 +1,7 @@
+2006-08-23 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* TreeNodeBindingTest.cs: removed NotWorking attributes 
+
 2006-08-27 Hagit Yidov <hagity@mainsoft.com>
 
 	* TreeNodeBindingCollectionTest.cs: New test was added

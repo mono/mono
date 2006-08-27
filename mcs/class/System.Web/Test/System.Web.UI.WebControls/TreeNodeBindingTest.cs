@@ -43,7 +43,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 	public class TreeNodeBindingTest {
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TreeNodeBinding_DefaultProperties () {
 			TreeNodeBinding tnb = new TreeNodeBinding ();
 			Assert.AreEqual (string.Empty, tnb.DataMember, "DataMember");
@@ -67,7 +66,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TreeNodeBinding_AssignToDefaultProperties () {
 			TreeNodeBinding tnb = new TreeNodeBinding ();
 
@@ -98,8 +96,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			tnb.SelectAction = TreeNodeSelectAction.Select;
 			Assert.AreEqual (TreeNodeSelectAction.Select, tnb.SelectAction, "SelectAction");
 
-			//*non-compatible*/tnb.ShowCheckBox = null;
-			tnb.ShowCheckBox = false;
+			tnb.ShowCheckBox = null;
 			Assert.AreEqual (null, tnb.ShowCheckBox, "ShowCheckBox");
 
 			tnb.Target = string.Empty;
@@ -128,7 +125,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TreeNodeBinding_Method_ToString () {
 			TreeNodeBinding tnb = new TreeNodeBinding ();
 			string str = tnb.ToString ();
