@@ -454,6 +454,12 @@ System.Web.UI.WebControls/TextBoxCas.cs
 System.Web.UI.WebControls/ThemeTest.cs
 System.Web.UI.WebControls/TreeViewCas.cs
 System.Web.UI.WebControls/TreeNodeBindingTest.cs
+System.Web.UI.WebControls/TreeNodeBindingCollectionTest.cs
+System.Web.UI.WebControls/TreeNodeCollectionTest.cs
+System.Web.UI.WebControls/TreeNodeStyleCollectionTest.cs
+System.Web.UI.WebControls/TreeNodeStyleTest.cs
+System.Web.UI.WebControls/TreeNodeTest.cs
+System.Web.UI.WebControls/TreeViewTest.cs
 System.Web.UI.WebControls/UnitCas.cs
 System.Web.UI.WebControls/UnitConverterCas.cs
 System.Web.UI.WebControls/ValidatedControlConverterCas.cs
