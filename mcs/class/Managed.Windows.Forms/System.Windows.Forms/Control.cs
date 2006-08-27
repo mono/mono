@@ -788,6 +788,7 @@ namespace System.Windows.Forms
 				}
 			}
 			is_disposed = true;
+			is_visible = false;
 			base.Dispose(disposing);
 		}
 		#endregion 	// Public Constructors
@@ -2701,6 +2702,9 @@ namespace System.Windows.Forms
 		}
 
 		public void CreateControl() {
+			if (is_disposed) {
+				throw new ObjectDisposedException(GetType().FullName.ToString());
+			}
 			if (is_created) {
 				return;
 			}
@@ -3289,7 +3293,7 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void CreateHandle() {
 			if (IsDisposed) {
-				throw new ObjectDisposedException(Name);
+				throw new ObjectDisposedException(GetType().FullName.ToString());
 			}
 
 			if (IsHandleCreated && !is_recreating) {
@@ -3713,7 +3717,7 @@ namespace System.Windows.Forms
 
 		protected virtual void SetVisibleCore(bool value) {
 			if (value!=is_visible) {
-				if (value && !is_created) {
+				if (value && (window.Handle == IntPtr.Zero) || !is_created) {
 					CreateControl();
 				}
 

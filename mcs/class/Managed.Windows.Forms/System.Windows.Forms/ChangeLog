@@ -1,3 +1,12 @@
+2006-08-23  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Form.cs (Activate): Only activate if the handle is created)
+	* Control.c:
+	  - Mark window as invisible when it's disposed
+	  - Check if window handle is created when setting window visible, 
+	    instead of relying just on the is_created variable
+	  - Check if object is disposed when creating the control (Fixes #79155)
+
 2006-08-23  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* ScrollableWindow.cs (ScrollWindow): Don't actually perform layouting
