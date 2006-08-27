@@ -361,7 +361,7 @@ namespace System.Web.UI.WebControls
 				PasswordCompare.ID = "PasswordCompare";
 				PasswordCompare.ControlToCompare = "Password";
 				PasswordCompare.ControlToValidate = "ConfirmPassword";
-				PasswordCompare.Display = ValidatorDisplay.Dynamic;
+				PasswordCompare.Display = ValidatorDisplay.Static;
 				PasswordCompare.ErrorMessage = _createUserWizard.ConfirmPasswordCompareErrorMessage;
 				PasswordCompare.ValidationGroup = _createUserWizard.ID;
 
@@ -374,7 +374,7 @@ namespace System.Web.UI.WebControls
 				PasswordRegEx.ID = "PasswordRegEx";
 				PasswordRegEx.ControlToValidate = "Password";
 				PasswordRegEx.ValidationExpression = _createUserWizard.PasswordRegularExpression;
-				PasswordRegEx.Display = ValidatorDisplay.Dynamic;
+				PasswordRegEx.Display = ValidatorDisplay.Static;
 				PasswordRegEx.ErrorMessage = _createUserWizard.PasswordRegularExpressionErrorMessage;
 				PasswordRegEx.ValidationGroup = _createUserWizard.ID;
 
@@ -387,7 +387,7 @@ namespace System.Web.UI.WebControls
 				EmailRegEx.ID = "EmailRegEx";
 				EmailRegEx.ControlToValidate = "Email";
 				EmailRegEx.ValidationExpression = _createUserWizard.EmailRegularExpression;
-				EmailRegEx.Display = ValidatorDisplay.Dynamic;
+				EmailRegEx.Display = ValidatorDisplay.Static;
 				EmailRegEx.ErrorMessage = _createUserWizard.EmailRegularExpressionErrorMessage;
 				EmailRegEx.ValidationGroup = _createUserWizard.ID;
 

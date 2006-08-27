@@ -1,3 +1,7 @@
+2006-08-27 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* CreateUserWizardStep.cs: fixed validators message display
+
 2006-08-25  Kornél Pál  <kornelpal@gmail.com>
 
 	* FileUpload.cs: Use assembly name constants.
