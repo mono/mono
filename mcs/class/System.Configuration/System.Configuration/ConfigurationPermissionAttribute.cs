@@ -44,7 +44,7 @@ namespace System.Configuration {
                 | AttributeTargets.Method,
                 AllowMultiple=true,
                 Inherited=false)]
-	public sealed class ConfigurationPermissionAttribute : CodeAccessSecurityAttribute, _Attribute
+	public sealed class ConfigurationPermissionAttribute : CodeAccessSecurityAttribute
 	{
 		public ConfigurationPermissionAttribute (SecurityAction action)
 			: base (action)
