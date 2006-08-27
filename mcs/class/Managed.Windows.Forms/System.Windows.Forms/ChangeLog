@@ -1,3 +1,14 @@
+2006-08-27  Chris Toshok  <toshok@ximian.com>
+
+	* AsyncMethodData.cs: add a slot for the window handle.
+
+	* XplatUIX11.cs (SendAsyncMethod): send the event to the right
+	window (the destination control's window, not the foster window).
+
+	* Control.cs (BeginInvokeInternal): store the window's handle in
+	the AsyncMethodData.
+	
+
 2006-08-23  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs:

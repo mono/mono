@@ -4035,11 +4035,11 @@ namespace System.Windows.Forms {
 			Hwnd	hwnd;
 			XEvent	xevent = new XEvent ();
 
-			hwnd = Hwnd.ObjectFromHandle(FosterParent);
+			hwnd = Hwnd.ObjectFromHandle(method.Handle);
 
 			xevent.type = XEventName.ClientMessage;
 			xevent.ClientMessageEvent.display = DisplayHandle;
-			xevent.ClientMessageEvent.window = FosterParent;
+			xevent.ClientMessageEvent.window = method.Handle;
 			xevent.ClientMessageEvent.message_type = (IntPtr)AsyncAtom;
 			xevent.ClientMessageEvent.format = 32;
 			xevent.ClientMessageEvent.ptr1 = (IntPtr) GCHandle.Alloc (method);

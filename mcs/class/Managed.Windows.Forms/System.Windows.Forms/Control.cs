@@ -835,6 +835,7 @@ namespace System.Windows.Forms
 			result = new AsyncMethodResult ();
 			data = new AsyncMethodData ();
 
+			data.Handle = window.Handle;
 			data.Method = method;
 			data.Args = args;
 			data.Result = result;
