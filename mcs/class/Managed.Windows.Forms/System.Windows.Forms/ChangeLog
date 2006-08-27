@@ -1,3 +1,7 @@
+2006-08-23  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XplatUIX11.cs (SetCursor): Issue flush after setting the cursor (#79168)
+
 2006-08-23  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* TextControl.cs (Insert): Update the caret position even if we don't

@@ -4126,6 +4126,7 @@ namespace System.Windows.Forms {
 					} else {
 						XUndefineCursor(DisplayHandle, hwnd.whole_window);
 					}
+					XFlush(DisplayHandle);
 				}
 				return;
 			}
