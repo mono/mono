@@ -1,3 +1,9 @@
+2006-08-27  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* ColorConverter.cs: Add a new test case for a color with a integer 
+	part that is too large to convert into an int.
+	* ColorTranslator.cs: Add more test cases for FromHtml method.
+
 2006-08-25  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* GDIPlusTest.cs: Fix ImageAttributes test case.

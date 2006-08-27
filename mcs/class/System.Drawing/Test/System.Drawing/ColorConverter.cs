@@ -441,6 +441,13 @@ namespace MonoTests.System.Drawing {
 		public void GetStandardValuesExclusive () {
 			Assert.AreEqual (false, colconv.GetStandardValuesExclusive ());
 		}
+
+		[Test]
+		[ExpectedException (typeof (Exception))]
+		public void ConvertFromString_FromHtml_PoundTooLarge ()
+		{
+			colconv.ConvertFromString ("#100000000");
+		}
 	}
 }
 
