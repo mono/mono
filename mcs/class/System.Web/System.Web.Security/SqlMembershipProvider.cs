@@ -1331,6 +1331,10 @@ UPDATE dbo.aspnet_Users
 		{
 			MembershipUser user = GetUser (username, false);
 
+			/* if the user is not found, return false immediately */
+			if (user == null)
+				return false;
+			
 			/* if the user is locked out, return false immediately */
 			if (user.IsLockedOut)
 				return false;

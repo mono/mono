@@ -1,3 +1,8 @@
+2006-08-27 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* SqlMembershipProvider.cs: fixed ValidateUser, bug when user
+	not exists
+
 2006-08-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FormsAuthentication.cs: set the Secure attribute of the authentication
