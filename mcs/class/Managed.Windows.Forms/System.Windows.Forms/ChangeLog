@@ -1,3 +1,10 @@
+2006-08-23  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUIX11.cs:
+	  - PostQuitMessage: Removed resetting S.D display handle, we might have
+	    another loop started after calling PostQuitMessage (Fixes #79119)
+	  - Created destructor to reset S.D handle
+
 2006-08-23  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* XplatUIX11.cs (SetCursor): Issue flush after setting the cursor (#79168)

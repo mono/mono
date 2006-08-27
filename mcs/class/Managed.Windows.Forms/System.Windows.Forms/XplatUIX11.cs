@@ -191,6 +191,12 @@ namespace System.Windows.Forms {
 			ErrorHandler = new XErrorHandler(HandleError);
 			XSetErrorHandler(ErrorHandler);
 		}
+
+		~XplatUIX11() {
+			// Remove our display handle from S.D
+			Graphics.FromHdcInternal (IntPtr.Zero);
+		}
+
 		#endregion	// Constructors
 
 		#region Singleton Specific Code
@@ -3867,9 +3873,6 @@ namespace System.Windows.Forms {
 		internal override void PostQuitMessage(int exitCode) {
 			XFlush(DisplayHandle);
 			PostQuitState = true;
-
-			// Remove our display handle from S.D
-			Graphics.FromHdcInternal (IntPtr.Zero);
 		}
 
 		internal override void RequestNCRecalc(IntPtr handle) {
