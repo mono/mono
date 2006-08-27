@@ -1,5 +1,9 @@
 2006-08-27 Konstantin Triger <kostat@mainsoft.com>
 
+	* SqlRoleProvider.cs: enable concurrent usage, refactoring.
+
+2006-08-27 Konstantin Triger <kostat@mainsoft.com>
+
 	* SqlMembershipProvider.cs: enable concurrent usage, refactoring.
 
 2006-08-27 Vladimir Krasnov <vladimirk@mainsoft.com>

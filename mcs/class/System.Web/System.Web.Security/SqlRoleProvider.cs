@@ -48,16 +48,14 @@ namespace System.Web.Security {
 
 		ConnectionStringSettings connectionString;
 		DbProviderFactory factory;
-		DbConnection connection;
 
-		void InitConnection ()
+		DbConnection CreateConnection ()
 		{
-			if (factory == null)
-				factory = ProvidersHelper.GetDbProviderFactory (connectionString.ProviderName);
-                        if (connection == null) {
-				connection = factory.CreateConnection();
-				connection.ConnectionString = connectionString.ConnectionString;
-			}
+			DbConnection connection = factory.CreateConnection ();
+			connection.ConnectionString = connectionString.ConnectionString;
+
+			connection.Open ();
+			return connection;
 		}
 
 		void AddParameter (DbCommand command, string parameterName, string parameterValue)
@@ -106,11 +104,7 @@ INSERT INTO dbo.aspnet_UsersInRoles (UserId, RoleId)
 				h.Add (r, r);
 			}
 
-			InitConnection();
-
-			bool closed = connection.State == ConnectionState.Closed;
-			if (closed)
-				connection.Open();
+			using(DbConnection connection = CreateConnection ()) {
 
 			DbTransaction trans = connection.BeginTransaction ();
 
@@ -143,9 +137,6 @@ INSERT INTO dbo.aspnet_UsersInRoles (UserId, RoleId)
 				else
 					throw new ProviderException ("", e);
 			}
-			finally {
-				if (closed)
-					connection.Close ();
 			}
 		}
 		
@@ -162,10 +153,7 @@ INSERT INTO dbo.aspnet_Roles
 			if (rolename.Length == 0 || rolename.Length > 256 || rolename.IndexOf (",") != -1)
 				throw new ArgumentException ("rolename is in invalid format");
 
-			InitConnection();
-			bool closed = connection.State == ConnectionState.Closed;
-			if (closed)
-				connection.Open();
+			using (DbConnection connection = CreateConnection ()) {
 
 			DbCommand command = factory.CreateCommand ();
 			command.CommandText = commandText;
@@ -177,8 +165,7 @@ INSERT INTO dbo.aspnet_Roles
 			if (command.ExecuteNonQuery() != 1)
 				throw new ProviderException ("failed to create new role.");
 
-			if (closed)
-				connection.Close ();
+			}
 		}
 		
 		[MonoTODO]
@@ -190,10 +177,7 @@ INSERT INTO dbo.aspnet_Roles
 			if (rolename.Length == 0 || rolename.Length > 256 || rolename.IndexOf (",") != -1)
 				throw new ArgumentException ("rolename is in invalid format");
 
-			InitConnection();
-			bool closed = connection.State == ConnectionState.Closed;
-			if (closed)
-				connection.Open();
+			using(DbConnection connection = CreateConnection ()) {
 
 			DbCommand command;
 			if (throwOnPopulatedRole) {
@@ -244,10 +228,8 @@ DELETE dbo.aspnet_Roles FROM dbo.aspnet_Roles, dbo.aspnet_Applications
 
 			bool rv = command.ExecuteNonQuery() == 1;
 
-			if (closed)
-				connection.Close ();
-
 			return rv;
+			}
 		}
 		
 		public override string[] FindUsersInRole (string roleName, string usernameToMatch)
@@ -273,7 +255,7 @@ SELECT dbo.aspnet_Users.UserName
 			if (usernameToMatch.Length == 0 || usernameToMatch.Length > 256)
 				throw new ArgumentException ("usernameToMatch is in invalid format");
 
-			InitConnection();
+			using(DbConnection connection = CreateConnection ()) {
 
 			bool useLike = usernameToMatch.IndexOf ("%") != -1;
 			DbCommand command = factory.CreateCommand ();
@@ -291,6 +273,7 @@ SELECT dbo.aspnet_Users.UserName
 			reader.Close();
 
 			return (string[])userList.ToArray(typeof (string));
+			}
 		}
 
 		public override string [] GetAllRoles ()
@@ -301,10 +284,7 @@ SELECT dbo.aspnet_Roles.RoleName
  WHERE dbo.aspnet_Roles.ApplicationId = dbo.aspnet_Applications.ApplicationId
    AND dbo.aspnet_Applications.LoweredApplicationName = LOWER(@ApplicationName)
 ";
-			InitConnection();
-			bool closed = connection.State == ConnectionState.Closed;
-			if (closed)
-				connection.Open();
+			using(DbConnection connection = CreateConnection ()) {
 
 			DbCommand command = factory.CreateCommand ();
 			command.CommandText = commandText;
@@ -318,10 +298,8 @@ SELECT dbo.aspnet_Roles.RoleName
 				roleList.Add (reader.GetString(0));
 			reader.Close();
 
-			if (closed)
-				connection.Close ();
-
 			return (string[])roleList.ToArray(typeof (string));
+			}
 		}
 		
 		public override string [] GetRolesForUser (string username)
@@ -337,10 +315,7 @@ WHERE dbo.aspnet_Roles.RoleId = dbo.aspnet_UsersInRoles.RoleId
   AND dbo.aspnet_Applications.LoweredApplicationName = LOWER(@ApplicationName)
 ";
 
-			InitConnection();
-			bool closed = connection.State == ConnectionState.Closed;
-			if (closed)
-				connection.Open();
+			using(DbConnection connection = CreateConnection ()) {
 
 			DbCommand command = factory.CreateCommand ();
 			command.CommandText = commandText;
@@ -355,10 +330,8 @@ WHERE dbo.aspnet_Roles.RoleId = dbo.aspnet_UsersInRoles.RoleId
 				roleList.Add (reader.GetString(0));
 			reader.Close();
 
-			if (closed)
-				connection.Close ();
-
 			return (string[])roleList.ToArray(typeof (string));
+			}
 		}
 		
 		public override string [] GetUsersInRole (string rolename)
@@ -374,10 +347,7 @@ WHERE dbo.aspnet_Roles.RoleId = dbo.aspnet_UsersInRoles.RoleId
   AND dbo.aspnet_Applications.LoweredApplicationName = LOWER(@ApplicationName)
 ";
 
-			InitConnection();
-			bool closed = connection.State == ConnectionState.Closed;
-			if (closed)
-				connection.Open();
+			using(DbConnection connection = CreateConnection ()) {
 
 			DbCommand command = factory.CreateCommand ();
 			command.CommandText = commandText;
@@ -392,10 +362,8 @@ WHERE dbo.aspnet_Roles.RoleId = dbo.aspnet_UsersInRoles.RoleId
 				userList.Add (reader.GetString(0));
 			reader.Close();
 
-			if (closed)
-				connection.Close ();
-
 			return (string[])userList.ToArray(typeof (string));
+			}
 		}
 		
 		[MonoTODO]
@@ -422,6 +390,7 @@ WHERE dbo.aspnet_Roles.RoleId = dbo.aspnet_UsersInRoles.RoleId
 			// XXX check connectionStringName and commandTimeout
 
 			connectionString = WebConfigurationManager.ConnectionStrings[connectionStringName];
+			factory = ProvidersHelper.GetDbProviderFactory (connectionString.ProviderName);
 		}
 		
 		public override bool IsUserInRole (string username, string rolename)
@@ -438,10 +407,7 @@ SELECT COUNT(*)
    AND dbo.aspnet_Users.LoweredUserName = LOWER(@UserName)
 ";
 
-			InitConnection();
-			bool closed = connection.State == ConnectionState.Closed;
-			if (closed)
-				connection.Open();
+			using(DbConnection connection = CreateConnection ()) {
 
 			DbCommand command = factory.CreateCommand ();
 			command.CommandText = commandText;
@@ -453,10 +419,8 @@ SELECT COUNT(*)
 
 			bool rv = ((int)command.ExecuteScalar ()) != 0;
 
-			if (closed)
-				connection.Close ();
-
 			return rv;
+			}
 		}
 		
 		public override void RemoveUsersFromRoles (string [] usernames, string [] rolenames)
@@ -496,11 +460,7 @@ DELETE dbo.aspnet_UsersInRoles
 				h.Add (r, r);
 			}
 
-			InitConnection();
-
-			bool closed = connection.State == ConnectionState.Closed;
-			if (closed)
-				connection.Open();
+			using(DbConnection connection = CreateConnection ()) {
 
 			DbTransaction trans = connection.BeginTransaction ();
 
@@ -530,9 +490,6 @@ DELETE dbo.aspnet_UsersInRoles
 				else
 					throw new ProviderException ("", e);
 			}
-			finally {
-				if (closed)
-					connection.Close ();
 			}
 		}
 		
@@ -546,24 +503,19 @@ SELECT COUNT(*)
    AND dbo.aspnet_Roles.LoweredRoleName = LOWER(@RoleName)
 ";
 
-			InitConnection();
-			bool closed = connection.State == ConnectionState.Closed;
-			if (closed)
-				connection.Open();
+			using (DbConnection connection = CreateConnection ()) {
 
-			DbCommand command = factory.CreateCommand ();
-			command.CommandText = commandText;
-			command.Connection = connection;
-			command.CommandType = CommandType.Text;
-			AddParameter (command, "ApplicationName", ApplicationName);
-			AddParameter (command, "RoleName", rolename);
+				DbCommand command = factory.CreateCommand ();
+				command.CommandText = commandText;
+				command.Connection = connection;
+				command.CommandType = CommandType.Text;
+				AddParameter (command, "ApplicationName", ApplicationName);
+				AddParameter (command, "RoleName", rolename);
 
-			bool rv = ((int)command.ExecuteScalar ()) != 0;
+				bool rv = ((int) command.ExecuteScalar ()) != 0;
 
-			if (closed)
-				connection.Close ();
-
-			return rv;
+				return rv;
+			}
 		}
 		
 		[MonoTODO]
