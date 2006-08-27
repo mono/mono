@@ -39,6 +39,7 @@ namespace System.Windows.Forms {
 		private PaintQueue	paint;	// Paint-only queue
 		internal ArrayList	timer_list;
 		private Thread		thread;
+		private bool		quit_posted;
 
 		private static readonly int InitialXEventSize = 100;
 		private static readonly int InitialLXEventSize = 10;
@@ -50,6 +51,7 @@ namespace System.Windows.Forms {
 			paint = new PaintQueue(InitialPaintSize);
 			timer_list = new ArrayList ();
 			this.thread = thread;
+			this.quit_posted = false;
 		}
 
 		public int Count {
@@ -102,6 +104,16 @@ namespace System.Windows.Forms {
 				}
 			}				
 			return xqueue.Peek();
+		}
+
+		public bool PostQuitState {
+			get {
+				return quit_posted;
+			}
+
+			set {
+				quit_posted = value;
+			}
 		}
 
 		public class PaintQueue {

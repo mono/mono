@@ -2,6 +2,7 @@
 
 	* XplatUIX11.cs: PostQuitMessage is thread-specific not app-specific.
 	  Prevent other threads from exiting when calling thread sets quit state.
+	* XEventQueue.cs: Added PostQuitState property
 
 2006-08-27  Chris Toshok  <toshok@ximian.com>
 
