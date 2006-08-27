@@ -381,7 +381,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TreeView_ViewStateNodes () {
 			PokerTreeView tv = new PokerTreeView ();
 			TreeNode R = new TreeNode ("root", "value-root");
@@ -406,7 +405,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		private static string xmlDataBindSmall = "<?xml version=\"1.0\" encoding=\"utf-8\" ?><Book Title=\"Book Title\"></Book>";
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TreeView_ViewStateDataBoundNodes () {
 			PokerTreeView b = new PokerTreeView ();
 			SetDataBindings (b);
@@ -600,15 +598,41 @@ namespace MonoTests.System.Web.UI.WebControls {
 			XmlDataSource xmlds = new XmlDataSource ();
 			xmlds.Data = xmlDataBind;
 			tv.DataSource = xmlds;
+			_TreeNodeDataBoundCount = 0;
+			tv.TreeNodeDataBound += new TreeNodeEventHandler (TreeView_TreeNodeDataBound);
 			Assert.AreEqual (0, tv.Nodes.Count, "BeforeDataBind1");
 			tv.DataBind ();
 			Assert.AreEqual (1, tv.Nodes.Count, "AfterDataBind1-a");
 			Assert.AreEqual ("Book", tv.Nodes[0].Text, "AfterDataBind1-b");
 			Assert.AreEqual (2, tv.Nodes[0].ChildNodes.Count, "AfterDataBind1-c");
+			Assert.AreEqual (2, tv.Nodes [0].ChildNodes [0].ChildNodes.Count, "AfterDataBind1-d");
+			Assert.AreEqual (6, _TreeNodeDataBoundCount, "AfterDataBind1-TreeNodeDataBoundCount");
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		public void TreeView_MaxDataBindDepth () {
+			TreeView tv = new TreeView ();
+			XmlDataSource xmlds = new XmlDataSource ();
+			xmlds.Data = xmlDataBind;
+			tv.DataSource = xmlds;
+			tv.MaxDataBindDepth = 1;
+			_TreeNodeDataBoundCount = 0;
+			tv.TreeNodeDataBound += new TreeNodeEventHandler (TreeView_TreeNodeDataBound);
+			Assert.AreEqual (0, tv.Nodes.Count, "BeforeDataBind1");
+			tv.DataBind ();
+			Assert.AreEqual (1, tv.Nodes.Count, "AfterDataBind1-a");
+			Assert.AreEqual ("Book", tv.Nodes [0].Text, "AfterDataBind1-b");
+			Assert.AreEqual (2, tv.Nodes [0].ChildNodes.Count, "AfterDataBind1-c");
+			Assert.AreEqual (0, tv.Nodes [0].ChildNodes [0].ChildNodes.Count, "AfterDataBind1-d");
+			Assert.AreEqual (3, _TreeNodeDataBoundCount, "AfterDataBind1-TreeNodeDataBoundCount");
+		}
+
+		int _TreeNodeDataBoundCount;
+		private void TreeView_TreeNodeDataBound (object sender, TreeNodeEventArgs e) {
+			_TreeNodeDataBoundCount++;
+		}
+
+		[Test]
 		public void TreeView_Method_DataBindStatic () {
 			PokerTreeView tv = new PokerTreeView ();
 			TreeNode R = new TreeNode ("root", "value-root");
@@ -628,7 +652,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TreeView_Method_DataBind () {
 			PokerTreeView tv = new PokerTreeView ();
 			SetDataBindings (tv);
@@ -665,6 +688,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			TreeView tv = new TreeView ();
 			tv.ID = "treeview1";
 			XmlDataSource xmlds = new XmlDataSource ();
+			xmlds.EnableCaching = false;
 			xmlds.Data = xmlDataBind;
 			tv.DataSource = xmlds;
 			tv.DataBind ();

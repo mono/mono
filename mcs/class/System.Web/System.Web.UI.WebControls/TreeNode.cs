@@ -50,8 +50,6 @@ namespace System.Web.UI.WebControls
 		string path;
 		int depth = -1;
 		
-		bool dataBound;
-		string dataPath;
 		object dataItem;
 		IHierarchyData hierarchyData;
 
@@ -143,14 +141,14 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (false)]
 		[Browsable (false)]
 		public bool DataBound {
-			get { return dataBound; }
+			get { return ViewState ["DataBound"] == null ? false : (bool) ViewState ["DataBound"]; }
+			private set { ViewState ["DataBound"] = value; }
 		}
 		
 		[DefaultValue (null)]
 		[Browsable (false)]
 		public object DataItem {
 			get {
-				if (!dataBound) throw new InvalidOperationException ("TreeNode is not data bound.");
 				return dataItem;
 			}
 		}
@@ -159,14 +157,8 @@ namespace System.Web.UI.WebControls
 		[DefaultValue ("")]
 		[Browsable (false)]
 		public string DataPath {
-			get {
-				if (!dataBound) throw new InvalidOperationException ("TreeNode is not data bound.");
-				
-				if (dataPath == null && hierarchyData != null)
-					dataPath = hierarchyData.Path;
-
-				return dataPath;
-			}
+			get { return ViewState ["DataPath"] == null ? String.Empty : (String) ViewState ["DataPath"]; }
+			private set { ViewState ["DataPath"] = value; }
 		}
 		
 		[DefaultValue (false)]
@@ -564,7 +556,7 @@ namespace System.Web.UI.WebControls
 		{
 			TreeNode nod = tree != null ? tree.CreateNode () : new TreeNode ();
 			foreach (DictionaryEntry e in ViewState)
-				nod.ViewState [(string)e.Key] = e.Value;
+				nod.ViewState [(string)e.Key] = ((StateItem)e.Value).Value;
 				
 			foreach (TreeNode c in ChildNodes)
 				nod.ChildNodes.Add ((TreeNode)c.Clone ());
@@ -575,30 +567,40 @@ namespace System.Web.UI.WebControls
 		internal void Bind (IHierarchyData hierarchyData)
 		{
 			this.hierarchyData = hierarchyData;
-			dataBound = true;
+			DataBound = true;
+			DataPath = hierarchyData.Path;
 			dataItem = hierarchyData.Item;
 			
 			TreeNodeBinding bin = GetBinding ();
 			if (bin != null) {
 			
 				// Bind ImageToolTip property
-					
-				if (bin.ImageToolTipField.Length > 0)
-					ImageToolTip = (string) GetBoundPropertyValue (bin.ImageToolTipField);
+
+				if (bin.ImageToolTipField.Length > 0) {
+					ImageToolTip = Convert.ToString (GetBoundPropertyValue (bin.ImageToolTipField));
+					if (ImageToolTip.Length == 0)
+						ImageToolTip = bin.ImageToolTip;
+				}
 				else if (bin.ImageToolTip.Length > 0)
 					ImageToolTip = bin.ImageToolTip;
 					
 				// Bind ImageUrl property
-					
-				if (bin.ImageUrlField.Length > 0)
-					ImageUrl = (string) GetBoundPropertyValue (bin.ImageUrlField);
+
+				if (bin.ImageUrlField.Length > 0) {
+					ImageUrl = Convert.ToString (GetBoundPropertyValue (bin.ImageUrlField));
+					if (ImageUrl.Length == 0)
+						ImageUrl = bin.ImageUrl;
+				}
 				else if (bin.ImageUrl.Length > 0)
 					ImageUrl = bin.ImageUrl;
 					
 				// Bind NavigateUrl property
-					
-				if (bin.NavigateUrlField.Length > 0)
-					NavigateUrl = (string) GetBoundPropertyValue (bin.NavigateUrlField);
+
+				if (bin.NavigateUrlField.Length > 0) {
+					NavigateUrl = Convert.ToString (GetBoundPropertyValue (bin.NavigateUrlField));
+					if (NavigateUrl.Length == 0)
+						NavigateUrl = bin.NavigateUrl;
+				}
 				else if (bin.NavigateUrl.Length > 0)
 					NavigateUrl = bin.NavigateUrl;
 					
@@ -618,46 +620,65 @@ namespace System.Web.UI.WebControls
 					ShowCheckBox = bin.ShowCheckBox;
 					
 				// Bind Target property
-					
-				if (bin.TargetField.Length > 0)
-					Target = (string) GetBoundPropertyValue (bin.TargetField);
+
+				if (bin.TargetField.Length > 0) {
+					Target = Convert.ToString (GetBoundPropertyValue (bin.TargetField));
+					if (Target.Length == 0)
+						Target = bin.Target;
+				}
 				else if (bin.Target.Length > 0)
 					Target = bin.Target;
 					
 				// Bind Text property
 					
-				string text;
-				if (bin.TextField.Length > 0)
-					text = (string) GetBoundPropertyValue (bin.TextField);
+				if (bin.TextField.Length > 0) {
+					Text = Convert.ToString (GetBoundPropertyValue (bin.TextField));
+					if (bin.FormatString.Length > 0)
+						Text = string.Format (bin.FormatString, Text);
+					if (Text.Length == 0)
+						Text = bin.Text;
+					if (Text.Length == 0)
+						Text = bin.Value;
+					if (Text.Length == 0 && bin.ValueField.Length > 0)
+						Text = Convert.ToString (GetBoundPropertyValue (bin.ValueField));
+				}
 				else if (bin.Text.Length > 0)
-					text = bin.Text;
+					Text = bin.Text;
+				else if (bin.Value.Length > 0)
+					Text = bin.Value;
 				else
-					text = GetDefaultBoundText ();
-					
-				if (bin.FormatString.Length != 0)
-					text = string.Format (bin.FormatString, text);
-				Text = text;
+					Text = GetDefaultBoundText ();
 					
 				// Bind ToolTip property
-					
-				if (bin.ToolTipField.Length > 0)
-					ToolTip = (string) GetBoundPropertyValue (bin.ToolTipField);
+
+				if (bin.ToolTipField.Length > 0) {
+					ToolTip = Convert.ToString (GetBoundPropertyValue (bin.ToolTipField));
+					if (ToolTip.Length == 0)
+						ToolTip = bin.ToolTip;
+				}
 				else if (bin.ToolTip.Length > 0)
 					ToolTip = bin.ToolTip;
 					
 				// Bind Value property
-					
-				if (bin.ValueField.Length > 0)
-					Value = (string) GetBoundPropertyValue (bin.ValueField);
-				if (bin.Value.Length > 0)
+
+				if (bin.ValueField.Length > 0) {
+					Value = Convert.ToString (GetBoundPropertyValue (bin.ValueField));
+					if (Value.Length == 0)
+						Value = bin.Value;
+					if (Value.Length == 0)
+						Value = bin.Text;
+					if(Value.Length == 0 && bin.TextField.Length > 0)
+						Value = Convert.ToString (GetBoundPropertyValue (bin.TextField));
+				}
+				else if (bin.Value.Length > 0)
 					Value = bin.Value;
+				else if (bin.Text.Length > 0)
+					Value = bin.Text;
 				else
 					Value = GetDefaultBoundText ();
 			} else {
 				Text = Value = GetDefaultBoundText ();
 			}
-			
-			FillBoundChildren ();
 		}
 		
 		internal void SetDataItem (object item)
@@ -667,12 +688,12 @@ namespace System.Web.UI.WebControls
 		
 		internal void SetDataPath (string path)
 		{
-			dataPath = path;
+			DataPath = path;
 		}
 		
 		internal void SetDataBound (bool bound)
 		{
-			dataBound = bound;
+			DataBound = bound;
 		}
 		
 		string GetDefaultBoundText ()
@@ -729,20 +750,6 @@ namespace System.Web.UI.WebControls
 				return prop.GetValue (dataItem);
 		}
 
-		void FillBoundChildren ()
-		{
-			if (hierarchyData == null || !hierarchyData.HasChildren) return;
-			if (tree.MaxDataBindDepth != -1 && Depth >= tree.MaxDataBindDepth) return;
-
-			IHierarchicalEnumerable e = hierarchyData.GetChildren ();
-			foreach (object obj in e) {
-				IHierarchyData hdata = e.GetHierarchyData (obj);
-				TreeNode node = tree != null ? tree.CreateNode () : new TreeNode ();
-				ChildNodes.Add (node);
-				node.Bind (hdata);
-			}
-		}
-		
 		internal void BeginRenderText (HtmlTextWriter writer)
 		{
 			RenderPreText (writer);

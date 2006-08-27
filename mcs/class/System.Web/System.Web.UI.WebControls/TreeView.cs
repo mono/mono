@@ -894,13 +894,31 @@ namespace System.Web.UI.WebControls
 		protected internal override void PerformDataBinding ()
 		{
 			base.PerformDataBinding ();
+			InitializeDataBindings ();
 			HierarchicalDataSourceView data = GetData ("");
+			if (data == null)
+				return;
+			Nodes.Clear ();
 			IHierarchicalEnumerable e = data.Select ();
-			foreach (object obj in e) {
-				IHierarchyData hdata = e.GetHierarchyData (obj);
-				TreeNode node = CreateNode ();
-				Nodes.Add (node);
-				node.Bind (hdata);
+			FillBoundChildrenRecursive (e, Nodes);
+		}
+		
+		private void FillBoundChildrenRecursive (IHierarchicalEnumerable hEnumerable, TreeNodeCollection nodeCollection) {
+			foreach (object obj in hEnumerable) {
+				IHierarchyData hdata = hEnumerable.GetHierarchyData (obj);
+				TreeNode child = new TreeNode ();
+				nodeCollection.Add (child);
+				child.Bind (hdata);
+				OnTreeNodeDataBound (new TreeNodeEventArgs (child));
+
+				if (MaxDataBindDepth >= 0 && child.Depth == MaxDataBindDepth)
+					continue;
+
+				if (hdata == null || !hdata.HasChildren)
+					continue;
+
+				IHierarchicalEnumerable e = hdata.GetChildren ();
+				FillBoundChildrenRecursive (e, child.ChildNodes);
 			}
 		}
 		
@@ -990,19 +1008,22 @@ namespace System.Web.UI.WebControls
 			return dataMember + " " + depth;
 		}
 		
+		void InitializeDataBindings () {
+			if (dataBindings != null && dataBindings.Count > 0) {
+				bindings = new Hashtable ();
+				foreach (TreeNodeBinding bin in dataBindings) {
+					string key = GetBindingKey (bin.DataMember, bin.Depth);
+					bindings [key] = bin;
+				}
+			}
+			else
+				bindings = null;
+		}
+		
 		internal TreeNodeBinding FindBindingForNode (string type, int depth)
 		{
-			if (bindings == null) {
-				if (dataBindings != null && dataBindings.Count > 0) {
-					bindings = new Hashtable ();
-					foreach (TreeNodeBinding bind in dataBindings) {
-						string key = GetBindingKey (bind.DataMember, bind.Depth);
-						bindings [key] = bind;
-					}
-				}
-				else
-					return null;
-			}
+			if (bindings == null)
+				return null;
 				
 			TreeNodeBinding bin = (TreeNodeBinding) bindings [GetBindingKey (type, depth)];
 			if (bin != null) return bin;

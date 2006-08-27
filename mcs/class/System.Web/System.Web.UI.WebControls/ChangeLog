@@ -1,5 +1,9 @@
 2006-08-27 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* TreeView.cs: fixed data binding
+
+2006-08-27 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* TreeNodeBinding.cs: fixed ToString method
 
 2006-08-27 Igor Zelmanovich <igorz@mainsoft.com>
