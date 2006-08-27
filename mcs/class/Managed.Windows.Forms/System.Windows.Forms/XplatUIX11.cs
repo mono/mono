@@ -85,7 +85,6 @@ namespace System.Windows.Forms {
 		private static IntPtr		FosterParent;		// Container to hold child windows until their parent exists
 		private static XErrorHandler	ErrorHandler;		// Error handler delegate
 		private static bool		ErrorExceptions;	// Throw exceptions on X errors
-		private static bool		PostQuitState;		// True if we've got an pending exit
 
 		// Clipboard
 		private static IntPtr 		ClipMagic = new IntPtr(27051977);
@@ -404,8 +403,6 @@ namespace System.Windows.Forms {
 
 				Keyboard = new X11Keyboard(DisplayHandle, FosterParent);
 				Dnd = new X11Dnd (DisplayHandle);
-
-				PostQuitState = false;
 
 				DoubleClickInterval = 500;
 
@@ -2943,14 +2940,14 @@ namespace System.Windows.Forms {
 				} else if (((XEventQueue)queue_id).Paint.Count > 0) {
 					xevent = ((XEventQueue)queue_id).Paint.Dequeue();
 				} else {
-					if (!PostQuitState) {
+					if (!ThreadQueue(Thread.CurrentThread).PostQuitState) {
 						msg.hwnd= IntPtr.Zero;
 						msg.message = Msg.WM_ENTERIDLE;
 						return true;
 					}
 
 					// We reset ourselves so GetMessage can be called again
-					PostQuitState = false;
+					ThreadQueue(Thread.CurrentThread).PostQuitState = false;
 
 					return false;
 				}
@@ -3321,7 +3318,7 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.ConfigureNotify: {
-					if (PostQuitState || !client && (xevent.ConfigureEvent.xevent == xevent.ConfigureEvent.window)) {	// Ignore events for children (SubstructureNotify) and client areas
+					if (ThreadQueue(Thread.CurrentThread).PostQuitState|| !client && (xevent.ConfigureEvent.xevent == xevent.ConfigureEvent.window)) {	// Ignore events for children (SubstructureNotify) and client areas
 						#if DriverDebugExtra
 							Console.WriteLine("GetMessage(): Window {0:X} ConfigureNotify x={1} y={2} width={3} height={4}", hwnd.client_window.ToInt32(), xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
 						#endif
@@ -3363,7 +3360,7 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.Expose: {
-					if (PostQuitState || !hwnd.Mapped) {
+					if (ThreadQueue(Thread.CurrentThread).PostQuitState || !hwnd.Mapped) {
 						if (client) {
 							hwnd.expose_pending = false;
 						} else {
@@ -3871,8 +3868,9 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void PostQuitMessage(int exitCode) {
+			
 			XFlush(DisplayHandle);
-			PostQuitState = true;
+			ThreadQueue(Thread.CurrentThread).PostQuitState = true;
 		}
 
 		internal override void RequestNCRecalc(IntPtr handle) {
