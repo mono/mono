@@ -1,3 +1,11 @@
+2006-08-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ColorConverter.cs: Catch the case where the integer part of the 
+	color doesn't fit into a 32bit integer.
+	* ColorTranslator.cs: Fixed Gendarme's UseStringEmptyRule on ToHtml 
+	method. Fixed string handling on FromHtml method. Fixed all parameter
+	names to match FX.
+
 2006-08-25  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* gdipFunctions.cs: Change ColorMatrix to IntPtr in method 

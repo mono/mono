@@ -6,11 +6,7 @@
 //	Ravindra (rkumar@novell.com)
 //
 // Copyright (C) 2002 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004 Novell, Inc.  http://www.novell.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
@@ -106,6 +101,8 @@ namespace System.Drawing
 						((i & 0xf0) << 8) | ((i & 0xf0) << 4) |
 						((i & 0xf) << 4) | (i & 0xf);
 					result = Color.FromArgb ( -16777216 | i );
+				} else if (s.StartsWith ("#") && (s.Length > 9) && !s.StartsWith ("#0x")) {
+					throw new Exception (Locale.GetText ("{0} isn't a valid color (integer too large).", s));
 				}
 			}
 

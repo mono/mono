@@ -1,17 +1,13 @@
 //
 // System.Drawing.ColorTranslator.cs
 //
-// Copyright (C) 2001 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004 Novell, Inc.  http://www.novell.com
-//
 // Authors:
 //	Dennis Hayes (dennish@raytek.com)
 //	Ravindra (rkumar@novell.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2001 Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,18 +29,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
  
-using System;
 using System.ComponentModel;
 
-namespace System.Drawing
-{
-	public sealed class ColorTranslator
-	{
-		private ColorTranslator () { }
+namespace System.Drawing {
 
-		public static Color FromHtml (string HtmlFromColor)
+	public sealed class ColorTranslator {
+
+		private ColorTranslator ()
 		{
-			switch (HtmlFromColor.ToLower()) {
+		}
+
+		public static Color FromHtml (string htmlColor)
+		{
+			if ((htmlColor == null) || (htmlColor.Length == 0))
+				return Color.FromArgb (0, 0, 0, 0);
+
+			switch (htmlColor.ToLower ()) {
 			case "buttonface":
 				return SystemColors.Control;
 			case "captiontext":
@@ -59,15 +59,15 @@ namespace System.Drawing
 				return SystemColors.Info;
 			}
 			TypeConverter converter = TypeDescriptor.GetConverter (typeof (Color));
-			return (Color) converter.ConvertFromString (HtmlFromColor);
+			return (Color) converter.ConvertFromString (htmlColor);
 		}
 
-		public static Color FromOle (int OleFromColor)
+		public static Color FromOle (int oleColor)
 		{
 			// OleColor format is BGR
-			int R = OleFromColor & 0xFF;
-			int G = (OleFromColor >> 8) & 0xFF;
-			int B = (OleFromColor >> 16) & 0xFF;
+			int R = oleColor & 0xFF;
+			int G = (oleColor >> 8) & 0xFF;
+			int B = (oleColor >> 16) & 0xFF;
 
 			Color retcolor = Color.FromArgb (255, R, G, B);
 			foreach (Color c in Color.NamedColors.Values) {
@@ -83,12 +83,12 @@ namespace System.Drawing
 			return retcolor;
 		}
 
-		public static Color FromWin32 (int Win32FromColor)
+		public static Color FromWin32 (int win32Color)
 		{
 			// Win32Color format is BGR
-			int R = Win32FromColor & 0xFF;
-			int G = (Win32FromColor >> 8) & 0xFF;
-			int B = (Win32FromColor >> 16) & 0xFF;
+			int R = win32Color & 0xFF;
+			int G = (win32Color >> 8) & 0xFF;
+			int B = (win32Color >> 16) & 0xFF;
 
 			Color retcolor = Color.FromArgb (255, R, G, B);
 			foreach (Color c in Color.NamedColors.Values) {
@@ -108,7 +108,7 @@ namespace System.Drawing
 		{
 			KnownColor kc;
 			if (c.IsEmpty)
-				return "";
+				return String.Empty;
 
 			string result;
 			if(c.IsSystemColor) {
@@ -183,18 +183,18 @@ namespace System.Drawing
 			return result;
 		}
 
-		public static int ToOle (Color color)
+		public static int ToOle (Color c)
 		{
 			// OleColor format is BGR, same as Win32
 
-			return  ((color.B << 16) | (color.G << 8) | color.R);
+			return  ((c.B << 16) | (c.G << 8) | c.R);
 		}
 
-		public static int ToWin32 (Color color)
+		public static int ToWin32 (Color c)
 		{
 			// Win32Color format is BGR, Same as OleColor
 
-			return  ((color.B << 16) | (color.G << 8) | color.R);
+			return  ((c.B << 16) | (c.G << 8) | c.R);
 		}
 	}
 }
