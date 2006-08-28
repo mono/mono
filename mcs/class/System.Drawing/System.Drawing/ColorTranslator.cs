@@ -42,7 +42,7 @@ namespace System.Drawing {
 		public static Color FromHtml (string htmlColor)
 		{
 			if ((htmlColor == null) || (htmlColor.Length == 0))
-				return Color.FromArgb (0, 0, 0, 0);
+				return Color.Empty;
 
 			switch (htmlColor.ToLower ()) {
 			case "buttonface":
