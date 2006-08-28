@@ -102,6 +102,9 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/WebLogin.config \
 	Test/mainsoft/NunitWebResources/CallbackTest1.aspx \
 	Test/mainsoft/NunitWebResources/CallbackTest2.aspx \
+	Test/mainsoft/NunitWebResources/EventValidationTest2.aspx \
+	Test/mainsoft/NunitWebResources/EventValidationTest1.aspx \
+	Test/mainsoft/NunitWebResources/ClientScript.js \
 	Test/mainsoft/MainsoftWebTest/nunitweb_config.xml 
 
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)

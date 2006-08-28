@@ -85,6 +85,7 @@ System.Web.Security/RolesTest.cs
 System.Web.UI/AttributeCollectionTest.cs
 System.Web.UI/ChtmlTextWriterTest.cs
 System.Web.UI/CleanHtmlTextWriter.cs
+System.Web.UI/ClientScriptManagerTest.cs
 System.Web.UI/ControlTest.cs
 System.Web.UI/ControlCollectionTest.cs
 System.Web.UI/DataBindingCollectionTest.cs

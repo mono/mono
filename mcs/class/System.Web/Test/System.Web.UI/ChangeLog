@@ -1,3 +1,7 @@
+2006-08-28  Klain Yoni   <yonik@mainsoft.com>
+
+	* ClientScriptManagerTest.cs: new test.
+
 2006-04-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ControlTest.cs : fix r59834: both the build and the coding style.

@@ -1,3 +1,11 @@
+2006-08-28 Yoni Klain <yonik@mainsoft.com>
+
+    * System.Web_test.dll.sources: add new \System.Web.UI\ClientScriptManagerTest.cs
+    * MakeFile: add new resources for ClientScriptMenagerTest.cs
+    Test/mainsoft/NunitWebResources/EventValidationTest2.aspx \
+	Test/mainsoft/NunitWebResources/EventValidationTest1.aspx \
+	Test/mainsoft/NunitWebResources/ClientScript.js \
+
 2006-08-27 Hagit Yidov <hagity@mainsoft.com>
 
 	* TreeNodeBindingCollectionTest.cs: New test was added
@@ -7,10 +15,6 @@
 	* TreeNodeTest.cs: New test was added
 	* TreeViewTest.cs: Test was updated
 
-=======
-=======
-<<<<<<< .mine
-<<<<<<< .mine
 2006-08-10 Hagit Yidov <hagity@mainsoft.com>
 
 	* ImageMapTest.cs: New test was added
@@ -20,8 +24,6 @@
 	* RectangleHotSpot.cs: New test was added
 	* PolygonHotSpot.cs: New test was added
 
-=======
-=======
 2006-08-23 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* MenuTest.cs: added tests 
