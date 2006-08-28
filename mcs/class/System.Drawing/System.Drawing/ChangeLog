@@ -1,3 +1,10 @@
+2006-08-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ImageAnimator.cs: Remove catch/throw in WorkerThread (it hides the
+	original exception). Found with Gendarme.
+	* Color.cs: Remove the double-check lock. Found with Gendarme.
+	* ColorConverter.cs: Remove the double-check lock. Found with Gendarme
+
 2006-08-28  Jonathan Chambers  <joncham@gmail.com> 
 
 	* ComIStreamMarshaler.cs: Do not free memory allocated for

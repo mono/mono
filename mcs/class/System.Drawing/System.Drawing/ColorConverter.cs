@@ -206,11 +206,7 @@ namespace System.Drawing
 
 		public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
 		{
-			if (cached != null)
-				return cached;
-
-			lock (creatingCached)
-			{
+			lock (creatingCached) {
 				if (cached != null)
 					return cached;
 			

@@ -10,11 +10,7 @@
 // (C) 2002 Dennis Hayes
 // (c) 2002 Ximian, Inc. (http://www.ximiam.com)
 // (C) 2005 HotFeet GmbH (http://www.hotfeet.ch)
-//
-// TODO: Are the static/non static functions declared correctly
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,7 +32,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
@@ -214,9 +209,6 @@ namespace System.Drawing
 
 		private static void FillColorNames ()
 		{
-			if (systemColors != null)
-				return;
-
 			lock (creatingColorNames) {
 				if (systemColors != null)
 					return;
