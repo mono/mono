@@ -5,7 +5,7 @@
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -152,6 +152,23 @@ namespace MonoTests.System.Runtime.InteropServices
 			s = Marshal.PtrToStringUni (handle);
 			Assert.AreEqual (19, s.Length, "#2");
 		}
+
+		[Test]
+		public void ReadInt32_Endian ()
+		{
+			IntPtr ptr = Marshal.AllocHGlobal (4);
+			try {
+				Marshal.WriteByte (ptr, 0, 0x01);
+				Marshal.WriteByte (ptr, 1, 0x02);
+				Marshal.WriteByte (ptr, 2, 0x03);
+				Marshal.WriteByte (ptr, 3, 0x04);
+				Assert.AreEqual (0x04030201, Marshal.ReadInt32 (ptr), "ReadInt32");
+			}
+			finally {
+				Marshal.FreeHGlobal (ptr);
+			}
+		}
+
 #if NET_2_0
 		private const string NotSupported = "Not supported before Windows 2000 Service Pack 3";
 		private static char[] PlainText = new char[] { 'a', 'b', 'c' };
