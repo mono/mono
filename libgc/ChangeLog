@@ -1,3 +1,8 @@
+
+Mon Aug 28 12:01:04 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* allchblk.c: fixed arguments to vararg call (novell bug#199872).
+
 2006-03-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* configure.in: Applied patch from David S. Miller <davem@davemloft.net>: Fix support for sparc/linux.

@@ -111,7 +111,7 @@ void GC_print_hblkfreelist()
     for (i = 0; i <= N_HBLK_FLS; ++i) {
       h = GC_hblkfreelist[i];
 #     ifdef USE_MUNMAP
-        if (0 != h) GC_printf1("Free list %ld (Total size %ld):\n",
+        if (0 != h) GC_printf1("Free list %ld:\n",
 		               (unsigned long)i);
 #     else
         if (0 != h) GC_printf2("Free list %ld (Total size %ld):\n",
