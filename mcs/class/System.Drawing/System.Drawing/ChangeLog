@@ -1,3 +1,11 @@
+2006-08-28  Jonathan Chambers  <joncham@gmail.com> 
+
+	* ComIStreamMarshaler.cs: Do not free memory allocated for
+	Com Callable Wrapper for stream. When Image created from stream
+	is destroyed, it calls Release on CCW interface. Somehow we seem
+	to be destroying Stream CCW before Image is destroyed. Fixes
+	crash on exit on Windows. #78315
+	
 2006-08-28	Boris Kirzner	<borisk@mainsoft.com>
 
 	* SystemColors.jvm.cs: fix array size for NET_2_0

@@ -177,7 +177,17 @@ namespace System.Drawing
 
 			private void Dispose(bool disposing)
 			{
-				Marshal.FreeHGlobal(comInterface);
+				// FIXME: This causes crash on windows on shutdown.
+				// Any image loaded from a stream holds onto a reference
+				// to that stream, and calls Release on the stream when the image is
+				// disposed. Somehow, we are getting destroyed before the image is
+				// even though we are using a GC handle (maybe GCHandles are ignored on shutdown)?
+				// in any cause I think leaking a pointer per image for now is
+				// better than crashing on windows.
+				// Need to talk to Paolo about having an unmanaged resource (IStream) in one managed
+				// object that another unmanaged resource (Image) in another managed object depends on.
+
+				//Marshal.FreeHGlobal(comInterface);
 				gcHandle.Free();
 				if (disposing)
 				{
