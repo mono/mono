@@ -266,14 +266,16 @@ namespace System.Web.J2EE
 			}
 			
 			string fileName = Path.GetFileName(_url);
-			if (fileName.ToLower() != "global.asax"
-				&& fileName.ToLower() != "defaultwsdlhelpgenerator.aspx")
+            
+			if (fileName.ToLower() != "defaultwsdlhelpgenerator.aspx")
 			{
-				string fullFileName = HttpContext.Current.Request.MapPath(_url);
-                
+                string fullFileName = (fileName.ToLower() == "global.asax") ? _url : HttpContext.Current.Request.MapPath(_url);
+#if DEBUG
+                Console.WriteLine("fullFileName=" + fullFileName);
+#endif                
 				if ( File.Exists(fullFileName) || Directory.Exists(fullFileName)) {
 					//type not found - run aspxparser
-					string[] command = GetParserCmd();
+                    string[] command = GetParserCmd(fileName.ToLower() == "global.asax");
 					if (J2EEUtils.RunProc(command) != 0)
 						throw GetCompilerError();
 				}
@@ -320,14 +322,23 @@ namespace System.Web.J2EE
 			return null;
 		}
 
-		private string[] GetParserCmd()
+		private string[] GetParserCmd(bool globalAsax)
 		{
-			string[] cmd = new string[5];
-			cmd[0] = GetParser();
-			cmd[1] = "/aspxFiles:" + _url;
-			cmd[2] = "/session:" + _session;
-			cmd[3] = "/appDir:" + (string)AppDomain.CurrentDomain.GetData(IAppDomainConfig.APP_PHYS_DIR);
-			cmd[4] = "/compilepages";
+            string[] cmd = null;			
+            if (globalAsax)
+            {
+                cmd = new string[4];
+                cmd[3] = "/buildglobalasax";
+            }
+            else
+            {
+                cmd = new string[5];
+                cmd[3] = "/aspxFiles:" + _url;
+                cmd[4] = "/compilepages";
+            }
+            cmd[0] = GetParser();
+            cmd[1] = "/session:" + _session;
+            cmd[2] = "/appDir:" + (string)AppDomain.CurrentDomain.GetData(IAppDomainConfig.APP_PHYS_DIR);
 			return cmd;
 		}
 
