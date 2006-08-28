@@ -105,7 +105,7 @@ namespace System.Windows.Forms
 		internal int			dist_bottom;		// distance to the bottom border of the parent
 
 		// to be categorized...
-		static internal ArrayList	controls = new ArrayList();		// All of the application's controls, in a flat list
+		static internal ArrayList	controls = ArrayList.Synchronized (new ArrayList());  // All of the application's controls, in a flat list
 		internal ControlCollection	child_controls;		// our children
 		internal Control		parent;			// our parent control
 		internal AccessibleObject	accessibility_object;	// object that contains accessibility information about our control

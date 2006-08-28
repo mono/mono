@@ -1,3 +1,8 @@
+2006-08-28  Chris Toshok  <toshok@ximian.com>
+
+	* Control.cs: make the static "controls" field synchronized, as it
+	gets updated from multiple threads.
+
 2006-08-27  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs: PostQuitMessage is thread-specific not app-specific.
