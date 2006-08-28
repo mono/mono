@@ -1,3 +1,7 @@
+2006-08-28	Boris Kirzner <borisk@mainsoft.com>
+
+	* run-tests.test.bat: chnged script for tests NET_2_0 run.
+
 2006-08-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Drawing_test.dll.sources: Added unit tests for TextureBrush.
