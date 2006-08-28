@@ -4221,6 +4221,8 @@ namespace Test.Sys.Drawing
 		}
 
 		[Test]
+		[Category("NotWorking")]
+		// In .Net PathData seems to clone Types and Points before returning them to user
 		public void PathData2 ()
 		{
 			path = new GraphicsPath ();
