@@ -1805,7 +1805,7 @@ namespace System.Windows.Forms
 							sub_item_font = subItem.Font;
 						}
 
-						if (item.Selected && control.FullRowSelect) {
+						if (item.Selected && control.Focused && control.FullRowSelect) {
 							dc.FillRectangle (SystemBrushes.Highlight, sub_item_rect);
 							if (subItem.Text != null && subItem.Text.Length > 0)
 								dc.DrawString (subItem.Text, sub_item_font,
