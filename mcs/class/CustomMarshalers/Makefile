@@ -1,4 +1,4 @@
-thisdir = class/Custommarshalers
+thisdir = class/CustomMarshalers
 SUBDIRS = 
 include ../../build/rules.make
 

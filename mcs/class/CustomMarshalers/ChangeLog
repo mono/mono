@@ -1,3 +1,7 @@
+2006-08-28  Wade Berrier <wberrier@novell.com>
+
+	* Makefile: Non consequential casing rename for thisdir
+
 2006-07-20  Jonathan Chambers  <joncham@gmail.com>
 
 	* Makefile:
