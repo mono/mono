@@ -1,3 +1,9 @@
+2006-08-28  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUIX11.cs: Preempt the roundtrip for getting the location back
+	  from X. Only send based on ConfigureNotify if we don't have the
+	  correct location in hwnd (if the window manager moved us)
+
 2006-08-28  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs: remove a TODO. 
