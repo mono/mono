@@ -65,22 +65,30 @@ namespace System.Windows.Forms
 
 		#region Private and Internal Methods
 		internal static NativeWindow FindWindow(IntPtr handle) {
-			return (NativeWindow)window_collection[handle];
+			NativeWindow rv;
+			lock (window_collection) {
+				rv = (NativeWindow)window_collection[handle];
+			}
+			return rv;
 		}
 
 		internal void InvalidateHandle() {
-			window_collection.Remove(window_handle);
+			lock (window_collection) {
+				window_collection.Remove(window_handle);
+			}
 			window_handle = IntPtr.Zero;
 		}
 		#endregion
 
 		#region Public Instance Methods
 		public void AssignHandle(IntPtr handle) {
-			if (window_handle != IntPtr.Zero) {
-				window_collection.Remove(window_handle);
+			lock (window_collection) {
+				if (window_handle != IntPtr.Zero) {
+					window_collection.Remove(window_handle);
+				}
+				window_handle=handle;
+				window_collection.Add(window_handle, this);
 			}
-			window_handle=handle;
-			window_collection.Add(window_handle, this);
 			OnHandleChange();
 		}
 
@@ -89,7 +97,9 @@ namespace System.Windows.Forms
 				window_handle=XplatUI.CreateWindow(create_params);
 
 				if (window_handle != IntPtr.Zero) {
-					window_collection.Add(window_handle, this);
+					lock (window_collection) {
+						window_collection.Add(window_handle, this);
+					}
 				}
 			}
 		}
@@ -105,7 +115,9 @@ namespace System.Windows.Forms
 		}
 
 		public virtual void ReleaseHandle() {
-			window_collection.Remove(window_handle);
+			lock (window_collection) {
+				window_collection.Remove(window_handle);
+			}
 			window_handle=IntPtr.Zero;
 			OnHandleChange();
 		}
@@ -134,7 +146,9 @@ namespace System.Windows.Forms
 			#if !ExternalExceptionHandler
 			try {
 			#endif
-				window = (NativeWindow)window_collection[hWnd];
+				lock (window_collection) {
+					window = (NativeWindow)window_collection[hWnd];
+				}
 				m.HWnd=hWnd;
 				m.Msg=(int)msg;
 				m.WParam=wParam;

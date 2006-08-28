@@ -1,5 +1,9 @@
 2006-08-28  Chris Toshok  <toshok@ximian.com>
 
+	* NativeWindow.cs: lock around accesses to window_collection.
+	
+2006-08-28  Chris Toshok  <toshok@ximian.com>
+
 	* Control.cs: err, fix this the right way, by locking on controls
 	when using it.  not by making it synchronized.
 
