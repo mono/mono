@@ -19,10 +19,6 @@
 	* TreeNodeTest.cs: New test was added
 	* TreeViewTest.cs: Test was updated
 
-=======
-=======
-<<<<<<< .mine
-<<<<<<< .mine
 2006-08-10 Hagit Yidov <hagity@mainsoft.com>
 
 	* ImageMapTest.cs: New test was added
@@ -32,8 +28,6 @@
 	* RectangleHotSpot.cs: New test was added
 	* PolygonHotSpot.cs: New test was added
 
-=======
-=======
 2006-08-23 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* MenuTest.cs: added tests 
