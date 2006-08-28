@@ -135,7 +135,9 @@ namespace System.Windows.Forms {
 						Application.ApplicationExit(null, EventArgs.Empty);
 					}
 				}
-				threads[thread_id] = null;
+				lock (threads) {
+					threads[thread_id] = null;
+				}
 			}
 			#endregion	// Methods
 		}

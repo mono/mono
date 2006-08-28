@@ -105,8 +105,10 @@ namespace System.Windows.Forms {
 		public void Dispose() {
 			expose_pending = false;
 			nc_expose_pending = false;
-			windows.Remove(client_window);
-			windows.Remove(whole_window);
+			lock (windows) {
+				windows.Remove(client_window);
+				windows.Remove(whole_window);
+			}
 			for (int i = 0; i < marshal_free_list.Count; i++) {
 				Marshal.FreeHGlobal((IntPtr)marshal_free_list[i]);
 			}
@@ -120,12 +122,20 @@ namespace System.Windows.Forms {
 		}
 
 		public static Hwnd ObjectFromWindow(IntPtr window) {
-			return (Hwnd)windows[window];
+			Hwnd rv;
+			lock (windows) {
+				rv = (Hwnd)windows[window];
+			}
+			return rv;
 		}
 
 		public static Hwnd ObjectFromHandle(IntPtr handle) {
 			//return (Hwnd)(((GCHandle)handle).Target);
-			return (Hwnd)windows[handle];
+			Hwnd rv;
+			lock (windows) {
+				rv = (Hwnd)windows[handle];
+			}
+			return rv;
 		}
 
 		public static IntPtr HandleFromObject(Hwnd obj) {
@@ -133,13 +143,19 @@ namespace System.Windows.Forms {
 		}
 
 		public static Hwnd GetObjectFromWindow(IntPtr window) {
-			return (Hwnd)windows[window];
+			Hwnd rv;
+			lock (windows) {
+				rv = (Hwnd)windows[window];
+			}
+			return rv;
 		}
 
 		public static IntPtr GetHandleFromWindow(IntPtr window) {
 			Hwnd	hwnd;
 
-			hwnd = (Hwnd)windows[window];
+			lock (windows) {
+				hwnd = (Hwnd)windows[window];
+			}
 			if (hwnd != null) {
 				return hwnd.handle;
 			} else {
@@ -263,8 +279,10 @@ namespace System.Windows.Forms {
 				client_window = value;
 				handle = value;
 
-				if (windows[client_window] == null) {
-					windows[client_window] = this;
+				lock (windows) {
+					if (windows[client_window] == null) {
+						windows[client_window] = this;
+					}
 				}
 			}
 		}
@@ -511,8 +529,10 @@ namespace System.Windows.Forms {
 			set {
 				whole_window = value;
 
-				if (windows[whole_window] == null) {
-					windows[whole_window] = this;
+				lock (windows) {
+					if (windows[whole_window] == null) {
+						windows[whole_window] = this;
+					}
 				}
 			}
 		}

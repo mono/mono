@@ -1,5 +1,13 @@
 2006-08-28  Chris Toshok  <toshok@ximian.com>
 
+	* Form.cs: remove unused "active_form" static field.
+
+	* Hwnd.cs: lock around accesses to static windows collection.
+
+	* Application.cs: lock threads in Exit ().
+
+2006-08-28  Chris Toshok  <toshok@ximian.com>
+
 	* NativeWindow.cs: lock around accesses to window_collection.
 	
 2006-08-28  Chris Toshok  <toshok@ximian.com>

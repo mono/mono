@@ -42,7 +42,6 @@ namespace System.Windows.Forms {
 	[ToolboxItem(false)]
 	public class Form : ContainerControl {
 		#region Local Variables
-		internal static Form		active_form;
 		internal bool			closing;
 		FormBorderStyle			form_border_style;
 		private bool		        autoscale;
