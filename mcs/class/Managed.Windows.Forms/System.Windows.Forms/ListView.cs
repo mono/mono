@@ -26,7 +26,6 @@
 //
 // TODO:
 //   - Feedback for item activation, change in cursor types as mouse moves.
-//   - HideSelection
 //   - LabelEdit
 //   - Drag and drop
 

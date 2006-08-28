@@ -1751,6 +1751,8 @@ namespace System.Windows.Forms
 
 			if (item.Selected && control.Focused)
 				dc.FillRectangle (SystemBrushes.Highlight, highlight_rect);
+			else if (item.Selected && !control.HideSelection)
+				dc.FillRectangle (SystemBrushes.Control, highlight_rect);
 			else
 				dc.FillRectangle (ResPool.GetSolidBrush (item.BackColor), text_rect);
 			
@@ -1805,12 +1807,20 @@ namespace System.Windows.Forms
 							sub_item_font = subItem.Font;
 						}
 
-						if (item.Selected && control.Focused && control.FullRowSelect) {
-							dc.FillRectangle (SystemBrushes.Highlight, sub_item_rect);
+						if (item.Selected && (control.Focused || !control.HideSelection) && control.FullRowSelect) {
+							Brush bg, text;
+							if (control.Focused) {
+								bg = SystemBrushes.Highlight;
+								text = SystemBrushes.HighlightText;
+							} else {
+								bg = SystemBrushes.Control;
+								text = sub_item_fore_br;
+							}
+					
+							dc.FillRectangle (bg, sub_item_rect);
 							if (subItem.Text != null && subItem.Text.Length > 0)
 								dc.DrawString (subItem.Text, sub_item_font,
-									       SystemBrushes.HighlightText,
-									       sub_item_text_rect, format);
+									       text, sub_item_text_rect, format);
 						} else {
 							dc.FillRectangle (sub_item_back_br, sub_item_rect);
 							if (subItem.Text != null && subItem.Text.Length > 0)

@@ -1,5 +1,11 @@
 2006-08-28  Mike Kestner  <mkestner@novell.com>
 
+	* ListView.cs: remove a TODO. 
+	* ThemeWin32Classic.cs: implement HideSelection support for ListView.
+	[Fixes ListView part of #79166]
+
+2006-08-28  Mike Kestner  <mkestner@novell.com>
+
 	* ListView.cs: move wheel handler to parent since it is focused
 	instead of the item_control now.  [Fixes #79177]
 
