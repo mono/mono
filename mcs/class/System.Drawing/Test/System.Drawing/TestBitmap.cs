@@ -476,14 +476,23 @@ namespace MonoTests.System.Drawing{
 			Color red  = Color.FromArgb (Color.Red.A,  Color.Red.R,  Color.Red.G,  Color.Red.B);
 			Color blue = Color.FromArgb (Color.Blue.A, Color.Blue.R, Color.Blue.G, Color.Blue.B);
 
-			using (Bitmap bmp = new Bitmap (1, 1, PixelFormat.Format24bppRgb))
+			using (Bitmap bmp = new Bitmap (1, 1, PixelFormat.Format32bppRgb))
 			{
 				bmp.SetPixel (0, 0, red);
 				pixel_colour = bmp.GetPixel (0, 0);
 				Assert.AreEqual (red, pixel_colour, "Set/Get-Red");
 
 				data = bmp.LockBits (new Rectangle (0, 0, 1, 1), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-				pixel_value = Marshal.ReadInt32 (data.Scan0);
+
+				// Marshal follows CPU endianess
+				if (BitConverter.IsLittleEndian) {
+					pixel_value = Marshal.ReadInt32 (data.Scan0);
+				} else {
+					pixel_value = Marshal.ReadByte (data.Scan0, 0);
+					pixel_value |= Marshal.ReadByte (data.Scan0, 1) << 8;
+					pixel_value |= Marshal.ReadByte (data.Scan0, 2) << 16;
+					pixel_value |= Marshal.ReadByte (data.Scan0, 3) << 24;
+				}
 				pixel_colour = Color.FromArgb (pixel_value);
 
 				// Disregard alpha information in the test

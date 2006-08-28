@@ -1,3 +1,8 @@
+2006-08-28  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* GDIPlusTest.cs: Added more parameters checks for TextureBrush calls.
+	* TestBitmap.cs: Fix test case for big endian arch (Marshal.ReadInt32)
+
 2006-08-27  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* ColorConverter.cs: Add a new test case for a color with a integer 

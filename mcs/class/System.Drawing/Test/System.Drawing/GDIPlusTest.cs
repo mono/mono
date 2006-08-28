@@ -867,6 +867,10 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipCreateTexture2 (IntPtr.Zero, (WrapMode) Int32.MinValue, 0, 0, 10, 10, out brush), "GdipCreateTexture2-wrapmode");
 			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipCreateTexture2 (image, WrapMode.Tile, 0, 0, 0, 10, out brush), "GdipCreateTexture2-width");
 			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipCreateTexture2 (image, WrapMode.Tile, 0, 0, 10, 0, out brush), "GdipCreateTexture2-height");
+			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipCreateTexture2 (image, WrapMode.Tile, -1, 0, 0, 10, out brush), "GdipCreateTexture2-x");
+			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipCreateTexture2 (image, WrapMode.Tile, 0, -1, 10, 0, out brush), "GdipCreateTexture2-y");
+			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipCreateTexture2 (image, WrapMode.Tile, 1, 0, 10, 10, out brush), "GdipCreateTexture2-too-wide");
+			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipCreateTexture2 (image, WrapMode.Tile, 0, 1, 10, 10, out brush), "GdipCreateTexture2-too-tall");
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreateTexture2 (image, WrapMode.Tile, 0, 0, 10, 10, out brush), "GdipCreateTexture2");
 
 			WrapMode wm;
@@ -898,6 +902,10 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipCreateTextureIA (IntPtr.Zero, IntPtr.Zero, 0, 0, 10, 10, out brush), "GdipCreateTexture2-image");
 			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipCreateTextureIA (image, IntPtr.Zero, 0, 0, 0, 10, out brush), "GdipCreateTexture2-width");
 			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipCreateTextureIA (image, IntPtr.Zero, 0, 0, 10, 0, out brush), "GdipCreateTexture2-height");
+			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipCreateTextureIA (image, IntPtr.Zero, -1, 0, 10, 10, out brush), "GdipCreateTexture2-x");
+			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipCreateTextureIA (image, IntPtr.Zero, 0, -1, 10, 10, out brush), "GdipCreateTexture2-y");
+			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipCreateTextureIA (image, IntPtr.Zero, 1, 0, 10, 10, out brush), "GdipCreateTexture2-too-wide");
+			Assert.AreEqual (Status.OutOfMemory, GDIPlus.GdipCreateTextureIA (image, IntPtr.Zero, 0, 1, 10, 10, out brush), "GdipCreateTexture2-too-tall");
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreateTextureIA (image, IntPtr.Zero, 0, 0, 10, 10, out brush), "GdipCreateTexture2");
 
 			// TODO - handle ImageAttribute in the tests
