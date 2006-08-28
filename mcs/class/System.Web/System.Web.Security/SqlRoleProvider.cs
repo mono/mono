@@ -390,7 +390,9 @@ WHERE dbo.aspnet_Roles.RoleId = dbo.aspnet_UsersInRoles.RoleId
 			// XXX check connectionStringName and commandTimeout
 
 			connectionString = WebConfigurationManager.ConnectionStrings[connectionStringName];
-			factory = ProvidersHelper.GetDbProviderFactory (connectionString.ProviderName);
+			factory = connectionString == null || String.IsNullOrEmpty (connectionString.ProviderName) ?
+				System.Data.SqlClient.SqlClientFactory.Instance :
+				ProvidersHelper.GetDbProviderFactory (connectionString.ProviderName);
 		}
 		
 		public override bool IsUserInRole (string username, string rolename)

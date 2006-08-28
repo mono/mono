@@ -1,3 +1,8 @@
+2006-08-28 Konstantin Triger <kostat@mainsoft.com>
+
+	* SqlRoleProvider.cs, SqlMembershipProvider.cs:
+		"use SqlClientFactory in case the ProviderName is not specified.
+
 2006-08-27 Konstantin Triger <kostat@mainsoft.com>
 
 	* SqlRoleProvider.cs: enable concurrent usage, refactoring.

@@ -1157,7 +1157,9 @@ SELECT u.UserName
 				throw new ProviderException ("The ConnectionStringName attribute must be present and non-zero length.");
 
 			connectionString = WebConfigurationManager.ConnectionStrings[connectionStringName];
-			factory = ProvidersHelper.GetDbProviderFactory (connectionString.ProviderName);
+			factory = connectionString == null || String.IsNullOrEmpty (connectionString.ProviderName) ?
+				System.Data.SqlClient.SqlClientFactory.Instance :
+				ProvidersHelper.GetDbProviderFactory (connectionString.ProviderName);
 		}
 
 		public override string ResetPassword (string username, string answer)
