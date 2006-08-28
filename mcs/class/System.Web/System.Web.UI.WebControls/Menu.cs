@@ -1244,11 +1244,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		void RegisterStyle (Style baseStyle, Style linkStyle) {
-			if (baseStyle.ForeColor != Color.Empty)
-				linkStyle.ForeColor = baseStyle.ForeColor;
-			if (!baseStyle.Font.IsEmpty) {
-				linkStyle.Font.CopyFrom (baseStyle.Font);
-			}
+			linkStyle.CopyTextStylesFrom (baseStyle);
 			linkStyle.BorderStyle = BorderStyle.None;
 			RegisterStyle (linkStyle);
 			RegisterStyle (baseStyle);
@@ -1298,12 +1294,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		void AddCssClass (Style style, string cssClass) {
-			if (String.IsNullOrEmpty (cssClass))
-				return;
-
-			if(style.CssClass.Length>0)
-				style.CssClass += " ";
-			style.CssClass += cssClass;
+			style.AddCssClass (cssClass);
 		}
 		
 		public override void RenderBeginTag (HtmlTextWriter writer)
@@ -1642,7 +1633,6 @@ namespace System.Web.UI.WebControls
 
 			RenderItemHref (writer, item);
 			
-			//ControlLinkStyle.AddAttributesToRender (writer);
 			Style linkStyle = new Style ();
 			if (Page.Header != null) {
 				// styles are registered

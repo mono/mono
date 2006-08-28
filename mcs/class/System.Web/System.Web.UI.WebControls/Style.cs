@@ -851,15 +851,23 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		internal virtual void CopyTextStylesFrom (Style source)
-		{
-			// Need to ask lluis if we need fonts, too
-			if ((styles & Styles.ForeColor) != 0) {
+		internal void CopyTextStylesFrom (Style source) {
+			// Used primary for TreeView and Menu
+			if ((source.styles & Styles.ForeColor) != 0) {
 				ForeColor = source.ForeColor;
 			}
-			if ((styles & Styles.BackColor) != 0) {
-				BackColor = source.BackColor;
+			if (!source.Font.IsEmpty) {
+				Font.CopyFrom (source.Font);
 			}
+		}
+
+		internal void AddCssClass (string cssClass) {
+			if (String.IsNullOrEmpty (cssClass))
+				return;
+
+			if (CssClass.Length > 0)
+				CssClass += " ";
+			CssClass += cssClass;
 		}
 
 		public void SetDirty ()
