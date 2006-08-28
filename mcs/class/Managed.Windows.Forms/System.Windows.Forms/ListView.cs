@@ -168,6 +168,7 @@ namespace System.Windows.Forms
 			SizeChanged += new EventHandler (ListView_SizeChanged);
 			GotFocus += new EventHandler (FocusChanged);
 			LostFocus += new EventHandler (FocusChanged);
+			MouseWheel += new MouseEventHandler(ListView_MouseWheel);
 
 			this.SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick, false);
 		}
@@ -1267,7 +1268,6 @@ namespace System.Windows.Forms
 				MouseMove += new MouseEventHandler(ItemsMouseMove);
 				MouseHover += new EventHandler(ItemsMouseHover);
 				MouseUp += new MouseEventHandler(ItemsMouseUp);
-				MouseWheel += new MouseEventHandler(ItemsMouseWheel);
 			}
 
 			void ItemsDoubleClick (object sender, EventArgs e)
@@ -1551,30 +1551,6 @@ namespace System.Windows.Forms
 				checking = false;
 			}
 
-			private void ItemsMouseWheel (object sender, MouseEventArgs me)
-			{
-				if (owner.Items.Count == 0)
-					return;
-
-				int lines = me.Delta / 120;
-
-				if (lines == 0)
-					return;
-
-				switch (owner.View) {
-				case View.Details:
-				case View.SmallIcon:
-					owner.Scroll (owner.v_scroll, -owner.Items [0].Bounds.Height * SystemInformation.MouseWheelScrollLines * lines);
-					break;
-				case View.LargeIcon:
-					owner.Scroll (owner.v_scroll, -(owner.Items [0].Bounds.Height + ThemeEngine.Current.ListViewVerticalSpacing)  * lines);
-					break;
-				case View.List:
-					owner.Scroll (owner.h_scroll, -owner.Items [0].Bounds.Width * lines);
-					break;
-				}
-			}
-
 			internal override void OnPaintInternal (PaintEventArgs pe)
 			{
 				ThemeEngine.Current.DrawListViewItems (pe.Graphics, pe.ClipRectangle, owner);
@@ -1603,6 +1579,30 @@ namespace System.Windows.Forms
 				SetFocusedItem (Items [0]);
 
 			item_control.Invalidate (FocusedItem.Bounds);
+		}
+
+		private void ListView_MouseWheel (object sender, MouseEventArgs me)
+		{
+			if (Items.Count == 0)
+				return;
+
+			int lines = me.Delta / 120;
+
+			if (lines == 0)
+				return;
+
+			switch (View) {
+			case View.Details:
+			case View.SmallIcon:
+				Scroll (v_scroll, -Items [0].Bounds.Height * SystemInformation.MouseWheelScrollLines * lines);
+				break;
+			case View.LargeIcon:
+				Scroll (v_scroll, -(Items [0].Bounds.Height + ThemeEngine.Current.ListViewVerticalSpacing)  * lines);
+				break;
+			case View.List:
+				Scroll (h_scroll, -Items [0].Bounds.Width * lines);
+				break;
+			}
 		}
 
 		private void ListView_SizeChanged (object sender, EventArgs e)

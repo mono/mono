@@ -1,5 +1,10 @@
 2006-08-28  Mike Kestner  <mkestner@novell.com>
 
+	* ListView.cs: move wheel handler to parent since it is focused
+	instead of the item_control now.  [Fixes #79177]
+
+2006-08-28  Mike Kestner  <mkestner@novell.com>
+
 	* ThemeWin32Classic.cs: only highlight subitems in fullrowselect
 	when the control is focused. [Fixes #79171]
 
