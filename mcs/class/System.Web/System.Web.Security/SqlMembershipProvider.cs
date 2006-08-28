@@ -917,35 +917,39 @@ SELECT m.Password
 		{
 			DbDataReader reader = null;
 			try {
-				reader = query.ExecuteReader ();
-				if (!reader.Read ())
-					return null;
+				using (DbConnection connection = CreateConnection ()) {
 
-				MembershipUser user = GetUserFromReader (reader);
+					query.Connection = connection;
+					reader = query.ExecuteReader ();
+					if (!reader.Read ())
+						return null;
 
-				if (user != null && userIsOnline) {
+					MembershipUser user = GetUserFromReader (reader);
 
-					string commandText;
-					DbCommand command;
+					if (user != null && userIsOnline) {
 
-					commandText = @"
+						string commandText;
+						DbCommand command;
+
+						commandText = @"
 UPDATE dbo.aspnet_Users u, dbo.aspnet_Application a
    SET u.LastActivityDate = GETDATE()
  WHERE u.ApplicationId = a.ApplicationId
    AND u.UserName = @UserName
    AND a.LoweredApplicationName = LOWER(@ApplicationName)";
 
-					command = factory.CreateCommand ();
-					command.CommandText = commandText;
-					command.Connection = query.Connection;
-					command.CommandType = CommandType.Text;
-					AddParameter (command, "UserName", user.UserName);
-					AddParameter (command, "ApplicationName", ApplicationName);
+						command = factory.CreateCommand ();
+						command.CommandText = commandText;
+						command.Connection = query.Connection;
+						command.CommandType = CommandType.Text;
+						AddParameter (command, "UserName", user.UserName);
+						AddParameter (command, "ApplicationName", ApplicationName);
 
-					command.ExecuteNonQuery();
+						command.ExecuteNonQuery ();
+					}
+
+					return user;
 				}
-
-				return user;
 			}
 			catch {
 				return null; /* should we let the exception through? */
@@ -964,9 +968,7 @@ UPDATE dbo.aspnet_Users u, dbo.aspnet_Application a
 			string commandText;
 			DbCommand command;
 
-			using (DbConnection connection = CreateConnection ()) {
-
-				commandText = @"
+			commandText = @"
 SELECT u.UserName, m.UserId, m.Email, m.PasswordQuestion, m.Comment, m.IsApproved,
        m.IsLockedOut, m.CreateDate, m.LastLoginDate, u.LastActivityDate,
        m.LastPasswordChangedDate, m.LastLockoutDate
@@ -977,17 +979,15 @@ SELECT u.UserName, m.UserId, m.Email, m.PasswordQuestion, m.Comment, m.IsApprove
    AND u.UserName = @UserName
    AND a.LoweredApplicationName = LOWER(@ApplicationName)";
 
-				command = factory.CreateCommand ();
-				command.CommandText = commandText;
-				command.Connection = connection;
-				command.CommandType = CommandType.Text;
-				AddParameter (command, "UserName", username);
-				AddParameter (command, "ApplicationName", ApplicationName);
+			command = factory.CreateCommand ();
+			command.CommandText = commandText;
+			command.CommandType = CommandType.Text;
+			AddParameter (command, "UserName", username);
+			AddParameter (command, "ApplicationName", ApplicationName);
 
-				MembershipUser u = BuildMembershipUser (command, userIsOnline);
+			MembershipUser u = BuildMembershipUser (command, userIsOnline);
 
-				return u;
-			}
+			return u;
 		}
 		
 		[MonoTODO]
@@ -996,9 +996,7 @@ SELECT u.UserName, m.UserId, m.Email, m.PasswordQuestion, m.Comment, m.IsApprove
 			string commandText;
 			DbCommand command;
 
-			using (DbConnection connection = CreateConnection ()) {
-
-				commandText = @"
+			commandText = @"
 SELECT u.UserName, m.UserId, m.Email, m.PasswordQuestion, m.Comment, m.IsApproved,
        m.IsLockedOut, m.CreateDate, m.LastLoginDate, u.LastActivityDate,
        m.LastPasswordChangedDate, m.LastLockoutDate
@@ -1009,17 +1007,15 @@ SELECT u.UserName, m.UserId, m.Email, m.PasswordQuestion, m.Comment, m.IsApprove
    AND u.UserId = @UserKey
    AND a.LoweredApplicationName = LOWER(@ApplicationName)";
 
-				command = factory.CreateCommand ();
-				command.CommandText = commandText;
-				command.Connection = connection;
-				command.CommandType = CommandType.Text;
-				AddParameter (command, "UserKey", providerUserKey.ToString ());
-				AddParameter (command, "ApplicationName", ApplicationName);
+			command = factory.CreateCommand ();
+			command.CommandText = commandText;
+			command.CommandType = CommandType.Text;
+			AddParameter (command, "UserKey", providerUserKey.ToString ());
+			AddParameter (command, "ApplicationName", ApplicationName);
 
-				MembershipUser u = BuildMembershipUser (command, userIsOnline);
+			MembershipUser u = BuildMembershipUser (command, userIsOnline);
 
-				return u;
-			}
+			return u;
 		}
 		
 		[MonoTODO]
