@@ -105,7 +105,7 @@ namespace System.Windows.Forms
 		internal int			dist_bottom;		// distance to the bottom border of the parent
 
 		// to be categorized...
-		static internal ArrayList	controls = ArrayList.Synchronized (new ArrayList());  // All of the application's controls, in a flat list
+		static internal ArrayList	controls = new ArrayList();  // All of the application's controls, in a flat list
 		internal ControlCollection	child_controls;		// our children
 		internal Control		parent;			// our parent control
 		internal AccessibleObject	accessibility_object;	// object that contains accessibility information about our control
@@ -773,7 +773,9 @@ namespace System.Windows.Forms
 					}
 				} else {
 					DestroyHandle();
-					controls.Remove(this);
+					lock (Control.controls) {
+						Control.controls.Remove(this);
+					}
 				}
 
 
@@ -2605,17 +2607,19 @@ namespace System.Windows.Forms
 		#region Public Static Methods
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public static Control FromChildHandle(IntPtr handle) {
-			IEnumerator control = Control.controls.GetEnumerator();
+			lock (Control.controls) {
+				IEnumerator control = Control.controls.GetEnumerator();
 
-			while (control.MoveNext()) {
-				if (((Control)control.Current).window.Handle == handle) {
-					// Found it
-					if (((Control)control.Current).Parent != null) {
-						return ((Control)control.Current).Parent;
+				while (control.MoveNext()) {
+					if (((Control)control.Current).window.Handle == handle) {
+						// Found it
+						if (((Control)control.Current).Parent != null) {
+							return ((Control)control.Current).Parent;
+						}
 					}
 				}
+				return null;
 			}
-			return null;
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -3304,8 +3308,10 @@ namespace System.Windows.Forms
 			window.CreateHandle(CreateParams);
 
 			if (window.Handle != IntPtr.Zero) {
-				if (!controls.Contains(window.Handle)) {
-					controls.Add(this);
+				lock (Control.controls) {
+					if (!Control.controls.Contains(window.Handle)) {
+						Control.controls.Add(this);
+					}
 				}
 
 				creator_thread = Thread.CurrentThread;

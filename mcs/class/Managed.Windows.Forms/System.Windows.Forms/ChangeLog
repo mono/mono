@@ -1,5 +1,10 @@
 2006-08-28  Chris Toshok  <toshok@ximian.com>
 
+	* Control.cs: err, fix this the right way, by locking on controls
+	when using it.  not by making it synchronized.
+
+2006-08-28  Chris Toshok  <toshok@ximian.com>
+
 	* Control.cs: make the static "controls" field synchronized, as it
 	gets updated from multiple threads.
 
