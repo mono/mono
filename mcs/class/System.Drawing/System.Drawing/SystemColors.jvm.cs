@@ -40,7 +40,11 @@ namespace System.Drawing {
 		
 		static SystemColors ()
 		{
+#if !NET_2_0
 			SystemColorsCache = new Color[27]; //enough for all system color indices
+#else
+			SystemColorsCache = new Color [175]; //enough for all system color indices
+#endif
 
 			if (Graphics.IsHeadless) {
 				SystemColorsCache[(int)KnownColor.ActiveBorder] = Color.FromArgbSystem (255, 212, 208, 200, "ActiveBorder", KnownColor.ActiveBorder);

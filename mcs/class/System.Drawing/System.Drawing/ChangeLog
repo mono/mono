@@ -1,3 +1,7 @@
+2006-08-28	Boris Kirzner	<borisk@mainsoft.com>
+
+	* SystemColors.jvm.cs: fix array size for NET_2_0
+
 2006-08-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ColorConverter.cs: Catch the case where the integer part of the 
