@@ -1541,7 +1541,11 @@ namespace System.Windows.Forms
 		{
 			bool details = control.View == View.Details;
 
-			dc.FillRectangle (GetControlBackBrush (control.BackColor), clip);						
+			if (control.Enabled)
+				dc.FillRectangle (GetControlBackBrush (control.BackColor), clip);
+			else
+				dc.FillRectangle (ResPool.GetSolidBrush (ColorControl), clip);
+
 			int first = control.FirstVisibleIndex;	
 
 			for (int i = first; i <= control.LastVisibleIndex; i ++) {					

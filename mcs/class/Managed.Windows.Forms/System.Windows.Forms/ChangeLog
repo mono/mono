@@ -1,3 +1,10 @@
+2006-08-28  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs: size the item and header controls for empty and
+	unscrollable views.
+	* ThemeWin32Classic.cs: draw disabled backgrounds.
+	[Fixes #79187]
+
 2006-08-28  Chris Toshok  <toshok@ximian.com>
 
 	* Form.cs: remove unused "active_form" static field.

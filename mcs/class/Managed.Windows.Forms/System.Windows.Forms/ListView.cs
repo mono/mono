@@ -777,6 +777,10 @@ namespace System.Windows.Forms
 			if (!this.scrollable || this.items.Count <= 0) {
 				h_scroll.Visible = false;
 				v_scroll.Visible = false;
+				item_control.Location = new Point (0, header_control.Height);
+				item_control.Height = ClientRectangle.Width - header_control.Height;
+				item_control.Width = ClientRectangle.Width;
+				header_control.Width = ClientRectangle.Width;
 				return;
 			}
 
