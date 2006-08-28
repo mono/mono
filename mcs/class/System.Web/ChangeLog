@@ -1,3 +1,8 @@
+2006-08-27 Roei Erez <roeie@mainsoft.com>
+
+	* WebConfigurationManager.cs: corrections for static variables on mainsoft platform
+
+=======
 2006-08-28 Yoni Klain <yonik@mainsoft.com>
 
     * System.Web_test.dll.sources: add new \System.Web.UI\ClientScriptManagerTest.cs
