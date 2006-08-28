@@ -414,7 +414,7 @@ namespace Mono.Xml.XPath
 				XPathNodeType.Text,
 				null,
 				false,
-				null,
+				String.Empty,
 				String.Empty,
 				String.Empty,
 				data,
@@ -452,7 +452,7 @@ namespace Mono.Xml.XPath
 				XPathNodeType.Comment,
 				null,
 				false,
-				null,
+				String.Empty,
 				String.Empty,
 				String.Empty,
 				data,
@@ -498,7 +498,7 @@ namespace Mono.Xml.XPath
 				XPathNodeType.Whitespace,
 				null,
 				false,
-				null,
+				String.Empty,
 				String.Empty,
 				String.Empty,
 				data,
@@ -525,6 +525,9 @@ namespace Mono.Xml.XPath
 
 		public override void WriteStartElement (string prefix, string localName, string ns)
 		{
+			if (prefix == null)
+				prefix = String.Empty;
+
 			switch (state) {
 			case WriteState.Element:
 				CloseStartElement ();
