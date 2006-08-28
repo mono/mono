@@ -1,6 +1,7 @@
-2005-08-28  Sebastien Pouliot  <sebastien@ximian.com>
+2005-08-28  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* MarshalTest.cs: Added test for ReadInt32 (versus arch endianess).
+	Added endian check as Marshal must use CPU endianess.
 
 2006-6-8  Jonathan Chambers  <jonathan.chambers@ansys.com>
 

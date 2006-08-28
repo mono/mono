@@ -162,7 +162,12 @@ namespace MonoTests.System.Runtime.InteropServices
 				Marshal.WriteByte (ptr, 1, 0x02);
 				Marshal.WriteByte (ptr, 2, 0x03);
 				Marshal.WriteByte (ptr, 3, 0x04);
-				Assert.AreEqual (0x04030201, Marshal.ReadInt32 (ptr), "ReadInt32");
+				// Marshal MUST use the native CPU data
+				if (BitConverter.IsLittleEndian){
+					Assert.AreEqual (0x04030201, Marshal.ReadInt32 (ptr), "ReadInt32");
+				} else {
+					Assert.AreEqual (0x01020304, Marshal.ReadInt32 (ptr), "ReadInt32");
+				}
 			}
 			finally {
 				Marshal.FreeHGlobal (ptr);
