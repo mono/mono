@@ -523,14 +523,15 @@ VALUES (@ApplicationId,
         NULL,
         {0}, {1},
         {2}, {3},
-        0, 0,
+        {4}, 0,
         GETDATE(), GETDATE(), @DefaultDateTime,
         @DefaultDateTime,
         0, @DefaultDateTime, 0, @DefaultDateTime, NULL)",
 									 email == null ? "NULL" : "@Email",
 									 email == null ? "NULL" : "LOWER(@Email)",
 									 pwdQuestion == null ? "NULL" : "@PasswordQuestion",
-									 pwdAnswer == null ? "NULL" : "@PasswordAnswer");
+									 pwdAnswer == null ? "NULL" : "@PasswordAnswer",
+									 isApproved ? "1" : "0");
 
 					command = factory.CreateCommand ();
 					command.Transaction = trans;

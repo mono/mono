@@ -1,3 +1,7 @@
+2006-08-28 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* SqlMembershipProvider.cs: fixed CreateUser, parameter isApproved is considered.
+
 2006-08-28 Konstantin Triger <kostat@mainsoft.com>
 
 	* SqlMembershipProvider.cs: ensure GetUser() returns null if it cannot
