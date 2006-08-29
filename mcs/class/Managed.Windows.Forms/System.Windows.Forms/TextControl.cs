@@ -3590,7 +3590,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			tag = line.tags;
 
 			// Adjust for alignment
-			x += line.align_shift;
+			x -= line.align_shift;
 
 			while (true) {
 				if (x >= tag.X && x < (tag.X+tag.width)) {
