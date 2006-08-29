@@ -48,6 +48,7 @@ namespace System.Windows.Forms {
 		private TreeViewAction selection_action = TreeViewAction.Unknown;
 		internal TreeNode selected_node = null;
 		private TreeNode focused_node = null;
+		private TreeNode highlighted_node;
 		private bool select_mmove = false;
 
 		private ImageList image_list;
@@ -349,6 +350,7 @@ namespace System.Windows.Forms {
 				if (value != null)
 					invalid = Rectangle.Union (invalid, Bloat (value.Bounds));
 
+				highlighted_node = value;
 				selected_node = value;
 				focused_node = value;
 
@@ -1220,16 +1222,25 @@ namespace System.Windows.Forms {
 			return (int) DeviceContext.MeasureString (node.Text, font, 0, string_format).Width + 3;
 		}
 
+		private bool ShowSelection {
+			get {
+				return Focused || !hide_selection;
+			}
+		}
+
 		private void DrawSelectionAndFocus(TreeNode node, Graphics dc, Rectangle r)
 		{
 			if (Focused && focused_node == node) {
 				ControlPaint.DrawFocusRectangle (dc, r, ForeColor, BackColor);
 			}
 			r.Inflate(-1, -1);
-			if ((!HideSelection || Focused) && SelectedNode == node)
+			if (Focused && node == highlighted_node) {
 				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHighlight), r);
-			else
+			} else if (!hide_selection && node == highlighted_node) {
+				dc.FillRectangle (SystemBrushes.Control, r);
+			} else {
 				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (node.BackColor), r);
+			}
 		}
 		 
 		private void DrawStaticNode (TreeNode node, Graphics dc)
@@ -1240,7 +1251,7 @@ namespace System.Windows.Forms {
 			Font font = node.NodeFont;
 			if (node.NodeFont == null)
 				font = Font;
-			Color text_color = ((Focused || !HideSelection) && SelectedNode == node ?
+			Color text_color = (Focused && node == highlighted_node ?
 					ThemeEngine.Current.ColorHighlightText : node.ForeColor);
 			dc.DrawString (node.Text, font,
 					ThemeEngine.Current.ResPool.GetSolidBrush (text_color),
@@ -1531,14 +1542,26 @@ namespace System.Windows.Forms {
 				UpdateNode(node);
 				return;
 			} else if (IsSelectableArea (node, e.X) || full_row_select) {
-				TreeNode old_selected = selected_node;
-				selection_action = TreeViewAction.ByMouse;
-				SelectedNode = node;
-				if (label_edit && e.Clicks == 1 && selected_node == old_selected) {
+				TreeNode old_highlighted = highlighted_node;
+				highlighted_node = node;
+				if (label_edit && e.Clicks == 1 && highlighted_node == old_highlighted) {
 					BeginEdit (node);
-				} else if (selected_node != focused_node) {
+				} else if (highlighted_node != focused_node) {
 					select_mmove = true;
 				}
+
+				Rectangle invalid;
+
+				/*
+				if (focused_node != null) {
+					invalid = Rectangle.Union (Bloat (focused_node.Bounds),
+							Bloat (highlighted_node.Bounds));
+				} else {
+					invalid = Bloat (highlighted_node.Bounds);
+				}
+				*/
+				invalid = Rectangle.Union (Bloat (old_highlighted.Bounds), highlighted_node.Bounds);
+				Invalidate (invalid);
 			} 
 		}
 
@@ -1546,8 +1569,6 @@ namespace System.Windows.Forms {
 
 			drag_begin_x = -1;
 			drag_begin_y = -1;
-
-			OnClick (EventArgs.Empty);
 
 			if (!select_mmove)
 				return;
@@ -1561,15 +1582,17 @@ namespace System.Windows.Forms {
 			if (!ce.Cancel) {
 				if (focused_node != null) {
 					invalid = Rectangle.Union (Bloat (focused_node.Bounds),
-							Bloat (selected_node.Bounds));
+							Bloat (highlighted_node.Bounds));
 				} else {
-					invalid = Bloat (selected_node.Bounds);
+					invalid = Bloat (highlighted_node.Bounds);
 				}
-				focused_node = selected_node;
+				selected_node = highlighted_node;
+				focused_node = highlighted_node;
 				OnAfterSelect (new TreeViewEventArgs (selected_node, TreeViewAction.ByMouse));
 
 				Invalidate (invalid);
 			} else {
+				highlighted_node = focused_node;
 				selected_node = focused_node;
 			}
 
@@ -1598,16 +1621,21 @@ namespace System.Windows.Forms {
 				}
 				
 			}
+
+			// If there is movement before the mouse comes up,
+			// selection is reverted back to the originally selected node
 			if(!select_mmove)
 				return;
-			TreeNode node = GetNodeAtUseX (e.X,e.Y);
-			if(node == selected_node)
-				return;
 
-			selected_node = focused_node;
-			select_mmove = false;
-			Invalidate (focused_node.Bounds);
+			Invalidate (highlighted_node.Bounds);
 			Invalidate (selected_node.Bounds);
+			Invalidate (focused_node.Bounds);
+
+			highlighted_node = selected_node;
+			selected_node = selected_node;
+			focused_node = selected_node;
+
+			select_mmove = false;
 		}
 
 		private void DoubleClickHandler (object sender, MouseEventArgs e) {
