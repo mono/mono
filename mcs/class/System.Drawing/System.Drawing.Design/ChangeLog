@@ -1,3 +1,7 @@
+2006-08-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ToolboxItem.cs: Fix compiler warning.
+
 2006-05-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ToolboxItem.cs: Update ComponentType property to match MS result.

@@ -258,7 +258,7 @@ namespace System.Drawing.Design
 				throw new Exception("Host does not provide an ITypeResolutionService");
 
 			//TODO: Using Assembly loader to throw errors. Silent fail and return null?
-			Assembly assembly = typeRes.GetAssembly(assemblyName, true);
+			typeRes.GetAssembly(assemblyName, true);
 			if (reference)
 				typeRes.ReferenceAssembly(assemblyName);
 			return typeRes.GetType(typeName, true);
