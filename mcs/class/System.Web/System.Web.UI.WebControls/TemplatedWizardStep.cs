@@ -69,10 +69,11 @@ namespace System.Web.UI.WebControls
 			internal set { _customNavigationTemplateContainer = value; }
 		}
 
+		[MonoTODO("Why override?")]
 		public override string SkinID
 		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return base.SkinID; }
+			set { base.SkinID = value; }
 		}
 
 		internal virtual ITemplate DefaultContentTemplate
