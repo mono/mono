@@ -1,6 +1,11 @@
+2006-08-29 Konstantin Triger <kostat@mainsoft.com>
+
+        * SqlMembershipProvider.cs: fix dispose order of reader vs connection.
+
 2006-08-28 Igor Zelmanovich <igorz@mainsoft.com>
 
-	* SqlMembershipProvider.cs: fixed CreateUser, parameter isApproved is considered.
+	* SqlMembershipProvider.cs: fixed CreateUser, parameter isApproved is
+		considered.
 
 2006-08-28 Konstantin Triger <kostat@mainsoft.com>
 

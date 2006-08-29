@@ -916,16 +916,16 @@ SELECT m.Password
 
 		MembershipUser BuildMembershipUser (DbCommand query, bool userIsOnline)
 		{
-			DbDataReader reader = null;
 			try {
 				using (DbConnection connection = CreateConnection ()) {
 
 					query.Connection = connection;
-					reader = query.ExecuteReader ();
+					DbDataReader reader = query.ExecuteReader ();
 					if (!reader.Read ())
 						return null;
 
 					MembershipUser user = GetUserFromReader (reader);
+					reader.Close ();
 
 					if (user != null && userIsOnline) {
 
@@ -956,8 +956,7 @@ UPDATE dbo.aspnet_Users u, dbo.aspnet_Application a
 				return null; /* should we let the exception through? */
 			}
 			finally {
-				if (reader != null)
-					reader.Close ();
+				query.Connection = null;
 			}
 		}
 
