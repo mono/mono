@@ -1,3 +1,7 @@
+2006-08-29 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ButtonTest.cs: New tests were added
+
 2006-08-27 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* TreeViewTest.cs: New test was added, removed NotWorking attributes

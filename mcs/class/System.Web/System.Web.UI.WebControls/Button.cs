@@ -117,16 +117,15 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Themeable (false)]
 		[DefaultValue ("")]
-		[MonoTODO]
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual string OnClientClick 
 		{
 			get {
-				throw new NotImplementedException ();
+				return ViewState.GetString ("OnClientClick", "");
 			}
 			set {
-				throw new NotImplementedException ();
+				ViewState ["OnClientClick"] = value;
 			}
 		}
 
@@ -151,25 +150,57 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[DefaultValue (true)]
 		[Themeable (false)]
-		[MonoTODO]
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual bool UseSubmitBehavior 
 		{
 			get {
-				throw new NotImplementedException ();
+				return ViewState.GetBool ("UseSubmitBehavior", true);
 			}
 			set {
-				throw new NotImplementedException ();
+				ViewState ["UseSubmitBehavior"] = value;
 			}
 		}
 #endif		
 
-		protected override void AddAttributesToRender (HtmlTextWriter writer)
-		{
+		protected override void AddAttributesToRender (HtmlTextWriter writer) {
 			if (Page != null)
 				Page.VerifyRenderingInServerForm (this);
 
+#if NET_2_0
+			writer.AddAttribute (HtmlTextWriterAttribute.Type, UseSubmitBehavior ? "submit" : "button");
+			writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
+			writer.AddAttribute (HtmlTextWriterAttribute.Value, Text);
+			if (!Enabled)
+				writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
+			if (ToolTip.Length > 0)
+				writer.AddAttribute (HtmlTextWriterAttribute.Title, ToolTip);
+
+			string onclick = OnClientClick;
+			onclick = EnsureEndsWithSemicolon (onclick);
+			if (Attributes ["onclick"] != null) {
+				onclick = EnsureEndsWithSemicolon (onclick + Attributes ["onclick"]);
+				Attributes.Remove ("onclick");
+			}
+
+			if (Page != null) {
+				bool doValidate = CausesValidation && Page.AreValidatorsUplevel ();
+				if (doValidate || PostBackUrl.Length>0) {
+					PostBackOptions options = new PostBackOptions (this);
+					options.RequiresJavaScriptProtocol = false;
+					options.ClientSubmit = !UseSubmitBehavior;
+					options.ActionUrl = Page.ResolveClientUrl (PostBackUrl);
+					options.PerformValidation = doValidate;
+					options.ValidationGroup = ValidationGroup;
+					onclick += Page.ClientScript.GetPostBackEventReference (options);
+				}
+				else if (!UseSubmitBehavior)
+					onclick += Page.ClientScript.GetPostBackEventReference (this, "");
+			}
+
+			if (onclick.Length > 0)
+				writer.AddAttribute (HtmlTextWriterAttribute.Onclick, onclick);
+#else
 			writer.AddAttribute (HtmlTextWriterAttribute.Type, "submit");
 			writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
 			writer.AddAttribute (HtmlTextWriterAttribute.Value, Text);
@@ -186,11 +217,18 @@ namespace System.Web.UI.WebControls {
 				writer.AddAttribute (HtmlTextWriterAttribute.Onclick, onclick + csm.GetClientValidationEvent ());
 				writer.AddAttribute ("language", "javascript");
 			}
+#endif
 
 			base.AddAttributesToRender (writer);
 		}
 
 #if NET_2_0
+		private static string EnsureEndsWithSemicolon (string onclick) {
+			if (onclick != null && onclick.Length > 0 && !onclick.EndsWith (";"))
+				return onclick += ";";
+			return onclick;
+		}
+
 		[MonoTODO]
 		protected virtual PostBackOptions GetPostBackOptions ()
 		{

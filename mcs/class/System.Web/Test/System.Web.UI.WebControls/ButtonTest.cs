@@ -36,6 +36,8 @@ using System.Globalization;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using MonoTests.SystemWeb.Framework;
+using MonoTests.stand_alone.WebHarness;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -83,7 +85,13 @@ namespace MonoTests.System.Web.UI.WebControls
 
 #if NET_2_0
 			p.ValidationGroup = "VG1";
+			p.UseSubmitBehavior = false;
+			p.OnClientClick = "ClientClick()";
+			p.PostBackUrl = "PostBackUrl";
 			Assert.AreEqual (p.ValidationGroup, "VG1", "A3");
+			Assert.AreEqual (false, p.UseSubmitBehavior, "ViewState_UseSubmitBehavior#original");
+			Assert.AreEqual ("ClientClick()", p.OnClientClick, "ViewState_OnClientClick#original");
+			Assert.AreEqual ("PostBackUrl", p.PostBackUrl, "ViewState_PostBackUrl#original");
 #endif
 
 			object state = p.SaveState ();
@@ -94,6 +102,9 @@ namespace MonoTests.System.Web.UI.WebControls
 
 #if NET_2_0
 			Assert.AreEqual (copy.ValidationGroup, "VG1", "A5");
+			Assert.AreEqual (false, copy.UseSubmitBehavior, "ViewState_UseSubmitBehavior#copy");
+			Assert.AreEqual ("ClientClick()", p.OnClientClick, "ViewState_OnClientClick#copy");
+			Assert.AreEqual ("PostBackUrl", p.PostBackUrl, "ViewState_PostBackUrl#copy");
 #endif
 		}
 
@@ -124,6 +135,27 @@ namespace MonoTests.System.Web.UI.WebControls
 			string str = tw.ToString ();
 			Assert.AreEqual (-1, str.IndexOf ("hola"), "hola");
 		}
+
+#if NET_2_0
+		[Test]
+		public void Button_Render2 () {
+			StringWriter sw = new StringWriter ();
+			HtmlTextWriter tw = new HtmlTextWriter (sw);
+			
+			Button b = new Button ();
+			b.ID = "MyButton";
+			b.Text = "Hello";
+			b.UseSubmitBehavior = false;
+			b.Enabled = false;
+			b.ToolTip = "Hello_ToolTip";
+			b.RenderControl (tw);
+			
+			string strTarget = "<input type=\"button\" name=\"MyButton\" value=\"Hello\" disabled=\"disabled\" title=\"Hello_ToolTip\" />";
+			string str = sw.ToString();
+			HtmlDiff.AssertAreEqual (strTarget, str, "Button_Render2");
+		}
+#endif
+
 	}
 }
 

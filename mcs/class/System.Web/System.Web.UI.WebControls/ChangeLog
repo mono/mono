@@ -1,3 +1,7 @@
+2006-08-29 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Button.cs: implemented 2.0 features
+
 2006-08-28 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Menu.cs: refactoring
