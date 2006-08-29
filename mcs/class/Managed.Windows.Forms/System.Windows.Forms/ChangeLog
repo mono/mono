@@ -8,6 +8,8 @@
 	they aren't always the same thing, when the mouse is down on a
 	node it is hilighted, but not selected yet.
 	- Do the HideSelection stuff right
+	- Need to focus on rbutton mouse down. And redraw selection when
+	right click is mouse upped.
 
 2006-08-29  Mike Kestner  <mkestner@novell.com>
 

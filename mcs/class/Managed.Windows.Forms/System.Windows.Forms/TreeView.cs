@@ -1529,6 +1529,9 @@ namespace System.Windows.Forms {
 
 		private void MouseDownHandler (object sender, MouseEventArgs e)
 		{
+			if (e.Button == MouseButtons.Right)
+				Focus ();
+
 			TreeNode node = GetNodeAt (e.Y);
 			if (node == null)
 				return;
@@ -1560,7 +1563,10 @@ namespace System.Windows.Forms {
 					invalid = Bloat (highlighted_node.Bounds);
 				}
 				*/
-				invalid = Rectangle.Union (Bloat (old_highlighted.Bounds), highlighted_node.Bounds);
+				if (old_highlighted != null)
+					invalid = Rectangle.Union (Bloat (old_highlighted.Bounds), highlighted_node.Bounds);
+				else
+					invalid = highlighted_node.Bounds;
 				Invalidate (invalid);
 			} 
 		}
@@ -1573,6 +1579,11 @@ namespace System.Windows.Forms {
 			if (!select_mmove)
 				return;
 
+			if (e.Button == MouseButtons.Right) {
+				Invalidate (highlighted_node.Bounds);
+				highlighted_node = selected_node;
+				Invalidate (selected_node.Bounds);
+			}
 			select_mmove = false;
 
 			TreeViewCancelEventArgs ce = new TreeViewCancelEventArgs (selected_node, false, TreeViewAction.ByMouse);
@@ -1595,8 +1606,6 @@ namespace System.Windows.Forms {
 				highlighted_node = focused_node;
 				selected_node = focused_node;
 			}
-
-			
 		}
 
 		private void MouseMoveHandler (object sender, MouseEventArgs e) {
@@ -1632,7 +1641,6 @@ namespace System.Windows.Forms {
 			Invalidate (focused_node.Bounds);
 
 			highlighted_node = selected_node;
-			selected_node = selected_node;
 			focused_node = selected_node;
 
 			select_mmove = false;
