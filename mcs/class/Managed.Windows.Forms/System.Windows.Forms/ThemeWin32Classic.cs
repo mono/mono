@@ -1829,6 +1829,20 @@ namespace System.Windows.Forms
 									       sub_item_text_rect, format);
 						}
 					}
+
+					// Fill in selection for remaining columns if Column.Count > SubItems.Count
+					if (item.Selected && (control.Focused || !control.HideSelection) && control.FullRowSelect) {
+						for (int index = count; index < control.Columns.Count; index++)
+						{
+							col = control.Columns [index];
+							sub_item_rect.X = col.Rect.X - control.h_marker;
+							sub_item_rect.Width = col.Wd;
+							if (control.Focused)
+								dc.FillRectangle (SystemBrushes.Highlight, sub_item_rect);
+							else
+								dc.FillRectangle (SystemBrushes.Control, sub_item_rect);
+						}
+					}
 				}
 			}
 			
