@@ -5,6 +5,10 @@
 
 	* exceptions-s390x.c: Cosmetic change.
 
+	* tramp-s390.c: Fix warning.
+
+	* cpu-s390.md: Correct length of mul_imm.
+
 Wed Aug 23 19:24:00 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* aot-compiler.c: added binary writer with ELF backend
