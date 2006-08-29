@@ -2686,6 +2686,11 @@ namespace System.Windows.Forms {
 				ActiveWindow = IntPtr.Zero;
 			}
 
+			if (FocusWindow == handle) {
+				SendMessage(handle, Msg.WM_KILLFOCUS, IntPtr.Zero, IntPtr.Zero);
+				FocusWindow = IntPtr.Zero;
+			}
+
 			SendWMDestroyMessages(Control.ControlNativeWindow.ControlFromHandle(hwnd.Handle));
 
 			lock (XlibLock) {
@@ -3436,6 +3441,11 @@ namespace System.Windows.Forms {
 						if (ActiveWindow == hwnd.client_window) {
 							SendMessage(hwnd.client_window, Msg.WM_ACTIVATE, (IntPtr)WindowActiveFlags.WA_INACTIVE, IntPtr.Zero);
 							ActiveWindow = IntPtr.Zero;
+						}
+
+						if (FocusWindow == hwnd.client_window) {
+							SendMessage(hwnd.client_window, Msg.WM_KILLFOCUS, IntPtr.Zero, IntPtr.Zero);
+							FocusWindow = IntPtr.Zero;
 						}
 
 						if (Caret.Window == hwnd.client_window) {

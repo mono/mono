@@ -1,3 +1,7 @@
+2006-08-29  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11.cs: when destroying the FocusWindow, send KILLFOCUS.
+
 2006-08-29  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Need to track selected node and highlighted node,
