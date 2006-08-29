@@ -751,6 +751,15 @@ namespace System.Windows.Forms {
 				decorations = 0;
 			}
 
+			if ((cp.Style & (int)WindowStyles.WS_DLGFRAME) == (int)WindowStyles.WS_DLGFRAME) {
+				decorations ^= MotifDecorations.Menu;
+			}
+
+			if ((cp.Style & (int)(WindowStyles.WS_CAPTION | WindowStyles.WS_BORDER | WindowStyles.WS_DLGFRAME)) == 0) {
+				functions = 0;
+				decorations = 0;
+			}
+
 			if ((functions & MotifFunctions.Resize) == 0) {
 				hwnd.fixed_size = true;
 				XplatUI.SetWindowMinMax(hwnd.Handle, new Rectangle(cp.X, cp.Y, cp.Width, cp.Height), new Size(cp.Width, cp.Height), new Size(cp.Width, cp.Height));
