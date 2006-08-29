@@ -4294,7 +4294,8 @@ switch_block
 opt_switch_sections
 	: /* empty */ 		
           {
-	  	Report.Error (1522, lexer.Location, "Empty switch block"); 
+	  	Report.Warning (1522, 1, lexer.Location, "Empty switch block"); 
+		$$ = new ArrayList ();
 	  }
 	| switch_sections
 	;
