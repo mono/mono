@@ -122,7 +122,7 @@ namespace System.IO {
 		
 		
 		public FileStream OpenRead () {
-			return Open (FileMode.Open, FileAccess.Read);
+			return Open (FileMode.Open, FileAccess.Read, FileShare.Read);
 		}
 
 		public FileStream OpenWrite () {
