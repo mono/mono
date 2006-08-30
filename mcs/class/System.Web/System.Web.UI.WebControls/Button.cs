@@ -171,15 +171,11 @@ namespace System.Web.UI.WebControls {
 			writer.AddAttribute (HtmlTextWriterAttribute.Type, UseSubmitBehavior ? "submit" : "button");
 			writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
 			writer.AddAttribute (HtmlTextWriterAttribute.Value, Text);
-			if (!Enabled)
-				writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
-			if (ToolTip.Length > 0)
-				writer.AddAttribute (HtmlTextWriterAttribute.Title, ToolTip);
 
 			string onclick = OnClientClick;
-			onclick = EnsureEndsWithSemicolon (onclick);
+			onclick = ClientScriptManager.EnsureEndsWithSemicolon (onclick);
 			if (Attributes ["onclick"] != null) {
-				onclick = EnsureEndsWithSemicolon (onclick + Attributes ["onclick"]);
+				onclick = ClientScriptManager.EnsureEndsWithSemicolon (onclick + Attributes ["onclick"]);
 				Attributes.Remove ("onclick");
 			}
 
@@ -223,12 +219,6 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		private static string EnsureEndsWithSemicolon (string onclick) {
-			if (onclick != null && onclick.Length > 0 && !onclick.EndsWith (";"))
-				return onclick += ";";
-			return onclick;
-		}
-
 		[MonoTODO]
 		protected virtual PostBackOptions GetPostBackOptions ()
 		{
@@ -315,7 +305,6 @@ namespace System.Web.UI.WebControls {
 		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[Themeable (false)]
 		[UrlProperty("*.aspx")]
-		[MonoTODO]
 		public virtual string PostBackUrl {
 			get {
 				return ViewState.GetString ("PostBackUrl", "");
