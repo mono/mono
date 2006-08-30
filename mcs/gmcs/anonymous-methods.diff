@@ -750,7 +750,7 @@ Index: iterators.cs
  				expr = Convert.ImplicitConversionRequired (
  					ec, expr, iterator.IteratorType, loc);
  				if (expr == null)
-@@ -119,13 +122,473 @@
+@@ -119,13 +122,478 @@
  		}
  	}
  
@@ -1170,6 +1170,11 @@ Index: iterators.cs
 +				return base.DoResolveInternal (ec);
 +			}
 +
++			protected override void DoEmit (EmitContext ec)
++			{
++				DoEmitInstance (ec);
++			}
++
 +			protected override void EmitParameterReference (EmitContext ec,
 +									CapturedParameter cp)
 +			{
@@ -1229,7 +1234,7 @@ Index: iterators.cs
  		public readonly bool IsStatic;
  
  		//
-@@ -139,7 +602,6 @@
+@@ -139,7 +607,6 @@
  		// Context from the original method
  		//
  		GenericMethod generic_method;
@@ -1237,7 +1242,7 @@ Index: iterators.cs
  		TypeExpr current_type;
  		Type this_type;
  		Parameters parameters;
-@@ -147,7 +609,7 @@
+@@ -147,7 +614,7 @@
  		IMethodData orig_method;
  
  		MethodInfo dispose_method;
@@ -1246,7 +1251,7 @@ Index: iterators.cs
  		Constructor ctor;
  		CaptureContext cc;
  
-@@ -156,25 +618,25 @@
+@@ -156,25 +623,25 @@
  		Expression generic_enumerator_type;
  		Expression generic_enumerable_type;
  		TypeArguments generic_args;
@@ -1278,7 +1283,7 @@ Index: iterators.cs
  		{
  			ILGenerator ig = ec.ig;
  
-@@ -192,7 +654,7 @@
+@@ -192,7 +659,7 @@
  			resume_points.Add (entry_point);
  			entry_point.Define (ig);
  
@@ -1287,7 +1292,7 @@ Index: iterators.cs
  
  			EmitYieldBreak (ig);
  
-@@ -203,7 +665,7 @@
+@@ -203,7 +670,7 @@
  				labels [i] = ((ResumePoint) resume_points [i]).Label;
  
  			ig.Emit (OpCodes.Ldarg_0);
@@ -1296,7 +1301,7 @@ Index: iterators.cs
  			ig.Emit (OpCodes.Switch, labels);
  
  			Label end = ig.DefineLabel ();
-@@ -221,7 +683,7 @@
+@@ -221,7 +688,7 @@
  			ig.BeginFaultBlock ();
  
  			ig.Emit (OpCodes.Ldarg_0);
@@ -1305,7 +1310,7 @@ Index: iterators.cs
  
  			ig.EndExceptionBlock ();
  
-@@ -264,12 +726,12 @@
+@@ -264,12 +731,12 @@
  
  			ig.MarkLabel (dispatcher);
  			ig.Emit (OpCodes.Ldarg_0);
@@ -1320,7 +1325,7 @@ Index: iterators.cs
  
  			ig.MarkLabel (end);
  		}
-@@ -305,13 +767,13 @@
+@@ -305,13 +772,13 @@
  			// Store the new current
  			ig.Emit (OpCodes.Ldarg_0);
  			expr.Emit (ec);
@@ -1336,7 +1341,7 @@ Index: iterators.cs
  
  			// Return ok
  			ig.Emit (OpCodes.Br, move_next_ok);
-@@ -329,726 +791,119 @@
+@@ -329,726 +796,119 @@
  			pc++;
  			ig.Emit (OpCodes.Ldarg_0);
  			IntConstant.EmitInt (ig, pc);
@@ -2129,7 +2134,7 @@ Index: iterators.cs
  		}
  
  		protected class MoveNextStatement : Statement {
-@@ -1062,147 +917,17 @@
+@@ -1062,147 +922,17 @@
  
  			public override bool Resolve (EmitContext ec)
  			{
@@ -2280,7 +2285,7 @@ Index: iterators.cs
  		}
  
  		//
-@@ -1212,10 +937,10 @@
+@@ -1212,10 +942,10 @@
  		class NoCheckReturn : Statement {
  			public Expression Expr;
  		
@@ -2293,7 +2298,7 @@ Index: iterators.cs
  			}
  
  			public override bool Resolve (EmitContext ec)
-@@ -1236,10 +961,47 @@
+@@ -1236,10 +966,47 @@
  			}
  		}
  
@@ -2467,7 +2472,7 @@ Index: anonymous.cs
 ===================================================================
 --- anonymous.cs	(revision 63019)
 +++ anonymous.cs	(working copy)
-@@ -20,297 +20,662 @@
+@@ -20,297 +20,667 @@
  
  namespace Mono.CSharp {
  
@@ -2915,12 +2920,17 @@ Index: anonymous.cs
 +			static int next_id;
 +			int id = ++next_id;
 +
-+			protected void DoEmit (EmitContext ec)
++			protected virtual void DoEmit (EmitContext ec)
 +			{
 +				if (ec.CurrentBlock.Toplevel == Scope.ScopeBlock.Toplevel)
-+					ec.ig.Emit (OpCodes.Ldloc, scope_instance);
++					DoEmitInstance (ec);
 +				else
 +					ec.ig.Emit (OpCodes.Ldarg_0);
++			}
++
++			protected void DoEmitInstance (EmitContext ec)
++			{
++				ec.ig.Emit (OpCodes.Ldloc, scope_instance);
 +			}
 +
 +			protected virtual void EmitScopeConstructor (EmitContext ec)
@@ -3345,7 +3355,7 @@ Index: anonymous.cs
  		}
  
  		public bool ImplicitStandardConversionExists (Type delegate_type)
-@@ -318,8 +683,9 @@
+@@ -318,8 +688,9 @@
  			if (Parameters == null)
  				return true;
  
@@ -3357,7 +3367,7 @@ Index: anonymous.cs
  			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
  
  			if (Parameters.Count != invoke_pd.Count)
-@@ -338,31 +704,20 @@
+@@ -338,31 +709,20 @@
  		//
  		public Expression Compatible (EmitContext ec, Type delegate_type)
  		{
@@ -3396,7 +3406,7 @@ Index: anonymous.cs
  			if (Parameters == null) {
  				//
  				// We provide a set of inaccessible parameters
-@@ -375,7 +730,9 @@
+@@ -375,7 +735,9 @@
  						"+" + i, invoke_pd.ParameterModifier (i), null, loc);
  				}
  								
@@ -3407,7 +3417,7 @@ Index: anonymous.cs
  			} else {
  				if (Parameters.Count != invoke_pd.Count) {
  					Report.SymbolRelatedToPreviousError (delegate_type);
-@@ -407,8 +764,10 @@
+@@ -407,8 +769,10 @@
  						return null;
  					}
  				}
@@ -3419,7 +3429,7 @@ Index: anonymous.cs
  			//
  			// Second: the return type of the delegate must be compatible with 
  			// the anonymous type.   Instead of doing a pass to examine the block
-@@ -419,135 +778,318 @@
+@@ -419,135 +783,318 @@
  			//MethodBuilder builder = method_data.MethodBuilder;
  			//ILGenerator ig = builder.GetILGenerator ();
  
@@ -3824,7 +3834,7 @@ Index: anonymous.cs
  		}
  	}
  
-@@ -573,69 +1115,40 @@
+@@ -573,69 +1120,40 @@
  		
  		public override void Emit (EmitContext ec)
  		{
@@ -3909,7 +3919,7 @@ Index: anonymous.cs
  		
  		ArrayList locals = new ArrayList ();
  		ArrayList children = new ArrayList ();
-@@ -643,40 +1156,52 @@
+@@ -643,40 +1161,52 @@
  		//
  		// The types and fields generated
  		//
@@ -3984,7 +3994,7 @@ Index: anonymous.cs
  		internal void AddChild (ScopeInfo si)
  		{
  			if (children.Contains (si))
-@@ -703,7 +1228,7 @@
+@@ -703,7 +1233,7 @@
  					children.Remove (child);
  				}
  			}
@@ -3993,7 +4003,7 @@ Index: anonymous.cs
  
  		static int indent = 0;
  
-@@ -719,8 +1244,6 @@
+@@ -719,8 +1249,6 @@
  			Pad ();
  			Console.WriteLine ("START");
  			indent++;
@@ -4002,7 +4012,7 @@ Index: anonymous.cs
  			foreach (LocalInfo li in locals){
  				Pad ();
  				Console.WriteLine ("var {0}", MakeFieldName (li.Name));
-@@ -733,168 +1256,18 @@
+@@ -733,168 +1261,18 @@
  			Console.WriteLine ("END");
  		}
  
@@ -4175,7 +4185,7 @@ Index: anonymous.cs
  		public static void CheckCycles (string msg, ScopeInfo s)
  		{
  			ArrayList l = new ArrayList ();
-@@ -935,6 +1308,173 @@
+@@ -935,6 +1313,173 @@
  
  			return sb.ToString ();
  		}
@@ -4349,7 +4359,7 @@ Index: anonymous.cs
  	}
  
  	//
-@@ -952,7 +1492,8 @@
+@@ -952,7 +1497,8 @@
  		//
  		// Points to the toplevel block that owns this CaptureContext
  		//
@@ -4359,7 +4369,7 @@ Index: anonymous.cs
  
  		//
  		// All the scopes we capture
-@@ -965,25 +1506,23 @@
+@@ -965,25 +1511,23 @@
  		ArrayList roots = new ArrayList ();
  		
  		bool have_captured_vars = false;
@@ -4391,7 +4401,7 @@ Index: anonymous.cs
  		}
  
  		void DoPath (StringBuilder sb, CaptureContext cc)
-@@ -995,17 +1534,6 @@
+@@ -995,17 +1539,6 @@
  			sb.Append (cc.cc_id.ToString ());
  		}
  
@@ -4409,7 +4419,7 @@ Index: anonymous.cs
  		public override string ToString ()
  		{
  			StringBuilder sb = new StringBuilder ();
-@@ -1017,7 +1545,7 @@
+@@ -1017,7 +1550,7 @@
  
  		public ToplevelBlock ParentToplevel {
  			get {
@@ -4418,7 +4428,7 @@ Index: anonymous.cs
  			}
  		}
  
-@@ -1029,124 +1557,257 @@
+@@ -1029,124 +1562,257 @@
  			}
  		}
  
@@ -4727,7 +4737,7 @@ Index: anonymous.cs
  		}
  
  		public bool HaveCapturedVariables {
-@@ -1164,21 +1825,23 @@
+@@ -1164,21 +1830,23 @@
  			}
  		}
  
@@ -4758,7 +4768,7 @@ Index: anonymous.cs
  				return true;
  			
  			if (captured_parameters != null)
-@@ -1186,224 +1849,53 @@
+@@ -1186,224 +1854,53 @@
  			return false;
  		}
  
@@ -5008,7 +5018,7 @@ Index: anonymous.cs
  		}
  
  		//
-@@ -1412,7 +1904,10 @@
+@@ -1412,7 +1909,10 @@
  		//
  		bool IsAncestor (ScopeInfo probe, ScopeInfo scope)
  		{
@@ -5019,7 +5029,7 @@ Index: anonymous.cs
  				if (probe.ScopeBlock == b)
  					return true;
  			}
-@@ -1474,7 +1969,7 @@
+@@ -1474,7 +1974,7 @@
  			}
  			return parent;
  		}
@@ -5028,7 +5038,7 @@ Index: anonymous.cs
  		//
  		// Links all the scopes
  		//
-@@ -1483,7 +1978,9 @@
+@@ -1483,7 +1983,9 @@
  		{
  			if (linked)
  				return;
@@ -5039,7 +5049,7 @@ Index: anonymous.cs
  			linked = true;
  			if (ParentCaptureContext != null)
  				ParentCaptureContext.LinkScopes ();
-@@ -1492,9 +1989,14 @@
+@@ -1492,9 +1994,14 @@
  			ScopeInfo [] scope_list = new ScopeInfo [scope_count];
  			scopes.Values.CopyTo (scope_list, 0);
  
@@ -5054,7 +5064,7 @@ Index: anonymous.cs
  				if (parent == null){
  					roots.Add (scope_list [i]);
  					continue;
-@@ -1504,17 +2006,28 @@
+@@ -1504,17 +2011,28 @@
  				parent.AddChild (scope_list [i]);
  			}
  
@@ -5084,7 +5094,7 @@ Index: anonymous.cs
  					found = true;
  					
  					// Found, link all the roots to this root
-@@ -1533,6 +2046,13 @@
+@@ -1533,6 +2051,13 @@
  					throw new Exception ("Internal compiler error: Did not find the parent for the root in the chain");
  				}
  			}
