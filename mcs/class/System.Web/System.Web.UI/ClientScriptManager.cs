@@ -82,6 +82,9 @@ namespace System.Web.UI
 			if (options.ActionUrl == null && options.ValidationGroup == null && !options.TrackFocus && 
 				!options.AutoPostBack && !options.PerformValidation)
 			{
+				if (!options.ClientSubmit)
+					return null;
+
 				if (options.RequiresJavaScriptProtocol)
 					return GetPostBackClientHyperlink (options.TargetControl, options.Argument);
 				else

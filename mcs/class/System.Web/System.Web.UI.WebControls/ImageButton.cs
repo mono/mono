@@ -141,14 +141,13 @@ namespace System.Web.UI.WebControls {
 
 		[DefaultValue ("")]
 		[Themeable (false)]
-		[MonoTODO]
 		public virtual string OnClientClick 
 		{
 			get {
-				throw new NotImplementedException ();
+				return ViewState.GetString ("OnClientClick", "");
 			}
 			set {
-				throw new NotImplementedException ();
+				ViewState ["OnClientClick"] = value;
 			}
 		}
 
@@ -196,14 +195,14 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO]
+		// Gets or sets the value of the ImageButton control's AlternateText property. (MSDN)
 		protected virtual string Text 
 		{
 			get {
-				throw new NotImplementedException ();
+				return AlternateText;
 			}
 			set {
-				throw new NotImplementedException ();
+				AlternateText = value;
 			}
 		}
 #endif		
@@ -215,20 +214,45 @@ namespace System.Web.UI.WebControls {
 
 			writer.AddAttribute (HtmlTextWriterAttribute.Type, "image");
 			writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
+#if NET_2_0
+			string onclick = OnClientClick;
+			onclick = ClientScriptManager.EnsureEndsWithSemicolon (onclick);
+			if (Attributes ["onclick"] != null) {
+				onclick = ClientScriptManager.EnsureEndsWithSemicolon (onclick + Attributes ["onclick"]);
+				Attributes.Remove ("onclick");
+			}
+
+			if (Page != null) {
+				PostBackOptions options = GetPostBackOptions ();
+				onclick += Page.ClientScript.GetPostBackEventReference (options);
+			}
+
+			if (onclick.Length > 0)
+				writer.AddAttribute (HtmlTextWriterAttribute.Onclick, onclick);
+#else
 			if (CausesValidation && Page != null && Page.AreValidatorsUplevel ()) {
 				ClientScriptManager csm = new ClientScriptManager (Page);
 				writer.AddAttribute (HtmlTextWriterAttribute.Onclick, csm.GetClientValidationEvent ());
 				writer.AddAttribute ("language", "javascript");
 			}
+#endif
 			base.AddAttributesToRender (writer);
 		}
 
 #if NET_2_0
 		protected virtual PostBackOptions GetPostBackOptions ()
 		{
-			return new PostBackOptions(this, PostBackUrl, null, false, true,
-						   false, true, CausesValidation,
-						   ValidationGroup);
+			PostBackOptions options = new PostBackOptions (this);
+			options.ActionUrl = (PostBackUrl.Length > 0 ? PostBackUrl : null);
+			options.ValidationGroup = null;
+			options.Argument = "";
+			options.ClientSubmit = false;
+			options.RequiresJavaScriptProtocol = false;
+			options.PerformValidation = CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup);
+			if (options.PerformValidation)
+				options.ValidationGroup = ValidationGroup;
+
+			return options;
 		}
 #endif		
 
@@ -355,14 +379,13 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		string IButtonControl.Text 
 		{
 			get {
-				throw new NotImplementedException ();
+				return Text;
 			}
 			set {
-				throw new NotImplementedException ();
+				Text = value;
 			}
 		}
 

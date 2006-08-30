@@ -1394,7 +1394,15 @@ public class Page : TemplateControl, IHttpHandler
 		ValidateCollection (_validators);
 	}
 
+#if NET_2_0
+	internal bool AreValidatorsUplevel () {
+		return AreValidatorsUplevel (String.Empty);
+	}
+
+	internal bool AreValidatorsUplevel (string valGroup)
+#else
 	internal virtual bool AreValidatorsUplevel ()
+#endif
 	{
 		bool uplevel = false;
 
@@ -1402,6 +1410,10 @@ public class Page : TemplateControl, IHttpHandler
 			BaseValidator bv = v as BaseValidator;
 			if (bv == null) continue;
 
+#if NET_2_0
+			if (valGroup != bv.ValidationGroup)
+				continue;
+#endif
 			if (bv.GetRenderUplevel()) {
 				uplevel = true;
 				break;

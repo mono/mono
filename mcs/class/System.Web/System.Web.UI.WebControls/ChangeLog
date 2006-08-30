@@ -1,5 +1,12 @@
 2006-08-30 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* ImageButton.cs: implemented 2.0 features
+	OnClientClick attached to onclick attribute.
+	PostBackUrl, CausesValidation, ValidationGroup - used PostBackOptions
+	generate onclick attribute.
+
+2006-08-30 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* LinkButton.cs: typo fix
 
 2006-08-30 Igor Zelmanovich <igorz@mainsoft.com>
