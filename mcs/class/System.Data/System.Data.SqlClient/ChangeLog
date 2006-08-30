@@ -1,3 +1,7 @@
+2006-08-30  Nagappan A  <anagappan@novell.com>
+
+	* SqlConnection.cs: Implemented SqlConnection.GetSchema ().
+
 2006-09-08  Konstantin Triger <kostat@mainsoft.com>
 
 	* SqlClientFactory.cs: implemented SqlClientFactory.CreateConnection ().
