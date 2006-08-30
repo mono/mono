@@ -1322,6 +1322,11 @@
 		<Reference Include="System.Configuration"/>
 	</ItemGroup>
 	<ItemGroup>
+		<EmbeddedResource Include="..\..\..\mono\data\browscap.ini">
+			<Link>browscap.ini</Link>
+		</EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
 		<Folder Include="Properties\"/>
 	</ItemGroup>
 	<Import Project="$(MSBuildBinPath)\Microsoft.csharp.targets"/>
