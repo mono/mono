@@ -1,5 +1,10 @@
 2006-08-30 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Wizard.cs: refactoring: Button, ImageButton and LinkButton are used
+	insted internal DataControlButton. 
+
+2006-08-30 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Button.cs: implemented GetPostBackOptions + refactoring
 
 2006-08-30 Igor Zelmanovich <igorz@mainsoft.com>

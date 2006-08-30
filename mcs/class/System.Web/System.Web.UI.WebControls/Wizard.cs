@@ -998,14 +998,48 @@ namespace System.Web.UI.WebControls
 		
 		Control CreateButton (string id, string command, ButtonType type, string text, string image, Style style)
 		{
-			DataControlButton b = new DataControlButton (this, text, image, command, "", false);
+			WebControl b;
+			switch (type) {
+			case ButtonType.Button:
+				b = CreateStandartButton ();
+				break;
+			case ButtonType.Image:
+				b = CreateImageButton (image);
+				break;
+			case ButtonType.Link:
+				b = CreateLinkButton ();
+				break;
+			default:
+				throw new ArgumentOutOfRangeException ("type");
+			}
+			
 			b.ID = id;
-			b.ButtonType = type;
+			b.EnableTheming = false;
+			((IButtonControl) b).CommandName = command;
+			((IButtonControl) b).Text = text;
+			((IButtonControl) b).ValidationGroup = ID;
+			
 			RegisterApplyStyle (b, NavigationButtonStyle);
 			RegisterApplyStyle (b, style);
 			return b;
 		}
-		
+
+		WebControl CreateStandartButton () {
+			Button btn = new Button ();
+			return btn;
+		}
+
+		WebControl CreateImageButton (string imageUrl) {
+			ImageButton img = new ImageButton ();
+			img.ImageUrl = imageUrl;
+			return img;
+		}
+
+		WebControl CreateLinkButton () {
+			LinkButton link = new LinkButton ();
+			return link;
+		}
+
 		void AddTemplateButtonBar (TableCell cell, ITemplate template, params string[] buttonIds)
 		{
 			template.InstantiateIn (cell);
