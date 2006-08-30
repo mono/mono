@@ -308,7 +308,7 @@ namespace System.IO {
 			{
 				cbEncoded = base_stream.Read (input_buffer, 0, buffer_size);
 				
-				if (cbEncoded == 0)
+				if (cbEncoded <= 0)
 					return 0;
 
 				mayBlock = (cbEncoded < buffer_size);
