@@ -1,3 +1,16 @@
+2006-08-30  Martin Baulig  <martin@ximian.com>
+
+	Committing a patch from Joachim Ante <joe@otee.dk>:
+	Add support for binary data symbol stores.
+
+	* debug-mono-symfile.c
+	(mono_debug_open_mono_symbol_file): Renamed into
+	mono_debug_open_mono_symbols() and added `raw_contents' and `size'
+	arguments.
+
+	* mono-debug.c
+	(mono_debug_open_image): Added `raw_contents' and `size' args.
+	(mono_debug_init_2_memory): New public function.
 
 Fri Aug 25 18:25:23 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
