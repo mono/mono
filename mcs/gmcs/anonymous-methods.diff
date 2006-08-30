@@ -2065,7 +2065,7 @@ Index: anonymous.cs
 ===================================================================
 --- anonymous.cs	(revision 63019)
 +++ anonymous.cs	(working copy)
-@@ -20,297 +20,659 @@
+@@ -20,297 +20,662 @@
  
  namespace Mono.CSharp {
  
@@ -2515,7 +2515,10 @@ Index: anonymous.cs
 +
 +			protected void DoEmit (EmitContext ec)
 +			{
-+				ec.ig.Emit (OpCodes.Ldloc, scope_instance);
++				if (ec.CurrentBlock.Toplevel == Scope.ScopeBlock.Toplevel)
++					ec.ig.Emit (OpCodes.Ldloc, scope_instance);
++				else
++					ec.ig.Emit (OpCodes.Ldarg_0);
 +			}
 +
 +			protected virtual void EmitScopeConstructor (EmitContext ec)
@@ -2766,7 +2769,7 @@ Index: anonymous.cs
 +			Field pfield = Parent is CompilerGeneratedClass ? parent_link : this_field;
 +			if (pfield != null) {
 +				ec.ig.Emit (OpCodes.Ldarg_0);
-+				ec.ig.Emit (OpCodes.Ldarg_1);
++				ec.ig.Emit (OpCodes.Ldarg, pos);
 +				ec.ig.Emit (OpCodes.Stfld, pfield.FieldBuilder);
 +				pos++;
 +			}
@@ -2940,7 +2943,7 @@ Index: anonymous.cs
  		}
  
  		public bool ImplicitStandardConversionExists (Type delegate_type)
-@@ -318,8 +680,9 @@
+@@ -318,8 +683,9 @@
  			if (Parameters == null)
  				return true;
  
@@ -2952,7 +2955,7 @@ Index: anonymous.cs
  			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
  
  			if (Parameters.Count != invoke_pd.Count)
-@@ -338,31 +701,20 @@
+@@ -338,31 +704,20 @@
  		//
  		public Expression Compatible (EmitContext ec, Type delegate_type)
  		{
@@ -2991,7 +2994,7 @@ Index: anonymous.cs
  			if (Parameters == null) {
  				//
  				// We provide a set of inaccessible parameters
-@@ -375,7 +727,9 @@
+@@ -375,7 +730,9 @@
  						"+" + i, invoke_pd.ParameterModifier (i), null, loc);
  				}
  								
@@ -3002,7 +3005,7 @@ Index: anonymous.cs
  			} else {
  				if (Parameters.Count != invoke_pd.Count) {
  					Report.SymbolRelatedToPreviousError (delegate_type);
-@@ -407,8 +761,10 @@
+@@ -407,8 +764,10 @@
  						return null;
  					}
  				}
@@ -3014,7 +3017,7 @@ Index: anonymous.cs
  			//
  			// Second: the return type of the delegate must be compatible with 
  			// the anonymous type.   Instead of doing a pass to examine the block
-@@ -419,135 +775,329 @@
+@@ -419,135 +778,329 @@
  			//MethodBuilder builder = method_data.MethodBuilder;
  			//ILGenerator ig = builder.GetILGenerator ();
  
@@ -3430,7 +3433,7 @@ Index: anonymous.cs
  		}
  	}
  
-@@ -573,69 +1123,40 @@
+@@ -573,69 +1126,40 @@
  		
  		public override void Emit (EmitContext ec)
  		{
@@ -3515,7 +3518,7 @@ Index: anonymous.cs
  		
  		ArrayList locals = new ArrayList ();
  		ArrayList children = new ArrayList ();
-@@ -643,40 +1164,59 @@
+@@ -643,40 +1167,59 @@
  		//
  		// The types and fields generated
  		//
@@ -3597,7 +3600,7 @@ Index: anonymous.cs
  		internal void AddChild (ScopeInfo si)
  		{
  			if (children.Contains (si))
-@@ -703,7 +1243,7 @@
+@@ -703,7 +1246,7 @@
  					children.Remove (child);
  				}
  			}
@@ -3606,7 +3609,7 @@ Index: anonymous.cs
  
  		static int indent = 0;
  
-@@ -719,8 +1259,6 @@
+@@ -719,8 +1262,6 @@
  			Pad ();
  			Console.WriteLine ("START");
  			indent++;
@@ -3615,7 +3618,7 @@ Index: anonymous.cs
  			foreach (LocalInfo li in locals){
  				Pad ();
  				Console.WriteLine ("var {0}", MakeFieldName (li.Name));
-@@ -733,168 +1271,18 @@
+@@ -733,168 +1274,18 @@
  			Console.WriteLine ("END");
  		}
  
@@ -3788,7 +3791,7 @@ Index: anonymous.cs
  		public static void CheckCycles (string msg, ScopeInfo s)
  		{
  			ArrayList l = new ArrayList ();
-@@ -935,6 +1323,173 @@
+@@ -935,6 +1326,173 @@
  
  			return sb.ToString ();
  		}
@@ -3962,7 +3965,7 @@ Index: anonymous.cs
  	}
  
  	//
-@@ -952,7 +1507,8 @@
+@@ -952,7 +1510,8 @@
  		//
  		// Points to the toplevel block that owns this CaptureContext
  		//
@@ -3972,7 +3975,7 @@ Index: anonymous.cs
  
  		//
  		// All the scopes we capture
-@@ -965,25 +1521,23 @@
+@@ -965,25 +1524,23 @@
  		ArrayList roots = new ArrayList ();
  		
  		bool have_captured_vars = false;
@@ -4004,7 +4007,7 @@ Index: anonymous.cs
  		}
  
  		void DoPath (StringBuilder sb, CaptureContext cc)
-@@ -995,17 +1549,6 @@
+@@ -995,17 +1552,6 @@
  			sb.Append (cc.cc_id.ToString ());
  		}
  
@@ -4022,7 +4025,7 @@ Index: anonymous.cs
  		public override string ToString ()
  		{
  			StringBuilder sb = new StringBuilder ();
-@@ -1017,7 +1560,7 @@
+@@ -1017,7 +1563,7 @@
  
  		public ToplevelBlock ParentToplevel {
  			get {
@@ -4031,7 +4034,7 @@ Index: anonymous.cs
  			}
  		}
  
-@@ -1029,124 +1572,264 @@
+@@ -1029,124 +1575,264 @@
  			}
  		}
  
@@ -4343,7 +4346,7 @@ Index: anonymous.cs
  		}
  
  		public bool HaveCapturedVariables {
-@@ -1164,21 +1847,23 @@
+@@ -1164,21 +1850,23 @@
  			}
  		}
  
@@ -4374,7 +4377,7 @@ Index: anonymous.cs
  				return true;
  			
  			if (captured_parameters != null)
-@@ -1186,224 +1871,57 @@
+@@ -1186,224 +1874,53 @@
  			return false;
  		}
  
@@ -4556,10 +4559,10 @@ Index: anonymous.cs
 -			}
 -			ILGenerator ig = ec.ig;
 -			CapturedParameter par_info = (CapturedParameter) captured_parameters [name];
-+			if (ec.CurrentBlock.Toplevel == root_scope.ScopeBlock)
-+				root_scope.EmitScopeInstance (ec);
-+			else
-+				ec.ig.Emit (OpCodes.Ldarg_0);
++			root_scope.EmitScopeInstance (ec);
++			while (root_scope != scope.Host) {
++				ec.ig.Emit (OpCodes.Ldfld, root_scope.ParentLink.FieldBuilder);
++				root_scope = root_scope.ParentHost;
  
 -			EmitParameterInstance (ec, name);
 -			if (prepare_for_load)
@@ -4569,14 +4572,15 @@ Index: anonymous.cs
 -				ig.Emit (OpCodes.Dup);
 -				temp = new LocalTemporary (par_info.FieldBuilder.FieldType);
 -				temp.Store (ec);
--			}
++				if (root_scope == null)
++					throw new InternalErrorException (
++						"Never found scope {0} starting at block {1}",
++						scope, ec.CurrentBlock.ID);
+ 			}
 -			ig.Emit (OpCodes.Stfld, par_info.FieldBuilder);
 -			if (temp != null)
 -				temp.Emit (ec);
 -		}
-+			while (root_scope != scope.Host) {
-+				ec.ig.Emit (OpCodes.Ldfld, root_scope.ParentLink.FieldBuilder);
-+				root_scope = root_scope.ParentHost;
  
 -		//
 -		// Emits the address for the parameter named `name' within
@@ -4588,15 +4592,13 @@ Index: anonymous.cs
 -			if (cc != this){
 -				cc.EmitAddressOfParameter (ec, name);
 -				return;
-+				if (root_scope == null)
-+					throw new InternalErrorException (
-+						"Never found scope {0} starting at block {1}",
-+						scope, ec.CurrentBlock.ID);
- 			}
+-			}
 -			EmitParameterInstance (ec, name);
 -			CapturedParameter par_info = (CapturedParameter) captured_parameters [name];
 -			ec.ig.Emit (OpCodes.Ldflda, par_info.FieldBuilder);
--		}
++			if (scope != scope.Host)
++				ec.ig.Emit (OpCodes.Ldfld, scope.ScopeInstance.FieldBuilder);
+ 		}
  
 -		//
 -		// The following methods are only invoked on the host for the
@@ -4616,10 +4618,8 @@ Index: anonymous.cs
 -
 -			si.EmitInitScope (target);
 -			si.EmitScopeInstance (ig);
-+			if (scope != scope.Host)
-+				ec.ig.Emit (OpCodes.Ldfld, scope.ScopeInstance.FieldBuilder);
- 		}
- 
+-		}
+-
  		public void RegisterCaptureContext ()
  		{
 -			toplevel_owner.RegisterCaptureContext (this);
@@ -4627,7 +4627,7 @@ Index: anonymous.cs
  		}
  
  		//
-@@ -1412,7 +1930,10 @@
+@@ -1412,7 +1929,10 @@
  		//
  		bool IsAncestor (ScopeInfo probe, ScopeInfo scope)
  		{
@@ -4638,7 +4638,7 @@ Index: anonymous.cs
  				if (probe.ScopeBlock == b)
  					return true;
  			}
-@@ -1474,7 +1995,7 @@
+@@ -1474,7 +1994,7 @@
  			}
  			return parent;
  		}
@@ -4647,7 +4647,7 @@ Index: anonymous.cs
  		//
  		// Links all the scopes
  		//
-@@ -1483,7 +2004,9 @@
+@@ -1483,7 +2003,9 @@
  		{
  			if (linked)
  				return;
@@ -4658,7 +4658,7 @@ Index: anonymous.cs
  			linked = true;
  			if (ParentCaptureContext != null)
  				ParentCaptureContext.LinkScopes ();
-@@ -1492,9 +2015,14 @@
+@@ -1492,9 +2014,14 @@
  			ScopeInfo [] scope_list = new ScopeInfo [scope_count];
  			scopes.Values.CopyTo (scope_list, 0);
  
@@ -4673,7 +4673,7 @@ Index: anonymous.cs
  				if (parent == null){
  					roots.Add (scope_list [i]);
  					continue;
-@@ -1504,17 +2032,28 @@
+@@ -1504,17 +2031,28 @@
  				parent.AddChild (scope_list [i]);
  			}
  
@@ -4703,7 +4703,7 @@ Index: anonymous.cs
  					found = true;
  					
  					// Found, link all the roots to this root
-@@ -1533,6 +2072,13 @@
+@@ -1533,6 +2071,13 @@
  					throw new Exception ("Internal compiler error: Did not find the parent for the root in the chain");
  				}
  			}
