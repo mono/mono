@@ -87,13 +87,12 @@ namespace System.Net {
 		{
 		}
 
-		// true if the we have >= count bytes in this.buffer
+		
+		// Returns 0 if we can keep reading from the base stream,
+		// > 0 if we read something from the buffer.
+		// -1 if we had a content length set and we finished reading that many bytes.
 		int FillFromBuffer (byte [] buffer, int off, int count)
 		{
-			int size = this.length - this.offset;
-			if (size <= 0)
-				return 0;
-
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 			if (off < 0)
@@ -106,9 +105,20 @@ namespace System.Net {
 			if (off > len - count)
 				throw new ArgumentException ("Reading would overrun buffer");
 
-			size = Math.Min (size, count);
+			if (this.available == 0)
+				return -1;
+
+			if (this.length == 0)
+				return 0;
+
+			int size = Math.Min (this.length, count);
+			if (this.available > 0)
+				size = (int) Math.Min (size, this.available);
 			Buffer.BlockCopy (this.buffer, this.offset, buffer, off, size);
 			this.offset += size;
+			this.length -= size;
+			if (this.available > 0)
+				available -= size;
 			return size;
 		}
 
@@ -117,18 +127,11 @@ namespace System.Net {
 			if (disposed)
 				throw new ObjectDisposedException (typeof (RequestStream).ToString ());
 
-			if (available == 0)
-				return 0;
-
 			// Avoid reading past the end of the request to allow
 			// for HTTP pipelining
-			if (available != -1 && count > available)
-				count = (int) available;
-			
 			int nread = FillFromBuffer (buffer, offset, count);
-			if (available != -1)
-				available -= nread;
-			
+			if (nread == -1) // No more bytes available (Content-Length)
+				return 0;
 			if (nread > 0)
 				return nread;
 
@@ -143,7 +146,7 @@ namespace System.Net {
 				throw new ObjectDisposedException (typeof (RequestStream).ToString ());
 
 			int nread = FillFromBuffer (buffer, offset, count);
-			if (nread > 0 || available == 0) {
+			if (nread > 0 || nread == -1) {
 				HttpStreamAsyncResult ares = new HttpStreamAsyncResult ();
 				ares.Buffer = buffer;
 				ares.Offset = offset;
