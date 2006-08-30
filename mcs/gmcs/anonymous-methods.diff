@@ -1092,7 +1092,7 @@ Index: iterators.cs
 +		protected ScopeInitializer GetEnumeratorInitializer (EmitContext ec)
 +		{
 +			ScopeInitializer init = new EnumeratorScopeInitializer (this);
-+			if (init.Resolve (ec) == null)
++			if (!init.Resolve (ec))
 +				throw new InternalErrorException ();
 +			return init;
 +		}
@@ -1100,7 +1100,7 @@ Index: iterators.cs
 +		protected class EnumeratorScopeInitializer : IteratorHostInitializer
 +		{
 +			IteratorHost host;
-+			ExpressionStatement initializer;
++			Statement initializer;
 +
 +			public EnumeratorScopeInitializer (IteratorHost host)
 +				: base (host)
@@ -2069,7 +2069,7 @@ Index: anonymous.cs
 ===================================================================
 --- anonymous.cs	(revision 63019)
 +++ anonymous.cs	(working copy)
-@@ -20,297 +20,721 @@
+@@ -20,297 +20,741 @@
  
  namespace Mono.CSharp {
  
@@ -2399,22 +2399,24 @@ Index: anonymous.cs
 -			for (int i = 1; i < top; i++)
 -				method_scope = Deepest (method_scope, (ScopeInfo) scopes_used [i]);
 +			Report.Debug (64, "EMIT SCOPE INSTANCE", this, GetType (), scope_initializer);
++#if FIXME
 +			if (this is IteratorHost)
 +				ec.ig.Emit (OpCodes.Ldarg_0);
 +			else
 +				scope_initializer.Emit (ec);
++#endif
  		}
  
 -		public ScopeInfo Scope {
 -			get {
 -				if (computed_method_scope)
 -					return method_scope;
-+		public ExpressionStatement GetScopeInitializer (EmitContext ec)
++		public Statement GetScopeInitializer (EmitContext ec)
 +		{
 +			Report.Debug (64, "GET SCOPE INITIALIZER", this, GetType (), scope_initializer);
 +			if (scope_initializer == null) {
 +				scope_initializer = CreateScopeInitializer ();
-+				if (scope_initializer.Resolve (ec) == null)
++				if (!scope_initializer.Resolve (ec))
 +					throw new InternalErrorException ();
 +			}
  
@@ -2451,7 +2453,7 @@ Index: anonymous.cs
  			}
 +
 +			if (Host != this)
-+				scope_instance = Host.CaptureVariable (MakeName ("scope"), ScopeType);
++				scope_instance = Host.CaptureScope (this);
 +
 +			return base.DoPopulateType ();
  		}
@@ -2460,70 +2462,54 @@ Index: anonymous.cs
 -		protected abstract bool CreateMethodHost (EmitContext ec);
  
 -		public abstract void CreateScopeType (EmitContext ec, ScopeInfo scope);
-+		protected abstract class ScopeInitializerBase : ExpressionStatement
++		protected abstract class ScopeInitializerBase : Statement
 +		{
 +			ScopeInfoBase scope;
-+			protected Variable scope_instance;
++			LocalBuilder scope_instance;
 +			ConstructorInfo scope_ctor;
++			protected Type type;
  
 -		public abstract Iterator Iterator {
 -			get;
-+			bool initialized;
-+
 +			protected ScopeInitializerBase (ScopeInfoBase scope)
 +			{
 +				this.scope = scope;
 +				this.loc = scope.Location;
-+				eclass = ExprClass.Value;
 +			}
 +
 +			public ScopeInfoBase Scope {
 +				get { return scope; }
 +			}
 +
-+			public override Expression DoResolve (EmitContext ec)
++			public override bool Resolve (EmitContext ec)
 +			{
-+				if (scope_ctor != null)
-+					return this;
-+
 +				Report.Debug (64, "RESOLVE SCOPE INITIALIZER BASE", this, Scope);
 +
 +				type = Scope.ScopeType;
-+
-+				if (!DoResolveInternal (ec))
-+					throw new InternalErrorException ();
-+
-+				return this;
++				return DoResolveInternal (ec);
 +			}
 +
 +			protected virtual bool DoResolveInternal (EmitContext ec)
 +			{
 +				MethodGroupExpr mg = (MethodGroupExpr) Expression.MemberLookupFinal (
 +					ec, ec.ContainerType, type, ".ctor", MemberTypes.Constructor,
-+					AllBindingFlags | BindingFlags.DeclaredOnly, loc);
++					Expression.AllBindingFlags | BindingFlags.DeclaredOnly, loc);
 +				if (mg == null)
 +					throw new InternalErrorException ();
 +
 +				scope_ctor = (ConstructorInfo) mg.Methods [0];
 +
-+				if (Scope.ScopeInstance != null)
-+					scope_instance = new CapturedField (Scope.ScopeInstance);
-+				else {
-+					LocalBuilder local = ec.ig.DeclareLocal (type);
-+					scope_instance = new CapturedTemporary (Scope, local);
-+				}
++				if (Scope.ScopeInstance == null)
++					scope_instance = ec.ig.DeclareLocal (type);
++
 +				return true;
 +			}
 +
 +			static int next_id;
 +			int id = ++next_id;
 +
-+			protected void DoEmit (EmitContext ec)
++			protected override void DoEmit (EmitContext ec)
 +			{
-+				if (initialized)
-+					return;
-+				initialized = true;
-+
 +				Report.Debug (64, "EMIT SCOPE INIT", this, id,
 +					      Scope, scope_instance, ec);
 +
@@ -2542,26 +2528,21 @@ Index: anonymous.cs
 +
 +			protected virtual void DoEmitInternal (EmitContext ec)
 +			{
-+				scope_instance.EmitInstance (ec);
++				if (Scope != Scope.Host)
++					Scope.Host.EmitScopeInstance (ec);
++				else if (Scope.ScopeInstance != null)
++					ec.ig.Emit (OpCodes.Ldarg_0);
 +				EmitScopeConstructor (ec);
-+				scope_instance.EmitAssign (ec);
-+			}
-+
-+			public override void Emit (EmitContext ec)
-+			{
-+				DoEmit (ec);
-+				scope_instance.EmitInstance (ec);
-+				scope_instance.Emit (ec);
-+			}
-+
-+			public override void EmitStatement (EmitContext ec)
-+			{
-+				DoEmit (ec);
++				if (Scope.ScopeInstance != null)
++					ec.ig.Emit (OpCodes.Stfld, Scope.ScopeInstance.FieldBuilder);
++				else
++					ec.ig.Emit (OpCodes.Stloc, scope_instance);
 +			}
  		}
  
 -		public abstract bool IsIterator {
 -			get;
++#if FIXME
 +		protected class CapturedTemporary : Variable {
 +			public readonly ScopeInfoBase Scope;
 +			public readonly LocalBuilder Local;
@@ -2604,10 +2585,12 @@ Index: anonymous.cs
  		}
 +
 +		protected class CapturedField : Variable {
++			public readonly ScopeInfoBase Scope;
 +			public readonly Field Field;
 +
-+			public CapturedField (Field field)
++			public CapturedField (ScopeInfoBase scope, Field field)
 +			{
++				this.Scope = scope;
 +				this.Field = field;
 +			}
 +
@@ -2623,9 +2606,30 @@ Index: anonymous.cs
 +				get { return true; }
 +			}
 +
++			static int next_id = 0x50;
++
 +			public override void EmitInstance (EmitContext ec)
 +			{
++				int id = next_id++;
++
++				Report.Debug (64, "EMIT CAPTURED FIELD", this, ec,
++					      ec.CurrentBlock, Scope, Scope.Host, id);
++				Report.StackTrace ();
++
 +				ec.ig.Emit (OpCodes.Ldarg_0);
++				ec.ig.Emit (OpCodes.Ldc_I4, id);
++				ec.ig.Emit (OpCodes.Ldc_I4, id);
++				ec.ig.Emit (OpCodes.Div);
++				ec.ig.Emit (OpCodes.Pop);
++
++#if FIXME
++				if (Scope != Scope.Host) {
++					Field field = Scope.Host.GetChildScope (Scope);
++					ec.ig.Emit (OpCodes.Mul);
++					ec.ig.Emit (OpCodes.Ldfld, field.FieldBuilder);
++					ec.ig.Emit (OpCodes.Div);
++				}
++#endif
 +			}
 +
 +			public override void Emit (EmitContext ec)
@@ -2643,6 +2647,7 @@ Index: anonymous.cs
 +				ec.ig.Emit (OpCodes.Ldflda, Field.FieldBuilder);
 +			}
 +		}
++#endif
  	}
  
 -	public class AnonymousMethod : AnonymousContainer
@@ -2665,6 +2670,7 @@ Index: anonymous.cs
 -		public AnonymousMethod (TypeContainer host, Parameters parameters, ToplevelBlock container,
 -					ToplevelBlock block, Location l)
 -			: base (parameters, container, block, l)
++		Hashtable scopes;
 +		TypeExpr parent_type;
 +		CapturedVariable parent_link;
 +		CapturedVariable this_field;
@@ -2703,18 +2709,45 @@ Index: anonymous.cs
  
 -		public override Iterator Iterator {
 -			get { return null; }
-+		protected override ScopeInitializerBase CreateScopeInitializer ()
++		public Field CaptureScope (ScopeInfoBase scope)
 +		{
-+			return new AnonymousMethodHostInitializer (this);
++			Field field = CaptureVariable (MakeName ("scope"), scope.ScopeType);
++			if (scopes == null)
++				scopes = new Hashtable ();
++			scopes.Add (scope, field);
++			return field;
  		}
  
 -		public override bool IsIterator {
 -			get { return false; }
-+		protected override bool DefineNestedTypes ()
++		public Field GetChildScope (ScopeInfoBase scope)
 +		{
++			return (Field) scopes [scope];
+ 		}
+ 
+-		public override void Emit (EmitContext ec)
++		protected override ScopeInitializerBase CreateScopeInitializer ()
+ 		{
+-			// nothing, as we only exist to not do anything.
++			return new AnonymousMethodHostInitializer (this);
+ 		}
+ 
+-		//
+-		// Creates the host for the anonymous method
+-		//
+-		protected override bool CreateMethodHost (EmitContext ec)
++		protected override bool DefineNestedTypes ()
+ 		{
+-			ComputeMethodHost ();
 +			Report.Debug (64, "ANONYMOUS METHOD HOST NESTED",
 +				      this, Name, Parent, Parent.Name, Parent.IsGeneric);
-+
+ 
+-			//
+-			// Crude hack follows: we replace the TypeBuilder during the
+-			// definition to get the method hosted in the right class
+-			//
+-			TypeBuilder current_type = ec.TypeContainer.TypeBuilder;
+-			TypeBuilder type_host = (Scope == null ) ? current_type : Scope.ScopeTypeBuilder;
 +			if (Parent.IsGeneric) {
 +				parent_type = new ConstructedType (
 +					Parent.TypeBuilder, Parent.TypeParameters, Location);
@@ -2724,33 +2757,50 @@ Index: anonymous.cs
 +			} else {
 +				parent_type = new TypeExpression (Parent.TypeBuilder, Location);
 +			}
-+
+ 
+-			if (current_type == null)
+-				throw new Exception ("The current_type is null");
+-			
+-			if (type_host == null)
+-				throw new Exception (String.Format ("Type host is null, method_host is {0}", Scope == null ? "null" : "Not null"));
 +			CompilerGeneratedClass parent = Parent as CompilerGeneratedClass;
 +			if (parent != null)
 +				parent_link = new CapturedVariable (this, "<>parent", parent_type);
-+
-+			return base.DefineNestedTypes ();
- 		}
  
--		public override void Emit (EmitContext ec)
+-			if (current_type != type_host)
+-				method_modifiers = Modifiers.INTERNAL;
++			return base.DefineNestedTypes ();
++		}
+ 
+-			if (current_type == type_host && ec.IsStatic){
+-				method_modifiers |= Modifiers.STATIC;
+-				current_type = null;
+-			} 
 +		protected override bool DoDefineMembers ()
- 		{
--			// nothing, as we only exist to not do anything.
++		{
 +			Report.Debug (64, "ANONYMOUS METHOD HOST DEFINE MEMBERS",
 +				      this, Name, Parent, CompilerGenerated);
-+
+ 
+-			string name = "<#AnonymousMethod>" + anonymous_method_count++;
+-			MemberName member_name;
 +			ArrayList args = new ArrayList ();
 +			if (this is IteratorHost)
 +				args.Add (new Parameter (
 +					TypeManager.int32_type, "$PC", Parameter.Modifier.NONE,
 +					null, Location));
-+
+ 
+-			GenericMethod generic_method = null;
+-			if (TypeParameters != null) {
+-				TypeArguments args = new TypeArguments (loc);
+-				foreach (string t in TypeParameters)
+-					args.Add (new SimpleName (t, loc));
 +			Field pfield = Parent is CompilerGeneratedClass ? parent_link : this_field;
 +			if (pfield != null)
 +				args.Add (new Parameter (
 +					pfield.MemberType, "parent", Parameter.Modifier.NONE,
 +					null, Location));
-+
+ 
+-				member_name = new MemberName (name, args, loc);
 +			if (HostsParameters) {
 +				Hashtable hash = CaptureContext.captured_parameters;
 +				foreach (CapturedParameter cp in hash.Values) {
@@ -2759,7 +2809,12 @@ Index: anonymous.cs
 +							  Parameter.Modifier.NONE, null, Location));
 +				}
 +			}
-+
+ 
+-				generic_method = new GenericMethod (
+-					ec.DeclContainer.NamespaceEntry,
+-					(TypeContainer) ec.TypeContainer, member_name,
+-					new TypeExpression (invoke_mb.ReturnType, loc),
+-					Parameters);
 +			Parameter[] ctor_params = new Parameter [args.Count];
 +			args.CopyTo (ctor_params, 0);
 +			Constructor ctor = new Constructor (
@@ -2768,20 +2823,31 @@ Index: anonymous.cs
 +				new GeneratedBaseInitializer (Location),
 +				Location);
 +			AddConstructor (ctor);
-+
+ 
+-				generic_method.SetParameterInfo (null);
+-			} else
+-				member_name = new MemberName (name, loc);
 +			ctor.Block = new ToplevelBlock (null, Location);
 +			ctor.Block.AddStatement (new TheCtor (this));
-+
-+			return base.DoDefineMembers ();
- 		}
  
--		//
--		// Creates the host for the anonymous method
--		//
--		protected override bool CreateMethodHost (EmitContext ec)
+-			method = new Method (
+-				(TypeContainer) ec.TypeContainer, generic_method,
+-				new TypeExpression (invoke_mb.ReturnType, loc),
+-				method_modifiers, false, member_name, Parameters, null);
+-			method.Block = Block;
++			return base.DoDefineMembers ();
++		}
+ 
+-			//
+-			// Swap the TypeBuilder while we define the method, then restore
+-			//
+-			if (current_type != null)
+-				ec.TypeContainer.TypeBuilder = type_host;
+-			bool res = method.Define ();
+-			if (current_type != null)
+-				ec.TypeContainer.TypeBuilder = current_type;
 +		protected virtual void EmitScopeConstructor (EmitContext ec)
- 		{
--			ComputeMethodHost ();
++		{
 +			int pos = (this is IteratorHost) ? 2 : 1;
 +			Field pfield = Parent is CompilerGeneratedClass ? parent_link : this_field;
 +			if (pfield != null) {
@@ -2791,12 +2857,7 @@ Index: anonymous.cs
 +				pos++;
 +			}
  
--			//
--			// Crude hack follows: we replace the TypeBuilder during the
--			// definition to get the method hosted in the right class
--			//
--			TypeBuilder current_type = ec.TypeContainer.TypeBuilder;
--			TypeBuilder type_host = (Scope == null ) ? current_type : Scope.ScopeTypeBuilder;
+-			return res;
 +			if (HostsParameters) {
 +				Hashtable hash = CaptureContext.captured_parameters;
 +				foreach (CapturedParameter cp in hash.Values) {
@@ -2805,80 +2866,48 @@ Index: anonymous.cs
 +					ec.ig.Emit (OpCodes.Stfld, cp.Field.FieldBuilder);
 +				}
 +			}
-+		}
+ 		}
  
--			if (current_type == null)
--				throw new Exception ("The current_type is null");
--			
--			if (type_host == null)
--				throw new Exception (String.Format ("Type host is null, method_host is {0}", Scope == null ? "null" : "Not null"));
 +		protected class TheCtor : Statement
 +		{
 +			AnonymousMethodHost host;
- 
--			if (current_type != type_host)
--				method_modifiers = Modifiers.INTERNAL;
++
 +			public TheCtor (AnonymousMethodHost host)
 +			{
 +				this.host = host;
 +			}
- 
--			if (current_type == type_host && ec.IsStatic){
--				method_modifiers |= Modifiers.STATIC;
--				current_type = null;
--			} 
++
 +			public override bool Resolve (EmitContext ec)
 +			{
 +				return true;
 +			}
- 
--			string name = "<#AnonymousMethod>" + anonymous_method_count++;
--			MemberName member_name;
++
 +			protected override void DoEmit (EmitContext ec)
 +			{
 +				host.EmitScopeConstructor (ec);
 +			}
 +		}
- 
--			GenericMethod generic_method = null;
--			if (TypeParameters != null) {
--				TypeArguments args = new TypeArguments (loc);
--				foreach (string t in TypeParameters)
--					args.Add (new SimpleName (t, loc));
++
 +		protected class AnonymousMethodHostInitializer : ScopeInitializer
 +		{
 +			AnonymousMethodHost host;
 +			ExpressionStatement parent_init;
- 
--				member_name = new MemberName (name, args, loc);
++
 +			public AnonymousMethodHostInitializer (AnonymousMethodHost host)
 +				: base (host)
 +			{
 +				this.host = host;
 +			}
- 
--				generic_method = new GenericMethod (
--					ec.DeclContainer.NamespaceEntry,
--					(TypeContainer) ec.TypeContainer, member_name,
--					new TypeExpression (invoke_mb.ReturnType, loc),
--					Parameters);
++
 +			public AnonymousMethodHost Host {
 +				get { return host; }
 +			}
- 
--				generic_method.SetParameterInfo (null);
--			} else
--				member_name = new MemberName (name, loc);
++
 +			protected override bool DoResolveInternal (EmitContext ec)
 +			{
 +				Report.Debug (64, "RESOLVE ANONYMOUS METHOD HOST INITIALIZER",
 +					      this, Host, Host.ScopeType, Host.ParentType, loc);
- 
--			method = new Method (
--				(TypeContainer) ec.TypeContainer, generic_method,
--				new TypeExpression (invoke_mb.ReturnType, loc),
--				method_modifiers, false, member_name, Parameters, null);
--			method.Block = Block;
++
 +				//
 +				// Copy the parameter values, if any
 +				//
@@ -2889,21 +2918,12 @@ Index: anonymous.cs
 +							ec.ContainerType, type, cp.Field.Name, loc);
 +						if (fe == null)
 +							throw new InternalErrorException ();
- 
--			//
--			// Swap the TypeBuilder while we define the method, then restore
--			//
--			if (current_type != null)
--				ec.TypeContainer.TypeBuilder = type_host;
--			bool res = method.Define ();
--			if (current_type != null)
--				ec.TypeContainer.TypeBuilder = current_type;
-+						fe.InstanceExpression = this;
++
++						// fe.InstanceExpression = this;
 +						cp.FieldInstance = fe;
 +					}
 +				}
- 
--			return res;
++
 +				return base.DoResolveInternal (ec);
 +			}
 +
@@ -2921,8 +2941,8 @@ Index: anonymous.cs
 +
 +				base.EmitScopeConstructor (ec);
 +			}
- 		}
- 
++		}
++
 +	}
 +
 +	public interface IAnonymousContainer
@@ -3006,7 +3026,7 @@ Index: anonymous.cs
  		}
  
  		public bool ImplicitStandardConversionExists (Type delegate_type)
-@@ -318,8 +742,9 @@
+@@ -318,8 +762,9 @@
  			if (Parameters == null)
  				return true;
  
@@ -3018,7 +3038,7 @@ Index: anonymous.cs
  			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
  
  			if (Parameters.Count != invoke_pd.Count)
-@@ -338,31 +763,20 @@
+@@ -338,31 +783,20 @@
  		//
  		public Expression Compatible (EmitContext ec, Type delegate_type)
  		{
@@ -3057,7 +3077,7 @@ Index: anonymous.cs
  			if (Parameters == null) {
  				//
  				// We provide a set of inaccessible parameters
-@@ -375,7 +789,9 @@
+@@ -375,7 +809,9 @@
  						"+" + i, invoke_pd.ParameterModifier (i), null, loc);
  				}
  								
@@ -3068,7 +3088,7 @@ Index: anonymous.cs
  			} else {
  				if (Parameters.Count != invoke_pd.Count) {
  					Report.SymbolRelatedToPreviousError (delegate_type);
-@@ -407,8 +823,10 @@
+@@ -407,8 +843,10 @@
  						return null;
  					}
  				}
@@ -3080,7 +3100,7 @@ Index: anonymous.cs
  			//
  			// Second: the return type of the delegate must be compatible with 
  			// the anonymous type.   Instead of doing a pass to examine the block
-@@ -419,135 +837,329 @@
+@@ -419,135 +857,329 @@
  			//MethodBuilder builder = method_data.MethodBuilder;
  			//ILGenerator ig = builder.GetILGenerator ();
  
@@ -3496,7 +3516,7 @@ Index: anonymous.cs
  		}
  	}
  
-@@ -573,69 +1185,41 @@
+@@ -573,69 +1205,37 @@
  		
  		public override void Emit (EmitContext ec)
  		{
@@ -3512,12 +3532,8 @@ Index: anonymous.cs
 -				delegate_instance_expression = new AnonymousInstance (am);
 -			
 +			if ((am.Method.ModFlags & Modifiers.STATIC) == 0) {
-+				delegate_instance_expression = am.RootScope.GetScopeInitializer (ec);
-+				Report.Debug (64, "ANONYMOUS DELEGATE #0", this,
-+					      delegate_instance_expression);
-+
-+				if (delegate_instance_expression == null)
-+					throw new InternalErrorException ();
++				Statement initializer = am.RootScope.GetScopeInitializer (ec);
++				// delegate_instance_expression = new StatementExpression (initializer);
 +			}
 +
  			Expression ml = Expression.MemberLookup (ec.ContainerType, type, ".ctor", loc);
@@ -3581,7 +3597,7 @@ Index: anonymous.cs
  		
  		ArrayList locals = new ArrayList ();
  		ArrayList children = new ArrayList ();
-@@ -643,40 +1227,59 @@
+@@ -643,40 +1243,59 @@
  		//
  		// The types and fields generated
  		//
@@ -3663,7 +3679,7 @@ Index: anonymous.cs
  		internal void AddChild (ScopeInfo si)
  		{
  			if (children.Contains (si))
-@@ -703,7 +1306,7 @@
+@@ -703,7 +1322,7 @@
  					children.Remove (child);
  				}
  			}
@@ -3672,7 +3688,7 @@ Index: anonymous.cs
  
  		static int indent = 0;
  
-@@ -719,8 +1322,6 @@
+@@ -719,8 +1338,6 @@
  			Pad ();
  			Console.WriteLine ("START");
  			indent++;
@@ -3681,7 +3697,7 @@ Index: anonymous.cs
  			foreach (LocalInfo li in locals){
  				Pad ();
  				Console.WriteLine ("var {0}", MakeFieldName (li.Name));
-@@ -733,168 +1334,18 @@
+@@ -733,168 +1350,18 @@
  			Console.WriteLine ("END");
  		}
  
@@ -3854,7 +3870,7 @@ Index: anonymous.cs
  		public static void CheckCycles (string msg, ScopeInfo s)
  		{
  			ArrayList l = new ArrayList ();
-@@ -935,6 +1386,174 @@
+@@ -935,6 +1402,174 @@
  
  			return sb.ToString ();
  		}
@@ -4011,7 +4027,7 @@ Index: anonymous.cs
 +					if (fe == null)
 +						throw new InternalErrorException ();
 +
-+					fe.InstanceExpression = this;
++					// fe.InstanceExpression = this;
 +					local.FieldInstance = fe;
 +				}
 +
@@ -4029,7 +4045,7 @@ Index: anonymous.cs
  	}
  
  	//
-@@ -952,7 +1571,8 @@
+@@ -952,7 +1587,8 @@
  		//
  		// Points to the toplevel block that owns this CaptureContext
  		//
@@ -4039,7 +4055,7 @@ Index: anonymous.cs
  
  		//
  		// All the scopes we capture
-@@ -965,25 +1585,23 @@
+@@ -965,25 +1601,23 @@
  		ArrayList roots = new ArrayList ();
  		
  		bool have_captured_vars = false;
@@ -4071,7 +4087,7 @@ Index: anonymous.cs
  		}
  
  		void DoPath (StringBuilder sb, CaptureContext cc)
-@@ -995,17 +1613,6 @@
+@@ -995,17 +1629,6 @@
  			sb.Append (cc.cc_id.ToString ());
  		}
  
@@ -4089,7 +4105,7 @@ Index: anonymous.cs
  		public override string ToString ()
  		{
  			StringBuilder sb = new StringBuilder ();
-@@ -1017,7 +1624,7 @@
+@@ -1017,7 +1640,7 @@
  
  		public ToplevelBlock ParentToplevel {
  			get {
@@ -4098,7 +4114,7 @@ Index: anonymous.cs
  			}
  		}
  
-@@ -1029,124 +1636,264 @@
+@@ -1029,124 +1652,264 @@
  			}
  		}
  
@@ -4410,7 +4426,7 @@ Index: anonymous.cs
  		}
  
  		public bool HaveCapturedVariables {
-@@ -1164,21 +1911,23 @@
+@@ -1164,21 +1927,23 @@
  			}
  		}
  
@@ -4441,12 +4457,12 @@ Index: anonymous.cs
  				return true;
  			
  			if (captured_parameters != null)
-@@ -1186,88 +1935,58 @@
+@@ -1186,224 +1951,127 @@
  			return false;
  		}
  
 -		public void EmitAnonymousHelperClasses (EmitContext ec)
-+		public ExpressionStatement GetScopeInitializerForBlock (EmitContext ec, Block b)
++		public Statement GetScopeInitializerForBlock (EmitContext ec, Block b)
  		{
 -			if (roots.Count != 0){
 -				foreach (ScopeInfo root in roots){
@@ -4501,39 +4517,27 @@ Index: anonymous.cs
 +		public void EmitCapturedVariableInstance (EmitContext ec, Block block,
  							  AnonymousContainer am)
  		{
- 			ILGenerator ig = ec.ig;
+-			ILGenerator ig = ec.ig;
  			ScopeInfo si;
  
 -			if (li.Block.Toplevel == toplevel_owner){
 -				si = (ScopeInfo) scopes [li.Block.ID];
 -				si.EmitScopeInstance (ig);
+-				return;
+-			}
 +			Report.Debug (64, "EMIT CAPTURED VARIABLE INSTANCE", this,
 +				      am, block.ID, block.Toplevel.ID, ToplevelOwner.ID,
 +				      block, block.Toplevel, ToplevelOwner);
-+
-+			while (block.Implicit)
-+				block = block.Parent;
-+
-+			if (block.Toplevel == ToplevelOwner){
-+				si = (ScopeInfo) scopes [block.ID];
-+				si.EmitScopeInstance (ec);
- 				return;
- 			}
++			Report.StackTrace ();
  
 -			si = am.Scope;
-+			Report.Debug (64, "EMIT CAPTURED VARIABLE INSTANCE #1", this,
-+				      am, block.Toplevel, ToplevelOwner, am.Scope);
-+
-+			AnonymousMethodHost host = am.RootScope;
- 			ig.Emit (OpCodes.Ldarg_0);
+-			ig.Emit (OpCodes.Ldarg_0);
 -			if (si != null){
 -				if (am.IsIterator && (si.ScopeBlock.Toplevel == li.Block.Toplevel)) {
 -					return;
 -				}
-+			if (host != null) {
-+				Report.Debug (64, "EMIT CAPTURED VARIABLE INSTANCE #2", this,
-+					      host, host.ParentLink, host.ScopeBlock,
-+					      block, block.Toplevel);
++			while (block.Implicit)
++				block = block.Parent;
  
 -				while (si.ScopeBlock.ID != li.Block.ID){
 -					if (si.ParentLink != null)
@@ -4546,34 +4550,40 @@ Index: anonymous.cs
 -							Console.WriteLine ("Trying: {0}", si.ScopeBlock.ID);
 -							si = si.ParentScope;
 -						}
--
++#if FIXME
++			if (am == null) {
++				ec.ig.Emit (OpCodes.Neg);
++				ec.ig.Emit (OpCodes.Not);
++				ec.ig.Emit (OpCodes.Pop);
++			}
++#endif
+ 
 -						throw new Exception (
 -							     String.Format ("Never found block {0} starting at {1} while looking up {2}",
 -									    li.Block.ID, am.Scope.ScopeBlock.ID, li.Name));
 -					}
-+				while (host.ScopeBlock.ID != block.ID){
-+					if (host.ParentLink != null)
-+						ig.Emit (OpCodes.Ldfld, host.ParentLink.FieldBuilder);
-+					host = host.ParentHost;
-+					if (host == null)
-+						throw new InternalErrorException (
-+							"Never found block {0} starting at {1}",
-+							block.ID, am.RootScope.ScopeBlock.ID);
- 				}
+-				}
++			if (block.Toplevel == ToplevelOwner) {
++				si = (ScopeInfo) scopes [block.ID];
++				si.EmitScopeInstance (ec);
++				return;
  			}
- 		}
-@@ -1275,135 +1994,34 @@
- 		//
- 		// Internal routine that loads the instance to reach parameter `name'
- 		//
+-		}
+ 
+-		//
+-		// Internal routine that loads the instance to reach parameter `name'
+-		//
 -		void EmitParameterInstance (EmitContext ec, string name)
-+		public void EmitParameterInstance (EmitContext ec, Parameter par)
- 		{
+-		{
 -			CaptureContext cc = ContextForParameter (ec.CurrentBlock.Toplevel, name);
-+			CaptureContext cc = ContextForParameter (ec.CurrentBlock.Toplevel, par);
- 			if (cc != this){
+-			if (cc != this){
 -				cc.EmitParameterInstance (ec, name);
-+				cc.EmitParameterInstance (ec, par);
++			ec.ig.Emit (OpCodes.Nop);
++
++			if (am == null) {
++				ec.ig.Emit (OpCodes.Neg);
++				ec.ig.Emit (OpCodes.Not);
++				ec.ig.Emit (OpCodes.Pop);
  				return;
  			}
  
@@ -4582,16 +4592,23 @@ Index: anonymous.cs
 -				// 
 -				// FIXME: implementing this.
 -				//
-+			if (ec.CurrentBlock.Toplevel == ToplevelOwner) {
-+				ScopeInfo si = (ScopeInfo) scopes [ToplevelOwner.ID];
-+				si.EmitScopeInstance (ec);
-+				return;
++			AnonymousMethodHost host = am.RootScope;
++			while (host.ScopeBlock.Toplevel != block.Toplevel) {
++				host.EmitScopeInstance (ec);
++				// ec.ig.Emit (OpCodes.Ldarg_0);
++				ec.ig.Emit (OpCodes.Ldfld, host.ParentLink.FieldBuilder);
++				host = host.ParentHost;
++				if (host == null)
++					throw new InternalErrorException (
++						"Never found block {0} starting at {1}",
++						block.ID, am.RootScope.ScopeBlock.ID);
  			}
 -			ILGenerator ig = ec.ig;
  
 -			ScopeInfo si;
-+			AnonymousMethodHost host = ec.CurrentAnonymousMethod.RootScope;
-+			ec.ig.Emit (OpCodes.Ldarg_0);
++			si = (ScopeInfo) host.CaptureContext.scopes [block.ID];
++			si.EmitScopeInstance (ec);
++			return;
  
 -			if (ec.CurrentBlock.Toplevel == toplevel_owner) {
 -				si = (ScopeInfo) scopes [toplevel_owner.ID];
@@ -4600,18 +4617,22 @@ Index: anonymous.cs
 -				si = ec.CurrentAnonymousMethod.Scope;
 -				ig.Emit (OpCodes.Ldarg_0);
 -			}
--
++#if FIXME
++			Report.Debug (64, "EMIT CAPTURED VARIABLE INSTANCE #1", this,
++				      am, block.Toplevel, ToplevelOwner, am.Scope);
+ 
 -			if (si != null){
 -				while (si.ParentLink != null) {
 -					ig.Emit (OpCodes.Ldfld, si.ParentLink);
 -					si = si.ParentScope;
+-				} 
+-			}
+-		}
++			ig.Emit (OpCodes.Ldarg_0);
 +			if (host != null) {
-+				while (host.ParentLink != null) {
-+					ec.ig.Emit (OpCodes.Ldfld, host.ParentLink.FieldBuilder);
-+					host = host.ParentHost;
- 				} 
- 			}
- 		}
++				Report.Debug (64, "EMIT CAPTURED VARIABLE INSTANCE #2", this,
++					      host, host.ParentLink, host.ScopeBlock,
++					      block, block.Toplevel);
  
 -		//
 -		// Emits the code necessary to load the parameter named `name' within
@@ -4623,7 +4644,16 @@ Index: anonymous.cs
 -			if (cc != this){
 -				cc.EmitParameter (ec, name, leave_copy, prepared, ref temp);
 -				return;
--			}
++				while (host.CaptureContext.ToplevelOwner != block.Toplevel) {
++					if (host.ParentLink != null)
++						ig.Emit (OpCodes.Ldfld, host.ParentLink.FieldBuilder);
++					host = host.ParentHost;
++					if (host == null)
++						throw new InternalErrorException (
++							"Never found block {0} starting at {1}",
++							block.ID, am.RootScope.ScopeBlock.ID);
++				}
+ 			}
 -			if (!prepared)
 -				EmitParameterInstance (ec, name);
 -			CapturedParameter par_info = (CapturedParameter) captured_parameters [name];
@@ -4639,22 +4669,27 @@ Index: anonymous.cs
 -				temp = new LocalTemporary (par_info.FieldBuilder.FieldType);
 -				temp.Store (ec);
 -			}
--		}
--
--		//
++#endif
+ 		}
+ 
+ 		//
 -		// Implements the assignment of `source' to the paramenter named `name' within
 -		// an anonymous method.
--		//
++		// Internal routine that loads the instance to reach parameter `name'
+ 		//
 -		public void EmitAssignParameter (EmitContext ec, string name, Expression source, bool leave_copy, bool prepare_for_load, ref LocalTemporary temp)
--		{
++		public void EmitParameterInstance (EmitContext ec, Parameter par)
+ 		{
 -			CaptureContext cc = ContextForParameter (ec.CurrentBlock.Toplevel, name);
--			if (cc != this){
++			CaptureContext cc = ContextForParameter (ec.CurrentBlock.Toplevel, par);
+ 			if (cc != this){
 -				cc.EmitAssignParameter (ec, name, source, leave_copy, prepare_for_load, ref temp);
--				return;
--			}
++				cc.EmitParameterInstance (ec, par);
+ 				return;
+ 			}
 -			ILGenerator ig = ec.ig;
 -			CapturedParameter par_info = (CapturedParameter) captured_parameters [name];
--
+ 
 -			EmitParameterInstance (ec, name);
 -			if (prepare_for_load)
 -				ig.Emit (OpCodes.Dup);
@@ -4678,13 +4713,16 @@ Index: anonymous.cs
 -			CaptureContext cc = ContextForParameter (ec.CurrentBlock.Toplevel, name);
 -			if (cc != this){
 -				cc.EmitAddressOfParameter (ec, name);
--				return;
--			}
++			if (ec.CurrentBlock.Toplevel == ToplevelOwner) {
++				ScopeInfo si = (ScopeInfo) scopes [ToplevelOwner.ID];
++				si.EmitScopeInstance (ec);
+ 				return;
+ 			}
 -			EmitParameterInstance (ec, name);
 -			CapturedParameter par_info = (CapturedParameter) captured_parameters [name];
 -			ec.ig.Emit (OpCodes.Ldflda, par_info.FieldBuilder);
 -		}
--
+ 
 -		//
 -		// The following methods are only invoked on the host for the
 -		// anonymous method.
@@ -4693,18 +4731,25 @@ Index: anonymous.cs
 -		{
 -			ILGenerator ig = target.ig;
 -			ScopeInfo si = am.Scope;
--
++			AnonymousMethodHost host = ec.CurrentAnonymousMethod.RootScope;
++			ec.ig.Emit (OpCodes.Ldarg_0);
+ 
 -			AnonymousContainer container = am.ContainerAnonymousMethod;
 -
 -			if ((si == null) || ((container != null) && (si == container.Scope))) {
 -				ig.Emit (OpCodes.Ldarg_0);
 -				return;
--			}
++			if (host != null) {
++				while (host.ParentLink != null) {
++					ec.ig.Emit (OpCodes.Ldfld, host.ParentLink.FieldBuilder);
++					host = host.ParentHost;
++				} 
+ 			}
 -
 -			si.EmitInitScope (target);
 -			si.EmitScopeInstance (ig);
--		}
--
+ 		}
+ 
  		public void RegisterCaptureContext ()
  		{
 -			toplevel_owner.RegisterCaptureContext (this);
@@ -4712,7 +4757,7 @@ Index: anonymous.cs
  		}
  
  		//
-@@ -1412,7 +2030,10 @@
+@@ -1412,7 +2080,10 @@
  		//
  		bool IsAncestor (ScopeInfo probe, ScopeInfo scope)
  		{
@@ -4723,7 +4768,7 @@ Index: anonymous.cs
  				if (probe.ScopeBlock == b)
  					return true;
  			}
-@@ -1474,7 +2095,7 @@
+@@ -1474,7 +2145,7 @@
  			}
  			return parent;
  		}
@@ -4732,7 +4777,7 @@ Index: anonymous.cs
  		//
  		// Links all the scopes
  		//
-@@ -1483,7 +2104,9 @@
+@@ -1483,7 +2154,9 @@
  		{
  			if (linked)
  				return;
@@ -4743,7 +4788,7 @@ Index: anonymous.cs
  			linked = true;
  			if (ParentCaptureContext != null)
  				ParentCaptureContext.LinkScopes ();
-@@ -1492,9 +2115,14 @@
+@@ -1492,9 +2165,14 @@
  			ScopeInfo [] scope_list = new ScopeInfo [scope_count];
  			scopes.Values.CopyTo (scope_list, 0);
  
@@ -4758,7 +4803,7 @@ Index: anonymous.cs
  				if (parent == null){
  					roots.Add (scope_list [i]);
  					continue;
-@@ -1504,17 +2132,28 @@
+@@ -1504,17 +2182,28 @@
  				parent.AddChild (scope_list [i]);
  			}
  
@@ -4788,7 +4833,7 @@ Index: anonymous.cs
  					found = true;
  					
  					// Found, link all the roots to this root
-@@ -1533,6 +2172,13 @@
+@@ -1533,6 +2222,13 @@
  					throw new Exception ("Internal compiler error: Did not find the parent for the root in the chain");
  				}
  			}
