@@ -153,6 +153,8 @@ namespace System.Windows.Forms {
 			default_maximized_bounds = Rectangle.Empty;
 			owned_forms = new Form.ControlCollection(this);
 			transparency_key = Color.Empty;
+
+			UpdateBounds();
 		}
 		#endregion	// Public Constructor & Destructor
 
@@ -986,7 +988,7 @@ namespace System.Windows.Forms {
 
 						case FormBorderStyle.FixedDialog: {
 							cp.Style |= (int)(WindowStyles.WS_CAPTION | WindowStyles.WS_BORDER);
-							cp.ExStyle |= (int)(WindowExStyles.WS_EX_DLGMODALFRAME);
+							cp.ExStyle |= (int)(WindowExStyles.WS_EX_DLGMODALFRAME | WindowExStyles.WS_EX_CONTROLPARENT);
 							break;
 						}
 
@@ -1361,6 +1363,8 @@ namespace System.Windows.Forms {
 		protected override void CreateHandle() {
 			base.CreateHandle ();
 
+			UpdateBounds();
+
 			if (XplatUI.SupportsTransparency()) {
 				if (allow_transparency) {
 					XplatUI.SetWindowTransparency(Handle, Opacity, TransparencyKey);
@@ -1368,7 +1372,7 @@ namespace System.Windows.Forms {
 			}
 
 			XplatUI.SetWindowMinMax(window.Handle, maximized_bounds, minimum_size, maximum_size);
-			if (icon != null) {
+			if ((FormBorderStyle != FormBorderStyle.FixedDialog) && (icon != null)) {
 				XplatUI.SetIcon(window.Handle, icon);
 			}
 

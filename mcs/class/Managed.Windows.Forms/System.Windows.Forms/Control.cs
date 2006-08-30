@@ -2978,7 +2978,8 @@ namespace System.Windows.Forms
 				for (int i = controls.Length - 1; i >= 0; i--) {
 					child=controls[i];
 
-					if (child.Visible && (child.Dock == DockStyle.Fill)) {
+					//if (child.Visible && (child.Dock == DockStyle.Fill)) {
+					if (child.Dock == DockStyle.Fill) {
 						child.SetBounds(space.Left, space.Top, space.Width, space.Height);
 					}
 				}
@@ -3126,7 +3127,7 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public virtual void ResetBackColor() {
-			background_color = Color.Empty;
+			BackColor = Color.Empty;
 		}
 
 	        [EditorBrowsable(EditorBrowsableState.Never)]

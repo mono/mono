@@ -328,6 +328,7 @@ namespace System.Windows.Forms {
 
 			set {
 				auto_scroll_min_size = value;
+				AutoScroll = true;
 			}
 		}
 
@@ -474,7 +475,11 @@ namespace System.Windows.Forms {
 			x += scroll_position.X;
 			y += scroll_position.Y;
 
-			// FIXME - Bail if the control is already visible?
+			// Don't scroll if already visible
+			if ((activeControl.Left >= scroll_position.X) && (activeControl.Left < (scroll_position.X + client_size.Width)) &&
+			    (activeControl.Top >= scroll_position.Y) && (activeControl.Top < (scroll_position.Y + client_size.Height))) {
+				return;
+			}
 
 			// try to center
 			corner_x = Math.Max(0, x + activeControl.Width / 2 - client_size.Width / 2);

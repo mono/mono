@@ -1,3 +1,19 @@
+2006-08-30  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Control.cs:
+	  - PerformLayout(): It would seem MS performs the fill even if the 
+	    control is not visible (part of #79218 fix)
+	  - ResetBackColor(): Use the setter to reset the color, to allow
+	    overriders to catch the change.
+	* Form.cs:
+	  - .ctor: Call UpdateBounds to adjust client rectangle (part of #79218 fix)
+	  - CreateHandle(): dito (part of $79218 fix)
+	  - Don't set an icon if we have a dialog
+	* ScrollableControl.cs:
+	  - set_AutoScrollMinSize: Setting the property enables AutoScroll (#79218)
+	  - ScrollIntoView(): No need to scroll if control is already visible
+	    (resolves fixme and fixes #79218)
+
 2006-08-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* MonthCalendar.cs: Change proportions in SingleMonthSize
