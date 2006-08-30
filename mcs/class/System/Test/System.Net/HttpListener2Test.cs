@@ -278,6 +278,41 @@ namespace MonoTests.System.Net {
 			Assert.IsTrue (input.StartsWith ("HTTP/1.1 400"));
 		}
 
+		HttpListenerRequest test14_request;
+		ManualResetEvent test14_evt;
+		bool test14_error;
+		[Test]
+		public void Test14 ()
+		{
+			HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test12/");
+			MyNetworkStream ns = CreateNS (9000);
+			Send (ns, "POST /test12/ HTTP/1.0\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n123");
+			HttpListenerContext c = listener.GetContext ();
+			test14_request = c.Request;
+			test14_evt = new ManualResetEvent (false);
+			Thread thread = new Thread (ReadToEnd);
+			thread.Start ();
+			if (test14_evt.WaitOne (3000, false) == false) {
+				thread.Abort ();
+				test14_evt.Close ();
+				Assert.IsTrue (false, "Timed out");
+			}
+			test14_evt.Close ();
+			Assert.IsFalse (test14_error, "Did not get the expected input.");
+				
+			c.Response.Close ();
+			ns.Close ();
+		}
+
+		void ReadToEnd ()
+		{
+			using (StreamReader r = new StreamReader (test14_request.InputStream)) {
+				if (r.ReadToEnd () != "123") {
+					test14_error = true;
+				}
+				test14_evt.Set ();
+			}
+		}
 	}
 
 	[TestFixture]
@@ -312,6 +347,7 @@ namespace MonoTests.System.Net {
 			HttpListener2Test.Send (ns, s);
 			bool timedout;
 			string response = HttpListener2Test.ReceiveWithTimeout (ns, 1024, 3000, out timedout);
+			ns.Close ();
 			Assert.IsFalse (timedout);
 		}
 

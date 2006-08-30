@@ -1,3 +1,7 @@
+2006-08-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpListener2Test.cs: test using StreamReader from InputStream.
+
 2006-08-20  Miguel de Icaza  <miguel@novell.com>
 
 	* HttpListener2Test.cs: Add test case for bug #79112
