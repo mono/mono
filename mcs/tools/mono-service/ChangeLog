@@ -1,3 +1,11 @@
+2006-08-30  Robert Jordan  <robertj@gmx.net>
+
+	* Makefile: Support the 2.0 profile.
+	* Makefile: Install the program into the GAC.
+	* AssemblyInfo.cs: Create, configure.
+	* mono-service.exe.sources: Add AssemblyInfo.cs.
+	Fixes #79207.
+	
 2006-07-30  Miguel de Icaza  <miguel@novell.com>
 
 	* mono-service.cs: Create/open the lockfile exclusively to avoid

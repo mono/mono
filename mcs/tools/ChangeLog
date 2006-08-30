@@ -1,3 +1,7 @@
+2006-08-30  Robert Jordan  <robertj@gmx.net>
+
+	* Makefile (net_2_0_SUBDIRS): Add 'mono-service'.
+
 2006-04-11  Gert Driesen  <gert.driesen@telenet.be>
 	    Raja R Harinath  <rharinath@novell.com>
 

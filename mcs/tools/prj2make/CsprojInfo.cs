@@ -70,9 +70,9 @@ namespace Mfconsulting.General.Prj2Make
 
 		// Character to quote
 		
-		char [] quotable = new char [] { ' ', '(', ')' };
+		static char [] quotable = new char [] { ' ', '(', ')' };
 
-		public string Quote (string s)
+		static public string Quote (string s)
 		{
 			if (s.IndexOfAny (quotable) == -1)
 				return s;
@@ -216,8 +216,9 @@ namespace Mfconsulting.General.Prj2Make
 						s = Path.ChangeExtension (s, ".resources");
 						relPath = Path.ChangeExtension (relPath, ".resources");
 					}
-					s = String.Format("-resource:{0},{1}", s, rootNS + "." + relPath.Replace("/", "."));
 					s = s.Replace("\\", "/");
+	                                string rp = relPath.Replace ("/", ".").Replace ("\\", "/");
+					s = String.Format("-resource:{0},{1}", Quote (s), rootNS + "." + rp);
 					if (SlnMaker.slash != "/")
 						s = s.Replace("/", SlnMaker.slash);
 					res += s;

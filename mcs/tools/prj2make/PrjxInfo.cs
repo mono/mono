@@ -166,7 +166,7 @@ namespace Mfconsulting.General.Prj2Make
 					} else {
 						// We are in *NIX or some other
 						// GNU like shell
-						src += s.Replace(" ", "\\ ");
+						src += CsprojInfo.Quote (s);
 					}    			
     			}
     		}
