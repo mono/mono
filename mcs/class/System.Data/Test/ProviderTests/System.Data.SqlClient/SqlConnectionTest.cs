@@ -571,4 +571,571 @@ namespace MonoTests.System.Data
 			disposedEventCount++; 
 		}
 	}
+  #if NET_2_0
+	[TestFixture]
+	[Category ("sqlserver")]
+	public class GetSchemaTest
+	{
+		SqlConnection conn = null;
+		String connectionString = ConnectionManager.Singleton.ConnectionString;
+
+		[SetUp]
+		public void Setup()
+		{
+			conn = new SqlConnection(connectionString);
+			conn.Open();
+		}
+		[TearDown]
+		public void TearDown()
+		{
+			conn.Close();
+		}
+		[Test]
+		public void GetSchemaTest1()
+		{
+			bool flag = false;
+			DataTable tab1 = conn.GetSchema("databases");
+			foreach (DataRow row in tab1.Rows)
+			{
+				foreach (DataColumn col in tab1.Columns)
+				{
+					if (col.ColumnName.ToString() == "database_name" && row[col].ToString() == "monotest")
+					{
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+					break;
+			}
+			Assert.AreEqual(true, flag, "#GS1 failed");
+		}
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void GetSchemaTest2()
+		{
+			conn.GetSchema(null);
+		}
+		[Test]
+		public void GetSchemaTest3()
+		{
+			bool flag = false;
+			DataTable tab1 = conn.GetSchema("ForeignKeys");
+			foreach (DataRow row in tab1.Rows)
+			{
+				foreach (DataColumn col in tab1.Columns)
+				{
+					/*
+					 * We need to consider multiple values
+					 */
+					if (col.ColumnName.ToString() == "TABLE_NAME" && row[col].ToString() == "tmptable1")
+					{
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+					break;
+			}
+			Assert.AreEqual(true, flag, "#GS3 failed");
+		}
+		[Test]
+		public void GetSchemaTest4()
+		{
+			bool flag = false;
+			DataTable tab1 = conn.GetSchema("Indexes");
+			foreach (DataRow row in tab1.Rows)
+			{
+				foreach (DataColumn col in tab1.Columns)
+				{
+					/*
+					 * We need to consider multiple values
+					 */
+					if (col.ColumnName.ToString() == "table_name" && row[col].ToString() == "binary_family")
+					{
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+					break;
+			}
+			Assert.AreEqual(true, flag, "#GS4 failed");
+		}
+		[Test]
+		public void GetSchemaTest5()
+		{
+			bool flag = false;
+			DataTable tab1 = conn.GetSchema("IndexColumns");
+			foreach (DataRow row in tab1.Rows)
+			{
+				foreach (DataColumn col in tab1.Columns)
+				{
+					/*
+					 * We need to consider multiple values
+					 */
+					if (col.ColumnName.ToString() == "table_name" && row[col].ToString() == "binary_family")
+					{
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+					break;
+			}
+			Assert.AreEqual(true, flag, "#GS5 failed");
+		}
+		[Test]
+		public void GetSchemaTest6()
+		{
+			bool flag = false;
+			DataTable tab1 = conn.GetSchema("Procedures");
+			foreach (DataRow row in tab1.Rows)
+			{
+				foreach (DataColumn col in tab1.Columns)
+				{
+					/*
+					 * We need to consider multiple values
+					 */
+					if (col.ColumnName.ToString() == "SPECIFIC_NAME" && row[col].ToString() == "sp_get_age")
+					{
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+					break;
+			}
+			Assert.AreEqual(true, flag, "#GS6 failed");
+		}
+		[Test]
+		public void GetSchemaTest7()
+		{
+			bool flag = false;
+			DataTable tab1 = conn.GetSchema("ProcedureParameters");
+			foreach (DataRow row in tab1.Rows)
+			{
+				foreach (DataColumn col in tab1.Columns)
+				{
+					/*
+					 * We need to consider multiple values
+					 */
+					if (col.ColumnName.ToString() == "SPECIFIC_NAME" && row[col].ToString() == "sp_get_age")
+					{
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+					break;
+			}
+			Assert.AreEqual(true, flag, "#GS7 failed");
+		}
+		[Test]
+		public void GetSchemaTest8()
+		{
+			bool flag = false;
+			DataTable tab1 = conn.GetSchema("Tables");
+			foreach (DataRow row in tab1.Rows)
+			{
+				foreach (DataColumn col in tab1.Columns)
+				{
+					/*
+					 * We need to consider multiple values
+					 */
+					if (col.ColumnName.ToString() == "TABLE_NAME" && row[col].ToString() == "binary_family")
+					{
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+					break;
+			}
+			Assert.AreEqual(true, flag, "#GS8 failed");
+		}
+		[Test]
+		public void GetSchemaTest9()
+		{
+			bool flag = false;
+			DataTable tab1 = conn.GetSchema("Columns");
+			foreach (DataRow row in tab1.Rows)
+			{
+				foreach (DataColumn col in tab1.Columns)
+				{
+					/*
+					 * We need to consider multiple values
+					 */
+					if (col.ColumnName.ToString() == "TABLE_NAME" && row[col].ToString() == "binary_family")
+					{
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+					break;
+			}
+			Assert.AreEqual(true, flag, "#GS9 failed");
+		}
+		public void GetSchemaTest10()
+		{
+			bool flag = false;
+			DataTable tab1 = conn.GetSchema("Users");
+			foreach (DataRow row in tab1.Rows)
+			{
+				foreach (DataColumn col in tab1.Columns)
+				{
+					/*
+					 * We need to consider multiple values
+					 */
+					if (col.ColumnName.ToString() == "user_name" && row[col].ToString() == "public")
+					{
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+					break;
+			}
+			Assert.AreEqual(true, flag, "#GS10 failed");
+		}
+		public void GetSchemaTest11()
+		{
+			bool flag = false;
+			DataTable tab1 = conn.GetSchema("Views");
+			flag = true; // FIXME: Currently MS-SQL 2005 returns empty table. Remove this flag ASAP.
+			foreach (DataRow row in tab1.Rows)
+			{
+				foreach (DataColumn col in tab1.Columns)
+				{
+					/*
+					 * We need to consider multiple values.
+					 */
+					if (col.ColumnName.ToString() == "user_name" && row[col].ToString() == "public")
+					{
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+					break;
+			}
+			Assert.AreEqual(true, flag, "#GS11 failed");
+		}
+		public void GetSchemaTest12()
+		{
+			bool flag = false;
+			DataTable tab1 = conn.GetSchema("ViewColumns");
+			flag = true; // FIXME: Currently MS-SQL 2005 returns empty table. Remove this flag ASAP.
+			foreach (DataRow row in tab1.Rows)
+			{
+				foreach (DataColumn col in tab1.Columns)
+				{
+					/*
+					 * We need to consider multiple values.
+					 */
+					if (col.ColumnName.ToString() == "user_name" && row[col].ToString() == "public")
+					{
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+					break;
+			}
+			Assert.AreEqual(true, flag, "#GS12 failed");
+		}
+		public void GetSchemaTest13()
+		{
+			bool flag = false;
+			DataTable tab1 = conn.GetSchema("UserDefineTypes");
+			flag = true; // FIXME: Currently MS-SQL 2005 returns empty table. Remove this flag ASAP.
+			foreach (DataRow row in tab1.Rows)
+			{
+				foreach (DataColumn col in tab1.Columns)
+				{
+					/*
+					 * We need to consider multiple values.
+					 */
+					if (col.ColumnName.ToString() == "user_name" && row[col].ToString() == "public")
+					{
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+					break;
+			}
+			Assert.AreEqual(true, flag, "#GS13 failed");
+		}
+		[Test]
+		public void GetSchemaTest14()
+		{
+			bool flag = false;
+			string [] restrictions = new string[4];
+
+			restrictions[0] = "monotest";
+			restrictions[1] = "dbo";
+			restrictions[2] = null;
+			restrictions[3] = "BASE TABLE";
+			DataTable tab1 = conn.GetSchema("Tables", restrictions);
+			foreach (DataRow row in tab1.Rows)
+			{
+				foreach (DataColumn col in tab1.Columns)
+				{
+					/*
+					 * We need to consider multiple values
+					 */
+					if (col.ColumnName.ToString() == "TABLE_NAME" && row[col].ToString() == "binary_family")
+					{
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+					break;
+			}
+			Assert.AreEqual(true, flag, "#GS14 failed");
+		}
+		[Test]
+		public void GetSchemaTest15()
+		{
+			bool flag = false;
+			string [] restrictions = new string[4];
+
+			restrictions[0] = "monotest";
+			restrictions[1] = null;
+			restrictions[2] = "binary_family";
+			restrictions[3] = null;
+			DataTable tab1 = conn.GetSchema("IndexColumns", restrictions);
+			foreach (DataRow row in tab1.Rows)
+			{
+				foreach (DataColumn col in tab1.Columns)
+				{
+					/*
+					 * We need to consider multiple values
+					 */
+					if (col.ColumnName.ToString() == "table_name" && row[col].ToString() == "binary_family")
+					{
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+					break;
+			}
+			Assert.AreEqual(true, flag, "#GS15 failed");
+		}
+		[Test]
+		public void GetSchemaTest16()
+		{
+			bool flag = false;
+			string [] restrictions = new string[4];
+
+			restrictions[0] = "monotest";
+			restrictions[1] = null;
+			restrictions[2] = "sp_get_age";
+			restrictions[3] = null;
+			DataTable tab1 = conn.GetSchema("Procedures", restrictions);
+			foreach (DataRow row in tab1.Rows)
+			{
+				foreach (DataColumn col in tab1.Columns)
+				{
+					/*
+					 * We need to consider multiple values
+					 */
+					if (col.ColumnName.ToString() == "ROUTINE_NAME" && row[col].ToString() == "sp_get_age")
+					{
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+					break;
+			}
+			Assert.AreEqual(true, flag, "#GS16 failed");
+		}
+		[Test]
+		public void GetSchemaTest17()
+		{
+			bool flag = false;
+			DataTable tab1 = conn.GetSchema();
+			foreach (DataRow row in tab1.Rows)
+			{
+				foreach (DataColumn col in tab1.Columns)
+				{
+					/*
+					 * We need to consider multiple values
+					 */
+					if (col.ColumnName.ToString() == "CollectionName" && row[col].ToString() == "UserDefinedTypes")
+					{
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+					break;
+			}
+			Assert.AreEqual(true, flag, "#GS17 failed");
+		}
+		[Test]
+		public void GetSchemaTest18()
+		{
+			bool flag = false;
+			DataTable tab1 = conn.GetSchema("RESTRICTIONS");
+			foreach (DataRow row in tab1.Rows)
+			{
+				foreach (DataColumn col in tab1.Columns)
+				{
+					/*
+					 * We need to consider multiple values
+					 */
+					if (col.ColumnName.ToString() == "RestrictionDefault" && row[col].ToString() == "CONSTRAINT_NAME")
+					{
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+					break;
+			}
+			Assert.AreEqual(true, flag, "#GS18 failed");
+		}
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void GetSchemaTest19()
+		{
+			String [] restrictions = new String[1];
+			DataTable tab1 = conn.GetSchema("RESTRICTIONS", restrictions);
+		}
+		[Test]
+		public void GetSchemaTest20()
+		{
+			bool flag = false;
+			DataTable tab1 = conn.GetSchema("DataTypes");
+			foreach (DataRow row in tab1.Rows)
+			{
+				foreach (DataColumn col in tab1.Columns)
+				{
+					/*
+					 * We need to consider multiple values
+					 */
+					if (col.ColumnName.ToString() == "TypeName" && row[col].ToString() == "uniqueidentifier")
+					{
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+					break;
+			}
+			Assert.AreEqual(true, flag, "#GS20 failed");
+		}
+		[Test]
+		public void GetSchemaTest21()
+		{
+			bool flag = false;
+			DataTable tab1 = conn.GetSchema();
+			foreach (DataRow row in tab1.Rows)
+			{
+				foreach (DataColumn col in tab1.Columns)
+				{
+					/*
+					 * We need to consider multiple values
+					 */
+					if (col.ColumnName.ToString() == "CollectionName" && row[col].ToString() == "UserDefinedTypes")
+					{
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+					break;
+			}
+			Assert.AreEqual(true, flag, "#GS21 failed");
+		}
+		[Test]
+		public void GetSchemaTest22()
+		{
+			bool flag = false;
+			DataTable tab1 = conn.GetSchema("ReservedWords");
+			foreach (DataRow row in tab1.Rows)
+			{
+				foreach (DataColumn col in tab1.Columns)
+				{
+					/*
+					 * We need to consider multiple values
+					 */
+					if (col.ColumnName.ToString() == "ReservedWord" && row[col].ToString() == "UPPER")
+					{
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+					break;
+			}
+			Assert.AreEqual(true, flag, "#GS22 failed");
+		}
+		[Test]
+		public void GetSchemaTest23()
+		{
+			bool flag = false;
+			DataTable tab1 = conn.GetSchema("ReservedWords");
+			foreach (DataRow row in tab1.Rows)
+			{
+				foreach (DataColumn col in tab1.Columns)
+				{
+					/*
+					 * We need to consider multiple values
+					 */
+					if (col.ColumnName.ToString() == "ReservedWord" && row[col].ToString() == "upper")
+					{
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+					break;
+			}
+			Assert.AreEqual(false, flag, "#GS23 failed");
+		}
+		[Test]
+		public void GetSchemaTest24()
+		{
+			bool flag = false;
+			string [] restrictions = new string[4];
+
+			restrictions[0] = "monotest";
+			restrictions[1] = null;
+			restrictions[2] = "sp_get_age";
+			restrictions[3] = null;
+			DataTable tab1 = conn.GetSchema("Procedures", restrictions);
+			foreach (DataRow row in tab1.Rows)
+			{
+				foreach (DataColumn col in tab1.Columns)
+				{
+					/*
+					 * We need to consider multiple values
+					 */
+					if (col.ColumnName.ToString() == "ROUTINE_NAME" && row[col].ToString() == "mono")
+					{
+						flag = true;
+						break;
+					}
+				}
+				if (flag)
+					break;
+			}
+			Assert.AreEqual(false, flag, "#GS24 failed");
+		}
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void GetSchemaTest25()
+		{
+			String [] restrictions = new String[1];
+			DataTable tab1 = conn.GetSchema("Mono", restrictions);
+		}
+	}
+  #endif
 }

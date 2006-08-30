@@ -1,3 +1,7 @@
+2006-08-30  Nagappan A  <anagappan@novell.com>
+
+	* SqlConnectionTest.cs: SqlConnection.GetSchema testcases
+
 2006-05-26  Senganal T  <tsenganal@novell.com>
 
 	* SqlParameterTest.cs : Test if Parameter Type is inferred correctly
