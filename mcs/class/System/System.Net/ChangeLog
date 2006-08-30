@@ -1,3 +1,9 @@
+2006-08-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RequestStream.cs: make sure we return 0 when no more bytes left.
+	Paticularly, when we have a content length and the whole response is
+	buffered.
+
 2006-08-20  Miguel de Icaza  <miguel@novell.com>
 
 	* RequestStream.cs (Read): A bug fix for #79112 and what I
