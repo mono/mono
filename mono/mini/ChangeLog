@@ -1,3 +1,9 @@
+2006-08-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_emit_exceptions): Align fp constants to 16 bytes.
+	(mono_arch_output_basic_block): Avoid unaligned accesses in FNEG implementation. 
+	Fixes #79213.
+
 2006-08-29 Neale Ferguson <neale@sinenomine.net>
 
 	* mini-s390.c, mini-s390x.c: Fix VARARG case processing with 0 arguments. Add
