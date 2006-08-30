@@ -283,19 +283,20 @@ namespace System.Web.J2EE
 					string message = "The requested resource (" + _url + ") is not available.";
 					throw new HttpException(404, message);
 				}
+
+				//if the desciptor exists in the real app dir - get the type
+				try {
+					StreamReader sr = new StreamReader (HttpContext.Current.Request.MapPath ("/" + descPath));
+					typeName = GetTypeFromDescStream (sr.BaseStream);
+					sr.Close ();
+				}
+				catch (Exception ex) {
+					Console.WriteLine (ex);
+					throw ex;
+				}
 			}
-			//if the desciptor exists in the real app dir - get the type
-			try
-			{
-				StreamReader sr = new StreamReader(HttpContext.Current.Request.MapPath("/" + descPath));
-				typeName = GetTypeFromDescStream(sr.BaseStream);
-				sr.Close();
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex);
-				throw ex;
-			}
+			else
+				typeName = "ASP.defaultwsdlhelpgenerator_jvm_aspx";
 
 			if (typeName != null)
 			{
