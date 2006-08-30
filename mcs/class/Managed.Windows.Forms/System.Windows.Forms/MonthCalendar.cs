@@ -610,8 +610,8 @@ namespace System.Windows.Forms {
 				int row_count = 7;		// not including the today date
 
 				// set the date_cell_size and the title_size
-				date_cell_size = new Size ((int) Math.Ceiling (2.5 * multiplier), (int) Math.Ceiling (1.5 * multiplier));
-				title_size = new Size ((date_cell_size.Width * column_count), 3 * multiplier);
+				date_cell_size = new Size ((int) Math.Ceiling (1.8 * multiplier), multiplier);
+				title_size = new Size ((date_cell_size.Width * column_count), 2 * multiplier);
 
 				return new Size (column_count * date_cell_size.Width, row_count * date_cell_size.Height + title_size.Height);
 			}
