@@ -106,6 +106,11 @@ namespace System.Data.SqlClient
 			return base.Contains (value);
 		}
 
+		public void CopyTo (SqlParameter [] array, int index)
+		{
+			base.CopyTo (array, index);
+		}
+
 		public void Insert (int index, SqlParameter value)
 		{
 			base.Insert (index, value);

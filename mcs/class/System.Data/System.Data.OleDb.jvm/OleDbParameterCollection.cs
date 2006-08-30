@@ -108,6 +108,11 @@ namespace System.Data.OleDb
 			return base.Contains (value);
 		}
 
+		public void CopyTo (OleDbParameter [] array, int index)
+		{
+			base.CopyTo (array, index);
+		}
+
 		public void Insert (int index, OleDbParameter value)
 		{
 			base.Insert (index, value);
