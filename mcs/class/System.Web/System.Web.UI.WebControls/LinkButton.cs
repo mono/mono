@@ -63,7 +63,33 @@ namespace System.Web.UI.WebControls {
 			if (Page != null)
 				Page.VerifyRenderingInServerForm (this);
 
-			base.AddAttributesToRender (w);
+#if NET_2_0
+			string onclick = OnClientClick;
+			onclick = ClientScriptManager.EnsureEndsWithSemicolon (onclick);
+			if (Attributes ["onclick"] != null) {
+				onclick = ClientScriptManager.EnsureEndsWithSemicolon (onclick + Attributes ["onclick"]);
+				Attributes.Remove ("onclick");
+			}
+
+			if (onclick.Length > 0)
+				w.AddAttribute (HtmlTextWriterAttribute.Onclick, onclick);
+
+			if (Enabled && Page != null) {
+				string href;
+				bool doValidate = CausesValidation && Page.AreValidatorsUplevel ();
+				if (doValidate || PostBackUrl.Length > 0) {
+					PostBackOptions options = new PostBackOptions (this);
+					options.ActionUrl = Page.ResolveClientUrl (PostBackUrl);
+					options.PerformValidation = doValidate;
+					options.ValidationGroup = ValidationGroup;
+					href = Page.ClientScript.GetPostBackEventReference (options);
+				}
+				else
+					href = Page.ClientScript.GetPostBackEventReference (this, "");
+
+				w.AddAttribute (HtmlTextWriterAttribute.Href, href);
+			}
+#else
 			if (Page == null || !Enabled)
 				return;
 			
@@ -75,6 +101,8 @@ namespace System.Web.UI.WebControls {
 			} else {
 				w.AddAttribute (HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackClientHyperlink (this, ""));
 			}
+#endif
+			base.AddAttributesToRender (w);
 		}
 
 #if NET_2_0
@@ -220,16 +248,15 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[DefaultValue ("")]
 		[Themeable (false)]
-		[MonoTODO]
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual string OnClientClick
 		{
 			get {
-				throw new NotImplementedException ();
+				return ViewState.GetString ("OnClientClick", "");
 			}
 			set {
-				throw new NotImplementedException ();
+				ViewState ["OnClientClick"] = value;
 			}
 		}
 

@@ -434,5 +434,14 @@ namespace System.Web.UI
 				Script = script;
 			}
 		}
+
+#if NET_2_0
+		// helper method
+		internal static string EnsureEndsWithSemicolon (string value) {
+			if (value != null && value.Length > 0 && !value.EndsWith (";"))
+				return value += ";";
+			return value;
+		}
+#endif
 	}
 }

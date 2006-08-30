@@ -1,3 +1,10 @@
+2006-08-30 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* LinkButton.cs: implemented 2.0 features
+	OnClientClick attached to onclick attribute.
+	PostBackUrl, CausesValidation, ValidationGroup - used PostBackOptions
+	for href attribute.
+
 2006-08-29 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Button.cs: implemented 2.0 features

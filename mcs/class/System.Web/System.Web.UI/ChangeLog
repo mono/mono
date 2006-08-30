@@ -1,3 +1,7 @@
+2006-08-30 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ClientScriptManager.cs: added helper method
+
 2006-08-22  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Page.cs: fixed ApplyMasterPage, masterPageFile can be empty string
