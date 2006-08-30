@@ -97,6 +97,10 @@ namespace System.Data.OracleClient {
 			return base.Contains (value);
 		}
 
+		public void CopyTo (OracleParameter [] array, int index) {
+			base.CopyTo (array, index);
+		}
+
 		public void Insert (int index, OracleParameter value) {
 			base.Insert (index, value);
 		}
@@ -106,7 +110,7 @@ namespace System.Data.OracleClient {
 		}
 #endif
 
-		#endregion // Methods        
-        
+		#endregion // Methods
+
 	}
 }
