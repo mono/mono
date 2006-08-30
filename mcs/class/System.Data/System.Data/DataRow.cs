@@ -71,6 +71,7 @@ namespace System.Data {
 		private bool _hasParentCollection;
 		private bool _inChangingEvent;
 		private int _rowId;
+		internal bool _rowChanged = false;
 
 		private XmlDataDocument.XmlDataElement mappedElement;
 		internal bool _inExpressionEvaluation = false;
@@ -178,6 +179,7 @@ namespace System.Data {
 				if (value == null && column.DataType != typeof(string)) {
 					throw new ArgumentException("Cannot set column " + column.ColumnName + " to be null, Please use DBNull instead");
 				}
+				_rowChanged = true;
 				
 				CheckValue (value, column);
 				bool orginalEditing = Proposed >= 0;
@@ -919,7 +921,10 @@ namespace System.Data {
 				// Note : row state must not be changed before all the job on indexes finished,
 				// since the indexes works with recods rather than with rows and the decision
 				// which of row records to choose depends on row state.
-				_table.ChangedDataRow(this, DataRowAction.Change);
+				if (_rowChanged == true) {
+					_table.ChangedDataRow(this, DataRowAction.Change);
+					_rowChanged = false;
+				}
 			}
 		}
 

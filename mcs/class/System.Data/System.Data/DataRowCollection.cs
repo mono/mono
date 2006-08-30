@@ -117,6 +117,8 @@ namespace System.Data
 			row.RowID = List.Count - 1;
 			row.AttachRow ();
 			row.Table.ChangedDataRow (row, DataRowAction.Add);
+			if (row._rowChanged)
+				row._rowChanged = false;
 		}
 
 		/// <summary>
