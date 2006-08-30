@@ -335,4 +335,27 @@
 			<UserProperties REFS-JarPath-system-web="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Web.jar" REFS-JarPath-system-configuration="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Configuration.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\mscorlib.jar" REFS-JarPath-system="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Xml.jar"/>
 		</VisualStudio>
 	</ProjectExtensions>
+	<PropertyGroup>
+  <PostBuildEvent>echo Parsing DefaultWsdlHelpGenerator.jvm.aspx
+
+"%25VMW_HOME%25\bin\aspxparser.exe" /reference:"$(FrameworkDir)\System.dll" /reference:"$(FrameworkDir)\System.Web.dll" /novalidator /enterprise:no /appdir:$(ProjectDir)$(OutDir) /out:$(ProjectDir)\WEB-INF\lib\$(TargetName).jar /bindir:$(TargetDir)$(OutDir) /virtdir:/MonoSystemWeb /aspxfiles:..\..\..\..\..\mono\data\net_2_0\DefaultWsdlHelpGenerator.jvm.aspx /precompileall /tempDir:$(ProjectDir)$(OutDir) /assembly:$(TargetPath)
+
+set td=%25random%25
+echo %25td%25\ASP
+md %25td%25\ASP
+cd assemblies\A*
+copy dll.ghres ..\..\%25td%25
+copy ASP ..\..\%25td%25\ASP
+cd ..\..\%25td%25
+
+echo Unzipping System.Web.Services.jar...
+set jar=$(TargetDir)$(TargetName).jar
+jar xf "%25jar%25"
+echo Repackaging...
+jar cfm "%25jar%25" .\META-INF\MANIFEST.MF *
+
+cd ..
+rmdir /S /Q %25td%25
+rmdir /S /Q assemblies</PostBuildEvent>
+  </PropertyGroup>
 </Project>
