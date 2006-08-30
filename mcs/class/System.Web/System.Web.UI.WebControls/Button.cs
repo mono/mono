@@ -180,18 +180,8 @@ namespace System.Web.UI.WebControls {
 			}
 
 			if (Page != null) {
-				bool doValidate = CausesValidation && Page.AreValidatorsUplevel ();
-				if (doValidate || PostBackUrl.Length>0) {
-					PostBackOptions options = new PostBackOptions (this);
-					options.RequiresJavaScriptProtocol = false;
-					options.ClientSubmit = !UseSubmitBehavior;
-					options.ActionUrl = Page.ResolveClientUrl (PostBackUrl);
-					options.PerformValidation = doValidate;
-					options.ValidationGroup = ValidationGroup;
-					onclick += Page.ClientScript.GetPostBackEventReference (options);
-				}
-				else if (!UseSubmitBehavior)
-					onclick += Page.ClientScript.GetPostBackEventReference (this, "");
+				PostBackOptions options = GetPostBackOptions ();
+				onclick += Page.ClientScript.GetPostBackEventReference (options);
 			}
 
 			if (onclick.Length > 0)
@@ -219,10 +209,19 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO]
-		protected virtual PostBackOptions GetPostBackOptions ()
+		protected virtual PostBackOptions GetPostBackOptions () 
 		{
-			throw new NotImplementedException ();
+			PostBackOptions options = new PostBackOptions (this);
+			options.ActionUrl = (PostBackUrl.Length > 0 ? Page.ResolveClientUrl (PostBackUrl) : null);
+			options.ValidationGroup = null;
+			options.Argument = "";
+			options.RequiresJavaScriptProtocol = false;
+			options.ClientSubmit = !UseSubmitBehavior;
+			options.PerformValidation = CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup);
+			if (options.PerformValidation)
+				options.ValidationGroup = ValidationGroup;
+
+			return options;
 		}
 #endif		
 
