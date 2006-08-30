@@ -44,6 +44,7 @@ namespace MonoTests.System.Drawing {
 		private Rectangle rect;
 		private RectangleF rectf;
 		private ImageAttributes attr;
+		private Bitmap bmp;
 
 		[TestFixtureSetUp]
 		public void FixtureSetUp ()
@@ -52,11 +53,14 @@ namespace MonoTests.System.Drawing {
 			rect = new Rectangle (0, 0, 10, 10);
 			rectf = new RectangleF (0, 0, 10, 10);
 			attr = new ImageAttributes ();
+			bmp = new Bitmap (50, 50);
 		}
 
 		private void Common (TextureBrush t, WrapMode wm)
 		{
-			Assert.IsNotNull (t.Image, "Image");
+			using (Image img = t.Image) {
+				Assert.IsNotNull (img, "Image");
+			}
 			Assert.IsFalse (Object.ReferenceEquals (image, t.Image), "Image-Equals");
 			Assert.IsTrue (t.Transform.IsIdentity, "Transform.IsIdentity");
 			Assert.AreEqual (wm, t.WrapMode, "WrapMode");
@@ -230,6 +234,31 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
+		public void TextureBush_RectangleInsideBitmap ()
+		{
+			Rectangle r = new Rectangle (10, 10, 40, 40);
+			Assert.IsTrue (r.Y + r.Height <= bmp.Height, "Height");
+			Assert.IsTrue (r.X + r.Width <= bmp.Width, "Width");
+			TextureBrush b = new TextureBrush (bmp, r);
+			using (Image img = b.Image) {
+				Assert.AreEqual (r.Height, img.Height, "Image.Height");
+				Assert.AreEqual (r.Width, img.Width, "Image.Width");
+			}
+			Assert.IsTrue (b.Transform.IsIdentity, "Transform.IsIdentity");
+			Assert.AreEqual (WrapMode.Tile, b.WrapMode, "WrapMode");
+		}
+
+		[Test]
+		[ExpectedException (typeof (OutOfMemoryException))]
+		public void TextureBush_RectangleOutsideBitmap ()
+		{
+			Rectangle r = new Rectangle (50, 50, 50, 50);
+			Assert.IsFalse (r.Y + r.Height <= bmp.Height, "Height");
+			Assert.IsFalse (r.X + r.Width <= bmp.Width, "Width");
+			new TextureBrush (bmp, r);
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Transform_Null ()
 		{
@@ -260,6 +289,14 @@ namespace MonoTests.System.Drawing {
 		public void WrapMode_Invalid ()
 		{
 			new TextureBrush (image).WrapMode = (WrapMode)Int32.MinValue;
+		}
+
+		[Test]
+		public void Clone ()
+		{
+			TextureBrush t = new TextureBrush (image);
+			TextureBrush clone = (TextureBrush) t.Clone ();
+			Common (clone, t.WrapMode);
 		}
 
 		[Test]
