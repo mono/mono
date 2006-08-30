@@ -619,28 +619,60 @@ Index: class.cs
  
  		#region IMethodData Members
  
-+		public Iterator Iterator {
-+			get { return null; }
++		public abstract Iterator Iterator {
++			get;
 +		}
 +
  		public ToplevelBlock Block {
  			get {
  				return block;
-@@ -6285,9 +6333,10 @@
+@@ -6220,6 +6268,7 @@
+ 		{
+ 			protected readonly MethodCore method;
+ 			protected MethodAttributes flags;
++			Iterator iterator;
+ 			bool yields;
+ 
+ 			public PropertyMethod (MethodCore method, string prefix)
+@@ -6241,6 +6290,10 @@
+ 				}
+ 			}
+ 
++			public override Iterator Iterator {
++				get { return iterator; }
++			}
++
+ 			public override AttributeTargets AttributeTargets {
+ 				get {
+ 					return AttributeTargets.Method;
+@@ -6285,10 +6338,11 @@
  				// Setup iterator if we are one
  				//
  				if (yields) {
 -					Iterator iterator = new Iterator (this, Parent as TypeContainer, null, ModFlags);
 -					
 -					if (!iterator.DefineIterator ())
-+					Iterator iterator = Iterator.CreateIterator (
+-						return null;
++					iterator = Iterator.CreateIterator (
 +						this, (TypeContainer) Parent, null, ModFlags);
 +
 +					if (iterator == null)
- 						return null;
++						throw new InternalErrorException ();
  				}
  
-@@ -7323,10 +7372,10 @@
+ 				return null;
+@@ -6932,6 +6986,10 @@
+ 				this.method = method;
+ 			}
+ 
++			public override Iterator Iterator {
++				get { return null; }
++			}
++
+ 			protected override void ApplyToExtraTarget(Attribute a, CustomAttributeBuilder cb)
+ 			{
+ 				if (a.Target == AttributeTargets.Parameter) {
+@@ -7323,10 +7381,10 @@
  				// Setup iterator if we are one
  				//
  				if ((ModFlags & Modifiers.METHOD_YIELDS) != 0){
@@ -654,7 +686,7 @@ Index: class.cs
  						return false;
  				}
  			}
-@@ -7444,6 +7493,10 @@
+@@ -7444,6 +7502,10 @@
  			Block = block;
  		}
  
