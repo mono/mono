@@ -85,7 +85,7 @@ namespace System.Web.UI.WebControls {
 					href = Page.ClientScript.GetPostBackEventReference (options);
 				}
 				else
-					href = Page.ClientScript.GetPostBackEventReference (this, "");
+					href = Page.ClientScript.GetPostBackClientHyperlink (this, "");
 
 				w.AddAttribute (HtmlTextWriterAttribute.Href, href);
 			}

@@ -1,5 +1,9 @@
 2006-08-30 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* LinkButton.cs: typo fix
+
+2006-08-30 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Button.cs: refactoring
 
 2006-08-30 Igor Zelmanovich <igorz@mainsoft.com>
