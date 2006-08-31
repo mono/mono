@@ -152,7 +152,7 @@ namespace System.Web {
 			if (apppath == null)
 				throw new HttpException ("The path to the application is not known");
 
-			return ToAbsolute (apppath, virtualPath);
+			return ToAbsolute (virtualPath,apppath);
 		}
 
 		public static string ToAbsolute (string virtualPath, string applicationPath)

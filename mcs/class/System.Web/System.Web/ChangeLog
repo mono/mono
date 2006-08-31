@@ -1,3 +1,7 @@
+2006-08-31	Boris Kirzner <borisk@mainsoft.com>
+
+	* VirtualPathUtility.cs : pass parameters in correct order.
+
 2006-08-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplicationFactory.cs: handle the 'renamed' event too.
