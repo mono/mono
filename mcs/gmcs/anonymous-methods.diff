@@ -750,7 +750,7 @@ Index: iterators.cs
  				expr = Convert.ImplicitConversionRequired (
  					ec, expr, iterator.IteratorType, loc);
  				if (expr == null)
-@@ -119,13 +122,478 @@
+@@ -119,13 +122,474 @@
  		}
  	}
  
@@ -1155,7 +1155,6 @@ Index: iterators.cs
 +		protected class EnumeratorScopeInitializer : IteratorHostInitializer
 +		{
 +			IteratorHost host;
-+			ExpressionStatement initializer;
 +
 +			public EnumeratorScopeInitializer (IteratorHost host)
 +				: base (host)
@@ -1165,7 +1164,6 @@ Index: iterators.cs
 +
 +			protected override bool DoResolveInternal (EmitContext ec)
 +			{
-+				// initializer = host.GetScopeInitializer (ec);
 +				type = host.IsGeneric ? host.CurrentType : host.TypeBuilder;
 +				return base.DoResolveInternal (ec);
 +			}
@@ -1178,8 +1176,6 @@ Index: iterators.cs
 +			protected override void EmitParameterReference (EmitContext ec,
 +									CapturedParameter cp)
 +			{
-+				Report.Debug (64, "EMIT THE PARAM", this, cp, host,
-+					      initializer, host.CaptureContext.captured_parameters);
 +				ec.ig.Emit (OpCodes.Ldarg_0);
 +				ec.ig.Emit (OpCodes.Ldfld, cp.Field.FieldBuilder);
 +			}
@@ -1234,7 +1230,7 @@ Index: iterators.cs
  		public readonly bool IsStatic;
  
  		//
-@@ -139,7 +607,6 @@
+@@ -139,7 +603,6 @@
  		// Context from the original method
  		//
  		GenericMethod generic_method;
@@ -1242,7 +1238,7 @@ Index: iterators.cs
  		TypeExpr current_type;
  		Type this_type;
  		Parameters parameters;
-@@ -147,7 +614,7 @@
+@@ -147,7 +610,7 @@
  		IMethodData orig_method;
  
  		MethodInfo dispose_method;
@@ -1251,7 +1247,7 @@ Index: iterators.cs
  		Constructor ctor;
  		CaptureContext cc;
  
-@@ -156,25 +623,25 @@
+@@ -156,25 +619,25 @@
  		Expression generic_enumerator_type;
  		Expression generic_enumerable_type;
  		TypeArguments generic_args;
@@ -1283,7 +1279,7 @@ Index: iterators.cs
  		{
  			ILGenerator ig = ec.ig;
  
-@@ -192,7 +659,7 @@
+@@ -192,7 +655,7 @@
  			resume_points.Add (entry_point);
  			entry_point.Define (ig);
  
@@ -1292,7 +1288,7 @@ Index: iterators.cs
  
  			EmitYieldBreak (ig);
  
-@@ -203,7 +670,7 @@
+@@ -203,7 +666,7 @@
  				labels [i] = ((ResumePoint) resume_points [i]).Label;
  
  			ig.Emit (OpCodes.Ldarg_0);
@@ -1301,7 +1297,7 @@ Index: iterators.cs
  			ig.Emit (OpCodes.Switch, labels);
  
  			Label end = ig.DefineLabel ();
-@@ -221,7 +688,7 @@
+@@ -221,7 +684,7 @@
  			ig.BeginFaultBlock ();
  
  			ig.Emit (OpCodes.Ldarg_0);
@@ -1310,7 +1306,7 @@ Index: iterators.cs
  
  			ig.EndExceptionBlock ();
  
-@@ -264,12 +731,12 @@
+@@ -264,12 +727,12 @@
  
  			ig.MarkLabel (dispatcher);
  			ig.Emit (OpCodes.Ldarg_0);
@@ -1325,7 +1321,7 @@ Index: iterators.cs
  
  			ig.MarkLabel (end);
  		}
-@@ -305,13 +772,13 @@
+@@ -305,13 +768,13 @@
  			// Store the new current
  			ig.Emit (OpCodes.Ldarg_0);
  			expr.Emit (ec);
@@ -1341,7 +1337,7 @@ Index: iterators.cs
  
  			// Return ok
  			ig.Emit (OpCodes.Br, move_next_ok);
-@@ -329,726 +796,119 @@
+@@ -329,726 +792,119 @@
  			pc++;
  			ig.Emit (OpCodes.Ldarg_0);
  			IntConstant.EmitInt (ig, pc);
@@ -2134,7 +2130,7 @@ Index: iterators.cs
  		}
  
  		protected class MoveNextStatement : Statement {
-@@ -1062,147 +922,17 @@
+@@ -1062,147 +918,17 @@
  
  			public override bool Resolve (EmitContext ec)
  			{
@@ -2285,7 +2281,7 @@ Index: iterators.cs
  		}
  
  		//
-@@ -1212,10 +942,10 @@
+@@ -1212,10 +938,10 @@
  		class NoCheckReturn : Statement {
  			public Expression Expr;
  		
@@ -2298,7 +2294,7 @@ Index: iterators.cs
  			}
  
  			public override bool Resolve (EmitContext ec)
-@@ -1236,10 +966,47 @@
+@@ -1236,10 +962,47 @@
  			}
  		}
  
