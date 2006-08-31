@@ -1,3 +1,11 @@
+2006-08-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestBmpCodec.cs: Add more test cases for 1, 8 and 32 bbp bitmaps
+	including checks for Pixels and BitmapData.
+	* TestImageCodecInfo.cs: Fix namespace and class name.
+	* TestJpegCodec.cs: Reactivate the tests (not sure why they were 
+	commented). Added test cases for Pixel and BitmapData (NotWorking).
+
 2006-08-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestBmpCodec.cs: Add pixel value tests to a well known bitmap.

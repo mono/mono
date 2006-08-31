@@ -2,14 +2,10 @@
 // ImageCodecInfo class testing unit
 //
 // Author:
-//
 // 	 Jordi Mas i Hernàndez (jordi@ximian.com)
 //
 // (C) 2004 Ximian, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,6 +26,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -38,13 +35,12 @@ using System.Collections;
 using System.Security.Permissions;
 using System.Text.RegularExpressions;
 
-namespace MonoTests.System.Drawing
-{
+namespace MonoTests.System.Drawing.Imaging {
 
 	[TestFixture]
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
-	public class TestImageCodecInfo 
-	{
+	public class ImageCodecInfoTest {
+
 		Hashtable decoders;
 		Hashtable encoders;
 
