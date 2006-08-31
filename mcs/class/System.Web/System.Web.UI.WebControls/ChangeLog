@@ -1,5 +1,10 @@
 2006-08-31 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* CreateUserWizard.cs: fixed: InvalidPasswordErrorMessage 
+	is formatted correct. 
+
+2006-08-31 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* CreateUserWizard.cs: 
 	* CompleteWizardStep.cs: 
 	* CreateUserWizardStep.cs: 

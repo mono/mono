@@ -1433,7 +1433,7 @@ namespace System.Web.UI.WebControls
 					break;
 
 				case MembershipCreateStatus.InvalidPassword:
-					ShowErrorMessage (InvalidPasswordErrorMessage);
+					ShowErrorMessage (String.Format (InvalidPasswordErrorMessage, MembershipProviderInternal.MinRequiredPasswordLength, MembershipProviderInternal.MinRequiredNonAlphanumericCharacters));
 					break;
 
 				case MembershipCreateStatus.DuplicateEmail:
