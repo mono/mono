@@ -557,8 +557,16 @@ namespace System.Windows.Forms {
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
 			// enforce our width / height
 			if (horizontal) {
+				splitter_size = height;
+				if (splitter_size < 1) {
+					splitter_size = 3;
+				}
 				base.SetBoundsCore (x, y, width, splitter_size, specified);
 			} else {
+				splitter_size = width;
+				if (splitter_size < 1) {
+					splitter_size = 3;
+				}
 				base.SetBoundsCore (x, y, splitter_size, height, specified);
 			}
 		}

@@ -1,3 +1,8 @@
+2006-08-31  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Splitter.cs (SetBoundsCore): Don't ignore width/height of the 
+	  splitter control (fixes #79228)
+
 2006-08-31  Chris Toshok  <toshok@ximian.com>
 
 	* DataGridColumnStyle.cs: we need to delay the assignment of
