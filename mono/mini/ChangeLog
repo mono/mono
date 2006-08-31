@@ -1,5 +1,8 @@
 2006-08-31  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_get_ldelema_ins): Fix verifier error when calling
+	Address on two dimensional arrays. Fixes #78729.
+
 	* mini.h (MonoCompile): Add a 'skip_visibility' field.
 
 	* mini.c (method_to_ir): Disable visibility checks if skip_visibility is set on
