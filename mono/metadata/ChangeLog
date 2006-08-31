@@ -1,5 +1,8 @@
 2006-08-31  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (emit_marshal_array): Avoid crash when a parameter with type array is 
+	missing a [MarshalAs] directive. Fixes #79203.
+
 	* marshal.c (mono_marshal_load_type_info): Fix a race in initializing 
 	klass->marshal_info. Fixes #79217.
 
