@@ -1,5 +1,8 @@
 2006-08-31  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (mono_marshal_load_type_info): Revert the last change as it can't cope
+	with cycles in classes.
+
 	* icall.c (ves_icall_MonoType_get_Name): Add a '&' for byref types. Fixes #79110.
 
 	* marshal.c (emit_marshal_array): Avoid crash when a parameter with type array is 
