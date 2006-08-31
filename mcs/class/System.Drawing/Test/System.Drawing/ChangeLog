@@ -1,3 +1,7 @@
+2006-08-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TextureBrushTest.cs: Remove NotWorking from rotation test case.
+
 2006-08-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TextureBrushTest.cs: More test cases when only a partial part of the

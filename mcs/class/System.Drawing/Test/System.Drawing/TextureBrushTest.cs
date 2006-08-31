@@ -367,7 +367,6 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void RotateTransform ()
 		{
 			TextureBrush t = new TextureBrush (image);
