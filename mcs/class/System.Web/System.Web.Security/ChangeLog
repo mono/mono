@@ -1,3 +1,7 @@
+2006-08-31 Konstantin Triger <kostat@mainsoft.com>
+
+	* SqlRoleProvider.cs: fixed initialization.
+
 2006-08-31 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* SqlMembershipProvider.cs: fixed CreateUser,

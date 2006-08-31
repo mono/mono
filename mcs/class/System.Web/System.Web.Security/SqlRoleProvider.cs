@@ -43,8 +43,6 @@ namespace System.Web.Security {
 	public class SqlRoleProvider: RoleProvider {
 
 		string applicationName;
-		int commandTimeout;
-		string providerName;
 
 		ConnectionStringSettings connectionString;
 		DbProviderFactory factory;
@@ -365,6 +363,15 @@ WHERE dbo.aspnet_Roles.RoleId = dbo.aspnet_UsersInRoles.RoleId
 			return (string[])userList.ToArray(typeof (string));
 			}
 		}
+
+		static string GetStringConfigValue (NameValueCollection config, string name, string def)
+		{
+			string rv = def;
+			string val = config[name];
+			if (val != null)
+				rv = val;
+			return rv;
+		}
 		
 		[MonoTODO]
 		public override void Initialize (string name, NameValueCollection config)
@@ -374,13 +381,8 @@ WHERE dbo.aspnet_Roles.RoleId = dbo.aspnet_UsersInRoles.RoleId
 
 			base.Initialize (name, config);
 
-#if false
-			ApplicationName = config["applicationName"];
-#else
-			ApplicationName = "/";
-#endif
+			applicationName = config ["applicationName"];
 			string connectionStringName = config["connectionStringName"];
-			string commandTimeout = config["commandTimeout"];
 
 			if (applicationName.Length > 256)
 				throw new ProviderException ("The ApplicationName attribute must be 256 characters long or less.");
