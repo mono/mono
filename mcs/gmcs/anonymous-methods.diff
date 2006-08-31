@@ -1100,7 +1100,7 @@ Index: iterators.cs
 +
 +				host.AddMethod (this);
 +
-+				Block = new ToplevelBlock (host.Iterator.Container, null, Location);
++				Block = new ToplevelBlock (host.Iterator.Block, null, Location);
 +				// Block.SetHaveAnonymousMethods (Location, Host.Iterator);
 +
 +				// Block = Host.Iterator.DisposeBlock;
@@ -2469,7 +2469,7 @@ Index: anonymous.cs
 ===================================================================
 --- anonymous.cs	(revision 63019)
 +++ anonymous.cs	(working copy)
-@@ -20,297 +20,697 @@
+@@ -20,297 +20,696 @@
  
  namespace Mono.CSharp {
  
@@ -3247,7 +3247,6 @@ Index: anonymous.cs
 +		protected class AnonymousMethodHostInitializer : ScopeInitializer
 +		{
 +			AnonymousMethodHost host;
-+			ExpressionStatement parent_init;
 +
 +			public AnonymousMethodHostInitializer (AnonymousMethodHost host)
 +				: base (host)
@@ -3382,7 +3381,7 @@ Index: anonymous.cs
  		}
  
  		public bool ImplicitStandardConversionExists (Type delegate_type)
-@@ -318,8 +718,9 @@
+@@ -318,8 +717,9 @@
  			if (Parameters == null)
  				return true;
  
@@ -3394,7 +3393,7 @@ Index: anonymous.cs
  			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
  
  			if (Parameters.Count != invoke_pd.Count)
-@@ -338,31 +739,20 @@
+@@ -338,31 +738,20 @@
  		//
  		public Expression Compatible (EmitContext ec, Type delegate_type)
  		{
@@ -3433,7 +3432,7 @@ Index: anonymous.cs
  			if (Parameters == null) {
  				//
  				// We provide a set of inaccessible parameters
-@@ -375,7 +765,9 @@
+@@ -375,7 +764,9 @@
  						"+" + i, invoke_pd.ParameterModifier (i), null, loc);
  				}
  								
@@ -3444,7 +3443,7 @@ Index: anonymous.cs
  			} else {
  				if (Parameters.Count != invoke_pd.Count) {
  					Report.SymbolRelatedToPreviousError (delegate_type);
-@@ -407,8 +799,10 @@
+@@ -407,8 +798,10 @@
  						return null;
  					}
  				}
@@ -3456,7 +3455,7 @@ Index: anonymous.cs
  			//
  			// Second: the return type of the delegate must be compatible with 
  			// the anonymous type.   Instead of doing a pass to examine the block
-@@ -419,135 +813,318 @@
+@@ -419,135 +812,307 @@
  			//MethodBuilder builder = method_data.MethodBuilder;
  			//ILGenerator ig = builder.GetILGenerator ();
  
@@ -3601,10 +3600,6 @@ Index: anonymous.cs
 +			get { return root_scope; }
 +		}
 +
-+		public ScopeInfo Scope {
-+			get { return ContainerCaptureContext.Scope; }
-+		}
-+
 +		public string GetSignatureForError ()
  		{
 -			string s = TypeManager.CSharpSignature (invoke_mb);
@@ -3665,13 +3660,6 @@ Index: anonymous.cs
 +			Report.Debug (64, "RESOLVE ANONYMOUS METHOD #3", this, ec, aec, Block,
 +				      ec.capture_context);
 +
-+			ContainerCaptureContext.ComputeMethodHost ();
-+
-+			Report.Debug (64, "RESOLVE ANONYMOUS METHOD #4", this, Scope);
-+
-+			if (Scope == null)
-+				throw new InternalErrorException ();
-+
 +			method = DoCreateMethodHost (ec);
 +
  			return true;
@@ -3727,7 +3715,7 @@ Index: anonymous.cs
 -			cig.Emit (OpCodes.Call, TypeManager.object_ctor);
 -			cig.Emit (OpCodes.Ret);
 +				am.RootScope.CheckMembersDefined ();
-+				am.Scope.AddMethod (this);
++				am.RootScope.AddMethod (this);
 +				Block = am.Block;
 +			}
  
@@ -3801,7 +3789,7 @@ Index: anonymous.cs
 +				member_name = new MemberName (name, args, loc);
 +
 +				generic_method = new GenericMethod (
-+					Scope.NamespaceEntry, Scope, member_name,
++					RootScope.NamespaceEntry, RootScope, member_name,
 +					new TypeExpression (ReturnType, loc), Parameters);
 +
 +				generic_method.SetParameterInfo (null);
@@ -3861,7 +3849,7 @@ Index: anonymous.cs
  		}
  	}
  
-@@ -573,69 +1150,40 @@
+@@ -573,137 +1138,84 @@
  		
  		public override void Emit (EmitContext ec)
  		{
@@ -3933,20 +3921,20 @@ Index: anonymous.cs
  	//
 -	public class ScopeInfo {
 -		public CaptureContext CaptureContext;
-+	public class ScopeInfo : ScopeInfoBase {
- 		public ScopeInfo ParentScope;
+-		public ScopeInfo ParentScope;
 -		public Block ScopeBlock;
 -		public bool NeedThis = false;
 -		public bool HostsParameters = false;
- 		
+-		
++	public class ScopeInfo : ScopeInfoBase {
  		// For tracking the number of scopes created.
  		public int id;
  		static int count;
 -		bool inited = false;
  		
  		ArrayList locals = new ArrayList ();
- 		ArrayList children = new ArrayList ();
-@@ -643,40 +1191,47 @@
+-		ArrayList children = new ArrayList ();
+ 
  		//
  		// The types and fields generated
  		//
@@ -3995,37 +3983,53 @@ Index: anonymous.cs
 -}
 -	
 -		public bool IsCaptured (LocalInfo li)
+-		{
+-			return locals.Contains (li);
 +			Report.Debug (64, "NEW ROOT SCOPE", this);
 +
 +			cc.RegisterCaptureContext ();
-+		}
-+
+ 		}
+-		
+-		internal void AddChild (ScopeInfo si)
+-		{
+-			if (children.Contains (si))
+-				return;
+ 
+-			//
+-			// If any of the current children should be a children of `si', move them there
+-			//
+-			ArrayList move_queue = null;
+-			foreach (ScopeInfo child in children){
+-				if (child.ScopeBlock.IsChildOf (si.ScopeBlock)){
+-					if (move_queue == null)
+-						move_queue = new ArrayList ();
+-					move_queue.Add (child);
+-					child.ParentScope = si;
+-					si.AddChild (child);
+-				}
+-			}
+-			
+-			children.Add (si);
 +		public override AnonymousMethodHost Host {
 +			get { return CaptureContext.Host.RootScope; }
 +		}
-+
+ 
+-			if (move_queue != null){
+-				foreach (ScopeInfo child in move_queue){
+-					children.Remove (child);
+-				}
+-			}
+-		} 
 +		public Variable AddLocal (LocalInfo local)
- 		{
--			return locals.Contains (li);
++		{
 +			CapturedLocal cl = new CapturedLocal (this, local);
 +			locals.Add (cl);
 +			return cl;
- 		}
--		
-+
- 		internal void AddChild (ScopeInfo si)
- 		{
- 			if (children.Contains (si))
-@@ -703,7 +1258,7 @@
- 					children.Remove (child);
- 				}
- 			}
--		} 
 +		}
  
  		static int indent = 0;
  
-@@ -719,8 +1274,6 @@
+@@ -719,221 +1231,212 @@
  			Pad ();
  			Console.WriteLine ("START");
  			indent++;
@@ -4034,7 +4038,12 @@ Index: anonymous.cs
  			foreach (LocalInfo li in locals){
  				Pad ();
  				Console.WriteLine ("var {0}", MakeFieldName (li.Name));
-@@ -733,168 +1286,18 @@
+ 			}
+ 			
+-			foreach (ScopeInfo si in children)
+-				si.EmitDebug ();
+ 			indent--;
+ 			Pad ();
  			Console.WriteLine ("END");
  		}
  
@@ -4045,173 +4054,51 @@ Index: anonymous.cs
  		}
  
 -		public void EmitScopeType (EmitContext ec)
--		{
++		protected override ScopeInitializerBase CreateScopeInitializer ()
+ 		{
 -			// EmitDebug ();
-+		bool resolved;
++			return new ScopeInitializer (this);
++		}
  
 -			if (ScopeTypeBuilder != null)
 -				return;
--			
++		static void DoPath (StringBuilder sb, ScopeInfo start)
++		{
++			sb.Append ((start.id).ToString ());
++		}
++		
++		public override string ToString ()
++		{
++			StringBuilder sb = new StringBuilder ();
+ 			
 -			Type container;
 -			if (ec.TypeContainer.CurrentType != null)
 -				container = ec.TypeContainer.CurrentType;
 -			else
 -				container = ec.TypeContainer.TypeBuilder;
--
++			sb.Append ("{");
++			if (CaptureContext != null){
++				sb.Append (CaptureContext.ToString ());
++				sb.Append (":");
++			}
+ 
 -			CaptureContext.Host.CreateScopeType (ec, this);
 -			
 -			if (NeedThis)
 -				THIS = ScopeTypeBuilder.DefineField ("<>THIS", container, FieldAttributes.Assembly);
--
++			DoPath (sb, this);
++			sb.Append ("}");
+ 
 -			if (ParentScope != null){
 -				if (ParentScope.ScopeTypeBuilder == null){
 -					throw new Exception (String.Format ("My parent has not been initialized {0} and {1}", ParentScope, this));
 -				}
--
++			return sb.ToString ();
++		}
+ 
 -				if (ParentScope.ScopeTypeBuilder != ScopeTypeBuilder)
 -					ParentLink = ScopeTypeBuilder.DefineField (
 -						"<>parent", ParentScope.ScopeType, FieldAttributes.Assembly);
--			}
--			
--			if (NeedThis && ParentScope != null)
--				throw new Exception ("I was not expecting THIS && having a parent");
--
--			foreach (LocalInfo info in locals)
--				info.FieldBuilder = ScopeTypeBuilder.DefineField (
--					MakeFieldName (info.Name), info.VariableType, FieldAttributes.Assembly);
--
--			if (HostsParameters){
--				Hashtable captured_parameters = CaptureContext.captured_parameters;
--				
--				foreach (DictionaryEntry de in captured_parameters){
--					string name = (string) de.Key;
--					CapturedParameter cp = (CapturedParameter) de.Value;
--					FieldBuilder fb;
--					
--					fb = ScopeTypeBuilder.DefineField ("<p:" + name + ">", cp.Type, FieldAttributes.Assembly);
--					cp.FieldBuilder = fb;
--				}
--			}
--
--			foreach (ScopeInfo si in children){
--				si.EmitScopeType (ec);
--			}
--		}
--
--		public void CloseTypes ()
-+		protected override ScopeInitializerBase CreateScopeInitializer ()
- 		{
--			RootContext.RegisterCompilerGeneratedType (ScopeTypeBuilder);
--			foreach (ScopeInfo si in children)
--				si.CloseTypes ();
-+			return new ScopeInitializer (this);
- 		}
- 
--		//
--		// Emits the initialization code for the scope
--		//
--		public void EmitInitScope (EmitContext ec)
--		{
--			ILGenerator ig = ec.ig;
--
--			if (inited)
--				return;
--
--			if (ScopeConstructor == null)
--				throw new Exception ("ScopeConstructor is null for" + this.ToString ());
--			
--			if (!CaptureContext.Host.IsIterator) {
--				scope_instance = ig.DeclareLocal (ScopeType);
--				ig.Emit (OpCodes.Newobj, ScopeConstructor);
--				ig.Emit (OpCodes.Stloc, scope_instance);
--			}
--
--			if (THIS != null){
--				if (CaptureContext.Host.IsIterator) {
--					ig.Emit (OpCodes.Ldarg_0);
--					ig.Emit (OpCodes.Ldarg_1);
--				} else {
--					ig.Emit (OpCodes.Ldloc, scope_instance);
--					ig.Emit (OpCodes.Ldarg_0);
--				}
--				ig.Emit (OpCodes.Stfld, THIS);
--			}
--
--			//
--			// Copy the parameter values, if any
--			//
--			int extra = ec.IsStatic ? 0 : 1;
--			if (CaptureContext.Host.IsIterator)
--				extra++;
--			if (HostsParameters){
--				Hashtable captured_parameters = CaptureContext.captured_parameters;
--				
--				foreach (DictionaryEntry de in captured_parameters){
--					CapturedParameter cp = (CapturedParameter) de.Value;
--
--					EmitScopeInstance (ig);
--					ParameterReference.EmitLdArg (ig, cp.Idx + extra);
--					ig.Emit (OpCodes.Stfld, cp.FieldBuilder);
--				}
--			}
--
--			if (ParentScope != null){
--				if (!ParentScope.inited)
--					ParentScope.EmitInitScope (ec);
--
--				if (ParentScope.ScopeTypeBuilder != ScopeTypeBuilder) {
--					//
--					// Only emit initialization in our capturecontext world
--					//
--					if (ParentScope.CaptureContext == CaptureContext){
--						EmitScopeInstance (ig);
--						ParentScope.EmitScopeInstance (ig);
--						ig.Emit (OpCodes.Stfld, ParentLink);
--					} else {
--						EmitScopeInstance (ig);
--						ig.Emit (OpCodes.Ldarg_0);
--						ig.Emit (OpCodes.Stfld, ParentLink);
--					}
--				}
--			}
--			inited = true;
--		}
--
--		public void EmitScopeInstance (ILGenerator ig)
--		{
--			if (CaptureContext.Host.IsIterator)
--				ig.Emit (OpCodes.Ldarg_0);
--			else {
--				if (scope_instance == null){
--					//
--					// This is needed if someone overwrites the Emit method
--					// of Statement and manually calls Block.Emit without
--					// this snippet first:
--					// 
--					//   ec.EmitScopeInitFromBlock (The_Block);
--					//   The_Block.Emit (ec);
--					// 
--
--					Console.WriteLine (
--				        	"The scope_instance has not been emitted, this typically means\n" +
--						"that inside the compiler someone is calling Block.Emit without\n" +
--						"first calling EmitScopeInitFromBlock for the block.  See compiler" +
--						"source code for an explanation");
--					throw new Exception ("Internal compiler error");
--					
--				}
--				ig.Emit (OpCodes.Ldloc, scope_instance);
--			}
--		}
--
- 		public static void CheckCycles (string msg, ScopeInfo s)
- 		{
- 			ArrayList l = new ArrayList ();
-@@ -935,6 +1338,173 @@
- 
- 			return sb.ToString ();
- 		}
-+
 +		protected class CapturedParameter : Variable {
 +			public readonly ScopeInfo Scope;
 +			public readonly Parameter Parameter;
@@ -4227,20 +4114,45 @@ Index: anonymous.cs
 +				this.Idx = idx;
 +				Field = scope.CaptureVariable (
 +					"<p:" + par.Name + ">", par.ParameterType);
-+			}
-+
+ 			}
+-			
+-			if (NeedThis && ParentScope != null)
+-				throw new Exception ("I was not expecting THIS && having a parent");
+ 
+-			foreach (LocalInfo info in locals)
+-				info.FieldBuilder = ScopeTypeBuilder.DefineField (
+-					MakeFieldName (info.Name), info.VariableType, FieldAttributes.Assembly);
 +			public override Type Type {
 +				get { return Field.MemberType; }
 +			}
-+
+ 
+-			if (HostsParameters){
+-				Hashtable captured_parameters = CaptureContext.captured_parameters;
+-				
+-				foreach (DictionaryEntry de in captured_parameters){
+-					string name = (string) de.Key;
+-					CapturedParameter cp = (CapturedParameter) de.Value;
+-					FieldBuilder fb;
+-					
+-					fb = ScopeTypeBuilder.DefineField ("<p:" + name + ">", cp.Type, FieldAttributes.Assembly);
+-					cp.FieldBuilder = fb;
+-				}
 +			public override bool HasInstance {
 +				get { return true; }
-+			}
-+
+ 			}
+ 
+-			foreach (ScopeInfo si in children){
+-				si.EmitScopeType (ec);
 +			public override bool NeedsTemporary {
 +				get { return true; }
-+			}
-+
+ 			}
+-		}
+ 
+-		public void CloseTypes ()
+-		{
+-			RootContext.RegisterCompilerGeneratedType (ScopeTypeBuilder);
+-			foreach (ScopeInfo si in children)
+-				si.CloseTypes ();
 +			protected FieldInfo GetField (EmitContext ec)
 +			{
 +				if ((Scope.Host is IteratorHost) ||
@@ -4274,48 +4186,120 @@ Index: anonymous.cs
 +			{
 +				return String.Format ("{0} ({1})", GetType (), Field);
 +			}
-+		}
-+
+ 		}
+ 
+-		//
+-		// Emits the initialization code for the scope
+-		//
+-		public void EmitInitScope (EmitContext ec)
+-		{
+-			ILGenerator ig = ec.ig;
 +		protected class CapturedLocal : Variable {
 +			public readonly ScopeInfo Scope;
 +			public readonly LocalInfo Local;
 +			public readonly Field Field;
-+
+ 
+-			if (inited)
+-				return;
 +			public FieldExpr FieldInstance;
-+
+ 
+-			if (ScopeConstructor == null)
+-				throw new Exception ("ScopeConstructor is null for" + this.ToString ());
+-			
+-			if (!CaptureContext.Host.IsIterator) {
+-				scope_instance = ig.DeclareLocal (ScopeType);
+-				ig.Emit (OpCodes.Newobj, ScopeConstructor);
+-				ig.Emit (OpCodes.Stloc, scope_instance);
 +			public CapturedLocal (ScopeInfo scope, LocalInfo local)
 +			{
 +				this.Scope = scope;
 +				this.Local = local;
 +				Field = scope.CaptureVariable (
 +					scope.MakeFieldName (local.Name), local.VariableType);
-+			}
-+
+ 			}
+ 
+-			if (THIS != null){
+-				if (CaptureContext.Host.IsIterator) {
+-					ig.Emit (OpCodes.Ldarg_0);
+-					ig.Emit (OpCodes.Ldarg_1);
+-				} else {
+-					ig.Emit (OpCodes.Ldloc, scope_instance);
+-					ig.Emit (OpCodes.Ldarg_0);
+-				}
+-				ig.Emit (OpCodes.Stfld, THIS);
 +			public override Type Type {
 +				get { return Field.MemberType; }
-+			}
-+
+ 			}
+ 
+-			//
+-			// Copy the parameter values, if any
+-			//
+-			int extra = ec.IsStatic ? 0 : 1;
+-			if (CaptureContext.Host.IsIterator)
+-				extra++;
+-			if (HostsParameters){
+-				Hashtable captured_parameters = CaptureContext.captured_parameters;
+-				
+-				foreach (DictionaryEntry de in captured_parameters){
+-					CapturedParameter cp = (CapturedParameter) de.Value;
 +			public override bool HasInstance {
 +				get { return true; }
 +			}
-+
+ 
+-					EmitScopeInstance (ig);
+-					ParameterReference.EmitLdArg (ig, cp.Idx + extra);
+-					ig.Emit (OpCodes.Stfld, cp.FieldBuilder);
+-				}
 +			public override bool NeedsTemporary {
 +				get { return true; }
-+			}
-+
+ 			}
+ 
+-			if (ParentScope != null){
+-				if (!ParentScope.inited)
+-					ParentScope.EmitInitScope (ec);
 +			public override void EmitInstance (EmitContext ec)
 +			{
 +				CaptureContext.EmitScopeInstance (ec, Scope);
 +			}
-+
+ 
+-				if (ParentScope.ScopeTypeBuilder != ScopeTypeBuilder) {
+-					//
+-					// Only emit initialization in our capturecontext world
+-					//
+-					if (ParentScope.CaptureContext == CaptureContext){
+-						EmitScopeInstance (ig);
+-						ParentScope.EmitScopeInstance (ig);
+-						ig.Emit (OpCodes.Stfld, ParentLink);
+-					} else {
+-						EmitScopeInstance (ig);
+-						ig.Emit (OpCodes.Ldarg_0);
+-						ig.Emit (OpCodes.Stfld, ParentLink);
+-					}
+-				}
 +			public override void Emit (EmitContext ec)
 +			{
 +				if (ec.capture_context == Scope.CaptureContext)
 +					ec.ig.Emit (OpCodes.Ldfld, FieldInstance.FieldInfo);
 +				else
 +					ec.ig.Emit (OpCodes.Ldfld, Field.FieldBuilder);
-+			}
-+
+ 			}
+-			inited = true;
+-		}
+ 
+-		public void EmitScopeInstance (ILGenerator ig)
+-		{
+-			if (CaptureContext.Host.IsIterator)
+-				ig.Emit (OpCodes.Ldarg_0);
+-			else {
+-				if (scope_instance == null){
+-					//
+-					// This is needed if someone overwrites the Emit method
+-					// of Statement and manually calls Block.Emit without
+-					// this snippet first:
+-					// 
+-					//   ec.EmitScopeInitFromBlock (The_Block);
+-					//   The_Block.Emit (ec);
+-					// 
 +			public override void EmitAssign (EmitContext ec)
 +			{
 +				if (ec.capture_context == Scope.CaptureContext)
@@ -4323,34 +4307,73 @@ Index: anonymous.cs
 +				else
 +					ec.ig.Emit (OpCodes.Stfld, Field.FieldBuilder);
 +			}
-+
+ 
+-					Console.WriteLine (
+-				        	"The scope_instance has not been emitted, this typically means\n" +
+-						"that inside the compiler someone is calling Block.Emit without\n" +
+-						"first calling EmitScopeInitFromBlock for the block.  See compiler" +
+-						"source code for an explanation");
+-					throw new Exception ("Internal compiler error");
+-					
+-				}
+-				ig.Emit (OpCodes.Ldloc, scope_instance);
 +			public override void EmitAddressOf (EmitContext ec)
 +			{
 +				if (ec.capture_context == Scope.CaptureContext)
 +					ec.ig.Emit (OpCodes.Ldflda, FieldInstance.FieldInfo);
 +				else
 +					ec.ig.Emit (OpCodes.Ldflda, Field.FieldBuilder);
-+			}
-+		}
-+
+ 			}
+ 		}
+ 
+-		public static void CheckCycles (string msg, ScopeInfo s)
 +		protected class ScopeInitializer : ScopeInitializerBase
-+		{
+ 		{
+-			ArrayList l = new ArrayList ();
+-			int n = 0;
+-			
+-			for (ScopeInfo p = s; p != null; p = p.ParentScope,n++){
+-				if (l.Contains (p)){
+-					Console.WriteLine ("Loop detected {0} in {1}", n, msg);
+-					throw new Exception ();
+-				}
+-				l.Add (p);
 +			ScopeInfo scope;
 +
 +			public ScopeInitializer (ScopeInfo scope)
 +				: base (scope)
 +			{
 +				this.scope = scope;
-+			}
+ 			}
+-		}
+-		
+-		static void DoPath (StringBuilder sb, ScopeInfo start)
+-		{
+-			CheckCycles ("print", start);
+-			
+-			if (start.ParentScope != null){
+-				DoPath (sb, start.ParentScope);
+-				sb.Append (", ");
 +
 +			new public ScopeInfo Scope {
 +				get { return scope; }
-+			}
+ 			}
+-			sb.Append ((start.id).ToString ());
+-		}
+-		
+-		public override string ToString ()
+-		{
+-			StringBuilder sb = new StringBuilder ();
+-			
+-			sb.Append ("{");
+-			if (CaptureContext != null){
+-				sb.Append (CaptureContext.ToString ());
+-				sb.Append (":");
 +
 +			protected override bool DoResolveInternal (EmitContext ec)
 +			{
 +				Report.Debug (64, "RESOLVE SCOPE INITIALIZER", this, Scope,
-+					      Scope.ParentScope, Scope.ScopeType, ec,
++					      Scope.ScopeType, ec,
 +					      ec.TypeContainer.Name, ec.DeclContainer,
 +					      ec.DeclContainer.Name, ec.DeclContainer.IsGeneric);
 +
@@ -4368,20 +4391,22 @@ Index: anonymous.cs
 +				}
 +
 +				return base.DoResolveInternal (ec);
-+			}
-+
+ 			}
+ 
+-			DoPath (sb, this);
+-			sb.Append ("}");
 +			protected virtual void EmitParameterReference (EmitContext ec,
 +								       CapturedParameter cp)
 +			{
 +				int extra = ec.IsStatic ? 0 : 1;
 +				ParameterReference.EmitLdArg (ec.ig, cp.Idx + extra);
 +			}
-+
-+		}
+ 
+-			return sb.ToString ();
+ 		}
  	}
  
- 	//
-@@ -952,7 +1522,8 @@
+@@ -952,38 +1455,31 @@
  		//
  		// Points to the toplevel block that owns this CaptureContext
  		//
@@ -4391,9 +4416,14 @@ Index: anonymous.cs
  
  		//
  		// All the scopes we capture
-@@ -965,25 +1536,22 @@
- 		ArrayList roots = new ArrayList ();
- 		
+ 		//
+ 		Hashtable scopes = new Hashtable ();
+ 
+-		//
+-		// All the root scopes
+-		//
+-		ArrayList roots = new ArrayList ();
+-		
  		bool have_captured_vars = false;
 -		bool referenced_this = false;
  
@@ -4422,7 +4452,7 @@ Index: anonymous.cs
  		}
  
  		void DoPath (StringBuilder sb, CaptureContext cc)
-@@ -995,17 +1563,6 @@
+@@ -995,17 +1491,6 @@
  			sb.Append (cc.cc_id.ToString ());
  		}
  
@@ -4440,7 +4470,7 @@ Index: anonymous.cs
  		public override string ToString ()
  		{
  			StringBuilder sb = new StringBuilder ();
-@@ -1017,7 +1574,7 @@
+@@ -1017,7 +1502,7 @@
  
  		public ToplevelBlock ParentToplevel {
  			get {
@@ -4449,24 +4479,11 @@ Index: anonymous.cs
  			}
  		}
  
-@@ -1029,124 +1586,192 @@
+@@ -1029,124 +1514,101 @@
  			}
  		}
  
 -		ScopeInfo GetScopeForBlock (Block block)
--		{
--			ScopeInfo si = (ScopeInfo) scopes [block.ID];
--			if (si != null)
--				return si;
--			si = new ScopeInfo (this, block);
--			scopes [block.ID] = si;
--			return si;
--		}
-+		// The method scope
-+		ScopeInfo method_scope;
-+		bool computed_method_scope = false;
- 		
--		public void AddLocal (AnonymousContainer am, LocalInfo li)
 +		//
 +		// Track the scopes that this method has used.  At the
 +		// end this is used to determine the ScopeInfo that will
@@ -4476,132 +4493,13 @@ Index: anonymous.cs
 +		
 +		public void RegisterScope (ScopeInfo scope)
  		{
--			if (li.Block.Toplevel != toplevel_owner){
--				ParentCaptureContext.AddLocal (am, li);
 +			if (scopes_used.Contains (scope))
- 				return;
--			}
--			ScopeInfo scope = GetScopeForBlock (li.Block);
++				return;
 +			scopes_used.Add (scope);
 +		}
- 
--			//
--			// Adjust the owner
--			//
--			if (Host != null)
--				Host.RegisterScope (scope);
-+		// Returns the deepest of two scopes
-+		ScopeInfo Deepest (ScopeInfo a, ScopeInfo b)
-+		{
-+			ScopeInfo p;
- 
-+			Report.Debug (64, "DEEPEST", this, a, a.ParentScope, b, b.ParentScope);
 +
-+			if (a == null)
-+				return b;
-+			if (b == null)
-+				return a;
-+			if (a == b)
-+				return a;
-+
- 			//
--			// Adjust the user
-+			// If they Scopes are on the same CaptureContext, we do the double
-+			// checks just so if there is an invariant change in the future,
-+			// we get the exception at the end
- 			//
--			am.RegisterScope (scope);
-+			for (p = a; p != null; p = p.ParentScope)
-+				if (p == b)
-+					return a;
- 			
--			if (captured_variables [li] != null)
--				return;
--			
--			have_captured_vars = true;
--			captured_variables [li] = li;
--			scope.AddLocal (li);
-+			for (p = b; p != null; p = p.ParentScope)
-+				if (p == a)
-+					return b;
-+
-+			CaptureContext ca = a.CaptureContext;
-+			CaptureContext cb = b.CaptureContext;
-+
-+			for (CaptureContext c = ca; c != null; c = c.ParentCaptureContext)
-+				if (c == cb)
-+					return a;
-+
-+			for (CaptureContext c = cb; c != null; c = c.ParentCaptureContext)
-+				if (c == ca)
-+					return b;
-+			throw new Exception ("Should never be reached");
- 		}
- 
- 		//
--		// Retursn the CaptureContext for the block that defines the parameter `name'
-+		// Determines the proper host for a method considering the
-+		// scopes it references
- 		//
--		static CaptureContext _ContextForParameter (ToplevelBlock current, string name)
-+		public void ComputeMethodHost ()
- 		{
--			ToplevelBlock container = current.Container;
--			if (container != null){
--				CaptureContext cc = _ContextForParameter (container, name);
--				if (cc != null)
--					return cc;
-+			Report.Debug (64, "COMPUTE METHOD HOST", this, computed_method_scope,
-+				      method_scope, scopes_used);
-+
-+			if (computed_method_scope)
-+				return;
-+
-+			LinkScopes ();
-+			
-+			method_scope = null;
-+			int top = scopes_used.Count;
-+			computed_method_scope = true;
-+
-+			if (top == 0)
-+				return;
-+			
-+			method_scope = (ScopeInfo) scopes_used [0];
-+			if (top == 1)
-+				return;
-+
-+			Report.Debug (64, "COMPUTE METHOD HOST #1", this, method_scope,
-+				      scopes_used);
-+			
-+			for (int i = 1; i < top; i++)
-+				method_scope = Deepest (method_scope, (ScopeInfo) scopes_used [i]);
-+		}
-+
-+		public ScopeInfo Scope {
-+			get {
-+				if (computed_method_scope)
-+					return method_scope;
-+
-+				//
-+				// This means that ComputeMethodHost is not being called, most
-+				// likely by someone who overwrote the CreateMethodHost method
-+				//
-+				throw new InternalErrorException (
-+					"AnonymousContainer.Scope is being used before its " +
-+					"container is computed");
- 			}
--			if (current.IsParameterReference (name))
--				return current.ToplevelBlockCaptureContext;
--			return null;
- 		}
- 
--		static CaptureContext ContextForParameter (ToplevelBlock current, string name)
 +		internal AnonymousMethodHost CreateRootScope (TypeContainer parent, GenericMethod generic)
- 		{
--			CaptureContext cc = _ContextForParameter (current, name);
--			if (cc == null)
--				throw new Exception (String.Format ("request for parameteter {0} failed: not found", name));
--			return cc;
++		{
 +			Report.Debug (64, "CREATE ROOT SCOPE", this, parent.Name, ToplevelOwner,
 +				      ToplevelOwner.ScopeInfo);
 +
@@ -4609,6 +4507,100 @@ Index: anonymous.cs
 +				this, ToplevelOwner, parent, generic);
 +			AddRootScope (root_scope);
 +			return root_scope;
++		}
++
++		internal void AddRootScope (ScopeInfo root_scope)
++		{
++			if (ToplevelOwner.ScopeInfo != null)
++				throw new InternalErrorException ();
++
++			ToplevelOwner.ScopeInfo = root_scope;
++			scopes.Add (ToplevelOwner.ID, root_scope);
++			RegisterScope (root_scope);
++		}
++
++		internal ScopeInfo GetScopeForBlock (Block block)
++		{
++			while (block.Implicit)
++				block = block.Parent;
++
+ 			ScopeInfo si = (ScopeInfo) scopes [block.ID];
++			Report.Debug (64, "GET SCOPE FOR BLOCK", this, block,
++				      block.ScopeInfo, block.Parent, si);
+ 			if (si != null)
+ 				return si;
+-			si = new ScopeInfo (this, block);
++
++			block.ScopeInfo = si = new ScopeInfo (this, block);
+ 			scopes [block.ID] = si;
+ 			return si;
+ 		}
+-		
+-		public void AddLocal (AnonymousContainer am, LocalInfo li)
++
++		public Variable AddLocal (LocalInfo li)
+ 		{
+-			if (li.Block.Toplevel != toplevel_owner){
+-				ParentCaptureContext.AddLocal (am, li);
+-				return;
+-			}
++			Report.Debug (64, "ADD LOCAL", this, li.Name, loc, li.Block,
++				      li.Block.Toplevel, ToplevelOwner);
++
++			if (li.Block.Toplevel != ToplevelOwner)
++				return ParentCaptureContext.AddLocal (li);
++
+ 			ScopeInfo scope = GetScopeForBlock (li.Block);
+ 
+ 			//
+ 			// Adjust the owner
+ 			//
+-			if (Host != null)
+-				Host.RegisterScope (scope);
++			RegisterScope (scope);
+ 
+-			//
+-			// Adjust the user
+-			//
+-			am.RegisterScope (scope);
+-			
+-			if (captured_variables [li] != null)
+-				return;
+-			
+-			have_captured_vars = true;
+-			captured_variables [li] = li;
+-			scope.AddLocal (li);
+-		}
+-
+-		//
+-		// Retursn the CaptureContext for the block that defines the parameter `name'
+-		//
+-		static CaptureContext _ContextForParameter (ToplevelBlock current, string name)
+-		{
+-			ToplevelBlock container = current.Container;
+-			if (container != null){
+-				CaptureContext cc = _ContextForParameter (container, name);
+-				if (cc != null)
+-					return cc;
++			Variable var = (Variable) captured_variables [li];
++			Report.Debug (64, "ADD LOCAL #1", this, li.Name, scope, var);
++			if (var == null) {
++				var = scope.AddLocal (li);
++				captured_variables.Add (li, var);
+ 			}
+-			if (current.IsParameterReference (name))
+-				return current.ToplevelBlockCaptureContext;
+-			return null;
+-		}
+ 
+-		static CaptureContext ContextForParameter (ToplevelBlock current, string name)
+-		{
+-			CaptureContext cc = _ContextForParameter (current, name);
+-			if (cc == null)
+-				throw new Exception (String.Format ("request for parameteter {0} failed: not found", name));
+-			return cc;
++			have_captured_vars = true;
++			return var;
  		}
 -		
 -		//
@@ -4616,73 +4608,28 @@ Index: anonymous.cs
 -		//
 -		public void AddParameter (EmitContext ec, AnonymousContainer am,
 -					  string name, Type t, int idx)
-+
-+		internal void AddRootScope (ScopeInfo root_scope)
- 		{
+-		{
 -			CaptureContext cc = ContextForParameter (ec.CurrentBlock.Toplevel, name);
-+			if (ToplevelOwner.ScopeInfo != null)
-+				throw new InternalErrorException ();
  
 -			cc.AddParameterToContext (am, name, t, idx);
-+			ToplevelOwner.ScopeInfo = root_scope;
-+			scopes.Add (ToplevelOwner.ID, root_scope);
-+			RegisterScope (root_scope);
- 		}
- 
--		//
+-		}
+-
+ 		//
 -		// Records the parameters in the context
 -		//
 -		public void AddParameterToContext (AnonymousContainer am, string name, Type t, int idx)
-+		internal ScopeInfo GetScopeForBlock (Block block)
- 		{
+-		{
 -			if (captured_parameters == null)
 -				captured_parameters = new Hashtable ();
 -			if (captured_parameters [name] == null)
 -				captured_parameters [name] = new CapturedParameter (t, idx);
-+			while (block.Implicit)
-+				block = block.Parent;
- 
+-
 -			ScopeInfo scope = GetScopeForBlock (toplevel_owner);
 -			scope.HostsParameters = true;
 -			am.RegisterScope (scope);
-+			ScopeInfo si = (ScopeInfo) scopes [block.ID];
-+			Report.Debug (64, "GET SCOPE FOR BLOCK", this, block,
-+				      block.ScopeInfo, block.Parent, si);
-+			if (si != null)
-+				return si;
-+
-+			block.ScopeInfo = si = new ScopeInfo (this, block);
-+			scopes [block.ID] = si;
-+			return si;
- 		}
- 
-+		public Variable AddLocal (LocalInfo li)
-+		{
-+			Report.Debug (64, "ADD LOCAL", this, li.Name, loc, li.Block,
-+				      li.Block.Toplevel, ToplevelOwner);
-+
-+			if (li.Block.Toplevel != ToplevelOwner)
-+				return ParentCaptureContext.AddLocal (li);
-+
-+			ScopeInfo scope = GetScopeForBlock (li.Block);
-+
-+			//
-+			// Adjust the owner
-+			//
-+			RegisterScope (scope);
-+
-+			Variable var = (Variable) captured_variables [li];
-+			Report.Debug (64, "ADD LOCAL #1", this, li.Name, scope, var);
-+			if (var == null) {
-+				var = scope.AddLocal (li);
-+				captured_variables.Add (li, var);
-+			}
-+
-+			have_captured_vars = true;
-+			return var;
-+		}
-+
- 		//
+-		}
+-
+-		//
  		// Captured fields are only recorded on the topmost CaptureContext, because that
  		// one is the one linked to the owner of instance fields
  		//
@@ -4722,7 +4669,7 @@ Index: anonymous.cs
  		}
  
  		public bool HaveCapturedVariables {
-@@ -1164,13 +1789,9 @@
+@@ -1164,13 +1626,9 @@
  			}
  		}
  
@@ -4738,7 +4685,7 @@ Index: anonymous.cs
  		}
  
  		//
-@@ -1178,232 +1799,48 @@
+@@ -1178,304 +1636,53 @@
  		//
  		public bool IsParameterCaptured (string name)
  		{
@@ -4864,7 +4811,9 @@ Index: anonymous.cs
 -				//
 -			}
 -			ILGenerator ig = ec.ig;
-+			Report.Debug (64, "EMIT SCOPE INSTANCE", root_scope, scope, scope.Host);
++			Report.Debug (64, "EMIT SCOPE INSTANCE", ec.CurrentBlock,
++				      ec.CurrentBlock.Toplevel, ec.CurrentBlock.Toplevel.Container,
++				      root_scope, scope, scope.Host);
  
 -			ScopeInfo si;
 +			root_scope.EmitScopeInstance (ec);
@@ -4993,27 +4942,79 @@ Index: anonymous.cs
  		}
  
  		//
-@@ -1412,7 +1849,10 @@
- 		//
- 		bool IsAncestor (ScopeInfo probe, ScopeInfo scope)
- 		{
-+			Report.Debug (64, "IS ANCESTOR", scope, scope.ScopeBlock,
-+				      scope.ScopeBlock.Parent, probe, probe.ScopeBlock);
- 			for (Block b = scope.ScopeBlock.Parent; b != null; b = b.Parent){
-+				Report.Debug (64, "IS ANCESTOR #1", b, probe.ScopeBlock);
- 				if (probe.ScopeBlock == b)
- 					return true;
- 			}
-@@ -1474,7 +1914,7 @@
- 			}
- 			return parent;
- 		}
+-		// Returs true if `probe' is an ancestor of `scope' in the 
+-		// scope chain
+-		//
+-		bool IsAncestor (ScopeInfo probe, ScopeInfo scope)
+-		{
+-			for (Block b = scope.ScopeBlock.Parent; b != null; b = b.Parent){
+-				if (probe.ScopeBlock == b)
+-					return true;
+-			}
+-			return false;
+-		}
+-
+-		//
+-		// Returns an ArrayList of ScopeInfos that enumerates all the ancestors
+-		// of `scope' found in `scope_list'.
+-		//
+-		// The value returned is either a ScopeInfo or an Arraylist of ScopeInfos
+-		//
+-		object GetAncestorScopes (ScopeInfo scope, ScopeInfo [] scope_list)
+-		{
+-			object ancestors = null;
+-			
+-			for (int i = 0; i < scope_list.Length; i++){
+-				// Ignore the same scope
+-				if (scope_list [i] == scope)
+-					continue;
+-				
+-				if (IsAncestor (scope_list [i], scope)){
+-					if (ancestors == null){
+-						ancestors = scope_list [i];
+-						continue;
+-					}
+-					
+-					if (ancestors is ScopeInfo){
+-						object old = ancestors;
+-						ancestors = new ArrayList (4);
+-						((ArrayList)ancestors).Add (old);
+-					} 
+-					
+-					((ArrayList)ancestors).Add (scope_list [i]);
+-				}
+-			}
+-			return ancestors;
+-		}
+-
+-		//
+-		// Returns the immediate parent of `scope' from all the captured
+-		// scopes found in `scope_list', or null if this is a toplevel scope.
+-		//
+-		ScopeInfo GetParentScope (ScopeInfo scope, ScopeInfo [] scope_list)
+-		{
+-			object ancestors = GetAncestorScopes (scope, scope_list);
+-			if (ancestors == null)
+-				return null;
+-
+-			// Single match, thats the parent.
+-			if (ancestors is ScopeInfo)
+-				return (ScopeInfo) ancestors;
+-
+-			ArrayList candidates = (ArrayList) ancestors;
+-			ScopeInfo parent = (ScopeInfo) candidates [0];
+-			for (int i = 1; i < candidates.Count; i++){
+-				if (IsAncestor (parent, (ScopeInfo) candidates [i]))
+-					parent = (ScopeInfo) candidates [i];
+-			}
+-			return parent;
+-		}
 -		
-+
- 		//
+-		//
  		// Links all the scopes
  		//
-@@ -1483,7 +1923,9 @@
+ 		bool linked;
+@@ -1483,7 +1690,9 @@
  		{
  			if (linked)
  				return;
@@ -5024,62 +5025,57 @@ Index: anonymous.cs
  			linked = true;
  			if (ParentCaptureContext != null)
  				ParentCaptureContext.LinkScopes ();
-@@ -1492,9 +1934,14 @@
+@@ -1492,47 +1701,14 @@
  			ScopeInfo [] scope_list = new ScopeInfo [scope_count];
  			scopes.Values.CopyTo (scope_list, 0);
  
+-			for (int i = 0; i < scope_count; i++){
+-				ScopeInfo parent = GetParentScope (scope_list [i], scope_list);
 +			Report.Debug (64, "LINK SCOPES #1", this, scope_list);
-+
- 			for (int i = 0; i < scope_count; i++){
- 				ScopeInfo parent = GetParentScope (scope_list [i], scope_list);
  
-+				Report.Debug (64, "LINK SCOPES #2", this, scope_list, i,
-+					      scope_list [i], parent);
-+
- 				if (parent == null){
- 					roots.Add (scope_list [i]);
- 					continue;
-@@ -1504,17 +1951,28 @@
- 				parent.AddChild (scope_list [i]);
- 			}
- 
-+			Report.Debug (64, "LINK SCOPES #3", this, ParentCaptureContext, roots);
-+
- 			//
- 			// Link the roots to their parent containers if any.
- 			//
- 			if (ParentCaptureContext != null && roots.Count != 0){
- 				ScopeInfo one_root = (ScopeInfo) roots [0];
- 				bool found = false;
--				
-+
-+				Report.Debug (64, "LINK SCOPES #4", this, one_root,
-+					      ParentCaptureContext.roots);
-+
- 				foreach (ScopeInfo a_parent_root in ParentCaptureContext.roots){
-+					Report.Debug (64, "LINK SCOPES #5", this, a_parent_root,
-+						      one_root);
-+
- 					if (!IsAncestor (a_parent_root, one_root))
- 						continue;
- 
-+					Report.Debug (64, "LINK SCOPES #6", this, a_parent_root,
-+						      one_root, roots);
-+
- 					found = true;
- 					
- 					// Found, link all the roots to this root
-@@ -1533,6 +1991,13 @@
- 					throw new Exception ("Internal compiler error: Did not find the parent for the root in the chain");
- 				}
- 			}
-+
+-				if (parent == null){
+-					roots.Add (scope_list [i]);
+-					continue;
+-				}
+-
+-				scope_list [i].ParentScope = parent;
+-				parent.AddChild (scope_list [i]);
 +			foreach (ScopeInfo si in scope_list) {
 +				if (!si.Define ())
 +					throw new InternalErrorException ();
 +				if (si.DefineType () == null)
 +					throw new InternalErrorException ();
-+			}
+ 			}
+-
+-			//
+-			// Link the roots to their parent containers if any.
+-			//
+-			if (ParentCaptureContext != null && roots.Count != 0){
+-				ScopeInfo one_root = (ScopeInfo) roots [0];
+-				bool found = false;
+-				
+-				foreach (ScopeInfo a_parent_root in ParentCaptureContext.roots){
+-					if (!IsAncestor (a_parent_root, one_root))
+-						continue;
+-
+-					found = true;
+-					
+-					// Found, link all the roots to this root
+-					foreach (ScopeInfo root in roots){
+-						root.ParentScope = a_parent_root;
+-						a_parent_root.AddChild (root);
+-					}
+-					break;
+-				}
+-				if (!found){
+-					//
+-					// This is to catch a condition in which it is
+-					// not possible to determine the containing ScopeInfo
+-					// from an encapsulating CaptureContext
+-					//
+-					throw new Exception ("Internal compiler error: Did not find the parent for the root in the chain");
+-				}
+-			}
  		}
  	}
  }
