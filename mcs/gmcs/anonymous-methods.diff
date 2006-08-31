@@ -225,7 +225,16 @@ Index: ecore.cs
 ===================================================================
 --- ecore.cs	(revision 63019)
 +++ ecore.cs	(working copy)
-@@ -4007,10 +4007,10 @@
+@@ -3146,8 +3146,6 @@
+  							"this");
+ 						return null;
+ 					}
+-					if ((am.ContainerAnonymousMethod == null) && (InstanceExpression is This))
+-						ec.CaptureField (this);
+ 				}
+ 			}
+ 			
+@@ -4007,10 +4005,10 @@
  		}
  	}
  
@@ -237,7 +246,7 @@ Index: ecore.cs
  		
  		public TemporaryVariable (Type type, Location loc)
  		{
-@@ -4028,64 +4028,46 @@
+@@ -4028,64 +4026,46 @@
  			li = ec.CurrentBlock.AddTemporaryVariable (te, loc);
  			if (!li.Resolve (ec))
  				return null;
@@ -320,7 +329,7 @@ Index: ecore.cs
  		}
  		
  		public void AddressOf (EmitContext ec, AddressOp mode)
-@@ -4093,5 +4075,5 @@
+@@ -4093,5 +4073,5 @@
  			EmitLoadAddress (ec);
  		}
  	}
@@ -4406,7 +4415,7 @@ Index: anonymous.cs
  		}
  	}
  
-@@ -952,38 +1455,31 @@
+@@ -952,38 +1455,26 @@
  		//
  		// Points to the toplevel block that owns this CaptureContext
  		//
@@ -4426,16 +4435,16 @@ Index: anonymous.cs
 -		
  		bool have_captured_vars = false;
 -		bool referenced_this = false;
++		Hashtable captured_variables = new Hashtable ();
  
- 		//
- 		// Captured fields
- 		//
- 		Hashtable captured_fields = new Hashtable ();
- 		Hashtable captured_variables = new Hashtable ();
+-		//
+-		// Captured fields
+-		//
+-		Hashtable captured_fields = new Hashtable ();
+-		Hashtable captured_variables = new Hashtable ();
 -		public Hashtable captured_parameters = new Hashtable ();
 -		public AnonymousContainer Host;
 -		
-+
  		public CaptureContext (ToplevelBlock toplevel_owner, Location loc,
 -				       AnonymousContainer host)
 +				       IAnonymousContainer host)
@@ -4452,7 +4461,7 @@ Index: anonymous.cs
  		}
  
  		void DoPath (StringBuilder sb, CaptureContext cc)
-@@ -995,17 +1491,6 @@
+@@ -995,17 +1486,6 @@
  			sb.Append (cc.cc_id.ToString ());
  		}
  
@@ -4470,7 +4479,7 @@ Index: anonymous.cs
  		public override string ToString ()
  		{
  			StringBuilder sb = new StringBuilder ();
-@@ -1017,7 +1502,7 @@
+@@ -1017,7 +1497,7 @@
  
  		public ToplevelBlock ParentToplevel {
  			get {
@@ -4479,86 +4488,42 @@ Index: anonymous.cs
  			}
  		}
  
-@@ -1029,124 +1514,101 @@
+@@ -1029,124 +1509,81 @@
  			}
  		}
  
 -		ScopeInfo GetScopeForBlock (Block block)
+-		{
+-			ScopeInfo si = (ScopeInfo) scopes [block.ID];
+-			if (si != null)
+-				return si;
+-			si = new ScopeInfo (this, block);
+-			scopes [block.ID] = si;
+-			return si;
+-		}
 +		//
 +		// Track the scopes that this method has used.  At the
 +		// end this is used to determine the ScopeInfo that will
 +		// host the method
 +		//
 +		ArrayList scopes_used = new ArrayList ();
-+		
-+		public void RegisterScope (ScopeInfo scope)
- 		{
-+			if (scopes_used.Contains (scope))
-+				return;
-+			scopes_used.Add (scope);
-+		}
-+
-+		internal AnonymousMethodHost CreateRootScope (TypeContainer parent, GenericMethod generic)
-+		{
-+			Report.Debug (64, "CREATE ROOT SCOPE", this, parent.Name, ToplevelOwner,
-+				      ToplevelOwner.ScopeInfo);
-+
-+			AnonymousMethodHost root_scope = new AnonymousMethodHost (
-+				this, ToplevelOwner, parent, generic);
-+			AddRootScope (root_scope);
-+			return root_scope;
-+		}
-+
-+		internal void AddRootScope (ScopeInfo root_scope)
-+		{
-+			if (ToplevelOwner.ScopeInfo != null)
-+				throw new InternalErrorException ();
-+
-+			ToplevelOwner.ScopeInfo = root_scope;
-+			scopes.Add (ToplevelOwner.ID, root_scope);
-+			RegisterScope (root_scope);
-+		}
-+
-+		internal ScopeInfo GetScopeForBlock (Block block)
-+		{
-+			while (block.Implicit)
-+				block = block.Parent;
-+
- 			ScopeInfo si = (ScopeInfo) scopes [block.ID];
-+			Report.Debug (64, "GET SCOPE FOR BLOCK", this, block,
-+				      block.ScopeInfo, block.Parent, si);
- 			if (si != null)
- 				return si;
--			si = new ScopeInfo (this, block);
-+
-+			block.ScopeInfo = si = new ScopeInfo (this, block);
- 			scopes [block.ID] = si;
- 			return si;
- 		}
--		
+ 		
 -		public void AddLocal (AnonymousContainer am, LocalInfo li)
-+
-+		public Variable AddLocal (LocalInfo li)
++		public void RegisterScope (ScopeInfo scope)
  		{
 -			if (li.Block.Toplevel != toplevel_owner){
 -				ParentCaptureContext.AddLocal (am, li);
--				return;
++			if (scopes_used.Contains (scope))
+ 				return;
 -			}
-+			Report.Debug (64, "ADD LOCAL", this, li.Name, loc, li.Block,
-+				      li.Block.Toplevel, ToplevelOwner);
-+
-+			if (li.Block.Toplevel != ToplevelOwner)
-+				return ParentCaptureContext.AddLocal (li);
-+
- 			ScopeInfo scope = GetScopeForBlock (li.Block);
- 
- 			//
- 			// Adjust the owner
- 			//
+-			ScopeInfo scope = GetScopeForBlock (li.Block);
+-
+-			//
+-			// Adjust the owner
+-			//
 -			if (Host != null)
 -				Host.RegisterScope (scope);
-+			RegisterScope (scope);
- 
+-
 -			//
 -			// Adjust the user
 -			//
@@ -4570,38 +4535,41 @@ Index: anonymous.cs
 -			have_captured_vars = true;
 -			captured_variables [li] = li;
 -			scope.AddLocal (li);
--		}
--
++			scopes_used.Add (scope);
+ 		}
+ 
 -		//
 -		// Retursn the CaptureContext for the block that defines the parameter `name'
 -		//
 -		static CaptureContext _ContextForParameter (ToplevelBlock current, string name)
--		{
++		internal AnonymousMethodHost CreateRootScope (TypeContainer parent, GenericMethod generic)
+ 		{
 -			ToplevelBlock container = current.Container;
 -			if (container != null){
 -				CaptureContext cc = _ContextForParameter (container, name);
 -				if (cc != null)
 -					return cc;
-+			Variable var = (Variable) captured_variables [li];
-+			Report.Debug (64, "ADD LOCAL #1", this, li.Name, scope, var);
-+			if (var == null) {
-+				var = scope.AddLocal (li);
-+				captured_variables.Add (li, var);
- 			}
+-			}
 -			if (current.IsParameterReference (name))
 -				return current.ToplevelBlockCaptureContext;
 -			return null;
--		}
++			Report.Debug (64, "CREATE ROOT SCOPE", this, parent.Name, ToplevelOwner,
++				      ToplevelOwner.ScopeInfo);
++
++			AnonymousMethodHost root_scope = new AnonymousMethodHost (
++				this, ToplevelOwner, parent, generic);
++			AddRootScope (root_scope);
++			return root_scope;
+ 		}
  
 -		static CaptureContext ContextForParameter (ToplevelBlock current, string name)
--		{
++		internal void AddRootScope (ScopeInfo root_scope)
+ 		{
 -			CaptureContext cc = _ContextForParameter (current, name);
 -			if (cc == null)
 -				throw new Exception (String.Format ("request for parameteter {0} failed: not found", name));
 -			return cc;
-+			have_captured_vars = true;
-+			return var;
- 		}
+-		}
 -		
 -		//
 -		// Records the captured parameter at the appropriate CaptureContext
@@ -4610,69 +4578,108 @@ Index: anonymous.cs
 -					  string name, Type t, int idx)
 -		{
 -			CaptureContext cc = ContextForParameter (ec.CurrentBlock.Toplevel, name);
++			if (ToplevelOwner.ScopeInfo != null)
++				throw new InternalErrorException ();
  
 -			cc.AddParameterToContext (am, name, t, idx);
--		}
--
- 		//
++			ToplevelOwner.ScopeInfo = root_scope;
++			scopes.Add (ToplevelOwner.ID, root_scope);
++			RegisterScope (root_scope);
+ 		}
+ 
+-		//
 -		// Records the parameters in the context
 -		//
 -		public void AddParameterToContext (AnonymousContainer am, string name, Type t, int idx)
--		{
++		internal ScopeInfo GetScopeForBlock (Block block)
+ 		{
 -			if (captured_parameters == null)
 -				captured_parameters = new Hashtable ();
 -			if (captured_parameters [name] == null)
 -				captured_parameters [name] = new CapturedParameter (t, idx);
--
++			while (block.Implicit)
++				block = block.Parent;
+ 
 -			ScopeInfo scope = GetScopeForBlock (toplevel_owner);
 -			scope.HostsParameters = true;
 -			am.RegisterScope (scope);
--		}
--
++			ScopeInfo si = (ScopeInfo) scopes [block.ID];
++			Report.Debug (64, "GET SCOPE FOR BLOCK", this, block,
++				      block.ScopeInfo, block.Parent, si);
++			if (si != null)
++				return si;
++
++			block.ScopeInfo = si = new ScopeInfo (this, block);
++			scopes [block.ID] = si;
++			return si;
+ 		}
+ 
 -		//
- 		// Captured fields are only recorded on the topmost CaptureContext, because that
- 		// one is the one linked to the owner of instance fields
- 		//
+-		// Captured fields are only recorded on the topmost CaptureContext, because that
+-		// one is the one linked to the owner of instance fields
+-		//
 -		public void AddField (EmitContext ec, AnonymousContainer am, FieldExpr fe)
-+		public void AddField (EmitContext ec, FieldExpr fe)
++		public Variable AddLocal (LocalInfo li)
  		{
- 			if (fe.FieldInfo.IsStatic)
+-			if (fe.FieldInfo.IsStatic)
 -				throw new Exception ("Attempt to register a static field as a captured field");
 -			CaptureContext parent = ParentCaptureContext;
 -			if (parent != null) {
 -				parent.AddField (ec, am, fe);
 -				return;
 -			}
-+				throw new InternalErrorException (
-+					"Attempt to register a static field as a captured field");
++			Report.Debug (64, "ADD LOCAL", this, li.Name, loc, li.Block,
++				      li.Block.Toplevel, ToplevelOwner);
  
 -			ScopeInfo scope = GetScopeForBlock (toplevel_owner);
 -			am.RegisterScope (scope);
 -		}
--
++			if (li.Block.Toplevel != ToplevelOwner)
++				return ParentCaptureContext.AddLocal (li);
+ 
 -		public void CaptureThis (AnonymousContainer am)
 -		{
 -			if (am == null)
 -				throw new Exception ("Internal Compiler error: Capturethis called with a null method");
- 			CaptureContext parent = ParentCaptureContext;
- 			if (parent != null) {
+-			CaptureContext parent = ParentCaptureContext;
+-			if (parent != null) {
 -				parent.CaptureThis (am);
-+				parent.AddField (ec, fe);
- 				return;
+-				return;
++			ScopeInfo scope = GetScopeForBlock (li.Block);
++
++			//
++			// Adjust the owner
++			//
++			RegisterScope (scope);
++
++			Variable var = (Variable) captured_variables [li];
++			Report.Debug (64, "ADD LOCAL #1", this, li.Name, scope, var);
++			if (var == null) {
++				var = scope.AddLocal (li);
++				captured_variables.Add (li, var);
  			}
 -			referenced_this = true;
  
 -			ScopeInfo scope = GetScopeForBlock (toplevel_owner);
 -			am.RegisterScope (scope);
-+			ScopeInfo scope = GetScopeForBlock (ToplevelOwner);
-+			RegisterScope (scope);
++			have_captured_vars = true;
++			return var;
  		}
  
  		public bool HaveCapturedVariables {
-@@ -1164,13 +1626,9 @@
+@@ -1155,22 +1592,9 @@
  			}
  		}
- 
+ 		
+-		public bool HaveCapturedFields {
+-			get {
+-				CaptureContext parent = ParentCaptureContext;
+-				if (parent != null)
+-					return parent.HaveCapturedFields;
+-				return captured_fields.Count > 0;
+-			}
+-		}
+-
 -		public bool IsCaptured (LocalInfo local)
 +		public Variable GetCapturedVariable (LocalInfo local)
  		{
@@ -4685,7 +4692,7 @@ Index: anonymous.cs
  		}
  
  		//
-@@ -1178,304 +1636,53 @@
+@@ -1178,304 +1602,53 @@
  		//
  		public bool IsParameterCaptured (string name)
  		{
@@ -5014,7 +5021,7 @@ Index: anonymous.cs
  		// Links all the scopes
  		//
  		bool linked;
-@@ -1483,7 +1690,9 @@
+@@ -1483,7 +1656,9 @@
  		{
  			if (linked)
  				return;
@@ -5025,7 +5032,7 @@ Index: anonymous.cs
  			linked = true;
  			if (ParentCaptureContext != null)
  				ParentCaptureContext.LinkScopes ();
-@@ -1492,47 +1701,14 @@
+@@ -1492,47 +1667,14 @@
  			ScopeInfo [] scope_list = new ScopeInfo [scope_count];
  			scopes.Values.CopyTo (scope_list, 0);
  
@@ -5519,7 +5526,7 @@ Index: codegen.cs
  		// <summary>
  		//   Starts a new code branching.  This inherits the state of all local
  		//   variables and parameters from the current branching.
-@@ -618,29 +607,18 @@
+@@ -618,32 +607,13 @@
  			current_flow_branching = current_flow_branching.Parent;
  		}
  
@@ -5543,19 +5550,31 @@ Index: codegen.cs
 -		
 -		
  		//
- 		// Use to register a field as captured
- 		//
- 		public void CaptureField (FieldExpr fe)
- 		{
+-		// Use to register a field as captured
+-		//
+-		public void CaptureField (FieldExpr fe)
+-		{
 -			capture_context.AddField (this, CurrentAnonymousMethod, fe);
-+			capture_context.AddField (this, fe);
+-		}
+-
+-		//
+ 		// Whether anonymous methods have captured variables
+ 		//
+ 		public bool HaveCapturedVariables ()
+@@ -654,35 +624,14 @@
  		}
  
  		//
-@@ -664,25 +642,14 @@
- 		}
- 
- 		//
+-		// Whether anonymous methods have captured fields or this.
+-		//
+-		public bool HaveCapturedFields ()
+-		{
+-			if (capture_context != null)
+-				return capture_context.HaveCapturedFields;
+-			return false;
+-		}
+-
+-		//
 -		// Emits the instance pointer for the host method
 -		//
 -		public void EmitMethodHostInstance (EmitContext target, AnonymousMethod am)
@@ -5582,7 +5601,7 @@ Index: codegen.cs
  		}
  
  		public bool IsParameterCaptured (string name)
-@@ -691,11 +658,18 @@
+@@ -691,11 +640,18 @@
  				return capture_context.IsParameterCaptured (name);
  			return false;
  		}
@@ -5603,7 +5622,7 @@ Index: codegen.cs
  			b.EmitMeta (this);
  
  			if (HasReturnLabel)
-@@ -734,7 +708,8 @@
+@@ -734,7 +690,8 @@
  			if (resolved)
  				return true;
  
@@ -5613,7 +5632,7 @@ Index: codegen.cs
  
  			if (!loc.IsNull)
  				CurrentFile = loc.File;
-@@ -745,6 +720,11 @@
+@@ -745,6 +702,11 @@
  				if (!block.ResolveMeta (this, ip))
  					return false;
  
@@ -5625,7 +5644,7 @@ Index: codegen.cs
  				using (this.With (EmitContext.Flags.DoFlowAnalysis, true)) {
  					FlowBranchingToplevel top_level;
  					if (anonymous_method_host != null)
-@@ -783,12 +763,14 @@
+@@ -783,12 +745,14 @@
  					return false;
  				} else if (!CurrentAnonymousMethod.IsIterator) {
  					Report.Error (1643, CurrentAnonymousMethod.Location, "Not all code paths return a value in anonymous method of type `{0}'",
@@ -5642,7 +5661,7 @@ Index: codegen.cs
  			resolved = true;
  			return true;
  		}
-@@ -829,12 +811,6 @@
+@@ -829,12 +793,6 @@
  					ig.Emit (OpCodes.Ret);
  				}
  			}
@@ -5655,7 +5674,7 @@ Index: codegen.cs
  		}
  
  		/// <summary>
-@@ -1002,50 +978,24 @@
+@@ -1002,50 +960,24 @@
  		public void EmitThis (bool need_address)
  		{
  			ig.Emit (OpCodes.Ldarg_0);
