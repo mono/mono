@@ -1,3 +1,6 @@
+2006-08-31  Zoltan Varga  <vargaz@freemail.hu>
+
+	* monoburg.vcproj: Fix include paths for newer glib versions.
 
 Sat Feb 25 17:06:48 CET 2006 Paolo Molaro <lupus@ximian.com>
 
