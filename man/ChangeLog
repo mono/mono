@@ -1,3 +1,7 @@
+2006-08-31  Geoff Norton  <gnorton@customerdna.com>
+
+	* macpack.1: Fix a typo for the -appname option.
+
 2006-08-23  Wade Berrier <wberrier@novell.com>
 
 	* gacutil.1 : Change automake usage example because we always use $(prefix)/lib 
