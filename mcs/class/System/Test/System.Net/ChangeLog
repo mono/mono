@@ -1,5 +1,10 @@
 2006-08-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpListener2Test.cs: new tests for headers sent separate from body
+	and together.
+
+2006-08-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpListener2Test.cs: test using StreamReader from InputStream.
 
 2006-08-20  Miguel de Icaza  <miguel@novell.com>

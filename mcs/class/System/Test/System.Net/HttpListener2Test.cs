@@ -279,39 +279,81 @@ namespace MonoTests.System.Net {
 		}
 
 		HttpListenerRequest test14_request;
-		ManualResetEvent test14_evt;
+		ManualResetEvent test_evt;
 		bool test14_error;
 		[Test]
 		public void Test14 ()
 		{
-			HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test12/");
+			HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test14/");
 			MyNetworkStream ns = CreateNS (9000);
-			Send (ns, "POST /test12/ HTTP/1.0\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n123");
+			Send (ns, "POST /test14/ HTTP/1.0\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n123");
 			HttpListenerContext c = listener.GetContext ();
 			test14_request = c.Request;
-			test14_evt = new ManualResetEvent (false);
+			test_evt = new ManualResetEvent (false);
 			Thread thread = new Thread (ReadToEnd);
 			thread.Start ();
-			if (test14_evt.WaitOne (3000, false) == false) {
+			if (test_evt.WaitOne (3000, false) == false) {
 				thread.Abort ();
-				test14_evt.Close ();
+				test_evt.Close ();
 				Assert.IsTrue (false, "Timed out");
 			}
-			test14_evt.Close ();
-			Assert.IsFalse (test14_error, "Did not get the expected input.");
-				
+			test_evt.Close ();
+			Assert.AreEqual ("123", read_to_end, "Did not get the expected input.");
 			c.Response.Close ();
 			ns.Close ();
 		}
 
+		string read_to_end;
 		void ReadToEnd ()
 		{
 			using (StreamReader r = new StreamReader (test14_request.InputStream)) {
-				if (r.ReadToEnd () != "123") {
-					test14_error = true;
-				}
-				test14_evt.Set ();
+				read_to_end = r.ReadToEnd ();
+				test_evt.Set ();
 			}
+		}
+
+		[Test]
+		public void Test15 ()
+		{
+			// 2 separate writes -> 2 packets. Body size > 8kB
+			HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test15/");
+			MyNetworkStream ns = CreateNS (9000);
+			Send (ns, "POST /test15/ HTTP/1.0\r\nHost: 127.0.0.1\r\nContent-Length: 8888\r\n\r\n");
+			Thread.Sleep (800);
+			string data = new string ('a', 8888);
+			Send (ns, data);
+			HttpListenerContext c = listener.GetContext ();
+			HttpListenerRequest req = c.Request;
+			using (StreamReader r = new StreamReader (req.InputStream)) {
+				read_to_end = r.ReadToEnd ();
+			}
+			Assert.AreEqual (read_to_end.Length, data.Length, "Wrong length");
+			Assert.IsTrue (data == read_to_end, "Wrong data");
+			c.Response.Close ();
+			ns.Close ();
+		}
+
+		[Test]
+		public void Test16 ()
+		{
+			// 1 single write with headers + body (size > 8kB)
+			HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test16/");
+			MyNetworkStream ns = CreateNS (9000);
+			StringBuilder sb = new StringBuilder ();
+			sb.Append ("POST /test16/ HTTP/1.0\r\nHost: 127.0.0.1\r\nContent-Length: 8888\r\n\r\n");
+			string eights = new string ('b', 8888);
+			sb.Append (eights);
+			string data = sb.ToString ();
+			Send (ns, data);
+			HttpListenerContext c = listener.GetContext ();
+			HttpListenerRequest req = c.Request;
+			using (StreamReader r = new StreamReader (req.InputStream)) {
+				read_to_end = r.ReadToEnd ();
+			}
+			Assert.AreEqual (read_to_end.Length, read_to_end.Length, "Wrong length");
+			Assert.IsTrue (eights == read_to_end, "Wrong data");
+			c.Response.Close ();
+			ns.Close ();
 		}
 	}
 
