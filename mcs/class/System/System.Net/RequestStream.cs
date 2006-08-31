@@ -35,7 +35,7 @@ namespace System.Net {
 		byte [] buffer;
 		int offset;
 		int length;
-		long available;
+		long remaining_body;
 		bool disposed;
 
 		internal RequestStream (Socket sock, byte [] buffer, int offset, int length) :
@@ -44,7 +44,7 @@ namespace System.Net {
 			this.buffer = buffer;
 			this.offset = offset;
 			this.length = length;
-			this.available = -1;
+			this.remaining_body = -1;
 		}
 
 		internal RequestStream (Socket sock, byte [] buffer, int offset, int length, long contentlength) :
@@ -53,7 +53,7 @@ namespace System.Net {
 			this.buffer = buffer;
 			this.offset = offset;
 			this.length = length;
-			this.available = contentlength;
+			this.remaining_body = contentlength;
 		}
 
 		public override bool CanRead {
@@ -105,20 +105,27 @@ namespace System.Net {
 			if (off > len - count)
 				throw new ArgumentException ("Reading would overrun buffer");
 
-			if (this.available == 0)
+			if (this.remaining_body == 0)
 				return -1;
 
 			if (this.length == 0)
 				return 0;
 
 			int size = Math.Min (this.length, count);
-			if (this.available > 0)
-				size = (int) Math.Min (size, this.available);
+			if (this.remaining_body > 0)
+				size = (int) Math.Min (size, this.remaining_body);
+
+			if (this.offset > this.buffer.Length - size) {
+				size = Math.Min (size, this.buffer.Length - this.offset);
+			}
+			if (size == 0)
+				return 0;
+
 			Buffer.BlockCopy (this.buffer, this.offset, buffer, off, size);
 			this.offset += size;
 			this.length -= size;
-			if (this.available > 0)
-				available -= size;
+			if (this.remaining_body > 0)
+				remaining_body -= size;
 			return size;
 		}
 
@@ -127,15 +134,17 @@ namespace System.Net {
 			if (disposed)
 				throw new ObjectDisposedException (typeof (RequestStream).ToString ());
 
-			// Avoid reading past the end of the request to allow
-			// for HTTP pipelining
+			// Call FillFromBuffer to check for buffer boundaries even when remaining_body is 0
 			int nread = FillFromBuffer (buffer, offset, count);
-			if (nread == -1) // No more bytes available (Content-Length)
+			if (nread == -1) { // No more bytes available (Content-Length)
 				return 0;
-			if (nread > 0)
+			} else if (nread > 0) {
 				return nread;
+			}
 
 			nread = base.Read (buffer, offset, count);
+			if (nread > 0 && remaining_body > 0)
+				remaining_body -= nread;
 			return nread;
 		}
 
@@ -160,8 +169,8 @@ namespace System.Net {
 
 			// Avoid reading past the end of the request to allow
 			// for HTTP pipelining
-			if (available != -1 && count > available)
-				count = (int) Math.Min (Int32.MaxValue, available);
+			if (remaining_body >= 0 && count > remaining_body)
+				count = (int) Math.Min (Int32.MaxValue, remaining_body);
 			return base.BeginRead (buffer, offset, count, cback, state);
 		}
 
@@ -182,8 +191,8 @@ namespace System.Net {
 
 			// Close on exception?
 			int nread = base.EndRead (ares);
-			if (available != -1)
-				available -= nread;
+			if (remaining_body > 0 && nread > 0)
+				remaining_body -= nread;
 			return nread;
 		}
 
