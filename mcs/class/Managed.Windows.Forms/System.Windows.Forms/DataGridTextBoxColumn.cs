@@ -218,11 +218,13 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		protected void HideEditBox ()
 		{
-			grid.SuspendLayout ();
-			textbox.Bounds = Rectangle.Empty;
-			textbox.Visible = false;
-			textbox.IsInEditOrNavigateMode = true;
-			grid.ResumeLayout (false);
+			if (textbox.Visible) {
+				grid.SuspendLayout ();
+				textbox.Bounds = Rectangle.Empty;
+				textbox.Visible = false;
+				textbox.IsInEditOrNavigateMode = true;
+				grid.ResumeLayout (false);
+			}
 		}
 
 		protected internal override void Paint (Graphics g, Rectangle bounds, CurrencyManager source, int rowNum)

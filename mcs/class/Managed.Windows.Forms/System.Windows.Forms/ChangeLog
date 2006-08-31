@@ -1,5 +1,38 @@
 2006-08-31  Chris Toshok  <toshok@ximian.com>
 
+	* DataGridTextBoxColumn.cs: only hide the textbox if it's still
+	visible.
+
+	* DataGridTextBox.cs: Pass Tab's up to the datagrid by calling
+	ProcessKeyPreview.  Fixes part of #77806.
+
+	* DataGrid.cs: big patch.
+
+	- revert the queueing up of DataSource/DataMember if inside
+	BeginInit/EndInit calls.  That's not the way the datagrid achieves
+	its delayed databinding.  Instead, call SetDataSource in
+	OnBindingContextChanged.  This mimic's MS's behavior, and fixes
+	#78811.
+
+	- Also, it wasn't mentioned in #78811, but the test case exhibits
+	behavior that was lacking in our datagrid implementation - Columns
+	that have mapping names that don't exist in the datasource's
+	properties aren't shown.  Yuck.  To fix this I added the bound
+	field to the column style, and basically any calculation to figure
+	out anything about columns uses a loop to find the bound columns.
+	still need to investigate if I can cache an array of the bound
+	columns or if the indices must be the same.
+
+	- When setting CurrentCell, we no longer abort if the cell being
+	edited was in the add row.  This fixes the other part of #77806.
+
+	- The new code also fixes #78807.
+	
+	* ThemeWin32Classic.cs: perpetrate the same disgusting
+	column.bound field hack, and only render bound fields.
+
+2006-08-31  Chris Toshok  <toshok@ximian.com>
+
 	* DataGridColumnStyle.cs: add bound field.  this field is true if
 	the datasource has a property corresponding to the mapping name.
 

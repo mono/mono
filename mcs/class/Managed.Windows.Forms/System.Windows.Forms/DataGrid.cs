@@ -219,12 +219,6 @@ namespace System.Windows.Forms
 		bool _readonly;
 		DataGridRow[] rows;
 
-		/* these fields make BeginInit/EndInit work */
-		bool initializing;
-		bool need_databinding;
-		object new_datasource;
-		string new_datamember;
-
 		/* column resize fields */
 		bool column_resize_active;
 		int resize_column_x;
@@ -463,10 +457,7 @@ namespace System.Windows.Forms
 				if (value.RowNumber != current_cell.RowNumber) {
 					if (!from_positionchanged_handler) {
 						try {
-							if (cursor_in_add_row && !add_row_changed)
-								ListManager.CancelCurrentEdit ();
-							else
-								ListManager.EndCurrentEdit ();
+							ListManager.EndCurrentEdit ();
 						}
 						catch (Exception e) {
 							DialogResult r = MessageBox.Show (String.Format ("{0} Do you wish to correct the value?", e.Message),
@@ -545,16 +536,7 @@ namespace System.Windows.Forms
 		public string DataMember {
 			get { return datamember; }
 			set {
-				if (initializing) {
-					need_databinding = true;
-					new_datamember = value;
-				}
-				else {
-					if (SetDataMember (value)) {					
-						SetDataSource (datasource);
-						SetNewDataSource ();
-					}
-				}
+				SetDataSource (datasource, value);
 			}
 		}
 
@@ -564,15 +546,10 @@ namespace System.Windows.Forms
 		public object DataSource {
 			get { return datasource; }
 			set {
-				if (initializing) {
-					need_databinding = true;
-					new_datasource = value;
-				}
-				else {
-					SetDataMember ("");
-					SetDataSource (value);
-					SetNewDataSource ();
-				}
+				if (datasource == null)
+					SetDataSource (value, datamember);
+				else
+					SetDataSource (value, string.Empty);
 			}
 		}
 
@@ -685,22 +662,7 @@ namespace System.Windows.Forms
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected internal CurrencyManager ListManager {
-			get {
-				if (BindingContext == null || datasource == null)
-					return null;
-
-				if (list_manager != null)
-					return list_manager;
-
-				list_manager = (CurrencyManager) BindingContext [datasource, datamember];
-
-				if (list_manager != null)
-					ConnectListManagerEvents ();
-
-				RecreateDataGridRows ();
-
-				return list_manager;
-			}
+			get { return list_manager; }
 			set { throw new NotSupportedException ("Operation is not supported."); }
 		}
 
@@ -922,7 +884,6 @@ namespace System.Windows.Forms
 
 		public void BeginInit ()
 		{
-			initializing = true;
 		}
 
 		protected virtual void CancelEditing ()
@@ -1023,12 +984,6 @@ namespace System.Windows.Forms
 
 		public void EndInit ()
 		{
-			initializing = false;
-			if (need_databinding) {
-				SetDataMember (new_datamember);
-				SetDataSource (new_datasource);
-				SetNewDataSource ();
-			}
 		}
 
 		public void Expand (int row)
@@ -1180,7 +1135,8 @@ namespace System.Windows.Forms
 					int col_pixel;
 					int column_cnt = first_visiblecolumn + visiblecolumn_count;
 					for (int column = first_visiblecolumn; column < column_cnt; column++) {
-
+						if (CurrentTableStyle.GridColumnStyles[column].bound == false)
+							continue;
 						col_pixel = GetColumnStartingPixel (column);
 						pos_x = cells_area.X + col_pixel - horiz_pixeloffset;
 						width = CurrentTableStyle.GridColumnStyles[column].Width;
@@ -1218,14 +1174,9 @@ namespace System.Windows.Forms
 			rows = source.Rows;
 			selected_rows = source.SelectedRows;
 			selection_start = source.SelectionStart;
-			datamember = source.data_member;
-			datasource = source.data_source;
-
-			SetNewDataSource ();
-			OnDataSourceChanged (EventArgs.Empty);
+			SetDataSource (source.data_source, source.data_member);
 
 			CurrentCell = source.current;
-			CalcAreasAndInvalidate ();
 		}
 
 		[MonoTODO]
@@ -1277,8 +1228,7 @@ namespace System.Windows.Forms
 		{
 			base.OnBindingContextChanged (e);
 
-			current_style.CreateColumnsForTable (false);
-			CalcAreasAndInvalidate ();
+			SetDataSource (datasource, datamember);
 		}
 
 		protected virtual void OnBorderStyleChanged (EventArgs e)
@@ -1789,9 +1739,10 @@ namespace System.Windows.Forms
 				return true;
 
 			case Keys.Tab:
+				Console.WriteLine ("CurrentRow == {0}, RowsCount = {1}", CurrentRow, RowsCount);
 				if (CurrentColumn < CurrentTableStyle.GridColumnStyles.Count - 1)
 					CurrentColumn ++;
-				else if ((CurrentRow <= RowsCount - 1) && (CurrentColumn == CurrentTableStyle.GridColumnStyles.Count - 1))
+				else if ((CurrentRow <= RowsCount) && (CurrentColumn == CurrentTableStyle.GridColumnStyles.Count - 1))
 					CurrentCell = new DataGridCell (CurrentRow + 1, 0);
 
 				UpdateSelectionAfterCursorMove (false);
@@ -2009,10 +1960,7 @@ namespace System.Windows.Forms
 
 		public void SetDataBinding (object dataSource, string dataMember)
 		{
-			this.datamember = string.Empty;
-			SetDataSource (dataSource);
-			SetDataMember (dataMember);		
-			SetNewDataSource ();
+			SetDataSource (dataSource, dataMember);
 		}
 
 		protected virtual bool ShouldSerializeAlternatingBackColor ()
@@ -2147,45 +2095,44 @@ namespace System.Windows.Forms
 				vert_scrollbar.Value = first_visiblerow;
 			}
 		}
-		
-		private bool SetDataMember (string member)
+
+		private void SetDataSource (object source, string member)
 		{
-			if (member == datamember)
-				return false;
-
-			datamember = member;
-
-			if (list_manager != null) {
-				DisconnectListManagerEvents ();
-				list_manager = null;
-			}
-
-			return true;
+			SetDataSource (source, member, true);
 		}
 
-		private void SetDataSource (object source)
-		{			
-			if (source != null && source as IListSource != null && source as IList != null) {
+		private void SetDataSource (object source, string member, bool recreate_rows)
+		{
+#if false
+			if (datasource == source && member == datamember)
+				return;
+#endif
+
+			if (source != null && source as IListSource != null && source as IList != null)
 				throw new Exception ("Wrong complex data binding source");
-			}
+
+			datasource = source;
+			datamember = member;
 
 			if (is_editing)
 				CancelEditing ();
 
 			current_cell = new DataGridCell ();
-			datasource = source;
-			if (list_manager != null) {
+
+			if (list_manager != null)
 				DisconnectListManagerEvents ();
-				list_manager = null;
-			}
 
-			OnDataSourceChanged (EventArgs.Empty);
-		}
+			list_manager = null;
 
-		private void SetNewDataSource ()
-		{
-			if (ListManager != null) {
-				string list_name = ListManager.GetListName (null);
+			/* create the new list manager */
+			if (BindingContext != null && datasource != null)
+				list_manager = (CurrencyManager) BindingContext [datasource, datamember];
+
+			if (list_manager != null)
+				ConnectListManagerEvents ();
+
+			if (list_manager != null) {
+				string list_name = list_manager.GetListName (null);
 				if (TableStyles[list_name] == null) {
 					current_style.GridColumnStyles.Clear ();			
 					current_style.CreateColumnsForTable (false);
@@ -2195,13 +2142,19 @@ namespace System.Windows.Forms
 					CurrentTableStyle = styles_collection[list_name];
 					current_style.CreateColumnsForTable (true);
 				}
-				else
-					current_style.CreateColumnsForTable (false);
+				else {
+					current_style.CreateColumnsForTable (true);
+				}
 			}
 			else
 				current_style.CreateColumnsForTable (false);
-			
-			CalcAreasAndInvalidate ();			
+
+			if (recreate_rows)
+				RecreateDataGridRows ();
+
+			CalcAreasAndInvalidate ();
+
+			OnDataSourceChanged (EventArgs.Empty);
 		}
 
 		private void OnListManagerPositionChanged (object sender, EventArgs e)
@@ -2299,9 +2252,12 @@ namespace System.Windows.Forms
 
 		private void Edit ()
 		{
+			if (CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].bound == false)
+				return;
+
 			is_editing = true;
 			is_changing = false;
-
+			
 			CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].Edit (ListManager,
 				current_cell.RowNumber, GetCellBounds (current_cell.RowNumber, current_cell.ColumnNumber),
 				_readonly, "", true);
@@ -2309,6 +2265,9 @@ namespace System.Windows.Forms
 
 		private void EndEdit ()
 		{
+			if (CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].bound == false)
+				return;
+
 			EndEdit (CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber],
 				 current_cell.RowNumber,
 				 false);
@@ -2474,9 +2433,12 @@ namespace System.Windows.Forms
 			int width = 0;
 			int cnt = CurrentTableStyle.GridColumnStyles.Count;
 
-			for (int col = 0; col < cnt; col++)
+			for (int col = 0; col < cnt; col++) {
+				if (CurrentTableStyle.GridColumnStyles[col].bound == false) {
+					continue;
+				}
 				width += CurrentTableStyle.GridColumnStyles[col].Width;
-
+			}
 			return width;
 		}
 
@@ -2496,6 +2458,9 @@ namespace System.Windows.Forms
 			}
 
 			for (int col = 0; col < cnt; col++) {
+				if (CurrentTableStyle.GridColumnStyles[col].bound == false)
+					continue;
+
 				width += CurrentTableStyle.GridColumnStyles[col].Width;
 
 				if (pixel < width)
@@ -2513,6 +2478,9 @@ namespace System.Windows.Forms
 			int cnt = CurrentTableStyle.GridColumnStyles.Count;
 
 			for (int col = 0; col < cnt; col++) {
+				if (CurrentTableStyle.GridColumnStyles[col].bound == false) {
+					continue;
+				}
 
 				if (my_col == col)
 					return width;
@@ -2531,6 +2499,8 @@ namespace System.Windows.Forms
 			
 			if (column > current_first_visiblecolumn) { // Going forward								
 				for (new_col = column; new_col >= 0; new_col--){
+					if (CurrentTableStyle.GridColumnStyles[new_col].bound == false)
+						continue;
 					width += CurrentTableStyle.GridColumnStyles[new_col].Width;
 					
 					if (width >= cells_area.Width)
@@ -2778,7 +2748,13 @@ namespace System.Windows.Forms
 			col = FromPixelToColumn (max_pixel, out unused);
 			
 			visiblecolumn_count = 1 + col - first_visiblecolumn;
-			
+
+			visiblecolumn_count = 0;
+			for (int i = first_visiblecolumn; i <= col; i ++) {
+				if (CurrentTableStyle.GridColumnStyles[i].bound)
+					visiblecolumn_count++;
+			}
+
 			if (first_visiblecolumn + visiblecolumn_count < CurrentTableStyle.GridColumnStyles.Count) { 
 				visiblecolumn_count++; // Partially visible column
 			}

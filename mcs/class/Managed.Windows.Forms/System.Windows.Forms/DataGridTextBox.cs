@@ -116,6 +116,7 @@ namespace System.Windows.Forms
 					return false;
 				case Keys.Enter:
 					return true;
+				case Keys.Tab:
 				case Keys.Up:
 				case Keys.Down:
 					return ProcessKeyPreview (ref m);

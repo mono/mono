@@ -927,6 +927,8 @@ namespace System.Windows.Forms
 
 			int column_cnt = grid.FirstVisibleColumn + grid.VisibleColumnCount;
 			for (int column = grid.FirstVisibleColumn; column < column_cnt; column++) {
+				if (grid.CurrentTableStyle.GridColumnStyles[column].bound == false)
+					continue;
 				
 				col_pixel = grid.GetColumnStartingPixel (column);
 				rect_columnhdr.X = columns_area.X + col_pixel - grid.HorizPixelOffset;
@@ -1231,8 +1233,11 @@ namespace System.Windows.Forms
 				rect_cell.Width = 0;
 
 				int column_cnt = grid.FirstVisibleColumn + grid.VisibleColumnCount;
-				for (int column = grid.FirstVisibleColumn; column < column_cnt; column++)
+				for (int column = grid.FirstVisibleColumn; column < column_cnt; column++) {
+					if (grid.CurrentTableStyle.GridColumnStyles[column].bound == false)
+						continue;
 					rect_cell.Width += grid.CurrentTableStyle.GridColumnStyles[column].Width;
+				}
 
 				g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.CurrentTableStyle.BackColor),
 						 rect_cell);
@@ -1305,6 +1310,8 @@ namespace System.Windows.Forms
 			Region current_clip;
 
 			for (int column = grid.FirstVisibleColumn; column < column_cnt; column++) {
+				if (grid.CurrentTableStyle.GridColumnStyles[column].bound == false)
+					continue;
 
 				col_pixel = grid.GetColumnStartingPixel (column);
 
