@@ -2,9 +2,6 @@
 
 	* mini-amd64.c (mono_arch_emit_exceptions): Fix assertion introduced by the last change.
 
-	* mini.c (mono_runtime_cleanup_handlers): Clean up signal handlers on unix. Fixes
-	#79130.
-	
 	* mini.c (handle_array_new): Applied patch from "briaeros007". Fix
 	a race condition.
 	(mini_get_ldelema_ins): Ditto.
