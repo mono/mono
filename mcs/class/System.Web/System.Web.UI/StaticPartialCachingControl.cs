@@ -53,6 +53,18 @@ namespace System.Web.UI {
 			this.buildMethod = buildMethod;
 		}
 
+#if NET_2_0
+		[MonoTODO("Consider sqlDependency parameter")]
+		public static void BuildCachedControl (Control parent, string ctrlID, string guid,
+				int duration, string varyByParams, string varyByControls,
+				string varyByCustom, string sqlDependency, BuildMethod buildMethod)
+		{
+			BuildCachedControl (parent, ctrlID, guid,
+				duration, varyByParams, varyByControls,
+				varyByCustom, buildMethod);
+		}
+#endif
+
 		public static void BuildCachedControl (Control parent, string ctrlID, string guid,
 				int duration, string varyByParams, string varyByControls,
 				string varyByCustom, BuildMethod buildMethod)
