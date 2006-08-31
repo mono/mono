@@ -131,6 +131,7 @@ namespace System.Windows.Forms
 		private StringFormat string_format_hdr;
 		static string def_null_text = "(null)";
 		private ArrowDrawing arrow_drawing = ArrowDrawing.No;
+		internal bool bound;
 		#endregion	// Local Variables
 
 		#region Constructors

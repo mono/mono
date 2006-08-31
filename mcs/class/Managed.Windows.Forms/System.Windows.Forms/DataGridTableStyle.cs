@@ -867,6 +867,9 @@ namespace System.Windows.Forms
 					return;
 			}
 
+			for (int i = 0; i < column_styles.Count; i ++)
+				column_styles[i].bound = false;
+
 			table_relations.Clear ();
 			PropertyDescriptorCollection propcol = mgr.GetItemProperties ();
 
@@ -879,7 +882,7 @@ namespace System.Windows.Forms
 						st.Width = CurrentPreferredColumnWidth;
 
 					st.PropertyDescriptor = propcol[i];
-
+					st.bound = true;
 					continue;
 				}
 
@@ -891,6 +894,7 @@ namespace System.Windows.Forms
 					table_relations.Add (propcol[i].Name);
 				} else {
 					st = CreateGridColumn (propcol[i],  true);
+					st.bound = true;
 					st.grid = datagrid;
 					st.MappingName = propcol[i].Name;
 					st.HeaderText = propcol[i].Name;

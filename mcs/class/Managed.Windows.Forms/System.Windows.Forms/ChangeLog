@@ -1,3 +1,11 @@
+2006-08-31  Chris Toshok  <toshok@ximian.com>
+
+	* DataGridColumnStyle.cs: add bound field.  this field is true if
+	the datasource has a property corresponding to the mapping name.
+
+	* DataGridTableStyle.cs: set the bound field on the column styles
+	depending on whether or not we have a column for that property.
+
 2006-08-31  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Splitter.cs (SetBoundsCore): Don't ignore width/height of the 
