@@ -5329,7 +5329,7 @@ Index: expression.cs
  			return this;
  		}
  
-@@ -3731,7 +3704,68 @@
+@@ -3731,7 +3704,74 @@
  			// FIXME: Review for anonymous methods
  			//
  		}
@@ -5375,6 +5375,9 @@ Index: expression.cs
 +			Variable.EmitInstance (ec);
 +			if (prepare_for_load)
 +				ig.Emit (OpCodes.Dup);
++			else if (is_ref)
++				Variable.Emit (ec);
++
 +			source.Emit (ec);
 +			if (leave_copy) {
 +				ig.Emit (OpCodes.Dup);
@@ -5383,7 +5386,10 @@ Index: expression.cs
 +					temp.Store (ec);
 +				}
 +			}
-+			Variable.EmitAssign (ec);
++			if (is_ref)
++				StoreFromPtr (ig, type);
++			else
++				Variable.EmitAssign (ec);
 +			if (temp != null)
 +				temp.Emit (ec);
 +		}
@@ -5398,7 +5404,7 @@ Index: expression.cs
  		public override void Emit (EmitContext ec)
  		{
  			Emit (ec, false);
-@@ -3742,8 +3776,11 @@
+@@ -3742,8 +3782,11 @@
  			ILGenerator ig = ec.ig;
  			int arg_idx = idx;
  
@@ -5412,7 +5418,7 @@ Index: expression.cs
  				return;
  			}
  
-@@ -3772,20 +3809,19 @@
+@@ -3772,20 +3815,19 @@
  				}
  			}
  		}
@@ -5437,7 +5443,7 @@ Index: expression.cs
  			if (!ec.MethodIsStatic)
  				arg_idx++;
  
-@@ -3818,7 +3854,7 @@
+@@ -3818,7 +3860,7 @@
  		public void AddressOf (EmitContext ec, AddressOp mode)
  		{
  			if (ec.HaveCaptureInfo && ec.IsParameterCaptured (name)){
@@ -5446,7 +5452,7 @@ Index: expression.cs
  				return;
  			}
  			
-@@ -3839,6 +3875,7 @@
+@@ -3839,6 +3881,7 @@
  					ec.ig.Emit (OpCodes.Ldarga, arg_idx);
  			}
  		}
