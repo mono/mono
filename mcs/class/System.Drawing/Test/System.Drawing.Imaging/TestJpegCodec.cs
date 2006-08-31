@@ -95,7 +95,6 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Bitmap24bitPixels ()
 		{
 			string sInFile = getInFile ("bitmaps/nature24bits.jpg");
