@@ -2295,15 +2295,13 @@ namespace System.Windows.Forms
 					StringFormat text_format = new StringFormat();
 					text_format.LineAlignment = StringAlignment.Center;
 					text_format.Alignment = StringAlignment.Near;
-					Font bold_font = new Font (mc.Font.FontFamily, mc.Font.Size, mc.Font.Style | FontStyle.Bold);
 					Rectangle today_rect = new Rectangle (
 							today_offset + client_rectangle.X,
 							Math.Max(client_rectangle.Bottom - date_cell_size.Height, 0),
 							Math.Max(client_rectangle.Width - today_offset, 0),
 							date_cell_size.Height);
-					dc.DrawString ("Today: " + DateTime.Now.ToShortDateString(), bold_font, GetControlForeBrush (mc.ForeColor), today_rect, text_format);
+					dc.DrawString ("Today: " + DateTime.Now.ToShortDateString(), mc.bold_font, GetControlForeBrush (mc.ForeColor), today_rect, text_format);
 					text_format.Dispose ();
-					bold_font.Dispose ();
 				}				
 			}
 			
@@ -2374,12 +2372,6 @@ namespace System.Windows.Forms
 			Size date_cell_size = (Size)((object)mc.date_cell_size);
 			DateTime current_month = (DateTime)((object)mc.current_month);
 			
-			// set up some standard string formating variables
-			StringFormat text_format = new StringFormat();
-			text_format.LineAlignment = StringAlignment.Center;
-			text_format.Alignment = StringAlignment.Center;
-			
-
 			// draw the title back ground
 			DateTime this_month = current_month.AddMonths (row*mc.CalendarDimensions.Width+col);
 			Rectangle title_rect = new Rectangle(rectangle.X, rectangle.Y, title_size.Width, title_size.Height);
@@ -2387,7 +2379,7 @@ namespace System.Windows.Forms
 				dc.FillRectangle (ResPool.GetSolidBrush (mc.TitleBackColor), title_rect);
 				// draw the title				
 				string title_text = this_month.ToString ("MMMM yyyy");
-				dc.DrawString (title_text, mc.Font, ResPool.GetSolidBrush (mc.TitleForeColor), title_rect, text_format);
+				dc.DrawString (title_text, mc.bold_font, ResPool.GetSolidBrush (mc.TitleForeColor), title_rect, mc.centered_format);
 
 				// draw previous and next buttons if it's time
 				if (row == 0 && col == 0) 
@@ -2440,7 +2432,7 @@ namespace System.Windows.Forms
 						day_name_rect.Y,
 						date_cell_size.Width,
 						date_cell_size.Height);
-					dc.DrawString (((DayOfWeek)i).ToString().Substring(0, 3), mc.Font, ResPool.GetSolidBrush (mc.TitleBackColor), day_rect, text_format);
+					dc.DrawString (((DayOfWeek)i).ToString().Substring(0, 3), mc.Font, ResPool.GetSolidBrush (mc.TitleBackColor), day_rect, mc.centered_format);
 				}
 				
 				// draw the vertical divider
@@ -2498,7 +2490,7 @@ namespace System.Windows.Forms
 							mc.Font,
 							ResPool.GetSolidBrush (mc.TitleBackColor),
 							date_rect,
-							text_format);
+							mc.centered_format);
 					}
 					date_rect.Offset(date_cell_size.Width, 0);
 				}
@@ -2542,7 +2534,6 @@ namespace System.Windows.Forms
 					rectangle.X + date_cell_size.Width - 1,
 					rectangle.Y + title_size.Height + date_cell_size.Height + (month_row_count * date_cell_size.Height) - mc.divider_line_offset);
 			}
-			text_format.Dispose ();
 		}
 
 		// draws the pervious or next button
@@ -2667,22 +2658,11 @@ namespace System.Windows.Forms
 				dc.FillRectangle (ResPool.GetSolidBrush (mc.TitleBackColor), selection_rect);
 			}
 
-			// set up some standard string formating variables
-			StringFormat text_format = new StringFormat();
-			text_format.LineAlignment = StringAlignment.Center;
-			text_format.Alignment = StringAlignment.Center;
-			
-
 			// establish if it's a bolded font
-			Font font;
-			if (mc.IsBoldedDate (date)) {
-				font = new Font (mc.Font.FontFamily, mc.Font.Size, mc.Font.Style | FontStyle.Bold);
-			} else {
-				font = mc.Font;
-			}
+			Font font = mc.IsBoldedDate (date) ? mc.bold_font : mc.Font;
 
 			// just draw the date now
-			dc.DrawString (date.Day.ToString(), font, ResPool.GetSolidBrush (date_color), rectangle, text_format);
+			dc.DrawString (date.Day.ToString(), font, ResPool.GetSolidBrush (date_color), rectangle, mc.centered_format);
 
 			// today circle if needed
 			if (mc.ShowTodayCircle && date == DateTime.Now.Date) {
@@ -2694,7 +2674,6 @@ namespace System.Windows.Forms
 				Pen pen = ResPool.GetDashPen (Color.Black, DashStyle.Dot);
 				dc.DrawRectangle (pen, interior);
 			}
-			text_format.Dispose ();
 		}
 
 		private void DrawTodayCircle (Graphics dc, Rectangle rectangle) {

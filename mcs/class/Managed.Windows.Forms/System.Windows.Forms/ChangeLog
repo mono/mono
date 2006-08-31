@@ -1,3 +1,11 @@
+2006-08-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* MonthCalendar.cs: 
+	* ThemeWin32Classic.cs: Cache Font in bold style, as well
+	as StringFormat with Center alignments in MonthCalendar,
+	instead of creating new ones when drawing the control. 
+	Also, draw the month name in bold style.
+
 2006-08-30  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Control.cs:

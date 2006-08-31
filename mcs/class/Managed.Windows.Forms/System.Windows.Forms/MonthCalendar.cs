@@ -80,6 +80,8 @@ namespace System.Windows.Forms {
 		internal DateTime		first_select_start_date;
 		internal int			last_clicked_calendar_index;
 		internal Rectangle		last_clicked_calendar_rect;
+		internal Font 			bold_font;			// Cache the font in FontStyle.Bold
+		internal StringFormat		centered_format;		// Cache centered string format
 		private Point			month_title_click_location;
 		// this is used to see which item was actually clicked on in the beginning
 		// so that we know which item to fire on timer
@@ -135,6 +137,10 @@ namespace System.Windows.Forms {
 			title_fore_color = ThemeEngine.Current.ColorActiveCaptionText;
 			today_date_set = false;
 			trailing_fore_color = Color.Gray;
+			bold_font = new Font (Font, Font.Style | FontStyle.Bold);
+			centered_format = new StringFormat ();
+			centered_format.LineAlignment = StringAlignment.Center;
+			centered_format.Alignment = StringAlignment.Center;
 			
 			// initialise the arraylest for bolded dates
 			added_bolded_dates = new ArrayList ();
@@ -923,6 +929,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnFontChanged (EventArgs e) {
+			bold_font = new Font (Font, Font.Style | FontStyle.Bold);
 			base.OnFontChanged (e);
 		}
 
