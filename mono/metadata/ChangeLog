@@ -1,5 +1,10 @@
 2006-08-31  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (reflection_methodbuilder_to_mono_method): Set 
+	method->skip_visibility based up the skipVisibility parameter of DynamicMethods.
+
+	* class-internals.h (MonoMethod): Add a 'skip_visibility' field.
+
 	* marshal.c (mono_marshal_load_type_info): Revert the last change as it can't cope
 	with cycles in classes.
 
