@@ -80,6 +80,31 @@ namespace MonoTests.System.Reflection.Emit
 			} catch (InvalidOperationException) {
 			}
 		}
+
+		private delegate string ReturnString (string msg);
+
+		private static string private_method (string s) {
+			return s;
+		}
+
+		[Test]
+		public void SkipVisibility ()
+		{
+			DynamicMethod hello = new DynamicMethod ("Hello",
+				typeof (string),
+				new Type[] { typeof (string) },
+				typeof (DynamicMethodTest).Module, true);
+
+			ILGenerator helloIL = hello.GetILGenerator ();
+			helloIL.Emit (OpCodes.Ldarg_0);
+			helloIL.EmitCall (OpCodes.Call, typeof (DynamicMethodTest).GetMethod ("private_method", BindingFlags.Static|BindingFlags.NonPublic), null);
+			helloIL.Emit (OpCodes.Ret);
+
+			ReturnString del =
+				(ReturnString) hello.CreateDelegate (typeof (ReturnString));
+			Assert.AreEqual ("ABCD", del ("ABCD"));
+		}
+
 	}
 }
 

@@ -1,3 +1,7 @@
+2006-08-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* DynamicMethodTest.cs: Add a test for skipVisibility.
+
 2006-07-31  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* AssemblyBuilderTest.cs: The GetType_IgnoreCase test case doesn't 
