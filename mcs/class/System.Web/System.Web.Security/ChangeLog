@@ -1,3 +1,9 @@
+2006-08-31 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* SqlMembershipProvider.cs: fixed CreateUser,
+	password is checked, properties MinRequiredPasswordLength and 
+	MinRequiredNonAlphanumericCharacters are considered.
+
 2006-08-29 Konstantin Triger <kostat@mainsoft.com>
 
         * SqlMembershipProvider.cs: fix dispose order of reader vs connection.

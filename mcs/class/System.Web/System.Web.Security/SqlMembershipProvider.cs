@@ -324,6 +324,13 @@ UPDATE m
 				status = MembershipCreateStatus.InvalidPassword;
 				return null;
 			}
+
+			if (!CheckPassword (password)) {
+				status = MembershipCreateStatus.InvalidPassword;
+				return null;
+			}
+			EmitValidatingPassword (username, password, true);
+
 			if (RequiresUniqueEmail && (email == null || email.Length == 0)) {
 				status = MembershipCreateStatus.InvalidEmail;
 				return null;
@@ -570,6 +577,21 @@ VALUES (@ApplicationId,
 			}
 		}
 		
+		private bool CheckPassword (string password) {
+			if (password.Length < MinRequiredPasswordLength)
+				return false;
+
+			if (MinRequiredNonAlphanumericCharacters > 0) {
+				int nonAlphanumeric = 0;
+				for (int i = 0; i < password.Length; i++) {
+					if (!Char.IsLetterOrDigit (password [i]))
+						nonAlphanumeric++;
+				}
+				return nonAlphanumeric >= MinRequiredNonAlphanumericCharacters;
+			}
+			return true;
+		}
+
 		[MonoTODO]
 		public override bool DeleteUser (string username, bool deleteAllRelatedData)
 		{
