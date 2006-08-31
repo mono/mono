@@ -1,3 +1,7 @@
+2006-08-31 Robert Jordan  <robertj@gmx.net>
+
+	* MarshalTest.cs: Added tests for PtrToStringAuto/StringToHGlobalAuto.
+
 2005-08-28  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* MarshalTest.cs: Added test for ReadInt32 (versus arch endianess).

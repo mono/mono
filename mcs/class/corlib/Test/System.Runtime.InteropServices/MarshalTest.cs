@@ -337,6 +337,35 @@ namespace MonoTests.System.Runtime.InteropServices
 		{
 			Marshal.GetComSlotForMethodInfo (typeof(TestCoClass).GetMethod ("DoNothing"));
 		}
+
+		[Test]
+		public void TestPtrToStringAuto ()
+		{
+			string input = Guid.NewGuid ().ToString ();
+			string output;
+			string output2;
+			int len = 4;
+			IntPtr ptr;
+
+			if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
+				// Auto -> Uni
+				ptr = Marshal.StringToHGlobalAuto (input);
+				output = Marshal.PtrToStringUni (ptr);
+				output2 = Marshal.PtrToStringUni (ptr, len);
+			} else {
+				// Auto -> Ansi
+				ptr = Marshal.StringToHGlobalAuto (input);
+				output = Marshal.PtrToStringAnsi (ptr);
+				output2 = Marshal.PtrToStringAnsi (ptr, len);
+			}
+
+			try {
+				Assert.AreEqual (input, output, "#1");
+				Assert.AreEqual (input.Substring (0, len), output2, "#2");
+			} finally {
+				Marshal.FreeHGlobal (ptr);
+			}
+		}
 	}
 
 	[ComImport()]
