@@ -37,6 +37,14 @@ namespace MonoTests.System.Data
 {
 	[TestFixture] public class DataRowTest2
 	{
+		bool _rowChanged;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			_rowChanged = false;
+		}
+
 		[Test] public void AcceptChanges()
 		{
 			DataTable myTable = new DataTable("myTable"); 
@@ -1181,6 +1189,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual(drArrExcepted ,  drArrResult, "DRW120");
 		}
 
+		[Test]
 		public void testMore()
 		{
 			DataSet ds = DataProvider.CreateForigenConstraint();
@@ -1189,6 +1198,7 @@ namespace MonoTests.System.Data
 			ds.Tables[1].Rows[0].SetParentRow(drParent);
 		}
 
+		[Test]
 		public void test()
 		{
 			// test SetParentRow
@@ -1493,9 +1503,9 @@ namespace MonoTests.System.Data
 		[Test]
 		public void ItemArray()
 		{
-			DataTable dt = GetDataTable();				
+			DataTable dt = GetDataTable();
 			DataRow dr = dt.Rows[0];
-	        
+
 			Assert.AreEqual(1, (int)dr.ItemArray[0] , "DRW131" );
 
 			Assert.AreEqual("Ofer", (string)dr.ItemArray[1] , "DRW132" );
@@ -1556,14 +1566,15 @@ namespace MonoTests.System.Data
 			return dt;
 		}
 
+		[Test]
 		public void RowError()
 		{
 			DataTable dt = new DataTable("myTable"); 
 			DataRow dr = dt.NewRow();
 
 			Assert.AreEqual(string.Empty , dr.RowError, "DRW137");
-						
-			dr.RowError = "Err";	        
+
+			dr.RowError = "Err";
 
 			Assert.AreEqual("Err", dr.RowError , "DRW138" );
 
@@ -1615,6 +1626,42 @@ namespace MonoTests.System.Data
 			{
 				Assert.Fail("DRW147: Wrong exception type. Got:" + exc);
 			}
+		}
+
+		[Test]
+		public void bug78885 ()
+		{
+			DataSet ds = new DataSet ();
+			DataTable t = ds.Tables.Add ("table");
+			DataColumn id;
+
+			id = t.Columns.Add ("userID", Type.GetType ("System.Int32"));
+			id.AutoIncrement = true;
+			t.Columns.Add ("name", Type.GetType ("System.String"));
+			t.Columns.Add ("address", Type.GetType ("System.String"));
+			t.Columns.Add ("zipcode", Type.GetType ("System.Int32"));
+			t.PrimaryKey = new DataColumn [] { id };
+
+			DataRow tempRow;
+			tempRow = t.NewRow ();
+			tempRow ["name"] = "Joan";
+			tempRow ["address"] = "Balmes 152";
+			tempRow ["zipcode"] = "1";
+			t.Rows.Add (tempRow);
+
+			t.RowChanged += new DataRowChangeEventHandler (RowChangedHandler);
+
+			/* neither of the calls to EndEdit below generate a RowChangedHandler on MS.  the first one does on mono */
+			t.DefaultView [0].BeginEdit ();
+			t.DefaultView [0].EndEdit (); /* this generates a call to the row changed handler */
+			t.DefaultView [0].EndEdit (); /* this doesn't */
+
+			Assert.IsFalse (_rowChanged);
+		}
+
+		private void RowChangedHandler (object sender, DataRowChangeEventArgs e)
+		{
+			_rowChanged = true;
 		}
 
 #if NET_2_0
