@@ -55,7 +55,12 @@ namespace System.Runtime.InteropServices
 	{
 		/* fields */
 		public static readonly int SystemMaxDBCSCharSize = 2; // don't know what this is
-		public static readonly int SystemDefaultCharSize = 2;
+		public static readonly int SystemDefaultCharSize;
+
+		static Marshal ()
+		{
+			SystemDefaultCharSize = Environment.OSVersion.Platform == PlatformID.Win32NT ? 2 : 1;
+		}
 
 #if !NET_2_0
 		private Marshal () {}
@@ -515,11 +520,17 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static string PtrToStringAnsi (IntPtr ptr, int len);
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static string PtrToStringAuto (IntPtr ptr);
+		public static string PtrToStringAuto (IntPtr ptr)
+		{
+			return SystemDefaultCharSize == 2
+				? PtrToStringUni (ptr) : PtrToStringAnsi (ptr);
+		}
 		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static string PtrToStringAuto (IntPtr ptr, int len);
+		public static string PtrToStringAuto (IntPtr ptr, int len)
+		{
+			return SystemDefaultCharSize == 2
+				? PtrToStringUni (ptr, len) : PtrToStringAnsi (ptr, len);
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static string PtrToStringUni (IntPtr ptr);
@@ -714,8 +725,11 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr StringToHGlobalAnsi (string s);
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static IntPtr StringToHGlobalAuto (string s);
+		public static IntPtr StringToHGlobalAuto (string s)
+		{
+			return SystemDefaultCharSize == 2
+				? StringToHGlobalUni (s) : StringToHGlobalAnsi (s);
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr StringToHGlobalUni (string s);

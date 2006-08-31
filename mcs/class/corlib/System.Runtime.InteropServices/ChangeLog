@@ -1,3 +1,9 @@
+2006-08-31 Robert Jordan  <robertj@gmx.net>
+
+	* Marshal.cs: Replaced the *Auto internal calls with managed
+	variants. Fixed SystemDefaultCharSize to return an OS dependent
+	value.
+
 2006-08-09  Jonathan Chambers  <joncham@gmail.com>
 
 	* Marshal.cs: Implement GetIDispatchForObject.
