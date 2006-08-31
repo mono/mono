@@ -1,3 +1,9 @@
+2006-08-31 Robert Jordan  <robertj@gmx.net>
+
+	* icall.c: Replace the PtrToStringAuto, StringToHGlobalAuto icalls
+	with managed variants.
+	All code is contributed under the MIT/X11 license.
+	
 2006-08-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (reflection_methodbuilder_to_mono_method): Set 
