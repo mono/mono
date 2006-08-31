@@ -65,11 +65,13 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		// MSDN: If you attempt to change the StepType property to any value other than the Auto value of the WizardStepType enumeration, an 
+		// InvalidOperationException will be thrown.
 		[ThemeableAttribute (false)]
 		public override WizardStepType StepType
 		{
-			get { return base.StepType; }
-			set { base.StepType = value; }
+			get { return WizardStepType.Auto; }
+			set { throw new InvalidOperationException (); }
 		}
 
 		internal override ITemplate DefaultContentTemplate

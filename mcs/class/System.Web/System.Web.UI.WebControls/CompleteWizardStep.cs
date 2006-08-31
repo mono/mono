@@ -41,11 +41,13 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+		// MSDN: The StepType property overrides the WizardStepBase.StepType property to ensure that CompleteWizardStep is always set to the Complete value of 
+		// the WizardStepType enumeration. Attempting to set the StepType property to a different value will result in an InvalidOperationException.
 		[ThemeableAttribute (false)]
 		public override WizardStepType StepType
 		{
-			get { return base.StepType; }
-			set { base.StepType = value; }
+			get { return WizardStepType.Complete; }
+			set { throw new InvalidOperationException (); }
 		}
 
 		[LocalizableAttribute (true)]
@@ -104,9 +106,21 @@ namespace System.Web.UI.WebControls
 			cell10.Controls.Add (new LiteralControl (_createUserWizard.CompleteSuccessText));
 			row1.Cells.Add (cell10);
 
+			// Row #2
+			TableRow row2 = new TableRow ();
+			TableCell cell20 = new TableCell ();
+
+			cell20.HorizontalAlign = HorizontalAlign.Right;
+			cell20.ColumnSpan = 2;
+			row2.Cells.Add (cell20);
+
+			Control b = _createUserWizard.CreateButton ("ContinueButtonButton", CreateUserWizard.ContinueButtonCommandName, _createUserWizard.ContinueButtonType, _createUserWizard.ContinueButtonText, _createUserWizard.ContinueButtonImageUrl, _createUserWizard.ContinueButtonStyle);
+			cell20.Controls.Add (b);
+			
 			// table
 			table.Rows.Add (row0);
 			table.Rows.Add (row1);
+			table.Rows.Add (row2);
 
 			container.Controls.Add (table);
 		}

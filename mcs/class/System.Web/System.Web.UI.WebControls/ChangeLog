@@ -1,3 +1,14 @@
+2006-08-31 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* CreateUserWizard.cs: 
+	* CompleteWizardStep.cs: 
+	* CreateUserWizardStep.cs: 
+	* Wizard.cs:
+	 fixed: ContinueButtonClick occurs when the user clicks 
+	 the Continue button in the final user account creation step.
+	 ContinueDestinationPageUrl - redirected after clicking 
+	 the Continue button on the success page.	
+
 2006-08-30 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Wizard.cs: refactoring: Button, ImageButton and LinkButton are used

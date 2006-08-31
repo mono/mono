@@ -116,6 +116,10 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			base.EnsureChildControls ();
 		}
+		
+		public bool DoOnBubbleEvent (EventArgs e) {
+			return base.OnBubbleEvent (this, e);
+		}
 	}
 
 	[Serializable]
@@ -846,6 +850,31 @@ namespace MonoTests.System.Web.UI.WebControls
 				w.UserNameRequiredErrorMessage = "userreq";
 				w.UnknownErrorMessage = "unknown";
 			}
+		}
+
+		[Test]
+		public void BibbleEvent_ContinueButtonCommand () {
+			TestCreateUserWizard w = new TestCreateUserWizard ();
+			w.ContinueButtonClick+=new EventHandler(w_ContinueButtonClick);
+			w.FinishButtonClick += new WizardNavigationEventHandler (w_FinishButtonClick);
+			_ContinueButtonClickFlag = false;
+			_FinishButtonClickFlag = false;
+
+			CommandEventArgs continueCommandArg = new CommandEventArgs (CreateUserWizard.ContinueButtonCommandName, null);
+			Assert.AreEqual (true, w.DoOnBubbleEvent (continueCommandArg), "Bubble Event#1");
+			Assert.AreEqual (true, _ContinueButtonClickFlag, "Bubble Event#2");
+			Assert.AreEqual (false, _FinishButtonClickFlag, "Bubble Event#3");
+		}
+
+		bool _ContinueButtonClickFlag;
+		bool _FinishButtonClickFlag;
+
+		void w_ContinueButtonClick (object sender, EventArgs e) {
+			_ContinueButtonClickFlag = true;
+		}
+
+		void w_FinishButtonClick (object sender, WizardNavigationEventArgs e) {
+			_FinishButtonClickFlag = true;
 		}
 	}
 }

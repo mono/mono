@@ -142,8 +142,10 @@ System.Web.UI.WebControls/CheckBoxListTest.cs
 System.Web.UI.WebControls/CheckBoxTest.cs
 System.Web.UI.WebControls/CommandFieldTest.cs
 System.Web.UI.WebControls/CompareValidatorTest.cs
+System.Web.UI.WebControls/CompleteWizardStepTest.cs
 System.Web.UI.WebControls/CompositeControlTest.cs
 System.Web.UI.WebControls/ContentTest.cs
+System.Web.UI.WebControls/CreateUserWizardStepTest.cs
 System.Web.UI.WebControls/CreateUserWizardTest.cs
 System.Web.UI.WebControls/CustomValidatorTest.cs
 System.Web.UI.WebControls/DataBoundControlTest.cs

@@ -1,3 +1,9 @@
+2006-08-31 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* CompleteWizardStepTest.cs: New tests were added
+	* CreateUserWizardStepTest.cs: New tests were added
+	* CreateUserWizardTest.cs: New tests were added
+
 2006-08-29 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ButtonTest.cs: New tests were added

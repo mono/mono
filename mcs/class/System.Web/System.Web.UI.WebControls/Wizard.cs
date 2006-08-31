@@ -996,7 +996,7 @@ namespace System.Web.UI.WebControls
 			buttonBarCell.Controls.Add (t);
 		}
 		
-		Control CreateButton (string id, string command, ButtonType type, string text, string image, Style style)
+		internal Control CreateButton (string id, string command, ButtonType type, string text, string image, Style style)
 		{
 			WebControl b;
 			switch (type) {

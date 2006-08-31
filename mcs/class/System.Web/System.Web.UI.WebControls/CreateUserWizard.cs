@@ -39,7 +39,7 @@ namespace System.Web.UI.WebControls
 	[BindableAttribute (false)]
 	public class CreateUserWizard : Wizard
 	{
-		public static readonly string ContinueButtonCommandName;
+		public static readonly string ContinueButtonCommandName = "Continue";
 		private string _password = "";
 		private string _confirmPassword = "";
 		private MembershipProvider _provider = null;
@@ -1219,7 +1219,20 @@ namespace System.Web.UI.WebControls
 
 		protected override bool OnBubbleEvent (object source, EventArgs e)
 		{
+			CommandEventArgs args = e as CommandEventArgs;
+			if (e != null && args.CommandName == ContinueButtonCommandName) {
+				ProcessContinueEvent ();
+				return true;
+			}
 			return base.OnBubbleEvent (source, e);
+		}
+
+		private void ProcessContinueEvent () {
+			OnContinueButtonClick (EventArgs.Empty);
+
+			if (ContinueDestinationPageUrl.Length > 0) {
+				Context.Response.Redirect (ContinueDestinationPageUrl);
+			}
 		}
 
 		protected virtual void OnContinueButtonClick (EventArgs e)
