@@ -1,5 +1,12 @@
 2006-08-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpConnection.cs: when the content length is available, keep it
+	updated after synchronous read. Renamed 'available' to 'remaining_body'.
+	* RequestStream.cs: when creating the stream, pass the remaining length
+	starting from the offset in the buffer.
+
+2006-08-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* RequestStream.cs: make sure we return 0 when no more bytes left.
 	Paticularly, when we have a content length and the whole response is
 	buffered.

@@ -108,9 +108,9 @@ namespace System.Net {
 				if (chunked) {
 					this.chunked = true;
 					context.Response.SendChunked = true;
-					i_stream = new ChunkedInputStream (context, sock, buffer, position, length);
+					i_stream = new ChunkedInputStream (context, sock, buffer, position, length - position);
 				} else {
-					i_stream = new RequestStream (sock, buffer, position, length, contentlength);
+					i_stream = new RequestStream (sock, buffer, position, length - position, contentlength);
 				}
 			}
 			return i_stream;
