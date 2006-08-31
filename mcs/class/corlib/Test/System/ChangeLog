@@ -1,3 +1,7 @@
+2006-08-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeTest.cs: Add a test for #79110.
+
 2006-08-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DateTimeTest.cs: Split the X509Certificate test in two - so the 'Z'

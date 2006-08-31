@@ -247,6 +247,15 @@ namespace MonoTests.System
 			Assert.AreEqual (null, typeof (NoNamespaceClass).Namespace);
 		}
 
+        public static void Reflected (ref int a) {
+		}
+
+		[Test]
+		public void Name ()
+		{
+			Assert.Equals ("Int32&", typeof (TypeTest).GetMethod ("Reflected").GetParameters () [0].ParameterType.Name);
+		}
+
 		[Test]
 		public void GetInterfaces () {
 			Type[] t = typeof (Duper).GetInterfaces ();
