@@ -385,7 +385,17 @@ namespace System.Windows.Forms
 			}
 			
 			if (property_descriptor == null) {
-				throw new ApplicationException ("The PropertyDescriptor for this column is a null reference");
+				PropertyDescriptorCollection propcol = value.GetItemProperties ();
+
+				for (int i = 0; i < propcol.Count ; i++) {
+					if (propcol[i].Name == mapping_name) {
+						property_descriptor = propcol[i];
+						break;
+					}
+				}
+
+				if (property_descriptor == null)
+					throw new InvalidOperationException ("The PropertyDescriptor for this column is a null reference");
 			}
 		}
 
@@ -482,18 +492,8 @@ namespace System.Windows.Forms
 		protected virtual void SetDataGrid (DataGrid value)
 		{
 			grid = value;
-			
-			if (property_descriptor != null || value == null || value.ListManager == null) {
-				return;
-			}
-			
-			PropertyDescriptorCollection propcol = value.ListManager.GetItemProperties ();
-			for (int i = 0; i < propcol.Count ; i++) {
-				if (propcol[i].Name == mapping_name) {
-					property_descriptor = propcol[i];
-					break;
-				}
-			}			
+
+			property_descriptor = null;
 		}
 
 		protected virtual void SetDataGridInColumn (DataGrid value)

@@ -1,3 +1,10 @@
+2006-08-31  Chris Toshok  <toshok@ximian.com>
+
+	* DataGridColumnStyle.cs: we need to delay the assignment of
+	property descriptor until the last possible moment due to the lazy
+	databinding stuff in the datagrid.  Also, fix the exceptions
+	thrown by CheckValidDataSource to match MS.
+
 2006-08-31  Jackson Harper  <jackson@ximian.com>
 
 	* Form.cs: When activated select the active control, if there is
