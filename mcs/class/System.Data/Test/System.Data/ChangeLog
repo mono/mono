@@ -1,5 +1,10 @@
 2006-08-31  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* DataRelationTest2.cs: Added test for bug #79233, currently marked
+	NotWorking. Set eol-style to native.
+
+2006-08-31  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* DataRowTest2.cs: Added test for bug #78885. Fixed line endings.
 	Set eol-style to native.
 

@@ -28,7 +28,7 @@
 
 using NUnit.Framework;
 using System;
-using System.ComponentModel;
+//using System.ComponentModel;
 using System.Data;
 using MonoTests.System.Data.Utils;
 
@@ -531,6 +531,25 @@ namespace MonoTests.System.Data
 
 			// RelationName get/set
 			Assert.AreEqual("myRelation", dRel.RelationName , "DR63");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void bug79233 ()
+		{
+			DataSet ds = new DataSet ();
+			DataTable dtChild = DataProvider.CreateChildDataTable ();
+			DataTable dtParent = DataProvider.CreateParentDataTable ();
+			ds.Tables.Add (dtParent);
+			ds.Tables.Add (dtChild);
+
+			dtParent.Rows.Clear ();
+			dtChild.Rows.Clear ();
+
+			DataRelation dr = dtParent.ChildRelations.Add (dtParent.Columns [0], dtChild.Columns [0]);
+			Assert.AreEqual ("Relation1", dr.RelationName, "#1");
+			dr = dtChild.ChildRelations.Add (dtChild.Columns [0], dtParent.Columns [0]);
+			Assert.AreEqual ("Relation2", dr.RelationName, "#1");
 		}
 
 #if NET_2_0
