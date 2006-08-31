@@ -95,6 +95,26 @@ namespace System.Windows.Forms {
 				mdi_container.SendToBack ();
 			}
 		}
+
+		private void SelectActiveControl ()
+		{
+			if (this.ActiveControl == null) {
+				bool visible;
+
+				// This visible hack is to work around CanSelect always being false if one of the parents
+				// is not visible; and we by default create Form invisible...
+				visible = this.is_visible;
+				this.is_visible = true;
+
+				if (SelectNextControl (this, true, true, true, true) == false) {
+					Select (this);
+				}
+
+				this.is_visible = visible;
+			} else {
+				Select (ActiveControl);
+			}
+		}
 		#endregion	// Private & Internal Methods
 
 		#region Public Classes
@@ -1400,7 +1420,10 @@ namespace System.Windows.Forms {
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected virtual void OnActivated(EventArgs e) {
+		protected virtual void OnActivated(EventArgs e)
+		{
+			SelectActiveControl ();
+
 			if (Activated != null) {
 				Activated(this, e);
 			}
@@ -1423,22 +1446,7 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnCreateControl() {
 			base.OnCreateControl ();
-			if (this.ActiveControl == null) {
-				bool visible;
-
-				// This visible hack is to work around CanSelect always being false if one of the parents
-				// is not visible; and we by default create Form invisible...
-				visible = this.is_visible;
-				this.is_visible = true;
-
-				if (SelectNextControl(this, true, true, true, true) == false) {
-					Select(this);
-				}
-
-				this.is_visible = visible;
-			} else {
-				Select(ActiveControl);
-			}
+			SelectActiveControl ();
 
 			if (menu != null) {
 				XplatUI.SetMenu(window.Handle, menu);

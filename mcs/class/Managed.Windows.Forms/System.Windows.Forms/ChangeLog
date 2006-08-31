@@ -1,3 +1,12 @@
+2006-08-31  Jackson Harper  <jackson@ximian.com>
+
+	* Form.cs: When activated select the active control, if there is
+	no active control, we select the first control.
+	* XplatUIX11.cs: If there is no focus control when we get a
+	FocusIn event, find the toplevel form and activate it.  This
+	occurs when you popup a window, it becomes the focus window, then
+	you close that window, giving focus back to the main window.
+
 2006-08-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* MonthCalendar.cs: 

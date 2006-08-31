@@ -1210,7 +1210,6 @@ namespace System.Windows.Forms {
 						}
 					}
 				}
-//Console.WriteLine("Got x event {0}", xevent);
 
 				hwnd = Hwnd.GetObjectFromWindow(xevent.AnyEvent.window);
 				if (hwnd == null) {
@@ -1218,6 +1217,7 @@ namespace System.Windows.Forms {
 					}
 					continue;
 				}
+
 				switch (xevent.type) {
 					case XEventName.Expose:
 						AddExpose (hwnd, xevent.ExposeEvent.window == hwnd.ClientWindow, xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
@@ -3353,6 +3353,18 @@ namespace System.Windows.Forms {
 					// Receiving focus means we've gotten activated and therefore we need to let the actual FocusWindow know 
 					// about it having focus again
 					if (xevent.FocusChangeEvent.detail != NotifyDetail.NotifyNonlinear) {
+						goto ProcessNextMessage;
+					}
+
+					if (FocusWindow == IntPtr.Zero) {
+						Control c = Control.FromHandle (hwnd.client_window);
+						if (c == null)
+							goto ProcessNextMessage;
+						Form form = c.FindForm ();
+						if (form == null)
+							goto ProcessNextMessage;
+						ActiveWindow = form.Handle;
+						SendMessage (ActiveWindow, Msg.WM_ACTIVATE, (IntPtr) WindowActiveFlags.WA_ACTIVE, IntPtr.Zero);
 						goto ProcessNextMessage;
 					}
 					Keyboard.FocusIn(FocusWindow);
