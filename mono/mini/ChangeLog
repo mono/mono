@@ -1,3 +1,9 @@
+2006-08-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (handle_array_new): Applied patch from "briaeros007". Fix
+	a race condition.
+	(mini_get_ldelema_ins): Ditto.
+
 2006-08-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_emit_exceptions): Align fp constants to 16 bytes.
