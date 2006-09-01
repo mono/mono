@@ -268,9 +268,9 @@ namespace System.Drawing
 #endif
 		BitmapData LockBits (Rectangle rect, ImageLockMode flags, PixelFormat format, BitmapData bitmapData)
 		{
-			if (nativeObject == IntPtr.Zero)
-				throw new Exception ("nativeObject is null");			
-			
+			if (bitmapData == null)
+				throw new ArgumentException ("bitmapData");
+
 			int img_format = (int) PixelFormat;
 			if ((int) format != img_format && (img_format & (int) PixelFormat.Indexed) != 0 &&
 			    (flags == ImageLockMode.WriteOnly || flags == ImageLockMode.ReadWrite)) {

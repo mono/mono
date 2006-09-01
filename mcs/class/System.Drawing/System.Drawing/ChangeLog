@@ -1,3 +1,7 @@
+2006-09-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Bitmap.cs: Fix exceptions for LockBits.
+
 2006-08-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ImageAnimator.cs: Remove catch/throw in WorkerThread (it hides the
