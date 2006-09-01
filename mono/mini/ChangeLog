@@ -1,3 +1,7 @@
+2006-09-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* *-alpha.c: More alpha port work from Sergey Tikhonov <tsv@solvo.ru>.
+
 2006-08-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_get_ldelema_ins): Fix verifier error when calling
