@@ -588,7 +588,39 @@ namespace MonoTests.System.Xml.XPath
 				// Value, HasValue, AttributeCount, HasAttributes
 				String.Empty, false, 0, false);
 
-			Assert.IsFalse (r.Read (), "#10");
+			Assert.IsFalse (r.Read (), label + "#10");
+		}
+
+		[Test]
+		public void MoveToFirstAttributeFromAttribute ()
+		{
+			string xml = @"<one xmlns:foo='urn:foo' a='v' />";
+
+			nav = GetXmlDocumentNavigator (xml);
+			MoveToFirstAttributeFromAttribute (nav, "#1.");
+
+			nav.MoveToRoot ();
+			nav.MoveToFirstChild ();
+			MoveToFirstAttributeFromAttribute (nav, "#2.");
+
+			nav = GetXPathDocumentNavigator (document);
+			MoveToFirstAttributeFromAttribute (nav, "#3.");
+
+			nav.MoveToRoot ();
+			nav.MoveToFirstChild ();
+			MoveToFirstAttributeFromAttribute (nav, "#4.");
+		}
+
+		void MoveToFirstAttributeFromAttribute (XPathNavigator nav, string label)
+		{
+			XmlReader r = nav.ReadSubtree ();
+			r.MoveToContent ();
+			Assert.IsTrue (r.MoveToFirstAttribute (), label + "#1");
+			Assert.IsTrue (r.MoveToFirstAttribute (), label + "#2");
+			r.ReadAttributeValue ();
+			Assert.IsTrue (r.MoveToFirstAttribute (), label + "#3");
+			Assert.IsTrue (r.MoveToNextAttribute (), label + "#4");
+			Assert.IsTrue (r.MoveToFirstAttribute (), label + "#5");
 		}
 	}
 }

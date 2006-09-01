@@ -454,19 +454,20 @@ namespace Mono.Xml.XPath
 			return false;
 		}
 
-		/*
-		public override void MoveToAttribute (int i)
-		{
-			if (!MoveToAttributeNavigator (i))
-				throw new ArgumentOutOfRangeException ();
-		}
-		*/
-
 		public override bool MoveToFirstAttribute ()
 		{
-			if (CheckAttributeMove (current.MoveToFirstNamespace (XPathNamespaceScope.Local)))
-				return true;
-			return CheckAttributeMove (current.MoveToFirstAttribute ());
+			switch (current.NodeType) {
+			case XPathNodeType.Element:
+				if (CheckAttributeMove (current.MoveToFirstNamespace (XPathNamespaceScope.Local)))
+					return true;
+				return CheckAttributeMove (current.MoveToFirstAttribute ());
+			case XPathNodeType.Namespace:
+			case XPathNodeType.Attribute:
+				current.MoveToParent ();
+				goto case XPathNodeType.Element;
+			default:
+				return false;
+			}
 		}
 
 		public override bool MoveToNextAttribute ()

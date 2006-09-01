@@ -1,3 +1,8 @@
+2006-09-01  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigatorReader.cs : MoveToFirstAttribute() should return
+	  true when current node is an attribute (including namespace node).
+
 2006-08-28  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTMXPathDocumentWriter2.cs : use String.Empty instead of null for
