@@ -1,3 +1,13 @@
+2006-09-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_class_create_runtime_vtable): Fix the AOT optimization.
+
+	* class.c (mono_class_setup_vtable): Update generic_vtable_count stat.
+
+	* loader.c (mono_get_method_from_token): Update method_count stat.
+
+	* class-internals.h (MonoStats): Add some stats.
+
 2006-08-31 Robert Jordan  <robertj@gmx.net>
 
 	* icall.c: Replace the PtrToStringAuto, StringToHGlobalAuto icalls
