@@ -1,3 +1,8 @@
+2006-09-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* atomic.h: Applied patch from Jakub Boqusz <qboosh@pld-linux.org>.
+	Add atomic ops implementation for alpha.
+
 2006-08-11  Dick Porter  <dick@ximian.com>
 
 	* processes.c (_wapi_process_reap): Avoid a deadlock by setting
