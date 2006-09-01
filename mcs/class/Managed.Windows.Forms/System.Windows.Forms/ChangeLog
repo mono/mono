@@ -1,3 +1,8 @@
+2006-09-01  Jackson Harper  <jackson@ximian.com>
+
+	* Splitter.cs: Don't do anything if there is no control to affect
+	(prevents us from crashing in weird tet cases).
+
 2006-09-01  Alexander Olk  <alex.olk@googlemail.com>
 
 	* MimeIcon.cs: Improved handling for reading default icons when

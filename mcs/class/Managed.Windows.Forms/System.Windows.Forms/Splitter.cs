@@ -448,7 +448,7 @@ namespace System.Windows.Forms {
 
 			base.OnMouseMove (e);
 
-			if (!Capture  || e.Button != MouseButtons.Left) {
+			if (!Capture  || e.Button != MouseButtons.Left || affected == null) {
 				return;
 			}
 
@@ -498,7 +498,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnMouseUp(MouseEventArgs e) {
-			if (!Capture || e.Button != MouseButtons.Left) {
+			if (!Capture || e.Button != MouseButtons.Left || affected == null) {
 				base.OnMouseUp (e);
 				return;
 			}
