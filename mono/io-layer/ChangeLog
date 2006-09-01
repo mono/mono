@@ -1,5 +1,8 @@
 2006-09-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* critical-sections.h critical-sections.c: Make Enter/LeaveCriticalSection a macro
+	since they are perf critical.
+
 	* atomic.h: Applied patch from Jakub Boqusz <qboosh@pld-linux.org>.
 	Add atomic ops implementation for alpha.
 
