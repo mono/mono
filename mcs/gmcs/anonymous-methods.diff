@@ -601,7 +601,28 @@ Index: class.cs
  		bool has_compliant_args = false;
  		//
  		// The spec claims that static is not permitted, but
-@@ -4710,6 +4738,8 @@
+@@ -4581,6 +4609,11 @@
+ 						ParentContainer.EmitFieldInitializers (ec);
+ 				}
+ 			}
++
++			bool unreachable;
++			ec.ResolveTopBlock (null, block, ParameterInfo, this, out unreachable);
++			ec.EmitMeta (block);
++
+ 			if (Initializer != null) {
+ 				Initializer.Emit (ec);
+ 			}
+@@ -4588,7 +4621,7 @@
+ 			if ((ModFlags & Modifiers.STATIC) != 0)
+ 				ParentContainer.EmitFieldInitializers (ec);
+ 
+-			ec.EmitTopBlock (this, block);
++			ec.EmitResolvedTopBlock (block, unreachable);
+ 
+ 			if (source != null)
+ 				source.CloseMethod ();
+@@ -4710,6 +4743,8 @@
  		GenericMethod GenericMethod { get; }
  		Parameters ParameterInfo { get; }
  
@@ -610,7 +631,7 @@ Index: class.cs
  		Attributes OptAttributes { get; }
  		ToplevelBlock Block { get; set; }
  
-@@ -5032,6 +5062,20 @@
+@@ -5032,6 +5067,20 @@
  			
  			SourceMethod source = SourceMethod.Create (parent, MethodBuilder, method.Block);
  
@@ -631,7 +652,7 @@ Index: class.cs
  			//
  			// Handle destructors specially
  			//
-@@ -5934,6 +5978,10 @@
+@@ -5934,6 +5983,10 @@
  
  		#region IMethodData Members
  
@@ -642,7 +663,7 @@ Index: class.cs
  		public ToplevelBlock Block {
  			get {
  				return block;
-@@ -6220,6 +6268,7 @@
+@@ -6220,6 +6273,7 @@
  		{
  			protected readonly MethodCore method;
  			protected MethodAttributes flags;
@@ -650,7 +671,7 @@ Index: class.cs
  			bool yields;
  
  			public PropertyMethod (MethodCore method, string prefix)
-@@ -6241,6 +6290,10 @@
+@@ -6241,6 +6295,10 @@
  				}
  			}
  
@@ -661,7 +682,7 @@ Index: class.cs
  			public override AttributeTargets AttributeTargets {
  				get {
  					return AttributeTargets.Method;
-@@ -6285,10 +6338,11 @@
+@@ -6285,10 +6343,11 @@
  				// Setup iterator if we are one
  				//
  				if (yields) {
@@ -677,7 +698,7 @@ Index: class.cs
  				}
  
  				return null;
-@@ -6932,6 +6986,10 @@
+@@ -6932,6 +6991,10 @@
  				this.method = method;
  			}
  
@@ -688,7 +709,7 @@ Index: class.cs
  			protected override void ApplyToExtraTarget(Attribute a, CustomAttributeBuilder cb)
  			{
  				if (a.Target == AttributeTargets.Parameter) {
-@@ -7323,10 +7381,10 @@
+@@ -7323,10 +7386,10 @@
  				// Setup iterator if we are one
  				//
  				if ((ModFlags & Modifiers.METHOD_YIELDS) != 0){
@@ -702,7 +723,7 @@ Index: class.cs
  						return false;
  				}
  			}
-@@ -7444,6 +7502,10 @@
+@@ -7444,6 +7507,10 @@
  			Block = block;
  		}
  
