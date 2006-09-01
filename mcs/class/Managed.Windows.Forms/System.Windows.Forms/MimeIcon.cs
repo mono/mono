@@ -935,104 +935,87 @@ namespace System.Windows.Forms
 		
 		private void CreateUIIcons ()
 		{
-			string resolv_path = ResolvePath (main_icon_theme_path);
-			string default_gnome_path = "";
-			
-			// get the default gnome icon theme path
-			foreach (string path in icon_paths)
-				if (Directory.Exists (path + "/gnome")) {
-					default_gnome_path = path + "/gnome/48x48/";
-					break;
-				}
-
-			// use default gnome icon theme if there isn't a "/48x48" or "/scalable" dir
-			// for the current theme			
-			if (resolv_path == String.Empty)
-				resolv_path = default_gnome_path;
-			
 			Hashtable name_mime_hash = new Hashtable ();
 			
 			name_mime_hash ["gnome-fs-directory"] = "inode/directory";
+			name_mime_hash ["folder"] = "inode/directory";
+			
 			name_mime_hash ["gnome-fs-regular"] = "unknown/unknown";
+			name_mime_hash ["unknown"] = "unknown/unknown";
+			
 			name_mime_hash ["gnome-fs-desktop"] = "desktop/desktop";
+			name_mime_hash ["user-desktop"] = "desktop/desktop";
+			name_mime_hash ["desktop"] = "desktop/desktop";
+			
 			name_mime_hash ["gnome-fs-home"] = "directory/home";
+			name_mime_hash ["user-home"] = "directory/home";
+			name_mime_hash ["folder_home"] = "directory/home";
+			
 			name_mime_hash ["gnome-fs-network"] = "network/network";
+			name_mime_hash ["network"] = "network/network";
+			
 			name_mime_hash ["gnome-fs-directory-accept"] = "recently/recently";
+			name_mime_hash ["folder-drag-accept"] = "recently/recently";
+			name_mime_hash ["folder_man"] = "recently/recently";
+			
 			name_mime_hash ["gnome-fs-client"] = "workplace/workplace";
+			name_mime_hash ["computer"] = "workplace/workplace";
+			name_mime_hash ["system"] = "workplace/workplace";
 			
 			name_mime_hash ["gnome-fs-nfs"] = "nfs/nfs";
+			name_mime_hash ["folder-remote-nfs"] = "nfs/nfs";
+			name_mime_hash ["nfs_mount"] = "nfs/nfs";
+			
 			name_mime_hash ["gnome-fs-smb"] = "smb/smb";
+			name_mime_hash ["folder-remote-smb"] = "smb/smb";
+			name_mime_hash ["server"] = "smb/smb";
 			
 			name_mime_hash ["gnome-dev-cdrom"] = "cdrom/cdrom";
+			name_mime_hash ["cdrom_mount"] = "cdrom/cdrom";
+			
 			name_mime_hash ["gnome-dev-harddisk"] = "harddisk/harddisk";
+			name_mime_hash ["hdd_mount"] = "harddisk/harddisk";
+			
 			name_mime_hash ["gnome-dev-removable"] = "removable/removable";
+			name_mime_hash ["usbpendrive_mount"] = "removable/removable";
 			
-			int initial_name_mime_hash_count = name_mime_hash.Count;
-			
-			// first check the current icon theme path
-			string[] dirs = Directory.GetDirectories (resolv_path);
-			ArrayList objects = CheckAndAddUIIcons (dirs, name_mime_hash);
-			
-			if (objects.Count != name_mime_hash.Count) {
-				// remove found icons
-				foreach (object o in objects) {
-					name_mime_hash.Remove (o);
-				}
-				
-				// check the default gnome path
-				dirs = Directory.GetDirectories (default_gnome_path);
-				objects = CheckAndAddUIIcons (dirs, name_mime_hash);
-				
-				//could be a kde icon theme, so we check kde icon names too
-				if (objects.Count == initial_name_mime_hash_count) {
-					dirs = Directory.GetDirectories (resolv_path);
-					
-					name_mime_hash.Clear ();
-					name_mime_hash ["folder"] = "inode/directory";
-					name_mime_hash ["unknown"] = "unknown/unknown";
-					name_mime_hash ["desktop"] = "desktop/desktop";
-					name_mime_hash ["folder_home"] = "directory/home";
-					name_mime_hash ["network"] = "network/network";
-					name_mime_hash ["folder_man"] = "recently/recently";
-					name_mime_hash ["system"] = "workplace/workplace";
-					
-					name_mime_hash ["nfs_mount"] = "nfs/nfs";
-					name_mime_hash ["server"] = "smb/smb";
-					
-					name_mime_hash ["cdrom_mount"] = "cdrom/cdrom";
-					name_mime_hash ["hdd_mount"] = "harddisk/harddisk";
-					name_mime_hash ["usbpendrive_mount"] = "removable/removable";
-					
-					CheckAndAddUIIcons (dirs, name_mime_hash);
-				}
-			}
+			CheckAndAddUIIcons (name_mime_hash);
 		}
 		
-		private ArrayList CheckAndAddUIIcons (string[] dirs, Hashtable name_mime_hash)
+		private void CheckAndAddUIIcons (Hashtable name_mime_hash)
 		{
-			ArrayList al = new ArrayList (name_mime_hash.Count);
+			StringCollection already_added = new StringCollection ();
 			
-			string extension = is_svg_icon_theme ? "svg" : "png";
-			
-			for (int i = 0; i < dirs.Length; i++) {
-				foreach (DictionaryEntry entry in name_mime_hash) {
-					string key = (string)entry.Key;
-					if (File.Exists (dirs [i] + "/" + key + "." + extension)) {
-						string value = (string)entry.Value;
+			foreach (string ip in inherits_path_collection) {
+				string path_to_use = ResolvePath (ip);
+				
+				string[] adirs = Directory.GetDirectories (path_to_use);
+				
+				string extension = is_svg_icon_theme ? "svg" : "png";
+				
+				for (int i = 0; i < adirs.Length; i++) {
+					foreach (DictionaryEntry entry in name_mime_hash) {
+						string key = (string)entry.Key;
 						
-						MimeIconEngine.AddMimeTypeAndIconName (value, key);
-						
-						if (!is_svg_icon_theme)
-							MimeIconEngine.AddIcon (key, dirs [i] + "/" + key + "." + extension);
-						else
-							MimeIconEngine.AddSVGIcon (key, dirs [i] + "/" + key + "." + extension);
-						
-						al.Add (entry.Key);
+						if (File.Exists (adirs [i] + "/" + key + "." + extension)) {
+							string value = (string)entry.Value;
+							
+							if (already_added.Contains (value)) {
+								continue;
+							}
+							
+							already_added.Add (value);
+							
+							MimeIconEngine.AddMimeTypeAndIconName (value, key);
+							
+							if (!is_svg_icon_theme)
+								MimeIconEngine.AddIcon (key, adirs [i] + "/" + key + "." + extension);
+							else
+								MimeIconEngine.AddSVGIcon (key, adirs [i] + "/" + key + "." + extension);
+						}
 					}
 				}
 			}
-			
-			return al;
 		}
 		
 		private void CreateMimeTypeIcons ()
@@ -1083,14 +1066,19 @@ namespace System.Windows.Forms
 		
 		private string ResolvePath (string path)
 		{
+			if (Directory.Exists (path + "/scalable")) {
+				is_svg_icon_theme = true;
+				return path + "/scalable/";
+			}
+			
 			if (Directory.Exists (path + "/48x48")) {
 				is_svg_icon_theme = false;
 				return path + "/48x48/";
 			}
 			
-			if (Directory.Exists (path + "/scalable")) {
-				is_svg_icon_theme = true;
-				return path + "/scalable/";
+			if (Directory.Exists (path + "/32x32")) {
+				is_svg_icon_theme = false;
+				return path + "/32x32/";
 			}
 			
 			return String.Empty;

@@ -1,3 +1,9 @@
+2006-09-01  Alexander Olk  <alex.olk@googlemail.com>
+
+	* MimeIcon.cs: Improved handling for reading default icons when
+	  using gnome (2.16 made it necessary). Check and read svg icons
+	  first, then 48x48 and then 32x32 icons.
+
 2006-08-31  Chris Toshok  <toshok@ximian.com>
 
 	* DataGridTextBoxColumn.cs: only hide the textbox if it's still
