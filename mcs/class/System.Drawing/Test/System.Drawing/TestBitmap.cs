@@ -60,23 +60,155 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
-		public void LockBits_NonIndexedWrite ()
+		public void LockBits_32_32_NonIndexedWrite ()
 		{
-			Bitmap bmp= new Bitmap(100,100, PixelFormat.Format32bppRgb);
-			Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
-                        BitmapData mybitmapdata = bmp.LockBits(rect, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-			bmp.UnlockBits (mybitmapdata);
+			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppRgb)) {
+				Rectangle rect = new Rectangle (0, 0, bmp.Width, bmp.Height);
+				BitmapData data = bmp.LockBits (rect, ImageLockMode.ReadWrite, PixelFormat.Format32bppRgb);
+				Assert.AreEqual (100, data.Height, "Height");
+				Assert.AreEqual (PixelFormat.Format32bppRgb, data.PixelFormat, "PixelFormat");
+				Assert.AreEqual (400, data.Stride, "Stride");
+				Assert.AreEqual (100, data.Width, "Width");
+				bmp.UnlockBits (data);
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void LockBits_32_24_NonIndexedWrite ()
+		{
+			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppRgb)) {
+				Rectangle rect = new Rectangle (0, 0, bmp.Width, bmp.Height);
+				BitmapData data = bmp.LockBits (rect, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+				Assert.AreEqual (100, data.Height, "Height");
+				Assert.AreEqual (PixelFormat.Format24bppRgb, data.PixelFormat, "PixelFormat");
+				Assert.AreEqual (300, data.Stride, "Stride");
+				Assert.AreEqual (100, data.Width, "Width");
+				bmp.UnlockBits (data);
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void LockBits_24_24_NonIndexedWrite ()
+		{
+			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format24bppRgb)) {
+				Rectangle rect = new Rectangle (0, 0, bmp.Width, bmp.Height);
+				BitmapData data = bmp.LockBits (rect, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+				Assert.AreEqual (100, data.Height, "Height");
+				Assert.AreEqual (PixelFormat.Format24bppRgb, data.PixelFormat, "PixelFormat");
+				Assert.AreEqual (300, data.Stride, "Stride");
+				Assert.AreEqual (100, data.Width, "Width");
+				bmp.UnlockBits (data);
+			}
+		}
+
+		[Test]
+		public void LockBits_24_32_NonIndexedWrite ()
+		{
+			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format24bppRgb)) {
+				Rectangle rect = new Rectangle (0, 0, bmp.Width, bmp.Height);
+				BitmapData data = bmp.LockBits (rect, ImageLockMode.ReadWrite, PixelFormat.Format32bppRgb);
+				Assert.AreEqual (100, data.Height, "Height");
+				Assert.AreEqual (PixelFormat.Format32bppRgb, data.PixelFormat, "PixelFormat");
+				Assert.AreEqual (400, data.Stride, "Stride");
+				Assert.AreEqual (100, data.Width, "Width");
+				bmp.UnlockBits (data);
+			}
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void LockBits_IndexedWrite ()
 		{
-			Bitmap bmp= new Bitmap(100,100, PixelFormat.Format8bppIndexed);
-			Rectangle rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
-                        BitmapData mybitmapdata = bmp.LockBits(rect, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-			bmp.UnlockBits (mybitmapdata);
+			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format8bppIndexed)) {
+				Rectangle rect = new Rectangle (0, 0, bmp.Width, bmp.Height);
+				bmp.LockBits (rect, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+			}
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void LockBits_Disposed ()
+		{
+			Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppRgb);
+			Rectangle rect = new Rectangle (0, 0, bmp.Width, bmp.Height);
+			bmp.Dispose ();
+			bmp.LockBits (rect, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+		}
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void LockBits_BitmapData_Null ()
+		{
+			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppRgb)) {
+				Rectangle rect = new Rectangle (0, 0, bmp.Width, bmp.Height);
+				bmp.LockBits (rect, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb, null);
+			}
+		}
+
+		[Test]
+		public void LockBits_32_32_BitmapData ()
+		{
+			BitmapData data = new BitmapData ();
+			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppRgb)) {
+				Rectangle rect = new Rectangle (0, 0, bmp.Width, bmp.Height);
+				bmp.LockBits (rect, ImageLockMode.ReadWrite, PixelFormat.Format32bppRgb, data);
+				Assert.AreEqual (100, data.Height, "Height");
+				Assert.AreEqual (PixelFormat.Format32bppRgb, data.PixelFormat, "PixelFormat");
+				Assert.AreEqual (400, data.Stride, "Stride");
+				Assert.AreEqual (100, data.Width, "Width");
+				bmp.UnlockBits (data);
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void LockBits_32_24_BitmapData ()
+		{
+			BitmapData data = new BitmapData ();
+			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppRgb)) {
+				Rectangle rect = new Rectangle (0, 0, bmp.Width, bmp.Height);
+				bmp.LockBits (rect, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb, data);
+				Assert.AreEqual (100, data.Height, "Height");
+				Assert.AreEqual (PixelFormat.Format24bppRgb, data.PixelFormat, "PixelFormat");
+				Assert.AreEqual (300, data.Stride, "Stride");
+				Assert.AreEqual (100, data.Width, "Width");
+				bmp.UnlockBits (data);
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void LockBits_24_24_BitmapData ()
+		{
+			BitmapData data = new BitmapData ();
+			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format24bppRgb)) {
+				Rectangle rect = new Rectangle (0, 0, bmp.Width, bmp.Height);
+				bmp.LockBits (rect, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb, data);
+				Assert.AreEqual (100, data.Height, "Height");
+				Assert.AreEqual (PixelFormat.Format24bppRgb, data.PixelFormat, "PixelFormat");
+				Assert.AreEqual (300, data.Stride, "Stride");
+				Assert.AreEqual (100, data.Width, "Width");
+				bmp.UnlockBits (data);
+			}
+		}
+
+		[Test]
+		public void LockBits_24_32_BitmapData ()
+		{
+			BitmapData data = new BitmapData ();
+			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format24bppRgb)) {
+				Rectangle rect = new Rectangle (0, 0, bmp.Width, bmp.Height);
+				bmp.LockBits (rect, ImageLockMode.ReadWrite, PixelFormat.Format32bppRgb, data);
+				Assert.AreEqual (100, data.Height, "Height");
+				Assert.AreEqual (PixelFormat.Format32bppRgb, data.PixelFormat, "PixelFormat");
+				Assert.AreEqual (400, data.Stride, "Stride");
+				Assert.AreEqual (100, data.Width, "Width");
+				bmp.UnlockBits (data);
+			}
+		}
+#endif
 
 		/* Get the output directory depending on the runtime and location*/
 		public static string getOutSubDir()

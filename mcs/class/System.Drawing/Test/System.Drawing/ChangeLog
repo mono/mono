@@ -1,3 +1,8 @@
+2006-09-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestBitmap.cs: Add more test cases for LockBits which, on Mono, 
+	seems to work only when the destination format is 32 bits.
+
 2006-08-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TextureBrushTest.cs: Remove NotWorking from rotation test case.
