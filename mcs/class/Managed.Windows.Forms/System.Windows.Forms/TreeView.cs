@@ -49,6 +49,7 @@ namespace System.Windows.Forms {
 		internal TreeNode selected_node = null;
 		private TreeNode focused_node = null;
 		private TreeNode highlighted_node;
+		private Rectangle mouse_rect = Rectangle.Empty;
 		private bool select_mmove = false;
 
 		private ImageList image_list;
@@ -1550,24 +1551,18 @@ namespace System.Windows.Forms {
 				if (label_edit && e.Clicks == 1 && highlighted_node == old_highlighted) {
 					BeginEdit (node);
 				} else if (highlighted_node != focused_node) {
+					Size ds = SystemInformation.DragSize;
+					mouse_rect.X = e.X - ds.Width;
+					mouse_rect.Y = e.Y - ds.Height;
+					mouse_rect.Width = ds.Width * 2;
+					mouse_rect.Height = ds.Height * 2;
+
 					select_mmove = true;
 				}
 
-				Rectangle invalid;
-
-				/*
-				if (focused_node != null) {
-					invalid = Rectangle.Union (Bloat (focused_node.Bounds),
-							Bloat (highlighted_node.Bounds));
-				} else {
-					invalid = Bloat (highlighted_node.Bounds);
-				}
-				*/
+				Invalidate (highlighted_node.Bounds);
 				if (old_highlighted != null)
-					invalid = Rectangle.Union (Bloat (old_highlighted.Bounds), highlighted_node.Bounds);
-				else
-					invalid = highlighted_node.Bounds;
-				Invalidate (invalid);
+					Invalidate (Bloat (old_highlighted.Bounds));
 			} 
 		}
 
@@ -1631,9 +1626,9 @@ namespace System.Windows.Forms {
 				
 			}
 
-			// If there is movement before the mouse comes up,
+			// If there is enough movement before the mouse comes up,
 			// selection is reverted back to the originally selected node
-			if(!select_mmove)
+			if (!select_mmove || mouse_rect.Contains (e.X, e.Y))
 				return;
 
 			Invalidate (highlighted_node.Bounds);

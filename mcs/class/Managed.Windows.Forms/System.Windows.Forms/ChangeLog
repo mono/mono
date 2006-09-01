@@ -2,6 +2,9 @@
 
 	* Splitter.cs: Don't do anything if there is no control to affect
 	(prevents us from crashing in weird tet cases).
+	* TreeView.cs: Bounding box for the mouse movement reverting
+	focus/selection back to previously selected node.  This matches
+	MS, and makes the tree a lot more useable.
 
 2006-09-01  Alexander Olk  <alex.olk@googlemail.com>
 
