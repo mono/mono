@@ -654,7 +654,7 @@ namespace Mono.Xml
 			open_count++;
 
 			if (namespaces && namespaceUri != null) {
-				string oldns = nsmanager.LookupNamespace (prefix);
+				string oldns = nsmanager.LookupNamespace (prefix, false);
 				if (oldns != namespaceUri) {
 					nsmanager.AddNamespace (prefix, namespaceUri);
 					new_local_namespaces.Push (prefix);
@@ -704,7 +704,7 @@ namespace Mono.Xml
 
 			for (int i = idx; i < explicit_nsdecls.Count; i++) {
 				string prefix = (string) explicit_nsdecls [i];
-				string ns = nsmanager.LookupNamespace (prefix);
+				string ns = nsmanager.LookupNamespace (prefix, false);
 				if (ns == null)
 					continue; // superceded
 				if (prefix.Length > 0) {
@@ -878,14 +878,14 @@ namespace Mono.Xml
 				mockup = true;
 			} else {
 				prefix = nsmanager.NameTable.Add (prefix);
-				string existing = nsmanager.LookupNamespace (prefix);
+				string existing = nsmanager.LookupNamespace (prefix, true);
 				if (existing == ns)
 					return prefix;
 				if (existing != null) {
 					// See code comment on the head of
 					// this source file.
 					nsmanager.RemoveNamespace (prefix, existing);
-					if (nsmanager.LookupNamespace (prefix) != existing) {
+					if (nsmanager.LookupNamespace (prefix, true) != existing) {
 						mockup = true;
 						nsmanager.AddNamespace (prefix, existing);
 					}
@@ -931,7 +931,7 @@ namespace Mono.Xml
 					if (preserved_name.Length > 0 &&
 					    value.Length == 0)
 						throw ArgumentError ("Non-empty prefix must be mapped to non-empty namespace URI.");
-					string existing = nsmanager.LookupNamespace (preserved_name);
+					string existing = nsmanager.LookupNamespace (preserved_name, false);
 					explicit_nsdecls.Add (preserved_name);
 					if (open_count > 0 &&
 					    elements [open_count - 1].NS == String.Empty &&

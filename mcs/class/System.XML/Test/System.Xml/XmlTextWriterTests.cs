@@ -2284,6 +2284,33 @@ namespace MonoTests.System.Xml
 			writer.WriteEndElement ();
 		}
 
+		[Test]
+		public void LookupNamespace ()
+		{
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter xw = new XmlTextWriter (sw);
+			xw.Formatting = Formatting.Indented;
+			string q1 = "urn:test";
+
+			string q1prefix_first= "q1";
+			// Ensure we get a different reference for the string "q1"
+			string q1prefix_second = ("q1" + "a").Substring(0,2);
+
+			xw.WriteStartElement("document");
+			xw.WriteStartElement("item");
+			xw.WriteStartElement (q1prefix_first, "addMedia", q1);
+			xw.WriteEndElement();
+			xw.WriteEndElement();
+			xw.WriteStartElement("item");
+			xw.WriteStartElement (q1prefix_second, "addMedia", q1);
+			xw.WriteEndElement();
+			xw.WriteEndElement();
+			xw.WriteEndElement();
+			string xml = sw.ToString ();
+			int first = xml.IndexOf ("xmlns");
+			Assert.IsTrue (xml.IndexOf ("xmlns", first + 5) > 0);
+		}
+
 #if NET_2_0
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
