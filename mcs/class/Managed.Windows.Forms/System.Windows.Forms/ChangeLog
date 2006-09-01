@@ -5,6 +5,10 @@
 	* TreeView.cs: Bounding box for the mouse movement reverting
 	focus/selection back to previously selected node.  This matches
 	MS, and makes the tree a lot more useable.
+	* GroupBox.cs: Instead of drawing over the lines of the groupbox,
+	use clipping so they are not drawn.  This fixes when the control
+	is set to have a transparent background, or if it was over an
+	image.
 
 2006-09-01  Alexander Olk  <alex.olk@googlemail.com>
 

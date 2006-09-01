@@ -1431,16 +1431,16 @@ namespace System.Windows.Forms
 				width = box.Width - 16;
 			
 			y = box.Font.Height / 2;
-			
+
+			// Clip the are that the text will be in
+			Region prev_clip = dc.Clip;
+			dc.SetClip (new Rectangle (10, 0, width, box.Font.Height), CombineMode.Exclude);
 			/* Draw group box*/
 			CPDrawBorder3D (dc, new Rectangle (0, y, box.Width, box.Height - y), Border3DStyle.Etched, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom, box.BackColor);
-			
+			dc.Clip = prev_clip;
+
 			/* Text */
 			if (box.Text.Length != 0) {
-				Pen pen = ResPool.GetPen (box.BackColor);
-				dc.DrawLine (pen, 9, y, 8 + width, y);
-				dc.DrawLine (pen, 9, y + 1, 8 + width, y + 1);
-				
 				if (box.Enabled) {
 					dc.DrawString (box.Text, box.Font, ResPool.GetSolidBrush (box.ForeColor), 10, 0, text_format);
 				} else {
