@@ -1,5 +1,9 @@
 2006-09-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c: Remove some references to mono_compile_aot, and use cfg->compile_aot instead.
+
+	* aot-runtime.c: Add some tweaks to the MONO_AOT_CACHE functionality.
+
 	* tramp-amd64.c (mono_arch_create_specific_trampoline): Fix a FIXME.
 
 	* mini.c (print_jit_stats): Print mscorlib mempool size too.
