@@ -344,7 +344,8 @@ namespace System.Windows.Forms {
 				break;
 			case ListChangedType.ItemAdded:
 				if (listposition == -1) {
-					listposition = e.NewIndex - 1;
+					/* do we need this logic up above in ItemDeleted as well? */
+					listposition = e.NewIndex == 0 ? 0 : e.NewIndex - 1;
 					OnCurrentChanged (EventArgs.Empty);
 					OnPositionChanged (EventArgs.Empty);
 				}

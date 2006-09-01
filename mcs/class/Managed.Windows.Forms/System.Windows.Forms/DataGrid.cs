@@ -536,7 +536,8 @@ namespace System.Windows.Forms
 		public string DataMember {
 			get { return datamember; }
 			set {
-				SetDataSource (datasource, value);
+				if (datasource != null)
+					SetDataSource (datasource, value);
 			}
 		}
 
@@ -546,10 +547,10 @@ namespace System.Windows.Forms
 		public object DataSource {
 			get { return datasource; }
 			set {
-				if (datasource == null)
-					SetDataSource (value, datamember);
-				else
+				if (datamember == null)
 					SetDataSource (value, string.Empty);
+				else
+					SetDataSource (value, datamember);
 			}
 		}
 
@@ -2101,8 +2102,17 @@ namespace System.Windows.Forms
 			SetDataSource (source, member, true);
 		}
 
+		bool in_setdatasource;
 		private void SetDataSource (object source, string member, bool recreate_rows)
 		{
+			/* we need this bool flag to work around a
+			 * problem with OnBindingContextChanged.  once
+			 * that stuff works properly, remove this
+			 * hack */
+			if (in_setdatasource)
+				return;
+			in_setdatasource = true;
+
 #if false
 			if (datasource == source && member == datamember)
 				return;
@@ -2154,6 +2164,8 @@ namespace System.Windows.Forms
 
 			CalcAreasAndInvalidate ();
 
+			in_setdatasource = false;
+
 			OnDataSourceChanged (EventArgs.Empty);
 		}
 
@@ -2189,7 +2201,7 @@ namespace System.Windows.Forms
 		{
 			if (e.Index == -1) {
 				ResetSelection ();
-				if (rows == null || RowsCount != rows.Length)
+				if (rows == null || RowsCount != rows.Length - (ShowEditRow ? 1 : 0))
 					RecreateDataGridRows ();
 			}
 			else {

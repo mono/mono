@@ -1,3 +1,23 @@
+2006-09-01  Chris Toshok  <toshok@ximian.com>
+
+	* CurrencyManager.cs (ListChangedHandler): in the ItemAdded case,
+	when setting list position guard against ending up with a -1 index
+	(the other part of the fix for #78812).  Should probably make sure
+	we don't need the analogous fix in the ItemDeleted case.
+
+	* DataGrid.cs:
+	- in SetDataSource, work around the fact that the way
+	OnBindingContextChanged is invoked will cause us to re-enter this
+	method.  I'll remove the hack once I investigate
+	OnBindingContextChanged.
+
+	- fix the logic in set_DataSource and set_DataMember (basically
+	what to do if the other of the two is null.)
+	
+	- in OnListManagerItemChanged, we need to take into account the
+	edit row when deciding whether or not to call RecreateDataGridRows
+	(part of the fix for #78812).
+
 2006-09-01  Jackson Harper  <jackson@ximian.com>
 
 	* Splitter.cs: Don't do anything if there is no control to affect
