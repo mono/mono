@@ -1,5 +1,7 @@
 2006-09-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-amd64.c (mono_arch_create_specific_trampoline): Fix a FIXME.
+
 	* mini.c (print_jit_stats): Print mscorlib mempool size too.
 	
 	* mini.c (print_jit_stats): Print new stats.
