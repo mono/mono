@@ -665,6 +665,31 @@ PublicKeyToken=b77a5c561934e089"));
 		{
 			Assert.AreEqual (1, typeof (ComFoo<int>).GetCustomAttributes (typeof (ComVisibleAttribute), true).Length);
 		}
+
+		interface ByRef1<T> { void f (ref T t); }
+		interface ByRef2 { void f<T> (ref T t); }
+
+		interface ByRef3<T> where T:struct { void f (ref T? t); }
+		interface ByRef4 { void f<T> (ref T? t) where T:struct; }
+
+		void CheckGenericByRef (Type t)
+		{
+			string name = t.Name;
+			t = t.GetMethod ("f").GetParameters () [0].ParameterType;
+
+			Assert.IsFalse (t.IsGenericType, name);
+			Assert.IsFalse (t.IsGenericTypeDefinition, name);
+			Assert.IsFalse (t.IsGenericParameter, name);
+		}
+
+		[Test]
+		public void GenericByRef ()
+		{
+			CheckGenericByRef (typeof (ByRef1<>));
+			CheckGenericByRef (typeof (ByRef2));
+			CheckGenericByRef (typeof (ByRef3<>));
+			CheckGenericByRef (typeof (ByRef4));
+		}
 #endif
 
 		public class NemerleAttribute : Attribute

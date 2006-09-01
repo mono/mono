@@ -1,5 +1,7 @@
 2006-09-01  Raja R Harinath  <rharinath@novell.com>
 
+	* TypeTest.cs (GenericByRef): New.  Inspired by #79238.
+
 	Re-enable TypeTest.
 	* TypeTest.cs (TypeTest): Remove explicit constructor that
 	disabled the default empty constructor.
