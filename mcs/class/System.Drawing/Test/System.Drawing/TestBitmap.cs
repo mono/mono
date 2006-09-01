@@ -119,11 +119,35 @@ namespace MonoTests.System.Drawing{
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		public void LockBits_IndexedWrite ()
+		public void LockBits_IndexedWrite_NonIndexed ()
 		{
 			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format8bppIndexed)) {
 				Rectangle rect = new Rectangle (0, 0, bmp.Width, bmp.Height);
 				bmp.LockBits (rect, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void LockBits_NonIndexedWrite_ToIndexed ()
+		{
+			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppRgb)) {
+				Rectangle rect = new Rectangle (0, 0, bmp.Width, bmp.Height);
+				bmp.LockBits (rect, ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed);
+			}
+		}
+
+		[Test]
+		public void LockBits_IndexedWrite_SameIndexedFormat ()
+		{
+			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format8bppIndexed)) {
+				Rectangle rect = new Rectangle (0, 0, bmp.Width, bmp.Height);
+				BitmapData data = bmp.LockBits (rect, ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed);
+				Assert.AreEqual (100, data.Height, "Height");
+				Assert.AreEqual (PixelFormat.Format8bppIndexed, data.PixelFormat, "PixelFormat");
+				Assert.AreEqual (100, data.Stride, "Stride");
+				Assert.AreEqual (100, data.Width, "Width");
+				bmp.UnlockBits (data);
 			}
 		}
 
@@ -135,6 +159,26 @@ namespace MonoTests.System.Drawing{
 			Rectangle rect = new Rectangle (0, 0, bmp.Width, bmp.Height);
 			bmp.Dispose ();
 			bmp.LockBits (rect, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void UnlockBits_Disposed ()
+		{
+			Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppRgb);
+			Rectangle rect = new Rectangle (0, 0, bmp.Width, bmp.Height);
+			BitmapData data = bmp.LockBits (rect, ImageLockMode.ReadWrite, PixelFormat.Format32bppRgb);
+			bmp.Dispose ();
+			bmp.UnlockBits (data);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void UnlockBits_Null ()
+		{
+			using (Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppRgb)) {
+				bmp.UnlockBits (null);
+			}
 		}
 #if NET_2_0
 		[Test]
