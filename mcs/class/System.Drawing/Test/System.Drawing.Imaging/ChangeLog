@@ -1,3 +1,10 @@
+2006-09-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GifCodecTest.cs: New. Unit tests for GIF codec.
+	* IconCodecTest.cs: New. Unit tests for ICON codec (not working).
+	* PngCodecTest.cs: New. Unit tests for PNG codec.
+	* TiffCodecTest.cs: New. Unit tests for TIFF codec.
+
 2006-08-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestBmpCodec.cs: Add more test cases for 1, 8 and 32 bbp bitmaps
