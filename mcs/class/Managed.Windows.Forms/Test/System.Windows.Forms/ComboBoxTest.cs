@@ -148,7 +148,11 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+#else
 		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void DropDownWidthException ()
 		{
 			ComboBox cmbbox = new ComboBox ();
@@ -156,7 +160,11 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+#else
 		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void ItemHeightException ()
 		{
 			ComboBox cmbbox = new ComboBox ();
@@ -249,8 +257,128 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (true, eventFired, "SI1");
 		}
 
-	}
+		[Test]
+		public void SelectionWithAdd()
+		{
+			ComboBox cb = new ComboBox();
+			cb.SelectedIndexChanged += new EventHandler(GenericHandler);
+			cb.Items.Add("Item 1");
+			cb.Items.Add("Item 3");
+			cb.SelectedIndex = 1;
+			eventFired = false;
+			cb.Items.Add("Item 4");
+			Assert.AreEqual(1, cb.SelectedIndex, "SWA1");
+			Assert.AreEqual(false, eventFired, "SWA2");
+			cb.Sorted = true;
+			cb.SelectedIndex = 1;
+			eventFired = false;
+			cb.Items.Add("Item 5");
+			Assert.AreEqual(1, cb.SelectedIndex, "SWA3");
+			Assert.AreEqual("Item 3", cb.SelectedItem, "SWA4");
+			Assert.AreEqual(false, eventFired, "SWA5");
+			cb.SelectedIndex = 1;
+			eventFired = false;
+			cb.Items.Add("Item 2");
+			Assert.AreEqual(1, cb.SelectedIndex, "SWA6");
+			Assert.AreEqual("Item 2", cb.SelectedItem, "SWA7");
+			Assert.AreEqual(false, eventFired, "SWA8");
+		}
 
+		[Test]
+		public void SelectionWithInsert()
+		{
+			ComboBox cb = new ComboBox();
+			cb.SelectedIndexChanged += new EventHandler(GenericHandler);
+			cb.Items.Add("Item 1");
+			cb.SelectedIndex = 0;
+			eventFired = false;
+			cb.Items.Insert(0, "Item 2");
+			Assert.AreEqual(0, cb.SelectedIndex, "SWI1");
+			Assert.AreEqual(false, eventFired, "SWI2");
+		}
+
+		[Test]
+		public void SelectionWithClear()
+		{
+			ComboBox cb = new ComboBox();
+			cb.SelectedIndexChanged += new EventHandler(GenericHandler);
+			cb.Items.Add("Item 1");
+			cb.SelectedIndex = 0;
+			eventFired = false;
+			cb.Items.Clear();
+			Assert.AreEqual(-1, cb.SelectedIndex, "SWC1");
+			Assert.AreEqual(false, eventFired, "SWC2");
+		}
+
+		[Test]
+		public void SortedTest()
+		{
+			ComboBox mycb = new ComboBox();
+			Assert.AreEqual(false, mycb.Sorted, "#1");
+			mycb.Items.Add("Item 2");
+			mycb.Items.Add("Item 1");
+			Assert.AreEqual("Item 2", mycb.Items[0], "#2");
+			Assert.AreEqual("Item 1", mycb.Items[1], "#3");
+			mycb.Sorted = true;
+			Assert.AreEqual(true, mycb.Sorted, "#4");
+			Assert.AreEqual("Item 1", mycb.Items[0], "#5");
+			Assert.AreEqual("Item 2", mycb.Items[1], "#6");
+			mycb.Sorted = false;
+			Assert.AreEqual(false, mycb.Sorted, "#7");
+			Assert.AreEqual("Item 1", mycb.Items[0], "#8");
+			Assert.AreEqual("Item 2", mycb.Items[1], "#9");
+		}
+
+		[Test]
+		public void SortedAddTest()
+		{
+			ComboBox mycb = new ComboBox();
+			mycb.Items.Add("Item 2");
+			mycb.Items.Add("Item 1");
+			mycb.Sorted = true;
+			Assert.AreEqual("Item 1", mycb.Items[0], "#I1");
+			Assert.AreEqual("Item 2", mycb.Items[1], "#I2");
+		}
+
+		[Test]
+		public void SortedInsertTest()
+		{
+			ComboBox mycb = new ComboBox();
+			mycb.Items.Add("Item 2");
+			mycb.Items.Add("Item 1");
+			mycb.Sorted = true;
+			mycb.Items.Insert (0, "Item 3");
+			Assert.AreEqual("Item 1", mycb.Items[0], "#J1");
+			Assert.AreEqual("Item 2", mycb.Items[1], "#J2");
+			Assert.AreEqual("Item 3", mycb.Items[2], "#J3");
+		}
+
+		[Test]
+		public void SortedSelectionInteractions()
+		{
+			ComboBox cb = new ComboBox();
+			cb.SelectedIndexChanged += new EventHandler(GenericHandler);
+			cb.Items.Add("Item 1");
+			cb.Items.Add("Item 2");
+			cb.Items.Add("Item 3");
+			cb.SelectedIndex = 1;
+			eventFired = false;
+			cb.Sorted = true;
+			Assert.AreEqual(-1, cb.SelectedIndex, "#SSI1");
+			Assert.AreEqual(true, eventFired, "#SSI2");
+			cb.SelectedIndex = 1;
+			eventFired = false;
+			cb.Sorted = true;
+			Assert.AreEqual(1, cb.SelectedIndex, "#SSI3");
+			Assert.AreEqual(false, eventFired, "#SSI4");
+			cb.SelectedIndex = 1;
+			eventFired = false;
+			cb.Sorted = false;
+			Assert.AreEqual(-1, cb.SelectedIndex, "#SSI5");
+			Assert.AreEqual(true, eventFired, "#SSI6");
+		}
+ 	}
+ 
 	[TestFixture]
 	public class ComboBoxObjectCollectionTest
 	{

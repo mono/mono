@@ -46,7 +46,7 @@ namespace System.Windows.Forms
 		private DrawMode draw_mode = DrawMode.Normal;
 		private ComboBoxStyle dropdown_style = (ComboBoxStyle)(-1);
 		private int dropdown_width = -1;		
-		private object selected_item = null;
+		private int selected_index = -1;
 		internal ObjectCollection items = null;
 		private bool suspend_ctrlupdate;
 		private int maxdrop_items = 8;			
@@ -223,6 +223,7 @@ namespace System.Windows.Forms
 	
 				if (dropdown_style != ComboBoxStyle.DropDownList && textbox_ctrl == null) {
 					textbox_ctrl = new ComboTextBox (this);
+					object selected_item = SelectedItem;
 					if (selected_item != null)
 						textbox_ctrl.Text = GetItemText (selected_item);
 					textbox_ctrl.BorderStyle = BorderStyle.None;
@@ -381,35 +382,17 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override int SelectedIndex {
-			get { return selected_item == null ? -1 : Items.IndexOf (selected_item); }
+			get { return selected_index; }
 			set {
 				if (value <= -2 || value >= Items.Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
+    				selected_index = value;
 
-				object item = null;
-				if (value != -1)
-					item = Items [value];
-
-    				SelectedItem = item;
-			}
-		}
-
-		[Browsable (false)]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[Bindable(true)]
-		public object SelectedItem {
-			get { return selected_item; }
-			set {				
-				if (selected_item == value)
-					return;
-
-				selected_item = value;
-    				
     				if (dropdown_style != ComboBoxStyle.DropDownList) {
-					if (selected_item == null)
+					if (value == -1)
 						SetControlText("");
 					else
-						SetControlText (GetItemText (selected_item));
+						SetControlText (GetItemText (Items [value]));
     				}
 
     				OnSelectedValueChanged (new EventArgs ());
@@ -419,7 +402,21 @@ namespace System.Windows.Forms
     					Invalidate ();
 
 				if (listbox_ctrl != null)
-					listbox_ctrl.HighlightedItem = value;
+					listbox_ctrl.HighlightedIndex = value;
+			}
+		}
+
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Bindable(true)]
+		public object SelectedItem {
+			get { return selected_index == -1 ? null : Items [selected_index]; }
+			set {				
+				object item = selected_index == -1 ? null : Items [selected_index];
+				if (item == value)
+					return;
+
+				SelectedIndex = Items.IndexOf (value);
 			}
 		}
 		
@@ -489,6 +486,11 @@ namespace System.Windows.Forms
 					return;
 
     				sorted = value;
+				SelectedIndex = -1;
+				if (sorted) {
+					Items.Sort ();
+					Layout ();
+				}
     			}
     		}
 
@@ -991,8 +993,7 @@ namespace System.Windows.Forms
 		private void CreateComboListBox ()
 		{			
 			listbox_ctrl = new ComboListBox (this);			
-			if (selected_item != null)
-				listbox_ctrl.HighlightedItem = selected_item;
+			listbox_ctrl.HighlightedIndex = SelectedIndex;
 		}
 		
 		internal void Draw (Rectangle clip, Graphics dc)
@@ -1205,7 +1206,7 @@ namespace System.Windows.Forms
 			
 			if (listbox_ctrl != null) {
 				listbox_ctrl.SetTopItem (item);
-				listbox_ctrl.HighlightedItem = Items [item];
+				listbox_ctrl.HighlightedIndex = item;
 			}
 
 			base.Text = textbox_ctrl.Text;
@@ -1272,6 +1273,8 @@ namespace System.Windows.Forms
 						throw new ArgumentNullException ("value");
 
 					object_items[index] = value;
+					if (owner.listbox_ctrl != null)
+						owner.listbox_ctrl.InvalidateItem (index);
 				}
 			}
 
@@ -1289,16 +1292,6 @@ namespace System.Windows.Forms
 
 			#endregion Public Properties
 			
-			#region Private Properties			
-			internal ArrayList ObjectItems {
-				get { return object_items;}
-				set {
-					object_items = value;
-				}
-			}
-			
-			#endregion Private Properties
-
 			#region Public Methods
 			public int Add (object item)
 			{
@@ -1322,7 +1315,7 @@ namespace System.Windows.Forms
 
 			public void Clear ()
 			{
-				owner.selected_item = null;
+				owner.selected_index = -1;
 				object_items.Clear ();
 				owner.UpdatedItems ();
 				owner.Refresh ();
@@ -1373,7 +1366,10 @@ namespace System.Windows.Forms
 				
 				owner.BeginUpdate ();
 				
-				object_items.Insert (index, item);
+				if (owner.Sorted)
+					AddItem (item);
+				else
+					object_items.Insert (index, item);
 												
 				owner.EndUpdate ();	// Calls UpdatedItems
 			}
@@ -1384,10 +1380,9 @@ namespace System.Windows.Forms
 					return;
 
 				if (IndexOf (value) == owner.SelectedIndex)
-					owner.SelectedItem = null;
+					owner.SelectedIndex = -1;
 				
 				RemoveAt (IndexOf (value));				
-				
 			}
 
 			public void RemoveAt (int index)
@@ -1396,7 +1391,7 @@ namespace System.Windows.Forms
 					throw new ArgumentOutOfRangeException ("Index of out range");
 					
 				if (index == owner.SelectedIndex)
-					owner.SelectedItem = null;
+					owner.SelectedIndex = -1;
 
 				object_items.RemoveAt (index);
 				owner.UpdatedItems ();
@@ -1409,9 +1404,18 @@ namespace System.Windows.Forms
 				if (item == null)
 					throw new ArgumentNullException ("item");
 
-				int cnt = object_items.Count;
+				if (owner.Sorted) {
+					int index = 0;
+					foreach (string s in object_items) {
+						if (String.Compare (item as String, s) < 0) {
+							object_items.Insert (index, item);
+							return index;
+						}
+						index++;
+					}
+				}
 				object_items.Add (item);
-				return cnt;
+				return object_items.Count - 1;
 			}
 			
 			internal void AddRange (IList items)
@@ -1420,6 +1424,11 @@ namespace System.Windows.Forms
 					AddItem (mi);
 										
 				owner.UpdatedItems ();
+			}
+
+			internal void Sort ()
+			{
+				object_items.Sort ();
 			}
 
 			#endregion Private Methods
@@ -1680,34 +1689,22 @@ namespace System.Windows.Forms
 				}
 			}
 
+			int highlighted_index = -1;
+
 			public int HighlightedIndex {
-				get { return highlighted_item == null ? -1 : owner.Items.IndexOf (highlighted_item); }
+				get { return highlighted_index; }
 				set { 
-					object item = null;
-					if (value != -1)
-						item = owner.Items [value];
-					HighlightedItem = item; 
-				}
-			}
-
-			object highlighted_item = null;
-
-			public object HighlightedItem {
-				get { return highlighted_item; }
-				set {
-					if (highlighted_item == value)
+					if (highlighted_index == value)
 						return;
-				
-					int index = highlighted_item == null ? -1 :  owner.Items.IndexOf (highlighted_item);
-    					if (index != -1)
-						Invalidate (GetItemDisplayRectangle (index, top_item));
-    					highlighted_item = value;
-				       	index = highlighted_item == null ? -1 : owner.Items.IndexOf (highlighted_item);
-    					if (index != -1)
-						Invalidate (GetItemDisplayRectangle (index, top_item));
+
+    					if (highlighted_index != -1)
+						Invalidate (GetItemDisplayRectangle (highlighted_index, top_item));
+					highlighted_index = value;
+    					if (highlighted_index != -1)
+						Invalidate (GetItemDisplayRectangle (highlighted_index, top_item));
 				}
 			}
-			
+
 			private Rectangle GetItemDisplayRectangle (int index, int top_index)
 			{
 				if (index < 0 || index >= owner.Items.Count)
@@ -1747,6 +1744,12 @@ namespace System.Windows.Forms
 				}
 
 				return -1;
+			}
+
+			public void InvalidateItem (int index)
+			{
+				if (Visible)
+					Invalidate (GetItemDisplayRectangle (index, top_item));
 			}
 
 			private int LastVisibleItem ()
@@ -1806,7 +1809,6 @@ namespace System.Windows.Forms
 				} else {
 					owner.OnSelectionChangeCommitted (new EventArgs ());
 					owner.SelectedIndex = index;
-					HighlightedIndex = index;
 					HideWindow ();
 				}
 

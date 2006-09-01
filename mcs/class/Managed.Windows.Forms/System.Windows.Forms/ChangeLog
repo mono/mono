@@ -1,3 +1,13 @@
+2006-09-01  Mike Kestner  <mkestner@novell.com>
+
+	* ComboBox.cs: first stab at sorting plus some selection handling
+	fixes to bring us more in line with MS behavior.  Also switches back
+	to index based selection.  Alternative patches for index-based 
+	selection were provided by Jackson Harper, Carlos Alberto Cortez, 
+	and latency@gmx.de on bug 78848.  I assume they were similar to this
+	code I've had simmering in my tree forever.
+	[Fixes #78848]
+
 2006-09-01  Chris Toshok  <toshok@ximian.com>
 
 	* CurrencyManager.cs (ListChangedHandler): in the ItemAdded case,

@@ -1,3 +1,8 @@
+2006-09-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBoxTest.cs: Add tests for sorting and selection handling.
+	Deal with a couple of exception mismatches in 2_0.
+
 2006-08-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ComboBoxTest.cs: Add tests for CB.ObjectCollection
