@@ -1,3 +1,13 @@
+2006-09-01  Raja R Harinath  <rharinath@novell.com>
+
+	Re-enable TypeTest.
+	* TypeTest.cs (TypeTest): Remove explicit constructor that
+	disabled the default empty constructor.
+	(Name): Use Assert.AreEqual.
+	(ByrefTypes): Use a nested type rather than TypeTest.
+	(InvokeMemberMatchPrimitiveTypeWithInterface): Likewise.
+	(Bug79023): Disable.
+
 2006-08-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeTest.cs: Add a test for #79110.

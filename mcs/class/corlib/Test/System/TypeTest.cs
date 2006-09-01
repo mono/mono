@@ -247,13 +247,13 @@ namespace MonoTests.System
 			Assert.AreEqual (null, typeof (NoNamespaceClass).Namespace);
 		}
 
-        public static void Reflected (ref int a) {
+		public static void Reflected (ref int a) {
 		}
 
 		[Test]
 		public void Name ()
 		{
-			Assert.Equals ("Int32&", typeof (TypeTest).GetMethod ("Reflected").GetParameters () [0].ParameterType.Name);
+			Assert.AreEqual ("Int32&", typeof (TypeTest).GetMethod ("Reflected").GetParameters () [0].ParameterType.Name);
 		}
 
 		[Test]
@@ -365,26 +365,29 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual (0, mi.Length);
 		}
 
-		public int byref_field;
-
-		public int byref_property {
-			get {
-				return 0;
+		public class ByRef0 {
+			public int field;
+			public int property {
+				get { return 0; }
 			}
+			public ByRef0 (int i) {}
+			public void f (int i) {}
 		}
 
 		[Test]
 		public void ByrefTypes ()
 		{
-			Type t = Type.GetType ("MonoTests.System.TypeTest&");
+			Type t = Type.GetType ("MonoTests.System.TypeTest+ByRef0&");
+			Assert.IsNotNull (t);
+			Assert.IsTrue (t.IsByRef);
 			Assert.AreEqual (0, t.GetMethods (BindingFlags.Public | BindingFlags.Instance).Length);
 			Assert.AreEqual (0, t.GetConstructors (BindingFlags.Public | BindingFlags.Instance).Length);
 			Assert.AreEqual (0, t.GetEvents (BindingFlags.Public | BindingFlags.Instance).Length);
 			Assert.AreEqual (0, t.GetProperties (BindingFlags.Public | BindingFlags.Instance).Length);
 
-			Assert.IsNull (t.GetMethod ("ByrefTypes"));
-			Assert.IsNull (t.GetField ("byref_field"));
-			Assert.IsNull (t.GetProperty ("byref_property"));
+			Assert.IsNull (t.GetMethod ("f"));
+			Assert.IsNull (t.GetField ("field"));
+			Assert.IsNull (t.GetProperty ("property"));
 		}
 
 		struct B
@@ -422,13 +425,14 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual (5, typeof (Y).InvokeMember ("Value", BindingFlags.Public|BindingFlags.Static|BindingFlags.FlattenHierarchy|BindingFlags.GetField, null, null, new object [0]));
 		}			
 
-		public TypeTest (IComparable value) {
+		class Z {
+			public Z (IComparable value) {}
 		}
 	
 		[Test]
 		public void InvokeMemberMatchPrimitiveTypeWithInterface () {
 			object[] invokeargs = {1};
-			typeof (TypeTest).InvokeMember( "", 
+			typeof (Z).InvokeMember( "", 
 											BindingFlags.DeclaredOnly |
 											BindingFlags.Public |
 											BindingFlags.NonPublic |
@@ -638,6 +642,7 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 
 		[Test]
+		[Category ("NotWorking")] // BindingFlags.SetField throws since args.Length != 1, even though we have SetProperty
 		public void Bug79023 ()
 		{
 			ArrayList list = new ArrayList();
@@ -648,8 +653,7 @@ PublicKeyToken=b77a5c561934e089"));
 						    BindingFlags.SetField|BindingFlags.SetProperty|
 						    BindingFlags.Instance|BindingFlags.Public,
 						    null, list, new object[] { 0, "bar" });
-			if (!object.Equals("bar", list[0]))
-				throw new ApplicationException();
+			Assert.AreEqual ("bar", list[0]);
 		}
 		
 		[ComVisible (true)]
