@@ -2117,8 +2117,24 @@ namespace Mono.CSharp {
 			    (gt != generic_ienumerable_type))
 				return false;
 
-			Type[] args = GetTypeArguments (list);
-			return args [0] == GetElementType (array);
+			Type arg_type = GetTypeArguments (list) [0];
+			Type element_type = GetElementType (array);
+
+			if (arg_type == element_type)
+				return true;
+			else if (element_type.IsValueType)
+				return false;
+
+			while (element_type != null) {
+				if (arg_type == element_type)
+					return true;
+				foreach (Type iface in element_type.GetInterfaces ())
+					if (arg_type == iface)
+						return true;
+				element_type = element_type.BaseType;
+			}
+
+			return false;
 		}
 
 		public static bool IsEqual (Type a, Type b)
