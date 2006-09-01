@@ -25,6 +25,7 @@ EXTRA_DISTFILES = Test/resources/indexed.png	\
 	Test/System.Drawing/bitmaps/almogaver24bits1.bmp	\
 	Test/System.Drawing/bitmaps/almogaver24bits.bmp	\
 	Test/System.Drawing/bitmaps/almogaver32bits.bmp	\
+	Test/System.Drawing/bitmaps/almogaver32bits.tif	\
 	Test/System.Drawing/bitmaps/almogaver8bits.bmp	\
 	Test/System.Drawing/bitmaps/almogaver-os2.bmp	\
 	Test/System.Drawing/bitmaps/maketransparent.bmp	\

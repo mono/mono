@@ -1,5 +1,6 @@
-2006-09-01  Sebastien Pouliot  <sebastien@ximian.com>
+2006-09-01  Sebastien Pouliot  <sebastien@ximian.com> 
 
+	* Makefile: Add new almogaver32bits.tif file to EXTRA_DISTFILES
 	* System.Drawing_test.dll.sources: Added unit tests for GIF, ICON, PNG
 	and TIFF codecs.
 
