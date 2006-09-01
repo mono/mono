@@ -230,11 +230,14 @@ namespace System.Reflection {
 				if (i > 0)
 					parms = parms + ", ";
 				Type pt = p[i].ParameterType;
+				bool byref = pt.IsByRef;
+				if (byref)
+					pt = pt.GetElementType ();
 				if (pt.IsClass && pt.Namespace != "")
 					parms = parms + pt.Namespace + "." + pt.Name;
 				else
 					parms = parms + pt.Name;
-				if (pt.IsByRef)
+				if (byref)
 					parms += " ByRef";
 			}
 			if (ReturnType.IsClass && ReturnType.Namespace != "")

@@ -1,3 +1,7 @@
+2006-09-01  Raja R Harinath  <rharinath@novell.com>
+
+	* MonoMethod.cs (ToString): Update to handle change in byref type names.
+
 2006-08-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Assembly.cs: On 2.0 profile, throw FileNotFoundException for
