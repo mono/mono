@@ -4105,7 +4105,15 @@ namespace Mono.CSharp {
 			if (!p.IsGenericParameter && q.IsGenericParameter)
 				return p;
 
-			if (p.IsGenericType) {
+			if (TypeManager.HasElementType (p)) {
+				Type pe = TypeManager.GetElementType (p);
+				Type qe = TypeManager.GetElementType (q);
+				Type specific = MoreSpecific (pe, qe);
+				if (specific == pe)
+					return p;
+				if (specific == qe)
+					return q;
+			} else if (p.IsGenericType) {
 				Type[] pargs = TypeManager.GetTypeArguments (p);
 				Type[] qargs = TypeManager.GetTypeArguments (q);
 
@@ -4123,14 +4131,6 @@ namespace Mono.CSharp {
 				if (p_specific_at_least_once && !q_specific_at_least_once)
 					return p;
 				if (!p_specific_at_least_once && q_specific_at_least_once)
-					return q;
-			} else if (TypeManager.HasElementType (p)) {
-				Type pe = TypeManager.GetElementType (p);
-				Type qe = TypeManager.GetElementType (q);
-				Type specific = MoreSpecific (pe, qe);
-				if (specific == pe)
-					return p;
-				if (specific == qe)
 					return q;
 			}
 
