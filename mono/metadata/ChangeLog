@@ -1,5 +1,7 @@
 2006-09-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* mempool.c: Fix warnings and the calculation of stats.
+
 	* object.c (mono_class_create_runtime_vtable): Fix the AOT optimization.
 
 	* class.c (mono_class_setup_vtable): Update generic_vtable_count stat.
