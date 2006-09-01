@@ -1,5 +1,8 @@
 2006-09-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_setup_vtable_general): Share identical vtables with the parent
+	class if possible.
+
 	* mempool.h (mono_mempool_get_allocated): New helper function.
 
 	* object.c (mono_class_create_runtime_vtable): Fix problem introduced by last
