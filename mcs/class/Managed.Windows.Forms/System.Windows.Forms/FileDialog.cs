@@ -326,7 +326,7 @@ namespace System.Windows.Forms {
 			form.FormBorderStyle = FormBorderStyle.Sizable;
 			form.MinimumSize = new Size (554, 405);
 			
-			form.Size =  new Size (554, 405); // 384
+			form.ClientSize =  new Size (554, 405); // 384
 			
 			form.Controls.Add (smallButtonToolBar);
 			form.Controls.Add (cancelButton);

@@ -1,3 +1,8 @@
+2006-09-01  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* FileDialog.cs: Set ClientSize instead of window size, to allow space
+	  for decorations (Fixes #79219)
+
 2006-09-01  Mike Kestner  <mkestner@novell.com>
 
 	* ComboBox.cs: first stab at sorting plus some selection handling
