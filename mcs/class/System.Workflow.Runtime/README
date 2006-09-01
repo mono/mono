@@ -1,0 +1,39 @@
+Welcome to Windows Workflow Foundation Mono implementation
+
+* Introduction
+
+Windows Workflow Foundation (WWF) has been introduced as part of Microsoft .Net 3.0 framework (also called WinFX). It is a namespace and a set of tools designed
+for building workflow enabled applications on .Net.
+
+The WWF is implemented using three assemblies: System.Workflow.Activities, System.Workflow.ComponentModel and System.Workflow.Runtime.
+
+* Status
+
+This library is in pre-alpha state. Development is still in the very early stages. Bug reports are welcome, provided they don't just point out missing
+classes. Please use http://bugzilla.ximian.com/.
+
+* Contributions
+
+Some indications when contributing to this namespace:
+
+- Contributions providing only stubs are not useful at this point. Our goal is to have a consistent and complete working implementation. New classes, enumerator
+or interfaces should be defined as they are need it as progress is made in the implementation.
+
+- For every new class or behavior added to a class provide a clear test case to verify its functionality and it to the test case suite for the assembly.
+
+- Before committing a change or propose a patch please verify that it does not break any existing test case for any of the three assemblies used to implement
+WWF.
+
+- Check the 'CodingStyle' file at mcs/CodingStyle
+
+* Install
+
+In order to install WWF you should compile the assemblies using 'make PROFILE=net_2_0 install' in the following order:
+
+- System.Workflow.ComponentModel
+- System.Workflow.Activities
+- System.Workflow.Runtime
+- System.Workflow.ComponentModel (twice, due to cyclic dependencies)
+
+At System.Workflow.Runtime/Samples you have some examples to demonstrate some basic functionality.
+
