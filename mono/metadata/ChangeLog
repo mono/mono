@@ -1,3 +1,27 @@
+2006-09-01  Martin Baulig  <martin@ximian.com>
+
+	Fix handling of the generic array interfaces.
+
+	* class-internals.h
+	(MonoDefaults): Removed `generic_array_class' and added
+	`generic_ilist' class.
+
+	* class.c
+	(mono_bounded_array_class_get): Add the new generic array interfaces.
+	(setup_generic_array_ifaces): New static method; create vtable
+	entries for each method in the generic array interfaces.
+
+	* metadata.c
+	(select_container): Allow "parent-less" generic methods.
+
+	* marshal.c
+	(mono_marshal_get_generic_array_helper): New public method.
+
+	* icall.c
+	(ves_icall_System_Array_InternalArray_GetGenericValueImpl):
+	Renamed into ves_icall_System_Array_GetGenericValueImpl() and
+	moved the interncall into System.Array.
+
 2006-09-01  Raja R Harinath  <rharinath@novell.com>
 
 	A few more cases of avoiding work on types with ->byref set.
