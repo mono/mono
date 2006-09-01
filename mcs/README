@@ -68,6 +68,19 @@ And to install:
 
 	make PROFILE=net_2_0 install
 
+* Running Unit tests
+====================
+
+You can run unit tests in individual components by running the command
+"make run-test".  If you want to run tests for a different profile (say
+'net_2_0')
+
+	make run-test PROFILE=net_2_0
+
+If you want to only run the tests in a single fixture (say
+'MonoTests.System.TypeTest'), you can use
+
+	make run-test TEST_HARNESS_FLAGS=/fixture:MonoTests.System.TypeTest
 
 * Acknowledgements
 ==================
