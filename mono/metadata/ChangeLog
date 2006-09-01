@@ -1,5 +1,7 @@
 2006-09-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* mempool.h (mono_mempool_get_allocated): New helper function.
+
 	* object.c (mono_class_create_runtime_vtable): Fix problem introduced by last
 	change.
 
