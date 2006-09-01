@@ -6,10 +6,7 @@
 //   Vladimir Vukicevic (vladimir@pobox.com)
 //
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,9 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Runtime.InteropServices;
-using System.IO;
 
 namespace System.Drawing.Imaging
 {
@@ -52,19 +47,20 @@ namespace System.Drawing.Imaging
 		internal IntPtr 	palette;
 
 		internal int		property_count;
-		internal IntPtr		property;
+		internal IntPtr	property;
 
 		internal float		dpi_horz;
 		internal float		dpi_vert;
 		internal int		image_flags;
 
-		internal int		top;
 		internal int		left;
+		internal int		top;
 		
 		internal int		x;
 		internal int		y;
 
 		internal int		transparent;
+
 		public int Height {
 			get {
 				return height;
