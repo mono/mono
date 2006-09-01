@@ -1,3 +1,10 @@
+2006-09-01  Chris Toshok  <toshok@ximian.com>
+
+	* DataGrid.cs: grr, stop overthinking the DataMember/DataSource
+	properties.
+
+	* BindingContext.cs (HashKey.GetHashCode): use ^ instead of +.
+
 2006-09-01  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* FileDialog.cs: Set ClientSize instead of window size, to allow space

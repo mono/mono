@@ -50,7 +50,7 @@ namespace System.Windows.Forms {
 
 			public override int GetHashCode ()
 			{
-				return source.GetHashCode() + member.GetHashCode ();
+				return source.GetHashCode() ^ member.GetHashCode ();
 			}
 
 			public override bool Equals (object o)

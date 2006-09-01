@@ -536,8 +536,7 @@ namespace System.Windows.Forms
 		public string DataMember {
 			get { return datamember; }
 			set {
-				if (datasource != null)
-					SetDataSource (datasource, value);
+				SetDataSource (datasource, value);
 			}
 		}
 
@@ -547,10 +546,7 @@ namespace System.Windows.Forms
 		public object DataSource {
 			get { return datasource; }
 			set {
-				if (datamember == null)
-					SetDataSource (value, string.Empty);
-				else
-					SetDataSource (value, datamember);
+				SetDataSource (value, string.Empty);
 			}
 		}
 
@@ -1740,7 +1736,6 @@ namespace System.Windows.Forms
 				return true;
 
 			case Keys.Tab:
-				Console.WriteLine ("CurrentRow == {0}, RowsCount = {1}", CurrentRow, RowsCount);
 				if (CurrentColumn < CurrentTableStyle.GridColumnStyles.Count - 1)
 					CurrentColumn ++;
 				else if ((CurrentRow <= RowsCount) && (CurrentColumn == CurrentTableStyle.GridColumnStyles.Count - 1))
