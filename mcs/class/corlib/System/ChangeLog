@@ -1,3 +1,9 @@
+2006-09-01  Martin Baulig  <martin@ximian.com>
+
+	* Array.cs (Array.InternalArray): Removed the helper class;
+	instead we use private generic methods in System.Array which are
+	inserted into the vtable at runtime.
+
 2006-08-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ConsoleCancelEventArgs.cs: fix my build.
