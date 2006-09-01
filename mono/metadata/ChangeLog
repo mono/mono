@@ -1,3 +1,19 @@
+2006-09-01  Raja R Harinath  <rharinath@novell.com>
+
+	A few more cases of avoiding work on types with ->byref set.
+	Has the real fix for #79238
+	* icall.c (is_generic_parameter): New helper.
+	(ves_icall_Type_GetGenericParameterPosition): Use it.
+	(ves_icall_Type_GetGenericParameterAttributes): Likewise.
+	(ves_icall_MonoType_get_IsGenericParameter): Likewise.
+	(ves_icall_TypeBuilder_get_IsGenericParameter): Likewise.
+	(ves_icall_Type_GetGenericTypeDefinition_impl): Return NULL on
+	reference types.
+	(ves_icall_Type_get_IsGenericTypeDefinition): Return FALSE on
+	reference types.
+	(ves_icall_Type_get_IsGenericInstance): Likewise.
+	(ves_icall_Type_get_IsGenericType): Likewise.
+
 2006-09-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_setup_vtable_general): Share identical vtables with the parent
