@@ -903,8 +903,18 @@ namespace System.Windows.Forms {
 			base.Dispose (disposing);
 		}
 
-		// not sure why this needs to be overriden
+		// Handle arrow keys
 		protected override bool IsInputKey (Keys keyData) {
+			switch (keyData) {
+				case Keys.Up:
+				case Keys.Down:
+				case Keys.Right:
+				case Keys.Left:
+					return true;
+				default:
+					break;
+			}
+
 			return base.IsInputKey (keyData);
 		}
 
@@ -1751,7 +1761,7 @@ namespace System.Windows.Forms {
 							DateTime date = GetFirstDateInMonth (this.SelectionStart);
 							this.SetSelectionRange (date, date);
 						}
-						this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 						break;
 					case Keys.End:
 						// set the date to the last of the month
@@ -1765,7 +1775,7 @@ namespace System.Windows.Forms {
 							DateTime date = GetLastDateInMonth (this.SelectionStart);
 							this.SetSelectionRange (date, date);
 						}
-						this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 						break;
 					case Keys.PageUp:
 						// set the date to the last of the month
@@ -1775,7 +1785,7 @@ namespace System.Windows.Forms {
 							DateTime date = this.SelectionStart.AddMonths (-1);
 							this.SetSelectionRange (date, date);
 						}
-						this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 						break;
 					case Keys.PageDown:
 						// set the date to the last of the month
@@ -1785,7 +1795,7 @@ namespace System.Windows.Forms {
 							DateTime date = this.SelectionStart.AddMonths (1);
 							this.SetSelectionRange (date, date);
 						}
-						this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 						break;
 					case Keys.Up:
 						// set the back 1 week
@@ -1795,7 +1805,7 @@ namespace System.Windows.Forms {
 							DateTime date = this.SelectionStart.AddDays (-7);
 							this.SetSelectionRange (date, date);
 						}
-						this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 						break;
 					case Keys.Down:
 						// set the date forward 1 week
@@ -1805,7 +1815,7 @@ namespace System.Windows.Forms {
 							DateTime date = this.SelectionStart.AddDays (7);
 							this.SetSelectionRange (date, date);
 						}
-						this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));					
+						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));					
 						break;
 					case Keys.Left:
 						// move one left
@@ -1815,7 +1825,7 @@ namespace System.Windows.Forms {
 							DateTime date = this.SelectionStart.AddDays (-1);
 							this.SetSelectionRange (date, date);
 						}
-						this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 						break;
 					case Keys.Right:
 						// move one left
@@ -1825,7 +1835,7 @@ namespace System.Windows.Forms {
 							DateTime date = this.SelectionStart.AddDays (1);
 							this.SetSelectionRange (date, date);
 						}
-						this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 						break;
 					default:
 						break;

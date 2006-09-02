@@ -1,5 +1,11 @@
 2006-09-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* MonthCalendar.cs: Handle arrow keys as input keys. Also
+	fire DateChanged event instead of DateSelected event when
+	the date was changed by keyboard interaction.
+
+2006-09-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* DateTimePicker.cs: Handle DateChanged for the associated
 	month_calendar control, and set month_calendar.Font from 
 	OnFontChanged method, as well as resize the height of the
