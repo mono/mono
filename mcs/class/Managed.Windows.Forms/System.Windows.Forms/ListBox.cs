@@ -1737,9 +1737,6 @@ namespace System.Windows.Forms
 		// Removes an item in the Selection array and marks it visually as unselected
 		private void UnSelectItem (int index, bool remove)
 		{
-			if (selection.Count == 0)
-				return;
-
 			if (index == -1)
 				return;
 
@@ -1769,17 +1766,18 @@ namespace System.Windows.Forms
 		internal virtual void CollectionChanged ()
 		{
 			if (sorted) 
-				Sort ();				
-
+				Sort ();
+			
+			if (Items.Count == 0) {
+				selected_index = -1;
+				focused_item = -1;
+				top_index = 0;
+			}
+			
 			if (!IsHandleCreated || suspend_layout)
 				return;
 
 			Layout ();
-
-			if (Items.Count == 0) {
-				selected_index = -1;
-				focused_item = -1;
-			}
 
 			base.Refresh ();
 		}

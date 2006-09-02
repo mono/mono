@@ -1,8 +1,7 @@
 2006-09-02  Alexander Olk  <alex.olk@googlemail.com>
 
-	* ListBox.cs: Don't unselect an item if the selection ArrayList
-	  is empty. This prevents a crash when the collection was cleared
-	  before calling SelectedIndex.
+	* ListBox.cs: If the items are cleared with Items.Clear set
+	  top_index to 0.
 
 2006-09-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
