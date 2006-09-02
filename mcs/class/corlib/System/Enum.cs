@@ -461,16 +461,7 @@ namespace System
 
 		public override bool Equals (object obj)
 		{
-			if (obj == null || !(obj is Enum))
-				return false;
-
-			if (obj.GetType() != this.GetType ())
-				return false;
-
-			object v1 = this.get_value ();
-			object v2 = ((Enum)obj).get_value ();
-
-			return v1.Equals (v2);
+			return DefaultEquals (this, obj);
 		}
 
 		public override int GetHashCode ()
