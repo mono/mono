@@ -1,3 +1,7 @@
+2006-09-02  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildEventArgsTest.cs: Small fix for TimeStamp check.
+
 2006-06-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildErrorEventArgsTest.cs: Fixed header.

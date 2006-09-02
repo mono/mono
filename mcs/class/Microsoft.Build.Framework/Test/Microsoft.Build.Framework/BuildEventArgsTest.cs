@@ -60,8 +60,8 @@ namespace MonoTests.Microsoft.Build.Framework {
 			Assert.AreEqual (helpKeyword, tc.HelpKeyword, "A2");
 			Assert.AreEqual (senderName, tc.SenderName, "A3");
 			Assert.AreEqual (Thread.CurrentThread.GetHashCode (), tc.ThreadId, "A4");
-			Assert.IsTrue (before < tc.Timestamp, "A5");
-			Assert.IsTrue (after > tc.Timestamp, "A6");
+			Assert.IsTrue (before <= tc.Timestamp, "A5");
+			Assert.IsTrue (after >= tc.Timestamp, "A6");
 		}
 	}
 }
