@@ -1,5 +1,9 @@
 2006-09-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* ParameterInfo.cs MethodInfo.cs MonoMethod.cs: Applied patch from 
+	Peter Dettman (peter.dettman@iinet.net.au). Implement ReturnParameter
+	property.
+
 	* Binder.cs (ReorderParameters): Really fix this.
 	
 	* Binder.cs (ReorderParameters): Fix this method. Fixes #79120.

@@ -101,7 +101,7 @@ namespace System.Reflection {
 
 		public virtual ParameterInfo ReturnParameter {
 			get {
-				throw new NotSupportedException ();				
+				throw new NotSupportedException ();
 			}
 		}
 #endif

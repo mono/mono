@@ -81,6 +81,14 @@ namespace System.Reflection {
 			return get_base_definition (this);
 		}
 
+#if NET_2_0 || BOOTSTRAP_NET_2_0
+		public override ParameterInfo ReturnParameter {
+			get {
+				return new ParameterInfo (ReturnType, this, MonoMethodInfo.get_retval_marshal (mhandle));
+			}
+		}
+#endif
+
 		public override Type ReturnType {
 			get {
 				MonoMethodInfo info;
