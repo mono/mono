@@ -502,7 +502,8 @@ namespace System.Reflection.Emit {
 			check_not_created ();
 			if (IsInterface && (
 				!((attributes & MethodAttributes.Abstract) != 0) || 
-				!((attributes & MethodAttributes.Virtual) != 0)))
+				!((attributes & MethodAttributes.Virtual) != 0)) &&
+				!(((attributes & MethodAttributes.Static) != 0)))
 				throw new ArgumentException ("attributes", "Interface method must be abstract and virtual.");
 
 			if (returnType == null)

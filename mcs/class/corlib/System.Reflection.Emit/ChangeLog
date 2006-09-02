@@ -1,3 +1,7 @@
+2006-09-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeBuilder.cs: Allow static methods on interfaces. Fixes #79249.
+
 2006-08-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* *.cs: Use String.Empty instead of "" in a lot of places.
