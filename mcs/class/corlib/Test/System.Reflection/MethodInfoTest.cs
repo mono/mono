@@ -231,6 +231,20 @@ namespace MonoTests.System.Reflection
 				Assert.AreEqual (false, locals [1].IsPinned, "#6");
 		}
 
+		public int return_parameter_test () {
+			return 0;
+		}
+
+		[Test]
+		public void ReturnParameter () {
+			ParameterInfo pi = typeof (MethodInfoTest).GetMethod ("return_parameter_test").ReturnParameter;
+
+			Assert.AreEqual (typeof (int), pi.ParameterType);
+			Assert.AreEqual (-1, pi.Position);
+			// This fails on MS
+			//Assert.AreEqual (True, pi.IsRetval);
+		}
+
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void InvokeOnRefOnlyAssembly ()
