@@ -145,6 +145,7 @@ namespace System.Windows.Forms {
 			up_down_width = 10;
 			is_drop_down_visible = false;
 			
+			month_calendar.DateChanged += new DateRangeEventHandler (MonthCalendarDateChangedHandler);
 			month_calendar.DateSelected += new DateRangeEventHandler (MonthCalendarDateSelectedHandler);
 			KeyPress += new KeyPressEventHandler (KeyPressHandler);
 //			LostFocus += new EventHandler (LostFocusHandler);
@@ -366,7 +367,8 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int PreferredHeight {
 			get {
-				return this.Font.Height + 7;
+				// Make it proportional
+				return (int) Math.Ceiling (Font.Height * 1.5);
 			}
 		}
 		
@@ -582,6 +584,9 @@ namespace System.Windows.Forms {
 
 		protected override void OnFontChanged(EventArgs e) {
 			// FIXME - do we need to update/invalidate/recalc our stuff?
+			month_calendar.Font = Font;
+			Size = new Size (Size.Width, PreferredHeight);
+
 			base.OnFontChanged (e);
 		}
 		
@@ -767,10 +772,14 @@ namespace System.Windows.Forms {
 //			}			
 //		}
 		
+		private void MonthCalendarDateChangedHandler (object sender, DateRangeEventArgs e)
+		{
+			this.Value = e.Start.Date.Add (this.Value.TimeOfDay);
+		}
+
 		// fired when a user clicks on the month calendar to select a date
 		private void MonthCalendarDateSelectedHandler (object sender, DateRangeEventArgs e)
 		{
-			this.Value = e.Start.Date.Add (this.Value.TimeOfDay);
 			this.HideMonthCalendar ();	
 			this.Focus ();			
 		} 

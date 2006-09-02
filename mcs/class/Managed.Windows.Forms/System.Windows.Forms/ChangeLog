@@ -1,3 +1,10 @@
+2006-09-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DateTimePicker.cs: Handle DateChanged for the associated
+	month_calendar control, and set month_calendar.Font from 
+	OnFontChanged method, as well as resize the height of the
+	control when needed. Make PreferredHeight proportional.
+
 2006-09-01  Chris Toshok  <toshok@ximian.com>
 
 	* DataGrid.cs: grr, stop overthinking the DataMember/DataSource
