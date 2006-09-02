@@ -1737,6 +1737,9 @@ namespace System.Windows.Forms
 		// Removes an item in the Selection array and marks it visually as unselected
 		private void UnSelectItem (int index, bool remove)
 		{
+			if (selection.Count == 0)
+				return;
+
 			if (index == -1)
 				return;
 
