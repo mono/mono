@@ -1,3 +1,7 @@
+2006-09-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* Binder.cs (ReorderParameters): Fix this method. Fixes #79120.
+
 2006-09-01  Raja R Harinath  <rharinath@novell.com>
 
 	* MonoMethod.cs (ToString): Update to handle change in byref type names.

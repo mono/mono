@@ -155,8 +155,8 @@ namespace System.Reflection
 							object o = args [n];
 							args [n] = args [p];
 							args [p] = o;
+							break;
 						}
-						break;
 					}
 			}
 
