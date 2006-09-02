@@ -826,28 +826,31 @@ Index: class.cs
  		bool has_compliant_args = false;
  		//
  		// The spec claims that static is not permitted, but
-@@ -4581,6 +4703,11 @@
+@@ -4581,6 +4703,13 @@
  						ParentContainer.EmitFieldInitializers (ec);
  				}
  			}
 +
-+			bool unreachable;
-+			ec.ResolveTopBlock (null, block, ParameterInfo, this, out unreachable);
-+			ec.EmitMeta (block);
++			bool unreachable = false;
++			if (block != null) {
++				ec.ResolveTopBlock (null, block, ParameterInfo, this, out unreachable);
++				ec.EmitMeta (block);
++			}
 +
  			if (Initializer != null) {
  				Initializer.Emit (ec);
  			}
-@@ -4588,7 +4715,7 @@
+@@ -4588,7 +4717,8 @@
  			if ((ModFlags & Modifiers.STATIC) != 0)
  				ParentContainer.EmitFieldInitializers (ec);
  
 -			ec.EmitTopBlock (this, block);
-+			ec.EmitResolvedTopBlock (block, unreachable);
++			if (block != null)
++				ec.EmitResolvedTopBlock (block, unreachable);
  
  			if (source != null)
  				source.CloseMethod ();
-@@ -4710,6 +4837,8 @@
+@@ -4710,6 +4840,8 @@
  		GenericMethod GenericMethod { get; }
  		Parameters ParameterInfo { get; }
  
@@ -856,7 +859,7 @@ Index: class.cs
  		Attributes OptAttributes { get; }
  		ToplevelBlock Block { get; set; }
  
-@@ -5032,6 +5161,20 @@
+@@ -5032,6 +5164,20 @@
  			
  			SourceMethod source = SourceMethod.Create (parent, MethodBuilder, method.Block);
  
@@ -877,7 +880,7 @@ Index: class.cs
  			//
  			// Handle destructors specially
  			//
-@@ -5860,7 +6003,7 @@
+@@ -5860,7 +6006,7 @@
  	//
  	// `set' and `get' accessors are represented with an Accessor.
  	// 
@@ -886,7 +889,7 @@ Index: class.cs
  		//
  		// Null if the accessor is empty, or a Block if not
  		//
-@@ -5875,6 +6018,7 @@
+@@ -5875,6 +6021,7 @@
  		public Location Location;
  		public int ModFlags;
  		public bool Yields;
@@ -894,7 +897,7 @@ Index: class.cs
  		
  		public Accessor (ToplevelBlock b, int mod, Attributes attrs, Location loc)
  		{
-@@ -5888,6 +6032,13 @@
+@@ -5888,6 +6035,13 @@
  		{
  			Yields = true;
  		}
@@ -908,7 +911,7 @@ Index: class.cs
  	}
  
  	// Ooouh Martin, templates are missing here.
-@@ -5934,6 +6085,10 @@
+@@ -5934,6 +6088,10 @@
  
  		#region IMethodData Members
  
@@ -919,7 +922,7 @@ Index: class.cs
  		public ToplevelBlock Block {
  			get {
  				return block;
-@@ -6220,6 +6375,8 @@
+@@ -6220,6 +6378,8 @@
  		{
  			protected readonly MethodCore method;
  			protected MethodAttributes flags;
@@ -928,7 +931,7 @@ Index: class.cs
  			bool yields;
  
  			public PropertyMethod (MethodCore method, string prefix)
-@@ -6235,12 +6392,17 @@
+@@ -6235,12 +6395,17 @@
  				this.method = method;
  				this.ModFlags = accessor.ModFlags;
  				yields = accessor.Yields;
@@ -946,7 +949,7 @@ Index: class.cs
  			public override AttributeTargets AttributeTargets {
  				get {
  					return AttributeTargets.Method;
-@@ -6252,6 +6414,28 @@
+@@ -6252,6 +6417,28 @@
  				return method.IsClsComplianceRequired ();
  			}
  
@@ -975,7 +978,7 @@ Index: class.cs
  			public virtual MethodBuilder Define (DeclSpace parent)
  			{
  				if (!method.CheckAbstractAndExtern (block != null))
-@@ -6281,16 +6465,6 @@
+@@ -6281,16 +6468,6 @@
  					flags |= (method.flags & (~MethodAttributes.MemberAccessMask));
  				}
  
@@ -992,7 +995,7 @@ Index: class.cs
  				return null;
  			}
  
-@@ -6932,6 +7106,10 @@
+@@ -6932,6 +7109,10 @@
  				this.method = method;
  			}
  
@@ -1003,7 +1006,7 @@ Index: class.cs
  			protected override void ApplyToExtraTarget(Attribute a, CustomAttributeBuilder cb)
  			{
  				if (a.Target == AttributeTargets.Parameter) {
-@@ -7183,7 +7361,7 @@
+@@ -7183,7 +7364,7 @@
  	}
  
   
@@ -1012,7 +1015,7 @@ Index: class.cs
  
  		class GetIndexerMethod : GetMethod
  		{
-@@ -7323,10 +7501,10 @@
+@@ -7323,10 +7504,10 @@
  				// Setup iterator if we are one
  				//
  				if ((ModFlags & Modifiers.METHOD_YIELDS) != 0){
@@ -1026,7 +1029,7 @@ Index: class.cs
  						return false;
  				}
  			}
-@@ -7383,7 +7561,7 @@
+@@ -7383,7 +7564,7 @@
  		}
  	}
  
