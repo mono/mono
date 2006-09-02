@@ -1,5 +1,7 @@
 2006-09-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* Binder.cs (ReorderParameters): Really fix this.
+	
 	* Binder.cs (ReorderParameters): Fix this method. Fixes #79120.
 
 2006-09-01  Raja R Harinath  <rharinath@novell.com>

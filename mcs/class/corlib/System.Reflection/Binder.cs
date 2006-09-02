@@ -148,16 +148,17 @@ namespace System.Reflection
 
 			void ReorderParameters (string [] names, ref object [] args, MethodBase selected)
 			{
+				object [] newArgs = new object [args.Length];
+				Array.Copy (args, newArgs, args.Length);
 				ParameterInfo [] plist = selected.GetParameters ();
 				for (int n = 0; n < names.Length; n++)
 					for (int p = 0; p < plist.Length; p++) {
 						if (names [n] == plist [p].Name) {
-							object o = args [n];
-							args [n] = args [p];
-							args [p] = o;
+							newArgs [p] = args [n];
 							break;
 						}
 					}
+				Array.Copy (newArgs, args, args.Length);
 			}
 
 			static bool IsArrayAssignable (Type object_type, Type target_type)
