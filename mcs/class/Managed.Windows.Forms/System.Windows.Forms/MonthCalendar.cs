@@ -939,6 +939,9 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnFontChanged (EventArgs e) {
+			// Update size based on new font's space requirements
+                        Size = new Size (CalendarDimensions.Width * SingleMonthSize.Width,
+                                        CalendarDimensions.Height * SingleMonthSize.Height);
 			bold_font = new Font (Font, Font.Style | FontStyle.Bold);
 			base.OnFontChanged (e);
 		}

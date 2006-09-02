@@ -1,3 +1,8 @@
+2006-09-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* MonthCalendar.cs: When Font changes, the Size should be
+	updated to fit the new font's space requirements.
+
 2006-09-02  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ListBox.cs: If the items are cleared with Items.Clear set
