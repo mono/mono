@@ -152,15 +152,16 @@ namespace System.IO {
 		}
 
 		public virtual int Read() {
-			char[] decode = new char[1];
+			if (charBuffer == null)
+				charBuffer = new char [MaxBufferSize];
 
-			int count=Read(decode, 0, 1);
-			if(count==0) {
+			int count = Read (charBuffer, 0, 1);
+			if(count == 0) {
 				/* No chars available */
-				return(-1);
+				return -1;
 			}
 			
-			return decode[0];
+			return charBuffer [0];
 		}
 
 		public virtual int Read(byte[] buffer, int index, int count) {

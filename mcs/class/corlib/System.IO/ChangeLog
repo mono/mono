@@ -1,3 +1,7 @@
+2006-09-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* BinaryReader.cs (Read): Avoid allocating memory when reading a char.
+
 2006-08-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* StreamReader.cs: avoid ArgumentOutRangeException when the underlying
