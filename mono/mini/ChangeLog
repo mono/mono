@@ -1,3 +1,10 @@
+2006-09-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-x86.c (mono_arch_create_specific_trampoline): Don't increase
+	stats.method_trampolines, it is already done by the generic trampoline code.
+
+	* tramp-amd64.c (mono_arch_create_specific_trampoline): Ditto.
+	
 2006-09-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c: Remove some references to mono_compile_aot, and use cfg->compile_aot instead.
