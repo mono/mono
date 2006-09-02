@@ -1,5 +1,7 @@
 2006-09-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* DynamicMethod.cs: Fix a warning.
+
 	* TypeBuilder.cs: Allow static methods on interfaces. Fixes #79249.
 
 2006-08-18  Zoltan Varga  <vargaz@gmail.com>

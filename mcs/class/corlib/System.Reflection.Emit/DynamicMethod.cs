@@ -310,7 +310,7 @@ namespace System.Reflection.Emit {
 		}
 
 		[MonoTODO]
-		public ParameterInfo ReturnParameter {
+		public override ParameterInfo ReturnParameter {
 			get {
 				throw new NotImplementedException ();
 			}
