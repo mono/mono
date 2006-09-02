@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using NUnit.Framework;
@@ -53,7 +54,7 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		private bool CompareStringCollections (ICollection compared, ICollection reference)
 		{
 			Hashtable comparedHash;
-			comparedHash = new Hashtable ();
+			comparedHash = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 			
 			foreach (string s in compared)
 				comparedHash.Add (s, null);
@@ -141,13 +142,14 @@ namespace MonoTests.Microsoft.Build.Utilities {
 
 			string[] metakeys = new string [] {"aaa", "BBB"};
 			IDictionary meta = item.CloneCustomMetadata ();
+
 			Assert.IsTrue (CompareStringCollections (meta.Keys, metakeys), "A1");
-			metakeys[0] = "aAa";
-			Assert.IsFalse (CompareStringCollections (meta.Keys, metakeys), "A2");
-			Assert.AreEqual ("222", meta["aaa"], "A3");
-			Assert.AreEqual ("222", meta["AAA"], "A4");
-			Assert.AreEqual ("222", meta["aAa"], "A5");
-			Assert.AreEqual ("111", meta["BbB"], "A5");
+			metakeys [0] = "aAa";
+			Assert.IsTrue (CompareStringCollections (meta.Keys, metakeys), "A2");
+			Assert.AreEqual ("222", meta ["aaa"], "A3");
+			Assert.AreEqual ("222", meta ["AAA"], "A4");
+			Assert.AreEqual ("222", meta ["aAa"], "A5");
+			Assert.AreEqual ("111", meta ["BbB"], "A5");
 		}
 
 		[Test]

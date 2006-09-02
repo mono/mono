@@ -1,3 +1,7 @@
+2006-09-02  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* TaskItemTest.cs: Fixed TestCloneCustomMetadata ().
+
 2006-05-26  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* CommandLineBuilderTest.cs: Added tests for
