@@ -1,3 +1,7 @@
+2006-09-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeBuilderTest.cs: Add a test for #79249.
+
 2006-08-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* DynamicMethodTest.cs: Add a test for skipVisibility.

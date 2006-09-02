@@ -957,6 +957,11 @@ public class TypeBuilderTest : Assertion
 		catch (ArgumentException) {
 		}
 
+		// Check static methods on an interface
+		tb2.DefineMethod ("BAR", MethodAttributes.Public | MethodAttributes.Static,
+						  typeof(void),
+						  Type.EmptyTypes);
+
 		tb.CreateType ();
 		// Can not be called on a created type
 		try {
