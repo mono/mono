@@ -1,5 +1,7 @@
 2006-09-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* metadata.c (mono_metadata_parse_mh_full): Fix an invalid free.
+
 	* assembly.c (mono_assembly_load_from_full): Avoid loading net 2.0 assemblies into
 	a net 1.0 runtime.
 
