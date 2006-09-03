@@ -1,5 +1,9 @@
 2006-09-03 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* RolePrincipal.cs: refactoring: instance can be serialized.
+
+2006-09-03 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* SqlMembershipProvider.cs: fixed GetUser,
 	when username is String.Empty methods returns null.
 

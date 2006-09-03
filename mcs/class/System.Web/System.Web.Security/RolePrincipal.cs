@@ -44,14 +44,13 @@ namespace System.Web.Security {
 		private bool listChanged;
 		string[] cachedArray;
 		private HybridDictionary cachedRoles;
-		private RoleProvider provider;
+		readonly string providerName;
 
 		public RolePrincipal (IIdentity identity)
 		{
 			if (identity == null)
 				throw new ArgumentNullException ("identity");
 			this.identity = identity;
-			this.provider = Roles.Provider;
 		}
 
 		[MonoTODO]
@@ -67,7 +66,7 @@ namespace System.Web.Security {
 			if (providerName == null)
 				throw new ArgumentNullException ("providerName");
 
-			this.provider = Roles.Providers[providerName];
+			this.providerName = providerName;
 		}
 
 		[MonoTODO]
@@ -77,7 +76,7 @@ namespace System.Web.Security {
 			if (providerName == null)
 				throw new ArgumentNullException ("providerName");
 
-			this.provider = Roles.Providers[providerName];
+			this.providerName = providerName;
 
 			throw new NotImplementedException ();
 		}
@@ -88,7 +87,7 @@ namespace System.Web.Security {
 				return new string[0];
 
 			if (cachedRoles == null) {
-				cachedArray = provider.GetRolesForUser (identity.Name);
+				cachedArray = Provider.GetRolesForUser (identity.Name);
 				cachedRoles = new HybridDictionary (true);
 
 				foreach (string r in cachedArray)
@@ -147,11 +146,20 @@ namespace System.Web.Security {
 		}
 		
 		public string ProviderName {
-			get { return provider.Name; }
+			get { return String.IsNullOrEmpty(providerName) ? Provider.Name : providerName; }
 		}
 		
 		public int Version {
 			get { return 1; }
+		}
+
+		RoleProvider Provider {
+			get {
+				if (String.IsNullOrEmpty(providerName))
+					return Roles.Provider;
+
+				return Roles.Providers [providerName];
+			}
 		}
 
 		public void SetDirty ()
