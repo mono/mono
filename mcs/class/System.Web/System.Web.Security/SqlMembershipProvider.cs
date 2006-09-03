@@ -985,6 +985,12 @@ UPDATE dbo.aspnet_Users u, dbo.aspnet_Application a
 		[MonoTODO]
 		public override MembershipUser GetUser (string username, bool userIsOnline)
 		{
+			if (username == null)
+				throw new ArgumentNullException ("username");
+
+			if (username.Length == 0)
+				return null;
+
 			CheckParam ("username", username, 256);
 
 			string commandText;

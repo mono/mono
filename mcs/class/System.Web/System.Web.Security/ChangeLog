@@ -1,3 +1,8 @@
+2006-09-03 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* SqlMembershipProvider.cs: fixed GetUser,
+	when username is String.Empty methods returns null.
+
 2006-08-31 Konstantin Triger <kostat@mainsoft.com>
 
 	* SqlRoleProvider.cs: fixed initialization.
