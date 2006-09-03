@@ -169,9 +169,11 @@ namespace Mainsoft.Data.Jdbc.Providers
 							properties.put (key, value);
 					}
 
-					ActivateJdbcDriver ();
-
+					Driver d = ActivateJdbcDriver ();
 					// TBD : add DriverManager.setLoginTimeout	
+					if (d != null)
+						return d.connect (url, properties);
+
 					return DriverManager.getConnection (url, properties);
 				}
 			}
@@ -194,14 +196,14 @@ namespace Mainsoft.Data.Jdbc.Providers
 				return value;
 			}
 
-			private void ActivateJdbcDriver () {
+			private Driver ActivateJdbcDriver () {
 				string driver = (string) _keyMapper["JdbcDriverClassName"];
 				if (driver == null)
 					driver = (string) _provider.ProviderInfo [ConfigurationConsts.JdbcDriverClassName];
 
 				if (driver != null && driver.Length != 0) {
 					try {
-						java.lang.Class.forName (driver).newInstance ();
+						return (Driver) java.lang.Class.forName (driver).newInstance ();
 					}
 					catch (java.lang.ClassNotFoundException e) {
 						throw new TypeLoadException (e.Message, e);
@@ -213,6 +215,8 @@ namespace Mainsoft.Data.Jdbc.Providers
 						throw new MissingMethodException (e.Message, e);
 					}
 				}
+
+				return null;
 			}
 
 			#endregion // Methods
