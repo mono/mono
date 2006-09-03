@@ -1,3 +1,7 @@
+2006-09-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (mono_aot_plt_resolve): Add an assert.
+
 2006-09-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-x86.c (mono_arch_create_specific_trampoline): Don't increase
