@@ -582,6 +582,42 @@ unix). MONO_GAC_PREFIX should point to the top directory of a prefixed
 install. Or to the directory provided in the gacutil /gacdir command. Example:
 .B /home/username/.mono:/usr/local/mono/
 .TP
+.I "MONO_EVENTLOG_TYPE"
+Sets the type of event log provider to use (for System.Diagnostics.EventLog).
+.Sp
+Possible values are:
+.RS
+.TP
+.I "local[:path]"
+.Sp
+Persists event logs and entries to the local file system.
+.Sp
+The directory in which to persit the event logs, event sources and entries
+can be specified as part of the value.
+.Sp
+If the path is not explicitly set, it defaults to "/var/lib/mono/eventlog"
+on unix and "%APPDATA%\mono\eventlog" on Windows.
+.TP
+.I "win32"
+.Sp
+.B 
+Uses the native win32 API to write events and registers event logs and
+event sources in the registry.   This is only available on Windows. 
+.Sp
+On Unix, the directory permission for individual event log and event source
+directories is set to 777 (with +t bit) allowing everyone to read and write
+event log entries while only allowing entries to be deleted by the user(s)
+that created them.
+.TP
+.I "null"
+.Sp
+Silently discards any events.
+.ne
+.PP
+The default is "null" on Unix (and versions of Windows before NT), and 
+"win32" on Windows NT (and higher).
+.RE
+.TP
 .I "MONO_MANAGED_WATCHER"
 If set to any value, System.IO.FileSystemWatcher will use the default
 managed implementation (slow). If unset, mono will try to use FAM under
@@ -589,7 +625,11 @@ Unix systems and native API calls on Windows, falling back to the
 managed implementation on error.
 .TP
 .I "MONO_PATH"
-Provides a search path to the runtime where to look for library files.
+Provides a search path to the runtime where to look for library
+files.   This is a tool convenient for debugging applications, but
+should not be used by deployed applications as it breaks the assembly
+loader in subtle ways. 
+.Sp
 Directories are separated by the platform path separator (colons on unix). Example:
 .B /home/username/lib:/usr/local/mono/lib
 .TP
@@ -715,41 +755,60 @@ On Unix assemblies are loaded from the installation lib directory.  If you set
 `prefix' to /usr, the assemblies will be located in /usr/lib.  On
 Windows, the assemblies are loaded from the directory where mono and
 mint live.
-.PP
-~/.mono/aot-cache
-.PP
+.TP
+.B ~/.mono/aot-cache
+.Sp
 The directory for the ahead-of-time compiler demand creation
 assemblies are located. 
-.PP
-/etc/mono/config, ~/.mono/config
-.PP
+.TP
+.B /etc/mono/config, ~/.mono/config
+.Sp
 Mono runtime configuration file.  See the mono-config(5) manual page
 for more information.
-.PP
-~/.config/.mono/certs, /usr/share/.mono/certs
-.PP
+.TP
+.B ~/.config/.mono/certs, /usr/share/.mono/certs
+.Sp
 Contains Mono certificate stores for users / machine. See the certmgr(1) 
 manual page for more information on managing certificate stores and
 the mozroots(1) page for information on how to import the Mozilla root
 certificates into the Mono certificate store. 
-.PP
-~/.config/.mono/keypairs, /usr/share/.mono/keypairs
-.PP
+.TP
+.B ~/.mono/assemblies/ASSEMBLY/ASSEMBLY.config
+.Sp
+Files in this directory allow a user to customize the configuration
+for a given system assembly, the format is the one described in the
+mono-config(5) page. 
+.TP
+.B ~/.config/.mono/keypairs, /usr/share/.mono/keypairs
+.Sp
 Contains Mono cryptographic keypairs for users / machine. They can be 
 accessed by using a CspParameters object with DSACryptoServiceProvider
 and RSACryptoServiceProvider classes.
-.PP
-~/.config/.isolatedstorage, ~/.local/share/.isolatedstorage, /usr/share/.isolatedstorage
-.PP
+.TP
+.B ~/.config/.isolatedstorage, ~/.local/share/.isolatedstorage, /usr/share/.isolatedstorage
+.Sp
 Contains Mono isolated storage for non-roaming users, roaming users and 
 local machine. Isolated storage can be accessed using the classes from 
 the System.IO.IsolatedStorage namespace.
+.TP
+.B <assembly>.config
+.Sp
+Configuration information for individual assemblies is loaded by the
+runtime from side-by-side files with the .config files, see the
+http://www.mono-project.com/Config for more information.
+.TP
+.B Web.config, web.config
+.Sp
+ASP.NET applications are configured through these files, the
+configuration is done on a per-directory basis.  For more information
+on this subject see the http://www.mono-project.com/Config_system.web
+page. 
 .SH MAILING LISTS
 Mailing lists are listed at the
 http://www.mono-project.com/Mailing_Lists
 .SH WEB SITE
 http://www.mono-project.com
 .SH SEE ALSO
-.BR certmgr(1), mcs(1), mint(1), monodis(1), mono-config(5), mozroots(1).
+.BR certmgr(1), mcs(1), mint(1), monodis(1), mono-config(5), mozroots(1), xsp(1).
 .PP
 For ASP.NET-related documentation, see the xsp(1) manual page

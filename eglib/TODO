@@ -1,0 +1,76 @@
+
+* Code that we will drop from Mono, because we do not really need this:
+
+  Locking:
+
+      5 G_LOCK
+      5 G_UNLOCK
+
+      These are currently only used for the GC-safe hash table, and 
+      we will be replacing that with a copy of our own hashtable.
+
+Important Groups:
+
+	* Markup: currently under development. 
+	      2 g_markup_parse_context_parse
+	      2 g_markup_parse_context_new
+	      2 g_markup_parse_context_free
+	      2 g_markup_parse_context_end_parse
+
+	* Process launching
+	      3 g_shell_quote
+	      1 g_shell_unquote
+
+        * Thread enabling, these might be just no-ops, check with Paolo/Zoltan
+	      3 g_thread_supported
+	      3 g_thread_init
+
+	* Path string manipulation and utilities.
+	      2 g_filename_to_uri
+	      2 g_filename_from_uri
+	
+        * Information retrieval
+	      1 g_get_charset
+	      1 g_win32_getlocale
+	
+	* String manipulation
+	      1 g_filename_from_utf8
+	      1 g_ascii_strdown
+	      4 g_strdown
+	     10 g_strlcpy
+	      2 g_strdelimit
+	      1 g_strescape
+	
+	* Character encoding
+	      3 g_utf8_validate
+	      3 g_locale_to_utf8
+	      3 g_convert
+	      1 g_locale_from_utf8
+
+	* Miscelaneous
+	      5 g_newa
+	      3 g_spaced_primes_closest
+	      2 g_printerr
+	      1 g_mem_set_vtable
+	      1 g_log_set_handler
+
+Macros:
+      6 G_UNLIKELY
+      4 G_LIKELY
+      2 G_USEC_PER_SEC
+      2 G_STRLOC
+      1 G_SPAWN_SEARCH_PATH
+      1 G_ALLOC_ONLY
+
+* Dead Code
+
+	The GMainLoop code was no longer in use in Mono.
+
+* Windows implementations needed
+
+  Directory, File manipulation:
+
+       g_dir_open, g_dir_close, g_dir_read_name
+
+       We're missing a native windows implementation. The unix one is in place.
+

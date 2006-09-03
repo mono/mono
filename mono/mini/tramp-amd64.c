@@ -385,11 +385,7 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 	g_assert ((code - buf) <= TRAMPOLINE_SIZE);
 
 	mono_domain_lock (domain);
-	/* 
-	 * FIXME: Changing the size to code - buf causes strange crashes during
-	 * mcs bootstrap.
-	 */
-	real_code = mono_code_manager_reserve (domain->code_mp, TRAMPOLINE_SIZE);
+	real_code = mono_code_manager_reserve (domain->code_mp, code - buf);
 	size = code - buf;
 	mono_domain_unlock (domain);
 
@@ -399,8 +395,6 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 	g_assert ((((gint64)tramp) >> 32) == 0);
 	code = (guint8*)real_code + jump_offset;
 	amd64_jump_disp (code, tramp - code);
-
-	mono_jit_stats.method_trampolines++;
 
 	if (code_len)
 		*code_len = size;

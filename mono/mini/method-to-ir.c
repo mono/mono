@@ -94,10 +94,6 @@ int mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *st
 MonoMethodSignature *helper_sig_class_init_trampoline;
 MonoMethodSignature *helper_sig_domain_get;
 
-#define mono_jit_lock() EnterCriticalSection (&jit_mutex)
-#define mono_jit_unlock() LeaveCriticalSection (&jit_mutex)
-static CRITICAL_SECTION jit_mutex;
-
 /*
  * Instruction metadata
  */
@@ -2663,89 +2659,6 @@ mono_emit_jit_icall (MonoCompile *cfg, gconstpointer func, MonoInst **args, cons
 	return mono_emit_native_call (cfg, mono_icall_get_wrapper (info), info->sig, args, ip);
 }
 
-static MonoMethodSignature *
-mono_get_element_address_signature (int arity)
-{
-	static GHashTable *sighash = NULL;
-	MonoMethodSignature *res;
-	int i;
-
-	mono_jit_lock ();
-	if (!sighash) {
-		sighash = g_hash_table_new (NULL, NULL);
-	}
-	else if ((res = g_hash_table_lookup (sighash, GINT_TO_POINTER (arity)))) {
-		LeaveCriticalSection (&jit_mutex);
-		return res;
-	}
-
-	res = mono_metadata_signature_alloc (mono_defaults.corlib, arity + 1);
-
-	res->pinvoke = 1;
-#ifdef MONO_ARCH_VARARG_ICALLS
-	/* Only set this only some archs since not all backends can handle varargs+pinvoke */
-	res->call_convention = MONO_CALL_VARARG;
-#endif
-	res->params [0] = &mono_defaults.array_class->byval_arg; 
-
-#ifdef PLATFORM_WIN32
-	/* 
-	 * The default pinvoke calling convention is STDCALL but we need CDECL.
-	 */
-	res->call_convention = MONO_CALL_C;
-#endif
-	
-	for (i = 1; i <= arity; i++)
-		res->params [i] = &mono_defaults.int_class->byval_arg;
-
-	res->ret = &mono_defaults.int_class->byval_arg;
-
-	g_hash_table_insert (sighash, GINT_TO_POINTER (arity), res);
-	mono_jit_unlock ();
-
-	return res;
-}
-
-static MonoMethodSignature *
-mono_get_array_new_va_signature (int arity)
-{
-	static GHashTable *sighash = NULL;
-	MonoMethodSignature *res;
-	int i;
-
-	mono_jit_lock ();
-	if (!sighash) {
-		sighash = g_hash_table_new (NULL, NULL);
-	}
-	else if ((res = g_hash_table_lookup (sighash, GINT_TO_POINTER (arity)))) {
-		mono_jit_unlock ();
-		return res;
-	}
-
-	res = mono_metadata_signature_alloc (mono_defaults.corlib, arity + 1);
-
-	res->pinvoke = 1;
-#ifdef MONO_ARCH_VARARG_ICALLS
-	/* Only set this only some archs since not all backends can handle varargs+pinvoke */
-	res->call_convention = MONO_CALL_VARARG;
-#endif
-
-#ifdef PLATFORM_WIN32
-	res->call_convention = MONO_CALL_C;
-#endif
-
-	res->params [0] = &mono_defaults.int_class->byval_arg;	
-	for (i = 0; i < arity; i++)
-		res->params [i + 1] = &mono_defaults.int_class->byval_arg;
-
-	res->ret = &mono_defaults.object_class->byval_arg;
-
-	g_hash_table_insert (sighash, GINT_TO_POINTER (arity), res);
-	mono_jit_unlock ();
-
-	return res;
-}
-
 static MonoMethod*
 get_memcpy_method (void)
 {
@@ -3382,24 +3295,10 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned c
 static MonoInst*
 handle_array_new (MonoCompile *cfg, int rank, MonoInst **sp, unsigned char *ip)
 {
-	MonoMethodSignature *esig;
-	char icall_name [256];
-	char *name;
 	MonoJitICallInfo *info;
 
 	/* Need to register the icall so it gets an icall wrapper */
-	sprintf (icall_name, "ves_array_new_va_%d", rank);
-
-	info = mono_find_jit_icall_by_name (icall_name);
-	if (info == NULL) {
-		esig = mono_get_array_new_va_signature (rank);
-		name = g_strdup (icall_name);
-		info = mono_register_jit_icall (mono_array_new_va, name, esig, FALSE);
-
-		mono_jit_lock ();
-		g_hash_table_insert (jit_icall_name_hash, name, name);
-		mono_jit_unlock ();
-	}
+	info = mono_get_array_new_va_icall (rank);
 
 	cfg->flags |= MONO_CFG_HAS_VARARGS;
 
@@ -3442,17 +3341,6 @@ mono_emit_load_got_addr (MonoCompile *cfg)
 }
 
 #define CODE_IS_STLOC(ip) (((ip) [0] >= CEE_STLOC_0 && (ip) [0] <= CEE_STLOC_3) || ((ip) [0] == CEE_STLOC_S))
-
-static gboolean
-mini_class_is_system_array (MonoClass *klass)
-{
-	if (klass->parent == mono_defaults.array_class)
-		return TRUE;
-	else if (mono_defaults.generic_array_class && klass->parent && klass->parent->generic_class)
-		return klass->parent->generic_class->container_class == mono_defaults.generic_array_class;
-	else
-		return FALSE;
-}
 
 static gboolean
 mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
@@ -3658,7 +3546,8 @@ mini_emit_ldelema_2_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 	MONO_EMIT_NEW_BIALU (cfg, OP_PADD, add_reg, mult2_reg, arr->dreg);
 	NEW_BIALU_IMM (cfg, ins, OP_PADD_IMM, add_reg, add_reg, G_STRUCT_OFFSET (MonoArray, vector));
 
-	ins->type = STACK_PTR;
+	ins->type = STACK_MP;
+	ins->klass = klass;
 	MONO_ADD_INS (cfg->cbb, ins);
 
 	return ins;
@@ -3670,9 +3559,6 @@ mini_emit_ldelema_ins (MonoCompile *cfg, MonoMethod *cmethod, MonoInst **sp, uns
 {
 	int rank;
 	MonoInst *addr;
-	MonoMethodSignature *esig;
-	char icall_name [256];
-	char *name;
 	MonoJitICallInfo *info;
 
 	rank = mono_method_signature (cmethod)->param_count - (is_set? 1: 0);
@@ -3688,18 +3574,7 @@ mini_emit_ldelema_ins (MonoCompile *cfg, MonoMethod *cmethod, MonoInst **sp, uns
 #endif
 
 	/* Need to register the icall so it gets an icall wrapper */
-	sprintf (icall_name, "ves_array_element_address_%d", rank);
-
-	info = mono_find_jit_icall_by_name (icall_name);
-	if (info == NULL) {
-		esig = mono_get_element_address_signature (rank);
-		name = g_strdup (icall_name);
-		info = mono_register_jit_icall (ves_array_element_address, name, esig, FALSE);
-
-		mono_jit_lock ();
-		g_hash_table_insert (jit_icall_name_hash, name, name);
-		mono_jit_unlock ();
-	}
+	info = mono_get_element_address_icall (rank);
 
 	cfg->flags |= MONO_CFG_HAS_VARARGS;
 	/* FIXME: This uses info->sig, but it should use the signature of the wrapper */
@@ -5636,7 +5511,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		}
 	}
 	
-	if ((header->init_locals || (cfg->method == method && (cfg->opt & MONO_OPT_SHARED))) || mono_compile_aot || security || pinvoke) {
+	if ((header->init_locals || (cfg->method == method && (cfg->opt & MONO_OPT_SHARED))) || cfg->compile_aot || security || pinvoke) {
 		/* we use a separate basic block for the initialization code */
 		NEW_BBLOCK (cfg, init_localsbb);
 		cfg->bb_init = init_localsbb;
@@ -6134,7 +6009,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 				if (!cmethod)
 					goto load_error;
-				if (!dont_verify && !can_access_method (method, cil_method))
+				if (!dont_verify && !cfg->skip_visibility && !can_access_method (method, cil_method))
 					UNVERIFIED;
 
 				if (!virtual && (cmethod->flags & METHOD_ATTRIBUTE_ABSTRACT))
@@ -7421,7 +7296,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			}
 			if (!field)
 				goto load_error;
-			if (!dont_verify && !can_access_field (method, field))
+			if (!dont_verify && !cfg->skip_visibility && !can_access_field (method, field))
 				UNVERIFIED;
 			mono_class_init (klass);
 
@@ -10055,7 +9930,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - merge new GC changes in mini.c
  * - merge the stack merge stuff
  * - merge the emit_sig_cookie changes on x86, ia64 and sparc.
- * - LAST MERGE: 63679.
+ * - LAST MERGE: 64791.
  */
 
 /*

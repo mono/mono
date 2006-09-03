@@ -1203,6 +1203,16 @@ mono_class_layout_fields (MonoClass *class)
 		break;
 	}
 
+	if (layout != TYPE_ATTRIBUTE_EXPLICIT_LAYOUT) {
+		/*
+		 * For small structs, set min_align to at least the struct size, since the
+		 * JIT memset/memcpy code assumes this and generates unaligned accesses
+		 * otherwise. See #78990 for a testcase.
+		 */
+		if (class->instance_size <= sizeof (MonoObject) + sizeof (gpointer))
+			class->min_align = MAX (class->min_align, class->instance_size - sizeof (MonoObject));
+	}
+
 	class->size_inited = 1;
 
 	/*
@@ -1765,6 +1775,8 @@ mono_class_setup_vtable (MonoClass *class)
 		return;
 	}
 
+	mono_stats.generic_vtable_count ++;
+
 	if (class->generic_class) {
 		context = class->generic_class->context;
 		type_token = class->generic_class->container_class->type_token;
@@ -2010,11 +2022,14 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 					 */
 					if (!(vtable [io + l])) {
 						MonoClass *parent = class->parent;
-
-						if ((ic->interface_id <= parent->max_interface_id) && 
-							(parent->interface_offsets [ic->interface_id] != -1) &&
-							parent->vtable)
-							vtable [io + l] = parent->vtable [parent->interface_offsets [ic->interface_id] + l];
+						
+						for (; parent; parent = parent->parent) {
+							if ((ic->interface_id <= parent->max_interface_id) && 
+									(parent->interface_offsets [ic->interface_id] != -1) &&
+									parent->vtable) {
+								vtable [io + l] = parent->vtable [parent->interface_offsets [ic->interface_id] + l];
+							}
+						}
 					}
 
 					if (!(vtable [io + l])) {
@@ -2157,8 +2172,13 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 	} else
 		class->vtable_size = cur_slot;
 
-	class->vtable = mono_mempool_alloc0 (class->image->mempool, sizeof (gpointer) * class->vtable_size);
-	memcpy (class->vtable, vtable,  sizeof (gpointer) * class->vtable_size);
+	/* Try to share the vtable with our parent. */
+	if (class->parent && (class->parent->vtable_size == class->vtable_size) && (memcmp (class->parent->vtable, vtable, sizeof (gpointer) * class->vtable_size) == 0)) {
+		class->vtable = class->parent->vtable;
+	} else {
+		class->vtable = mono_mempool_alloc0 (class->image->mempool, sizeof (gpointer) * class->vtable_size);
+		memcpy (class->vtable, vtable,  sizeof (gpointer) * class->vtable_size);
+	}
 
 	if (mono_print_vtable) {
 		int icount = 0;
@@ -2242,6 +2262,47 @@ g_list_prepend_mempool (GList* l, MonoMemPool* mp, gpointer datum)
 	n->prev = NULL;
 	n->data = datum;
 	return n;
+}
+
+static void
+setup_generic_array_ifaces (MonoClass *class, MonoClass *iface, int pos)
+{
+	MonoMethodSignature *sig;
+	MonoGenericContext *context;
+	int i;
+
+	context = g_new0 (MonoGenericContext, 1);
+	context->container = iface->generic_class->context->container;
+	context->gmethod = g_new0 (MonoGenericMethod, 1);
+	context->gmethod->generic_class = iface->generic_class;
+	context->gmethod->inst = iface->generic_class->inst;
+
+	for (i = 0; i < class->parent->method.count; i++) {
+		MonoMethod *m = class->parent->methods [i];
+		MonoMethod *inflated;
+		const char *mname, *iname;
+		gchar *name;
+
+		if (!strncmp (m->name, "InternalArray__ICollection_", 27)) {
+			iname = "System.Collections.Generic.ICollection`1.";
+			mname = m->name + 27;
+		} else if (!strncmp (m->name, "InternalArray__IEnumerable_", 27)) {
+			iname = "System.Collections.Generic.IEnumerable`1.";
+			mname = m->name + 27;
+		} else if (!strncmp (m->name, "InternalArray__", 15)) {
+			iname = "System.Collections.Generic.IList`1.";
+			mname = m->name + 15;
+		} else {
+			continue;
+		}
+
+		name = mono_mempool_alloc (class->image->mempool, strlen (iname) + strlen (mname) + 1);
+		strcpy (name, iname);
+		strcpy (name + strlen (iname), mname);
+
+		inflated = mono_class_inflate_generic_method (m, context);
+		class->methods [pos++] = mono_marshal_get_generic_array_helper (class, iface, name, inflated);
+	}
 }
 
 /**
@@ -2392,7 +2453,20 @@ mono_class_init (MonoClass *class)
 	if (class->rank) {
 		MonoMethod *ctor;
 		MonoMethodSignature *sig;
-		class->method.count = class->rank > 1? 2: 1;
+		int count_generic = 0, first_generic = 0;
+
+		class->method.count = (class->rank > 1? 2: 1);
+
+		if (class->interface_count) {
+			for (i = 0; i < class->parent->method.count; i++) {
+				MonoMethod *m = class->parent->methods [i];
+				if (!strncmp (m->name, "InternalArray__", 15))
+					count_generic++;
+			}
+			first_generic = class->method.count;
+			class->method.count += class->interface_count * count_generic;
+		}
+
 		sig = mono_metadata_signature_alloc (class->image, class->rank);
 		sig->ret = &mono_defaults.void_class->byval_arg;
 		sig->pinvoke = TRUE;
@@ -2424,6 +2498,9 @@ mono_class_init (MonoClass *class)
 			ctor->slot = -1;
 			class->methods [1] = ctor;
 		}
+
+		for (i = 0; i < class->interface_count; i++)
+			setup_generic_array_ifaces (class, class->interfaces [i], first_generic + i * count_generic);
 	}
 
 	mono_class_setup_supertypes (class);
@@ -3365,18 +3442,6 @@ mono_bounded_array_class_get (MonoClass *eclass, guint32 rank, gboolean bounded)
 	if (image->assembly && image->assembly->dynamic && image->assembly_name && strcmp (image->assembly_name, "mscorlib") == 0) {
 		parent = mono_class_from_name (image, "System", "Array");
 		corlib_type = TRUE;
-	} else if (mono_defaults.generic_array_class) {
-		MonoType *inflated, **args;
-
-		args = g_new0 (MonoType *, 1);
-		args [0] = &eclass->byval_arg;
-
-		inflated = mono_class_bind_generic_parameters (
-			&mono_defaults.generic_array_class->byval_arg, 1, args);
-		parent = mono_class_from_mono_type (inflated);
-
-		if (!parent->inited)
-			mono_class_init (parent);
 	} else {
 		parent = mono_defaults.array_class;
 		if (!parent->inited)
@@ -3405,6 +3470,57 @@ mono_bounded_array_class_get (MonoClass *eclass, guint32 rank, gboolean bounded)
 	class->instance_size = mono_class_instance_size (class->parent);
 	class->class_size = 0;
 	mono_class_setup_supertypes (class);
+
+	if (mono_defaults.generic_ilist_class) {
+		MonoClass *fclass = NULL;
+		int i;
+
+		if (eclass->valuetype) {
+			if (eclass == mono_defaults.int16_class)
+				fclass = mono_defaults.uint16_class;
+			if (eclass == mono_defaults.uint16_class)
+				fclass = mono_defaults.int16_class;
+			if (eclass == mono_defaults.int32_class)
+				fclass = mono_defaults.uint32_class;
+			if (eclass == mono_defaults.uint32_class)
+				fclass = mono_defaults.int32_class;
+			if (eclass == mono_defaults.int64_class)
+				fclass = mono_defaults.uint64_class;
+			if (eclass == mono_defaults.uint64_class)
+				fclass = mono_defaults.int64_class;
+			if (eclass == mono_defaults.byte_class)
+				fclass = mono_defaults.sbyte_class;
+			if (eclass == mono_defaults.sbyte_class)
+				fclass = mono_defaults.byte_class;
+
+			class->interface_count = fclass ? 2 : 1;
+		} else {
+			class->interface_count = eclass->idepth + eclass->interface_count;
+		}
+
+		class->interfaces = g_new0 (MonoClass *, class->interface_count);
+
+		for (i = 0; i < class->interface_count; i++) {
+			MonoType *inflated, **args;
+			MonoClass *iface;
+
+			if (eclass->valuetype)
+				iface = (i == 0) ? eclass : fclass;
+			else if (i < eclass->idepth)
+				iface = eclass->supertypes [i];
+			else
+				iface = eclass->interfaces [i - eclass->idepth];
+
+			args = g_new0 (MonoType *, 1);
+			args [0] = &iface->byval_arg;
+
+			inflated = mono_class_bind_generic_parameters (
+				&mono_defaults.generic_ilist_class->byval_arg, 1, args);
+
+			class->interfaces [i] = mono_class_from_mono_type (inflated);
+		}
+	}
+
 	if (eclass->generic_class)
 		mono_class_init (eclass);
 	if (!eclass->size_inited)

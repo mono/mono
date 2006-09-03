@@ -6,7 +6,6 @@
 	ProjectGUID="{6FDE4E5E-57D0-432F-A987-6C226A7827E4}"
 	RootNamespace="teste"
 	Keyword="Win32Proj"
-	SignManifests="true"
 	>
 	<Platforms>
 		<Platform
@@ -41,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..;&quot;..\..\VSDependancies\include\glib-2.0\glib&quot;;..\..\VSDependancies\include;C:\cygwin\opt\mono\include"
+				AdditionalIncludeDirectories="..\..\..\libgc\include;&quot;..\..\VSDependancies\include\glib-2.0&quot;;&quot;..\..\VSDependancies\include\glib-2.0\glib&quot;;&quot;..\..\VSDependancies\lib\glib-2.0\include&quot;;..\..\VSDependancies\include;..\..\;C:\cygwin\opt\mono\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"

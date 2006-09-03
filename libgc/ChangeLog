@@ -1,3 +1,13 @@
+2006-08-31  Zoltan Varga  <vargaz@freemail.hu>
+
+	* libgc.vcproj: Define GC_INSIDE_DLL on VC build too.
+
+2006-08-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (EXTRA_DIST): Fix make dist.
+
+	* libtool.m4: Removed, should not be in SVN.
+
 2006-07-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* configure.in: Applied patch from Sergey Tikhonov <tsv@solvo.ru>. Beginning
@@ -420,7 +430,7 @@ Wed May 19 18:42:23 CEST 2004 Paolo Molaro <lupus@ximian.com>
 	* autogen.sh: Applied patch from Peter Teichman (peter@ximian.com). 
 	Use 'glibtool' instead of 'libtool' on OSX. 
 
-2003-10-01  Pedro MartÌnez Juli·  <yoro@wanadoo.es>
+2003-10-01  Pedro Mart√≠nez Juli√°  <yoro@wanadoo.es>
 
 	* Makefile.am: Change lib_LTLIBRARIES to noinst_LTLIBRARIES because
 	of libmonogc is included inside libmono and without this change it

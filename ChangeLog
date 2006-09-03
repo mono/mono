@@ -1,3 +1,40 @@
+2006-09-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in: More alpha updates from Sergey Tikhonov <tsv@solvo.ru>.
+
+2006-08-31  Zoltan Varga  <vargaz@freemail.hu>
+
+	* samples/embed/test-invoke.vcproj samples/embed/teste.vcproj: Fix include paths for newer glib versions.
+
+	* genmdesc.vcproj: Fix include paths for newer glib versions.
+
+	* libmono.vcproj: Add further missing sources, fix include paths for newer glib versions.
+	
+	* libmono.vcproj: Add aot-compiler.c and aot-runtime.c as source files.
+
+	* README.vsnet: Fix a typo.
+
+2006-08-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in (PLATFORM_WIN32): Add -mno-cygwin to libmono_cflags/ldflags. Fixes
+	#79180.
+
+2006-08-15  Miguel de Icaza  <miguel@novell.com>
+
+	* configure.in: Add support for an altenative version of glib.
+
+2006-08-29 Wade Berrier <wberrier@novell.com>
+
+	* configure.in: Add required CFLAGS for s390[x] (-mbackchain)
+
+2006-08-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* configure.in: check for mkstemp.
+
+2006-08-22  Raja R Harinath  <rharinath@novell.com>
+
+	* runtime/Makefile.am (mcs-compileall): Remove mention of Microsoft.VisualBasic.
+
 2006-07-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* configure.in: add check for sys/syscall.h. Remove aio_* detection as

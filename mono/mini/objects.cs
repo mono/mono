@@ -38,6 +38,12 @@ struct Small {
 	public byte b2;
 }
 
+// Size=2, Align=1
+struct Foo {
+	bool b1;
+	bool b2;
+}
+
 struct Large {
 	int one;
 	int two;
@@ -1012,6 +1018,17 @@ ncells ) {
 		sb [1] = 'D';
 
 		return sb.ToString () == "ADC" ? 0 : 1;
+	}
+
+	public class Bar {
+		bool allowLocation = true;
+        Foo f = new Foo ();	
+	}
+
+	static int test_0_regress_78990_unaligned_structs () {
+		new Bar ();
+
+		return 0;
 	}
 }
 

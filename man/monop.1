@@ -34,10 +34,17 @@ signature of each member of the class.
 .PP
 The tool takes one option, the class to view. You must specify the full name of the
 class, including namespace.
-
+.PP
+For generic classes, you must specify the generic arguments, for
+example:
+.nf
+monop2 'System.Collections.Generic.List`1'
+.fi
+The above is the string representation for the List<T> in System.Collections.Generic
+.PP
 If you are unsure of the full name of the class, you can use the
 `--search' option to search through all known assemblies.
-
+.PP
 .SH MAILING LISTS
 Visit http://lists.ximian.com/mailman/listinfo/mono-devel-list for details.
 .SH WEB SITE

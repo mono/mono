@@ -30,7 +30,7 @@ mono-xmltool \- Mono XML validation and transformation tool.
 .PP
 .SH DESCRIPTION
 \fImono-xmltool\fP is a command line front end for various functions
-available in the Mono XML class libraries, currently it offers
+available in the Mono XML class libraries. It currently it offers
 validation with various different kinds of schemas, xslt
 transformations and pretty printing.
 .PP
@@ -46,7 +46,7 @@ extension to guess the kind of validation required.  The
 --validate-xxx flags would force a specific kind of validation.
 .PP
 The following lists the flags and the actual class that implements
-this in Mono:
+them in Mono:
 .TP
 .I --validate-rng 
 .Sp
@@ -66,11 +66,11 @@ validator.
 System.Xml.Schema.XmlSchema as the schema and uses
 System.Xml.XmlValidatingReader as the validator.
 .SH TRANSFORMATIONS
-This does an XSLT transformation, the stylesheet must be an XSLT file,
+This does an XSLT transformation. The stylesheet must be an XSLT file,
 the instance-xml is the document to be processed.  Output it sent to
 the standard output.
 .SH PRETTY PRINTING
-Produces a prett-print rendering of the 
+Produces a pretty-print rendering of the 
 .I source
 file.  If it is not
 specified it reads the standard input.   If 

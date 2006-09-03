@@ -14,7 +14,8 @@ installation prefix /etc/mono/config file, the ~/.mono/config or from
 the file pointed by the MONO_CONFIG environment variable.
 .PP
 For each assembly loaded a config file with the name:
-/path/to/the/assembly.exe.config is loaded, too.
+/path/to/the/assembly.exe.config is loaded as well as the
+~/.mono/assemblies/ASSEMBLY/ASSEMBLY.EXT.config file. 
 .PP
 This file controls the behavior of the runtime.
 .PP
@@ -23,6 +24,10 @@ contained inside a
 .B<configuration> 
 section (It actually uses GMarkup
 to parse the file).
+.PP
+This page describes the Unix-specific and Mono-specific extensions to
+the configuration file;   For complete details, see the
+http://www.mono-project.com/Config web page.
 .SH <dllmap> directive
 You use the dllmap directive to map shared libraries referenced by
 P/Invoke in your assemblies to a different shared library.

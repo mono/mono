@@ -64,6 +64,7 @@ typedef struct MonoAotModule {
 	MonoAssemblyName *image_names;
 	char **image_guids;
 	MonoImage **image_table;
+	guint32 image_table_len;
 	gboolean out_of_date;
 	gboolean plt_inited;
 	guint8 *mem_begin;
@@ -76,13 +77,15 @@ typedef struct MonoAotModule {
 	guint8 *plt_jump_table;
 	guint32 plt_jump_table_size;
 	guint32 *code_offsets;
-	guint8 *method_infos;
+	guint8 *method_info;
 	guint32 *method_info_offsets;
-	guint8 *ex_infos;
+	guint8 *got_info;
+	guint32 *got_info_offsets;
+	guint8 *ex_info;
 	guint32 *ex_info_offsets;
 	guint32 *method_order;
 	guint32 *method_order_end;
-	guint8 *class_infos;
+	guint8 *class_info;
 	guint32 *class_info_offsets;
 	guint32 *methods_loaded;
 } MonoAotModule;
@@ -99,17 +102,19 @@ static CRITICAL_SECTION aot_mutex;
  * code is in copy-on-write memory, this will not increase the memory usage
  * of the runtime.
  */
-#ifdef MONO_ARCH_HAVE_PIC_AOT
 static gboolean use_loaded_code = TRUE;
-#else
-static gboolean use_loaded_code = FALSE;
-#endif
 
 /*
  * Whenever to AOT compile loaded assemblies on demand and store them in
  * a cache under $HOME/.mono/aot-cache.
  */
 static gboolean use_aot_cache = FALSE;
+
+/*
+ * Whenever to spawn a new process to AOT a file or do it in-process. Only relevant if
+ * use_aot_cache is TRUE.
+ */
+static gboolean spawn_compiler = TRUE;
 
 /* For debugging */
 static gint32 mono_last_aot_method = -1;
@@ -148,6 +153,8 @@ load_image (MonoAotModule *module, int index)
 {
 	MonoAssembly *assembly;
 	MonoImageOpenStatus status;
+
+	g_assert (index < module->image_table_len);
 
 	if (module->image_table [index])
 		return module->image_table [index];
@@ -346,11 +353,12 @@ create_cache_structure (void)
 static GModule*
 load_aot_module_from_cache (MonoAssembly *assembly, char **aot_name)
 {
-	char *fname, *cmd, *tmp2;
+	char *fname, *cmd, *tmp2, *aot_options;
 	const char *home;
 	GModule *module;
 	gboolean res;
 	gchar *out, *err;
+	gint exit_status;
 
 	*aot_name = NULL;
 
@@ -374,19 +382,38 @@ load_aot_module_from_cache (MonoAssembly *assembly, char **aot_name)
 
 		mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT precompiling assembly '%s'... ", assembly->image->name);
 
-		/* FIXME: security */
-		cmd = g_strdup_printf ("mono -O=all --aot=outfile=%s %s", fname, assembly->image->name);
+		aot_options = g_strdup_printf ("outfile=%s", fname);
 
-		res = g_spawn_command_line_sync (cmd, &out, &err, NULL, NULL);
-		g_free (cmd);
-		if (!res) {
-			mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT failed.");
-			return NULL;
+		if (spawn_compiler) {
+			/* FIXME: security */
+			/* FIXME: Has to pass the assembly loading path to the child process */
+			cmd = g_strdup_printf ("mono -O=all --aot=%s %s", aot_options, assembly->image->name);
+
+			res = g_spawn_command_line_sync (cmd, &out, &err, &exit_status, NULL);
+
+#ifndef PLATFORM_WIN32
+			if (res) {
+				if (!WIFEXITED (exit_status) && (WEXITSTATUS (exit_status) == 0))
+					mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT failed: %s.", err);
+				else
+					mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT succeeded.");
+				g_free (out);
+				g_free (err);
+			}
+#endif
+			g_free (cmd);
+		} else {
+			res = mono_compile_assembly (assembly, mono_parse_default_optimizations (NULL), aot_options);
+			if (!res) {
+				mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT failed.");
+			} else {
+				mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT succeeded.");
+			}
 		}
 
-		mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT succeeded.");
-
 		module = g_module_open (fname, G_MODULE_BIND_LAZY);	
+
+		g_free (aot_options);
 	}
 
 	return module;
@@ -403,16 +430,13 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 	char *opt_flags = NULL;
 	gpointer *plt_jump_table_addr = NULL;
 	guint32 *plt_jump_table_size = NULL;
-
-#ifdef MONO_ARCH_HAVE_PIC_AOT
 	gpointer *got_addr = NULL;
 	gpointer *got = NULL;
 	guint32 *got_size_ptr = NULL;
-#endif
 
 	if (mono_compile_aot)
 		return;
-							
+
 	if (use_aot_cache)
 		assembly->aot_module = load_aot_module_from_cache (assembly, &aot_name);
 	else {
@@ -452,22 +476,19 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 		return;
 	}
 
-#ifdef MONO_ARCH_HAVE_PIC_AOT
 	g_module_symbol (assembly->aot_module, "got_addr", (gpointer *)&got_addr);
 	g_assert (got_addr);
 	got = (gpointer*)*got_addr;
 	g_assert (got);
 	g_module_symbol (assembly->aot_module, "got_size", (gpointer *)&got_size_ptr);
 	g_assert (got_size_ptr);
-#endif
 
 	info = g_new0 (MonoAotModule, 1);
 	info->aot_name = aot_name;
-#ifdef MONO_ARCH_HAVE_PIC_AOT
 	info->got = got;
 	info->got_size = *got_size_ptr;
 	info->got [0] = assembly->image;
-#endif
+
 	sscanf (opt_flags, "%d", &info->opts);
 
 	/* Read image table */
@@ -483,6 +504,7 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 		info->image_table = g_new0 (MonoImage*, table_len);
 		info->image_names = g_new0 (MonoAssemblyName, table_len);
 		info->image_guids = g_new0 (char*, table_len);
+		info->image_table_len = table_len;
 		for (i = 0; i < table_len; ++i) {
 			MonoAssemblyName *aname = &(info->image_names [i]);
 
@@ -515,13 +537,15 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 	g_module_symbol (assembly->aot_module, "methods", (gpointer*)&info->code);
 	g_module_symbol (assembly->aot_module, "methods_end", (gpointer*)&info->code_end);
 	g_module_symbol (assembly->aot_module, "method_info_offsets", (gpointer*)&info->method_info_offsets);
-	g_module_symbol (assembly->aot_module, "method_infos", (gpointer*)&info->method_infos);
+	g_module_symbol (assembly->aot_module, "method_info", (gpointer*)&info->method_info);
 	g_module_symbol (assembly->aot_module, "ex_info_offsets", (gpointer*)&info->ex_info_offsets);
-	g_module_symbol (assembly->aot_module, "ex_infos", (gpointer*)&info->ex_infos);
+	g_module_symbol (assembly->aot_module, "ex_info", (gpointer*)&info->ex_info);
 	g_module_symbol (assembly->aot_module, "method_order", (gpointer*)&info->method_order);
 	g_module_symbol (assembly->aot_module, "method_order_end", (gpointer*)&info->method_order_end);
-	g_module_symbol (assembly->aot_module, "class_infos", (gpointer*)&info->class_infos);
+	g_module_symbol (assembly->aot_module, "class_info", (gpointer*)&info->class_info);
 	g_module_symbol (assembly->aot_module, "class_info_offsets", (gpointer*)&info->class_info_offsets);
+	g_module_symbol (assembly->aot_module, "got_info", (gpointer*)&info->got_info);
+	g_module_symbol (assembly->aot_module, "got_info_offsets", (gpointer*)&info->got_info_offsets);
 	g_module_symbol (assembly->aot_module, "mem_end", (gpointer*)&info->mem_end);
 
 	info->mem_begin = info->code;
@@ -641,7 +665,7 @@ mono_aot_init_vtable (MonoVTable *vtable)
 		return FALSE;
 	}
 
-	info = &aot_module->class_infos [aot_module->class_info_offsets [mono_metadata_token_index (klass->type_token) - 1]];
+	info = &aot_module->class_info [aot_module->class_info_offsets [mono_metadata_token_index (klass->type_token) - 1]];
 	p = info;
 
 	err = decode_cached_class_info (aot_module, &class_info, p, &p);
@@ -707,7 +731,7 @@ mono_aot_get_cached_class_info (MonoClass *klass, MonoCachedClassInfo *res)
 		return FALSE;
 	}
 
-	p = (guint8*)&aot_module->class_infos [aot_module->class_info_offsets [mono_metadata_token_index (klass->type_token) - 1]];
+	p = (guint8*)&aot_module->class_info [aot_module->class_info_offsets [mono_metadata_token_index (klass->type_token) - 1]];
 
 	err = decode_cached_class_info (aot_module, res, p, &p);
 	if (!err) {
@@ -768,11 +792,7 @@ decode_exception_debug_info (MonoAotModule *aot_module, MonoDomain *domain,
 	jinfo->used_regs = used_int_regs;
 	jinfo->method = method;
 	jinfo->code_start = code;
-#ifdef MONO_ARCH_HAVE_PIC_AOT
 	jinfo->domain_neutral = 0;
-#else
-	jinfo->domain_neutral = (aot_module->opts & MONO_OPT_SHARED) != 0;
-#endif
 
 	/* Load debug info */
 	buf_len = decode_value (p, &p);
@@ -891,7 +911,7 @@ mono_aot_find_jit_info (MonoDomain *domain, MonoImage *image, gpointer addr)
 	//printf ("F: %s\n", mono_method_full_name (method, TRUE));
 
 	code = &aot_module->code [aot_module->code_offsets [method_index]];
-	ex_info = &aot_module->ex_infos [aot_module->ex_info_offsets [method_index]];
+	ex_info = &aot_module->ex_info [aot_module->ex_info_offsets [method_index]];
 
 	jinfo = decode_exception_debug_info (aot_module, domain, method, ex_info, code);
 
@@ -905,7 +925,7 @@ mono_aot_find_jit_info (MonoDomain *domain, MonoImage *image, gpointer addr)
 }
 
 static gboolean
-decode_patch_info (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guint8 *buf, guint8 **endbuf)
+decode_patch_info (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guint8 *buf, guint8 **endbuf, guint32 *got_offset)
 {
 	guint8 *p = buf;
 	gpointer *table;
@@ -1018,10 +1038,22 @@ decode_patch_info (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji,
 		p += len + 1;
 		break;
 	}
+	case MONO_PATCH_INFO_VTABLE:
 	case MONO_PATCH_INFO_CLASS:
 	case MONO_PATCH_INFO_IID:
 	case MONO_PATCH_INFO_ADJUSTED_IID:
-	case MONO_PATCH_INFO_VTABLE:
+		*got_offset = decode_value (p, &p);
+
+		if (aot_module->got [*got_offset]) {
+			/* Already loaded */
+			//printf ("HIT!\n");
+		} else {
+			guint8 *tmp = aot_module->got_info + aot_module->got_info_offsets [*got_offset];
+			ji->data.klass = decode_klass_info (aot_module, tmp, &tmp);
+			if (!ji->data.klass)
+				goto cleanup;
+		}
+		break;
 	case MONO_PATCH_INFO_CLASS_INIT:
 		ji->data.klass = decode_klass_info (aot_module, p, &p);
 		if (!ji->data.klass)
@@ -1034,9 +1066,17 @@ decode_patch_info (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji,
 		break;
 	case MONO_PATCH_INFO_FIELD:
 	case MONO_PATCH_INFO_SFLDA:
-		ji->data.field = decode_field_info (aot_module, p, &p);
-		if (!ji->data.field)
-			goto cleanup;
+		*got_offset = decode_value (p, &p);
+
+		if (aot_module->got [*got_offset]) {
+			/* Already loaded */
+			//printf ("HIT2!\n");
+		} else {
+			guint8 *tmp = aot_module->got_info + aot_module->got_info_offsets [*got_offset];
+			ji->data.field = decode_field_info (aot_module, tmp, &tmp);
+			if (!ji->data.field)
+				goto cleanup;
+		}
 		break;
 	case MONO_PATCH_INFO_SWITCH:
 		ji->data.table = mono_mempool_alloc0 (mp, sizeof (MonoJumpInfoBBTable));
@@ -1073,10 +1113,17 @@ decode_patch_info (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji,
 	case MONO_PATCH_INFO_DECLSEC:
 	case MONO_PATCH_INFO_LDTOKEN:
 	case MONO_PATCH_INFO_TYPE_FROM_HANDLE:
-		image = load_image (aot_module, decode_value (p, &p));
-		if (!image)
-			goto cleanup;
-		ji->data.token = mono_jump_info_token_new (mp, image, decode_value (p, &p));
+		*got_offset = decode_value (p, &p);
+
+		if (aot_module->got [*got_offset]) {
+			/* Already loaded */
+		} else {
+			guint8 *tmp = aot_module->got_info + aot_module->got_info_offsets [*got_offset];
+			image = load_image (aot_module, decode_value (tmp, &tmp));
+			if (!image)
+				goto cleanup;
+			ji->data.token = mono_jump_info_token_new (mp, image, decode_value (tmp, &tmp));
+		}
 		break;
 	case MONO_PATCH_INFO_EXC_NAME:
 		ji->data.klass = decode_klass_info (aot_module, p, &p);
@@ -1115,31 +1162,14 @@ load_patch_info (MonoAotModule *aot_module, MonoMemPool *mp, int n_patches,
 
 	/* First load the type + offset table */
 	last_offset = 0;
-	patches = mono_mempool_alloc (mp, sizeof (MonoJumpInfo) * n_patches);
+	patches = mono_mempool_alloc0 (mp, sizeof (MonoJumpInfo) * n_patches);
 
 	for (pindex = 0; pindex < n_patches; ++pindex) {		
 		MonoJumpInfo *ji = &patches [pindex];
 
-#if defined(MONO_ARCH_HAVE_PIC_AOT)
 		ji->type = *p;
 		p ++;
-#else
-		guint8 b1, b2;
 
-		b1 = *(guint8*)p;
-		b2 = *((guint8*)p + 1);
-		p += 2;
-
-		ji->type = b1 >> 2;
-
-		if (((b1 & (1 + 2)) == 3) && (b2 == 255))
-			ji->ip.i = decode_value (p, &p);
-		else
-			ji->ip.i = (((guint32)(b1 & (1 + 2))) << 8) + b2;
-
-		ji->ip.i += last_offset;
-		last_offset = ji->ip.i;
-#endif
 		//printf ("T: %d O: %d.\n", ji->type, ji->ip.i);
 		ji->next = patch_info;
 		patch_info = ji;
@@ -1152,13 +1182,11 @@ load_patch_info (MonoAotModule *aot_module, MonoMemPool *mp, int n_patches,
 	for (pindex = 0; pindex < n_patches; ++pindex) {
 		MonoJumpInfo *ji = &patches [pindex];
 
-		if (!decode_patch_info (aot_module, mp, ji, p, &p))
+		if (!decode_patch_info (aot_module, mp, ji, p, &p, (*got_slots) + pindex))
 			goto cleanup;
 
-#if MONO_ARCH_HAVE_PIC_AOT
 		if ((*got_slots) [pindex] == 0xffffffff)
 			(*got_slots) [pindex] = got_index ++;
-#endif
 	}
 
 	*endbuf = p;
@@ -1216,8 +1244,8 @@ mono_aot_get_method_inner (MonoDomain *domain, MonoMethod *method)
 	}
 
 	code = &aot_module->code [aot_module->code_offsets [mono_metadata_token_index (method->token) - 1]];
-	info = &aot_module->method_infos [aot_module->method_info_offsets [mono_metadata_token_index (method->token) - 1]];
-	ex_info = &aot_module->ex_infos [aot_module->ex_info_offsets [mono_metadata_token_index (method->token) - 1]];
+	info = &aot_module->method_info [aot_module->method_info_offsets [mono_metadata_token_index (method->token) - 1]];
+	ex_info = &aot_module->ex_info [aot_module->ex_info_offsets [mono_metadata_token_index (method->token) - 1]];
 
 	if (mono_last_aot_method != -1) {
 		if (mono_jit_stats.methods_aot > mono_last_aot_method)
@@ -1269,9 +1297,7 @@ mono_aot_load_method (MonoDomain *domain, MonoAotModule *aot_module, MonoMethod 
 
 	n_patches = decode_value (p, &p);
 
-#ifdef MONO_ARCH_HAVE_PIC_AOT
 	keep_patches = FALSE;
-#endif
 
 	if (n_patches) {
 		MonoJumpInfo *patches;
@@ -1282,15 +1308,12 @@ mono_aot_load_method (MonoDomain *domain, MonoAotModule *aot_module, MonoMethod 
 		else
 			mp = mono_mempool_new ();
 
-#ifdef MONO_ARCH_HAVE_PIC_AOT
 		got_index = decode_value (p, &p);
-#endif
 
 		patches = load_patch_info (aot_module, mp, n_patches, got_index, &got_slots, p, &p);
 		if (patches == NULL)
 			goto cleanup;
 
-#if MONO_ARCH_HAVE_PIC_AOT
 		/* Do this outside the lock to avoid deadlocks */
 		mono_aot_unlock ();
 		non_got_patches = FALSE;
@@ -1311,16 +1334,7 @@ mono_aot_load_method (MonoDomain *domain, MonoAotModule *aot_module, MonoMethod 
 			mono_arch_patch_code (method, domain, code, patch_info, TRUE);
 		}
 		mono_aot_lock ();
-#else
-		if (use_loaded_code)
-			/* disable write protection */
-			make_writable (code, jinfo->code_size);
 
-		/* Do this outside the lock to avoid deadlocks */
-		mono_aot_unlock ();
-		mono_arch_patch_code (method, domain, code, patch_info, TRUE);
-		mono_aot_lock ();
-#endif
 		g_free (got_slots);
 
 		if (!keep_patches)
@@ -1401,7 +1415,7 @@ mono_aot_get_method_from_token_inner (MonoDomain *domain, MonoImage *image, guin
 
 	method_index = mono_metadata_token_index (token) - 1;
 	code = &aot_module->code [aot_module->code_offsets [method_index]];
-	info = &aot_module->method_infos [aot_module->method_info_offsets [method_index]];
+	info = &aot_module->method_info [aot_module->method_info_offsets [method_index]];
 
 	if (!aot_module->methods_loaded)
 		aot_module->methods_loaded = g_new0 (guint32, image->tables [MONO_TABLE_METHOD].rows + 1);
@@ -1694,7 +1708,7 @@ mono_aot_plt_resolve (gpointer aot_module, guint32 plt_info_offset, guint8 *code
 	ji.type = decode_value (p, &p);
 
 	// FIXME: Error handling
-	decode_patch_info (module, NULL, &ji, p, &p);
+	decode_patch_info (module, NULL, &ji, p, &p, NULL);
 
 	target = mono_resolve_patch_target (NULL, mono_domain_get (), NULL, &ji, TRUE);
 
@@ -1704,7 +1718,6 @@ mono_aot_plt_resolve (gpointer aot_module, guint32 plt_info_offset, guint8 *code
 	mono_arch_patch_plt_entry (plt_entry, target);
 
 	return target;
-
 #else
 	g_assert_not_reached ();
 	return NULL;

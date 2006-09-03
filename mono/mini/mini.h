@@ -52,7 +52,7 @@
 #endif
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION "27"
+#define MONO_AOT_FILE_VERSION "29"
 
 #if 0
 #define mono_bitset_foreach_bit(set,b,n) \
@@ -698,6 +698,7 @@ typedef struct {
 	guint            new_ir : 1;
 	guint            dont_verify_stack_merge : 1;
 	guint            unverifiable : 1;
+	guint            skip_visibility : 1;
 	gpointer         debug_info;
 	guint32          lmf_offset;
 	guint16          *intvars;
@@ -1019,6 +1020,8 @@ guint     mono_type_to_store_membase        (MonoType *type);
 void      mono_add_patch_info               (MonoCompile *cfg, int ip, MonoJumpInfoType type, gconstpointer target);
 void      mono_remove_patch_info            (MonoCompile *cfg, int ip);
 MonoJumpInfo* mono_patch_info_dup_mp        (MonoMemPool *mp, MonoJumpInfo *patch_info);
+guint     mono_patch_info_hash (gconstpointer data);
+gint      mono_patch_info_equal (gconstpointer ka, gconstpointer kb);
 gpointer  mono_resolve_patch_target         (MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *patch_info, gboolean run_cctors);
 MonoLMF** mono_get_lmf_addr                 (void);
 void      mono_jit_thread_attach            (MonoDomain *domain);
@@ -1036,8 +1039,12 @@ void      mono_create_jump_table            (MonoCompile *cfg, MonoInst *label, 
 int       mono_compile_assembly             (MonoAssembly *ass, guint32 opts, const char *aot_options);
 MonoCompile *mini_method_compile            (MonoMethod *method, guint32 opts, MonoDomain *domain, gboolean run_cctors, gboolean compile_aot, int parts);
 void      mono_destroy_compile              (MonoCompile *cfg);
-MonoJitICallInfo *mono_find_jit_opcode_emulation (int opcode);
-
+gboolean  mini_class_is_system_array (MonoClass *klass);
+MonoJitICallInfo    *mono_find_jit_opcode_emulation (int opcode);
+MonoMethodSignature *mono_get_element_address_signature (int arity);
+MonoMethodSignature *mono_get_array_new_va_signature (int arity);
+MonoJitICallInfo    *mono_get_element_address_icall (int rank);
+MonoJitICallInfo    *mono_get_array_new_va_icall (int rank);
 
 void      mono_aot_init                     (void);
 MonoJitInfo*  mono_aot_get_method           (MonoDomain *domain,

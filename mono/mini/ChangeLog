@@ -129,12 +129,130 @@
 
 	* method-to-ir.c (mono_method_check_inlining): Fix warnings.
 
-=======
+2006-09-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-x86.c (mono_arch_create_specific_trampoline): Don't increase
+	stats.method_trampolines, it is already done by the generic trampoline code.
+
+	* tramp-amd64.c (mono_arch_create_specific_trampoline): Ditto.
+	
+2006-09-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c: Remove some references to mono_compile_aot, and use cfg->compile_aot instead.
+
+	* aot-runtime.c: Add some tweaks to the MONO_AOT_CACHE functionality.
+
+	* tramp-amd64.c (mono_arch_create_specific_trampoline): Fix a FIXME.
+
+	* mini.c (print_jit_stats): Print mscorlib mempool size too.
+	
+	* mini.c (print_jit_stats): Print new stats.
+
+	* *-alpha.c: More alpha port work from Sergey Tikhonov <tsv@solvo.ru>.
+
+2006-08-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_get_ldelema_ins): Fix verifier error when calling
+	Address on two dimensional arrays. Fixes #78729.
+
+	* mini.h (MonoCompile): Add a 'skip_visibility' field.
+
+	* mini.c (method_to_ir): Disable visibility checks if skip_visibility is set on
+	a method.
+
+	* mini-amd64.c (mono_arch_emit_exceptions): Fix assertion introduced by the last change.
+
+	* mini.c (mono_runtime_cleanup_handlers): Clean up signal handlers on unix. Fixes
+	#79130.
+	
+	* mini.c (handle_array_new): Applied patch from "briaeros007". Fix
+	a race condition.
+	(mini_get_ldelema_ins): Ditto.
+
+2006-08-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_emit_exceptions): Align fp constants to 16 bytes.
+	(mono_arch_output_basic_block): Avoid unaligned accesses in FNEG implementation. 
+	Fixes #79213.
+
+2006-08-29 Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390.c, mini-s390x.c: Fix VARARG case processing with 0 arguments. Add
+	mono_arch_get_patch_offset as a dummy entry point to allow successful link. 
+
+	* exceptions-s390x.c: Cosmetic change.
+
+	* tramp-s390.c: Fix warning.
+
+	* cpu-s390.md: Correct length of mul_imm.
+
+Wed Aug 23 19:24:00 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* aot-compiler.c: added binary writer with ELF backend
+	implementation (only on Linux/x86 for now).
+
+2006-08-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Don't run net 2.0 AOT tests.
+
+	* aot-compiler.c (compile_method): Skip methods with tail calls as well.
+	(mono_compile_assembly): Skip net 2.0 assemblies as well.
+
+	* aot-runtime.c (load_patch_info): Fix an uninitialized memory error.
+
+Fri Aug 18 19:38:28 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* aot-compiler.c: simplified and refactored the asm-writing code
+	to allow different backends.
+
+2006-08-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h (MONO_AOT_FILE_VERSION): Bump AOT file format version.
+
+	* aot-compiler.c aot-runtime.c: Reorg the GOT slot allocation code a 
+	little. Share patches of type TYPE_FROM_HANDLE as well.
+
+	* mini.c (mono_patch_info_equal): New helper function.
+	(mono_patch_info_hash): Ditto.
+
+	* aot-compiler.c (emit_method_code): Fix s390 build.
+
+	* mini.c (mono_allocate_stack_slots_full): Fix yet another place where byref
+	is not handled because it is stored as a flag and not as a type ctor. Fixes
+	#79016.
+
+2006-08-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c: Fix computation of GOT slot statistics.
+	
+	* aot-compiler.c aot-runtime.c: Implement sharing of GOT slots for classes/fields.
+	Also remove support for not PIC AOT.
+
+	* mini.h: Bump AOT file format version.
+
+	* objects.cs: Add a test for #78990.
+
+	* mini-x86.c (mono_arch_output_basic_block): Applied patch from Peter Dettman
+	(peter.dettman@iinet.net.au). Fixes #79087.
+
+	* basic-long.cs: Add a test for the above.
+
+2006-08-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (get_got_offset): Add a cache for GOT entries, not yet used.
+	
+	* aot-compiler.c (get_plt_index): Add a cache for wrappers too. Simplify the
+	code somewhat.
+
+2006-08-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_init): Fix registration of idiv/imul opcodes which can throw
+	exceptions.
+
 2006-08-10  Jonathan Chambers  <joncham@gmail.com>
 
 	* mini.c: Don't verify COM proxy invoke calls
 	
-
 2006-08-10  Dick Porter  <dick@ximian.com>
 
 	* wapihandles.c (mini_wapi_seminfo): More info, to help track down

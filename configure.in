@@ -6,7 +6,7 @@ AC_CANONICAL_SYSTEM
 m4_ifdef([_A][M_PROG_TAR],[_A][M_SET_OPTION([tar-ustar])])
 
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(mono,1.1.16)
+AM_INIT_AUTOMAKE(mono,1.1.17)
 AM_MAINTAINER_MODE
 
 AC_PROG_LN_S
@@ -67,6 +67,8 @@ case "$host" in
 		fi
 		HOST_CC="gcc"
 		CPPFLAGS="$CPPFLAGS -DWIN32_THREADS -DFD_SETSIZE=1024"
+		libmono_cflags="-mno-cygwin"
+		libmono_ldflags="-mno-cygwin"
 		libdl=
 		libgc_threads=win32
 		gc_default=included
@@ -390,13 +392,6 @@ if test "x$PKG_CONFIG" = "xno"; then
 	AC_MSG_ERROR([You need to install pkg-config])
 fi
 
-dnl for use on the build system
-dnl pkg-config is stupid
-BUILD_GLIB_CFLAGS=`$PKG_CONFIG --cflags glib-2.0 gthread-2.0`
-BUILD_GLIB_LIBS=`$PKG_CONFIG --libs glib-2.0 gthread-2.0`
-AC_SUBST(BUILD_GLIB_CFLAGS)
-AC_SUBST(BUILD_GLIB_LIBS)
-
 pkg_config_path=
 AC_ARG_WITH(crosspkgdir, [  --with-crosspkgdir=/path/to/pkg-config/dir],
 	if test x$with_crosspkgdir = "x"; then
@@ -410,16 +405,36 @@ AC_ARG_WITH(crosspkgdir, [  --with-crosspkgdir=/path/to/pkg-config/dir],
 	fi
 )
 
-## Versions of dependencies
-GLIB_REQUIRED_VERSION=1.3.11
+AC_ARG_WITH([glib],
+	[  --with-glib=embedded|system       Choose glib API: system or embedded (default to system)],
+	[], [with_glib=system])
 
-PKG_CHECK_MODULES(BASE_DEPENDENCIES, glib-2.0 >= $GLIB_REQUIRED_VERSION)
+case $with_glib in
+embedded) 
+  GLIB_CFLAGS='-I$(top_srcdir)/eglib/src'
+  GLIB_LIBS='-L$(top_builddir)/eglib/src -leglib'
+  AC_CONFIG_SUBDIRS(eglib)
+  ;;
+system)
+  BUILD_GLIB_CFLAGS=`$PKG_CONFIG --cflags glib-2.0 gthread-2.0`
+  BUILD_GLIB_LIBS=`$PKG_CONFIG --libs glib-2.0 gthread-2.0`
+  AC_SUBST(BUILD_GLIB_CFLAGS)
+  AC_SUBST(BUILD_GLIB_LIBS)
 
-GLIB_CFLAGS=`$PKG_CONFIG --cflags glib-2.0 gthread-2.0`
-GLIB_LIBS=`$PKG_CONFIG --libs glib-2.0 gthread-2.0`
-GMODULE_CFLAGS=`$PKG_CONFIG --cflags gmodule-2.0`
-GMODULE_LIBS=`$PKG_CONFIG --libs gmodule-2.0`
-
+  ## Versions of dependencies
+  GLIB_REQUIRED_VERSION=1.3.11
+  
+  PKG_CHECK_MODULES(BASE_DEPENDENCIES, glib-2.0 >= $GLIB_REQUIRED_VERSION)
+  
+  GLIB_CFLAGS=`$PKG_CONFIG --cflags glib-2.0 gthread-2.0`
+  GLIB_LIBS=`$PKG_CONFIG --libs glib-2.0 gthread-2.0`
+  GMODULE_CFLAGS=`$PKG_CONFIG --cflags gmodule-2.0`
+  GMODULE_LIBS=`$PKG_CONFIG --libs gmodule-2.0`
+  ;;
+*)
+  AC_MSG_ERROR([Invalid argument to --with-glib.])
+esac
+  
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
 AC_SUBST(GMODULE_CFLAGS)
@@ -699,6 +714,7 @@ if test x$platform_win32 = xno; then
 	AC_CHECK_FUNCS(setresuid)
 	AC_CHECK_FUNCS(kqueue)
 	AC_CHECK_FUNCS(backtrace_symbols)
+	AC_CHECK_FUNCS(mkstemp)
 
 	dnl ******************************************************************
 	dnl *** Check for large file support                               ***
@@ -1549,6 +1565,7 @@ case "$host" in
 		JIT_SUPPORTED=yes
 		jit_wanted=true
 		arch_target=alpha;
+		CFLAGS="$CFLAGS -mieee"
 		case $host_os in
 		  linux*)
 			LIBC="libc.so.6.1"
@@ -1595,6 +1612,8 @@ case "$host" in
 		ACCESS_UNALIGNED="no"
 		JIT_SUPPORTED=yes
 		jit_wanted=true
+		# Required CFLAGS for s390[x].  USE_STRING_INLINES is automatic with gcc 4.1
+		CFLAGS="$CFLAGS -mbackchain -D__USE_STRING_INLINES"
 		;;
 	s390x-*-linux*)
 		TARGET=S390x;
@@ -1603,6 +1622,7 @@ case "$host" in
 		ACCESS_UNALIGNED="no"
 		JIT_SUPPORTED=yes
 		jit_wanted=true
+		CFLAGS="$CFLAGS -mbackchain -D__USE_STRING_INLINES"
 		;;
 esac
 

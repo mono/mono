@@ -2885,7 +2885,7 @@ mono_emulate_opcode (MonoCompile *cfg, MonoInst *tree, MonoInst **iargs, MonoJit
 	}
 }
 
-static MonoMethodSignature *
+MonoMethodSignature *
 mono_get_element_address_signature (int arity)
 {
 	static GHashTable *sighash = NULL;
@@ -2928,7 +2928,7 @@ mono_get_element_address_signature (int arity)
 	return res;
 }
 
-static MonoMethodSignature *
+MonoMethodSignature *
 mono_get_array_new_va_signature (int arity)
 {
 	static GHashTable *sighash = NULL;
@@ -2960,12 +2960,62 @@ mono_get_array_new_va_signature (int arity)
 	for (i = 0; i < arity; i++)
 		res->params [i + 1] = &mono_defaults.int_class->byval_arg;
 
-	res->ret = &mono_defaults.int_class->byval_arg;
+	res->ret = &mono_defaults.object_class->byval_arg;
 
 	g_hash_table_insert (sighash, GINT_TO_POINTER (arity), res);
 	mono_jit_unlock ();
 
 	return res;
+}
+
+MonoJitICallInfo *
+mono_get_element_address_icall (int rank)
+{
+	MonoMethodSignature *esig;
+	char icall_name [256];
+	char *name;
+	MonoJitICallInfo *info;
+
+	/* Need to register the icall so it gets an icall wrapper */
+	sprintf (icall_name, "ves_array_element_address_%d", rank);
+
+	mono_jit_lock ();
+	info = mono_find_jit_icall_by_name (icall_name);
+	if (info == NULL) {
+		esig = mono_get_element_address_signature (rank);
+		name = g_strdup (icall_name);
+		info = mono_register_jit_icall (ves_array_element_address, name, esig, FALSE);
+
+		g_hash_table_insert (jit_icall_name_hash, name, name);
+	}
+	mono_jit_unlock ();
+
+	return info;
+}
+
+MonoJitICallInfo *
+mono_get_array_new_va_icall (int rank)
+{
+	MonoMethodSignature *esig;
+	char icall_name [256];
+	char *name;
+	MonoJitICallInfo *info;
+
+	/* Need to register the icall so it gets an icall wrapper */
+	sprintf (icall_name, "ves_array_new_va_%d", rank);
+
+	mono_jit_lock ();
+	info = mono_find_jit_icall_by_name (icall_name);
+	if (info == NULL) {
+		esig = mono_get_array_new_va_signature (rank);
+		name = g_strdup (icall_name);
+		info = mono_register_jit_icall (mono_array_new_va, name, esig, FALSE);
+
+		g_hash_table_insert (jit_icall_name_hash, name, name);
+	}
+	mono_jit_unlock ();
+
+	return info;
 }
 
 static MonoMethod*
@@ -3181,24 +3231,10 @@ handle_box (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst *val, const gucha
 static int
 handle_array_new (MonoCompile *cfg, MonoBasicBlock *bblock, int rank, MonoInst **sp, unsigned char *ip)
 {
-	MonoMethodSignature *esig;
-	char icall_name [256];
-	char *name;
 	MonoJitICallInfo *info;
 
 	/* Need to register the icall so it gets an icall wrapper */
-	sprintf (icall_name, "ves_array_new_va_%d", rank);
-
-	info = mono_find_jit_icall_by_name (icall_name);
-	if (info == NULL) {
-		esig = mono_get_array_new_va_signature (rank);
-		name = g_strdup (icall_name);
-		info = mono_register_jit_icall (mono_array_new_va, name, esig, FALSE);
-
-		mono_jit_lock ();
-		g_hash_table_insert (jit_icall_name_hash, name, name);
-		mono_jit_unlock ();
-	}
+	info = mono_get_array_new_va_icall (rank);
 
 	cfg->flags |= MONO_CFG_HAS_VARARGS;
 
@@ -3241,13 +3277,11 @@ mono_emit_load_got_addr (MonoCompile *cfg)
 
 #define CODE_IS_STLOC(ip) (((ip) [0] >= CEE_STLOC_0 && (ip) [0] <= CEE_STLOC_3) || ((ip) [0] == CEE_STLOC_S))
 
-static gboolean
+gboolean
 mini_class_is_system_array (MonoClass *klass)
 {
 	if (klass->parent == mono_defaults.array_class)
 		return TRUE;
-	else if (mono_defaults.generic_array_class && klass->parent && klass->parent->generic_class)
-		return klass->parent->generic_class->container_class == mono_defaults.generic_array_class;
 	else
 		return FALSE;
 }
@@ -3358,9 +3392,6 @@ mini_get_ldelema_ins (MonoCompile *cfg, MonoBasicBlock *bblock, MonoMethod *cmet
 {
 	int temp, rank;
 	MonoInst *addr;
-	MonoMethodSignature *esig;
-	char icall_name [256];
-	char *name;
 	MonoJitICallInfo *info;
 
 	rank = mono_method_signature (cmethod)->param_count - (is_set? 1: 0);
@@ -3386,24 +3417,13 @@ mini_get_ldelema_ins (MonoCompile *cfg, MonoBasicBlock *bblock, MonoMethod *cmet
 		addr->inst_right = indexes;
 		addr->cil_code = ip;
 		addr->type = STACK_MP;
-		addr->klass = cmethod->klass;
+		addr->klass = cmethod->klass->element_class;
 		return addr;
 #endif
 	}
 
 	/* Need to register the icall so it gets an icall wrapper */
-	sprintf (icall_name, "ves_array_element_address_%d", rank);
-
-	info = mono_find_jit_icall_by_name (icall_name);
-	if (info == NULL) {
-		esig = mono_get_element_address_signature (rank);
-		name = g_strdup (icall_name);
-		info = mono_register_jit_icall (ves_array_element_address, name, esig, FALSE);
-
-		mono_jit_lock ();
-		g_hash_table_insert (jit_icall_name_hash, name, name);
-		mono_jit_unlock ();
-	}
+	info = mono_get_element_address_icall (rank);
 
 	/* FIXME: This uses info->sig, but it should use the signature of the wrapper */
 	temp = mono_emit_native_call (cfg, bblock, mono_icall_get_wrapper (info), info->sig, sp, ip, FALSE, FALSE);
@@ -4254,7 +4274,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		}
 	}
 	
-	if ((header->init_locals || (cfg->method == method && (cfg->opt & MONO_OPT_SHARED))) || mono_compile_aot || security || pinvoke) {
+	if ((header->init_locals || (cfg->method == method && (cfg->opt & MONO_OPT_SHARED))) || cfg->compile_aot || security || pinvoke) {
 		/* we use a separate basic block for the initialization code */
 		cfg->bb_init = init_localsbb = NEW_BBLOCK (cfg);
 		init_localsbb->real_offset = real_offset;
@@ -4741,7 +4761,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				if (!cmethod)
 					goto load_error;
-				if (!dont_verify && !can_access_method (method, cil_method))
+				if (!dont_verify && !cfg->skip_visibility && !can_access_method (method, cil_method))
 					UNVERIFIED;
 
 				if (!virtual && (cmethod->flags & METHOD_ATTRIBUTE_ABSTRACT))
@@ -6083,7 +6103,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (!field)
 				goto load_error;
 			mono_class_init (klass);
-			if (!dont_verify && !can_access_field (method, field))
+			if (!dont_verify && !cfg->skip_visibility && !can_access_field (method, field))
 				UNVERIFIED;
 
 			foffset = klass->valuetype? field->offset - sizeof (MonoObject): field->offset;
@@ -8525,46 +8545,50 @@ mono_allocate_stack_slots_full (MonoCompile *m, gboolean backward, guint32 *stac
 		}
 
 		t = mono_type_get_underlying_type (inst->inst_vtype);
-		switch (t->type) {
-		case MONO_TYPE_GENERICINST:
-			if (!mono_type_generic_inst_is_valuetype (t)) {
-				slot_info = &scalar_stack_slots [t->type];
-				break;
-			}
-			/* Fall through */
-		case MONO_TYPE_VALUETYPE:
-			if (!vtype_stack_slots)
-				vtype_stack_slots = mono_mempool_alloc0 (m->mempool, sizeof (StackSlotInfo) * 256);
-			for (i = 0; i < nvtypes; ++i)
-				if (t->data.klass == vtype_stack_slots [i].vtype)
+		if (t->byref) {
+			slot_info = &scalar_stack_slots [MONO_TYPE_I];
+		} else {
+			switch (t->type) {
+			case MONO_TYPE_GENERICINST:
+				if (!mono_type_generic_inst_is_valuetype (t)) {
+					slot_info = &scalar_stack_slots [t->type];
 					break;
-			if (i < nvtypes)
-				slot_info = &vtype_stack_slots [i];
-			else {
-				g_assert (nvtypes < 256);
-				vtype_stack_slots [nvtypes].vtype = t->data.klass;
-				slot_info = &vtype_stack_slots [nvtypes];
-				nvtypes ++;
-			}
-			break;
-		case MONO_TYPE_CLASS:
-		case MONO_TYPE_OBJECT:
-		case MONO_TYPE_ARRAY:
-		case MONO_TYPE_SZARRAY:
-		case MONO_TYPE_STRING:
-		case MONO_TYPE_PTR:
-		case MONO_TYPE_I:
-		case MONO_TYPE_U:
+				}
+				/* Fall through */
+			case MONO_TYPE_VALUETYPE:
+				if (!vtype_stack_slots)
+					vtype_stack_slots = mono_mempool_alloc0 (m->mempool, sizeof (StackSlotInfo) * 256);
+				for (i = 0; i < nvtypes; ++i)
+					if (t->data.klass == vtype_stack_slots [i].vtype)
+						break;
+				if (i < nvtypes)
+					slot_info = &vtype_stack_slots [i];
+				else {
+					g_assert (nvtypes < 256);
+					vtype_stack_slots [nvtypes].vtype = t->data.klass;
+					slot_info = &vtype_stack_slots [nvtypes];
+					nvtypes ++;
+				}
+				break;
+			case MONO_TYPE_CLASS:
+			case MONO_TYPE_OBJECT:
+			case MONO_TYPE_ARRAY:
+			case MONO_TYPE_SZARRAY:
+			case MONO_TYPE_STRING:
+			case MONO_TYPE_PTR:
+			case MONO_TYPE_I:
+			case MONO_TYPE_U:
 #if SIZEOF_VOID_P == 4
-		case MONO_TYPE_I4:
+			case MONO_TYPE_I4:
 #else
-		case MONO_TYPE_I8:
+			case MONO_TYPE_I8:
 #endif
-			/* Share non-float stack slots of the same size */
-			slot_info = &scalar_stack_slots [MONO_TYPE_CLASS];
-			break;
-		default:
-			slot_info = &scalar_stack_slots [t->type];
+				/* Share non-float stack slots of the same size */
+				slot_info = &scalar_stack_slots [MONO_TYPE_CLASS];
+				break;
+			default:
+				slot_info = &scalar_stack_slots [t->type];
+			}
 		}
 
 		slot = 0xffffff;
@@ -9083,6 +9107,56 @@ mono_patch_info_dup_mp (MonoMemPool *mp, MonoJumpInfo *patch_info)
 	}
 
 	return res;
+}
+
+guint
+mono_patch_info_hash (gconstpointer data)
+{
+	const MonoJumpInfo *ji = (MonoJumpInfo*)data;
+
+	switch (ji->type) {
+	case MONO_PATCH_INFO_LDSTR:
+	case MONO_PATCH_INFO_TYPE_FROM_HANDLE:
+	case MONO_PATCH_INFO_LDTOKEN:
+	case MONO_PATCH_INFO_DECLSEC:
+		return (ji->type << 8) | ji->data.token->token;
+	default:
+		return (ji->type << 8);
+	}
+}
+
+/* 
+ * mono_patch_info_equal:
+ * 
+ * This might fail to recognize equivalent patches, i.e. floats, so its only
+ * usable in those cases where this is not a problem, i.e. sharing GOT slots
+ * in AOT.
+ */
+gint
+mono_patch_info_equal (gconstpointer ka, gconstpointer kb)
+{
+	const MonoJumpInfo *ji1 = (MonoJumpInfo*)ka;
+	const MonoJumpInfo *ji2 = (MonoJumpInfo*)kb;
+
+	if (ji1->type != ji2->type)
+		return 0;
+
+	switch (ji1->type) {
+	case MONO_PATCH_INFO_LDSTR:
+	case MONO_PATCH_INFO_TYPE_FROM_HANDLE:
+	case MONO_PATCH_INFO_LDTOKEN:
+	case MONO_PATCH_INFO_DECLSEC:
+		if ((ji1->data.token->image != ji2->data.token->image) ||
+			(ji1->data.token->token != ji2->data.token->token))
+			return 0;
+		break;
+	default:
+		if (ji1->data.name != ji2->data.name)
+			return 0;
+		break;
+	}
+
+	return 1;
 }
 
 gpointer
@@ -10562,6 +10636,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	cfg->domain = domain;
 	cfg->verbose_level = mini_verbose;
 	cfg->compile_aot = compile_aot;
+	cfg->skip_visibility = method->skip_visibility;
 	if (!header) {
 		cfg->exception_type = MONO_EXCEPTION_INVALID_PROGRAM;
 		cfg->exception_message = g_strdup_printf ("Missing or incorrect header for method %s", cfg->method->name);
@@ -10635,7 +10710,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	mono_jit_stats.basic_blocks += cfg->num_bblocks;
 	mono_jit_stats.max_basic_blocks = MAX (cfg->num_bblocks, mono_jit_stats.max_basic_blocks);
 
-	if ((cfg->num_varinfo > 2000) && !mono_compile_aot) {
+	if ((cfg->num_varinfo > 2000) && !cfg->compile_aot) {
 		/* 
 		 * we disable some optimizations if there are too many variables
 		 * because JIT time may become too expensive. The actual number needs 
@@ -11036,7 +11111,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 	method = mono_get_inflated_method (method);
 
 #ifdef MONO_USE_AOT_COMPILER
-	if (!mono_compile_aot && (opt & MONO_OPT_AOT) && !(mono_profiler_get_events () & MONO_PROFILE_JIT_COMPILATION)) {
+	if ((opt & MONO_OPT_AOT) && !(mono_profiler_get_events () & MONO_PROFILE_JIT_COMPILATION)) {
 		MonoJitInfo *info;
 		MonoDomain *domain = mono_domain_get ();
 
@@ -11585,6 +11660,18 @@ add_signal_handler (int signo, gpointer handler)
 #endif
 	g_assert (sigaction (signo, &sa, NULL) != -1);
 }
+
+static void
+remove_signal_handler (int signo)
+{
+	struct sigaction sa;
+
+	sa.sa_handler = SIG_DFL;
+	sigemptyset (&sa.sa_mask);
+	sa.sa_flags = 0;
+
+	g_assert (sigaction (signo, &sa, NULL) != -1);
+}
 #endif
 
 static void
@@ -11603,11 +11690,6 @@ mono_runtime_install_handlers (void)
 		win32_seh_set_handler(SIGINT, sigint_signal_handler);
 
 #else /* !PLATFORM_WIN32 */
-
-	/* libpthreads has its own implementation of sigaction(),
-	 * but it seems to work well with our current exception
-	 * handlers. If not we must call syscall directly instead 
-	 * of sigaction */
 
 	if (debug_options.handle_sigint)
 		add_signal_handler (SIGINT, sigint_signal_handler);
@@ -11633,6 +11715,30 @@ mono_runtime_install_handlers (void)
 #else
 	add_signal_handler (SIGSEGV, sigsegv_signal_handler);
 #endif
+#endif /* PLATFORM_WIN32 */
+}
+
+static void
+mono_runtime_cleanup_handlers (void)
+{
+#ifdef PLATFORM_WIN32
+	win32_seh_cleanup();
+#else
+	if (debug_options.handle_sigint)
+		remove_signal_handler (SIGINT);
+
+	remove_signal_handler (SIGFPE);
+	remove_signal_handler (SIGQUIT);
+	remove_signal_handler (SIGILL);
+	remove_signal_handler (SIGBUS);
+	if (mono_jit_trace_calls != NULL)
+		remove_signal_handler (SIGUSR2);
+
+	remove_signal_handler (mono_thread_get_abort_signal ());
+
+	remove_signal_handler (SIGABRT);
+
+	remove_signal_handler (SIGSEGV);
 #endif /* PLATFORM_WIN32 */
 }
 
@@ -11940,10 +12046,10 @@ mini_init (const char *filename)
 #endif
 
 #if defined(MONO_ARCH_EMULATE_MUL_DIV) || defined(MONO_ARCH_EMULATE_DIV)
-	mono_register_opcode_emulation (CEE_DIV, "__emul_idiv", "int32 int32 int32", mono_idiv, TRUE);
-	mono_register_opcode_emulation (CEE_DIV_UN, "__emul_idiv_un", "int32 int32 int32", mono_idiv_un, TRUE);
-	mono_register_opcode_emulation (CEE_REM, "__emul_irem", "int32 int32 int32", mono_irem, TRUE);
-	mono_register_opcode_emulation (CEE_REM_UN, "__emul_irem_un", "int32 int32 int32", mono_irem_un, TRUE);
+	mono_register_opcode_emulation (CEE_DIV, "__emul_idiv", "int32 int32 int32", mono_idiv, FALSE);
+	mono_register_opcode_emulation (CEE_DIV_UN, "__emul_idiv_un", "int32 int32 int32", mono_idiv_un, FALSE);
+	mono_register_opcode_emulation (CEE_REM, "__emul_irem", "int32 int32 int32", mono_irem, FALSE);
+	mono_register_opcode_emulation (CEE_REM_UN, "__emul_irem_un", "int32 int32 int32", mono_irem_un, FALSE);
 	mono_register_opcode_emulation (OP_IDIV, "__emul_op_idiv", "int32 int32 int32", mono_idiv, TRUE);
 	mono_register_opcode_emulation (OP_IDIV_UN, "__emul_op_idiv_un", "int32 int32 int32", mono_idiv_un, TRUE);
 	mono_register_opcode_emulation (OP_IREM, "__emul_op_irem", "int32 int32 int32", mono_irem, TRUE);
@@ -11951,13 +12057,13 @@ mini_init (const char *filename)
 #endif
 
 #ifdef MONO_ARCH_EMULATE_MUL_DIV
-	mono_register_opcode_emulation (CEE_MUL_OVF, "__emul_imul_ovf", "int32 int32 int32", mono_imul_ovf, TRUE);
-	mono_register_opcode_emulation (CEE_MUL_OVF_UN, "__emul_imul_ovf_un", "int32 int32 int32", mono_imul_ovf_un, TRUE);
+	mono_register_opcode_emulation (CEE_MUL_OVF, "__emul_imul_ovf", "int32 int32 int32", mono_imul_ovf, FALSE);
+	mono_register_opcode_emulation (CEE_MUL_OVF_UN, "__emul_imul_ovf_un", "int32 int32 int32", mono_imul_ovf_un, FALSE);
 	mono_register_opcode_emulation (CEE_MUL, "__emul_imul", "int32 int32 int32", mono_imul, TRUE);
 	mono_register_opcode_emulation (OP_IMUL, "__emul_op_imul", "int32 int32 int32", mono_imul, TRUE);
 	mono_register_opcode_emulation (OP_IMUL_OVF, "__emul_op_imul_ovf", "int32 int32 int32", mono_imul_ovf, TRUE);
 	mono_register_opcode_emulation (OP_IMUL_OVF_UN, "__emul_op_imul_ovf_un", "int32 int32 int32", mono_imul_ovf_un, TRUE);
-	mono_register_opcode_emulation (OP_FDIV, "__emul_fdiv", "double double double", mono_fdiv, TRUE);
+	mono_register_opcode_emulation (OP_FDIV, "__emul_fdiv", "double double double", mono_fdiv, FALSE);
 #endif
 
 	mono_register_opcode_emulation (OP_FCONV_TO_U8, "__emul_fconv_to_u8", "ulong double", mono_fconv_u8, FALSE);
@@ -12054,8 +12160,11 @@ print_jit_stats (void)
 		g_print ("\nCreated object count:   %ld\n", mono_stats.new_object_count);
 		g_print ("Initialized classes:    %ld\n", mono_stats.initialized_class_count);
 		g_print ("Used classes:           %ld\n", mono_stats.used_class_count);
+		g_print ("Generic vtables:        %ld\n", mono_stats.generic_vtable_count);
+		g_print ("Methods:                %ld\n", mono_stats.method_count);
 		g_print ("Static data size:       %ld\n", mono_stats.class_static_data_size);
 		g_print ("VTable data size:       %ld\n", mono_stats.class_vtable_size);
+		g_print ("Mscorlib mempool size:  %d\n", mono_mempool_get_allocated (mono_defaults.corlib->mempool));
 
 		g_print ("\nGeneric instances:      %ld\n", mono_stats.generic_instance_count);
 		g_print ("Initialized classes:    %ld\n", mono_stats.generic_class_count);
@@ -12106,9 +12215,7 @@ mini_cleanup (MonoDomain *domain)
 
 	mono_icall_cleanup ();
 
-#ifdef PLATFORM_WIN32
-	win32_seh_cleanup();
-#endif
+	mono_runtime_cleanup_handlers ();
 
 	mono_domain_free (domain, TRUE);
 

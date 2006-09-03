@@ -419,8 +419,8 @@ rcheck: mono $(regtests) $(regtests2)
 	$(RUNTIME2) --regression $(regtests2)
 
 aotcheck: mono $(regtests)
-	for i in $(regtests); do $(RUNTIME) --aot $$i || exit 1; done
-#	for i in $(regtests2); do $(RUNTIME2) --aot $$i || exit 1; done
+	for i in $(regtests); do $(RUNTIME) --aot $$i; done
+#	for i in $(regtests2); do $(RUNTIME2) --aot $$i; done
 	$(RUNTIME) --regression $(regtests)
 #	$(RUNTIME2) --verbose --regression $(regtests2)
 	rm -f *.exe.so

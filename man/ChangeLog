@@ -1,3 +1,29 @@
+2006-08-31  Geoff Norton  <gnorton@customerdna.com>
+
+	* macpack.1: Fix a typo for the -appname option.
+
+2006-08-23  Wade Berrier <wberrier@novell.com>
+
+	* gacutil.1 : Change automake usage example because we always use $(prefix)/lib 
+	for the gac, even on 64 bit systems.
+
+2006-08-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* mono.1 : Document MONO_EVENTLOG_TYPE, replaces MONO_EVENTLOG_PATH.
+
+2006-08-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* sn.1: Document the (new - 1.1.17) support for PKCS#12/PFX password
+	protected files to sign assemblies.
+
+2006-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* mono.1 : MONO_LOCAL_EVENTLOG_PATH -> MONO_EVENTLOG_PATH.
+
+2006-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* mono.1 : description on MONO_LOCAL_EVENTLOG_PATH.
+
 2006-03-15  Miguel de Icaza  <miguel@novell.com>
 
 	* mono.1: Document MONO_XEXCEPTIONS and MONO_XSYNC, create new

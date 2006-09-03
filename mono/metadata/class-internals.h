@@ -83,7 +83,8 @@ struct _MonoMethod {
 	unsigned int save_lmf:1;
 	unsigned int dynamic:1; /* created & destroyed during runtime */
 	unsigned int is_inflated:1; /* whether we're a MonoMethodInflated */
-	signed int slot : 21;
+	unsigned int skip_visibility:1; /* whenever to skip JIT visibility checks */
+	signed int slot : 20;
 };
 
 struct _MonoMethodNormal {
@@ -274,6 +275,8 @@ struct _MonoClass {
 	 * during object creation rather than having to traverse supertypes
 	 */
 	guint is_com_object : 1; 
+	/* Used to detect cycles in mono_marshal_load_type_info */
+	guint marshal_info_init_pending    : 1;
 
 	guint8     exception_type;	/* MONO_EXCEPTION_* */
 	void*      exception_data;	/* Additional information about the exception */
@@ -542,7 +545,9 @@ typedef struct {
 typedef struct {
 	gulong new_object_count;
 	gulong initialized_class_count;
+	gulong generic_vtable_count;
 	gulong used_class_count;
+	gulong method_count;
 	gulong class_vtable_size;
 	gulong class_static_data_size;
 	gulong generic_instance_count;
@@ -699,7 +704,7 @@ typedef struct {
 	MonoClass *runtimesecurityframe_class;
 	MonoClass *executioncontext_class;
 	MonoClass *internals_visible_class;
-	MonoClass *generic_array_class;
+	MonoClass *generic_ilist_class;
 	MonoClass *generic_nullable_class;
 	MonoClass *variant_class;
 	MonoClass *com_object_class;

@@ -67,6 +67,12 @@
 static MonoReflectionAssembly* ves_icall_System_Reflection_Assembly_GetCallingAssembly (void);
 
 
+static inline MonoBoolean
+is_generic_parameter (MonoType *type)
+{
+	return !type->byref && (type->type == MONO_TYPE_VAR || type->type == MONO_TYPE_MVAR);
+}
+
 /*
  * We expect a pointer to a char, not a string
  */
@@ -662,8 +668,7 @@ ves_icall_System_Array_FastCopy (MonoArray *source, int source_idx, MonoArray* d
 }
 
 static void
-ves_icall_System_Array_InternalArray_GetGenericValueImpl (MonoObject *this, guint32 pos,
-							  gpointer value)
+ves_icall_System_Array_GetGenericValueImpl (MonoObject *this, guint32 pos, gpointer value)
 {
 	MonoClass *ac;
 	MonoArray *ao;
@@ -1190,6 +1195,7 @@ handle_enum:
 	case MONO_TYPE_OBJECT:
 	case MONO_TYPE_VAR:
 	case MONO_TYPE_MVAR:
+	case MONO_TYPE_TYPEDBYREF:
 		return TYPECODE_OBJECT;
 	case MONO_TYPE_CLASS:
 		{
@@ -1676,12 +1682,6 @@ ves_icall_Type_GetInterfaces (MonoReflectionType* type)
 
 	slots = mono_bitset_new (class->max_interface_id + 1, 0);
 
-	if (class->rank) {
-		/* GetInterfaces() returns an empty array in MS.NET (this may be a bug) */
-		mono_bitset_free (slots);
-		return mono_array_new (domain, mono_defaults.monotype_class, 0);
-	}
-
 	for (parent = class; parent; parent = parent->parent) {
 		GPtrArray *tmp_ifaces = mono_class_get_implemented_interfaces (parent);
 		if (tmp_ifaces) {
@@ -1893,7 +1893,16 @@ ves_icall_MonoType_get_Name (MonoReflectionType *type)
 
 	MONO_ARCH_SAVE_REGS;
 
-	return mono_string_new (domain, class->name);
+	if (type->type->byref) {
+		char *n = g_strdup_printf ("%s&", class->name);
+		MonoString *res = mono_string_new (domain, n);
+
+		g_free (n);
+
+		return res;
+	} else {
+		return mono_string_new (domain, class->name);
+	}
 }
 
 static MonoString*
@@ -1957,6 +1966,9 @@ ves_icall_Type_get_IsGenericTypeDefinition (MonoReflectionType *type)
 	MonoClass *klass;
 	MONO_ARCH_SAVE_REGS;
 
+	if (type->type->byref)
+		return FALSE;
+
 	klass = mono_class_from_mono_type (type->type);
 
 	return klass->generic_container != NULL;
@@ -1967,6 +1979,9 @@ ves_icall_Type_GetGenericTypeDefinition_impl (MonoReflectionType *type)
 {
 	MonoClass *klass;
 	MONO_ARCH_SAVE_REGS;
+
+	if (type->type->byref)
+		return NULL;
 
 	klass = mono_class_from_mono_type (type->type);
 	if (klass->generic_container) {
@@ -2012,6 +2027,9 @@ ves_icall_Type_get_IsGenericInstance (MonoReflectionType *type)
 	MonoClass *klass;
 	MONO_ARCH_SAVE_REGS;
 
+	if (type->type->byref)
+		return FALSE;
+
 	klass = mono_class_from_mono_type (type->type);
 	return klass->generic_class != NULL;
 }
@@ -2022,6 +2040,9 @@ ves_icall_Type_get_IsGenericType (MonoReflectionType *type)
 	MonoClass *klass;
 	MONO_ARCH_SAVE_REGS;
 
+	if (type->type->byref)
+		return FALSE;
+
 	klass = mono_class_from_mono_type (type->type);
 	return klass->generic_class != NULL || klass->generic_container != NULL;
 }
@@ -2031,7 +2052,7 @@ ves_icall_Type_GetGenericParameterPosition (MonoReflectionType *type)
 {
 	MONO_ARCH_SAVE_REGS;
 
-	if (type->type->type == MONO_TYPE_VAR || type->type->type == MONO_TYPE_MVAR)
+	if (is_generic_parameter (type->type))
 		return type->type->data.generic_param->num;
 	return -1;
 }
@@ -2040,6 +2061,7 @@ static GenericParameterAttributes
 ves_icall_Type_GetGenericParameterAttributes (MonoReflectionType *type)
 {
 	MONO_ARCH_SAVE_REGS;
+	g_assert (is_generic_parameter (type->type));
 	return type->type->data.generic_param->flags;
 }
 
@@ -2071,20 +2093,14 @@ static MonoBoolean
 ves_icall_MonoType_get_IsGenericParameter (MonoReflectionType *type)
 {
 	MONO_ARCH_SAVE_REGS;
-
-	if (type->type->type == MONO_TYPE_VAR || type->type->type == MONO_TYPE_MVAR)
-		return !type->type->byref;
-	return FALSE;
+	return is_generic_parameter (type->type);
 }
 
 static MonoBoolean
 ves_icall_TypeBuilder_get_IsGenericParameter (MonoReflectionTypeBuilder *tb)
 {
 	MONO_ARCH_SAVE_REGS;
-
-	if (tb->type.type->type == MONO_TYPE_VAR || tb->type.type->type == MONO_TYPE_MVAR)
-		return !tb->type.type->byref;
-	return FALSE;
+	return is_generic_parameter (tb->type.type);
 }
 
 static void
@@ -6486,6 +6502,7 @@ static const IcallEntry array_icalls [] = {
 	{"Clone",            mono_array_clone},
 	{"CreateInstanceImpl",   ves_icall_System_Array_CreateInstanceImpl},
 	{"FastCopy",         ves_icall_System_Array_FastCopy},
+	{"GetGenericValueImpl", ves_icall_System_Array_GetGenericValueImpl},
 	{"GetLength",        ves_icall_System_Array_GetLength},
 	{"GetLowerBound",    ves_icall_System_Array_GetLowerBound},
 	{"GetRank",          ves_icall_System_Array_GetRank},
@@ -6639,6 +6656,10 @@ static const IcallEntry compareinfo_icalls [] = {
 	{"internal_compare(string,int,int,string,int,int,System.Globalization.CompareOptions)", ves_icall_System_Globalization_CompareInfo_internal_compare},
 	{"internal_index(string,int,int,char,System.Globalization.CompareOptions,bool)", ves_icall_System_Globalization_CompareInfo_internal_index_char},
 	{"internal_index(string,int,int,string,System.Globalization.CompareOptions,bool)", ves_icall_System_Globalization_CompareInfo_internal_index}
+};
+
+static const IcallEntry normalization_icalls [] = {
+	{"load_normalization_resource(intptr&,intptr&,intptr&,intptr&,intptr&,intptr&)", load_normalization_resource}
 };
 
 static const IcallEntry gc_icalls [] = {
@@ -7024,8 +7045,6 @@ static const IcallEntry marshal_icalls [] = {
 	{"PrelinkAll", ves_icall_System_Runtime_InteropServices_Marshal_PrelinkAll},
 	{"PtrToStringAnsi(intptr)", ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi},
 	{"PtrToStringAnsi(intptr,int)", ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi_len},
-	{"PtrToStringAuto(intptr)", ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi},
-	{"PtrToStringAuto(intptr,int)", ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi_len},
 	{"PtrToStringBSTR", ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringBSTR},
 	{"PtrToStringUni(intptr)", ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni},
 	{"PtrToStringUni(intptr,int)", ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni_len},
@@ -7042,7 +7061,6 @@ static const IcallEntry marshal_icalls [] = {
 	{"SizeOf", ves_icall_System_Runtime_InteropServices_Marshal_SizeOf},
 	{"StringToBSTR", ves_icall_System_Runtime_InteropServices_Marshal_StringToBSTR},
 	{"StringToHGlobalAnsi", ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi},
-	{"StringToHGlobalAuto", ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi},
 	{"StringToHGlobalUni", ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni},
 	{"StructureToPtr", ves_icall_System_Runtime_InteropServices_Marshal_StructureToPtr},
 	{"UnsafeAddrOfPinnedArrayElement", ves_icall_System_Runtime_InteropServices_Marshal_UnsafeAddrOfPinnedArrayElement},
@@ -7321,10 +7339,6 @@ static const IcallEntry securitymanager_icalls [] = {
 	{"set_SecurityEnabled", ves_icall_System_Security_SecurityManager_set_SecurityEnabled}
 };
 
-static const IcallEntry generic_array_icalls [] = {
-	{"GetGenericValueImpl", ves_icall_System_Array_InternalArray_GetGenericValueImpl}
-};
-
 static const IcallEntry comobject_icalls [] = {
 	{"CacheInterface", ves_icall_System_ComObject_CacheInterface},
 	{"CreateRCW", ves_icall_System_ComObject_CreateRCW},
@@ -7342,13 +7356,13 @@ static const IcallEntry array_icalls [] = {
 
 /* keep the entries all sorted */
 static const IcallMap icall_entries [] = {
+	{"Mono.Globalization.Unicode.Normalization", normalization_icalls, G_N_ELEMENTS (normalization_icalls)},
 	{"Mono.Runtime", runtime_icalls, G_N_ELEMENTS (runtime_icalls)},
 	{"Mono.Security.Cryptography.KeyPairPersistence", keypair_icalls, G_N_ELEMENTS (keypair_icalls)},
 	{"System.Activator", activator_icalls, G_N_ELEMENTS (activator_icalls)},
 	{"System.AppDomain", appdomain_icalls, G_N_ELEMENTS (appdomain_icalls)},
 	{"System.ArgIterator", argiterator_icalls, G_N_ELEMENTS (argiterator_icalls)},
 	{"System.Array", array_icalls, G_N_ELEMENTS (array_icalls)},
-	{"System.Array/InternalArray`1", generic_array_icalls, G_N_ELEMENTS (generic_array_icalls)},
 	{"System.Buffer", buffer_icalls, G_N_ELEMENTS (buffer_icalls)},
 	{"System.Char", char_icalls, G_N_ELEMENTS (char_icalls)},
 	{"System.Configuration.DefaultConfig", defaultconf_icalls, G_N_ELEMENTS (defaultconf_icalls)},
@@ -7553,9 +7567,6 @@ mono_lookup_internal_call (MonoMethod *method)
 	const IcallMap *imap;
 
 	g_assert (method != NULL);
-
-	if (method->is_inflated)
-		method = ((MonoMethodInflated *) method)->declaring;
 
 	if (method->klass->nested_in) {
 		int pos = concat_class_name (mname, sizeof (mname)-2, method->klass->nested_in);

@@ -1,3 +1,211 @@
+2006-09-01  Martin Baulig  <martin@ximian.com>
+
+	Fix handling of the generic array interfaces.
+
+	* class-internals.h
+	(MonoDefaults): Removed `generic_array_class' and added
+	`generic_ilist' class.
+
+	* class.c
+	(mono_bounded_array_class_get): Add the new generic array interfaces.
+	(setup_generic_array_ifaces): New static method; create vtable
+	entries for each method in the generic array interfaces.
+
+	* metadata.c
+	(select_container): Allow "parent-less" generic methods.
+
+	* marshal.c
+	(mono_marshal_get_generic_array_helper): New public method.
+
+	* icall.c
+	(ves_icall_System_Array_InternalArray_GetGenericValueImpl):
+	Renamed into ves_icall_System_Array_GetGenericValueImpl() and
+	moved the interncall into System.Array.
+
+2006-09-01  Raja R Harinath  <rharinath@novell.com>
+
+	A few more cases of avoiding work on types with ->byref set.
+	Has the real fix for #79238
+	* icall.c (is_generic_parameter): New helper.
+	(ves_icall_Type_GetGenericParameterPosition): Use it.
+	(ves_icall_Type_GetGenericParameterAttributes): Likewise.
+	(ves_icall_MonoType_get_IsGenericParameter): Likewise.
+	(ves_icall_TypeBuilder_get_IsGenericParameter): Likewise.
+	(ves_icall_Type_GetGenericTypeDefinition_impl): Return NULL on
+	reference types.
+	(ves_icall_Type_get_IsGenericTypeDefinition): Return FALSE on
+	reference types.
+	(ves_icall_Type_get_IsGenericInstance): Likewise.
+	(ves_icall_Type_get_IsGenericType): Likewise.
+
+2006-09-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_vtable_general): Share identical vtables with the parent
+	class if possible.
+
+	* mempool.h (mono_mempool_get_allocated): New helper function.
+
+	* object.c (mono_class_create_runtime_vtable): Fix problem introduced by last
+	change.
+
+	* mempool.c: Fix warnings and the calculation of stats.
+
+	* object.c (mono_class_create_runtime_vtable): Fix the AOT optimization.
+
+	* class.c (mono_class_setup_vtable): Update generic_vtable_count stat.
+
+	* loader.c (mono_get_method_from_token): Update method_count stat.
+
+	* class-internals.h (MonoStats): Add some stats.
+
+2006-08-31 Robert Jordan  <robertj@gmx.net>
+
+	* icall.c: Replace the PtrToStringAuto, StringToHGlobalAuto icalls
+	with managed variants.
+	All code is contributed under the MIT/X11 license.
+	
+2006-08-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (reflection_methodbuilder_to_mono_method): Set 
+	method->skip_visibility based up the skipVisibility parameter of DynamicMethods.
+
+	* class-internals.h (MonoMethod): Add a 'skip_visibility' field.
+
+	* marshal.c (mono_marshal_load_type_info): Revert the last change as it can't cope
+	with cycles in classes.
+
+	* icall.c (ves_icall_MonoType_get_Name): Add a '&' for byref types. Fixes #79110.
+
+	* marshal.c (emit_marshal_array): Avoid crash when a parameter with type array is 
+	missing a [MarshalAs] directive. Fixes #79203.
+
+	* marshal.c (mono_marshal_load_type_info): Fix a race in initializing 
+	klass->marshal_info. Fixes #79217.
+
+2006-08-30  Martin Baulig  <martin@ximian.com>
+
+	Committing a patch from Joachim Ante <joe@otee.dk>:
+	Add support for binary data symbol stores.
+
+	* debug-mono-symfile.c
+	(mono_debug_open_mono_symbol_file): Renamed into
+	mono_debug_open_mono_symbols() and added `raw_contents' and `size'
+	arguments.
+
+	* mono-debug.c
+	(mono_debug_open_image): Added `raw_contents' and `size' args.
+	(mono_debug_init_2_memory): New public function.
+
+Fri Aug 25 18:25:23 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: handle TypedReference in GetTypeCode (bug #79150).
+
+2006-08-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c: implement support for ShadowCopyFiles.
+
+2006-08-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* string-icalls.c: Add shortcut in ves_icall_System_String_ctor_charp
+	when value is NULL (and should remove CID #51).
+
+2006-08-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* image.c: moved 2 functions to ../utils.
+
+Tue Aug 22 15:53:29 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c: cope with the target object of a GC handle being NULL
+	(bug #78877).
+
+Tue Aug 22 11:10:33 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: recursively check parent's explicit implementations
+	of interface methods (fixes bug #79125).
+
+2006-08-19  Miguel de Icaza  <miguel@novell.com>
+
+	* filewatcher.c: Avoid warnings when building, do not redefine
+	constants that are defined.
+
+	Remove warnings.
+
+2006-08-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* image.c: don't fail when the link points to an absolute path.
+
+2006-08-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* decimal.c: Remove dead code (unrequired check) in mono_decimalIncr.
+	Fix CID #3.
+
+2006-08-17  Miguel de Icaza  <miguel@novell.com>
+
+	* image.c (full_path): A new method used to obtain the actual path
+	of an assembly even in the presence of symbolic links.  
+
+	This is necessary for the case where we are running a binary that
+	has been GACed, but we are using the "published" path name
+	($prefix/mono/1.0/blah.exe) which happens to point to the real
+	file in the GAC.
+
+	This was the source of the failure for the `xsp' command with the
+	recent AppDomain changes, as far as the runtime was concerned,
+	there were two different assemblies: $prefix/mono/1.0/blah.exe and
+	$prefix/mono/gac/blah/version/blah.exe.
+
+	(do_mono_image_open): use full path
+
+2006-08-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_class_create_runtime_vtable): Add a FIXME.
+
+2006-08-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* marshal.c: Fix mono_marshal_check_domain_image if an invalid 
+	domain_id is supplied. Fix CID #241 and corlib's unit tests.
+
+2006-08-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_layout_fields): Set min_align to a bigger value for
+	small structures. Fixes #78990.
+
+2006-08-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_xappdomain_invoke): Use the new helper functions here.
+
+	* appdomain.c (ves_icall_System_AppDomain_createDomain): Fix a warning.
+
+2006-08-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c:
+	* marshal.c: don't load all the assemblies from a domain into newly
+	created ones. The new domains might have different rules and load
+	assemblies from different locations. Fixes bug #76757.
+
+	Patch by Lluis. Conflicts resolved by Brian Crowell.
+
+2006-08-16  Alp Toker  <alp@atoker.com>
+
+	* socket-io.c: First half of the fix for #79084.
+	Set sa_size to the length of the content, not that of the struct.
+	Don't add NULL suffix to the content, this should be done in
+	managed code if needed.
+
+2006-08-14  Raja R Harinath  <rharinath@novell.com>
+
+	Fix part of #79012
+	* metadata.c (do_mono_metadata_parse_generic_class): Don't SEGV if
+	mono_metadata_parse_type returns NULL.
+
+2006-08-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* normalization-tables.h : new file for string normalization data.
+	* locales.c, locales.h, icall.c :
+	  added load_normalization_resource() for string normalization,
+	  and icall as well.
+	* Makefile.am : added normalization-tables.h to the sources.
+
 2006-08-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c: Add more helper functions to reduce code duplication and use them

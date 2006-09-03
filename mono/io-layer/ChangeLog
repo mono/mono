@@ -1,3 +1,11 @@
+2006-09-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* critical-sections.h critical-sections.c: Make Enter/LeaveCriticalSection a macro
+	since they are perf critical.
+
+	* atomic.h: Applied patch from Jakub Boqusz <qboosh@pld-linux.org>.
+	Add atomic ops implementation for alpha.
+
 2006-08-11  Dick Porter  <dick@ximian.com>
 
 	* processes.c (_wapi_process_reap): Avoid a deadlock by setting
@@ -1036,7 +1044,7 @@ Mon Dec 20 11:58:33 CET 2004 Paolo Molaro <lupus@ximian.com>
 	become signalled, only own and return the lowest.  All the
 	documentation suggests that the old way was correct, but
 	experimentation shows it actually works like this.  Patch by
-	Sébastien Robitaille
+	SÃ©bastien Robitaille
 	(sebastien.robitaille@croesus.com), fixes bug 61511.
 
 2004-07-09  Ben Maurer  <bmaurer@ximian.com>
@@ -1594,7 +1602,7 @@ Mon Dec 22 17:18:45 CET 2003 Paolo Molaro <lupus@ximian.com>
 2003-10-29  Dick Porter  <dick@ximian.com>
 
 	* io.c (MoveFile): If the move crosses filesystems, try and fall
-	back to copy and delete.  Patch from Jörg Rosenkranz
+	back to copy and delete.  Patch from JÃ¶rg Rosenkranz
 	(JoergR@voelcker.com), fixes bug 50298.
 
 2003-10-28  Dick Porter  <dick@ximian.com>

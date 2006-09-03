@@ -25,6 +25,7 @@
 #include "loader.h"
 #include <mono/io-layer/io-layer.h>
 #include <mono/utils/mono-logger.h>
+#include <mono/utils/mono-path.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -83,50 +84,6 @@ mono_image_rva_map (MonoImage *image, guint32 addr)
 		tables++;
 	}
 	return NULL;
-}
-
-static gchar *
-canonicalize_path (const char *path)
-{
-	gchar *abspath, *pos, *lastpos, *dest;
-	int backc;
-
-	if (g_path_is_absolute (path)) {
-		abspath = g_strdup (path);
-	} else {
-		gchar *tmpdir = g_get_current_dir ();
-		abspath = g_build_filename (tmpdir, path, NULL);
-		g_free (tmpdir);
-	}
-
-	abspath = g_strreverse (abspath);
-
-	backc = 0;
-	dest = lastpos = abspath;
-	pos = strchr (lastpos, G_DIR_SEPARATOR);
-
-	while (pos != NULL) {
-		int len = pos - lastpos;
-		if (len == 1 && lastpos [0] == '.') {
-			// nop
-		} else if (len == 2 && lastpos [0] == '.' && lastpos [1] == '.') {
-			backc++;
-		} else if (len > 0) {
-			if (backc > 0) {
-				backc--;
-			} else {
-				if (dest != lastpos) 
-					/* The two strings can overlap */
-					memmove (dest, lastpos, len + 1);
-				dest += len + 1;
-			}
-		}
-		lastpos = pos + 1;
-		pos = strchr (lastpos, G_DIR_SEPARATOR);
-	}
-	
-	if (dest != lastpos) strcpy (dest, lastpos);
-	return g_strreverse (abspath);
 }
 
 /**
@@ -854,7 +811,7 @@ do_mono_image_open (const char *fname, MonoImageOpenStatus *status,
 	image->raw_data = mono_raw_buffer_load (fileno (filed), FALSE, 0, stat_buf.st_size);
 	iinfo = g_new0 (MonoCLIImageInfo, 1);
 	image->image_info = iinfo;
-	image->name = canonicalize_path (fname);
+	image->name = mono_path_resolve_symlinks (fname);
 	image->ref_only = refonly;
 	image->ref_count = 1;
 
@@ -976,7 +933,7 @@ mono_image_open_full (const char *fname, MonoImageOpenStatus *status, gboolean r
 	
 	g_return_val_if_fail (fname != NULL, NULL);
 	
-	absfname = canonicalize_path (fname);
+	absfname = mono_path_canonicalize (fname);
 
 	/*
 	 * The easiest solution would be to do all the loading inside the mutex,

@@ -1,20 +1,27 @@
-<<<<<<< .working
-2006-05-03  Zoltan Varga  <vargaz@gmail.com>
-=======
-2006-08-10  Zoltan Varga  <vargaz@gmail.com>
->>>>>>> .merge-right.r63679
 
-<<<<<<< .working
+2006-08-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-codeman.c: Align code to a 16 byte boundary on amd64 too.
+
+2006-08-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Makefile.am:
+	* mono-stdlib.[ch]: mkstemp implementation.
+
+2006-08-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Makefile.am:
+	* mono-path.[ch]: new files with functions to handle/resolve paths.
+
+2006-08-10  Zoltan Varga  <vargaz@gmail.com>
 	* monobitset.c: Fix mono_bitset_sub again: Use src->size instead of dest->size.
 
 	* monobitset.h monobitset.c: Add new macros for performing copy/union operations
 	with little overhead.
 
-=======
 	* mono-compiler.h: Fix TLS definitions so libmono can be loaded dynamically as a
 	module. Fixes #78767.
 
->>>>>>> .merge-right.r63679
 Wed May 17 19:00:15 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mono-hash.h, mono-hash.c: changed the code so we're able to
