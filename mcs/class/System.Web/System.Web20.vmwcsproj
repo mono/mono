@@ -924,6 +924,7 @@
 		<Compile Include="System.Web.UI\TemplateContainerAttribute.cs"/>
 		<Compile Include="System.Web.UI\TemplateContentType.cs"/>
 		<Compile Include="System.Web.UI\TemplateInstance.cs"/>
+		<Compile Include="System.Web.UI\TemplateInstanceAttribute.cs"/>
 		<Compile Include="System.Web.UI\ThemeableAttribute.cs"/>
 		<Compile Include="System.Web.UI\ToolboxDataAttribute.cs"/>
 		<Compile Include="System.Web.UI\Triplet.cs"/>

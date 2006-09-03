@@ -614,6 +614,7 @@ System.Web.UI/TemplateContainerAttribute.cs
 System.Web.UI/TemplateControl.cs
 System.Web.UI/TemplateControlParser.cs
 System.Web.UI/TemplateInstance.cs
+System.Web.UI/TemplateInstanceAttribute.cs
 System.Web.UI/TemplateParser.cs
 System.Web.UI/ThemeableAttribute.cs
 System.Web.UI/ThemeProvider.cs

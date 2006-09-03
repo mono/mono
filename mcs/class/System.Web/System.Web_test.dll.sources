@@ -117,6 +117,7 @@ System.Web.UI/MinimizableAttributeTypeConverterTest.cs
 System.Web.UI/PageTest.cs
 System.Web.UI/PropertyConverterTest.cs
 System.Web.UI/StateBagTest.cs
+System.Web.UI/TemplateInstanceAttributeTest.cs
 System.Web.UI/TestUrlPropertyAttribute.cs
 System.Web.UI/ToolboxDataAttributeTest.cs
 System.Web.UI/XhtmlTextWriterTest.cs
