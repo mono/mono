@@ -1,5 +1,8 @@
 2006-09-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* assembly.c (mono_assembly_load_from_full): Avoid loading net 2.0 assemblies into
+	a net 1.0 runtime.
+
 	* marshal.c (mono_string_builder_to_utf8): Fix marshalling of StringBuilders
 	created using the default ctor. Fixes #79152.
 	(mono_string_builder_to_utf16): Ditto.
