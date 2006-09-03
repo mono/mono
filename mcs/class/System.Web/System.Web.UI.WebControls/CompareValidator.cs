@@ -50,7 +50,7 @@ namespace System.Web.UI.WebControls {
 		{
 			if (RenderUplevel) {
 				if (ControlToCompare != "")
-					w.AddAttribute ("controltocompare", ControlToCompare);
+					w.AddAttribute ("controltocompare", GetControlRenderID(ControlToCompare));
 				if (ValueToCompare != "")
 					w.AddAttribute ("valuetocompare", ValueToCompare);
 				w.AddAttribute ("operator", Operator.ToString());

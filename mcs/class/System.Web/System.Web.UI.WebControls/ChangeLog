@@ -1,5 +1,9 @@
 2006-09-03 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* CompareValidator.cs: fixed controltocompare attribute.	 
+
+2006-09-03 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Login.cs: fixed:
 	when login attempt was not successful FailureText is shown.	 
 
