@@ -440,6 +440,11 @@ namespace System.Web.UI.WebControls {
 		{
 		}
 
+		ITextControl FailureTextLabel {
+			get {
+				return FindControl ("FailureText") as ITextControl;
+			}
+		}
 
 		[DefaultValue (1)]
 		public virtual int BorderPadding {
@@ -1071,8 +1076,10 @@ namespace System.Web.UI.WebControls {
 
 			editable = container.UserNameTextBox as IEditableTextControl;
 
-			if (editable != null)
+			if (editable != null) {
+				editable.Text = UserName;
 				editable.TextChanged += new EventHandler (UserName_TextChanged);
+			}
 
 			editable = container.PasswordTextBox as IEditableTextControl;
 
@@ -1128,7 +1135,11 @@ namespace System.Web.UI.WebControls {
 			// check for submit button
 			CommandEventArgs cea = (e as CommandEventArgs);
 			if ((cea != null) && (cea.CommandName == LoginButtonCommandName)) {
-				AuthenticateUser ();
+				if (!AuthenticateUser ()) {
+					ITextControl failureText = FailureTextLabel;
+					if (failureText != null)
+						failureText.Text = FailureText;
+				}
 				return true;
 			}
 			return false;
@@ -1304,6 +1315,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+		// TODO: its called from default template only, not usefully, OnBubbleEvent 
+		// do handle command, need be removed
+		[MonoTODO()]
 		private void LoginClick (object sender, CommandEventArgs e)
 		{
 			RaiseBubbleEvent (sender, (EventArgs)e);
