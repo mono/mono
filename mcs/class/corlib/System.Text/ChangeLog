@@ -1,3 +1,7 @@
+2006-09-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* StringBuilder.cs (.ctor): Add a comment.
+
 2006-08-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Encoding.cs :

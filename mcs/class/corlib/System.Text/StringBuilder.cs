@@ -106,6 +106,11 @@ namespace System.Text {
 
 		public StringBuilder (string value)
 		{
+			/*
+			 * This is an optimization to avoid allocating the internal string
+			 * until the first Append () call.
+			 * The runtime pinvoke marshalling code needs to be aware of this.
+			 */
 			if (null == value)
 				value = "";
 			
