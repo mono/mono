@@ -1,3 +1,9 @@
+2006-09-03  Robert Jordan  <robertj@gmx.net>
+
+	* SessionSQLServerHandler.cs: persist and handle the "timeout" and
+	"expire" properties of the session. Fixes bug #78281.
+	Patch by Boris Dores <babal@via.ecp.fr>.
+
 2006-08-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* SessionInProcHandler.jvm.cs:

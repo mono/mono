@@ -50,9 +50,9 @@ namespace System.Web.SessionState {
                 
 		const string defaultParamPrefix = ":";
 		string paramPrefix;
-		string selectCommand = "SELECT * FROM ASPStateTempSessions WHERE SessionID = :SessionID";
+		string selectCommand = "SELECT * FROM ASPStateTempSessions WHERE SessionID = :SessionID AND Expires > :Expires";
 		string insertCommand = "INSERT INTO ASPStateTempSessions VALUES (:SessionID, :Created, :Expires, :Timeout, :StaticObjectsData, :SessionData)";
-		string updateCommand = "UPDATE ASPStateTempSessions SET SessionData = :SessionData WHERE SessionId = :SessionID";
+		string updateCommand = "UPDATE ASPStateTempSessions SET expires = :Expires, timeout = :Timeout, SessionData = :SessionData WHERE SessionId = :SessionID";
 		string deleteCommand = "DELETE FROM ASPStateTempSessions WHERE SessionId = :SessionID";
 
 		public void Dispose ()
@@ -118,7 +118,7 @@ namespace System.Web.SessionState {
 			string id = session.SessionID;
 			if (!session._abandoned) {
 				SessionDictionary dict = session.SessionDictionary;
-				UpdateSessionWithRetry (id, dict);
+				UpdateSessionWithRetry (id, session.Timeout, dict);
 			} else {
 				DeleteSessionWithRetry (id);
 			}
@@ -195,6 +195,7 @@ namespace System.Web.SessionState {
 			command = cnc.CreateCommand();
 			command.CommandText = selectCommand;
 			command.Parameters.Add (CreateParam (command, DbType.String, "SessionID", id));
+			command.Parameters.Add (CreateParam (command, DbType.DateTime, "Expires", DateTime.Now ));
 			return command.ExecuteReader ();
 		}
 
@@ -223,11 +224,14 @@ namespace System.Web.SessionState {
 
 				SessionDictionary dict; 
 				HttpStaticObjectsCollection sobjs;
+				int timeout;
 				
 				dict = SessionDictionary.FromByteArray (ReadBytes (reader, reader.FieldCount-1));
 				sobjs = HttpStaticObjectsCollection.FromByteArray (ReadBytes (reader, reader.FieldCount-2));
+				// try to support as many DBs/int types as possible
+				timeout = Convert.ToInt32 (reader.GetValue (reader.FieldCount-3));
 				
-				session = new HttpSessionState (id, dict, sobjs, 100, false, config.CookieLess,
+				session = new HttpSessionState (id, dict, sobjs, timeout, false, config.CookieLess,
 						SessionStateMode.SQLServer, read_only);
 				return session;
 			}
@@ -243,7 +247,7 @@ namespace System.Web.SessionState {
 			param = command.Parameters;
 			param.Add (CreateParam (command, DbType.String, "SessionID", session.SessionID));
 			param.Add (CreateParam (command, DbType.DateTime, "Created", DateTime.Now));
-			param.Add (CreateParam (command, DbType.DateTime, "Expires", Tommorow ()));
+			param.Add (CreateParam (command, DbType.DateTime, "Expires", DateTime.Now.AddMinutes (timeout)));
 			param.Add (CreateParam (command, DbType.Int32, "Timeout", timeout));
 			param.Add (CreateParam (command, DbType.Binary, "StaticObjectsData",
 						   session.StaticObjects.ToByteArray ()));
@@ -270,7 +274,7 @@ namespace System.Web.SessionState {
 			InsertSession (session, timeout);
 		}
 
-		void UpdateSession (string id, SessionDictionary dict)
+		void UpdateSession (string id, int timeout, SessionDictionary dict)
 		{
 			IDbCommand command = cnc.CreateCommand ();
 			IDataParameterCollection param;
@@ -279,16 +283,18 @@ namespace System.Web.SessionState {
 
 			param = command.Parameters;
 			param.Add (CreateParam (command, DbType.String, "SessionID", id));
+			param.Add (CreateParam (command, DbType.DateTime, "Expires", DateTime.Now.AddMinutes (timeout)));
+			param.Add (CreateParam (command, DbType.Int32, "Timeout", timeout));
 			param.Add (CreateParam (command, DbType.Binary, "SessionData",
 								dict.ToByteArray ()));
 
 			command.ExecuteNonQuery ();
 		}
 
-		void UpdateSessionWithRetry (string id, SessionDictionary dict)
+		void UpdateSessionWithRetry (string id, int timeout, SessionDictionary dict)
 		{
 			try {
-				UpdateSession (id, dict);
+				UpdateSession (id, timeout, dict);
 				return;
 			} catch {
 			}
@@ -299,7 +305,7 @@ namespace System.Web.SessionState {
 			}
 
 			cnc.Open ();
-			UpdateSession (id, dict);
+			UpdateSession (id, timeout, dict);
 		}
 
 		void DeleteSession (string id)
@@ -338,11 +344,6 @@ namespace System.Web.SessionState {
 			result.ParameterName = paramPrefix + name;
 			result.Value = value;
 			return result;
-		}
-
-		private DateTime Tommorow ()
-		{
-			return DateTime.Now.AddDays (1);
 		}
 
 		private byte [] ReadBytes (IDataReader reader, int index)
