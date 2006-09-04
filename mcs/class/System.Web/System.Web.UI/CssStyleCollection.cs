@@ -86,8 +86,12 @@ namespace System.Web.UI {
 				return last_string;
 
 			StringBuilder sb = new StringBuilder ();
-			foreach (string key in Keys)
-				sb.AppendFormat ("{0}: {1};", key, style [key]);
+			foreach (string key in Keys) {
+				if (key == "background-image")
+					sb.AppendFormat ("{0}:url({1});", key, HttpUtility.UrlPathEncode ((string) style [key]));
+				else
+					sb.AppendFormat ("{0}:{1};", key, style [key]);
+			}
 
 			last_string = sb.ToString ();
 			return last_string;

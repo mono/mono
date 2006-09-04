@@ -1,3 +1,7 @@
+2006-09-04 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* CssStyleCollection.cs: fixed: background-image style attribute
+
 2006-08-31 Konstantin Triger <kostat@mainsoft.com>
 
 	* StaticPartialCachingControl.cs: added forwarding implementation for
