@@ -730,13 +730,20 @@ namespace Mono.CSharp {
 			aec.CurrentAnonymousMethod = this;
 
 			Report.Debug (64, "RESOLVE ANONYMOUS METHOD #1", this, ec, aec,
-				      Parameters, Block, Block.CaptureContext);
+				      Parent, Parameters, Block, Block.CaptureContext);
 
-			ScopeInfo scope = ec.capture_context.CreateRootScope (this);
+			ScopeInfo root = ec.capture_context.CreateRootScope (this);
+			RegisterScope (root);
+
+#if FIXME
+			ScopeInfo scope = Block.CaptureContext.CreateRootScope (this);
 			RegisterScope (scope);
 
-			Report.Debug (64, "RESOLVE ANONYMOUS METHOD #2", this, ec, aec, Block,
-				      ec.capture_context, scope);
+			if (ContainerAnonymousMethod != null) {
+				ScopeInfo scope = Block.CaptureContext.CreateRootScope (this);
+				ContainerAnonymousMethod.RegisterScope (scope);
+			}
+#endif
 
 			bool unreachable;
 			if (!aec.ResolveTopBlock (ec, Block, Parameters, null, out unreachable))
@@ -764,6 +771,9 @@ namespace Mono.CSharp {
 			Expression init = Scope.GetScopeInitializer (ec);
 			MethodGroupExpr mg = (MethodGroupExpr) Expression.MemberLookup (
 				ec.ContainerType, init.Type, builder.Name, loc);
+
+			Report.Debug (64, "GET METHOD BUILDER", this, Scope, init, init.Type,
+				      builder, mg, loc);
 
 			if (mg == null)
 				throw new InternalErrorException ();
@@ -1029,6 +1039,7 @@ namespace Mono.CSharp {
 			id = count++;
 
 			Report.Debug (64, "NEW SCOPE", this, cc, block);
+			Report.StackTrace ();
 
 			cc.RegisterCaptureContext ();
 		}
@@ -1686,7 +1697,11 @@ namespace Mono.CSharp {
 		{
 			this.Host = host;
 
-			Report.Debug (64, "CREATE ROOT SCOPE", this, toplevel_owner, host);
+			Report.Debug (64, "CREATE ROOT SCOPE", this, toplevel_owner,
+				      toplevel_owner.ScopeInfo, host);
+
+			if (toplevel_owner.ScopeInfo != null)
+				return toplevel_owner.ScopeInfo;
 
 			ScopeInfo si = new ScopeInfo (this, toplevel_owner, host);
 			si.CreateScopeType ();
@@ -1699,10 +1714,10 @@ namespace Mono.CSharp {
 		internal ScopeInfo GetScopeForBlock (Block block)
 		{
 			ScopeInfo si = (ScopeInfo) scopes [block.ID];
+			Report.Debug (64, "GET SCOPE FOR BLOCK", this, block,
+				      block.ScopeInfo, block.Parent, si);
 			if (si != null)
 				return si;
-			Report.Debug (64, "GET SCOPE FOR BLOCK", this, block,
-				      block.ScopeInfo, block.Parent);
 
 			block.ScopeInfo = si = new ScopeInfo (this, block);
 			si.CreateScopeType ();
