@@ -634,6 +634,10 @@ namespace Mono.CSharp {
 			: base (message)
 		{
 		}
+
+		public InternalErrorException (string message, params object[] args)
+			: base (String.Format (message, args))
+		{ }
 	}
 
 	/// <summary>

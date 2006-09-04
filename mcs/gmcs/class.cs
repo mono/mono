@@ -429,8 +429,8 @@ namespace Mono.CSharp {
 		// Holds the operators
 		MemberCoreArrayList operators;
 
-		// Holds the iterators
-		ArrayList iterators;
+		// Holds the compiler generated classes
+		ArrayList compiler_generated;
 
 		//
 		// Pointers to the default constructor and the default static constructor
@@ -772,12 +772,14 @@ namespace Mono.CSharp {
 			operators.Add (op);
 		}
 
-		public void AddIterator (Iterator i)
+		public void AddCompilerGeneratedClass (CompilerGeneratedClass c)
 		{
-			if (iterators == null)
-				iterators = new ArrayList ();
+			Report.Debug (64, "ADD COMPILER GENERATED CLASS", this, c);
 
-			iterators.Add (i);
+			if (compiler_generated == null)
+				compiler_generated = new ArrayList ();
+
+			compiler_generated.Add (c);
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
@@ -822,9 +824,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public ArrayList Iterators {
+		public ArrayList CompilerGenerated {
 			get {
-				return iterators;
+				return compiler_generated;
 			}
 		}
 
@@ -1202,7 +1204,7 @@ namespace Mono.CSharp {
 			// Let's do it as soon as possible, since code below can call DefineType() on classes
 			// that depend on us to be populated before they are.
 			//
-			if (!(this is Iterator))
+			if (!(this is Iterator) && !(this is CompilerGeneratedClass))
 				RootContext.RegisterOrder (this); 
 
 			if (base_type != null) {
@@ -1541,14 +1543,13 @@ namespace Mono.CSharp {
 					part.member_cache = member_cache;
 			}
 #endif
-			if (iterators != null) {
-				foreach (Iterator iterator in iterators) {
-					if (iterator.DefineType () == null)
+			if (compiler_generated != null) {
+				foreach (CompilerGeneratedClass c in compiler_generated) {
+					if (c.DefineType () == null)
 						return false;
 				}
-
-				foreach (Iterator iterator in iterators) {
-					if (!iterator.DefineMembers ())
+				foreach (CompilerGeneratedClass c in compiler_generated) {
+					if (!c.DefineMembers ())
 						return false;
 				}
 			}
@@ -1564,9 +1565,9 @@ namespace Mono.CSharp {
 
 		public override bool Define ()
 		{
-			if (iterators != null) {
-				foreach (Iterator iterator in iterators) {
-					if (!iterator.Define ())
+			if (compiler_generated != null) {
+				foreach (CompilerGeneratedClass c in compiler_generated) {
+					if (!c.Define ())
 						return false;
 				}
 			}
@@ -2239,7 +2240,7 @@ namespace Mono.CSharp {
 
 			if (default_static_constructor != null)
 				default_static_constructor.Emit ();
-			
+
 			if (methods != null){
 				foreach (Method m in methods)
 					m.Emit ();
@@ -2282,9 +2283,10 @@ namespace Mono.CSharp {
 				if (pending.VerifyPendingMethods ())
 					return;
 
-			if (iterators != null)
-				foreach (Iterator iterator in iterators)
-					iterator.EmitType ();
+			if (compiler_generated != null) {
+				foreach (CompilerGeneratedClass c in compiler_generated)
+					c.EmitType ();
+			}
 		}
 		
 		public override void CloseType ()
@@ -2324,9 +2326,9 @@ namespace Mono.CSharp {
 				foreach (Delegate d in Delegates)
 					d.CloseType ();
 
-			if (Iterators != null)
-				foreach (Iterator i in Iterators)
-					i.CloseType ();
+			if (CompilerGenerated != null)
+				foreach (CompilerGeneratedClass c in CompilerGenerated)
+					c.CloseType ();
 			
 			types = null;
 			properties = null;
@@ -2341,7 +2343,7 @@ namespace Mono.CSharp {
 			events = null;
 			indexers = null;
 			operators = null;
-			iterators = null;
+			compiler_generated = null;
 			default_constructor = null;
 			default_static_constructor = null;
 			type_bases = null;
@@ -3709,7 +3711,7 @@ namespace Mono.CSharp {
 
 			Iterator iterator = tc as Iterator;
 			if (iterator != null)
-				ec.CurrentAnonymousMethod = iterator.Host;
+				ec.CurrentAnonymousMethod = iterator;
 
 			return ec;
 		}
@@ -4135,10 +4137,10 @@ namespace Mono.CSharp {
 			// Setup iterator if we are one
 			//
 			if ((ModFlags & Modifiers.METHOD_YIELDS) != 0){
-				Iterator iterator = new Iterator (
-					this, Parent, GenericMethod, ModFlags);
+				Iterator iterator = Iterator.CreateIterator (
+					this, (TypeContainer) Parent, GenericMethod, ModFlags);
 
-				if (!iterator.DefineIterator ())
+				if (iterator == null)
 					return false;
 			}
 
@@ -6285,9 +6287,10 @@ namespace Mono.CSharp {
 				// Setup iterator if we are one
 				//
 				if (yields) {
-					Iterator iterator = new Iterator (this, Parent as TypeContainer, null, ModFlags);
-					
-					if (!iterator.DefineIterator ())
+					Iterator iterator = Iterator.CreateIterator (
+						this, (TypeContainer) Parent, null, ModFlags);
+
+					if (iterator == null)
 						return null;
 				}
 
@@ -7323,10 +7326,10 @@ namespace Mono.CSharp {
 				// Setup iterator if we are one
 				//
 				if ((ModFlags & Modifiers.METHOD_YIELDS) != 0){
-					Iterator iterator = new Iterator (
-						Get, Parent, null, ModFlags);
+					Iterator iterator = Iterator.CreateIterator (
+						Get, (TypeContainer) Parent, null, ModFlags);
 
-					if (!iterator.DefineIterator ())
+					if (iterator == null)
 						return false;
 				}
 			}

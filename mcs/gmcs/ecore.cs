@@ -4011,6 +4011,7 @@ namespace Mono.CSharp {
 	public class TemporaryVariable : Expression, IMemoryLocation
 	{
 		LocalInfo li;
+		Variable var;
 		
 		public TemporaryVariable (Type type, Location loc)
 		{
@@ -4030,62 +4031,45 @@ namespace Mono.CSharp {
 				return null;
 			
 			AnonymousContainer am = ec.CurrentAnonymousMethod;
-			if ((am != null) && am.IsIterator)
-				ec.CaptureVariable (li);
+			if ((am != null) && am.IsIterator) {
+				var = ec.CaptureVariable (li);
+				type = var.Type;
+			}
 			
 			return this;
+		}
+
+		public Variable Variable {
+			get { return var != null ? var : li.Variable; }
 		}
 		
 		public override void Emit (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-			
-			if (li.FieldBuilder != null) {
-				ig.Emit (OpCodes.Ldarg_0);
-				ig.Emit (OpCodes.Ldfld, li.FieldBuilder);
-			} else {
-				ig.Emit (OpCodes.Ldloc, li.LocalBuilder);
-			}
+			Variable.EmitInstance (ec);
+			Variable.Emit (ec);
 		}
 		
 		public void EmitLoadAddress (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-			
-			if (li.FieldBuilder != null) {
-				ig.Emit (OpCodes.Ldarg_0);
-				ig.Emit (OpCodes.Ldflda, li.FieldBuilder);
-			} else {
-				ig.Emit (OpCodes.Ldloca, li.LocalBuilder);
-			}
+			Variable.EmitInstance (ec);
+			Variable.EmitAddressOf (ec);
 		}
 		
 		public void Store (EmitContext ec, Expression right_side)
 		{
-			if (li.FieldBuilder != null)
-				ec.ig.Emit (OpCodes.Ldarg_0);
-			
+			Variable.EmitInstance (ec);
 			right_side.Emit (ec);
-			if (li.FieldBuilder != null) {
-				ec.ig.Emit (OpCodes.Stfld, li.FieldBuilder);
-			} else {
-				ec.ig.Emit (OpCodes.Stloc, li.LocalBuilder);
-			}
+			Variable.EmitAssign (ec);
 		}
 		
 		public void EmitThis (EmitContext ec)
 		{
-			if (li.FieldBuilder != null) {
-				ec.ig.Emit (OpCodes.Ldarg_0);
-			}
+			Variable.EmitInstance (ec);
 		}
 		
-		public void EmitStore (ILGenerator ig)
+		public void EmitStore (EmitContext ec)
 		{
-			if (li.FieldBuilder != null)
-				ig.Emit (OpCodes.Stfld, li.FieldBuilder);
-			else
-				ig.Emit (OpCodes.Stloc, li.LocalBuilder);
+			Variable.EmitAssign (ec);
 		}
 		
 		public void AddressOf (EmitContext ec, AddressOp mode)

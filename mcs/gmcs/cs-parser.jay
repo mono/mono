@@ -45,6 +45,9 @@ namespace Mono.CSharp
 
 		Delegate   current_delegate;
 
+		GenericMethod current_generic_method;
+		AnonymousMethodExpression current_anonymous_method;
+
 		/// <summary>
 		///   This is used by the unary_expression code to resolve
 		///   a name against a parameter.  
@@ -1074,6 +1077,7 @@ method_declaration
 		method.Block = (ToplevelBlock) $3;
 		current_container.AddMethod (method);
 
+		current_generic_method = null;
 		current_local_parameters = null;
 		iterator_container = null;
 
@@ -1133,6 +1137,7 @@ method_header
 				     name, (Parameters) $6, (Attributes) $1);
 
 		current_local_parameters = (Parameters) $6;
+		current_generic_method = generic;
 
 		if (RootContext.Documentation != null)
 			method.DocComment = Lexer.consume_doc_comment ();
@@ -1169,6 +1174,7 @@ method_header
 				     (int) $2, false, name, (Parameters) $6, (Attributes) $1);
 
 		current_local_parameters = (Parameters) $6;
+		current_generic_method = generic;
 
 		if (RootContext.Documentation != null)
 			method.DocComment = Lexer.consume_doc_comment ();
@@ -3396,6 +3402,7 @@ anonymous_method_expression
 		if (oob_stack == null)
 			oob_stack = new Stack (6);
 
+		oob_stack.Push (current_anonymous_method);
 		oob_stack.Push (current_local_parameters);
 		current_local_parameters = (Parameters)$2;
 
@@ -3403,7 +3410,12 @@ anonymous_method_expression
 		oob_stack.Push (current_block);
 		oob_stack.Push (top_current_block);
 		current_block = null;
-	  } 
+
+		Location loc = (Location) $1;
+		current_anonymous_method = new AnonymousMethodExpression (
+			current_anonymous_method, current_generic_method, current_container,
+			(Parameters) $2, (ToplevelBlock) top_current_block, loc);
+	  }
 	  block
 	  {
 		Location loc = (Location) $1;
@@ -3416,11 +3428,16 @@ anonymous_method_expression
 			ToplevelBlock anon_block = (ToplevelBlock) $4;
 
 			anon_block.Parent = current_block;
-			$$ = new AnonymousMethod (current_container, (Parameters) $2, (ToplevelBlock) top_current_block, 
-				anon_block, loc);
+
+			current_anonymous_method.Block = anon_block;
+			anon_block.SetHaveAnonymousMethods (loc, current_anonymous_method);
+
+			$$ = current_anonymous_method;
 		}
-			current_local_parameters = (Parameters) oob_stack.Pop ();
-		}
+
+		current_local_parameters = (Parameters) oob_stack.Pop ();
+		current_anonymous_method = (AnonymousMethodExpression) oob_stack.Pop ();
+	}
 	;
 
 opt_anonymous_method_signature
@@ -4000,7 +4017,8 @@ block
 	: OPEN_BRACE 
 	  {
 		if (current_block == null){
-			current_block = new ToplevelBlock ((ToplevelBlock) top_current_block, current_local_parameters, (Location) $1);
+			current_block = new ToplevelBlock ((ToplevelBlock) top_current_block, current_local_parameters,
+							   current_generic_method, (Location) $1);
 			top_current_block = current_block;
 		} else {
 			current_block = new Block (current_block, (Location) $1, Location.Null);

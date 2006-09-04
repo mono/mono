@@ -665,7 +665,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		Parameter this [int pos]
+		public Parameter this [int pos]
 		{
 			get {
 				if (pos >= count && (HasArglist || HasParams)) {

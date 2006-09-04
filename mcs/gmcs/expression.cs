@@ -3309,6 +3309,7 @@ namespace Mono.CSharp {
 		bool is_readonly;
 		bool prepared;
 		LocalTemporary temp;
+		Variable variable;
 
 		public LocalVariableReference (Block block, string name, Location l)
 		{
@@ -3363,20 +3364,18 @@ namespace Mono.CSharp {
 			if (!VerifyAssigned (ec))
 				return null;
 
-			if (ec.CurrentAnonymousMethod != null){
-				//
-				// If we are referencing a variable from the external block
-				// flag it for capturing
-				//
-				if ((local_info.Block.Toplevel != ec.CurrentBlock.Toplevel) ||
-				    ec.CurrentAnonymousMethod.IsIterator)
-				{
-					if (local_info.AddressTaken){
-						AnonymousMethod.Error_AddressOfCapturedVar (local_info.Name, loc);
-						return null;
-					}
-					ec.CaptureVariable (local_info);
+			//
+			// If we are referencing a variable from the external block
+			// flag it for capturing
+			//
+			if (ec.MustCaptureVariable (local_info)) {
+				if (local_info.AddressTaken){
+					AnonymousMethod.Error_AddressOfCapturedVar (local_info.Name, loc);
+					return null;
 				}
+
+				variable = ec.CaptureVariable (local_info);
+				type = variable.Type;
 			}
 
 			return this;
@@ -3439,90 +3438,55 @@ namespace Mono.CSharp {
 			return Name == lvr.Name && Block == lvr.Block;
 		}
 
+		public Variable Variable {
+			get { return variable != null ? variable : local_info.Variable; }
+		}
+
 		public override void Emit (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-
-			if (local_info.FieldBuilder == null){
-				//
-				// A local variable on the local CLR stack
-				//
-				ig.Emit (OpCodes.Ldloc, local_info.LocalBuilder);
-			} else {
-				//
-				// A local variable captured by anonymous methods.
-				//
-				if (!prepared)
-					ec.EmitCapturedVariableInstance (local_info);
-				
-				ig.Emit (OpCodes.Ldfld, local_info.FieldBuilder);
-			}
+			if (!prepared)
+				Variable.EmitInstance (ec);
+			Variable.Emit (ec);
 		}
 		
 		public void Emit (EmitContext ec, bool leave_copy)
 		{
 			Emit (ec);
-			if (leave_copy){
+			if (leave_copy) {
 				ec.ig.Emit (OpCodes.Dup);
-				if (local_info.FieldBuilder != null){
+				if (Variable.NeedsTemporary) {
 					temp = new LocalTemporary (Type);
 					temp.Store (ec);
 				}
 			}
 		}
-		
-		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
+
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy,
+					bool prepare_for_load)
 		{
 			ILGenerator ig = ec.ig;
 			prepared = prepare_for_load;
 
-			if (local_info.FieldBuilder == null){
-				//
-				// A local variable on the local CLR stack
-				//
-				if (local_info.LocalBuilder == null)
-					throw new Exception ("This should not happen: both Field and Local are null");
-
-				source.Emit (ec);
-				if (leave_copy)
-					ec.ig.Emit (OpCodes.Dup);
-				ig.Emit (OpCodes.Stloc, local_info.LocalBuilder);
-			} else {
-				//
-				// A local variable captured by anonymous methods or itereators.
-				//
-				ec.EmitCapturedVariableInstance (local_info);
-
-				if (prepare_for_load)
-					ig.Emit (OpCodes.Dup);
-				source.Emit (ec);
-				if (leave_copy){
-					ig.Emit (OpCodes.Dup);
+			Variable.EmitInstance (ec);
+			if (prepare_for_load)
+				ig.Emit (OpCodes.Dup);
+			source.Emit (ec);
+			if (leave_copy) {
+				ig.Emit (OpCodes.Dup);
+				if (Variable.NeedsTemporary) {
 					temp = new LocalTemporary (Type);
 					temp.Store (ec);
 				}
-				ig.Emit (OpCodes.Stfld, local_info.FieldBuilder);
-				if (temp != null)
-					temp.Emit (ec);
 			}
+			Variable.EmitAssign (ec);
+			if (temp != null)
+				temp.Emit (ec);
 		}
 		
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
-			ILGenerator ig = ec.ig;
-
-			if (local_info.FieldBuilder == null){
-				//
-				// A local variable on the local CLR stack
-				//
-				ig.Emit (OpCodes.Ldloca, local_info.LocalBuilder);
-			} else {
-				//
-				// A local variable captured by anonymous methods or iterators
-				//
-				ec.EmitCapturedVariableInstance (local_info);
-				ig.Emit (OpCodes.Ldflda, local_info.FieldBuilder);
-			}
+			Variable.EmitInstance (ec);
+			Variable.EmitAddressOf (ec);
 		}
 
 		public override string ToString ()
@@ -3636,15 +3600,6 @@ namespace Mono.CSharp {
 						par.Name);
 					return false;
 				}
-
-				//
-				// If we are referencing the parameter from the external block
-				// flag it for capturing
-				//
-				//Console.WriteLine ("Is parameter `{0}' local? {1}", name, block.IsLocalParameter (name));
-				if (!block.Toplevel.IsLocalParameter (name)){
-					ec.CaptureParameter (name, type, idx);
-				}
 			}
 
 			return true;
@@ -3684,6 +3639,9 @@ namespace Mono.CSharp {
 			if (is_out && ec.DoFlowAnalysis && (!ec.OmitStructFlowAnalysis || !vi.TypeInfo.IsStruct) && !IsAssigned (ec, loc))
 				return null;
 
+			if (ec.MustCaptureParameter (block, name))
+				return ec.capture_context.AddParameter (ec, par, idx, loc);
+
 			return this;
 		}
 
@@ -3693,6 +3651,9 @@ namespace Mono.CSharp {
 				return null;
 
 			SetAssigned (ec);
+
+			if (ec.MustCaptureParameter (block, name))
+				return ec.capture_context.AddParameter (ec, par, idx, loc);
 
 			return this;
 		}
@@ -3742,8 +3703,11 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			int arg_idx = idx;
 
-			if (ec.HaveCaptureInfo && ec.IsParameterCaptured (name)){				
-				ec.EmitParameter (name, leave_copy, prepared, ref temp);
+			Report.Debug (64, "EMIT PARAMETER REF", this, name, ec.capture_context,
+				      ec.CurrentBlock, ec.CurrentBlock.Toplevel, loc);
+
+			if (ec.HaveCaptureInfo && ec.IsParameterCaptured (name)) {
+				ec.capture_context.EmitParameter (ec, name, leave_copy, prepared, ref temp);
 				return;
 			}
 
@@ -3777,15 +3741,14 @@ namespace Mono.CSharp {
 		{
 			prepared = prepare_for_load;
 			if (ec.HaveCaptureInfo && ec.IsParameterCaptured (name)){
-				ec.EmitAssignParameter (name, source, leave_copy, prepare_for_load, ref temp);
+				ec.capture_context.EmitAssignParameter (
+					ec, name, source, leave_copy, prepare_for_load, ref temp);
 				return;
 			}
 
 			ILGenerator ig = ec.ig;
 			int arg_idx = idx;
-			
-			
-			
+
 			if (!ec.MethodIsStatic)
 				arg_idx++;
 
@@ -3818,7 +3781,7 @@ namespace Mono.CSharp {
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			if (ec.HaveCaptureInfo && ec.IsParameterCaptured (name)){
-				ec.EmitAddressOfParameter (name);
+				ec.capture_context.EmitAddressOfParameter (ec, name);
 				return;
 			}
 			

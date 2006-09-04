@@ -363,12 +363,7 @@ namespace Mono.CSharp {
 		///    The current iterator
 		/// </summary>
 		public Iterator CurrentIterator {
-			get {
-				if (CurrentAnonymousMethod != null)
-					return CurrentAnonymousMethod.Iterator;
-				else
-					return null;
-			}
+			get { return CurrentAnonymousMethod as Iterator; }
 		}
 
 		/// <summary>
@@ -529,12 +524,6 @@ namespace Mono.CSharp {
 			get { return capture_context != null; }
 		}
 
-		public void EmitScopeInitFromBlock (Block b)
-		{
-			if (capture_context != null)
-				capture_context.EmitScopeInitFromBlock (this, b);
-		}
-
 		// <summary>
 		//   Starts a new code branching.  This inherits the state of all local
 		//   variables and parameters from the current branching.
@@ -618,15 +607,10 @@ namespace Mono.CSharp {
 			current_flow_branching = current_flow_branching.Parent;
 		}
 
-		public void CaptureVariable (LocalInfo li)
+		public Variable CaptureVariable (LocalInfo li)
 		{
-			capture_context.AddLocal (CurrentAnonymousMethod, li);
 			li.IsCaptured = true;
-		}
-
-		public void CaptureParameter (string name, Type t, int idx)
-		{
-			capture_context.AddParameter (this, CurrentAnonymousMethod, name, t, idx);
+			return capture_context.AddLocal (CurrentAnonymousMethod, li);
 		}
 
 		public void CaptureThis ()
@@ -664,25 +648,14 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Emits the instance pointer for the host method
-		//
-		public void EmitMethodHostInstance (EmitContext target, AnonymousMethod am)
-		{
-			if (capture_context != null)
-				capture_context.EmitMethodHostInstance (target, am);
-			else if (IsStatic)
-				target.ig.Emit (OpCodes.Ldnull);
-			else
-				target.ig.Emit (OpCodes.Ldarg_0);
-		}
-
-		//
 		// Returns whether the `local' variable has been captured by an anonymous
 		// method
 		//
-		public bool IsCaptured (LocalInfo local)
+		public Variable GetCapturedVariable (LocalInfo local)
 		{
-			return capture_context.IsCaptured (local);
+			if (capture_context != null)
+				return capture_context.GetCapturedVariable (local);
+			return null;
 		}
 
 		public bool IsParameterCaptured (string name)
@@ -690,6 +663,25 @@ namespace Mono.CSharp {
 			if (capture_context != null)
 				return capture_context.IsParameterCaptured (name);
 			return false;
+		}
+
+		public bool MustCaptureParameter (Block block, string name)
+		{
+			if (CurrentAnonymousMethod == null)
+				return false;
+			if (CurrentAnonymousMethod.IsIterator)
+				return true;
+			else
+				return !block.Toplevel.IsLocalParameter (name);
+		}
+
+		public bool MustCaptureVariable (LocalInfo local)
+		{
+			if (CurrentAnonymousMethod == null)
+				return false;
+			if (CurrentAnonymousMethod.IsIterator)
+				return true;
+			return local.Block.Toplevel != CurrentBlock.Toplevel;
 		}
 		
 		public void EmitMeta (ToplevelBlock b)
@@ -788,7 +780,9 @@ namespace Mono.CSharp {
 				}
 			}
 
-			block.CompleteContexts ();
+			if (!block.CompleteContexts (this))
+				return false;
+
 			resolved = true;
 			return true;
 		}
@@ -829,12 +823,6 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Ret);
 				}
 			}
-
-			//
-			// Close pending helper classes if we are the toplevel
-			//
-			if (capture_context != null && capture_context.ParentToplevel == null)
-				capture_context.CloseAnonymousHelperClasses ();
 		}
 
 		/// <summary>
@@ -995,6 +983,8 @@ namespace Mono.CSharp {
 				HasReturnLabel = true;
 		}
 
+		static int next_temp = 0;
+
 		//
 		// Emits the proper object to address fields on a remapped
 		// variable/parameter to field in anonymous-method/iterator proxy classes.
@@ -1004,14 +994,22 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Ldarg_0);
 			if (capture_context != null && CurrentAnonymousMethod != null){
 				ScopeInfo si = CurrentAnonymousMethod.Scope;
+				ig.Emit (OpCodes.Ldc_I4, ++next_temp);
+				ig.Emit (OpCodes.Pop);
+				Report.Debug (64, "EMIT THIS", this, capture_context,
+					      CurrentAnonymousMethod, next_temp, si);
+
 				while (si != null){
+					Report.Debug (64, "EMIT THIS #1", this, capture_context,
+						      CurrentAnonymousMethod, next_temp, si,
+						      si.THIS, si.ParentLink);
 					if (si.ParentLink != null)
-						ig.Emit (OpCodes.Ldfld, si.ParentLink);
+						ig.Emit (OpCodes.Ldfld, si.ParentLink.FieldBuilder);
 					if (si.THIS != null){
-						if (need_address && TypeManager.IsValueType (si.THIS.FieldType))
-							ig.Emit (OpCodes.Ldflda, si.THIS);
+						if (need_address && TypeManager.IsValueType (si.THIS.MemberType))
+							ig.Emit (OpCodes.Ldflda, si.THIS.FieldBuilder);
 						else
-							ig.Emit (OpCodes.Ldfld, si.THIS);
+							ig.Emit (OpCodes.Ldfld, si.THIS.FieldBuilder);
 						break;
 					}
 					si = si.ParentScope;
@@ -1029,21 +1027,6 @@ namespace Mono.CSharp {
 				throw new Exception ("Calling EmitCapturedContext when there is no capture_context");
 			
 			capture_context.EmitCapturedVariableInstance (this, li, CurrentAnonymousMethod);
-		}
-
-		public void EmitParameter (string name, bool leave_copy, bool prepared, ref LocalTemporary temp)
-		{
-			capture_context.EmitParameter (this, name, leave_copy, prepared, ref temp);
-		}
-
-		public void EmitAssignParameter (string name, Expression source, bool leave_copy, bool prepare_for_load, ref LocalTemporary  temp)
-		{
-			capture_context.EmitAssignParameter (this, name, source, leave_copy, prepare_for_load, ref temp);
-		}
-
-		public void EmitAddressOfParameter (string name)
-		{
-			capture_context.EmitAddressOfParameter (this, name);
 		}
 		
 		public Expression GetThis (Location loc)

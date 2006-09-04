@@ -962,22 +962,30 @@ namespace Mono.CSharp {
 		}
 	}
 
+	public abstract class Variable
+	{
+		public abstract Type Type {
+			get;
+		}
+
+		public abstract bool NeedsTemporary {
+			get;
+		}
+
+		public abstract void EmitInstance (EmitContext ec);
+
+		public abstract void Emit (EmitContext ec);
+
+		public abstract void EmitAssign (EmitContext ec);
+
+		public abstract void EmitAddressOf (EmitContext ec);
+	}
+
 	//
 	// The information about a user-perceived local variable
 	//
 	public class LocalInfo {
 		public Expression Type;
-
-		//
-		// Most of the time a variable will be stored in a LocalBuilder
-		//
-		// But sometimes, it will be stored in a field (variables that have been
-		// hoisted by iterators or by anonymous methods).  The context of the field will
-		// be stored in the EmitContext
-		//
-		//
-		public LocalBuilder LocalBuilder;
-		public FieldBuilder FieldBuilder;
 
 		public Type VariableType;
 		public readonly string Name;
@@ -985,6 +993,11 @@ namespace Mono.CSharp {
 		public readonly Block Block;
 
 		public VariableInfo VariableInfo;
+
+		Variable var;
+		public Variable Variable {
+			get { return var; }
+		}
 
 		[Flags]
  		enum Flags : byte {
@@ -1022,18 +1035,22 @@ namespace Mono.CSharp {
 			Location = l;
 		}
 
-		public void DeclareLocal (ILGenerator ig)
+		public void ResolveVariable (EmitContext ec)
 		{
-			if (Pinned) {
-				//
-				// This is needed to compile on both .NET 1.x and .NET 2.x
-				// the later introduced `DeclareLocal (Type t, bool pinned)'
-				//
-				LocalBuilder = TypeManager.DeclareLocalPinned (ig, VariableType);
-				return;
+			var = ec.GetCapturedVariable (this);
+			if (var == null) {
+				LocalBuilder builder;
+				if (Pinned)
+					//
+					// This is needed to compile on both .NET 1.x and .NET 2.x
+					// the later introduced `DeclareLocal (Type t, bool pinned)'
+					//
+					builder = TypeManager.DeclareLocalPinned (ec.ig, VariableType);
+				else
+					builder = ec.ig.DeclareLocal (VariableType);
+
+				var = new LocalVariable (this, builder);
 			}
-			if (!IsThis && !IsConstant)
-				LocalBuilder = ig.DeclareLocal (VariableType);
 		}
 
 		public bool IsThisAssigned (EmitContext ec, Location loc)
@@ -1185,6 +1202,46 @@ namespace Mono.CSharp {
 				flags = value ? (flags | Flags.IsThis) : (flags & ~Flags.IsThis);
 			}
 		}
+
+		protected class LocalVariable : Variable
+		{
+			public readonly LocalInfo LocalInfo;
+			LocalBuilder builder;
+
+			public LocalVariable (LocalInfo local, LocalBuilder builder)
+			{
+				this.LocalInfo = local;
+				this.builder = builder;
+			}
+
+			public override Type Type {
+				get { return LocalInfo.VariableType; }
+			}
+
+			public override bool NeedsTemporary {
+				get { return false; }
+			}
+
+			public override void EmitInstance (EmitContext ec)
+			{
+				// Do nothing.
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				ec.ig.Emit (OpCodes.Ldloc, builder);
+			}
+
+			public override void EmitAssign (EmitContext ec)
+			{
+				ec.ig.Emit (OpCodes.Stloc, builder);
+			}
+
+			public override void EmitAddressOf (EmitContext ec)
+			{
+				ec.ig.Emit (OpCodes.Ldloca, builder);
+			}
+		}
 	}
 		
 	/// <summary>
@@ -1274,6 +1331,8 @@ namespace Mono.CSharp {
 		// If this is a switch section, the enclosing switch block.
 		//
 		Block switch_block;
+
+		ExpressionStatement scope_init;
 
 		protected static int id;
 
@@ -1679,6 +1738,8 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public ScopeInfo ScopeInfo;
+
 		/// <summary>
 		///   Emits the variable declarations and labels.
 		/// </summary>
@@ -1793,37 +1854,17 @@ namespace Mono.CSharp {
 		//
 		public void EmitMeta (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-			
+			if (ec.capture_context != null)
+				scope_init = ec.capture_context.GetScopeInitializerForBlock (ec, this);
+
 			if (variables != null){
-				bool have_captured_vars = ec.HaveCapturedVariables ();
-				
-				foreach (DictionaryEntry de in variables){
-					LocalInfo vi = (LocalInfo) de.Value;
-
-					if (have_captured_vars && ec.IsCaptured (vi))
-						continue;
-
-					vi.DeclareLocal (ig);
-				}
+				foreach (LocalInfo vi in variables.Values)
+					vi.ResolveVariable (ec);
 			}
 
 			if (temporary_variables != null) {
-				AnonymousContainer am = ec.CurrentAnonymousMethod;
-				TypeBuilder scope = null;
-				if ((am != null) && am.IsIterator) {
-					scope = am.Scope.ScopeTypeBuilder;
-					if (scope == null)
-						throw new InternalErrorException ();
-				}
-				foreach (LocalInfo vi in temporary_variables) {
-					if (scope != null) {
-						if (vi.FieldBuilder == null)
-							vi.FieldBuilder = scope.DefineField (
-								vi.Name, vi.VariableType, FieldAttributes.Assembly);
-					} else
-						vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
-				}
+				foreach (LocalInfo vi in temporary_variables)
+					vi.ResolveVariable (ec);
 			}
 
 			if (children != null){
@@ -2031,15 +2072,18 @@ namespace Mono.CSharp {
 						string name = (string) de.Key;
 						LocalInfo vi = (LocalInfo) de.Value;
 
+#if FIXME
 						if (vi.LocalBuilder == null)
 							continue;
 
 						ec.DefineLocalVariable (name, vi.LocalBuilder);
+#endif
 					}
 				}
 			}
 			ec.Mark (StartLocation, true);
-			ec.EmitScopeInitFromBlock (this);
+			if (scope_init != null)
+				scope_init.EmitStatement (ec);
 			DoEmit (ec);
 			ec.Mark (EndLocation, true); 
 
@@ -2083,11 +2127,13 @@ namespace Mono.CSharp {
 		// Pointer to the host of this anonymous method, or null
 		// if we are the topmost block
 		//
+		GenericMethod generic;
 		ToplevelBlock container;
 		CaptureContext capture_context;
 		FlowBranchingToplevel top_level_branching;
 
 		Hashtable capture_contexts;
+		ArrayList anonymous_methods;
 		ArrayList children;
 
 		public bool HasVarargs {
@@ -2110,14 +2156,35 @@ namespace Mono.CSharp {
 			capture_contexts [cc] = cc;
 		}
 
-		public void CompleteContexts ()
+		public void RegisterAnonymousMethod (AnonymousContainer am)
 		{
-			if (capture_contexts == null)
-				return;
+			if (anonymous_methods == null)
+				anonymous_methods = new ArrayList ();
+			anonymous_methods.Add (am);
+		}
 
-			foreach (CaptureContext cc in capture_contexts.Keys){
-				cc.LinkScopes ();
+		public bool CompleteContexts (EmitContext ec)
+		{
+			Report.Debug (64, "TOPLEVEL COMPLETE CONTEXTS", this, capture_contexts);
+
+			if (capture_contexts != null) {
+				foreach (CaptureContext cc in capture_contexts.Keys)
+					cc.LinkScopes ();
 			}
+
+#if FIXME
+			if (anonymous_methods != null) {
+				foreach (AnonymousContainer am in anonymous_methods)
+					if (!am.CreateMethod (ec))
+						return false;
+			}
+#endif
+
+			return true;
+		}
+
+		public GenericMethod GenericMethod {
+			get { return generic; }
 		}
 
 		public CaptureContext ToplevelBlockCaptureContext {
@@ -2144,6 +2211,13 @@ namespace Mono.CSharp {
 			this (container, (Flags) 0, parameters, start)
 		{
 		}
+
+		public ToplevelBlock (ToplevelBlock container, Parameters parameters, GenericMethod generic,
+				      Location start) :
+			this (container, parameters, start)
+		{
+			this.generic = generic;
+		}
 		
 		public ToplevelBlock (Parameters parameters, Location start) :
 			this (null, (Flags) 0, parameters, start)
@@ -2169,7 +2243,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public void SetHaveAnonymousMethods (Location loc, AnonymousContainer host)
+		public void SetHaveAnonymousMethods (Location loc, IAnonymousContainer host)
 		{
 			if (capture_context == null)
 				capture_context = new CaptureContext (this, loc, host);
@@ -3299,7 +3373,7 @@ namespace Mono.CSharp {
 			}
 
 			public abstract void Emit (EmitContext ec);
-			public abstract void EmitExit (ILGenerator ig);
+			public abstract void EmitExit (EmitContext ec);
 		}
 
 		class ExpressionEmitter : Emitter {
@@ -3313,14 +3387,14 @@ namespace Mono.CSharp {
 				// Store pointer in pinned location
 				//
 				converted.Emit (ec);
-				ec.ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+				vi.Variable.EmitAssign (ec);
 			}
 
-			public override void EmitExit (ILGenerator ig)
+			public override void EmitExit (EmitContext ec)
 			{
-				ig.Emit (OpCodes.Ldc_I4_0);
-				ig.Emit (OpCodes.Conv_U);
-				ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+				ec.ig.Emit (OpCodes.Ldc_I4_0);
+				ec.ig.Emit (OpCodes.Conv_U);
+				vi.Variable.EmitAssign (ec);
 			}
 		}
 
@@ -3350,13 +3424,13 @@ namespace Mono.CSharp {
 					return;
 
 				converted.Emit (ec);
-				ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+				vi.Variable.EmitAssign (ec);
 			}
 
-			public override void EmitExit(ILGenerator ig)
+			public override void EmitExit (EmitContext ec)
 			{
-				ig.Emit (OpCodes.Ldnull);
-				ig.Emit (OpCodes.Stloc, pinned_string);
+				ec.ig.Emit (OpCodes.Ldnull);
+				ec.ig.Emit (OpCodes.Stloc, pinned_string);
 			}
 		}
 
@@ -3554,13 +3628,11 @@ namespace Mono.CSharp {
 			if (has_ret)
 				return;
 
-			ILGenerator ig = ec.ig;
-
 			//
 			// Clear the pinned variable
 			//
 			for (int i = 0; i < data.Length; i++) {
-				data [i].EmitExit (ig);
+				data [i].EmitExit (ec);
 			}
 		}
 	}
@@ -3772,22 +3844,24 @@ namespace Mono.CSharp {
 				
 				ig.BeginCatchBlock (c.CatchType);
 
+#if FIXME
 				if (c.VarBlock != null)
 					ec.EmitScopeInitFromBlock (c.VarBlock);
+#endif
 				if (c.Name != null){
 					vi = c.Block.GetLocalInfo (c.Name);
 					if (vi == null)
 						throw new Exception ("Variable does not exist in this block");
 
-					if (vi.IsCaptured){
+					if (vi.Variable.NeedsTemporary) {
 						LocalBuilder e = ig.DeclareLocal (vi.VariableType);
 						ig.Emit (OpCodes.Stloc, e);
-						
-						ec.EmitCapturedVariableInstance (vi);
+
+						vi.Variable.EmitInstance (ec);
 						ig.Emit (OpCodes.Ldloc, e);
-						ig.Emit (OpCodes.Stfld, vi.FieldBuilder);
+						vi.Variable.EmitAssign (ec);
 					} else
-						ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+						vi.Variable.EmitAssign (ec);
 				} else
 					ig.Emit (OpCodes.Pop);
 
@@ -4164,7 +4238,7 @@ namespace Mono.CSharp {
 
 			Type var_type = texpr.Type;
 
-			if (expr.eclass == ExprClass.MethodGroup || expr is AnonymousMethod) {
+			if (expr.eclass == ExprClass.MethodGroup || expr is AnonymousMethodExpression) {
 				Report.Error (446, expr.Location, "Foreach statement cannot operate on a `{0}'",
 					expr.ExprClassName);
 				return false;
@@ -4220,7 +4294,7 @@ namespace Mono.CSharp {
 			{
 				EmitThis (ec);
 				ec.ig.Emit (OpCodes.Ldc_I4_0);
-				EmitStore (ec.ig);
+				EmitStore (ec);
 			}
 
 			public void Increment (EmitContext ec)
@@ -4229,7 +4303,7 @@ namespace Mono.CSharp {
 				Emit (ec);
 				ec.ig.Emit (OpCodes.Ldc_I4_1);
 				ec.ig.Emit (OpCodes.Add);
-				EmitStore (ec.ig);
+				EmitStore (ec);
 			}
 		}
 
@@ -4323,7 +4397,7 @@ namespace Mono.CSharp {
 
 					lengths [i].EmitThis (ec);
 					((ArrayAccess) access).EmitGetLength (ec, i);
-					lengths [i].EmitStore (ig);
+					lengths [i].EmitStore (ec);
 				}
 
 				for (int i = 0; i < rank; i++) {

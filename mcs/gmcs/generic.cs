@@ -151,9 +151,12 @@ namespace Mono.CSharp {
 		}
 
 		public override string TypeParameter {
-			get {
-				return name;
-			}
+			get { return name; }
+		}
+
+		public Constraints Clone ()
+		{
+			return new Constraints (name, constraints, loc);
 		}
 
 		GenericParameterAttributes attrs;
@@ -739,7 +742,7 @@ namespace Mono.CSharp {
 						TypeManager.CSharpName (mparam), TypeManager.CSharpSignature (mb));
 					return false;
 				}
-			} else if (DeclSpace is Iterator) {
+			} else if (DeclSpace is CompilerGeneratedClass) {
 				TypeParameter[] tparams = DeclSpace.TypeParameters;
 				Type[] types = new Type [tparams.Length];
 				for (int i = 0; i < tparams.Length; i++)
@@ -2622,7 +2625,7 @@ namespace Mono.CSharp {
 
 				Argument a = (Argument) arguments [i];
 				if ((a.Expr is NullLiteral) || (a.Expr is MethodGroupExpr) ||
-				    (a.Expr is AnonymousMethod))
+				    (a.Expr is AnonymousMethodExpression))
 					continue;
 
 				arg_types [i] = a.Type;

@@ -525,6 +525,7 @@ namespace Mono.CSharp {
 				caching_flags |= Flags.ClsCompliantAttributeTrue;
 				return true;
 			}
+
 			return false;
 		}
 
