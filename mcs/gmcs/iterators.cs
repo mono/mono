@@ -462,7 +462,7 @@ namespace Mono.CSharp {
 
 				host.AddMethod (this);
 
-				Block = new ToplevelBlock (host.Iterator.Container, null, Location);
+				Block = new ToplevelBlock (host.Iterator.Block, null, Location);
 				// Block.SetHaveAnonymousMethods (Location, Host.Iterator);
 
 				// Block = Host.Iterator.DisposeBlock;
