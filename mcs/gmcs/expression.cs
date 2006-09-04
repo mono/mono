@@ -3444,6 +3444,7 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
+			Report.Debug (64, "EMIT LOCAL VARIABLE REFERENCE", this, ec, Variable, loc);
 			if (!prepared)
 				Variable.EmitInstance (ec);
 			Variable.Emit (ec);
@@ -3467,8 +3468,9 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			prepared = prepare_for_load;
 
+			Report.Debug (64, "LOCAL VAR REF EMIT ASSIGN", this, source, loc);
 			Variable.EmitInstance (ec);
-			if (prepare_for_load)
+			if (prepare_for_load && Variable.HasInstance)
 				ig.Emit (OpCodes.Dup);
 			source.Emit (ec);
 			if (leave_copy) {
@@ -3526,6 +3528,7 @@ namespace Mono.CSharp {
 		}
 
 		LocalTemporary temp;
+		Variable variable;
 		
 		public ParameterReference (Parameter par, Block block, int idx, Location loc)
 		{
@@ -3539,6 +3542,10 @@ namespace Mono.CSharp {
 
 		public VariableInfo VariableInfo {
 			get { return vi; }
+		}
+
+		public Variable Variable {
+			get { return variable != null ? variable : par.Variable; }
 		}
 
 		public bool VerifyFixed ()
@@ -3636,11 +3643,14 @@ namespace Mono.CSharp {
 			if (!DoResolveBase (ec))
 				return null;
 
-			if (is_out && ec.DoFlowAnalysis && (!ec.OmitStructFlowAnalysis || !vi.TypeInfo.IsStruct) && !IsAssigned (ec, loc))
+			if (is_out && ec.DoFlowAnalysis &&
+			    (!ec.OmitStructFlowAnalysis || !vi.TypeInfo.IsStruct) && !IsAssigned (ec, loc))
 				return null;
 
-			if (ec.MustCaptureParameter (block, name))
-				return ec.capture_context.AddParameter (ec, par, idx, loc);
+			if (ec.MustCaptureParameter (block, name)) {
+				variable = ec.CaptureParameter (par, idx);
+				type = variable.Type;
+			}
 
 			return this;
 		}
@@ -3652,8 +3662,10 @@ namespace Mono.CSharp {
 
 			SetAssigned (ec);
 
-			if (ec.MustCaptureParameter (block, name))
-				return ec.capture_context.AddParameter (ec, par, idx, loc);
+			if (ec.MustCaptureParameter (block, name)) {
+				variable = ec.CaptureParameter (par, idx);
+				type = variable.Type;
+			}
 
 			return this;
 		}
@@ -3692,7 +3704,68 @@ namespace Mono.CSharp {
 			// FIXME: Review for anonymous methods
 			//
 		}
+
+		public override void Emit (EmitContext ec)
+		{
+			Emit (ec, false);
+		}
 		
+		public void Emit (EmitContext ec, bool leave_copy)
+		{
+			if (!prepared)
+				Variable.EmitInstance (ec);
+			Variable.Emit (ec);
+
+			if (is_ref) {
+				if (prepared)
+					ec.ig.Emit (OpCodes.Dup);
+	
+				//
+				// If we are a reference, we loaded on the stack a pointer
+				// Now lets load the real value
+				//
+				LoadFromPtr (ec.ig, type);
+			}
+
+			if (leave_copy) {
+				ec.ig.Emit (OpCodes.Dup);
+
+				if (is_ref || Variable.NeedsTemporary) {
+					temp = new LocalTemporary (Type);
+					temp.Store (ec);
+				}
+			}
+		}
+
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy,
+					bool prepare_for_load)
+		{
+			ILGenerator ig = ec.ig;
+			prepared = prepare_for_load;
+
+			Variable.EmitInstance (ec);
+			if (prepare_for_load)
+				ig.Emit (OpCodes.Dup);
+			source.Emit (ec);
+			if (leave_copy) {
+				ig.Emit (OpCodes.Dup);
+				if (Variable.NeedsTemporary) {
+					temp = new LocalTemporary (Type);
+					temp.Store (ec);
+				}
+			}
+			Variable.EmitAssign (ec);
+			if (temp != null)
+				temp.Emit (ec);
+		}
+		
+		public void AddressOf (EmitContext ec, AddressOp mode)
+		{
+			Variable.EmitInstance (ec);
+			Variable.EmitAddressOf (ec);
+		}
+
+#if FIXME
 		public override void Emit (EmitContext ec)
 		{
 			Emit (ec, false);
@@ -3736,7 +3809,7 @@ namespace Mono.CSharp {
 				}
 			}
 		}
-		
+
 		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
 			prepared = prepare_for_load;
@@ -3802,6 +3875,7 @@ namespace Mono.CSharp {
 					ec.ig.Emit (OpCodes.Ldarga, arg_idx);
 			}
 		}
+#endif
 
 		public override string ToString ()
 		{

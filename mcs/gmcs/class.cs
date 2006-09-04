@@ -2295,12 +2295,10 @@ namespace Mono.CSharp {
 					return;
 
 			if (compiler_generated != null) {
-#if FIXME
 				foreach (CompilerGeneratedClass c in compiler_generated) {
 					if (!c.DefineMembers ())
 						throw new InternalErrorException ();
 				}
-#endif
 				foreach (CompilerGeneratedClass c in compiler_generated)
 					c.EmitType ();
 			}
@@ -3721,18 +3719,10 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public EmitContext CreateEmitContext (DeclSpace tc, ILGenerator ig)
+		public virtual EmitContext CreateEmitContext (DeclSpace tc, ILGenerator ig)
 		{
-			EmitContext ec = new EmitContext (this,
-				tc, this.ds, Location, ig, MemberType, ModFlags, false);
-
-#if FIXME
-			Iterator iterator = tc as Iterator;
-			if (iterator != null)
-				ec.CurrentAnonymousMethod = iterator;
-#endif
-
-			return ec;
+			return new EmitContext (
+				this, tc, this.ds, Location, ig, MemberType, ModFlags, false);
 		}
 
 		public override bool Define ()
@@ -3840,6 +3830,10 @@ namespace Mono.CSharp {
 			get {
 				return MemberName;
 			}
+		}
+
+		public abstract Iterator Iterator {
+			get;
 		}
 
 		public new Location Location {
@@ -4002,6 +3996,12 @@ namespace Mono.CSharp {
 			Modifiers.METHOD_YIELDS | 
 			Modifiers.EXTERN;
 
+		Iterator iterator;
+
+		public override Iterator Iterator {
+			get { return iterator; }
+		}
+
 		const int AllowedInterfaceModifiers =
 			Modifiers.NEW | Modifiers.UNSAFE;
 
@@ -4139,6 +4139,8 @@ namespace Mono.CSharp {
 		//
 		public override bool Define ()
 		{
+			Report.Debug (64, "METHOD DEFINE", this, Name);
+
 			if (!base.Define ())
 				return false;
 
@@ -4156,11 +4158,11 @@ namespace Mono.CSharp {
 			// Setup iterator if we are one
 			//
 			if ((ModFlags & Modifiers.METHOD_YIELDS) != 0){
-				Iterator iterator = Iterator.CreateIterator (
+				iterator = Iterator.CreateIterator (
 					this, (TypeContainer) Parent, GenericMethod, ModFlags);
 
 				if (iterator == null)
-					return false;
+					throw new InternalErrorException ();
 			}
 
 			//
@@ -4200,6 +4202,7 @@ namespace Mono.CSharp {
 		// 
 		public override void Emit ()
 		{
+			Report.Debug (64, "METHOD EMIT", this, MethodBuilder, Location, Block, MethodData);
 			MethodData.Emit (Parent);
 			base.Emit ();
 
@@ -4380,6 +4383,10 @@ namespace Mono.CSharp {
 			Modifiers.PRIVATE;
 
 		static string[] attribute_targets = new string [] { "method" };
+
+		public Iterator Iterator {
+			get { return null; }
+		}
 
 		bool has_compliant_args = false;
 		//
@@ -4731,6 +4738,8 @@ namespace Mono.CSharp {
 		GenericMethod GenericMethod { get; }
 		Parameters ParameterInfo { get; }
 
+		Iterator Iterator { get; }
+
 		Attributes OptAttributes { get; }
 		ToplevelBlock Block { get; set; }
 
@@ -5052,6 +5061,20 @@ namespace Mono.CSharp {
 			ToplevelBlock block = method.Block;
 			
 			SourceMethod source = SourceMethod.Create (parent, MethodBuilder, method.Block);
+
+			Report.Debug (64, "METHOD DATA EMIT", this, MethodBuilder,
+				      method, method.Iterator, block);
+
+#if FIXME
+			if (method.Iterator != null) {
+				if (!method.Iterator.Resolve (ec))
+					throw new InternalErrorException ();
+				// method.Iterator.EmitMethod (ec);
+			}
+#endif
+
+			Report.Debug (64, "METHOD DATA EMIT #1", this, MethodBuilder,
+				      method, method.Iterator, block);
 
 			//
 			// Handle destructors specially
@@ -5954,6 +5977,10 @@ namespace Mono.CSharp {
 		}
 
 		#region IMethodData Members
+
+		public Iterator Iterator {
+			get { return null; }
+		}
 
 		public ToplevelBlock Block {
 			get {
@@ -7464,6 +7491,10 @@ namespace Mono.CSharp {
 		{
 			OperatorType = type;
 			Block = block;
+		}
+
+		public override Iterator Iterator {
+			get { return null; }
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb) 

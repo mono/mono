@@ -212,6 +212,11 @@ namespace Mono.CSharp {
 		protected Type parameter_type;
 		public readonly Location Location;
 
+		Variable var;
+		public Variable Variable {
+			get { return var; }
+		}
+
 		IResolveContext resolve_context;
 		
 		public Parameter (Expression type, string name, Modifier mod, Attributes attrs, Location loc)
@@ -335,6 +340,15 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public void ResolveVariable (EmitContext ec, int idx)
+		{
+			Report.Debug (64, "PARAMETER RESOLVE VARIABLE", ParameterType, Name, Location);
+			var = ec.GetCapturedParameter (this);
+			Report.Debug (64, "PARAMETER RESOLVE VARIABLE #1", var, ec.IsStatic, idx);
+			if (var == null)
+				var = new ParameterVariable (this, idx);
+		}
+
 		public Type ExternalType ()
 		{
 			if ((ModFlags & Parameter.Modifier.ISBYREF) != 0)
@@ -452,6 +466,78 @@ namespace Mono.CSharp {
 				return attribute_targets;
 			}
 		}
+
+		protected class ParameterVariable : Variable
+		{
+			public readonly Parameter Parameter;
+			public readonly int Idx;
+			public readonly bool IsRef;
+
+			public ParameterVariable (Parameter par, int idx)
+			{
+				this.Parameter = par;
+				this.Idx = idx;
+				this.IsRef = (par.ModFlags & Parameter.Modifier.ISBYREF) != 0;
+			}
+
+			public override Type Type {
+				get { return Parameter.ParameterType; }
+			}
+
+			public override bool HasInstance {
+				get { return false; }
+			}
+
+			public override bool NeedsTemporary {
+				get { return false; }
+			}
+
+			public override void EmitInstance (EmitContext ec)
+			{
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				int arg_idx = Idx;
+				if (!ec.MethodIsStatic)
+					arg_idx++;
+
+				ParameterReference.EmitLdArg (ec.ig, arg_idx);
+			}
+
+			public override void EmitAssign (EmitContext ec)
+			{
+				int arg_idx = Idx;
+				if (!ec.MethodIsStatic)
+					arg_idx++;
+
+				if (arg_idx <= 255)
+					ec.ig.Emit (OpCodes.Starg_S, (byte) arg_idx);
+				else
+					ec.ig.Emit (OpCodes.Starg, arg_idx);
+			}
+
+			public override void EmitAddressOf (EmitContext ec)
+			{
+				int arg_idx = Idx;
+
+				if (!ec.MethodIsStatic)
+					arg_idx++;
+
+				if (IsRef) {
+					if (arg_idx <= 255)
+						ec.ig.Emit (OpCodes.Ldarg_S, (byte) arg_idx);
+					else
+						ec.ig.Emit (OpCodes.Ldarg, arg_idx);
+				} else {
+					if (arg_idx <= 255)
+						ec.ig.Emit (OpCodes.Ldarga_S, (byte) arg_idx);
+					else
+						ec.ig.Emit (OpCodes.Ldarga, arg_idx);
+				}
+			}
+		}
+
 	}
 
 	/// <summary>
@@ -605,6 +691,14 @@ namespace Mono.CSharp {
 			}
 
 			return ok;
+		}
+
+		public void ResolveVariable (EmitContext ec)
+		{
+			for (int i = 0; i < FixedParameters.Length; ++i) {
+				Parameter p = FixedParameters [i];
+				p.ResolveVariable (ec, i);
+			}
 		}
 
 		public CallingConventions CallingConvention

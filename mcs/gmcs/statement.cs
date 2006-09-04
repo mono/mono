@@ -968,6 +968,10 @@ namespace Mono.CSharp {
 			get;
 		}
 
+		public abstract bool HasInstance {
+			get;
+		}
+
 		public abstract bool NeedsTemporary {
 			get;
 		}
@@ -1038,6 +1042,7 @@ namespace Mono.CSharp {
 		public void ResolveVariable (EmitContext ec)
 		{
 			var = ec.GetCapturedVariable (this);
+			Report.Debug (64, "LOCAL RESOLVE VARIABLE", this, var);
 			if (var == null) {
 				LocalBuilder builder;
 				if (Pinned)
@@ -1218,6 +1223,10 @@ namespace Mono.CSharp {
 				get { return LocalInfo.VariableType; }
 			}
 
+			public override bool HasInstance {
+				get { return false; }
+			}
+
 			public override bool NeedsTemporary {
 				get { return false; }
 			}
@@ -1296,7 +1305,7 @@ namespace Mono.CSharp {
 		//
 		// The statements in this block
 		//
-		ArrayList statements;
+		protected ArrayList statements;
 		int num_statements;
 
 		//
@@ -1648,6 +1657,8 @@ namespace Mono.CSharp {
 
 		public LocalInfo AddTemporaryVariable (TypeExpr te, Location loc)
 		{
+			Report.Debug (64, "ADD TEMPORARY", this, Toplevel, loc);
+
 			if (temporary_variables == null)
 				temporary_variables = new ArrayList ();
 
@@ -1749,6 +1760,8 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public void ResolveMeta (ToplevelBlock toplevel, EmitContext ec, Parameters ip)
 		{
+			Report.Debug (64, "BLOCK RESOLVE META", this, Parent, toplevel);
+
 			// If some parent block was unsafe, we remain unsafe even if this block
 			// isn't explicitly marked as such.
 			using (ec.With (EmitContext.Flags.InUnsafe, ec.InUnsafe | Unsafe)) {
@@ -1852,10 +1865,15 @@ namespace Mono.CSharp {
 		//
 		// Emits the local variable declarations for a block
 		//
-		public void EmitMeta (EmitContext ec)
+		public virtual void EmitMeta (EmitContext ec)
 		{
-			if (ec.capture_context != null)
-				scope_init = ec.capture_context.GetScopeInitializerForBlock (ec, this);
+			Report.Debug (64, "BLOCK EMIT META", this, Toplevel, ScopeInfo,
+				      ec, ec.capture_context);
+			if (ScopeInfo != null) {
+				scope_init = ScopeInfo.GetScopeInitializer (ec);
+				Report.Debug (64, "BLOCK EMIT META #1", this, Toplevel, ScopeInfo,
+					      ec, ec.capture_context, scope_init);
+			}
 
 			if (variables != null){
 				foreach (LocalInfo vi in variables.Values)
@@ -2082,6 +2100,8 @@ namespace Mono.CSharp {
 				}
 			}
 			ec.Mark (StartLocation, true);
+			Report.Debug (64, "BLOCK EMIT", this, Toplevel, ec, ec.capture_context,
+				      scope_init);
 			if (scope_init != null)
 				scope_init.EmitStatement (ec);
 			DoEmit (ec);
@@ -2128,13 +2148,12 @@ namespace Mono.CSharp {
 		// if we are the topmost block
 		//
 		GenericMethod generic;
-		ToplevelBlock container;
+		ToplevelBlock container, child;
 		CaptureContext capture_context;
 		FlowBranchingToplevel top_level_branching;
 		AnonymousMethodHost anonymous_method_host;
 
 		Hashtable capture_contexts;
-		ArrayList children;
 
 		public bool HasVarargs {
 			get { return (flags & Flags.HasVarargs) != 0; }
@@ -2151,6 +2170,8 @@ namespace Mono.CSharp {
 
 		public void RegisterCaptureContext (CaptureContext cc)
 		{
+			Report.Debug (64, "TOPLEVEL REGISTER CONTEXT", this, capture_contexts, cc);
+
 			if (capture_contexts == null)
 				capture_contexts = new Hashtable ();
 			capture_contexts [cc] = cc;
@@ -2159,14 +2180,14 @@ namespace Mono.CSharp {
 		public bool CompleteContexts (EmitContext ec)
 		{
 			Report.Debug (64, "TOPLEVEL COMPLETE CONTEXTS", this, capture_contexts,
-				      anonymous_method_host);
+				      container, anonymous_method_host);
 
 			if (capture_contexts != null) {
 				foreach (CaptureContext cc in capture_contexts.Keys)
 					cc.LinkScopes ();
 			}
 
-			if (anonymous_method_host != null) {
+			if ((container == null) && (anonymous_method_host != null)) {
 				Report.Debug (64, "TOPLEVEL COMPLETE CONTEXTS #1", this,
 					      anonymous_method_host);
 
@@ -2191,14 +2212,6 @@ namespace Mono.CSharp {
 
 		public ToplevelBlock Container {
 			get { return container; }
-		}
-
-		protected void AddChild (ToplevelBlock block)
-		{
-			if (children == null)
-				children = new ArrayList ();
-
-			children.Add (block);
 		}
 
 		//
@@ -2232,30 +2245,38 @@ namespace Mono.CSharp {
 		{
 			this.parameters = parameters == null ? Parameters.EmptyReadOnlyParameters : parameters;
 			this.container = container;
-
-			if (container != null)
-				container.AddChild (this);
 		}
 
 		public ToplevelBlock (Location loc) : this (null, (Flags) 0, null, loc)
 		{
 		}
 
-		public void CreateAnonymousMethodHost (AnonymousMethodExpression anon)
+		public void CreateAnonymousMethodHost (TypeContainer host)
 		{
+			if (anonymous_method_host != null)
+				return;
 			if (container != null)
-				container.CreateAnonymousMethodHost (anon);
-			else if (anonymous_method_host == null)
-				anonymous_method_host = new AnonymousMethodHost (
-					anon.Host, generic, this);
+				anonymous_method_host = capture_context.CreateRootScope (
+					container.anonymous_method_host, null);
+			else
+				anonymous_method_host = capture_context.CreateRootScope (
+					host, generic);
+		}
+
+		public void CreateIteratorHost (AnonymousMethodHost root_scope)
+		{
+			Report.Debug (64, "CREATE ITERATOR HOST", this, container,
+				      anonymous_method_host, root_scope);
+			if ((container != null) || (anonymous_method_host != null))
+				throw new InternalErrorException ();
+
+			capture_context.AddRootScope (root_scope);
+			anonymous_method_host = root_scope;
 		}
 
 		public AnonymousMethodHost AnonymousMethodHost {
 			get {
-				if (container != null)
-					return container.AnonymousMethodHost;
-				else
-					return anonymous_method_host;
+				return anonymous_method_host;
 			}
 		}
 
@@ -2282,15 +2303,12 @@ namespace Mono.CSharp {
 		// null.  Later on, when resolving the iterator, we need to move the
 		// anonymous method into that iterator.
 		//
-		public void ReParent (ToplevelBlock new_parent, AnonymousContainer new_host)
+		public void ReParent (ToplevelBlock new_parent)
 		{
-			foreach (ToplevelBlock block in children) {
-				if (block.CaptureContext == null)
-					continue;
-
-				block.container = new_parent;
-				block.CaptureContext.ReParent (new_parent, new_host);
-			}
+			Report.Debug (64, "TOPLEVEL REPARENT", this, Parent, new_parent);
+			container = new_parent;
+			Parent = new_parent;
+			new_parent.child = this;
 		}
 
 		//
@@ -2380,9 +2398,57 @@ namespace Mono.CSharp {
 
 			ResolveMeta (this, ec, ip);
 
+			if (child != null)
+				child.ResolveMeta (this, ec, ip);
+
 			top_level_branching = ec.StartFlowBranching (this);
 
 			return Report.Errors == errors;
+		}
+
+		public override void EmitMeta (EmitContext ec)
+		{
+			base.EmitMeta (ec);
+			parameters.ResolveVariable (ec);
+		}
+
+		public void MakeIterator (Iterator iterator)
+		{
+			Report.Debug (64, "TOPLEVEL MAKE ITERATOR", this, statements);
+
+			Block block = new Block (this);
+			foreach (Statement stmt in statements)
+				block.AddStatement (stmt);
+			statements = new ArrayList ();
+			statements.Add (new MoveNextStatement (iterator, block));
+		}
+
+		protected class MoveNextStatement : Statement {
+			Iterator iterator;
+			Block block;
+
+			public MoveNextStatement (Iterator iterator, Block block)
+			{
+				this.iterator = iterator;
+				this.block = block;
+				this.loc = iterator.Location;
+			}
+
+			public override bool Resolve (EmitContext ec)
+			{
+				return block.Resolve (ec);
+			}
+
+			protected override void DoEmit (EmitContext ec)
+			{
+				iterator.EmitMoveNext (ec, block);
+			}
+		}
+
+		public override string ToString ()
+		{
+			return String.Format ("{0} ({1}:{2}{3}:{4})", GetType (), ID, StartLocation,
+					      capture_context, anonymous_method_host);
 		}
 	}
 	

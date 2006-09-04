@@ -71,6 +71,7 @@ public partial class TypeManager {
 	static public Type asynccallback_type;
 	static public Type intptr_type;
 	static public Type monitor_type;
+	static public Type interlocked_type;
 	static public Type runtime_field_handle_type;
 	static public Type runtime_argument_handle_type;
 	static public Type attribute_type;
@@ -974,6 +975,7 @@ public partial class TypeManager {
 		icloneable_type      = CoreLookupType ("System", "ICloneable");
 		iconvertible_type    = CoreLookupType ("System", "IConvertible");
 		monitor_type         = CoreLookupType ("System.Threading", "Monitor");
+		interlocked_type     = CoreLookupType ("System.Threading", "Interlocked");
 		intptr_type          = CoreLookupType ("System", "IntPtr");
 
 		attribute_type       = CoreLookupType ("System", "Attribute");

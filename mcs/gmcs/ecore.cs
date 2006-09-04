@@ -4007,7 +4007,6 @@ namespace Mono.CSharp {
 		}
 	}
 
-	
 	public class TemporaryVariable : Expression, IMemoryLocation
 	{
 		LocalInfo li;
@@ -4029,9 +4028,8 @@ namespace Mono.CSharp {
 			li = ec.CurrentBlock.AddTemporaryVariable (te, loc);
 			if (!li.Resolve (ec))
 				return null;
-			
-			AnonymousContainer am = ec.CurrentAnonymousMethod;
-			if ((am != null) && am.IsIterator) {
+
+			if (ec.MustCaptureVariable (li)) {
 				var = ec.CaptureVariable (li);
 				type = var.Type;
 			}
@@ -4077,5 +4075,5 @@ namespace Mono.CSharp {
 			EmitLoadAddress (ec);
 		}
 	}
-	
+
 }	
