@@ -1272,21 +1272,18 @@ namespace Mono.CSharp {
 			return sb.ToString ();
 		}
 
-		protected class CapturedParameter : Variable {
+		protected abstract class CapturedLocalOrParameter : Variable
+		{
 			public readonly ScopeInfo Scope;
-			public readonly Parameter Parameter;
 			public readonly Field Field;
-			public readonly int Idx;
 
 			public FieldExpr FieldInstance;
 
-			public CapturedParameter (ScopeInfo scope, Parameter par, int idx)
+			protected CapturedLocalOrParameter (ScopeInfo scope, string name, Type type)
 			{
 				this.Scope = scope;
-				this.Parameter = par;
-				this.Idx = idx;
-				Field = scope.CaptureVariable (
-					"<p:" + par.Name + ">", par.ParameterType);
+				this.Field = scope.CaptureVariable (
+					scope.MakeFieldName (name), type);
 			}
 
 			public override Type Type {
@@ -1303,8 +1300,7 @@ namespace Mono.CSharp {
 
 			protected FieldInfo GetField (EmitContext ec)
 			{
-				if ((Scope.Host is IteratorHost) ||
-				    (ec.capture_context != Scope.CaptureContext))
+				if (ec.CurrentBlock.Toplevel != Scope.ScopeBlock.Toplevel)
 					return Field.FieldBuilder;
 				else
 					return FieldInstance.FieldInfo;
@@ -1312,7 +1308,7 @@ namespace Mono.CSharp {
 
 			public override void EmitInstance (EmitContext ec)
 			{
-				CaptureContext.EmitScopeInstance (ec, Scope);
+				ec.CurrentBlock.Toplevel.EmitScopeInstance (ec, Scope);
 			}
 
 			public override void Emit (EmitContext ec)
@@ -1329,67 +1325,39 @@ namespace Mono.CSharp {
 			{
 				ec.ig.Emit (OpCodes.Ldflda, GetField (ec));
 			}
+		}
+
+		protected class CapturedParameter : CapturedLocalOrParameter {
+			public readonly Parameter Parameter;
+			public readonly int Idx;
+
+			public CapturedParameter (ScopeInfo scope, Parameter par, int idx)
+				: base (scope, par.Name, par.ParameterType)
+			{
+				this.Parameter = par;
+				this.Idx = idx;
+			}
 
 			public override string ToString ()
 			{
-				return String.Format ("{0} ({1})", GetType (), Field);
+				return String.Format ("{0} ({1}:{2}:{3})", GetType (), Field,
+						      Parameter.Name, Idx);
 			}
 		}
 
-		protected class CapturedLocal : Variable {
-			public readonly ScopeInfo Scope;
+		protected class CapturedLocal : CapturedLocalOrParameter {
 			public readonly LocalInfo Local;
-			public readonly Field Field;
-
-			public FieldExpr FieldInstance;
 
 			public CapturedLocal (ScopeInfo scope, LocalInfo local)
+				: base (scope, local.Name, local.VariableType)
 			{
-				this.Scope = scope;
 				this.Local = local;
-				Field = scope.CaptureVariable (
-					scope.MakeFieldName (local.Name), local.VariableType);
 			}
 
-			public override Type Type {
-				get { return Field.MemberType; }
-			}
-
-			public override bool HasInstance {
-				get { return true; }
-			}
-
-			public override bool NeedsTemporary {
-				get { return true; }
-			}
-
-			public override void EmitInstance (EmitContext ec)
+			public override string ToString ()
 			{
-				CaptureContext.EmitScopeInstance (ec, Scope);
-			}
-
-			public override void Emit (EmitContext ec)
-			{
-				if (ec.capture_context == Scope.CaptureContext)
-					ec.ig.Emit (OpCodes.Ldfld, FieldInstance.FieldInfo);
-				else
-					ec.ig.Emit (OpCodes.Ldfld, Field.FieldBuilder);
-			}
-
-			public override void EmitAssign (EmitContext ec)
-			{
-				if (ec.capture_context == Scope.CaptureContext)
-					ec.ig.Emit (OpCodes.Stfld, FieldInstance.FieldInfo);
-				else
-					ec.ig.Emit (OpCodes.Stfld, Field.FieldBuilder);
-			}
-
-			public override void EmitAddressOf (EmitContext ec)
-			{
-				if (ec.capture_context == Scope.CaptureContext)
-					ec.ig.Emit (OpCodes.Ldflda, FieldInstance.FieldInfo);
-				else
-					ec.ig.Emit (OpCodes.Ldflda, Field.FieldBuilder);
+				return String.Format ("{0} ({1}:{2})", GetType (), Field,
+						      Local.Name);
 			}
 		}
 
@@ -1607,40 +1575,6 @@ namespace Mono.CSharp {
 				return true;
 
 			return ToplevelOwner.AnonymousMethodHost.IsParameterCaptured (name);
-		}
-
-		public ExpressionStatement GetScopeInitializerForBlock (EmitContext ec, Block b)
-		{
-			Report.Debug (64, "GET SCOPE INIT FOR BLOCK", this, Host, b);
-			ScopeInfo si = (ScopeInfo) scopes [b.ID];
-			if (si == null)
-				return null;
-
-			Report.Debug (64, "GET SCOPE INIT FOR BLOCK #1", this, Host, b, si);
-			return si.GetScopeInitializer (ec);
-		}
-
-		public static void EmitScopeInstance (EmitContext ec, ScopeInfo scope)
-		{
-			AnonymousMethodHost root_scope = ec.CurrentBlock.Toplevel.AnonymousMethodHost;
-
-			Report.Debug (64, "EMIT SCOPE INSTANCE", ec.CurrentBlock,
-				      ec.CurrentBlock.Toplevel, ec.CurrentBlock.Toplevel.Container,
-				      root_scope, scope, scope.Host);
-
-			root_scope.EmitScopeInstance (ec);
-			while (root_scope != scope.Host) {
-				ec.ig.Emit (OpCodes.Ldfld, root_scope.ParentLink.FieldBuilder);
-				root_scope = root_scope.ParentHost;
-
-				if (root_scope == null)
-					throw new InternalErrorException (
-						"Never found scope {0} starting at block {1}",
-						scope, ec.CurrentBlock.ID);
-			}
-
-			if (scope != scope.Host)
-				ec.ig.Emit (OpCodes.Ldfld, scope.ScopeInstance.FieldBuilder);
 		}
 
 		public void RegisterCaptureContext ()

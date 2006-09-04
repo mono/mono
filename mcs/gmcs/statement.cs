@@ -2291,6 +2291,25 @@ namespace Mono.CSharp {
 				capture_context = new CaptureContext (this, loc, host);
 		}
 
+		public void EmitScopeInstance (EmitContext ec, ScopeInfo scope)
+		{
+			AnonymousMethodHost root_scope = AnonymousMethodHost;
+
+			root_scope.EmitScopeInstance (ec);
+			while (root_scope != scope.Host) {
+				ec.ig.Emit (OpCodes.Ldfld, root_scope.ParentLink.FieldBuilder);
+				root_scope = root_scope.ParentHost;
+
+				if (root_scope == null)
+					throw new InternalErrorException (
+						"Never found scope {0} starting at block {1}",
+						scope, ec.CurrentBlock.ID);
+			}
+
+			if (scope != scope.Host)
+				ec.ig.Emit (OpCodes.Ldfld, scope.ScopeInstance.FieldBuilder);
+		}
+
 		public CaptureContext CaptureContext {
 			get { return capture_context; }
 		}
