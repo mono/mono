@@ -877,17 +877,6 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
-#if FIXME
-		protected AnonymousContainer (TypeContainer host, GenericMethod generic,
-					      Parameters parameters, ToplevelBlock container,
-					      int mod, Location loc)
-			: this (null, generic, host, parameters, container, null, mod, loc)
-		{
-			Block = new ToplevelBlock (container, parameters, loc);
-			Block.SetHaveAnonymousMethods (loc, this);
-		}
-#endif
-
 		public Method Method {
 			get { return method; }
 		}
@@ -1181,13 +1170,6 @@ namespace Mono.CSharp {
 			Report.Debug (64, "NEW SCOPE", this);
 
 			cc.RegisterCaptureContext ();
-
-#if FIXME
-			if (!Define ())
-				throw new InternalErrorException ();
-			if (DefineType () == null)
-				throw new InternalErrorException ();
-#endif
 		}
 
 		public ScopeInfo (CaptureContext cc, ToplevelBlock toplevel, TypeContainer parent,
@@ -1731,13 +1713,6 @@ namespace Mono.CSharp {
 			// Adjust the owner
 			//
 			RegisterScope (scope);
-
-#if FIXME
-			//
-			// Adjust the user
-			//
-			am.RegisterScope (scope);
-#endif
 
 			Variable var = (Variable) captured_variables [li];
 			Report.Debug (64, "ADD LOCAL #1", this, li.Name, scope, var);
