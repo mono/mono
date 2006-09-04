@@ -1331,6 +1331,20 @@ namespace Mono.CSharp {
 
 		public bool ResolveType ()
 		{
+			if (!DoResolveType ())
+				return false;
+
+			if (compiler_generated != null) {
+				foreach (CompilerGeneratedClass c in compiler_generated)
+					if (!c.ResolveType ())
+						return false;
+			}
+
+			return true;
+		}
+
+		protected virtual bool DoResolveType ()
+		{
 			if ((base_type != null) &&
 			    (base_type.ResolveAsTypeTerminal (this, false) == null)) {
 				error = true;
@@ -1413,6 +1427,13 @@ namespace Mono.CSharp {
 				foreach (Enum en in Enums)
 					if (en.DefineType () == null)
 						return false;
+			}
+
+			if (compiler_generated != null) {
+				foreach (CompilerGeneratedClass c in compiler_generated) {
+					if (c.DefineType () == null)
+						return false;
+				}
 			}
 
 			return true;
@@ -1543,16 +1564,6 @@ namespace Mono.CSharp {
 					part.member_cache = member_cache;
 			}
 #endif
-			if (compiler_generated != null) {
-				foreach (CompilerGeneratedClass c in compiler_generated) {
-					if (c.DefineType () == null)
-						return false;
-				}
-				foreach (CompilerGeneratedClass c in compiler_generated) {
-					if (!c.DefineMembers ())
-						return false;
-				}
-			}
 
 			return true;
 		}
@@ -2284,6 +2295,12 @@ namespace Mono.CSharp {
 					return;
 
 			if (compiler_generated != null) {
+#if FIXME
+				foreach (CompilerGeneratedClass c in compiler_generated) {
+					if (!c.DefineMembers ())
+						throw new InternalErrorException ();
+				}
+#endif
 				foreach (CompilerGeneratedClass c in compiler_generated)
 					c.EmitType ();
 			}
@@ -3709,9 +3726,11 @@ namespace Mono.CSharp {
 			EmitContext ec = new EmitContext (this,
 				tc, this.ds, Location, ig, MemberType, ModFlags, false);
 
+#if FIXME
 			Iterator iterator = tc as Iterator;
 			if (iterator != null)
 				ec.CurrentAnonymousMethod = iterator;
+#endif
 
 			return ec;
 		}

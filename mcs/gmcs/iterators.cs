@@ -122,7 +122,8 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class Iterator : AnonymousContainer {
+	public class Iterator {
+#if FIXME
 		protected ToplevelBlock original_block;
 		protected ToplevelBlock block;
 
@@ -1190,6 +1191,27 @@ namespace Mono.CSharp {
 
 			return false;
 		}
+#else
+		public Type IteratorType {
+			get { return null; }
+		}
+
+		public void MarkYield (EmitContext ec, Expression expr,
+				       ArrayList finally_blocks)
+		{ }
+
+		public void EmitYieldBreak (ILGenerator ig)
+		{ }
+
+		public void MarkFinally (EmitContext ec, ArrayList finally_blocks)
+		{ }
+
+		public static Iterator CreateIterator (IMethodData method, TypeContainer parent,
+						       GenericMethod generic, int modifiers)
+		{
+			return null;
+		}
+#endif
 	}
 }
 

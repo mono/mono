@@ -363,7 +363,11 @@ namespace Mono.CSharp {
 		///    The current iterator
 		/// </summary>
 		public Iterator CurrentIterator {
+#if FIXME
 			get { return CurrentAnonymousMethod as Iterator; }
+#else
+			get { return null; }
+#endif
 		}
 
 		/// <summary>
@@ -616,8 +620,7 @@ namespace Mono.CSharp {
 		public void CaptureThis ()
 		{
 			capture_context.CaptureThis (CurrentAnonymousMethod);
-		}
-		
+		}		
 		
 		//
 		// Use to register a field as captured
@@ -775,7 +778,7 @@ namespace Mono.CSharp {
 					return false;
 				} else if (!CurrentAnonymousMethod.IsIterator) {
 					Report.Error (1643, CurrentAnonymousMethod.Location, "Not all code paths return a value in anonymous method of type `{0}'",
-						CurrentAnonymousMethod.GetSignatureForError ());
+						      CurrentAnonymousMethod.GetSignatureForError ());
 					return false;
 				}
 			}

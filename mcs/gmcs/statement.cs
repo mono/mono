@@ -2131,9 +2131,9 @@ namespace Mono.CSharp {
 		ToplevelBlock container;
 		CaptureContext capture_context;
 		FlowBranchingToplevel top_level_branching;
+		AnonymousMethodHost anonymous_method_host;
 
 		Hashtable capture_contexts;
-		ArrayList anonymous_methods;
 		ArrayList children;
 
 		public bool HasVarargs {
@@ -2156,29 +2156,27 @@ namespace Mono.CSharp {
 			capture_contexts [cc] = cc;
 		}
 
-		public void RegisterAnonymousMethod (AnonymousContainer am)
-		{
-			if (anonymous_methods == null)
-				anonymous_methods = new ArrayList ();
-			anonymous_methods.Add (am);
-		}
-
 		public bool CompleteContexts (EmitContext ec)
 		{
-			Report.Debug (64, "TOPLEVEL COMPLETE CONTEXTS", this, capture_contexts);
+			Report.Debug (64, "TOPLEVEL COMPLETE CONTEXTS", this, capture_contexts,
+				      anonymous_method_host);
 
 			if (capture_contexts != null) {
 				foreach (CaptureContext cc in capture_contexts.Keys)
 					cc.LinkScopes ();
 			}
 
-#if FIXME
-			if (anonymous_methods != null) {
-				foreach (AnonymousContainer am in anonymous_methods)
-					if (!am.CreateMethod (ec))
-						return false;
+			if (anonymous_method_host != null) {
+				Report.Debug (64, "TOPLEVEL COMPLETE CONTEXTS #1", this,
+					      anonymous_method_host);
+
+				if (anonymous_method_host.DefineType () == null)
+					return false;
+				if (!anonymous_method_host.ResolveType ())
+					return false;
+				if (!anonymous_method_host.DefineMembers ())
+					return false;
 			}
-#endif
 
 			return true;
 		}
@@ -2241,6 +2239,24 @@ namespace Mono.CSharp {
 
 		public ToplevelBlock (Location loc) : this (null, (Flags) 0, null, loc)
 		{
+		}
+
+		public void CreateAnonymousMethodHost (AnonymousMethodExpression anon)
+		{
+			if (container != null)
+				container.CreateAnonymousMethodHost (anon);
+			else if (anonymous_method_host == null)
+				anonymous_method_host = new AnonymousMethodHost (
+					anon.Host, generic, this);
+		}
+
+		public AnonymousMethodHost AnonymousMethodHost {
+			get {
+				if (container != null)
+					return container.AnonymousMethodHost;
+				else
+					return anonymous_method_host;
+			}
 		}
 
 		public void SetHaveAnonymousMethods (Location loc, IAnonymousContainer host)

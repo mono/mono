@@ -37,7 +37,7 @@ namespace Mono.CSharp {
 				return new MemberName (name, loc);
 		}
 
-		protected CompilerGeneratedClass (DeclSpace parent, GenericMethod generic,
+		protected CompilerGeneratedClass (TypeContainer parent, GenericMethod generic,
 						  int mod, Location loc)
 			: base (parent.NamespaceEntry, parent,
 				MakeProxyName (generic, loc), mod, null)
@@ -52,11 +52,30 @@ namespace Mono.CSharp {
 				}
 				SetParameterInfo (list);
 			}
+
+			parent.AddCompilerGeneratedClass (this);
 		}
 
 		protected override bool DefineNestedTypes ()
 		{
 			Report.Debug (64, "COMPILER GENERATED NESTED", this, Name, Parent);
+
+			if (Parent.IsGeneric) {
+				parent_type = new ConstructedType (
+					Parent.TypeBuilder, TypeParameters, Location);
+				parent_type = parent_type.ResolveAsTypeTerminal (this, false);
+				if ((parent_type == null) || (parent_type.Type == null))
+					return false;
+			} else {
+				parent_type = new TypeExpression (Parent.TypeBuilder, Location);
+			}
+
+			Report.Debug (64, "COMPILER GENERATED NESTED #1", this,
+				      Name, Parent, parent_type);
+
+			CompilerGeneratedClass parent = Parent as CompilerGeneratedClass;
+			if (parent != null)
+				parent_link = new CapturedVariable (this, "<>parent", parent_type);
 
 			RootContext.RegisterCompilerGeneratedType (TypeBuilder);
 			return base.DefineNestedTypes ();
@@ -66,11 +85,7 @@ namespace Mono.CSharp {
 			get { return generic_method; }
 		}
 
-		public abstract ConstructorInfo Constructor {
-			get;
-		}
-
-		public TypeExpr InflateType (Type it)
+		protected TypeExpr InflateType (Type it)
 		{
 			if (generic_method == null)
 				return new TypeExpression (it, Location);
@@ -97,28 +112,51 @@ namespace Mono.CSharp {
 			return new TypeExpression (it, Location);
 		}
 
-		Type parent_type;
+		public Field CaptureVariable (string name, Type type)
+		{
+			if (members_defined)
+				throw new InternalErrorException ("Helper class already defined!");
+
+			return new CapturedVariable (this, name, InflateType (type));
+		}
+
+		public Field CaptureThis ()
+		{
+			if (members_defined)
+				throw new InternalErrorException ("Helper class already defined!");
+			if (Parent is CompilerGeneratedClass)
+				throw new InternalErrorException ("CaptureThis called in inner class!");
+
+			if (this_field == null)
+				this_field = new CapturedVariable (this, "<>THIS", parent_type);
+			return this_field;
+		}
+
+		TypeExpr parent_type;
+		bool members_defined;
 		CapturedVariable parent_link;
+		CapturedVariable this_field;
 
 		public Type ParentType {
-			get { return parent_type; }
+			get { return parent_type.Type; }
 		}
 
 		public Field ParentLink {
 			get { return parent_link; }
 		}
 
+		public Field THIS {
+			get { return this_field; }
+		}
+
 		protected override bool DoDefineMembers ()
 		{
-			Report.Debug (64, "DO DEFINE MEMBERS", this, Name, Parent);
+			Report.Debug (64, "DO DEFINE MEMBERS", this, Name, Parent, CompilerGenerated);
 
-			CompilerGeneratedClass parent = Parent as CompilerGeneratedClass;
-			if (parent != null) {
-				parent_type = parent.CurrentType != null ?
-					parent.CurrentType : parent.TypeBuilder;
+			members_defined = true;
 
-				parent_link = new CapturedVariable (this, "<>parent", parent_type);
-
+			Field pfield = Parent is CompilerGeneratedClass ? parent_link : this_field;
+			if (pfield != null) {
 				Parameter[] ctor_params = new Parameter [1];
 				ctor_params [0] = new Parameter (
 					parent_type, "parent", Parameter.Modifier.NONE,
@@ -132,10 +170,20 @@ namespace Mono.CSharp {
 				AddConstructor (ctor);
 
 				ctor.Block = new ToplevelBlock (null, Location);
-				ctor.Block.AddStatement (new TheCtor (parent_link));
+				ctor.Block.AddStatement (new TheCtor (pfield));
 			}
 
-			return base.DoDefineMembers ();
+			if (!base.DoDefineMembers ())
+				return false;
+
+			if (CompilerGenerated != null) {
+				foreach (CompilerGeneratedClass c in CompilerGenerated) {
+					if (!c.DefineMembers ())
+						return false;
+				}
+			}
+
+			return true;
 		}
 
 		protected class TheCtor : Statement
@@ -162,9 +210,9 @@ namespace Mono.CSharp {
 
 		protected class CapturedVariable : Field
 		{
-			public CapturedVariable (CompilerGeneratedClass helper, string name, Type type)
-				: base (helper, new TypeExpression (type, helper.Location),
-					Modifiers.INTERNAL, name, null, helper.Location)
+			public CapturedVariable (CompilerGeneratedClass helper, string name,
+						 TypeExpr type)
+				: base (helper, type, Modifiers.INTERNAL, name, null, helper.Location)
 			{
 				helper.AddField (this);
 			}
@@ -210,8 +258,8 @@ namespace Mono.CSharp {
 			Report.Debug (64, "NEW ANONYMOUS METHOD EXPRESSION", this, parent, host,
 				      container, loc);
 
-			if (container != null)
-				container.SetHaveAnonymousMethods (loc, this);
+			container.SetHaveAnonymousMethods (loc, this);
+			container.CreateAnonymousMethodHost (this);
 		}
 
 		public override string ExprClassName {
@@ -378,12 +426,26 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public abstract class AnonymousContainer : CompilerGeneratedClass, IAnonymousContainer
+	public class AnonymousMethodHost : CompilerGeneratedClass
+	{
+		public readonly ScopeInfo RootScope;
+
+		public AnonymousMethodHost (TypeContainer parent, GenericMethod generic,
+					    ToplevelBlock toplevel)
+			: base (parent, generic, 0, toplevel.StartLocation)
+		{
+			RootScope = toplevel.CaptureContext.CreateRootScope (this);
+		}
+	}
+
+	public abstract class AnonymousContainer : IAnonymousContainer
 	{
 		// Used to generate unique method names.
 		protected static int anonymous_method_count;
 
-		new public readonly TypeContainer Parent;
+		public readonly Location Location;
+		public readonly GenericMethod GenericMethod;
+		public readonly AnonymousMethodHost Host;
 
 		// An array list of AnonymousMethodParameter or null
 		public Parameters Parameters;
@@ -407,11 +469,6 @@ namespace Mono.CSharp {
 		bool computed_method_scope = false;
 		
 		//
-		// The modifiers applied to the method, we aggregate them
-		//
-		protected int method_modifiers = Modifiers.PRIVATE;
-		
-		//
 		// Track the scopes that this method has used.  At the
 		// end this is used to determine the ScopeInfo that will
 		// host the method
@@ -427,24 +484,26 @@ namespace Mono.CSharp {
 					      TypeContainer host, Parameters parameters,
 					      ToplevelBlock container, ToplevelBlock block,
 					      int mod, Location loc)
+#if FIXME
 			: base (parent != null ? parent : host, parent != null ? null : generic,
 				mod, loc)
+#endif
 		{
 			this.ContainerAnonymousMethod = parent;
+#if FIXME
 			this.Parent = (parent != null) ? parent : host;
+#else
+			this.Host = container.AnonymousMethodHost;
+#endif
+			this.GenericMethod = parent != null ? null : generic;
 			this.Parameters = parameters;
 			this.Block = block;
 			this.loc = loc;
 
 			Report.Debug (64, "NEW ANONYMOUS CONTAINER", this, parent, host, host.Name,
-				      container, parameters);
+				      Host, container, parameters);
 
-			Parent.AddCompilerGeneratedClass (this);
-
-			if (container == null)
-				return;
-
-			container.RegisterAnonymousMethod (this);
+			RegisterScope (Host.RootScope);
 		}
 
 		protected AnonymousContainer (TypeContainer host, GenericMethod generic,
@@ -541,15 +600,10 @@ namespace Mono.CSharp {
 			}
 		}
 
-#if FIXME
-		public bool CreateMethod (EmitContext ec)
+		public string GetSignatureForError ()
 		{
-			if (method != null)
-				return true;
-
-			return CreateMethodHost (ec);
+			return Host.GetSignatureForError ();
 		}
-#endif
 
 		public abstract bool Resolve (EmitContext ec);
 
@@ -561,19 +615,17 @@ namespace Mono.CSharp {
 			get;
 		}
 
-		public override ConstructorInfo Constructor {
-			get { throw new InternalErrorException (); }
-		}
-
 		public ExpressionStatement GetScopeInitializer (Location loc)
 		{
 			return new AnonymousMethodScopeInitializer (this, loc);
 		}
 
+#if FIXME
 		public override string ToString ()
 		{
 			return String.Format ("{0} ({1})", GetType (), Name);
 		}
+#endif
 
 		protected class AnonymousMethodScopeInitializer : ExpressionStatement
 		{
@@ -590,7 +642,7 @@ namespace Mono.CSharp {
 			{
 				ScopeInfo scope = am.Scope;
 				if (scope == null) {
-					type = am.Parent.TypeBuilder;
+					type = am.Host.TypeBuilder;
 					return this;
 				}
 
@@ -664,19 +716,12 @@ namespace Mono.CSharp {
 
 			Report.Debug (64, "CREATE METHOD HOST", this, Scope);
 
-			if ((Scope != null) && (Scope.HelperClass == null))
+			if ((Scope == null) && (Scope.HelperClass == null))
 				throw new InternalErrorException ();
 
-			method_modifiers = (Scope != null) ? Modifiers.INTERNAL : Modifiers.PRIVATE;
-
-			if ((Scope == null) && ec.IsStatic)
-				method_modifiers |= Modifiers.STATIC;
-
+			CompilerGeneratedClass host = Scope.HelperClass;
 			string name = "<>c__AnonymousMethod" + anonymous_method_count++;
 			MemberName member_name;
-
-			Report.Debug (64, "CREATE METHOD HOST #1",
-				      this, Scope, Scope.HelperClass.Name, name);
 
 			GenericMethod generic_method = null;
 			if (DelegateType.IsGenericType) {
@@ -689,7 +734,7 @@ namespace Mono.CSharp {
 				member_name = new MemberName (name, args, loc);
 
 				generic_method = new GenericMethod (
-					NamespaceEntry, this, member_name,
+					host.NamespaceEntry, host, member_name,
 					new TypeExpression (ReturnType, loc), Parameters);
 
 				generic_method.SetParameterInfo (null);
@@ -697,8 +742,8 @@ namespace Mono.CSharp {
 				member_name = new MemberName (name, loc);
 
 			method = new Method (
-				this, generic_method, new TypeExpression (ReturnType, loc),
-				method_modifiers, false, member_name, Parameters, null);
+				host, generic_method, new TypeExpression (ReturnType, loc),
+				Modifiers.INTERNAL, false, member_name, Parameters, null);
 			method.Block = Block;
 
 			return method.Define ();
@@ -715,13 +760,8 @@ namespace Mono.CSharp {
 
 			Report.Debug (64, "RESOLVE ANONYMOUS METHOD", this, ec, aec, Parameters);
 
-			if (DefineType () == null)
-				return false;
-			if (!ResolveType ())
-				return false;
-
 			aec = new EmitContext (
-				ec.ResolveContext, ec.TypeContainer, this, loc, null, ReturnType,
+				ec.ResolveContext, ec.TypeContainer, Host, loc, null, ReturnType,
 				/* REVIEW */ (ec.InIterator ? Modifiers.METHOD_YIELDS : 0) |
 				(ec.InUnsafe ? Modifiers.UNSAFE : 0) |
 				(ec.IsStatic ? Modifiers.STATIC : 0),
@@ -730,20 +770,7 @@ namespace Mono.CSharp {
 			aec.CurrentAnonymousMethod = this;
 
 			Report.Debug (64, "RESOLVE ANONYMOUS METHOD #1", this, ec, aec,
-				      Parent, Parameters, Block, Block.CaptureContext);
-
-			ScopeInfo root = ec.capture_context.CreateRootScope (this);
-			RegisterScope (root);
-
-#if FIXME
-			ScopeInfo scope = Block.CaptureContext.CreateRootScope (this);
-			RegisterScope (scope);
-
-			if (ContainerAnonymousMethod != null) {
-				ScopeInfo scope = Block.CaptureContext.CreateRootScope (this);
-				ContainerAnonymousMethod.RegisterScope (scope);
-			}
-#endif
+				      Host, Parameters, Block, Block.CaptureContext);
 
 			bool unreachable;
 			if (!aec.ResolveTopBlock (ec, Block, Parameters, null, out unreachable))
@@ -765,7 +792,7 @@ namespace Mono.CSharp {
 		public MethodInfo GetMethodBuilder (EmitContext ec)
 		{
 			MethodInfo builder = method.MethodBuilder;
-			if ((Scope == null) || !IsGeneric)
+			if (!Host.IsGeneric)
 				return builder;
 
 			Expression init = Scope.GetScopeInitializer (ec);
@@ -795,12 +822,6 @@ namespace Mono.CSharp {
 			Report.Debug (64, "ANONYMOUS EMIT METHOD", this, aec, Scope,
 				      aec.capture_context);
 
-			//
-			// Adjust based on the computed state of the
-			// method from CreateMethodHost
-			
-			aec.MethodIsStatic = (method_modifiers & Modifiers.STATIC) != 0;
-			
 			aec.EmitMeta (Block);
 			aec.EmitResolvedTopBlock (Block, unreachable);
 			return true;
@@ -811,23 +832,12 @@ namespace Mono.CSharp {
 			Report.Debug (64, "ANONYMOUS METHOD CREATE SCOPE TYPE",
 				      this, scope, scope.ParentScope);
 
-			if (scope.ParentScope == null) {
-				if (!Define ())
-					return null;
-				if (DefineType () == null)
-					return null;
-				return this;
-			}
-
 			AnonymousHelper helper = new AnonymousHelper (this);
 
 			if (!helper.Define ())
 				return null;
-
 			if (helper.DefineType () == null)
 				return null;
-
-			AddCompilerGeneratedClass (helper);
 
 			return helper;
 		}
@@ -841,10 +851,8 @@ namespace Mono.CSharp {
 
 		protected class AnonymousHelper : CompilerGeneratedClass
 		{
-			ConstructorInfo ctor;
-
 			public AnonymousHelper (AnonymousMethod anonymous)
-				: base (anonymous, anonymous.GenericMethod,
+				: base (anonymous.Host, anonymous.GenericMethod,
 					Modifiers.PUBLIC, anonymous.Location)
 			{ }
 
@@ -853,12 +861,7 @@ namespace Mono.CSharp {
 				if (!base.DoDefineMembers ())
 					return false;
 
-				ctor = default_constructor.ConstructorBuilder;
 				return true;
-			}
-
-			public override ConstructorInfo Constructor {
-				get { return ctor; }
 			}
 		}
 	}
@@ -907,18 +910,8 @@ namespace Mono.CSharp {
 			constructor_method = ((MethodGroupExpr) ml).Methods [0];
 			delegate_method = am.GetMethodBuilder (ec);
 			Report.Debug (64, "ANONYMOUS DELEGATE #1", constructor_method, delegate_method,
-				      delegate_method.GetType ());
+				      delegate_method.GetType (), delegate_instance_expression);
 			base.Emit (ec);
-		}
-	}
-
-	class CapturedVariable : Field
-	{
-		public CapturedVariable (ScopeInfo scope, string name, Type type)
-			: base (scope.HelperClass, scope.HelperClass.InflateType (type),
-				Modifiers.INTERNAL, name, null, scope.loc)
-		{
-			scope.HelperClass.AddField (this);
 		}
 	}
 
@@ -931,7 +924,8 @@ namespace Mono.CSharp {
 		{
 			this.Parameter = par;
 			Idx = idx;
-			Field = new CapturedVariable (scope, "<p:" + par.Name + ">", par.ParameterType);
+			Field = scope.HelperClass.CaptureVariable (
+				"<p:" + par.Name + ">", par.ParameterType);
 		}
 	}
 
@@ -1025,7 +1019,6 @@ namespace Mono.CSharp {
 		public readonly Location loc;
 		public TypeBuilder ScopeTypeBuilder;
 		public Type ScopeType;
-		public Field THIS;
 
 		public CompilerGeneratedClass HelperClass;
 
@@ -1039,7 +1032,6 @@ namespace Mono.CSharp {
 			id = count++;
 
 			Report.Debug (64, "NEW SCOPE", this, cc, block);
-			Report.StackTrace ();
 
 			cc.RegisterCaptureContext ();
 		}
@@ -1122,6 +1114,10 @@ namespace Mono.CSharp {
 			get { return HelperClass.ParentLink; }
 		}
 
+		public Field THIS {
+			get { return HelperClass.THIS; }
+		}
+
 		public void CreateScopeType ()
 		{
 			Report.Debug (64, "CREATE SCOPE TYPE", this, HelperClass, ParentScope);
@@ -1146,65 +1142,17 @@ namespace Mono.CSharp {
 			if (resolved)
 				return;
 
-			if (!(CaptureContext.Host.IsIterator))
-				HelperClass.ResolveType ();
-
 			ScopeType = HelperClass.IsGeneric ?
 				HelperClass.CurrentType : HelperClass.TypeBuilder;
 
 			Report.Debug (64, "EMIT SCOPE TYPE", this, HelperClass, CaptureContext,
-				      CaptureContext.NeedThis, ParentScope, ScopeTypeBuilder,
-				      ec, ec.DeclContainer, ec.DeclContainer.IsGeneric);
+				      ParentScope, ScopeTypeBuilder, ec, ec.DeclContainer,
+				      ec.DeclContainer.IsGeneric);
 
 			if (ParentScope != null)
 				ParentScope.EmitScopeType (ec);
-			else if (CaptureContext.NeedThis) {
-				Type container;
-				if (ec.TypeContainer.CurrentType != null)
-					container = ec.TypeContainer.CurrentType;
-				else
-					container = ec.TypeContainer.TypeBuilder;
-
-				THIS = new CapturedVariable (this, "<>THIS", container);
-			}
-
-#if FIXME
-			if (ParentScope != null){
-				if (ParentScope.ScopeTypeBuilder == null){
-					throw new InternalErrorException (
-						"My parent has not been initialized " +
-						"{0} and {1}", ParentScope, this);
-				}
-
-				if (ParentScope.ScopeTypeBuilder != ScopeTypeBuilder)
-					ParentLink = new CapturedVariable (
-						this, "<>parent", ParentScope.ScopeType);
-			}
-#endif
-
-#if FIXME
-			foreach (LocalInfo info in locals) {
-				info.Field = new CapturedVariable (
-					this, MakeFieldName (info.Name), info.VariableType);
-			}
-
-			if (HostsParameters){
-				Hashtable captured_parameters = CaptureContext.captured_parameters;
-				
-				foreach (DictionaryEntry de in captured_parameters){
-					string name = (string) de.Key;
-					CapturedParameter cp = (CapturedParameter) de.Value;
-
-					cp.Field = new CapturedVariable (
-						this, "<p:" + name + ">", cp.Type);
-				}
-			}
-#endif
 
 			resolved = true;
-
-			if (!(CaptureContext.Host.IsIterator))
-				HelperClass.DefineMembers ();
 
 			Report.Debug (64, "EMIT SCOPE TYPE #1", this, HelperClass, ParentScope,
 				      ParentLink);
@@ -1296,8 +1244,8 @@ namespace Mono.CSharp {
 			{
 				this.Scope = scope;
 				this.Local = local;
-				Field = new CapturedVariable (
-					scope, scope.MakeFieldName (local.Name), local.VariableType);
+				Field = scope.HelperClass.CaptureVariable (
+					scope.MakeFieldName (local.Name), local.VariableType);
 			}
 
 			public override Type Type {
@@ -1385,7 +1333,6 @@ namespace Mono.CSharp {
 			LocalTemporary scope_instance;
 			Expression scope_ctor;
 
-			FieldExpr this_field;
 			Hashtable captured_params;
 
 			ExpressionStatement parent_init;
@@ -1416,7 +1363,8 @@ namespace Mono.CSharp {
 
 				Scope.EmitScopeType (ec);
 
-				if (Scope.HelperClass == null)
+				CompilerGeneratedClass helper = Scope.HelperClass;
+				if (helper == null)
 					throw new InternalErrorException (
 						"HelperClass is null for " + Scope.ToString ());
 
@@ -1438,22 +1386,12 @@ namespace Mono.CSharp {
 				if (!IsIterator) {
 					scope_instance = new LocalTemporary (type);
 					ArrayList args = new ArrayList ();
-					if (Scope.HelperClass.ParentType != null) {
+					if ((helper.ParentLink != null) || (helper.THIS != null)) {
 						args.Add (new Argument (new SimpleThis (
-							Scope.HelperClass.ParentType, loc)));
+							helper.ParentType, loc)));
 					}
 					scope_ctor = new New (scope_type, args, loc).Resolve (ec);
 					if (scope_ctor == null)
-						throw new InternalErrorException ();
-				}
-
-				if (Scope.THIS != null) {
-					this_field = (FieldExpr) Expression.MemberLookup (
-						ec.ContainerType, type, "<>THIS", loc);
-					Report.Debug (64, "RESOLVE SCOPE INITIALIZER #1", this, Scope, ec,
-						      ec.ContainerType, type, this_field,
-						      Scope.ParentScope);
-					if (this_field == null)
 						throw new InternalErrorException ();
 				}
 
@@ -1465,6 +1403,9 @@ namespace Mono.CSharp {
 				foreach (CapturedLocal local in Scope.locals) {
 					FieldExpr fe = (FieldExpr) Expression.MemberLookup (
 						ec.ContainerType, type, local.Field.Name, loc);
+					Report.Debug (64, "RESOLVE SCOPE INITIALIZER #2", this, Scope,
+						      helper, ec, ec.ContainerType, type,
+						      local.Field, local.Field.Name, loc, fe);
 					if (fe == null)
 						throw new InternalErrorException ();
 
@@ -1537,17 +1478,6 @@ namespace Mono.CSharp {
 				if (!IsIterator) {
 					scope_ctor.Emit (ec);
 					scope_instance.Store (ec);
-				}
-
-				if (Scope.THIS != null) {
-					if (IsIterator) {
-						ec.ig.Emit (OpCodes.Ldarg_0);
-						ec.ig.Emit (OpCodes.Ldarg_1);
-					} else {
-						scope_instance.Emit (ec);
-						ec.ig.Emit (OpCodes.Ldarg_0);
-					}
-					ec.ig.Emit (OpCodes.Stfld, this_field.FieldInfo);
 				}
 
 				if (Scope.HostsParameters) {
@@ -1629,7 +1559,6 @@ namespace Mono.CSharp {
 		ArrayList roots = new ArrayList ();
 		
 		bool have_captured_vars = false;
-		bool referenced_this = false;
 
 		//
 		// Captured fields
@@ -1693,19 +1622,15 @@ namespace Mono.CSharp {
 			}
 		}
 
-		internal ScopeInfo CreateRootScope (AnonymousContainer host)
+		internal ScopeInfo CreateRootScope (AnonymousMethodHost host)
 		{
-			this.Host = host;
-
 			Report.Debug (64, "CREATE ROOT SCOPE", this, toplevel_owner,
-				      toplevel_owner.ScopeInfo, host);
+				      toplevel_owner.ScopeInfo);
 
 			if (toplevel_owner.ScopeInfo != null)
 				return toplevel_owner.ScopeInfo;
 
 			ScopeInfo si = new ScopeInfo (this, toplevel_owner, host);
-			si.CreateScopeType ();
-
 			toplevel_owner.ScopeInfo = si;
 			scopes.Add (toplevel_owner.ID, si);
 			return si;
@@ -1836,16 +1761,15 @@ namespace Mono.CSharp {
 		public void CaptureThis (AnonymousContainer am)
 		{
 			if (am == null)
-				throw new Exception ("Internal Compiler error: Capturethis called with a null method");
+				throw new InternalErrorException ("CaptureThis called with a null method");
+
 			CaptureContext parent = ParentCaptureContext;
 			if (parent != null) {
 				parent.CaptureThis (am);
 				return;
 			}
-			referenced_this = true;
 
-			ScopeInfo scope = GetScopeForBlock (toplevel_owner);
-			am.RegisterScope (scope);
+			am.Host.CaptureThis ();
 		}
 
 		public bool HaveCapturedVariables {
@@ -1861,10 +1785,6 @@ namespace Mono.CSharp {
 					return parent.HaveCapturedFields;
 				return captured_fields.Count > 0;
 			}
-		}
-
-		public bool NeedThis {
-			get { return HaveCapturedFields || referenced_this; }
 		}
 
 		public Variable GetCapturedVariable (LocalInfo local)
