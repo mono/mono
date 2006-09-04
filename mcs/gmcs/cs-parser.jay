@@ -5034,6 +5034,7 @@ public class SimpleAnonymousHost : IAnonymousHost {
 	ArrayList anonymous_methods;
 
 	public static SimpleAnonymousHost GetSimple () {
+		Simple.yields = false;
 		Simple.anonymous_methods = null;
 		return Simple;
 	}
