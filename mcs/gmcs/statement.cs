@@ -1882,12 +1882,11 @@ namespace Mono.CSharp {
 		//
 		public virtual void EmitMeta (EmitContext ec)
 		{
-			Report.Debug (64, "BLOCK EMIT META", this, Toplevel, ScopeInfo,
-				      ec, ec.capture_context);
+			Report.Debug (64, "BLOCK EMIT META", this, Toplevel, ScopeInfo, ec);
 			if (ScopeInfo != null) {
 				scope_init = ScopeInfo.GetScopeInitializer (ec);
 				Report.Debug (64, "BLOCK EMIT META #1", this, Toplevel, ScopeInfo,
-					      ec, ec.capture_context, scope_init);
+					      ec, scope_init);
 			}
 
 			if (variables != null){
@@ -2115,8 +2114,7 @@ namespace Mono.CSharp {
 				}
 			}
 			ec.Mark (StartLocation, true);
-			Report.Debug (64, "BLOCK EMIT", this, Toplevel, ec, ec.capture_context,
-				      scope_init);
+			Report.Debug (64, "BLOCK EMIT", this, Toplevel, ec, scope_init);
 			if (scope_init != null)
 				scope_init.EmitStatement (ec);
 			DoEmit (ec);
@@ -2164,7 +2162,6 @@ namespace Mono.CSharp {
 		//
 		GenericMethod generic;
 		ToplevelBlock container, child;
-		CaptureContext capture_context;
 		FlowBranchingToplevel top_level_branching;
 		AnonymousMethodHost anonymous_method_host;
 
@@ -2206,10 +2203,6 @@ namespace Mono.CSharp {
 
 		public GenericMethod GenericMethod {
 			get { return generic; }
-		}
-
-		public CaptureContext ToplevelBlockCaptureContext {
-			get { return capture_context; }
 		}
 
 		public ToplevelBlock Container {
@@ -2287,12 +2280,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void SetHaveAnonymousMethods (Location loc, IAnonymousContainer host)
-		{
-			if (capture_context == null)
-				capture_context = new CaptureContext (this, loc, host);
-		}
-
 		public void EmitScopeInstance (EmitContext ec, ScopeInfo scope)
 		{
 			AnonymousMethodHost root_scope = AnonymousMethodHost;
@@ -2310,10 +2297,6 @@ namespace Mono.CSharp {
 
 			if (scope != scope.Host)
 				ec.ig.Emit (OpCodes.Ldfld, scope.ScopeInstance.FieldBuilder);
-		}
-
-		public CaptureContext CaptureContext {
-			get { return capture_context; }
 		}
 
 		public FlowBranchingToplevel TopLevelBranching {
@@ -2473,8 +2456,8 @@ namespace Mono.CSharp {
 
 		public override string ToString ()
 		{
-			return String.Format ("{0} ({1}:{2}{3}:{4})", GetType (), ID, StartLocation,
-					      capture_context, anonymous_method_host);
+			return String.Format ("{0} ({1}:{2}{3})", GetType (), ID, StartLocation,
+					      anonymous_method_host);
 		}
 	}
 	

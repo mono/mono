@@ -350,13 +350,6 @@ namespace Mono.CSharp {
 		/// </summary>
 		public bool InEnumContext;
 
-		/// <summary>
-		///   Anonymous methods can capture local variables and fields,
-		///   this object tracks it.  It is copied from the TopLevelBlock
-		///   field.
-		/// </summary>
-		public CaptureContext capture_context;
-
 		public readonly IResolveContext ResolveContext;
 
 		/// <summary>
@@ -385,8 +378,8 @@ namespace Mono.CSharp {
 
 		public override string ToString ()
 		{
-			return String.Format ("EmitContext ({0}:{1}:{2})", id,
-					      CurrentIterator, capture_context, loc);
+			return String.Format ("EmitContext ({0}:{1})", id,
+					      CurrentAnonymousMethod, loc);
 		}
 		
 		public EmitContext (IResolveContext rc, DeclSpace parent, DeclSpace ds, Location l, ILGenerator ig,
@@ -520,10 +513,6 @@ namespace Mono.CSharp {
 			get { return current_flow_branching; }
 		}
 
-		public bool HaveCaptureInfo {
-			get { return capture_context != null; }
-		}
-
 		// <summary>
 		//   Starts a new code branching.  This inherits the state of all local
 		//   variables and parameters from the current branching.
@@ -655,9 +644,6 @@ namespace Mono.CSharp {
 
 			if (resolved)
 				return true;
-
-			if (capture_context == null)
-				capture_context = block.CaptureContext;
 
 			if (!loc.IsNull)
 				CurrentFile = loc.File;

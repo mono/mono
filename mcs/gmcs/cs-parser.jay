@@ -3430,7 +3430,6 @@ anonymous_method_expression
 			anon_block.Parent = current_block;
 
 			current_anonymous_method.Block = anon_block;
-			anon_block.SetHaveAnonymousMethods (loc, current_anonymous_method);
 
 			$$ = current_anonymous_method;
 		}

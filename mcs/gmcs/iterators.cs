@@ -380,7 +380,6 @@ namespace Mono.CSharp {
 				EmitContext ec = new EmitContext (
 					this, tc, this.ds, Location, ig, MemberType, ModFlags, false);
 
-				ec.capture_context = Host.Iterator.Block.CaptureContext;
 				ec.CurrentAnonymousMethod = Host.Iterator;
 				return ec;
 			}
@@ -462,13 +461,6 @@ namespace Mono.CSharp {
 				host.AddMethod (this);
 
 				Block = new ToplevelBlock (host.Iterator.Block, null, Location);
-				// Block.SetHaveAnonymousMethods (Location, Host.Iterator);
-
-				// Block = Host.Iterator.DisposeBlock;
-
-				// Block = new ToplevelBlock (Location);
-				// Block.SetHaveAnonymousMethods (Location, Host.Iterator);
-
 				Block.AddStatement (new DisposeMethodStatement (Host.Iterator));
 
 				Report.Debug (64, "DISPOSE METHOD", host, Block);
@@ -479,7 +471,6 @@ namespace Mono.CSharp {
 				EmitContext ec = new EmitContext (
 					this, tc, this.ds, Location, ig, MemberType, ModFlags, false);
 
-				ec.capture_context = Host.Iterator.Block.CaptureContext;
 				ec.CurrentAnonymousMethod = Host.Iterator;
 				return ec;
 			}
@@ -611,7 +602,6 @@ namespace Mono.CSharp {
 		MethodInfo dispose_method;
 		Method move_next_method;
 		Constructor ctor;
-		CaptureContext cc;
 
 		Expression enumerator_type;
 		Expression enumerable_type;
@@ -806,9 +796,6 @@ namespace Mono.CSharp {
 			get { return IteratorHost; }
 		}
 
-		ToplevelBlock TheBlock;
-		// public ToplevelBlock DisposeBlock;
-
 		//
 		// Our constructor
 		//
@@ -823,18 +810,6 @@ namespace Mono.CSharp {
 			this.OriginalMethod = m_container;
 			this.OriginalIteratorType = iterator_type;
 			this.IsEnumerable = is_enumerable;
-			this.TheBlock = block;
-
-			// Block.ReParent (Container);
-
-			// Container.SetHaveAnonymousMethods (Location, this);
-			Block.SetHaveAnonymousMethods (Location, this);
-
-			// DisposeBlock = new ToplevelBlock (Block, null, Location);
-			// DisposeBlock.SetHaveAnonymousMethods (Location, this);
-
-			// OriginalBlock.ReParent (Block);
-			// OriginalBlock.SetHaveAnonymousMethods (Location, this);
 
 			Report.Debug (64, "NEW ITERATOR", host, generic, OriginalBlock,
 				      Container, Block, block);
@@ -844,13 +819,9 @@ namespace Mono.CSharp {
 
 			OriginalBlock.ReParent (Container);
 
-			m_container.Block = TheBlock;
-			// block.AddStatement (new TestStatement ());
+			m_container.Block = block;
 
 			OriginalBlock.MakeIterator (this);
-
-			// MoveNextStatement inline = new MoveNextStatement (this, Location);
-			// Container.AddStatement (inline);
 		}
 
 		protected class TestStatement : Statement
@@ -869,17 +840,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override CaptureContext ContainerCaptureContext {
-			get { return OriginalBlock.CaptureContext; }
-		}
-
-		protected override CaptureContext CaptureContext {
-			get { return OriginalBlock.CaptureContext; }
-		}
-
 		public override bool Resolve (EmitContext ec)
 		{
-			Report.Debug (64, "RESOLVE ITERATOR", this, Container, Block, TheBlock);
+			Report.Debug (64, "RESOLVE ITERATOR", this, Container, Block);
 
 			if (!base.Resolve (ec))
 				return false;

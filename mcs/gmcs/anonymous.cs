@@ -709,10 +709,8 @@ namespace Mono.CSharp {
 			Report.Debug (64, "NEW ANONYMOUS METHOD EXPRESSION", this, parent, host,
 				      container, loc);
 
-			if (container != null) {
-				container.SetHaveAnonymousMethods (loc, this);
+			if (container != null)
 				container.CreateAnonymousMethodHost (Host);
-			}
 		}
 
 		public override string ExprClassName {
@@ -940,14 +938,6 @@ namespace Mono.CSharp {
 			return RootScope.GetSignatureForError ();
 		}
 
-		protected virtual CaptureContext ContainerCaptureContext {
-			get { return Container.CaptureContext; }
-		}
-
-		protected virtual CaptureContext CaptureContext {
-			get { return Block.CaptureContext; }
-		}
-
 		public virtual bool Resolve (EmitContext ec)
 		{
 			if (!ec.IsAnonymousMethodAllowed) {
@@ -965,18 +955,16 @@ namespace Mono.CSharp {
 				/* REVIEW */ (ec.InIterator ? Modifiers.METHOD_YIELDS : 0) |
 				(ec.InUnsafe ? Modifiers.UNSAFE : 0), /* No constructor */ false);
 
-			aec.capture_context = CaptureContext;
 			aec.CurrentAnonymousMethod = this;
 
 			Report.Debug (64, "RESOLVE ANONYMOUS METHOD #1", this, loc, ec, aec,
-				      RootScope, Parameters, Block, Block.CaptureContext);
+				      RootScope, Parameters, Block);
 
 			bool unreachable;
 			if (!aec.ResolveTopBlock (ec, Block, Parameters, null, out unreachable))
 				return false;
 
-			Report.Debug (64, "RESOLVE ANONYMOUS METHOD #3", this, ec, aec, Block,
-				      ec.capture_context);
+			Report.Debug (64, "RESOLVE ANONYMOUS METHOD #3", this, ec, aec, Block);
 
 			method = DoCreateMethodHost (ec);
 
@@ -1153,7 +1141,7 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			Report.Debug (64, "ANONYMOUS DELEGATE", this, am, ec.ContainerType, type,
-				      ec, ec.capture_context, loc);
+				      ec, loc);
 
 			//
 			// Now emit the delegate creation.
@@ -1416,20 +1404,6 @@ namespace Mono.CSharp {
 				ParameterReference.EmitLdArg (ec.ig, cp.Idx + extra);
 			}
 
-		}
-	}
-
-	//
-	// CaptureContext objects are created on demand if a method has
-	// anonymous methods and kept on the ToplevelBlock.
-	//
-	// If they exist, all ToplevelBlocks in the containing block are
-	// linked together (children pointing to their parents).
-	//
-	public class CaptureContext {
-		public CaptureContext (ToplevelBlock toplevel_owner, Location loc,
-				       IAnonymousContainer host)
-		{
 		}
 	}
 }
