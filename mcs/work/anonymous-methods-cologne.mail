@@ -1,0 +1,152 @@
+Hi Miguel,
+
+after hacking another week on anoymous methods, I think I got most
+problems regarding generics solved, but I have some trouble
+integrating that with the ScopeInfo's.
+
+My latest patch makes `AnonymousContainer' a `TypeContainer' (more
+precisely a `CompilerGeneratedClass') and `Iterator' derives from
+`AnonymousContainer' as well.
+
+While parsing, we just create an `AnonymousMethodExpression' (which
+derives from `Expression') and we create the `AnonymousMethod' from
+within Compatible().
+
+This means that when creating the `AnonymousMethod', we already know
+its parent - and its parent is either a class, or an iterator or
+another anonymous methods.  At this point, we don't distinguish
+between iterators and anonymous methods any more - an anonymous method
+inside an iterator basically behaves like an anonymous method inside
+another anonymous method.
+
+So the code basically looks like this:
+
+---- cs-parser.jay -----
+anonymous_method_expression : DELEGATE opt_anonymous_method_signature
+{
+	.....
+	current_anonymous_method = new AnonymousMethodExpression (
+		current_anonymous_method, current_generic_method, current_container,
+		(Parameters) $2, (ToplevelBlock) top_current_block,
+		loc);
+	.....
+} block {
+	.....
+	current_anonymous_method.Block = anon_block;
+	anon_block.SetHaveAnonymousMethods (loc, current_anonymous_method);
+	$$ = current_anonymous_method;
+	.....
+}
+----- anonymous.cs ----
+public class AnonymousMethodExpression : Expression
+{
+	....
+	public Expression Compatible (EmitContext ec, Type delegate_type)
+	{
+		if (anonymous != null)
+			return anonymous.AnonymousDelegate;
+
+		.....
+
+		Anonymous = new AnonymousMethod (
+			Parent != null ? Parent.AnonymousMethod : null, GenericMethod,
+			Host, parameters, Container, Block, invoke_mb.ReturnType,
+			delegate_type, loc);
+
+		if (!anonymous.Resolve (ec))
+			return null;
+
+		return anonymous.AnonymousDelegate;
+	}
+	....
+}
+
+public abstract class AnonymousContainer : CompilerGeneratedClass
+{
+	protected abstract bool CreateMethodHost (EmitContext ec);
+}
+
+public class AnonymousMethod : AnonymousContainer
+{ }
+
+public class Iterator : AnonymousContainer
+{ }
+------
+
+The `AnonymousContainer' takes care of all the generics stuff and it
+also creates the helper classes for us.
+
+At the moment, I'm creating a separate helper class for each anonymous
+method - no matter whether we actually need it or not.  We can later
+optimize this away, but at the moment it helps a lot to simplify
+things.
+
+The main reason for this was that we might need to create a generic
+helper class for some anonymous methods and this code deals with all
+the generics stuff.  For nested anonymous methods, the helper classes
+are also nested (because we might need to inherit some type
+parameters).
+
+This code basically works as long as each anonymous method captures
+some variable - if an anonymous method doesn't capture anything, my
+code currently breaks.
+
+I have some big problem with scopes; consider the following example:
+
+====
+delegate void Simple ();
+delegate Simple Foo ();
+
+class X
+{
+	public void Hello (long k)
+	{ }
+
+	public void Test (int i)
+	{
+		long j = 1 << i;
+		Hello (j);
+		Foo foo = delegate {
+			long k = j;
+			Hello (j);
+			return delegate {
+				long l = k;
+				Hello (j);
+			};
+		};
+		Simple simple = foo ();
+		simple ();
+	}
+}
+====
+
+Here, we create 3 CaptureContext's:
+- [0] for Test()'s toplevel
+- [0.1] for the outer anonymous method
+- [0.1.2] for the inner anonymous method
+
+And we also need to create some scopes - but the big question here is how
+many ?
+
+Since there are two anonymous methods, we already create two helper
+classes - the outer anonymous method is hosted in `CompilerGeneratedClass1'
+and the inner one in `CompilerGeneratedClass2', which is nested inside
+`CompilerGeneratedClass1'.
+
+How what about the variables ?
+
+It looks like we can put `j' into `CompilerGeneratedClass1', but where
+do `k' and `'l' go and do we need to create any additional helper
+classes besides these two ?
+
+Here also comes another problem with the current ScopeInfo approach:
+if we have to create a separate helper class for some variables, it
+has to be nested within it's corresponding anonymous method host.
+
+So what I need is basically create a "root scope" for each anonymous
+method and then make all other scopes children of these roots.
+
+I already spent some time today trying to do that, but without much
+success so far.  Maybe I'll have more luck tomorrow.
+
+Martin
