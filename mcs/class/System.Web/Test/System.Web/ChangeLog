@@ -1,3 +1,7 @@
+2006-09-04 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* HttpUtilityTest.cs: new test added.
+
 2006-08-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWriter.cs: call WriteString instead of Write. Fixes the test.

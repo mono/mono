@@ -293,6 +293,26 @@ namespace MonoTests.System.Web {
 
 		const string notEncoded = "!'()*-._";
 
+		static void UrlPathEncodeChar (char c, Stream result) {
+			if (c > 127) {
+				byte [] bIn = Encoding.UTF8.GetBytes (c.ToString ());
+				for (int i = 0; i < bIn.Length; i++) {
+					result.WriteByte ((byte) '%');
+					int idx = ((int) bIn [i]) >> 4;
+					result.WriteByte ((byte) hexChars [idx]);
+					idx = ((int) bIn [i]) & 0x0F;
+					result.WriteByte ((byte) hexChars [idx]);
+				}
+			}
+			else if (c == ' ') {
+				result.WriteByte ((byte) '%');
+				result.WriteByte ((byte) '2');
+				result.WriteByte ((byte) '0');
+			}
+			else
+				result.WriteByte ((byte) c);
+		}
+
 		static void UrlEncodeChar (char c, Stream result, bool isUnicode) {
 			if (c > 255) {
 				//FIXME: what happens when there is an internal error?
@@ -365,6 +385,21 @@ namespace MonoTests.System.Web {
 					"UrlEncodeUnicode "+c.ToString());
 			}
 		}
+
+#if NET_1_1
+		[Test]
+		public void UrlPathEncode () {
+			for (char c = char.MinValue; c < char.MaxValue; c++) {
+				MemoryStream expected = new MemoryStream ();
+				UrlPathEncodeChar (c, expected);
+
+				String exp = Encoding.ASCII.GetString (expected.ToArray ());
+				String act = HttpUtility.UrlPathEncode (c.ToString ());
+				Assert.AreEqual (exp, act, "UrlPathEncode " + c.ToString ());
+			}
+		}
+
+#endif
 
 #if NET_2_0
 		[Test]

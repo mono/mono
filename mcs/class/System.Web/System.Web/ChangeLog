@@ -1,3 +1,7 @@
+2006-09-04 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* HttpUtility.cs: fixed UrlPathEncode method.
+
 2006-08-31	Boris Kirzner <borisk@mainsoft.com>
 
 	* VirtualPathUtility.cs : pass parameters in correct order.

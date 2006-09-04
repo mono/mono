@@ -946,19 +946,35 @@ namespace System.Web {
 #if NET_1_1
 		public static string UrlPathEncode (string s)
 		{
-			if (s == null)
-				return null;
+			if(String.IsNullOrEmpty(s))
+				return s;
 
-			int idx = s.IndexOf ("?");
-			string s2 = null;
-			if (idx != -1) {
-				s2 = s.Substring (0, idx-1);
-				s2 = UrlEncode (s2) + s.Substring (idx);
-			} else {
-				s2 = UrlEncode (s);
+			MemoryStream result = new MemoryStream ();
+			int length = s.Length;
+            for (int i = 0; i < length; i++) {
+				UrlPathEncodeChar (s [i], result);
 			}
-
-			return s2;
+			return Encoding.ASCII.GetString (result.ToArray ());
+		}
+		
+		static void UrlPathEncodeChar (char c, Stream result) {
+			if (c > 127) {
+				byte [] bIn = Encoding.UTF8.GetBytes (c.ToString ());
+				for (int i = 0; i < bIn.Length; i++) {
+					result.WriteByte ((byte) '%');
+					int idx = ((int) bIn [i]) >> 4;
+					result.WriteByte ((byte) hexChars [idx]);
+					idx = ((int) bIn [i]) & 0x0F;
+					result.WriteByte ((byte) hexChars [idx]);
+				}
+			}
+			else if (c == ' ') {
+				result.WriteByte ((byte) '%');
+				result.WriteByte ((byte) '2');
+				result.WriteByte ((byte) '0');
+			}
+			else
+				result.WriteByte ((byte) c);
 		}
 #endif
 
