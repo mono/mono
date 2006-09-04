@@ -4704,9 +4704,11 @@ namespace Mono.CSharp {
 				}
 			}
 
-			bool unreachable;
-			ec.ResolveTopBlock (null, block, ParameterInfo, this, out unreachable);
-			ec.EmitMeta (block);
+			bool unreachable = false;
+			if (block != null) {
+				ec.ResolveTopBlock (null, block, ParameterInfo, this, out unreachable);
+				ec.EmitMeta (block);
+			}
 
 			if (Initializer != null) {
 				Initializer.Emit (ec);
@@ -4715,7 +4717,8 @@ namespace Mono.CSharp {
 			if ((ModFlags & Modifiers.STATIC) != 0)
 				ParentContainer.EmitFieldInitializers (ec);
 
-			ec.EmitResolvedTopBlock (block, unreachable);
+			if (block != null)
+				ec.EmitResolvedTopBlock (block, unreachable);
 
 			if (source != null)
 				source.CloseMethod ();
