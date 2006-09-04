@@ -1,3 +1,7 @@
+2006-09-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (setup_generic_array_ifaces): Fix a warning.
+
 2006-09-04  Miguel de Icaza  <miguel@novell.com>
 
 	* Temporarily remove the patch to assemly.c that checks the
