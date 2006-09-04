@@ -103,8 +103,7 @@ SUBDIRS = $(common_dirs) $(default_dirs) $(net_2_0_dirs)
 # These libraries below are either unimplemented or don't compile, but
 # I wrote makefiles for them.
 
-BROKEN_SUBDIRS = \
-	Mono.Globalization
+BROKEN_SUBDIRS =
 
 DIST_ONLY_SUBDIRS = \
 	$(BROKEN_SUBDIRS)

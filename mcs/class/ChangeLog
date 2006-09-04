@@ -1,3 +1,7 @@
+2006-09-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile (BROKEN_SUBDIRS): Fix make dist.
+
 2006-09-02  Jordi Mas <jordimash@gmail.com>
 
 	* msfinal3.pub: Microsoft public key to be used for strongnaming
