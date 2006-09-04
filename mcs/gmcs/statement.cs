@@ -2246,19 +2246,20 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public void CreateAnonymousMethodHost (TypeContainer host)
+		public AnonymousMethodHost CreateAnonymousMethodHost (TypeContainer host)
 		{
 			if (anonymous_method_host != null)
-				return;
+				return anonymous_method_host;
 
 			if (container != null)
 				anonymous_method_host = new AnonymousMethodHost (
-					this, container.anonymous_method_host, null);
+					this, container.anonymous_method_host, null, StartLocation);
 			else
 				anonymous_method_host = new AnonymousMethodHost (
-					this, host, generic);
+					this, host, generic, StartLocation);
 
 			ScopeInfo = anonymous_method_host;
+			return anonymous_method_host;
 		}
 
 		public void CreateIteratorHost (AnonymousMethodHost root_scope)

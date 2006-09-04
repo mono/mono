@@ -381,8 +381,8 @@ namespace Mono.CSharp {
 	public class AnonymousMethodHost : ScopeInfo
 	{
 		public AnonymousMethodHost (ToplevelBlock toplevel, TypeContainer parent,
-					    GenericMethod generic)
-			: base (toplevel, parent, generic)
+					    GenericMethod generic, Location loc)
+			: base (toplevel, parent, generic, loc)
 		{
 			scopes = new ArrayList ();
 		}
@@ -675,6 +675,7 @@ namespace Mono.CSharp {
 		public ToplevelBlock Block;
 		protected AnonymousMethod anonymous;
 
+		protected readonly AnonymousMethodHost root_scope;
 		protected readonly ToplevelBlock container;
 		protected readonly GenericMethod generic;
 
@@ -691,7 +692,7 @@ namespace Mono.CSharp {
 		}
 
 		public AnonymousMethodHost RootScope {
-			get { return container.AnonymousMethodHost; }
+			get { return root_scope; }
 		}
 
 		public AnonymousMethodExpression (AnonymousMethodExpression parent,
@@ -710,7 +711,7 @@ namespace Mono.CSharp {
 				      container, loc);
 
 			if (container != null)
-				container.CreateAnonymousMethodHost (Host);
+				root_scope = container.CreateAnonymousMethodHost (Host);
 		}
 
 		public override string ExprClassName {
@@ -831,7 +832,7 @@ namespace Mono.CSharp {
 				      delegate_type.IsGenericType, loc);
 
 			anonymous = new AnonymousMethod (
-				Parent != null ? Parent.AnonymousMethod : null, Host,
+				Parent != null ? Parent.AnonymousMethod : null, RootScope, Host,
 				GenericMethod, parameters, Container, Block, invoke_mb.ReturnType,
 				delegate_type, loc);
 
@@ -901,7 +902,6 @@ namespace Mono.CSharp {
 		protected readonly Location loc;
 		protected readonly ToplevelBlock container;
 		protected readonly GenericMethod generic;
-		protected readonly AnonymousMethodHost root_scope;
 
 		//
 		// Points to our container anonymous method if its present
@@ -919,7 +919,6 @@ namespace Mono.CSharp {
 
 			this.container = container;
 			this.generic = parent != null ? null : generic;
-			this.root_scope = container.AnonymousMethodHost;
 			this.Parameters = parameters;
 			this.Block = block;
 			this.loc = loc;
@@ -929,8 +928,8 @@ namespace Mono.CSharp {
 			get { return method; }
 		}
 
-		public virtual AnonymousMethodHost RootScope {
-			get { return root_scope; }
+		public abstract AnonymousMethodHost RootScope {
+			get;
 		}
 
 		public string GetSignatureForError ()
@@ -951,7 +950,8 @@ namespace Mono.CSharp {
 				      RootScope, Parameters, ec.IsStatic);
 
 			aec = new EmitContext (
-				ec.ResolveContext, ec.TypeContainer, RootScope, loc, null, ReturnType,
+				ec.ResolveContext, ec.TypeContainer,
+				RootScope != null ? RootScope : Host, loc, null, ReturnType,
 				/* REVIEW */ (ec.InIterator ? Modifiers.METHOD_YIELDS : 0) |
 				(ec.InUnsafe ? Modifiers.UNSAFE : 0), /* No constructor */ false);
 
@@ -968,7 +968,10 @@ namespace Mono.CSharp {
 
 			method = DoCreateMethodHost (ec);
 
-			return true;
+			if (RootScope == null)
+				return method.Define ();
+			else
+				return true;
 		}
 
 		protected abstract Method DoCreateMethodHost (EmitContext ec);
@@ -999,13 +1002,18 @@ namespace Mono.CSharp {
 			public AnonymousMethodMethod (AnonymousContainer am, GenericMethod generic,
 						      TypeExpr return_type, int mod, MemberName name,
 						      Parameters parameters)
-				: base (am.RootScope, generic, return_type, mod, false,
-					name, parameters, null)
+				: base (am.RootScope != null ? am.RootScope : am.Host,
+					generic, return_type, mod, false, name, parameters, null)
 			{
 				this.AnonymousMethod = am;
 
-				am.RootScope.CheckMembersDefined ();
-				am.RootScope.AddMethod (this);
+				if (am.RootScope != null) {
+					am.RootScope.CheckMembersDefined ();
+					am.RootScope.AddMethod (this);
+				} else {
+					ModFlags |= Modifiers.STATIC;
+					am.Host.AddMethod (this);
+				}
 				Block = am.Block;
 			}
 
@@ -1028,15 +1036,22 @@ namespace Mono.CSharp {
 		// more than once, due to the way Convert.ImplicitConversion works
 		//
 		Expression anonymous_delegate;
+		AnonymousMethodHost root_scope;
 
-		public AnonymousMethod (AnonymousMethod parent, TypeContainer host,
-					GenericMethod generic, Parameters parameters,
-					ToplevelBlock container, ToplevelBlock block,
-					Type return_type, Type delegate_type, Location loc)
+		public AnonymousMethod (AnonymousMethod parent, AnonymousMethodHost root_scope,
+					TypeContainer host, GenericMethod generic,
+					Parameters parameters, ToplevelBlock container,
+					ToplevelBlock block, Type return_type, Type delegate_type,
+					Location loc)
 			: base (parent, host, generic, parameters, container, block,
 				return_type, 0, loc)
 		{
 			this.DelegateType = delegate_type;
+			this.root_scope = root_scope;
+		}
+
+		public override AnonymousMethodHost RootScope {
+			get { return root_scope; }
 		}
 
 		public override bool IsIterator {
@@ -1093,7 +1108,7 @@ namespace Mono.CSharp {
 		public MethodInfo GetMethodBuilder (EmitContext ec)
 		{
 			MethodInfo builder = method.MethodBuilder;
-			if (RootScope.IsGeneric) {
+			if ((RootScope != null) && RootScope.IsGeneric) {
 				MethodGroupExpr mg = (MethodGroupExpr) Expression.MemberLookup (
 					ec.ContainerType, RootScope.ScopeType, builder.Name, loc);
 
@@ -1148,8 +1163,6 @@ namespace Mono.CSharp {
 			//
 			if ((am.Method.ModFlags & Modifiers.STATIC) == 0) {
 				delegate_instance_expression = am.RootScope.GetScopeInitializer (ec);
-				Report.Debug (64, "ANONYMOUS DELEGATE #0", this,
-					      delegate_instance_expression);
 
 				if (delegate_instance_expression == null)
 					throw new InternalErrorException ();
@@ -1159,7 +1172,7 @@ namespace Mono.CSharp {
 			constructor_method = ((MethodGroupExpr) ml).Methods [0];
 			delegate_method = am.GetMethodBuilder (ec);
 			Report.Debug (64, "ANONYMOUS DELEGATE #1", constructor_method, delegate_method,
-				      delegate_method.GetType (), delegate_instance_expression);
+				      delegate_method, delegate_instance_expression);
 			base.Emit (ec);
 		}
 	}
@@ -1190,8 +1203,8 @@ namespace Mono.CSharp {
 		}
 
 		public ScopeInfo (ToplevelBlock toplevel, TypeContainer parent,
-				  GenericMethod generic)
-			: base (parent, generic, 0, toplevel.StartLocation)
+				  GenericMethod generic, Location loc)
+			: base (parent, generic, 0, loc)
 		{
 			RootScope = (AnonymousMethodHost) this;
 			ScopeBlock = toplevel;
