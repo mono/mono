@@ -1,3 +1,8 @@
+2006-09-04  Jonathan Gilbert  <logic@deltaq.org>
+
+	* TestBitmap.cs: Reactivated the Rotate1bit4bit test, with code added
+	to ignore the test if Microsoft's GDIPLUS.DLL is in use.
+
 2006-09-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestBitmap.cs: Add more test cases for LockBits which, on Mono, 

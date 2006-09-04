@@ -473,9 +473,12 @@ namespace MonoTests.System.Drawing{
 			resulting pixels using MD5
 		*/
 		[Test]
-		[Ignore ("this fails when using MS GDI+ - with or without Mono")]
 		public void Rotate1bit4bit()
 		{
+			if ((Environment.OSVersion.Platform != (PlatformID)4)
+			 && (Environment.OSVersion.Platform != (PlatformID)128))
+				Assert.Ignore("This fails with Microsoft's GDIPLUS.DLL due to off-by-1 errors in their GdipBitmapRotateFlip function.");
+
 			string[] files = {
 			                   getInFile ("bitmaps/1bit.png"),
 			                   getInFile ("bitmaps/4bit.png")
