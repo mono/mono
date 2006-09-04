@@ -862,6 +862,8 @@ namespace System.Xml
 
 		private string ReadContentString ()
 		{
+			if (NodeType == XmlNodeType.Attribute)
+				return Value;
 			return ReadContentString (true);
 		}
 

@@ -1937,6 +1937,20 @@ namespace MonoTests.System.Xml
 			AssertEquals ("#4",
 				XmlNodeType.None, r.NodeType);
 		}
+
+		[Test]
+		public void ReadContentStringOnAttribute ()
+		{
+			string xml = @"<root id='myId'><child /></root>";
+			RunTest (xml, new TestMethod (ReadContentStringOnAttribute));
+		}
+
+		void ReadContentStringOnAttribute (XmlReader reader)
+		{
+			reader.Read ();
+			Assert (reader.MoveToAttribute ("id"));
+			AssertEquals ("myId", reader.ReadContentAsString ());
+		}
 #endif
 	}
 }
