@@ -124,6 +124,14 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			return result;
 		}
+
+		public bool SetBitCalledFlag = false;
+		public int SetBitCalledValue = 0;
+		protected override void SetBit (int bit) {
+			SetBitCalledFlag = true;
+			SetBitCalledValue = bit;
+			base.SetBit (bit);
+		}
 	}
 
 	[TestFixture]	
@@ -587,6 +595,51 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.IsTrue (s.Empty, "Empty after getter");
 			s.Font.Name = "Arial";
 			Assert.IsFalse (s.Empty, "No longer empty");
+		}
+		
+		[Test]
+		public void SetBitCalledWhenSetProperty () {
+			StyleTestClass s = new StyleTestClass ();
+
+			s.SetBitCalledFlag = false;
+			s.BackColor = Color.Aqua;
+			Assert.IsTrue (s.SetBitCalledFlag, "SetBit() was not called : BackColor");
+			Assert.AreEqual (0x08, s.SetBitCalledValue, "SetBit() was called with wrong argument : BackColor");
+
+			s.SetBitCalledFlag = false;
+			s.BorderColor = Color.Blue;
+			Assert.IsTrue (s.SetBitCalledFlag, "SetBit() was not called : BorderColor");
+			Assert.AreEqual (0x10, s.SetBitCalledValue, "SetBit() was called with wrong argument : BorderColor");
+
+			s.SetBitCalledFlag = false;
+			s.BorderStyle = BorderStyle.Dashed;
+			Assert.IsTrue (s.SetBitCalledFlag, "SetBit() was not called : BorderStyle");
+			Assert.AreEqual (0x40, s.SetBitCalledValue, "SetBit() was called with wrong argument : BorderStyle");
+
+			s.SetBitCalledFlag = false;
+			s.BorderWidth = 1;
+			Assert.IsTrue (s.SetBitCalledFlag, "SetBit() was not called : BorderWidth");
+			Assert.AreEqual (0x20, s.SetBitCalledValue, "SetBit() was called with wrong argument : BorderWidth");
+
+			s.SetBitCalledFlag = false;
+			s.CssClass = "class";
+			Assert.IsTrue (s.SetBitCalledFlag, "SetBit() was not called : CssClass");
+			Assert.AreEqual (0x02, s.SetBitCalledValue, "SetBit() was called with wrong argument : CssClass");
+
+			s.SetBitCalledFlag = false;
+			s.ForeColor = Color.Red;
+			Assert.IsTrue (s.SetBitCalledFlag, "SetBit() was not called : ForeColor");
+			Assert.AreEqual (0x04, s.SetBitCalledValue, "SetBit() was called with wrong argument : ForeColor");
+
+			s.SetBitCalledFlag = false;
+			s.Height = 1;
+			Assert.IsTrue (s.SetBitCalledFlag, "SetBit() was not called : Height");
+			Assert.AreEqual (0x80, s.SetBitCalledValue, "SetBit() was called with wrong argument : Height");
+
+			s.SetBitCalledFlag = false;
+			s.Width = 1;
+			Assert.IsTrue (s.SetBitCalledFlag, "SetBit() was not called : Width");
+			Assert.AreEqual (0x100, s.SetBitCalledValue, "SetBit() was called with wrong argument : Width");
 		}
 
 		public void Render ()

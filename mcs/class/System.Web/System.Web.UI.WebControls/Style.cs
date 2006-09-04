@@ -47,13 +47,13 @@ namespace System.Web.UI.WebControls {
 		internal enum Styles 
 		{
 			None		= 0,
-			BackColor	= 0x00000001,
-			BorderColor	= 0x00000002,
-			BorderStyle	= 0x00000004,
-			BorderWidth	= 0x00000008,
-			CssClass	= 0x00000010,
-			Font		= 0x00000020,
-			ForeColor	= 0x00000040,
+			BackColor	= 0x00000008,
+			BorderColor	= 0x00000010,
+			BorderStyle	= 0x00000040,
+			BorderWidth	= 0x00000020,
+			CssClass	= 0x00000002,
+			Font		= 0x00000001,
+			ForeColor	= 0x00000004,
 			Height		= 0x00000080,
 			Width		= 0x00000100,
 
@@ -128,7 +128,7 @@ namespace System.Web.UI.WebControls {
 			set 
 			{
 				viewstate["BackColor"] = value;
-				styles |= Styles.BackColor;
+				SetBit ((int) Styles.BackColor);
 			}
 		}
 
@@ -155,7 +155,7 @@ namespace System.Web.UI.WebControls {
 			set 
 			{
 				viewstate["BorderColor"] = value;
-				styles |= Styles.BorderColor;
+				SetBit ((int) Styles.BorderColor);
 			}
 		}
 
@@ -181,7 +181,7 @@ namespace System.Web.UI.WebControls {
 			set 
 			{
 				viewstate["BorderStyle"] = value;
-				styles |= Styles.BorderStyle;
+				SetBit ((int) Styles.BorderStyle);
 			}
 		}
 
@@ -212,7 +212,7 @@ namespace System.Web.UI.WebControls {
 				}
 
 				viewstate["BorderWidth"] = value;
-				styles |= Styles.BorderWidth;
+				SetBit ((int) Styles.BorderWidth);
 			}
 		}
 
@@ -235,7 +235,7 @@ namespace System.Web.UI.WebControls {
 			set 
 			{
 				viewstate["CssClass"] = value;
-				styles |= Styles.CssClass;
+				SetBit ((int) Styles.CssClass);
 			}
 		}
 
@@ -278,7 +278,7 @@ namespace System.Web.UI.WebControls {
 			set 
 			{
 				viewstate["ForeColor"] = value;
-				styles |= Styles.ForeColor;
+				SetBit ((int) Styles.ForeColor);
 			}
 		}
 
@@ -309,7 +309,7 @@ namespace System.Web.UI.WebControls {
 				}
 
 				viewstate["Height"] = value;
-				styles |= Styles.Height;
+				SetBit ((int) Styles.Height);
 			}
 		}
 
@@ -340,7 +340,7 @@ namespace System.Web.UI.WebControls {
 				}
 
 				viewstate["Width"] = value;
-				styles |= Styles.Width;
+				SetBit ((int) Styles.Width);
 			}
 		}
 		#endregion	// Public Instance Properties
@@ -783,13 +783,16 @@ namespace System.Web.UI.WebControls {
 			return null;
 		}
 
-		[MonoTODO]
 		protected internal virtual void SetBit( int bit ) 
 		{
-			throw new NotImplementedException();
+			styles |= (Styles) bit;
 		}
 
-		protected internal virtual void TrackViewState() 
+		internal bool CheckBit (int bit) {
+			return (styles & (Styles) bit) != 0;
+		}
+
+		protected internal virtual void TrackViewState () 
 		{
 			tracking = true;
 			viewstate.TrackViewState();

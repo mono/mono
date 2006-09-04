@@ -1,3 +1,7 @@
+2006-09-04 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* StyleTest.cs: New test was added
+
 2006-08-31 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* CompleteWizardStepTest.cs: New tests were added
