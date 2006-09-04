@@ -2276,7 +2276,12 @@ namespace Mono.CSharp {
 
 		public AnonymousMethodHost AnonymousMethodHost {
 			get {
-				return anonymous_method_host;
+				if (anonymous_method_host != null)
+					return anonymous_method_host;
+				else if (container != null)
+					return container.AnonymousMethodHost;
+				else
+					return null;
 			}
 		}
 
@@ -2409,7 +2414,7 @@ namespace Mono.CSharp {
 		public override void EmitMeta (EmitContext ec)
 		{
 			base.EmitMeta (ec);
-			parameters.ResolveVariable (ec);
+			parameters.ResolveVariable (this);
 		}
 
 		public void MakeIterator (Iterator iterator)

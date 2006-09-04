@@ -386,12 +386,11 @@ namespace Mono.CSharp {
 			: base (cc, toplevel, parent, generic)
 		{ }
 
-		public bool HostsParameters = false;
-
 		Hashtable scopes;
 		TypeExpr parent_type;
 		CapturedVariable parent_link;
 		CapturedVariable this_field;
+		Hashtable captured_params;
 
 		public override AnonymousMethodHost Host {
 			get { return this; }
@@ -413,12 +412,16 @@ namespace Mono.CSharp {
 			get { return this_field; }
 		}
 
+		public bool HostsParameters {
+			get { return captured_params != null; }
+		}
+
 		public Field CaptureThis ()
 		{
-			CheckMembersDefined ();
-			if (Parent is CompilerGeneratedClass)
-				throw new InternalErrorException ("CaptureThis called in inner class!");
+			if (ParentHost != null)
+				return ParentHost.CaptureThis ();
 
+			CheckMembersDefined ();
 			if (this_field == null)
 				this_field = new CapturedVariable (this, "<>THIS", parent_type);
 			return this_field;
@@ -436,6 +439,35 @@ namespace Mono.CSharp {
 		public Field GetChildScope (ScopeInfoBase scope)
 		{
 			return (Field) scopes [scope];
+		}
+
+		public Variable GetCapturedParameter (Parameter par)
+		{
+			if (captured_params != null)
+				return (Variable) captured_params [par];
+			else
+				return null;
+		}
+
+		public bool IsParameterCaptured (string name)
+		{			
+			if (captured_params != null)
+				return captured_params [name] != null;
+			return false;
+		}
+
+		public Variable AddParameter (Parameter par, int idx)
+		{
+			if (captured_params == null)
+				captured_params = new Hashtable ();
+
+			Variable var = (Variable) captured_params [par];
+			if (var == null) {
+				var = new CapturedParameter (this, par, idx);
+				captured_params.Add (par, var);
+			}
+
+			return var;
 		}
 
 		protected override ScopeInitializerBase CreateScopeInitializer ()
@@ -483,8 +515,7 @@ namespace Mono.CSharp {
 					null, Location));
 
 			if (HostsParameters) {
-				Hashtable hash = CaptureContext.captured_parameters;
-				foreach (CapturedParameter cp in hash.Values) {
+				foreach (CapturedParameter cp in captured_params.Values) {
 					args.Add (new Parameter (
 							  cp.Field.MemberType, cp.Field.Name,
 							  Parameter.Modifier.NONE, null, Location));
@@ -518,8 +549,7 @@ namespace Mono.CSharp {
 			}
 
 			if (HostsParameters) {
-				Hashtable hash = CaptureContext.captured_parameters;
-				foreach (CapturedParameter cp in hash.Values) {
+				foreach (CapturedParameter cp in captured_params.Values) {
 					ec.ig.Emit (OpCodes.Ldarg_0);
 					ParameterReference.EmitLdArg (ec.ig, pos++);
 					ec.ig.Emit (OpCodes.Stfld, cp.Field.FieldBuilder);
@@ -570,9 +600,8 @@ namespace Mono.CSharp {
 				//
 				// Copy the parameter values, if any
 				//
-				if (Host.HostsParameters){
-					Hashtable hash = Host.CaptureContext.captured_parameters;
-					foreach (CapturedParameter cp in hash.Values) {
+				if (Host.HostsParameters) {
+					foreach (CapturedParameter cp in Host.captured_params.Values) {
 						FieldExpr fe = (FieldExpr) Expression.MemberLookup (
 							ec.ContainerType, type, cp.Field.Name, loc);
 						if (fe == null)
@@ -592,8 +621,7 @@ namespace Mono.CSharp {
 					ec.ig.Emit (OpCodes.Ldarg_0);
 
 				if (Host.HostsParameters) {
-					Hashtable hash = Host.CaptureContext.captured_parameters;
-					foreach (CapturedParameter cp in hash.Values) {
+					foreach (CapturedParameter cp in Host.captured_params.Values) {
 						EmitParameterReference (ec, cp);
 					}
 				}
@@ -666,8 +694,10 @@ namespace Mono.CSharp {
 			Report.Debug (64, "NEW ANONYMOUS METHOD EXPRESSION", this, parent, host,
 				      container, loc);
 
-			container.SetHaveAnonymousMethods (loc, this);
-			container.CreateAnonymousMethodHost (Host);
+			if (container != null) {
+				container.SetHaveAnonymousMethods (loc, this);
+				container.CreateAnonymousMethodHost (Host);
+			}
 		}
 
 		public override string ExprClassName {
@@ -1202,11 +1232,6 @@ namespace Mono.CSharp {
 			return cl;
 		}
 
-		public Variable AddParameter (Parameter par, int idx)
-		{
-			return new CapturedParameter (this, par, idx);
-		}
-
 		internal void AddChild (ScopeInfo si)
 		{
 			if (children.Contains (si))
@@ -1517,7 +1542,6 @@ namespace Mono.CSharp {
 		//
 		Hashtable captured_fields = new Hashtable ();
 		Hashtable captured_variables = new Hashtable ();
-		internal Hashtable captured_parameters = new Hashtable ();
 
 		public CaptureContext (ToplevelBlock toplevel_owner, Location loc,
 				       IAnonymousContainer host)
@@ -1731,60 +1755,6 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Returns the CaptureContext for the block that defines the parameter `name'
-		//
-		static CaptureContext _ContextForParameter (ToplevelBlock current, Parameter par)
-		{
-			ToplevelBlock container = current.Container;
-			if (container != null){
-				CaptureContext cc = _ContextForParameter (container, par);
-				if (cc != null)
-					return cc;
-			}
-			if (current.IsParameterReference (par.Name))
-				return current.ToplevelBlockCaptureContext;
-			return null;
-		}
-
-		static CaptureContext ContextForParameter (ToplevelBlock current, Parameter par)
-		{
-			CaptureContext cc = _ContextForParameter (current, par);
-			if (cc == null)
-				throw new InternalErrorException (
-					"Request for parameteter {0} failed: not found", par.Name);
-			return cc;
-		}
-
-		//
-		// Records the captured parameter at the appropriate CaptureContext
-		//
-		public Variable AddParameter (EmitContext ec, Parameter par, int idx)
-		{
-			CaptureContext cc = ContextForParameter (ec.CurrentBlock.Toplevel, par);
-			return cc.AddParameterToContext (par, idx);
-		}
-
-		//
-		// Records the parameters in the context
-		//
-		public Variable AddParameterToContext (Parameter par, int idx)
-		{
-			if (captured_parameters == null)
-				captured_parameters = new Hashtable ();
-
-			AnonymousMethodHost host = ToplevelOwner.AnonymousMethodHost;
-			host.HostsParameters = true;
-
-			Variable var = (Variable) captured_parameters [par];
-			if (var == null) {
-				var = host.AddParameter (par, idx);
-				captured_parameters.Add (par, var);
-			}
-
-			return var;
-		}
-
-		//
 		// Captured fields are only recorded on the topmost CaptureContext, because that
 		// one is the one linked to the owner of instance fields
 		//
@@ -1802,17 +1772,6 @@ namespace Mono.CSharp {
 
 			ScopeInfo scope = GetScopeForBlock (ToplevelOwner);
 			RegisterScope (scope);
-		}
-
-		public void CaptureThis ()
-		{
-			CaptureContext parent = ParentCaptureContext;
-			if (parent != null) {
-				parent.CaptureThis ();
-				return;
-			}
-
-			Host.RootScope.CaptureThis ();
 		}
 
 		public bool HaveCapturedVariables {
@@ -1835,11 +1794,6 @@ namespace Mono.CSharp {
 			return (Variable) captured_variables [local];
 		}
 
-		public Variable GetCapturedParameter (Parameter par)
-		{
-			return (Variable) captured_parameters [par];
-		}
-
 		//
 		// Returns whether the parameter is captured
 		//
@@ -1848,10 +1802,8 @@ namespace Mono.CSharp {
 			if ((ParentCaptureContext != null) &&
 			    ParentCaptureContext.IsParameterCaptured (name))
 				return true;
-			
-			if (captured_parameters != null)
-				return captured_parameters [name] != null;
-			return false;
+
+			return ToplevelOwner.AnonymousMethodHost.IsParameterCaptured (name);
 		}
 
 		public ExpressionStatement GetScopeInitializerForBlock (EmitContext ec, Block b)
@@ -1865,21 +1817,9 @@ namespace Mono.CSharp {
 			return si.GetScopeInitializer (ec);
 		}
 
-		protected static AnonymousMethodHost GetRootScope (ToplevelBlock toplevel)
-		{
-			while (toplevel != null) {
-				if (toplevel.AnonymousMethodHost != null)
-					return toplevel.AnonymousMethodHost;
-
-				toplevel = toplevel.Container;
-			}
-
-			throw new InternalErrorException ();
-		}
-
 		public static void EmitScopeInstance (EmitContext ec, ScopeInfo scope)
 		{
-			AnonymousMethodHost root_scope = GetRootScope (ec.CurrentBlock.Toplevel);
+			AnonymousMethodHost root_scope = ec.CurrentBlock.Toplevel.AnonymousMethodHost;
 
 			Report.Debug (64, "EMIT SCOPE INSTANCE", root_scope, scope, scope.Host);
 

@@ -3601,14 +3601,33 @@ namespace Mono.CSharp {
 			if (is_out)
 				vi = block.ParameterMap [idx];
 
-			if (ec.CurrentAnonymousMethod != null){
-				if (is_ref && !block.Toplevel.IsLocalParameter (name)){
-					Report.Error (1628, Location, "Cannot use ref or out parameter `{0}' inside an anonymous method block",
-						par.Name);
-					return false;
-				}
+			AnonymousContainer am = ec.CurrentAnonymousMethod;
+			if (am == null)
+				return true;
+
+			if (is_ref && !block.Toplevel.IsLocalParameter (name)){
+				Report.Error (1628, Location,
+					      "Cannot use ref or out parameter `{0}' inside an " +
+					      "anonymous method block", par.Name);
+				return false;
 			}
 
+			if (!am.IsIterator && block.Toplevel.IsLocalParameter (name))
+				return true;
+
+			AnonymousMethodHost host = null;
+			ToplevelBlock toplevel = block.Toplevel;
+			while (toplevel != null) {
+				if (toplevel.IsLocalParameter (name)) {
+					host = toplevel.AnonymousMethodHost;
+					break;
+				}
+
+				toplevel = toplevel.Container;
+			}
+
+			variable = host.AddParameter (par, idx);
+			type = variable.Type;
 			return true;
 		}
 
@@ -3647,11 +3666,6 @@ namespace Mono.CSharp {
 			    (!ec.OmitStructFlowAnalysis || !vi.TypeInfo.IsStruct) && !IsAssigned (ec, loc))
 				return null;
 
-			if (ec.MustCaptureParameter (block, name)) {
-				variable = ec.CaptureParameter (par, idx);
-				type = variable.Type;
-			}
-
 			return this;
 		}
 
@@ -3661,11 +3675,6 @@ namespace Mono.CSharp {
 				return null;
 
 			SetAssigned (ec);
-
-			if (ec.MustCaptureParameter (block, name)) {
-				variable = ec.CaptureParameter (par, idx);
-				type = variable.Type;
-			}
 
 			return this;
 		}
@@ -3770,118 +3779,6 @@ namespace Mono.CSharp {
 			Variable.EmitInstance (ec);
 			Variable.EmitAddressOf (ec);
 		}
-
-#if FIXME
-		public override void Emit (EmitContext ec)
-		{
-			Emit (ec, false);
-		}
-		
-		public void Emit (EmitContext ec, bool leave_copy)
-		{
-			ILGenerator ig = ec.ig;
-			int arg_idx = idx;
-
-			Report.Debug (64, "EMIT PARAMETER REF", this, name, ec.capture_context,
-				      ec.CurrentBlock, ec.CurrentBlock.Toplevel, loc);
-
-			if (ec.HaveCaptureInfo && ec.IsParameterCaptured (name)) {
-				ec.capture_context.EmitParameter (ec, name, leave_copy, prepared, ref temp);
-				return;
-			}
-
-			if (!ec.MethodIsStatic)
-				arg_idx++;
-
-			EmitLdArg (ig, arg_idx);
-
-			if (is_ref) {
-				if (prepared)
-					ec.ig.Emit (OpCodes.Dup);
-	
-				//
-				// If we are a reference, we loaded on the stack a pointer
-				// Now lets load the real value
-				//
-				LoadFromPtr (ig, type);
-			}
-			
-			if (leave_copy) {
-				ec.ig.Emit (OpCodes.Dup);
-				
-				if (is_ref) {
-					temp = new LocalTemporary (type);
-					temp.Store (ec);
-				}
-			}
-		}
-
-		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
-		{
-			prepared = prepare_for_load;
-			if (ec.HaveCaptureInfo && ec.IsParameterCaptured (name)){
-				ec.capture_context.EmitAssignParameter (
-					ec, name, source, leave_copy, prepare_for_load, ref temp);
-				return;
-			}
-
-			ILGenerator ig = ec.ig;
-			int arg_idx = idx;
-
-			if (!ec.MethodIsStatic)
-				arg_idx++;
-
-			if (is_ref && !prepared)
-				EmitLdArg (ig, arg_idx);
-			
-			source.Emit (ec);
-
-			if (leave_copy)
-				ec.ig.Emit (OpCodes.Dup);
-			
-			if (is_ref) {
-				if (leave_copy) {
-					temp = new LocalTemporary (type);
-					temp.Store (ec);
-				}
-				
-				StoreFromPtr (ig, type);
-				
-				if (temp != null)
-					temp.Emit (ec);
-			} else {
-				if (arg_idx <= 255)
-					ig.Emit (OpCodes.Starg_S, (byte) arg_idx);
-				else
-					ig.Emit (OpCodes.Starg, arg_idx);
-			}
-		}
-
-		public void AddressOf (EmitContext ec, AddressOp mode)
-		{
-			if (ec.HaveCaptureInfo && ec.IsParameterCaptured (name)){
-				ec.capture_context.EmitAddressOfParameter (ec, name);
-				return;
-			}
-			
-			int arg_idx = idx;
-
-			if (!ec.MethodIsStatic)
-				arg_idx++;
-
-			if (is_ref){
-				if (arg_idx <= 255)
-					ec.ig.Emit (OpCodes.Ldarg_S, (byte) arg_idx);
-				else
-					ec.ig.Emit (OpCodes.Ldarg, arg_idx);
-			} else {
-				if (arg_idx <= 255)
-					ec.ig.Emit (OpCodes.Ldarga_S, (byte) arg_idx);
-				else
-					ec.ig.Emit (OpCodes.Ldarga, arg_idx);
-			}
-		}
-#endif
 
 		public override string ToString ()
 		{
@@ -6692,11 +6589,14 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (block != null && block.Toplevel.ThisVariable != null)
-				variable_info = block.Toplevel.ThisVariable.VariableInfo;
+			if (block != null) {
+				if (block.Toplevel.ThisVariable != null)
+					variable_info = block.Toplevel.ThisVariable.VariableInfo;
 
-			if (ec.CurrentAnonymousMethod != null)
-				ec.CaptureThis ();
+				AnonymousMethodHost host = block.Toplevel.AnonymousMethodHost;
+				if (host != null)
+					host.CaptureThis ();
+			}
 			
 			return true;
 		}

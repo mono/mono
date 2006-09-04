@@ -613,16 +613,6 @@ namespace Mono.CSharp {
 			return capture_context.AddLocal (li);
 		}
 
-		public Variable CaptureParameter (Parameter par, int idx)
-		{
-			return capture_context.AddParameter (this, par, idx);
-		}
-
-		public void CaptureThis ()
-		{
-			capture_context.CaptureThis ();
-		}		
-		
 		//
 		// Use to register a field as captured
 		//
@@ -662,28 +652,11 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public Variable GetCapturedParameter (Parameter par)
-		{
-			if (capture_context != null)
-				return capture_context.GetCapturedParameter (par);
-			return null;
-		}
-
 		public bool IsParameterCaptured (string name)
 		{
 			if (capture_context != null)
 				return capture_context.IsParameterCaptured (name);
 			return false;
-		}
-
-		public bool MustCaptureParameter (Block block, string name)
-		{
-			if (CurrentAnonymousMethod == null)
-				return false;
-			if (CurrentAnonymousMethod.IsIterator)
-				return true;
-			else
-				return !block.Toplevel.IsLocalParameter (name);
 		}
 
 		public bool MustCaptureVariable (LocalInfo local)
@@ -998,8 +971,6 @@ namespace Mono.CSharp {
 				HasReturnLabel = true;
 		}
 
-		static int next_temp = 0;
-
 		//
 		// Emits the proper object to address fields on a remapped
 		// variable/parameter to field in anonymous-method/iterator proxy classes.
@@ -1007,29 +978,22 @@ namespace Mono.CSharp {
 		public void EmitThis (bool need_address)
 		{
 			ig.Emit (OpCodes.Ldarg_0);
-			if (capture_context != null && CurrentAnonymousMethod != null){
-				AnonymousMethodHost host = CurrentAnonymousMethod.RootScope;
-				ig.Emit (OpCodes.Ldc_I4, ++next_temp);
-				ig.Emit (OpCodes.Pop);
-				Report.Debug (64, "EMIT THIS", this, capture_context,
-					      CurrentAnonymousMethod, next_temp, host);
+			if (CurrentAnonymousMethod == null)
+				return;
 
-				while (host != null){
-					Report.Debug (64, "EMIT THIS #1", this, capture_context,
-						      CurrentAnonymousMethod, next_temp, host,
-						      host.THIS, host.ParentLink);
-					if (host.ParentLink != null)
-						ig.Emit (OpCodes.Ldfld, host.ParentLink.FieldBuilder);
-					if (host.THIS != null){
-						if (need_address && TypeManager.IsValueType (host.THIS.MemberType))
-							ig.Emit (OpCodes.Ldflda, host.THIS.FieldBuilder);
-						else
-							ig.Emit (OpCodes.Ldfld, host.THIS.FieldBuilder);
-						break;
-					}
-					host = host.ParentHost;
+			AnonymousMethodHost host = CurrentAnonymousMethod.RootScope;
+			while (host != null) {
+				if (host.ParentLink != null)
+					ig.Emit (OpCodes.Ldfld, host.ParentLink.FieldBuilder);
+				if (host.THIS != null) {
+					if (need_address && TypeManager.IsValueType (host.THIS.MemberType))
+						ig.Emit (OpCodes.Ldflda, host.THIS.FieldBuilder);
+					else
+						ig.Emit (OpCodes.Ldfld, host.THIS.FieldBuilder);
+					break;
 				}
-			} 
+				host = host.ParentHost;
+			}
 		}
 
 		public Expression GetThis (Location loc)

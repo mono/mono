@@ -340,11 +340,12 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public void ResolveVariable (EmitContext ec, int idx)
+		public void ResolveVariable (ToplevelBlock toplevel, int idx)
 		{
 			Report.Debug (64, "PARAMETER RESOLVE VARIABLE", ParameterType, Name, Location);
-			var = ec.GetCapturedParameter (this);
-			Report.Debug (64, "PARAMETER RESOLVE VARIABLE #1", var, ec.IsStatic, idx);
+			if (toplevel.AnonymousMethodHost != null)
+				var = toplevel.AnonymousMethodHost.GetCapturedParameter (this);
+			Report.Debug (64, "PARAMETER RESOLVE VARIABLE #1", var, idx);
 			if (var == null)
 				var = new ParameterVariable (this, idx);
 		}
@@ -693,11 +694,11 @@ namespace Mono.CSharp {
 			return ok;
 		}
 
-		public void ResolveVariable (EmitContext ec)
+		public void ResolveVariable (ToplevelBlock toplevel)
 		{
 			for (int i = 0; i < FixedParameters.Length; ++i) {
 				Parameter p = FixedParameters [i];
-				p.ResolveVariable (ec, i);
+				p.ResolveVariable (toplevel, i);
 			}
 		}
 
