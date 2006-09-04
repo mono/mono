@@ -946,7 +946,7 @@ namespace System.Web {
 #if NET_1_1
 		public static string UrlPathEncode (string s)
 		{
-			if(String.IsNullOrEmpty(s))
+			if (s == null || s.Length == 0)
 				return s;
 
 			MemoryStream result = new MemoryStream ();
