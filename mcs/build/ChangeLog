@@ -1,3 +1,11 @@
+2006-09-04  Raja R Harinath  <rharinath@novell.com>
+
+	* library.make (TEST_HARNESS_VERBOSE): New user toggle.  If
+	defined, NUnit will print the names of the unit tests as they are
+	run.  Can be used to narrow down infloops.
+	(TEST_HARNESS_EXCLUDE): Provide a way to override the list of
+	excluded unit test categories.
+
 2006-04-11  Raja R Harinath  <rharinath@novell.com>
 
 	* profiles/default.make (BOOTSTRAP_PROFILE): Define.
