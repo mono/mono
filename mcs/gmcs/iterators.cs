@@ -518,7 +518,6 @@ namespace Mono.CSharp {
 		protected class EnumeratorScopeInitializer : IteratorHostInitializer
 		{
 			IteratorHost host;
-			ExpressionStatement initializer;
 
 			public EnumeratorScopeInitializer (IteratorHost host)
 				: base (host)
@@ -528,7 +527,6 @@ namespace Mono.CSharp {
 
 			protected override bool DoResolveInternal (EmitContext ec)
 			{
-				// initializer = host.GetScopeInitializer (ec);
 				type = host.IsGeneric ? host.CurrentType : host.TypeBuilder;
 				return base.DoResolveInternal (ec);
 			}
@@ -541,8 +539,6 @@ namespace Mono.CSharp {
 			protected override void EmitParameterReference (EmitContext ec,
 									CapturedParameter cp)
 			{
-				Report.Debug (64, "EMIT THE PARAM", this, cp, host,
-					      initializer, host.CaptureContext.captured_parameters);
 				ec.ig.Emit (OpCodes.Ldarg_0);
 				ec.ig.Emit (OpCodes.Ldfld, cp.Field.FieldBuilder);
 			}
