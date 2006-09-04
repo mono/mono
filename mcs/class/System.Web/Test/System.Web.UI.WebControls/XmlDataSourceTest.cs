@@ -351,6 +351,9 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
+#if TARGET_JVM
+		[Category ("NotWorking")] // can not write into file located inside jar
+#endif
 		public void Save ()
 		{
 			string origin = @"<div>

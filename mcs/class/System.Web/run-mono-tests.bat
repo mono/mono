@@ -1,4 +1,4 @@
-rem @echo off
+@echo off
 REM ********************************************************
 REM This batch file receives the follwing parameters:
 REM build/rebuild (optional): should the solution file be rebuilded 
@@ -9,8 +9,7 @@ REM ********************************************************
 
 IF "%JAVA_HOME%"=="" GOTO ENVIRONMENT_EXCEPTION
 
-IF "%GH_HOME%"=="" GOTO ENVIRONMENT_EXCEPTION
-IF "%GHROOT%"=="" set GHROOT=%GH_HOME%
+IF "%VMW_HOME%"=="" GOTO ENVIRONMENT_EXCEPTION
 
 REM ********************************************************
 REM Set parameters
@@ -28,13 +27,13 @@ REM ********************************************************
 REM @echo Set environment
 REM ********************************************************
 
-set JGAC_PATH=%GH_HOME%\jgac\vmw4j2ee_110
+set JGAC_PATH=%VMW_HOME%\jgac\vmw4j2ee_110
 set RUNTIME_CLASSPATH=%JGAC_PATH%\mscorlib.jar;%JGAC_PATH%\System.jar;%JGAC_PATH%\System.Xml.jar;%JGAC_PATH%\J2SE.Helpers.jar;%JGAC_PATH%\System.Web.jar;%JGAC_PATH%\System.Drawing.jar;%JGAC_PATH%\System.Runtime.Serialization.Formatters.Soap.jar
 set PROJECT_CONFIGURATION=Debug_Java20
 set GH_OUTPUT_XML=nunit_results.xml
 set NUNIT_PATH=..\..\..\nunit20
 set XML_TOOL_PATH=..\..\..\tools\mono-xmltool
-set NUNIT_CLASSPATH=%NUNIT_PATH%\nunit-console\bin\Debug_Java\nunit.framework.jar;%NUNIT_PATH%\nunit-console\bin\Debug_Java\nunit.util.jar;%NUNIT_PATH%\nunit-console\bin\Debug_Java\nunit.core.jar;%NUNIT_PATH%\nunit-console\bin\Debug_Java\nunit-console.jar
+set NUNIT_CLASSPATH=%NUNIT_PATH%\nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.framework.jar;%NUNIT_PATH%\nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.util.jar;%NUNIT_PATH%\nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.core.jar;%NUNIT_PATH%\nunit-console\bin\%PROJECT_CONFIGURATION%\nunit-console.jar
 set CLASSPATH="%RUNTIME_CLASSPATH%;%NUNIT_CLASSPATH%"
 
 pushd Test
@@ -45,7 +44,7 @@ REM ********************************************************
 REM ********************************************************
 
 if "%NUNIT_BUILD%" == "DONE" goto NUNITSKIP
-msbuild %NUNIT_PATH%\nunit.java20.sln /t:%BUILD_OPTION% /p:configuration=%PROJECT_CONFIGURATION% >build.log.txt 2<&1
+msbuild %NUNIT_PATH%\nunit20.java.sln /t:%BUILD_OPTION% /p:configuration=%PROJECT_CONFIGURATION% >build.log.txt 2<&1
 
 goto NUNITREADY
 
@@ -60,9 +59,10 @@ IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 REM ********************************************************
 @echo Build XmlTool
 REM ********************************************************
-msbuild %XML_TOOL_PATH%\XmlTool20.sln /p:configuration=Debug >>build.log.txt 2<&1
+msbuild %XML_TOOL_PATH%\XmlTool20.vmwcsproj /p:configuration=%PROJECT_CONFIGURATION% >>build.log.txt 2<&1
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
-copy %XML_TOOL_PATH%\bin\Debug_Java\xmltool.exe ..
+
+copy %XML_TOOL_PATH%\bin\%PROJECT_CONFIGURATION%\xmltool.exe ..
 copy %XML_TOOL_PATH%\nunit_transform.xslt ..
 
 REM ********************************************************
@@ -83,8 +83,7 @@ del %GH_OUTPUT_XML%
 
 popd
 
-del %GH_OUTPUT_XML%
-copy Test\%GH_OUTPUT_XML% .
+copy Test\bin\%PROJECT_CONFIGURATION%\%GH_OUTPUT_XML% .
 
 REM ********************************************************
 @echo Analyze and print results

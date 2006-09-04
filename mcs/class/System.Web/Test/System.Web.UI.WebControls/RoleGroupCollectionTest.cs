@@ -122,6 +122,9 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void GetMatchingRoleGroup_In ()
 		{
 			RoleGroup rg = new RoleGroup ();

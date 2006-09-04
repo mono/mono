@@ -63,6 +63,11 @@
     </servlet-mapping>
 
     <servlet-mapping>
+      <servlet-name>VmwDynamicServlet</servlet-name>
+      <url-pattern>*.fake</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>VmwIncludeHelperServlet</servlet-name>
         <url-pattern>/servletincludehelper</url-pattern>
     </servlet-mapping>
