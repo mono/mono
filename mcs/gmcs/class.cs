@@ -5978,8 +5978,8 @@ namespace Mono.CSharp {
 
 		#region IMethodData Members
 
-		public Iterator Iterator {
-			get { return null; }
+		public abstract Iterator Iterator {
+			get;
 		}
 
 		public ToplevelBlock Block {
@@ -6268,6 +6268,7 @@ namespace Mono.CSharp {
 		{
 			protected readonly MethodCore method;
 			protected MethodAttributes flags;
+			Iterator iterator;
 			bool yields;
 
 			public PropertyMethod (MethodCore method, string prefix)
@@ -6287,6 +6288,10 @@ namespace Mono.CSharp {
 				if (accessor.ModFlags != 0 && RootContext.Version == LanguageVersion.ISO_1) {
 					Report.FeatureIsNotStandardized (Location, "access modifiers on properties");
 				}
+			}
+
+			public override Iterator Iterator {
+				get { return iterator; }
 			}
 
 			public override AttributeTargets AttributeTargets {
@@ -6333,11 +6338,11 @@ namespace Mono.CSharp {
 				// Setup iterator if we are one
 				//
 				if (yields) {
-					Iterator iterator = Iterator.CreateIterator (
+					iterator = Iterator.CreateIterator (
 						this, (TypeContainer) Parent, null, ModFlags);
 
 					if (iterator == null)
-						return null;
+						throw new InternalErrorException ();
 				}
 
 				return null;
@@ -6979,6 +6984,10 @@ namespace Mono.CSharp {
 				: base (method, accessor, prefix)
 			{
 				this.method = method;
+			}
+
+			public override Iterator Iterator {
+				get { return null; }
 			}
 
 			protected override void ApplyToExtraTarget(Attribute a, CustomAttributeBuilder cb)
