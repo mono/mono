@@ -1,3 +1,9 @@
+2006-05-09	Boris Kirzner <borisk@mainsoft.com>
+
+	* System.Configuration.Test20.sln,
+	System.Configuration.Test20.vmwcsproj: added solution 
+	and project files for NET_2_0 TERGET_JVM tests.
+
 2005-12-16  Chris Toshok  <toshok@ximian.com>
 
 	* System.Configuration/ConfigurationLockCollectionTest.cs

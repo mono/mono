@@ -50,7 +50,11 @@ namespace MonoTests.System.Configuration {
 
 			Console.WriteLine("application config path: {0}", config.FilePath);
 			FileInfo fi = new FileInfo (config.FilePath);
+#if TARGET_JVM
+			Assert.AreEqual("System.Configuration.Test.jar.config", fi.Name);
+#else
 			Assert.AreEqual ("System.Configuration_test_net_2_0.dll.config", fi.Name);
+#endif
 		}
 
 		[Test]
@@ -239,7 +243,11 @@ namespace MonoTests.System.Configuration {
 			Console.WriteLine("null mapped application config path: {0}", config.FilePath);	
 
 			FileInfo fi = new FileInfo (config.FilePath);
+#if TARGET_JVM
+			Assert.AreEqual("System.Configuration.Test.jar.config", fi.Name);
+#else
 			Assert.AreEqual ("System.Configuration_test_net_2_0.dll.config", fi.Name);
+#endif
 		}
 
 		[Test]
@@ -263,9 +271,11 @@ namespace MonoTests.System.Configuration {
 		{
 			SysConfig cfg = ConfigurationManager.OpenMachineConfiguration ();
 			Assert.IsTrue (cfg.Sections.Count > 0, "#1");
+#if !TARGET_JVM
 			ConfigurationSection s = cfg.Sections ["system.net/connectionManagement"];
 			Assert.IsNotNull (s, "#2");
 			Assert.IsTrue (s is ConnectionManagementSection, "#3");
+#endif
 		}
 	}
 }

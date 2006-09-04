@@ -1,3 +1,8 @@
+2006-05-09	Boris Kirzner <borisk@mainsoft.com>
+
+	* ConfigurationManagerTest.cs, ConfigurationPermissionTest.cs:
+	fixes for TARGET_JVM.
+
 2006-07-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ConfigurationManagerTest.cs :
