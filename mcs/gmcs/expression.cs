@@ -3746,6 +3746,9 @@ namespace Mono.CSharp {
 			Variable.EmitInstance (ec);
 			if (prepare_for_load)
 				ig.Emit (OpCodes.Dup);
+			else if (is_ref)
+				Variable.Emit (ec);
+
 			source.Emit (ec);
 			if (leave_copy) {
 				ig.Emit (OpCodes.Dup);
@@ -3754,7 +3757,10 @@ namespace Mono.CSharp {
 					temp.Store (ec);
 				}
 			}
-			Variable.EmitAssign (ec);
+			if (is_ref)
+				StoreFromPtr (ig, type);
+			else
+				Variable.EmitAssign (ec);
 			if (temp != null)
 				temp.Emit (ec);
 		}
