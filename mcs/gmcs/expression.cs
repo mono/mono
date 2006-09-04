@@ -3759,7 +3759,7 @@ namespace Mono.CSharp {
 			prepared = prepare_for_load;
 
 			Variable.EmitInstance (ec);
-			if (prepare_for_load)
+			if (prepare_for_load && Variable.HasInstance)
 				ig.Emit (OpCodes.Dup);
 			else if (is_ref)
 				Variable.Emit (ec);
