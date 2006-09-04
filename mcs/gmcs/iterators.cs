@@ -21,14 +21,6 @@ using System.Reflection.Emit;
 
 namespace Mono.CSharp {
 
-	public interface IIteratorContainer {
-
-		//
-		// Invoked if a yield statement is found in the body
-		//
-		void SetYields ();
-	}
-	
 	public class Yield : Statement {
 		Expression expr;
 		ArrayList finally_blocks;
@@ -948,12 +940,14 @@ namespace Mono.CSharp {
 				method, parent, generic, null, block, modifiers,
 				iterator_type, is_enumerable);
 
+#if FIXME
 			if (!iterator.RootScope.Define ())
 				return null;
 			if (iterator.RootScope.DefineType () == null)
 				return null;
 			if (!iterator.RootScope.ResolveType ())
 				return null;
+#endif
 
 			Report.Debug (64, "CREATE ITERATOR #1", iterator, iterator.RootScope,
 				      iterator.RootScope.IsGeneric, iterator.RootScope.TypeBuilder);

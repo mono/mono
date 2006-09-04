@@ -2264,6 +2264,9 @@ namespace Mono.CSharp {
 
 		public void CreateIteratorHost (AnonymousMethodHost root_scope)
 		{
+			Report.Debug (64, "CREATE ITERATOR HOST", this, root_scope,
+				      container, anonymous_method_host);
+
 			if ((container != null) || (anonymous_method_host != null))
 				throw new InternalErrorException ();
 

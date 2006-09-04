@@ -36,6 +36,7 @@ namespace Mono.CSharp {
 		//
 		public const int METHOD_YIELDS = 0x8000;
 		public const int METHOD_GENERIC = 0x10000;
+		public const int ANONYMOUS_HOST = 0x20000;
 
 		public const int Accessibility =
 			PUBLIC | PROTECTED | INTERNAL | PRIVATE;

@@ -87,16 +87,8 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected virtual bool PopulateType ()
+		protected override bool DoPopulateType ()
 		{
-			if (type_populated)
-				return true;
-
-			type_populated = true;
-
-			if (!DoPopulateType ())
-				return false;
-
 			if (CompilerGenerated != null) {
 				foreach (CompilerGeneratedClass c in CompilerGenerated) {
 					if (!c.PopulateType ())
@@ -104,11 +96,6 @@ namespace Mono.CSharp {
 				}
 			}
 
-			return true;
-		}
-
-		protected virtual bool DoPopulateType ()
-		{
 			return true;
 		}
 
@@ -153,7 +140,6 @@ namespace Mono.CSharp {
 			return new CapturedVariable (this, name, InflateType (type));
 		}
 
-		bool type_populated;
 		bool members_defined;
 
 		internal void CheckMembersDefined ()
@@ -666,7 +652,20 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class AnonymousMethodExpression : Expression, IAnonymousContainer
+	public interface IAnonymousHost
+	{
+		//
+		// Invoked if a yield statement is found in the body
+		//
+		void SetYields ();
+
+		//
+		// Invoked if an anonymous method is found in the body
+		//
+		void AddAnonymousMethod (AnonymousMethodExpression anonymous);
+	}
+
+	public class AnonymousMethodExpression : Expression, IAnonymousContainer, IAnonymousHost
 	{
 		public readonly AnonymousMethodExpression Parent;
 		public readonly TypeContainer Host;
@@ -675,7 +674,6 @@ namespace Mono.CSharp {
 		public ToplevelBlock Block;
 		protected AnonymousMethod anonymous;
 
-		protected readonly AnonymousMethodHost root_scope;
 		protected readonly ToplevelBlock container;
 		protected readonly GenericMethod generic;
 
@@ -710,8 +708,41 @@ namespace Mono.CSharp {
 			Report.Debug (64, "NEW ANONYMOUS METHOD EXPRESSION", this, parent, host,
 				      container, loc);
 
+			if (parent != null)
+				parent.AddAnonymousMethod (this);
+		}
+
+		ArrayList children;
+		AnonymousMethodHost root_scope;
+
+		void IAnonymousHost.SetYields ()
+		{
+			throw new InvalidOperationException ();
+		}
+
+		public void AddAnonymousMethod (AnonymousMethodExpression anonymous)
+		{
+			if (children == null)
+				children = new ArrayList ();
+			children.Add (anonymous);
+		}
+
+		public bool CreateAnonymousHelpers ()
+		{
+			Report.Debug (64, "ANONYMOUS METHOD EXPRESSION CREATE ROOT SCOPE",
+				      this, Host, container, loc);
+
 			if (container != null)
 				root_scope = container.CreateAnonymousMethodHost (Host);
+
+			if (children != null) {
+				foreach (AnonymousMethodExpression child in children) {
+					if (!child.CreateAnonymousHelpers ())
+						return false;
+				}
+			}
+
+			return true;
 		}
 
 		public override string ExprClassName {

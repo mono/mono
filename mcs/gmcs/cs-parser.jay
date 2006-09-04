@@ -35,7 +35,7 @@ namespace Mono.CSharp
 		TypeContainer   current_container;
 		TypeContainer	current_class;
 	
-		IIteratorContainer iterator_container;
+		IAnonymousHost anonymous_host;
 
 		/// <summary>
 		///   Current block is used to add statements as we find
@@ -1067,7 +1067,7 @@ variable_initializer
 
 method_declaration
 	: method_header {
-		iterator_container = (IIteratorContainer) $1;
+		anonymous_host = (IAnonymousHost) $1;
 		if (RootContext.Documentation != null)
 			Lexer.doc_state = XmlCommentState.NotAllowed;
 	  }
@@ -1077,9 +1077,9 @@ method_declaration
 		method.Block = (ToplevelBlock) $3;
 		current_container.AddMethod (method);
 
+		anonymous_host = null;
 		current_generic_method = null;
 		current_local_parameters = null;
-		iterator_container = null;
 
 		if (RootContext.Documentation != null)
 			Lexer.doc_state = XmlCommentState.Allowed;
@@ -1136,6 +1136,7 @@ method_header
 		method = new Method (current_class, generic, (Expression) $3, (int) $2, false,
 				     name, (Parameters) $6, (Attributes) $1);
 
+		anonymous_host = method;
 		current_local_parameters = (Parameters) $6;
 		current_generic_method = generic;
 
@@ -1173,6 +1174,7 @@ method_header
 		method = new Method (current_class, generic, TypeManager.system_void_expr,
 				     (int) $2, false, name, (Parameters) $6, (Attributes) $1);
 
+		anonymous_host = method;
 		current_local_parameters = (Parameters) $6;
 		current_generic_method = generic;
 
@@ -1450,7 +1452,7 @@ get_accessor_declaration
 			current_local_parameters = indexer_parameters;
 		lexer.PropertyParsing = false;
 
-		iterator_container = SimpleIteratorContainer.GetSimple ();
+		anonymous_host = SimpleAnonymousHost.GetSimple ();
 	  }
           accessor_body
 	  {
@@ -1463,10 +1465,8 @@ get_accessor_declaration
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
 
-		if (SimpleIteratorContainer.Simple.Yields)
-			accessor.SetYields ();
-
-		iterator_container = null;
+		SimpleAnonymousHost.Simple.Propagate (accessor);
+		anonymous_host = null;
 
 		if (RootContext.Documentation != null)
 			if (Lexer.doc_state == XmlCommentState.Error)
@@ -1505,7 +1505,7 @@ set_accessor_declaration
 		
 		lexer.PropertyParsing = false;
 
-		iterator_container = SimpleIteratorContainer.GetSimple ();
+		anonymous_host = SimpleAnonymousHost.GetSimple ();
 	  }
 	  accessor_body
 	  {
@@ -1518,10 +1518,8 @@ set_accessor_declaration
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
 
-		if (SimpleIteratorContainer.Simple.Yields)
-			accessor.SetYields ();
-
-		iterator_container = null;
+		SimpleAnonymousHost.Simple.Propagate (accessor);
+		anonymous_host = null;
 
 		if (RootContext.Documentation != null
 			&& Lexer.doc_state == XmlCommentState.Error)
@@ -1946,7 +1944,7 @@ interface_indexer_declaration
 operator_declaration
 	: opt_attributes opt_modifiers operator_declarator 
 	  {
-		iterator_container = SimpleIteratorContainer.GetSimple ();
+		anonymous_host = SimpleAnonymousHost.GetSimple ();
 	  }
 	  operator_body
 	  {
@@ -1971,14 +1969,13 @@ operator_declaration
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
 
-		if (SimpleIteratorContainer.Simple.Yields)
-			op.SetYields ();
+		SimpleAnonymousHost.Simple.Propagate (op);
+		anonymous_host = null;
 
 		// Note again, checking is done in semantic analysis
 		current_container.AddOperator (op);
 
 		current_local_parameters = null;
-		iterator_container = null;
 	  }
 	;
 
@@ -2438,7 +2435,7 @@ indexer_declaration
 		parsing_indexer  = true;
 		
 		indexer_parameters = decl.param_list;
-		iterator_container = SimpleIteratorContainer.GetSimple ();
+		anonymous_host = SimpleAnonymousHost.GetSimple ();
 	  }
           accessor_declarations 
 	  {
@@ -3429,7 +3426,12 @@ anonymous_method_expression
 
 			anon_block.Parent = current_block;
 
+			Report.Debug (64, "PARSER", anon_block, current_anonymous_method, anonymous_host,
+				      loc);
+
 			current_anonymous_method.Block = anon_block;
+			if ((anonymous_host != null) && (current_anonymous_method.Parent == null))
+				anonymous_host.AddAnonymousMethod (current_anonymous_method);
 
 			$$ = current_anonymous_method;
 		}
@@ -4633,11 +4635,11 @@ yield_statement
 			Report.FeatureIsNotStandardized (lt.Location, "yield statement");
 			$$ = null;
 		}
-		if (iterator_container == null){
+		if (anonymous_host == null){
 			Report.Error (204, lt.Location, "yield statement can only be used within a method, operator or property");
 			$$ = null;
 		} else {
-			iterator_container.SetYields ();
+			anonymous_host.SetYields ();
 			$$ = new Yield ((Expression) $3, lt.Location); 
 		}
 	  }
@@ -4658,11 +4660,11 @@ yield_statement
 			Report.FeatureIsNotStandardized (lt.Location, "yield statement");
 			$$ = null;
 		}
-		if (iterator_container == null){
+		if (anonymous_host == null){
 			Report.Error (204, lt.Location, "yield statement can only be used within a method, operator or property");
 			$$ = null;
 		} else {
-			iterator_container.SetYields ();
+			anonymous_host.SetYields ();
 			$$ = new YieldBreak (lt.Location);
 		}
 	  }
@@ -5023,22 +5025,40 @@ public class IndexerDeclaration {
 }
 
 //
-// We use this when we do not have an object in advance that is an IIteratorContainer
+// We use this when we do not have an object in advance that is an IAnonymousHost
 //
-public class SimpleIteratorContainer : IIteratorContainer {
-	public bool Yields;
+public class SimpleAnonymousHost : IAnonymousHost {
+	public static readonly SimpleAnonymousHost Simple = new SimpleAnonymousHost ();
 
-	public static SimpleIteratorContainer Simple = new SimpleIteratorContainer ();
+	bool yields;
+	ArrayList anonymous_methods;
 
-	//
-	// Reset and return
-	//
-	public static SimpleIteratorContainer GetSimple () { 
-		Simple.Yields = false;
+	public static SimpleAnonymousHost GetSimple () {
+		Simple.anonymous_methods = null;
 		return Simple;
 	}
 
-	public void SetYields () { Yields = true; } 
+	public void SetYields ()
+	{
+		yields = true;
+	}
+
+	public void AddAnonymousMethod (AnonymousMethodExpression anonymous)
+	{
+		if (anonymous_methods == null)
+			anonymous_methods = new ArrayList ();
+		anonymous_methods.Add (anonymous);
+	}
+
+	public void Propagate (IAnonymousHost real_host)
+	{
+		if (yields)
+			real_host.SetYields ();
+		if (anonymous_methods != null) {
+			foreach (AnonymousMethodExpression ame in anonymous_methods)
+				real_host.AddAnonymousMethod (ame);
+		}
+	}
 }
 
 // <summary>
