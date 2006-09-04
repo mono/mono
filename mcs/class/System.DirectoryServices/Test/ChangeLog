@@ -1,3 +1,7 @@
+2006-4-09 Boris Kirzner <borisk@mainsoft.com>
+
+	* Properties\AssemblyInfo.cs: added assembly info.
+
 2006-3-09	Boris Kirzner <borisk@mainsoft.com>
 	
 	* System.DirectoryServices.Test20.sln, 
