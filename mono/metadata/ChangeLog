@@ -1,3 +1,8 @@
+2006-09-04  Miguel de Icaza  <miguel@novell.com>
+
+	* Temporarily remove the patch to assemly.c that checks the
+	assembly versions as it breaks our gacutil.
+
 2006-09-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata.c (mono_metadata_parse_mh_full): Fix an invalid free.
