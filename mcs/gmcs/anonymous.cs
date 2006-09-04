@@ -320,12 +320,17 @@ namespace Mono.CSharp {
 			static int next_id;
 			int id = ++next_id;
 
-			protected void DoEmit (EmitContext ec)
+			protected virtual void DoEmit (EmitContext ec)
 			{
 				if (ec.CurrentBlock.Toplevel == Scope.ScopeBlock.Toplevel)
-					ec.ig.Emit (OpCodes.Ldloc, scope_instance);
+					DoEmitInstance (ec);
 				else
 					ec.ig.Emit (OpCodes.Ldarg_0);
+			}
+
+			protected void DoEmitInstance (EmitContext ec)
+			{
+				ec.ig.Emit (OpCodes.Ldloc, scope_instance);
 			}
 
 			protected virtual void EmitScopeConstructor (EmitContext ec)

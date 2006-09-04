@@ -533,6 +533,11 @@ namespace Mono.CSharp {
 				return base.DoResolveInternal (ec);
 			}
 
+			protected override void DoEmit (EmitContext ec)
+			{
+				DoEmitInstance (ec);
+			}
+
 			protected override void EmitParameterReference (EmitContext ec,
 									CapturedParameter cp)
 			{
