@@ -1,4 +1,0 @@
-<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>
-<xs:element name='foo' type='xs:integer' />
-<xs:element name='bar' type='xs:string' />
-</xs:schema>

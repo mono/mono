@@ -1,4 +1,0 @@
-IsMachineLevel: False
-File: `t5.exe.config2'
-settings[hithere] = Hello World!
-AppSettings[hithere] = Hello World!

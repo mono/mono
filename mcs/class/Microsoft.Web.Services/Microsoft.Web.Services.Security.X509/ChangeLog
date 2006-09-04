@@ -1,9 +1,0 @@
-2003-10-05  Sebastien Pouliot  <spouliot@videotron.ca>
-
-	* X509Certificate.cs: Class is sealed (corcompare). Implemented 
-	GetSubjectAlternativeName for WSE2.
-	* X509CertificateCollection.cs: Removed Item[] set (corcompare).
-
-2003-09-04  Sebastien Pouliot  <spouliot@videotron.ca>
-
-	* FileCertificateStore.cs: Fixed compilation.

@@ -1,8 +1,0 @@
-2005-10-31  Sebastien Pouliot  <sebastien@ximian.com> 
-
-	* ResourceConsumptionAttributeCas.cs: New. CAS unit tests.
-	* ResourceConsumptionAttributeTest.cs: New. Unit tests.
-	* ResourceExposureAttributeCas.cs: New. CAS unit tests.
-	* ResourceExposureAttributeTest.cs
-	* VersioningHelperCas.cs: New. CAS unit tests.
-	* VersioningHelperTest.cs

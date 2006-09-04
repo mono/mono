@@ -1,3 +1,0 @@
-<!ENTITY % foobar SYSTEM "nested-included.dtd">
-<!ELEMENT root (foo, bar)>
-%foobar;

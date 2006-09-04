@@ -1,9 +1,0 @@
-Mono.Security.Cryptography/MD2CryptoServiceProviderTest.cs
-Mono.Security.Cryptography/MD2Test.cs
-Mono.Security.Cryptography/MD4CryptoServiceProviderTest.cs
-Mono.Security.Cryptography/MD4Test.cs
-Mono.Security.Cryptography/MD5CryptoServiceProviderTest.cs
-Mono.Security.Cryptography/MD5Test.cs
-Mono.Security.Cryptography/RandomNumberGeneratorTest.cs
-Mono.Security.Cryptography/SHA1CryptoServiceProviderTest.cs
-Mono.Security.Cryptography/SHA1Test.cs

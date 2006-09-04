@@ -1,9 +1,0 @@
-2006-03-27	Boris Kirzner <borisk@mainsoft.com>
-	* SqlNullValueException.cs, SqlTypeException.cs: 
-	fix Soap Serialization .NET compatibility
-
-2005-10-26  Boris Kirzner  <borisk@mainsoft.com>
-
-	* SqlBinary.cs : Avoid ArrayTypeMismatch exception by 
-	using Array.Copy().
-

@@ -1,3 +1,0 @@
-2006-05-25  Konstantin Triger <kostat@mainsoft.com>
-
-	* ProvidersSectionHandler.cs: support configuration hierarchy merge.

@@ -1,3 +1,0 @@
-2006-05-09  Konstantin Triger <kostat@mainsoft.com>
-
-	* OleDbConnection_GetOleDbSchemaTable.cs: in Oracle Database maps to Schema.

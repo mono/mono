@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<testresults name="">
-  <div id="GHTSubTest1" style="height:40px;left:16px;position:absolute;top:15px;width:40px;z-index:101">
-    <img id="Image1" alt="" border="0" style="font-family:david;font-size:12pt" />
-  </div>
-  <div id="GHTSubTest6" style="height:40px;left:16px;position:absolute;top:72px;width:40px;z-index:106">
-    <img id="Image6" alt="" border="0" style="font-family:david,tahoma,arial;font-size:12pt;font-style:italic;font-weight:bold;text-decoration:line-through overline underline" />
-  </div>
-</testresults>

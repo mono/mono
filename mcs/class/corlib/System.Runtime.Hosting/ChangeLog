@@ -1,5 +1,0 @@
-2005-05-28  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* ActivationArguments.cs: New. Required to test HostSecurityManager.
-	* ApplicationActivator.cs: Moved from System namespace and updated to
-	beta2 API.

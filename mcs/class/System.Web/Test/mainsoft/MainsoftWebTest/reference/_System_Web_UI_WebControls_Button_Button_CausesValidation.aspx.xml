@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<testresults name="">
-  <div id="GHTSubTest1" style="height:56px;left:32px;position:absolute;top:24px;width:136px;z-index:101">
-    <input value="Button" onclick="if (typeof(Page_ClientValidate) == 'function') Page_ClientValidate(); " language="javascript" type="submit" name="Button1" id="Button1" />
-  </div>
-  <div id="GHTSubTest2" style="height:56px;left:32px;position:absolute;top:96px;width:136px;z-index:102">
-    <input value="Button" type="submit" name="Button2" id="Button2" />
-  </div>
-</testresults>

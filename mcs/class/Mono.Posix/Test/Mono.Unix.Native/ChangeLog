@@ -1,5 +1,0 @@
-2005-11-28  Jonathan Pryor  <jonpryor@vt.edu>
-
-	* ChangeLog: Started.
-	* StdlibTest.cs: Moved from ../Mono.Unix.  Test Mono.Unix.Native namespace.
-

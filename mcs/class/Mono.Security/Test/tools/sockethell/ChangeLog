@@ -1,5 +1,0 @@
-2005-08-31  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* Makefile: build and execute unit tests from SocketHell.
-	* SocketHell.cs: Tests from JD Conley for Ssl*Stream, NetworkStream and
-	socket (adapted to run on 1.x with nunit).

@@ -1,8 +1,0 @@
-2005-02-10  Sebastien Pouliot  <sebastien@ximian,com>
-
-	* ChangeLog: New. Track change in the Npgsql/SSL test tool.
-	* Makefile: New. Build the test tool.
-	* makewords.sh: New. Script to create sample data in batabase.
-	* npdbtest.cs: New. Test tool.
-	* README: Instruction on how to install and setup PostgreSQL for the 
-	tests.

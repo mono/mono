@@ -1,9 +1,0 @@
-2005-11-05  Robert Jordan  <robertj@gmx.net>
-
-	* IpcServerChannel.cs: Implemented missing GetChannelUri ().
-	  Ipc*.cs: Removed the reflective channel factory.
-
-2005-10-16  Robert Jordan  <robertj@gmx.net>
-
-	* Imported
-
