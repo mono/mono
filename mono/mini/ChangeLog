@@ -1,3 +1,10 @@
+2006-09-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (emit_call): Special case calls to the vararg array icalls. Hopefully
+	fixes #79271.
+	(mono_arch_patch_code): Add some debug code to help track down similar failures in the
+	future.
+
 2006-09-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (mono_aot_plt_resolve): Add an assert.
