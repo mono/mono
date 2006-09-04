@@ -614,30 +614,12 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Use to register a field as captured
-		//
-		public void CaptureField (FieldExpr fe)
-		{
-			capture_context.AddField (this, fe);
-		}
-
-		//
 		// Whether anonymous methods have captured variables
 		//
 		public bool HaveCapturedVariables ()
 		{
 			if (capture_context != null)
 				return capture_context.HaveCapturedVariables;
-			return false;
-		}
-
-		//
-		// Whether anonymous methods have captured fields or this.
-		//
-		public bool HaveCapturedFields ()
-		{
-			if (capture_context != null)
-				return capture_context.HaveCapturedFields;
 			return false;
 		}
 

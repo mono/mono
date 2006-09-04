@@ -1464,11 +1464,6 @@ namespace Mono.CSharp {
 		Hashtable scopes = new Hashtable ();
 
 		bool have_captured_vars = false;
-
-		//
-		// Captured fields
-		//
-		Hashtable captured_fields = new Hashtable ();
 		Hashtable captured_variables = new Hashtable ();
 
 		public CaptureContext (ToplevelBlock toplevel_owner, Location loc,
@@ -1591,41 +1586,12 @@ namespace Mono.CSharp {
 			return var;
 		}
 
-		//
-		// Captured fields are only recorded on the topmost CaptureContext, because that
-		// one is the one linked to the owner of instance fields
-		//
-		public void AddField (EmitContext ec, FieldExpr fe)
-		{
-			if (fe.FieldInfo.IsStatic)
-				throw new InternalErrorException (
-					"Attempt to register a static field as a captured field");
-
-			CaptureContext parent = ParentCaptureContext;
-			if (parent != null) {
-				parent.AddField (ec, fe);
-				return;
-			}
-
-			ScopeInfo scope = GetScopeForBlock (ToplevelOwner);
-			RegisterScope (scope);
-		}
-
 		public bool HaveCapturedVariables {
 			get {
 				return have_captured_vars;
 			}
 		}
 		
-		public bool HaveCapturedFields {
-			get {
-				CaptureContext parent = ParentCaptureContext;
-				if (parent != null)
-					return parent.HaveCapturedFields;
-				return captured_fields.Count > 0;
-			}
-		}
-
 		public Variable GetCapturedVariable (LocalInfo local)
 		{
 			return (Variable) captured_variables [local];

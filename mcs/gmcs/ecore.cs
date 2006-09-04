@@ -3146,8 +3146,6 @@ namespace Mono.CSharp {
  							"this");
 						return null;
 					}
-					if ((am.ContainerAnonymousMethod == null) && (InstanceExpression is This))
-						ec.CaptureField (this);
 				}
 			}
 			
