@@ -7,7 +7,7 @@
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <SkipValidation>True</SkipValidation>
+    <SkipValidation>False</SkipValidation>
     <KeepIntermediate>False</KeepIntermediate>
     <GHProjectType>1</GHProjectType>
     <PreCompile>false</PreCompile>
@@ -63,14 +63,9 @@
     </AdditionalClassPath>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.core, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\nunit20\core\bin\Debug_Java20\nunit.core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="nunit.framework, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\nunit20\core\bin\Debug_Java20\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\nunit20\nunit-console\bin\Debug_Java20\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="rt, Version=0.0.0.0, Culture=neutral">

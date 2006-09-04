@@ -1,5 +1,9 @@
 2006-05-09	Boris Kirzner <borisk@mainsoft.com>
 
+	* ConfigurationManagerTest.cs: small fixes for TARGET_JVM.
+
+2006-05-09	Boris Kirzner <borisk@mainsoft.com>
+
 	* ConfigurationManagerTest.cs, ConfigurationPermissionTest.cs:
 	fixes for TARGET_JVM.
 

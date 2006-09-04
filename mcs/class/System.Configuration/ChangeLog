@@ -1,5 +1,9 @@
 2006-05-09	Boris Kirzner <borisk@mainsoft.com>
 
+	* run-tests.test.bat : small fixes for TARGET_JVM.
+
+2006-05-09	Boris Kirzner <borisk@mainsoft.com>
+
 	* run-tests.bat,  run-tests.test.bat: added scripts for NET_2_0
 	TARGET_JVM tests.
 

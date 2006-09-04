@@ -1,4 +1,8 @@
 2006-05-09	Boris Kirzner <borisk@mainsoft.com>
+	
+	* System.Configuration.Test20.vmwcsproj: small fixes for TARGET_JVM.
+
+2006-05-09	Boris Kirzner <borisk@mainsoft.com>
 
 	* System.Configuration.Test20.sln,
 	System.Configuration.Test20.vmwcsproj: added solution 
