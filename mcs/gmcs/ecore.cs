@@ -4028,7 +4028,8 @@ namespace Mono.CSharp {
 				return null;
 
 			if (ec.MustCaptureVariable (li)) {
-				var = ec.CaptureVariable (li);
+				ScopeInfo scope = li.Block.CreateScopeInfo ();
+				var = scope.AddLocal (li);
 				type = var.Type;
 			}
 			

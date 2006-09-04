@@ -457,8 +457,7 @@ namespace Mono.CSharp {
 				}
 
 				ParameterReference pr = Expr as ParameterReference;
-				if ((pr != null) && (ec.capture_context != null) &&
-				    ec.capture_context.IsParameterCaptured (pr.Name)) {
+				if ((pr != null) && pr.Parameter.IsCaptured) {
 					AnonymousMethod.Error_AddressOfCapturedVar (pr.Name, loc);
 					return null;
 				}
@@ -3374,7 +3373,8 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				variable = ec.CaptureVariable (local_info);
+				ScopeInfo scope = local_info.Block.CreateScopeInfo ();
+				variable = scope.AddLocal (local_info);
 				type = variable.Type;
 			}
 
@@ -3524,6 +3524,12 @@ namespace Mono.CSharp {
 		public string Name {
 			get {
 				return name;
+			}
+		}
+
+		public Parameter Parameter {
+			get {
+				return par;
 			}
 		}
 

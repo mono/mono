@@ -139,8 +139,7 @@ namespace Mono.CSharp {
 		TypeArguments generic_args;
 
 		public IteratorHost (Iterator iterator)
-			: base (iterator.Block.CaptureContext, iterator.Container,
-				iterator.Host, iterator.GenericMethod)
+			: base (iterator.Container, iterator.Host, iterator.GenericMethod)
 		{
 			this.Iterator = iterator;
 		}

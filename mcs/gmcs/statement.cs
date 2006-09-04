@@ -1041,8 +1041,12 @@ namespace Mono.CSharp {
 
 		public void ResolveVariable (EmitContext ec)
 		{
-			var = ec.GetCapturedVariable (this);
-			Report.Debug (64, "LOCAL RESOLVE VARIABLE", this, var);
+			Block theblock = Block;
+			while (theblock.Implicit)
+				theblock = theblock.Parent;
+			if (theblock.ScopeInfo != null)
+				var = theblock.ScopeInfo.GetCapturedVariable (this);
+
 			if (var == null) {
 				LocalBuilder builder;
 				if (Pinned)
@@ -1751,6 +1755,17 @@ namespace Mono.CSharp {
 
 		public ScopeInfo ScopeInfo;
 
+		public ScopeInfo CreateScopeInfo ()
+		{
+			if (Implicit)
+				return Parent.CreateScopeInfo ();
+
+			if (ScopeInfo == null)
+				ScopeInfo = new ScopeInfo (Toplevel.AnonymousMethodHost, this);
+
+			return ScopeInfo;
+		}
+
 		/// <summary>
 		///   Emits the variable declarations and labels.
 		/// </summary>
@@ -2153,8 +2168,6 @@ namespace Mono.CSharp {
 		FlowBranchingToplevel top_level_branching;
 		AnonymousMethodHost anonymous_method_host;
 
-		Hashtable capture_contexts;
-
 		public bool HasVarargs {
 			get { return (flags & Flags.HasVarargs) != 0; }
 			set { flags |= Flags.HasVarargs; }
@@ -2168,24 +2181,13 @@ namespace Mono.CSharp {
 			get { return parameters; }
 		}
 
-		public void RegisterCaptureContext (CaptureContext cc)
-		{
-			Report.Debug (64, "TOPLEVEL REGISTER CONTEXT", this, capture_contexts, cc);
-
-			if (capture_contexts == null)
-				capture_contexts = new Hashtable ();
-			capture_contexts [cc] = cc;
-		}
-
 		public bool CompleteContexts (EmitContext ec)
 		{
-			Report.Debug (64, "TOPLEVEL COMPLETE CONTEXTS", this, capture_contexts,
+			Report.Debug (64, "TOPLEVEL COMPLETE CONTEXTS", this,
 				      container, anonymous_method_host);
 
-			if (capture_contexts != null) {
-				foreach (CaptureContext cc in capture_contexts.Keys)
-					cc.LinkScopes ();
-			}
+			if (anonymous_method_host != null)
+				anonymous_method_host.LinkScopes ();
 
 			if ((container == null) && (anonymous_method_host != null)) {
 				Report.Debug (64, "TOPLEVEL COMPLETE CONTEXTS #1", this,
@@ -2255,23 +2257,23 @@ namespace Mono.CSharp {
 		{
 			if (anonymous_method_host != null)
 				return;
+
 			if (container != null)
-				anonymous_method_host = capture_context.CreateRootScope (
-					container.anonymous_method_host, null);
+				anonymous_method_host = new AnonymousMethodHost (
+					this, container.anonymous_method_host, null);
 			else
-				anonymous_method_host = capture_context.CreateRootScope (
-					host, generic);
+				anonymous_method_host = new AnonymousMethodHost (
+					this, host, generic);
+
+			ScopeInfo = anonymous_method_host;
 		}
 
 		public void CreateIteratorHost (AnonymousMethodHost root_scope)
 		{
-			Report.Debug (64, "CREATE ITERATOR HOST", this, container,
-				      anonymous_method_host, root_scope);
 			if ((container != null) || (anonymous_method_host != null))
 				throw new InternalErrorException ();
 
-			capture_context.AddRootScope (root_scope);
-			anonymous_method_host = root_scope;
+			ScopeInfo = anonymous_method_host = root_scope;
 		}
 
 		public AnonymousMethodHost AnonymousMethodHost {

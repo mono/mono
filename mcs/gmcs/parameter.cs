@@ -208,6 +208,7 @@ namespace Mono.CSharp {
 		public Expression TypeName;
 		public readonly Modifier ModFlags;
 		public string Name;
+		public bool IsCaptured;
 		GenericConstraints constraints;
 		protected Type parameter_type;
 		public readonly Location Location;

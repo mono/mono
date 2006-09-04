@@ -607,40 +607,6 @@ namespace Mono.CSharp {
 			current_flow_branching = current_flow_branching.Parent;
 		}
 
-		public Variable CaptureVariable (LocalInfo li)
-		{
-			li.IsCaptured = true;
-			return capture_context.AddLocal (li);
-		}
-
-		//
-		// Whether anonymous methods have captured variables
-		//
-		public bool HaveCapturedVariables ()
-		{
-			if (capture_context != null)
-				return capture_context.HaveCapturedVariables;
-			return false;
-		}
-
-		//
-		// Returns whether the `local' variable has been captured by an anonymous
-		// method
-		//
-		public Variable GetCapturedVariable (LocalInfo local)
-		{
-			if (capture_context != null)
-				return capture_context.GetCapturedVariable (local);
-			return null;
-		}
-
-		public bool IsParameterCaptured (string name)
-		{
-			if (capture_context != null)
-				return capture_context.IsParameterCaptured (name);
-			return false;
-		}
-
 		public bool MustCaptureVariable (LocalInfo local)
 		{
 			if (CurrentAnonymousMethod == null)

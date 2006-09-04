@@ -181,7 +181,6 @@ namespace Mono.CSharp {
 
 	public abstract class ScopeInfoBase : CompilerGeneratedClass
 	{
-		public CaptureContext CaptureContext;
 		public Block ScopeBlock;
 
 		protected ScopeInfoBase (TypeContainer parent, GenericMethod generic,
@@ -381,12 +380,14 @@ namespace Mono.CSharp {
 
 	public class AnonymousMethodHost : ScopeInfo
 	{
-		public AnonymousMethodHost (CaptureContext cc, ToplevelBlock toplevel,
-					    TypeContainer parent, GenericMethod generic)
-			: base (cc, toplevel, parent, generic)
-		{ }
+		public AnonymousMethodHost (ToplevelBlock toplevel, TypeContainer parent,
+					    GenericMethod generic)
+			: base (toplevel, parent, generic)
+		{
+			scopes = new ArrayList ();
+		}
 
-		Hashtable scopes;
+		ArrayList scopes;
 		TypeExpr parent_type;
 		CapturedVariable parent_link;
 		CapturedVariable this_field;
@@ -429,16 +430,7 @@ namespace Mono.CSharp {
 
 		public Field CaptureScope (ScopeInfoBase scope)
 		{
-			Field field = CaptureVariable (MakeName ("scope"), scope.ScopeType);
-			if (scopes == null)
-				scopes = new Hashtable ();
-			scopes.Add (scope, field);
-			return field;
-		}
-
-		public Field GetChildScope (ScopeInfoBase scope)
-		{
-			return (Field) scopes [scope];
+			return CaptureVariable (MakeName ("scope"), scope.ScopeType);
 		}
 
 		public Variable GetCapturedParameter (Parameter par)
@@ -465,9 +457,33 @@ namespace Mono.CSharp {
 			if (var == null) {
 				var = new CapturedParameter (this, par, idx);
 				captured_params.Add (par, var);
+				par.IsCaptured = true;
 			}
 
 			return var;
+		}
+
+		public void AddScope (ScopeInfo scope)
+		{
+			scopes.Add (scope);
+		}
+
+		bool linked;
+		public void LinkScopes ()
+		{
+			if (linked)
+				return;
+
+			linked = true;
+			if (ParentHost != null)
+				ParentHost.LinkScopes ();
+
+			foreach (ScopeInfo si in scopes) {
+				if (!si.Define ())
+					throw new InternalErrorException ();
+				if (si.DefineType () == null)
+					throw new InternalErrorException ();
+			}
 		}
 
 		protected override ScopeInitializerBase CreateScopeInitializer ()
@@ -1033,8 +1049,6 @@ namespace Mono.CSharp {
 				return_type, 0, loc)
 		{
 			this.DelegateType = delegate_type;
-
-			// Container.CaptureContext.RegisterScope (RootScope);
 		}
 
 		public override bool IsIterator {
@@ -1167,54 +1181,55 @@ namespace Mono.CSharp {
 	// keep some extra information that might be required on each scope.
 	//
 	public class ScopeInfo : ScopeInfoBase {
+		public readonly AnonymousMethodHost RootScope;
+
 		// For tracking the number of scopes created.
 		public int id;
 		static int count;
 		
-		ArrayList locals = new ArrayList ();
+		Hashtable locals = new Hashtable ();
 
-		//
-		// The types and fields generated
-		//
-		public readonly Location loc;
-
-		public ScopeInfo (CaptureContext cc, Block block)
-			: base (cc.Host.RootScope, cc.Host.GenericMethod,
-				Modifiers.PUBLIC, cc.loc)
+		public ScopeInfo (AnonymousMethodHost root, Block block)
+			: base (root, null, Modifiers.PUBLIC, block.StartLocation)
 		{
-			CaptureContext = cc;
+			this.RootScope = root;
 			ScopeBlock = block;
-			loc = cc.loc;
 			id = count++;
 
 			Report.Debug (64, "NEW SCOPE", this);
 
-			cc.RegisterCaptureContext ();
+			root.AddScope (this);
 		}
 
-		public ScopeInfo (CaptureContext cc, ToplevelBlock toplevel, TypeContainer parent,
+		public ScopeInfo (ToplevelBlock toplevel, TypeContainer parent,
 				  GenericMethod generic)
 			: base (parent, generic, 0, toplevel.StartLocation)
 		{
-			CaptureContext = cc;
+			RootScope = (AnonymousMethodHost) this;
 			ScopeBlock = toplevel;
-			loc = cc.loc;
 			id = count++;
 
 			Report.Debug (64, "NEW ROOT SCOPE", this);
-
-			cc.RegisterCaptureContext ();
 		}
 
 		public override AnonymousMethodHost Host {
-			get { return CaptureContext.Host.RootScope; }
+			get { return RootScope; }
 		}
 
 		public Variable AddLocal (LocalInfo local)
 		{
-			CapturedLocal cl = new CapturedLocal (this, local);
-			locals.Add (cl);
-			return cl;
+			Variable var = (Variable) locals [local];
+			if (var == null) {
+				var = new CapturedLocal (this, local);
+				locals.Add (local, var);
+				local.IsCaptured = true;
+			}
+			return var;
+		}
+
+		public Variable GetCapturedVariable (LocalInfo local)
+		{
+			return (Variable) locals [local];
 		}
 
 		static int indent = 0;
@@ -1231,7 +1246,7 @@ namespace Mono.CSharp {
 			Pad ();
 			Console.WriteLine ("START");
 			indent++;
-			foreach (LocalInfo li in locals){
+			foreach (LocalInfo li in locals.Values){
 				Pad ();
 				Console.WriteLine ("var {0}", MakeFieldName (li.Name));
 			}
@@ -1261,10 +1276,6 @@ namespace Mono.CSharp {
 			StringBuilder sb = new StringBuilder ();
 			
 			sb.Append ("{");
-			if (CaptureContext != null){
-				sb.Append (CaptureContext.ToString ());
-				sb.Append (":");
-			}
 
 			DoPath (sb, this);
 			sb.Append ("}");
@@ -1382,7 +1393,7 @@ namespace Mono.CSharp {
 					      ec.TypeContainer.Name, ec.DeclContainer,
 					      ec.DeclContainer.Name, ec.DeclContainer.IsGeneric);
 
-				foreach (CapturedLocal local in Scope.locals) {
+				foreach (CapturedLocal local in Scope.locals.Values) {
 					FieldExpr fe = (FieldExpr) Expression.MemberLookup (
 						ec.ContainerType, type, local.Field.Name, loc);
 					Report.Debug (64, "RESOLVE SCOPE INITIALIZER #2", this, Scope,
@@ -1416,199 +1427,9 @@ namespace Mono.CSharp {
 	// linked together (children pointing to their parents).
 	//
 	public class CaptureContext {
-		public static int count;
-		public int cc_id;
-		public Location loc;
-		
-		//
-		// Points to the toplevel block that owns this CaptureContext
-		//
-		public readonly ToplevelBlock ToplevelOwner;
-		public readonly IAnonymousContainer Host;
-
-		//
-		// All the scopes we capture
-		//
-		Hashtable scopes = new Hashtable ();
-
-		bool have_captured_vars = false;
-		Hashtable captured_variables = new Hashtable ();
-
 		public CaptureContext (ToplevelBlock toplevel_owner, Location loc,
 				       IAnonymousContainer host)
 		{
-			cc_id = count++;
-			this.ToplevelOwner = toplevel_owner;
-			this.Host = host;
-			this.loc = loc;
-
-			Report.Debug (64, "NEW CAPTURE CONTEXT", this, toplevel_owner, loc);
-		}
-
-		void DoPath (StringBuilder sb, CaptureContext cc)
-		{
-			if (cc.ParentCaptureContext != null){
-				DoPath (sb, cc.ParentCaptureContext);
-				sb.Append (".");
-			}
-			sb.Append (cc.cc_id.ToString ());
-		}
-
-		public override string ToString ()
-		{
-			StringBuilder sb = new StringBuilder ();
-			sb.Append ("[");
-			DoPath (sb, this);
-			sb.Append ("]");
-			return sb.ToString ();
-		}
-
-		public ToplevelBlock ParentToplevel {
-			get {
-				return ToplevelOwner.Container;
-			}
-		}
-
-		public CaptureContext ParentCaptureContext {
-			get {
-				ToplevelBlock parent = ParentToplevel;
-				
-				return (parent == null) ? null : parent.CaptureContext;
-			}
-		}
-
-		//
-		// Track the scopes that this method has used.  At the
-		// end this is used to determine the ScopeInfo that will
-		// host the method
-		//
-		ArrayList scopes_used = new ArrayList ();
-		
-		public void RegisterScope (ScopeInfo scope)
-		{
-			if (scopes_used.Contains (scope))
-				return;
-			scopes_used.Add (scope);
-		}
-
-		internal AnonymousMethodHost CreateRootScope (TypeContainer parent, GenericMethod generic)
-		{
-			Report.Debug (64, "CREATE ROOT SCOPE", this, parent.Name, ToplevelOwner,
-				      ToplevelOwner.ScopeInfo);
-
-			AnonymousMethodHost root_scope = new AnonymousMethodHost (
-				this, ToplevelOwner, parent, generic);
-			AddRootScope (root_scope);
-			return root_scope;
-		}
-
-		internal void AddRootScope (ScopeInfo root_scope)
-		{
-			if (ToplevelOwner.ScopeInfo != null)
-				throw new InternalErrorException ();
-
-			ToplevelOwner.ScopeInfo = root_scope;
-			scopes.Add (ToplevelOwner.ID, root_scope);
-			RegisterScope (root_scope);
-		}
-
-		internal ScopeInfo GetScopeForBlock (Block block)
-		{
-			while (block.Implicit)
-				block = block.Parent;
-
-			ScopeInfo si = (ScopeInfo) scopes [block.ID];
-			Report.Debug (64, "GET SCOPE FOR BLOCK", this, block,
-				      block.ScopeInfo, block.Parent, si);
-			if (si != null)
-				return si;
-
-			block.ScopeInfo = si = new ScopeInfo (this, block);
-			scopes [block.ID] = si;
-			return si;
-		}
-
-		public Variable AddLocal (LocalInfo li)
-		{
-			Report.Debug (64, "ADD LOCAL", this, li.Name, loc, li.Block,
-				      li.Block.Toplevel, ToplevelOwner);
-
-			if (li.Block.Toplevel != ToplevelOwner)
-				return ParentCaptureContext.AddLocal (li);
-
-			ScopeInfo scope = GetScopeForBlock (li.Block);
-
-			//
-			// Adjust the owner
-			//
-			RegisterScope (scope);
-
-			Variable var = (Variable) captured_variables [li];
-			Report.Debug (64, "ADD LOCAL #1", this, li.Name, scope, var);
-			if (var == null) {
-				var = scope.AddLocal (li);
-				captured_variables.Add (li, var);
-			}
-
-			have_captured_vars = true;
-			return var;
-		}
-
-		public bool HaveCapturedVariables {
-			get {
-				return have_captured_vars;
-			}
-		}
-		
-		public Variable GetCapturedVariable (LocalInfo local)
-		{
-			return (Variable) captured_variables [local];
-		}
-
-		//
-		// Returns whether the parameter is captured
-		//
-		public bool IsParameterCaptured (string name)
-		{
-			if ((ParentCaptureContext != null) &&
-			    ParentCaptureContext.IsParameterCaptured (name))
-				return true;
-
-			return ToplevelOwner.AnonymousMethodHost.IsParameterCaptured (name);
-		}
-
-		public void RegisterCaptureContext ()
-		{
-			ToplevelOwner.RegisterCaptureContext (this);
-		}
-
-		//
-		// Links all the scopes
-		//
-		bool linked;
-		public void LinkScopes ()
-		{
-			if (linked)
-				return;
-
-			Report.Debug (64, "LINK SCOPES", this, ParentCaptureContext);
-
-			linked = true;
-			if (ParentCaptureContext != null)
-				ParentCaptureContext.LinkScopes ();
-
-			int scope_count = scopes.Keys.Count;
-			ScopeInfo [] scope_list = new ScopeInfo [scope_count];
-			scopes.Values.CopyTo (scope_list, 0);
-
-			Report.Debug (64, "LINK SCOPES #1", this, scope_list);
-
-			foreach (ScopeInfo si in scope_list) {
-				if (!si.Define ())
-					throw new InternalErrorException ();
-				if (si.DefineType () == null)
-					throw new InternalErrorException ();
-			}
 		}
 	}
 }
