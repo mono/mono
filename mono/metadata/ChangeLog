@@ -1,3 +1,8 @@
+2006-09-05  Raja R Harinath  <rharinath@novell.com>
+
+	* debug-mono-symfile.c (mono_debug_open_mono_symbols): Remove
+	double g_free.
+
 2006-09-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* debug-mono-symfile.c: Fix *some* memory leaks that happens only 
