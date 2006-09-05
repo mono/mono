@@ -216,9 +216,12 @@ namespace System.Web.Services.Description
 					OperationMessage om;
 					if (mb is InputBinding) om = op.Messages.Input;
 					else if (mb is OutputBinding) om = op.Messages.Output;
-					else if (mb is FaultBinding) om = op.Messages.Fault;
+					else if (mb is FaultBinding) om = op.Faults [mb.Name];
 					else return null;
-					return ctx.Services.GetMessage (om.Message);
+					if (om != null)
+						return ctx.Services.GetMessage (om.Message);
+					else
+						return null;
 				}
 			return null;
 		}
@@ -317,8 +320,10 @@ namespace System.Web.Services.Description
 		
 		public override void Check (ConformanceCheckContext ctx, XmlSchemaSimpleTypeUnion value)
 		{
-			foreach (XmlQualifiedName name in value.MemberTypes)
-				CheckSchemaQName (ctx, value, name);
+			if (value.MemberTypes != null) {
+				foreach (XmlQualifiedName name in value.MemberTypes)
+					CheckSchemaQName (ctx, value, name);
+			}
 		}
 		
 		// Helper methods

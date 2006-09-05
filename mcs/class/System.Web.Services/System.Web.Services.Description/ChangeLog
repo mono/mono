@@ -1,3 +1,8 @@
+2006-09-05  Lluis Sanchez Gual <lluis@novell.com>
+
+	* BasicProfileChecker.cs: In FindMessage, get faults messages from the
+	  Faults collection. Added null check.
+
 2006-09-05  Ankit Jain  <jankit@novell.com>
 
 	* ServiceDescriptionImportWarnings.cs: Remove [Serializable].
