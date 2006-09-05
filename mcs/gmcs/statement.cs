@@ -2194,6 +2194,8 @@ namespace Mono.CSharp {
 					return false;
 				if (!anonymous_method_host.ResolveType ())
 					return false;
+				if (!anonymous_method_host.ResolveMembers ())
+					return false;
 				if (!anonymous_method_host.DefineMembers ())
 					return false;
 			}

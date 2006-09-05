@@ -188,7 +188,7 @@ namespace Mono.CSharp {
 			return base.GetClassBases (out base_class);
 		}
 
-		protected override bool DoDefineMembers ()
+		protected override bool DoResolveMembers ()
 		{
 			pc_field = CaptureVariable ("$PC", TypeManager.int32_type);
 			current_field = CaptureVariable ("$current", Iterator.OriginalIteratorType);
@@ -203,10 +203,16 @@ namespace Mono.CSharp {
 				new GetEnumeratorMethod (this, true);
 			}
 
+			return base.DoResolveMembers ();
+		}
+
+		protected override bool DoDefineMembers ()
+		{
 			if (!base.DoDefineMembers ())
 				return false;
 
 			FetchMethodDispose ();
+
 			return true;
 		}
 
@@ -843,6 +849,8 @@ namespace Mono.CSharp {
 			Report.Debug (64, "RESOLVE ITERATOR #1", this, method, method.Parent,
 				      RootScope, ec);
 
+			if (!RootScope.ResolveMembers ())
+				return false;
 			if (!RootScope.DefineMembers ())
 				return false;
 

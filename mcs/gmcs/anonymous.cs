@@ -69,9 +69,6 @@ namespace Mono.CSharp {
 
 		protected override bool DoDefineMembers ()
 		{
-			if (!PopulateType ())
-				throw new InternalErrorException ();
-
 			members_defined = true;
 
 			if (!base.DoDefineMembers ())
@@ -87,16 +84,16 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected override bool DoPopulateType ()
+		protected override bool DoResolveMembers ()
 		{
 			if (CompilerGenerated != null) {
 				foreach (CompilerGeneratedClass c in CompilerGenerated) {
-					if (!c.PopulateType ())
+					if (!c.ResolveMembers ())
 						return false;
 				}
 			}
 
-			return true;
+			return base.DoResolveMembers ();
 		}
 
 		public GenericMethod GenericMethod {
@@ -146,12 +143,6 @@ namespace Mono.CSharp {
 		{
 			if (members_defined)
 				throw new InternalErrorException ("Helper class already defined!");
-		}
-
-		public override void EmitType ()
-		{
-			Report.Debug (64, "COMPILER GENERATED EMIT TYPE", this, CompilerGenerated);
-			base.EmitType ();
 		}
 
 		protected class CapturedVariable : Field
@@ -223,9 +214,9 @@ namespace Mono.CSharp {
 
 		protected abstract ScopeInitializerBase CreateScopeInitializer ();
 
-		protected override bool DoPopulateType ()
+		protected override bool DoResolveMembers ()
 		{
-			Report.Debug (64, "SCOPE INFO RESOLVE TYPE", this, GetType (), IsGeneric,
+			Report.Debug (64, "SCOPE INFO RESOLVE MEMBERS", this, GetType (), IsGeneric,
 				      Parent.IsGeneric, GenericMethod);
 
 			if (IsGeneric) {
@@ -248,7 +239,7 @@ namespace Mono.CSharp {
 			if (Host != this)
 				scope_instance = Host.CaptureScope (this);
 
-			return base.DoPopulateType ();
+			return base.DoResolveMembers ();
 		}
 
 		protected abstract class ScopeInitializerBase : ExpressionStatement
@@ -999,10 +990,12 @@ namespace Mono.CSharp {
 
 			method = DoCreateMethodHost (ec);
 
-			if (RootScope == null)
-				return method.Define ();
-			else
+			if (RootScope != null)
 				return true;
+
+			if (!method.ResolveMembers ())
+				return false;
+			return method.Define ();
 		}
 
 		protected abstract Method DoCreateMethodHost (EmitContext ec);

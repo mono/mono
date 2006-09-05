@@ -453,8 +453,8 @@ namespace Mono.CSharp {
 
 		ArrayList type_bases;
 
-		bool type_populated;
-		bool type_populated_ok;
+		bool members_resolved;
+		bool members_resolved_ok;
 		bool members_defined;
 		bool members_defined_ok;
 
@@ -1280,46 +1280,62 @@ namespace Mono.CSharp {
 					part.TypeBuilder = TypeBuilder;
 			}
 
-			if (!CreateAnonymousHelpers ()) {
+			if (!(this is CompilerGeneratedClass)) {
+				if (!ResolveMembers ()) {
+					error = true;
+					return null;
+				}
+			}
+
+			if (!DefineNestedTypes ()) {
 				error = true;
 				return null;
 			}
 
-			DefineNestedTypes ();
-
 			return TypeBuilder;
 		}
 
-		protected bool CreateAnonymousHelpers ()
+		public bool ResolveMembers ()
+		{
+			if (members_resolved)
+				return members_resolved_ok;
+
+			members_resolved_ok = DoResolveMembers ();
+			members_resolved = true;
+
+			return members_resolved_ok;
+		}
+
+		protected virtual bool DoResolveMembers ()
 		{
 			if (methods != null) {
 				foreach (Method method in methods) {
-					if (!method.CreateAnonymousHelpers ())
+					if (!method.ResolveMembers ())
 						return false;
 				}
 			}
 
 			if (operators != null) {
 				foreach (Operator o in operators) {
-					if (!o.CreateAnonymousHelpers ())
+					if (!o.ResolveMembers ())
 						return false;
 				}
 			}
 
 			if (properties != null) {
 				foreach (PropertyBase p in properties) {
-					if (!p.Get.IsDummy && !p.Get.CreateAnonymousHelpers ())
+					if (!p.Get.IsDummy && !p.Get.ResolveMembers ())
 						return false;
-					if (!p.Set.IsDummy && !p.Set.CreateAnonymousHelpers ())
+					if (!p.Set.IsDummy && !p.Set.ResolveMembers ())
 						return false;
 				}
 			}
 
 			if (indexers != null) {
 				foreach (PropertyBase p in indexers) {
-					if (!p.Get.IsDummy && !p.Get.CreateAnonymousHelpers ())
+					if (!p.Get.IsDummy && !p.Get.ResolveMembers ())
 						return false;
-					if (!p.Set.IsDummy && !p.Set.CreateAnonymousHelpers ())
+					if (!p.Set.IsDummy && !p.Set.ResolveMembers ())
 						return false;
 				}
 			}
@@ -1525,22 +1541,6 @@ namespace Mono.CSharp {
 		public static void Error_KeywordNotAllowed (Location loc)
 		{
 			Report.Error (1530, loc, "Keyword `new' is not allowed on namespace elements");
-		}
-
-		protected bool PopulateType ()
-		{
-			if (type_populated)
-				return type_populated_ok;
-
-			type_populated_ok = DoPopulateType ();
-			type_populated = true;
-
-			return type_populated_ok;
-		}
-
-		protected virtual bool DoPopulateType ()
-		{
-			return true;
 		}
 
 		/// <summary>
@@ -3793,13 +3793,8 @@ namespace Mono.CSharp {
 			anonymous_methods.Add (anonymous);
 		}
 
-		bool base_defined;
-
 		protected bool DefineGenericMethod ()
 		{
-			if (base_defined)
-				return true;
-
 			if (!DoDefineBase ())
 				return false;
 
@@ -3817,17 +3812,11 @@ namespace Mono.CSharp {
 					return false;
 			}
 
-			base_defined = true;
 			return true;
 		}
 
-		public bool CreateAnonymousHelpers ()
+		public bool ResolveMembers ()
 		{
-			Report.Debug (64, "METHOD DEFINE HELPERS", this, Name,
-				      ModFlags & Modifiers.METHOD_YIELDS,
-				      ModFlags & Modifiers.ANONYMOUS_HOST,
-				      Block);
-
 			if (!DefineGenericMethod ())
 				return false;
 
@@ -3851,9 +3840,6 @@ namespace Mono.CSharp {
 
 		public override bool Define ()
 		{
-			if (!DefineGenericMethod ())
-				return false;
-
 			if (!DoDefine ())
 				return false;
 
@@ -6417,7 +6403,7 @@ namespace Mono.CSharp {
 				return method.IsClsComplianceRequired ();
 			}
 
-			public bool CreateAnonymousHelpers ()
+			public bool ResolveMembers ()
 			{
 				TypeContainer container = ((TypeContainer) Parent).PartialContainer;
 
