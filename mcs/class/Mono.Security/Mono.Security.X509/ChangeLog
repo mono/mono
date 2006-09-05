@@ -1,3 +1,8 @@
+2006-09-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate.cs: Don't reset RSA or DSA property if the new value
+	is null (part of the fix for #79262).
+
 2006-07-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509CRL.cs: Fix the case where no entry are present in the CRL (as
