@@ -1,3 +1,9 @@
+2006-09-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RSACryptoServiceProviderTest.cs: Test case for #79269 where we 
+	ensure a CryptographicException (not a NRE) when decrypting without a
+	private key.
+
 2006-07-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RSAPKCS1SignatureDeformatterTest.cs: Added test case where 

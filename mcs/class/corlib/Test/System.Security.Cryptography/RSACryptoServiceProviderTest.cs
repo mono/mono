@@ -5,7 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -1090,6 +1090,20 @@ public class RSACryptoServiceProviderTest : Assertion {
 		catch (CryptographicException) {
 			// will fail on MS runtime before Windows XP
 		}
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void Bug79269 ()
+	{
+		rsa = new RSACryptoServiceProvider ();
+		rsa.FromXmlString ("<RSAKeyValue><Modulus>iSObDmmhDgrl4NiLaviFcpv4NdysBWJcqiVz3AQbPdajtXaQQ8VJdfRkixah132yKOFGCWZhHS3EuPMh8dcNwGwta2nh+m2IV6ktzI4+mZ7CSNAsmlDY0JI+H8At1vKvNArlC5jkVGuliYroJeSU/NLPLNYgspi7TtXGy9Rfug8=</Modulus><Exponent>EQ==</Exponent></RSAKeyValue>");
+#if NET_2_0
+		Assert ("PublicOnly", rsa.PublicOnly);
+#endif
+		string b64 = @"YgyAhscnTTIcDeLJTZcOYYyHVxNhV6d03jeZYjq0sPMEsfCCbE/NcFyYHD9BTuiduqPplCLbGpfZIZYJ6vAP9m5z4Q9eEw79kmEFCsm8wSKEo/gKiptVpwQ78VOPrWd/wEkTTeeg2nVim3JIsTKGFlV7rKxIWQhGN9aAqgP8nZI=";
+		byte [] bytes = Convert.FromBase64String (b64);
+		rsa.Decrypt (bytes, true);
 	}
 
 #if NET_2_0
