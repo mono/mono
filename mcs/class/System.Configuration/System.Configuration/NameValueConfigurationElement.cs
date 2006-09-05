@@ -36,36 +36,40 @@ namespace System.Configuration {
 
 	public sealed class NameValueConfigurationElement : ConfigurationElement
 	{
-		string name;
-		string value;
+		private static ConfigurationPropertyCollection _properties;
+		private static readonly ConfigurationProperty _propName;
+		private static readonly ConfigurationProperty _propValue;
+
+		static NameValueConfigurationElement ()
+		{
+			_properties = new ConfigurationPropertyCollection ();
+			
+			_propName = new ConfigurationProperty ("name", typeof (string), "", ConfigurationPropertyOptions.IsKey);
+			_propValue = new ConfigurationProperty ("value", typeof (string), "");
+
+			_properties.Add (_propName);
+			_properties.Add (_propValue);
+		}
 
 		public NameValueConfigurationElement (string name, string value)
 		{
-			this.name = name;
-			this.value = value;
+			this [_propName] = name;
+			this [_propValue] = value;
 		}
 
 		[ConfigurationProperty ("name", DefaultValue = "", Options = ConfigurationPropertyOptions.IsKey)]
 		public string Name {
-			get {
-				return name;
-			}
+			get { return (string) this [_propName]; }
 		}
 
 		[ConfigurationProperty ("value", DefaultValue = "", Options = ConfigurationPropertyOptions.None)]
 		public string Value {
-			get {
-				return value;
-			}
-			set {
-				this.value = value;
-			}
+			get { return (string) this [_propValue]; }
+			set { this [_propValue] = value; }
 		}
 
 		protected internal override ConfigurationPropertyCollection Properties {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return _properties; }
 		}
 	}
 }

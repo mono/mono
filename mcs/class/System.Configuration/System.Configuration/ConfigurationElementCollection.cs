@@ -475,7 +475,7 @@ namespace System.Configuration
 					return true;
 				}
 				else if (elementName == removeElementName) {
-					ConfigurationElement elem = CreateNewElementInternal (null);
+					ConfigurationElement elem = CreateNewElementInternal (removeElementName);
 					elem.DeserializeElement (reader, true);
 					BaseRemove (GetElementKey (elem));
 					modified = false;

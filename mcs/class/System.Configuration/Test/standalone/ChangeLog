@@ -1,3 +1,8 @@
+2006-09-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* t37.cs, t37.exe.config, t37.exe.expected: new test for
+	<remove> bug in connectionStrings section
+
 2006-05-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* t36.cs, t36-lib.cs, t36.exe.config, t36.exe.expected :

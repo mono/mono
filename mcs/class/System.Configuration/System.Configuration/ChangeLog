@@ -1,3 +1,10 @@
+2006-09-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* NameValueConfigurationElement.cs: fixed functionality
+	* ConfigurationElementCollection.cs,
+	ConnectionStringSettingsCollection.cs: fixed <remove> element in
+	connectionStrings section
+
 2006-08-23  Konstantin Triger <kostat@mainsoft.com>
 
 	* ConfigurationSection.cs: for net 1.1 SectionHandlers: return null in case
