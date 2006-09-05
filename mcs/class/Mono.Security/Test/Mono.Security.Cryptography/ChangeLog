@@ -1,3 +1,7 @@
+2006-09-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RSAManagedTest.cs: Add a test case for #79269 (wrong exception).
+
 2005-04-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* KeyPairPersistenceTest.cs: Upgrade to NUnit 2.2 API to use Ignore.
