@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -61,24 +61,24 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public X509Certificate2 (byte[] rawData, string password) : base (rawData, password) 
 		{
-			_cert = new MX.X509Certificate (base.GetRawCertData ());
+			Import (rawData, password, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		public X509Certificate2 (byte[] rawData, SecureString password) : base (rawData, password) 
 		{
-			_cert = new MX.X509Certificate (base.GetRawCertData ());
+			Import (rawData, password, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		public X509Certificate2 (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 			: base (rawData, password, keyStorageFlags) 
 		{
-			_cert = new MX.X509Certificate (base.GetRawCertData ());
+			Import (rawData, password, keyStorageFlags);
 		}
 
 		public X509Certificate2 (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
 			: base (rawData, password, keyStorageFlags) 
 		{
-			_cert = new MX.X509Certificate (base.GetRawCertData ());
+			Import (rawData, password, keyStorageFlags);
 		}
 
 		public X509Certificate2 (string fileName) : base (fileName) 
@@ -89,25 +89,25 @@ namespace System.Security.Cryptography.X509Certificates {
 		public X509Certificate2 (string fileName, string password)
 			: base (fileName, password)
 		{
-			_cert = new MX.X509Certificate (base.GetRawCertData ());
+			Import (fileName, password, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		public X509Certificate2 (string fileName, SecureString password)
 			: base (fileName, password)
 		{
-			_cert = new MX.X509Certificate (base.GetRawCertData ());
+			Import (fileName, password, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		public X509Certificate2 (string fileName, string password, X509KeyStorageFlags keyStorageFlags)
 			: base (fileName, password, keyStorageFlags) 
 		{
-			_cert = new MX.X509Certificate (base.GetRawCertData ());
+			Import (fileName, password, keyStorageFlags);
 		}
 
 		public X509Certificate2 (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags)
 			: base (fileName, password, keyStorageFlags) 
 		{
-			_cert = new MX.X509Certificate (base.GetRawCertData ());
+			Import (fileName, password, keyStorageFlags);
 		}
 
 		public X509Certificate2 (IntPtr handle) : base (handle) 

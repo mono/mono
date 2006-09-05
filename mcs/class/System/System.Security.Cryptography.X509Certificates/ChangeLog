@@ -1,3 +1,8 @@
+2006-09-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate2.cs: Call import in ctor to be sure the private key
+	will be decoded. Last fix for #79269.
+
 2006-08-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate2.cs: A unrequired password can be supplied to the 
