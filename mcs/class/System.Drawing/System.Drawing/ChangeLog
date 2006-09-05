@@ -1,3 +1,9 @@
+2006-09-04  Jonathan Chambers  <joncham@gmail.com> 
+
+	* ComIStreamMarshaler.cs: Do not deallocate unmanaged memory
+	allocated for vtable. If this finalizer runs before all clients
+	are done with it (Image(s) in this case) we crash on windows. #78315
+	
 2006-09-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Bitmap.cs: Fix exceptions for LockBits.

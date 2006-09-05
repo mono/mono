@@ -109,11 +109,15 @@ namespace System.Drawing
 
 			private sealed class VtableDestructor
 			{
-				~VtableDestructor()
-				{
-					Marshal.DestroyStructure(comVtable, typeof(IStreamVtbl));
-					Marshal.FreeHGlobal(comVtable);
-				}
+				// FIXME: This causes crash on windows on shutdown.
+				// Any image loaded from a stream holds onto a reference
+				// to that stream, and calls Release on the stream when the image is
+				// disposed. 
+				//~VtableDestructor()
+				//{				
+					//Marshal.DestroyStructure(comVtable, typeof(IStreamVtbl));
+					//Marshal.FreeHGlobal(comVtable);
+				//}
 			}
 
 			private static readonly Guid IID_IUnknown = new Guid("00000000-0000-0000-C000-000000000046");
