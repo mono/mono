@@ -1,5 +1,9 @@
 2006-09-05  Ankit Jain  <jankit@novell.com>
 
+	* ServiceDescriptionImportWarnings.cs: Remove [Serializable].
+
+2006-09-05  Ankit Jain  <jankit@novell.com>
+
 	* OperationFlow.cs: Remove [Serializable].
 
 2006-09-05  Ankit Jain  <jankit@novell.com>

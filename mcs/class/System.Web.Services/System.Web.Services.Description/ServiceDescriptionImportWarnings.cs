@@ -33,7 +33,6 @@ namespace System.Web.Services.Description
 #if NET_2_0
 	[Flags]
 #endif
-	[Serializable]
 	public enum ServiceDescriptionImportWarnings {
 		NoCodeGenerated = 0x1,
 		NoMethodsGenerated = 0x20,

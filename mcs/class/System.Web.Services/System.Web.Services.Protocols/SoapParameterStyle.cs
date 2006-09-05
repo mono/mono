@@ -29,7 +29,6 @@
 //
 
 namespace System.Web.Services.Protocols {
-	[Serializable]
 	public enum SoapParameterStyle {
 		Default = 0x0,
 		Bare = 0x1,

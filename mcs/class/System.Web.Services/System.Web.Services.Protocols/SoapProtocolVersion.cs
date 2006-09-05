@@ -32,7 +32,6 @@
 
 namespace System.Web.Services.Protocols 
 {
-	[Serializable]
 	public enum SoapProtocolVersion
 	{
 		Default,

@@ -30,7 +30,6 @@
 
 namespace System.Web.Services.Protocols {
 	[Flags]
-	[Serializable]
 	public enum SoapHeaderDirection {
 		In = 0x1,
 		InOut = 0x3,

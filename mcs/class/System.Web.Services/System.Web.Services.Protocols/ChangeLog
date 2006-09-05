@@ -1,3 +1,12 @@
+2006-09-05  Ankit Jain <jankit@novell.com>
+
+	* LogicalMethodTypes.cs:
+	* SoapMessageStage.cs:
+	* SoapServiceRoutingStyle.cs:
+	* SoapHeaderDirection.cs:
+	* SoapParameterStyle.cs:
+	* SoapProtocolVersion.cs: Remove [Serializable].
+
 2006-08-30  Konstantin Triger <kostat@mainsoft.com>
 
 	* WebClientProtocol.cs: implemented WebClientProtocol.UseDefaultCredentials().

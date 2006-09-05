@@ -29,7 +29,6 @@
 //
 
 namespace System.Web.Services.Protocols {
-	[Serializable]
 	public enum LogicalMethodTypes {
 		Async = 0x2,
 		Sync = 0x1
