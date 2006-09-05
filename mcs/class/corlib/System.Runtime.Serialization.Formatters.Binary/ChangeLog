@@ -1,3 +1,11 @@
+2006-09-05  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #79159
+	* ObjectWriter.cs (WritePrimitiveTypeArray) [NET_2_0]: Encode the
+	'Kind' of each DateTime.
+	* ObjectReader.cs (ReadArrayOfPrimitiveType) [NET_2_0]: Decode the
+	'Kind' of each DateTime.
+
 2005-12-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BinaryFormatter.cs: Implemented UnsafeDeserialize and 

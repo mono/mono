@@ -142,5 +142,31 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary {
 			Assert.AreEqual (Int32.MinValue, clone.Integer, "Integer");
 			Assert.IsFalse (clone.Boolean, "Boolean");
 		}
+
+		[Test]
+		public void DateTimeArray ()
+		{
+			DateTime [] e = new DateTime [6];
+			string [] names = new string [6];
+
+			names [0] = "Today";  e [0] = DateTime.Today;
+			names [1] = "Min";    e [1] = DateTime.MinValue;
+			names [2] = "Max";    e [2] = DateTime.MaxValue;
+			names [3] = "BiCent"; e [3] = new DateTime (1976, 07, 04);
+			names [4] = "Now";    e [4] = DateTime.Now;
+			names [5] = "UtcNow"; e [5] = DateTime.UtcNow;
+
+			BinaryFormatter bf = new BinaryFormatter ();
+			MemoryStream ms = new MemoryStream ();
+
+			bf.Serialize (ms, e);
+
+			ms.Position = 0;
+			DateTime [] a = (DateTime []) bf.Deserialize (ms);
+
+			Assert.AreEqual (e.Length, a.Length);
+			for (int i = 0; i < e.Length; ++i)
+				Assert.AreEqual (e [i], a [i], names [i]);
+		}
 	}
 }

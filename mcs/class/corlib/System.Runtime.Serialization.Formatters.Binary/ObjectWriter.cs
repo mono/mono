@@ -546,8 +546,13 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					break;
 
 				case TypeCode.DateTime: 
-					foreach (DateTime item in (DateTime[]) array)
-						writer.Write (item.Ticks);
+					foreach (DateTime item in (DateTime[]) array) {
+						ulong val = (ulong) item.Ticks;
+#if NET_2_0
+						val |= ((ulong) item.Kind) << 62;
+#endif
+						writer.Write (val);
+					}
 					break;
 
 				case TypeCode.Decimal:
