@@ -238,12 +238,14 @@ namespace System.Web.Services.Discovery {
 			DiscoveryClientResultsFile resfile = (DiscoveryClientResultsFile) ser.Deserialize (sr);
 			sr.Close ();
 			
+			string basePath = Path.GetDirectoryName (topLevelFilename);
+			
 			foreach (DiscoveryClientResult dcr in resfile.Results)
 			{
 				Type type = Type.GetType (dcr.ReferenceTypeName);
 				DiscoveryReference dr = (DiscoveryReference) Activator.CreateInstance (type);
 				dr.Url = dcr.Url;
-				FileStream fs = new FileStream (dcr.Filename, FileMode.Open, FileAccess.Read);
+				FileStream fs = new FileStream (Path.Combine (basePath, dcr.Filename), FileMode.Open, FileAccess.Read);
 				Documents.Add (dr.Url, dr.ReadDocument (fs));
 				fs.Close ();
 				References.Add (dr.Url, dr);
