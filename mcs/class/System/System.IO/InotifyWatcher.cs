@@ -498,9 +498,12 @@ namespace System.IO {
 						} else {
 							nread += i;
 							action = FileAction.RenamedNewName;
-							renamed = new RenamedEventArgs (WatcherChangeTypes.Renamed, data.Directory, evt.Name, to.Name);
-							filename = to.Name;
-							evt = to;
+							if (evt.Name == data.Directory || fsw.Pattern.IsMatch (evt.Name)) {
+								renamed = new RenamedEventArgs (WatcherChangeTypes.Renamed, data.Directory, to.Name, evt.Name);
+							} else {
+								renamed = new RenamedEventArgs (WatcherChangeTypes.Renamed, data.Directory, evt.Name, to.Name);
+								filename = to.Name;
+							}
 						}
 					} else if ((mask & InotifyMask.MovedTo) != 0) {
 						action = (new_name_needed) ? FileAction.RenamedNewName : FileAction.Added;

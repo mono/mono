@@ -1,3 +1,9 @@
+2006-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* InotifyWatcher.cs: fix file names for the rename event.
+	* FileSystemWatcher.cs: ignore exceptions that happen when invoking
+	event handlers.
+
 2006-08-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* InotifyWatcher.cs: handle CloseWrite, as it might happen without other

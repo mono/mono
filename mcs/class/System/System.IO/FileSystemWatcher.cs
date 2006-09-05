@@ -354,44 +354,60 @@ namespace System.IO {
 			throw new NotImplementedException (); 
 		}
 
-		private void RaiseEvent (Delegate ev, EventArgs arg)
+		enum EventType {
+			FileSystemEvent,
+			ErrorEvent,
+			RenameEvent
+		}
+		private void RaiseEvent (Delegate ev, EventArgs arg, EventType evtype)
 		{
 			if (ev == null)
 				return;
 
-			object [] args = new object [] {this, arg};
-
 			if (synchronizingObject == null) {
-				ev.DynamicInvoke (args);
+				Delegate [] delegates = ev.GetInvocationList ();
+				if (evtype == EventType.RenameEvent) {
+					foreach (RenamedEventHandler d in delegates){
+						d.BeginInvoke (this, (RenamedEventArgs) arg, null, null);
+					}
+				} else if (evtype == EventType.ErrorEvent) {
+					foreach (ErrorEventHandler d in delegates){
+						d.BeginInvoke (this, (ErrorEventArgs) arg, null, null);
+					}
+				} else {
+					foreach (FileSystemEventHandler d in delegates){
+						d.BeginInvoke (this, (FileSystemEventArgs) arg, null, null);
+					}
+				}
 				return;
 			}
 			
-			synchronizingObject.BeginInvoke (ev, args);
+			synchronizingObject.BeginInvoke (ev, new object [] {this, arg});
 		}
 
 		protected void OnChanged (FileSystemEventArgs e)
 		{
-			RaiseEvent (Changed, e);
+			RaiseEvent (Changed, e, EventType.FileSystemEvent);
 		}
 
 		protected void OnCreated (FileSystemEventArgs e)
 		{
-			RaiseEvent (Created, e);
+			RaiseEvent (Created, e, EventType.FileSystemEvent);
 		}
 
 		protected void OnDeleted (FileSystemEventArgs e)
 		{
-			RaiseEvent (Deleted, e);
+			RaiseEvent (Deleted, e, EventType.FileSystemEvent);
 		}
 
 		protected void OnError (ErrorEventArgs e)
 		{
-			RaiseEvent (Error, e);
+			RaiseEvent (Error, e, EventType.ErrorEvent);
 		}
 
 		protected void OnRenamed (RenamedEventArgs e)
 		{
-			RaiseEvent (Renamed, e);
+			RaiseEvent (Renamed, e, EventType.RenameEvent);
 		}
 
 		public WaitForChangedResult WaitForChanged (WatcherChangeTypes changeType)
@@ -454,9 +470,7 @@ namespace System.IO {
 			case FileAction.RenamedNewName:
 				lastData.Name = filename;
 				lastData.ChangeType = WatcherChangeTypes.Renamed;
-				if (renamed != null) {
-					renamed.SetName (filename);
-				} else {
+				if (renamed == null) {
 					renamed = new RenamedEventArgs (WatcherChangeTypes.Renamed, path, "", filename);
 				}
 				OnRenamed (renamed);
