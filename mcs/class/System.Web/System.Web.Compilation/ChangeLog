@@ -1,3 +1,7 @@
+2006-09-05  Konstantin Triger <kostat@mainsoft.com>
+
+	* ParseException.cs: Ensure the source file stream is closed.
+
 2006-08-25  Kornél Pál  <kornelpal@gmail.com>
 
 	* AppSettingsExpressionBuilder.cs: Use assembly name constants.
