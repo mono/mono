@@ -542,7 +542,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 			Assert.IsTrue (rsa.PublicOnly, "PublicOnly");
         	        string b64 = @"YgyAhscnTTIcDeLJTZcOYYyHVxNhV6d03jeZYjq0sPMEsfCCbE/NcFyYHD9BTuiduqPplCLbGpfZIZYJ6vAP9m5z4Q9eEw79kmEFCsm8wSKEo/gKiptVpwQ78VOPrWd/wEkTTeeg2nVim3JIsTKGFlV7rKxIWQhGN9aAqgP8nZI=";
         	        byte [] bytes = Convert.FromBase64String (b64);
-	                rsa.Decrypt (bytes, true);
+	                rsa.DecryptValue (bytes);
 		}
 	}
 }
