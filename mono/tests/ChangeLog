@@ -1,3 +1,7 @@
+2006-09-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* interlocked-2.2.cs: Add tests for the generic versions of the interlocked methods.
+
 2006-09-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* pinvoke2.cs libtest.c: Add test for marshalling of StringBuilders created with
