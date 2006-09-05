@@ -570,12 +570,9 @@ namespace System.Diagnostics
 			// http://www.pinvoke.net/default.aspx/advapi32/LookupAccountSid.html
 			// http://msdn.microsoft.com/library/en-us/secauthz/security/lookupaccountsid.asp
 
-			// FIXME: StringBuilders should not have to be initialized with a
-			// specific capacity => bug #79152
-
-			StringBuilder name = new StringBuilder (16);
+			StringBuilder name = new StringBuilder ();
 			uint cchName = (uint) name.Capacity;
-			StringBuilder referencedDomainName = new StringBuilder (16);
+			StringBuilder referencedDomainName = new StringBuilder ();
 			uint cchReferencedDomainName = (uint) referencedDomainName.Capacity;
 			SidNameUse sidUse;
 
@@ -608,9 +605,6 @@ namespace System.Diagnostics
 			// http://msdn.microsoft.com/msdnmag/issues/02/08/CQA/
 			// http://msdn.microsoft.com/netframework/programming/netcf/cffaq/default.aspx
 
-			// FIXME: we should be using Marshal.StringToHGlobalAuto and 
-			// Marshal.PtrToStringAuto => bug #79117
-
 			IntPtr msgDllHandle = PInvoke.LoadLibraryEx (msgDll, IntPtr.Zero,
 				LoadFlags.LibraryAsDataFile);
 			if (msgDllHandle == IntPtr.Zero)
@@ -622,8 +616,7 @@ namespace System.Diagnostics
 
 			try {
 				for (int i = 0; i < replacementStrings.Length; i++) {
-					// TODO: use StringToHGlobalAuto once bug #79117 is fixed
-					arguments [i] = Marshal.StringToHGlobalUni (
+					arguments [i] = Marshal.StringToHGlobalAuto (
 						replacementStrings [i]);
 				}
 
@@ -631,8 +624,7 @@ namespace System.Diagnostics
 					FormatMessageFlags.FromHModule | FormatMessageFlags.AllocateBuffer,
 					msgDllHandle, messageID, 0, ref lpMsgBuf, 0, arguments);
 				if (ret != 0) {
-					// TODO: use PtrToStringAuto once bug #79117 is fixed
-					string sRet = Marshal.PtrToStringUni (lpMsgBuf);
+					string sRet = Marshal.PtrToStringAuto (lpMsgBuf);
 					lpMsgBuf = PInvoke.LocalFree (lpMsgBuf);
 					// remove trailing whitespace (CRLF)
 					return sRet.TrimEnd (null);
@@ -649,6 +641,13 @@ namespace System.Diagnostics
 					}
 				}
 			} finally {
+				// release unmanaged memory allocated for replacement strings
+				for (int i = 0; i < arguments.Length; i++) {
+					IntPtr argument = arguments [i];
+					if (argument != IntPtr.Zero)
+						Marshal.FreeHGlobal (argument);
+				}
+
 				PInvoke.FreeLibrary (msgDllHandle);
 			}
 			return null;
@@ -709,8 +708,7 @@ namespace System.Diagnostics
 			[DllImport ("advapi32.dll", SetLastError=true)]
 			public static extern int DeregisterEventSource (IntPtr hEventLog);
 
-			// FIXME: CharSet.Unicode can be removed once bug #79117 is fixed
-			[DllImport ("kernel32.dll", CharSet=CharSet.Unicode, SetLastError=true)]
+			[DllImport ("kernel32.dll", CharSet=CharSet.Auto, SetLastError=true)]
 			public static extern int FormatMessage (FormatMessageFlags dwFlags, IntPtr lpSource, uint dwMessageId, int dwLanguageId, ref IntPtr lpBuffer, int nSize, IntPtr [] arguments);
 
 			[DllImport ("kernel32.dll", SetLastError=true)]
@@ -728,8 +726,7 @@ namespace System.Diagnostics
 			[DllImport ("kernel32.dll", SetLastError=true)]
 			public static extern IntPtr LocalFree (IntPtr hMem);
 
-			// FIXME: CharSet.Unicode can be removed once bug #79117 is fixed
-			[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, SetLastError=true)]
+			[DllImport ("advapi32.dll", SetLastError=true)]
 			public static extern bool LookupAccountSid (
 				string lpSystemName,
 				[MarshalAs (UnmanagedType.LPArray)] byte [] Sid,
@@ -745,7 +742,7 @@ namespace System.Diagnostics
 			[DllImport ("advapi32.dll", SetLastError=true)]
 			public static extern IntPtr RegisterEventSource (string machineName, string sourceName);
 
-			[DllImport ("Advapi32.dll", SetLastError = true)]
+			[DllImport ("Advapi32.dll", SetLastError=true)]
 			public static extern int ReportEvent (IntPtr hHandle, ushort wType,
 				ushort wCategory, uint dwEventID, IntPtr sid, ushort wNumStrings,
 				uint dwDataSize, string [] lpStrings, byte [] lpRawData);

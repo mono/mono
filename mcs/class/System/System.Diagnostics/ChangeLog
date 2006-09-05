@@ -1,3 +1,9 @@
+2006-09-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Win32EventLog.cs: Removed workarounds for bug #79152 and bug #79117
+	now that these have been fixed. Release unmanaged memory that was
+	allocated for replacement strings.
+
 2006-08-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* NullEventLog.cs: Added dummy GetLogNames implementation.
