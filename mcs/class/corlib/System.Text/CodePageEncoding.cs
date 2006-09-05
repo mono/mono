@@ -2,9 +2,9 @@
 // System.Text.CodePageEncoding.cs
 //
 // Author:
-//   Kornél Pál <http://www.kornelpal.hu/>
+//   KornÃ©l PÃ¡l <http://www.kornelpal.hu/>
 //
-// Copyright (C) 2006 Kornél Pál
+// Copyright (C) 2006 KornÃ©l PÃ¡l
 //
 
 //

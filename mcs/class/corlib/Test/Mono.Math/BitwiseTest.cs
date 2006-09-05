@@ -1,4 +1,4 @@
-﻿//
+//
 // MonoTests.Mono.Math.BitwiseTest.cs
 //
 // Authors:

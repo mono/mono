@@ -1,4 +1,4 @@
-﻿//
+//
 // System.Web.UI.DataSourceSelectArguments.cs
 //
 // Author:

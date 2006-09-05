@@ -1,4 +1,4 @@
-﻿//
+//
 // HostProtectionAttributeTest.cs - NUnit Test Cases for HostProtectionAttribute
 //
 // Author:

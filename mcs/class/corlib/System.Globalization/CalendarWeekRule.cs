@@ -2,9 +2,9 @@
 //
 // System.Globalization.CalendarWeekRule.cs
 //
-// Copyright (C) Wictor Wilén 2001 (wictor@iBizkit.se)
+// Copyright (C) Wictor WilÃ©n 2001 (wictor@iBizkit.se)
 //
-// Contributors: Wictor Wilén
+// Contributors: Wictor WilÃ©n
 //
 // Revisions
 // 2001-09-14:	First draft

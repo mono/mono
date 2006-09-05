@@ -1,9 +1,9 @@
 // System.Configuration.Install.ComponentInstaller.cs
 //
 // Author:
-// 	Alejandro Sánchez Acosta
+// 	Alejandro SÃ¡nchez Acosta
 //
-// (C) Alejandro Sánchez Acosta
+// (C) Alejandro SÃ¡nchez Acosta
 //
 
 //

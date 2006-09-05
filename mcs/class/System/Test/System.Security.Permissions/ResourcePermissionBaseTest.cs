@@ -1,4 +1,4 @@
-﻿//
+//
 // ResourcePermissionBaseTest.cs - NUnit Test Cases for ResourcePermissionBase
 //
 // Author:

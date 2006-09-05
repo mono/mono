@@ -1,4 +1,4 @@
-﻿//
+//
 // System.Web.UI.WebControls.WebParts.TypeCollection.cs
 //
 // Authors:

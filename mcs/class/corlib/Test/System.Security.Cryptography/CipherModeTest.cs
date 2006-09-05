@@ -1,4 +1,4 @@
-﻿//
+//
 // CipherModeTest.cs - NUnit Test Cases for CipherMode
 //
 // Author:

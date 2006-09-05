@@ -1,4 +1,4 @@
-﻿//
+//
 // UIPermissionTest.cs - NUnit Test Cases for UIPermission
 //
 // Author:

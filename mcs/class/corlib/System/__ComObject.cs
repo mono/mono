@@ -3,11 +3,11 @@
 //
 // Authors:
 //   Sebastien Pouliot <sebastien@ximian.com>
-//   Kornél Pál <http://www.kornelpal.hu/>
+//   KornÃ©l PÃ¡l <http://www.kornelpal.hu/>
 //   Jonathan Chambers <joncham@gmail.com>
 //
 // Copyright (C) 2004 Novell (http://www.novell.com)
-// Copyright (C) 2005 Kornél Pál
+// Copyright (C) 2005 KornÃ©l PÃ¡l
 // Copyright (C) 2006 Jonathan Chambers
 //
 

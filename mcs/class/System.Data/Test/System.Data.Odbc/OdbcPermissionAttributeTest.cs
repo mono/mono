@@ -1,4 +1,4 @@
-﻿//
+//
 // OdbcPermissionAttributeTest.cs -
 //	NUnit Test Cases for OdbcPermissionAttribute
 //

@@ -3,7 +3,7 @@
 //
 // Author:
 //
-// 	 Jordi Mas i Hernàndez (jmas@softcatala.org>
+// 	 Jordi Mas i HernÃ ndez (jmas@softcatala.org>
 //	 Jonathan Gilbert <logic@deltaq.org>
 //
 // (C) 2004 Ximian, Inc.  http://www.ximian.com

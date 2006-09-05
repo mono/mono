@@ -1,4 +1,4 @@
-﻿//
+//
 // XQueryModuleProlog.cs - abstract syntax tree for XQuery
 //
 // Author:

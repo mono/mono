@@ -1,4 +1,4 @@
-﻿//
+//
 // SqlClientPermissionTest.cs - NUnit Test Cases for SqlClientPermission
 //
 // Author:

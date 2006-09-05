@@ -2,7 +2,7 @@
 // Sample application for ImageAttributes
 //
 // Author:
-//   Jordi Mas i Hern‡ndez, jordi@ximian.com
+//   Jordi Mas i Hern√†ndez, jordi@ximian.com
 //
 
 //

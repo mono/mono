@@ -1,4 +1,4 @@
-﻿//
+//
 // OdbcPermissionTest.cs - NUnit Test Cases for OdbcPermission
 //
 // Author:

@@ -1,4 +1,4 @@
-﻿//
+//
 // AspNetHostingPermissionAttributeTest.cs -
 //	NUnit Test Cases for AspNetHostingPermissionAttribute
 //

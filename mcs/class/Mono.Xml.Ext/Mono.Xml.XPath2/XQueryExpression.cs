@@ -1,4 +1,4 @@
-﻿//
+//
 // XQueryExpression.cs - abstract syntax tree for XQuery 1.0
 //
 // Author:

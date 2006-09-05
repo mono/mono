@@ -912,7 +912,7 @@ namespace System.Diagnostics {
 			} else {
 				stdin_rd = MonoIO.ConsoleInput;
 				/* This is required to stop the
-				 * &$*£ing stupid compiler moaning
+				 * &$*Â£ing stupid compiler moaning
 				 * that stdin_wr is unassigned, below.
 				 */
 				stdin_wr = (IntPtr)0;

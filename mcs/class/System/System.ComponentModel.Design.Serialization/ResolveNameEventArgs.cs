@@ -2,9 +2,9 @@
 // System.ComponentModel.Design.Serialization.ResolveNameEventArgs.cs
 //
 // Author:
-//   Alejandro Sánchez Acosta (raciel@gnome.org)
+//   Alejandro SÃ¡nchez Acosta (raciel@gnome.org)
 //
-// (C) Alejandro Sánchez Acosta
+// (C) Alejandro SÃ¡nchez Acosta
 //
 
 //

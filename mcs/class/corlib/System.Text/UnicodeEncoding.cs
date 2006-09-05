@@ -4,7 +4,7 @@
  *
  * Copyright (c) 2001, 2002  Southern Storm Software, Pty Ltd
  * Copyright (C) 2003, 2004 Novell, Inc.
- * Copyright (C) 2006 Kornél Pál <http://www.kornelpal.hu/>
+ * Copyright (C) 2006 KornÃ©l PÃ¡l <http://www.kornelpal.hu/>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the "Software"),

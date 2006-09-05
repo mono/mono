@@ -69,11 +69,11 @@ namespace FirebirdSql.Data.Common
 
 					case IscCodes.isc_info_db_id:
 						/* Database	file name and site name:
-						 *		• 1	byte containing	the	number 2
-						 *		• 1	byte containing	the	length,	d, of the database file	name in	bytes
-						 *		• A	string of d	bytes, containing the database file	name
-						 *		• 1	byte containing	the	length,	l, of the site name	in bytes
-						 *		• A	string of l	bytes, containing the site name
+						 *		Â• 1	byte containing	the	number 2
+						 *		Â• 1	byte containing	the	length,	d, of the database file	name in	bytes
+						 *		Â• A	string of d	bytes, containing the database file	name
+						 *		Â• 1	byte containing	the	length,	l, of the site name	in bytes
+						 *		Â• A	string of l	bytes, containing the site name
 						 */
 						string	dbFile		= Encoding.Default.GetString(buffer, pos + 2, buffer[pos + 1]);
 						int		sitePos		= pos + 2 + buffer[pos + 1];
@@ -89,28 +89,28 @@ namespace FirebirdSql.Data.Common
 
 					case IscCodes.isc_info_implementation:
 						/* Database	implementation number:
-						 *		• 1	byte containing	a 1
-						 *		• 1	byte containing	the	implementation number
-						 *		• 1	byte containing	a “class” number, either 1 or 12
+						 *		Â• 1	byte containing	a 1
+						 *		Â• 1	byte containing	the	implementation number
+						 *		Â• 1	byte containing	a Â“classÂ” number, either 1 or 12
 						 */
 						info.Add(String.Format(CultureInfo.CurrentCulture, "{0}.{1}.{2}", buffer[pos], buffer[pos + 1], buffer[pos + 2]));
 						break;
 
 					case IscCodes.isc_info_no_reserve:
 						/* 0 or	1
-						 *		• 0	indicates space	is reserved	on each	database page for holding
+						 *		Â• 0	indicates space	is reserved	on each	database page for holding
 						 *			backup versions	of modified	records	[Default]
-						 *		• 1	indicates no space is reserved for such	records
+						 *		Â• 1	indicates no space is reserved for such	records
 						 */
 						info.Add(buffer[pos] == 1 ? true : false);
 						break;
 
 					case IscCodes.isc_info_ods_version:
 						/* ODS major version number
-						 *		• Databases	with different major version numbers have different
+						 *		Â• Databases	with different major version numbers have different
 						 *			physical layouts; a	database engine	can	only access	databases
 						 *			with a particular ODS major	version	number
-						 *		• Trying to	attach to a	database with a	different ODS number
+						 *		Â• Trying to	attach to a	database with a	different ODS number
 						 *			results	in an error
 						 */
 						info.Add(VaxInteger(buffer, pos, length));
@@ -135,9 +135,9 @@ namespace FirebirdSql.Data.Common
 
 					case IscCodes.isc_info_isc_version:
 						/* Version identification string of	the	database implementation:
-						 *		• 1	byte containing	the	number 1
-						 *		• 1	byte specifying	the	length,	n, of the following	string
-						 *		• n	bytes containing the version identification	string
+						 *		Â• 1	byte containing	the	number 1
+						 *		Â• 1	byte specifying	the	length,	n, of the following	string
+						 *		Â• n	bytes containing the version identification	string
 						 */
 						info.Add(Encoding.Default.GetString(buffer, pos + 2, buffer[pos + 1]));
 						break;
@@ -171,7 +171,7 @@ namespace FirebirdSql.Data.Common
 						break;
 
 					case IscCodes.isc_info_sweep_interval:
-						/* Number of transactions that are committed between “sweeps” to
+						/* Number of transactions that are committed between Â“sweepsÂ” to
 						 * remove database record versions that	are	no longer needed
 						 */
 						info.Add(VaxInteger(buffer, pos, length));

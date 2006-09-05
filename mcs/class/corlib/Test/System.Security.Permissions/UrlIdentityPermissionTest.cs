@@ -1,4 +1,4 @@
-﻿//
+//
 // UrlIdentityPermissionTest.cs - NUnit Test Cases for UrlIdentityPermission
 //
 // Author:

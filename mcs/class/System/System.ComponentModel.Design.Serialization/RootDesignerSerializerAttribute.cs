@@ -2,10 +2,10 @@
 // System.ComponentModel.Design.Serialization.RootDesignerSerializerAttribute.cs
 //
 // Authors:
-//   Alejandro Sánchez Acosta (raciel@gnome.org)
+//   Alejandro SÃ¡nchez Acosta (raciel@gnome.org)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
-// (C) Alejandro Sánchez Acosta
+// (C) Alejandro SÃ¡nchez Acosta
 // (C) 2003 Andreas Nahr
 //
 

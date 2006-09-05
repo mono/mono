@@ -1,7 +1,7 @@
 // Tests for System.Drawing.Point.cs
 //
 // Author: Mike Kestner (mkestner@speakeasy.net)
-// 		   Improvements by Jordi Mas i Hern‡ndez <jmas@softcatala.org>
+// 		   Improvements by Jordi Mas i Hern√†ndez <jmas@softcatala.org>
 // Copyright (c) 2001 Ximian, Inc.
 
 //

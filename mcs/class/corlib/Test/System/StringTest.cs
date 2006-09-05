@@ -3,10 +3,10 @@
 // Authors:
 //   Jeffrey Stedfast <fejj@ximian.com>
 //   David Brandt <bucky@keystreams.com>
-//   Kornél Pál <http://www.kornelpal.hu/>
+//   KornÃ©l PÃ¡l <http://www.kornelpal.hu/>
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2006 Kornél Pál
+// Copyright (C) 2006 KornÃ©l PÃ¡l
 // Copyright (C) 2006 Novell (http://www.novell.com)
 //
 

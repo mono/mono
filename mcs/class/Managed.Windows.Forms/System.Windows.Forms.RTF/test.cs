@@ -226,32 +226,32 @@ namespace TextTestClass {
 				}
 
 				case Minor.EmDash: {
-					Console.Write("—");
+					Console.Write("Â—");
 					break;
 				}
 
 				case Minor.EnDash: {
-					Console.Write("–");
+					Console.Write("Â–");
 					break;
 				}
 
 				case Minor.LQuote: {
-					Console.Write("‘");
+					Console.Write("Â‘");
 					break;
 				}
 
 				case Minor.RQuote: {
-					Console.Write("’");
+					Console.Write("Â’");
 					break;
 				}
 
 				case Minor.LDblQuote: {
-					Console.Write("“");
+					Console.Write("Â“");
 					break;
 				}
 
 				case Minor.RDblQuote: {
-					Console.Write("”");
+					Console.Write("Â”");
 					break;
 				}
 

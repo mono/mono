@@ -2,7 +2,7 @@
 // A sample application for some graphics.cs functions implementation
 //
 // Author:
-//   Jordi Mas i Hern‡ndez, jordi@ximian.com
+//   Jordi Mas i Hern√†ndez, jordi@ximian.com
 //
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)

@@ -3,9 +3,6 @@ include ../../build/rules.make
 
 LIBRARY = System.Windows.Forms.dll
 
-# UTF-8
-CODEPAGE = 65001
-
 LIB_MCS_FLAGS = /unsafe \
 	/r:$(corlib) /r:System.dll /r:System.Xml.dll \
 	/r:System.Drawing.dll /r:Accessibility.dll \

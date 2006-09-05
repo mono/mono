@@ -2,10 +2,10 @@
 // System.Web.SessionState.SessionInProcHandler
 //
 // Authors:
-//	Stefan Görling (stefan@gorling.se)
+//	Stefan GÃ¶rling (stefan@gorling.se)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2003 Stefan Görling
+// (C) 2003 Stefan GÃ¶rling
 // Copyright (c) 2004 Novell, Inc. (http://www.novell.com)
 //
 

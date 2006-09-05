@@ -1,4 +1,4 @@
-﻿/*
+/*
  *  BinaryEncoding handler for .Net.  This class implements
  *	a symmetric encoding that will convert string to byte[]
  *  and byte[] to string without any character set

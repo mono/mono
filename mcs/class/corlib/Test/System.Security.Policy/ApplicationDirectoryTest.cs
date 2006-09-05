@@ -1,4 +1,4 @@
-﻿//
+//
 // ApplicationDirectoryTest.cs - NUnit Test Cases for ApplicationDirectory
 //
 // Author:

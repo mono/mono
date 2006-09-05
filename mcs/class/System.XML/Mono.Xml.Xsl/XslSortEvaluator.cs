@@ -1,4 +1,4 @@
-﻿//
+//
 // XslSortEvaluator.cs
 //
 // Author:

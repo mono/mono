@@ -1,4 +1,4 @@
-﻿//
+//
 // System.Web.UI.WebControls.AssociatedControlConverter.cs
 //
 // Authors:

@@ -1,4 +1,4 @@
-﻿//
+//
 // AllMembershipConditionTest.cs - NUnit Test Cases for AllMembershipCondition
 //
 // Author:

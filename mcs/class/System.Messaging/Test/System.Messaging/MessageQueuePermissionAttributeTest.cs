@@ -1,4 +1,4 @@
-﻿//
+//
 // MessageQueuePermissionAttributeTest.cs -
 //	NUnit Test Cases for MessageQueuePermissionAttribute
 //

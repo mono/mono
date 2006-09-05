@@ -1,4 +1,4 @@
-﻿//
+//
 // ZoneIdentityPermissionTest.cs - NUnit Test Cases for ZoneIdentityPermission
 //
 // Author:

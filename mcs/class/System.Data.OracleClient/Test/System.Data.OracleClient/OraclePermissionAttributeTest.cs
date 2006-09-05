@@ -1,4 +1,4 @@
-﻿//
+//
 // OraclePermissionAttributeTest.cs -
 //	NUnit Test Cases for OraclePermissionAttribute
 //

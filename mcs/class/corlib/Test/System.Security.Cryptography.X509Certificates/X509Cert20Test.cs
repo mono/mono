@@ -1,4 +1,4 @@
-﻿//
+//
 // X509Cert20Test.cs - Unit Tests for new 2.0 features in X509Certificate
 //
 // Author:

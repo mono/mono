@@ -1,4 +1,4 @@
-﻿//
+//
 // ApplicationDirectoryMembershipConditionTest.cs -
 //	NUnit Test Cases for ApplicationDirectoryMembershipCondition
 //

@@ -1,4 +1,4 @@
-﻿//
+//
 // DataProtectionPermissionAttributeTest.cs -
 //	NUnit Test Cases for DataProtectionPermissionAttributeTest
 //

@@ -1,4 +1,4 @@
-﻿//
+//
 // EventLogPermissionAttributeTest.cs -
 //	NUnit Test Cases for EventLogPermissionAttribute
 //

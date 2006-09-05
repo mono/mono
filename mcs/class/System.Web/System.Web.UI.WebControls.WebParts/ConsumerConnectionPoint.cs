@@ -1,4 +1,4 @@
-﻿//
+//
 // System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint.cs
 //
 // Author: Sanjay Gupta (gsanjay@novell.com)

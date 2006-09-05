@@ -1,4 +1,4 @@
-﻿//
+//
 // SocketPermissionAttributeTest.cs - NUnit Test Cases for SocketPermissionAttribute
 //
 // Author:

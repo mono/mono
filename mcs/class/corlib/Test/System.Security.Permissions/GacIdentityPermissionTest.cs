@@ -1,4 +1,4 @@
-﻿//
+//
 // GacIdentityPermissionTest.cs - NUnit Test Cases for GacIdentityPermission
 //
 // Author:

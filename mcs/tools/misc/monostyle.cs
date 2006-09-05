@@ -1,4 +1,4 @@
-﻿//	monostyle.cs
+//	monostyle.cs
 //
 //	Adam Treat (manyoso@yahoo.com)
 //	Ben Maurer (bmaurer@users.sf.net)

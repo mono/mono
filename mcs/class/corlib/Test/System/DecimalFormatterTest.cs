@@ -1,4 +1,4 @@
-﻿//
+//
 // DecimalFormatterTest.cs - NUnit Test Cases for System.DecimalFormatter
 //
 // Author:

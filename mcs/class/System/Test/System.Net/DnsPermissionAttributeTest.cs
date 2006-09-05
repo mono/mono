@@ -1,4 +1,4 @@
-﻿//
+//
 // DnsPermissionAttributeTest.cs - NUnit Test Cases for DnsPermissionAttribute
 //
 // Author:

@@ -1,4 +1,4 @@
-﻿//
+//
 // HashTest.cs - NUnit Test Cases for Hash
 //
 // Author:

@@ -1,4 +1,4 @@
-﻿//
+//
 // UnicodeEncodingTest.cs - NUnit Test Cases for System.Text.UnicodeEncoding
 //
 // Author:

@@ -358,7 +358,7 @@ namespace ByteFX.Data.MySqlClient
 				}
 				else 
 				{
-					if (b == '\\' || b == '\'' || b == '"' || b == '`' || b == '´')
+					if (b == '\\' || b == '\'' || b == '"' || b == '`' || b == 'Â´')
 						newbytes[newx++] = (byte)'\\';
 					newbytes[newx++] = b;
 				}

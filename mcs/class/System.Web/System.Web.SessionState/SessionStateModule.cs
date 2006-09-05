@@ -3,11 +3,11 @@
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
-//	Stefan Görling (stefan@gorling.se)
+//	Stefan GÃ¶rling (stefan@gorling.se)
 //	Jackson Harper (jackson@ximian.com)
 //
 // Copyright (C) 2002-2006 Novell, Inc (http://www.novell.com)
-// (C) 2003 Stefan Görling (http://www.gorling.se)
+// (C) 2003 Stefan GÃ¶rling (http://www.gorling.se)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the

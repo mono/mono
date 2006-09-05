@@ -2,10 +2,10 @@
 // System.Drawing.Design.PropertyValueItem.cs
 // 
 // Authors:
-//  Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+//  Alejandro SÃ¡nchez Acosta  <raciel@es.gnu.org>
 //  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 // 
-// (C) Alejandro Sánchez Acosta
+// (C) Alejandro SÃ¡nchez Acosta
 // (C) 2003 Andreas Nahr
 // 
 

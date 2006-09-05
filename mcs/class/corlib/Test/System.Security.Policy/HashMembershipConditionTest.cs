@@ -1,4 +1,4 @@
-﻿//
+//
 // HashMembershipConditionTest.cs -
 //	NUnit Test Cases for HashMembershipCondition
 //

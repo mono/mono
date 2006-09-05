@@ -1,4 +1,4 @@
-﻿//
+//
 // ServiceControllerPermissionAttributeTest.cs -
 //	NUnit Test Cases for ServiceControllerPermissionAttribute
 //

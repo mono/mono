@@ -1,4 +1,4 @@
-﻿//
+//
 // DomainApplicationMembershipConditionTest.cs -
 //	NUnit Test Cases for DomainApplicationMembershipCondition
 //

@@ -1,4 +1,4 @@
-﻿//
+//
 // This is a build test: checks that the compiler does not loop
 // forever endlessly with anonymous methods
 //

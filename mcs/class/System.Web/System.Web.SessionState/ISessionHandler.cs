@@ -2,9 +2,9 @@
 // System.Web.SessionState.ISessionHandler
 //
 // Authors:
-//	Stefan Görling, (stefan@gorling.se)
+//	Stefan GÃ¶rling, (stefan@gorling.se)
 //
-// (C) 2003 Stefan Görling
+// (C) 2003 Stefan GÃ¶rling
 //
 // This interface is simple, but as it's internal it shouldn't be hard to change it if we need to.
 //

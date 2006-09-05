@@ -1,4 +1,4 @@
-﻿//
+//
 // ResourcePermissionBaseEntryTest.cs -
 //	NUnit Test Cases for ResourcePermissionBaseEntry
 //

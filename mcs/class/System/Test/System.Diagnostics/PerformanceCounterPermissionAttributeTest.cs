@@ -1,4 +1,4 @@
-﻿//
+//
 // PerformanceCounterPermissionAttributeTest.cs -
 //	NUnit Test Cases for PerformanceCounterPermissionAttribute
 //

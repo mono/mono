@@ -2,9 +2,9 @@
 // System.Drawing.ComIStreamWrapper.cs
 //
 // Author:
-//   Kornél Pál <http://www.kornelpal.hu/>
+//   KornÃ©l PÃ¡l <http://www.kornelpal.hu/>
 //
-// Copyright (C) 2005 Kornél Pál
+// Copyright (C) 2005 KornÃ©l PÃ¡l
 //
 
 //

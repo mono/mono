@@ -3,9 +3,9 @@
 // Test suite for System.Collections.Queue
 //
 // Author:
-//    Ricardo Fern·ndez Pascual
+//    Ricardo Fern√°ndez Pascual
 //
-// (C) 2001 Ricardo Fern·ndez Pascual
+// (C) 2001 Ricardo Fern√°ndez Pascual
 // Copyright (C) 2004 Novell (http://www.novell.com)
 //
 

@@ -1,4 +1,4 @@
-﻿//
+//
 // XPath2Expression.cs - abstract syntax tree for XPath 2.0
 //
 // Author:

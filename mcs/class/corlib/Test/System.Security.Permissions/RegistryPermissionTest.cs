@@ -1,4 +1,4 @@
-﻿//
+//
 // RegistryPermissionTest.cs - NUnit Test Cases for RegistryPermission
 //
 // Author:

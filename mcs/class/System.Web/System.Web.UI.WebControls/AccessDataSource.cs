@@ -1,4 +1,4 @@
-﻿//
+//
 // System.Web.UI.WebControls.AccessDataSource.cs
 //
 // Authors:

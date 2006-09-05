@@ -1,4 +1,4 @@
-﻿//
+//
 // CodeAccessSecurityAttributeTest.cs - 
 //	NUnit Test Cases for CodeAccessSecurityAttribute
 //

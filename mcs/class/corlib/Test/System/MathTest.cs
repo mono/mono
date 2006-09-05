@@ -1,10 +1,10 @@
 // MathTest.cs
 //
 // Jon Guymon (guymon@slackworks.com)
-// Pedro MartÌnez Juli· (yoros@wanadoo.es)
+// Pedro Mart√≠nez Juli√° (yoros@wanadoo.es)
 //
 // (C) 2002 Jon Guymon
-// Copyright (C) 2003 Pedro MartÌnez Juli· <yoros@wanadoo.es>
+// Copyright (C) 2003 Pedro Mart√≠nez Juli√° <yoros@wanadoo.es>
 // Copyright (C) 2004 Novell (http://www.novell.com)
 // 
 

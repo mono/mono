@@ -1,4 +1,4 @@
-﻿//
+//
 // StrongNameIdentityPermissionTest.cs -
 //	NUnit Test Cases for StrongNameIdentityPermission
 //

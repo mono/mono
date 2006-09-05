@@ -235,7 +235,7 @@ namespace System.Xml.Schema
 		///		1. name must be present and of type NCName.
 		///		2. type and <simpleType> must not both be present.
 		///		3. default and fixed must not both be present. 
-		///     4. If default and use are both present, use must have the ·actual value· optional.
+		///     4. If default and use are both present, use must have the Â·actual valueÂ· optional.
 		///		5. name must not be xmlns
 		///		6. Targetnamespace must not be xsi.
 		///		7. *Exception to rule 15* inbuilt attributes: xsi:nil, xsi:type, xsi:schemaLocation, xsi: noNamespaceSchemaLocation
@@ -245,7 +245,7 @@ namespace System.Xml.Schema
 		///		1. name must not be present
 		///		2. all of <simpleType>, form and type must be absent. 
 		///		3. default and fixed must not both be present. 
-		///     4. If default and use are both present, use must have the ·actual value· optional.
+		///     4. If default and use are both present, use must have the Â·actual valueÂ· optional.
 		/// </remarks>
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{

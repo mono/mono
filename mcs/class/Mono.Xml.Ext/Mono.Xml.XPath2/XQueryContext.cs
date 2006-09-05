@@ -1,4 +1,4 @@
-﻿//
+//
 // XQueryContext.cs - XQuery/XPath2 dynamic context
 //
 // Author:

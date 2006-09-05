@@ -1,4 +1,4 @@
-﻿//
+//
 // IBuiltInEvidenceTest.cs - NUnit Test Cases for IBuiltInEvidence
 //
 // Author:

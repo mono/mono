@@ -699,7 +699,7 @@ namespace MonoTests.System.Security.Cryptography {
 			AssertEquals ("Result Length", 0, result.Length);
 		}
 
-		// bugzilla: 49323 (adapted from test case by Carlos Guzm·n ¡lvarez)
+		// bugzilla: 49323 (adapted from test case by Carlos Guzm√°n √Ålvarez)
 		[Test]
 		public void MultiblocksWithPartial () 
 		{

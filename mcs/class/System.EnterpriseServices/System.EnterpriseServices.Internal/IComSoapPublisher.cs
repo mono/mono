@@ -1,9 +1,9 @@
 // System.EnterpriseServices.Internal.IComSoapPublisher.cs
 //
 // Author:
-//   Alejandro Sánchez Acosta (raciel@es.gnu.org)
+//   Alejandro SÃ¡nchez Acosta (raciel@es.gnu.org)
 //
-// Copyright (C) 2002 Alejandro Sánchez Acosta
+// Copyright (C) 2002 Alejandro SÃ¡nchez Acosta
 //
 
 //

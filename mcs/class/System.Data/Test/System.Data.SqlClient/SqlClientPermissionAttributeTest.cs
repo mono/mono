@@ -1,4 +1,4 @@
-﻿//
+//
 // SqlClientPermissionAttributeTest.cs -
 //	NUnit Test Cases for SqlClientPermissionAttribute
 //

@@ -1,4 +1,4 @@
-﻿//
+//
 // IsolatedStoragePermissionAttributeTest.cs -
 //	NUnit Test Cases for IsolateStoragePermissionAttribute
 //

@@ -1,4 +1,4 @@
-﻿//
+//
 // OleDbPermissionTest.cs - NUnit Test Cases for OleDbPermission
 //
 // Author:

@@ -1,4 +1,4 @@
-﻿//
+//
 // AuthenticodeDeformatterTest.cs - 
 //	NUnit Test Cases for AuthenticodeDeformatter
 //

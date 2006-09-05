@@ -1,4 +1,4 @@
-﻿//
+//
 // SiteIdentityPermissionTest.cs - NUnit Test Cases for SiteIdentityPermission
 //
 // Author:

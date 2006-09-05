@@ -21,7 +21,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // Authors:
-//	Jordi Mas i Hern‡ndez (jordi@ximian.com)
+//	Jordi Mas i Hern√†ndez (jordi@ximian.com)
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 

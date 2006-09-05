@@ -1,4 +1,4 @@
-﻿//
+//
 // GeneralNames.cs: Handles GeneralNames for SubjectAltNameExtension and
 //	CRLDistributionPointsExtension
 //

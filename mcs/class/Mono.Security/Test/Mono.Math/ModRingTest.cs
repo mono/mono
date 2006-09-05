@@ -1,4 +1,4 @@
-﻿//
+//
 // MonoTests.Mono.Math.ModRingTest.cs
 //
 // Authors:

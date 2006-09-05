@@ -791,7 +791,7 @@ namespace FirebirdSql.Data.Firebird
 
 		#endregion
 
-		#region · Input parameter descriptor generation methods ·
+		#region Â· Input parameter descriptor generation methods Â·
 
 		private void DescribeInput()
 		{

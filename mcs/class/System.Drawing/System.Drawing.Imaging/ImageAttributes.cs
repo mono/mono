@@ -3,7 +3,7 @@
 //
 // Authors:
 //	Dennis Hayes (dennish@raytek.com) (stubbed out)
-//	Jordi Mas i Hern‡ndez (jmas@softcatala.org)
+//	Jordi Mas i Hern√†ndez (jmas@softcatala.org)
 //	Sanjay Gupta (gsanjay@novell.com)
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //

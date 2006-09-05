@@ -2,9 +2,9 @@
 // System.Collections.Queue
 //
 // Author:
-//    Ricardo Fern·ndez Pascual
+//    Ricardo Fern√°ndez Pascual
 //
-// (C) 2001 Ricardo Fern·ndez Pascual
+// (C) 2001 Ricardo Fern√°ndez Pascual
 //
 
 //

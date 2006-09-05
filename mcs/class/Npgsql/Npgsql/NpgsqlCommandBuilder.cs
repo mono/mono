@@ -1,9 +1,9 @@
 // NpgsqlCommandBuilder.cs
 //
 // Author:
-//   Pedro MartÌnez Juli· (yoros@wanadoo.es)
+//   Pedro Mart√≠nez Juli√° (yoros@wanadoo.es)
 //
-// Copyright (C) 2003 Pedro MartÌnez Juli·
+// Copyright (C) 2003 Pedro Mart√≠nez Juli√°
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the

@@ -1,4 +1,4 @@
-﻿//
+//
 // ApplicationIdentityTest.cs - NUnit Test Cases for ApplicationIdentity
 //
 // Author:

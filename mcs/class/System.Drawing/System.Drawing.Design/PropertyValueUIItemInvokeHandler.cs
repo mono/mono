@@ -1,9 +1,9 @@
 // System.Drawing.Design.PropertyValueUIItemInvokeHandler.cs
 // 
 // Author:
-//      Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+//      Alejandro SÃ¡nchez Acosta  <raciel@es.gnu.org>
 // 
-// (C) Alejandro Sánchez Acosta
+// (C) Alejandro SÃ¡nchez Acosta
 // Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining

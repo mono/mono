@@ -19,7 +19,7 @@ namespace MonoTests.Mono.Data.SqliteClient
 		readonly static string _uri = "SqliteTest.db";
 		readonly static string _connectionString = "URI=file://" + _uri + ", version=3";
 		static SqliteConnection _conn = new SqliteConnection (_connectionString);
-		readonly static string stringvalue = "my keyboard is better than yours : äöüß";
+		readonly static string stringvalue = "my keyboard is better than yours : Ã¤Ã¶Ã¼ÃŸ";
 
 		public SqliteCommandUnitTests()
 		{
@@ -128,7 +128,7 @@ namespace MonoTests.Mono.Data.SqliteClient
 		public void ScalarReturn()
 		{
 			// This should return the 1 line that got inserted in CreateTable() Test
-			SqliteCommand cmd = new SqliteCommand("SELECT COUNT(*) FROM t1 WHERE  t LIKE '%äöüß'",_conn);
+			SqliteCommand cmd = new SqliteCommand("SELECT COUNT(*) FROM t1 WHERE  t LIKE '%Ã¤Ã¶Ã¼ÃŸ'",_conn);
 			using(_conn)
 			{
 				_conn.Open();

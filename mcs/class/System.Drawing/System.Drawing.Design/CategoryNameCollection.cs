@@ -2,10 +2,10 @@
 // System.Drawing.Design.CategoryNameCollection.cs
 //
 // Authors:
-// 	Alejandro Sánchez Acosta
+// 	Alejandro SÃ¡nchez Acosta
 //  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
-// (C) Alejandro Sánchez Acosta
+// (C) Alejandro SÃ¡nchez Acosta
 // (C) 2003 Andreas Nahr
 // 
 

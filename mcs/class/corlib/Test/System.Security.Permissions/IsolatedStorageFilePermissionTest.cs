@@ -1,4 +1,4 @@
-﻿//
+//
 // IsolatedStorageFilePermissionTest.cs - NUnit Test Cases for IsolatedStorageFilePermission
 //
 // Author:

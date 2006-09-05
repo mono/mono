@@ -204,31 +204,31 @@ namespace Font1Sample {
 			gr.DrawRectangle( new Pen(Color.Green), rect2);			
 			gr.DrawRectangle( new Pen(Color.Green), rect7);			
 			
-			str = "Ara que tinc &vint anys, ara que encara tinc força,que no tinc l'ànima morta, i em sento bullir la sang. (" + f1.Name + ")";			
+			str = "Ara que tinc &vint anys, ara que encara tinc forÃ§a,que no tinc l'Ã nima morta, i em sento bullir la sang. (" + f1.Name + ")";			
 			gr.DrawString( str,	f1, new SolidBrush(Color.White), rect1, strfmt1);						
 			gr.DrawString(flagProcessing(strfmt1), fonttxt, brushtxt, calcRect(rect1), strfmttxt);						                                    
             		sz =  gr.MeasureString (str, f1, new SizeF (rect1.Width, rect1.Height), strfmt1, out chars, out lines);                             			                                
 			Console.WriteLine("MeasureString str1 [" + str + "] " + sz + ";chars:" + chars + " lines:" + lines);
 			
-			str = "Ara que em sento capaç de cantar si un altre canta. Avui que encara tinc veu i encara puc creure en déus (" + f2.Name + ")";
+			str = "Ara que em sento capaÃ§ de cantar si un altre canta. Avui que encara tinc veu i encara puc creure en dÃ©us (" + f2.Name + ")";
 			gr.DrawString(str, f2, new SolidBrush(Color.Red),rect2, strfmt2);														
 			gr.DrawString(flagProcessing(strfmt2), fonttxt, brushtxt, calcRect(rect2), strfmttxt);						
 			sz =  gr.MeasureString (str, f2, new SizeF (rect2.Width, rect2.Height), strfmt2, out chars, out lines);                             			                                			
 			Console.WriteLine("MeasureString str2 [" + str + "] " + sz + ";chars:" + chars + " lines:" + lines);
 			
-			str = "Vull cantar a les pedres, la terra, l'aigua, al blat i al camí, que vaig trepitjant. (" + f3.Name + ")";
+			str = "Vull cantar a les pedres, la terra, l'aigua, al blat i al camÃ­, que vaig trepitjant. (" + f3.Name + ")";
 			gr.DrawString(str,f3, new SolidBrush(Color.White), rect3, strfmt3);				
 			gr.DrawString(flagProcessing(strfmt3), fonttxt, brushtxt, calcRect(rect3), strfmttxt);			
 			sz =  gr.MeasureString (str, f3, new SizeF (rect3.Width, rect3.Height), strfmt3, out chars, out lines);                             			                                			
 			Console.WriteLine("MeasureString str3 [" + str + "] " + sz + ";chars:" + chars + " lines:" + lines);
 			
-			str = "A la nit, al cel i a aquet mar tan nostre i al vent que al matí ve a besar-me el rostre (" + f4.Name + ")";				
+			str = "A la nit, al cel i a aquet mar tan nostre i al vent que al matÃ­ ve a besar-me el rostre (" + f4.Name + ")";				
 			gr.DrawString(str, f4, new SolidBrush(Color.Red),rect4, strfmt4);
 			gr.DrawString(flagProcessing(strfmt4), fonttxt, brushtxt, calcRect(rect4), strfmttxt);			
 			sz =  gr.MeasureString (str, f4, new SizeF (rect4.Width, rect4.Height), strfmt4, out chars, out lines);                             			                                			
 			Console.WriteLine("MeasureString str4 [" + str + "] " + sz + ";chars:" + chars + " lines:" + lines);			
 			
-			str = "Vull cantar a les pedres, la terra, l'aigua, al blat i al camí, que vaig trepitjant. (" + f5.Name + ")";
+			str = "Vull cantar a les pedres, la terra, l'aigua, al blat i al camÃ­, que vaig trepitjant. (" + f5.Name + ")";
 			gr.DrawString(str, f5, new SolidBrush(Color.White), rect5, strfmt5);
 			gr.DrawString(flagProcessing(strfmt5), fonttxt, brushtxt, calcRect(rect5), strfmttxt);			
 			sz =  gr.MeasureString (str, f5, new SizeF (rect5.Width, rect5.Height), strfmt5, out chars, out lines);                             			                                			
@@ -240,7 +240,7 @@ namespace Font1Sample {
 			sz =  gr.MeasureString (str, f6, new SizeF (rect6.Width, rect6.Height), strfmt6, out chars, out lines);                             			                                			
 			Console.WriteLine("MeasureString str6 [" + str + "] " + sz + ";chars:" + chars + " lines:" + lines);				
 			
-			str = "Vull plorar amb aquells que es troben tots sols, sense cap amor van passant pel món.. (" + f5.Name + ")";
+			str = "Vull plorar amb aquells que es troben tots sols, sense cap amor van passant pel mÃ³n.. (" + f5.Name + ")";
 			gr.DrawString(str, f5, new SolidBrush(Color.White), rect7, strfmt4);
 			gr.DrawString(flagProcessing(strfmt4), fonttxt, brushtxt, calcRect(rect7), strfmttxt);			
 			sz =  gr.MeasureString (str, f5, new SizeF (rect7.Width, rect7.Height), strfmt5, out chars, out lines);                             			                                			
@@ -313,25 +313,25 @@ namespace Font1Sample {
 			strfmt14.HotkeyPrefix = HotkeyPrefix.Show;								
 			strfmt14.FormatFlags = StringFormatFlags.DirectionRightToLeft;
 			
-			str = "Vull alçar la veu,per cantar als homes que han nascut dempeus (" + f8.Name + ")";
+			str = "Vull alÃ§ar la veu,per cantar als homes que han nascut dempeus (" + f8.Name + ")";
 			gr.DrawString(str, f8, new SolidBrush(Color.White), rect8, strfmt8);
 			gr.DrawString(flagProcessing(strfmt8), fonttxt, brushtxt, calcRect(rect8), strfmttxt);			
 			sz =  gr.MeasureString (str, f8, new SizeF (rect8.Width, rect8.Height), strfmt8, out chars, out lines);                             			                                			
 			gr.DrawRectangle(new Pen(Color.Red), new Rectangle (rect8.X, rect8.Y, (int)sz.Width, (int)sz.Height));			
 			
-			str = "I no tinc l'ànima morta i  em sento bollir la sang (" + f9.Name + ")";
+			str = "I no tinc l'Ã nima morta i  em sento bollir la sang (" + f9.Name + ")";
 			gr.DrawString(str, f9, new SolidBrush(Color.White), rect9, strfmt9);
 			gr.DrawString(flagProcessing(strfmt9), fonttxt, brushtxt, calcRect(rect9), strfmttxt);			
 			sz =  gr.MeasureString (str, f9, new SizeF (rect9.Width, rect9.Height), strfmt9, out chars, out lines);                             			                                			
 			gr.DrawRectangle(new Pen(Color.Red), new Rectangle (rect9.X, rect9.Y, (int)sz.Width, (int)sz.Height));			
 			
-			str = "I no tinc l'ànima morta i  em sento bollir la sang (" + f10.Name + ")";
+			str = "I no tinc l'Ã nima morta i  em sento bollir la sang (" + f10.Name + ")";
 			gr.DrawString(str, f10, new SolidBrush(Color.White), rect10, strfmt10);
 			gr.DrawString(flagProcessing(strfmt10), fonttxt, brushtxt, calcRect(rect10), strfmttxt);			
 			sz =  gr.MeasureString (str, f10, new SizeF (rect10.Width, rect10.Height), strfmt10, out chars, out lines);                             			                                			
 			gr.DrawRectangle(new Pen(Color.Red), new Rectangle (rect10.X, rect10.Y, (int)sz.Width, (int)sz.Height));			
 			
-			str = "I no tinc l'ànima morta i  em sento bollir la sang (" + f11.Name + ")";
+			str = "I no tinc l'Ã nima morta i  em sento bollir la sang (" + f11.Name + ")";
 			gr.DrawString(str, f11, new SolidBrush(Color.White), rect11, strfmt11);
 			gr.DrawString(flagProcessing(strfmt11), fonttxt, brushtxt, calcRect(rect11), strfmttxt);			
 			sz =  gr.MeasureString (str, f11, new SizeF (rect11.Width, rect11.Height), strfmt11, out chars, out lines);                             			                                			
@@ -342,12 +342,12 @@ namespace Font1Sample {
 			sz =  gr.MeasureString (str, f8, new SizeF (rect12.Width, rect12.Height), strfmt12, out chars, out lines);                             			                                						
 			gr.DrawRectangle(new Pen(Color.Red), new Rectangle (rect12.X, rect12.Y, (int)sz.Width, (int)sz.Height));			
 			
-			str = "Nom\tCognom\tAdreça";
+			str = "Nom\tCognom\tAdreÃ§a";
 			gr.DrawString(str, f8, new SolidBrush(Color.White), rect13, strfmt13);
 			sz =  gr.MeasureString (str, f8, new SizeF (rect13.Width, rect13.Height), strfmt13, out chars, out lines);                             			                                						
 			gr.DrawRectangle(new Pen(Color.Red), new Rectangle (rect13.X, rect13.Y, (int)sz.Width, (int)sz.Height));			
 			
-			str = "Nom Cognom Adreça";
+			str = "Nom Cognom AdreÃ§a";
 			gr.DrawString(str, f8, new SolidBrush(Color.White), rect14, strfmt14);
 			sz =  gr.MeasureString (str, f8, new SizeF (rect14.Width, rect13.Height), strfmt14, out chars, out lines);                             			                                						
 			gr.DrawRectangle(new Pen(Color.Red), new Rectangle (rect14.X, rect14.Y, (int)sz.Width, (int)sz.Height));			

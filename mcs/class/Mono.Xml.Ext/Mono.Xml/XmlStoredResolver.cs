@@ -1,4 +1,4 @@
-﻿//
+//
 // XmlStoredResolver.cs
 //
 // Author: Atsushi Enomoto <atsushi@ximian.com>

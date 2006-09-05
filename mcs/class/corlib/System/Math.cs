@@ -4,11 +4,11 @@
 // Authors:
 //   Bob Smith (bob@thestuff.net)
 //   Dan Lewis (dihlewis@yahoo.co.uk)
-//   Pedro MartÌnez Juli· (yoros@wanadoo.es)
+//   Pedro Mart√≠nez Juli√° (yoros@wanadoo.es)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2001 Bob Smith.  http://www.thestuff.net
-// Copyright (C) 2003 Pedro MartÌnez Juli· <yoros@wanadoo.es>
+// Copyright (C) 2003 Pedro Mart√≠nez Juli√° <yoros@wanadoo.es>
 // Copyright (C) 2004 Novell (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining

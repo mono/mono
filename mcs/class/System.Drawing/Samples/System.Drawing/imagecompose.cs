@@ -2,7 +2,7 @@
 // Sample application for adding two images into a single TIFF file
 //
 // Author:
-//   Jordi Mas i Hern‡ndez, jordi@ximian.com
+//   Jordi Mas i Hern√†ndez, jordi@ximian.com
 //
 
 //

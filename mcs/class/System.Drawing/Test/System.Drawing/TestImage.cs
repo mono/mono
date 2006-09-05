@@ -2,7 +2,7 @@
 // Image class testing unit
 //
 // Authors:
-// 	Jordi Mas i Hernàndez (jmas@softcatala.org>
+// 	Jordi Mas i HernÃ ndez (jmas@softcatala.org>
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2005 Ximian, Inc.  http://www.ximian.com

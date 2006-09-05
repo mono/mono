@@ -1,4 +1,4 @@
-﻿//
+//
 // ApplicationMembershipConditionTest.cs -
 //	NUnit Test Cases for ApplicationMembershipCondition
 //

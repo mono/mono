@@ -1,4 +1,4 @@
-﻿//
+//
 // XQueryFunctionContextAttribute.cs
 //
 // Author:

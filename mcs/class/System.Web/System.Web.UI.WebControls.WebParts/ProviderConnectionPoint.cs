@@ -1,4 +1,4 @@
-﻿//
+//
 // System.Web.UI.WebControls.WebParts.ProviderConnectionPoint.cs
 //
 // Author: Sanjay Gupta (gsanjay@novell.com)

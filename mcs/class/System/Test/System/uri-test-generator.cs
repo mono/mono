@@ -1,4 +1,4 @@
-﻿//
+//
 // uri-test-generator.cs : URI test result generator.
 //
 // Author:

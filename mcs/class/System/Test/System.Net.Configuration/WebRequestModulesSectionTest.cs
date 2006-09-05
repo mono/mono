@@ -1,4 +1,4 @@
-﻿//
+//
 // WebRequestModulesSectionTest.cs
 //
 // Author:

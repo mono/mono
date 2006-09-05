@@ -266,8 +266,8 @@ namespace C5UnitTests.support
       public void CharequalityComparerViaBuilder()
       {
         SCG.IEqualityComparer<char> h = EqualityComparer<char>.Default;
-        char s = 'å';
-        char t = 'å';
+        char s = 'Ã¥';
+        char t = 'Ã¥';
         char u = 'r';
 
         Assert.AreEqual(s.GetHashCode(), h.GetHashCode(s));

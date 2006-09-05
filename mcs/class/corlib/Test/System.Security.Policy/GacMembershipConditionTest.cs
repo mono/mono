@@ -1,4 +1,4 @@
-﻿//
+//
 // GacMembershipConditionTest.cs - NUnit Test Cases for GacMembershipCondition
 //
 // Author:

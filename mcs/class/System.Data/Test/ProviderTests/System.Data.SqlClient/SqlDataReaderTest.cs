@@ -3,7 +3,7 @@
 //                          SqlDataReader class
 // Author:
 //      Umadevi S (sumadevi@novell.com)
-//      Kornél Pál <http://www.kornelpal.hu/>
+//      KornÃ©l PÃ¡l <http://www.kornelpal.hu/>
 //	Sureshkumar T (tsureshkumar@novell.com)
 //	Senganal T (tsenganal@novell.com)
 //

@@ -1,4 +1,4 @@
-﻿//
+//
 // DirectoryServicesPermissionAttributeTest.cs -
 //	NUnit Test Cases for DirectoryServicesPermissionAttribute
 //

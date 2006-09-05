@@ -1,4 +1,4 @@
-﻿//
+//
 // DBDataPermissionAttributeTest.cs -
 //	NUnit Test Cases for DBDataPermissionAttribute
 //

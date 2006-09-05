@@ -1,4 +1,4 @@
-﻿//
+//
 // PKCS1Test.cs - NUnit Test Cases for PKCS #1
 //
 // Author:

@@ -38,7 +38,7 @@ namespace GetOptTest
 			return WhatToDoNext.GoAhead; 
 		}
 
-		public override WhatToDoNext DoHelp() // uses parent´s OptionAttribute as is
+		public override WhatToDoNext DoHelp() // uses parent's OptionAttribute as is
 		{
 			base.DoHelp();
 			return WhatToDoNext.GoAhead; 

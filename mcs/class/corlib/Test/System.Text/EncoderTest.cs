@@ -1,4 +1,4 @@
-﻿//
+//
 // EncoderTest.cs
 //
 // Author:

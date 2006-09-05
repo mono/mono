@@ -2,7 +2,7 @@
 // ImageCodecInfo class testing unit
 //
 // Author:
-// 	 Jordi Mas i Hern‡ndez (jordi@ximian.com)
+// 	 Jordi Mas i Hern√†ndez (jordi@ximian.com)
 //
 // (C) 2004 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)

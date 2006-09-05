@@ -1,9 +1,9 @@
 // System.EnterpriseServices.Internal.IClrObjectFactory.cs
 //
 // Author:
-//   Alejandro Sánchez Acosta (raciel@es.gnu.org)
+//   Alejandro SÃ¡nchez Acosta (raciel@es.gnu.org)
 //
-// Copyright (C) Alejandro Sánchez Acosta
+// Copyright (C) Alejandro SÃ¡nchez Acosta
 //
 
 //

@@ -8,9 +8,9 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // References
-// a.	NTLM Authentication Scheme for HTTP, Ronald Tschalär
+// a.	NTLM Authentication Scheme for HTTP, Ronald TschalÃ¤r
 //	http://www.innovation.ch/java/ntlm.html
-// b.	The NTLM Authentication Protocol, Copyright © 2003 Eric Glass
+// b.	The NTLM Authentication Protocol, Copyright Â© 2003 Eric Glass
 //	http://davenport.sourceforge.net/ntlm.html
 //
 // Permission is hereby granted, free of charge, to any person obtaining

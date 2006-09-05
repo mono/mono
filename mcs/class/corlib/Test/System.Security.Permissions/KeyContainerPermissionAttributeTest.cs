@@ -1,4 +1,4 @@
-﻿//
+//
 // KeyContainerPermissionAttributeTest.cs -
 //	NUnit Test Cases for KeyContainerPermissionAttributeTest
 //

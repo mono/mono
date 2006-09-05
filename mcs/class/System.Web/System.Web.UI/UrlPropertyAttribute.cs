@@ -1,4 +1,4 @@
-﻿//
+//
 // System.Web.UI.UrlPropertyAttribute
 //
 // Authors:

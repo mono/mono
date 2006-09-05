@@ -1,4 +1,4 @@
-﻿//
+//
 // SecurityAttributeTest.cs - NUnit Test Cases for SecurityAttribute
 //
 // Author:

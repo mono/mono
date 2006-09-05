@@ -1,4 +1,4 @@
-﻿//
+//
 // OleDbPermissionAttributeTest.cs -
 //	NUnit Test Cases for OleDbPermissionAttribute
 //

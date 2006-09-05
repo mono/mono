@@ -1,4 +1,4 @@
-﻿//
+//
 // ZoneMembershipConditionTest.cs -
 //	NUnit Test Cases for ZoneMembershipCondition
 //

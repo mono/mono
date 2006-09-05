@@ -2,7 +2,7 @@
 // ICO Codec class testing unit
 //
 // Authors:
-// 	Jordi Mas i Hern‡ndez (jordi@ximian.com)
+// 	Jordi Mas i Hern√†ndez (jordi@ximian.com)
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2006 Novell, Inc (http://www.novell.com)

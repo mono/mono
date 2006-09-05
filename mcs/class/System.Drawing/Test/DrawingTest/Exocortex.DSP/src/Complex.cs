@@ -406,7 +406,7 @@ namespace Exocortex.DSP {
 		/// <param name="b"></param>
 		/// <returns></returns>
 		public static Complex operator*( Complex a, Complex b ) {
-			// (x + yi)(u + vi) = (xu – yv) + (xv + yu)i. 
+			// (x + yi)(u + vi) = (xu - yv) + (xv + yu)i. 
 			double	x = a.Re, y = a.Im;
 			double	u = b.Re, v = b.Im;
 			

@@ -405,7 +405,7 @@ namespace Exocortex.DSP {
 		/// <param name="b"></param>
 		/// <returns></returns>
 		public static ComplexF operator*( ComplexF a, ComplexF b ) {
-			// (x + yi)(u + vi) = (xu – yv) + (xv + yu)i. 
+			// (x + yi)(u + vi) = (xu - yv) + (xv + yu)i. 
 			double	x = a.Re, y = a.Im;
 			double	u = b.Re, v = b.Im;
 			a.Re	= (float)( x*u - y*v );

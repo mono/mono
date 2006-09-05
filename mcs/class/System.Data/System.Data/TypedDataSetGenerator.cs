@@ -1,4 +1,4 @@
-﻿//
+//
 // TypedDataSetGenerator.cs
 //
 // Author:

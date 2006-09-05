@@ -1,9 +1,9 @@
 // System.Configuration.Install.Installer.cs
 //
 // Author:
-// 	Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+// 	Alejandro SÃ¡nchez Acosta  <raciel@es.gnu.org>
 //
-// Alejandro Sánchez Acosta
+// Alejandro SÃ¡nchez Acosta
 // 
 
 //
