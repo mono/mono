@@ -1,3 +1,7 @@
+2006-09-05  Raja R Harinath  <rharinath@novell.com>
+
+	* DateTimeTest.cs (Kind): Add test for DateTime.Today.
+
 2006-09-01  Raja R Harinath  <rharinath@novell.com>
 
 	* TypeTest.cs (GenericByRef): New.  Inspired by #79238.

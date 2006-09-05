@@ -1,3 +1,7 @@
+2006-09-05  Raja R Harinath  <rharinath@novell.com>
+
+	* DateTime.cs (Today) [NET_2_0]: Set kind to Local.
+
 2006-09-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* Enum.cs (Equals): Use the generic Equals implementation from ValueType which

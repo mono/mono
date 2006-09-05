@@ -1507,6 +1507,7 @@ public class DateTimeTest : Assertion
 			return; // In this case it does not satisfy the test premises.
 
 		AssertEquals ("#0", DateTimeKind.Local, DateTime.Now.Kind);
+		AssertEquals ("#0a", DateTimeKind.Local, DateTime.Today.Kind);
 
 		DateTime utc = DateTime.UtcNow;
 		DateTime now = new DateTime (utc.Ticks + TimeZone.

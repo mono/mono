@@ -438,7 +438,11 @@ namespace System
 		{
 			get {
 				DateTime now = Now;
-				return new DateTime (now.Year, now.Month, now.Day);
+				DateTime today = new DateTime (now.Year, now.Month, now.Day);
+#if NET_2_0
+				today.kind = now.kind;
+#endif
+				return today;
 			}
 		}
 
