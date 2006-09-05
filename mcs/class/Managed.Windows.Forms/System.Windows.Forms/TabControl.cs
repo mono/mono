@@ -229,11 +229,13 @@ namespace System.Windows.Forms {
                                 	int re = ThemeEngine.Current.GetTabControlLeftScrollRect (this).Left;
 					if (show_slider && le > re) {
 						int diff = le - re;
-						int ind = value - 1;
-						while (ind > 0 && diff > 0) {
-							diff -= TabPages [ind++].Width;
+						int i = 0;
+
+						for (i = value; i < TabPages.Count; i++) {
+							if (TabPages [i].TabBounds.Right > re)
+								break;
 						}
-						slider_pos = ind - 1;
+						slider_pos = i;
 						refresh = true;
 					}
 				}
