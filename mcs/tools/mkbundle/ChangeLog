@@ -1,3 +1,7 @@
+2006-09-05  Kornél Pál  <kornelpal@gmail.com>
+
+	* TODO: Renamed mono-1.dll to mono.dll.
+
 2005-12-29  Robert Jordan  <robertj@gmx.net>
 
 	* mkbundle.cs, template.c, template_z.c: Added support for Windows.

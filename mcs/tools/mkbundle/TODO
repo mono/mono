@@ -18,7 +18,7 @@ the mkbundle-generated executable.
 
 For example, a bundled XSP needs:
 
-mono-1.dll
+mono.dll
 libglib*.dll
 libgmodule*.dll
 libgthread*.dll
