@@ -2,6 +2,7 @@
 
 	* TabControl.cs: Better calculation method for setting the slider
 	pos. Prevents crashes on really wide tabs.
+	- Draw Image on tab pages if an image list is used.
 
 2006-09-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 

@@ -692,6 +692,10 @@ namespace System.Windows.Forms {
 					width = item_size.Width;
 				} else {
 					width = (int) DeviceContext.MeasureString (page.Text, Font).Width + (Padding.X * 2);
+					if (ImageList != null && page.ImageIndex >= 0 && page.ImageIndex < ImageList.Images.Count) {
+						width += ImageList.ImageSize.Width + 2;
+						item_size.Height = ImageList.ImageSize.Height + 3;
+					}
 				}
 
 				if (i == SelectedIndex)
@@ -810,6 +814,10 @@ namespace System.Windows.Forms {
 					width = item_size.Width;
 				} else {
 					width = (int) DeviceContext.MeasureString (page.Text, Font).Width + (Padding.X * 2);
+					if (ImageList != null && page.ImageIndex >= 0 && page.ImageIndex < ImageList.Images.Count) {
+						width += ImageList.ImageSize.Width + 2;
+						item_size.Height = ImageList.ImageSize.Height + 3;
+					}
 				}
 
 				if (width < MinimumTabWidth)
@@ -867,6 +875,10 @@ namespace System.Windows.Forms {
 					width = item_size.Width;
 				} else {					
 					width = (int) DeviceContext.MeasureString (page.Text, Font).Width + (Padding.X * 2);
+					if (ImageList != null && page.ImageIndex >= 0 && page.ImageIndex < ImageList.Images.Count) {
+						width += ImageList.ImageSize.Width + 2;
+						item_size.Height = ImageList.ImageSize.Height + 3;
+					}
 				}
 
 				if (width < MinimumTabWidth)
