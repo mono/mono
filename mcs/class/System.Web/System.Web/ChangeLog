@@ -1,3 +1,7 @@
+2006-09-05  Konstantin Triger <kostat@mainsoft.com>
+
+	* SiteMapProvider.cs: consider authorization section for access decision.
+
 2006-09-04 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* HttpUtility.cs: fixed UrlPathEncode method.

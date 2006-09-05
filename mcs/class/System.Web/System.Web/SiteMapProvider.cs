@@ -190,10 +190,13 @@ namespace System.Web {
 			/* 2. */
 			/* XXX */
 
-			/* 3. */
-			/* XXX */
+			AuthorizationSection config = (AuthorizationSection) WebConfigurationManager.GetSection (
+				"system.web/authorization",
+				node.Url);
+			if (config != null)
+				return config.IsValidUser (context.User, context.Request.HttpMethod);
 
-			return true; // the default should be false.
+			return false;
 		}
 		
 		public virtual SiteMapNode CurrentNode {
