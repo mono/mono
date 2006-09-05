@@ -1,3 +1,7 @@
+2006-09-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate.cs: Keep in sync with Mono.Security.dll (#79262).
+
 2006-01-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Extension.cs: Keep in sync with Mono.Security.dll.
