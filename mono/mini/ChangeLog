@@ -1,3 +1,7 @@
+2006-09-05  Kornél Pál  <kornelpal@gmail.com>
+
+	* Makefile.am: Renamed mono-1.dll to mono.dll. (-avoid-version)
+
 2006-09-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_icall_get_wrapper): Fix a race condition on initializing
