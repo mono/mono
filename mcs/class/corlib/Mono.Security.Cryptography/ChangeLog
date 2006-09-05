@@ -1,3 +1,9 @@
+2006-09-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RSAManaged.cs: Fix a NRE when decrypting without a private key 
+	(#79269). We now throw a CryptographicException with an appropriate
+	text message.
+
 2006-06-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoTools.cs: Fix offset in block processor. This fix the HMAC
