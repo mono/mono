@@ -1154,7 +1154,7 @@ namespace System.Xml.Serialization
 
 		TypeData FindBuiltInType (XmlQualifiedName qname, XmlSchemaSimpleType st)
 		{
-			if (CanBeEnum (st))
+			if (CanBeEnum (st) && qname != null)
 				return ImportType (qname, null, true).TypeData;
 
 			if (st.Content is XmlSchemaSimpleTypeRestriction) {
@@ -1168,23 +1168,9 @@ namespace System.Xml.Serialization
 			else if (st.Content is XmlSchemaSimpleTypeList) {
 				return FindBuiltInType (GetContentBaseType (st.Content)).ListTypeData;
 			}
-			else if (st.Content is XmlSchemaSimpleTypeUnion)
-			{
-				// Check if all types of the union are equal. If not, then will use anyType.
-				XmlSchemaSimpleTypeUnion uni = (XmlSchemaSimpleTypeUnion) st.Content;
-				TypeData utype = null;
-
-				// Anonymous types are unique
-				if (uni.BaseTypes.Count != 0 && uni.MemberTypes.Length != 0)
-					return FindBuiltInType (anyType);
-
-				foreach (XmlQualifiedName mt in uni.MemberTypes)
-				{
-					TypeData qn = FindBuiltInType (mt);
-					if (utype != null && qn != utype) return FindBuiltInType (anyType);
-					else utype = qn;
-				}
-				return utype;
+			else if (st.Content is XmlSchemaSimpleTypeUnion) {
+				// MS.NET always import simple unions as string
+				return FindBuiltInType (new XmlQualifiedName ("string", XmlSchema.Namespace));
 			}
 			else
 				return null;

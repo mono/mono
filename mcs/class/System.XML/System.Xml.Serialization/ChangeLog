@@ -1,3 +1,8 @@
+2006-09-05  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlSchemaImporter.cs: Always import simple type unions
+	  as string (like MS.NET does). Fixes bug #79234.
+
 2006-08-25  Kornél Pál  <kornelpal@gmail.com>
 
 	* MapCodeGenerator.cs: Use assembly file version constants.
