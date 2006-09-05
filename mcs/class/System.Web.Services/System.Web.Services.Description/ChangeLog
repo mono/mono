@@ -1,3 +1,8 @@
+2006-09-05  Ankit Jain  <jankit@novell.com>
+
+	* DocumentableItem.cs (DocumentableItem.Namespaces): Add missing NET_2_0
+	property.
+
 2006-08-23  Konstantin Triger <kostat@mainsoft.com>
 
 	* ServiceDescriptionReflector.cs: remove CONFIGURATION_2_0 #if since NET_2_0

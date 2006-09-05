@@ -42,6 +42,7 @@ namespace System.Web.Services.Description {
 
 #if NET_2_0
 		XmlAttribute [] extAttributes;
+		XmlSerializerNamespaces namespaces;
 #endif
 
 		#endregion // Fields
@@ -91,6 +92,16 @@ namespace System.Web.Services.Description {
 		[XmlIgnore]
 		public abstract ServiceDescriptionFormatExtensionCollection Extensions {
 			get;
+		}
+
+		[XmlNamespaceDeclarations]
+		public XmlSerializerNamespaces Namespaces {
+			get { 
+				if (namespaces == null)
+					namespaces = new XmlSerializerNamespaces ();
+				return namespaces;
+			}
+			set { namespaces = value; }
 		}
 #endif
 
