@@ -1,3 +1,14 @@
+2006-09-05  Ankit Jain  <jankit@novell.com>
+
+	* wsdl.genxs: Remove readerhooks for "unknownAttribute" and
+	"attributes".
+	* ServiceDescription.cs (ServiceDescription.AddUnknownAttribute):
+	(ServiceDescription.SetExtensibleAttributes): Remove.
+	* ServiceDescriptionSerializerBase.cs: Regenerated with genxs (for
+	!NET_2_0 profile)
+	* ServiceDescriptionSerializerBase2.cs: Generated with genxs2 (for
+	NET_2_0 profile)
+
 2006-09-05  Lluis Sanchez Gual <lluis@novell.com>
 
 	* BasicProfileChecker.cs: In FindMessage, get faults messages from the

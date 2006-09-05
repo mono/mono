@@ -16,6 +16,7 @@ using System.IO;
 using System.Web.Services.Description;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Collections;
 
 namespace MonoTests.System.Web.Services.Description
 {
@@ -31,6 +32,31 @@ namespace MonoTests.System.Web.Services.Description
 		}
 
 #if NET_2_0
+		[Test]
+		public void Namespaces ()
+		{
+			FileStream fs = new FileStream ("Test/System.Web.Services.Description/test.wsdl", FileMode.Open);
+			XmlTextReader xtr = new XmlTextReader (fs);
+
+			ServiceDescription sd = ServiceDescription.Read (xtr);
+			fs.Close ();
+
+			Assert.IsNotNull (sd.Namespaces);
+			Assert.AreEqual (8, sd.Namespaces.Count, "#n0");
+
+			ArrayList list = new ArrayList (sd.Namespaces.ToArray ());
+			list.Sort (new qname_comparer ());
+
+			Assert.AreEqual (new XmlQualifiedName ("", "http://schemas.xmlsoap.org/wsdl/"), list [0]);
+			Assert.AreEqual (new XmlQualifiedName ("http", "http://schemas.xmlsoap.org/wsdl/http/"), list [1]);
+			Assert.AreEqual (new XmlQualifiedName ("mime", "http://schemas.xmlsoap.org/wsdl/mime/"), list [2]);
+			Assert.AreEqual (new XmlQualifiedName ("s", "http://www.w3.org/2001/XMLSchema"), list [3]);
+			Assert.AreEqual (new XmlQualifiedName ("s0", "http://tempuri.org/"), list [4]);
+			Assert.AreEqual (new XmlQualifiedName ("soap", "http://schemas.xmlsoap.org/wsdl/soap/"), list [5]);
+			Assert.AreEqual (new XmlQualifiedName ("soapenc", "http://schemas.xmlsoap.org/soap/encoding/"), list [6]);
+			Assert.AreEqual (new XmlQualifiedName ("tm", "http://microsoft.com/wsdl/mime/textMatching/"), list [7]);
+		}
+
 		[Test]
 		public void ExtensibleAttributes ()
 		{
@@ -121,5 +147,17 @@ namespace MonoTests.System.Web.Services.Description
 
 #endif
 
+    }
+
+	class qname_comparer : IComparer
+	{
+		public int Compare (object x, object y)
+		{
+			XmlQualifiedName a = (XmlQualifiedName) x;
+			XmlQualifiedName b = (XmlQualifiedName) y;
+
+			return String.Compare (a.Name, b.Name);
+		}
 	}
 }
+

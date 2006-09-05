@@ -1,3 +1,7 @@
+2006-09-05  Ankit Jain  <jankit@novell.com>
+
+	* ServiceDescriptionTest.cs (Namespaces): New.
+
 2006-05-03  Ankit Jain  <jankit@novell.com>
 
 	* ServiceDescriptionTest.cs (Extensions) New test.

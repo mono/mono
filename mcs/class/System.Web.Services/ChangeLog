@@ -1,3 +1,8 @@
+2006-09-05  Ankit Jain  <jankit@novell.com>
+
+	* System.Web.Services.dll.sources: Add
+	ServiceDescriptionSerializerBase2.cs
+
 2006-06-16  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (EXTRA_DISTFILES): New.

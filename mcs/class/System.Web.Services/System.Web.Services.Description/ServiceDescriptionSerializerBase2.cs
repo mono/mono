@@ -19,8 +19,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-#if !NET_2_0
+#if NET_2_0
 
 using System;
 using System.Xml;
@@ -60,6 +59,8 @@ namespace System.Web.Services.Description
 
 			Reader.MoveToElement();
 
+			int anyAttributeIndex = 0;
+			System.Xml.XmlAttribute[] anyAttributeArray = null;
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
@@ -69,11 +70,22 @@ namespace System.Web.Services.Description
 					ob.@TargetNamespace = Reader.Value;
 				}
 				else if (IsXmlnsAttribute (Reader.Name)) {
+					if (ob.@Namespaces == null) ob.@Namespaces = new XmlSerializerNamespaces ();
+					if (Reader.Prefix == "xmlns")
+						ob.@Namespaces.Add (Reader.LocalName, Reader.Value);
+					else
+						ob.@Namespaces.Add ("", Reader.Value);
 				}
 				else {
-					UnknownNode (ob);
+					System.Xml.XmlAttribute attr = (System.Xml.XmlAttribute) Document.ReadNode(Reader);
+					anyAttributeArray = (System.Xml.XmlAttribute[]) EnsureArrayIndex (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute));
+					anyAttributeArray[anyAttributeIndex] = ((System.Xml.XmlAttribute) attr);
+					anyAttributeIndex++;
 				}
 			}
+
+			anyAttributeArray = (System.Xml.XmlAttribute[]) ShrinkArray (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute), true);
+			ob.@ExtensibleAttributes = anyAttributeArray;
 
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
@@ -173,17 +185,30 @@ namespace System.Web.Services.Description
 
 			Reader.MoveToElement();
 
+			int anyAttributeIndex = 0;
+			System.Xml.XmlAttribute[] anyAttributeArray = null;
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
 					ob.@Name = Reader.Value;
 				}
 				else if (IsXmlnsAttribute (Reader.Name)) {
+					if (ob.@Namespaces == null) ob.@Namespaces = new XmlSerializerNamespaces ();
+					if (Reader.Prefix == "xmlns")
+						ob.@Namespaces.Add (Reader.LocalName, Reader.Value);
+					else
+						ob.@Namespaces.Add ("", Reader.Value);
 				}
 				else {
-					UnknownNode (ob);
+					System.Xml.XmlAttribute attr = (System.Xml.XmlAttribute) Document.ReadNode(Reader);
+					anyAttributeArray = (System.Xml.XmlAttribute[]) EnsureArrayIndex (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute));
+					anyAttributeArray[anyAttributeIndex] = ((System.Xml.XmlAttribute) attr);
+					anyAttributeIndex++;
 				}
 			}
+
+			anyAttributeArray = (System.Xml.XmlAttribute[]) ShrinkArray (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute), true);
+			ob.@ExtensibleAttributes = anyAttributeArray;
 
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
@@ -247,17 +272,30 @@ namespace System.Web.Services.Description
 
 			Reader.MoveToElement();
 
+			int anyAttributeIndex = 0;
+			System.Xml.XmlAttribute[] anyAttributeArray = null;
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
 					ob.@Name = Reader.Value;
 				}
 				else if (IsXmlnsAttribute (Reader.Name)) {
+					if (ob.@Namespaces == null) ob.@Namespaces = new XmlSerializerNamespaces ();
+					if (Reader.Prefix == "xmlns")
+						ob.@Namespaces.Add (Reader.LocalName, Reader.Value);
+					else
+						ob.@Namespaces.Add ("", Reader.Value);
 				}
 				else {
-					UnknownNode (ob);
+					System.Xml.XmlAttribute attr = (System.Xml.XmlAttribute) Document.ReadNode(Reader);
+					anyAttributeArray = (System.Xml.XmlAttribute[]) EnsureArrayIndex (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute));
+					anyAttributeArray[anyAttributeIndex] = ((System.Xml.XmlAttribute) attr);
+					anyAttributeIndex++;
 				}
 			}
+
+			anyAttributeArray = (System.Xml.XmlAttribute[]) ShrinkArray (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute), true);
+			ob.@ExtensibleAttributes = anyAttributeArray;
 
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
@@ -321,17 +359,30 @@ namespace System.Web.Services.Description
 
 			Reader.MoveToElement();
 
+			int anyAttributeIndex = 0;
+			System.Xml.XmlAttribute[] anyAttributeArray = null;
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
 					ob.@Name = Reader.Value;
 				}
 				else if (IsXmlnsAttribute (Reader.Name)) {
+					if (ob.@Namespaces == null) ob.@Namespaces = new XmlSerializerNamespaces ();
+					if (Reader.Prefix == "xmlns")
+						ob.@Namespaces.Add (Reader.LocalName, Reader.Value);
+					else
+						ob.@Namespaces.Add ("", Reader.Value);
 				}
 				else {
-					UnknownNode (ob);
+					System.Xml.XmlAttribute attr = (System.Xml.XmlAttribute) Document.ReadNode(Reader);
+					anyAttributeArray = (System.Xml.XmlAttribute[]) EnsureArrayIndex (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute));
+					anyAttributeArray[anyAttributeIndex] = ((System.Xml.XmlAttribute) attr);
+					anyAttributeIndex++;
 				}
 			}
+
+			anyAttributeArray = (System.Xml.XmlAttribute[]) ShrinkArray (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute), true);
+			ob.@ExtensibleAttributes = anyAttributeArray;
 
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
@@ -395,6 +446,8 @@ namespace System.Web.Services.Description
 
 			Reader.MoveToElement();
 
+			int anyAttributeIndex = 0;
+			System.Xml.XmlAttribute[] anyAttributeArray = null;
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "location" && Reader.NamespaceURI == "") {
@@ -404,11 +457,22 @@ namespace System.Web.Services.Description
 					ob.@Namespace = Reader.Value;
 				}
 				else if (IsXmlnsAttribute (Reader.Name)) {
+					if (ob.@Namespaces == null) ob.@Namespaces = new XmlSerializerNamespaces ();
+					if (Reader.Prefix == "xmlns")
+						ob.@Namespaces.Add (Reader.LocalName, Reader.Value);
+					else
+						ob.@Namespaces.Add ("", Reader.Value);
 				}
 				else {
-					UnknownNode (ob);
+					System.Xml.XmlAttribute attr = (System.Xml.XmlAttribute) Document.ReadNode(Reader);
+					anyAttributeArray = (System.Xml.XmlAttribute[]) EnsureArrayIndex (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute));
+					anyAttributeArray[anyAttributeIndex] = ((System.Xml.XmlAttribute) attr);
+					anyAttributeIndex++;
 				}
 			}
+
+			anyAttributeArray = (System.Xml.XmlAttribute[]) ShrinkArray (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute), true);
+			ob.@ExtensibleAttributes = anyAttributeArray;
 
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
@@ -461,6 +525,8 @@ namespace System.Web.Services.Description
 
 			Reader.MoveToElement();
 
+			int anyAttributeIndex = 0;
+			System.Xml.XmlAttribute[] anyAttributeArray = null;
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
@@ -470,11 +536,22 @@ namespace System.Web.Services.Description
 					ob.@Type = ToXmlQualifiedName (Reader.Value);
 				}
 				else if (IsXmlnsAttribute (Reader.Name)) {
+					if (ob.@Namespaces == null) ob.@Namespaces = new XmlSerializerNamespaces ();
+					if (Reader.Prefix == "xmlns")
+						ob.@Namespaces.Add (Reader.LocalName, Reader.Value);
+					else
+						ob.@Namespaces.Add ("", Reader.Value);
 				}
 				else {
-					UnknownNode (ob);
+					System.Xml.XmlAttribute attr = (System.Xml.XmlAttribute) Document.ReadNode(Reader);
+					anyAttributeArray = (System.Xml.XmlAttribute[]) EnsureArrayIndex (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute));
+					anyAttributeArray[anyAttributeIndex] = ((System.Xml.XmlAttribute) attr);
+					anyAttributeIndex++;
 				}
 			}
+
+			anyAttributeArray = (System.Xml.XmlAttribute[]) ShrinkArray (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute), true);
+			ob.@ExtensibleAttributes = anyAttributeArray;
 
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
@@ -538,14 +615,27 @@ namespace System.Web.Services.Description
 
 			Reader.MoveToElement();
 
+			int anyAttributeIndex = 0;
+			System.Xml.XmlAttribute[] anyAttributeArray = null;
 			while (Reader.MoveToNextAttribute())
 			{
 				if (IsXmlnsAttribute (Reader.Name)) {
+					if (ob.@Namespaces == null) ob.@Namespaces = new XmlSerializerNamespaces ();
+					if (Reader.Prefix == "xmlns")
+						ob.@Namespaces.Add (Reader.LocalName, Reader.Value);
+					else
+						ob.@Namespaces.Add ("", Reader.Value);
 				}
 				else {
-					UnknownNode (ob);
+					System.Xml.XmlAttribute attr = (System.Xml.XmlAttribute) Document.ReadNode(Reader);
+					anyAttributeArray = (System.Xml.XmlAttribute[]) EnsureArrayIndex (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute));
+					anyAttributeArray[anyAttributeIndex] = ((System.Xml.XmlAttribute) attr);
+					anyAttributeIndex++;
 				}
 			}
+
+			anyAttributeArray = (System.Xml.XmlAttribute[]) ShrinkArray (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute), true);
+			ob.@ExtensibleAttributes = anyAttributeArray;
 
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
@@ -609,20 +699,33 @@ namespace System.Web.Services.Description
 
 			Reader.MoveToElement();
 
+			int anyAttributeIndex = 0;
+			System.Xml.XmlAttribute[] anyAttributeArray = null;
 			while (Reader.MoveToNextAttribute())
 			{
-				if (Reader.LocalName == "binding" && Reader.NamespaceURI == "") {
-					ob.@Binding = ToXmlQualifiedName (Reader.Value);
-				}
-				else if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
+				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
 					ob.@Name = Reader.Value;
 				}
+				else if (Reader.LocalName == "binding" && Reader.NamespaceURI == "") {
+					ob.@Binding = ToXmlQualifiedName (Reader.Value);
+				}
 				else if (IsXmlnsAttribute (Reader.Name)) {
+					if (ob.@Namespaces == null) ob.@Namespaces = new XmlSerializerNamespaces ();
+					if (Reader.Prefix == "xmlns")
+						ob.@Namespaces.Add (Reader.LocalName, Reader.Value);
+					else
+						ob.@Namespaces.Add ("", Reader.Value);
 				}
 				else {
-					UnknownNode (ob);
+					System.Xml.XmlAttribute attr = (System.Xml.XmlAttribute) Document.ReadNode(Reader);
+					anyAttributeArray = (System.Xml.XmlAttribute[]) EnsureArrayIndex (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute));
+					anyAttributeArray[anyAttributeIndex] = ((System.Xml.XmlAttribute) attr);
+					anyAttributeIndex++;
 				}
 			}
+
+			anyAttributeArray = (System.Xml.XmlAttribute[]) ShrinkArray (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute), true);
+			ob.@ExtensibleAttributes = anyAttributeArray;
 
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
@@ -675,23 +778,36 @@ namespace System.Web.Services.Description
 
 			Reader.MoveToElement();
 
+			int anyAttributeIndex = 0;
+			System.Xml.XmlAttribute[] anyAttributeArray = null;
 			while (Reader.MoveToNextAttribute())
 			{
-				if (Reader.LocalName == "element" && Reader.NamespaceURI == "") {
-					ob.@Element = ToXmlQualifiedName (Reader.Value);
-				}
-				else if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
+				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
 					ob.@Name = Reader.Value;
+				}
+				else if (Reader.LocalName == "element" && Reader.NamespaceURI == "") {
+					ob.@Element = ToXmlQualifiedName (Reader.Value);
 				}
 				else if (Reader.LocalName == "type" && Reader.NamespaceURI == "") {
 					ob.@Type = ToXmlQualifiedName (Reader.Value);
 				}
 				else if (IsXmlnsAttribute (Reader.Name)) {
+					if (ob.@Namespaces == null) ob.@Namespaces = new XmlSerializerNamespaces ();
+					if (Reader.Prefix == "xmlns")
+						ob.@Namespaces.Add (Reader.LocalName, Reader.Value);
+					else
+						ob.@Namespaces.Add ("", Reader.Value);
 				}
 				else {
-					UnknownNode (ob);
+					System.Xml.XmlAttribute attr = (System.Xml.XmlAttribute) Document.ReadNode(Reader);
+					anyAttributeArray = (System.Xml.XmlAttribute[]) EnsureArrayIndex (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute));
+					anyAttributeArray[anyAttributeIndex] = ((System.Xml.XmlAttribute) attr);
+					anyAttributeIndex++;
 				}
 			}
+
+			anyAttributeArray = (System.Xml.XmlAttribute[]) ShrinkArray (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute), true);
+			ob.@ExtensibleAttributes = anyAttributeArray;
 
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
@@ -745,6 +861,8 @@ namespace System.Web.Services.Description
 			Reader.MoveToElement();
 
 			ob.@ParameterOrderString = "";
+			int anyAttributeIndex = 0;
+			System.Xml.XmlAttribute[] anyAttributeArray = null;
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
@@ -754,11 +872,22 @@ namespace System.Web.Services.Description
 					ob.@ParameterOrderString = Reader.Value;
 				}
 				else if (IsXmlnsAttribute (Reader.Name)) {
+					if (ob.@Namespaces == null) ob.@Namespaces = new XmlSerializerNamespaces ();
+					if (Reader.Prefix == "xmlns")
+						ob.@Namespaces.Add (Reader.LocalName, Reader.Value);
+					else
+						ob.@Namespaces.Add ("", Reader.Value);
 				}
 				else {
-					UnknownNode (ob);
+					System.Xml.XmlAttribute attr = (System.Xml.XmlAttribute) Document.ReadNode(Reader);
+					anyAttributeArray = (System.Xml.XmlAttribute[]) EnsureArrayIndex (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute));
+					anyAttributeArray[anyAttributeIndex] = ((System.Xml.XmlAttribute) attr);
+					anyAttributeIndex++;
 				}
 			}
+
+			anyAttributeArray = (System.Xml.XmlAttribute[]) ShrinkArray (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute), true);
+			ob.@ExtensibleAttributes = anyAttributeArray;
 
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
@@ -836,17 +965,30 @@ namespace System.Web.Services.Description
 
 			Reader.MoveToElement();
 
+			int anyAttributeIndex = 0;
+			System.Xml.XmlAttribute[] anyAttributeArray = null;
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
 					ob.@Name = Reader.Value;
 				}
 				else if (IsXmlnsAttribute (Reader.Name)) {
+					if (ob.@Namespaces == null) ob.@Namespaces = new XmlSerializerNamespaces ();
+					if (Reader.Prefix == "xmlns")
+						ob.@Namespaces.Add (Reader.LocalName, Reader.Value);
+					else
+						ob.@Namespaces.Add ("", Reader.Value);
 				}
 				else {
-					UnknownNode (ob);
+					System.Xml.XmlAttribute attr = (System.Xml.XmlAttribute) Document.ReadNode(Reader);
+					anyAttributeArray = (System.Xml.XmlAttribute[]) EnsureArrayIndex (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute));
+					anyAttributeArray[anyAttributeIndex] = ((System.Xml.XmlAttribute) attr);
+					anyAttributeIndex++;
 				}
 			}
+
+			anyAttributeArray = (System.Xml.XmlAttribute[]) ShrinkArray (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute), true);
+			ob.@ExtensibleAttributes = anyAttributeArray;
 
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
@@ -925,20 +1067,33 @@ namespace System.Web.Services.Description
 
 			Reader.MoveToElement();
 
+			int anyAttributeIndex = 0;
+			System.Xml.XmlAttribute[] anyAttributeArray = null;
 			while (Reader.MoveToNextAttribute())
 			{
-				if (Reader.LocalName == "message" && Reader.NamespaceURI == "") {
-					ob.@Message = ToXmlQualifiedName (Reader.Value);
-				}
-				else if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
+				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
 					ob.@Name = Reader.Value;
 				}
+				else if (Reader.LocalName == "message" && Reader.NamespaceURI == "") {
+					ob.@Message = ToXmlQualifiedName (Reader.Value);
+				}
 				else if (IsXmlnsAttribute (Reader.Name)) {
+					if (ob.@Namespaces == null) ob.@Namespaces = new XmlSerializerNamespaces ();
+					if (Reader.Prefix == "xmlns")
+						ob.@Namespaces.Add (Reader.LocalName, Reader.Value);
+					else
+						ob.@Namespaces.Add ("", Reader.Value);
 				}
 				else {
-					UnknownNode (ob);
+					System.Xml.XmlAttribute attr = (System.Xml.XmlAttribute) Document.ReadNode(Reader);
+					anyAttributeArray = (System.Xml.XmlAttribute[]) EnsureArrayIndex (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute));
+					anyAttributeArray[anyAttributeIndex] = ((System.Xml.XmlAttribute) attr);
+					anyAttributeIndex++;
 				}
 			}
+
+			anyAttributeArray = (System.Xml.XmlAttribute[]) ShrinkArray (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute), true);
+			ob.@ExtensibleAttributes = anyAttributeArray;
 
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
@@ -991,20 +1146,33 @@ namespace System.Web.Services.Description
 
 			Reader.MoveToElement();
 
+			int anyAttributeIndex = 0;
+			System.Xml.XmlAttribute[] anyAttributeArray = null;
 			while (Reader.MoveToNextAttribute())
 			{
-				if (Reader.LocalName == "message" && Reader.NamespaceURI == "") {
-					ob.@Message = ToXmlQualifiedName (Reader.Value);
-				}
-				else if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
+				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
 					ob.@Name = Reader.Value;
 				}
+				else if (Reader.LocalName == "message" && Reader.NamespaceURI == "") {
+					ob.@Message = ToXmlQualifiedName (Reader.Value);
+				}
 				else if (IsXmlnsAttribute (Reader.Name)) {
+					if (ob.@Namespaces == null) ob.@Namespaces = new XmlSerializerNamespaces ();
+					if (Reader.Prefix == "xmlns")
+						ob.@Namespaces.Add (Reader.LocalName, Reader.Value);
+					else
+						ob.@Namespaces.Add ("", Reader.Value);
 				}
 				else {
-					UnknownNode (ob);
+					System.Xml.XmlAttribute attr = (System.Xml.XmlAttribute) Document.ReadNode(Reader);
+					anyAttributeArray = (System.Xml.XmlAttribute[]) EnsureArrayIndex (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute));
+					anyAttributeArray[anyAttributeIndex] = ((System.Xml.XmlAttribute) attr);
+					anyAttributeIndex++;
 				}
 			}
+
+			anyAttributeArray = (System.Xml.XmlAttribute[]) ShrinkArray (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute), true);
+			ob.@ExtensibleAttributes = anyAttributeArray;
 
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
@@ -1057,20 +1225,33 @@ namespace System.Web.Services.Description
 
 			Reader.MoveToElement();
 
+			int anyAttributeIndex = 0;
+			System.Xml.XmlAttribute[] anyAttributeArray = null;
 			while (Reader.MoveToNextAttribute())
 			{
-				if (Reader.LocalName == "message" && Reader.NamespaceURI == "") {
-					ob.@Message = ToXmlQualifiedName (Reader.Value);
-				}
-				else if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
+				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
 					ob.@Name = Reader.Value;
 				}
+				else if (Reader.LocalName == "message" && Reader.NamespaceURI == "") {
+					ob.@Message = ToXmlQualifiedName (Reader.Value);
+				}
 				else if (IsXmlnsAttribute (Reader.Name)) {
+					if (ob.@Namespaces == null) ob.@Namespaces = new XmlSerializerNamespaces ();
+					if (Reader.Prefix == "xmlns")
+						ob.@Namespaces.Add (Reader.LocalName, Reader.Value);
+					else
+						ob.@Namespaces.Add ("", Reader.Value);
 				}
 				else {
-					UnknownNode (ob);
+					System.Xml.XmlAttribute attr = (System.Xml.XmlAttribute) Document.ReadNode(Reader);
+					anyAttributeArray = (System.Xml.XmlAttribute[]) EnsureArrayIndex (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute));
+					anyAttributeArray[anyAttributeIndex] = ((System.Xml.XmlAttribute) attr);
+					anyAttributeIndex++;
 				}
 			}
+
+			anyAttributeArray = (System.Xml.XmlAttribute[]) ShrinkArray (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute), true);
+			ob.@ExtensibleAttributes = anyAttributeArray;
 
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
@@ -1123,17 +1304,30 @@ namespace System.Web.Services.Description
 
 			Reader.MoveToElement();
 
+			int anyAttributeIndex = 0;
+			System.Xml.XmlAttribute[] anyAttributeArray = null;
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
 					ob.@Name = Reader.Value;
 				}
 				else if (IsXmlnsAttribute (Reader.Name)) {
+					if (ob.@Namespaces == null) ob.@Namespaces = new XmlSerializerNamespaces ();
+					if (Reader.Prefix == "xmlns")
+						ob.@Namespaces.Add (Reader.LocalName, Reader.Value);
+					else
+						ob.@Namespaces.Add ("", Reader.Value);
 				}
 				else {
-					UnknownNode (ob);
+					System.Xml.XmlAttribute attr = (System.Xml.XmlAttribute) Document.ReadNode(Reader);
+					anyAttributeArray = (System.Xml.XmlAttribute[]) EnsureArrayIndex (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute));
+					anyAttributeArray[anyAttributeIndex] = ((System.Xml.XmlAttribute) attr);
+					anyAttributeIndex++;
 				}
 			}
+
+			anyAttributeArray = (System.Xml.XmlAttribute[]) ShrinkArray (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute), true);
+			ob.@ExtensibleAttributes = anyAttributeArray;
 
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
@@ -1186,17 +1380,30 @@ namespace System.Web.Services.Description
 
 			Reader.MoveToElement();
 
+			int anyAttributeIndex = 0;
+			System.Xml.XmlAttribute[] anyAttributeArray = null;
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
 					ob.@Name = Reader.Value;
 				}
 				else if (IsXmlnsAttribute (Reader.Name)) {
+					if (ob.@Namespaces == null) ob.@Namespaces = new XmlSerializerNamespaces ();
+					if (Reader.Prefix == "xmlns")
+						ob.@Namespaces.Add (Reader.LocalName, Reader.Value);
+					else
+						ob.@Namespaces.Add ("", Reader.Value);
 				}
 				else {
-					UnknownNode (ob);
+					System.Xml.XmlAttribute attr = (System.Xml.XmlAttribute) Document.ReadNode(Reader);
+					anyAttributeArray = (System.Xml.XmlAttribute[]) EnsureArrayIndex (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute));
+					anyAttributeArray[anyAttributeIndex] = ((System.Xml.XmlAttribute) attr);
+					anyAttributeIndex++;
 				}
 			}
+
+			anyAttributeArray = (System.Xml.XmlAttribute[]) ShrinkArray (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute), true);
+			ob.@ExtensibleAttributes = anyAttributeArray;
 
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
@@ -1249,17 +1456,30 @@ namespace System.Web.Services.Description
 
 			Reader.MoveToElement();
 
+			int anyAttributeIndex = 0;
+			System.Xml.XmlAttribute[] anyAttributeArray = null;
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
 					ob.@Name = Reader.Value;
 				}
 				else if (IsXmlnsAttribute (Reader.Name)) {
+					if (ob.@Namespaces == null) ob.@Namespaces = new XmlSerializerNamespaces ();
+					if (Reader.Prefix == "xmlns")
+						ob.@Namespaces.Add (Reader.LocalName, Reader.Value);
+					else
+						ob.@Namespaces.Add ("", Reader.Value);
 				}
 				else {
-					UnknownNode (ob);
+					System.Xml.XmlAttribute attr = (System.Xml.XmlAttribute) Document.ReadNode(Reader);
+					anyAttributeArray = (System.Xml.XmlAttribute[]) EnsureArrayIndex (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute));
+					anyAttributeArray[anyAttributeIndex] = ((System.Xml.XmlAttribute) attr);
+					anyAttributeIndex++;
 				}
 			}
+
+			anyAttributeArray = (System.Xml.XmlAttribute[]) ShrinkArray (anyAttributeArray, anyAttributeIndex, typeof(System.Xml.XmlAttribute), true);
+			ob.@ExtensibleAttributes = anyAttributeArray;
 
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
@@ -1337,45 +1557,54 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("ServiceDescription", "http://schemas.xmlsoap.org/wsdl/");
 
+			WriteNamespaceDeclarations ((XmlSerializerNamespaces) ob.@Namespaces);
+
+			ICollection o59 = ob.@ExtensibleAttributes;
+			if (o59 != null) {
+				foreach (XmlAttribute o60 in o59)
+					if (o60.NamespaceURI != xmlNamespace)
+						WriteXmlAttribute (o60, ob);
+			}
+
 			WriteAttribute ("name", "", ob.@Name);
 			WriteAttribute ("targetNamespace", "", ob.@TargetNamespace);
 
 			ServiceDescription.WriteExtensions (Writer, ob);
 			if (ob.@DocumentationElement != null) {
-				XmlNode o59 = ob.@DocumentationElement;
-				if (o59 is XmlElement) {
-				if ((o59.Name == "documentation" && o59.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				XmlNode o61 = ob.@DocumentationElement;
+				if (o61 is XmlElement) {
+				if ((o61.Name == "documentation" && o61.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
-					else o59.WriteTo (Writer);
-					WriteElementLiteral (o59, "", "", false, true);
+					else o61.WriteTo (Writer);
+					WriteElementLiteral (o61, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o59.Name, o59.NamespaceURI);
+					throw CreateUnknownAnyElementException (o61.Name, o61.NamespaceURI);
 			}
 			if (ob.@Imports != null) {
-				for (int n60 = 0; n60 < ob.@Imports.Count; n60++) {
-					WriteObject_Import (ob.@Imports[n60], "import", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
+				for (int n62 = 0; n62 < ob.@Imports.Count; n62++) {
+					WriteObject_Import (ob.@Imports[n62], "import", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
 				}
 			}
 			WriteObject_Types (ob.@Types, "types", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
 			if (ob.@Messages != null) {
-				for (int n61 = 0; n61 < ob.@Messages.Count; n61++) {
-					WriteObject_Message (ob.@Messages[n61], "message", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
+				for (int n63 = 0; n63 < ob.@Messages.Count; n63++) {
+					WriteObject_Message (ob.@Messages[n63], "message", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
 				}
 			}
 			if (ob.@PortTypes != null) {
-				for (int n62 = 0; n62 < ob.@PortTypes.Count; n62++) {
-					WriteObject_PortType (ob.@PortTypes[n62], "portType", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
+				for (int n64 = 0; n64 < ob.@PortTypes.Count; n64++) {
+					WriteObject_PortType (ob.@PortTypes[n64], "portType", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
 				}
 			}
 			if (ob.@Bindings != null) {
-				for (int n63 = 0; n63 < ob.@Bindings.Count; n63++) {
-					WriteObject_Binding (ob.@Bindings[n63], "binding", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
+				for (int n65 = 0; n65 < ob.@Bindings.Count; n65++) {
+					WriteObject_Binding (ob.@Bindings[n65], "binding", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
 				}
 			}
 			if (ob.@Services != null) {
-				for (int n64 = 0; n64 < ob.@Services.Count; n64++) {
-					WriteObject_Service (ob.@Services[n64], "service", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
+				for (int n66 = 0; n66 < ob.@Services.Count; n66++) {
+					WriteObject_Service (ob.@Services[n66], "service", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
 				}
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
@@ -1403,19 +1632,29 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("Import", "http://schemas.xmlsoap.org/wsdl/");
 
+			WriteNamespaceDeclarations ((XmlSerializerNamespaces) ob.@Namespaces);
+
+			ICollection o67 = ob.@ExtensibleAttributes;
+			if (o67 != null) {
+				foreach (XmlAttribute o68 in o67)
+					if (o68.NamespaceURI != xmlNamespace)
+						WriteXmlAttribute (o68, ob);
+			}
+
 			WriteAttribute ("location", "", ob.@Location);
 			WriteAttribute ("namespace", "", ob.@Namespace);
 
+			ServiceDescription.WriteExtensions (Writer, ob);
 			if (ob.@DocumentationElement != null) {
-				XmlNode o65 = ob.@DocumentationElement;
-				if (o65 is XmlElement) {
-				if ((o65.Name == "documentation" && o65.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				XmlNode o69 = ob.@DocumentationElement;
+				if (o69 is XmlElement) {
+				if ((o69.Name == "documentation" && o69.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
-					else o65.WriteTo (Writer);
-					WriteElementLiteral (o65, "", "", false, true);
+					else o69.WriteTo (Writer);
+					WriteElementLiteral (o69, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o65.Name, o65.NamespaceURI);
+					throw CreateUnknownAnyElementException (o69.Name, o69.NamespaceURI);
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
@@ -1442,21 +1681,30 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("Types", "http://schemas.xmlsoap.org/wsdl/");
 
+			WriteNamespaceDeclarations ((XmlSerializerNamespaces) ob.@Namespaces);
+
+			ICollection o70 = ob.@ExtensibleAttributes;
+			if (o70 != null) {
+				foreach (XmlAttribute o71 in o70)
+					if (o71.NamespaceURI != xmlNamespace)
+						WriteXmlAttribute (o71, ob);
+			}
+
 			ServiceDescription.WriteExtensions (Writer, ob);
 			if (ob.@DocumentationElement != null) {
-				XmlNode o66 = ob.@DocumentationElement;
-				if (o66 is XmlElement) {
-				if ((o66.Name == "documentation" && o66.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				XmlNode o72 = ob.@DocumentationElement;
+				if (o72 is XmlElement) {
+				if ((o72.Name == "documentation" && o72.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
-					else o66.WriteTo (Writer);
-					WriteElementLiteral (o66, "", "", false, true);
+					else o72.WriteTo (Writer);
+					WriteElementLiteral (o72, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o66.Name, o66.NamespaceURI);
+					throw CreateUnknownAnyElementException (o72.Name, o72.NamespaceURI);
 			}
 			if (ob.@Schemas != null) {
-				for (int n67 = 0; n67 < ob.@Schemas.Count; n67++) {
-					WriteObject_XmlSchema (ob.@Schemas[n67], "schema", "http://www.w3.org/2001/XMLSchema", false, false, true);
+				for (int n73 = 0; n73 < ob.@Schemas.Count; n73++) {
+					WriteObject_XmlSchema (ob.@Schemas[n73], "schema", "http://www.w3.org/2001/XMLSchema", false, false, true);
 				}
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
@@ -1484,22 +1732,32 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("Message", "http://schemas.xmlsoap.org/wsdl/");
 
+			WriteNamespaceDeclarations ((XmlSerializerNamespaces) ob.@Namespaces);
+
+			ICollection o74 = ob.@ExtensibleAttributes;
+			if (o74 != null) {
+				foreach (XmlAttribute o75 in o74)
+					if (o75.NamespaceURI != xmlNamespace)
+						WriteXmlAttribute (o75, ob);
+			}
+
 			WriteAttribute ("name", "", ob.@Name);
 
+			ServiceDescription.WriteExtensions (Writer, ob);
 			if (ob.@DocumentationElement != null) {
-				XmlNode o68 = ob.@DocumentationElement;
-				if (o68 is XmlElement) {
-				if ((o68.Name == "documentation" && o68.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				XmlNode o76 = ob.@DocumentationElement;
+				if (o76 is XmlElement) {
+				if ((o76.Name == "documentation" && o76.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
-					else o68.WriteTo (Writer);
-					WriteElementLiteral (o68, "", "", false, true);
+					else o76.WriteTo (Writer);
+					WriteElementLiteral (o76, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o68.Name, o68.NamespaceURI);
+					throw CreateUnknownAnyElementException (o76.Name, o76.NamespaceURI);
 			}
 			if (ob.@Parts != null) {
-				for (int n69 = 0; n69 < ob.@Parts.Count; n69++) {
-					WriteObject_MessagePart (ob.@Parts[n69], "part", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
+				for (int n77 = 0; n77 < ob.@Parts.Count; n77++) {
+					WriteObject_MessagePart (ob.@Parts[n77], "part", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
 				}
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
@@ -1527,22 +1785,32 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("PortType", "http://schemas.xmlsoap.org/wsdl/");
 
+			WriteNamespaceDeclarations ((XmlSerializerNamespaces) ob.@Namespaces);
+
+			ICollection o78 = ob.@ExtensibleAttributes;
+			if (o78 != null) {
+				foreach (XmlAttribute o79 in o78)
+					if (o79.NamespaceURI != xmlNamespace)
+						WriteXmlAttribute (o79, ob);
+			}
+
 			WriteAttribute ("name", "", ob.@Name);
 
+			ServiceDescription.WriteExtensions (Writer, ob);
 			if (ob.@DocumentationElement != null) {
-				XmlNode o70 = ob.@DocumentationElement;
-				if (o70 is XmlElement) {
-				if ((o70.Name == "documentation" && o70.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				XmlNode o80 = ob.@DocumentationElement;
+				if (o80 is XmlElement) {
+				if ((o80.Name == "documentation" && o80.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
-					else o70.WriteTo (Writer);
-					WriteElementLiteral (o70, "", "", false, true);
+					else o80.WriteTo (Writer);
+					WriteElementLiteral (o80, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o70.Name, o70.NamespaceURI);
+					throw CreateUnknownAnyElementException (o80.Name, o80.NamespaceURI);
 			}
 			if (ob.@Operations != null) {
-				for (int n71 = 0; n71 < ob.@Operations.Count; n71++) {
-					WriteObject_Operation (ob.@Operations[n71], "operation", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
+				for (int n81 = 0; n81 < ob.@Operations.Count; n81++) {
+					WriteObject_Operation (ob.@Operations[n81], "operation", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
 				}
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
@@ -1570,24 +1838,33 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("Binding", "http://schemas.xmlsoap.org/wsdl/");
 
+			WriteNamespaceDeclarations ((XmlSerializerNamespaces) ob.@Namespaces);
+
+			ICollection o82 = ob.@ExtensibleAttributes;
+			if (o82 != null) {
+				foreach (XmlAttribute o83 in o82)
+					if (o83.NamespaceURI != xmlNamespace)
+						WriteXmlAttribute (o83, ob);
+			}
+
 			WriteAttribute ("name", "", ob.@Name);
 			WriteAttribute ("type", "", FromXmlQualifiedName (ob.@Type));
 
 			ServiceDescription.WriteExtensions (Writer, ob);
 			if (ob.@DocumentationElement != null) {
-				XmlNode o72 = ob.@DocumentationElement;
-				if (o72 is XmlElement) {
-				if ((o72.Name == "documentation" && o72.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				XmlNode o84 = ob.@DocumentationElement;
+				if (o84 is XmlElement) {
+				if ((o84.Name == "documentation" && o84.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
-					else o72.WriteTo (Writer);
-					WriteElementLiteral (o72, "", "", false, true);
+					else o84.WriteTo (Writer);
+					WriteElementLiteral (o84, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o72.Name, o72.NamespaceURI);
+					throw CreateUnknownAnyElementException (o84.Name, o84.NamespaceURI);
 			}
 			if (ob.@Operations != null) {
-				for (int n73 = 0; n73 < ob.@Operations.Count; n73++) {
-					WriteObject_OperationBinding (ob.@Operations[n73], "operation", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
+				for (int n85 = 0; n85 < ob.@Operations.Count; n85++) {
+					WriteObject_OperationBinding (ob.@Operations[n85], "operation", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
 				}
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
@@ -1615,22 +1892,32 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("Service", "http://schemas.xmlsoap.org/wsdl/");
 
+			WriteNamespaceDeclarations ((XmlSerializerNamespaces) ob.@Namespaces);
+
+			ICollection o86 = ob.@ExtensibleAttributes;
+			if (o86 != null) {
+				foreach (XmlAttribute o87 in o86)
+					if (o87.NamespaceURI != xmlNamespace)
+						WriteXmlAttribute (o87, ob);
+			}
+
 			WriteAttribute ("name", "", ob.@Name);
 
+			ServiceDescription.WriteExtensions (Writer, ob);
 			if (ob.@DocumentationElement != null) {
-				XmlNode o74 = ob.@DocumentationElement;
-				if (o74 is XmlElement) {
-				if ((o74.Name == "documentation" && o74.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				XmlNode o88 = ob.@DocumentationElement;
+				if (o88 is XmlElement) {
+				if ((o88.Name == "documentation" && o88.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
-					else o74.WriteTo (Writer);
-					WriteElementLiteral (o74, "", "", false, true);
+					else o88.WriteTo (Writer);
+					WriteElementLiteral (o88, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o74.Name, o74.NamespaceURI);
+					throw CreateUnknownAnyElementException (o88.Name, o88.NamespaceURI);
 			}
 			if (ob.@Ports != null) {
-				for (int n75 = 0; n75 < ob.@Ports.Count; n75++) {
-					WriteObject_Port (ob.@Ports[n75], "port", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
+				for (int n89 = 0; n89 < ob.@Ports.Count; n89++) {
+					WriteObject_Port (ob.@Ports[n89], "port", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
 				}
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
@@ -1663,20 +1950,30 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("MessagePart", "http://schemas.xmlsoap.org/wsdl/");
 
-			WriteAttribute ("element", "", FromXmlQualifiedName (ob.@Element));
+			WriteNamespaceDeclarations ((XmlSerializerNamespaces) ob.@Namespaces);
+
+			ICollection o90 = ob.@ExtensibleAttributes;
+			if (o90 != null) {
+				foreach (XmlAttribute o91 in o90)
+					if (o91.NamespaceURI != xmlNamespace)
+						WriteXmlAttribute (o91, ob);
+			}
+
 			WriteAttribute ("name", "", ob.@Name);
+			WriteAttribute ("element", "", FromXmlQualifiedName (ob.@Element));
 			WriteAttribute ("type", "", FromXmlQualifiedName (ob.@Type));
 
+			ServiceDescription.WriteExtensions (Writer, ob);
 			if (ob.@DocumentationElement != null) {
-				XmlNode o76 = ob.@DocumentationElement;
-				if (o76 is XmlElement) {
-				if ((o76.Name == "documentation" && o76.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				XmlNode o92 = ob.@DocumentationElement;
+				if (o92 is XmlElement) {
+				if ((o92.Name == "documentation" && o92.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
-					else o76.WriteTo (Writer);
-					WriteElementLiteral (o76, "", "", false, true);
+					else o92.WriteTo (Writer);
+					WriteElementLiteral (o92, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o76.Name, o76.NamespaceURI);
+					throw CreateUnknownAnyElementException (o92.Name, o92.NamespaceURI);
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
@@ -1703,37 +2000,47 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("Operation", "http://schemas.xmlsoap.org/wsdl/");
 
+			WriteNamespaceDeclarations ((XmlSerializerNamespaces) ob.@Namespaces);
+
+			ICollection o93 = ob.@ExtensibleAttributes;
+			if (o93 != null) {
+				foreach (XmlAttribute o94 in o93)
+					if (o94.NamespaceURI != xmlNamespace)
+						WriteXmlAttribute (o94, ob);
+			}
+
 			WriteAttribute ("name", "", ob.@Name);
 			if (ob.@ParameterOrderString != "") {
 				WriteAttribute ("parameterOrder", "", ob.@ParameterOrderString);
 			}
 
+			ServiceDescription.WriteExtensions (Writer, ob);
 			if (ob.@DocumentationElement != null) {
-				XmlNode o77 = ob.@DocumentationElement;
-				if (o77 is XmlElement) {
-				if ((o77.Name == "documentation" && o77.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				XmlNode o95 = ob.@DocumentationElement;
+				if (o95 is XmlElement) {
+				if ((o95.Name == "documentation" && o95.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
-					else o77.WriteTo (Writer);
-					WriteElementLiteral (o77, "", "", false, true);
+					else o95.WriteTo (Writer);
+					WriteElementLiteral (o95, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o77.Name, o77.NamespaceURI);
+					throw CreateUnknownAnyElementException (o95.Name, o95.NamespaceURI);
 			}
 			if (ob.@Faults != null) {
-				for (int n78 = 0; n78 < ob.@Faults.Count; n78++) {
-					WriteObject_OperationFault (ob.@Faults[n78], "fault", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
+				for (int n96 = 0; n96 < ob.@Faults.Count; n96++) {
+					WriteObject_OperationFault (ob.@Faults[n96], "fault", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
 				}
 			}
 			if (ob.@Messages != null) {
-				for (int n79 = 0; n79 < ob.@Messages.Count; n79++) {
-					if (((object)ob.@Messages[n79]) == null) { }
-					else if (ob.@Messages[n79].GetType() == typeof(System.Web.Services.Description.OperationInput)) {
-						WriteObject_OperationInput (((System.Web.Services.Description.OperationInput) ob.@Messages[n79]), "input", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
+				for (int n97 = 0; n97 < ob.@Messages.Count; n97++) {
+					if (((object)ob.@Messages[n97]) == null) { }
+					else if (ob.@Messages[n97].GetType() == typeof(System.Web.Services.Description.OperationInput)) {
+						WriteObject_OperationInput (((System.Web.Services.Description.OperationInput) ob.@Messages[n97]), "input", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
 					}
-					else if (ob.@Messages[n79].GetType() == typeof(System.Web.Services.Description.OperationOutput)) {
-						WriteObject_OperationOutput (((System.Web.Services.Description.OperationOutput) ob.@Messages[n79]), "output", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
+					else if (ob.@Messages[n97].GetType() == typeof(System.Web.Services.Description.OperationOutput)) {
+						WriteObject_OperationOutput (((System.Web.Services.Description.OperationOutput) ob.@Messages[n97]), "output", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
 					}
-					else throw CreateUnknownTypeException (ob.@Messages[n79]);
+					else throw CreateUnknownTypeException (ob.@Messages[n97]);
 				}
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
@@ -1761,23 +2068,32 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("OperationBinding", "http://schemas.xmlsoap.org/wsdl/");
 
+			WriteNamespaceDeclarations ((XmlSerializerNamespaces) ob.@Namespaces);
+
+			ICollection o98 = ob.@ExtensibleAttributes;
+			if (o98 != null) {
+				foreach (XmlAttribute o99 in o98)
+					if (o99.NamespaceURI != xmlNamespace)
+						WriteXmlAttribute (o99, ob);
+			}
+
 			WriteAttribute ("name", "", ob.@Name);
 
 			ServiceDescription.WriteExtensions (Writer, ob);
 			if (ob.@DocumentationElement != null) {
-				XmlNode o80 = ob.@DocumentationElement;
-				if (o80 is XmlElement) {
-				if ((o80.Name == "documentation" && o80.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				XmlNode o100 = ob.@DocumentationElement;
+				if (o100 is XmlElement) {
+				if ((o100.Name == "documentation" && o100.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
-					else o80.WriteTo (Writer);
-					WriteElementLiteral (o80, "", "", false, true);
+					else o100.WriteTo (Writer);
+					WriteElementLiteral (o100, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o80.Name, o80.NamespaceURI);
+					throw CreateUnknownAnyElementException (o100.Name, o100.NamespaceURI);
 			}
 			if (ob.@Faults != null) {
-				for (int n81 = 0; n81 < ob.@Faults.Count; n81++) {
-					WriteObject_FaultBinding (ob.@Faults[n81], "fault", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
+				for (int n101 = 0; n101 < ob.@Faults.Count; n101++) {
+					WriteObject_FaultBinding (ob.@Faults[n101], "fault", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
 				}
 			}
 			WriteObject_InputBinding (ob.@Input, "input", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
@@ -1807,20 +2123,29 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("Port", "http://schemas.xmlsoap.org/wsdl/");
 
-			WriteAttribute ("binding", "", FromXmlQualifiedName (ob.@Binding));
+			WriteNamespaceDeclarations ((XmlSerializerNamespaces) ob.@Namespaces);
+
+			ICollection o102 = ob.@ExtensibleAttributes;
+			if (o102 != null) {
+				foreach (XmlAttribute o103 in o102)
+					if (o103.NamespaceURI != xmlNamespace)
+						WriteXmlAttribute (o103, ob);
+			}
+
 			WriteAttribute ("name", "", ob.@Name);
+			WriteAttribute ("binding", "", FromXmlQualifiedName (ob.@Binding));
 
 			ServiceDescription.WriteExtensions (Writer, ob);
 			if (ob.@DocumentationElement != null) {
-				XmlNode o82 = ob.@DocumentationElement;
-				if (o82 is XmlElement) {
-				if ((o82.Name == "documentation" && o82.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				XmlNode o104 = ob.@DocumentationElement;
+				if (o104 is XmlElement) {
+				if ((o104.Name == "documentation" && o104.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
-					else o82.WriteTo (Writer);
-					WriteElementLiteral (o82, "", "", false, true);
+					else o104.WriteTo (Writer);
+					WriteElementLiteral (o104, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o82.Name, o82.NamespaceURI);
+					throw CreateUnknownAnyElementException (o104.Name, o104.NamespaceURI);
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
@@ -1847,19 +2172,29 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("OperationFault", "http://schemas.xmlsoap.org/wsdl/");
 
-			WriteAttribute ("message", "", FromXmlQualifiedName (ob.@Message));
-			WriteAttribute ("name", "", ob.@Name);
+			WriteNamespaceDeclarations ((XmlSerializerNamespaces) ob.@Namespaces);
 
+			ICollection o105 = ob.@ExtensibleAttributes;
+			if (o105 != null) {
+				foreach (XmlAttribute o106 in o105)
+					if (o106.NamespaceURI != xmlNamespace)
+						WriteXmlAttribute (o106, ob);
+			}
+
+			WriteAttribute ("name", "", ob.@Name);
+			WriteAttribute ("message", "", FromXmlQualifiedName (ob.@Message));
+
+			ServiceDescription.WriteExtensions (Writer, ob);
 			if (ob.@DocumentationElement != null) {
-				XmlNode o83 = ob.@DocumentationElement;
-				if (o83 is XmlElement) {
-				if ((o83.Name == "documentation" && o83.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				XmlNode o107 = ob.@DocumentationElement;
+				if (o107 is XmlElement) {
+				if ((o107.Name == "documentation" && o107.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
-					else o83.WriteTo (Writer);
-					WriteElementLiteral (o83, "", "", false, true);
+					else o107.WriteTo (Writer);
+					WriteElementLiteral (o107, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o83.Name, o83.NamespaceURI);
+					throw CreateUnknownAnyElementException (o107.Name, o107.NamespaceURI);
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
@@ -1886,19 +2221,29 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("OperationInput", "http://schemas.xmlsoap.org/wsdl/");
 
-			WriteAttribute ("message", "", FromXmlQualifiedName (ob.@Message));
-			WriteAttribute ("name", "", ob.@Name);
+			WriteNamespaceDeclarations ((XmlSerializerNamespaces) ob.@Namespaces);
 
+			ICollection o108 = ob.@ExtensibleAttributes;
+			if (o108 != null) {
+				foreach (XmlAttribute o109 in o108)
+					if (o109.NamespaceURI != xmlNamespace)
+						WriteXmlAttribute (o109, ob);
+			}
+
+			WriteAttribute ("name", "", ob.@Name);
+			WriteAttribute ("message", "", FromXmlQualifiedName (ob.@Message));
+
+			ServiceDescription.WriteExtensions (Writer, ob);
 			if (ob.@DocumentationElement != null) {
-				XmlNode o84 = ob.@DocumentationElement;
-				if (o84 is XmlElement) {
-				if ((o84.Name == "documentation" && o84.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				XmlNode o110 = ob.@DocumentationElement;
+				if (o110 is XmlElement) {
+				if ((o110.Name == "documentation" && o110.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
-					else o84.WriteTo (Writer);
-					WriteElementLiteral (o84, "", "", false, true);
+					else o110.WriteTo (Writer);
+					WriteElementLiteral (o110, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o84.Name, o84.NamespaceURI);
+					throw CreateUnknownAnyElementException (o110.Name, o110.NamespaceURI);
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
@@ -1925,19 +2270,29 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("OperationOutput", "http://schemas.xmlsoap.org/wsdl/");
 
-			WriteAttribute ("message", "", FromXmlQualifiedName (ob.@Message));
-			WriteAttribute ("name", "", ob.@Name);
+			WriteNamespaceDeclarations ((XmlSerializerNamespaces) ob.@Namespaces);
 
+			ICollection o111 = ob.@ExtensibleAttributes;
+			if (o111 != null) {
+				foreach (XmlAttribute o112 in o111)
+					if (o112.NamespaceURI != xmlNamespace)
+						WriteXmlAttribute (o112, ob);
+			}
+
+			WriteAttribute ("name", "", ob.@Name);
+			WriteAttribute ("message", "", FromXmlQualifiedName (ob.@Message));
+
+			ServiceDescription.WriteExtensions (Writer, ob);
 			if (ob.@DocumentationElement != null) {
-				XmlNode o85 = ob.@DocumentationElement;
-				if (o85 is XmlElement) {
-				if ((o85.Name == "documentation" && o85.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				XmlNode o113 = ob.@DocumentationElement;
+				if (o113 is XmlElement) {
+				if ((o113.Name == "documentation" && o113.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
-					else o85.WriteTo (Writer);
-					WriteElementLiteral (o85, "", "", false, true);
+					else o113.WriteTo (Writer);
+					WriteElementLiteral (o113, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o85.Name, o85.NamespaceURI);
+					throw CreateUnknownAnyElementException (o113.Name, o113.NamespaceURI);
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
@@ -1964,19 +2319,28 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("FaultBinding", "http://schemas.xmlsoap.org/wsdl/");
 
+			WriteNamespaceDeclarations ((XmlSerializerNamespaces) ob.@Namespaces);
+
+			ICollection o114 = ob.@ExtensibleAttributes;
+			if (o114 != null) {
+				foreach (XmlAttribute o115 in o114)
+					if (o115.NamespaceURI != xmlNamespace)
+						WriteXmlAttribute (o115, ob);
+			}
+
 			WriteAttribute ("name", "", ob.@Name);
 
 			ServiceDescription.WriteExtensions (Writer, ob);
 			if (ob.@DocumentationElement != null) {
-				XmlNode o86 = ob.@DocumentationElement;
-				if (o86 is XmlElement) {
-				if ((o86.Name == "documentation" && o86.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				XmlNode o116 = ob.@DocumentationElement;
+				if (o116 is XmlElement) {
+				if ((o116.Name == "documentation" && o116.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
-					else o86.WriteTo (Writer);
-					WriteElementLiteral (o86, "", "", false, true);
+					else o116.WriteTo (Writer);
+					WriteElementLiteral (o116, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o86.Name, o86.NamespaceURI);
+					throw CreateUnknownAnyElementException (o116.Name, o116.NamespaceURI);
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
@@ -2003,19 +2367,28 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("InputBinding", "http://schemas.xmlsoap.org/wsdl/");
 
+			WriteNamespaceDeclarations ((XmlSerializerNamespaces) ob.@Namespaces);
+
+			ICollection o117 = ob.@ExtensibleAttributes;
+			if (o117 != null) {
+				foreach (XmlAttribute o118 in o117)
+					if (o118.NamespaceURI != xmlNamespace)
+						WriteXmlAttribute (o118, ob);
+			}
+
 			WriteAttribute ("name", "", ob.@Name);
 
 			ServiceDescription.WriteExtensions (Writer, ob);
 			if (ob.@DocumentationElement != null) {
-				XmlNode o87 = ob.@DocumentationElement;
-				if (o87 is XmlElement) {
-				if ((o87.Name == "documentation" && o87.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				XmlNode o119 = ob.@DocumentationElement;
+				if (o119 is XmlElement) {
+				if ((o119.Name == "documentation" && o119.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
-					else o87.WriteTo (Writer);
-					WriteElementLiteral (o87, "", "", false, true);
+					else o119.WriteTo (Writer);
+					WriteElementLiteral (o119, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o87.Name, o87.NamespaceURI);
+					throw CreateUnknownAnyElementException (o119.Name, o119.NamespaceURI);
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
@@ -2042,19 +2415,28 @@ namespace System.Web.Services.Description
 
 			if (needType) WriteXsiType("OutputBinding", "http://schemas.xmlsoap.org/wsdl/");
 
+			WriteNamespaceDeclarations ((XmlSerializerNamespaces) ob.@Namespaces);
+
+			ICollection o120 = ob.@ExtensibleAttributes;
+			if (o120 != null) {
+				foreach (XmlAttribute o121 in o120)
+					if (o121.NamespaceURI != xmlNamespace)
+						WriteXmlAttribute (o121, ob);
+			}
+
 			WriteAttribute ("name", "", ob.@Name);
 
 			ServiceDescription.WriteExtensions (Writer, ob);
 			if (ob.@DocumentationElement != null) {
-				XmlNode o88 = ob.@DocumentationElement;
-				if (o88 is XmlElement) {
-				if ((o88.Name == "documentation" && o88.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				XmlNode o122 = ob.@DocumentationElement;
+				if (o122 is XmlElement) {
+				if ((o122.Name == "documentation" && o122.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
-					else o88.WriteTo (Writer);
-					WriteElementLiteral (o88, "", "", false, true);
+					else o122.WriteTo (Writer);
+					WriteElementLiteral (o122, "", "", false, true);
 				}
 				else
-					throw CreateUnknownAnyElementException (o88.Name, o88.NamespaceURI);
+					throw CreateUnknownAnyElementException (o122.Name, o122.NamespaceURI);
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
@@ -2063,6 +2445,92 @@ namespace System.Web.Services.Description
 		{
 		}
 
+	}
+
+
+	public class BaseXmlSerializer : System.Xml.Serialization.XmlSerializer
+	{
+		protected override System.Xml.Serialization.XmlSerializationReader CreateReader () {
+			return new ServiceDescriptionReaderBase ();
+		}
+
+		protected override System.Xml.Serialization.XmlSerializationWriter CreateWriter () {
+			return new ServiceDescriptionWriterBase ();
+		}
+
+		public override bool CanDeserialize (System.Xml.XmlReader xmlReader) {
+			return true;
+		}
+	}
+
+	public sealed class definitionsSerializer : BaseXmlSerializer
+	{
+		protected override void Serialize (object obj, System.Xml.Serialization.XmlSerializationWriter writer) {
+			((ServiceDescriptionWriterBase)writer).WriteRoot_ServiceDescription(obj);
+		}
+
+		protected override object Deserialize (System.Xml.Serialization.XmlSerializationReader reader) {
+			return ((ServiceDescriptionReaderBase)reader).ReadRoot_ServiceDescription();
+		}
+	}
+
+	public class XmlSerializerContract : System.Xml.Serialization.IXmlSerializerImplementation
+	{
+		System.Collections.Hashtable readMethods = null;
+		System.Collections.Hashtable writeMethods = null;
+		System.Collections.Hashtable typedSerializers = null;
+
+		public System.Xml.Serialization.XmlSerializationReader Reader {
+			get {
+				return new ServiceDescriptionReaderBase();
+			}
+		}
+
+		public System.Xml.Serialization.XmlSerializationWriter Writer {
+			get {
+				return new ServiceDescriptionWriterBase();
+			}
+		}
+
+		public System.Collections.Hashtable ReadMethods {
+			get {
+				lock (System.Xml.Serialization.XmlSerializationGeneratedCode.InternalSyncObject) {
+					if (readMethods == null) {
+						readMethods = new System.Collections.Hashtable ();
+						readMethods.Add (@"", @"ReadRoot_ServiceDescription");
+					}
+					return readMethods;
+				}
+			}
+		}
+
+		public System.Collections.Hashtable WriteMethods {
+			get {
+				lock (System.Xml.Serialization.XmlSerializationGeneratedCode.InternalSyncObject) {
+					if (writeMethods == null) {
+						writeMethods = new System.Collections.Hashtable ();
+						writeMethods.Add (@"", @"WriteRoot_ServiceDescription");
+					}
+					return writeMethods;
+				}
+			}
+		}
+
+		public System.Collections.Hashtable TypedSerializers {
+			get {
+				lock (System.Xml.Serialization.XmlSerializationGeneratedCode.InternalSyncObject) {
+					if (typedSerializers == null) {
+						typedSerializers = new System.Collections.Hashtable ();
+						typedSerializers.Add (@"", new definitionsSerializer());
+					}
+					return typedSerializers;
+				}
+			}
+		}
+		public bool CanSerialize (System.Type type) {
+			if (type == typeof(System.Web.Services.Description.ServiceDescription)) return true;
+			return false;
+		}
 	}
 
 }
