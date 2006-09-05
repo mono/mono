@@ -1,5 +1,9 @@
 2006-09-05  Ankit Jain  <jankit@novell.com>
 
+	* OperationFlow.cs: Remove [Serializable].
+
+2006-09-05  Ankit Jain  <jankit@novell.com>
+
 	* DocumentableItem.cs (DocumentableItem.Namespaces): Add missing NET_2_0
 	property.
 

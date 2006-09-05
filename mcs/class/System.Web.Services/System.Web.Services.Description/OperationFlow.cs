@@ -29,7 +29,6 @@
 //
 
 namespace System.Web.Services.Description {
-	[Serializable]
 	public enum OperationFlow {
 		None = 0x0,
 		Notification = 0x2,
