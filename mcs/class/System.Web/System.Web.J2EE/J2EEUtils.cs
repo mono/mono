@@ -148,3 +148,21 @@ namespace System.Web.J2EE
 		}
 	}
 }
+
+#if !CODEDOM_SUPPORT
+//stubs for CodeDom symbols
+namespace System.CodeDom
+{
+	public class CodeObject
+	{
+		protected CodeObject () { }
+
+		public System.Collections.IDictionary UserData { get { throw new NotSupportedException (); } }
+	}
+
+	public class CodeExpression : CodeObject
+	{
+		protected CodeExpression () { }
+	}
+}
+#endif

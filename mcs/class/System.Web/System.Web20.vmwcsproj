@@ -1083,6 +1083,11 @@
 			<Link>Consts.cs.in</Link>
 		</Compile>
 		<Compile Include="Assembly\AssemblyInfo.cs" />
+		<Compile Include="System.Web.Compilation\ConnectionStringsExpressionBuilder.cs" />
+		<Compile Include="System.Web.Compilation\ExpressionBuilder.cs" />
+		<Compile Include="System.Web.Compilation\ExpressionBuilderContext.cs" />
+		<Compile Include="System.Web.Compilation\ExpressionEditorAttribute.cs" />
+		<Compile Include="System.Web.Compilation\ExpressionPrefixAttribute.cs" />
 		<Compile Include="System.Web.Compilation\ILocation.cs">
 			<SubType>Code</SubType>
 		</Compile>
