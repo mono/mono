@@ -37,6 +37,7 @@ using System.Text;
 using System.Configuration.Provider;
 using System.Web.Util;
 using System.Globalization;
+using System.Web.Configuration;
 
 namespace System.Web {
 	public abstract class SiteMapProvider : ProviderBase {
