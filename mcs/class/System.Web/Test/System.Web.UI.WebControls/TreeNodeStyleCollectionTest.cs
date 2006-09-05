@@ -38,6 +38,7 @@ using MonoTests.stand_alone.WebHarness;
 using MonoTests.SystemWeb.Framework;
 using System.Threading;
 using System.Collections;
+using System.Drawing;
 
 namespace MonoTests.System.Web.UI.WebControls {
 	[TestFixture]
@@ -148,6 +149,33 @@ namespace MonoTests.System.Web.UI.WebControls {
 			tv.LevelStyles.RemoveAt (1);
 			Assert.AreEqual (2, tv.LevelStyles.Count, "AfterRemove1");
 			Assert.AreEqual ("third", tv.LevelStyles[1].ImageUrl, "AfterRemove2");
+		}
+		
+		[Test]
+		public void TreeNodeStyleCollection_ViewState () {
+			TreeView tv = new TreeView ();
+			((IStateManager) tv.LevelStyles).TrackViewState ();
+
+			TreeNodeStyle style = new TreeNodeStyle ();
+			tv.LevelStyles.Add (style);
+			Assert.AreEqual (false, style.IsEmpty, "TreeNodeStyleCollection_ViewState#1");
+
+			tv.LevelStyles.Remove (style);
+			Assert.AreEqual (false, style.IsEmpty, "TreeNodeStyleCollection_ViewState#2");
+
+			tv.LevelStyles.Add (style);
+			tv.LevelStyles.Add (new TreeNodeStyle ());
+			tv.LevelStyles [1].BackColor = Color.Blue;
+
+			object state = ((IStateManager) tv.LevelStyles).SaveViewState ();
+			TreeView copy = new TreeView ();
+			((IStateManager) copy.LevelStyles).TrackViewState ();
+			((IStateManager) copy.LevelStyles).LoadViewState (state);
+
+			Assert.AreEqual (2, copy.LevelStyles.Count, "TreeNodeStyleCollection_ViewState#3");
+			Assert.AreEqual (false, copy.LevelStyles [0].IsEmpty, "TreeNodeStyleCollection_ViewState#4");
+			Assert.AreEqual (false, copy.LevelStyles [1].IsEmpty, "TreeNodeStyleCollection_ViewState#5");
+			Assert.AreEqual (Color.Blue, copy.LevelStyles [1].BackColor, "TreeNodeStyleCollection_ViewState#6");
 		}
 	}
 }

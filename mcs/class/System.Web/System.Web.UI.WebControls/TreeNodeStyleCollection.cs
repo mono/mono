@@ -46,6 +46,7 @@ namespace System.Web.UI.WebControls
 		
 		public int Add (TreeNodeStyle style)
 		{
+			style.Font.Underline = false;
 			return ((IList)this).Add (style);
 		}
 		

@@ -1,3 +1,7 @@
+2006-09-05 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* TreeNodeStyleCollectionTest.cs: New test was added
+
 2006-09-04 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* StyleTest.cs: New test was added

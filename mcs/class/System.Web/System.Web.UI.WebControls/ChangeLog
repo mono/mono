@@ -1,3 +1,7 @@
+2006-09-05 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* TreeNodeStyleCollection.cs: fixed: ViewState saved and restored correct.	 
+
 2006-09-04 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Style.cs: implemented SetBit().	 
