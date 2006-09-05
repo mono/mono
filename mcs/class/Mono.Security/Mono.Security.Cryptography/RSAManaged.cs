@@ -7,7 +7,7 @@
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Portions (C) 2003 Ben Maurer
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Key generation translated from Bouncy Castle JCE (http://www.bouncycastle.org/)
 // See bouncycastle.txt for license.
@@ -161,10 +161,10 @@ namespace Mono.Security.Cryptography {
 			get { return "RSA-PKCS1-KeyEx"; }
 		}
 
-		// note: this property will exist in RSACryptoServiceProvider in
-		// version 2.0 of the framework
+		// note: when (if) we generate a keypair then it will have both
+		// the public and private keys
 		public bool PublicOnly {
-			get { return ((d == null) || (n == null)); }
+			get { return (keypairGenerated && ((d == null) || (n == null))); }
 		}
 
 		public override string SignatureAlgorithm {
@@ -210,9 +210,11 @@ namespace Mono.Security.Cryptography {
 					// m = m2 + q * h;
 					output = m2 + q * h;
 				}
-			} else {
+			} else if (!PublicOnly) {
 				// m = c^d mod n
 				output = input.ModPow (d, n);
+			} else {
+				throw new CryptographicException (Locale.GetText ("Missing private key to decrypt value."));
 			}
 
 			if (keyBlinding) {
