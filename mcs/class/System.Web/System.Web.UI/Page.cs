@@ -748,6 +748,19 @@ public class Page : TemplateControl, IHttpHandler
 		return 0;
 	}
 
+#if NET_2_0
+    [MonoTODO("The following properties of OutputCacheParameters are silently ignored: CacheProfile, NoStore, SqlDependency")]
+    protected internal virtual void InitOutputCache(OutputCacheParameters cacheSettings)
+    {
+        if (cacheSettings.Enabled)
+            InitOutputCache(cacheSettings.Duration,
+                cacheSettings.VaryByHeader,
+                cacheSettings.VaryByCustom,
+                cacheSettings.Location,
+                cacheSettings.VaryByParam);
+    }
+#endif
+
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected virtual void InitOutputCache (int duration,
 						string varyByHeader,

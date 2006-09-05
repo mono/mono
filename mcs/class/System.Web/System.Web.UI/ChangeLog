@@ -1,3 +1,8 @@
+2006-09-05 Konstantin Triger <kostat@mainsoft.com>
+
+	* Page.cs: Imlemented InitOutputCache(OutputCacheParameters cacheSettings).
+	* OutputCacheParameters.cs: added an implementation.
+
 2006-09-04 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* CssStyleCollection.cs: fixed: background-image style attribute

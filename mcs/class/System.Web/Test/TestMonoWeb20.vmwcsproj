@@ -241,6 +241,7 @@
     <Compile Include="System.Web.UI\DataBindingHandlerAttributeTest.cs" />
     <Compile Include="System.Web.UI\HtmlTextWriterTest.cs" />
     <Compile Include="System.Web.UI\MinimizableAttributeTypeConverterTest.cs" />
+    <Compile Include="System.Web.UI\OutputCacheParametersTest.cs" />
     <Compile Include="System.Web.UI\PageTest.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>

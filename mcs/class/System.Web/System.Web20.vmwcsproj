@@ -900,6 +900,7 @@
 		<Compile Include="System.Web.UI\ObjectStateFormatter.cs"/>
 		<Compile Include="System.Web.UI\ObjectTag.cs"/>
 		<Compile Include="System.Web.UI\OutputCacheLocation.cs"/>
+		<Compile Include="System.Web.UI\OutputCacheParameters.cs"/>
 		<Compile Include="System.Web.UI\PageHandlerFactory.cs"/>
 		<Compile Include="System.Web.UI\PageStatePersister.cs"/>
 		<Compile Include="System.Web.UI\PageTheme.cs"/>
