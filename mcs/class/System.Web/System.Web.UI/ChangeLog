@@ -1,3 +1,8 @@
+2006-09-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: don't use the Browser object, as it slows down process
+	request time *a lot*. Fixes bug #79206.
+
 2006-09-05 Konstantin Triger <kostat@mainsoft.com>
 
 	* Page.cs: Imlemented InitOutputCache(OutputCacheParameters cacheSettings).
