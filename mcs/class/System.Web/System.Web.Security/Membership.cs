@@ -159,7 +159,7 @@ namespace System.Web.Security
 		public static MembershipUserCollection GetAllUsers ()
 		{
 			int total;
-			return GetAllUsers (1, int.MaxValue, out total);
+			return GetAllUsers (0, int.MaxValue, out total);
 		}
 		
 		public static MembershipUserCollection GetAllUsers (int pageIndex, int pageSize, out int totalRecords)

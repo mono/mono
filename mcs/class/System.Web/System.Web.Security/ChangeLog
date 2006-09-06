@@ -1,3 +1,11 @@
+2006-09-26 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Membership.cs: fixed GetAllUsers, typo bug
+	* SqlRoleProvider.cs, SqlMembershipProvider.cs: refactored to use
+	aspnetdb built in stored procedures,
+	fixed application name and membership relation,
+	improved exception handling
+
 2006-09-03 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* RolePrincipal.cs: refactoring: instance can be serialized.
