@@ -108,16 +108,17 @@ namespace System.Drawing
 			}
 
 			private sealed class VtableDestructor
-			{
-				// FIXME: This causes crash on windows on shutdown.
-				// Any image loaded from a stream holds onto a reference
-				// to that stream, and calls Release on the stream when the image is
-				// disposed. 
-				//~VtableDestructor()
-				//{				
-					//Marshal.DestroyStructure(comVtable, typeof(IStreamVtbl));
-					//Marshal.FreeHGlobal(comVtable);
-				//}
+            {
+				// only free if not shutting down. if we are shutting down
+				// there is not guarantee on order of finalizers
+				// and other object may still need this vtable
+				~VtableDestructor ()
+				{
+					if (!Environment.HasShutdownStarted) {
+						Marshal.DestroyStructure (comVtable, typeof (IStreamVtbl));
+						Marshal.FreeHGlobal (comVtable);
+					}
+				}
 			}
 
 			private static readonly Guid IID_IUnknown = new Guid("00000000-0000-0000-C000-000000000046");
@@ -181,17 +182,11 @@ namespace System.Drawing
 
 			private void Dispose(bool disposing)
 			{
-				// FIXME: This causes crash on windows on shutdown.
-				// Any image loaded from a stream holds onto a reference
-				// to that stream, and calls Release on the stream when the image is
-				// disposed. Somehow, we are getting destroyed before the image is
-				// even though we are using a GC handle (maybe GCHandles are ignored on shutdown)?
-				// in any cause I think leaking a pointer per image for now is
-				// better than crashing on windows.
-				// Need to talk to Paolo about having an unmanaged resource (IStream) in one managed
-				// object that another unmanaged resource (Image) in another managed object depends on.
-
-				//Marshal.FreeHGlobal(comInterface);
+				// only free if not shutting down. if we are shutting down
+				// there is not guarantee on order of finalizers
+				// and other object may still need this stream
+				if (!Environment.HasShutdownStarted)
+					Marshal.FreeHGlobal (comInterface);
 				gcHandle.Free();
 				if (disposing)
 				{
