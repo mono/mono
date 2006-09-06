@@ -490,18 +490,20 @@ namespace System.Windows.Forms
 				
 				if ( extension.Length != 0 )
 				{
-					global_result = GlobalPatternsShort[ extension ];
+					string global_result_tmp = GlobalPatternsShort[ extension ];
 					
-					if ( global_result != null )
+					if ( global_result_tmp != null )
 					{
+						global_result = global_result_tmp;
 						CheckGlobalResult( );
 						return true;
 					}
 					
-					global_result = GlobalPatternsShort[ extension.ToLower( ) ];
+					global_result_tmp = GlobalPatternsShort[ extension.ToLower( ) ];
 					
-					if ( global_result != null )
+					if ( global_result_tmp != null )
 					{
+						global_result = global_result_tmp;
 						CheckGlobalResult( );
 						return true;
 					}
