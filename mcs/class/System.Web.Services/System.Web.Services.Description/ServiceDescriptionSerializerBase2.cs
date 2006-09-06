@@ -2473,7 +2473,7 @@ namespace System.Web.Services.Description
 			return ((ServiceDescriptionReaderBase)reader).ReadRoot_ServiceDescription();
 		}
 	}
-
+#if !TARGET_JVM
 	public class XmlSerializerContract : System.Xml.Serialization.IXmlSerializerImplementation
 	{
 		System.Collections.Hashtable readMethods = null;
@@ -2532,6 +2532,7 @@ namespace System.Web.Services.Description
 			return false;
 		}
 	}
+#endif
 
 }
 

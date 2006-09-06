@@ -177,7 +177,7 @@
 		<Compile Include="System.Web.Services.Description\ServiceDescriptionImportStyle.cs"/>
 		<Compile Include="System.Web.Services.Description\ServiceDescriptionImportWarnings.cs"/>
 		<Compile Include="System.Web.Services.Description\ServiceDescriptionReflector.cs"/>
-		<Compile Include="System.Web.Services.Description\ServiceDescriptionSerializerBase.cs"/>
+		<Compile Include="System.Web.Services.Description\ServiceDescriptionSerializerBase2.cs"/>
 		<Compile Include="System.Web.Services.Description\Soap12AddressBinding.cs"/>
 		<Compile Include="System.Web.Services.Description\Soap12Binding.cs"/>
 		<Compile Include="System.Web.Services.Description\Soap12BodyBinding.cs"/>

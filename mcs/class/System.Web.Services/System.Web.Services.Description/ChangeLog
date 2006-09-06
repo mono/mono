@@ -1,3 +1,8 @@
+2006-09-06  Vladimir Krasnov
+
+	* ServiceDescriptionSerializerBase2.cs: inserted TARGET_JVM for not
+	supported class
+
 2006-09-05  Ankit Jain  <jankit@novell.com>
 
 	* wsdl.genxs: Remove readerhooks for "unknownAttribute" and

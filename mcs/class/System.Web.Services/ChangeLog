@@ -1,3 +1,8 @@
+2006-09-06  Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* System.Web.Services20.vmwcsproj: added
+	ServiceDescriptionSerializerBase2.cs for 2.0 
+
 2006-09-05  Ankit Jain  <jankit@novell.com>
 
 	* System.Web.Services.dll.sources: Add
