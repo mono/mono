@@ -1,3 +1,7 @@
+2006-09-06  Martin Baulig  <martin@ximian.com>
+
+	* icall.c (mono_lookup_internal_call): Small fix.
+
 2006-09-05  Raja R Harinath  <rharinath@novell.com>
 
 	* debug-mono-symfile.c (mono_debug_open_mono_symbols): Remove
