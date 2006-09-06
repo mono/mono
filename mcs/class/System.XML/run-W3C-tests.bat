@@ -47,15 +47,14 @@ REM ********************************************************
 if "%NUNIT_BUILD%" == "DONE" goto NUNITSKIP
 msbuild %NUNIT_PATH%\nunit20.java.sln /t:%BUILD_OPTION% /p:configuration=%PROJECT_CONFIGURATION% >build.log.txt 2<&1
 
-goto NUNITREADY
+IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
+
+set NUNIT_BUILD=DONE
 
 :NUNITSKIP
 echo Skipping NUnit Build...
 
-:NUNITREADY
-set NUNIT_BUILD=DONE
 
-IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
 REM ********************************************************
 @echo Build XmlTool
@@ -63,7 +62,7 @@ REM ********************************************************
 set XML_TOOL_PATH=..\..\..\..\..\tools\mono-xmltool
 msbuild %XML_TOOL_PATH%\XmlTool20.sln /p:configuration=Debug >>build.log.txt 2<&1
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
-copy %XML_TOOL_PATH%\bin\Debug\xmltool.exe ..\..\..
+copy %XML_TOOL_PATH%\bin\Debug\xmltool20.exe ..\..\..
 copy %XML_TOOL_PATH%\nunit_transform.xslt ..\..\..
 
 REM ********************************************************

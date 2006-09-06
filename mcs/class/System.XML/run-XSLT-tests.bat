@@ -34,7 +34,7 @@ set NUNIT_OPTIONS=/fixture=MonoTests.oasis_xslt.SuiteBuilder /include=Clean
 set PROJECT_CONFIGURATION=Debug_Java20
 set GH_OUTPUT_XML=XSLT_nunit_results.xml
 set NUNIT_PATH=..\..\..\..\..\nunit20\
-set NUNIT_CLASSPATH=%NUNIT_PATH%nunit-console\bin\Debug_Java\nunit.framework.jar;%NUNIT_PATH%nunit-console\bin\Debug_Java\nunit.util.jar;%NUNIT_PATH%nunit-console\bin\Debug_Java\nunit.core.jar;%NUNIT_PATH%nunit-console\bin\Debug_Java\nunit-console.jar
+set NUNIT_CLASSPATH=%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.framework.jar;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.util.jar;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.core.jar;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit-console.jar
 set CLASSPATH="%RUNTIME_CLASSPATH%;%NUNIT_CLASSPATH%"
 set XSLT_DIR=Test\System.Xml.XSL\standalone_tests\
 
@@ -46,7 +46,9 @@ REM ********************************************************
 REM ********************************************************
 
 if "%NUNIT_BUILD%" == "DONE" goto NUNITSKIP
-msbuild %NUNIT_PATH%nunit.java.sln /t:%BUILD_OPTION% /p:configuration=%PROJECT_CONFIGURATION% >build.log.txt 2<&1
+msbuild %NUNIT_PATH%nunit20.java.sln /t:%BUILD_OPTION% /p:configuration=%PROJECT_CONFIGURATION% >build.log.txt 2<&1
+
+IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
 goto NUNITREADY
 
@@ -56,7 +58,6 @@ echo Skipping NUnit Build...
 :NUNITREADY
 set NUNIT_BUILD=DONE
 
-IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
 REM ********************************************************
 @echo Build XmlTool
@@ -64,7 +65,7 @@ REM ********************************************************
 set XML_TOOL_PATH=..\..\..\..\..\tools\mono-xmltool
 msbuild %XML_TOOL_PATH%\XmlTool20.sln /p:configuration=Debug >>build.log.txt 2<&1
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
-copy %XML_TOOL_PATH%\bin\Debug_Java\xmltool.exe ..\..\..
+copy %XML_TOOL_PATH%\bin\Debug_Java\xmltool20.exe ..\..\..
 copy %XML_TOOL_PATH%\nunit_transform.xslt ..\..\..
 
 REM ********************************************************
@@ -110,7 +111,7 @@ REM ********************************************************
 @echo Analyze and print results
 REM ********************************************************
 @echo on
-xmltool.exe --transform nunit_transform.xslt %GH_OUTPUT_XML%
+xmltool20.exe --transform nunit_transform.xslt %GH_OUTPUT_XML%
 @echo off
 
 :FINALLY
