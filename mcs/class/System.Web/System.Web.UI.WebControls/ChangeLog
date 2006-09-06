@@ -1,5 +1,10 @@
 2006-09-06 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* TreeView.cs: fixed: when specified value is not one of 
+	the TreeNodeTypes values exception is threw.	 
+
+2006-09-06 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* TreeView.cs: fixed: when specified image set is not one of 
 	the TreeViewImageSet values exception is threw.	 
 

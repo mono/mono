@@ -576,7 +576,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-		[Category ("NotWorking")]
 		public void TreeView_Exp_ShowCheckBoxes () {
 			// The bitwise combination value is outside the range of the TreeNodeTypes enumeration.
 			PokerTreeView tv = new PokerTreeView ();

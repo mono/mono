@@ -515,6 +515,8 @@ namespace System.Web.UI.WebControls
 				return (TreeNodeTypes)ViewState.GetInt ("ShowCheckBoxes", (int)TreeNodeTypes.None);
 			}
 			set {
+				if (!Enum.IsDefined (typeof (TreeNodeTypes), value))
+					throw new ArgumentOutOfRangeException ();
 				ViewState ["ShowCheckBoxes"] = value;
 			}
 		}
