@@ -77,6 +77,38 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary {
 		}
 	}
 
+	[Serializable]
+	sealed class ThisObjectReference : IObjectReference
+	{
+		internal static int Count;
+
+		internal ThisObjectReference()
+		{
+		}
+
+		public object GetRealObject(StreamingContext context)
+		{
+			Count++;
+			return this;
+		}
+	}
+
+	[Serializable]
+	sealed class NewObjectReference : IObjectReference
+	{
+		internal static int Count;
+
+		internal NewObjectReference()
+		{
+		}
+
+		public object GetRealObject(StreamingContext context)
+		{
+			Count++;
+			return new NewObjectReference();
+		}
+	}
+
 	[TestFixture]
 	public class BinaryFormatterTest {
 
@@ -141,6 +173,30 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary {
 			SerializationTest clone = (SerializationTest) bf.UnsafeDeserialize (s, null);
 			Assert.AreEqual (Int32.MinValue, clone.Integer, "Integer");
 			Assert.IsFalse (clone.Boolean, "Boolean");
+		}
+		
+		[Test]
+		public void NestedObjectReference ()
+		{
+			MemoryStream ms = new MemoryStream();
+			BinaryFormatter bf = new BinaryFormatter();
+
+			bf.Serialize(ms, new ThisObjectReference());
+			bf.Serialize(ms, new NewObjectReference());
+			ms.Position = 0;
+			Assert.AreEqual (0, ThisObjectReference.Count, "#1");
+
+			bf.Deserialize(ms);
+			Assert.AreEqual (2, ThisObjectReference.Count, "#2");
+			Assert.AreEqual (0, NewObjectReference.Count, "#3");
+			try
+			{
+				bf.Deserialize(ms);
+			}
+			catch (SerializationException e)
+			{
+			}
+			Assert.AreEqual (101, NewObjectReference.Count, "#4");
 		}
 
 		[Test]
