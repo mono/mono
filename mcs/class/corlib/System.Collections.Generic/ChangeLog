@@ -1,3 +1,8 @@
+2006-09-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* Dictionary.cs: Speed up get_Item/set_Item/GetPrev () a bit. Increase capacity
+	specified by the user so 'capacity' elements can really be added without resizing.
+
 2006-07-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* Dictionary.cs: Swap order of parameters to cmp.Equals () to improve 

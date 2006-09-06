@@ -56,12 +56,15 @@ namespace System.Collections.Generic {
 		const float DEFAULT_LOAD_FACTOR = (90f / 100);
 
 		private class Slot {
-			public KeyValuePair<TKey, TValue> Data;
+			// Can't use KeyValuePair here since the JIT won't inline the Key/Value accessors
+			public TKey Key;
+			public TValue Value;
 			public Slot Next;
 
 			public Slot (TKey Key, TValue Value, Slot Next)
 			{
-				this.Data = new KeyValuePair<TKey,TValue> (Key, Value);
+				this.Key = Key;
+				this.Value = Value;
 				this.Next = Next;
 			}
 		}
@@ -84,13 +87,22 @@ namespace System.Collections.Generic {
 			}
 		}
 
+		// This is perf critical so inline calls etc.
 		public TValue this [TKey key] {
 			get {
-				int index;
-				Slot slot = GetSlot (key, out index);
-				if (slot == null)
-					throw new KeyNotFoundException ();
-				return slot.Data.Value;
+				if (key == null)
+					throw new ArgumentNullException ("key");
+				uint size = (uint)table.Length;
+				uint i = ((uint)hcp.GetHashCode (key) & Int32.MaxValue) % size;
+				Slot slot = table [i];
+				while (slot != null) {
+					// The ordering is important for compatibility with MS and strange
+					// Object.Equals () implementations
+					if (hcp.Equals (slot.Key, key))
+						return slot.Value;
+					slot = slot.Next;
+				}
+				throw new KeyNotFoundException ();
 			}
 
 			set {
@@ -98,17 +110,22 @@ namespace System.Collections.Generic {
 				Slot prev = GetPrev (key, out index);
 				Slot slot = prev == null ? table [index] : prev.Next;
 				if (slot == null) {
-					DoAdd (index, key, value);
-					return;
+					if (Count++ >= threshold) {
+						Resize ();
+						index = DoHash (key);
+					}
+					table [index] = new Slot (key, value, table [index]);
+				} else {
+					++generation;
+					if (prev != null) {
+						// move-to-front on update
+						prev.Next = slot.Next;
+						slot.Next = table [index];
+						table [index] = slot;
+					}
+					slot.Key = key;
+					slot.Value = value;
 				}
-				++generation;
-				if (prev != null) {
-					// move-to-front on update
-					prev.Next = slot.Next;
-					slot.Next = table [index];
-					table [index] = slot;
-				}
-				slot.Data = new KeyValuePair<TKey, TValue> (key, value);
 			}
 		}
 
@@ -166,6 +183,9 @@ namespace System.Collections.Generic {
 			this.hcp = (hcp != null) ? hcp : EqualityComparer<TKey>.Default;
 			if (capacity == 0)
 				capacity = INITIAL_SIZE;
+
+			/* Modify capacity so 'capacity' elements can be added without resizing */
+			capacity = (int)(capacity / DEFAULT_LOAD_FACTOR) + 1;
 			
 			table = new Slot [capacity];
 			SetThreshold ();
@@ -186,7 +206,7 @@ namespace System.Collections.Generic {
 
 			for (int i = 0; i < table.Length; ++i) {
 				for (Slot slot = table [i]; slot != null; slot = slot.Next)
-					array [index++] = slot.Data;
+					array [index++] = new KeyValuePair<TKey, TValue> (slot.Key, slot.Value);
 			}
 		}
 
@@ -209,7 +229,7 @@ namespace System.Collections.Generic {
 				for (Slot slot = oldTable [i]; slot != null; slot = nextslot) {
 					nextslot = slot.Next;
 
-					index = DoHash (slot.Data.Key);
+					index = DoHash (slot.Key);
 					slot.Next = table [index];
 					table [index] = slot;
 				}
@@ -265,7 +285,7 @@ namespace System.Collections.Generic {
 
 			for (int i = 0; i < table.Length; ++i) {
 				for (Slot slot = table [i]; slot != null; slot = slot.Next) {
-					if (cmp.Equals (slot.Data.Value, value))
+					if (cmp.Equals (slot.Value, value))
 						return true;
 				}
 			}
@@ -328,25 +348,43 @@ namespace System.Collections.Generic {
 			return true;
 		}
 
+		//
+		// Return the predecessor of the slot containing 'key', and set 'index' to the 
+		// chain the key was found in.
+		// If the key is not found, return null and set 'index' to the chain that would've 
+		// contained the key.
+		//
 		private Slot GetPrev (TKey key, out int index)
 		{
+			// This method is perf critical so inline DoHash () etc.
 			if (key == null)
 				throw new ArgumentNullException ("key");
-			index = DoHash (key);
-			Slot prev = null;
-			for (Slot slot = table [index]; slot != null; slot = slot.Next) {
-				// The ordering is important for compatibility with MS and strange
-				// Object.Equals () implementations
-				if (hcp.Equals (slot.Data.Key, key))
-					break;
-				prev = slot;
+			uint size = (uint)table.Length;
+			// Use uint to help ABCREM
+			uint i = ((uint)hcp.GetHashCode (key) & Int32.MaxValue) % size;
+			Slot slot = table [i];
+			if (slot != null) {
+				Slot prev = null;
+				do {
+					// The ordering is important for compatibility with MS and strange
+					// Object.Equals () implementations
+					if (hcp.Equals (slot.Key, key))
+						break;
+					prev = slot;
+					slot = slot.Next;
+				} while (slot != null);
+				index = (int)i;
+				return prev;
 			}
-			return prev;
+			else {
+				index = (int)i;
+				return null;
+			}
 		}
 
 		private Slot GetSlot (TKey key, out int index)
 		{
-			Slot prev = GetPrev (key, out index);
+ 			Slot prev = GetPrev (key, out index);
 			return prev == null ? table [index] : prev.Next;
 		}
 
@@ -355,7 +393,7 @@ namespace System.Collections.Generic {
 			int index;
 			Slot slot = GetSlot (key, out index);
 			bool found = slot != null;
-			value = found ? slot.Data.Value : default (TValue);
+			value = found ? slot.Value : default (TValue);
 			return found;
 		}
 
@@ -480,7 +518,7 @@ namespace System.Collections.Generic {
 
 			for (int i = 0; i < table.Length; ++i) {
 				for (Slot slot = table [i]; slot != null; slot = slot.Next)
-					array.SetValue (new DictionaryEntry (slot.Data.Key, slot.Data.Value), index++);
+					array.SetValue (new DictionaryEntry (slot.Key, slot.Value), index++);
 			}
 		}
 
@@ -584,7 +622,10 @@ namespace System.Collections.Generic {
 			}
 
 			public KeyValuePair<TKey, TValue> Current {
-				get { return CurrentSlot ().Data; }
+				get { 
+					Slot s = CurrentSlot (); 
+					return new KeyValuePair <TKey, TValue> (s.Key, s.Value);
+				}
 			}
 
 			object IEnumerator.Current {
@@ -600,7 +641,7 @@ namespace System.Collections.Generic {
 			DictionaryEntry IDictionaryEnumerator.Entry {
 				get {
 					Slot s = CurrentSlot ();
-					return new DictionaryEntry (s.Data.Key, s.Data.Value);
+					return new DictionaryEntry (s.Key, s.Value);
 				}
 			}
 
