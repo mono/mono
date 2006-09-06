@@ -1,3 +1,7 @@
+2006-09-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke3.cs libtest.c: Add test for #79289.
+
 2006-09-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* interlocked-2.2.cs: Add tests for the generic versions of the interlocked methods.
