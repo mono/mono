@@ -1,3 +1,8 @@
+2006-09-06  Konstantin Triger  <kostat@mainsoft.com>
+
+	* WebConfigurationHost.cs: do not recourse as this will be done by
+		Configuration object.
+
 2006-08-08  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* WebConfigurationManager.cs: added configSystem property under 

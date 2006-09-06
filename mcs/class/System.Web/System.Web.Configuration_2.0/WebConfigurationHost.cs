@@ -193,11 +193,6 @@ namespace System.Web.Configuration
 					locationConfigPath = null;
 				}
 			}
-			
-			if (GetStreamName (configPath) == null) {
-				// There is no config file for this path. Get the next one in the chain.
-				InitForConfiguration (ref locationSubPath, out configPath, out locationConfigPath, root, hostInitConfigurationParams);
-			}
 		}
 		
 		public string MapPath (string virtualPath)
