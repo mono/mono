@@ -1,3 +1,7 @@
+2006-09-04  Robert Jordan  <robertj@gmx.net>
+
+	* mono-stdlib.c (mono_mkstemp): Fix mkstemp's loop.
+
 2006-08-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Makefile.am:
