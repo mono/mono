@@ -670,11 +670,11 @@ namespace System.Windows.Forms {
 			Rectangle	current;
 
 			if (horizontal) {
-				prev = new Rectangle(0, prev_split_position - click_offset + 1, Width, 0);
-				current = new Rectangle(0, split_position - click_offset + 1, Width, 0);
+				prev = new Rectangle(Location.X, prev_split_position - click_offset + 1, Width, 0);
+				current = new Rectangle(Location.X, split_position - click_offset + 1, Width, 0);
 			} else {
-				prev = new Rectangle(prev_split_position - click_offset + 1, 0, 0, Height);
-				current = new Rectangle(split_position - click_offset + 1, 0, 0, Height);
+				prev = new Rectangle(prev_split_position - click_offset + 1, Location.Y, 0, Height);
+				current = new Rectangle(split_position - click_offset + 1, Location.Y, 0, Height);
 			}
 
 			switch(type) {

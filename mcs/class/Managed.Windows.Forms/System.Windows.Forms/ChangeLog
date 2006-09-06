@@ -1,3 +1,8 @@
+2006-09-06  Mike Kestner  <mkestner@novell.com>
+
+	* Splitter.cs: draw the drag handle at X or Y instead of 0 to deal
+	support offset splitters. [Fixes #79298]
+
 2006-09-06  Alexander Olk  <alex.olk@googlemail.com>
 
 	* Mime.cs: Fixed a bug that could override the global mime type
