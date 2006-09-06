@@ -83,13 +83,9 @@ namespace System.Configuration {
 				}
 				
 				configuration = new Configuration (parent);
-				XmlTextReader tr = new XmlTextReader (new StringReader (xmlContent));
-				tr.MoveToContent ();
-				tr.ReadStartElement ();
-				tr.MoveToContent ();
-				
-				configuration.ReadData (tr, allowOverride);
-				tr.Close ();
+				using (XmlTextReader tr = new XmlTextReader (new StringReader (xmlContent)))
+					configuration.ReadData (tr, allowOverride);
+
 				xmlContent = null;
 			}
 			return configuration;

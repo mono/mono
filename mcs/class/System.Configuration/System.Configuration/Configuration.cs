@@ -54,7 +54,9 @@ namespace System.Configuration {
 			
 		internal Configuration (Configuration parent)
 		{
-			Init (parent.system, null, parent);
+			this.parent = parent;
+			this.system = parent.system;
+			this.rootGroup = parent.rootGroup;
 		}
 		
 		internal Configuration (InternalConfigurationSystem system, string locationSubPath)
@@ -467,7 +469,7 @@ namespace System.Configuration {
 		
 		internal void ReadData (XmlTextReader reader, bool allowOverride)
 		{
-			rootGroup.ReadRootData (reader, this, allowOverride);
+			rootGroup.ReadData (this, reader, allowOverride);
 		}
 		
 

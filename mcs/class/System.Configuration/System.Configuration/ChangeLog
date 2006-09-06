@@ -1,3 +1,11 @@
+2006-08-23  Konstantin Triger <kostat@mainsoft.com>
+
+	* ConfigurationLocation.cs: do not read root element, correctly close stream.
+	* Configuration.cs: use ReadData for nested content to throw if location
+		elements are encounterd.
+		In constructor taking parent Configurqation: do not call Init and so avoid
+		rereading config file.
+
 2006-09-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* NameValueConfigurationElement.cs: fixed functionality
