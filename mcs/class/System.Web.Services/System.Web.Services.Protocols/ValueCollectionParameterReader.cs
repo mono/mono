@@ -78,6 +78,7 @@ namespace System.Web.Services.Protocols {
 		internal static bool IsSupportedPrimitive (Type type)
 		{
 			return ( type.IsPrimitive || 
+					 type.IsEnum ||
 					 type == typeof(string) ||
 					 type == typeof(DateTime) ||
 					 type == typeof(Decimal)

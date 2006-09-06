@@ -79,6 +79,9 @@ namespace System.Web.Services.Protocols {
 
 		internal static object StringToObj (Type type, string value)
 		{
+			if (type.IsEnum)
+				return Enum.Parse (type, value);
+			
 			switch (Type.GetTypeCode (type))
 			{
 				case TypeCode.Boolean: return XmlConvert.ToBoolean (value);
@@ -123,6 +126,9 @@ namespace System.Web.Services.Protocols {
 				case TypeCode.UInt64: return XmlConvert.ToString ((UInt64)value);
 				case TypeCode.String: return value as string;
 			}
+			if (value.GetType().IsEnum)
+				return value.ToString ();
+
 			throw new InvalidOperationException ("Type not supported");
 		}
 		
