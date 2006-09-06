@@ -1,5 +1,10 @@
 2006-09-06  Mike Kestner  <mkestner@novell.com>
 
+	* Splitter.cs: use the "current" rect when finishing drag handle
+	to avoid an artifact demonstrated by resedit.exe.  [Fixes #79251]
+
+2006-09-06  Mike Kestner  <mkestner@novell.com>
+
 	* Splitter.cs: draw the drag handle at X or Y instead of 0 to deal
 	support offset splitters. [Fixes #79298]
 

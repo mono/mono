@@ -694,7 +694,7 @@ namespace System.Windows.Forms {
 				}
 
 				case DrawType.Finish: {
-					XplatUI.DrawReversibleRectangle(Parent.window.Handle, prev, 3);
+					XplatUI.DrawReversibleRectangle(Parent.window.Handle, current, 3);
 					return;
 				}
 			}
