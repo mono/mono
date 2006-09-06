@@ -52,7 +52,14 @@ public class Marshal1 : ICustomMarshaler
 [TestFixture]
 public class ParameterInfoTest : Assertion
 {
-	public static void paramMethod (int i, [In] int j, [Out] int k, [Optional] int l, [In,Out] int m) {
+#if NET_2_0
+	public enum ParamEnum {
+		None = 0,
+		Foo = 1,
+		Bar = 2
+	};
+
+	public static void paramMethod (int i, [In] int j, [Out] int k, [Optional] int l, [In,Out] int m, [DefaultParameterValue (ParamEnum.Foo)] ParamEnum n) {
 	}
 
 	[DllImport ("foo")]
@@ -61,7 +68,14 @@ public class ParameterInfoTest : Assertion
 		[MarshalAs(UnmanagedType.LPArray, ArraySubType=UnmanagedType.LPStr)] string [] p1,
 		[MarshalAs( UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Marshal1), MarshalCookie = "5")] object p2);
 
-#if NET_2_0
+	[Test]
+	public void DefaultValueEnum () {
+		ParameterInfo[] info = typeof (ParameterInfoTest).GetMethod ("paramMethod").GetParameters ();
+
+		AssertEquals (typeof (ParamEnum), info [5].DefaultValue.GetType ());
+		AssertEquals (ParamEnum.Foo, info [5].DefaultValue);
+	}
+
 	[Test]
 	public void PseudoCustomAttributes () {
 		ParameterInfo[] info = typeof (ParameterInfoTest).GetMethod ("paramMethod").GetParameters ();

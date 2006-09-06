@@ -1,3 +1,7 @@
+2006-09-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* ParameterInfoTest.cs: Add a test for enum default parameter values.
+
 2006-09-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* MethodInfoTest.cs: Add a test for the ReturnParameter property.
