@@ -1,3 +1,7 @@
+2006-09-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (emit_call): Avoid strstr () call if possible.
+
 2006-09-05  Kornél Pál  <kornelpal@gmail.com>
 
 	* Makefile.am: Renamed mono-1.dll to mono.dll. (-avoid-version)
