@@ -1,3 +1,8 @@
+2006-09-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_marshal_object): Implement [In, Out] byval marshalling of classes.
+	Fixes #79289.
+	
 2006-09-06  Martin Baulig  <martin@ximian.com>
 
 	* icall.c (mono_lookup_internal_call): Small fix.
