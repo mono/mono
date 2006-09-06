@@ -187,7 +187,7 @@ namespace System.Web.Services.Protocols
 		}
 		
 		[System.Runtime.InteropServices.ComVisible(false)]
-		public SoapFaultSubcode Subcode {
+		public SoapFaultSubcode SubCode {
 			get { return subcode; }
 		}
 		

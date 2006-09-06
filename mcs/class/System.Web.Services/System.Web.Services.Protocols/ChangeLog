@@ -1,3 +1,7 @@
+2006-09-06  Lluis Sanchez Gual <lluis@novell.com>
+
+	* SoapException.cs: Fix property name.
+
 2006-09-05  Ankit Jain <jankit@novell.com>
 
 	* LogicalMethodTypes.cs:
