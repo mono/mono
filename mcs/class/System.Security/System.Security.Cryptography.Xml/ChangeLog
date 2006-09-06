@@ -1,3 +1,9 @@
+2006-09-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CipherReference.cs, EncryptedReference.cs : unify duplicate code.
+	  Remove incorrect name check in the latter class so that it works
+	  for DataReference and KeyReference as well.
+
 2006-05-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* KeyInfoClause.cs: Under 2.0 the ctor is protected.

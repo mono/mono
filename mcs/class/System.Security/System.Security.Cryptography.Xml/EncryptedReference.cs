@@ -124,8 +124,6 @@ namespace System.Security.Cryptography.Xml {
 		{
 			if (value == null)
 				throw new ArgumentNullException ("value");
-			if ((value.LocalName != XmlEncryption.ElementNames.CipherReference) || (value.NamespaceURI != EncryptedXml.XmlEncNamespaceUrl))
-				throw new CryptographicException ("Malformed CipherReference element.");
 			else {
 				Uri = null;
 				TransformChain = new TransformChain ();
@@ -157,6 +155,11 @@ namespace System.Security.Cryptography.Xml {
 							case XmlSignature.AlgorithmNamespaces.XmlDsigXsltTransform:
 								t = new XmlDsigXsltTransform ();
 								break;
+#if NET_2_0
+							case XmlSignature.AlgorithmNamespaces.XmlDecryptionTransform:
+								t = new XmlDecryptionTransform ();
+								break;
+#endif
 							default:
 								continue;
 							}
