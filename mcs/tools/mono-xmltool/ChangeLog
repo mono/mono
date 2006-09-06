@@ -1,5 +1,9 @@
 2006-09-06  Andrew Skiba  <andrews@mainsoft.com>
 
+	* XmlTool20.csproj, XmlTool20.sln: added solution for Net 2.0
+
+2006-09-06  Andrew Skiba  <andrews@mainsoft.com>
+
 	* xmltool.cs: ifdef MSNET for mono-specific references
 
 2006-03-23  Atsushi Enomoto  <atsushi@ximian.com>
