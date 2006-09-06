@@ -2197,6 +2197,8 @@ constructor_declarator
 		LocatedToken lt = (LocatedToken) $1;
 		$$ = new Constructor (current_class, lt.Value, 0, (Parameters) $4,
 				      (ConstructorInitializer) $7, lt.Location);
+
+		anonymous_host = (IAnonymousHost) $$;
 	  }
 	;
 

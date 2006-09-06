@@ -1315,6 +1315,18 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (instance_constructors != null) {
+				foreach (Constructor c in instance_constructors) {
+					if (!c.ResolveMembers ())
+						return false;
+				}
+			}
+
+			if (default_static_constructor != null) {
+				if (!default_static_constructor.ResolveMembers ())
+					return false;
+			}
+
 			if (operators != null) {
 				foreach (Operator o in operators) {
 					if (!o.ResolveMembers ())
@@ -4445,10 +4457,11 @@ namespace Mono.CSharp {
 		}
 	}
 	
-	public class Constructor : MethodCore, IMethodData {
+	public class Constructor : MethodCore, IMethodData, IAnonymousHost {
 		public ConstructorBuilder ConstructorBuilder;
 		public ConstructorInitializer Initializer;
 		ListDictionary declarative_security;
+		ArrayList anonymous_methods;
 
 		// <summary>
 		//   Modifiers allowed for a constructor.
@@ -4519,6 +4532,28 @@ namespace Mono.CSharp {
 			}
 
 			ConstructorBuilder.SetCustomAttribute (cb);
+		}
+
+		public void AddAnonymousMethod (AnonymousMethodExpression anonymous)
+		{
+			if (anonymous_methods == null)
+				anonymous_methods = new ArrayList ();
+			anonymous_methods.Add (anonymous);
+		}
+
+		public bool ResolveMembers ()
+		{
+			if (!CheckBase ())
+				return false;
+
+			if (anonymous_methods != null) {
+				foreach (AnonymousMethodExpression ame in anonymous_methods) {
+					if (!ame.CreateAnonymousHelpers ())
+						return false;
+				}
+			}
+
+			return true;
 		}
 
  		protected override bool CheckForDuplications ()
