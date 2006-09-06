@@ -719,12 +719,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void TreeView_Method_RenderTags () {
 			new WebTest (PageInvoker.CreateOnLoad (pageLoadRenderTags)).Run ();
 		}
-		private static void pageLoadRenderTags (Page page) {
+		public static void pageLoadRenderTags (Page page) {
 			TreeView tv = new TreeView ();
 			tv.ID = "treeview1";
 			page.Form.Controls.Add (tv);

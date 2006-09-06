@@ -1076,12 +1076,32 @@ namespace System.Web.UI.WebControls
 		
 		public override void RenderBeginTag (HtmlTextWriter writer)
 		{
+			if (SkipLinkText != "") {
+				writer.AddAttribute (HtmlTextWriterAttribute.Href, "#" + ClientID + "_SkipLink");
+				writer.RenderBeginTag (HtmlTextWriterTag.A);
+
+				Image img = new Image ();
+				ClientScriptManager csm = new ClientScriptManager (null);
+				img.ImageUrl = csm.GetWebResourceUrl (typeof (SiteMapPath), "transparent.gif");
+				img.Attributes.Add ("height", "0");
+				img.Attributes.Add ("width", "0");
+				img.AlternateText = SkipLinkText;
+				img.Render (writer);
+
+				writer.RenderEndTag ();
+			}
 			base.RenderBeginTag (writer);
 		}
 		
 		public override void RenderEndTag (HtmlTextWriter writer)
 		{
 			base.RenderEndTag (writer);
+
+			if (SkipLinkText != "") {
+				writer.AddAttribute (HtmlTextWriterAttribute.Id, ClientID + "_SkipLink");
+				writer.RenderBeginTag (HtmlTextWriterTag.A);
+				writer.RenderEndTag ();
+			}
 		}
 		
  		void RenderNode (HtmlTextWriter writer, TreeNode node, int level, ArrayList levelLines, bool hasPrevious, bool hasNext)

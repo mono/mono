@@ -1,5 +1,9 @@
 2006-09-06 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* TreeView.cs: corrected rendering: RenderBeginTag, RenderEndTag.	 
+
+2006-09-06 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* TreeView.cs: fixed: when specified value is not one of 
 	the TreeNodeTypes values exception is threw.	 
 
