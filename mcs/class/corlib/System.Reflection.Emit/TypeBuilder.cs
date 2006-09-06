@@ -1364,10 +1364,11 @@ namespace System.Reflection.Emit {
 			}
 		}
 		public void SetParent (Type parentType) {
-			if (parentType == null)
-				throw new ArgumentNullException ("parentType");
 			check_not_created ();
 
+			if (parentType == null && (attrs & TypeAttributes.Interface) == 0)
+				throw new ArgumentNullException ("parentType");
+			
 			parent = parentType;
 			// will just set the parent-related bits if called a second time
 			setup_internal_class (this);
