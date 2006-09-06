@@ -1,3 +1,9 @@
+2006-09-05  Lluis Sanchez Gual  <lluis@novell.com> 
+
+	* XmlSchemaImporter.cs: In MS.NET 2.0, simple type arrays are mapped
+	to strings. Make sure maps returned by ImportClassSimpleType are always
+	simple type maps. All this fixes bug #77585.
+
 2006-09-05  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlSchemaImporter.cs: Always import simple type unions

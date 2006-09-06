@@ -869,9 +869,13 @@ namespace System.Xml.Serialization
 						{
 							// It is a simple list (space separated list).
 							// Since this is not supported, map as a single item value
-							// TODO: improve this
 							member = new XmlTypeMapMemberElement ();
+#if NET_2_0
+							// In MS.NET those types are mapped to a string
+							typeData = TypeTranslator.GetTypeData(typeof(string));
+#else
 							typeData = typeData.ListItemTypeData;
+#endif
 						}
 						else
 							member = new XmlTypeMapMemberList ();
@@ -1296,7 +1300,11 @@ namespace System.Xml.Serialization
 			// It is an extension of a primitive or known type
 			
 			TypeData typeData = FindBuiltInType (typeQName, stype);
-			return GetTypeMapping (typeData);
+			XmlTypeMapping rmap = GetTypeMapping (typeData);
+			
+			// The resulting map must be a simple type. It needs to be explicitely set for arrays
+			rmap.IsSimpleType = true;
+			return rmap;
 		}
 
 		bool CanBeEnum (XmlSchemaSimpleType stype)
