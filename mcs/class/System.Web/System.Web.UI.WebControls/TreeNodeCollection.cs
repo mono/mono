@@ -73,8 +73,8 @@ namespace System.Web.UI.WebControls
 		public void Add (TreeNode child)
 		{
 			child.Index = items.Add (child);
-			child.Tree = tree;
 			child.SetParent (parent);
+			child.Tree = tree;
 			if (marked) {
 				((IStateManager)child).TrackViewState ();
 				child.SetDirty ();
@@ -86,8 +86,8 @@ namespace System.Web.UI.WebControls
 		{
 			items.Insert (index, child);
 			child.Index = index;
-			child.Tree = tree;
 			child.SetParent (parent);
+			child.Tree = tree;
 			for (int n=index+1; n<items.Count; n++)
 				((TreeNode)items[n]).Index = n;
 			if (marked) {

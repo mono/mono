@@ -678,10 +678,6 @@ namespace System.Web.UI.WebControls
 		protected internal override void OnInit (EventArgs e)
 		{
 			base.OnInit (e);
-			if (!Page.IsPostBack && ExpandDepth != 0) {
-				foreach (TreeNode node in Nodes)
-					node.Expand (ExpandDepth - 1);
-			}
 		}
 		
 		internal void SetSelectedNode (TreeNode node, bool loading)
@@ -997,6 +993,10 @@ namespace System.Web.UI.WebControls
 				script += string.Format ("{0}.collapseAlt = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageToolTip (false, null)));
 				Page.ClientScript.RegisterStartupScript (typeof(TreeView), this.UniqueID, script, true);
 
+				if (!Page.IsPostBack) {
+					SetNodesExpandedToDepthRecursive (Nodes);
+				}
+
 				if (EnableClientScript) {
 					Page.ClientScript.RegisterHiddenField (ClientID + "_ExpandStates", GetExpandStates ());
 				
@@ -1004,6 +1004,16 @@ namespace System.Web.UI.WebControls
 					Page.ClientScript.GetCallbackEventReference (this, "null", "", "null");
 					Page.ClientScript.GetPostBackClientHyperlink (this, "");
 				}
+			}
+		}
+
+		void SetNodesExpandedToDepthRecursive (TreeNodeCollection nodes) {
+			foreach (TreeNode node in nodes) {
+				if (!node.Expanded.HasValue) {
+					if (ExpandDepth < 0 || node.Depth < ExpandDepth)
+						node.Expanded = true;
+				}
+				SetNodesExpandedToDepthRecursive (node.ChildNodes);
 			}
 		}
 		

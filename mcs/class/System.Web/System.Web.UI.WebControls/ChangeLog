@@ -1,5 +1,11 @@
 2006-09-06 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* TreeView.cs: fixed: populating nodes flow.
+	* TreeNodeCollection.cs
+	* TreeNode.cs
+
+2006-09-06 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* TreeNodeCollection.cs: fixed: ViewState saved and restored correct.	 
 
 2006-09-06 Igor Zelmanovich <igorz@mainsoft.com>

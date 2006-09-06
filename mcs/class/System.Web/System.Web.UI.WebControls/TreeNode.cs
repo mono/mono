@@ -134,6 +134,8 @@ namespace System.Web.UI.WebControls
 				if (nodes != null)
 					nodes.SetTree (tree);
 				ResetPathData ();
+				if (PopulateOnDemand && !Populated && Expanded.HasValue && Expanded.Value)
+					Populate ();
 			}
 		}
 		
@@ -182,18 +184,10 @@ namespace System.Web.UI.WebControls
 		public TreeNodeCollection ChildNodes {
 			get {
 				if (nodes == null) {
-					if (PopulateOnDemand && tree == null)
-						return null;
-
 					nodes = new TreeNodeCollection (this);
 						
 					if (IsTrackingViewState)
 						((IStateManager)nodes).TrackViewState();
-					
-					if (PopulateOnDemand && !Populated) {
-						Populated = true;
-						Populate ();
-					}
 				}
 				return nodes;
 			}
@@ -209,6 +203,8 @@ namespace System.Web.UI.WebControls
 				ViewState ["Expanded"] = value;
 				if (tree != null)
 					tree.NotifyExpandedChanged (this);
+				if (PopulateOnDemand && !Populated && value.HasValue && value.Value)
+					Populate ();
 			}
 		}
 
@@ -433,6 +429,10 @@ namespace System.Web.UI.WebControls
 		
 		internal void Populate ()
 		{
+			if (tree == null)
+				return;
+
+			Populated = true;
 			tree.NotifyPopulateRequired (this);
 		}
 		

@@ -932,6 +932,88 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
+		[Category ("NunitWeb")]
+		public void TreeView_PopulateNode () {
+			PageDelegates delegates = new PageDelegates ();
+			delegates.Load = new PageDelegate (TreeView_PopulateNode_Load);
+			delegates.PreRender = new PageDelegate (TreeView_PopulateNode_PreRender);
+			delegates.PreRenderComplete = new PageDelegate (TreeView_PopulateNode_PreRenderComplete);
+			PageInvoker invoker = new PageInvoker (delegates);
+			WebTest test = new WebTest (invoker);
+			test.Run ();
+		}
+
+		public static void TreeView_PopulateNode_Load (Page page) {
+			TreeView tv = new TreeView ();
+			tv.ID = "TreeView";
+			tv.TreeNodePopulate += new TreeNodeEventHandler (tv_TreeNodePopulate);
+			tv.ExpandDepth = 3;
+			TreeNode rootNode = new TreeNode ("root");
+			rootNode.PopulateOnDemand = true;
+			tv.Nodes.Add (rootNode);
+			page.Form.Controls.Add (tv);
+
+			// root node still not populated
+			Assert.AreEqual (null, rootNode.Expanded, "TreeView_PopulateNode_Load#1");
+			Assert.AreEqual (0, rootNode.ChildNodes.Count, "TreeView_PopulateNode_Load#2");
+			
+			// root node was populated after set Expanded=true
+			rootNode.Expanded = true;
+			Assert.AreEqual (1, rootNode.ChildNodes.Count, "TreeView_PopulateNode_Load#3");
+			
+			// node1 was populated because was added with Expanded=true whan root was populated
+			Assert.AreEqual (true, rootNode.ChildNodes [0].Expanded, "TreeView_PopulateNode_Load#4");
+			Assert.AreEqual (1, rootNode.ChildNodes [0].ChildNodes.Count, "TreeView_PopulateNode_Load#5");
+			
+			// node2 not populated because Expanded not set
+			Assert.AreEqual (null, rootNode.ChildNodes [0].ChildNodes [0].Expanded, "TreeView_PopulateNode_Load#6");
+			Assert.AreEqual (0, rootNode.ChildNodes [0].ChildNodes [0].ChildNodes.Count, "TreeView_PopulateNode_Load#7");
+		}
+
+		public static void TreeView_PopulateNode_PreRender (Page page) {
+			TreeView tv = (TreeView) page.Form.FindControl ("TreeView");
+			TreeNode rootNode = tv.Nodes [0];
+
+			// state of nodes remain the same
+			// root
+			Assert.AreEqual (true, rootNode.Expanded, "TreeView_PopulateNode_PreRender#1");
+			Assert.AreEqual (1, rootNode.ChildNodes.Count, "TreeView_PopulateNode_PreRender#3");
+			// node1
+			Assert.AreEqual (true, rootNode.ChildNodes [0].Expanded, "TreeView_PopulateNode_PreRender#4");
+			Assert.AreEqual (1, rootNode.ChildNodes [0].ChildNodes.Count, "TreeView_PopulateNode_PreRender#5");
+			// node2
+			Assert.AreEqual (null, rootNode.ChildNodes [0].ChildNodes [0].Expanded, "TreeView_PopulateNode_PreRender#6");
+			Assert.AreEqual (0, rootNode.ChildNodes [0].ChildNodes [0].ChildNodes.Count, "TreeView_PopulateNode_PreRender#7");
+		}
+
+		public static void TreeView_PopulateNode_PreRenderComplete (Page page) {
+			TreeView tv = (TreeView) page.Form.FindControl ("TreeView");
+			TreeNode rootNode = tv.Nodes [0];
+
+			// All nodes were expanded and populated up to ExpandDepth
+			// root
+			Assert.AreEqual (true, rootNode.Expanded, "TreeView_PopulateNode_PreRenderComplete#1");
+			Assert.AreEqual (1, rootNode.ChildNodes.Count, "TreeView_PopulateNode_PreRenderComplete#3");
+			// node1
+			Assert.AreEqual (true, rootNode.ChildNodes [0].Expanded, "TreeView_PopulateNode_PreRenderComplete#4");
+			Assert.AreEqual (1, rootNode.ChildNodes [0].ChildNodes.Count, "TreeView_PopulateNode_PreRenderComplete#5");
+			// node2
+			Assert.AreEqual (true, rootNode.ChildNodes [0].ChildNodes [0].Expanded, "TreeView_PopulateNode_PreRenderComplete#6");
+			Assert.AreEqual (1, rootNode.ChildNodes [0].ChildNodes [0].ChildNodes.Count, "TreeView_PopulateNode_PreRenderComplete#7");
+			// node3
+			Assert.AreEqual (null, rootNode.ChildNodes [0].ChildNodes [0].ChildNodes [0].Expanded, "TreeView_PopulateNode_PreRenderComplete#6");
+			Assert.AreEqual (0, rootNode.ChildNodes [0].ChildNodes [0].ChildNodes [0].ChildNodes.Count, "TreeView_PopulateNode_PreRenderComplete#7");
+		}
+
+		static void tv_TreeNodePopulate (object sender, TreeNodeEventArgs e) {
+			TreeNode node = new TreeNode ("node" + (e.Node.Depth + 1));
+			node.PopulateOnDemand = true;
+			if (e.Node.Depth < 1)
+				node.Expanded = true;
+			e.Node.ChildNodes.Add (node);
+		}
+
+		[Test]
 		public void TreeView_Method_CreateControlCollection () {
 			PokerTreeView tv = new PokerTreeView ();
 			ControlCollection cc = tv.CreateControlCollectionBase ();
