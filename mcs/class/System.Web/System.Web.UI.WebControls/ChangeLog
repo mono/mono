@@ -1,5 +1,9 @@
 2006-09-06 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* TreeNodeCollection.cs: fixed: ViewState saved and restored correct.	 
+
+2006-09-06 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* TreeView.cs: corrected rendering: RenderBeginTag, RenderEndTag.	 
 
 2006-09-06 Igor Zelmanovich <igorz@mainsoft.com>

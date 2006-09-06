@@ -43,6 +43,21 @@ namespace MonoTests.System.Web.UI.WebControls {
 	[TestFixture]
 	public class TreeNodeCollectionTest {
 
+		class PokerTreeView : TreeView
+		{
+			public void DoTrackViewState () {
+				TrackViewState ();
+			}
+
+			public object DoSaveViewState () {
+				return SaveViewState ();
+			}
+
+			public void DoLoadViewState (object state) {
+				LoadViewState (state);
+			}
+		}
+
 		[Test]
 		public void TreeNodeCollection_DefaultProperties () {
 			TreeNodeCollection tnc = new TreeNodeCollection ();
@@ -154,6 +169,83 @@ namespace MonoTests.System.Web.UI.WebControls {
 			tnc.RemoveAt (1);
 			Assert.AreEqual (2, tnc.Count, "AfterRemoveAt1");
 			Assert.AreEqual ("third", tnc[1].Text, "AfterRemoveAt2");
+		}
+
+		[Test]
+		public void TreeNodeCollection_ViewState () {
+			PokerTreeView orig = new PokerTreeView ();
+			orig.DoTrackViewState ();
+			BuildTree (orig);
+
+			PokerTreeView copy = new PokerTreeView ();
+			copy.DoTrackViewState ();
+			object state = orig.DoSaveViewState ();
+			copy.DoLoadViewState (state);
+
+			// restored collection that was created after TrackViewState
+			Assert.AreEqual (1, copy.Nodes.Count, "TreeNodeCollection_ViewState#1");
+			Assert.AreEqual (2, copy.Nodes [0].ChildNodes.Count, "TreeNodeCollection_ViewState#2");
+			Assert.AreEqual (0, copy.Nodes [0].ChildNodes [0].ChildNodes.Count, "TreeNodeCollection_ViewState#3");
+			Assert.AreEqual ("node1", copy.Nodes [0].ChildNodes [0].Text, "TreeNodeCollection_ViewState#4");
+			Assert.AreEqual ("value-node1", copy.Nodes [0].ChildNodes [0].Value, "TreeNodeCollection_ViewState#5");
+			Assert.AreEqual (false, copy.Nodes [0].ChildNodes [0].DataBound, "TreeNodeCollection_ViewState#6");
+			Assert.AreEqual ("", copy.Nodes [0].ChildNodes [0].DataPath, "TreeNodeCollection_ViewState#7");
+
+
+			PokerTreeView orig2 = new PokerTreeView ();
+			BuildTree (orig2);
+			orig2.DoTrackViewState ();
+
+			orig2.Nodes [0].ChildNodes [0].Text = "changed text 1";
+			orig2.Nodes [0].ChildNodes [0].Value = "changed value 1";
+
+			PokerTreeView copy2 = new PokerTreeView ();
+			BuildTree (copy2);
+			copy2.DoTrackViewState ();
+			object state2 = orig2.DoSaveViewState ();
+			copy2.DoLoadViewState (state2);
+
+			// restored collection that was changed (item's properties only) after TrackViewState
+			Assert.AreEqual (1, copy2.Nodes.Count, "TreeNodeCollection_ViewState#8");
+			Assert.AreEqual (2, copy2.Nodes [0].ChildNodes.Count, "TreeNodeCollection_ViewState#9");
+			Assert.AreEqual (0, copy2.Nodes [0].ChildNodes [0].ChildNodes.Count, "TreeNodeCollection_ViewState#10");
+			Assert.AreEqual ("changed text 1", copy2.Nodes [0].ChildNodes [0].Text, "TreeNodeCollection_ViewState#11");
+			Assert.AreEqual ("changed value 1", copy2.Nodes [0].ChildNodes [0].Value, "TreeNodeCollection_ViewState#12");
+			Assert.AreEqual (false, copy2.Nodes [0].ChildNodes [0].DataBound, "TreeNodeCollection_ViewState#13");
+			Assert.AreEqual ("", copy2.Nodes [0].ChildNodes [0].DataPath, "TreeNodeCollection_ViewState#14");
+
+
+			PokerTreeView orig3 = new PokerTreeView ();
+			BuildTree (orig3);
+			orig3.DoTrackViewState ();
+
+			orig3.Nodes [0].ChildNodes [0].Text = "changed text 1";
+			orig3.Nodes [0].ChildNodes [0].Value = "changed value 1";
+			orig3.Nodes [0].ChildNodes.RemoveAt (1);
+
+			PokerTreeView copy3 = new PokerTreeView ();
+			BuildTree (copy3);
+			copy3.DoTrackViewState ();
+			object state3 = orig3.DoSaveViewState ();
+			copy3.DoLoadViewState (state3);
+
+			// restored collection that was changed after TrackViewState
+			Assert.AreEqual (1, copy3.Nodes.Count, "TreeNodeCollection_ViewState#15");
+			Assert.AreEqual (1, copy3.Nodes [0].ChildNodes.Count, "TreeNodeCollection_ViewState#16");
+			Assert.AreEqual (0, copy3.Nodes [0].ChildNodes [0].ChildNodes.Count, "TreeNodeCollection_ViewState#17");
+			Assert.AreEqual ("changed text 1", copy3.Nodes [0].ChildNodes [0].Text, "TreeNodeCollection_ViewState#18");
+			Assert.AreEqual ("changed value 1", copy3.Nodes [0].ChildNodes [0].Value, "TreeNodeCollection_ViewState#19");
+			Assert.AreEqual (false, copy3.Nodes [0].ChildNodes [0].DataBound, "TreeNodeCollection_ViewState#20");
+			Assert.AreEqual ("", copy3.Nodes [0].ChildNodes [0].DataPath, "TreeNodeCollection_ViewState#21");
+		}
+
+		private static void BuildTree (TreeView tv) {
+			TreeNode R = new TreeNode ("root", "value-root");
+			TreeNode N1 = new TreeNode ("node1", "value-node1");
+			TreeNode N2 = new TreeNode ("node2", "value-node2");
+			R.ChildNodes.Add (N1);
+			R.ChildNodes.Add (N2);
+			tv.Nodes.Add (R);
 		}
 	}
 }

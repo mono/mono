@@ -550,6 +550,8 @@ namespace System.Web.UI.WebControls
 		internal void SetDirty ()
 		{
 			ViewState.SetDirty (true);
+			if (nodes != null)
+				nodes.SetDirty ();
 		}
 		
 		public virtual object Clone ()
