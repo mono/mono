@@ -1,3 +1,7 @@
+2006-09-06 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* TreeViewTest.cs: removed NotWorking attribute
+
 2006-09-05 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* TreeNodeStyleCollectionTest.cs: New test was added

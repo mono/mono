@@ -568,7 +568,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-		[Category ("NotWorking")]
 		public void TreeView_Exp_ImageSet () {
 			// The specified image set is not one of the TreeViewImageSet values.
 			PokerTreeView tv = new PokerTreeView ();

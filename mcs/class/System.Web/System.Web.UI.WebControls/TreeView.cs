@@ -319,6 +319,8 @@ namespace System.Web.UI.WebControls
 				return (TreeViewImageSet)ViewState.GetInt ("ImageSet", (int)TreeViewImageSet.Custom);
 			}
 			set {
+				if (!Enum.IsDefined (typeof (TreeViewImageSet), value))
+					throw new ArgumentOutOfRangeException ();
 				ViewState["ImageSet"] = value;
 			}
 		}
