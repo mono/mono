@@ -1,3 +1,7 @@
+2006-09-06  Kornél Pál  <kornelpal@gmail.com>
+
+	* Makefile: Removed TestConfiguration.cs.
+
 2006-06-07  Kornél Pál  <kornelpal@gmail.com>
 
 	* Consts.cs.in: Removed RuntimeVersion as it should be the same as

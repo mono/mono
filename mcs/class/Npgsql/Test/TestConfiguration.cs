@@ -31,7 +31,7 @@ using NUnit.Framework;
 using NUnit.Core;
 
 
-namespace System {
+namespace NpgsqlTests {
 	class TestConfiguration {
 		public static string NpgsqlConnectionString {
 			get {

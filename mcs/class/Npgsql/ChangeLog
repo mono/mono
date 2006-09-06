@@ -1,3 +1,7 @@
+2006-09-06  Kornél Pál  <kornelpal@gmail.com>
+
+	* Test/TestConfiguration.cs: Moved from build/common.
+	* Npgsql/Npgsql_test.dll.sources: Added TestConfiguration.cs.
 
 2006-08-16  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 

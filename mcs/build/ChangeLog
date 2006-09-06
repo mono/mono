@@ -1,3 +1,7 @@
+2006-09-06  Kornél Pál  <kornelpal@gmail.com>
+
+	* TestConfiguration.cs: Moved to Npgsql.
+
 2006-09-05  Kornél Pál  <kornelpal@hotmail.com>
 
 	* config-default.make: Use UTF-8 as the default encoding for compilers.

@@ -22,8 +22,7 @@ PROFILES = \
 COMMON_SRCS = \
 	Consts.cs.in			\
 	Locale.cs			\
-	MonoTODOAttribute.cs		\
-	TestConfiguration.cs
+	MonoTODOAttribute.cs
 
 DISTFILES = \
 	README.makefiles		\
