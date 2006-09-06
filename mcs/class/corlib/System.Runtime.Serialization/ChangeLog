@@ -1,3 +1,8 @@
+2006-08-06  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* ObjectManager.cs: Add support for nested IObjectReference.
+	Fixes bug #78749.
+
 2006-07-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ObjectIDGenerator.cs: Fix ArgumentNullException parameter.

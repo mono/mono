@@ -550,6 +550,17 @@ namespace System.Runtime.Serialization
 			{
 				try {
 					ObjectInstance = ((IObjectReference)ObjectInstance).GetRealObject(context);
+					int n = 100;
+					while (ObjectInstance is IObjectReference && n > 0) {
+						object ob = ((IObjectReference)ObjectInstance).GetRealObject (context);
+						if (ob == ObjectInstance)
+							break;
+						ObjectInstance = ob;
+						n--;
+					}
+					if (n == 0)
+						throw new SerializationException ("The implementation of the IObjectReference interface returns too many nested references to other objects that implement IObjectReference.");
+					
 					Status = ObjectRecordStatus.ReferenceSolved;
 				}
 				catch (NullReferenceException) {
