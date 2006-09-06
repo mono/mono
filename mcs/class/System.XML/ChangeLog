@@ -1,3 +1,8 @@
+2006-09-06  Merav Sudri  <meravs@mainsoft.com>
+
+	* run-W3C-tests.bat - Update nunit build and XMLTool actions
+	* run-XSLT-tests.bat - Update CLASSPATH,nunit build and XMLTool actions 
+ 
 2006-07-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources : added XmlMappingAccess.
