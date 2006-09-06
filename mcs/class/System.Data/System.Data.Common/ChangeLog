@@ -1,3 +1,7 @@
+2006-09-06  Konstantin Triger <kostat@mainsoft.com>
+
+	* DbDataAdapter.cs: added basic implementation for some 2.0 features.
+
 2006-08-24  Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* DbProviderFactories.cs: added TARGET_JVM block to not supported

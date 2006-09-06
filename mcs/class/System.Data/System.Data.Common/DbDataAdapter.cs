@@ -51,6 +51,13 @@ namespace System.Data.Common {
 		public const string DefaultSourceTableName = "Table";
 		const string DefaultSourceColumnName = "Column";
 
+#if NET_2_0
+		IDbCommand _selectCommand;
+		IDbCommand _updateCommand;
+		IDbCommand _deleteCommand;
+		IDbCommand _insertCommand;
+#endif
+
 		#endregion // Fields
 		
 		#region Constructors
@@ -76,26 +83,26 @@ namespace System.Data.Common {
 
 		[MonoTODO]
 		IDbCommand IDbDataAdapter.SelectCommand {
-			get { return ((IDbDataAdapter) this).SelectCommand; }
-			set { throw new NotImplementedException(); }
+			get { return _selectCommand; }
+			set { _selectCommand = value; }
 		}
 
 		[MonoTODO]
 		IDbCommand IDbDataAdapter.UpdateCommand{
-			get { return ((IDbDataAdapter) this).UpdateCommand; }
-			set { throw new NotImplementedException(); }
+			get { return _updateCommand; }
+			set { _updateCommand = value; }
 		}
 
 		[MonoTODO]
 		IDbCommand IDbDataAdapter.DeleteCommand{
-			get { return ((IDbDataAdapter) this).DeleteCommand; }
-			set { throw new NotImplementedException(); }
+			get { return _deleteCommand; }
+			set { _deleteCommand = value; }
 		}
 
 		[MonoTODO]
 		IDbCommand IDbDataAdapter.InsertCommand{
-			get { return ((IDbDataAdapter) this).InsertCommand; }
-			set { throw new NotImplementedException(); }
+			get { return _insertCommand; }
+			set { _insertCommand = value; }
 		}
 		
 		[MonoTODO]
@@ -103,7 +110,7 @@ namespace System.Data.Common {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand SelectCommand {
 			get { return (DbCommand) ((IDbDataAdapter) this).SelectCommand; }
-			set { throw new NotImplementedException(); }
+			set { ((IDbDataAdapter) this).SelectCommand = value; }
 		}
 
 		[MonoTODO]
@@ -111,7 +118,7 @@ namespace System.Data.Common {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand DeleteCommand {
 			get { return (DbCommand) ((IDbDataAdapter) this).DeleteCommand; }
-			set { throw new NotImplementedException(); }
+			set { ((IDbDataAdapter) this).DeleteCommand = value; }
 		}
 
 		[MonoTODO]
@@ -119,7 +126,7 @@ namespace System.Data.Common {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand InsertCommand {
 			get { return (DbCommand) ((IDbDataAdapter) this).InsertCommand; }
-			set { throw new NotImplementedException(); }
+			set { ((IDbDataAdapter) this).InsertCommand = value; }
 		}
 
 		[MonoTODO]
@@ -127,7 +134,7 @@ namespace System.Data.Common {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand UpdateCommand {
 			get { return (DbCommand) ((IDbDataAdapter) this).UpdateCommand; }
-			set { throw new NotImplementedException(); }
+			set { ((IDbDataAdapter) this).UpdateCommand = value; }
 		}
 
 		[MonoTODO]
