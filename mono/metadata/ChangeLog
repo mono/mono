@@ -1,5 +1,8 @@
 2006-09-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (mono_param_get_objects): Handle enum default parameter values
+	correctly.
+
 	* marshal.c (emit_marshal_object): Implement [In, Out] byval marshalling of classes.
 	Fixes #79289.
 	
