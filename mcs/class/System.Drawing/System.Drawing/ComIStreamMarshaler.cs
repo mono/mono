@@ -4,7 +4,7 @@
 // Author:
 //   Kornél Pál <http://www.kornelpal.hu/>
 //
-// Copyright (C) 2005 Kornél Pál
+// Copyright (C) 2005-2006 Kornél Pál
 //
 
 //
@@ -107,27 +107,13 @@ namespace System.Drawing
 				internal ReleaseDelegate Release;
 			}
 
-			private sealed class VtableDestructor
-            {
-				// only free if not shutting down. if we are shutting down
-				// there is not guarantee on order of finalizers
-				// and other object may still need this vtable
-				~VtableDestructor ()
-				{
-					if (!Environment.HasShutdownStarted) {
-						Marshal.DestroyStructure (comVtable, typeof (IStreamVtbl));
-						Marshal.FreeHGlobal (comVtable);
-					}
-				}
-			}
-
 			private static readonly Guid IID_IUnknown = new Guid("00000000-0000-0000-C000-000000000046");
 			private static readonly Guid IID_IStream = new Guid("0000000C-0000-0000-C000-000000000046");
 			private static readonly MethodInfo exceptionGetHResult = typeof(Exception).GetProperty("HResult", BindingFlags.GetProperty | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.ExactBinding, null, typeof(int), new Type[] {}, null).GetGetMethod(true);
 			// Keeps delegates alive while they are marshaled
 			private static readonly IStreamVtbl managedVtable;
-			private static readonly IntPtr comVtable;
-			private static readonly VtableDestructor vtableDestructor;
+			private static IntPtr comVtable;
+			private static int vtableRefCount;
 
 			private IStream managedInterface;
 			private IntPtr comInterface;
@@ -154,11 +140,7 @@ namespace System.Drawing
 				newVtable.UnlockRegion = new UnlockRegionDelegate(UnlockRegion);
 				newVtable.Stat = new StatDelegate(Stat);
 				newVtable.Clone = new CloneDelegate(Clone);
-				comVtable = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(IStreamVtbl)));
-				Marshal.StructureToPtr(newVtable, comVtable, false);
 				managedVtable = newVtable;
-
-				vtableDestructor = new VtableDestructor();
 			}
 
 			private ManagedToNativeWrapper(IStream managedInterface)
@@ -169,30 +151,41 @@ namespace System.Drawing
 				gcHandle = GCHandle.Alloc(this);
 
 				newInterface = new IStreamInterface();
-				newInterface.lpVtbl = comVtable;
+
+				lock (managedVtable)
+				{
+					// Vtable may have been freed when unloading
+					if (vtableRefCount == 0 && comVtable == IntPtr.Zero)
+					{
+						comVtable = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(IStreamVtbl)));
+						Marshal.StructureToPtr(managedVtable, comVtable, false);
+					}
+					vtableRefCount++;
+
+					newInterface.lpVtbl = comVtable;
+				}
+
 				newInterface.gcHandle = (IntPtr)gcHandle;
 				comInterface = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(IStreamInterface)));
 				Marshal.StructureToPtr(newInterface, comInterface, false);
 			}
 
-			~ManagedToNativeWrapper()
+			private void Dispose()
 			{
-				Dispose(false);
-			}
-
-			private void Dispose(bool disposing)
-			{
-				// only free if not shutting down. if we are shutting down
-				// there is not guarantee on order of finalizers
-				// and other object may still need this stream
-				if (!Environment.HasShutdownStarted)
-					Marshal.FreeHGlobal (comInterface);
+				Marshal.FreeHGlobal(comInterface);
 				gcHandle.Free();
-				if (disposing)
+				comInterface = IntPtr.Zero;
+				managedInterface = null;
+
+				lock (managedVtable)
 				{
-					comInterface = IntPtr.Zero;
-					managedInterface = null;
-					GC.SuppressFinalize(this);
+					// Free vtable when unloading
+					if (--vtableRefCount == 0 && Environment.HasShutdownStarted)
+					{
+						Marshal.DestroyStructure(comVtable, typeof(IStreamVtbl));
+						Marshal.FreeHGlobal(comVtable);
+						comVtable = IntPtr.Zero;
+					}
 				}
 			}
 
@@ -310,7 +303,7 @@ namespace System.Drawing
 					lock (thisObject)
 					{
 						if ((thisObject.refCount != 0) && (--thisObject.refCount == 0))
-							thisObject.Dispose(true);
+							thisObject.Dispose();
 
 						return thisObject.refCount;
 					}

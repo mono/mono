@@ -1,3 +1,9 @@
+2006-09-06  Kornél Pál  <kornelpal@gmail.com>
+
+	* ComIStreamMarshaler.cs: ManagedToNativeWrapper should not have a
+	  destructor because it is freed using Release. (Proper fix for bug
+	  #78315.) Free COM vtable when unloading and all objects Released.
+
 2006-09-06  Jonathan Chambers  <joncham@gmail.com> 
 
 	* ComIStreamMarshaler.cs: Only deallocate memory
