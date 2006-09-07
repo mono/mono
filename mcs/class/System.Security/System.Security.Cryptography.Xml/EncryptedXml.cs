@@ -141,7 +141,7 @@ namespace System.Security.Cryptography.Xml {
 
 		public byte[] DecryptData (EncryptedData encryptedData, SymmetricAlgorithm symAlg)
 		{
-			return Transform (encryptedData.CipherData.CipherValue, symAlg.CreateDecryptor (), symAlg.BlockSize / 8);
+			return Transform (encryptedData.CipherData.CipherValue, symAlg.CreateDecryptor (), 0);
 		}
 
 		public void DecryptDocument ()
