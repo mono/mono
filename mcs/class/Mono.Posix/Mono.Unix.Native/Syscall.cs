@@ -1825,6 +1825,8 @@ namespace Mono.Unix.Native {
 			}
 		}
 
+		internal static object readdir_lock = new object ();
+
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_readdir")]
 		private static extern int sys_readdir (IntPtr dir, out _Dirent dentry);
@@ -1832,7 +1834,10 @@ namespace Mono.Unix.Native {
 		public static Dirent readdir (IntPtr dir)
 		{
 			_Dirent dentry;
-			int r = sys_readdir (dir, out dentry);
+			int r;
+			lock (readdir_lock) {
+				r = sys_readdir (dir, out dentry);
+			}
 			if (r != 0)
 				return null;
 			Dirent d = new Dirent ();
