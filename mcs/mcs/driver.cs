@@ -1601,13 +1601,10 @@ namespace Mono.CSharp
 				int pos = first_source.LastIndexOf ('.');
 
 				if (pos > 0)
-					output_file = first_source.Substring (0, pos);
+					output_file = first_source.Substring (0, pos) + RootContext.TargetExt;
 				else
-					output_file = first_source;
+					output_file = first_source + RootContext.TargetExt;
 			}
-			
-			if (!Path.HasExtension (output_file))
-				output_file += RootContext.TargetExt;
 
 			if (!CodeGen.Init (output_file, output_file, want_debugging_support))
 				return false;
