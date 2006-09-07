@@ -61,7 +61,7 @@ namespace System.Web.UI
 				if (index < 0 || index >= objs.Count)
 					throw new InvalidOperationException ();
 
-				return objs[index];
+				return ((DictionaryEntry)objs[index]).Value;
 			}
 		}
 

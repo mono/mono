@@ -1,3 +1,8 @@
+2006-08-22  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* KeyedListEnumerator.cs: fixed Current property to return real object
+	instead of DictionaryEntry
+
 2006-09-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: don't use the Browser object, as it slows down process
