@@ -1,3 +1,8 @@
+2006-09-07  Jackson Harper  <jackson@ximian.com>
+
+	* ThemeWin32Classic.cs:  oops, forgot to commit.  Draw the images
+	for tab pages if they have any.
+
 2006-09-06  Mike Kestner  <mkestner@novell.com>
 
 	* Splitter.cs: use the "current" rect when finishing drag handle

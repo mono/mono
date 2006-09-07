@@ -3782,9 +3782,16 @@ namespace System.Windows.Forms
 					dc.DrawString (page.Text, page.Font, SystemBrushes.ControlText, 0, 0, string_format);
 					dc.ResetTransform ();
 				} else {
+					Rectangle str_rect = interior;
+
+					if (tab.ImageList != null && page.ImageIndex >= 0 && page.ImageIndex < tab.ImageList.Images.Count) {
+						tab.ImageList.Draw (dc, new Point (interior.X, interior.Y), page.ImageIndex);
+						str_rect.X += tab.ImageList.ImageSize.Width + 2;
+						str_rect.Width -= tab.ImageList.ImageSize.Width + 2;
+					}
 					dc.DrawString (page.Text, page.Font,
 						       SystemBrushes.ControlText,
-							interior, string_format);
+							str_rect, string_format);
 				}
 			} else if (page.Text != null) {
 				DrawItemState state = DrawItemState.None;
