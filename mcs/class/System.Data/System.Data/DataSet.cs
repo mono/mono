@@ -98,6 +98,13 @@ namespace System.Data {
 			GetSerializationData (info, context);
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		protected DataSet (SerializationInfo info, StreamingContext context, bool constructSchema)
+			: this (info, context)
+		{
+		}
+#endif
 		#endregion // Constructors
 
 		#region Public Properties
@@ -1283,6 +1290,26 @@ namespace System.Data {
 		protected internal void RaisePropertyChanging (string name)
 		{
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		protected SchemaSerializationMode DetermineSchemaSerializationMode (XmlReader reader)
+		{
+			return SchemaSerializationMode.IncludeSchema;
+		}
+
+		[MonoTODO]
+		protected SchemaSerializationMode DetermineSchemaSerializationMode (SerializationInfo info, StreamingContext context)
+		{
+			return SchemaSerializationMode.IncludeSchema;
+		}
+
+		[MonoTODO]
+		protected bool IsBinarySerialized (SerializationInfo info, StreamingContext context)
+		{
+			return false;
+		}
+#endif
 		#endregion
 
 		#region Private Methods

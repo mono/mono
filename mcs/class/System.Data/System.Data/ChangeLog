@@ -1,3 +1,7 @@
+2006-09-07  Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* DataSet.cs: added 2.0 stubs to solve typed dataset porting issues
+
 2006-08-30  Nagappan A  <anagappan@novell.com>
 
 	* DataRow.cs (EndEdit): DataRow.EndEdit emits RowChanged too
