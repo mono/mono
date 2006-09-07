@@ -54,13 +54,13 @@ function TreeView_PopulateCallback (data, ids)
 	node.populated = true;
 	if (data != "*") {
 		node.innerHTML = data;
-		TreeView_ToggleExpand (idArray[0], idArray[1]);
 	} else {
 		if (tree.showImage && tree.noExpandImage != null) {
 			var image = document.getElementById (spanId + "_img");
 			image.src = tree.noExpandImage;
 		}
 	}
+	TreeView_ToggleExpand (idArray[0], idArray[1]);
 }
 
 function TreeView_ErrorCallback (data, ids)

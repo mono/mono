@@ -848,6 +848,7 @@ namespace System.Web.UI.WebControls
 			StringWriter sw = new StringWriter ();
 			HtmlTextWriter writer = new HtmlTextWriter (sw);
 			
+			node.Expanded = true;
 			int num = node.ChildNodes.Count;
 			for (int n=0; n<num; n++)
 				RenderNode (writer, node.ChildNodes [n], node.Depth + 1, levelLines, true, n<num-1);
@@ -1124,7 +1125,7 @@ namespace System.Web.UI.WebControls
 			bool renderChildNodes = node.Expanded.HasValue && node.Expanded.Value;
 			
 			if (clientExpand && !renderChildNodes)
-				renderChildNodes = (!PopulateNodesFromClient || HasChildInputData (node));
+				renderChildNodes = (!node.PopulateOnDemand || node.Populated);
 				
 			bool hasChildNodes;
 			
@@ -1193,7 +1194,7 @@ namespace System.Web.UI.WebControls
 					writer.RenderBeginTag (HtmlTextWriterTag.Td);	// TD
 					
 					if (buttonImage) {
-						if (!clientExpand)
+						if (!clientExpand || (!PopulateNodesFromClient && node.PopulateOnDemand && !node.Populated))
 							writer.AddAttribute ("href", GetClientEvent (node, "ec"));
 						else
 							writer.AddAttribute ("href", GetClientExpandEvent(node));
@@ -1373,19 +1374,6 @@ namespace System.Web.UI.WebControls
 				writer.RenderBeginTag (HtmlTextWriterTag.Span);
 		}
 		
-		bool HasChildInputData (TreeNode node)
-		{
-			// Returns true if this node contain childs whose state is hold in
-			// input elements that are rendered together with the node.
-			
-			if (node.Checked) return true;
-			if (!node.HasChildData) return false;
-
-			foreach (TreeNode n in node.ChildNodes)
-				if (HasChildInputData (n)) return true;
-			return false;
-		}
-		
 		string GetNodeImageToolTip (bool expand, string txt) {
 			if (expand)  {
 				if (ExpandImageToolTip != "")
@@ -1512,7 +1500,8 @@ namespace System.Web.UI.WebControls
 			foreach (string id in states) {
 				if (id == null || id == "") continue;
 				TreeNode node = FindNodeByPos (id);
-				node.Expanded = true;
+				if (node != null)
+					node.Expanded = true;
 			}
 		}
 		

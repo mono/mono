@@ -1,5 +1,10 @@
 2006-09-07 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* TreeView.cs: fixed: populating nodes.
+	* TreeView.js	
+
+2006-09-07 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* TreeNode.cs: fixed: ToggleExpandState.
 
 2006-09-07 Andrew Skiba <andrews@mainsoft.com>
