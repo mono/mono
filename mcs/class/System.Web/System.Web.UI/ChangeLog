@@ -1,3 +1,8 @@
+2006-09-07 Lluis Sanchez Gual  <lluis@novell.com>
+
+	* Page.cs: Use lowercase getElementById in the javascript that
+	checks the browser.
+
 2006-08-22  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* KeyedListEnumerator.cs: fixed Current property to return real object

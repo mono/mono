@@ -885,7 +885,7 @@ public class Page : TemplateControl, IHttpHandler
 		writer.WriteLine ("<script language=\"javascript\">");
 		writer.WriteLine ("<!--");
 
-		writer.WriteLine ("\tvar theForm;\n\tif (document.getElementById) {{ var theForm = document.GetElementById ('{0}'); }}", formUniqueID);
+		writer.WriteLine ("\tvar theForm;\n\tif (document.getElementById) {{ theForm = document.getElementById ('{0}'); }}", formUniqueID);
 		writer.WriteLine ("\telse {{ theForm = document.{0}; }}", formUniqueID);
 		writer.WriteLine ("\tfunction __doPostBack(eventTarget, eventArgument) {");
 		writer.WriteLine ("\t\ttheForm.{0}.value = eventTarget;", postEventSourceID);
