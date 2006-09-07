@@ -183,7 +183,10 @@ namespace System.Web.UI.WebControls {
 
 				adapter.Fill (dataset, name);
 
-				return dataset.CreateDataReader ();
+				if (dataset.Tables.Count >= 1)
+					return dataset.Tables[0].DefaultView;
+				else
+					return dataset.CreateDataReader ();
 			}
 			else {
 				bool closed = connection.State == ConnectionState.Closed;
