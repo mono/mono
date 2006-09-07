@@ -31,6 +31,22 @@ namespace MonoTests.System.Web.Services.Description
 			sd.Write (TextWriter.Null);
 		}
 
+		[Test]
+		public void Ctor ()
+		{
+			ServiceDescription sd = new ServiceDescription ();
+			Assert.IsNotNull (sd.Bindings);
+			Assert.IsNotNull (sd.Extensions);
+			Assert.IsNotNull (sd.Imports);
+			Assert.IsNotNull (sd.Messages);
+			Assert.IsNotNull (sd.PortTypes);
+			Assert.IsNotNull (sd.Services);
+			Assert.IsNotNull (sd.Types);
+
+			Assert.IsNull (sd.ServiceDescriptions);
+			Assert.IsNull (sd.TargetNamespace);
+		}
+
 #if NET_2_0
 		[Test]
 		public void Namespaces ()

@@ -94,8 +94,8 @@ namespace System.Web.Services.Description
 
 			serviceDescriptions = null;
 			services = new ServiceCollection (this);
-			targetNamespace = String.Empty;
-			types = null;
+			targetNamespace = null;
+			types = new Types ();
 		}
 		
 		#endregion // Constructors
@@ -159,8 +159,6 @@ namespace System.Web.Services.Description
 		[XmlIgnore]
 		public ServiceDescriptionCollection ServiceDescriptions {
 			get { 
-				if (serviceDescriptions == null) 
-					throw new NullReferenceException ();
 				return serviceDescriptions; 
 			}
 		}
