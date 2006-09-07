@@ -100,7 +100,7 @@ namespace Mono.CSharp {
 			get { return generic_method; }
 		}
 
-		protected TypeExpr InflateType (Type it)
+		public TypeExpr InflateType (Type it)
 		{
 			if (generic_method == null)
 				return new TypeExpression (it, Location);
@@ -127,14 +127,14 @@ namespace Mono.CSharp {
 			return new TypeExpression (it, Location);
 		}
 
-		public Field CaptureVariable (string name, Type type)
+		public Field CaptureVariable (string name, TypeExpr type)
 		{
 			if (members_defined)
 				throw new InternalErrorException ("Helper class already defined!");
 			if (type == null)
 				throw new ArgumentNullException ();
 
-			return new CapturedVariable (this, name, InflateType (type));
+			return new CapturedVariable (this, name, type);
 		}
 
 		bool members_defined;
@@ -186,7 +186,7 @@ namespace Mono.CSharp {
 		}
 
 		TypeExpr scope_type;
-		protected Field scope_instance;
+		protected CapturedScope scope_instance;
 		protected ScopeInitializer scope_initializer;
 
 		Hashtable locals = new Hashtable ();
@@ -195,12 +195,8 @@ namespace Mono.CSharp {
 			get { return RootScope; }
 		}
 
-		public Field ScopeInstance {
+		public Variable ScopeInstance {
 			get { return scope_instance; }
-		}
-
-		public Type ScopeType {
-			get { return scope_type.Type; }
 		}
 
 		public void EmitScopeInstance (EmitContext ec)
@@ -234,30 +230,34 @@ namespace Mono.CSharp {
 			return scope_initializer;
 		}
 
+		public Type GetScopeType (EmitContext ec)
+		{
+			if (!IsGeneric)
+				return TypeBuilder;
+
+			TypeArguments targs = new TypeArguments (Location);
+
+			if (ec.DeclContainer.Parent.IsGeneric)
+				foreach (TypeParameter t in ec.DeclContainer.Parent.TypeParameters)
+					targs.Add (new TypeParameterExpr (t, Location));
+			if (ec.DeclContainer.IsGeneric)
+				foreach (TypeParameter t in ec.DeclContainer.CurrentTypeParameters)
+					targs.Add (new TypeParameterExpr (t, Location));
+
+			TypeExpr te = new ConstructedType (TypeBuilder, targs, Location);
+			te = te.ResolveAsTypeTerminal (ec, false);
+			if ((te == null) || (te.Type == null))
+				return null;
+			return te.Type;
+		}
+
 		protected override bool DoResolveMembers ()
 		{
 			Report.Debug (64, "SCOPE INFO RESOLVE MEMBERS", this, GetType (), IsGeneric,
 				      Parent.IsGeneric, GenericMethod);
 
-			if (IsGeneric) {
-				TypeArguments targs = new TypeArguments (Location);
-				if (Parent.IsGeneric)
-					foreach (TypeParameter t in Parent.TypeParameters)
-						targs.Add (new TypeParameterExpr (t, Location));
-				if (GenericMethod != null)
-					foreach (TypeParameter t in GenericMethod.TypeParameters)
-						targs.Add (new TypeParameterExpr (t, Location));
-
-				scope_type = new ConstructedType (TypeBuilder, targs, Location);
-				scope_type = scope_type.ResolveAsTypeTerminal (this, false);
-				if ((scope_type == null) || (scope_type.Type == null))
-					return false;
-			} else {
-				scope_type = new TypeExpression (TypeBuilder, Location);
-			}
-
 			if (Host != this)
-				scope_instance = Host.CaptureScope (this);
+				scope_instance = new CapturedScope (Host, this);
 
 			return base.DoResolveMembers ();
 		}
@@ -299,7 +299,7 @@ namespace Mono.CSharp {
 			{
 				this.Scope = scope;
 				this.Field = scope.CaptureVariable (
-					scope.MakeFieldName (name), type);
+					scope.MakeFieldName (name), scope.RootScope.InflateType (type));
 			}
 
 			public override Type Type {
@@ -377,6 +377,16 @@ namespace Mono.CSharp {
 			}
 		}
 
+		protected class CapturedScope : CapturedLocalOrParameter {
+			public readonly ScopeInfo ChildScope;
+
+			public CapturedScope (ScopeInfo root, ScopeInfo child)
+				: base (root, child.ID + "_scope", child.TypeBuilder)
+			{
+				this.ChildScope = child;
+			}
+		}
+
 		static void DoPath (StringBuilder sb, ScopeInfo start)
 		{
 			sb.Append ((start.ID).ToString ());
@@ -420,7 +430,9 @@ namespace Mono.CSharp {
 				Report.Debug (64, "RESOLVE SCOPE INITIALIZER BASE", this, Scope,
 					      ec, ec.CurrentBlock);
 
-				type = Scope.ScopeType;
+				type = Scope.GetScopeType (ec);
+				if (type == null)
+					throw new InternalErrorException ();
 
 				if (!DoResolveInternal (ec))
 					throw new InternalErrorException ();
@@ -440,6 +452,16 @@ namespace Mono.CSharp {
 
 				if (Scope.ScopeInstance == null)
 					scope_instance = ec.ig.DeclareLocal (type);
+				else {
+					Type root = Scope.Host.GetScopeType (ec);
+					FieldExpr fe = (FieldExpr) Expression.MemberLookup (
+						type, root, Scope.scope_instance.Field.Name, loc);
+					if (fe == null)
+						throw new InternalErrorException ();
+
+					fe.InstanceExpression = this;
+					Scope.scope_instance.FieldInstance = fe;
+				}
 
 				foreach (CapturedLocal local in Scope.locals.Values) {
 					FieldExpr fe = (FieldExpr) Expression.MemberLookup (
@@ -519,7 +541,7 @@ namespace Mono.CSharp {
 					ec.ig.Emit (OpCodes.Ldarg_0);
 				EmitScopeConstructor (ec);
 				if (Scope.ScopeInstance != null)
-					ec.ig.Emit (OpCodes.Stfld, Scope.ScopeInstance.FieldBuilder);
+					Scope.ScopeInstance.EmitAssign (ec);
 				else
 					ec.ig.Emit (OpCodes.Stloc, scope_instance);
 			}
@@ -574,11 +596,6 @@ namespace Mono.CSharp {
 			if (this_field == null)
 				this_field = new CapturedVariable (this, "<>THIS", parent_type);
 			return this_field;
-		}
-
-		public Field CaptureScope (ScopeInfo scope)
-		{
-			return CaptureVariable (MakeName ("scope"), scope.ScopeType);
 		}
 
 		public Variable GetCapturedParameter (Parameter par)
@@ -758,7 +775,7 @@ namespace Mono.CSharp {
 			protected override bool DoResolveInternal (EmitContext ec)
 			{
 				Report.Debug (64, "RESOLVE ANONYMOUS METHOD HOST INITIALIZER",
-					      this, Host, Host.ScopeType, Host.ParentType, loc);
+					      this, Host, Host.ParentType, loc);
 
 				//
 				// Copy the parameter values, if any
@@ -1304,8 +1321,12 @@ namespace Mono.CSharp {
 		{
 			MethodInfo builder = method.MethodBuilder;
 			if ((RootScope != null) && RootScope.IsGeneric) {
+				Type scope_type = RootScope.GetScopeType (ec);
+				if (scope_type == null)
+					throw new InternalErrorException ();
+
 				MethodGroupExpr mg = (MethodGroupExpr) Expression.MemberLookup (
-					ec.ContainerType, RootScope.ScopeType, builder.Name, loc);
+					ec.ContainerType, scope_type, builder.Name, loc);
 
 				if (mg == null)
 					throw new InternalErrorException ();

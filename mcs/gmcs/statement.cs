@@ -2302,7 +2302,7 @@ namespace Mono.CSharp {
 			}
 
 			if (scope != scope.Host)
-				ec.ig.Emit (OpCodes.Ldfld, scope.ScopeInstance.FieldBuilder);
+				scope.ScopeInstance.Emit (ec);
 		}
 
 		public FlowBranchingToplevel TopLevelBranching {

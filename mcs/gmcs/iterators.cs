@@ -190,8 +190,8 @@ namespace Mono.CSharp {
 
 		protected override bool DoResolveMembers ()
 		{
-			pc_field = CaptureVariable ("$PC", TypeManager.int32_type);
-			current_field = CaptureVariable ("$current", Iterator.OriginalIteratorType);
+			pc_field = CaptureVariable ("$PC", TypeManager.system_int32_expr);
+			current_field = CaptureVariable ("$current", iterator_type_expr);
 
 			Define_Current (true);
 			Define_Current (false);
