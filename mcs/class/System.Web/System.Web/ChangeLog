@@ -1,3 +1,7 @@
+2006-09-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplicationFactory.cs: watch web.config too. Fixes bug #78356.
+
 2006-09-05  Konstantin Triger <kostat@mainsoft.com>
 
 	* SiteMapProvider.cs: consider authorization section for access decision.

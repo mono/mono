@@ -74,6 +74,7 @@ namespace System.Web {
 #if !TARGET_JVM
 		FileSystemWatcher app_file_watcher;
 		FileSystemWatcher bin_watcher;
+		FileSystemWatcher config_watcher;
 #endif
 		Stack available = new Stack ();
 		Stack available_for_end = new Stack ();
@@ -224,6 +225,8 @@ namespace System.Web {
 
 		void OnAppFileChanged (object sender, FileSystemEventArgs args)
 		{
+			if (config_watcher != null)
+				config_watcher.EnableRaisingEvents = false;
 			if (bin_watcher != null)
 				bin_watcher.EnableRaisingEvents = false;
 			if (app_file_watcher != null)
@@ -369,6 +372,7 @@ namespace System.Web {
 				app_file = Path.Combine (physical_app_path, "Global.asax");
 				if (!File.Exists (app_file))
 					app_file = Path.Combine (physical_app_path, "global.asax");
+
 			
 #if NET_2_0
 				WebConfigurationManager.Init ();
@@ -385,15 +389,21 @@ namespace System.Web {
 						string msg = String.Format ("Error compiling application file ({0}).", app_file);
 						throw new ApplicationException (msg);
 					}
-
-					FileSystemEventHandler fseh = new FileSystemEventHandler (OnAppFileChanged);
-					RenamedEventHandler reh = new RenamedEventHandler (OnAppFileRenamed);
-					app_file_watcher = CreateWatcher (app_file, fseh, reh);
 #endif
 				} else {
 					app_type = typeof (System.Web.HttpApplication);
 					app_state = new HttpApplicationState ();
 				}
+
+				FileSystemEventHandler fseh = new FileSystemEventHandler (OnAppFileChanged);
+				RenamedEventHandler reh = new RenamedEventHandler (OnAppFileRenamed);
+				app_file_watcher = CreateWatcher (app_file, fseh, reh);
+
+				string config_file = Path.Combine (physical_app_path, "Web.config");
+				if (!File.Exists (config_file))
+					config_file = Path.Combine (physical_app_path, "web.config");
+
+				config_watcher = CreateWatcher (config_file, fseh, reh);
 				needs_init = false;
 
 				//
