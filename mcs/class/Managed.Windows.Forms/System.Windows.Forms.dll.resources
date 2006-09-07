@@ -32,6 +32,9 @@
 -resource:resources/16_user-desktop.png
 -resource:resources/32_user-desktop.png
 -resource:resources/user-desktop.png
+-resource:resources/16_user-home.png
+-resource:resources/32_user-home.png
+-resource:resources/user-home.png
 -resource:resources/dialog-error.png
 -resource:resources/dialog-information.png
 -resource:resources/dialog-question.png
