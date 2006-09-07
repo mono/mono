@@ -287,9 +287,13 @@ namespace System.Web.Configuration {
 		public static object GetWebApplicationSection (string sectionName)
 		{
 			_Configuration config = GetWebApplicationConfiguration ();
+			if (config == null)
+				return null;
 
 			ConfigurationSection section = config.GetSection (sectionName);
-
+			if (section == null)
+				return null;
+			
 			return get_runtime_object.Invoke (section, new object [0]);
 		}
 
