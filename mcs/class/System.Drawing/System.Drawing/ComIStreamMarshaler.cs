@@ -123,7 +123,14 @@ namespace System.Drawing
 
 			static ManagedToNativeWrapper()
 			{
+				EventHandler onShutdown;
+				AppDomain currentDomain;
 				IStreamVtbl newVtable;
+
+				onShutdown = new EventHandler(OnShutdown);
+				currentDomain = AppDomain.CurrentDomain;
+				currentDomain.DomainUnload += onShutdown;
+				currentDomain.ProcessExit += onShutdown;
 
 				newVtable = new IStreamVtbl();
 				newVtable.QueryInterface = new QueryInterfaceDelegate(QueryInterface);
@@ -141,52 +148,82 @@ namespace System.Drawing
 				newVtable.Stat = new StatDelegate(Stat);
 				newVtable.Clone = new CloneDelegate(Clone);
 				managedVtable = newVtable;
+
+				CreateVtable();
 			}
 
 			private ManagedToNativeWrapper(IStream managedInterface)
 			{
 				IStreamInterface newInterface;
 
-				this.managedInterface = managedInterface;
-				gcHandle = GCHandle.Alloc(this);
-
-				newInterface = new IStreamInterface();
-
 				lock (managedVtable)
 				{
-					// Vtable may have been freed when unloading
+					// Vtable may have been disposed when shutting down
 					if (vtableRefCount == 0 && comVtable == IntPtr.Zero)
-					{
-						comVtable = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(IStreamVtbl)));
-						Marshal.StructureToPtr(managedVtable, comVtable, false);
-					}
+						CreateVtable();
 					vtableRefCount++;
-
-					newInterface.lpVtbl = comVtable;
 				}
 
-				newInterface.gcHandle = (IntPtr)gcHandle;
-				comInterface = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(IStreamInterface)));
-				Marshal.StructureToPtr(newInterface, comInterface, false);
+				try
+				{
+					this.managedInterface = managedInterface;
+					gcHandle = GCHandle.Alloc(this);
+
+					newInterface = new IStreamInterface();
+					newInterface.lpVtbl = comVtable;
+					newInterface.gcHandle = (IntPtr)gcHandle;
+					comInterface = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(IStreamInterface)));
+					Marshal.StructureToPtr(newInterface, comInterface, false);
+				}
+				catch
+				{
+					this.Dispose();
+					throw;
+				}
 			}
 
 			private void Dispose()
 			{
-				Marshal.FreeHGlobal(comInterface);
-				gcHandle.Free();
-				comInterface = IntPtr.Zero;
+				if (gcHandle.IsAllocated)
+					gcHandle.Free();
+
+				if (comInterface != IntPtr.Zero)
+				{
+					Marshal.FreeHGlobal(comInterface);
+					comInterface = IntPtr.Zero;
+				}
+
 				managedInterface = null;
 
 				lock (managedVtable)
 				{
-					// Free vtable when unloading
+					// Dispose vtable when shutting down
 					if (--vtableRefCount == 0 && Environment.HasShutdownStarted)
-					{
-						Marshal.DestroyStructure(comVtable, typeof(IStreamVtbl));
-						Marshal.FreeHGlobal(comVtable);
-						comVtable = IntPtr.Zero;
-					}
+						DisposeVtable();
 				}
+			}
+
+			private static void OnShutdown(object sender, EventArgs e)
+			{
+				lock (managedVtable)
+				{
+					// There may be object instances when shutting down
+					if (vtableRefCount == 0 && comVtable != IntPtr.Zero)
+						DisposeVtable();
+				}
+			}
+
+			private static void CreateVtable()
+			{
+				comVtable = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(IStreamVtbl)));
+				Marshal.StructureToPtr(managedVtable, comVtable, false);
+			}
+
+			private static void DisposeVtable()
+			{
+				Marshal.DestroyStructure(comVtable, typeof(IStreamVtbl));
+				Marshal.FreeHGlobal(comVtable);
+				comVtable = IntPtr.Zero;
 			}
 
 			internal static IStream GetUnderlyingInterface(IntPtr comInterface, bool outParam)
