@@ -1,6 +1,7 @@
 2006-09-07  Alexander Olk  <alex.olk@googlemail.com>
 
 	* Theme.cs: Use correct icon for UIIcon.PlacesPersonal
+	* FileDialog.cs: Fix typo
 
 2006-09-07  Jackson Harper  <jackson@ximian.com>
 

@@ -3138,7 +3138,7 @@ namespace System.Windows.Forms {
 			desktopFSEntry.Name = "Desktop";
 			desktopFSEntry.RealName = ThemeEngine.Current.Places (UIIcon.PlacesDesktop);
 			desktopFSEntry.FileType = FSEntry.FSEntryType.Directory;
-			desktopFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("deskop/desktop");
+			desktopFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("desktop/desktop");
 			desktopFSEntry.LastAccessTime = DateTime.Now;
 			
 			recentlyusedFSEntry = new FSEntry ();
@@ -3523,7 +3523,7 @@ namespace System.Windows.Forms {
 			desktopFSEntry.Name = "Desktop";
 			desktopFSEntry.RealName = ThemeEngine.Current.Places (UIIcon.PlacesDesktop);
 			desktopFSEntry.FileType = FSEntry.FSEntryType.Directory;
-			desktopFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("deskop/desktop");
+			desktopFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("desktop/desktop");
 			desktopFSEntry.LastAccessTime = DateTime.Now;
 			
 			recentlyusedFSEntry = new FSEntry ();
