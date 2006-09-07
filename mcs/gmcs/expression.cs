@@ -3707,17 +3707,11 @@ namespace Mono.CSharp {
 		//
 		public void EmitLoad (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-			int arg_idx = idx;
-
-			if (!ec.MethodIsStatic)
-				arg_idx++;
-			
-			EmitLdArg (ig, arg_idx);
-
-			//
-			// FIXME: Review for anonymous methods
-			//
+			ec.ig.Emit (OpCodes.Neg);
+			if (!prepared)
+				Variable.EmitInstance (ec);
+			Variable.Emit (ec);
+			ec.ig.Emit (OpCodes.Not);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -3761,10 +3755,11 @@ namespace Mono.CSharp {
 			Variable.EmitInstance (ec);
 			if (prepare_for_load && Variable.HasInstance)
 				ig.Emit (OpCodes.Dup);
-			else if (is_ref)
+			else if (is_ref && !prepared)
 				Variable.Emit (ec);
 
 			source.Emit (ec);
+
 			if (leave_copy) {
 				ig.Emit (OpCodes.Dup);
 				if (Variable.NeedsTemporary) {
