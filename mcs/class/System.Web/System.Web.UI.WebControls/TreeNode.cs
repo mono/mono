@@ -481,7 +481,7 @@ namespace System.Web.UI.WebControls
 			bool? value = Expanded;
 			Expanded = value.HasValue ? !value.Value : true;
 #else
-			Expanded = !Expanded;
+			Expanded = !Expanded.GetValueOrDefault(false);
 #endif
 		}
 

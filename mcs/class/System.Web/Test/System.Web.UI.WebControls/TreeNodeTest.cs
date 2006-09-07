@@ -420,6 +420,16 @@ namespace MonoTests.System.Web.UI.WebControls {
 			page.Form.Controls.Add (tv);
 			page.Form.Controls.Add (lce);
 		}
+
+		[Test]
+		public void TreeNode_ToggleExpandState () {
+			TreeNode node = new TreeNode ("node");
+			Assert.AreEqual (null, node.Expanded, "TreeNode_ToggleExpandState#1");
+			node.ToggleExpandState ();
+			Assert.AreEqual (true, node.Expanded, "TreeNode_ToggleExpandState#2");
+			node.ToggleExpandState ();
+			Assert.AreEqual (false, node.Expanded, "TreeNode_ToggleExpandState#3");
+		}
 	}
 }
 
