@@ -53,6 +53,9 @@ IMAGES_RESOURCES = \
 	resources/16_user-desktop.png		\
 	resources/32_user-desktop.png		\
 	resources/user-desktop.png		\
+	resources/16_user-home.png		\
+	resources/32_user-home.png		\
+	resources/user-home.png		\
 	resources/dialog-error.png		\
 	resources/dialog-information.png	\
 	resources/dialog-question.png		\

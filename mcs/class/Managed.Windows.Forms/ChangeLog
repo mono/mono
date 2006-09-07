@@ -1,6 +1,6 @@
 2006-09-07  Alexander Olk  <alex.olk@googlemail.com>
 
-	* resources/, System.Windows.Forms.dll.resources:
+	* resources/, System.Windows.Forms.dll.resources, Makefile:
 	  Add user-home Tango icon in various sizes.
 
 2006-09-05  Kornél Pál  <kornelpal@hotmail.com>
