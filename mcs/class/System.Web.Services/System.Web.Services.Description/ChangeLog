@@ -1,6 +1,8 @@
 2006-09-07  Ankit Jain  <jankit@novell.com>
 
-	* ServiceDescriptionTest.cs (Ctor): New.
+	* ServiceDescription.cs (.ctor): Set targetNamespace = null,
+	and initialize 'types'.
+	(ServiceDescription.ServiceDescriptions): Don't throw NRE.
 
 2006-09-06  Vladimir Krasnov
 
