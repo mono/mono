@@ -306,7 +306,7 @@ namespace Mono.CSharp {
 			return (MethodInfo) mg.Methods [0];
 		}
 
-		protected override ScopeInitializerBase CreateScopeInitializer ()
+		protected override ScopeInitializer CreateScopeInitializer ()
 		{
 			return new IteratorHostInitializer (this);
 		}
