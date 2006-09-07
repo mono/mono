@@ -5,7 +5,7 @@
 // Author:
 //      Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004-2005 Novell, Inc. (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -43,7 +43,8 @@ namespace Mono.Security.Protocol.Tls {
 
                 public HttpsClientStream (Stream stream, X509CertificateCollection clientCertificates,
 					HttpWebRequest request, byte [] buffer)
-                        : base (stream, request.RequestUri.Host, false, SecurityProtocolType.Default, clientCertificates)
+                        : base (stream, request.RequestUri.Host, false, (Mono.Security.Protocol.Tls.SecurityProtocolType)
+				ServicePointManager.SecurityProtocol, clientCertificates)
                 {
                         // this constructor permit access to the WebRequest to call
                         // ICertificatePolicy.CheckValidationResult
