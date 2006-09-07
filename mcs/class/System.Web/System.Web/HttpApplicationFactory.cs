@@ -395,6 +395,7 @@ namespace System.Web {
 					app_state = new HttpApplicationState ();
 				}
 
+#if !TARGET_JVM
 				FileSystemEventHandler fseh = new FileSystemEventHandler (OnAppFileChanged);
 				RenamedEventHandler reh = new RenamedEventHandler (OnAppFileRenamed);
 				app_file_watcher = CreateWatcher (app_file, fseh, reh);
@@ -404,6 +405,7 @@ namespace System.Web {
 					config_file = Path.Combine (physical_app_path, "web.config");
 
 				config_watcher = CreateWatcher (config_file, fseh, reh);
+#endif
 				needs_init = false;
 
 				//
