@@ -243,8 +243,6 @@ namespace System.Web.UI {
 				throw new ArgumentNullException ("virtualPath");
 
 			string vpath = UrlUtils.Combine (TemplateSourceDirectory, virtualPath);
-			if (!vpath.StartsWith(IAppDomainConfig.WAR_ROOT_SYMBOL)) 
-				vpath = Context.Request.MapPath(vpath);
 			return PageMapper.GetObjectType(vpath);
 		}
 
