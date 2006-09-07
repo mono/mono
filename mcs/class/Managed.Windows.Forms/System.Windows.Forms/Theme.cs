@@ -601,7 +601,7 @@ namespace System.Windows.Forms
 				case UIIcon.PlacesDesktop:
 					return GetSizedResourceImage ("user-desktop.png", size);
 				case UIIcon.PlacesPersonal:
-					return GetSizedResourceImage ("document-open.png", size);
+					return GetSizedResourceImage ("user-home.png", size);
 				case UIIcon.PlacesMyComputer:
 					return GetSizedResourceImage ("computer.png", size);
 				case UIIcon.PlacesMyNetwork:

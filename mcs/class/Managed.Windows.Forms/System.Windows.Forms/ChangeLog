@@ -1,3 +1,7 @@
+2006-09-07  Alexander Olk  <alex.olk@googlemail.com>
+
+	* Theme.cs: Use correct icon for UIIcon.PlacesPersonal
+
 2006-09-07  Jackson Harper  <jackson@ximian.com>
 
 	* ThemeWin32Classic.cs:  oops, forgot to commit.  Draw the images
