@@ -3739,7 +3739,7 @@ namespace Mono.CSharp {
 
 				mb = Parent.TypeBuilder.DefineMethod (method_name, flags);
 
-				if (!GenericMethod.Define (mb))
+				if (!GenericMethod.Define (mb, block))
 					return false;
 			}
 

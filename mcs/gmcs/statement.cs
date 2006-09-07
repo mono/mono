@@ -1327,7 +1327,7 @@ namespace Mono.CSharp {
 			get { return this_id; }
 		}
 
-		protected IDictionary Variables {
+		public IDictionary Variables {
 			get {
 				if (variables == null)
 					variables = new ListDictionary ();
