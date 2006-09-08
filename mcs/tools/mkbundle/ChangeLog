@@ -1,3 +1,8 @@
+2006-09-08  Robert Jordan  <robertj@gmx.net>
+
+	* mkbundle.cs, TODO: The `-z' option is now supported under
+	Windows.
+
 2006-09-05  Kornél Pál  <kornelpal@gmail.com>
 
 	* TODO: Renamed mono-1.dll to mono.dll.

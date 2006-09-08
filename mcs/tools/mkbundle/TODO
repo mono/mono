@@ -10,23 +10,18 @@ Files:
 
 Windows Issues:
 
---static doesn't work because libmono.a is not distributed with the
-Windows package.
+	* --static is not supported and probably it will never be,
+	  because the libgc code must reside in a DLL.
 
-Not a big deal, because the needed dlls can be simply distributed with
-the mkbundle-generated executable.
+	* Document that the following DLLs are required to be deployed
+	  along with the bundle. Do we need some legal blub if we
+	  incite the user to deploy these binaries?
 
-For example, a bundled XSP needs:
-
-mono.dll
-libglib*.dll
-libgmodule*.dll
-libgthread*.dll
-iconv.dll
-intl.dll
-
-(roundabout 10MB). This seems to be the minimal working set of dlls
-that have to be distributed with a bundled application.
-
--z doesn't work due to some weird cygwin zlib problems.
+		[Mm]ono*.dll
+		libglib*.dll
+		libgmodule*.dll
+		libgthread*.dll
+		iconv.dll
+		intl.dll
+		zlib1.dll
 

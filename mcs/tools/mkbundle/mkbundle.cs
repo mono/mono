@@ -110,10 +110,6 @@ class MakeBundle {
 				config_dir = args [++i];
 				break;
 			case "-z":
-				if (style == "windows") {
-					Console.Error.WriteLine ("The option `{0}' is not supported on this platform.", args [i]);
-					return 1;
-				}
 				compress = true;
 				break;
 			default:
