@@ -1,5 +1,16 @@
 2006-08-08  Raja R Harinath  <rharinath@novell.com>
 
+	* ecore.cs (FieldExpr.EmitAssign): Release temporary.
+	(PropertyExpr.EmitAssign): Likewise.
+	* expression.cs (Indirection.EmitAssign): Likewise.
+	(LocalVariableReference.EmitAssign): Likewise.
+	(ParameterReference.EmitAssign): Likewise.
+	(Invocation.EmitArguments): Likewise.
+	(ArrayAccess.EmitAssign): Likewise.
+	(IndexerAccess.EmitAssign): Likewise.
+	(This.EmitAssign): Likewise.
+	(ConditionalLogicalOperator.Emit): Likewise.
+
 	Fix #79026
 	* codegen.cs (EmitContext.GetTemporaryLocal): Simplify.  Use Stack
 	instead of ArrayList.  If the hashtable has a LocalBuilder, don't

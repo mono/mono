@@ -3370,8 +3370,10 @@ namespace Mono.CSharp {
 			else 
 				ig.Emit (OpCodes.Stfld, FieldInfo);
 			
-			if (temp != null)
+			if (temp != null) {
 				temp.Emit (ec);
+				temp.Release (ec);
+			}
 		}
 
 		public override void Emit (EmitContext ec)
@@ -3827,8 +3829,10 @@ namespace Mono.CSharp {
 			
 			Invocation.EmitCall (ec, IsBase, IsStatic, InstanceExpression, setter, args, loc, false, prepared);
 			
-			if (temp != null)
+			if (temp != null) {
 				temp.Emit (ec);
+				temp.Release (ec);
+			}
 		}
 	}
 
