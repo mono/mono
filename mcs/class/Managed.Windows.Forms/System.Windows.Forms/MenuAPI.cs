@@ -82,6 +82,7 @@ namespace System.Windows.Forms {
 			keynav_state = KeyNavState.Idle;
 			if (TopMenu is ContextMenu) {
 				PopUpWindow puw = TopMenu.Wnd as PopUpWindow;
+				DeselectItem (TopMenu.SelectedItem);
 				puw.HideWindow ();
 			} else {
 #if false
