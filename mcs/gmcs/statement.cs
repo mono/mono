@@ -1092,8 +1092,7 @@ namespace Mono.CSharp {
 			}
 
 			if (VariableType == TypeManager.void_type) {
-				Report.Error (1547, Location,
-					      "Keyword 'void' cannot be used in this context");
+				Expression.Error_VoidInvalidInTheContext (Location);
 				return false;
 			}
 

@@ -567,7 +567,7 @@ namespace Mono.CSharp
 				return true;
 			else if ((the_token == Token.COMMA) || (the_token == Token.DOT))
 				goto start;
-			else if (the_token == Token.INTERR)
+			else if (the_token == Token.INTERR || the_token == Token.STAR)
 				goto again;
 			else if (the_token == Token.OP_GENERICS_LT) {
 				if (!parse_less_than ())

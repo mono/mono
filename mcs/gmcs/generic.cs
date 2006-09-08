@@ -507,6 +507,12 @@ namespace Mono.CSharp {
 			return false;
 		}
 
+		public Location Location {
+			get {
+				return loc;
+			}
+		}
+
 		/// <summary>
 		///   This is used when we're implementing a generic interface method.
 		///   Each method type parameter in implementing method must have the same
@@ -1199,7 +1205,7 @@ namespace Mono.CSharp {
 
 				if (te.Type.IsPointer) {
 					Report.Error (306, Location, "The type `{0}' may not be used " +
-						      "as a type argument.", TypeManager.CSharpName (te.Type));
+						      "as a type argument", TypeManager.CSharpName (te.Type));
 					return false;
 				} else if (te.Type == TypeManager.void_type) {
 					Report.Error (1547, Location,

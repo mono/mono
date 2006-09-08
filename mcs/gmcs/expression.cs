@@ -1333,7 +1333,7 @@ namespace Mono.CSharp {
 			this.loc = loc;
 
 			if (target_type == TypeManager.system_void_expr)
-				Report.Error (1547, loc, "Keyword `void' cannot be used in this context");
+				Error_VoidInvalidInTheContext (loc);
 		}
 
 		public Expression TargetType {
@@ -6919,6 +6919,13 @@ namespace Mono.CSharp {
 			}
 
 			type_queried = texpr.Type;
+			if (type_queried.IsEnum)
+				type_queried = TypeManager.EnumToUnderlying (type_queried);
+
+			if (type_queried == TypeManager.void_type) {
+				Expression.Error_VoidInvalidInTheContext (loc);
+				return null;
+			}
 
 			int size_of = GetTypeSize (type_queried);
 			if (size_of > 0) {
@@ -8519,8 +8526,7 @@ namespace Mono.CSharp {
 
 			Type ltype = lexpr.Type;
 			if ((ltype == TypeManager.void_type) && (dim != "*")) {
-				Report.Error (1547, Location,
-					      "Keyword 'void' cannot be used in this context");
+				Error_VoidInvalidInTheContext (loc);
 				return null;
 			}
 

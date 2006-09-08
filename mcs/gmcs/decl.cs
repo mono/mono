@@ -397,9 +397,9 @@ namespace Mono.CSharp {
 		public virtual string GetSignatureForError ()
 		{
 			if (Parent == null || Parent.Parent == null)
-				return Name;
+				return member_name.ToString ();
 
-			return String.Concat (Parent.GetSignatureForError (), '.', Name);
+			return String.Concat (Parent.GetSignatureForError (), '.', member_name.ToString ());
 		}
 
 		/// <summary>

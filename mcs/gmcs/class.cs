@@ -3580,9 +3580,8 @@ namespace Mono.CSharp {
 
 			foreach (Type partype in parameters){
 				if (partype == TypeManager.void_type) {
-					Report.Error (
-						1547, Location, "Keyword 'void' cannot " +
-						"be used in this context");
+					// TODO: location is wrong
+					Expression.Error_VoidInvalidInTheContext (Location);
 					return false;
 				}
 
@@ -4142,27 +4141,27 @@ namespace Mono.CSharp {
 				CodeGen.FileName, TypeManager.CSharpSignature(b));
 		}
 
-                bool IsEntryPoint (MethodBuilder b, Parameters pinfo)
-                {
-                        if (b.ReturnType != TypeManager.void_type &&
-                            b.ReturnType != TypeManager.int32_type)
-                                return false;
+		bool IsEntryPoint (Parameters pinfo)
+		{
+			if (ReturnType != TypeManager.void_type &&
+				ReturnType != TypeManager.int32_type)
+				return false;
 
-                        if (pinfo.Count == 0)
-                                return true;
+			if (pinfo.Count == 0)
+				return true;
 
-                        if (pinfo.Count > 1)
-                                return false;
+			if (pinfo.Count > 1)
+				return false;
 
-                        Type t = pinfo.ParameterType(0);
-                        if (t.IsArray &&
-                            (t.GetArrayRank() == 1) &&
-                            (TypeManager.GetElementType(t) == TypeManager.string_type) &&
-                            (pinfo.ParameterModifier(0) == Parameter.Modifier.NONE))
-                                return true;
-                        else
-                                return false;
-                }
+			Type t = pinfo.ParameterType (0);
+			if (t.IsArray &&
+				(t.GetArrayRank () == 1) &&
+				(TypeManager.GetElementType (t) == TypeManager.string_type) &&
+				(pinfo.ParameterModifier (0) == Parameter.Modifier.NONE))
+				return true;
+			else
+				return false;
+		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
@@ -4270,29 +4269,30 @@ namespace Mono.CSharp {
 			//
 			// This is used to track the Entry Point,
 			//
-			if (Name == "Main" &&
-				((ModFlags & Modifiers.STATIC) != 0) && RootContext.NeedsEntryPoint && 
+			if (RootContext.NeedsEntryPoint &&  ((ModFlags & Modifiers.STATIC) != 0) &&
+				Name == "Main" &&
 				(RootContext.MainClass == null ||
 				RootContext.MainClass == Parent.TypeBuilder.FullName)){
-				if (IsEntryPoint (MethodBuilder, ParameterInfo)) {
-					IMethodData md = TypeManager.GetMethod (MethodBuilder);
-					md.SetMemberIsUsed ();
+				if (IsEntryPoint (ParameterInfo)) {
 
 					if (RootContext.EntryPoint == null) {
-						if (Parent.IsGeneric){
-							Report.Error (-201, Location,
-								      "Entry point can not be defined in a generic class");
-						}
+						if (Parent.IsGeneric || MemberName.IsGeneric) {
+							Report.Warning (402, 4, Location, "`{0}': an entry point cannot be generic or in a generic type",
+								GetSignatureForError ());
+						} else {
+							IMethodData md = TypeManager.GetMethod (MethodBuilder);
+							md.SetMemberIsUsed ();
 
-						RootContext.EntryPoint = MethodBuilder;
-						RootContext.EntryPointLocation = Location;
+							RootContext.EntryPoint = MethodBuilder;
+							RootContext.EntryPointLocation = Location;
+						}
 					} else {
 						Error_DuplicateEntryPoint (RootContext.EntryPoint, RootContext.EntryPointLocation);
 						Error_DuplicateEntryPoint (MethodBuilder, Location);
 					}
 				} else {
-					if (RootContext.WarningLevel >= 4)
-						Report.Warning (28, 4, Location, "`{0}' has the wrong signature to be an entry point", TypeManager.CSharpSignature(MethodBuilder));
+					Report.Warning (28, 4, Location, "`{0}' has the wrong signature to be an entry point",
+						GetSignatureForError ());
 				}
 			}
 
@@ -5711,7 +5711,8 @@ namespace Mono.CSharp {
 				return false;
 			
 			if (MemberType == TypeManager.void_type) {
-				Report.Error (1547, Location, "Keyword 'void' cannot be used in this context");
+				// TODO: wrong location
+				Expression.Error_VoidInvalidInTheContext (Location);
 				return false;
 			}
 
