@@ -483,11 +483,55 @@ namespace System.Web.UI.WebControls
 				return updateParameters;
 			}
 		}
-		
+
+		private static string privateBinPath;
+    
+		private static string PrivateBinPath
+		{
+			get {
+    				if (privateBinPath != null)
+        				return privateBinPath;
+
+    				AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
+    				privateBinPath = Path.Combine(setup.ApplicationBase, setup.PrivateBinPath);
+
+    				return privateBinPath;
+    			    }
+		}
+    
+	        private Type LoadType(string typeName)
+		{
+    			Type type = null;
+    			Assembly [] assemblies = AppDomain.CurrentDomain.GetAssemblies ();
+
+    			foreach (Assembly ass in assemblies) {
+    				type = ass.GetType (typeName);
+    				if (type == null)
+        				continue;
+
+    				return type;
+    			}
+
+    			if (!Directory.Exists (PrivateBinPath))
+    				return null;
+
+    			string[] binDlls = Directory.GetFiles(PrivateBinPath, "*.dll");
+    			foreach (string s in binDlls) {
+    				Assembly binA = Assembly.LoadFrom (s);
+    				type = binA.GetType (typeName);
+    				if (type == null)
+        				continue;
+
+    				return type;
+    			}
+
+    			return null;
+		}
+    
 		Type ObjectType {
 			get {
 				if (objectType == null) {
-					objectType = Type.GetType (TypeName);
+					objectType = LoadType (TypeName);
 					if (objectType == null)
 						throw new InvalidOperationException ("Type not found: " + TypeName);
 				}
@@ -498,7 +542,7 @@ namespace System.Web.UI.WebControls
 		Type DataObjectType {
 			get {
 				if (dataObjectType == null) {
-					dataObjectType = Type.GetType (DataObjectTypeName);
+					dataObjectType = LoadType (DataObjectTypeName);
 					if (objectType == null)
 						throw new InvalidOperationException ("Type not found: " + DataObjectTypeName);
 				}
@@ -787,7 +831,10 @@ namespace System.Web.UI.WebControls
 		
 		MethodInfo GetObjectMethod (string methodName, IOrderedDictionary parameters)
 		{
-			MemberInfo[] methods = ObjectType.GetMember (methodName);
+			MemberInfo[] methods = ObjectType.GetMember (methodName, BindingFlags.Instance | 
+										 BindingFlags.Static | 
+										 BindingFlags.Public | 
+										 BindingFlags.FlattenHierarchy);
 			if (methods.Length > 1) {
 				// MSDN: The ObjectDataSource resolves method overloads by method name and number
 				// of parameters; the names and types of the parameters are not considered.

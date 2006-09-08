@@ -1,5 +1,10 @@
 2006-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ObjectDataSourceView.cs: correctly find the type when it is not in the
+	executing assembly. Fixes bug #78321. Patch by Marek Habersack.
+
+2006-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ControlParameter.cs: fix search for controls so that they use their
 	NamingContainer, not the Page. Patch by Marek Habersack that fixes
 	bug #78320.
