@@ -3760,7 +3760,7 @@ namespace Mono.CSharp {
 
 			if (leave_copy) {
 				ig.Emit (OpCodes.Dup);
-				if (Variable.NeedsTemporary) {
+				if (is_ref || Variable.NeedsTemporary) {
 					temp = new LocalTemporary (Type);
 					temp.Store (ec);
 				}
