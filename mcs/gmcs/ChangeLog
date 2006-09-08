@@ -1,3 +1,24 @@
+2006-09-01  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs
+	(TypeManager.IsIList): Also handle base classes and interfaces.	
+
+2006-09-01  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #79238
+	* expression.cs (Invocation.MoreSpecific): Check for reference
+	types earlier.
+
+2006-08-29  Miguel de Icaza  <miguel@novell.com>
+
+	* cs-parser.jay: Turn 1522 into a warning, instead of an error #79210
+
+2006-08-17  Miguel de Icaza  <miguel@novell.com>
+
+	* cs-tokenizer.cs: Apply patch from Atsushi Enomoto that fixes
+	#52019 and #79064, the use of the \uXXXX sequence in source code
+	to represent unicode characters.
+
 2006-08-15  Marek Safar  <marek.safar@seznam.cz>
  
 	* expression.cs (SizeOf.DoResolve): Check for void type. Fixed enum types
