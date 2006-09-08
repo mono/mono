@@ -728,7 +728,7 @@ mono_ia64_alloc_stacked_registers (MonoCompile *cfg)
 	}
 
 	/* 
-	 * Need to allocate at least 2 out register for use by CEE_THROW / the system
+	 * Need to allocate at least 2 out register for use by OP_THROW / the system
 	 * exception throwing code.
 	 */
 	cfg->arch.n_out_regs = MAX (cfg->arch.n_out_regs, 2);
@@ -2416,7 +2416,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_MOVE:
 			ia64_mov (code, ins->dreg, ins->sreg1);
 			break;
-		case CEE_BR:
 		case OP_BR:
 		case OP_IA64_BR_COND: {
 			int pred = 0;
@@ -3050,7 +3049,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_FNEG:
 			ia64_fmerge_ns (code, ins->dreg, ins->sreg1, ins->sreg1);
 			break;
-		case CEE_CKFINITE:
 		case OP_CKFINITE:
 			/* Quiet NaN */
 			ia64_fclass_m (code, 6, 7, ins->sreg1, 0x080);
@@ -3152,7 +3150,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			code = emit_move_return_value (cfg, ins, code);
 			break;
-		case CEE_JMP:
 		case OP_JMP: {
 			/*
 			 * Keep in sync with the code in emit_epilog.
@@ -3188,7 +3185,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			break;
 		}
-		case CEE_BREAK:
 		case OP_BREAK:
 			code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, mono_arch_break);
 			break;
@@ -3402,7 +3398,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			break;
 		}
-		case CEE_ENDFINALLY:
 		case OP_ENDFINALLY:
 		case OP_ENDFILTER: {
 			/* FIXME: Return the value in ENDFILTER */
@@ -3427,7 +3422,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ia64_br_cond_reg (code, IA64_B6);
 			break;
 		}
-		case CEE_THROW:
 		case OP_THROW:
 			ia64_mov (code, cfg->arch.reg_out0, ins->sreg1);
 			code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD, 
@@ -4377,7 +4371,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 
 	ia64_codegen_init (code, buf);
 
-	/* the code restoring the registers must be kept in sync with CEE_JMP */
+	/* the code restoring the registers must be kept in sync with OP_JMP */
 	pos = 0;
 	
 	if (method->save_lmf) {

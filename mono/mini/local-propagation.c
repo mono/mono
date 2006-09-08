@@ -1011,7 +1011,7 @@ mono_local_cprop_bb (MonoCompile *cfg, TreeMover *tree_mover, MonoBasicBlock *bb
 		  if (tree->inst_i0->inst_i0->opcode == OP_ICONST &&
 		  tree->inst_i0->inst_i1->opcode == OP_ICONST) {
 
-		  tree->opcode = CEE_BR;
+		  tree->opcode = OP_BR;
 		  if (tree->inst_i0->inst_i0->opcode == tree->inst_i0->inst_i1->opcode) {
 		  tree->inst_target_bb = tree->inst_true_bb;
 		  } else {

@@ -11,14 +11,9 @@ br: len:48
 op_jump_table: dest:i len:48
 
 nop: len:0
-op_nop: len:0
 dummy_use: len:0
 dummy_store: len:0
 not_reached: len:0
-
-op_br: len: 48
-op_jmp: len:48
-op_break: len:48
 
 beq: len:48
 bge: len:48
@@ -80,13 +75,11 @@ long_conv_to_r8: dest:f src1:i len:112
 
 conv.r.un: dest:f src1:i len:48
 throw: src1:i len:96
-op_throw: src1:i len:96
-op_rethrow: src1:i len:48
+rethrow: src1:i len:48
 conv.ovf.i4.un: dest:i src1:i len:96
 conv.ovf.u4.un: 
 conv.ovf.u4: dest:i src1:i len:48
 ckfinite: dest:f src1:f len:48
-op_ckfinite: dest:f src1:f len:48
 conv.u2: dest:i src1:i len:48
 conv.u1: dest:i src1:i len:48
 conv.i: dest:i src1:i len:48
@@ -254,9 +247,7 @@ float_conv_to_u: dest:i src1:f len:48
 fmove: dest:f src1:f len:48
 call_handler: len:96
 start_handler: len:96
-op_endfilter: len:96
 endfinally: len:96
-op_endfinally: len:96
 endfilter: len:96
 aot_const: dest:i len:48
 tls_get: dest:i len:48

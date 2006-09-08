@@ -55,14 +55,9 @@ br: len:8
 op_jump_table: dest:i len:48
 
 nop: len:0
-op_nop: len:0
 dummy_use: len:0
 dummy_store: len:0
 not_reached: len:0
-
-op_br: len: 8
-op_jmp: len:64
-op_break: len:64
 
 beq: len:8
 bge: len:8
@@ -129,11 +124,9 @@ conv.u1: dest:i src1:i len:4
 conv.i: dest:i src1:i len:4
 
 throw: src1:i len:64
-op_throw: src1:i len:64
-op_rethrow: src1:i len:64
+rethrow: src1:i len:64
 conv.ovf.u4: dest:i src1:i len:64
 ckfinite: dest:f src1:f len:40
-op_ckfinite: dest:f src1:f len:40
 
 mul.ovf: dest:i src1:i src2:i len:64
 mul.ovf.un: dest:i src1:i src2:i len:64
@@ -143,9 +136,7 @@ int_mul_ovf_un: dest:i src1:i src2:i len:64
 
 start_handler: len:64
 endfinally: len:64
-op_endfinally: len:64
 endfilter: len:64
-op_endfilter: len:64
 conv.u: dest:i src1:i len:4
 arglist: src1:i
 ceq: dest:i len:64

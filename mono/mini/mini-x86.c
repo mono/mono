@@ -1548,7 +1548,7 @@ insert_after_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst *to_insert)
 #define INST_IGNORES_CFLAGS(opcode) (!(((opcode) == OP_ADC) || ((opcode) == OP_IADC) || ((opcode) == OP_ADC_IMM) || ((opcode) == OP_IADC_IMM) || ((opcode) == OP_SBB) || ((opcode) == OP_ISBB) || ((opcode) == OP_SBB_IMM) || ((opcode) == OP_ISBB_IMM)))
 
 /*
-#define INST_IGNORES_CFLAGS(opcode) (((opcode) == CEE_BR) || ((opcode) == OP_BR) || ((opcode) == OP_STORE_MEMBASE_IMM) || ((opcode) == OP_STOREI4_MEMBASE_IMM) || ((opcode) == OP_STOREI4_MEMBASE_REG) || ((opcode) == OP_STOREI1_MEMBASE_REG) || ((opcode) == OP_STOREI1_MEMBASE_IMM) || ((opcode) == OP_STOREI2_MEMBASE_REG) || ((opcode) == OP_STOREI2_MEMBASE_IMM) || ((opcode) == OP_IXOR) || ((opcode) == OP_MOVE) || ((opcode) == OP_ICONST) || ((opcode) == OP_IADD) || ((opcode) == OP_X86_PUSH) || ((opcode) == OP_X86_PUSH_IMM) || ((opcode) == OP_X86_PUSH_MEMBASE) || ((opcode) == OP_COMPARE_IMM) || ((opcode) == OP_ICOMPARE_IMM) || ((opcode) == OP_LOAD_MEMBASE) || ((opcode) == OP_LOADI4_MEMBASE))
+#define INST_IGNORES_CFLAGS(opcode) (((opcode) == OP_BR) || ((opcode) == OP_STORE_MEMBASE_IMM) || ((opcode) == OP_STOREI4_MEMBASE_IMM) || ((opcode) == OP_STOREI4_MEMBASE_REG) || ((opcode) == OP_STOREI1_MEMBASE_REG) || ((opcode) == OP_STOREI1_MEMBASE_IMM) || ((opcode) == OP_STOREI2_MEMBASE_REG) || ((opcode) == OP_STOREI2_MEMBASE_IMM) || ((opcode) == OP_IXOR) || ((opcode) == OP_MOVE) || ((opcode) == OP_ICONST) || ((opcode) == OP_IADD) || ((opcode) == OP_X86_PUSH) || ((opcode) == OP_X86_PUSH_IMM) || ((opcode) == OP_X86_PUSH_MEMBASE) || ((opcode) == OP_COMPARE_IMM) || ((opcode) == OP_ICOMPARE_IMM) || ((opcode) == OP_LOAD_MEMBASE) || ((opcode) == OP_LOADI4_MEMBASE))
 */
 
 /*
@@ -2569,7 +2569,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_X86_XOR_REG_MEMBASE:
 			x86_alu_reg_membase (code, X86_XOR, ins->sreg1, ins->sreg2, ins->inst_offset);
 			break;
-		case CEE_BREAK:
 		case OP_BREAK:
 			x86_breakpoint (code);
 			break;
@@ -3007,7 +3006,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case CEE_CONV_U4:
 			g_assert_not_reached ();
-		case CEE_JMP:
 		case OP_JMP: {
 			/*
 			 * Note: this 'frame destruction' logic is useful for tail calls, too.
@@ -3193,7 +3191,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_RET:
 			x86_ret (code);
 			break;
-		case CEE_THROW:
 		case OP_THROW: {
 			x86_push_reg (code, ins->sreg1);
 			code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD, 
@@ -3215,7 +3212,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_mov_membase_reg (code, spvar->inst_basereg, spvar->inst_offset, X86_ESP, 4);
 			break;
 		}
-		case CEE_ENDFINALLY:
 		case OP_ENDFINALLY: {
 			MonoInst *spvar = mono_find_spvar_for_region (cfg, bb->region);
 			x86_mov_reg_membase (code, X86_ESP, spvar->inst_basereg, spvar->inst_offset, 4);
@@ -3232,7 +3228,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_LABEL:
 			ins->inst_c0 = code - cfg->native_code;
 			break;
-		case CEE_BR:
 		case OP_BR:
 			//g_print ("target: %p, next: %p, curr: %p, last: %p\n", ins->inst_target_bb, bb->next_bb, ins, bb->last_ins);
 			//if ((ins->inst_target_bb == bb->next_bb) && ins == bb->last_ins)
@@ -3892,7 +3887,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_alu_reg_imm (code, X86_CMP, X86_EAX, X86_FP_C0);
 			EMIT_COND_BRANCH (ins, X86_CC_NE, FALSE);
 			break;
-		case CEE_CKFINITE:
 		case OP_CKFINITE: {
 			guchar *br1;
 
@@ -4305,7 +4299,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	if (mono_jit_trace_calls != NULL && mono_trace_eval (method))
 		code = mono_arch_instrument_epilog (cfg, mono_trace_leave_method, code, TRUE);
 
-	/* the code restoring the registers must be kept in sync with CEE_JMP */
+	/* the code restoring the registers must be kept in sync with OP_JMP */
 	pos = 0;
 	
 	if (method->save_lmf) {

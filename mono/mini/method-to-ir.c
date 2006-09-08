@@ -1507,7 +1507,7 @@ type_from_op (MonoInst *ins, MonoInst *src1, MonoInst *src2) {
 		ins->type = STACK_R8;
 		ins->opcode += unops_op_map [src1->type];
 		return;
-	case CEE_CKFINITE:
+	case OP_CKFINITE:
 		ins->type = STACK_R8;		
 		return;
 	case CEE_CONV_U2:
@@ -9930,6 +9930,9 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - merge new GC changes in mini.c
  * - merge the stack merge stuff
  * - merge the emit_sig_cookie changes on ia64 and sparc.
+ * - remove unused opcodes from mini-ops.h, remove "op_" from the opcode names,
+ *   remove the op_ opcodes from the cpu-..md files, rename cpu-pentium.md to cpu-x86.md,
+ *   clean up the cpu-..md files.
  * - LAST MERGE: 65121.
  */
 

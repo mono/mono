@@ -482,7 +482,6 @@ mono_print_ins_index (int i, MonoInst *ins)
 		}
 		break;
 	}
-	case CEE_BR:
 	case OP_BR:
 	case OP_CALL_HANDLER:
 		printf (" [B%d]", ins->inst_target_bb->block_num);

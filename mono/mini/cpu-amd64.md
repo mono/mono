@@ -54,7 +54,6 @@
 # See the code in mini-x86.c for more details on how the specifiers are used.
 #
 nop: len:0
-op_nop: len:0
 dummy_use: len:0
 dummy_store: len:0
 not_reached: len:0
@@ -72,10 +71,6 @@ bge.un: len:8
 bgt.un: len:8
 ble.un: len:8
 blt.un: len:8
-
-op_br: len: 6
-op_jmp: len:42
-op_break: len:2
 
 label:
 ldind.i1: dest:i len:8
@@ -162,18 +157,15 @@ long_conv_to_u4: dest:i src1:i len:3
 long_conv_to_u8: dest:i src1:i len:3
 
 throw: src1:i len:18
-op_throw: src1:i len:18
-op_rethrow: src1:i len:18
+rethrow: src1:i len:18
 start_handler: len:9
 endfinally: len:9
-op_endfilter: src1:a len:9
-op_endfinally: len:9
+endfilter: src1:a len:9
 
 conv.ovf.i4.un: dest:i src1:i len:16
 conv.ovf.u4.un: 
 conv.ovf.u4: dest:i src1:i len:15
 ckfinite: dest:f src1:f len:43
-op_ckfinite: dest:f src1:f len:43
 
 conv.u2: dest:i src1:i len:4
 conv.u1: dest:i src1:i len:4

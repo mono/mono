@@ -932,14 +932,14 @@ fold_tree (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, MonoInst **carr
 		if (target) {
 			bb->out_bb [0] = target;
 			bb->out_count = 1;
-			inst->opcode = CEE_BR;
+			inst->opcode = OP_BR;
 			inst->inst_target_bb = target;
 		}
 	} else if (inst->opcode == CEE_SWITCH && (evaluate_const_tree (cfg, inst->inst_left, &a, carray) == 1) && (a >= 0) && (a < GPOINTER_TO_INT (inst->klass))) {
 		bb->out_bb [0] = inst->inst_many_bb [a];
 		bb->out_count = 1;
 		inst->inst_target_bb = bb->out_bb [0];
-		inst->opcode = CEE_BR;
+		inst->opcode = OP_BR;
 	}
 
 }
