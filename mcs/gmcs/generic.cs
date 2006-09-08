@@ -571,41 +571,23 @@ namespace Mono.CSharp {
 		}
 
 		public GenericConstraints GenericConstraints {
-			get {
-				return gc != null ? gc : constraints;
-			}
+			get { return gc != null ? gc : constraints; }
 		}
 
 		public Constraints Constraints {
-			get {
-				return constraints;
-			}
+			get { return constraints; }
 		}
 
 		public bool HasConstructorConstraint {
-			get {
-				if (constraints != null)
-					return constraints.HasConstructorConstraint;
-
-				return false;
-			}
+			get { return constraints != null && constraints.HasConstructorConstraint; }
 		}
 
 		public DeclSpace DeclSpace {
-			get {
-				return decl;
-			}
+			get { return decl; }
 		}
 
 		public Type Type {
-			get {
-				return type;
-			}
-		}
-
-		// FIXME: This should be removed once we fix the handling of RootContext.Tree.Types
-		public override DeclSpace DeclContainer {
-			get { return DeclSpace; }
+			get { return type; }
 		}
 
 		/// <summary>

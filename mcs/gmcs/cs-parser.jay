@@ -404,10 +404,14 @@ namespace_declaration
 
 		current_namespace = new NamespaceEntry (
 			current_namespace, file, name.GetName ());
+		current_class = current_namespace.SlaveDeclSpace;
+		current_container = current_class.PartialContainer;
 	  } 
 	  namespace_body opt_semicolon
 	  { 
 		current_namespace = current_namespace.Parent;
+		current_class = current_namespace.SlaveDeclSpace;
+		current_container = current_class.PartialContainer;
 	  }
 	;
 
@@ -5269,13 +5273,11 @@ public Tokenizer Lexer {
 
 public CSharpParser (SeekableStreamReader reader, SourceFile file, ArrayList defines)
 {
-	current_namespace = new NamespaceEntry (null, file, null);
 	this.name = file.Name;
 	this.file = file;
-	current_container = RootContext.ToplevelTypes;
-	// TODO: Make RootContext.ToplevelTypes a PartialContainer.
-	current_class = current_container;
-	current_container.NamespaceEntry = current_namespace;
+	current_namespace = new NamespaceEntry (null, file, null);
+	current_class = current_namespace.SlaveDeclSpace;
+	current_container = current_class.PartialContainer; // == RootContest.ToplevelTypes
 
 	lexer = new Tokenizer (reader, file, defines);
 }
@@ -5301,7 +5303,8 @@ public void parse ()
 			Console.WriteLine (e);
 	}
 
-	RootContext.ToplevelTypes.NamespaceEntry = null;
+	if (RootContext.ToplevelTypes.NamespaceEntry != null)
+		throw new InternalErrorException ("who set it?");
 }
 
 static void CheckToken (int error, int yyToken, string msg, Location loc)

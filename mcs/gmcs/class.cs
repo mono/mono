@@ -482,8 +482,7 @@ namespace Mono.CSharp {
 				      Attributes attrs, Kind kind)
 			: base (ns, parent, name, attrs)
 		{
-			// FIXME: Remove the second condition -- will require making RootContext.ToplevelTypes partial
-			if (parent != null && parent != RootContext.ToplevelTypes && parent.NamespaceEntry != ns)
+			if (parent != null && parent.NamespaceEntry != ns)
 				throw new InternalErrorException ("A nested type should be in the same NamespaceEntry as its enclosing class");
 
 			this.Kind = kind;
@@ -1742,18 +1741,18 @@ namespace Mono.CSharp {
 		
 		// Indicated whether container has StructLayout attribute set Explicit
 		public bool HasExplicitLayout {
-			get {
-				return (caching_flags & Flags.HasExplicitLayout) != 0;
-			}
-			set {
-				caching_flags |= Flags.HasExplicitLayout;
-			}
+			get { return (caching_flags & Flags.HasExplicitLayout) != 0; }
+			set { caching_flags |= Flags.HasExplicitLayout; }
 		}
 
-		public override Type FindNestedType (string name)
+		//
+		// Return the nested type with name @name.  Ensures that the nested type
+		// is defined if necessary.  Do _not_ use this when you have a MemberCache handy.
+		//
+		public Type FindNestedType (string name)
 		{
 			if (PartialContainer != this)
-				return PartialContainer.FindNestedType (name);
+				throw new InternalErrorException ("should not happen");
 
 			ArrayList [] lists = { types, enums, delegates, interfaces };
 

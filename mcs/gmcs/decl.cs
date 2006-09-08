@@ -614,8 +614,12 @@ namespace Mono.CSharp {
 
 		#region IResolveContext Members
 
-		public virtual DeclSpace DeclContainer {
+		public DeclSpace DeclContainer {
 			get { return Parent; }
+		}
+
+		public virtual DeclSpace GenericDeclContainer {
+			get { return DeclContainer; }
 		}
 
 		public bool IsInObsoleteScope {
@@ -711,7 +715,7 @@ namespace Mono.CSharp {
 				count_type_params += parent.count_type_params;
 		}
 
-		public override DeclSpace DeclContainer {
+		public override DeclSpace GenericDeclContainer {
 			get { return this; }
 		}
 
@@ -1024,15 +1028,6 @@ namespace Mono.CSharp {
 			return ~ (~ mAccess | pAccess) == 0;
 		}
 
-		//
-		// Return the nested type with name @name.  Ensures that the nested type
-		// is defined if necessary.  Do _not_ use this when you have a MemberCache handy.
-		//
-		public virtual Type FindNestedType (string name)
-		{
-			return null;
-		}
-
 		private Type LookupNestedTypeInHierarchy (string name)
 		{
 			// if the member cache has been created, lets use it.
@@ -1047,10 +1042,11 @@ namespace Mono.CSharp {
 			     current_type = current_type.BaseType) {
 				current_type = TypeManager.DropGenericTypeArguments (current_type);
 				if (current_type is TypeBuilder) {
-					DeclSpace decl = this;
-					if (current_type != TypeBuilder)
-						decl = TypeManager.LookupDeclSpace (current_type);
-					t = decl.FindNestedType (name);
+					TypeContainer tc = current_type == TypeBuilder
+						? PartialContainer
+						: TypeManager.LookupTypeContainer (current_type);
+					if (tc != null)
+						t = tc.FindNestedType (name);
 				} else {
 					t = TypeManager.GetNestedType (current_type, name);
 				}
@@ -1078,7 +1074,7 @@ namespace Mono.CSharp {
 			Type t = LookupNestedTypeInHierarchy (name);
 			if (t != null)
 				e = new TypeExpression (t, Location.Null);
-			else if (Parent != null && Parent != RootContext.ToplevelTypes) // FIXME: remove the second condition
+			else if (Parent != null)
 				e = Parent.LookupType (name, loc, ignore_cs0104);
 			else
 				e = NamespaceEntry.LookupNamespaceOrType (this, name, loc, ignore_cs0104);

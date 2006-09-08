@@ -1,3 +1,44 @@
+2006-08-02  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #77396
+	* codegen.cs (IResolveContext.GenericDeclContainer): New.
+	(EmitContext): Implement new interface requirement.
+	* namespace.cs (UsingEntry, LocalAliasEntry): Likewise.
+	* decl.cs (MemberCore): Likewise.
+	(DeclSpace.GenericDeclContainer): Rename from DeclContainer.
+	* ecore.cs (SimpleName.ResolveAsTypeTerminal): Use
+	ec.GenericDeclContainer to check for generic parameters.
+	(SimpleName.DoSimpleNameResolve): Likewise.
+	* generic.cs (TypeParameter.DeclContainer): Remove override.
+
+	* namespace.cs (NamespaceEntry.Doppelganger): Create slave
+	declspaces for doppelgangers too.
+	(UsingEntry): Implement IResolveContext.
+	(UsingEntry.Resolve): Don't set ToplevelTypes.Namespace.  Use
+	'this' as the resolve context.
+	(LocalAliasEntry): Likewise.
+
+	Implement parts of #77403
+	* roottypes.cs (RootDeclSpace): New.  Used to represent the
+	toplevel declaration space.  Each namespace declaration introduces
+	a "partial" root declaretion space.
+	* namespace.cs (NamespaceEntry.SlaveDeclSpace): New.
+	(NamespaceEntry.ctor): Create a SlaveDeclSpace if necessary.
+	* cs-parser.jay (CSharpParser.ctor): Initialize 'current_class'
+	from 'current_namespace.SlaveDeclSpace'.
+	(namespace_declaration): Likewise.
+	* class.cs (TypeContainer.ctor): Remove parent==ToplevelTypes
+	check.  It can't happen now.
+	* decl.cs (DeclSpace.LookupType): Likewise.
+	* driver.cs (MainDriver): Sanity check.
+
+2006-08-01  Raja R Harinath  <rharinath@novell.com>
+
+	* decl.cs (DeclSpace.FindNestedType): Remove.
+	(DeclSpace.LookupNestedTypeINHierarchy): Use PartialContainer and
+	LookupTypeContainer to get the container of the nested type.
+	* class.cs (TypeContainer.FindNestedType): Make non-override.
+
 2006-07-31  Raja R Harinath  <rharinath@novell.com>
 
 	* decl.cs (DeclSpace.PartialContainer): Move field from ...
