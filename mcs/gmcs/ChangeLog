@@ -1,4 +1,16 @@
+2006-08-03  Raja R Harinath  <rharinath@novell.com>
+
+	Fix cs0146-3.cs and cs0146-4.cs.
+	* class.cs (TypeManager.CheckRecursiveDefinition): Check that
+	enclosing types don't depend on the current type.
+
 2006-08-02  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #77963
+	* class.cs (TypeContainer.DoDefineMembers): Use
+	FindBaseMemberWithSameName on Parent, since we're interested in
+	whether we hide inherited members or not.
+	(FindBaseMemberWithSameName): Make slightly more robust.
 
 	Fix #77396
 	* codegen.cs (IResolveContext.GenericDeclContainer): New.
