@@ -296,16 +296,6 @@ namespace Mono.CSharp {
 			return (ConstructorInfo) mg.Methods [0];
 		}
 
-		MethodInfo GetCompareExchange ()
-		{
-			MethodGroupExpr mg = (MethodGroupExpr) Expression.MemberLookup (
-				TypeBuilder, TypeManager.interlocked_type,
-				"CompareExchange", Location);
-			if (mg == null)
-				throw new InternalErrorException ();
-			return (MethodInfo) mg.Methods [0];
-		}
-
 		protected override ScopeInitializer CreateScopeInitializer ()
 		{
 			return new IteratorHostInitializer (this);
@@ -414,7 +404,7 @@ namespace Mono.CSharp {
 
 					cast = new ClassCast (initializer, type.Type);
 
-					ce = host.GetCompareExchange ();
+					ce = TypeManager.int_interlocked_compare_exchange;
 
 					ec.CurrentBranching.CurrentUsageVector.Return ();
 					return true;
