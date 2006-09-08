@@ -1,3 +1,8 @@
+2006-09-07  Martin Baulig  <martin@ximian.com>
+
+	* driver.cs
+	(MainDriver): Revert r62663 from Marek; see #70506 for details.
+
 2006-09-01  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs
@@ -263,12 +268,6 @@
 	Currently we trigger ResolvetopBlock twice due to a first pass of
 	argument check compatibility, and a second pass that does the
 	actual resolution.   
-
-2006-07-16  Marek Safar  <marek.safar@seznam.cz>
-
-	A fix for #70506
-	* driver.cs (MainDriver): When a file extension is missing,
-	use a default one.
 
 2006-07-15  Marek Safar  <marek.safar@seznam.cz>
 
