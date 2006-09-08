@@ -1,5 +1,7 @@
 2006-09-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (mono_aot_get_class_from_name): Remove a debug printf.
+
 	* aot-compiler.c: Add a hash table to the AOT file mapping class names to typedef 
 	tokens.
 
