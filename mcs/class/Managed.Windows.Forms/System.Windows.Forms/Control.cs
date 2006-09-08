@@ -1588,10 +1588,12 @@ namespace System.Windows.Forms
 					throw new ArgumentException("Transparent background colors are not supported on this control");
 				}
 
-				background_color=value;
-				SetChildColor(this);
-				OnBackColorChanged(EventArgs.Empty);
-				Invalidate();
+				if (background_color != value) {
+					background_color=value;
+					SetChildColor(this);
+					OnBackColorChanged(EventArgs.Empty);
+					Invalidate();
+				}
 			}
 		}
 

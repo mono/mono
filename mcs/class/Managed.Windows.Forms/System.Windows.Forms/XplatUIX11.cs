@@ -3792,6 +3792,8 @@ namespace System.Windows.Forms {
 				paint_event = new PaintEventArgs(hwnd.client_dc, hwnd.Invalid);
 				hwnd.expose_pending = false;
 
+				hwnd.ClearInvalidArea();
+
 				return paint_event;
 			} else {
 				hwnd.non_client_dc = Graphics.FromHwnd (hwnd.whole_window);
@@ -3804,6 +3806,8 @@ namespace System.Windows.Forms {
 				}
 				hwnd.nc_expose_pending = false;
 
+				hwnd.ClearNcInvalidArea ();
+
 				return paint_event;
 			}
 		}
@@ -3814,8 +3818,6 @@ namespace System.Windows.Forms {
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (client) {
-				hwnd.ClearInvalidArea();
-
 #if true
 				hwnd.client_dc.Flush();
 				hwnd.client_dc.Dispose();
@@ -3828,14 +3830,11 @@ namespace System.Windows.Forms {
 				}
 #endif
 			} else {
-				hwnd.ClearNcInvalidArea ();
-
 				hwnd.non_client_dc.Flush ();
 				hwnd.non_client_dc.Dispose ();
 				hwnd.non_client_dc = null;
 			}
 
-			
 
 			if (Caret.Visible == true) {
 				ShowCaret();

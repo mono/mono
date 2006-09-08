@@ -1,3 +1,14 @@
+2006-09-07  Chris Toshok  <toshok@ximian.com>
+
+	* Control.cs: in set_BackColor only do the work if
+	background_color != value.
+
+	* XplatUIX11.cs: move the clearing of invalid areas (both client
+	and nc) to the same block of code where we set (nc_)expose_pending
+	to false.  That is, move it from PaintEventEnd to PaintEventStart,
+	so things that cause invalidates from within OnPaint will trigger
+	another call to OnPaint.  Fixes bug #79262.
+
 2006-09-07  Alexander Olk  <alex.olk@googlemail.com>
 
 	* Theme.cs: Use correct icon for UIIcon.PlacesPersonal
