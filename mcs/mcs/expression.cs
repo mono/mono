@@ -1570,7 +1570,8 @@ namespace Mono.CSharp {
 		
 		void Error_OperatorCannotBeApplied ()
 		{
-			Error_OperatorCannotBeApplied (Location, OperName (oper), left.GetSignatureForError (), right.GetSignatureForError ());
+			Error_OperatorCannotBeApplied (Location, OperName (oper), TypeManager.CSharpName (left.Type),
+				TypeManager.CSharpName(right.Type));
 		}
 
 		static bool is_unsigned (Type t)

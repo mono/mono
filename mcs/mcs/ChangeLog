@@ -1,3 +1,8 @@
+2006-09-08  Marek Safar  <marek.safar@seznam.cz>
+
+	* expression.cs (Error_OperatorCannotBeApplied): Report type instead of
+	type instance.
+
 2006-09-07  Martin Baulig  <martin@ximian.com>
 
 	* driver.cs
