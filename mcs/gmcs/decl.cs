@@ -609,17 +609,13 @@ namespace Mono.CSharp {
 		}
 
 		public override IResolveContext ResolveContext {
-			get {
-				return this;
-			}
+			get { return this; }
 		}
 
 		#region IResolveContext Members
 
 		public virtual DeclSpace DeclContainer {
-			get {
-				return Parent;
-			}
+			get { return Parent; }
 		}
 
 		public bool IsInObsoleteScope {
@@ -677,6 +673,8 @@ namespace Mono.CSharp {
 		
 		protected Hashtable defined_names;
 
+		public TypeContainer PartialContainer;
+
 		readonly bool is_generic;
 		readonly int count_type_params;
 		readonly int count_current_type_params;
@@ -704,6 +702,7 @@ namespace Mono.CSharp {
 			NamespaceEntry = ns;
 			Basename = name.Basename;
 			defined_names = new Hashtable ();
+			PartialContainer = null;
 			if (name.TypeArguments != null) {
 				is_generic = true;
 				count_type_params = count_current_type_params = name.TypeArguments.Count;
@@ -713,9 +712,7 @@ namespace Mono.CSharp {
 		}
 
 		public override DeclSpace DeclContainer {
-			get {
-				return this;
-			}
+			get { return this; }
 		}
 
 		/// <summary>
@@ -1266,7 +1263,7 @@ namespace Mono.CSharp {
 
 			TypeParameter [] current_params;
 			if (this is TypeContainer)
-				current_params = ((TypeContainer) this).PartialContainer.CurrentTypeParameters;
+				current_params = PartialContainer.CurrentTypeParameters;
 			else
 				current_params = CurrentTypeParameters;
 
