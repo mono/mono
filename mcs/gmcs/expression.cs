@@ -3707,11 +3707,9 @@ namespace Mono.CSharp {
 		//
 		public void EmitLoad (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Neg);
 			if (!prepared)
 				Variable.EmitInstance (ec);
 			Variable.Emit (ec);
-			ec.ig.Emit (OpCodes.Not);
 		}
 
 		public override void Emit (EmitContext ec)
