@@ -1,3 +1,9 @@
+2006-09-08  Alexander Olk  <alex.olk@googlemail.com>
+
+	* MimeIcon.cs: Rewrote major parts. Dropped KDE support for now.
+	  Simplified gnome support by adding more pinvokes to get the
+	  icon for a file or mime type.
+
 2006-09-08  Jackson Harper  <jackson@ximian.com>
 
 	* MenuAPI.cs: Deslect popup context menu items before closing the
