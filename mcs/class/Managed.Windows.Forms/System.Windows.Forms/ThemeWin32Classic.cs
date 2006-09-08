@@ -618,7 +618,7 @@ namespace System.Windows.Forms
 			if ( checkbox.Focused && checkbox.appearance != Appearance.Button && checkbox.Enabled )
 				DrawInnerFocusRectangle( dc, text_rectangle, checkbox.BackColor );
 		}
-		
+
 		// renders a checkBox with the Flat and Popup FlatStyle
 		protected virtual void DrawFlatStyleCheckBox (Graphics graphics, Rectangle rectangle, CheckBox checkbox)
 		{
@@ -1399,13 +1399,26 @@ namespace System.Windows.Forms
 				if (dtp.hilight_date_area != Rectangle.Empty) {
 					dc.FillRectangle (SystemBrushes.Highlight, dtp.hilight_date_area);
 				}
+
+				// Update date_area_rect if we are drawing the checkbox
+				Rectangle date_area_rect = dtp.date_area_rect;
+				if (dtp.ShowCheckBox) {
+					Rectangle check_box_rect = dtp.CheckBoxRect;
+					date_area_rect.X = date_area_rect.X + check_box_rect.Width + DateTimePicker.check_box_space*2;
+					date_area_rect.Width = date_area_rect.Width - check_box_rect.Width - DateTimePicker.check_box_space*2;
+
+					ButtonState bs = dtp.Checked ? ButtonState.Checked : ButtonState.Normal;
+					CPDrawCheckBox (dc, check_box_rect, bs);
+				}
 				
 				// draw the text part
 				// TODO: if date format is CUstom then we need to draw the dates as separate parts
 				StringFormat text_format = new StringFormat();
 				text_format.LineAlignment = StringAlignment.Center;
 				text_format.Alignment = StringAlignment.Near;					
-				dc.DrawString (dtp.Text, dtp.Font, ResPool.GetSolidBrush (dtp.ForeColor), Rectangle.Inflate(dtp.date_area_rect, -1, -1), text_format);
+				Brush text_brush = ResPool.GetSolidBrush (dtp.ShowCheckBox && dtp.Checked == false ?
+						SystemColors.GrayText : dtp.ForeColor); // Use GrayText if Checked is false
+				dc.DrawString (dtp.Text, dtp.Font, text_brush, Rectangle.Inflate (date_area_rect, -1, -1), text_format);
 				text_format.Dispose ();
 			}
 		}

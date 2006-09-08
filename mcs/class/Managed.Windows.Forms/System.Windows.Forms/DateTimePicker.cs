@@ -48,6 +48,9 @@ namespace System.Windows.Forms {
 		// this class has to have the specified hour, minute and second, as it says in msdn
 		public static readonly DateTime MaxDateTime = new DateTime (9998, 12, 31, 23, 59, 59);
 		public static readonly DateTime MinDateTime = new DateTime (1753, 1, 1);
+
+		internal const int check_box_size = 13;
+		internal const int check_box_space = 4;
 		
 		#endregion 	// Public variables
 		
@@ -131,7 +134,7 @@ namespace System.Windows.Forms {
 
 			
 			// initialise other variables
-			is_checked = false;
+			is_checked = true;
 			custom_format = string.Empty;
 			drop_down_align = LeftRightAlignment.Left;
 			format = DateTimePickerFormat.Long;
@@ -248,7 +251,8 @@ namespace System.Windows.Forms {
 				if (is_checked != value) {
 					is_checked = value;
 					// invalidate the value inside this control
-					this.Invalidate (date_area_rect);
+					if (ShowCheckBox)
+						Invalidate (date_area_rect);
 				}
 			}
 			get {
@@ -661,6 +665,14 @@ namespace System.Windows.Forms {
 				return rect;
 			}
 		}
+
+		internal Rectangle CheckBoxRect {
+			get {
+				Rectangle retval = new Rectangle (check_box_space, ClientSize.Height / 2 - check_box_size / 2, 
+						check_box_size, check_box_size);
+				return retval;
+			}
+		}
 		
 		// the rectangle for the drop down arrow
 		internal Rectangle drop_down_arrow_rect {
@@ -790,9 +802,14 @@ namespace System.Windows.Forms {
 			/* Click On button*/
 			if (ShowUpDown) {
 				// TODO: Process clicking for UPDown
-			} else {
+			} else if (ShowCheckBox && CheckBoxRect.Contains (e.X, e.Y))
+				Checked = !Checked;
+			else {
 				if (is_drop_down_visible == false && drop_down_arrow_rect.Contains (e.X, e.Y)) {
 					is_drop_down_visible = true;
+					if (!Checked)
+						Checked = true;
+
 					Invalidate (drop_down_arrow_rect);
 					DropDownMonthCalendar ();
     			} else {

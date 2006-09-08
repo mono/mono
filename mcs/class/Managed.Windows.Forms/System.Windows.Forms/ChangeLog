@@ -1,3 +1,9 @@
+2006-09-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ThemeWin32Classic.cs: 
+	* DateTimePicker.cs: Draw check box if DateTimePicker.ShowCheckBox
+	is true. Handle that check box too.
+
 2006-09-07  Chris Toshok  <toshok@ximian.com>
 
 	* MenuAPI.cs: move the PerformClick call to OnMouseUp.  Fixes bug
