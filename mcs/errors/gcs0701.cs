@@ -1,9 +1,8 @@
-// gcs0701.cs: `A' is not a valid bound.  Bounds must be interfaces or non sealed classes
-// Line: 8
+// CS0701: `A' is not a valid constraint. A constraint must be an interface, a non-sealed class or a type parameter
+// Line: 6
 
 sealed class A { }
 
-class Foo<T>
-	where T : A
+class Foo<T> where T : A
 {
 }
