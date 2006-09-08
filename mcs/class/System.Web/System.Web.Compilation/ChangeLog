@@ -1,3 +1,9 @@
+2006-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: after parsing an include file, don't error out if we
+	still have opened tags unless this was the last file to parse. Fixes
+	bug #79318.
+
 2006-09-05  Konstantin Triger <kostat@mainsoft.com>
 
 	* ParseException.cs: Ensure the source file stream is closed.

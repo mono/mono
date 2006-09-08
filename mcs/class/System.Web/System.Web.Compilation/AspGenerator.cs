@@ -121,6 +121,10 @@ namespace System.Web.Compilation
 
 			return result;
 		}
+
+		public int Count {
+			get { return parsers.Count; }
+		}
 		
 		public AspParser Parser {
 			get { return current; }
@@ -254,7 +258,7 @@ namespace System.Web.Compilation
 			PrintTree (rootBuilder, 0);
 #endif
 
-			if (stack.Count > 1)
+			if (stack.Count > 1 && pstack.Count == 0)
 				throw new ParseException (stack.Builder.location,
 						"Expecting </" + stack.Builder.TagName + "> " + stack.Builder);
 		}
