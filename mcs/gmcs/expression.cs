@@ -1615,7 +1615,8 @@ namespace Mono.CSharp {
 		
 		void Error_OperatorCannotBeApplied ()
 		{
-			Error_OperatorCannotBeApplied (Location, OperName (oper), left.GetSignatureForError (), right.GetSignatureForError ());
+			Error_OperatorCannotBeApplied (Location, OperName (oper), TypeManager.CSharpName (left.Type),
+				TypeManager.CSharpName(right.Type));
 		}
 
 		static bool is_unsigned (Type t)
@@ -6916,6 +6917,14 @@ namespace Mono.CSharp {
 
 		public override bool GetAttributableValue (Type valueType, out object value)
 		{
+			if (typearg.ContainsGenericParameters) {
+				Report.SymbolRelatedToPreviousError(typearg);
+				Report.Error(416, loc, "`{0}': an attribute argument cannot use type parameters",
+					TypeManager.CSharpName(typearg));
+				value = null;
+				return false;
+			}
+
 			if (valueType == TypeManager.object_type) {
 				value = (object)typearg;
 				return true;

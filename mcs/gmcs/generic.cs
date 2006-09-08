@@ -182,7 +182,7 @@ namespace Mono.CSharp {
 			foreach (object obj in constraints) {
 				if (HasConstructorConstraint) {
 					Report.Error (401, loc,
-						      "The new() constraint must be last.");
+						      "The new() constraint must be the last constraint specified");
 					return false;
 				}
 
@@ -195,17 +195,14 @@ namespace Mono.CSharp {
 							continue;
 						}
 
-						Report.Error (
-							451, loc, "The new () constraint " +
-							"cannot be used with the `struct' " +
-							"constraint.");
+						Report.Error (451, loc, "The `new()' constraint " +
+							"cannot be used with the `struct' constraint");
 						return false;
 					}
 
 					if ((num_constraints > 0) || HasReferenceTypeConstraint || HasValueTypeConstraint) {
-						Report.Error (449, loc,
-							      "The `class' or `struct' " +
-							      "constraint must be first");
+						Report.Error (449, loc, "The `class' or `struct' " +
+							      "constraint must be the first constraint specified");
 						return false;
 					}
 
@@ -254,7 +251,7 @@ namespace Mono.CSharp {
 				} else if (HasReferenceTypeConstraint || HasValueTypeConstraint) {
 					Report.Error (450, loc, "`{0}': cannot specify both " +
 						      "a constraint class and the `class' " +
-						      "or `struct' constraint.", expr.Name);
+						      "or `struct' constraint", expr.GetSignatureForError ());
 					return false;
 				} else
 					class_constraint = expr;
@@ -301,10 +298,16 @@ namespace Mono.CSharp {
 					return false;
 
 				if (class_constraint_type.IsSealed) {
-					Report.Error (701, loc,
-						      "`{0}' is not a valid bound.  Bounds " +
-						      "must be interfaces or non sealed " +
-						      "classes", TypeManager.CSharpName (class_constraint_type));
+					if (class_constraint_type.IsAbstract)
+					{
+						Report.Error (717, loc, "`{0}' is not a valid constraint. Static classes cannot be used as constraints",
+							TypeManager.CSharpName (class_constraint_type));
+					}
+					else
+					{
+						Report.Error (701, loc, "`{0}' is not a valid constraint. A constraint must be an interface, " +
+							"a non-sealed class or a type parameter", TypeManager.CSharpName(class_constraint_type));
+					}
 					return false;
 				}
 
@@ -684,11 +687,9 @@ namespace Mono.CSharp {
 
 			if (implementing != null) {
 				if (is_override && (constraints != null)) {
-					Report.Error (
-						460, loc, "Constraints for override and " +
-						"explicit interface implementation methods " +
-						"are inherited from the base method so they " +
-						"cannot be specified directly");
+					Report.Error (460, loc,
+						"`{0}': Cannot specify constraints for overrides or explicit interface implementation methods",
+						TypeManager.CSharpSignature (builder));
 					return false;
 				}
 
@@ -1181,6 +1182,19 @@ namespace Mono.CSharp {
 			return s.ToString ();
 		}
 
+		public string GetSignatureForError()
+		{
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < Count; ++i)
+			{
+				Expression expr = (Expression)args [i];
+				sb.Append(expr.GetSignatureForError());
+				if (i + 1 < Count)
+					sb.Append(',');
+			}
+			return sb.ToString();
+		}
+
 		/// <summary>
 		///   Resolve the type arguments.
 		/// </summary>
@@ -1307,7 +1321,7 @@ namespace Mono.CSharp {
 
 		public override string GetSignatureForError ()
 		{
-			return TypeManager.CSharpName (gt);
+			return TypeManager.RemoveGenericArity (gt.FullName) + "<" + args.GetSignatureForError () + ">";
 		}
 
 		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)

@@ -709,7 +709,7 @@ public partial class TypeManager {
 		return sb.ToString ();
 	}
 
-	static string RemoveGenericArity (string from)
+	public static string RemoveGenericArity (string from)
 	{
 		int i = from.IndexOf ('`');
 		if (i > 0)
