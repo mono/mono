@@ -1,3 +1,8 @@
+2006-09-08  Robert Jordan  <robertj@gmx.net>
+
+	* TraceData.cs: fixed NRE if `sizes' is null, which may happen
+	if a page was unable to save its viewstate and size.
+
 2006-09-07 Andrew Skiba <andrews@mainsoft.com>
 
 	* HttpApplicationFactory.cs: ifdef the previous fix with TARGET_JVM to
