@@ -1296,8 +1296,13 @@ namespace System.Web.UI.WebControls {
 			OnAuthenticate (aea);
 
 			if (aea.Authenticated) {
+				FormsAuthentication.SetAuthCookie (UserName, RememberMeSet);				
+
 				string url = DestinationPageUrl;
-				FormsAuthentication.SetAuthCookie (UserName, RememberMeSet);
+				if (url.Length == 0 && Page.Request.UrlReferrer != null)
+					url = Page.Request.UrlReferrer.ToString();
+				if (url.Length == 0 && FormsAuthentication.DefaultUrl != null)
+					url = FormsAuthentication.DefaultUrl;
 				if (url.Length == 0) {
 					Redirect (FormsAuthentication.LoginUrl);
 				} else {
@@ -1334,8 +1339,10 @@ namespace System.Web.UI.WebControls {
 		{
 			if ((Page == null) || (Page.Request == null))
 				return false;
-			string url = Page.Request.Url.AbsolutePath;
 			string defaultLogin = FormsAuthentication.LoginUrl;
+			if (defaultLogin == null)
+				return false;
+			string url = Page.Request.Url.AbsolutePath;
 			return (String.Compare (defaultLogin, 0, url, url.Length - defaultLogin.Length, defaultLogin.Length,
 				true, CultureInfo.InvariantCulture) == 0);
 		}

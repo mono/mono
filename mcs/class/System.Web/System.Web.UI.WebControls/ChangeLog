@@ -1,3 +1,8 @@
+2006-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Login.cs: fix problem with the login control and master pages.
+	Patch by Marek Habersack that fixes bug #78219.
+
 2006-09-07 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* TreeView.cs: fixed: populating nodes.
