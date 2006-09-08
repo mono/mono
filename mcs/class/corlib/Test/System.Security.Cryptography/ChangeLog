@@ -1,3 +1,10 @@
+2006-09-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RSACryptoServiceProviderTest.cs: Added test cases for decoding bad
+	PKCS1 and OAEP padding - both resulting in a CryptographicException.
+	* RSAOAEPKeyExchangeDeformatterTest.cs: Add test case for bad padding.
+	* RSAPKCS1KeyExchangeDeformatterTest.cs: Add test case for bad padding
+
 2006-09-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RSACryptoServiceProviderTest.cs: Test case for #79269 where we 
