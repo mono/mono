@@ -170,7 +170,7 @@ namespace Mono.CSharp {
 			this.RootScope = root;
 			ScopeBlock = block;
 
-			Report.Debug (64, "NEW SCOPE", this);
+			Report.Debug (64, "NEW SCOPE", this, root, block);
 
 			root.AddScope (this);
 		}

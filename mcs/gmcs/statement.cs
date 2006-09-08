@@ -3765,6 +3765,34 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit(EmitContext ec)
 		{
+			ILGenerator ig = ec.ig;
+
+			if (CatchType != null)
+				ig.BeginCatchBlock (CatchType);
+			else
+				ig.BeginCatchBlock (TypeManager.object_type);
+
+			if (VarBlock != null)
+				VarBlock.Emit (ec);
+
+			if (Name != null) {
+				LocalInfo vi = Block.GetLocalInfo (Name);
+				if (vi == null)
+					throw new Exception ("Variable does not exist in this block");
+
+				if (vi.Variable.NeedsTemporary) {
+					LocalBuilder e = ig.DeclareLocal (vi.VariableType);
+					ig.Emit (OpCodes.Stloc, e);
+
+					vi.Variable.EmitInstance (ec);
+					ig.Emit (OpCodes.Ldloc, e);
+					vi.Variable.EmitAssign (ec);
+				} else
+					vi.Variable.EmitAssign (ec);
+			} else
+				ig.Emit (OpCodes.Pop);
+
+			Block.Emit (ec);
 		}
 
 		public override bool Resolve (EmitContext ec)
@@ -3936,40 +3964,11 @@ namespace Mono.CSharp {
 				ig.BeginExceptionBlock ();
 			Block.Emit (ec);
 
-			foreach (Catch c in Specific){
-				LocalInfo vi;
-				
-				ig.BeginCatchBlock (c.CatchType);
+			foreach (Catch c in Specific)
+				c.Emit (ec);
 
-#if FIXME
-				if (c.VarBlock != null)
-					ec.EmitScopeInitFromBlock (c.VarBlock);
-#endif
-				if (c.Name != null){
-					vi = c.Block.GetLocalInfo (c.Name);
-					if (vi == null)
-						throw new Exception ("Variable does not exist in this block");
-
-					if (vi.Variable.NeedsTemporary) {
-						LocalBuilder e = ig.DeclareLocal (vi.VariableType);
-						ig.Emit (OpCodes.Stloc, e);
-
-						vi.Variable.EmitInstance (ec);
-						ig.Emit (OpCodes.Ldloc, e);
-						vi.Variable.EmitAssign (ec);
-					} else
-						vi.Variable.EmitAssign (ec);
-				} else
-					ig.Emit (OpCodes.Pop);
-
-				c.Block.Emit (ec);
-			}
-
-			if (General != null){
-				ig.BeginCatchBlock (TypeManager.object_type);
-				ig.Emit (OpCodes.Pop);
-				General.Block.Emit (ec);
-			}
+			if (General != null)
+				General.Emit (ec);
 
 			DoEmitFinally (ec);
 			if (need_exc_block)
