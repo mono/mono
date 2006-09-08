@@ -4553,9 +4553,6 @@ namespace Mono.CSharp {
 
 		public bool ResolveMembers ()
 		{
-			if (!CheckBase ())
-				return false;
-
 			if (anonymous_methods != null) {
 				foreach (AnonymousMethodExpression ame in anonymous_methods) {
 					if (!ame.CreateAnonymousHelpers ())
