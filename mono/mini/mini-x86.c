@@ -441,7 +441,6 @@ mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJit
 	int k, frame_size = 0;
 	int size, pad;
 	guint32 align;
-	guint32 ialign;
 	int offset = 8;
 	CallInfo *cinfo;
 
@@ -464,10 +463,11 @@ mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJit
 	for (k = 0; k < param_count; k++) {
 		
 		if (csig->pinvoke) {
-			size = mono_type_native_stack_size (csig->params [k], &ialign);
-			align = ialign;
+			size = mono_type_native_stack_size (csig->params [k], &align);
 		} else {
-			size = mono_type_stack_size (csig->params [k], &align);
+			int ialign;
+			size = mono_type_stack_size (csig->params [k], &ialign);
+			align = ialign;
 		}
 
 		/* ignore alignment for now */
@@ -1082,6 +1082,28 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 
 #define EMIT_NEW_VARLOADA(cfg,dest,var,vartype) do { NEW_VARLOADA ((cfg), (dest), (var), (vartype)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
+static void
+emit_sig_cookie2 (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo)
+{
+	MonoMethodSignature *tmp_sig;
+
+	/* FIXME: Add support for signature tokens to AOT */
+	cfg->disable_aot = TRUE;
+
+	/*
+	 * mono_ArgIterator_Setup assumes the signature cookie is 
+	 * passed first and all the arguments which were before it are
+	 * passed on the stack after the signature. So compensate by 
+	 * passing a different signature.
+	 */
+	tmp_sig = mono_metadata_signature_dup (call->signature);
+	tmp_sig->param_count -= call->signature->sentinelpos;
+	tmp_sig->sentinelpos = 0;
+	memcpy (tmp_sig->params, call->signature->params + call->signature->sentinelpos, tmp_sig->param_count * sizeof (MonoType*));
+
+	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_X86_PUSH_IMM, -1, -1, tmp_sig);
+}
+
 void
 mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 {
@@ -1098,6 +1120,11 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 
 	if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG))
 		sentinelpos = sig->sentinelpos + (is_virtual ? 1 : 0);
+
+	/* Handle the case where there are no implicit arguments */
+	if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG) && (n == sig->sentinelpos)) {
+		emit_sig_cookie2 (cfg, call, cinfo);
+	}
 
 	/* Arguments are pushed in the reverse order */
 	for (i = n - 1; i >= 0; i --) {
@@ -1175,25 +1202,9 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 			MONO_ADD_INS (cfg->cbb, arg);
 		}
 
-		/* Emit the signature cookie just before the implicit arguments */
 		if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG) && (i == sentinelpos)) {
-			MonoMethodSignature *tmp_sig;
-
-			/* FIXME: Add support for signature tokens to AOT */
-			cfg->disable_aot = TRUE;
-
-			/*
-			 * mono_ArgIterator_Setup assumes the signature cookie is 
-			 * passed first and all the arguments which were before it are
-			 * passed on the stack after the signature. So compensate by 
-			 * passing a different signature.
-			 */
-			tmp_sig = mono_metadata_signature_dup (call->signature);
-			tmp_sig->param_count -= call->signature->sentinelpos;
-			tmp_sig->sentinelpos = 0;
-			memcpy (tmp_sig->params, call->signature->params + call->signature->sentinelpos, tmp_sig->param_count * sizeof (MonoType*));
-
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_X86_PUSH_IMM, -1, -1, tmp_sig);
+			/* Emit the signature cookie just before the implicit arguments */
+			emit_sig_cookie2 (cfg, call, cinfo);
 		}
 	}
 

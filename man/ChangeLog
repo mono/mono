@@ -1,3 +1,7 @@
+2006-09-08  Robert Jordan  <robertj@gmx.net>
+
+	* mkbundle.1: The `-z' option is now supported under Windows.
+
 2006-08-31  Geoff Norton  <gnorton@customerdna.com>
 
 	* macpack.1: Fix a typo for the -appname option.

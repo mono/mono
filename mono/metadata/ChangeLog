@@ -1,3 +1,58 @@
+2006-09-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* image.c (load_class_names): Move this to class.c, and rename it to 
+	'mono_image_init_name_cache'.
+	(load_modules): Fix a warning.
+
+	* class.c icall.c image.c: Initialize image->name_cache lazily.
+
+	* class-internals.h (MonoGetClassFromName): New hook function to find a class based
+	on its name using information in the AOT file.
+
+	* class.c (mono_class_from_name): Use the new hook function.
+
+2006-09-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_param_get_objects): Handle enum default parameter values
+	correctly.
+
+	* marshal.c (emit_marshal_object): Implement [In, Out] byval marshalling of classes.
+	Fixes #79289.
+	
+2006-09-06  Martin Baulig  <martin@ximian.com>
+
+	* icall.c (mono_lookup_internal_call): Small fix.
+
+2006-09-05  Raja R Harinath  <rharinath@novell.com>
+
+	* debug-mono-symfile.c (mono_debug_open_mono_symbols): Remove
+	double g_free.
+
+2006-09-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* debug-mono-symfile.c: Fix *some* memory leaks that happens only 
+	when --debug is specified.
+
+2006-09-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (setup_generic_array_ifaces): Fix a warning.
+
+2006-09-04  Miguel de Icaza  <miguel@novell.com>
+
+	* Temporarily remove the patch to assemly.c that checks the
+	assembly versions as it breaks our gacutil.
+
+2006-09-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c (mono_metadata_parse_mh_full): Fix an invalid free.
+
+	* assembly.c (mono_assembly_load_from_full): Avoid loading net 2.0 assemblies into
+	a net 1.0 runtime.
+
+	* marshal.c (mono_string_builder_to_utf8): Fix marshalling of StringBuilders
+	created using the default ctor. Fixes #79152.
+	(mono_string_builder_to_utf16): Ditto.
+
 2006-09-01  Martin Baulig  <martin@ximian.com>
 
 	Fix handling of the generic array interfaces.

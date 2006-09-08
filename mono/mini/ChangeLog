@@ -129,6 +129,39 @@
 
 	* method-to-ir.c (mono_method_check_inlining): Fix warnings.
 
+2006-09-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c: Add a hash table to the AOT file mapping class names to typedef 
+	tokens.
+
+	* aot-runtime.c (mono_aot_get_class_from_name): New function used by 
+	mono_class_from_name () to find a class from its name.
+
+	* mini.c (mini_init): Register mono_aot_get_class_from_name () with the runtime.
+
+2006-09-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (emit_call): Avoid strstr () call if possible.
+
+2006-09-05  Kornél Pál  <kornelpal@gmail.com>
+
+	* Makefile.am: Renamed mono-1.dll to mono.dll. (-avoid-version)
+
+2006-09-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_icall_get_wrapper): Fix a race condition on initializing
+	callinfo->trampoline.
+
+	* mini-amd64.c (emit_call): Special case calls to the vararg array icalls. Hopefully
+	fixes #79271.
+	(mono_arch_patch_code): Add some debug code to help track down similar failures in the
+	future.
+
+2006-09-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (mono_aot_plt_resolve): Add an assert.
+
+>>>>>>> .merge-right.r65118
 2006-09-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-x86.c (mono_arch_create_specific_trampoline): Don't increase

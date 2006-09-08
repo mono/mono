@@ -733,6 +733,29 @@ mono_test_marshal_delegate7 (SimpleDelegate7 delegate)
 	return 0;
 }
 
+typedef int (STDCALL *InOutByvalClassDelegate) (simplestruct *ss);
+
+STDCALL int
+mono_test_marshal_inout_byval_class_delegate (InOutByvalClassDelegate delegate)
+{
+	int res;
+	simplestruct ss;
+
+	ss.a = FALSE;
+	ss.b = TRUE;
+	ss.c = FALSE;
+	ss.d = g_strdup_printf ("%s", "FOO");
+
+	res = delegate (&ss);
+	if (res != 0)
+		return 1;
+
+	if (!(ss.a && !ss.b && ss.c && !strcmp (ss.d, "RES")))
+		return 2;
+
+	return 0;
+}
+
 typedef int (STDCALL *SimpleDelegate8) (gunichar2 *s);
 
 STDCALL int
@@ -801,6 +824,15 @@ mono_test_marshal_stringbuilder (char *s, int n)
 }
 
 STDCALL int 
+mono_test_marshal_stringbuilder_default (char *s, int n)
+{
+	const char m[] = "This is my message.  Isn't it nice?";
+
+	strncpy(s, m, n);
+	return 0;
+}
+
+STDCALL int 
 mono_test_marshal_stringbuilder_unicode (gunichar2 *s, int n)
 {
 	const char m[] = "This is my message.  Isn't it nice?";
@@ -810,8 +842,8 @@ mono_test_marshal_stringbuilder_unicode (gunichar2 *s, int n)
 	s2 = g_utf8_to_utf16 (m, -1, NULL, &len, NULL);
 	
 	len = (len * 2) + 2;
-	if (len > n)
-		len = n;
+	if (len > (n * 2))
+		len = n * 2;
 	memcpy (s, s2, len);
 
 	g_free (s2);

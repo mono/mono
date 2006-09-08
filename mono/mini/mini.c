@@ -334,8 +334,8 @@ mono_jump_info_token_new (MonoMemPool *mp, MonoImage *image, guint32 token)
         (vi)->idx = (id); \
 } while (0)
 
-//#define UNVERIFIED do { G_BREAKPOINT (); goto unverified; } while (0)
-#define UNVERIFIED do { goto unverified; } while (0)
+#define UNVERIFIED do { G_BREAKPOINT (); goto unverified; } while (0)
+//#define UNVERIFIED do { goto unverified; } while (0)
 
 /*
  * Basic blocks have two numeric identifiers:
@@ -7922,6 +7922,8 @@ mono_icall_get_wrapper (MonoJitICallInfo* callinfo)
 {
 	char *name;
 	MonoMethod *wrapper;
+	gconstpointer trampoline;
+	MonoDomain *domain = mono_get_root_domain ();
 	
 	if (callinfo->wrapper) {
 		return callinfo->wrapper;
@@ -7930,13 +7932,28 @@ mono_icall_get_wrapper (MonoJitICallInfo* callinfo)
 	if (callinfo->trampoline)
 		return callinfo->trampoline;
 
+	/* 
+	 * We use the lock on the root domain instead of the JIT lock to protect 
+	 * callinfo->trampoline, since we do a lot of stuff inside the critical section.
+	 */
+	mono_domain_lock (domain);
+
+	if (callinfo->trampoline) {
+		mono_domain_unlock (domain);
+		return callinfo->trampoline;
+	}
+
 	name = g_strdup_printf ("__icall_wrapper_%s", callinfo->name);
 	wrapper = mono_marshal_get_icall_wrapper (callinfo->sig, name, callinfo->func);
 	g_free (name);
 
-	callinfo->trampoline = mono_create_ftnptr (mono_get_root_domain (), mono_create_jit_trampoline_in_domain (mono_get_root_domain (), wrapper));
-	mono_register_jit_icall_wrapper (callinfo, callinfo->trampoline);
+	trampoline = mono_create_ftnptr (domain, mono_create_jit_trampoline_in_domain (domain, wrapper));
+	mono_register_jit_icall_wrapper (callinfo, trampoline);
 
+	callinfo->trampoline = trampoline;
+
+	mono_domain_unlock (domain);
+	
 	return callinfo->trampoline;
 }
 
@@ -8473,7 +8490,7 @@ mono_allocate_stack_slots_full2 (MonoCompile *cfg, gboolean backward, guint32 *s
 			g_list_free (scalar_stack_slots [i].active);
 	}
 	for (i = 0; i < nvtypes; ++i) {
-		if (scalar_stack_slots [i].active)
+		if (vtype_stack_slots [i].active)
 			g_list_free (vtype_stack_slots [i].active);
 	}
 
@@ -8675,7 +8692,7 @@ mono_allocate_stack_slots_full (MonoCompile *m, gboolean backward, guint32 *stac
 			g_list_free (scalar_stack_slots [i].active);
 	}
 	for (i = 0; i < nvtypes; ++i) {
-		if (scalar_stack_slots [i].active)
+		if (vtype_stack_slots [i].active)
 			g_list_free (vtype_stack_slots [i].active);
 	}
 
@@ -11971,6 +11988,7 @@ mini_init (const char *filename)
 	mono_install_stack_walk (mono_jit_walk_stack);
 	mono_install_init_vtable (mono_aot_init_vtable);
 	mono_install_get_cached_class_info (mono_aot_get_cached_class_info);
+	mono_install_get_class_from_name (mono_aot_get_class_from_name);
  	mono_install_jit_info_find_in_aot (mono_aot_find_jit_info);
 
 	if (debug_options.collect_pagefault_stats) {

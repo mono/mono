@@ -2,7 +2,18 @@
  * gmakrup.c: Minimal XML markup reader.
  *
  * Unlike the GLib one, this can not be restarted with more text
- * as the Mono use does not require it
+ * as the Mono use does not require it.
+ *
+ * Actually, with further thought, I think that this could be made
+ * to restart very easily.  The pos == end condition would mean
+ * "return to caller" and only at end parse this would be a fatal
+ * error.
+ *
+ * Not that it matters to Mono, but it is very simple to change, there
+ * is a tricky situation: there are a few places where we check p+n
+ * in the source, and that would have to change to be progressive, instead
+ * of depending on the string to be complete at that point, so we would
+ * have to introduce extra states to cope with that.
  *
  * Author:
  *   Miguel de Icaza (miguel@novell.com)
@@ -38,7 +49,8 @@ typedef enum {
 	START_ELEMENT,
 	TEXT,
 	FLUSH_TEXT,
-	CLOSING_ELEMENT
+	CLOSING_ELEMENT,
+	COMMENT
 } ParseState;
 
 struct _GMarkupParseContext {
@@ -71,6 +83,18 @@ g_markup_parse_context_new (const GMarkupParser *parser,
 void
 g_markup_parse_context_free (GMarkupParseContext *context)
 {
+	GSList *l;
+	
+	g_return_if_fail (context != NULL);
+
+	if (context->user_data_dnotify != NULL)
+		(context->user_data_dnotify) (context->user_data);
+	
+	if (context->text != NULL)
+		g_string_free (context->text, TRUE);
+	for (l = context->level; l; l = l->next)
+		g_free (l->data);
+	g_slist_free (context->level);
 	g_free (context);
 }
 
@@ -140,7 +164,7 @@ parse_attributes (const char *p, const char *end, char ***names, char ***values,
 			*full_stop = 0;
 			return p; 
 		}
-		if (*p == '/' && ((p+1) < end && *p == '>')){
+		if (*p == '/' && ((p+1) < end && *(p+1) == '>')){
 			*full_stop = 1;
 			return p+1;
 		} else {
@@ -149,27 +173,35 @@ parse_attributes (const char *p, const char *end, char ***names, char ***values,
 			p = parse_name (p, end, &name);
 			if (p == end)
 				return p;
+
 			p = skip_space (p, end);
-			if (p == end)
+			if (p == end){
+				free (name);
 				return p;
+			}
 			if (*p != '='){
 				set_error ("Expected an = after the attribute name `%s'", name);
+				free (name);
 				return end;
 			}
 			p++;
 			p = skip_space (p, end);
-			if (p == end)
+			if (p == end){
+				free (name);
 				return end;
+			}
 
 			p = parse_value (p, end, &value, error);
-			if (p == end)
+			if (p == end){
+				free (name);
 				return p;
+			}
 
 			++nnames;
 			*names = g_realloc (*names, sizeof (char **) * (nnames+1));
 			*values = g_realloc (*values, sizeof (char **) * (nnames+1));
 			(*names) [nnames-1] = name;
-			(*values) [nnames-1] = name;			
+			(*values) [nnames-1] = value;
 			(*names) [nnames] = NULL;
 			(*values) [nnames] = NULL;			
 		}
@@ -231,6 +263,13 @@ g_markup_parse_context_parse (GMarkupParseContext *context,
 				set_error ("Unfinished element");
 				goto fail;
 			}
+
+			if (*p == '!' && (p+2 < end) && (p [1] == '-') && (p [2] == '-')){
+				context->state = COMMENT;
+				p += 2;
+				break;
+			}
+			
 			if (!(isascii (*p) && isalpha (*p))){
 				set_error ("Expected an element name");
 				goto fail;
@@ -256,8 +295,9 @@ g_markup_parse_context_parse (GMarkupParseContext *context,
 					g_strfreev (names);
 					g_strfreev (values);
 				}
-				
-				set_error ("Unfinished sequence");
+				/* Only set the error if parse_attributes did not */
+				if (error != NULL && *error == NULL)
+					set_error ("Unfinished sequence");
 				goto fail;
 			}
 			l = element_end - element_start;
@@ -278,15 +318,20 @@ g_markup_parse_context_parse (GMarkupParseContext *context,
 				g_strfreev (values);
 			}
 
-			if (*error != NULL)
+			if (error != NULL && *error != NULL){
+				free (ename);
 				goto fail;
+			}
 			
 			if (full_stop){
 				if (context->parser.end_element != NULL){
 					context->parser.end_element (context, ename, context->user_data, error);
-					if (*error != NULL)
+					if (error != NULL && *error != NULL){
+						free (ename);
 						goto fail;
+					}
 				}
+				free (ename);
 			} else
 				context->level = g_slist_prepend (context->level, ename);
 			
@@ -307,11 +352,21 @@ g_markup_parse_context_parse (GMarkupParseContext *context,
 			break;
 		}
 
+		case COMMENT:
+			if (*p != '-')
+				break;
+			if (p+2 < end && (p [1] == '-') && (p [2] == '>')){
+				context->state = TEXT;
+				p += 2;
+				break;
+			}
+
+			
 		case FLUSH_TEXT:
 			if (context->parser.text != NULL){
 				context->parser.text (context, context->text->str, context->text->len,
 						      context->user_data, error);
-				if (*error != NULL)
+				if (error != NULL && *error != NULL)
 					goto fail;
 			}
 			
@@ -325,21 +380,25 @@ g_markup_parse_context_parse (GMarkupParseContext *context,
 
 		case CLOSING_ELEMENT: {
 			GSList *current = context->level;
+			char *text;
 
 			if (context->level == NULL){
 				set_error ("Too many closing tags, not enough open tags");
 				goto fail;
 			}
+			text = current->data;
 			
 			if (context->parser.end_element != NULL){
-				char *text = current->data;
-				
 				context->parser.end_element (context, text, context->user_data, error);
-				if (*error != NULL)
+				if (error != NULL && *error != NULL){
+					free (text);
 					goto fail;
+				}
 			}
+			free (text);
+			
 			context->level = context->level->next;
-			g_slist_free (current);
+			g_slist_free_1 (current);
 			break;
 		} /* case CLOSING_ELEMENT */
 			
@@ -356,4 +415,15 @@ g_markup_parse_context_parse (GMarkupParseContext *context,
 	return FALSE;
 }
 
+gboolean
+g_markup_parse_context_end_parse (GMarkupParseContext *context, GError **error)
+{
+	g_return_val_if_fail (context != NULL, FALSE);
 
+	/*
+	 * In our case, we always signal errors during parse, not at the end
+	 * see the notes at the top of this file for details on how this
+	 * could be moved here
+	 */
+	return TRUE;
+}

@@ -47,6 +47,23 @@ public class InterlockTest
 		if (Interlocked.Read (ref la) != 2)
 			return 9;
 
+		/* Generics */
+		InterlockTest o1 = new InterlockTest ();
+		InterlockTest o2 = new InterlockTest ();
+		InterlockTest o = o1;
+
+		InterlockTest o3 = Interlocked.CompareExchange (ref o, o2, o2);
+		if (o3 != o1)
+			return 10;
+		if (o != o1)
+			return 11;
+
+		InterlockTest o4 = Interlocked.CompareExchange (ref o, o2, o1);
+		if (o4 != o1)
+			return 12;
+		if (o != o2)
+			return 13;
+
 		Console.WriteLine ("done!");
 
 		return 0;

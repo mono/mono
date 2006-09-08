@@ -9929,8 +9929,8 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   MONO_CFG_HAS_SPILLUP.
  * - merge new GC changes in mini.c
  * - merge the stack merge stuff
- * - merge the emit_sig_cookie changes on x86, ia64 and sparc.
- * - LAST MERGE: 64791.
+ * - merge the emit_sig_cookie changes on ia64 and sparc.
+ * - LAST MERGE: 65121.
  */
 
 /*
