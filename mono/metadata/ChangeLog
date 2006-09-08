@@ -1,5 +1,7 @@
 2006-09-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_init): Init class->no_special_static_fields from the cached info.
+
 	* image.c (load_class_names): Move this to class.c, and rename it to 
 	'mono_image_init_name_cache'.
 	(load_modules): Fix a warning.
