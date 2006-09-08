@@ -71,6 +71,7 @@ public partial class TypeManager {
 	static public Type asynccallback_type;
 	static public Type intptr_type;
 	static public Type monitor_type;
+	static public Type interlocked_type;
 	static public Type runtime_field_handle_type;
 	static public Type runtime_argument_handle_type;
 	static public Type attribute_type;
@@ -184,6 +185,7 @@ public partial class TypeManager {
 	static public MethodInfo int_array_get_lower_bound_int;
 	static public MethodInfo int_array_get_upper_bound_int;
 	static public MethodInfo void_array_copyto_array_int;
+	static public MethodInfo int_interlocked_compare_exchange;
 	static public PropertyInfo ienumerator_getcurrent;
 	
 	//
@@ -922,7 +924,6 @@ public partial class TypeManager {
 
 	public static void InitEnumUnderlyingTypes ()
 	{
-
 		int32_type    = CoreLookupType ("System", "Int32");
 		int64_type    = CoreLookupType ("System", "Int64");
 		uint32_type   = CoreLookupType ("System", "UInt32"); 
@@ -931,6 +932,13 @@ public partial class TypeManager {
 		sbyte_type    = CoreLookupType ("System", "SByte");
 		short_type    = CoreLookupType ("System", "Int16");
 		ushort_type   = CoreLookupType ("System", "UInt16");
+
+		ienumerator_type     = CoreLookupType ("System.Collections", "IEnumerator");
+		ienumerable_type     = CoreLookupType ("System.Collections", "IEnumerable");
+
+		idisposable_type     = CoreLookupType ("System", "IDisposable");
+
+		InitGenericCoreTypes ();
 	}
 	
 	/// <remarks>
@@ -968,11 +976,9 @@ public partial class TypeManager {
 		runtime_handle_type  = CoreLookupType ("System", "RuntimeTypeHandle");
 		asynccallback_type   = CoreLookupType ("System", "AsyncCallback");
 		iasyncresult_type    = CoreLookupType ("System", "IAsyncResult");
-		ienumerator_type     = CoreLookupType ("System.Collections", "IEnumerator");
-		ienumerable_type     = CoreLookupType ("System.Collections", "IEnumerable");
-		idisposable_type     = CoreLookupType ("System", "IDisposable");
 		icloneable_type      = CoreLookupType ("System", "ICloneable");
 		iconvertible_type    = CoreLookupType ("System", "IConvertible");
+		interlocked_type     = CoreLookupType ("System.Threading", "Interlocked");
 		monitor_type         = CoreLookupType ("System.Threading", "Monitor");
 		intptr_type          = CoreLookupType ("System", "IntPtr");
 
@@ -1016,8 +1022,6 @@ public partial class TypeManager {
 		assembly_culture_attribute_type = CoreLookupType ("System.Reflection", "AssemblyCultureAttribute");
 		comimport_attr_type = CoreLookupType ("System.Runtime.InteropServices", "ComImportAttribute");
 		coclass_attr_type = CoreLookupType ("System.Runtime.InteropServices", "CoClassAttribute");
-
-		InitGenericCoreTypes ();
 
 		//
 		// .NET 2.0
@@ -1249,6 +1253,14 @@ public partial class TypeManager {
 
 		field_offset_attribute_ctor = GetConstructor (field_offset_attribute_type, new Type []
 			{ int32_type });
+
+		//
+		// System.Threading.CompareExchange
+		//
+		Type[] compare_exchange_types = {
+			GetReferenceType (int32_type), int32_type, int32_type };
+		int_interlocked_compare_exchange = GetMethod (
+			interlocked_type, "CompareExchange", compare_exchange_types);
 
 		//
 		// .NET 2.0 types
