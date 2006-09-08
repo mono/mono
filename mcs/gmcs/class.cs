@@ -3829,7 +3829,7 @@ namespace Mono.CSharp {
 
 				MethodBuilder = Parent.TypeBuilder.DefineMethod (method_name, flags);
 
-				if (!GenericMethod.Define (MethodBuilder))
+				if (!GenericMethod.Define (MethodBuilder, block))
 					return false;
 			}
 

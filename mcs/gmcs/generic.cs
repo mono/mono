@@ -1772,14 +1772,28 @@ namespace Mono.CSharp {
 		///   Define and resolve the type parameters.
 		///   We're called from Method.Define().
 		/// </summary>
-		public bool Define (MethodBuilder mb)
+		public bool Define (MethodBuilder mb, ToplevelBlock block)
 		{
-			GenericTypeParameterBuilder[] gen_params;
 			TypeParameterName[] names = MemberName.TypeArguments.GetDeclarations ();
 			string[] snames = new string [names.Length];
-			for (int i = 0; i < names.Length; i++)
-				snames [i] = names [i].Name;
-			gen_params = mb.DefineGenericParameters (snames);
+			for (int i = 0; i < names.Length; i++) {
+				string type_argument_name = names[i].Name;
+				Parameter p = parameters.GetParameterByName (type_argument_name);
+				if (p != null) {
+					Error_ParameterNameCollision (p.Location, type_argument_name, "method parameter");
+					return false;
+				}
+				if (block != null) {
+					LocalInfo li = (LocalInfo)block.Variables[type_argument_name];
+					if (li != null) {
+						Error_ParameterNameCollision (li.Location, type_argument_name, "local variable");
+						return false;
+					}
+				}
+				snames[i] = type_argument_name;
+			}
+
+			GenericTypeParameterBuilder[] gen_params = mb.DefineGenericParameters (snames);
 			for (int i = 0; i < TypeParameters.Length; i++)
 				TypeParameters [i].Define (gen_params [i]);
 
@@ -1792,6 +1806,12 @@ namespace Mono.CSharp {
 			}
 
 			return true;
+		}
+
+		static void Error_ParameterNameCollision (Location loc, string name, string collisionWith)
+		{
+			Report.Error (412, loc, "The type parameter name `{0}' is the same as `{1}'",
+				name, collisionWith);
 		}
 
 		/// <summary>
@@ -1840,11 +1860,6 @@ namespace Mono.CSharp {
 			get {
 				return null;
 			}
-		}
-
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
-		{
-			base.ApplyAttributeBuilder (a, cb);
 		}
 
 		public override AttributeTargets AttributeTargets {
