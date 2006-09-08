@@ -1,3 +1,8 @@
+2006-09-08  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTMXPathDocumentWriter2.cs : fill String.Empty for null ns in
+	  WriteStartElement() and WriteStartAttribute().
+
 2006-09-01  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigatorReader.cs : MoveToFirstAttribute() should return

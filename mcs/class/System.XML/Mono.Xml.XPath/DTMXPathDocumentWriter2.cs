@@ -527,6 +527,8 @@ namespace Mono.Xml.XPath
 		{
 			if (prefix == null)
 				prefix = String.Empty;
+			if (ns == null)
+				ns = String.Empty;
 
 			switch (state) {
 			case WriteState.Element:
@@ -609,6 +611,9 @@ namespace Mono.Xml.XPath
 
 		public override void WriteStartAttribute (string prefix, string localName, string ns)
 		{
+			if (ns == null)
+				ns = String.Empty;
+
 			if (state != WriteState.Element)
 				throw new InvalidOperationException ("Invalid document state for attribute: " + state);
 
