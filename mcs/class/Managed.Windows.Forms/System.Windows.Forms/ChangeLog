@@ -1,3 +1,9 @@
+2006-09-08  Chris Toshok  <toshok@ximian.com>
+
+	* X11Keyboard.cs: In UpdateKeyState vkey can be any integer, but
+	our arrays are length 256.  & 0xff before indexing.  Fixes the
+	crash in bug #78077.
+	
 2006-09-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ThemeWin32Classic.cs: 

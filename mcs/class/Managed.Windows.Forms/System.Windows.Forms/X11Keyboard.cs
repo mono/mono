@@ -402,13 +402,13 @@ namespace System.Windows.Forms {
 
 			switch (xevent.type) {
 			case XEventName.KeyRelease:
-				key_state_table [(int) vkey] &= unchecked ((byte) ~0x80);
+				key_state_table [vkey & 0xff] &= unchecked ((byte) ~0x80);
 				break;
 			case XEventName.KeyPress:
-				if ((key_state_table [(int) vkey] & 0x80) == 0) {
-					key_state_table [(int) vkey] ^= 0x01;
+				if ((key_state_table [vkey & 0xff] & 0x80) == 0) {
+					key_state_table [vkey & 0xff] ^= 0x01;
 				}
-				key_state_table [(int) vkey] |= 0x80;
+				key_state_table [vkey & 0xff] |= 0x80;
 				break;
 			}
 		}
