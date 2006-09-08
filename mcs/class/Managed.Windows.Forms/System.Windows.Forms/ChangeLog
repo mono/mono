@@ -3,6 +3,11 @@
 	* MenuAPI.cs: Deslect popup context menu items before closing the
 	window, so that you don't see the previously selected item
 	selected when you reopen the menu.
+	* TextControl.cs: Update the cursor position even if we don't have
+	focus.  This fixes typing in things like the ComboBox.  I'm not
+	totally sure we should always set the visibility if we don't have
+	focus, but couldn't find any corner cases where the cursor showed
+	up when it shouldn't.
 
 2006-09-08  Chris Toshok  <toshok@ximian.com>
 

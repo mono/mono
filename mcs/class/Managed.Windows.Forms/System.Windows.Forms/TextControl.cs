@@ -1478,10 +1478,8 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			if (owner.Focused) {
-				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y + caret_shift);
-				XplatUI.CaretVisible(owner.Handle, true);
-			}
+			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y + caret_shift);
+			XplatUI.CaretVisible(owner.Handle, true);
 
 			if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
 		}
