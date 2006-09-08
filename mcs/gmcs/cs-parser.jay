@@ -786,16 +786,9 @@ struct_declaration
 	  member_name
 	  { 
 		MemberName name = MakeName ((MemberName) $6);
-		current_class = new Struct (
+		push_current_class (new Struct (
 			current_namespace, current_class, name, (int) $2,
-			(Attributes) $1);
-
-		if ($3 != null) {
-			current_container = current_container.AddPartial (current_class);
-		} else {
-			current_container.AddClassOrStruct (current_class);
-			current_container = current_class;
-		}
+			(Attributes) $1), false, $3);
 	  }
 	  opt_class_base
 	  opt_type_parameter_constraints_clauses
@@ -1546,16 +1539,9 @@ interface_declaration
 	  {
 		MemberName name = MakeName ((MemberName) $6);
 
-		current_class = new Interface (
+		push_current_class (new Interface (
 			current_namespace, current_class, name, (int) $2,
-			(Attributes) $1);
-
-		if ($3 != null) {
-			current_container = current_container.AddPartial (current_class);
-		} else {
-			current_container.AddInterface (current_class);
-			current_container = current_class;
-		}
+			(Attributes) $1), true, $3);
 	  }
 	  opt_class_base
 	  opt_type_parameter_constraints_clauses
@@ -3853,16 +3839,9 @@ class_declaration
 		MemberName name = MakeName ((MemberName) $6);
 		int mod_flags = (int) $2;
 
-		current_class = new Class (
+		push_current_class (new Class (
 			current_namespace, current_class, name,
-			mod_flags, (Attributes) $1);
-
-		if ($3 != null) {
-			current_container = current_container.AddPartial (current_class);
-		} else {
-			current_container.AddClassOrStruct (current_class);
-			current_container = current_class;
-		}
+			mod_flags, (Attributes) $1), false, $3);
 	  }
 	  opt_class_base
 	  opt_type_parameter_constraints_clauses
@@ -5095,6 +5074,15 @@ void Error_ExpectingTypeName (Expression expr)
 	} else {
 		Report.Error (201, expr.Location, "Only assignment, call, increment, decrement, and new object expressions can be used as a statement");
 	}
+}
+
+void push_current_class (TypeContainer tc, bool is_interface, object partial_token)
+{
+	if (partial_token != null)
+		current_container = current_container.AddPartial (tc, is_interface);
+	else
+		current_container = current_container.AddTypeContainer (tc, is_interface);
+	current_class = tc;
 }
 
 TypeContainer pop_current_class ()

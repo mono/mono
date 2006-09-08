@@ -491,19 +491,19 @@ namespace Mono.CSharp {
 			this.PartialContainer = this;
 		}
 
-		public bool AddToMemberContainer (MemberCore symbol)
+		public bool AddMember (MemberCore symbol)
 		{
 			return AddToContainer (symbol, symbol.MemberName.MethodName);
 		}
 
-		protected virtual bool AddToTypeContainer (DeclSpace ds)
+		protected virtual bool AddMemberType (DeclSpace ds)
 		{
 			return AddToContainer (ds, ds.Basename);
 		}
 
 		public void AddConstant (Const constant)
 		{
-			if (!AddToMemberContainer (constant))
+			if (!AddMember (constant))
 				return;
 
 			if (constants == null)
@@ -514,7 +514,7 @@ namespace Mono.CSharp {
 
 		public void AddEnum (Mono.CSharp.Enum e)
 		{
-			if (!AddToTypeContainer (e))
+			if (!AddMemberType (e))
 				return;
 
 			if (enums == null)
@@ -522,36 +522,36 @@ namespace Mono.CSharp {
 
 			enums.Add (e);
 		}
-		
-		public bool AddClassOrStruct (TypeContainer c)
+
+		public TypeContainer AddTypeContainer (TypeContainer tc, bool is_interface)
 		{
-			if (!AddToTypeContainer (c))
-				return false;
+			if (!AddMemberType (tc))
+				return tc;
 
-			if (types == null)
-				types = new ArrayList (2);
-
-			types.Add (c);
-			return true;
+			if (is_interface) {
+				if (interfaces == null)
+					interfaces = new MemberCoreArrayList ();
+				interfaces.Add (tc);
+			} else {
+				if (types == null)
+					types = new ArrayList (2);
+				types.Add (tc);
+			}
+			return tc;
 		}
 
-		public virtual TypeContainer AddPartial (TypeContainer nextPart)
+		public virtual TypeContainer AddPartial (TypeContainer nextPart, bool is_interface)
 		{
-			return AddPartial (nextPart, nextPart.Basename);
+			return AddPartial (nextPart, nextPart.Basename, is_interface);
 		}
 
-		protected TypeContainer AddPartial (TypeContainer nextPart, string name)
+		protected TypeContainer AddPartial (TypeContainer nextPart, string name, bool is_interface)
 		{
 			nextPart.ModFlags |= Modifiers.PARTIAL;
 			TypeContainer tc = defined_names [name] as TypeContainer;
 
-			if (tc == null) {
-				if (nextPart is Interface)
-					AddInterface (nextPart);
-				else
-					AddClassOrStruct (nextPart);
-				return nextPart;
-			}
+			if (tc == null)
+				return AddTypeContainer (nextPart, is_interface);
 
 			if ((tc.ModFlags & Modifiers.PARTIAL) == 0) {
 				Report.SymbolRelatedToPreviousError (tc);
@@ -595,7 +595,7 @@ namespace Mono.CSharp {
 
 		public void AddDelegate (Delegate d)
 		{
-			if (!AddToTypeContainer (d))
+			if (!AddMemberType (d))
 				return;
 
 			if (delegates == null)
@@ -606,7 +606,7 @@ namespace Mono.CSharp {
 
 		public void AddMethod (Method method)
 		{
-			if (!AddToMemberContainer (method))
+			if (!AddMember (method))
 				return;
 
 			if (methods == null)
@@ -625,7 +625,7 @@ namespace Mono.CSharp {
 		//
 		public void AppendMethod (Method method)
 		{
-			if (!AddToMemberContainer (method))
+			if (!AddMember (method))
 				return;
 
 			if (methods == null)
@@ -672,22 +672,10 @@ namespace Mono.CSharp {
 				return "`{0}' is already defined. Rename this member or use different parameter types";
 			}
 		}
-		
-		public bool AddInterface (TypeContainer iface)
-		{
-			if (!AddToTypeContainer (iface))
-				return false;
-
-			if (interfaces == null)
-				interfaces = new MemberCoreArrayList ();
-
-			interfaces.Add (iface);
-			return true;
-		}
 
 		public void AddField (FieldMember field)
 		{
-			if (!AddToMemberContainer (field))
+			if (!AddMember (field))
 				return;
 
 			if (fields == null)
@@ -715,8 +703,8 @@ namespace Mono.CSharp {
 
 		public void AddProperty (Property prop)
 		{
-			if (!AddToMemberContainer (prop) || 
-				!AddToMemberContainer (prop.Get) || !AddToMemberContainer (prop.Set))
+			if (!AddMember (prop) || 
+				!AddMember (prop.Get) || !AddMember (prop.Set))
 				return;
 
 			if (properties == null)
@@ -730,14 +718,14 @@ namespace Mono.CSharp {
 
 		public void AddEvent (Event e)
 		{
-			if (!AddToMemberContainer (e))
+			if (!AddMember (e))
 				return;
 
 			if (e is EventProperty) {
-				if (!AddToMemberContainer (e.Add))
+				if (!AddMember (e.Add))
 					return;
 
-				if (!AddToMemberContainer (e.Remove))
+				if (!AddMember (e.Remove))
 					return;
 			}
 
@@ -763,7 +751,7 @@ namespace Mono.CSharp {
 
 		public void AddOperator (Operator op)
 		{
-			if (!AddToMemberContainer (op))
+			if (!AddMember (op))
 				return;
 
 			if (operators == null)
@@ -7508,8 +7496,8 @@ namespace Mono.CSharp {
 					ShortName = base_IndexerName;
 			}
 
-			if (!ParentContainer.AddToMemberContainer (this) ||
-				!ParentContainer.AddToMemberContainer (Get) || !ParentContainer.AddToMemberContainer (Set))
+			if (!ParentContainer.AddMember (this) ||
+				!ParentContainer.AddMember (Get) || !ParentContainer.AddMember (Set))
 				return false;
 
 			if (!CheckBase ())
