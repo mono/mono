@@ -1068,9 +1068,11 @@ public class Page : TemplateControl, IHttpHandler
 			context.ClearError (e);
 			// We want to remove that error, as we're rethrowing to stop
 			// further processing.
+			Trace.Warn ("Unhandled Exception", e.ToString (), e);
 			throw;
 		} finally {
 			try {
+				RenderTrace ();
 				UnloadRecursive (true);
 			} catch {}
 			if (Thread.CurrentThread.CurrentCulture.Equals (culture) == false)
@@ -1177,11 +1179,9 @@ public class Page : TemplateControl, IHttpHandler
 		HtmlTextWriter output = new HtmlTextWriter (_context.Response.Output);
 		RenderControl (output);
 		Trace.Write ("aspx.page", "End Render");
-		
-		RenderTrace (output);
 	}
 
-	private void RenderTrace (HtmlTextWriter output)
+	private void RenderTrace ()
 	{
 		TraceManager traceManager = HttpRuntime.TraceManager;
 
@@ -1193,8 +1193,10 @@ public class Page : TemplateControl, IHttpHandler
 		if (!Trace.HaveTrace && traceManager.Enabled && !traceManager.PageOutput) 
 			return;
 
-		if (!traceManager.LocalOnly || Context.Request.IsLocal)
+		if (!traceManager.LocalOnly || Context.Request.IsLocal) {
+			HtmlTextWriter output = new HtmlTextWriter (_context.Response.Output);
 			Trace.Render (output);
+		}
 	}
 	
 	void RaisePostBackEvents ()
