@@ -1,3 +1,10 @@
+2006-09-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RSAOAEPKeyExchangeDeformatter.cs: Throw a CryptographicException, 
+	instead of returning null, when a padding error occurs on decryption.
+	* RSAPKCS1KeyExchangeDeformatter.cs: Throw a CryptographicException, 
+	instead of returning null, when a padding error occurs on decryption.
+
 2006-07-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AsymmetricSignatureDeformatter.cs: Set the hash algorithm name from
