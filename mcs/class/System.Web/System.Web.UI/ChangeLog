@@ -1,3 +1,8 @@
+2006-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateControl.cs: search for the new Page_* event handlers in 2.0.
+	Patch by Marek Habersack that fixes bug #78268.
+
 2006-09-07 Lluis Sanchez Gual  <lluis@novell.com>
 
 	* Page.cs: Use lowercase getElementById in the javascript that

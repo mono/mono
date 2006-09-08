@@ -50,6 +50,14 @@ namespace System.Web.UI {
 		static object commitTransaction = new object ();
 		static object error = new object ();
 		static string [] methodNames = { "Page_Init",
+#if NET_2_0
+						 "Page_PreInit",
+						 "Page_PreLoad",
+						 "Page_LoadComplete",
+						 "Page_PreRenderComplete",
+						 "Page_SaveStateComplete",
+						 "Page_InitComplete",
+#endif
 						 "Page_Load",
 						 "Page_DataBind",
 						 "Page_PreRender",
@@ -57,7 +65,7 @@ namespace System.Web.UI {
 						 "Page_Error",
 						 "Page_Unload",
 						 "Page_AbortTransaction",
-						 "Page_CommitTransaction" };
+						 "Page_CommitTransaction"};
 
 		const BindingFlags bflags = BindingFlags.Public |
 					    BindingFlags.NonPublic |
