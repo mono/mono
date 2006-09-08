@@ -658,13 +658,48 @@ namespace Mono.CSharp {
 			if (mi == null)
 				return null;
 
-			int count = mi.Length;
+			if (mi.Length > 1) {
+				bool is_interface = qualifier_type != null && qualifier_type.IsInterface;
+				MemberInfo non_method = null;
+				ArrayList methods = new ArrayList (2);
+
+				foreach (MemberInfo m in mi) {
+					if (m is MethodBase) {
+						methods.Add (m);
+						continue;
+					}
+
+					if (non_method == null) {
+						non_method = m;
+						continue;
+					}
+
+					if (!is_interface)
+						continue;
+
+					Report.SymbolRelatedToPreviousError (m);
+					Report.SymbolRelatedToPreviousError (non_method);
+					Report.Error (229, loc, "Ambiguity between `{0}' and `{1}'",
+						TypeManager.GetFullNameSignature (m), TypeManager.GetFullNameSignature (non_method));
+					return null;
+				}
+
+				if (non_method != null && is_interface) {
+					MethodBase method = (MethodBase)methods[0];
+					Report.SymbolRelatedToPreviousError (method);
+					Report.SymbolRelatedToPreviousError (non_method);
+					Report.Warning (467, 2, loc, "Ambiguity between method `{0}' and non-method `{1}'. Using method `{0}'",
+						TypeManager.CSharpSignature (method), TypeManager.GetFullNameSignature (non_method));
+				}
+
+				if (methods.Count == 0)
+					return new MethodGroupExpr (mi, loc);
+
+				return new MethodGroupExpr (methods, loc);
+			}
 
 			if (mi [0] is MethodBase)
 				return new MethodGroupExpr (mi, loc);
-
-			if (count > 1)
-				return null;
 
 			return ExprClassFromMemberInfo (container_type, mi [0], loc);
 		}

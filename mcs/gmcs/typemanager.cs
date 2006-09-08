@@ -2796,8 +2796,7 @@ public partial class TypeManager {
 
 			Timer.StopTimer (TimerType.MemberLookup);
 
-			list = MemberLookup_FindMembers (
-				current_type, mt, bf, name, out used_cache);
+			list = MemberLookup_FindMembers (current_type, mt, bf, name, out used_cache);
 
 			Timer.StartTimer (TimerType.MemberLookup);
 
@@ -2857,8 +2856,7 @@ public partial class TypeManager {
 				if ((list.Length == 2) && (list [1] is FieldInfo))
 					return new MemberInfo [] { list [0] };
 
-				// Oooops
-				return null;
+				return list;
 			}
 
 			//
@@ -2866,34 +2864,26 @@ public partial class TypeManager {
 			// mode.
 			//
 
- 			if (first_members_list != null) {
- 				if (use_first_members_list) {
- 					method_list = CopyNewMethods (method_list, first_members_list);
- 					use_first_members_list = false;
- 				}
- 				
+			if (first_members_list != null) {
+				if (use_first_members_list) {
+					method_list = CopyNewMethods (method_list, first_members_list);
+					use_first_members_list = false;
+				}
+				
 				method_list = CopyNewMethods (method_list, list);
 			} else {
 				first_members_list = list;
- 				use_first_members_list = true;
-
+				use_first_members_list = true;
 				mt &= (MemberTypes.Method | MemberTypes.Constructor);
 			}
 		} while (searching);
 
- 		if (use_first_members_list) {
- 			foreach (MemberInfo mi in first_members_list) {
- 				if (! (mi is MethodBase)) {
- 					method_list = CopyNewMethods (method_list, first_members_list);
- 					return (MemberInfo []) method_list.ToArray (typeof (MemberInfo));
- 				}
- 			}
- 			return (MemberInfo []) first_members_list;
- 		}
+		if (use_first_members_list)
+			return first_members_list;
 
 		if (method_list != null && method_list.Count > 0) {
-                        return (MemberInfo []) method_list.ToArray (typeof (MemberInfo));
-                }
+			return (MemberInfo []) method_list.ToArray (typeof (MemberInfo));
+		}
 		//
 		// This happens if we already used the cache in the first iteration, in this case
 		// the cache already looked in all interfaces.
@@ -3044,6 +3034,10 @@ public sealed class TypeHandle : IMemberContainer {
 	private TypeHandle (Type type)
 	{
 		this.type = type;
+#if MS_COMPATIBLE
+		if (type.IsGenericType)
+			this.type = this.type.GetGenericTypeDefinition ();
+#endif
 		full_name = type.FullName != null ? type.FullName : type.Name;
 		if (type.BaseType != null) {
 			base_cache = TypeManager.LookupMemberCache (type.BaseType);

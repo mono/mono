@@ -1,3 +1,19 @@
+2006-08-09  Marek Safar  <marek.safar@seznam.cz>
+ 
+	* anonymous.cs(AnonymousDelegate.Emit): Uses Constructor filter when
+	looking for ctor.
+	* decl.cs (MemberCache.FindMembers): When container is interface we need to
+	search all base interfaces as a member can be ambiguous.
+	* delegate.cs (Delegate.FindMembers): Fixed to return valid data for
+	Constructor member type filter. 
+	(Delegate.ResolveConstructorMethod) Uses Constructor filter.
+	* ecore.cs: (Expression.MemberLookup): Implemented ambiguity error/warning
+	reporting for returned memberinfos.
+	* report.cs: Updated.
+	* typemanager.cs (TypeManager.LookupBaseInterfacesCache): Uses TypeManager
+	version to work on all runtimes.
+	(TypeManager.RealMemberLookup): Removed members filtering.
+
 2006-08-08  Raja R Harinath  <rharinath@novell.com>
 
 	* ecore.cs (FieldExpr.EmitAssign): Release temporary.

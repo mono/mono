@@ -1371,9 +1371,6 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			Report.Debug (64, "ANONYMOUS DELEGATE", this, am, ec.ContainerType, type,
-				      ec, loc);
-
 			//
 			// Now emit the delegate creation.
 			//
@@ -1384,11 +1381,13 @@ namespace Mono.CSharp {
 					throw new InternalErrorException ();
 			}
 
-			Expression ml = Expression.MemberLookup (ec.ContainerType, type, ".ctor", loc);
+			Expression ml = Expression.MemberLookup (
+				ec.ContainerType, type, ".ctor", MemberTypes.Constructor,
+				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
+				loc);
+
 			constructor_method = ((MethodGroupExpr) ml).Methods [0];
 			delegate_method = am.GetMethodBuilder (ec);
-			Report.Debug (64, "ANONYMOUS DELEGATE #1", constructor_method, delegate_method,
-				      delegate_method, delegate_instance_expression);
 			base.Emit (ec);
 		}
 	}
