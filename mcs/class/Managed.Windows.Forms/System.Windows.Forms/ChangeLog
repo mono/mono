@@ -1,5 +1,10 @@
 2006-09-07  Chris Toshok  <toshok@ximian.com>
 
+	* MenuAPI.cs: move the PerformClick call to OnMouseUp.  Fixes bug
+	79244.
+
+2006-09-07  Chris Toshok  <toshok@ximian.com>
+
 	* Control.cs: in set_BackColor only do the work if
 	background_color != value.
 

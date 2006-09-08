@@ -131,13 +131,14 @@ namespace System.Windows.Forms {
 
 			MenuItem item = GetItemAtXY (args.X, args.Y);
 
-			if (item != null && !item.Enabled)
-				return;
-
-			if (item == null || (active && item.IsPopup && (item.Parent is MainMenu))) {
+			if (item == null) {
 				Deactivate ();
 				return;
 			}
+
+			if (item != null && !item.Enabled)
+				return;
+
 
 			SelectItem (item.Parent, item, item.IsPopup);
 			if (item.IsPopup) {
@@ -146,9 +147,6 @@ namespace System.Windows.Forms {
 				item.Parent.InvalidateItem (item);
 			} else if (item.Parent is MainMenu)
 				active = false;
-			else
-				Deactivate ();
-			item.PerformClick ();			
 		}
 
 		public void OnMotion (MouseEventArgs args)
@@ -169,7 +167,12 @@ namespace System.Windows.Forms {
 
 		public void OnMouseUp (MouseEventArgs args)
 		{
-			// Doing nothing (yet)
+			MenuItem item = GetItemAtXY (args.X, args.Y);
+			if (item.Parent is MainMenu)
+				return;
+
+			Deactivate ();
+			item.PerformClick ();
 		}
 
 		void MoveSelection (MenuItem item)
