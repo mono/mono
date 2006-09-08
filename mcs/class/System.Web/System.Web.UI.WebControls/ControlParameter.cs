@@ -77,7 +77,14 @@ namespace System.Web.UI.WebControls {
 			if (control == null) return null;
 			if (control.Page == null) return null;
 			
-			Control c = control.Page.FindControl (ControlID);
+			Control c = null, namingContainer = control.NamingContainer; 
+			
+			while (namingContainer != null) {
+				c = namingContainer.FindControl(ControlID);
+				if (c != null)
+					break;
+				namingContainer = namingContainer.NamingContainer;
+			}
 			if (c == null) throw new HttpException ("Control '" + ControlID + "' not found.");
 			
 			PropertyInfo prop = c.GetType().GetProperty (PropertyName);

@@ -1,5 +1,11 @@
 2006-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ControlParameter.cs: fix search for controls so that they use their
+	NamingContainer, not the Page. Patch by Marek Habersack that fixes
+	bug #78320.
+
+2006-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Login.cs: fix problem with the login control and master pages.
 	Patch by Marek Habersack that fixes bug #78219.
 
