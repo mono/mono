@@ -693,6 +693,11 @@ interpreter.  The possible values are `no' to disable the use of a
 custom serializer or a number to indicate when the XmlSerializer
 should start serializing.   The default value is 50, which means that
 the a custom serializer will be produced on the 50th use.
+.TP
+.I "MONO_XMLSERIALIZER_DEBUG"
+Set this value to 1 to prevent the serializer from removing the
+temporary files that are created for fast serialization;  This might
+be useful when debugging.
 .SH ENVIRONMENT VARIABLES FOR DEBUGGING
 .TP
 .I "MONO_ASPNET_NODELETE"
