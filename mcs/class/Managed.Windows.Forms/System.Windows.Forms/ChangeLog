@@ -1,3 +1,9 @@
+2006-09-09  Miguel de Icaza  <miguel@novell.com>
+
+	* X11Keyboard.cs: If we are unable to obtain the input method, do
+	not call CreateXic to create the input context.   Should fix
+	#78944/79276.
+
 2006-09-08  Alexander Olk  <alex.olk@googlemail.com>
 
 	* MimeIcon.cs: Rewrote major parts. Dropped KDE support for now.

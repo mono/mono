@@ -81,11 +81,10 @@ namespace System.Windows.Forms {
 			}
 
 			IntPtr xim = XOpenIM (display, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
-			if (xim == IntPtr.Zero) {
+			if (xim == IntPtr.Zero) 
 				Console.Error.WriteLine ("Could not get XIM");
-			}
-
-			xic = CreateXic (window, xim);
+			else 
+				xic = CreateXic (window, xim);
 			
 			initialized = true;
 		}
