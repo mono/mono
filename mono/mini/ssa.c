@@ -195,7 +195,7 @@ mono_ssa_rename_vars (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, MonoIn
 {
 	MonoInst *inst, *new_var;
 	int i, j, idx;
-	GList *tmp;
+	GSList *tmp;
 	MonoInst **new_stack;
 
 #ifdef DEBUG_SSA
@@ -431,7 +431,7 @@ mono_ssa_replace_copies (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, c
 			printf ("REPLACE COPY BB%d %d %d\n", bb->block_num, idx, new_var->inst_c0);
 			g_assert (cfg->varinfo [mv->reg]->inst_vtype == cfg->varinfo [idx]->inst_vtype);
 #endif
-			inst->inst_i0 = new_var;
+			inst->inst_p0 = new_var;
 		} else {
 			is_live [mv->idx] = 1;
 		}

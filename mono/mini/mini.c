@@ -77,6 +77,11 @@
 
 #define MONO_CHECK_THIS(ins) (mono_method_signature (cfg->method)->hasthis && (ins)->ssa_op == MONO_SSA_LOAD && (ins)->inst_left->inst_c0 == 0)
 
+/* FIXME: Handle OP_GOT_ENTRY too */
+#define MONO_IS_JUMP_TABLE(ins) (((ins)->opcode == OP_JUMP_TABLE) ? TRUE : ((((ins)->opcode == OP_AOTCONST) && (ins->inst_i1 == (gpointer)MONO_PATCH_INFO_SWITCH)) ? TRUE : FALSE))
+
+#define MONO_JUMP_TABLE_FROM_INS(ins) (((ins)->opcode == OP_JUMP_TABLE) ? (ins)->inst_p0 : (((ins)->opcode == OP_AOTCONST) && (ins->inst_i1 == (gpointer)MONO_PATCH_INFO_SWITCH) ? (ins)->inst_p0 : NULL))
+
 static void setup_stat_profiler (void);
 gboolean  mono_arch_print_tree(MonoInst *tree, int arity);
 static gpointer mono_jit_compile_method_with_opt (MonoMethod *method, guint32 opt);
@@ -9462,9 +9467,9 @@ replace_out_block_in_code (MonoBasicBlock *bb, MonoBasicBlock *orig, MonoBasicBl
 				inst->inst_target_bb = repl;
 			}
 		}
-		if (inst->opcode == OP_JUMP_TABLE) {
+		if (MONO_IS_JUMP_TABLE (inst)) {
 			int i;
-			MonoJumpInfoBBTable *table = inst->inst_p0;
+			MonoJumpInfoBBTable *table = MONO_JUMP_TABLE_FROM_INS (inst);
 			for (i = 0; i < table->table_size; i++ ) {
 				if (table->table [i] == orig) {
 					table->table [i] = repl;
@@ -9637,9 +9642,9 @@ mono_merge_basic_blocks (MonoBasicBlock *bb, MonoBasicBlock *bbn)
 			g_assert (inst->inst_target_bb == bbn);
 			NULLIFY_INS (inst);
 		}
-		if (inst->opcode == OP_JUMP_TABLE) {
+		if (MONO_IS_JUMP_TABLE (inst)) {
 			int i;
-			MonoJumpInfoBBTable *table = inst->inst_p0;
+			MonoJumpInfoBBTable *table = MONO_JUMP_TABLE_FROM_INS (inst);
 			for (i = 0; i < table->table_size; i++ ) {
 				g_assert (table->table [i] == bbn);
 				table->table [i] = NULL;

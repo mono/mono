@@ -1,5 +1,14 @@
 2006-09-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_lowering_pass): Handle OP_IDIV_UN_IMM/OP_IREM_UN_IMM as well.
+
+	* *: Change bb->dominated to a GSList. Allocate the list items from the cfg mempool.
+	
+	* mini.c (replace_out_block_in_code): Handle the AOT case of jump tables as well.
+	(mono_merge_basic_blocks): Ditto.
+
+	* method-to-ir.c (mono_spill_global_vars): Get rid of an allocation.
+
 	* mini-sparc.c (emit_sig_cookie2): Port the vararg changes to sparc.
 
 	* *: More rationalizing of opcodes: Get rid of the CEE_... versions of some

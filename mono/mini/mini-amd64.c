@@ -2399,6 +2399,8 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_REM_IMM:
 		case OP_IDIV_IMM:
 		case OP_IREM_IMM:
+		case OP_IDIV_UN_IMM:
+		case OP_IREM_UN_IMM:
 			NEW_INS (cfg, temp, OP_ICONST);
 			temp->inst_c0 = ins->inst_imm;
 			temp->dreg = mono_regstate_next_int (cfg->rs);
@@ -2414,6 +2416,12 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 				break;
 			case OP_IREM_IMM:
 				ins->opcode = OP_IREM;
+				break;
+			case OP_IDIV_UN_IMM:
+				ins->opcode = OP_IDIV_UN;
+				break;
+			case OP_IREM_UN_IMM:
+				ins->opcode = OP_IREM_UN;
 				break;
 			}
 			ins->sreg2 = temp->dreg;

@@ -492,7 +492,7 @@ MINI_OP(OP_GROUP, "group", NONE, NONE, NONE)
 MINI_OP(OP_JUMP_TABLE, "op_jump_table", IREG, NONE, NONE)
 
 /* aot compiler */
-MINI_OP(OP_AOTCONST, "aot_const", NONE, NONE, NONE)
+MINI_OP(OP_AOTCONST, "aot_const", IREG, NONE, NONE)
 MINI_OP(OP_PATCH_INFO, "patch_info", NONE, NONE, NONE)
 MINI_OP(OP_GOT_ENTRY, "got_entry", IREG, IREG, NONE)
 

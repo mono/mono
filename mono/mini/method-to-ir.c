@@ -9490,7 +9490,6 @@ insert_after_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst *ins_to_insert)
 void
 mono_spill_global_vars (MonoCompile *cfg)
 {
-	guint32 *stacktypes;
 	MonoBasicBlock *bb;
 	char spec2 [16];
 	int orig_next_vireg;
@@ -9498,11 +9497,11 @@ mono_spill_global_vars (MonoCompile *cfg)
 	guint32 *lvregs;
 	guint32 i, lvregs_len;
 	gboolean dest_has_lvreg = FALSE;
+	guint32 stacktypes [128];
 
 	memset (spec2, 0, sizeof (spec2));
 
 	/* FIXME: Move this function to mini.c */
-	stacktypes = mono_mempool_alloc0 (cfg->mempool, sizeof (guint32) * 128);
 	stacktypes ['i'] = STACK_PTR;
 	stacktypes ['l'] = STACK_I8;
 	stacktypes ['f'] = STACK_R8;
@@ -9944,8 +9943,8 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   running generics.exe.
  * - create a helper function for allocating a stack slot, taking into account 
  *   MONO_CFG_HAS_SPILLUP.
- * - merge new GC changes in mini.c.
- * - merge the stack merge stuff.
+ * - merge new GC changes in mini.c
+ * - merge the stack merge stuff
  * - remove unused opcodes from mini-ops.h, remove "op_" from the opcode names,
  *   remove the op_ opcodes from the cpu-..md files, rename cpu-pentium.md to cpu-x86.md,
  *   clean up the cpu-..md files.
