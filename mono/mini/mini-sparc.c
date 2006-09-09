@@ -1499,6 +1499,28 @@ emit_pass_other (MonoCompile *cfg, MonoCallInst *call, ArgInfo *ainfo, MonoType 
 	}
 }
 
+static void
+emit_sig_cookie2 (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo)
+{
+	MonoMethodSignature *tmp_sig;
+
+	/*
+	 * mono_ArgIterator_Setup assumes the signature cookie is 
+	 * passed first and all the arguments which were before it are
+	 * passed on the stack after the signature. So compensate by 
+	 * passing a different signature.
+	 */
+	tmp_sig = mono_metadata_signature_dup (call->signature);
+	tmp_sig->param_count -= call->signature->sentinelpos;
+	tmp_sig->sentinelpos = 0;
+	memcpy (tmp_sig->params, call->signature->params + call->signature->sentinelpos, tmp_sig->param_count * sizeof (MonoType*));
+
+	/* FIXME: Add support for signature tokens to AOT */
+	cfg->disable_aot = TRUE;
+	/* We allways pass the signature on the stack for simplicity */
+	MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STORE_MEMBASE_IMM, sparc_sp, ARGS_OFFSET + cinfo->sig_cookie.offset, tmp_sig);
+}
+
 void
 mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 {
@@ -1526,23 +1548,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 
 		if ((sig->call_convention == MONO_CALL_VARARG) && (i == sig->sentinelpos)) {
 			/* Emit the signature cookie just before the first implicit argument */
-			MonoMethodSignature *tmp_sig;
-
-			/*
-			 * mono_ArgIterator_Setup assumes the signature cookie is 
-			 * passed first and all the arguments which were before it are
-			 * passed on the stack after the signature. So compensate by 
-			 * passing a different signature.
-			 */
-			tmp_sig = mono_metadata_signature_dup (call->signature);
-			tmp_sig->param_count -= call->signature->sentinelpos;
-			tmp_sig->sentinelpos = 0;
-			memcpy (tmp_sig->params, call->signature->params + call->signature->sentinelpos, tmp_sig->param_count * sizeof (MonoType*));
-
-			/* FIXME: Add support for signature tokens to AOT */
-			cfg->disable_aot = TRUE;
-			/* We allways pass the signature on the stack for simplicity */
-			MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STORE_MEMBASE_IMM, sparc_sp, ARGS_OFFSET + cinfo->sig_cookie.offset, tmp_sig);
+			emit_sig_cookie2 (cfg, call, cinfo);
 		}
 
 		in = call->args [i];
@@ -1562,6 +1568,11 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 			emit_pass_float (cfg, call, ainfo, in);
 		else
 			emit_pass_other (cfg, call, ainfo, arg_type, in);
+	}
+
+	/* Handle the case where there are no implicit arguments */
+	if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG) && (n == sig->sentinelpos)) {
+		emit_sig_cookie2 (cfg, call, cinfo);
 	}
 
 	call->stack_usage = cinfo->stack_usage + extra_space;
@@ -2875,6 +2886,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case CEE_DIV:
 		case OP_IDIV:
+			/* Sign extend sreg1 into %y */
+			sparc_sra_imm (code, ins->sreg1, 31, sparc_o7);
+			sparc_wry (code, sparc_o7, sparc_g0);
+			sparc_sdiv (code, TRUE, ins->sreg1, ins->sreg2, ins->dreg);
+			EMIT_COND_SYSTEM_EXCEPTION_GENERAL (code, sparc_boverflow, "ArithmeticException", TRUE, sparc_icc_short);
+			break;
+		case OP_IDIV_IMM:
+			sparc_set (code, ins->inst_imm, GP_SCRATCH_REG);
 			/* Sign extend sreg1 into %y */
 			sparc_sra_imm (code, ins->sreg1, 31, sparc_o7);
 			sparc_wry (code, sparc_o7, sparc_g0);

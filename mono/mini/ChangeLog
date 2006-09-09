@@ -1,5 +1,7 @@
 2006-09-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-sparc.c (emit_sig_cookie2): Port the vararg changes to sparc.
+
 	* *: More rationalizing of opcodes: Get rid of the CEE_... versions of some
 	opcodes, use OP_... versions everywhere.
 
