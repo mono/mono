@@ -1310,6 +1310,39 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 	cfg->param_area = MAX (cfg->param_area, call->stack_usage);
 	cfg->arch.n_out_regs = MAX (cfg->arch.n_out_regs, cinfo->reg_usage);
 	cfg->flags |= MONO_CFG_HAS_CALLS;
+
+	return call;
+}
+
+static void
+emit_sig_cookie2 (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo)
+{
+	MonoMethodSignature *tmp_sig;
+
+	/* Emit the signature cookie just before the implicit arguments */
+	MonoInst *sig_arg;
+	/* FIXME: Add support for signature tokens to AOT */
+	cfg->disable_aot = TRUE;
+
+	g_assert (cinfo->sig_cookie.storage == ArgOnStack);
+
+	/*
+	 * mono_ArgIterator_Setup assumes the signature cookie is 
+	 * passed first and all the arguments which were before it are
+	 * passed on the stack after the signature. So compensate by 
+	 * passing a different signature.
+	 */
+	tmp_sig = mono_metadata_signature_dup (call->signature);
+	tmp_sig->param_count -= call->signature->sentinelpos;
+	tmp_sig->sentinelpos = 0;
+	memcpy (tmp_sig->params, call->signature->params + call->signature->sentinelpos, tmp_sig->param_count * sizeof (MonoType*));
+
+	MONO_INST_NEW (cfg, sig_arg, OP_ICONST);
+	sig_arg->dreg = mono_alloc_ireg (cfg);
+	sig_arg->inst_p0 = tmp_sig;
+	MONO_ADD_INS (cfg->cbb, sig_arg);
+
+	MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI8_MEMBASE_REG, IA64_SP, 16 + cinfo->sig_cookie.offset, sig_arg->dreg);
 }
 
 void
@@ -1359,32 +1392,8 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 		ainfo = cinfo->args + i;
 
 		if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG) && (i == sig->sentinelpos)) {
-			MonoMethodSignature *tmp_sig;
-
 			/* Emit the signature cookie just before the implicit arguments */
-			MonoInst *sig_arg;
-			/* FIXME: Add support for signature tokens to AOT */
-			cfg->disable_aot = TRUE;
-
-			g_assert (cinfo->sig_cookie.storage == ArgOnStack);
-
-			/*
-			 * mono_ArgIterator_Setup assumes the signature cookie is 
-			 * passed first and all the arguments which were before it are
-			 * passed on the stack after the signature. So compensate by 
-			 * passing a different signature.
-			 */
-			tmp_sig = mono_metadata_signature_dup (call->signature);
-			tmp_sig->param_count -= call->signature->sentinelpos;
-			tmp_sig->sentinelpos = 0;
-			memcpy (tmp_sig->params, call->signature->params + call->signature->sentinelpos, tmp_sig->param_count * sizeof (MonoType*));
-
-			MONO_INST_NEW (cfg, sig_arg, OP_ICONST);
-			sig_arg->dreg = mono_alloc_ireg (cfg);
-			sig_arg->inst_p0 = tmp_sig;
-			MONO_ADD_INS (cfg->cbb, sig_arg);
-
-			MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI8_MEMBASE_REG, IA64_SP, 16 + cinfo->sig_cookie.offset, sig_arg->dreg);
+			emit_sig_cookie2 (cfg, call, cinfo);
 		}
 
 		in = call->args [i];
@@ -1450,12 +1459,15 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 		}
 	}
 
+	/* Handle the case where there are no implicit arguments */
+	if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG) && (n == sig->sentinelpos)) {
+		emit_sig_cookie2 (cfg, call, cinfo);
+	}
+
 	call->stack_usage = cinfo->stack_usage;
 	cfg->param_area = MAX (cfg->param_area, call->stack_usage);
 	cfg->arch.n_out_regs = MAX (cfg->arch.n_out_regs, cinfo->reg_usage);
 	cfg->flags |= MONO_CFG_HAS_CALLS;
-
-	return call;
 }
 
 /* FIXME: Remove these later */

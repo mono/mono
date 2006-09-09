@@ -80,6 +80,7 @@ static int ldind_to_load_membase (int opcode);
 static int stind_to_store_membase (int opcode);
 
 int mono_op_to_op_imm (int opcode);
+int mono_op_to_op_imm_noemul (int opcode);
 
 gboolean  mono_arch_print_tree(MonoInst *tree, int arity);
 
@@ -6679,14 +6680,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 			/* Use the immediate opcodes if possible */
 			if (((sp [1]->opcode == OP_ICONST) || (sp [1]->opcode == OP_I8CONST)) && mono_arch_is_inst_imm (sp [1]->opcode == OP_ICONST ? sp [1]->inst_c0 : sp [1]->inst_l)) {
-				int imm_opcode = -1;
+				int imm_opcode;
 
-#if SIZEOF_VOID_P == 4 && !defined(MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPTS)
-				if ((ins->opcode != OP_LSHR) && (ins->opcode != OP_LSHL) && (ins->opcode != OP_LSHR_UN))
-					imm_opcode = mono_op_to_op_imm (ins->opcode);
-#else
-					imm_opcode = mono_op_to_op_imm (ins->opcode);
-#endif
+				imm_opcode = mono_op_to_op_imm_noemul (ins->opcode);
 				if (imm_opcode != -1) {
 					ins->opcode = imm_opcode;
 					if (sp [1]->opcode == OP_I8CONST) {
@@ -9264,6 +9260,27 @@ op_to_op_src2_membase (int load_opcode, int opcode)
 	return -1;
 }
 
+int
+mono_op_to_op_imm_noemul (int opcode)
+{
+	switch (opcode) {
+#if SIZEOF_VOID_P == 4 && !defined(MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPTS)
+	case OP_LSHR:
+	case OP_LSHL:
+	case OP_LSHR_UN:
+#endif
+#if defined(MONO_ARCH_EMULATE_MUL_DIV) || defined(MONO_ARCH_EMULATE_DIV)
+	case OP_IDIV:
+	case OP_IDIV_UN:
+	case OP_IREM:
+	case OP_IREM_UN:
+#endif
+		return -1;
+	default:
+		return mono_op_to_op_imm (opcode);
+	}
+}
+
 /**
  * mono_handle_global_vregs:
  *
@@ -9927,9 +9944,8 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   running generics.exe.
  * - create a helper function for allocating a stack slot, taking into account 
  *   MONO_CFG_HAS_SPILLUP.
- * - merge new GC changes in mini.c
- * - merge the stack merge stuff
- * - merge the emit_sig_cookie changes on ia64 and sparc.
+ * - merge new GC changes in mini.c.
+ * - merge the stack merge stuff.
  * - remove unused opcodes from mini-ops.h, remove "op_" from the opcode names,
  *   remove the op_ opcodes from the cpu-..md files, rename cpu-pentium.md to cpu-x86.md,
  *   clean up the cpu-..md files.
