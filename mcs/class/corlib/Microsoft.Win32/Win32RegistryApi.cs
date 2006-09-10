@@ -35,6 +35,7 @@
 
 using System;
 using System.Collections;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
@@ -62,6 +63,10 @@ namespace Microsoft.Win32
 	       
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegCloseKey")]
 		static extern int RegCloseKey (IntPtr keyHandle);
+
+		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode)]
+		static extern int RegConnectRegistry (string machineName, IntPtr hKey,
+				out IntPtr keyHandle);
 
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegFlushKey")]
 		private static extern int RegFlushKey (IntPtr keyHandle);
@@ -124,13 +129,12 @@ namespace Microsoft.Win32
 		// Returns our handle from the RegistryKey
 		static IntPtr GetHandle (RegistryKey key)
 		{
-			return key.IsRoot ? new IntPtr ((int) key.Data)
-				: (IntPtr) key.Data;
+			return (IntPtr) key.Handle;
 		}
 
 		static bool IsHandleValid (RegistryKey key)
 		{
-			return key.Data != null;
+			return key.Handle != null;
 		}
 
 		/// <summary>
@@ -358,7 +362,19 @@ namespace Microsoft.Win32
 			}
 			return index;
 		}
-		
+
+		public RegistryKey OpenRemoteBaseKey (RegistryHive hKey, string machineName)
+		{
+			IntPtr handle = new IntPtr ((int) hKey);
+
+			IntPtr keyHandle;
+			int result = RegConnectRegistry (machineName, handle, out keyHandle);
+			if (result != Win32ResultCode.Success)
+				GenerateException (result);
+
+			return new RegistryKey (hKey, keyHandle, true);
+		}
+
 		public RegistryKey OpenSubKey (RegistryKey rkey, string keyName, bool writable)
 		{
 			int access = OpenRegKeyRead;
@@ -508,10 +524,10 @@ namespace Microsoft.Win32
 				case Win32ResultCode.FileNotFound:
 				case Win32ResultCode.InvalidParameter:
 					throw new ArgumentException ();
-				
 				case Win32ResultCode.AccessDenied:
 					throw new SecurityException ();
-
+				case Win32ResultCode.NetworkPathNotFound:
+					throw new IOException ("The network path was not found.");
 				default:
 					// unidentified system exception
 					throw new SystemException ();

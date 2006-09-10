@@ -48,20 +48,13 @@ namespace Microsoft.Win32
 		// This represents the backend data, used when creating the
 		// RegistryKey object
 		//
-		internal object Data;
-		
+		object handle;
+
+		object hive; // the RegistryHive if the key represents a base key
 		readonly string qname;	// the fully qualified registry key name
-		readonly bool isRoot;	// is the an instance of a root key?
+		readonly bool isRemoteRoot;	// is an instance of a remote root key?
 		readonly bool isWritable;	// is the key openen in writable mode
 
-		internal bool IsRoot {
-			get { return isRoot; }
-		}
-
-		internal bool IsWritable {
-			get { return isWritable; }
-		}
-		
 		static readonly IRegistryApi RegistryApi;
 
 		static RegistryKey ()
@@ -75,22 +68,30 @@ namespace Microsoft.Win32
 		/// <summary>
 		///	Construct an instance of a root registry key entry.
 		/// </summary>
-		internal RegistryKey (RegistryHive hiveId, string keyName)
+		internal RegistryKey (RegistryHive hiveId) : this (hiveId, 
+			new IntPtr ((int) hiveId), false)
 		{
-			Data = hiveId;
-			qname = keyName;
-			isRoot = true;
+		}
+
+		/// <summary>
+		///	Construct an instance of a root registry key entry.
+		/// </summary>
+		internal RegistryKey (RegistryHive hiveId, IntPtr keyHandle, bool remoteRoot)
+		{
+			hive = hiveId;
+			handle = keyHandle;
+			qname = GetHiveName (hiveId);
+			isRemoteRoot = remoteRoot;
 			isWritable = true; // always consider root writable
 		}
-		
+
 		/// <summary>
 		///	Construct an instance of a registry key entry.
 		/// </summary>
 		internal RegistryKey (object data, string keyName, bool writable)
 		{
-			Data = data;
+			handle = data;
 			qname = keyName;
-			isRoot = false;
 			isWritable = writable;
 		}
 
@@ -142,11 +143,13 @@ namespace Microsoft.Win32
 		{
 			Flush ();
 
-			if (isRoot)
+			// a handle to a remote hive must be closed, while one to a local
+			// hive should not be closed
+			if (!isRemoteRoot && IsRoot)
 				return;
 			
 			RegistryApi.Close (this);
-			Data = null;
+			handle = null;
 		}
 		
 		
@@ -382,10 +385,12 @@ namespace Microsoft.Win32
 		}
 		
 		
-		[MonoTODO]
+		[MonoTODO ("Not implemented on unix")]
 		public static RegistryKey OpenRemoteBaseKey(RegistryHive hKey,string machineName)
 		{
-			throw new NotImplementedException ();
+			if (machineName == null)
+				throw new ArgumentNullException ("machineName");
+			return RegistryApi.OpenRemoteBaseKey (hKey, machineName);
 		}
 		
 		
@@ -396,18 +401,41 @@ namespace Microsoft.Win32
 		/// </summary>
 		public override string ToString()
 		{
+			AssertKeyStillValid ();
+
 			return RegistryApi.ToString (this);
 		}
 
 		#endregion // PublicAPI
 
-		
+		internal bool IsRoot {
+			get { return hive != null; }
+		}
+
+		private bool IsWritable {
+			get { return isWritable; }
+		}
+
+		internal RegistryHive Hive {
+			get {
+				if (!IsRoot)
+					throw new NotSupportedException ();
+				return (RegistryHive) hive;
+			}
+		}
+
+		// returns the key handle for the win32 implementation and the
+		// KeyHandler for the unix implementation
+		internal object Handle {
+			get { return handle; }
+		}
+
 		/// <summary>
 		/// validate that the registry key handle is still usable.
 		/// </summary>
 		private void AssertKeyStillValid ()
 		{
-			if (Data == null)
+			if (handle == null)
 				throw new ObjectDisposedException ("Microsoft.Win32.RegistryKey");
 		}
 
@@ -430,7 +458,7 @@ namespace Microsoft.Win32
 		/// </summary>
 		private void DeleteChildKeysAndValues ()
 		{
-			if (isRoot)
+			if (IsRoot)
 				return;
 			
 			string[] subKeys = GetSubKeyNames ();
@@ -464,6 +492,29 @@ namespace Microsoft.Win32
 		{
 			throw new IOException ("Illegal operation attempted on a"
 				+ " registry key that has been marked for deletion.");
+		}
+
+		static string GetHiveName (RegistryHive hive)
+		{
+			switch (hive) {
+			case RegistryHive.ClassesRoot:
+				return "HKEY_CLASSES_ROOT";
+			case RegistryHive.CurrentConfig:
+				return "HKEY_CURRENT_CONFIG";
+			case RegistryHive.CurrentUser:
+				return "HKEY_CURRENT_USER";
+			case RegistryHive.DynData:
+				return "HKEY_DYN_DATA";
+			case RegistryHive.LocalMachine:
+				return "HKEY_LOCAL_MACHINE";
+			case RegistryHive.PerformanceData:
+				return "HKEY_PERFORMANCE_DATA";
+			case RegistryHive.Users:
+				return "HKEY_USERS";
+			}
+
+			throw new NotImplementedException (string.Format (
+				"Registry hive '{0}' is not implemented.", hive.ToString ()));
 		}
 
 	}

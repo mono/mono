@@ -1,3 +1,27 @@
+2006-09-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* IRegistryApi.cs: Added OpenRemoteBaseKey method.
+	* Win32ResultCode.cs: Added code for win32 error 53.
+	* RegistryKey.cs: Implemented support for OpenRemoteBaseKEy on
+	Windows. To achieve this, the handle of the remote hive must be
+	stored separately from the RegistryHive value. Removed isRoot field, as
+	we now determine whether we're a root key (hive) by checking if hive
+	is not null. Added internal ctor for registry hives that takes a 
+	RegistryHive, a key handle and a bool to indicate whether its a remote
+	hive. Renamed Data field to handle and added internal property to 
+	access it. Throw ObjectDisposedException in ToString if key is
+	closed/disposed. Added Hive property, which is used in UnixRegistryApi.
+	Added GetHiveName method which translates a RegistryHive value to its
+	(key) name.
+	* Win32RegistryApi.cs: Added pinvoke for RegConnectRegistry. GetHandle
+	no longer needs to know whether the key refers to a hive (base key) 
+	or not. Implemented OpenRemoteBaseKey.
+	* UnixRegistryApi.cs: Added OpenRemoteBaseKey implementation which
+	always throws NotImplementedException.
+	* Registry.cs: The key name of the base key no longer needs to be 
+	passed to the ctor, as it's looked up in the ctor itself. This avoids
+	having a different logical for local or remote base keys.
+
 2006-08-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Win32RegistryApi.cs: Use a StringBuilder instead of byte [] for

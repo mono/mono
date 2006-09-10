@@ -45,19 +45,19 @@ namespace Microsoft.Win32
 		private Registry () { }
 #endif
 		public static readonly RegistryKey ClassesRoot = new RegistryKey (
-				RegistryHive.ClassesRoot, "HKEY_CLASSES_ROOT");
+				RegistryHive.ClassesRoot);
 		public static readonly RegistryKey CurrentConfig = new RegistryKey (
-				RegistryHive.CurrentConfig, "HKEY_CURRENT_CONFIG");
+				RegistryHive.CurrentConfig);
 		public static readonly RegistryKey CurrentUser = new RegistryKey (
-				RegistryHive.CurrentUser, "HKEY_CURRENT_USER");
+				RegistryHive.CurrentUser);
 		public static readonly RegistryKey DynData = new RegistryKey (
-				RegistryHive.DynData, "HKEY_DYN_DATA");
+				RegistryHive.DynData);
 		public static readonly RegistryKey LocalMachine = new RegistryKey (
-				RegistryHive.LocalMachine, "HKEY_LOCAL_MACHINE");
+				RegistryHive.LocalMachine);
 		public static readonly RegistryKey PerformanceData = new RegistryKey (
-				RegistryHive.PerformanceData, "HKEY_PERFORMANCE_DATA");
+				RegistryHive.PerformanceData);
 		public static readonly RegistryKey Users = new RegistryKey (
-				RegistryHive.Users, "HKEY_USERS");
+				RegistryHive.Users);
 
 #if NET_2_0
 		static RegistryKey ToKey (string keyName, bool setting)

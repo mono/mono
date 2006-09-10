@@ -38,6 +38,7 @@ namespace Microsoft.Win32 {
 
 	internal interface IRegistryApi {
 		RegistryKey CreateSubKey (RegistryKey rkey, string keyname);
+		RegistryKey OpenRemoteBaseKey (RegistryHive hKey, string machineName);
 		RegistryKey OpenSubKey (RegistryKey rkey, string keyname, bool writtable);
 		void Flush (RegistryKey rkey);
 		void Close (RegistryKey rkey);

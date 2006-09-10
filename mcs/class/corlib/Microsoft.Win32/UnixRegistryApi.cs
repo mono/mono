@@ -240,7 +240,7 @@ namespace Microsoft.Win32 {
 				if (!rkey.IsRoot || !createNonExisting)
 					return null;
 
-				RegistryHive x = (RegistryHive) rkey.Data;
+				RegistryHive x = (RegistryHive) rkey.Hive;
 				switch (x){
 				case RegistryHive.CurrentUser:
 					string userDir = Path.Combine (UserStore, x.ToString ());
@@ -568,6 +568,11 @@ namespace Microsoft.Win32 {
 		public RegistryKey CreateSubKey (RegistryKey rkey, string keyname)
 		{
 			return CreateSubKey (rkey, keyname, true);
+		}
+
+		public RegistryKey OpenRemoteBaseKey (RegistryHive hKey, string machineName)
+		{
+			throw new NotImplementedException ();
 		}
 
 		public RegistryKey OpenSubKey (RegistryKey rkey, string keyname, bool writable)

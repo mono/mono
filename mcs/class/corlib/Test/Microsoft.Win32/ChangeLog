@@ -1,3 +1,10 @@
+2006-09-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* RegistryKeyTest.cs: Added RunningOnUnix property that is used
+	to skip tests that only need to be run on Windows. Added tests Close
+	tests for local/remote registry hives and keys. Added tests for
+	OpenRemoteBaseKey (Windows only).
+
 2006-08-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* RegistryKeyTest.cs: Modified GetValueNamesTest and GetSubKeyNamesTest

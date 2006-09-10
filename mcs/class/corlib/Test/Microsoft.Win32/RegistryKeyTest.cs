@@ -43,9 +43,8 @@ namespace MonoTests.Microsoft.Win32
 		[Test]
 		public void TestHandle ()
 		{
-			// this test is for Windows
-			int p = (int) Environment.OSVersion.Platform;
-			if ((p == 4) || (p == 128))
+			// this test is for Windows only
+			if (RunningOnUnix)
 				return;
 
 			// this regpath always exists under windows
@@ -150,6 +149,291 @@ namespace MonoTests.Microsoft.Win32
 		}
 
 		[Test]
+		public void Close_Local_Hive ()
+		{
+			RegistryKey hive = Registry.CurrentUser;
+			hive.Close ();
+
+			Assert.IsNotNull (hive.GetSubKeyNames (), "#1");
+			Assert.IsNull (hive.GetValue ("doesnotexist"), "#2");
+			Assert.IsNotNull (hive.GetValueNames (), "#3");
+			Assert.IsNull (hive.OpenSubKey ("doesnotexist"), "#4");
+			Assert.IsNotNull (hive.SubKeyCount, "#5");
+			Assert.IsNotNull (hive.ToString (), "#6");
+
+			// closing key again does not have any effect
+			hive.Close ();
+		}
+
+		[Test]
+		public void Close_Local_Key ()
+		{
+			RegistryKey key = Registry.CurrentUser.OpenSubKey ("SOFTWARE");
+			key.Close ();
+
+			// closing a key twice does not have any effect
+			key.Close ();
+
+			try {
+				key.CreateSubKey ("a");
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				key.DeleteSubKey ("doesnotexist");
+				Assert.Fail ("#2");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				key.DeleteSubKeyTree ("doesnotexist");
+				Assert.Fail ("#3");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				key.DeleteValue ("doesnotexist");
+				Assert.Fail ("#4");
+			} catch (ObjectDisposedException) {
+			}
+
+			// flushing a closed key does not have any effect
+			key.Flush ();
+
+			try {
+				key.GetSubKeyNames ();
+				Assert.Fail ("#5");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				key.GetValue ("doesnotexist");
+				Assert.Fail ("#6");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				key.GetValueNames ();
+				Assert.Fail ("#7");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				key.OpenSubKey ("doesnotexist");
+				Assert.Fail ("#8");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				key.SetValue ("doesnotexist", "something");
+				Assert.Fail ("#9");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				int x = key.SubKeyCount;
+				Assert.Fail ("#10:" + x);
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				key.ToString ();
+				Assert.Fail ("#11");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				int x = key.ValueCount;
+				Assert.Fail ("#12:" + x);
+			} catch (ObjectDisposedException) {
+			}
+		}
+
+		[Test]
+		public void Close_Remote_Hive ()
+		{
+			// access to registry of remote machines is not implemented on unix
+			if (RunningOnUnix)
+				return;
+
+			RegistryKey hive = RegistryKey.OpenRemoteBaseKey (
+				RegistryHive.CurrentUser, Environment.MachineName);
+			hive.Close ();
+
+			// closing a remote hive twice does not have any effect
+			hive.Close ();
+
+			try {
+				hive.CreateSubKey ("a");
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				hive.DeleteSubKey ("doesnotexist");
+				Assert.Fail ("#2");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				hive.DeleteSubKeyTree ("doesnotexist");
+				Assert.Fail ("#3");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				hive.DeleteValue ("doesnotexist");
+				Assert.Fail ("#4");
+			} catch (ObjectDisposedException) {
+			}
+
+			// flushing a closed hive does not have any effect
+			hive.Flush ();
+
+			try {
+				hive.GetSubKeyNames ();
+				Assert.Fail ("#5");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				hive.GetValue ("doesnotexist");
+				Assert.Fail ("#6");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				hive.GetValueNames ();
+				Assert.Fail ("#7");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				hive.OpenSubKey ("doesnotexist");
+				Assert.Fail ("#8");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				hive.SetValue ("doesnotexist", "something");
+				Assert.Fail ("#9");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				int x = hive.SubKeyCount;
+				Assert.Fail ("#10:" + x);
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				hive.ToString ();
+				Assert.Fail ("#11");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				int x = hive.ValueCount;
+				Assert.Fail ("#12:" + x);
+			} catch (ObjectDisposedException) {
+			}
+		}
+
+		[Test]
+		public void Close_Remote_Key ()
+		{
+			// access to registry of remote machines is not implemented on unix
+			if (RunningOnUnix)
+				return;
+
+			RegistryKey hive = RegistryKey.OpenRemoteBaseKey (
+				RegistryHive.CurrentUser, Environment.MachineName);
+			RegistryKey key = hive.OpenSubKey ("SOFTWARE");
+			key.Close ();
+
+			// closing a remote key twice does not have any effect
+			key.Close ();
+
+			try {
+				key.CreateSubKey ("a");
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				key.DeleteSubKey ("doesnotexist");
+				Assert.Fail ("#2");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				key.DeleteSubKeyTree ("doesnotexist");
+				Assert.Fail ("#3");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				key.DeleteValue ("doesnotexist");
+				Assert.Fail ("#4");
+			} catch (ObjectDisposedException) {
+			}
+
+			// flushing a closed key does not have any effect
+			key.Flush ();
+
+			try {
+				key.GetSubKeyNames ();
+				Assert.Fail ("#5");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				key.GetValue ("doesnotexist");
+				Assert.Fail ("#6");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				key.GetValueNames ();
+				Assert.Fail ("#7");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				key.OpenSubKey ("doesnotexist");
+				Assert.Fail ("#8");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				key.SetValue ("doesnotexist", "something");
+				Assert.Fail ("#9");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				int x = key.SubKeyCount;
+				Assert.Fail ("#10:" + x);
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				key.ToString ();
+				Assert.Fail ("#11");
+			} catch (ObjectDisposedException) {
+			}
+
+			try {
+				int x = key.ValueCount;
+				Assert.Fail ("#12:" + x);
+			} catch (ObjectDisposedException) {
+			}
+
+			hive.Close ();
+		}
+
+		[Test]
 		public void CreateSubKey ()
 		{
 			string subKeyName = Guid.NewGuid ().ToString ();
@@ -178,7 +462,7 @@ namespace MonoTests.Microsoft.Win32
 						createdKey = softwareKey.CreateSubKey (subKeyName);
 						Assert.Fail ("#1");
 					} catch (UnauthorizedAccessException ex) {
-						// Cannot write to the registry key.
+						// Cannot write to the registry key
 						Assert.AreEqual (typeof (UnauthorizedAccessException), ex.GetType (), "#2");
 						Assert.IsNotNull (ex.Message, "#3");
 						Assert.IsNull (ex.InnerException, "#4");
@@ -291,7 +575,7 @@ namespace MonoTests.Microsoft.Win32
 					Assert.Fail ("#2");
 				} catch (InvalidOperationException ex) {
 					// Registry key has subkeys and recursive removes are not
-					// supported by this method.
+					// supported by this method
 					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#3");
 					Assert.IsNotNull (ex.Message, "#4");
 					Assert.IsNull (ex.InnerException, "#5");
@@ -1384,6 +1668,50 @@ namespace MonoTests.Microsoft.Win32
 		}
 
 		[Test]
+		public void OpenRemoteBaseKey ()
+		{
+			// access to registry of remote machines is not implemented on unix
+			if (RunningOnUnix)
+				return;
+
+			RegistryKey hive = RegistryKey.OpenRemoteBaseKey (
+				RegistryHive.CurrentUser, Environment.MachineName);
+			Assert.IsNotNull (hive, "#1");
+
+			RegistryKey key = hive.OpenSubKey ("SOFTWARE");
+			Assert.IsNotNull (key, "#2");
+			key.Close ();
+
+			hive.Close ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void OpenRemoteBaseKey_MachineName_Null ()
+		{
+			RegistryKey.OpenRemoteBaseKey (RegistryHive.CurrentUser, null);
+		}
+
+		[Test]
+		public void OpenRemoteBaseKey_MachineName_DoesNotExist ()
+		{
+			// access to registry of remote machines is not implemented on unix
+			if (RunningOnUnix)
+				return;
+
+			try {
+				RegistryKey.OpenRemoteBaseKey (RegistryHive.CurrentUser,
+					"DOESNOTEXIST");
+				Assert.Fail ("#1");
+			} catch (IOException ex) {
+				// The network path was not found
+				Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.Message, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+			}
+		}
+
+		[Test]
 		public void SetValue_Name_Null ()
 		{
 			string subKeyName = Guid.NewGuid ().ToString ();
@@ -1696,7 +2024,7 @@ namespace MonoTests.Microsoft.Win32
 							createdKey.SetValue ("name1", "value1");
 							Assert.Fail ("#1");
 						} catch (UnauthorizedAccessException ex) {
-							// Cannot write to the registry key.
+							// Cannot write to the registry key
 							Assert.AreEqual (typeof (UnauthorizedAccessException), ex.GetType (), "#2");
 							Assert.IsNotNull (ex.Message, "#3");
 							Assert.IsNull (ex.InnerException, "#4");
@@ -2145,6 +2473,17 @@ namespace MonoTests.Microsoft.Win32
 					}
 				} catch {
 				}
+			}
+		}
+
+		private bool RunningOnUnix {
+			get {
+#if NET_2_0
+				return Environment.OSVersion.Platform == PlatformID.Unix;
+#else
+				int p = (int) Environment.OSVersion.Platform;
+				return ((p == 4) || (p == 128));
+#endif
 			}
 		}
 	}
