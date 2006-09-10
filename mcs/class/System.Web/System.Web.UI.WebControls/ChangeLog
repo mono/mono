@@ -1,3 +1,9 @@
+2006-09-10 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* TreeView.cs: fixed: for PopulateOnDemand nodes expanded and checked 
+	state restored correct on PostBack.
+	* TreeView.js	
+
 2006-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ObjectDataSourceView.cs: correctly find the type when it is not in the

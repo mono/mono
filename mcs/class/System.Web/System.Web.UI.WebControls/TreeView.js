@@ -61,6 +61,7 @@ function TreeView_PopulateCallback (data, ids)
 		}
 	}
 	TreeView_ToggleExpand (idArray[0], idArray[1]);
+	TreeView_SetNodeFlag (document.forms[0][idArray[0] + "_PopulatedStates"], idArray[1], true);
 }
 
 function TreeView_ErrorCallback (data, ids)

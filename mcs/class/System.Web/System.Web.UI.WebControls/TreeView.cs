@@ -927,6 +927,20 @@ namespace System.Web.UI.WebControls
 		{
 			bool res = false;
 
+			if (PopulateNodesFromClient) {
+				string states = postCollection [ClientID + "_PopulatedStates"];
+				if (states != null) {
+					foreach (string id in states.Split ('|')) {
+						if (String.IsNullOrEmpty(id))
+							continue;
+						TreeNode node = FindNodeByPos (id);
+						if (node != null && node.PopulateOnDemand && !node.Populated)
+							node.Populate();
+					}
+				}
+				res = true;
+			}
+
 			if (ShowCheckBoxes != TreeNodeTypes.None) {
 				UnsetCheckStates (Nodes, postCollection);
 				SetCheckStates (postCollection);
@@ -1004,6 +1018,10 @@ namespace System.Web.UI.WebControls
 					// Make sure the basic script infrastructure is rendered
 					Page.ClientScript.GetCallbackEventReference (this, "null", "", "null");
 					Page.ClientScript.GetPostBackClientHyperlink (this, "");
+				}
+
+				if (PopulateNodesFromClient) {
+					Page.ClientScript.RegisterHiddenField (ClientID + "_PopulatedStates", "|");
 				}
 			}
 		}
