@@ -43,10 +43,15 @@ namespace System.Web.UI.WebControls
 		private const string IMG_URL = "ImageUrl";
 		private const string SPACING = "NodeSpacing";
 		private const string VERT_PADD = "VerticalPadding";
-		
-		bool IsSet (string v)
+
+		[Flags]
+		enum TreeNodeStyles
 		{
-			return ViewState [v] != null;
+			ChildNodesPadding = 0x00010000,
+			HorizontalPadding = 0x00020000,
+			ImageUrl = 0x00040000,
+			NodeSpacing = 0x00080000,
+			VerticalPadding = 0x00100000,
 		}
 		
 		[DefaultValue ("")]
@@ -55,12 +60,15 @@ namespace System.Web.UI.WebControls
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public string ImageUrl {
 			get {
+				if (!CheckBit ((int) TreeNodeStyles.ImageUrl))
+					return String.Empty;
 				return ViewState.GetString (IMG_URL, String.Empty);
 			}
 			set {
 				if(value == null)
 					throw new ArgumentNullException("value");
 				ViewState [IMG_URL] = value;
+				SetBit ((int) TreeNodeStyles.ImageUrl);
 			}
 		}
 
@@ -68,10 +76,13 @@ namespace System.Web.UI.WebControls
 		[NotifyParentProperty (true)]
 		public Unit ChildNodesPadding {
 			get {
+				if (!CheckBit ((int) TreeNodeStyles.ChildNodesPadding))
+					return 0;
 				return ViewState [CHILD_PADD] == null ? 0 : (Unit) ViewState [CHILD_PADD];
 			}
 			set {
 				ViewState [CHILD_PADD] = value;
+				SetBit ((int) TreeNodeStyles.ChildNodesPadding);
 			}
 		}
 
@@ -79,10 +90,13 @@ namespace System.Web.UI.WebControls
 		[NotifyParentProperty (true)]
 		public Unit HorizontalPadding {
 			get {
+				if (!CheckBit ((int) TreeNodeStyles.HorizontalPadding))
+					return 0;
 				return ViewState [HORZ_PADD] == null ? 0 : (Unit) ViewState [HORZ_PADD];
 			}
 			set {
 				ViewState[HORZ_PADD] = value;
+				SetBit ((int) TreeNodeStyles.HorizontalPadding);
 			}
 		}
 
@@ -90,10 +104,13 @@ namespace System.Web.UI.WebControls
 		[NotifyParentProperty (true)]
 		public Unit VerticalPadding {
 			get {
+				if (!CheckBit ((int) TreeNodeStyles.VerticalPadding))
+					return 0;
 				return ViewState [VERT_PADD] == null ? 0 : (Unit) ViewState [VERT_PADD];
 			}
 			set {
 				ViewState [VERT_PADD] = value;
+				SetBit ((int) TreeNodeStyles.VerticalPadding);
 			}
 		}
 
@@ -101,23 +118,35 @@ namespace System.Web.UI.WebControls
 		[NotifyParentProperty (true)]
 		public Unit NodeSpacing {
 			get {
+				if (!CheckBit ((int) TreeNodeStyles.NodeSpacing))
+					return 0;
 				return ViewState [SPACING] == null ? 0 : (Unit) ViewState [SPACING];
 			}
 			set {
 				ViewState [SPACING] = value;
+				SetBit ((int) TreeNodeStyles.NodeSpacing);
 			}
 		}
 
-		// FIXME: shouldn't be part of the public API
-		public override bool IsEmpty {
-			get {
-				return (base.IsEmpty &&
-				        !IsSet (CHILD_PADD) &&
-				        !IsSet (HORZ_PADD) &&
-				        !IsSet (IMG_URL) &&
-				        !IsSet (SPACING) &&
-				        !IsSet (VERT_PADD));
+		internal override void LoadViewStateInternal () {
+			
+			if (viewstate [CHILD_PADD] != null) {
+				SetBit ((int) TreeNodeStyles.ChildNodesPadding);
 			}
+			if (viewstate [HORZ_PADD] != null) {
+				SetBit ((int) TreeNodeStyles.HorizontalPadding);
+			}
+			if (viewstate [IMG_URL] != null) {
+				SetBit ((int) TreeNodeStyles.ImageUrl);
+			}
+			if (viewstate [SPACING] != null) {
+				SetBit ((int) TreeNodeStyles.NodeSpacing);
+			}
+			if (viewstate [VERT_PADD] != null) {
+				SetBit ((int) TreeNodeStyles.VerticalPadding);
+			}
+			
+			base.LoadViewStateInternal ();
 		}
 		
 		public override void CopyFrom (Style s)
@@ -130,19 +159,19 @@ namespace System.Web.UI.WebControls
 			if (from == null)
 				return;
 
-			if (from.IsSet (CHILD_PADD))
+			if (from.CheckBit ((int) TreeNodeStyles.ChildNodesPadding))
 				ChildNodesPadding = from.ChildNodesPadding;
 
-			if (from.IsSet (HORZ_PADD))
+			if (from.CheckBit ((int) TreeNodeStyles.HorizontalPadding))
 				HorizontalPadding = from.HorizontalPadding;
 
-			if (from.IsSet (IMG_URL))
+			if (from.CheckBit ((int) TreeNodeStyles.ImageUrl))
 				ImageUrl = from.ImageUrl;
 
-			if (from.IsSet (SPACING))
+			if (from.CheckBit ((int) TreeNodeStyles.NodeSpacing))
 				NodeSpacing = from.NodeSpacing;
 
-			if (from.IsSet (VERT_PADD))
+			if (from.CheckBit ((int) TreeNodeStyles.VerticalPadding))
 				VerticalPadding = from.VerticalPadding;
 		}
 		
@@ -159,19 +188,19 @@ namespace System.Web.UI.WebControls
 				TreeNodeStyle with = s as TreeNodeStyle;
 				if (with == null) return;
 				
-				if (with.IsSet(CHILD_PADD) && !IsSet(CHILD_PADD)) {
+				if (with.CheckBit ((int) TreeNodeStyles.ChildNodesPadding) && !CheckBit ((int) TreeNodeStyles.ChildNodesPadding)) {
 					ChildNodesPadding = with.ChildNodesPadding;
 				}
-				if (with.IsSet(HORZ_PADD) && !IsSet(HORZ_PADD)) {
+				if (with.CheckBit ((int) TreeNodeStyles.HorizontalPadding) && !CheckBit ((int) TreeNodeStyles.HorizontalPadding)) {
 					HorizontalPadding = with.HorizontalPadding;
 				}
-				if (with.IsSet(IMG_URL) && !IsSet(IMG_URL)) {
+				if (with.CheckBit ((int) TreeNodeStyles.ImageUrl) && !CheckBit ((int) TreeNodeStyles.ImageUrl)) {
 					ImageUrl = with.ImageUrl;
 				}
-				if (with.IsSet(SPACING) && !IsSet(SPACING)) {
+				if (with.CheckBit ((int) TreeNodeStyles.NodeSpacing) && !CheckBit ((int) TreeNodeStyles.NodeSpacing)) {
 					NodeSpacing = with.NodeSpacing;
 				}
-				if (with.IsSet(VERT_PADD) && !IsSet(VERT_PADD)) {
+				if (with.CheckBit ((int) TreeNodeStyles.VerticalPadding) && !CheckBit ((int) TreeNodeStyles.VerticalPadding)) {
 					VerticalPadding = with.VerticalPadding;
 				}
 			}
@@ -179,16 +208,16 @@ namespace System.Web.UI.WebControls
 
 		public override void Reset()
 		{
-			if(IsSet(CHILD_PADD))
-				ViewState.Remove("ChildNodesPadding");
-			if(IsSet(HORZ_PADD))
-				ViewState.Remove("HorizontalPadding");
-			if(IsSet(IMG_URL))
-				ViewState.Remove("ImageUrl");
-			if(IsSet(SPACING))
-				ViewState.Remove("NodeSpacing");
-			if(IsSet(VERT_PADD))
-				ViewState.Remove("VerticalPadding");
+			if (CheckBit ((int) TreeNodeStyles.ChildNodesPadding))
+				ViewState.Remove(CHILD_PADD);
+			if (CheckBit ((int) TreeNodeStyles.HorizontalPadding))
+				ViewState.Remove(HORZ_PADD);
+			if (CheckBit ((int) TreeNodeStyles.ImageUrl))
+				ViewState.Remove(IMG_URL);
+			if (CheckBit ((int) TreeNodeStyles.NodeSpacing))
+				ViewState.Remove(SPACING);
+			if (CheckBit ((int) TreeNodeStyles.VerticalPadding))
+				ViewState.Remove(VERT_PADD);
 			base.Reset();
 		}
 	}

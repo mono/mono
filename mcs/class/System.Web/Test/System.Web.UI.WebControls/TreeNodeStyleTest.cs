@@ -156,6 +156,33 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (0.0, tns.VerticalPadding.Value, "VerticalPadding2");
 			Assert.AreEqual (0.0, tns.Width.Value, "Width2");
 		}
+
+		[Test]
+		public void TreeNodeStyle_ViewState () {
+
+			TreeNodeStyle orig = new TreeNodeStyle ();
+			((IStateManager) orig).TrackViewState ();
+			TreeNodeStyle copy = new TreeNodeStyle ();
+
+			Assert.AreEqual (true, orig.IsEmpty, "TreeNodeStyle_ViewState");
+			orig.ChildNodesPadding = 4;
+			orig.HorizontalPadding = 6;
+			orig.ImageUrl = "ImageUrl";
+			orig.NodeSpacing = 7;
+			orig.VerticalPadding = 8;
+			Assert.AreEqual (false, orig.IsEmpty, "TreeNodeStyle_ViewState");
+
+			object state = ((IStateManager) orig).SaveViewState ();
+			((IStateManager) copy).LoadViewState (state);
+
+			Assert.AreEqual (false, copy.IsEmpty, "TreeNodeStyle_ViewState");
+			Assert.AreEqual (4.0, copy.ChildNodesPadding.Value, "TreeNodeStyle_ViewState");
+			Assert.AreEqual (6.0, copy.HorizontalPadding.Value, "TreeNodeStyle_ViewState");
+			Assert.AreEqual ("ImageUrl", copy.ImageUrl, "TreeNodeStyle_ViewState");
+			Assert.AreEqual (7.0, copy.NodeSpacing.Value, "TreeNodeStyle_ViewState");
+			Assert.AreEqual (8.0, copy.VerticalPadding.Value, "TreeNodeStyle_ViewState");
+		}
+
 	}
 }
 
