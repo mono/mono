@@ -713,15 +713,15 @@ namespace System.Web.UI.WebControls
 		}
 				
 		internal bool IsParentNode {
-			get { return ChildNodes.Count > 0 && Parent != null; }
+			get { return !IsRootNode && (ChildNodes.Count > 0 || PopulateOnDemand); }
 		}
 		
 		internal bool IsLeafNode {
-			get { return ChildNodes.Count == 0; }
+			get { return !IsRootNode && ChildNodes.Count == 0 && !PopulateOnDemand; }
 		}
 		
 		internal bool IsRootNode {
-			get { return ChildNodes.Count > 0 && Parent == null; }
+			get { return Depth == 0; }
 		}
 		
 		TreeNodeBinding GetBinding ()

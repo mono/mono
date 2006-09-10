@@ -220,6 +220,18 @@ namespace System.Web.UI.WebControls
 				ViewState.Remove(VERT_PADD);
 			base.Reset();
 		}
+
+		protected override void FillStyleAttributes (CssStyleCollection attributes, IUrlResolutionService urlResolver) {
+			base.FillStyleAttributes (attributes, urlResolver);
+			if (CheckBit ((int) TreeNodeStyles.HorizontalPadding)) {
+				attributes.Add (HtmlTextWriterStyle.PaddingLeft, HorizontalPadding.ToString ());
+				attributes.Add (HtmlTextWriterStyle.PaddingRight, HorizontalPadding.ToString ());
+			}
+			if (CheckBit ((int) TreeNodeStyles.VerticalPadding)) {
+				attributes.Add (HtmlTextWriterStyle.PaddingTop, VerticalPadding.ToString ());
+				attributes.Add (HtmlTextWriterStyle.PaddingBottom, VerticalPadding.ToString ());
+			}
+		}
 	}
 }
 
