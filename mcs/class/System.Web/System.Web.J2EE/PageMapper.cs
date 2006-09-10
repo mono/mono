@@ -134,7 +134,11 @@ namespace System.Web.J2EE
 
 		public static Type GetObjectType(string url)
 		{
+#if NET_2_0
+			return GetCachedType(System.Web.Util.UrlUtils.RemoveDoubleSlashes(url));
+#else
 			return GetCachedType(url);
+#endif
 		}
 
 		private static Type GetCachedType(string url)
