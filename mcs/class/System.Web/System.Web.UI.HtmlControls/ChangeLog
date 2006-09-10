@@ -1,3 +1,7 @@
+2006-09-10  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HtmlInputFile.cs: fixed Value property
+
 2006-08-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlTextArea.cs: encode the value in 1.x too. Patch by Dean Brettle.

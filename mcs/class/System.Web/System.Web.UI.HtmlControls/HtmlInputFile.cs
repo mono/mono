@@ -134,13 +134,11 @@ namespace System.Web.UI.HtmlControls
 		public override string Value 
 		{
 			get {
-				string value = Attributes["value"];
+				HttpPostedFile file = PostedFile;
+				if (file == null)
+					return string.Empty;
 
-				if (value == null) {
-					return (String.Empty);
-				}
-				
-				return (value);
+				return file.FileName;
 			}
 			set {
 				throw new NotSupportedException ("The value property on HtmlInputFile is not settable.");
