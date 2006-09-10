@@ -1,5 +1,9 @@
 2006-08-15  Andrew Skiba <andrews@mainsoft.com>
 
+	* knownFailures.jvm.cs: add false alarm to the knownFailures
+
+2006-08-15  Andrew Skiba <andrews@mainsoft.com>
+
 	* Makefile: support PROFILE net_2_0
 
 2006-05-31  Andrew Skiba <andrews@mainsoft.com>
