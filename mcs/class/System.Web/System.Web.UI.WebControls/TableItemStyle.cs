@@ -37,6 +37,14 @@ namespace System.Web.UI.WebControls {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class TableItemStyle : Style {
 
+		[Flags]
+		enum TableItemStyles
+		{
+			HorizontalAlign = 0x00010000,
+			VerticalAlign = 0x00020000,
+			Wrap = 0x00040000,
+		}
+
 		public TableItemStyle ()
 		{
 		}
@@ -55,7 +63,7 @@ namespace System.Web.UI.WebControls {
 		[WebCategory("Layout")]
 		public virtual HorizontalAlign HorizontalAlign {
 			get {
-				if ((styles & Styles.HorizontalAlign) == 0)
+				if (!CheckBit ((int) TableItemStyles.HorizontalAlign))
 					return HorizontalAlign.NotSet;
 				return (HorizontalAlign) ViewState ["HorizontalAlign"];
 			}
@@ -66,7 +74,7 @@ namespace System.Web.UI.WebControls {
 					throw new ArgumentOutOfRangeException (Locale.GetText ("Invalid HorizontalAlign value."));
 				}
 				ViewState ["HorizontalAlign"] = value;
-				styles |= Styles.HorizontalAlign;
+				SetBit ((int) TableItemStyles.HorizontalAlign);
 			}
 		}
 
@@ -79,7 +87,7 @@ namespace System.Web.UI.WebControls {
 		[WebCategory("Layout")]
 		public virtual VerticalAlign VerticalAlign {
 			get {
-				if ((styles & Styles.VerticalAlign) == 0)
+				if (!CheckBit ((int) TableItemStyles.VerticalAlign))
 					return VerticalAlign.NotSet;
 				return (VerticalAlign) ViewState ["VerticalAlign"];
 			}
@@ -90,7 +98,7 @@ namespace System.Web.UI.WebControls {
 					throw new ArgumentOutOfRangeException (Locale.GetText ("Invalid VerticalAlign value."));
 				}
 				ViewState ["VerticalAlign"] = value;
-				styles |= Styles.VerticalAlign;
+				SetBit ((int) TableItemStyles.VerticalAlign);
 			}
 		}
 
@@ -103,13 +111,13 @@ namespace System.Web.UI.WebControls {
 		[WebCategory("Layout")]
 		public virtual bool Wrap {
 			get {
-				if ((styles & Styles.Wrap) == 0)
+				if (!CheckBit ((int) TableItemStyles.Wrap))
 					return true;
 				return (bool) ViewState ["Wrap"];
 			}
 			set {
 				ViewState ["Wrap"] = value;
-					styles |= Styles.Wrap;
+				SetBit ((int) TableItemStyles.Wrap);
 			}
 		}
 
@@ -158,13 +166,13 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		private void Copy (string name, Styles s, Style source)
+		private void Copy (string name, TableItemStyles s, Style source)
 		{
-			if ((source.styles & s) != 0) {
+			if (source.CheckBit((int) s)) {
 				object o = source.ViewState [name];
 				if (o != null) {
 					ViewState [name] = o;
-					styles |= s;
+					SetBit ((int) s);
 				}
 			}
 		}
@@ -173,19 +181,19 @@ namespace System.Web.UI.WebControls {
 		{
 			base.CopyFrom (s);
 			if (s != null && !s.IsEmpty) {
-				Copy ("HorizontalAlign", Styles.HorizontalAlign, s);
-				Copy ("VerticalAlign", Styles.VerticalAlign, s);
-				Copy ("Wrap", Styles.Wrap, s);
+				Copy ("HorizontalAlign", TableItemStyles.HorizontalAlign, s);
+				Copy ("VerticalAlign", TableItemStyles.VerticalAlign, s);
+				Copy ("Wrap", TableItemStyles.Wrap, s);
 			}
 		}
 
-		private void Merge (string name, Styles s, Style source)
+		private void Merge (string name, TableItemStyles s, Style source)
 		{
-			if ((styles & s) == 0 && (source.styles & s) != 0) {
+			if ((!CheckBit ((int) s)) && (source.CheckBit ((int) s))) {
 				object o = source.ViewState [name];
 				if (o != null) {
 					ViewState [name] = o;
-					styles |= s;
+					SetBit ((int) s);
 				}
 			}
 		}
@@ -198,20 +206,20 @@ namespace System.Web.UI.WebControls {
 			} else {
 				base.MergeWith (s);
 				if (s != null) {
-					Merge ("HorizontalAlign", Styles.HorizontalAlign, s);
-					Merge ("VerticalAlign", Styles.VerticalAlign, s);
-					Merge ("Wrap", Styles.Wrap, s);
+					Merge ("HorizontalAlign", TableItemStyles.HorizontalAlign, s);
+					Merge ("VerticalAlign", TableItemStyles.VerticalAlign, s);
+					Merge ("Wrap", TableItemStyles.Wrap, s);
 				}
 			}
 		}
 
 		public override void Reset ()
 		{
-			if ((styles & Styles.HorizontalAlign) != 0)
+			if (CheckBit ((int) TableItemStyles.HorizontalAlign))
 				ViewState.Remove ("HorizontalAlign");
-			if ((styles & Styles.VerticalAlign) != 0)
+			if (CheckBit ((int) TableItemStyles.VerticalAlign))
 				ViewState.Remove ("VerticalAlign");
-			if ((styles & Styles.Wrap) != 0)
+			if (CheckBit ((int) TableItemStyles.Wrap))
 				ViewState.Remove ("Wrap");
 			// call base at the end because "styles" will reset there
 			base.Reset ();
@@ -219,11 +227,14 @@ namespace System.Web.UI.WebControls {
 
 		internal override void LoadViewStateInternal()
 		{
-			if (viewstate["VerticalAlign"] != null) {
-				styles |= Styles.VerticalAlign;
+			if (viewstate ["HorizontalAlign"] != null) {
+				SetBit ((int) TableItemStyles.HorizontalAlign);
+			}
+			if (viewstate ["VerticalAlign"] != null) {
+				SetBit ((int) TableItemStyles.VerticalAlign);
 			}
 			if (viewstate["Wrap"] != null) {
-				styles |= Styles.Wrap;
+				SetBit ((int) TableItemStyles.Wrap);
 			}
 
 			base.LoadViewStateInternal();

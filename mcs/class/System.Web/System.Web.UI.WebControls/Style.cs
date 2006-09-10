@@ -44,9 +44,8 @@ namespace System.Web.UI.WebControls {
 	public class Style : System.ComponentModel.Component, System.Web.UI.IStateManager 
 	{
 		[Flags]
-		internal enum Styles 
+		enum Styles 
 		{
-			None		= 0,
 			BackColor	= 0x00000008,
 			BorderColor	= 0x00000010,
 			BorderStyle	= 0x00000040,
@@ -56,30 +55,10 @@ namespace System.Web.UI.WebControls {
 			ForeColor	= 0x00000004,
 			Height		= 0x00000080,
 			Width		= 0x00000100,
-
-			// from TableStyle (which doesn't override IsEmpty)
-			BackImageUrl	= 0x00000200,
-			CellPadding	= 0x00000400,
-			CellSpacing	= 0x00000800,
-			GridLines	= 0x00001000,
-			HorizontalAlign	= 0x00002000,
-
-			// from TableItemStyle (which doesn't override IsEmpty neither)
-			VerticalAlign	= 0x00004000,
-			Wrap		= 0x00008000,
-
-			// from DataGridPagerStyle (and, once again, no IsEmpty override)
-			Mode		= 0x00010000,
-			NextPageText	= 0x00020000,
-			PageButtonCount	= 0x00040000,
-			Position	= 0x00080000,
-			PrevPageText	= 0x00100000,
-			Visible		= 0x00200000
-			
 		}
 
 		#region Fields
-		internal Styles		styles;
+		private int styles;
 		internal StateBag	viewstate;
 		private FontInfo	fontinfo;
 		private bool		tracking;
@@ -117,7 +96,7 @@ namespace System.Web.UI.WebControls {
 		{
 			get 
 			{
-				if ((styles & Styles.BackColor) == 0) 
+				if (!CheckBit ((int) Styles.BackColor)) 
 				{
 					return Color.Empty;
 				}
@@ -144,7 +123,7 @@ namespace System.Web.UI.WebControls {
 		{
 			get 
 			{
-				if ((styles & Styles.BorderColor) == 0) 
+				if (!CheckBit ((int) Styles.BorderColor)) 
 				{
 					return Color.Empty;
 				}
@@ -170,7 +149,7 @@ namespace System.Web.UI.WebControls {
 		{
 			get 
 			{
-				if ((styles & Styles.BorderStyle) == 0) 
+				if (!CheckBit ((int) Styles.BorderStyle)) 
 				{
 					return BorderStyle.NotSet;
 				}
@@ -196,7 +175,7 @@ namespace System.Web.UI.WebControls {
 		{
 			get 
 			{
-				if ((styles & Styles.BorderWidth) == 0) 
+				if (!CheckBit ((int) Styles.BorderWidth)) 
 				{
 					return Unit.Empty;
 				}
@@ -224,7 +203,7 @@ namespace System.Web.UI.WebControls {
 		{
 			get 
 			{
-				if ((styles & Styles.CssClass) == 0) 
+				if (!CheckBit ((int) Styles.CssClass)) 
 				{
 					return string.Empty;
 				}
@@ -267,7 +246,7 @@ namespace System.Web.UI.WebControls {
 		{
 			get 
 			{
-				if ((styles & Styles.ForeColor) == 0) 
+				if (!CheckBit ((int) Styles.ForeColor)) 
 				{
 					return Color.Empty;
 				}
@@ -293,7 +272,7 @@ namespace System.Web.UI.WebControls {
 		{
 			get 
 			{
-				if ((styles & Styles.Height) == 0) 
+				if (!CheckBit ((int) Styles.Height)) 
 				{
 					return Unit.Empty;
 				}
@@ -324,7 +303,7 @@ namespace System.Web.UI.WebControls {
 		{
 			get 
 			{
-				if ((styles & Styles.Width) == 0) 
+				if (!CheckBit ((int) Styles.Width)) 
 				{
 					return Unit.Empty;
 				}
@@ -438,20 +417,20 @@ namespace System.Web.UI.WebControls {
 			BorderStyle	bs;
 			Unit		u;
 
-			if ((styles & Styles.BackColor) != 0) {
+			if (CheckBit ((int) Styles.BackColor)) {
 				color = (Color)viewstate["BackColor"];
 				if (!color.IsEmpty)
 					writer.AddStyleAttribute (HtmlTextWriterStyle.BackgroundColor, ColorTranslator.ToHtml(color));
 			}
 
-			if ((styles & Styles.BorderColor) != 0) {
+			if (CheckBit ((int) Styles.BorderColor)) {
 				color = (Color)viewstate["BorderColor"];
 				if (!color.IsEmpty)
 					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderColor, ColorTranslator.ToHtml(color));
 			}
 
 			bool have_width = false;
-			if ((styles & Styles.BorderWidth) != 0) {
+			if (CheckBit ((int) Styles.BorderWidth)) {
 				u = (Unit)viewstate["BorderWidth"];
 				if (!u.IsEmpty) {
 					if (u.Value > 0)
@@ -460,31 +439,31 @@ namespace System.Web.UI.WebControls {
 				}
 			}
 
-			if ((styles & Styles.BorderStyle) != 0) {
+			if (CheckBit ((int) Styles.BorderStyle)) {
 				bs = (BorderStyle)viewstate["BorderStyle"];
 				if (bs != BorderStyle.NotSet) 
 					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderStyle, bs.ToString());
 				else {
-					if ((styles & Styles.BorderWidth) != 0)
+					if (CheckBit ((int) Styles.BorderWidth))
 						writer.AddStyleAttribute (HtmlTextWriterStyle.BorderStyle, "solid");
 				}
 			} else if (have_width) {
 				writer.AddStyleAttribute (HtmlTextWriterStyle.BorderStyle, "solid");
 			}
 
-			if ((styles & Styles.ForeColor) != 0) {
+			if (CheckBit ((int) Styles.ForeColor)) {
 				color = (Color)viewstate["ForeColor"];
 				if (!color.IsEmpty)
 					writer.AddStyleAttribute (HtmlTextWriterStyle.Color, ColorTranslator.ToHtml(color));
 			}
 
-			if ((styles & Styles.Height) != 0) {
+			if (CheckBit ((int) Styles.Height)) {
 				u = (Unit)viewstate["Height"];
 				if (!u.IsEmpty)
 					writer.AddStyleAttribute (HtmlTextWriterStyle.Height, u.ToString());
 			}
 
-			if ((styles & Styles.Width) != 0) {
+			if (CheckBit ((int) Styles.Width)) {
 				u = (Unit)viewstate["Width"];
 				if (!u.IsEmpty)
 					writer.AddStyleAttribute (HtmlTextWriterStyle.Width, u.ToString());
@@ -534,14 +513,14 @@ namespace System.Web.UI.WebControls {
 			BorderStyle	bs;
 			Unit		u;
 
-			if ((styles & Styles.BackColor) != 0)
+			if (CheckBit ((int) Styles.BackColor))
 			{
 				color = (Color)viewstate["BackColor"];
 				if (!color.IsEmpty)
 					attributes.Add (HtmlTextWriterStyle.BackgroundColor, ColorTranslator.ToHtml(color));
 			}
 
-			if ((styles & Styles.BorderColor) != 0) 
+			if (CheckBit ((int) Styles.BorderColor)) 
 			{
 				color = (Color)viewstate["BorderColor"];
 				if (!color.IsEmpty)
@@ -549,7 +528,7 @@ namespace System.Web.UI.WebControls {
 			}
 
 			bool have_width = false;
-			if ((styles & Styles.BorderWidth) != 0) {
+			if (CheckBit ((int) Styles.BorderWidth)) {
 				u = (Unit) viewstate ["BorderWidth"];
 				if (!u.IsEmpty) {
 					if (u.Value > 0)
@@ -558,7 +537,7 @@ namespace System.Web.UI.WebControls {
 				}
 			}
 
-			if ((styles & Styles.BorderStyle) != 0) {
+			if (CheckBit ((int) Styles.BorderStyle)) {
 				bs = (BorderStyle) viewstate ["BorderStyle"];
 				if (bs != BorderStyle.NotSet)
 					attributes.Add (HtmlTextWriterStyle.BorderStyle, bs.ToString ());
@@ -569,21 +548,21 @@ namespace System.Web.UI.WebControls {
 				attributes.Add (HtmlTextWriterStyle.BorderStyle, "solid");
 			}
 
-			if ((styles & Styles.ForeColor) != 0) 
+			if (CheckBit ((int) Styles.ForeColor)) 
 			{
 				color = (Color)viewstate["ForeColor"];
 				if (!color.IsEmpty)
 					attributes.Add (HtmlTextWriterStyle.Color, ColorTranslator.ToHtml(color));
 			}
 
-			if ((styles & Styles.Height) != 0) 
+			if (CheckBit ((int) Styles.Height)) 
 			{
 				u = (Unit)viewstate["Height"];
 				if (!u.IsEmpty)
 					attributes.Add (HtmlTextWriterStyle.Height, u.ToString());
 			}
 
-			if ((styles & Styles.Width) != 0) 
+			if (CheckBit ((int) Styles.Width)) 
 			{
 				u = (Unit)viewstate["Width"];
 				if (!u.IsEmpty)
@@ -606,35 +585,35 @@ namespace System.Web.UI.WebControls {
 				Font.CopyFrom(s.fontinfo);
 			}
 
-			if (((s.styles & Styles.BackColor) != 0) && (s.BackColor != Color.Empty))
+			if ((s.CheckBit ((int) Styles.BackColor)) && (s.BackColor != Color.Empty))
 			{
 				this.BackColor = s.BackColor;
 			}
-			if (((s.styles & Styles.BorderColor) != 0) && (s.BorderColor != Color.Empty))
+			if ((s.CheckBit ((int) Styles.BorderColor)) && (s.BorderColor != Color.Empty))
 			{
 				this.BorderColor = s.BorderColor;
 			}
-			if (((s.styles & Styles.BorderStyle) != 0) && (s.BorderStyle != BorderStyle.NotSet))
+			if ((s.CheckBit ((int) Styles.BorderStyle)) && (s.BorderStyle != BorderStyle.NotSet))
 			{
 				this.BorderStyle = s.BorderStyle;
 			}
-			if (((s.styles & Styles.BorderWidth) != 0) && (!s.BorderWidth.IsEmpty))
+			if ((s.CheckBit ((int) Styles.BorderWidth)) && (!s.BorderWidth.IsEmpty))
 			{
 				this.BorderWidth = s.BorderWidth;
 			}
-			if (((s.styles & Styles.CssClass) != 0) && (s.CssClass != string.Empty))
+			if ((s.CheckBit ((int) Styles.CssClass)) && (s.CssClass != string.Empty))
 			{
 				this.CssClass = s.CssClass;
 			}
-			if (((s.styles & Styles.ForeColor) != 0) && (s.ForeColor != Color.Empty))
+			if ((s.CheckBit ((int) Styles.ForeColor)) && (s.ForeColor != Color.Empty))
 			{
 				this.ForeColor = s.ForeColor;
 			}
-			if (((s.styles & Styles.Height) != 0) && (!s.Height.IsEmpty))
+			if ((s.CheckBit ((int) Styles.Height)) && (!s.Height.IsEmpty))
 			{
 				this.Height = s.Height;
 			}
-			if (((s.styles & Styles.Width) != 0) && (!s.Width.IsEmpty))
+			if ((s.CheckBit ((int) Styles.Width)) && (!s.Width.IsEmpty))
 			{
 				this.Width = s.Width;
 			}
@@ -652,35 +631,35 @@ namespace System.Web.UI.WebControls {
 				Font.MergeWith(s.fontinfo);
 			}
 
-			if (((styles & Styles.BackColor) == 0) && ((s.styles & Styles.BackColor) != 0) && (s.BackColor != Color.Empty))
+			if ((!CheckBit ((int) Styles.BackColor)) && (s.CheckBit ((int) Styles.BackColor)) && (s.BackColor != Color.Empty))
 			{
 				this.BackColor = s.BackColor;
 			}
-			if (((styles & Styles.BorderColor) == 0) && ((s.styles & Styles.BorderColor) != 0) && (s.BorderColor != Color.Empty)) 
+			if ((!CheckBit ((int) Styles.BorderColor)) && (s.CheckBit ((int) Styles.BorderColor)) && (s.BorderColor != Color.Empty)) 
 			{
 				this.BorderColor = s.BorderColor;
 			}
-			if (((styles & Styles.BorderStyle) == 0) && ((s.styles & Styles.BorderStyle) != 0) && (s.BorderStyle != BorderStyle.NotSet)) 
+			if ((!CheckBit ((int) Styles.BorderStyle)) && (s.CheckBit ((int) Styles.BorderStyle)) && (s.BorderStyle != BorderStyle.NotSet))
 			{
 				this.BorderStyle = s.BorderStyle;
 			}
-			if (((styles & Styles.BorderWidth) == 0) && ((s.styles & Styles.BorderWidth) != 0) && (!s.BorderWidth.IsEmpty)) 
+			if ((!CheckBit ((int) Styles.BorderWidth)) && (s.CheckBit ((int) Styles.BorderWidth)) && (!s.BorderWidth.IsEmpty))
 			{
 				this.BorderWidth = s.BorderWidth;
 			}
-			if (((styles & Styles.CssClass) == 0) && ((s.styles & Styles.CssClass) != 0) && (s.CssClass != string.Empty)) 
+			if ((!CheckBit ((int) Styles.CssClass)) && (s.CheckBit ((int) Styles.CssClass)) && (s.CssClass != string.Empty))
 			{
 				this.CssClass = s.CssClass;
 			}
-			if (((styles & Styles.ForeColor) == 0) && ((s.styles & Styles.ForeColor) != 0) && (s.ForeColor != Color.Empty)) 
+			if ((!CheckBit ((int) Styles.ForeColor)) && (s.CheckBit ((int) Styles.ForeColor)) && (s.ForeColor != Color.Empty))
 			{
 				this.ForeColor = s.ForeColor;
 			}
-			if (((styles & Styles.Height) == 0) && ((s.styles & Styles.Height) != 0) && (!s.Height.IsEmpty)) 
+			if ((!CheckBit ((int) Styles.Height)) && (s.CheckBit ((int) Styles.Height)) && (!s.Height.IsEmpty))
 			{
 				this.Height = s.Height;
 			}
-			if (((styles & Styles.Width) == 0) && ((s.styles & Styles.Width) != 0) && (!s.Width.IsEmpty)) 
+			if ((!CheckBit ((int) Styles.Width)) && (s.CheckBit ((int) Styles.Width)) && (!s.Width.IsEmpty))
 			{
 				this.Width = s.Width;
 			}
@@ -714,7 +693,7 @@ namespace System.Web.UI.WebControls {
 			{
 				fontinfo.Reset();
 			}
-			styles = Styles.None;
+			styles = 0;
 		}
 #if ONLY_1_1
 		public override string ToString() 
@@ -730,39 +709,39 @@ namespace System.Web.UI.WebControls {
 			viewstate.LoadViewState(state);
 
 			// Update our style
-			this.styles = Styles.None;
+			this.styles = 0;
 
 			if (viewstate["BackColor"] != null) 
 			{
-				styles |= Styles.BackColor;
+				styles |= (int) Styles.BackColor;
 			}
 			if (viewstate["BorderColor"] != null) 
 			{
-				styles |= Styles.BorderColor;
+				styles |= (int) Styles.BorderColor;
 			}
 			if (viewstate["BorderStyle"] != null) 
 			{
-				styles |= Styles.BorderStyle;
+				styles |= (int) Styles.BorderStyle;
 			}
 			if (viewstate["BorderWidth"] != null) 
 			{
-				styles |= Styles.BorderWidth;
+				styles |= (int) Styles.BorderWidth;
 			}
 			if (viewstate["CssClass"] != null) 
 			{
-				styles |= Styles.CssClass;
+				styles |= (int) Styles.CssClass;
 			}
 			if (viewstate["ForeColor"] != null) 
 			{
-				styles |= Styles.ForeColor;
+				styles |= (int) Styles.ForeColor;
 			}
 			if (viewstate["Height"] != null) 
 			{
-				styles |= Styles.Height;
+				styles |= (int) Styles.Height;
 			}
 			if (viewstate["Width"] != null) 
 			{
-				styles |= Styles.Width;
+				styles |= (int) Styles.Width;
 			}
 			Font.LoadViewState();
 
@@ -776,7 +755,7 @@ namespace System.Web.UI.WebControls {
 
 		protected internal virtual object SaveViewState () 
 		{
-			if (styles != Styles.None || !Font.IsEmpty) 
+			if (styles != 0 || !Font.IsEmpty) 
 			{
 				return viewstate.SaveViewState();
 			}
@@ -785,11 +764,11 @@ namespace System.Web.UI.WebControls {
 
 		protected internal virtual void SetBit( int bit ) 
 		{
-			styles |= (Styles) bit;
+			styles |= bit;
 		}
 
 		internal bool CheckBit (int bit) {
-			return (styles & (Styles) bit) != 0;
+			return (styles & bit) != 0;
 		}
 
 		protected internal virtual void TrackViewState () 
@@ -856,7 +835,7 @@ namespace System.Web.UI.WebControls {
 
 		internal void CopyTextStylesFrom (Style source) {
 			// Used primary for TreeView and Menu
-			if ((source.styles & Styles.ForeColor) != 0) {
+			if (source.CheckBit ((int) Styles.ForeColor)) {
 				ForeColor = source.ForeColor;
 			}
 			if (!source.Font.IsEmpty) {

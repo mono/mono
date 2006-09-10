@@ -56,6 +56,14 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public StateBag StateBag {
 			get { return base.ViewState; }
 		}
+
+		public bool SetBitCalledFlag = false;
+		public int SetBitCalledValue = 0;
+		protected override void SetBit (int bit) {
+			SetBitCalledFlag = true;
+			SetBitCalledValue = bit;
+			base.SetBit (bit);
+		}
 	}
 
 	[TestFixture]
@@ -251,6 +259,26 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (HorizontalAlign.Left, tis.HorizontalAlign, "HorizontalAlign");
 			Assert.AreEqual (VerticalAlign.Top, tis.VerticalAlign, "VerticalAlign");
 			Assert.IsTrue (tis.Wrap, "Wrap");
+		}
+
+		[Test]
+		public void SetBitCalledWhenSetProperty () {
+			TestTableItemStyle s = new TestTableItemStyle ();
+
+			s.SetBitCalledFlag = false;
+			s.HorizontalAlign = HorizontalAlign.Right;
+			Assert.IsTrue (s.SetBitCalledFlag, "SetBit() was not called : HorizontalAlign");
+			Assert.AreEqual (0x10000, s.SetBitCalledValue, "SetBit() was called with wrong argument : HorizontalAlign");
+
+			s.SetBitCalledFlag = false;
+			s.VerticalAlign = VerticalAlign.Bottom;
+			Assert.IsTrue (s.SetBitCalledFlag, "SetBit() was not called : VerticalAlign");
+			Assert.AreEqual (0x20000, s.SetBitCalledValue, "SetBit() was called with wrong argument : VerticalAlign");
+
+			s.SetBitCalledFlag = false;
+			s.Wrap = false;
+			Assert.IsTrue (s.SetBitCalledFlag, "SetBit() was not called : Wrap");
+			Assert.AreEqual (0x40000, s.SetBitCalledValue, "SetBit() was called with wrong argument : Wrap");
 		}
 	}
 }

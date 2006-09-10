@@ -77,6 +77,14 @@ namespace MonoTests.System.Web.UI.WebControls {
 			base.FillStyleAttributes (attributes, urlResolver);
 		}
 #endif
+
+		public bool SetBitCalledFlag = false;
+		public int SetBitCalledValue = 0;
+		protected override void SetBit (int bit) {
+			SetBitCalledFlag = true;
+			SetBitCalledValue = bit;
+			base.SetBit (bit);
+		}
 	}
 
 #if NET_2_0
@@ -445,6 +453,36 @@ namespace MonoTests.System.Web.UI.WebControls {
 #endif
 			expected += ");\">\n";
 			Assert.AreEqual (expected, res);
+		}
+
+		[Test]
+		public void SetBitCalledWhenSetProperty () {
+			TestTableStyle s = new TestTableStyle ();
+
+			s.SetBitCalledFlag = false;
+			s.BackImageUrl = "http://www.mono-project.com";
+			Assert.IsTrue (s.SetBitCalledFlag, "SetBit() was not called : BackImageUrl");
+			Assert.AreEqual (0x10000, s.SetBitCalledValue, "SetBit() was called with wrong argument : BackImageUrl");
+
+			s.SetBitCalledFlag = false;
+			s.CellPadding = 1;
+			Assert.IsTrue (s.SetBitCalledFlag, "SetBit() was not called : CellPadding");
+			Assert.AreEqual (0x20000, s.SetBitCalledValue, "SetBit() was called with wrong argument : CellPadding");
+
+			s.SetBitCalledFlag = false;
+			s.CellSpacing = 1;
+			Assert.IsTrue (s.SetBitCalledFlag, "SetBit() was not called : CellSpacing");
+			Assert.AreEqual (0x40000, s.SetBitCalledValue, "SetBit() was called with wrong argument : CellSpacing");
+
+			s.SetBitCalledFlag = false;
+			s.GridLines = GridLines.Vertical;
+			Assert.IsTrue (s.SetBitCalledFlag, "SetBit() was not called : GridLines");
+			Assert.AreEqual (0x80000, s.SetBitCalledValue, "SetBit() was called with wrong argument : GridLines");
+
+			s.SetBitCalledFlag = false;
+			s.HorizontalAlign = HorizontalAlign.Right;
+			Assert.IsTrue (s.SetBitCalledFlag, "SetBit() was not called : HorizontalAlign");
+			Assert.AreEqual (0x100000, s.SetBitCalledValue, "SetBit() was called with wrong argument : HorizontalAlign");
 		}
 	}
 }

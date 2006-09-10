@@ -1,5 +1,13 @@
 2006-09-10 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Style.cs:
+	* TableStyle.cs:	
+	* TableItemStyle.cs:	
+	* DataGridPagerStyle.cs:	
+	refactoring: makes Style class more flexible for inheriting and reuse	
+
+2006-09-10 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* TreeView.cs: fixed: for PopulateOnDemand nodes expanded and checked 
 	state restored correct on PostBack.
 	* TreeView.js	

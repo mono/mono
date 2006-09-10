@@ -37,6 +37,16 @@ namespace System.Web.UI.WebControls {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class TableStyle : Style {
 
+		[Flags]
+		enum TableStyles
+		{
+			BackImageUrl = 0x00010000,
+			CellPadding = 0x00020000,
+			CellSpacing = 0x00040000,
+			GridLines = 0x00080000,
+			HorizontalAlign = 0x00100000,
+		}
+
 		public TableStyle ()
 		{
 		}
@@ -58,7 +68,7 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Appearance")]
 		public virtual string BackImageUrl {
 			get {
-				if ((styles & Styles.BackImageUrl) == 0)
+				if (!CheckBit ((int) TableStyles.BackImageUrl))
 					return String.Empty;
 				return (string) ViewState ["BackImageUrl"];
 			}
@@ -66,7 +76,7 @@ namespace System.Web.UI.WebControls {
 				if (value == null)
 					throw new ArgumentNullException ("BackImageUrl");
 				ViewState ["BackImageUrl"] = value;
-				styles |= Styles.BackImageUrl;
+				SetBit ((int) TableStyles.BackImageUrl);
 			}
 		}
 
@@ -80,7 +90,7 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Appearance")]
 		public virtual int CellPadding {
 			get {
-				if ((styles & Styles.CellPadding) == 0)
+				if (!CheckBit ((int) TableStyles.CellPadding))
 					return -1;
 				return (int) ViewState ["CellPadding"];
 			}
@@ -88,7 +98,7 @@ namespace System.Web.UI.WebControls {
 				if (value < -1)
 					throw new ArgumentOutOfRangeException ("< -1");
 				ViewState ["CellPadding"] = value;
-				styles |= Styles.CellPadding;
+				SetBit ((int) TableStyles.CellPadding);
 			}
 		}
 
@@ -102,7 +112,7 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Appearance")]
 		public virtual int CellSpacing {
 			get {
-				if ((styles & Styles.CellSpacing) == 0)
+				if (!CheckBit ((int) TableStyles.CellSpacing))
 					return -1;
 				return (int) ViewState ["CellSpacing"];
 			}
@@ -110,7 +120,7 @@ namespace System.Web.UI.WebControls {
 				if (value < -1)
 					throw new ArgumentOutOfRangeException ("< -1");
 				ViewState ["CellSpacing"] = value;
-				styles |= Styles.CellSpacing;
+				SetBit ((int) TableStyles.CellSpacing);
 			}
 		}
 
@@ -125,7 +135,7 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Appearance")]
 		public virtual GridLines GridLines {
 			get {
-				if ((styles & Styles.GridLines) == 0)
+				if (!CheckBit ((int) TableStyles.GridLines))
 					return GridLines.None;
 				return (GridLines) ViewState ["GridLines"];
 			}
@@ -136,7 +146,7 @@ namespace System.Web.UI.WebControls {
 					throw new ArgumentOutOfRangeException (Locale.GetText ("Invalid GridLines value."));
 				}
 				ViewState ["GridLines"] = value;
-				styles |= Styles.GridLines;
+				SetBit ((int) TableStyles.GridLines);
 			}
 		}
 
@@ -150,7 +160,7 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Layout")]
 		public virtual HorizontalAlign HorizontalAlign {
 			get {
-				if ((styles & Styles.HorizontalAlign) == 0)
+				if (!CheckBit ((int) TableStyles.HorizontalAlign))
 					return HorizontalAlign.NotSet;
 				return (HorizontalAlign) ViewState ["HorizontalAlign"];
 			}
@@ -161,7 +171,7 @@ namespace System.Web.UI.WebControls {
 					throw new ArgumentOutOfRangeException (Locale.GetText ("Invalid HorizontalAlign value."));
 				}
 				ViewState ["HorizontalAlign"] = value;
-				styles |= Styles.HorizontalAlign;
+				SetBit ((int) TableStyles.HorizontalAlign);
 			}
 		}
 
@@ -235,13 +245,13 @@ namespace System.Web.UI.WebControls {
 #endif
 		}
 
-		private void Copy (string name, Styles s, Style source)
+		private void Copy (string name, TableStyles s, Style source)
 		{
-			if ((source.styles & s) != 0) {
+			if (source.CheckBit ((int) s)) {
 				object o = source.ViewState [name];
 				if (o != null) {
 					ViewState [name] = o;
-					styles |= s;
+					SetBit ((int) s);
 				}
 			}
 		}
@@ -251,21 +261,21 @@ namespace System.Web.UI.WebControls {
 			// note: styles is copied in base
 			base.CopyFrom (s);
 			if ((s != null) && !s.IsEmpty) {
-				Copy ("BackImageUrl", Styles.BackImageUrl, s);
-				Copy ("CellPadding", Styles.CellPadding, s);
-				Copy ("CellSpacing", Styles.CellSpacing, s);
-				Copy ("GridLines", Styles.GridLines, s);
-				Copy ("HorizontalAlign", Styles.HorizontalAlign, s);
+				Copy ("BackImageUrl", TableStyles.BackImageUrl, s);
+				Copy ("CellPadding", TableStyles.CellPadding, s);
+				Copy ("CellSpacing", TableStyles.CellSpacing, s);
+				Copy ("GridLines", TableStyles.GridLines, s);
+				Copy ("HorizontalAlign", TableStyles.HorizontalAlign, s);
 			}
 		}
 
-		private void Merge (string name, Styles s, Style source)
+		private void Merge (string name, TableStyles s, Style source)
 		{
-			if ((styles & s) == 0 && (source.styles & s) != 0) {
+			if ((!CheckBit ((int) s)) && (source.CheckBit ((int) s))) {
 				object o = source.ViewState [name];
 				if (o != null) {
 					ViewState [name] = o;
-					styles |= s;
+					SetBit ((int) s);
 				}
 			}
 		}
@@ -278,26 +288,26 @@ namespace System.Web.UI.WebControls {
 			} else {
 				base.MergeWith (s);
 				if ((s != null) && !s.IsEmpty) {
-					Merge ("BackImageUrl", Styles.BackImageUrl, s);
-					Merge ("CellPadding", Styles.CellPadding, s);
-					Merge ("CellSpacing", Styles.CellSpacing, s);
-					Merge ("GridLines", Styles.GridLines, s);
-					Merge ("HorizontalAlign", Styles.HorizontalAlign, s);
+					Merge ("BackImageUrl", TableStyles.BackImageUrl, s);
+					Merge ("CellPadding", TableStyles.CellPadding, s);
+					Merge ("CellSpacing", TableStyles.CellSpacing, s);
+					Merge ("GridLines", TableStyles.GridLines, s);
+					Merge ("HorizontalAlign", TableStyles.HorizontalAlign, s);
 				}
 			}
 		}
 
 		public override void Reset ()
 		{
-			if ((styles & Styles.BackImageUrl) != 0)
+			if (CheckBit ((int) TableStyles.BackImageUrl))
 				ViewState.Remove ("BackImageUrl");
-			if ((styles & Styles.CellPadding) != 0)
+			if (CheckBit ((int) TableStyles.CellPadding))
 				ViewState.Remove ("CellPadding");
-			if ((styles & Styles.CellSpacing) != 0)
+			if (CheckBit ((int) TableStyles.CellSpacing))
 				ViewState.Remove ("CellSpacing");
-			if ((styles & Styles.GridLines) != 0)
+			if (CheckBit ((int) TableStyles.GridLines))
 				ViewState.Remove ("GridLines");
-			if ((styles & Styles.HorizontalAlign) != 0)
+			if (CheckBit ((int) TableStyles.HorizontalAlign))
 				ViewState.Remove ("HorizontalAlign");
 			// call base at the end because "styles" will reset there
 			base.Reset ();
@@ -320,19 +330,19 @@ namespace System.Web.UI.WebControls {
 		internal override void LoadViewStateInternal()
 		{
 			if (viewstate["BackImageUrl"] != null) {
-				styles |= Styles.BackImageUrl;
+				SetBit ((int) TableStyles.BackImageUrl);
 			}
 			if (viewstate["CellPadding"] != null) {
-				styles |= Styles.CellPadding;
+				SetBit ((int) TableStyles.CellPadding);
 			}
 			if (viewstate["CellSpacing"] != null) {
-				styles |= Styles.CellSpacing;
+				SetBit ((int) TableStyles.CellSpacing);
 			}
 			if (viewstate["GridLines"] != null) {
-				styles |= Styles.GridLines;
+				SetBit ((int) TableStyles.GridLines);
 			}
 			if (viewstate["HorizontalAlign"] != null) {
-				styles |= Styles.HorizontalAlign;
+				SetBit ((int) TableStyles.HorizontalAlign);
 			}
 
 			base.LoadViewStateInternal();
