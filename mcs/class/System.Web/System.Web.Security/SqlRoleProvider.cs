@@ -307,7 +307,9 @@ namespace System.Web.Security
 			// XXX check connectionStringName and commandTimeout
 
 			connectionString = WebConfigurationManager.ConnectionStrings [connectionStringName];
-			factory = connectionString == null || String.IsNullOrEmpty (connectionString.ProviderName) ?
+			if (connectionString == null)
+				throw new ProviderException (String.Format("The connection name '{0}' was not found in the applications configuration or the connection string is empty.", connectionStringName));
+			factory = String.IsNullOrEmpty (connectionString.ProviderName) ?
 				System.Data.SqlClient.SqlClientFactory.Instance :
 				ProvidersHelper.GetDbProviderFactory (connectionString.ProviderName);
 		}
