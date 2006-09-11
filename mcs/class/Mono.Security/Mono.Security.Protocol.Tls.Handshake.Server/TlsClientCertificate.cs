@@ -1,6 +1,6 @@
 // Transport Security Layer (TLS)
 // Copyright (c) 2003-2004 Carlos Guzman Alvarez
-
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,7 +25,6 @@
 using System;
 using System.Collections;
 using SSCX = System.Security.Cryptography.X509Certificates;
-using Mono.Security.Protocol.Tls;
 using Mono.Security.X509;
 using Mono.Security.X509.Extensions;
 
@@ -67,14 +66,26 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 		protected override void ProcessAsTls1()
 		{
-			this.ReadInt24 ();
-			int length = this.ReadInt24();
-			if (length > 0)
+			int length = this.ReadInt24 ();
+			if (length > 0)	
 			{
-				byte[] certs = this.ReadBytes (length);
-				this.clientCertificate = new X509Certificate (certs);
+				// the next three bytes won't be here for 0-length
+				length = this.ReadInt24();
+				if (length > 0) 
+				{
+					byte[] certs = this.ReadBytes (length);
+					this.clientCertificate = new X509Certificate (certs);
+				}
 			}
-			this.validateCertificate(this.clientCertificate);
+
+			if (this.clientCertificate != null) 
+			{
+				this.validateCertificate (this.clientCertificate);
+			} 
+			else if ((this.Context as ServerContext).ClientCertificateRequired) 
+			{
+				throw new TlsException (AlertDescription.NoCertificate);
+			}
 		}
 
 		#endregion
@@ -91,7 +102,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 				return true;
 
 			KeyUsages ku = KeyUsages.none;
-			switch (context.Cipher.ExchangeAlgorithmType)
+			switch (context.Negotiating.Cipher.ExchangeAlgorithmType)
 			{
 				case ExchangeAlgorithmType.RsaSign:
 					ku = KeyUsages.digitalSignature;

@@ -1,6 +1,6 @@
 // Transport Security Layer (TLS)
 // Copyright (c) 2003-2004 Carlos Guzman Alvarez
-
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -54,34 +54,27 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		#region Protected Methods
 
+		static private byte[] Ssl3Marker = new byte [4] { 0x53, 0x52, 0x56, 0x52 };
+
 		protected override void ProcessAsSsl3()
 		{
 			// Compute handshake messages hashes
 			HashAlgorithm hash = new SslHandshakeHash(this.Context.MasterSecret);
 
-			TlsStream data = new TlsStream();
-			data.Write(this.Context.HandshakeMessages.ToArray());
-			data.Write((int)0x53525652);
-			
-			hash.TransformFinalBlock(data.ToArray(), 0, (int)data.Length);
-
-			data.Reset();
+			byte[] data = this.Context.HandshakeMessages.ToArray ();
+			hash.TransformBlock (data, 0, data.Length, data, 0);
+			hash.TransformBlock (Ssl3Marker, 0, Ssl3Marker.Length, Ssl3Marker, 0);
+			// hack to avoid memory allocation
+			hash.TransformFinalBlock (CipherSuite.EmptyArray, 0, 0);
 
 			byte[] serverHash	= this.ReadBytes((int)Length);			
 			byte[] clientHash	= hash.Hash;
 			
 			// Check server prf against client prf
-			if (clientHash.Length != serverHash.Length)
+			if (!Compare (clientHash, serverHash))
 			{
 #warning Review that selected alert is correct
 				throw new TlsException(AlertDescription.InsuficientSecurity, "Invalid ServerFinished message received.");
-			}
-			for (int i = 0; i < serverHash.Length; i++)
-			{
-				if (clientHash[i] != serverHash[i])
-				{
-					throw new TlsException(AlertDescription.InsuficientSecurity, "Invalid ServerFinished message received.");
-				}
 			}
 		}
 
@@ -90,24 +83,17 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			byte[]			serverPRF	= this.ReadBytes((int)Length);
 			HashAlgorithm	hash		= new MD5SHA1();
 
-			hash.ComputeHash(
-				this.Context.HandshakeMessages.ToArray(), 
-				0,
-				(int)this.Context.HandshakeMessages.Length);
+			// note: we could call HashAlgorithm.ComputeHash(Stream) but that would allocate (on Mono)
+			// a 4096 bytes buffer to process the hash - which is bigger than HandshakeMessages
+			byte[] data = this.Context.HandshakeMessages.ToArray ();
+			byte[] digest = hash.ComputeHash (data, 0, data.Length);
 
-			byte[] clientPRF = this.Context.Cipher.PRF(this.Context.MasterSecret, "server finished", hash.Hash, 12);
+			byte[] clientPRF = this.Context.Current.Cipher.PRF(this.Context.MasterSecret, "server finished", digest, 12);
 
 			// Check server prf against client prf
-			if (clientPRF.Length != serverPRF.Length)
+			if (!Compare (clientPRF, serverPRF))
 			{
 				throw new TlsException("Invalid ServerFinished message received.");
-			}
-			for (int i = 0; i < serverPRF.Length; i++)
-			{
-				if (clientPRF[i] != serverPRF[i])
-				{
-					throw new TlsException(AlertDescription.InsuficientSecurity, "Invalid ServerFinished message received.");
-				}
 			}
 		}
 

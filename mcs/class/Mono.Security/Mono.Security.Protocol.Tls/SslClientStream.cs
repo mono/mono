@@ -277,12 +277,12 @@ namespace Mono.Security.Protocol.Tls
 					break;
 			}
 
-			// the handshake is much easier if we can reuse a preivous session settings
+			// the handshake is much easier if we can reuse a previous session settings
 			if (this.context.AbbreviatedHandshake) 
 			{
 				ClientSessionCache.SetContextFromCache (this.context);
-				this.context.Cipher.ComputeKeys ();
-				this.context.Cipher.InitializeCipher ();
+				this.context.Negotiating.Cipher.ComputeKeys ();
+				this.context.Negotiating.Cipher.InitializeCipher ();
 
 				// Send Cipher Spec protocol
 				this.protocol.SendChangeCipherSpec ();
@@ -324,7 +324,7 @@ namespace Mono.Security.Protocol.Tls
 				this.protocol.SendRecord(HandshakeType.ClientKeyExchange);
 
 				// Now initialize session cipher with the generated keys
-				this.context.Cipher.InitializeCipher();
+				this.context.Negotiating.Cipher.InitializeCipher();
 
 				// Send certificate verify if requested (optional)
 				if (clientCertificate && (this.context.ClientSettings.ClientCertificate != null))
@@ -334,8 +334,9 @@ namespace Mono.Security.Protocol.Tls
 
 				// Send Cipher Spec protocol
 				this.protocol.SendChangeCipherSpec ();
+
 				// Send Finished message
-				this.protocol.SendRecord (HandshakeType.Finished);			
+				this.protocol.SendRecord (HandshakeType.Finished);
 
 				// Read record until server finished is received
 				while (this.context.HandshakeState != HandshakeState.Finished) {

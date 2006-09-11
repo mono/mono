@@ -1,3 +1,17 @@
+2006-09-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TlsClientFinished.cs: Use Write.Cipher instead of Cipher. Remove 
+	usage of TlsStream in ProcessAsSsl3.
+	* TlsClientKeyExchange.cs: Use Negotiating.Cipher instead of Cipher.
+	Refactor to avoid code duplication between SSL3 and TLS.
+	* TlsServerCertificate.cs: Use Negotiating.Cipher instead of Cipher.
+	* TlsServerFinished.cs: Use Current.Cipher instead of Cipher. Use 
+	Compare to test client and server digests equality. Remove usage of 
+	TlsStream in ProcessAsSsl3.
+	* TlsServerHello.cs: Use Negotiating.Cipher instead of Cipher. Remove
+	usage of TlsStream to reduce memory allocations. Remove method 
+	CompareSessionId and use the new base class Compare method instead.
+
 2006-03-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TlsClientHello.cs: Check to see if we already have a known session

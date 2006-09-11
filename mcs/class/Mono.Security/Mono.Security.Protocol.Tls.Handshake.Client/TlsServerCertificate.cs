@@ -1,7 +1,6 @@
 // Transport Security Layer (TLS)
 // Copyright (c) 2003-2004 Carlos Guzman Alvarez
-// Sebastien Pouliot, Copyright (c) 2004 Novell (http://www.novell.com)
-
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -122,7 +121,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 				return true;
 
 			KeyUsages ku = KeyUsages.none;
-			switch (context.Cipher.ExchangeAlgorithmType) 
+			switch (context.Negotiating.Cipher.ExchangeAlgorithmType) 
 			{
 				case ExchangeAlgorithmType.RsaSign:
 					ku = KeyUsages.digitalSignature;

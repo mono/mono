@@ -1,6 +1,6 @@
 // Transport Security Layer (TLS)
 // Copyright (c) 2003-2004 Carlos Guzman Alvarez
-
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,6 +33,7 @@ namespace Mono.Security.Protocol.Tls.Handshake
 		private Context			context;
 		private HandshakeType	handshakeType;
 		private ContentType	contentType;
+		private byte[]		cache;
 
 		#endregion
 
@@ -118,27 +119,50 @@ namespace Mono.Security.Protocol.Tls.Handshake
 		{
 			if (this.CanWrite)
 			{
-				this.context.HandshakeMessages.Write(this.EncodeMessage());
+				// result may (should) be available from a previous call to EncodeMessage
+				if (cache == null)
+					cache = this.EncodeMessage ();
+				this.context.HandshakeMessages.Write (cache);
 				this.Reset();
+				cache = null;
 			}
 		}
 
 		public virtual byte[] EncodeMessage()
 		{
-			byte[] result = null;
+			cache = null;
 
 			if (CanWrite)
 			{
-				TlsStream c = new TlsStream();
+				byte[] hs = this.ToArray ();
+				int len = hs.Length;
+				cache = new byte[4 + len];
 
-				c.Write((byte)HandshakeType);
-				c.WriteInt24((int)this.Length);
-				c.Write(this.ToArray());
-
-				result = c.ToArray();
+				cache[0] = (byte) HandshakeType;
+				// Length as an Int24 in Network Order
+				cache[1] = (byte) (len >> 16);
+				cache[2] = (byte) (len >> 8);
+				cache[3] = (byte) len;
+				Buffer.BlockCopy (hs, 0, cache, 4, len);
 			}
 
-			return result;
+			return cache;
+		}
+
+		static public bool Compare (byte[] buffer1, byte[] buffer2)
+		{
+			// in our case both null can't exist (or be valid)
+			if ((buffer1 == null) || (buffer2 == null))
+				return false;
+
+			if (buffer1.Length != buffer2.Length)
+				return false;
+
+			for (int i = 0; i < buffer1.Length; i++) {
+				if (buffer1[i] != buffer2[i])
+					return false;
+			}
+			return true;
 		}
 
 		#endregion

@@ -90,6 +90,7 @@
 ./Mono.Security.Protocol.Tls/RSASslSignatureDeformatter.cs
 ./Mono.Security.Protocol.Tls/RSASslSignatureFormatter.cs
 ./Mono.Security.Protocol.Tls/SecurityCompressionType.cs
+./Mono.Security.Protocol.Tls/SecurityParameters.cs
 ./Mono.Security.Protocol.Tls/SecurityProtocolType.cs
 ./Mono.Security.Protocol.Tls/ServerContext.cs
 ./Mono.Security.Protocol.Tls/ServerRecordProtocol.cs

@@ -1,6 +1,6 @@
 // Transport Security Layer (TLS)
 // Copyright (c) 2003-2004 Carlos Guzman Alvarez
-
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,7 +29,6 @@ using System.Security.Cryptography;
 
 using Mono.Security;
 using Mono.Security.Cryptography;
-using Mono.Security.X509;
 using M = Mono.Security.Cryptography;
 
 namespace Mono.Security.Protocol.Tls
@@ -238,97 +237,92 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Methods
 
+		internal void Write (byte[] array, int offset, short value)
+		{
+			if (offset > array.Length - 2)
+				throw new ArgumentException ("offset");
+
+			array [offset    ] = (byte) (value >> 8);
+			array [offset + 1] = (byte) value;
+		}
+
+		internal void Write (byte[] array, int offset, ulong value)
+		{
+			if (offset > array.Length - 8)
+				throw new ArgumentException ("offset");
+
+			array [offset    ] = (byte) (value >> 56);
+			array [offset + 1] = (byte) (value >> 48);
+			array [offset + 2] = (byte) (value >> 40);
+			array [offset + 3] = (byte) (value >> 32);
+			array [offset + 4] = (byte) (value >> 24);
+			array [offset + 5] = (byte) (value >> 16);
+			array [offset + 6] = (byte) (value >> 8);
+			array [offset + 7] = (byte) value;
+		}
+
 		public void InitializeCipher()
 		{
 			this.createEncryptionCipher();
 			this.createDecryptionCipher();
 		}
 
-		public void UpdateClientCipherIV(byte[] iv)
-		{
-			if (this.cipherMode == CipherMode.CBC)
-			{
-				// Set the new IV
-				this.encryptionAlgorithm.IV	= iv;
-			
-				// Create encryption cipher with the new IV
-				this.encryptionCipher = this.encryptionAlgorithm.CreateEncryptor();
-			}
-		}
-
-		/*
-		public void UpdateServerCipherIV(byte[] iv)
-		{
-			if (this.cipherMode == CipherMode.CBC)
-			{
-				// Set the new IV
-				this.decryptionAlgorithm.IV	= iv;
-			
-				// Create encryption cipher with the new IV
-				this.decryptionCipher = this.decryptionAlgorithm.CreateDecryptor();
-			}
-		}
-		*/
-
 		public byte[] EncryptRecord(byte[] fragment, byte[] mac)
 		{
 			// Encryption ( fragment + mac [+ padding + padding_length] )
-			MemoryStream ms = new MemoryStream();
-			CryptoStream cs = new CryptoStream(ms, this.EncryptionCipher, CryptoStreamMode.Write);
-
-			cs.Write(fragment, 0, fragment.Length);
-			cs.Write(mac, 0, mac.Length);
-			if (this.CipherMode == CipherMode.CBC)
-			{
+			int length = fragment.Length + mac.Length;
+			int padlen = 0;
+			if (this.CipherMode == CipherMode.CBC) {
 				// Calculate padding_length
-				byte fragmentLength	= (byte)(fragment.Length + mac.Length + 1);
-				byte paddingLength	= (byte)(this.blockSize - fragmentLength % this.blockSize);
-				if (paddingLength == this.blockSize)
-				{
-					paddingLength = 0;
+				length++; // keep an extra byte
+				padlen = (this.blockSize - length % this.blockSize);
+				if (padlen == this.blockSize) {
+					padlen = 0;
 				}
-
-				// Write padding length byte
-				byte[] padding = new byte[(paddingLength + 1)];				
-				for (int i = 0; i < (paddingLength + 1); i++)
-				{
-					padding[i] = paddingLength;
-				}
-
-				cs.Write(padding, 0, padding.Length);
+				length += padlen;
 			}
-			cs.FlushFinalBlock();
-			cs.Close();
 
-			return ms.ToArray();
+			byte[] plain = new byte [length];
+			Buffer.BlockCopy (fragment, 0, plain, 0, fragment.Length);
+			Buffer.BlockCopy (mac, 0, plain, fragment.Length, mac.Length);
+			if (padlen > 0) {
+				int start = fragment.Length + mac.Length;
+				for (int i = start; i < (start + padlen + 1); i++) {
+					plain[i] = (byte)padlen;
+				}
+			}
+
+			this.EncryptionCipher.TransformBlock (plain, 0, plain.Length, plain, 0);
+			return plain;
 		}
 
-		public void DecryptRecord(byte[] fragment, ref byte[] dcrFragment, ref byte[] dcrMAC)
+		public void DecryptRecord(byte[] fragment, out byte[] dcrFragment, out byte[] dcrMAC)
 		{
 			int	fragmentSize	= 0;
 			int paddingLength	= 0;
 
 			// Decrypt message fragment ( fragment + mac [+ padding + padding_length] )
-			byte[] buffer = new byte[fragment.Length];
-			this.DecryptionCipher.TransformBlock(fragment, 0, fragment.Length, buffer, 0);
+			this.DecryptionCipher.TransformBlock(fragment, 0, fragment.Length, fragment, 0);
+			// optimization: decrypt "in place", worst case: padding will reduce the size of the data
+			// this will cut in half the memory allocations (dcrFragment and dcrMAC remains)
 
 			// Calculate fragment size
 			if (this.CipherMode == CipherMode.CBC)
 			{
 				// Calculate padding_length
-				paddingLength	= buffer[buffer.Length - 1];
-				fragmentSize	= (buffer.Length - (paddingLength + 1)) - this.HashSize;
+				paddingLength	= fragment[fragment.Length - 1];
+				fragmentSize	= (fragment.Length - (paddingLength + 1)) - this.HashSize;
 			}
 			else
 			{
-				fragmentSize = buffer.Length - this.HashSize;
+				fragmentSize = fragment.Length - this.HashSize;
 			}
 
 			dcrFragment = new byte[fragmentSize];
 			dcrMAC		= new byte[HashSize];
 
-			Buffer.BlockCopy(buffer, 0, dcrFragment, 0, dcrFragment.Length);
-			Buffer.BlockCopy(buffer, dcrFragment.Length, dcrMAC, 0, dcrMAC.Length);
+			Buffer.BlockCopy(fragment, 0, dcrFragment, 0, dcrFragment.Length);
+			Buffer.BlockCopy(fragment, dcrFragment.Length, dcrMAC, 0, dcrMAC.Length);
 		}
 
 		#endregion
@@ -349,21 +343,14 @@ namespace Mono.Security.Protocol.Tls
 
 		public byte[] CreatePremasterSecret()
 		{
-			TlsStream		stream	= new TlsStream();
 			ClientContext	context = (ClientContext)this.context;
-			
-			// Write protocol version
-			// We need to send here the protocol version used in 
-			// the ClientHello message, that can be different than the actual
-			// protocol version
-			stream.Write(context.ClientHelloProtocol);
 
-			// Generate random bytes
-			stream.Write(this.context.GetSecureRandomBytes(46));
-
-			byte[] preMasterSecret = stream.ToArray();
-
-			stream.Reset();
+			// Generate random bytes (total size)
+			byte[] preMasterSecret = this.context.GetSecureRandomBytes (48);
+			// and replace the first two bytes with the protocol version
+			// (maximum support version not actual)
+			preMasterSecret [0] = (byte)(context.ClientHelloProtocol >> 8);
+			preMasterSecret [1] = (byte)context.ClientHelloProtocol;
 
 			return preMasterSecret;
 		}
@@ -512,13 +499,13 @@ namespace Mono.Security.Protocol.Tls
 			{
 				this.clientHMAC = new M.HMAC(
 					this.HashAlgorithmName,
-					this.context.ClientWriteMAC);
+					this.context.Negotiating.ClientWriteMAC);
 			}
 			else
 			{
 				this.serverHMAC = new M.HMAC(
 					this.HashAlgorithmName,
-					this.context.ServerWriteMAC);
+					this.context.Negotiating.ServerWriteMAC);
 			}
 		}
 
@@ -578,13 +565,13 @@ namespace Mono.Security.Protocol.Tls
 			{
 				this.serverHMAC = new M.HMAC(
 					this.HashAlgorithmName,
-					this.context.ServerWriteMAC);
+					this.context.Negotiating.ServerWriteMAC);
 			}
 			else
 			{
 				this.clientHMAC = new M.HMAC(
 					this.HashAlgorithmName,
-					this.context.ClientWriteMAC);
+					this.context.Negotiating.ClientWriteMAC);
 			}
 		}
 

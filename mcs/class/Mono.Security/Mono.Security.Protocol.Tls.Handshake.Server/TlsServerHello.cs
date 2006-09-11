@@ -1,6 +1,6 @@
 // Transport Security Layer (TLS)
 // Copyright (c) 2003-2004 Carlos Guzman Alvarez
-
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -111,7 +111,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 			}
 
 			// Write selected cipher suite
-			this.Write(this.Context.Cipher.Code);
+			this.Write(this.Context.Negotiating.Cipher.Code);
 			
 			// Write selected compression method
 			this.WriteByte((byte)this.Context.CompressionMethod);

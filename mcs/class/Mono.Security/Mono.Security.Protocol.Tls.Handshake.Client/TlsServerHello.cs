@@ -1,6 +1,6 @@
 // Transport Security Layer (TLS)
 // Copyright (c) 2003-2004 Carlos Guzman Alvarez
-
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -54,7 +54,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 			this.Context.SessionId			= this.sessionId;
 			this.Context.ServerRandom		= this.random;
-			this.Context.Cipher				= this.cipherSuite;
+			this.Context.Negotiating.Cipher = this.cipherSuite;
 			this.Context.CompressionMethod	= this.compressionMethod;
 			this.Context.ProtocolNegotiated	= true;
 
@@ -63,18 +63,19 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			DebugHelper.WriteLine("Server random", this.Context.ServerRandom);
 			
 			// Compute ClientRandom + ServerRandom
-			TlsStream random = new TlsStream();
-			random.Write(this.Context.ClientRandom);
-			random.Write(this.Context.ServerRandom);
-			this.Context.RandomCS = random.ToArray();
+			int clen = this.Context.ClientRandom.Length;
+			int slen = this.Context.ServerRandom.Length;
+			int rlen = clen + slen;
+			byte[] cs = new byte[rlen];
+			Buffer.BlockCopy (this.Context.ClientRandom, 0, cs, 0, clen);
+			Buffer.BlockCopy (this.Context.ServerRandom, 0, cs, clen, slen);
+			this.Context.RandomCS = cs;
 			
 			// Server Random + Client Random
-			random.Reset();
-			random.Write(this.Context.ServerRandom);
-			random.Write(this.Context.ClientRandom);
-
-			this.Context.RandomSC = random.ToArray();
-			random.Reset();
+			byte[] sc = new byte[rlen];
+			Buffer.BlockCopy (this.Context.ServerRandom, 0, sc, 0, slen);
+			Buffer.BlockCopy (this.Context.ClientRandom, 0, sc, slen, clen);
+			this.Context.RandomSC = sc;
 		}
 
 		#endregion
@@ -100,7 +101,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			{
 				this.sessionId = this.ReadBytes(length);
 				ClientSessionCache.Add (this.Context.ClientSettings.TargetHost, this.sessionId);
-				this.Context.AbbreviatedHandshake = CompareSessionId (this.sessionId, this.Context.SessionId);
+				this.Context.AbbreviatedHandshake = Compare (this.sessionId, this.Context.SessionId);
 			} 
 			else
 			{
@@ -123,22 +124,6 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		#endregion
 
 		#region Private Methods
-
-		private bool CompareSessionId (byte[] id1, byte[] id2)
-		{
-			// in our case both null can't exist (or be valid)
-			if ((id1 == null) || (id2 == null))
-				return false;
-
-			if (id1.Length != id2.Length)
-				return false;
-
-			for (int i = 0; i < id1.Length; i++) {
-				if (id1 [i] != id2 [i])
-					return false;
-			}
-			return true;
-		}
 
 		private void processProtocol(short protocol)
 		{

@@ -1,6 +1,6 @@
 // Transport Security Layer (TLS)
 // Copyright (c) 2003-2004 Carlos Guzman Alvarez
-
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -225,7 +225,7 @@ namespace Mono.Security.Protocol.Tls
 			{
 				if (this.context.HandshakeState == HandshakeState.Finished)
 				{
-					return this.context.Cipher.CipherAlgorithmType;
+					return this.context.Current.Cipher.CipherAlgorithmType;
 				}
 
 				return CipherAlgorithmType.None;
@@ -238,7 +238,7 @@ namespace Mono.Security.Protocol.Tls
 			{
 				if (this.context.HandshakeState == HandshakeState.Finished)
 				{
-					return this.context.Cipher.EffectiveKeyBits;
+					return this.context.Current.Cipher.EffectiveKeyBits;
 				}
 
 				return 0;
@@ -251,7 +251,7 @@ namespace Mono.Security.Protocol.Tls
 			{
 				if (this.context.HandshakeState == HandshakeState.Finished)
 				{
-					return this.context.Cipher.HashAlgorithmType;
+					return this.context.Current.Cipher.HashAlgorithmType;
 				}
 
 				return HashAlgorithmType.None;
@@ -264,7 +264,7 @@ namespace Mono.Security.Protocol.Tls
 			{
 				if (this.context.HandshakeState == HandshakeState.Finished)
 				{
-					return this.context.Cipher.HashSize * 8;
+					return this.context.Current.Cipher.HashSize * 8;
 				}
 
 				return 0;
@@ -290,7 +290,7 @@ namespace Mono.Security.Protocol.Tls
 			{
 				if (this.context.HandshakeState == HandshakeState.Finished)
 				{
-					return this.context.Cipher.ExchangeAlgorithmType;
+					return this.context.Current.Cipher.ExchangeAlgorithmType;
 				}
 
 				return ExchangeAlgorithmType.None;
@@ -569,6 +569,9 @@ namespace Mono.Security.Protocol.Tls
 			return asyncResult;
 		}
 
+		// bigger than max record length for SSL/TLS
+		private byte[] recbuf = new byte[16384];
+
 		private void InternalBeginRead(InternalAsyncResult asyncResult)
 		{
 			try
@@ -602,9 +605,6 @@ namespace Mono.Security.Protocol.Tls
 				}
 				else if (!this.context.ConnectionEnd)
 				{
-					// bigger than max record length for SSL/TLS
-					byte[] recbuf = new byte[16384];
-
 					// this will read data from the network until we have (at least) one
 					// record to send back to the caller
 					this.innerStream.BeginRead(recbuf, 0, recbuf.Length,
@@ -978,7 +978,6 @@ namespace Mono.Security.Protocol.Tls
 						}
 
 						bool dataToReturn = false;
-						long pos = recordStream.Position;
 
 						recordStream.Position = 0;
 						byte[] record = null;
@@ -1036,7 +1035,6 @@ namespace Mono.Security.Protocol.Tls
 					throw new IOException("IO exception during read.", ex);
 				}
 			}
-			return 0;
 		}
 
 		public override long Seek(long offset, SeekOrigin origin)

@@ -1,6 +1,6 @@
 // Transport Security Layer (TLS)
 // Copyright (c) 2003-2004 Carlos Guzman Alvarez
-
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -44,8 +44,6 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 		protected override void ProcessAsSsl3()
 		{
-			bool decryptError = false;
-
 			// Compute handshake messages hashes
 			HashAlgorithm hash = new SslHandshakeHash(this.Context.MasterSecret);
 
@@ -61,23 +59,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 			byte[] serverHash	= hash.Hash;
 			
 			// Check client prf against server prf
-			if (clientHash.Length != serverHash.Length)
-			{
-				decryptError = true;
-			}
-			else
-			{
-				for (int i = 0; i < clientHash.Length; i++)
-				{
-					if (clientHash[i] != serverHash[i])
-					{
-						decryptError = true;
-						break;
-					}
-				}
-			}
-
-			if (decryptError)
+			if (!Compare (clientHash, serverHash))
 			{
 				throw new TlsException(AlertDescription.DecryptError, "Decrypt error.");
 			}
@@ -87,34 +69,15 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 		{
 			byte[]			clientPRF		= this.ReadBytes((int)this.Length);
 			HashAlgorithm	hash			= new MD5SHA1();
-			bool			decryptError	= false;
 
-			hash.ComputeHash(
-				this.Context.HandshakeMessages.ToArray(), 
-				0,
-				(int)this.Context.HandshakeMessages.Length);
+			byte[] data = this.Context.HandshakeMessages.ToArray ();
+			byte[] digest = hash.ComputeHash (data, 0, data.Length);
 
-			byte[] serverPRF = this.Context.Cipher.PRF(
-				this.Context.MasterSecret, "client finished", hash.Hash, 12);
+			byte[] serverPRF = this.Context.Current.Cipher.PRF(
+				this.Context.MasterSecret, "client finished", digest, 12);
 
 			// Check client prf against server prf
-			if (clientPRF.Length != serverPRF.Length)
-			{
-				decryptError = true;
-			}
-			else
-			{
-				for (int i = 0; i < serverPRF.Length; i++)
-				{
-					if (clientPRF[i] != serverPRF[i])
-					{
-						decryptError = true;
-						break;
-					}
-				}
-			}
-
-			if (decryptError)
+			if (!Compare (clientPRF, serverPRF))
 			{
 				throw new TlsException(AlertDescription.DecryptError, "Decrypt error.");
 			}

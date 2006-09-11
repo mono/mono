@@ -36,7 +36,7 @@ namespace Mono.Security.Protocol.Tls
 
 		private string						targetHost;
 		private X509CertificateCollection	certificates;
-		private SecurityCompressionType		compressionMethod;
+		//private SecurityCompressionType		compressionMethod;
 		private X509Certificate				clientCertificate;
 		private RSAManaged					certificateRSA;
 	
@@ -92,7 +92,7 @@ namespace Mono.Security.Protocol.Tls
 
 		public TlsClientSettings()
 		{
-			this.compressionMethod	= SecurityCompressionType.None;
+			// this.compressionMethod	= SecurityCompressionType.None;
 			this.certificates		= new X509CertificateCollection();
 			this.targetHost			= String.Empty;
 		}

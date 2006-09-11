@@ -56,12 +56,6 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Handshake Processing Methods
 
-		protected override void ProcessChangeCipherSpec()
-		{
-			// Reset sequence numbers
-			this.context.ReadSequenceNumber = 0;
-		}
-
 		protected override void ProcessHandshakeMessage(TlsStream handMsg)
 		{
 			HandshakeType		handshakeType	= (HandshakeType)handMsg.ReadByte();
@@ -73,8 +67,12 @@ namespace Mono.Security.Protocol.Tls
 			int length = handMsg.ReadInt24();
 
 			// Read message data
-			byte[] data = new byte[length];
-			handMsg.Read(data, 0, length);
+			byte[] data = null;
+			if (length > 0)
+			{
+				data = new byte[length];
+				handMsg.Read (data, 0, length);
+			}
 
 			// Create and process the server message
 			message = this.createServerHandshakeMessage(handshakeType, data);
@@ -92,7 +90,10 @@ namespace Mono.Security.Protocol.Tls
 				message.Update();
 				this.Context.HandshakeMessages.WriteByte ((byte) handshakeType);
 				this.Context.HandshakeMessages.WriteInt24 (length);
-				this.Context.HandshakeMessages.Write (data, 0, data.Length);
+				if (length > 0) 
+				{
+					this.Context.HandshakeMessages.Write (data, 0, data.Length);
+				}
 			}
 		}
 
@@ -134,7 +135,9 @@ namespace Mono.Security.Protocol.Tls
 				case HandshakeType.HelloRequest:
 					if (context.HandshakeState != HandshakeState.Started)
 					{
-						context.SslStream.NegotiateHandshake();
+						context.HandshakeState = HandshakeState.None;
+						// re-negotiation will occur at next read/write
+						// (i.e. not during an existing encode/decode op)
 					}
 					else
 					{

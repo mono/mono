@@ -1,6 +1,6 @@
 // Transport Security Layer (TLS)
 // Copyright (c) 2003-2004 Carlos Guzman Alvarez
-
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -52,33 +52,34 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		#region Protected Methods
 
+		static private byte[] Ssl3Marker = new byte [4] { 0x43, 0x4c, 0x4e, 0x54 };
+
 		protected override void ProcessAsSsl3()
 		{
 			// Compute handshake messages hashes
 			HashAlgorithm hash = new SslHandshakeHash(this.Context.MasterSecret);
 
-			TlsStream data = new TlsStream();
-			data.Write(this.Context.HandshakeMessages.ToArray());
-			data.Write((int)0x434C4E54);
-			
-			hash.TransformFinalBlock(data.ToArray(), 0, (int)data.Length);
+			byte[] data = this.Context.HandshakeMessages.ToArray ();
+			hash.TransformBlock (data, 0, data.Length, data, 0);
+			hash.TransformBlock (Ssl3Marker, 0, Ssl3Marker.Length, Ssl3Marker, 0);
+			// hack to avoid memory allocation
+			hash.TransformFinalBlock (CipherSuite.EmptyArray, 0, 0);
 
-			this.Write(hash.Hash);
-
-			data.Reset();
+			this.Write (hash.Hash);
 		}
 
 		protected override void ProcessAsTls1()
 		{
 			// Compute handshake messages hash
 			HashAlgorithm hash = new MD5SHA1();
-			hash.ComputeHash(
-				this.Context.HandshakeMessages.ToArray(),
-				0,
-				(int)this.Context.HandshakeMessages.Length);
+
+			// note: we could call HashAlgorithm.ComputeHash(Stream) but that would allocate (on Mono)
+			// a 4096 bytes buffer to process the hash - which is bigger than HandshakeMessages
+			byte[] data = this.Context.HandshakeMessages.ToArray ();
+			byte[] digest = hash.ComputeHash (data, 0, data.Length);
 
 			// Write message
-			Write(this.Context.Cipher.PRF(this.Context.MasterSecret, "client finished", hash.Hash, 12));
+			Write(this.Context.Write.Cipher.PRF(this.Context.MasterSecret, "client finished", digest, 12));
 		}
 
 		#endregion

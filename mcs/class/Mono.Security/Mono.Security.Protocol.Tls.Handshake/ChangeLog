@@ -1,3 +1,13 @@
+2006-09-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HandshakeMessage.cs: EncodeMessage is called very often so we avoid
+	many allocations by not creating a TlsStream and by not calling 
+	WriteInt24 (IPAddress.HostToNetworkOrder and BitConverter.GetBytes).
+	We also cache the encoded result to avoid computing/allocating the 
+	encoded message twice (in most cases) for the handshake. Added a
+	Compare static method to compare byte arrays (easier to step out when
+	debugging).
+
 2004-07-14  Carlos Guzman Alvarez  <carlosga@telefonica.net>
 
 	* Updated license head in c# source files for use

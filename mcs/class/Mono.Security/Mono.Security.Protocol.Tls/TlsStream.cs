@@ -1,6 +1,6 @@
 // Transport Security Layer (TLS)
 // Copyright (c) 2003-2004 Carlos Guzman Alvarez
-
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,7 +24,6 @@
 
 using System;
 using System.IO;
-using System.Net;
 
 namespace Mono.Security.Protocol.Tls
 {
@@ -35,6 +34,8 @@ namespace Mono.Security.Protocol.Tls
 		private bool				canRead;
 		private bool				canWrite;
 		private MemoryStream		buffer;
+		private byte[] temp;
+		private const int temp_size = 4;
 
 		#endregion
 
@@ -98,8 +99,11 @@ namespace Mono.Security.Protocol.Tls
 
 		public TlsStream(byte[] data) : base()
 		{
-			this.buffer		= new MemoryStream(data);
-			this.canRead	= true;
+			if (data != null)
+				this.buffer = new MemoryStream(data);
+			else
+				this.buffer = new MemoryStream ();
+			this.canRead = true;
 			this.canWrite	= false;
 		}
 
@@ -107,37 +111,44 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Specific Read Methods
 
+		// hack for reducing memory allocations
+		// returned value is valid only for the length asked *and*
+		// cannot be directly returned outside the class
+		// note: Mono's Stream.ReadByte does a 1 byte array allocation
+		private byte[] ReadSmallValue (int length)
+		{
+			if (length > temp_size)
+				throw new ArgumentException ("8 bytes maximum");
+			if (temp == null)
+				temp = new byte[temp_size];
+
+			if (this.Read (temp, 0, length) != length)
+				throw new TlsException (String.Format ("buffer underrun"));
+			return temp;
+		}
+
 		public new byte ReadByte()
 		{
-			return (byte)base.ReadByte();
+			byte[] result = ReadSmallValue (1);
+			return result [0];
 		}
 
 		public short ReadInt16()
 		{
-			byte[] bytes = this.ReadBytes(2);
-
-			return IPAddress.HostToNetworkOrder(BitConverter.ToInt16(bytes, 0));
+			byte[] result = ReadSmallValue (2);
+			return (short) (result[0] << 8 | result[1]);
 		}
 
 		public int ReadInt24()
 		{
-			byte[] b = this.ReadBytes(3);
-			
-			return ((b[0] & 0xff) << 16) | ((b[1] & 0xff) << 8) | (b[2] & 0xff);
+			byte[] result = ReadSmallValue (3);
+			return ((result[0] << 16) | (result[1] << 8) | result[2]);
 		}
 
 		public int ReadInt32()
 		{
-			byte[] bytes = this.ReadBytes(4);
-
-			return IPAddress.HostToNetworkOrder(BitConverter.ToInt32(bytes, 0));
-		}
-
-		public long ReadInt64()
-		{
-			byte[] bytes = this.ReadBytes(8);
-						
-			return IPAddress.HostToNetworkOrder(BitConverter.ToInt64(bytes, 0));
+			byte[] result = ReadSmallValue (4);
+			return ((result[0] << 24) | (result[1] << 16) | (result[2] << 8) | result[3]);
 		}
 
 		public byte[] ReadBytes(int count)
@@ -153,37 +164,49 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Specific Write Methods
 
+		// note: Mono's Stream.WriteByte does a 1 byte array allocation
 		public void Write(byte value)
 		{
-			this.WriteByte(value);
+			if (temp == null)
+				temp = new byte[temp_size];
+			temp[0] = value;
+			this.Write (temp, 0, 1);
 		}
 
 		public void Write(short value)
 		{
-			byte[] bytes = BitConverter.GetBytes((short)IPAddress.HostToNetworkOrder(value));
-			this.Write(bytes);
+			if (temp == null)
+				temp = new byte[temp_size];
+			temp[0] = ((byte)(value >> 8));
+			temp[1] = ((byte)value);
+			this.Write (temp, 0, 2);
 		}
 
 		public void WriteInt24(int value)
 		{
-			int int24 = IPAddress.HostToNetworkOrder(value);
-			byte[] content = new byte[3];
-				
-			Buffer.BlockCopy(BitConverter.GetBytes(int24), 1, content, 0, 3);
-
-			this.Write(content);
+			if (temp == null)
+				temp = new byte[temp_size];
+			temp[0] = ((byte)(value >> 16));
+			temp[1] = ((byte)(value >> 8));
+			temp[2] = ((byte)value);
+			this.Write (temp, 0, 3);
 		}
 
 		public void Write(int value)
 		{
-			byte[] bytes = BitConverter.GetBytes((int)IPAddress.HostToNetworkOrder(value));
-			this.Write(bytes);
+			if (temp == null)
+				temp = new byte[temp_size];
+			temp[0] = ((byte)(value >> 24));
+			temp[1] = ((byte)(value >> 16));
+			temp[2] = ((byte)(value >> 8));
+			temp[3] = ((byte)value);
+			this.Write (temp, 0, 4);
 		}
 
-		public void Write(long value)
+		public void Write(ulong value)
 		{
-			byte[] bytes = BitConverter.GetBytes((long)IPAddress.HostToNetworkOrder(value));
-			this.Write(bytes);
+			Write ((int)(value >> 32));
+			Write ((int)value);
 		}
 
 		public void Write(byte[] buffer)

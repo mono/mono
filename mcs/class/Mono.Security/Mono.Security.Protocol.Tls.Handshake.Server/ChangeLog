@@ -1,3 +1,15 @@
+2006-09-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TlsClientCertificate.cs: Use Negotiating.Cipher instead of Cipher.
+	Fix reading the message length if it's zero (in that case it's not 
+	present two times).
+	* TlsClientFinished.cs: Use Current.Cipher instead of Cipher. Use 
+	Compare to test client and server digests equality.
+	* TlsClientHello.cs: Use Negotiating.Cipher instead of Cipher.
+	* TlsClientKeyExchange.cs: Use Negotiating.Cipher instead of Cipher.
+	* TlsServerFinished.cs: Use Current.Cipher instead of Cipher.
+	* TlsServerHello.cs: Use Negotiating.Cipher instead of Cipher.
+
 2005-07-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TlsClientCertificate.cs: Fix decoding (extra length) and for null

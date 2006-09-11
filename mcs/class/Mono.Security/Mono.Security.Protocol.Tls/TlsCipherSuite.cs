@@ -1,6 +1,6 @@
 // Transport Security Layer (TLS)
 // Copyright (c) 2003-2004 Carlos Guzman Alvarez
-
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,17 +24,15 @@
 
 using System;
 using System.IO;
-using System.Text;
 using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
-
-using Mono.Security;
-using Mono.Security.Cryptography;
 
 namespace Mono.Security.Protocol.Tls
 {
 	internal class TlsCipherSuite : CipherSuite
 	{
+		private const int MacHeaderLength = 13;
+		private byte[] header;
+
 		#region Constructors
 		
 		public TlsCipherSuite(
@@ -55,54 +53,40 @@ namespace Mono.Security.Protocol.Tls
 
 		public override byte[] ComputeServerRecordMAC(ContentType contentType, byte[] fragment)
 		{
-			TlsStream	data	= new TlsStream();
-			byte[]		result	= null;
+			if (header == null)
+				header = new byte [MacHeaderLength];
 
-			if (this.Context is ClientContext)
-			{
-				data.Write(this.Context.ReadSequenceNumber);
-			}
-			else
-			{
-				data.Write(this.Context.WriteSequenceNumber);
-			}
+			ulong seqnum = (Context is ClientContext) ? Context.ReadSequenceNumber : Context.WriteSequenceNumber;
+			Write (header, 0, seqnum);
+			header [8] = (byte) contentType;
+			Write (header, 9, this.Context.Protocol);
+			Write (header, 11, (short)fragment.Length);
 
-			data.Write((byte)contentType);
-			data.Write(this.Context.Protocol);
-			data.Write((short)fragment.Length);
-			data.Write(fragment);
-
-			result = this.ServerHMAC.ComputeHash(data.ToArray());
-
-			data.Reset();
-
-			return result;
+			HashAlgorithm mac = this.ServerHMAC;
+			mac.TransformBlock (header, 0, header.Length, header, 0);
+			mac.TransformBlock (fragment, 0, fragment.Length, fragment, 0);
+			// hack, else the method will allocate a new buffer of the same length (negative half the optimization)
+			mac.TransformFinalBlock (CipherSuite.EmptyArray, 0, 0);
+			return mac.Hash;
 		}
 
 		public override byte[] ComputeClientRecordMAC(ContentType contentType, byte[] fragment)
 		{
-			TlsStream	data	= new TlsStream();
-			byte[]		result	= null;
+			if (header == null)
+				header = new byte [MacHeaderLength];
 
-			if (this.Context is ClientContext)
-			{
-				data.Write(this.Context.WriteSequenceNumber);
-			}
-			else
-			{
-				data.Write(this.Context.ReadSequenceNumber);
-			}
+			ulong seqnum = (Context is ClientContext) ? Context.WriteSequenceNumber : Context.ReadSequenceNumber;
+			Write (header, 0, seqnum);
+			header [8] = (byte) contentType;
+			Write (header, 9, this.Context.Protocol);
+			Write (header, 11, (short)fragment.Length);
 
-			data.Write((byte)contentType);
-			data.Write(this.Context.Protocol);
-			data.Write((short)fragment.Length);
-			data.Write(fragment);
-
-			result = this.ClientHMAC.ComputeHash(data.ToArray());
-
-			data.Reset();
-
-			return result;
+			HashAlgorithm mac = this.ClientHMAC;
+			mac.TransformBlock (header, 0, header.Length, header, 0);
+			mac.TransformBlock (fragment, 0, fragment.Length, fragment, 0);
+			// hack, else the method will allocate a new buffer of the same length (negative half the optimization)
+			mac.TransformFinalBlock (CipherSuite.EmptyArray, 0, 0);
+			return mac.Hash;
 		}
 
 		#endregion
@@ -129,8 +113,8 @@ namespace Mono.Security.Protocol.Tls
 				this.Context.RandomSC,
 				this.KeyBlockSize));
 
-			this.Context.ClientWriteMAC = keyBlock.ReadBytes(this.HashSize);
-			this.Context.ServerWriteMAC = keyBlock.ReadBytes(this.HashSize);
+			this.Context.Negotiating.ClientWriteMAC = keyBlock.ReadBytes(this.HashSize);
+			this.Context.Negotiating.ServerWriteMAC = keyBlock.ReadBytes(this.HashSize);
 			this.Context.ClientWriteKey = keyBlock.ReadBytes(this.KeyMaterialSize);
 			this.Context.ServerWriteKey = keyBlock.ReadBytes(this.KeyMaterialSize);
 
@@ -178,10 +162,10 @@ namespace Mono.Security.Protocol.Tls
 			DebugHelper.WriteLine(">>>> KeyBlock", keyBlock.ToArray());
 			DebugHelper.WriteLine(">>>> ClientWriteKey", this.Context.ClientWriteKey);
 			DebugHelper.WriteLine(">>>> ClientWriteIV", this.Context.ClientWriteIV);
-			DebugHelper.WriteLine(">>>> ClientWriteMAC", this.Context.ClientWriteMAC);
+			DebugHelper.WriteLine(">>>> ClientWriteMAC", this.Context.Negotiating.ClientWriteMAC);
 			DebugHelper.WriteLine(">>>> ServerWriteKey", this.Context.ServerWriteKey);
 			DebugHelper.WriteLine(">>>> ServerWriteIV", this.Context.ServerWriteIV);
-			DebugHelper.WriteLine(">>>> ServerWriteMAC", this.Context.ServerWriteMAC);
+			DebugHelper.WriteLine(">>>> ServerWriteMAC", this.Context.Negotiating.ServerWriteMAC);
 
 			ClientSessionCache.SetContextInCache (this.Context);
 			// Clear no more needed data

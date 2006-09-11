@@ -1,6 +1,6 @@
 // Transport Security Layer (TLS)
 // Copyright (c) 2003-2004 Carlos Guzman Alvarez
-
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -62,8 +62,11 @@ namespace Mono.Security.Protocol.Tls
 		private TlsClientSettings clientSettings;
 
 		// Cipher suite information
-		private CipherSuite				cipher;
-		private CipherSuiteCollection	supportedCiphers;
+		private SecurityParameters current;
+		private SecurityParameters negotiating;
+		private SecurityParameters read;
+		private SecurityParameters write;
+		private CipherSuiteCollection supportedCiphers;
 
 		// Last handshake message received
 		private HandshakeType lastHandshakeMsg;
@@ -73,13 +76,12 @@ namespace Mono.Security.Protocol.Tls
 
 		// Misc
 		private bool	abbreviatedHandshake;
-		private bool	isActual;
 		private bool	connectionEnd;
 		private bool	protocolNegotiated;
 		
 		// Sequence numbers
-		private long	writeSequenceNumber;
-		private long	readSequenceNumber;
+		private ulong	writeSequenceNumber;
+		private ulong	readSequenceNumber;
 
 		// Random data
 		private byte[]	clientRandom;
@@ -89,8 +91,6 @@ namespace Mono.Security.Protocol.Tls
 
 		// Key information
 		private byte[]	masterSecret;
-		private byte[]	clientWriteMAC;
-		private byte[]	serverWriteMAC;
 		private byte[]	clientWriteKey;
 		private byte[]	serverWriteKey;
 		private byte[]	clientWriteIV;
@@ -191,12 +191,6 @@ namespace Mono.Security.Protocol.Tls
 			get { return this.clientSettings; }
 		}
 
-		public bool	IsActual
-		{
-			get { return this.isActual; }
-			set { this.isActual = value; }
-		}
-
 		public HandshakeType LastHandshakeMsg
 		{
 			get { return this.lastHandshakeMsg; }
@@ -215,16 +209,6 @@ namespace Mono.Security.Protocol.Tls
 			set { this.connectionEnd = value; }
 		}
 
-		public CipherSuite Cipher
-		{
-			get { return this.cipher; }
-			set 
-			{ 
-				this.cipher			= value; 
-				this.cipher.Context = this;
-			}
-		}
-
 		public CipherSuiteCollection SupportedCiphers
 		{
 			get { return supportedCiphers; }
@@ -236,13 +220,13 @@ namespace Mono.Security.Protocol.Tls
 			get { return this.handshakeMessages; }
 		}
 
-		public long WriteSequenceNumber
+		public ulong WriteSequenceNumber
 		{
 			get { return this.writeSequenceNumber; }
 			set { this.writeSequenceNumber = value; }
 		}
 
-		public long ReadSequenceNumber
+		public ulong ReadSequenceNumber
 		{
 			get { return this.readSequenceNumber; }
 			set { this.readSequenceNumber = value; }
@@ -276,18 +260,6 @@ namespace Mono.Security.Protocol.Tls
 		{
 			get { return this.masterSecret; }
 			set { this.masterSecret = value; }
-		}
-
-		public byte[] ClientWriteMAC
-		{
-			get { return this.clientWriteMAC; }
-			set { this.clientWriteMAC = value; }
-		}
-
-		public byte[] ServerWriteMAC
-		{
-			get { return this.serverWriteMAC; }
-			set { this.serverWriteMAC = value; }
 		}
 
 		public byte[] ClientWriteKey
@@ -391,10 +363,11 @@ namespace Mono.Security.Protocol.Tls
 			this.handshakeMessages.Reset();
 
 			// Clear MAC keys if protocol is different than Ssl3
+			// SSLv3 needs them inside Mono.Security.Protocol.Tls.SslCipherSuite.Compute[Client|Server]RecordMAC
 			if (this.securityProtocol != SecurityProtocolType.Ssl3)
 			{
-				this.clientWriteMAC = null;
-				this.serverWriteMAC = null;
+//				this.clientWriteMAC = null;
+//				this.serverWriteMAC = null;
 			}
 		}
 
@@ -429,6 +402,78 @@ namespace Mono.Security.Protocol.Tls
 			{
 				throw new TlsException(AlertDescription.ProtocolVersion, "Incorrect protocol version received from server");
 			}
+		}
+
+
+		public SecurityParameters Current
+		{
+			get
+			{
+				if (current == null)
+					current = new SecurityParameters ();
+				if (current.Cipher != null)
+					current.Cipher.Context = this;
+				return current;
+			}
+		}
+
+		public SecurityParameters Negotiating
+		{
+			get
+			{
+				if (negotiating == null)
+					negotiating = new SecurityParameters ();
+				if (negotiating.Cipher != null)
+					negotiating.Cipher.Context = this;
+				return negotiating;
+			}
+		}
+
+		public SecurityParameters Read
+		{
+			get { return read; }
+		}
+
+		public SecurityParameters Write
+		{
+			get { return write; }
+		}
+
+		public void StartSwitchingSecurityParameters (bool client)
+		{
+			if (client) {
+				// everything we write from now on is encrypted
+				write = negotiating;
+				// but we still read with the older cipher until we 
+				// receive the ChangeCipherSpec message
+				read = current;
+			} else {
+				// everything we read from now on is encrypted
+				read = negotiating;
+				// but we still write with the older cipher until we 
+				// receive the ChangeCipherSpec message
+				write = current;
+			}
+			current = negotiating;
+		}
+
+		public void EndSwitchingSecurityParameters (bool client)
+		{
+			SecurityParameters temp;
+			if (client) {
+				temp = read;
+				// we now read with the new, negotiated, security parameters
+				read = current;
+			} else {
+				temp = write;
+				// we now write with the new, negotiated, security parameters
+				write = current;
+			}
+			// so we clear the old one (last reference)
+			if (temp != null)
+				temp.Clear ();
+			negotiating = temp;
+			// and are now ready for a future renegotiation
 		}
 
 		#endregion

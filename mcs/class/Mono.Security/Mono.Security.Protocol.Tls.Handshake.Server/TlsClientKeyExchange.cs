@@ -1,6 +1,6 @@
 // Transport Security Layer (TLS)
 // Copyright (c) 2003-2004 Carlos Guzman Alvarez
-
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -68,13 +68,13 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
             byte[] preMasterSecret = deformatter.DecryptKeyExchange(clientSecret);
 
             // Create master secret
-            this.Context.Cipher.ComputeMasterSecret(preMasterSecret);
+            this.Context.Negotiating.Cipher.ComputeMasterSecret(preMasterSecret);
 
             // Create keys
-            this.Context.Cipher.ComputeKeys();
+	    this.Context.Negotiating.Cipher.ComputeKeys ();
 
             // Initialize Cipher Suite
-            this.Context.Cipher.InitializeCipher();
+	    this.Context.Negotiating.Cipher.InitializeCipher ();
         }
 
         protected override void ProcessAsTls1()
@@ -102,13 +102,13 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
             byte[] preMasterSecret = deformatter.DecryptKeyExchange(clientSecret);
 
             // Create master secret
-            this.Context.Cipher.ComputeMasterSecret(preMasterSecret);
+            this.Context.Negotiating.Cipher.ComputeMasterSecret(preMasterSecret);
 
             // Create keys
-            this.Context.Cipher.ComputeKeys();
+            this.Context.Negotiating.Cipher.ComputeKeys();
 
             // Initialize Cipher Suite
-            this.Context.Cipher.InitializeCipher();
+            this.Context.Negotiating.Cipher.InitializeCipher();
         }
 
         #endregion

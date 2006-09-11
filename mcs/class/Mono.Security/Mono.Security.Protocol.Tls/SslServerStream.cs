@@ -206,7 +206,7 @@ namespace Mono.Security.Protocol.Tls
 			this.protocol.SendRecord(HandshakeType.Certificate);
 
 			// If the negotiated cipher is a KeyEx cipher send ServerKeyExchange
-			if (this.context.Cipher.IsExportable)
+			if (this.context.Negotiating.Cipher.IsExportable)
 			{
 				this.protocol.SendRecord(HandshakeType.ServerKeyExchange);
 			}
@@ -215,7 +215,7 @@ namespace Mono.Security.Protocol.Tls
 
 			// If the negotiated cipher is a KeyEx cipher or
 			// the client certificate is required send the CertificateRequest message
-			if (this.context.Cipher.IsExportable ||
+			if (this.context.Negotiating.Cipher.IsExportable ||
 				((ServerContext)this.context).ClientCertificateRequired)
 			{
 				this.protocol.SendRecord(HandshakeType.CertificateRequest);
@@ -228,7 +228,6 @@ namespace Mono.Security.Protocol.Tls
 			// Receive client response, until the Client Finished message
 			// is received. IE can be interrupted at this stage and never
 			// complete the handshake
-			DateTime complete = DateTime.Now.AddSeconds (10);
 			while (this.context.LastHandshakeMsg != HandshakeType.Finished)
 			{
 				byte[] record = this.protocol.ReceiveRecord(this.innerStream);

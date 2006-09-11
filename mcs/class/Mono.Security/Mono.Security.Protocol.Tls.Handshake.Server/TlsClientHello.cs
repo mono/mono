@@ -1,6 +1,6 @@
 // Transport Security Layer (TLS)
 // Copyright (c) 2003-2004 Carlos Guzman Alvarez
-
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -130,12 +130,12 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 			{
 				if ((index = this.Context.SupportedCiphers.IndexOf(this.cipherSuites[i])) != -1)	
 				{
-					this.Context.Cipher	= this.Context.SupportedCiphers[index];
+					this.Context.Negotiating.Cipher = this.Context.SupportedCiphers[index];
 					break;
 				}
 			}
 
-			if (this.Context.Cipher == null)
+			if (this.Context.Negotiating.Cipher == null)
 			{
 				throw new TlsException(AlertDescription.InsuficientSecurity, "Insuficient Security");
 			}

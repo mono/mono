@@ -1,3 +1,41 @@
+2006-09-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CipherSuite.cs: Avoid creating a CryptoStream and a MemoryStream in
+	EncryptRecord (removing the need to do a keysetup each time). Add
+	helper methods to write inside byte buffers. Decrypt the data in
+	place (without allocating new memory) as the result will always be
+	smaller than the original. Avoid TlsStream in CreatePremasterSecret 
+	method. All HMAC access are done with the Negotiating parameters.
+	* ClientRecordProtocol.cs: Set HandshakeState to None if we receive
+	a HelloRequest during an existing session. Remove overidden method
+	ProcessChangeCipherSpec. Skip memory allocation if possible.
+	* Context.cs: Add new SecurityParameters for current, negotiating, 
+	read and write (actually only two different instance exists). Change
+	readSequenceNumber and writeSequenceNumber to ulong to match specs.
+	Remove all properties that are moved/replaced with SecurityParameters.
+	Added methods to Start and End a switch of the security parameters.
+	* RecordProtocol.cs: Add code to ProcessChangeCipherSpec (not abstract
+	anymore). Remove ReadShort and it's use. Deal with null alerts in 
+	SendAlert method (internal error). Change code to deal with 
+	SendChangeCipherSpec inside an existing (encrypted) session. Update 
+	Cipher to use the correct one (mostly Read.Cipher or Negotiating.Cipher
+	for ProcessCipherSpecV2Buffer method).
+	* SecurityParameters.cs: New. Deal with all parameters that changes
+	between negotiations.
+	* ServerRecordProtocol.cs: Remove method ProcessChangeCipherSpec.
+	* SslCipherSuite.cs: Don't use TlsStream when computing MAC. Set the
+	MAC keys to the Negotiating security parameters.
+	* SslClientStream.cs: Change calls from Cipher to Negotiating.Cipher.
+	* SslServerStream.cs: Change calls from Cipher to Negotiating.Cipher.
+	Remove debugging dead code (DateTime).
+	* SslStreamBase.cs: Change calls from Cipher to Current.Cipher. Reuse
+	existing memory buffer.
+	* TlsCipherSuite.cs: Don't use TlsStream when computing MAC. Set the
+	MAC keys to the Negotiating security parameters.
+	* TlsClientSettings.cs: Comment code cause compiler warnings.
+	* TlsStream.cs: Avoid/reduce memory allocations when reading or 
+	writing small integer values to the stream.
+
 2006-09-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpsClientStream.cs: Honor ServicePointManager.SecurityProtocol to
