@@ -1,4 +1,9 @@
 
+Mon Sep 11 13:10:12 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: handle cases where pthread_attr_getstack() behaves
+	incorrectly (bug #78096).
+
 Mon Sep 11 11:31:10 BST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini-arm.c: support larger stack frames (bug #79272).
