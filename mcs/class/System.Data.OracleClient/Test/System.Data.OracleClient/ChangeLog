@@ -1,3 +1,10 @@
+2006-09-11  Leszek Ciesielski  <skolima@gmail.com>
+
+	* OracleCommandTest.cs: New. Regression tests for class
+	OracleCommand.
+	* OracleParameterTest.cs: New. Regression tests for class
+	OracleParameter.
+
 2005-09-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* OraclePermissionAttributeTest.cs: Removed *Choice security actions.

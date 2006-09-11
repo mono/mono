@@ -130,9 +130,8 @@ namespace System.Data.OracleClient {
 		[DefaultValue (null)]
 		IDbConnection IDbCommand.Connection {
 			get { return Connection; }
-			set { 
-				if (!(value is OracleConnection))
-					throw new InvalidCastException ("The value was not a valid OracleConnection.");
+			set {
+                                // InvalidCastException is expected when types do not match
 				Connection = (OracleConnection) value;
 			}
 		}
@@ -143,9 +142,8 @@ namespace System.Data.OracleClient {
 
 		IDbTransaction IDbCommand.Transaction {
 			get { return Transaction; }
-			set { 
-				if (!(value is OracleTransaction))
-					throw new ArgumentException ();
+			set {
+                                // InvalidCastException is expected when types do not match
 				Transaction = (OracleTransaction) value; 
 			}
 		}

@@ -1,0 +1,5 @@
+Some tests located in Test/System.Data.OracleClient require a connection to Oracle database to execute.
+To configure a connection, copy System.Data.OracleClient_test_default.dll.config.example
+to System.Data.OracleClient_test_default.dll.config and fill in the OracleConnectionString with appropriate values.
+
+If no System.Data.OracleClient_test_default.dll.config is present, those tests will be ignored.

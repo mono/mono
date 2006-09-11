@@ -1,0 +1,5 @@
+<configuration>
+	<appSettings>
+		<add key="OracleConnectionString" value="Data Source=;User ID=;Password=;" />
+	</appSettings>
+</configuration>

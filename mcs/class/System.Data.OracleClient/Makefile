@@ -24,6 +24,6 @@ endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) /nowarn:618
 
-EXTRA_DISTFILES = Test/TestOracleClient.cs
+EXTRA_DISTFILES = Test/*.cs
 
 include ../../build/library.make

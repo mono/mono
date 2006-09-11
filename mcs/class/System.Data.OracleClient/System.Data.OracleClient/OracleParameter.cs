@@ -490,7 +490,7 @@ namespace System.Data.OracleClient {
 					bindSize = v.ToString ().Length;
 				}
 				else {
-					string svalue = v.ToString ();
+					string svalue = v.ToString () + '\0';
 					rsize = 0;
 			
 					// Get size of buffer
@@ -500,8 +500,8 @@ namespace System.Data.OracleClient {
 					bytes = new byte[rsize];
 					OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, svalue, out rsize);
 
-					bindType = OciDataType.VarChar2;
-					bindSize = v.ToString ().Length;
+					bindType = OciDataType.String;
+					bindSize = v.ToString ().Length + 1;
 				}
 			}
 
