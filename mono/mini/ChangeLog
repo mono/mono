@@ -1,5 +1,8 @@
 2006-09-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-sparc.c (mono_arch_setup_jit_tls_data): Remove the duplicate altstack
+	setup code, the real one is in mini-exceptions.c.
+
 	* mini-amd64.h mini-amd64.c exceptions-amd64.c: Move all dependencies on the
 	layout of ucontext_t to helper functions in exceptions-amd64.c, as on x86. Add
 	some changes from the freebsd ports tree.
