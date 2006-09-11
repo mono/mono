@@ -1170,7 +1170,7 @@ namespace System.Diagnostics {
 			bool completed;
 			bool err_out; // true -> stdout, false -> stderr
 			internal int error;
-			public int operation = 6; // MAGIC NUMBER: Maximum in SocketOperation + 1
+			public int operation = 8; // MAGIC NUMBER: see Socket.cs:AsyncOperation
 			public object ares;
 
 

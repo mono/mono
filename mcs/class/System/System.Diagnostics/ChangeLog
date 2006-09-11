@@ -1,3 +1,8 @@
+2006-09-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Process.cs: fix operation number to be 8. The other one was working
+	because the default is to wait for input on the file descriptor.
+
 2006-09-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Win32EventLog.cs: Removed workarounds for bug #79152 and bug #79117
