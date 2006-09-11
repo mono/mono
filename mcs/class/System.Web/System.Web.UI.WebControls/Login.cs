@@ -306,7 +306,7 @@ namespace System.Web.UI.WebControls {
 					writer.RenderBeginTag (HtmlTextWriterTag.Td);
 
 					if (userImg) {
-						writer.AddAttribute (HtmlTextWriterAttribute.Src, _login.CreateUserIconUrl);
+						writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveClientUrl (_login.CreateUserIconUrl));
 						writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
 						if (userText)
 							writer.AddAttribute (HtmlTextWriterAttribute.Alt, _login.CreateUserText);
@@ -335,7 +335,7 @@ namespace System.Web.UI.WebControls {
 						}
 
 						if (passImg) {
-							writer.AddAttribute (HtmlTextWriterAttribute.Src, _login.PasswordRecoveryIconUrl);
+							writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveClientUrl (_login.PasswordRecoveryIconUrl));
 							writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
 							if (passText)
 								writer.AddAttribute (HtmlTextWriterAttribute.Alt, _login.PasswordRecoveryText);
@@ -365,7 +365,7 @@ namespace System.Web.UI.WebControls {
 						}
 
 						if (helpImg) {
-							writer.AddAttribute (HtmlTextWriterAttribute.Src, _login.HelpPageIconUrl);
+							writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveClientUrl (_login.HelpPageIconUrl));
 							writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
 							if (helpText)
 								writer.AddAttribute (HtmlTextWriterAttribute.Alt, _login.HelpPageText);

@@ -1,3 +1,7 @@
+2006-09-11  Konstantin Triger <kostat@mainsoft.com>
+
+	* Login.cs: ensure the urls are correctly resolved.
+
 2006-09-10 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* TreeView.cs: corrected rendering: styles are applied correct
