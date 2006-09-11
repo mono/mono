@@ -337,8 +337,12 @@
 	</ProjectExtensions>
 	<PropertyGroup>
   <PostBuildEvent>echo Parsing DefaultWsdlHelpGenerator.jvm.aspx
+  
+copy ..\..\..\..\..\mono\data\net_2_0\DefaultWsdlHelpGenerator.jvm.aspx .
 
-"%25VMW_HOME%25\bin\aspxparser.exe" /reference:"$(FrameworkDir)\System.dll" /reference:"$(FrameworkDir)\System.Web.dll" /novalidator /enterprise:no /appdir:$(ProjectDir)$(OutDir) /out:$(ProjectDir)\WEB-INF\lib\$(TargetName).jar /bindir:$(TargetDir)$(OutDir) /virtdir:/MonoSystemWeb /aspxfiles:..\..\..\..\..\mono\data\net_2_0\DefaultWsdlHelpGenerator.jvm.aspx /precompileall /tempDir:$(ProjectDir)$(OutDir) /assembly:$(TargetPath)
+"%25VMW_HOME%25\bin\aspxparser.exe" /reference:"$(FrameworkDir)\System.dll" /reference:"$(FrameworkDir)\System.Web.dll" /novalidator /enterprise:no /appdir:$(ProjectDir)$(OutDir) /out:$(ProjectDir)\WEB-INF\lib\$(TargetName).jar /bindir:$(TargetDir)$(OutDir) /virtdir:/MonoSystemWeb /aspxfiles:DefaultWsdlHelpGenerator.jvm.aspx /precompileall /tempDir:$(ProjectDir)$(OutDir) /assembly:$(TargetPath)
+
+del DefaultWsdlHelpGenerator.jvm.aspx
 
 set td=%25random%25
 echo %25td%25\ASP
