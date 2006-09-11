@@ -1,5 +1,9 @@
 2006-09-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* System.ComponentModel/ContainerTest.cs: new test.
+
+2006-09-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* TypeDescriptorTests.cs: test for overriden attributes.
 	Patch by Ivan N. Zlatev.
 

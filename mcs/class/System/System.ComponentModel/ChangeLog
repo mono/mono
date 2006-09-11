@@ -1,5 +1,10 @@
 2006-09-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Container.cs: 'unsite' the component when removing it. Fixes
+	bug #79255. Patch by Ivan N. Zlatev.
+
+2006-09-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* TypeDescriptor.cs: don't ignore toplevel attributes when they are
 	overriden.
 

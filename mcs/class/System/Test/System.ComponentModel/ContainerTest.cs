@@ -3,8 +3,10 @@
 //
 // Authors:
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
-//
+//  Ivan N. Zlatev (contact i-nZ.net)
+
 // Copyright (c) 2006 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2006 Ivan N. Zlatev
 //
 
 using NUnit.Framework;
@@ -27,6 +29,26 @@ namespace MonoTests.System.ComponentModel
 		protected override object GetService( Type serviceType ) {
 			return _services.GetService( serviceType );
 		}
+
+#if NET_2_0
+		public void Remove_WithoutUnsiting (IComponent component)
+		{
+			base.RemoveWithoutUnsiting (component);
+		}
+#endif
+		
+		public bool Contains (IComponent component)
+		{
+			bool found = false;
+			
+			foreach (IComponent c in Components) {
+				if (component.Equals (c)) {
+					found = true;
+					break;
+				}
+			}
+			return found;
+		}
 	}
 	
 	class TestComponent : Component {
@@ -45,12 +67,45 @@ namespace MonoTests.System.ComponentModel
 	}
 
 	[TestFixture]
-	public class ContainerTest {
+	public class ContainerTest
+	{
+		
+		private TestContainer _container;
+		
+		[SetUp]
+		public void Init ()
+		{
+			_container = new TestContainer ();
+		}
+
+		
+		[Test]
+		public void AddRemove ()
+		{
+			bool found = false;		   
+			TestComponent component = new TestComponent ();
+			
+			_container.Add (component);
+			Assert.IsNotNull (component.Site, "#1");			
+			Assert.IsTrue (_container.Contains (component), "#2");
+			
+			_container.Remove (component);
+			Assert.IsNull (component.Site, "#3");
+			Assert.IsFalse (_container.Contains (component), "#4");
+			
+#if NET_2_0
+			_container.Add (component);
+			_container.Remove_WithoutUnsiting (component);
+			Assert.IsNotNull (component.Site, "#5");
+			Assert.IsFalse (_container.Contains (component), "#6");
+#endif
+		}
+
+		
 		[Test]
 		public void GetService1 ()
 		{
-			TestContainer container = new TestContainer ();
-			container.Add (new TestComponent ());
+			_container.Add (new TestComponent ());
 		}
 	}
 }

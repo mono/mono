@@ -4,9 +4,11 @@
 // Author:
 //  Miguel de Icaza (miguel@ximian.com)
 //  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//  Ivan N. Zlatev (contact i-nZ.net)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 // (C) 2003 Andreas Nahr
+// (C) 2006 Ivan N. Zlatev
 //
 
 //
@@ -58,6 +60,7 @@ namespace System.ComponentModel {
 		// </remarks>
 		
 		class DefaultSite : ISite {
+
 			private IComponent component;
 			private Container container;
 			private string     name;
@@ -81,11 +84,8 @@ namespace System.ComponentModel {
 				}
 			}
 
-			[MonoTODO]
 			public bool DesignMode {
 				get {
-					// FIXME: should we provide a way to set
-					// this value?
 					return false;
 				}
 			}
@@ -130,19 +130,20 @@ namespace System.ComponentModel {
 
 		public virtual void Add (IComponent component, string name)
 		{
-			component.Site = CreateSite (component, name);
-			c.Add (component);
+			if (component != null) {
+				if (component.Site == null || component.Site.Container != this) {					
+					if (component.Site != null) {
+						component.Site.Container.Remove (component);
+					}
+					
+					component.Site = this.CreateSite (component, name);
+					c.Add (component);
+				}
+			}
 		}
 
 		protected virtual ISite CreateSite (IComponent component, string name)
 		{
-			if (name != null) {
-				foreach (IComponent Comp in c) {
-					if (Comp.Site != null && Comp.Site.Name == name)
-						throw new ArgumentException ("duplicate component name", "name");
-				}
-			}
-
 			return new DefaultSite (name, component, this);
 		}
 
@@ -183,8 +184,28 @@ namespace System.ComponentModel {
 
 		public virtual void Remove (IComponent component)
 		{
-			c.Remove (component);
+			Remove (component, true);		
 		}
+
+		private void Remove (IComponent component, bool unsite)
+		{
+			if (component.Site != null && component.Site.Container == this) {
+				if (unsite) {
+					component.Site = null;
+				}
+				c.Remove (component);
+			}					
+		}
+
+#if NET_2_0
+		protected void RemoveWithoutUnsiting (IComponent component)
+		{
+			if (component.Site != null && component.Site.Container == this) {
+				Remove (component, false);
+			}
+		}
+#endif
+		
 	}
 	
 }
