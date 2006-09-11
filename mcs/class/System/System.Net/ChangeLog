@@ -1,3 +1,9 @@
+2006-09-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WebConnection.cs: Patch to remove the hack that was required for 
+	using the older versions of the SSL/TLS classes. This hack is no more
+	required :-). Patch by Gonzalo Paniagua Javier.
+
 2006-08-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpConnection.cs: when the content length is available, keep it
