@@ -1,3 +1,7 @@
+2006-09-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_from_name_case): Fix regression introduced by the last
+	change.
 
 Mon Sep 11 12:57:15 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
