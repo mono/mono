@@ -1,3 +1,7 @@
+2006-09-11 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* TableViewTest.cs: fixed tests, removed NotWorking attributes
+
 2006-09-10 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* TableNodeStyleTest.cs: New test was added

@@ -9,7 +9,7 @@
 		<tr id="" visible="" name=""/>
 		<table id="" visible="" name=""/>
 		<img id="" visible="" name="" disabled="" src=""/>
-		<a id="" visible="" name="" href=""/>
+		<a id="" visible="" name="" href="" onclick=""/>
 		<select id="" visible="" name=""/>
 		<textarea id="" visible="" name=""/>
 		<button id="" visible="" name="" causesvalidation=""/>
