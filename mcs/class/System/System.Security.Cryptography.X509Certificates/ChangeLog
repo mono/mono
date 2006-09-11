@@ -1,3 +1,8 @@
+2006-09-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* X509Certificate2.cs : implemented HasPrivateKey. Return null
+	  when the corresponding RSA or DSA has no private key.
+
 2006-09-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate2.cs: Call import in ctor to be sure the private key

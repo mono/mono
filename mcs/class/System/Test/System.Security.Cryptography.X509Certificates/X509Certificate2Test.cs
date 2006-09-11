@@ -77,6 +77,8 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates
 				Assert.IsNotNull (cert.GetRawCertData (), "#C4");
 				Assert.AreEqual (cert_a.Length, cert.GetRawCertData ().Length, "#C5");
 				Assert.AreEqual (cert_a, cert.GetRawCertData (), "#C6");
+				Assert.IsFalse (cert.HasPrivateKey, "#C7");
+				Assert.IsNull (cert.PrivateKey, "#C8");
 			} finally {
 				File.Delete (tempFile);
 			}

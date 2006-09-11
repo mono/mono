@@ -31,7 +31,7 @@
 
 using System.IO;
 using System.Text;
-
+using Mono.Security.Cryptography;
 using MX = Mono.Security.X509;
 
 namespace System.Security.Cryptography.X509Certificates {
@@ -136,9 +136,9 @@ namespace System.Security.Cryptography.X509Certificates {
 			set { _name = value; }
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Probably it could be more efficient")]
 		public bool HasPrivateKey {
-			get { return false; }
+			get { return PrivateKey != null; }
 		}
 
 		[MonoTODO]
@@ -160,10 +160,31 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public AsymmetricAlgorithm PrivateKey {
 			get {
-				if (_cert.RSA != null)
-					return _cert.RSA; 
-				else if (_cert.DSA != null)
-					return _cert.DSA;
+				if (_cert.RSA != null) {
+					RSACryptoServiceProvider rcsp = _cert.RSA as RSACryptoServiceProvider;
+					if (rcsp != null)
+						return rcsp.PublicOnly ? null : rcsp;
+					RSAManaged rsam = _cert.RSA as RSAManaged;
+					if (rsam != null)
+						return rsam.PublicOnly ? null : rsam;
+					try {
+						_cert.RSA.ExportParameters (true);
+						return _cert.RSA;
+					} catch (CryptographicException) {
+						return null;
+					}
+				}
+				else if (_cert.DSA != null) {
+					DSACryptoServiceProvider dcsp = _cert.DSA as DSACryptoServiceProvider;
+					if (dcsp != null)
+						return dcsp.PublicOnly ? null : dcsp;
+					try {
+						_cert.DSA.ExportParameters (true);
+						return _cert.DSA;
+					} catch (CryptographicException) {
+						return null;
+					}
+				}
 				return null;
 			}
 			set {

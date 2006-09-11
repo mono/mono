@@ -1,3 +1,8 @@
+2006-09-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* X509Certificate2Test.cs : added test for PrivateKey and
+	  HasPrivateKey for non-private-inclusive certificate.
+
 2006-08-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate2Test.cs: Activate test cases blocked by bug #79028.
