@@ -79,7 +79,10 @@ namespace System.Windows.Forms {
 		static XplatUI() {
 			Console.WriteLine("Mono System.Windows.Forms Assembly [$auto_build_revision$]");
 
-			default_class_name="SWFClass";
+			// Compose name with current domain id because on Win32 we register class name
+			// and name must be unique to process. If we load MWF into multiple appdomains
+			// and try to register same class name we fail.
+			default_class_name = "SWFClass" + System.Threading.Thread.GetDomainID().ToString();
 
 			// check for Unix platforms - see FAQ for more details
 			// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F

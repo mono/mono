@@ -1,3 +1,9 @@
+2006-09-10  Jonathan Chambers  <joncham@gmail.com>
+
+	* XplatUI.cs: Set default_class_name to be composed
+	of current domain id. This allows MWF to be loaded in multiple
+	domains on Win32.
+
 2006-09-09  Miguel de Icaza  <miguel@novell.com>
 
 	* X11Keyboard.cs: If we are unable to obtain the input method, do
