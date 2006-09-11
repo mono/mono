@@ -150,12 +150,10 @@ namespace System.Windows.Forms
 					if (is_checked) {
 						if (owner.CheckedItems.Contains (this) == false) {
 							owner.CheckedItems.list.Add (this);
-							owner.CheckedIndices.list.Add (this.Index);
 						}
 					}
 					else {
 						owner.CheckedItems.list.Remove (this);
-						owner.CheckedIndices.list.Remove (this.Index);
 					}
 					
 					Layout ();
@@ -357,6 +355,7 @@ namespace System.Windows.Forms
 			clone.is_checked = this.is_checked;
 			clone.is_focused = this.is_focused;
 			clone.selected = this.selected;
+			clone.font = this.font;
 			clone.state_image_index = this.state_image_index;
 			clone.sub_items = new ListViewSubItemCollection (this);
 			

@@ -1,3 +1,46 @@
+2006-09-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ListView.cs: Do not initialize item_sorter in init. To match MS,
+	return null for ListViewItemSorter if View is SmallIcon or LargeIcon
+	and the internal comparer is set. When a new ListViewItemSorter is set,
+	sort the items. Use Enum.IsDefined to verify whether a valid SortOrder
+	was specified. No further processing is necessary if SortOrder is set
+	to it's current value. If Sorting is modified to None, and View is
+	neither SmallIcon nor LargeIcon then: on 2.0 profile set item_sorter
+	(either custom or our internal ItemComparer) to null, on 1.0 profile
+	only set item_sorter to null if its our internal IComparer. If Sorting
+	is modified to Ascending or Descending, then use our internal IComparer
+	if none is set, and if the current IComparer is our internal one then:
+	on 2.0 profile always replace it with one for new Sorting, and on 1.0
+	profile only use new Sorting if view is not SmallIcon or LargeIcon. Use
+	Enum.IsDefined to verify whether a valid View value is specified in
+	its setter. Automatically sort listview items when listview is
+	created. In Sort, do nothing if ListView is not yet created, or if
+	no item_sorter is set (no Sorting was set, Sorting was explicitly set
+	to None or ListViewItemSorter was set to null). Added Sort overload
+	taking a bool to indicate whether the ListView should be redrawn when
+	items are sorted (we use this in ListViewItemCollection to avoid double
+	redraws). Modified our internal IComparer to take the sort order into
+	account. In Add and AddRange methods of ListViewItemCollection, also
+	call Sort if Sorting is None (necessary for SmallIcon and LargeIcon
+	view), but use overload with noredraw option to avoid double redraw.
+	On 2.0 profile, throw NotSupportedException when setting CheckBoxes to
+	true when View is Tile, and do the same when attempting to set View to
+	Tile when CheckBoxes is true. Avoid maintaining separate ArrayLists
+	for selected/checked indices, as it involves overhead when sorting is
+	done while these collections are not used all that often. Instead
+	we'll build the indices on demand. Modified IList implementation of
+	CheckedIndexCollection to use public methods if object is int.
+	Modified CheckedListViewItemCollection to hide checked items if
+	ListView.CheckBoxes is false. Removed LAMESPEC remark in 
+	ListViewItemCollection as the .NET SDK docs have been fixed. Modified
+	IList implementation in SelectedIndexCollection to use public methods
+	if object is int. Modified SelectedListViewItemCollection to hide
+	selected items if listview is not yet created.
+	* ListViewItem.cs: CheckedIndices list no longer needs to be
+	maintained separately (see ListView changes). Also clone font, fixes
+	test failure.
+
 2006-09-11  Mike Kestner  <mkestner@novell.com>
 
 	* ComboBox.cs: if we are updating the contents of the currently

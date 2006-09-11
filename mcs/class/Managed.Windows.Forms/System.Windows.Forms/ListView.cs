@@ -61,7 +61,7 @@ namespace System.Windows.Forms
 		private ColumnHeaderStyle header_style = ColumnHeaderStyle.Clickable;
 		private bool hide_selection = true;
 		private bool hover_selection = false;
-		private IComparer item_sorter = new ItemComparer ();
+		private IComparer item_sorter;
 		private ListViewItemCollection items;
 		private bool label_edit = false;
 		private bool label_wrap = true;
@@ -301,6 +301,13 @@ namespace System.Windows.Forms
 			get { return check_boxes; }
 			set {
 				if (check_boxes != value) {
+#if NET_2_0
+					if (value && View == View.Tile)
+						throw new NotSupportedException ("CheckBoxes are not"
+							+ " supported in Tile view. Choose a different"
+							+ " view or set CheckBoxes to false.");
+#endif
+
 					check_boxes = value;
 					this.Redraw (true);
 				}
@@ -438,8 +445,17 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public IComparer ListViewItemSorter {
-			get { return item_sorter; }
-			set { item_sorter = value; }
+			get {
+				if (View != View.SmallIcon && View != View.LargeIcon && item_sorter is ItemComparer)
+					return null;
+				return item_sorter;
+			}
+			set {
+				if (item_sorter != value) {
+					item_sorter = value;
+					Sort ();
+				}
+			}
 		}
 
 		[DefaultValue (true)]
@@ -496,15 +512,46 @@ namespace System.Windows.Forms
 		public SortOrder Sorting {
 			get { return sort_order; }
 			set { 
-				if (value != SortOrder.Ascending && value != SortOrder.Descending  && 
-					value != SortOrder.None) {
-					throw new InvalidEnumArgumentException (string.Format
-						("Enum argument value '{0}' is not valid for Sorting", value));
+				if (!Enum.IsDefined (typeof (SortOrder), value)) {
+					throw new InvalidEnumArgumentException ("value", (int) value,
+						typeof (SortOrder));
 				}
 				
-				if (sort_order != value)  {			
-					sort_order = value; 
+				if (sort_order == value)
+					return;
+
+				sort_order = value;
+
+				if (value == SortOrder.None) {
+					if (item_sorter != null) {
+						// ListViewItemSorter should never be reset for SmallIcon
+						// and LargeIcon view
+						if (View != View.SmallIcon && View != View.LargeIcon)
+#if NET_2_0
+							item_sorter = null;
+#else
+							// in .NET 1.1, only internal IComparer would be
+							// set to null
+							if (item_sorter is ItemComparer)
+								item_sorter = null;
+#endif
+					}
 					this.Redraw (false);
+				} else {
+					if (item_sorter == null)
+						item_sorter = new ItemComparer (value);
+					if (item_sorter is ItemComparer) {
+#if NET_2_0
+						item_sorter = new ItemComparer (value);
+#else
+						// in .NET 1.1, the sort order is not updated for
+						// SmallIcon and LargeIcon views if no custom IComparer
+						// is set
+						if (View != View.SmallIcon && View != View.LargeIcon)
+							item_sorter = new ItemComparer (value);
+#endif
+					}
+					Sort ();
 				}
 			}
 		}
@@ -572,13 +619,18 @@ namespace System.Windows.Forms
 		public View View {
 			get { return view; }
 			set { 
-				if (value != View.Details && value != View.LargeIcon  && 
-					value != View.List  && value != View.SmallIcon  ) {
-					throw new InvalidEnumArgumentException (string.Format
-						("Enum argument value '{0}' is not valid for View", value));
-				}
-				
+				if (!Enum.IsDefined (typeof (View), value))
+					throw new InvalidEnumArgumentException ("value", (int) value,
+						typeof (View));
+
 				if (view != value) {
+#if NET_2_0
+					if (CheckBoxes && value == View.Tile)
+						throw new NotSupportedException ("CheckBoxes are not"
+							+ " supported in Tile view. Choose a different"
+							+ " view or set CheckBoxes to false.");
+#endif
+
 					h_scroll.Value = v_scroll.Value = 0;
 					view = value; 
 					Redraw (true);
@@ -1059,16 +1111,13 @@ namespace System.Windows.Forms
 
 				if (!CanMultiselect && SelectedItems.Count > 0) {
 					SelectedItems.Clear ();
-					SelectedIndices.list.Clear ();
 				}
 
-				if (!SelectedItems.Contains (item)) {
+				if (!SelectedItems.list.Contains (item)) {
 					SelectedItems.list.Add (item);
-					SelectedIndices.list.Add (item.Index);
 				}
 			} else {
 				SelectedItems.list.Remove (item);
-				SelectedIndices.list.Remove (item.Index);
 			}
 		}
 
@@ -1196,7 +1245,6 @@ namespace System.Windows.Forms
 					OnSelectedIndexChanged (EventArgs.Empty);
 			} else if (!ctrl_pressed) {
 				SelectedItems.Clear ();
-				SelectedIndices.list.Clear ();
 				item.Selected = true;
 				selection_start = item;
 				OnSelectedIndexChanged (EventArgs.Empty);
@@ -1462,7 +1510,6 @@ namespace System.Windows.Forms
 						prev_selection = (ArrayList) owner.SelectedItems.list.Clone ();
 					} else if (owner.selected_indices.Count > 0) {
 						owner.SelectedItems.Clear ();
-						owner.SelectedIndices.list.Clear ();
 						owner.OnSelectedIndexChanged (EventArgs.Empty);
 					}
 				}
@@ -1538,7 +1585,6 @@ namespace System.Windows.Forms
 				} else if (!checking && owner.SelectedItems.Count > 0 && BoxSelectRectangle.Size.IsEmpty) {
 					// Need this to clean up background clicks
 					owner.SelectedItems.Clear ();
-					owner.SelectedIndices.list.Clear ();
 					owner.OnSelectedIndexChanged (EventArgs.Empty);
 				}
 
@@ -1721,6 +1767,7 @@ namespace System.Windows.Forms
 		protected override void OnHandleCreated (EventArgs e)
 		{
 			base.OnHandleCreated (e);
+			Sort ();
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e)
@@ -1856,13 +1903,27 @@ namespace System.Windows.Forms
 
 		public void Sort ()
 		{
-			if (sort_order != SortOrder.None)
-				items.list.Sort (item_sorter);
+			Sort (true);
+		}
 
-			if (sort_order == SortOrder.Descending)
-				items.list.Reverse ();
-
-			this.Redraw (true);
+		// we need this overload to reuse the logic for sorting, while allowing
+		// redrawing to be done by caller or have it done by this method when
+		// sorting is really performed
+		//
+		// ListViewItemCollection's Add and AddRange methods call this overload
+		// with redraw set to false, as they take care of redrawing themselves
+		// (they even want to redraw the listview if no sort is performed, as 
+		// an item was added), while ListView.Sort () only wants to redraw if 
+		// sorting was actually performed
+		private void Sort (bool redraw)
+		{
+			if (!IsHandleCreated || item_sorter == null) {
+				return;
+			}
+			
+			items.list.Sort (item_sorter);
+			if (redraw)
+				this.Redraw (true);
 		}
 
 		public override string ToString ()
@@ -2073,24 +2134,31 @@ namespace System.Windows.Forms
 		}
 
 		private class ItemComparer : IComparer {
+			readonly SortOrder sort_order;
+
+			public ItemComparer (SortOrder sortOrder)
+			{
+				sort_order = sortOrder;
+			}
 
 			public int Compare (object x, object y)
 			{
 				ListViewItem item_x = x as ListViewItem;
 				ListViewItem item_y = y as ListViewItem;
-				return String.Compare (item_x.Text, item_y.Text);
+				if (sort_order == SortOrder.Ascending)
+					return String.Compare (item_x.Text, item_y.Text);
+				else
+					return String.Compare (item_y.Text, item_x.Text);
 			}
 		}
 
 		public class CheckedIndexCollection : IList, ICollection, IEnumerable
 		{
-			internal ArrayList list;
-			private ListView owner;
+			private readonly ListView owner;
 
 			#region Public Constructor
 			public CheckedIndexCollection (ListView owner)
 			{
-				list = new ArrayList ();
 				this.owner = owner;
 			}
 			#endregion	// Public Constructor
@@ -2098,7 +2166,7 @@ namespace System.Windows.Forms
 			#region Public Properties
 			[Browsable (false)]
 			public int Count {
-				get { return list.Count; }
+				get { return owner.CheckedItems.Count; }
 			}
 
 			public bool IsReadOnly {
@@ -2107,9 +2175,10 @@ namespace System.Windows.Forms
 
 			public int this [int index] {
 				get {
-					if (index < 0 || index >= list.Count)
+					int [] indices = GetIndices ();
+					if (index < 0 || index >= indices.Length)
 						throw new ArgumentOutOfRangeException ("index");
-					return (int) list [index];
+					return indices [index];
 				}
 			}
 
@@ -2134,17 +2203,24 @@ namespace System.Windows.Forms
 			#region Public Methods
 			public bool Contains (int checkedIndex)
 			{
-				return list.Contains (checkedIndex);
+				int [] indices = GetIndices ();
+				for (int i = 0; i < indices.Length; i++) {
+					if (indices [i] == checkedIndex)
+						return true;
+				}
+				return false;
 			}
 
 			public IEnumerator GetEnumerator ()
 			{
-				return list.GetEnumerator ();
+				int [] indices = GetIndices ();
+				return indices.GetEnumerator ();
 			}
 
 			void ICollection.CopyTo (Array dest, int index)
 			{
-				list.CopyTo (dest, index);
+				int [] indices = GetIndices ();
+				Array.Copy (indices, 0, dest, index, indices.Length);
 			}
 
 			int IList.Add (object value)
@@ -2159,12 +2235,16 @@ namespace System.Windows.Forms
 
 			bool IList.Contains (object checkedIndex)
 			{
-				return list.Contains (checkedIndex);
+				if (!(checkedIndex is int))
+					return false;
+				return Contains ((int) checkedIndex);
 			}
 
 			int IList.IndexOf (object checkedIndex)
 			{
-				return list.IndexOf (checkedIndex);
+				if (!(checkedIndex is int))
+					return -1;
+				return IndexOf ((int) checkedIndex);
 			}
 
 			void IList.Insert (int index, object value)
@@ -2184,16 +2264,30 @@ namespace System.Windows.Forms
 
 			public int IndexOf (int checkedIndex)
 			{
-				return list.IndexOf (checkedIndex);
+				int [] indices = GetIndices ();
+				for (int i = 0; i < indices.Length; i++) {
+					if (indices [i] == checkedIndex)
+						return i;
+				}
+				return -1;
 			}
 			#endregion	// Public Methods
 
+			private int [] GetIndices ()
+			{
+				int [] indices = new int [Count];
+				for (int i = 0; i < owner.CheckedItems.Count; i++) {
+					ListViewItem item = owner.CheckedItems [i];
+					indices [i] = item.Index;
+				}
+				return indices;
+			}
 		}	// CheckedIndexCollection
 
 		public class CheckedListViewItemCollection : IList, ICollection, IEnumerable
 		{
-			internal ArrayList list;
-			private ListView owner;
+			internal readonly ArrayList list;
+			private readonly ListView owner;
 
 			#region Public Constructor
 			public CheckedListViewItemCollection (ListView owner)
@@ -2206,7 +2300,11 @@ namespace System.Windows.Forms
 			#region Public Properties
 			[Browsable (false)]
 			public int Count {
-				get { return list.Count; }
+				get {
+					if (!owner.CheckBoxes)
+						return 0;
+					return list.Count;
+				}
 			}
 
 			public bool IsReadOnly {
@@ -2215,7 +2313,7 @@ namespace System.Windows.Forms
 
 			public ListViewItem this [int index] {
 				get {
-					if (index < 0 || index >= list.Count)
+					if (index < 0 || index >= Count)
 						throw new ArgumentOutOfRangeException ("index");
 					return (ListViewItem) list [index];
 				}
@@ -2242,16 +2340,22 @@ namespace System.Windows.Forms
 			#region Public Methods
 			public bool Contains (ListViewItem item)
 			{
+				if (!owner.CheckBoxes)
+					return false;
 				return list.Contains (item);
 			}
 
 			public void CopyTo (Array dest, int index)
 			{
+				if (!owner.CheckBoxes)
+					return;
 				list.CopyTo (dest, index);
 			}
 
 			public IEnumerator GetEnumerator ()
 			{
+				if (!owner.CheckBoxes)
+					return (new ListViewItem [0]).GetEnumerator ();
 				return list.GetEnumerator ();
 			}
 
@@ -2267,12 +2371,16 @@ namespace System.Windows.Forms
 
 			bool IList.Contains (object item)
 			{
-				return list.Contains (item);
+				if (!(item is ListViewItem))
+					return false;
+				return Contains ((ListViewItem) item);
 			}
 
 			int IList.IndexOf (object item)
 			{
-				return list.IndexOf (item);
+				if (!(item is ListViewItem))
+					return -1;
+				return IndexOf ((ListViewItem) item);
 			}
 
 			void IList.Insert (int index, object value)
@@ -2292,10 +2400,11 @@ namespace System.Windows.Forms
 
 			public int IndexOf (ListViewItem item)
 			{
+				if (!owner.CheckBoxes)
+					return -1;
 				return list.IndexOf (item);
 			}
 			#endregion	// Public Methods
-
 		}	// CheckedListViewItemCollection
 
 		public class ColumnHeaderCollection : IList, ICollection, IEnumerable
@@ -2489,7 +2598,7 @@ namespace System.Windows.Forms
 		public class ListViewItemCollection : IList, ICollection, IEnumerable
 		{
 			internal ArrayList list;
-			private ListView owner;
+			private readonly ListView owner;
 
 			#region Public Constructor
 			public ListViewItemCollection (ListView owner)
@@ -2562,11 +2671,8 @@ namespace System.Windows.Forms
 				value.Owner = owner;
 				list.Add (value);
 
-				if (owner.Sorting != SortOrder.None)
-					owner.Sort ();
-
+				owner.Sort (false);
 				owner.Redraw (true);
-
 				return value;
 			}
 
@@ -2586,18 +2692,14 @@ namespace System.Windows.Forms
 			{
 				list.Clear ();
 				owner.SelectedItems.list.Clear ();
-				owner.SelectedIndices.list.Clear ();
 				owner.CheckedItems.list.Clear ();
-				owner.CheckedIndices.list.Clear ();
 
 				foreach (ListViewItem item in values) {
 					item.Owner = owner;
 					list.Add (item);
 				}
 
-				if (owner.Sorting != SortOrder.None)
-					owner.Sort ();
-
+				owner.Sort (false);
 				owner.Redraw (true);
 			}
 
@@ -2607,9 +2709,7 @@ namespace System.Windows.Forms
 				owner.h_scroll.Value = owner.v_scroll.Value = 0;
 				list.Clear ();
 				owner.SelectedItems.list.Clear ();
-				owner.SelectedIndices.list.Clear ();
 				owner.CheckedItems.list.Clear ();
-				owner.CheckedIndices.list.Clear ();
 				owner.Redraw (true);
 			}
 
@@ -2678,8 +2778,6 @@ namespace System.Windows.Forms
 
 			public ListViewItem Insert (int index, ListViewItem item)
 			{
-				// LAMESPEC: MSDOCS say greater than or equal to the value of the Count property
-				// but it's really only greater.
 				if (index < 0 || index > list.Count)
 					throw new ArgumentOutOfRangeException ("index");
 
@@ -2708,23 +2806,17 @@ namespace System.Windows.Forms
 					return;
 	 				
 				owner.SelectedItems.list.Remove (item);
-				owner.SelectedIndices.list.Remove (item.Index);
 				owner.CheckedItems.list.Remove (item);
-				owner.CheckedIndices.list.Remove (item.Index);
 				list.Remove (item);
 				owner.Redraw (true);				
 			}
 
 			public virtual void RemoveAt (int index)
 			{
-				if (index < 0 || index >= list.Count)
-					throw new ArgumentOutOfRangeException ("index");
-
+				ListViewItem item = this [index];
 				list.RemoveAt (index);
-				owner.SelectedItems.list.RemoveAt (index);
-				owner.SelectedIndices.list.RemoveAt (index);
-				owner.CheckedItems.list.RemoveAt (index);
-				owner.CheckedIndices.list.RemoveAt (index);
+				owner.SelectedItems.list.Remove (item);
+				owner.CheckedItems.list.Remove (item);
 				owner.Redraw (false);
 			}
 			#endregion	// Public Methods
@@ -2733,13 +2825,11 @@ namespace System.Windows.Forms
 
 		public class SelectedIndexCollection : IList, ICollection, IEnumerable
 		{
-			internal ArrayList list;
-			private ListView owner;
+			private readonly ListView owner;
 
 			#region Public Constructor
 			public SelectedIndexCollection (ListView owner)
 			{
-				list = new ArrayList ();
 				this.owner = owner;
 			}
 			#endregion	// Public Constructor
@@ -2747,7 +2837,9 @@ namespace System.Windows.Forms
 			#region Public Properties
 			[Browsable (false)]
 			public int Count {
-				get { return list.Count; }
+				get {
+					return owner.SelectedItems.Count;
+				}
 			}
 
 			public bool IsReadOnly {
@@ -2756,14 +2848,15 @@ namespace System.Windows.Forms
 
 			public int this [int index] {
 				get {
-					if (index < 0 || index >= list.Count)
+					int [] indices = GetIndices ();
+					if (index < 0 || index >= indices.Length)
 						throw new ArgumentOutOfRangeException ("index");
-					return (int) list [index];
+					return indices [index];
 				}
 			}
 
 			bool ICollection.IsSynchronized {
-				get { return list.IsSynchronized; }
+				get { return false; }
 			}
 
 			object ICollection.SyncRoot {
@@ -2783,17 +2876,24 @@ namespace System.Windows.Forms
 			#region Public Methods
 			public bool Contains (int selectedIndex)
 			{
-				return list.Contains (selectedIndex);
+				int [] indices = GetIndices ();
+				for (int i = 0; i < indices.Length; i++) {
+					if (indices [i] == selectedIndex)
+						return true;
+				}
+				return false;
 			}
 
 			public void CopyTo (Array dest, int index)
 			{
-				list.CopyTo (dest, index);
+				int [] indices = GetIndices ();
+				Array.Copy (indices, 0, dest, index, indices.Length);
 			}
 
 			public IEnumerator GetEnumerator ()
 			{
-				return list.GetEnumerator ();
+				int [] indices = GetIndices ();
+				return indices.GetEnumerator ();
 			}
 
 			int IList.Add (object value)
@@ -2808,12 +2908,16 @@ namespace System.Windows.Forms
 
 			bool IList.Contains (object selectedIndex)
 			{
-				return list.Contains (selectedIndex);
+				if (!(selectedIndex is int))
+					return false;
+				return Contains ((int) selectedIndex);
 			}
 
 			int IList.IndexOf (object selectedIndex)
 			{
-				return list.IndexOf (selectedIndex);
+				if (!(selectedIndex is int))
+					return -1;
+				return IndexOf ((int) selectedIndex);
 			}
 
 			void IList.Insert (int index, object value)
@@ -2833,16 +2937,31 @@ namespace System.Windows.Forms
 
 			public int IndexOf (int selectedIndex)
 			{
-				return list.IndexOf (selectedIndex);
+				int [] indices = GetIndices ();
+				for (int i = 0; i < indices.Length; i++) {
+					if (indices [i] == selectedIndex)
+						return i;
+				}
+				return -1;
 			}
 			#endregion	// Public Methods
+
+			private int [] GetIndices ()
+			{
+				int [] indices = new int [Count];
+				for (int i = 0; i < owner.SelectedItems.Count; i++) {
+					ListViewItem item = owner.SelectedItems [i];
+					indices [i] = item.Index;
+				}
+				return indices;
+			}
 
 		}	// SelectedIndexCollection
 
 		public class SelectedListViewItemCollection : IList, ICollection, IEnumerable
 		{
 			internal ArrayList list;
-			private ListView owner;
+			private readonly ListView owner;
 
 			#region Public Constructor
 			public SelectedListViewItemCollection (ListView owner)
@@ -2855,7 +2974,11 @@ namespace System.Windows.Forms
 			#region Public Properties
 			[Browsable (false)]
 			public int Count {
-				get { return list.Count; }
+				get {
+					if (!owner.IsHandleCreated)
+						return 0;
+					return list.Count;
+				}
 			}
 
 			public bool IsReadOnly {
@@ -2864,7 +2987,7 @@ namespace System.Windows.Forms
 
 			public ListViewItem this [int index] {
 				get {
-					if (index < 0 || index >= list.Count)
+					if (index < 0 || index >= Count)
 						throw new ArgumentOutOfRangeException ("index");
 					return (ListViewItem) list [index];
 				}
@@ -2891,6 +3014,9 @@ namespace System.Windows.Forms
 			#region Public Methods
 			public void Clear ()
 			{
+				if (!owner.IsHandleCreated)
+					return;
+
 				ArrayList copy = (ArrayList) list.Clone ();
 				for (int i = 0; i < copy.Count; i++)
 					((ListViewItem) copy [i]).Selected = false;
@@ -2900,16 +3026,22 @@ namespace System.Windows.Forms
 
 			public bool Contains (ListViewItem item)
 			{
+				if (!owner.IsHandleCreated)
+					return false;
 				return list.Contains (item);
 			}
 
 			public void CopyTo (Array dest, int index)
 			{
+				if (!owner.IsHandleCreated)
+					return;
 				list.CopyTo (dest, index);
 			}
 
 			public IEnumerator GetEnumerator ()
 			{
+				if (!owner.IsHandleCreated)
+					return (new ListViewItem [0]).GetEnumerator ();
 				return list.GetEnumerator ();
 			}
 
@@ -2920,12 +3052,16 @@ namespace System.Windows.Forms
 
 			bool IList.Contains (object item)
 			{
-				return list.Contains (item);
+				if (!(item is ListViewItem))
+					return false;
+				return Contains ((ListViewItem) item);
 			}
 
 			int IList.IndexOf (object item)
 			{
-				return list.IndexOf (item);
+				if (!(item is ListViewItem))
+					return -1;
+				return IndexOf ((ListViewItem) item);
 			}
 
 			void IList.Insert (int index, object value)
@@ -2945,6 +3081,8 @@ namespace System.Windows.Forms
 
 			public int IndexOf (ListViewItem item)
 			{
+				if (!owner.IsHandleCreated)
+					return -1;
 				return list.IndexOf (item);
 			}
 			#endregion	// Public Methods

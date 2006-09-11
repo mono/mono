@@ -1,3 +1,11 @@
+2006-09-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ListViewTest.cs: Added test for bug #79076. Added tests for 
+	sorting bug fixes. Added tests for CheckBoxes and MultiSelect (marked
+	NotWorking).
+	* ListViewCollectionsTest.cs: Added tests for SelectedItemCollection
+	and ListViewItemCollection fixes.
+
 2006-09-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ComboBoxTest.cs: Add tests for sorting and selection handling.
