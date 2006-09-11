@@ -1,4 +1,4 @@
-@echo on
+@echo off
 REM ********************************************************
 REM This batch file receives the follwing parameters:
 REM build/rebuild (optional): should the solution file be rebuilded 
@@ -31,6 +31,10 @@ set TEST_SOLUTION=Test\System.DirectoryServices.Test20.sln
 set TEST_ASSEMBLY=System.DirectoryServices.Test20.jar
 set PROJECT_CONFIGURATION=Debug_Java20
 
+set DATEL=%date:~4,2%_%date:~7,2%_%date:~10,4%
+set TIMEL=%time:~0,2%_%time:~3,2%
+set TIMESTAMP=%DATEL%_%TIMEL%
+
 
 REM ********************************************************
 REM @echo Set environment
@@ -41,7 +45,7 @@ set JGAC_PATH=%GHROOT%\jgac\vmw4j2ee_110\
 set RUNTIME_CLASSPATH=%JGAC_PATH%mscorlib.jar;%JGAC_PATH%System.jar;%JGAC_PATH%System.Xml.jar;%JGAC_PATH%System.DirectoryServices.jar;%JGAC_PATH%Novell.Directory.Ldap.jar;%JGAC_PATH%J2SE.Helpers.jar
 set NUNIT_OPTIONS=/exclude=NotWorking
 
-set GH_OUTPUT_XML=%OUTPUT_FILE_PREFIX%.GH.%SECURE_MODE%.xml
+set GH_OUTPUT_XML=%OUTPUT_FILE_PREFIX%.GH.%SECURE_MODE%.%TIMESTAMP%.xml
 
 set NUNIT_PATH=%BACK_TO_ROOT_DIR%..\..\nunit20\
 set NUNIT_CLASSPATH=%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.framework.jar;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.util.jar;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.core.jar;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit-console.jar;.
@@ -53,7 +57,7 @@ REM @echo Building GH solution...
 REM ********************************************************
 
 rem devenv Test\System.DirectoryServices.sln /%BUILD_OPTION% Debug_Java >>%RUNNING_FIXTURE%_build.log.txt 2<&1
-msbuild %TEST_SOLUTION% /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.txt 2<&1
+msbuild %TEST_SOLUTION% /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.%TIMESTAMP%.txt 2<&1
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
@@ -64,7 +68,7 @@ REM ********************************************************
 if "%NUNIT_BUILD%" == "DONE" goto NUNITSKIP
 
 rem devenv ..\..\nunit20\nunit.java.sln /%BUILD_OPTION% Debug_Java >>%RUNNING_FIXTURE%_build.log.txt 2<&1
-msbuild ..\..\nunit20\nunit20.java.sln /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.txt 2<&1
+msbuild ..\..\nunit20\nunit20.java.sln /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.%TIMESTAMP%.txt 2<&1
 
 goto NUNITREADY
 
@@ -95,7 +99,7 @@ IF "%SECURE_MODE%" NEQ "secure" (
 )
 
 REM @echo on
-"%JAVA_HOME%\bin\java" %JVM_OPTIONS%  -cp %CLASSPATH% NUnit.Console.ConsoleUi %TEST_ASSEMBLY% /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUNNING_FIXTURE%_run.log.txt 2<&1
+"%JAVA_HOME%\bin\java" %JVM_OPTIONS%  -cp %CLASSPATH% NUnit.Console.ConsoleUi %TEST_ASSEMBLY% /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUNNING_FIXTURE%_run.log.%TIMESTAMP%.txt 2<&1
 REM @echo off
 
 
@@ -104,7 +108,7 @@ REM @echo Build XmlTool
 REM ********************************************************
 set XML_TOOL_PATH=..\..\tools\mono-xmltool
 rem devenv %XML_TOOL_PATH%\XmlTool.sln /%BUILD_OPTION% Debug_Java >>%RUNNING_FIXTURE%_build.log.txt 2<&1
-msbuild %XML_TOOL_PATH%\XmlTool20.vmwcsproj /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.txt 2<&1
+msbuild %XML_TOOL_PATH%\XmlTool20.vmwcsproj /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.%TIMESTAMP%.txt 2<&1
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
@@ -118,6 +122,10 @@ REM @echo on
 xmltool.exe --transform nunit_transform.xslt %GH_OUTPUT_XML%
 REM @echo off
 
+copy %RUNNING_FIXTURE%_run.log.%TIMESTAMP%.txt ..\
+copy %GH_OUTPUT_XML% ..\
+
+
 :FINALLY
 GOTO END
 
@@ -126,12 +134,12 @@ GOTO END
 GOTO END
 
 :BUILD_EXCEPTION
-@echo Error in building solutions. See %RUNNING_FIXTURE%_build.log.txt for details...
+@echo Error in building solutions. See %RUNNING_FIXTURE%_build.log.%TIMESTAMP%.txt for details...
 REM EXIT 1
 GOTO END
 
 :RUN_EXCEPTION
-@echo Error in running fixture %RUNNING_FIXTURE%. See %RUNNING_FIXTURE%_run.log.txt for details...
+@echo Error in running fixture %RUNNING_FIXTURE%. See %RUNNING_FIXTURE%_run.log.%TIMESTAMP%.txt for details...
 REM EXIT 1
 GOTO END
 
