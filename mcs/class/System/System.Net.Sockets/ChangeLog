@@ -1,3 +1,7 @@
+2006-09-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: update the SocketOperation enum.
+
 2006-08-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: replace hardcoded error numbers with the SocketError

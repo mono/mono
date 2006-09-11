@@ -51,7 +51,11 @@ namespace System.Net.Sockets
 			Receive,
 			ReceiveFrom,
 			Send,
-			SendTo
+			SendTo,
+			UsedInManaged1,
+			UsedInManaged2,
+			UsedInProcess,
+			UsedInConsole2
 		}
 
 		[StructLayout (LayoutKind.Sequential)]
