@@ -3,9 +3,10 @@
 //
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
+//      Ivan N. Zlatev (contact i-nZ.net)
 //
 // (C) 2003 Martin Willemoes Hansen
-//
+// (C) 2006 Ivan N. Zlatev
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -32,11 +33,23 @@ using System.Runtime.InteropServices;
 
 namespace System.ComponentModel.Design
 {
+#if NET_2_0
+	[ComVisible(true)]
+	public enum ViewTechnology
+	{
+		[Obsolete ("Use ViewTechnology.Default.")]
+		Passthrough,
+		[Obsolete ("Use ViewTechnology.Default.")]
+		WindowsForms,
+		Default
+	}
+#else
 	[Serializable]
 	[ComVisible(true)]
-        public enum ViewTechnology
+	public enum ViewTechnology
 	{
 		Passthrough,
-		WindowsForms,
+		WindowsForms
 	}
+#endif
 }

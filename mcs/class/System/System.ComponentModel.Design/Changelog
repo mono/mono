@@ -1,5 +1,9 @@
 2006-09-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ViewTechnology.cs: update for 2.0. Patch by Ivan N. Zlatev.
+
+2006-09-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* SelectionTypes.cs: updates for 2.0. Patch by Ivan N. Zlatev.
 
 2006-09-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
