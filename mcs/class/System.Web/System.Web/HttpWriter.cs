@@ -130,16 +130,11 @@ namespace System.Web {
 			response.Flush ();
 		}
 
-		static byte [] newline = new byte [2] { 13, 10 };
+		static char [] newline = new char [2] { '\r', '\n' };
 		
 		public override void WriteLine ()
 		{
-			output_stream.Write (newline, 0, 2);
-			
-			if (response.buffer)
-				return;
-
-			response.Flush ();
+			Write (newline, 0, 2);
 		}
 
 		public void WriteString (string s, int index, int count)

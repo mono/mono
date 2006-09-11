@@ -1,3 +1,7 @@
+2006-09-11  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpWriter.cs: fixed WriteLine to work correctly in utf-16 encoding
+
 2006-09-08  Robert Jordan  <robertj@gmx.net>
 
 	* TraceData.cs: fixed NRE if `sizes' is null, which may happen
