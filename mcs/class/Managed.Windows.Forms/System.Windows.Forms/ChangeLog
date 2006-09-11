@@ -1,3 +1,11 @@
+2006-09-11  Mike Kestner  <mkestner@novell.com>
+
+	* ComboBox.cs (UpdateBounds): use SetBounds not SetBoundsCore since 
+	the 'specified' logic has been moved there.  This seems like a bug 
+	in Control.cs, since our current SetBoundsCore completely ignores 
+	the specified parameter.  Peter's commit seems to indicate that is 
+	the way the MS control implementation works.  [Fixes #79325]
+
 2006-09-10  Jonathan Chambers  <joncham@gmail.com>
 
 	* XplatUI.cs: Set default_class_name to be composed

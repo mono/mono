@@ -1222,7 +1222,7 @@ namespace System.Windows.Forms
 		void UpdateBounds ()
 		{
 			if (requested_height != -1)
-				SetBoundsCore (0, 0, 0, requested_height, BoundsSpecified.Height);
+				SetBounds (0, 0, 0, requested_height, BoundsSpecified.Height);
 		}
 
 		private void UpdatedItems ()
