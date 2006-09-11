@@ -1,5 +1,9 @@
 2006-09-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.h mini-amd64.c exceptions-amd64.c: Move all dependencies on the
+	layout of ucontext_t to helper functions in exceptions-amd64.c, as on x86. Add
+	some changes from the freebsd ports tree.
+
 	* mini-amd64.h exceptions-amd64.c: Fix the amd64 build. Get rid of the SC_
 	constants.
 	
