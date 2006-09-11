@@ -739,6 +739,17 @@ namespace MonoTests.System.Xml.XPath
 			// should first move to owner element and go on.
 			Assert.IsTrue (nav.MoveToFollowing ("foo", String.Empty));
 		}
+
+		[Test]
+		public void AppendChildInDocumentFragment ()
+		{
+			XmlDocumentFragment f = new XmlDocument ().CreateDocumentFragment ();
+			XmlWriter w = f.CreateNavigator ().AppendChild ();
+			w.WriteStartElement ("foo");
+			w.WriteEndElement ();
+			w.Close ();
+			Assert.IsNotNull (f.FirstChild as XmlElement);
+		}
 	}
 }
 

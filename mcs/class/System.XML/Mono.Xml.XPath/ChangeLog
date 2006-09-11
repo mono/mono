@@ -1,3 +1,8 @@
+2006-09-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathEditableDocument.cs : DocumentFragment should also be allowed
+	  to have a child.
+
 2006-09-08  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTMXPathDocumentWriter2.cs : fill String.Empty for null ns in

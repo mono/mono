@@ -85,6 +85,7 @@ namespace Mono.Xml.XPath
 			case XmlNodeType.Document:
 				current = ((XmlDocument) parent).CreateDocumentFragment ();
 				break;
+			case XmlNodeType.DocumentFragment:
 			case XmlNodeType.Element:
 				current = parent.OwnerDocument.CreateDocumentFragment ();
 				break;
