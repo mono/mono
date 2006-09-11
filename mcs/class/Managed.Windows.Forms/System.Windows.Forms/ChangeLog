@@ -1,5 +1,11 @@
 2006-09-11  Mike Kestner  <mkestner@novell.com>
 
+	* ComboBox.cs: if we are updating the contents of the currently
+	selected index, refresh the control or the textbox selection.
+	[Fixes #79066]
+
+2006-09-11  Mike Kestner  <mkestner@novell.com>
+
 	* ComboBox.cs (UpdateBounds): use SetBounds not SetBoundsCore since 
 	the 'specified' logic has been moved there.  This seems like a bug 
 	in Control.cs, since our current SetBoundsCore completely ignores 

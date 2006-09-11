@@ -1275,6 +1275,12 @@ namespace System.Windows.Forms
 					object_items[index] = value;
 					if (owner.listbox_ctrl != null)
 						owner.listbox_ctrl.InvalidateItem (index);
+					if (index == owner.SelectedIndex) {
+						if (owner.textbox_ctrl == null)
+							owner.Refresh ();
+						else
+							owner.textbox_ctrl.SelectedText = value.ToString ();
+					}
 				}
 			}
 
