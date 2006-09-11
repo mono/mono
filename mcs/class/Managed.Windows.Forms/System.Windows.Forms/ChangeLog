@@ -1,3 +1,9 @@
+2006-09-11  Chris Toshok  <toshok@ximian.com>
+
+	* MenuAPI.cs: rework OnMouseUp a bit so that releasing the mouse
+	button on various spots (including outside the menu) works closer
+	to MS, and doesn't crash.  Fixes #79343.
+
 2006-09-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ListView.cs: Do not initialize item_sorter in init. To match MS,

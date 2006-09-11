@@ -169,11 +169,22 @@ namespace System.Windows.Forms {
 		public void OnMouseUp (MouseEventArgs args)
 		{
 			MenuItem item = GetItemAtXY (args.X, args.Y);
-			if (item.Parent is MainMenu)
-				return;
 
-			Deactivate ();
-			item.PerformClick ();
+			if (item == null) {
+				/* the user released the mouse button outside the menu */
+				Deactivate ();
+			}
+			else {
+				/* releasing the mouse button on a
+				 * popup item leaves things active */
+				if (item.IsPopup)
+					return;
+
+				/* otherwise we hide the menu and
+				 * click the menu item */
+				Deactivate ();
+				item.PerformClick ();
+			}
 		}
 
 		void MoveSelection (MenuItem item)
