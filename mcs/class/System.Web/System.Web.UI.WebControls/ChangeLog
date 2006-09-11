@@ -6,6 +6,12 @@
 
 2006-09-10 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* TreeView.cs: corrected rendering: HoverNodeStyle works
+	* TreeNode.cs:	
+	* TreeView.js:	
+
+2006-09-10 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* TreeNodeStyle.cs: fixed: ViewState restored properly	
 
 2006-09-10 Igor Zelmanovich <igorz@mainsoft.com>

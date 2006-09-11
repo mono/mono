@@ -713,11 +713,11 @@ namespace System.Web.UI.WebControls
 		}
 				
 		internal bool IsParentNode {
-			get { return !IsRootNode && (ChildNodes.Count > 0 || PopulateOnDemand); }
+			get { return ChildNodes.Count > 0 || PopulateOnDemand; }
 		}
 		
 		internal bool IsLeafNode {
-			get { return !IsRootNode && ChildNodes.Count == 0 && !PopulateOnDemand; }
+			get { return ChildNodes.Count == 0 && !PopulateOnDemand; }
 		}
 		
 		internal bool IsRootNode {

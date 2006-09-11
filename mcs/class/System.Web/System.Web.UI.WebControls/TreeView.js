@@ -54,14 +54,14 @@ function TreeView_PopulateCallback (data, ids)
 	node.populated = true;
 	if (data != "*") {
 		node.innerHTML = data;
+	    TreeView_ToggleExpand (idArray[0], idArray[1]);
+	    TreeView_SetNodeFlag (document.forms[0][idArray[0] + "_PopulatedStates"], idArray[1], true);
 	} else {
 		if (tree.showImage && tree.noExpandImage != null) {
 			var image = document.getElementById (spanId + "_img");
 			image.src = tree.noExpandImage;
 		}
 	}
-	TreeView_ToggleExpand (idArray[0], idArray[1]);
-	TreeView_SetNodeFlag (document.forms[0][idArray[0] + "_PopulatedStates"], idArray[1], true);
 }
 
 function TreeView_ErrorCallback (data, ids)
@@ -76,3 +76,28 @@ function TreeView_ErrorCallback (data, ids)
 }
 
 function getTree (treeId) { return eval (treeId + "_data"); }
+function getNodeLink (node) { return node.childNodes[node.childNodes.length - 1]; }
+
+function TreeView_HoverNode (treeId, node)
+{
+	var tree = getTree (treeId);
+	if (tree.hoverClass != null) {
+	    if (node.normalClass == null)
+		    node.normalClass = node.className;
+	    node.className = node.normalClass + " " + tree.hoverClass;
+    }
+	if (tree.hoverLinkClass != null) {
+	    var nodeLink = getNodeLink(node);
+	    if (nodeLink.normalClass == null)
+		    nodeLink.normalClass = nodeLink.className;
+	    nodeLink.className = nodeLink.normalClass + " " + tree.hoverLinkClass;
+	}
+}
+
+function TreeView_UnhoverNode (node) {
+	if (node != null && node.normalClass != null)
+		node.className = node.normalClass;
+	var nodeLink = getNodeLink(node);
+	if (nodeLink != null && nodeLink.normalClass != null)
+		nodeLink.className = nodeLink.normalClass;
+}

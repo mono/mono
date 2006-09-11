@@ -1003,7 +1003,7 @@ namespace System.Web.UI.WebControls
 		{
 			bool res = false;
 
-			if (PopulateNodesFromClient) {
+			if (EnableClientScript && PopulateNodesFromClient) {
 				string states = postCollection [ClientID + "_PopulatedStates"];
 				if (states != null) {
 					foreach (string id in states.Split ('|')) {
@@ -1071,7 +1071,6 @@ namespace System.Web.UI.WebControls
 				script += string.Format ("{0}.populateFromClient = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (PopulateNodesFromClient));
 				script += string.Format ("{0}.expandAlt = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageToolTip (true, null)));
 				script += string.Format ("{0}.collapseAlt = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageToolTip (false, null)));
-				Page.ClientScript.RegisterStartupScript (typeof(TreeView), this.UniqueID, script, true);
 
 				if (!Page.IsPostBack) {
 					SetNodesExpandedToDepthRecursive (Nodes);
@@ -1085,19 +1084,21 @@ namespace System.Web.UI.WebControls
 					Page.ClientScript.GetPostBackClientHyperlink (this, "");
 				}
 
-				if (PopulateNodesFromClient) {
+				if (EnableClientScript && PopulateNodesFromClient) {
 					Page.ClientScript.RegisterHiddenField (ClientID + "_PopulatedStates", "|");
 				}
-			}
 
-			EnsureStylesPrepared ();
+				EnsureStylesPrepared ();
 
-			if (hoverNodeStyle != null) {
-				if (Page.Header == null)
-					throw new InvalidOperationException ("Using TreeView.HoverNodeStyle requires Page.Header to be non-null (e.g. <head runat=\"server\" />).");
-				RegisterStyle (HoverNodeStyle, HoverNodeLinkStyle);
-				script += string.Format ("{0}.hoverClass = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (HoverNodeStyle.RegisteredCssClass));
-				script += string.Format ("{0}.hoverLinkClass = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (HoverNodeLinkStyle.RegisteredCssClass));
+				if (hoverNodeStyle != null) {
+					if (Page.Header == null)
+						throw new InvalidOperationException ("Using TreeView.HoverNodeStyle requires Page.Header to be non-null (e.g. <head runat=\"server\" />).");
+					RegisterStyle (HoverNodeStyle, HoverNodeLinkStyle);
+					script += string.Format ("{0}.hoverClass = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (HoverNodeStyle.RegisteredCssClass));
+					script += string.Format ("{0}.hoverLinkClass = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (HoverNodeLinkStyle.RegisteredCssClass));
+				}
+				
+				Page.ClientScript.RegisterStartupScript (typeof(TreeView), this.UniqueID, script, true);
 			}
 		}
 
@@ -1401,6 +1402,10 @@ namespace System.Web.UI.WebControls
 			if (!NodeWrap)
 				writer.AddStyleAttribute ("white-space", "nowrap");
 			AddNodeStyle (writer, node, level);
+			if (EnableClientScript) {
+				writer.AddAttribute ("onmouseout", "TreeView_UnhoverNode(this)");
+				writer.AddAttribute ("onmouseover", "TreeView_HoverNode('" + ClientID + "', this)");
+			}
 			writer.RenderBeginTag (HtmlTextWriterTag.Td);	// TD
 			
 			// Checkbox
@@ -1410,8 +1415,8 @@ namespace System.Web.UI.WebControls
 				showChecks = node.ShowCheckBox.Value;
 			else
 				showChecks = (ShowCheckBoxes == TreeNodeTypes.All) ||
-							 (ShowCheckBoxes == TreeNodeTypes.Leaf && node.ChildNodes.Count == 0) ||
-							 (ShowCheckBoxes == TreeNodeTypes.Parent && node.ChildNodes.Count > 0 && node.Parent != null) ||
+							 (ShowCheckBoxes == TreeNodeTypes.Leaf && node.IsLeafNode) ||
+							 (ShowCheckBoxes == TreeNodeTypes.Parent && node.IsParentNode && node.Parent != null) ||
 							 (ShowCheckBoxes == TreeNodeTypes.Root && node.Parent == null && node.ChildNodes.Count > 0);
 
 			if (showChecks) {
@@ -1495,17 +1500,17 @@ namespace System.Web.UI.WebControls
 				return levelStyles [node.Depth].NodeSpacing;
 			}
 
-			if (node.IsRootNode) {
+			if (node.IsLeafNode) {
+				if (leafNodeStyle != null && leafNodeStyle.NodeSpacing != Unit.Empty)
+					return leafNodeStyle.NodeSpacing;
+			}
+			else if (node.IsRootNode) {
 				if (rootNodeStyle != null && rootNodeStyle.NodeSpacing != Unit.Empty)
 					return rootNodeStyle.NodeSpacing;
 			}
 			else if (node.IsParentNode) {
 				if (parentNodeStyle != null && parentNodeStyle.NodeSpacing != Unit.Empty)
 					return parentNodeStyle.NodeSpacing;
-			}
-			else if (node.IsLeafNode) {
-				if (leafNodeStyle != null && leafNodeStyle.NodeSpacing != Unit.Empty)
-					return leafNodeStyle.NodeSpacing;
 			}
 
 			if (nodeStyle != null)
@@ -1523,17 +1528,23 @@ namespace System.Web.UI.WebControls
 					style.AddCssClass (nodeStyle.CssClass);
 					style.AddCssClass (nodeStyle.RegisteredCssClass);
 				}
-				if (node.IsRootNode && rootNodeStyle != null) {
-					style.AddCssClass (rootNodeStyle.CssClass);
-					style.AddCssClass (rootNodeStyle.RegisteredCssClass);
+				if (node.IsLeafNode) {
+					if (leafNodeStyle != null) {
+						style.AddCssClass (leafNodeStyle.CssClass);
+						style.AddCssClass (leafNodeStyle.RegisteredCssClass);
+					}
 				}
-				if (node.IsParentNode && parentNodeStyle != null) {
-					style.AddCssClass (parentNodeStyle.CssClass);
-					style.AddCssClass (parentNodeStyle.RegisteredCssClass);
+				else if (node.IsRootNode) {
+					if (rootNodeStyle != null) {
+						style.AddCssClass (rootNodeStyle.CssClass);
+						style.AddCssClass (rootNodeStyle.RegisteredCssClass);
+					}
 				}
-				if (node.IsLeafNode && leafNodeStyle != null) {
-					style.AddCssClass (leafNodeStyle.CssClass);
-					style.AddCssClass (leafNodeStyle.RegisteredCssClass);
+				else if (node.IsParentNode) {
+					if (parentNodeStyle != null) {
+						style.AddCssClass (parentNodeStyle.CssClass);
+						style.AddCssClass (parentNodeStyle.RegisteredCssClass);
+					}
 				}
 				if (levelStyles != null && levelStyles.Count > level) {
 					style.AddCssClass (levelStyles [level].CssClass);
@@ -1549,14 +1560,20 @@ namespace System.Web.UI.WebControls
 				if (nodeStyle != null) {
 					style.CopyFrom (nodeStyle);
 				}
-				if (node.IsRootNode && rootNodeStyle != null) {
-					style.CopyFrom (rootNodeStyle);
+				if (node.IsLeafNode) {
+					if (leafNodeStyle != null) {
+						style.CopyFrom (leafNodeStyle);
+					}
 				}
-				if (node.IsParentNode && parentNodeStyle != null) {
-					style.CopyFrom (parentNodeStyle);
+				else if (node.IsRootNode) {
+					if (rootNodeStyle != null) {
+						style.CopyFrom (rootNodeStyle);
+					}
 				}
-				if (node.IsLeafNode && leafNodeStyle != null) {
-					style.CopyFrom (leafNodeStyle);
+				else if (node.IsParentNode) {
+					if (parentNodeStyle != null) {
+						style.CopyFrom (parentNodeStyle);
+					}
 				}
 				if (levelStyles != null && levelStyles.Count > level) {
 					style.CopyFrom (levelStyles [level]);
@@ -1578,17 +1595,23 @@ namespace System.Web.UI.WebControls
 					style.AddCssClass (nodeLinkStyle.CssClass);
 					style.AddCssClass (nodeLinkStyle.RegisteredCssClass);
 				}
-				if (node.IsRootNode && rootNodeStyle != null) {
-					style.AddCssClass (rootNodeLinkStyle.CssClass);
-					style.AddCssClass (rootNodeLinkStyle.RegisteredCssClass);
+				if (node.IsLeafNode) {
+					if (leafNodeStyle != null) {
+						style.AddCssClass (leafNodeLinkStyle.CssClass);
+						style.AddCssClass (leafNodeLinkStyle.RegisteredCssClass);
+					}
 				}
-				if (node.IsParentNode && parentNodeStyle != null) {
-					style.AddCssClass (parentNodeLinkStyle.CssClass);
-					style.AddCssClass (parentNodeLinkStyle.RegisteredCssClass);
+				else if (node.IsRootNode) {
+					if (rootNodeStyle != null) {
+						style.AddCssClass (rootNodeLinkStyle.CssClass);
+						style.AddCssClass (rootNodeLinkStyle.RegisteredCssClass);
+					}
 				}
-				if (node.IsLeafNode && leafNodeStyle != null) {
-					style.AddCssClass (leafNodeLinkStyle.CssClass);
-					style.AddCssClass (leafNodeLinkStyle.RegisteredCssClass);
+				else if (node.IsParentNode) {
+					if (parentNodeStyle != null) {
+						style.AddCssClass (parentNodeLinkStyle.CssClass);
+						style.AddCssClass (parentNodeLinkStyle.RegisteredCssClass);
+					}
 				}
 				if (levelStyles != null && levelStyles.Count > level) {
 					style.AddCssClass (levelLinkStyles [level].CssClass);
@@ -1605,14 +1628,20 @@ namespace System.Web.UI.WebControls
 				if (nodeStyle != null) {
 					style.CopyFrom (nodeLinkStyle);
 				}
-				if (node.IsRootNode && rootNodeStyle != null) {
-					style.CopyFrom (rootNodeLinkStyle);
+				if (node.IsLeafNode) {
+					if (node.IsLeafNode && leafNodeStyle != null) {
+						style.CopyFrom (leafNodeLinkStyle);
+					}
 				}
-				if (node.IsParentNode && parentNodeStyle != null) {
-					style.CopyFrom (parentNodeLinkStyle);
+				else if (node.IsRootNode) {
+					if (node.IsRootNode && rootNodeStyle != null) {
+						style.CopyFrom (rootNodeLinkStyle);
+					}
 				}
-				if (node.IsLeafNode && leafNodeStyle != null) {
-					style.CopyFrom (leafNodeLinkStyle);
+				else if (node.IsParentNode) {
+					if (node.IsParentNode && parentNodeStyle != null) {
+						style.CopyFrom (parentNodeLinkStyle);
+					}
 				}
 				if (levelStyles != null && levelStyles.Count > level) {
 					style.CopyFrom (levelLinkStyles [level]);
