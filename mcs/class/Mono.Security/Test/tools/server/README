@@ -12,32 +12,32 @@ TEST CASES
 
 1. Mutual authentication with automatic SSL/TLS detection (TLS by default)
 
-wget --sslprotocol=0 --sslcertfile=mutual.pem https://localhost:4433
+wget --no-check-certificate --certificate=mutual.pem --private-key=mutual.pem https://localhost:4433
 
 
 2. Mutual authentication with SSL3
 
-wget --sslprotocol=2 --sslcertfile=mutual.pem https://localhost:4433
+wget --no-check-certificate --secure-protocol=sslv3 --certificate=mutual.pem --private-key=mutual.pem https://localhost:4433
 
 
 3. Mutual authentication with TLS1
 
-wget --sslprotocol=3 --sslcertfile=mutual.pem https://localhost:4433
+wget --no-check-certificate --secure-protocol=tlsv1 --certificate=mutual.pem --private-key=mutual.pem https://localhost:4433
 
 
 4. Optional mutual authentication with automatic SSL/TLS detection (TLS by default)
 
-wget --sslprotocol=0 https://localhost:4433
+wget --no-check-certificate https://localhost:4433
 
 
 5. Optional mutual authentication with SSL3
 
-wget --sslprotocol=2 https://localhost:4433
+wget --no-check-certificate --secure-protocol=sslv3 https://localhost:4433
 
 
 6. Optional mutual authentication with TLS1
 
-wget --sslprotocol=3 https://localhost:4433
+wget --no-check-certificate --secure-protocol=tlsv1 https://localhost:4433
 
 
 NOTES
@@ -48,7 +48,7 @@ NOTES
 
 * SSL versions
 
-	--sslprotocol=1 is for SSL2 which isn't supported.
+	--secure-protocol=sslv2 is for SSL2 which isn't supported.
 
 * Convertion from PKCS#12 to PEM (wget/OpenSSL)
 

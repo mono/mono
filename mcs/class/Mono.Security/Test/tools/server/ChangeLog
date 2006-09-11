@@ -1,0 +1,4 @@
+2006-09-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* README: Updated instruction for recent versions of wget.
+	* msslserver.cs: Don't require the client certificates (i.e. optional)

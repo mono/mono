@@ -33,7 +33,7 @@ namespace SslHttpServer
 				try {
 					requestSocket = listenSocket.Accept ();
 					using (NetworkStream ns = new NetworkStream (requestSocket, FileAccess.ReadWrite, true)) {
-						using (SslServerStream s = new SslServerStream (ns, Certificate, true, false)) {
+						using (SslServerStream s = new SslServerStream (ns, Certificate, false, false)) {
 							s.PrivateKeyCertSelectionDelegate += new PrivateKeySelectionCallback (GetPrivateKey);
 							s.ClientCertValidationDelegate += new CertificateValidationCallback (VerifyClientCertificate);
 							StreamReader reader = new StreamReader (s);
