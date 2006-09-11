@@ -1,3 +1,7 @@
+2006-09-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ServiceContainer.cs: update for 2.0. Patch by Ivan N. Zlatev.
+
 2006-05-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DesignerCollection.cs: Added explicit interface implemenation for

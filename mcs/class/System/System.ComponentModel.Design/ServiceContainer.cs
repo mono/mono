@@ -4,10 +4,11 @@
 // Authors:
 //   Martin Willemoes Hansen (mwh@sysrq.dk)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Ivan N. Zlatev (contact i-nZ.net)
 //
 // (C) 2003 Martin Willemoes Hansen
 // (C) 2003 Andreas Nahr
-//
+// (C) 2006 Ivan N. Zlatev
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -30,16 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.Collections;
 
 namespace System.ComponentModel.Design
 {
+
+#if NET_2_0
+	public class ServiceContainer : IServiceContainer, IServiceProvider, IDisposable
+#else
 	public sealed class ServiceContainer : IServiceContainer, IServiceProvider
+#endif
 	{
 
 		private IServiceProvider parentProvider;
 		private Hashtable services = new Hashtable ();
-
+#if NET_2_0
+		private bool _disposed = false;
+#endif
+		
 		public ServiceContainer()
 			: this (null)
 		{
@@ -94,8 +104,12 @@ namespace System.ComponentModel.Design
 		{
 			RemoveService (serviceType, false);
 		}
-
-		public void RemoveService (Type serviceType, bool promote)
+        
+#if NET_2_0
+		public virtual void RemoveService (Type serviceType, bool promote)
+#else
+        public void RemoveService (Type serviceType, bool promote)
+#endif
 		{
 			if (serviceType == null)
 				throw new ArgumentNullException ("serviceType", "Cannot be null");
@@ -122,5 +136,36 @@ namespace System.ComponentModel.Design
 			}
 			return result;
 		}
+
+#if NET_2_0		
+		public void Dispose ()
+		{
+			this.Dispose (true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected virtual void Dispose (bool disposing)
+		{
+			if (!_disposed) {
+				if (disposing) {
+					if (this.services != null) {
+						foreach (object obj in this.services) {
+							if (obj is IDisposable) {
+								((IDisposable) obj).Dispose ();
+							}
+						}
+						this.services = null;
+					}
+				}
+				_disposed = true;
+			}
+		}
+
+		~ServiceContainer ()
+		{
+			Dispose (false);
+		}
+#endif
+		
 	}
 }
