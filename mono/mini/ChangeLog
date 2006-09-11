@@ -1,3 +1,6 @@
+2006-09-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.h: Freebsd has MAP_ANON instead of MAP_ANONYMOUS.
 
 Mon Sep 11 13:18:55 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
