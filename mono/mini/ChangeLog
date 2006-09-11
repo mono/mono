@@ -1,4 +1,9 @@
 
+Mon Sep 11 13:18:55 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: on Linux, check for /proc to be mounted
+	(bug# 79351, novell bug#201204).
+
 Mon Sep 11 13:10:12 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: handle cases where pthread_attr_getstack() behaves
