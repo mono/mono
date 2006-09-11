@@ -1,3 +1,10 @@
+2006-09-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TypeDescriptor.cs: don't ignore toplevel attributes when they are
+	overriden.
+
+	Patch by Ivan N. Zlatev that fixes bug #79256.
+
 2006-08-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* InvalidEnumArgumentException.cs: Beautify error message.

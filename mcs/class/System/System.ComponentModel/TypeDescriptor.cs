@@ -705,8 +705,13 @@ public sealed class TypeDescriptor
 			bool cache = true;
 			object[] ats = _infoType.GetCustomAttributes (true);
 			Hashtable t = new Hashtable ();
-			foreach (Attribute at in ats)
-				t [at.TypeId] = at;
+
+			// Filter the custom attributes, so that only the top
+			// level of the same type are left.
+			//
+			for (int i = ats.Length -1; i >= 0; i--) {
+				t [((Attribute) ats[i]).TypeId] = ats[i];
+			}
 					
 			if (comp != null && comp.Site != null) 
 			{

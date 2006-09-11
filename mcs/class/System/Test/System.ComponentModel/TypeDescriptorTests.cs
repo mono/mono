@@ -32,6 +32,19 @@ namespace MonoTests.System.ComponentModel
 		public void Dispose () { }
 	}
 
+	class MyOtherDesigner: IDesigner
+	{
+		public MyOtherDesigner()
+		{
+		}
+
+		public IComponent Component {get {return null; } }
+		public DesignerVerbCollection Verbs { get {return null; } }
+		public void DoDefaultAction () { }
+		public void Initialize (IComponent component) { }
+		public void Dispose () { }
+	}
+	
 	class MySite: ISite
 	{ 
 		public IComponent Component { get {  return null; } }
@@ -136,7 +149,7 @@ namespace MonoTests.System.ComponentModel
 		}
 		
 		[DescriptionAttribute ("test")]
-		public string TestProperty
+		public virtual string TestProperty
 		{
 			get { return prop; }
 			set { prop = value; }
@@ -148,6 +161,29 @@ namespace MonoTests.System.ComponentModel
 			set { prop = value; }
 		}
 	}
+
+	[DescriptionAttribute ("my test derived component")]
+	[DesignerAttribute (typeof(MyOtherDesigner))]
+	public class MyDerivedComponent: MyComponent
+	{
+		string prop;
+		
+		public MyDerivedComponent  ()
+		{
+		}
+		
+		public MyDerivedComponent (ISite site) : base (site)
+		{
+		}
+		
+		[DescriptionAttribute ("test derived")]
+		public override string TestProperty
+		{
+			get { return prop; }
+			set { prop = value; }
+		}
+	}
+	
 
 	[DefaultProperty("AnotherProperty")]
 	[DefaultEvent("AnotherEvent")]
@@ -256,6 +292,13 @@ namespace MonoTests.System.ComponentModel
 			Assert ("t10", col[typeof(DescriptionAttribute)] != null);
 			Assert ("t11", col[typeof(DesignerAttribute)] != null);
 			Assert ("t12", col[typeof(EditorAttribute)] != null);
+
+			col = TypeDescriptor.GetAttributes (typeof (MyDerivedComponent));
+			Assert ("t13", col[typeof(DesignerAttribute)] != null);
+			Assert ("t14", col[typeof(DescriptionAttribute)] != null);
+			DesignerAttribute attribute = col[typeof(DesignerAttribute)] as DesignerAttribute;
+			Assert ("t15", attribute != null);
+			AssertEquals ("t16", attribute.DesignerTypeName, typeof(MyOtherDesigner).AssemblyQualifiedName);
 		}
 		
 		[Test]
