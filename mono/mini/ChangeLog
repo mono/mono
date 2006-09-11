@@ -1,3 +1,8 @@
+Mon Sep 11 13:18:55 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: on Linux, check for /proc to be mounted
+	(bug# 79351, novell bug#201204).
+
 2006-07-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* inssel-x86.brg: Remove an incorrect vtype rule. Fixes #78776.
