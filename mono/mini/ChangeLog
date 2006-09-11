@@ -1,3 +1,8 @@
+
+Mon Sep 11 11:31:10 BST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.c: support larger stack frames (bug #79272).
+
 2006-09-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (mono_aot_get_class_from_name): Remove a debug printf.
