@@ -228,12 +228,12 @@ namespace System.Web
 		{
 			throw new NotImplementedException ();
 		}
-
+#if !TARGET_JVM
 		void OnFileChanged (object sender, FileSystemEventArgs args)
 		{
 			Clear ();
 		}
-
+#endif
 		public override SiteMapNode RootNode {
 			get {
 				BuildSiteMap ();

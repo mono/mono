@@ -114,7 +114,7 @@ namespace System.Web.Caching
 				dependency.DependencyChanged += new EventHandler (OnChildDependencyChanged);
 			this.start = start;
 		}
-		
+#if !TARGET_JVM
 		void OnChanged (object sender, FileSystemEventArgs args)
 		{
 			if (DateTime.Now < start)
@@ -125,12 +125,7 @@ namespace System.Web.Caching
 			if (cache != null)
 				cache.CheckExpiration ();
 		}
-		
-#if TARGET_JVM
-		void DisposeWatchers ()
-		{
-		}
-#else
+	
 		void DisposeWatchers ()
 		{
 			lock (locker) {
@@ -141,6 +136,10 @@ namespace System.Web.Caching
 				}
 				watchers = null;
 			}
+		}
+#else
+		void DisposeWatchers ()
+		{
 		}
 #endif
 		public void Dispose ()

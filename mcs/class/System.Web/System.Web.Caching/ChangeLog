@@ -1,3 +1,7 @@
+2006-09-11 Andrew Skiba <andrews@mainsoft.com>
+
+	* CacheDependency.cs: ifdef TARGET_JVM
+
 2006-08-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CacheDependency.cs:

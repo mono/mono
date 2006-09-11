@@ -128,12 +128,13 @@ namespace System.Xml.Serialization
 		{
 			get { throw new NotImplementedException (); }
 		}
-		
+#if !TARGET_JVM		
 		[MonoTODO]
 		public string GenerateTypeName (System.CodeDom.Compiler.CodeDomProvider codeProvider)
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 #endif
 
 #if NET_1_1

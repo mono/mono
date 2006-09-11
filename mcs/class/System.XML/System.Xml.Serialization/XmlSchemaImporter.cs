@@ -30,7 +30,9 @@
 //
 
 using System.Xml;
+#if !TARGET_JVM
 using System.CodeDom.Compiler;
+#endif
 using System.Xml.Schema;
 using System.Collections;
 
@@ -91,6 +93,7 @@ namespace System.Xml.Serialization
 		}
 		
 #if NET_2_0
+#if !TARGET_JVM
 		[MonoTODO]
 		public XmlSchemaImporter (XmlSchemas schemas, CodeGenerationOptions options, CodeDomProvider codeProvider, ImportContext context)
 		{
@@ -103,7 +106,8 @@ namespace System.Xml.Serialization
 			else
 				typeIdentifiers = new CodeIdentifiers ();
 		}
-		
+#endif
+
 		public XmlSchemaImporter (XmlSchemas schemas, CodeGenerationOptions options, ImportContext context)
 		{
 			this.schemas = schemas;
@@ -123,7 +127,7 @@ namespace System.Xml.Serialization
 			this.schemas = schemas;
 			this.options = options;
 		}
-		
+
 		void InitSharedData (ImportContext context)
 		{
 			if (context.ShareTypes) {
