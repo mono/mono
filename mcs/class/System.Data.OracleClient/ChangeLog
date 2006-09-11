@@ -1,11 +1,14 @@
 2006-08-21	Leszek Ciesielski <skolima@gmail.com>
 
-	* OracleCommand.cs : fix for bug 78765
-	* OracleParameter.cs : fix for bug 78509
+	* OracleCommand.cs : fix for bug 78765 and 79284
+	* OracleParameter.cs : fix for bug 78509 and 79284
 	* README.tests : New : information about running on-line tests from
 	Test/System.Data.OracleClient
 	* System.Data.OracleClient_test_default.dll.config.example : New : Example configuration
 	for	on-line tests from Test/System.Data.OracleClient
+        * OracleDataReader.cs : fix for bug 79284
+        * OracleConnection.cs : fix for bug 79284
+        * OciDefineHandle.cs : fix for bug 79284
 
 2006-08-21	Boris Kirzner	<borisk@mainsoft.com>
 

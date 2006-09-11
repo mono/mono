@@ -412,7 +412,7 @@ namespace System.Data.OracleClient.Oci
 			return new OracleLob (lobLocator, ociType);
 		}
 
-		public object GetValue ()
+                public object GetValue (IFormatProvider formatProvider)
 		{
 			object tmp;
 
@@ -458,7 +458,7 @@ namespace System.Data.OracleClient.Oci
 			case OciDataType.Float:
 				tmp = Marshal.PtrToStringAnsi (Value, Size);
 				if (tmp != null)
-					return Decimal.Parse (String.Copy ((string) tmp));
+                                        return Decimal.Parse (String.Copy ((string) tmp), formatProvider);
 				break;
 			case OciDataType.TimeStamp:
 				return dateTimeDesc.GetDateTime (Parent.Parent, dateTimeDesc.ErrorHandle);
@@ -476,9 +476,9 @@ namespace System.Data.OracleClient.Oci
 			return DBNull.Value;
 		}
 
-		internal object GetOracleValue () 
+                internal object GetOracleValue (IFormatProvider formatProvider)
 		{
-			object ovalue = GetValue ();
+                        object ovalue = GetValue (formatProvider);
 
 			switch (DataType) {
 			case OciDataType.Raw:

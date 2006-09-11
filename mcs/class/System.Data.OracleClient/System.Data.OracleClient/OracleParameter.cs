@@ -474,9 +474,17 @@ namespace System.Data.OracleClient {
 					Marshal.Copy (val, 0, bindValue, val.Length);
 					bindSize = val.Length;
 				}
-				else if (oracleType == OracleType.Number) {
-					// TODO: move number type to a non-locale specific way
-					string svalue = v.ToString ();
+                                else if (oracleType == OracleType.Number
+                                        || oracleType == OracleType.Double
+                                        || oracleType == OracleType.Int32
+                                        || oracleType == OracleType.Int16
+                                        || oracleType == OracleType.Byte
+                                        || oracleType == OracleType.Float) {
+                                        string svalue = null;
+                                        if(v is IFormattable)
+                                                svalue = ((IFormattable)v).ToString (null, con.SessionFormatProvider);
+                                        else
+                                                svalue = v.ToString();
 					rsize = 0;
 			
 					// Get size of buffer
@@ -487,7 +495,7 @@ namespace System.Data.OracleClient {
 					OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, svalue, out rsize);
 
 					bindType = OciDataType.VarChar2;
-					bindSize = v.ToString ().Length;
+                                        bindSize = svalue.Length;
 				}
 				else {
 					string svalue = v.ToString () + '\0';
@@ -501,7 +509,7 @@ namespace System.Data.OracleClient {
 					OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, svalue, out rsize);
 
 					bindType = OciDataType.String;
-					bindSize = v.ToString ().Length + 1;
+                                        bindSize = svalue.Length;
 				}
 			}
 
@@ -908,7 +916,7 @@ namespace System.Data.OracleClient {
 			case OciDataType.Float:
 				tmp = Marshal.PtrToStringAnsi (bindOutValue, bindSize);
 				if (tmp != null)
-					value = Decimal.Parse (String.Copy ((string) tmp));
+                                        value = Decimal.Parse (String.Copy ((string) tmp), cmd.Connection.SessionFormatProvider);
 				break;
 			case OciDataType.TimeStamp:
 				value = dateTimeDesc.GetDateTime (connection.Environment, dateTimeDesc.ErrorHandle);

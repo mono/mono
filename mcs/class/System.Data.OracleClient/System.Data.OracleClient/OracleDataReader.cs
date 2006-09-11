@@ -291,7 +291,8 @@ namespace System.Data.OracleClient {
 			if (IsDBNull (i))
 				throw new InvalidOperationException("The value is null");
 
-			OracleLob output = (OracleLob) ((OciDefineHandle) statement.Values [i]).GetValue();
+                        OracleLob output = (OracleLob) ((OciDefineHandle) statement.Values [i]).GetValue (
+                                command.Connection.SessionFormatProvider);
 			output.connection = command.Connection;
 			return output;
 		}
@@ -680,7 +681,7 @@ namespace System.Data.OracleClient {
 				lob.Close ();
 				return value;
 			default:
-				return defineHandle.GetValue ();
+                                return defineHandle.GetValue (command.Connection.SessionFormatProvider);
 			}
 		}
 
