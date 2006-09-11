@@ -42,6 +42,40 @@ namespace System.Web.Security
 {
 	public static class Membership
 	{
+#if TARGET_J2EE
+		const string Membership_providers = "Membership.providers";
+		static MembershipProviderCollection providers {
+			get {
+				object o = AppDomain.CurrentDomain.GetData (Membership_providers);
+				if (o == null) {
+					lock (AppDomain.CurrentDomain) {
+						o = AppDomain.CurrentDomain.GetData (Membership_providers);
+						if (o == null) {
+							MembershipSection section = (MembershipSection) WebConfigurationManager.GetSection ("system.web/membership");
+							MembershipProviderCollection local_providers = new MembershipProviderCollection ();
+							ProvidersHelper.InstantiateProviders (section.Providers, local_providers, typeof (MembershipProvider));
+							AppDomain.CurrentDomain.SetData (Membership_providers, local_providers);
+							o = local_providers;
+						}
+					}
+				}
+
+				return (MembershipProviderCollection) o;
+			}
+		}
+		static MembershipProvider provider {
+			get {
+				MembershipSection section = (MembershipSection) WebConfigurationManager.GetSection ("system.web/membership");
+				return providers [section.DefaultProvider];
+			}
+		}
+		static int onlineTimeWindow {
+			get {
+				MembershipSection section = (MembershipSection) WebConfigurationManager.GetSection ("system.web/membership");
+				return (int) section.UserIsOnlineTimeWindow.TotalMinutes;
+			}
+		}
+#else
 		static MembershipProviderCollection providers;
 		static MembershipProvider provider;
 		static int onlineTimeWindow;
@@ -58,7 +92,8 @@ namespace System.Web.Security
 
 			onlineTimeWindow = (int) section.UserIsOnlineTimeWindow.TotalMinutes;
 		}
-		
+#endif
+
 		public static MembershipUser CreateUser (string username, string password)
 		{
 			return CreateUser (username, password, null);

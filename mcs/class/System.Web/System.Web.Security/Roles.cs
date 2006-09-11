@@ -37,7 +37,46 @@ using System.Web.Configuration;
 namespace System.Web.Security {
 
 	public static class Roles {
+#if TARGET_J2EE
+		const string Roles_cookie_protection = "Roles.cookie_protection";
+		private static CookieProtection cookie_protection {
+			get {
+				object o = AppDomain.CurrentDomain.GetData (Roles_cookie_protection);
+				if (o == null) {
+					lock (AppDomain.CurrentDomain) {
+						o = AppDomain.CurrentDomain.GetData (Roles_cookie_protection);
+						if (o == null) {
+							cookie_protection = CookieProtection.All;
+							return cookie_protection;
+						}
+					}
+				}
 
+				return (CookieProtection) o;
+			}
+
+			set {
+				AppDomain.CurrentDomain.SetData (Roles_cookie_protection, value);
+			}
+		}
+
+		private static RoleManagerSection config {
+			get {
+				return (RoleManagerSection) WebConfigurationManager.GetSection ("system.web/roleManager");
+			}
+		}
+
+		const string Roles_providersCollection = "Roles.providersCollection";
+		static RoleProviderCollection providersCollection {
+			get {
+				return (RoleProviderCollection)AppDomain.CurrentDomain.GetData (Roles_providersCollection);
+			}
+
+			set {
+				AppDomain.CurrentDomain.SetData (Roles_providersCollection, value);
+			}
+		}
+#else
 		private static CookieProtection cookie_protection;
 		private static RoleManagerSection config;
 		static RoleProviderCollection providersCollection;
@@ -49,6 +88,7 @@ namespace System.Web.Security {
 
 			config = (RoleManagerSection)WebConfigurationManager.GetSection ("system.web/roleManager");
 		}
+#endif
 
 
 		public static void AddUsersToRole (string [] usernames, string rolename)
