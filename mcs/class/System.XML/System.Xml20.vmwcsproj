@@ -276,9 +276,6 @@
 		<Compile Include="System.Xml.Serialization\IXmlSerializerImplementation.cs"/>
 		<Compile Include="System.Xml.Serialization\IXmlTextParser.cs"/>
 		<Compile Include="System.Xml.Serialization\ReflectionHelper.cs"/>
-		<Compile Include="System.Xml.Serialization\SchemaImporter.cs"/>
-		<Compile Include="System.Xml.Serialization\SchemaImporterExtension.cs"/>
-		<Compile Include="System.Xml.Serialization\SchemaImporterExtensionCollection.cs"/>
 		<Compile Include="System.Xml.Serialization\SchemaTypes.cs"/>
 		<Compile Include="System.Xml.Serialization\SerializationCodeGenerator.cs"/>
 		<Compile Include="System.Xml.Serialization\SerializationCodeGeneratorConfiguration.cs"/>
@@ -292,7 +289,6 @@
 		<Compile Include="System.Xml.Serialization\SoapIncludeAttribute.cs"/>
 		<Compile Include="System.Xml.Serialization\SoapReflectionImporter.cs"/>
 		<Compile Include="System.Xml.Serialization\SoapSchemaExporter.cs"/>
-		<Compile Include="System.Xml.Serialization\SoapSchemaImporter.cs"/>
 		<Compile Include="System.Xml.Serialization\SoapSchemaMember.cs"/>
 		<Compile Include="System.Xml.Serialization\SoapTypeAttribute.cs"/>
 		<Compile Include="System.Xml.Serialization\TypeData.cs"/>
@@ -331,7 +327,6 @@
 		<Compile Include="System.Xml.Serialization\XmlReflectionMember.cs"/>
 		<Compile Include="System.Xml.Serialization\XmlRootAttribute.cs"/>
 		<Compile Include="System.Xml.Serialization\XmlSchemaExporter.cs"/>
-		<Compile Include="System.Xml.Serialization\XmlSchemaImporter.cs"/>
 		<Compile Include="System.Xml.Serialization\XmlSchemaProviderAttribute.cs"/>
 		<Compile Include="System.Xml.Serialization\XmlSchemas.cs"/>
 		<Compile Include="System.Xml.Serialization\XmlSerializationCollectionFixupCallback.cs"/>
