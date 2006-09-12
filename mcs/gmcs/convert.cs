@@ -63,6 +63,38 @@ namespace Mono.CSharp {
 			return FindMostEncompassedType (list);
 		}
 
+		//
+		// From a one-dimensional array-type S[] to System.Collections.IList<S> and base
+		// interfaces of this interface.
+		//
+		// From a one-dimensional array-type S[] to System.Collections.IList<T> and base
+		// interfaces of this interface, provided there is an implicit reference conversion
+		// from S to T.
+		// 
+		static bool Array_To_IList (Type array, Type list)
+		{
+			if (!array.IsArray || (array.GetArrayRank () != 1) || !list.IsGenericType)
+				return false;
+
+			Type gt = list.GetGenericTypeDefinition ();
+			if ((gt != TypeManager.generic_ilist_type) &&
+			    (gt != TypeManager.generic_icollection_type) &&
+			    (gt != TypeManager.generic_ienumerable_type))
+				return false;
+
+			Type element_type = TypeManager.GetElementType (array);
+			Type arg_type = TypeManager.GetTypeArguments (list) [0];
+
+			if (element_type == arg_type)
+				return true;
+
+			if (MyEmptyExpr == null)
+				MyEmptyExpr = new EmptyExpression ();
+			MyEmptyExpr.SetType (TypeManager.GetElementType (array));
+
+			return ImplicitReferenceConversionExists (MyEmptyExpr, arg_type);
+		}
+
 		static Expression ImplicitTypeParameterConversion (Expression expr,
 								   Type target_type)
 		{
@@ -281,7 +313,7 @@ namespace Mono.CSharp {
 				return new EmptyCast (expr, target_type);
 
 			// from an array-type of type T to IList<T>
-			if (expr_type.IsArray && TypeManager.IsIList (expr_type, target_type))
+			if (expr_type.IsArray && Array_To_IList (expr_type, target_type))
 				return new EmptyCast (expr, target_type);
 
 			// from any delegate type to System.Delegate
@@ -377,7 +409,7 @@ namespace Mono.CSharp {
 				return true;
 
 			// from an array-type of type T to IList<T>
-			if (expr_type.IsArray && TypeManager.IsIList (expr_type, target_type))
+			if (expr_type.IsArray && Array_To_IList (expr_type, target_type))
 				return true;
 
 			// from any delegate type to System.Delegate

@@ -2132,40 +2132,6 @@ namespace Mono.CSharp {
 			return fi;
 		}
 
-		//
-		// Whether `array' is an array of T and `list' is `IList<T>'.
-		// For instance "string[]" -> "IList<string>".
-		//
-		public static bool IsIList (Type array, Type list)
-		{
-			if (!array.IsArray || !list.IsGenericType)
-				return false;
-
-			Type gt = list.GetGenericTypeDefinition ();
-			if ((gt != generic_ilist_type) && (gt != generic_icollection_type) &&
-			    (gt != generic_ienumerable_type))
-				return false;
-
-			Type arg_type = GetTypeArguments (list) [0];
-			Type element_type = GetElementType (array);
-
-			if (arg_type == element_type)
-				return true;
-			else if (element_type.IsValueType)
-				return false;
-
-			while (element_type != null) {
-				if (arg_type == element_type)
-					return true;
-				foreach (Type iface in element_type.GetInterfaces ())
-					if (arg_type == iface)
-						return true;
-				element_type = element_type.BaseType;
-			}
-
-			return false;
-		}
-
 		public static bool IsEqual (Type a, Type b)
 		{
 			if (a.Equals (b))
