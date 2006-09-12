@@ -149,10 +149,8 @@ namespace Mono.WebServices
 					return 0;
 					
 				// generate the code
-				if (GenerateCode (references, codeUnit))
-					return 1;
-				else
-					return 0;
+				GenerateCode (references, codeUnit);
+				return 0;
 			}
 			catch (Exception exception)
 			{

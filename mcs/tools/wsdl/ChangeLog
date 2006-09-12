@@ -1,3 +1,8 @@
+2005-09-12  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* MonoWSDL.cs, MonoWSDL2.cs: Return exit code 0 even if there
+	are warnings.
+
 2006-07-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MonoWSDL2.cs : 2.0 API fixes from beta2 to RTM.

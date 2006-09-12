@@ -575,12 +575,15 @@ namespace Mono.WebServices
 				}
 				
 				// generate the code
-				if (generator.GenerateCode (descriptions, schemas))
-					return 1;
-				else
-					return 0;
+				generator.GenerateCode (descriptions, schemas);
+				return 0;
 			}
 			catch (NullReferenceException e)
+			{
+				Console.WriteLine (e);
+				return 2;
+			}
+			catch (InvalidCastException e)
 			{
 				Console.WriteLine (e);
 				return 2;
