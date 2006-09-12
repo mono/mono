@@ -1,12 +1,11 @@
 //
 // Tests for System.Drawing.ImageConverter.cs 
 //
-// Author:
+// Authors:
 //	Sanjay Gupta (gsanjay@novell.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -50,9 +49,6 @@ namespace MonoTests.System.Drawing
 		ImageConverter imgConvFrmTD;
 		String imageStr;
 		byte [] imageBytes;
-
-		[TearDown]
-		public void TearDown () {}
 
 		[SetUp]
 		public void SetUp ()		
@@ -154,285 +150,341 @@ namespace MonoTests.System.Drawing
 #if TARGET_JVM
 		[NUnit.Framework.Category ("NotWorking")]
 #endif
-		public void TestConvertFrom ()
+		public void ConvertFrom ()
 		{
 			Image newImage = (Image) imgConv.ConvertFrom (null, CultureInfo.InvariantCulture, imageBytes);
 			
 			Assert.AreEqual (image.Height, newImage.Height, "CF#1");
 			Assert.AreEqual (image.Width, newImage.Width, "CF#1a");
-			
-			try {
-				imgConv.ConvertFrom ("System.Drawing.String");
-				Assert.Fail ("CF#2: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CF#2");
-			}
 
-			try {
-				imgConv.ConvertFrom (null, CultureInfo.InvariantCulture,
-						   "System.Drawing.String");
-				Assert.Fail ("CF#2a: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CF#2a");
-			}
-
-			try {
-				imgConv.ConvertFrom (null, CultureInfo.InvariantCulture,
-						   new Bitmap (20, 20));
-				Assert.Fail ("CF#3: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CF#3");
-			}
-
-			try {
-				imgConv.ConvertFrom (null, CultureInfo.InvariantCulture,
-						   new Point (10, 10));
-				Assert.Fail ("CF#4: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CF#4");
-			}
-
-			try {
-				imgConv.ConvertFrom (null, CultureInfo.InvariantCulture,
-						   new SizeF (10, 10));
-				Assert.Fail ("CF#5: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CF#5");
-			}
-
-			try {
-				imgConv.ConvertFrom (null, CultureInfo.InvariantCulture,
-						   new Object ());
-				Assert.Fail ("CF#6: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CF#6");
-			}
-
+			Assert.AreEqual ("(none)", imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture, null, typeof (string)), "Null/Empty");
 
 			newImage = (Image) imgConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture, imageBytes);
 
 			Assert.AreEqual (image.Height, newImage.Height, "CF#1A");
 			Assert.AreEqual (image.Width, newImage.Width, "CF#1aA");
-			
-			
-			try {
-				imgConvFrmTD.ConvertFrom ("System.Drawing.String");
-				Assert.Fail ("CF#2A: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CF#2A");
-			}
-
-			try {
-				imgConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture,
-						   "System.Drawing.String");
-				Assert.Fail ("CF#2aA: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CF#2aA");
-			}
-
-			try {
-				imgConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture,
-						   new Bitmap (20, 20));
-				Assert.Fail ("CF#3A: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CF#3A");
-			}
-
-			try {
-				imgConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture,
-						   new Point (10, 10));
-				Assert.Fail ("CF#4A: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CF#4A");
-			}
-
-			try {
-				imgConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture,
-						   new SizeF (10, 10));
-				Assert.Fail ("CF#5A: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CF#5A");
-			}
-
-			try {
-				imgConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture,
-						   new Object ());
-				Assert.Fail ("CF#6A: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CF#6A");
-			}
-
+		}
+		
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ConvertFrom_BadString ()
+		{
+			imgConv.ConvertFrom ("System.Drawing.String");
 		}
 
 		[Test]
 #if TARGET_JVM
 		[NUnit.Framework.Category ("NotWorking")]
 #endif
-		public void TestConvertTo ()
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ConvertFrom_BadString_WithCulture ()
 		{
-			Assert.AreEqual (imageStr, (String) imgConv.ConvertTo (null,
-								CultureInfo.InvariantCulture,
-								image, typeof (String)), "CT#1");
+			imgConv.ConvertFrom (null, CultureInfo.InvariantCulture, "System.Drawing.String");
+		}
 
-			Assert.AreEqual (imageStr, (String) imgConv.ConvertTo (image, 
-									typeof (String)), "CT#1a");
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ConvertFrom_Bitmap ()
+		{
+			imgConv.ConvertFrom (null, CultureInfo.InvariantCulture, new Bitmap (20, 20));
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ConvertFrom_Point ()
+		{
+			imgConv.ConvertFrom (null, CultureInfo.InvariantCulture, new Point (10, 10));
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ConvertFrom_SizeF ()
+		{
+			imgConv.ConvertFrom (null, CultureInfo.InvariantCulture, new SizeF (10, 10));
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ConvertFrom_Object ()
+		{
+			imgConv.ConvertFrom (null, CultureInfo.InvariantCulture, new Object ());
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void TypeDescriptor_ConvertFrom_BadString ()
+		{
+			imgConvFrmTD.ConvertFrom ("System.Drawing.String");
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void TypeDescriptor_ConvertFrom_BadString_Culture ()
+		{
+			imgConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture, "System.Drawing.String");
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void TypeDescriptor_ConvertFrom_Bitmap ()
+		{
+			imgConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture, new Bitmap (20, 20));
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void TypeDescriptor_ConvertFrom_Point ()
+		{
+			imgConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture, new Point (10, 10));
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void TypeDescriptor_ConvertFrom_SizeF ()
+		{
+			imgConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture, new SizeF (10, 10));
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void TypeDescriptor_ConvertFrom_Object ()
+		{
+			imgConvFrmTD.ConvertFrom (null, CultureInfo.InvariantCulture, new Object ());
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		public void ConvertTo ()
+		{
+			Assert.AreEqual (imageStr, (String) imgConv.ConvertTo (null, CultureInfo.InvariantCulture,
+				image, typeof (string)), "CT#1");
+
+			Assert.AreEqual (imageStr, (String) imgConv.ConvertTo (image, typeof (string)), "CT#1a");
+
+			Assert.AreEqual (imageStr, (String) imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture,
+				image, typeof (string)), "CT#1A");
+
+			Assert.AreEqual (imageStr, (String) imgConvFrmTD.ConvertTo (image, typeof (string)), "CT#1aA");
+		}
 				
-			/*byte [] newImageBytes = (byte []) imgConv.ConvertTo (null, CultureInfo.InvariantCulture,
-											image, imageBytes.GetType ());
+		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
+		public void ConvertTo_ByteArray ()
+		{
+			byte[] newImageBytes = (byte[]) imgConv.ConvertTo (null, CultureInfo.InvariantCulture,
+				image, imageBytes.GetType ());
 
 			Assert.AreEqual (imageBytes.Length, newImageBytes.Length, "CT#2");
 
-			newImageBytes = (byte []) imgConv.ConvertTo (image, imageBytes.GetType ());
+			newImageBytes = (byte[]) imgConv.ConvertTo (image, imageBytes.GetType ());
 			
 			Assert.AreEqual (imageBytes.Length, newImageBytes.Length, "CT#2a");
-			
-			try {
-				imgConv.ConvertTo (null, CultureInfo.InvariantCulture, 
-						 image, typeof (Rectangle));
-				Assert.Fail ("CT#3: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CT#3");
-			}
 
-			try {
-				imgConv.ConvertTo (null, CultureInfo.InvariantCulture,
-						 image, image.GetType ());
-				Assert.Fail ("CT#4: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CT#4");
-			}
+			newImageBytes = (byte[]) imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture,
+				image, imageBytes.GetType ());
 
-			try {
-				imgConv.ConvertTo (null, CultureInfo.InvariantCulture,
-						 image, typeof (Size));
-				Assert.Fail ("CT#5: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CT#5");
-			}
+			Assert.AreEqual (imageBytes.Length, newImageBytes.Length, "CT#2A");
 
-			try {
-				imgConv.ConvertTo (null, CultureInfo.InvariantCulture,
-						 image, typeof (Bitmap));
-				Assert.Fail ("CT#6: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CT#6");
-			}
-
-			try {
-				imgConv.ConvertTo (null, CultureInfo.InvariantCulture,
-						 image, typeof (Point));
-				Assert.Fail ("CT#7: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CT#7");
-			}
-
-			try {
-				imgConv.ConvertTo (null, CultureInfo.InvariantCulture,
-						 image, typeof (Metafile));
-				Assert.Fail ("CT#8: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CT#8");
-			}
-
-			try {
-				imgConv.ConvertTo (null, CultureInfo.InvariantCulture,
-						 image, typeof (Object));
-				Assert.Fail ("CT#9: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CT#9");
-			}
-
-			try {
-				imgConv.ConvertTo (null, CultureInfo.InvariantCulture,
-						 image, typeof (int));
-				Assert.Fail ("CT#10: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CT#10");
-			}
-			*/
-			
-			Assert.AreEqual (imageStr, (String) imgConvFrmTD.ConvertTo (null,
-								CultureInfo.InvariantCulture,
-								image, typeof (String)), "CT#1A");
-
-			Assert.AreEqual (imageStr, (String) imgConvFrmTD.ConvertTo (image, 
-									typeof (String)), "CT#1aA");
-				
-			/*newImageBytes = (byte []) imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture,
-											image, imageBytes.GetType ());
-
-			Assert.AreEqual ( imageBytes.Length, newImageBytes.Length, "CT#2A");
-
-			newImageBytes = (byte []) imgConvFrmTD.ConvertTo (image, imageBytes.GetType ());
+			newImageBytes = (byte[]) imgConvFrmTD.ConvertTo (image, imageBytes.GetType ());
 			
 			Assert.AreEqual (imageBytes.Length, newImageBytes.Length, "CT#2aA");
-			
-			try {
-				imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture, 
-						 image, typeof (Rectangle));
-				Assert.Fail ("CT#3A: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CT#3A");
-			}
-
-			try {
-				imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture,
-						 image, image.GetType ());
-				Assert.Fail ("CT#4A: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CT#4A");
-			}
-
-			try {
-				imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture,
-						 image, typeof (Size));
-				Assert.Fail ("CT#5A: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CT#5A");
-			}
-
-			try {
-				imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture,
-						 image, typeof (Bitmap));
-				Assert.Fail ("CT#6A: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CT#6A");
-			}
-
-			try {
-				imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture,
-						 image, typeof (Point));
-				Assert.Fail ("CT#7A: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CT#7A");
-			}
-
-			try {
-				imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture,
-						 image, typeof (Metafile));
-				Assert.Fail ("CT#8A: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CT#8A");
-			}
-
-			try {
-				imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture,
-						 image, typeof (Object));
-				Assert.Fail ("CT#9A: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CT#9A");
-			}
-
-			try {
-				imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture,
-						 image, typeof (int));
-				Assert.Fail ("CT#10A: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert.IsTrue (e is NotSupportedException, "CT#10A");
-			}*/
 		}
 
-		
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ConvertTo_Rectangle ()
+		{
+			imgConv.ConvertTo (null, CultureInfo.InvariantCulture, image, typeof (Rectangle));
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ConvertTo_Image ()
+		{
+			imgConv.ConvertTo (null, CultureInfo.InvariantCulture, image, image.GetType ());
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ConvertTo_Size ()
+		{
+			imgConv.ConvertTo (null, CultureInfo.InvariantCulture, image, typeof (Size));
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ConvertTo_Bitmap ()
+		{
+			imgConv.ConvertTo (null, CultureInfo.InvariantCulture, image, typeof (Bitmap));
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ConvertTo_Point ()
+		{
+			imgConv.ConvertTo (null, CultureInfo.InvariantCulture, image, typeof (Point));
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ConvertTo_Metafile ()
+		{
+			imgConv.ConvertTo (null, CultureInfo.InvariantCulture, image, typeof (Metafile));
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ConvertTo_Object ()
+		{
+			imgConv.ConvertTo (null, CultureInfo.InvariantCulture, image, typeof (Object));
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ConvertTo_Int ()
+		{
+			imgConv.ConvertTo (null, CultureInfo.InvariantCulture, image, typeof (int));
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void TypeDescriptor_ConvertTo_Rectangle ()
+		{
+			imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture, image, typeof (Rectangle));
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void TypeDescriptor_ConvertTo_Image ()
+		{
+			imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture, image, image.GetType ());
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void TypeDescriptor_ConvertTo_Size ()
+		{
+			imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture, image, typeof (Size));
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void TypeDescriptor_ConvertTo_Bitmap ()
+		{
+			imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture, image, typeof (Bitmap));
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void TypeDescriptor_ConvertTo_Point ()
+		{
+			imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture, image, typeof (Point));
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void TypeDescriptor_ConvertTo_Metafile ()
+		{
+			imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture, image, typeof (Metafile));
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void TypeDescriptor_ConvertTo_Object ()
+		{
+			imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture, image, typeof (Object));
+		}
+
+		[Test]
+#if TARGET_JVM
+		[NUnit.Framework.Category ("NotWorking")]
+#endif
+		[ExpectedException (typeof (NotSupportedException))]
+		public void TypeDescriptor_ConvertTo_Int ()
+		{
+			imgConvFrmTD.ConvertTo (null, CultureInfo.InvariantCulture, image, typeof (int));
+		}
+
 		[Test]
 #if TARGET_JVM
 		[NUnit.Framework.Category ("NotWorking")]

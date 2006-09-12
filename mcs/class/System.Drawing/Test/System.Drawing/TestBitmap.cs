@@ -279,13 +279,9 @@ namespace MonoTests.System.Drawing{
 		/* Get the input directory depending on the runtime*/
 		public static string getInFile(string file)
 		{				
-			string sRslt;						
-			
-			sRslt = Path.GetFullPath (file);
-				
-			if (File.Exists(file)==false) 
-				sRslt = "Test/System.Drawing/" + file;							
-			
+			string sRslt = Path.GetFullPath ("../System.Drawing/" + file);
+			if (!File.Exists (sRslt))
+				sRslt = "Test/System.Drawing/" + file;
 			return sRslt;
 		}
 

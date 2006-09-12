@@ -1,3 +1,10 @@
+2006-09-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestBitmap.cs: Fix the bitmap loading code to work in more cases.
+	* TestImageConverter.cs: Added a test case when value is null (should
+	return "(none)"). Uncommented and splitted all exception test cases 
+	into individual tests. Still got one faulty test: ConvertTo_ByteArray.
+
 2006-09-04  Jonathan Gilbert  <logic@deltaq.org>
 
 	* TestBitmap.cs: Reactivated the Rotate1bit4bit test, with code added
