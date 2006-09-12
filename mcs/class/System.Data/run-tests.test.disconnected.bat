@@ -15,9 +15,8 @@ REM ********************************************************
 
 IF "%1"=="" GOTO USAGE
 
-IF "%JAVA_HOME%"=="" GOTO ENVIRONMENT_EXCEPTION
+IF "%VMW_HOME%"=="" GOTO ENVIRONMENT_EXCEPTION
 
-IF "%GHROOT%"=="" GOTO ENVIRONMENT_EXCEPTION
 
 
 IF "%1"=="" (
@@ -31,11 +30,15 @@ REM Set parameters
 REM ********************************************************
 
 set BUILD_OPTION=%1
-set OUTPUT_FILE_PREFIX=MonoTests.System.Data
+set OUTPUT_FILE_PREFIX=System.Data
 set RUNNING_FIXTURE=MonoTests.System.Data
 set TEST_SOLUTION=Test\System.Data.Test20.sln
 set TEST_ASSEMBLY=System.Data.Test.jar
 set PROJECT_CONFIGURATION=Debug_Java20
+
+set DATEL=%date:~4,2%_%date:~7,2%_%date:~10,4%
+set TIMEL=%time:~0,2%_%time:~3,2%
+set TIMESTAMP=%DATEL%_%TIMEL%
 
 set OUTPUT_FILE_PREFIX=%OUTPUT_FILE_PREFIX%.disconnected
 
@@ -43,12 +46,15 @@ REM ********************************************************
 REM @echo Set environment
 REM ********************************************************
 
-set JGAC_PATH=%GHROOT%\jgac\vmw4j2ee_110\
+set JGAC_PATH=%VMW_HOME%\jgac\vmw4j2ee_110\
+set JAVA_HOME=%VMW_HOME%\jre5
 
 set RUNTIME_CLASSPATH=%JGAC_PATH%mscorlib.jar;%JGAC_PATH%System.jar;%JGAC_PATH%System.Xml.jar;%JGAC_PATH%System.Data.jar;%JGAC_PATH%J2SE.Helpers.jar
 set NUNIT_OPTIONS=/exclude=NotWorking
 
-set GH_OUTPUT_XML=%OUTPUT_FILE_PREFIX%.GH.xml
+set GH_OUTPUT_XML=%OUTPUT_FILE_PREFIX%.%RUNNING_FIXTURE%.GH.%TIMESTAMP%.xml
+set BUILD_LOG=%OUTPUT_FILE_PREFIX%.%RUNNING_FIXTURE%_build.log.%TIMESTAMP%.txt
+set RUN_LOG=%OUTPUT_FILE_PREFIX%.%RUNNING_FIXTURE%_run.log.%TIMESTAMP%.txt
 
 set NUNIT_PATH=..\..\nunit20\
 set NUNIT_CLASSPATH=%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.framework.jar;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.util.jar;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.core.jar;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit-console.jar
@@ -60,7 +66,7 @@ REM ********************************************************
 REM ********************************************************
 
 rem devenv %TEST_SOLUTION% /%BUILD_OPTION% %PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.txt 2<&1
-msbuild %TEST_SOLUTION% /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.txt 2<&1
+msbuild %TEST_SOLUTION% /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%BUILD_LOG% 2<&1
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
@@ -71,7 +77,7 @@ REM ********************************************************
 if "%NUNIT_BUILD%" == "DONE" goto NUNITSKIP
 
 REM devenv ..\..\nunit20\nunit.java.sln /%BUILD_OPTION% %PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.txt 2<&1
-msbuild ..\..\nunit20\nunit20.java.sln /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.txt 2<&1
+msbuild ..\..\nunit20\nunit20.java.sln /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%BUILD_LOG% 2<&1
 
 goto NUNITREADY
 
@@ -94,7 +100,7 @@ REM ********************************************************
 copy %BACK_TO_ROOT_DIR%Test\bin\%PROJECT_CONFIGURATION%\%TEST_ASSEMBLY% .
 
 REM @echo on
-"%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi %TEST_ASSEMBLY% /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUNNING_FIXTURE%_run.log.txt 2<&1
+"%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi %TEST_ASSEMBLY% /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUN_LOG% 2<&1
 REM @echo off
 
 REM ********************************************************
@@ -102,7 +108,7 @@ REM ********************************************************
 REM ********************************************************
 set XML_TOOL_PATH=..\..\tools\mono-xmltool
 REM devenv %XML_TOOL_PATH%\XmlTool.sln /%BUILD_OPTION% %PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.txt 2<&1
-msbuild %XML_TOOL_PATH%\XmlTool20.vmwcsproj /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.txt 2<&1
+msbuild %XML_TOOL_PATH%\XmlTool20.vmwcsproj /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%BUILD_LOG% 2<&1
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
@@ -117,19 +123,24 @@ xmltool.exe --transform nunit_transform.xslt %GH_OUTPUT_XML%
 @echo off
 
 :FINALLY
+
+copy %RUN_LOG% ..\
+copy %BUILD_LOG% ..\
+copy %GH_OUTPUT_XML% ..\
+
 GOTO END
 
 :ENVIRONMENT_EXCEPTION
-@echo This test requires environment variables JAVA_HOME and GHROOT to be defined
+@echo This test requires environment variable VMW_HOME to be defined
 GOTO END
 
 :BUILD_EXCEPTION
-@echo Error in building solutions. See %RUNNING_FIXTURE%_build.log.txt for details...
+@echo Error in building solutions. See %BUILD_LOG% for details...
 REM EXIT 1
 GOTO END
 
 :RUN_EXCEPTION
-@echo Error in running fixture %RUNNING_FIXTURE%. See %RUNNING_FIXTURE%_run.log.txt for details...
+@echo Error in running fixture %RUNNING_FIXTURE%. See %RUN_LOG% for details...
 REM EXIT 1
 GOTO END
 
