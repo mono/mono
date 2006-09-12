@@ -75,17 +75,24 @@ namespace System.Drawing
 			return Image.FromStream (ms);	
 		}
 
-		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object val, Type destType )
+		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object val, Type destType)
 		{
-			if ((val is System.Drawing.Image) && (destType == typeof (System.String)))
-				return val.ToString ();
-			else if (CanConvertTo (null, destType)){
-				//came here means destType is byte array ;
-				MemoryStream ms = new MemoryStream ();
-				((Image)val).Save (ms, ((Image)val).RawFormat);
-				return ms.GetBuffer ();
-			}else
-				return new NotSupportedException ("ImageConverter can not convert from " + val.GetType ());
+			if (val == null)
+				return "(none)";
+
+			if (val is System.Drawing.Image) {
+				if (destType == typeof (string)) {
+					return val.ToString ();
+				} else if (CanConvertTo (null, destType)) {
+					//came here means destType is byte array ;
+					MemoryStream ms = new MemoryStream ();
+					((Image)val).Save (ms, ((Image)val).RawFormat);
+					return ms.GetBuffer ();
+				}
+			}
+
+			string msg = Locale.GetText ("ImageConverter can not convert from type '{0}'.", val.GetType ());
+			throw new NotSupportedException (msg);
 		}
 
 		public override PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context, object val, Attribute[] attribs)
