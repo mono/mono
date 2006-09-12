@@ -1212,7 +1212,7 @@ namespace Mono.CSharp {
 			// Let's do it as soon as possible, since code below can call DefineType() on classes
 			// that depend on us to be populated before they are.
 			//
-			if (!(this is Iterator) && !(this is CompilerGeneratedClass))
+			if (!(this is CompilerGeneratedClass))
 				RootContext.RegisterOrder (this); 
 
 			if (base_type != null) {
@@ -1258,10 +1258,6 @@ namespace Mono.CSharp {
 				}
 
 				TypeManager.RegisterBuilder (TypeBuilder, ifaces);
-			}
-
-			if (this is Iterator && !ResolveType ()) {
-				return false;
 			}
 
 			return true;
@@ -4689,7 +4685,7 @@ namespace Mono.CSharp {
 				// If this is a non-static `struct' constructor and doesn't have any
 				// initializer, it must initialize all of the struct's fields.
 				if ((Parent.PartialContainer.Kind == Kind.Struct) &&
-					((ModFlags & Modifiers.STATIC) == 0) && (Initializer == null))
+				    ((ModFlags & Modifiers.STATIC) == 0) && (Initializer == null))
 					block.AddThisVariable (Parent, Location);
 
 				if (!block.ResolveMeta (ec, ParameterInfo))
@@ -5191,20 +5187,6 @@ namespace Mono.CSharp {
 			ToplevelBlock block = method.Block;
 			
 			SourceMethod source = SourceMethod.Create (parent, MethodBuilder, method.Block);
-
-			Report.Debug (64, "METHOD DATA EMIT", this, MethodBuilder,
-				      method, method.Iterator, block);
-
-#if FIXME
-			if (method.Iterator != null) {
-				if (!method.Iterator.Resolve (ec))
-					throw new InternalErrorException ();
-				// method.Iterator.EmitMethod (ec);
-			}
-#endif
-
-			Report.Debug (64, "METHOD DATA EMIT #1", this, MethodBuilder,
-				      method, method.Iterator, block);
 
 			//
 			// Handle destructors specially
