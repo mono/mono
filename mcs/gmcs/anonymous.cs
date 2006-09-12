@@ -134,7 +134,7 @@ namespace Mono.CSharp {
 			if (type == null)
 				throw new ArgumentNullException ();
 
-			return new CapturedVariable (this, name, type);
+			return new CapturedVariableField (this, name, type);
 		}
 
 		bool members_defined;
@@ -145,10 +145,10 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("Helper class already defined!");
 		}
 
-		protected class CapturedVariable : Field
+		protected class CapturedVariableField : Field
 		{
-			public CapturedVariable (CompilerGeneratedClass helper, string name,
-						 TypeExpr type)
+			public CapturedVariableField (CompilerGeneratedClass helper, string name,
+						      TypeExpr type)
 				: base (helper, type, Modifiers.INTERNAL, name, null, helper.Location)
 			{
 				helper.AddField (this);
@@ -185,7 +185,6 @@ namespace Mono.CSharp {
 			Report.Debug (64, "NEW ROOT SCOPE", this);
 		}
 
-		TypeExpr scope_type;
 		protected CapturedScope scope_instance;
 		protected ScopeInitializer scope_initializer;
 
@@ -288,14 +287,14 @@ namespace Mono.CSharp {
 			return new ScopeInitializer (this);
 		}
 
-		protected abstract class CapturedLocalOrParameter : Variable
+		protected abstract class CapturedVariable : Variable
 		{
 			public readonly ScopeInfo Scope;
 			public readonly Field Field;
 
 			public FieldExpr FieldInstance;
 
-			protected CapturedLocalOrParameter (ScopeInfo scope, string name, Type type)
+			protected CapturedVariable (ScopeInfo scope, string name, Type type)
 			{
 				this.Scope = scope;
 				this.Field = scope.CaptureVariable (
@@ -343,7 +342,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected class CapturedParameter : CapturedLocalOrParameter {
+		protected class CapturedParameter : CapturedVariable {
 			public readonly Parameter Parameter;
 			public readonly int Idx;
 
@@ -361,7 +360,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected class CapturedLocal : CapturedLocalOrParameter {
+		protected class CapturedLocal : CapturedVariable {
 			public readonly LocalInfo Local;
 
 			public CapturedLocal (ScopeInfo scope, LocalInfo local)
@@ -377,7 +376,13 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected class CapturedScope : CapturedLocalOrParameter {
+		protected class CapturedThis : CapturedVariable {
+			public CapturedThis (AnonymousMethodHost host)
+				: base (host, "<>THIS", host.ParentType)
+			{ }
+		}
+
+		protected class CapturedScope : CapturedVariable {
 			public readonly ScopeInfo ChildScope;
 
 			public CapturedScope (ScopeInfo root, ScopeInfo child)
@@ -559,12 +564,16 @@ namespace Mono.CSharp {
 
 		ArrayList scopes;
 		TypeExpr parent_type;
-		CapturedVariable parent_link;
-		CapturedVariable this_field;
+		CapturedVariableField parent_link;
+		CapturedThis this_variable;
 		Hashtable captured_params;
 
 		public override AnonymousMethodHost Host {
 			get { return this; }
+		}
+
+		public virtual bool IsIterator {
+			get { return false; }
 		}
 
 		public AnonymousMethodHost ParentHost {
@@ -579,23 +588,23 @@ namespace Mono.CSharp {
 			get { return parent_link; }
 		}
 
-		public Field THIS {
-			get { return this_field; }
+		protected CapturedThis THIS {
+			get { return this_variable; }
 		}
 
 		public bool HostsParameters {
 			get { return captured_params != null; }
 		}
 
-		public Field CaptureThis ()
+		public Variable CaptureThis ()
 		{
 			if (ParentHost != null)
 				return ParentHost.CaptureThis ();
 
 			CheckMembersDefined ();
-			if (this_field == null)
-				this_field = new CapturedVariable (this, "<>THIS", parent_type);
-			return this_field;
+			if (this_variable == null)
+				this_variable = new CapturedThis (this);
+			return this_variable;
 		}
 
 		public Variable GetCapturedParameter (Parameter par)
@@ -658,9 +667,6 @@ namespace Mono.CSharp {
 
 		protected override bool DefineNestedTypes ()
 		{
-			Report.Debug (64, "ANONYMOUS METHOD HOST NESTED",
-				      this, Name, Parent, Parent.Name, Parent.IsGeneric);
-
 			if (Parent.IsGeneric) {
 				parent_type = new ConstructedType (
 					Parent.TypeBuilder, Parent.TypeParameters, Location);
@@ -673,23 +679,24 @@ namespace Mono.CSharp {
 
 			CompilerGeneratedClass parent = Parent as CompilerGeneratedClass;
 			if (parent != null)
-				parent_link = new CapturedVariable (this, "<>parent", parent_type);
+				parent_link = new CapturedVariableField (this, "<>parent", parent_type);
 
 			return base.DefineNestedTypes ();
 		}
 
 		protected override bool DoDefineMembers ()
 		{
-			Report.Debug (64, "ANONYMOUS METHOD HOST DEFINE MEMBERS",
-				      this, Name, Parent, CompilerGenerated);
-
 			ArrayList args = new ArrayList ();
 			if (this is IteratorHost)
 				args.Add (new Parameter (
 					TypeManager.int32_type, "$PC", Parameter.Modifier.NONE,
 					null, Location));
 
-			Field pfield = Parent is CompilerGeneratedClass ? parent_link : this_field;
+			Field pfield;
+			if (Parent is CompilerGeneratedClass)
+				pfield = parent_link;
+			else
+				pfield = this_variable !=  null ? this_variable.Field : null;
 			if (pfield != null)
 				args.Add (new Parameter (
 					pfield.MemberType, "parent", Parameter.Modifier.NONE,
@@ -721,7 +728,13 @@ namespace Mono.CSharp {
 		protected virtual void EmitScopeConstructor (EmitContext ec)
 		{
 			int pos = (this is IteratorHost) ? 2 : 1;
-			Field pfield = Parent is CompilerGeneratedClass ? parent_link : this_field;
+
+			Field pfield;
+			if (Parent is CompilerGeneratedClass)
+				pfield = parent_link;
+			else
+				pfield = this_variable !=  null ? this_variable.Field : null;
+
 			if (pfield != null) {
 				ec.ig.Emit (OpCodes.Ldarg_0);
 				ec.ig.Emit (OpCodes.Ldarg, pos);
@@ -777,6 +790,16 @@ namespace Mono.CSharp {
 				Report.Debug (64, "RESOLVE ANONYMOUS METHOD HOST INITIALIZER",
 					      this, Host, Host.ParentType, loc);
 
+				if (Host.THIS != null) {
+					FieldExpr fe = (FieldExpr) Expression.MemberLookup (
+						ec.ContainerType, type, Host.THIS.Field.Name, loc);
+					if (fe == null)
+						throw new InternalErrorException ();
+
+					fe.InstanceExpression = this;
+					Host.THIS.FieldInstance = fe;
+				}
+
 				//
 				// Copy the parameter values, if any
 				//
@@ -795,9 +818,19 @@ namespace Mono.CSharp {
 				return base.DoResolveInternal (ec);
 			}
 
+			protected virtual bool IsGetEnumerator {
+				get { return false; }
+			}
+
 			protected override void EmitScopeConstructor (EmitContext ec)
 			{
-				if ((host.THIS != null) || (host.ParentLink != null))
+				if (host.THIS != null) {
+					ec.ig.Emit (OpCodes.Ldarg_0);
+					if (IsGetEnumerator)
+						ec.ig.Emit (OpCodes.Ldfld, host.THIS.Field.FieldBuilder);
+					else if (host.THIS.Type.IsValueType)
+						Expression.LoadFromPtr (ec.ig, host.THIS.Type);
+				} else if (host.ParentLink != null)
 					ec.ig.Emit (OpCodes.Ldarg_0);
 
 				if (Host.HostsParameters) {
@@ -1199,13 +1232,6 @@ namespace Mono.CSharp {
 		public abstract bool IsIterator {
 			get;
 		}
-
-#if FIXME
-		public override string ToString ()
-		{
-			return String.Format ("{0} ({1})", GetType (), Name);
-		}
-#endif
 
 		protected class AnonymousMethodMethod : Method
 		{

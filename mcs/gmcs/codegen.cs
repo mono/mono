@@ -903,30 +903,6 @@ namespace Mono.CSharp {
 				HasReturnLabel = true;
 		}
 
-		//
-		// Emits the proper object to address fields on a remapped
-		// variable/parameter to field in anonymous-method/iterator proxy classes.
-		//
-		public void EmitThis (bool need_address)
-		{
-			ig.Emit (OpCodes.Ldarg_0);
-			if (CurrentAnonymousMethod == null)
-				return;
-
-			AnonymousMethodHost host = CurrentAnonymousMethod.RootScope;
-			while (host != null) {
-				if (host.ParentLink != null)
-					ig.Emit (OpCodes.Ldfld, host.ParentLink.FieldBuilder);
-				if (host.THIS != null) {
-					if (need_address && TypeManager.IsValueType (host.THIS.MemberType))
-						ig.Emit (OpCodes.Ldflda, host.THIS.FieldBuilder);
-					else
-						ig.Emit (OpCodes.Ldfld, host.THIS.FieldBuilder);
-					break;
-				}
-				host = host.ParentHost;
-			}
-		}
 
 		public Expression GetThis (Location loc)
 		{

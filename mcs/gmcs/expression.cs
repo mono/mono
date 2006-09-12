@@ -3301,16 +3301,115 @@ namespace Mono.CSharp {
 
 	}
 
+	public abstract class VariableReference : Expression, IAssignMethod, IMemoryLocation {
+		bool prepared;
+		LocalTemporary temp;
+
+		public abstract Variable Variable {
+			get;
+		}
+
+		public abstract bool IsRef {
+			get;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			Emit (ec, false);
+		}
+
+		//
+		// This method is used by parameters that are references, that are
+		// being passed as references:  we only want to pass the pointer (that
+		// is already stored in the parameter, not the address of the pointer,
+		// and not the value of the variable).
+		//
+		public void EmitLoad (EmitContext ec)
+		{
+			Report.Debug (64, "VARIABLE EMIT LOAD", this, Variable, type, loc);
+			if (!prepared)
+				Variable.EmitInstance (ec);
+			Variable.Emit (ec);
+		}
+		
+		public void Emit (EmitContext ec, bool leave_copy)
+		{
+			Report.Debug (64, "VARIABLE EMIT", this, Variable, type, IsRef, loc);
+
+			EmitLoad (ec);
+
+			if (IsRef) {
+				if (prepared)
+					ec.ig.Emit (OpCodes.Dup);
+	
+				//
+				// If we are a reference, we loaded on the stack a pointer
+				// Now lets load the real value
+				//
+				LoadFromPtr (ec.ig, type);
+			}
+
+			if (leave_copy) {
+				ec.ig.Emit (OpCodes.Dup);
+
+				if (IsRef || Variable.NeedsTemporary) {
+					temp = new LocalTemporary (Type);
+					temp.Store (ec);
+				}
+			}
+		}
+
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy,
+					bool prepare_for_load)
+		{
+			Report.Debug (64, "VARIABLE EMIT ASSIGN", this, Variable, type, IsRef,
+				      source, loc);
+
+			ILGenerator ig = ec.ig;
+			prepared = prepare_for_load;
+
+			Variable.EmitInstance (ec);
+			if (prepare_for_load && Variable.HasInstance)
+				ig.Emit (OpCodes.Dup);
+			else if (IsRef && !prepared)
+				Variable.Emit (ec);
+
+			source.Emit (ec);
+
+			if (leave_copy) {
+				ig.Emit (OpCodes.Dup);
+				if (IsRef || Variable.NeedsTemporary) {
+					temp = new LocalTemporary (Type);
+					temp.Store (ec);
+				}
+			}
+
+			if (IsRef)
+				StoreFromPtr (ig, type);
+			else
+				Variable.EmitAssign (ec);
+
+			if (temp != null) {
+				temp.Emit (ec);
+				temp.Release (ec);
+			}
+		}
+		
+		public void AddressOf (EmitContext ec, AddressOp mode)
+		{
+			Variable.EmitInstance (ec);
+			Variable.EmitAddressOf (ec);
+		}
+	}
+
 	/// <summary>
 	///   Local variables
 	/// </summary>
-	public class LocalVariableReference : Expression, IAssignMethod, IMemoryLocation, IVariable {
+	public class LocalVariableReference : VariableReference, IVariable {
 		public readonly string Name;
 		public readonly Block Block;
 		public LocalInfo local_info;
 		bool is_readonly;
-		bool prepared;
-		LocalTemporary temp;
 		Variable variable;
 
 		public LocalVariableReference (Block block, string name, Location l)
@@ -3335,6 +3434,10 @@ namespace Mono.CSharp {
 
 		public VariableInfo VariableInfo {
 			get { return local_info.VariableInfo; }
+		}
+
+		public override bool IsRef {
+			get { return false; }
 		}
 
 		public bool IsReadOnly {
@@ -3441,59 +3544,8 @@ namespace Mono.CSharp {
 			return Name == lvr.Name && Block == lvr.Block;
 		}
 
-		public Variable Variable {
+		public override Variable Variable {
 			get { return variable != null ? variable : local_info.Variable; }
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			Report.Debug (64, "EMIT LOCAL VARIABLE REFERENCE", this, ec, Variable, loc);
-			if (!prepared)
-				Variable.EmitInstance (ec);
-			Variable.Emit (ec);
-		}
-		
-		public void Emit (EmitContext ec, bool leave_copy)
-		{
-			Emit (ec);
-			if (leave_copy) {
-				ec.ig.Emit (OpCodes.Dup);
-				if (Variable.NeedsTemporary) {
-					temp = new LocalTemporary (Type);
-					temp.Store (ec);
-				}
-			}
-		}
-
-		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy,
-					bool prepare_for_load)
-		{
-			ILGenerator ig = ec.ig;
-			prepared = prepare_for_load;
-
-			Report.Debug (64, "LOCAL VAR REF EMIT ASSIGN", this, source, loc);
-			Variable.EmitInstance (ec);
-			if (prepare_for_load && Variable.HasInstance)
-				ig.Emit (OpCodes.Dup);
-			source.Emit (ec);
-			if (leave_copy) {
-				ig.Emit (OpCodes.Dup);
-				if (Variable.NeedsTemporary) {
-					temp = new LocalTemporary (Type);
-					temp.Store (ec);
-				}
-			}
-			Variable.EmitAssign (ec);
-			if (temp != null) {
-				temp.Emit (ec);
-				temp.Release (ec);
-			}
-		}
-		
-		public void AddressOf (EmitContext ec, AddressOp mode)
-		{
-			Variable.EmitInstance (ec);
-			Variable.EmitAddressOf (ec);
 		}
 
 		public override string ToString ()
@@ -3506,13 +3558,13 @@ namespace Mono.CSharp {
 	///   This represents a reference to a parameter in the intermediate
 	///   representation.
 	/// </summary>
-	public class ParameterReference : Expression, IAssignMethod, IMemoryLocation, IVariable {
+	public class ParameterReference : VariableReference, IVariable {
 		Parameter par;
 		string name;
 		int idx;
 		Block block;
 		VariableInfo vi;
-		public bool is_ref, is_out, prepared;
+		public bool is_ref, is_out;
 
 		public bool IsOut {
 			get {
@@ -3520,7 +3572,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool IsRef {
+		public override bool IsRef {
 			get {
 				return is_ref;
 			}
@@ -3538,7 +3590,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		LocalTemporary temp;
 		Variable variable;
 		
 		public ParameterReference (Parameter par, Block block, int idx, Location loc)
@@ -3555,7 +3606,7 @@ namespace Mono.CSharp {
 			get { return vi; }
 		}
 
-		public Variable Variable {
+		public override Variable Variable {
 			get { return variable != null ? variable : par.Variable; }
 		}
 
@@ -3704,88 +3755,6 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldarg, x);
 		}
 		
-		//
-		// This method is used by parameters that are references, that are
-		// being passed as references:  we only want to pass the pointer (that
-		// is already stored in the parameter, not the address of the pointer,
-		// and not the value of the variable).
-		//
-		public void EmitLoad (EmitContext ec)
-		{
-			if (!prepared)
-				Variable.EmitInstance (ec);
-			Variable.Emit (ec);
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			Emit (ec, false);
-		}
-		
-		public void Emit (EmitContext ec, bool leave_copy)
-		{
-			if (!prepared)
-				Variable.EmitInstance (ec);
-			Variable.Emit (ec);
-
-			if (is_ref) {
-				if (prepared)
-					ec.ig.Emit (OpCodes.Dup);
-	
-				//
-				// If we are a reference, we loaded on the stack a pointer
-				// Now lets load the real value
-				//
-				LoadFromPtr (ec.ig, type);
-			}
-
-			if (leave_copy) {
-				ec.ig.Emit (OpCodes.Dup);
-
-				if (is_ref || Variable.NeedsTemporary) {
-					temp = new LocalTemporary (Type);
-					temp.Store (ec);
-				}
-			}
-		}
-
-		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy,
-					bool prepare_for_load)
-		{
-			ILGenerator ig = ec.ig;
-			prepared = prepare_for_load;
-
-			Variable.EmitInstance (ec);
-			if (prepare_for_load && Variable.HasInstance)
-				ig.Emit (OpCodes.Dup);
-			else if (is_ref && !prepared)
-				Variable.Emit (ec);
-
-			source.Emit (ec);
-
-			if (leave_copy) {
-				ig.Emit (OpCodes.Dup);
-				if (is_ref || Variable.NeedsTemporary) {
-					temp = new LocalTemporary (Type);
-					temp.Store (ec);
-				}
-			}
-			if (is_ref)
-				StoreFromPtr (ig, type);
-			else
-				Variable.EmitAssign (ec);
-			if (temp != null) {
-				temp.Emit (ec);
-				temp.Release (ec);
-			}
-		}
-		
-		public void AddressOf (EmitContext ec, AddressOp mode)
-		{
-			Variable.EmitInstance (ec);
-			Variable.EmitAddressOf (ec);
-		}
-
 		public override string ToString ()
 		{
 			return "ParameterReference[" + name + "]";
@@ -6551,6 +6520,7 @@ namespace Mono.CSharp {
 		{
 			eclass = ExprClass.Variable;
 			type = ec.ContainerType;
+			variable = new SimpleThis (type);
 			return this;
 		}
 	}
@@ -6559,11 +6529,13 @@ namespace Mono.CSharp {
 	///   Represents the `this' construct
 	/// </summary>
 
-	public class This : Expression, IAssignMethod, IMemoryLocation, IVariable {
-
+	public class This : VariableReference, IVariable
+	{
 		Block block;
 		VariableInfo variable_info;
-		
+		protected Variable variable;
+		bool is_struct;
+
 		public This (Block block, Location loc)
 		{
 			this.loc = loc;
@@ -6584,6 +6556,14 @@ namespace Mono.CSharp {
 			return !TypeManager.IsValueType (Type);
 		}
 
+		public override bool IsRef {
+			get { return is_struct; }
+		}
+
+		public override Variable Variable {
+			get { return variable; }
+		}
+
 		public bool ResolveBase (EmitContext ec)
 		{
 			eclass = ExprClass.Variable;
@@ -6593,8 +6573,11 @@ namespace Mono.CSharp {
 			else
 				type = ec.ContainerType;
 
+			is_struct = ec.TypeContainer is Struct;
+
 			if (ec.IsStatic) {
-				Error (26, "Keyword `this' is not valid in a static property, static method, or static field initializer");
+				Error (26, "Keyword `this' is not valid in a static property, " +
+				       "static method, or static field initializer");
 				return false;
 			}
 
@@ -6602,10 +6585,26 @@ namespace Mono.CSharp {
 				if (block.Toplevel.ThisVariable != null)
 					variable_info = block.Toplevel.ThisVariable.VariableInfo;
 
+				AnonymousContainer am = ec.CurrentAnonymousMethod;
+				if (is_struct && (am != null) && !am.IsIterator) {
+					Report.Error (1673, loc, "Anonymous methods inside structs " +
+						      "cannot access instance members of `this'. " +
+						      "Consider copying `this' to a local variable " +
+						      "outside the anonymous method and using the " +
+						      "local instead.");
+					return false;
+				}
+
 				AnonymousMethodHost host = block.Toplevel.AnonymousMethodHost;
-				if (host != null)
-					host.CaptureThis ();
+				if ((host != null) && (!is_struct || host.IsIterator)) {
+					variable = host.CaptureThis ();
+					type = variable.Type;
+					is_struct = false;
+				}
 			}
+
+			if (variable == null)
+				variable = new SimpleThis (type);
 			
 			return true;
 		}
@@ -6615,8 +6614,10 @@ namespace Mono.CSharp {
 			if (!ResolveBase (ec))
 				return null;
 
-			if ((variable_info != null) && !(type.IsValueType && ec.OmitStructFlowAnalysis) && !variable_info.IsAssigned (ec)) {
-				Error (188, "The `this' object cannot be used before all of its fields are assigned to");
+			if ((variable_info != null) && !(type.IsValueType && ec.OmitStructFlowAnalysis) &&
+			    !variable_info.IsAssigned (ec)) {
+				Error (188, "The `this' object cannot be used before all of its " +
+				       "fields are assigned to");
 				variable_info.SetAssigned (ec);
 				return this;
 			}
@@ -6644,49 +6645,6 @@ namespace Mono.CSharp {
 
 			return this;
 		}
-
-		public void Emit (EmitContext ec, bool leave_copy)
-		{
-			Emit (ec);
-			if (leave_copy)
-				ec.ig.Emit (OpCodes.Dup);
-		}
-		
-		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
-		{
-			ILGenerator ig = ec.ig;
-			
-			if (ec.TypeContainer is Struct){
-				ec.EmitThis (false);
-				source.Emit (ec);
-				
-				LocalTemporary t = null;
-				if (leave_copy) {
-					t = new LocalTemporary (type);
-					ec.ig.Emit (OpCodes.Dup);
-					t.Store (ec);
-				}
-
-				ig.Emit (OpCodes.Stobj, type);
-				
-				if (leave_copy) {
-					t.Emit (ec);
-					t.Release (ec);
-				}
-			} else {
-				throw new Exception ("how did you get here");
-			}
-		}
-		
-		public override void Emit (EmitContext ec)
-		{
-			ILGenerator ig = ec.ig;
-
-			ec.EmitThis (false);
-			if (ec.TypeContainer is Struct)
-				ig.Emit (OpCodes.Ldobj, type);
-		}
-
 		public override int GetHashCode()
 		{
 			return block.GetHashCode ();
@@ -6701,18 +6659,46 @@ namespace Mono.CSharp {
 			return block == t.block;
 		}
 
-		public void AddressOf (EmitContext ec, AddressOp mode)
+		protected class SimpleThis : Variable
 		{
-			ec.EmitThis (true);
+			Type type;
 
-			// FIMXE
-			// FIGURE OUT WHY LDARG_S does not work
-			//
-			// consider: struct X { int val; int P { set { val = value; }}}
-			//
-			// Yes, this looks very bad. Look at `NOTAS' for
-			// an explanation.
-			// ec.ig.Emit (OpCodes.Ldarga_S, (byte) 0);
+			public SimpleThis (Type type)
+			{
+				this.type = type;
+			}
+
+			public override Type Type {
+				get { return type; }
+			}
+
+			public override bool HasInstance {
+				get { return false; }
+			}
+
+			public override bool NeedsTemporary {
+				get { return false; }
+			}
+
+			public override void EmitInstance (EmitContext ec)
+			{
+				// Do nothing.
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				ec.ig.Emit (OpCodes.Ldarg_0);
+			}
+
+			public override void EmitAssign (EmitContext ec)
+			{
+				throw new InvalidOperationException ();
+			}
+
+			public override void EmitAddressOf (EmitContext ec)
+			{
+				ec.ig.Emit (OpCodes.Ldarg_0);
+			}
 		}
 	}
 
