@@ -1,3 +1,7 @@
+2006-09-12  Lluis Sanchez Gual  <lluis@novell.com> 
+
+	* System.Xml.Serialization/XmlSchemaImporter.cs: Added null check.
+
 2006-09-11  Andrew Skiba <andrews@mainsoft.com>
 
 	* XmlSchemaImporter.cs,XmlMemberMapping.cs,SchemaImporter.cs: ifdef

@@ -1053,7 +1053,10 @@ namespace System.Xml.Serialization
 				choiceMember.ElementInfo.Add (CreateElementInfo (typeQName.Namespace, choiceMember, choiceMember.Name, choiceMember.TypeData, false, XmlSchemaForm.None));
 				cmap.AddMember (choiceMember);
 			}
-
+			
+			if (typeData == null)
+				return;
+	
 			if (multiValue)
 				typeData = typeData.ListTypeData;
 
