@@ -126,6 +126,7 @@ namespace MonoTests.System.Drawing.Imaging {
 			}
 		}
 
+#if !TARGET_JVM
 		[Test]
 		[Category ("NotWorking")]
 		public void Bitmap24bitData ()
@@ -250,6 +251,7 @@ namespace MonoTests.System.Drawing.Imaging {
 				}
 			}
 		}
+#endif
 
 		[Test]
 		public void Save () 

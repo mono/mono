@@ -36,6 +36,9 @@ set PROJECT_NET_CONFIGURATION=Debug
 set NUNIT_CONSOLE_PATH="C:\Program Files\NUnit-Net-2.0 2.2.8\bin"
 set JAVA_HOME=%VMW_HOME%\jre5
 
+set DATEL=%date:~4,2%_%date:~7,2%_%date:~10,4%
+set TIMEL=%time:~0,2%_%time:~3,2%
+set TIMESTAMP=%DATEL%_%TIMEL%
 
 REM ********************************************************
 REM @echo Set environment
@@ -46,8 +49,11 @@ set JGAC_PATH=%VMW_HOME%\jgac\vmw4j2ee_110\
 set RUNTIME_CLASSPATH=%JGAC_PATH%mscorlib.jar;%JGAC_PATH%System.jar;%JGAC_PATH%System.Xml.jar;%JGAC_PATH%System.Drawing.jar;%JGAC_PATH%J2SE.Helpers.jar;%JGAC_PATH%jai_imageio.jar
 set NUNIT_OPTIONS=/exclude=NotWorking
 
-set NET_OUTPUT_XML=%OUTPUT_FILE_PREFIX%.Net.xml
-set GH_OUTPUT_XML=%OUTPUT_FILE_PREFIX%.GH.xml
+set NET_OUTPUT_XML=%OUTPUT_FILE_PREFIX%.%RUNNING_FIXTURE%.Net.%TIMESTAMP%.xml
+set GH_OUTPUT_XML=%OUTPUT_FILE_PREFIX%.%RUNNING_FIXTURE%.GH.%TIMESTAMP%.xml
+
+set BUILD_LOG=%OUTPUT_FILE_PREFIX%.%RUNNING_FIXTURE%_build.log.%TIMESTAMP%.txt
+set RUN_LOG=%OUTPUT_FILE_PREFIX%.%RUNNING_FIXTURE%_run.log.%TIMESTAMP%.txt
 
 set NUNIT_PATH=%BACK_TO_ROOT_DIR%..\..\nunit20\
 set NUNIT_CLASSPATH=%NUNIT_PATH%nunit-console\bin\%PROJECT_J2EE_CONFIGURATION%\nunit.framework.jar;%NUNIT_PATH%nunit-console\bin\%PROJECT_J2EE_CONFIGURATION%\nunit.util.jar;%NUNIT_PATH%nunit-console\bin\%PROJECT_J2EE_CONFIGURATION%\nunit.core.jar;%NUNIT_PATH%nunit-console\bin\%PROJECT_J2EE_CONFIGURATION%\nunit-console.jar
@@ -59,7 +65,7 @@ REM ********************************************************
 REM ********************************************************
 
 REM devenv Test\DrawingTest\System.Drawing.Test.dotnet.sln /%BUILD_OPTION% Debug >%RUNNING_FIXTURE%_build.log.txt 2<&1
-msbuild %TEST_NET_SOLUTION% /t:%BUILD_OPTION% /p:Configuration=%PROJECT_NET_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.txt 2<&1
+msbuild %TEST_NET_SOLUTION% /t:%BUILD_OPTION% /p:Configuration=%PROJECT_NET_CONFIGURATION% >>%BUILD_LOG% 2<&1
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
@@ -72,7 +78,7 @@ REM ********************************************************
 REM ********************************************************
 
 REM devenv ..\..\nunit20\nunit.java.sln /%BUILD_OPTION% Debug_Java >>%RUNNING_FIXTURE%_build.log.txt 2<&1
-msbuild ..\..\nunit20\nunit20.java.sln /t:%BUILD_OPTION% /p:Configuration=%PROJECT_J2EE_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.txt 2<&1
+msbuild ..\..\nunit20\nunit20.java.sln /t:%BUILD_OPTION% /p:Configuration=%PROJECT_J2EE_CONFIGURATION% >>%BUILD_LOG% 2<&1
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
@@ -91,7 +97,7 @@ REM ********************************************************
 REM ********************************************************
 
 REM devenv Test\DrawingTest\System.Drawing.Test.sln /%BUILD_OPTION% Debug_Java >>%RUNNING_FIXTURE%_build.log.txt 2<&1
-msbuild %TEST_J2EE_SOLUTION% /t:%BUILD_OPTION% /p:Configuration=%PROJECT_J2EE_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.txt 2<&1
+msbuild %TEST_J2EE_SOLUTION% /t:%BUILD_OPTION% /p:Configuration=%PROJECT_J2EE_CONFIGURATION% >>%BUILD_LOG% 2<&1
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
@@ -119,7 +125,7 @@ copy "%NUNIT_PATH%nunit-console\bin\%PROJECT_J2EE_CONFIGURATION%\nunit-console.e
 copy "%NUNIT_PATH%nunit-console\bin\%PROJECT_J2EE_CONFIGURATION%\nunit.util.dll" .
 copy "%NUNIT_PATH%nunit-console\bin\%PROJECT_J2EE_CONFIGURATION%\nunit.core.dll" .
 copy "%NUNIT_PATH%nunit-console\bin\%PROJECT_J2EE_CONFIGURATION%\nunit.framework.dll" .
-%NUNIT_CONSOLE_PATH%\nunit-console.exe /fixture:%RUNNING_FIXTURE% %TEST_NET_ASSEMBLY% %NUNIT_OPTIONS% /xml=%NET_OUTPUT_XML% >%RUNNING_FIXTURE%_run.log.txt 2<&1
+%NUNIT_CONSOLE_PATH%\nunit-console.exe /fixture:%RUNNING_FIXTURE% %TEST_NET_ASSEMBLY% %NUNIT_OPTIONS% /xml=%NET_OUTPUT_XML% >>%RUN_LOG% 2<&1
 
 
 REM ********************************************************
@@ -136,7 +142,7 @@ copy %BACK_TO_ROOT_DIR%Test\DrawingTest\Test\bin\%PROJECT_J2EE_CONFIGURATION%\%T
 
 
 REM @echo on
-"%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi %TEST_J2EE_ASSEMBLY% /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUNNING_FIXTURE%_run.log.txt 2<&1
+"%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi %TEST_J2EE_ASSEMBLY% /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUN_LOG% 2<&1
 REM @echo off
 
 if "%RUNNING_DIR%" NEQ "" (
@@ -149,7 +155,7 @@ REM ********************************************************
 REM ********************************************************
 set XML_TOOL_PATH=..\..\tools\mono-xmltool
 REM devenv %XML_TOOL_PATH%\XmlTool.sln /%BUILD_OPTION% Debug_Java >>%RUNNING_FIXTURE%_build.log.txt 2<&1
-msbuild %XML_TOOL_PATH%\XmlTool20.vmwcsproj /t:%BUILD_OPTION% /p:Configuration=%PROJECT_J2EE_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.txt 2<&1
+msbuild %XML_TOOL_PATH%\XmlTool20.vmwcsproj /t:%BUILD_OPTION% /p:Configuration=%PROJECT_J2EE_CONFIGURATION% >>%BUILD_LOG% 2<&1
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
@@ -164,6 +170,12 @@ xmltool.exe --transform nunit_transform.xslt %GH_OUTPUT_XML%
 @echo off
 
 :FINALLY
+
+copy %RUNNING_DIR%\%RUN_LOG% ..\%BACK_TO_ROOT_DIR%
+copy %BUILD_LOG% ..\%BACK_TO_ROOT_DIR%
+copy %NET_OUTPUT_XML% ..\%BACK_TO_ROOT_DIR%
+copy %GH_OUTPUT_XML% ..\%BACK_TO_ROOT_DIR%
+
 GOTO END
 
 :ENVIRONMENT_EXCEPTION
@@ -171,12 +183,12 @@ GOTO END
 GOTO END
 
 :BUILD_EXCEPTION
-@echo Error in building solutions. See %RUNNING_FIXTURE%_build.log.txt for details...
+@echo Error in building solutions. See System.Drawing.%RUNNING_FIXTURE%_build.log.txt for details...
 REM EXIT 1
 GOTO END
 
 :RUN_EXCEPTION
-@echo Error in running fixture %RUNNING_FIXTURE%. See %RUNNING_FIXTURE%_run.log.txt for details...
+@echo Error in running fixture %RUNNING_FIXTURE%. See System.Drawing.%RUNNING_FIXTURE%_run.log.txt for details...
 REM EXIT 1
 GOTO END
 

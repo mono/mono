@@ -15,7 +15,7 @@ IF "%1"=="" (
 )
 	
 IF "%2"=="" (
-	set OUTPUT_FILE_PREFIX=System.Drawing.MonoTests.NUnitTestResult
+	set OUTPUT_FILE_PREFIX=System.Drawing
 ) ELSE (
 	set OUTPUT_FILE_PREFIX=%2
 )
@@ -36,7 +36,7 @@ IF "%1"=="" (
 )
 	
 IF "%2"=="" (
-	set OUTPUT_FILE_PREFIX=System.Drawing.Test.NUnitTestResult
+	set OUTPUT_FILE_PREFIX=System.Drawing
 ) ELSE (
 	set OUTPUT_FILE_PREFIX=%2
 )

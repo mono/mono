@@ -17,7 +17,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>DrawingTest\Test\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET_2_0</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET_2_0;TARGET_JVM</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>

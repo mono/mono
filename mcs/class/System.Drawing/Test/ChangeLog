@@ -1,3 +1,6 @@
+2006-09-12	Boris Kirzner <borisk@mainsoft.com>
+	* Test20.csproj,Test20.J2EE.vmwcsproj: updated references path.
+
 2006-08-28	Boris Kirzner <borisk@mainsoft.com>
 	* System.Drawing.Test20.J2EE.sln, System.Drawing.Test20.sln,
 	Test20.csproj, Test20.J2EE.vmwcsproj: added solution 

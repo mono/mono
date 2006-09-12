@@ -302,6 +302,7 @@ namespace MonoTests.System.Drawing.Imaging {
 			}
 		}
 
+#if !TARGET_JVM
 		[Test]
 		[Category ("NotWorking")]
 		public void Bitmap24bitData ()
@@ -426,6 +427,7 @@ namespace MonoTests.System.Drawing.Imaging {
 				}
 			}
 		}
+#endif
 
 		/* Checks bitmap features on a know 32-bits bitmap (codec)*/
 		[Test]

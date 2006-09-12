@@ -1,3 +1,7 @@
+2006-09-12	Boris Kirzner <borisk@mainsoft.com>
+	* run-tests.bat, run-tests.test.bat: reworked tests logging.
+	* System.Drawing20.vmwcsproj: updated references path.
+
 2006-09-01  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Makefile: Add new almogaver32bits.tif file to EXTRA_DISTFILES

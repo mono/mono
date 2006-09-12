@@ -1,3 +1,6 @@
+2006-09-12	Boris Kirzner <borisk@mainsoft.com>
+	* DrawingTestHelper20.J2EE.vmwcsproj: updated references path.
+
 2006-08-28	Boris Kirzner <borisk@mainsoft.com>
 	* DrawingTestHelper20.csproj, DrawingTestHelper20.J2EE.vmwcsproj :
 	added project files for NET_2_0 tests.
