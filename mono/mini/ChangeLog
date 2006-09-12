@@ -1,3 +1,16 @@
+2006-09-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_get_ldelema_ins): Allow ldelema2d optimization if 
+	MONO_ARCH_NO_EMULATE_MUL is defined.
+
+	* mini-ia64.h (MONO_ARCH_CALLEE_FREGS): Reserve f33 for use by instructions.
+
+	* mini-ia64.h: Define MONO_ARCH_NO_EMULATE_MUL.
+
+	* mini-ia64.c: Implement CEE_MUL based on gcc emitted code.
+
+	* mini-ia64.c (mono_arch_lowering_pass): Optimize store_membase_imm with offset==0.
+	
 2006-09-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-sparc.c (mono_arch_setup_jit_tls_data): Remove the duplicate altstack
