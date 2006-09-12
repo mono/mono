@@ -32,6 +32,7 @@
 #if NET_2_0 && SECURITY_DEP
 
 using Mono.Security;
+using Mono.Security.Cryptography;
 using MSX = Mono.Security.X509;
 
 namespace System.Security.Cryptography.X509Certificates {
@@ -62,10 +63,42 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		internal PublicKey (MSX.X509Certificate certificate)
 		{
+			// note: _key MUSTonly contains the public part of the key
+			bool export_required = true;
+
 			if (certificate.KeyAlgorithm == rsaOid) {
-				_key = certificate.RSA;
+				// shortcut export/import in the case the private key isn't available
+				RSACryptoServiceProvider rcsp = (certificate.RSA as RSACryptoServiceProvider);
+				if ((rcsp != null) && rcsp.PublicOnly) {
+					_key = certificate.RSA;
+					export_required = false;
+				} else {
+					RSAManaged rsam = (certificate.RSA as RSAManaged);
+					if ((rsam != null) && rsam.PublicOnly) {
+						_key = certificate.RSA;
+						export_required = false;
+					}
+				}
+
+				if (export_required) {
+					RSAParameters rsap = certificate.RSA.ExportParameters (false);
+					_key = RSA.Create ();
+					(_key as RSA).ImportParameters (rsap);
+				}
 			} else {
-				_key = certificate.DSA;
+				// shortcut export/import in the case the private key isn't available
+				DSACryptoServiceProvider dcsp = (certificate.DSA as DSACryptoServiceProvider);
+				if ((dcsp != null) && dcsp.PublicOnly) {
+					_key = certificate.DSA;
+					export_required = false;
+				}
+				// note: DSAManaged isn't availablt in Mono.Security due to a bug in Fx 1.x
+
+				if (export_required) {
+					DSAParameters rsap = certificate.DSA.ExportParameters (false);
+					_key = DSA.Create ();
+					(_key as DSA).ImportParameters (rsap);
+				}
 			}
 
 			_oid = new Oid (certificate.KeyAlgorithm);

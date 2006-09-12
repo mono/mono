@@ -1,3 +1,8 @@
+2006-09-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PublicKey.cs: Never return the private key in the Key property, even
+	if it was available when creating the public key.
+
 2006-09-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* X509Certificate2.cs : implemented HasPrivateKey. Return null
