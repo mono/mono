@@ -837,7 +837,7 @@ namespace Mono.CSharp {
 		public bool CheckAccessLevel (Type check_type) 
 		{
 			TypeBuilder tb;
-			if ((this is GenericMethod) || (this is Iterator))
+			if (this is GenericMethod)
 				tb = Parent.TypeBuilder;
 			else
 				tb = TypeBuilder;
