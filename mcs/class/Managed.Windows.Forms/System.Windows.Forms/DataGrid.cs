@@ -546,7 +546,7 @@ namespace System.Windows.Forms
 		public object DataSource {
 			get { return datasource; }
 			set {
-				SetDataSource (value, string.Empty);
+				SetDataSource (value, ListManager == null ? datamember : string.Empty);
 			}
 		}
 

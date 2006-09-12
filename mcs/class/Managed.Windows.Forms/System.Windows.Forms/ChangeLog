@@ -1,5 +1,14 @@
 2006-09-11  Chris Toshok  <toshok@ximian.com>
 
+	* DataGrid.cs (set_DataSource): make this work for both the
+	winforms/datagrid test and ReportBuilder.  It seems as though when
+	we've created a ListManager (or maybe it's if we have a
+	BindingContext?), when we set the DataSource it clears the
+	DataMember to "".  otherwise we reuse the datamember.  Fixes bug
+	#79333.
+
+2006-09-11  Chris Toshok  <toshok@ximian.com>
+
 	* XplatUIX11.cs: deal with queue being null, which happens in all
 	the Clipboard functions.  Fixes one of the two problems mentioned
 	in #78612.
