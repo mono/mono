@@ -2097,23 +2097,8 @@ namespace Mono.CSharp {
 			if (emit_debug_info) {
 				if (is_lexical_block)
 					ec.BeginScope ();
-
-				if (variables != null) {
-					foreach (DictionaryEntry de in variables) {
-						string name = (string) de.Key;
-						LocalInfo vi = (LocalInfo) de.Value;
-
-#if FIXME
-						if (vi.LocalBuilder == null)
-							continue;
-
-						ec.DefineLocalVariable (name, vi.LocalBuilder);
-#endif
-					}
-				}
 			}
 			ec.Mark (StartLocation, true);
-			Report.Debug (64, "BLOCK EMIT", this, Toplevel, ec, scope_init);
 			if (scope_init != null)
 				scope_init.EmitStatement (ec);
 			DoEmit (ec);
@@ -3997,7 +3982,7 @@ namespace Mono.CSharp {
 		Expression [] resolved_vars;
 		Expression [] converted_vars;
 		ExpressionStatement [] assign;
-		LocalBuilder local_copy;
+		TemporaryVariable local_copy;
 		
 		public Using (object expression_or_block, Statement stmt, Location l)
 		{
@@ -4090,6 +4075,9 @@ namespace Mono.CSharp {
 				}
 			}
 
+			local_copy = new TemporaryVariable (expr_type, loc);
+			local_copy.Resolve (ec);
+
 			return true;
 		}
 		
@@ -4175,10 +4163,8 @@ namespace Mono.CSharp {
 			// Make a copy of the expression and operate on that.
 			//
 			ILGenerator ig = ec.ig;
-			local_copy = ig.DeclareLocal (expr_type);
 
-			expr.Emit (ec);
-			ig.Emit (OpCodes.Stloc, local_copy);
+			local_copy.Store (ec, expr);
 
 			if (emit_finally)
 				ig.BeginExceptionBlock ();
@@ -4193,19 +4179,21 @@ namespace Mono.CSharp {
 		void EmitExpressionFinally (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			if (!local_copy.LocalType.IsValueType) {
+			if (!expr_type.IsValueType) {
 				Label skip = ig.DefineLabel ();
-				ig.Emit (OpCodes.Ldloc, local_copy);
+				local_copy.Emit (ec);
 				ig.Emit (OpCodes.Brfalse, skip);
-				ig.Emit (OpCodes.Ldloc, local_copy);
+				local_copy.Emit (ec);
 				ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
 				ig.MarkLabel (skip);
 			} else {
-				Expression ml = Expression.MemberLookup(ec.ContainerType, TypeManager.idisposable_type, local_copy.LocalType, "Dispose", Mono.CSharp.Location.Null);
+				Expression ml = Expression.MemberLookup (
+					ec.ContainerType, TypeManager.idisposable_type, expr_type,
+					"Dispose", Location.Null);
 
 				if (!(ml is MethodGroupExpr)) {
-					ig.Emit (OpCodes.Ldloc, local_copy);
-					ig.Emit (OpCodes.Box, local_copy.LocalType);
+					local_copy.Emit (ec);
+					ig.Emit (OpCodes.Box, expr_type);
 					ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
 				} else {
 					MethodInfo mi = null;
@@ -4222,7 +4210,7 @@ namespace Mono.CSharp {
 						return;
 					}
 
-					ig.Emit (OpCodes.Ldloca, local_copy);
+					local_copy.AddressOf (ec, AddressOp.Load);
 					ig.Emit (OpCodes.Call, mi);
 				}
 			}
