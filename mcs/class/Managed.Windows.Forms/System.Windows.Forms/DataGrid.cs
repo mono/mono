@@ -659,7 +659,12 @@ namespace System.Windows.Forms
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected internal CurrencyManager ListManager {
-			get { return list_manager; }
+			get {
+				if (list_manager == null)
+					SetDataSource (DataSource, DataMember);
+
+				return list_manager;
+			}
 			set { throw new NotSupportedException ("Operation is not supported."); }
 		}
 
