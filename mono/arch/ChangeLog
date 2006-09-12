@@ -1,3 +1,8 @@
+
+Tue Sep 12 13:09:56 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* arm/*: VFP floating point format code generation support.
+
 2006-09-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* ia64/ia64-codegen.h: Add xmpy_l/u pseudo ops.
