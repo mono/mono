@@ -17,7 +17,7 @@ namespace System.Data.OracleClient {
 		OracleType type;
 
 		long length = -1;
-		long position = 1;
+		long position = 0;
 
 		#endregion // Fields
 
@@ -275,7 +275,7 @@ namespace System.Data.OracleClient {
 					newPosition += offset;
 					break;
 				case SeekOrigin.End:
-					newPosition = Length - offset;
+					newPosition = Length + offset;
 					break;
 			}
 

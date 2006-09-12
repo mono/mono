@@ -1,4 +1,8 @@
-2006-08-21	Leszek Ciesielski <skolima@gmail.com>
+2006-09-12      Leszek Ciesielski <skolima@gmail.com>
+
+        * OracleLob.cs : fix for bug 78898
+
+2006-09-11	Leszek Ciesielski <skolima@gmail.com>
 
 	* OracleCommand.cs : fix for bug 78765 and 79284
 	* OracleParameter.cs : fix for bug 78509 and 79284

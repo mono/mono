@@ -1,3 +1,4 @@
 System.Data.OracleClient/OraclePermissionAttributeTest.cs
 System.Data.OracleClient/OracleCommandTest.cs
 System.Data.OracleClient/OracleParameterTest.cs
+System.Data.OracleClient/OracleLobTest.cs

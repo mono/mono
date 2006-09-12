@@ -35,7 +35,7 @@ namespace System.Data.OracleClient {
 		OracleType type;
 
 		long length = -1;
-		long position = 1;
+		long position = 0;
 
 		#endregion // Fields
 
@@ -316,7 +316,7 @@ namespace System.Data.OracleClient {
 			int bytesRead;
 			byte[] output = new byte[count];
 
-			bytesRead = locator.Read (output, (uint) Position, (uint) count, LobType == OracleType.Blob);
+			bytesRead = locator.Read (output, (uint) Position + 1, (uint) count, LobType == OracleType.Blob);
 			output.CopyTo (buffer, offset);
 			position += bytesRead;
 			return bytesRead;
@@ -335,7 +335,7 @@ namespace System.Data.OracleClient {
 				newPosition += offset;
 				break;
 			case SeekOrigin.End:
-				newPosition = Length - offset;
+				newPosition = Length + offset;
 				break;
 			}
 
@@ -380,7 +380,7 @@ namespace System.Data.OracleClient {
 				Array.Copy (buffer, offset, value, 0, count);
 			}
 
-			position += locator.Write (value, (uint) Position, (uint) value.Length, LobType);
+			position += locator.Write (value, (uint) Position + 1, (uint) value.Length, LobType);
 		}
 
 		#endregion // Methods
