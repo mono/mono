@@ -114,7 +114,7 @@ msbuild %XML_TOOL_PATH%\XmlTool20.vmwcsproj /t:%BUILD_OPTION% /p:Configuration=%
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
-copy %XML_TOOL_PATH%\bin\Debug_Java\xmltool.exe .
+copy %XML_TOOL_PATH%\bin\%PROJECT_CONFIGURATION%\xmltool.exe .
 copy %XML_TOOL_PATH%\nunit_transform.xslt .
 
 REM ********************************************************
