@@ -1,3 +1,9 @@
+2006-09-11  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (mono_image_build_metadata): Create the
+	MethodImpl's after emitting all types and methods, so we don't
+	need another fixup pass for them.
+
 2006-09-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_from_name_case): Fix regression introduced by the last
