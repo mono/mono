@@ -1,3 +1,7 @@
+2006-19-12	Boris Kizner <borisk@mainsoft.com>
+
+	* System.Data.OracleClient.J2EE.config: change tests server.
+
 2006-08-21	Boris Kirzner	<borisk@mainsoft.com>
 
 	* System.Data.OracleClient.Tests20.J2EE.sln, 

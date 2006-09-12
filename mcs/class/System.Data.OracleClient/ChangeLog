@@ -1,3 +1,7 @@
+2006-09-12	Boris Kirzner <borisk@mainsoft.com>
+
+	* run-tests.test.bat: rework logging for TARGET_JVM tests.
+
 2006-09-12      Leszek Ciesielski <skolima@gmail.com>
 
         * OracleLob.cs : fix for bug 78898
