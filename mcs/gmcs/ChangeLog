@@ -1,3 +1,10 @@
+2006-09-12  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (TypeManager.IsIList): Moved into convert.cs.
+
+	* convert.cs (Convert.Array_To_IList): Moved here and correctly
+	implement it; fixes #79345.
+
 2006-09-08  Martin Baulig  <martin@ximian.com>
 
 	* typemanager.cs (TypeManager.interlocked_type): New public field.
