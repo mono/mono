@@ -40,6 +40,7 @@ namespace System.Windows.Forms {
 		internal ArrayList	timer_list;
 		private Thread		thread;
 		private bool		quit_posted;
+		private bool            dispatch_idle;
 
 		private static readonly int InitialXEventSize = 100;
 		private static readonly int InitialLXEventSize = 10;
@@ -52,6 +53,7 @@ namespace System.Windows.Forms {
 			timer_list = new ArrayList ();
 			this.thread = thread;
 			this.quit_posted = false;
+			this.handle_idle = true;
 		}
 
 		public int Count {
@@ -104,6 +106,15 @@ namespace System.Windows.Forms {
 				}
 			}				
 			return xqueue.Peek();
+		}
+
+		public bool DispatchIdle {
+			get {
+				return dispatch_idle;
+			}
+			set {
+				dispatch_idle = value;
+			}
 		}
 
 		public bool PostQuitState {

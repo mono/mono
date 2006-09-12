@@ -1162,7 +1162,7 @@ namespace System.Windows.Forms {
 			}
 
 			if (pending == 0) {
-				if (Idle != null) {
+				if ((queue == null || queue.DispatchIdle) && Idle != null) {
 					Idle (this, EventArgs.Empty);
 				}
 
@@ -2784,18 +2784,22 @@ namespace System.Windows.Forms {
 
 		internal override void DoEvents() {
 			MSG	msg = new MSG ();
-			Object	queue_id;
+			XEventQueue queue;
 
 			if (OverrideCursorHandle != IntPtr.Zero) {
 				OverrideCursorHandle = IntPtr.Zero;
 			}
 
-			queue_id = (Object)ThreadQueue(Thread.CurrentThread);
+			queue = ThreadQueue(Thread.CurrentThread);
 
-			while (PeekMessage(queue_id, ref msg, IntPtr.Zero, 0, 0, (uint)PeekMessageFlags.PM_REMOVE)) {
+			queue.DispatchIdle = false;
+
+			while (PeekMessage(queue, ref msg, IntPtr.Zero, 0, 0, (uint)PeekMessageFlags.PM_REMOVE)) {
 				TranslateMessage (ref msg);
 				DispatchMessage (ref msg);
 			}
+
+			queue.DispatchIdle = true;
 		}
 
 		internal override void EnableWindow(IntPtr handle, bool Enable) {

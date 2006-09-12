@@ -1,5 +1,17 @@
 2006-09-11  Chris Toshok  <toshok@ximian.com>
 
+	* XEventQueue.cs: add a DispatchIdle property.
+
+	* XplatUIX11.cs (UpdateMessageQueue): only emit the Idle event if
+	either the queue is null, or the queue has DispatchIdle set to
+	true.
+	(DoEvents): set queue.DispatchIdle to false around the
+	peek/translate/dispatch message loop in this method.  This keeps
+	Application.Doevents from emitting idle events.  Part of the fix
+	for #78823.
+
+2006-09-11  Chris Toshok  <toshok@ximian.com>
+
 	* DataGrid.cs (set_DataSource): make this work for both the
 	winforms/datagrid test and ReportBuilder.  It seems as though when
 	we've created a ListManager (or maybe it's if we have a
