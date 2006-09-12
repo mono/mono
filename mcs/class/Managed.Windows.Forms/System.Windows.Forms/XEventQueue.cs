@@ -53,7 +53,7 @@ namespace System.Windows.Forms {
 			timer_list = new ArrayList ();
 			this.thread = thread;
 			this.quit_posted = false;
-			this.handle_idle = true;
+			this.dispatch_idle = true;
 		}
 
 		public int Count {
