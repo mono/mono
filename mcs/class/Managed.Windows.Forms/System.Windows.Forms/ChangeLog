@@ -1,5 +1,11 @@
 2006-09-11  Chris Toshok  <toshok@ximian.com>
 
+	* XplatUIX11.cs: deal with queue being null, which happens in all
+	the Clipboard functions.  Fixes one of the two problems mentioned
+	in #78612.
+
+2006-09-11  Chris Toshok  <toshok@ximian.com>
+
 	* MenuAPI.cs: rework OnMouseUp a bit so that releasing the mouse
 	button on various spots (including outside the menu) works closer
 	to MS, and doesn't crash.  Fixes #79343.

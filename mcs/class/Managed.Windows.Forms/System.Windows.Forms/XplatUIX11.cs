@@ -1172,13 +1172,15 @@ namespace System.Windows.Forms {
 			}
 
 			if (pending == 0) {
-				int	timeout;
+				int	timeout = 0;
 
-				if ((queue != null) && (queue.Paint.Count > 0)) {
-					return;
+				if (queue != null) {
+					if (queue.Paint.Count > 0)
+						return;
+
+					timeout = NextTimeout (queue.timer_list, now);
 				}
 
-				timeout = NextTimeout (queue.timer_list, now);
 				if (timeout > 0) {
 					#if __MonoCS__
 					Syscall.poll (pollfds, (uint) pollfds.Length, timeout);
@@ -1193,7 +1195,8 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			CheckTimers (queue.timer_list, now);
+			if (queue != null)
+				CheckTimers (queue.timer_list, now);
 
 			while (true) {
 				XEvent xevent = new XEvent ();
