@@ -1,10 +1,14 @@
 2006-09-12 Igor Zelmanovich <igorz@mainsoft.com>
 
-	* TableViewTest.cs: fixed test, removed NotWorking attributes
+	* TreeNodeTest.cs: fixed tests, removed NotWorking attributes
+
+2006-09-12 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* TreeViewTest.cs: fixed test, removed NotWorking attributes
 
 2006-09-11 Igor Zelmanovich <igorz@mainsoft.com>
 
-	* TableViewTest.cs: fixed tests, removed NotWorking attributes
+	* TreeViewTest.cs: fixed tests, removed NotWorking attributes
 
 2006-09-10 Igor Zelmanovich <igorz@mainsoft.com>
 
