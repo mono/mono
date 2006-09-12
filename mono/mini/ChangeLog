@@ -1,5 +1,7 @@
 2006-09-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* cpu-alpha.md inssel-alpha.brg mini-alpha.h mini-alpha.c exceptions-alpha.c tramp-alpha.c: More alpha port work from Sergey Tikhonov <tsv@solvo.ru>.
+
 	* cpu-pentium.md: Rename this to cpu-x86.md for consistency with other platforms.
 
 	* Makefile.am mini-x86.c mini-codegen.c: Rename pentium_desc to x86_desc.
