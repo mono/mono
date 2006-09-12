@@ -536,6 +536,11 @@ delegate missuse.  Basically a delegate instance might be created,
 passed to unmanaged code, and no references kept in managed code,
 which will garbage collect the code.  With this option it is possible
 to track down the source of the problems. 
+.TP
+.I "break-on-unverified"
+If this variable is set, when the Mono VM runs into a verification
+problem, instead of throwing an exception it will break into the
+debugger.  This is useful when debugging verifier problems
 .ne
 .RE
 .TP
