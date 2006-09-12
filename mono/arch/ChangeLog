@@ -1,3 +1,7 @@
+2006-09-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* ia64/ia64-codegen.h: Add xmpy_l/u pseudo ops.
+
 2006-07-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* amd64/amd64-codegen.h: Fix amd64_mov_mem_reg.
