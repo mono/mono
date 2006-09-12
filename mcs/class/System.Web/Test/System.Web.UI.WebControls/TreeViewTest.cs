@@ -1275,16 +1275,32 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 		// Render Navigate
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void TreeView_Render_Navigate () {
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadNavigate));
-			string strTarget = "<a href=\"#treeview1_SkipLink\"><img alt=\"Skip Navigation Links.\" src=\"/NunitWeb/WebResource.axd?d=kffkK8wYLPknq-W8AKNdNQ2&amp;t=632883840303269703\" width=\"0\" height=\"0\" style=\"border-width:0px;\" /></a><div id=\"treeview1\">\r\n\t<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><a id=\"treeview1n0\" href=\"javascript:TreeView_ToggleNode(treeview1_Data,0,treeview1n0,' ',treeview1n0Nodes)\"><img src=\"/NunitWeb/WebResource.axd?d=edXX1vkoy5lI0CekgaZ5zW7-1Af97Wq_r6fRK7PDqP81&amp;t=632883840303269703\" alt=\"Collapse myNode0\" style=\"border-width:0;\" /></a></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"myUrl0\" target=\"myTarget\" onclick=\"javascript:TreeView_SelectNode(treeview1_Data, this,'treeview1t0');\" id=\"treeview1t0\">myNode0</a></td>\r\n\t\t</tr>\r\n\t</table><div id=\"treeview1n0Nodes\" style=\"display:block;\">\r\n\t\t<table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td><div style=\"width:20px;height:1px\"></div></td><td><img src=\"/NunitWeb/WebResource.axd?d=edXX1vkoy5lI0CekgaZ5zZhMbc1ZCZv4nlS9J-l53l41&amp;t=632883840303269703\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"myUrl00\" target=\"myTarget\" onclick=\"javascript:TreeView_SelectNode(treeview1_Data, this,'treeview1t1');\" id=\"treeview1t1\">myNode00</a></td>\r\n\t\t\t</tr>\r\n\t\t</table>\r\n\t</div><table cellpadding=\"0\" cellspacing=\"0\" style=\"border-width:0;\">\r\n\t\t<tr>\r\n\t\t\t<td><img src=\"/NunitWeb/WebResource.axd?d=edXX1vkoy5lI0CekgaZ5zZhMbc1ZCZv4nlS9J-l53l41&amp;t=632883840303269703\" alt=\"\" /></td><td style=\"white-space:nowrap;\"><a class=\"treeview1_0\" href=\"myUrl1\" target=\"myTarget\" onclick=\"javascript:TreeView_SelectNode(treeview1_Data, this,'treeview1t2');\" id=\"treeview1t2\">myNode1</a></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div><a id=\"treeview1_SkipLink\"></a>";
+			#region HTML
+			string strTarget = @"<a href=""#treeview1_SkipLink""><img alt=""Skip Navigation Links."" src=""/NunitWeb/WebResource.axd?d=QxfUEifeQdL5PTiZOF8HlA2&amp;t=632900536532114160"" width=""0"" height=""0"" style=""border-width:0px;"" /></a><div id=""treeview1"">
+	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
+		<tr>
+			<td><a href=""javascript:__doPostBack('treeview1','tmyNode0')""><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCKx8id-JMenwfEutsU_5Jl881&amp;t=632900536532114160"" alt=""Collapse myNode0"" style=""border-width:0;"" /></a></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""myUrl0"" target=""myTarget"" id=""treeview1t0"">myNode0</a></td>
+		</tr>
+	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
+		<tr>
+			<td><div style=""width:20px;height:1px""></div></td><td><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCK1PXgyMDQIACCdOOfDo560o1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""myUrl00"" target=""myTarget"" id=""treeview1t1"">myNode00</a></td>
+		</tr>
+	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
+		<tr>
+			<td><img src=""/NunitWeb/WebResource.axd?d=FFvd_97uOAs_RkkFT_hCK1PXgyMDQIACCdOOfDo560o1&amp;t=632900536532114160"" alt="""" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""myUrl1"" target=""myTarget"" id=""treeview1t2"">myNode1</a></td>
+		</tr>
+	</table>
+</div><a id=""treeview1_SkipLink""></a>";
+			#endregion
 			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			HtmlDiff.AssertAreEqual (strTarget, str, "RenderNavigate");
 		}
 		public static void pageLoadNavigate (Page page) {
 			TreeView tv = new TreeView ();
+			tv.EnableClientScript = false;
 			tv.ID = "treeview1";
 			tv.Target = "myTarget";
 			tv.Nodes.Add (new TreeNode ());
@@ -1416,7 +1432,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 		// Render Images
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void TreeView_Render_ImagesOn () {
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadImagesOn));
@@ -1634,7 +1649,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 		//Render Node Strings
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void TreeView_Render_NodeStrings () {
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadNodeStrings));

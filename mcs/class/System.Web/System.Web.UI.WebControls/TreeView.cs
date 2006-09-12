@@ -590,7 +590,7 @@ namespace System.Web.UI.WebControls
 				return (TreeNodeTypes)ViewState.GetInt ("ShowCheckBoxes", (int)TreeNodeTypes.None);
 			}
 			set {
-				if (!Enum.IsDefined (typeof (TreeNodeTypes), value))
+				if ((int) value > 7)
 					throw new ArgumentOutOfRangeException ();
 				ViewState ["ShowCheckBoxes"] = value;
 			}
@@ -1301,18 +1301,14 @@ namespace System.Web.UI.WebControls
 			writer.RenderBeginTag (HtmlTextWriterTag.Tr);
 			
 			// Vertical lines from previous levels
-			
+
+			nodeImage = GetNodeImageUrl ("i", imageStyle);
 			for (int n=0; n<level; n++) {
 				writer.RenderBeginTag (HtmlTextWriterTag.Td);
 				writer.AddStyleAttribute ("width", NodeIndent + "px");
 				writer.AddStyleAttribute ("height", "1px");
 				writer.RenderBeginTag (HtmlTextWriterTag.Div);
-				if (ShowLines) {
-					if (levelLines [n] == null)
-						nodeImage = GetNodeImageUrl ("noexpand", imageStyle);
-					else
-						nodeImage = GetNodeImageUrl ("i", imageStyle);
-
+				if (ShowLines && levelLines [n] != null) {
 					writer.AddAttribute ("src", nodeImage);
 					writer.AddAttribute (HtmlTextWriterAttribute.Alt, "");
 					writer.RenderBeginTag (HtmlTextWriterTag.Img);
@@ -1391,8 +1387,8 @@ namespace System.Web.UI.WebControls
 				writer.RenderBeginTag (HtmlTextWriterTag.Td);	// TD
 				BeginNodeTag (writer, node, clientExpand);
 				writer.AddAttribute ("src", imageUrl);
-				writer.AddAttribute ("border", "0");
-				if (node.ImageToolTip != "") writer.AddAttribute ("alt", node.ImageToolTip);
+				writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0");
+				writer.AddAttribute ("alt", node.ImageToolTip);
 				writer.RenderBeginTag (HtmlTextWriterTag.Img);
 				writer.RenderEndTag ();	// IMG
 				writer.RenderEndTag ();	// style tag
@@ -1415,9 +1411,9 @@ namespace System.Web.UI.WebControls
 				showChecks = node.ShowCheckBox.Value;
 			else
 				showChecks = (ShowCheckBoxes == TreeNodeTypes.All) ||
-							 (ShowCheckBoxes == TreeNodeTypes.Leaf && node.IsLeafNode) ||
-							 (ShowCheckBoxes == TreeNodeTypes.Parent && node.IsParentNode && node.Parent != null) ||
-							 (ShowCheckBoxes == TreeNodeTypes.Root && node.Parent == null && node.ChildNodes.Count > 0);
+							 ((ShowCheckBoxes & TreeNodeTypes.Leaf) > 0 && node.IsLeafNode) ||
+							 ((ShowCheckBoxes & TreeNodeTypes.Parent) > 0 && node.IsParentNode && node.Parent != null) ||
+							 ((ShowCheckBoxes & TreeNodeTypes.Root) > 0 && node.Parent == null && node.ChildNodes.Count > 0);
 
 			if (showChecks) {
 				writer.AddAttribute ("name", ClientID + "_cs_" + node.Path);
@@ -1656,10 +1652,15 @@ namespace System.Web.UI.WebControls
 
 		void BeginNodeTag (HtmlTextWriter writer, TreeNode node, bool clientExpand)
 		{
+			if(node.ToolTip.Length>0)
+				writer.AddAttribute ("title", node.ToolTip);
+
 			if (node.NavigateUrl != "") {
 				writer.AddAttribute ("href", node.NavigateUrl);
-				if (node.Target != null)
+				if (node.Target.Length > 0)
 					writer.AddAttribute ("target", node.Target);
+				else if (Target.Length > 0)
+					writer.AddAttribute ("target", Target);
 				writer.RenderBeginTag (HtmlTextWriterTag.A);
 			}
 			else if (node.SelectAction != TreeNodeSelectAction.None) {
