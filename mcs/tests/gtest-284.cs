@@ -222,7 +222,7 @@ public static class InterfaceTester
 		if (result != 0)
 			return result;
 
-		result = Test (typeof (Y), typeof (Y));
+		result = Test (typeof (Y), typeof (Y), typeof (object));
 		if (result != 0)
 			return 100 + result;
 
