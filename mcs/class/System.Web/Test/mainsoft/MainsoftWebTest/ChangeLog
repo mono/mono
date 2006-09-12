@@ -1,3 +1,8 @@
+2006-09-12  Vladimir Krasniv  <vladimirk@mainsoft.com>
+
+	* WebTest.cs: fixed test case find in response of net2.0
+	* added reference20, reference response from net2.0
+
 2006-07-26  Vladimir Krasnov  <vladimirk@mainsfot.com>
 	
 	* NunitWebTest.cs: fixed HtmltoXml, removes spaces and crlf before

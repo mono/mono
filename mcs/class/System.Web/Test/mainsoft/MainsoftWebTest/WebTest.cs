@@ -118,7 +118,7 @@ namespace MonoTests.stand_alone.WebHarness
 		private ArrayList GetSubTests(string s)
 		{
 			ArrayList subTestList = new ArrayList();
-			int startIndex = 0;
+			int startIndex = SkipViewstate (s);
 			string subTest = FindSubTest(s, startIndex);
 			
 			while (subTest != "")
@@ -182,6 +182,19 @@ namespace MonoTests.stand_alone.WebHarness
 				else
 					return tagEndPos;
 			}
+		}
+
+		private int SkipViewstate (string s)
+		{
+			int start = s.IndexOf ("<div id");
+			int startVS = s.IndexOf ("<div>");
+			int vs = s.IndexOf ("VIEWSTATE");
+			int endVS = s.IndexOf ("</div>");
+
+			if (startVS > 0 && startVS < vs && vs < endVS && startVS < start)
+				return endVS + 7;
+
+			return 0;
 		}
 
 		private int GetBeginDivPosition(string s, int startIndex)
