@@ -121,7 +121,6 @@ namespace Mono.CSharp {
 		TypeExpr iterator_type_expr;
 		Field pc_field;
 		Field current_field;
-		Method dispose;
 		MethodInfo dispose_method;
 
 		TypeExpr enumerator_type;
@@ -135,6 +134,10 @@ namespace Mono.CSharp {
 				iterator.Location)
 		{
 			this.Iterator = iterator;
+		}
+
+		public override bool IsIterator {
+			get { return true; }
 		}
 
 		public MethodInfo Dispose {
@@ -195,7 +198,7 @@ namespace Mono.CSharp {
 
 			Define_Current (true);
 			Define_Current (false);
-			dispose = new DisposeMethod (this);
+			new DisposeMethod (this);
 			Define_Reset ();
 
 			if (Iterator.IsEnumerable) {
@@ -361,7 +364,7 @@ namespace Mono.CSharp {
 				host.AddMethod (this);
 
 				Block = new ToplevelBlock (host.Iterator.Container, null, Location);
-				Block.AddStatement (new GetEnumeratorStatement (host, Type, is_generic));
+				Block.AddStatement (new GetEnumeratorStatement (host, Type));
 			}
 
 			public override EmitContext CreateEmitContext (DeclSpace tc, ILGenerator ig)
@@ -377,18 +380,15 @@ namespace Mono.CSharp {
 			{
 				IteratorHost host;
 				Expression type;
-				bool is_generic;
 
 				ExpressionStatement initializer;
 				Expression cast;
 				MethodInfo ce;
 
-				public GetEnumeratorStatement (IteratorHost host, Expression type,
-							       bool is_generic)
+				public GetEnumeratorStatement (IteratorHost host, Expression type)
 				{
 					this.host = host;
 					this.type = type;
-					this.is_generic = is_generic;
 					loc = host.Location;
 				}
 
@@ -515,6 +515,10 @@ namespace Mono.CSharp {
 				DoEmitInstance (ec);
 			}
 
+			protected override bool IsGetEnumerator {
+				get { return true; }
+			}
+
 			protected override void EmitParameterReference (EmitContext ec,
 									CapturedParameter cp)
 			{
@@ -578,26 +582,6 @@ namespace Mono.CSharp {
 		ArrayList resume_points = new ArrayList ();
 		int pc;
 		
-		//
-		// Context from the original method
-		//
-		GenericMethod generic_method;
-		TypeExpr current_type;
-		Type this_type;
-		Parameters parameters;
-		Parameters original_parameters;
-		IMethodData orig_method;
-
-		MethodInfo dispose_method;
-		Method move_next_method;
-		Constructor ctor;
-
-		Expression enumerator_type;
-		Expression enumerable_type;
-		Expression generic_enumerator_type;
-		Expression generic_enumerable_type;
-		TypeArguments generic_args;
-
 		public readonly Type OriginalIteratorType;
 		public readonly IteratorHost IteratorHost;
 
@@ -937,15 +921,6 @@ namespace Mono.CSharp {
 			Iterator iterator = new Iterator (
 				method, parent, generic, null, block, modifiers,
 				iterator_type, is_enumerable);
-
-#if FIXME
-			if (!iterator.RootScope.Define ())
-				return null;
-			if (iterator.RootScope.DefineType () == null)
-				return null;
-			if (!iterator.RootScope.ResolveType ())
-				return null;
-#endif
 
 			Report.Debug (64, "CREATE ITERATOR #1", iterator, iterator.RootScope,
 				      iterator.RootScope.IsGeneric, iterator.RootScope.TypeBuilder);
