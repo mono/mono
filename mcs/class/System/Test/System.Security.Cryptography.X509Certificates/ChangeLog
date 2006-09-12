@@ -1,3 +1,10 @@
+2006-09-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PublicKeyTest.cs: Add a test case where the key comes from a PKCS#12
+	file, i.e. where a private key is also present. PublicKey.Key never
+	returns the private part of the key. Fix bug #79375. Added similar 
+	checks to existing test cases (where a Key is returned).
+
 2006-09-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* X509Certificate2Test.cs : added test for PrivateKey and
