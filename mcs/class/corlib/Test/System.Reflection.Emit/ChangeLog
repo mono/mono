@@ -1,3 +1,8 @@
+2006-09-13  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DynamicMethodTest.cs: Added ctor tests for name null check. Added
+	tests for bug #79367 (marked NotWorking).
+
 2006-09-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeBuilderTest.cs: Add a test for #79249.
