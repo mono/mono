@@ -1,3 +1,7 @@
+2006-13-09	Boris Kirzner <borisk@mainsoft.com>
+
+	* run-tests.test.bat: small fixes for TARGET_JVM test scripts.
+
 2006-11-09	Boris Kirzner <borisk@mainsoft.com>
 
 	* run-tests.test.bat: added timestamp to log file namies.
