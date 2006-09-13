@@ -30,16 +30,18 @@ REM Set parameters
 REM ********************************************************
 
 set BUILD_OPTION=%1
-set OUTPUT_FILE_PREFIX=System.Data
+set OUTPUT_FILE_PREFIX=System.Data.connected
 set RUNNING_FIXTURE=MonoTests.System.Data
-
 set TEST_SOLUTION=Test\ProviderTests\System.Data.OleDb.Tests20.J2EE.sln
 set TEST_ASSEMBLY=System.Data.OleDb.Tests.J2EE.jar
 set PROJECT_CONFIGURATION=Debug_Java20
 set APP_CONFIG_FILE=Test\ProviderTests\System.Data.OleDb.J2EE.config
 
-set RUN_ID=connected
-set OUTPUT_FILE_PREFIX=%OUTPUT_FILE_PREFIX%.%RUN_ID%
+
+set DATEL=%date:~10,4%_%date:~4,2%_%date:~7,2%%
+set TIMEL=%time:~0,2%_%time:~3,2%
+set TIMESTAMP=%DATEL%_%TIMEL%
+
 
 REM ********************************************************
 REM @echo Set environment
@@ -69,9 +71,9 @@ set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%GHROOT%\jgac\jdbc\db2jcc_license_cu.j
 
 set NUNIT_OPTIONS=/exclude=NotWorking
 
-set GH_OUTPUT_XML=%OUTPUT_FILE_PREFIX%.%RUNNING_FIXTURE%.GH.%TIMESTAMP%.xml
-set BUILD_LOG=%OUTPUT_FILE_PREFIX%.%RUNNING_FIXTURE%_build.log.%TIMESTAMP%.txt
-set RUN_LOG=%OUTPUT_FILE_PREFIX%.%RUNNING_FIXTURE%_run.log.%TIMESTAMP%.txt
+set GH_OUTPUT_XML=%TIMESTAMP%.%OUTPUT_FILE_PREFIX%.GH.xml
+set BUILD_LOG=%TIMESTAMP%.%OUTPUT_FILE_PREFIX%.GH.%RUNNING_FIXTURE%.build.log
+set RUN_LOG=%TIMESTAMP%.%OUTPUT_FILE_PREFIX%.GH.%RUNNING_FIXTURE%.run.log
 
 set NUNIT_PATH=..\..\nunit20\
 set NUNIT_CLASSPATH=%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.framework.jar
@@ -122,7 +124,6 @@ REM ********************************************************
 copy Test\ProviderTests\bin\%PROJECT_CONFIGURATION%\%TEST_ASSEMBLY% .
 copy %APP_CONFIG_FILE% nunit-console.exe.config
 
-
 REM @echo on
 "%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi %TEST_ASSEMBLY% /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUN_LOG% 2<&1
 REM @echo off
@@ -147,11 +148,6 @@ xmltool.exe --transform nunit_transform.xslt %GH_OUTPUT_XML%
 @echo off
 
 :FINALLY
-
-copy %RUN_LOG% ..\
-copy %BUILD_LOG% ..\
-copy %GH_OUTPUT_XML% ..\
-
 GOTO END
 
 :ENVIRONMENT_EXCEPTION
@@ -173,4 +169,8 @@ GOTO END
 GOTO END
 
 :END
+copy %RUN_LOG% ..\
+copy %BUILD_LOG% ..\
+copy %GH_OUTPUT_XML% ..\
+
 REM EXIT 0

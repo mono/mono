@@ -30,17 +30,17 @@ REM Set parameters
 REM ********************************************************
 
 set BUILD_OPTION=%1
-set OUTPUT_FILE_PREFIX=System.Data
+set OUTPUT_FILE_PREFIX=System.Data.disconnected
 set RUNNING_FIXTURE=MonoTests.System.Data
 set TEST_SOLUTION=Test\System.Data.Test20.sln
 set TEST_ASSEMBLY=System.Data.Test.jar
 set PROJECT_CONFIGURATION=Debug_Java20
 
-set DATEL=%date:~4,2%_%date:~7,2%_%date:~10,4%
+
+set DATEL=%date:~10,4%_%date:~4,2%_%date:~7,2%%
 set TIMEL=%time:~0,2%_%time:~3,2%
 set TIMESTAMP=%DATEL%_%TIMEL%
 
-set OUTPUT_FILE_PREFIX=%OUTPUT_FILE_PREFIX%.disconnected
 
 REM ********************************************************
 REM @echo Set environment
@@ -49,15 +49,24 @@ REM ********************************************************
 set JGAC_PATH=%VMW_HOME%\jgac\vmw4j2ee_110\
 set JAVA_HOME=%VMW_HOME%\jre5
 
-set RUNTIME_CLASSPATH=%JGAC_PATH%mscorlib.jar;%JGAC_PATH%System.jar;%JGAC_PATH%System.Xml.jar;%JGAC_PATH%System.Data.jar;%JGAC_PATH%J2SE.Helpers.jar
+set RUNTIME_CLASSPATH=%JGAC_PATH%mscorlib.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.Xml.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.Data.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%J2SE.Helpers.jar
 set NUNIT_OPTIONS=/exclude=NotWorking
 
-set GH_OUTPUT_XML=%OUTPUT_FILE_PREFIX%.%RUNNING_FIXTURE%.GH.%TIMESTAMP%.xml
-set BUILD_LOG=%OUTPUT_FILE_PREFIX%.%RUNNING_FIXTURE%_build.log.%TIMESTAMP%.txt
-set RUN_LOG=%OUTPUT_FILE_PREFIX%.%RUNNING_FIXTURE%_run.log.%TIMESTAMP%.txt
+set GH_OUTPUT_XML=%TIMESTAMP%.%OUTPUT_FILE_PREFIX%.GH.xml
+set BUILD_LOG=%TIMESTAMP%.%OUTPUT_FILE_PREFIX%.GH.%RUNNING_FIXTURE%.build.log
+set RUN_LOG=%TIMESTAMP%.%OUTPUT_FILE_PREFIX%.GH.%RUNNING_FIXTURE%.run.log
 
 set NUNIT_PATH=..\..\nunit20\
-set NUNIT_CLASSPATH=%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.framework.jar;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.util.jar;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.core.jar;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit-console.jar
+set NUNIT_CLASSPATH=%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.framework.jar
+set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.util.jar
+set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.core.jar
+set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit-console.jar
+set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;.
+set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%TEST_ASSEMBLY%
 
 set CLASSPATH="%RUNTIME_CLASSPATH%;%NUNIT_CLASSPATH%"
 
@@ -123,11 +132,6 @@ xmltool.exe --transform nunit_transform.xslt %GH_OUTPUT_XML%
 @echo off
 
 :FINALLY
-
-copy %RUN_LOG% ..\
-copy %BUILD_LOG% ..\
-copy %GH_OUTPUT_XML% ..\
-
 GOTO END
 
 :ENVIRONMENT_EXCEPTION
@@ -149,4 +153,8 @@ GOTO END
 GOTO END
 
 :END
+copy %RUN_LOG% ..\
+copy %BUILD_LOG% ..\
+copy %GH_OUTPUT_XML% ..\
+
 REM EXIT 0

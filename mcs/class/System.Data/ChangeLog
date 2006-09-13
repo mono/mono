@@ -1,5 +1,9 @@
 2006-09-12	Boris Kirzner <borisk@mainsoft.com>
 	* run-tests.test.connected.bat, run-tests.test.disconnected.bat: 
+	small fixes for TARGET_JVM test scrips.
+
+2006-09-12	Boris Kirzner <borisk@mainsoft.com>
+	* run-tests.test.connected.bat, run-tests.test.disconnected.bat: 
 	reworked logging options for TARGET_JVM tests.
 
 2006-07-17  Senganal T  <tsenganal@novell.com>
