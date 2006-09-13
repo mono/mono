@@ -1,3 +1,7 @@
+﻿2006-09-13  Jonathan Pobst  <monkey@jpobst.com>
+
+	* SplitContainerTests.cs: Added.
+
 2006-09-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ListViewTest.cs: Added test for bug #79076. Added tests for 

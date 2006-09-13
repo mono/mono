@@ -541,11 +541,13 @@ System.Windows.Forms/SizeGrip.cs
 System.Windows.Forms/SizeGripStyle.cs
 System.Windows.Forms/SizeType.cs
 System.Windows.Forms/SortOrder.cs
+System.Windows.Forms/SplitContainer.cs
 System.Windows.Forms/Splitter.cs
 System.Windows.Forms/SplitterCancelEventArgs.cs
 System.Windows.Forms/SplitterCancelEventHandler.cs
 System.Windows.Forms/SplitterEventArgs.cs
 System.Windows.Forms/SplitterEventHandler.cs
+System.Windows.Forms/SplitterPanel.cs
 System.Windows.Forms/StatusBar.cs
 System.Windows.Forms/StatusBarDrawItemEventArgs.cs
 System.Windows.Forms/StatusBarDrawItemEventHandler.cs

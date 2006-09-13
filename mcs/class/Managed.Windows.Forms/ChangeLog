@@ -1,3 +1,8 @@
+﻿2006-09-13  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System.Windows.Forms.dll.sources: Added SplitContainer/SplitterPanel.
+	* System.Windows.Forms_test.dll.sources: Added SplitContainerTests.cs
+
 2006-09-07  Alexander Olk  <alex.olk@googlemail.com>
 
 	* resources/, System.Windows.Forms.dll.resources, Makefile:

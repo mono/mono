@@ -1,3 +1,7 @@
+﻿2006-09-13  Jonathan Pobst <monkey@jpobst.com>
+
+	* SplitContainer.cs, SplitterPanel.cs: Initial implementation [2.0].
+
 2006-09-12  Chris Toshok  <toshok@ximian.com>
 
 	* DataGrid.cs (get_ListManager): if the list_manager is null, try
