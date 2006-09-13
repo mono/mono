@@ -1,3 +1,8 @@
+2006-09-13	Leszek Ciesielski <skolima@gmail.com>
+
+	* OracleCommand.cs
+	* OracleParameter.cs : fix for bug 77592
+
 2006-09-12	Boris Kirzner <borisk@mainsoft.com>
 
 	* run-tests.test.bat: rework logging for TARGET_JVM tests.

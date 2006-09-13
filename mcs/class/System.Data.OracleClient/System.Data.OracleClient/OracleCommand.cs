@@ -577,6 +577,15 @@ namespace System.Data.OracleClient {
 			preparedStatement = statement;
 		}
 
+                protected override void Dispose (bool disposing)
+                {
+                        if (disposing)
+                                if (Parameters.Count > 0)
+                                        foreach (OracleParameter parm in Parameters)
+                                                parm.FreeHandle ();
+                        base.Dispose (disposing);
+                }
+
 		#endregion // Methods
 	}
 }

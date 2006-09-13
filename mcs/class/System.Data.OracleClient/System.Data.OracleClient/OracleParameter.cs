@@ -245,7 +245,7 @@ namespace System.Data.OracleClient {
 			}
 		}
 
-		internal void Bind (OciStatementHandle statement, OracleConnection con, uint pos) 
+		internal void Bind (OciStatementHandle statement, OracleConnection con, uint pos)
 		{
 			connection = con;
 
@@ -776,6 +776,7 @@ namespace System.Data.OracleClient {
 
 		private void SetOracleType (OracleType type)
 		{
+                        FreeHandle ();
 			string exception = String.Format ("No mapping exists from OracleType {0} to a known DbType.", type);
 			switch (type) {
 			case OracleType.BFile:
@@ -954,7 +955,7 @@ namespace System.Data.OracleClient {
 			FreeHandle ();
 		}
 
-		private void FreeHandle () 
+                internal void FreeHandle ()
 		{
 			switch (ociType) {
 			case OciDataType.Clob:
@@ -963,7 +964,12 @@ namespace System.Data.OracleClient {
 				break;
 			case OciDataType.Raw:
 				Marshal.FreeHGlobal (bindValue);
-				break;				
+				break;
+                        case OciDataType.TimeStamp:
+                                break;
+                        default:
+                                Marshal.FreeHGlobal (bindOutValue);
+                                break;
 			} 
 
 			bindOutValue = IntPtr.Zero;
