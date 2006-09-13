@@ -124,29 +124,25 @@ namespace System.Windows.Forms {
 
 						ThemeEngine.Current.ColorMenu = ColorFromGdkColor (style.bg [0]);
 						ThemeEngine.Current.ColorMenuText = ColorFromGdkColor (style.text [0]);
-						Console.WriteLine("Gtk colorscheme read");
 					}
 
 					catch (DllNotFoundException) {
-						Console.WriteLine("Gtk not found (missing LD_LIBRARY_PATH to libgtk-x11-2.0.so.0?), using built-in colorscheme");
+						Console.Error.WriteLine("Gtk not found (missing LD_LIBRARY_PATH to libgtk-x11-2.0.so.0?), using built-in colorscheme");
 					}
 
 					catch {
-						Console.WriteLine("Gtk colorscheme read failure, using built-in colorscheme");
+						Console.Error.WriteLine("Gtk colorscheme read failure, using built-in colorscheme");
 					}
 					break;
 				}
 					
 				case Desktop.KDE: {
-						if ( ReadKDEColorsheme() )
-							Console.WriteLine("KDE colorscheme read");
-						else
-							Console.WriteLine("KDE colorscheme read failure, using built-in colorscheme");
+						if (! ReadKDEColorsheme() )
+							Console.Error.WriteLine("KDE colorscheme read failure, using built-in colorscheme");
 						break;
 					}
 					
 				default: {
-					Console.WriteLine("Unknown desktop manager, using default colors");
 					break;
 				}
 			}

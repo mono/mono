@@ -1,5 +1,7 @@
 2006-09-13  Miguel de Icaza  <miguel@novell.com>
 
+	* X11DesktopColors.cs: Start the droppage of debugging messages.
+
 	* FileDialog.cs: Store the configuration file in ~/.mono/mwf_config
 
 ﻿2006-09-13  Jonathan Pobst <monkey@jpobst.com>
