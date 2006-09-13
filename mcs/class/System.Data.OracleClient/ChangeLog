@@ -1,3 +1,7 @@
+2006-09-12	Boris Kirzner <borisk@mainsoft.com>
+
+	* run-tests.test.bat: small fixes for TARGET_JVM test scripts.
+
 2006-09-13	Leszek Ciesielski <skolima@gmail.com>
 
 	* OracleCommand.cs

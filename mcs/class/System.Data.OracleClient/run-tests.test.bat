@@ -32,13 +32,16 @@ REM ********************************************************
 set BUILD_OPTION=%1
 set OUTPUT_FILE_PREFIX=System.Data.OracleClient
 set RUNNING_FIXTURE=MonoTests.System.Data.OracleClient
-
 set TEST_SOLUTION=Test\System.Data.OracleClient.Tests20.J2EE.sln
 set TEST_ASSEMBLY=System.Data.OracleClient.Tests20.J2EE.jar
 set PROJECT_CONFIGURATION=Debug_Java20
 set APP_CONFIG_FILE=Test\System.Data.OracleClient.J2EE.config
 
-set OUTPUT_FILE_PREFIX=%OUTPUT_FILE_PREFIX%
+
+set DATEL=%date:~10,4%_%date:~4,2%_%date:~7,2%%
+set TIMEL=%time:~0,2%_%time:~3,2%
+set TIMESTAMP=%DATEL%_%TIMEL%
+
 
 REM ********************************************************
 REM @echo Set environment
@@ -58,13 +61,9 @@ set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%GHROOT%\jgac\jdbc\ojdbc14.jar
 
 set NUNIT_OPTIONS=/exclude=NotWorking
 
-set DATEL=%date:~4,2%_%date:~7,2%_%date:~10,4%
-set TIMEL=%time:~0,2%_%time:~3,2%
-set TIMESTAMP=%DATEL%_%TIMEL%
-
-set GH_OUTPUT_XML=%OUTPUT_FILE_PREFIX%.%RUNNING_FIXTURE%.GH.%TIMESTAMP%.xml
-set BUILD_LOG=%OUTPUT_FILE_PREFIX%.%RUNNING_FIXTURE%_build.log.%TIMESTAMP%.txt
-set RUN_LOG=%OUTPUT_FILE_PREFIX%.%RUNNING_FIXTURE%_run.log.%TIMESTAMP%.txt
+set GH_OUTPUT_XML=%TIMESTAMP%.%OUTPUT_FILE_PREFIX%.GH.xml
+set BUILD_LOG=%TIMESTAMP%.%OUTPUT_FILE_PREFIX%.GH.%RUNNING_FIXTURE%.build.log
+set RUN_LOG=%TIMESTAMP%.%OUTPUT_FILE_PREFIX%.GH.%RUNNING_FIXTURE%.run.log
 
 set NUNIT_PATH=..\..\nunit20\
 set NUNIT_CLASSPATH=%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.framework.jar
@@ -89,8 +88,18 @@ REM ********************************************************
 @echo Building NUnit solution...
 REM ********************************************************
 
+if "%NUNIT_BUILD%" == "DONE" goto NUNITSKIP
+
 REM devenv ..\..\nunit20\nunit.java.sln /%BUILD_OPTION% %PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.txt 2<&1
 msbuild ..\..\nunit20\nunit20.java.sln /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%BUILD_LOG% 2<&1
+
+goto NUNITREADY
+
+:NUNITSKIP
+echo Skipping NUnit Build...
+
+:NUNITREADY
+set NUNIT_BUILD=DONE
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
@@ -104,7 +113,6 @@ REM ********************************************************
 
 copy Test\bin\%PROJECT_CONFIGURATION%\%TEST_ASSEMBLY% .
 copy %APP_CONFIG_FILE% nunit-console.exe.config
-
 
 REM @echo on
 "%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi %TEST_ASSEMBLY% /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUN_LOG% 2<&1
@@ -130,11 +138,6 @@ xmltool.exe --transform nunit_transform.xslt %GH_OUTPUT_XML%
 @echo off
 
 :FINALLY
-
-copy %RUN_LOG% ..\
-copy %BUILD_LOG% ..\
-copy %GH_OUTPUT_XML% ..\
-
 GOTO END
 
 :ENVIRONMENT_EXCEPTION
@@ -156,4 +159,8 @@ GOTO END
 GOTO END
 
 :END
+copy %RUN_LOG% ..\
+copy %BUILD_LOG% ..\
+copy %GH_OUTPUT_XML% ..\
+
 REM EXIT 0
