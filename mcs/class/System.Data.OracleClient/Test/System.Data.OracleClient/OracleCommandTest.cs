@@ -47,6 +47,12 @@ namespace MonoTests.System.Data.OracleClient {
                         interface_command = command;
                 }
 
+                [TearDown]
+                public void TearDown ()
+                {
+                        command.Dispose ();
+                }
+
                 [Test] // regression for bug #78765
                 public void AllowNullConnectionTest ()
                 {

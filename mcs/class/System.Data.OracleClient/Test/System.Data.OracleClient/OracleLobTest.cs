@@ -58,20 +58,22 @@ namespace MonoTests.System.Data.OracleClient {
                 {
                         connection = new OracleConnection (connection_string);
                         connection.Open ();
-                        command = connection.CreateCommand ();
 
-                        // create the tables
-                        command.CommandText =
-                                        "create table lob_test (id number(10), lobo blob)";
-                        command.ExecuteNonQuery ();
+                        using (command = connection.CreateCommand ()) {
+                                // create the tables
+                                command.CommandText =
+                                                "create table lob_test (id number(10), lobo blob)";
+                                command.ExecuteNonQuery ();
+                        }
                 }
 
                 [TearDown]
                 public void TearDown ()
                 {
-                        command = connection.CreateCommand ();
-                        command.CommandText = "drop table lob_test";
-                        command.ExecuteNonQuery ();
+                        using (command = connection.CreateCommand ()) {
+                                command.CommandText = "drop table lob_test";
+                                command.ExecuteNonQuery ();
+                        }
 
                         connection.Close ();
                         connection.Dispose ();
@@ -80,47 +82,47 @@ namespace MonoTests.System.Data.OracleClient {
                 [Test] // regression for bug #78898
                 public void PositionIs0BasedTest ()
                 {
-                        command = connection.CreateCommand (); // reusing command from SetUp causes parameter names mismatch
+                        using (command = connection.CreateCommand ()) { // reusing command from SetUp causes parameter names mismatch
+                                // insert test values
+                                command.CommandText =
+                                                "insert into lob_test (id, lobo) values (11, '00000000000000000000000000000')";
+                                command.ExecuteNonQuery ();
 
-                        // insert test values
-                        command.CommandText =
-                                        "insert into lob_test (id, lobo) values (11, '00000000000000000000000000000')";
-                        command.ExecuteNonQuery ();
+                                // select for writing test values
+                                command.CommandText =
+                                                "select lobo from lob_test where id = 11 for update";
 
-                        // select for writing test values
-                        command.CommandText =
-                                        "select lobo from lob_test where id = 11 for update";
-
-                        using (OracleDataReader reader = command.ExecuteReader ()) {
-                                if (reader.Read ()) {
-                                        OracleLob lob = reader.GetOracleLob (0);
-                                        Assert.AreEqual (0, lob.Position, "Lob index is not 0 - based.");
-                                        lob.Seek (1, SeekOrigin.Current);
-                                        Assert.AreEqual (1, lob.Position, "Lob seek placed position wrongly.");
-                                        lob.Seek (0, SeekOrigin.End);
-                                        Assert.AreEqual (lob.Length , lob.Position, "Lob end is too far away.");
-                                        TrySeek (lob, -lob.Length, SeekOrigin.End, 0, 1);
-                                        TrySeek (lob, -lob.Length + 5, SeekOrigin.End, 5, 2);
-                                        try {
-                                                lob.Seek (5, SeekOrigin.End);
-                                                Assert.Fail ("Illegal seek succeeded.");
+                                using (OracleDataReader reader = command.ExecuteReader ()) {
+                                        if (reader.Read ()) {
+                                                OracleLob lob = reader.GetOracleLob (0);
+                                                Assert.AreEqual (0, lob.Position, "Lob index is not 0 - based.");
+                                                lob.Seek (1, SeekOrigin.Current);
+                                                Assert.AreEqual (1, lob.Position, "Lob seek placed position wrongly.");
+                                                lob.Seek (0, SeekOrigin.End);
+                                                Assert.AreEqual (lob.Length , lob.Position, "Lob end is too far away.");
+                                                TrySeek (lob, -lob.Length, SeekOrigin.End, 0, 1);
+                                                TrySeek (lob, -lob.Length + 5, SeekOrigin.End, 5, 2);
+                                                try {
+                                                        lob.Seek (5, SeekOrigin.End);
+                                                        Assert.Fail ("Illegal seek succeeded.");
+                                                }
+                                                catch (ArgumentOutOfRangeException) { // exception is required
+                                                }
+                                                lob.Seek (lob.Length - 5, SeekOrigin.Begin);
+                                                Assert.AreEqual (lob.Length - 5 , lob.Position, "Lob position has unexpected value.");
+                                                lob.Seek (0, SeekOrigin.Begin);
+                                                TryRead (lob, 10, 1);
+                                                lob.Seek (5, SeekOrigin.Begin);
+                                                lob.Position = 0;
+                                                TryRead (lob, 10, 2);
+                                                lob.Position = lob.Length;
+                                                TryRead (lob, 0, 3);
+                                                lob.Seek (-1, SeekOrigin.Current);
+                                                TryRead (lob, 1, 4);
                                         }
-                                        catch (ArgumentOutOfRangeException) { // exception is required
+                                        else {
+                                                Assert.Fail ("Expected records not found.");
                                         }
-                                        lob.Seek (lob.Length - 5, SeekOrigin.Begin);
-                                        Assert.AreEqual (lob.Length - 5 , lob.Position, "Lob position has unexpected value.");
-                                        lob.Seek (0, SeekOrigin.Begin);
-                                        TryRead (lob, 10, 1);
-                                        lob.Seek (5, SeekOrigin.Begin);
-                                        lob.Position = 0;
-                                        TryRead (lob, 10, 2);
-                                        lob.Position = lob.Length;
-                                        TryRead (lob, 0, 3);
-                                        lob.Seek (-1, SeekOrigin.Current);
-                                        TryRead (lob, 1, 4);
-                                }
-                                else {
-                                        Assert.Fail ("Expected records not found.");
                                 }
                         }
                 }

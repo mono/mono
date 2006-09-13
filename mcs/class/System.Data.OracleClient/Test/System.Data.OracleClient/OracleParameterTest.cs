@@ -61,26 +61,27 @@ namespace MonoTests.System.Data.OracleClient {
                 {
                         connection = new OracleConnection (connection_string);
                         connection.Open ();
-                        command = connection.CreateCommand ();
+                        using (command = connection.CreateCommand ()) {
+                                // create the tables
+                                command.CommandText =
+                                                "create table oratest (id number(10), text varchar2(64), text2 varchar2(64) )";
+                                command.ExecuteNonQuery ();
 
-                        // create the tables
-                        command.CommandText =
-                                        "create table oratest (id number(10), text varchar2(64), text2 varchar2(64) )";
-                        command.ExecuteNonQuery ();
-                        
-                        command.CommandText =
-                                        "create table culture_test (id number(10), value1 float, value2 number(20,10))";
-                        command.ExecuteNonQuery ();
+                                command.CommandText =
+                                                "create table culture_test (id number(10), value1 float, value2 number(20,10))";
+                                command.ExecuteNonQuery ();
+                        }
                 }
 
                 [TearDown]
                 public void TearDown ()
                 {
-                        command = connection.CreateCommand ();
-                        command.CommandText = "drop table oratest";
-                        command.ExecuteNonQuery ();
-                        command.CommandText = "drop table culture_test";
-                        command.ExecuteNonQuery ();
+                        using (command = connection.CreateCommand ()) {
+                                command.CommandText = "drop table oratest";
+                                command.ExecuteNonQuery ();
+                                command.CommandText = "drop table culture_test";
+                                command.ExecuteNonQuery ();
+                        }
 
                         connection.Close ();
                         connection.Dispose ();
@@ -89,28 +90,29 @@ namespace MonoTests.System.Data.OracleClient {
                 [Test] // regression for bug #78509
                 public void TrimsTrailingSpacesTest ()
                 {
-                        command = connection.CreateCommand (); // reusing command from SetUp causes parameter names mismatch
+                        using (command = connection.CreateCommand ()) { // reusing command from SetUp causes parameter names mismatch
 
-                        // insert test values
-                        command.CommandText =
-                                        "insert into oratest (id,text,text2) values (:id,:txt,'" + test_value2 + "')";
-                        command.Parameters.Add (new OracleParameter ("ID", OracleType.Int32));
-                        command.Parameters.Add( new OracleParameter ("TXT", OracleType.VarChar));
-                        command.Parameters ["ID"].Value = 100;
-                        command.Parameters ["TXT"].Value = test_value;
-                        command.ExecuteNonQuery ();
+                                // insert test values
+                                command.CommandText =
+                                                "insert into oratest (id,text,text2) values (:id,:txt,'" + test_value2 + "')";
+                                command.Parameters.Add (new OracleParameter ("ID", OracleType.Int32));
+                                command.Parameters.Add( new OracleParameter ("TXT", OracleType.VarChar));
+                                command.Parameters ["ID"].Value = 100;
+                                command.Parameters ["TXT"].Value = test_value;
+                                command.ExecuteNonQuery ();
 
-                        // read test values
-                        command.CommandText =
-                                        "select text,text2 from oratest where id = 100";
-                        command.Parameters.Clear ();
-                        using (OracleDataReader reader = command.ExecuteReader ()) {
-                                if (reader.Read ()) {
-                                        Assert.AreEqual (test_value2, reader.GetString (1), "Directly passed value mismatched");
-                                        Assert.AreEqual (test_value, reader.GetString (0), "Passed through bind value mismatched");
-                                }
-                                else {
-                                        Assert.Fail ("Expected records not found.");
+                                // read test values
+                                command.CommandText =
+                                                "select text,text2 from oratest where id = 100";
+                                command.Parameters.Clear ();
+                                using (OracleDataReader reader = command.ExecuteReader ()) {
+                                        if (reader.Read ()) {
+                                                Assert.AreEqual (test_value2, reader.GetString (1), "Directly passed value mismatched");
+                                                Assert.AreEqual (test_value, reader.GetString (0), "Passed through bind value mismatched");
+                                        }
+                                        else {
+                                                Assert.Fail ("Expected records not found.");
+                                        }
                                 }
                         }
                 }
@@ -131,56 +133,58 @@ namespace MonoTests.System.Data.OracleClient {
                         Thread.CurrentThread.CurrentCulture = new CultureInfo ("ja-JP", false);
                         CultureSensitiveNumbersInsertTest (3);
                         CultureSensitiveNumbersSelectTest (3);
-                        
+
                         Thread.CurrentThread.CurrentCulture = currentCulture;
                 }
 
                 // regression for bug #79284
                 protected void CultureSensitiveNumbersInsertTest (int id)
                 {
-                        command = connection.CreateCommand (); // reusing command from SetUp causes parameter names mismatch
-                        // insert test values
-                        command.CommandText =
-                                        "insert into culture_test (id,value1,value2) values (:id,:value1,:value2)";
-                        command.Parameters.Add (new OracleParameter ("ID", OracleType.Int32));
-                        command.Parameters.Add( new OracleParameter ("VALUE1", OracleType.Float));
-                        command.Parameters.Add( new OracleParameter ("VALUE2", OracleType.Double));
-                        command.Parameters ["ID"].Value = id;
-                        command.Parameters ["VALUE1"].Value = 2346.2342f;
-                        command.Parameters ["VALUE2"].Value = 4567456.23412m;
-                        try {
-                                command.ExecuteNonQuery ();
-                        }
-                        catch (OracleException e) {
-                                if (e.Code == 1722)
-                                        Assert.Fail("Culture incompatibility error while inserting [" + id + ']');
-                                else throw;
+                        using (command = connection.CreateCommand ()) { // reusing command from SetUp causes parameter names mismatch
+                                // insert test values
+                                command.CommandText =
+                                                "insert into culture_test (id,value1,value2) values (:id,:value1,:value2)";
+                                command.Parameters.Add (new OracleParameter ("ID", OracleType.Int32));
+                                command.Parameters.Add( new OracleParameter ("VALUE1", OracleType.Float));
+                                command.Parameters.Add( new OracleParameter ("VALUE2", OracleType.Double));
+                                command.Parameters ["ID"].Value = id;
+                                command.Parameters ["VALUE1"].Value = 2346.2342f;
+                                command.Parameters ["VALUE2"].Value = 4567456.23412m;
+                                try {
+                                        command.ExecuteNonQuery ();
+                                }
+                                catch (OracleException e) {
+                                        if (e.Code == 1722)
+                                                Assert.Fail("Culture incompatibility error while inserting [" + id + ']');
+                                        else throw;
+                                }
                         }
                 }
 
                 // regression for bug #79284
                 protected void CultureSensitiveNumbersSelectTest (int id)
                 {
-                        command = connection.CreateCommand (); // reusing command from SetUp causes parameter names mismatch
-                        // read test values
-                        command.CommandText =
-                                        "select value1,value2 from culture_test where id = " + id;
-                        command.Parameters.Clear ();
-                        try {
-                                using (OracleDataReader reader = command.ExecuteReader ()) {
-                                        if (reader.Read ()) {
-                                                Assert.AreEqual (2346.2342f,reader.GetFloat(0),
-                                                        "Float value improperly stored [" + id + ']');
-                                                Assert.AreEqual (4567456.23412m, reader.GetDecimal (1),
-                                                        "Decimal value improperly stored [" + id + ']');
-                                        }
-                                        else {
-                                                Assert.Fail ("Expected records not found [" + id + ']');
+                        using (command = connection.CreateCommand ()) { // reusing command from SetUp causes parameter names mismatch
+                                // read test values
+                                command.CommandText =
+                                                "select value1,value2 from culture_test where id = " + id;
+                                command.Parameters.Clear ();
+                                try {
+                                        using (OracleDataReader reader = command.ExecuteReader ()) {
+                                                if (reader.Read ()) {
+                                                        Assert.AreEqual (2346.2342f,reader.GetFloat(0),
+                                                                "Float value improperly stored [" + id + ']');
+                                                        Assert.AreEqual (4567456.23412m, reader.GetDecimal (1),
+                                                                "Decimal value improperly stored [" + id + ']');
+                                                }
+                                                else {
+                                                        Assert.Fail ("Expected records not found [" + id + ']');
+                                                }
                                         }
                                 }
-                        }
-                        catch (FormatException) {
-                                Assert.Fail("Culture incompatibility error while reading [" + id + ']');
+                                catch (FormatException) {
+                                        Assert.Fail("Culture incompatibility error while reading [" + id + ']');
+                                }
                         }
                 }
         }
