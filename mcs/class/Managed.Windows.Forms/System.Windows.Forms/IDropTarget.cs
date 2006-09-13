@@ -25,8 +25,10 @@ using System;
 using System.Drawing;
 using System.ComponentModel;
 
-public interface IDropTarget {
+namespace System.Windows.Forms {
 
-	
+	public interface IDropTarget {
+	}
+
 }
 #endif
