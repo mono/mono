@@ -7,5 +7,5 @@ REM example run-tests build
 REM will cause to build (and not rebuild) test solutions,
 REM ********************************************************
 
-call run-W3C-tests.bat
-call run-XSLT-tests.bat
+call run-W3C-tests.bat rebuild
+call run-XSLT-tests.bat rebuild

@@ -1,3 +1,7 @@
+2006-09-13	Boris Kirzner <borisk@mainsoft.com>
+	* run-tests.bat, run-W3C-tests.bat, run-XSLT-tests.bat: 
+	reworked test scripts for TARGET_JVM.
+
 2006-09-06  Merav Sudri  <meravs@mainsoft.com>
 
 	* run-W3C-tests.bat - Update nunit build and XMLTool actions
