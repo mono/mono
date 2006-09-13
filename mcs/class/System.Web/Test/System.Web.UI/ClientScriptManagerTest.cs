@@ -425,36 +425,41 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		// Expected Exceptions
-
-		// TODO --> No RegisterForEventValidation Method
-		//[Test]
-		//[ExpectedException (typeof (InvalidOperationException))]
-		//public void ClientScriptManager_RegisterForEventValidationException ()
-		//{
+				
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ClientScriptManager_RegisterForEventValidationException ()
+		{
+		// TODO --> No RegisterForEventValidation Method	
 		//        Page p = new Page ();
 		//        ClientScriptManager cs = p.ClientScript;
 		//        cs.RegisterForEventValidation ("ID", "args");
-		//}
+		}
 
+		
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ClientScriptManager_ValidateEventException_1 ()
+		{
 		// TODO --> No ValidateEvent Method
-		//[Test]
-		//[ExpectedException (typeof (ArgumentException))]
-		//public void ClientScriptManager_ValidateEventException_1 ()
-		//{
 		//        Page p = new Page ();
 		//        ClientScriptManager cs = p.ClientScript;
 		//        cs.ValidateEvent ("Exception");
-		//}
+		}
 
+		
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ClientScriptManager_ValidateEventException_2 ()
+		{
 		// TODO --> No ValidateEvent Method		
-		//[Test]
-		//[ExpectedException (typeof (ArgumentException))]
-		//public void ClientScriptManager_ValidateEventException_2 ()
-		//{
 		//        Page p = new Page ();
 		//        ClientScriptManager cs = p.ClientScript;
 		//        cs.ValidateEvent ("Exception", "args");
-		//}
+		}
 
 
 		[Test]

@@ -1,3 +1,7 @@
+2006-09-13  Klain Yoni   <yonik@mainsoft.com>
+
+	* ClientScriptManagerTest.cs: changes for not implemented stuff.
+
 2006-09-04  Igor Zelmanovich   <igorz@mainsoft.com>
 
 	* CssStyleCollectionTest.cs: new test.
