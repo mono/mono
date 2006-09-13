@@ -77,8 +77,6 @@ namespace System.Windows.Forms {
 
 		#region Constructor & Destructor
 		static XplatUI() {
-			Console.WriteLine("Mono System.Windows.Forms Assembly [$auto_build_revision$]");
-
 			// Compose name with current domain id because on Win32 we register class name
 			// and name must be unique to process. If we load MWF into multiple appdomains
 			// and try to register same class name we fail.
