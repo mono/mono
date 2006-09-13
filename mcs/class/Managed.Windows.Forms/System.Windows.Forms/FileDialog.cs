@@ -4140,35 +4140,54 @@ namespace System.Windows.Forms {
 	
 		internal class MWFConfigInstance
 		{
-			private Hashtable classes_hashtable = new Hashtable ();
-			
-			private string path;
-			private string fullFileName;
-			private XmlTextReader xtr;
-			private XmlTextWriter xtw;
-			
-			private static string defaultFileName;
-			
-			private readonly string configName = "MWFConfig";
-			
-			private int platform = (int) Environment.OSVersion.Platform;
+			Hashtable classes_hashtable = new Hashtable ();
+			string path;
+			static string full_file_name;
+			XmlTextReader xtr;
+			XmlTextWriter xtw;
+			static string default_file_name;
+			readonly string configName = "MWFConfig";
+			static int platform = (int) Environment.OSVersion.Platform;
+
+			static bool IsUnix ()
+			{
+				return (platform == 4 || platform == 128);
+			}
+
+			static MWFConfigInstance ()
+			{
+				string b = "mwf_config";
+				string dir = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
+					
+				if (IsUnix ()){
+					dir = Path.Combine (dir, ".mono");
+					try {
+						Directory.CreateDirectory (dir);
+					} catch {}
+				} 
+
+				default_file_name = Path.Combine (dir, b);
+				full_file_name = default_file_name;
+			}
 			
 			public MWFConfigInstance ()
 			{
-				if ((platform == 4) || (platform == 128)) {
-					defaultFileName = ".mwf_config";
-				} else {
-					defaultFileName = "mwf_config";
-				}
-				
-				Open (defaultFileName);
+				Open (default_file_name);
 			}
 			
 			// only for testing
-			public MWFConfigInstance (string fileName)
+			public MWFConfigInstance (string filename)
 			{
-				Open (fileName);
-			}
+				path = Path.GetDirectoryName (filename);
+				if (path == null || path == String.Empty) {
+					path = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
+					
+					full_file_name = Path.Combine (path, filename);
+				}  else 
+					full_file_name = filename;
+
+				Open (full_file_name);
+			}				
 			
 			~MWFConfigInstance ()
 			{
@@ -4198,19 +4217,10 @@ namespace System.Windows.Forms {
 				class_entry.SetValue (value_name, value);
 			}
 			
-			private void Open (string fileName)
+			private void Open (string filename)
 			{
-				path = Path.GetDirectoryName (fileName);
-				
-				if (path == null || path == String.Empty) {
-					path = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
-					
-					fullFileName = Path.Combine (path, fileName);
-				} else
-					fullFileName = fileName;
-				
 				try {
-					xtr = new XmlTextReader (fullFileName);
+					xtr = new XmlTextReader (filename);
 					
 					ReadConfig ();
 					
@@ -4222,16 +4232,17 @@ namespace System.Windows.Forms {
 			public void Flush ()
 			{
 				try {
-					xtw = new XmlTextWriter (fullFileName, null);
+					xtw = new XmlTextWriter (full_file_name, null);
 					xtw.Formatting = Formatting.Indented;
 					
 					WriteConfig ();
 					
 					xtw.Close ();
-					
-					if ((platform != 4) && (platform != 128))
-						File.SetAttributes (fullFileName, FileAttributes.Hidden);
-				} catch (Exception) {}
+
+					if (!IsUnix ())
+						File.SetAttributes (full_file_name, FileAttributes.Hidden);
+				} catch (Exception e){
+				}
 			}
 			
 			public void RemoveClass (string class_name)
