@@ -323,7 +323,10 @@ namespace Mono.Data.SqliteClient
 		
 		public long GetBytes (int i, long fieldOffset, byte[] buffer, int bufferOffset, int length)
 		{
-			throw new NotImplementedException ();
+			byte[] data = (byte[])(((object[]) rows[current_row])[i]);
+			if (buffer != null)
+				Array.Copy (data, fieldOffset, buffer, bufferOffset, length);
+			return data.LongLength - fieldOffset;
 		}
 		
 		public char GetChar (int i)

@@ -218,6 +218,10 @@ namespace Mono.Data.SqliteClient
 				{
 					err = Sqlite.sqlite3_bind_int (pStmt, i, (Char)param.Value);
 				} 
+				else if (ptype.IsEnum) 
+				{
+					err = Sqlite.sqlite3_bind_int (pStmt, i, (Int32)param.Value);
+				}
 				else if (ptype.Equals (typeof (Int16))) 
 				{
 					err = Sqlite.sqlite3_bind_int (pStmt, i, (Int16)param.Value);

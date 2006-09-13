@@ -1,3 +1,8 @@
+2006-09-13  Mart Roosmaa <roosmaa@gmail.com> 
+
+	* SqliteDataReader.cs: Implemented GetBytes ().
+	* SqliteCommand.cs: Automatically convert enums to Int32.
+
 2006-08-20  Joshua Tauberer  <jt@occams.info>
 
 	* SqliteConnection.cs: Changed Version property (which is
