@@ -1352,13 +1352,6 @@ namespace Mono.CSharp {
 			}
 
 			if (expr_type == TypeManager.anonymous_method_type){
-				if (!TypeManager.IsDelegateType (target_type)){
-					Report.Error (1660, loc,
-						"Cannot convert anonymous method block to type `{0}' because it is not a delegate type",
-						TypeManager.CSharpName (target_type));
-					return null;
-				}
-
 				AnonymousMethodExpression ame = (AnonymousMethodExpression) expr;
 
 				int errors = Report.Errors;

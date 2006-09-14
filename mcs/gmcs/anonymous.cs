@@ -999,6 +999,21 @@ namespace Mono.CSharp {
 			if (anonymous != null)
 				return anonymous.AnonymousDelegate;
 
+			if (!ec.IsAnonymousMethodAllowed) {
+				Report.Error (1706, loc,
+					      "Anonymous methods are not allowed in the " +
+					      "attribute declaration");
+				return null;
+			}
+
+			if (!TypeManager.IsDelegateType (delegate_type)){
+				Report.Error (1660, loc,
+					      "Cannot convert anonymous method block to type " +
+					      "`{0}' because it is not a delegate type",
+					      TypeManager.CSharpName (delegate_type));
+				return null;
+			}
+
 			//
 			// At this point its the first time we know the return type that is 
 			// needed for the anonymous method.  We create the method here.
@@ -1178,13 +1193,6 @@ namespace Mono.CSharp {
 
 		public virtual bool Resolve (EmitContext ec)
 		{
-			if (!ec.IsAnonymousMethodAllowed) {
-				Report.Error (1706, Location,
-					      "Anonymous methods are not allowed in the " +
-					      "attribute declaration");
-				return false;
-			}
-
 			Report.Debug (64, "RESOLVE ANONYMOUS METHOD", this, Location, ec,
 				      RootScope, Parameters, ec.IsStatic);
 

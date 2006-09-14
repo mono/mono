@@ -2271,6 +2271,8 @@ namespace Mono.CSharp {
 						left = EmptyExpression.Null;
 					} else {
 						left = ec.GetThis (loc);
+						if (left == null)
+							return null;
 					}
 				} else {
 					left = new TypeExpression (ec.ContainerType, loc);
