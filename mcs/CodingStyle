@@ -25,11 +25,15 @@
 	please use the attribute [MonoTODO].  This attribute can be used
 	to programatically generate our status web pages:
 
-	[MonoTODO]
+	[MonoTODO("My Function is not available on Mono")]
 	int MyFunction ()
 	{
 		throw new NotImplementedException ();
 	}
+
+	Ideally, write a human description of the reason why there is
+	a MonoTODO, this will be useful in the future for our
+	automated tools that can assist in developers porting their code.
 
 * Supporting .NET 1.2, .NET 1.1 and .NET 1.0 builds
 
@@ -404,6 +408,11 @@
 
 	From that point on a list of changes in a file-by-file basis,
 	describing what changes were done.
+
+	This information must be cut and pasted into your commit
+	message, so the information ends up in two places: in the
+	subversion repository metadata and also on the source code
+	distirbution (which does not have the Subversion metadata).
 		
 * Warnings
 
