@@ -1596,6 +1596,47 @@ namespace Mono.CSharp {
 			return false;
 		}
 
+		bool CheckError136 (string name, string scope, Location loc)
+		{
+			if (!DoCheckError136 (name, scope, loc))
+				return false;
+
+			if (Toplevel.AnonymousChildren != null) {
+				foreach (ToplevelBlock child in Toplevel.AnonymousChildren) {
+					if (!child.CheckError136 (name, "child", loc))
+						return false;
+				}
+			}
+
+			for (ToplevelBlock c = Toplevel.Container; c != null; c = c.Container) {
+				if (!c.DoCheckError136 (name, "parent or current", loc))
+					return false;
+			}
+
+			return true;
+		}
+
+		protected bool DoCheckError136 (string name, string scope, Location loc)
+		{
+			LocalInfo vi = GetKnownVariableInfo (name);
+			if (vi != null) {
+				Report.SymbolRelatedToPreviousError (vi.Location, name);
+				Error_AlreadyDeclared (loc, name, scope != null ? scope : "child");
+				return false;
+			}
+
+			int idx;
+			Parameter p = Toplevel.Parameters.GetParameterByName (name, out idx);
+			if (p != null) {
+				Report.SymbolRelatedToPreviousError (p.Location, name);
+				Error_AlreadyDeclared (
+					loc, name, scope != null ? scope : "method argument");
+				return false;
+			}
+
+			return true;
+		}
+
 		public LocalInfo AddVariable (Expression type, string name, Location l)
 		{
 			LocalInfo vi = GetLocalInfo (name);
@@ -1609,20 +1650,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			vi = GetKnownVariableInfo (name);
-			if (vi != null) {
-				Report.SymbolRelatedToPreviousError (vi.Location, name);
-				Error_AlreadyDeclared (l, name, "child");
+			if (!CheckError136 (name, null, l))
 				return null;
-			}
-
-			int idx;
-			Parameter p = Toplevel.Parameters.GetParameterByName (name, out idx);
-			if (p != null) {
-				Report.SymbolRelatedToPreviousError (p.Location, name);
-				Error_AlreadyDeclared (l, name, "method argument");
-				return null;
-			}
 
 			vi = new LocalInfo (type, name, this, l);
 
@@ -1639,8 +1668,10 @@ namespace Mono.CSharp {
 
 		void Error_AlreadyDeclared (Location loc, string var, string reason)
 		{
-			Report.Error (136, loc, "A local variable named `{0}' cannot be declared in this scope because it would give a different meaning to `{0}', " +
-				"which is already used in a `{1}' scope", var, reason);
+			Report.Error (136, loc, "A local variable named `{0}' cannot be declared " +
+				      "in this scope because it would give a different meaning " +
+				      "to `{0}', which is already used in a `{1}' scope " +
+				      "to denote something else", var, reason);
 		}
 
 		public bool AddConstant (Expression type, string name, Expression value, Location l)
@@ -2254,7 +2285,7 @@ namespace Mono.CSharp {
 		{
 			if (anonymous_children != null) {
 				foreach (ToplevelBlock child in anonymous_children) {
-					if (!child.DoCheckError158 (name, loc))
+					if (!child.CheckError158 (name, loc))
 						return false;
 				}
 			}
@@ -2350,11 +2381,9 @@ namespace Mono.CSharp {
 		//
 		public void ReParent (ToplevelBlock new_parent)
 		{
-			Report.Debug (64, "TOPLEVEL REPARENT", this, Parent, new_parent);
 			container = new_parent;
 			Parent = new_parent;
 			new_parent.child = this;
-
 
 			if (container != null)
 				container.AddAnonymousChild (this);
@@ -2444,6 +2473,16 @@ namespace Mono.CSharp {
 
 			if (ip != null)
 				parameters = ip;
+
+			if ((container != null) && (ip != null) && (parameters != container.parameters)) {
+				for (int i = 0; i < parameters.Count; i++) {
+					string name = parameters.ParameterName (i);
+					for (ToplevelBlock c = container; c != null; c = c.container) {
+						if (!c.DoCheckError136 (name, "parent or current", loc))
+							return false;
+					}
+				}
+			}
 
 			ResolveMeta (this, ec, ip);
 
