@@ -621,14 +621,10 @@ namespace System {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern void InternalSetEnvironmentVariable (string variable, string value);
 
-		[MonoTODO]
-		public static int ProcessorCount {
+		public static extern int ProcessorCount {
 			[EnvironmentPermission (SecurityAction.Demand, Read="NUMBER_OF_PROCESSORS")]
-			get {
-				// note: Changes to the NUMBER_OF_PROCESSORS environment variable
-				// under Windows doesn't affect the (good) value returned.
-				throw new NotImplementedException ();
-			}
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			get;			
 		}
 
 		[MonoTODO ("not much documented")]
