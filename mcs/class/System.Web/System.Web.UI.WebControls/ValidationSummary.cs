@@ -163,14 +163,24 @@ namespace System.Web.UI.WebControls {
 		#endregion	// Public Instance Properties
 
 		#region Public Instance Methods
+		[MonoTODO ()]
+		// for 2.0: not XHTML attributes must be registered with RegisterExpandoAttribute 
+		// when it will be implemented, in this case WebUIValidation_2.0.js muist be refactored
 		protected override void AddAttributesToRender(HtmlTextWriter writer) {
 			base.AddAttributesToRender (writer);
 
+#if NET_2_0
+			if (EnableClientScript && pre_render_called && Page.AreValidatorsUplevel (ValidationGroup)) {
+#else
 			if (EnableClientScript && pre_render_called && Page.AreValidatorsUplevel ()) {
+#endif
 				/* force an ID here if we weren't assigned one */
 				if (ID == null)
 					writer.AddAttribute(HtmlTextWriterAttribute.Id, ClientID);
-
+#if NET_2_0
+				if (ValidationGroup != String.Empty)
+					writer.AddAttribute ("validationgroup", ValidationGroup);
+#endif
 				if (HeaderText != "")
 					writer.AddAttribute ("headertext", HeaderText);
 
@@ -205,6 +215,10 @@ namespace System.Web.UI.WebControls {
 		protected
 #endif		
 		override void Render(HtmlTextWriter writer) {
+#if NET_2_0
+			if (!Enabled)
+				return;
+#endif
 			ValidatorCollection	validators;
 			ArrayList		errors;
 
@@ -228,7 +242,11 @@ namespace System.Web.UI.WebControls {
 
 			has_errors = errors.Count > 0;
 
+#if NET_2_0
+			if (EnableClientScript && pre_render_called && Page.AreValidatorsUplevel (ValidationGroup)) {
+#else
 			if (EnableClientScript && pre_render_called && Page.AreValidatorsUplevel ()) {
+#endif
 				Page.ClientScript.RegisterArrayDeclaration ("Page_ValidationSummaries",
 									    String.Format ("document.getElementById ('{0}')", ClientID));
 			}

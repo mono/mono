@@ -1,3 +1,7 @@
+2006-09-14 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* WebUIValidation_2.0.js: added new file
+
 2006-03-13  Chris Toshok  <toshok@ximian.com>
 
 	* WebUIValidation.js (CompareValidatorEvaluateIsValid): implement.

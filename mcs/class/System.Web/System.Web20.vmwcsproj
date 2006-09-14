@@ -1289,8 +1289,8 @@
 		<EmbeddedResource Include="resources\webform.js">
 			<LogicalName>webform.js</LogicalName>
 		</EmbeddedResource>
-		<EmbeddedResource Include="resources\WebUIValidation.js">
-			<LogicalName>WebUIValidation.js</LogicalName>
+		<EmbeddedResource Include="resources\WebUIValidation_2.0.js">
+			<LogicalName>WebUIValidation_2.0.js</LogicalName>
 		</EmbeddedResource>
 		<EmbeddedResource Include="resources\MaintainScrollPositionOnPostBack.js">
 			<LogicalName>MaintainScrollPositionOnPostBack.js</LogicalName>

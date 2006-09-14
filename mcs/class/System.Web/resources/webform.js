@@ -65,7 +65,7 @@ function WebForm_ReEnableControls()
 
 function WebForm_DoPostback (ctrl, par, url, apb, pval, tf, csubm, vg)
 {
-	if (pval && typeof(Page_ClientValidate) == "function" && !Page_ClientValidate())
+	if (pval && typeof(Page_ClientValidate) == "function" && !Page_ClientValidate(vg))
 		return;
 
 	if (url != null)

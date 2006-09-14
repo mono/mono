@@ -114,4 +114,8 @@ using System.Web.UI;
 [assembly: WebResource ("MaintainScrollPositionOnPostBack.js", "text/javascript")]
 #endif
 
+#if NET_2_0
+[assembly: WebResource ("WebUIValidation_2.0.js", "text/javascript")]
+#else
 [assembly: WebResource ("WebUIValidation.js", "text/javascript")]
+#endif

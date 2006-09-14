@@ -1,3 +1,7 @@
+2006-09-14 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Page.cs: fixed: GetValidators(string), Validate(string) works properly
+
 2006-09-08  Robert Jordan  <robertj@gmx.net>
 
 	* Page.cs: assure that RenderTrace is called even if an

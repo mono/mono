@@ -202,6 +202,9 @@ namespace System.Web.UI.WebControls {
 			return render_uplevel;
 		}
 
+		[MonoTODO()]
+		// for 2.0: not XHTML attributes must be registered with RegisterExpandoAttribute 
+		// when it will be implemented, in this case WebUIValidation_2.0.js muist be refactored
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
 			/* if we're rendering uplevel, add our attributes */
@@ -217,11 +220,18 @@ namespace System.Web.UI.WebControls {
 					writer.AddAttribute ("errormessage", ErrorMessage);
 				if (Text != String.Empty)
 					writer.AddAttribute ("text", Text);
-
+#if NET_2_0
+				if (ValidationGroup != String.Empty)
+					writer.AddAttribute ("validationgroup", ValidationGroup);
+#endif
 				if (!Enabled)
 					writer.AddAttribute ("enabled", "false");
 
+#if NET_2_0
+				if (Enabled && !IsValid) {
+#else
 				if (!IsValid) {
+#endif
 					writer.AddAttribute ("isvalid", "false");
 				}
 				else {
@@ -354,8 +364,7 @@ namespace System.Web.UI.WebControls {
 				Page.Validators.Add (this);
 
 #if NET_2_0
-				if (ValidationGroup != "")
-					Page.GetValidators (ValidationGroup).Add (this);
+				Page.GetValidators (ValidationGroup).Add (this);
 #endif
 			}
 			base.OnInit (e);
@@ -423,7 +432,11 @@ namespace System.Web.UI.WebControls {
 				Page.ClientScript.RegisterClientScriptBlock ("Mono-System.Web-ValidationClientScriptBlock",
 									     String.Format ("<script language=\"JavaScript\" src=\"{0}\"></script>",
 											    Page.ClientScript.GetWebResourceUrl (GetType(),
+#if NET_2_0
+																 "WebUIValidation_2.0.js")));
+#else		
 																 "WebUIValidation.js")));
+#endif
 			}
 		}
 
@@ -440,6 +453,10 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void Render (HtmlTextWriter writer)
 		{
+#if NET_2_0
+			if (!Enabled && !EnableClientScript)
+				return;
+#endif
 			if (render_uplevel) {
 				/* according to an msdn article, this is done here */
 				RegisterValidatorDeclaration ();

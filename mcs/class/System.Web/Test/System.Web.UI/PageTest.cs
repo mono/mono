@@ -36,6 +36,7 @@ using System.Web;
 using System.Web.UI;
 using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
+using System.Web.UI.WebControls;
 
 namespace MonoTests.System.Web.UI {
 
@@ -290,6 +291,52 @@ namespace MonoTests.System.Web.UI {
 #endif
 
 
+
+
+#if NET_2_0
+		[Test]
+		[Category ("NunitWeb")]
+		public void Page_ValidationGroup () {
+			new WebTest (PageInvoker.CreateOnLoad (Page_ValidationGroup_Load)).Run ();
+		}
+
+		public static void Page_ValidationGroup_Load (Page page) {
+			TextBox textbox;
+			BaseValidator val;
+
+			textbox = new TextBox ();
+			textbox.ID = "T1";
+			textbox.ValidationGroup = "VG1";
+			page.Form.Controls.Add (textbox);
+			val = new RequiredFieldValidator ();
+			val.ControlToValidate = "T1";
+			val.ValidationGroup = "VG1";
+			page.Form.Controls.Add (val);
+
+			textbox = new TextBox ();
+			textbox.ID = "T2";
+			textbox.ValidationGroup = "VG2";
+			page.Form.Controls.Add (textbox);
+			val = new RequiredFieldValidator ();
+			val.ControlToValidate = "T2";
+			val.ValidationGroup = "VG2";
+			page.Form.Controls.Add (val);
+
+			textbox = new TextBox ();
+			textbox.ID = "T3";
+			page.Form.Controls.Add (textbox);
+			val = new RequiredFieldValidator ();
+			val.ControlToValidate = "T3";
+			page.Form.Controls.Add (val);
+
+			Assert.AreEqual (3, page.Validators.Count, "Page_ValidationGroup#1");
+			Assert.AreEqual (1, page.GetValidators ("").Count, "Page_ValidationGroup#2");
+			Assert.AreEqual (1, page.GetValidators (null).Count, "Page_ValidationGroup#3");
+			Assert.AreEqual (0, page.GetValidators ("Fake").Count, "Page_ValidationGroup#4");
+			Assert.AreEqual (1, page.GetValidators ("VG1").Count, "Page_ValidationGroup#5");
+			Assert.AreEqual (1, page.GetValidators ("VG2").Count, "Page_ValidationGroup#6");
+		}
+#endif
 
 	}
 	

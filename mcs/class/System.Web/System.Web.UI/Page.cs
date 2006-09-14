@@ -70,7 +70,9 @@ namespace System.Web.UI
 #endif
 public class Page : TemplateControl, IHttpHandler
 {
+#if NET_2_0
 	private bool _eventValidation = true;
+#endif
 	private bool _viewState = true;
 	private bool _viewStateMac;
 	private string _errorPage;
@@ -360,7 +362,14 @@ public class Page : TemplateControl, IHttpHandler
 			if (!is_validated)
 				throw new HttpException (Locale.GetText ("Page hasn't been validated."));
 
+#if NET_2_0
+			foreach (IValidator val in Validators)
+				if (!val.IsValid)
+					return false;
+			return true;
+#else
 			return ValidateCollection (_validators);
+#endif
 		}
 	}
 #if NET_2_0
@@ -1716,14 +1725,15 @@ public class Page : TemplateControl, IHttpHandler
 	
 	public ValidatorCollection GetValidators (string validationGroup)
 	{
-		if (validationGroup == null || validationGroup == "")
-			return Validators;
+		string valgr = validationGroup;
+		if (valgr == null)
+			valgr = String.Empty;
 
 		if (_validatorsByGroup == null) _validatorsByGroup = new Hashtable ();
-		ValidatorCollection col = _validatorsByGroup [validationGroup] as ValidatorCollection;
+		ValidatorCollection col = _validatorsByGroup [valgr] as ValidatorCollection;
 		if (col == null) {
 			col = new ValidatorCollection ();
-			_validatorsByGroup [validationGroup] = col;
+			_validatorsByGroup [valgr] = col;
 		}
 		return col;
 	}
@@ -1731,8 +1741,8 @@ public class Page : TemplateControl, IHttpHandler
 	public virtual void Validate (string validationGroup)
 	{
 		is_validated = true;
-		if (validationGroup == null || validationGroup == "")
-			ValidateCollection (_validators);
+		if (validationGroup == null)
+			ValidateCollection (_validatorsByGroup [String.Empty] as ValidatorCollection);
 		else if (_validatorsByGroup != null) {
 			ValidateCollection (_validatorsByGroup [validationGroup] as ValidatorCollection);
 		}
