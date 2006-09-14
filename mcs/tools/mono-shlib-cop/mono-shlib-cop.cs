@@ -497,11 +497,6 @@ namespace Mono.Unmanaged.Check {
 	}
 
 	class Runner {
-		[DllImport ("does-not-exist")]
-			private static extern void Foo ();
-
-		[DllImport ("another-native-lib")]
-			private static extern void Bar ();
 
 		public static void Main (string[] args)
 		{

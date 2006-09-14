@@ -1,3 +1,19 @@
+2006-09-14  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Makefile: Modify test to build `test.dll' and use that as an input
+	  assembly to mono-shlib-cop.exe, and not mono-shlib-cop.exe itself.  This
+	  permits mono-shlib-cop.exe to be "clean", as it doesn't need to have
+	  deliberate errors inserted into it for use by the unit test.
+	* mono-shlib-cop.cs: Remove methods used for unit test.
+	* mono-shlib-cop.exe.config: Add <dllmap/> entry for libglib-2.0, so that
+	  `mono-shlib-cop mono-shlib-cop.exe` doesn't return any errors/warnings.
+	  This is requested by meebey@#mono, so that mono-shlib-cop doesn't itself
+	  require development libraries to execute (complicating the packaging
+	  process on debian).
+	* mono-shlib-cop.exe.out: Removed; not used anymore.
+	* test.cs: Added; test input file for mono-shlib-cop.
+	* test.dll.out: Added; expected output for `mono-shlib-cop test.dll`.
+
 2005-09-07  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* mono-shlib-cop.cs: Use Assembly.LoadWithPartialName instead of
