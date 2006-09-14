@@ -1,3 +1,13 @@
+2006-09-14  Marek Safar  <marek.safar@seznam.cz>
+
+	* assign.cs, ecore.cs, expression.cs: Share error message text.
+	* class.cs (FieldMember.Define): Check for variable of static type.
+	* decl.cs (check_type_parameter): Report correct type name.
+	* driver.cs (LoadAssembly): Uses error output for errors.
+	* generic.cs (Constraints.Resolve): Add check for constraint accessibility
+	(TypeArguments.Resolve): Static class cannot be used as an argument.
+	* statement.cs (ResolveMeta): Constants cannot be generic types.
+
 2006-09-12  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (TypeManager.IsIList): Moved into convert.cs.

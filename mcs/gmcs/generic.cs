@@ -220,7 +220,7 @@ namespace Mono.CSharp {
 					if (errors != Report.Errors)
 						return false;
 
-					Report.Error (246, loc, "Cannot find type '{0}'", ((Expression) obj).GetSignatureForError ());
+					NamespaceEntry.Error_NamespaceNotFound (loc, ((Expression)obj).GetSignatureForError ());
 					return false;
 				}
 
@@ -232,10 +232,19 @@ namespace Mono.CSharp {
 
 					expr = cexpr;
 				} else
-					expr = fn.ResolveAsTypeTerminal (ec, false);
+					expr = ((Expression) obj).ResolveAsTypeTerminal (ec, false);
 
 				if ((expr == null) || (expr.Type == null))
 					return false;
+
+				// TODO: It's aleady done in ResolveAsBaseTerminal
+				if (!ec.GenericDeclContainer.AsAccessible (fn.Type, ec.GenericDeclContainer.ModFlags)) {
+					Report.SymbolRelatedToPreviousError (fn.Type);
+					Report.Error (703, loc,
+						"Inconsistent accessibility: constraint type `{0}' is less accessible than `{1}'",
+						fn.GetSignatureForError (), ec.GenericDeclContainer.GetSignatureForError ());
+					return false;
+				}
 
 				TypeParameterExpr texpr = expr as TypeParameterExpr;
 				if (texpr != null)
@@ -1214,13 +1223,19 @@ namespace Mono.CSharp {
 				if (te is TypeParameterExpr)
 					has_type_args = true;
 
+				if (te.Type.IsSealed && te.Type.IsAbstract) {
+					Report.Error (718, Location, "`{0}': static classes cannot be used as generic arguments",
+						te.GetSignatureForError ());
+					return false;
+				}
 				if (te.Type.IsPointer) {
 					Report.Error (306, Location, "The type `{0}' may not be used " +
-						      "as a type argument", TypeManager.CSharpName (te.Type));
+							  "as a type argument", TypeManager.CSharpName (te.Type));
 					return false;
-				} else if (te.Type == TypeManager.void_type) {
-					Report.Error (1547, Location,
-						      "Keyword `void' cannot be used in this context");
+				}
+
+				if (te.Type == TypeManager.void_type) {
+					Expression.Error_VoidInvalidInTheContext (Location);
 					return false;
 				}
 

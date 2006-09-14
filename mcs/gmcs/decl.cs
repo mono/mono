@@ -1134,9 +1134,11 @@ namespace Mono.CSharp {
 				if (param.Name != name)
 					continue;
 
+				Report.SymbolRelatedToPreviousError (Parent);
+				// TODO: Location is wrong (parent instead of child)
 				Report.Warning (693, 3, Location,
-					"Type parameter `{0}' has same name as type parameter from outer type `{1}'",
-					name, Parent.GetInstantiationName ());
+					"Type parameter `{0}' has the same name as the type parameter from outer type `{1}'",
+					name, Parent.GetSignatureForError ());
 
 				return false;
 			}

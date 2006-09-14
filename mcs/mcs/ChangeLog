@@ -1,3 +1,10 @@
+2006-09-14  Marek Safar  <marek.safar@seznam.cz>
+
+	* assign.cs, ecore.cs, expression.cs: Share error message text.
+	* class.cs (FieldMember.Define): Check for varible of static type.
+	* driver.cs (LoadAssembly): Uses error output for errors.
+	* statement.cs: Updated.
+
 2006-09-08  Marek Safar  <marek.safar@seznam.cz>
 
 	* expression.cs (Error_OperatorCannotBeApplied): Report type instead of

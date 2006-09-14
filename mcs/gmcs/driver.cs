@@ -258,7 +258,7 @@ namespace Mono.CSharp
 				"   -resource:FILE[,ID]     Embed FILE as a resource\n" +
 				"   -win32res:FILE          Specifies Win32 resource file (.res)\n" +
 				"   -win32icon:FILE         Use this icon for the output\n" +
-                                "   @file              Read response file for more options\n\n" +
+                                "   @file                   Read response file for more options\n\n" +
 				"Options can be of the form -option or /option");
 		}
 
@@ -353,13 +353,14 @@ namespace Mono.CSharp
 					}
 				}
 				if (!soft) {
-					Report.Error (6, "Cannot find assembly `" + assembly + "'" );
-					Console.WriteLine ("Log: \n" + total_log);
+					Report.Error (6, "Cannot find assembly file `{0}'", assembly);
+					Report.Stderr.WriteLine ("Log: \n" + total_log);
 				}
 			} catch (BadImageFormatException f) {
 				Report.Error(6, "Cannot load assembly (bad file format)" + f.FusionLog);
 			} catch (FileLoadException f){
-				Report.Error(6, "Cannot load assembly " + f.FusionLog);
+				Report.SymbolRelatedToPreviousError (Location.Null, f.FusionLog);
+				Report.Error(6, "Cannot load assembly file `{0}'", f.FileName);
 			} catch (ArgumentNullException){
 				Report.Error(6, "Cannot load assembly (null argument)");
 			}
@@ -1543,10 +1544,10 @@ namespace Mono.CSharp
 			// If we are an exe, require a source file for the entry point
 			//
 			if (RootContext.Target == Target.Exe || RootContext.Target == Target.WinExe || RootContext.Target == Target.Module){
-			if (first_source == null){
-				Report.Error (2008, "No files to compile were specified");
-				return false;
-			}
+				if (first_source == null){
+					Report.Error (2008, "No files to compile were specified");
+					return false;
+				}
 
 			}
 
@@ -1554,8 +1555,8 @@ namespace Mono.CSharp
 			// If there is nothing to put in the assembly, and we are not a library
 			//
 			if (first_source == null && embedded_resources == null){
-					Report.Error (2008, "No files to compile were specified");
-					return false;
+				Report.Error (2008, "No files to compile were specified");
+				return false;
 			}
 
 			if (Report.Errors > 0)
@@ -1694,8 +1695,8 @@ namespace Mono.CSharp
 			
 			if (RootContext.VerifyClsCompliance) {
 				if (CodeGen.Assembly.IsClsCompliant) {
-				AttributeTester.VerifyModulesClsCompliance ();
-				TypeManager.LoadAllImportedTypes ();
+					AttributeTester.VerifyModulesClsCompliance ();
+					TypeManager.LoadAllImportedTypes ();
 				}
 			}
 			if (Report.Errors > 0)

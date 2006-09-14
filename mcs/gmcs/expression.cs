@@ -3407,7 +3407,8 @@ namespace Mono.CSharp {
 				} else if (right_side == EmptyExpression.LValueMemberOutAccess) {
 					code = 1655; msg = "Cannot pass members of `{0}' as ref or out arguments because it is a `{1}'";
 				} else {
-					code = 1656; msg = "Cannot assign to `{0}' because it is a `{1}'";
+					Error_CannotAssign (Name, local_info.GetReadOnlyContext ());
+					return null;
 				}
 				Report.Error (code, loc, msg, Name, local_info.GetReadOnlyContext ());
 				return null;

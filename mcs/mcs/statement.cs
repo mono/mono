@@ -1071,7 +1071,7 @@ namespace Mono.CSharp {
 			}
 
 			if (VariableType.IsAbstract && VariableType.IsSealed) {
-				Report.Error (723, Location, "Cannot declare variable of static type `{0}'", TypeManager.CSharpName (VariableType));
+				FieldMember.Error_VariableOfStaticClass (Location, Name, VariableType);
 				return false;
 			}
 

@@ -5202,6 +5202,11 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			if (MemberType.IsSealed && MemberType.IsAbstract) {
+				Error_VariableOfStaticClass (Location, GetSignatureForError (), MemberType);
+				return false;
+			}
+
 			if (!CheckBase ())
 				return false;
 			
@@ -5230,6 +5235,13 @@ namespace Mono.CSharp {
 			}
 
 			base.Emit ();
+		}
+
+		public static void Error_VariableOfStaticClass (Location loc, string variableName, Type staticClass)
+		{
+			Report.SymbolRelatedToPreviousError (staticClass);
+			Report.Error (723, loc, "`{0}': cannot declare variables of static types",
+				variableName);
 		}
 
 		//

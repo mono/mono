@@ -623,8 +623,7 @@ namespace Mono.CSharp {
 				return null;
 
 			if (target is MethodGroupExpr){
-				Report.Error (1656, Location, "Can not assign to {0} because it is a method group",
-					      ((MethodGroupExpr) target).Name);
+				Error_CannotAssign (((MethodGroupExpr)target).Name, target.ExprClassName);
 				return null;
 			}
 			//

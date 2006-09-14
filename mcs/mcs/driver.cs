@@ -353,13 +353,14 @@ namespace Mono.CSharp
 					}
 				}
 				if (!soft) {
-					Report.Error (6, "Cannot find assembly `" + assembly + "'" );
-					Console.WriteLine ("Log: \n" + total_log);
+					Report.Error (6, "Cannot find assembly file `{0}'", assembly);
+					Report.Stderr.WriteLine ("Log: \n" + total_log);
 				}
 			} catch (BadImageFormatException f) {
 				Report.Error(6, "Cannot load assembly (bad file format)" + f.FusionLog);
 			} catch (FileLoadException f){
-				Report.Error(6, "Cannot load assembly " + f.FusionLog);
+				Report.SymbolRelatedToPreviousError (Location.Null, f.FusionLog);
+				Report.Error(6, "Cannot load assembly file `{0}'", f.FileName);
 			} catch (ArgumentNullException){
 				Report.Error(6, "Cannot load assembly (null argument)");
 			}

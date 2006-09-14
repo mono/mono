@@ -303,6 +303,12 @@ namespace Mono.CSharp {
 
 		}
 
+		protected void Error_CannotAssign (string to, string roContext)
+		{
+			Report.Error (1656, loc, "Cannot assign to `{0}' because it is a `{1}'",
+				to, roContext);
+		}
+
 		public static void Error_VoidInvalidInTheContext (Location loc)
 		{
 			Report.Error (1547, loc, "Keyword `void' cannot be used in this context");
