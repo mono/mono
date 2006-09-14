@@ -1,3 +1,7 @@
+2006-09-14	Boris Kirzner <borisk@mainsoft.com>
+
+	* run-mono-tests.bat: fixes for TARGET_JVM tests run.
+	
 2006-04-09	Boris Kirzner <borisk@mainsoft.com>
 
 	* run-mono-tests.bat: fixes for TARGET_JVM NET_2_0 tests run.
