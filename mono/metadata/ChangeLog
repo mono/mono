@@ -1,3 +1,16 @@
+2006-09-14  Jonathan Chambers  <joncham@gmail.com>
+
+	* environment.c (ves_icall_System_Environment_get_ProcessorCount): 
+	Implement Environment.ProcessorCount.
+	
+	* environment.h (ves_icall_System_Environment_get_ProcessorCount): 
+	Implement Environment.ProcessorCount.
+	
+	* icall.c: 
+	Add Environment.ProcessorCount icall.
+	
+	Patch by Jason McFall.
+
 2006-09-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* assembly.c: don't append .exe/.dll when the filename already contains
