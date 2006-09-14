@@ -33,33 +33,35 @@ using System.Runtime.InteropServices;
 namespace System.Drawing.Imaging
 {
 	// MUST BE KEPT IN SYNC WITH gdip.h in libgdiplus!
+	// The first 6 fields MUST also match MS definition
 #if TARGET_JVM
 	[MonoTODO]
 #endif
 	[StructLayout(LayoutKind.Sequential)]
 	public sealed class BitmapData {
-		internal int		width;
-		internal int		height;
-		internal int		stride;
-		internal PixelFormat	pixel_format; // int
-		internal IntPtr 	scan0;
-		internal int 		reserved;
-		internal IntPtr 	palette;
+		private int		width;
+		private int		height;
+		private int		stride;
+		private PixelFormat	pixel_format; // int
+		private IntPtr		scan0;
+		private int 		reserved;
 
-		internal int		property_count;
-		internal IntPtr	property;
+		// *** Warning ***	don't depend on those fields in managed
+		//			code as they won't exists when using MS
+		//			GDI+
+		private IntPtr 	palette;
+		private int		property_count;
+		private IntPtr	property;
+		private float		dpi_horz;
+		private float		dpi_vert;
+		private int		image_flags;
+		private int		left;
+		private int		top;
+		private int		x;
+		private int		y;
+		private int		transparent;
+		// *** Warning ***
 
-		internal float		dpi_horz;
-		internal float		dpi_vert;
-		internal int		image_flags;
-
-		internal int		left;
-		internal int		top;
-		
-		internal int		x;
-		internal int		y;
-
-		internal int		transparent;
 
 		public int Height {
 			get {

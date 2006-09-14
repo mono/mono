@@ -1,3 +1,9 @@
+2006-09-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BitmapData.cs: Change fields visibility to private as they either
+	have get/set properties or shouldn't be used in managed code (as they
+	do not exists when using MS GDI+). Added more warnings comments.
+
 2006-09-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BitmapData.cs: Invert left and top fields to be in sync with gdip.h
