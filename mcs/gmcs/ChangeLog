@@ -5,6 +5,15 @@
 	* convert.cs (Convert.Array_To_IList): Moved here and correctly
 	implement it; fixes #79345.
 
+2006-09-08  Marek Safar  <marek.safar@seznam.cz>
+
+	* decl.cs (DeclSpace.SetParameterInfo): Check for nonexistent type
+	parameter.
+	* expression.cs (TypeOf.GetAttributableValue): Check for open generic
+	types.
+	* generic.cs: Improved error messages.
+	* typemanager.cs (RemoveGenericArity): Made public.
+
 2006-09-08  Martin Baulig  <martin@ximian.com>
 
 	* typemanager.cs (TypeManager.interlocked_type): New public field.

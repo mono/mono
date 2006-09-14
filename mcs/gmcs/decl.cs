@@ -1200,11 +1200,18 @@ namespace Mono.CSharp {
 
 				Constraints constraints = null;
 				if (constraints_list != null) {
-					foreach (Constraints constraint in constraints_list) {
-						if (constraint == null)
+					int total = constraints_list.Count;
+					for (int ii = 0; ii < total; ++ii) {
+						Constraints constraints_at = (Constraints)constraints_list[ii];
+						// TODO: it is used by iterators only
+						if (constraints_at == null) {
+							constraints_list.RemoveAt (ii);
+							--total;
 							continue;
-						if (constraint.TypeParameter == name.Name) {
-							constraints = constraint;
+						}
+						if (constraints_at.TypeParameter == name.Name) {
+							constraints = constraints_at;
+							constraints_list.RemoveAt(ii);
 							break;
 						}
 					}
@@ -1215,6 +1222,13 @@ namespace Mono.CSharp {
 					Location);
 
 				AddToContainer (type_params [i], name.Name);
+			}
+
+			if (constraints_list != null && constraints_list.Count > 0) {
+				foreach (Constraints constraint in constraints_list) {
+					Report.Error(699, constraint.Location, "`{0}': A constraint references nonexistent type parameter `{1}'", 
+						GetSignatureForError (), constraint.TypeParameter);
+				}
 			}
 		}
 
