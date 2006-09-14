@@ -194,6 +194,8 @@ namespace Mono.Data.SqliteClient
 				}
 					
 				Type ptype = param.Value.GetType ();
+				if (ptype.IsEnum)
+					ptype = Enum.GetUnderlyingType (ptype);
 				
 				SqliteError err;
 				
