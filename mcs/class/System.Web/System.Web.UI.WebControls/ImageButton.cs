@@ -288,6 +288,13 @@ namespace System.Web.UI.WebControls {
 #endif
 		void RaisePostDataChangedEvent ()
 		{
+		}
+		
+#if NET_2_0
+		protected virtual
+#endif
+		void RaisePostBackEvent (string eventArgument)
+		{
 			if (CausesValidation)
 #if NET_2_0
 				Page.Validate (ValidationGroup);
@@ -297,14 +304,6 @@ namespace System.Web.UI.WebControls {
 
 			OnClick (new ImageClickEventArgs (pos_x, pos_y));
 			OnCommand (new CommandEventArgs (CommandName, CommandArgument));
-		}
-		
-		[MonoTODO]
-#if NET_2_0
-		protected virtual
-#endif
-		void RaisePostBackEvent (string eventArgument)
-		{
 		}
 
 		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
@@ -389,14 +388,13 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[MonoTODO]
 		event EventHandler IButtonControl.Click
 		{
 			add {
-				throw new NotImplementedException ();
+				Events.AddHandler (ClickEvent, value);
 			}
 			remove {
-				throw new NotImplementedException ();
+				Events.RemoveHandler (ClickEvent, value);
 			}
 		}
 		

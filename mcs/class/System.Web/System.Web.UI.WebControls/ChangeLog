@@ -1,5 +1,9 @@
 2006-09-14 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* ImageButton.cs: implemented IButtonControl.Click, RaisePostBackEvent
+
+2006-09-14 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* BaseValidator.cs: implemented ValidationGroup feature on client side
 	* ValidationSummary.cs:	
 
