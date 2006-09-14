@@ -1,5 +1,26 @@
 2006-09-13  Chris Toshok  <toshok@ximian.com>
 
+	* XplatUIX11.cs: rework window destruction slightly.
+
+	- when destroying the windows associated with a control, we don't
+	need 2 separate XDestroyWindow calls.  Just the one for the
+	whole_window (or for client_window if whole_window is somehow
+	IntPtr.Zero -- can this happen?) is enough.
+
+	- reworked SendWMDestroyMessages slightly, so we always dispose
+	the child control hwnd's after sending the messages.
+	
+	- refactored out the ActiveWindow/FocusWindow/Caret clearing from
+	the two places it's used (differently in each place!), adding
+	another call in SendWMDestroyMessages.  We need this new call
+	because now the DestroyNotify events in the queue will be ignored
+	for the child controls (as their hwnd's were destroyed in
+	SendWMDestroyMessages.) fun, eh?
+
+	- this fixes bug #79326.
+
+2006-09-13  Chris Toshok  <toshok@ximian.com>
+
 	* Control.cs: don't always set is_recreating to false at the end
 	of RecreateHandle, since sometimes we're not done (and won't be
 	until WndProc handles the WM_DESTROY message).  Also, set

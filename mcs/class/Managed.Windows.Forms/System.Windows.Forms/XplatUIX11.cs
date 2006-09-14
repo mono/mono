@@ -1510,19 +1510,37 @@ namespace System.Windows.Forms {
 					#endif
 
 					hwnd = Hwnd.ObjectFromHandle(c.Handle);
+					CleanupCachedWindows (hwnd);
 					SendMessage(c.Handle, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
 				}
 
 				for (i = 0; i < controls.Length; i++) {
-					SendWMDestroyMessages(controls[i]);
-					if (!controls[i].IsRecreating && controls[i].IsHandleCreated) {
+					hwnd = null;
+
+					if (controls[i].IsHandleCreated)
 						hwnd = Hwnd.ObjectFromHandle(controls[i].Handle);
-						if (hwnd != null) {
-							hwnd.Dispose();
-						}
-					}
+
+					SendWMDestroyMessages(controls[i]);
+
+					if (hwnd != null)
+						hwnd.Dispose();
 				}
 			}
+		}
+
+		void CleanupCachedWindows (Hwnd hwnd)
+		{
+			if (ActiveWindow == hwnd.Handle) {
+				SendMessage(hwnd.client_window, Msg.WM_ACTIVATE, (IntPtr)WindowActiveFlags.WA_INACTIVE, IntPtr.Zero);
+				ActiveWindow = IntPtr.Zero;
+			}
+
+			if (FocusWindow == hwnd.Handle) {
+				SendMessage(hwnd.client_window, Msg.WM_KILLFOCUS, IntPtr.Zero, IntPtr.Zero);
+				FocusWindow = IntPtr.Zero;
+			}
+
+			DestroyCaret (hwnd.Handle);
 		}
 
 		private void PerformNCCalc(Hwnd hwnd) {
@@ -2653,19 +2671,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void DestroyCaretInternal() {
-			if (Caret.Visible == true) {
-				Caret.Timer.Stop();
-			}
-			if (Caret.gc != IntPtr.Zero) {
-				XFreeGC(DisplayHandle, Caret.gc);
-				Caret.gc = IntPtr.Zero;
-			}
-			Caret.Hwnd = IntPtr.Zero;
-			Caret.Visible = false;
-			Caret.On = false;
-		}
-
 		internal override void DestroyCursor(IntPtr cursor) {
 			lock (XlibLock) {
 				XFreeCursor(DisplayHandle, cursor);
@@ -2688,31 +2693,18 @@ namespace System.Windows.Forms {
 				Console.WriteLine("Destroying window {0:X}", handle.ToInt32());
 			#endif
 
-			// Make sure if the caret is in the window, that we destroy the caret, too
-			if (Caret.Hwnd == hwnd.client_window) {
-				DestroyCaret(handle);
-			}
-
-			if (ActiveWindow == handle) {
-				SendMessage(handle, Msg.WM_ACTIVATE, (IntPtr)WindowActiveFlags.WA_INACTIVE, IntPtr.Zero);
-				ActiveWindow = IntPtr.Zero;
-			}
-
-			if (FocusWindow == handle) {
-				SendMessage(handle, Msg.WM_KILLFOCUS, IntPtr.Zero, IntPtr.Zero);
-				FocusWindow = IntPtr.Zero;
-			}
+			CleanupCachedWindows (hwnd);
 
 			SendWMDestroyMessages(Control.ControlNativeWindow.ControlFromHandle(hwnd.Handle));
 
 			lock (XlibLock) {
-				if (hwnd.client_window != IntPtr.Zero) {
+				if (hwnd.whole_window != IntPtr.Zero) {
+					XDestroyWindow(DisplayHandle, hwnd.whole_window);
+				}
+				else if (hwnd.client_window != IntPtr.Zero) {
 					XDestroyWindow(DisplayHandle, hwnd.client_window);
 				}
 
-				if ((hwnd.whole_window != IntPtr.Zero) && (hwnd.whole_window != hwnd.client_window)) {
-					XDestroyWindow(DisplayHandle, hwnd.whole_window);
-				}
 			}
 			hwnd.Dispose();
 		}
@@ -3466,19 +3458,7 @@ namespace System.Windows.Forms {
 
 					// We may get multiple for the same window, act only one the first (when Hwnd still knows about it)
 					if ((hwnd != null) && (hwnd.client_window == xevent.DestroyWindowEvent.window)) {
-						if (ActiveWindow == hwnd.client_window) {
-							SendMessage(hwnd.client_window, Msg.WM_ACTIVATE, (IntPtr)WindowActiveFlags.WA_INACTIVE, IntPtr.Zero);
-							ActiveWindow = IntPtr.Zero;
-						}
-
-						if (FocusWindow == hwnd.client_window) {
-							SendMessage(hwnd.client_window, Msg.WM_KILLFOCUS, IntPtr.Zero, IntPtr.Zero);
-							FocusWindow = IntPtr.Zero;
-						}
-
-						if (Caret.Window == hwnd.client_window) {
-							DestroyCaretInternal();
-						}
+						CleanupCachedWindows (hwnd);
 
 						#if DriverDebugDestroy
 							Console.WriteLine("Received X11 Destroy Notification for {0}", XplatUI.Window(hwnd.client_window));
