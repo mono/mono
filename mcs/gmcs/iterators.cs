@@ -817,12 +817,6 @@ namespace Mono.CSharp {
 		{
 			Report.Debug (64, "RESOLVE ITERATOR", this, Container, Block);
 
-			if (!base.Resolve (ec))
-				return false;
-
-			Report.Debug (64, "RESOLVE ITERATOR #1", this, method, method.Parent,
-				      RootScope, ec);
-
 			Parameters parameters = OriginalMethod.ParameterInfo;
 			for (int i = 0; i < parameters.Count; i++){
 				Parameter.Modifier mod = parameters.ParameterModifier (i);
@@ -846,6 +840,12 @@ namespace Mono.CSharp {
 					return false;
 				}
 			}
+
+			if (!base.Resolve (ec))
+				return false;
+
+			Report.Debug (64, "RESOLVE ITERATOR #1", this, method, method.Parent,
+				      RootScope, ec);
 
 			if (!RootScope.ResolveMembers ())
 				return false;
