@@ -773,10 +773,10 @@ namespace Mono.CSharp {
 		// Our constructor
 		//
 		public Iterator (IMethodData m_container, TypeContainer host, GenericMethod generic,
-				 ToplevelBlock container, ToplevelBlock block, int modifiers,
-				 Type iterator_type, bool is_enumerable)
+				 int modifiers, Type iterator_type, bool is_enumerable)
 			: base (null, host, generic, m_container.ParameterInfo,
-				block, m_container.Block, TypeManager.bool_type, modifiers,
+				new ToplevelBlock (m_container.ParameterInfo, m_container.Location),
+				m_container.Block, TypeManager.bool_type, modifiers,
 				m_container.Location)
 		{
 			this.OriginalBlock = m_container.Block;
@@ -785,14 +785,14 @@ namespace Mono.CSharp {
 			this.IsEnumerable = is_enumerable;
 
 			Report.Debug (64, "NEW ITERATOR", host, generic, OriginalBlock,
-				      Container, Block, block);
+				      Container, Block);
 
 			IteratorHost = new IteratorHost (this);
 			Block.CreateIteratorHost (IteratorHost);
 
 			OriginalBlock.ReParent (Container);
 
-			m_container.Block = block;
+			m_container.Block = Container;
 
 			OriginalBlock.MakeIterator (this);
 		}
@@ -938,18 +938,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			Report.Debug (64, "CREATE ITERATOR", parent, method, method.Block);
-
-			ToplevelBlock block = new ToplevelBlock (method.ParameterInfo, method.Location);
-
-			Iterator iterator = new Iterator (
-				method, parent, generic, null, block, modifiers,
-				iterator_type, is_enumerable);
-
-			Report.Debug (64, "CREATE ITERATOR #1", iterator, iterator.RootScope,
-				      iterator.RootScope.IsGeneric, iterator.RootScope.TypeBuilder);
-
-			return iterator;
+			return new Iterator (method, parent, generic, modifiers,
+					     iterator_type, is_enumerable);
 		}
 
 		static bool CheckType (Type ret, out Type original_iterator_type, out bool is_enumerable)
