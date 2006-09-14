@@ -75,18 +75,8 @@ namespace System.Web.UI.WebControls {
 				w.AddAttribute (HtmlTextWriterAttribute.Onclick, onclick);
 
 			if (Enabled && Page != null) {
-				string href;
-				bool doValidate = CausesValidation && Page.AreValidatorsUplevel ();
-				if (doValidate || PostBackUrl.Length > 0) {
-					PostBackOptions options = new PostBackOptions (this);
-					options.ActionUrl = Page.ResolveClientUrl (PostBackUrl);
-					options.PerformValidation = doValidate;
-					options.ValidationGroup = ValidationGroup;
-					href = Page.ClientScript.GetPostBackEventReference (options);
-				}
-				else
-					href = Page.ClientScript.GetPostBackClientHyperlink (this, "");
-
+				PostBackOptions options = GetPostBackOptions ();
+				string href = Page.ClientScript.GetPostBackEventReference (options);
 				w.AddAttribute (HtmlTextWriterAttribute.Href, href);
 			}
 #else
@@ -106,14 +96,9 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO]
-		protected virtual void RaisePostBackEvent (string eventArgument)
-		{
-			throw new NotImplementedException ();
-		}
+		protected virtual 
 #endif		
-		
-		void IPostBackEventHandler.RaisePostBackEvent (string ea)
+		void RaisePostBackEvent (string eventArgument)
 		{
 			if (CausesValidation)
 #if NET_2_0
@@ -124,6 +109,11 @@ namespace System.Web.UI.WebControls {
 			
 			OnClick (EventArgs.Empty);
 			OnCommand (new CommandEventArgs (CommandName, CommandArgument));
+		}
+		
+		void IPostBackEventHandler.RaisePostBackEvent (string ea)
+		{
+			RaisePostBackEvent (ea);
 		}
 
 		protected override void AddParsedSubObject (object obj)
@@ -150,9 +140,17 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		protected virtual PostBackOptions GetPostBackOptions ()
 		{
-			return new PostBackOptions(this, PostBackUrl, null, false, true,
-						   false, true, CausesValidation,
-						   ValidationGroup);
+			PostBackOptions options = new PostBackOptions (this);
+			options.ActionUrl = (PostBackUrl.Length > 0 ? Page.ResolveClientUrl (PostBackUrl) : null);
+			options.ValidationGroup = null;
+			options.Argument = "";
+			options.ClientSubmit = true;
+			options.RequiresJavaScriptProtocol = true;
+			options.PerformValidation = CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup);
+			if (options.PerformValidation)
+				options.ValidationGroup = ValidationGroup;
+
+			return options;
 		}
 #endif		
 
