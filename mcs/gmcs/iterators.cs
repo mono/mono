@@ -37,27 +37,37 @@ namespace Mono.CSharp {
 				Report.Error (1625, loc, "Cannot yield in the body of a " +
 					      "finally clause");
 				return false;
-			} 
-			
-			if (ec.InUnsafe) {
+			}
+
+			for (Block block = ec.CurrentBlock; block != null; block = block.Parent) {
+				if (!block.Unsafe)
+					continue;
+
 				Report.Error (1629, loc, "Unsafe code may not appear in iterators");
 				return false;
 			}
 
-			AnonymousContainer am = ec.CurrentAnonymousMethod;
-			if ((am != null) && !am.IsIterator){
-				Report.Error (1621, loc, "The yield statement cannot be used inside anonymous method blocks");
+			//
+			// We can't use `ec.InUnsafe' here because it's allowed to have an iterator
+			// inside an unsafe class.  See test-martin-29.cs for an example.
+			//
+			if (!ec.CurrentAnonymousMethod.IsIterator) {
+				Report.Error (1621, loc,
+					      "The yield statement cannot be used inside " +
+					      "anonymous method blocks");
 				return false;
 			}
 
 			if (ec.CurrentBranching.InTryWithCatch () && (!isYieldBreak || !ec.InCatch)) {
 				if (!ec.InCatch)
-					Report.Error (1626, loc, "Cannot yield a value in the body of a " +
-					"try block with a catch clause");
+					Report.Error (1626, loc, "Cannot yield a value in the body " +
+						      "of a try block with a catch clause");
 				else
-					Report.Error (1631, loc, "Cannot yield a value in the body of a catch clause");
+					Report.Error (1631, loc, "Cannot yield a value in the body " +
+						      "of a catch clause");
 				return false;
 			}
+
 			return true;
 		}
 		
@@ -844,6 +854,11 @@ namespace Mono.CSharp {
 						      "yield types");
 					return false;
 				}
+			}
+
+			if ((ModFlags & Modifiers.UNSAFE) != 0) {
+				Report.Error (1629, Location, "Unsafe code may not appear in iterators");
+				return false;
 			}
 
 			if (!base.Resolve (ec))

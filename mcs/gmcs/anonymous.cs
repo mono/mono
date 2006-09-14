@@ -1146,6 +1146,7 @@ namespace Mono.CSharp {
 		//
 		public readonly ToplevelBlock Block;
 
+		public readonly int ModFlags;
 		public readonly Type ReturnType;
 		public readonly TypeContainer Host;
 
@@ -1172,6 +1173,7 @@ namespace Mono.CSharp {
 		{
 			this.ContainerAnonymousMethod = parent;
 			this.ReturnType = return_type;
+			this.ModFlags = mod;
 			this.Host = host;
 
 			this.container = container;
