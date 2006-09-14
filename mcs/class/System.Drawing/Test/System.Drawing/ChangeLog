@@ -1,3 +1,7 @@
+2006-09-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GDIPlusTest.cs: Added test cases for GdipBitmapUnlockBits.
+
 2006-09-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestBitmap.cs: Fix the bitmap loading code to work in more cases.

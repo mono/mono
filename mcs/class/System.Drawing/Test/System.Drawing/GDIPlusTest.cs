@@ -142,6 +142,34 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipCreateBitmapFromScan0 (-1, 10, 10, PixelFormat.Format32bppArgb, IntPtr.Zero, out bmp), "negative width");
 		}
 
+		[Test]
+		public void Unlock ()
+		{
+			IntPtr bmp;
+			GDIPlus.GdipCreateBitmapFromScan0 (10, 10, 0, PixelFormat.Format32bppArgb, IntPtr.Zero, out bmp);
+			Assert.IsTrue (bmp != IntPtr.Zero, "bmp");
+
+			BitmapData bd = null;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipBitmapUnlockBits (bmp, bd), "BitmapData");
+
+			bd = new BitmapData ();
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipBitmapUnlockBits (IntPtr.Zero, bd), "handle");
+
+			Assert.AreEqual (Status.Win32Error, GDIPlus.GdipBitmapUnlockBits (bmp, bd), "not locked");
+
+			Rectangle rect = new Rectangle (2, 2, 5, 5);
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipBitmapLockBits (bmp, ref rect, ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb, bd), "locked");
+			Assert.AreEqual (rect.Width, bd.Width, "Width");
+			Assert.AreEqual (rect.Height, bd.Height, "Height");
+			Assert.AreEqual (PixelFormat.Format24bppRgb, bd.PixelFormat, "PixelFormat");
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipBitmapUnlockBits (bmp, bd), "unlocked");
+
+			Assert.AreEqual (Status.Win32Error, GDIPlus.GdipBitmapUnlockBits (bmp, bd), "unlocked-twice");
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDisposeImage (bmp), "GdipDisposeImage");
+		}
+
 		// Brush
 		[Test]
 		public void DeleteBrush ()
