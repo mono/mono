@@ -33,6 +33,8 @@ using System.IO;
 using System.Security.Principal;
 using System.Web;
 using System.Web.UI;
+using MonoTests.SystemWeb.Framework;
+using MonoTests.stand_alone.WebHarness;
 
 namespace MonoTests.System.Web.UI {
 
