@@ -464,4 +464,44 @@ class X : Y {
 		}
 	}
 }
-	
+
+* Conditional compilation
+
+	Ideally we would not need conditional compilation, and the use
+	of #ifdef is strongly discouraged.  But due to our support for
+	old C# 1.0 compilers we have to use it in a few places.
+
+	Try to avoid negative tests that have an else clause, for
+	example:
+
+	    #if !NET_2_0
+	    	CODE_FOR_1_0
+            #else
+		CODE_FOR_2_0
+	    #endif
+
+        Instead use:
+
+	    #if NET_2_0
+	    	CODE_FOR_2_0
+	    #else
+	        CODE_FOR_1_0
+            #endif
+
+	When a major feature differs across compilation targets, try
+	to factor out the code into a separate class, a helper class
+	or a separate file, and include that in your profile while
+	surrounding that helper file/class with the ifdefs to reduce
+	the amount of ifdefs in the code.
+
+	For instance, this is used for some parts of Grasshopper where
+	the code is ifdefed out, when large parts of a file would have
+	been ifdefed out, we moved the code into a MyOtherFile.jvm.cs
+
+	For 2.0 classes, this is even simpler as code can be trivially
+	factored out into 
+
+		 MyHelperClass.cli.cs
+		 MyHelperClass.jvm.cs
+
+	By using partial classes.
