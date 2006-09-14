@@ -1174,10 +1174,7 @@ namespace Mono.CSharp {
 			get;
 		}
 
-		public string GetSignatureForError ()
-		{
-			return RootScope.GetSignatureForError ();
-		}
+		public abstract string GetSignatureForError ();
 
 		public virtual bool Resolve (EmitContext ec)
 		{
@@ -1297,6 +1294,11 @@ namespace Mono.CSharp {
 
 		public Expression AnonymousDelegate {
 			get { return anonymous_delegate; }
+		}
+
+		public override string GetSignatureForError ()
+		{
+			return TypeManager.CSharpName (DelegateType);
 		}
 
 		//

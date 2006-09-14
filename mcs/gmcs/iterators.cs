@@ -813,6 +813,11 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override string GetSignatureForError ()
+		{
+			return OriginalMethod.GetSignatureForError ();
+		}
+
 		public override bool Resolve (EmitContext ec)
 		{
 			Report.Debug (64, "RESOLVE ITERATOR", this, Container, Block);
