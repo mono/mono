@@ -1,3 +1,7 @@
+2006-09-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_marshal_object): Fix marshalling of blittable classes and null.
+
 2006-09-14  Jonathan Chambers  <joncham@gmail.com>
 
 	* environment.c (ves_icall_System_Environment_get_ProcessorCount): 
