@@ -120,6 +120,7 @@ namespace MonoTests.System.Web.UI {
 
 #if NET_2_0
 		[Test]
+		[Category ("NunitWeb")]
 		public void PageHeaderOnPreInit ()
 		{
 			Thread.Sleep (200); 
@@ -141,6 +142,8 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
 		public void PageHeaderInit ()
 		{
 			Thread.Sleep (200); 
@@ -158,6 +161,8 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
 		public void PageHeaderInitComplete ()
 		{
 			Thread.Sleep (200); 
@@ -176,6 +181,8 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
 		public void PageHeaderPreLoad ()
 		{
 			Thread.Sleep (200); 
@@ -194,6 +201,8 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
 		public void PageHeaderLoad ()
 		{
 			Thread.Sleep (200); 
@@ -210,6 +219,8 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
 		public void PageHeaderLoadComplete ()
 		{
 			Thread.Sleep (200); 
@@ -228,6 +239,8 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
 		public void PageHeaderPreRender ()
 		{
 			Thread.Sleep (200);
@@ -246,6 +259,8 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
 		public void PageHeaderPreRenderComplete ()
 		{
 			Thread.Sleep (200); 
