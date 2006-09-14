@@ -668,7 +668,7 @@ namespace Mono.CSharp {
 
 				if ((md != null) && (md.Iterator != null)) {
 					if (!md.Iterator.Resolve (this))
-						throw new InternalErrorException ();
+						return false;
 				}
 
 				using (this.With (EmitContext.Flags.DoFlowAnalysis, true)) {

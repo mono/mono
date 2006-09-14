@@ -2370,6 +2370,9 @@ namespace Mono.CSharp {
 				if (pending.VerifyPendingMethods ())
 					return;
 
+			if (Report.Errors > 0)
+				return;
+
 			if (compiler_generated != null) {
 				foreach (CompilerGeneratedClass c in compiler_generated) {
 					if (!c.DefineMembers ())
