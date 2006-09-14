@@ -28,9 +28,9 @@
 //
 
 namespace System.ServiceProcess
-{	
-	[Serializable]
-        public enum ServiceStartMode {
+{
+	public enum ServiceStartMode
+	{
 		Automatic = 2,
 		Manual = 3,
 		Disabled = 4

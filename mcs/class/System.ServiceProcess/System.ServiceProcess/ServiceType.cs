@@ -28,10 +28,10 @@
 //
 
 namespace System.ServiceProcess
-{	
+{
 	[Flags]
-	[Serializable]
-        public enum ServiceType {
+	public enum ServiceType
+	{
 		KernelDriver = 1,
 		FileSystemDriver = 2,
 		Adapter = 4,

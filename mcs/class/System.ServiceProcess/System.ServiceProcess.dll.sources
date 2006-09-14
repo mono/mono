@@ -5,6 +5,7 @@ Assembly/AssemblyInfo.cs
 System.ServiceProcess/PowerBroadcastStatus.cs
 System.ServiceProcess/ServiceAccount.cs
 System.ServiceProcess/ServiceController.cs
+System.ServiceProcess/ServiceControllerImpl.cs
 System.ServiceProcess/ServiceControllerPermissionAccess.cs
 System.ServiceProcess/ServiceControllerStatus.cs
 System.ServiceProcess/ServiceInstaller.cs
@@ -18,3 +19,5 @@ System.ServiceProcess/ServiceControllerPermission.cs
 System.ServiceProcess/ServiceControllerPermissionAttribute.cs
 System.ServiceProcess/ServiceControllerPermissionEntry.cs
 System.ServiceProcess/ServiceControllerPermissionEntryCollection.cs
+System.ServiceProcess/UnixServiceController.cs
+System.ServiceProcess/Win32ServiceController.cs

@@ -278,7 +278,7 @@ namespace MonoTests.System.ServiceProcess {
 			scp.PermissionEntries.Add (new ServiceControllerPermissionEntry (ServiceControllerPermissionAccess.None, "localhost", "http"));
 			// Union with null is a simple copy
 			ServiceControllerPermission union = (ServiceControllerPermission)scp.Union (null);
-			Assert.IsNotNull (scp.PermissionEntries.Count, "Count");
+			Assert.AreEqual (1, union.PermissionEntries.Count, "Count");
 		}
 
 		[Test]

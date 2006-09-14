@@ -77,7 +77,7 @@ namespace MonoTests.System.ServiceProcess {
 		[Test]
 		public void Action_Invalid ()
 		{
-			ServiceControllerPermissionAttribute a = new ServiceControllerPermissionAttribute ((SecurityAction)Int32.MinValue);
+			new ServiceControllerPermissionAttribute ((SecurityAction)Int32.MinValue);
 			// no validation in attribute
 		}
 

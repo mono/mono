@@ -28,8 +28,8 @@
 
 namespace System.ServiceProcess
 {
-	[Serializable]
-	public enum PowerBroadcastStatus {
+	public enum PowerBroadcastStatus
+	{
 		QuerySuspend = 0,
 		QuerySuspendFailed = 2,
 		Suspend = 4,

@@ -1,3 +1,11 @@
+2006-09-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Makefile: Treat warnings as error. Ignore no warnings.
+	* System.ServiceProcess.dll.sources: Added ServiceControllerImpl.cs,
+	UnixServiceController.cs and Win32ServiceController.cs.
+	* System.ServiceProcess_test.dll.sources: Added
+	ServiceControllerTest.cs.
+
 2005-01-23  Geoff Norton  <gnorton@customerdna.com>
 
 	* System.ServiceProcess.dll.sources: Add ServiceInstaller and 

@@ -33,7 +33,6 @@ using System.ComponentModel;
 
 namespace System.ServiceProcess {
 
-        [Serializable]
         [AttributeUsage (AttributeTargets.All)]
         public class ServiceProcessDescriptionAttribute : DescriptionAttribute
         {

@@ -28,17 +28,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Configuration.Install;
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
 
 namespace System.ServiceProcess
 {
-	public class ServiceInstaller : System.Configuration.Install.ComponentInstaller
+	[MonoTODO]
+	public class ServiceInstaller : ComponentInstaller
 	{
-		public ServiceInstaller () {}
+		public ServiceInstaller ()
+		{
+		}
 		
 		private string display_name;
 		private string service_name;
@@ -47,6 +52,10 @@ namespace System.ServiceProcess
 
 #if NET_2_0
 		private string description;
+
+		[ComVisible (false)]
+		[DefaultValue ("")]
+		[ServiceProcessDescription ("")]
 		public string Description {
 			get {
 				return description;
@@ -57,6 +66,7 @@ namespace System.ServiceProcess
 		}
 #endif
 
+		[DefaultValue("")]
 		public string DisplayName {
 			get {
 				return display_name;
@@ -66,6 +76,8 @@ namespace System.ServiceProcess
 			}
 		}
 
+		[DefaultValue("")]
+		[TypeConverter("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
 		public string ServiceName {
 			get {
 				return service_name;
@@ -86,6 +98,7 @@ namespace System.ServiceProcess
 			}
 		}
 
+		[DefaultValue (ServiceStartMode.Manual)]
 		public ServiceStartMode StartType {
 			get {
 				return start_type;
@@ -95,24 +108,29 @@ namespace System.ServiceProcess
 			}
 		}
 
-		public override void CopyFromComponent (IComponent component) {
+		public override void CopyFromComponent (IComponent component)
+		{
 			if (!component.GetType ().IsSubclassOf (typeof (ServiceBase)))
 				throw new ArgumentException ();
 		}
 
-		public override void Install (IDictionary stateSaver) {
+		public override void Install (IDictionary stateSaver)
+		{
 			throw new NotImplementedException ();
 		}
 	
-		public override bool IsEquivalentInstaller (ComponentInstaller otherInstaller) {
+		public override bool IsEquivalentInstaller (ComponentInstaller otherInstaller)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public override void Rollback (IDictionary savedState) {
+		public override void Rollback (IDictionary savedState)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public override void Uninstall (IDictionary savedState) {
+		public override void Uninstall (IDictionary savedState)
+		{
 			throw new NotImplementedException ();
 		}
 	}

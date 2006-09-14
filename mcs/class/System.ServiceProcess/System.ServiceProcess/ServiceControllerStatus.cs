@@ -28,9 +28,9 @@
 //
 
 namespace System.ServiceProcess
-{	
-	[Serializable]
-        public enum ServiceControllerStatus {
+{
+	public enum ServiceControllerStatus
+	{
 		Stopped = 1,
 		StartPending = 2,
 		StopPending = 3,
@@ -40,4 +40,3 @@ namespace System.ServiceProcess
 		Paused = 7
 	}
 }
-		

@@ -1,3 +1,12 @@
+2006-09-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ServiceControllerPermissionTest.cs: Set eol-style to native. Fixed
+	warning and improved Union_Null test.
+	* ServiceControllerPermissionAttributeTest.cs: Set eol-style to native.
+	Fixed warning.
+	* ServiceControllerTest.cs: Added unit tests for win32 implementation
+	of ServiceController.
+
 2005-09-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ServiceControllerPermissionAttributeTest.cs: Removed *Choice 

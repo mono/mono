@@ -28,13 +28,12 @@
 //
 
 namespace System.ServiceProcess
-{	
+{
 	[Flags]
-	[Serializable]
-        public enum ServiceControllerPermissionAccess {
+	public enum ServiceControllerPermissionAccess
+	{
 		None = 0,
 		Browse = 2, 
 		Control = 6,
-
 	}
 }

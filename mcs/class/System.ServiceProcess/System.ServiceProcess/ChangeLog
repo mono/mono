@@ -1,3 +1,37 @@
+2006-09-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ServiceControllerPermissionEntryCollection.cs: Set eol-style to 
+	native.
+	* ServiceAccount.cs: Set eol-style to native.
+	* ServiceControllerPermission.cs: Set eol-style to native.
+	* ServiceProcessInstaller.cs: Set eol-style to native.
+	* ServiceInstaller.cs: API compatibility fixes. Coding guidelines
+	fixes. Set eol-style to native.
+	* PowerBroadcastStatus.cs: Removed Serializable attribute. Coding
+	guidelines fixes. Set eol-style to native.
+	* ServiceStartMode.cs: Removed Serializable attribute. Coding 
+	guidelines fixes. Set eol-style to native.
+	* ServiceProcessDescriptionAttribute.cs: Removed Serializable
+	 attribute. Set eol-style to native.
+	* ServiceBase.cs: Set eol-style to native.
+	* ServiceControllerPermissionAccess.cs: Removed Serializable
+	attribute. Coding guidelines fixes. Set eol-style to native.
+	* ServiceControllerPermissionAccess.cs: Set eol-style to native.
+	* ServiceControllerPermissionEntry.cs: Set eol-style to native.
+	* ServiceControllerPermissionAttribute.cs: Set eol-style to native.
+	* ServiceType.cs: Removed Serializable attribute. Coding guidelines
+	fixes. Set eol-style to native.
+	* ServiceController.cs: API compatibility fixes. Added missing
+	MonoTODO's. Coding guidelines fixes. Set eol-style to native.
+	Provides an implementation for Win32.
+	* TimeoutException.cs: Set eol-style to native.
+	* ServiceControllerStatus.cs: Removed Serializable attribute.
+	Coding guidelines fixes. Set eol-style to native.
+	* UnixServiceController.cs: Dummy implementation for unix. Always
+	throws NotImplementedException.
+	* Win32ServiceController.cs: Win32 implementation. Built as a wrapper
+	for the Win32 Service API.
+
 2006-01-13  Ben Maurer  <bmaurer@andrew.cmu.edu>
 
 	* ServiceInstaller.cs: Stubs for 2.0 stuff
