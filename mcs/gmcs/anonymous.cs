@@ -1142,7 +1142,6 @@ namespace Mono.CSharp {
 
 		// The emit context for the anonymous method
 		protected bool unreachable;
-		protected readonly Location loc;
 		protected readonly ToplevelBlock container;
 		protected readonly GenericMethod generic;
 
@@ -1164,7 +1163,7 @@ namespace Mono.CSharp {
 			this.generic = parent != null ? null : generic;
 			this.Parameters = parameters;
 			this.Block = block;
-			this.loc = loc;
+			this.Location = loc;
 		}
 
 		public Method Method {
@@ -1183,24 +1182,24 @@ namespace Mono.CSharp {
 		public virtual bool Resolve (EmitContext ec)
 		{
 			if (!ec.IsAnonymousMethodAllowed) {
-				Report.Error (1706, loc,
+				Report.Error (1706, Location,
 					      "Anonymous methods are not allowed in the " +
 					      "attribute declaration");
 				return false;
 			}
 
-			Report.Debug (64, "RESOLVE ANONYMOUS METHOD", this, loc, ec,
+			Report.Debug (64, "RESOLVE ANONYMOUS METHOD", this, Location, ec,
 				      RootScope, Parameters, ec.IsStatic);
 
 			aec = new EmitContext (
 				ec.ResolveContext, ec.TypeContainer,
-				RootScope != null ? RootScope : Host, loc, null, ReturnType,
+				RootScope != null ? RootScope : Host, Location, null, ReturnType,
 				/* REVIEW */ (ec.InIterator ? Modifiers.METHOD_YIELDS : 0) |
 				(ec.InUnsafe ? Modifiers.UNSAFE : 0), /* No constructor */ false);
 
 			aec.CurrentAnonymousMethod = this;
 
-			Report.Debug (64, "RESOLVE ANONYMOUS METHOD #1", this, loc, ec, aec,
+			Report.Debug (64, "RESOLVE ANONYMOUS METHOD #1", this, Location, ec, aec,
 				      RootScope, Parameters, Block);
 
 			bool unreachable;
@@ -1310,24 +1309,24 @@ namespace Mono.CSharp {
 
 			GenericMethod generic_method = null;
 			if (DelegateType.IsGenericType) {
-				TypeArguments args = new TypeArguments (loc);
+				TypeArguments args = new TypeArguments (Location);
 
 				Type[] tparam = TypeManager.GetTypeArguments (DelegateType);
 				for (int i = 0; i < tparam.Length; i++)
-					args.Add (new SimpleName (tparam [i].Name, loc));
+					args.Add (new SimpleName (tparam [i].Name, Location));
 
-				member_name = new MemberName (name, args, loc);
+				member_name = new MemberName (name, args, Location);
 
 				generic_method = new GenericMethod (
 					RootScope.NamespaceEntry, RootScope, member_name,
-					new TypeExpression (ReturnType, loc), Parameters);
+					new TypeExpression (ReturnType, Location), Parameters);
 
 				generic_method.SetParameterInfo (null);
 			} else
-				member_name = new MemberName (name, loc);
+				member_name = new MemberName (name, Location);
 
 			return new AnonymousMethodMethod (
-				this, generic_method, new TypeExpression (ReturnType, loc),
+				this, generic_method, new TypeExpression (ReturnType, Location),
 				Modifiers.INTERNAL, member_name, Parameters);
 		}
 
@@ -1336,7 +1335,8 @@ namespace Mono.CSharp {
 			if (!base.Resolve (ec))
 				return false;
 
-			anonymous_delegate = new AnonymousDelegate (this, DelegateType, loc).Resolve (ec);
+			anonymous_delegate = new AnonymousDelegate (
+				this, DelegateType, Location).Resolve (ec);
 			if (anonymous_delegate == null)
 				return false;
 
@@ -1352,7 +1352,7 @@ namespace Mono.CSharp {
 					throw new InternalErrorException ();
 
 				MethodGroupExpr mg = (MethodGroupExpr) Expression.MemberLookup (
-					ec.ContainerType, scope_type, builder.Name, loc);
+					ec.ContainerType, scope_type, builder.Name, Location);
 
 				if (mg == null)
 					throw new InternalErrorException ();
