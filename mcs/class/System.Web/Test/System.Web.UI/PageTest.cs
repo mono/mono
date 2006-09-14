@@ -30,6 +30,7 @@
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Threading;
 using System.Security.Principal;
 using System.Web;
 using System.Web.UI;
@@ -93,6 +94,7 @@ namespace MonoTests.System.Web.UI {
 		[Test]
 #if NET_2_0
 		[Category ("NotDotNet")] // page.User throw NRE in 2.0 RC
+		
 #endif
 		public void User_OverridenContext ()
 		{
@@ -116,136 +118,164 @@ namespace MonoTests.System.Web.UI {
 			Assert.IsNotNull (page.HttpContext.Request, "Request");
 		}
 
+#if NET_2_0
 		[Test]
-        public void PageHeaderOnPreInit()
-        {
-            PageDelegate pd = new PageDelegate(Page_OnPreInit);
-            WebTest t = new WebTest(PageInvoker.CreateOnPreInit(pd));
-            string html = t.Run();
-            string newHtml = html.Substring(html.IndexOf("<head"), (html.IndexOf("<body") - html.IndexOf("<head")));
-            string origHtml = @" <head id=""Head1""><title>
+		public void PageHeaderOnPreInit ()
+		{
+			Thread.Sleep (200); 
+			PageDelegate pd = new PageDelegate (Page_OnPreInit);
+			WebTest t = new WebTest (PageInvoker.CreateOnPreInit (pd));
+			string html = t.Run ();
+			string newHtml = html.Substring (html.IndexOf ("<head"), (html.IndexOf ("<body") - html.IndexOf ("<head")));
+			string origHtml = @" <head id=""Head1""><title>
 	                                Untitled Page
                                     </title></head>";
-            HtmlDiff.AssertAreEqual(origHtml, newHtml, "HeaderRenderInit");
-        }
+			HtmlDiff.AssertAreEqual (origHtml, newHtml, "HeaderRenderInit");
+			Thread.Sleep (200); 
+			WebTest.Unload ();
+		}
 
-        public static void Page_OnPreInit(Page p)
-        {
-            Assert.AreEqual(null, p.Header, "HeaderOnPreInit");
-        }
+		public static void Page_OnPreInit (Page p)
+		{
+			Assert.AreEqual (null, p.Header, "HeaderOnPreInit");
+		}
 
-        [Test]
-        public void PageHeaderInit()
-        {
-            PageDelegate pd = new PageDelegate(CheckHeader);
-            WebTest t = new WebTest(PageInvoker.CreateOnInit(pd));
-            string html = t.Run();
-            string newHtml = html.Substring(html.IndexOf("<head"), (html.IndexOf("<body") - html.IndexOf("<head")));
-            string origHtml = @" <head id=""Head1""><title>
+		[Test]
+		public void PageHeaderInit ()
+		{
+			Thread.Sleep (200); 
+			PageDelegate pd = new PageDelegate (CheckHeader);
+			WebTest t = new WebTest (PageInvoker.CreateOnInit (pd));
+			string html = t.Run ();
+			string newHtml = html.Substring (html.IndexOf ("<head"), (html.IndexOf ("<body") - html.IndexOf ("<head")));
+			string origHtml = @" <head id=""Head1""><title>
 	                            Test
                                 </title></head>";
-            HtmlDiff.AssertAreEqual(origHtml, newHtml, "HeaderRenderInit"); 
-           
-        }
+			HtmlDiff.AssertAreEqual (origHtml, newHtml, "HeaderRenderInit");
+			Thread.Sleep (200); 
+			WebTest.Unload ();
 
-        [Test]
-        public void PageHeaderInitComplete()
-        {
-            WebTest t = new WebTest();
-            PageDelegates pd = new PageDelegates();
-            pd.InitComplete = CheckHeader;
-            t.Invoker = new PageInvoker(pd);
-            string html = t.Run();
-            string newHtml = html.Substring (html.IndexOf("<head"),(html.IndexOf("<body")-html.IndexOf("<head")));            
-            string origHtml = @" <head id=""Head1""><title>
+		}
+
+		[Test]
+		public void PageHeaderInitComplete ()
+		{
+			Thread.Sleep (200); 
+			WebTest t = new WebTest ();
+			PageDelegates pd = new PageDelegates ();
+			pd.InitComplete = CheckHeader;
+			t.Invoker = new PageInvoker (pd);
+			string html = t.Run ();
+			string newHtml = html.Substring (html.IndexOf ("<head"), (html.IndexOf ("<body") - html.IndexOf ("<head")));
+			string origHtml = @" <head id=""Head1""><title>
 	                            Test
                                 </title></head>";
-            HtmlDiff.AssertAreEqual (origHtml,newHtml ,"HeaderRenderInitComplete"); 
-        }
+			HtmlDiff.AssertAreEqual (origHtml, newHtml, "HeaderRenderInitComplete");
+			Thread.Sleep (200); 
+			WebTest.Unload ();
+		}
 
-        [Test]
-        public void PageHeaderPreLoad()
-        {
-            WebTest t = new WebTest();
-            PageDelegates pd = new PageDelegates();
-            pd.PreLoad = CheckHeader;
-            t.Invoker = new PageInvoker(pd);
-            string html = t.Run();
-            string newHtml = html.Substring(html.IndexOf("<head"), (html.IndexOf("<body") - html.IndexOf("<head")));
-            string origHtml = @" <head id=""Head1""><title>
+		[Test]
+		public void PageHeaderPreLoad ()
+		{
+			Thread.Sleep (200); 
+			WebTest t = new WebTest ();
+			PageDelegates pd = new PageDelegates ();
+			pd.PreLoad = CheckHeader;
+			t.Invoker = new PageInvoker (pd);
+			string html = t.Run ();
+			string newHtml = html.Substring (html.IndexOf ("<head"), (html.IndexOf ("<body") - html.IndexOf ("<head")));
+			string origHtml = @" <head id=""Head1""><title>
 	                            Test
                                 </title></head>";
-            HtmlDiff.AssertAreEqual(origHtml, newHtml, "HeaderRenderPreLoad");
-        }
+			HtmlDiff.AssertAreEqual (origHtml, newHtml, "HeaderRenderPreLoad");
+			Thread.Sleep (200); 
+			WebTest.Unload ();
+		}
 
-        [Test]
-        public void PageHeaderLoad()
-        {
-            PageDelegate pd = new PageDelegate(CheckHeader);
-            WebTest t = new WebTest(PageInvoker.CreateOnLoad(pd));
-            string html = t.Run();
-            string newHtml = html.Substring(html.IndexOf("<head"), (html.IndexOf("<body") - html.IndexOf("<head")));
-            string origHtml = @" <head id=""Head1""><title>
+		[Test]
+		public void PageHeaderLoad ()
+		{
+			Thread.Sleep (200); 
+			PageDelegate pd = new PageDelegate (CheckHeader);
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pd));
+			string html = t.Run ();
+			string newHtml = html.Substring (html.IndexOf ("<head"), (html.IndexOf ("<body") - html.IndexOf ("<head")));
+			string origHtml = @" <head id=""Head1""><title>
 	                            Test
                                 </title></head>";
-            HtmlDiff.AssertAreEqual(origHtml, newHtml, "HeaderRenderLoad");
-        }
+			HtmlDiff.AssertAreEqual (origHtml, newHtml, "HeaderRenderLoad");
+			Thread.Sleep (200); 
+			WebTest.Unload ();
+		}
 
-        [Test]
-        public void PageHeaderLoadComplete()
-        {
-            WebTest t = new WebTest();
-            PageDelegates pd = new PageDelegates();
-            pd.LoadComplete = CheckHeader;
-            t.Invoker = new PageInvoker(pd);
-            string html = t.Run();
-            string newHtml = html.Substring(html.IndexOf("<head"), (html.IndexOf("<body") - html.IndexOf("<head")));
-            string origHtml = @" <head id=""Head1""><title>
+		[Test]
+		public void PageHeaderLoadComplete ()
+		{
+			Thread.Sleep (200); 
+			WebTest t = new WebTest ();
+			PageDelegates pd = new PageDelegates ();
+			pd.LoadComplete = CheckHeader;
+			t.Invoker = new PageInvoker (pd);
+			string html = t.Run ();
+			string newHtml = html.Substring (html.IndexOf ("<head"), (html.IndexOf ("<body") - html.IndexOf ("<head")));
+			string origHtml = @" <head id=""Head1""><title>
 	                            Test
                                 </title></head>";
-            HtmlDiff.AssertAreEqual(origHtml, newHtml, "HeaderRenderLoadComplete");
-        }
+			HtmlDiff.AssertAreEqual (origHtml, newHtml, "HeaderRenderLoadComplete");
+			Thread.Sleep (200); 
+			WebTest.Unload ();
+		}
 
-        [Test]
-        public void PageHeaderPreRender()
-        {
-            WebTest t = new WebTest();
-            PageDelegates pd = new PageDelegates();
-            pd.PreRender = CheckHeader;
-            t.Invoker = new PageInvoker(pd);
-            string html = t.Run();
-            string newHtml = html.Substring(html.IndexOf("<head"), (html.IndexOf("<body") - html.IndexOf("<head")));
-            string origHtml = @" <head id=""Head1""><title>
+		[Test]
+		public void PageHeaderPreRender ()
+		{
+			Thread.Sleep (200);
+			WebTest t = new WebTest ();
+			PageDelegates pd = new PageDelegates ();
+			pd.PreRender = CheckHeader;
+			t.Invoker = new PageInvoker (pd);
+			string html = t.Run ();
+			string newHtml = html.Substring (html.IndexOf ("<head"), (html.IndexOf ("<body") - html.IndexOf ("<head")));
+			string origHtml = @" <head id=""Head1""><title>
 	                            Test
                                 </title></head>";
-            HtmlDiff.AssertAreEqual(origHtml, newHtml, "HeaderRenderPreRender");
-        }
+			HtmlDiff.AssertAreEqual (origHtml, newHtml, "HeaderRenderPreRender");
+			Thread.Sleep (200); 
+			WebTest.Unload ();
+		}
 
-        [Test]
-        public void PageHeaderPreRenderComplete()
-        {
-            WebTest t = new WebTest();
-            PageDelegates pd = new PageDelegates();
-            pd.PreRenderComplete = CheckHeader;            
-            t.Invoker = new PageInvoker(pd);
-            string html = t.Run();
-            string newHtml = html.Substring(html.IndexOf("<head"), (html.IndexOf("<body") - html.IndexOf("<head")));
-            string origHtml = @" <head id=""Head1""><title>
+		[Test]
+		public void PageHeaderPreRenderComplete ()
+		{
+			Thread.Sleep (200); 
+			WebTest t = new WebTest ();
+			PageDelegates pd = new PageDelegates ();
+			pd.PreRenderComplete = CheckHeader;
+			t.Invoker = new PageInvoker (pd);
+			string html = t.Run ();
+			string newHtml = html.Substring (html.IndexOf ("<head"), (html.IndexOf ("<body") - html.IndexOf ("<head")));
+			string origHtml = @" <head id=""Head1""><title>
 	                            Test
                                 </title></head>";
-            HtmlDiff.AssertAreEqual(origHtml, newHtml, "HeaderRenderPreRenderComplete");
-        }
+			HtmlDiff.AssertAreEqual (origHtml, newHtml, "HeaderRenderPreRenderComplete");
+			Thread.Sleep (200); 
+			WebTest.Unload ();
+		}
 
 
 
-        public static void CheckHeader(Page p)
-        {
-            Assert.AreEqual("Untitled Page", p.Title, "TitleOnInit");
-            Assert.AreEqual("Untitled Page", p.Header.Title, "HeaderDefaultTitleOnInit");
-            p.Title = "Test";
-            Assert.AreEqual("Test", p.Header.Title, "HeaderAssignTitleOnInit");
-        }     
-       
-    }
+		public static void CheckHeader (Page p)
+		{
+			Assert.AreEqual ("Untitled Page", p.Title, "TitleOnInit");
+			Assert.AreEqual ("Untitled Page", p.Header.Title, "HeaderDefaultTitleOnInit");
+			p.Title = "Test";
+			Assert.AreEqual ("Test", p.Header.Title, "HeaderAssignTitleOnInit");
+		}     
+#endif
+
+
+
+	}
 	
 }
