@@ -1,6 +1,9 @@
+// CS1656: Cannot assign to `Method_1' because it is a `method group'
+// Line: 14
+
 public class Test
 {
-	void Method ()
+	void Method_1 ()
 	{
 	}
 	
@@ -8,6 +11,6 @@ public class Test
         {
 		Test t = new Test ();
 		
-                t.Method += delegate {  };
+                t.Method_1 += delegate {  };
         }
 }

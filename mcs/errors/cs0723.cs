@@ -1,4 +1,4 @@
-// cs0723.cs: Cannot declare variable of static type `StaticClass'
+// CS0723: `sc': cannot declare variables of static types
 // Line: 10
 
 static class StaticClass {
