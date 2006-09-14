@@ -1,3 +1,11 @@
+2006-09-13  Chris Toshok  <toshok@ximian.com>
+
+	* Control.cs: don't always set is_recreating to false at the end
+	of RecreateHandle, since sometimes we're not done (and won't be
+	until WndProc handles the WM_DESTROY message).  Also, set
+	is_recreating to false in the WM_DESTROY handling code.  Part of
+	the fix for bug #79326.
+
 2006-09-13  Miguel de Icaza  <miguel@novell.com>
 
 	* X11DesktopColors.cs: Start the droppage of debugging messages.

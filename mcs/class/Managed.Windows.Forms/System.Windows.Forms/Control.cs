@@ -3540,9 +3540,9 @@ namespace System.Windows.Forms
 				} else {
 					CreateHandle();
 				}
-			}
 
-			is_recreating = false;
+				is_recreating = false;
+			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -3886,6 +3886,7 @@ namespace System.Windows.Forms
 						RecreateHandle();
 					} else if (is_recreating) {
 						CreateHandle();
+						is_recreating = false;
 					}
 					return;
 				}
