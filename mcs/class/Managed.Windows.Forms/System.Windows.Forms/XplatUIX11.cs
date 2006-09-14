@@ -1515,15 +1515,14 @@ namespace System.Windows.Forms {
 				}
 
 				for (i = 0; i < controls.Length; i++) {
-					hwnd = null;
-
-					if (controls[i].IsHandleCreated)
+					if (controls[i].IsHandleCreated) {
+						/* set all the children hwnd's to zombies so all events will
+						   be ignored (except DestroyNotify) until their X windows are
+						   reset) */
 						hwnd = Hwnd.ObjectFromHandle(controls[i].Handle);
-
+						hwnd.zombie = true;
+					}
 					SendWMDestroyMessages(controls[i]);
-
-					if (hwnd != null)
-						hwnd.Dispose();
 				}
 			}
 		}
@@ -2968,8 +2967,13 @@ namespace System.Windows.Forms {
 
 			hwnd = Hwnd.GetObjectFromWindow(xevent.AnyEvent.window);
 
-			// Handle messages for windows that are already or are about to be destroyed
-			if (hwnd == null) {
+			// Handle messages for windows that are already or are about to be destroyed.
+
+			// We need to make sure we only allow DestroyNotify events through for zombie
+			// hwnds, since much of the event handling code makes requests using the hwnd's
+			// client_window, and that'll result in BadWindow errors if there's some lag
+			// between the XDestroyWindow call and the DestroyNotify event.
+			if (hwnd == null || (hwnd.zombie && xevent.type != XEventName.DestroyNotify)) {
 				#if DriverDebug
 					Console.WriteLine("GetMessage(): Got message {0} for non-existent or already destroyed window {1:X}", xevent.type, xevent.AnyEvent.window.ToInt32());
 				#endif

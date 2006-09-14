@@ -73,6 +73,7 @@ namespace System.Windows.Forms {
 		internal int		tool_caption_height;
 		internal bool		whacky_wm;
 		internal bool		fixed_size;
+		internal bool		zombie; /* X11 only flag.  true if the X windows have been destroyed but we haven't been Disposed */
 		internal Region		user_clip;
 		internal static Bitmap	bmp = new Bitmap(1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 		internal XEventQueue	queue;
@@ -109,6 +110,9 @@ namespace System.Windows.Forms {
 				windows.Remove(client_window);
 				windows.Remove(whole_window);
 			}
+			client_window = IntPtr.Zero;
+			whole_window = IntPtr.Zero;
+			zombie = false;
 			for (int i = 0; i < marshal_free_list.Count; i++) {
 				Marshal.FreeHGlobal((IntPtr)marshal_free_list[i]);
 			}
@@ -278,6 +282,8 @@ namespace System.Windows.Forms {
 			set {
 				client_window = value;
 				handle = value;
+
+				zombie = false;
 
 				lock (windows) {
 					if (windows[client_window] == null) {
@@ -528,6 +534,8 @@ namespace System.Windows.Forms {
 
 			set {
 				whole_window = value;
+
+				zombie = false;
 
 				lock (windows) {
 					if (windows[whole_window] == null) {
