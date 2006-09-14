@@ -1,10 +1,13 @@
-// CS0403: `T': parameter name is the same as method type parameter name
+// CS0403: Cannot convert null to the type parameter `T' becaues it could be a value type. Consider using `default (T)' instead
 // Line: 8
 
 struct S
 {
 	public void Foo<T> () where T : struct
 	{
-		const T t = null;
+		T t = null;
 	}
+
+	static void Main ()
+	{ }
 }
