@@ -1420,6 +1420,12 @@ namespace Mono.CSharp {
 			EndLocation = loc;
 		}
 
+		protected static void Error_158 (string name, Location loc)
+		{
+			Report.Error (158, loc, "The label `{0}' shadows another label " +
+				      "by the same name in a contained scope.", name);
+		}
+
 		/// <summary>
 		///   Adds a label to the current block. 
 		/// </summary>
@@ -1439,7 +1445,8 @@ namespace Mono.CSharp {
 			Block cur = this;
 			while (cur != null) {
 				if (cur.DoLookupLabel (name) != null) {
-					Report.Error (140, target.loc, "The label `{0}' is a duplicate", name);
+					Report.Error (140, target.loc,
+						      "The label `{0}' is a duplicate", name);
 					return false;
 				}
 
@@ -1451,10 +1458,7 @@ namespace Mono.CSharp {
 
 			while (cur != null) {
 				if (cur.DoLookupLabel (name) != null) {
-					Report.Error (
-						158, target.loc,
-						"The label `{0}' shadows another label by the same name in a contained scope.",
-						name);
+					Error_158 (name, target.loc);
 					return false;
 				}
 
@@ -1464,17 +1468,15 @@ namespace Mono.CSharp {
 						if (s == null)
 							continue;
 
-						Report.Error (
-							158, s.loc,
-							"The label `{0}' shadows another label by the same name in a contained scope.",
-							name);
+						Error_158 (name, target.loc);
 						return false;
 					}
 				}
 
-
 				cur = cur.Parent;
 			}
+
+			Toplevel.CheckError158 (name, target.loc);
 
 			if (labels == null)
 				labels = new Hashtable ();
@@ -2148,6 +2150,7 @@ namespace Mono.CSharp {
 		ToplevelBlock container, child;
 		FlowBranchingToplevel top_level_branching;
 		AnonymousMethodHost anonymous_method_host;
+		ArrayList anonymous_children;
 
 		public bool HasVarargs {
 			get { return (flags & Flags.HasVarargs) != 0; }
@@ -2160,6 +2163,10 @@ namespace Mono.CSharp {
 		Parameters parameters;
 		public Parameters Parameters {
 			get { return parameters; }
+		}
+
+		public ArrayList AnonymousChildren {
+			get { return anonymous_children; }
 		}
 
 		public bool CompleteContexts (EmitContext ec)
@@ -2226,10 +2233,49 @@ namespace Mono.CSharp {
 		{
 			this.parameters = parameters == null ? Parameters.EmptyReadOnlyParameters : parameters;
 			this.container = container;
+
+			if (container != null)
+				container.AddAnonymousChild (this);
 		}
 
 		public ToplevelBlock (Location loc) : this (null, (Flags) 0, null, loc)
 		{
+		}
+
+		void AddAnonymousChild (ToplevelBlock b)
+		{
+			if (anonymous_children == null)
+				anonymous_children = new ArrayList ();
+
+			anonymous_children.Add (b);
+		}
+
+		public bool CheckError158 (string name, Location loc)
+		{
+			if (anonymous_children != null) {
+				foreach (ToplevelBlock child in anonymous_children) {
+					if (!child.DoCheckError158 (name, loc))
+						return false;
+				}
+			}
+
+			for (ToplevelBlock c = container; c != null; c = c.container) {
+				if (!c.DoCheckError158 (name, loc))
+					return false;
+			}
+
+			return true;
+		}
+
+		bool DoCheckError158 (string name, Location loc)
+		{
+			LabeledStatement s = LookupLabel (name);
+			if (s != null) {
+				Error_158 (name, loc);
+				return false;
+			}
+
+			return true;
 		}
 
 		public AnonymousMethodHost CreateAnonymousMethodHost (TypeContainer host)
@@ -2308,6 +2354,10 @@ namespace Mono.CSharp {
 			container = new_parent;
 			Parent = new_parent;
 			new_parent.child = this;
+
+
+			if (container != null)
+				container.AddAnonymousChild (this);
 		}
 
 		//
