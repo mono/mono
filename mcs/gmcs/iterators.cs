@@ -823,6 +823,30 @@ namespace Mono.CSharp {
 			Report.Debug (64, "RESOLVE ITERATOR #1", this, method, method.Parent,
 				      RootScope, ec);
 
+			Parameters parameters = OriginalMethod.ParameterInfo;
+			for (int i = 0; i < parameters.Count; i++){
+				Parameter.Modifier mod = parameters.ParameterModifier (i);
+				if ((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0){
+					Report.Error (1623, Location,
+						      "Iterators cannot have ref or out parameters");
+					return false;
+				}
+
+				if ((mod & Parameter.Modifier.ARGLIST) != 0) {
+					Report.Error (1636, Location,
+						      "__arglist is not allowed in parameter list " +
+						      "of iterators");
+					return false;
+				}
+
+				if (parameters.ParameterType (i).IsPointer) {
+					Report.Error (1637, Location,
+						      "Iterators cannot have unsafe parameters or " +
+						      "yield types");
+					return false;
+				}
+			}
+
 			if (!RootScope.ResolveMembers ())
 				return false;
 			if (!RootScope.DefineMembers ())
