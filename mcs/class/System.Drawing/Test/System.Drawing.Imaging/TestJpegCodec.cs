@@ -253,13 +253,12 @@ namespace MonoTests.System.Drawing.Imaging {
 		}
 #endif
 
-		[Test]
-		public void Save () 
+		private void Save (PixelFormat original, PixelFormat expected)
 		{				
 			string sOutFile =  "linerect" + getOutSufix() + ".jpeg";
 						
 			// Save		
-			Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppRgb);						
+			Bitmap bmp = new Bitmap (100, 100, original);						
 			Graphics gr = Graphics.FromImage (bmp);
 
 			using (Pen p = new Pen (Color.Red, 2)) {
@@ -268,12 +267,17 @@ namespace MonoTests.System.Drawing.Imaging {
 			}
 
 			try {
-				bmp.Save (sOutFile, ImageFormat.Bmp);
+				bmp.Save (sOutFile, ImageFormat.Jpeg);
 
 				// Load			
 				using (Bitmap bmpLoad = new Bitmap (sOutFile)) {
+					Assert.AreEqual (expected, bmpLoad.PixelFormat, "PixelFormat");
 					Color color = bmpLoad.GetPixel (10, 10);
-					Assert.AreEqual (Color.FromArgb (255, 255, 0, 0), color);
+					// by default JPEG isn't lossless - so value is "near" read
+					Assert.IsTrue (color.R >= 200, "Red");
+					Assert.IsTrue (color.G < 60, "Green");
+					Assert.IsTrue (color.B < 60, "Blue");
+					Assert.AreEqual (0xFF, color.A, "Alpha");
 				}
 			}
 			finally {
@@ -285,6 +289,51 @@ namespace MonoTests.System.Drawing.Imaging {
 				catch {
 				}
 			}
+		}
+
+		[Test]
+		public void Save_24bppRgb ()
+		{
+			Save (PixelFormat.Format24bppRgb, PixelFormat.Format24bppRgb);
+		}
+
+		[Test]
+		public void Save_32bppRgb ()
+		{
+			Save (PixelFormat.Format32bppRgb, PixelFormat.Format24bppRgb);
+		}
+
+		[Test]
+		public void Save_32bppArgb ()
+		{
+			Save (PixelFormat.Format32bppArgb, PixelFormat.Format24bppRgb);
+		}
+
+		[Test]
+		public void Save_32bppPArgb ()
+		{
+			Save (PixelFormat.Format32bppPArgb, PixelFormat.Format24bppRgb);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Save_48bppRgb ()
+		{
+			Save (PixelFormat.Format48bppRgb, PixelFormat.Format24bppRgb);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Save_64bppArgb ()
+		{
+			Save (PixelFormat.Format64bppArgb, PixelFormat.Format24bppRgb);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Save_64bppPArgb ()
+		{
+			Save (PixelFormat.Format64bppPArgb, PixelFormat.Format24bppRgb);
 		}
 	}
 }

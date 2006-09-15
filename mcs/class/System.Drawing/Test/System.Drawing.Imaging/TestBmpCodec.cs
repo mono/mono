@@ -504,13 +504,12 @@ namespace MonoTests.System.Drawing.Imaging {
 			}
 		}
 
-		[Test]
-		public void Save () 
+		private void Save (PixelFormat original, PixelFormat expected, bool colorCheck) 
 		{				
 			string sOutFile =  "linerect" + getOutSufix() + ".bmp";
 						
 			// Save		
-			Bitmap bmp = new Bitmap (100, 100, PixelFormat.Format32bppRgb);						
+			Bitmap bmp = new Bitmap (100, 100, original);						
 			Graphics gr = Graphics.FromImage (bmp);
 
 			using (Pen p = new Pen (Color.Red, 2)) {
@@ -523,8 +522,11 @@ namespace MonoTests.System.Drawing.Imaging {
 
 				// Load
 				using (Bitmap bmpLoad = new Bitmap (sOutFile)) {
-					Color color = bmpLoad.GetPixel (10, 10);
-					Assert.AreEqual (Color.FromArgb (255, 255, 0, 0), color);
+					Assert.AreEqual (expected, bmpLoad.PixelFormat, "PixelFormat");
+					if (colorCheck) {
+						Color color = bmpLoad.GetPixel (10, 10);
+						Assert.AreEqual (Color.FromArgb (255, 255, 0, 0), color, "Red");
+					}
 				}
 			}
 			finally {
@@ -536,6 +538,51 @@ namespace MonoTests.System.Drawing.Imaging {
 				catch {
 				}
 			}
+		}
+
+		[Test]
+		public void Save_24bppRgb ()
+		{
+			Save (PixelFormat.Format24bppRgb, PixelFormat.Format24bppRgb, true);
+		}
+
+		[Test]
+		public void Save_32bppRgb ()
+		{
+			Save (PixelFormat.Format32bppRgb, PixelFormat.Format32bppRgb, true);
+		}
+
+		[Test]
+		public void Save_32bppArgb ()
+		{
+			Save (PixelFormat.Format32bppArgb, PixelFormat.Format32bppRgb, true);
+		}
+
+		[Test]
+		public void Save_32bppPArgb ()
+		{
+			Save (PixelFormat.Format32bppPArgb, PixelFormat.Format32bppRgb, true);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Save_48bppRgb ()
+		{
+			Save (PixelFormat.Format48bppRgb, PixelFormat.Format32bppRgb, false);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Save_64bppArgb ()
+		{
+			Save (PixelFormat.Format64bppArgb, PixelFormat.Format64bppArgb, true);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Save_64bppPArgb ()
+		{
+			Save (PixelFormat.Format64bppPArgb, PixelFormat.Format64bppArgb, true);
 		}
 	}
 }

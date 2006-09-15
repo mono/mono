@@ -1,3 +1,9 @@
+2006-09-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GifCodecTest.cs, IconCodecTest.cs, PngCodecTest.cs, TestBmpCodec.cs,
+	  TestJpegCodec.cs, TiffCodecTest.cs: Refactor Save test case to check
+	convertions between pixel formats.
+
 2006-09-12	Boris Kirzner <borisk@mainsoft.com>
 
 	* TestBmpCodec.cs, TestJpegCodec.cs: ifdef unsafe code 
