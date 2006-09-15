@@ -287,11 +287,11 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("Namespace has a null fullname");
 
 			if (parent != null && parent.MemberName != MemberName.Null)
-				MemberName = new MemberName (parent.MemberName, name, parent.MemberName.Location);
+				MemberName = new MemberName (parent.MemberName, name);
 			else if (name.Length == 0)
 				MemberName = MemberName.Null;
 			else
-				MemberName = new MemberName (name, Location.Null);
+				MemberName = new MemberName (name);
 
 			namespaces = new Hashtable ();
 			cached_types = new Hashtable ();

@@ -31,11 +31,12 @@ namespace Mono.CSharp {
 		public readonly MemberName Left;
 		public readonly Location Location;
 
-		bool is_double_colon;
-
 		public static readonly MemberName Null = new MemberName ("");
 
-		private MemberName (MemberName left, string name, bool is_double_colon, Location loc)
+		bool is_double_colon;
+
+		private MemberName (MemberName left, string name, bool is_double_colon,
+				    Location loc)
 		{
 			this.Name = name;
 			this.Location = loc;
@@ -44,34 +45,28 @@ namespace Mono.CSharp {
 		}
 
 		public MemberName (string name)
-			: this (null, name, false, Location.Null)
-		{
-		}
-
-		public MemberName (MemberName left, string name)
-			: this (left, name, false, left != null ? left.Location : Location.Null)
-		{
-		}
+			: this (name, Location.Null)
+		{ }
 
 		public MemberName (string name, Location loc)
 			: this (null, name, false, loc)
-		{
-		}
+		{ }
+
+		public MemberName (MemberName left, string name)
+			: this (left, name, left != null ? left.Location : Location.Null)
+		{ }
 
 		public MemberName (MemberName left, string name, Location loc)
 			: this (left, name, false, loc)
-		{
-		}
+		{ }
 
 		public MemberName (string alias, string name, Location loc)
-			: this (new MemberName (alias), name, true, loc)
-		{
-		}
+			: this (new MemberName (alias, loc), name, true, loc)
+		{ }
 
 		public MemberName (MemberName left, MemberName right)
 			: this (left, right, right.Location)
-		{
-		}
+		{ }
 
 		public MemberName (MemberName left, MemberName right, Location loc)
 			: this (null, right.Name, false, loc)
@@ -79,19 +74,6 @@ namespace Mono.CSharp {
 			if (right.is_double_colon)
 				throw new InternalErrorException ("Cannot append double_colon member name");
 			this.Left = (right.Left == null) ? left : new MemberName (left, right.Left);
-		}
-
-		static readonly char [] dot_array = { '.' };
-
-		public static MemberName FromDotted (string name)
-		{
-			string [] elements = name.Split (dot_array);
-			int count = elements.Length;
-			int i = 0;
-			MemberName n = new MemberName (elements [i++]);
-			while (i < count)
-				n = new MemberName (n, elements [i++]);
-			return n;
 		}
 
 		public string GetName ()
@@ -113,19 +95,6 @@ namespace Mono.CSharp {
 				return Left.GetName (is_generic) + connect + name;
 			else
 				return name;
-		}
-
-		///
-		/// This returns exclusively the name as seen on the source code
-		/// it is not the fully qualifed type after resolution
-		///
-		public string GetPartialName ()
-		{
-			string connect = is_double_colon ? "::" : ".";
-			if (Left != null)
-				return Left.GetPartialName () + connect + Name;
-			else
-				return Name;
 		}
 
 		public string GetTypeName ()

@@ -1,5 +1,9 @@
 2006-09-15  Martin Baulig  <martin@ximian.com>
 
+	* decl.cs (MemberName): Minor code cleanups.
+
+2006-09-15  Martin Baulig  <martin@ximian.com>
+
 	* parameter.cs: Merge with the gmcs version.
 
 2006-09-15  Martin Baulig  <martin@ximian.com>
