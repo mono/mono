@@ -22,7 +22,7 @@ iterators.cs
 ../mcs/literal.cs
 ../mcs/location.cs
 ../mcs/modifiers.cs
-namespace.cs
+../mcs/namespace.cs
 ../mcs/parameter.cs
 pending.cs
 report.cs

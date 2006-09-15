@@ -114,11 +114,19 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("Use GetPointerType() to get a pointer");
 			
 			TypeAttributes ta = t.Attributes & TypeAttributes.VisibilityMask;
-			if (ta == TypeAttributes.NotPublic ||
-			    ta == TypeAttributes.NestedPrivate ||
-			    ta == TypeAttributes.NestedAssembly ||
-			    ta == TypeAttributes.NestedFamANDAssem)
+			if (ta == TypeAttributes.NestedPrivate)
 				return null;
+
+			if (ta == TypeAttributes.NotPublic ||
+			    ta == TypeAttributes.NestedAssembly ||
+			    ta == TypeAttributes.NestedFamANDAssem) {
+#if GMCS_SOURCE
+				if (!TypeManager.IsFriendAssembly (t.Assembly))
+					return null;
+#else
+				return null;
+#endif
+			}
 
 			return t;
 		}
@@ -485,6 +493,13 @@ namespace Mono.CSharp {
 			DeclSpace IResolveContext.DeclContainer {
 				get { return NamespaceEntry.SlaveDeclSpace; }
 			}
+
+#if GMCS_SOURCE
+			DeclSpace IResolveContext.GenericDeclContainer {
+				get { return NamespaceEntry.SlaveDeclSpace; }
+			}
+#endif
+
 			bool IResolveContext.IsInObsoleteScope {
 				get { return false; }
 			}
@@ -552,6 +567,13 @@ namespace Mono.CSharp {
 			DeclSpace IResolveContext.DeclContainer {
 				get { return NamespaceEntry.SlaveDeclSpace; }
 			}
+
+#if GMCS_SOURCE
+			DeclSpace IResolveContext.GenericDeclContainer {
+				get { return NamespaceEntry.SlaveDeclSpace; }
+			}
+#endif
+
 			bool IResolveContext.IsInObsoleteScope {
 				get { return false; }
 			}
