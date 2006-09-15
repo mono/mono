@@ -929,9 +929,9 @@ namespace System.Net
 				object [] cbArgs = new object [] {uri, method, data,  asyncState};
 				WaitOrTimerCallback cb = delegate (object innerState, bool timedOut) {
 					object [] args = (object []) innerState;
-					byte [] data = timedOut ? null : UploadData ((Uri) args [0], (string) args [1], (byte []) args [2]);
+					byte [] data2 = timedOut ? null : UploadData ((Uri) args [0], (string) args [1], (byte []) args [2]);
 					OnUploadDataCompleted (
-						new UploadDataCompletedEventArgs (data, null, timedOut, args [3]));
+						new UploadDataCompletedEventArgs (data2, null, timedOut, args [3]));
 					};
 				AutoResetEvent ev = new AutoResetEvent (true);
 				WaitHandles.Add (ThreadPool.RegisterWaitForSingleObject (ev, cb, cbArgs, -1, true));
@@ -987,9 +987,9 @@ namespace System.Net
 				object [] cbArgs = new object [] {uri, method, data, asyncState};
 				WaitOrTimerCallback cb = delegate (object innerState, bool timedOut) {
 					object [] args = (object []) innerState;
-					string data = timedOut ? null : UploadString ((Uri) args [0], (string) args [1], (string) args [2]);
+					string data2 = timedOut ? null : UploadString ((Uri) args [0], (string) args [1], (string) args [2]);
 					OnUploadStringCompleted (
-						new UploadStringCompletedEventArgs (data, null, timedOut, args [3]));
+						new UploadStringCompletedEventArgs (data2, null, timedOut, args [3]));
 					};
 				AutoResetEvent ev = new AutoResetEvent (true);
 				WaitHandles.Add (ThreadPool.RegisterWaitForSingleObject (ev, cb, cbArgs, -1, true));
