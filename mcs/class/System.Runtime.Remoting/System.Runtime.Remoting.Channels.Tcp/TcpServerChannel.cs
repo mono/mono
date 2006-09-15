@@ -292,9 +292,8 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			_id = _count++;
 		}
 
-		public Stream Stream
-		{
-			get { return _stream; }
+		public Socket Socket {
+			get { return _socket; }
 		}
 
 		public byte[] Buffer
@@ -318,7 +317,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 					switch (type)
 					{
 						case MessageStatus.MethodMessage:
-							_sink.InternalProcessMessage (this);
+							_sink.InternalProcessMessage (this, _stream);
 							break;
 
 						case MessageStatus.Unknown:

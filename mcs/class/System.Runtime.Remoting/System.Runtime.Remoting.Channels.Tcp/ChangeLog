@@ -1,3 +1,9 @@
+2006-09-15  Lluis Sanchez Gual  <lluis@novell.com> 
+
+	* TcpServerTransportSink.cs, TcpServerChannel.cs: 
+	When sending an async call response, don't use the original request
+	stream because it may have been used by another call.
+
 2006-05-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TcpClientChannel.cs: Marked CreateMessageSink virtual.

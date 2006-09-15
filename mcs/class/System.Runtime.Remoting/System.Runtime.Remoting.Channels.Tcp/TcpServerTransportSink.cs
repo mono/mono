@@ -31,6 +31,7 @@
 using System;
 using System.Collections;
 using System.Runtime.Remoting.Messaging;
+using System.Net.Sockets;
 using System.IO;
 
 namespace System.Runtime.Remoting.Channels.Tcp
@@ -65,7 +66,11 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			IMessage msg, ITransportHeaders headers, Stream responseStream)
 		{
 			ClientConnection connection = (ClientConnection)state;
-			TcpMessageIO.SendMessageStream (connection.Stream, responseStream, headers, connection.Buffer);
+			
+			NetworkStream ns = new NetworkStream (connection.Socket);
+			TcpMessageIO.SendMessageStream (ns, responseStream, headers, connection.Buffer);
+			ns.Flush ();
+			ns.Close ();
 		}
 
 		public Stream GetResponseStream (IServerResponseChannelSinkStack sinkStack, object state,
@@ -86,14 +91,14 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			throw new NotSupportedException ();
 		}
 
-		internal void InternalProcessMessage (ClientConnection connection)
+		internal void InternalProcessMessage (ClientConnection connection, Stream stream)
 		{
 			// Reads the headers and the request stream
 
 			Stream requestStream;
 			ITransportHeaders requestHeaders;
 
-			requestStream = TcpMessageIO.ReceiveMessageStream (connection.Stream, out requestHeaders, connection.Buffer);
+			requestStream = TcpMessageIO.ReceiveMessageStream (stream, out requestHeaders, connection.Buffer);
 			requestHeaders [CommonTransportKeys.IPAddress] = connection.ClientAddress;
 			requestHeaders [CommonTransportKeys.ConnectionId] = connection.Id;
 
@@ -118,7 +123,8 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			switch (proc)
 			{
 				case ServerProcessing.Complete:
-					TcpMessageIO.SendMessageStream (connection.Stream, responseStream, responseHeaders, connection.Buffer);
+					TcpMessageIO.SendMessageStream (stream, responseStream, responseHeaders, connection.Buffer);
+					stream.Flush ();
 					break;
 
 				case ServerProcessing.Async:
