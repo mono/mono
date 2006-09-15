@@ -1,3 +1,10 @@
+﻿2006-09-15  Jonathan Pobst <monkey@jpobst.com>
+	* FlowLayoutPanel.cs, FlowLayoutSettings.cs: Initial commit.
+	* Control.cs:
+   	    Add properties: LayoutEngine, Margin, DefaultMargin.
+   	    Add method: GetPreferredSize.
+   	    Move layout logic from PerformLayout to layout engines. 
+
 2006-09-13  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIX11.cs: more destroy work.  Jackson pointed out that my

@@ -294,6 +294,8 @@ System.Windows.Forms/FixedPanel.cs
 System.Windows.Forms/FixedSizeTextBox.cs
 System.Windows.Forms/FlatStyle.cs
 System.Windows.Forms/FlowDirection.cs
+System.Windows.Forms/FlowLayoutPanel.cs
+System.Windows.Forms/FlowLayoutSettings.cs
 System.Windows.Forms/FolderBrowserDialog.cs
 System.Windows.Forms/FontDialog.cs
 System.Windows.Forms/Form.cs
@@ -681,6 +683,8 @@ System.Windows.Forms/XplatUIOSX.cs
 System.Windows.Forms/XplatUIStructs.cs
 System.Windows.Forms/XplatUIWin32.cs
 System.Windows.Forms/XplatUIX11.cs
+System.Windows.Forms.Layout/DefaultLayout.cs
+System.Windows.Forms.Layout/FlowLayout.cs
 System.Windows.Forms.VisualStyles/BackgroundType.cs
 System.Windows.Forms.VisualStyles/BooleanProperty.cs
 System.Windows.Forms.VisualStyles/BorderType.cs

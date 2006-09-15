@@ -127,6 +127,9 @@ namespace System.Windows.Forms
 		private Padding			padding;
 		private Size			maximum_size;
 		private Size			minimum_size;
+		private Size			preferred_size;
+		private Padding			margin;
+		internal Layout.LayoutEngine	layout_engine;
 #endif
 
 		#endregion	// Local Variables
@@ -700,6 +703,9 @@ namespace System.Windows.Forms
 			padding = new Padding(0);
 			maximum_size = new Size();
 			minimum_size = new Size();
+			preferred_size = new Size();
+			margin = this.DefaultMargin;
+			layout_engine = new Layout.DefaultLayout();
 #endif
 
 			control_style = ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | 
@@ -1540,7 +1546,7 @@ namespace System.Windows.Forms
 
 		public virtual bool AutoSize {
 			get {
-				Console.Error.WriteLine("Unimplemented: Control::get_AutoSize()");
+				//Console.Error.WriteLine("Unimplemented: Control::get_AutoSize()");
 				return auto_size;
 			}
 			set {
@@ -2134,6 +2140,12 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		public virtual Layout.LayoutEngine LayoutEngine {
+			get { return this.layout_engine; }
+		} 
+#endif
+
 		[EditorBrowsable(EditorBrowsableState.Always)]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -2158,6 +2170,14 @@ namespace System.Windows.Forms
 				SetBounds(value.X, value.Y, bounds.Width, bounds.Height, BoundsSpecified.Location);
 			}
 		}
+
+#if NET_2_0
+		[Localizable (true)]
+		public Padding Margin {
+			get { return this.margin; }
+			set { this.margin = value; }
+		}
+#endif
 
 		[Browsable(false)]
 		public string Name {
@@ -2555,6 +2575,12 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		protected virtual Padding DefaultMargin {
+			get { return new Padding (3); }
+		}
+#endif
+
 		protected virtual Size DefaultSize {
 			get {
 				return new Size(0, 0);
@@ -2834,6 +2860,12 @@ namespace System.Windows.Forms
 			return FindControlBackward(this, ctl);
 		}
 
+#if NET_2_0
+		public virtual Size GetPreferredSize (Size proposedSize) {
+			return preferred_size;
+		}
+#endif
+
 		public void Hide() {
 			this.Visible = false;
 		}
@@ -2928,6 +2960,11 @@ namespace System.Windows.Forms
 
 			// Perform all Dock and Anchor calculations
 			try {
+
+#if NET_2_0
+			this.layout_engine.Layout(this, levent);
+#else		
+				// This has been moved to Layout/DefaultLayout.cs for 2.0, please duplicate any changes/fixes there.
 				Control		child;
 				AnchorStyles	anchor;
 				Rectangle	space;
@@ -3047,6 +3084,7 @@ namespace System.Windows.Forms
 
 					child.SetBounds(left, top, width, height);
 				}
+#endif
 
 				// Let everyone know
 				OnLayout(levent);

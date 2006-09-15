@@ -1,4 +1,9 @@
-﻿2006-09-13  Jonathan Pobst  <monkey@jpobst.com>
+﻿2006-09-15  Jonathan Pobst <monkey@jpobst.com>
+	* System.Windows.Forms.dll.sources: Added DefaultLayout.cs, FlowLayout.cs,
+	  FlowLayoutPanel.cs, FlowLayoutSettings.cs.
+	* System.Windows.Forms_test.dll.sources: Added FlowPanelTests.cs
+
+2006-09-13  Jonathan Pobst  <monkey@jpobst.com>
 
 	* System.Windows.Forms.dll.sources: Added SplitContainer/SplitterPanel.
 	* System.Windows.Forms_test.dll.sources: Added SplitContainerTests.cs
