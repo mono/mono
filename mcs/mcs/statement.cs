@@ -1566,7 +1566,7 @@ namespace Mono.CSharp {
 		void Error_AlreadyDeclared (Location loc, string var, string reason)
 		{
 			Report.Error (136, loc, "A local variable named `{0}' cannot be declared in this scope because it would give a different meaning to `{0}', " +
-				"which is already used in a `{1}' scope", var, reason);
+				"which is already used in a `{1}' scope to denote something else", var, reason);
 		}
 
 		public bool AddConstant (Expression type, string name, Expression value, Location l)
