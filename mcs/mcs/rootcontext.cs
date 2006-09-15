@@ -367,6 +367,7 @@ namespace Mono.CSharp {
 				"System.Runtime.CompilerServices.RuntimeHelpers",
 				"System.Reflection.DefaultMemberAttribute",
 				"System.Threading.Monitor",
+				"System.Threading.Interlocked",
 				
 				"System.AttributeUsageAttribute",
 				"System.Runtime.InteropServices.DllImportAttribute",
