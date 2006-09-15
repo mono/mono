@@ -1,5 +1,13 @@
 2006-09-15  Martin Baulig  <martin@ximian.com>
 
+	Removed modifiers.cs, literal.cs, location.cs, roottypes.cs,
+	assign.cs, const.cs, cfold.cs, constant.cs, symbolwriter.cs and
+	doc.cs - they are now shared with mcs.
+
+	* gmcs.exe.sources: Include these files from ../mcs/.
+
+2006-09-15  Martin Baulig  <martin@ximian.com>
+
 	* old-code.cs, gen-il.cs, gen-treedump.cs: Removed old stuff.
 	* g1.cs, sample-hello.cs, sample-stack.il: Likewise.
 
