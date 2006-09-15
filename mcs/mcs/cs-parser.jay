@@ -2758,7 +2758,8 @@ member_access
 	| predefined_type DOT IDENTIFIER
 	  {
 		LocatedToken lt = (LocatedToken) $3;
-		$$ = new MemberAccess ((Expression) $1, lt.Value);
+		// TODO: Location is wrong as some predefined types doesn't hold a location
+		$$ = new MemberAccess ((Expression) $1, lt.Value, lt.Location);
 	  }
 	;
 

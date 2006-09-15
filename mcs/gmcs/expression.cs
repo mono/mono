@@ -178,10 +178,20 @@ namespace Mono.CSharp {
 			oper_names [(int) Operator.AddressOf] = "op_AddressOf";
 		}
 
+		public static void Error_OperatorCannotBeApplied (Location loc, string oper, Type t)
+		{
+			Error_OperatorCannotBeApplied (loc, oper, TypeManager.CSharpName (t));
+		}
+
+		public static void Error_OperatorCannotBeApplied (Location loc, string oper, string type)
+		{
+			Report.Error (23, loc, "The `{0}' operator cannot be applied to operand of type `{1}'",
+				oper, type);
+		}
+
 		void Error23 (Type t)
 		{
-			Report.Error (23, loc, "Operator `{0}' cannot be applied to operand of type `{1}'",
-				OperName (Oper), TypeManager.CSharpName (t));
+			Error_OperatorCannotBeApplied (loc, OperName (Oper), t);
 		}
 
 		/// <remarks>
@@ -7118,21 +7128,26 @@ namespace Mono.CSharp {
 		TypeArguments args;
 		
 		public MemberAccess (Expression expr, string id)
-			: this (expr, id, expr.Location)
+			: this (expr, id, null)
 		{
 		}
 
-		public MemberAccess (Expression expr, string identifier, Location loc)
+		public MemberAccess (Expression expr, string identifier, Location loc, TypeArguments args)
 		{
 			this.expr = expr;
 			Identifier = identifier;
 			this.loc = loc;
+			this.args = args;
 		}
 
-		public MemberAccess (Expression expr, string id, TypeArguments args)
-			: this (expr, id)
+		public MemberAccess (Expression expr, string id, Location loc)
+			: this (expr, id, loc, null)
 		{
-			this.args = args;
+		}
+		
+		public MemberAccess (Expression expr, string id, TypeArguments args)
+			: this (expr, id, expr.Location, args)
+		{
 		}
 
 		public Expression Expr {
@@ -7173,15 +7188,13 @@ namespace Mono.CSharp {
 			}
 
 			Type expr_type = new_expr.Type;
-			if (expr_type.IsPointer){
-				Error (23, "The `.' operator can not be applied to pointer operands (" +
-				       TypeManager.CSharpName (expr_type) + ")");
+			if (expr_type.IsPointer || expr_type == TypeManager.void_type || new_expr is NullLiteral){
+				Unary.Error_OperatorCannotBeApplied (loc, ".", expr_type);
 				return null;
-			} else if (expr_type == TypeManager.void_type) {
-				Error (23, "The `.' operator can not be applied to operands of type 'void'");
+			}
+			if (expr_type == TypeManager.anonymous_method_type){
+				Unary.Error_OperatorCannotBeApplied (loc, ".", "anonymous method");
 				return null;
-			} else if (expr_type == TypeManager.anonymous_method_type){
-				Error (23, "The `.' operator can not be applied to anonymous methods");
 			}
 			
 

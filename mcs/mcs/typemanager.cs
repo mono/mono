@@ -544,6 +544,9 @@ public class TypeManager {
 	/// </summary>
 	static public string CSharpName (Type t)
 	{
+		if (t == typeof(NullType))
+			return "null";
+
 		return Regex.Replace (t.FullName, 
 			@"^System\." +
 			@"(Int32|UInt32|Int16|UInt16|Int64|UInt64|" +

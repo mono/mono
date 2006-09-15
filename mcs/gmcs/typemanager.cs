@@ -599,6 +599,9 @@ public partial class TypeManager {
 	/// </summary>
 	static public string CSharpName (Type t)
 	{
+		if (t == typeof(NullType))
+			return "null";
+ 
 		if (IsNullableType (t) && !t.IsGenericTypeDefinition) {
 			t = GetTypeArguments (t) [0];
 			return CSharpName (t) + "?";
