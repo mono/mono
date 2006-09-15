@@ -23,14 +23,14 @@ namespace Mono.CSharp {
 		public Location loc;
 		
 		/// <summary>
-		/// Resolves the statement, true means that all sub-statements
-		/// did resolve ok.
+		///   Resolves the statement, true means that all sub-statements
+		///   did resolve ok.
 		//  </summary>
 		public virtual bool Resolve (EmitContext ec)
 		{
 			return true;
 		}
-		
+
 		/// <summary>
 		///   We already know that the statement is unreachable, but we still
 		///   need to resolve it to catch errors.
@@ -68,12 +68,12 @@ namespace Mono.CSharp {
 		{
 			Error (error, String.Format (format, args));
 		}
-		
+
 		public void Error (int error, string s)
 		{
 			if (!loc.IsNull)
 				Report.Error (error, loc, s);
-				else
+			else
 				Report.Error (error, s);
 		}
 
@@ -84,7 +84,7 @@ namespace Mono.CSharp {
 		{
 			ec.Mark (loc, true);
 			DoEmit (ec);
-		}
+		}		
 	}
 
 	public sealed class EmptyStatement : Statement {
@@ -112,7 +112,7 @@ namespace Mono.CSharp {
 		Expression expr;
 		public Statement TrueStatement;
 		public Statement FalseStatement;
-		
+
 		bool is_true_ret;
 		
 		public If (Expression expr, Statement trueStatement, Location l)
@@ -144,7 +144,7 @@ namespace Mono.CSharp {
 				ok = false;
 				goto skip;
 			}
-			
+
 			Assign ass = expr as Assign;
 			if (ass != null && ass.Source is Constant) {
 				Report.Warning (665, 3, loc, "Assignment in conditional expression is always constant; did you mean to use == instead of = ?");
@@ -168,7 +168,7 @@ namespace Mono.CSharp {
 					if (!TrueStatement.ResolveUnreachable (ec, true))
 						return false;
 					TrueStatement = null;
-			
+
 					if ((FalseStatement != null) &&
 					    !FalseStatement.Resolve (ec))
 						return false;
@@ -211,13 +211,13 @@ namespace Mono.CSharp {
 				if (take)
 					TrueStatement.Emit (ec);
 				else if (FalseStatement != null)
-						FalseStatement.Emit (ec);
+					FalseStatement.Emit (ec);
 
-						return;
-					}
+				return;
+			}
 			
 			expr.EmitBranchable (ec, false_target, false);
-
+			
 			TrueStatement.Emit (ec);
 
 			if (FalseStatement != null){
@@ -505,7 +505,7 @@ namespace Mono.CSharp {
 			Label test = ig.DefineLabel ();
 			
 			if (InitStatement != null && InitStatement != EmptyStatement.Value)
-					InitStatement.Emit (ec);
+				InitStatement.Emit (ec);
 
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
@@ -644,8 +644,8 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Leave, ec.ReturnLabel);
 			else
 				ec.ig.Emit (OpCodes.Ret);
-			}
 		}
+	}
 
 	public class Goto : Statement {
 		string target;
@@ -880,7 +880,7 @@ namespace Mono.CSharp {
 				}
 
 				Type t = expr.Type;
-
+				
 				if ((t != TypeManager.exception_type) &&
 				    !TypeManager.IsSubclassOf (t, TypeManager.exception_type) &&
 				    !(expr is NullLiteral)) {
@@ -907,13 +907,13 @@ namespace Mono.CSharp {
 		protected override void DoEmit (EmitContext ec)
 		{
 			if (expr == null)
-					ec.ig.Emit (OpCodes.Rethrow);
-				else {
-			expr.Emit (ec);
+				ec.ig.Emit (OpCodes.Rethrow);
+			else {
+				expr.Emit (ec);
 
-			ec.ig.Emit (OpCodes.Throw);
+				ec.ig.Emit (OpCodes.Throw);
+			}
 		}
-	}
 	}
 
 	public class Break : Statement {
@@ -987,8 +987,8 @@ namespace Mono.CSharp {
 		public VariableInfo VariableInfo;
 
 		[Flags]
- 		enum Flags : byte {
- 			Used = 1,
+		enum Flags : byte {
+			Used = 1,
 			ReadOnly = 2,
 			Pinned = 4,
 			IsThis = 8,
@@ -1203,7 +1203,7 @@ namespace Mono.CSharp {
 	public class Block : Statement {
 		public Block    Parent;
 		public readonly Location  StartLocation;
-		public Location           EndLocation = Location.Null;
+		public Location EndLocation = Location.Null;
 
 		public readonly ToplevelBlock Toplevel;
 
@@ -1839,7 +1839,7 @@ namespace Mono.CSharp {
 		void UsageWarning (FlowBranching.UsageVector vector)
 		{
 			string name;
-			
+
 			if ((variables != null) && (RootContext.WarningLevel >= 3)) {
 				foreach (DictionaryEntry de in variables){
 					LocalInfo vi = (LocalInfo) de.Value;
@@ -1919,6 +1919,9 @@ namespace Mono.CSharp {
 						statements [ix + 1] is Block)
 					CheckPossibleMistakenEmptyStatement (s);
 
+				//
+				// Warn if we detect unreachable code.
+				//
 				if (unreachable) {
 					if (s is EmptyStatement)
 						continue;
@@ -1931,6 +1934,14 @@ namespace Mono.CSharp {
 						unreachable_shown = true;
 					}
 				}
+
+				//
+				// Note that we're not using ResolveUnreachable() for unreachable
+				// statements here.  ResolveUnreachable() creates a temporary
+				// flow branching and kills it afterwards.  This leads to problems
+				// if you have two unreachable statements where the first one
+				// assigns a variable and the second one tries to access it.
+				//
 
 				if (!s.Resolve (ec)) {
 					ok = false;
@@ -1984,7 +1995,7 @@ namespace Mono.CSharp {
 
 			return ok;
 		}
-		
+
 		public override bool ResolveUnreachable (EmitContext ec, bool warn)
 		{
 			unreachable_shown = true;
@@ -3043,7 +3054,7 @@ namespace Mono.CSharp {
 				} else {
 					if (!ss.Block.Resolve (ec))
 						return false;
-			}
+				}
 			}
 
 			if (default_section == null)
@@ -3178,6 +3189,8 @@ namespace Mono.CSharp {
 				ec.NeedReturnLabel ();
 			}
 
+			// Avoid creating libraries that reference the internal
+			// mcs NullType:
 			Type t = expr.Type;
 			if (t == TypeManager.null_type)
 				t = TypeManager.object_type;
@@ -3943,7 +3956,6 @@ namespace Mono.CSharp {
 					ig.BeginExceptionBlock ();
 			}
 			Statement.Emit (ec);
-
 			var_list.Reverse ();
 
 			DoEmitFinally (ec);
