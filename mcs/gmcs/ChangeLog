@@ -1,5 +1,11 @@
 2006-09-15  Martin Baulig  <martin@ximian.com>
 
+	* rootcontext.cs (RootContext.BrokenCircularDeps): Removed.
+
+	* driver.cs: Removed the `--broken-cycles' argument.
+
+2006-09-15  Martin Baulig  <martin@ximian.com>
+
 	* namespace.cs: Removed; this file is now shared with mcs.
 
 2006-09-15  Martin Baulig  <martin@ximian.com>
