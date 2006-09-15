@@ -1,3 +1,9 @@
+2006-09-15  Lluis Sanchez Gual  <lluis@novell.com> 
+
+	* UnixServerTransportSink.cs, UnixServerChannel.cs: 
+	When sending an async call response, don't use the original request
+	stream because it may have been used by another call.
+
 2005-11-02  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* UnixServerChannel.cs: Use Mono.Unix.Native.Syscall.  Mono.Unix.Syscall is

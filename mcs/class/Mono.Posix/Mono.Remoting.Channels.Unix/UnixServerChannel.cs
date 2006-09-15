@@ -173,7 +173,7 @@ namespace Mono.Remoting.Channels.Unix
             {
                 while (true) 
                 {
-                    UnixClient client = listener.AcceptUnixClient ();
+                    Socket client = listener.AcceptSocket ();
                     CreateListenerConnection (client);
                 }
             }
@@ -181,7 +181,7 @@ namespace Mono.Remoting.Channels.Unix
             {}
         }
 
-        internal void CreateListenerConnection (UnixClient client)
+        internal void CreateListenerConnection (Socket client)
         {
             lock (_activeConnections)
                 {
@@ -254,27 +254,22 @@ namespace Mono.Remoting.Channels.Unix
 
     class ClientConnection
     {
-        UnixClient _client;
+        Socket _client;
         UnixServerTransportSink _sink;
         Stream _stream;
         UnixServerChannel _serverChannel;
 
         byte[] _buffer = new byte[UnixMessageIO.DefaultStreamBufferSize];
 
-        public ClientConnection (UnixServerChannel serverChannel, UnixClient client, UnixServerTransportSink sink)
+        public ClientConnection (UnixServerChannel serverChannel, Socket client, UnixServerTransportSink sink)
         {
             _serverChannel = serverChannel;
             _client = client;
             _sink = sink;
         }
 
-        public UnixClient Client {
+        public Socket Client {
             get { return _client; }
-        }
-
-        public Stream Stream
-        {
-            get { return _stream; }
         }
 
         public byte[] Buffer
@@ -285,7 +280,7 @@ namespace Mono.Remoting.Channels.Unix
         public void ProcessMessages()
         {
 			byte[] buffer = new byte[256];
-            _stream = new BufferedStream (_client.GetStream());
+            _stream = new BufferedStream (new NetworkStream (_client));
 
             try
             {
@@ -297,7 +292,7 @@ namespace Mono.Remoting.Channels.Unix
                     switch (type)
                     {
 						case MessageStatus.MethodMessage:
-							_sink.InternalProcessMessage (this);
+							_sink.InternalProcessMessage (this, _stream);
 							break;
 
 						case MessageStatus.Unknown:
@@ -305,7 +300,6 @@ namespace Mono.Remoting.Channels.Unix
 							end = true;
 							break;
                     }
-					_stream.Flush ();
                 }
             }
             catch (Exception ex)

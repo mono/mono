@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Net.Sockets;
 using System.Collections;
 using System.Runtime.Remoting.Messaging;
 using System.IO;
@@ -67,7 +68,10 @@ namespace Mono.Remoting.Channels.Unix
                                           IMessage msg, ITransportHeaders headers, Stream responseStream)
         {
             ClientConnection connection = (ClientConnection)state;
-            UnixMessageIO.SendMessageStream (connection.Stream, responseStream, headers, connection.Buffer);
+            NetworkStream stream = new NetworkStream (connection.Client);
+            UnixMessageIO.SendMessageStream (stream, responseStream, headers, connection.Buffer);
+            stream.Flush ();
+            stream.Close ();
         }
 
         public Stream GetResponseStream (IServerResponseChannelSinkStack sinkStack, object state,
@@ -88,14 +92,14 @@ namespace Mono.Remoting.Channels.Unix
             throw new NotSupportedException ();
         }
 
-        internal void InternalProcessMessage (ClientConnection connection)
+        internal void InternalProcessMessage (ClientConnection connection, Stream stream)
         {
             // Reads the headers and the request stream
 
             Stream requestStream;
             ITransportHeaders requestHeaders;
 
-            requestStream = UnixMessageIO.ReceiveMessageStream (connection.Stream, out requestHeaders, connection.Buffer);
+            requestStream = UnixMessageIO.ReceiveMessageStream (stream, out requestHeaders, connection.Buffer);
 
 /*            try {
                 PeerCred cred = connection.Client.PeerCredential;
@@ -119,7 +123,8 @@ namespace Mono.Remoting.Channels.Unix
             switch (proc)
             {
             case ServerProcessing.Complete:
-                UnixMessageIO.SendMessageStream (connection.Stream, responseStream, responseHeaders, connection.Buffer);
+                UnixMessageIO.SendMessageStream (stream, responseStream, responseHeaders, connection.Buffer);
+                stream.Flush ();
                 break;
 
             case ServerProcessing.Async:
