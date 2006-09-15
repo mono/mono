@@ -882,8 +882,8 @@ namespace Mono.CSharp {
 				Type t = expr.Type;
 				
 				if ((t != TypeManager.exception_type) &&
-					!t.IsSubclassOf (TypeManager.exception_type) &&
-					!(expr is NullLiteral)) {
+				    !TypeManager.IsSubclassOf (t, TypeManager.exception_type) &&
+				    !(expr is NullLiteral)) {
 					Error (155,
 						"The type caught or thrown must be derived " +
 						"from System.Exception");
@@ -1327,7 +1327,7 @@ namespace Mono.CSharp {
 			get { return this_id; }
 		}
 
-		protected IDictionary Variables {
+		public IDictionary Variables {
 			get {
 				if (variables == null)
 					variables = new ListDictionary ();
@@ -1899,6 +1899,12 @@ namespace Mono.CSharp {
 
 			Report.Debug (4, "RESOLVE BLOCK", StartLocation, ec.CurrentBranching);
 
+			//
+			// This flag is used to notate nested statements as unreachable from the beginning of this block.
+			// For the purposes of this resolution, it doesn't matter that the whole block is unreachable 
+			// from the beginning of the function.  The outer Resolve() that detected the unreachability is
+			// responsible for handling the situation.
+			//
 			int statement_count = statements.Count;
 			for (int ix = 0; ix < statement_count; ix++){
 				Statement s = (Statement) statements [ix];
@@ -2102,8 +2108,11 @@ namespace Mono.CSharp {
 		//
 		// The parameters for the block.
 		//
-		public readonly Parameters Parameters;
-			
+		Parameters parameters;
+		public Parameters Parameters {
+			get { return parameters; }
+		}
+
 		public void RegisterCaptureContext (CaptureContext cc)
 		{
 			if (capture_contexts == null)
@@ -2159,7 +2168,7 @@ namespace Mono.CSharp {
 		public ToplevelBlock (ToplevelBlock container, Flags flags, Parameters parameters, Location start) :
 			base (null, flags | Flags.IsToplevel, start, Location.Null)
 		{
-			Parameters = parameters == null ? Parameters.EmptyReadOnlyParameters : parameters;
+			this.parameters = parameters == null ? Parameters.EmptyReadOnlyParameters : parameters;
 			this.container = container;
 
 			if (container != null)
@@ -2285,6 +2294,9 @@ namespace Mono.CSharp {
 
 			if (top_level_branching != null)
 				return true;
+
+			if (ip != null)
+				parameters = ip;
 
 			ResolveMeta (this, ec, ip);
 

@@ -1,5 +1,11 @@
 2006-09-15  Martin Baulig  <martin@ximian.com>
 
+	* statement.cs (Block.Variables): Make this public.
+	(ToplevelBlock.Parameters): Make this a property.
+	(Throw.Resolve): Use `TypeManager.IsSubclassOf ()'.
+
+2006-09-15  Martin Baulig  <martin@ximian.com>
+
 	* namespace.cs: Merge with the gmcs version.
 
 2006-09-15  Martin Baulig  <martin@ximian.com>
