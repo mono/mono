@@ -2871,7 +2871,6 @@ namespace Mono.CSharp {
 					}
 				}
 				ss.Block.Emit (ec);
-				//ig.Emit (OpCodes.Br, lblEnd);
 			}
 			
 			if (!fFoundDefault) {
@@ -4572,9 +4571,8 @@ namespace Mono.CSharp {
 
 					enumerator_found = true;
 
-					if (!GetEnumeratorFilter (ec, mi)) {
+					if (!GetEnumeratorFilter (ec, mi))
 						continue;
-					}
 
 					result = mi;
 					tmp_move_next = move_next;

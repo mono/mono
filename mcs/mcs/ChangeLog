@@ -1,5 +1,10 @@
 2006-09-15  Martin Baulig  <martin@ximian.com>
 
+	* statement.cs (Switch): Merge with the gmcs implementation
+	(without nullables), which is newer.
+
+2006-09-15  Martin Baulig  <martin@ximian.com>
+
 	* statement.cs (Block.Variables): Make this public.
 	(ToplevelBlock.Parameters): Make this a property.
 	(Throw.Resolve): Use `TypeManager.IsSubclassOf ()'.

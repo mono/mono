@@ -2431,6 +2431,7 @@ namespace Mono.CSharp {
 		// Computed
 		//
 		Label default_target;
+		Label null_target;
 		Expression new_expr;
 		bool is_constant;
 		SwitchSection constant_section;
@@ -2467,8 +2468,10 @@ namespace Mono.CSharp {
 		// expression that includes any potential conversions to the
 		// integral types or to string.
 		//
-		Expression SwitchGoverningType (EmitContext ec, Type t)
+		Expression SwitchGoverningType (EmitContext ec, Expression expr)
 		{
+			Type t = expr.Type;
+
 			if (t == TypeManager.byte_type ||
 			    t == TypeManager.sbyte_type ||
 			    t == TypeManager.ushort_type ||
@@ -2481,7 +2484,7 @@ namespace Mono.CSharp {
 			    t == TypeManager.string_type ||
 			    t == TypeManager.bool_type ||
 			    t.IsSubclassOf (TypeManager.enum_type))
-				return Expr;
+				return expr;
 
 			if (allowed_types == null){
 				allowed_types = new Type [] {
@@ -2509,7 +2512,7 @@ namespace Mono.CSharp {
 			foreach (Type tt in allowed_types){
 				Expression e;
 				
-				e = Convert.ImplicitUserConversion (ec, Expr, tt, loc);
+				e = Convert.ImplicitUserConversion (ec, expr, tt, loc);
 				if (e == null)
 					continue;
 
@@ -2524,7 +2527,7 @@ namespace Mono.CSharp {
 					Report.ExtraInformation (
 						loc,
 						String.Format ("reason: more than one conversion to an integral type exist for type {0}",
-							       TypeManager.CSharpName (Expr.Type)));
+							       TypeManager.CSharpName (expr.Type)));
 					return null;
 				}
 
@@ -2566,11 +2569,10 @@ namespace Mono.CSharp {
 					object key = sl.Converted;
 					try {
 						Elements.Add (key, sl);
+					} catch (ArgumentException) {
+						sl.Erorr_AlreadyOccurs ();
+						error = true;
 					}
-					catch (ArgumentException) {
-						 sl.Erorr_AlreadyOccurs ();
-						 error = true;
-					 }
 				}
 			}
 			return !error;
@@ -2834,20 +2836,30 @@ namespace Mono.CSharp {
 
 			// now emit the code for the sections
 			bool fFoundDefault = false;
+			bool fFoundNull = false;
+			foreach (SwitchSection ss in Sections)
+			{
+				foreach (SwitchLabel sl in ss.Labels)
+					if (sl.Converted == SwitchLabel.NullStringCase)
+						fFoundNull = true;
+			}
+
 			foreach (SwitchSection ss in Sections)
 			{
 				foreach (SwitchLabel sl in ss.Labels)
 				{
 					ig.MarkLabel (sl.GetILLabel (ec));
 					ig.MarkLabel (sl.GetILLabelCode (ec));
-					if (sl.Label == null)
-					{
+					if (sl.Converted == SwitchLabel.NullStringCase)
+						ig.MarkLabel (null_target);
+					else if (sl.Label == null) {
 						ig.MarkLabel (lblDefault);
 						fFoundDefault = true;
+						if (!fFoundNull)
+							ig.MarkLabel (null_target);
 					}
 				}
 				ss.Block.Emit (ec);
-				//ig.Emit (OpCodes.Br, lblEnd);
 			}
 			
 			if (!fFoundDefault) {
@@ -2866,7 +2878,6 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			Label end_of_switch = ig.DefineLabel ();
 			Label next_test = ig.DefineLabel ();
-			Label null_target = ig.DefineLabel ();
 			bool first_test = true;
 			bool pending_goto_end = false;
 			bool null_marked = false;
@@ -2971,7 +2982,7 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return false;
 
-			new_expr = SwitchGoverningType (ec, Expr.Type);
+			new_expr = SwitchGoverningType (ec, Expr);
 			if (new_expr == null){
 				Report.Error (151, loc, "A value of an integral type or string expected for switch");
 				return false;
@@ -3038,6 +3049,9 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 
+			default_target = ig.DefineLabel ();
+			null_target = ig.DefineLabel ();
+
 			// Store variable for comparission purposes
 			LocalBuilder value;
 			if (!is_constant) {
@@ -3046,8 +3060,6 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Stloc, value);
 			} else
 				value = null;
-
-			default_target = ig.DefineLabel ();
 
 			//
 			// Setup the codegen context
@@ -3927,6 +3939,8 @@ namespace Mono.CSharp {
 				Expression var = resolved_vars [--i];
 				Label skip = ig.DefineLabel ();
 
+				ig.BeginFinallyBlock ();
+
 				if (!var.Type.IsValueType) {
 					var.Emit (ec);
 					ig.Emit (OpCodes.Brfalse, skip);
@@ -4499,23 +4513,39 @@ namespace Mono.CSharp {
 				if (mg == null)
 					return false;
 
-				foreach (MethodBase mb in mg.Methods) {
-					if (TypeManager.GetParameterData (mb).Count != 0)
+				MethodBase result = null;
+				MethodInfo tmp_move_next = null;
+				PropertyExpr tmp_get_cur = null;
+				Type tmp_enumerator_type = enumerator_type;
+				foreach (MethodInfo mi in mg.Methods) {
+					if (TypeManager.GetParameterData (mi).Count != 0)
 						continue;
 			
 					// Check whether GetEnumerator is public
-					if ((mb.Attributes & MethodAttributes.Public) != MethodAttributes.Public)
+					if ((mi.Attributes & MethodAttributes.Public) != MethodAttributes.Public)
 						continue;
 
-					if (TypeManager.IsOverride (mb))
+					if (TypeManager.IsOverride (mi))
 						continue;
 
 					enumerator_found = true;
 
-					if (!GetEnumeratorFilter (ec, (MethodInfo) mb))
+					if (!GetEnumeratorFilter (ec, mi))
 						continue;
 
-					MethodInfo[] mi = new MethodInfo[] { (MethodInfo) mb };
+					result = mi;
+					tmp_move_next = move_next;
+					tmp_get_cur = get_current;
+					tmp_enumerator_type = enumerator_type;
+					if (mi.DeclaringType == t)
+						break;
+				}
+
+				if (result != null) {
+					move_next = tmp_move_next;
+					get_current = tmp_get_cur;
+					enumerator_type = tmp_enumerator_type;
+					MethodInfo[] mi = new MethodInfo[] { (MethodInfo) result };
 					get_enumerator = new MethodGroupExpr (mi, loc);
 
 					if (t != expr.Type) {
