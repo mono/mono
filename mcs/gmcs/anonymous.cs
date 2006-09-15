@@ -1205,6 +1205,7 @@ namespace Mono.CSharp {
 				(ec.InUnsafe ? Modifiers.UNSAFE : 0), /* No constructor */ false);
 
 			aec.CurrentAnonymousMethod = this;
+			aec.IsFieldInitializer = ec.IsFieldInitializer;
 
 			Report.Debug (64, "RESOLVE ANONYMOUS METHOD #1", this, Location, ec, aec,
 				      RootScope, Parameters, Block);
