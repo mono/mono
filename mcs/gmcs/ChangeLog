@@ -1,3 +1,8 @@
+2006-09-15  Martin Baulig  <martin@ximian.com>
+
+	* old-code.cs, gen-il.cs, gen-treedump.cs: Removed old stuff.
+	* g1.cs, sample-hello.cs, sample-stack.il: Likewise.
+
 2006-09-14  Marek Safar  <marek.safar@seznam.cz>
 
 	* assign.cs, ecore.cs, expression.cs: Share error message text.
