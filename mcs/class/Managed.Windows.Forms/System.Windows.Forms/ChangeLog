@@ -1,5 +1,11 @@
 2006-09-15  Chris Toshok  <toshok@ximian.com>
 
+	* XplatUIX11.cs (SetWMStyles): if Form.Text == "" and
+	Form.ControlBox == false, the window has no titlebar nor resize
+	handles.  fixes bug #79368.
+
+2006-09-15  Chris Toshok  <toshok@ximian.com>
+
 	* TextBoxBase.cs: in CalculateScrollBars make sure LargeChange is
 	>= 0.  Fixes bug #79370.
 

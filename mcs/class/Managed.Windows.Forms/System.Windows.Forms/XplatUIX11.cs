@@ -760,6 +760,12 @@ namespace System.Windows.Forms {
 				decorations = 0;
 			}
 
+			/* if the form has ControlBox == false and Text == "", there are no borders at all (#79368) */
+			if ((cp.Caption == "") && (cp.Style & ((int)WindowStyles.WS_SYSMENU)) == 0) {
+				functions = 0;
+				decorations = 0;
+			}
+
 			if ((functions & MotifFunctions.Resize) == 0) {
 				hwnd.fixed_size = true;
 				XplatUI.SetWindowMinMax(hwnd.Handle, new Rectangle(cp.X, cp.Y, cp.Width, cp.Height), new Size(cp.Width, cp.Height), new Size(cp.Width, cp.Height));
