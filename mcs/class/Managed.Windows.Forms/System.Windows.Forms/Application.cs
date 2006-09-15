@@ -347,7 +347,9 @@ namespace System.Windows.Forms {
 
 		#region Public Static Methods
 		public static void AddMessageFilter(IMessageFilter value) {
-			message_filters.Add(value);
+			lock (message_filters) {
+				message_filters.Add(value);
+			}
 		}
 
 		public static void DoEvents() {
@@ -406,7 +408,9 @@ namespace System.Windows.Forms {
 		}
 
 		public static void RemoveMessageFilter(IMessageFilter filter) {
-			message_filters.Remove(filter);
+			lock (message_filters) {
+				message_filters.Remove(filter);
+			}
 		}
 
 		public static void Run() {
@@ -483,21 +487,23 @@ namespace System.Windows.Forms {
 			thread.MessageLoop = true;
 
 			while (XplatUI.GetMessage(queue_id, ref msg, IntPtr.Zero, 0, 0)) {
-				if ((message_filters != null) && (message_filters.Count > 0)) {
-					Message	m;
-					bool	drop;
+				lock (message_filters) {
+					if (message_filters.Count > 0) {
+						Message	m;
+						bool	drop;
 
-					drop = false;
-					m = Message.Create(msg.hwnd, (int)msg.message, msg.wParam, msg.lParam);
-					for (int i = 0; i < message_filters.Count; i++) {
-						if (((IMessageFilter)message_filters[i]).PreFilterMessage(ref m)) {
-							// we're dropping the message
-							drop = true;
-							break;
+						drop = false;
+						m = Message.Create(msg.hwnd, (int)msg.message, msg.wParam, msg.lParam);
+						for (int i = 0; i < message_filters.Count; i++) {
+							if (((IMessageFilter)message_filters[i]).PreFilterMessage(ref m)) {
+								// we're dropping the message
+								drop = true;
+								break;
+							}
 						}
-					}
-					if (drop) {
-						continue;
+						if (drop) {
+							continue;
+						}
 					}
 				}
 

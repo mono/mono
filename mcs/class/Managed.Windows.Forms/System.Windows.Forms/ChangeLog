@@ -1,5 +1,10 @@
 2006-09-15  Chris Toshok  <toshok@ximian.com>
 
+	* Application.cs: add locking around the static message_filters
+	ArrayList, part of #79196.
+
+2006-09-15  Chris Toshok  <toshok@ximian.com>
+
 	* XplatUIX11.cs (SetWMStyles): if Form.Text == "" and
 	Form.ControlBox == false, the window has no titlebar nor resize
 	handles.  fixes bug #79368.
