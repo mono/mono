@@ -1,5 +1,13 @@
 2006-09-15  Chris Toshok  <toshok@ximian.com>
 
+	* XplatUIX11.cs (SetWMStyles): rework the #79368 fix slightly.  If
+	ControlBox == false, we disallow maximize/minimize/close.  If the
+	form Caption is "" we also disallow move (and get rid of the Title
+	decoration).  Unfortunately, regardless of how things are set,
+	we're stuck with the Title and WM menu.
+
+2006-09-15  Chris Toshok  <toshok@ximian.com>
+
 	* Application.cs: add locking around the static message_filters
 	ArrayList, part of #79196.
 

@@ -730,10 +730,6 @@ namespace System.Windows.Forms {
 				decorations |= MotifDecorations.Maximize;
 			}
 
-			if ((cp.Style & ((int)WindowStyles.WS_SYSMENU)) != 0) {
-				functions |= MotifFunctions.Close;
-			}
-
 			if ((cp.ExStyle & ((int)WindowExStyles.WS_EX_DLGMODALFRAME)) != 0) {
 				decorations |= MotifDecorations.Border;
 			}
@@ -755,13 +751,20 @@ namespace System.Windows.Forms {
 				decorations ^= MotifDecorations.Menu;
 			}
 
-			if ((cp.Style & (int)(WindowStyles.WS_CAPTION | WindowStyles.WS_BORDER | WindowStyles.WS_DLGFRAME)) == 0) {
-				functions = 0;
-				decorations = 0;
+			if ((cp.Style & ((int)WindowStyles.WS_SYSMENU)) != 0) {
+				functions |= MotifFunctions.Close;
+			}
+			else {
+				functions &= ~(MotifFunctions.Maximize | MotifFunctions.Minimize | MotifFunctions.Close);
+				decorations &= ~(MotifDecorations.Menu | MotifDecorations.Maximize | MotifDecorations.Minimize);
+				if (cp.Caption == "") {
+					functions &= ~MotifFunctions.Move;
+					decorations &= ~MotifDecorations.Title;
+				}
 			}
 
-			/* if the form has ControlBox == false and Text == "", there are no borders at all (#79368) */
-			if ((cp.Caption == "") && (cp.Style & ((int)WindowStyles.WS_SYSMENU)) == 0) {
+
+			if ((cp.Style & (int)(WindowStyles.WS_CAPTION | WindowStyles.WS_BORDER | WindowStyles.WS_DLGFRAME)) == 0) {
 				functions = 0;
 				decorations = 0;
 			}
