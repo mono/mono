@@ -1,11 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using System.Windows.Forms;
 using System.Drawing;
 
-#ifdef NET_2_0
+#if NET_2_0
+using System.Collections.Generic;
 namespace ProfessionalColorTest
 {
 	[TestFixture()]	
