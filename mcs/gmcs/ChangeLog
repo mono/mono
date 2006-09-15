@@ -1,5 +1,9 @@
 2006-09-15  Martin Baulig  <martin@ximian.com>
 
+	* parameter.cs: Removed; this file is now shared with mcs.
+
+2006-09-15  Martin Baulig  <martin@ximian.com>
+
 	* enum.cs: Removed; this file is now shared with mcs.
 
 2006-09-15  Martin Baulig  <martin@ximian.com>

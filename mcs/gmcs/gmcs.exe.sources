@@ -23,7 +23,7 @@ iterators.cs
 ../mcs/location.cs
 ../mcs/modifiers.cs
 namespace.cs
-parameter.cs
+../mcs/parameter.cs
 pending.cs
 report.cs
 rootcontext.cs

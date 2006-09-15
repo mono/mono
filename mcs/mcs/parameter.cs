@@ -212,6 +212,10 @@ namespace Mono.CSharp {
 		public readonly Location Location;
 
 		IResolveContext resolve_context;
+
+#if GMCS_SOURCE
+		GenericConstraints constraints;
+#endif
 		
 		public Parameter (Expression type, string name, Modifier mod, Attributes attrs, Location loc)
 			: base (attrs)
@@ -306,6 +310,12 @@ namespace Mono.CSharp {
 			if (texpr == null)
 				return false;
 
+#if GMCS_SOURCE
+			TypeParameterExpr tparam = texpr as TypeParameterExpr;
+			if (tparam != null)
+				constraints = tparam.TypeParameter.Constraints;
+#endif
+
 			parameter_type = texpr.Type;
 			
 			if (parameter_type.IsAbstract && parameter_type.IsSealed) {
@@ -343,7 +353,15 @@ namespace Mono.CSharp {
 				return parameter_type;
 			}
 		}
-		
+
+#if GMCS_SOURCE
+		public GenericConstraints GenericConstraints {
+			get {
+				return constraints;
+			}
+		}
+#endif
+
 		public ParameterAttributes Attributes {
 			get {
 				switch (ModFlags) {
@@ -359,6 +377,23 @@ namespace Mono.CSharp {
 				
 				return ParameterAttributes.None;
 			}
+		}
+
+		public static ParameterAttributes GetParameterAttributes (Modifier mod)
+		{
+			int flags = ((int) mod) & ~((int) Parameter.Modifier.ISBYREF);
+			switch ((Modifier) flags) {
+			case Modifier.NONE:
+				return ParameterAttributes.None;
+			case Modifier.REF:
+				return ParameterAttributes.None;
+			case Modifier.OUT:
+				return ParameterAttributes.Out;
+			case Modifier.PARAMS:
+				return 0;
+			}
+				
+			return ParameterAttributes.None;
 		}
 		
 		public override AttributeTargets AttributeTargets {
@@ -408,11 +443,14 @@ namespace Mono.CSharp {
 
 		public virtual void ApplyAttributes (MethodBuilder mb, ConstructorBuilder cb, int index)
 		{
+#if !GMCS_SOURCE || !MS_COMPATIBLE
+			// TODO: It should use mb.DefineGenericParameters
 			if (mb == null)
 				builder = cb.DefineParameter (index, Attributes, Name);
 			else 
 				builder = mb.DefineParameter (index, Attributes, Name);
-		
+#endif
+
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 		}
@@ -436,6 +474,10 @@ namespace Mono.CSharp {
 
 		public static readonly Parameters EmptyReadOnlyParameters = new Parameters ();
 		static readonly Parameter ArgList = new ArglistParameter ();
+
+#if GMCS_SOURCE
+		public readonly TypeParameter[] TypeParameters;
+#endif
 
 		private Parameters ()
 		{
