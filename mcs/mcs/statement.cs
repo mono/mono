@@ -1762,6 +1762,13 @@ namespace Mono.CSharp {
 								continue;
 							}
 
+#if GMCS_SOURCE
+							if (TypeManager.IsGenericParameter (variable_type)) {
+								Const.Error_ExpressionMustBeConstant (variable_type, vi.Location, name);
+								continue;
+							}
+#endif
+
 							e = ce.ToType (variable_type, vi.Location);
 							if (e == null)
 								continue;
@@ -2361,7 +2368,7 @@ namespace Mono.CSharp {
 		// Resolves the expression, reduces it to a literal if possible
 		// and then converts it to the requested type.
 		//
-		public bool ResolveAndReduce (EmitContext ec, Type required_type)
+		public bool ResolveAndReduce (EmitContext ec, Type required_type, bool allow_nullable)
 		{	
 			Expression e = label.Resolve (ec);
 
@@ -2375,6 +2382,11 @@ namespace Mono.CSharp {
 			}
 
 			if (required_type == TypeManager.string_type && c.GetValue () == null) {
+				converted = NullStringCase;
+				return true;
+			}
+
+			if (allow_nullable && c.GetValue () == null) {
 				converted = NullStringCase;
 				return true;
 			}
@@ -2436,6 +2448,21 @@ namespace Mono.CSharp {
 		bool is_constant;
 		SwitchSection constant_section;
 		SwitchSection default_section;
+
+#if GMCS_SOURCE
+		//
+		// Nullable Types support for GMCS.
+		//
+		Nullable.Unwrap unwrap;
+
+		protected bool HaveUnwrap {
+			get { return unwrap != null; }
+		}
+#else
+		protected bool HaveUnwrap {
+			get { return false; }
+		}
+#endif
 
 		//
 		// The types allowed to be implicitly cast from
@@ -2561,7 +2588,7 @@ namespace Mono.CSharp {
 						continue;
 					}
 
-					if (!sl.ResolveAndReduce (ec, SwitchType)){
+					if (!sl.ResolveAndReduce (ec, SwitchType, HaveUnwrap)) {
 						error = true;
 						continue;
 					}
@@ -2983,6 +3010,17 @@ namespace Mono.CSharp {
 				return false;
 
 			new_expr = SwitchGoverningType (ec, Expr);
+
+#if GMCS_SOURCE
+			if ((new_expr == null) && TypeManager.IsNullableType (Expr.Type)) {
+				unwrap = Nullable.Unwrap.Create (Expr, ec);
+				if (unwrap == null)
+					return false;
+
+				new_expr = SwitchGoverningType (ec, unwrap);
+			}
+#endif
+
 			if (new_expr == null){
 				Report.Error (151, loc, "A value of an integral type or string expected for switch");
 				return false;
@@ -2993,6 +3031,9 @@ namespace Mono.CSharp {
 
 			if (!CheckSwitch (ec))
 				return false;
+
+			if (HaveUnwrap)
+				Elements.Remove (SwitchLabel.NullStringCase);
 
 			Switch old_switch = ec.Switch;
 			ec.Switch = this;
@@ -3054,7 +3095,15 @@ namespace Mono.CSharp {
 
 			// Store variable for comparission purposes
 			LocalBuilder value;
-			if (!is_constant) {
+			if (HaveUnwrap) {
+				value = ig.DeclareLocal (SwitchType);
+#if GMCS_SOURCE
+				unwrap.EmitCheck (ec);
+				ig.Emit (OpCodes.Brfalse, null_target);
+				new_expr.Emit (ec);
+				ig.Emit (OpCodes.Stloc, value);
+#endif
+			} else if (!is_constant) {
 				value = ig.DeclareLocal (SwitchType);
 				new_expr.Emit (ec);
 				ig.Emit (OpCodes.Stloc, value);
@@ -4398,9 +4447,25 @@ namespace Mono.CSharp {
 					// way I could do this without a goto
 					//
 
+#if GMCS_SOURCE
+					//
+					// Prefer a generic enumerator over a non-generic one.
+					//
+					if (return_type.IsInterface && return_type.IsGenericType) {
+						enumerator_type = return_type;
+						if (!FetchGetCurrent (ec, return_type))
+							get_current = new PropertyExpr (
+								ec.ContainerType, TypeManager.ienumerator_getcurrent, loc);
+						if (!FetchMoveNext (return_type))
+							move_next = TypeManager.bool_movenext_void;
+						return true;
+					}
+#endif
+
 					if (return_type.IsInterface ||
 					    !FetchMoveNext (return_type) ||
 					    !FetchGetCurrent (ec, return_type)) {
+						enumerator_type = return_type;
 						move_next = TypeManager.bool_movenext_void;
 						get_current = new PropertyExpr (
 							ec.ContainerType, TypeManager.ienumerator_getcurrent, loc);

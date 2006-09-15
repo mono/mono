@@ -28,7 +28,7 @@ pending.cs
 report.cs
 rootcontext.cs
 ../mcs/roottypes.cs
-statement.cs
+../mcs/statement.cs
 support.cs
 typemanager.cs
 ../mcs/symbolwriter.cs
