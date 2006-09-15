@@ -1,3 +1,10 @@
+2006-09-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CookieContainer.cs: send the cookies from the collection we got for
+	the given URI, not the whole collection.
+	* HttpWebResponse.cs: only add the cookies to this instance, not to the
+	cookie container set in the request.
+
 2006-09-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* WebConnection.cs: Patch to remove the hack that was required for 

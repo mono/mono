@@ -238,7 +238,7 @@ namespace System.Net
 				return "";
 
 			StringBuilder result = new StringBuilder ();
-			foreach (Cookie cookie in cookies) {
+			foreach (Cookie cookie in coll) {
 				result.Append (cookie.ToString ());
 				result.Append (';');
 			}

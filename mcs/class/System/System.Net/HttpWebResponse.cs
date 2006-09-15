@@ -52,7 +52,6 @@ namespace System.Net
 		string statusDescription;
 		long contentLength = -1;
 		string contentType;
-		CookieContainer cookieContainer;
 
 		bool disposed = false;
 		Stream stream;
@@ -69,7 +68,6 @@ namespace System.Net
 			statusDescription = data.StatusDescription;
 			stream = data.stream;
 			if (container != null) {
-				this.cookieContainer = container;
 				FillCookies ();
 			}
 		}
@@ -417,8 +415,6 @@ namespace System.Net
 				cookie.Domain = uri.Host;
 
 			cookieCollection.Add (cookie);
-			if (cookieContainer != null)
-				cookieContainer.Add (uri, cookie);
 		}
 
 		void SetCookie2 (string cookies_str)
