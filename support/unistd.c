@@ -236,14 +236,6 @@ Mono_Posix_Syscall_swab (void *from, void *to, mph_ssize_t n)
 }
 
 int
-Mono_Posix_Syscall_encrypt (void* block, int edflag)
-{
-	errno = 0;
-	encrypt (block, edflag);
-	return errno == 0 ? 0 : -1;
-}
-
-int
 Mono_Posix_Syscall_setusershell (void)
 {
 	errno = 0;

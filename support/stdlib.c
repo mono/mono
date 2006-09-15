@@ -64,16 +64,6 @@ Mono_Posix_Stdlib_realloc (void* ptr, mph_size_t size)
 	return realloc (ptr, (size_t) size);
 }
 
-#ifdef HAVE_SETKEY
-int
-Mono_Posix_Syscall_setkey (const char* key)
-{
-	errno = 0;
-	setkey (key);
-	return errno == 0 ? 0 : -1;
-}
-#endif /* ndef HAVE_SETKEY */
-
 G_END_DECLS
 
 /*
