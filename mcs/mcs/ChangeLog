@@ -1,5 +1,10 @@
 2006-09-15  Martin Baulig  <martin@ximian.com>
 
+	* enum.cs: Merge with the gmcs-version: 3005 is a warning in gmcs
+	and an error in mcs.
+
+2006-09-15  Martin Baulig  <martin@ximian.com>
+
 	* flowanalysis.cs: Merged from GMCS; added the generics code into
 	a `GMCS_SOURCE' conditional so we can share this file.
 

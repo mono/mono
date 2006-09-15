@@ -343,7 +343,11 @@ namespace Mono.CSharp {
 				catch (ArgumentException) {
 					Report.SymbolRelatedToPreviousError (em);
 					MemberCore col = (MemberCore)dict [em.Name];
+#if GMCS_SOURCE
+					Report.Warning (3005, 1, col.Location, "Identifier `{0}' differing only in case is not CLS-compliant", col.GetSignatureForError ());
+#else
 					Report.Error (3005, col.Location, "Identifier `{0}' differing only in case is not CLS-compliant", col.GetSignatureForError ());
+#endif
 				}
 			}
   		}

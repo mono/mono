@@ -13,7 +13,7 @@ convert.cs
 decl.cs
 delegate.cs
 ../mcs/doc.cs
-enum.cs
+../mcs/enum.cs
 ecore.cs
 expression.cs
 ../mcs/flowanalysis.cs
