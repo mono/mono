@@ -1574,10 +1574,14 @@ namespace System.Windows.Forms {
 			// FIXME - need separate calculations for center and right alignment
 			// No scrollbars for a single line
 
+			if (!multiline) {
+				return;
+			}
+
 			if (document.Width >= document.ViewPortWidth) {
 				hscroll.Enabled = true;
 				hscroll.Minimum = 0;
-				hscroll.LargeChange = document.ViewPortWidth;
+				hscroll.LargeChange = document.ViewPortWidth < 0 ? 0 : document.ViewPortWidth;
 				hscroll.Maximum = document.Width;
 			} else {
 				hscroll.Maximum = document.ViewPortWidth;
@@ -1587,17 +1591,13 @@ namespace System.Windows.Forms {
 			if (document.Height >= document.ViewPortHeight) {
 				vscroll.Enabled = true;
 				vscroll.Minimum = 0;
-				vscroll.LargeChange = document.ViewPortHeight;
+				vscroll.LargeChange = document.ViewPortHeight < 0 ? 0 : document.ViewPortHeight;
 				vscroll.Maximum = document.Height;
 			} else {
 				vscroll.Maximum = document.ViewPortHeight;
 				vscroll.Enabled = false;
 			}
 
-
-			if (!multiline) {
-				return;
-			}
 
 			if (!WordWrap) {
 				if ((scrollbars & RichTextBoxScrollBars.Horizontal) != 0) {
