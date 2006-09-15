@@ -16,7 +16,7 @@ delegate.cs
 enum.cs
 ecore.cs
 expression.cs
-flowanalysis.cs
+../mcs/flowanalysis.cs
 generic.cs
 iterators.cs
 ../mcs/literal.cs
