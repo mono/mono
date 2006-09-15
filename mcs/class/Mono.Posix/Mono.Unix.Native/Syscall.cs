@@ -56,6 +56,7 @@
 using System;
 using System.Collections;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Text;
 using Mono.Unix.Native;
 
@@ -1463,7 +1464,6 @@ namespace Mono.Unix.Native {
 	public sealed class Syscall : Stdlib
 	{
 		new internal const string LIBC  = "libc";
-		    private  const string CRYPT = "crypt";
 
 		private Syscall () {}
 
@@ -2496,9 +2496,11 @@ namespace Mono.Unix.Native {
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int ttyslot ();
 
-		[DllImport (MPH, SetLastError=true,
-				EntryPoint="Mono_Posix_Syscall_setkey")]
-		public static extern int setkey (string key);
+		[Obsolete ("This is insecure and should not be used", true)]
+		public static int setkey (string key)
+		{
+			throw new SecurityException ("crypt(3) has been broken.  Use something more secure.");
+		}
 
 		#endregion
 
@@ -3683,32 +3685,16 @@ namespace Mono.Unix.Native {
 				EntryPoint="Mono_Posix_Syscall_lockf")]
 		public static extern int lockf (int fd, LockfCommand cmd, long len);
 
-		internal static object crypt_lock = new object ();
-
-		[DllImport (CRYPT, SetLastError=true, EntryPoint="crypt")]
-		private static extern IntPtr sys_crypt (string key, string salt);
-
+		[Obsolete ("This is insecure and should not be used", true)]
 		public static string crypt (string key, string salt)
 		{
-			lock (crypt_lock) {
-				IntPtr r = sys_crypt (key, salt);
-				return UnixMarshal.PtrToString (r);
-			}
+			throw new SecurityException ("crypt(3) has been broken.  Use something more secure.");
 		}
 
-		internal static object encrypt_lock = new object ();
-
-		[DllImport (MPH, SetLastError=true, 
-				EntryPoint="Mono_Posix_Syscall_encrypt")]
-		private static extern int sys_encrypt ([In, Out] byte[] block, int edflag);
-
+		[Obsolete ("This is insecure and should not be used", true)]
 		public static int encrypt (byte[] block, bool decode)
 		{
-			if (block.Length < 64)
-				throw new ArgumentOutOfRangeException ("block", "Must refer to at least 64 bytes");
-			lock (encrypt_lock) {
-				return sys_encrypt (block, decode ? 1 : 0);
-			}
+			throw new SecurityException ("crypt(3) has been broken.  Use something more secure.");
 		}
 
 		// swab(3)

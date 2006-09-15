@@ -1,3 +1,12 @@
+2006-09-15  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Syscall.cs: "Remove" crypt(3), encrypt(3), setkey(3).  These use an
+	  encryption algorithm which was broken years ago and could be cracked in
+	  minutes on a modern machine.  This also removes a libcrypt.so dependency,
+	  which means you don't need to have development packages installed to use
+	  these either (since "crypt" wasn't <dllmap>'d).  These are still present,
+	  but marked [Obsolete] and throw a SecurityException when invoked.
+
 2006-09-07  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Syscall.cs: readdir(P) is not thread-safe, so it needs to be locked so
