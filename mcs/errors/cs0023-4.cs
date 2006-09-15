@@ -1,4 +1,4 @@
-// cs0023-4.cs: The `.' operator can not be applied to anonymous methods
+// CS0023: The `.' operator cannot be applied to operand of type `anonymous method'
 // Line: 8
 
 using System;

@@ -1,4 +1,4 @@
-// cs0023-3.cs: The `.' operator can not be applied to operands of type 'void'
+// CS0023: The `.' operator cannot be applied to operand of type `void'
 // Line: 12
 
 using System; 
