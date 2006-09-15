@@ -4478,25 +4478,22 @@ namespace Mono.CSharp {
 
 				move_next_list = TypeContainer.FindMembers (
 					t, MemberTypes.Method,
-					Expression.AllBindingFlags,
+					BindingFlags.Public | BindingFlags.Instance,
 					Type.FilterName, "MoveNext");
 				if (move_next_list.Count == 0)
 					return false;
 
-				bool found = false;
 				foreach (MemberInfo m in move_next_list){
 					MethodInfo mi = (MethodInfo) m;
 				
 					if ((TypeManager.GetParameterData (mi).Count == 0) &&
 					    TypeManager.TypeToCoreType (mi.ReturnType) == TypeManager.bool_type) {
 						move_next = mi;
-						if (mi.IsPublic)
-							return true;
-						found = true;
+						return true;
 					}
 				}
 
-				return found;
+				return false;
 			}
 		
 			//
