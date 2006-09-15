@@ -151,7 +151,7 @@ namespace Mono.CSharp {
 			foreach (MissingInterfacesInfo missing in missing_ifaces){
 				MethodInfo [] mi;
 				Type t = missing.Type;
-
+				
 				if (!t.IsInterface)
 					continue;
 
@@ -159,11 +159,11 @@ namespace Mono.CSharp {
 					TypeContainer iface;
 
 					iface = TypeManager.LookupInterface (t);
-
+					
 					mi = iface.GetMethods ();
 				} else 
 					mi = t.GetMethods ();
-
+				
 				int count = mi.Length;
 				pending_implementations [i].type = t;
 				pending_implementations [i].optional = missing.Optional;
@@ -269,7 +269,7 @@ namespace Mono.CSharp {
 
 			for (int i = 0; i < impl.Length; i++)
 				ret [i] = new MissingInterfacesInfo (impl [i]);
-			
+
 			// we really should not get here because Object doesnt implement any
 			// interfaces. But it could implement something internal, so we have
 			// to handle that case.
@@ -399,6 +399,8 @@ namespace Mono.CSharp {
 					if (m == null)
 						continue;
 
+					string mname = TypeManager.GetMethodName (m);
+
 					//
 					// `need_proxy' is not null when we're implementing an
 					// interface indexer and this is Clear(One/All) operation.
@@ -408,12 +410,12 @@ namespace Mono.CSharp {
 					// for an interface indexer).
 					//
 					if (name == null){
-						if (m.Name != tm.get_indexer_name && m.Name != tm.set_indexer_name)
+						if (mname != tm.get_indexer_name && mname != tm.set_indexer_name)
 							continue;
-					} else if ((need_proxy == null) && (name != m.Name))
+					} else if ((need_proxy == null) && (name != mname))
 						continue;
 
-					if (ret_type != m.ReturnType &&
+					if (!TypeManager.IsEqual (ret_type, m.ReturnType) &&
 					    !(ret_type == null && m.ReturnType == TypeManager.void_type) &&
 					    !(m.ReturnType == null && ret_type == TypeManager.void_type))
 						continue;
@@ -430,7 +432,7 @@ namespace Mono.CSharp {
 					int j;
 
 					for (j = 0; j < arg_len; j++) {
-						if (tm.args [i][j] != args.ParameterType (j))
+						if (!TypeManager.IsEqual (tm.args [i][j], args.ParameterType (j)))
 							break;
 						if (tm.mods [i][j] == args.ParameterModifier (j))
 							continue;
@@ -452,7 +454,7 @@ namespace Mono.CSharp {
 						// a proxy if the implementation's IndexerName doesn't
 						// match the IndexerName in the interface.
 						bool name_matches = false;
-						if (name == m.Name || m.Name == tm.get_indexer_name || m.Name == tm.set_indexer_name)
+						if (name == mname || mname == tm.get_indexer_name || mname == tm.set_indexer_name)
 							name_matches = true;
 						
 						if ((t == null) && (need_proxy != null) && !name_matches)
@@ -490,7 +492,7 @@ namespace Mono.CSharp {
 		{
 			MethodBuilder proxy;
 
-			string proxy_name = iface.Name + "." + iface_method.Name;
+			string proxy_name = SimpleName.RemoveGenericArity (iface.Name) + '.' + iface_method.Name;
 
 			proxy = container.TypeBuilder.DefineMethod (
 				proxy_name,
@@ -499,6 +501,14 @@ namespace Mono.CSharp {
 				MethodAttributes.Virtual,
 				CallingConventions.Standard | CallingConventions.HasThis,
 				base_method.ReturnType, args);
+
+			ParameterData pd = TypeManager.GetParameterData (iface_method);
+			proxy.DefineParameter (0, ParameterAttributes.None, "");
+			for (int i = 0; i < pd.Count; i++) {
+				string name = pd.ParameterName (i);
+				ParameterAttributes attr = Parameter.GetParameterAttributes (pd.ParameterModifier (i));
+				proxy.DefineParameter (i + 1, attr, name);
+			}
 
 			int top = args.Length;
 			ILGenerator ig = proxy.GetILGenerator ();
@@ -564,6 +574,10 @@ namespace Mono.CSharp {
 				Type type = pending_implementations [i].type;
 				int j = 0;
 
+				bool base_implements_type = type.IsInterface &&
+					container.TypeBuilder.BaseType != null &&
+					TypeManager.ImplementsInterface (container.TypeBuilder.BaseType, type);
+
 				foreach (MethodInfo mi in pending_implementations [i].methods){
 					if (mi == null)
 						continue;
@@ -578,7 +592,7 @@ namespace Mono.CSharp {
 							continue;
 						}
 
-						if (BaseImplements (type, mi))
+						if (base_implements_type || BaseImplements (type, mi))
 							continue;
 						
 						if (pending_implementations [i].optional)

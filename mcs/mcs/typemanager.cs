@@ -667,9 +667,19 @@ public class TypeManager {
 		return sig.ToString ();
 	}
 
+	public static string GetMethodName (MethodInfo m)
+	{
+		return m.Name;
+	}
+
 	static public string CSharpSignature (EventInfo ei)
 	{
 		return CSharpName (ei.DeclaringType) + '.' + ei.Name;
+	}
+
+	public static bool IsEqual (Type a, Type b)
+	{
+		return a.Equals (b);
 	}
 
 	/// <summary>

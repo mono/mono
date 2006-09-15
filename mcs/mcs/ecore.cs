@@ -1885,6 +1885,11 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		public static string RemoveGenericArity (string name)
+		{
+			return name;
+		}
+
 		public static void Error_ObjectRefRequired (EmitContext ec, Location l, string name)
 		{
 			if (ec.IsFieldInitializer)

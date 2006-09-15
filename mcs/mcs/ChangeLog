@@ -1,5 +1,16 @@
 2006-09-15  Martin Baulig  <martin@ximian.com>
 
+	* typemanager.cs
+	(TypeManager.GetMethodName): Added mcs implementation.
+	(TypeManager.IsEqual): Likewise.
+
+	* ecore.cs
+	(SimpleName.RemoveGenericArity): Added dummy implementation.
+
+	* pending.cs: Merged with the gmcs version.	
+
+2006-09-15  Martin Baulig  <martin@ximian.com>
+
 	* statement.cs: Merge with the gmcs version.
 
 2006-09-15  Martin Baulig  <martin@ximian.com>
