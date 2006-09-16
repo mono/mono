@@ -44,6 +44,7 @@
 #undef DriverDebugParent
 #undef DriverDebugCreate
 #undef DriverDebugDestroy
+#undef DriverDebugThreads
 
 using System;
 using System.ComponentModel;
@@ -167,7 +168,7 @@ namespace System.Windows.Forms {
 
 			// Now regular initialization
 			XlibLock = new object ();
-			MessageQueues = new Hashtable(7);
+			MessageQueues = Hashtable.Synchronized (new Hashtable(7));
 			XInitThreads();
 
 			ErrorExceptions = false;
@@ -4079,7 +4080,32 @@ namespace System.Windows.Forms {
 			WakeupMain ();
 		}
 
-		internal override IntPtr SendMessage (IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam) {
+		delegate IntPtr WndProcDelegate (IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam);
+
+		internal override IntPtr SendMessage (IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam)
+		{
+			Hwnd	h;
+			h = Hwnd.ObjectFromHandle(hwnd);
+
+			if (h.queue != ThreadQueue (Thread.CurrentThread)) {
+				AsyncMethodResult	result;
+				AsyncMethodData		data;
+
+				result = new AsyncMethodResult ();
+				data = new AsyncMethodData ();
+
+				data.Handle = hwnd;
+				data.Method = new WndProcDelegate (NativeWindow.WndProc);
+				data.Args = new object[] { hwnd, message, wParam, lParam };
+				data.Result = result;
+				
+				SendAsyncMethod (data);
+				#if DriverDebug || DriverDebugParent
+				Console.WriteLine ("Sending {0} message across.", message);
+				#endif
+
+				return IntPtr.Zero;
+			}
 			return NativeWindow.WndProc(hwnd, message, wParam, lParam);
 		}
 

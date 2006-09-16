@@ -1,5 +1,14 @@
 2006-09-15  Chris Toshok  <toshok@ximian.com>
 
+	* XplatUIX11.cs:
+	- make the MessageQueues hashtable Synchronized.
+	
+	- SendMessage: if the Hwnd is owned by a different thread, use the
+	AsyncMethod stuff to dispatch the SendMessage on the hwnd's
+	thread.  Fixes bug #79201.
+
+2006-09-15  Chris Toshok  <toshok@ximian.com>
+
 	* XplatUIX11.cs (SetWMStyles): rework the #79368 fix slightly.  If
 	ControlBox == false, we disallow maximize/minimize/close.  If the
 	form Caption is "" we also disallow move (and get rid of the Title
