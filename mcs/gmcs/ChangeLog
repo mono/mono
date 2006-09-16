@@ -1,3 +1,11 @@
+2006-09-16  Marek Safar  <marek.safar@seznam.cz>
+
+	A fix for #79401
+	* class.cs (MethodCore.VerifyClsCompliance): Do check for abstract members
+	only if parent type is class.
+	* decl.cs (MemberCore.GetClsCompliantAttributeValue): Fixed missing cache
+	update.
+
 2006-09-15  Marek Safar  <marek.safar@seznam.cz>
 
 	* cs-parser.jay,

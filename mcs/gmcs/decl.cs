@@ -504,7 +504,10 @@ namespace Mono.CSharp {
 					TypeManager.cls_compliant_attribute_type);
 				if (cls_attribute != null) {
 					caching_flags |= Flags.HasClsCompliantAttribute;
-					return cls_attribute.GetClsCompliantAttributeValue ();
+					bool value = cls_attribute.GetClsCompliantAttributeValue ();
+					if (value)
+						caching_flags |= Flags.ClsCompliantAttributeTrue;
+					return value;
 				}
 			}
 

@@ -3312,7 +3312,7 @@ namespace Mono.CSharp {
 		protected override bool VerifyClsCompliance ()
 		{
 			if (!base.VerifyClsCompliance ()) {
-				if ((ModFlags & Modifiers.ABSTRACT) != 0 && IsExposedFromAssembly () && Parent.IsClsComplianceRequired ()) {
+				if ((ModFlags & Modifiers.ABSTRACT) != 0 && Parent.TypeBuilder.IsClass && IsExposedFromAssembly () && Parent.IsClsComplianceRequired ()) {
 					Report.Error (3011, Location, "`{0}': only CLS-compliant members can be abstract", GetSignatureForError ());
 				}
 				return false;
