@@ -1,3 +1,7 @@
+2006-09-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DynamicMethodTest.cs: Enabled tests for bug #79367.
+
 2006-09-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DynamicMethodTest.cs: Added ctor tests for name null check. Added

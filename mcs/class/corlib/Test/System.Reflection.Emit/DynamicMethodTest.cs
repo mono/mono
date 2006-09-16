@@ -207,7 +207,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("NotWorking")] // bug #79367
 		public void ReturnType_Null ()
 		{
 			DynamicMethod hello = new DynamicMethod ("Hello",
@@ -228,7 +227,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("NotWorking")] // bug #79367
 		public void Name_Empty ()
 		{
 			DynamicMethod hello = new DynamicMethod (string.Empty,

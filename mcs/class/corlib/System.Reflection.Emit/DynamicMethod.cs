@@ -83,10 +83,8 @@ namespace System.Reflection.Emit {
 		public DynamicMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Module m, bool skipVisibility) {
 			if (name == null)
 				throw new ArgumentNullException ("name");
-			if (name == String.Empty)
-				throw new ArgumentException ("Name can't be empty", "name");
 			if (returnType == null)
-				throw new ArgumentNullException ("returnType");
+				returnType = typeof (void);
 			if (m == null)
 				throw new ArgumentNullException ("m");
 			if (returnType.IsByRef)

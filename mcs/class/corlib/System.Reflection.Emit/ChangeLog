@@ -1,3 +1,8 @@
+2006-09-12  Mart Roosma  <roosma@gmail.com>
+
+	* DynamicMethod.cs: Allow empty name and null return type. 
+	Fixes bug #79367.
+
 2006-09-05  Miguel de Icaza  <miguel@novell.com>
 
 	* TypeBuilder.cs (SetParent): Null parent is allowed for
