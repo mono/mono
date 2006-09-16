@@ -114,6 +114,7 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void Test2Size ()
 		{
+			// note: using Size (not SizeF) is normal for this test
 			Size sz1 = new Size (1, 9);
 			Size sz2 = sz11_99.ToSize ();
 
@@ -165,21 +166,11 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-#if NET_2_0
-		[Category ("NotWorking")]
-		public void GetHashCodeTest ()
-		{
-			Assert.AreEqual (0, Size.Empty.GetHashCode (), "GHC#2a");
-			Assert.IsTrue (new SizeF (0, 0).IsEmpty, "GHC#2b");
-			Assert.IsFalse (new SizeF (0, 0).GetHashCode () == 0, "GHC#2c"); // that doesn't work!
-		}
-#else
 		public void GetHashCodeTest ()
 		{
 			Assert.AreEqual (sz11_0.GetHashCode (), new SizeF (1.1f, 0).GetHashCode (), "GHC#1");
-			Assert.AreEqual (Size.Empty.GetHashCode (), new SizeF (0, 0).GetHashCode (), "GHC#2");
+			Assert.AreEqual (SizeF.Empty.GetHashCode (), new SizeF (0, 0).GetHashCode (), "GHC#2");
 		}
-#endif
 
 		[Test]
 		public void ToStringTest () {
