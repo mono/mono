@@ -1,3 +1,15 @@
+2006-09-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GifCodecTest.cs: Change filename for Save to ease debugging. 
+	* IconCodecTest.cs: Change filename for Save to ease debugging. 
+	* PngCodecTest.cs: Change filename for Save to ease debugging. Change
+	color from Red to BlueViolet for lossless formats.
+	* TestBmpCodec.cs: Change filename for Save to ease debugging. Change
+	color from Red to BlueViolet for lossless formats. 
+	* TestJpegCodec.cs: Change filename for Save to ease debugging.
+	* TiffCodecTest.cs: Change filename for Save to ease debugging. Change
+	color from Red to BlueViolet for lossless formats.
+
 2006-09-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GifCodecTest.cs, IconCodecTest.cs, PngCodecTest.cs, TestBmpCodec.cs,

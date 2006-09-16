@@ -191,7 +191,7 @@ namespace MonoTests.System.Drawing.Imaging {
 
 		private void Save (PixelFormat original, PixelFormat expected, bool colorCheck)
 		{
-			string sOutFile = "linerect" + getOutSufix () + ".gif";
+			string sOutFile = String.Format ("linerect{0}-{1}.gif", getOutSufix (), expected.ToString ());
 
 			// Save		
 			Bitmap bmp = new Bitmap (100, 100, original);

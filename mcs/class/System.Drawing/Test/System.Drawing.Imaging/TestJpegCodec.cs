@@ -255,8 +255,8 @@ namespace MonoTests.System.Drawing.Imaging {
 
 		private void Save (PixelFormat original, PixelFormat expected)
 		{				
-			string sOutFile =  "linerect" + getOutSufix() + ".jpeg";
-						
+			string sOutFile = String.Format ("linerect{0}-{1}.jpeg", getOutSufix (), expected.ToString ());
+
 			// Save		
 			Bitmap bmp = new Bitmap (100, 100, original);						
 			Graphics gr = Graphics.FromImage (bmp);

@@ -493,13 +493,13 @@ namespace MonoTests.System.Drawing.Imaging {
 
 		private void Save (PixelFormat original, PixelFormat expected, bool colorCheck)
 		{
-			string sOutFile = "linerect" + getOutSufix () + ".png";
+			string sOutFile = String.Format ("linerect{0}-{1}.png", getOutSufix (), expected.ToString ());
 
 			// Save		
 			Bitmap bmp = new Bitmap (100, 100, original);
 			Graphics gr = Graphics.FromImage (bmp);
 
-			using (Pen p = new Pen (Color.Red, 2)) {
+			using (Pen p = new Pen (Color.BlueViolet, 2)) {
 				gr.DrawLine (p, 10.0F, 10.0F, 90.0F, 90.0F);
 				gr.DrawRectangle (p, 10.0F, 10.0F, 80.0F, 80.0F);
 			}
@@ -512,7 +512,7 @@ namespace MonoTests.System.Drawing.Imaging {
 					Assert.AreEqual (expected, bmpLoad.PixelFormat, "PixelFormat");
 					if (colorCheck) {
 						Color color = bmpLoad.GetPixel (10, 10);
-						Assert.AreEqual (Color.FromArgb (255, 255, 0, 0), color, "Red");
+						Assert.AreEqual (Color.FromArgb (255, 138, 43, 226), color, "BlueViolet");
 					}
 				}
 			}
