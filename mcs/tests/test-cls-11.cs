@@ -15,6 +15,16 @@ public abstract class CLSClass_3 {
         internal abstract void Test ();
 }
 
+[CLSCompliant(true)]
+public interface ICallable
+{
+	object Call(params object[] args);
+	object Target
+	{
+		get;
+	}
+}
+
 public class MainClass {
         public static void Main () {
         }
