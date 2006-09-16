@@ -284,6 +284,9 @@ namespace Mono.CSharp
 		
 		public static int Main (string[] args)
 		{
+#if GMCS_SOURCE
+			RootContext.Version = LanguageVersion.Default;
+#endif
 			Location.InEmacs = Environment.GetEnvironmentVariable ("EMACS") == "t";
 
 			bool ok = MainDriver (args);

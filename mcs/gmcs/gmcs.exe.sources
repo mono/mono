@@ -1,8 +1,8 @@
-AssemblyInfo.cs
+../mcs/AssemblyInfo.cs
 anonymous.cs
 ../mcs/assign.cs
 attribute.cs
-driver.cs
+../mcs/driver.cs
 cs-tokenizer.cs
 ../mcs/cfold.cs
 class.cs

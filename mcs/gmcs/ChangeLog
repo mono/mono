@@ -1,3 +1,8 @@
+2006-09-16  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (LOCAL_MCS_FLAGS): Use instead of PROFILE_MCS_FLAGS.
+	* AssemblyInfo.cs, driver.cs: Remove after unification with mcs source.
+
 2006-09-16  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for #79401

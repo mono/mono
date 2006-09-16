@@ -1,3 +1,8 @@
+2006-09-16  Raja R Harinath  <rharinath@novell.com>
+
+	* AssemblyInfo.cs [GMCS_SOURCE]: Unify with gmcs source.
+	* driver.cs: Likewise.
+
 2006-09-16  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for #79401
