@@ -79,7 +79,7 @@ namespace Mono.CSharp
 		static Resources embedded_resources;
 		static string win32ResourceFile;
 		static string win32IconFile;
-		
+
 		//
 		// An array of the defines from the command line
 		//
@@ -204,7 +204,7 @@ namespace Mono.CSharp
 				input.Close ();
 			}
 		}
-		
+
 		static void OtherFlags ()
 		{
 			Console.WriteLine (
@@ -703,7 +703,7 @@ namespace Mono.CSharp
 				Usage ();
 				Environment.Exit (0);
 				return true;
-				
+
 			case "--define":
 				Report.Warning (-29, 1, "Compatibility: Use -d:SYMBOL instead of --define SYMBOL");
 				if ((i + 1) >= args.Length){
@@ -1360,7 +1360,7 @@ namespace Mono.CSharp
 
 			return false;
 		}
-		
+
 		static void Error_WrongOption (string option)
 		{
 			Report.Error (2007, "Unrecognized command-line option: `{0}'", option);
@@ -1532,9 +1532,9 @@ namespace Mono.CSharp
 
 			if (tokenize)
 				return true;
-			
+
 			if (RootContext.ToplevelTypes.NamespaceEntry != null)
- 				throw new InternalErrorException ("who set it?");
+				throw new InternalErrorException ("who set it?");
 
 			//
 			// If we are an exe, require a source file for the entry point
@@ -1560,7 +1560,7 @@ namespace Mono.CSharp
 			
 			if (parse_only)
 				return true;
-			
+
 			//
 			// Load Core Library for default compilation
 			//
@@ -1718,7 +1718,7 @@ namespace Mono.CSharp
 			RootContext.CloseTypes ();
 
 			PEFileKinds k = PEFileKinds.ConsoleApplication;
-				
+
 			switch (RootContext.Target) {
 			case Target.Library:
 			case Target.Module:
@@ -1754,7 +1754,7 @@ namespace Mono.CSharp
 							output_file);
 					return false;
 				}
-				
+
 				CodeGen.Assembly.Builder.SetEntryPoint (ep, k);
 			} else if (RootContext.MainClass != null) {
 				Report.Error (2017, "Cannot specify -main if building a module or library");
@@ -1803,7 +1803,7 @@ namespace Mono.CSharp
 
 			Timer.ShowTimers ();
 			
-			if (Report.ExpectedError != 0){
+			if (Report.ExpectedError != 0) {
 				if (Report.Errors == 0) {
 					Console.WriteLine ("Failed to report expected error " + Report.ExpectedError + ".\n" +
 						"No other errors reported.");
@@ -1813,7 +1813,7 @@ namespace Mono.CSharp
 					Console.WriteLine ("Failed to report expected error " + Report.ExpectedError + ".\n" +
 						"However, other errors were reported.");
 					
-				Environment.Exit (1);
+					Environment.Exit (1);
 				}
 				
 				

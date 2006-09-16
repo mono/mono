@@ -100,7 +100,6 @@ namespace Mono.CSharp
 		//
 		static Encoding encoding;
 
-
 		static public void Reset ()
 		{
 			want_debugging_support = false;
@@ -854,7 +853,7 @@ namespace Mono.CSharp
 				Report.Warning (-29, 1, "Compatibility: Use -warnaserror: option instead of --werror");
 				Report.WarningsAreErrors = true;
 				return true;
-				
+
 			case "--nowarn":
 				Report.Warning (-29, 1, "Compatibility: Use -nowarn instead of --nowarn");
 				if ((i + 1) >= args.Length){
@@ -1466,7 +1465,7 @@ namespace Mono.CSharp
 				string arg = args [i];
 				if (arg.Length == 0)
 					continue;
-				
+
 				if (arg.StartsWith ("@")){
 					string [] extra_args;
 					string response_file = arg.Substring (1);
@@ -1666,7 +1665,6 @@ namespace Mono.CSharp
 				ShowTime ("Populate tree");
 			if (!RootContext.StdLib)
 				RootContext.BootCorlib_PopulateCoreTypes ();
-
 			RootContext.PopulateTypes ();
 
 			TypeManager.InitCodeHelpers ();
@@ -1719,7 +1717,7 @@ namespace Mono.CSharp
 			RootContext.CloseTypes ();
 
 			PEFileKinds k = PEFileKinds.ConsoleApplication;
-			
+
 			switch (RootContext.Target) {
 			case Target.Library:
 			case Target.Module:
