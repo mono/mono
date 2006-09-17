@@ -83,7 +83,9 @@ new Uri ("http://localhost:59598/NunitWebTest/"),
 				t.Response = t.Request.ExtractResponse (response);
 			}
 			catch (WebException we) {
-				throw;//place for a breakpoint
+				StreamReader sr = new StreamReader (we.Response.GetResponseStream ());
+				throw new WebException (we.Message + Environment.NewLine
+					+ "Response:" + Environment.NewLine + sr.ReadToEnd (), we);
 			}
 			finally {
 				if (response != null)
