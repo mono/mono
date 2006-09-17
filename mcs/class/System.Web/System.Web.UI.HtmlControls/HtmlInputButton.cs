@@ -141,6 +141,7 @@ namespace System.Web.UI.HtmlControls {
 				server_click (this, e);
 		}
 
+#if !NET_2_0
 		bool RenderOnClick ()
 		{
 			if (Page == null || !CausesValidation)
@@ -158,9 +159,33 @@ namespace System.Web.UI.HtmlControls {
 
 			return false;
 		}
+#endif
 
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
+#if NET_2_0
+			CultureInfo inv = CultureInfo.InvariantCulture;
+			string input_type = Type;
+			if (0 != String.Compare (input_type, "reset", true, inv) &&
+				((0 == String.Compare (input_type, "submit", true, inv)) ||
+				(0 == String.Compare (input_type, "button", true, inv) && Events [ServerClickEvent] != null))) {
+
+				string onclick = String.Empty;
+				if (Attributes ["onclick"] != null) {
+					onclick = ClientScriptManager.EnsureEndsWithSemicolon (Attributes ["onclick"] + onclick);
+					Attributes.Remove ("onclick");
+				}
+				if (Page != null) {
+					PostBackOptions options = GetPostBackOptions ();
+					onclick += Page.ClientScript.GetPostBackEventReference (options);
+				}
+
+				if (onclick.Length > 0) {
+					writer.WriteAttribute ("onclick", onclick);
+					writer.WriteAttribute ("language", "javascript");
+				}
+			}
+#else
 			if (RenderOnClick ()) {
 				string oc = null;
 				ClientScriptManager csm = new ClientScriptManager (Page);
@@ -175,6 +200,7 @@ namespace System.Web.UI.HtmlControls {
 					writer.WriteAttribute ("onclick", oc);
 				}
 			}
+#endif
 
 			Attributes.Remove ("CausesValidation");
 #if NET_2_0
@@ -186,6 +212,22 @@ namespace System.Web.UI.HtmlControls {
 #endif
 			base.RenderAttributes (writer);
 		}
+
+#if NET_2_0
+		PostBackOptions GetPostBackOptions () {
+			PostBackOptions options = new PostBackOptions (this);
+			options.ValidationGroup = null;
+			options.ActionUrl = null;
+			options.Argument = "";
+			options.RequiresJavaScriptProtocol = false;
+			options.ClientSubmit = (0 != String.Compare (Type, "submit", true, CultureInfo.InvariantCulture));
+			options.PerformValidation = CausesValidation && Page != null && Page.Validators.Count > 0;
+			if (options.PerformValidation)
+				options.ValidationGroup = ValidationGroup;
+
+			return options;
+		}
+#endif
 
 		[WebSysDescription("")]
 		[WebCategory("Action")]
