@@ -1,3 +1,8 @@
+2006-09-17  Igor Zelmanovich  <igorz@mainsoft.com>
+
+	* HtmlAnchor.cs: 
+	implemented CausesValidation and ValidationGroup properties	
+
 2006-09-10  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HtmlInputFile.cs: fixed Value property

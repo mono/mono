@@ -51,6 +51,18 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			base.RaisePostBackEvent ("2.0");
 		}
 #endif
+
+		public void TrakState () {
+			TrackViewState();
+		}
+
+		public object SaveState () {
+			return SaveViewState ();
+		}
+
+		public void LoadState (object state) {
+			LoadViewState (state);
+		}
 	}
 
 	[TestFixture]
@@ -192,6 +204,23 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			serverClick = false;
 			a.Raise ();
 			Assert.IsTrue (serverClick, "ServerClick");
+		}
+
+		[Test]
+		public void ViewState2 () {
+			TestHtmlAnchor a = new TestHtmlAnchor ();
+			a.TrakState ();
+			a.CausesValidation = false;
+			a.ValidationGroup = "VG";
+			
+			object s = a.SaveState ();
+			
+			TestHtmlAnchor copy = new TestHtmlAnchor ();
+			
+			copy.LoadState (s);
+
+			Assert.AreEqual (false, copy.CausesValidation, "A1");
+			Assert.AreEqual ("VG", copy.ValidationGroup, "A2");
 		}
 #endif
 	}

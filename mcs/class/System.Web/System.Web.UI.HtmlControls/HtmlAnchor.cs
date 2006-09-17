@@ -125,6 +125,28 @@ namespace System.Web.UI.HtmlControls {
 		}
 
 #if NET_2_0
+		[DefaultValue (true)]
+		public virtual bool CausesValidation {
+			get {
+				return ViewState.GetBool ("CausesValidation", true);
+			}
+			set {
+				ViewState ["CausesValidation"] = value;
+			}
+		}
+
+		[DefaultValue ("")]
+		public virtual string ValidationGroup {
+			get {
+				return ViewState.GetString ("ValidationGroup", String.Empty);
+			}
+			set {
+				ViewState ["ValidationGroup"] = value;
+			}
+		}
+#endif
+
+#if NET_2_0
 		protected internal
 #else
 		protected
@@ -147,9 +169,15 @@ namespace System.Web.UI.HtmlControls {
 
 			EventHandler serverClick = (EventHandler) Events [serverClickEvent];
 			if (serverClick != null) {
+#if NET_2_0
+				// a script
+				PostBackOptions options = GetPostBackOptions ();
+				Attributes ["href"] = Page.ClientScript.GetPostBackEventReference (options);
+#else
 				// a script
 				ClientScriptManager csm = new ClientScriptManager (Page);
 				Attributes ["href"] = csm.GetPostBackClientHyperlink (this, String.Empty);
+#endif
 			} else {
 				string hr = HRef;
 				if (hr != "")
@@ -169,7 +197,24 @@ namespace System.Web.UI.HtmlControls {
 #if NET_2_0
 		protected virtual void RaisePostBackEvent (string eventArgument)
 		{
+			if (CausesValidation)
+				Page.Validate (ValidationGroup);
+			
 			OnServerClick (EventArgs.Empty);
+		}
+	
+		PostBackOptions GetPostBackOptions () {
+			PostBackOptions options = new PostBackOptions (this);
+			options.ValidationGroup = null;
+			options.ActionUrl = null;
+			options.Argument = "";
+			options.RequiresJavaScriptProtocol = true;
+			options.ClientSubmit = true;
+			options.PerformValidation = CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup);
+			if (options.PerformValidation)
+				options.ValidationGroup = ValidationGroup;
+
+			return options;
 		}
 #endif
 

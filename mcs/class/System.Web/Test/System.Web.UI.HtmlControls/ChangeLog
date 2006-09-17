@@ -1,3 +1,7 @@
+2006-09-17  Igor Zelmanovich  <igorz@mainsoft.com>
+
+	* HtmlAnchorTest.cs: added test for ViewState
+
 2006-07-10 Andrew Skiba <andrews@mainsoft.com>
 
 	* HtmlInputControlTest.cs: check attribute values, not only their
