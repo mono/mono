@@ -1,5 +1,8 @@
 2006-09-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (load_aot_module): Return immeditely if the AOT module was already
+	loaded.
+
 	* exceptions-amd64.c (gregs_from_ucontext): Apply another patch from the
 	freebsd ports tree.
 
