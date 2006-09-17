@@ -1,5 +1,8 @@
 2006-09-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-amd64.c (gregs_from_ucontext): Apply another patch from the
+	freebsd ports tree.
+
 	* mini-amd64.c (emit_call): Avoid near calls on freebsd.
 	(mono_arch_patch_code): Remove the unused handling of MONO_PATCH_INFO_CLASS_INIT.
 
