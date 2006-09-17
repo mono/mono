@@ -118,6 +118,13 @@ namespace System.Web.UI.HtmlControls {
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
 			ClientScriptManager csm = new ClientScriptManager (Page);
+#if NET_2_0
+			if (Page != null && Events [ServerClickEvent] != null) {
+				PostBackOptions options = GetPostBackOptions ();
+				Attributes ["onclick"] += Page.ClientScript.GetPostBackEventReference (options);
+				writer.WriteAttribute ("language", "javascript");
+			}
+#else		
 			bool postback = false;
 
 			if (Page != null && Events [ServerClickEvent] != null)
@@ -140,9 +147,26 @@ namespace System.Web.UI.HtmlControls {
 
 				writer.WriteAttribute ("language", "javascript");
 			}
+#endif
 
 			base.RenderAttributes (writer);
 		}
+
+#if NET_2_0
+		PostBackOptions GetPostBackOptions () {
+			PostBackOptions options = new PostBackOptions (this);
+			options.ValidationGroup = null;
+			options.ActionUrl = null;
+			options.Argument = "";
+			options.RequiresJavaScriptProtocol = false;
+			options.ClientSubmit = true;
+			options.PerformValidation = CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup);
+			if (options.PerformValidation)
+				options.ValidationGroup = ValidationGroup;
+
+			return options;
+		}
+#endif
 
 		[WebSysDescription("")]
 		[WebCategory("Action")]
