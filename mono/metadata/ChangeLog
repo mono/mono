@@ -1,3 +1,12 @@
+2006-09-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* NOTES: Moved to ../../docs and renamed to thread-safety.txt.
+
+	* marshal.c (mono_marshal_emit_native_wrapper): Add an 'image' argument, 
+	indicating the image where custom marshaller types should be looked up.
+	(mono_ftnptr_to_delegate): Use the image of the delegate type to look up
+	custom marshallers, instead of corlib. Fixes #79425.
+
 2006-09-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (emit_marshal_object): Fix marshalling of blittable classes and null.
