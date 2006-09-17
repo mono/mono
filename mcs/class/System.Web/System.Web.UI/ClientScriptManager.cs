@@ -389,6 +389,12 @@ namespace System.Web.UI
 			}
 		}
 
+#if NET_2_0
+		internal string GetClientValidationEvent (string validationGroup) {
+			return "if (typeof(Page_ClientValidate) == 'function') Page_ClientValidate('" + validationGroup + "');";
+		}
+#endif
+
 		internal string GetClientValidationEvent ()
 		{
 			return "if (typeof(Page_ClientValidate) == 'function') Page_ClientValidate();";

@@ -1,3 +1,7 @@
+2006-19-17 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ClientScriptManager.cs: added helper method
+
 2006-09-14 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Page.cs: fixed: GetValidators(string), Validate(string) works properly

@@ -1,5 +1,10 @@
 2006-09-17  Igor Zelmanovich  <igorz@mainsoft.com>
 
+	* HtmlInputImage.cs: 
+	make rendering of the onclick attribute to consider ValidationGroup property	
+
+2006-09-17  Igor Zelmanovich  <igorz@mainsoft.com>
+
 	* HtmlInputButton.cs: 
 	make rendering of the onclick attribute to consider ValidationGroup property	
 

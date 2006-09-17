@@ -245,10 +245,17 @@ namespace System.Web.UI.HtmlControls {
 
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
+#if NET_2_0
+			if (CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup)) {
+				ClientScriptManager csm = Page.ClientScript;
+				Attributes ["onclick"] += csm.GetClientValidationEvent (ValidationGroup);
+			}
+#else		
 			if (CausesValidation && Page != null && Page.AreValidatorsUplevel ()) {
 				ClientScriptManager csm = new ClientScriptManager (Page);
 				writer.WriteAttribute ("onclick", csm.GetClientValidationEvent ());
 			}
+#endif		
 
 			base.RenderAttributes (writer);
 		}
