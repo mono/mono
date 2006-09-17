@@ -1,5 +1,7 @@
 2006-09-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* unicode.h unicode.c Makefile.am: Remove these unused source files.
+
 	* NOTES: Moved to ../../docs and renamed to thread-safety.txt.
 
 	* marshal.c (mono_marshal_emit_native_wrapper): Add an 'image' argument, 
