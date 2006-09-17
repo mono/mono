@@ -1,3 +1,7 @@
+2006-09-17	Boris Kirzner <borisk@mainsoft.com>
+
+	* run-tests.test.disconnected.bat : added usage of app config.
+
 2006-09-12	Boris Kirzner <borisk@mainsoft.com>
 	* run-tests.test.connected.bat, run-tests.test.disconnected.bat: 
 	small fixes for TARGET_JVM test scrips.

@@ -1,3 +1,6 @@
+2006-09-17	Boris Kirzner <borisk@mainsoft.com>
+	* System.Data.OleDb.Tests20.J2EE.vmwcsproj: added KNOW_BUG variable.
+
 2006-09-12	Boris Kirzner <borisk@mainsoft.com>
 	* System.Data.OleDb.J2EE.config: changed test server name.
 

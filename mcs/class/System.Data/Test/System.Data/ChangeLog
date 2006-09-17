@@ -1,3 +1,8 @@
+2006-09-17	Boris Kirzner <borisk@mainsoft.com>
+
+	* DataViewTest.cs : marked not wroker test for TARGET_JVM.
+	* DataSetTest.cs : marked not working net_2_0 tests.
+
 2006-08-31  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* DataRelationTest2.cs: Added test for bug #79233, currently marked

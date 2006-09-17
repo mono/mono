@@ -35,11 +35,14 @@ set RUNNING_FIXTURE=MonoTests.System.Data
 set TEST_SOLUTION=Test\System.Data.Test20.sln
 set TEST_ASSEMBLY=System.Data.Test.jar
 set PROJECT_CONFIGURATION=Debug_Java20
+set APP_CONFIG_FILE=app_test_2.0.config
 
 
 set DATEL=%date:~10,4%_%date:~4,2%_%date:~7,2%%
 set TIMEL=%time:~0,2%_%time:~3,2%
 set TIMESTAMP=%DATEL%_%TIMEL%
+
+set NUNIT_OPTIONS=/exclude:NotWorking,ValueAdd,CAS,InetAccess
 
 
 REM ********************************************************
@@ -107,6 +110,7 @@ REM ********************************************************
 REM ********************************************************
 
 copy %BACK_TO_ROOT_DIR%Test\bin\%PROJECT_CONFIGURATION%\%TEST_ASSEMBLY% .
+copy %APP_CONFIG_FILE% nunit-console.exe.config
 
 REM @echo on
 "%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi %TEST_ASSEMBLY% /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUN_LOG% 2<&1

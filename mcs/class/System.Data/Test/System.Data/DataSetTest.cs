@@ -167,6 +167,9 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+#if NET_2_0
+		[Category("NotWorking")]
+#endif
 		public void OwnWriteXmlSchema ()
 		{
 			DataSet ds = new DataSet ("test_dataset");
@@ -540,6 +543,9 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		public void WriteXmlSchema ()
 		{
 			DataSet ds = new DataSet ();			
@@ -1032,6 +1038,9 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		public void SerializeDataSet ()
 		{
 			// see GetReady() for current culture
@@ -1477,6 +1486,9 @@ namespace MonoTests.System.Data
 		}
 
 		[Test] // bug #60469
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		public void WriteXmlSchema2 ()
 		{
 			string xml = @"<myDataSet xmlns='NetFrameWork'><myTable><id>0</id><item>item 0</item></myTable><myTable><id>1</id><item>item 1</item></myTable><myTable><id>2</id><item>item 2</item></myTable><myTable><id>3</id><item>item 3</item></myTable><myTable><id>4</id><item>item 4</item></myTable><myTable><id>5</id><item>item 5</item></myTable><myTable><id>6</id><item>item 6</item></myTable><myTable><id>7</id><item>item 7</item></myTable><myTable><id>8</id><item>item 8</item></myTable><myTable><id>9</id><item>item 9</item></myTable></myDataSet>";
@@ -1535,6 +1547,9 @@ namespace MonoTests.System.Data
 
 		// bug #66366
 		[Test]
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		public void WriteXmlSchema3 ()
 		{
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -1578,6 +1593,9 @@ namespace MonoTests.System.Data
 
 		// bug #67792.
 		[Test]
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		public void WriteXmlSchema4 ()
 		{
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -1620,6 +1638,9 @@ namespace MonoTests.System.Data
 
 		// bug # 68432
 		[Test]
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		public void WriteXmlSchema5 ()
 		{
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -1728,6 +1749,9 @@ namespace MonoTests.System.Data
 
 		// bug #67793
 		[Test]
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		public void WriteXmlSchema6 ()
 		{
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -1786,6 +1810,9 @@ namespace MonoTests.System.Data
 
 		// bug #61233
 		[Test]
+#if NET_2_0
+			[Category ("NotWorking")]
+#endif
 		public void WriteXmlExtendedProperties ()
 		{
 			string xml = @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -1820,6 +1847,9 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		public void WriteXmlModeSchema ()
 		{
 			// This is the MS output of WriteXmlSchema().

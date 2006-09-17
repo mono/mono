@@ -185,7 +185,7 @@ namespace MonoTests.System.Data.OleDb
 				string user = (string)conProps["User Id"];
 				string password = (string)conProps["Password"];
 				string database = (string)conProps["Initial Catalog"];
-				string jdbcUrlTemplate = "JdbcDriverClassName=com.microsoft.jdbc.sqlserver.SQLServerDriver;JdbcURL=\"jdbc:microsoft:sqlserver://{0};User={1};Password={2};DatabaseName={3}\"";
+				string jdbcUrlTemplate = "JdbcDriverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver;JdbcURL=\"jdbc:sqlserver://{0};User={1};Password={2};DatabaseName={3}\"";
 				string conStr = string.Format(jdbcUrlTemplate, server, user, password, database);
 				con = new OleDbConnection(conStr);
 				con.Open();

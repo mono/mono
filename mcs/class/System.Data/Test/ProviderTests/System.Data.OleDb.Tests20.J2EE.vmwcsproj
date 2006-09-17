@@ -22,7 +22,7 @@
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20|AnyCPU' ">
 		<DebugSymbols>true</DebugSymbols>
 		<OutputPath>bin\Debug_Java20\</OutputPath>
-		<DefineConstants>TRACE;DEBUG;JAVA;TARGET_JVM;NET_1_1;NET_2_0</DefineConstants>
+		<DefineConstants>TRACE;DEBUG;JAVA;TARGET_JVM;NET_1_1;NET_2_0;KNOWN_BUG</DefineConstants>
 		<BaseAddress>285212672</BaseAddress>
 		<DebugType>full</DebugType>
 		<PlatformTarget>AnyCPU</PlatformTarget>
