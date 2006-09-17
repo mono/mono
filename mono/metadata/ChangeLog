@@ -1,5 +1,7 @@
 2006-09-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* icall.c string-icalls.c: Remove references to unicode.h.
+
 	* unicode.h unicode.c Makefile.am: Remove these unused source files.
 
 	* NOTES: Moved to ../../docs and renamed to thread-safety.txt.
