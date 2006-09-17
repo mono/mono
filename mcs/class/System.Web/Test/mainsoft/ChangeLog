@@ -1,3 +1,7 @@
+2006-09-17 Yoni Klain <yonik@mainsoft.com>
+
+	* new resources : EvalTest.aspx;TemplateUserControl.ascx
+
 2006-08-10 Yoni Klain <yonik@mainsoft.com>
 
 	* new resources : CallbackTest1.aspx; CallbackTest2.aspx 
