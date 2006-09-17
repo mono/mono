@@ -1,3 +1,15 @@
+2006-09-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (emit_call): Avoid near calls on freebsd.
+	(mono_arch_patch_code): Remove the unused handling of MONO_PATCH_INFO_CLASS_INIT.
+
+	* tramp-amd64.c (mono_arch_create_specific_trampoline): Fix check for 32 bitness of
+	displacement.
+
+2006-09-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (load_aot_module_from_cache): Fix PPC build.
+
 2006-09-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (UNVERIFIED): Add a 'break-on-unverified' MONO_DEBUG option so this 
@@ -21,6 +33,9 @@
 	* mini-ia64.c (mono_arch_lowering_pass): Optimize store_membase_imm with offset==0.
 	
 2006-09-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.h mini-amd64.h mini-exceptions.c: Move the bsd specific MAP_ANON
+	stuff to mini-exceptions.c where it is used.
 
 	* mini-sparc.c (mono_arch_setup_jit_tls_data): Remove the duplicate altstack
 	setup code, the real one is in mini-exceptions.c.
