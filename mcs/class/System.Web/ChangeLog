@@ -1,3 +1,11 @@
+2006-09-18 Yoni Klain <yonik@mainsoft.com>
+
+    * System.Web_test.dll.sources: add new \System.Web.UI.WebControls\MappingUrlTest.cs
+    * MakeFile: add new resources for MappingUrlTest.cs :
+    Test/mainsoft/NunitWebResources/Mapping.aspx ;
+	Test/mainsoft/NunitWebResources/Mapping1.aspx ;
+	Test/mainsoft/NunitWebResources/WebMapping.config
+
 2006-09-17 Yoni Klain <yonik@mainsoft.com>
 
     * System.Web_test.dll.sources: add new \System.Web.UI\TemplateControlTest.cs

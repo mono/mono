@@ -1,3 +1,10 @@
+2006-09-18 Yoni Klain <yonik@mainsoft.com>
+
+	* new resources : 
+	Test/mainsoft/NunitWebResources/Mapping.aspx ;
+	Test/mainsoft/NunitWebResources/Mapping1.aspx ;
+	Test/mainsoft/NunitWebResources/WebMapping.config
+
 2006-09-17 Yoni Klain <yonik@mainsoft.com>
 
 	* new resources : EvalTest.aspx;TemplateUserControl.ascx

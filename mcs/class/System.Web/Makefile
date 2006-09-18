@@ -108,6 +108,9 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/ClientScript.js \
 	Test/mainsoft/NunitWebResources/EvalTest.aspx \
 	Test/mainsoft/NunitWebResources/TemplateUserControl.ascx \
+	Test/mainsoft/NunitWebResources/WebMapping.config \
+	Test/mainsoft/NunitWebResources/Mapping.aspx \
+	Test/mainsoft/NunitWebResources/Mapping1.aspx \
 	Test/mainsoft/MainsoftWebTest/nunitweb_config.xml 
 
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
