@@ -27,7 +27,7 @@ using System.ComponentModel;
 namespace System.Windows.Forms {
 	
 	public class ToolStrip : ScrollableControl, IComponent, IDisposable {
-		ToolStripItem items;
+		//ToolStripItem items;
 		
 		public ToolStrip ()
 		{
@@ -35,7 +35,7 @@ namespace System.Windows.Forms {
 
 		public ToolStrip (ToolStripItem [] items)
 		{
-			this.items = items;
+			//this.items = items;
 		}
 	}
 }

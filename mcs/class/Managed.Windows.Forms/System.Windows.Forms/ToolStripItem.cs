@@ -31,6 +31,8 @@ namespace System.Windows.Forms {
 		string text, name;
 		Image image;
 		EventHandler onClick;
+		private ToolStrip owner;
+		internal bool is_selected;
 
 		protected ToolStripItem ()
 		{
@@ -49,6 +51,12 @@ namespace System.Windows.Forms {
 			this.image = image;
 			this.onClick = onClick;
 			this.name = name;
+		}
+
+		public ToolStrip Owner
+		{
+			get { return owner; }
+			set { owner = value; }
 		}
 
 	}

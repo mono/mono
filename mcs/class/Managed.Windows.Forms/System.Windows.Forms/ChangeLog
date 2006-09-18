@@ -1,3 +1,21 @@
+﻿2006-09-18  Jonathan Pobst <monkey@jpobst.com>
+
+	* ToolStripArrowRenderEventArgs.cs, ToolStripArrowRenderEventHandler.cs,
+	  ToolStripContentPanelRenderEventArgs.cs, ToolStripContentPanelRenderEventHandler.cs,
+	  ToolStripGripRenderEventArgs.cs, ToolStripGripRenderEventHandler.cs,
+	  ToolStripItemClickedEventArgs.cs, ToolStripItemClickedEventHandler.cs,
+	  ToolStripItemEventArgs.cs, ToolStripItemEventHandler.cs,
+	  ToolStripItemImageRenderEventArgs.cs, ToolStripItemImageRenderEventHandler.cs,
+	  ToolStripItemRenderEventArgs.cs, ToolStripItemRenderEventHandler.cs,
+	  ToolStripItemTextRenderEventArgs.cs, ToolStripItemTextRenderEventHandler.cs,
+	  ToolStripPanelRenderEventArgs.cs, ToolStripPanelRenderEventHandler.cs,
+	  ToolStripRenderEventArgs.cs, ToolStripRenderEventHandler.cs,
+	  ToolStripSeparatorRenderEventArgs.cs, ToolStripSeparatorRenderEventHandler.cs:
+	    Inital import.
+	* ToolStripPanel.cs, ToolStripContentPanel.cs, ToolStripSeparator.cs,
+	  ToolStripButton.cs: Stubs needed for above.
+	* ToolStrip.cs, ToolStripItem.cs: Stub a few variables/properties for above.
+
 2006-09-15  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIX11.cs:

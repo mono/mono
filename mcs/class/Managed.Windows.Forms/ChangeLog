@@ -1,4 +1,8 @@
-﻿2006-09-15  Jonathan Pobst <monkey@jpobst.com>
+﻿2006-09-18  Jonathan Pobst <monkey@jpobst.com>
+	* System.Windows.Forms.dll.sources: Add ToolStrip EventArgs/Handlers,
+	  add a few ToolStrip stub classes.
+
+2006-09-15  Jonathan Pobst <monkey@jpobst.com>
 	* System.Windows.Forms.dll.sources: Added DefaultLayout.cs, FlowLayout.cs,
 	  FlowLayoutPanel.cs, FlowLayoutSettings.cs.
 	* System.Windows.Forms_test.dll.sources: Added FlowPanelTests.cs
