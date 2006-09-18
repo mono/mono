@@ -1,3 +1,9 @@
+2006-09-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Graphics.cs: Reorder instructions in MeasureString methods to avoid
+	allocations before checking for quick exit case (null/String.Empty 
+	text or throwing execptions).
+
 2006-09-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ImageConverter.cs: Fixed ConvertTo to deal with null values (#79331)

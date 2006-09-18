@@ -1899,22 +1899,21 @@ namespace System.Drawing
 		
 		public SizeF MeasureString (string text, Font font)
 		{
-			return MeasureString (text, font, new Size (0, 0));
+			return MeasureString (text, font, SizeF.Empty);
 		}
 
 		
 		public SizeF MeasureString (string text, Font font, SizeF layoutArea)
 		{
-			int charactersFitted, linesFilled;
-			RectangleF boundingBox = new RectangleF ();
-			RectangleF rect = new RectangleF (0, 0, layoutArea.Width,
-							  layoutArea.Height);
-
 			if (text == null || text.Length == 0)
 				return SizeF.Empty;
 
 			if (font == null)
 				throw new ArgumentNullException ("font");
+
+			int charactersFitted, linesFilled;
+			RectangleF boundingBox = new RectangleF ();
+			RectangleF rect = new RectangleF (0, 0, layoutArea.Width, layoutArea.Height);
 
 			Status status = GDIPlus.GdipMeasureString (nativeObject, text, text.Length,
 								   font.NativeObject, ref rect,
@@ -1928,15 +1927,15 @@ namespace System.Drawing
 		
 		public SizeF MeasureString (string text, Font font, int width)
 		{				
-			RectangleF boundingBox = new RectangleF ();
-			RectangleF rect = new RectangleF (0, 0, width, 999999);
-			int charactersFitted, linesFilled;
-
 			if (text == null || text.Length == 0)
 				return SizeF.Empty;
 
 			if (font == null)
 				throw new ArgumentNullException ("font");
+
+			RectangleF boundingBox = new RectangleF ();
+			RectangleF rect = new RectangleF (0, 0, width, 999999);
+			int charactersFitted, linesFilled;
 
 			Status status = GDIPlus.GdipMeasureString (nativeObject, text, text.Length, 
 								   font.NativeObject, ref rect,
@@ -1968,22 +1967,20 @@ namespace System.Drawing
 		public SizeF MeasureString (string text, Font font, PointF origin,
 					    StringFormat stringFormat)
 		{
-			RectangleF boundingBox = new RectangleF ();
-			RectangleF rect = new RectangleF (origin.X, origin.Y, 0, 0);
-			int charactersFitted, linesFilled;
-
 			if (text == null || text.Length == 0)
 				return SizeF.Empty;
 
 			if (font == null)
 				throw new ArgumentNullException ("font");
 
-			if (stringFormat == null)
-				stringFormat = new StringFormat ();
+			RectangleF boundingBox = new RectangleF ();
+			RectangleF rect = new RectangleF (origin.X, origin.Y, 0, 0);
+			int charactersFitted, linesFilled;
+
+			IntPtr format = (stringFormat == null) ? IntPtr.Zero : stringFormat.NativeObject;
 
 			Status status = GDIPlus.GdipMeasureString (nativeObject, text, text.Length, 
-								   font.NativeObject, ref rect,
-								   stringFormat.NativeObject, 
+								   font.NativeObject, ref rect, format, 
 								   out boundingBox,
 								   out charactersFitted,
 								   out linesFilled);
@@ -1997,8 +1994,6 @@ namespace System.Drawing
 					    StringFormat stringFormat, out int charactersFitted,
 					    out int linesFilled)
 		{	
-			RectangleF boundingBox = new RectangleF ();
-			RectangleF rect = new RectangleF (0, 0, layoutArea.Width, layoutArea.Height);
 			charactersFitted = 0;
 			linesFilled = 0;
 
@@ -2008,12 +2003,13 @@ namespace System.Drawing
 			if (font == null)
 				throw new ArgumentNullException ("font");
 
-			if (stringFormat == null)
-				stringFormat = new StringFormat ();
+			RectangleF boundingBox = new RectangleF ();
+			RectangleF rect = new RectangleF (0, 0, layoutArea.Width, layoutArea.Height);
+
+			IntPtr format = (stringFormat == null) ? IntPtr.Zero : stringFormat.NativeObject;
 
 			Status status = GDIPlus.GdipMeasureString (nativeObject, text, text.Length, 
-								   font.NativeObject, ref rect,
-								   stringFormat.NativeObject,
+								   font.NativeObject, ref rect, format,
 								   out boundingBox,
 								   out charactersFitted,
 								   out linesFilled);
