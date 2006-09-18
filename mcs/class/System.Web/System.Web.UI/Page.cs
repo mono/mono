@@ -539,8 +539,17 @@ public class Page : TemplateControl, IHttpHandler
 	[Bindable (true)] 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	public string Title {
-		get { return _title; }
-		set { _title = value; }
+		get {
+			if (_title == null)
+				return htmlHeader.Title;
+			return _title;
+		}
+		set {
+			if (htmlHeader != null)
+				htmlHeader.Title = value;
+			else
+				_title = value;
+		}
 	}
 #endif
 
@@ -1119,10 +1128,6 @@ public class Page : TemplateControl, IHttpHandler
 
 #if NET_2_0
 		OnInitComplete (EventArgs.Empty);
-		
-
-		if (_title != null && htmlHeader != null)
-			htmlHeader.Title = _title;
 #endif
 			
 		renderingForm = false;	
@@ -1666,6 +1671,10 @@ public class Page : TemplateControl, IHttpHandler
 	internal void SetHeader (HtmlHead header)
 	{
 		htmlHeader = header;
+		if (_title != null) {
+			htmlHeader.Title = _title;
+			_title = null;
+		}
 	}
 	
 	void ApplyMasterPage ()

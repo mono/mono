@@ -1,4 +1,8 @@
-2006-19-17 Igor Zelmanovich <igorz@mainsoft.com>
+2006-09-18 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Page.cs: fixed: Title property works properly
+
+2006-09-17 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ClientScriptManager.cs: added helper method
 

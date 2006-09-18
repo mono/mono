@@ -41,6 +41,7 @@ namespace System.Web.UI.HtmlControls
 	[ControlBuilder (typeof(HtmlHeadBuilder))]
 	public sealed class HtmlHead: HtmlGenericControl, IParserAccessor {
 
+		string titleText;
 		HtmlTitle title;
 		Hashtable metadata;
 		ArrayList styleSheets;
@@ -54,11 +55,16 @@ namespace System.Web.UI.HtmlControls
 		
 		protected internal override void OnInit (EventArgs e)
 		{
+			//You can only have one <head runat="server"> control on a page.
+			if(Page.Header!=null)
+				throw new HttpException ("You can only have one <head runat=\"server\"> control on a page.");
 			Page.SetHeader (this);
 		}
 		
 		protected internal override void RenderChildren (HtmlTextWriter writer)
 		{
+			EnsureTitleControl ();
+
 			base.RenderChildren (writer);
 			if (metadata != null) {
 				foreach (DictionaryEntry entry in metadata) {
@@ -75,8 +81,13 @@ namespace System.Web.UI.HtmlControls
 		
 		protected internal override void AddedControl (Control control, int index)
 		{
-			if (control is HtmlTitle)
-				title = (HtmlTitle) control;
+			//You can only have one <title> element within the <head> element.
+			HtmlTitle t = control as HtmlTitle;
+			if (t != null) {
+				if (title != null)
+					throw new HttpException ("You can only have one <title> element within the <head> element.");
+				title = t;
+			}
 
 			base.AddedControl (control, index);
 		}
@@ -89,6 +100,15 @@ namespace System.Web.UI.HtmlControls
 			base.RemovedControl (control);
 		}
 		
+		void EnsureTitleControl () {
+			if (title != null)
+				return;
+
+			HtmlTitle t = new HtmlTitle ();
+			t.Text = titleText;
+			Controls.Add (t);
+		}
+
 		IList LinkedStyleSheets {
 			get {
 				if (styleSheets == null) styleSheets = new ArrayList ();
@@ -111,8 +131,18 @@ namespace System.Web.UI.HtmlControls
 		}
 		
 		public string Title {
-			get { return title.Text; }
-			set { title.Text = value; }
+			get {
+				if (title != null)
+					return title.Text;
+				else
+					return titleText;
+			}
+			set {
+				if (title != null)
+					title.Text = value;
+				else
+					titleText = value;
+			}
 		}
 	}
 	

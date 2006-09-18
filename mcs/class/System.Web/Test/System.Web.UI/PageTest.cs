@@ -37,6 +37,7 @@ using System.Web.UI;
 using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
 using System.Web.UI.WebControls;
+using System.Web.UI.HtmlControls;
 
 namespace MonoTests.System.Web.UI {
 
@@ -130,7 +131,7 @@ namespace MonoTests.System.Web.UI {
 			string html = t.Run ();
 			string newHtml = html.Substring (html.IndexOf ("<head"), (html.IndexOf ("<body") - html.IndexOf ("<head")));
 			string origHtml = @" <head id=""Head1""><title>
-	                                Untitled Page
+	                                PreInit
                                     </title></head>";
 			HtmlDiff.AssertAreEqual (origHtml, newHtml, "HeaderRenderInit");
 			Thread.Sleep (200); 
@@ -140,11 +141,11 @@ namespace MonoTests.System.Web.UI {
 		public static void Page_OnPreInit (Page p)
 		{
 			Assert.AreEqual (null, p.Header, "HeaderOnPreInit");
+			p.Title = "PreInit";
 		}
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void PageHeaderInit ()
 		{
 			Thread.Sleep (200); 
@@ -163,7 +164,6 @@ namespace MonoTests.System.Web.UI {
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void PageHeaderInitComplete ()
 		{
 			Thread.Sleep (200); 
@@ -183,7 +183,6 @@ namespace MonoTests.System.Web.UI {
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void PageHeaderPreLoad ()
 		{
 			Thread.Sleep (200); 
@@ -203,7 +202,6 @@ namespace MonoTests.System.Web.UI {
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void PageHeaderLoad ()
 		{
 			Thread.Sleep (200); 
@@ -221,7 +219,6 @@ namespace MonoTests.System.Web.UI {
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void PageHeaderLoadComplete ()
 		{
 			Thread.Sleep (200); 
@@ -241,7 +238,6 @@ namespace MonoTests.System.Web.UI {
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void PageHeaderPreRender ()
 		{
 			Thread.Sleep (200);
@@ -261,7 +257,6 @@ namespace MonoTests.System.Web.UI {
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void PageHeaderPreRenderComplete ()
 		{
 			Thread.Sleep (200); 
@@ -283,10 +278,12 @@ namespace MonoTests.System.Web.UI {
 
 		public static void CheckHeader (Page p)
 		{
-			Assert.AreEqual ("Untitled Page", p.Title, "TitleOnInit");
-			Assert.AreEqual ("Untitled Page", p.Header.Title, "HeaderDefaultTitleOnInit");
-			p.Title = "Test";
-			Assert.AreEqual ("Test", p.Header.Title, "HeaderAssignTitleOnInit");
+			Assert.AreEqual ("Untitled Page", p.Title, "CheckHeader#1");
+			Assert.AreEqual ("Untitled Page", p.Header.Title, "CheckHeader#2");
+			p.Title = "Test0";
+			Assert.AreEqual ("Test0", p.Header.Title, "CheckHeader#3");
+			p.Header.Title = "Test";
+			Assert.AreEqual ("Test", p.Title, "CheckHeader#4");
 		}     
 #endif
 
