@@ -57,6 +57,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
 		public void MappingUrl()
 		{
 			WebTest t = new WebTest ("Mapping.aspx");
