@@ -146,8 +146,12 @@ namespace System.Web.UI.WebControls {
 #endif
 
 			if (AutoPostBack)
+#if NET_2_0
+				writer.AddAttribute (HtmlTextWriterAttribute.Onchange, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions ()));
+#else
 				writer.AddAttribute (HtmlTextWriterAttribute.Onchange,
 						Page.ClientScript.GetPostBackClientHyperlink (this, ""));
+#endif
 
 			if (SelectionMode == ListSelectionMode.Multiple)
 				writer.AddAttribute (HtmlTextWriterAttribute.Multiple,
@@ -155,6 +159,22 @@ namespace System.Web.UI.WebControls {
 			writer.AddAttribute (HtmlTextWriterAttribute.Size,
                                         Rows.ToString (CultureInfo.InvariantCulture));
 		}
+
+#if NET_2_0
+		PostBackOptions GetPostBackOptions () {
+			PostBackOptions options = new PostBackOptions (this);
+			options.ActionUrl = null;
+			options.ValidationGroup = null;
+			options.Argument = "";
+			options.RequiresJavaScriptProtocol = false;
+			options.ClientSubmit = true;
+			options.PerformValidation = CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup);
+			if (options.PerformValidation)
+				options.ValidationGroup = ValidationGroup;
+
+			return options;
+		}
+#endif		
 
 #if NET_2_0
 		protected internal
@@ -248,6 +268,10 @@ namespace System.Web.UI.WebControls {
 #endif
 		void RaisePostDataChangedEvent ()
 		{
+#if NET_2_0
+			if (CausesValidation)
+				Page.Validate (ValidationGroup);
+#endif
 			OnSelectedIndexChanged (EventArgs.Empty);
 		}
 			
