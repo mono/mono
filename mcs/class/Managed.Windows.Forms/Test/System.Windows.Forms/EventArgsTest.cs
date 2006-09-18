@@ -483,6 +483,220 @@ namespace MonoTestSuite
 			Assert.AreEqual (max, e.MaximumProgress, "A2");
 		}
 
+		[Test]
+		public void TestToolStripArrowRenderEventArgs ()
+		{
+			Graphics g = Graphics.FromImage(new Bitmap(5,5));
+			ToolStripItem tsi = new ToolStripButton();
+			Rectangle r = new Rectangle(0,0,10,10);
+			ToolStripArrowRenderEventArgs e = new ToolStripArrowRenderEventArgs(g,tsi,r,Color.BurlyWood, ArrowDirection.Down);
+			
+			Assert.AreEqual(g, e.Graphics, "A1");
+			Assert.AreEqual(tsi, e.Item, "A2");
+			Assert.AreEqual(r, e.ArrowRectangle, "A3");
+			Assert.AreEqual(Color.BurlyWood, e.ArrowColor, "A4");
+			Assert.AreEqual(ArrowDirection.Down, e.Direction, "A5");
+			
+			Rectangle r2 = new Rectangle(0,0,5,5);
+			
+			e.ArrowColor = Color.BlanchedAlmond;
+			e.ArrowRectangle = r2;
+			e.Direction = ArrowDirection.Right;
+
+			Assert.AreEqual (Color.BlanchedAlmond, e.ArrowColor, "A6");
+			Assert.AreEqual (r2, e.ArrowRectangle, "A7");
+			Assert.AreEqual (ArrowDirection.Right, e.Direction, "A8");
+		}
+		
+		[Test]
+		public void TestToolStripContentPanelRenderEventArgs()
+		{
+			Graphics g = Graphics.FromImage (new Bitmap (5, 5));
+			ToolStripContentPanel tscp = new ToolStripContentPanel();
+			ToolStripContentPanelRenderEventArgs e = new ToolStripContentPanelRenderEventArgs(g, tscp);
+
+			Assert.AreEqual (g, e.Graphics, "BBB1");
+			Assert.AreEqual (false, e.Handled, "BBB2");
+			Assert.AreEqual (tscp, e.ToolStripContentPanel, "BBB3");	
+			
+			e.Handled = true;
+
+			Assert.AreEqual (true, e.Handled, "BBB4");
+		}
+		
+		[Test]
+		public void TestToolStripGripRenderEventArgs()
+		{
+			Graphics g = Graphics.FromImage (new Bitmap (5, 5));
+			ToolStrip ts = new ToolStrip();
+			ToolStripGripRenderEventArgs e = new ToolStripGripRenderEventArgs(g, ts);
+
+			Assert.AreEqual (new Rectangle(2,0,3,25), e.GripBounds, "CCC1");
+			Assert.AreEqual (ToolStripGripDisplayStyle.Vertical, e.GripDisplayStyle, "CCC1");
+			Assert.AreEqual (ToolStripGripStyle.Visible, e.GripStyle, "CCC3");
+			Assert.AreEqual (g, e.Graphics, "CCC4");
+			Assert.AreEqual (ts, e.ToolStrip, "CCC5");
+	
+		}
+		
+		[Test]
+		public void TestToolStripItemClickedEventArgs()
+		{
+			ToolStripItem tsi = new ToolStripButton ();
+			ToolStripItemClickedEventArgs e = new ToolStripItemClickedEventArgs(tsi);
+
+			Assert.AreEqual (tsi, e.ClickedItem, "DDD1");
+		}
+		
+		[Test]
+		public void TestToolStripItemEventArgs()
+		{
+			ToolStripItem tsi = new ToolStripButton ();
+			ToolStripItemEventArgs e = new ToolStripItemEventArgs(tsi);
+
+			Assert.AreEqual (tsi, e.Item, "EEE1");
+		}
+		
+		[Test]
+		public void TestToolStripItemImageRenderEventArgs()
+		{
+			Graphics g = Graphics.FromImage (new Bitmap (5, 5));
+			ToolStripItem tsi = new ToolStripButton ();
+			Rectangle r = new Rectangle(0,0,16,16);
+			ToolStripItemImageRenderEventArgs e = new ToolStripItemImageRenderEventArgs(g, tsi, r);
+
+			Assert.AreEqual (g, e.Graphics, "FFF1");
+			Assert.AreEqual (tsi, e.Item, "FFF2");
+			Assert.AreEqual (r, e.ImageRectangle, "FFF3");
+			Assert.AreEqual (null, e.Image, "FFF4");
+			
+			Image i = new Bitmap(16,16);
+			e = new ToolStripItemImageRenderEventArgs (g, tsi, i, r);
+
+			Assert.AreEqual (g, e.Graphics, "FFF5");
+			Assert.AreEqual (tsi, e.Item, "FFF6");
+			Assert.AreEqual (r, e.ImageRectangle, "FFF7");
+			Assert.AreEqual (i, e.Image, "FFF8");
+		}
+		
+		[Test]
+		public void TestToolStripItemRenderEventArgs()
+		{
+			Graphics g = Graphics.FromImage (new Bitmap (5, 5));
+			ToolStripItem tsi = new ToolStripButton ();
+			ToolStripItemRenderEventArgs e = new ToolStripItemRenderEventArgs(g, tsi);
+
+			Assert.AreEqual (g, e.Graphics, "GGG1");
+			Assert.AreEqual (tsi, e.Item, "GGG2");
+			Assert.AreEqual (null, e.ToolStrip, "GGG3");
+		}
+		
+		[Test]
+		public void TestToolStripItemTextRenderEventArgs()
+		{
+			Graphics g = Graphics.FromImage (new Bitmap (5, 5));
+			ToolStripItem tsi = new ToolStripButton ();
+			string text = "Test String";
+			Rectangle r = new Rectangle(0,0,15,15);
+			Color c = Color.Bisque;
+			Font f = new Font("Arial", 12);
+			
+			ToolStripItemTextRenderEventArgs e = new ToolStripItemTextRenderEventArgs(g,tsi,text,r,c,f, ContentAlignment.BottomRight);
+
+			Assert.AreEqual (g, e.Graphics, "HHH1");
+			Assert.AreEqual (tsi, e.Item, "HHH2");
+			Assert.AreEqual (text, e.Text, "HHH3");
+			Assert.AreEqual (r, e.TextRectangle, "HHH4");
+			Assert.AreEqual (c, e.TextColor, "HHH5");
+			Assert.AreEqual (f, e.TextFont, "HHH6");
+			Assert.AreEqual (ToolStripTextDirection.Horizontal, e.TextDirection, "HHH7");
+			Assert.AreEqual (TextFormatFlags.Bottom | TextFormatFlags.Right | TextFormatFlags.HidePrefix, e.TextFormat, "HHH8");
+			Assert.AreEqual (null, e.ToolStrip, "HHH9");
+
+			e = new ToolStripItemTextRenderEventArgs (g, tsi, text, r, c, f, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+
+			Assert.AreEqual (g, e.Graphics, "HHH10");
+			Assert.AreEqual (tsi, e.Item, "HHH11");
+			Assert.AreEqual (text, e.Text, "HHH12");
+			Assert.AreEqual (r, e.TextRectangle, "HHH13");
+			Assert.AreEqual (c, e.TextColor, "HHH14");
+			Assert.AreEqual (f, e.TextFont, "HHH15");
+			Assert.AreEqual (ToolStripTextDirection.Horizontal, e.TextDirection, "HHH16");
+			Assert.AreEqual (TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter, e.TextFormat, "HHH17");
+			Assert.AreEqual (null, e.ToolStrip, "HHH18");
+			
+			Font f2 = new Font("Tahoma", 14);
+			Rectangle r2 = new Rectangle(0,0,100,100);
+			
+			e.Text = "More Text";
+			e.TextColor = Color.Khaki;
+			e.TextDirection = ToolStripTextDirection.Vertical270;
+			e.TextFont = f2;
+			e.TextFormat = TextFormatFlags.SingleLine;
+			e.TextRectangle = r2;
+
+			Assert.AreEqual ("More Text", e.Text, "HHH19");
+			Assert.AreEqual (r2, e.TextRectangle, "HHH20");
+			Assert.AreEqual (Color.Khaki, e.TextColor, "HHH21");
+			Assert.AreEqual (f2, e.TextFont, "HHH22");
+			Assert.AreEqual (ToolStripTextDirection.Vertical270, e.TextDirection, "HHH23");
+			Assert.AreEqual (TextFormatFlags.SingleLine, e.TextFormat, "HHH24");
+		}
+		
+		[Test]
+		public void TestToolStripPanelRenderEventArgs()
+		{
+			Graphics g = Graphics.FromImage (new Bitmap (5, 5));
+			ToolStripPanel tsp = new ToolStripPanel();
+			
+			ToolStripPanelRenderEventArgs e = new ToolStripPanelRenderEventArgs(g, tsp);
+
+			Assert.AreEqual (g, e.Graphics, "III1");
+			Assert.AreEqual (false, e.Handled, "III2");
+			Assert.AreEqual (tsp, e.ToolStripPanel, "III3");
+			
+			e.Handled = true;
+
+			Assert.AreEqual (true, e.Handled, "III2");
+		}
+		
+		[Test]
+		public void TestToolStripRenderEventArgs()
+		{
+			Graphics g = Graphics.FromImage (new Bitmap (5, 5));
+			ToolStrip ts = new ToolStrip();
+			
+			ToolStripRenderEventArgs e = new ToolStripRenderEventArgs(g, ts);
+
+			Assert.AreEqual (g, e.Graphics, "JJJ1");
+			Assert.AreEqual (new Rectangle(0,0,100,25) , e.AffectedBounds, "JJJ2");
+			Assert.AreEqual (SystemColors.Control, e.BackColor, "JJJ3");
+			Assert.AreEqual (Rectangle.Empty, e.ConnectedArea, "JJJ4");
+			Assert.AreEqual (ts, e.ToolStrip, "JJJ5");
+
+			Rectangle r = new Rectangle (0, 23, 40, 100);
+			e = new ToolStripRenderEventArgs (g, ts, r, Color.DodgerBlue);
+
+			Assert.AreEqual (g, e.Graphics, "JJJ6");
+			Assert.AreEqual (r, e.AffectedBounds, "JJJ7");
+			Assert.AreEqual (Color.DodgerBlue, e.BackColor, "JJJ8");
+			Assert.AreEqual (Rectangle.Empty, e.ConnectedArea, "JJJ9");
+			Assert.AreEqual (ts, e.ToolStrip, "JJJ10");
+		}
+		
+		[Test]
+		public void TestToolStripSeparatorRenderEventArgs()
+		{
+			Graphics g = Graphics.FromImage (new Bitmap (5, 5));
+			ToolStripSeparator tss = new ToolStripSeparator();
+			
+			ToolStripSeparatorRenderEventArgs e = new ToolStripSeparatorRenderEventArgs(g, tss, true);
+
+			Assert.AreEqual (g, e.Graphics, "LLL1");
+			Assert.AreEqual (tss, e.Item, "LLL2");
+			Assert.AreEqual (true, e.Vertical, "LLL3");
+			Assert.AreEqual (null, e.ToolStrip, "LLL4");
+		}
 	}
 }
 #endif
