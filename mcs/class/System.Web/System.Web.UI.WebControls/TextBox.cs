@@ -29,6 +29,7 @@
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Security.Permissions;
+using System.Text;
 
 namespace System.Web.UI.WebControls {
 
@@ -91,9 +92,16 @@ namespace System.Web.UI.WebControls {
 				break;	
 			}
 
+#if NET_2_0
+			if (AutoPostBack) {
+				w.AddAttribute ("onkeypress", "if (WebForm_TextBoxKeyHandler(event) == false) return false;");
+				w.AddAttribute (HtmlTextWriterAttribute.Onchange, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions ()));
+			}
+#else		
 			if (AutoPostBack)
 				w.AddAttribute (HtmlTextWriterAttribute.Onchange, Page.ClientScript.GetPostBackClientHyperlink (this, ""));
-			
+#endif
+
 			if (ReadOnly)
 				w.AddAttribute (HtmlTextWriterAttribute.ReadOnly, "ReadOnly");
 
@@ -117,6 +125,11 @@ namespace System.Web.UI.WebControls {
 		{
 			// What do i do here?
 			base.OnPreRender (e);
+#if NET_2_0
+			if (AutoPostBack) {
+				RegisterKeyHandlerClientScript ();
+			}
+#endif
 		}
 
 		[MonoTODO ("Am I missing something here")]
@@ -152,6 +165,10 @@ namespace System.Web.UI.WebControls {
 #endif
 		void RaisePostDataChangedEvent ()
 		{
+#if NET_2_0
+			if (CausesValidation)
+				Page.Validate (ValidationGroup);
+#endif
 			OnTextChanged (EventArgs.Empty);
 		}
 
@@ -173,6 +190,45 @@ namespace System.Web.UI.WebControls {
 		}
 #endif		
 	
+#if NET_2_0
+		PostBackOptions GetPostBackOptions () {
+			PostBackOptions options = new PostBackOptions (this);
+			options.ActionUrl = null;
+			options.ValidationGroup = null;
+			options.Argument = "";
+			options.RequiresJavaScriptProtocol = false;
+			options.ClientSubmit = true;
+			options.PerformValidation = CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup);
+			if (options.PerformValidation)
+				options.ValidationGroup = ValidationGroup;
+
+			return options;
+		}
+
+		void RegisterKeyHandlerClientScript () {
+
+			if (!Page.ClientScript.IsClientScriptBlockRegistered (typeof (TextBox), "KeyHandler")) {
+				StringBuilder script=new StringBuilder();
+				script.AppendLine ("function WebForm_TextBoxKeyHandler(event) {");
+				script.AppendLine ("\tvar target = event.target;");
+				script.AppendLine ("\tif ((target == null) || (typeof(target) == \"undefined\")) target = event.srcElement;");
+				script.AppendLine ("\tif (event.keyCode == 13) {");
+				script.AppendLine ("\t\tif ((typeof(target) != \"undefined\") && (target != null)) {");
+				script.AppendLine ("\t\t\tif (typeof(target.onchange) != \"undefined\") {");
+				script.AppendLine ("\t\t\t\ttarget.onchange();");
+				script.AppendLine ("\t\t\t\tevent.cancelBubble = true;");
+				script.AppendLine ("\t\t\t\tif (event.stopPropagation) event.stopPropagation();");
+				script.AppendLine ("\t\t\t\treturn false;");
+				script.AppendLine ("\t\t\t}");
+				script.AppendLine ("\t\t}");
+				script.AppendLine ("\t}");
+				script.AppendLine ("\treturn true;");
+				script.AppendLine ("}");
+				Page.ClientScript.RegisterClientScriptBlock (typeof (TextBox), "KeyHandler", script.ToString(), true);
+			}
+		}
+#endif
+
 #if NET_2_0
 		[DefaultValue (AutoCompleteType.None)]
 		[Themeable (false)]
