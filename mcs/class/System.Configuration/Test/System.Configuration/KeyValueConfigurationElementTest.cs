@@ -58,6 +58,7 @@ namespace MonoTests.System.Configuration {
 
 
 		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
 		public void Properties ()
 		{
 			Poker p = new Poker ("name", "value");

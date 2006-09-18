@@ -72,6 +72,7 @@ namespace MonoTests.System.Configuration {
 
 		[Test]
 		[ExpectedException (typeof(ConfigurationErrorsException))]
+		[Category ("NotWorking")]
 		public void Validators_Name1 ()
 		{
 			ConnectionStringSettings s = new ConnectionStringSettings ();

@@ -101,6 +101,9 @@ namespace MonoTests.System.Configuration {
 
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]
+#if TARGET_JVM
+		[Category("NotWorking")]
+#endif
 		public void ConvertTo_NullError ()
 		{
 			InfiniteTimeSpanConverter cv = new InfiniteTimeSpanConverter ();

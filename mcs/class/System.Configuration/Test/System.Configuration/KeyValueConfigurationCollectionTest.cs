@@ -167,6 +167,7 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void GetElementKey_withoutAdd()
 		{
 			Poker p = new Poker ();

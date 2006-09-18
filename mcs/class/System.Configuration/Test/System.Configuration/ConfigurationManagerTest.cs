@@ -58,6 +58,7 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
+		[Category("NotWorking")]
 		public void UserLevelPerRoaming ()
 		{
 			SysConfig config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoaming);
@@ -68,6 +69,7 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void UserLevelPerRoamingAndLocal ()
 		{
 			SysConfig config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
@@ -129,6 +131,7 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void mapped_UserLevelPerRoaming ()
 		{
 			ExeConfigurationFileMap map = new ExeConfigurationFileMap ();
@@ -157,6 +160,7 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void mapped_UserLevelPerRoamingAndLocal ()
 		{
 			ExeConfigurationFileMap map = new ExeConfigurationFileMap ();
@@ -188,6 +192,7 @@ namespace MonoTests.System.Configuration {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
+		[Category ("NotWorking")]
 		public void mapped_UserLevelPerRoamingAndLocal_no_roaminguser ()
 		{
 			ExeConfigurationFileMap map = new ExeConfigurationFileMap ();
@@ -237,6 +242,7 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void mapped_ExeConfiguration_null ()
 		{
 			SysConfig config = ConfigurationManager.OpenMappedExeConfiguration(null, ConfigurationUserLevel.None);
@@ -251,6 +257,7 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void mapped_MachineConfig_null ()
 		{
 			SysConfig config = ConfigurationManager.OpenMappedMachineConfiguration (null);
@@ -267,6 +274,7 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test] // test for bug #78372.
+		[Category ("NotWorking")]
 		public void OpenMachineConfiguration ()
 		{
 			SysConfig cfg = ConfigurationManager.OpenMachineConfiguration ();

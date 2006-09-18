@@ -1,3 +1,16 @@
+2006-09-18	Boris Kirzner <borisk@mainsoft.com>
+
+	*  TimeSpanMinutesConverterTest.cs, 
+	TimeSpanSecondsOrInfiniteConverterTest.cs,
+	KeyValueConfigurationElementTest.cs,
+	TimeSpanSecondsConverterTest.cs,
+	KeyValueConfigurationCollectionTest.cs,
+	InfiniteTimeSpanConverterTest.cs,ConfigurationManagerTest.cs,
+	TimeSpanMinutesOrInfiniteConverterTest.cs,
+	ConnectionStringSettingsTest.cs,InfiniteIntConverterTest.cs : 
+	marked not working tests.
+
+
 2006-05-09	Boris Kirzner <borisk@mainsoft.com>
 
 	* ConfigurationManagerTest.cs: small fixes for TARGET_JVM.
