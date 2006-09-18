@@ -1,3 +1,7 @@
+2006-09-18  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Graphics.cs: Add missing validations to MeasureCharacterRanges.
+
 2006-09-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Graphics.cs: Reorder instructions in MeasureString methods to avoid

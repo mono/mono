@@ -1875,9 +1875,17 @@ namespace System.Drawing
 		}
 
 		
-		public Region [] MeasureCharacterRanges (string text, Font font, RectangleF layoutRect, StringFormat stringFormat)
-		{	
-			Status status;			
+		public Region[] MeasureCharacterRanges (string text, Font font, RectangleF layoutRect, StringFormat stringFormat)
+		{
+			if ((text == null) || (text.Length == 0))
+				return new Region [0];
+
+			if (font == null)
+				throw new ArgumentNullException ("font");
+
+			if (stringFormat == null)
+				stringFormat = StringFormat.GenericDefault;
+
 			int regcount = stringFormat.GetMeasurableCharacterRangeCount ();
 			IntPtr[] native_regions = new IntPtr [regcount];
 			Region[] regions = new Region [regcount];
@@ -1887,12 +1895,10 @@ namespace System.Drawing
 				native_regions[i] = regions[i].NativeObject;
 			}
 			
-			status =  GDIPlus.GdipMeasureCharacterRanges (nativeObject, text, text.Length,
-				font.NativeObject, ref layoutRect, stringFormat.NativeObject, 
-				regcount, out native_regions[0]); 
-			
+			Status status = GDIPlus.GdipMeasureCharacterRanges (nativeObject, text, text.Length,
+				font.NativeObject, ref layoutRect, stringFormat.NativeObject, regcount, out native_regions[0]); 
 			GDIPlus.CheckStatus (status);				
-							
+
 			return regions;							
 		}
 
