@@ -1386,6 +1386,59 @@ namespace MonoTests.System.Drawing
 				}
 			}
 		}
+
+		[Test]
+		public void MeasureCharacterRanges_NullOrEmptyText ()
+		{
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					Region[] regions = g.MeasureCharacterRanges (null, font, new RectangleF (), null);
+					AssertEquals ("text null", 0, regions.Length);
+					regions = g.MeasureCharacterRanges (String.Empty, font, new RectangleF (), null);
+					AssertEquals ("text empty", 0, regions.Length);
+					// null font is ok with null or empty string
+					regions = g.MeasureCharacterRanges (null, null, new RectangleF (), null);
+					AssertEquals ("text null/null font", 0, regions.Length);
+					regions = g.MeasureCharacterRanges (String.Empty, null, new RectangleF (), null);
+					AssertEquals ("text empty/null font", 0, regions.Length);
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void MeasureCharacterRanges_FontNull ()
+		{
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					g.MeasureCharacterRanges ("a", null, new RectangleF (), null);
+				}
+			}
+		}
+
+		[Test] // adapted from bug #78777
+		public void MeasureCharacterRanges_TwoLines ()
+		{
+			string text = "this\nis a test";
+			CharacterRange[] ranges = new CharacterRange [2];
+			ranges[0] = new CharacterRange (0,5);
+			ranges[1] = new CharacterRange (5,9);
+
+			StringFormat string_format = new StringFormat ();
+			string_format.FormatFlags = StringFormatFlags.NoClip;
+			string_format.SetMeasurableCharacterRanges (ranges);
+
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					SizeF size = g.MeasureString (text, font, new Point (0,0), string_format);
+					RectangleF layout_rect = new RectangleF (0.0f, 0.0f, size.Width, size.Height);			
+					Region[] regions = g.MeasureCharacterRanges (text, font, layout_rect, string_format);
+
+					AssertEquals ("Length", 2, regions.Length);
+					AssertEquals ("Height", regions[0].GetBounds (g).Height, regions[1].GetBounds (g).Height);
+				}
+			}
+		}
 #if NET_2_0
 		[Test]
 		public void TestReleaseHdc ()
