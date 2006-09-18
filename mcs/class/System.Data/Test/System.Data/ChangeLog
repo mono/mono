@@ -1,3 +1,7 @@
+2006-09-18	Boris Kirzner <borisk@mainsoft.com>
+
+	* DataViewTest.cs : fix compilation error.
+
 2006-09-17	Boris Kirzner <borisk@mainsoft.com>
 
 	* DataViewTest.cs : marked not wroker test for TARGET_JVM.

@@ -415,7 +415,7 @@ namespace MonoTests.System.Data
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 #if TARGET_JVM
-		[Category("NotWorking")] // defect 5446
+		[NUnit.Framework.Category ("NotWorking")] // defect 5446
 #endif
 		public void Find_3 ()
 		{
