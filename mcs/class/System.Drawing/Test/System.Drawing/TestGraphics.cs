@@ -41,6 +41,20 @@ namespace MonoTests.System.Drawing
 	public class GraphicsTest : Assertion
 	{
 		private RectangleF[] rects;
+		private Font font;
+
+		[TestFixtureSetUp]
+		public void FixtureSetUp ()
+		{
+			font = new Font ("Arial", 12);
+		}
+
+		[TestFixtureTearDown]
+		public void FixtureTearDown ()
+		{
+			font.Dispose ();
+		}
+		
 
 		private bool IsEmptyBitmap (Bitmap bitmap, out int x, out int y)
 		{
@@ -1298,6 +1312,80 @@ namespace MonoTests.System.Drawing
 			}
 		}
 
+		[Test]
+		public void MeasureString_StringFont ()
+		{
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					SizeF size = g.MeasureString (null, font);
+					Assert ("MeasureString(null,font)", size.IsEmpty);
+					size = g.MeasureString (String.Empty, font);
+					Assert ("MeasureString(empty,font)", size.IsEmpty);
+					// null font
+					size = g.MeasureString (null, null);
+					Assert ("MeasureString(null,null)", size.IsEmpty);
+					size = g.MeasureString (String.Empty, null);
+					Assert ("MeasureString(empty,null)", size.IsEmpty);
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void MeasureString_StringFont_Null ()
+		{
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					g.MeasureString ("a", null);
+				}
+			}
+		}
+
+		[Test]
+		public void MeasureString_StringFontSizeF ()
+		{
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					SizeF size = g.MeasureString ("a", font, SizeF.Empty);
+					Assert ("MeasureString(a,font,empty)", !size.IsEmpty);
+
+					size = g.MeasureString (String.Empty, font, SizeF.Empty);
+					Assert ("MeasureString(empty,font,empty)", size.IsEmpty);
+				}
+			}
+		}
+
+		[Test]
+		public void MeasureString_StringFontInt ()
+		{
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					SizeF size = g.MeasureString ("a", font, 0);
+					Assert ("MeasureString(a,font,0)", !size.IsEmpty);
+					size = g.MeasureString ("a", font, Int32.MinValue);
+					Assert ("MeasureString(a,font,min)", !size.IsEmpty);
+					size = g.MeasureString ("a", font, Int32.MaxValue);
+					Assert ("MeasureString(a,font,max)", !size.IsEmpty);
+				}
+			}
+		}
+
+		[Test]
+		public void MeasureString_Bug76664 ()
+		{
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					string s = "aaa aa aaaa a aaa";
+					SizeF size = g.MeasureString (s, font);
+
+					int chars, lines;
+					size = g.MeasureString (s, font, new SizeF (80, size.Height), null, out chars, out lines);
+					// LAMESPEC: documentation seems to suggest chars is total length
+					Assert ("characters fitted", chars < s.Length);
+					AssertEquals ("lines fitted", 1, lines);
+				}
+			}
+		}
 #if NET_2_0
 		[Test]
 		public void TestReleaseHdc ()

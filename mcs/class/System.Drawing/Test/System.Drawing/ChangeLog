@@ -1,3 +1,7 @@
+2006-09-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestGraphics.cs: Add test cases for MeasureString methods.
+
 2006-09-18	Boris Kirzner <borisk@mainsoft.com>
 
 	* ColorTranslator.cs,TestBitmap.cs,TestColor.cs,TestFont.cs,
