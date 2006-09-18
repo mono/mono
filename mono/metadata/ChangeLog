@@ -1,3 +1,9 @@
+2006-09-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_load_type_info): Handle concurrent and recursive calls
+	correctly. Fixes #79217.
+
+	* class-internals.h (MonoClass): Remove unused marshal_info_init_pending field.
 
 Mon Sep 18 16:59:54 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
