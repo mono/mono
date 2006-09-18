@@ -321,30 +321,6 @@ namespace System.Web.UI.WebControls {
 				items [i].Selected = false;
 		}
 
-#if NET_2_0
-		protected internal override void LoadControlState (object savedState)
-		{
-			object first = null;
-			ArrayList indices = null;
-			Pair pair = savedState as Pair;
-
-			if (pair != null) {
-				first = pair.First;
-				indices = pair.Second as ArrayList;
-			}
-
-			base.LoadControlState (first);
-
-			if (indices != null) {
-				int count = Items.Count;
-				foreach (int index in indices) {
-					if (index >= 0 && index < count)
-						Items [index].Selected = true;
-				}
-			}
-		}
-#endif		
-
 		protected override void OnDataBinding (EventArgs e)
 		{
 			base.OnDataBinding (e);
@@ -370,14 +346,6 @@ namespace System.Web.UI.WebControls {
 				// No need to check saved_selected_value here, as it's done before.
 			}
 		}
-
-#if NET_2_0
-		protected internal override void OnInit (EventArgs e)
-		{
-			Page.RegisterRequiresControlState (this);
-			base.OnInit (e);
-		}
-#endif		
 
 #if NET_2_0
 		protected internal
@@ -453,18 +421,6 @@ namespace System.Web.UI.WebControls {
 			base.RenderContents (w);
 		}
 
-		protected internal override object SaveControlState ()
-		{
-			object first;
-			ArrayList second;
-
-			first = base.SaveControlState ();
-			second = GetSelectedIndicesInternal ();
-			if (second == null)
-				second = new ArrayList();
-
-			return new Pair (first, second);
-		}
 #endif		
 
 		internal ArrayList GetSelectedIndicesInternal ()
@@ -492,46 +448,26 @@ namespace System.Web.UI.WebControls {
 			if (manager != null)
 				second = manager.SaveViewState ();
 
-#if !NET_2_0
 			ArrayList selected = GetSelectedIndicesInternal ();
-#endif
 
-			if (first == null && second == null
-#if !NET_2_0
-			    && selected == null
-#endif
-			    )
+			if (first == null && second == null && selected == null)
 				return null;
 
-#if NET_2_0
-			return new Pair (first, second);
-#else
 			return new Triplet (first, second, selected);
-#endif
 		}
 
 		protected override void LoadViewState (object savedState)
 		{
 			object first = null;
 			object second = null;
-#if !NET_2_0
 			ArrayList indices = null;
-#endif
 
-#if NET_2_0
-			Pair pair = savedState as Pair;
-			if (pair != null) {
-				first = pair.First;
-				second = pair.Second;
-			}
-#else
 			Triplet triplet = savedState as Triplet;
 			if (triplet != null) {
 				first = triplet.First;
 				second = triplet.Second;
 				indices = triplet.Third as ArrayList;
 			}
-#endif
 
 			base.LoadViewState (first);
 
@@ -540,12 +476,10 @@ namespace System.Web.UI.WebControls {
 				manager.LoadViewState (second);
 			}
 
-#if !NET_2_0
 			if (indices != null) {
 				foreach (int index in indices)
 					Items [index].Selected = true;
 			}
-#endif
 		}
 
 #if NET_2_0
@@ -596,31 +530,30 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		
-		[MonoTODO]
 		[Themeable (false)]
 		[DefaultValue (false)]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
-	        public virtual bool CausesValidation {
+		public virtual bool CausesValidation {
 			get {
-				throw new NotImplementedException ();
+				return ViewState.GetBool ("CausesValidation", false);
 			}
+
 			set {
-				throw new NotImplementedException ();	
+				ViewState ["CausesValidation"] = value;
 			}
 		}
 
-		[MonoTODO]
 		[Themeable (false)]
 		[DefaultValue ("")]
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual string ValidationGroup {
 			get {
-				throw new NotImplementedException ();
+				return ViewState.GetString ("ValidationGroup", "");
 			}
 			set {
-				throw new NotImplementedException ();
+				ViewState ["ValidationGroup"] = value;
 			}
 		}
 

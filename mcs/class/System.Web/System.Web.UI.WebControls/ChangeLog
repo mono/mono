@@ -1,5 +1,13 @@
 2006-09-18 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* ListControl.cs: 
+	VewState saving and restoring rolled back to 1.1 implementation 
+	(fixed corresponding test), corrected public interface (there are no 
+	overriden methods SaveControlState, LoadControlState and OnInit), 
+	implemented CausesValidation and ValidationGroup properties.
+	
+2006-09-18 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* TextBox.cs: 
 	make rendering of the onclick attribute to consider ValidationGroup property
 	Page.Validate() is called when CausesValidation=true
