@@ -1,5 +1,11 @@
 2006-09-18 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* BulletedLis.cs: 
+	make rendering of the href attribute to consider ValidationGroup property.
+	Page.Validate() is called when CausesValidation=true
+	
+2006-09-18 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* ListBox.cs: 
 	make rendering of the onchange attribute to consider ValidationGroup 
 	property.

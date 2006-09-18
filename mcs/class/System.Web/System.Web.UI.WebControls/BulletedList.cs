@@ -49,6 +49,8 @@ namespace System.Web.UI.WebControls {
 	[SupportsEventValidation]
 	public class BulletedList : ListControl, IPostBackEventHandler {
 		
+		PostBackOptions postBackOptions;
+
 		[MonoTODO ("we are missing a new style enum, we should be using it")]
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
@@ -142,7 +144,7 @@ namespace System.Web.UI.WebControls {
 
 				case BulletedListDisplayMode.LinkButton:
 					if (Enabled && item.Enabled)
-						writer.AddAttribute (HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackClientHyperlink (this, (index.ToString (CultureInfo.InvariantCulture))));
+						writer.AddAttribute (HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (index.ToString (CultureInfo.InvariantCulture))));
 					else
 						writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
 					writer.RenderBeginTag (HtmlTextWriterTag.A);
@@ -150,6 +152,21 @@ namespace System.Web.UI.WebControls {
 					writer.RenderEndTag ();
 					break;
 			}
+		}
+
+		PostBackOptions GetPostBackOptions (string argument) {
+			if (postBackOptions == null) {
+				postBackOptions = new PostBackOptions (this);
+				postBackOptions.ActionUrl = null;
+				postBackOptions.ValidationGroup = null;
+				postBackOptions.RequiresJavaScriptProtocol = true;
+				postBackOptions.ClientSubmit = true;
+				postBackOptions.PerformValidation = CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup);
+				if (postBackOptions.PerformValidation)
+					postBackOptions.ValidationGroup = ValidationGroup;
+			}
+			postBackOptions.Argument = argument;
+			return postBackOptions;
 		}
 		
 		protected internal override void RenderContents (HtmlTextWriter writer)
@@ -172,11 +189,10 @@ namespace System.Web.UI.WebControls {
 			RaisePostBackEvent (eventArgument);
 		}
 			
-		[MonoTODO ("ListControl has a CausesValidation prop in v1.2, we need to use it")]
 		protected virtual void RaisePostBackEvent (string eventArgument)
 		{
-			//if (CausesValidation)
-			//	Page.Validate ();
+			if (CausesValidation)
+				Page.Validate (ValidationGroup);
 			
 			this.OnClick (new BulletedListEventArgs (int.Parse (eventArgument, CultureInfo.InvariantCulture)));
 		}
