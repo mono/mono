@@ -1375,6 +1375,9 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void Rectangle_GetRegionScans ()
 		{
 			Matrix matrix = new Matrix ();
@@ -1404,6 +1407,9 @@ namespace MonoTests.System.Drawing
 	}
 
 	[TestFixture]
+#if TARGET_JVM
+	[Category ("NotWorking")]
+#endif
 	// the test cases in this fixture aren't restricted wrt running unmanaged code
 	public class RegionTestUnmanaged {
 

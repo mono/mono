@@ -1173,6 +1173,9 @@ namespace MonoTests.System.Drawing {
 			0x01, 0x00, 0x0B };
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void Deserialize ()
 		{
 			BinaryFormatter bf = new BinaryFormatter ();
@@ -1190,6 +1193,9 @@ namespace MonoTests.System.Drawing {
 			67,111,108,111,114,5,115,116,97,116,101,1,0,0,0,9,7,7,2,0,0,0,10,0,0,0,0,0,0,0,0,37,0,1,0,11 };
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void Deserialize2 ()
 		{
 			BinaryFormatter bf = new BinaryFormatter ();
@@ -1215,6 +1221,9 @@ namespace MonoTests.System.Drawing {
 			67,111,108,111,114,5,115,116,97,116,101,1,0,0,0,9,7,7,2,0,0,0,10,255,0,0,255,0,0,0,0,0,0,2,0,11};
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void Deserialize3 ()
 		{
 			BinaryFormatter bf = new BinaryFormatter ();

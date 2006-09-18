@@ -1,3 +1,7 @@
+2006-09-18	Boris Kirzner <borisk@mainsoft.com>
+
+	* Test20.J2EE.vmwcsproj : fixed reference path.
+
 2006-09-12	Boris Kirzner <borisk@mainsoft.com>
 	* Test20.csproj,Test20.J2EE.vmwcsproj: updated references path.
 

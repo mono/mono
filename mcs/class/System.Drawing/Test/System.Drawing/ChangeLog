@@ -1,3 +1,9 @@
+2006-09-18	Boris Kirzner <borisk@mainsoft.com>
+
+	* ColorTranslator.cs,TestBitmap.cs,TestColor.cs,TestFont.cs,
+	TestRegion.cs,TestSizeFConverter.cs : mark tests not working
+	in TARGET_JVM.
+
 2006-09-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestSizeF.cs: Remove the NET_2_0/NotWorking stuff from GetHashCode

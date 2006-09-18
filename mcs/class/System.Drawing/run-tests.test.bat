@@ -17,6 +17,14 @@ IF "%1"=="" GOTO USAGE
 
 IF "%VMW_HOME%"=="" GOTO ENVIRONMENT_EXCEPTION
 
+
+
+IF "%1"=="" (
+	set BUILD_OPTION=rebuild
+) ELSE (
+	set BUILD_OPTION=%1
+)
+
 REM ********************************************************
 REM Set parameters
 REM ********************************************************
@@ -34,53 +42,59 @@ set TEST_NET_ASSEMBLY=System.Drawing.Test.dll
 set PROJECT_J2EE_CONFIGURATION=Debug_Java20
 set PROJECT_NET_CONFIGURATION=Debug
 set NUNIT_CONSOLE_PATH="C:\Program Files\NUnit-Net-2.0 2.2.8\bin"
-set JAVA_HOME=%VMW_HOME%\jre5
 
-set DATEL=%date:~4,2%_%date:~7,2%_%date:~10,4%
+set DATEL=%date:~10,4%_%date:~4,2%_%date:~7,2%%
 set TIMEL=%time:~0,2%_%time:~3,2%
 set TIMESTAMP=%DATEL%_%TIMEL%
+
 
 REM ********************************************************
 REM @echo Set environment
 REM ********************************************************
 
 set JGAC_PATH=%VMW_HOME%\jgac\vmw4j2ee_110\
+set JAVA_HOME=%VMW_HOME%\jre5
 
-set RUNTIME_CLASSPATH=%JGAC_PATH%mscorlib.jar;%JGAC_PATH%System.jar;%JGAC_PATH%System.Xml.jar;%JGAC_PATH%System.Drawing.jar;%JGAC_PATH%J2SE.Helpers.jar;%JGAC_PATH%jai_imageio.jar
+set RUNTIME_CLASSPATH=%JGAC_PATH%mscorlib.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.Xml.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%J2SE.Helpers.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%jai_imageio.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.Drawing.jar;
 set NUNIT_OPTIONS=/exclude=NotWorking
 
-set NET_OUTPUT_XML=%OUTPUT_FILE_PREFIX%.%RUNNING_FIXTURE%.Net.%TIMESTAMP%.xml
-set GH_OUTPUT_XML=%OUTPUT_FILE_PREFIX%.%RUNNING_FIXTURE%.GH.%TIMESTAMP%.xml
-
-set BUILD_LOG=%OUTPUT_FILE_PREFIX%.%RUNNING_FIXTURE%_build.log.%TIMESTAMP%.txt
-set RUN_LOG=%OUTPUT_FILE_PREFIX%.%RUNNING_FIXTURE%_run.log.%TIMESTAMP%.txt
+set GH_OUTPUT_XML=%TIMESTAMP%.%OUTPUT_FILE_PREFIX%.%RUNNING_FIXTURE%.GH.xml
+set NET_OUTPUT_XML=%TIMESTAMP%.%OUTPUT_FILE_PREFIX%.%RUNNING_FIXTURE%.Net.xml
+set BUILD_LOG=%TIMESTAMP%.%OUTPUT_FILE_PREFIX%.GH.%RUNNING_FIXTURE%.build.log
+set RUN_LOG=%TIMESTAMP%.%OUTPUT_FILE_PREFIX%.GH.%RUNNING_FIXTURE%.run.log
 
 set NUNIT_PATH=%BACK_TO_ROOT_DIR%..\..\nunit20\
-set NUNIT_CLASSPATH=%NUNIT_PATH%nunit-console\bin\%PROJECT_J2EE_CONFIGURATION%\nunit.framework.jar;%NUNIT_PATH%nunit-console\bin\%PROJECT_J2EE_CONFIGURATION%\nunit.util.jar;%NUNIT_PATH%nunit-console\bin\%PROJECT_J2EE_CONFIGURATION%\nunit.core.jar;%NUNIT_PATH%nunit-console\bin\%PROJECT_J2EE_CONFIGURATION%\nunit-console.jar
+set NUNIT_CLASSPATH=%NUNIT_PATH%nunit-console\bin\%PROJECT_J2EE_CONFIGURATION%\nunit.framework.jar
+set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%NUNIT_PATH%nunit-console\bin\%PROJECT_J2EE_CONFIGURATION%\nunit.util.jar
+set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%NUNIT_PATH%nunit-console\bin\%PROJECT_J2EE_CONFIGURATION%\nunit.core.jar
+set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%NUNIT_PATH%nunit-console\bin\%PROJECT_J2EE_CONFIGURATION%\nunit-console.jar
+set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;.
+set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%TEST_ASSEMBLY%
+
 set CLASSPATH="%RUNTIME_CLASSPATH%;%NUNIT_CLASSPATH%"
 
-
 REM ********************************************************
-@echo Building .Net solution...
+@echo Building GH solution...
 REM ********************************************************
 
-REM devenv Test\DrawingTest\System.Drawing.Test.dotnet.sln /%BUILD_OPTION% Debug >%RUNNING_FIXTURE%_build.log.txt 2<&1
-msbuild %TEST_NET_SOLUTION% /t:%BUILD_OPTION% /p:Configuration=%PROJECT_NET_CONFIGURATION% >>%BUILD_LOG% 2<&1
+REM devenv Test\DrawingTest\System.Drawing.Test.sln /%BUILD_OPTION% Debug_Java >>%RUNNING_FIXTURE%_build.log.txt 2<&1
+msbuild %TEST_J2EE_SOLUTION% /t:%BUILD_OPTION% /p:Configuration=%PROJECT_J2EE_CONFIGURATION% >>%BUILD_LOG% 2<&1
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
-
-
-
-if "%NUNIT_BUILD%" == "DONE" goto NUNITSKIP
 
 REM ********************************************************
 @echo Building NUnit solution...
 REM ********************************************************
 
+if "%NUNIT_BUILD%" == "DONE" goto NUNITSKIP
+
 REM devenv ..\..\nunit20\nunit.java.sln /%BUILD_OPTION% Debug_Java >>%RUNNING_FIXTURE%_build.log.txt 2<&1
 msbuild ..\..\nunit20\nunit20.java.sln /t:%BUILD_OPTION% /p:Configuration=%PROJECT_J2EE_CONFIGURATION% >>%BUILD_LOG% 2<&1
-
-IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
 goto NUNITREADY
 
@@ -93,11 +107,11 @@ set NUNIT_BUILD=DONE
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
 REM ********************************************************
-@echo Building GH solution...
+@echo Building .Net solution...
 REM ********************************************************
 
-REM devenv Test\DrawingTest\System.Drawing.Test.sln /%BUILD_OPTION% Debug_Java >>%RUNNING_FIXTURE%_build.log.txt 2<&1
-msbuild %TEST_J2EE_SOLUTION% /t:%BUILD_OPTION% /p:Configuration=%PROJECT_J2EE_CONFIGURATION% >>%BUILD_LOG% 2<&1
+REM devenv Test\DrawingTest\System.Drawing.Test.dotnet.sln /%BUILD_OPTION% Debug >%RUNNING_FIXTURE%_build.log.txt 2<&1
+msbuild %TEST_NET_SOLUTION% /t:%BUILD_OPTION% /p:Configuration=%PROJECT_NET_CONFIGURATION% >>%BUILD_LOG% 2<&1
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
@@ -148,6 +162,7 @@ REM @echo off
 if "%RUNNING_DIR%" NEQ "" (
 	copy %NET_OUTPUT_XML% %BACK_TO_ROOT_DIR%
 	copy %GH_OUTPUT_XML% %BACK_TO_ROOT_DIR%
+	copy %RUN_LOG% %BACK_TO_ROOT_DIR%
 	cd %BACK_TO_ROOT_DIR% )
 
 REM ********************************************************
@@ -170,12 +185,6 @@ xmltool.exe --transform nunit_transform.xslt %GH_OUTPUT_XML%
 @echo off
 
 :FINALLY
-
-copy %RUNNING_DIR%\%RUN_LOG% ..\%BACK_TO_ROOT_DIR%
-copy %BUILD_LOG% ..\%BACK_TO_ROOT_DIR%
-copy %NET_OUTPUT_XML% ..\%BACK_TO_ROOT_DIR%
-copy %GH_OUTPUT_XML% ..\%BACK_TO_ROOT_DIR%
-
 GOTO END
 
 :ENVIRONMENT_EXCEPTION
@@ -183,12 +192,12 @@ GOTO END
 GOTO END
 
 :BUILD_EXCEPTION
-@echo Error in building solutions. See System.Drawing.%RUNNING_FIXTURE%_build.log.txt for details...
+@echo Error in building solutions. See %BUILD_LOG% for details...
 REM EXIT 1
 GOTO END
 
 :RUN_EXCEPTION
-@echo Error in running fixture %RUNNING_FIXTURE%. See System.Drawing.%RUNNING_FIXTURE%_run.log.txt for details...
+@echo Error in running fixture %RUNNING_FIXTURE%. See %RUN_LOG% for details...
 REM EXIT 1
 GOTO END
 
@@ -197,4 +206,10 @@ GOTO END
 GOTO END
 
 :END
+
+
+copy %RUN_LOG% ..\%BACK_TO_ROOT_DIR%
+copy %BUILD_LOG% ..\%BACK_TO_ROOT_DIR%
+copy %GH_OUTPUT_XML% ..\%BACK_TO_ROOT_DIR%
+
 REM EXIT 0

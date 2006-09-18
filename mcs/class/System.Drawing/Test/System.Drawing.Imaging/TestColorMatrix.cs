@@ -48,6 +48,9 @@ namespace MonoTests.System.Drawing.Imaging {
 
 		[Test]
 		[ExpectedException (typeof (IndexOutOfRangeException))]
+#if TARGET_JVM
+		[Category ("NotWorking")] // defect 6365
+#endif
 		public void Constructor_TooSmallArraySize ()
 		{
 			new ColorMatrix (new float[][] { });
@@ -55,6 +58,9 @@ namespace MonoTests.System.Drawing.Imaging {
 
 		[Test]
 		[ExpectedException (typeof (IndexOutOfRangeException))]
+#if TARGET_JVM
+		[Category ("NotWorking")] // defect 6365
+#endif
 		public void Constructor_TooWideArraySize ()
 		{
 			new ColorMatrix (new float[][] {
@@ -64,6 +70,9 @@ namespace MonoTests.System.Drawing.Imaging {
 
 		[Test]
 		[ExpectedException (typeof (IndexOutOfRangeException))]
+#if TARGET_JVM
+		[Category ("NotWorking")] // defect 6365
+#endif
 		public void Constructor_TooTallArraySize ()
 		{
 			new ColorMatrix (new float[][] {
@@ -160,9 +169,10 @@ namespace MonoTests.System.Drawing.Imaging {
 			Assert.AreEqual (cm.Matrix41, 0);
 			Assert.AreEqual (cm.Matrix42, 0);
 			Assert.AreEqual (cm.Matrix43, 0);
-
+#if !TARGET_JVM
 			Assert.AreEqual (100, Marshal.SizeOf (cm), "object");
 			Assert.AreEqual (100, Marshal.SizeOf (typeof (ColorMatrix)), "type");
+#endif
 		}
 
 		[Test]

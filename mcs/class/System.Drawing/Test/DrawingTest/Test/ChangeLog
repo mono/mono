@@ -1,3 +1,7 @@
+2006-09-18	Boris Kirzner <borisk@mainsoft.com>
+
+	* Graphics.cs : marked not working tests for TARGET_JVM.
+
 2006-08-28	Boris Kirzner	<borisk@mainsoft.com>
 	* GraphicsPath.cs: marked test as "NotWorking"
 

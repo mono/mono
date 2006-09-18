@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
 		<OutputPath>bin\Release_Java20\</OutputPath>
 		<DefineConstants>TRACE;TARGET_JVM;NET_1_1;NET_2_0</DefineConstants>
@@ -91,7 +91,7 @@
 		</Reference>
 		<Reference Include="nunit.framework, Version=0.0.0.0, Culture=neutral">
 			<SpecificVersion>False</SpecificVersion>
-			<HintPath>c:\cygwin\monobuild\mcs\nunit20\framework\bin\Debug_Java20\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\..\..\nunit20\nunit-console\bin\Debug_Java20\nunit.framework.dll</HintPath>
 			<Private>True</Private>
 		</Reference>
 		<Reference Include="rt, Version=0.0.0.0, Culture=neutral">
@@ -109,7 +109,7 @@
 		<Compile Include="PDComparer.cs"/>
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="c:\cygwin\monobuild\mcs\class\System.Drawing\Test\DrawingTest\Exocortex.DSP\src\Exocortex.DSP20.v1.J2EE.vmwcsproj">
+    <ProjectReference Include="..\Exocortex.DSP\src\Exocortex.DSP20.v1.J2EE.vmwcsproj">
 			<Project>{995DE32D-06AB-4926-97FF-565B9205D5F8}</Project>
 			<Name>Exocortex.DSP20.v1.J2EE</Name>
 		</ProjectReference>

@@ -1,3 +1,8 @@
+2006-09-18	Boris Kirzner <borisk@mainsoft.com>
+
+	* TestColorBlend.cs,TestHatchBrush.cs : marked tests not working
+	for TARGET_JVM.
+
 2006-08-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GraphicsPathTest.cs: Ignore some test cases if we cannot get any 

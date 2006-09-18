@@ -42,6 +42,9 @@ namespace MonoTests.System.Drawing{
 
 	[TestFixture]
 	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
+#if TARGET_JVM
+	[Category ("NotWorking")]
+#endif
 	public class TestBitmap {
 		
 		[Test]

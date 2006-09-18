@@ -203,6 +203,9 @@ namespace MonoTests.System.Drawing{
 #if ONLY_1_1
 		[ExpectedException (typeof (ArgumentNullException))]
 #endif
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void Font_StringNull_Float ()
 		{
 			string family = null;
@@ -215,6 +218,9 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void Font_String_Float ()
 		{
 			Font f = new Font (name, 12.5f);
@@ -233,6 +239,9 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void Font_String_Float_FontStyle ()
 		{
 			Font f = new Font (name, 12.5f, FontStyle.Bold);
@@ -251,6 +260,9 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void Font_String_Float_FontStyle_GraphicsUnit ()
 		{
 			Font f = new Font (name, 12.5f, FontStyle.Italic, GraphicsUnit.Pixel);
@@ -269,12 +281,18 @@ namespace MonoTests.System.Drawing{
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void Font_String_Float_FontStyle_GraphicsUnit_Display ()
 		{
 			new Font (name, 12.5f, FontStyle.Italic, GraphicsUnit.Display);
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void Font_String_Float_FontStyle_GraphicsUnit_Byte ()
 		{
 			Font f = new Font (name, 12.5f, FontStyle.Strikeout, GraphicsUnit.Inch, Byte.MaxValue);
@@ -293,6 +311,9 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void Font_String_Float_FontStyle_GraphicsUnit_Byte_Bool ()
 		{
 			Font f = new Font (name, 12.5f, FontStyle.Underline, GraphicsUnit.Document, Byte.MinValue, true);
@@ -319,6 +340,9 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void Font_FontFamily_Float ()
 		{
 			Font f = new Font (FontFamily.GenericMonospace, 12.5f);
@@ -337,6 +361,9 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void Font_FontFamily_Float_FontStyle ()
 		{
 			Font f = new Font (FontFamily.GenericMonospace, 12.5f, FontStyle.Bold);
@@ -355,6 +382,9 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void Font_FontFamily_Float_FontStyle_GraphicsUnit ()
 		{
 			Font f = new Font (FontFamily.GenericMonospace, 12.5f, FontStyle.Italic, GraphicsUnit.Millimeter);
@@ -374,12 +404,18 @@ namespace MonoTests.System.Drawing{
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void Font_FontFamily_Float_FontStyle_GraphicsUnit_Display ()
 		{
 			new Font (FontFamily.GenericMonospace, 12.5f, FontStyle.Italic, GraphicsUnit.Display);
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void Font_FontFamily_Float_FontStyle_GraphicsUnit_Byte ()
 		{
 			Font f = new Font (FontFamily.GenericMonospace, 12.5f, FontStyle.Strikeout, GraphicsUnit.Inch, Byte.MaxValue);
@@ -398,6 +434,9 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void Font_FontFamily_Float_FontStyle_GraphicsUnit_Byte_Bool ()
 		{
 			Font f = new Font (FontFamily.GenericMonospace, 12.5f, FontStyle.Underline, GraphicsUnit.Document, Byte.MinValue, true);
@@ -436,6 +475,9 @@ namespace MonoTests.System.Drawing{
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void Dispose_Height ()
 		{
 			Font f = new Font (name, 12.5f);
@@ -445,6 +487,9 @@ namespace MonoTests.System.Drawing{
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void Dispose_ToLogFont ()
 		{
 			Font f = new Font (name, 12.5f);
@@ -454,6 +499,9 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void Dispose_ToLogFont_LoopCharSet ()
 		{
 			Font f = new Font (name, 12.5f);
@@ -504,6 +552,9 @@ namespace MonoTests.System.Drawing{
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void Dispose_ToHFont ()
 		{
 			Font f = new Font (name, 12.5f);

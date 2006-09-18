@@ -96,6 +96,9 @@ namespace MonoTests.System.Drawing.Drawing2D
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void TestDrawing ()
 		{
 			// create a bitmap with big enough dimensions 

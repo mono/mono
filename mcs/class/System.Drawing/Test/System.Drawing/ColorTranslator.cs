@@ -67,6 +67,9 @@ namespace MonoTests.System.Drawing {
 
 		[Test]
 		[ExpectedException (typeof (Exception))]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void FromHtml_PoundNegative ()
 		{
 			ColorTranslator.FromHtml ("#-1");
@@ -81,6 +84,9 @@ namespace MonoTests.System.Drawing {
 
 		[Test]
 		[ExpectedException (typeof (Exception))]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void FromHtml_Unkown ()
 		{
 			ColorTranslator.FromHtml ("unknown-color-test");
