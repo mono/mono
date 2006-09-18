@@ -64,6 +64,24 @@ of the P/Invoke method.
 .I target
 This is the name of the function to lookup instead of the name specified in the 
 P/Invoke method.
+.SH Mapping based on operating system and cpu
+Both the
+.B dllmap
+and the
+.B dllentry
+elements allow the following two attributes which make it easy to use a single
+configuration file and support multiple operating systems and architectures with
+different mapping requirements:
+.TP
+.I os
+This is the name of the operating system for which the mapping should be applied.
+Allowed values are: linux, osx, solaris, freebsd, openbsd, netbsd, windows, aix, hpux.
+.TP
+.I cpu
+This is the name of the architecture for which the mapping should be applied.
+Allowed values are: x86, x86-64, sparc, ppc, s390, s390x, arm, mips, alpha, hppa, ia64.
+.PP
+Note that later entries will override the entries defined earlier in the file.
 .SH EXAMPLES
 The following example maps references to the `cygwin1.dll' shared
 library to the `libc.so.6' file.  
@@ -81,11 +99,15 @@ This one maps the following C# method:
 to
 .B differentfunction
 in
-.B libdifferent.so.
+.B libdifferent.so
+, but to the same function in the library
+.B libanother.so
+when running under the Solaris operating system.
 .nf
 <configuration>
 	<dllmap dll="libc">
 		<dllentry dll="libdifferent.so" name="somefunction" target="differentfunction" />
+		<dllentry os="solaris" dll="libanother.so" name="somefunction" target="differentfunction" />
 	</dllmap>
 </configuration>
 .fi
