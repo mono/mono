@@ -131,11 +131,31 @@ namespace System.Web.UI.WebControls {
 			writer.AddAttribute(HtmlTextWriterAttribute.Name, this.UniqueID, true);
 #endif
 			if (AutoPostBack) {
+#if NET_2_0
+				writer.AddAttribute (HtmlTextWriterAttribute.Onchange, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions ()));
+#else
 				writer.AddAttribute (HtmlTextWriterAttribute.Onchange, Page.ClientScript.GetPostBackClientHyperlink (this, ""));
+#endif
 			}
 
 			base.AddAttributesToRender(writer);
 		}
+
+#if NET_2_0
+		PostBackOptions GetPostBackOptions () {
+			PostBackOptions options = new PostBackOptions (this);
+			options.ActionUrl = null;
+			options.ValidationGroup = null;
+			options.Argument = "";
+			options.RequiresJavaScriptProtocol = false;
+			options.ClientSubmit = true;
+			options.PerformValidation = CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup);
+			if (options.PerformValidation)
+				options.ValidationGroup = ValidationGroup;
+
+			return options;
+		}
+#endif		
 
 		protected override ControlCollection CreateControlCollection() {
 			return base.CreateControlCollection();
@@ -213,6 +233,10 @@ namespace System.Web.UI.WebControls {
 #endif
 		void RaisePostDataChangedEvent ()
 		{
+#if NET_2_0
+			if (CausesValidation)
+				Page.Validate (ValidationGroup);
+#endif
 			OnSelectedIndexChanged(EventArgs.Empty);
 		}
 		

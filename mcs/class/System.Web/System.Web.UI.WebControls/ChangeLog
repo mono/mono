@@ -1,5 +1,11 @@
 2006-09-18 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* DropDownList.cs: 
+	make rendering of the onclick attribute to consider ValidationGroup property
+	Page.Validate() is called when CausesValidation=true
+	
+2006-09-18 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* ListControl.cs: 
 	VewState saving and restoring rolled back to 1.1 implementation 
 	(fixed corresponding test), corrected public interface (there are no 
