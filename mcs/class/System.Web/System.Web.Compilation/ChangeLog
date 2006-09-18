@@ -1,3 +1,7 @@
+2006-09-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* PageCompiler.cs: support the EnableEventValidation attribute.
+
 2006-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: after parsing an include file, don't error out if we

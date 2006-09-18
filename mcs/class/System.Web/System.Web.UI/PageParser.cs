@@ -66,6 +66,7 @@ namespace System.Web.UI
 		string title;
 		string theme;
 		string styleSheetTheme;
+		bool enable_event_validation;
 #endif
 
 		public PageParser ()
@@ -286,6 +287,7 @@ namespace System.Web.UI
 
 			theme = GetString (atts, "Theme", null);
 			styleSheetTheme = GetString (atts, "StyleSheetTheme", null);
+			enable_event_validation = GetBool (atts, "EnableEventValidation", true);
 #endif
 			// Ignored by now
 			GetString (atts, "EnableViewStateMac", null);
@@ -424,6 +426,10 @@ namespace System.Web.UI
 
 		internal string Title {
 			get { return title; }
+		}
+
+		internal bool EnableEventValidation {
+			get { return enable_event_validation; }
 		}
 #endif
 	}

@@ -195,6 +195,16 @@ namespace System.Web.Compilation
 				method.Statements.Add (expr);
 			}
 #endif
+#if NET_2_0
+			if (!pageParser.EnableEventValidation) {
+                                CodeAssignStatement stmt = new CodeAssignStatement ();
+                                CodePropertyReferenceExpression prop;
+                                prop = new CodePropertyReferenceExpression (thisRef, "EnableEventValidation");
+				stmt.Left = prop;
+				stmt.Right = new CodePrimitiveExpression (pageParser.EnableEventValidation);
+				method.Statements.Add (stmt);
+			}
+#endif
                         
 			base.AppendStatementsToFrameworkInitialize (method);
 		}
