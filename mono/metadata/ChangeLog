@@ -1,3 +1,10 @@
+
+Mon Sep 18 16:59:54 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mono-config.c: allow both an os and cpu attribute for dllmap
+	and dllentry elemnets to enable a single config file to be used
+	for multiple architectures.
+
 2006-09-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* loader.c: MonoLoaderError was cleared too soon on load failure.
