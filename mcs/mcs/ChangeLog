@@ -1,5 +1,9 @@
 2006-09-19  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (Binary): Merged with the gmcs version.
+
+2006-09-19  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (Probe, As, Is): Merged with the gmcs version.
 
 2006-09-19  Martin Baulig  <martin@ximian.com>

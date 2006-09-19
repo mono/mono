@@ -609,6 +609,11 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return null;
 
+#if GMCS_SOURCE
+			if (TypeManager.IsNullableValueType (Expr.Type))
+				return new Nullable.LiftedUnaryOperator (Oper, Expr, loc).Resolve (ec);
+#endif
+
 			eclass = ExprClass.Value;
 			return ResolveOperator (ec);
 		}
@@ -912,6 +917,12 @@ namespace Mono.CSharp {
 				return null;
 
 			eclass = ExprClass.Value;
+
+#if GMCS_SOURCE
+			if (TypeManager.IsNullableValueType (expr.Type))
+				return new Nullable.LiftedUnaryMutator (mode, expr, loc).Resolve (ec);
+#endif
+
 			return ResolveOperator (ec);
 		}
 
@@ -1692,6 +1703,28 @@ namespace Mono.CSharp {
 			Type r = right.Type;
 
 			if (oper == Operator.Equality || oper == Operator.Inequality){
+				if (TypeManager.IsGenericParameter (l) && (right is NullLiteral)) {
+					if (l.BaseType == TypeManager.value_type) {
+						Error_OperatorCannotBeApplied ();
+						return null;
+					}
+
+					left = new BoxedCast (left, TypeManager.object_type);
+					Type = TypeManager.bool_type;
+					return this;
+				}
+
+				if (TypeManager.IsGenericParameter (r) && (left is NullLiteral)) {
+					if (r.BaseType == TypeManager.value_type) {
+						Error_OperatorCannotBeApplied ();
+						return null;
+					}
+
+					right = new BoxedCast (right, TypeManager.object_type);
+					Type = TypeManager.bool_type;
+					return this;
+				}
+
 				//
 				// Optimize out call to op_Equality in a few cases.
 				//
@@ -1825,6 +1858,23 @@ namespace Mono.CSharp {
 					}
 				}
 
+#if GMCS_SOURCE
+				if (l.IsGenericParameter && r.IsGenericParameter) {
+					GenericConstraints l_gc, r_gc;
+
+					l_gc = TypeManager.GetTypeParameterConstraints (l);
+					r_gc = TypeManager.GetTypeParameterConstraints (r);
+
+					if ((l_gc == null) || (r_gc == null) ||
+					    !(l_gc.HasReferenceTypeConstraint || l_gc.HasClassConstraint) ||
+					    !(r_gc.HasReferenceTypeConstraint || r_gc.HasClassConstraint)) {
+						Error_OperatorCannotBeApplied ();
+						return null;
+					}
+
+				}
+#endif
+
 				//
 				// operator != (object a, object b)
 				// operator == (object a, object b)
@@ -1913,8 +1963,8 @@ namespace Mono.CSharp {
 							method = TypeManager.delegate_combine_delegate_delegate;
 						else
 							method = TypeManager.delegate_remove_delegate_delegate;
-						
-						if (l != r && !(right is NullLiteral)) {
+
+						if (!TypeManager.IsEqual (l, r) && !(right is NullLiteral)) {
 							Error_OperatorCannotBeApplied ();
 							return null;
 						}
@@ -2275,6 +2325,14 @@ namespace Mono.CSharp {
 				if (e != null || Report.Errors != prev_e)
 					return e;
 			}
+
+#if GMCS_SOURCE
+			if ((left is NullLiteral || left.Type.IsValueType) &&
+			    (right is NullLiteral || right.Type.IsValueType) &&
+			    !(left is NullLiteral && right is NullLiteral) &&
+			    (TypeManager.IsNullableType (left.Type) || TypeManager.IsNullableType (right.Type)))
+				return new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
+#endif
 
 			// Comparison warnings
 			if (oper == Operator.Equality || oper == Operator.Inequality ||
@@ -3173,6 +3231,11 @@ namespace Mono.CSharp {
 
 			if (expr == null)
 				return null;
+
+#if GMCS_SOURCE
+			if (TypeManager.IsNullableValueType (expr.Type))
+				return new Nullable.LiftedConditional (expr, trueExpr, falseExpr, loc).Resolve (ec);
+#endif
 			
 			if (expr.Type != TypeManager.bool_type){
 				expr = Expression.ResolveBoolean (
