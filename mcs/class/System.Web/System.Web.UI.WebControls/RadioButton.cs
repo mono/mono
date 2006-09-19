@@ -131,6 +131,10 @@ namespace System.Web.UI.WebControls {
 #endif
 		void RaisePostDataChangedEvent ()
 		{
+#if NET_2_0
+			if (CausesValidation)
+				Page.Validate (ValidationGroup);
+#endif
 			OnCheckedChanged (EventArgs.Empty);
 		}
 

@@ -1,5 +1,10 @@
 2006-09-19 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* RadioButton.cs: 
+	Page.Validate() is called when CausesValidation=true
+		
+2006-09-19 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* CheckBox.cs: 
 	make onclick attribute to consider ValidationGroup property.
 	
