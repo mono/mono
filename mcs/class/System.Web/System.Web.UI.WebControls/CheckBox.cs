@@ -399,8 +399,12 @@ namespace System.Web.UI.WebControls {
 					w.AddAttribute (HtmlTextWriterAttribute.Checked, "checked");
 
 				if (AutoPostBack){
+#if NET_2_0
+					w.AddAttribute (HtmlTextWriterAttribute.Onclick, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions ()));
+#else
 					w.AddAttribute (HtmlTextWriterAttribute.Onclick,
 							Page.ClientScript.GetPostBackEventReference (this, String.Empty));
+#endif
 					w.AddAttribute ("language", "javascript");
 				}
 
@@ -447,8 +451,12 @@ namespace System.Web.UI.WebControls {
 					w.AddAttribute (HtmlTextWriterAttribute.Checked, "checked");
 
 				if (AutoPostBack){
+#if NET_2_0
+					w.AddAttribute (HtmlTextWriterAttribute.Onclick, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions ()));
+#else
 					w.AddAttribute (HtmlTextWriterAttribute.Onclick,
 							Page.ClientScript.GetPostBackEventReference (this, String.Empty));
+#endif
 					w.AddAttribute ("language", "javascript");
 				}
 
@@ -512,6 +520,20 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
+		PostBackOptions GetPostBackOptions () {
+			PostBackOptions options = new PostBackOptions (this);
+			options.ActionUrl = null;
+			options.ValidationGroup = null;
+			options.Argument = "";
+			options.RequiresJavaScriptProtocol = false;
+			options.ClientSubmit = true;
+			options.PerformValidation = CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup);
+			if (options.PerformValidation)
+				options.ValidationGroup = ValidationGroup;
+
+			return options;
+		}
+
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
 			base.AddAttributesToRender (writer);

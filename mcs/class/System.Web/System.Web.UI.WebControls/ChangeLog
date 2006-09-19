@@ -1,3 +1,8 @@
+2006-09-19 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* CheckBox.cs: 
+	make onclick attribute to consider ValidationGroup property.
+	
 2006-09-18 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* BulletedLis.cs: 
