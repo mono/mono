@@ -1,7 +1,9 @@
-2006-09-19  Sebastien Pouliot  <sebastien@ximian.com>
+2006-09-19  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* GDIPlusTest.cs: Added test cases for GdipMeasureCharacterRanges and
 	StringFormat functions.
+	* TestGraphics.cs: Avoid test cases failure if the font object can't 
+	be created during fixture's setup.
 	* TestStringFormat.cs: Increased coverage of the unit tests.
 
 2006-09-18  Sebastien Pouliot  <sebastien@ximian.com>

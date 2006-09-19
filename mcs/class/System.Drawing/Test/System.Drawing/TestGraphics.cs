@@ -46,13 +46,18 @@ namespace MonoTests.System.Drawing
 		[TestFixtureSetUp]
 		public void FixtureSetUp ()
 		{
-			font = new Font ("Arial", 12);
+			try {
+				font = new Font ("Arial", 12);
+			}
+			catch {
+			}
 		}
 
 		[TestFixtureTearDown]
 		public void FixtureTearDown ()
 		{
-			font.Dispose ();
+			if (font != null)
+				font.Dispose ();
 		}
 		
 
