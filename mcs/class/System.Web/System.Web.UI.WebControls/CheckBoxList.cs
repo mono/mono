@@ -238,6 +238,10 @@ namespace System.Web.UI.WebControls {
 #endif
 		void RaisePostDataChangedEvent ()
 		{
+#if NET_2_0
+			if (CausesValidation)
+				Page.Validate (ValidationGroup);
+#endif
 			OnSelectedIndexChanged (EventArgs.Empty);
 		}
 
@@ -340,6 +344,10 @@ namespace System.Web.UI.WebControls {
 			check_box.Checked = item.Selected;
 			check_box.TextAlign = TextAlign;
 			check_box.Enabled = Enabled;
+#if NET_2_0
+			check_box.ValidationGroup = ValidationGroup;
+			check_box.CausesValidation = CausesValidation;
+#endif
 			check_box.RenderControl (writer);
 		}
 
