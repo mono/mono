@@ -2063,17 +2063,6 @@ namespace Mono.CSharp {
 			return GetNumberOfTypeArguments (t) > 0;
 		}
 
-		public static int GetNumberOfTypeArguments (Type t)
-		{
-			if (t.IsGenericParameter)
-				return 0;
-			DeclSpace tc = LookupDeclSpace (t);
-			if (tc != null)
-				return tc.IsGeneric ? tc.CountTypeParameters : 0;
-			else
-				return t.IsGenericType ? t.GetGenericArguments ().Length : 0;
-		}
-
 		public static Type[] GetTypeArguments (Type t)
 		{
 			DeclSpace tc = LookupDeclSpace (t);
@@ -2313,24 +2302,6 @@ namespace Mono.CSharp {
 			}
 
 			return true;
-		}
-
-		/// <summary>
-		///   Check whether `type' and `parent' are both instantiations of the same
-		///   generic type.  Note that we do not check the type parameters here.
-		/// </summary>
-		public static bool IsInstantiationOfSameGenericType (Type type, Type parent)
-		{
-			int tcount = GetNumberOfTypeArguments (type);
-			int pcount = GetNumberOfTypeArguments (parent);
-
-			if (tcount != pcount)
-				return false;
-
-			type = DropGenericTypeArguments (type);
-			parent = DropGenericTypeArguments (parent);
-
-			return type.Equals (parent);
 		}
 
 		/// <summary>

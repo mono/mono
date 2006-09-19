@@ -1,3 +1,7 @@
+2006-09-19  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs: Merged with the gmcs version.
+
 2006-09-16  Raja R Harinath  <rharinath@novell.com>
 
 	* AssemblyInfo.cs [GMCS_SOURCE]: Unify with gmcs source.
