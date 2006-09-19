@@ -1,3 +1,9 @@
+
+Tue Sep 19 18:57:38 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mono-config.c: make the os/cpu specification more flexible,
+	allowing lists and negation.
+
 2006-09-18  Jonathan Chambers  <joncham@gmail.com>
 
 	* marshal.c: COM Interop fixes. Handle case where method->klass.
