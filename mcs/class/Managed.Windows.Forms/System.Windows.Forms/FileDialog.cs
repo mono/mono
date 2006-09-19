@@ -4241,7 +4241,7 @@ namespace System.Windows.Forms {
 
 					if (!IsUnix ())
 						File.SetAttributes (full_file_name, FileAttributes.Hidden);
-				} catch (Exception e){
+				} catch (Exception){
 				}
 			}
 			

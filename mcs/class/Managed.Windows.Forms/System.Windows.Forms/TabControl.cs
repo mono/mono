@@ -228,7 +228,6 @@ namespace System.Windows.Forms {
         				int le = TabPages [value].TabBounds.Right;
                                 	int re = ThemeEngine.Current.GetTabControlLeftScrollRect (this).Left;
 					if (show_slider && le > re) {
-						int diff = le - re;
 						int i = 0;
 
 						for (i = value; i < TabPages.Count; i++) {

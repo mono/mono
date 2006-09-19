@@ -695,14 +695,12 @@ namespace System.Windows.Forms {
 			int[]			atoms;
 			int			atom_count;
 			Rectangle		client_rect;
-			bool			transient;
 
 			// Child windows don't need WM window styles
 			if ((cp.Style & (int)WindowStyles.WS_CHILDWINDOW) != 0) {
 				return;
 			}
 
-			transient = false;
 			atoms = new int[8];
 			mwmHints = new MotifWmHints();
 			functions = 0;
@@ -787,10 +785,8 @@ namespace System.Windows.Forms {
 					atoms[0] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_NORMAL].ToInt32();
 					XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_WINDOW_TYPE], (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
 
-					transient = true;
 					XSetTransientForHint(DisplayHandle, hwnd.whole_window, hwnd.parent.whole_window);
 				} else if ((cp.ExStyle & (int)WindowExStyles.WS_EX_APPWINDOW) == 0) {
-//					transient = true;
 //					XSetTransientForHint(DisplayHandle, hwnd.whole_window, FosterParent);
 				}
 				if ((client_rect.Width < 1) || (client_rect.Height < 1)) {
