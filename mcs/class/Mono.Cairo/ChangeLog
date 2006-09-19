@@ -1,3 +1,8 @@
+2006-09-19 Jordi Mas <jordimash@gmail.com>
+
+	* Surface.cs, Cairo.cs: the parameters for Show are X,Y not witdh 
+	and height and also double not int.
+
 2006-07-21  Alp Toker  <alp@atoker.com>
 
 	* Mono.Cairo.dll.sources:

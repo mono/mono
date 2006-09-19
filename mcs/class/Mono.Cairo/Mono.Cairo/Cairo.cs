@@ -569,7 +569,7 @@ namespace Cairo
 		internal static extern void cairo_set_source_rgba (IntPtr cr, double red, double green, double blue, double alpha);
 		
 		[DllImport (cairo)]
-		internal static extern void cairo_set_source_surface (IntPtr cr, IntPtr surface, double width, double height);
+		internal static extern void cairo_set_source_surface (IntPtr cr, IntPtr surface, double x, double y);
 		
 		[DllImport (cairo)]
 		internal static extern void cairo_set_tolerance (IntPtr cr, double tolerance);

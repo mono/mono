@@ -102,9 +102,9 @@ namespace Cairo {
 			Dispose (false);
 		}
 
-		public void Show (Context gr, int width, int height) 
+		public void Show (Context gr, double x, double y) 
 		{
-			CairoAPI.cairo_set_source_surface (gr.Handle, surface, width, height);
+			CairoAPI.cairo_set_source_surface (gr.Handle, surface, x, y);
 			CairoAPI.cairo_paint (gr.Handle);
 		}
 
