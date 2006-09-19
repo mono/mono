@@ -3648,10 +3648,10 @@ namespace Mono.CSharp {
 
 			InstanceExpression.CheckMarshalByRefAccess ();
 
-			if (must_do_cs1540_check && InstanceExpression != EmptyExpression.Null &&
-			    InstanceExpression.Type != ec.ContainerType &&
-			    ec.ContainerType.IsSubclassOf (PropertyInfo.DeclaringType) &&
-			    !InstanceExpression.Type.IsSubclassOf (ec.ContainerType)) {
+			if (must_do_cs1540_check && (InstanceExpression != EmptyExpression.Null) &&
+			    !TypeManager.IsInstantiationOfSameGenericType (InstanceExpression.Type, ec.ContainerType) &&
+			    TypeManager.IsFamilyAccessible (ec.ContainerType, PropertyInfo.DeclaringType) &&
+			    !TypeManager.IsFamilyAccessible (InstanceExpression.Type, ec.ContainerType)) {
 				Error_CannotAccessProtected (loc, PropertyInfo, InstanceExpression.Type, ec.ContainerType);
 				return false;
 			}
