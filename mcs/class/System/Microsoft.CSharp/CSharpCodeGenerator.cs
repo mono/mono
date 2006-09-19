@@ -364,7 +364,6 @@ namespace Mono.CSharp
 					output.WriteLine (t);
 				}
 			}
-			output.WriteLine ();
 		}
 
 		protected override void GenerateMethodReturnStatement (CodeMethodReturnStatement statement)
