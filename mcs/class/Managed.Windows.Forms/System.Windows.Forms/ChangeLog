@@ -1,5 +1,15 @@
 2006-09-19  Chris Toshok  <toshok@ximian.com>
 
+	* XplatUIX11.cs: a couple of blanket code massage passes to clean
+	things up a bit.  First, get rid of the NetAtoms array (and the NA
+	enum), and just embed the atoms as static fields.  Also, add a
+	couple of functions (StyleSet and ExStyleSet) to clean up all the
+	bitmask testing of styles.
+
+	* X11Structs.cs: remove the NA enum, not needed anymore.
+	
+2006-09-19  Chris Toshok  <toshok@ximian.com>
+
 	* XplatUIX11.cs: apply Alexander's tool window fix for bug #79245
 	(mapping them to _NET_WM_WINDOW_TYPE_UTILITY).  and add a little
 	added cleanup to get MessageBox titles appearing again, which were

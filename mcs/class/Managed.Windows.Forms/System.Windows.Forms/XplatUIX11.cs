@@ -126,8 +126,73 @@ namespace System.Windows.Forms {
 		// Caret
 		private static CaretStruct	Caret;			//
 
-		// Support for Window Styles
-		private static IntPtr[]		NetAtoms;		// All atoms we know
+		// Our atoms
+		private static IntPtr WM_PROTOCOLS;
+		private static IntPtr WM_DELETE_WINDOW;
+		private static IntPtr WM_TAKE_FOCUS;
+		private static IntPtr _NET_SUPPORTED;
+		private static IntPtr _NET_CLIENT_LIST;
+		private static IntPtr _NET_NUMBER_OF_DESKTOPS;
+		private static IntPtr _NET_DESKTOP_GEOMETRY;
+		private static IntPtr _NET_DESKTOP_VIEWPORT;
+		private static IntPtr _NET_CURRENT_DESKTOP;
+		private static IntPtr _NET_DESKTOP_NAMES;
+		private static IntPtr _NET_ACTIVE_WINDOW;
+		private static IntPtr _NET_WORKAREA;
+		private static IntPtr _NET_SUPPORTING_WM_CHECK;
+		private static IntPtr _NET_VIRTUAL_ROOTS;
+		private static IntPtr _NET_DESKTOP_LAYOUT;
+		private static IntPtr _NET_SHOWING_DESKTOP;
+		private static IntPtr _NET_CLOSE_WINDOW;
+		private static IntPtr _NET_MOVERESIZE_WINDOW;
+		private static IntPtr _NET_WM_MOVERESIZE;
+		private static IntPtr _NET_RESTACK_WINDOW;
+		private static IntPtr _NET_REQUEST_FRAME_EXTENTS;
+		private static IntPtr _NET_WM_NAME;
+		private static IntPtr _NET_WM_VISIBLE_NAME;
+		private static IntPtr _NET_WM_ICON_NAME;
+		private static IntPtr _NET_WM_VISIBLE_ICON_NAME;
+		private static IntPtr _NET_WM_DESKTOP;
+		private static IntPtr _NET_WM_WINDOW_TYPE;
+		private static IntPtr _NET_WM_STATE;
+		private static IntPtr _NET_WM_ALLOWED_ACTIONS;
+		private static IntPtr _NET_WM_STRUT;
+		private static IntPtr _NET_WM_STRUT_PARTIAL;
+		private static IntPtr _NET_WM_ICON_GEOMETRY;
+		private static IntPtr _NET_WM_ICON;
+		private static IntPtr _NET_WM_PID;
+		private static IntPtr _NET_WM_HANDLED_ICONS;
+		private static IntPtr _NET_WM_USER_TIME;
+		private static IntPtr _NET_FRAME_EXTENTS;
+		private static IntPtr _NET_WM_PING;
+		private static IntPtr _NET_WM_SYNC_REQUEST;
+		private static IntPtr _NET_SYSTEM_TRAY_S;
+		private static IntPtr _NET_SYSTEM_TRAY_ORIENTATION;
+		private static IntPtr _NET_SYSTEM_TRAY_OPCODE;
+		private static IntPtr _NET_WM_STATE_MAXIMIZED_HORZ;
+		private static IntPtr _NET_WM_STATE_MAXIMIZED_VERT;
+		private static IntPtr _XEMBED;
+		private static IntPtr _XEMBED_INFO;
+		private static IntPtr _MOTIF_WM_HINTS;
+		private static IntPtr _NET_WM_STATE_NO_TASKBAR;
+		private static IntPtr _NET_WM_STATE_ABOVE;
+		private static IntPtr _NET_WM_STATE_MODAL;
+		private static IntPtr _NET_WM_STATE_HIDDEN;
+		private static IntPtr _NET_WM_CONTEXT_HELP;
+		private static IntPtr _NET_WM_WINDOW_OPACITY;
+		private static IntPtr _NET_WM_WINDOW_TYPE_DESKTOP;
+		private static IntPtr _NET_WM_WINDOW_TYPE_DOCK;
+		private static IntPtr _NET_WM_WINDOW_TYPE_TOOLBAR;
+		private static IntPtr _NET_WM_WINDOW_TYPE_MENU;
+		private static IntPtr _NET_WM_WINDOW_TYPE_UTILITY;
+		private static IntPtr _NET_WM_WINDOW_TYPE_SPLASH;
+		private static IntPtr _NET_WM_WINDOW_TYPE_DIALOG;
+		private static IntPtr _NET_WM_WINDOW_TYPE_NORMAL;
+		private static IntPtr CLIPBOARD;
+		private static IntPtr DIB;
+		private static IntPtr OEMTEXT;
+		private static IntPtr UNICODETEXT;
+		private static IntPtr TARGETS;
 
 		// mouse hover message generation
 		private static HoverStruct	HoverState;		//
@@ -487,86 +552,84 @@ namespace System.Windows.Forms {
 		}
 
 		private static void SetupAtoms() {
-			NetAtoms = new IntPtr[(int)NA.LAST_NET_ATOM];
+			WM_PROTOCOLS = XInternAtom(DisplayHandle, "WM_PROTOCOLS", false);
+			WM_DELETE_WINDOW = XInternAtom(DisplayHandle, "WM_DELETE_WINDOW", false);
+			WM_TAKE_FOCUS = XInternAtom(DisplayHandle, "WM_TAKE_FOCUS", false);
 
-			NetAtoms[(int)NA.WM_PROTOCOLS] = XInternAtom(DisplayHandle, "WM_PROTOCOLS", false);
-			NetAtoms[(int)NA.WM_DELETE_WINDOW] = XInternAtom(DisplayHandle, "WM_DELETE_WINDOW", false);
-			NetAtoms[(int)NA.WM_TAKE_FOCUS] = XInternAtom(DisplayHandle, "WM_TAKE_FOCUS", false);
+			_NET_SUPPORTED = XInternAtom(DisplayHandle, "_NET_SUPPORTED", false);
+			_NET_CLIENT_LIST = XInternAtom(DisplayHandle, "_NET_CLIENT_LIST", false);
+			_NET_NUMBER_OF_DESKTOPS = XInternAtom(DisplayHandle, "_NET_NUMBER_OF_DESKTOPS", false);
+			_NET_DESKTOP_GEOMETRY = XInternAtom(DisplayHandle, "_NET_DESKTOP_GEOMETRY", false);
+			_NET_DESKTOP_VIEWPORT = XInternAtom(DisplayHandle, "_NET_DESKTOP_VIEWPORT", false);
+			_NET_CURRENT_DESKTOP = XInternAtom(DisplayHandle, "_NET_CURRENT_DESKTOP", false);
+			_NET_DESKTOP_NAMES = XInternAtom(DisplayHandle, "_NET_DESKTOP_NAMES", false);
+			_NET_ACTIVE_WINDOW = XInternAtom(DisplayHandle, "_NET_ACTIVE_WINDOW", false);
+			_NET_WORKAREA = XInternAtom(DisplayHandle, "_NET_WORKAREA", false);
+			_NET_SUPPORTING_WM_CHECK = XInternAtom(DisplayHandle, "_NET_SUPPORTING_WM_CHECK", false);
+			_NET_VIRTUAL_ROOTS = XInternAtom(DisplayHandle, "_NET_VIRTUAL_ROOTS", false);
+			_NET_DESKTOP_LAYOUT = XInternAtom(DisplayHandle, "_NET_DESKTOP_LAYOUT", false);
+			_NET_SHOWING_DESKTOP = XInternAtom(DisplayHandle, "_NET_SHOWING_DESKTOP", false);
 
-			NetAtoms[(int)NA._NET_SUPPORTED] = XInternAtom(DisplayHandle, "_NET_SUPPORTED", false);
-			NetAtoms[(int)NA._NET_CLIENT_LIST] = XInternAtom(DisplayHandle, "_NET_CLIENT_LIST", false);
-			NetAtoms[(int)NA._NET_NUMBER_OF_DESKTOPS] = XInternAtom(DisplayHandle, "_NET_NUMBER_OF_DESKTOPS", false);
-			NetAtoms[(int)NA._NET_DESKTOP_GEOMETRY] = XInternAtom(DisplayHandle, "_NET_DESKTOP_GEOMETRY", false);
-			NetAtoms[(int)NA._NET_DESKTOP_VIEWPORT] = XInternAtom(DisplayHandle, "_NET_DESKTOP_VIEWPORT", false);
-			NetAtoms[(int)NA._NET_CURRENT_DESKTOP] = XInternAtom(DisplayHandle, "_NET_CURRENT_DESKTOP", false);
-			NetAtoms[(int)NA._NET_DESKTOP_NAMES] = XInternAtom(DisplayHandle, "_NET_DESKTOP_NAMES", false);
-			NetAtoms[(int)NA._NET_ACTIVE_WINDOW] = XInternAtom(DisplayHandle, "_NET_ACTIVE_WINDOW", false);
-			NetAtoms[(int)NA._NET_WORKAREA] = XInternAtom(DisplayHandle, "_NET_WORKAREA", false);
-			NetAtoms[(int)NA._NET_SUPPORTING_WM_CHECK] = XInternAtom(DisplayHandle, "_NET_SUPPORTING_WM_CHECK", false);
-			NetAtoms[(int)NA._NET_VIRTUAL_ROOTS] = XInternAtom(DisplayHandle, "_NET_VIRTUAL_ROOTS", false);
-			NetAtoms[(int)NA._NET_DESKTOP_LAYOUT] = XInternAtom(DisplayHandle, "_NET_DESKTOP_LAYOUT", false);
-			NetAtoms[(int)NA._NET_SHOWING_DESKTOP] = XInternAtom(DisplayHandle, "_NET_SHOWING_DESKTOP", false);
+			_NET_CLOSE_WINDOW = XInternAtom(DisplayHandle, "_NET_CLOSE_WINDOW", false);
+			_NET_MOVERESIZE_WINDOW = XInternAtom(DisplayHandle, "_NET_MOVERESIZE_WINDOW", false);
+			_NET_WM_MOVERESIZE = XInternAtom(DisplayHandle, "_NET_WM_MOVERESIZE", false);
+			_NET_RESTACK_WINDOW = XInternAtom(DisplayHandle, "_NET_RESTACK_WINDOW", false);
+			_NET_REQUEST_FRAME_EXTENTS = XInternAtom(DisplayHandle, "_NET_REQUEST_FRAME_EXTENTS", false);
 
-			NetAtoms[(int)NA._NET_CLOSE_WINDOW] = XInternAtom(DisplayHandle, "_NET_CLOSE_WINDOW", false);
-			NetAtoms[(int)NA._NET_MOVERESIZE_WINDOW] = XInternAtom(DisplayHandle, "_NET_MOVERESIZE_WINDOW", false);
-			NetAtoms[(int)NA._NET_WM_MOVERESIZE] = XInternAtom(DisplayHandle, "_NET_WM_MOVERESIZE", false);
-			NetAtoms[(int)NA._NET_RESTACK_WINDOW] = XInternAtom(DisplayHandle, "_NET_RESTACK_WINDOW", false);
-			NetAtoms[(int)NA._NET_REQUEST_FRAME_EXTENTS] = XInternAtom(DisplayHandle, "_NET_REQUEST_FRAME_EXTENTS", false);
+			_NET_WM_NAME = XInternAtom(DisplayHandle, "_NET_WM_NAME", false);
+			_NET_WM_VISIBLE_NAME = XInternAtom(DisplayHandle, "_NET_WM_VISIBLE_NAME", false);
+			_NET_WM_ICON_NAME = XInternAtom(DisplayHandle, "_NET_WM_ICON_NAME", false);
+			_NET_WM_VISIBLE_ICON_NAME = XInternAtom(DisplayHandle, "_NET_WM_VISIBLE_ICON_NAME", false);
+			_NET_WM_DESKTOP = XInternAtom(DisplayHandle, "_NET_WM_DESKTOP", false);
+			_NET_WM_WINDOW_TYPE = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE", false);
+			_NET_WM_STATE = XInternAtom(DisplayHandle, "_NET_WM_STATE", false);
+			_NET_WM_ALLOWED_ACTIONS = XInternAtom(DisplayHandle, "_NET_WM_ALLOWED_ACTIONS", false);
+			_NET_WM_STRUT = XInternAtom(DisplayHandle, "_NET_WM_STRUT", false);
+			_NET_WM_STRUT_PARTIAL = XInternAtom(DisplayHandle, "_NET_WM_STRUT_PARTIAL", false);
+			_NET_WM_ICON_GEOMETRY = XInternAtom(DisplayHandle, "_NET_WM_ICON_GEOMETRY", false);
+			_NET_WM_ICON = XInternAtom(DisplayHandle, "_NET_WM_ICON", false);
+			_NET_WM_PID = XInternAtom(DisplayHandle, "_NET_WM_PID", false);
+			_NET_WM_HANDLED_ICONS = XInternAtom(DisplayHandle, "_NET_WM_HANDLED_ICONS", false);
+			_NET_WM_USER_TIME = XInternAtom(DisplayHandle, "_NET_WM_USER_TIME", false);
+			_NET_FRAME_EXTENTS = XInternAtom(DisplayHandle, "_NET_FRAME_EXTENTS", false);
 
-			NetAtoms[(int)NA._NET_WM_NAME] = XInternAtom(DisplayHandle, "_NET_WM_NAME", false);
-			NetAtoms[(int)NA._NET_WM_VISIBLE_NAME] = XInternAtom(DisplayHandle, "_NET_WM_VISIBLE_NAME", false);
-			NetAtoms[(int)NA._NET_WM_ICON_NAME] = XInternAtom(DisplayHandle, "_NET_WM_ICON_NAME", false);
-			NetAtoms[(int)NA._NET_WM_VISIBLE_ICON_NAME] = XInternAtom(DisplayHandle, "_NET_WM_VISIBLE_ICON_NAME", false);
-			NetAtoms[(int)NA._NET_WM_DESKTOP] = XInternAtom(DisplayHandle, "_NET_WM_DESKTOP", false);
-			NetAtoms[(int)NA._NET_WM_WINDOW_TYPE] = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE", false);
-			NetAtoms[(int)NA._NET_WM_STATE] = XInternAtom(DisplayHandle, "_NET_WM_STATE", false);
-			NetAtoms[(int)NA._NET_WM_ALLOWED_ACTIONS] = XInternAtom(DisplayHandle, "_NET_WM_ALLOWED_ACTIONS", false);
-			NetAtoms[(int)NA._NET_WM_STRUT] = XInternAtom(DisplayHandle, "_NET_WM_STRUT", false);
-			NetAtoms[(int)NA._NET_WM_STRUT_PARTIAL] = XInternAtom(DisplayHandle, "_NET_WM_STRUT_PARTIAL", false);
-			NetAtoms[(int)NA._NET_WM_ICON_GEOMETRY] = XInternAtom(DisplayHandle, "_NET_WM_ICON_GEOMETRY", false);
-			NetAtoms[(int)NA._NET_WM_ICON] = XInternAtom(DisplayHandle, "_NET_WM_ICON", false);
-			NetAtoms[(int)NA._NET_WM_PID] = XInternAtom(DisplayHandle, "_NET_WM_PID", false);
-			NetAtoms[(int)NA._NET_WM_HANDLED_ICONS] = XInternAtom(DisplayHandle, "_NET_WM_HANDLED_ICONS", false);
-			NetAtoms[(int)NA._NET_WM_USER_TIME] = XInternAtom(DisplayHandle, "_NET_WM_USER_TIME", false);
-			NetAtoms[(int)NA._NET_FRAME_EXTENTS] = XInternAtom(DisplayHandle, "_NET_FRAME_EXTENTS", false);
+			_NET_WM_PING = XInternAtom(DisplayHandle, "_NET_WM_PING", false);
+			_NET_WM_SYNC_REQUEST = XInternAtom(DisplayHandle, "_NET_WM_SYNC_REQUEST", false);
 
-			NetAtoms[(int)NA._NET_WM_PING] = XInternAtom(DisplayHandle, "_NET_WM_PING", false);
-			NetAtoms[(int)NA._NET_WM_SYNC_REQUEST] = XInternAtom(DisplayHandle, "_NET_WM_SYNC_REQUEST", false);
+			_NET_SYSTEM_TRAY_S = XInternAtom(DisplayHandle, "_NET_SYSTEM_TRAY_S" + ScreenNo.ToString(), false);
+			_NET_SYSTEM_TRAY_OPCODE = XInternAtom(DisplayHandle, "_NET_SYSTEM_TRAY_OPCODE", false);
+			_NET_SYSTEM_TRAY_ORIENTATION = XInternAtom(DisplayHandle, "_NET_SYSTEM_TRAY_ORIENTATION", false);
 
-			NetAtoms[(int)NA._NET_SYSTEM_TRAY_S] = XInternAtom(DisplayHandle, "_NET_SYSTEM_TRAY_S" + ScreenNo.ToString(), false);
-			NetAtoms[(int)NA._NET_SYSTEM_TRAY_OPCODE] = XInternAtom(DisplayHandle, "_NET_SYSTEM_TRAY_OPCODE", false);
-			NetAtoms[(int)NA._NET_SYSTEM_TRAY_ORIENTATION] = XInternAtom(DisplayHandle, "_NET_SYSTEM_TRAY_ORIENTATION", false);
+			_NET_WM_STATE_MAXIMIZED_HORZ = XInternAtom(DisplayHandle, "_NET_WM_STATE_MAXIMIZED_HORZ", false);
+			_NET_WM_STATE_MAXIMIZED_VERT = XInternAtom(DisplayHandle, "_NET_WM_STATE_MAXIMIZED_VERT", false);
+			_NET_WM_STATE_HIDDEN = XInternAtom(DisplayHandle, "_NET_WM_STATE_HIDDEN", false);
 
-			NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_HORZ] = XInternAtom(DisplayHandle, "_NET_WM_STATE_MAXIMIZED_HORZ", false);
-			NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_VERT] = XInternAtom(DisplayHandle, "_NET_WM_STATE_MAXIMIZED_VERT", false);
-			NetAtoms[(int)NA._NET_WM_STATE_HIDDEN] = XInternAtom(DisplayHandle, "_NET_WM_STATE_HIDDEN", false);
+			_XEMBED = XInternAtom(DisplayHandle, "_XEMBED", false);
+			_XEMBED_INFO = XInternAtom(DisplayHandle, "_XEMBED_INFO", false);
 
-			NetAtoms[(int)NA._XEMBED] = XInternAtom(DisplayHandle, "_XEMBED", false);
-			NetAtoms[(int)NA._XEMBED_INFO] = XInternAtom(DisplayHandle, "_XEMBED_INFO", false);
+			_MOTIF_WM_HINTS = XInternAtom(DisplayHandle, "_MOTIF_WM_HINTS", false);
 
-			NetAtoms[(int)NA._MOTIF_WM_HINTS] = XInternAtom(DisplayHandle, "_MOTIF_WM_HINTS", false);
+			_NET_WM_STATE_NO_TASKBAR = XInternAtom(DisplayHandle, "_NET_WM_STATE_NO_TASKBAR", false);
+			_NET_WM_STATE_ABOVE = XInternAtom(DisplayHandle, "_NET_WM_STATE_ABOVE", false);
+			_NET_WM_STATE_MODAL = XInternAtom(DisplayHandle, "_NET_WM_STATE_MODAL", false);
+			_NET_WM_CONTEXT_HELP = XInternAtom(DisplayHandle, "_NET_WM_CONTEXT_HELP", false);
+			_NET_WM_WINDOW_OPACITY = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_OPACITY", false);
 
-			NetAtoms[(int)NA._NET_WM_STATE_NO_TASKBAR] = XInternAtom(DisplayHandle, "_NET_WM_STATE_NO_TASKBAR", false);
-			NetAtoms[(int)NA._NET_WM_STATE_ABOVE] = XInternAtom(DisplayHandle, "_NET_WM_STATE_ABOVE", false);
-			NetAtoms[(int)NA._NET_WM_STATE_MODAL] = XInternAtom(DisplayHandle, "_NET_WM_STATE_MODAL", false);
-			NetAtoms[(int)NA._NET_WM_CONTEXT_HELP] = XInternAtom(DisplayHandle, "_NET_WM_CONTEXT_HELP", false);
-			NetAtoms[(int)NA._NET_WM_WINDOW_OPACITY] = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_OPACITY", false);
-
-			NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_DESKTOP] = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_DESKTOP", false);
-			NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_DOCK] = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_DOCK", false);
-			NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_TOOLBAR] = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_TOOLBAR", false);
-			NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_MENU] = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_MENU", false);
-			NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_UTILITY] = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_UTILITY", false);
-			NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_DIALOG] = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_DIALOG", false);
-			NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_SPLASH] = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_SPLASH", false);
-			NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_NORMAL] = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_NORMAL", false);
+			_NET_WM_WINDOW_TYPE_DESKTOP = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_DESKTOP", false);
+			_NET_WM_WINDOW_TYPE_DOCK = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_DOCK", false);
+			_NET_WM_WINDOW_TYPE_TOOLBAR = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_TOOLBAR", false);
+			_NET_WM_WINDOW_TYPE_MENU = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_MENU", false);
+			_NET_WM_WINDOW_TYPE_UTILITY = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_UTILITY", false);
+			_NET_WM_WINDOW_TYPE_DIALOG = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_DIALOG", false);
+			_NET_WM_WINDOW_TYPE_SPLASH = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_SPLASH", false);
+			_NET_WM_WINDOW_TYPE_NORMAL = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_NORMAL", false);
 
 			// Clipboard support
-			NetAtoms[(int)NA.CLIPBOARD] = XInternAtom (DisplayHandle, "CLIPBOARD", false);
-			NetAtoms[(int)NA.DIB] = (IntPtr)Atom.XA_PIXMAP;
-			NetAtoms[(int)NA.OEMTEXT] = XInternAtom(DisplayHandle, "COMPOUND_TEXT", false);
-			NetAtoms[(int)NA.UNICODETEXT] = XInternAtom(DisplayHandle, "UTF8_STRING", false);
-			NetAtoms[(int)NA.TARGETS] = XInternAtom(DisplayHandle, "TARGETS", false);
+			CLIPBOARD = XInternAtom (DisplayHandle, "CLIPBOARD", false);
+			DIB = (IntPtr)Atom.XA_PIXMAP;
+			OEMTEXT = XInternAtom(DisplayHandle, "COMPOUND_TEXT", false);
+			UNICODETEXT = XInternAtom(DisplayHandle, "UTF8_STRING", false);
+			TARGETS = XInternAtom(DisplayHandle, "TARGETS", false);
 
 			// Special Atoms
 			AsyncAtom = XInternAtom(DisplayHandle, "_SWF_AsyncAtom", false);
@@ -576,7 +639,7 @@ namespace System.Windows.Forms {
 
 		private void GetSystrayManagerWindow() {
 			XGrabServer(DisplayHandle);
-			SystrayMgrWindow = XGetSelectionOwner(DisplayHandle, NetAtoms[(int)NA._NET_SYSTEM_TRAY_S]);
+			SystrayMgrWindow = XGetSelectionOwner(DisplayHandle, _NET_SYSTEM_TRAY_S);
 			XUngrabServer(DisplayHandle);
 			XFlush(DisplayHandle);
 		}
@@ -611,35 +674,45 @@ namespace System.Windows.Forms {
 			XSendEvent(DisplayHandle, window, false, new IntPtr ((int)EventMask.NoEventMask), ref xev);
 		}
 
+		bool StyleSet (int s, WindowStyles ws)
+		{
+			return (s & (int)ws) != 0;
+		}
+
+		bool ExStyleSet (int ex, WindowExStyles exws)
+		{
+			return (ex & (int)exws) != 0;
+		}
+
 		private void DeriveStyles(int Style, int ExStyle, out FormBorderStyle border_style, out TitleStyle title_style, out int caption_height, out int tool_caption_height) {
 
 			// Only MDI windows get caption_heights
 			caption_height = 0;
 			tool_caption_height = 19;
 
-			if ((Style & (int) WindowStyles.WS_CHILD) != 0) {
-				if ((ExStyle & (int) WindowExStyles.WS_EX_CLIENTEDGE) != 0) {
+			if (StyleSet (Style, WindowStyles.WS_CHILD)) {
+				if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_CLIENTEDGE)) {
 					border_style = FormBorderStyle.Fixed3D;
-				} else if ((Style & (int) WindowStyles.WS_BORDER) == 0) {
+				} else if (!StyleSet (Style, WindowStyles.WS_BORDER)) {
 					border_style = FormBorderStyle.None;
 				} else {
 					border_style = FormBorderStyle.FixedSingle;
 				}
 				title_style = TitleStyle.None;
 
-				if ((ExStyle & (int) WindowExStyles.WS_EX_MDICHILD) != 0) {
+				if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_MDICHILD)) {
 					caption_height = 26;
 
-					if ((Style & (int)WindowStyles.WS_CAPTION) != 0) {
-						if ((ExStyle & (int)WindowExStyles.WS_EX_TOOLWINDOW) != 0) {
+					if (StyleSet (Style, WindowStyles.WS_CAPTION)) {
+						if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
 							title_style = TitleStyle.Tool;
 						} else {
 							title_style = TitleStyle.Normal;
 						}
 					}
 
-					if ((Style & (int) WindowStyles.WS_OVERLAPPEDWINDOW) != 0 ||
-							(ExStyle & (int) WindowExStyles.WS_EX_TOOLWINDOW) != 0) {
+					if (StyleSet (Style, WindowStyles.WS_OVERLAPPEDWINDOW) ||
+					    ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
 						border_style = (FormBorderStyle) 0xFFFF;
 					} else {
 						border_style = FormBorderStyle.None;
@@ -648,8 +721,8 @@ namespace System.Windows.Forms {
 
 			} else {
 				title_style = TitleStyle.None;
-				if ((Style & (int)WindowStyles.WS_CAPTION) != 0) {
-					if ((ExStyle & (int)WindowExStyles.WS_EX_TOOLWINDOW) != 0) {
+				if (StyleSet (Style, WindowStyles.WS_CAPTION)) {
+					if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
 						title_style = TitleStyle.Tool;
 					} else {
 						title_style = TitleStyle.Normal;
@@ -658,25 +731,25 @@ namespace System.Windows.Forms {
 
 				border_style = FormBorderStyle.None;
 
-				if ((Style & (int)WindowStyles.WS_THICKFRAME) != 0) {
-					if ((ExStyle & (int)WindowExStyles.WS_EX_TOOLWINDOW) != 0) {
+				if (StyleSet (Style, WindowStyles.WS_THICKFRAME)) {
+					if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
 						border_style = FormBorderStyle.SizableToolWindow;
 					} else {
 						border_style = FormBorderStyle.Sizable;
 					}
 				} else {
-					if ((Style & (int)WindowStyles.WS_CAPTION) != 0) {
-						if ((ExStyle & (int)WindowExStyles.WS_EX_CLIENTEDGE) != 0) {
+					if (StyleSet (Style, WindowStyles.WS_CAPTION)) {
+						if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_CLIENTEDGE)) {
 							border_style = FormBorderStyle.Fixed3D;
-						} else if ((ExStyle & (int)WindowExStyles.WS_EX_DLGMODALFRAME) != 0) {
+						} else if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_DLGMODALFRAME)) {
 							border_style = FormBorderStyle.FixedDialog;
-						} else if ((ExStyle & (int)WindowExStyles.WS_EX_TOOLWINDOW) != 0) {
+						} else if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
 							border_style = FormBorderStyle.FixedToolWindow;
-						} else if ((Style & (int)WindowStyles.WS_BORDER) != 0) {
+						} else if (StyleSet (Style, WindowStyles.WS_BORDER)) {
 							border_style = FormBorderStyle.FixedSingle;
 						}
 					} else {
-						if ((Style & (int)WindowStyles.WS_BORDER) != 0) {
+						if (StyleSet (Style, WindowStyles.WS_BORDER)) {
 							border_style = FormBorderStyle.FixedSingle;
 						}
 					}
@@ -697,7 +770,7 @@ namespace System.Windows.Forms {
 			Rectangle		client_rect;
 
 			// Child windows don't need WM window styles
-			if ((cp.Style & (int)WindowStyles.WS_CHILDWINDOW) != 0) {
+			if (StyleSet (cp.Style, WindowStyles.WS_CHILDWINDOW)) {
 				return;
 			}
 
@@ -710,38 +783,38 @@ namespace System.Windows.Forms {
 			mwmHints.functions = (IntPtr)0;
 			mwmHints.decorations = (IntPtr)0;
 
-			if ((cp.Style & (int)WindowStyles.WS_CAPTION) != 0) {
+			if (StyleSet (cp.Style, WindowStyles.WS_CAPTION)) {
 				functions |= MotifFunctions.Move;
 				decorations |= MotifDecorations.Title | MotifDecorations.Menu;
 			}
 
-			if ((cp.Style & ((int)WindowStyles.WS_THICKFRAME)) != 0) {
+			if (StyleSet (cp.Style, WindowStyles.WS_THICKFRAME)) {
 				functions |= MotifFunctions.Move | MotifFunctions.Resize;
 				decorations |= MotifDecorations.Border | MotifDecorations.ResizeH;
 			}
-			if ((cp.Style & ((int)WindowStyles.WS_MINIMIZEBOX)) != 0) {
+			if (StyleSet (cp.Style, WindowStyles.WS_MINIMIZEBOX)) {
 				functions |= MotifFunctions.Minimize;
 				decorations |= MotifDecorations.Minimize;
 			}
 
-			if ((cp.Style & ((int)WindowStyles.WS_MAXIMIZEBOX)) != 0) {
+			if (StyleSet (cp.Style, WindowStyles.WS_MAXIMIZEBOX)) {
 				functions |= MotifFunctions.Maximize;
 				decorations |= MotifDecorations.Maximize;
 			}
 
-			if ((cp.ExStyle & ((int)WindowExStyles.WS_EX_DLGMODALFRAME)) != 0) {
+			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_DLGMODALFRAME)) {
 				decorations |= MotifDecorations.Border;
 			}
 
-			if ((cp.Style & ((int)WindowStyles.WS_BORDER)) != 0) {
+			if (StyleSet (cp.Style, WindowStyles.WS_BORDER)) {
 				decorations |= MotifDecorations.Border;
 			}
 			
-			if ((cp.Style & ((int)WindowStyles.WS_DLGFRAME)) != 0) {
+			if (StyleSet (cp.Style, WindowStyles.WS_DLGFRAME)) {
 				decorations |= MotifDecorations.Border;
 			}
 			else {
-				if ((cp.Style & ((int)WindowStyles.WS_SYSMENU)) != 0) {
+				if (StyleSet (cp.Style, WindowStyles.WS_SYSMENU)) {
 					functions |= MotifFunctions.Close;
 				}
 				else {
@@ -754,13 +827,13 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			if ((cp.ExStyle & ((int)WindowExStyles.WS_EX_TOOLWINDOW)) != 0) {
+			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
 				functions = 0;
 				decorations = 0;
 			}
 
 
-			if ((cp.Style & (int)(WindowStyles.WS_CAPTION | WindowStyles.WS_BORDER | WindowStyles.WS_DLGFRAME)) == 0) {
+			if (!StyleSet (cp.Style, WindowStyles.WS_CAPTION | WindowStyles.WS_BORDER | WindowStyles.WS_DLGFRAME)) {
 				functions = 0;
 				decorations = 0;
 			}
@@ -779,19 +852,19 @@ namespace System.Windows.Forms {
 			lock (XlibLock) {
 				// needed! map toolwindows to _NET_WM_WINDOW_TYPE_UTILITY to make newer metacity versions happy
 				// and get those windows in front of their parents
-				if ((cp.ExStyle & (int)WindowExStyles.WS_EX_TOOLWINDOW) != 0) {
-					atoms [0] = NetAtoms [(int)NA._NET_WM_WINDOW_TYPE_UTILITY].ToInt32 ();
-					XChangeProperty (DisplayHandle, hwnd.whole_window,  NetAtoms [(int)NA._NET_WM_WINDOW_TYPE],
+				if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
+					atoms [0] = _NET_WM_WINDOW_TYPE_UTILITY.ToInt32 ();
+					XChangeProperty (DisplayHandle, hwnd.whole_window,  _NET_WM_WINDOW_TYPE,
 							 (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
 				}
 				
-				XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._MOTIF_WM_HINTS], NetAtoms[(int)NA._MOTIF_WM_HINTS], 32, PropertyMode.Replace, ref mwmHints, 5);
-				if (((cp.Style & (int)WindowStyles.WS_POPUP) != 0) && (hwnd.parent != null) && (hwnd.parent.whole_window != IntPtr.Zero)) {
-					atoms[0] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_NORMAL].ToInt32();
-					XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_WINDOW_TYPE], (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
+				XChangeProperty(DisplayHandle, hwnd.whole_window, _MOTIF_WM_HINTS, _MOTIF_WM_HINTS, 32, PropertyMode.Replace, ref mwmHints, 5);
+				if (StyleSet (cp.Style, WindowStyles.WS_POPUP) && (hwnd.parent != null) && (hwnd.parent.whole_window != IntPtr.Zero)) {
+					atoms[0] = _NET_WM_WINDOW_TYPE_NORMAL.ToInt32();
+					XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_WINDOW_TYPE, (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
 
 					XSetTransientForHint(DisplayHandle, hwnd.whole_window, hwnd.parent.whole_window);
-				} else if ((cp.ExStyle & (int)WindowExStyles.WS_EX_APPWINDOW) == 0) {
+				} else if (!ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_APPWINDOW)) {
 //					XSetTransientForHint(DisplayHandle, hwnd.whole_window, FosterParent);
 				}
 				if ((client_rect.Width < 1) || (client_rect.Height < 1)) {
@@ -802,16 +875,16 @@ namespace System.Windows.Forms {
 
 				atom_count = 0;
 
-				if ((cp.ExStyle & ((int)WindowExStyles.WS_EX_TOOLWINDOW)) != 0) {
-					atoms[atom_count++] = NetAtoms[(int)NA._NET_WM_STATE_NO_TASKBAR].ToInt32();
+				if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
+					atoms[atom_count++] = _NET_WM_STATE_NO_TASKBAR.ToInt32();
 				}
-				XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_STATE], (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, atom_count);
+				XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_STATE, (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, atom_count);
 
 				atom_count = 0;
 				IntPtr[] atom_ptrs = new IntPtr[2];
-				atom_ptrs[atom_count++] = NetAtoms[(int)NA.WM_DELETE_WINDOW];
-				if ((cp.ExStyle & (int)WindowExStyles.WS_EX_CONTEXTHELP) != 0) {
-					atom_ptrs[atom_count++] = NetAtoms[(int)NA._NET_WM_CONTEXT_HELP];
+				atom_ptrs[atom_count++] = WM_DELETE_WINDOW;
+				if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_CONTEXTHELP)) {
+					atom_ptrs[atom_count++] = _NET_WM_CONTEXT_HELP;
 				}
 
 				XSetWMProtocols(DisplayHandle, hwnd.whole_window, atom_ptrs, atom_count);
@@ -838,7 +911,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_ICON], (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, data, size);
+			XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_ICON, (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, data, size);
 		}
 
 		private IntPtr ImageToPixmap(Image image) {
@@ -879,9 +952,9 @@ namespace System.Windows.Forms {
 					// FIXME - convert bitmap to image
 				} else if (property == (IntPtr)Atom.XA_PIXMAP) {
 					// FIXME - convert pixmap to image
-				} else if (property == NetAtoms[(int)NA.OEMTEXT]) {
+				} else if (property == OEMTEXT) {
 					Clipboard.Item = Marshal.PtrToStringAnsi(prop);
-				} else if (property == NetAtoms[(int)NA.UNICODETEXT]) {
+				} else if (property == UNICODETEXT) {
 					Clipboard.Item = Marshal.PtrToStringAnsi(prop);
 				}
 
@@ -1007,7 +1080,7 @@ namespace System.Windows.Forms {
 			IntPtr			bytes_after;
 			IntPtr			prop = IntPtr.Zero;
 
-			XGetWindowProperty(DisplayHandle, window, NetAtoms[(int)NA._NET_FRAME_EXTENTS], IntPtr.Zero, new IntPtr (16), false, (IntPtr)Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+			XGetWindowProperty(DisplayHandle, window, _NET_FRAME_EXTENTS, IntPtr.Zero, new IntPtr (16), false, (IntPtr)Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 			if (((long)nitems == 4) && (prop != IntPtr.Zero)) {
 				left = Marshal.ReadIntPtr(prop, 0).ToInt32();
 				//right = Marshal.ReadIntPtr(prop, IntPtr.Size).ToInt32();
@@ -1258,7 +1331,7 @@ namespace System.Windows.Forms {
 						sel_event.SelectionEvent.property = IntPtr.Zero;
 
 						// Seems that some apps support asking for supported types
-						if (xevent.SelectionEvent.target == NetAtoms[(int)NA.TARGETS]) {
+						if (xevent.SelectionEvent.target == TARGETS) {
 							int[]	atoms;
 							int	atom_count;
 
@@ -1267,8 +1340,8 @@ namespace System.Windows.Forms {
 
 							if (Clipboard.Item is String) {
 								atoms[atom_count++] = (int)Atom.XA_STRING;
-								atoms[atom_count++] = (int)NetAtoms[(int)NA.OEMTEXT];
-								atoms[atom_count++] = (int)NetAtoms[(int)NA.UNICODETEXT];
+								atoms[atom_count++] = (int)OEMTEXT;
+								atoms[atom_count++] = (int)UNICODETEXT;
 							} else if (Clipboard.Item is Image) {
 								atoms[atom_count++] = (int)Atom.XA_PIXMAP;
 								atoms[atom_count++] = (int)Atom.XA_BITMAP;
@@ -1293,13 +1366,13 @@ namespace System.Windows.Forms {
 								for (int i = 0; i < buflen; i++) {
 									Marshal.WriteByte(buffer, i, bytes[i]);
 								}
-							} else if (xevent.SelectionRequestEvent.target == NetAtoms[(int)NA.OEMTEXT]) {
+							} else if (xevent.SelectionRequestEvent.target == OEMTEXT) {
 								// FIXME - this should encode into ISO2022
 								buffer = Marshal.StringToHGlobalAnsi((string)Clipboard.Item);
 								while (Marshal.ReadByte(buffer, buflen) != 0) {
 									buflen++;
 								}
-							} else if (xevent.SelectionRequestEvent.target == NetAtoms[(int)NA.UNICODETEXT]) {
+							} else if (xevent.SelectionRequestEvent.target == UNICODETEXT) {
 								buffer = Marshal.StringToHGlobalAnsi((string)Clipboard.Item);
 								while (Marshal.ReadByte(buffer, buflen) != 0) {
 									buflen++;
@@ -1409,7 +1482,7 @@ namespace System.Windows.Forms {
 						break;
 
 					case XEventName.PropertyNotify:
-						if (xevent.PropertyEvent.atom == NetAtoms[(int)NA._NET_ACTIVE_WINDOW]) {
+						if (xevent.PropertyEvent.atom == _NET_ACTIVE_WINDOW) {
 							IntPtr	actual_atom;
 							int	actual_format;
 							IntPtr	nitems;
@@ -1418,7 +1491,7 @@ namespace System.Windows.Forms {
 							IntPtr	prev_active;;
 
 							prev_active = ActiveWindow;
-							XGetWindowProperty(DisplayHandle, RootWindow, NetAtoms[(int)NA._NET_ACTIVE_WINDOW], IntPtr.Zero, new IntPtr (1), false, (IntPtr)Atom.XA_WINDOW, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+							XGetWindowProperty(DisplayHandle, RootWindow, _NET_ACTIVE_WINDOW, IntPtr.Zero, new IntPtr (1), false, (IntPtr)Atom.XA_WINDOW, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 							if (((long)nitems > 0) && (prop != IntPtr.Zero)) {
 								ActiveWindow = Hwnd.GetHandleFromWindow((IntPtr)Marshal.ReadInt32(prop));
 								XFree(prop);
@@ -1893,7 +1966,7 @@ namespace System.Windows.Forms {
 				int			x;
 				int			y;
 
-				XGetWindowProperty(DisplayHandle, RootWindow, NetAtoms[(int)NA._NET_CURRENT_DESKTOP], IntPtr.Zero, new IntPtr(1), false, (IntPtr)Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+				XGetWindowProperty(DisplayHandle, RootWindow, _NET_CURRENT_DESKTOP, IntPtr.Zero, new IntPtr(1), false, (IntPtr)Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 				if ((long)nitems < 1) {
 					goto failsafe;
 				}
@@ -1901,7 +1974,7 @@ namespace System.Windows.Forms {
 				current_desktop = Marshal.ReadIntPtr(prop, 0).ToInt32();
 				XFree(prop);
 
-				XGetWindowProperty(DisplayHandle, RootWindow, NetAtoms[(int)NA._NET_WORKAREA], IntPtr.Zero, new IntPtr (256), false, (IntPtr)Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+				XGetWindowProperty(DisplayHandle, RootWindow, _NET_WORKAREA, IntPtr.Zero, new IntPtr (256), false, (IntPtr)Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 				if ((long)nitems < 4 * current_desktop) {
 					goto failsafe;
 				}
@@ -1964,7 +2037,7 @@ namespace System.Windows.Forms {
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (hwnd != null) lock (XlibLock) {
-				SendNetWMMessage(hwnd.whole_window, NetAtoms[(int)NA._NET_ACTIVE_WINDOW], IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+				SendNetWMMessage(hwnd.whole_window, _NET_ACTIVE_WINDOW, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 				//XRaiseWindow(DisplayHandle, handle);
 			}
 			return;
@@ -2029,14 +2102,14 @@ namespace System.Windows.Forms {
 
 			f = DataFormats.Format.List;
 
-			if (XGetSelectionOwner(DisplayHandle, NetAtoms[(int)NA.CLIPBOARD]) == IntPtr.Zero) {
+			if (XGetSelectionOwner(DisplayHandle, CLIPBOARD) == IntPtr.Zero) {
 				return null;
 			}
 
 			Clipboard.Formats = new ArrayList();
 
 			while (f != null) {
-				XConvertSelection(DisplayHandle, NetAtoms[(int)NA.CLIPBOARD], (IntPtr)f.Id, (IntPtr)f.Id, FosterParent, IntPtr.Zero);
+				XConvertSelection(DisplayHandle, CLIPBOARD, (IntPtr)f.Id, (IntPtr)f.Id, FosterParent, IntPtr.Zero);
 
 				Clipboard.Enumerating = true;
 				while (Clipboard.Enumerating) {
@@ -2092,7 +2165,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override object ClipboardRetrieve(IntPtr handle, int type, XplatUI.ClipboardToObject converter) {
-			XConvertSelection(DisplayHandle, NetAtoms[(int)NA.CLIPBOARD], (IntPtr)type, (IntPtr)type, FosterParent, IntPtr.Zero);
+			XConvertSelection(DisplayHandle, CLIPBOARD, (IntPtr)type, (IntPtr)type, FosterParent, IntPtr.Zero);
 
 			Clipboard.Retrieving = true;
 			while (Clipboard.Retrieving) {
@@ -2108,10 +2181,10 @@ namespace System.Windows.Forms {
 			Clipboard.Converter = converter;
 
 			if (obj != null) {
-				XSetSelectionOwner(DisplayHandle, NetAtoms[(int)NA.CLIPBOARD], FosterParent, IntPtr.Zero);
+				XSetSelectionOwner(DisplayHandle, CLIPBOARD, FosterParent, IntPtr.Zero);
 			} else {
 				// Clearing the selection
-				XSetSelectionOwner(DisplayHandle, NetAtoms[(int)NA.CLIPBOARD], IntPtr.Zero, IntPtr.Zero);
+				XSetSelectionOwner(DisplayHandle, CLIPBOARD, IntPtr.Zero, IntPtr.Zero);
 			}
 		}
 
@@ -2172,10 +2245,10 @@ namespace System.Windows.Forms {
 			if (cp.Parent != IntPtr.Zero) {
 				ParentHandle = Hwnd.ObjectFromHandle(cp.Parent).client_window;
 			} else {
-				if ((cp.Style & (int)WindowStyles.WS_CHILD) != 0) {
+				if (StyleSet (cp.Style, WindowStyles.WS_CHILD)) {
 					// We need to use our foster parent window until this poor child gets it's parent assigned
 					ParentHandle=FosterParent;
-				} else if ((cp.Style & (int)WindowStyles.WS_POPUP) != 0) {
+				} else if (StyleSet (cp.Style, WindowStyles.WS_POPUP)) {
 					ParentHandle=RootWindow;
 				} else {
 					// Default position on screen, if window manager doesn't place us somewhere else
@@ -2191,18 +2264,16 @@ namespace System.Windows.Forms {
 			Attributes.win_gravity = Gravity.NorthWestGravity;
 
 			// Save what's under the toolwindow
-			if ((cp.ExStyle & (int)WindowExStyles.WS_EX_TOOLWINDOW) != 0) {
+			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
 				Attributes.save_under = true;
 				ValueMask |= SetWindowValuemask.SaveUnder;
 			}
 
 
 			// If we're a popup without caption we override the WM
-			if ((cp.Style & ((int)WindowStyles.WS_POPUP)) != 0) {
-				if ((cp.Style & (int)WindowStyles.WS_CAPTION) != (int)WindowStyles.WS_CAPTION) {
-					Attributes.override_redirect = true;
-					ValueMask |= SetWindowValuemask.OverrideRedirect;
-				}
+			if (StyleSet (cp.Style, WindowStyles.WS_POPUP) && !StyleSet (cp.Style, WindowStyles.WS_CAPTION)) {
+				Attributes.override_redirect = true;
+				ValueMask |= SetWindowValuemask.OverrideRedirect;
 			}
 
 			hwnd.x = X;
@@ -2211,7 +2282,7 @@ namespace System.Windows.Forms {
 			hwnd.height = Height;
 			hwnd.parent = Hwnd.ObjectFromHandle(cp.Parent);
 
-			if ((cp.Style & ((int)WindowStyles.WS_DISABLED)) != 0) {
+			if (StyleSet (cp.Style, WindowStyles.WS_DISABLED)) {
 				hwnd.enabled = false;
 			}
 
@@ -2243,7 +2314,7 @@ namespace System.Windows.Forms {
 				Console.WriteLine("Created window {0:X} / {1:X} parent {2:X}, Style {3}, ExStyle {4}", ClientWindow.ToInt32(), WholeWindow.ToInt32(), hwnd.parent != null ? hwnd.parent.Handle.ToInt32() : 0, (WindowStyles)cp.Style, (WindowExStyles)cp.ExStyle);
 			#endif
 
-			if ((cp.Style & (int)WindowStyles.WS_CHILD) == 0) {
+			if (!StyleSet (cp.Style, WindowStyles.WS_CHILD)) {
 				if ((X != unchecked((int)0x80000000)) && (Y != unchecked((int)0x80000000))) {
 					XSizeHints	hints;
 
@@ -2259,19 +2330,19 @@ namespace System.Windows.Forms {
 				XSelectInput(DisplayHandle, hwnd.whole_window, new IntPtr ((int)SelectInputMask));
 				XSelectInput(DisplayHandle, hwnd.client_window, new IntPtr ((int)SelectInputMask));
 
-				if ((cp.Style & (int)WindowStyles.WS_VISIBLE) != 0) {
+				if (StyleSet (cp.Style, WindowStyles.WS_VISIBLE)) {
 					MapWindow(hwnd, WindowType.Both);
 					hwnd.visible = true;
 				}
 			}
 
-			if ((cp.ExStyle & (int)WindowExStyles.WS_EX_TOPMOST) != 0) {
+			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOPMOST)) {
 				atoms = new int[2];
-				atoms[0] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_NORMAL].ToInt32();
-				XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_WINDOW_TYPE], (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
+				atoms[0] = _NET_WM_WINDOW_TYPE_NORMAL.ToInt32();
+				XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_WINDOW_TYPE, (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
 
 				XSetTransientForHint (DisplayHandle, hwnd.whole_window, RootWindow);
-			} else if ((cp.ExStyle & (int)WindowExStyles.WS_EX_APPWINDOW) == 0) {
+			} else if (!ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_APPWINDOW)) {
 //				XSetTransientForHint (DisplayHandle, hwnd.whole_window, FosterParent);
 			}
 
@@ -2281,8 +2352,8 @@ namespace System.Windows.Forms {
 			XWMHints wm_hints = new XWMHints ();
 			
 			wm_hints.flags = (IntPtr)(XWMHintsFlags.InputHint | XWMHintsFlags.StateHint | XWMHintsFlags.WindowGroupHint);
-			wm_hints.input = !((cp.Style & (int)WindowStyles.WS_DISABLED) != 0 ? true : false);
-			wm_hints.initial_state = ((cp.Style & (int)WindowStyles.WS_MINIMIZE) !=0) ? XInitialState.IconicState : XInitialState.NormalState;
+			wm_hints.input = !StyleSet (cp.Style, WindowStyles.WS_DISABLED);
+			wm_hints.initial_state = StyleSet (cp.Style, WindowStyles.WS_MINIMIZE) ? XInitialState.IconicState : XInitialState.NormalState;
 			
 			if (ParentHandle != RootWindow) {
 				wm_hints.window_group = hwnd.whole_window;
@@ -2294,9 +2365,9 @@ namespace System.Windows.Forms {
 				XSetWMHints(DisplayHandle, hwnd.whole_window, ref wm_hints );
 			}
 
-			if ((cp.Style & (int)WindowStyles.WS_MINIMIZE) != 0) {
+			if (StyleSet (cp.Style, WindowStyles.WS_MINIMIZE)) {
 				SetWindowState(hwnd.Handle, FormWindowState.Minimized);
-			} else if ((cp.Style & (int)WindowStyles.WS_MAXIMIZE) != 0) {
+			} else if (StyleSet (cp.Style, WindowStyles.WS_MAXIMIZE)) {
 				SetWindowState(hwnd.Handle, FormWindowState.Maximized);
 			}
 
@@ -2843,7 +2914,7 @@ namespace System.Windows.Forms {
 			IntPtr	prop = IntPtr.Zero;
 			IntPtr	active = IntPtr.Zero;
 
-			XGetWindowProperty(DisplayHandle, RootWindow, NetAtoms[(int)NA._NET_ACTIVE_WINDOW], IntPtr.Zero, new IntPtr (1), false, (IntPtr)Atom.XA_WINDOW, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+			XGetWindowProperty(DisplayHandle, RootWindow, _NET_ACTIVE_WINDOW, IntPtr.Zero, new IntPtr (1), false, (IntPtr)Atom.XA_WINDOW, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 			if (((long)nitems > 0) && (prop != IntPtr.Zero)) {
 				active = (IntPtr)Marshal.ReadInt32(prop);
 				XFree(prop);
@@ -3350,7 +3421,7 @@ namespace System.Windows.Forms {
 								IntPtr opacity;
 
 								opacity = (IntPtr)(Int32)hwnd.opacity;
-								XChangeProperty(DisplayHandle, XGetParent(hwnd.whole_window), NetAtoms[(int)NA._NET_WM_WINDOW_OPACITY], (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, ref opacity, 1);
+								XChangeProperty(DisplayHandle, XGetParent(hwnd.whole_window), _NET_WM_WINDOW_OPACITY, (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, ref opacity, 1);
 							}
 							SendMessage(msg.hwnd, Msg.WM_WINDOWPOSCHANGED, msg.wParam, msg.lParam);
 							goto ProcessNextMessage;
@@ -3536,20 +3607,20 @@ namespace System.Windows.Forms {
 					}
 
 					#if dontcare
-					if  (xevent.ClientMessageEvent.message_type == NetAtoms[(int)NA._XEMBED]) {
+					if  (xevent.ClientMessageEvent.message_type == _XEMBED) {
 						Console.WriteLine("GOT EMBED MESSAGE {0:X}", xevent.ClientMessageEvent.ptr2.ToInt32());
 						break;
 					}
 					#endif
 
-					if  (xevent.ClientMessageEvent.message_type == NetAtoms[(int)NA.WM_PROTOCOLS]) {
-						if (xevent.ClientMessageEvent.ptr1 == NetAtoms[(int)NA.WM_DELETE_WINDOW]) {
+					if  (xevent.ClientMessageEvent.message_type == WM_PROTOCOLS) {
+						if (xevent.ClientMessageEvent.ptr1 == WM_DELETE_WINDOW) {
 							msg.message = Msg.WM_CLOSE;
 							return true;
 						}
 
 						// We should not get this, but I'll leave the code in case we need it in the future
-						if (xevent.ClientMessageEvent.ptr1 == NetAtoms[(int)NA.WM_TAKE_FOCUS]) {
+						if (xevent.ClientMessageEvent.ptr1 == WM_TAKE_FOCUS) {
 							goto ProcessNextMessage;
 						}
 					}
@@ -3634,13 +3705,13 @@ namespace System.Windows.Forms {
 
 			maximized = 0;
 			minimized = false;
-			XGetWindowProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_STATE], IntPtr.Zero, new IntPtr (256), false, (IntPtr)Atom.XA_ATOM, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+			XGetWindowProperty(DisplayHandle, hwnd.whole_window, _NET_WM_STATE, IntPtr.Zero, new IntPtr (256), false, (IntPtr)Atom.XA_ATOM, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 			if (((long)nitems > 0) && (prop != IntPtr.Zero)) {
 				for (int i = 0; i < (long)nitems; i++) {
 					atom = (IntPtr)Marshal.ReadInt32(prop, i * 4);
-					if ((atom == NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_HORZ]) || (atom == NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_VERT])) {
+					if ((atom == _NET_WM_STATE_MAXIMIZED_HORZ) || (atom == _NET_WM_STATE_MAXIMIZED_VERT)) {
 						maximized++;
-					} else if (atom == NetAtoms[(int)NA._NET_WM_STATE_HIDDEN]) {
+					} else if (atom == _NET_WM_STATE_HIDDEN) {
 						minimized = true;
 					}
 				}
@@ -4329,8 +4400,8 @@ namespace System.Windows.Forms {
 
 					atoms = new int[8];
 
-					atoms[0] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_NORMAL].ToInt32();
-					XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_WINDOW_TYPE], (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
+					atoms[0] = _NET_WM_WINDOW_TYPE_NORMAL.ToInt32();
+					XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_WINDOW_TYPE, (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
 
 					if (hwnd_owner != null) {
 						XSetTransientForHint(DisplayHandle, hwnd.whole_window, hwnd_owner.whole_window);
@@ -4493,7 +4564,7 @@ namespace System.Windows.Forms {
 						if (current_state == FormWindowState.Minimized) {
 							MapWindow(hwnd, WindowType.Both);
 						} else if (current_state == FormWindowState.Maximized) {
-							SendNetWMMessage(hwnd.whole_window, NetAtoms[(int)NA._NET_WM_STATE], (IntPtr)2 /* toggle */, NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_HORZ], NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_VERT]);
+							SendNetWMMessage(hwnd.whole_window, _NET_WM_STATE, (IntPtr)2 /* toggle */, _NET_WM_STATE_MAXIMIZED_HORZ, _NET_WM_STATE_MAXIMIZED_VERT);
 						}
 					}
 					Activate(handle);
@@ -4503,7 +4574,7 @@ namespace System.Windows.Forms {
 				case FormWindowState.Minimized: {
 					lock (XlibLock) {
 						if (current_state == FormWindowState.Maximized) {
-							SendNetWMMessage(hwnd.whole_window, NetAtoms[(int)NA._NET_WM_STATE], (IntPtr)2 /* toggle */, NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_HORZ], NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_VERT]);
+							SendNetWMMessage(hwnd.whole_window, _NET_WM_STATE, (IntPtr)2 /* toggle */, _NET_WM_STATE_MAXIMIZED_HORZ, _NET_WM_STATE_MAXIMIZED_VERT);
 						}
 						XIconifyWindow(DisplayHandle, hwnd.whole_window, ScreenNo);
 					}
@@ -4516,7 +4587,7 @@ namespace System.Windows.Forms {
 							MapWindow(hwnd, WindowType.Both);
 						}
 
-						SendNetWMMessage(hwnd.whole_window, NetAtoms[(int)NA._NET_WM_STATE], (IntPtr)1 /* Add */, NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_HORZ], NetAtoms[(int)NA._NET_WM_STATE_MAXIMIZED_VERT]);
+						SendNetWMMessage(hwnd.whole_window, _NET_WM_STATE, (IntPtr)1 /* Add */, _NET_WM_STATE_MAXIMIZED_HORZ, _NET_WM_STATE_MAXIMIZED_VERT);
 					}
 					Activate(handle);
 					return;
@@ -4546,7 +4617,7 @@ namespace System.Windows.Forms {
 			opacity = (IntPtr)((int)hwnd.opacity);
 
 			if (hwnd.reparented) {
-				XChangeProperty(DisplayHandle, XGetParent(hwnd.whole_window), NetAtoms[(int)NA._NET_WM_WINDOW_OPACITY], (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, ref opacity, 1);
+				XChangeProperty(DisplayHandle, XGetParent(hwnd.whole_window), _NET_WM_WINDOW_OPACITY, (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, ref opacity, 1);
 			}
 		}
 
@@ -4577,10 +4648,10 @@ namespace System.Windows.Forms {
 
 					atoms = new int[2];
 					atoms[0] = unixtime();
-					XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._NET_WM_USER_TIME], (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, atoms, 1);
+					XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_USER_TIME, (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, atoms, 1);
 
 					XRaiseWindow(DisplayHandle, hwnd.whole_window);
-					SendNetWMMessage(hwnd.whole_window, NetAtoms[(int)NA._NET_ACTIVE_WINDOW], IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+					SendNetWMMessage(hwnd.whole_window, _NET_ACTIVE_WINDOW, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 					return true;
 					//throw new ArgumentNullException("after_handle", "Need sibling to adjust z-order");
 				}
@@ -4652,7 +4723,7 @@ namespace System.Windows.Forms {
 				atoms [1] = 0;			// We're not mapped
 
 				// This line cost me 3 days...
-				XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._XEMBED_INFO], NetAtoms[(int)NA._XEMBED_INFO], 32, PropertyMode.Replace, atoms, 2);
+				XChangeProperty(DisplayHandle, hwnd.whole_window, _XEMBED_INFO, _XEMBED_INFO, 32, PropertyMode.Replace, atoms, 2);
 
 				// Need to pick some reasonable defaults
 				tt = new ToolTip();
@@ -4671,7 +4742,7 @@ namespace System.Windows.Forms {
 				// Make sure the window exists
 				XSync(DisplayHandle, hwnd.whole_window);
 
-				SendNetClientMessage(SystrayMgrWindow, NetAtoms[(int)NA._NET_SYSTEM_TRAY_OPCODE], IntPtr.Zero, (IntPtr)SystrayRequest.SYSTEM_TRAY_REQUEST_DOCK, hwnd.whole_window);
+				SendNetClientMessage(SystrayMgrWindow, _NET_SYSTEM_TRAY_OPCODE, IntPtr.Zero, (IntPtr)SystrayRequest.SYSTEM_TRAY_REQUEST_DOCK, hwnd.whole_window);
 				return true;
 			}
 			tt = null;
