@@ -53,7 +53,7 @@ namespace System.IO.Compression {
 			try {
 				base.Dispose (disposing);
 			} finally {
-				deflateStream.Dispose (disposing);
+				deflateStream.Dispose ();
 			}
 		}
 
