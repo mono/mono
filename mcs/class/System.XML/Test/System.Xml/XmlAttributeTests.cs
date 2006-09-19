@@ -385,5 +385,19 @@ namespace MonoTests.System.Xml
 			docElement.AppendChild (fooElement);
 			xmlDoc.Save (TextWriter.Null);
 		}
+
+		[Test]
+		public void NullPrefix ()
+		{
+			new MyXmlAttribute ("foo", "urn:foo", new XmlDocument ());
+		}
+
+		class MyXmlAttribute : XmlAttribute
+		{
+			public MyXmlAttribute (string localName, string ns, XmlDocument doc)
+				: base (null, localName, ns, doc)
+			{
+			}
+		}
 	}
 }

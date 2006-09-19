@@ -604,5 +604,19 @@ namespace MonoTests.System.Xml
 				doc.DocumentElement.OuterXml);
 			AssertEquals ("#Clear6", string.Empty, doc.DocumentElement.Prefix);
 		}
+
+		[Test]
+		public void NullPrefix ()
+		{
+			new MyXmlElement ("foo", "urn:foo", new XmlDocument ());
+		}
+
+		class MyXmlElement : XmlElement
+		{
+			public MyXmlElement (string localName, string ns, XmlDocument doc)
+				: base (null, localName, ns, doc)
+			{
+			}
+		}
 	}
 }

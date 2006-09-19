@@ -1,3 +1,9 @@
+2006-09-19  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlElementTests.cs : added test for #79420.
+	* XmlAttributeTests.cs : added similar test.
+	* XmlDocumentTests.cs : fix warnings.
+
 2006-09-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReaderCommonTests.cs : added test for bug #79268.

@@ -1,3 +1,8 @@
+2006-09-19  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlElement.cs : for non-atomized names, alter null prefix with "".
+	  Fixed bug #79420.
+
 2006-09-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReader.cs : ReadContentAsString() and its family should allow 

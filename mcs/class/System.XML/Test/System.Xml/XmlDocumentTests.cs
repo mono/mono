@@ -97,35 +97,33 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void CreateNodeNodeTypeNameEmptyParams ()
 		{
-			XmlNode node;
-
 			try {
-				node = document.CreateNode (null, null, null);
+				document.CreateNode (null, null, null);
 				Fail ("Expected an ArgumentException to be thrown.");
 			} catch (ArgumentException) {}
 
 			try {
-				node = document.CreateNode ("attribute", null, null);
+				document.CreateNode ("attribute", null, null);
 				Fail ("Expected a NullReferenceException to be thrown.");
 			} catch (NullReferenceException) {}
 
 			try {
-				node = document.CreateNode ("attribute", "", null);
+				document.CreateNode ("attribute", "", null);
 				Fail ("Expected an ArgumentException to be thrown.");
 			} catch (ArgumentException) {}
 
 			try {
-				node = document.CreateNode ("element", null, null);
+				document.CreateNode ("element", null, null);
 				Fail ("Expected a NullReferenceException to be thrown.");
 			} catch (NullReferenceException) {}
 
 			try {
-				node = document.CreateNode ("element", "", null);
+				document.CreateNode ("element", "", null);
 				Fail ("Expected an ArgumentException to be thrown.");
 			} catch (ArgumentException) {}
 
 			try {
-				node = document.CreateNode ("entityreference", null, null);
+				document.CreateNode ("entityreference", null, null);
 				Fail ("Expected a NullReferenceException to be thrown.");
 			} catch (NullReferenceException) {}
 		}

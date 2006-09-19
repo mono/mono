@@ -75,6 +75,11 @@ namespace System.Xml
 			bool atomizedNames) : base (doc)
 		{
 			if (!atomizedNames) {
+				if (prefix == null)
+					prefix = String.Empty;
+				if (namespaceURI == null)
+					namespaceURI = String.Empty;
+
 				XmlConvert.VerifyName (localName);
 
 				prefix = doc.NameTable.Add (prefix);
