@@ -665,7 +665,7 @@ namespace System.Windows.Forms {
 						border_style = FormBorderStyle.Sizable;
 					}
 				} else {
-					if ((Style & (int)WindowStyles.WS_CAPTION) == (int)WindowStyles.WS_CAPTION) {
+					if ((Style & (int)WindowStyles.WS_CAPTION) != 0) {
 						if ((ExStyle & (int)WindowExStyles.WS_EX_CLIENTEDGE) != 0) {
 							border_style = FormBorderStyle.Fixed3D;
 						} else if ((ExStyle & (int)WindowExStyles.WS_EX_DLGMODALFRAME) != 0) {
@@ -733,33 +733,30 @@ namespace System.Windows.Forms {
 				decorations |= MotifDecorations.Border;
 			}
 
+			if ((cp.Style & ((int)WindowStyles.WS_BORDER)) != 0) {
+				decorations |= MotifDecorations.Border;
+			}
+			
 			if ((cp.Style & ((int)WindowStyles.WS_DLGFRAME)) != 0) {
 				decorations |= MotifDecorations.Border;
 			}
-
-			if ((cp.Style & ((int)WindowStyles.WS_BORDER)) != 0) {
-				decorations |= MotifDecorations.Border;
+			else {
+				if ((cp.Style & ((int)WindowStyles.WS_SYSMENU)) != 0) {
+					functions |= MotifFunctions.Close;
+				}
+				else {
+					functions &= ~(MotifFunctions.Maximize | MotifFunctions.Minimize | MotifFunctions.Close);
+					decorations &= ~(MotifDecorations.Menu | MotifDecorations.Maximize | MotifDecorations.Minimize);
+					if (cp.Caption == "") {
+						functions &= ~MotifFunctions.Move;
+						decorations &= ~MotifDecorations.Title;
+					}
+				}
 			}
 
 			if ((cp.ExStyle & ((int)WindowExStyles.WS_EX_TOOLWINDOW)) != 0) {
 				functions = 0;
 				decorations = 0;
-			}
-
-			if ((cp.Style & (int)WindowStyles.WS_DLGFRAME) == (int)WindowStyles.WS_DLGFRAME) {
-				decorations ^= MotifDecorations.Menu;
-			}
-
-			if ((cp.Style & ((int)WindowStyles.WS_SYSMENU)) != 0) {
-				functions |= MotifFunctions.Close;
-			}
-			else {
-				functions &= ~(MotifFunctions.Maximize | MotifFunctions.Minimize | MotifFunctions.Close);
-				decorations &= ~(MotifDecorations.Menu | MotifDecorations.Maximize | MotifDecorations.Minimize);
-				if (cp.Caption == "") {
-					functions &= ~MotifFunctions.Move;
-					decorations &= ~MotifDecorations.Title;
-				}
 			}
 
 
@@ -780,6 +777,14 @@ namespace System.Windows.Forms {
 
 			client_rect = hwnd.ClientRect;
 			lock (XlibLock) {
+				// needed! map toolwindows to _NET_WM_WINDOW_TYPE_UTILITY to make newer metacity versions happy
+				// and get those windows in front of their parents
+				if ((cp.ExStyle & (int)WindowExStyles.WS_EX_TOOLWINDOW) != 0) {
+					atoms [0] = NetAtoms [(int)NA._NET_WM_WINDOW_TYPE_UTILITY].ToInt32 ();
+					XChangeProperty (DisplayHandle, hwnd.whole_window,  NetAtoms [(int)NA._NET_WM_WINDOW_TYPE],
+							 (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
+				}
+				
 				XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._MOTIF_WM_HINTS], NetAtoms[(int)NA._MOTIF_WM_HINTS], 32, PropertyMode.Replace, ref mwmHints, 5);
 				if (((cp.Style & (int)WindowStyles.WS_POPUP) != 0) && (hwnd.parent != null) && (hwnd.parent.whole_window != IntPtr.Zero)) {
 					atoms[0] = NetAtoms[(int)NA._NET_WM_WINDOW_TYPE_NORMAL].ToInt32();
@@ -2271,6 +2276,23 @@ namespace System.Windows.Forms {
 			}
 
 			SetWMStyles(hwnd, cp);
+			
+			// set the group leader
+			XWMHints wm_hints = new XWMHints ();
+			
+			wm_hints.flags = (IntPtr)(XWMHintsFlags.InputHint | XWMHintsFlags.StateHint | XWMHintsFlags.WindowGroupHint);
+			wm_hints.input = !((cp.Style & (int)WindowStyles.WS_DISABLED) != 0 ? true : false);
+			wm_hints.initial_state = ((cp.Style & (int)WindowStyles.WS_MINIMIZE) !=0) ? XInitialState.IconicState : XInitialState.NormalState;
+			
+			if (ParentHandle != RootWindow) {
+				wm_hints.window_group = hwnd.whole_window;
+			} else {
+				wm_hints.window_group = ParentHandle;
+			}
+			
+			lock (XlibLock) {
+				XSetWMHints(DisplayHandle, hwnd.whole_window, ref wm_hints );
+			}
 
 			if ((cp.Style & (int)WindowStyles.WS_MINIMIZE) != 0) {
 				SetWindowState(hwnd.Handle, FormWindowState.Minimized);

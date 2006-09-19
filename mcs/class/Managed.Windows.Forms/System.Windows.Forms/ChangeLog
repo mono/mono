@@ -1,3 +1,10 @@
+2006-09-19  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11.cs: apply Alexander's tool window fix for bug #79245
+	(mapping them to _NET_WM_WINDOW_TYPE_UTILITY).  and add a little
+	added cleanup to get MessageBox titles appearing again, which were
+	broken by my earlier fix for caption-less/ControlBox-less windows.
+
 ﻿2006-09-18  Jonathan Pobst <monkey@jpobst.com>
 
 	* ToolStripArrowRenderEventArgs.cs, ToolStripArrowRenderEventHandler.cs,
