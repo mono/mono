@@ -1,5 +1,10 @@
 2006-09-19  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (Invocation): Merged with the gmcs version.
+	(ArrayAccess.GetStoreOpcode): Likewise.
+
+2006-09-19  Martin Baulig  <martin@ximian.com>
+
 	* typemanager.cs
 	(TypeManager.IsGenericMethod): Moved here from ../gmcs/generic.cs.
 	(TypeManager.IsGenericMethodDefinition): Likewise.

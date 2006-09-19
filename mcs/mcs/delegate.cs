@@ -421,7 +421,7 @@ namespace Mono.CSharp {
 			bool is_applicable = Invocation.IsApplicable (ec, args, arg_count, mb);
 
 			if (!is_applicable && params_method &&
-			    Invocation.IsParamsMethodApplicable (ec, args, arg_count, mb))
+			    Invocation.IsParamsMethodApplicable (ec, me, args, arg_count, ref mb))
 				is_applicable = is_params_applicable = true;
 
 			if (!is_applicable && !params_method && arg_count != pd_count) {

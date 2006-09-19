@@ -3940,6 +3940,10 @@ namespace Mono.CSharp {
 
 		public bool ResolveMethodGroup (EmitContext ec)
 		{
+			SimpleName sn = Expr as SimpleName;
+			if (sn != null)
+				Expr = sn.GetMethodGroup ();
+
 			// FIXME: csc doesn't report any error if you try to use `ref' or
 			//        `out' in a delegate creation expression.
 			Expr = Expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
@@ -4027,7 +4031,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		static Type BetterConversion (EmitContext ec, Argument a, Type p, Type q)
 		{
-			Type argument_type = a.Type;
+			Type argument_type = TypeManager.TypeToCoreType (a.Type);
 			Expression argument_expr = a.Expr;
 
 			if (argument_type == null)
@@ -4114,6 +4118,45 @@ namespace Mono.CSharp {
 
 			return null;
 		}
+
+		static Type MoreSpecific (Type p, Type q)
+		{
+			if (TypeManager.IsGenericParameter (p) && !TypeManager.IsGenericParameter (q))
+				return q;
+			if (!TypeManager.IsGenericParameter (p) && TypeManager.IsGenericParameter (q))
+				return p;
+
+			if (TypeManager.HasElementType (p)) {
+				Type pe = TypeManager.GetElementType (p);
+				Type qe = TypeManager.GetElementType (q);
+				Type specific = MoreSpecific (pe, qe);
+				if (specific == pe)
+					return p;
+				if (specific == qe)
+					return q;
+			} else if (TypeManager.IsGenericType (p)) {
+				Type[] pargs = TypeManager.GetTypeArguments (p);
+				Type[] qargs = TypeManager.GetTypeArguments (q);
+
+				bool p_specific_at_least_once = false;
+				bool q_specific_at_least_once = false;
+
+				for (int i = 0; i < pargs.Length; i++) {
+					Type specific = MoreSpecific (pargs [i], qargs [i]);
+					if (specific == pargs [i])
+						p_specific_at_least_once = true;
+					if (specific == qargs [i])
+						q_specific_at_least_once = true;
+				}
+
+				if (p_specific_at_least_once && !q_specific_at_least_once)
+					return p;
+				if (!p_specific_at_least_once && q_specific_at_least_once)
+					return q;
+			}
+
+			return null;
+		}
 		
 		/// <summary>
 		///   Determines "Better function" between candidate
@@ -4147,7 +4190,7 @@ namespace Mono.CSharp {
 					if (best_params)
 						bt = TypeManager.GetElementType (bt);
 
-				if (ct == bt)
+				if (ct.Equals (bt))
 					continue;
 
 				same = false;
@@ -4180,13 +4223,64 @@ namespace Mono.CSharp {
 				return false;
 
 			//
+			// The two methods have equal parameter types.  Now apply tie-breaking rules
+			//
+			if (TypeManager.IsGenericMethod (best) && !TypeManager.IsGenericMethod (candidate))
+				return true;
+			if (!TypeManager.IsGenericMethod (best) && TypeManager.IsGenericMethod (candidate))
+				return false;
+
+			//
 			// This handles the following cases:
 			//
 			//   Trim () is better than Trim (params char[] chars)
 			//   Concat (string s1, string s2, string s3) is better than
 			//     Concat (string s1, params string [] srest)
+			//   Foo (int, params int [] rest) is better than Foo (params int [] rest)
 			//
-                        return !candidate_params && best_params;
+			if (!candidate_params && best_params)
+				return true;
+			if (candidate_params && !best_params)
+				return false;
+
+			int candidate_param_count = candidate_pd.Count;
+			int best_param_count = best_pd.Count;
+
+			if (candidate_param_count != best_param_count)
+				// can only happen if (candidate_params && best_params)
+				return candidate_param_count > best_param_count;
+
+			//
+			// now, both methods have the same number of parameters, and the parameters have the same types
+			// Pick the "more specific" signature
+			//
+
+			MethodBase orig_candidate = TypeManager.DropGenericMethodArguments (candidate);
+			MethodBase orig_best = TypeManager.DropGenericMethodArguments (best);
+
+			ParameterData orig_candidate_pd = TypeManager.GetParameterData (orig_candidate);
+			ParameterData orig_best_pd = TypeManager.GetParameterData (orig_best);
+
+			bool specific_at_least_once = false;
+			for (int j = 0; j < candidate_param_count; ++j) {
+				Type ct = TypeManager.TypeToCoreType (orig_candidate_pd.ParameterType (j));
+				Type bt = TypeManager.TypeToCoreType (orig_best_pd.ParameterType (j));
+				if (ct.Equals (bt))
+					continue;
+				Type specific = MoreSpecific (ct, bt);
+				if (specific == bt)
+					return false;
+				if (specific == ct)
+					specific_at_least_once = true;
+			}
+
+			if (specific_at_least_once)
+				return true;
+
+			// FIXME: handle lifted operators
+			// ...
+
+			return false;
 		}
 
 		internal static bool IsOverride (MethodBase cand_method, MethodBase base_method)
@@ -4275,16 +4369,33 @@ namespace Mono.CSharp {
 			return union;
 		}
 
-		public static bool IsParamsMethodApplicable (EmitContext ec,
+		public static bool IsParamsMethodApplicable (EmitContext ec, MethodGroupExpr me,
 							     ArrayList arguments, int arg_count,
-							     MethodBase candidate)
+							     ref MethodBase candidate)
 		{
 			return IsParamsMethodApplicable (
-				ec, arguments, arg_count, candidate, false) ||
+				ec, me, arguments, arg_count, false, ref candidate) ||
 				IsParamsMethodApplicable (
-					ec, arguments, arg_count, candidate, true);
+					ec, me, arguments, arg_count, true, ref candidate);
 
 
+		}
+
+		static bool IsParamsMethodApplicable (EmitContext ec, MethodGroupExpr me,
+						      ArrayList arguments, int arg_count,
+						      bool do_varargs, ref MethodBase candidate)
+		{
+#if GMCS_SOURCE
+			if (!me.HasTypeArguments &&
+			    !TypeManager.InferParamsTypeArguments (ec, arguments, ref candidate))
+				return false;
+
+			if (TypeManager.IsGenericMethodDefinition (candidate))
+				throw new InternalErrorException ("a generic method definition took part in overload resolution");
+#endif
+
+			return IsParamsMethodApplicable (
+				ec, arguments, arg_count, candidate, do_varargs);
 		}
 
 		/// <summary>
@@ -4374,6 +4485,22 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public static bool IsApplicable (EmitContext ec, MethodGroupExpr me,
+						 ArrayList arguments, int arg_count,
+						 ref MethodBase candidate)
+		{
+#if GMCS_SOURCE
+			if (!me.HasTypeArguments &&
+			    !TypeManager.InferTypeArguments (arguments, ref candidate))
+				return false;
+
+			if (TypeManager.IsGenericMethodDefinition (candidate))
+				throw new InternalErrorException ("a generic method definition took part in overload resolution");
+#endif
+
+			return IsApplicable (ec, arguments, arg_count, candidate);
+		}
+
 		/// <summary>
 		///   Determines if the candidate method is applicable (section 14.4.2.1)
 		///   to the given set of arguments
@@ -4401,7 +4528,8 @@ namespace Mono.CSharp {
 					Type pt = pd.ParameterType (i);
 
 					if (a_mod == Parameter.Modifier.NONE) {
-						if (!Convert.ImplicitConversionExists (ec, a.Expr, pt))
+                                                if (!TypeManager.IsEqual (a.Type, pt) &&
+						    !Convert.ImplicitConversionExists (ec, a.Expr, pt))
 							return false;
 						continue;
 					}
@@ -4485,11 +4613,23 @@ namespace Mono.CSharp {
 				int j = 0;
 				for (int i = 0; i < methods.Length; ++i) {
 					MethodBase m = methods [i];
+#if GMCS_SOURCE
+					Type [] gen_args = null;
+					if (m.IsGenericMethod && !m.IsGenericMethodDefinition)
+						gen_args = m.GetGenericArguments ();
+#endif
 					if (TypeManager.IsOverride (m)) {
 						if (candidate_overrides == null)
 							candidate_overrides = new ArrayList ();
 						candidate_overrides.Add (m);
 						m = TypeManager.TryGetBaseDefinition (m);
+#if GMCS_SOURCE
+						if (m != null && gen_args != null) {
+							if (!m.IsGenericMethodDefinition)
+								throw new InternalErrorException ("GetBaseDefinition didn't return a GenericMethodDefinition");
+							m = ((MethodInfo) m).MakeGenericMethod (gen_args);
+						}
+#endif
 					}
 					if (m != null)
 						methods [j++] = m;
@@ -4502,7 +4642,7 @@ namespace Mono.CSharp {
 			//
 			// First we construct the set of applicable methods
 			//
-			bool is_sorted = true;
+ 			bool is_sorted = true;
 			for (int i = 0; i < nmethods; i++){
 				Type decl_type = methods [i].DeclaringType;
 
@@ -4517,9 +4657,9 @@ namespace Mono.CSharp {
 				// Check if candidate is applicable (section 14.4.2.1)
 				//   Is candidate applicable in normal form?
 				//
-				bool is_applicable = IsApplicable (ec, Arguments, arg_count, methods [i]);
+				bool is_applicable = IsApplicable (ec, me, Arguments, arg_count, ref methods [i]);
 
-				if (!is_applicable && IsParamsMethodApplicable (ec, Arguments, arg_count, methods [i])) {
+				if (!is_applicable && IsParamsMethodApplicable (ec, me, Arguments, arg_count, ref methods [i])) {
 					MethodBase candidate = methods [i];
 					if (candidate_to_form == null)
 						candidate_to_form = new PtrHashtable ();
@@ -4560,6 +4700,13 @@ namespace Mono.CSharp {
 					if (pd.Count != arg_count)
 						continue;
 
+#if GMCS_SOURCE
+					if (!TypeManager.InferTypeArguments (Arguments, ref c))
+						continue;
+					if (TypeManager.IsGenericMethodDefinition (c))
+						continue;
+#endif
+
 					VerifyArgumentsCompat (ec, Arguments, arg_count,
 						c, false, null, may_fail, loc);
 
@@ -4575,6 +4722,30 @@ namespace Mono.CSharp {
 					string report_name = me.Name;
 					if (report_name == ".ctor")
 						report_name = me.DeclaringType.ToString ();
+                                        
+#if GMCS_SOURCE
+					//
+					// Type inference
+					//
+					for (int i = 0; i < methods.Length; ++i) {
+						MethodBase c = methods [i];
+						ParameterData pd = TypeManager.GetParameterData (c);
+
+						if (pd.Count != arg_count)
+							continue;
+
+						if (TypeManager.InferTypeArguments (Arguments, ref c))
+							continue;
+
+						Report.Error (
+							411, loc, "The type arguments for " +
+							"method `{0}' cannot be infered from " +
+							"the usage. Try specifying the type " +
+							"arguments explicitly.", report_name);
+						return null;
+					}
+#endif
+
 					Error_WrongNumArguments (loc, report_name, arg_count);
 				}
                                 
@@ -4593,7 +4764,7 @@ namespace Mono.CSharp {
 
 				do {
 					// Invariant: applicable_type is a most derived type
-
+					
 					// We'll try to complete Section 14.5.5.1 for 'applicable_type' by 
 					// eliminating all it's base types.  At the same time, we'll also move
 					// every unrelated type to the end of the array, and pick the next
@@ -4645,7 +4816,7 @@ namespace Mono.CSharp {
 					continue;
 
 				bool cand_params = candidate_to_form != null && candidate_to_form.Contains (candidate);
-                                
+
 				if (BetterFunction (ec, Arguments, arg_count, 
 						    candidate, cand_params,
 						    method, method_params)) {
@@ -4708,7 +4879,14 @@ namespace Mono.CSharp {
 			if (method == null)
 				return null;
 
-			IMethodData data = TypeManager.GetMethod (method);
+			MethodBase the_method = TypeManager.DropGenericMethodArguments (method);
+#if GMCS_SOURCE
+			if (the_method.IsGenericMethodDefinition &&
+			    !ConstraintChecker.CheckConstraints (ec, the_method, method, loc))
+				return null;
+#endif
+
+			IMethodData data = TypeManager.GetMethod (the_method);
 			if (data != null)
 				data.SetMemberIsUsed ();
 
@@ -4783,7 +4961,7 @@ namespace Mono.CSharp {
 				if (pm != am)
 					break;
 
-				if (!a.Type.Equals (parameter_type)) {
+				if (!TypeManager.IsEqual (a.Type, parameter_type)) {
 					if (pm == Parameter.Modifier.OUT || pm == Parameter.Modifier.REF)
 						break;
 
@@ -4821,6 +4999,10 @@ namespace Mono.CSharp {
 			// First, resolve the expression that is used to
 			// trigger the invocation
 			//
+			SimpleName sn = expr as SimpleName;
+			if (sn != null)
+				expr = sn.GetMethodGroup ();
+
 			expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
 			if (expr == null)
 				return null;
@@ -4904,7 +5086,7 @@ namespace Mono.CSharp {
 			if ((method.Attributes & MethodAttributes.SpecialName) != 0 && IsSpecialMethodInvocation (method)) {
 				return null;
 			}
-
+			
 			if (mg.InstanceExpression != null)
 				mg.InstanceExpression.CheckMarshalByRefAccess ();
 
@@ -4948,7 +5130,7 @@ namespace Mono.CSharp {
 			int count = arguments.Count - idx;
 			Argument a = (Argument) arguments [idx];
 			Type t = a.Expr.Type;
-			
+
 			IntConstant.EmitInt (ig, count);
 			ig.Emit (OpCodes.Newarr, TypeManager.TypeToCoreType (t));
 
@@ -4959,15 +5141,15 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Dup);
 				IntConstant.EmitInt (ig, j - idx);
 
-				bool is_stobj;
-				OpCode op = ArrayAccess.GetStoreOpcode (t, out is_stobj);
+				bool is_stobj, has_type_arg;
+				OpCode op = ArrayAccess.GetStoreOpcode (t, out is_stobj, out has_type_arg);
 				if (is_stobj)
 					ig.Emit (OpCodes.Ldelema, t);
 
 				a.Emit (ec);
 
-				if (is_stobj)
-					ig.Emit (OpCodes.Stobj, t);
+				if (has_type_arg)
+					ig.Emit (op, t);
 				else
 					ig.Emit (op);
 			}
@@ -5146,7 +5328,7 @@ namespace Mono.CSharp {
 			}
 
 			if (IsMethodExcluded (method))
-				return; 
+				return;
 			
 			if (!is_static){
 				if (instance_expr == EmptyExpression.Null) {
@@ -5163,15 +5345,18 @@ namespace Mono.CSharp {
 				//
 				if (!omit_args) {
 					Type t = null;
+					Type iexpr_type = instance_expr.Type;
+
 					//
 					// Push the instance expression
 					//
-					if (TypeManager.IsValueType (instance_expr.Type)) {
+					if (TypeManager.IsValueType (iexpr_type)) {
 						//
 						// Special case: calls to a function declared in a 
 						// reference-type with a value-type argument need
 						// to have their value boxed.
-						if (decl_type.IsValueType) {
+						if (decl_type.IsValueType ||
+						    TypeManager.IsGenericParameter (iexpr_type)) {
 							//
 							// If the expression implements IMemoryLocation, then
 							// we can optimize and use AddressOf on the
@@ -5183,20 +5368,20 @@ namespace Mono.CSharp {
 								((IMemoryLocation)instance_expr).
 									AddressOf (ec, AddressOp.LoadStore);
 							} else {
-								LocalTemporary temp = new LocalTemporary (instance_expr.Type);
+								LocalTemporary temp = new LocalTemporary (iexpr_type);
 								instance_expr.Emit (ec);
 								temp.Store (ec);
 								temp.AddressOf (ec, AddressOp.Load);
 							}
-							
+
 							// avoid the overhead of doing this all the time.
 							if (dup_args)
-								t = TypeManager.GetReferenceType (instance_expr.Type);
+								t = TypeManager.GetReferenceType (iexpr_type);
 						} else {
 							instance_expr.Emit (ec);
 							ig.Emit (OpCodes.Box, instance_expr.Type);
 							t = TypeManager.object_type;
-						} 
+						}
 					} else {
 						instance_expr.Emit (ec);
 						t = instance_expr.Type;
@@ -5214,6 +5399,11 @@ namespace Mono.CSharp {
 
 			if (!omit_args)
 				EmitArguments (ec, method, Arguments, dup_args, this_arg);
+
+#if GMCS_SOURCE
+			if ((instance_expr != null) && (instance_expr.Type.IsGenericParameter))
+				ig.Emit (OpCodes.Constrained, instance_expr.Type);
+#endif
 
 			OpCode call_op;
 			if (is_static || struct_call || is_base || (this_call && !method.IsVirtual))
@@ -5279,7 +5469,7 @@ namespace Mono.CSharp {
 			// First try to resolve it as a cast.
 			//
 			TypeExpr te = expr.ResolveAsTypeTerminal (ec, true);
-			if (te != null) {
+			if ((te != null) && (te.eclass == ExprClass.Type)) {
 				Cast cast = new Cast (te, argument, loc);
 				return cast.Resolve (ec);
 			}
@@ -5326,7 +5516,7 @@ namespace Mono.CSharp {
 			// First try to resolve it as a cast.
 			//
 			TypeExpr te = expr.ResolveAsTypeTerminal (ec, true);
-			if (te != null) {
+			if ((te != null) && (te.eclass == ExprClass.Type)) {
 				error201 ();
 				return null;
 			}
@@ -6297,10 +6487,12 @@ namespace Mono.CSharp {
 					e.Emit (ec);
 
 					if (dims == 1) {
-						bool is_stobj;
-						OpCode op = ArrayAccess.GetStoreOpcode (etype, out is_stobj);
+						bool is_stobj, has_type_arg;
+						OpCode op = ArrayAccess.GetStoreOpcode (etype, out is_stobj, out has_type_arg);
 						if (is_stobj)
 							ig.Emit (OpCodes.Stobj, etype);
+						else if (has_type_arg)
+							ig.Emit (op, etype);
 						else
 							ig.Emit (op);
 					} else 
@@ -7407,10 +7599,10 @@ namespace Mono.CSharp {
 		///    Returns the right opcode to store an object of Type `t'
 		///    from an array of T.  
 		/// </summary>
-		static public OpCode GetStoreOpcode (Type t, out bool is_stobj)
+		static public OpCode GetStoreOpcode (Type t, out bool is_stobj, out bool has_type_arg)
 		{
 			//Console.WriteLine (new System.Diagnostics.StackTrace ());
-			is_stobj = false;
+			has_type_arg = false; is_stobj = false;
 			t = TypeManager.TypeToCoreType (t);
 			if (TypeManager.IsEnumType (t))
 				t = TypeManager.EnumToUnderlying (t);
@@ -7429,11 +7621,23 @@ namespace Mono.CSharp {
 			else if (t == TypeManager.double_type)
 				return OpCodes.Stelem_R8;
 			else if (t == TypeManager.intptr_type) {
-                                is_stobj = true;
+                                has_type_arg = true;
+				is_stobj = true;
                                 return OpCodes.Stobj;
 			} else if (t.IsValueType) {
+				has_type_arg = true;
 				is_stobj = true;
 				return OpCodes.Stobj;
+#if GMCS_SOURCE
+			} else if (t.IsGenericParameter) {
+				has_type_arg = true;
+#if MS_COMPATIBLE
+				return OpCodes.Stelem;
+#else
+				return OpCodes.Stelem_Any;
+#endif
+#endif
+
 			} else if (t.IsPointer)
 				return OpCodes.Stelem_I;
 			else
@@ -7569,8 +7773,8 @@ namespace Mono.CSharp {
 			LoadArrayAndArguments (ec);
 
 			if (rank == 1) {
-				bool is_stobj;
-				OpCode op = GetStoreOpcode (t, out is_stobj);
+				bool is_stobj, has_type_arg;
+				OpCode op = GetStoreOpcode (t, out is_stobj, out has_type_arg);
 				//
 				// The stobj opcode used by value types will need
 				// an address on the stack, not really an array/array
@@ -7588,6 +7792,8 @@ namespace Mono.CSharp {
 				
 				if (is_stobj)
 					ig.Emit (OpCodes.Stobj, t);
+				else if (has_type_arg)
+					ig.Emit (op, t);
 				else
 					ig.Emit (op);
 			} else {
