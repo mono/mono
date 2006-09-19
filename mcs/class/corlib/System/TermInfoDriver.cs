@@ -4,7 +4,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005,2006 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -30,6 +30,7 @@
 #if NET_2_0
 using System.Collections;
 using System.IO;
+using System.Text;
 namespace System {
 	class TermInfoDriver : IConsoleDriver {
 		static string [] locations = { "/etc/terminfo", "/usr/share/terminfo", "/usr/lib/terminfo" };
@@ -47,6 +48,9 @@ namespace System {
 		string term;
 		Stream stdout;
 		Stream stdin;
+		byte verase;
+		byte vsusp;
+		byte intr;
 
 		int windowWidth;
 		int windowHeight;
@@ -58,7 +62,6 @@ namespace System {
 		byte [] buffer;
 		int readpos;
 		int writepos;
-		string enterCA, exitCA;
 		string keypadXmit, keypadLocal;
 		bool controlCAsInput;
 		bool inited;
@@ -132,6 +135,8 @@ namespace System {
 
 			if (reader == null)
 				reader = new TermInfoReader (term, KnownTerminals.ansi);
+
+			Init ();
 		}
 
 		public bool Initialized {
@@ -142,24 +147,21 @@ namespace System {
 		{
 			if (inited)
 				return;
+			
+			/* This should not happen any more, since it is checked for in Console */
+			if (!ConsoleDriver.IsConsole)
+				throw new IOException ("Not a tty.");
 
 			inited = true;
-			enterCA = reader.Get (TermInfoStrings.EnterCaMode);
-			exitCA = reader.Get (TermInfoStrings.ExitCaMode);
+			ConsoleDriver.SetEcho (false);
 			string endString = null;
-			if (enterCA != null && exitCA != null)
-				endString = exitCA;
-
 			keypadXmit = reader.Get (TermInfoStrings.KeypadXmit);
 			keypadLocal = reader.Get (TermInfoStrings.KeypadLocal);
 			if (keypadXmit != null) {
-				WriteConsole (keypadXmit);
+				WriteConsole (keypadXmit); // Needed to get the arrows working
 				if (keypadLocal != null)
 					endString += keypadLocal;
 			}
-
-			if (!ConsoleDriver.Isatty (MonoIO.ConsoleOutput) || !ConsoleDriver.Isatty (MonoIO.ConsoleInput))
-				throw new IOException ("Not a tty.");
 
 			origPair = reader.Get (TermInfoStrings.OrigPair);
 			origColors = reader.Get (TermInfoStrings.OrigColors);
@@ -169,11 +171,8 @@ namespace System {
 			if (resetColors != null)
 				endString += resetColors;
 
-			if (!ConsoleDriver.TtySetup (endString))
+			if (!ConsoleDriver.TtySetup (endString, out verase, out vsusp, out intr))
 				throw new IOException ("Error initializing terminal.");
-
-			if (enterCA != null && exitCA != null)
-				WriteConsole (enterCA);
 
 			stdout = Console.OpenStandardOutput (0);
 			stdin = Console.OpenStandardInput (0);
@@ -203,6 +202,13 @@ namespace System {
 				string result = cursorAddress.Replace ("%i", String.Empty);
 				home_1_1 = (cursorAddress != result);
 				cursorAddress = MangleParameters (result);
+			}
+
+			GetCursorPosition ();
+			if (noGetPosition) {
+				WriteConsole (clear);
+				cursorLeft = 0;
+				cursorTop = 0;
 			}
 		}
 
@@ -252,7 +258,6 @@ namespace System {
 		public ConsoleColor BackgroundColor {
 			get { return bgcolor; }
 			set {
-				Init ();
 				bgcolor = value;
 				WriteConsole (String.Format (setabcolor, TranslateColor (value)));
 			}
@@ -261,17 +266,14 @@ namespace System {
 		public ConsoleColor ForegroundColor {
 			get { return fgcolor; }
 			set {
-				Init ();
 				fgcolor = value;
 				WriteConsole (String.Format (setafcolor, TranslateColor (value)));
 			}
 		}
 
+		// Only used once.
 		void GetCursorPosition ()
 		{
-			if (noGetPosition)
-				return;
-
 			int row = 0, col = 0;
 			bool prevEcho = Echo;
 			Echo = false;
@@ -330,7 +332,6 @@ namespace System {
 
 		public int BufferHeight {
 			get {
-				GetWindowDimensions ();
 				return bufferHeight;
 			}
 			set {
@@ -340,7 +341,6 @@ namespace System {
 
 		public int BufferWidth {
 			get {
-				GetWindowDimensions ();
 				return bufferWidth;
 			}
 			set {
@@ -354,12 +354,10 @@ namespace System {
 
 		public int CursorLeft {
 			get {
-				Init ();
 				GetCursorPosition ();
 				return cursorLeft;
 			}
 			set {
-				Init ();
 				SetCursorPosition (value, CursorTop);
 				cursorLeft = value;
 			}
@@ -367,12 +365,10 @@ namespace System {
 
 		public int CursorTop {
 			get {
-				Init ();
 				GetCursorPosition ();
 				return cursorTop;
 			}
 			set {
-				Init ();
 				SetCursorPosition (CursorLeft, value);
 				cursorTop = value;
 			}
@@ -380,11 +376,9 @@ namespace System {
 
 		public bool CursorVisible {
 			get {
-				Init ();
 				return cursorVisible;
 			}
 			set {
-				Init ();
 				cursorVisible = value;
 				WriteConsole ((value ? csrVisible : csrInvisible));
 			}
@@ -410,7 +404,6 @@ namespace System {
 
 		public bool KeyAvailable {
 			get {
-				Init ();
 				return (writepos > readpos || ConsoleDriver.InternalKeyAvailable (0) > 0);
 			}
 		}
@@ -432,7 +425,6 @@ namespace System {
 			get { return title; }
 			
 			set {
-				Init ();
 				title = value;
 				WriteConsole (String.Format (titleFormat, value));
 			}
@@ -444,16 +436,14 @@ namespace System {
 				if (controlCAsInput == value)
 					return;
 
-				Init ();
 				ConsoleDriver.SetBreak (value);
 				controlCAsInput = value;
 			}
 		}
 
+		// TODO: use this at the beginning and on every SIGWINCH
 		void GetWindowDimensions ()
 		{
-			//TODO: Handle SIGWINCH
-
 			/* Try the ioctl first */
 			if (!ConsoleDriver.GetTtySize (MonoIO.ConsoleOutput, out windowWidth, out windowHeight)) {
 				windowWidth = reader.Get (TermInfoNumbers.Columns);
@@ -475,8 +465,6 @@ namespace System {
 				}
 			}
 
-			//windowTop = 0;
-			//windowLeft = 0;
 			bufferHeight = windowHeight;
 			bufferWidth = windowWidth;
 		}
@@ -523,13 +511,11 @@ namespace System {
 
 		public void Clear ()
 		{
-			Init ();
 			WriteConsole (clear);
 		}
 
 		public void Beep (int frequency, int duration)
 		{
-			Init ();
 			WriteConsole (bell);
 		}
 
@@ -633,7 +619,6 @@ namespace System {
 
 		public ConsoleKeyInfo ReadKey (bool intercept)
 		{
-			Init ();
 			bool prevEcho = Echo;
 			if (prevEcho == intercept)
 				Echo  = !intercept;
@@ -645,9 +630,28 @@ namespace System {
 			return key;
 		}
 
+		public string ReadLine ()
+ 		{
+			bool prevEcho = Echo;
+			if (prevEcho == false)
+				Echo  = true;
+			StringBuilder builder = new StringBuilder ();
+			bool exit = false;
+			do {
+				ConsoleKeyInfo key = ReadKeyInternal ();
+				char c = key.KeyChar;
+				exit = (c == '\n');
+				if (!exit)
+					builder.Append (c);
+				stdout.WriteByte ((byte) c);
+			} while (!exit);
+			if (prevEcho == false)
+				Echo = prevEcho;
+			return builder.ToString ();
+ 		}
+
 		public void ResetColor ()
 		{
-			Init ();
 			string str = (origPair != null) ? origPair : origColors;
 			WriteConsole (str);
 		}
@@ -667,8 +671,6 @@ namespace System {
 
 			if (top < 0 || top >= bufferHeight)
 				throw new ArgumentOutOfRangeException ("top", "Value must be positive and below the buffer height.");
-
-			Init ();
 
 			// Either CursorAddress or nothing.
 			// We might want to play with up/down/left/right/home when ca is not available.

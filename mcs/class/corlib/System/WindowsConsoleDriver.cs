@@ -456,6 +456,20 @@ namespace System {
 				throw new ArgumentException (String.Empty, "Cannot write to the specified coordinates.");
 		}
 
+		public string ReadLine ()
+		{
+			StringBuilder builder = new StringBuilder ();
+			bool exit = false;
+			do {
+				ConsoleKeyInfo key = ReadKey (false);
+				char c = key.KeyChar;
+				exit = (c == '\n');
+				if (!exit)
+					builder.Append (key.KeyChar);
+			} while (!exit);
+			return builder.ToString ();
+		}
+
 		public ConsoleKeyInfo ReadKey (bool intercept)
 		{
 			int eventsRead;

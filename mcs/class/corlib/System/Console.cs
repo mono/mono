@@ -104,13 +104,29 @@ namespace System
 					inputEncoding = outputEncoding = Encoding.Default;
 			}
 
-			stderr = new UnexceptionalStreamWriter (OpenStandardError (0), outputEncoding); 
-			((StreamWriter)stderr).AutoFlush = true;
-			stderr = TextWriter.Synchronized (stderr, true);
+#if NET_2_0
+/*
+			if (ConsoleDriver.IsConsole) {
+				CStreamWriter w = new CStreamWriter (OpenStandardError (0), outputEncoding); 
+				w.AutoFlush = true;
+				stderr = TextWriter.Synchronized (w, true);
 
-			stdout = new UnexceptionalStreamWriter (OpenStandardOutput (0), outputEncoding);
-			((StreamWriter)stdout).AutoFlush = true;
-			stdout = TextWriter.Synchronized (stdout, true);
+				w = new CStreamWriter (OpenStandardOutput (0), outputEncoding);
+				w.AutoFlush = true;
+				stdout = TextWriter.Synchronized (w, true);
+			} else {
+			*/
+#endif
+				stderr = new UnexceptionalStreamWriter (OpenStandardError (0), outputEncoding); 
+				((StreamWriter)stderr).AutoFlush = true;
+				stderr = TextWriter.Synchronized (stderr, true);
+
+				stdout = new UnexceptionalStreamWriter (OpenStandardOutput (0), outputEncoding);
+				((StreamWriter)stdout).AutoFlush = true;
+				stdout = TextWriter.Synchronized (stdout, true);
+#if NET_2_0
+			//}
+#endif
 
 			stdin = new UnexceptionalStreamReader (OpenStandardInput (0), inputEncoding);
 			stdin = TextReader.Synchronized (stdin);
@@ -148,7 +164,7 @@ namespace System
 			return OpenStandardError (0);
 		}
 
-		// calling any FileStream constructor with an handle normally
+		// calling any FileStream constructor with a handle normally
 		// requires permissions UnmanagedCode permissions. In this 
 		// case we assert this permission so the console can be used
 		// in partial trust (i.e. without having UnmanagedCode).
@@ -167,7 +183,7 @@ namespace System
 			return OpenStandardInput (0);
 		}
 
-		// calling any FileStream constructor with an handle normally
+		// calling any FileStream constructor with a handle normally
 		// requires permissions UnmanagedCode permissions. In this 
 		// case we assert this permission so the console can be used
 		// in partial trust (i.e. without having UnmanagedCode).
@@ -186,7 +202,7 @@ namespace System
 			return OpenStandardOutput (0);
 		}
 
-		// calling any FileStream constructor with an handle normally
+		// calling any FileStream constructor with a handle normally
 		// requires permissions UnmanagedCode permissions. In this 
 		// case we assert this permission so the console can be used
 		// in partial trust (i.e. without having UnmanagedCode).
@@ -448,27 +464,30 @@ namespace System
 		}
 #endif
 
+#if NET_2_0
+		public static int Read ()
+		{
+			if (ConsoleDriver.IsConsole) {
+				return ConsoleDriver.Read ();
+			} else {
+				return stdin.Read ();
+			}
+		}
+
+		public static string ReadLine ()
+		{
+			if (ConsoleDriver.IsConsole) {
+				return ConsoleDriver.ReadLine ();
+			} else {
+				return stdin.ReadLine ();
+			}
+		}
+#else
 		public static int Read ()
 		{
 			return stdin.Read ();
 		}
 
-#if NET_2_0
-		public static string ReadLine ()
-		{
-			bool prevEcho = false;
-			if (ConsoleDriver.Initialized) {
-				prevEcho = ConsoleDriver.Echo;
-				ConsoleDriver.Echo = true;
-			}
-
-			string ret = stdin.ReadLine ();
-			if (ConsoleDriver.Initialized)
-				ConsoleDriver.Echo = prevEcho;
-
-			return ret;
-		}
-#else
 		public static string ReadLine ()
 		{
 			return stdin.ReadLine ();
@@ -631,8 +650,30 @@ namespace System
 			ConsoleDriver.SetWindowSize (width, height);
 		}
 
-		[MonoTODO ("Implement add/remove hooks")]
 		public static event ConsoleCancelEventHandler CancelKeyPress;
+
+		delegate void InternalCancelHandler ();
+		static InternalCancelHandler cancel_handler = new InternalCancelHandler (DoConsoleCancelEvent);
+
+		internal static void DoConsoleCancelEvent ()
+		{
+			bool exit = true;
+			if (CancelKeyPress != null) {
+				ConsoleCancelEventArgs args = new ConsoleCancelEventArgs (ConsoleSpecialKey.ControlC);
+				Delegate [] delegates = CancelKeyPress.GetInvocationList ();
+				foreach (ConsoleCancelEventHandler d in delegates){
+					try {
+						// Sender is always null here.
+						d (null, args);
+					} catch {} // Ignore any exception.
+				}
+				exit = !args.Cancel;
+			}
+
+			if (exit)
+				Environment.Exit (58);
+		}
 #endif
 	}
 }
+

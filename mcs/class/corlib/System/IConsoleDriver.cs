@@ -63,6 +63,7 @@ namespace System {
 		void SetCursorPosition (int left, int top);
 		void SetWindowPosition (int left, int top);
 		void SetWindowSize (int width, int height);
+		string ReadLine ();
 	}
 }
 #endif

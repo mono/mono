@@ -34,6 +34,8 @@ using System.Runtime.CompilerServices;
 namespace System {
 	class ConsoleDriver {
 		static IConsoleDriver driver;
+		static bool is_console;
+		static bool called_isatty;
 
 		static ConsoleDriver ()
 		{
@@ -178,6 +180,16 @@ namespace System {
 					targetLeft, targetTop, sourceChar, sourceForeColor, sourceBackColor);
 		}
 
+		public static int Read ()
+		{
+			return ReadKey (false).KeyChar;
+		}
+
+		public static string ReadLine ()
+		{
+			return driver.ReadLine ();
+		}
+
 		public static ConsoleKeyInfo ReadKey (bool intercept)
 		{
 			return driver.ReadKey (intercept);
@@ -208,14 +220,25 @@ namespace System {
 			driver.SetWindowSize (width, height);
 		}
 
+		public static bool IsConsole {
+			get {
+				if (called_isatty)
+					return is_console;
+
+				is_console = (Isatty (MonoIO.ConsoleOutput) && Isatty (MonoIO.ConsoleInput));
+				called_isatty = true;
+				return is_console;
+			}
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern bool Isatty (IntPtr handle);
+		static extern bool Isatty (IntPtr handle);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern int InternalKeyAvailable (int ms_timeout);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern bool TtySetup (string teardown);
+		internal static extern bool TtySetup (string teardown, out byte verase, out byte vsusp, out byte intr);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern bool SetEcho (bool wantEcho);
@@ -225,6 +248,9 @@ namespace System {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern bool GetTtySize (IntPtr handle, out int width, out int height);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern void Suspend ();
 	}
 }
 #endif
