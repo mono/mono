@@ -1,3 +1,8 @@
+2006-09-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_emit_exceptions): Emit the call to 
+	mono_arch_throw_corlib_exception using emit_call () too. Fixes #79271.
+
 2006-09-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (load_aot_module): Return immeditely if the AOT module was already
