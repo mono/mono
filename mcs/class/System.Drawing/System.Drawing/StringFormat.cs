@@ -7,8 +7,7 @@
 //   Jordi Mas i Hernandez (jordi@ximian.com)
 //
 // Copyright (C) 2002 Ximian, Inc (http://www.ximian.com)
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,14 +28,12 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
+
+using System.ComponentModel;
 using System.Drawing.Text;
 
-namespace System.Drawing
-{
-	/// <summary>
-	/// Summary description for StringFormat.
-	/// </summary>
+namespace System.Drawing {
+
 	public sealed class StringFormat : MarshalByRefObject, IDisposable, ICloneable
 	{
 		private static StringFormat genericDefault;
@@ -45,17 +42,12 @@ namespace System.Drawing
 				
 		public StringFormat() : this (0, GDIPlus.LANG_NEUTRAL)
 		{					   
-			
 		}		
 		
 		public StringFormat(StringFormatFlags options, int lang)
 		{
 			Status status = GDIPlus.GdipCreateStringFormat (options, lang, out nativeStrFmt);        			
 			GDIPlus.CheckStatus (status);
-	
-			LineAlignment =  StringAlignment.Near;
-			Alignment =  StringAlignment.Near;			
-			language = lang;			
 		}
 		
 		internal StringFormat(IntPtr native)
@@ -85,9 +77,12 @@ namespace System.Drawing
 		}
 
 		public StringFormat (StringFormat source)
-		{		
+		{
+			if (source == null)
+				throw new ArgumentNullException ("source");
+
 			Status status = GDIPlus.GdipCloneStringFormat (source.NativeObject, out nativeStrFmt);
-			GDIPlus.CheckStatus (status);			
+			GDIPlus.CheckStatus (status);
 		}
 
 		public StringFormat (StringFormatFlags flags)
@@ -105,7 +100,10 @@ namespace System.Drawing
         			return align;
 			}
 
-			set {					
+			set {
+				if ((value < StringAlignment.Near) || (value > StringAlignment.Far))
+					throw new InvalidEnumArgumentException ("Alignment");
+
 				Status status = GDIPlus.GdipSetStringFormatAlign (nativeStrFmt, value);
 				GDIPlus.CheckStatus (status);
 			}
@@ -120,7 +118,10 @@ namespace System.Drawing
                                 return align;
 			}
 
-			set {				
+			set {
+				if ((value < StringAlignment.Near) || (value > StringAlignment.Far))
+					throw new InvalidEnumArgumentException ("Alignment");
+
 				Status status = GDIPlus.GdipSetStringFormatLineAlign (nativeStrFmt, value);
 				GDIPlus.CheckStatus (status);
         		}
@@ -151,6 +152,9 @@ namespace System.Drawing
 			}
 
 			set {
+				if ((value < HotkeyPrefix.None) || (value > HotkeyPrefix.Hide))
+					throw new InvalidEnumArgumentException ("HotkeyPrefix");
+
 				Status status = GDIPlus.GdipSetStringFormatHotkeyPrefix (nativeStrFmt, value);
 				GDIPlus.CheckStatus (status);
 			}
@@ -166,6 +170,9 @@ namespace System.Drawing
 			}
 
 			set {
+				if ((value < StringTrimming.None) || (value > StringTrimming.EllipsisPath))
+					throw new InvalidEnumArgumentException ("Trimming");
+
 				Status status = GDIPlus.GdipSetStringFormatTrimming (nativeStrFmt, value);
 				GDIPlus.CheckStatus (status);
 			}
@@ -179,7 +186,6 @@ namespace System.Drawing
 				GDIPlus.CheckStatus (status);
 	
 				return new StringFormat (ptr);
-				
 			}
 		}
 		
@@ -193,7 +199,6 @@ namespace System.Drawing
 		
 		public static StringFormat GenericTypographic {
 			get {
-			
 				IntPtr ptr;
 						
 				Status status = GDIPlus.GdipStringFormatGetGenericTypographic (out ptr);
