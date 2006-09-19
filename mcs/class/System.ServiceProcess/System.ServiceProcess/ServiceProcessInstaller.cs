@@ -44,6 +44,7 @@ namespace System.ServiceProcess
 		private string password;
 		private string username;
 
+		[DefaultValue (ServiceAccount.User)]
 		public ServiceAccount Account {
 			get {
 				return account;
@@ -59,6 +60,7 @@ namespace System.ServiceProcess
 			}
 		}
 
+		[Browsable (false)]
 		public string Password {
 			get {
 				return password;
@@ -68,6 +70,8 @@ namespace System.ServiceProcess
 			}
 		}
 
+		[Browsable (false)]
+		[TypeConverter ("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
 		public string Username {
 			get {
 				return username;

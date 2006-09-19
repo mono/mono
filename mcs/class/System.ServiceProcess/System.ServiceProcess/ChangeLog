@@ -1,3 +1,17 @@
+2006-09-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ServiceProcessInstaller.cs: Added some missing attributes. Fixes
+	class status errors.
+	* ServiceBase.cs: Added missing attributes. Fixed signature of
+	OnCustomCommand and OnPowerEvent methods. Fixed code to match coding
+	guidelines and converted spaces to tabs.
+	* ServiceController.cs: Added missing attributes. Moved MonoTODO to
+	class level. Added descriptions for ServiceProcessDescription 
+	attributes.
+	* TimeoutException.cs: Reduce accesibility of deserialization ctor to
+	protected to match MS. Fixed code to match coding guidelines and
+	converted spaces to tabs.
+
 2006-09-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ServiceControllerPermissionEntryCollection.cs: Set eol-style to 

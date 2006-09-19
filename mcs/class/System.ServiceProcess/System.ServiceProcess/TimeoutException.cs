@@ -6,7 +6,6 @@
 //
 // (C) 2003, Ximian Inc.
 //
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,15 +30,21 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace System.ServiceProcess {
+namespace System.ServiceProcess
+{
+	[Serializable]
+	public class TimeoutException : SystemException
+	{
+		public TimeoutException () : base ()
+		{
+		}
 
-        [Serializable]
-        public class TimeoutException : SystemException
-        {
-                public TimeoutException () : base () { }
+		public TimeoutException (string message) : base (message)
+		{
+		}
 
-                public TimeoutException (string message) : base (message) { }
-
-                public TimeoutException (SerializationInfo info, StreamingContext context) : base (info, context) { }
-        }
+		protected TimeoutException (SerializationInfo info, StreamingContext context) : base (info, context)
+		{
+		}
+	}
 }

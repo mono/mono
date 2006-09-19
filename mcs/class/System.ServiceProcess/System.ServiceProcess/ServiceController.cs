@@ -41,6 +41,8 @@ using System.Threading;
 namespace System.ServiceProcess
 {
 	[Designer("System.ServiceProcess.Design.ServiceControllerDesigner, " + Consts.AssemblySystem_Design)]
+	[MonoTODO ("No unix implementation")]
+	[ServiceProcessDescription ("")]
 	public class ServiceController : Component
 	{
 		private string _name;
@@ -51,7 +53,6 @@ namespace System.ServiceProcess
 		private ServiceController [] _dependentServices;
 		private ServiceController [] _servicesDependedOn;
 
-		[MonoTODO ("No unix implementation")]
 		public ServiceController ()
 		{
 			_machineName = ".";
@@ -59,12 +60,10 @@ namespace System.ServiceProcess
 			_impl = CreateServiceControllerImpl (this);
 		}
 
-		[MonoTODO ("No unix implementation")]
 		public ServiceController (string name) : this (name, ".")
 		{
 		}
 
-		[MonoTODO ("No unix implementation")]
 		public ServiceController (string name, string machineName)
 		{
 			if (name == null || name.Length == 0)
@@ -78,9 +77,8 @@ namespace System.ServiceProcess
 			_impl = CreateServiceControllerImpl (this);
 		}
 
-		[MonoTODO ("No unix implementation")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[ServiceProcessDescription ("")]
+		[ServiceProcessDescription ("Whether this service recognizes the Pause and Continue commands.")]
 		public bool CanPauseAndContinue {
 			get {
 #if NET_2_0
@@ -90,9 +88,8 @@ namespace System.ServiceProcess
 			}
 		}
 
-		[MonoTODO ("No unix implementation")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[ServiceProcessDescription ("")]
+		[ServiceProcessDescription ("Whether this service can respond to a system shutdown.")]
 		public bool CanShutdown {
 			get
 			{
@@ -103,9 +100,8 @@ namespace System.ServiceProcess
 			}
 		}
 
-		[MonoTODO ("No unix implementation")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[ServiceProcessDescription ("")]
+		[ServiceProcessDescription ("Whether this service can be stopped.")]
 		public bool CanStop {
 			get
 			{
@@ -116,9 +112,8 @@ namespace System.ServiceProcess
 			}
 		}
 
-		[MonoTODO ("No unix implementation")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[ServiceProcessDescription ("")]
+		[ServiceProcessDescription ("The services that depend on this service in order to run.")]
 		public ServiceController [] DependentServices {
 			get
 			{
@@ -131,10 +126,9 @@ namespace System.ServiceProcess
 			}
 		}
 
-		[MonoTODO ("No unix implementation")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[ReadOnly (true)]
-		[ServiceProcessDescription ("")]
+		[ServiceProcessDescription ("The descriptive name of the service.")]
 		public string DisplayName {
 			get {
 				if (_displayName.Length == 0 && (_serviceName.Length > 0 || _name.Length > 0))
@@ -165,11 +159,10 @@ namespace System.ServiceProcess
 			}
 		}
 
-		[MonoTODO ("No unix implementation")]
 		[Browsable (false)]
 		[DefaultValue (".")]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[ServiceProcessDescription ("")]
+		[RecommendedAsConfigurable (true)]
+		[ServiceProcessDescription ("The name of the machine on which this service resides.")]
 		public string MachineName {
 			get {
 				return _machineName;
@@ -193,11 +186,10 @@ namespace System.ServiceProcess
 			}
 		}
 
-		[MonoTODO ("No unix implementation")]
 		[DefaultValue ("")]
 		[ReadOnly (true)]
 		[RecommendedAsConfigurable (true)]
-		[ServiceProcessDescription ("")]
+		[ServiceProcessDescription ("The short name of the service.")]
 		public string ServiceName {
 			get {
 				if (_serviceName.Length == 0 && (_displayName.Length > 0 || _name.Length > 0))
@@ -232,9 +224,8 @@ namespace System.ServiceProcess
 			}
 		}
 
-		[MonoTODO ("No unix implementation")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[ServiceProcessDescription ("")]
+		[ServiceProcessDescription ("Services that must be started in order for this one to start.")]
 		public ServiceController [] ServicesDependedOn {
 			get
 			{
@@ -259,9 +250,8 @@ namespace System.ServiceProcess
 		}
 #endif
 
-		[MonoTODO ("No unix implementation")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[ServiceProcessDescription ("")]
+		[ServiceProcessDescription ("The type of this service.")]
 		public ServiceType ServiceType {
 			get
 			{
@@ -272,9 +262,8 @@ namespace System.ServiceProcess
 			}
 		}
 
-		[MonoTODO ("No unix implementation")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[ServiceProcessDescription ("")]
+		[ServiceProcessDescription ("The status of the service, e.g., Running or Stopped.")]
 		public ServiceControllerStatus Status {
 			get
 			{
@@ -285,13 +274,11 @@ namespace System.ServiceProcess
 			}
 		}
 
-		[MonoTODO ("No unix implementation")]
 		public void Close () 
 		{
 			_impl.Close ();
 		}
 
-		[MonoTODO ("No unix implementation")]
 		public void Continue ()
 		{
 #if NET_2_0
@@ -300,14 +287,12 @@ namespace System.ServiceProcess
 			_impl.Continue ();
 		}
 
-		[MonoTODO ("No unix implementation")]
 		protected override void Dispose (bool disposing)
 		{
 			_impl.Dispose (disposing);
 			base.Dispose (disposing);
 		}
 
-		[MonoTODO ("No unix implementation")]
 		public void ExecuteCommand (int command)
 		{
 #if NET_2_0
@@ -316,13 +301,11 @@ namespace System.ServiceProcess
 			_impl.ExecuteCommand (command);
 		}
 
-		[MonoTODO ("No unix implementation")]
 		public static ServiceController[] GetDevices ()
 		{
 			return GetDevices (".");
 		}
 
-		[MonoTODO ("No unix implementation")]
 		public static ServiceController[] GetDevices (string machineName)
 		{
 			ValidateMachineName (machineName);
@@ -333,13 +316,11 @@ namespace System.ServiceProcess
 			}
 		}
 
-		[MonoTODO ("No unix implementation")]
 		public static ServiceController[] GetServices ()
 		{
 			return GetServices (".");
 		}
 
-		[MonoTODO ("No unix implementation")]
 		public static ServiceController[] GetServices (string machineName)
 		{
 			ValidateMachineName (machineName);
@@ -350,7 +331,6 @@ namespace System.ServiceProcess
 			}
 		}
 
-		[MonoTODO ("No unix implementation")]
 		public void Pause ()
 		{
 #if NET_2_0
@@ -359,7 +339,6 @@ namespace System.ServiceProcess
 			_impl.Pause ();
 		}
 
-		[MonoTODO ("No unix implementation")]
 		public void Refresh ()
 		{
 			// MSDN: this method also sets the  ServicesDependedOn and 
@@ -372,13 +351,11 @@ namespace System.ServiceProcess
 			_impl.Refresh ();
 		}
 
-		[MonoTODO ("No unix implementation")]
 		public void Start () 
 		{
 			Start (new string [0]);
 		}
 
-		[MonoTODO ("No unix implementation")]
 		public void Start (string [] args)
 		{
 #if NET_2_0
@@ -387,7 +364,6 @@ namespace System.ServiceProcess
 			_impl.Start (args);
 		}
 
-		[MonoTODO ("No unix implementation")]
 		public void Stop ()
 		{
 #if NET_2_0
@@ -396,13 +372,11 @@ namespace System.ServiceProcess
 			_impl.Stop ();
 		}
 
-		[MonoTODO ("No unix implementation")]
 		public void WaitForStatus (ServiceControllerStatus desiredStatus)
 		{
 			WaitForStatus (desiredStatus, TimeSpan.MaxValue);
 		}
 
-		[MonoTODO ("No unix implementation")]
 		public void WaitForStatus (ServiceControllerStatus desiredStatus, TimeSpan timeout)
 		{
 #if NET_2_0
