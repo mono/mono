@@ -30,6 +30,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Drawing.Text;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
 
@@ -190,11 +191,50 @@ namespace MonoTests.System.Drawing {
 
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetImageGraphicsContext (image, out graphics), "GdipGetImageGraphicsContext");
 			Assert.IsTrue (graphics != IntPtr.Zero, "graphics");
-			
 
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteGraphics (graphics), "GdipDeleteGraphics");
 			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDeleteGraphics (IntPtr.Zero), "GdipDeleteGraphics-null");
 
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDisposeImage (image), "GdipDisposeImage");
+		}
+
+		[Test]
+		public void MeasureCharacterRanges ()
+		{
+			IntPtr image;
+			GDIPlus.GdipCreateBitmapFromScan0 (10, 10, 0, PixelFormat.Format32bppArgb, IntPtr.Zero, out image);
+			Assert.IsTrue (image != IntPtr.Zero, "image");
+
+			IntPtr graphics;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetImageGraphicsContext (image, out graphics), "GdipGetImageGraphicsContext");
+			Assert.IsTrue (graphics != IntPtr.Zero, "graphics");
+
+			IntPtr family;
+			GDIPlus.GdipCreateFontFamilyFromName ("Arial", IntPtr.Zero, out family);
+			if (family == IntPtr.Zero)
+				Assert.Ignore ("Arial isn't available on this platform");
+
+			IntPtr font;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreateFont (family, 10f, FontStyle.Regular, GraphicsUnit.Point, out font), "GdipCreateFont");
+			Assert.IsTrue (font != IntPtr.Zero, "font");
+
+			RectangleF layout = new RectangleF ();
+			IntPtr[] regions = new IntPtr[1];
+			IntPtr format;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipStringFormatGetGenericDefault (out format), "GdipStringFormatGetGenericDefault");
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipMeasureCharacterRanges (IntPtr.Zero, "a", 1, font, ref layout, format, 1, out regions[0]), "GdipMeasureCharacterRanges-null");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipMeasureCharacterRanges (graphics, null, 0, font, ref layout, format, 1, out regions[0]), "GdipMeasureCharacterRanges-null string");
+
+			int count;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetStringFormatMeasurableCharacterRangeCount (format, out count), "GdipGetStringFormatMeasurableCharacterRangeCount");
+			Assert.AreEqual (0, count, "count");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipMeasureCharacterRanges (graphics, "a", 1, font, ref layout, format, 1, out regions[0]), "GdipMeasureCharacterRanges");
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteStringFormat (format), "GdipDeleteStringFormat");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteGraphics (graphics), "GdipDeleteGraphics");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteFont (font), "GdipDeleteFont");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteFontFamily (family), "GdipDeleteFontFamily");
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipDisposeImage (image), "GdipDisposeImage");
 		}
 
@@ -859,6 +899,96 @@ namespace MonoTests.System.Drawing {
 			
 			GDIPlus.GdipDeleteGraphics (graphics);
 			GDIPlus.GdipDisposeImage (image);
+		}
+
+		// StringFormat
+		private void CheckStringFormat (IntPtr sf, StringFormatFlags exepcted_flags, StringTrimming expected_trimmings)
+		{
+			StringAlignment sa = StringAlignment.Center;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetStringFormatAlign (IntPtr.Zero, out sa), "GdipGetStringFormatAlign-null");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetStringFormatAlign (sf, out sa), "GdipGetStringFormatAlign");
+			Assert.AreEqual (StringAlignment.Near, sa, "StringAlignment-1");
+
+			StringAlignment la = StringAlignment.Center;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetStringFormatLineAlign (IntPtr.Zero, out la), "GdipGetStringFormatLineAlign-null");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetStringFormatLineAlign (sf, out la), "GdipGetStringFormatLineAlign");
+			Assert.AreEqual (StringAlignment.Near, la, "StringAlignment-2");
+
+			StringFormatFlags flags = StringFormatFlags.DirectionRightToLeft;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetStringFormatFlags (IntPtr.Zero, out flags), "GdipGetStringFormatFlags-null");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetStringFormatFlags (sf, out flags), "GdipGetStringFormatFlags");
+			Assert.AreEqual (exepcted_flags, flags, "StringFormatFlags");
+
+			HotkeyPrefix hotkey = HotkeyPrefix.Show;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetStringFormatHotkeyPrefix (IntPtr.Zero, out hotkey), "GdipGetStringFormatHotkeyPrefix-null");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetStringFormatHotkeyPrefix (sf, out hotkey), "GdipGetStringFormatHotkeyPrefix");
+			Assert.AreEqual (HotkeyPrefix.None, hotkey, "HotkeyPrefix");
+
+			StringTrimming trimming = StringTrimming.None;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetStringFormatTrimming (IntPtr.Zero, out trimming), "GdipGetStringFormatTrimming-null");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetStringFormatTrimming (sf, out trimming), "GdipGetStringFormatTrimming");
+			Assert.AreEqual (expected_trimmings, trimming, "StringTrimming");
+
+			StringDigitSubstitute sub = StringDigitSubstitute.Traditional;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetStringFormatDigitSubstitution (IntPtr.Zero, 0, out sub), "GdipGetStringFormatDigitSubstitution-null");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetStringFormatDigitSubstitution (sf, 0, out sub), "GdipGetStringFormatDigitSubstitution");
+			Assert.AreEqual (StringDigitSubstitute.User, sub, "StringDigitSubstitute");
+
+			int count;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipGetStringFormatMeasurableCharacterRangeCount (IntPtr.Zero, out count), "GdipGetStringFormatMeasurableCharacterRangeCount-null");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetStringFormatMeasurableCharacterRangeCount (sf, out count), "GdipGetStringFormatMeasurableCharacterRangeCount");
+			Assert.AreEqual (0, count, "count");
+		}
+
+		[Test]
+		public void StringFormat ()
+		{
+			IntPtr sf;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreateStringFormat (Int32.MinValue, Int32.MinValue, out sf), "GdipCreateStringFormat");
+
+			CheckStringFormat (sf, (StringFormatFlags) Int32.MinValue, StringTrimming.Character);
+
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDeleteStringFormat (IntPtr.Zero), "GdipDeleteStringFormat-null");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteStringFormat (sf), "GdipDeleteStringFormat");
+		}
+
+		[Test]
+		public void StringFormat_Clone ()
+		{
+			IntPtr sf;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreateStringFormat (Int32.MinValue, Int32.MinValue, out sf), "GdipCreateStringFormat");
+
+			IntPtr clone;
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipCloneStringFormat (IntPtr.Zero, out clone), "GdipCloneStringFormat");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCloneStringFormat (sf, out clone), "GdipCloneStringFormat");
+
+			CheckStringFormat (clone, (StringFormatFlags) Int32.MinValue, StringTrimming.Character);
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteStringFormat (clone), "GdipDeleteStringFormat-clone");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteStringFormat (sf), "GdipDeleteStringFormat");
+		}
+
+		[Test]
+		public void StringFormat_GenericDefault ()
+		{
+			IntPtr sf;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipStringFormatGetGenericDefault (out sf), "GdipStringFormatGetGenericDefault");
+
+			CheckStringFormat (sf, (StringFormatFlags) 0, StringTrimming.Character);
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteStringFormat (sf), "GdipDeleteStringFormat");
+		}
+
+		[Test]
+		public void StringFormat_GenericTypographic ()
+		{
+			IntPtr sf;
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipStringFormatGetGenericTypographic (out sf), "GdipStringFormatGetGenericTypographic");
+
+			StringFormatFlags flags = StringFormatFlags.NoClip | StringFormatFlags.LineLimit | StringFormatFlags.FitBlackBox;
+			CheckStringFormat (sf, flags , StringTrimming.None);
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteStringFormat (sf), "GdipDeleteStringFormat");
 		}
 
 		// TextureBrush
