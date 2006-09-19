@@ -1,5 +1,9 @@
 2006-09-19  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs: Completely merged with the gmcs version.
+
+2006-09-19  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (Invocation): Merged with the gmcs version.
 	(ArrayAccess.GetStoreOpcode): Likewise.
 

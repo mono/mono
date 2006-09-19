@@ -148,7 +148,7 @@ namespace Mono.CSharp {
 			}
 
 			Expression lexpr = Left.GetTypeExpression ();
-			return new MemberAccess (lexpr, Name, TypeArguments);
+			return new MemberAccess (lexpr, Name, TypeArguments, Location);
 		}
 
 		public MemberName Clone ()

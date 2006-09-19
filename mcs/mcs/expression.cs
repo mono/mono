@@ -5588,6 +5588,7 @@ namespace Mono.CSharp {
 		//
 		Expression value_target;
 		bool value_target_set = false;
+		bool is_type_parameter = false;
 		
 		public New (Expression requested_type, ArrayList arguments, Location l)
 		{
@@ -5729,6 +5730,33 @@ namespace Mono.CSharp {
 				return RequestedType;
 			}
 
+#if GMCS_SOURCE
+			if (type.IsGenericParameter) {
+				GenericConstraints gc = TypeManager.GetTypeParameterConstraints (type);
+
+				if ((gc == null) || (!gc.HasConstructorConstraint && !gc.IsValueType)) {
+					Error (304, String.Format (
+						       "Cannot create an instance of the " +
+						       "variable type '{0}' because it " +
+						       "doesn't have the new() constraint",
+						       type));
+					return null;
+				}
+
+				if ((Arguments != null) && (Arguments.Count != 0)) {
+					Error (417, String.Format (
+						       "`{0}': cannot provide arguments " +
+						       "when creating an instance of a " +
+						       "variable type.", type));
+					return null;
+				}
+
+				is_type_parameter = true;
+				eclass = ExprClass.Value;
+				return this;
+			}
+#endif
+
 			if (type.IsAbstract && type.IsSealed) {
 				Report.SymbolRelatedToPreviousError (type);
 				Report.Error (712, loc, "Cannot create an instance of the static class `{0}'", TypeManager.CSharpName (type));
@@ -5784,6 +5812,21 @@ namespace Mono.CSharp {
 			}
 
 			return this;
+		}
+
+		bool DoEmitTypeParameter (EmitContext ec)
+		{
+#if GMCS_SOURCE
+			ILGenerator ig = ec.ig;
+
+			ig.Emit (OpCodes.Ldtoken, type);
+			ig.Emit (OpCodes.Call, TypeManager.system_type_get_type_from_handle);
+			ig.Emit (OpCodes.Call, TypeManager.activator_create_instance);
+			ig.Emit (OpCodes.Unbox_Any, type);
+			return true;
+#else
+			throw new InternalErrorException ();
+#endif
 		}
 
 		//
@@ -5849,17 +5892,26 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			DoEmit (ec, true);
+			if (is_type_parameter)
+				DoEmitTypeParameter (ec);
+			else
+				DoEmit (ec, true);
 		}
 		
 		public override void EmitStatement (EmitContext ec)
 		{
+			if (is_type_parameter)
+				throw new InvalidOperationException ();
+
 			if (DoEmit (ec, false))
 				ec.ig.Emit (OpCodes.Pop);
 		}
 
 		public void AddressOf (EmitContext ec, AddressOp Mode)
 		{
+			if (is_type_parameter)
+				throw new InvalidOperationException ();
+
 			if (!type.IsValueType){
 				//
 				// We throw an exception.  So far, I believe we only need to support
@@ -6642,7 +6694,13 @@ namespace Mono.CSharp {
 		public bool ResolveBase (EmitContext ec)
 		{
 			eclass = ExprClass.Variable;
-			type = ec.ContainerType;
+
+#if GMCS_SOURCE
+			if (ec.TypeContainer.CurrentType != null)
+				type = ec.TypeContainer.CurrentType;
+			else
+#endif
+				type = ec.ContainerType;
 
 			if (ec.IsStatic) {
 				Error (26, "Keyword `this' is not valid in a static property, static method, or static field initializer");
@@ -6906,6 +6964,14 @@ namespace Mono.CSharp {
 
 		public override bool GetAttributableValue (Type valueType, out object value)
 		{
+			if (TypeManager.ContainsGenericParameters (typearg)) {
+				Report.SymbolRelatedToPreviousError(typearg);
+				Report.Error(416, loc, "`{0}': an attribute argument cannot use type parameters",
+					     TypeManager.CSharpName(typearg));
+				value = null;
+				return false;
+			}
+
 			if (valueType == TypeManager.object_type) {
 				value = (object)typearg;
 				return true;
@@ -6960,6 +7026,13 @@ namespace Mono.CSharp {
 			TypeExpr texpr = QueriedType.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)
 				return null;
+
+#if GMCS_SOURCE
+			if (texpr is TypeParameterExpr){
+				((TypeParameterExpr)texpr).Error_CannotUseAsUnmanagedType (loc);
+				return null;
+			}
+#endif
 
 			type_queried = texpr.Type;
 			if (type_queried.IsEnum)
@@ -7090,7 +7163,7 @@ namespace Mono.CSharp {
 	public class MemberAccess : Expression {
 		public readonly string Identifier;
 		Expression expr;
-		
+
 		public MemberAccess (Expression expr, string id)
 			: this (expr, id, expr.Location)
 		{
@@ -7103,8 +7176,28 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
+#if GMCS_SOURCE
+		public MemberAccess (Expression expr, string identifier, TypeArguments args, Location loc)
+			: this (expr, identifier, loc)
+		{
+			this.args = args;
+		}
+
+		TypeArguments args;
+#endif
+
 		public Expression Expr {
 			get { return expr; }
+		}
+
+		protected string LookupIdentifier {
+			get {
+#if GMCS_SOURCE
+				return MemberName.MakeName (Identifier, args);
+#else
+				return Identifier;
+#endif
+			}
 		}
 
 		// TODO: this method has very poor performace for Enum fields and
@@ -7131,7 +7224,12 @@ namespace Mono.CSharp {
 
 			if (new_expr is Namespace) {
 				Namespace ns = (Namespace) new_expr;
-				FullNamedExpression retval = ns.Lookup (ec.DeclContainer, Identifier, loc);
+				FullNamedExpression retval = ns.Lookup (ec.DeclContainer, LookupIdentifier, loc);
+#if GMCS_SOURCE
+				if ((retval != null) && (args != null))
+					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (ec, false);
+#endif
+
 				if (retval == null)
 					ns.Error_NamespaceDoesNotExist (loc, Identifier);
 				return retval;
@@ -7149,9 +7247,19 @@ namespace Mono.CSharp {
 			
 
 			Expression member_lookup;
-			member_lookup = MemberLookupFinal (ec, expr_type, expr_type, Identifier, loc);
-			if (member_lookup == null)
+			member_lookup = MemberLookup (
+				ec.ContainerType, expr_type, expr_type, Identifier, loc);
+#if GMCS_SOURCE
+			if ((member_lookup == null) && (args != null)) {
+				member_lookup = MemberLookup (
+					ec.ContainerType, expr_type, expr_type, LookupIdentifier, loc);
+			}
+#endif
+			if (member_lookup == null) {
+				MemberLookupFailed (
+					ec.ContainerType, expr_type, expr_type, Identifier, null, true, loc);
 				return null;
+			}
 
 			if (member_lookup is TypeExpr) {
 				if (!(new_expr is TypeExpr) && 
@@ -7161,6 +7269,22 @@ namespace Mono.CSharp {
 					return null;
 				}
 
+#if GMCS_SOURCE
+				ConstructedType ct = new_expr as ConstructedType;
+				if (ct != null) {
+					//
+					// When looking up a nested type in a generic instance
+					// via reflection, we always get a generic type definition
+					// and not a generic instance - so we have to do this here.
+					//
+					// See gtest-172-lib.cs and gtest-172.cs for an example.
+					//
+					ct = new ConstructedType (
+						member_lookup.Type, ct.TypeArguments, loc);
+
+					return ct.ResolveAsTypeStep (ec, false);
+				}
+#endif
 				return member_lookup;
 			}
 
@@ -7168,6 +7292,16 @@ namespace Mono.CSharp {
 			member_lookup = me.ResolveMemberAccess (ec, new_expr, loc, original);
 			if (member_lookup == null)
 				return null;
+
+#if GMCS_SOURCE
+			if (args != null) {
+				MethodGroupExpr mg = member_lookup as MethodGroupExpr;
+				if (mg == null)
+					throw new InternalErrorException ();
+
+				return mg.ResolveGeneric (ec, args);
+			}
+#endif
 
 			if (original != null && !TypeManager.IsValueType (expr_type)) {
 				me = member_lookup as MemberExpr;
@@ -7211,28 +7345,40 @@ namespace Mono.CSharp {
 
 			if (new_expr is Namespace) {
 				Namespace ns = (Namespace) new_expr;
-				FullNamedExpression retval = ns.Lookup (rc.DeclContainer, Identifier, loc);
+				FullNamedExpression retval = ns.Lookup (rc.DeclContainer, LookupIdentifier, loc);
+#if GMCS_SOURCE
+				if ((retval != null) && (args != null))
+					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (rc, false);
+#endif
 				if (!silent && retval == null)
 					ns.Error_NamespaceDoesNotExist (loc, Identifier);
 				return retval;
 			}
 
-			Type expr_type = new_expr.Type;
-		      
+			TypeExpr tnew_expr = new_expr.ResolveAsTypeTerminal (rc, false);
+			if (tnew_expr == null)
+				return null;
+
+			Type expr_type = tnew_expr.Type;
+
 			if (expr_type.IsPointer){
 				Error (23, "The `.' operator can not be applied to pointer operands (" +
 				       TypeManager.CSharpName (expr_type) + ")");
 				return null;
 			}
-			
-			Expression member_lookup = MemberLookup (rc.DeclContainer.TypeBuilder, expr_type, expr_type, Identifier, loc);
+
+			Expression member_lookup = MemberLookup (
+				rc.DeclContainer.TypeBuilder, expr_type, expr_type, LookupIdentifier,
+				MemberTypes.NestedType, BindingFlags.Public | BindingFlags.NonPublic, loc);
 			if (member_lookup == null) {
 				int errors = Report.Errors;
-				MemberLookupFailed (rc.DeclContainer.TypeBuilder, expr_type, expr_type, Identifier, null, false, loc);
+				MemberLookupFailed (
+					rc.DeclContainer.TypeBuilder, expr_type, expr_type,
+					LookupIdentifier, null, false, loc);
 
 				if (!silent && errors == Report.Errors) {
 					Report.Error (426, loc, "The nested type `{0}' does not exist in the type `{1}'",
-						Identifier, new_expr.GetSignatureForError ());
+						      Identifier, new_expr.GetSignatureForError ());
 				}
 				return null;
 			}
@@ -7240,9 +7386,34 @@ namespace Mono.CSharp {
 			if (!(member_lookup is TypeExpr)) {
 				new_expr.Error_UnexpectedKind (rc.DeclContainer, "type", loc);
 				return null;
-			} 
+			}
 
-			return member_lookup.ResolveAsTypeTerminal (rc, silent);
+			TypeExpr texpr = member_lookup.ResolveAsTypeTerminal (rc, false);
+			if (texpr == null)
+				return null;
+
+#if GMCS_SOURCE
+			TypeArguments the_args = args;
+			if (TypeManager.HasGenericArguments (expr_type)) {
+				Type[] decl_args = TypeManager.GetTypeArguments (expr_type);
+
+				TypeArguments new_args = new TypeArguments (loc);
+				foreach (Type decl in decl_args)
+					new_args.Add (new TypeExpression (decl, loc));
+
+				if (args != null)
+					new_args.Add (args);
+
+				the_args = new_args;
+			}
+
+			if (the_args != null) {
+				ConstructedType ctype = new ConstructedType (texpr.Type, the_args, loc);
+				return ctype.ResolveAsTypeStep (rc, false);
+			}
+#endif
+
+			return texpr;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -7252,7 +7423,11 @@ namespace Mono.CSharp {
 
 		public override string ToString ()
 		{
+#if GMCS_SOURCE
+			return expr + "." + MemberName.MakeName (Identifier, args);
+#else
 			return expr + "." + Identifier;
+#endif
 		}
 
 		public override string GetSignatureForError ()
@@ -7589,6 +7764,14 @@ namespace Mono.CSharp {
 			} else if (type.IsValueType){
 				ig.Emit (OpCodes.Ldelema, type);
 				ig.Emit (OpCodes.Ldobj, type);
+#if GMCS_SOURCE
+			} else if (type.IsGenericParameter) {
+#if MS_COMPATIBLE
+				ig.Emit (OpCodes.Ldelem, type);
+#else
+				ig.Emit (OpCodes.Ldelem_Any, type);
+#endif
+#endif
 			} else if (type.IsPointer)
 				ig.Emit (OpCodes.Ldelem_I);
 			else
@@ -7925,6 +8108,23 @@ namespace Mono.CSharp {
 		{
 			Indexers ix = empty;
 
+#if GMCS_SOURCE
+			if (lookup_type.IsGenericParameter) {
+				GenericConstraints gc = TypeManager.GetTypeParameterConstraints (lookup_type);
+				if (gc == null)
+					return empty;
+
+				if (gc.HasClassConstraint)
+					Append (ref ix, caller_type, GetIndexersForTypeOrInterface (caller_type, gc.ClassConstraint));
+
+				Type[] ifaces = gc.InterfaceConstraints;
+				foreach (Type itype in ifaces)
+					Append (ref ix, caller_type, GetIndexersForTypeOrInterface (caller_type, itype));
+
+				return ix;
+			}
+#endif
+
 			Type copy = lookup_type;
 			while (copy != TypeManager.object_type && copy != null){
 				Append (ref ix, caller_type, GetIndexersForTypeOrInterface (caller_type, copy));
@@ -8189,13 +8389,23 @@ namespace Mono.CSharp {
 	///   The base operator for method names
 	/// </summary>
 	public class BaseAccess : Expression {
-		string member;
-		
+		public readonly string Identifier;
+
 		public BaseAccess (string member, Location l)
 		{
-			this.member = member;
+			this.Identifier = member;
 			loc = l;
 		}
+
+#if GMCS_SOURCE
+		public BaseAccess (string member, TypeArguments args, Location l)
+			: this (member, l)
+		{
+			this.args = args;
+		}
+
+		TypeArguments args;
+#endif
 
 		public override Expression DoResolve (EmitContext ec)
 		{
@@ -8244,10 +8454,10 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			member_lookup = MemberLookup (ec.ContainerType, null, base_type, member,
+			member_lookup = MemberLookup (ec.ContainerType, null, base_type, Identifier,
 						      AllMemberTypes, AllBindingFlags, loc);
 			if (member_lookup == null) {
-				MemberLookupFailed (ec.ContainerType, base_type, base_type, member, null, true, loc);
+				MemberLookupFailed (ec.ContainerType, base_type, base_type, Identifier, null, true, loc);
 				return null;
 			}
 
@@ -8267,9 +8477,21 @@ namespace Mono.CSharp {
 
 				pe.IsBase = true;
 			}
-			
-			if (e is MethodGroupExpr)
-				((MethodGroupExpr) e).IsBase = true;
+
+			MethodGroupExpr mg = e as MethodGroupExpr;
+			if (mg != null)
+				mg.IsBase = true;
+
+#if GMCS_SOURCE
+			if (args != null) {
+				if (mg != null)
+					return mg.ResolveGeneric (ec, args);
+
+				Report.Error (307, loc, "`{0}' cannot be used with type arguments",
+					      Identifier);
+				return null;
+			}
+#endif
 
 			return e;
 		}
@@ -8441,6 +8663,19 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+#if GMCS_SOURCE
+		public Expression RemoveNullable ()
+		{
+			if (dim.EndsWith ("?")) {
+				dim = dim.Substring (0, dim.Length - 1);
+				if (dim == "")
+					return left;
+			}
+
+			return this;
+		}
+#endif
+
 		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
 			TypeExpr lexpr = left.ResolveAsTypeTerminal (ec, false);
@@ -8453,11 +8688,24 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+#if GMCS_SOURCE
+			if ((dim.Length > 0) && (dim [0] == '?')) {
+				TypeExpr nullable = new NullableType (left, loc);
+				if (dim.Length > 1)
+					nullable = new ComposedCast (nullable, dim.Substring (1), loc);
+				return nullable.ResolveAsTypeTerminal (ec, false);
+			}
+#endif
+
 			if (dim == "*" && !TypeManager.VerifyUnManaged (ltype, loc)) {
 				return null;
 			}
 
-			type = TypeManager.GetConstructedType (ltype, dim);
+			if (dim != "")
+				type = TypeManager.GetConstructedType (ltype, dim);
+			else
+				type = ltype;
+
 			if (type == null) {
 				throw new InternalErrorException ("Couldn't create computed type " + ltype + dim);
 			}
