@@ -2639,6 +2639,7 @@ public partial class TypeManager {
 		return target_list;
 	}
 
+#region Generics
 	// This method always return false for non-generic compiler,
 	// while Type.IsGenericParameter is returned if it is supported.
 	public static bool IsGenericParameter (Type type)
@@ -2824,6 +2825,47 @@ public partial class TypeManager {
 
 		return type.Equals (parent);
 	}
+
+	/// <summary>
+	///   Whether `mb' is a generic method definition.
+	/// </summary>
+	public static bool IsGenericMethodDefinition (MethodBase mb)
+	{
+#if GMCS_SOURCE
+		if (mb.DeclaringType is TypeBuilder) {
+			IMethodData method = (IMethodData) builder_to_method [mb];
+			if (method == null)
+				return false;
+
+			return method.GenericMethod != null;
+		}
+
+		return mb.IsGenericMethodDefinition;
+#else
+		return false;
+#endif
+	}
+
+	/// <summary>
+	///   Whether `mb' is a generic method.
+	/// </summary>
+	public static bool IsGenericMethod (MethodBase mb)
+	{
+#if GMCS_SOURCE
+		if (mb.DeclaringType is TypeBuilder) {
+			IMethodData method = (IMethodData) builder_to_method [mb];
+			if (method == null)
+				return false;
+
+			return method.GenericMethod != null;
+		}
+
+		return mb.IsGenericMethod;
+#else
+		return false;
+#endif
+	}
+#endregion
 
 #region MemberLookup implementation
 	

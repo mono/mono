@@ -1,6 +1,12 @@
 2006-09-19  Martin Baulig  <martin@ximian.com>
 
 	* typemanager.cs
+	(TypeManager.IsGenericMethod): Moved here from ../gmcs/generic.cs.
+	(TypeManager.IsGenericMethodDefinition): Likewise.
+
+2006-09-19  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs
 	(TypeManager.IsEqual): Moved the gmcs implementation here.
 	(TypeManager.DropGenericTypeArguments): Likewise.
 	(TypeManager.DropGenericMethodArguments): Likewise.
