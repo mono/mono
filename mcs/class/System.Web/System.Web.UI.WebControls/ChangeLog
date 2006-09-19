@@ -1,5 +1,10 @@
 2006-09-19 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* RadioButtonList.cs: 
+	make it to consider CausesValidation and ValidationGroup properties
+		
+2006-09-19 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* CheckBoxList.cs: 
 	make it to consider CausesValidation and ValidationGroup properties
 		

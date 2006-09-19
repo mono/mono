@@ -46,7 +46,9 @@ namespace System.Web.UI.WebControls {
 #endif
 	public class RadioButtonList : ListControl, IRepeatInfoUser,
 		INamingContainer, IPostBackDataHandler {
+#if !NET_2_0
 		bool need_raise;
+#endif
 		short tabIndex = 0;
 
 		public RadioButtonList ()
@@ -257,6 +259,10 @@ namespace System.Web.UI.WebControls {
 			radio.AutoPostBack = AutoPostBack;
 			radio.Enabled = Enabled;
 			radio.TabIndex = tabIndex;
+#if NET_2_0
+			radio.ValidationGroup = ValidationGroup;
+			radio.CausesValidation = CausesValidation;
+#endif
 			radio.RenderControl (writer);
 		}
 #if NET_2_0
@@ -275,9 +281,15 @@ namespace System.Web.UI.WebControls {
 
 				if (i != selected) {
 					SelectedIndex = i;
+#if NET_2_0
+					return true;
+#else
 					need_raise = true;
+#endif
 				}
+#if !NET_2_0
 				return true;
+#endif
 			}
 
 			return false;
@@ -288,7 +300,14 @@ namespace System.Web.UI.WebControls {
 #endif
 		void RaisePostDataChangedEvent ()
 		{
+#if NET_2_0
+			if (CausesValidation)
+				Page.Validate (ValidationGroup);
+#endif
+
+#if !NET_2_0
 			if (need_raise)
+#endif
 				OnSelectedIndexChanged (EventArgs.Empty);
 		}
 
