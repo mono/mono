@@ -1890,6 +1890,11 @@ namespace Mono.CSharp {
 			return name;
 		}
 
+		public SimpleName GetMethodGroup ()
+		{
+			return new SimpleName (RemoveGenericArity (Name), loc);
+		}
+
 		public static void Error_ObjectRefRequired (EmitContext ec, Location l, string name)
 		{
 			if (ec.IsFieldInitializer)

@@ -1,5 +1,14 @@
 2006-09-19  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs
+	(TypeManager.IsEqual): Moved into ../mcs/typemanager.cs.
+	(TypeManager.DropGenericTypeArguments): Likewise.
+	(TypeManager.DropGenericMethodArguments): Likewise.
+	(TypeManager.GetTypeArguments): Likewise.
+	(TypeManager.HasGenericArguments): Likewise.
+
+2006-09-19  Martin Baulig  <martin@ximian.com>
+
 	* ecore.cs (PropertyExpr.InstanceResolve): Fix the CS1540 check.
 
 2006-09-19  Martin Baulig  <martin@ximian.com>

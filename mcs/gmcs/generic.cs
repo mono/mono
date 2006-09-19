@@ -2058,67 +2058,6 @@ namespace Mono.CSharp {
 			return ReflectionConstraints.GetConstraints (t);
 		}
 
-		public static bool HasGenericArguments (Type t)
-		{
-			return GetNumberOfTypeArguments (t) > 0;
-		}
-
-		public static Type[] GetTypeArguments (Type t)
-		{
-			DeclSpace tc = LookupDeclSpace (t);
-			if (tc != null) {
-				if (!tc.IsGeneric)
-					return Type.EmptyTypes;
-
-				TypeParameter[] tparam = tc.TypeParameters;
-				Type[] ret = new Type [tparam.Length];
-				for (int i = 0; i < tparam.Length; i++) {
-					ret [i] = tparam [i].Type;
-					if (ret [i] == null)
-						throw new InternalErrorException ();
-				}
-
-				return ret;
-			} else
-				return t.GetGenericArguments ();
-		}
-
-		public static Type DropGenericTypeArguments (Type t)
-		{
-			if (!t.IsGenericType)
-				return t;
-			// Micro-optimization: a generic typebuilder is always a generic type definition
-			if (t is TypeBuilder)
-				return t;
-			return t.GetGenericTypeDefinition ();
-		}
-
-		public static MethodBase DropGenericMethodArguments (MethodBase m)
-		{
-			if (m.IsGenericMethodDefinition)
-				return m;
-			if (m.IsGenericMethod)
-				return ((MethodInfo) m).GetGenericMethodDefinition ();
-			if (!m.DeclaringType.IsGenericType)
-				return m;
-
-			Type t = m.DeclaringType.GetGenericTypeDefinition ();
-			BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic |
-				BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
-
-			if (m is ConstructorInfo) {
-				foreach (ConstructorInfo c in t.GetConstructors (bf))
-					if (c.MetadataToken == m.MetadataToken)
-						return c;
-			} else {
-				foreach (MethodBase mb in t.GetMethods (bf))
-					if (mb.MetadataToken == m.MetadataToken)
-						return mb;
-			}
-
-			return m;
-		}
-
 		public static FieldInfo GetGenericFieldDefinition (FieldInfo fi)
 		{
 			if (fi.DeclaringType.IsGenericTypeDefinition ||
@@ -2134,48 +2073,6 @@ namespace Mono.CSharp {
 					return f;
 
 			return fi;
-		}
-
-		public static bool IsEqual (Type a, Type b)
-		{
-			if (a.Equals (b))
-				return true;
-
-			if (a.IsGenericParameter && b.IsGenericParameter) {
-				if (a.DeclaringMethod != b.DeclaringMethod &&
-				    (a.DeclaringMethod == null || b.DeclaringMethod == null))
-					return false;
-				return a.GenericParameterPosition == b.GenericParameterPosition;
-			}
-
-			if (a.IsArray && b.IsArray) {
-				if (a.GetArrayRank () != b.GetArrayRank ())
-					return false;
-				return IsEqual (a.GetElementType (), b.GetElementType ());
-			}
-
-			if (a.IsByRef && b.IsByRef)
-				return IsEqual (a.GetElementType (), b.GetElementType ());
-
-			if (a.IsGenericType && b.IsGenericType) {
-				if (a.GetGenericTypeDefinition () != b.GetGenericTypeDefinition ())
-					return false;
-
-				Type[] aargs = a.GetGenericArguments ();
-				Type[] bargs = b.GetGenericArguments ();
-
-				if (aargs.Length != bargs.Length)
-					return false;
-
-				for (int i = 0; i < aargs.Length; i++) {
-					if (!IsEqual (aargs [i], bargs [i]))
-						return false;
-				}
-
-				return true;
-			}
-
-			return false;
 		}
 
 		/// <summary>

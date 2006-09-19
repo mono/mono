@@ -1,5 +1,14 @@
 2006-09-19  Martin Baulig  <martin@ximian.com>
 
+	* typemanager.cs
+	(TypeManager.IsEqual): Moved the gmcs implementation here.
+	(TypeManager.DropGenericTypeArguments): Likewise.
+	(TypeManager.DropGenericMethodArguments): Likewise.
+	(TypeManager.GetTypeArguments): Moved here from gmcs.
+	(TypeManager.HasGenericArguments): Likewise.
+
+2006-09-19  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (Binary): Merged with the gmcs version.
 
 2006-09-19  Martin Baulig  <martin@ximian.com>
