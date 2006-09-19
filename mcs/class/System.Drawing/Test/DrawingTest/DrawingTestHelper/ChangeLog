@@ -1,3 +1,7 @@
+2006-09-19	Boris Kirzner <borisk@mainsoft.com>
+
+	* DrawingTestHelper20.J2EE.vmwcsproj : fixed references path.
+
 2006-09-18	Boris Kirzner <borisk@mainsoft.com>
 
 	* DrawingTestHelper20.J2EE.vmwcsproj : fixed references path.
