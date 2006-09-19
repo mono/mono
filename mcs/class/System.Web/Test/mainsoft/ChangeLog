@@ -1,3 +1,10 @@
+2006-09-19 Yoni Klain <yonik@mainsoft.com>
+	* Web.config added NunitWeb assembly  ;
+	* WebTest.cs remove overriden set url ;
+	* new resources : 
+	Test/mainsoft/NunitWebResources/CrossPagePosting1.aspx ;
+	Test/mainsoft/NunitWebResources/CrossPagePosting2.aspx ;
+
 2006-09-18 Yoni Klain <yonik@mainsoft.com>
 
 	* new resources : 

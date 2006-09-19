@@ -101,14 +101,7 @@ namespace MonoTests.SystemWeb.Framework
 		/// property should not be changed, otherwise an <see cref="Exception"/>
 		/// is thrown.
 		/// </summary>
-		/// <exception cref="Exception">Thrown when trying to change this property.</exception>
-		public override string Url
-		{
-			get { return base.Url; }
-			set { throw new Exception ("Must not change Url of FormPostback"); }
-		}
-
-		/// <summary>
+		
 		/// Get returns true if the form method was POST, otherwise returns false.
 		/// Unlike the base class, here this property should not be
 		/// changed, otherwise an <see cref="Exception"/> is thrown.

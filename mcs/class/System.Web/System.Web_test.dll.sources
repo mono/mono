@@ -151,6 +151,7 @@ System.Web.UI.WebControls/CompositeControlTest.cs
 System.Web.UI.WebControls/ContentTest.cs
 System.Web.UI.WebControls/CreateUserWizardStepTest.cs
 System.Web.UI.WebControls/CreateUserWizardTest.cs
+System.Web.UI.WebControls/CrossPagePostingTest.cs
 System.Web.UI.WebControls/CustomValidatorTest.cs
 System.Web.UI.WebControls/DataBoundControlTest.cs
 System.Web.UI.WebControls/DataControlFieldCollectionTest.cs

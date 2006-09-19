@@ -111,6 +111,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/WebMapping.config \
 	Test/mainsoft/NunitWebResources/Mapping.aspx \
 	Test/mainsoft/NunitWebResources/Mapping1.aspx \
+	Test/mainsoft/NunitWebResources/CrossPagePosting1.aspx \
+	Test/mainsoft/NunitWebResources/CrossPagePosting2.aspx \
 	Test/mainsoft/MainsoftWebTest/nunitweb_config.xml 
 
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)

@@ -1,3 +1,7 @@
+2006-09-19 Yoni Klain <yonik@mainsoft.com>
+
+	* CrossPagePostingTest.cs: New test was added
+
 2006-09-18 Yoni Klain <yonik@mainsoft.com>
 
 	* MappingUrlTest.cs: New test was added
