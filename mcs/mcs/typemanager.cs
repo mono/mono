@@ -2668,6 +2668,15 @@ public partial class TypeManager {
 #endif
 	}
 
+	public static bool ContainsGenericParameters (Type type)
+	{
+#if GMCS_SOURCE
+		return type.ContainsGenericParameters;
+#else
+		return false;
+#endif
+	}
+
 #if !GMCS_SOURCE
 	public static bool IsEqual (Type a, Type b)
 	{
