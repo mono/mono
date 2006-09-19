@@ -103,12 +103,10 @@ CLEANFILES = etc/mono/config
 etc/mono/config: ../data/config Makefile $(symlinks)
 	d=`cd ../support && pwd`; \
 	sed 's,target="libMonoPosixHelper[^"]*",target="'$$d/libMonoPosixHelper.la'",' ../data/config > $@t
-	if test -z "$(libgdiplus_loc)"; then \
-	  mv -f $@t $@; \
-	else \
-	  sed 's,<configuration>,& <dllmap dll="gdiplus.dll" target="$(libgdiplus_loc)" />,' $@t > $@; \
-	  rm -f $@t; \
-	fi
+	if test -z "$(libgdiplus_loc)"; then :; else \
+	  sed 's,<configuration>,& <dllmap dll="gdiplus.dll" target="$(libgdiplus_loc)" />,' $@t > $@tt; \
+	  mv -f $@tt $@t; fi
+	mv -f $@t $@
 
 $(tmpinst)/bin/mono: mono-wrapper etc/mono/config
 	cp mono-wrapper $@
