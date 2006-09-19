@@ -81,6 +81,13 @@ Allowed values are: linux, osx, solaris, freebsd, openbsd, netbsd, windows, aix,
 This is the name of the architecture for which the mapping should be applied.
 Allowed values are: x86, x86-64, sparc, ppc, s390, s390x, arm, mips, alpha, hppa, ia64.
 .PP
+The attribute value for both attributes can be a comma-separated list of the allowed
+values. Additionally, the first character may be a
+.I '!'
+to reverse the meaning. An attribute value of "!windows,osx", for example, would mean
+that the entry is considered on all operating systems, except on Windows and OS X.
+No spaces are allowed in any part of the value.
+.PP
 Note that later entries will override the entries defined earlier in the file.
 .SH EXAMPLES
 The following example maps references to the `cygwin1.dll' shared
@@ -102,12 +109,12 @@ in
 .B libdifferent.so
 , but to the same function in the library
 .B libanother.so
-when running under the Solaris operating system.
+when running under the Solaris and FreeBSD operating systems.
 .nf
 <configuration>
 	<dllmap dll="libc">
 		<dllentry dll="libdifferent.so" name="somefunction" target="differentfunction" />
-		<dllentry os="solaris" dll="libanother.so" name="somefunction" target="differentfunction" />
+		<dllentry os="solaris,freebsd" dll="libanother.so" name="somefunction" target="differentfunction" />
 	</dllmap>
 </configuration>
 .fi
