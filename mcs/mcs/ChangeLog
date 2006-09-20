@@ -1,5 +1,7 @@
 2006-09-20  Raja R Harinath  <rharinath@novell.com>
 
+	* expression.cs (MemberAccess): Remove GMCS_SOURCE #ifdef.
+
 	* decl.cs (MemberName): Unify with gmcs, except for GetTypeExpression.
 	* generic.cs (TypeArguments): New dummy class to help avoid #ifdefs.
 	* mcs.exe.sources: Add generic.cs.

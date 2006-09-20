@@ -7176,7 +7176,6 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
-#if GMCS_SOURCE
 		public MemberAccess (Expression expr, string identifier, TypeArguments args, Location loc)
 			: this (expr, identifier, loc)
 		{
@@ -7184,20 +7183,13 @@ namespace Mono.CSharp {
 		}
 
 		TypeArguments args;
-#endif
 
 		public Expression Expr {
 			get { return expr; }
 		}
 
 		protected string LookupIdentifier {
-			get {
-#if GMCS_SOURCE
-				return MemberName.MakeName (Identifier, args);
-#else
-				return Identifier;
-#endif
-			}
+			get { return MemberName.MakeName (Identifier, args); }
 		}
 
 		// TODO: this method has very poor performace for Enum fields and
@@ -7423,11 +7415,7 @@ namespace Mono.CSharp {
 
 		public override string ToString ()
 		{
-#if GMCS_SOURCE
 			return expr + "." + MemberName.MakeName (Identifier, args);
-#else
-			return expr + "." + Identifier;
-#endif
 		}
 
 		public override string GetSignatureForError ()
