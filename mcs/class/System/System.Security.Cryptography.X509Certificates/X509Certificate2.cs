@@ -116,6 +116,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 		public X509Certificate2 (X509Certificate certificate) 
+			: base (certificate)
 		{
 			_cert = new MX.X509Certificate (base.GetRawCertData ());
 		}
