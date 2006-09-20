@@ -1,3 +1,13 @@
+2006-09-20  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* CreateProperty.cs: First implementation.
+
+2006-08-15  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* MakeDir.cs, Touch.cs, ReadLinesFromFile.cs, RemoveDir.cs, Delete.cs,
+	Message.cs, FindUnderPath.cs, GenerateResource.cs, Copy.cs: Start to
+	use generics.
+
 2006-07-17  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* ManagedCompiler.cs: TargetType.Get: added null check.

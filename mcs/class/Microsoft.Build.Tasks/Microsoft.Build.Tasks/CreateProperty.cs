@@ -42,7 +42,9 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
-			throw new NotImplementedException ();
+			valueSetByTask = value;
+		
+			return true;
 		}
 
 		[Output]
