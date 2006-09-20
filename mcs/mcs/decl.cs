@@ -507,6 +507,10 @@ namespace Mono.CSharp {
 			get { return Parent; }
 		}
 
+		public virtual DeclSpace GenericDeclContainer {
+			get { return DeclContainer; }
+		}
+
 		public bool IsInObsoleteScope {
 			get {
 				if (GetObsoleteAttribute () != null)
@@ -575,6 +579,10 @@ namespace Mono.CSharp {
 			Basename = name.Name;
 			defined_names = new Hashtable ();
 			PartialContainer = null;
+		}
+
+		public override DeclSpace GenericDeclContainer {
+			get { return this; }
 		}
 
 		/// <summary>

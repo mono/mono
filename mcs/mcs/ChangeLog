@@ -1,5 +1,10 @@
 2006-09-20  Raja R Harinath  <rharinath@novell.com>
 
+	* codegen.cs (IResolveContent.GenericDeclContainer): Copy from gmcs.
+	(EmitContext): Add GenericDeclContainer implementation.
+	* decl.cs (MemberCore, DeclSpace): Likewise.
+	* namespace.cs: Remove #ifdef GMCS_SOURCE.
+
 	* namespace.cs (GetTypeInAssembly): Remove #ifdef GMCS_SOURCE.
 	MCS TypeManager has a corresponding dummy method.
 

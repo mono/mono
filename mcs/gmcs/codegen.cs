@@ -332,7 +332,7 @@ namespace Mono.CSharp {
 		public bool InIterator;
 
 		public bool IsLastStatement;
-		
+
 		/// <summary>
 		///  Whether we are in a `fixed' initialization
 		/// </summary>
@@ -1179,7 +1179,7 @@ namespace Mono.CSharp {
 				is_cls_compliant = ClsCompliantAttribute.GetClsCompliantAttributeValue ();
 			}
 
-#if NET_2_0
+#if GMCS_SOURCE
 			Attribute a = ResolveAttribute (TypeManager.runtime_compatibility_attr_type);
 			if (a != null) {
 				object val = a.GetPropertyValue ("WrapNonExceptionThrows");
@@ -1545,6 +1545,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void ResolveAttributes ()
 		{
+#if GMCS_SOURCE
 			Attribute a = ResolveAttribute (TypeManager.default_charset_type);
 			if (a != null) {
 				DefaultCharSet = a.GetCharSetValue ();
@@ -1563,6 +1564,7 @@ namespace Mono.CSharp {
 						break;
 				}
 			}
+#endif
 		}
 
 		public override string[] ValidAttributeTargets {
