@@ -1,5 +1,9 @@
 2006-09-20  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
+	* Makefile: Fix broken build.
+
+2006-09-20  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
 	* xbuild/Microsoft.CSharp.targets: Support AssemblyName and
 	WarningLevel.
 
