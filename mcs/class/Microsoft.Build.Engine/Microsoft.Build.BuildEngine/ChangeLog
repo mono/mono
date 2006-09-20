@@ -1,3 +1,8 @@
+2006-09-20  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* ConditionParser.cs: Copyright note.
+	* ExpressionCollection.cs: Fixed arrays passing.
+
 2006-08-06  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildTask.cs, UsingTaskCollection.cs, ImportCollection.cs,

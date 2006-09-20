@@ -67,7 +67,7 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public object ConvertTo (Type type)
 		{
-			if (type.IsArray == true) {
+			if (type.IsArray) {
 				if (type == typeof (ITaskItem[]))
 					return ConvertToITaskItemArray ();
 				else
@@ -90,24 +90,39 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			return ConvertToObject (ConvertToString (), type);
 		}
-		
+
 		object ConvertToArray (Type type)
 		{
-			string[] rawTable = ToString ().Split (';');
+			string[] rawTable = ConvertToString ().Split (';');
 			int i = 0;
 			
-			if (type == typeof (bool[]) ||
-				type == typeof (string[]) ||
-				type == typeof (int[]) ||
-				type == typeof (uint[]) ||
-				type == typeof (DateTime[])) {
-				
-				object[] array = new object [rawTable.Length];
+			if (type == typeof (bool[])) {
+				bool[] array = new bool [rawTable.Length];
 				foreach (string raw in rawTable)
-					array [i++] = ConvertToObject (raw, type.GetElementType ());
+					array [i++] = (bool) ConvertToObject (raw, type.GetElementType ());
 				return array;
-				
-			} else throw new Exception ("Invalid type.");
+			} else if (type == typeof (string[])) {
+				string[] array = new string [rawTable.Length];
+				foreach (string raw in rawTable)
+					array [i++] = (string) ConvertToObject (raw, type.GetElementType ());
+				return array;
+			} else if (type == typeof (int[])) {
+				int[] array = new int [rawTable.Length];
+				foreach (string raw in rawTable)
+					array [i++] = (int) ConvertToObject (raw, type.GetElementType ());
+				return array;
+			} else if (type == typeof (uint[])) {
+				uint[] array = new uint [rawTable.Length];
+				foreach (string raw in rawTable)
+					array [i++] = (uint) ConvertToObject (raw, type.GetElementType ());
+				return array;
+			} else if (type == typeof (DateTime[])) {
+				DateTime[] array = new DateTime [rawTable.Length];
+				foreach (string raw in rawTable)
+					array [i++] = (DateTime) ConvertToObject (raw, type.GetElementType ());
+				return array;
+			} else
+				throw new Exception ("Invalid type");
 		}
 		
 		object ConvertToObject (string raw, Type type)
@@ -126,7 +141,6 @@ namespace Microsoft.Build.BuildEngine {
 				throw new Exception (String.Format ("Unknown type: {0}", type.ToString ()));
 			}
 		}
-		
 		string ConvertToString ()
 		{
 			StringBuilder sb = new StringBuilder ();

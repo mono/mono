@@ -3,8 +3,10 @@
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
+//   Jaroslaw Kowalski <jaak@jkowalski.net>
 // 
 // (C) 2006 Marek Sieradzki
+// (C) 2004-2006 Jaroslaw Kowalski
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
