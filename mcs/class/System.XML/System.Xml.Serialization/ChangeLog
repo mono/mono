@@ -1,3 +1,7 @@
+2006-09-20  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* XmlTypeAttribute.cs: added property AnonymousType for 2.0
+
 2006-09-12  Lluis Sanchez Gual  <lluis@novell.com> 
 
 	* System.Xml.Serialization/XmlSchemaImporter.cs: Added null check.

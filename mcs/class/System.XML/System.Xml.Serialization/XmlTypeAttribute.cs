@@ -52,6 +52,14 @@ namespace System.Xml.Serialization
 			this.typeName = typeName;
 		}
 
+#if NET_2_0
+		private bool anonymousType = false;
+		public bool AnonymousType
+		{
+			get { return anonymousType; }
+			set { anonymousType = value; }
+		}
+#endif
 		public bool IncludeInSchema {
 			get { return includeInSchema; }
 			set { includeInSchema = value; }
