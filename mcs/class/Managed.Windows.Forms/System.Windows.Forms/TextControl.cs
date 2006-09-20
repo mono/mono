@@ -4677,8 +4677,9 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			a.line_no = start_line.line_no;
 			a.pos = start_pos - 1;
 
-			undo_actions.Push(a);
+			// Record the cursor position before, since the actions will occur in reverse order
 			RecordCursor();
+			undo_actions.Push(a);
 		}
 
 		public void RecordCursor() {
