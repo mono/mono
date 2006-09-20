@@ -88,7 +88,7 @@ namespace Mono.XBuild.CommandLine {
 				}
 				string responseFilename = Path.GetFullPath (s.Substring (1));
 				if (responseFiles.ContainsKey (responseFilename))
-					throw new CommandLineException ("We already have " + responseFilename + "file.", 0001);
+					ErrorUtilities.ReportError (1, String.Format ("We already have {0} file.", responseFilename));
 				responseFiles [responseFilename] = responseFilename;
 				LoadResponseFile (responseFilename);
 			}
@@ -107,11 +107,11 @@ namespace Mono.XBuild.CommandLine {
 				if (files.Length > 0)
 					projectFile = files [0];
 				else
-					throw new CommandLineException ("No .proj file specified and no found in current directory.", 0003);
+					ErrorUtilities.ReportError (3, "No .proj file specified and no found in current directory.");
 			} else if (remainingArguments.Count == 1) {
 				projectFile = (string) remainingArguments [0];
 			} else {
-				throw new CommandLineException ("Too many project files specified.", 0004);
+				ErrorUtilities.ReportError (4, "Too many project files specified");
 			}
 		}
 		
@@ -152,9 +152,10 @@ namespace Mono.XBuild.CommandLine {
                                                 sb.Length = 0;
                                         }
                                 }
-                        } catch (Exception ex) {
-                                throw new CommandLineException ("Error during loading response file.", ex, 0002);
-                        } finally {
+                        } catch (Exception) {
+				// FIXME: we lose exception message
+				ErrorUtilities.ReportError (2, "Error during loading response file.");
+			} finally {
                                 if (sr != null)
                                         sr.Close ();
                         }
@@ -166,13 +167,15 @@ namespace Mono.XBuild.CommandLine {
 			case "/help":
 			case "/h":
 			case "/?":
-				throw new CommandLineException ("Show usage", 0006);
+				ErrorUtilities.ShowUsage ();
+				break;
 			case "/nologo":
 				noLogo = true;
 				break;
 			case "/version":
 			case "/ver":
-				throw new CommandLineException ("Show version", 0005);
+				ErrorUtilities.ShowVersion (true);
+				break;
 			case "/noconsolelogger":
 			case "/noconlog":
 				noConsoleLogger = true;

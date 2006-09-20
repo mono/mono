@@ -1,3 +1,10 @@
+2006-09-20  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Parameters.cs, Main.cs, ErrorUtilities.cs: Moved error handling to
+	new file and started to use ErrorUtilities.ReportError ()
+	instead of throw and catch. (In cases where xbuild should quit
+	instantly)
+
 2006-06-25  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Makefile, xbuild/Microsoft.CSharp.Targets: Renamed to
