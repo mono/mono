@@ -725,7 +725,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			protected override CreateParams CreateParams {
 				get {
 					CreateParams cp = base.CreateParams;				
-					cp.Style = unchecked ((int)(WindowStyles.WS_POPUP | WindowStyles.WS_VISIBLE | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CLIPCHILDREN));
+					cp.Style = unchecked ((int)(WindowStyles.WS_POPUP | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CLIPCHILDREN));
 					cp.ExStyle |= (int)(WindowExStyles.WS_EX_TOOLWINDOW | WindowExStyles.WS_EX_TOPMOST);				
 					return cp;
 				}
