@@ -1,3 +1,7 @@
+2006-09-20  Raja R Harinath  <rharinath@novell.com>
+
+	* codegen.cs: Remove after unification with mcs source.
+
 2006-09-19  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs: Removed; this file is now shared with mcs.

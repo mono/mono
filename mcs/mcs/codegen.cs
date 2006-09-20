@@ -144,6 +144,12 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+#if GMCS_SOURCE
+			// Get the complete AssemblyName from the builder
+			// (We need to get the public key and token)
+			Assembly.Name = Assembly.Builder.GetName ();
+#endif
+
 			//
 			// Pass a path-less name to DefineDynamicModule.  Wonder how
 			// this copes with output in different directories then.
@@ -366,7 +372,18 @@ namespace Mono.CSharp {
 		/// <summary>
 		///    The current iterator
 		/// </summary>
+#if GMCS_SOURCE
+		public Iterator CurrentIterator {
+			get {
+				if (CurrentAnonymousMethod != null)
+					return CurrentAnonymousMethod.Iterator;
+				else
+					return null;
+			}
+		}
+#else
 		public Iterator CurrentIterator;
+#endif
 
 		/// <summary>
 		///    Whether we are in the resolving stage or not
@@ -402,6 +419,11 @@ namespace Mono.CSharp {
 			if (RootContext.Checked)
 				flags |= Flags.CheckState;
 			flags |= Flags.ConstantCheckState;
+
+#if GMCS_SOURCE
+			if ((return_type is TypeBuilder) && return_type.IsGenericTypeDefinition)
+				throw new InternalErrorException ();
+#endif
 
 			IsStatic = (code_flags & Modifiers.STATIC) != 0;
 			MethodIsStatic = IsStatic;
@@ -1072,7 +1094,7 @@ namespace Mono.CSharp {
 
 			OptAttributes.Emit ();
 		}
-                
+
 		protected Attribute ResolveAttribute (Type a_type)
 		{
 			if (OptAttributes == null)
@@ -1123,6 +1145,10 @@ namespace Mono.CSharp {
 		public Attribute ClsCompliantAttribute;
 
 		ListDictionary declarative_security;
+#if GMCS_SOURCE
+		public AssemblyName Name;
+		MethodInfo add_type_forwarder;
+#endif
 
 		// Module is here just because of error messages
 		static string[] attribute_targets = new string [] { "assembly", "module" };
@@ -1322,6 +1348,37 @@ namespace Mono.CSharp {
 			Report.Error (1548, "Error during assembly signing. " + text);
 		}
 
+#if GMCS_SOURCE
+		bool CheckInternalsVisibleAttribute (Attribute a)
+		{
+			string assembly_name = a.GetString ();
+			if (assembly_name.Length == 0)
+				return false;
+				
+			AssemblyName aname = null;
+			try {
+				aname = new AssemblyName (assembly_name);
+			} catch (FileLoadException) {
+			} catch (ArgumentException) {
+			}
+				
+			// Bad assembly name format
+			if (aname == null)
+				Report.Warning (1700, 3, a.Location, "Assembly reference `" + assembly_name + "' is invalid and cannot be resolved");
+			// Report error if we have defined Version or Culture
+			else if (aname.Version != null || aname.CultureInfo != null)
+				throw new Exception ("Friend assembly `" + a.GetString () + 
+						"' is invalid. InternalsVisibleTo cannot have version or culture specified.");
+			else if (aname.GetPublicKey () == null && Name.GetPublicKey () != null) {
+				Report.Error (1726, a.Location, "Friend assembly reference `" + aname.FullName + "' is invalid." +
+						" Strong named assemblies must specify a public key in their InternalsVisibleTo declarations");
+				return false;
+			}
+
+			return true;
+		}
+#endif
+
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder customBuilder)
 		{
 			if (a.Type.IsSubclassOf (TypeManager.security_attr_type) && a.CheckSecurityActionValidity (true)) {
@@ -1343,12 +1400,70 @@ namespace Mono.CSharp {
 				}
 			}
 
+#if GMCS_SOURCE
+			if (a.Type == TypeManager.internals_visible_attr_type && !CheckInternalsVisibleAttribute (a))
+				return;
+
+			if (a.Type == TypeManager.type_forwarder_attr_type) {
+				Type t = a.GetArgumentType ();
+				if (t == null || TypeManager.HasElementType (t)) {
+					Report.Error (735, a.Location, "Invalid type specified as an argument for TypeForwardedTo attribute");
+					return;
+				}
+
+				if (TypeManager.LookupDeclSpace (t) != null) {
+					Report.SymbolRelatedToPreviousError (t);
+					Report.Error (729, a.Location, "Cannot forward type `{0}' because it is defined in this assembly",
+						TypeManager.CSharpName (t));
+					return;
+				}
+
+				if (t.IsNested) {
+					Report.Error (730, a.Location, "Cannot forward type `{0}' because it is a nested type",
+						TypeManager.CSharpName (t));
+					return;
+				}
+
+				if (t.IsGenericType) {
+					Report.Error (733, a.Location, "Cannot forward generic type `{0}'", TypeManager.CSharpName (t));
+					return;
+				}
+
+				if (add_type_forwarder == null) {
+					add_type_forwarder = typeof (AssemblyBuilder).GetMethod ("AddTypeForwarder",
+						BindingFlags.NonPublic | BindingFlags.Instance);
+
+					if (add_type_forwarder == null) {
+						Report.RuntimeMissingSupport (a.Location, "TypeForwardedTo attribute");
+						return;
+					}
+				}
+
+				add_type_forwarder.Invoke (Builder, new object[] { t });
+				return;
+			}
+			
+#endif
 			Builder.SetCustomAttribute (customBuilder);
 		}
 
 		public override void Emit (TypeContainer tc)
 		{
 			base.Emit (tc);
+
+#if GMCS_SOURCE
+			// FIXME: Does this belong inside SRE.AssemblyBuilder instead?
+			if (OptAttributes == null || !OptAttributes.Contains (TypeManager.runtime_compatibility_attr_type)) {
+				ConstructorInfo ci = TypeManager.GetConstructor (
+					TypeManager.runtime_compatibility_attr_type, Type.EmptyTypes);
+				PropertyInfo [] pis = new PropertyInfo [1];
+				pis [0] = TypeManager.GetProperty (
+					TypeManager.runtime_compatibility_attr_type, "WrapNonExceptionThrows");
+				object [] pargs = new object [1];
+				pargs [0] = true;
+				Builder.SetCustomAttribute (new CustomAttributeBuilder (ci, new object [0], pis, pargs));
+			}
+#endif
 
 			if (declarative_security != null) {
 

@@ -6,7 +6,7 @@ attribute.cs
 cs-tokenizer.cs
 ../mcs/cfold.cs
 class.cs
-codegen.cs
+../mcs/codegen.cs
 ../mcs/const.cs
 ../mcs/constant.cs
 convert.cs
