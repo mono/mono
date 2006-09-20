@@ -85,7 +85,10 @@ namespace System.Security.Cryptography.Xml {
 		private XmlResolver xmlResolver = new XmlUrlResolver ();
 #endif
 		private ArrayList manifests;
-		
+#if NET_2_0
+		private IEnumerator _x509Enumerator;
+#endif
+
 		private static readonly char [] whitespaceChars = new char [] {' ', '\r', '\n', '\t'};
 
 		public SignedXml () 
@@ -680,18 +683,21 @@ namespace System.Security.Cryptography.Xml {
 			if (pkEnumerator == null) {
 				pkEnumerator = m_signature.KeyInfo.GetEnumerator ();
 			}
-
-			if (pkEnumerator.MoveNext ()) {
+			
+#if NET_2_0
+			if (_x509Enumerator != null) {
+				if (_x509Enumerator.MoveNext ()) {
+					X509Certificate cert = (X509Certificate) _x509Enumerator.Current;
+					return new X509Certificate2 (cert.GetRawCertData ()).PublicKey.Key;
+				} else {
+					_x509Enumerator = null;
+				}
+			}
+#endif
+			while (pkEnumerator.MoveNext ()) {
 				AsymmetricAlgorithm key = null;
 				KeyInfoClause kic = (KeyInfoClause) pkEnumerator.Current;
 
-#if NET_2_0
-				if (kic is KeyInfoX509Data) {
-					foreach (X509Certificate cert in ((KeyInfoX509Data) kic).Certificates)
-						// FIXME: this GetRawCertData() should not be required, but it somehow causes crash.
-						return new X509Certificate2 (cert.GetRawCertData ()).PublicKey.Key;
-				}
-#endif
 				if (kic is DSAKeyValue)
 					key = DSA.Create ();
 				else if (kic is RSAKeyValue) 
@@ -701,6 +707,16 @@ namespace System.Security.Cryptography.Xml {
 					key.FromXmlString (kic.GetXml ().InnerXml);
 					return key;
 				}
+
+#if NET_2_0
+				if (kic is KeyInfoX509Data) {
+					_x509Enumerator = ((KeyInfoX509Data) kic).Certificates.GetEnumerator ();
+					if (_x509Enumerator.MoveNext ()) {
+						X509Certificate cert = (X509Certificate) _x509Enumerator.Current;
+						return new X509Certificate2 (cert.GetRawCertData ()).PublicKey.Key;
+					}
+				}
+#endif
 			}
 			return null;
 		}

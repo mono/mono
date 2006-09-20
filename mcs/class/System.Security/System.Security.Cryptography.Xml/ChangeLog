@@ -1,5 +1,10 @@
 2006-09-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SignedXml.cs : overwrite my fix with Gert's patch on #79454 to make it
+	  possible to handle multiple certificates.
+
+2006-09-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SignedXml.cs : handle KeyInfoX509Data in GetPublicKey(). Fixed #1 of
 	  bug #79454.
 
