@@ -1,3 +1,9 @@
+2006-09-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* libtest.c (mono_test_marshal_stringbuilder_default): Null terminate string to
+	prevent random errors.
+	(mono_test_marshal_stringbuilder): Ditto.
+
 2006-09-18  Jonathan Chambers  <joncham@gmail.com>
 
 	* cominterop.cs: Added COM Interop tests for null BSTR checks.
