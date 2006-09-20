@@ -120,12 +120,8 @@ namespace Mono.CSharp {
 			if (ta == TypeAttributes.NotPublic ||
 			    ta == TypeAttributes.NestedAssembly ||
 			    ta == TypeAttributes.NestedFamANDAssem) {
-#if GMCS_SOURCE
 				if (!TypeManager.IsFriendAssembly (t.Assembly))
 					return null;
-#else
-				return null;
-#endif
 			}
 
 			return t;

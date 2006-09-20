@@ -1,3 +1,8 @@
+2006-09-20  Raja R Harinath  <rharinath@novell.com>
+
+	* namespace.cs (GetTypeInAssembly): Remove #ifdef GMCS_SOURCE.
+	MCS TypeManager has a corresponding dummy method.
+
 2006-09-19  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs: Completely merged with the gmcs version.
