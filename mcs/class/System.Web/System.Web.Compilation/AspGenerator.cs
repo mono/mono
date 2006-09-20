@@ -31,6 +31,7 @@
 using System;
 using System.Collections;
 using System.CodeDom.Compiler;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Web.Caching;
@@ -162,7 +163,7 @@ namespace System.Web.Compilation
 			if (tags.Count == 0)
 				return false;
 
-			return 0 == String.Compare (tagid, (string) tags.Peek (), true);
+			return 0 == String.Compare (tagid, (string) tags.Peek (), true, CultureInfo.InvariantCulture);
 		}
 		
 		public int Count {
@@ -332,15 +333,15 @@ namespace System.Web.Compilation
 
 			// MS ignores tbody/thead
 			if ((attributes == null || !attributes.IsRunAtServer ())) {
-				if (String.Compare (tagid, "tbody", true) == 0 ||
-				    String.Compare (tagid, "thead", true) == 0)
+				if (String.Compare (tagid, "tbody", true, CultureInfo.InvariantCulture) == 0 ||
+				    String.Compare (tagid, "thead", true, CultureInfo.InvariantCulture) == 0)
 				return;
 			}
 
 			if (text.Length != 0)
 				FlushText ();
 
-			if (0 == String.Compare (tagid, "script", true)) {
+			if (0 == String.Compare (tagid, "script", true, CultureInfo.InvariantCulture)) {
 				bool in_script = (inScript || ignore_text);
 				if (in_script || (tagtype != TagType.Close && attributes != null)) {
 					if ((in_script || attributes.IsRunAtServer ()) && ProcessScript (tagtype, attributes))
@@ -421,13 +422,16 @@ namespace System.Web.Compilation
 			if (otags == null || otags.Count == 0)
 				return false;
 
-			int idx = otags.Count - 1;
-			string otagid = (string) otags [idx];
-			if (0 != String.Compare (tagid, otagid, true))
-				return false;
-
-			otags.RemoveAt (idx);
-			return true;
+			for (int idx = otags.Count - 1; idx >= 0; idx--) {
+				string otagid = (string) otags [idx];
+				if (0 == String.Compare (tagid, otagid, true, CultureInfo.InvariantCulture)) {
+					do {
+						otags.RemoveAt (idx);
+					} while (otags.Count - 1 >= idx);
+					return true;
+				}
+			}
+			return false;
 		}
 
 		static string GetIncludeFilePath (string basedir, string filename)
@@ -478,7 +482,7 @@ namespace System.Web.Compilation
 		bool ProcessTag (string tagid, TagAttributes atts, TagType tagtype)
 		{
 			if (isApplication) {
-				if (String.Compare (tagid, "object", true) != 0)
+				if (String.Compare (tagid, "object", true, CultureInfo.InvariantCulture) != 0)
 					throw new ParseException (location, "Invalid tag for application file.");
 			}
 
@@ -610,7 +614,8 @@ namespace System.Web.Compilation
 		{
 			ControlBuilder current = stack.Builder;
 			string btag = current.TagName;
-			if (String.Compare (btag, "tbody", true) != 0 && String.Compare (tagid, "tbody", true) == 0) {
+			if (String.Compare (btag, "tbody", true, CultureInfo.InvariantCulture) != 0 &&
+			    String.Compare (tagid, "tbody", true, CultureInfo.InvariantCulture) == 0) {
 				if (!current.ChildrenAsProperties) {
 					try {
 						TextParsed (location, location.PlainText);
@@ -620,7 +625,7 @@ namespace System.Web.Compilation
 				return true;
 			}
 			
-			if (0 != String.Compare (tagid, btag, true))
+			if (0 != String.Compare (tagid, btag, true, CultureInfo.InvariantCulture))
 				return false;
 
 			// if (current is TemplateBuilder)
@@ -670,7 +675,7 @@ namespace System.Web.Compilation
 			if (lang == null || lang == "")
 				return;
 
-			if (String.Compare (lang, tparser.Language, true) == 0)
+			if (String.Compare (lang, tparser.Language, true, CultureInfo.InvariantCulture) == 0)
 				return;
 
 #if NET_2_0

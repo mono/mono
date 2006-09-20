@@ -1,3 +1,9 @@
+2006-09-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: if we are tracking non-server tags for
+	well-formedness, handle tags that do not need to be closed (br, img,...)
+	Fixes bug #79437.
+
 2006-09-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* PageCompiler.cs: support the EnableEventValidation attribute.
