@@ -2717,6 +2717,11 @@ namespace Mono.CSharp {
 		{
 			return RemoveMethods (false);
 		}
+
+		public Expression ResolveGeneric (EmitContext ec, TypeArguments args)
+		{
+			throw new InternalErrorException ("cannot be called");
+		}
 	}
 
 	/// <summary>

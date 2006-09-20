@@ -7285,7 +7285,6 @@ namespace Mono.CSharp {
 			if (member_lookup == null)
 				return null;
 
-#if GMCS_SOURCE
 			if (args != null) {
 				MethodGroupExpr mg = member_lookup as MethodGroupExpr;
 				if (mg == null)
@@ -7293,7 +7292,6 @@ namespace Mono.CSharp {
 
 				return mg.ResolveGeneric (ec, args);
 			}
-#endif
 
 			if (original != null && !TypeManager.IsValueType (expr_type)) {
 				me = member_lookup as MemberExpr;
@@ -8385,7 +8383,6 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-#if GMCS_SOURCE
 		public BaseAccess (string member, TypeArguments args, Location l)
 			: this (member, l)
 		{
@@ -8393,7 +8390,6 @@ namespace Mono.CSharp {
 		}
 
 		TypeArguments args;
-#endif
 
 		public override Expression DoResolve (EmitContext ec)
 		{
@@ -8470,7 +8466,6 @@ namespace Mono.CSharp {
 			if (mg != null)
 				mg.IsBase = true;
 
-#if GMCS_SOURCE
 			if (args != null) {
 				if (mg != null)
 					return mg.ResolveGeneric (ec, args);
@@ -8479,7 +8474,6 @@ namespace Mono.CSharp {
 					      Identifier);
 				return null;
 			}
-#endif
 
 			return e;
 		}

@@ -1,6 +1,7 @@
 2006-09-20  Raja R Harinath  <rharinath@novell.com>
 
-	* expression.cs (MemberAccess): Remove GMCS_SOURCE #ifdef.
+	* ecore.cs (MethodGroupExpr.ResolveGeneric): New dummy method.
+	* expression.cs (MemberAccess, BaseAccess): Remove GMCS_SOURCE #ifdef.
 
 	* decl.cs (MemberName): Unify with gmcs, except for GetTypeExpression.
 	* generic.cs (TypeArguments): New dummy class to help avoid #ifdefs.
