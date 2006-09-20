@@ -206,7 +206,7 @@ namespace System.Web.UI.WebControls {
 		override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
-			if (Page != null)
+			if (Page != null && Enabled)
 				Page.RegisterRequiresPostBack (this);
 		}
 

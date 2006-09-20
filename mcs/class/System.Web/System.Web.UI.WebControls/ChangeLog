@@ -1,5 +1,10 @@
 2006-09-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ListBox.cs: if the list is not enabled, don't require a postback.
+	Fixes bug #79445.
+
+2006-09-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HyperLink.cs: don't output the nabvigate url if disabled.
 	* LinkButton.cs: always call base.AddAttributesToRender(). Don't output
 	the link URL if disabled.
