@@ -28,6 +28,8 @@ namespace Mono.CSharp {
 
 	public class MemberName {
 		public readonly string Name;
+		public readonly TypeArguments TypeArguments;
+
 		public readonly MemberName Left;
 		public readonly Location Location;
 
@@ -44,6 +46,13 @@ namespace Mono.CSharp {
 			this.Left = left;
 		}
 
+		private MemberName (MemberName left, string name, bool is_double_colon,
+				    TypeArguments args, Location loc)
+			: this (left, name, is_double_colon, loc)
+		{
+			this.TypeArguments = args;
+		}
+
 		public MemberName (string name)
 			: this (name, Location.Null)
 		{ }
@@ -52,12 +61,20 @@ namespace Mono.CSharp {
 			: this (null, name, false, loc)
 		{ }
 
+		public MemberName (string name, TypeArguments args, Location loc)
+			: this (null, name, false, args, loc)
+		{ }
+
 		public MemberName (MemberName left, string name)
 			: this (left, name, left != null ? left.Location : Location.Null)
 		{ }
 
 		public MemberName (MemberName left, string name, Location loc)
 			: this (left, name, false, loc)
+		{ }
+
+		public MemberName (MemberName left, string name, TypeArguments args, Location loc)
+			: this (left, name, false, args, loc)
 		{ }
 
 		public MemberName (string alias, string name, Location loc)
@@ -69,7 +86,7 @@ namespace Mono.CSharp {
 		{ }
 
 		public MemberName (MemberName left, MemberName right, Location loc)
-			: this (null, right.Name, false, loc)
+			: this (null, right.Name, false, right.TypeArguments, loc)
 		{
 			if (right.is_double_colon)
 				throw new InternalErrorException ("Cannot append double_colon member name");
@@ -83,7 +100,12 @@ namespace Mono.CSharp {
 
 		public bool IsGeneric {
 			get {
-				return false;
+				if (TypeArguments != null)
+					return true;
+				else if (Left != null)
+					return Left.IsGeneric;
+				else
+					return false;
 			}
 		}
 
@@ -123,20 +145,44 @@ namespace Mono.CSharp {
 		public MemberName Clone ()
 		{
 			MemberName left_clone = Left == null ? null : Left.Clone ();
-			return new MemberName (left_clone, Name, is_double_colon, Location);
+			return new MemberName (left_clone, Name, is_double_colon, TypeArguments, Location);
 		}
 
 		public string Basename {
-			get { return Name; }
+			get {
+				if (TypeArguments != null)
+					return MakeName (Name, TypeArguments);
+				else
+					return Name;
+			}
+		}
+
+		public string FullName {
+			get {
+				if (TypeArguments != null)
+					return Name + "<" + TypeArguments + ">";
+				else
+					return Name;
+			}
+		}
+
+		public string MethodName {
+			get {
+				string connect = is_double_colon ? "::" : ".";
+				if (Left != null)
+					return Left.FullName + connect + Name;
+				else
+					return Name;
+			}
 		}
 
 		public override string ToString ()
 		{
 			string connect = is_double_colon ? "::" : ".";
 			if (Left != null)
-				return Left + connect + Name;
+				return Left.FullName + connect + FullName;
 			else
-				return Name;
+				return FullName;
 		}
 
 		public override bool Equals (object other)
@@ -152,13 +198,14 @@ namespace Mono.CSharp {
 				return false;
 			if (is_double_colon != other.is_double_colon)
 				return false;
-#if NET_2_0
-			if (TypeArguments == null)
-				return other.TypeArguments == null;
 
-			if (other.TypeArguments == null || TypeArguments.Count != other.TypeArguments.Count)
+			if ((TypeArguments != null) &&
+			    (other.TypeArguments == null || TypeArguments.Count != other.TypeArguments.Count))
 				return false;
-#endif
+
+			if ((TypeArguments == null) && (other.TypeArguments != null))
+				return false;
+
 			if (Left == null)
 				return other.Left == null;
 
@@ -172,12 +219,56 @@ namespace Mono.CSharp {
 				hash ^= n.Name.GetHashCode ();
 			if (is_double_colon)
 				hash ^= 0xbadc01d;
-#if NET_2_0
+
 			if (TypeArguments != null)
 				hash ^= TypeArguments.Count << 5;
-#endif
 
 			return hash & 0x7FFFFFFF;
+		}
+
+		public int CountTypeArguments {
+			get {
+				if (TypeArguments == null)
+					return 0;
+				else
+					return TypeArguments.Count;
+			}
+		}
+
+		public static string MakeName (string name, TypeArguments args)
+		{
+			if (args == null)
+				return name;
+			else
+				return name + "`" + args.Count;
+		}
+
+		public static string MakeName (string name, int count)
+		{
+			return name + "`" + count;
+		}
+
+		protected bool IsUnbound {
+			get {
+				if ((Left != null) && Left.IsUnbound)
+					return true;
+				else if (TypeArguments == null)
+					return false;
+				else
+					return TypeArguments.IsUnbound;
+			}
+		}
+
+		protected bool CheckUnbound (Location loc)
+		{
+			if ((Left != null) && !Left.CheckUnbound (loc))
+				return false;
+			if ((TypeArguments != null) && !TypeArguments.IsUnbound) {
+				Report.Error (1031, loc, "Type expected");
+				return false;
+			}
+
+			return true;
 		}
 	}
 

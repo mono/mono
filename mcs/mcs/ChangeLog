@@ -1,5 +1,9 @@
 2006-09-20  Raja R Harinath  <rharinath@novell.com>
 
+	* decl.cs (MemberName): Unify with gmcs, except for GetTypeExpression.
+	* generic.cs (TypeArguments): New dummy class to help avoid #ifdefs.
+	* mcs.exe.sources: Add generic.cs.
+
 	* codegen.cs: Unify with gmcs version.
 
 	* codegen.cs (IResolveContent.GenericDeclContainer): Copy from gmcs.

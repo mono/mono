@@ -73,7 +73,6 @@ namespace Mono.CSharp {
 			: this (left, name, false, args, loc)
 		{ }
 
-
 		public MemberName (string alias, string name, Location loc)
 			: this (new MemberName (alias, loc), name, true, loc)
 		{ }
