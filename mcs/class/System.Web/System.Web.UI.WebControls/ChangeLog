@@ -1,3 +1,10 @@
+2006-09-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HyperLink.cs: don't output the nabvigate url if disabled.
+	* LinkButton.cs: always call base.AddAttributesToRender(). Don't output
+	the link URL if disabled.
+	Fixes bug #79443.
+
 2006-09-19 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* RadioButtonList.cs: 

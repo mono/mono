@@ -79,7 +79,9 @@ namespace System.Web.UI.WebControls {
 				string href = Page.ClientScript.GetPostBackEventReference (options);
 				w.AddAttribute (HtmlTextWriterAttribute.Href, href);
 			}
+			base.AddAttributesToRender (w);
 #else
+			base.AddAttributesToRender (w);
 			if (Page == null || !Enabled)
 				return;
 			
@@ -92,7 +94,6 @@ namespace System.Web.UI.WebControls {
 				w.AddAttribute (HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackClientHyperlink (this, ""));
 			}
 #endif
-			base.AddAttributesToRender (w);
 		}
 
 #if NET_2_0

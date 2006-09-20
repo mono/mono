@@ -56,6 +56,8 @@ namespace System.Web.UI.WebControls {
 		protected override void AddAttributesToRender (HtmlTextWriter w)
 		{
 			base.AddAttributesToRender (w);
+			if (!Enabled)
+				return;
 			// add attributes - only if they're not empty
 			string s = NavigateUrl;
 			if (s.Length > 0)
