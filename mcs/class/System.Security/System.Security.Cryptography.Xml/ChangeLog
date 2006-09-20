@@ -1,3 +1,8 @@
+2006-09-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SignedXml.cs : handle KeyInfoX509Data in GetPublicKey(). Fixed #1 of
+	  bug #79454.
+
 2006-09-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* EncryptedXml.cs : DecryptData() should not pass block size to

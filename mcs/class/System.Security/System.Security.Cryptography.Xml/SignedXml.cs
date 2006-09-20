@@ -685,6 +685,13 @@ namespace System.Security.Cryptography.Xml {
 				AsymmetricAlgorithm key = null;
 				KeyInfoClause kic = (KeyInfoClause) pkEnumerator.Current;
 
+#if NET_2_0
+				if (kic is KeyInfoX509Data) {
+					foreach (X509Certificate cert in ((KeyInfoX509Data) kic).Certificates)
+						// FIXME: this GetRawCertData() should not be required, but it somehow causes crash.
+						return new X509Certificate2 (cert.GetRawCertData ()).PublicKey.Key;
+				}
+#endif
 				if (kic is DSAKeyValue)
 					key = DSA.Create ();
 				else if (kic is RSAKeyValue) 
