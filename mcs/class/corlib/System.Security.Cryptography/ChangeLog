@@ -1,3 +1,7 @@
+2006-09-20  Kazuki Oikawa  <kazuki@panicode.com>
+
+	* RijndaelManaged.cs: improves the performance.
+
 2006-09-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RSAOAEPKeyExchangeDeformatter.cs: Throw a CryptographicException, 
