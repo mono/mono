@@ -1,5 +1,7 @@
 2006-09-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-alpha.c: More alpha port work from Sergey Tikhonov <tsv@solvo.ru>.
+
 	* exceptions-ia64.c: Fix some problems reported by Bill Seurer <seurer@us.ibm.com>.
 
 2006-09-19  Zoltan Varga  <vargaz@gmail.com>
