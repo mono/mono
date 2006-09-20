@@ -57,13 +57,13 @@ namespace Microsoft.Build.BuildEngine {
 			this.isImported = false;
 			this.parentProject = project;
 			
-			if (FromXml == false)
+			if (!FromXml)
 				return;
-			
+
 			this.condition = xmlElement.GetAttributeNode ("Condition");
 			foreach (XmlNode xn in xmlElement.ChildNodes) {
 				if (xn is XmlElement == false)
-					return;
+					continue;
 					
 				XmlElement xe = (XmlElement) xn;
 				BuildItem bi = new BuildItem (xe, this);

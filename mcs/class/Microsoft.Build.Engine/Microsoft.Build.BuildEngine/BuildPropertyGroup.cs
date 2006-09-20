@@ -59,7 +59,11 @@ namespace Microsoft.Build.BuildEngine {
 
 			if (FromXml) {
 				this.properties = new List <BuildProperty> ();
-				foreach (XmlElement xe in propertyGroup.ChildNodes) {
+				foreach (XmlNode xn in propertyGroup.ChildNodes) {
+					if (xn is XmlElement == false)
+						continue;
+					
+					XmlElement xe = (XmlElement) xn;
 					BuildProperty bp = new BuildProperty (parentProject, xe);
 					AddProperty (bp);
 				} 

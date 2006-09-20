@@ -1,5 +1,11 @@
 2006-09-20  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
+	* BuildPropertyGroup.cs: Check for XmlNodes that aren't XmlElements
+	(like comments)
+	* BuildItemGroup.cs: Change return to continue.
+
+2006-09-20  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
 	* ConditionParser.cs: Copyright note.
 	* ExpressionCollection.cs: Fixed arrays passing.
 
