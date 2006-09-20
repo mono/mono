@@ -102,6 +102,10 @@ namespace System.Web.UI {
 			}
 			if (addAssembliesInBin)
 				AddAssembliesInBin ();
+
+			foreach (NamespaceInfo info in PagesConfig.Namespaces) {
+				imports.Add (info.Namespace);
+			}
 #else
 			foreach (string a in CompilationConfig.Assemblies)
 				AddAssemblyByName (a);
