@@ -8,6 +8,8 @@ PROGRAM = mono-shlib-cop.exe
 
 TEST_INPUT = test.dll
 
+EXTRA_DISTFILES = test.cs
+
 include ../../build/executable.make
 
 test-local: $(PROGRAM) $(TEST_INPUT)
