@@ -1,4 +1,4 @@
-all: Samples.Common.dll binary.exe clippy.exe flatten.exe scan.exe
+all: Samples.Common.dll binary.exe clippy.exe flatten.exe scan.exe texture.exe
 
 Samples.Common.dll: Shapes.cs Matrices.cs
 	gmcs Shapes.cs Matrices.cs -r:System.Drawing.dll -target:library -out:Samples.Common.dll
@@ -14,6 +14,9 @@ flatten.exe: Samples.Common.dll flatten.cs flatten.Designer.cs
 
 scan.exe: Samples.Common.dll scan.cs scan.Designer.cs
 	gmcs scan.cs scan.Designer.cs -r:Samples.Common.dll -r:System.Drawing.dll -r:System.Windows.Forms.dll
+
+texture.exe: texture.cs
+	gmcs texture.cs -r:System.Drawing.dll -r:System.Windows.Forms.dll
 
 clean:
 	rm -f *.exe Samples.Common.dll

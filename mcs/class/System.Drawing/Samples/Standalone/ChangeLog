@@ -1,3 +1,8 @@
+2006-09-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: Updated to include new texture.exe
+	* texture.cs: Sample to test texture brushes.
+
 2006-03-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile: Build all (4) samples and their common assembly (dll);
