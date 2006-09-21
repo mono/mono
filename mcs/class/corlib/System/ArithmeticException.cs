@@ -42,7 +42,7 @@ namespace System
 
 		// Constructors
 		public ArithmeticException ()
-			: base (Locale.GetText ("The arithmetic operation is not allowed."))
+			: base (Locale.GetText ("Overflow or underflow in the arithmetic operation."))
 		{
 			HResult = Result;
 		}
