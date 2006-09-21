@@ -442,14 +442,12 @@ public partial class TypeManager {
 				return container.MemberCache;
 		}
 
-#if GMCS_SOURCE
 		if (t is GenericTypeParameterBuilder) {
 			IMemberContainer container = builder_to_type_param [t] as IMemberContainer;
 
 			if (container != null)
 				return container.MemberCache;
 		}
-#endif
 
 		return TypeHandle.GetMemberCache (t);
 	}
@@ -1367,7 +1365,6 @@ public partial class TypeManager {
 			t.IsSubclassOf (TypeManager.array_type))
 			return new MemberList (TypeManager.array_type.FindMembers (mt, bf, filter, criteria));
 
-#if GMCS_SOURCE
 		if (t is GenericTypeParameterBuilder) {
 			TypeParameter tparam = (TypeParameter) builder_to_type_param [t];
 
@@ -1377,7 +1374,6 @@ public partial class TypeManager {
 			Timer.StopTimer (TimerType.FindMembers);
 			return list;
 		}
-#endif
 
 		//
 		// Since FindMembers will not lookup both static and instance
@@ -1469,7 +1465,6 @@ public partial class TypeManager {
 				mt, bf, name, FilterWithClosure_delegate, null);
 		}
 
-#if GMCS_SOURCE
 		if (t is GenericTypeParameterBuilder) {
 			TypeParameter tparam = (TypeParameter) builder_to_type_param [t];
 
@@ -1482,7 +1477,7 @@ public partial class TypeManager {
 			return (MemberInfo []) list;
 		}
 
-		if (t.IsGenericType && (mt == MemberTypes.NestedType)) {
+		if (IsGenericType (t) && (mt == MemberTypes.NestedType)) {
 			//
 			// This happens if we're resolving a class'es base class and interfaces
 			// in TypeContainer.DefineType().  At this time, the types aren't
@@ -1493,7 +1488,6 @@ public partial class TypeManager {
 			used_cache = false;
 			return info;
 		}
-#endif
 
 		//
 		// This call will always succeed.  There is exactly one TypeHandle instance per
@@ -2217,7 +2211,6 @@ public partial class TypeManager {
 
 			iface_cache [t] = result;
 			return result;
-#if GMCS_SOURCE
 		} else if (t is GenericTypeParameterBuilder){
 			Type[] type_ifaces = (Type []) builder_to_ifaces [t];
 			if (type_ifaces == null || type_ifaces.Length == 0)
@@ -2225,7 +2218,6 @@ public partial class TypeManager {
 
 			iface_cache [t] = type_ifaces;
 			return type_ifaces;
-#endif
 		} else {
 			Type[] ifaces = t.GetInterfaces ();
 			iface_cache [t] = ifaces;
@@ -3385,10 +3377,10 @@ public sealed class TypeHandle : IMemberContainer {
 	public MemberList GetMembers (MemberTypes mt, BindingFlags bf)
 	{
                 MemberInfo [] members;
-#if GMCS_SOURCE
+
 		if (type is GenericTypeParameterBuilder)
 			return MemberList.Empty;
-#endif
+
 		if (mt == MemberTypes.Event)
                         members = type.GetEvents (bf | BindingFlags.DeclaredOnly);
                 else

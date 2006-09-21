@@ -1,5 +1,8 @@
 2006-09-21  Raja R Harinath  <rharinath@novell.com>
 
+	* generic.cs (TypeParameter): Implement IMemberContainer.
+	(GenericTypeParameterBuilder): New.  An abominable repugnant hack.
+
 	* rootcontext.cs: Unify with gmcs version.
 
 	* report.cs: Unify with gmcs version.
