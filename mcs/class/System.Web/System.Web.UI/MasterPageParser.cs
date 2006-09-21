@@ -41,6 +41,8 @@ namespace System.Web.UI
 {
 	internal sealed class MasterPageParser: UserControlParser
 	{
+		Type masterType;
+
 		internal MasterPageParser (string virtualPath, string inputFile, HttpContext context)
 		: base (virtualPath, inputFile, context, "System.Web.UI.MasterPage")
 		{
@@ -57,7 +59,6 @@ namespace System.Web.UI
 			MasterPageParser mpp = new MasterPageParser (virtualPath, inputFile, context);
 			return mpp.CompileIntoType ();
 		}
-
 		internal override void HandleOptions (object obj)
 		{
 			base.HandleOptions (obj);
@@ -66,6 +67,32 @@ namespace System.Web.UI
 			mp.MasterPageFile = MasterPageFile;
 		}
 
+
+#if NET_2_0
+		internal override void AddDirective (string directive, Hashtable atts)
+		{
+			if (String.Compare ("MasterType", directive, true) == 0) {
+				string type = GetString (atts, "TypeName", null);
+				if (type != null) {
+					masterType = LoadType (type);
+					if (masterType == null)
+						ThrowParseException ("Could not load type '" + type + "'.");
+				} else {
+					string path = GetString (atts, "VirtualPath", null);
+					if (path != null)
+						masterType = MasterPageParser.GetCompiledMasterType (path, MapPath (path), HttpContext.Current);
+					else
+						ThrowParseException ("The MasterType directive must have either a TypeName or a VirtualPath attribute.");				}
+				AddAssembly (masterType.Assembly, true);
+			}
+			else
+				base.AddDirective (directive, atts);
+		}
+#endif
+
+		internal Type MasterType {
+			get { return masterType; }
+		}
 
 		internal override Type DefaultBaseType {
 			get { return typeof (MasterPage); }

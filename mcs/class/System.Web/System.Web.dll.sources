@@ -51,6 +51,7 @@ System.Web.Compilation/ImplicitResourceKey.cs
 System.Web.Compilation/IResourceProvider.cs
 System.Web.Compilation/LinePragmaCodeInfo.cs
 System.Web.Compilation/Location.cs
+System.Web.Compilation/MasterPageCompiler.cs
 System.Web.Compilation/PageBuildProvider.cs
 System.Web.Compilation/PageCompiler.cs
 System.Web.Compilation/PageThemeCompiler.cs
