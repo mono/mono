@@ -1,4 +1,9 @@
 
+Thu Sep 21 12:09:34 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mono-debug.c, mono-debug.h: export find_method as
+	mono_debug_find_method ().
+
 Wed Sep 20 19:59:06 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* debug-helpers.c, class-internals.h: added a few functions useful
