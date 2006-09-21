@@ -252,6 +252,34 @@ namespace MonoTests.System.Drawing{
 				}
 			}
 		}
+
+		[Test]
+		public void Clone_Complex ()
+		{
+			using (StringFormat sf = new StringFormat ()) {
+				CharacterRange[] ranges = new CharacterRange [2];
+				ranges[0].First = 1;
+				ranges[0].Length = 2;
+				ranges[1].First = 3;
+				ranges[1].Length = 4;
+				sf.SetMeasurableCharacterRanges (ranges);
+
+				float[] stops = new float [2];
+				stops [0] = 6.0f;
+				stops [1] = 7.0f;
+				sf.SetTabStops (5.0f, stops);
+
+				using (StringFormat clone = (StringFormat) sf.Clone ()) {
+					CheckDefaults (clone);
+
+					float first;
+					float[] cloned_stops = clone.GetTabStops (out first);
+					Assert.AreEqual (5.0f, first, "first");
+					Assert.AreEqual (6.0f, cloned_stops[0], "cloned_stops[0]");
+					Assert.AreEqual (7.0f, cloned_stops[1], "cloned_stops[1]");
+				}
+			}
+		}
 			
 		[Test]
 		public void TestFormatFlags() 

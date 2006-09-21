@@ -955,6 +955,19 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipSetStringFormatMeasurableCharacterRanges (sf, 32, ranges), "GdipSetStringFormatMeasurableCharacterRanges-32");
 			Assert.AreEqual (Status.ValueOverflow, GDIPlus.GdipSetStringFormatMeasurableCharacterRanges (sf, 33, ranges), "GdipSetStringFormatMeasurableCharacterRanges-33");
 
+			float first = Single.MinValue;
+			float[] tabs = new float[1];
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipSetStringFormatTabStops (IntPtr.Zero, 1.0f, 1, tabs), "GdipSetStringFormatTabStops-null");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipSetStringFormatTabStops (sf, 1.0f, 1, null), "GdipSetStringFormatTabStops-null/tabs");
+			
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipSetStringFormatTabStops (sf, 1.0f, -1, tabs), "GdipSetStringFormatTabStops-negative");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetStringFormatTabStops (sf, 1, out first, tabs), "GdipGetStringFormatTabStops-negative");
+			Assert.AreEqual (0.0f, first, "first-negative");
+
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipSetStringFormatTabStops (sf, 1.0f, 1, tabs), "GdipSetStringFormatTabStops");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipGetStringFormatTabStops (sf, 1, out first, tabs), "GdipGetStringFormatTabStops");
+			Assert.AreEqual (1.0f, first, "first");
+
 			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDeleteStringFormat (IntPtr.Zero), "GdipDeleteStringFormat-null");
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteStringFormat (sf), "GdipDeleteStringFormat");
 		}

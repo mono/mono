@@ -1,3 +1,9 @@
+2006-09-21  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* GDIPlusTest.cs: Added test cases for GdipGetStringFormatTabStops and
+	GdipSetStringFormatTabStops functions.
+	* TestStringFormat.cs: Added a more complex test case for Clone.
+
 2006-09-19  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* GDIPlusTest.cs: Added test cases for GdipMeasureCharacterRanges and
