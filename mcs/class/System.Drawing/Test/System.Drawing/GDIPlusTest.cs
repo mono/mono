@@ -948,6 +948,13 @@ namespace MonoTests.System.Drawing {
 
 			CheckStringFormat (sf, (StringFormatFlags) Int32.MinValue, StringTrimming.Character);
 
+			CharacterRange[] ranges = new CharacterRange[32];
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipSetStringFormatMeasurableCharacterRanges (IntPtr.Zero, 1, ranges), "GdipSetStringFormatMeasurableCharacterRanges-null");
+			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipSetStringFormatMeasurableCharacterRanges (IntPtr.Zero, -1, ranges), "GdipSetStringFormatMeasurableCharacterRanges-negative");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipSetStringFormatMeasurableCharacterRanges (sf, 1, ranges), "GdipSetStringFormatMeasurableCharacterRanges");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipSetStringFormatMeasurableCharacterRanges (sf, 32, ranges), "GdipSetStringFormatMeasurableCharacterRanges-32");
+			Assert.AreEqual (Status.ValueOverflow, GDIPlus.GdipSetStringFormatMeasurableCharacterRanges (sf, 33, ranges), "GdipSetStringFormatMeasurableCharacterRanges-33");
+
 			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDeleteStringFormat (IntPtr.Zero), "GdipDeleteStringFormat-null");
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipDeleteStringFormat (sf), "GdipDeleteStringFormat");
 		}

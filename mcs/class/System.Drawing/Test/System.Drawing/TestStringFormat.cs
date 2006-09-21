@@ -321,5 +321,24 @@ namespace MonoTests.System.Drawing{
 				sf.SetMeasurableCharacterRanges (range);
 			}
 		}
+
+		[Test]
+		public void SetMeasurableCharacterRanges_Max ()
+		{
+			using (StringFormat sf = new StringFormat ()) {
+				CharacterRange[] range = new CharacterRange[32];
+				sf.SetMeasurableCharacterRanges (range);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void SetMeasurableCharacterRanges_TooBig ()
+		{
+			using (StringFormat sf = new StringFormat ()) {
+				CharacterRange[] range = new CharacterRange[33];
+				sf.SetMeasurableCharacterRanges (range);
+			}
+		}
 	}
 }
