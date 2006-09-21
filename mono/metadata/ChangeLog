@@ -1,3 +1,10 @@
+2006-09-21 Gert Driesen  <drieseng@users.sourceforge.net>
+
+        * appdomain.c: Pass NULL to mono_get_exception_file_not_found2 as
+        exception message to have FileNotFoundException use the default
+        assembly load error message. Fixes bug #79426.
+        * exception.c: Support NULL msg in mono_get_exception_file_not_found2.
+
 2006-09-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threadpool.c: (start_thread_or_queue) use the root domain when
