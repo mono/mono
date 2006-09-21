@@ -58,7 +58,7 @@ namespace Mono.CSharp {
 				if (expr_type.IsValueType)
 					return new BoxedCast (expr, target_type);
 				if (expr_type == TypeManager.null_type)
-					return new NullCast ((Constant)expr, target_type);
+					return new NullCast ((NullConstant)expr, target_type);
 
 				return null;
 			} else if (expr_type.IsSubclassOf (target_type)) {
@@ -79,18 +79,9 @@ namespace Mono.CSharp {
 			// Always ensure that the code here and there is in sync
 
 			// from the null type to any reference-type.
-			if (expr_type == TypeManager.null_type){
-				if (target_type.IsPointer)
-					return new EmptyCast (NullPointer.Null, target_type);
-					
-				if (!target_type.IsValueType) {
-					if (expr is Constant)
-						return new NullCast ((Constant)expr, target_type);
-
-					// I found only one case when it happens -- Foo () ? null : null;
-					Report.Warning (-100, 1, expr.Location, "The result of the expression is always `null'");
-					return new NullCast (new NullLiteral (expr.Location), target_type);
-				}
+			if (expr_type == TypeManager.null_type) {
+				NullConstant nc = (NullConstant)expr;
+				return nc.ToType(target_type);
 			}
 
 			// from any class-type S to any interface-type T.

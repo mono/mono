@@ -3,6 +3,7 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Marek Safar (marek.safar@seznam.cz)
 //
 // (C) 2002, 2003 Ximian, Inc.
 //
@@ -447,13 +448,13 @@ namespace Mono.CSharp {
 						return null;
 					}
 
-					right = right.ToType (((EnumConstant) left).Child.Type, loc);
+					right = right.ToType (((EnumConstant) left).Child.Type);
 					if (right == null)
 						return null;
 
 					wrap_as = left.Type;
 				} else if (right is EnumConstant){
-					left = left.ToType (((EnumConstant) right).Child.Type, loc);
+					left = left.ToType (((EnumConstant) right).Child.Type);
 					if (left == null)
 						return null;
 
@@ -576,23 +577,23 @@ namespace Mono.CSharp {
 						}
 
 						wrap_as = TypeManager.EnumToUnderlying (left.Type);
-						right = ((EnumConstant) right).Child.ToType (wrap_as, loc);
+						right = ((EnumConstant) right).Child.ToType (wrap_as);
 						if (right == null)
 							return null;
 
-						left = ((EnumConstant) left).Child.ToType (wrap_as, loc);
+						left = ((EnumConstant) left).Child.ToType (wrap_as);
 						if (left == null)
 							return null;
 					}
 					else {
-						right = right.ToType (((EnumConstant) left).Child.Type, loc);
+						right = right.ToType (((EnumConstant) left).Child.Type);
 						if (right == null)
 							return null;
 
 						wrap_as = left.Type;
 					}
 				} else if (right is EnumConstant){
-					left = left.ToType (((EnumConstant) right).Child.Type, loc);
+					left = left.ToType (((EnumConstant) right).Child.Type);
 					if (left == null)
 						return null;
 
@@ -1034,14 +1035,14 @@ namespace Mono.CSharp {
 						((BoolConstant) right).Value, left.Location);
 				
 				}
-				if (left is NullLiteral){
-					if (right is NullLiteral)
+				if (left is NullConstant){
+					if (right is NullConstant)
 						return new BoolConstant (true, left.Location);
 					else if (right is StringConstant)
 						return new BoolConstant (
 							((StringConstant) right).Value == null, left.Location);
-				} else if (right is NullLiteral){
-					if (left is NullLiteral)
+				} else if (right is NullConstant){
+					if (left is NullConstant)
 						return new BoolConstant (true, left.Location);
 					else if (left is StringConstant)
 						return new BoolConstant (
@@ -1088,14 +1089,14 @@ namespace Mono.CSharp {
 						((BoolConstant) left).Value !=
 						((BoolConstant) right).Value, left.Location);
 				}
-				if (left is NullLiteral){
-					if (right is NullLiteral)
+				if (left is NullConstant){
+					if (right is NullConstant)
 						return new BoolConstant (false, left.Location);
 					else if (right is StringConstant)
 						return new BoolConstant (
 							((StringConstant) right).Value != null, left.Location);
-				} else if (right is NullLiteral){
-					if (left is NullLiteral)
+				} else if (right is NullConstant){
+					if (left is NullConstant)
 						return new BoolConstant (false, left.Location);
 					else if (left is StringConstant)
 						return new BoolConstant (

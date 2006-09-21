@@ -1917,20 +1917,32 @@ namespace Mono.CSharp {
 
 			type = texpr.Type;
 
+			if (type.IsGenericParameter)
+			{
+				GenericConstraints constraints = TypeManager.GetTypeParameterConstraints(type);
+				if (constraints != null && constraints.IsReferenceType)
+					return new NullDefault(loc, this);
+			}
+			else
+			{
+				Constant c = New.Constantify(type);
+				if (c != null)
+					return c;
+
+				if (!TypeManager.IsValueType(type))
+					return new NullDefault(loc, this);
+			}
 			eclass = ExprClass.Variable;
 			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			if (type.IsGenericParameter || TypeManager.IsValueType (type)) {
-				LocalTemporary temp_storage = new LocalTemporary (type);
+			LocalTemporary temp_storage = new LocalTemporary(type);
 
-				temp_storage.AddressOf (ec, AddressOp.LoadStore);
-				ec.ig.Emit (OpCodes.Initobj, type);
-				temp_storage.Emit (ec);
-			} else
-				ec.ig.Emit (OpCodes.Ldnull);
+			temp_storage.AddressOf(ec, AddressOp.LoadStore);
+			ec.ig.Emit(OpCodes.Initobj, type);
+			temp_storage.Emit(ec);
 		}
 	}
 

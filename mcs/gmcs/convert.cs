@@ -19,21 +19,6 @@ namespace Mono.CSharp {
 	// A container class for all the conversion operations
 	//
 	public class Convert {
-	
-		static Expression TypeParameter_to_Null (Type target_type, Location loc)
-		{
-			if (!TypeParameter_to_Null (target_type)) {
-				Report.Error (403, loc, "Cannot convert null to the type " +
-					      "parameter `{0}' becaues it could be a value " +
-					      "type. Consider using `default ({0})' instead.",
-					      target_type.ToString ());
-				return null;
-			}
-
-			Constant expr = new Nullable.NullableLiteral (target_type, loc);
-			return new NullCast (expr, target_type);
-		}
-
 		static bool TypeParameter_to_Null (Type target_type)
 		{
 			GenericConstraints gc = TypeManager.GetTypeParameterConstraints (target_type);
@@ -226,7 +211,7 @@ namespace Mono.CSharp {
 				if (TypeManager.IsValueType (expr_type))
 					return new BoxedCast (expr, target_type);
 				if (expr_type == TypeManager.null_type)
-					return new NullCast ((Constant)expr, target_type);
+					return new NullCast ((NullConstant)expr, target_type);
 
 				return null;
 			} else if (TypeManager.IsSubclassOf (expr_type, target_type)) {
@@ -248,17 +233,8 @@ namespace Mono.CSharp {
 
 			// from the null type to any reference-type.
 			if (expr_type == TypeManager.null_type){
-				if (target_type.IsPointer)
-					return new EmptyCast (NullPointer.Null, target_type);
-					
-				if (!target_type.IsValueType) {
-					if (expr is Constant)
-						return new NullCast ((Constant)expr, target_type);
-
-					// I found only one case when it happens -- Foo () ? null : null;
-					Report.Warning (-100, 1, expr.Location, "The result of the expression is always `null'");
-					return new NullCast (new NullLiteral (expr.Location), target_type);
-				}
+				NullConstant nc = (NullConstant)expr;
+				return nc.ToType(target_type);
 			}
 
 			// from any class-type S to any interface-type T.
@@ -1195,7 +1171,7 @@ namespace Mono.CSharp {
 				method = (MethodInfo) o;
 			} else {
 				method = GetConversionOperator (ec, source, target, look_for_explicit);
-				if (!(source is Constant))
+				//if (!(source is Constant))
 					hash.Insert (source_type, target, method);
 			}
 
@@ -1271,12 +1247,10 @@ namespace Mono.CSharp {
 			Type expr_type = expr.Type;
 			Expression e;
 
+			// TODO: refactor to be a part of constant infrastructure
 			if (expr is NullLiteral) {
-				if (target_type.IsGenericParameter)
-					return TypeParameter_to_Null (target_type, loc);
-
-				if (TypeManager.IsNullableType (target_type))
-					return new Nullable.NullableLiteral (target_type, loc);
+			    if (TypeManager.IsNullableType (target_type))
+			        return new Nullable.NullableLiteral (target_type, loc);
 			}
 
 			if (TypeManager.IsNullableType (target_type)) {

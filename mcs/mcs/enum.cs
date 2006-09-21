@@ -109,8 +109,6 @@ namespace Mono.CSharp {
 				return true;
 
 			if (in_transit) {
-				// suppress cyclic errors
-				value = new EnumConstant (New.Constantify (parent_enum.UnderlyingType), parent_enum.TypeBuilder);
 				Const.Error_CyclicDeclaration (this);
 				return false;
 			}
@@ -126,7 +124,7 @@ namespace Mono.CSharp {
 				if (c is EnumConstant)
 					c = ((EnumConstant)c).Child;
 					
-				c = c.ToType (parent_enum.UnderlyingType, Location);
+				c = c.ImplicitConversionRequired (parent_enum.UnderlyingType, Location);
 				if (c == null)
 					return false;
 
@@ -168,8 +166,11 @@ namespace Mono.CSharp {
 			if (OptAttributes != null)
 				OptAttributes.Emit (); 
 
-			if (!ResolveValue ())
+			if (!ResolveValue ()) {
+				// Suppress cyclic errors
+				value = new EnumConstant(New.Constantify(parent_enum.UnderlyingType), parent_enum.TypeBuilder);
 				return;
+			}
 
 			builder.SetConstant (value.GetValue ());
 			base.Emit ();

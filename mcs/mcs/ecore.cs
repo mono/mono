@@ -1325,55 +1325,19 @@ namespace Mono.CSharp {
 	// We need to special case this since an empty cast of
 	// a NullLiteral is still a Constant
 	//
-	public class NullCast : Constant {
-		public Constant child;
+	public class NullCast : NullConstant {
+		public NullConstant child;
 				
-		public NullCast (Constant child, Type return_type):
-			base (Location.Null)
+		public NullCast (NullConstant child, Type return_type):
+			base (child.Location)
 		{
-			eclass = child.eclass;
 			type = return_type;
 			this.child = child;
-		}
-
-		override public string AsString ()
-		{
-			return "null";
-		}
-
-		public override object GetValue ()
-		{
-			return null;
-		}
-
-		public override Expression DoResolve (EmitContext ec)
-		{
-			// This should never be invoked, we are born in fully
-			// initialized state.
-
-			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
 			child.Emit (ec);
-		}
-
-		public override Constant Increment ()
-		{
-			throw new NotSupportedException ();
-		}
-
-		public override bool IsDefaultValue {
-			get {
-				return true;
-			}
-		}
-
-		public override bool IsNegative {
-			get {
-				return false;
-			}
 		}
 
 		public override Constant Reduce (bool inCheckedContext, Type target_type)
@@ -1383,7 +1347,6 @@ namespace Mono.CSharp {
 
 			return null;
 		}
-
 	}
 
 
@@ -1504,7 +1467,7 @@ namespace Mono.CSharp {
 			return Child.Reduce (inCheckedContext, target_type);
 		}
 
-		public override Constant ToType (Type type, Location loc)
+		public override Constant ToType (Type type)
 		{
 			if (Type == type) {
 				// This is workaround of mono bug. It can be removed when the latest corlib spreads enough
@@ -1512,16 +1475,15 @@ namespace Mono.CSharp {
 					return this;
 
 				if (type.UnderlyingSystemType != Child.Type)
-					Child = Child.ToType (type.UnderlyingSystemType, loc);
+					Child = Child.ToType (type.UnderlyingSystemType);
 				return this;
 			}
 
 			if (!Convert.ImplicitStandardConversionExists (this, type)){
-				Error_ValueCannotBeConverted (loc, type, false);
 				return null;
 			}
 
-			return Child.ToType (type, loc);
+			return Child.ToType (type);
 		}
 
 	}

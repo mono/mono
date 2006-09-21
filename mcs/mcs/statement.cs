@@ -4,6 +4,7 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Martin Baulig (martin@ximian.com)
+//   Marek Safar (marek.safar@seznam.cz)
 //
 // (C) 2001, 2002, 2003 Ximian, Inc.
 // (C) 2003, 2004 Novell, Inc.
@@ -1769,7 +1770,7 @@ namespace Mono.CSharp {
 							}
 #endif
 
-							e = ce.ToType (variable_type, vi.Location);
+							e = ce.ImplicitConversionRequired (variable_type, vi.Location);
 							if (e == null)
 								continue;
 
@@ -2391,7 +2392,7 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			c = c.ToType (required_type, loc);
+			c = c.ImplicitConversionRequired (required_type, loc);
 			if (c == null)
 				return false;
 

@@ -1,3 +1,32 @@
+2006-09-21  Marek Safar  <marek.safar@seznam.cz>
+
+	* cfold.cs, const.cs, enum.cs, statement.cs: Updated
+	after ToType change.
+
+	* constant.cs (Constant.ImplicitConversionRequired): Designed to used
+	when constant must be implicitly convertible.
+
+	* convert.cs (ImplicitReferenceConversion): Reuse ToType.
+
+	* ecore.cs (NullCast): Derives from NullConstant.
+
+	* expression.cs (Is.DoResolve): Removed useless variables.
+	(Conditional.DoResolve): Quick hack for `Foo () ? null : null'.
+	(New.Constantify): Add enum support.
+	(MemberAccess.DoResolve): Add warning when accessing null constant or
+	variable.
+
+	* generic.cs (GenericConstraints.IsReferenceType): Another dummy
+	property.
+
+	* literal.cs (NullConstant): New abstract class with common
+	functionality for all null specializations.
+	(NullDefault): Represents default(X) when result can be
+	reduced to null.
+	(NullLiteral): Updated.
+
+	* report.cs: Add new warning.
+
 2006-09-21  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (GenericTypeParameterBuilder): Removed this ugly hack.

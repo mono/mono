@@ -3,6 +3,7 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Marek Safar (marek.safar@seznam.cz)
 //
 // (C) 2001 Ximian, Inc.
 //
@@ -43,11 +44,10 @@ namespace Mono.CSharp {
 	public class NullType {
 	}
 
-	//
-	// The null Literal constant
-	//
-	public class NullLiteral : Constant {
-		public NullLiteral (Location loc):
+
+	public abstract class NullConstant : Constant
+	{
+		public NullConstant (Location loc):
 			base (loc)
 		{
 			eclass = ExprClass.Value;
@@ -63,15 +63,14 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
-		{
-			type = TypeManager.null_type;
-			return this;
-		}
-
 		public override void Emit (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Ldnull);
+			ec.ig.Emit(OpCodes.Ldnull);
+		}
+
+		public override string GetSignatureForError ()
+		{
+			return "null";
 		}
 
 		public override Constant Increment ()
@@ -79,39 +78,19 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ();
 		}
 
-		public override bool IsDefaultValue {
-			get {
-				return true;
-			}
-		}
-
-		public override bool IsNegative {
-			get {
-				return false;
-			}
-		}
-
-		public override bool IsZeroInteger {
+		public override bool IsDefaultValue 
+		{
 			get { return true; }
 		}
 
-		public override string GetSignatureForError()
+		public override bool IsNegative 
 		{
-			return "null";
+			get { return false; }
 		}
 
-		public override void Error_ValueCannotBeConverted (Location loc, Type t, bool expl)
+		public override bool IsZeroInteger 
 		{
-			Report.Error (37, loc, "Cannot convert null to `{0}' because it is a value type",
-				TypeManager.CSharpName (t));
-		}
-
-		public override Constant ToType (Type type, Location loc)
-		{
-			if (!type.IsValueType && !TypeManager.IsEnumType (type))
-				return this;
-
-			return base.ToType (type, loc);
+			get { return true; }
 		}
 
 		public override Constant Reduce(bool inCheckedContext, Type target_type)
@@ -121,6 +100,84 @@ namespace Mono.CSharp {
 
 			return null;
 		}
+
+		public override Constant ToType(Type targetType)
+		{
+			if (!targetType.IsValueType)
+				return new NullCast (this, targetType);
+
+			return null;
+		}
+	}
+
+	//
+	// Represents default(X) when result can be reduced to null
+	//
+	public class NullDefault : NullConstant
+	{
+		Expression defaultExpression;
+
+		public NullDefault(Location loc, Expression defaultExpression)
+			: base (loc)
+		{
+			type = TypeManager.null_type;
+			this.defaultExpression = defaultExpression;
+		}
+
+		public override void Error_ValueCannotBeConverted (Location loc, Type target, bool expl)
+		{
+			defaultExpression.Error_ValueCannotBeConverted (loc, target, expl);
+		}
+	}
+
+	//
+	// The null Literal constant
+	//
+	public class NullLiteral : NullConstant {
+		public NullLiteral (Location loc):
+			base (loc)
+		{
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			type = TypeManager.null_type;
+			return this;
+		}
+
+		public override void Error_ValueCannotBeConverted (Location loc, Type t, bool expl)
+		{
+			if (TypeManager.IsGenericParameter (t)) {
+				Report.Error(403, loc,
+					"Cannot convert null to the type parameter `{0}' becaues it could be a value " +
+					"type. Consider using `default ({0})' instead", t.Name);
+			} else {
+				Report.Error(37, loc, "Cannot convert null to `{0}' because it is a value type",
+					TypeManager.CSharpName(t));
+			}
+		}
+
+		public override Constant ToType (Type targetType)
+		{
+			if (targetType.IsPointer)
+				return new NullCast (NullPointer.Null, targetType);
+
+			if (TypeManager.IsGenericParameter(targetType)) {
+				GenericConstraints gc = null;
+
+#if GMCS_SOURCE
+				gc = TypeManager.GetTypeParameterConstraints(targetType);
+#endif
+				if (gc != null && gc.IsReferenceType)
+					return new NullCast(this, targetType);
+
+				Error_ValueCannotBeConverted (loc, targetType, false);
+				return null;
+			}
+
+			return base.ToType(targetType);
+		}
+
 	}
 
 	//
@@ -144,6 +201,7 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 				
+			// TODO: why not use Ldnull instead ?
 			ig.Emit (OpCodes.Ldc_I4_0);
 			ig.Emit (OpCodes.Conv_U);
 		}

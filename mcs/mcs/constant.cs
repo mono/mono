@@ -41,7 +41,7 @@ namespace Mono.CSharp {
 
 		public override bool GetAttributableValue (Type valueType, out object value)
 		{
-			Constant c = ToType (valueType, loc);
+			Constant c = ImplicitConversionRequired (valueType, loc);
 			if (c == null) {
 				value = null;
 				return false;
@@ -68,6 +68,14 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			return this;
+		}
+
+		public Constant ImplicitConversionRequired (Type type, Location loc)
+		{
+			Constant c = ToType (type);
+			if (c == null)
+				Error_ValueCannotBeConverted (loc, type, false);
+			return c;
 		}
 
 		//
@@ -151,7 +159,7 @@ namespace Mono.CSharp {
 			return c;
 		}
 
-		public virtual Constant ToType (Type type, Location loc)
+		public virtual Constant ToType (Type type)
 		{
 			if (Type == type)
 				return this;
@@ -160,7 +168,6 @@ namespace Mono.CSharp {
 				return this;
 
 			if (!Convert.ImplicitStandardConversionExists (this, type)){
-				Error_ValueCannotBeConverted (loc, type, false);
 				return null;
 			}
 
@@ -173,8 +180,6 @@ namespace Mono.CSharp {
 			bool fail;			
 			object constant_value = TypeManager.ChangeType (GetValue (), type, out fail);
 			if (fail){
-				Error_ValueCannotBeConverted (loc, type, false);
-				
 				//
 				// We should always catch the error before this is ever
 				// reached, by calling Convert.ImplicitStandardConversionExists

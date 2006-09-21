@@ -1,3 +1,12 @@
+2006-09-21  Marek Safar  <marek.safar@seznam.cz>
+
+	* convert.cs (ImplicitReferenceConversion): Reuse ToType.
+
+	* ecore.cs (NullCast): Derives from NullConstant.
+
+	* generic.cs (DefaultValueExpression): Fixed to cope with the constant
+	results.
+
 2006-09-21  Martin Baulig  <martin@ximian.com>
 
 	* decl.cs: Removed; this file is now shared with mcs.

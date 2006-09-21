@@ -153,7 +153,7 @@ namespace Mono.CSharp {
 			if (value == null)
 				return false;
 
-			value = value.ToType (MemberType, Location);
+			value = value.ImplicitConversionRequired (MemberType, Location);
 			if (value == null)
 				return false;
 

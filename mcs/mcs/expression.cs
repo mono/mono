@@ -1172,9 +1172,6 @@ namespace Mono.CSharp {
 				return null;
 
 			Type etype = expr.Type;
-			bool warning_always_matches = false;
-			bool warning_never_matches = false;
-
 			type = TypeManager.bool_type;
 			eclass = ExprClass.Value;
 
@@ -1184,15 +1181,19 @@ namespace Mono.CSharp {
 			//
 			Type probe_type = probe_type_expr.Type;
 			e = Convert.ImplicitConversionStandard (ec, expr, probe_type, loc);
-			if (e != null && !(e is NullCast)){
+			if (e != null && !(e is NullConstant)){
 				expr = e;
 				if (etype.IsValueType)
 					action = Action.AlwaysTrue;
 				else
 					action = Action.LeaveOnStack;
 
-				warning_always_matches = true;
-			} else if (Convert.ExplicitReferenceConversionExists (etype, probe_type)){
+				Report.Warning(183, 1, loc, "The given expression is always of the provided (`{0}') type",
+					TypeManager.CSharpName(probe_type));
+				return this;
+			}
+			
+			if (Convert.ExplicitReferenceConversionExists (etype, probe_type)){
 				if (TypeManager.IsGenericParameter (etype))
 					expr = new BoxedCast (expr, etype);
 
@@ -1209,12 +1210,6 @@ namespace Mono.CSharp {
 				action = Action.Probe;
 			} else {
 				action = Action.AlwaysFalse;
-				warning_never_matches = true;
-			}
-			
-			if (warning_always_matches)
-				Report.Warning (183, 1, loc, "The given expression is always of the provided (`{0}') type", TypeManager.CSharpName (probe_type));
-			else if (warning_never_matches){
 				if (!(probe_type.IsInterface || expr.Type.IsInterface))
 					Report.Warning (184, 1, loc, "The given expression is never of the provided (`{0}') type", TypeManager.CSharpName (probe_type));
 			}
@@ -3257,9 +3252,15 @@ namespace Mono.CSharp {
 				return null;
 
 			eclass = ExprClass.Value;
-			if (trueExpr.Type == falseExpr.Type)
+			if (trueExpr.Type == falseExpr.Type) {
 				type = trueExpr.Type;
-			else {
+				if (type == TypeManager.null_type) {
+					// TODO: probably will have to implement ConditionalConstant
+					// to call method without return constant as well
+					Report.Warning (-101, 1, loc, "Conditional expression will always return same value");
+					return trueExpr;
+				}
+			} else {
 				Expression conv;
 				Type true_type = trueExpr.Type;
 				Type false_type = falseExpr.Type;
@@ -5667,6 +5668,8 @@ namespace Mono.CSharp {
 				return new BoolConstant (false, Location.Null);
 			if (t == TypeManager.decimal_type)
 				return new DecimalConstant (0, Location.Null);
+			if (TypeManager.IsEnumType (t))
+				return new EnumConstant (Constantify (TypeManager.EnumToUnderlying (t)), t);
 
 			return null;
 		}
@@ -6038,7 +6041,7 @@ namespace Mono.CSharp {
 
 				Constant c = a.Expr as Constant;
 				if (c != null) {
-					c = c.ToType (TypeManager.int32_type, a.Expr.Location);
+					c = c.ImplicitConversionRequired (TypeManager.int32_type, a.Expr.Location);
 				}
 
 				if (c == null) {
@@ -7236,7 +7239,11 @@ namespace Mono.CSharp {
 				Unary.Error_OperatorCannotBeApplied (loc, ".", "anonymous method");
 				return null;
 			}
-			
+
+			if (new_expr is NullConstant) {
+				Report.Warning (1720, 1, loc, "Expression will always cause a `{0}'",
+					"System.NullReferenceException");
+			}
 
 			Expression member_lookup;
 			member_lookup = MemberLookup (

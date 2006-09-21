@@ -18,6 +18,10 @@ namespace Mono.CSharp
 		public abstract string TypeParameter {
 			get;
 		}
+
+		public bool IsReferenceType { 
+			get { throw new NotSupportedException (); }
+		}
 	}
 
 	public abstract class Constraints : GenericConstraints
