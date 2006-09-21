@@ -16,7 +16,7 @@ endif
 
 EXTRA_DISTFILES = \
 	Test/System.Security.Cryptography.Xml/sample.pfx \
-	Test/System.Security.Cryptography.Xml/EncryptedXmlSample1.xml
+	Test/System.Security.Cryptography.Xml/EncryptedXmlSample1.xml \
 	Test/System.Security.Cryptography.Xml/EncryptedXmlSample2.xml
 
 include ../../build/library.make

@@ -1,5 +1,9 @@
 2006-09-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Makefile: oops, syntax breakage.
+
+2006-09-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile:
 	  Added Test/S.S.C.Xml/EncryptedXmlSample2.xml to EXTRA_DISTFILES.
 
