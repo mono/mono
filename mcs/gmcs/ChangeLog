@@ -1,5 +1,10 @@
 2006-09-21  Raja R Harinath  <rharinath@novell.com>
 
+	* report.cs: Remove after unification with mcs source.
+	* generic.cs (AddTypeParameter, LookupTypeParameter): Move to
+	mcs/typemanager.cs.
+	(InitGenerics, CleanUpGenerics): Remove.
+
 	* support.cs: Remove after unification with mcs source.
 
 2006-09-20  Raja R Harinath  <rharinath@novell.com>

@@ -269,6 +269,7 @@ public partial class TypeManager {
 		builder_to_declspace = null;
 		builder_to_member_cache = null;
 		builder_to_ifaces = null;
+		builder_to_type_param = null;
 		indexer_arguments = null;
 		method_params = null;
 		builder_to_method = null;
@@ -282,8 +283,6 @@ public partial class TypeManager {
 
 #if GMCS_SOURCE
 		assembly_internals_vis_attrs = null;
-
-		CleanUpGenerics ();
 #endif
 
 		TypeHandle.CleanUp ();
@@ -373,6 +372,7 @@ public partial class TypeManager {
 		builder_to_declspace = new PtrHashtable ();
 		builder_to_member_cache = new PtrHashtable ();
 		builder_to_method = new PtrHashtable ();
+		builder_to_type_param = new PtrHashtable ();
 		method_params = new PtrHashtable ();
 		method_overrides = new PtrHashtable ();
 		indexer_arguments = new PtrHashtable ();
@@ -385,8 +385,6 @@ public partial class TypeManager {
 
 #if GMCS_SOURCE
 		assembly_internals_vis_attrs = new PtrHashtable ();
-		
-		InitGenerics ();
 #endif
 
 		// to uncover regressions
@@ -1669,7 +1667,6 @@ public partial class TypeManager {
 
 	public static bool IsSubclassOf (Type type, Type base_type)
 	{
-#if GMCS_SOURCE
 		TypeParameter tparam = LookupTypeParameter (type);
 		TypeParameter pparam = LookupTypeParameter (base_type);
 
@@ -1680,10 +1677,9 @@ public partial class TypeManager {
 			return tparam.IsSubclassOf (base_type);
 		}
 
-#if MS_COMPATIBLE
+#if MS_COMPATIBLE && GMCS_SOURCE
 		if (type.IsGenericType)
 			type = type.GetGenericTypeDefinition ();
-#endif
 #endif
 
 		if (type.IsSubclassOf (base_type))
@@ -1712,7 +1708,6 @@ public partial class TypeManager {
 
 	public static bool IsFamilyAccessible (Type type, Type parent)
 	{
-#if GMCS_SOURCE
 		TypeParameter tparam = LookupTypeParameter (type);
 		TypeParameter pparam = LookupTypeParameter (parent);
 
@@ -1722,7 +1717,6 @@ public partial class TypeManager {
 
 			return tparam.IsSubclassOf (parent);
 		}
-#endif
 
 		do {
 			if (IsInstantiationOfSameGenericType (type, parent))
@@ -2640,6 +2634,22 @@ public partial class TypeManager {
 	}
 
 #region Generics
+	// <remarks>
+	//   Tracks the generic parameters.
+	// </remarks>
+	static PtrHashtable builder_to_type_param;
+
+	public static void AddTypeParameter (Type t, TypeParameter tparam)
+	{
+		if (!builder_to_type_param.Contains (t))
+			builder_to_type_param.Add (t, tparam);
+	}
+
+	public static TypeParameter LookupTypeParameter (Type t)
+	{
+		return (TypeParameter) builder_to_type_param [t];
+	}
+
 	// This method always return false for non-generic compiler,
 	// while Type.IsGenericParameter is returned if it is supported.
 	public static bool IsGenericParameter (Type type)

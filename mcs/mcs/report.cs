@@ -84,7 +84,10 @@ namespace Mono.CSharp {
 			1717, 1718,
 			1901,
 			2002, 2023,
-			3005, 3012, 3019, 3021, 3022, 3023, 3026, 3027
+			3005, 3012, 3019, 3021, 3022, 3023, 3026, 3027,
+#if GMCS_SOURCE
+			402, 414, 693, 1700
+#endif
 		};
 
 		static Report ()
@@ -304,12 +307,15 @@ namespace Mono.CSharp {
 
 		static public void SymbolRelatedToPreviousError (MemberInfo mi)
 		{
-			TypeContainer temp_ds = TypeManager.LookupTypeContainer (mi.DeclaringType);
+			Type dt = TypeManager.DropGenericTypeArguments (mi.DeclaringType);
+			TypeContainer temp_ds = TypeManager.LookupTypeContainer (dt);
 			if (temp_ds == null) {
-				SymbolRelatedToPreviousError (mi.DeclaringType.Assembly.Location, TypeManager.GetFullNameSignature (mi));
+				SymbolRelatedToPreviousError (dt.Assembly.Location, TypeManager.GetFullNameSignature (mi));
 			} else {
-				if (mi is MethodBase) {
-					IMethodData md = TypeManager.GetMethod ((MethodBase)mi);
+				MethodBase mb = mi as MethodBase;
+				if (mb != null) {
+					mb = TypeManager.DropGenericMethodArguments (mb);
+					IMethodData md = TypeManager.GetMethod (mb);
 					SymbolRelatedToPreviousError (md.Location, md.GetSignatureForError ());
 					return;
 				}
@@ -326,6 +332,16 @@ namespace Mono.CSharp {
 
 		static public void SymbolRelatedToPreviousError (Type type)
 		{
+			type = TypeManager.DropGenericTypeArguments (type);
+
+			if (TypeManager.IsGenericParameter (type)) {
+				TypeParameter tp = TypeManager.LookupTypeParameter (type);
+				if (tp != null) {
+					SymbolRelatedToPreviousError (tp.Location, "");
+					return;
+				}
+			}
+
 			if (type is TypeBuilder) {
 				DeclSpace temp_ds = TypeManager.LookupDeclSpace (type);
 				SymbolRelatedToPreviousError (temp_ds.Location, TypeManager.CSharpName (type));

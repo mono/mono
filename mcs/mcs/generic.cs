@@ -18,4 +18,16 @@ namespace Mono.CSharp {
 			get { throw new InternalErrorException ("cannot be called"); }
 		}
 	}
+
+	public abstract class TypeParameter : MemberCore {
+		private TypeParameter ()
+			: base (null, null, null)
+		{
+		}
+
+		public bool IsSubclassOf (Type base_type)
+		{
+			throw new InternalErrorException ("cannot be called");
+		}
+	}
 }

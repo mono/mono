@@ -1,5 +1,10 @@
 2006-09-21  Raja R Harinath  <rharinath@novell.com>
 
+	* report.cs: Unify with gmcs version.
+	* typemanager.cs (AddTypeParameter, LookupTypeParameter): Move
+	from gmcs/generics.cs.
+	* generics.cs (TypeParameter): New dummy class.
+
 	* support.cs: Unify with gmcs version.
 
 2006-09-20  Raja R Harinath  <rharinath@novell.com>
