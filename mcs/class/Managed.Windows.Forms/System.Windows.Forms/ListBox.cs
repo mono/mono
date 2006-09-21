@@ -1475,9 +1475,17 @@ namespace System.Windows.Forms
 		private void OnMouseDownLB (object sender, MouseEventArgs e)
     		{
     			int index = IndexAtClientPoint (e.X, e.Y);
-    			
-    			if (index == -1)
-				return;
+    			    				
+			if (e.Clicks > 1) {
+				OnDoubleClick (EventArgs.Empty);
+			}
+			
+			if (e.Clicks == 1) {
+				OnClick (EventArgs.Empty);
+			}
+			
+			if (index == -1)
+				return;			
 
 			switch (SelectionMode) {
 			case SelectionMode.One:
