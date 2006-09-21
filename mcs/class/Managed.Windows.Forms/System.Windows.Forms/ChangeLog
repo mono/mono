@@ -1,3 +1,10 @@
+2006-09-21  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11.cs: first little cleanup of the StyleSet (...) block
+	of SetWMStyles.  It's still a rat's nest and is largely
+	order-dependent which I dislike immensely.  This also fixes the X
+	button disappearing from toplevel forms.
+
 2006-09-21  Mike Kestner <mkestner@novell.com>
 
 	* ListBox.cs: move Jordi's click/dblclick raising code to the

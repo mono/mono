@@ -783,37 +783,52 @@ namespace System.Windows.Forms {
 			mwmHints.functions = (IntPtr)0;
 			mwmHints.decorations = (IntPtr)0;
 
-			if (StyleSet (cp.Style, WindowStyles.WS_CAPTION)) {
-				functions |= MotifFunctions.Move;
-				decorations |= MotifDecorations.Title | MotifDecorations.Menu;
-			}
-
-			if (StyleSet (cp.Style, WindowStyles.WS_THICKFRAME)) {
-				functions |= MotifFunctions.Move | MotifFunctions.Resize;
-				decorations |= MotifDecorations.Border | MotifDecorations.ResizeH;
-			}
-			if (StyleSet (cp.Style, WindowStyles.WS_MINIMIZEBOX)) {
-				functions |= MotifFunctions.Minimize;
-				decorations |= MotifDecorations.Minimize;
-			}
-
-			if (StyleSet (cp.Style, WindowStyles.WS_MAXIMIZEBOX)) {
-				functions |= MotifFunctions.Maximize;
-				decorations |= MotifDecorations.Maximize;
-			}
-
-			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_DLGMODALFRAME)) {
-				decorations |= MotifDecorations.Border;
-			}
-
-			if (StyleSet (cp.Style, WindowStyles.WS_BORDER)) {
-				decorations |= MotifDecorations.Border;
-			}
-			
-			if (StyleSet (cp.Style, WindowStyles.WS_DLGFRAME)) {
-				decorations |= MotifDecorations.Border;
+			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)
+			    || !StyleSet (cp.Style, WindowStyles.WS_CAPTION | WindowStyles.WS_BORDER | WindowStyles.WS_DLGFRAME)) {
+				/* tool windows get no window manager
+				   decorations, and neither do windows
+				   which lack CAPTION/BORDER/DLGFRAME
+				   styles.
+				*/
 			}
 			else {
+				if (StyleSet (cp.Style, WindowStyles.WS_CAPTION)) {
+					functions |= MotifFunctions.Move;
+					decorations |= MotifDecorations.Title | MotifDecorations.Menu;
+				}
+
+				if (StyleSet (cp.Style, WindowStyles.WS_THICKFRAME)) {
+					functions |= MotifFunctions.Move | MotifFunctions.Resize;
+					decorations |= MotifDecorations.Border | MotifDecorations.ResizeH;
+				}
+
+				if (StyleSet (cp.Style, WindowStyles.WS_MINIMIZEBOX)) {
+					functions |= MotifFunctions.Minimize;
+					decorations |= MotifDecorations.Minimize;
+				}
+
+				if (StyleSet (cp.Style, WindowStyles.WS_MAXIMIZEBOX)) {
+					functions |= MotifFunctions.Maximize;
+					decorations |= MotifDecorations.Maximize;
+				}
+
+				if (StyleSet (cp.Style, WindowStyles.WS_SIZEBOX)) {
+					functions |= MotifFunctions.Resize;
+					decorations |= MotifDecorations.ResizeH;
+				}
+
+				if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_DLGMODALFRAME)) {
+					decorations |= MotifDecorations.Border;
+				}
+
+				if (StyleSet (cp.Style, WindowStyles.WS_BORDER)) {
+					decorations |= MotifDecorations.Border;
+				}
+			
+				if (StyleSet (cp.Style, WindowStyles.WS_DLGFRAME)) {
+					decorations |= MotifDecorations.Border;
+				}
+
 				if (StyleSet (cp.Style, WindowStyles.WS_SYSMENU)) {
 					functions |= MotifFunctions.Close;
 				}
@@ -825,17 +840,6 @@ namespace System.Windows.Forms {
 						decorations &= ~MotifDecorations.Title;
 					}
 				}
-			}
-
-			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
-				functions = 0;
-				decorations = 0;
-			}
-
-
-			if (!StyleSet (cp.Style, WindowStyles.WS_CAPTION | WindowStyles.WS_BORDER | WindowStyles.WS_DLGFRAME)) {
-				functions = 0;
-				decorations = 0;
 			}
 
 			if ((functions & MotifFunctions.Resize) == 0) {
