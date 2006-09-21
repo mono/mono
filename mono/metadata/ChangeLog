@@ -1,4 +1,10 @@
 
+Thu Sep 21 19:30:04 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, object.c, class-internals.h, reflection.c:
+	for arrays, store element_size inside MonoClass (speedup
+	for array object creation).
+
 Thu Sep 21 17:06:43 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: fixed CodeBase to use the file name and not the module
