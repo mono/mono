@@ -1,3 +1,9 @@
+
+Thu Sep 21 12:10:56 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, debug-mini.c: added a debugging function to print
+	info about local variables and arguments in a jitted method.
+
 2006-09-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-alpha.c: More alpha port work from Sergey Tikhonov <tsv@solvo.ru>.
