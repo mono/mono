@@ -190,6 +190,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "generic.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "iterators.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
