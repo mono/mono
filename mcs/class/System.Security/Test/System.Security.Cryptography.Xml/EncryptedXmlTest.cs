@@ -51,6 +51,24 @@ namespace MonoTests.System.Security.Cryptography.Xml
 				encxml.ReplaceData (ed, encxml.DecryptData (edata, aes));
 			}
 		}
+
+		[Test]
+		public void Sample2 ()
+		{
+			RijndaelManaged aes = new RijndaelManaged ();
+			aes.Mode = CipherMode.CBC;
+			aes.KeySize = 256;
+			aes.Key = Convert.FromBase64String ("o/ilseZu+keLBBWGGPlUHweqxIPc4gzZEFWr2nBt640=");
+			aes.Padding = PaddingMode.Zeros;
+
+			XmlDocument doc = new XmlDocument ();
+			doc.PreserveWhitespace = true;
+			doc.Load ("Test/System.Security.Cryptography.Xml/EncryptedXmlSample2.xml");
+			EncryptedXml encxml = new EncryptedXml (doc);
+			EncryptedData edata = new EncryptedData ();
+			edata.LoadXml (doc.DocumentElement);
+			encxml.ReplaceData (doc.DocumentElement, encxml.DecryptData (edata, aes));
+		}
 	}
 }
 #endif

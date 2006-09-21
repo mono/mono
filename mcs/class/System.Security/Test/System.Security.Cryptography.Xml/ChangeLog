@@ -1,5 +1,11 @@
 2006-09-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* EncryptedXmlTest.cs, EncryptedXmlSample2.xml :
+	  Added another case that expects correct padding processing which is 
+	  specified in W3C xmlenc spec section 5.2.
+
+2006-09-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* EncryptedXmlTest.cs :
 	  removed problematic culture change (was for debugging).
 

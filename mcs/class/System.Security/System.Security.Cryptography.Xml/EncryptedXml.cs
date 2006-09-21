@@ -141,7 +141,7 @@ namespace System.Security.Cryptography.Xml {
 
 		public byte[] DecryptData (EncryptedData encryptedData, SymmetricAlgorithm symAlg)
 		{
-			return Transform (encryptedData.CipherData.CipherValue, symAlg.CreateDecryptor (), symAlg.BlockSize / 8);
+			return Transform (encryptedData.CipherData.CipherValue, symAlg.CreateDecryptor (), symAlg.BlockSize / 8, true);
 		}
 
 		public void DecryptDocument ()
@@ -410,10 +410,10 @@ namespace System.Security.Cryptography.Xml {
 
 		private byte[] Transform (byte[] data, ICryptoTransform transform)
 		{
-			return Transform (data, transform, 0);
+			return Transform (data, transform, 0, false);
 		}
 
-		private byte[] Transform (byte[] data, ICryptoTransform transform, int startIndex)
+		private byte[] Transform (byte[] data, ICryptoTransform transform, int blockOctetCount, bool trimPadding)
 		{
 			MemoryStream output = new MemoryStream ();
 			CryptoStream crypto = new CryptoStream (output, transform, CryptoStreamMode.Write);
@@ -421,8 +421,16 @@ namespace System.Security.Cryptography.Xml {
 
 			crypto.FlushFinalBlock ();
 
-			byte[] result = new byte [output.Length - startIndex];
-			Array.Copy (output.GetBuffer (), startIndex, result, 0, result.Length);
+			// strip padding (see xmlenc spec 5.2)
+			int trimSize = 0;
+			if (trimPadding)
+				trimSize = output.GetBuffer () [output.Length - 1];
+			// It should not happen, but somehow .NET allows such cipher 
+			// data as if there were no padding.
+			if (trimSize > blockOctetCount)
+				trimSize = 0;
+			byte[] result = new byte [output.Length - blockOctetCount - trimSize];
+			Array.Copy (output.GetBuffer (), blockOctetCount, result, 0, result.Length);
 
 			crypto.Close ();
 			output.Close ();

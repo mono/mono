@@ -1,5 +1,11 @@
 2006-09-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* EncryptedXml.cs :
+	  Handle orthodox padding (xmlenc spec section 5.2). However, like 
+	  EncryptedXmlSample1, it might not exist, so make it optional.
+
+2006-09-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* EncryptedXml.cs : True fix for DecryptData(). It indeed uses block size
 	  (or possibly IV size) in Transform(), but only for stripping the heading
 	  n bytes garbage.

@@ -1,5 +1,10 @@
 2006-09-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Makefile:
+	  Added Test/S.S.C.Xml/EncryptedXmlSample2.xml to EXTRA_DISTFILES.
+
+2006-09-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* System.Security_test.dll.sources: added EncryptedXmlTest.cs.
 	* Makefile: added some extra test support files as EXTRA_DISTFILES.
 
