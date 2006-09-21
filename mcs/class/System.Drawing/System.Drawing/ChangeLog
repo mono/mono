@@ -1,3 +1,8 @@
+2006-09-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* gdipFunctions.cs: Throw an OverflowException for the ValueOverflow
+	Status code.
+
 2006-09-21 Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* gdipFunctions.cs, Image.cs: 78315. Probably in the future we should

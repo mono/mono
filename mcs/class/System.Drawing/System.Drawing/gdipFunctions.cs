@@ -209,6 +209,9 @@ namespace System.Drawing
 				case Status.FontFamilyNotFound:
 					throw new ArgumentException ("FontFamily wasn't found.");
 
+				case Status.ValueOverflow:
+					throw new OverflowException ("Argument out of range.");
+
 				default:
 					throw new Exception ("Unknown Error.");
 			}
