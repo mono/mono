@@ -1,29 +1,20 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<Target Name="GenerateFullAssemblyName">
-		<CreateProperty Value="$(AssemblyName).dll" Condition="'$(OutputType)' == 'Library'" >
-			<Output TaskParameter="Value" PropertyName="FullAssemblyName" />
-		</CreateProperty>
+	<PropertyGroup>
+		<TargetExt Condition="'$(OutputType)' == 'Winexe'">.exe</TargetExt>
+		<TargetExt Condition="'$(OutputType)' == 'Exe'">.exe</TargetExt>
+		<TargetExt Condition="'$(OutputType)' == 'Library'">.dll</TargetExt>
+		<TargetExt Condition="'$(OutputType)' == 'Netmodule'">.netmodule</TargetExt>
+	</PropertyGroup>
 
-		<CreateProperty Value="$(AssemblyName).exe" Condition="'$(OutputType)' == 'Exe'" >
-			<Output TaskParameter="Value" PropertyName="FullAssemblyName" />
-		</CreateProperty>
+	<PropertyGroup>
+		<WarningLevel Condition="'$(WarningLevel)' == ''" >2</WarningLevel>
+	</PropertyGroup>
 
-		<CreateProperty Value="$(AssemblyName).exe" Condition="'$(OutputType)' == 'Winexe'" >
-			<Output TaskParameter="Value" PropertyName="FullAssemblyName" />
-		</CreateProperty>
-	</Target>
-
-	<Target Name="AssignWarningLevel">
-		<CreateProperty Value="2" Condition="'$(WarningLevel)' == ''">
-			<Output TaskParameter="Value" PropertyName="WarningLevel"/>
-		</CreateProperty>
-	</Target>
-
-
-	<Target Name="Build" DependsOnTargets="GenerateFullAssemblyName;AssignWarningLevel" >
+	<Target Name="Build">
 		<Csc
 			DefineConstants="$(DefineConstants)"
-			OutputAssembly="$(FullAssemblyName)"
+			NoConfig="true"
+			OutputAssembly="$(AssemblyName)$(TargetExt)"
 			References="@(Reference)"
 			Sources="@(Compile)"
 			TargetType="$(OutputType)"

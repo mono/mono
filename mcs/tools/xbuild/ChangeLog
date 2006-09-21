@@ -1,3 +1,8 @@
+2006-09-21  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* xbuild/Microsoft.CSharp.targets: Simplify: use PropertyGroups
+	instead of Targets to set properties needed by Csc task.
+
 2006-09-20  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Makefile: Fix broken build.
