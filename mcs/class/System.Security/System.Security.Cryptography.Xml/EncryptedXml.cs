@@ -141,7 +141,7 @@ namespace System.Security.Cryptography.Xml {
 
 		public byte[] DecryptData (EncryptedData encryptedData, SymmetricAlgorithm symAlg)
 		{
-			return Transform (encryptedData.CipherData.CipherValue, symAlg.CreateDecryptor (), 0);
+			return Transform (encryptedData.CipherData.CipherValue, symAlg.CreateDecryptor (), symAlg.BlockSize / 8);
 		}
 
 		public void DecryptDocument ()
@@ -417,11 +417,12 @@ namespace System.Security.Cryptography.Xml {
 		{
 			MemoryStream output = new MemoryStream ();
 			CryptoStream crypto = new CryptoStream (output, transform, CryptoStreamMode.Write);
-			crypto.Write (data, startIndex, data.Length - startIndex);
+			crypto.Write (data, 0, data.Length);
 
 			crypto.FlushFinalBlock ();
 
-			byte[] result = output.ToArray ();
+			byte[] result = new byte [output.Length - startIndex];
+			Array.Copy (output.GetBuffer (), startIndex, result, 0, result.Length);
 
 			crypto.Close ();
 			output.Close ();

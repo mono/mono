@@ -23,6 +23,7 @@ System.Security.Cryptography.Xml/AssertCrypto.cs
 System.Security.Cryptography.Xml/DataObjectTest.cs
 System.Security.Cryptography.Xml/DSAKeyValueTest.cs
 System.Security.Cryptography.Xml/DataReferenceTest.cs
+System.Security.Cryptography.Xml/EncryptedXmlTest.cs
 System.Security.Cryptography.Xml/KeyInfoNameTest.cs
 System.Security.Cryptography.Xml/KeyInfoNodeTest.cs
 System.Security.Cryptography.Xml/KeyInfoRetrievalMethodTest.cs

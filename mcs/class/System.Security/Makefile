@@ -14,4 +14,8 @@ LIB_MCS_FLAGS += -r:Mono.Security.dll -nowarn:414
 TEST_MCS_FLAGS += -nowarn:168,183,414
 endif
 
+EXTRA_DISTFILES = \
+	Test/System.Security.Cryptography.Xml/sample.pfx \
+	Test/System.Security.Cryptography.Xml/EncryptedXmlSample1.xml
+
 include ../../build/library.make
