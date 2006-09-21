@@ -1,3 +1,7 @@
+2006-09-21  Raja R Harinath  <rharinath@novell.com>
+
+	* support.cs: Unify with gmcs version.
+
 2006-09-20  Raja R Harinath  <rharinath@novell.com>
 
 	* ecore.cs (MethodGroupExpr.ResolveGeneric): New dummy method.
@@ -11,7 +15,6 @@
 
 	* codegen.cs (IResolveContent.GenericDeclContainer): Copy from gmcs.
 	(EmitContext): Add GenericDeclContainer implementation.
-
 	* decl.cs (MemberCore, DeclSpace): Likewise.
 	* namespace.cs: Remove #ifdef GMCS_SOURCE.
 

@@ -1,3 +1,7 @@
+2006-09-21  Raja R Harinath  <rharinath@novell.com>
+
+	* support.cs: Remove after unification with mcs source.
+
 2006-09-20  Raja R Harinath  <rharinath@novell.com>
 
 	* codegen.cs: Remove after unification with mcs source.

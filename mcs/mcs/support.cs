@@ -34,14 +34,15 @@ namespace Mono.CSharp {
 		Type [] types;
 		bool last_arg_is_params = false;
 		bool is_varargs = false;
-		
+		ParameterData gpd;
+
 		public ReflectionParameters (MethodBase mb)
 		{
 			object [] attrs;
 
 			ParameterInfo [] pi = mb.GetParameters ();
 			is_varargs = (mb.CallingConvention & CallingConventions.VarArgs) != 0;
-			
+
 			this.pi = pi;
 			int count = pi.Length-1;
 
@@ -53,19 +54,26 @@ namespace Mono.CSharp {
 					types [i] = pi [i].ParameterType;
 			}
 
-			if (count >= 0) {
-				attrs = pi [count].GetCustomAttributes (TypeManager.param_array_type, true);
+			if (count < 0)
+				return;
 
-				if (attrs == null)
-					return;
-				
-				if (attrs.Length == 0)
-					return;
-
-				last_arg_is_params = true;
+			MethodBase generic = TypeManager.DropGenericMethodArguments (mb);
+			if (generic != mb) {
+				gpd = TypeManager.GetParameterData (generic);
+				last_arg_is_params = gpd.HasParams;
+				return;
 			}
+
+			attrs = pi [count].GetCustomAttributes (TypeManager.param_array_type, true);
+			if (attrs == null)
+				return;
+
+			if (attrs.Length == 0)
+				return;
+
+			last_arg_is_params = true;
 		}
-		
+
 		public string GetSignatureForError ()
 		{
 			StringBuilder sb = new StringBuilder ("(");
@@ -98,18 +106,21 @@ namespace Mono.CSharp {
 
 		public string ParameterName (int pos)
 		{
+			if (gpd != null)
+				return gpd.ParameterName (pos);
+
 			if (last_arg_is_params && pos >= pi.Length - 1)
 				return pi [pi.Length - 1].Name;
 			else if (is_varargs && pos >= pi.Length)
 				return "__arglist";
-			else 
+			else
 				return pi [pos].Name;
 		}
 
 		public string ParameterDesc (int pos)
 		{
 			if (is_varargs && pos >= pi.Length)
-				return "";			
+				return "";
 
 			StringBuilder sb = new StringBuilder ();
 
@@ -123,7 +134,7 @@ namespace Mono.CSharp {
 					sb.Append ("out ");
 				else
 					sb.Append ("ref ");
-			} 
+			}
 
 			if (pos >= pi.Length - 1 && last_arg_is_params)
 				sb.Append ("params ");
@@ -131,7 +142,6 @@ namespace Mono.CSharp {
 			sb.Append (TypeManager.CSharpName (partype).Replace ("&", ""));
 
 			return sb.ToString ();
-			
 		}
 
 		public Parameter.Modifier ParameterModifier (int pos)
@@ -140,7 +150,10 @@ namespace Mono.CSharp {
 				return Parameter.Modifier.PARAMS;
 			else if (is_varargs && pos >= pi.Length)
 				return Parameter.Modifier.ARGLIST;
-			
+
+			if (gpd != null)
+				return gpd.ParameterModifier (pos);
+
 			Type t = pi [pos].ParameterType;
 			if (t.IsByRef){
 				if ((pi [pos].Attributes & (ParameterAttributes.Out|ParameterAttributes.In)) == ParameterAttributes.Out)
@@ -148,36 +161,89 @@ namespace Mono.CSharp {
 				else
 					return Parameter.Modifier.REF;
 			}
-			
+
 			return Parameter.Modifier.NONE;
 		}
 
 		public int Count {
-			get {
-				return is_varargs ? pi.Length + 1 : pi.Length;
-			}
+			get { return is_varargs ? pi.Length + 1 : pi.Length; }
 		}
 
 		public bool HasParams {
-			get {
-				return this.last_arg_is_params;
-			}
+			get { return last_arg_is_params; }
 		}
 
 		public Type[] Types {
-			get {
-				return types;
-			}
+			get { return types; }
 		}
-		
 	}
+
+#if GMCS_SOURCE
+	public class ReflectionConstraints : GenericConstraints
+	{
+		GenericParameterAttributes attrs;
+		Type base_type;
+		Type class_constraint;
+		Type[] iface_constraints;
+		string name;
+
+		public static GenericConstraints GetConstraints (Type t)
+		{
+			Type [] constraints = t.GetGenericParameterConstraints ();
+			GenericParameterAttributes attrs = t.GenericParameterAttributes;
+			if (constraints.Length == 0 && attrs == GenericParameterAttributes.None)
+				return null;
+			return new ReflectionConstraints (t.Name, constraints, attrs);
+		}
+
+		private ReflectionConstraints (string name, Type [] constraints, GenericParameterAttributes attrs)
+		{
+			this.name = name;
+			this.attrs = attrs;
+
+			if ((constraints.Length > 0) && !constraints [0].IsInterface) {
+				class_constraint = constraints [0];
+				iface_constraints = new Type [constraints.Length - 1];
+				Array.Copy (constraints, 1, iface_constraints, 0, constraints.Length - 1);
+			} else
+				iface_constraints = constraints;
+
+			if (HasValueTypeConstraint)
+				base_type = TypeManager.value_type;
+			else if (class_constraint != null)
+				base_type = class_constraint;
+			else
+				base_type = TypeManager.object_type;
+		}
+
+		public override string TypeParameter {
+			get { return name; }
+		}
+
+		public override GenericParameterAttributes Attributes {
+			get { return attrs; }
+		}
+
+		public override Type ClassConstraint {
+			get { return class_constraint; }
+		}
+
+		public override Type EffectiveBaseClass {
+			get { return base_type; }
+		}
+
+		public override Type[] InterfaceConstraints {
+			get { return iface_constraints; }
+		}
+	}
+#endif
 
 	class PtrHashtable : Hashtable {
 		sealed class PtrComparer : IComparer {
 			private PtrComparer () {}
-			
+
 			public static PtrComparer Instance = new PtrComparer ();
-			
+
 			public int Compare (object x, object y)
 			{
 				if (x == y)
@@ -186,7 +252,7 @@ namespace Mono.CSharp {
 					return 1;
 			}
 		}
-		
+
 		public PtrHashtable ()
 		{
 			comparer = PtrComparer.Instance;
@@ -234,12 +300,12 @@ namespace Mono.CSharp {
 			this.len = len;
 			comparer = new ArrComparer (len);
 		}
-	}			
+	}
 
 	struct Pair {
 		public object First;
 		public object Second;
-		
+
 		public Pair (object f, object s)
 		{
 			First = f;
@@ -330,26 +396,26 @@ namespace Mono.CSharp {
 
 	public class DoubleHash {
 		const int DEFAULT_INITIAL_BUCKETS = 100;
-		
+
 		public DoubleHash () : this (DEFAULT_INITIAL_BUCKETS) {}
-		
+
 		public DoubleHash (int size)
 		{
 			count = size;
 			buckets = new Entry [size];
 		}
-		
+
 		int count;
 		Entry [] buckets;
 		int size = 0;
-		
+
 		class Entry {
 			public object key1;
 			public object key2;
 			public int hash;
 			public object value;
 			public Entry next;
-	
+
 			public Entry (object key1, object key2, int hash, object value, Entry next)
 			{
 				this.key1 = key1;
@@ -363,7 +429,7 @@ namespace Mono.CSharp {
 		public bool Lookup (object a, object b, out object res)
 		{
 			int h = (a.GetHashCode () ^ b.GetHashCode ()) & 0x7FFFFFFF;
-			
+
 			for (Entry e = buckets [h % count]; e != null; e = e.next) {
 				if (e.hash == h && e.key1.Equals (a) && e.key2.Equals (b)) {
 					res = e.value;
@@ -377,22 +443,22 @@ namespace Mono.CSharp {
 		public void Insert (object a, object b, object value)
 		{
 			// Is it an existing one?
-		
+
 			int h = (a.GetHashCode () ^ b.GetHashCode ()) & 0x7FFFFFFF;
-			
+
 			for (Entry e = buckets [h % count]; e != null; e = e.next) {
 				if (e.hash == h && e.key1.Equals (a) && e.key2.Equals (b))
 					e.value = value;
 			}
-			
+
 			int bucket = h % count;
 			buckets [bucket] = new Entry (a, b, h, value, buckets [bucket]);
-			
+
 			// Grow whenever we double in size
 			if (size++ == count) {
 				count <<= 1;
 				count ++;
-				
+
 				Entry [] newBuckets = new Entry [count];
 				foreach (Entry root in buckets) {
 					Entry e = root;
