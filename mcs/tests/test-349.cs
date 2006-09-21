@@ -1,11 +1,14 @@
 // Compiler options: -optimize+
 
-// TODO: I will have to investigate how to test that instance ctor is really empty
-// GetMethodBody in 2.0
-
 using System;
 using System.Reflection;
 
+enum E
+{
+}
+
+delegate void D();
+		
 class C {
 	public C () {}
 
@@ -17,6 +20,8 @@ class C {
 	decimal dec2 = new decimal ();
 	object o = null;
 	ValueType BoolVal = (ValueType)null;
+	E e = new E ();
+	event D Ev1 = null;
 		
 	int[] a_i = null;
 	object[] a_o = null;
@@ -25,7 +30,6 @@ class C {
 
 class X
 {
-	public delegate void D();
 	public static event D Ev1 = null;
 	public static event D Ev2 = null;
 	protected static string temp = null, real_temp = null;
@@ -49,6 +53,16 @@ class Test
 			
 		if ((typeof (X2).Attributes & TypeAttributes.BeforeFieldInit) == 0)
 			return 2;
+		
+#if NET_2_0
+		ConstructorInfo mi = typeof(C).GetConstructors ()[0];
+        MethodBody mb = mi.GetMethodBody();
+		
+		if (mb.GetILAsByteArray ().Length != 7) {
+			Console.WriteLine("Optimization failed");
+			return 3;
+		}
+#endif
 			
 		Console.WriteLine ("OK");
 		return 0;
