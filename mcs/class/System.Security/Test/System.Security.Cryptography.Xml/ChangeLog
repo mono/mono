@@ -1,5 +1,10 @@
 2006-09-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* EncryptedXmlTest.cs :
+	  removed problematic culture change (was for debugging).
+
+2006-09-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* EncryptedXmlTest.cs : new file. Added practical example.
 	* EncryptedXmlSample1.xml, sample.pfx : support files for the above test.
 

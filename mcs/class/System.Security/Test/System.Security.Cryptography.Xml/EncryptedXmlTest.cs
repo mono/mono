@@ -26,7 +26,6 @@ namespace MonoTests.System.Security.Cryptography.Xml
 		[Test]
 		public void Sample1 ()
 		{
-global::System.Threading.Thread.CurrentThread.CurrentCulture = new global::System.Globalization.CultureInfo ("en-US");
 			XmlDocument doc = new XmlDocument ();
 			doc.PreserveWhitespace = true;
 			doc.Load ("Test/System.Security.Cryptography.Xml/EncryptedXmlSample1.xml");
