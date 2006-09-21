@@ -1,3 +1,7 @@
+2006-09-21  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs: Removed; this file is now shared with mcs.
+
 2006-09-21  Raja R Harinath  <rharinath@novell.com>
 
 	* rootcontext.cs: Remove after unification with mcs source.

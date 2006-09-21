@@ -2766,6 +2766,15 @@ public partial class TypeManager {
 		return m;
 	}
 
+	public static Type[] GetGenericArguments (MethodInfo mi)
+	{
+#if GMCS_SOURCE
+		return mi.GetGenericArguments ();
+#else
+		return Type.EmptyTypes;
+#endif
+	}
+
 	public static Type[] GetTypeArguments (Type t)
 	{
 #if GMCS_SOURCE

@@ -3945,7 +3945,7 @@ namespace Mono.CSharp {
 		protected override MethodInfo FindOutBaseMethod (ref Type base_ret_type)
 		{
 			MethodInfo mi = (MethodInfo) Parent.PartialContainer.BaseCache.FindMemberToOverride (
-				Parent.TypeBuilder, Name, ParameterTypes, false);
+				Parent.TypeBuilder, Name, ParameterTypes, null, false);
 
 			if (mi == null)
 				return null;
@@ -6119,7 +6119,7 @@ namespace Mono.CSharp {
  		protected override MethodInfo FindOutBaseMethod (ref Type base_ret_type)
  		{
  			PropertyInfo base_property = Parent.PartialContainer.BaseCache.FindMemberToOverride (
- 				Parent.TypeBuilder, Name, ParameterTypes, true) as PropertyInfo;
+ 				Parent.TypeBuilder, Name, ParameterTypes, null, true) as PropertyInfo;
   
  			if (base_property == null)
  				return null;

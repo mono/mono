@@ -1,3 +1,15 @@
+2006-09-21  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (GenericConstraints): New dummy class.
+	(Constraints): Likewise.
+	(TypeParameter): Likewise.
+	(TypeParameterName): Likewise.
+	(GenericMethod): Likewise.
+
+	* typemanager.cs (TypeManager.GetGenericArguments): New method.
+
+	* decl.cs: Merged with the gmcs version.
+
 2006-09-21  Raja R Harinath  <rharinath@novell.com>
 
 	* generic.cs (TypeParameter): Implement IMemberContainer.

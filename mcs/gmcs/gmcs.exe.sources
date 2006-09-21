@@ -10,7 +10,7 @@ class.cs
 ../mcs/const.cs
 ../mcs/constant.cs
 convert.cs
-decl.cs
+../mcs/decl.cs
 delegate.cs
 ../mcs/doc.cs
 ../mcs/enum.cs

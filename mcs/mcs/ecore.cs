@@ -1877,11 +1877,19 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class SimpleName : Expression {
 		public string Name;
+		public readonly TypeArguments Arguments;
 		bool in_transit;
 
 		public SimpleName (string name, Location l)
 		{
 			Name = name;
+			loc = l;
+		}
+
+		public SimpleName (string name, TypeArguments args, Location l)
+		{
+			Name = name;
+			Arguments = args;
 			loc = l;
 		}
 
