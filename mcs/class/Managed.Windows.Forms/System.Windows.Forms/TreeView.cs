@@ -1288,7 +1288,7 @@ namespace System.Windows.Forms {
 
 		internal void UpdateScrollBars ()
 		{
-			if (update_stack > 0)
+			if (IsDisposed || update_stack > 0)
 				return;
 
 			bool vert = false;

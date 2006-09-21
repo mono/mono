@@ -1,3 +1,9 @@
+2006-09-21  Mike Kestner <mkestner@novell.com>
+
+	* TreeView.cs: guard against disposed conditions in UpdateScrollbars
+	to deal with people updating the TreeNodeCollection after the tree
+	is disposed.  "Fixes" 79330.
+
 2006-09-20  Jackson Harper <jackson@ximian.com>
 
 	* TextControl.cs: Push the cursor record onto the undo stack
