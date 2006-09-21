@@ -760,7 +760,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	protected virtual void Dispose (bool disposing)
 	{
-		if (nativeObject != IntPtr.Zero){
+		if (GDIPlus.GdiPlusToken != 0 && nativeObject != IntPtr.Zero) {
 			Status status = GDIPlus.GdipDisposeImage (nativeObject);
 			// set nativeObject to null before throwing an exception
 			nativeObject = IntPtr.Zero;

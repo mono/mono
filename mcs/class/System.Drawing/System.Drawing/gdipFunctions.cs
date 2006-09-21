@@ -67,7 +67,7 @@ namespace System.Drawing
 		[DllImport("gdiplus.dll")]
 		static internal extern void GdiplusShutdown(ref ulong token);
 		
-		static ulong GdiPlusToken;
+		internal static ulong GdiPlusToken = 0;
 
 		static void ProcessExit (object sender, EventArgs e)
 		{		
@@ -75,6 +75,8 @@ namespace System.Drawing
 			// shutting down
 			GC.Collect ();	
 			GC.WaitForPendingFinalizers ();
+			
+			GdiPlusToken = 0;
 
 			// This causes crashes in MS GDI+ because this call occurs before
 			// all managed GDI objects are finalized. When they are finalized they call
