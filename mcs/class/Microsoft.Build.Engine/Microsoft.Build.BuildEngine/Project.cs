@@ -291,9 +291,8 @@ namespace Microsoft.Build.BuildEngine {
 
 		internal void CheckUnloaded ()
 		{
-			if (unloaded) {
-				throw new InvalidOperationException("This project object is no longer valid.");
-			}
+			if (unloaded)
+				throw new InvalidOperationException ("This project object is no longer valid.");
 		}
 
 		private void ProcessXml ()
@@ -340,6 +339,11 @@ namespace Microsoft.Build.BuildEngine {
 
 			InitializeProperties ();
 
+			// FIXME: questionable order of evaluation
+			
+			foreach (Import import in Imports)
+				import.Evaluate ();
+			
 			foreach (BuildPropertyGroup bpg in PropertyGroups) {
 				if (bpg.Condition == String.Empty)
 					bpg.Evaluate ();
@@ -349,9 +353,6 @@ namespace Microsoft.Build.BuildEngine {
 						bpg.Evaluate ();
 				}
 			}
-			
-			foreach (Import import in Imports)
-				import.Evaluate ();
 			
 			foreach (BuildItemGroup big in ItemGroups) {
 				if (big.Condition == String.Empty)

@@ -1,3 +1,14 @@
+2006-09-21  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* ConditionRelationalExpression.cs: Change comparers to case
+	insensitive.
+	* ImportCollection.cs: Add NotImplementedExceptions.
+	* BuildPropertyGroup.cs: Reformatted a bit.
+	* BuildProperty.cs: The same.
+	* Project.cs: Moved evaluation of imports before evaluation of
+	properties. This may "work" until importing projects is redesigned but
+	probably isn't correct.
+
 2006-09-20  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildPropertyGroup.cs: Check for XmlNodes that aren't XmlElements

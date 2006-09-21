@@ -88,11 +88,12 @@ namespace Microsoft.Build.BuildEngine {
 				
 				xe = propertyGroup.OwnerDocument.CreateElement (propertyName);
 				propertyGroup.AppendChild (xe);
-				if (treatPropertyValueAsLiteral) {
+				
+				if (treatPropertyValueAsLiteral)
 					xe.InnerText = Utilities.Escape (propertyValue);
-				} else {
+				else
 					xe.InnerText = propertyValue;
-				}
+				
 				prop = new BuildProperty (parentProject, xe);
 			} else {
 				prop = new BuildProperty (propertyName, propertyValue);

@@ -84,15 +84,15 @@ namespace Microsoft.Build.BuildEngine {
 		public BuildProperty Clone (bool deepClone)
 		{
 			if (deepClone) {
-				if (FromXml == false) {
-					return (BuildProperty) this.MemberwiseClone ();
-				} else {
+				if (FromXml) 
 					throw new NotImplementedException ();
-				}
+				else
+					return (BuildProperty) this.MemberwiseClone ();
 			} else {
-				if (FromXml == false)
+				if (FromXml)
+					throw new NotImplementedException ();
+				else
 					throw new InvalidOperationException ("A shallow clone of this object cannot be created.");
-				throw new NotImplementedException ();
 			}
 		}
 

@@ -103,7 +103,7 @@ namespace Microsoft.Build.BuildEngine {
 						   float r,
 						   RelationOperator op)
 		{
-			IComparer comparer = Comparer.DefaultInvariant;
+			IComparer comparer = CaseInsensitiveComparer.DefaultInvariant;
 			
 			switch (op) {
 			case RelationOperator.Equal:
@@ -127,7 +127,7 @@ namespace Microsoft.Build.BuildEngine {
 						 bool r,
 						 RelationOperator op)
 		{
-			IComparer comparer = Comparer.DefaultInvariant;
+			IComparer comparer = CaseInsensitiveComparer.DefaultInvariant;
 			
 			switch (op) {
 			case RelationOperator.Equal:
@@ -143,7 +143,7 @@ namespace Microsoft.Build.BuildEngine {
 						   string r,
 						   RelationOperator op)
 		{
-			IComparer comparer = Comparer.DefaultInvariant;
+			IComparer comparer = CaseInsensitiveComparer.DefaultInvariant;
 			
 			switch (op) {
 			case RelationOperator.Equal:
