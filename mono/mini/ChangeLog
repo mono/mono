@@ -1,4 +1,10 @@
 
+Thu Sep 21 19:06:09 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* inssel.brg: use the correct function to get the size of an item
+	in an array, given an element class.
+	* aot-compiler.c: do not access class->class_size directly.
+
 Thu Sep 21 12:10:56 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini.h, debug-mini.c: added a debugging function to print
