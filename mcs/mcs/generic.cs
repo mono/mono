@@ -175,9 +175,3 @@ namespace Mono.CSharp
 		}
 	}
 }
-
-namespace System.Reflection.Emit {
-	// GRIEVOUS HACK
-	abstract class GenericTypeParameterBuilder : Type {
-	}
-}

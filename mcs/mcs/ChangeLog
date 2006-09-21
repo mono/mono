@@ -1,5 +1,9 @@
 2006-09-21  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (GenericTypeParameterBuilder): Removed this ugly hack.
+
+2006-09-21  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (GenericConstraints): New dummy class.
 	(Constraints): Likewise.
 	(TypeParameter): Likewise.
