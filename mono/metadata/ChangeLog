@@ -1,4 +1,9 @@
 
+Thu Sep 21 17:06:43 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: fixed CodeBase to use the file name and not the module
+	name (bug #79365).
+
 Thu Sep 21 12:09:34 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mono-debug.c, mono-debug.h: export find_method as
