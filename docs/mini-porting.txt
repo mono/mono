@@ -241,6 +241,9 @@
 	collecting liveness information and in a backward pass on the
 	same list performs the actual register allocation, inserting
 	the instructions needed to spill values, if necessary.
+
+	The cross-platform local register allocator is now implemented
+	and it is documented in the jit-regalloc file.
 	
 	When this part of code is implemented, some testing can be
 	done with the generated code for the new architecture. Most
@@ -254,7 +257,14 @@
 	tests.  Also, using multiple -v switches on the command line
 	makes the JIT dump an increasing amount of information during
 	compilation.
-	
+
+	Values loaded into registers need to be extened as needed by
+	the ECMA specs:
+
+	*) integers smaller than 4 bytes are extended to int32 values
+	*) 32 bit floats are extended to double precision (in particular
+	this means that currently all the floating point operations operate
+	on doubles)
 	
 * Method trampolines
 
