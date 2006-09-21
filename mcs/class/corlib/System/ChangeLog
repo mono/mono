@@ -1,4 +1,9 @@
-2006-09-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+2006-09-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Exception.cs: Marked message internal to allow derived classes to
+	access the raw message (without changing the public API).
+
+2006-09-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ConsoleDriver.cs:
 	* TermInfoDriver.cs:

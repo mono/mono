@@ -1,3 +1,7 @@
+2006-09-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* FileNotFoundExceptionTest.cs: Added ctor tests.
+
 2006-07-06  Dick Porter  <dick@ximian.com>
 
 	* DirectoryTest.cs: Test creating a directory when a file or

@@ -45,7 +45,7 @@ namespace System.IO {
 
 		// Constructors
 		public FileNotFoundException ()
-			: base (Locale.GetText ("File not found"))
+			: base (Locale.GetText ("Unable to find the specified file."))
 		{
 			HResult = Result;
 		}
@@ -98,9 +98,24 @@ namespace System.IO {
 
 		public override string Message {
 			get {
-				if (base.Message == null)
-					return "File not found";
-				return base.Message;
+				if (base.message == null) {
+#if NET_2_0
+					if (fileName != null) {
+						string message = string.Format (CultureInfo.CurrentCulture,
+							"Could not load file or assembly '{0}' or one of"
+							+ " its dependencies. The system cannot find the"
+							+ " file specified.", fileName);
+						return message;
+					}
+#else
+					string file = fileName == null ? "(null)" : fileName;
+					string message = string.Format (CultureInfo.CurrentCulture,
+						"File or assembly name {0}, or one of its dependencies,"
+						+ " was not found.", file);
+					return message;
+#endif
+				}
+				return base.message;
 			}
 		}
 
@@ -116,11 +131,17 @@ namespace System.IO {
 			StringBuilder sb = new StringBuilder (GetType ().FullName);
 			sb.AppendFormat (": {0}", Message);
 
-			if (fileName != null)
-				sb.AppendFormat (" : {0}", fileName);
+			if (fileName != null && fileName.Length > 0) {
+				sb.Append (Environment.NewLine);
+#if NET_2_0
+				sb.AppendFormat ("File name: '{0}'", fileName);
+#else
+				sb.AppendFormat ("File name: \"{0}\"", fileName);
+#endif
+			}
 
 			if (this.InnerException != null)
-				sb.AppendFormat (" ----> {0}", InnerException);
+				sb.AppendFormat (" ---> {0}", InnerException);
 
 			if (this.StackTrace != null) {
 				sb.Append (Environment.NewLine);

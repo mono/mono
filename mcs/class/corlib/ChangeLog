@@ -1,3 +1,7 @@
+2006-09-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* corlib_test.dll.sources: Added FileNotFoundExceptionTest.cs.
+
 2006-08-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* corlib.dll.sources: Added RegistryValueOptions.cs.

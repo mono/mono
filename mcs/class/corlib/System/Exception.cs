@@ -48,7 +48,7 @@ namespace System
 	{
 		IntPtr [] trace_ips;
 		Exception inner_exception;
-		string message;
+		internal string message;
 		string help_link;
 		string class_name;
 		string stack_trace;
