@@ -1,5 +1,7 @@
 2006-09-21  Raja R Harinath  <rharinath@novell.com>
 
+	* rootcontext.cs: Unify with gmcs version.
+
 	* report.cs: Unify with gmcs version.
 	* typemanager.cs (AddTypeParameter, LookupTypeParameter): Move
 	from gmcs/generics.cs.

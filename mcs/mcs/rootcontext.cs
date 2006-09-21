@@ -63,7 +63,7 @@ namespace Mono.CSharp {
 		static TypeBuilder impl_details_class;
 
 		public static int WarningLevel;
-		
+
 		public static Target Target;
 		public static string TargetExt;
 
@@ -119,7 +119,7 @@ namespace Mono.CSharp {
 			impl_details_class = null;
 			helper_classes = null;
 		}
-		
+
 		public static bool NeedsEntryPoint {
 			get { return RootContext.Target == Target.Exe || RootContext.Target == Target.WinExe; }
 		}
@@ -309,7 +309,16 @@ namespace Mono.CSharp {
 				"System.Runtime.Serialization.ISerializable",
 
 				"System.Reflection.IReflect",
-				"System.Reflection.ICustomAttributeProvider"
+				"System.Reflection.ICustomAttributeProvider",
+#if GMCS_SOURCE
+				"System.Runtime.InteropServices._Exception",
+
+				//
+				// Generic types
+				//
+				"System.Collections.Generic.IEnumerator`1",
+				"System.Collections.Generic.IEnumerable`1"
+#endif
 			};
 
 			foreach (string iname in interfaces_first_stage)
@@ -359,6 +368,9 @@ namespace Mono.CSharp {
 				"System.Reflection.MemberInfo",
 				"System.Type",
 				"System.Exception",
+#if GMCS_SOURCE
+				"System.Activator",
+#endif
 
 				//
 				// These are not really important in the order, but they
@@ -373,6 +385,10 @@ namespace Mono.CSharp {
 				"System.Runtime.InteropServices.DllImportAttribute",
 				"System.Runtime.CompilerServices.MethodImplAttribute",
 				"System.Runtime.InteropServices.MarshalAsAttribute",
+#if GMCS_SOURCE
+				"System.Runtime.CompilerServices.CompilerGeneratedAttribute",
+				"System.Runtime.CompilerServices.FixedBufferAttribute",
+#endif
 				"System.Diagnostics.ConditionalAttribute",
 				"System.ObsoleteAttribute",
 				"System.ParamArrayAttribute",
@@ -384,6 +400,9 @@ namespace Mono.CSharp {
 				"System.Runtime.InteropServices.OutAttribute",
 				"System.Runtime.InteropServices.StructLayoutAttribute",
 				"System.Runtime.InteropServices.FieldOffsetAttribute",
+#if GMCS_SOURCE
+				"System.Runtime.InteropServices.DefaultCharSetAttribute",
+#endif
 				"System.InvalidOperationException",
 				"System.NotSupportedException",
 				"System.MarshalByRefObject",
@@ -395,7 +414,9 @@ namespace Mono.CSharp {
 
 			foreach (string cname in classes_second_stage)
 				BootstrapCorlib_ResolveClass (root, cname);
-
+#if GMCS_SOURCE
+			BootstrapCorlib_ResolveStruct (root, "System.Nullable`1");
+#endif
 			BootstrapCorlib_ResolveDelegate (root, "System.AsyncCallback");
 
 			// These will be defined indirectly during the previous ResolveDelegate.
@@ -448,7 +469,7 @@ namespace Mono.CSharp {
 			//
 			if (helper_classes != null){
 				foreach (TypeBuilder type_builder in helper_classes) {
-#if NET_2_0
+#if GMCS_SOURCE
 					type_builder.SetCustomAttribute (TypeManager.compiler_generated_attr);
 #endif
 					type_builder.CreateType ();
@@ -497,7 +518,12 @@ namespace Mono.CSharp {
 		// have been defined through `ResolveTree' 
 		static public void PopulateTypes ()
 		{
+
 			if (type_container_resolve_order != null){
+#if GMCS_SOURCE
+				foreach (TypeContainer tc in type_container_resolve_order)
+					tc.ResolveType ();
+#endif
 				foreach (TypeContainer tc in type_container_resolve_order)
 					tc.DefineMembers ();
 			}

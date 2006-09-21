@@ -26,7 +26,7 @@ iterators.cs
 ../mcs/parameter.cs
 ../mcs/pending.cs
 ../mcs/report.cs
-rootcontext.cs
+../mcs/rootcontext.cs
 ../mcs/roottypes.cs
 ../mcs/statement.cs
 ../mcs/support.cs
