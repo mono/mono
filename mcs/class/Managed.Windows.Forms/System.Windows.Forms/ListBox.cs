@@ -1476,14 +1476,6 @@ namespace System.Windows.Forms
     		{
     			int index = IndexAtClientPoint (e.X, e.Y);
     			    				
-			if (e.Clicks > 1) {
-				OnDoubleClick (EventArgs.Empty);
-			}
-			
-			if (e.Clicks == 1) {
-				OnClick (EventArgs.Empty);
-			}
-			
 			if (index == -1)
 				return;			
 
@@ -1562,6 +1554,11 @@ namespace System.Windows.Forms
 
 		private void OnMouseUpLB (object sender, MouseEventArgs e)
     		{
+			if (e.Clicks > 1)
+				OnDoubleClick (EventArgs.Empty);
+			else if (e.Clicks == 1)
+				OnClick (EventArgs.Empty);
+			
 			if (!button_pressed)
 				return;
 
