@@ -64,7 +64,7 @@ namespace System.ServiceProcess
 		}
 
 		[DefaultValue (true)]
-		[ServiceProcessDescription ("")]
+		[ServiceProcessDescription ("Whether the service should automatically write to the event log on common events such as Install and Start.")]
 		public bool AutoLog {
 			get { return auto_log; }
 			set { auto_log = value; }
@@ -132,7 +132,7 @@ namespace System.ServiceProcess
 			}
 		}
 
-		[ServiceProcessDescription ("")]
+		[ServiceProcessDescription ("The name by which the service is identified to the system.")]
 		[TypeConverter ("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
 		public string ServiceName {
 			get { return service_name; }
@@ -170,8 +170,9 @@ namespace System.ServiceProcess
 		{
 		}
 
-		protected virtual void OnPowerEvent (PowerBroadcastStatus powerStatus)
+		protected virtual bool OnPowerEvent (PowerBroadcastStatus powerStatus)
 		{
+			return true;
 		}
 
 		protected virtual void OnShutdown ()

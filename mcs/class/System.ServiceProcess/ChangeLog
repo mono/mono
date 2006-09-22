@@ -1,3 +1,7 @@
+2006-09-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.ServiceProcess.dll.sources: Added ServiceNameConverter.cs.
+
 2006-09-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Makefile: Treat warnings as error. Ignore no warnings.

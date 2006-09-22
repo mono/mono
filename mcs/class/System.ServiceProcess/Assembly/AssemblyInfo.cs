@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Resources;
 using System.Security;
@@ -39,14 +40,12 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyVersion (Consts.FxVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
-                
+
 [assembly: AssemblyTitle ("System.ServiceProcess.dll")]
 [assembly: AssemblyDescription ("System.ServiceProcess.dll")]
-[assembly: AssemblyConfiguration ("Development version")]
 [assembly: AssemblyCompany ("MONO development team")]
 [assembly: AssemblyProduct ("MONO CLI")]
 [assembly: AssemblyCopyright ("(c) 2003 Various Authors")]
-[assembly: AssemblyTrademark ("")]
 
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyDefaultAlias ("System.ServiceProcess.dll")]
@@ -57,3 +56,12 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile("../msfinal.pub")]
+
+#if NET_2_0
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+#else
+[assembly: AssemblyConfiguration ("Development version")]
+[assembly: AssemblyTrademark ("")]
+#endif

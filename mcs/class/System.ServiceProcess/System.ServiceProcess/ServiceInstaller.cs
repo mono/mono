@@ -55,7 +55,7 @@ namespace System.ServiceProcess
 
 		[ComVisible (false)]
 		[DefaultValue ("")]
-		[ServiceProcessDescription ("")]
+		[ServiceProcessDescription ("Indicates the service's description (a brief comment that explains the purpose of the service). ")]
 		public string Description {
 			get {
 				return description;
@@ -67,6 +67,9 @@ namespace System.ServiceProcess
 #endif
 
 		[DefaultValue("")]
+#if NET_2_0
+		[ServiceProcessDescription ("Indicates the friendly name that identifies the service to the user.")]
+#endif
 		public string DisplayName {
 			get {
 				return display_name;
@@ -77,6 +80,9 @@ namespace System.ServiceProcess
 		}
 
 		[DefaultValue("")]
+#if NET_2_0
+		[ServiceProcessDescription ("Indicates the name used by the system to identify this service.")]
+#endif
 		[TypeConverter("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
 		public string ServiceName {
 			get {
@@ -89,6 +95,9 @@ namespace System.ServiceProcess
 			}
 		}
 
+#if NET_2_0
+		[ServiceProcessDescription ("Indicates the services that must be running in order for this service to run.")]
+#endif
 		public string[] ServicesDependedOn {
 			get {
 				return services_depended_on;
@@ -99,6 +108,9 @@ namespace System.ServiceProcess
 		}
 
 		[DefaultValue (ServiceStartMode.Manual)]
+#if NET_2_0
+		[ServiceProcessDescription ("Indicates how and when this service is started.")]
+#endif
 		public ServiceStartMode StartType {
 			get {
 				return start_type;

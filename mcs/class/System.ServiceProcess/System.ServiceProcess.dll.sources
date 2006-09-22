@@ -21,3 +21,4 @@ System.ServiceProcess/ServiceControllerPermissionEntry.cs
 System.ServiceProcess/ServiceControllerPermissionEntryCollection.cs
 System.ServiceProcess/UnixServiceController.cs
 System.ServiceProcess/Win32ServiceController.cs
+System.ServiceProcess.Design/ServiceNameConverter.cs

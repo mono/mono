@@ -36,13 +36,16 @@ using System.Globalization;
 #if NET_2_0
 using System.Runtime.InteropServices;
 #endif
+using System.ServiceProcess.Design;
 using System.Threading;
 
 namespace System.ServiceProcess
 {
 	[Designer("System.ServiceProcess.Design.ServiceControllerDesigner, " + Consts.AssemblySystem_Design)]
 	[MonoTODO ("No unix implementation")]
-	[ServiceProcessDescription ("")]
+#if NET_2_0
+	[ServiceProcessDescription ("Provides the ability to connect to, query, and manipulate running or stopped Windows services.")]
+#endif
 	public class ServiceController : Component
 	{
 		private string _name;
@@ -190,6 +193,7 @@ namespace System.ServiceProcess
 		[ReadOnly (true)]
 		[RecommendedAsConfigurable (true)]
 		[ServiceProcessDescription ("The short name of the service.")]
+		[TypeConverter (typeof (ServiceNameConverter))]
 		public string ServiceName {
 			get {
 				if (_serviceName.Length == 0 && (_displayName.Length > 0 || _name.Length > 0))

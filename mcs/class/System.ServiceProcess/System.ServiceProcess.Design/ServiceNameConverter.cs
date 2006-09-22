@@ -1,10 +1,11 @@
 //
-// System.ServiceProcess.ServiceAccount
+// System.ServiceProcess.Design.ServiceNameConverter
 //
-// Author: Cesar Octavio Lopez Nataren (cesar@ciencias.unam.mx)
+// Authors:
+//	Gert Driesen (drieseng@users.sourceforge.net)
 //
-// (C) 2002, Cesar Octavio Lopez Nataren 
-
+// (C) 2006 Novell Inc.
+//
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,12 +27,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.ServiceProcess
+using System.ComponentModel;
+using System.Globalization;
+
+namespace System.ServiceProcess.Design
 {
-	public enum ServiceAccount {
-		LocalService = 0,
-		NetworkService = 1,
-		LocalSystem = 2,
-		User = 3
+	internal class ServiceNameConverter : TypeConverter
+	{
+		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
+		{
+			if (sourceType == typeof (string))
+				return true;
+			return base.CanConvertFrom (sourceType);
+		}
+
+		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
+		{
+			if (value is string)
+				return ((string) value);
+			return base.ConvertFrom (context, culture, value);
+		}
 	}
 }

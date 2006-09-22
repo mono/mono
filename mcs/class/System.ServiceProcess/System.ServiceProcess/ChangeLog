@@ -1,3 +1,16 @@
+2006-09-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ServiceProcessInstaller.cs: Added missing ServiceProcessDescription
+	attribute.
+	* ServiceAccount.cs: Removed extra Serializable attribute.
+	* ServiceInstaller.cs: Added ServiceProcessDescriptions.
+	* ServiceBase.cs: Added descriptions for ServiceProcessDescription
+	as reported by class status. Modified return type of OnPowerEvent
+	from void to bool.
+	* ServiceController.cs: Added description for class-level
+	ServiceProcessDescription. Added TypeConverter for ServiceName.
+	* TimeoutException.cs: Added ctor introduced in 2.0 profile.
+
 2006-09-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ServiceProcessInstaller.cs: Added some missing attributes. Fixes
