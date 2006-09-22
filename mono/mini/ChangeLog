@@ -1,5 +1,7 @@
 2006-09-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* inssel-amd64.brg (OP_OUTARG_VT): Use state->left->reg1 instead of state->left->dreg.
+
 	* local-propagation.c (mono_local_cprop_bb): Fix some warnings.
 
 	* ssa2.c (mono_ssa_rename_vars2): Fix a warning.
