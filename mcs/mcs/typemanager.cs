@@ -2679,6 +2679,15 @@ public partial class TypeManager {
 #endif
 	}
 
+	public static bool IsGenericTypeDefinition (Type type)
+	{
+#if GMCS_SOURCE
+		return type.IsGenericTypeDefinition;
+#else
+		return false;
+#endif
+	}
+
 	public static bool ContainsGenericParameters (Type type)
 	{
 #if GMCS_SOURCE
@@ -2686,6 +2695,25 @@ public partial class TypeManager {
 #else
 		return false;
 #endif
+	}
+
+	public static FieldInfo GetGenericFieldDefinition (FieldInfo fi)
+	{
+#if GMCS_SOURCE
+		if (fi.DeclaringType.IsGenericTypeDefinition ||
+		    !fi.DeclaringType.IsGenericType)
+			return fi;
+
+		Type t = fi.DeclaringType.GetGenericTypeDefinition ();
+		BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic |
+			BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+
+		foreach (FieldInfo f in t.GetFields (bf))
+			if (f.MetadataToken == fi.MetadataToken)
+				return f;
+#endif
+
+		return fi;
 	}
 
 	public static bool IsEqual (Type a, Type b)

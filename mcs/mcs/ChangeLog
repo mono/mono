@@ -1,3 +1,14 @@
+2006-09-22  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs: Merged with the gmcs version.
+
+	* generic.cs (ConstructedType): New dummy class.
+	(TypeArguments): Don't make this abstract.
+
+	* typemanager.cs
+	(TypeManager.IsGenericTypeDefinition): New method.
+	(TypeManager.GetGenericFieldDefinition): Moved here from gmcs.
+
 2006-09-22  Raja R Harinath  <rharinath@novell.com>
 
 	* expression.cs (ComposedCast): Check for arrays of TypedReference

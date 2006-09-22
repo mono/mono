@@ -1469,7 +1469,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-
 		public override string FullName {
 			get {
 				return full_name;
@@ -2042,23 +2041,6 @@ namespace Mono.CSharp {
 				return tparam.GenericConstraints;
 
 			return ReflectionConstraints.GetConstraints (t);
-		}
-
-		public static FieldInfo GetGenericFieldDefinition (FieldInfo fi)
-		{
-			if (fi.DeclaringType.IsGenericTypeDefinition ||
-			    !fi.DeclaringType.IsGenericType)
-				return fi;
-
-			Type t = fi.DeclaringType.GetGenericTypeDefinition ();
-			BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic |
-				BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
-
-			foreach (FieldInfo f in t.GetFields (bf))
-				if (f.MetadataToken == fi.MetadataToken)
-					return f;
-
-			return fi;
 		}
 
 		/// <summary>

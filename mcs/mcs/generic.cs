@@ -153,6 +153,42 @@ namespace Mono.CSharp
 		}
 	}
 
+	public class ConstructedType : TypeExpr
+	{
+		public ConstructedType (FullNamedExpression fname, TypeArguments args, Location l)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public ConstructedType (Type t, TypeParameter[] type_params, Location l)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public ConstructedType (Type t, TypeArguments args, Location l)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override string Name {
+			get { throw new NotImplementedException (); }
+		}
+
+		public override string FullName {
+			get { throw new NotImplementedException (); }
+		}
+
+		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public bool CheckConstraints (IResolveContext ec)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+
 	public abstract class GenericMethod : DeclSpace
 	{
 		public GenericMethod (NamespaceEntry ns, DeclSpace parent, MemberName name,
@@ -163,8 +199,32 @@ namespace Mono.CSharp
 		}
 	}
 
-	public abstract class TypeArguments
+	public class TypeArguments
 	{
+		public TypeArguments (Location loc)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void Add (Expression type)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void Add (TypeArguments new_args)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public bool Resolve (IResolveContext ec)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public Type[] Arguments {
+			get { throw new NotImplementedException (); }
+		}
+
 		public int Count {
 			get { throw new NotImplementedException (); }
 		}
