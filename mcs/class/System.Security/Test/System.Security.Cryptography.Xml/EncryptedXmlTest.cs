@@ -27,9 +27,14 @@ namespace MonoTests.System.Security.Cryptography.Xml
 		[Test]
 		public void Sample1 ()
 		{
+			AssertDecryption1 ("Test/System.Security.Cryptography.Xml/EncryptedXmlSample1.xml");
+		}
+
+		void AssertDecryption1 (string filename)
+		{
 			XmlDocument doc = new XmlDocument ();
 			doc.PreserveWhitespace = true;
-			doc.Load ("Test/System.Security.Cryptography.Xml/EncryptedXmlSample1.xml");
+			doc.Load (filename);
 			EncryptedXml encxml = new EncryptedXml (doc);
 			RSACryptoServiceProvider rsa = new X509Certificate2 ("Test/System.Security.Cryptography.Xml/sample.pfx", "mono").PrivateKey as RSACryptoServiceProvider;
 			XmlNamespaceManager nm = new XmlNamespaceManager (doc.NameTable);
@@ -69,6 +74,12 @@ namespace MonoTests.System.Security.Cryptography.Xml
 			EncryptedData edata = new EncryptedData ();
 			edata.LoadXml (doc.DocumentElement);
 			encxml.ReplaceData (doc.DocumentElement, encxml.DecryptData (edata, aes));
+		}
+
+		[Test]
+		public void Sample3 ()
+		{
+			AssertDecryption1 ("Test/System.Security.Cryptography.Xml/EncryptedXmlSample3.xml");
 		}
 
 		[Test]

@@ -141,7 +141,13 @@ namespace System.Security.Cryptography.Xml {
 
 		public byte[] DecryptData (EncryptedData encryptedData, SymmetricAlgorithm symAlg)
 		{
-			return Transform (encryptedData.CipherData.CipherValue, symAlg.CreateDecryptor (), symAlg.BlockSize / 8, true);
+			PaddingMode bak = symAlg.Padding;
+			try {
+				symAlg.Padding = Padding;
+				return Transform (encryptedData.CipherData.CipherValue, symAlg.CreateDecryptor (), symAlg.BlockSize / 8, true);
+			} finally {
+				symAlg.Padding = bak;
+			}
 		}
 
 		public void DecryptDocument ()
@@ -240,7 +246,7 @@ namespace System.Security.Cryptography.Xml {
 		{
 			PaddingMode bak = symAlg.Padding;
 			try {
-				symAlg.Padding = PaddingMode.ISO10126;
+				symAlg.Padding = Padding;
 				return EncryptDataCore (plainText, symAlg);
 			} finally {
 				symAlg.Padding = bak;
