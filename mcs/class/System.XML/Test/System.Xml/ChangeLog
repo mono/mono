@@ -1,3 +1,7 @@
+2006-09-21  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDocumentTests.cs : added bug #79468 case.
+
 2006-09-19  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlElementTests.cs : added test for #79420.

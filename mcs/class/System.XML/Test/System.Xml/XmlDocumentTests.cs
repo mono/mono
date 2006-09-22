@@ -1171,5 +1171,17 @@ namespace MonoTests.System.Xml
 			doc.Load (new StringReader (xml));
 			AssertEquals ("urn:foo", doc.DocumentElement.NamespaceURI);
 		}
+
+		[Test]
+		public void Bug79468 () // XmlNameEntryCache bug
+		{
+			string xml = "<?xml version='1.0' encoding='UTF-8'?>"
+				+ "<ns0:DebtAmountRequest xmlns:ns0='http://whatever'>"
+				+ "  <Signature xmlns='http://www.w3.org/2000/09/xmldsig#' />"
+				+ "</ns0:DebtAmountRequest>";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (xml);
+			XmlNodeList nodeList = doc.GetElementsByTagName ("Signature");
+		}
 	}
 }

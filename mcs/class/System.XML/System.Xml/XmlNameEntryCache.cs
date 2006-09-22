@@ -52,11 +52,12 @@ namespace System.Xml
 
 			if (cacheBuffer == null)
 				cacheBuffer = new char [20];
-			else if (cacheBuffer.Length < prefix.Length + local.Length + 1)
+			if (cacheBuffer.Length < prefix.Length + local.Length + 1)
 				cacheBuffer = new char [Math.Max (
 					prefix.Length + local.Length + 1,
 					cacheBuffer.Length << 1)];
-			prefix.CopyTo (0, cacheBuffer, 0, prefix.Length);				cacheBuffer [prefix.Length] = ':';
+			prefix.CopyTo (0, cacheBuffer, 0, prefix.Length);
+			cacheBuffer [prefix.Length] = ':';
 			local.CopyTo (0, cacheBuffer, prefix.Length + 1, local.Length);
 			return nameTable.Add (cacheBuffer, 0, prefix.Length + local.Length + 1);
 		}

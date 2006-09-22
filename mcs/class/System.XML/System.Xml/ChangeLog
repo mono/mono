@@ -1,3 +1,8 @@
+2006-09-21  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlNameEntryCache.cs : It should expand temporary buffer even at
+	  initial state. Fixed bug #79468.
+
 2006-09-19  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlElement.cs : for non-atomized names, alter null prefix with "".
