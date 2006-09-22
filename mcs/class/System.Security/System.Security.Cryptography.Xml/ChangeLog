@@ -1,5 +1,9 @@
 2006-09-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* EncryptedXml.cs : implement orthodox padding on encryption.
+
+2006-09-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* EncryptedXml.cs :
 	  Handle orthodox padding (xmlenc spec section 5.2). However, like 
 	  EncryptedXmlSample1, it might not exist, so make it optional.

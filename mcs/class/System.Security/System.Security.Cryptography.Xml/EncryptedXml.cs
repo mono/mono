@@ -238,6 +238,17 @@ namespace System.Security.Cryptography.Xml {
 
 		public byte[] EncryptData (byte[] plainText, SymmetricAlgorithm symAlg)
 		{
+			PaddingMode bak = symAlg.Padding;
+			try {
+				symAlg.Padding = PaddingMode.ISO10126;
+				return EncryptDataCore (plainText, symAlg);
+			} finally {
+				symAlg.Padding = bak;
+			}
+		}
+
+		byte[] EncryptDataCore (byte[] plainText, SymmetricAlgorithm symAlg)
+		{
 			// Write the symmetric algorithm IV and ciphertext together.
 			// We use a memory stream to accomplish this.
 			MemoryStream stream = new MemoryStream ();
