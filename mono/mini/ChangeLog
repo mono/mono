@@ -1,3 +1,6 @@
+2006-09-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (add_valuetype): Fix an uninitialized memory issue.
 
 Thu Sep 21 19:06:09 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
