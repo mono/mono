@@ -276,7 +276,7 @@ mono_ssa_rename_vars2 (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gbool
 {
 	MonoInst *ins, *new_var;
 	int i, j, idx;
-	GList *tmp;
+	GSList *tmp;
 	int stack_history_len = 0;
 
 	if (cfg->verbose_level >= 4)

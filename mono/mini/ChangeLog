@@ -1,3 +1,9 @@
+2006-09-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* local-propagation.c (mono_local_cprop_bb): Fix some warnings.
+
+	* ssa2.c (mono_ssa_rename_vars2): Fix a warning.
+
 2006-09-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c: Add some TODOs.
