@@ -2116,24 +2116,25 @@ namespace Mono.CSharp {
 					// TODO: Almost duplicate !
 					// Check visibility
 					switch (fi.Attributes & FieldAttributes.FieldAccessMask) {
-						case FieldAttributes.Private:
-							//
-							// A private method is Ok if we are a nested subtype.
-							// The spec actually is not very clear about this, see bug 52458.
-							//
-							if (invocationType != entry.Container.Type &
-								TypeManager.IsNestedChildOf (invocationType, entry.Container.Type))
-								continue;
-
-							break;
-						case FieldAttributes.FamANDAssem:
-						case FieldAttributes.Assembly:
-							//
-							// Check for assembly methods
-							//
-							if (mi.DeclaringType.Assembly != CodeGen.Assembly.Builder)
-								continue;
-							break;
+					case FieldAttributes.PrivateScope:
+						continue;
+					case FieldAttributes.Private:
+						//
+						// A private method is Ok if we are a nested subtype.
+						// The spec actually is not very clear about this, see bug 52458.
+						//
+						if (!invocationType.Equals (entry.Container.Type) &&
+						    !TypeManager.IsNestedChildOf (invocationType, entry.Container.Type))
+							continue;
+						break;
+					case FieldAttributes.FamANDAssem:
+					case FieldAttributes.Assembly:
+						//
+						// Check for assembly methods
+						//
+						if (mi.DeclaringType.Assembly != CodeGen.Assembly.Builder)
+							continue;
+						break;
 					}
 					return entry.Member;
 				}
@@ -2144,23 +2145,24 @@ namespace Mono.CSharp {
 				if (cmpAttrs.Length != paramTypes.Length)
 					continue;
 	
-				for (int j = cmpAttrs.Length - 1; j >= 0; j --) {
+				int j;
+				for (j = 0; j < cmpAttrs.Length; ++j)
 					if (!TypeManager.IsEqual (paramTypes [j], cmpAttrs [j]))
-						goto next;
-				}
+						break;
+				if (j < cmpAttrs.Length)
+					continue;
 
 				//
 				// check generic arguments for methods
 				//
 				if (mi != null) {
 					Type [] cmpGenArgs = TypeManager.GetGenericArguments (mi);
-					if ((genericMethod != null) && (cmpGenArgs.Length > 0)) {
-						if (genericMethod.TypeParameters.Length != cmpGenArgs.Length)
-						goto next;
-					} else if (!((genericMethod == null) && (cmpGenArgs.Length == 0)))
-						goto next;
+					if (genericMethod == null && cmpGenArgs.Length != 0)
+						continue;
+					if (genericMethod != null && cmpGenArgs.Length != genericMethod.TypeParameters.Length)
+						continue;
 				}
-				
+
 				//
 				// get one of the methods because this has the visibility info.
 				//
@@ -2174,34 +2176,27 @@ namespace Mono.CSharp {
 				// Check visibility
 				//
 				switch (mi.Attributes & MethodAttributes.MemberAccessMask) {
+				case MethodAttributes.PrivateScope:
+					continue;
 				case MethodAttributes.Private:
 					//
 					// A private method is Ok if we are a nested subtype.
 					// The spec actually is not very clear about this, see bug 52458.
 					//
-					if (invocationType.Equals (entry.Container.Type) ||
-					    TypeManager.IsNestedChildOf (invocationType, entry.Container.Type))
-						return entry.Member;
-					
+					if (!invocationType.Equals (entry.Container.Type) &&
+					    !TypeManager.IsNestedChildOf (invocationType, entry.Container.Type))
+						continue;
 					break;
 				case MethodAttributes.FamANDAssem:
 				case MethodAttributes.Assembly:
 					//
 					// Check for assembly methods
 					//
-					if (mi.DeclaringType.Assembly == CodeGen.Assembly.Builder)
-						return entry.Member;
-					
+					if (mi.DeclaringType.Assembly != CodeGen.Assembly.Builder)
+						continue;
 					break;
-				default:
-					//
-					// A protected method is ok, because we are overriding.
-					// public is always ok.
-					//
-					return entry.Member;
 				}
-			next:
-				;
+				return entry.Member;
 			}
 			
 			return null;

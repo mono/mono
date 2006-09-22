@@ -1,3 +1,10 @@
+2006-09-22  Raja R Harinath  <rharinath@novell.com>
+
+	Fix part of #79451
+	* typemanager.cs (Closure.Filter): Consider PrivateScope attributes.
+	* decl.cs (DeclSpace.FindMemberToOverride): Likewise.  Reorganize
+	code slightly.
+
 2006-09-22  Martin Baulig  <martin@ximian.com>
 
 	* ecore.cs: Merged with the gmcs version.

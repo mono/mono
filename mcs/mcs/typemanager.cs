@@ -2992,7 +2992,10 @@ public partial class TypeManager {
 
 				if (ma == MethodAttributes.Public)
 					return true;
-				
+
+				if (ma == MethodAttributes.PrivateScope)
+					return false;
+
 				if (ma == MethodAttributes.Private)
 					return private_ok ||
 						IsPrivateAccessible (invocation_type, m.DeclaringType) ||
@@ -3017,7 +3020,10 @@ public partial class TypeManager {
 				
 				if (fa == FieldAttributes.Public)
 					return true;
-				
+
+				if (fa == FieldAttributes.PrivateScope)
+					return false;
+
 				if (fa == FieldAttributes.Private)
 					return private_ok ||
 						IsPrivateAccessible (invocation_type, m.DeclaringType) ||
