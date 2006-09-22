@@ -8913,8 +8913,6 @@ mono_destroy_compile (MonoCompile *cfg)
 	mono_mempool_destroy (cfg->mempool);
 	g_list_free (cfg->ldstr_list);
 
-	g_free (cfg->reginfo);
-	g_free (cfg->reginfof);
 	g_free (cfg->reverse_inst_list);
 
 	g_free (cfg->varinfo);
@@ -10282,8 +10280,7 @@ mini_select_instructions (MonoCompile *cfg)
 			}
 			emit_state (cfg, mbstate, MB_NTERM_stmt);
 		}
-		bb->max_ireg = cfg->rs->next_vireg;
-		bb->max_freg = cfg->rs->next_vfreg;
+		bb->max_vreg = cfg->rs->next_vreg;
 
 		if (bb->last_ins)
 			bb->last_ins->next = NULL;
@@ -10701,8 +10698,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 	if (cfg->new_ir) {
 		cfg->rs = mono_regstate_new ();
-		cfg->next_vireg = cfg->rs->next_vireg;
-		cfg->next_vfreg = cfg->rs->next_vfreg;
+		cfg->next_vreg = cfg->rs->next_vreg;
 	}
 
 	/*
@@ -11005,8 +11001,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 		/* FIXME: */
 		for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-			bb->max_ireg = cfg->next_vireg;
-			bb->max_freg = cfg->next_vfreg;
+			bb->max_vreg = cfg->next_vreg;
 		}
 	}
 	else

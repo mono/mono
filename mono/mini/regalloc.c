@@ -20,50 +20,34 @@ mono_regstate_new (void)
 
 void
 mono_regstate_free (MonoRegState *rs) {
-	g_free (rs->iassign);
-	if (rs->iassign != rs->fassign)
-		g_free (rs->fassign);
+	g_free (rs->vassign);
 	g_free (rs);
 }
 
 void
 mono_regstate_reset (MonoRegState *rs) {
-	rs->next_vireg = MONO_MAX_IREGS;
-	rs->next_vfreg = MONO_MAX_FREGS;
+	rs->next_vreg = MAX (MONO_MAX_IREGS, MONO_MAX_FREGS);
 }
 
 void
 mono_regstate_assign (MonoRegState *rs) {
 	int i;
-	rs->max_ireg = -1;
+	rs->max_vreg = -1;
 
-	if (rs->next_vireg != rs->iassign_size) {
-		g_free (rs->iassign);
-		rs->iassign = g_malloc (MAX (MONO_MAX_IREGS, rs->next_vireg) * sizeof (int));
-		rs->iassign_size = rs->next_vireg;
+	if (rs->next_vreg != rs->vassign_size) {
+		g_free (rs->vassign);
+		rs->vassign = g_malloc (MAX (MONO_MAX_IREGS, rs->next_vreg) * sizeof (int));
+		rs->vassign_size = rs->next_vreg;
 	}
 
-	for (i = 0; i < MONO_MAX_IREGS; ++i) {
-		rs->iassign [i] = i;
+	for (i = 0; i < MAX (MONO_MAX_IREGS, MONO_MAX_FREGS); ++i)
+		rs->vassign [i] = i;
+	for (i = 0; i < MONO_MAX_IREGS; ++i)
 		rs->isymbolic [i] = 0;
-	}
-
-	/* iassign can be very large so it needs to be initialized by the caller */
-	memset (rs->iassign, -1, MONO_MAX_IREGS);
-
-	if (rs->next_vfreg != rs->fassign_size) {
-		g_free (rs->fassign);
-		rs->fassign = g_malloc (MAX (MONO_MAX_FREGS, rs->next_vfreg) * sizeof (int));
-		rs->fassign_size = rs->next_vfreg;
-	}
-
-	for (i = 0; i < MONO_MAX_FREGS; ++i) {
-		rs->fassign [i] = i;
+	for (i = 0; i < MONO_MAX_FREGS; ++i)
 		rs->fsymbolic [i] = 0;
-	}
 
-	if (rs->next_vfreg > MONO_MAX_FREGS)
-		memset (rs->fassign, -1, sizeof (rs->fassign [0]) * rs->next_vfreg);
+	/* vassign can be very large so it needs to be initialized by the caller */
 }
 
 int
@@ -74,7 +58,7 @@ mono_regstate_alloc_int (MonoRegState *rs, regmask_t allow)
 	for (i = 0; i < MONO_MAX_IREGS; ++i) {
 		if (mask & ((regmask_t)1 << i)) {
 			rs->ifree_mask &= ~ ((regmask_t)1 << i);
-			rs->max_ireg = MAX (rs->max_ireg, i);
+			rs->max_vreg = MAX (rs->max_vreg, i);
 			return i;
 		}
 	}
@@ -116,9 +100,9 @@ mono_regstate_free_float (MonoRegState *rs, int reg)
 inline int
 mono_regstate_next_long (MonoRegState *rs)
 {
-	int rval = rs->next_vireg;
+	int rval = rs->next_vreg;
 
-	rs->next_vireg += 2;
+	rs->next_vreg += 2;
 
 	return rval;
 }

@@ -129,7 +129,7 @@ extern GHashTable *jit_icall_name_hash;
 static inline guint32
 alloc_ireg (MonoCompile *cfg)
 {
-	return cfg->next_vireg ++;
+	return cfg->next_vreg ++;
 }
 
 static inline guint32
@@ -142,20 +142,19 @@ static inline guint32
 alloc_freg (MonoCompile *cfg)
 {
 	/* Allocate these from the same pool as the int regs */
-	cfg->next_vfreg = cfg->next_vireg + 1;
-	return cfg->next_vireg ++;
+	return cfg->next_vreg ++;
 }
 
 static inline guint32
 alloc_lreg (MonoCompile *cfg)
 {
 #if SIZEOF_VOID_P == 8
-	return cfg->next_vireg ++;
+	return cfg->next_vreg ++;
 #else
 	/* Use a pair of consecutive vregs */
-	guint32 res = cfg->next_vireg;
+	guint32 res = cfg->next_vreg;
 
-	cfg->next_vireg += 3;
+	cfg->next_vreg += 3;
 
 	return res;
 #endif
@@ -9294,7 +9293,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 	MonoBasicBlock *bb;
 	int i;
 
-	vreg_to_bb = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoBasicBlock*) * cfg->next_vireg + 1);
+	vreg_to_bb = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoBasicBlock*) * cfg->next_vreg + 1);
 
 	/* Find local vregs used in more than one bb */
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
@@ -9492,7 +9491,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 {
 	MonoBasicBlock *bb;
 	char spec2 [16];
-	int orig_next_vireg;
+	int orig_next_vreg;
 	guint32 *vreg_to_lvreg;
 	guint32 *lvregs;
 	guint32 i, lvregs_len;
@@ -9545,8 +9544,8 @@ mono_spill_global_vars (MonoCompile *cfg)
 	 * an lvreg, we will remember the lvreg and use it the next time instead of loading
 	 * the variable again.
 	 */
-	orig_next_vireg = cfg->next_vireg;
-	vreg_to_lvreg = mono_mempool_alloc0 (cfg->mempool, sizeof (guint32) * cfg->next_vireg);
+	orig_next_vreg = cfg->next_vreg;
+	vreg_to_lvreg = mono_mempool_alloc0 (cfg->mempool, sizeof (guint32) * cfg->next_vreg);
 	lvregs = mono_mempool_alloc (cfg->mempool, sizeof (guint32) * 1024);
 	lvregs_len = 0;
 	

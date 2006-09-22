@@ -1226,10 +1226,10 @@ mono_local_cprop2 (MonoCompile *cfg)
 	MonoBasicBlock *bb;
 	MonoInst **defs;
 	guint32 *def_index;
-	int max = cfg->next_vireg;
+	int max = cfg->next_vreg;
 
-	defs = mono_mempool_alloc (cfg->mempool, sizeof (MonoInst*) * (cfg->next_vireg + 1));
-	def_index = mono_mempool_alloc (cfg->mempool, sizeof (guint32) * (cfg->next_vireg + 1));
+	defs = mono_mempool_alloc (cfg->mempool, sizeof (MonoInst*) * (cfg->next_vreg + 1));
+	def_index = mono_mempool_alloc (cfg->mempool, sizeof (guint32) * (cfg->next_vreg + 1));
 
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		MonoInst *ins, *prev;
@@ -1554,8 +1554,8 @@ mono_local_deadce (MonoCompile *cfg)
 	 * after the handle_global_vregs () pass.
 	 */
 
-	used = mono_bitset_mp_new_noinit (cfg->mempool, cfg->next_vireg + 1);
-	defined = mono_bitset_mp_new_noinit (cfg->mempool, cfg->next_vireg + 1);
+	used = mono_bitset_mp_new_noinit (cfg->mempool, cfg->next_vreg + 1);
+	defined = mono_bitset_mp_new_noinit (cfg->mempool, cfg->next_vreg + 1);
 	reverse_len = 1024;
 	reverse = mono_mempool_alloc (cfg->mempool, sizeof (MonoInst*) * reverse_len);
 

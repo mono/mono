@@ -465,7 +465,7 @@ mono_ssa_compute2 (MonoCompile *cfg)
 	g_assert (!cfg->disable_ssa);
 
 	if (cfg->verbose_level >= 4)
-		printf ("\nCOMPUTE SSA %d (R%d-)\n\n", cfg->num_varinfo, cfg->next_vireg);
+		printf ("\nCOMPUTE SSA %d (R%d-)\n\n", cfg->num_varinfo, cfg->next_vreg);
 
 #ifdef CREATE_PRUNED_SSA
 	/* we need liveness for pruned SSA */
@@ -582,8 +582,8 @@ mono_ssa_compute2 (MonoCompile *cfg)
 	stack = alloca (sizeof (MonoInst *) * cfg->num_varinfo);
 	memset (stack, 0, sizeof (MonoInst *) * cfg->num_varinfo);
 
-	lvreg_stack = g_new0 (guint32, cfg->next_vireg);
-	lvreg_defined = g_new0 (gboolean, cfg->next_vireg);
+	lvreg_stack = g_new0 (guint32, cfg->next_vreg);
+	lvreg_defined = g_new0 (gboolean, cfg->next_vreg);
 	stack_history_size = 1024;
 	stack_history = g_new (RenameInfo, stack_history_size);
 	originals = g_new0 (gboolean, cfg->num_varinfo);
@@ -1270,7 +1270,7 @@ mono_ssa_cprop2 (MonoCompile *cfg)
 	int i;
 	//printf ("SIMPLE OPTS BB%d %s\n", bb->block_num, mono_method_full_name (cfg->method, TRUE));
 
-	carray = g_new0 (MonoInst*, cfg->next_vireg);
+	carray = g_new0 (MonoInst*, cfg->next_vreg);
 
 	if (!(cfg->comp_done & MONO_COMP_SSA_DEF_USE))
 		mono_ssa_create_def_use (cfg);

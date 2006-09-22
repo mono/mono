@@ -286,7 +286,7 @@ struct MonoBasicBlock {
         guint region;
 
 	/* The current symbolic register number, used in local register allocation. */
-	guint32 max_ireg, max_freg;
+	guint32 max_vreg;
 };
 
 /* BBlock flags */
@@ -668,8 +668,8 @@ typedef struct {
 	guint            real_offset;
 	GHashTable      *cbb_hash;
 
-	/* The current virtual register numbers */
-	guint32 next_vireg, next_vfreg;
+	/* The current virtual register number */
+	guint32 next_vreg;
 
 	unsigned char   *cil_start;
 	unsigned char   *native_code;
@@ -710,9 +710,8 @@ typedef struct {
 
 	/* Fields used by the local reg allocator */
 	void*            reginfo;
-	void*            reginfof;
 	void*            reverse_inst_list;
-	int              reginfo_len, reginfof_len;
+	int              reginfo_len;
 	int              reverse_inst_list_len;
 
 	/* Maps vregs to their associated MonoInst's */

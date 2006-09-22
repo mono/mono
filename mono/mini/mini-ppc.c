@@ -1557,12 +1557,12 @@ get_register_force_spilling (MonoCompile *cfg, InstList *item, MonoInst *ins, in
 	MonoInst *load;
 	int i, sel, spill;
 	
-	sel = cfg->rs->iassign [reg];
+	sel = cfg->rs->vassign [reg];
 	/*i = cfg->rs->isymbolic [sel];
 	g_assert (i == reg);*/
 	i = reg;
 	spill = ++cfg->spill_count;
-	cfg->rs->iassign [i] = -spill - 1;
+	cfg->rs->vassign [i] = -spill - 1;
 	mono_regstate_free_int (cfg->rs, sel);
 	/* we need to create a spill var and insert a load to sel after the current instruction */
 	MONO_INST_NEW (cfg, load, OP_LOAD_MEMBASE);
@@ -1590,16 +1590,16 @@ get_register_spilling (MonoCompile *cfg, InstList *item, MonoInst *ins, guint32 
 
 	DEBUG (g_print ("start regmask to assign R%d: 0x%08x (R%d <- R%d R%d)\n", reg, regmask, ins->dreg, ins->sreg1, ins->sreg2));
 	/* exclude the registers in the current instruction */
-	if (reg != ins->sreg1 && (reg_is_freeable (ins->sreg1) || (ins->sreg1 >= MONO_MAX_IREGS && cfg->rs->iassign [ins->sreg1] >= 0))) {
+	if (reg != ins->sreg1 && (reg_is_freeable (ins->sreg1) || (ins->sreg1 >= MONO_MAX_IREGS && cfg->rs->vassign [ins->sreg1] >= 0))) {
 		if (ins->sreg1 >= MONO_MAX_IREGS)
-			regmask &= ~ (1 << cfg->rs->iassign [ins->sreg1]);
+			regmask &= ~ (1 << cfg->rs->vassign [ins->sreg1]);
 		else
 			regmask &= ~ (1 << ins->sreg1);
 		DEBUG (g_print ("excluding sreg1 %s\n", mono_arch_regname (ins->sreg1)));
 	}
-	if (reg != ins->sreg2 && (reg_is_freeable (ins->sreg2) || (ins->sreg2 >= MONO_MAX_IREGS && cfg->rs->iassign [ins->sreg2] >= 0))) {
+	if (reg != ins->sreg2 && (reg_is_freeable (ins->sreg2) || (ins->sreg2 >= MONO_MAX_IREGS && cfg->rs->vassign [ins->sreg2] >= 0))) {
 		if (ins->sreg2 >= MONO_MAX_IREGS)
-			regmask &= ~ (1 << cfg->rs->iassign [ins->sreg2]);
+			regmask &= ~ (1 << cfg->rs->vassign [ins->sreg2]);
 		else
 			regmask &= ~ (1 << ins->sreg2);
 		DEBUG (g_print ("excluding sreg2 %s %d\n", mono_arch_regname (ins->sreg2), ins->sreg2));
@@ -1616,13 +1616,13 @@ get_register_spilling (MonoCompile *cfg, InstList *item, MonoInst *ins, guint32 
 	for (i = 0; i < MONO_MAX_IREGS; ++i) {
 		if (regmask & (1 << i)) {
 			sel = i;
-			DEBUG (g_print ("selected register %s has assignment %d\n", mono_arch_regname (sel), cfg->rs->iassign [sel]));
+			DEBUG (g_print ("selected register %s has assignment %d\n", mono_arch_regname (sel), cfg->rs->vassign [sel]));
 			break;
 		}
 	}
 	i = cfg->rs->isymbolic [sel];
 	spill = ++cfg->spill_count;
-	cfg->rs->iassign [i] = -spill - 1;
+	cfg->rs->vassign [i] = -spill - 1;
 	mono_regstate_free_int (cfg->rs, sel);
 	/* we need to create a spill var and insert a load to sel after the current instruction */
 	MONO_INST_NEW (cfg, load, OP_LOAD_MEMBASE);
@@ -1785,7 +1785,7 @@ insert_before_ins (MonoInst *ins, InstList *item, MonoInst* to_insert)
 static int
 alloc_int_reg (MonoCompile *cfg, InstList *curinst, MonoInst *ins, int sym_reg, guint32 allow_mask)
 {
-	int val = cfg->rs->iassign [sym_reg];
+	int val = cfg->rs->vassign [sym_reg];
 	if (val < 0) {
 		int spill = 0;
 		if (val < -1) {
@@ -1795,7 +1795,7 @@ alloc_int_reg (MonoCompile *cfg, InstList *curinst, MonoInst *ins, int sym_reg, 
 		val = mono_regstate_alloc_int (cfg->rs, allow_mask);
 		if (val < 0)
 			val = get_register_spilling (cfg, curinst, ins, allow_mask, sym_reg);
-		cfg->rs->iassign [sym_reg] = val;
+		cfg->rs->vassign [sym_reg] = val;
 		/* add option to store before the instruction for src registers */
 		if (spill)
 			create_spilled_store (cfg, spill, val, sym_reg, ins);
@@ -1826,11 +1826,10 @@ mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 	if (!bb->code)
 		return;
-	rs->next_vireg = bb->max_ireg;
-	rs->next_vfreg = bb->max_freg;
+	rs->next_vreg = bb->max_vreg;
 	mono_regstate_assign (rs);
-	reginfo = mono_mempool_alloc0 (cfg->mempool, sizeof (RegTrack) * rs->next_vireg);
-	reginfof = mono_mempool_alloc0 (cfg->mempool, sizeof (RegTrack) * rs->next_vfreg);
+	reginfo = mono_mempool_alloc0 (cfg->mempool, sizeof (RegTrack) * rs->next_vreg);
+	reginfof = reginfo;
 	rs->ifree_mask = PPC_CALLER_REGS;
 	rs->ffree_mask = PPC_CALLER_FREGS;
 
@@ -1894,8 +1893,7 @@ mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	cur_iregs = PPC_CALLER_REGS;
 	cur_fregs = PPC_CALLER_FREGS;
 
-	DEBUG (print_regtrack (reginfo, rs->next_vireg));
-	DEBUG (print_regtrack (reginfof, rs->next_vfreg));
+	DEBUG (print_regtrack (reginfo, rs->next_vreg));
 	tmp = reversed;
 	while (tmp) {
 		int prev_dreg, prev_sreg1, prev_sreg2;
@@ -1959,7 +1957,7 @@ mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				mono_regstate_free_float (rs, ins->dreg);
 			}
 		} else if (ins->dreg >= MONO_MAX_IREGS) {
-			val = rs->iassign [ins->dreg];
+			val = rs->vassign [ins->dreg];
 			prev_dreg = ins->dreg;
 			if (val < 0) {
 				int spill = 0;
@@ -1970,7 +1968,7 @@ mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				val = mono_regstate_alloc_int (rs, dest_mask);
 				if (val < 0)
 					val = get_register_spilling (cfg, tmp, ins, dest_mask, ins->dreg);
-				rs->iassign [ins->dreg] = val;
+				rs->vassign [ins->dreg] = val;
 				if (spill)
 					create_spilled_store (cfg, spill, val, prev_dreg, ins);
 			}
@@ -1979,7 +1977,7 @@ mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			ins->dreg = val;
 			if (spec [MONO_INST_DEST] == 'l') {
 				int hreg = prev_dreg + 1;
-				val = rs->iassign [hreg];
+				val = rs->vassign [hreg];
 				if (val < 0) {
 					int spill = 0;
 					if (val < -1) {
@@ -1989,7 +1987,7 @@ mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 					val = mono_regstate_alloc_int (rs, dest_mask);
 					if (val < 0)
 						val = get_register_spilling (cfg, tmp, ins, dest_mask, hreg);
-					rs->iassign [hreg] = val;
+					rs->vassign [hreg] = val;
 					if (spill)
 						create_spilled_store (cfg, spill, val, hreg, ins);
 				}
@@ -2065,7 +2063,7 @@ mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				prev_sreg1 = -1;
 			}
 		} else if (ins->sreg1 >= MONO_MAX_IREGS) {
-			val = rs->iassign [ins->sreg1];
+			val = rs->vassign [ins->sreg1];
 			prev_sreg1 = ins->sreg1;
 			if (val < 0) {
 				int spill = 0;
@@ -2083,7 +2081,7 @@ mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 					 * There are also some other issues that should with make testjit.
 					 */
 					mono_regstate_alloc_int (rs, 1 << ins->dreg);
-					val = rs->iassign [ins->sreg1] = ins->dreg;
+					val = rs->vassign [ins->sreg1] = ins->dreg;
 					//g_assert (val >= 0);
 					DEBUG (g_print ("\tfast assigned sreg1 %s to R%d\n", mono_arch_regname (val), ins->sreg1));
 				} else {
@@ -2091,7 +2089,7 @@ mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 					val = mono_regstate_alloc_int (rs, src1_mask);
 					if (val < 0)
 						val = get_register_spilling (cfg, tmp, ins, src1_mask, ins->sreg1);
-					rs->iassign [ins->sreg1] = val;
+					rs->vassign [ins->sreg1] = val;
 					DEBUG (g_print ("\tassigned sreg1 %s to R%d\n", mono_arch_regname (val), ins->sreg1));
 				}
 				if (spill) {
@@ -2129,7 +2127,7 @@ mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				prev_sreg2 = -1;
 			}
 		} else if (ins->sreg2 >= MONO_MAX_IREGS) {
-			val = rs->iassign [ins->sreg2];
+			val = rs->vassign [ins->sreg2];
 			prev_sreg2 = ins->sreg2;
 			if (val < 0) {
 				int spill = 0;
@@ -2140,7 +2138,7 @@ mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				val = mono_regstate_alloc_int (rs, src2_mask);
 				if (val < 0)
 					val = get_register_spilling (cfg, tmp, ins, src2_mask, ins->sreg2);
-				rs->iassign [ins->sreg2] = val;
+				rs->vassign [ins->sreg2] = val;
 				DEBUG (g_print ("\tassigned sreg2 %s to R%d\n", mono_arch_regname (val), ins->sreg2));
 				if (spill)
 					create_spilled_store (cfg, spill, val, prev_sreg2, ins);
@@ -2173,7 +2171,7 @@ mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		//DEBUG (print_ins (i, ins));
 		tmp = tmp->next;
 	}
-	cfg->max_ireg = MAX (cfg->max_ireg, rs->max_ireg);
+	cfg->max_vreg = MAX (cfg->max_vreg, rs->max_vreg);
 }
 
 static guchar*
@@ -3588,7 +3586,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		ppc_mflr (code, ppc_r0);
 		ppc_stw (code, ppc_r0, PPC_RET_ADDR_OFFSET, ppc_sp);
 	}
-	if (cfg->max_ireg >= 29)
+	if (cfg->max_vreg >= 29)
 		cfg->used_int_regs |= USE_EXTRA_TEMPS;
 
 	alloc_size = cfg->stack_offset;

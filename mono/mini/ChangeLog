@@ -1,5 +1,8 @@
 2006-09-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* *.h *.c: Unify int/fp vregs in the old JIT as well. Use this to simplify and 
+	speed up the local register allocator.
+
 	* inssel-amd64.brg (OP_OUTARG_VT): Use state->left->reg1 instead of state->left->dreg.
 
 	* local-propagation.c (mono_local_cprop_bb): Fix some warnings.

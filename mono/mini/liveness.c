@@ -670,7 +670,7 @@ optimize_initlocals (MonoCompile *cfg)
 	MonoInst *ins;
 	MonoBasicBlock *initlocals_bb;
 
-	used = mono_bitset_new (cfg->next_vireg + 1, 0);
+	used = mono_bitset_new (cfg->next_vreg + 1, 0);
 
 	mono_bitset_clear_all (used);
 	initlocals_bb = cfg->bb_entry->next_bb;

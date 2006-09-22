@@ -16,8 +16,7 @@ enum {
 
 typedef struct {
 	/* symbolic registers */
-	int next_vireg;
-	int next_vfreg;
+	int next_vreg;
 
 	/* hard registers */
 	int num_iregs;
@@ -31,21 +30,20 @@ typedef struct {
 	 * If the register is spilled, then this contains -spill - 1, where 'spill'
 	 * is the index of the spill variable.
 	 */
-	int *iassign;
-	int *fassign;
+	int *vassign;
 
 	/* hard -> symbolic */
 	int isymbolic [MONO_MAX_IREGS];
 	int fsymbolic [MONO_MAX_FREGS];
 
-	int max_ireg;
+	int max_vreg;
 	int ispills;
 
-	int iassign_size, fassign_size;
+	int vassign_size;
 } MonoRegState;
 
-#define mono_regstate_next_int(rs)   ((rs)->next_vireg++)
-#define mono_regstate_next_float(rs) ((rs)->next_vfreg++)
+#define mono_regstate_next_int(rs)   ((rs)->next_vreg++)
+#define mono_regstate_next_float(rs) ((rs)->next_vreg++)
 
 
 MonoRegState* mono_regstate_new (void);
