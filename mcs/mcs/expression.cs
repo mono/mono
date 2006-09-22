@@ -8689,7 +8689,7 @@ namespace Mono.CSharp {
 			if (dim == "*" && !TypeManager.VerifyUnManaged (ltype, loc))
 				return null;
 
-			if (dim [0] == '[' &&
+			if (dim != "" && dim [0] == '[' &&
 			    (ltype == TypeManager.arg_iterator_type || ltype == TypeManager.typed_reference_type)) {
 				Report.Error (611, loc, "Array elements cannot be of type `{0}'", TypeManager.CSharpName (ltype));
 				return null;
