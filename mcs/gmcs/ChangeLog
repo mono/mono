@@ -1,3 +1,13 @@
+2006-09-22  Martin Baulig  <martin@ximian.com>
+
+	* delegate.cs: Removed; this file is now shared with mcs.
+
+	* attribute.cs: Removed; this file is now shared with mcs.
+
+2006-09-22  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs: Removed; this file is now shared with mcs.
+
 2006-09-21  Marek Safar  <marek.safar@seznam.cz>
 
 	* convert.cs (ImplicitReferenceConversion): Reuse ToType.

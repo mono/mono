@@ -287,7 +287,8 @@ namespace Mono.CSharp {
 			if (Parameters == null)
 				return true;
 
-			invoke_mb = (MethodInfo) Delegate.GetInvokeMethod (host.TypeBuilder, delegate_type, loc);
+			MethodGroupExpr invoke_mg = Delegate.GetInvokeMethod (host.TypeBuilder, delegate_type, loc);
+			invoke_mb = (MethodInfo) invoke_mg.Methods [0];
 			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
 
 			if (Parameters.Count != invoke_pd.Count)
@@ -314,7 +315,8 @@ namespace Mono.CSharp {
 			// needed for the anonymous method.  We create the method here.
 			//
 
-			invoke_mb = (MethodInfo) Delegate.GetInvokeMethod (ec.ContainerType, delegate_type, loc);
+			MethodGroupExpr invoke_mg = Delegate.GetInvokeMethod (ec.ContainerType, delegate_type, loc);
+			invoke_mb = (MethodInfo) invoke_mg.Methods [0];
 			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
 
 			if (Parameters == null) {

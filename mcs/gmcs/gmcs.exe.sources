@@ -1,7 +1,7 @@
 ../mcs/AssemblyInfo.cs
 anonymous.cs
 ../mcs/assign.cs
-attribute.cs
+../mcs/attribute.cs
 ../mcs/driver.cs
 cs-tokenizer.cs
 ../mcs/cfold.cs
@@ -11,7 +11,7 @@ class.cs
 ../mcs/constant.cs
 convert.cs
 ../mcs/decl.cs
-delegate.cs
+../mcs/delegate.cs
 ../mcs/doc.cs
 ../mcs/enum.cs
 ../mcs/ecore.cs

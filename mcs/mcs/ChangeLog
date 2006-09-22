@@ -1,3 +1,7 @@
+2006-09-22  Martin Baulig  <martin@ximian.com>
+
+	* delegate.cs, attribute.cs: Merged with the gmcs versions.
+
 2006-09-22  Raja R Harinath  <rharinath@novell.com>
 
 	* literal.cs (NullDefault): The type of default(IFoo) is 'IFoo',

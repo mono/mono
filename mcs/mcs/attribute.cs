@@ -174,7 +174,13 @@ namespace Mono.CSharp {
 			Report.Error (182, loc,
 				      "An attribute argument must be a constant expression, typeof " +
 				      "expression or array creation expression");
-		}		
+		}
+		
+		static void Error_TypeParameterInAttribute (Location loc)
+		{
+			Report.Error (
+				-202, loc, "Can not use a type parameter in an attribute");
+		}
 
 		public void Error_MissingGuidAttribute ()
 		{
@@ -334,8 +340,14 @@ namespace Mono.CSharp {
 			ec.IsAnonymousMethodAllowed = false;
 
 			ConstructorInfo ctor = ResolveConstructor (ec);
-			if (ctor == null)
+			if (ctor == null) {
+				if (Type is TypeBuilder && 
+				    TypeManager.LookupDeclSpace (Type).MemberCache == null)
+					// The attribute type has been DefineType'd, but not Defined.  Let's not treat it as an error.
+					// It'll be resolved again when the attached-to entity is emitted.
+					resolve_error = false;
 				return null;
+			}
 
 			CustomAttributeBuilder cb;
 
@@ -533,6 +545,11 @@ namespace Mono.CSharp {
 				
 				if (!(member is PropertyExpr || member is FieldExpr)) {
 					Error_InvalidNamedArgument (member_name);
+					return false;
+				}
+
+				if (a.Expr is TypeParameterExpr){
+					Error_TypeParameterInAttribute (Location);
 					return false;
 				}
 
@@ -841,21 +858,29 @@ namespace Mono.CSharp {
 		/// </summary>
 		public bool CheckSecurityActionValidity (bool for_assembly)
 		{
-			SecurityAction action  = GetSecurityActionValue ();
+			SecurityAction action = GetSecurityActionValue ();
 
-			if ((action == SecurityAction.RequestMinimum || action == SecurityAction.RequestOptional ||
-			     action == SecurityAction.RequestRefuse) && for_assembly)
-				return true;
-			
-			if (!for_assembly) {
-				if (action < SecurityAction.Demand || action > SecurityAction.InheritanceDemand) {
-					Error_AttributeEmitError ("SecurityAction is out of range");
-					return false;
-				}
-				
-				if ((action != SecurityAction.RequestMinimum && action != SecurityAction.RequestOptional &&
-				     action != SecurityAction.RequestRefuse) && !for_assembly)
+			switch (action) {
+			case SecurityAction.Demand:
+			case SecurityAction.Assert:
+			case SecurityAction.Deny:
+			case SecurityAction.PermitOnly:
+			case SecurityAction.LinkDemand:
+			case SecurityAction.InheritanceDemand:
+				if (!for_assembly)
 					return true;
+				break;
+
+			case SecurityAction.RequestMinimum:
+			case SecurityAction.RequestOptional:
+			case SecurityAction.RequestRefuse:
+				if (for_assembly)
+					return true;
+				break;
+
+			default:
+				Error_AttributeEmitError ("SecurityAction is out of range");
+				return false;
 			}
 
 			Error_AttributeEmitError (String.Concat ("SecurityAction `", action, "' is not valid for this declaration"));
@@ -1096,6 +1121,11 @@ namespace Mono.CSharp {
 			return (LayoutKind)pos_values [0];
 		}
 
+		public object GetParameterDefaultValue ()
+		{
+			return pos_values [0];
+		}
+
 		public override bool Equals (object obj)
 		{
 			Attribute a = obj as Attribute;
@@ -1108,11 +1138,6 @@ namespace Mono.CSharp {
 		public override int GetHashCode ()
 		{
 			return base.GetHashCode ();
-		}
-
-		public object GetParameterDefaultValue ()
-		{
-			return pos_values [0];
 		}
 
 		/// <summary>
@@ -1656,7 +1681,7 @@ namespace Mono.CSharp {
 			return (IFixedBuffer)o;
 #else
 			return null;
-#endif
+#endif		
 		}
 
 		public static void VerifyModulesClsCompliance ()
@@ -1700,10 +1725,14 @@ namespace Mono.CSharp {
 
 		static bool AnalyzeTypeCompliance (Type type)
 		{
+			type = TypeManager.DropGenericTypeArguments (type);
 			DeclSpace ds = TypeManager.LookupDeclSpace (type);
 			if (ds != null) {
 				return ds.IsClsComplianceRequired ();
 			}
+
+			if (TypeManager.IsGenericParameter (type))
+				return true;
 
 			object[] CompliantAttribute = type.GetCustomAttributes (TypeManager.cls_compliant_attribute_type, false);
 			if (CompliantAttribute.Length == 0) 
@@ -1727,7 +1756,9 @@ namespace Mono.CSharp {
 			ObsoleteAttribute result = null;
 			if (type.IsByRef || type.IsArray || type.IsPointer) {
 				result = GetObsoleteAttribute (TypeManager.GetElementType (type));
-			} else {
+			} else if (TypeManager.IsGenericParameter (type) || TypeManager.IsGenericType (type))
+				return null;
+			else {
 				DeclSpace type_ds = TypeManager.LookupDeclSpace (type);
 
 				// Type is external, we can get attribute directly
@@ -1793,6 +1824,9 @@ namespace Mono.CSharp {
 			if (type_obsolete != null)
 				return (ObsoleteAttribute)type_obsolete;
 
+			if ((mi.DeclaringType is TypeBuilder) || TypeManager.IsGenericType (mi.DeclaringType))
+				return null;
+
 			ObsoleteAttribute oa = System.Attribute.GetCustomAttribute (mi, TypeManager.obsolete_attribute_type, false)
 				as ObsoleteAttribute;
 			analyzed_member_obsolete.Add (mi, oa == null ? FALSE : oa);
@@ -1818,10 +1852,14 @@ namespace Mono.CSharp {
 
 		public static bool IsConditionalMethodExcluded (MethodBase mb)
 		{
+			mb = TypeManager.DropGenericMethodArguments (mb);
+			if ((mb is MethodBuilder) || (mb is ConstructorBuilder))
+				return false;
+
 			object excluded = analyzed_method_excluded [mb];
 			if (excluded != null)
 				return excluded == TRUE ? true : false;
-			
+
 			ConditionalAttribute[] attrs = mb.GetCustomAttributes (TypeManager.conditional_attribute_type, true)
 				as ConditionalAttribute[];
 			if (attrs.Length == 0) {

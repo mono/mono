@@ -78,6 +78,14 @@ namespace Mono.CSharp {
 			if (TypeBuilder != null)
 				return TypeBuilder;
 
+#if GMCS_SOURCE
+			if (IsGeneric) {
+				foreach (TypeParameter type_param in TypeParameters)
+					if (!type_param.Resolve (this))
+						return null;
+			}
+#endif
+			
 			if (TypeManager.multicast_delegate_type == null && !RootContext.StdLib) {
 				Namespace system = RootNamespace.Global.GetNamespace ("System", true);
 				TypeExpr expr = system.Lookup (this, "MulticastDelegate", Location) as TypeExpr;
@@ -85,7 +93,10 @@ namespace Mono.CSharp {
 			}
 
 			if (TypeManager.multicast_delegate_type == null)
-				throw new InternalErrorException ("System.MulticastDelegate unresolved");
+				Report.Error (-100, Location, "Internal error: delegate used before " +
+					      "System.MulticastDelegate is resolved.  This can only " +
+					      "happen during corlib compilation, when using a delegate " +
+					      "in any of the `core' classes.  See bug #72015 for details.");
 
 			if (IsTopLevel) {
 				if (TypeManager.NamespaceClash (Name, Location))
@@ -105,11 +116,46 @@ namespace Mono.CSharp {
 
 			TypeManager.AddUserType (this);
 
+#if GMCS_SOURCE
+			if (IsGeneric) {
+				string[] param_names = new string [TypeParameters.Length];
+				for (int i = 0; i < TypeParameters.Length; i++)
+					param_names [i] = TypeParameters [i].Name;
+
+				GenericTypeParameterBuilder[] gen_params;
+				gen_params = TypeBuilder.DefineGenericParameters (param_names);
+
+				int offset = CountTypeParameters - CurrentTypeParameters.Length;
+				for (int i = offset; i < gen_params.Length; i++)
+					CurrentTypeParameters [i - offset].Define (gen_params [i]);
+
+				foreach (TypeParameter type_param in CurrentTypeParameters) {
+					if (!type_param.Resolve (this))
+						return null;
+				}
+
+				Expression current = new SimpleName (
+					MemberName.Basename, TypeParameters, Location);
+				current = current.ResolveAsTypeTerminal (this, false);
+				if (current == null)
+					return null;
+
+				CurrentType = current.Type;
+			}
+#endif
+
 			return TypeBuilder;
 		}
 
  		public override bool Define ()
 		{
+#if GMCS_SOURCE
+			if (IsGeneric) {
+				foreach (TypeParameter type_param in TypeParameters)
+					type_param.DefineType (this);
+			}
+#endif
+
 			// FIXME: POSSIBLY make this static, as it is always constant
 			//
 			Type [] const_arg_types = new Type [2];
@@ -313,40 +359,50 @@ namespace Mono.CSharp {
 		// Returns the MethodBase for "Invoke" from a delegate type, this is used
 		// to extract the signature of a delegate.
 		//
-		public static MethodInfo GetInvokeMethod (Type container_type, Type delegate_type, Location loc)
+		public static MethodGroupExpr GetInvokeMethod (Type container_type, Type delegate_type, Location loc)
 		{
-			Expression ml = Expression.MemberLookup (container_type, delegate_type,
+			Expression ml = Expression.MemberLookup (container_type, null, delegate_type,
 				"Invoke", loc);
 
-			if (!(ml is MethodGroupExpr)) {
+			MethodGroupExpr mg = ml as MethodGroupExpr;
+			if (mg == null) {
 				Report.Error (-100, loc, "Internal error: could not find Invoke method!");
 				return null;
 			}
 
-			return (MethodInfo) (((MethodGroupExpr) ml).Methods [0]);
+			return mg;
 		}
 		
 		/// <summary>
 		///  Verifies whether the method in question is compatible with the delegate
 		///  Returns the method itself if okay and null if not.
 		/// </summary>
-		public static MethodBase VerifyMethod (Type container_type, Type delegate_type, MethodBase mb,
+		public static MethodBase VerifyMethod (Type container_type, Type delegate_type,
+						       MethodGroupExpr old_mg, MethodBase mb,
 						       Location loc)
 		{
-			ParameterData pd = TypeManager.GetParameterData (mb);
-
-			int pd_count = pd.Count;
-
-			MethodBase invoke_mb = GetInvokeMethod (container_type, delegate_type, loc);
-			if (invoke_mb == null)
+			MethodGroupExpr mg = GetInvokeMethod (container_type, delegate_type, loc);
+			if (mg == null)
 				return null;
 
+			if (old_mg.HasTypeArguments)
+				mg.HasTypeArguments = true;
+
+			MethodBase invoke_mb = mg.Methods [0];
 			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
 
-			if (invoke_pd.Count != pd_count)
+#if GMCS_SOURCE
+			if (!mg.HasTypeArguments &&
+			    !TypeManager.InferTypeArguments (invoke_pd, ref mb))
+				return null;
+#endif
+
+			ParameterData pd = TypeManager.GetParameterData (mb);
+
+			if (invoke_pd.Count != pd.Count)
 				return null;
 
-			for (int i = pd_count; i > 0; ) {
+			for (int i = pd.Count; i > 0; ) {
 				i--;
 
 				Type invoke_pd_type = invoke_pd.ParameterType (i);
@@ -362,13 +418,13 @@ namespace Mono.CSharp {
 					continue;
 				
 				if (invoke_pd_type.IsSubclassOf (pd_type) && 
-						invoke_pd_type_mod == pd_type_mod)
+				    invoke_pd_type_mod == pd_type_mod)
 					if (RootContext.Version == LanguageVersion.ISO_1) {
 						Report.FeatureIsNotStandardized (loc, "contravariance");
 						return null;
 					} else
 						continue;
-					
+
 				return null;
 			}
 
@@ -418,7 +474,7 @@ namespace Mono.CSharp {
 
 			bool params_method = pd.HasParams;
 			bool is_params_applicable = false;
-			bool is_applicable = Invocation.IsApplicable (ec, args, arg_count, mb);
+			bool is_applicable = Invocation.IsApplicable (ec, me, args, arg_count, ref mb);
 
 			if (!is_applicable && params_method &&
 			    Invocation.IsParamsMethodApplicable (ec, me, args, arg_count, ref mb))
@@ -578,8 +634,8 @@ namespace Mono.CSharp {
 		public static void Error_NoMatchingMethodForDelegate (EmitContext ec, MethodGroupExpr mg, Type type, Location loc)
 		{
 			string method_desc;
-			MethodInfo found_method = (MethodInfo)mg.Methods [0];
-			
+			MethodBase found_method = mg.Methods [0];
+
 			if (mg.Methods.Length > 1)
 				method_desc = found_method.Name;
 			else
@@ -593,7 +649,17 @@ namespace Mono.CSharp {
 			ParameterData param = TypeManager.GetParameterData (method);
 			string delegate_desc = Delegate.FullDelegateDesc (type, method, param);
 
-			if (method.ReturnType != found_method.ReturnType) {
+#if GMCS_SOURCE
+			if (!mg.HasTypeArguments &&
+			    !TypeManager.InferTypeArguments (param, ref found_method)) {
+				Report.Error (411, loc, "The type arguments for " +
+					      "method `{0}' cannot be infered from " +
+					      "the usage. Try specifying the type " +
+					      "arguments explicitly.", method_desc);
+				return;
+			}
+#endif
+			if (method.ReturnType != ((MethodInfo) found_method).ReturnType) {
 				Report.Error (407, loc, "`{0}' has the wrong return type to match the delegate `{1}'", method_desc, delegate_desc);
 			} else {
 				Report.Error (123, loc, "Method `{0}' does not match delegate `{1}'", method_desc, delegate_desc);
@@ -632,7 +698,7 @@ namespace Mono.CSharp {
 		public static MethodBase ImplicitStandardConversionExists (MethodGroupExpr mg, Type targetType)
 		{
 			foreach (MethodInfo mi in mg.Methods){
-				MethodBase mb = Delegate.VerifyMethod (mg.DeclaringType, targetType, mi, Location.Null);
+				MethodBase mb = Delegate.VerifyMethod (mg.DeclaringType, targetType, mg, mi, Location.Null);
 				if (mb != null)
 					return mb;
 			}
@@ -642,7 +708,7 @@ namespace Mono.CSharp {
 		protected Expression ResolveMethodGroupExpr (EmitContext ec, MethodGroupExpr mg)
 		{
 			delegate_method = ImplicitStandardConversionExists (mg, type);
-			
+
 			if (delegate_method == null) {
 				Error_NoMatchingMethodForDelegate (ec, mg, type, loc);
 				return null;
@@ -662,7 +728,7 @@ namespace Mono.CSharp {
 					}
 				}
 			}
-			
+						
 			//TODO: implement caching when performance will be low
 			IMethodData md = TypeManager.GetMethod (delegate_method);
 			if (md == null) {
@@ -691,11 +757,11 @@ namespace Mono.CSharp {
 				delegate_instance_expression = null;
 			} else
 				delegate_instance_expression = ec.GetThis (loc);
-			
+
 			if (delegate_instance_expression != null && delegate_instance_expression.Type.IsValueType)
 				delegate_instance_expression = new BoxedCast (
 					delegate_instance_expression, TypeManager.object_type);
-			
+
 			method_group = mg;
 			eclass = ExprClass.Value;
 			return this;
@@ -728,7 +794,7 @@ namespace Mono.CSharp {
 			return d.ResolveMethodGroupExpr (ec, mge);
 		}
 	}
-
+	
 	//
 	// A delegate-creation-expression, invoked from the `New' class 
 	//
@@ -757,7 +823,7 @@ namespace Mono.CSharp {
 				return null;
 
 			Argument a = (Argument) Arguments [0];
-
+			
 			if (!a.ResolveMethodGroup (ec))
 				return null;
 			
@@ -785,7 +851,7 @@ namespace Mono.CSharp {
 			}
 
 			// This is what MS' compiler reports. We could always choose
-			// to be more verbose and actually give delegate-level specifics			
+			// to be more verbose and actually give delegate-level specifics
 			if (!Delegate.VerifyDelegate (ec, type, loc)) {
 				Report.Error (29, loc, "Cannot implicitly convert type '" + e.Type + "' " +
 					      "to type '" + type + "'");
@@ -884,7 +950,8 @@ namespace Mono.CSharp {
 			// Pop the return value if there is one
 			//
 			if (method is MethodInfo){
-				if (((MethodInfo) method).ReturnType != TypeManager.void_type)
+				Type ret = ((MethodInfo)method).ReturnType;
+				if (TypeManager.TypeToCoreType (ret) != TypeManager.void_type)
 					ec.ig.Emit (OpCodes.Pop);
 			}
 		}
