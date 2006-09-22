@@ -1,3 +1,7 @@
+2006-09-22  Raja R Harinath  <rharinath@novell.com>
+
+	* test-531.cs, test-531-lib.il: New test from #79451.
+
 2006-09-01  Martin Baulig  <martin@ximian.com>
 
 	* gtest-284.cs: New big test for the generic array interfaces.
