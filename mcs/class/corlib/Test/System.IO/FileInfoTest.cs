@@ -105,6 +105,30 @@ namespace MonoTests.System.IO
 				DeleteFile (path);
 			}
 		}
+
+#if NET_2_0
+		
+		[Test]
+		public void IsReadOnly ()
+		{
+			string path = TempFolder + DSC + "FIT.IsReadOnly.Test";
+			DeleteFile (path);
+			
+			try {
+				FileStream stream = File.Create (path);
+				stream.WriteByte (12);
+				stream.Close ();
+				FileInfo info = new FileInfo (path);
+				AssertEquals ("test#01", false, info.IsReadOnly);
+				info.IsReadOnly = true;
+				AssertEquals ("test#02", true, info.IsReadOnly);
+				info.IsReadOnly = false;
+				AssertEquals ("test#03", false, info.IsReadOnly);
+			} finally {
+				DeleteFile (path);
+			}
+		}
+#endif
 		
 		[Test]
 		public void Length ()

@@ -1,5 +1,9 @@
 2006-09-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* FileInfo.cs: added 2.0 IsReadOnly. Patch by Joel Reed.
+
+2006-09-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* FileInfo.cs: eol-style.
 
 2006-09-19  Gert Driesen  <drieseng@users.sourceforge.net>

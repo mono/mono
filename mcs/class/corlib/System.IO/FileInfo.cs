@@ -78,6 +78,31 @@ namespace System.IO {
 			}
 		}
 
+#if NET_2_0
+		public bool IsReadOnly {
+			get {
+				if (!Exists)
+					throw new FileNotFoundException ("Could not find file \"" + OriginalPath + "\".", OriginalPath);
+					
+				return ((stat.Attributes & FileAttributes.ReadOnly) != 0);
+			}
+				
+			set {
+				if (!Exists)
+					throw new FileNotFoundException ("Could not find file \"" + OriginalPath + "\".", OriginalPath);
+					
+				FileAttributes attrs = File.GetAttributes(FullPath);
+
+				if (value) 
+					attrs |= FileAttributes.ReadOnly;
+				else
+					attrs &= ~FileAttributes.ReadOnly;					
+
+				File.SetAttributes(FullPath, attrs);
+			}
+		}
+#endif
+
 		public long Length {
 			get {
 				if (!Exists)
