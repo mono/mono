@@ -259,7 +259,7 @@ namespace System.Windows.Forms {
 		internal abstract void SetIcon(IntPtr handle, Icon icon);
 
 		internal abstract void ClipboardClose(IntPtr handle);
-		internal abstract IntPtr ClipboardOpen();
+		internal abstract IntPtr ClipboardOpen (bool primary_selection);
 		internal abstract int ClipboardGetID(IntPtr handle, string format);
 		internal abstract void ClipboardStore(IntPtr handle, object obj, int id, XplatUI.ObjectToClipboard converter);
 		internal abstract int[] ClipboardAvailableFormats(IntPtr handle);

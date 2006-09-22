@@ -85,7 +85,7 @@ namespace System.Windows.Forms {
 				if (f == null) {
 					IntPtr cliphandle;
 
-					cliphandle = XplatUI.ClipboardOpen();
+					cliphandle = XplatUI.ClipboardOpen(false);
 					f = new Format(name, XplatUI.ClipboardGetID(cliphandle, name));
 					XplatUI.ClipboardClose(cliphandle);
 				}
@@ -183,7 +183,7 @@ namespace System.Windows.Forms {
 		{
 			if (initialized)
 				return;
-			IntPtr cliphandle = XplatUI.ClipboardOpen();
+			IntPtr cliphandle = XplatUI.ClipboardOpen(false);
 
 			new Format (Text, XplatUI.ClipboardGetID (cliphandle, Text));
 			new Format (Bitmap, XplatUI.ClipboardGetID (cliphandle, Bitmap));

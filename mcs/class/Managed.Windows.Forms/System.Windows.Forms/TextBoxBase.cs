@@ -693,7 +693,7 @@ namespace System.Windows.Forms {
 		}
 
 		public void Paste() {
-			Paste(null, false);
+			Paste(Clipboard.GetDataObject(), null, false);
 		}
 
 		public void ScrollToCaret() {
@@ -860,7 +860,7 @@ namespace System.Windows.Forms {
 
 				case Keys.V: {	// Paste (Ctrl-V)
 					if (control) {
-						return Paste(null, true);
+						return Paste(Clipboard.GetDataObject(), null, true);
 					}
 					return false;
 				}
@@ -1037,7 +1037,7 @@ namespace System.Windows.Forms {
 
 				case Keys.Insert: {
 					if (shift) {
-						Paste(null, true);
+						Paste(Clipboard.GetDataObject(), null, true);
 						return true;
 					}
 
@@ -1449,7 +1449,7 @@ namespace System.Windows.Forms {
 				marker.height = marker.tag.height;
 
 				document.SetSelection(marker.line, marker.pos, marker.line, marker.pos);
-				Paste();
+				Paste (Clipboard.GetDataObject (true), null, true);
 
 			}
 
@@ -1761,11 +1761,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal bool Paste(DataFormats.Format format, bool obey_length) {
-			IDataObject	clip;
+		internal bool Paste(IDataObject clip, DataFormats.Format format, bool obey_length) {
 			string		s;
 
-			clip = Clipboard.GetDataObject();
 			if (clip == null)
 				return false;
 			

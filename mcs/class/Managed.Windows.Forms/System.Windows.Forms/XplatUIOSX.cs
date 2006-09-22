@@ -859,7 +859,7 @@ namespace System.Windows.Forms {
 			return 0;
 		}
 
-		internal override IntPtr ClipboardOpen() {
+		internal override IntPtr ClipboardOpen(bool primary_selection) {
 			throw new NotImplementedException();
 		}
 

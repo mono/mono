@@ -1,3 +1,20 @@
+2006-09-22  Jackson Harper  <jackson@ximian.com>
+
+	* XplatUI.cs:
+	* XplatUIWin32.cs:
+	* Clipboard.cs:
+	* DataFormats.cs:
+	* XplatUIOSX.cs:
+	* XplatUIDriver.cs: Update interface to add a primary selection
+	flag, so the driver can use the primary selection buffer if
+	needed.
+	* XplatUIX11.cs: Allow the clipboard to retrieve from PRIMARY.
+
+	* RichTextBox.cs: We need to supply the data object to paste now
+	(so we can choose to supply CLIPBOARD or PRIMARY).
+	* TextBoxBase.cs: Supply data object to paste (see above).
+	- Middle click uses the primary selection data object.
+	
 2006-09-21  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIX11.cs: first little cleanup of the StyleSet (...) block

@@ -528,7 +528,7 @@ namespace System.Windows.Forms {
 
 				document.UpdateView(document.selection_start.line, 0);
 				document.AlignCaret();
-				
+
 			}
 		}
 
@@ -909,7 +909,7 @@ namespace System.Windows.Forms {
 		}
 
 		public void Paste(DataFormats.Format clipFormat) {
-			base.Paste(clipFormat, false);
+			base.Paste(Clipboard.GetDataObject(), clipFormat, false);
 		}
 
 		[MonoTODO()]

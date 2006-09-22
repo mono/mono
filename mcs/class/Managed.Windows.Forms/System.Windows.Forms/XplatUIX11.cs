@@ -88,7 +88,7 @@ namespace System.Windows.Forms {
 		private static bool		ErrorExceptions;	// Throw exceptions on X errors
 
 		// Clipboard
-		private static IntPtr 		ClipMagic = new IntPtr(27051977);
+		private static IntPtr 		ClipMagic;
 		private static ClipboardStruct	Clipboard;		// Our clipboard
 
 		// Communication
@@ -189,6 +189,7 @@ namespace System.Windows.Forms {
 		private static IntPtr _NET_WM_WINDOW_TYPE_DIALOG;
 		private static IntPtr _NET_WM_WINDOW_TYPE_NORMAL;
 		private static IntPtr CLIPBOARD;
+		private static IntPtr PRIMARY;
 		private static IntPtr DIB;
 		private static IntPtr OEMTEXT;
 		private static IntPtr UNICODETEXT;
@@ -626,6 +627,7 @@ namespace System.Windows.Forms {
 
 			// Clipboard support
 			CLIPBOARD = XInternAtom (DisplayHandle, "CLIPBOARD", false);
+			PRIMARY = XInternAtom (DisplayHandle, "PRIMARY", false);
 			DIB = (IntPtr)Atom.XA_PIXMAP;
 			OEMTEXT = XInternAtom(DisplayHandle, "COMPOUND_TEXT", false);
 			UNICODETEXT = XInternAtom(DisplayHandle, "UTF8_STRING", false);
@@ -2164,12 +2166,16 @@ namespace System.Windows.Forms {
 			return XInternAtom(DisplayHandle, format, false).ToInt32();
 		}
 
-		internal override IntPtr ClipboardOpen() {
+		internal override IntPtr ClipboardOpen(bool primary_selection) {
+			if (!primary_selection)
+				ClipMagic = CLIPBOARD;
+			else
+				ClipMagic = PRIMARY;
 			return ClipMagic;
 		}
 
 		internal override object ClipboardRetrieve(IntPtr handle, int type, XplatUI.ClipboardToObject converter) {
-			XConvertSelection(DisplayHandle, CLIPBOARD, (IntPtr)type, (IntPtr)type, FosterParent, IntPtr.Zero);
+			XConvertSelection(DisplayHandle, handle, (IntPtr)type, (IntPtr)type, FosterParent, IntPtr.Zero);
 
 			Clipboard.Retrieving = true;
 			while (Clipboard.Retrieving) {

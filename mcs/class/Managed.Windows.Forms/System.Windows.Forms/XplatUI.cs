@@ -367,11 +367,11 @@ namespace System.Windows.Forms {
 			return driver.ClipboardGetID(handle, format);
 		}
 
-		internal static IntPtr ClipboardOpen() {
+		internal static IntPtr ClipboardOpen(bool primary_selection) {
 			#if DriverDebug
 				Console.WriteLine("ClipboardOpen(): Called");
 			#endif
-			return driver.ClipboardOpen();
+			return driver.ClipboardOpen (primary_selection);
 		}
 
 		internal static void ClipboardStore(IntPtr handle, object obj, int type, XplatUI.ObjectToClipboard converter) {

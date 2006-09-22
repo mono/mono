@@ -2068,7 +2068,8 @@ namespace System.Windows.Forms {
 			return (int)Win32RegisterClipboardFormat(format);
 		}
 
-		internal override IntPtr ClipboardOpen() {
+		internal override IntPtr ClipboardOpen(bool primary_selection) {
+			// Win32 does not have primary selection
 			Win32OpenClipboard(FosterParent);
 			return clip_magic;
 		}

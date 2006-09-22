@@ -57,7 +57,14 @@ namespace System.Windows.Forms {
 		#endregion	// Private Methods
 
 		#region Public Static Methods
-		public static IDataObject GetDataObject() {
+
+		public static IDataObject GetDataObject ()
+		{
+			return GetDataObject (false);
+		}
+
+		internal static IDataObject GetDataObject (bool primary_selection)
+		{
 			DataObject		clipboard;
 			IntPtr			clipboard_handle;
 			int[]			native_formats;
@@ -67,7 +74,7 @@ namespace System.Windows.Forms {
 
 			converter = new XplatUI.ClipboardToObject(ConvertFromClipboardData);
 
-			clipboard_handle = XplatUI.ClipboardOpen();
+			clipboard_handle = XplatUI.ClipboardOpen (primary_selection);
 			native_formats = XplatUI.ClipboardAvailableFormats(clipboard_handle);
 			if (native_formats == null) {
 				return null;	// Clipboard empty
@@ -110,7 +117,7 @@ namespace System.Windows.Forms {
 
 			converter = new XplatUI.ObjectToClipboard(ConvertToClipboardData);
 
-			clipboard_handle = XplatUI.ClipboardOpen();
+			clipboard_handle = XplatUI.ClipboardOpen(false);
 			XplatUI.ClipboardStore(clipboard_handle, null, 0, null);	// Empty clipboard
 
 			native_format = -1;
