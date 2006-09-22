@@ -1444,6 +1444,75 @@ namespace MonoTests.System.Drawing
 				}
 			}
 		}
+
+		private void MeasureCharacterRanges (string text, int first, int length)
+		{
+			CharacterRange[] ranges = new CharacterRange[1];
+			ranges[0] = new CharacterRange (first, length);
+
+			StringFormat string_format = new StringFormat ();
+			string_format.FormatFlags = StringFormatFlags.NoClip;
+			string_format.SetMeasurableCharacterRanges (ranges);
+
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					SizeF size = g.MeasureString (text, font, new Point (0, 0), string_format);
+					RectangleF layout_rect = new RectangleF (0.0f, 0.0f, size.Width, size.Height);
+					g.MeasureCharacterRanges (text, font, layout_rect, string_format);
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void MeasureCharacterRanges_FirstTooFar ()
+		{
+			string text = "this\nis a test";
+			MeasureCharacterRanges (text, text.Length, 1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void MeasureCharacterRanges_LengthTooLong ()
+		{
+			string text = "this\nis a test";
+			MeasureCharacterRanges (text, 0, text.Length + 1);
+		}
+
+		[Test]
+		public void MeasureCharacterRanges_Prefix ()
+		{
+			string text = "Hello &Mono::";
+			CharacterRange[] ranges = new CharacterRange[1];
+			ranges[0] = new CharacterRange (5, 4);
+
+			StringFormat string_format = new StringFormat ();
+			string_format.SetMeasurableCharacterRanges (ranges);
+
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					SizeF size = g.MeasureString (text, font, new Point (0, 0), string_format);
+					RectangleF layout_rect = new RectangleF (0.0f, 0.0f, size.Width, size.Height);
+
+					// here & is part of the measure and visible
+					string_format.HotkeyPrefix = HotkeyPrefix.None;
+					Region[] regions = g.MeasureCharacterRanges (text, font, layout_rect, string_format);
+					RectangleF bounds_none = regions[0].GetBounds (g);
+
+					// here & is part of the measure (range) but visible as an underline
+					string_format.HotkeyPrefix = HotkeyPrefix.Show;
+					regions = g.MeasureCharacterRanges (text, font, layout_rect, string_format);
+					RectangleF bounds_show = regions[0].GetBounds (g);
+					Assert ("Show<None", bounds_show.Width < bounds_none.Width);
+
+					// here & is part of the measure (range) but invisible
+					string_format.HotkeyPrefix = HotkeyPrefix.Hide;
+					regions = g.MeasureCharacterRanges (text, font, layout_rect, string_format);
+					RectangleF bounds_hide = regions[0].GetBounds (g);
+					AssertEquals ("Hide==None", bounds_hide.Width, bounds_show.Width);
+				}
+			}
+		}
 #if NET_2_0
 		[Test]
 		public void TestReleaseHdc ()

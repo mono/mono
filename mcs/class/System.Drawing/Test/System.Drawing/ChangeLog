@@ -1,3 +1,8 @@
+2006-09-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestGraphics.cs: Added more test cases for MeasureCharacterRanges,
+	like handling bad ranges (start, length) and hotkey prefix handling.
+
 2006-09-21  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* GDIPlusTest.cs: Added test cases for GdipGetStringFormatTabStops and
