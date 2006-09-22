@@ -117,10 +117,10 @@ namespace Mono.CSharp {
 	{
 		Expression defaultExpression;
 
-		public NullDefault(Location loc, Expression defaultExpression)
+		public NullDefault (Location loc, Expression defaultExpression)
 			: base (loc)
 		{
-			type = TypeManager.null_type;
+			type = defaultExpression.Type;
 			this.defaultExpression = defaultExpression;
 		}
 

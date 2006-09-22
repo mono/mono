@@ -1,5 +1,8 @@
 2006-09-22  Raja R Harinath  <rharinath@novell.com>
 
+	* literal.cs (NullDefault): The type of default(IFoo) is 'IFoo',
+	not the null type.
+
 	Fix part of #79451
 	* typemanager.cs (Closure.Filter): Consider PrivateScope attributes.
 	* decl.cs (DeclSpace.FindMemberToOverride): Likewise.  Reorganize
