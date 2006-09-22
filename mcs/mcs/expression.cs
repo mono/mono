@@ -8686,7 +8686,12 @@ namespace Mono.CSharp {
 			}
 #endif
 
-			if (dim == "*" && !TypeManager.VerifyUnManaged (ltype, loc)) {
+			if (dim == "*" && !TypeManager.VerifyUnManaged (ltype, loc))
+				return null;
+
+			if (dim [0] == '[' &&
+			    (ltype == TypeManager.arg_iterator_type || ltype == TypeManager.typed_reference_type)) {
+				Report.Error (611, loc, "Array elements cannot be of type `{0}'", TypeManager.CSharpName (ltype));
 				return null;
 			}
 
@@ -8695,21 +8700,14 @@ namespace Mono.CSharp {
 			else
 				type = ltype;
 
-			if (type == null) {
+			if (type == null)
 				throw new InternalErrorException ("Couldn't create computed type " + ltype + dim);
-			}
 
 			if (type.IsPointer && !ec.IsInUnsafeScope){
 				UnsafeError (loc);
 				return null;
 			}
 
-			if (type.IsArray && (type.GetElementType () == TypeManager.arg_iterator_type ||
-				type.GetElementType () == TypeManager.typed_reference_type)) {
-				Report.Error (611, loc, "Array elements cannot be of type `{0}'", TypeManager.CSharpName (type.GetElementType ()));
-				return null;
-			}
-			
 			eclass = ExprClass.Type;
 			return this;
 		}
