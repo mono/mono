@@ -1,5 +1,7 @@
 2006-09-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c (mono_arch_emit_inst_for_method): Add OP_MEMORY_BARRIER.
+
 	* *.h *.c: Unify int/fp vregs in the old JIT as well. Use this to simplify and 
 	speed up the local register allocator.
 
