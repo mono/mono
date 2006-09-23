@@ -1,3 +1,7 @@
+2006-09-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SystemInformationTest.cs: Add tests case for MenuFont.
+
 ﻿2006-09-18  Jonathan Pobst  <monkey@jpobst.com>
 	* EventArgsTest.cs: Add tests for ToolStrip*EventArgs.
 

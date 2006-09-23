@@ -21,7 +21,7 @@
 //
 // Authors:
 //	Jackson Harper (jackson@ximian.com)
-//
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 
 
@@ -44,13 +44,30 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (expected, SystemInformation.IconSize, "#1");
 		}
 
+		[Test]
 		public void IconSpacingTest ()
 		{
 			Size expected = new Size (75, 75);
 			Assert.AreEqual (expected, SystemInformation.IconSpacingSize, "#1");
 		}
+
+		[Test]
+		public void MenuFont_Clone ()
+		{
+			Font mf1 = SystemInformation.MenuFont;
+			Font mf2 = SystemInformation.MenuFont;
+			Assert.IsFalse (Object.ReferenceEquals (mf1, mf2), "ReferenceEquals");
+			// yep, it's a clone
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void MenuFont_Dispose ()
+		{
+			Font mf = SystemInformation.MenuFont;
+			mf.Dispose ();
+			Assert.AreEqual (SystemInformation.MenuFont.Height, mf.Height, "Height");
+			// Font.Height can't be accessed after Dispose (see Font unit tests)
+		}
 	}
-
 }
-
-
