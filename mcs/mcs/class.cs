@@ -2428,7 +2428,10 @@ namespace Mono.CSharp {
 
 			if ((events != null) && (RootContext.WarningLevel >= 3)) {
 				foreach (Event e in events){
-					if ((e.caching_flags & Flags.IsAssigned) == 0)
+					if ((e.ModFlags & Modifiers.Accessibility) != Modifiers.PRIVATE)
+						continue;
+
+					if ((e.caching_flags & Flags.IsUsed) == 0)
 						Report.Warning (67, 3, e.Location, "The event `{0}' is never used", e.GetSignatureForError ());
 				}
 			}

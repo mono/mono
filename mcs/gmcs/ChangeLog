@@ -1,3 +1,8 @@
+2006-09-24  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (ClassOrStruct.VerifyMembers): Fixed to report correctly
+	not used private events only.
+
 2006-09-23  Marek Safar  <marek.safar@seznam.cz>
 
 	* convert.cs (ImplicitReferenceConversion): NullCast to EmptyConstantCast.
