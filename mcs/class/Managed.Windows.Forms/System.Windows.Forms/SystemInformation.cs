@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004,2006 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //	Miguel de Icaza (miguel@novell.com).
@@ -201,7 +201,10 @@ namespace System.Windows.Forms {
 
 		public static Font MenuFont {
 			get {
-				return ThemeEngine.Current.MenuFont;
+				// note: we MUST return a clone of the Font instance as anyone
+				// can dispose it. However we shouldn't expect the theme to do
+				// the cloning for performance reason
+				return (Font) ThemeEngine.Current.MenuFont.Clone ();
 			}
 		}
 

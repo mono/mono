@@ -1,3 +1,9 @@
+2006-09-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SystemInformation.cs: Return a clone of the theme's MenuFont because
+	anyone can dispose it, anytime. All other properties returns enums, 
+	structs or basic types so they don't need such tricks.
+
 2006-09-22  Jackson Harper  <jackson@ximian.com>
 
 	* XplatUI.cs:
