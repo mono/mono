@@ -3477,6 +3477,10 @@ cast_list
 	  {
 		$$ = new Cast ((Expression) $1, (Expression) $3);
 	  }
+	| parenthesized_expression_0 CLOSE_PARENS_NO_CAST default_value_expression
+	  {
+	  	$$ = new Cast ((Expression) $1, (Expression) $3);
+	  }
 	| parenthesized_expression_0 CLOSE_PARENS_OPEN_PARENS cast_expression
 	  {
 		$$ = new Cast ((Expression) $1, (Expression) $3);

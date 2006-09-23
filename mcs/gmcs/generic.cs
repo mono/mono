@@ -1916,20 +1916,25 @@ namespace Mono.CSharp {
 
 			type = texpr.Type;
 
+			if (type == TypeManager.void_type) {
+				Error_VoidInvalidInTheContext (loc);
+				return null;
+			}
+
 			if (type.IsGenericParameter)
 			{
 				GenericConstraints constraints = TypeManager.GetTypeParameterConstraints(type);
 				if (constraints != null && constraints.IsReferenceType)
-					return new NullDefault(loc, this);
+					return new NullDefault (new NullLiteral (Location), type);
 			}
 			else
 			{
 				Constant c = New.Constantify(type);
 				if (c != null)
-					return c;
+					return new NullDefault (c, type);
 
-				if (!TypeManager.IsValueType(type))
-					return new NullDefault(loc, this);
+				if (!TypeManager.IsValueType (type))
+					return new NullDefault (new NullLiteral (Location), type);
 			}
 			eclass = ExprClass.Variable;
 			return this;

@@ -211,7 +211,7 @@ namespace Mono.CSharp {
 				if (TypeManager.IsValueType (expr_type))
 					return new BoxedCast (expr, target_type);
 				if (expr_type == TypeManager.null_type)
-					return new NullCast ((NullConstant)expr, target_type);
+					return new EmptyConstantCast ((Constant)expr, target_type);
 
 				return null;
 			} else if (TypeManager.IsSubclassOf (expr_type, target_type)) {

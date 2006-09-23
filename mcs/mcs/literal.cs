@@ -96,15 +96,15 @@ namespace Mono.CSharp {
 		public override Constant Reduce(bool inCheckedContext, Type target_type)
 		{
 			if (!TypeManager.IsValueType (target_type))
-				return new NullCast (this, target_type);
+				return new EmptyConstantCast (this, target_type);
 
 			return null;
 		}
 
 		public override Constant ToType(Type targetType)
 		{
-			if (!targetType.IsValueType)
-				return new NullCast (this, targetType);
+			if (!TypeManager.IsValueType (targetType))
+				return new EmptyConstantCast (this, targetType);
 
 			return null;
 		}
@@ -113,20 +113,16 @@ namespace Mono.CSharp {
 	//
 	// Represents default(X) when result can be reduced to null
 	//
-	public class NullDefault : NullConstant
+	public class NullDefault : EmptyConstantCast
 	{
-		Expression defaultExpression;
-
-		public NullDefault (Location loc, Expression defaultExpression)
-			: base (loc)
+		public NullDefault(Constant value, Type type)
+			: base (value, type)
 		{
-			type = defaultExpression.Type;
-			this.defaultExpression = defaultExpression;
 		}
 
 		public override void Error_ValueCannotBeConverted (Location loc, Type target, bool expl)
 		{
-			defaultExpression.Error_ValueCannotBeConverted (loc, target, expl);
+			base.Error_ValueCannotBeConverted(loc, target, expl);
 		}
 	}
 
@@ -160,7 +156,7 @@ namespace Mono.CSharp {
 		public override Constant ToType (Type targetType)
 		{
 			if (targetType.IsPointer)
-				return new NullCast (NullPointer.Null, targetType);
+				return new EmptyConstantCast (NullPointer.Null, targetType);
 
 			if (TypeManager.IsGenericParameter(targetType)) {
 				GenericConstraints gc = null;
@@ -169,7 +165,7 @@ namespace Mono.CSharp {
 				gc = TypeManager.GetTypeParameterConstraints(targetType);
 #endif
 				if (gc != null && gc.IsReferenceType)
-					return new NullCast(this, targetType);
+					return new EmptyConstantCast (this, targetType);
 
 				Error_ValueCannotBeConverted (loc, targetType, false);
 				return null;

@@ -339,7 +339,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (Type != TypeManager.string_type && this is Constant && !(this is NullCast)) {
+			if (Type != TypeManager.string_type && this is Constant && !(this is EmptyConstantCast)) {
 				Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
 					GetSignatureForError (), TypeManager.CSharpName (target));
 				return;
@@ -454,12 +454,7 @@ namespace Mono.CSharp {
 			if (c != null)
 				return c;
 
-			Type constant_type = null;
-			if (mc is MemberBase) {
-				constant_type = ((MemberBase)mc).MemberType;
-			}
-
-			Const.Error_ExpressionMustBeConstant (constant_type, loc, mc.GetSignatureForError ());
+			Const.Error_ExpressionMustBeConstant (loc, mc.GetSignatureForError ());
 			return null;
 		}
 
@@ -1351,18 +1346,51 @@ namespace Mono.CSharp {
 		}
 	}
 
-        //
-	// We need to special case this since an empty cast of
-	// a NullLiteral is still a Constant
 	//
-	public class NullCast : NullConstant {
-		public NullConstant child;
-				
-		public NullCast (NullConstant child, Type return_type):
-			base (child.Location)
+	// Constant specialization of EmptyCast.
+	// We need to special case this since an empty cast of
+	// a constant is still a constant. 
+	//
+	public class EmptyConstantCast : Constant
+	{
+		public readonly Constant child;
+
+		public EmptyConstantCast(Constant child, Type type)
+			: base (child.Location)
 		{
-			type = return_type;
+			eclass = child.eclass;
 			this.child = child;
+			this.type = type;
+		}
+
+		public override string AsString ()
+		{
+			return child.AsString ();
+		}
+
+		public override object GetValue ()
+		{
+			return child.GetValue ();
+		}
+
+		public override Constant Reduce (bool inCheckedContext, Type target_type)
+		{
+			return child.Reduce (inCheckedContext, target_type);
+		}
+
+		public override Constant Increment ()
+		{
+			return child.Increment ();
+		}
+
+		public override bool IsDefaultValue
+		{
+			get { return child.IsDefaultValue; }
+		}
+
+		public override bool IsNegative
+		{
+			get { return child.IsNegative; }
 		}
 
 		public override void Emit (EmitContext ec)
@@ -1370,12 +1398,9 @@ namespace Mono.CSharp {
 			child.Emit (ec);
 		}
 
-		public override Constant Reduce (bool inCheckedContext, Type target_type)
+		public override Constant ToType (Type type)
 		{
-			if (type == target_type)
-				return child.Reduce (inCheckedContext, target_type);
-
-			return null;
+			return child.ToType (type);
 		}
 	}
 

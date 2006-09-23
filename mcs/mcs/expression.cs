@@ -1181,15 +1181,22 @@ namespace Mono.CSharp {
 			//
 			Type probe_type = probe_type_expr.Type;
 			e = Convert.ImplicitConversionStandard (ec, expr, probe_type, loc);
-			if (e != null && !(e is NullConstant)){
+			if (e != null){
 				expr = e;
 				if (etype.IsValueType)
 					action = Action.AlwaysTrue;
 				else
 					action = Action.LeaveOnStack;
 
-				Report.Warning(183, 1, loc, "The given expression is always of the provided (`{0}') type",
-					TypeManager.CSharpName(probe_type));
+				Constant c = e as Constant;
+				if (c != null && c.GetValue () == null) {
+					action = Action.AlwaysFalse;
+					Report.Warning (184, 1, loc, "The given expression is never of the provided (`{0}') type",
+						TypeManager.CSharpName (probe_type));
+				} else {
+					Report.Warning (183, 1, loc, "The given expression is always of the provided (`{0}') type",
+						TypeManager.CSharpName (probe_type));
+				}
 				return this;
 			}
 			
@@ -5719,6 +5726,11 @@ namespace Mono.CSharp {
 
 			type = texpr.Type;
 
+			if (type == TypeManager.void_type) {
+				Error_VoidInvalidInTheContext (loc);
+				return null;
+			}
+
 			if (Arguments == null) {
 				Expression c = Constantify (type);
 				if (c != null)
@@ -7240,7 +7252,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (new_expr is NullConstant) {
+			Constant c = new_expr as Constant;
+			if (c != null && c.GetValue () == null) {
 				Report.Warning (1720, 1, loc, "Expression will always cause a `{0}'",
 					"System.NullReferenceException");
 			}

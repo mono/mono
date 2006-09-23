@@ -175,11 +175,11 @@ namespace Mono.CSharp {
 		static public Expression BinaryFold (EmitContext ec, Binary.Operator oper,
 						     Constant left, Constant right, Location loc)
 		{
-			if (left is NullCast)
-				return BinaryFold (ec, oper, ((NullCast)left).child, right, loc);
+			if (left is EmptyConstantCast)
+				return BinaryFold (ec, oper, ((EmptyConstantCast)left).child, right, loc);
 
-			if (right is NullCast)
-				return BinaryFold (ec, oper, left, ((NullCast)right).child, loc);
+			if (right is EmptyConstantCast)
+				return BinaryFold (ec, oper, left, ((EmptyConstantCast)right).child, loc);
 
 			Type lt = left.Type;
 			Type rt = right.Type;

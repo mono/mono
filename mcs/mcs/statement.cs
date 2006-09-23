@@ -1751,6 +1751,11 @@ namespace Mono.CSharp {
 						// which in turn causes the 'must be constant' error to be triggered.
 						constants.Remove (name);
 
+						if (!Const.IsConstantTypeValid (variable_type)) {
+							Const.Error_InvalidConstantType (variable_type, loc);
+							continue;
+						}
+
 						using (ec.With (EmitContext.Flags.ConstantCheckState, (flags & Flags.Unchecked) == 0)) {
 							ec.CurrentBlock = this;
 							Expression e = cv.Resolve (ec);
@@ -1759,16 +1764,9 @@ namespace Mono.CSharp {
 
 							Constant ce = e as Constant;
 							if (ce == null) {
-								Const.Error_ExpressionMustBeConstant (variable_type, vi.Location, name);
+								Const.Error_ExpressionMustBeConstant (vi.Location, name);
 								continue;
 							}
-
-#if GMCS_SOURCE
-							if (TypeManager.IsGenericParameter (variable_type)) {
-								Const.Error_ExpressionMustBeConstant (variable_type, vi.Location, name);
-								continue;
-							}
-#endif
 
 							e = ce.ImplicitConversionRequired (variable_type, vi.Location);
 							if (e == null)

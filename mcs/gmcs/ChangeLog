@@ -1,3 +1,12 @@
+2006-09-23  Marek Safar  <marek.safar@seznam.cz>
+
+	* convert.cs (ImplicitReferenceConversion): NullCast to EmptyConstantCast.
+
+	* cs-parser.jay: Parse correctly cast of default (T).
+
+	* generic.cs (DefaultValueExpression.DoResolve): Check for void type.
+	Store original type via EmptyConstantCast.
+
 2006-09-22  Martin Baulig  <martin@ximian.com>
 
 	* delegate.cs: Removed; this file is now shared with mcs.

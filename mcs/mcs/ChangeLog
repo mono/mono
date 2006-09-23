@@ -1,3 +1,25 @@
+2006-09-23  Marek Safar  <marek.safar@seznam.cz>
+
+	* cfold.cs (BinaryFold): On the guest to unify empty constant cast.
+
+	* const.cs (Const.Define): Check for constant type.
+	(Const.IsConstantTypeValid): Looks for valid constant types.
+
+	* convert.cs (ImplicitReferenceConversion): NullCast to EmptyConstantCast.
+
+	* ecore.cs (EmptyConstantCast): New common class for all constant based
+	EmptyCast(s).
+
+	* expression.cs (Is.DoResolve): Handle null constant especially.
+	(New.DoResolve): Check for new void().
+	(MemberAccess.DoResolve): Cope with all kind of nulls.
+
+	* literal.cs (NullConstant): Uses EmptyConstantCast.
+	(NullDefault): Based on EmptyConstantCast.
+	(NullLiteral): Uses EmptyConstantCast.
+
+	* statement.cs (Block.ResolveMeta): Check for constant type.
+
 2006-09-22  Martin Baulig  <martin@ximian.com>
 
 	* delegate.cs, attribute.cs: Merged with the gmcs versions.

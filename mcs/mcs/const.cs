@@ -66,6 +66,11 @@ namespace Mono.CSharp {
 				return false;
 
 			Type ttype = MemberType;
+			if (!IsConstantTypeValid (ttype)) {
+				Error_InvalidConstantType (ttype, Location);
+				return false;
+			}
+
 			while (ttype.IsArray)
 			    ttype = TypeManager.GetElementType (ttype);
 
@@ -84,7 +89,21 @@ namespace Mono.CSharp {
 
 			return true;
 		}
-		
+
+		public static bool IsConstantTypeValid (Type t)
+		{
+			if (TypeManager.IsBuiltinOrEnum (t))
+				return true;
+
+			if (t.IsPointer || t.IsValueType)
+				return false;
+			
+			if (TypeManager.IsGenericParameter (t))
+				return false;
+
+			return true;
+		}
+
 		/// <summary>
 		///  Emits the field value by evaluating the expression
 		/// </summary>
@@ -107,13 +126,8 @@ namespace Mono.CSharp {
 			base.Emit ();
 		}
 
-		public static void Error_ExpressionMustBeConstant (Type constantType, Location loc, string e_name)
+		public static void Error_ExpressionMustBeConstant (Location loc, string e_name)
 		{
-			if (constantType != null && TypeManager.IsValueType (constantType) &&
-				!TypeManager.IsBuiltinOrEnum (constantType)) {
-				Report.Error (283, loc, "The type `{0}' cannot be declared const", TypeManager.CSharpName (constantType));
-				return;
-			}
 			Report.Error (133, loc, "The expression being assigned to `{0}' must be constant", e_name);
 		}
 
@@ -127,6 +141,11 @@ namespace Mono.CSharp {
 		{
 			Report.Error (134, loc, "`{0}': the constant of reference type other than string can only be initialized with null",
 				name);
+		}
+
+		public static void Error_InvalidConstantType (Type t, Location loc)
+		{
+			Report.Error (283, loc, "The type `{0}' cannot be declared const", TypeManager.CSharpName (t));
 		}
 
 		#region IConstant Members
