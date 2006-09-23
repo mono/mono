@@ -1,4 +1,4 @@
-// cs0067.cs: The event `Foo.OnFoo' is never used
+// cs0067: The event `Foo.OnFoo' is never used
 // Line: 12
 // Compiler options: -warnaserror -warn:4
 
@@ -9,7 +9,7 @@ class ErrorCS0067 {
 }
 
 class Foo {
-	public event ErrorCS0067.FooHandler OnFoo;
+	private event ErrorCS0067.FooHandler OnFoo;
 	
 	public static void Main () {
 	}
