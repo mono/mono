@@ -14,6 +14,10 @@ public class GenericEventNotUsedTest<T>
 	}
 }
 
+public interface IFoo {
+		event EventHandler blah;
+}
+
 public static class TestEntry
 {
 	public static void Main()
