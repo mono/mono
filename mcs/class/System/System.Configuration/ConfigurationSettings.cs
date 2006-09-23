@@ -202,8 +202,10 @@ namespace System.Configuration
 		Hashtable pending;
 		string fileName;
 		static object removedMark = new object ();
+		static object emptyMark = new object ();
+#if (XML_DEP)
 		static object groupMark = new object ();
-                static object emptyMark = new object ();
+#endif
 		Hashtable cache;
 
                 Hashtable FileCache {

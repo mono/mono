@@ -805,7 +805,7 @@ namespace System.Net
 			try {
 				nstream.EndWrite (result);
 				return true;
-			} catch (Exception e) {
+			} catch {
 				status = WebExceptionStatus.SendFailure;
 				return false;
 			}

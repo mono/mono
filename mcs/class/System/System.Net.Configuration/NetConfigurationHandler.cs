@@ -89,7 +89,7 @@ namespace System.Net.Configuration
 
 							config.MaxResponseHeadersLength = val;
 						}
-					} catch (Exception e) {
+					} catch {
 						HandlersUtil.ThrowException ("Invalid int value", child);
 					}
 
