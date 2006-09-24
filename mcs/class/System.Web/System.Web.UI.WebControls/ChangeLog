@@ -1,3 +1,8 @@
+2006-09-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataList.cs: use ExtractTemplateRows to determine if the style is
+	applied to the Table in a template or to its rows. Fixes bug #78058.
+
 2006-09-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListBox.cs: if the list is not enabled, don't require a postback.

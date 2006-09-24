@@ -756,7 +756,7 @@ namespace System.Web.UI.WebControls {
 				updateCommand (this, e);
 		}
 
-		void ApplyControlStyle (Control ctrl, Style style)
+		void ApplyControlStyle (Control ctrl, Style style, bool apply_to_rows)
 		{
 			if (style == null || false == ctrl.HasControls ())
 				return;
@@ -764,8 +764,12 @@ namespace System.Web.UI.WebControls {
 			foreach (Control c in ctrl.Controls) {
 				if (c is Table) {
 					Table tbl = (Table) c;
-					foreach (TableRow row in tbl.Rows)
-						row.MergeStyle (style);
+					if (apply_to_rows) {
+						foreach (TableRow row in tbl.Rows)
+							row.MergeStyle (style);
+					} else {
+						tbl.MergeStyle (style);
+					}
 				}
 			}
 		}
@@ -776,11 +780,12 @@ namespace System.Web.UI.WebControls {
 				return; // No one called CreateControlHierarchy() with DataSource != null
 
 			Style alt = null;
+			bool apply_to_rows = ExtractTemplateRows;
 			foreach (DataListItem item in Controls) {
 				switch (item.ItemType) {
 				case ListItemType.Item:
 					item.MergeStyle (itemStyle);
-					ApplyControlStyle (item, itemStyle);
+					ApplyControlStyle (item, itemStyle, apply_to_rows);
 					break;
 				case ListItemType.AlternatingItem:
 					if (alt == null) {
@@ -793,16 +798,21 @@ namespace System.Web.UI.WebControls {
 						}
 					}
 
+					if (itemStyle != null)
+						Console.WriteLine ("itemStyle.BackColor: {0}", itemStyle.BackColor);
+					if (alternatingItemStyle != null)
+						Console.WriteLine ("alternatingItemStyle.BackColor: {0}", alternatingItemStyle.BackColor);
+					Console.WriteLine ("alt.BackColor: {0}", alt.BackColor);
 					item.MergeStyle (alt);
-					ApplyControlStyle (item, alt);
+					ApplyControlStyle (item, alt, apply_to_rows);
 					break;
 				case ListItemType.EditItem:
 					if (editItemStyle != null) {
 						item.MergeStyle (editItemStyle);
-						ApplyControlStyle (item, editItemStyle);
+						ApplyControlStyle (item, editItemStyle, apply_to_rows);
 					} else {
 						item.MergeStyle (itemStyle);
-						ApplyControlStyle (item, itemStyle);
+						ApplyControlStyle (item, itemStyle, apply_to_rows);
 					}
 					break;
 				case ListItemType.Footer:
@@ -812,7 +822,7 @@ namespace System.Web.UI.WebControls {
 					}
 					if (footerStyle != null) {
 						item.MergeStyle (footerStyle);
-						ApplyControlStyle (item, footerStyle);
+						ApplyControlStyle (item, footerStyle, apply_to_rows);
 					}
 					break;
 				case ListItemType.Header:
@@ -822,26 +832,26 @@ namespace System.Web.UI.WebControls {
 					}
 					if (headerStyle != null) {
 						item.MergeStyle (headerStyle);
-						ApplyControlStyle (item, headerStyle);
+						ApplyControlStyle (item, headerStyle, apply_to_rows);
 					}
 					break;
 				case ListItemType.SelectedItem:
 					if (selectedItemStyle != null) {
 						item.MergeStyle (selectedItemStyle);
-						ApplyControlStyle (item, selectedItemStyle);
+						ApplyControlStyle (item, selectedItemStyle, apply_to_rows);
 					} else {
 						item.MergeStyle (itemStyle);
-						ApplyControlStyle (item, itemStyle);
+						ApplyControlStyle (item, itemStyle, apply_to_rows);
 					}
 					break;
 				case ListItemType.Separator:
 					if (separatorStyle != null) {
 						item.MergeStyle(separatorStyle);
-						ApplyControlStyle (item, separatorStyle);
+						ApplyControlStyle (item, separatorStyle, apply_to_rows);
 					}
 					else {
 						item.MergeStyle (itemStyle);
-						ApplyControlStyle (item, itemStyle);
+						ApplyControlStyle (item, itemStyle, apply_to_rows);
 					}
 					break;
 				}
