@@ -1,4 +1,9 @@
-<<<<<<< .working
+2006-09-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c: Add a comment.
+
+	* mini-codegen.c (mono_local_regalloc): Remove some unused variables.
+
 2006-09-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c (mono_arch_emit_inst_for_method): Add OP_MEMORY_BARRIER.
@@ -271,7 +276,6 @@ Mon Sep 11 11:31:10 BST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini-arm.c: support larger stack frames (bug #79272).
 
->>>>>>> .merge-right.r65846
 2006-09-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c: Add a hash table to the AOT file mapping class names to typedef 

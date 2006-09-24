@@ -896,12 +896,11 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 {
 	MonoInst *ins;
 	MonoRegState *rs = cfg->rs;
-	int i, val, fpcount, max, ins_count;
+	int i, val, max, ins_count;
 	RegTrack *reginfo;
 	InstList *tmp, *reversed = NULL;
 	const char *spec;
 	gboolean fp;
-	int fspill = 0;
 	guint8 *inst_list, *mem;
 #if MONO_ARCH_USE_FPSTACK
 	gboolean has_fp = FALSE;
@@ -1007,7 +1006,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		local_copy_prop (cfg, ins);*/
 
 	i = 1;
-	fpcount = 0;
 	DEBUG (printf ("\nLOCAL REGALLOC: BASIC BLOCK %d:\n", bb->block_num));
 	/* forward pass on the instructions to collect register liveness info */
 	for (ins = bb->code; ins; ins = ins->next) {
@@ -1141,9 +1139,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		mem += sizeof (InstList);
 		++i;
 	}
-
-	// todo: check if we have anything left on fp stack, in verify mode?
-	fspill = 0;
 
 	DEBUG (print_regtrack (reginfo, rs->next_vreg));
 	tmp = reversed;

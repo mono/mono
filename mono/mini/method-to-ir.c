@@ -9947,6 +9947,8 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - remove unused opcodes from mini-ops.h, remove "op_" from the opcode names,
  *   remove the op_ opcodes from the cpu-..md files, clean up the cpu-..md files.
  * - optimize mono_regstate2_alloc_int/float.
+ * - duplicating the code in mono_local_regalloc () into a fp/non-fp branches speeds it
+ *   up by about 15%.
  * - LAST MERGE: 65846.
  */
 
