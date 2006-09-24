@@ -9,7 +9,7 @@ class.cs
 ../mcs/codegen.cs
 ../mcs/const.cs
 ../mcs/constant.cs
-convert.cs
+../mcs/convert.cs
 ../mcs/decl.cs
 ../mcs/delegate.cs
 ../mcs/doc.cs

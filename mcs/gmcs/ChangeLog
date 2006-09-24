@@ -1,3 +1,7 @@
+2006-09-24  Raja R Harinath  <harinath@gmail.com>
+
+	* convert.cs: Remove after unification with mcs source.
+
 2006-09-24  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (MemberBase.VerifyClsCompliance): When method has type
