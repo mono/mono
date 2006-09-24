@@ -397,6 +397,10 @@ namespace System.Windows.Forms
 			fontstyleTextBox.TextChanged += new EventHandler (OnFontStyleTextTextChanged);
 			fontsizeTextBox.TextChanged += new EventHandler (OnFontSizeTextBoxTextChanged);
 			
+			fontTextBox.KeyDown += new KeyEventHandler (OnFontTextBoxKeyDown);
+			fontstyleTextBox.KeyDown += new KeyEventHandler (OnFontStyleTextBoxKeyDown);
+			fontsizeTextBox.KeyDown += new KeyEventHandler (OnFontSizeTextBoxKeyDown);
+			
 			Font = form.Font;
 		}
 		#endregion	// Public Constructors
@@ -870,6 +874,75 @@ namespace System.Windows.Forms
 		}
 		
 		bool internal_textbox_change = false;
+		
+		void OnFontTextBoxKeyDown (object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Up) {
+				int sel_index = fontListBox.SelectedIndex;
+				
+				sel_index--;
+				
+				if (sel_index < 0)
+					sel_index = 0;
+				
+				fontListBox.SelectedIndex = sel_index;
+			} else if (e.KeyCode == Keys.Down) {
+				int sel_index = fontListBox.SelectedIndex;
+				
+				sel_index++;
+				
+				if (sel_index > fontListBox.Items.Count - 1)
+					sel_index = fontListBox.Items.Count - 1;
+				
+				fontListBox.SelectedIndex = sel_index;
+			}
+		}
+		
+		void OnFontStyleTextBoxKeyDown (object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Up) {
+				int sel_index = fontstyleListBox.SelectedIndex;
+				
+				sel_index--;
+				
+				if (sel_index < 0)
+					sel_index = 0;
+				
+				fontstyleListBox.SelectedIndex = sel_index;
+			} else if (e.KeyCode == Keys.Down) {
+				int sel_index = fontstyleListBox.SelectedIndex;
+				
+				sel_index++;
+				
+				if (sel_index > fontstyleListBox.Items.Count - 1)
+					sel_index = fontstyleListBox.Items.Count - 1;
+				
+				fontstyleListBox.SelectedIndex = sel_index;
+			}
+		}
+		
+		void OnFontSizeTextBoxKeyDown (object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Up) {
+				int sel_index = fontsizeListBox.SelectedIndex;
+				
+				sel_index--;
+				
+				if (sel_index < 0)
+					sel_index = 0;
+				
+				fontsizeListBox.SelectedIndex = sel_index;
+			} else if (e.KeyCode == Keys.Down) {
+				int sel_index = fontsizeListBox.SelectedIndex;
+				
+				sel_index++;
+				
+				if (sel_index > fontsizeListBox.Items.Count - 1)
+					sel_index = fontsizeListBox.Items.Count - 1;
+				
+				fontsizeListBox.SelectedIndex = sel_index;
+			}
+		}
 		
 		void OnFontTextBoxKeyPress (object sender, KeyPressEventArgs e)
 		{
