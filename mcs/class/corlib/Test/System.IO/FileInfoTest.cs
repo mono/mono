@@ -118,12 +118,17 @@ namespace MonoTests.System.IO
 				FileStream stream = File.Create (path);
 				stream.WriteByte (12);
 				stream.Close ();
-				FileInfo info = new FileInfo (path);
-				AssertEquals ("test#01", false, info.IsReadOnly);
-				info.IsReadOnly = true;
-				AssertEquals ("test#02", true, info.IsReadOnly);
-				info.IsReadOnly = false;
-				AssertEquals ("test#03", false, info.IsReadOnly);
+
+				FileInfo info1 = new FileInfo (path);
+				AssertEquals ("test#01", false, info1.IsReadOnly);
+
+				FileInfo info2 = new FileInfo (path);
+				info2.IsReadOnly = true;
+				AssertEquals ("test#02", true, info1.IsReadOnly);
+
+				FileInfo info1 = new FileInfo (path);
+				info2.IsReadOnly = false;
+				AssertEquals ("test#03", false, info1.IsReadOnly);
 			} finally {
 				DeleteFile (path);
 			}

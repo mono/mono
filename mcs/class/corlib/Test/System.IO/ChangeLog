@@ -1,3 +1,7 @@
+2006-09-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileInfoTest.cs: improved IsReadOnly test case. Patch by Joel Reed.
+
 2006-09-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FileNotFoundExceptionTest.cs: Added ctor tests.
