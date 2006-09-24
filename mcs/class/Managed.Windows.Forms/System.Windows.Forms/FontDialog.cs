@@ -68,9 +68,9 @@ namespace System.Windows.Forms
 		private TextBox fontstyleTextBox;
 		private TextBox fontsizeTextBox;
 		
-		private ListBox fontListBox;
-		private ListBox fontstyleListBox;
-		private ListBox fontsizeListBox;
+		private MouseWheelListBox fontListBox;
+		private MouseWheelListBox fontstyleListBox;
+		private MouseWheelListBox fontsizeListBox;
 		
 		private GroupBox effectsGroupBox;
 		private CheckBox strikethroughCheckBox;
@@ -180,8 +180,9 @@ namespace System.Windows.Forms
 			fontstyleTextBox = new TextBox( );
 			fontsizeTextBox = new TextBox( );
 			
-			fontListBox = new ListBox( );
-			fontsizeListBox = new ListBox( );
+			fontListBox = new MouseWheelListBox ();
+			fontsizeListBox = new MouseWheelListBox ();
+			fontstyleListBox = new MouseWheelListBox ();
 			
 			fontLabel = new Label( );
 			fontstyleLabel = new Label( );
@@ -189,7 +190,6 @@ namespace System.Windows.Forms
 			scriptLabel = new Label( );
 			
 			exampleGroupBox = new GroupBox( );
-			fontstyleListBox = new ListBox( );
 			
 			effectsGroupBox = new GroupBox( );
 			underlinedCheckBox = new CheckBox( );
@@ -400,6 +400,10 @@ namespace System.Windows.Forms
 			fontTextBox.KeyDown += new KeyEventHandler (OnFontTextBoxKeyDown);
 			fontstyleTextBox.KeyDown += new KeyEventHandler (OnFontStyleTextBoxKeyDown);
 			fontsizeTextBox.KeyDown += new KeyEventHandler (OnFontSizeTextBoxKeyDown);
+			
+			fontTextBox.MouseWheel += new MouseEventHandler (OnFontTextBoxMouseWheel);
+			fontstyleTextBox.MouseWheel += new MouseEventHandler (OnFontStyleTextBoxMouseWheel);
+			fontsizeTextBox.MouseWheel += new MouseEventHandler (OnFontSizeTextBoxMouseWheel);
 			
 			Font = form.Font;
 		}
@@ -875,6 +879,21 @@ namespace System.Windows.Forms
 		
 		bool internal_textbox_change = false;
 		
+		void OnFontTextBoxMouseWheel (object sender, MouseEventArgs e)
+		{
+			fontListBox.SendMouseWheelEvent (e);
+		}
+		
+		void OnFontStyleTextBoxMouseWheel (object sender, MouseEventArgs e)
+		{
+			fontstyleListBox.SendMouseWheelEvent (e);
+		}
+		
+		void OnFontSizeTextBoxMouseWheel (object sender, MouseEventArgs e)
+		{
+			fontsizeListBox.SendMouseWheelEvent (e);
+		}
+		
 		void OnFontTextBoxKeyDown (object sender, KeyEventArgs e)
 		{
 			if (e.KeyCode == Keys.Up) {
@@ -1246,6 +1265,14 @@ namespace System.Windows.Forms
 		public event EventHandler Apply {
 			add { Events.AddHandler (EventApply, value); }
 			remove { Events.RemoveHandler (EventApply, value); }
+		}
+	}
+		
+	internal class MouseWheelListBox : ListBox
+	{
+		public void SendMouseWheelEvent(MouseEventArgs e)
+		{
+			OnMouseWheel (e);
 		}
 	}
 }

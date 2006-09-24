@@ -3,6 +3,8 @@
 	* FontDialog.cs: Fixed the up/down arrow keys issue from bug #79478.
 	  It is now possible to change the selected index in a FontXXXListBox
 	  with the up and down arrow keys from the FontXXXTextBoxes.
+	  Also, send the FontXXXTextBox mouse wheel event to the corresponding
+	  FontXXXListBoxes to match ms.
 
 2006-09-22  Sebastien Pouliot  <sebastien@ximian.com>
 
