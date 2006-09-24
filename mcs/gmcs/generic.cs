@@ -562,6 +562,27 @@ namespace Mono.CSharp {
 
 			return true;
 		}
+
+		public void VerifyClsCompliance ()
+		{
+			if (class_constraint_type != null && !AttributeTester.IsClsCompliant (class_constraint_type))
+				Warning_ConstrainIsNotClsCompliant (class_constraint_type, class_constraint.Location);
+
+			if (iface_constraint_types != null) {
+				for (int i = 0; i < iface_constraint_types.Length; ++i) {
+					if (!AttributeTester.IsClsCompliant (iface_constraint_types [i]))
+						Warning_ConstrainIsNotClsCompliant (iface_constraint_types [i],
+							((TypeExpr)iface_constraints [i]).Location);
+				}
+			}
+		}
+
+		void Warning_ConstrainIsNotClsCompliant (Type t, Location loc)
+		{
+			Report.SymbolRelatedToPreviousError (t);
+			Report.Warning (3024, 1, loc, "Constraint type `{0}' is not CLS-compliant",
+				TypeManager.CSharpName (t));
+		}
 	}
 
 	/// <summary>
@@ -1895,6 +1916,16 @@ namespace Mono.CSharp {
 
 		public override string DocCommentHeader {
 			get { return "M:"; }
+		}
+
+		public new void VerifyClsCompliance ()
+		{
+			foreach (TypeParameter tp in TypeParameters) {
+				if (tp.Constraints == null)
+					continue;
+
+				tp.Constraints.VerifyClsCompliance ();
+			}
 		}
 	}
 

@@ -5335,6 +5335,9 @@ namespace Mono.CSharp {
 		protected override bool VerifyClsCompliance()
 		{
 			if (base.VerifyClsCompliance ()) {
+				if (GenericMethod != null)
+					GenericMethod.VerifyClsCompliance ();
+
 				return true;
 			}
 
@@ -6802,7 +6805,6 @@ namespace Mono.CSharp {
 		
 		public void SetUsed ()
 		{
-			Console.WriteLine (this.Name + " assigned");
 			if (my_event != null) {
 				my_event.SetAssigned ();
 				my_event.SetMemberIsUsed ();

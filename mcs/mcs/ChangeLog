@@ -1,5 +1,12 @@
 2006-09-24  Marek Safar  <marek.safar@seznam.cz>
 
+	* decl.cs (DeclSpace.VerifyClsCompliance): When type has type parameters
+	verify them as well.
+
+	* report.cs: New warning.
+
+2006-09-24  Marek Safar  <marek.safar@seznam.cz>
+
 	* anonymous.cs (AnonymousMethod.Compatible): Cannot generate arguments
 	for anonymous block with out argument.
 

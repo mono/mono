@@ -29,6 +29,8 @@ namespace Mono.CSharp
 		public abstract Location Location {
 			get;
 		}
+
+		public abstract void VerifyClsCompliance ();
 	}
 
 	public class TypeParameter : MemberCore, IMemberContainer
@@ -67,6 +69,12 @@ namespace Mono.CSharp
 		public override string[] ValidAttributeTargets {
 			get {
 				return new string [] { "type parameter" };
+			}
+		}
+
+		public Constraints Constraints {
+			get {
+				return null;
 			}
 		}
 

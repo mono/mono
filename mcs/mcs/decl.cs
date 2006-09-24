@@ -1295,6 +1295,15 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			if (type_params != null) {
+				foreach (TypeParameter tp in type_params) {
+					if (tp.Constraints == null)
+						continue;
+
+					tp.Constraints.VerifyClsCompliance ();
+				}
+			}
+
 			IDictionary cache = TypeManager.AllClsTopLevelTypes;
 			string lcase = Name.ToLower (System.Globalization.CultureInfo.InvariantCulture);
 			if (!cache.Contains (lcase)) {

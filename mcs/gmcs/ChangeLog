@@ -1,5 +1,14 @@
 2006-09-24  Marek Safar  <marek.safar@seznam.cz>
 
+	* class.cs (MemberBase.VerifyClsCompliance): When method has type
+	parameters verify them as well.
+
+	* generic.cs (Constraints.VerifyClsCompliance): Verify CLS-Compliance of
+	the type parameter constraints.
+	(Generics.VerifyClsCompliance): Ditto.
+
+2006-09-24  Marek Safar  <marek.safar@seznam.cz>
+
 	* anonymous.cs (AnonymousMethod.Compatible): Cannot generate arguments
 	for anonymous block with out argument.
 
