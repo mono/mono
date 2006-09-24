@@ -370,9 +370,17 @@ namespace Mono.CSharp {
 				Parameter [] fixedpars = new Parameter [invoke_pd.Count];
 								
 				for (int i = 0; i < invoke_pd.Count; i++){
-					fixedpars [i] = new Parameter (
-						invoke_pd.ParameterType (i),
-						"+" + i, invoke_pd.ParameterModifier (i), null, loc);
+					Parameter.Modifier p_mod = invoke_pd.ParameterModifier (i);
+					if ((p_mod & Parameter.Modifier.OUT) != 0) {
+						Report.SymbolRelatedToPreviousError (delegate_type);
+						Report.Error (1688, loc, "Cannot convert anonymous method block without a parameter list " +
+							"to delegate type `{0}' because it has one or more `out' parameters",
+							TypeManager.CSharpName (delegate_type));
+						return null;
+					}
+
+					fixedpars [i] = new Parameter (invoke_pd.ParameterType (i),
+						"+" + i, p_mod, null, loc);
 				}
 								
 				Parameters = new Parameters (fixedpars);

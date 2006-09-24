@@ -1,5 +1,10 @@
 2006-09-24  Marek Safar  <marek.safar@seznam.cz>
 
+	* anonymous.cs (AnonymousMethod.Compatible): Cannot generate arguments
+	for anonymous block with out argument.
+
+2006-09-24  Marek Safar  <marek.safar@seznam.cz>
+
 	* class.cs (ClassOrStruct.VerifyMembers): Fixed to report correctly
 	not used private events only.
 
