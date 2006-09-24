@@ -798,11 +798,6 @@ namespace System.Web.UI.WebControls {
 						}
 					}
 
-					if (itemStyle != null)
-						Console.WriteLine ("itemStyle.BackColor: {0}", itemStyle.BackColor);
-					if (alternatingItemStyle != null)
-						Console.WriteLine ("alternatingItemStyle.BackColor: {0}", alternatingItemStyle.BackColor);
-					Console.WriteLine ("alt.BackColor: {0}", alt.BackColor);
 					item.MergeStyle (alt);
 					ApplyControlStyle (item, alt, apply_to_rows);
 					break;
