@@ -343,7 +343,6 @@ namespace Mono.CSharp
 			Output.WriteLine (";");
 		}
 
-		static char [] crlf = new char [] { '\r', '\n' };
 		protected override void GenerateComment (CodeComment comment)
 		{
 			TextWriter output = Output;
@@ -356,14 +355,23 @@ namespace Mono.CSharp
 				commentChars = "//";
 			}
 
-			string [] text = comment.Text.Split (crlf);
-			foreach (string t in text) {
-				if (t != "") {
+			output.Write (commentChars);
+			output.Write (' ');
+			string text = comment.Text;
+
+			for (int i = 0; i < text.Length; i++) {
+				output.Write (text[i]);
+				if (text[i] == '\r') {
+					if (i < (text.Length - 1) && text[i + 1] == '\n') {
+						continue;
+					}
 					output.Write (commentChars);
-					output.Write (' ');
-					output.WriteLine (t);
+				} else if (text[i] == '\n') {
+					output.Write (commentChars);
 				}
 			}
+
+			output.WriteLine ();
 		}
 
 		protected override void GenerateMethodReturnStatement (CodeMethodReturnStatement statement)

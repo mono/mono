@@ -1,8 +1,3 @@
-2006-09-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
-
-	* CSharpCodeGenerator.cs: indent comment lines after the first one and
-	speed it up a little bit.
-
 2006-08-08  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CSharpCodeCompiler.cs: Added support for embedded resources, fixes
