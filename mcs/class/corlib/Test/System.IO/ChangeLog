@@ -1,3 +1,7 @@
+2006-09-24  Raja R Harinath  <harinath@gmail.com>
+
+	* FileInfoTest.cs (IsReadOnly): Fix compilation.  Mark as NotWorking.
+
 2006-09-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileInfoTest.cs: improved IsReadOnly test case. Patch by Joel Reed.
