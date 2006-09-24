@@ -34,7 +34,6 @@
 #include <mono/metadata/socket-io.h>
 #include <mono/metadata/mono-endian.h>
 #include <mono/metadata/tokentype.h>
-#include <mono/metadata/unicode.h>
 #include <mono/metadata/domain-internals.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/class-internals.h>
@@ -1460,7 +1459,7 @@ ves_icall_MonoField_GetValueInternal (MonoReflectionField *field, MonoObject *ob
 	vtable = NULL;
 	if (cf->type->attrs & FIELD_ATTRIBUTE_STATIC) {
 		is_static = TRUE;
-		vtable = mono_class_vtable (domain, field->klass);
+		vtable = mono_class_vtable (domain, cf->parent);
 		if (!vtable->initialized && !(cf->type->attrs & FIELD_ATTRIBUTE_LITERAL))
 			mono_runtime_class_init (vtable);
 	}
@@ -1573,7 +1572,7 @@ ves_icall_FieldInfo_SetValueInternal (MonoReflectionField *field, MonoObject *ob
 	}
 
 	if (cf->type->attrs & FIELD_ATTRIBUTE_STATIC) {
-		MonoVTable *vtable = mono_class_vtable (mono_object_domain (field), field->klass);
+		MonoVTable *vtable = mono_class_vtable (mono_object_domain (field), cf->parent);
 		if (!vtable->initialized)
 			mono_runtime_class_init (vtable);
 		mono_field_static_set_value (vtable, cf, v);
@@ -3795,7 +3794,10 @@ ves_icall_System_Reflection_Assembly_get_code_base (MonoReflectionAssembly *asse
 	
 	MONO_ARCH_SAVE_REGS;
 
-	absolute = g_build_filename (mass->basedir, mass->image->module_name, NULL);
+	if (g_path_is_absolute (mass->image->name))
+		absolute = g_strdup (mass->image->name);
+	else
+		absolute = g_build_filename (mass->basedir, mass->image->name, NULL);
 #if PLATFORM_WIN32
 	{
 		gint i;
@@ -4451,13 +4453,19 @@ static void
 ves_icall_System_Reflection_Assembly_FillName (MonoReflectionAssembly *assembly, MonoReflectionAssemblyName *aname)
 {
 	gchar *absolute;
+	MonoAssembly *mass = assembly->assembly;
 
 	MONO_ARCH_SAVE_REGS;
 
-	absolute = g_build_filename (assembly->assembly->basedir, assembly->assembly->image->module_name, NULL);
+	if (g_path_is_absolute (mass->image->name)) {
+		fill_reflection_assembly_name (mono_object_domain (assembly),
+			aname, &mass->aname, mass->image->name, TRUE);
+		return;
+	}
+	absolute = g_build_filename (mass->basedir, mass->image->name, NULL);
 
-	fill_reflection_assembly_name (mono_object_domain (assembly), aname, 
-								   &assembly->assembly->aname, absolute, TRUE);
+	fill_reflection_assembly_name (mono_object_domain (assembly),
+		aname, &mass->aname, absolute, TRUE);
 
 	g_free (absolute);
 }
@@ -6626,6 +6634,7 @@ static const IcallEntry environment_icalls [] = {
 	{"get_MachineName", ves_icall_System_Environment_get_MachineName},
 	{"get_NewLine", ves_icall_System_Environment_get_NewLine},
 	{"get_Platform", ves_icall_System_Environment_get_Platform},
+	{"get_ProcessorCount", ves_icall_System_Environment_get_ProcessorCount},
 	{"get_TickCount", ves_icall_System_Environment_get_TickCount},
 	{"get_UserName", ves_icall_System_Environment_get_UserName},
 	{"internalGetEnvironmentVariable", ves_icall_System_Environment_GetEnvironmentVariable},

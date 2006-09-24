@@ -1,3 +1,39 @@
+2006-09-19  Raja R Harinath  <rharinath@novell.com>
+
+	* runtime/Makefile.am (etc/mono/config): Fix rule to avoid writing
+	into a symlink created by the 2006-09-13 change below.
+
+2006-09-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* docs/thread-safety.txt: Moved here from mono/metadata.
+
+2006-09-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* configure.in: Avoid non-static build warning on windows.
+
+2006-09-16  Raja R Harinath  <rharinath@novell.com>
+
+	Fix srcdir!=builddir issue.
+	* configure.in (runtime/etc/mono/config): Remove erroneous code.
+	* runtime/Makefile.am (etc/mono/config): Rename from wrapper-config.
+	* runtime/mono-wrapper.in: Update.
+
+2006-09-15  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* configure.in: Remove check for setkey(3).
+
+2006-09-13  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* configure.in: Add command to create runtime/etc/mono/config.  This is
+	  needed so that programs which use the bootstrap mono build get the
+	  appropriate <dllmap/> entries (in particular, the mono-shlib-cop unit
+	  tests requires that a $prefix/etc/mono/config be present to run).
+	* runtime/Makefile.am: Create runtime/etc/mono/config.
+
+2006-09-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono.vcproj: Fix VC build.
+
 2006-09-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* configure.in: More alpha updates from Sergey Tikhonov <tsv@solvo.ru>.

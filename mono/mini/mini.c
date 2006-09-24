@@ -339,8 +339,8 @@ mono_jump_info_token_new (MonoMemPool *mp, MonoImage *image, guint32 token)
         (vi)->idx = (id); \
 } while (0)
 
-#define UNVERIFIED do { G_BREAKPOINT (); goto unverified; } while (0)
-//#define UNVERIFIED do { goto unverified; } while (0)
+//#define UNVERIFIED do { G_BREAKPOINT (); goto unverified; } while (0)
+#define UNVERIFIED do { if (debug_options.break_on_unverified) G_BREAKPOINT (); else goto unverified; } while (0)
 
 /*
  * Basic blocks have two numeric identifiers:
@@ -3411,7 +3411,7 @@ mini_get_ldelema_ins (MonoCompile *cfg, MonoBasicBlock *bblock, MonoMethod *cmet
 	}
 
 	if (rank == 2 && (cfg->opt & MONO_OPT_INTRINS)) {
-#ifdef MONO_ARCH_EMULATE_MUL_DIV
+#if defined(MONO_ARCH_EMULATE_MUL_DIV) && !defined(MONO_ARCH_NO_EMULATE_MUL)
 		/* OP_LDELEMA2D depends on OP_LMUL */
 #else
 		MonoInst *indexes;
@@ -8505,7 +8505,7 @@ mono_allocate_stack_slots_full2 (MonoCompile *cfg, gboolean backward, guint32 *s
 }
 
 /*
- * mono_allocate_stack_slots_full:
+ *  mono_allocate_stack_slots_full:
  *
  *  Allocate stack slots for all non register allocated variables using a
  * linear scan algorithm.
@@ -11883,9 +11883,11 @@ mini_parse_debug_options (void)
 			debug_options.keep_delegates = TRUE;
 		else if (!strcmp (arg, "collect-pagefault-stats"))
 			debug_options.collect_pagefault_stats = TRUE;
+		else if (!strcmp (arg, "break-on-unverified"))
+			debug_options.break_on_unverified = TRUE;
 		else {
 			fprintf (stderr, "Invalid option for the MONO_DEBUG env variable: %s\n", arg);
-			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'collect-pagefault-stats'\n");
+			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'collect-pagefault-stats', 'break-on-unverified'\n");
 			exit (1);
 		}
 	}
@@ -11895,6 +11897,13 @@ MonoDomain *
 mini_init (const char *filename)
 {
 	MonoDomain *domain;
+
+#ifdef __linux__
+	if (access ("/proc/self/maps", F_OK) != 0) {
+		g_print ("Mono requires /proc to be mounted.\n");
+		exit (1);
+	}
+#endif
 
 	/* Happens when using the embedding interface */
 	if (!default_opt_set)
@@ -11941,7 +11950,17 @@ mini_init (const char *filename)
 		 * GC_register_stackbottom as well, but don't know how.
 		 */
 #else
-		GC_stackbottom = (char*)sstart + size;
+		/* apparently with some linuxthreads implementations sstart can be NULL,
+		 * fallback to the more imprecise method (bug# 78096).
+		 */
+		if (sstart) {
+			GC_stackbottom = (char*)sstart + size;
+		} else {
+			gsize stack_bottom = (gsize)&domain;
+			stack_bottom += 4095;
+			stack_bottom &= ~4095;
+			GC_stackbottom = (char*)stack_bottom;
+		}
 #endif
 	}
 #elif defined(HAVE_PTHREAD_GET_STACKSIZE_NP) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)

@@ -820,6 +820,7 @@ mono_test_marshal_stringbuilder (char *s, int n)
 	if (strcmp (s, "ABCD") != 0)
 		return 1;
 	strncpy(s, m, n);
+	s [n] = '\0';
 	return 0;
 }
 
@@ -829,6 +830,7 @@ mono_test_marshal_stringbuilder_default (char *s, int n)
 	const char m[] = "This is my message.  Isn't it nice?";
 
 	strncpy(s, m, n);
+	s [n] = '\0';
 	return 0;
 }
 
@@ -1148,20 +1150,26 @@ string_marshal_test3 (char *str)
 typedef struct {
 	int a;
 	int b;
-} VectorList;
+} BlittableClass;
 
-STDCALL VectorList* 
-TestVectorList (VectorList *vl)
+STDCALL BlittableClass* 
+TestBlittableClass (BlittableClass *vl)
 {
-	VectorList *res;
+	BlittableClass *res;
 
-	// printf ("TestVectorList %d %d\n", vl->a, vl->b);
+	// printf ("TestBlittableClass %d %d\n", vl->a, vl->b);
 
-	vl->a++;
-	vl->b++;
+	if (vl) {
+		vl->a++;
+		vl->b++;
 
-	res = g_new0 (VectorList, 1);
-	memcpy (res, vl, sizeof (VectorList));
+		res = g_new0 (BlittableClass, 1);
+		memcpy (res, vl, sizeof (BlittableClass));
+	} else {
+		res = g_new0 (BlittableClass, 1);
+		res->a = 42;
+		res->b = 43;
+	}
 
 	return res;
 }
@@ -1883,6 +1891,21 @@ STDCALL int
 mono_test_marshal_bstr_out(BSTR* bstr)
 {
 	*bstr = SysAllocString(L"mono_test_marshal_bstr_out");
+	return 0;
+}
+
+STDCALL int
+mono_test_marshal_bstr_in_null(BSTR bstr)
+{
+	if (!bstr)
+		return 0;
+	return 1;
+}
+
+STDCALL int
+mono_test_marshal_bstr_out_null(BSTR* bstr)
+{
+	*bstr = NULL;
 	return 0;
 }
 

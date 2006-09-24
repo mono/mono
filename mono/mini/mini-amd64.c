@@ -398,6 +398,8 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 		return;
 	}
 
+	args [0] = ARG_CLASS_NO_CLASS;
+	args [1] = ARG_CLASS_NO_CLASS;
 	for (quad = 0; quad < nquads; ++quad) {
 		int size;
 		guint32 align;
@@ -1797,10 +1799,13 @@ if (ins->flags & MONO_INST_BRLABEL) { \
 } while (0);
 
 static guint8*
-emit_call (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer data)
+emit_call_body (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer data)
 {
 	mono_add_patch_info (cfg, code - cfg->native_code, patch_type, data);
 
+	/* 
+	 * FIXME: Add support for thunks
+	 */
 	{
 		gboolean near_call = FALSE;
 
@@ -1868,6 +1873,10 @@ emit_call (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer dat
 		if (cfg->compile_aot)
 			near_call = TRUE;
 
+#ifdef MONO_ARCH_NOMAP32BIT
+		near_call = FALSE;
+#endif
+
 		if (near_call) {
 			amd64_call_code (code, 0);
 		}
@@ -1878,6 +1887,14 @@ emit_call (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer dat
 	}
 
 	return code;
+}
+
+static inline guint8*
+emit_call (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer data)
+{
+	mono_add_patch_info (cfg, code - cfg->native_code, patch_type, data);
+
+	return emit_call_body (cfg, code, patch_type, data);
 }
 
 static inline int
@@ -4792,12 +4809,6 @@ mono_arch_patch_code (MonoMethod *method, MonoDomain *domain, guint8 *code, Mono
 		switch (patch_info->type) {
 		case MONO_PATCH_INFO_NONE:
 			continue;
-		case MONO_PATCH_INFO_CLASS_INIT: {
-			/* Might already been changed to a nop */
-			guint8* ip2 = ip;
-			amd64_call_code (ip2, 0);
-			break;
-		}
 		case MONO_PATCH_INFO_METHOD_REL:
 		case MONO_PATCH_INFO_R8:
 		case MONO_PATCH_INFO_R4:
@@ -5358,12 +5369,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 				patch_info->type = MONO_PATCH_INFO_INTERNAL_METHOD;
 				patch_info->ip.i = code - cfg->native_code;
 
-				if (cfg->compile_aot) {
-					amd64_call_code (code, 0);
-				} else {
-					/* The callee is in memory allocated using the code manager */
-					amd64_call_code (code, 0);
-				}
+				code = emit_call_body (cfg, code, patch_info->type, patch_info->data.name);
 
 				amd64_mov_reg_imm (buf, AMD64_RSI, (code - cfg->native_code) - throw_ip);
 				while (buf < buf2)
@@ -5614,12 +5620,6 @@ mono_arch_is_inst_imm (gint64 imm)
 
 #define IS_REX(inst) (((inst) >= 0x40) && ((inst) <= 0x4f))
 
-static int reg_to_ucontext_reg [] = {
-	REG_RAX, REG_RCX, REG_RDX, REG_RBX, REG_RSP, REG_RBP, REG_RSI, REG_RDI,
-	REG_R8, REG_R9, REG_R10, REG_R11, REG_R12, REG_R13, REG_R14, REG_R15,
-	REG_RIP
-};
-
 /*
  * Determine whenever the trap whose info is in SIGINFO is caused by
  * integer overflow.
@@ -5627,11 +5627,14 @@ static int reg_to_ucontext_reg [] = {
 gboolean
 mono_arch_is_int_overflow (void *sigctx, void *info)
 {
-	ucontext_t *ctx = (ucontext_t*)sigctx;
+	MonoContext ctx;
 	guint8* rip;
 	int reg;
+	gint64 value;
 
-	rip = (guint8*)ctx->uc_mcontext.gregs [REG_RIP];
+	mono_arch_sigctx_to_monoctx (sigctx, &ctx);
+
+	rip = (guint8*)ctx.rip;
 
 	if (IS_REX (rip [0])) {
 		reg = amd64_rex_b (rip [0]);
@@ -5644,7 +5647,49 @@ mono_arch_is_int_overflow (void *sigctx, void *info)
 		/* idiv REG */
 		reg += x86_modrm_rm (rip [1]);
 
-		if (ctx->uc_mcontext.gregs [reg_to_ucontext_reg [reg]] == -1)
+		switch (reg) {
+		case AMD64_RAX:
+			value = ctx.rax;
+			break;
+		case AMD64_RBX:
+			value = ctx.rbx;
+			break;
+		case AMD64_RCX:
+			value = ctx.rcx;
+			break;
+		case AMD64_RDX:
+			value = ctx.rdx;
+			break;
+		case AMD64_RBP:
+			value = ctx.rbp;
+			break;
+		case AMD64_RSP:
+			value = ctx.rsp;
+			break;
+		case AMD64_RSI:
+			value = ctx.rsi;
+			break;
+		case AMD64_RDI:
+			value = ctx.rdi;
+			break;
+		case AMD64_R12:
+			value = ctx.r12;
+			break;
+		case AMD64_R13:
+			value = ctx.r13;
+			break;
+		case AMD64_R14:
+			value = ctx.r14;
+			break;
+		case AMD64_R15:
+			value = ctx.r15;
+			break;
+		default:
+			g_assert_not_reached ();
+			reg = -1;
+		}			
+
+		if (value == -1)
 			return TRUE;
 	}
 

@@ -22,7 +22,7 @@
 #include "trace.h"
 #include "mini-x86.h"
 #include "inssel.h"
-#include "cpu-pentium.h"
+#include "cpu-x86.h"
 
 /* On windows, these hold the key returned by TlsAlloc () */
 static gint lmf_tls_offset = -1;
@@ -2071,7 +2071,7 @@ cc_signed_table [] = {
 	FALSE, FALSE, FALSE, FALSE
 };
 
-static const char*const * ins_spec = pentium_desc;
+static const char*const * ins_spec = x86_desc;
 
 /*#include "cprop.c"*/
 void

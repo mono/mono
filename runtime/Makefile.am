@@ -15,7 +15,7 @@ etc/mono/2.0/web.config: $(top_srcdir)/data/net_2_0/web.config
 $(symlinks):
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 
-SUPPORT_FILES = $(symlinks) mono-wrapper wrapper-config
+SUPPORT_FILES = $(symlinks) mono-wrapper etc/mono/config
 
 if INSTALL_2_0
 build_profiles = default net_2_0
@@ -82,7 +82,7 @@ PLATFORM_PATH_SEPARATOR = :
 endif
 
 # Use --compile-all as a poor man's PEVerify to detect invalid IL
-mcs-compileall: mono-wrapper wrapper-config
+mcs-compileall: mono-wrapper etc/mono/config
 	save_MONO_PATH=$$MONO_PATH; mcs_topdir=`cd $(mcs_topdir) && $(cur_dir_cmd)`; ok=:; \
 	for profile in $(build_profiles); do \
 	  MONO_PATH="$$mcs_topdir/class/lib/$$profile$(PLATFORM_PATH_SEPARATOR)$$save_MONO_PATH"; export MONO_PATH; \
@@ -97,18 +97,18 @@ mcs-compileall: mono-wrapper wrapper-config
 check-local: mcs-compileall mcs-do-test-profiles
 	$(MAKE) $(test_select) mcs-do-run-test-profiles
 
-CLEANFILES = wrapper-config
+CLEANFILES = etc/mono/config
 
-wrapper-config: ../data/config Makefile
+# depend on $(symlinks) to ensure 'etc/mono' directory exists
+etc/mono/config: ../data/config Makefile $(symlinks)
 	d=`cd ../support && pwd`; \
-	sed 's,target="libMonoPosixHelper[^"]*",target="'$$d/libMonoPosixHelper.la'",' ../data/config > $@
+	sed 's,target="libMonoPosixHelper[^"]*",target="'$$d/libMonoPosixHelper.la'",' ../data/config > $@t
 	if test -z "$(libgdiplus_loc)"; then :; else \
-	  mv $@ $@t; \
-	  sed 's,<configuration>,& <dllmap dll="gdiplus.dll" target="$(libgdiplus_loc)" />,' $@t > $@; \
-	  rm -f $@t; \
-	fi
+	  sed 's,<configuration>,& <dllmap dll="gdiplus.dll" target="$(libgdiplus_loc)" />,' $@t > $@tt; \
+	  mv -f $@tt $@t; fi
+	mv -f $@t $@
 
-$(tmpinst)/bin/mono: mono-wrapper wrapper-config
+$(tmpinst)/bin/mono: mono-wrapper etc/mono/config
 	cp mono-wrapper $@
 
 $(tmpinst)/bin/mcs:

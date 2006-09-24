@@ -1,3 +1,9 @@
+2006-09-15  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Makefile.am: Remove CRYPT_LIBS use; we no longer rely on libcrypt.
+	* stdlib.c: Remove setkey(3) wrapper.
+	* unistd.c: Remove encrypt(3) wrapper.
+
 2006-08-13  Miguel de Icaza  <miguel@novell.com>
 
 	* serial.c (get_bytes_in_buffer): Change the signature, we do not

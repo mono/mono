@@ -521,7 +521,7 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInf
 						offset ++;
 					}
 					else {
-						reg = *((guint64 *)ctx->SC_EBP + offset);
+						reg = *((guint64 *)ctx->rbp + offset);
 						offset --;
 					}
 
@@ -558,16 +558,16 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInf
 		if (omit_fp) {
 			/* Pop frame */
 			new_ctx->rsp += (ji->used_regs >> 16) & (0x7fff);
-			new_ctx->SC_EIP = *((guint64 *)new_ctx->rsp) - 1;
+			new_ctx->rip = *((guint64 *)new_ctx->rsp) - 1;
 			/* Pop return address */
 			new_ctx->rsp += 8;
 		}
 		else {
 			/* Pop EBP and the return address */
-			new_ctx->SC_ESP = ctx->SC_EBP + (2 * sizeof (gpointer));
+			new_ctx->rsp = ctx->rbp + (2 * sizeof (gpointer));
 			/* we substract 1, so that the IP points into the call instruction */
-			new_ctx->SC_EIP = *((guint64 *)ctx->SC_EBP + 1) - 1;
-			new_ctx->SC_EBP = *((guint64 *)ctx->SC_EBP);
+			new_ctx->rip = *((guint64 *)ctx->rbp + 1) - 1;
+			new_ctx->rbp = *((guint64 *)ctx->rbp);
 		}
 
 		/* Pop arguments off the stack */
@@ -575,7 +575,7 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInf
 			MonoJitArgumentInfo *arg_info = g_newa (MonoJitArgumentInfo, mono_method_signature (ji->method)->param_count + 1);
 
 			guint32 stack_to_pop = mono_arch_get_argument_info (mono_method_signature (ji->method), mono_method_signature (ji->method)->param_count, arg_info);
-			new_ctx->SC_ESP += stack_to_pop;
+			new_ctx->rsp += stack_to_pop;
 		}
 
 		return ji;
@@ -592,15 +592,15 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInf
 			res->method = (*lmf)->method;
 		}
 
-		new_ctx->SC_RIP = (*lmf)->rip;
-		new_ctx->SC_RBP = (*lmf)->ebp;
-		new_ctx->SC_ESP = (*lmf)->rsp;
+		new_ctx->rip = (*lmf)->rip;
+		new_ctx->rbp = (*lmf)->ebp;
+		new_ctx->rsp = (*lmf)->rsp;
 
-		new_ctx->SC_RBX = (*lmf)->rbx;
-		new_ctx->SC_R12 = (*lmf)->r12;
-		new_ctx->SC_R13 = (*lmf)->r13;
-		new_ctx->SC_R14 = (*lmf)->r14;
-		new_ctx->SC_R15 = (*lmf)->r15;
+		new_ctx->rbx = (*lmf)->rbx;
+		new_ctx->r12 = (*lmf)->r12;
+		new_ctx->r13 = (*lmf)->r13;
+		new_ctx->r14 = (*lmf)->r14;
+		new_ctx->r15 = (*lmf)->r15;
 
 		*lmf = (*lmf)->previous_lmf;
 
@@ -619,46 +619,80 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInf
 gboolean
 mono_arch_handle_exception (void *sigctx, gpointer obj, gboolean test_only)
 {
-	ucontext_t *ctx = (ucontext_t*)sigctx;
 	MonoContext mctx;
 
-	mctx.rax = ctx->uc_mcontext.gregs [REG_RAX];
-	mctx.rbx = ctx->uc_mcontext.gregs [REG_RBX];
-	mctx.rcx = ctx->uc_mcontext.gregs [REG_RCX];
-	mctx.rdx = ctx->uc_mcontext.gregs [REG_RDX];
-	mctx.rbp = ctx->uc_mcontext.gregs [REG_RBP];
-	mctx.rsp = ctx->uc_mcontext.gregs [REG_RSP];
-	mctx.rsi = ctx->uc_mcontext.gregs [REG_RSI];
-	mctx.rdi = ctx->uc_mcontext.gregs [REG_RDI];
-	mctx.rip = ctx->uc_mcontext.gregs [REG_RIP];
-	mctx.r12 = ctx->uc_mcontext.gregs [REG_R12];
-	mctx.r13 = ctx->uc_mcontext.gregs [REG_R13];
-	mctx.r14 = ctx->uc_mcontext.gregs [REG_R14];
-	mctx.r15 = ctx->uc_mcontext.gregs [REG_R15];
+	mono_arch_sigctx_to_monoctx (sigctx, &mctx);
 
-	mono_handle_exception (&mctx, obj, (gpointer)mctx.rip, test_only);
+	mono_handle_exception (&mctx, obj, MONO_CONTEXT_GET_IP (&mctx), test_only);
 
-	ctx->uc_mcontext.gregs [REG_RAX] = mctx.rax;
-	ctx->uc_mcontext.gregs [REG_RBX] = mctx.rbx;
-	ctx->uc_mcontext.gregs [REG_RCX] = mctx.rcx;
-	ctx->uc_mcontext.gregs [REG_RDX] = mctx.rdx;
-	ctx->uc_mcontext.gregs [REG_RBP] = mctx.rbp;
-	ctx->uc_mcontext.gregs [REG_RSP] = mctx.rsp;
-	ctx->uc_mcontext.gregs [REG_RSI] = mctx.rsi;
-	ctx->uc_mcontext.gregs [REG_RDI] = mctx.rdi;
-	ctx->uc_mcontext.gregs [REG_RIP] = mctx.rip;
-	ctx->uc_mcontext.gregs [REG_R12] = mctx.r12;
-	ctx->uc_mcontext.gregs [REG_R13] = mctx.r13;
-	ctx->uc_mcontext.gregs [REG_R14] = mctx.r14;
-	ctx->uc_mcontext.gregs [REG_R15] = mctx.r15;
+	mono_arch_monoctx_to_sigctx (&mctx, sigctx);
 
 	return TRUE;
+}
+
+static inline guint64*
+gregs_from_ucontext (ucontext_t *ctx)
+{
+#ifdef __FreeBSD__
+    guint64 *gregs = (guint64 *) &ctx->uc_mcontext;
+#else
+    guint64 *gregs = (guint64 *) &ctx->uc_mcontext.gregs;
+#endif
+
+	return gregs;
+}
+
+void
+mono_arch_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
+{
+	ucontext_t *ctx = (ucontext_t*)sigctx;
+
+    guint64 *gregs = gregs_from_ucontext (ctx);
+
+	mctx->rax = gregs [REG_RAX];
+	mctx->rbx = gregs [REG_RBX];
+	mctx->rcx = gregs [REG_RCX];
+	mctx->rdx = gregs [REG_RDX];
+	mctx->rbp = gregs [REG_RBP];
+	mctx->rsp = gregs [REG_RSP];
+	mctx->rsi = gregs [REG_RSI];
+	mctx->rdi = gregs [REG_RDI];
+	mctx->rip = gregs [REG_RIP];
+	mctx->r12 = gregs [REG_R12];
+	mctx->r13 = gregs [REG_R13];
+	mctx->r14 = gregs [REG_R14];
+	mctx->r15 = gregs [REG_R15];
+}
+
+void
+mono_arch_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
+{
+	ucontext_t *ctx = (ucontext_t*)sigctx;
+
+    guint64 *gregs = gregs_from_ucontext (ctx);
+
+	gregs [REG_RAX] = mctx->rax;
+	gregs [REG_RBX] = mctx->rbx;
+	gregs [REG_RCX] = mctx->rcx;
+	gregs [REG_RDX] = mctx->rdx;
+	gregs [REG_RBP] = mctx->rbp;
+	gregs [REG_RSP] = mctx->rsp;
+	gregs [REG_RSI] = mctx->rsi;
+	gregs [REG_RDI] = mctx->rdi;
+	gregs [REG_RIP] = mctx->rip;
+	gregs [REG_R12] = mctx->r12;
+	gregs [REG_R13] = mctx->r13;
+	gregs [REG_R14] = mctx->r14;
+	gregs [REG_R15] = mctx->r15;
 }
 
 gpointer
 mono_arch_ip_from_context (void *sigctx)
 {
 	ucontext_t *ctx = (ucontext_t*)sigctx;
-	return (gpointer)ctx->uc_mcontext.gregs [REG_RIP];
+
+    guint64 *gregs = gregs_from_ucontext (ctx);
+
+	return (gpointer)gregs [REG_RIP];
 }
 

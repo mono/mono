@@ -1,3 +1,7 @@
+2006-09-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* declsec.c: Fix windows VC build.
+
 2006-08-09  Alp Toker  <alp@atoker.com>
 
 	* dis-cil.c:

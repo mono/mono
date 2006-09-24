@@ -1,3 +1,4 @@
+<<<<<<< .working
 2006-06-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* interlocked-2.2.cs: Add Interlocked.Read (long) test.
@@ -6,6 +7,27 @@
 
 	* libtest.c: Fix merge problem.
 
+=======
+2006-09-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* libtest.c (mono_test_marshal_stringbuilder_default): Null terminate string to
+	prevent random errors.
+	(mono_test_marshal_stringbuilder): Ditto.
+
+2006-09-18  Jonathan Chambers  <joncham@gmail.com>
+
+	* cominterop.cs: Added COM Interop tests for null BSTR checks.
+	* libtest.c: Added COM Interop tests for null BSTR checks.
+
+2006-09-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am (test): Disable mkbundle test on win32 since there is no static build there.
+
+2006-09-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke2.cs libtest.c: Add test for marshalling of blittable classes and null.
+
+>>>>>>> .merge-right.r65846
 2006-09-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* pinvoke3.cs libtest.c: Add test for #79289.

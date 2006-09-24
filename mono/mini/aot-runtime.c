@@ -394,7 +394,7 @@ load_aot_module_from_cache (MonoAssembly *assembly, char **aot_name)
 
 			res = g_spawn_command_line_sync (cmd, &out, &err, &exit_status, NULL);
 
-#ifndef PLATFORM_WIN32
+#if !defined(PLATFORM_WIN32) && !defined(__ppc__) && !defined(__powerpc__)
 			if (res) {
 				if (!WIFEXITED (exit_status) && (WEXITSTATUS (exit_status) == 0))
 					mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT failed: %s.", err);
@@ -438,6 +438,13 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 	guint32 *got_size_ptr = NULL;
 
 	if (mono_compile_aot)
+		return;
+
+	if (assembly->aot_module)
+		/* 
+		 * Already loaded. This can happen because the assembly loading code might invoke
+		 * the assembly load hooks multiple times for the same assembly.
+		 */
 		return;
 
 	if (use_aot_cache)

@@ -1,3 +1,4 @@
+<<<<<<< .working
 2006-09-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c (mono_arch_emit_inst_for_method): Add OP_MEMORY_BARRIER.
@@ -162,6 +163,115 @@
 
 	* method-to-ir.c (mono_method_check_inlining): Fix warnings.
 
+=======
+2006-09-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (add_valuetype): Fix an uninitialized memory issue.
+
+Thu Sep 21 19:06:09 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* inssel.brg: use the correct function to get the size of an item
+	in an array, given an element class.
+	* aot-compiler.c: do not access class->class_size directly.
+
+Thu Sep 21 12:10:56 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, debug-mini.c: added a debugging function to print
+	info about local variables and arguments in a jitted method.
+
+2006-09-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-alpha.c: More alpha port work from Sergey Tikhonov <tsv@solvo.ru>.
+
+	* exceptions-ia64.c: Fix some problems reported by Bill Seurer <seurer@us.ibm.com>.
+
+2006-09-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c (mono_arch_call_opcode): Avoid using the same loop index in the
+	inner and outer loops when passing vtypes.
+
+Tue Sep 19 17:53:40 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: take into account the cpu errata for cache flushing
+	which caused some random errors (bug #79381).
+
+2006-09-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_emit_exceptions): Emit the call to 
+	mono_arch_throw_corlib_exception using emit_call () too. Fixes #79271.
+
+2006-09-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (load_aot_module): Return immeditely if the AOT module was already
+	loaded.
+
+	* exceptions-amd64.c (gregs_from_ucontext): Apply another patch from the
+	freebsd ports tree.
+
+	* mini-amd64.c (emit_call): Avoid near calls on freebsd.
+	(mono_arch_patch_code): Remove the unused handling of MONO_PATCH_INFO_CLASS_INIT.
+
+	* tramp-amd64.c (mono_arch_create_specific_trampoline): Fix check for 32 bitness of
+	displacement.
+
+2006-09-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (load_aot_module_from_cache): Fix PPC build.
+
+2006-09-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (UNVERIFIED): Add a 'break-on-unverified' MONO_DEBUG option so this 
+	macro does not have to be changed during debugging.
+
+	* cpu-alpha.md inssel-alpha.brg mini-alpha.h mini-alpha.c exceptions-alpha.c tramp-alpha.c: More alpha port work from Sergey Tikhonov <tsv@solvo.ru>.
+
+	* cpu-pentium.md: Rename this to cpu-x86.md for consistency with other platforms.
+
+	* Makefile.am mini-x86.c mini-codegen.c: Rename pentium_desc to x86_desc.
+	
+	* mini.c (mini_get_ldelema_ins): Allow ldelema2d optimization if 
+	MONO_ARCH_NO_EMULATE_MUL is defined.
+
+	* mini-ia64.h (MONO_ARCH_CALLEE_FREGS): Reserve f33 for use by instructions.
+
+	* mini-ia64.h: Define MONO_ARCH_NO_EMULATE_MUL.
+
+	* mini-ia64.c: Implement CEE_MUL based on gcc emitted code.
+
+	* mini-ia64.c (mono_arch_lowering_pass): Optimize store_membase_imm with offset==0.
+	
+2006-09-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.h mini-amd64.h mini-exceptions.c: Move the bsd specific MAP_ANON
+	stuff to mini-exceptions.c where it is used.
+
+	* mini-sparc.c (mono_arch_setup_jit_tls_data): Remove the duplicate altstack
+	setup code, the real one is in mini-exceptions.c.
+
+	* mini-amd64.h mini-amd64.c exceptions-amd64.c: Move all dependencies on the
+	layout of ucontext_t to helper functions in exceptions-amd64.c, as on x86. Add
+	some changes from the freebsd ports tree.
+
+	* mini-amd64.h exceptions-amd64.c: Fix the amd64 build. Get rid of the SC_
+	constants.
+	
+	* mini-amd64.h: Freebsd has MAP_ANON instead of MAP_ANONYMOUS.
+
+Mon Sep 11 13:18:55 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: on Linux, check for /proc to be mounted
+	(bug# 79351, novell bug#201204).
+
+Mon Sep 11 13:10:12 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: handle cases where pthread_attr_getstack() behaves
+	incorrectly (bug #78096).
+
+Mon Sep 11 11:31:10 BST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.c: support larger stack frames (bug #79272).
+
+>>>>>>> .merge-right.r65846
 2006-09-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c: Add a hash table to the AOT file mapping class names to typedef 

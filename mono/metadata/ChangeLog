@@ -1,3 +1,138 @@
+2006-09-22  Martin Baulig  <martin@ximian.com>
+
+	Revert Paolo's change from r65776.
+
+2006-09-21 Gert Driesen  <drieseng@users.sourceforge.net>
+
+        * appdomain.c: Pass NULL to mono_get_exception_file_not_found2 as
+        exception message to have FileNotFoundException use the default
+        assembly load error message. Fixes bug #79426.
+        * exception.c: Support NULL msg in mono_get_exception_file_not_found2.
+
+2006-09-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: (start_thread_or_queue) use the root domain when
+	creating the thread instead of the async object one.
+
+Thu Sep 21 17:06:43 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: fixed CodeBase to use the file name and not the module
+	name (bug #79365).
+
+Thu Sep 21 12:09:34 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mono-debug.c, mono-debug.h: export find_method as
+	mono_debug_find_method ().
+
+Wed Sep 20 19:59:06 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* debug-helpers.c, class-internals.h: added a few functions useful
+	when debugging under gdb.
+
+2006-09-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* console-io.[ch]: trigger the ConsoleCancelEvent and retrieve
+	characters that need special handling.
+
+Tue Sep 19 18:57:38 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mono-config.c: make the os/cpu specification more flexible,
+	allowing lists and negation.
+
+2006-09-18  Jonathan Chambers  <joncham@gmail.com>
+
+	* marshal.c: COM Interop fixes. Handle case where method->klass.
+	is interface. Handle BSTR/MonoString when null. Use CDECL as 
+	calling convention on non-windows platforms. This is for
+	compatibility with XPCOM and MainWin COM.
+	
+	Code is contributed under MIT/X11 license.
+	
+
+2006-09-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_load_type_info): Handle concurrent and recursive calls
+	correctly. Fixes #79217.
+
+	* class-internals.h (MonoClass): Remove unused marshal_info_init_pending field.
+
+Mon Sep 18 16:59:54 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mono-config.c: allow both an os and cpu attribute for dllmap
+	and dllentry elemnets to enable a single config file to be used
+	for multiple architectures.
+
+2006-09-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* loader.c: MonoLoaderError was cleared too soon on load failure.
+	Fixes bug #79424.
+
+Mon Sep 18 15:37:13 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: use the defining class vtable when accessing a
+	static field, not a pobblibly derived class.
+
+2006-09-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c string-icalls.c: Remove references to unicode.h.
+
+	* unicode.h unicode.c Makefile.am: Remove these unused source files.
+
+	* NOTES: Moved to ../../docs and renamed to thread-safety.txt.
+
+	* marshal.c (mono_marshal_emit_native_wrapper): Add an 'image' argument, 
+	indicating the image where custom marshaller types should be looked up.
+	(mono_ftnptr_to_delegate): Use the image of the delegate type to look up
+	custom marshallers, instead of corlib. Fixes #79425.
+
+2006-09-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_marshal_object): Fix marshalling of blittable classes and null.
+
+2006-09-14  Jonathan Chambers  <joncham@gmail.com>
+
+	* environment.c (ves_icall_System_Environment_get_ProcessorCount): 
+	Implement Environment.ProcessorCount.
+	
+	* environment.h (ves_icall_System_Environment_get_ProcessorCount): 
+	Implement Environment.ProcessorCount.
+	
+	* icall.c: 
+	Add Environment.ProcessorCount icall.
+	
+	Patch by Jason McFall.
+
+2006-09-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* assembly.c: don't append .exe/.dll when the filename already contains
+	one of those extensions.
+
+2006-09-12  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_bounded_array_class_get): Also add `IList<object>'
+	to array interfaces.
+
+2006-09-11  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (mono_image_build_metadata): Create the
+	MethodImpl's after emitting all types and methods, so we don't
+	need another fixup pass for them.
+
+2006-09-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_from_name_case): Fix regression introduced by the last
+	change.
+
+Mon Sep 11 12:57:15 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* gc-internal.h, appdomain.c, gc.c: force-destroy GC handles on domain
+	unload.
+
+2006-09-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_method_return_message_restore): Avoid a crash if one of the out
+	args is not set. Fixes #78926.
+
 2006-09-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* image.c (load_class_names): Move this to class.c, and rename it to 

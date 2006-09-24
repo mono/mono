@@ -536,6 +536,11 @@ delegate missuse.  Basically a delegate instance might be created,
 passed to unmanaged code, and no references kept in managed code,
 which will garbage collect the code.  With this option it is possible
 to track down the source of the problems. 
+.TP
+.I "break-on-unverified"
+If this variable is set, when the Mono VM runs into a verification
+problem, instead of throwing an exception it will break into the
+debugger.  This is useful when debugging verifier problems
 .ne
 .RE
 .TP
@@ -693,6 +698,11 @@ interpreter.  The possible values are `no' to disable the use of a
 custom serializer or a number to indicate when the XmlSerializer
 should start serializing.   The default value is 50, which means that
 the a custom serializer will be produced on the 50th use.
+.TP
+.I "MONO_XMLSERIALIZER_DEBUG"
+Set this value to 1 to prevent the serializer from removing the
+temporary files that are created for fast serialization;  This might
+be useful when debugging.
 .SH ENVIRONMENT VARIABLES FOR DEBUGGING
 .TP
 .I "MONO_ASPNET_NODELETE"

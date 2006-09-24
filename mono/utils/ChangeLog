@@ -1,3 +1,8 @@
+2006-09-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* strtod.c (IEEE_8087): Applied patch from Sergey Tikhonov <tsv@solvo.ru>. Define
+	IEEE_8087 for alpha as well.
+
 2006-09-04  Robert Jordan  <robertj@gmx.net>
 
 	* mono-stdlib.c (mono_mkstemp): Fix mkstemp's loop.

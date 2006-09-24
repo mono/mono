@@ -1,3 +1,15 @@
+2006-09-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* alpha/alpha-codegen.h: More alpha updates from Sergey Tikhonov <tsv@solvo.ru>.
+
+Tue Sep 12 13:09:56 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* arm/*: VFP floating point format code generation support.
+
+2006-09-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* ia64/ia64-codegen.h: Add xmpy_l/u pseudo ops.
+
 2006-07-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* amd64/amd64-codegen.h: Fix amd64_mov_mem_reg.

@@ -9945,13 +9945,9 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - merge new GC changes in mini.c
  * - merge the stack merge stuff
  * - remove unused opcodes from mini-ops.h, remove "op_" from the opcode names,
- *   remove the op_ opcodes from the cpu-..md files, rename cpu-pentium.md to cpu-x86.md,
- *   clean up the cpu-..md files.
- * - unify int/fp vregs in the old JIT as well, then use this to simplify the local
- *   allocator (local regalloc cost: 77698 -> 69633).
- * - allocate MonoRegState on the stack in the local allocator.
+ *   remove the op_ opcodes from the cpu-..md files, clean up the cpu-..md files.
  * - optimize mono_regstate2_alloc_int/float.
- * - LAST MERGE: 65121.
+ * - LAST MERGE: 65846.
  */
 
 /*
