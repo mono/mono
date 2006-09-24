@@ -72,7 +72,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			return base.Read7BitEncodedInt ();
 		}
 	}
-
+	
 	internal class MonoDebuggerSupport
 	{
 		static GetMethodTokenFunc get_method_token;
@@ -300,14 +300,19 @@ namespace Mono.CompilerServices.SymbolWriter
 					"Cannot read symbol file `{0}'", filename);
 			}
 
-			Module[] modules = assembly.GetModules ();
-			Guid assembly_guid = MonoDebuggerSupport.GetGuid (modules [0]);
-
-			if (guid != assembly_guid)
-				throw new MonoSymbolFileException (
-					"Symbol file `{0}' does not match assembly `{1}'",
-					filename, assembly.Location);
-
+			if (assembly != null) {
+				// Check that the MDB file matches the assembly, if we have been
+				// passed an assembly.
+				
+				Module[] modules = assembly.GetModules ();
+				Guid assembly_guid = MonoDebuggerSupport.GetGuid (modules [0]);
+	
+				if (guid != assembly_guid)
+					throw new MonoSymbolFileException (
+						"Symbol file `{0}' does not match assembly `{1}'",
+						filename, assembly.Location);
+			}
+			
 			method_hash = new Hashtable ();
 			source_file_hash = new Hashtable ();
 		}
@@ -318,6 +323,11 @@ namespace Mono.CompilerServices.SymbolWriter
 			string name = filename + ".mdb";
 
 			return new MonoSymbolFile (name, assembly);
+		}
+
+		public static MonoSymbolFile ReadSymbolFile (string mdbFilename)
+		{
+			return new MonoSymbolFile (mdbFilename, null);
 		}
 
 		public Assembly Assembly {

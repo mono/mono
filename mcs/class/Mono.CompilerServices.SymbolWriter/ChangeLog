@@ -1,3 +1,9 @@
+2006-09-24  Joshua Tauberer  <jit@occams.info>
+
+	* MonoSymbolFile.cs: Allow MonoSymbolFile to be created
+	  without passing a System.Reflection.Assembly, so we can
+	  use this with Cecil.  Only the GUID check is avoided.
+
 2005-09-14  Martin Baulig  <martin@ximian.com>
 
 	* MonoSymbolTable.cs (OffsetTable): Bump version to 39.
