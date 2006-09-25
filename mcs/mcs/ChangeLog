@@ -1,5 +1,9 @@
 2006-09-25  Martin Baulig  <martin@ximian.com>
 
+	* class.cs: Completely unified with the gmcs version.
+
+2006-09-25  Martin Baulig  <martin@ximian.com>
+
 	* typemanager.cs (TypeManager.IsNullableType): New public function.
 	(TypeManager.IsNullableTypeOf): Likewise.
 	(TypeManager.IsNullableValueType): Likewise.

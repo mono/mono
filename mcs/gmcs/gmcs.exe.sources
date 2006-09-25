@@ -5,7 +5,7 @@ anonymous.cs
 ../mcs/driver.cs
 cs-tokenizer.cs
 ../mcs/cfold.cs
-class.cs
+../mcs/class.cs
 ../mcs/codegen.cs
 ../mcs/const.cs
 ../mcs/constant.cs

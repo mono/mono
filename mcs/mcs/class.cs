@@ -457,6 +457,7 @@ namespace Mono.CSharp {
 		//
 		TypeExpr base_type;
 		TypeExpr[] iface_exprs;
+		Type GenericType;
 
 		ArrayList type_bases;
 
@@ -471,6 +472,10 @@ namespace Mono.CSharp {
 		MemberCache member_cache;
 
 		public const string DefaultIndexerName = "Item";
+
+#if GMCS_SOURCE
+		GenericTypeParameterBuilder[] gen_params;
+#endif
 
 		ArrayList partial_parts;
 
@@ -575,6 +580,21 @@ namespace Mono.CSharp {
 					"Partial declarations of `{0}' have conflicting accessibility modifiers",
 					nextPart.GetSignatureForError ());
 				return tc;
+			}
+
+			if (tc.MemberName.IsGeneric) {
+				TypeParameter[] tc_names = tc.TypeParameters;
+				TypeParameterName[] part_names = nextPart.MemberName.TypeArguments.GetDeclarations ();
+
+				for (int i = 0; i < tc_names.Length; ++i) {
+					if (tc_names[i].Name == part_names[i].Name)
+						continue;
+
+					Report.SymbolRelatedToPreviousError (part_names[i].Location, "");
+					Report.Error (264, tc.Location, "Partial declarations of `{0}' must have the same type parameter names in the same order",
+						tc.GetSignatureForError ());
+					return tc;
+				}
 			}
 
 			if (tc.partial_parts == null)
@@ -996,7 +1016,7 @@ namespace Mono.CSharp {
 			TypeExpr [] ifaces = new TypeExpr [count-start];
 			
 			for (i = start, j = 0; i < count; i++, j++){
-				TypeExpr resolved = ((Expression) Bases [i]).ResolveAsTypeTerminal (this, false);
+				TypeExpr resolved = ((Expression) Bases [i]).ResolveAsBaseTerminal (this, false);
 				if (resolved == null) {
 					return null;
 				}
@@ -1108,6 +1128,36 @@ namespace Mono.CSharp {
 			return ifaces;
 		}
 
+		bool CheckGenericInterfaces (Type[] ifaces)
+		{
+#if GMCS_SOURCE
+			ArrayList already_checked = new ArrayList ();
+
+			for (int i = 0; i < ifaces.Length; i++) {
+				Type iface = ifaces [i];
+				foreach (Type t in already_checked) {
+					if (iface == t)
+						continue;
+
+					Type[] infered = new Type [CountTypeParameters];
+					if (!TypeManager.MayBecomeEqualGenericInstances (iface, t, infered, null))
+						continue;
+
+					Report.Error (695, Location,
+						"`{0}' cannot implement both `{1}' and `{2}' " +
+						"because they may unify for some type parameter substitutions",
+						TypeManager.CSharpName (TypeBuilder), TypeManager.CSharpName (iface),
+						TypeManager.CSharpName (t));
+					return false;
+				}
+
+				already_checked.Add (iface);
+			}
+#endif
+
+			return true;
+		}
+
 		bool error = false;
 		
 		protected void Error_TypeInListIsNotInterface (Location loc, string type)
@@ -1124,8 +1174,11 @@ namespace Mono.CSharp {
 					}
 
 					ModuleBuilder builder = CodeGen.Module.Builder;
+					Type default_parent = null;
+					if (Kind == Kind.Struct)
+						default_parent = TypeManager.value_type;
 					TypeBuilder = builder.DefineType (
-						Name, TypeAttr, null, null);
+						Name, TypeAttr, default_parent, null);
 				} else {
 					TypeBuilder builder = Parent.TypeBuilder;
 
@@ -1138,6 +1191,20 @@ namespace Mono.CSharp {
 			}
 
 			TypeManager.AddUserType (this);
+
+#if GMCS_SOURCE
+			if (IsGeneric) {
+				string[] param_names = new string [TypeParameters.Length];
+				for (int i = 0; i < TypeParameters.Length; i++)
+					param_names [i] = TypeParameters [i].Name;
+
+				gen_params = TypeBuilder.DefineGenericParameters (param_names);
+
+				int offset = CountTypeParameters - CurrentTypeParameters.Length;
+				for (int i = offset; i < gen_params.Length; i++)
+					CurrentTypeParameters [i - offset].Define (gen_params [i]);
+			}
+#endif
 
 			iface_exprs = GetClassBases (out base_type);
 			if (partial_parts != null) {
@@ -1157,8 +1224,15 @@ namespace Mono.CSharp {
 			if (!(this is Iterator))
 				RootContext.RegisterOrder (this); 
 
-
 			if (base_type != null) {
+				if (IsGeneric && TypeManager.IsAttributeType (base_type.Type)) {
+					Report.Error (698, base_type.Location,
+						      "A generic type cannot derive from `{0}' " +
+						      "because it is an attribute class",
+						      base_type.Name);
+					return false;
+				}
+
 				TypeBuilder.SetParent (base_type.Type);
 
 				ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (base_type.Type);
@@ -1179,9 +1253,24 @@ namespace Mono.CSharp {
 				}
 
 				foreach (Type itype in ifaces)
-					TypeBuilder.AddInterfaceImplementation (itype);
+ 					TypeBuilder.AddInterfaceImplementation (itype);
+
+				foreach (TypeExpr ie in iface_exprs) {
+					ObsoleteAttribute oa = AttributeTester.GetObsoleteAttribute (ie.Type);
+					if ((oa != null) && !IsInObsoleteScope)
+						AttributeTester.Report_ObsoleteMessage (
+							oa, ie.GetSignatureForError (), Location);
+				}
+
+				if (!CheckGenericInterfaces (ifaces)) {
+					return false;
+				}
 
 				TypeManager.RegisterBuilder (TypeBuilder, ifaces);
+			}
+
+			if (this is Iterator && !ResolveType ()) {
+				return false;
 			}
 
 			return true;
@@ -1211,6 +1300,109 @@ namespace Mono.CSharp {
 			DefineNestedTypes ();
 
 			return TypeBuilder;
+		}
+
+		Constraints [] constraints;
+		public override void SetParameterInfo (ArrayList constraints_list)
+		{
+			if (PartialContainer == this) {
+				base.SetParameterInfo (constraints_list);
+				return;
+			}
+
+			if (constraints_list == null)
+				return;
+
+			constraints = new Constraints [PartialContainer.CountCurrentTypeParameters];
+
+			TypeParameter[] current_params = PartialContainer.CurrentTypeParameters;
+			for (int i = 0; i < constraints.Length; i++) {
+				foreach (Constraints constraint in constraints_list) {
+					if (constraint.TypeParameter == current_params [i].Name) {
+						constraints [i] = constraint;
+						break;
+					}
+				}
+			}
+		}
+
+		bool UpdateTypeParameterConstraints ()
+		{
+			if (constraints == null)
+				return true;
+
+			TypeParameter[] current_params = PartialContainer.CurrentTypeParameters;
+			for (int i = 0; i < current_params.Length; i++) {
+				if (!current_params [i].UpdateConstraints (this, constraints [i])) {
+					Report.SymbolRelatedToPreviousError (Location, "");
+					Report.Error (265, PartialContainer.Location,
+						"Partial declarations of `{0}' have inconsistent constraints for type parameter `{1}'",
+						PartialContainer.GetSignatureForError (), current_params [i].Name);
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		public bool ResolveType ()
+		{
+			if ((base_type != null) &&
+			    (base_type.ResolveAsTypeTerminal (this, false) == null)) {
+				error = true;
+				return false;
+			}
+
+			if (!IsGeneric)
+				return true;
+
+			if (PartialContainer != this)
+				throw new InternalErrorException ();
+
+			TypeExpr current_type = null;
+
+			foreach (TypeParameter type_param in CurrentTypeParameters) {
+				if (!type_param.Resolve (this)) {
+					error = true;
+					return false;
+				}
+			}
+
+			if (partial_parts != null) {
+				foreach (TypeContainer part in partial_parts) {
+					if (!part.UpdateTypeParameterConstraints ()) {
+						error = true;
+						return false;
+					}
+				}
+			}
+
+			foreach (TypeParameter type_param in TypeParameters) {
+				if (!type_param.DefineType (this)) {
+					error = true;
+					return false;
+				}
+			}
+
+			current_type = new ConstructedType (TypeBuilder, TypeParameters, Location);
+
+			foreach (TypeParameter type_param in TypeParameters)
+				if (!type_param.CheckDependencies ()) {
+					error = true;
+					return false;
+				}
+
+			if (current_type != null) {
+				current_type = current_type.ResolveAsTypeTerminal (this, false);
+				if (current_type == null) {
+					error = true;
+					return false;
+				}
+
+				CurrentType = current_type.Type;
+			}
+
+			return true;
 		}
 
 		protected virtual bool DefineNestedTypes ()
@@ -1264,15 +1456,15 @@ namespace Mono.CSharp {
 			InTransit = tc;
 
 			if (BaseType != null) {
-				TypeContainer ptc = TypeManager.LookupTypeContainer (BaseType);
+				Type t = TypeManager.DropGenericTypeArguments (BaseType);
+				TypeContainer ptc = TypeManager.LookupTypeContainer (t);
 				if ((ptc != null) && !ptc.CheckRecursiveDefinition (this))
 					return false;
 			}
 
 			if (iface_exprs != null) {
 				foreach (TypeExpr iface in iface_exprs) {
-					Type itype = iface.Type;
-
+					Type itype = TypeManager.DropGenericTypeArguments (iface.Type);
 					TypeContainer ptc = TypeManager.LookupTypeContainer (itype);
 					if ((ptc != null) && !ptc.CheckRecursiveDefinition (this))
 						return false;
@@ -1310,6 +1502,20 @@ namespace Mono.CSharp {
 
 		protected virtual bool DoDefineMembers ()
 		{
+			if (iface_exprs != null) {
+				foreach (TypeExpr iface in iface_exprs) {
+					ConstructedType ct = iface as ConstructedType;
+					if ((ct != null) && !ct.CheckConstraints (this))
+						return false;
+				}
+			}
+
+			if (base_type != null) {
+				ConstructedType ct = base_type as ConstructedType;
+				if ((ct != null) && !ct.CheckConstraints (this))
+					return false;
+			}
+
 			if (!IsTopLevel) {
 				MemberInfo conflict_symbol = Parent.PartialContainer.FindBaseMemberWithSameName (Basename, false);
 				if (conflict_symbol == null) {
@@ -1342,7 +1548,12 @@ namespace Mono.CSharp {
 			DefineContainerMembers (methods);
 			DefineContainerMembers (operators);
 			DefineContainerMembers (enums);
-			DefineContainerMembers (delegates);			
+			DefineContainerMembers (delegates);
+
+			if (CurrentType != null) {
+				GenericType = CurrentType;
+			}
+
 
 #if CACHE
 			member_cache = new MemberCache (this);
@@ -1877,17 +2088,6 @@ namespace Mono.CSharp {
 						members.AddRange (list);
 					}
 				}
-				if (ifaces != null) {
-					foreach (Type base_type in ifaces) {
-						MemberList list = TypeContainer.FindMembers (base_type, mt, bf, filter, criteria);
-
-						if (list.Count > 0) {
-							if (members == null)
-								members = new ArrayList ();
-							members.AddRange (list);
-						}
-					}
-				}
 			}
 
 			Timer.StopTimer (TimerType.TcFindMembers);
@@ -2020,7 +2220,15 @@ namespace Mono.CSharp {
 		{
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
-				
+
+#if GMCS_SOURCE
+			if (IsGeneric) {
+				int offset = CountTypeParameters - CurrentTypeParameters.Length;
+				for (int i = offset; i < gen_params.Length; i++)
+					CurrentTypeParameters [i - offset].EmitAttributes ();
+			}
+#endif
+
 			//
 			// Structs with no fields need to have at least one byte.
 			// The right thing would be to set the PackingSize in a DefineType
@@ -2307,7 +2515,11 @@ namespace Mono.CSharp {
 				} else {
 					Report.SymbolRelatedToPreviousError ((MemberCore) found);
 				}
+#if GMCS_SOURCE
+				Report.Warning (3005, 1, mc.Location, "Identifier `{0}' differing only in case is not CLS-compliant", mc.GetSignatureForError ());
+#else
 				Report.Error (3005, mc.Location, "Identifier `{0}' differing only in case is not CLS-compliant", mc.GetSignatureForError ());
+#endif
 			}
 		}
 
@@ -2372,7 +2584,13 @@ namespace Mono.CSharp {
 
 		MemberList IMemberContainer.GetMembers (MemberTypes mt, BindingFlags bf)
 		{
-			return FindMembers (mt, bf | BindingFlags.DeclaredOnly, null, null);
+			BindingFlags new_bf = bf | BindingFlags.DeclaredOnly;
+
+			if (GenericType != null)
+				return TypeManager.FindMembers (GenericType, mt, new_bf,
+								null, null);
+			else
+				return FindMembers (mt, new_bf, null, null);
 		}
 
 		//
@@ -3042,7 +3260,7 @@ namespace Mono.CSharp {
 					return false;
 
 				if ((ModFlags & Modifiers.NEW) == 0) {
-					if (MemberType != TypeManager.TypeToCoreType (base_ret_type)) {
+					if (!TypeManager.IsEqual (MemberType, TypeManager.TypeToCoreType (base_ret_type))) {
 						Report.SymbolRelatedToPreviousError (base_method);
 						if (this is PropertyBase) {
 							Report.Error (1715, Location, "`{0}': type must be `{1}' to match overridden member `{2}'", 
@@ -5135,6 +5353,9 @@ namespace Mono.CSharp {
 		protected override bool VerifyClsCompliance()
 		{
 			if (base.VerifyClsCompliance ()) {
+				if (GenericMethod != null)
+					GenericMethod.VerifyClsCompliance ();
+
 				return true;
 			}
 

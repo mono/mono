@@ -82,6 +82,32 @@ namespace Mono.CSharp
 			get { throw new NotImplementedException (); }
 		}
 
+		public bool Resolve (DeclSpace ds)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public bool DefineType (IResolveContext ec)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public bool DefineType (IResolveContext ec, MethodBuilder builder,
+					MethodInfo implementing, bool is_override)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public bool CheckDependencies ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public bool UpdateConstraints (IResolveContext ec, Constraints new_constraints)
+		{
+			throw new NotImplementedException ();
+		}
+
 		//
 		// IMemberContainer
 		//
@@ -213,6 +239,12 @@ namespace Mono.CSharp
 		}
 
 		public void EmitAttributes ()
+		{
+			throw new NotImplementedException ();
+		}
+
+
+		public new void VerifyClsCompliance ()
 		{
 			throw new NotImplementedException ();
 		}

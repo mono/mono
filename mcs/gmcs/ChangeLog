@@ -1,3 +1,7 @@
+2006-09-25  Martin Baulig  <martin@ximian.com>
+
+	* class.cs: Remove after unification with mcs source.
+
 2006-09-24  Raja R Harinath  <harinath@gmail.com>
 
 	* convert.cs: Remove after unification with mcs source.
