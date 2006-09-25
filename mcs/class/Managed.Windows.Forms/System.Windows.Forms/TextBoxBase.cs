@@ -525,6 +525,9 @@ namespace System.Windows.Forms {
 				if ((value != null) && (value != "")) {
 					Line	line;
 
+					if (value == Text)
+						return;
+
 					if (multiline) {
 						string[]	lines;
 

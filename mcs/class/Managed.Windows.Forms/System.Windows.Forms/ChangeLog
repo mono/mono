@@ -1,6 +1,8 @@
 2006-09-25  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: Fix print out in debug method.
+	* TextBoxBase.cs: When text is set bail if we are setting to the
+	previous value.
 	
 2006-09-24  Alexander Olk  <alex.olk@googlemail.com>
 
