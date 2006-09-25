@@ -130,6 +130,8 @@ public class Page : TemplateControl, IHttpHandler
 	
 	Page previousPage;
 	bool isCrossPagePostBack;
+	bool isPostBack;
+	bool isCallback;
 	ArrayList requireStateControls;
 	Hashtable _validatorsByGroup;
 	HtmlForm _form;
@@ -346,7 +348,11 @@ public class Page : TemplateControl, IHttpHandler
 	public bool IsPostBack
 	{
 		get {
+#if NET_2_0
+			return isPostBack;
+#else
 			return _requestValueCollection != null;
+#endif
 		}
 	}
 
@@ -1114,9 +1120,17 @@ public class Page : TemplateControl, IHttpHandler
 		_requestValueCollection = this.DeterminePostBackMode();
 
 #if NET_2_0
-		if (!IsCrossPagePostBack)
-			LoadPreviousPageReference ();
-			
+		// http://msdn2.microsoft.com/en-us/library/ms178141.aspx
+		if (_requestValueCollection != null) {
+			if (!isCrossPagePostBack && _requestValueCollection [PreviousPageID] != null && _requestValueCollection [PreviousPageID] != Request.FilePath) {
+				LoadPreviousPageReference ();
+			}
+			else {
+				isCallback = _requestValueCollection [CallbackArgumentID] != null;
+				isPostBack = !isCallback;
+			}
+		}
+
 		OnPreInit (EventArgs.Empty);
 
 		InitializeTheme ();
@@ -1141,9 +1155,6 @@ public class Page : TemplateControl, IHttpHandler
 		}
 
 #if NET_2_0
-		if (IsCrossPagePostBack)
-			return;
-
 		OnPreLoad (EventArgs.Empty);
 #endif
 
@@ -1162,6 +1173,9 @@ public class Page : TemplateControl, IHttpHandler
 		
 #if NET_2_0
 		OnLoadComplete (EventArgs.Empty);
+
+		if (IsCrossPagePostBack)
+			return;
 
 		if (IsCallback) {
 			string result = ProcessCallbackData ();
@@ -1638,13 +1652,13 @@ public class Page : TemplateControl, IHttpHandler
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[BrowsableAttribute (false)]
 	public bool IsCallback {
-		get { return _requestValueCollection != null && _requestValueCollection [CallbackArgumentID] != null; }
+		get { return isCallback; }
 	}
 	
 	[BrowsableAttribute (false)]
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	public bool IsCrossPagePostBack {
-		get { return _requestValueCollection != null && isCrossPagePostBack; }
+		get { return isCrossPagePostBack; }
 	}
 	
 	string ProcessCallbackData ()

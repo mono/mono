@@ -1,3 +1,10 @@
+2006-09-25 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Page.cs: fixed: Cross-page postback feature in ASP.NET 2.0
+	When page is invoked by cross-page posting, PreviousPage processed all 
+	live-cycle up to OnLoadComplite included.
+	IsPostBack, IsCallBack and IsCrossPagePostBack returns relevant values.
+
 2006-09-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateParser.cs: patch by Joel Reed that makes use of the namespace
