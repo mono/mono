@@ -36,6 +36,10 @@ using System.Globalization;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Text;
+using System.Collections;
+using System.Data;
+using MonoTests.SystemWeb.Framework;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -47,7 +51,106 @@ namespace MonoTests.System.Web.UI.WebControls
 				Console.WriteLine ("PerformSelect\n{0}", Environment.StackTrace);
 			}
 		}
+
+		class MyDataBoundControl : DataBoundControl
+		{
+			private StringBuilder dataBindTrace = new StringBuilder ();
+			public string DataBindTrace {
+				get { return dataBindTrace.ToString (); }
+			}
+
+			public override void DataBind () {
+				dataBindTrace = new StringBuilder ();
+				dataBindTrace.Append ("[Start DataBind]");
+				base.DataBind ();
+				dataBindTrace.Append ("[End DataBind]");
+			}
+
+			protected override void PerformSelect () {
+				dataBindTrace.Append ("[Start PerformSelect]");
+				base.PerformSelect ();
+				dataBindTrace.Append ("[End PerformSelect]");
+			}
+			
+			protected override void PerformDataBinding (IEnumerable data) {
+				dataBindTrace.Append ("[Start PerformDataBinding]");
+				base.PerformDataBinding (data);
+				dataBindTrace.Append ("[End PerformDataBinding]");
+			}
+
+			protected override void OnDataBinding (EventArgs e) {
+				dataBindTrace.Append ("[Start OnDataBinding]");
+				base.OnDataBinding (e);
+				dataBindTrace.Append ("[End OnDataBinding]");
+			}
+
+			protected override void OnDataBound (EventArgs e) {
+				dataBindTrace.Append ("[Start OnDataBound]");
+				base.OnDataBound (e);
+				dataBindTrace.Append ("[End OnDataBound]");
+			}
+
+			protected override DataSourceView GetData () {
+				dataBindTrace.Append ("[Start GetData]");
+				DataSourceView d = base.GetData ();
+				dataBindTrace.Append ("[End GetData]");
+				return d;
+			}
+
+			public DataSourceView DoGetData () {
+				return GetData ();
+			}
+
+			public IDataSource DoGetDataSource () {
+				return GetDataSource ();
+			}
+
+			public void DoEnsureDataBound () {
+				EnsureDataBound();
+			}
+		}
+
+		[Test]
+		public void DataBoundControl_GetData () {
+			Page p = new Page ();
+			MyDataBoundControl dc = new MyDataBoundControl ();
+			p.Controls.Add (dc);
+
+			DataSourceView data = dc.DoGetData ();
+			Assert.IsNotNull (data, "GetData");
+
+			IDataSource dataSource = dc.DoGetDataSource ();
+			Assert.IsNotNull (dataSource, "GetDataSource");
+		}
+
+		[Test]
+		public void DataBoundControl_DataBindFlow () {
+			Page p = new Page ();
+			MyDataBoundControl dc = new MyDataBoundControl ();
+			p.Controls.Add (dc);
+			dc.DataBind ();
+			string expected = "[Start DataBind][Start PerformSelect][Start OnDataBinding][End OnDataBinding][Start GetData][End GetData][Start PerformDataBinding][End PerformDataBinding][Start OnDataBound][End OnDataBound][End PerformSelect][End DataBind]";
+			Assert.AreEqual (expected, dc.DataBindTrace, "DataBindFlow");
+		}
 		
+		[Test]
+		[Category ("NunitWeb")]
+		public void DataBoundControl_DataBindFlow2 () {
+			new WebTest (PageInvoker.CreateOnLoad (DataBoundControl_DataBindFlow2_Load)).Run ();
+		}
+
+		public static void DataBoundControl_DataBindFlow2_Load(Page p){
+			MyDataBoundControl dc = new MyDataBoundControl ();
+			p.Controls.Add (dc);
+			dc.DataSourceID = "ObjectDataSource1";
+			ObjectDataSource ods = new ObjectDataSource (typeof(Control).FullName, "ToString");
+			ods.ID = "ObjectDataSource1";
+			p.Controls.Add (ods);
+			dc.DataBind ();
+			string expected = "[Start DataBind][Start PerformSelect][Start GetData][End GetData][Start OnDataBinding][End OnDataBinding][Start PerformDataBinding][End PerformDataBinding][Start OnDataBound][End OnDataBound][End PerformSelect][End DataBind]";
+			Assert.AreEqual (expected, dc.DataBindTrace, "DataBindFlow");
+		}
+
 		[Test]
 		public void Defaults ()
 		{

@@ -84,15 +84,11 @@ namespace System.Web.UI.WebControls {
 				return (IDataSource) ctrl;
 			}
 			
-			if (DataSource == null) return null;
-			
 			IDataSource ds = DataSource as IDataSource;
 			if (ds != null) return ds;
 			
-			IEnumerable ie = DataSourceHelper.GetResolvedDataSource (DataSource, DataMember);
-			if (ie != null) return new CollectionDataSource (ie);
-			
-			throw new HttpException (string.Format ("Unexpected data source type: {0}", DataSource.GetType()));
+			IEnumerable ie = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
+			return new CollectionDataSource (ie);
 		}
 		
 		protected virtual DataSourceView GetData ()
@@ -192,17 +188,23 @@ namespace System.Web.UI.WebControls {
 			if (!IsBoundUsingDataSourceID)
 				OnDataBinding (EventArgs.Empty);
 
-			DataSourceView view = GetData ();
-			if (view != null) {
-				view.Select (SelectArguments, new DataSourceViewSelectCallback (OnSelect));
-				MarkAsDataBound ();
-			}
+			GetData ().Select (SelectArguments, new DataSourceViewSelectCallback (OnSelect));
+			MarkAsDataBound ();
+			
+			// Raise the DataBound event.
+			OnDataBound (EventArgs.Empty);
 		}
 		
 		void OnSelect (IEnumerable data)
 		{
+			// Call OnDataBinding only if it has not already been 
+			// called in the PerformSelect method.
+			if (IsBoundUsingDataSourceID) {
+				OnDataBinding (EventArgs.Empty);
+			}
+			// The PerformDataBinding method binds the data in the  
+			// retrievedData collection to elements of the data-bound control.
 			PerformDataBinding (data);
-			OnDataBound (EventArgs.Empty);
 		}
 		
 		protected virtual DataSourceSelectArguments CreateDataSourceSelectArguments ()
@@ -235,4 +237,5 @@ namespace System.Web.UI.WebControls {
 	}
 }
 #endif
+
 

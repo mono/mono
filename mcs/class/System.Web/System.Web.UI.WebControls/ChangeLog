@@ -1,3 +1,9 @@
+2006-09-25 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DataBoundControl.cs: fixed: DataBind flow
+	GetData return "empty" DataSourceView when no DataSource and DataSourceID
+	was assigned to cause PerformDataBinding be called. 	
+		
 2006-09-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataList.cs: use ExtractTemplateRows to determine if the style is
