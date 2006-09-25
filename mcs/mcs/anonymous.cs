@@ -259,7 +259,7 @@ namespace Mono.CSharp {
 			} 
 
 			method = new Method (
-				(TypeContainer) ec.TypeContainer,
+				(TypeContainer) ec.TypeContainer, null,
 				new TypeExpression (invoke_mb.ReturnType, loc),
 				method_modifiers, false, new MemberName ("<#AnonymousMethod>" + anonymous_method_count++, loc),
 				Parameters, null);

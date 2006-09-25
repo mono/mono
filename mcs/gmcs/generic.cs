@@ -2501,27 +2501,6 @@ namespace Mono.CSharp {
 			method = ((MethodInfo)method).MakeGenericMethod (infered_types);
 			return true;
 		}
-
-		public static bool IsNullableType (Type t)
-		{
-			return generic_nullable_type == DropGenericTypeArguments (t);
-		}
-
-		public static bool IsNullableTypeOf (Type t, Type nullable)
-		{
-			if (!IsNullableType (t))
-				return false;
-
-			return GetTypeArguments (t) [0] == nullable;
-		}
-
-		public static bool IsNullableValueType (Type t)
-		{
-			if (!IsNullableType (t))
-				return false;
-
-			return GetTypeArguments (t) [0].IsValueType;
-		}
 	}
 
 	public abstract class Nullable

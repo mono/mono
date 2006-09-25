@@ -338,7 +338,7 @@ namespace Mono.CSharp {
 		//
 		// Our constructor
 		//
-		public Iterator (IMethodData m_container, DeclSpace parent,
+		public Iterator (IMethodData m_container, DeclSpace parent, GenericMethod generic,
 				 int modifiers)
 			: base (parent.NamespaceEntry, parent, MakeProxyName (m_container.MethodName.Name, m_container.Location),
 				(modifiers & Modifiers.UNSAFE) | Modifiers.PRIVATE, null)
@@ -632,7 +632,7 @@ namespace Mono.CSharp {
 			MemberName name = new MemberName (left, "GetEnumerator", Location);
 
 			Method get_enumerator = new Method (
-				this,
+				this, null,
 				new TypeExpression (TypeManager.ienumerator_type, Location),
 				0, false, name,
 				Parameters.EmptyReadOnlyParameters, null);
@@ -839,7 +839,7 @@ namespace Mono.CSharp {
 			protected override bool CreateMethodHost (EmitContext ec)
 			{
 				method = new Method (
-					iterator, TypeManager.system_boolean_expr,
+					iterator, null, TypeManager.system_boolean_expr,
 					Modifiers.PUBLIC, false, new MemberName ("MoveNext", loc),
 					Parameters.EmptyReadOnlyParameters, null);
 
@@ -998,7 +998,7 @@ namespace Mono.CSharp {
 		void Define_Reset ()
 		{
 			Method reset = new Method (
-				this, TypeManager.system_void_expr, Modifiers.PUBLIC,
+				this, null, TypeManager.system_void_expr, Modifiers.PUBLIC,
 				false, new MemberName ("Reset", Location),
 				Parameters.EmptyReadOnlyParameters, null);
 			AddMethod (reset);
@@ -1013,7 +1013,7 @@ namespace Mono.CSharp {
 		void Define_Dispose ()
 		{
 			dispose = new Method (
-				this, TypeManager.system_void_expr, Modifiers.PUBLIC,
+				this, null, TypeManager.system_void_expr, Modifiers.PUBLIC,
 				false, new MemberName ("Dispose", Location),
 				Parameters.EmptyReadOnlyParameters, null);
 			AddMethod (dispose);

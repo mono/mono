@@ -1078,7 +1078,7 @@ method_header
 	  {
 		MemberName name = (MemberName) $4;
 
-		Method method = new Method (current_class, (Expression) $3, (int) $2,
+		Method method = new Method (current_class, null, (Expression) $3, (int) $2,
 					    false, name,  (Parameters) $6, (Attributes) $1);
 
 		current_local_parameters = (Parameters) $6;
@@ -1095,7 +1095,7 @@ method_header
 	  {
 		MemberName name = (MemberName) $4;
 
-		Method method = new Method (current_class, TypeManager.system_void_expr,
+		Method method = new Method (current_class, null, TypeManager.system_void_expr,
 					    (int) $2, false, name, (Parameters) $6,
 					    (Attributes) $1);
 
@@ -1115,7 +1115,7 @@ method_header
 		Report.Error (1585, name.Location, 
 			"Member modifier `{0}' must precede the member type and name", Modifiers.Name ((int) $4));
 
-		Method method = new Method (current_class, TypeManager.system_void_expr,
+		Method method = new Method (current_class, null, TypeManager.system_void_expr,
 					    0, false, name, (Parameters) $7, (Attributes) $1);
 
 		current_local_parameters = (Parameters) $7;
@@ -1628,7 +1628,7 @@ interface_method_declaration
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  SEMICOLON
 	  {
-		$$ = new Method (current_class, (Expression) $3, (int) $2, true,
+		$$ = new Method (current_class, null, (Expression) $3, (int) $2, true,
 				 (MemberName) $4, (Parameters) $6, (Attributes) $1);
 		if (RootContext.Documentation != null)
 			((Method) $$).DocComment = Lexer.consume_doc_comment ();
@@ -1637,7 +1637,7 @@ interface_method_declaration
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  OPEN_BRACE opt_statement_list CLOSE_BRACE
 	  {
-		$$ = new Method (current_class, (Expression) $3, (int) $2, true,
+		$$ = new Method (current_class, null, (Expression) $3, (int) $2, true,
 				 (MemberName) $4, (Parameters) $6, (Attributes) $1);
 
 		Report.Error (531, lexer.Location, "`{0}': interface members cannot have a definition",

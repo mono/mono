@@ -2912,6 +2912,39 @@ public partial class TypeManager {
 		return false;
 #endif
 	}
+
+	public static bool IsNullableType (Type t)
+	{
+#if GMCS_SOURCE
+		return generic_nullable_type == DropGenericTypeArguments (t);
+#else
+		return false;
+#endif
+	}
+
+	public static bool IsNullableTypeOf (Type t, Type nullable)
+	{
+#if GMCS_SOURCE
+		if (!IsNullableType (t))
+			return false;
+
+		return GetTypeArguments (t) [0] == nullable;
+#else
+		return false;
+#endif
+	}
+
+	public static bool IsNullableValueType (Type t)
+	{
+#if GMCS_SOURCE
+		if (!IsNullableType (t))
+			return false;
+
+		return GetTypeArguments (t) [0].IsValueType;
+#else
+		return false;
+#endif
+	}
 #endregion
 
 #region MemberLookup implementation

@@ -1,3 +1,12 @@
+2006-09-25  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs (TypeManager.IsNullableType): New public function.
+	(TypeManager.IsNullableTypeOf): Likewise.
+	(TypeManager.IsNullableValueType): Likewise.
+
+	* class.cs (MethodCore): Added the `GenericMethod' argument from
+	gmcs and also unified all classes derived from `MethodCore' with gmcs.
+
 2006-09-24  Raja R Harinath  <harinath@gmail.com>
 
 	* convert.cs: Unify with gmcs version.

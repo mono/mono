@@ -205,6 +205,17 @@ namespace Mono.CSharp
 		{
 			throw new NotImplementedException ();
 		}
+
+		public bool DefineType (EmitContext ec, MethodBuilder mb,
+					MethodInfo implementing, bool is_override)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void EmitAttributes ()
+		{
+			throw new NotImplementedException ();
+		}
 	}
 
 	public class TypeArguments
