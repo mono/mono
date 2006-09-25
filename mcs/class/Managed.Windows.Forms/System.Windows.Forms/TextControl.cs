@@ -1008,7 +1008,7 @@ namespace System.Windows.Forms {
 
 			total = 1;
 
-			Console.Write("Line {0} [# {1}], Y: {1} Text {2}", line.line_no, line.GetHashCode(), line.Y, line.text != null ? line.text.ToString() : "undefined");
+			Console.Write("Line {0} [# {1}], Y: {2} Text {3}", line.line_no, line.GetHashCode(), line.Y, line.text != null ? line.text.ToString() : "undefined");
 
 			if (line.left == sentinel) {
 				Console.Write(", left = sentinel");

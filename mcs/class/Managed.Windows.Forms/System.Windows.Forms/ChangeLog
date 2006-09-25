@@ -1,3 +1,7 @@
+2006-09-25  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: Fix print out in debug method.
+	
 2006-09-24  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FontDialog.cs: Fixed the up/down arrow keys issue from bug #79478.
