@@ -354,7 +354,7 @@ namespace System.Windows.Forms {
 
 			while (tag != null) {
 				if (((tag.start - 1) <= pos) && (pos < (tag.start + tag.length - 1))) {
-					return tag;
+					return LineTag.GetFinalTag (tag);
 				}
 				tag = tag.next;
 			}
@@ -3346,7 +3346,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 					while (tag != null) {
 						if (index < (start + tag.start + tag.length)) {
 							line_out = line;
-							tag_out = tag;
+							tag_out = LineTag.GetFinalTag (tag);
 							pos = index - start;
 							return;
 						}
@@ -3357,12 +3357,12 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 
 							if (next_line != null) {
 								line_out = next_line;
-								tag_out = next_line.tags;
+								tag_out = LineTag.GetFinalTag (next_line.tags);
 								pos = 0;
 								return;
 							} else {
 								line_out = line;
-								tag_out = tag;
+								tag_out = LineTag.GetFinalTag (tag);
 								pos = line_out.text.Length;
 								return;
 							}
@@ -3559,11 +3559,11 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 					for (int pos = tag.start; pos < end; pos++) {
 						if (x < line.widths[pos]) {
 							index = pos;
-							return tag;
+							return LineTag.GetFinalTag (tag);
 						}
 					}
 					index=end;
-					return tag;
+					return LineTag.GetFinalTag (tag);
 				}
 				if (tag.next != null) {
 					tag = tag.next;
@@ -3574,7 +3574,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 					}
 
 					index = line.text.Length;
-					return tag;
+					return LineTag.GetFinalTag (tag);
 				}
 			}
 		}
@@ -4417,18 +4417,30 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 
 			// Beginning of line is a bit special
 			if (pos == 0) {
+				// Not sure if we should get the final tag here
 				return tag;
 			}
 
 			while (tag != null) {
 				if ((tag.start <= pos) && (pos < (tag.start+tag.length))) {
-					return tag;
+					return GetFinalTag (tag);
 				}
 
 				tag = tag.next;
 			}
 
 			return null;
+		}
+
+		// There can be multiple tags at the same position, we want to make
+		// sure we are using the very last tag at the given position
+		internal static LineTag GetFinalTag (LineTag tag)
+		{
+			LineTag res = tag;
+
+			while (res.next != null && res.next.length == 0)
+				res = res.next;
+			return res;
 		}
 
 		/// <summary>Combines 'this' tag with 'other' tag</summary>

@@ -1,5 +1,12 @@
 2006-09-25  Jackson Harper  <jackson@ximian.com>
 
+	* TextControl.cs: When getting a tag at the location there can be
+	multiple tags at the same spot, these are 0-lengthed tags that
+	appear when extra formatting has been stuck in a location.  We
+	need to pull out the last of these 0 lengthed tags.
+
+2006-09-25  Jackson Harper  <jackson@ximian.com>
+
 	* TextControl.cs: Fix print out in debug method.
 	* TextBoxBase.cs: When text is set bail if we are setting to the
 	previous value.
