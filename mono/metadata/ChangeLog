@@ -1,3 +1,11 @@
+
+Mon Sep 25 11:33:06 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, icall-def.h, icall.c, verify.c: changed the way
+	internal calls are defined to keep methods closer to the declaring
+	type and allow a significant reduction in runtime relocations and
+	memory usage.
+
 2006-09-21 Gert Driesen  <drieseng@users.sourceforge.net>
 
         * appdomain.c: Pass NULL to mono_get_exception_file_not_found2 as
