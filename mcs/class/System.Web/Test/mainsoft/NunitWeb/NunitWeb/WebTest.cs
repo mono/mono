@@ -411,7 +411,7 @@ namespace MonoTests.SystemWeb.Framework
 ////				"assemblies/hnnefdht/ASP/MyPage_aspx.class");
 //#endif
 #else
-			CopyResource (typeof (WebTest), "Web.config", "Web.config");
+			CopyResource (typeof (WebTest), "Web.mono.config", "Web.config");
 			CopyResource (typeof (WebTest), "MyPage.aspx", "MyPage.aspx");
 			CopyResource (typeof (WebTest), "MyPage.aspx.cs", "MyPage.aspx.cs");
 			CopyResource (typeof (WebTest), "MyPageWithMaster.aspx", "MyPageWithMaster.aspx");
