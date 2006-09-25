@@ -1,3 +1,8 @@
+2006-09-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SignedXmlTest.cs: Added tests for bug #79454 and bug #79483 (marked
+	NotWorking).
+
 2006-09-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* EncryptedXmlTest.cs, EncryptedXmlSample3.xml :
