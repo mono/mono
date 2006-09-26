@@ -356,6 +356,10 @@ namespace System.Windows.Forms
 			{
 				if (impl_list == null)
 					impl_list = new ArrayList ();
+
+				if (AllContains (control))
+					return;
+
 				all_controls = null;
 				impl_list.Add (control);
 

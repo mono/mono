@@ -1,3 +1,11 @@
+2006-09-26  Chris Toshok  <toshok@ximian.com>
+
+	* Control.cs (ControlCollection.AddImplicit): don't add the
+	control again if it's already in one of our lists.  This keeps us
+	from adding controls over and over again for comboboxes when their
+	handle gets recreated (as the combobox adds implicit controls in
+	OnHandleCreated).  Fixes the X11 errors in bug #79480.
+
 2006-09-26  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: When deleting characters make sure that any
