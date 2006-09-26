@@ -600,6 +600,9 @@ namespace System.Data {
 			get {
 				return _extendedProperties;
 			}
+#if NET_2_0
+			internal set { _extendedProperties = value; }
+#endif
 		}
 
 		[DataCategory ("Data")]

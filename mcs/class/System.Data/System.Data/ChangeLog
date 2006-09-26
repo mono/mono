@@ -1,5 +1,9 @@
 2006-09-26  Nagappan A  <anagappan@novell.com>
 
+	* DataTable.cs, DataSet.cs, DataColumn.cs, Constraint.cs,
+	DataRow.cs: Implementation of Binary Serialization /
+	Deserialization.
+
 	* DataTable.cs (RowsExist): Check rows based on version.
 
 	* DataRow.cs: Raise exception same as MS.NET. Thanks to

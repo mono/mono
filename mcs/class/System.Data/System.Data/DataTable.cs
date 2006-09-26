@@ -147,6 +147,231 @@ namespace System.Data {
 			_tableName = tableName;
 		}
 
+#if NET_2_0
+		internal void DeserializeConstraints (ArrayList arrayList)
+		{
+			bool bParentColumn = true;
+			bool bUniqueConstraintNavigate = false;
+			UniqueConstraint unique = null;
+			PropertyCollection extendedProperty = null;
+			for (int i = 0; i < arrayList.Count; i++) {
+				ArrayList tmpArrayList = (ArrayList) arrayList[i];
+				ArrayList fKeyChildColumns = new ArrayList ();
+				ArrayList fKeyParentColumns = new ArrayList ();
+				ArrayList uniqueDataColumns = new ArrayList ();
+				bParentColumn = true;
+				for (int j = 0; j < tmpArrayList.Count; j++) {
+					int [] array = tmpArrayList [j] as int [];
+					if (array == null)
+						continue;
+					int len = array.Length;
+					if (len == 1) {
+						uniqueDataColumns.Add (Columns [array [0]]);
+						if (bUniqueConstraintNavigate == false &&
+						    (string) tmpArrayList [0] == "U") {
+							bUniqueConstraintNavigate = false;
+							unique = new UniqueConstraint ((string) tmpArrayList[1],
+										       (DataColumn[]) uniqueDataColumns.
+										       ToArray (typeof (DataColumn)));
+							/*
+							  If UniqueConstraint already exist, don't add them
+							*/
+							if (Constraints.IndexOf (unique) != -1 ||
+							    Constraints.IndexOf ((string) tmpArrayList[1]) != -1)
+								continue;
+							Constraints.Add (unique);
+							for (j = 0; j < tmpArrayList.Count; j++) {
+								if (typeof (PropertyCollection) == tmpArrayList [j].GetType ()) {
+									Constraints [Constraints.Count - 1].
+									  ExtendedProperties = (PropertyCollection) tmpArrayList [j];
+									break;
+								}
+							}
+						}
+					} else if (len == 2) {
+						bUniqueConstraintNavigate = true;
+						if (bParentColumn) {
+							fKeyParentColumns.Add (dataSet.Tables [array[0]].
+									       Columns [array[1]]);
+							bParentColumn = false;
+						} else {
+							fKeyChildColumns.Add (dataSet.Tables [array[0]].
+									      Columns [array[1]]);
+							bParentColumn = true;
+						}
+					}
+				}
+				if ((string) tmpArrayList [0] == "F") {
+					ForeignKeyConstraint fKeyConstraint = new 
+					  ForeignKeyConstraint ((string) tmpArrayList [1],
+								(DataColumn []) fKeyParentColumns.ToArray (typeof (DataColumn)),
+								(DataColumn []) fKeyChildColumns.ToArray (typeof (DataColumn)));
+					Constraints.Add (fKeyConstraint);
+					Array ruleArray = (Array) tmpArrayList [4];
+					fKeyConstraint.AcceptRejectRule = (AcceptRejectRule) ruleArray.GetValue (0);
+					fKeyConstraint.UpdateRule = (Rule) ruleArray.GetValue (1);
+					fKeyConstraint.DeleteRule = (Rule) ruleArray.GetValue (2);
+					for (int j = 0; j < tmpArrayList.Count; j++) {
+						if (typeof (PropertyCollection) == tmpArrayList [j].GetType ()) {
+							Constraints [Constraints.Count - 1].
+							  ExtendedProperties = (PropertyCollection) tmpArrayList [j];
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		DataRowState GetCurrentRowState (BitArray rowStateBitArray, int i)
+		{
+			DataRowState currentRowState;
+			if (rowStateBitArray[i] == false &&
+			    rowStateBitArray[i+1] == false &&
+			    rowStateBitArray[i+2] == true)
+				currentRowState = DataRowState.Detached;
+			else if (rowStateBitArray[i] == false &&
+				 rowStateBitArray[i+1] == false &&
+				 rowStateBitArray[i+2] == false)
+				currentRowState = DataRowState.Unchanged;
+			else if (rowStateBitArray[i] == false &&
+				 rowStateBitArray[i+1] == true &&
+				 rowStateBitArray[i+2] == false)
+				currentRowState = DataRowState.Added;
+			else if (rowStateBitArray[i] == true &&
+				 rowStateBitArray[i+1] == true &&
+				 rowStateBitArray[i+2] == false)
+				currentRowState = DataRowState.Deleted;
+			else
+				currentRowState = DataRowState.Modified;
+			return currentRowState;
+		}
+
+		internal void DeserializeRecords (ArrayList arrayList, ArrayList nullBits, BitArray rowStateBitArray)
+		{
+			BitArray  nullBit = null;
+			int len = ((Array) arrayList [0]).Length;
+			object [] tmpArray = new object [arrayList.Count];
+			int k = 0;
+			DataRowState currentRowState;
+			for (int l = 0; l < len; l++) { // Columns
+				currentRowState = GetCurrentRowState (rowStateBitArray, k *3);
+				for (int j = 0; j < arrayList.Count; j++) { // Rows
+					Array array = (Array) arrayList [j];
+					nullBit = (BitArray) nullBits [j];
+					if (nullBit [l] == false) {
+						tmpArray [j] = array.GetValue (l);
+					} else {
+						tmpArray [j] = null;
+					}
+				}
+				LoadDataRow (tmpArray, false);
+				if (currentRowState == DataRowState.Modified) {
+					Rows[k].AcceptChanges ();
+					l++;
+					for (int j = 0; j < arrayList.Count; j++) {
+						Array array = (Array) arrayList [j];
+						nullBit = (BitArray) nullBits[j];
+						if (nullBit [l] == false) {
+							Rows [k][j] = array.GetValue (l);
+						} else {
+							Rows [k][j] = null;
+						}
+					}
+				} else if (currentRowState == DataRowState.Unchanged) {
+					Rows[k].AcceptChanges ();
+				} else if (currentRowState == DataRowState.Deleted) {
+					Rows[k].AcceptChanges ();
+					Rows[k].Delete ();
+				}
+				k++;
+			}
+		}
+
+		void BinaryDeserializeTable (SerializationInfo info)
+		{
+			ArrayList arrayList = null;
+			PropertyCollection propCollection = null;
+
+			TableName = info.GetString ("DataTable.TableName");
+			Namespace = info.GetString ("DataTable.Namespace");
+			Prefix = info.GetString ("DataTable.Prefix");
+			CaseSensitive = info.GetBoolean ("DataTable.CaseSensitive");
+			/*
+			  FIXME: Private variable available in SerializationInfo
+			  this.caseSensitiveAmbientCaseSensitive = info.GetBoolean("DataTable.caseSensitiveAmbientCaseSensitive");
+			  this.NestedInDataSet = info.GetBoolean("DataTable.NestedInDataSet");
+			  this.RepeatableElement = info.GetBoolean("DataTable.RepeatableElement");
+			  this.RemotingVersion = (System.Version) info.GetValue("DataTable.RemotingVersion",
+			  typeof(System.Version));
+			*/
+			Locale = new CultureInfo (info.GetInt32 ("DataTable.LocaleLCID"));
+			_extendedProperties = (PropertyCollection) info.GetValue ("DataTable.ExtendedProperties",
+										 typeof (PropertyCollection));
+			MinimumCapacity = info.GetInt32 ("DataTable.MinimumCapacity");
+			int columnsCount = info.GetInt32 ("DataTable.Columns.Count");
+
+			for (int i = 0; i < columnsCount; i++) {
+				Columns.Add ();
+				string prefix = "DataTable.DataColumn_" + i + ".";
+				Columns[i].ColumnName = info.GetString (prefix + "ColumnName");
+				Columns[i].Namespace = info.GetString (prefix + "Namespace");
+				Columns[i].Caption = info.GetString (prefix + "Caption");
+				Columns[i].Prefix = info.GetString (prefix + "Prefix");
+				Columns[i].DataType = (Type) info.GetValue (prefix + "DataType",
+									    typeof (Type));
+				Columns[i].DefaultValue = (DBNull) info.GetValue (prefix + "DefaultValue",
+										  typeof (DBNull));
+				Columns[i].AllowDBNull = info.GetBoolean (prefix + "AllowDBNull");
+				Columns[i].AutoIncrement = info.GetBoolean (prefix + "AutoIncrement");
+				Columns[i].AutoIncrementStep = info.GetInt64 (prefix + "AutoIncrementStep");
+				Columns[i].AutoIncrementSeed = info.GetInt64(prefix + "AutoIncrementSeed");
+				Columns[i].ReadOnly = info.GetBoolean (prefix + "ReadOnly");
+				Columns[i].MaxLength = info.GetInt32 (prefix + "MaxLength");
+				/*
+				  FIXME: Private variable available in SerializationInfo
+				  this.Columns[i].SimpleType = info.GetString("DataTable.DataColumn_" +
+				  i + ".SimpleType");
+				  this.Columns[i].AutoIncrementCurrent = info.GetInt64("DataTable.DataColumn_" +
+				  i + ".AutoIncrementCurrent");
+				  this.Columns[i].XmlDataType = info.GetString("DataTable.DataColumn_" +
+				  i + ".XmlDataType");
+				*/
+				Columns[i].ExtendedProperties = (PropertyCollection) info.GetValue (prefix + "ExtendedProperties",
+												    typeof (PropertyCollection));
+				if (Columns[i].DataType == typeof (DataSetDateTime))
+					Columns[i].DateTimeMode = (DataSetDateTime) info.GetValue (prefix + "DateTimeMode",
+												   typeof (DataSetDateTime));
+				Columns[i].ColumnMapping = (MappingType) info.GetValue (prefix + "ColumnMapping",
+											typeof (MappingType));
+				try {
+					Columns[i].Expression = info.GetString (prefix + "Expression");
+
+					prefix = "DataTable_0.";
+
+					arrayList = (ArrayList) info.GetValue (prefix + "Constraints",
+									       typeof (ArrayList));
+					if (Constraints == null)
+						Constraints = new ConstraintCollection (this);
+					DeserializeConstraints (arrayList);
+				} catch (SerializationException ex) {
+				}
+			}
+			try {
+				String prefix = "DataTable_0.";
+				ArrayList nullBits = (ArrayList) info.GetValue (prefix + "NullBits",
+										typeof (ArrayList));
+				arrayList = (ArrayList) info.GetValue (prefix + "Records",
+								       typeof (ArrayList));
+				BitArray rowStateBitArray = (BitArray) info.GetValue (prefix + "RowStates",
+										      typeof (BitArray));
+				Hashtable htRowErrors = (Hashtable) info.GetValue (prefix + "RowErrors",
+										  typeof (Hashtable));
+				DeserializeRecords (arrayList, nullBits, rowStateBitArray);
+			} catch (SerializationException ex) {
+			}
+		}
+#endif
+
 		/// <summary>
 		/// Initializes a new instance of the DataTable class with the SerializationInfo and the StreamingContext.
 		/// </summary>
@@ -154,26 +379,43 @@ namespace System.Data {
 		protected DataTable (SerializationInfo info, StreamingContext context)
 			: this () 
 		{
-			string schema = info.GetString ("XmlSchema");
-			string data = info.GetString ("XmlDiffGram");
+#if NET_2_0
+			SerializationInfoEnumerator e = info.GetEnumerator ();
+			SerializationFormat serializationFormat = SerializationFormat.Xml;
+
+			while (e.MoveNext()) {
+				if (e.ObjectType == typeof(System.Data.SerializationFormat)) {
+					serializationFormat = (SerializationFormat) e.Value;
+					break;
+				}
+			}
+			if (serializationFormat == SerializationFormat.Xml) {
+#endif
+				string schema = info.GetString ("XmlSchema");
+				string data = info.GetString ("XmlDiffGram");
 			
-			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema (new StringReader (schema));
-			ds.Tables [0].CopyProperties (this);
-			ds = new DataSet ();
-			ds.Tables.Add (this);
-			ds.ReadXml (new StringReader (data), XmlReadMode.DiffGram);
-			ds.Tables.Remove (this);
-/* keeping for a while. With the change above, we shouldn't have to consider 
- * DataTable mode in schema inference/read.
-			XmlSchemaMapper mapper = new XmlSchemaMapper (this);
-			XmlTextReader xtr = new XmlTextReader(new StringReader (schema));
-			mapper.Read (xtr);
+				DataSet ds = new DataSet ();
+				ds.ReadXmlSchema (new StringReader (schema));
+				ds.Tables [0].CopyProperties (this);
+				ds = new DataSet ();
+				ds.Tables.Add (this);
+				ds.ReadXml (new StringReader (data), XmlReadMode.DiffGram);
+				ds.Tables.Remove (this);
+				/* keeping for a while. With the change above, we shouldn't have to consider 
+				 * DataTable mode in schema inference/read.
+				 XmlSchemaMapper mapper = new XmlSchemaMapper (this);
+				 XmlTextReader xtr = new XmlTextReader(new StringReader (schema));
+				 mapper.Read (xtr);
 			
-			XmlDiffLoader loader = new XmlDiffLoader (this);
-			xtr = new XmlTextReader(new StringReader (data));
-			loader.Load (xtr);
-*/
+				 XmlDiffLoader loader = new XmlDiffLoader (this);
+				 xtr = new XmlTextReader(new StringReader (data));
+				 loader.Load (xtr);
+				*/
+#if NET_2_0
+			} else /*if (Tables.RemotingFormat == SerializationFormat.Binary)*/ {
+				BinaryDeserializeTable (info);
+			}
+#endif
 		}
 
 #if NET_2_0
@@ -207,6 +449,21 @@ namespace System.Data {
 			}
 		}
 		
+#if NET_2_0
+		SerializationFormat remotingFormat = SerializationFormat.Xml;
+		public SerializationFormat RemotingFormat {
+			get {
+				if (dataSet != null)
+					remotingFormat = dataSet.RemotingFormat;
+				return remotingFormat;
+			}
+			set {
+				if (dataSet != null)
+					throw new ArgumentException ("Cannot have different remoting format property value for DataSet and DataTable");
+				remotingFormat = value;
+			}
+		}
+#endif
 		internal ArrayList Indexes{
 			get { return _indexes; }
 		}
@@ -283,6 +540,11 @@ namespace System.Data {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public ConstraintCollection Constraints {
 			get { return _constraintCollection; }
+#if NET_2_0
+			internal set {
+				_constraintCollection = value;
+			}
+#endif
 		}
 
 		/// <summary>
@@ -295,6 +557,9 @@ namespace System.Data {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataSet DataSet {
 			get { return dataSet; }
+#if NET_2_0
+			set { dataSet = value; }
+#endif
 		}
 
 		
@@ -1136,33 +1401,256 @@ namespace System.Data {
 			}	
 		}
 
+#if NET_2_0
+		internal void BinarySerializeProperty (SerializationInfo info)
+		{
+			Version vr = new Version (2, 0);
+			info.AddValue ("DataTable.RemotingVersion", vr);
+			info.AddValue ("DataTable.RemotingFormat", RemotingFormat);
+			info.AddValue ("DataTable.TableName", TableName);
+			info.AddValue ("DataTable.Namespace", Namespace);
+			info.AddValue ("DataTable.Prefix", Prefix);
+			info.AddValue ("DataTable.CaseSensitive", CaseSensitive);
+			/*
+			  FIXME: Required by MS.NET
+			  caseSensitiveAmbient, NestedInDataSet, RepeatableElement
+			*/
+			info.AddValue ("DataTable.caseSensitiveAmbient", true);
+			info.AddValue ("DataTable.NestedInDataSet", true);
+			info.AddValue ("DataTable.RepeatableElement", false);
+			info.AddValue ("DataTable.LocaleLCID", Locale.LCID);
+			info.AddValue ("DataTable.MinimumCapacity", MinimumCapacity);
+			info.AddValue ("DataTable.Columns.Count", Columns.Count);
+			info.AddValue ("DataTable.ExtendedProperties", _extendedProperties);
+			for (int i = 0; i < Columns.Count; i++) {
+				info.AddValue ("DataTable.DataColumn_" + i + ".ColumnName",
+					       Columns[i].ColumnName);
+				info.AddValue ("DataTable.DataColumn_" + i + ".Namespace",
+					       Columns[i].Namespace);
+				info.AddValue ("DataTable.DataColumn_" + i + ".Caption",
+					       Columns[i].Caption);
+				info.AddValue ("DataTable.DataColumn_" + i + ".Prefix",
+					       Columns[i].Prefix);
+				info.AddValue ("DataTable.DataColumn_" + i + ".DataType",
+					       Columns[i].DataType, typeof (Type));
+				info.AddValue ("DataTable.DataColumn_" + i + ".DefaultValue",
+					       Columns[i].DefaultValue, typeof (DBNull));
+				info.AddValue ("DataTable.DataColumn_" + i + ".AllowDBNull",
+					       Columns[i].AllowDBNull);
+				info.AddValue ("DataTable.DataColumn_" + i + ".AutoIncrement",
+					       Columns[i].AutoIncrement);
+				info.AddValue ("DataTable.DataColumn_" + i + ".AutoIncrementStep",
+					       Columns[i].AutoIncrementStep);
+				info.AddValue ("DataTable.DataColumn_" + i + ".AutoIncrementSeed",
+					       Columns[i].AutoIncrementSeed);
+				info.AddValue ("DataTable.DataColumn_" + i + ".ReadOnly",
+					       Columns[i].ReadOnly);
+				info.AddValue ("DataTable.DataColumn_" + i + ".MaxLength",
+					       Columns[i].MaxLength);
+				info.AddValue ("DataTable.DataColumn_" + i + ".ExtendedProperties",
+					       Columns[i].ExtendedProperties);
+				info.AddValue ("DataTable.DataColumn_" + i + ".DateTimeMode",
+					       Columns[i].DateTimeMode);
+				info.AddValue ("DataTable.DataColumn_" + i + ".ColumnMapping",
+					       Columns[i].ColumnMapping, typeof (MappingType));
+				/*
+				  FIXME: Required by MS.NET
+				  SimpleType, AutoIncrementCurrent, XmlDataType
+				*/
+				info.AddValue ("DataTable.DataColumn_" + i + ".SimpleType",
+					       null, typeof (string));
+				info.AddValue ("DataTable.DataColumn_" + i + ".AutoIncrementCurrent",
+					       Columns[i].AutoIncrementValue());
+				info.AddValue ("DataTable.DataColumn_" + i + ".XmlDataType",
+					       null, typeof (string));
+			}
+			/*
+			  FIXME: Required by MS.NET
+			  TypeName
+			*/
+			info.AddValue ("DataTable.TypeName", null, typeof (string));
+		}
+
+		internal void SerializeConstraints (SerializationInfo info, string prefix)
+		{
+			ArrayList constraintArrayList = new ArrayList ();
+			for (int j = 0; j < Constraints.Count; j++) {
+				ArrayList constraintList = new ArrayList ();
+				if (Constraints[j].GetType () == typeof (UniqueConstraint)) {
+					constraintList.Add ("U");
+					UniqueConstraint unique = (UniqueConstraint) Constraints [j];
+					constraintList.Add (unique.ConstraintName);
+					DataColumn [] columns = unique.Columns;
+					int [] tmpArray = new int [columns.Length];
+					for (int k = 0; k < columns.Length; k++)
+						tmpArray [k] = unique.Table.Columns.IndexOf (unique.Columns [k]);
+					constraintList.Add (tmpArray);
+					constraintList.Add (unique.IsPrimaryKey);
+					constraintList.Add (unique.ExtendedProperties);
+				} else if (Constraints[j].GetType() == typeof (ForeignKeyConstraint)) {
+					constraintList.Add ("F");
+					ForeignKeyConstraint fKey = (ForeignKeyConstraint) Constraints [j];
+					constraintList.Add (fKey.ConstraintName);
+
+					// Parent Columns - FIXME: To handle multiple parent columns
+					int [] tmpArray = new int[2];
+					DataTable tmpDataTable = fKey.RelatedTable;
+					tmpArray [0] = DataSet.Tables.IndexOf (tmpDataTable);
+					tmpArray [1] = tmpDataTable.Columns.IndexOf (fKey.RelatedColumns[0]);
+					constraintList.Add (tmpArray);
+
+					// Child Columns - FIXME: To handle multiple child columns
+					tmpArray = new int [2];
+					tmpDataTable = fKey.Table;
+					tmpArray [0] = DataSet.Tables.IndexOf (tmpDataTable);
+					tmpArray [1] = tmpDataTable.Columns.IndexOf (fKey.Columns [0]);
+					constraintList.Add (tmpArray);
+
+					tmpArray = new int[3];
+					tmpArray [0] = (int) fKey.AcceptRejectRule;
+					tmpArray [1] = (int) fKey.UpdateRule;
+					tmpArray [2] = (int) fKey.DeleteRule;
+					constraintList.Add (tmpArray);
+
+					constraintList.Add (fKey.ExtendedProperties);
+				}
+				else
+					continue;
+				constraintArrayList.Add (constraintList);
+			}
+			info.AddValue (prefix, constraintArrayList, typeof (ArrayList));
+		}
+
+		internal void BinarySerialize (SerializationInfo info, string prefix)
+		{
+			int columnsCount = Columns.Count;
+			int rowsCount = Rows.Count;
+			int recordsCount = Rows.Count;
+			ArrayList recordList = new ArrayList ();
+			ArrayList bitArrayList = new ArrayList ();
+			BitArray rowStateBitArray = new BitArray (rowsCount * 3);
+			for (int k = 0; k < Rows.Count; k++) {
+				if (Rows[k].RowState == DataRowState.Modified)
+					recordsCount++;
+			}
+			SerializeConstraints (info, prefix + "Constraints");
+			for (int j = 0; j < columnsCount; j++) {
+				BitArray nullBits = new BitArray (rowsCount);
+				Array recordArray = Array.CreateInstance (Rows[0][j].GetType (), recordsCount);
+				DataColumn column = Columns [j];
+				for (int k = 0, l = 0; k < Rows.Count; k++, l++) {
+					DataRowVersion version;
+					DataRow dr = Rows[k];
+					if (dr.RowState == DataRowState.Modified) {
+						version = DataRowVersion.Default;
+						nullBits.Length = nullBits.Length + 1;
+						if (dr.IsNull (column, version) == false) {
+							nullBits [l] = false;
+							recordArray.SetValue (dr [j, version], l);
+						} else {
+							nullBits [l] = true;
+						}
+						l++;
+						version = DataRowVersion.Current;
+					} else if (dr.RowState == DataRowState.Deleted) {
+						version = DataRowVersion.Original;
+					} else {
+						version = DataRowVersion.Default;
+					}
+					if (dr.IsNull (column, version) == false) {
+						nullBits [l] =  false;
+						recordArray.SetValue (dr [j, version], l);
+					} else {
+						nullBits [l] = true;
+					}
+				}
+				recordList.Add (recordArray);
+				bitArrayList.Add (nullBits);
+			}
+			for (int j = 0; j < Rows.Count; j++) {
+				int l = j * 3;
+				DataRowState rowState = Rows [j].RowState;
+				if (rowState == DataRowState.Detached) {
+					rowStateBitArray [l] = false;
+					rowStateBitArray [l + 1] = false;
+					rowStateBitArray [l + 2] = true;
+				} else if (rowState == DataRowState.Unchanged) {
+					rowStateBitArray [l] = false;
+					rowStateBitArray [l + 1] = false;
+					rowStateBitArray [l + 2] = false;
+				} else if (rowState == DataRowState.Added) {
+					rowStateBitArray [l] = false;
+					rowStateBitArray [l + 1] = true;
+					rowStateBitArray [l + 2] = false;
+				} else if (rowState == DataRowState.Deleted) {
+					rowStateBitArray [l] = true;
+					rowStateBitArray [l + 1] = true;
+					rowStateBitArray [l + 2] = false;
+				} else {
+					rowStateBitArray [l] = true;
+					rowStateBitArray [l + 1] = false;
+					rowStateBitArray [l + 2] = false;
+				}
+			}
+			info.AddValue (prefix + "Rows.Count", Rows.Count);
+			info.AddValue (prefix + "Records.Count", recordsCount);
+			info.AddValue (prefix + "Records", recordList, typeof (ArrayList));
+			info.AddValue (prefix + "NullBits", bitArrayList, typeof (ArrayList));
+			info.AddValue (prefix + "RowStates",
+				       rowStateBitArray, typeof (BitArray));
+			// FIXME: To get row errors
+			Hashtable htRowErrors = new Hashtable ();
+			info.AddValue (prefix + "RowErrors",
+				       htRowErrors, typeof (Hashtable));
+			// FIXME: To get column errors
+			Hashtable htColumnErrors = new Hashtable ();
+			info.AddValue (prefix + "ColumnErrors",
+				       htColumnErrors, typeof (Hashtable));
+		}
+#endif
+
 		/// <summary>
 		/// This member is only meant to support Mono's infrastructure 		
 		/// </summary>
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context) 
 		{
-			DataSet dset;
-			if (dataSet != null)
-				dset = dataSet;
-			else {
-				dset = new DataSet ("tmpDataSet");
-				dset.Tables.Add (this);
+#if NET_2_0
+			if (RemotingFormat == SerializationFormat.Xml) {
+#endif
+				DataSet dset;
+				if (dataSet != null)
+					dset = dataSet;
+				else {
+					dset = new DataSet ("tmpDataSet");
+					dset.Tables.Add (this);
+				}
+			
+				StringWriter sw = new StringWriter ();
+				XmlTextWriter tw = new XmlTextWriter (sw);
+				tw.Formatting = Formatting.Indented;
+				dset.WriteIndividualTableContent (tw, this, XmlWriteMode.DiffGram);
+				tw.Close ();
+			
+				StringWriter sw2 = new StringWriter ();
+				DataTableCollection tables = new DataTableCollection (dset);
+				tables.Add (this);
+				XmlSchemaWriter.WriteXmlSchema (dset, new XmlTextWriter (sw2), tables, null);
+				sw2.Close ();
+			
+				info.AddValue ("XmlSchema", sw2.ToString(), typeof(string));
+				info.AddValue ("XmlDiffGram", sw.ToString(), typeof(string));
+#if NET_2_0
+			} else /*if (RemotingFormat == SerializationFormat.Binary)*/ {
+				BinarySerializeProperty (info);
+				if (dataSet == null) {
+					for (int i = 0; i < Columns.Count; i++) {
+						info.AddValue ("DataTable.DataColumn_" + i + ".Expression",
+							       Columns[i].Expression);
+					}
+					BinarySerialize (info, "DataTable_0.");
+				}
 			}
-			
-			StringWriter sw = new StringWriter ();
-			XmlTextWriter tw = new XmlTextWriter (sw);
-			tw.Formatting = Formatting.Indented;
-			dset.WriteIndividualTableContent (tw, this, XmlWriteMode.DiffGram);
-			tw.Close ();
-			
-			StringWriter sw2 = new StringWriter ();
-			DataTableCollection tables = new DataTableCollection (dset);
-			tables.Add (this);
-			XmlSchemaWriter.WriteXmlSchema (dset, new XmlTextWriter (sw2), tables, null);
-			sw2.Close ();
-			
-			info.AddValue ("XmlSchema", sw2.ToString(), typeof(string));
-			info.AddValue ("XmlDiffGram", sw.ToString(), typeof(string));
+#endif
 		}
 
 #if NET_2_0

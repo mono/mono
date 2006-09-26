@@ -340,6 +340,20 @@ namespace System.Data {
 					return DataRowState.Deleted;
 				return DataRowState.Modified;
 			}
+#if NET_2_0
+			internal set {
+				if (DataRowState.Detached == value) {
+					Original = -1;
+					Current = -1;
+				}
+				if (DataRowState.Unchanged == value)
+					Original = Current;
+				if (DataRowState.Added == value)
+					Original = -1;
+				if (DataRowState.Deleted == value)
+					Current = -1;
+			}
+#endif
 		}
 
 #if NET_2_0
