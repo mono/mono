@@ -292,7 +292,7 @@ namespace MonoTests.System.Drawing{
 		
 		[Test]
 #if TARGET_JVM
-		[Category ("NotWorking")]
+		[NUnit.Framework.Category ("NotWorking")]
 #endif
 		public void TabsStops() 
 		{

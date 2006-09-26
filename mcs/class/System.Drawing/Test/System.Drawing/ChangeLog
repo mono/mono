@@ -1,3 +1,7 @@
+2006-09-26	Boris Kirzner <borisk@mainsoft.com>
+
+	* TestStringFormat.cs: fix build for TARGET_JVM.
+
 2006-09-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestGraphics.cs: Added more test cases for MeasureCharacterRanges,
