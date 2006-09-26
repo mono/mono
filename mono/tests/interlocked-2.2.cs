@@ -4,7 +4,7 @@ using System.Threading;
 public class InterlockTest
 {
 	public int test;
-	public int ltest;
+	public long ltest;
 
 	public static int Main() {
 		int a,b;
@@ -30,7 +30,7 @@ public class InterlockTest
 
 		/* long */
 		it.ltest = 2;
-		int lc = Interlocked.Add (ref it.ltest, 1);
+		long lc = Interlocked.Add (ref it.ltest, 1);
 		if (lc != 3)
 			return 5;
 
@@ -47,6 +47,14 @@ public class InterlockTest
 		if (Interlocked.Read (ref la) != 2)
 			return 9;
 
+		la = 1;
+		lc = Interlocked.Exchange (ref la, 2);
+		if (c != 1)
+			return 10;
+
+		if (la != 2)
+			return 11;
+
 		/* Generics */
 		InterlockTest o1 = new InterlockTest ();
 		InterlockTest o2 = new InterlockTest ();
@@ -54,15 +62,15 @@ public class InterlockTest
 
 		InterlockTest o3 = Interlocked.CompareExchange (ref o, o2, o2);
 		if (o3 != o1)
-			return 10;
+			return 12;
 		if (o != o1)
-			return 11;
+			return 13;
 
 		InterlockTest o4 = Interlocked.CompareExchange (ref o, o2, o1);
 		if (o4 != o1)
-			return 12;
+			return 14;
 		if (o != o2)
-			return 13;
+			return 15;
 
 		Console.WriteLine ("done!");
 

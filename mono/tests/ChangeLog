@@ -1,4 +1,7 @@
-<<<<<<< .working
+2006-09-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* interlocked-2.2.cs: Fix long tests and add Interlocked.Exchange(long) test.
+
 2006-06-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* interlocked-2.2.cs: Add Interlocked.Read (long) test.
@@ -7,7 +10,6 @@
 
 	* libtest.c: Fix merge problem.
 
-=======
 2006-09-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* libtest.c (mono_test_marshal_stringbuilder_default): Null terminate string to
