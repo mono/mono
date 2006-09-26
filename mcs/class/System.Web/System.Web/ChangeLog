@@ -1,3 +1,13 @@
+2006-09-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* QueueManager.cs: if disposed, always return null for next request.
+	* HttpRuntime.cs: dispose the queue manager when shutting down the
+	domain. This will close pending requests with a 503.
+	* HttpApplication.cs: release the handler before marking the request
+	as completed. If in PipelineDone context is null, use
+	HttpContext.Current. Fixes some of those "Tick detected an unhandled
+	exception" errors printed out.
+
 2006-09-11  Andrew Skiba <andrews@mainsoft.com>
 
 	* XmlSiteMapProvider.cs: ifdef TARGET_JVM

@@ -78,7 +78,7 @@ namespace System.Web
 		public HttpWorkerRequest GetNextRequest (HttpWorkerRequest req)
 		{
 			if (!CanExecuteRequest (req)) {
-				if (req != null) {
+				if (!disposing && req != null) {
 					lock (queue) {
 						Queue (req);
 					}

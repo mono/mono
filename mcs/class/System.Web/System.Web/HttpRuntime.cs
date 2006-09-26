@@ -320,6 +320,7 @@ namespace System.Web {
 		//
 		static void ShutdownAppDomain (object args)
 		{
+			queue_manager.Dispose ();
 			// This will call Session_End if needed.
 			Cache.InvokePrivateCallbacks ();
 			// Kill our application.

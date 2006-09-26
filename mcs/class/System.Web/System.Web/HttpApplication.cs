@@ -787,12 +787,17 @@ namespace System.Web {
 			}
 
 			try {
-
 				OutputPage ();
 			} catch (Exception e) {
 				Console.WriteLine ("Internal error: OutputPage threw an exception " + e);
 			} finally {
 				context.WorkerRequest.EndOfRequest();
+				if (factory != null && context.Handler != null){
+					factory.ReleaseHandler (context.Handler);
+					context.Handler = null;
+					factory = null;
+				}
+				
 				if (begin_iar != null){
 					try {
 						begin_iar.Complete ();
@@ -802,17 +807,13 @@ namespace System.Web {
 						// Not really too bad, since the only failure might be
 						// `HttpRuntime.request_processed'
 						//
+					} finally {
+						done.Set ();
 					}
+				} else {
+					done.Set ();
 				}
 				
-				done.Set ();
-
-				if (factory != null && context.Handler != null){
-					factory.ReleaseHandler (context.Handler);
-					factory = null;
-				}
-				
-				context.Handler = null;
 				// context = null; -> moved to PostDone
 				pipeline = null;
 				current_ai = null;
@@ -1018,6 +1019,8 @@ namespace System.Web {
 				th.CurrentCulture = prev_app_culture;
 
 #if !TARGET_J2EE
+			if (context == null)
+				context = HttpContext.Current;
 			HttpRuntime.TimeoutManager.Remove (context);
 #endif
 			context = null;
