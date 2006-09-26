@@ -1,5 +1,10 @@
 2006-09-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-exceptions.c (mono_handle_exception): Special case ia64 too when determining
+	whenever an exception is caught by a try block.
+
+	* mini-ia64.c (mono_arch_allocate_vars): Fix an assert.
+
 	* method-to-ir.c mini-x86.h mini-x86.c mini-amd64.h mini-amd64.c: Move the rest of
 	the Interlocked instrins creation code to mini_emit_inst_for_method () as well.
 
