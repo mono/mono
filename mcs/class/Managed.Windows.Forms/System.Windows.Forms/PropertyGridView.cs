@@ -523,7 +523,10 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			if (this.property_grid.SelectedGridItem != null) {
 				PropertyDescriptor desc = property_grid.SelectedGridItem.PropertyDescriptor;
 				if (desc != null) {
-					desc.SetValue(property_grid.SelectedObject, newVal);
+					object target = property_grid.SelectedObject;
+					if (property_grid.SelectedGridItem.Parent != null)
+						target = property_grid.SelectedGridItem.Parent.Value;
+					desc.SetValue(target, newVal);
 				}
 			}
 		}

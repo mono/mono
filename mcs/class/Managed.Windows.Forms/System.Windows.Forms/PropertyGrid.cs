@@ -465,10 +465,18 @@ namespace System.Windows.Forms {
 					this.help_description_label.Text = selected_grid_item.PropertyDescriptor.Description;
 					
 				current_property_value = value.Value;
-				if (oldItem != null && oldItem.PropertyDescriptor != null)
-					oldItem.PropertyDescriptor.RemoveValueChanged(SelectedObject, new EventHandler(HandlePropertyValueChanged));
-				if (selected_grid_item.PropertyDescriptor != null)
-					selected_grid_item.PropertyDescriptor.AddValueChanged(SelectedObject, new EventHandler(HandlePropertyValueChanged));
+				if (oldItem != null && oldItem.PropertyDescriptor != null) {
+					object target = SelectedObject;
+					if (oldItem.Parent != null)
+						target = oldItem.Parent.Value;
+					oldItem.PropertyDescriptor.RemoveValueChanged(target, new EventHandler(HandlePropertyValueChanged));
+				}
+				if (selected_grid_item.PropertyDescriptor != null) {
+					object target = SelectedObject;
+					if (selected_grid_item.Parent != null)
+						target = selected_grid_item.Parent.Value;
+					selected_grid_item.PropertyDescriptor.AddValueChanged(target, new EventHandler(HandlePropertyValueChanged));
+				}
 				OnSelectedGridItemChanged(new SelectedGridItemChangedEventArgs( oldItem, selected_grid_item));
 				
 			}
@@ -945,18 +953,19 @@ namespace System.Windows.Forms {
 			grid_items = new GridItemCollection();
 			foreach (object obj in selected_objects) {
 				if (obj != null) {
-					PopulateGridItemCollection(obj,grid_items, true);
+					PopulateGridItemCollection(obj,grid_items, true, null);
 				}
 			}
 		}
 
-		private void PopulateGridItemCollection (object obj, GridItemCollection grid_item_coll, bool recurse) {
+		private void PopulateGridItemCollection (object obj, GridItemCollection grid_item_coll, bool recurse, GridItem parent_grid_item) {
 			if (!recurse && !TypeDescriptor.GetConverter(obj).GetPropertiesSupported())
 				return;
 			PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(obj);
 			foreach (PropertyDescriptor property in properties) {
 				if (property.IsBrowsable) {
 					GridEntry grid_entry = new GridEntry(obj, property);
+					grid_entry.SetParent (parent_grid_item);
 					if (property_sort == PropertySort.Alphabetical || !recurse) {
 						if (grid_item_coll[property.Name] == null)
 							grid_item_coll.Add(property.Name,grid_entry);
@@ -967,6 +976,7 @@ namespace System.Windows.Forms {
 						GridItem cat_item = grid_item_coll[category];
 						if (cat_item == null) {
 							cat_item = new CategoryGridEntry(category);
+							(cat_item as CategoryGridEntry).SetParent (parent_grid_item);
 							grid_item_coll.Add(category,cat_item);
 						}
 						cat_item.GridItems.Add(property.Name,grid_entry);
@@ -974,7 +984,7 @@ namespace System.Windows.Forms {
 					if (recurse) {
 						object propObj = property.GetValue(obj);
 						if (propObj != null)
-							PopulateGridItemCollection(propObj,grid_entry.GridItems, false);
+							PopulateGridItemCollection(propObj,grid_entry.GridItems, false, grid_entry);
 					}
 					grid_entry.Expanded = false;
 				}

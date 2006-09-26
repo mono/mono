@@ -1,3 +1,12 @@
+2006-09-26  Mike Kestner  <mkestner@novell.com>
+
+	* GridEntry.cs : internal SetParent method.
+	* PropertyGrid.cs : attach to property changed on the proper
+	target if we have a hierarchical grid with subobjects. Setup
+	GridItem.Parent for hierarchical items.
+	* PropertyGridView.cs : Set value on the correct target for
+	hierarchical grids. [Fixes #78903]
+
 2006-09-26  Chris Toshok  <toshok@ximian.com>
 
 	* Control.cs (ChildNeedsRecreating): this should return true if
