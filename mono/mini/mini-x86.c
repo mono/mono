@@ -4746,57 +4746,6 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 			ins->inst_i1 = args [1];
 		}
 #endif
-	} else if(cmethod->klass->image == mono_defaults.corlib &&
-			   (strcmp (cmethod->klass->name_space, "System.Threading") == 0) &&
-			   (strcmp (cmethod->klass->name, "Interlocked") == 0)) {
-		/* FIXME: Fuse these with ldaddr */
-		if (strcmp (cmethod->name, "Increment") == 0 && fsig->params [0]->type == MONO_TYPE_I4) {
-			MonoInst *ins_iconst;
-
-			MONO_INST_NEW (cfg, ins_iconst, OP_ICONST);
-			ins_iconst->inst_c0 = 1;
-			ins_iconst->dreg = mono_alloc_ireg (cfg);
-			MONO_ADD_INS (cfg->cbb, ins_iconst);
-
-			MONO_INST_NEW (cfg, ins, OP_ATOMIC_ADD_NEW_I4);
-			ins->dreg = mono_alloc_ireg (cfg);
-			ins->inst_basereg = args [0]->dreg;
-			ins->inst_offset = 0;
-			ins->sreg2 = ins_iconst->dreg;
-			ins->type = STACK_I4;
-			MONO_ADD_INS (cfg->cbb, ins);
-		} else if (strcmp (cmethod->name, "Decrement") == 0 && fsig->params [0]->type == MONO_TYPE_I4) {
-			MonoInst *ins_iconst;
-
-			MONO_INST_NEW (cfg, ins_iconst, OP_ICONST);
-			ins_iconst->inst_c0 = -1;
-			ins_iconst->dreg = mono_alloc_ireg (cfg);
-			MONO_ADD_INS (cfg->cbb, ins_iconst);
-
-			MONO_INST_NEW (cfg, ins, OP_ATOMIC_ADD_NEW_I4);
-			ins->dreg = mono_alloc_ireg (cfg);
-			ins->inst_basereg = args [0]->dreg;
-			ins->inst_offset = 0;
-			ins->sreg2 = ins_iconst->dreg;
-			ins->type = STACK_I4;
-			MONO_ADD_INS (cfg->cbb, ins);
-		} else if (strcmp (cmethod->name, "Exchange") == 0 && fsig->params [0]->type == MONO_TYPE_I4) {
-			MONO_INST_NEW (cfg, ins, OP_ATOMIC_EXCHANGE_I4);
-			ins->dreg = mono_alloc_ireg (cfg);
-			ins->inst_basereg = args [0]->dreg;
-			ins->inst_offset = 0;
-			ins->sreg2 = args [1]->dreg;
-			ins->type = STACK_I4;
-			MONO_ADD_INS (cfg->cbb, ins);
-		} else if (strcmp (cmethod->name, "Add") == 0 && fsig->params [0]->type == MONO_TYPE_I4) {
-			MONO_INST_NEW (cfg, ins, OP_ATOMIC_ADD_NEW_I4);
-			ins->dreg = mono_alloc_ireg (cfg);
-			ins->inst_basereg = args [0]->dreg;
-			ins->inst_offset = 0;
-			ins->sreg2 = args [1]->dreg;
-			ins->type = STACK_I4;
-			MONO_ADD_INS (cfg->cbb, ins);
-		}
 	}
 
 	return ins;

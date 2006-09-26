@@ -1,5 +1,8 @@
 2006-09-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c mini-x86.h mini-x86.c mini-amd64.h mini-amd64.c: Move the rest of
+	the Interlocked instrins creation code to mini_emit_inst_for_method () as well.
+
 	* mini-amd64.c mini-amd64.c mini-x86.c mini-sparc.: Move check for OP_MEMORY_BARRIER
 	from mono_arch_emit_inst_for_method () to mini_emit_inst_for_method ().
 

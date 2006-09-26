@@ -237,6 +237,8 @@ typedef struct {
 #define MONO_ARCH_HAVE_CREATE_SPECIFIC_TRAMPOLINE 1
 #define MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE 1
 #define MONO_ARCH_HAVE_CREATE_VARS 1
+#define MONO_ARCH_HAVE_ATOMIC_ADD 1
+#define MONO_ARCH_HAVE_ATOMIC_EXCHANGE 1
 
 /* Used for optimization, not complete */
 #define MONO_ARCH_IS_OP_MEMBASE(opcode) ((opcode) == OP_X86_PUSH_MEMBASE)
