@@ -1,3 +1,7 @@
+2006-09-26 Yoni Klain <yonik@mainsoft.com>
+
+	* CheckBoxTest.cs: Some new tests was added.
+
 2006-09-25 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DataBoundControlTest.cs:  New test was added

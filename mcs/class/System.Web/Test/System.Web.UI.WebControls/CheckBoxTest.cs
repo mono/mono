@@ -4,6 +4,7 @@
 //
 // Author:
 //	Dick Porter  <dick@ximian.com>
+//      Yoni Klain   <Yonik@mainsoft.com>
 //
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
@@ -75,7 +76,36 @@ namespace MonoTests.System.Web.UI.WebControls {
 			
 			((IPostBackDataHandler) this).LoadPostData ("mykey", nvc);
 		}
+	}
+
+	public class PokerCheckBox : CheckBox
+	{
+		private bool checker;
+		public bool Checker
+		{
+			get { return checker; }
+		}
+
+		public void Reset ()
+		{
+			checker = false;
+		}
 		
+		public string Render ()
+		{
+			HtmlTextWriter writer = new HtmlTextWriter (new StringWriter ());
+			base.Render (writer);
+			return writer.InnerWriter.ToString ();
+		}
+
+		override protected void AddAttributesToRender (HtmlTextWriter writer)
+		{
+			Reset ();
+			base.AddAttributesToRender (writer);
+			writer.AddAttribute ("Attribute", "AttributeValue");
+			writer.AddStyleAttribute ("StyleAttribute", "StyleAttValue");
+			checker = true;
+		}
 	}
 
 	[TestFixture]
@@ -100,6 +130,60 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (String.Empty, c.ValidationGroup, "ValidationGroup");
 #endif
 		}
+#if NET_2_0
+		[Test]
+		[Category ("NotWorking")]
+		public void InputAttributesTest ()
+		{
+			TestCheckBox c = new TestCheckBox ();
+			c.InputAttributes.Add ("Atribute", "Test");
+		 	string html = c.Render ();
+			Assert.AreEqual ("<input type=\"checkbox\" Atribute=\"Test\" />", html, "Input Attribute fail");
+		}
+
+
+		[Test]
+		[Category ("NotWorking")]
+		public void LabelAttributesTest_1 ()
+		{
+			TestCheckBox c = new TestCheckBox ();
+			c.Text = "CheckBoxText";
+			c.LabelAttributes.Add ("Atribute", "Test");
+			string html = c.Render ();
+			Assert.AreEqual ("<input type=\"checkbox\" /><label for Atribute=\"Test\">CheckBoxText</label>", html, "Label Attributes fail#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void LabelAttributesTest_2 ()
+		{
+			TestCheckBox c = new TestCheckBox ();
+			c.LabelAttributes.Add ("Atribute", "Test");
+			string html = c.Render ();
+			Assert.AreEqual ("<input type=\"checkbox\" />", html, "Label Attributes fail#2");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void AddAttributesToRenderTest_1 ()
+		{
+			PokerCheckBox c = new PokerCheckBox ();
+			c.Text = "CheckBoxText";
+			string html = c.Render ();
+			Assert.AreEqual (true, c.Checker, "AddAttributesToRender dosn't called fail");
+			Assert.AreEqual ("<input Attribute=\"AttributeValue\" type=\"checkbox\" style=\"StyleAttribute:StyleAttValue;\" /><label for>CheckBoxText</label>", html, "Add Attributes To Render fail#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void AddAttributesToRenderTest_2 ()
+		{
+			PokerCheckBox c = new PokerCheckBox ();
+			string html = c.Render ();
+			Assert.AreEqual (true, c.Checker, "AddAttributesToRender dosn't called fail");
+			Assert.AreEqual ("<input Attribute=\"AttributeValue\" type=\"checkbox\" style=\"StyleAttribute:StyleAttValue;\" />", html, "Add Attributes To Render fail#2");
+		}
+#endif
 
 		[Test]
 		public void NullProperties ()
