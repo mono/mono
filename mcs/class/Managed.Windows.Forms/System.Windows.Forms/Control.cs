@@ -524,10 +524,7 @@ namespace System.Windows.Forms
 				list.Remove(value);
 
 				value.ChangeParent(null);
-
-				// Removing this temporarily because we have a bug somewhere else
-				// that this exposes
-				// value.Hide ();
+				value.Hide ();
 
 				owner.UpdateChildrenZOrder();
 			}
