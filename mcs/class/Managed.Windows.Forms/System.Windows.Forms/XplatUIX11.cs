@@ -4376,7 +4376,7 @@ namespace System.Windows.Forms {
 				#if DriverDebug || DriverDebugParent
 					Console.WriteLine("Parent for window {0} = {1}", XplatUI.Window(hwnd.Handle), XplatUI.Window(hwnd.parent != null ? hwnd.parent.Handle : IntPtr.Zero));
 				#endif
-				XReparentWindow(DisplayHandle, hwnd.whole_window, hwnd.parent.client_window, hwnd.x, hwnd.y);
+				XReparentWindow(DisplayHandle, hwnd.whole_window, hwnd.parent == null ? FosterParent : hwnd.parent.client_window, hwnd.x, hwnd.y);
 			}
 
 			return IntPtr.Zero;

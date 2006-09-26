@@ -517,14 +517,13 @@ namespace System.Windows.Forms
 			}
 
 			public virtual void Remove(Control value) {
-				all_controls = null;
-
 				owner.PerformLayout(value, "Parent");
 				owner.OnControlRemoved(new ControlEventArgs(value));
+
+				all_controls = null;
 				list.Remove(value);
 
 				value.ChangeParent(null);
-				value.Hide ();
 
 				owner.UpdateChildrenZOrder();
 			}
@@ -1345,9 +1344,9 @@ namespace System.Windows.Forms
 
 			parent = new_parent;
 
-			if (IsHandleCreated && (new_parent != null) && new_parent.IsHandleCreated) {
-				XplatUI.SetParent(Handle, new_parent.Handle);
-			}
+			if (IsHandleCreated)
+				XplatUI.SetParent(Handle,
+						  (new_parent == null || !new_parent.IsHandleCreated) ? IntPtr.Zero : new_parent.Handle);
 
 			OnParentChanged(EventArgs.Empty);
 
@@ -2229,6 +2228,7 @@ namespace System.Windows.Forms
 				if (parent!=value) {
 					if (value==null) {
 						parent.Controls.Remove(this);
+						parent = null;
 						return;
 					}
 

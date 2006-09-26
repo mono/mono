@@ -1,3 +1,23 @@
+2006-09-26  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIWin32.cs (SetParent): if parent == IntPtr.Zero (and the
+	control isn't a Form), call Win32ShowWindow to hide the window,
+	but don't update the control Visible property.  When we reparent
+	back to a parent control, call SetVisible in order for the
+	window's visibility to be reinstated.
+
+	* XplatUIX11.cs (SetParent): if hwnd.parent == null, reparent to
+	the FosterParent.
+
+	* Control.cs (ControlCollection.Remove): remove that value.Hide()
+	call for good, since it breaks MonoCalendar (and other things I'm
+	sure.) Also, set all_controls to null *after* the owner calls,
+	which end up regenerating it.
+	(ChangeParent): allow new_parent to be == null, passing
+	IntPtr.Zero down to XplatUI.
+
+	this fixes #79294 the right way.
+
 2006-09-26  Mike Kestner  <mkestner@novell.com>
 
 	* GridEntry.cs : internal SetParent method.
@@ -12,7 +32,7 @@
 	* Control.cs (ChildNeedsRecreating): this should return true if
 	either we're being recreated and the child is in our list, or our
 	parent is waiting for our recreation.
-	
+
 2006-09-26  Chris Toshok  <toshok@ximian.com>
 
 	* Control.cs (ControlCollection.Remove): reinstate the

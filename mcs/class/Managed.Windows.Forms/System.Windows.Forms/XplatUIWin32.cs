@@ -1566,6 +1566,15 @@ namespace System.Windows.Forms {
 		}
 
 		internal override IntPtr SetParent(IntPtr handle, IntPtr parent) {
+			Control c = Control.FromHandle (handle);
+			if (parent == IntPtr.Zero) {
+				if (!(c is Form)) {
+					Win32ShowWindow(handle, WindowPlacementFlags.SW_HIDE);
+				}
+			}
+			else
+				SetVisible (handle, c.Visible);
+				
 			return Win32SetParent(handle, parent);
 		}
 
