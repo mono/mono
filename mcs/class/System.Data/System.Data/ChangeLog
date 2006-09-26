@@ -1,3 +1,9 @@
+2006-09-26  Nagappan A  <anagappan@novell.com>
+
+	* DataRow.cs: Raise exception same as MS.NET. Thanks to
+	Hubert FONGARNAND <informatique.internet@fiducial.fr> for
+	providing this patch.
+
 2006-09-07  Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* DataSet.cs: added 2.0 stubs to solve typed dataset porting issues

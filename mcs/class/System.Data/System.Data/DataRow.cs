@@ -141,8 +141,10 @@ namespace System.Data {
 			get { return this[columnName, DataRowVersion.Default]; }
 			set {
 				int columnIndex = _table.Columns.IndexOf (columnName);
-				if (columnIndex == -1)
-					throw new IndexOutOfRangeException ();
+				if (columnIndex == -1) {
+					throw new ArgumentException ("The column " + columnName +
+								    " does not belong to the table : " + _table.TableName);
+				}
 				this[columnIndex] = value;
 			}
 		}
@@ -201,8 +203,10 @@ namespace System.Data {
 		public object this[string columnName, DataRowVersion version] {
 			get {
 				int columnIndex = _table.Columns.IndexOf (columnName);
-				if (columnIndex == -1)
-					throw new IndexOutOfRangeException ();
+				if (columnIndex == -1) {
+					throw new ArgumentException ("The column " + columnName +
+								     " does not belong to the table : " + _table.TableName);
+				}
 				return this[columnIndex, version];
 			}
 		}
