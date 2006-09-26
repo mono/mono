@@ -1,5 +1,7 @@
 2006-09-26  Nagappan A  <anagappan@novell.com>
 
+	* DataTable.cs (RowsExist): Check rows based on version.
+
 	* DataRow.cs: Raise exception same as MS.NET. Thanks to
 	Hubert FONGARNAND <informatique.internet@fiducial.fr> for
 	providing this patch.

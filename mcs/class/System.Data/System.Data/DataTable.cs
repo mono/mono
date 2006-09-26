@@ -697,7 +697,11 @@ namespace System.Data {
 					if (thisRow.RowState != DataRowState.Deleted) {
 						bool match = true;
 						// check if the values in the columns are equal
-						int thisIndex = thisRow.IndexFromVersion(DataRowVersion.Current);
+						int thisIndex = -1;
+						if (thisRow.RowState == DataRowState.Modified)
+							thisIndex = thisRow.IndexFromVersion(DataRowVersion.Original);
+						else
+							thisIndex = thisRow.IndexFromVersion(DataRowVersion.Current);
 						foreach (DataColumn column in columns) {
 							if (column.DataContainer.CompareValues(thisIndex, index) != 0) {
 								match = false;
