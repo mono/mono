@@ -1,3 +1,7 @@
+2006-09-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-ia64.md mini-ia64.c inssel-ia64.brg mini-ops.h: Get rid of the 
+	OP_IA64_FETCHADD opcodes, use OP_ATOMIC_ADD_IMM_NEW opcodes instead.
 
 Mon Sep 25 11:05:24 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
