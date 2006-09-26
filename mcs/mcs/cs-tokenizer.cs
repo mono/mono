@@ -1565,7 +1565,6 @@ namespace Mono.CSharp
 			bool v = pp_expr (ref s);
 			s = s.Trim ();
 			if (s.Length != 0){
-				Error_InvalidDirective ();
 				return false;
 			}
 
@@ -2318,10 +2317,9 @@ namespace Mono.CSharp
 				int state = (int) ifstack.Pop ();
 				if ((state & REGION) != 0)
 					Report.Error (1038, Location, "#endregion directive expected");
-				else 
-					Report.Error (1027, Location, "Expected `#endif' directive");
+//				else 
+//					Report.Error (1027, Location, "Expected `#endif' directive");
 			}
-				
 		}
 	}
 

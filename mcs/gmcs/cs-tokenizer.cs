@@ -1773,7 +1773,6 @@ namespace Mono.CSharp
 			bool v = pp_expr (ref s);
 			s = s.Trim ();
 			if (s.Length != 0){
-				Error_InvalidDirective ();
 				return false;
 			}
 
