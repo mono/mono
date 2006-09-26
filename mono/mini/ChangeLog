@@ -1,3 +1,8 @@
+2006-09-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c mini-amd64.c mini-x86.c mini-sparc.: Move check for OP_MEMORY_BARRIER
+	from mono_arch_emit_inst_for_method () to mini_emit_inst_for_method ().
+
 2006-09-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c: Add a comment.

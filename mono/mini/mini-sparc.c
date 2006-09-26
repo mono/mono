@@ -4745,14 +4745,6 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 {
 	MonoInst *ins = NULL;
 
-	if (cmethod->klass == mono_defaults.thread_class &&
-		strcmp (cmethod->name, "MemoryBarrier") == 0) {
-		if (sparcv9) {
-			MONO_INST_NEW (cfg, ins, OP_MEMORY_BARRIER);
-			MONO_ADD_INS (cfg->cbb, ins);
-		}
-	}
-
 	return ins;
 }
 

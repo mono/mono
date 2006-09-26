@@ -3687,6 +3687,10 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			ins->type = STACK_OBJ;
 			MONO_ADD_INS (cfg->cbb, ins);
 			return ins;
+		} else if (strcmp (cmethod->name, "MemoryBarrier") == 0) {
+			MONO_INST_NEW (cfg, ins, OP_MEMORY_BARRIER);
+			MONO_ADD_INS (cfg->cbb, ins);
+			return ins;
 		}
 	} else if (mini_class_is_system_array (cmethod->klass) &&
 			strcmp (cmethod->name, "GetGenericValueImpl") == 0) {
@@ -3697,13 +3701,10 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, load, &eklass->byval_arg, addr->dreg, 0);
 		EMIT_NEW_STORE_MEMBASE_TYPE (cfg, store, &eklass->byval_arg, args [2]->dreg, 0, load->dreg);
 		return store;
-	} else if (cmethod->klass == mono_defaults.thread_class &&
-			   strcmp (cmethod->name, "MemoryBarrier") == 0) {
-		MONO_INST_NEW (cfg, ins, OP_MEMORY_BARRIER);
-		MONO_ADD_INS (cfg->cbb, ins);
 	} else if (cmethod->klass->image == mono_defaults.corlib &&
 			   (strcmp (cmethod->klass->name_space, "System.Threading") == 0) &&
 			   (strcmp (cmethod->klass->name, "Interlocked") == 0)) {
+#if SIZEOF_VOID_P == 8
 		if (strcmp (cmethod->name, "Read") == 0 && (fsig->params [0]->type == MONO_TYPE_I8)) {
 			/* 64 bit reads are already atomic */
 			MONO_INST_NEW (cfg, ins, OP_LOADI8_MEMBASE);
@@ -3711,7 +3712,9 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			ins->inst_basereg = args [0]->dreg;
 			ins->inst_offset = 0;
 			MONO_ADD_INS (cfg->cbb, ins);
+			return ins;
 		}
+#endif
 	}
 
 	return mono_arch_emit_inst_for_method (cfg, cmethod, fsig, args);

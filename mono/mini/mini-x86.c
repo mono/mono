@@ -4746,10 +4746,6 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 			ins->inst_i1 = args [1];
 		}
 #endif
-	} else if (cmethod->klass == mono_defaults.thread_class &&
-			   strcmp (cmethod->name, "MemoryBarrier") == 0) {
-		MONO_INST_NEW (cfg, ins, OP_MEMORY_BARRIER);
-		MONO_ADD_INS (cfg->cbb, ins);
 	} else if(cmethod->klass->image == mono_defaults.corlib &&
 			   (strcmp (cmethod->klass->name_space, "System.Threading") == 0) &&
 			   (strcmp (cmethod->klass->name, "Interlocked") == 0)) {
