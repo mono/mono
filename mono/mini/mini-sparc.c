@@ -884,9 +884,9 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 		if (inst->flags & MONO_INST_IS_DEAD)
 			continue;
 
-		/* inst->unused indicates native sized value types, this is used by the
+		/* inst->backend.is_pinvoke indicates native sized value types, this is used by the
 		* pinvoke wrappers when they call functions returning structure */
-		if (inst->unused && MONO_TYPE_ISSTRUCT (inst->inst_vtype) && inst->inst_vtype->type != MONO_TYPE_TYPEDBYREF)
+		if (inst->backend.is_pinvoke && MONO_TYPE_ISSTRUCT (inst->inst_vtype) && inst->inst_vtype->type != MONO_TYPE_TYPEDBYREF)
 			size = mono_class_native_size (inst->inst_vtype->data.klass, &align);
 		else
 			size = mono_type_stack_size (inst->inst_vtype, &align);
@@ -1192,7 +1192,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 				pad = offset - ((ARGS_OFFSET - STACK_BIAS) + cinfo->stack_usage);
 
 				inst->inst_c1 = STACK_BIAS + offset;
-				inst->unused = size;
+				inst->backend.size = size;
 				arg->inst_left = inst;
 
 				cinfo->stack_usage += size;
@@ -1207,7 +1207,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 			case ArgInIRegPair:
 				if (ainfo->storage == ArgInIRegPair)
 					arg->opcode = OP_SPARC_OUTARG_REGPAIR;
-				arg->unused = sparc_o0 + ainfo->reg;
+				arg->backend.reg3 = sparc_o0 + ainfo->reg;
 				call->used_iregs |= 1 << ainfo->reg;
 
 				if ((i >= sig->hasthis) && !sig->params [i - sig->hasthis]->byref && ((sig->params [i - sig->hasthis]->type == MONO_TYPE_R8) || (sig->params [i - sig->hasthis]->type == MONO_TYPE_R4))) {
@@ -1233,16 +1233,16 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 				break;
 			case ArgInSplitRegStack:
 				arg->opcode = OP_SPARC_OUTARG_SPLIT_REG_STACK;
-				arg->unused = sparc_o0 + ainfo->reg;
+				arg->backend.reg3 = sparc_o0 + ainfo->reg;
 				call->used_iregs |= 1 << ainfo->reg;
 				break;
 			case ArgInFloatReg:
 				arg->opcode = OP_SPARC_OUTARG_FLOAT_REG;
-				arg->unused = sparc_f0 + ainfo->reg;
+				arg->backend.reg3 = sparc_f0 + ainfo->reg;
 				break;
 			case ArgInDoubleReg:
 				arg->opcode = OP_SPARC_OUTARG_DOUBLE_REG;
-				arg->unused = sparc_f0 + ainfo->reg;
+				arg->backend.reg3 = sparc_f0 + ainfo->reg;
 				break;
 			default:
 				NOT_IMPLEMENTED;
@@ -1454,7 +1454,7 @@ emit_pass_vtype (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo, ArgInfo 
 		MONO_INST_NEW (cfg, arg, OP_OUTARG_VT);
 		arg->sreg1 = in->dreg;
 		arg->klass = in->klass;
-		arg->unused = size;
+		arg->backend.size = size;
 		arg->inst_p0 = call;
 		arg->inst_p1 = mono_mempool_alloc (cfg->mempool, sizeof (ArgInfo));
 		memcpy (arg->inst_p1, ainfo, sizeof (ArgInfo));
@@ -1601,7 +1601,7 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins)
 	MonoInst *src_var = get_vreg_to_inst (cfg, ins->sreg1);
 	MonoInst *src;
 	ArgInfo *ainfo = (ArgInfo*)ins->inst_p1;
-	int size = ins->unused;
+	int size = ins->backend.size;
 
 	g_assert (ins->klass);
 

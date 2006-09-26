@@ -1013,14 +1013,14 @@ add_outarg_reg (MonoCompile *cfg, MonoCallInst *call, MonoInst *arg, ArgStorage 
 		arg->opcode = OP_OUTARG_REG;
 		arg->inst_left = tree;
 		arg->inst_right = (MonoInst*)call;
-		arg->unused = reg;
+		arg->backend.reg3 = reg;
 		call->used_iregs |= 1 << reg;
 		break;
 	case ArgInFloatReg:
 		arg->opcode = OP_OUTARG_FREG;
 		arg->inst_left = tree;
 		arg->inst_right = (MonoInst*)call;
-		arg->unused = reg;
+		arg->backend.reg3 = reg;
 		call->used_fregs |= 1 << reg;
 		break;
 	default:
@@ -1432,7 +1432,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 				MONO_INST_NEW (cfg, arg, OP_OUTARG_VT);
 				arg->sreg1 = in->dreg;
 				arg->klass = in->klass;
-				arg->unused = size;
+				arg->backend.size = size;
 				arg->inst_p0 = call;
 				arg->inst_p1 = mono_mempool_alloc (cfg->mempool, sizeof (ArgInfo));
 				memcpy (arg->inst_p1, ainfo, sizeof (ArgInfo));
@@ -1493,7 +1493,7 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins)
 	MonoInst *src;
 	MonoCallInst *call = (MonoCallInst*)ins->inst_p0;
 	ArgInfo *ainfo = (ArgInfo*)ins->inst_p1;
-	int size = ins->unused;
+	int size = ins->backend.size;
 
 	g_assert (ins->klass);
 

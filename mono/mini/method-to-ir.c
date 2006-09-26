@@ -2505,7 +2505,7 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 		MonoInst *temp = mono_compile_create_var (cfg, sig->ret, OP_LOCAL);
 		MonoInst *loada;
 
-		temp->unused = sig->pinvoke;
+		temp->backend.is_pinvoke = sig->pinvoke;
 
 		/*
 		 * We use a new opcode OP_OUTARG_VTRETADDR instead of LDADDR for emitting the
@@ -3456,7 +3456,7 @@ mini_emit_ldelema_1_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 		ins->sreg1 = array_reg;
 		ins->sreg2 = index_reg;
 		ins->inst_imm = G_STRUCT_OFFSET (MonoArray, vector);
-		ins->unused = fast_log2 [size];
+		ins->backend.shift_amount = fast_log2 [size];
 		ins->type = STACK_PTR;
 		MONO_ADD_INS (cfg->cbb, ins);
 
@@ -3478,7 +3478,7 @@ mini_emit_ldelema_1_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 		ins->sreg1 = array_reg;
 		ins->sreg2 = index2_reg;
 		ins->inst_imm = G_STRUCT_OFFSET (MonoArray, vector);
-		ins->unused = fast_log2 [size];
+		ins->backend.shift_amount = fast_log2 [size];
 		ins->type = STACK_PTR;
 		MONO_ADD_INS (cfg->cbb, ins);
 
@@ -5267,7 +5267,8 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 	 * can be executed anytime. It should be executed as late as possible so vtype
 	 * opcodes can be optimized by the other passes.
 	 * The pinvoke wrappers need to manipulate vtypes in their unmanaged representation.
-	 * This is indicated by setting the 'unused' field of the MonoInst for the var to 1.
+	 * This is indicated by setting the 'backend.is_pinvoke' field of the MonoInst for the 
+	 * var to 1.
 	 * This is done on demand, ie. by the LDNATIVEOBJ opcode, and propagated by this pass 
 	 * when OP_VMOVE opcodes are decomposed.
 	 */
@@ -5314,13 +5315,13 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 						dest_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->dreg);
 
 					// FIXME:
-					if (src_var->unused)
-						dest_var->unused = 1;
+					if (src_var->backend.is_pinvoke)
+						dest_var->backend.is_pinvoke = 1;
 
 					EMIT_NEW_VARLOADA ((cfg), (src), src_var, src_var->inst_vtype);
 					EMIT_NEW_VARLOADA ((cfg), (dest), dest_var, dest_var->inst_vtype);
 
-					emit_stobj (cfg, dest, src, 0, src_var->klass, src_var->unused);
+					emit_stobj (cfg, dest, src, 0, src_var->klass, src_var->backend.is_pinvoke);
 					break;
 				}
 				case OP_VZERO:
@@ -5341,7 +5342,7 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 
 					dreg = alloc_preg (cfg);
 					EMIT_NEW_BIALU_IMM (cfg, dest, OP_ADD_IMM, dreg, ins->inst_destbasereg, ins->inst_offset);
-					emit_stobj (cfg, dest, src, NULL, src_var->klass, src_var->unused);
+					emit_stobj (cfg, dest, src, NULL, src_var->klass, src_var->backend.is_pinvoke);
 					break;
 				}
 				case OP_LOADV_MEMBASE: {
@@ -5355,7 +5356,7 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 					dreg = alloc_preg (cfg);
 					EMIT_NEW_BIALU_IMM (cfg, src, OP_ADD_IMM, dreg, ins->inst_basereg, ins->inst_offset);
 					EMIT_NEW_VARLOADA (cfg, dest, dest_var, dest_var->inst_vtype);
-					emit_stobj (cfg, dest, src, NULL, dest_var->klass, dest_var->unused);
+					emit_stobj (cfg, dest, src, NULL, dest_var->klass, dest_var->backend.is_pinvoke);
 					break;
 				}
 				case OP_OUTARG_VT: {
@@ -5373,7 +5374,7 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 					src_var = get_vreg_to_inst (cfg, call->inst.dreg);
 					if (!src_var)
 						src_var = mono_compile_create_var_for_vreg (cfg, call->signature->ret, OP_LOCAL, call->inst.dreg);
-					// FIXME: src_var->unused ?
+					// FIXME: src_var->backend.is_pinvoke ?
 
 					EMIT_NEW_VARLOADA (cfg, src, src_var, src_var->inst_vtype);
 					src->dreg = ins->dreg;
@@ -8287,7 +8288,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 					src = sp [0];
 					temp = mono_compile_create_var (cfg, &klass->byval_arg, OP_LOCAL);
-					temp->unused = 1;
+					temp->backend.is_pinvoke = 1;
 					EMIT_NEW_TEMPLOADA (cfg, dest, temp->inst_c0);
 					emit_stobj (cfg, dest, src, ip, klass, TRUE);
 
@@ -10072,7 +10073,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - optimize mono_regstate2_alloc_int/float.
  * - duplicating the code in mono_local_regalloc () into a fp/non-fp branches speeds it
  *   up by about 15%.
- * - LAST MERGE: 65901.
+ * - LAST MERGE: 65915.
  */
 
 /*
