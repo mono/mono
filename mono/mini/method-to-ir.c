@@ -82,8 +82,6 @@ static int stind_to_store_membase (int opcode);
 int mono_op_to_op_imm (int opcode);
 int mono_op_to_op_imm_noemul (int opcode);
 
-gboolean  mono_arch_print_tree(MonoInst *tree, int arity);
-
 static void emit_stobj (MonoCompile *cfg, MonoInst *dest, MonoInst *src, 
 			  const unsigned char *ip, MonoClass *klass, gboolean native);
 
@@ -10073,6 +10071,8 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - optimize mono_regstate2_alloc_int/float.
  * - duplicating the code in mono_local_regalloc () into a fp/non-fp branches speeds it
  *   up by about 15%.
+ * - patch_delegate_trampoline () only works on call_membase, but the new JIT can't create
+ *   it such code.
  * - LAST MERGE: 65915.
  */
 

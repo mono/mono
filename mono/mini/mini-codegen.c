@@ -440,6 +440,7 @@ mono_print_ins_index (int i, MonoInst *ins)
 		printf (" [%d]", (int)ins->inst_imm);
 		break;
 	case OP_ADD_IMM:
+	case OP_LADD_IMM:
 		printf (" [%d]", (int)(gssize)ins->inst_p1);
 		break;
 	case OP_I8CONST:
