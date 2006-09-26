@@ -1,3 +1,7 @@
+2006-09-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h (MonoInst): Remove backend.data field since it is unused and increases
+	MonoInst size by 4 bytes on 64 bit machines.
 
 Tue Sep 26 11:57:26 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
