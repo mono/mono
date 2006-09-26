@@ -889,7 +889,9 @@ namespace System.Windows.Forms
 
 		internal bool ChildNeedsRecreating (Control child)
 		{
-			return children_to_recreate != null && children_to_recreate.Contains (child);
+			if (children_to_recreate != null && children_to_recreate.Contains (child))
+					return true;
+			return ParentWaitingOnRecreation (this);
 		}
 
 		internal void RemoveChildFromRecreateList (Control child)

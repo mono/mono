@@ -1,5 +1,11 @@
 2006-09-26  Chris Toshok  <toshok@ximian.com>
 
+	* Control.cs (ChildNeedsRecreating): this should return true if
+	either we're being recreated and the child is in our list, or our
+	parent is waiting for our recreation.
+	
+2006-09-26  Chris Toshok  <toshok@ximian.com>
+
 	* Control.cs (ControlCollection.Remove): reinstate the
 	value.Hide() call as suggested in bug #79294.
 
