@@ -4297,8 +4297,10 @@ namespace System.Windows.Forms {
 
 		internal override void SetCursorPos(IntPtr handle, int x, int y) {
 			if (handle == IntPtr.Zero) {
+				int cx, cy;
+				GetCursorPos (handle, out cx, out cy);
 				lock (XlibLock) {
-					XWarpPointer(DisplayHandle, IntPtr.Zero, IntPtr.Zero, 0, 0, 0, 0, x, y);
+					XWarpPointer(DisplayHandle, IntPtr.Zero, IntPtr.Zero, 0, 0, 0, 0, x - cx, y - cy);
 				}
 				return;
 			} else {

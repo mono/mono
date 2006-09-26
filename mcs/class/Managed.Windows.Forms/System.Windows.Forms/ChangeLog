@@ -1,3 +1,8 @@
+2006-09-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XplatUIX11.cs: Fixed SetCursorPos to move the cursor to screen
+	coordinates (versus a relative move).
+
 2006-09-26  Chris Toshok  <toshok@ximian.com>
 
 	* Control.cs: rework child recreation a little bit.  It turns out
