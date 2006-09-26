@@ -2128,7 +2128,8 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			if (update_caret) {
 				// Move caret to the end of the inserted text
 				if (insert_lines > 1) {
-					PositionCaret(GetLine(line.line_no + insert_lines - 1), ins[ins.Length - 1].Length);
+					Line l = GetLine (line.line_no + insert_lines + 1);
+					PositionCaret(l, l.text.Length);
 				} else {
 					PositionCaret(line, pos + ins[0].Length);
 				}
