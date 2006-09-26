@@ -73,6 +73,7 @@ namespace System.Windows.Forms
 		internal bool			is_captured;		// tracks if the control has captured the mouse
 		internal bool			is_toplevel;		// tracks if the control is a toplevel window
 		internal bool			is_recreating;		// tracks if the handle for the control is being recreated
+		internal ArrayList              children_to_recreate;   // keep track of the children which need to be recreated
 		internal bool			causes_validation;	// tracks if validation is executed on changes
 		internal int			tab_index;		// position in tab order of siblings
 		internal bool			tab_stop = true;	// is the control a tab stop?
@@ -885,21 +886,26 @@ namespace System.Windows.Forms
 					return true;
 				}
 
-				if (parent != null) {
-					return parent.IsRecreating;
-				}
-
-				return false;
+				return ParentWaitingOnRecreation(this);
 			}
 		}
 
-		private bool ParentIsRecreating {
-			get {
-				if (parent != null) {
-					return parent.IsRecreating;
-				}
-				return false;
+		internal bool ChildNeedsRecreating (Control child)
+		{
+			return children_to_recreate != null && children_to_recreate.Contains (child);
+		}
+
+		internal void RemoveChildFromRecreateList (Control child)
+		{
+			if (children_to_recreate != null)
+				children_to_recreate.Remove (child);
+		}
+
+		private bool ParentWaitingOnRecreation (Control c) {
+			if (parent != null) {
+				return parent.ChildNeedsRecreating (c);
 			}
+			return false;
 		}
 
 		internal Graphics DeviceContext {
@@ -2137,7 +2143,9 @@ namespace System.Windows.Forms
 		public bool IsHandleCreated {
 			get {
 				if ((window != null) && (window.Handle != IntPtr.Zero)) {
-					return true;
+					Hwnd hwnd = Hwnd.ObjectFromHandle (window.Handle);
+					if (hwnd != null && !hwnd.zombie)
+						return true;
 				}
 
 				return false;
@@ -3574,6 +3582,8 @@ namespace System.Windows.Forms
 			is_recreating=true;
 
 			if (IsHandleCreated) {
+				children_to_recreate = new ArrayList();
+				children_to_recreate.AddRange (child_controls.GetAllControls ());
 				DestroyHandle();
 				// WM_DESTROY will CreateHandle for us
 			} else {
@@ -3582,6 +3592,8 @@ namespace System.Windows.Forms
 				} else {
 					CreateHandle();
 				}
+				if (parent != null)
+					parent.RemoveChildFromRecreateList (this);
 			}
 
 			is_recreating = false;
@@ -3924,7 +3936,7 @@ namespace System.Windows.Forms
 					OnHandleDestroyed(EventArgs.Empty);
 					window.InvalidateHandle();
 
-					if (ParentIsRecreating) {
+					if (ParentWaitingOnRecreation (this)) {
 						RecreateHandle();
 					} else if (is_recreating) {
 						CreateHandle();

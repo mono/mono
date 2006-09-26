@@ -1,3 +1,19 @@
+2006-09-26  Chris Toshok  <toshok@ximian.com>
+
+	* Control.cs: rework child recreation a little bit.  It turns out
+	that we race between the DestroyNotify the WM_DESTROY message.  If
+	the parent gets its DestroyNotify before the child gets the
+	WM_DESTROY message, the child ends up not recreating (since the
+	parent finishes its recreation on DestroyNotify, and the child
+	checks ParentIsRecreating.)
+
+	So, instead we store off a list of all the child controls which
+	need to be recreated when the parent control starts to recreate
+	itself.  Then, when child controls get their WM_DESTROY message we
+	check to see if they're in the parent's pending recreation list,
+	and if so, we recreate.  This removes all dependency on ordering
+	from the code and fixes the initial MonoCalendar upgrade dialog.
+	
 2006-09-26  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: Use the Line to get the length of the line,
