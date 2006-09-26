@@ -839,7 +839,7 @@ namespace System.Windows.Forms {
 					decorations &= ~(MotifDecorations.Menu | MotifDecorations.Maximize | MotifDecorations.Minimize);
 					if (cp.Caption == "") {
 						functions &= ~MotifFunctions.Move;
-						decorations &= ~MotifDecorations.Title;
+						decorations &= ~(MotifDecorations.Title | MotifDecorations.ResizeH);
 					}
 				}
 			}

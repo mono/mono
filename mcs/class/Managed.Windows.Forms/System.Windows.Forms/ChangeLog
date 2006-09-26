@@ -1,5 +1,19 @@
 2006-09-26  Chris Toshok  <toshok@ximian.com>
 
+	* XplatUIX11.cs (SetWMStyles): turns out when SYSMENU is not set
+	and caption == "", we need to remove the resize handles as well as
+	the title bar.
+
+	* Control.cs (set_Text): turns out that setting Text on a form
+	should change the WM styles on the window, since if ControlBox ==
+	false, the only way to get a window border is to have a non-""
+	Text property.  check winforms/forms/text.cs for an example.  so,
+	call both XplatUI.SetWindowStyle and XplatUI.Text here to properly
+	update both window styles and title.  This fixes a lot of dialogs
+	(including the preferences dialog in MonoCalendar.)
+
+2006-09-26  Chris Toshok  <toshok@ximian.com>
+
 	* XplatUIWin32.cs (SetParent): if parent == IntPtr.Zero (and the
 	control isn't a Form), call Win32ShowWindow to hide the window,
 	but don't update the control Visible property.  When we reparent
