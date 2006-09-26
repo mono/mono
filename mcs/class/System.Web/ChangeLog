@@ -1,3 +1,7 @@
+2006-09-26	Boris Kirzner <borisk@mainsoft.com>
+
+	* run-mono-tests.bat: log files naming fix.
+
 2006-09-19 Yoni Klain <yonik@mainsoft.com>
 
     * System.Web_test.dll.sources: add new \System.Web.UI.WebControls\CrossPagePostingTest.cs

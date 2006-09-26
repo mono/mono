@@ -1,3 +1,7 @@
+2006-09-26	Boris Kirzner <borisk@mainsoft.com>
+
+	* run-W3C-tests.bat, run-XSLT-tests.bat: log files naming fix.
+
 2006-09-13	Boris Kirzner <borisk@mainsoft.com>
 	* run-tests.bat, run-W3C-tests.bat, run-XSLT-tests.bat: 
 	reworked test scripts for TARGET_JVM.

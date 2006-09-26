@@ -15,13 +15,13 @@ IF "%1"=="" (
 )
 
 set SECURE_MODE=nonsecure
-set OUTPUT_FILE_PREFIX=System.DirectoryServices
+set OUTPUT_FILE_PREFIX=System_DirectoryServices
 set RUNNING_FIXTURE=MonoTests.System.DirectoryServices
 
 call run-tests.test.bat %BUILD_OPTION% %SECURE_MODE% %OUTPUT_FILE_PREFIX% %RUNNING_FIXTURE%
 
 set SECURE_MODE=secure
-set OUTPUT_FILE_PREFIX=System.DirectoryServices
+set OUTPUT_FILE_PREFIX=System_DirectoryServices
 set RUNNING_FIXTURE=MonoTests.System.DirectoryServices
 
 REM call run-tests.test.bat %BUILD_OPTION% %SECURE_MODE% %OUTPUT_FILE_PREFIX% %RUNNING_FIXTURE%

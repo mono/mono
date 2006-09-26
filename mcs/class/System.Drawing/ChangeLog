@@ -1,3 +1,7 @@
+2006-09-26	Boris Kirzner <borisk@mainsoft.com>
+
+	* run-tests.bat,run-tests.test.bat: log files naimng fix.
+
 2006-09-18	Boris Kirzner <borisk@mainsoft.com>
 
 	* run-tests.test.bat : fixes for TARGET_JVM tests run script.

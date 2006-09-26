@@ -1,3 +1,8 @@
+2006-09-26	Boris Kirzner <borisk@mainsoft.com>
+
+	* run-tests.test.disconnected.bat,run-tests.test.connected.bat: 
+	log files naming fix.
+
 2006-09-17	Boris Kirzner <borisk@mainsoft.com>
 
 	* run-tests.test.disconnected.bat : added usage of app config.

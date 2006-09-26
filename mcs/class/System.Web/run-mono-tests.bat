@@ -1,4 +1,4 @@
-@echo oî
+@echo ff
 REM ********************************************************
 REM This batch file receives the follwing parameters:
 REM build/rebuild (optional): should the solution file be rebuilded 
@@ -21,16 +21,22 @@ REM ********************************************************
 REM Set parameters
 REM ********************************************************
 
-set OUTPUT_FILE_PREFIX=System.Web
+set OUTPUT_FILE_PREFIX=System_Web
 set RUNNING_FIXTURE=System.Web
 set TEST_SOLUTION=Test\TestMonoWeb.J2EE20.sln
 set TEST_ASSEMBLY=TestMonoWeb.jar
 set PROJECT_CONFIGURATION=Debug_Java20
 
 
-set DATEL=%date:~10,4%_%date:~4,2%_%date:~7,2%%
-set TIMEL=%time:~0,2%_%time:~3,2%
-set TIMESTAMP=%DATEL%_%TIMEL%
+set startDate=%date%
+set startTime=%time%
+set sdy=%startDate:~10%
+set /a sdm=1%startDate:~4,2% - 100
+set /a sdd=1%startDate:~7,2% - 100
+set /a sth=%startTime:~0,2%
+set /a stm=1%startTime:~3,2% - 100
+set /a sts=1%startTime:~6,2% - 100
+set TIMESTAMP=%sdy%_%sdm%_%sdd%_%sth%_%stm%
 
 
 REM ********************************************************
@@ -52,9 +58,14 @@ set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;Test\mainsoft\NunitWeb\NunitWeb\bin\De
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;Test\mainsoft\NunitWeb\NunitWeb\bin\Debug_Java20\HtmlCompare.jar
 set NUNIT_OPTIONS=/exclude=NotWorking
 
-set GH_OUTPUT_XML=%TIMESTAMP%.%OUTPUT_FILE_PREFIX%.GH.xml
-set BUILD_LOG=%TIMESTAMP%.%OUTPUT_FILE_PREFIX%.GH.%RUNNING_FIXTURE%.build.log
-set RUN_LOG=%TIMESTAMP%.%OUTPUT_FILE_PREFIX%.GH.%RUNNING_FIXTURE%.run.log
+if "%GH_VERSION%"=="" (
+	set GH_VERSION=0_0_0_0
+)
+
+set COMMON_PREFIX=%TIMESTAMP%_%OUTPUT_FILE_PREFIX%.GH_%GH_VERSION%.1.%USERNAME%
+set GH_OUTPUT_XML=%COMMON_PREFIX%.xml
+set BUILD_LOG=%COMMON_PREFIX%.build.log
+set RUN_LOG=%COMMON_PREFIX%.run.log
 
 set NUNIT_PATH=..\..\nunit20\
 set NUNIT_CLASSPATH=%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.framework.jar
