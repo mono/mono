@@ -2311,6 +2311,16 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 				}
 			}
 
+			// Delete empty orphaned tags at the end
+			LineTag walk = tag;
+			while (walk != null && walk.next != null && walk.next.length == 0) {
+				LineTag t = walk;
+				walk.next = walk.next.next;
+				if (walk.next != null)
+					walk.next.previous = t;
+				walk = walk.next;
+			}
+
 			// Adjust the start point of any tags following
 			if (tag != null) {
 				tag = tag.next;
@@ -2373,6 +2383,16 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 						streamline = true;
 					}
 				}
+			}
+
+			// Delete empty orphaned tags at the end
+			LineTag walk = tag;
+			while (walk != null && walk.next != null && walk.next.length == 0) {
+				LineTag t = walk;
+				walk.next = walk.next.next;
+				if (walk.next != null)
+					walk.next.previous = t;
+				walk = walk.next;
 			}
 
 			tag = tag.next;
@@ -4512,7 +4532,9 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 		}
 
 		public override string ToString() {
-			return "Tag starts at index " + this.start + "length " + this.length + " text: " + this.line.Text.Substring(this.start-1, this.length) + "Font " + this.font.ToString();
+			if (length > 0)
+				return "Tag starts at index " + this.start + "length " + this.length + " text: " + this.line.Text.Substring(this.start-1, this.length) + "Font " + this.font.ToString();
+			return "Zero Lengthed tag at index " + this.start;
 		}
 
 		#endregion	// Internal Methods

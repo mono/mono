@@ -1,3 +1,9 @@
+2006-09-26  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: When deleting characters make sure that any
+	orphaned zero lengthed tags get deleted.
+	- Fix ToString for zero lengthed tags.
+
 2006-09-25  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: When getting a tag at the location there can be
