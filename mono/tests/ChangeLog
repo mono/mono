@@ -1,5 +1,7 @@
 2006-09-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* interlocked-2.2.cs: Fix problem with previous change.
+	
 	* interlocked-2.2.cs: Fix long tests and add Interlocked.Exchange(long) test.
 
 2006-06-24  Zoltan Varga  <vargaz@gmail.com>
@@ -29,7 +31,6 @@
 
 	* pinvoke2.cs libtest.c: Add test for marshalling of blittable classes and null.
 
->>>>>>> .merge-right.r65846
 2006-09-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* pinvoke3.cs libtest.c: Add test for #79289.

@@ -49,7 +49,7 @@ public class InterlockTest
 
 		la = 1;
 		lc = Interlocked.Exchange (ref la, 2);
-		if (c != 1)
+		if (lc != 1)
 			return 10;
 
 		if (la != 2)
