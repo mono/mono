@@ -1,3 +1,7 @@
+2006-09-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_delegate_invoke): Tweak the IL a little so better code
+	could be generated from it.
 
 Mon Sep 25 13:29:53 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
