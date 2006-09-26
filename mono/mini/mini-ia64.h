@@ -188,6 +188,7 @@ unw_dyn_region_info_t* mono_ia64_create_unwind_region (Ia64CodegenState *code);
 #define MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE 1
 #define MONO_ARCH_HAVE_SAVE_UNWIND_INFO 1
 #define MONO_ARCH_HAVE_CREATE_VARS 1
+#define MONO_ARCH_HAVE_ATOMIC_EXCHANGE 1
 
 #define MONO_ARCH_IS_OP_MEMBASE(opcode) FALSE
 

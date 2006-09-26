@@ -10072,7 +10072,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - optimize mono_regstate2_alloc_int/float.
  * - duplicating the code in mono_local_regalloc () into a fp/non-fp branches speeds it
  *   up by about 15%.
- * - LAST MERGE: 65846.
+ * - LAST MERGE: 65901.
  */
 
 /*

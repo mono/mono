@@ -12,6 +12,23 @@
 
 	* mini-codegen.c (mono_local_regalloc): Remove some unused variables.
 
+2006-09-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-ia64.md mini-ia64.c inssel-ia64.brg mini-ops.h: Get rid of the 
+	OP_IA64_FETCHADD opcodes, use OP_ATOMIC_ADD_IMM_NEW opcodes instead.
+
+Mon Sep 25 11:05:24 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, driver.c, optflags-def.h, Makefile.am: reduce runtime
+	relocations and memory requirements, put the optimization flags
+	definitions in their own file.
+
+2006-09-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* jit-icalls.c (mono_helper_stelem_ref): Remove this unused helper function.
+
+	* mini.c (mini_init): Remove reference to mono_helper_stelem_ref.
+
 2006-09-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c (mono_arch_emit_inst_for_method): Add OP_MEMORY_BARRIER.

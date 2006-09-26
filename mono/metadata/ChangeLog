@@ -1,6 +1,14 @@
-2006-09-22  Martin Baulig  <martin@ximian.com>
 
-	Revert Paolo's change from r65776.
+Mon Sep 25 13:29:53 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* rand.c: fix read loop to correctly handle EINTR.
+
+Mon Sep 25 11:33:06 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, icall-def.h, icall.c, verify.c: changed the way
+	internal calls are defined to keep methods closer to the declaring
+	type and allow a significant reduction in runtime relocations and
+	memory usage.
 
 2006-09-21 Gert Driesen  <drieseng@users.sourceforge.net>
 
@@ -13,6 +21,12 @@
 
 	* threadpool.c: (start_thread_or_queue) use the root domain when
 	creating the thread instead of the async object one.
+
+Thu Sep 21 19:30:04 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, object.c, class-internals.h, reflection.c:
+	for arrays, store element_size inside MonoClass (speedup
+	for array object creation).
 
 Thu Sep 21 17:06:43 CEST 2006 Paolo Molaro <lupus@ximian.com>
 

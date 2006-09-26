@@ -584,9 +584,9 @@ MINI_OP(OP_ATOMIC_EXCHANGE_I4, "atomic_exchange_i4", IREG, IREG, IREG)
 
 MINI_OP(OP_ATOMIC_ADD_I8, "atomic_add_i8", IREG, IREG, IREG)
 MINI_OP(OP_ATOMIC_ADD_NEW_I8, "atomic_add_new_i8", IREG, IREG, IREG)
-MINI_OP(OP_ATOMIC_ADD_IMM_I8, "atomic_add_imm_i8", NONE, NONE, NONE)
-MINI_OP(OP_ATOMIC_ADD_IMM_NEW_I8, "atomic_add_imm_new_i8", NONE, NONE, NONE)
-MINI_OP(OP_ATOMIC_EXCHANGE_I8, "atomic_exchange_i8", NONE, NONE, NONE)
+MINI_OP(OP_ATOMIC_ADD_IMM_I8, "atomic_add_imm_i8", IREG, IREG, NONE)
+MINI_OP(OP_ATOMIC_ADD_IMM_NEW_I8, "atomic_add_imm_new_i8", IREG, IREG, NONE)
+MINI_OP(OP_ATOMIC_EXCHANGE_I8, "atomic_exchange_i8", IREG, IREG, IREG)
 MINI_OP(OP_MEMORY_BARRIER, "memory_barrier", NONE, NONE, NONE)
 
 /* Arch specific opcodes */
@@ -822,8 +822,6 @@ MINI_OP(OP_IA64_LOADU4_MEMBASE_INC,"ia64_loadu4_membase_inc", NONE, NONE, NONE)
 MINI_OP(OP_IA64_LOADI8_MEMBASE_INC,"ia64_loadi8_membase_inc", NONE, NONE, NONE)
 MINI_OP(OP_IA64_LOADR4_MEMBASE_INC,"ia64_loadr4_membase_inc", NONE, NONE, NONE)
 MINI_OP(OP_IA64_LOADR8_MEMBASE_INC,"ia64_loadr8_membase_inc", NONE, NONE, NONE)
-MINI_OP(OP_IA64_FETCHADD4_IMM,   "ia64_fetchadd4_imm", IREG, IREG, NONE)
-MINI_OP(OP_IA64_FETCHADD8_IMM,   "ia64_fetchadd8_imm", IREG, IREG, NONE)
 #endif
 
 #if defined(__alpha__)

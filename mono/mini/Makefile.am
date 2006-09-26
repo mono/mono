@@ -179,6 +179,7 @@ common_sources = \
 	mini.h		\
 	mini.c		\
 	method-to-ir.c \
+	optflags-def.h		\
 	jit-icalls.h \
 	jit-icalls.c \
 	trace.c		\
