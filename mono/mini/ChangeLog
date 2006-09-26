@@ -1,3 +1,11 @@
+
+Tue Sep 26 14:02:58 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h: put back backend.data which is to be used shortly and
+	doesn't increase the size of MonoInst. If any 64 bit arch aligned
+	pointers on 4 byte boundaries it'd have much bigger issues running
+	and you can ifdef it out anyway.
+
 2006-09-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h (MonoInst): Remove backend.data field since it is unused and increases
