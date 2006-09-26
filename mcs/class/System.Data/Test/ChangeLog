@@ -1,3 +1,6 @@
+2006-07-18 Dean Brettle <dean@brettle.com>
+	* SqlTest.cs: Added test for inserting zero-length varbinary.
+
 2006-06-09 Juraj Skripsky <js@hotfeet.ch>
 
 	* DataTableTest.cs (SelectEscaping): Add tests for calling Select()

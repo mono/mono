@@ -229,6 +229,27 @@ namespace Test.Mono.Data.SqlClient {
 			insertCommand.ExecuteNonQuery ();
 		}
 
+		// execute SQL INSERT Command using ExecuteNonQuery()
+		static void InsertEdgeCaseData (IDbConnection cnc) {		
+
+			IDbCommand insertCommand = cnc.CreateCommand();
+		
+			insertCommand.CommandText =
+				"insert into mono_sql_test (" +
+				"varbinary_value " +
+				") values (" +
+				"@p20 " +
+				")";
+
+			SqlParameterCollection parameters = ((SqlCommand) insertCommand).Parameters;
+
+			parameters.Add ("@p20", SqlDbType.VarBinary, 8);
+
+			parameters ["@p20"].Value = new byte[0] {};
+
+			insertCommand.ExecuteNonQuery ();
+		}
+
 		// execute a SQL SELECT Query using ExecuteReader() to retrieve
 		// a IDataReader so we retrieve data
 		static IDataReader SelectData (IDbConnection cnc) {
@@ -638,6 +659,11 @@ namespace Test.Mono.Data.SqlClient {
 				/* Inserts values */
 				Console.WriteLine ("\t\tInsert values for all known types: ");
 				InsertData (cnc);
+				Console.WriteLine ("OK");			
+
+				/* Inserts edge case values */
+				Console.WriteLine ("\t\tInsert values that require special coding: ");
+				InsertEdgeCaseData (cnc);
 				Console.WriteLine ("OK");			
 
 				/* Select aggregates */
