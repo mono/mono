@@ -1,3 +1,10 @@
+
+Tue Sep 26 11:57:26 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* *.{c,h,brg}: long due removal of the unused field in MonoInst and
+	replacement with more meaningful field names. Arch maintainers, please
+	check the assigned names are good enough for your arch.
+
 2006-09-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* cpu-ia64.md mini-ia64.c inssel-ia64.brg mini-ops.h: Get rid of the 
