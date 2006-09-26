@@ -477,7 +477,13 @@ namespace Mono.Data.Tds.Protocol {
 			case "image":
 			case "binary":
 			case "varbinary":
-				value = String.Format ("0x{0}", BitConverter.ToString ((byte[]) parameter.Value).Replace ("-", "").ToLower ());
+				byte[] byteArray = (byte[]) parameter.Value;
+				// In 1.0 profile, BitConverter.ToString() throws ArgumentOutOfRangeException when passed a 0-length
+				// array, so handle that as a special case.
+				if (byteArray.Length == 0)
+					value = "0x";
+				else
+					value = String.Format ("0x{0}", BitConverter.ToString (byteArray).Replace ("-", "").ToLower ());
 				break;
 			default:
 				value = String.Format ("'{0}'", parameter.Value.ToString ().Replace ("'", "''"));

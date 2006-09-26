@@ -1,3 +1,9 @@
+2006-07-18  Dean Brettle <dean@brettle.com>
+
+	* Tds70.cs : Fixed bug in FormatParameter() which caused 
+	ArgumentOutOfRangeException when formatting 0-length varbinary values
+	under 1.0 profile.
+
 2006-05-03  Senganal T  <tsenganal@novell.com>
 
 	* Tds.cs : 
