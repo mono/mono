@@ -9,6 +9,7 @@
 //
 
 using System;
+using System.IO;
 using System.Xml;
 
 using NUnit.Framework;
@@ -197,7 +198,21 @@ namespace MonoTests.System.Xml
 
 			d.Value = "version='1.0' encoding='ISO-8859-1' standalone='yes'" ;
 			AssertEquals ("Value round-trip ('s)", expected, d.Value);
+		}
 
+		[Test]
+		public void Bug79496 ()
+		{
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter xtw = new XmlTextWriter (sw);
+			xtw.WriteStartDocument (true);
+			xtw.WriteStartElement ("person");
+			xtw.WriteEndElement ();
+			xtw.Flush ();
+
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (sw.ToString ());
+			AssertEquals ("<?xml version=\"1.0\" encoding=\"utf-16\" standalone=\"yes\"?><person />", doc.OuterXml);
 		}
 
 		[Test]

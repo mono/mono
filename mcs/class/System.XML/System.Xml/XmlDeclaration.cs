@@ -186,7 +186,6 @@ namespace System.Xml
 				if (!XmlChar.IsWhitespace (input [index]))
 					throw new XmlException ("Invalid XML declaration.");
 				index = SkipWhitespace (input, index + 1);
-					return;
 			}
 
 			if (input.Length > index + 10 && input.IndexOf ("standalone", index, 10) > 0) {

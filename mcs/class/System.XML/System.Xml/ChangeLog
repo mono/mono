@@ -1,3 +1,8 @@
+2006-09-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDeclaration.cs :
+	  Removed bogus return statement in Value. Fixed bug #79496.
+
 2006-09-21  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlNameEntryCache.cs : It should expand temporary buffer even at
