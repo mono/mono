@@ -62,14 +62,15 @@ namespace System.Drawing.Printing
 		// Methods
 		internal override void LoadPrinterSettings (string printer, PrinterSettings settings)
 		{
-			IntPtr ptr, ppd_handle;
+			IntPtr ptr, ppd_handle, ptr_opt, ptr_choice;
 			string ppd_filename;
 			PPD_FILE ppd;
+			PPD_OPTION option;
+			PPD_CHOICE choice;			
 
-			if (cups_installed == false || (printer == null) || (printer == String.Empty)) {
+			if (cups_installed == false || (printer == null) || (printer == String.Empty))
 				return;
-			}
-
+		
 			ptr = cupsGetPPD (printer);
 			ppd_filename = Marshal.PtrToStringAnsi (ptr);
 			ppd_handle = ppdOpenFile (ppd_filename);
@@ -78,6 +79,47 @@ namespace System.Drawing.Printing
 			ppd = (PPD_FILE) Marshal.PtrToStructure (ppd_handle, typeof (PPD_FILE));
 			settings.landscape_angle = ppd.landscape;
 			settings.supports_color = (ppd.color_device == 0) ? false : true;
+
+			// Default paper source
+			ptr_opt = ppdFindOption (ppd_handle, "InputSlot"); 
+			if (ptr_opt != IntPtr.Zero) {
+				option = (PPD_OPTION) Marshal.PtrToStructure (ptr_opt, typeof (PPD_OPTION));
+				ptr_choice = option.choices;
+				for (int c = 0; c < option.num_choices; c++) {
+					choice = (PPD_CHOICE) Marshal.PtrToStructure (ptr_choice, typeof (PPD_CHOICE));
+					ptr_choice = new IntPtr (ptr_choice.ToInt64 () + Marshal.SizeOf (choice));
+					if (choice.choice == option.defchoice) {
+						foreach (PaperSource paper_source in settings.PaperSources) {
+							if (paper_source.SourceName ==  choice.text) {
+								settings.DefaultPageSettings.PaperSource = paper_source;
+								break;
+							}
+						}
+						break;
+					}
+				}
+			}
+			
+			// Default paper size
+			ptr_opt = ppdFindOption (ppd_handle, "PageSize"); 
+			if (ptr_opt != IntPtr.Zero) {
+				option = (PPD_OPTION) Marshal.PtrToStructure (ptr_opt, typeof (PPD_OPTION));
+				ptr_choice = option.choices;
+				for (int c = 0; c < option.num_choices; c++) {
+					choice = (PPD_CHOICE) Marshal.PtrToStructure (ptr_choice, typeof (PPD_CHOICE));
+					ptr_choice = new IntPtr (ptr_choice.ToInt64 () + Marshal.SizeOf (choice));
+					if (choice.choice == option.defchoice) {
+						foreach (PaperSize paper_size in settings.PaperSizes) {
+							if (paper_size.PaperName == choice.text) {
+								settings.DefaultPageSettings.PaperSize = paper_size;
+								break;
+							}
+						}
+						break;
+					}
+				}
+			}
+			
 			ppdClose (ppd_handle);
 		}
 
@@ -107,9 +149,8 @@ namespace System.Drawing.Printing
 			float w, h;
 			for (int i = 0; i < ppd.num_sizes; i++) {
 				size = (PPD_SIZE) Marshal.PtrToStructure (ptr, typeof (PPD_SIZE));
-				real_name = GetPaperSizeName (ppd, size.name);
+				real_name = GetPaperSizeName (ppd_handle, size.name);
 				ptr = new IntPtr (ptr.ToInt64 () + Marshal.SizeOf (size));
-
 				w = size.width * 100 / 72;
 				h = size.length * 100 / 72;
 				ps = new PaperSize (real_name, (int) w, (int) h);
@@ -123,7 +164,36 @@ namespace System.Drawing.Printing
 		
 		internal override void LoadPrinterPaperSources (string printer, PrinterSettings settings)
 		{
-			// TODO	
+			IntPtr ptr, ppd_handle, ptr_opt, ptr_choice;
+			string ppd_filename;
+			PPD_OPTION option;
+			PPD_CHOICE choice;
+
+			if (cups_installed == false || (printer == null) || (printer == String.Empty))
+				return;
+
+			ptr = cupsGetPPD (printer);
+			ppd_filename = Marshal.PtrToStringAnsi (ptr);
+			ppd_handle = ppdOpenFile (ppd_filename);
+
+			ptr_opt = ppdFindOption (ppd_handle, "InputSlot"); 
+
+			if (ptr_opt == IntPtr.Zero) {
+				ppdClose (ppd_handle);
+				return;	
+			}
+			
+			option = (PPD_OPTION) Marshal.PtrToStructure (ptr_opt, typeof (PPD_OPTION));
+			//Console.WriteLine (" OPTION  key:{0} def:{1} text: {2}", option.keyword, option.defchoice, option.text);
+
+			ptr_choice = option.choices;
+			for (int c = 0; c < option.num_choices; c++) {
+				choice = (PPD_CHOICE) Marshal.PtrToStructure (ptr_choice, typeof (PPD_CHOICE));
+				ptr_choice = new IntPtr (ptr_choice.ToInt64 () + Marshal.SizeOf (choice));
+				//Console.WriteLine ("       choice:{0} - text: {1}", choice.choice, choice.text);
+				settings.PaperSources.Add (new PaperSource (choice.text, PaperSourceKind.Custom));					
+			}
+			ppdClose (ppd_handle);
 		}
 
 		internal override bool StartPage (GraphicsPrinter gr)
@@ -229,42 +299,30 @@ namespace System.Drawing.Printing
 
 		// Private functions
 
-		private string GetPaperSizeName (PPD_FILE ppd, string name)
+		private string GetPaperSizeName (IntPtr ppd, string name)
 		{
 			string rslt = name;
-			PPD_GROUP group;
 			PPD_OPTION option;
 			PPD_CHOICE choice;
-			IntPtr ptr, ptr_opt, ptr_choice;
+			IntPtr ptr_opt, ptr_choice;
+			
+			ptr_opt = ppdFindOption (ppd, "PageSize"); 
 
-			ptr = ppd.groups;
-			for (int i = 0; i < ppd.num_groups; i++) {
-				group = (PPD_GROUP) Marshal.PtrToStructure (ptr, typeof (PPD_GROUP));
-				//Console.WriteLine ("Size text:{0} name:{1} opts {2}", group.text, group.name, group.num_options);
-				ptr = new IntPtr (ptr.ToInt64 () + Marshal.SizeOf (group));
+			if (ptr_opt == IntPtr.Zero) {
+				return rslt;	
+			}
+			
+			option = (PPD_OPTION) Marshal.PtrToStructure (ptr_opt, typeof (PPD_OPTION));
 
-				ptr_opt = group.options;
-				for (int n = 0; n < group.num_options; n++) {
-					option = (PPD_OPTION) Marshal.PtrToStructure (ptr_opt, typeof (PPD_OPTION));
-					ptr_opt = new IntPtr (ptr_opt.ToInt64 () + Marshal.SizeOf (option));
-					//Console.WriteLine ("   key:{0} def:{1} text: {2}", option.keyword, option.defchoice, option.text);
-
-					if (!option.keyword.Equals ("PageSize"))
-						continue;
-
-					ptr_choice = option.choices;
-					for (int c = 0; c < option.num_choices; c++) {
-						choice = (PPD_CHOICE) Marshal.PtrToStructure (ptr_choice, typeof (PPD_CHOICE));
-						ptr_choice = new IntPtr (ptr_choice.ToInt64 () + Marshal.SizeOf (choice));
-						//Console.WriteLine ("       choice:{0} - text: {1}", choice.choice, choice.text);
-						if (name.Equals (choice.choice)) {
-							rslt = choice.text;
-							break;
-						}
-					}
+			ptr_choice = option.choices;
+			for (int c = 0; c < option.num_choices; c++) {
+				choice = (PPD_CHOICE) Marshal.PtrToStructure (ptr_choice, typeof (PPD_CHOICE));
+				ptr_choice = new IntPtr (ptr_choice.ToInt64 () + Marshal.SizeOf (choice));
+				if (name.Equals (choice.choice)) {
+					rslt = choice.text;
+					break;
 				}
 			}
-
 			return rslt;
 		}
 
@@ -295,6 +353,9 @@ namespace System.Drawing.Printing
 
 		[DllImport("libcups", CharSet=CharSet.Ansi)]
 		static extern IntPtr ppdOpenFile (string filename);
+
+		[DllImport("libcups", CharSet=CharSet.Ansi)]
+		static extern IntPtr ppdFindOption (IntPtr ppd_file, string keyword);
 
 		[DllImport("libcups")]
 		static extern void ppdClose (IntPtr ppd);

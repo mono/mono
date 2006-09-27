@@ -1,5 +1,10 @@
 2006-09-27 Jordi Mas i Hernandez <jordimash@gmail.com>
 
+	* PrintingServicesUnix.cs: Implements LoadPrinterPaperSources member,
+	simplifies GetPaperSizeName and loads paper source and size defaults
+
+2006-09-27 Jordi Mas i Hernandez <jordimash@gmail.com>
+
 	* PrintingServices.cs: Add LoadPrinterPaperSources member
 	
 	* PrintingServicesWin32.cs: Implements LoadPrinterPaperSources and
