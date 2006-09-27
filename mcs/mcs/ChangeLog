@@ -1,3 +1,8 @@
+2006-09-27  Martin Baulig  <martin@ximian.com>
+
+	* report.cs
+	(InternalErrorException): Added overloaded ctor taking a params array.
+
 2006-09-26  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs, codegen.cs, const.cs, cs-tokenizer.cs, driver.cs, ecore.cs:
