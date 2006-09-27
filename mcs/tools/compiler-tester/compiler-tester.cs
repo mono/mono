@@ -150,7 +150,7 @@ namespace TestRunner {
 				using (StreamReader sr = new StreamReader (file)) {
 					String line;
 					while (row++ < 3 && (line = sr.ReadLine()) != null) {
-						if (!AnalyzeTestFile (row, line, ref compiler_options,
+						if (!AnalyzeTestFile (ref row, line, ref compiler_options,
 								      ref dependencies))
 							return false;
 					}
@@ -161,7 +161,7 @@ namespace TestRunner {
 			return true;
 		}
 
-		protected virtual bool AnalyzeTestFile (int row, string line,
+		protected virtual bool AnalyzeTestFile (ref int row, string line,
 							ref string[] compiler_options,
 							ref string[] dependencies)
 		{
@@ -573,7 +573,8 @@ namespace TestRunner {
 			Wrong,
 			Missing,
 			WrongMessage,
-			MissingLocation
+			MissingLocation,
+			Duplicate
 		}
 
 		public NegativeChecker (ITester tester, string log_file, string issue_file, bool check_msg):
@@ -583,7 +584,7 @@ namespace TestRunner {
 			wrong_warning = new Hashtable ();
 		}
 
-		protected override bool AnalyzeTestFile(int row, string line,
+		protected override bool AnalyzeTestFile (ref int row, string line,
 							ref string[] compiler_options,
 							ref string[] dependencies)
 		{
@@ -594,7 +595,7 @@ namespace TestRunner {
 				if (index == -1 || index > 15) {
 					LogLine ("IGNORING: Wrong test file syntax (missing error mesage text)");
 					++ignored;
-					base.AnalyzeTestFile (row, line, ref compiler_options,
+					base.AnalyzeTestFile (ref row, line, ref compiler_options,
 							      ref dependencies);
 					return false;
 				}
@@ -603,17 +604,28 @@ namespace TestRunner {
 			}
 
 			if (row == 2) {
-				string filtered = line.Replace (" ", "");
+				string filtered = line.Replace(" ", "");
+
+				// Some error tests require to have different error text for different runtimes.
+				if (filtered.StartsWith ("//GMCS")) {
+					row = 1;
+#if !NET_2_0
+					return true;
+#else
+					return AnalyzeTestFile(ref row, line, ref compiler_options, ref dependencies);
+#endif
+				}
+
 				check_error_line = !filtered.StartsWith ("//Line:0");
 
 				if (!filtered.StartsWith ("//Line:")) {
-					LogLine ("IGNORING: Wrong test syntax (second line must have `// Line: xx' syntax");
+					LogLine ("IGNORING: Wrong test syntax (following line after an error messsage must have `// Line: xx' syntax");
 					++ignored;
 					return false;
 				}
 			}
 
-			if (!base.AnalyzeTestFile (row, line, ref compiler_options, ref dependencies))
+			if (!base.AnalyzeTestFile (ref row, line, ref compiler_options, ref dependencies))
 				return false;
 
 			is_warning = false;
@@ -678,36 +690,42 @@ namespace TestRunner {
 			string tested_text = "error " + error_prefix + expected;
 			StringReader sr = new StringReader (buffer);
 			string line = sr.ReadLine ();
-			bool any_error = false;
+			ArrayList ld = new ArrayList ();
+			CompilerError result = CompilerError.Missing;
 			while (line != null) {
-
-				if (line.IndexOf (tested_text) != -1) {
-					if (check_msg) {
-						int first = line.IndexOf (':');
-						int second = line.IndexOf (':', first + 1);
-						if (second == -1 || !check_error_line)
-							second = first;
-
-						string msg = line.Substring (second + 1).TrimEnd ('.').Trim ();
-						if (msg != expected_message && msg != expected_message.Replace ('`', '\'')) {
-							error_message = msg;
-							return CompilerError.WrongMessage;
-						}
-
-						if (check_error_line && line.IndexOf (".cs(") == -1)
-							return CompilerError.MissingLocation;
-					}
-					return CompilerError.Expected;
+				if (ld.Contains (line)) {
+					if (line.IndexOf ("Location of the symbol related to previous") == -1)
+						return CompilerError.Duplicate;
 				}
+				ld.Add (line);
 
-				if (line.IndexOf (error_prefix) != -1 &&
-					line.IndexOf (ignored_error) == -1)
-					any_error = true;
+				if (result != CompilerError.Expected) {
+					if (line.IndexOf (tested_text) != -1) {
+						if (check_msg) {
+							int first = line.IndexOf (':');
+							int second = line.IndexOf (':', first + 1);
+							if (second == -1 || !check_error_line)
+								second = first;
+
+							string msg = line.Substring (second + 1).TrimEnd ('.').Trim ();
+							if (msg != expected_message && msg != expected_message.Replace ('`', '\'')) {
+								error_message = msg;
+								return CompilerError.WrongMessage;
+							}
+
+							if (check_error_line && line.IndexOf (".cs(") == -1)
+								return CompilerError.MissingLocation;
+						}
+						result = CompilerError.Expected;
+					} else if (line.IndexOf (error_prefix) != -1 &&
+						line.IndexOf (ignored_error) == -1)
+						result = CompilerError.Wrong;
+				}
 
 				line = sr.ReadLine ();
 			}
 			
-			return any_error ? CompilerError.Wrong : CompilerError.Missing;
+			return result;
 		}
 
 		bool HandleFailure (string file, CompilerError status)
@@ -785,6 +803,10 @@ namespace TestRunner {
 					}
 					break;
 
+				case CompilerError.Duplicate:
+					// Will become an error soon
+					LogLine("WARNING: EXACTLY SAME ERROR HAS BEEN ISSUED MULTIPLE TIMES");
+					return true;
 			}
 
 			regression.Add (file);

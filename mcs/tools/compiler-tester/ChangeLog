@@ -1,3 +1,9 @@
+2006-09-27  Marek Safar  <marek.safar@seznam.cz>
+
+	* compiler-tester.cs: Add a new "//GMCS:" comment for messages
+	different on 2.0 runtime.
+	Add detection of the exactly same error/warning.
+
 2006-04-07  Marek Safar  <marek.safar@seznam.cz>
 
 	* compiler-tester.cs: Prints known issues stats.
