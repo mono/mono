@@ -1,5 +1,11 @@
 2006-09-27  Chris Toshok  <toshok@ximian.com>
 
+	* DataGrid.cs: return false if alt isn't pressed when '0' is
+	pressed.  this keeps the '0' key from being swallowed, and fixes
+	bug #79350.
+
+2006-09-27  Chris Toshok  <toshok@ximian.com>
+
 	* ComboBox.cs: use Invalidate when scrolling the dropdown list.
 	Calling Refresh (in response to a scrollbar event) screws up the
 	scrollbar painting.  Fixes bug #78923.

@@ -1732,8 +1732,9 @@ namespace System.Windows.Forms
 				if (alt_pressed) {
 					if (is_editing)
 						CurrentTableStyle.GridColumnStyles[CurrentColumn].EnterNullValue ();
+					return true;
 				}
-				return true;
+				return false;
 
 			case Keys.Enter:
 				if (is_changing)
