@@ -2140,6 +2140,14 @@ namespace Mono.CSharp {
 						Error_OperatorAmbiguous (loc, oper, l, r);
 						return null;
 					}
+
+					if (oper == Operator.BitwiseOr && l != r && !(orig_right is Constant) && right is OpcodeCast &&
+						(r == TypeManager.sbyte_type || r == TypeManager.short_type ||
+						 r == TypeManager.int32_type || r == TypeManager.int64_type)) {
+							Report.Warning (675, 3, loc, "The operator `|' used on the sign-extended type `{0}'. Consider casting to a smaller unsigned type first",
+								TypeManager.CSharpName (r));
+					}
+					
 				} else if (!VerifyApplicable_Predefined (ec, TypeManager.bool_type)) {
 					Error_OperatorCannotBeApplied ();
 					return null;

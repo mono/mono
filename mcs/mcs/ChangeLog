@@ -1,3 +1,10 @@
+2006-09-27  Marek Safar  <marek.safar@seznam.cz>
+
+	* expression.cs (Binary.ResolveOperator): Warn about a side effect
+	of the `|' operator.
+
+	* report.cs: A new warning added.
+
 2006-09-27  Martin Baulig  <martin@ximian.com>
 
 	* report.cs
