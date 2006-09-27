@@ -170,8 +170,10 @@ namespace Mono.CSharp {
 		{
 			iterator_type_expr = InflateType (Iterator.OriginalIteratorType);
 
+#if GMCS_SOURCE
 			generic_args = new TypeArguments (Location);
 			generic_args.Add (iterator_type_expr);
+#endif
 
 			ArrayList list = new ArrayList ();
 			if (Iterator.IsEnumerable) {
