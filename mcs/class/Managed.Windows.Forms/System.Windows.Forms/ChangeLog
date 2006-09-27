@@ -1,3 +1,9 @@
+2006-09-27  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11.cs: make StyleSet and ExStyleSet check == with the
+	flag, not just != 0.  this makes flags that are actually multiple
+	bits (like WS_CAPTION) work.  fixes bug #79508.
+
 2006-09-27  Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* PageSetupDialog.cs: add support for getting and settings the 

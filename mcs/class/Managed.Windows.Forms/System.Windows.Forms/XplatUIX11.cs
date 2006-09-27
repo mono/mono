@@ -678,12 +678,12 @@ namespace System.Windows.Forms {
 
 		bool StyleSet (int s, WindowStyles ws)
 		{
-			return (s & (int)ws) != 0;
+			return (s & (int)ws) == (int)ws;
 		}
 
 		bool ExStyleSet (int ex, WindowExStyles exws)
 		{
-			return (ex & (int)exws) != 0;
+			return (ex & (int)exws) == (int)exws;
 		}
 
 		private void DeriveStyles(int Style, int ExStyle, out FormBorderStyle border_style, out TitleStyle title_style, out int caption_height, out int tool_caption_height) {
