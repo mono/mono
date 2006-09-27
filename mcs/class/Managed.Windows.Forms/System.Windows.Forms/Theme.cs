@@ -73,74 +73,86 @@ namespace System.Windows.Forms
 		{
 			int hash = color.ToArgb ();			
 
-			Pen res = pens [hash] as Pen;
-			if (res != null)
-				return res;
+			lock (pens) {
+				Pen res = pens [hash] as Pen;
+				if (res != null)
+					return res;
 			
-			Pen pen = new Pen (color);
-			pens.Add (hash, pen);
-			return pen;
+				Pen pen = new Pen (color);
+				pens.Add (hash, pen);
+				return pen;
+			}
 		}
 		
 		public Pen GetDashPen (Color color, DashStyle dashStyle)
 		{
 			string hash = color.ToString() + dashStyle;
+
+			lock (dashpens) {
+				Pen res = dashpens [hash] as Pen;
+				if (res != null)
+					return res;
 			
-			Pen res = dashpens [hash] as Pen;
-			if (res != null)
-				return res;
-			
-			Pen pen = new Pen (color);
-			pen.DashStyle = dashStyle;
-			dashpens [hash] = pen;
-			return pen;
+				Pen pen = new Pen (color);
+				pen.DashStyle = dashStyle;
+				dashpens [hash] = pen;
+				return pen;
+			}
 		}
 		
 		public Pen GetSizedPen (Color color, int size)
 		{
 			string hash = color.ToString () + size;
 			
-			Pen res = sizedpens [hash] as Pen;
-			if (res != null)
-				return res;
+			lock (sizedpens) {
+				Pen res = sizedpens [hash] as Pen;
+				if (res != null)
+					return res;
 			
-			Pen pen = new Pen (color, size);
-			sizedpens [hash] = pen;
-			return pen;
+				Pen pen = new Pen (color, size);
+				sizedpens [hash] = pen;
+				return pen;
+			}
 		}
 		
 		public SolidBrush GetSolidBrush (Color color)
 		{
 			int hash = color.ToArgb ();
 
-			SolidBrush res = solidbrushes [hash] as SolidBrush;
-			if (res != null)
-				return res;
+			lock (solidbrushes) {
+				SolidBrush res = solidbrushes [hash] as SolidBrush;
+				if (res != null)
+					return res;
 			
-			SolidBrush brush = new SolidBrush (color);
-			solidbrushes.Add (hash, brush);
-			return brush;
+				SolidBrush brush = new SolidBrush (color);
+				solidbrushes.Add (hash, brush);
+				return brush;
+			}
 		}		
 		
 		public HatchBrush GetHatchBrush (HatchStyle hatchStyle, Color foreColor, Color backColor)
 		{
 			string hash = hatchStyle.ToString () + foreColor.ToString () + backColor.ToString ();			
-						
-			if (hatchbrushes.Contains (hash))
-				return (HatchBrush) hatchbrushes[hash];							
 
-			HatchBrush brush = new HatchBrush (hatchStyle, foreColor, backColor);
-			hatchbrushes.Add (hash, brush);
-			return brush;
+			lock (hatchbrushes) {
+				if (hatchbrushes.Contains (hash))
+					return (HatchBrush) hatchbrushes[hash];							
+
+				HatchBrush brush = new HatchBrush (hatchStyle, foreColor, backColor);
+				hatchbrushes.Add (hash, brush);
+				return brush;
+			}
 		}
 		
 		public void AddUIImage (Image image, string name, int size)
 		{
 			string hash = name + size.ToString();
-			
-			if (uiImages.Contains (hash))
-				return;
-			uiImages.Add (hash, image);
+
+			lock (uiImages) {
+				if (uiImages.Contains (hash))
+					return;
+				uiImages.Add (hash, image);
+			}
 		}
 		
 		public Image GetUIImage(string name, int size)
@@ -154,21 +166,23 @@ namespace System.Windows.Forms
 		
 		public CPColor GetCPColor (Color color)
 		{
-			object tmp = cpcolors [color];
+			lock (cpcolors) {
+				object tmp = cpcolors [color];
 			
-			if (tmp == null) {
-				CPColor cpcolor = new CPColor ();
-				cpcolor.Dark = ControlPaint.Dark (color);
-				cpcolor.DarkDark = ControlPaint.DarkDark (color);
-				cpcolor.Light = ControlPaint.Light (color);
-				cpcolor.LightLight = ControlPaint.LightLight (color);
+				if (tmp == null) {
+					CPColor cpcolor = new CPColor ();
+					cpcolor.Dark = ControlPaint.Dark (color);
+					cpcolor.DarkDark = ControlPaint.DarkDark (color);
+					cpcolor.Light = ControlPaint.Light (color);
+					cpcolor.LightLight = ControlPaint.LightLight (color);
 				
-				cpcolors.Add (color, cpcolor);
-				
-				return cpcolor;
+					cpcolors.Add (color, cpcolor);
+
+					return cpcolor;
+				}
+			
+				return (CPColor)tmp;
 			}
-			
-			return (CPColor)tmp;
 		}
 	}
 

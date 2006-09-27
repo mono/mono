@@ -1,5 +1,10 @@
 2006-09-27  Chris Toshok  <toshok@ximian.com>
 
+	* Theme.cs (SystemResPool): make the "if hashtable[key] == null
+	then insert into hashtable" blocks threadsafe.
+
+2006-09-27  Chris Toshok  <toshok@ximian.com>
+
 	* MessageBox.cs (CreateParams): the styles should be |'ed with our
 	baseclass's, since otherwise the
 	ControlBox/MinimizeBox/MaximizeBox assignments above have no
