@@ -1,3 +1,8 @@
+2006-09-27  Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* PageSetupDialog.cs: add support for getting and settings the 
+	paper size, source and orientation.
+
 2006-09-26  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIX11.cs (SetWMStyles): turns out when SYSMENU is not set

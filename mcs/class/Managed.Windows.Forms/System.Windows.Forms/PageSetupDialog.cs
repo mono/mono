@@ -157,13 +157,16 @@ namespace System.Windows.Forms {
 		#endregion // Public Instance Properties
 
 		#region Protected Instance Methods
-		protected override bool RunDialog (IntPtr hwnd) {
+		protected override bool RunDialog (IntPtr hwnd) 
+		{
+			SetPrinterDetails ();
 			return true;
 		}
 		#endregion // Protected Instance Methods
 
 		#region Private Helper
-		private void InitializeComponent() {
+		private void InitializeComponent()
+		{
 			this.groupbox_paper = new System.Windows.Forms.GroupBox();
 			this.combobox_source = new System.Windows.Forms.ComboBox();
 			this.combobox_size = new System.Windows.Forms.ComboBox();
@@ -208,7 +211,6 @@ namespace System.Windows.Forms {
 			this.combobox_source.Name = "combobox_source";
 			this.combobox_source.Size = new System.Drawing.Size(240, 21);
 			this.combobox_source.TabIndex = 3;
-			this.combobox_source.Text = "Default";
 			// 
 			// combobox_size
 			// 
@@ -217,7 +219,6 @@ namespace System.Windows.Forms {
 			this.combobox_size.Name = "combobox_size";
 			this.combobox_size.Size = new System.Drawing.Size(240, 21);
 			this.combobox_size.TabIndex = 2;
-			this.combobox_size.Text = "A4";
 			// 
 			// label_source
 			// 
@@ -294,6 +295,7 @@ namespace System.Windows.Forms {
 			this.button_ok.Size = new System.Drawing.Size(72, 23);
 			this.button_ok.TabIndex = 3;
 			this.button_ok.Text = "OK";
+			this.button_ok.Click += new EventHandler (OnClickOkButton);
 			// 
 			// button_cancel
 			// 
@@ -416,6 +418,53 @@ namespace System.Windows.Forms {
 		private string LocalizedLengthUnit ()
 		{
 			return UseYardPound ? "Margins (inches)" : "Margins (millimeters)";
+		}
+		
+		private void SetPrinterDetails ()
+		{
+			combobox_size.Items.Clear ();
+			foreach (PaperSize paper_size in PrinterSettings.PaperSizes) {
+				combobox_size.Items.Add (paper_size.PaperName);
+			}
+			combobox_size.SelectedItem = page_settings.PaperSize.PaperName;
+			
+			combobox_source.Items.Clear ();
+			foreach (PaperSource paper_source in PrinterSettings.PaperSources) {
+				combobox_source.Items.Add (paper_source.SourceName);
+			}
+			combobox_source.SelectedItem = page_settings.PaperSource.SourceName;
+			
+			if (PageSettings.Landscape) {
+				radio_landscape.Checked = true;
+				radio_portrait.Checked = false;
+			} else {
+				radio_landscape.Checked = false;
+				radio_portrait.Checked = true;
+			}
+		}
+		
+		private void OnClickOkButton (object sender, EventArgs e)
+		{			
+			if (combobox_size.SelectedItem != null) {
+				foreach (PaperSize paper_size in PrinterSettings.PaperSizes) {
+					if (paper_size.PaperName == (string) combobox_size.SelectedItem) {
+						PageSettings.PaperSize = paper_size;
+						break;
+					}
+				}
+			}
+			
+			if (combobox_source.SelectedItem != null) {
+				foreach (PaperSource paper_source in PrinterSettings.PaperSources) {
+					if (paper_source.SourceName == (string) combobox_source.SelectedItem) {
+						PageSettings.PaperSource = paper_source;
+						break;
+					}
+				}
+			}
+			
+			PageSettings.Landscape = radio_landscape.Checked;
+			form.DialogResult = DialogResult.OK;
 		}
 		#endregion // Private Helper
 	}
