@@ -1,3 +1,7 @@
+2006-09-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriter2.cs : null arg check.
+
 2006-09-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDeclaration.cs :

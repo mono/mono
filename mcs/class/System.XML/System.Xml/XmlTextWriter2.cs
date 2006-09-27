@@ -281,6 +281,8 @@ namespace Mono.Xml
 
 		void Initialize (TextWriter writer)
 		{
+			if (writer == null)
+				throw new ArgumentNullException ("writer");
 			XmlNameTable name_table = new NameTable ();
 			this.writer = writer;
 			if (writer is StreamWriter)
