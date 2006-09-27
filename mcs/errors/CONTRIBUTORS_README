@@ -24,16 +24,27 @@ Mono MCS Errors.
 	
 	For example:
 
-	// cs0057.cs: Inconsistent accessibility. Parameter type is less accessible than operator.
+	// CS0057: Inconsistent accessibility. Parameter type is less accessible than operator.
 	// Line: 10
 	
-	** Note: If your error or warning message does not contain source line
+	** Note 1: If your error or warning message does not contain source line
 	location use syntax `// Line : 0'
+
+	** Note 2: Because in some special cases the error message can differ
+	between runtimes. The special syntax exists where you can specify message
+	for 2.0 runtime. 
+	
+	For example:
+
+	// CS0057: Uknown error
+	// GMCS0057: Uknown error 2.0
+	// Line: 10
+
 
 	There should not be more than one error per tests.  Each test
 	should only contain one error.
 
-	Then you have to add the file to the CVS and commit it.
+	Then you have to add the file to the SVN and commit it.
 
 	The next thing is to write a short text file with a little
 	description of what the error is and what it's necessary
@@ -80,7 +91,7 @@ Mono MCS Errors.
 
 	CS0134: not supported by csc 2.0
 	CS0576: not supported by csc 2.0
-        CS0580: Included in error CS1501 (not supported by csc 2.0)
-        CS0581: Included in error CS0117 (not supported by csc 2.0)
+	CS0580: Included in error CS1501 (not supported by csc 2.0)
+	CS0581: Included in error CS0117 (not supported by csc 2.0)
 	CS0654: not supported by csc 2.0
 
