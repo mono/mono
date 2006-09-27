@@ -224,7 +224,9 @@ namespace Mono.Security.Cryptography {
 				r.Clear ();
 			}
 
-			byte[] result = output.GetBytes ();
+			// it's sometimes possible for the results to be a byte short
+			// and this can break some software (see #79502) so we 0x00 pad the result
+			byte[] result = GetPaddedValue (output);
 			// zeroize values
 			input.Clear ();	
 			output.Clear ();
@@ -241,7 +243,9 @@ namespace Mono.Security.Cryptography {
 
 			BigInteger input = new BigInteger (rgb);
 			BigInteger output = input.ModPow (e, n);
-			byte[] result = output.GetBytes ();
+			// it's sometimes possible for the results to be a byte short
+			// and this can break some software (see #79502) so we 0x00 pad the result
+			byte[] result = GetPaddedValue (output);
 			// zeroize value
 			input.Clear ();	
 			output.Clear ();
@@ -456,6 +460,21 @@ namespace Mono.Security.Cryptography {
 			// generated with CRT parameters) or CRT is (or isn't)
 			// possible (in case the key was imported)
 			get { return (!keypairGenerated || isCRTpossible); }
+		}
+
+		private byte[] GetPaddedValue (BigInteger value)
+		{
+			byte[] result = value.GetBytes ();
+			int length = (KeySize >> 3);
+			if (result.Length >= length)
+				return result;
+
+			// left-pad 0x00 value on the result (same integer, correct length)
+			byte[] padded = new byte[length];
+			Buffer.BlockCopy (result, 0, padded, (length - result.Length), result.Length);
+			// temporary result may contain decrypted (plaintext) data, clear it
+			Array.Clear (result, 0, result.Length);
+			return padded;
 		}
 	}
 }
