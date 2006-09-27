@@ -184,7 +184,7 @@ public abstract class ByteEncoding : MonoEncoding
 	}
 */
 
-	[CLSCompliant (false)]
+	//[CLSCompliant (false)]
 	public unsafe override int GetBytesImpl (char* chars, int charCount, byte* bytes, int byteCount)
 	{
 		ToBytes (chars, charCount, bytes, byteCount);

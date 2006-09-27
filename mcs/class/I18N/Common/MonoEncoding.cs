@@ -174,10 +174,10 @@ namespace I18N.Common
 		}
 #endif
 
-		[CLSCompliant (false)]
+		//[CLSCompliant (false)]
 		public unsafe abstract int GetByteCountImpl (char* chars, int charCount);
 
-		[CLSCompliant (false)]
+		//[CLSCompliant (false)]
 		public unsafe abstract int GetBytesImpl (char* chars, int charCount,
 			byte* bytes, int byteCount);
 	}

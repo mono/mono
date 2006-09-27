@@ -199,11 +199,11 @@ namespace System.Configuration
 	{
 		ConfigurationData parent;
 		Hashtable factories;
-		Hashtable pending;
-		string fileName;
 		static object removedMark = new object ();
 		static object emptyMark = new object ();
 #if (XML_DEP)
+		Hashtable pending;
+		string fileName;
 		static object groupMark = new object ();
 #endif
 		Hashtable cache;
@@ -232,10 +232,11 @@ namespace System.Configuration
 		[FileIOPermission (SecurityAction.Assert, Unrestricted = true)]
 		public bool Load (string fileName)
 		{
+#if (XML_DEP)
 			this.fileName = fileName;
 			if (fileName == null || !File.Exists (fileName))
 				return false;
-#if (XML_DEP)
+			
 			XmlTextReader reader = null;
 
 			try {

@@ -153,28 +153,28 @@ namespace System.Reflection.Emit {
 		/* Used by mcs */
 		internal bool BestFitMapping {
 			set {
-				extra_flags = (uint) ((extra_flags & ~0x30) | (value ? 0x10 : 0x20));
+				extra_flags = (uint) ((extra_flags & ~0x30) | (uint)(value ? 0x10 : 0x20));
 			}
 		}
 
 		/* Used by mcs */
 		internal bool ThrowOnUnmappableChar {
 			set {
-				extra_flags = (uint) ((extra_flags & ~0x3000) | (value ? 0x1000 : 0x2000));
+				extra_flags = (uint) ((extra_flags & ~0x3000) | (uint)(value ? 0x1000 : 0x2000));
 			}
 		}
 
 		/* Used by mcs */
 		internal bool ExactSpelling {
 			set {
-				extra_flags = (uint) ((extra_flags & ~0x01) | (value ? 0x01 : 0x00));
+				extra_flags = (uint) ((extra_flags & ~0x01) | (uint)(value ? 0x01 : 0x00));
 			}
 		}
 
 		/* Used by mcs */
 		internal bool SetLastError {
 			set {
-				extra_flags = (uint) ((extra_flags & ~0x40) | (value ? 0x40 : 0x00));
+				extra_flags = (uint) ((extra_flags & ~0x40) | (uint)(value ? 0x40 : 0x00));
 			}
 		}
 
