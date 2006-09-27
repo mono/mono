@@ -1,5 +1,11 @@
 2006-09-27  Chris Toshok  <toshok@ximian.com>
 
+	* ComboBox.cs: use Invalidate when scrolling the dropdown list.
+	Calling Refresh (in response to a scrollbar event) screws up the
+	scrollbar painting.  Fixes bug #78923.
+
+2006-09-27  Chris Toshok  <toshok@ximian.com>
+
 	* Theme.cs (SystemResPool): make the "if hashtable[key] == null
 	then insert into hashtable" blocks threadsafe.
 

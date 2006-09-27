@@ -1779,7 +1779,7 @@ namespace System.Windows.Forms
 					return;
 				top_item = item;
 				UpdateLastVisibleItem ();
-				Refresh ();
+				Invalidate ();
 			}			
 
 			protected override void OnMouseDown (MouseEventArgs e)
@@ -1879,7 +1879,7 @@ namespace System.Windows.Forms
 
 				top_item =  vscrollbar_ctrl.Value;
 				UpdateLastVisibleItem ();
-				Refresh ();
+				Invalidate ();
 			}			
 			
 			protected override void WndProc(ref Message m) {
