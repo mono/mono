@@ -1,5 +1,9 @@
 2006-09-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* metadata.c class.c: Applied patch from Ricardo Fernandez Pascual 
+	(ricardo.fernandez@st.com). Add some new MonoClass and MonoType accessors. Fixes
+	#79460, #79461, #79485.
+
 	* class.c (mono_class_from_name_case): Fix incorrect comments. Fixes #79504.
 
 	* marshal.c (mono_marshal_load_type_info): Fix a typo which caused an assert. Fixes
