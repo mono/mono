@@ -1,3 +1,8 @@
+2006-09-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpServerUtility.cs: 1.1 Execute(s) preserves the query string.
+	Thanks to Hubert Fongarnand. Fixes bug #79506.
+
 2006-09-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* QueueManager.cs: if disposed, always return null for next request.

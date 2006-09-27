@@ -77,12 +77,12 @@ namespace System.Web {
 
 		public void Execute (string path)
 		{
-			Execute (path, null);
+			Execute (path, null, true);
 		}
 
 		public void Execute (string path, TextWriter writer)
 		{
-			Execute (path, writer, false);
+			Execute (path, writer, true);
 		}
 
 #if NET_2_0
