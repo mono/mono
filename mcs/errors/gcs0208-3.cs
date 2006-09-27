@@ -2,16 +2,12 @@
 // Line: 10
 // Compiler options: /unsafe
 // Similar code to #75772, but without field of type T.
-// Compiler options: /unsafe
+
 public class Splay<T>
 {
   unsafe private struct Node
   {
-    private Node *            left, right;
     private Node *            parent;
-//    private T                 data;
-
-    public static void Main () {}
   } 
 }
 

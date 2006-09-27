@@ -2,12 +2,11 @@
 // Line: 10
 // Compiler options: /unsafe
 // similar one to #75772 but using a class instead of a struct.
-// Compiler options: /unsafe
+
 public class Splay<T>
 {
   unsafe private class Node
   {
-    private Node *            left, right;
     private Node *            parent;
     private T                 data;
   } 
