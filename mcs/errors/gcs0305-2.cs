@@ -1,5 +1,6 @@
-// CS8217: Generic type `Stack' takes 1 type parameters, but specified 2.
-// Line: 10
+// CS0305: Using the generic type `Stack<T>' requires `1' type argument(s)
+// Line: 11
+
 class Stack<T> {
 }
 
