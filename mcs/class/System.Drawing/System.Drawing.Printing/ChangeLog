@@ -1,3 +1,15 @@
+2006-09-27 Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* PrintingServices.cs: Add LoadPrinterPaperSources member
+	
+	* PrintingServicesWin32.cs: Implements LoadPrinterPaperSources and
+	reads the default paper source and size.
+	
+	* PrintingServicesUnix.cs: Add stub LoadPrinterPaperSources member
+	
+	* PrinterSettings.cs: Implements PaperSourceCollection property and
+	makes default paper source and size from the system.
+
 2006-08-02  Chris Toshok  <toshok@ximian.com>
 
 	* PreviewPrintController.cs: scale the Graphics context we pass

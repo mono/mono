@@ -43,6 +43,9 @@ namespace System.Drawing.Printing
 		internal override void LoadPrinterSettings (string printer, PrinterSettings settings)
 		{
 			int ret;
+			DEVMODE devmode;
+			IntPtr hPrn = IntPtr.Zero;
+			IntPtr ptr_dev = IntPtr.Zero;
 
 			settings.maximum_copies = Win32DeviceCapabilities (printer, null, DCCapabilities.DC_COPIES, IntPtr.Zero, IntPtr.Zero);
 
@@ -55,6 +58,41 @@ namespace System.Drawing.Printing
 			ret = Win32DeviceCapabilities (printer, null, DCCapabilities.DC_ORIENTATION, IntPtr.Zero, IntPtr.Zero);
 			if (ret != -1)
 				settings.landscape_angle = ret;
+
+			try {
+				Win32OpenPrinter (printer, out hPrn, IntPtr.Zero);
+				ret = Win32DocumentProperties (IntPtr.Zero, hPrn, null, IntPtr.Zero, IntPtr.Zero, 2);
+
+				if (ret < 0)
+					return;
+
+				ptr_dev =  Marshal.AllocHGlobal (ret);
+				ret = Win32DocumentProperties (IntPtr.Zero, hPrn, null, ptr_dev, IntPtr.Zero, 2);
+
+				devmode = (DEVMODE) Marshal.PtrToStructure (ptr_dev, typeof(DEVMODE));
+
+	        		foreach (PaperSize paper_size in settings.PaperSizes) {
+					if ((int) paper_size.Kind ==  devmode.dmPaperSize) {
+						settings.DefaultPageSettings.PaperSize = paper_size;
+						break;
+					}
+				}
+
+				foreach (PaperSource paper_source in settings.PaperSources) {
+					if ((int) paper_source.Kind ==  devmode.dmDefaultSource) {
+						settings.DefaultPageSettings.PaperSource = paper_source;
+						break;
+					}
+				}
+	        	}
+	        	finally {
+	        		Win32ClosePrinter (hPrn);
+
+	        		if (ptr_dev != IntPtr.Zero)
+					Marshal.FreeHGlobal (ptr_dev);
+	        	}
+
+
 		}
 
 		internal override void LoadPrinterResolutions (string printer, PrinterSettings settings)
@@ -163,6 +201,54 @@ namespace System.Drawing.Printing
 			return (ret > 0) ? true : false;
 		}
 
+		internal override void LoadPrinterPaperSources (string printer, PrinterSettings settings)
+		{
+			int items, ret;
+			IntPtr ptr_names, buff_names = IntPtr.Zero;
+			IntPtr ptr_bins, buff_bins = IntPtr.Zero;
+			PaperSourceKind kind;
+			string name;
+
+			settings.PaperSources.Clear ();
+			items = Win32DeviceCapabilities (printer, null, DCCapabilities.DC_BINNAMES, IntPtr.Zero, IntPtr.Zero);
+
+			if (items == -1)
+				return;
+
+			try {
+				ptr_names = buff_names = Marshal.AllocHGlobal (items * 2 * 24);
+				ptr_bins = buff_bins = Marshal.AllocHGlobal (items * 2);
+
+				ret = Win32DeviceCapabilities (printer, null, DCCapabilities.DC_BINNAMES, buff_names, IntPtr.Zero);
+
+				if (ret == -1) {
+					// the finally clause will free the unmanaged memory before returning
+					return;
+				}
+
+				ret = Win32DeviceCapabilities (printer, null, DCCapabilities.DC_BINS, buff_bins, IntPtr.Zero);
+
+				for (int i = 0; i < ret; i++) {
+					name  = Marshal.PtrToStringUni (ptr_names);
+					kind = (PaperSourceKind) Marshal.ReadInt16 (ptr_bins);
+					settings.PaperSources.Add (new PaperSource (name, kind));
+
+					ptr_names = new IntPtr (ptr_names.ToInt64 () + 24 * 2);
+					ptr_bins = new IntPtr (ptr_bins.ToInt64 () + 2);
+				}
+
+			}
+			finally {
+				if (buff_names != IntPtr.Zero)
+					Marshal.FreeHGlobal (buff_names);
+
+				if (buff_bins != IntPtr.Zero)
+					Marshal.FreeHGlobal (buff_bins);
+
+			}
+
+		}
+
 		internal override bool StartPage (GraphicsPrinter gr)
 		{
 			int ret = Win32StartPage (gr.Hdc);
@@ -241,7 +327,7 @@ namespace System.Drawing.Printing
 			IntPtr ptr;
 
 			Win32OpenPrinter (printer, out hPrn, IntPtr.Zero);
-			
+
 			if (hPrn == IntPtr.Zero)
 				return;
 
@@ -319,6 +405,10 @@ namespace System.Drawing.Printing
       		[DllImport("winspool.drv", EntryPoint="GetDefaultPrinter", CharSet=CharSet.Unicode, SetLastError=true)]
       		private static extern int Win32GetDefaultPrinter (StringBuilder buffer, ref int bufferSize);
 
+		[DllImport("winspool.drv", EntryPoint="DocumentProperties", CharSet=CharSet.Unicode, SetLastError=true)]
+		private static extern int Win32DocumentProperties (IntPtr hwnd, IntPtr hPrinter, string pDeviceName,
+			IntPtr pDevModeOutput, IntPtr pDevModeInput, int fMode);
+
     		[DllImport("gdi32.dll", EntryPoint="CreateDC")]
 		static extern IntPtr Win32CreateDC (string lpszDriver, string lpszDevice,
    			string lpszOutput, IntPtr lpInitData);
@@ -376,6 +466,49 @@ namespace System.Drawing.Printing
   			public IntPtr	lpszDatatype;
   			public int	fwType;
   		}
+
+		[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
+		internal struct DEVMODE
+		{
+			[MarshalAs(UnmanagedType.ByValTStr,SizeConst=32)]
+			public string	dmDeviceName;
+			public short	dmSpecVersion;
+			public short	dmDriverVersion;
+			public short	dmSize;
+			public short	dmDriverExtra;
+			public int	dmFields;
+
+			public short	dmOrientation;
+			public short	dmPaperSize;
+			public short	dmPaperLength;
+			public short	dmPaperWidth;
+
+			public short	dmScale;
+			public short	dmCopies;
+			public short	dmDefaultSource;
+			public short	dmPrintQuality;
+			public short	dmColor;
+			public short	dmDuplex;
+			public short	dmYResolution;
+			public short	dmTTOption;
+			public short	dmCollate;
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+			public string	dmFormName;
+			public short	dmLogPixels;
+			public short	dmBitsPerPel;
+			public int	dmPelsWidth;
+			public int	dmPelsHeight;
+			public int	dmDisplayFlags;
+			public int	dmDisplayFrequency;
+			public int	dmICMMethod;
+			public int	dmICMIntent;
+			public int	dmMediaType;
+			public int	dmDitherType;
+			public int	dmReserved1;
+			public int	dmReserved2;
+			public int	dmPanningWidth;
+			public int	dmPanningHeight;
+		}
 
   		// Enums
   		internal enum DCCapabilities : short

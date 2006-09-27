@@ -58,6 +58,8 @@ namespace System.Drawing.Printing
 		private bool print_tofile;
 		internal PrinterSettings.PrinterResolutionCollection printer_resolutions;
 		internal PrinterSettings.PaperSizeCollection paper_sizes;
+		internal PrinterSettings.PaperSourceCollection paper_sources;
+		private PageSettings default_pagesettings;
 		
 		public PrinterSettings() : this (SysPrn.Service.DefaultPrinter)
 		{			
@@ -75,6 +77,8 @@ namespace System.Drawing.Printing
 		{			
 			printer_resolutions = null;
 			paper_sizes = null;
+			paper_sources = null;
+			default_pagesettings = null;
 			maximum_page = 9999; 	
 			copies = 1;
 		}
@@ -96,8 +100,10 @@ namespace System.Drawing.Printing
 			object ICollection.SyncRoot { get { return this; } }			
 #if NET_2_0
 			[EditorBrowsable(EditorBrowsableState.Never)]
-      			public int Add (PaperSource paperSource) {throw new NotImplementedException (); }
+      			public int Add (PaperSource paperSource) {return _PaperSources.Add (paperSource); }
 			public void CopyTo (PaperSource[] paperSources, int index)  {throw new NotImplementedException (); }
+#else
+			internal int Add (PaperSource paperSource) {return _PaperSources.Add (paperSource); }
 #endif
 			
 			public virtual PaperSource this[int index] {
@@ -118,6 +124,12 @@ namespace System.Drawing.Printing
 			{
 				_PaperSources.CopyTo(array, index);
 			}
+			
+			internal void Clear ()
+			{ 
+				_PaperSources.Clear (); 
+			}
+			
 		}
 
 		public class PaperSizeCollection : ICollection, IEnumerable
@@ -276,23 +288,21 @@ namespace System.Drawing.Printing
 				copies = value;
 			}
 		}
-
-		[MonoTODO("PrinterSettings.DefaultPageSettings")]
+		
 		public PageSettings DefaultPageSettings
 		{
-			get
-			{
-				return new PageSettings(
-					this,
-					SupportsColor,
-					false,
-					// TODO: get default paper size for this printer
-					new PaperSize("A4", 827, 1169),
-					// TODO: get default paper source for this printer
-					new PaperSource("default", PaperSourceKind.FormSource),
-					// TODO: get default resolution for this printer
-					new PrinterResolution(200, 200, PrinterResolutionKind.Medium)
-				);
+			get {
+				if (default_pagesettings == null) {
+					default_pagesettings = new PageSettings (this,
+						SupportsColor,
+						false,	
+						// Real defaults are set by LoadPrinterSettings				
+						new PaperSize("A4", 827, 1169),						
+						new PaperSource("default", PaperSourceKind.FormSource),						
+						new PrinterResolution(200, 200, PrinterResolutionKind.Medium));
+				}
+				
+				return default_pagesettings;
 			}
 		}
 
@@ -380,10 +390,15 @@ namespace System.Drawing.Printing
 			}
 		}
 
-		[MonoTODO("PrinterSettings.PaperSources")]
 		public PrinterSettings.PaperSourceCollection PaperSources
 		{
-			get { throw new NotImplementedException(); }
+			get {
+				if (paper_sources == null) {
+					paper_sources = new PrinterSettings.PaperSourceCollection (new PaperSource [] {});
+					SysPrn.Service.LoadPrinterPaperSources (printer_name, this);
+				}
+				return paper_sources;
+			}
 		}
 #if NET_2_0
 		public

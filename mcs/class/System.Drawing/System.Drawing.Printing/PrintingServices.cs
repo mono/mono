@@ -50,6 +50,7 @@ namespace System.Drawing.Printing
 		internal abstract void LoadPrinterSettings (string printer, PrinterSettings settings);
 		internal abstract void LoadPrinterResolutions (string printer, PrinterSettings settings);
 		internal abstract void LoadPrinterPaperSizes (string printer, PrinterSettings settings);
+		internal abstract void LoadPrinterPaperSources (string printer, PrinterSettings settings);
 
 		//Used from SWF
 		internal abstract void GetPrintDialogInfo (string printer, ref string port, ref string type, ref string status, ref string comment);

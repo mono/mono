@@ -119,6 +119,11 @@ namespace System.Drawing.Printing
 			}
 
 			ppdClose (ppd_handle);
+		}		
+		
+		internal override void LoadPrinterPaperSources (string printer, PrinterSettings settings)
+		{
+			// TODO	
 		}
 
 		internal override bool StartPage (GraphicsPrinter gr)
