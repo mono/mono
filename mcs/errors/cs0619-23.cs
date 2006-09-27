@@ -1,5 +1,5 @@
-// cs0619-23.cs: `AA' is obsolete: `'
-// Line: 17
+// CS0619: `AA' is obsolete: `'
+// Line: 13
 
 [System.Obsolete ("", true)]
 class AA
@@ -10,6 +10,6 @@ class AA
 class B {
         public B (object a)
         {
-                ((AA)a).Foo ();
+                object o = ((AA)a);
         }
 }
