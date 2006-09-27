@@ -74,8 +74,7 @@ namespace Mono.CSharp {
 				foreach (MemberCore mc in this) {
 					try {
 						mc.Define ();
-					}
-					catch (Exception e) {
+					} catch (Exception e) {
 						throw new InternalErrorException (mc.Location, mc.GetSignatureForError (), e);
 					}
 				}
@@ -138,7 +137,6 @@ namespace Mono.CSharp {
  					Report.Warning (659, 3, container.Location, "`{0}' overrides Object.Equals(object) but does not override Object.GetHashCode()", container.GetSignatureForError ());
  				}
  			}
- 
  		}
 
 		public sealed class IndexerArrayList : MemberCoreArrayList
@@ -434,8 +432,8 @@ namespace Mono.CSharp {
 		// Holds the operators
 		MemberCoreArrayList operators;
 
-		// Holds the iterators
-		ArrayList iterators;
+		// Holds the compiler generated classes
+		ArrayList compiler_generated;
 
 		//
 		// Pointers to the default constructor and the default static constructor
@@ -461,6 +459,8 @@ namespace Mono.CSharp {
 
 		ArrayList type_bases;
 
+		bool members_resolved;
+		bool members_resolved_ok;
 		bool members_defined;
 		bool members_defined_ok;
 
@@ -780,12 +780,14 @@ namespace Mono.CSharp {
 			operators.Add (op);
 		}
 
-		public void AddIterator (Iterator i)
+		public void AddCompilerGeneratedClass (CompilerGeneratedClass c)
 		{
-			if (iterators == null)
-				iterators = new ArrayList ();
+			Report.Debug (64, "ADD COMPILER GENERATED CLASS", this, c);
 
-			iterators.Add (i);
+			if (compiler_generated == null)
+				compiler_generated = new ArrayList ();
+
+			compiler_generated.Add (c);
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
@@ -830,9 +832,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public ArrayList Iterators {
+		public ArrayList CompilerGenerated {
 			get {
-				return iterators;
+				return compiler_generated;
 			}
 		}
 
@@ -1221,7 +1223,7 @@ namespace Mono.CSharp {
 			// Let's do it as soon as possible, since code below can call DefineType() on classes
 			// that depend on us to be populated before they are.
 			//
-			if (!(this is Iterator))
+			if (!(this is CompilerGeneratedClass))
 				RootContext.RegisterOrder (this); 
 
 			if (base_type != null) {
@@ -1269,10 +1271,6 @@ namespace Mono.CSharp {
 				TypeManager.RegisterBuilder (TypeBuilder, ifaces);
 			}
 
-			if (this is Iterator && !ResolveType ()) {
-				return false;
-			}
-
 			return true;
 		}
 
@@ -1297,9 +1295,79 @@ namespace Mono.CSharp {
 					part.TypeBuilder = TypeBuilder;
 			}
 
-			DefineNestedTypes ();
+			if (!(this is CompilerGeneratedClass)) {
+				if (!ResolveMembers ()) {
+					error = true;
+					return null;
+				}
+			}
+
+			if (!DefineNestedTypes ()) {
+				error = true;
+				return null;
+			}
 
 			return TypeBuilder;
+		}
+
+		public bool ResolveMembers ()
+		{
+			if (members_resolved)
+				return members_resolved_ok;
+
+			members_resolved_ok = DoResolveMembers ();
+			members_resolved = true;
+
+			return members_resolved_ok;
+		}
+
+		protected virtual bool DoResolveMembers ()
+		{
+			if (methods != null) {
+				foreach (Method method in methods) {
+					if (!method.ResolveMembers ())
+						return false;
+				}
+			}
+
+			if (instance_constructors != null) {
+				foreach (Constructor c in instance_constructors) {
+					if (!c.ResolveMembers ())
+						return false;
+				}
+			}
+
+			if (default_static_constructor != null) {
+				if (!default_static_constructor.ResolveMembers ())
+					return false;
+			}
+
+			if (operators != null) {
+				foreach (Operator o in operators) {
+					if (!o.ResolveMembers ())
+						return false;
+				}
+			}
+
+			if (properties != null) {
+				foreach (PropertyBase p in properties) {
+					if (!p.Get.IsDummy && !p.Get.ResolveMembers ())
+						return false;
+					if (!p.Set.IsDummy && !p.Set.ResolveMembers ())
+						return false;
+				}
+			}
+
+			if (indexers != null) {
+				foreach (PropertyBase p in indexers) {
+					if (!p.Get.IsDummy && !p.Get.ResolveMembers ())
+						return false;
+					if (!p.Set.IsDummy && !p.Set.ResolveMembers ())
+						return false;
+				}
+			}
+
+			return true;
 		}
 
 		Constraints [] constraints;
@@ -1346,6 +1414,20 @@ namespace Mono.CSharp {
 		}
 
 		public bool ResolveType ()
+		{
+			if (!DoResolveType ())
+				return false;
+
+			if (compiler_generated != null) {
+				foreach (CompilerGeneratedClass c in compiler_generated)
+					if (!c.ResolveType ())
+						return false;
+			}
+
+			return true;
+		}
+
+		protected virtual bool DoResolveType ()
 		{
 			if ((base_type != null) &&
 			    (base_type.ResolveAsTypeTerminal (this, false) == null)) {
@@ -1429,6 +1511,13 @@ namespace Mono.CSharp {
 				foreach (Enum en in Enums)
 					if (en.DefineType () == null)
 						return false;
+			}
+
+			if (compiler_generated != null) {
+				foreach (CompilerGeneratedClass c in compiler_generated) {
+					if (c.DefineType () == null)
+						return false;
+				}
 			}
 
 			return true;
@@ -1562,17 +1651,6 @@ namespace Mono.CSharp {
 					part.member_cache = member_cache;
 			}
 #endif
-			if (iterators != null) {
-				foreach (Iterator iterator in iterators) {
-					if (iterator.DefineType () == null)
-						return false;
-				}
-
-				foreach (Iterator iterator in iterators) {
-					if (!iterator.DefineMembers ())
-						return false;
-				}
-			}
 
 			return true;
 		}
@@ -1585,9 +1663,9 @@ namespace Mono.CSharp {
 
 		public override bool Define ()
 		{
-			if (iterators != null) {
-				foreach (Iterator iterator in iterators) {
-					if (!iterator.Define ())
+			if (compiler_generated != null) {
+				foreach (CompilerGeneratedClass c in compiler_generated) {
+					if (!c.Define ())
 						return false;
 				}
 			}
@@ -2304,11 +2382,19 @@ namespace Mono.CSharp {
 				if (pending.VerifyPendingMethods ())
 					return;
 
-			if (iterators != null)
-				foreach (Iterator iterator in iterators)
-					iterator.EmitType ();
-		}
+			if (Report.Errors > 0)
+				return;
 
+			if (compiler_generated != null) {
+				foreach (CompilerGeneratedClass c in compiler_generated) {
+					if (!c.DefineMembers ())
+						throw new InternalErrorException ();
+				}
+				foreach (CompilerGeneratedClass c in compiler_generated)
+					c.EmitType ();
+			}
+		}
+		
 		public override void CloseType ()
 		{
 			if ((caching_flags & Flags.CloseTypeCreated) != 0)
@@ -2346,10 +2432,10 @@ namespace Mono.CSharp {
 				foreach (Delegate d in Delegates)
 					d.CloseType ();
 
-			if (Iterators != null)
-				foreach (Iterator i in Iterators)
-					i.CloseType ();
-
+			if (CompilerGenerated != null)
+				foreach (CompilerGeneratedClass c in CompilerGenerated)
+					c.CloseType ();
+			
 			types = null;
 			properties = null;
 			enums = null;
@@ -2363,7 +2449,7 @@ namespace Mono.CSharp {
 			events = null;
 			indexers = null;
 			operators = null;
-			iterators = null;
+			compiler_generated = null;
 			default_constructor = null;
 			default_static_constructor = null;
 			type_bases = null;
@@ -3222,7 +3308,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void SetYields ()
+		public virtual void SetYields ()
 		{
 			ModFlags |= Modifiers.METHOD_YIELDS;
 		}
@@ -3679,6 +3765,9 @@ namespace Mono.CSharp {
 		ListDictionary declarative_security;
 		protected MethodData MethodData;
 
+		Iterator iterator;
+		ArrayList anonymous_methods;
+
 		static string[] attribute_targets = new string [] { "method", "return" };
 
 		protected MethodOrOperator (DeclSpace parent, GenericMethod generic, Expression type, int mod,
@@ -3729,24 +3818,24 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public EmitContext CreateEmitContext (DeclSpace tc, ILGenerator ig)
+		public virtual EmitContext CreateEmitContext (DeclSpace tc, ILGenerator ig)
 		{
-			EmitContext ec = new EmitContext (this,
-				tc, this.ds, Location, ig, MemberType, ModFlags, false);
-
-			Iterator iterator = tc as Iterator;
-			if (iterator != null)
-				ec.CurrentAnonymousMethod = iterator.Host;
-
-			return ec;
+			return new EmitContext (
+				this, tc, this.ds, Location, ig, MemberType, ModFlags, false);
 		}
 
-		public override bool Define ()
+		public void AddAnonymousMethod (AnonymousMethodExpression anonymous)
+		{
+			if (anonymous_methods == null)
+				anonymous_methods = new ArrayList ();
+			anonymous_methods.Add (anonymous);
+		}
+
+		protected bool DefineGenericMethod ()
 		{
 			if (!DoDefineBase ())
 				return false;
 
-			MethodBuilder mb = null;
 #if GMCS_SOURCE
 			if (GenericMethod != null) {
 				string method_name = MemberName.Name;
@@ -3756,13 +3845,41 @@ namespace Mono.CSharp {
 						'.' + method_name;
 				}
 
-				mb = Parent.TypeBuilder.DefineMethod (method_name, flags);
+				MethodBuilder = Parent.TypeBuilder.DefineMethod (method_name, flags);
 
-				if (!GenericMethod.Define (mb, block))
+				if (!GenericMethod.Define (MethodBuilder, block))
 					return false;
 			}
 #endif
 
+			return true;
+		}
+
+		public bool ResolveMembers ()
+		{
+			if (!DefineGenericMethod ())
+				return false;
+
+			if ((ModFlags & Modifiers.METHOD_YIELDS) != 0) {
+				iterator = Iterator.CreateIterator (
+					this, Parent.PartialContainer, GenericMethod, ModFlags);
+
+				if (iterator == null)
+					return false;
+			}
+
+			if (anonymous_methods != null) {
+				foreach (AnonymousMethodExpression ame in anonymous_methods) {
+					if (!ame.CreateAnonymousHelpers ())
+						return false;
+				}
+			}
+
+			return true;
+		}
+
+		public override bool Define ()
+		{
 			if (!DoDefine ())
 				return false;
 
@@ -3772,7 +3889,8 @@ namespace Mono.CSharp {
 			if (!CheckBase ())
 				return false;
 
-			MethodData = new MethodData (this, ModFlags, flags, this, mb, GenericMethod, base_method);
+			MethodData = new MethodData (
+				this, ModFlags, flags, this, MethodBuilder, GenericMethod, base_method);
 
 			if (!MethodData.Define (Parent.PartialContainer))
 				return false;
@@ -3848,6 +3966,10 @@ namespace Mono.CSharp {
 			get {
 				return MemberName;
 			}
+		}
+
+		public Iterator Iterator {
+			get { return iterator; }
 		}
 
 		public new Location Location {
@@ -3990,7 +4112,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class Method : MethodOrOperator, IIteratorContainer {
+	public class Method : MethodOrOperator, IAnonymousHost {
 
 		/// <summary>
 		///   Modifiers allowed in a class declaration
@@ -4161,17 +4283,6 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// Setup iterator if we are one
-			//
-			if ((ModFlags & Modifiers.METHOD_YIELDS) != 0){
-				Iterator iterator = new Iterator (
-					this, Parent, GenericMethod, ModFlags);
-
-				if (!iterator.DefineIterator ())
-					return false;
-			}
-
-			//
 			// This is used to track the Entry Point,
 			//
 			if (RootContext.NeedsEntryPoint &&  ((ModFlags & Modifiers.STATIC) != 0) &&
@@ -4209,6 +4320,7 @@ namespace Mono.CSharp {
 		// 
 		public override void Emit ()
 		{
+			Report.Debug (64, "METHOD EMIT", this, MethodBuilder, Location, Block, MethodData);
 			MethodData.Emit (Parent);
 			base.Emit ();
 
@@ -4329,7 +4441,7 @@ namespace Mono.CSharp {
 				base_constructor = null;
 				return false;
 			}
-
+			
 			if (base_constructor == caller_builder){
 				Report.Error (516, loc, "Constructor `{0}' cannot call itself", TypeManager.CSharpSignature (caller_builder));
 				return false;
@@ -4371,10 +4483,11 @@ namespace Mono.CSharp {
 		}
 	}
 	
-	public class Constructor : MethodCore, IMethodData {
+	public class Constructor : MethodCore, IMethodData, IAnonymousHost {
 		public ConstructorBuilder ConstructorBuilder;
 		public ConstructorInitializer Initializer;
 		ListDictionary declarative_security;
+		ArrayList anonymous_methods;
 
 		// <summary>
 		//   Modifiers allowed for a constructor.
@@ -4389,6 +4502,10 @@ namespace Mono.CSharp {
 			Modifiers.PRIVATE;
 
 		static string[] attribute_targets = new string [] { "method" };
+
+		public Iterator Iterator {
+			get { return null; }
+		}
 
 		bool has_compliant_args = false;
 		//
@@ -4442,9 +4559,28 @@ namespace Mono.CSharp {
 
 			ConstructorBuilder.SetCustomAttribute (cb);
 		}
-		
+
+		public void AddAnonymousMethod (AnonymousMethodExpression anonymous)
+		{
+			if (anonymous_methods == null)
+				anonymous_methods = new ArrayList ();
+			anonymous_methods.Add (anonymous);
+		}
+
+		public bool ResolveMembers ()
+		{
+			if (anonymous_methods != null) {
+				foreach (AnonymousMethodExpression ame in anonymous_methods) {
+					if (!ame.CreateAnonymousHelpers ())
+						return false;
+				}
+			}
+
+			return true;
+		}
+
  		protected override bool CheckForDuplications ()
-  		{
+		{
 			ArrayList ar = Parent.PartialContainer.InstanceConstructors;
 			if (ar != null) {
 				int arLen = ar.Count;
@@ -4611,6 +4747,13 @@ namespace Mono.CSharp {
 						Parent.PartialContainer.EmitFieldInitializers (ec);
 				}
 			}
+
+			bool unreachable = false;
+			if (block != null) {
+				ec.ResolveTopBlock (null, block, ParameterInfo, this, out unreachable);
+				ec.EmitMeta (block);
+			}
+
 			if (Initializer != null) {
 				Initializer.Emit (ec);
 			}
@@ -4618,7 +4761,8 @@ namespace Mono.CSharp {
 			if ((ModFlags & Modifiers.STATIC) != 0)
 				Parent.PartialContainer.EmitFieldInitializers (ec);
 
-			ec.EmitTopBlock (this, block);
+			if (block != null)
+				ec.EmitResolvedTopBlock (block, unreachable);
 
 			if (source != null)
 				source.CloseMethod ();
@@ -4739,6 +4883,8 @@ namespace Mono.CSharp {
 		Type ReturnType { get; }
 		GenericMethod GenericMethod { get; }
 		Parameters ParameterInfo { get; }
+
+		Iterator Iterator { get; }
 
 		Attributes OptAttributes { get; }
 		ToplevelBlock Block { get; set; }
@@ -5902,7 +6048,7 @@ namespace Mono.CSharp {
 	//
 	// `set' and `get' accessors are represented with an Accessor.
 	// 
-	public class Accessor : IIteratorContainer {
+	public class Accessor : IAnonymousHost {
 		//
 		// Null if the accessor is empty, or a Block if not
 		//
@@ -5917,6 +6063,7 @@ namespace Mono.CSharp {
 		public Location Location;
 		public int ModFlags;
 		public bool Yields;
+		public ArrayList AnonymousMethods;
 		
 		public Accessor (ToplevelBlock b, int mod, Attributes attrs, Location loc)
 		{
@@ -5929,6 +6076,13 @@ namespace Mono.CSharp {
 		public void SetYields ()
 		{
 			Yields = true;
+		}
+
+		public void AddAnonymousMethod (AnonymousMethodExpression ame)
+		{
+			if (AnonymousMethods == null)
+				AnonymousMethods = new ArrayList ();
+			AnonymousMethods.Add (ame);
 		}
 	}
 
@@ -5975,6 +6129,10 @@ namespace Mono.CSharp {
 		}
 
 		#region IMethodData Members
+
+		public abstract Iterator Iterator {
+			get;
+		}
 
 		public ToplevelBlock Block {
 			get {
@@ -6262,6 +6420,8 @@ namespace Mono.CSharp {
 		{
 			protected readonly MethodCore method;
 			protected MethodAttributes flags;
+			Iterator iterator;
+			ArrayList anonymous_methods;
 			bool yields;
 
 			public PropertyMethod (MethodCore method, string prefix)
@@ -6277,10 +6437,15 @@ namespace Mono.CSharp {
 				this.method = method;
 				this.ModFlags = accessor.ModFlags;
 				yields = accessor.Yields;
+				anonymous_methods = accessor.AnonymousMethods;
 
 				if (accessor.ModFlags != 0 && RootContext.Version == LanguageVersion.ISO_1) {
 					Report.FeatureIsNotStandardized (Location, "access modifiers on properties");
 				}
+			}
+
+			public override Iterator Iterator {
+				get { return iterator; }
 			}
 
 			public override AttributeTargets AttributeTargets {
@@ -6292,6 +6457,28 @@ namespace Mono.CSharp {
 			public override bool IsClsComplianceRequired ()
 			{
 				return method.IsClsComplianceRequired ();
+			}
+
+			public bool ResolveMembers ()
+			{
+				TypeContainer container = ((TypeContainer) Parent).PartialContainer;
+
+				if (yields) {
+					iterator = Iterator.CreateIterator (
+						this, container, null, ModFlags);
+
+					if (iterator == null)
+						return false;
+				}
+
+				if (anonymous_methods != null) {
+					foreach (AnonymousMethodExpression ame in anonymous_methods) {
+						if (!ame.CreateAnonymousHelpers ())
+							return false;
+					}
+				}
+
+				return true;
 			}
 
 			public virtual MethodBuilder Define (DeclSpace parent)
@@ -6321,16 +6508,6 @@ namespace Mono.CSharp {
 					ModFlags |= Modifiers.PROPERTY_CUSTOM;
 					flags = Modifiers.MethodAttr (ModFlags);
 					flags |= (method.flags & (~MethodAttributes.MemberAccessMask));
-				}
-
-				//
-				// Setup iterator if we are one
-				//
-				if (yields) {
-					Iterator iterator = new Iterator (this, Parent as TypeContainer, null, ModFlags);
-					
-					if (!iterator.DefineIterator ())
-						return null;
 				}
 
 				return null;
@@ -6976,6 +7153,10 @@ namespace Mono.CSharp {
 				this.method = method;
 			}
 
+			public override Iterator Iterator {
+				get { return null; }
+			}
+
 			protected override void ApplyToExtraTarget(Attribute a, CustomAttributeBuilder cb)
 			{
 				if (a.Target == AttributeTargets.Parameter) {
@@ -7227,7 +7408,7 @@ namespace Mono.CSharp {
 	}
 
  
-	public class Indexer : PropertyBase, IIteratorContainer {
+	public class Indexer : PropertyBase {
 
 		class GetIndexerMethod : GetMethod
 		{
@@ -7365,10 +7546,10 @@ namespace Mono.CSharp {
 				// Setup iterator if we are one
 				//
 				if ((ModFlags & Modifiers.METHOD_YIELDS) != 0){
-					Iterator iterator = new Iterator (
-						Get, Parent, null, ModFlags);
+					Iterator iterator = Iterator.CreateIterator (
+						Get, (TypeContainer) Parent, null, ModFlags);
 
-					if (!iterator.DefineIterator ())
+					if (iterator == null)
 						return false;
 				}
 			}
@@ -7425,7 +7606,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class Operator : MethodOrOperator, IIteratorContainer {
+	public class Operator : MethodOrOperator, IAnonymousHost {
 
 		const int AllowedModifiers =
 			Modifiers.PUBLIC |
