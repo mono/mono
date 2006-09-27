@@ -1,3 +1,177 @@
+2006-09-25  Martin Baulig  <martin@ximian.com>
+
+	* class.cs: Remove after unification with mcs source.
+
+2006-09-24  Raja R Harinath  <harinath@gmail.com>
+
+	* convert.cs: Remove after unification with mcs source.
+
+2006-09-24  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (MemberBase.VerifyClsCompliance): When method has type
+	parameters verify them as well.
+
+	* generic.cs (Constraints.VerifyClsCompliance): Verify CLS-Compliance of
+	the type parameter constraints.
+	(Generics.VerifyClsCompliance): Ditto.
+
+2006-09-24  Marek Safar  <marek.safar@seznam.cz>
+
+	* anonymous.cs (AnonymousMethod.Compatible): Cannot generate arguments
+	for anonymous block with out argument.
+
+2006-09-24  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (ClassOrStruct.VerifyMembers): Fixed to report correctly
+	not used private events only.
+
+2006-09-23  Marek Safar  <marek.safar@seznam.cz>
+
+	* convert.cs (ImplicitReferenceConversion): NullCast to EmptyConstantCast.
+
+	* cs-parser.jay: Parse correctly cast of default (T).
+
+	* generic.cs (DefaultValueExpression.DoResolve): Check for void type.
+	Store original type via EmptyConstantCast.
+
+2006-09-22  Martin Baulig  <martin@ximian.com>
+
+	* delegate.cs: Removed; this file is now shared with mcs.
+
+	* attribute.cs: Removed; this file is now shared with mcs.
+
+2006-09-22  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs: Removed; this file is now shared with mcs.
+
+2006-09-21  Marek Safar  <marek.safar@seznam.cz>
+
+	* convert.cs (ImplicitReferenceConversion): Reuse ToType.
+
+	* ecore.cs (NullCast): Derives from NullConstant.
+
+	* generic.cs (DefaultValueExpression): Fixed to cope with the constant
+	results.
+
+2006-09-21  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs: Removed; this file is now shared with mcs.
+
+2006-09-21  Raja R Harinath  <rharinath@novell.com>
+
+	* rootcontext.cs: Remove after unification with mcs source.
+
+	* report.cs: Remove after unification with mcs source.
+	* generic.cs (AddTypeParameter, LookupTypeParameter): Move to
+	mcs/typemanager.cs.
+	(InitGenerics, CleanUpGenerics): Remove.
+
+	* support.cs: Remove after unification with mcs source.
+
+2006-09-20  Raja R Harinath  <rharinath@novell.com>
+
+	* codegen.cs: Remove after unification with mcs source.
+
+2006-09-19  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs: Removed; this file is now shared with mcs.
+
+2006-09-19  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs
+	(TypeManager.IsEqual): Moved into ../mcs/typemanager.cs.
+	(TypeManager.DropGenericTypeArguments): Likewise.
+	(TypeManager.DropGenericMethodArguments): Likewise.
+	(TypeManager.GetTypeArguments): Likewise.
+	(TypeManager.HasGenericArguments): Likewise.
+
+2006-09-19  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs (PropertyExpr.InstanceResolve): Fix the CS1540 check.
+
+2006-09-19  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs: Removed; this file is now shared with mcs.
+
+2006-09-16  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (LOCAL_MCS_FLAGS): Use instead of PROFILE_MCS_FLAGS.
+	* AssemblyInfo.cs, driver.cs: Remove after unification with mcs source.
+
+2006-09-16  Marek Safar  <marek.safar@seznam.cz>
+
+	A fix for #79401
+	* class.cs (MethodCore.VerifyClsCompliance): Do check for abstract members
+	only if parent type is class.
+	* decl.cs (MemberCore.GetClsCompliantAttributeValue): Fixed missing cache
+	update.
+
+2006-09-15  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay,
+	* expression.cs(MemberAccess.DoResolve): Don't crash when not allowed
+	keywords are used.
+	* typemanager.cs(CSharpName): Converts NullType to null.
+
+2006-09-15  Martin Baulig  <martin@ximian.com>
+
+	* pending.cs: Removed; this file is now shared with mcs.
+
+2006-09-15  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs: Removed; this file is now shared with mcs.
+
+2006-09-15  Martin Baulig  <martin@ximian.com>
+
+	* rootcontext.cs (RootContext.BrokenCircularDeps): Removed.
+
+	* driver.cs: Removed the `--broken-cycles' argument.
+
+2006-09-15  Martin Baulig  <martin@ximian.com>
+
+	* namespace.cs: Removed; this file is now shared with mcs.
+
+2006-09-15  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (MemberName): Minor code cleanups.
+
+2006-09-15  Martin Baulig  <martin@ximian.com>
+
+	* parameter.cs: Removed; this file is now shared with mcs.
+
+2006-09-15  Martin Baulig  <martin@ximian.com>
+
+	* enum.cs: Removed; this file is now shared with mcs.
+
+2006-09-15  Martin Baulig  <martin@ximian.com>
+
+	* Makefile: Define `GMCS_SOURCE'.
+
+	* flowanalysis.cs: Removed; this file is now shared with mcs.
+
+2006-09-15  Martin Baulig  <martin@ximian.com>
+
+	Removed modifiers.cs, literal.cs, location.cs, roottypes.cs,
+	assign.cs, const.cs, cfold.cs, constant.cs, symbolwriter.cs and
+	doc.cs - they are now shared with mcs.
+
+	* gmcs.exe.sources: Include these files from ../mcs/.
+
+2006-09-15  Martin Baulig  <martin@ximian.com>
+
+	* old-code.cs, gen-il.cs, gen-treedump.cs: Removed old stuff.
+	* g1.cs, sample-hello.cs, sample-stack.il: Likewise.
+
+2006-09-14  Marek Safar  <marek.safar@seznam.cz>
+
+	* assign.cs, ecore.cs, expression.cs: Share error message text.
+	* class.cs (FieldMember.Define): Check for variable of static type.
+	* decl.cs (check_type_parameter): Report correct type name.
+	* driver.cs (LoadAssembly): Uses error output for errors.
+	* generic.cs (Constraints.Resolve): Add check for constraint accessibility
+	(TypeArguments.Resolve): Static class cannot be used as an argument.
+	* statement.cs (ResolveMeta): Constants cannot be generic types.
+
 2006-09-12  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (TypeManager.IsIList): Moved into convert.cs.

@@ -2993,6 +2993,7 @@ member_access
 	| predefined_type DOT IDENTIFIER opt_type_argument_list
 	  {
 		LocatedToken lt = (LocatedToken) $3;
+		// TODO: Location is wrong as some predefined types doesn't hold a location
 		$$ = new MemberAccess ((Expression) $1, lt.Value, (TypeArguments) $4, lt.Location);
 	  }
 	;
@@ -3495,6 +3496,10 @@ cast_list
 	: parenthesized_expression_0 CLOSE_PARENS_CAST unary_expression
 	  {
 		$$ = new Cast ((Expression) $1, (Expression) $3);
+	  }
+	| parenthesized_expression_0 CLOSE_PARENS_NO_CAST default_value_expression
+	  {
+	  	$$ = new Cast ((Expression) $1, (Expression) $3);
 	  }
 	| parenthesized_expression_0 CLOSE_PARENS_OPEN_PARENS cast_expression
 	  {
