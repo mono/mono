@@ -1,5 +1,12 @@
 2006-09-27  Chris Toshok  <toshok@ximian.com>
 
+	* MessageBox.cs (CreateParams): the styles should be |'ed with our
+	baseclass's, since otherwise the
+	ControlBox/MinimizeBox/MaximizeBox assignments above have no
+	effect.  This gets the close button back in messageboxes.
+
+2006-09-27  Chris Toshok  <toshok@ximian.com>
+
 	* XplatUIX11.cs: make StyleSet and ExStyleSet check == with the
 	flag, not just != 0.  this makes flags that are actually multiple
 	bits (like WS_CAPTION) work.  fixes bug #79508.
