@@ -151,7 +151,9 @@ namespace Mono.CSharp {
 		}
 
 		public override string TypeParameter {
-			get { return name; }
+			get {
+				return name;
+			}
 		}
 
 		public Constraints Clone ()
@@ -223,7 +225,7 @@ namespace Mono.CSharp {
 					if (errors != Report.Errors)
 						return false;
 
-					Report.Error (246, loc, "Cannot find type '{0}'", ((Expression) obj).GetSignatureForError ());
+					NamespaceEntry.Error_NamespaceNotFound (loc, ((Expression)obj).GetSignatureForError ());
 					return false;
 				}
 
@@ -235,10 +237,19 @@ namespace Mono.CSharp {
 
 					expr = cexpr;
 				} else
-					expr = fn.ResolveAsTypeTerminal (ec, false);
+					expr = ((Expression) obj).ResolveAsTypeTerminal (ec, false);
 
 				if ((expr == null) || (expr.Type == null))
 					return false;
+
+				// TODO: It's aleady done in ResolveAsBaseTerminal
+				if (!ec.GenericDeclContainer.AsAccessible (fn.Type, ec.GenericDeclContainer.ModFlags)) {
+					Report.SymbolRelatedToPreviousError (fn.Type);
+					Report.Error (703, loc,
+						"Inconsistent accessibility: constraint type `{0}' is less accessible than `{1}'",
+						fn.GetSignatureForError (), ec.GenericDeclContainer.GetSignatureForError ());
+					return false;
+				}
 
 				TypeParameterExpr texpr = expr as TypeParameterExpr;
 				if (texpr != null)
@@ -555,6 +566,27 @@ namespace Mono.CSharp {
 			}
 
 			return true;
+		}
+
+		public void VerifyClsCompliance ()
+		{
+			if (class_constraint_type != null && !AttributeTester.IsClsCompliant (class_constraint_type))
+				Warning_ConstrainIsNotClsCompliant (class_constraint_type, class_constraint.Location);
+
+			if (iface_constraint_types != null) {
+				for (int i = 0; i < iface_constraint_types.Length; ++i) {
+					if (!AttributeTester.IsClsCompliant (iface_constraint_types [i]))
+						Warning_ConstrainIsNotClsCompliant (iface_constraint_types [i],
+							((TypeExpr)iface_constraints [i]).Location);
+				}
+			}
+		}
+
+		void Warning_ConstrainIsNotClsCompliant (Type t, Location loc)
+		{
+			Report.SymbolRelatedToPreviousError (t);
+			Report.Warning (3024, 1, loc, "Constraint type `{0}' is not CLS-compliant",
+				TypeManager.CSharpName (t));
 		}
 	}
 
@@ -1217,13 +1249,19 @@ namespace Mono.CSharp {
 				if (te is TypeParameterExpr)
 					has_type_args = true;
 
+				if (te.Type.IsSealed && te.Type.IsAbstract) {
+					Report.Error (718, Location, "`{0}': static classes cannot be used as generic arguments",
+						te.GetSignatureForError ());
+					return false;
+				}
 				if (te.Type.IsPointer) {
 					Report.Error (306, Location, "The type `{0}' may not be used " +
-						      "as a type argument", TypeManager.CSharpName (te.Type));
+							  "as a type argument", TypeManager.CSharpName (te.Type));
 					return false;
-				} else if (te.Type == TypeManager.void_type) {
-					Report.Error (1547, Location,
-						      "Keyword `void' cannot be used in this context");
+				}
+
+				if (te.Type == TypeManager.void_type) {
+					Expression.Error_VoidInvalidInTheContext (Location);
 					return false;
 				}
 
@@ -1456,7 +1494,6 @@ namespace Mono.CSharp {
 				return full_name;
 			}
 		}
-
 
 		public override string FullName {
 			get {
@@ -1885,6 +1922,16 @@ namespace Mono.CSharp {
 		public override string DocCommentHeader {
 			get { return "M:"; }
 		}
+
+		public new void VerifyClsCompliance ()
+		{
+			foreach (TypeParameter tp in TypeParameters) {
+				if (tp.Constraints == null)
+					continue;
+
+				tp.Constraints.VerifyClsCompliance ();
+			}
+		}
 	}
 
 	public class DefaultValueExpression : Expression
@@ -1905,20 +1952,37 @@ namespace Mono.CSharp {
 
 			type = texpr.Type;
 
+			if (type == TypeManager.void_type) {
+				Error_VoidInvalidInTheContext (loc);
+				return null;
+			}
+
+			if (type.IsGenericParameter)
+			{
+				GenericConstraints constraints = TypeManager.GetTypeParameterConstraints(type);
+				if (constraints != null && constraints.IsReferenceType)
+					return new NullDefault (new NullLiteral (Location), type);
+			}
+			else
+			{
+				Constant c = New.Constantify(type);
+				if (c != null)
+					return new NullDefault (c, type);
+
+				if (!TypeManager.IsValueType (type))
+					return new NullDefault (new NullLiteral (Location), type);
+			}
 			eclass = ExprClass.Variable;
 			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			if (type.IsGenericParameter || TypeManager.IsValueType (type)) {
-				LocalTemporary temp_storage = new LocalTemporary (type);
+			LocalTemporary temp_storage = new LocalTemporary(type);
 
-				temp_storage.AddressOf (ec, AddressOp.LoadStore);
-				ec.ig.Emit (OpCodes.Initobj, type);
-				temp_storage.Emit (ec);
-			} else
-				ec.ig.Emit (OpCodes.Ldnull);
+			temp_storage.AddressOf(ec, AddressOp.LoadStore);
+			ec.ig.Emit(OpCodes.Initobj, type);
+			temp_storage.Emit(ec);
 		}
 	}
 
@@ -1968,25 +2032,10 @@ namespace Mono.CSharp {
 		static public Type generic_ienumerable_type;
 		static public Type generic_nullable_type;
 
-		// <remarks>
-		//   Tracks the generic parameters.
-		// </remarks>
-		static PtrHashtable builder_to_type_param;
-
 		//
 		// These methods are called by code generated by the compiler
 		//
 		static public MethodInfo activator_create_instance;
-
-		static void InitGenerics ()
-		{
-			builder_to_type_param = new PtrHashtable ();
-		}
-
-		static void CleanUpGenerics ()
-		{
-			builder_to_type_param = null;
-		}
 
 		static void InitGenericCoreTypes ()
 		{
@@ -2017,21 +2066,10 @@ namespace Mono.CSharp {
 			return CoreLookupType (ns, MemberName.MakeName (name, arity));
 		}
 
-		public static void AddTypeParameter (Type t, TypeParameter tparam)
-		{
-			if (!builder_to_type_param.Contains (t))
-				builder_to_type_param.Add (t, tparam);
-		}
-
 		public static TypeContainer LookupGenericTypeContainer (Type t)
 		{
 			t = DropGenericTypeArguments (t);
 			return LookupTypeContainer (t);
-		}
-
-		public static TypeParameter LookupTypeParameter (Type t)
-		{
-			return (TypeParameter) builder_to_type_param [t];
 		}
 
 		public static GenericConstraints GetTypeParameterConstraints (Type t)
@@ -2044,155 +2082,6 @@ namespace Mono.CSharp {
 				return tparam.GenericConstraints;
 
 			return ReflectionConstraints.GetConstraints (t);
-		}
-
-		public static bool HasGenericArguments (Type t)
-		{
-			return GetNumberOfTypeArguments (t) > 0;
-		}
-
-		public static int GetNumberOfTypeArguments (Type t)
-		{
-			if (t.IsGenericParameter)
-				return 0;
-			DeclSpace tc = LookupDeclSpace (t);
-			if (tc != null)
-				return tc.IsGeneric ? tc.CountTypeParameters : 0;
-			else
-				return t.IsGenericType ? t.GetGenericArguments ().Length : 0;
-		}
-
-		public static Type[] GetTypeArguments (Type t)
-		{
-			DeclSpace tc = LookupDeclSpace (t);
-			if (tc != null) {
-				if (!tc.IsGeneric)
-					return Type.EmptyTypes;
-
-				TypeParameter[] tparam = tc.TypeParameters;
-				Type[] ret = new Type [tparam.Length];
-				for (int i = 0; i < tparam.Length; i++) {
-					ret [i] = tparam [i].Type;
-					if (ret [i] == null)
-						throw new InternalErrorException ();
-				}
-
-				return ret;
-			} else
-				return t.GetGenericArguments ();
-		}
-
-		public static Type DropGenericTypeArguments (Type t)
-		{
-			if (!t.IsGenericType)
-				return t;
-			// Micro-optimization: a generic typebuilder is always a generic type definition
-			if (t is TypeBuilder)
-				return t;
-			return t.GetGenericTypeDefinition ();
-		}
-
-		public static MethodBase DropGenericMethodArguments (MethodBase m)
-		{
-			if (m.IsGenericMethodDefinition)
-				return m;
-			if (m.IsGenericMethod)
-				return ((MethodInfo) m).GetGenericMethodDefinition ();
-			if (!m.DeclaringType.IsGenericType)
-				return m;
-
-			Type t = m.DeclaringType.GetGenericTypeDefinition ();
-			BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic |
-				BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
-
-			if (m is ConstructorInfo) {
-				foreach (ConstructorInfo c in t.GetConstructors (bf))
-					if (c.MetadataToken == m.MetadataToken)
-						return c;
-			} else {
-				foreach (MethodBase mb in t.GetMethods (bf))
-					if (mb.MetadataToken == m.MetadataToken)
-						return mb;
-			}
-
-			return m;
-		}
-
-		public static FieldInfo GetGenericFieldDefinition (FieldInfo fi)
-		{
-			if (fi.DeclaringType.IsGenericTypeDefinition ||
-			    !fi.DeclaringType.IsGenericType)
-				return fi;
-
-			Type t = fi.DeclaringType.GetGenericTypeDefinition ();
-			BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic |
-				BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
-
-			foreach (FieldInfo f in t.GetFields (bf))
-				if (f.MetadataToken == fi.MetadataToken)
-					return f;
-
-			return fi;
-		}
-
-		public static bool IsEqual (Type a, Type b)
-		{
-			if (a.Equals (b))
-				return true;
-
-			if (a.IsGenericParameter && b.IsGenericParameter) {
-				if (a.DeclaringMethod != b.DeclaringMethod &&
-				    (a.DeclaringMethod == null || b.DeclaringMethod == null))
-					return false;
-				return a.GenericParameterPosition == b.GenericParameterPosition;
-			}
-
-			if (a.IsArray && b.IsArray) {
-				if (a.GetArrayRank () != b.GetArrayRank ())
-					return false;
-				return IsEqual (a.GetElementType (), b.GetElementType ());
-			}
-
-			if (a.IsByRef && b.IsByRef)
-				return IsEqual (a.GetElementType (), b.GetElementType ());
-
-			if (a.IsGenericType && b.IsGenericType) {
-				if (a.GetGenericTypeDefinition () != b.GetGenericTypeDefinition ())
-					return false;
-
-				Type[] aargs = a.GetGenericArguments ();
-				Type[] bargs = b.GetGenericArguments ();
-
-				if (aargs.Length != bargs.Length)
-					return false;
-
-				for (int i = 0; i < aargs.Length; i++) {
-					if (!IsEqual (aargs [i], bargs [i]))
-						return false;
-				}
-
-				return true;
-			}
-
-			//
-			// This is to build with the broken circular dependencies between
-			// System and System.Configuration in the 2.x profile where we
-			// end up with a situation where:
-			//
-			// System on the second build is referencing the System.Configuration
-			// that has references to the first System build.
-			//
-			// Point in case: NameValueCollection built on the first pass, vs
-			// NameValueCollection build on the second one.  The problem is that
-			// we need to override some methods sometimes, or we need to 
-			//
-			if (RootContext.BrokenCircularDeps){
-				if (a.Name == b.Name && a.Namespace == b.Namespace){
-					Console.WriteLine ("GonziMatch: {0}.{1}", a.Namespace, a.Name);
-					return true;
-				}
-			}
-			return false;
 		}
 
 		/// <summary>
@@ -2319,56 +2208,6 @@ namespace Mono.CSharp {
 			}
 
 			return true;
-		}
-
-		/// <summary>
-		///   Check whether `type' and `parent' are both instantiations of the same
-		///   generic type.  Note that we do not check the type parameters here.
-		/// </summary>
-		public static bool IsInstantiationOfSameGenericType (Type type, Type parent)
-		{
-			int tcount = GetNumberOfTypeArguments (type);
-			int pcount = GetNumberOfTypeArguments (parent);
-
-			if (tcount != pcount)
-				return false;
-
-			type = DropGenericTypeArguments (type);
-			parent = DropGenericTypeArguments (parent);
-
-			return type.Equals (parent);
-		}
-
-		/// <summary>
-		///   Whether `mb' is a generic method definition.
-		/// </summary>
-		public static bool IsGenericMethodDefinition (MethodBase mb)
-		{
-			if (mb.DeclaringType is TypeBuilder) {
-				IMethodData method = (IMethodData) builder_to_method [mb];
-				if (method == null)
-					return false;
-
-				return method.GenericMethod != null;
-			}
-
-			return mb.IsGenericMethodDefinition;
-		}
-
-		/// <summary>
-		///   Whether `mb' is a generic method definition.
-		/// </summary>
-		public static bool IsGenericMethod (MethodBase mb)
-		{
-			if (mb.DeclaringType is TypeBuilder) {
-				IMethodData method = (IMethodData) builder_to_method [mb];
-				if (method == null)
-					return false;
-
-				return method.GenericMethod != null;
-			}
-
-			return mb.IsGenericMethod;
 		}
 
 		//
@@ -2666,27 +2505,6 @@ namespace Mono.CSharp {
 
 			method = ((MethodInfo)method).MakeGenericMethod (infered_types);
 			return true;
-		}
-
-		public static bool IsNullableType (Type t)
-		{
-			return generic_nullable_type == DropGenericTypeArguments (t);
-		}
-
-		public static bool IsNullableTypeOf (Type t, Type nullable)
-		{
-			if (!IsNullableType (t))
-				return false;
-
-			return GetTypeArguments (t) [0] == nullable;
-		}
-
-		public static bool IsNullableValueType (Type t)
-		{
-			if (!IsNullableType (t))
-				return false;
-
-			return GetTypeArguments (t) [0].IsValueType;
 		}
 	}
 
