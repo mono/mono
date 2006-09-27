@@ -212,14 +212,18 @@ namespace Mono.CSharp {
 			pc_field = CaptureVariable ("$PC", TypeManager.system_int32_expr);
 			current_field = CaptureVariable ("$current", iterator_type_expr);
 
+#if GMCS_SOURCE
 			Define_Current (true);
+#endif
 			Define_Current (false);
 			new DisposeMethod (this);
 			Define_Reset ();
 
 			if (Iterator.IsEnumerable) {
 				new GetEnumeratorMethod (this, false);
+#if GMCS_SOURCE
 				new GetEnumeratorMethod (this, true);
+#endif
 			}
 
 			return base.DoResolveMembers ();
