@@ -1,3 +1,10 @@
+2006-09-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RSAManaged.cs: Ensure that the results of Encrypt and Decrypt will
+	always be the same length as the key. If smaller then we left pad the
+	result with 0x00 (same integer, correct length for everyone). Fix bug
+	#79502 where an LDAP/SSL server didn't like the missing byte.
+
 2006-09-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RSAManaged.cs: Fix a NRE when decrypting without a private key 
