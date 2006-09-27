@@ -306,8 +306,21 @@ namespace Mono.CSharp {
 
 		public virtual void Error_NamespaceDoesNotExist (Location loc, string name)
 		{
+			Type t = LookForAnyGenericType (name);
+			if (t != null) {
+				Error_InvalidNumberOfTypeArguments(t, loc);
+				return;
+			}
+
 			Report.Error (234, loc, "The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?",
 				name, FullName);
+		}
+
+		public static void Error_InvalidNumberOfTypeArguments (Type t, Location loc)
+		{
+			Report.SymbolRelatedToPreviousError (t);
+			Report.Error (305, loc, "Using the generic type `{0}' requires `{1}' type argument(s)",
+				TypeManager.CSharpName(t), TypeManager.GetNumberOfTypeArguments(t).ToString());
 		}
 
 		public override void Emit (EmitContext ec)
@@ -376,6 +389,26 @@ namespace Mono.CSharp {
 			TypeExpr te = t == null ? null : new TypeExpression (t, Location.Null);
 			cached_types [name] = te;
 			return te;
+		}
+
+		///
+		/// Used for better error reporting only
+		/// 
+		public Type LookForAnyGenericType (string typeName)
+		{
+			typeName = SimpleName.RemoveGenericArity(typeName);
+
+			foreach (string type_item in declspaces.Keys) {
+				string[] sep_type = type_item.Split('`');
+				if (sep_type.Length < 2)
+					continue;
+
+				if (typeName == sep_type [0]) {
+					DeclSpace tdecl = (DeclSpace)declspaces [type_item];
+					return tdecl.TypeBuilder;
+				}
+			}
+			return null;
 		}
 
 		public FullNamedExpression Lookup (DeclSpace ds, string name, Location loc)
