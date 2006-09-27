@@ -1,5 +1,14 @@
 2006-09-27  Martin Baulig  <martin@ximian.com>
 
+	Merged the Anonymous Methods patch.
+
+	* parameter.cs (Parameter.ResolveVariable): New public method.
+	(Parameters.ResolveVariable): Likewise.
+
+	* ecore.cs (TemporaryVariable): Use the new `Variable' framework.
+
+2006-09-27  Martin Baulig  <martin@ximian.com>
+
 	* report.cs
 	(InternalErrorException): Added overloaded ctor taking a params array.
 
