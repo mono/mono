@@ -1,4 +1,14 @@
+2006-09-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c: Add some new comments.
+
 2006-09-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c (mono_print_ins_index): Handle OP_LADD_IMM as well.
+
+	* method-to-ir.c: Add a FIXME.
+
+	* local-propagation.c: Add a new rule for optimizing op_ladd_imm + load_membase.
 
 	* mini-exceptions.c (mono_handle_exception): Special case ia64 too when determining
 	whenever an exception is caught by a try block.

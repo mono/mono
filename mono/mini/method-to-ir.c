@@ -9981,7 +9981,8 @@ mono_spill_global_vars (MonoCompile *cfg)
  *     code wouldn't need if (fp) all over the place. but that would mean the hregs
  *     would no longer map to the machine hregs, so the code generators would need to
  *     be modified. Also, on ia64 for example, niregs + nfregs > 256 -> bitmasks
- *     wouldn't work any more.
+ *     wouldn't work any more. Duplicating the code in mono_local_regalloc () into
+ *     fp/non-fp branches speeds it up by about 15%.
  * - use sext/zext opcodes instead of shifts
  * - add OP_ICALL
  * - get rid of TEMPLOADs if possible and use vregs instead
@@ -10069,10 +10070,12 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - remove unused opcodes from mini-ops.h, remove "op_" from the opcode names,
  *   remove the op_ opcodes from the cpu-..md files, clean up the cpu-..md files.
  * - optimize mono_regstate2_alloc_int/float.
- * - duplicating the code in mono_local_regalloc () into a fp/non-fp branches speeds it
- *   up by about 15%.
  * - patch_delegate_trampoline () only works on call_membase, but the new JIT can't create
- *   it such code.
+ *   such code.
+ * - need to write a tree optimization pass, but the creation of trees is difficult, i.e.
+ *   parts of the tree could be separated by other instructions, killing the tree
+ *   arguments, or stores killing loads etc. Also, should we fold loads into other
+ *   instructions if the result of the load is used multiple times ?
  * - LAST MERGE: 65915.
  */
 
