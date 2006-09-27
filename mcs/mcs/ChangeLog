@@ -1,5 +1,9 @@
 2006-09-27  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (GenericMethod): Don't make this abstract.
+
+2006-09-27  Martin Baulig  <martin@ximian.com>
+
 	Merged the Anonymous Methods patch.
 
 	* parameter.cs (Parameter.ResolveVariable): New public method.
