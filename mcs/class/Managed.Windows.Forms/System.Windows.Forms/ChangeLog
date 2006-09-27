@@ -1,5 +1,13 @@
 2006-09-27  Chris Toshok  <toshok@ximian.com>
 
+	* PropertyGridView.cs: half of the fix for #78190.  Clicking on
+	the dropdown button now toggles between showing and hiding the
+	dropdown.  Also, get rid of dropdown_form_showing and just use
+	dropdown_form.Visible.  We still don't do a grab, but I'll leave
+	that part to someone who has handled Capture-fu before.
+
+2006-09-27  Chris Toshok  <toshok@ximian.com>
+
 	* DataGrid.cs: return false if alt isn't pressed when '0' is
 	pressed.  this keeps the '0' key from being swallowed, and fixes
 	bug #79350.

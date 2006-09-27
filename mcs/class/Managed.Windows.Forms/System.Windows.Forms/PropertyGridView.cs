@@ -51,7 +51,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		private int open_grid_item_count = -1;
 		private int skipped_grid_items;
 		private PropertyGridDropDown dropdown_form;
-		private bool dropdown_form_showing;
 		private Form dialog_form;
 		private ImplicitVScrollBar vbar;
 		private StringFormat string_format;
@@ -486,7 +485,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		}
 
 		private void dropdown_form_Deactivate (object sender, EventArgs e) {
-			dropdown_form_showing = false;
 			dropdown_form.Hide();
 		}
 
@@ -501,7 +499,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				AcceptListBoxSelection (sender);
 				return;
 			case Keys.Escape:
-				dropdown_form_showing = false;
 				dropdown_form.Hide();
 				return;
 			}
@@ -514,7 +511,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					SetPropertyValue(((ListBox)sender).SelectedItem);
 				}
 			}
-			dropdown_form_showing = false;
 			dropdown_form.Hide();
 			Refresh();
 		}
@@ -534,27 +530,32 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		private void DropDownButtonClicked (object sender, EventArgs e) {
 			UITypeEditor editor = property_grid.SelectedGridItem.PropertyDescriptor.GetEditor (typeof (UITypeEditor)) as UITypeEditor;
 			if (editor == null) {
-				dropdown_form.Deactivate +=new EventHandler(dropdown_form_Deactivate);
-				ListBox listBox = new ListBox();
-				listBox.BorderStyle = BorderStyle.FixedSingle;
-				listBox.Dock = DockStyle.Fill;
-				int selected_index = 0;
-				int i = 0;
-				foreach (object obj in property_grid.SelectedGridItem.PropertyDescriptor.Converter.GetStandardValues()) {
-					listBox.Items.Add(obj);
-					if (property_grid.SelectedGridItem.Value.Equals(obj))
-						selected_index = i;
-					i++;
+				if (dropdown_form.Visible) {
+					dropdown_form.Hide ();
 				}
-				listBox.SelectedIndex = selected_index;
-				listBox.KeyDown += new KeyEventHandler(listBox_KeyDown);
-				listBox.MouseUp+=new MouseEventHandler(listBox_MouseUp);
-				dropdown_form.Controls.Clear();
-				dropdown_form.Controls.Add(listBox);
-				dropdown_form.Location = PointToScreen(new Point(SplitterLocation,grid_textbox.Location.Y+row_height));
-				dropdown_form.Width = this.Width - this.SplitterLocation;
-				dropdown_form.ActiveControl = listBox;
-				dropdown_form.Show();
+				else {
+					dropdown_form.Deactivate +=new EventHandler(dropdown_form_Deactivate);
+					ListBox listBox = new ListBox();
+					listBox.BorderStyle = BorderStyle.FixedSingle;
+					listBox.Dock = DockStyle.Fill;
+					int selected_index = 0;
+					int i = 0;
+					foreach (object obj in property_grid.SelectedGridItem.PropertyDescriptor.Converter.GetStandardValues()) {
+						listBox.Items.Add(obj);
+						if (property_grid.SelectedGridItem.Value.Equals(obj))
+							selected_index = i;
+						i++;
+					}
+					listBox.SelectedIndex = selected_index;
+					listBox.KeyDown += new KeyEventHandler(listBox_KeyDown);
+					listBox.MouseUp+=new MouseEventHandler(listBox_MouseUp);
+					dropdown_form.Controls.Clear();
+					dropdown_form.Controls.Add(listBox);
+					dropdown_form.Location = PointToScreen(new Point(SplitterLocation,grid_textbox.Location.Y+row_height));
+					dropdown_form.Width = this.Width - this.SplitterLocation;
+					dropdown_form.ActiveControl = listBox;
+					dropdown_form.Show();
+				}
 			} else { // use editor
 				SetPropertyValueFromUITypeEditor (editor);
 			}
@@ -640,7 +641,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		#region IWindowsFormsEditorService Members
 
 		public void CloseDropDown() {
-			dropdown_form_showing = false;
 			dropdown_form.Hide();
 		}
 
@@ -655,11 +655,10 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			dropdown_form.Location = PointToScreen(new Point(SplitterLocation,grid_textbox.Location.Y+row_height));
 			dropdown_form.Width = Width - SplitterLocation;
 
-			dropdown_form_showing = true;
 			dropdown_form.Show();
 			System.Windows.Forms.MSG msg = new MSG();
 			queue_id = XplatUI.StartLoop(Thread.CurrentThread);
-			while (XplatUI.GetMessage(queue_id, ref msg, IntPtr.Zero, 0, 0) && dropdown_form_showing) {
+			while (XplatUI.GetMessage(queue_id, ref msg, IntPtr.Zero, 0, 0) && dropdown_form.Visible) {
 				XplatUI.TranslateMessage(ref msg);
 				XplatUI.DispatchMessage(ref msg);
 			}
