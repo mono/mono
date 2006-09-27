@@ -4110,7 +4110,6 @@ namespace Mono.CSharp {
 			Modifiers.ABSTRACT |
 		        Modifiers.UNSAFE |
 			Modifiers.METHOD_YIELDS |
-			Modifiers.ANONYMOUS_HOST |
 			Modifiers.EXTERN;
 
 		const int AllowedInterfaceModifiers =
