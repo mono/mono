@@ -1597,17 +1597,20 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		bool CheckError136 (string name, string scope, Location loc)
+		bool CheckError136 (string name, string scope, bool is_child, Location loc)
 		{
 			if (!DoCheckError136 (name, scope, loc))
 				return false;
 
 			if (Toplevel.AnonymousChildren != null) {
 				foreach (ToplevelBlock child in Toplevel.AnonymousChildren) {
-					if (!child.CheckError136 (name, "child", loc))
+					if (!child.CheckError136 (name, "child", true, loc))
 						return false;
 				}
 			}
+
+			if (is_child)
+				return true;
 
 			for (ToplevelBlock c = Toplevel.Container; c != null; c = c.Container) {
 				if (!c.DoCheckError136 (name, "parent or current", loc))
@@ -1651,7 +1654,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (!CheckError136 (name, null, l))
+			if (!CheckError136 (name, null, false, l))
 				return null;
 
 			vi = new LocalInfo (type, name, this, l);
