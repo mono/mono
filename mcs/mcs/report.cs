@@ -131,7 +131,7 @@ namespace Mono.CSharp {
 				Stderr.WriteLine (msg.ToString ());
 
 				foreach (string s in extra_information) 
-					Stderr.WriteLine (s + MessageType);
+					Stderr.WriteLine (s + MessageType + ")");
 
 				extra_information.Clear ();
 
@@ -354,7 +354,7 @@ namespace Mono.CSharp {
 
 		static void SymbolRelatedToPreviousError (string loc, string symbol)
 		{
-			extra_information.Add (String.Format ("{0}: `{1}', name of symbol related to previous ", loc, symbol));
+			extra_information.Add (String.Format ("{0} (Location of the symbol related to previous ", loc));
 		}
 
 		public static void ExtraInformation (Location loc, string msg)
@@ -635,6 +635,10 @@ namespace Mono.CSharp {
 			: base (message)
 		{
 		}
+
+		public InternalErrorException (string message, params object[] args)
+			: base (String.Format (message, args))
+		{ }
 	}
 
 	/// <summary>

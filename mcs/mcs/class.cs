@@ -4890,10 +4890,6 @@ namespace Mono.CSharp {
 				// but it wont get cleared
 				//
 				if (member.IsExplicitImpl){
-					if ((modifiers & (Modifiers.PUBLIC | Modifiers.ABSTRACT | Modifiers.VIRTUAL)) != 0){
-						Modifiers.Error_InvalidModifier (method.Location, "public, virtual or abstract");
-						implementing = null;
-					}
 					if (method.ParameterInfo.HasParams && !TypeManager.GetParameterData (implementing).HasParams) {
 						Report.SymbolRelatedToPreviousError (implementing);
 						Report.Error (466, method.Location, "`{0}': the explicit interface implementation cannot introduce the params modifier",
@@ -5335,7 +5331,6 @@ namespace Mono.CSharp {
 				if (!Parent.PartialContainer.VerifyImplements (this))
 					return false;
 				
-				Modifiers.Check (Modifiers.AllowedExplicitImplFlags, explicit_mod_flags, 0, Location);
 				
 			}
 			return true;
@@ -6886,8 +6881,10 @@ namespace Mono.CSharp {
 			}
 
 			if (a.Target == AttributeTargets.Method) {
+				int errors = Report.Errors;
 				Add.ApplyAttributeBuilder (a, cb);
-				Remove.ApplyAttributeBuilder (a, cb);
+				if (errors == Report.Errors)
+					Remove.ApplyAttributeBuilder (a, cb);
 				return;
 			}
 

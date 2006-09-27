@@ -1097,13 +1097,6 @@ namespace Mono.CSharp {
 
 		protected Attribute ResolveAttribute (Type a_type)
 		{
-			if (OptAttributes == null)
-				return null;
-
-			// Ensure that we only have GlobalAttributes, since the Search below isn't safe with other types.
-			if (!OptAttributes.CheckTargets ())
-				return null;
-
 			Attribute a = OptAttributes.Search (a_type);
 			if (a != null) {
 				a.Resolve ();
@@ -1183,6 +1176,13 @@ namespace Mono.CSharp {
 
 		public void Resolve ()
 		{
+			if (OptAttributes == null)
+				return;
+
+			// Ensure that we only have GlobalAttributes, since the Search isn't safe with other types.
+			if (!OptAttributes.CheckTargets())
+				return;
+
 			ClsCompliantAttribute = ResolveAttribute (TypeManager.cls_compliant_attribute_type);
 			if (ClsCompliantAttribute != null) {
 				is_cls_compliant = ClsCompliantAttribute.GetClsCompliantAttributeValue ();
@@ -1558,9 +1558,15 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// It is called very early therefore can resolve only predefined attributes
 		/// </summary>
-		public void ResolveAttributes ()
+		public void Resolve ()
 		{
 #if GMCS_SOURCE
+			if (OptAttributes == null)
+				return;
+
+			if (!OptAttributes.CheckTargets())
+				return;
+
 			Attribute a = ResolveAttribute (TypeManager.default_charset_type);
 			if (a != null) {
 				DefaultCharSet = a.GetCharSetValue ();

@@ -26,6 +26,7 @@ namespace Mono.CSharp {
 	public class Const : FieldMember, IConstant {
 		Constant value;
 		bool in_transit;
+		bool define_called;
 
 		public const int AllowedModifiers =
 			Modifiers.NEW |
@@ -58,9 +59,13 @@ namespace Mono.CSharp {
 		/// </summary>
 		public override bool Define ()
 		{
-			// Make Define () idempotent, but ensure that the error check happens.
-			if (FieldBuilder != null)
-				return base.CheckBase ();
+			// Because constant define can be called from other class
+			if (define_called) {
+				CheckBase ();
+				return FieldBuilder != null;
+			}
+
+			define_called = true;
 
 			if (!base.Define ())
 				return false;

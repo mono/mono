@@ -1653,7 +1653,7 @@ namespace Mono.CSharp
 			if (timestamps)
 				ShowTime ("   Core Types done");
 
-			CodeGen.Module.ResolveAttributes ();
+			CodeGen.Module.Resolve ();
 
 			//
 			// The second pass of the compiler

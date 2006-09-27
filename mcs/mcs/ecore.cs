@@ -239,9 +239,11 @@ namespace Mono.CSharp {
 			if (te == null)
 				return null;
 
-			ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (te.Type);
-			if (obsolete_attr != null && !ec.IsInObsoleteScope) {
-				AttributeTester.Report_ObsoleteMessage (obsolete_attr, te.GetSignatureForError (), Location);
+			if (!silent) {
+				ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (te.Type);
+				if (obsolete_attr != null && !ec.IsInObsoleteScope) {
+					AttributeTester.Report_ObsoleteMessage (obsolete_attr, te.GetSignatureForError (), Location);
+				}
 			}
 
 			// Constrains don't need to be checked for overrides
