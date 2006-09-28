@@ -1,6 +1,10 @@
 2006-09-28 Igor Zelmanovich <igorz@mainsoft.com>
 
-	* FormView.cs: removed NotWorking attributes
+	* FormViewTest.cs: removed NotWorking attribute, fixed test
+			
+2006-09-28 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* FormViewTest.cs: removed NotWorking attributes
 			
 2006-09-28 Yoni Klain <yonik@mainsoft.com>
 

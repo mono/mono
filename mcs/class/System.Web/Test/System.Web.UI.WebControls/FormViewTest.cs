@@ -853,7 +853,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void FormView_BubbleEvent ()
 		{
 			FormViewCommandEventArgs com;
@@ -863,6 +862,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			fv.AllowPaging = true;
 			fv.DataSource = myds;
 			page.Controls.Add (fv);
+			fv.DataBind ();
 			ResetEvents ();
 			fv.ItemCommand += new FormViewCommandEventHandler (fv_ItemCommand);
 			fv.ItemDeleted += new FormViewDeletedEventHandler (fv_ItemDeleted);
@@ -939,6 +939,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			fv.DoOnBubbleEvent (bt, com);
 			Assert.AreEqual (true, itemCommand, "AfterPageCommandBubbleEvent");
 			Assert.AreEqual (true, pageIndexChanging, "AfterPageBubbleEvent");
+			Assert.AreEqual (-1, newPageIndex, "PageIndex");
 
 			//Next Page
 			itemCommand = false;
@@ -982,7 +983,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			fv.DoOnBubbleEvent (bt, com);
 			Assert.AreEqual (true, itemCommand, "AfterLastPageCommandBubbleEvent");
 			Assert.AreEqual (true, pageIndexChanging, "AfterLastPageBubbleEvent");
-			Assert.AreEqual (-1, newPageIndex, "FirstPageIndex");
+			Assert.AreEqual (5, newPageIndex, "FirstPageIndex");
 
 		}
 
@@ -1111,6 +1112,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			pageIndexChanging = true;
 			newPageIndex = e.NewPageIndex;
+			e.NewPageIndex = -1;
 		}
 
 		//Exceptions		

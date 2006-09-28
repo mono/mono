@@ -1,3 +1,7 @@
+2006-09-28 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* FormView.cs: fixed: OnBubbleEvent works properly
+		
 2006-09-25 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DataBoundControl.cs: fixed: DataBind flow
