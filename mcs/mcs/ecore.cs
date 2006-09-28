@@ -682,9 +682,6 @@ namespace Mono.CSharp {
 						continue;
 					}
 
-					if (!is_interface)
-						continue;
-
 					Report.SymbolRelatedToPreviousError (m);
 					Report.SymbolRelatedToPreviousError (non_method);
 					Report.Error (229, loc, "Ambiguity between `{0}' and `{1}'",
@@ -692,16 +689,26 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				if (non_method != null && is_interface) {
-					MethodBase method = (MethodBase)methods[0];
+				if (methods.Count == 0)
+					return null;
+
+				if (non_method != null) {
+					MethodBase method = (MethodBase) methods [0];
 					Report.SymbolRelatedToPreviousError (method);
 					Report.SymbolRelatedToPreviousError (non_method);
-					Report.Warning (467, 2, loc, "Ambiguity between method `{0}' and non-method `{1}'. Using method `{0}'",
-						TypeManager.CSharpSignature (method), TypeManager.GetFullNameSignature (non_method));
-				}
 
-				if (methods.Count == 0)
-					return new MethodGroupExpr (mi, loc);
+					if (method.DeclaringType == non_method.DeclaringType) {
+						// Cannot happen with C# code, but is valid in IL
+						Report.Error (229, loc, "Ambiguity between `{0}' and `{1}'",
+							      TypeManager.GetFullNameSignature (non_method),
+							      TypeManager.CSharpSignature (method));
+						return null;
+					}
+
+					if (is_interface)
+						Report.Warning (467, 2, loc, "Ambiguity between method `{0}' and non-method `{1}'. Using method `{0}'",
+								TypeManager.CSharpSignature (method), TypeManager.GetFullNameSignature (non_method));
+				}
 
 				return new MethodGroupExpr (methods, loc);
 			}
