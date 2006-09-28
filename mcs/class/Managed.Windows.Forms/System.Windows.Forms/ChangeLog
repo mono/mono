@@ -1,5 +1,14 @@
 2006-09-27  Chris Toshok  <toshok@ximian.com>
 
+	* XplatUIX11.cs (SetWMStyles): more metacity wonderment.  turns
+	out metacity ignores the MAXIMIZE_HORZ/VERT messages unless the
+	window is maximizable.  So, we need to make sure that even if we
+	clear the border/wm frame of those functions, they're still
+	available (basically, we remove the decoration without removing
+	the function).  Half the fix for #79338.
+
+2006-09-27  Chris Toshok  <toshok@ximian.com>
+
 	* DataGrid.cs (ProcessGridKey): implement Shift-Tab handling.
 	Fixes bug #79515.
 

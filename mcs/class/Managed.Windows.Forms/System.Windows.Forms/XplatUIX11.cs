@@ -40,7 +40,7 @@
 #undef DriverDebug
 
 // Extra detailed debug
-#undef	DriverDebugExtra
+#undef DriverDebugExtra
 #undef DriverDebugParent
 #undef DriverDebugCreate
 #undef DriverDebugDestroy
@@ -792,6 +792,12 @@ namespace System.Windows.Forms {
 				   which lack CAPTION/BORDER/DLGFRAME
 				   styles.
 				*/
+
+				/* just because the window doesn't get any decorations doesn't
+				   mean we should disable the functions.  for instance, without
+				   MotifFunctions.Maximize, changing the windowstate to Maximized
+				   is ignored by metacity. */
+				functions |= MotifFunctions.Move | MotifFunctions.Resize | MotifFunctions.Minimize | MotifFunctions.Maximize;
 			}
 			else {
 				if (StyleSet (cp.Style, WindowStyles.WS_CAPTION)) {
@@ -4811,17 +4817,6 @@ namespace System.Windows.Forms {
 
 			SendMessage(handle, Msg.WM_PAINT, IntPtr.Zero, IntPtr.Zero);
 			hwnd.Queue.Paint.Remove(hwnd);
-		}
-
-		private bool WindowIsMapped(IntPtr handle) {
-			XWindowAttributes attributes;
-
-			attributes = new XWindowAttributes();
-			XGetWindowAttributes(DisplayHandle, handle, ref attributes);
-			if (attributes.map_state == MapState.IsUnmapped) {
-				return false;
-			}
-			return true;
 		}
 
 		#endregion	// Public Static Methods
