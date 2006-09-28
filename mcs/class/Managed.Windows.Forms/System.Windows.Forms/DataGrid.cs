@@ -1742,10 +1742,18 @@ namespace System.Windows.Forms
 				return true;
 
 			case Keys.Tab:
-				if (CurrentColumn < CurrentTableStyle.GridColumnStyles.Count - 1)
-					CurrentColumn ++;
-				else if ((CurrentRow <= RowsCount) && (CurrentColumn == CurrentTableStyle.GridColumnStyles.Count - 1))
-					CurrentCell = new DataGridCell (CurrentRow + 1, 0);
+				if (shift_pressed) {
+					if (CurrentColumn > 0)
+						CurrentColumn --;
+					else if ((CurrentRow > 0) && (CurrentColumn == 0))
+						CurrentCell = new DataGridCell (CurrentRow - 1, CurrentTableStyle.GridColumnStyles.Count - 1);
+				}
+				else {
+					if (CurrentColumn < CurrentTableStyle.GridColumnStyles.Count - 1)
+						CurrentColumn ++;
+					else if ((CurrentRow <= RowsCount) && (CurrentColumn == CurrentTableStyle.GridColumnStyles.Count - 1))
+						CurrentCell = new DataGridCell (CurrentRow + 1, 0);
+				}
 
 				UpdateSelectionAfterCursorMove (false);
 

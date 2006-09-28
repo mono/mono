@@ -1,5 +1,10 @@
 2006-09-27  Chris Toshok  <toshok@ximian.com>
 
+	* DataGrid.cs (ProcessGridKey): implement Shift-Tab handling.
+	Fixes bug #79515.
+
+2006-09-27  Chris Toshok  <toshok@ximian.com>
+
 	* Splitter.cs: reorder things a bit so that we don't actually
 	draw/move the splitter until after calling OnSplitterMoving.  This
 	lets users cancel/disallow the movement by explicitly setting
