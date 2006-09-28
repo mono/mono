@@ -153,8 +153,8 @@ namespace System.Windows.Forms {
 			case Msg.WM_NCHITTEST:
 				int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
 				int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
-				
-				form.PointToClient (ref x, ref y);
+
+				NCPointToClient (ref x, ref y);
 
 				FormPos pos = FormPosForCoords (x, y);
 				
@@ -197,11 +197,14 @@ namespace System.Windows.Forms {
 				}
 				return true;
 
+				// Return true from these guys, otherwise win32 will mess up z-order
 			case Msg.WM_NCLBUTTONUP:
-				return HandleNCLButtonUp (ref m);
+				HandleNCLButtonUp (ref m);
+				return true;
 
 			case Msg.WM_NCLBUTTONDOWN:
-				return HandleNCLButtonDown (ref m);
+				HandleNCLButtonDown (ref m);
+				return true;
 
 			case Msg.WM_NCLBUTTONDBLCLK:
 				HandleNCLButtonDblClick (ref m);
@@ -233,9 +236,22 @@ namespace System.Windows.Forms {
 				break;
 
 			case Msg.WM_NCPAINT:
-				PaintDecorations ();
+				PaintEventArgs pe = XplatUI.PaintEventStart (form.Handle, false);
+
+				Rectangle clip;
+				if (m.WParam.ToInt32 () > 1) {
+					Region r = Region.FromHrgn (m.WParam);
+					RectangleF rf = r.GetBounds (pe.Graphics);
+					clip = new Rectangle ((int) rf.X, (int) rf.Y, (int) rf.Width, (int) rf.Height);
+				} else {	
+					clip = new Rectangle (0, 0, form.Width, form.Height);
+				}
+
+				ThemeEngine.Current.DrawManagedWindowDecorations (pe.Graphics, clip, this);
+				XplatUI.PaintEventEnd (form.Handle, false);
 				return true;
 			}
+
 			return false;
 		}
 
@@ -315,23 +331,12 @@ namespace System.Windows.Forms {
 		private void FormSizeChangedHandler (object sender, EventArgs e)
 		{
 			ThemeEngine.Current.ManagedWindowSetButtonLocations (this);
-
-			PaintDecorations ();
-		}
-
-		public void PaintDecorations ()
-		{
-			PaintEventArgs pe = XplatUI.PaintEventStart (form.Handle, false);
-			ThemeEngine.Current.DrawManagedWindowDecorations (pe.Graphics, pe.ClipRectangle, this);
-
-			if (IsMaximized) {
-				MainMenu menu = form.ActiveMenu;
-				DrawMaximizedButtons (menu, pe);
-				if (menu != null)
-					menu.Draw (pe);
-			}
-
-			XplatUI.PaintEventEnd (form.Handle, false);
+			Message m = new Message ();
+			m.Msg = (int) Msg.WM_NCPAINT;
+			m.HWnd = form.Handle;
+			m.LParam = IntPtr.Zero;
+			m.WParam = new IntPtr (1);
+			XplatUI.SendMessage (ref m);
 		}
 
 		protected void CreateButtons ()
@@ -382,12 +387,11 @@ namespace System.Windows.Forms {
 
 			int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
 			int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
-			Console.WriteLine ("MOUSE DOWN:   ({0}, {1})", x, y);
 			
-			form.PointToClient (ref x, ref y);
 			// Need to adjust because we are in NC land
+			NCPointToClient (ref x, ref y);
 			FormPos pos = FormPosForCoords (x, y);
-
+			Console.WriteLine ("NC POS:   {0} for coords:  {1}, {2}", pos, x, y);
 			
 			if (pos == FormPos.TitleBar) {
 				HandleTitleBarDown (x, y);
@@ -593,7 +597,7 @@ namespace System.Windows.Forms {
 			int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
 			int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
 
-			form.PointToClient (ref x, ref y);
+			NCPointToClient (ref x, ref y);
 
 			foreach (TitleButton button in title_buttons) {
 				if (button != null && button.Rectangle.Contains (x, y)) {
@@ -662,6 +666,12 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnWindowFinishedMoving ()
 		{
+		}
+
+		protected virtual void NCPointToClient(ref int x, ref int y) {
+			form.PointToClient(ref x, ref y);
+			y += TitleBarHeight;
+			y += ThemeEngine.Current.ManagedWindowBorderWidth (this);
 		}
 
 		protected FormPos FormPosForCoords (int x, int y)
