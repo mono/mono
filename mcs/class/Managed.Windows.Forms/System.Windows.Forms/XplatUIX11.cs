@@ -4235,8 +4235,8 @@ namespace System.Windows.Forms {
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			Form form = Control.FromHandle (handle) as Form;
-			if (form != null && border_style == FormBorderStyle.FixedToolWindow ||
-					border_style == FormBorderStyle.SizableToolWindow) {
+			if (form != null && form.window_manager == null && (border_style == FormBorderStyle.FixedToolWindow ||
+					border_style == FormBorderStyle.SizableToolWindow)) {
 				form.window_manager = new InternalWindowManager (form);
 			}
 			

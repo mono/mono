@@ -2,6 +2,15 @@
 
 	* XplatUIWin32.cs: Clip the rect to the parent window.
 	* XplatUIStructs.cs: Add clipping modes struct.
+	* InternalWindowManager.cs: New private method that factors title
+	bar heights in when calculating the pos of an NC mouse message.
+	- Use SendMessage to force a paint when the form's size is changed
+	instead of painting the decorations immediately.
+	- Don't let the NC button click messages get to DefWndProc,
+	because they will attempt to handle windowing themself, and this
+	messes up z-order (it will put them in front of the scrollbars).
+	* XplatUIX11.cs: Make sure that we don't reset window managers if
+	we already have one (ie the window is an MDI window).
 
 2006-09-28  Chris Toshok  <toshok@ximian.com>
 
