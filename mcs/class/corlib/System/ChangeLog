@@ -1,5 +1,9 @@
 2006-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Console.cs: avoid casting on windows.
+
+2006-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ConsoleDriver.cs:
 	* TermInfoDriver.cs:
 	* IConsoleDriver.cs:

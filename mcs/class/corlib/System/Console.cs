@@ -109,7 +109,7 @@ namespace System
 			stderr = TextWriter.Synchronized (stderr, true);
 
 #if NET_2_0
-			if (ConsoleDriver.IsConsole) {
+			if (!Environment.IsRunningOnWindows && ConsoleDriver.IsConsole) {
 				StreamWriter w = new CStreamWriter (OpenStandardOutput (0), outputEncoding);
 				w.AutoFlush = true;
 				stdout = w;
