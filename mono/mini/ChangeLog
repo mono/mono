@@ -1,3 +1,9 @@
+
+Thu Sep 28 15:36:07 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: updates for monoburg changes.
+	* inssel.brg: make a few helper functions static as they should.
+
 2006-09-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am: Move mini-codegen.c to common_sources.
