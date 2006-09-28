@@ -456,6 +456,10 @@ namespace System {
 				throw new ArgumentException (String.Empty, "Cannot write to the specified coordinates.");
 		}
 
+		public void Init ()
+		{
+		}
+
 		public string ReadLine ()
 		{
 			StringBuilder builder = new StringBuilder ();

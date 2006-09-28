@@ -31,6 +31,7 @@
 namespace System {
 	[Serializable]
 	public struct ConsoleKeyInfo {
+		internal static ConsoleKeyInfo Empty = new ConsoleKeyInfo ('\0', 0, false, false, false);
 		ConsoleKey key;
 		char keychar;
 		ConsoleModifiers modifiers;

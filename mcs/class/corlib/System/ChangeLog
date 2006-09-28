@@ -1,3 +1,16 @@
+2006-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ConsoleDriver.cs:
+	* TermInfoDriver.cs:
+	* IConsoleDriver.cs:
+	* CStreamWriter.cs:
+	* ConsoleKeyInfo.cs:
+	* NullConsoleDriver.cs:
+	* Console.cs:
+	* CStreamReader.cs:
+	* WindowsConsoleDriver.cs: initial changes to handle cursor position
+	and screen buffers.
+
 2006-09-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ArithmeticException.cs: Modified default message to match MS, to

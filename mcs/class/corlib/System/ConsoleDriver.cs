@@ -33,13 +33,15 @@ using System.Runtime.CompilerServices;
 
 namespace System {
 	class ConsoleDriver {
-		static IConsoleDriver driver;
+		internal static IConsoleDriver driver;
 		static bool is_console;
 		static bool called_isatty;
 
 		static ConsoleDriver ()
 		{
-			if (Environment.IsRunningOnWindows) {
+			if (!IsConsole) {
+				driver = new NullConsoleDriver ();
+			} else if (Environment.IsRunningOnWindows) {
 				driver = new WindowsConsoleDriver ();
 			} else {
 				driver = new TermInfoDriver (Environment.GetEnvironmentVariable ("TERM"));
@@ -178,6 +180,11 @@ namespace System {
 		{
 			driver.MoveBufferArea (sourceLeft, sourceTop, sourceWidth, sourceHeight,
 					targetLeft, targetTop, sourceChar, sourceForeColor, sourceBackColor);
+		}
+
+		public static void Init ()
+		{
+			driver.Init ();
 		}
 
 		public static int Read ()

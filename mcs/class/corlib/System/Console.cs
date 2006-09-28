@@ -65,7 +65,7 @@ namespace System
 			}
 		}
 
-		private static TextWriter stdout;
+		internal static TextWriter stdout;
 		private static TextWriter stderr;
 		private static TextReader stdin;
 
@@ -104,32 +104,28 @@ namespace System
 					inputEncoding = outputEncoding = Encoding.Default;
 			}
 
+			stderr = new UnexceptionalStreamWriter (OpenStandardError (0), outputEncoding); 
+			((StreamWriter)stderr).AutoFlush = true;
+			stderr = TextWriter.Synchronized (stderr, true);
+
 #if NET_2_0
-/*
 			if (ConsoleDriver.IsConsole) {
-				CStreamWriter w = new CStreamWriter (OpenStandardError (0), outputEncoding); 
+				StreamWriter w = new CStreamWriter (OpenStandardOutput (0), outputEncoding);
 				w.AutoFlush = true;
-				stderr = TextWriter.Synchronized (w, true);
-
-				w = new CStreamWriter (OpenStandardOutput (0), outputEncoding);
-				w.AutoFlush = true;
-				stdout = TextWriter.Synchronized (w, true);
+				stdout = w;
+				stdin = new CStreamReader (OpenStandardInput (0), inputEncoding);
+				ConsoleDriver.Init ();
 			} else {
-			*/
 #endif
-				stderr = new UnexceptionalStreamWriter (OpenStandardError (0), outputEncoding); 
-				((StreamWriter)stderr).AutoFlush = true;
-				stderr = TextWriter.Synchronized (stderr, true);
-
 				stdout = new UnexceptionalStreamWriter (OpenStandardOutput (0), outputEncoding);
 				((StreamWriter)stdout).AutoFlush = true;
 				stdout = TextWriter.Synchronized (stdout, true);
+				stdin = new UnexceptionalStreamReader (OpenStandardInput (0), inputEncoding);
+				stdin = TextReader.Synchronized (stdin);
 #if NET_2_0
-			//}
+			}
 #endif
 
-			stdin = new UnexceptionalStreamReader (OpenStandardInput (0), inputEncoding);
-			stdin = TextReader.Synchronized (stdin);
 			GC.SuppressFinalize (stdout);
 			GC.SuppressFinalize (stderr);
 			GC.SuppressFinalize (stdin);
@@ -467,7 +463,7 @@ namespace System
 #if NET_2_0
 		public static int Read ()
 		{
-			if (ConsoleDriver.IsConsole) {
+			if ((stdin is CStreamReader) && ConsoleDriver.IsConsole) {
 				return ConsoleDriver.Read ();
 			} else {
 				return stdin.Read ();
@@ -476,7 +472,7 @@ namespace System
 
 		public static string ReadLine ()
 		{
-			if (ConsoleDriver.IsConsole) {
+			if ((stdin is CStreamReader) && ConsoleDriver.IsConsole) {
 				return ConsoleDriver.ReadLine ();
 			} else {
 				return stdin.ReadLine ();

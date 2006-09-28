@@ -51,6 +51,7 @@ namespace System {
 		int WindowTop { get; set; }
 		int WindowWidth { get; set; }
 
+		void Init ();
 		void Beep (int frequency, int duration);
 		void Clear ();
 		void MoveBufferArea (int sourceLeft, int sourceTop, int sourceWidth, int sourceHeight,

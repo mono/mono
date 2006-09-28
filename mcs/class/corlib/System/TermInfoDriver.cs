@@ -31,6 +31,7 @@
 using System.Collections;
 using System.IO;
 using System.Text;
+using System.Runtime.InteropServices;
 namespace System {
 	class TermInfoDriver : IConsoleDriver {
 		static string [] locations = { "/etc/terminfo", "/usr/share/terminfo", "/usr/lib/terminfo" };
@@ -46,9 +47,8 @@ namespace System {
 		string clear;
 		string bell;
 		string term;
-		Stream stdout;
 		Stream stdin;
-		byte verase;
+		internal byte verase;
 		byte vsusp;
 		byte intr;
 
@@ -111,7 +111,7 @@ namespace System {
 			if (str == null)
 				return;
 
-			Console.Write (str);
+			((CStreamWriter) Console.stdout).InternalWriteString (str);
 		}
 
 		public TermInfoDriver ()
@@ -135,15 +135,13 @@ namespace System {
 
 			if (reader == null)
 				reader = new TermInfoReader (term, KnownTerminals.ansi);
-
-			Init ();
 		}
 
 		public bool Initialized {
 			get { return inited; }
 		}
 		
-		void Init ()
+		public void Init ()
 		{
 			if (inited)
 				return;
@@ -174,7 +172,6 @@ namespace System {
 			if (!ConsoleDriver.TtySetup (endString, out verase, out vsusp, out intr))
 				throw new IOException ("Error initializing terminal.");
 
-			stdout = Console.OpenStandardOutput (0);
 			stdin = Console.OpenStandardInput (0);
 			clear = reader.Get (TermInfoStrings.ClearScreen);
 			bell = reader.Get (TermInfoStrings.Bell);
@@ -253,6 +250,284 @@ namespace System {
 			}
 
 			return 0;
+		}
+
+		public bool NotifyWrite (ConsoleKeyInfo key)
+		{
+			if (key.Key >= ConsoleKey.A && key.Key <= ConsoleKey.Z) {
+				cursorLeft++;
+				if (cursorLeft >= WindowWidth) {
+					cursorTop++;
+					cursorLeft = 0;
+					if (cursorTop >= WindowHeight) {
+						cursorTop--;
+					}
+				}
+				return true;
+			}	
+			switch (key.Key) {
+			case ConsoleKey.Backspace:
+				if (cursorLeft > 0) {
+					cursorLeft--;
+					SetCursorPosition (cursorLeft, cursorTop);
+					WriteConsole (" ");
+					SetCursorPosition (cursorLeft, cursorTop);
+				}
+				return false;
+			case ConsoleKey.Tab:
+				break;
+			case ConsoleKey.Clear:
+				break;
+			case ConsoleKey.Enter:
+				break;
+			case ConsoleKey.Pause:
+				break;
+			case ConsoleKey.Escape:
+				break;
+			case ConsoleKey.Spacebar:
+				break;
+			case ConsoleKey.PageUp:
+				break;
+			case ConsoleKey.PageDown:
+				break;
+			case ConsoleKey.End:
+				break;
+			case ConsoleKey.Home:
+				break;
+			case ConsoleKey.LeftArrow:
+				break;
+			case ConsoleKey.UpArrow:
+				break;
+			case ConsoleKey.RightArrow:
+				break;
+			case ConsoleKey.DownArrow:
+				break;
+			case ConsoleKey.Select:
+				break;
+			case ConsoleKey.Print:
+				break;
+			case ConsoleKey.Execute:
+				break;
+			case ConsoleKey.PrintScreen:
+				break;
+			case ConsoleKey.Insert:
+				break;
+			case ConsoleKey.Delete:
+				break;
+			case ConsoleKey.Help:
+				break;
+			case ConsoleKey.D0:
+				break;
+			case ConsoleKey.D1:
+				break;
+			case ConsoleKey.D2:
+				break;
+			case ConsoleKey.D3:
+				break;
+			case ConsoleKey.D4:
+				break;
+			case ConsoleKey.D5:
+				break;
+			case ConsoleKey.D6:
+				break;
+			case ConsoleKey.D7:
+				break;
+			case ConsoleKey.D8:
+				break;
+			case ConsoleKey.D9:
+				break;
+			case ConsoleKey.LeftWindows:
+				break;
+			case ConsoleKey.RightWindows:
+				break;
+			case ConsoleKey.Applications:
+				break;
+			case ConsoleKey.Sleep:
+				break;
+			case ConsoleKey.NumPad0:
+				break;
+			case ConsoleKey.NumPad1:
+				break;
+			case ConsoleKey.NumPad2:
+				break;
+			case ConsoleKey.NumPad3:
+				break;
+			case ConsoleKey.NumPad4:
+				break;
+			case ConsoleKey.NumPad5:
+				break;
+			case ConsoleKey.NumPad6:
+				break;
+			case ConsoleKey.NumPad7:
+				break;
+			case ConsoleKey.NumPad8:
+				break;
+			case ConsoleKey.NumPad9:
+				break;
+			case ConsoleKey.Multiply:
+				break;
+			case ConsoleKey.Add:
+				break;
+			case ConsoleKey.Separator:
+				break;
+			case ConsoleKey.Subtract:
+				break;
+			case ConsoleKey.Decimal:
+				break;
+			case ConsoleKey.Divide:
+				break;
+			case ConsoleKey.F1:
+				break;
+			case ConsoleKey.F2:
+				break;
+			case ConsoleKey.F3:
+				break;
+			case ConsoleKey.F4:
+				break;
+			case ConsoleKey.F5:
+				break;
+			case ConsoleKey.F6:
+				break;
+			case ConsoleKey.F7:
+				break;
+			case ConsoleKey.F8:
+				break;
+			case ConsoleKey.F9:
+				break;
+			case ConsoleKey.F10:
+				break;
+			case ConsoleKey.F11:
+				break;
+			case ConsoleKey.F12:
+				break;
+			case ConsoleKey.F13:
+				break;
+			case ConsoleKey.F14:
+				break;
+			case ConsoleKey.F15:
+				break;
+			case ConsoleKey.F16:
+				break;
+			case ConsoleKey.F17:
+				break;
+			case ConsoleKey.F18:
+				break;
+			case ConsoleKey.F19:
+				break;
+			case ConsoleKey.F20:
+				break;
+			case ConsoleKey.F21:
+				break;
+			case ConsoleKey.F22:
+				break;
+			case ConsoleKey.F23:
+				break;
+			case ConsoleKey.F24:
+				break;
+			case ConsoleKey.BrowserBack:
+				break;
+			case ConsoleKey.BrowserForward:
+				break;
+			case ConsoleKey.BrowserRefresh:
+				break;
+			case ConsoleKey.BrowserStop:
+				break;
+			case ConsoleKey.BrowserSearch:
+				break;
+			case ConsoleKey.BrowserFavorites:
+				break;
+			case ConsoleKey.BrowserHome:
+				break;
+			case ConsoleKey.VolumeMute:
+				break;
+			case ConsoleKey.VolumeDown:
+				break;
+			case ConsoleKey.VolumeUp:
+				break;
+			case ConsoleKey.MediaNext:
+				break;
+			case ConsoleKey.MediaPrevious:
+				break;
+			case ConsoleKey.MediaStop:
+				break;
+			case ConsoleKey.MediaPlay:
+				break;
+			case ConsoleKey.LaunchMail:
+				break;
+			case ConsoleKey.LaunchMediaSelect:
+				break;
+			case ConsoleKey.LaunchApp1:
+				break;
+			case ConsoleKey.LaunchApp2:
+				break;
+			case ConsoleKey.Oem1:
+				break;
+			case ConsoleKey.OemPlus:
+				break;
+			case ConsoleKey.OemComma:
+				break;
+			case ConsoleKey.OemMinus:
+				break;
+			case ConsoleKey.OemPeriod:
+				break;
+			case ConsoleKey.Oem2:
+				break;
+			case ConsoleKey.Oem3:
+				break;
+			case ConsoleKey.Oem4:
+				break;
+			case ConsoleKey.Oem5:
+				break;
+			case ConsoleKey.Oem6:
+				break;
+			case ConsoleKey.Oem7:
+				break;
+			case ConsoleKey.Oem8:
+				break;
+			case ConsoleKey.Oem102:
+				break;
+			case ConsoleKey.Process:
+				break;
+			case ConsoleKey.Packet:
+				break;
+			case ConsoleKey.Attention:
+				break;
+			case ConsoleKey.CrSel:
+				break;
+			case ConsoleKey.ExSel:
+				break;
+			case ConsoleKey.EraseEndOfFile:
+				break;
+			case ConsoleKey.Play:
+				break;
+			case ConsoleKey.Zoom:
+				break;
+			case ConsoleKey.NoName:
+				break;
+			case ConsoleKey.Pa1:
+				break;
+			case ConsoleKey.OemClear:
+				break;
+			default:
+				return true;
+			}
+			return true;
+		}
+
+		public bool NotifyWrite (char val)
+		{
+			if (val == verase) {
+				string str = reader.Get (TermInfoStrings.EraseChars);
+				if (str != null) {
+					Console.Error.WriteLine ("{0}", TermInfoReader.Escape (str));
+				} else {
+					Console.Error.WriteLine ("FUCK");
+				}
+				return false;
+			} else {
+				//TODO: compute cursor position
+				return true;
+			}
 		}
 
 		public ConsoleColor BackgroundColor {
@@ -354,7 +629,6 @@ namespace System {
 
 		public int CursorLeft {
 			get {
-				GetCursorPosition ();
 				return cursorLeft;
 			}
 			set {
@@ -365,7 +639,6 @@ namespace System {
 
 		public int CursorTop {
 			get {
-				GetCursorPosition ();
 				return cursorTop;
 			}
 			set {
@@ -398,7 +671,6 @@ namespace System {
 					return;
 
 				noEcho = !value;
-				ConsoleDriver.SetEcho (value);
 			}
 		}
 
@@ -637,13 +909,14 @@ namespace System {
 				Echo  = true;
 			StringBuilder builder = new StringBuilder ();
 			bool exit = false;
+			CStreamWriter writer = (CStreamWriter) Console.stdout;
 			do {
 				ConsoleKeyInfo key = ReadKeyInternal ();
 				char c = key.KeyChar;
 				exit = (c == '\n');
 				if (!exit)
 					builder.Append (c);
-				stdout.WriteByte ((byte) c);
+				writer.WriteKey (key);
 			} while (!exit);
 			if (prevEcho == false)
 				Echo = prevEcho;
