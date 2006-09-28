@@ -2767,7 +2767,6 @@ namespace System.Windows.Forms {
 			if (Caret.Hwnd == handle) {
 				if (Caret.Visible == true) {
 					Caret.Timer.Stop();
-					HideCaret();
 				}
 				if (Caret.gc != IntPtr.Zero) {
 					XFreeGC(DisplayHandle, Caret.gc);
