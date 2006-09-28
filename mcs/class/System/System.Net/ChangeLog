@@ -1,3 +1,7 @@
+2006-09-28  Andrew Skiba <andrews@mainsoft.com>
+
+	* Dns.cs: TARGET_JVM
+
 2006-09-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CookieContainer.cs: send the cookies from the collection we got for

@@ -165,6 +165,7 @@ namespace System.Net {
 		}
 #endif
 
+#if !TARGET_JVM
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static bool GetHostByName_internal(string host, out string h_name, out string[] h_aliases, out string[] h_addr_list);
 
@@ -173,7 +174,8 @@ namespace System.Net {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static bool GetHostName_internal(out string h_name);
-		
+#endif	
+
 		private static IPHostEntry hostent_to_IPHostEntry(string h_name, string[] h_aliases, string[] h_addrlist) 
 		{
 			IPHostEntry he = new IPHostEntry();
@@ -237,16 +239,29 @@ namespace System.Net {
 
 			// Must check the IP format, might send an exception if invalid string.
 			if (parse)
-				IPAddress.Parse(address);
+				IPAddress.Parse (address);
 
 			string h_name;
 			string[] h_aliases, h_addrlist;
-
+#if TARGET_JVM
+			h_name = null;
+			h_aliases = null;
+			h_addrlist = null;
+			java.net.InetAddress[] iaArr = java.net.InetAddress.getAllByName (address);
+			if (iaArr != null && iaArr.Length > 0)
+				h_name = iaArr[0].getHostName ();
+			if (iaArr != null && iaArr.Length > 0) {
+				h_addrlist = new String[iaArr.Length];
+				for (int i = 0; i < h_addrlist.Length; i++)
+					h_addrlist[i] = iaArr[i].getHostAddress ();
+			}
+#else
 			bool ret = GetHostByAddr_internal(address, out h_name, out h_aliases, out h_addrlist);
 			if (!ret)
 				throw new SocketException(11001);
-
+#endif
 			return (hostent_to_IPHostEntry (h_name, h_aliases, h_addrlist));
+			
 		}
 
 #if NET_2_0
@@ -296,11 +311,29 @@ namespace System.Net {
 #if NET_2_0
 		[Obsolete ("Use GetHostEntry instead")]
 #endif
-		public static IPHostEntry GetHostByName(string hostName) 
+		public static IPHostEntry GetHostByName (string hostName)
 		{
 			if (hostName == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException ();
+#if TARGET_JVM
+			if (hostName.Length == 0)
+				hostName = "localhost";
 
+			java.net.InetAddress[] iaArr = java.net.InetAddress.getAllByName (hostName);
+			IPHostEntry host = new IPHostEntry ();
+			if (iaArr != null && iaArr.Length > 0) {
+
+				host.HostName = iaArr[0].getHostName ();
+
+				IPAddress[] ipArr = new IPAddress[iaArr.Length];
+				for (int i = 0; i < iaArr.Length; i++)
+					ipArr[i] = IPAddress.Parse (iaArr[i].getHostAddress ());
+
+				host.AddressList = ipArr;
+
+			}
+			return host;
+#else
 			string h_name;
 			string[] h_aliases, h_addrlist;
 
@@ -312,10 +345,14 @@ namespace System.Net {
 
 			return(hostent_to_IPHostEntry(h_name, h_aliases,
 				h_addrlist));
+#endif
 		}
 
-		public static string GetHostName() 
+		public static string GetHostName ()
 		{
+#if TARGET_JVM
+			return java.net.InetAddress.getLocalHost ().getHostName ();
+#else
 			string hostName;
 
 			bool ret = GetHostName_internal(out hostName);
@@ -324,6 +361,7 @@ namespace System.Net {
 				throw new SocketException(11001);
 
 			return hostName;
+#endif
 		}
 
 #if NET_2_0
