@@ -68,11 +68,13 @@ namespace System.ComponentModel
 			// Set fields to null
 		}
 
+#if !TARGET_JVM
 		~MarshalByValueComponent ()
 		{
 			Dispose (false);
 		}
-		
+#endif	
+
 		public virtual object GetService (Type service) 
 		{
 			if (mySite != null) {

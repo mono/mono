@@ -97,6 +97,7 @@ namespace System.ComponentModel
 			properties.Clear ();
 		}
 
+#if !TARGET_JVM // DUAL_IFACE_CONFLICT
 		void IList.Clear ()
 		{
 			Clear ();
@@ -106,11 +107,19 @@ namespace System.ComponentModel
 		{
 			Clear ();
 		}
+#endif
 
 		public bool Contains (PropertyDescriptor value)
 		{
 			return properties.Contains (value);
 		}
+
+#if TARGET_JVM // DUAL_IFACE_CONFLICT
+		public bool Contains (object value)
+		{
+			return Contains ((PropertyDescriptor) value);
+		}
+#else
 
 		bool IList.Contains (object value)
 		{
@@ -121,6 +130,7 @@ namespace System.ComponentModel
 		{
 			return Contains ((PropertyDescriptor) value);
 		}
+#endif
 
 		public void CopyTo (Array array, int index)
 		{
@@ -133,6 +143,17 @@ namespace System.ComponentModel
 				throw new ArgumentNullException ("name");
 			}
 
+#if TARGET_JVM
+			if (!ignoreCase)
+			{
+				foreach (PropertyDescriptor p in properties) 
+				{
+					if (String.Equals (name, p.Name))
+						return p;				
+				}
+				return null;
+			}
+#endif
 			foreach (PropertyDescriptor p in properties) {
 				if (0 == String.Compare (name, p.Name, ignoreCase))
 					return p;
@@ -151,6 +172,12 @@ namespace System.ComponentModel
 			throw new NotImplementedException ();
 		}
 
+#if TARGET_JVM
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return GetEnumerator ();
+		}
+#endif
 		public int IndexOf (PropertyDescriptor value)
 		{
 			return properties.IndexOf (value);
@@ -182,6 +209,12 @@ namespace System.ComponentModel
 			properties.Remove (value);
 		}
 
+#if TARGET_JVM// DUAL_IFACE_CONFLICT
+		public void Remove (object value)
+		{
+			Remove ((PropertyDescriptor) value);
+		}
+#else
 		void IDictionary.Remove (object value)
 		{
 			Remove ((PropertyDescriptor) value);
@@ -191,7 +224,7 @@ namespace System.ComponentModel
 		{
 			Remove ((PropertyDescriptor) value);
 		}
-
+#endif
 		public void RemoveAt (int index)
 		{
 			if (readOnly) {
@@ -289,21 +322,19 @@ namespace System.ComponentModel
 			list.CopyTo (descriptors);
 			return new PropertyDescriptorCollection (descriptors, true);
 		}
-		
+
+#if TARGET_JVM //DUAL_IFACE_CONFLICT
+		public bool IsFixedSize
+#else
 		bool IDictionary.IsFixedSize
 		{
-			get {
-#if NET_2_0
-				return readOnly;
-#else
-				return !readOnly;
-#endif
-			}
+			get {return ((IList)this).IsFixedSize;}
 		}
-
 		bool IList.IsFixedSize
+#endif
 		{
-			get {
+			get 
+			{
 #if NET_2_0
 				return readOnly;
 #else
@@ -311,15 +342,15 @@ namespace System.ComponentModel
 #endif
 			}
 		}
-
-		bool IList.IsReadOnly
-		{
-			get {
-				return readOnly;
-			}
-		}
-
+#if TARGET_JVM //DUAL_IFACE_CONFLICT
+		public bool IsReadOnly
+#else
 		bool IDictionary.IsReadOnly
+		{
+			get {return ((IList)this).IsReadOnly;}
+		}
+		bool IList.IsReadOnly
+#endif
 		{
 			get 
 			{

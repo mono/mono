@@ -92,11 +92,18 @@ namespace System.ComponentModel {
 			Dispose (false);
 		}
 
+#if TARGET_JVM
+		public virtual void Dispose ()
+		{
+			Dispose (true);
+		}
+#else
 		public void Dispose ()
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);
 		}
+#endif
 
 		// <summary>
 		//   Controls disposal of resources used by this.
