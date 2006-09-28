@@ -1,3 +1,7 @@
+2006-09-28  Andrew Skiba  <andrews@mainsoft.com>
+
+	* Stack.cs: TARGET_JVM
+
 2006-04-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SortedDictionary.cs : new file. The original code is mostly
