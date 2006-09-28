@@ -2269,7 +2269,12 @@ namespace System.Windows.Forms {
 			Win32SetROP2(hdc, ROP2DrawMode.R2_NOT);
 			oldpen = Win32SelectObject(hdc, pen);
 
-			// We might need to add clipping to the WindowRect of 'handle' - right now we're drawing on the desktop
+			Control c = Control.FromHandle (handle);
+			if (c != null) {
+				Region r = new Region(new Rectangle(c.PointToScreen (c.Location), c.Size));
+
+				Win32ExtSelectClipRgn(hdc, r.GetHrgn (Graphics.FromHdc (hdc)), (int) ClipCombineMode.RGN_AND);
+			}
 
 			Win32MoveToEx(hdc, pt.x + rect.Left, pt.y + rect.Top, IntPtr.Zero);
 			if ((rect.Width > 0) && (rect.Height > 0)) {
@@ -2287,6 +2292,9 @@ namespace System.Windows.Forms {
 
 			Win32SelectObject(hdc, oldpen);
 			Win32DeleteObject(pen);
+			if (c != null)
+				Win32ExtSelectClipRgn(hdc, IntPtr.Zero, (int) ClipCombineMode.RGN_COPY);
+
 			Win32ReleaseDC(IntPtr.Zero, hdc);
 		}
 
@@ -2668,6 +2676,12 @@ namespace System.Windows.Forms {
 
 		[DllImport ("gdi32.dll", EntryPoint="CreateHatchBrush", CallingConvention=CallingConvention.StdCall)]
 		internal extern static IntPtr Win32CreateHatchBrush(HatchStyle fnStyle, ref COLORREF color);
+
+		[DllImport("gdi32.dll", EntryPoint = "ExcludeClipRect", CallingConvention = CallingConvention.StdCall)]
+		internal extern static int Win32ExcludeClipRect (IntPtr hdc, int left, int top,  int right, int bottom);
+
+		[DllImport ("gdi32.dll", EntryPoint="ExtSelectClipRgn", CallingConvention=CallingConvention.StdCall)]
+		internal extern static int Win32ExtSelectClipRgn(IntPtr hdc, IntPtr hrgn, int mode);
 
 		[DllImport ("winmm.dll", EntryPoint="PlaySoundW", CallingConvention=CallingConvention.StdCall, CharSet=CharSet.Unicode)]
 		internal extern static IntPtr Win32PlaySound(string pszSound, IntPtr hmod, SndFlags fdwSound);

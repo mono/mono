@@ -826,5 +826,16 @@ namespace System.Windows.Forms {
 		SB_RIGHT		= 7,
 		SB_ENDSCROLL		= 8
 	}
+
+	internal enum ClipCombineMode {
+		RGN_AND = 1,
+		RGN_OR,
+		RGN_XOR,
+		RGN_DIFF,
+		RGN_COPY,
+
+		RGN_MIN = RGN_AND,
+		RGN_MAX = RGN_COPY
+	}
 }
 
