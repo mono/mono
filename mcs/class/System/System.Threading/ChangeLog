@@ -1,3 +1,7 @@
+2006-09-28  Andrew Skiba <andrews@mainsoft.com>
+
+	* Semaphore.cs: TARGET_JVM
+
 2005-12-23  Dick Porter  <dick@ximian.com>
 
 	* Semaphore.cs: Implement OpenExisting
