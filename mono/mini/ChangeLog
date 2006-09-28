@@ -1,4 +1,8 @@
 
+Thu Sep 28 16:40:07 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* inssel-x86.brg: make the helper methods static.
+
 Thu Sep 28 16:31:32 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* inssel-amd64.brg, mini-amd64.c: small cleanup, use inst_call.
