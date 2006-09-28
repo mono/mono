@@ -7,7 +7,7 @@
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Portions (C) 2003 Ben Maurer
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Key generation translated from Bouncy Castle JCE (http://www.bouncycastle.org/)
 // See bouncycastle.txt for license.
@@ -161,10 +161,10 @@ namespace Mono.Security.Cryptography {
 			get { return "RSA-PKCS1-KeyEx"; }
 		}
 
-		// note: this property will exist in RSACryptoServiceProvider in
-		// version 2.0 of the framework
+		// note: when (if) we generate a keypair then it will have both
+		// the public and private keys
 		public bool PublicOnly {
-			get { return ((d == null) || (n == null)); }
+			get { return (keypairGenerated && ((d == null) || (n == null))); }
 		}
 
 		public override string SignatureAlgorithm {
@@ -210,9 +210,11 @@ namespace Mono.Security.Cryptography {
 					// m = m2 + q * h;
 					output = m2 + q * h;
 				}
-			} else {
+			} else if (!PublicOnly) {
 				// m = c^d mod n
 				output = input.ModPow (d, n);
+			} else {
+				throw new CryptographicException (Locale.GetText ("Missing private key to decrypt value."));
 			}
 
 			if (keyBlinding) {
@@ -222,7 +224,9 @@ namespace Mono.Security.Cryptography {
 				r.Clear ();
 			}
 
-			byte[] result = output.GetBytes ();
+			// it's sometimes possible for the results to be a byte short
+			// and this can break some software (see #79502) so we 0x00 pad the result
+			byte[] result = GetPaddedValue (output);
 			// zeroize values
 			input.Clear ();	
 			output.Clear ();
@@ -239,7 +243,9 @@ namespace Mono.Security.Cryptography {
 
 			BigInteger input = new BigInteger (rgb);
 			BigInteger output = input.ModPow (e, n);
-			byte[] result = output.GetBytes ();
+			// it's sometimes possible for the results to be a byte short
+			// and this can break some software (see #79502) so we 0x00 pad the result
+			byte[] result = GetPaddedValue (output);
 			// zeroize value
 			input.Clear ();	
 			output.Clear ();
@@ -454,6 +460,21 @@ namespace Mono.Security.Cryptography {
 			// generated with CRT parameters) or CRT is (or isn't)
 			// possible (in case the key was imported)
 			get { return (!keypairGenerated || isCRTpossible); }
+		}
+
+		private byte[] GetPaddedValue (BigInteger value)
+		{
+			byte[] result = value.GetBytes ();
+			int length = (KeySize >> 3);
+			if (result.Length >= length)
+				return result;
+
+			// left-pad 0x00 value on the result (same integer, correct length)
+			byte[] padded = new byte[length];
+			Buffer.BlockCopy (result, 0, padded, (length - result.Length), result.Length);
+			// temporary result may contain decrypted (plaintext) data, clear it
+			Array.Clear (result, 0, result.Length);
+			return padded;
 		}
 	}
 }
