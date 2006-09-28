@@ -47,12 +47,32 @@ using System.Security.Permissions;
 using System.Xml;
 using System.Xml.XPath;
 #endif
+#if TARGET_JVM
+using vmw.common;
+using vmw.@internal.io;
+#endif
 
 namespace System.Configuration
 {
 	public sealed class ConfigurationSettings
 	{
-		static IConfigurationSystem config = DefaultConfig.GetInstance ();
+#if !TARGET_JVM
+     		static IConfigurationSystem config = DefaultConfig.GetInstance ();
+#else
+		static IConfigurationSystem config {
+			get {
+				IConfigurationSystem conf = (IConfigurationSystem) AppDomain.CurrentDomain.GetData ("ConfigurationSettings.Config");
+				if (conf == null) {
+					conf = DefaultConfig.GetInstance ();
+					AppDomain.CurrentDomain.SetData ("ConfigurationSettings.Config", conf);
+				}
+				return conf;
+			}
+			set {
+				AppDomain.CurrentDomain.SetData ("ConfigurationSettings.Config", value);
+			}
+		}
+#endif
 		static object lockobj = new object ();
 		private ConfigurationSettings ()
 		{
@@ -103,7 +123,23 @@ namespace System.Configuration
 	//
 	class DefaultConfig : IConfigurationSystem
 	{
-		static readonly DefaultConfig instance = new DefaultConfig ();
+#if !TARGET_JVM
+        	static readonly DefaultConfig instance = new DefaultConfig ();        
+#else
+		static DefaultConfig instance {
+			get {
+				DefaultConfig conf = (DefaultConfig) AppDomain.CurrentDomain.GetData ("DefaultConfig.instance");
+				if (conf == null) {
+					conf = new DefaultConfig ();
+					AppDomain.CurrentDomain.SetData ("DefaultConfig.instance", conf);
+				}
+				return conf;
+			}
+			set {
+				AppDomain.CurrentDomain.SetData ("DefaultConfig.instance", value);
+			}
+		}
+#endif
 		ConfigurationData config;
 		
 		private DefaultConfig ()
@@ -147,14 +183,19 @@ namespace System.Configuration
 					config = data;
 			}
 		}
-
+#if TARGET_JVM
+		internal static string GetMachineConfigPath ()
+		{
+			return "/machine.config";
+		}
+#else
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern private static string get_machine_config_path ();
-
 		internal static string GetMachineConfigPath ()
 		{
 			return get_machine_config_path ();
 		}
+#endif
 
 		private static string GetAppConfigPath ()
 		{
@@ -234,13 +275,30 @@ namespace System.Configuration
 		{
 #if (XML_DEP)
 			this.fileName = fileName;
-			if (fileName == null || !File.Exists (fileName))
+			if (fileName == null
+#if !TARGET_JVM
+				|| !File.Exists (fileName)
+#endif
+)
 				return false;
 			
 			XmlTextReader reader = null;
 
 			try {
+#if !TARGET_JVM
 				FileStream fs = new FileStream (fileName, FileMode.Open, FileAccess.Read);
+#else
+				Stream fs = (Stream) vmw.common.IOUtils.getStream (fileName);
+
+				//patch for machine.config
+				if (fs == null && fileName.EndsWith ("machine.config")) {
+					fs = (Stream) IOUtils.getStreamForGHConfigs (fileName);
+				}
+
+				if (fs == null) {
+					return false;
+				}
+#endif
 				reader = new XmlTextReader (fs);
 				InitRead (reader);
 				ReadConfigFile (reader);
