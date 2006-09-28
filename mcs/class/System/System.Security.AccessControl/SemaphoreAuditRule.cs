@@ -33,7 +33,10 @@ using System.Security.Principal;
 
 namespace System.Security.AccessControl {
 	[ComVisible (false)]
-	public sealed class SemaphoreAuditRule : AuditRule
+	public sealed class SemaphoreAuditRule
+#if !TARGET_JVM
+		: AuditRule
+#endif
 	{
 		SemaphoreRights semaphoreRights;
 		
