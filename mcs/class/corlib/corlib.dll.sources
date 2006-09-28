@@ -99,6 +99,8 @@ System/CannotUnloadAppDomainException.cs
 System/Char.cs
 System/CharEnumerator.cs
 System/CLSCompliantAttribute.cs
+System/CStreamReader.cs
+System/CStreamWriter.cs
 System/Console.cs
 System/ConsoleCancelEventArgs.cs
 System/ConsoleCancelEventHandler.cs
@@ -182,6 +184,7 @@ System/NonSerializedAttribute.cs
 System/NotFiniteNumberException.cs
 System/NotImplementedException.cs
 System/NotSupportedException.cs
+System/NullConsoleDriver.cs
 System/Nullable.cs
 System/NullReferenceException.cs
 System/NumberFormatter.cs
