@@ -596,8 +596,10 @@ namespace System.Web {
 		//
 		void ProcessError (Exception e)
 		{
+			if (context == null)
+				context = HttpContext.Current;
+
 			bool first = context.Error == null;
-			
 			context.AddError (e);
 			if (first){
 				if (Error != null){
@@ -620,8 +622,8 @@ namespace System.Web {
 		void Tick ()
 		{
 			try {
-				if (pipeline.MoveNext ()){
-					if ((bool)pipeline.Current)
+				if (pipeline != null && pipeline.MoveNext ()){
+					if (pipeline != null && (bool)pipeline.Current)
 						PipelineDone ();
 				}
 			} catch (Exception e) {
@@ -791,6 +793,8 @@ namespace System.Web {
 			} catch (Exception e) {
 				Console.WriteLine ("Internal error: OutputPage threw an exception " + e);
 			} finally {
+				if (context == null)
+					context = HttpContext.Current;
 				context.WorkerRequest.EndOfRequest();
 				if (factory != null && context.Handler != null){
 					factory.ReleaseHandler (context.Handler);
