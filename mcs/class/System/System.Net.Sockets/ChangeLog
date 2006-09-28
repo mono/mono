@@ -1,3 +1,7 @@
+2006-09-28 Andrew Skiba <andrews@mainsoft.com>
+
+	* Socket.cs,NetworkStream.cs,SocketException.cs: TARGET_JVM
+
 2006-09-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: update the SocketOperation enum.

@@ -37,11 +37,16 @@ namespace System.Net.Sockets
 	[Serializable]
 	public class SocketException : Win32Exception
 	{
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern int WSAGetLastError_internal();
-		
+#if TARGET_JVM
 		public SocketException ()
-			: base (WSAGetLastError_internal()) {
+			: base (-2147467259)
+#else
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private static extern int WSAGetLastError_internal ();
+		public SocketException ()
+			: base (WSAGetLastError_internal ())
+#endif
+		{
 		}
 
 		public SocketException (int error)

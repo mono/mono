@@ -329,7 +329,14 @@ namespace System.Net.Sockets
 		{
 			if (disposed)
 				throw new ObjectDisposedException (GetType().FullName);
-		}		
-	     
+		}
+
+#if TARGET_JVM
+		public void ChangeToSSLSocket()
+		{
+			socket.ChangeToSSL();
+		}
+#endif
+
 	}
 }

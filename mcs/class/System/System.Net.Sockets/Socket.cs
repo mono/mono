@@ -433,12 +433,12 @@ namespace System.Net.Sockets
 
 			sockets.Add (null);
 		}
-
+#if !TARGET_JVM
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Select_internal (ref Socket [] sockets,
 							int microSeconds,
 							out int error);
-
+#endif
 		public static void Select (IList checkRead, IList checkWrite, IList checkError, int microSeconds)
 		{
 			ArrayList list = new ArrayList ();
@@ -528,14 +528,14 @@ namespace System.Net.Sockets
 			socket=sock;
 			connected=true;
 		}
-		
+#if !TARGET_JVM
 		// Creates a new system socket, returning the handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern IntPtr Socket_internal(AddressFamily family,
 						      SocketType type,
 						      ProtocolType proto,
 						      out int error);
-		
+#endif		
 		public Socket(AddressFamily family, SocketType type,
 			      ProtocolType proto) {
 			address_family=family;
@@ -555,11 +555,12 @@ namespace System.Net.Sockets
 				return(address_family);
 			}
 		}
-
+#if !TARGET_JVM
 		// Returns the amount of data waiting to be read on socket
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static int Available_internal(IntPtr socket,
 							     out int error);
+#endif
 		
 		public int Available {
 			get {
@@ -577,12 +578,12 @@ namespace System.Net.Sockets
 				return(ret);
 			}
 		}
-
+#if !TARGET_JVM
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Blocking_internal(IntPtr socket,
 							     bool block,
 							     out int error);
-
+#endif
 		public bool Blocking {
 			get {
 				return(blocking);
@@ -614,11 +615,11 @@ namespace System.Net.Sockets
 				return(socket);
 			}
 		}
-
+#if !TARGET_JVM
 		// Returns the local endpoint details in addr and port
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static SocketAddress LocalEndPoint_internal(IntPtr socket, out int error);
-
+#endif
 		[MonoTODO("Support non-IP endpoints")]
 		public EndPoint LocalEndPoint {
 			get {
