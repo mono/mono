@@ -1513,6 +1513,41 @@ namespace MonoTests.System.Drawing
 				}
 			}
 		}
+
+		[Test]
+		public void DrawString_EndlessLoop_Bug77699 ()
+		{
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					Rectangle rect = Rectangle.Empty;
+					rect.Location = new Point (10, 10);
+					rect.Size = new Size (1, 20);
+					StringFormat fmt = new StringFormat ();
+					fmt.Alignment = StringAlignment.Center;
+					fmt.LineAlignment = StringAlignment.Center;
+					fmt.FormatFlags = StringFormatFlags.NoWrap;
+					fmt.Trimming = StringTrimming.EllipsisWord;
+					g.DrawString ("Test String", font, Brushes.Black, rect, fmt);
+				}
+			}
+		}
+
+		[Test]
+		public void DrawString_EndlessLoop_Wrapping ()
+		{
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					Rectangle rect = Rectangle.Empty;
+					rect.Location = new Point (10, 10);
+					rect.Size = new Size (1, 20);
+					StringFormat fmt = new StringFormat ();
+					fmt.Alignment = StringAlignment.Center;
+					fmt.LineAlignment = StringAlignment.Center;
+					fmt.Trimming = StringTrimming.EllipsisWord;
+					g.DrawString ("Test String", font, Brushes.Black, rect, fmt);
+				}
+			}
+		}
 #if NET_2_0
 		[Test]
 		public void TestReleaseHdc ()
