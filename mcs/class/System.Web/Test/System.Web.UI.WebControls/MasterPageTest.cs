@@ -42,11 +42,12 @@ using MyWebControl = System.Web.UI.WebControls;
 using System.Collections;
 using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
+using System.Threading;
 
 
 namespace MonoTests.System.Web.UI.WebControls
 {
-	class PokerMasterPage : MasterPage
+	public class PokerMasterPage : MasterPage
 	{
 		public PokerMasterPage ()
 		{
@@ -64,12 +65,39 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			base.AddContentTemplate (templateName, template);
 		}
+		public string MasterMethod ()
+		{
+			return "FromMasterMethod";
+		}
 	}
 
-	
 	[TestFixture]
 	public class MasterPageTest
 	{
+		public const string PAGE_WITH_MASTER = "MyPageWithMaster.aspx";
+		public const string PAGE_WITH_DERIVED_MASTER = "MyPageWithDerivedMaster.aspx";
+
+		[TestFixtureSetUp]
+		public void CopyTestResources ()
+		{
+#if DOT_NET
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.MasterTypeTest1.aspx", "MasterTypeTest1.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.MasterTypeTest2.aspx", "MasterTypeTest2.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.MyDerived.master", "MyDerived.master");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.MyPageWithDerivedMaster.aspx", "MyPageWithDerivedMaster.aspx");
+#else
+			WebTest.CopyResource (GetType (), "MasterTypeTest1.aspx", "MasterTypeTest1.aspx");
+			WebTest.CopyResource (GetType (), "MasterTypeTest2.aspx", "MasterTypeTest2.aspx");
+			WebTest.CopyResource (GetType (), "MyDerived.master", "MyDerived.master");
+			WebTest.CopyResource (GetType (), "MyPageWithDerivedMaster.aspx", "MyPageWithDerivedMaster.aspx");
+#endif
+		}
+
+		[SetUp]
+		public void SetupTestCase ()
+		{
+			Thread.Sleep (100);
+		}
 
 		[Test]
 		public void MasterPage_DefaultProperties ()
@@ -90,19 +118,32 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		public void MasterPage_Render()
+		public void MasterPage_Render ()
+		{
+			Render_Helper (StandardUrl.PAGE_WITH_MASTER);
+		}
+
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void MasterPageDerived_Render ()
+		{
+			Render_Helper (StandardUrl.PAGE_WITH_DERIVED_MASTER);
+		}
+		
+		public void Render_Helper(string url)
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (_RenderDefault));
-			t.Request.Url = StandardUrl.PAGE_WITH_MASTER;
+			t.Request.Url = url;
 			string PageRenderHtml = t.Run ();
-			Assert.AreEqual (-1, PageRenderHtml.IndexOf ("Master header text"), "Master#1");
+			
 			
 			if (PageRenderHtml.IndexOf ("Page main text") < 0) {
 			        Assert.Fail ("Master#2");
 			}
 			
 			Assert.AreEqual (-1, PageRenderHtml.IndexOf ("Master main text"), "Master#3");
-			Assert.AreEqual (-1, PageRenderHtml.IndexOf ("Master dynamic text"), "Master#4");
+			
 
 			if (PageRenderHtml.IndexOf ("Page dynamic text") < 0) {
 				Assert.Fail ("Master#5");
@@ -116,9 +157,46 @@ namespace MonoTests.System.Web.UI.WebControls
 				Assert.Fail ("Master#7");
 			}
 
+
+			if (url == PAGE_WITH_DERIVED_MASTER) {
+				if (PageRenderHtml.IndexOf ("Derived header text") < 0) {
+					Assert.Fail ("Master#8");
+				}
+
+				if (PageRenderHtml.IndexOf ("Derived master page text ") < 0) {
+					Assert.Fail ("Master#9");
+				}
+
+				if (PageRenderHtml.IndexOf ("Master header text") < 0) {
+					Assert.Fail ("Master#10");
+				}
+			}
+			else {
+				Assert.AreEqual (-1, PageRenderHtml.IndexOf ("Master header text"), "Master#1");
+				Assert.AreEqual (-1, PageRenderHtml.IndexOf ("Master dynamic text"), "Master#4");
+			}
 		}
-		
-		
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void MasterType_VirtualPath ()
+		{
+			WebTest t = new WebTest ("MasterTypeTest1.aspx");
+			string PageRenderHtml = t.Run ();
+			if (PageRenderHtml.IndexOf ("MasterTypeMethod") < 0)
+				Assert.Fail ("MasterType VirtualPath test failed");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void MasterType_TypeName ()
+		{
+			WebTest t = new WebTest ("MasterTypeTest2.aspx");
+			string PageRenderHtml = t.Run ();
+			if (PageRenderHtml.IndexOf ("FromMasterMethod") < 0)
+				Assert.Fail ("MasterType TypeName test failed");
+		}
+
 		public static void _RenderDefault (Page p)
 		{
 			p.Form.Controls.Add(new LiteralControl("Page dynamic text"));

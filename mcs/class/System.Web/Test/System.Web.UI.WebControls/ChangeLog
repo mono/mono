@@ -1,3 +1,7 @@
+2006-09-28 Yoni Klain <yonik@mainsoft.com>
+
+	* MasterPageTest.cs: Some new tests was added.
+
 2006-09-26 Yoni Klain <yonik@mainsoft.com>
 
 	* CheckBoxTest.cs: Some new tests was added.
