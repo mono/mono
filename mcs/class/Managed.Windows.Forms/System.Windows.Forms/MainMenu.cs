@@ -144,7 +144,11 @@ namespace System.Windows.Forms
 			if (form == null)
 				return;
 
-			form.Invalidate (Rect);
+			/* this is a disgusting hack.  this code.. ugh. */
+			Rectangle r = Rect;
+			Height = 0; /* need this so the theme code will re-layout the menu items
+				       (why is the theme code doing the layout?  argh) */
+			form.Invalidate (r);
 		}
 
 		/* Mouse events from the form */
