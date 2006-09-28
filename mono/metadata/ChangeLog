@@ -1,3 +1,7 @@
+2006-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* console-io.c: ignore previous SIGINT handler.
+
 2006-09-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata.c class.c: Applied patch from Ricardo Fernandez Pascual 
