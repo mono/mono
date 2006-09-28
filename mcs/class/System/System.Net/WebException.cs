@@ -34,8 +34,7 @@ namespace System.Net
 	public class WebException : InvalidOperationException, ISerializable
 	{
 		private WebResponse response;
-		private WebExceptionStatus status = WebExceptionStatus.RequestCanceled;
-		
+		private WebExceptionStatus status = WebExceptionStatus.UnknownError;
 
 		// Constructors
 		
@@ -51,8 +50,6 @@ namespace System.Net
 		   			StreamingContext context)
 			: base (info, context)
 		{
-			status = (WebExceptionStatus) info.GetInt32 ("web_status");
-			response = (WebResponse) info.GetValue ("web_response", typeof (WebResponse));
 		}
 
 		public WebException (string message, Exception innerException)
@@ -91,8 +88,6 @@ namespace System.Net
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);
-			info.AddValue ("web_status", (int) status, typeof (int));
-			info.AddValue ("web_response", response, typeof (WebResponse));
 		}
 	}
 }
