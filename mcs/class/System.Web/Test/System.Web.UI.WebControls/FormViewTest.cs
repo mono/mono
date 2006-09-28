@@ -327,7 +327,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Defaults ()
 		{
 			Poker p = new Poker ();
@@ -465,7 +464,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void FormView_ItemsProperties ()
 		{
 			Poker p = new Poker ();
@@ -501,7 +499,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		// Protected methods
 
 		[Test]
-		[Category ("NotWorking")]
 		public void FormView_CreateChildControls ()
 		{
 			Poker fv = new Poker ();
@@ -526,7 +523,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void FormView_CreateControlStyle ()
 		{
 			Poker fv = new Poker ();
@@ -546,7 +542,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void FormView_InitializePager ()
 		{
 			Poker fv = new Poker ();
@@ -562,7 +557,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void FormView_CreateRow ()
 		{
 			Poker fv = new Poker ();
@@ -586,7 +580,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void FormView_CreateTable ()
 		{
 			Poker fv = new Poker ();
@@ -613,7 +606,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void FormView_PerformDataBinding ()
 		{
 			Poker fv = new Poker ();
@@ -690,7 +682,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void FormView_DataBind ()
 		{
 			Poker fv = new Poker ();
@@ -768,7 +759,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void FormView_IsBindableType ()
 		{
 			bool isBindable = false;
@@ -792,7 +782,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void FormView_ControlState ()		{
 
 			Poker fv = new Poker ();
@@ -803,12 +792,14 @@ namespace MonoTests.System.Web.UI.WebControls
 			fv.DataKeyNames = keys;
 			fv.BackImageUrl = "photo.jpg";			
 			fv.DefaultMode  = FormViewMode.Insert  ;
+			fv.ChangeMode (FormViewMode.Edit);
 			object state = fv.DoSaveControlState ();
 			copy.DoLoadControlState (state);
 			Assert.AreEqual (2, copy.DataKeyNames.Length, "DataKeyNames.Length");
 			Assert.AreEqual ("key1", copy.DataKeyNames[0], "ControlStateDataKeyValue");
 			Assert.AreEqual ("key2", copy.DataKeyNames[1], "ControlStateDataKeyValue2");			
 			Assert.AreEqual (FormViewMode.Insert, copy.DefaultMode, "ControlStateDefaultMode");
+			Assert.AreEqual (FormViewMode.Edit, copy.CurrentMode, "ControlStateCurrentMode");
 
 		}
 
@@ -997,7 +988,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 
 		[Test]
-		[Category ("NotWorking")]
 		public void FormView_Events ()
 		{
 			ResetEvents ();
@@ -1125,7 +1115,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		//Exceptions		
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void CellPaddingException ()
 		{
@@ -1134,7 +1123,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void CellSpacingException ()
 		{
@@ -1277,7 +1265,6 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		//}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category("NunitWeb")]
 		public void FormViewCssClass ()
 		{
@@ -1348,7 +1335,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
 		public void FormView_RenderWithHeader()
 		{
 			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();
@@ -1371,7 +1358,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
 		public void FormView_Render ()
 		{
 			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();
