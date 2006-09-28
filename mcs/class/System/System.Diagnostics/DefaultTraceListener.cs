@@ -62,10 +62,14 @@ namespace System.Diagnostics {
 			OnWin32 = (Path.DirectorySeparatorChar == '\\');
 
 			if (!OnWin32) {
+#if TARGET_JVM
+				string trace = java.lang.System.getProperty("MONO_TRACE");
+#else
 				// If we're running on Unix, we don't have OutputDebugString.
 				// Instead, send output to...wherever the MONO_TRACE_LISTENER environment
 				// variables says to.
 				String trace = Environment.GetEnvironmentVariable("MONO_TRACE_LISTENER");
+#endif
 
 				if (trace != null) {
 					string file = null;
@@ -158,6 +162,10 @@ namespace System.Diagnostics {
 			WriteLine (new StackTrace().ToString());
 		}
 
+#if TARGET_JVM
+		private void WriteDebugString (string message)
+		{
+#else
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void WriteWindowsDebugString (string message);
 
@@ -166,6 +174,7 @@ namespace System.Diagnostics {
 			if (OnWin32)
 				WriteWindowsDebugString (message);
 			else
+#endif
 				WriteMonoTrace (message);
 		}
 
