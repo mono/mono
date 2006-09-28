@@ -1,5 +1,11 @@
 2006-09-28  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #79013
+	* convert.cs (Convert.ImplicitStandardConversionExists): Avoid infloop.
+	* expression.cs (EmptyExpression.Grab, EmptyExpression.Release):
+	Change semantics slightly.  Don't insist on having only one
+	temporary EmptyExpression -- just throttle the creation of new ones.
+
 	Fix #79451
 	* ecore.cs (Expression.MemberLookup): Enable CS0229 errors for
 	non-interfaces too.  If no methods are found, don't try to create

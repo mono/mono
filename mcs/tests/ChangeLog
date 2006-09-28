@@ -1,3 +1,7 @@
+2006-09-28  Raja R Harinath  <rharinath@novell.com>
+
+	* gtest-291.cs: New test from #79013.
+
 2006-09-22  Raja R Harinath  <rharinath@novell.com>
 
 	* test-531.cs, test-531-lib.il: New test from #79451.

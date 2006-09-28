@@ -647,18 +647,19 @@ namespace Mono.CSharp {
 		{
 			Type expr_type = expr.Type;
 #if GMCS_SOURCE
-			if (TypeManager.IsNullableType (expr_type)) {
-				Type nullable = TypeManager.GetTypeArguments (expr_type) [0];
-				Expression source = new EmptyExpression (nullable);
+			if (TypeManager.IsNullableType (target_type)) {
+				// if implicit standard conversion S -> T exists, S -> T? and S? -> T? also exists
+				target_type = TypeManager.GetTypeArguments (target_type) [0];
 
-				if (TypeManager.IsNullableType (target_type)) {
-					if (ImplicitStandardConversionExists (source, target_type))
-						return true;
-					if (ImplicitStandardConversionExists (expr, target_type))
-						return true;
+				// S? -> T?
+				if (TypeManager.IsNullableType (expr_type)) {
+					EmptyExpression new_expr = EmptyExpression.Grab ();
+					new_expr.SetType (TypeManager.GetTypeArguments (expr_type) [0]);
+					bool retval = ImplicitStandardConversionExists (new_expr, target_type);
+					EmptyExpression.Release (new_expr);
+					return retval;
 				}
-			} else if (TypeManager.IsNullableTypeOf (target_type, expr_type))
-				return true;
+			}
 #endif
 			if (expr_type == TypeManager.void_type)
 				return false;

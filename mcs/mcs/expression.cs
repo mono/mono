@@ -8560,17 +8560,13 @@ namespace Mono.CSharp {
 		static EmptyExpression temp = new EmptyExpression ();
 		public static EmptyExpression Grab ()
 		{
-			if (temp == null)
-				throw new InternalErrorException ("Nested Grab");
-			EmptyExpression retval = temp;
+			EmptyExpression retval = temp == null ? new EmptyExpression () : temp;
 			temp = null;
 			return retval;
 		}
 
 		public static void Release (EmptyExpression e)
 		{
-			if (temp != null)
-				throw new InternalErrorException ("Already released");
 			temp = e;
 		}
 

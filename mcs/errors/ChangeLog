@@ -1,5 +1,7 @@
 2006-09-28  Raja R Harinath  <rharinath@novell.com>
 
+	* gcs1502.cs: New test from #79013.
+
 	* cs0229-3.cs, CS0229-3-lib.il: New test based on #79451.
 	* cs0229-4.cs, CS0229-4-lib.il: Likewise.
 
