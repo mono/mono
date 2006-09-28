@@ -1,3 +1,9 @@
+2006-09-28  Marek Safar  <marek.safar@seznam.cz>
+
+	* namespace.cs (Namespace.Error_NamespaceDoesNotExist): Better error
+	message when non-generic type is used with the type arguments.
+	* expression.cs: Updated.
+
 2006-09-28  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #79013

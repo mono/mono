@@ -7246,7 +7246,7 @@ namespace Mono.CSharp {
 #endif
 
 				if (retval == null)
-					ns.Error_NamespaceDoesNotExist (loc, Identifier);
+					ns.Error_NamespaceDoesNotExist (ec.DeclContainer, loc, Identifier);
 				return retval;
 			}
 
@@ -7369,7 +7369,7 @@ namespace Mono.CSharp {
 					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (rc, false);
 #endif
 				if (!silent && retval == null)
-					ns.Error_NamespaceDoesNotExist (loc, Identifier);
+					ns.Error_NamespaceDoesNotExist (rc.DeclContainer, loc, LookupIdentifier);
 				return retval;
 			}
 
