@@ -3127,7 +3127,7 @@ namespace System.Windows.Forms {
 								msg.message = Msg.WM_LBUTTONDOWN;
 							} else {
 								msg.message = Msg.WM_NCLBUTTONDOWN;
-								ClientToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+								MenuToScreen (xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 							// TODO: For WM_NCLBUTTONDOWN wParam specifies a hit-test value not the virtual keys down
 							msg.wParam=GetMousewParam(0);
@@ -3140,7 +3140,7 @@ namespace System.Windows.Forms {
 								msg.message = Msg.WM_MBUTTONDOWN;
 							} else {
 								msg.message = Msg.WM_NCMBUTTONDOWN;
-								ClientToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+								MenuToScreen (xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 							msg.wParam=GetMousewParam(0);
 							break;
@@ -3152,7 +3152,7 @@ namespace System.Windows.Forms {
 								msg.message = Msg.WM_RBUTTONDOWN;
 							} else {
 								msg.message = Msg.WM_NCRBUTTONDOWN;
-								ClientToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+								MenuToScreen (xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 							msg.wParam=GetMousewParam(0);
 							break;
@@ -3234,7 +3234,7 @@ namespace System.Windows.Forms {
 								msg.message = Msg.WM_LBUTTONUP;
 							} else {
 								msg.message = Msg.WM_NCLBUTTONUP;
-								ClientToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+								MenuToScreen (xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 							msg.wParam=GetMousewParam(0);
 							break;
@@ -3246,7 +3246,7 @@ namespace System.Windows.Forms {
 								msg.message = Msg.WM_MBUTTONUP;
 							} else {
 								msg.message = Msg.WM_NCMBUTTONUP;
-								ClientToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+								MenuToScreen (xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 							msg.wParam=GetMousewParam(0);
 							break;
@@ -3258,7 +3258,7 @@ namespace System.Windows.Forms {
 								msg.message = Msg.WM_RBUTTONUP;
 							} else {
 								msg.message = Msg.WM_NCRBUTTONUP;
-								ClientToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+								MenuToScreen (xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 							msg.wParam=GetMousewParam(0);
 							break;
@@ -3350,7 +3350,7 @@ namespace System.Windows.Forms {
 						}
 
 						// The hit test is sent in screen coordinates
-						XTranslateCoordinates (DisplayHandle, hwnd.client_window, RootWindow,
+						XTranslateCoordinates (DisplayHandle, xevent.AnyEvent.window, RootWindow,
 								xevent.MotionEvent.x, xevent.MotionEvent.y,
 								out screen_x, out screen_y, out dummy);
 

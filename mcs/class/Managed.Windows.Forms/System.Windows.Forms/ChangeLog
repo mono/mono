@@ -1,5 +1,10 @@
 2006-09-28  Jackson Harper  <jackson@ximian.com>
 
+	* XplatUIX11.cs: When translating NC messages make sure we go from
+	whole window to screen, not client window to screen.
+
+2006-09-28  Jackson Harper  <jackson@ximian.com>
+
 	* XplatUIWin32.cs: Clip the rect to the parent window.
 	* XplatUIStructs.cs: Add clipping modes struct.
 	* InternalWindowManager.cs: New private method that factors title
