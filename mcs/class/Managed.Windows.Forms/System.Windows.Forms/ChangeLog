@@ -2,6 +2,9 @@
 
 	* XplatUIX11.cs: When translating NC messages make sure we go from
 	whole window to screen, not client window to screen.
+	* MdiClient.cs: Remove the calls to PaintWindowDecorations, this
+	method doesn't exist
+	- Skip over controls that aren't forms when arranging.
 
 2006-09-28  Jackson Harper  <jackson@ximian.com>
 

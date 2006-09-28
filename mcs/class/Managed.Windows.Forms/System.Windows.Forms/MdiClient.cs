@@ -394,10 +394,13 @@ namespace System.Windows.Forms {
 			if (prev_bottom != -1)
 				change = Bottom - prev_bottom;
 
-			foreach (Form child in Controls) {
-				if (!child.Visible)
+			foreach (Control c in Controls) {
+				Form child = c as Form;
+
+				if (c == null || !child.Visible)
 					continue;
-				MdiWindowManager wm = (MdiWindowManager) child.WindowManager;
+
+				MdiWindowManager wm = child.WindowManager as MdiWindowManager;
 				if (wm.GetWindowState () == FormWindowState.Maximized)
 					wm.SizeMaximized ();
 
@@ -490,11 +493,12 @@ namespace System.Windows.Forms {
 			Form current = (Form) Controls [0];
 
 			form.BringToFront ();
-
+/*
 			if (current != form) {
 				current.WindowManager.PaintDecorations ();
 				form.WindowManager.PaintDecorations ();
 			}
+*/
 		}
 
 		internal int ChildrenCreated {
