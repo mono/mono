@@ -623,7 +623,7 @@ namespace System.Web {
 		{
 			try {
 				if (pipeline != null && pipeline.MoveNext ()){
-					if (pipeline != null && (bool)pipeline.Current)
+					if (pipeline == null || (bool)pipeline.Current)
 						PipelineDone ();
 				}
 			} catch (Exception e) {

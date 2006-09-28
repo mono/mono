@@ -1,5 +1,10 @@
 2006-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpApplication.cs: this makes the test run successfully. Still need
+	to figure out why that is null.
+
+2006-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpApplication.cs: band-aid patch to help debugging hang running 2.0
 	tests.
 
