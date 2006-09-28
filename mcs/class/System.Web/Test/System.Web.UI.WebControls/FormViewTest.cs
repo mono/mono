@@ -699,7 +699,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		private bool isDeleted = false;
 
 		[Test]
-		[Category ("NotWorking")]
 		public void FormView_DeleteItem ()
 		{
 			Poker fv = new Poker ();
@@ -721,7 +720,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		private bool insertItem = false;
 
 		[Test]
-		[Category ("NotWorking")]
 		public void FormView_InsertItem ()
 		{
 			Poker fv = new Poker ();
@@ -729,7 +727,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			fv.ChangeMode (FormViewMode.Insert);
 			fv.ItemInserting += new FormViewInsertEventHandler (insert_item);
 			Assert.AreEqual (false, insertItem, "BeforeInsertItem");
-			fv.InsertItem (true);
+			fv.InsertItem (false);
 			Assert.AreEqual (true, insertItem, "AfterInsertItem");
 
 		}
@@ -741,14 +739,16 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		private bool updateItem = false;
 		[Test]
-		[Category ("NotWorking")]
 		public void FormView_UpdateItem ()
 		{
 			Poker fv = new Poker ();
+			fv.Page = new Page ();
+			fv.DataSource = myds;
+			fv.DataBind ();
 			fv.ChangeMode (FormViewMode.Edit);
 			fv.ItemUpdating += new FormViewUpdateEventHandler (update_item);
 			Assert.AreEqual (false, updateItem, "BeforeUpdateItem");
-			fv.UpdateItem (true);
+			fv.UpdateItem (false);
 			Assert.AreEqual (true, updateItem, "AfterUpdateItem");
 
 		}
