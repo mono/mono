@@ -1,3 +1,7 @@
+2006-09-28  Andrew Skiba  <andrews@mainsoft.com>
+
+	* SerialPort.cs,WinSerialStream.cs: TARGET_JVM
+
 2006-08-14  Chris Toshok  <toshok@ximian.com>
 
 	* SerialPort.cs: the paths returned by Directory.GetFiles have the
