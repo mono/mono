@@ -273,8 +273,16 @@ namespace System.Net.Mail {
 					sfre.Add (new SmtpFailedRecipientException (status.StatusCode, message.Bcc [i].Address.ToString ()));
 			}
 
-			if (sfre.Count > 0)
+#if TARGET_JVM // List<T>.ToArray () is not supported
+			if (sfre.Count > 0) {
+				SmtpFailedRecipientException[] xs = new SmtpFailedRecipientException[sfre.Count];
+				sfre.CopyTo (xs);
+				throw new SmtpFailedRecipientsException ("failed recipients", xs);
+			}
+#else
+			if (sfre.Count >0)
 				throw new SmtpFailedRecipientsException ("failed recipients", sfre.ToArray ());
+#endif
 
 			// DATA
 			status = SendCommand (Command.Data);
@@ -426,7 +434,11 @@ namespace System.Net.Mail {
 				case TransferEncoding.Base64:
 					byte[] content = new byte [attachments [i].ContentStream.Length];
 					attachments [i].ContentStream.Read (content, 0, content.Length);
+#if TARGET_JVM
+					SendData (Convert.ToBase64String (content));
+#else
 					SendData (Convert.ToBase64String (content, Base64FormattingOptions.InsertLineBreaks));
+#endif
 					break;
 				case TransferEncoding.QuotedPrintable:
 					StreamReader sr = new StreamReader (attachments [i].ContentStream);
