@@ -1,3 +1,10 @@
+2006-09-27  Chris Toshok  <toshok@ximian.com>
+
+	* Splitter.cs: reorder things a bit so that we don't actually
+	draw/move the splitter until after calling OnSplitterMoving.  This
+	lets users cancel/disallow the movement by explicitly setting
+	event.SplitX/SplitY.  Fixes #79372.
+
 2006-09-27  Jackson Harper  <jackson@ximian.com>
 
 	* XplatUIX11.cs: Don't hide the caret when it is being destroyed,
