@@ -1,3 +1,8 @@
+2006-09-28  Andrew Skiba  <andrews@mainsoft.com>
+
+	* UriParser.cs: TARGET_JVM
+	* UriFormatException.cs: MonoTODO
+
 2006-08-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Uri.cs : don't compare UserInfo in Equals() and op_Equality().

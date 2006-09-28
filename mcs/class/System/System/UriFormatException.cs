@@ -55,7 +55,7 @@ namespace System {
 		}
 
 		// Methods
-
+		[MonoTODO ("Why override")]
 		// This effectively kills the LinkDemand from Exception.GetObjectData (if someone
 		// use the ISerializable interface to serialize the object). See unit tests.
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
