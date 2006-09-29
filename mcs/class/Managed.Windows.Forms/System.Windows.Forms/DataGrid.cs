@@ -472,6 +472,9 @@ namespace System.Windows.Forms
 						}
 					}
 
+					if (value.RowNumber == RowsCount && !ListManager.CanAddRows)
+						value.RowNumber --;
+
 					if (value.RowNumber == RowsCount) {
 						cursor_in_add_row = true;
 						add_row_changed = false;

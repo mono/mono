@@ -340,15 +340,11 @@ namespace System.Windows.Forms
 		// - If DataGrid.ReadOnly and DataGridTableStyle.ReadOnly are false, the columns settings are mandatory
 		//
 		internal bool ParentReadOnly {
-			get {				
+			get {
 				if (grid != null) {
 					if (grid.ReadOnly == true) {
 						return true;
 					}
-					
-					if (grid.ListManager != null && grid.ListManager.CanAddRows == false) {
-						return true;
-					}				
 				}
 				
 				if (table_style != null) {
@@ -484,10 +480,10 @@ namespace System.Windows.Forms
 
 			IEditableObject editable = source [rowNum] as IEditableObject;
 
-			if (editable != null) {
+			if (editable != null)
 				editable.BeginEdit ();
-				property_descriptor.SetValue (source [rowNum], value);
-			}
+
+			property_descriptor.SetValue (source [rowNum], value);
 		}
 
 		protected virtual void SetDataGrid (DataGrid value)

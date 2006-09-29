@@ -1,5 +1,17 @@
 2006-09-29  Chris Toshok  <toshok@ximian.com>
 
+	* DataGrid.cs (CurrentCell): if we try to navigate to the add row
+	when ListManager.CanAddRows == false, bump us back one.
+
+	* DataGridColumnStyle.cs (ParentReadOnly): remove the
+	listmanager.CanAddRows check.  This makes ArrayLists uneditable
+	using a datagrid, which is not right.
+	(SetColumnValueAtRow): call IEditable.BeginEdit if source[rowNum]
+	is an IEditable, but call property_descriptor.SetValue regardless.
+	fixes #79435.
+
+2006-09-29  Chris Toshok  <toshok@ximian.com>
+
 	* DataGridBoolColumn.cs: we need to test equality in the face of
 	possible null values (as is the case with the default NullValue).
 	This patch keeps us from crashing in that case.
