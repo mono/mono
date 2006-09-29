@@ -477,7 +477,8 @@ namespace System.Windows.Forms {
 					}
 				}
 				// FIXME - need activate?
-
+				/* make sure the MainForm is enabled */
+				XplatUI.EnableWindow (context.MainForm.Handle, true);
 				XplatUI.SetModal(context.MainForm.Handle, true);
 			} else {
 				toplevels = null;

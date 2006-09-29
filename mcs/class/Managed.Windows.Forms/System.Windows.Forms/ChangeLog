@@ -1,5 +1,10 @@
 2006-09-29  Chris Toshok  <toshok@ximian.com>
 
+	* Application.cs: when entering a runloop with a modal, make sure
+	the hwnd is enabled.  Fixes #79480.
+
+2006-09-29  Chris Toshok  <toshok@ximian.com>
+
 	* DataGrid.cs (CurrentCell): if we try to navigate to the add row
 	when ListManager.CanAddRows == false, bump us back one.
 
