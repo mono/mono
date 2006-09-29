@@ -493,12 +493,18 @@ namespace System.Windows.Forms {
 			Form current = (Form) Controls [0];
 
 			form.BringToFront ();
-/*
+
 			if (current != form) {
-				current.WindowManager.PaintDecorations ();
-				form.WindowManager.PaintDecorations ();
+				Message m = new Message ();
+				m.Msg = (int) Msg.WM_NCPAINT;
+				m.HWnd = current.Handle;
+				m.LParam = IntPtr.Zero;
+				m.WParam = new IntPtr (1);
+				XplatUI.SendMessage (ref m);
+
+				m.HWnd = form.Handle;
+				XplatUI.SendMessage (ref m);
 			}
-*/
 		}
 
 		internal int ChildrenCreated {

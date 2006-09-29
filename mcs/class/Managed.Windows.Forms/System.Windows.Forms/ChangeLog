@@ -1,3 +1,8 @@
+2006-09-29  Jackson Harper  <jackson@ximian.com>
+
+	* MdiClient.cs: Repaint the titlebars when the active window is
+	changed.
+
 2006-09-29  Chris Toshok  <toshok@ximian.com>
 
 	* Application.cs: when entering a runloop with a modal, make sure
