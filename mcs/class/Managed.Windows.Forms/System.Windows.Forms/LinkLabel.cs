@@ -158,11 +158,15 @@ namespace System.Windows.Forms
 				if (value.Start <0 || value.Length < -1)
 					throw new ArgumentException ();
 
-				if (!value.IsEmpty)
+				if (Links.IsDefault)
+					Links.Clear ();
+
+				if (!value.IsEmpty) {
 					Links.Add (value.Start, value.Length);
 
-				link_area = value;
-				Invalidate ();
+					link_area = value;
+					Invalidate ();
+				}
 			}
 		}
 				
@@ -523,7 +527,7 @@ namespace System.Windows.Forms
 
 		private void CreateLinkPieces ()
 		{
-			if (Links.Count == 0 || Text.Length == 0) {
+			if (Text.Length == 0) {
 				SetStyle (ControlStyles.Selectable, false);
 				return;
 			}
@@ -860,16 +864,24 @@ namespace System.Windows.Forms
 			{
 				return Add (start, length, null);
 			}
-
+			
+			internal bool IsDefault {
+				get {
+					return (Count == 1
+						&& this[0].Start == 0
+						&& this[0].length == -1);
+				}
+			}
 
 			public Link Add (int start, int length, object o)
 			{
 				Link link = new Link (owner);
 				int idx;
 
-				if (Count == 1 && this[0].Start == 0
-					&& this[0].length == -1) {
-					Clear ();
+				/* remove the default 0,-1 link */
+				if (IsDefault) {
+					/* don't call Clear() here to save the additional CreateLinkPieces */
+					collection.Clear ();
 				}
 
 				link.Length = length;

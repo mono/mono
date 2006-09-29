@@ -1,5 +1,13 @@
 2006-09-29  Chris Toshok  <toshok@ximian.com>
 
+	* LinkLabel.cs: more handling of the default link collection in
+	the face of LinkArea manipulation.  The default link collection
+	contains 1 element (start=0,length=-1).  If the user sets LinkArea
+	to anything and the links collection is the default, clear it.
+	Then only add the link if its nonempty.  Fixes #79518.
+
+2006-09-29  Chris Toshok  <toshok@ximian.com>
+
 	* LinkLabel.cs (CreatePiecesFromText): calculate the length of a
 	piece correctly when we hit a '\n'.  Fixes #79517.
 
