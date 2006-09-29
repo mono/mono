@@ -1,3 +1,11 @@
+2006-09-29  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs : kill CanMultiSelect and refactor the selection
+	code to support multiselection in the absence of mod keys. Steal
+	arrow/home/end keys by overriding InternalPreProcessMessage to
+	restore regressed keynav behavior.
+	[Fixes #79416]
+
 2006-09-29  Jackson Harper  <jackson@ximian.com>
 
 	* MdiClient.cs: Repaint the titlebars when the active window is

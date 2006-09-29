@@ -186,19 +186,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		bool multiselecting;
-
-		bool CanMultiselect {
-			get {
-				if (multiselecting)
-					return true;
-				else if (multiselect && (XplatUI.State.ModifierKeys & (Keys.Control | Keys.Shift)) != 0)
-					return true;
-				else
-					return false;
-			}
-		}
-
 		#endregion	// Private Internal Properties
 
 		#region	 Protected Properties
@@ -1105,17 +1092,20 @@ namespace System.Windows.Forms
                         CalculateScrollBars ();
 		}
 
+		bool HaveModKeys {
+			get {
+				return (XplatUI.State.ModifierKeys & (Keys.Control | Keys.Shift)) != 0;
+			}
+		}
+
 		internal void UpdateSelection (ListViewItem item)
 		{
 			if (item.Selected) {
-
-				if (!CanMultiselect && SelectedItems.Count > 0) {
+				if (!MultiSelect && SelectedItems.Count > 0)
 					SelectedItems.Clear ();
-				}
 
-				if (!SelectedItems.list.Contains (item)) {
+				if (!SelectedItems.list.Contains (item))
 					SelectedItems.list.Add (item);
-				}
 			} else {
 				SelectedItems.list.Remove (item);
 			}
@@ -1202,7 +1192,6 @@ namespace System.Windows.Forms
 		private bool SelectItems (ArrayList sel_items)
 		{
 			bool changed = false;
-			multiselecting = true;
 			ArrayList curr_items = (ArrayList) SelectedItems.list.Clone ();
 			foreach (ListViewItem item in curr_items)
 				if (!sel_items.Contains (item)) {
@@ -1214,7 +1203,6 @@ namespace System.Windows.Forms
 					item.Selected = true;
 					changed = true;
 				}
-			multiselecting = false;
 			return changed;
 		}
 
@@ -1243,47 +1231,58 @@ namespace System.Windows.Forms
 				}
 				if (SelectItems (list))
 					OnSelectedIndexChanged (EventArgs.Empty);
-			} else if (!ctrl_pressed) {
-				SelectedItems.Clear ();
+			} else {
+				if (!ctrl_pressed)
+					SelectedItems.Clear ();
 				item.Selected = true;
 				selection_start = item;
 				OnSelectedIndexChanged (EventArgs.Empty);
 			}
 		}
 
-		private void ListView_KeyDown (object sender, KeyEventArgs ke)
-		{			
-			if (ke.Handled || Items.Count == 0 || !item_control.Visible)
-				return;
+		internal override bool InternalPreProcessMessage (ref Message msg)
+		{
+			if (msg.Msg == (int)Msg.WM_KEYDOWN) {
+				Keys key_data = (Keys)msg.WParam.ToInt32();
+				if (HandleNavKeys (key_data))
+					return true;
+			} 
+			return base.InternalPreProcessMessage (ref msg);
+		}
 
-			int index = -1;
-			ke.Handled = true;
+		bool HandleNavKeys (Keys key_data)
+		{
+			if (Items.Count == 0 || !item_control.Visible)
+				return false;
 
 			if (FocusedItem == null)
 				SetFocusedItem (Items [0]);
 
-			switch (ke.KeyCode) {
-
+			switch (key_data) {
 			case Keys.End:
-				index = Items.Count - 1;
+				SelectIndex (Items.Count - 1);
 				break;
 
 			case Keys.Home:			
-				index = 0;
+				SelectIndex (0);
 				break;
 
 			case Keys.Left:
 			case Keys.Right:
 			case Keys.Up:				
 			case Keys.Down:
-				index = GetAdjustedIndex (ke.KeyCode);
+				SelectIndex (GetAdjustedIndex (key_data));
 				break;
 
 			default:
-				ke.Handled = KeySearchString (ke);
-				return;
+				return false;
 			}
-			
+
+			return true;
+		}
+
+		void SelectIndex (int index)
+		{
 			if (index == -1)
 				return;
 
@@ -1298,7 +1297,14 @@ namespace System.Windows.Forms
 			EnsureVisible (index);
 		}
 
-				
+		private void ListView_KeyDown (object sender, KeyEventArgs ke)
+		{			
+			if (ke.Handled || Items.Count == 0 || !item_control.Visible)
+				return;
+
+			ke.Handled = KeySearchString (ke);
+		}
+
 		internal class ItemControl : Control {
 
 			ListView owner;
@@ -1481,7 +1487,7 @@ namespace System.Windows.Forms
 				if (clicked_item != null) {
 					owner.SetFocusedItem (clicked_item);
 					bool changed = !clicked_item.Selected;
-					if (owner.MultiSelect && (XplatUI.State.ModifierKeys & Keys.Control) == 0)
+					if (owner.MultiSelect)
 						owner.UpdateMultiSelection (clicked_item.Index);
 					else
 						clicked_item.Selected = true;
