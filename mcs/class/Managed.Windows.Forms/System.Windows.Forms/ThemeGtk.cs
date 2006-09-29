@@ -148,7 +148,7 @@ namespace System.Windows.Forms
 		static extern IntPtr gdk_window_foreign_new_for_display (IntPtr display, uint anid);
 
 		[DllImport("libgdk-x11-2.0.so")]
-		static extern bool gdk_init_check(out int argc, string argv);	
+		static extern bool gdk_init_check(IntPtr argc, IntPtr argv);	
 		
 		[DllImport("libgdk-x11-2.0.so")]
 		static extern IntPtr gdk_pixmap_new (IntPtr drawable, int width, int height, int depth);
@@ -181,7 +181,7 @@ namespace System.Windows.Forms
 
 		/* GTK imports */		
 		[DllImport("libgtk-x11-2.0.so")]
-		static extern bool gtk_init_check (out int argc, string argv);
+		static extern bool gtk_init_check (IntPtr argc, IntPtr argv);
 
 		[DllImport("libgtk-x11-2.0.so")]
 		static extern IntPtr gtk_adjustment_new (double value, double lower, double upper, double step_increment, double page_increment, double page_size);
@@ -319,14 +319,12 @@ namespace System.Windows.Forms
 		public static void InitGtk ()
 		{	
 			Console.WriteLine ("ThemeGtk Init");		
-			int argc = 0;
-			string argv = "";
 			
-			gdk_init_check (out argc, argv);	
+			gdk_init_check (IntPtr.Zero, IntPtr.Zero);	
 
 			dispmgr =  gdk_display_manager_get ();
 			gdkdisplay =  gdk_display_manager_get_default_display (dispmgr);
-			gtk_init_check (out argc, argv);
+			gtk_init_check (IntPtr.Zero, IntPtr.Zero);
 
 			widget = gtk_invisible_new ();
 			gtk_widget_ensure_style (widget);

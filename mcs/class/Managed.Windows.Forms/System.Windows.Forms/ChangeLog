@@ -1,3 +1,9 @@
+2006-09-29  Chris Toshok  <toshok@ximian.com>
+
+	* MimeIcon.cs, ThemeGtk.cs, X11DesktopColors.cs, XplatUIX11GTK.cs:
+	change the binding of gdk_init_check to take two IntPtr's, and
+	pass IntPtr.Zero for both of them.  Fixes #79520.
+
 2006-09-29  Mike Kestner  <mkestner@novell.com>
 
 	* ComboBox.cs : raise TextChanged on ComboTextBox.TextChanged.

@@ -95,11 +95,9 @@ namespace System.Windows.Forms {
 					IntPtr		widget;
 					IntPtr		style_ptr;
 					GtkStyleStruct	style;
-					int		argc = 0;
-					string		argv = "";
 
 					try {
-						gtk_init_check (out argc, argv);
+						gtk_init_check (IntPtr.Zero, IntPtr.Zero);
 						//dispmgr =  gdk_display_manager_get ();
 						//gdkdisplay =  gdk_display_manager_get_default_display (dispmgr);
 
@@ -263,7 +261,7 @@ namespace System.Windows.Forms {
 		const string libgtk = "libgtk-x11-2.0.so.0";
 		
 		[DllImport(libgtk)]
-		static extern bool gtk_init_check (out int argc, string argv);
+		static extern bool gtk_init_check (IntPtr argc, IntPtr argv);
 
 		[DllImport(libgdk)]
 		internal static extern IntPtr gdk_display_manager_get ();

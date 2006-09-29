@@ -367,7 +367,7 @@ namespace System.Windows.Forms
 		static extern void g_free (IntPtr mem);
 		
 		[DllImport("libgdk-x11-2.0.so.0")]
-		static extern bool gdk_init_check (out int argc, string argv);
+		static extern bool gdk_init_check (IntPtr argc, IntPtr argv);
 		
 		[DllImport("libgobject-2.0.so")]
 		static extern void g_object_unref (IntPtr nativeObject);
@@ -405,10 +405,7 @@ namespace System.Windows.Forms
 		
 		static void Init ()
 		{
-			int argc = 0;
-			string argv = "";
-			
-			gdk_init_check (out argc, argv);
+			gdk_init_check (IntPtr.Zero, IntPtr.Zero);
 			
 			inited = true;
 			

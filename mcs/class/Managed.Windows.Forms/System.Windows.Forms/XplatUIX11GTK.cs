@@ -459,10 +459,7 @@ namespace System.Windows.Forms {
 			RefCount = 0;
 			
 			// init gdk
-			int argc = 0;
-			string argv = "";
-			
-			gdk_init_check (out argc, argv);
+			gdk_init_check (IntPtr.Zero, IntPtr.Zero);
 			
 			// Now regular initialization
 			XlibLock = new object ();
@@ -4662,7 +4659,7 @@ namespace System.Windows.Forms {
 		
 		#region gdk imports
 		[DllImport("libgdk-x11-2.0.so")]
-		static extern bool gdk_init_check (out int argc, string argv);
+		static extern bool gdk_init_check (IntPtr argc, IntPtr argv);
 		
 		[DllImport("libgdk-x11-2.0.so")]
 		internal static extern IntPtr gdk_x11_display_get_xdisplay (IntPtr display);
