@@ -507,7 +507,7 @@ namespace System.Windows.Forms
 			for (int i = 0; i < t.Length; i ++) {
 				if (t[i] == '\n') {
 					if (i != 0) {
-						Piece p = new Piece (start + ps, i + 1, t.Substring (ps, i+1-ps), link);
+						Piece p = new Piece (start + ps, i + 1 - ps, t.Substring (ps, i+1-ps), link);
 						rv.Add (p);
 					}
 					ps = i+1;

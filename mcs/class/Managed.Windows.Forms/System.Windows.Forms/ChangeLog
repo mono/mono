@@ -1,5 +1,10 @@
 2006-09-29  Chris Toshok  <toshok@ximian.com>
 
+	* LinkLabel.cs (CreatePiecesFromText): calculate the length of a
+	piece correctly when we hit a '\n'.  Fixes #79517.
+
+2006-09-29  Chris Toshok  <toshok@ximian.com>
+
 	* MimeIcon.cs, ThemeGtk.cs, X11DesktopColors.cs, XplatUIX11GTK.cs:
 	change the binding of gdk_init_check to take two IntPtr's, and
 	pass IntPtr.Zero for both of them.  Fixes #79520.
