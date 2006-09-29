@@ -1,5 +1,10 @@
 2006-09-29  Mike Kestner  <mkestner@novell.com>
 
+	* ListView.cs : toggle the selection state for ctrl clicks in 
+	multiselect mode. [Fixes #79417]
+
+2006-09-29  Mike Kestner  <mkestner@novell.com>
+
 	* ListView.cs : kill CanMultiSelect and refactor the selection
 	code to support multiselection in the absence of mod keys. Steal
 	arrow/home/end keys by overriding InternalPreProcessMessage to

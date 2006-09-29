@@ -1231,9 +1231,12 @@ namespace System.Windows.Forms
 				}
 				if (SelectItems (list))
 					OnSelectedIndexChanged (EventArgs.Empty);
+			} else  if (ctrl_pressed) {
+				item.Selected = !item.Selected;
+				selection_start = item;
+				OnSelectedIndexChanged (EventArgs.Empty);
 			} else {
-				if (!ctrl_pressed)
-					SelectedItems.Clear ();
+				SelectedItems.Clear ();
 				item.Selected = true;
 				selection_start = item;
 				OnSelectedIndexChanged (EventArgs.Empty);
