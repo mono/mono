@@ -423,7 +423,9 @@ namespace System.Windows.Forms {
 					sorted = value;
 				if (sorted) {
 					Nodes.Sort ();
-					top_node = null;
+					top_node = root_node;
+					RecalculateVisibleOrder (root_node);
+					UpdateScrollBars ();
 					Invalidate ();
 				}
 			}

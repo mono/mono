@@ -17,12 +17,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc.
+// Copyright (c) 2004-2006 Novell, Inc.
 //
 // Authors:
 //	Jackson Harper (jackson@ximian.com)
 
-// TODO: Sorting
 
 using System;
 using System.Collections;
@@ -365,16 +364,11 @@ namespace System.Windows.Forms {
 
 		// Would be nice to do this without running through the collection twice
 		internal void Sort () {
-
 			Array.Sort (nodes, 0, count, new TreeNodeComparer (Application.CurrentCulture.CompareInfo));
 
 			for (int i = 0; i < count; i++) {
 				nodes [i].Nodes.Sort ();
 			}
-
-			// No null checks since sort can only be called from the treeviews root node collection
-			owner.TreeView.RecalculateVisibleOrder (owner);
-			owner.TreeView.UpdateScrollBars ();
 		}
 
 		private void Grow ()

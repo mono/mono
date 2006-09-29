@@ -1,3 +1,13 @@
+2006-09-29  Jackson Harper  <jackson@ximian.com>
+
+	* TreeNodeCollection.cs: Don't do a recalculate/updatescrollbars
+	here, since it will get called for every node collection in the
+	tree. This is now done in the treeview once the sorting is
+	finished.
+	* TreeView.cs: Recalculate the visible order, and update the
+	scrollbars after sorting, set the top nope to the root so that the
+	recalc actually works.
+
 2006-09-29  Chris Toshok  <toshok@ximian.com>
 
 	* LinkLabel.cs: more handling of the default link collection in
