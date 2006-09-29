@@ -110,6 +110,9 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			GraphicsPath clone = (GraphicsPath) gp.Clone ();
 			Assert.AreEqual (FillMode.Alternate, gp.FillMode, "Clone.FillMode");
 			CheckEmpty ("Clone.", gp);
+
+			gp.Reverse ();
+			CheckEmpty ("Reverse.", gp);
 		}
 
 		[Test]
@@ -2442,6 +2445,28 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			using (Bitmap bitmap = new Bitmap (40, 40)) {
 				using (Graphics g = Graphics.FromImage (bitmap)) {
 					IsVisible_Rectangle (g);
+				}
+			}
+		}
+
+		[Test]
+		public void Reverse_Arc ()
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				gp.AddArc (1f, 1f, 2f, 2f, Pi4, Pi4);
+				PointF[] bp = gp.PathPoints;
+				byte[] bt = gp.PathTypes;
+
+				gp.Reverse ();
+				PointF[] ap = gp.PathPoints;
+				byte[] at = gp.PathTypes;
+
+				int count = gp.PointCount;
+				Assert.AreEqual (bp.Length, count, "PointCount");
+				for (int i = 0; i < count; i++) {
+					Assert.AreEqual (bp[i], ap[count - i - 1], "Point" + i.ToString ());
+					// PathTypes are NOT reversed
+					Assert.AreEqual (bt[i], at[i], "Type" + i.ToString ());
 				}
 			}
 		}
