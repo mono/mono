@@ -38,8 +38,8 @@ using System.Reflection;
 namespace MonoTests.System.Drawing
 {
 	[TestFixture]
-	public class GraphicsTest : Assertion
-	{
+	public class GraphicsTest {
+
 		private RectangleF[] rects;
 		private Font font;
 
@@ -93,14 +93,24 @@ namespace MonoTests.System.Drawing
 		{
 			int x, y;
 			if (!IsEmptyBitmap (bitmap, out x, out y))
-				Fail (String.Format ("Position {0},{1}", x, y));
+				Assert.Fail (String.Format ("Position {0},{1}", x, y));
 		}
 
 		private void CheckForNonEmptyBitmap (Bitmap bitmap)
 		{
 			int x, y;
 			if (IsEmptyBitmap (bitmap, out x, out y))
-				Fail ("Bitmap was empty");
+				Assert.Fail ("Bitmap was empty");
+		}
+
+		private void AssertEquals (string msg, object expected, object actual)
+		{
+			Assert.AreEqual (expected, actual, msg);
+		}
+
+		private void AssertEquals (string msg, double expected, double actual, double delta)
+		{
+			Assert.AreEqual (expected, actual, delta, msg);
 		}
 
 		[Test]
@@ -174,10 +184,10 @@ namespace MonoTests.System.Drawing
 		{
 			Bitmap bmp = new Bitmap (200, 200);
 			Graphics g = Graphics.FromImage (bmp);
-			Assert ("IsInfinite", g.Clip.IsInfinite (g));
+			Assert.IsTrue (g.Clip.IsInfinite (g), "IsInfinite");
 			g.Clip.IsEmpty (g);
-			Assert ("!IsEmpty", !g.Clip.IsEmpty (g));
-			Assert ("IsInfinite-2", g.Clip.IsInfinite (g));
+			Assert.IsFalse (g.Clip.IsEmpty (g), "!IsEmpty");
+			Assert.IsTrue (g.Clip.IsInfinite (g), "IsInfinite-2");
 		}
 
 		[Test]
@@ -392,7 +402,7 @@ namespace MonoTests.System.Drawing
 			AssertEquals ("Y", 0, bounds.Y);
 			AssertEquals ("Width", 16, bounds.Width);
 			AssertEquals ("Height", 16, bounds.Height);
-			Assert ("Identity", g.Transform.IsIdentity);
+			Assert.IsTrue (g.Transform.IsIdentity, "Identity");
 			g.Dispose ();
 		}
 
@@ -422,7 +432,7 @@ namespace MonoTests.System.Drawing
 			AssertEquals ("reset.Y", 0, bounds.Y);
 			AssertEquals ("reset.Width", 16, bounds.Width);
 			AssertEquals ("reset.Height", 16, bounds.Height);
-			Assert ("Identity", g.Transform.IsIdentity);
+			Assert.IsTrue (g.Transform.IsIdentity, "Identity");
 			g.Dispose ();
 		}
 
@@ -431,7 +441,7 @@ namespace MonoTests.System.Drawing
 		public void Transform_NonInvertibleMatrix ()
 		{
 			Matrix matrix = new Matrix (123, 24, 82, 16, 47, 30);
-			Assert ("IsInvertible", !matrix.IsInvertible);
+			Assert.IsFalse (matrix.IsInvertible, "IsInvertible");
 			Graphics g = Get (16, 16);
 			g.Transform = matrix;
 		}
@@ -442,7 +452,7 @@ namespace MonoTests.System.Drawing
 		public void Multiply_NonInvertibleMatrix ()
 		{
 			Matrix matrix = new Matrix (123, 24, 82, 16, 47, 30);
-			Assert ("IsInvertible", !matrix.IsInvertible);
+			Assert.IsFalse (matrix.IsInvertible, "IsInvertible");
 			Graphics g = Get (16, 16);
 			g.MultiplyTransform (matrix);
 		}
@@ -537,7 +547,7 @@ namespace MonoTests.System.Drawing
 			g.ResetClip ();
 			// see next test for ClipBounds
 			CheckBounds ("resetclip.Clip.GetBounds", g.Clip.GetBounds (g), -4194304, -4194304, 8388608, 8388608);
-			Assert ("IsInfinite", g.Clip.IsInfinite (g));
+			Assert.IsTrue (g.Clip.IsInfinite (g), "IsInfinite");
 		}
 
 		[Test]
@@ -1007,7 +1017,7 @@ namespace MonoTests.System.Drawing
 
 		private void CheckDefaultProperties (string message, Graphics g)
 		{
-			Assert (message + ".Clip.IsInfinite", g.Clip.IsInfinite (g));
+			Assert.IsTrue (g.Clip.IsInfinite (g), message + ".Clip.IsInfinite");
 			AssertEquals (message + ".CompositingMode", CompositingMode.SourceOver, g.CompositingMode);
 			AssertEquals (message + ".CompositingQuality", CompositingQuality.Default, g.CompositingQuality);
 			AssertEquals (message + ".InterpolationMode", InterpolationMode.Bilinear, g.InterpolationMode);
@@ -1017,12 +1027,12 @@ namespace MonoTests.System.Drawing
 			AssertEquals (message + ".SmoothingMode", SmoothingMode.None, g.SmoothingMode);
 			AssertEquals (message + ".TextContrast", 4, g.TextContrast);
 			AssertEquals (message + ".TextRenderingHint", TextRenderingHint.SystemDefault, g.TextRenderingHint);
-			Assert (message + ".Transform.IsIdentity", g.Transform.IsIdentity);
+			Assert.IsTrue (g.Transform.IsIdentity, message + ".Transform.IsIdentity");
 		}
 
 		private void CheckCustomProperties (string message, Graphics g)
 		{
-			Assert (message + ".Clip.IsInfinite", !g.Clip.IsInfinite (g));
+			Assert.IsFalse (g.Clip.IsInfinite (g), message + ".Clip.IsInfinite");
 			AssertEquals (message + ".CompositingMode", CompositingMode.SourceCopy, g.CompositingMode);
 			AssertEquals (message + ".CompositingQuality", CompositingQuality.HighQuality, g.CompositingQuality);
 			AssertEquals (message + ".InterpolationMode", InterpolationMode.HighQualityBicubic, g.InterpolationMode);
@@ -1033,7 +1043,7 @@ namespace MonoTests.System.Drawing
 			AssertEquals (message + ".SmoothingMode", SmoothingMode.AntiAlias, g.SmoothingMode);
 			AssertEquals (message + ".TextContrast", 0, g.TextContrast);
 			AssertEquals (message + ".TextRenderingHint", TextRenderingHint.AntiAlias, g.TextRenderingHint);
-			Assert (message + ".Transform.IsIdentity", !g.Transform.IsIdentity);
+			Assert.IsFalse (g.Transform.IsIdentity, message + ".Transform.IsIdentity");
 		}
 
 		private void CheckMatrix (string message, Matrix m, float xx, float yx, float xy, float yy, float x0, float y0)
@@ -1323,14 +1333,14 @@ namespace MonoTests.System.Drawing
 			using (Bitmap bitmap = new Bitmap (20, 20)) {
 				using (Graphics g = Graphics.FromImage (bitmap)) {
 					SizeF size = g.MeasureString (null, font);
-					Assert ("MeasureString(null,font)", size.IsEmpty);
+					Assert.IsTrue (size.IsEmpty, "MeasureString(null,font)");
 					size = g.MeasureString (String.Empty, font);
-					Assert ("MeasureString(empty,font)", size.IsEmpty);
+					Assert.IsTrue (size.IsEmpty, "MeasureString(empty,font)");
 					// null font
 					size = g.MeasureString (null, null);
-					Assert ("MeasureString(null,null)", size.IsEmpty);
+					Assert.IsTrue (size.IsEmpty, "MeasureString(null,null)");
 					size = g.MeasureString (String.Empty, null);
-					Assert ("MeasureString(empty,null)", size.IsEmpty);
+					Assert.IsTrue (size.IsEmpty, "MeasureString(empty,null)");
 				}
 			}
 		}
@@ -1349,13 +1359,16 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void MeasureString_StringFontSizeF ()
 		{
+			if (font == null)
+				Assert.Ignore ("Couldn't create required font");
+
 			using (Bitmap bitmap = new Bitmap (20, 20)) {
 				using (Graphics g = Graphics.FromImage (bitmap)) {
 					SizeF size = g.MeasureString ("a", font, SizeF.Empty);
-					Assert ("MeasureString(a,font,empty)", !size.IsEmpty);
+					Assert.IsFalse (size.IsEmpty, "MeasureString(a,font,empty)");
 
 					size = g.MeasureString (String.Empty, font, SizeF.Empty);
-					Assert ("MeasureString(empty,font,empty)", size.IsEmpty);
+					Assert.IsTrue (size.IsEmpty, "MeasureString(empty,font,empty)");
 				}
 			}
 		}
@@ -1363,14 +1376,17 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void MeasureString_StringFontInt ()
 		{
+			if (font == null)
+				Assert.Ignore ("Couldn't create required font");
+
 			using (Bitmap bitmap = new Bitmap (20, 20)) {
 				using (Graphics g = Graphics.FromImage (bitmap)) {
 					SizeF size = g.MeasureString ("a", font, 0);
-					Assert ("MeasureString(a,font,0)", !size.IsEmpty);
+					Assert.IsFalse (size.IsEmpty, "MeasureString(a,font,0)");
 					size = g.MeasureString ("a", font, Int32.MinValue);
-					Assert ("MeasureString(a,font,min)", !size.IsEmpty);
+					Assert.IsFalse (size.IsEmpty, "MeasureString(a,font,min)");
 					size = g.MeasureString ("a", font, Int32.MaxValue);
-					Assert ("MeasureString(a,font,max)", !size.IsEmpty);
+					Assert.IsFalse (size.IsEmpty, "MeasureString(a,font,max)");
 				}
 			}
 		}
@@ -1378,6 +1394,9 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void MeasureString_Bug76664 ()
 		{
+			if (font == null)
+				Assert.Ignore ("Couldn't create required font");
+
 			using (Bitmap bitmap = new Bitmap (20, 20)) {
 				using (Graphics g = Graphics.FromImage (bitmap)) {
 					string s = "aaa aa aaaa a aaa";
@@ -1386,7 +1405,7 @@ namespace MonoTests.System.Drawing
 					int chars, lines;
 					size = g.MeasureString (s, font, new SizeF (80, size.Height), null, out chars, out lines);
 					// LAMESPEC: documentation seems to suggest chars is total length
-					Assert ("characters fitted", chars < s.Length);
+					Assert.IsTrue (chars < s.Length, "characters fitted");
 					AssertEquals ("lines fitted", 1, lines);
 				}
 			}
@@ -1424,6 +1443,9 @@ namespace MonoTests.System.Drawing
 		[Test] // adapted from bug #78777
 		public void MeasureCharacterRanges_TwoLines ()
 		{
+			if (font == null)
+				Assert.Ignore ("Couldn't create required font");
+
 			string text = "this\nis a test";
 			CharacterRange[] ranges = new CharacterRange [2];
 			ranges[0] = new CharacterRange (0,5);
@@ -1447,6 +1469,9 @@ namespace MonoTests.System.Drawing
 
 		private void MeasureCharacterRanges (string text, int first, int length)
 		{
+			if (font == null)
+				Assert.Ignore ("Couldn't create required font");
+
 			CharacterRange[] ranges = new CharacterRange[1];
 			ranges[0] = new CharacterRange (first, length);
 
@@ -1482,6 +1507,9 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void MeasureCharacterRanges_Prefix ()
 		{
+			if (font == null)
+				Assert.Ignore ("Couldn't create required font");
+
 			string text = "Hello &Mono::";
 			CharacterRange[] ranges = new CharacterRange[1];
 			ranges[0] = new CharacterRange (5, 4);
@@ -1503,7 +1531,7 @@ namespace MonoTests.System.Drawing
 					string_format.HotkeyPrefix = HotkeyPrefix.Show;
 					regions = g.MeasureCharacterRanges (text, font, layout_rect, string_format);
 					RectangleF bounds_show = regions[0].GetBounds (g);
-					Assert ("Show<None", bounds_show.Width < bounds_none.Width);
+					Assert.IsTrue (bounds_show.Width < bounds_none.Width, "Show<None");
 
 					// here & is part of the measure (range) but invisible
 					string_format.HotkeyPrefix = HotkeyPrefix.Hide;
@@ -1517,6 +1545,9 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void DrawString_EndlessLoop_Bug77699 ()
 		{
+			if (font == null)
+				Assert.Ignore ("Couldn't create required font");
+
 			using (Bitmap bitmap = new Bitmap (20, 20)) {
 				using (Graphics g = Graphics.FromImage (bitmap)) {
 					Rectangle rect = Rectangle.Empty;
@@ -1535,6 +1566,9 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void DrawString_EndlessLoop_Wrapping ()
 		{
+			if (font == null)
+				Assert.Ignore ("Couldn't create required font");
+
 			using (Bitmap bitmap = new Bitmap (20, 20)) {
 				using (Graphics g = Graphics.FromImage (bitmap)) {
 					Rectangle rect = Rectangle.Empty;
