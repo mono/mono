@@ -174,15 +174,20 @@ namespace System.Windows.Forms
 
 		}
 
+		private bool ValueEquals (object value, object obj)
+		{
+			return value == null ? obj == null : value.Equals (obj);
+		}
+
 		protected internal override object GetColumnValueAtRow (CurrencyManager lm, int row)
 		{
 			object obj = base.GetColumnValueAtRow (lm, row);
 
-			if (obj.Equals (nullvalue)) {
+			if (ValueEquals (nullvalue, obj)) {
 				return Convert.DBNull;
 			}
 
-			if (obj.Equals (truevalue)) {
+			if (ValueEquals (truevalue, obj)) {
 				return true;
 			}
 
@@ -259,11 +264,11 @@ namespace System.Windows.Forms
 		{
 			object value = null;
 
-			if (obj.Equals (nullvalue))
+			if (ValueEquals (nullvalue, obj))
 				value = Convert.DBNull;
-			else if (obj.Equals (truevalue))
+			else if (ValueEquals (truevalue, obj))
 				value = true;
-			else if (obj.Equals (falsevalue))
+			else if (ValueEquals (falsevalue, obj))
 				value = false;
 			/* else error? */
 
@@ -284,9 +289,9 @@ namespace System.Windows.Forms
 
 		private CheckState FromValueToState (object obj)
 		{
-			if (obj.Equals (truevalue))
+			if (ValueEquals (truevalue, obj))
 				return CheckState.Checked;
-			else if (obj.Equals (nullvalue))
+			else if (ValueEquals (nullvalue, obj))
 				return CheckState.Null;
 			else
 				return CheckState.UnChecked;

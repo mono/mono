@@ -1,3 +1,9 @@
+2006-09-29  Chris Toshok  <toshok@ximian.com>
+
+	* DataGridBoolColumn.cs: we need to test equality in the face of
+	possible null values (as is the case with the default NullValue).
+	This patch keeps us from crashing in that case.
+
 2006-09-29  Jackson Harper  <jackson@ximian.com>
 
 	* TreeNodeCollection.cs: Don't do a recalculate/updatescrollbars
