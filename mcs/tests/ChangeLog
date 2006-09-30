@@ -1,3 +1,9 @@
+2006-09-30  Raja R Harinath  <harinath@gmail.com>
+
+	* test-444.cs (Compiler options): Add.  Ensure that the file
+	compiles in non-UTF8 locales.
+	* test-465.cs: Fix path.
+
 2006-09-28  Raja R Harinath  <rharinath@novell.com>
 
 	* gtest-291.cs: New test from #79013.
