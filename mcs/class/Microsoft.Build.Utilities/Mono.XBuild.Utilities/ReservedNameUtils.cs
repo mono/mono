@@ -70,6 +70,9 @@ namespace Mono.XBuild.Utilities {
 		public static string GetReservedMetadata (string itemSpec,
 						   string metadataName)
 		{
+			if (metadataName == null)
+				throw new ArgumentNullException ();
+		
 			switch (metadataName.ToLower ()) {
 			case "fullpath":
 				return Path.GetFullPath (itemSpec);
@@ -85,7 +88,7 @@ namespace Mono.XBuild.Utilities {
 				return Path.GetDirectoryName (Path.GetFullPath (itemSpec));
 			case "recursivedir":
 				// FIXME: how to handle this?
-				return "";
+				return String.Empty;
 			case "identity":
 				return Path.Combine (Path.GetDirectoryName (itemSpec), Path.GetFileName (itemSpec));
 			case "modifiedtime":
