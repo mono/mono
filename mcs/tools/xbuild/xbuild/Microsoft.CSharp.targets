@@ -15,13 +15,21 @@
 	System, System.Xml. (that exist in compiler's directory) ResolveAssemblyReferences task should be given
 	the references and should output list of .dll/.exe files that should be passed to Csc task.-->
 
-	<Target Name="Build">
+	<Target Name="ResolveAssemblyReferences">
+		<ResolveAssemblyReference
+			Assemblies="@(Reference)"
+		>
+			<Output TaskParameter="ResolvedFiles" ItemName="ResolvedFiles"/>
+		</ResolveAssemblyReference>
+	</Target>
+
+	<Target Name="Build" DependsOnTargets="ResolveAssemblyReferences">
 		<Csc
 			AllowUnsafeBlocks="$(AllowUnsafeBlocks)"
 			DefineConstants="$(DefineConstants)"
 			NoConfig="true"
 			OutputAssembly="$(AssemblyName)$(TargetExt)"
-			References="@(Reference)"
+			References="@(ResolvedFiles)"
 			Sources="@(Compile)"
 			TargetType="$(OutputType)"
 			WarningLevel="$(WarningLevel)"

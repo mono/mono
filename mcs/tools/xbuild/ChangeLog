@@ -1,5 +1,11 @@
 2006-09-30  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
+	* xbuild/Microsoft.CSharp.targets: Use new ResolveAssemblyReference
+	task.
+	* xbuild/Microsoft.Common.tasks: Add new task (RAR).
+
+2006-09-30  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
 	* xbuild/Microsoft.CSharp.targets: Set AllowUnsafeBlocks to false when it's
 	equal to ''.
 
