@@ -117,6 +117,8 @@ namespace System.Reflection {
 		{
 			if (!IsStatic && obj == null)
 				throw new TargetException ("Non-static field requires a target");
+			if (IsLiteral)
+				throw new FieldAccessException ("Cannot set a constant field");
 			if (binder == null)
 				binder = Binder.DefaultBinder;
 			if (val != null) {

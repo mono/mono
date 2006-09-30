@@ -1,3 +1,7 @@
+2006-09-29  Jb Evain  <jbevain@gmail.com>
+
+	* FieldInfoTest.cs: Test for FieldInfo.SetValue on a literal field.
+
 2006-09-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* ParameterInfoTest.cs: Add a test for enum default parameter values.

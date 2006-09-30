@@ -118,6 +118,16 @@ public class FieldInfoTest : Assertion
 		f.SetValue (null, 8);
 	}
 
+	const int literal = 42;
+
+	[Test]
+	[ExpectedException (typeof (FieldAccessException))]
+	public void SetValueOnLiteralField ()
+	{
+		FieldInfo f = typeof (FieldInfoTest).GetField ("literal", BindingFlags.Static | BindingFlags.NonPublic);
+		f.SetValue (null, 0);
+	}
+
 	public int? nullable_field;
 
 	public static int? static_nullable_field;

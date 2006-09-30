@@ -1,3 +1,7 @@
+2006-09-29  Jb Evain  <jbevain@gmail.com>
+
+	* MonoFieldInfo.cs: throw a FieldAccessException when setting a literal field.
+
 2006-09-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* ParameterInfo.cs MethodInfo.cs MonoMethod.cs: Applied patch from 
