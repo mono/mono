@@ -1,5 +1,7 @@
 2006-09-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (emit_marshal_custom): Fix some corner cases. Fixes	#79471.
+	
 	* marshal.c (mono_marshal_load_type_info): Allocate memory from the image
 	mempool.
 
