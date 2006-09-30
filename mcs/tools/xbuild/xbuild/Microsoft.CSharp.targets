@@ -7,11 +7,17 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
+		<AllowUnsafeBlocks Condition="'$(AllowUnsafeBlocks)' == ''">false</AllowUnsafeBlocks>
 		<WarningLevel Condition="'$(WarningLevel)' == ''" >2</WarningLevel>
 	</PropertyGroup>
 
+	<!-- We are passing references just as they are to Csc task. It can only work with references like:
+	System, System.Xml. (that exist in compiler's directory) ResolveAssemblyReferences task should be given
+	the references and should output list of .dll/.exe files that should be passed to Csc task.-->
+
 	<Target Name="Build">
 		<Csc
+			AllowUnsafeBlocks="$(AllowUnsafeBlocks)"
 			DefineConstants="$(DefineConstants)"
 			NoConfig="true"
 			OutputAssembly="$(AssemblyName)$(TargetExt)"
@@ -19,7 +25,6 @@
 			Sources="@(Compile)"
 			TargetType="$(OutputType)"
 			WarningLevel="$(WarningLevel)"
-			AllowUnsafeBlocks="$(AllowUnsafeBlocks)"
 		/>
 	</Target>
 
