@@ -7,7 +7,7 @@
 
 # This file supports extended syntax
 # csXXXX.cs		: error test case reports wrong error
-# csXXXX.cs IGNORE 	: adds test to ignore list
+# csXXXX.cs IGNORE 	: adds test to ignore list (should ONLY be used if the runtime crashes)
 # csXXXX.cs NO ERROR	: error test case doesn't report any error. An exception is considered
 #			  as NO ERROR and CS5001 is automatically ignored.
 
@@ -42,17 +42,17 @@ cs1670-2.cs
 # Anonymous Methods
 #
 
-cs1673-2.cs IGNORE
-cs0158-2.cs IGNORE
-cs0158-3.cs IGNORE
-cs0158-4.cs IGNORE
-cs0136-7.cs IGNORE
-cs0136-8.cs IGNORE
-cs0136-9.cs IGNORE
-cs0136-10.cs IGNORE
-cs0136-11.cs IGNORE
-cs0136-12.cs IGNORE
-cs0136-13.cs IGNORE
-cs0136-14.cs IGNORE
-cs0136-15.cs IGNORE
-cs0236-3.cs IGNORE
+cs1673-2.cs NO ERROR
+cs0158-2.cs NO ERROR
+cs0158-3.cs NO ERROR
+cs0158-4.cs NO ERROR
+cs0136-7.cs NO ERROR
+cs0136-8.cs NO ERROR
+cs0136-9.cs
+cs0136-10.cs NO ERROR
+cs0136-11.cs NO ERROR
+cs0136-12.cs
+cs0136-13.cs
+cs0136-14.cs NO ERROR
+cs0136-15.cs NO ERROR
+cs0236-3.cs NO ERROR
