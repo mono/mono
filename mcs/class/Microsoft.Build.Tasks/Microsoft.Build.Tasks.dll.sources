@@ -65,6 +65,7 @@ Microsoft.Build.Tasks/MSBuild.cs
 Microsoft.Build.Tasks/ReadLinesFromFile.cs
 Microsoft.Build.Tasks/RegisterAssembly.cs
 Microsoft.Build.Tasks/RemoveDir.cs
+Microsoft.Build.Tasks/ResolveAssemblyReference.cs
 Microsoft.Build.Tasks/ResolveProjectBase.cs
 Microsoft.Build.Tasks/SignFile.cs
 Microsoft.Build.Tasks/TaskExtension.cs

@@ -1,3 +1,7 @@
+2006-09-30  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* ResolveAssemblyReference.cs: Added.
+
 2006-09-20  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* CreateProperty.cs: First implementation.
