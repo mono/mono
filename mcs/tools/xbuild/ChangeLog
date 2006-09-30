@@ -1,3 +1,8 @@
+2006-09-29  Todd Berman  <tberman@off.net>
+
+	* xbuild/Microsoft.CSharp.targets: Copy over the AllowUnsafeBlocks
+	property definition.
+
 2006-09-21  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* xbuild/Microsoft.CSharp.targets: Simplify: use PropertyGroups

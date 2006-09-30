@@ -19,6 +19,7 @@
 			Sources="@(Compile)"
 			TargetType="$(OutputType)"
 			WarningLevel="$(WarningLevel)"
+			AllowUnsafeBlocks="$(AllowUnsafeBlocks)"
 		/>
 	</Target>
 
