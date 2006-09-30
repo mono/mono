@@ -1,3 +1,7 @@
+2006-09-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal9.cs libtest.c: Add tests for some custom marshalling corner cases.
+
 2006-09-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* libtest.c (mono_test_marshal_stringbuilder_default): Null terminate string to
