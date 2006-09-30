@@ -1,3 +1,8 @@
+2006-09-30  Jonathan Chambers  <joncham@gmail.com>
+
+	* marshal7.cs: Added tests for size of structs containing
+	objects with MarshalAs.Interface,IUnknown,IDispatch, and Struct.
+
 2006-09-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal9.cs libtest.c: Add tests for some custom marshalling corner cases.
