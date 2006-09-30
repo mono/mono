@@ -1,3 +1,7 @@
+2006-09-30  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* ReservedNameUtils.cs: Added a null check.
+
 2006-06-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* ToolTask.cs: Added some [MonoTODO]s.
