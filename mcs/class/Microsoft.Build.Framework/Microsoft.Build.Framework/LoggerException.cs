@@ -73,7 +73,11 @@ namespace Microsoft.Build.Framework {
 		public override void GetObjectData (SerializationInfo info,
 						    StreamingContext context)
 		{
-			base.GetObjectData (info,context);
+			if (info == null)
+				throw new ArgumentNullException ();
+		
+			base.GetObjectData (info, context);
+			
 			info.AddValue ("ErrorCode", errorCode);
 			info.AddValue ("HelpKeyword", helpKeyword);
 		}

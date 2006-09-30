@@ -1,3 +1,7 @@
+2006-09-30  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* LoggerException.cs: Added a null check.
+
 2006-03-11  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* MonoTODOAttribute.cs: Removed.
