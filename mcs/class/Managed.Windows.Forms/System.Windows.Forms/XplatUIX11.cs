@@ -4715,11 +4715,11 @@ namespace System.Windows.Forms {
 					Console.WriteLine("Adding Systray Whole:{0:X}, Client:{1:X}", hwnd.whole_window.ToInt32(), hwnd.client_window.ToInt32());
 				#endif
 
-				UnmapWindow(hwnd, WindowType.Whole);
-
 				// Oh boy.
-				XDestroyWindow(DisplayHandle, hwnd.client_window);
-				hwnd.client_window = hwnd.whole_window;
+				if (hwnd.client_window != hwnd.whole_window) {
+					XDestroyWindow(DisplayHandle, hwnd.client_window);
+					hwnd.client_window = hwnd.whole_window;
+				}
 
 				size_hints = new XSizeHints();
 
@@ -4737,7 +4737,7 @@ namespace System.Windows.Forms {
 
 				int[] atoms = new int[2];
 				atoms [0] = 1;			// Version 1
-				atoms [1] = 0;			// We're not mapped
+				atoms [1] = 1;			// we want to be mapped
 
 				// This line cost me 3 days...
 				XChangeProperty(DisplayHandle, hwnd.whole_window, _XEMBED_INFO, _XEMBED_INFO, 32, PropertyMode.Replace, atoms, 2);
@@ -4756,10 +4756,8 @@ namespace System.Windows.Forms {
 					tt.Active = false;
 				}
 
-				// Make sure the window exists
-				XSync(DisplayHandle, hwnd.whole_window);
-
 				SendNetClientMessage(SystrayMgrWindow, _NET_SYSTEM_TRAY_OPCODE, IntPtr.Zero, (IntPtr)SystrayRequest.SYSTEM_TRAY_REQUEST_DOCK, hwnd.whole_window);
+
 				return true;
 			}
 			tt = null;
@@ -4780,12 +4778,30 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SystrayRemove(IntPtr handle, ref ToolTip tt) {
+
+#if GTKSOCKET_SUPPORTS_REPARENTING
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-			UnmapWindow(hwnd, WindowType.Whole);
+			/* in the XEMBED spec, it mentions 3 ways for a client window to break the protocol with the embedder.
+			 * 1. The embedder can unmap the window and reparent to the root window (we should probably handle this...)
+			 * 2. The client can reparent its window out of the embedder window.
+			 * 3. The client can destroy its window.
+			 *
+			 * this call to SetParent is case 2, but in
+			 * the spec it also mentions that gtk doesn't
+			 * support this at present.  Looking at HEAD
+			 * gtksocket-x11.c jives with this statement.
+			 *
+			 * so we can't reparent.  we have to destroy.
+			 */
 			SetParent(hwnd.whole_window, FosterParent);
+#else
+			Control	control = Control.FromHandle(handle);
+			if (control is NotifyIcon.NotifyIconWindow)
+				((NotifyIcon.NotifyIconWindow)control).InternalRecreateHandle ();
+#endif
 
 			// The caller can now re-dock it later...
 			if (tt != null) {
@@ -5075,9 +5091,6 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XSetWMHints")]
 		internal extern static void XSetWMHints(IntPtr display, IntPtr window, ref XWMHints wmhints);
-
-		[DllImport ("libX11", EntryPoint="XSync")]
-		internal extern static void XSync(IntPtr display, IntPtr window);
 
 		[DllImport ("libX11", EntryPoint="XGetIconSizes")]
 		internal extern static int XGetIconSizes(IntPtr display, IntPtr window, out IntPtr size_list, out int count);

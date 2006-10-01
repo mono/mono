@@ -178,6 +178,11 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			internal void InternalRecreateHandle () {
+				base.RecreateHandle ();
+			}
+
+
 			private void HandleSizeChanged(object sender, EventArgs e) {
 				CalculateIconRect();
 			}
