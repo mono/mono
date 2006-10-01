@@ -1,3 +1,8 @@
+2006-10-01  Chris Toshok  <toshok@ximian.com>
+
+	* Form.cs (WndProc): inline the native_enabled variable usage into
+	the cases in which it's used.  Fixes #79536.
+
 2006-09-29  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs : toggle the selection state for ctrl clicks in 

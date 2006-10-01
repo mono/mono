@@ -1740,8 +1740,6 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			bool native_enabled = XplatUI.IsEnabled (Handle);
-
 			switch((Msg)m.Msg) {
 				case Msg.WM_DESTROY: {
 					base.WndProc(ref m);
@@ -1822,7 +1820,7 @@ namespace System.Windows.Forms {
 
 				// Menu drawing
 				case Msg.WM_NCLBUTTONDOWN: {
-					if (native_enabled && ActiveMenu != null) {
+					if (XplatUI.IsEnabled (Handle) && ActiveMenu != null) {
 						ActiveMenu.OnMouseDown(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), mouse_clicks, Control.MousePosition.X, Control.MousePosition.Y, 0));
 					}
 
@@ -1836,7 +1834,7 @@ namespace System.Windows.Forms {
 				}
 
 				case Msg.WM_NCMOUSEMOVE: {
-					if (native_enabled && ActiveMenu != null) {
+					if (XplatUI.IsEnabled (Handle) && ActiveMenu != null) {
 						ActiveMenu.OnMouseMove(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 0));
 					}
 					base.WndProc(ref m);
@@ -1879,7 +1877,7 @@ namespace System.Windows.Forms {
 				}
 
 				case Msg.WM_MOUSEMOVE: {
-					if (native_enabled && active_tracker != null) {
+					if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
 						MouseEventArgs args;
 
 						args = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
@@ -1894,7 +1892,7 @@ namespace System.Windows.Forms {
 				case Msg.WM_LBUTTONDOWN:
 				case Msg.WM_MBUTTONDOWN:
 				case Msg.WM_RBUTTONDOWN: {					
-					if (native_enabled && active_tracker != null) {
+					if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
 						MouseEventArgs args;
 
 						args = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
@@ -1909,7 +1907,7 @@ namespace System.Windows.Forms {
 				case Msg.WM_LBUTTONUP:
 				case Msg.WM_MBUTTONUP:
 				case Msg.WM_RBUTTONUP: {
-					if (native_enabled && active_tracker != null) {
+					if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
 						MouseEventArgs args;
 
 						args = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
