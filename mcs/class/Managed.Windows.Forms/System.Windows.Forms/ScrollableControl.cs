@@ -721,6 +721,9 @@ namespace System.Windows.Forms {
 
 			} while (right_edge != prev_right_edge || bottom_edge != prev_bottom_edge);
 
+			if (right_edge < 0) right_edge = 0;
+			if (bottom_edge < 0) bottom_edge = 0;
+
 			Rectangle hscroll_bounds;
 			Rectangle vscroll_bounds;
 

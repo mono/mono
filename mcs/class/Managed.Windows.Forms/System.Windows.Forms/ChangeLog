@@ -1,5 +1,11 @@
 2006-10-01  Chris Toshok  <toshok@ximian.com>
 
+	* ScrollableControl.cs: make sure neither right_edge or
+	bottom_edge are < 0, since they're used as LargeChange for the
+	horiz/vert scrollbars respectively.  Fixes #79539.
+
+2006-10-01  Chris Toshok  <toshok@ximian.com>
+
 	* NotifyIcon.cs: add NotifyIconWindow.InternalRecreateHandle, so
 	the xplatuix11 code can cause us to destroy/recreate our handle.
 
