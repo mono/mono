@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections;
+using DefaultValueAttribute = System.ComponentModel.DefaultValueAttribute;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -1050,6 +1051,90 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+#if ONLY_1_1
+		[Category ("NotDotNet")] // wrong error message is reported in .NET 1.1
+#endif
+		public void TypeMapping_Attribute_ComplexType ()
+		{
+			SoapAttributes attrs = new SoapAttributes (typeof (Field_Encoded).GetMember ("Names")[0]);
+			attrs.SoapAttribute = new SoapAttributeAttribute (); // SoapAttribute cannot be used to encode complex types
+			SoapAttributeOverrides overrides = new SoapAttributeOverrides ();
+			overrides.Add (typeof (Field_Encoded), "Names", attrs);
+
+			try {
+				Map (typeof (Field_Encoded), overrides);
+				Assert.Fail ("#A1");
+			} catch (InvalidOperationException ex) {
+				// Cannot serialize member 'Names' of type System.String[].
+				// SoapAttribute cannot be used to encode complex types.
+				Assert.IsNotNull (ex.Message, "#A2");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (string[]).FullName) != -1, "#A3");
+				Assert.IsTrue (ex.Message.IndexOf ("SoapAttribute") != -1, "#A4");
+				Assert.IsNull (ex.InnerException, "#A5");
+			}
+		}
+
+		[Test]
+		public void TypeMapping_Field ()
+		{
+			XmlTypeMapping tm = Map (typeof (Field));
+			Assert.AreEqual ("Field", tm.ElementName, "#1");
+			Assert.AreEqual (string.Empty, tm.Namespace, "#2");
+			Assert.AreEqual ("Field", tm.TypeName, "#3");
+			Assert.AreEqual ("MonoTests.System.Xml.TestClasses.Field", tm.TypeFullName, "#4");
+		}
+
+		[Test]
+		public void TypeMapping_Field_DefaultNamespace ()
+		{
+			XmlTypeMapping tm = Map (typeof (Field), SomeNamespace);
+			Assert.AreEqual ("Field", tm.ElementName, "#1");
+			Assert.AreEqual (SomeNamespace, tm.Namespace, "#2");
+			Assert.AreEqual ("Field", tm.TypeName, "#3");
+			Assert.AreEqual ("MonoTests.System.Xml.TestClasses.Field", tm.TypeFullName, "#4");
+		}
+
+		[Test]
+		public void TypeMapping_Field_Encoded ()
+		{
+			XmlTypeMapping tm = Map (typeof (Field_Encoded));
+			Assert.AreEqual ("field", tm.ElementName, "#1");
+			Assert.AreEqual (SomeNamespace, tm.Namespace, "#2");
+			Assert.AreEqual ("Field_Encoded", tm.TypeName, "#3");
+			Assert.AreEqual ("MonoTests.System.Xml.TestClasses.Field_Encoded", tm.TypeFullName, "#4");
+		}
+
+		[Test]
+		public void TypeMapping_Field_Encoded_DefaultNamespace ()
+		{
+			XmlTypeMapping tm = Map (typeof (Field_Encoded), AnotherNamespace);
+			Assert.AreEqual ("field", tm.ElementName, "#1");
+			Assert.AreEqual (SomeNamespace, tm.Namespace, "#2");
+			Assert.AreEqual ("Field_Encoded", tm.TypeName, "#3");
+			Assert.AreEqual ("MonoTests.System.Xml.TestClasses.Field_Encoded", tm.TypeFullName, "#4");
+		}
+
+		[Test]
+		public void TypeMapping_FlagEnum ()
+		{
+			XmlTypeMapping tm = Map (typeof (FlagEnum));
+			Assert.AreEqual ("FlagEnum", tm.ElementName, "#1");
+			Assert.AreEqual (string.Empty, tm.Namespace, "#2");
+			Assert.AreEqual ("FlagEnum", tm.TypeName, "#3");
+			Assert.AreEqual ("MonoTests.System.Xml.TestClasses.FlagEnum", tm.TypeFullName, "#4");
+		}
+
+		[Test]
+		public void TypeMapping_FlagEnum_DefaultNamespace ()
+		{
+			XmlTypeMapping tm = Map (typeof (FlagEnum), SomeNamespace);
+			Assert.AreEqual ("FlagEnum", tm.ElementName, "#1");
+			Assert.AreEqual (SomeNamespace, tm.Namespace, "#2");
+			Assert.AreEqual ("FlagEnum", tm.TypeName, "#3");
+			Assert.AreEqual ("MonoTests.System.Xml.TestClasses.FlagEnum", tm.TypeFullName, "#4");
+		}
+
+		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TypeMapping_IDictionary ()
 		{
@@ -1315,6 +1400,65 @@ namespace MonoTests.System.XmlSerialization
 		public void TypeMapping_ICollection_SimpleClass_NoIntIndexer_Array ()
 		{
 			Map (typeof (SimpleClassCollectionNoIntIndexer[]));
+		}
+
+		[Test]
+		public void TypeMapping_InvalidDefault ()
+		{
+			SoapAttributes attrs = new SoapAttributes (typeof (Field_Encoded).GetMember ("Modifiers")[0]);
+			attrs.SoapDefaultValue = 2; // not a defined enum value
+			SoapAttributeOverrides overrides = new SoapAttributeOverrides ();
+			overrides.Add (typeof (Field_Encoded), "Modifiers", attrs);
+
+			try {
+				Map (typeof (Field_Encoded), overrides);
+				Assert.Fail ("#A1");
+			} catch (InvalidOperationException ex) {
+				// Enum System.Int32 cannot be converted to MonoTests.System.Xml.TestClasses.MapModifiers
+				Assert.IsNotNull (ex.Message, "#A2");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (int).FullName) != -1, "#A3");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (MapModifiers).FullName) != -1, "#A4");
+				Assert.IsNull (ex.InnerException, "#A5");
+			}
+
+			attrs.SoapDefaultValue = "2"; // not of the same type as the underlying enum type (System.Int32)
+
+			try {
+				Map (typeof (Field_Encoded), overrides);
+				Assert.Fail ("#B1");
+			} catch (InvalidOperationException ex) {
+				// Enum System.String cannot be converted to MonoTests.System.Xml.TestClasses.MapModifiers
+				Assert.IsNotNull (ex.Message, "#A2");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (string).FullName) != -1, "#A3");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (MapModifiers).FullName) != -1, "#A4");
+				Assert.IsNull (ex.InnerException, "#A5");
+			}
+
+			attrs.SoapDefaultValue = EnumDefaultValueNF.e2; // other enum type
+
+			try {
+				Map (typeof (Field_Encoded), overrides);
+				Assert.Fail ("#C1");
+			} catch (InvalidOperationException ex) {
+				// Enum MonoTests.System.Xml.TestClasses.EnumDefaultValueNF cannot be converted to MonoTests.System.Xml.TestClasses.MapModifiers
+				Assert.IsNotNull (ex.Message, "#A2");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (EnumDefaultValueNF).FullName) != -1, "#A3");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (MapModifiers).FullName) != -1, "#A4");
+				Assert.IsNull (ex.InnerException, "#A5");
+			}
+
+			attrs.SoapDefaultValue = (MapModifiers) 20; // non-existing enum value
+
+			try {
+				Map (typeof (Field_Encoded), overrides);
+				Assert.Fail ("#C1");
+			} catch (InvalidOperationException ex) {
+				// Value '20' cannot be converted to MonoTests.System.Xml.TestClasses.MapModifiers
+				Assert.IsNotNull (ex.Message, "#A2");
+				Assert.IsTrue (ex.Message.IndexOf ("'20'") != -1, "#A3");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (MapModifiers).FullName) != -1, "#A4");
+				Assert.IsNull (ex.InnerException, "#A5");
+			}
 		}
 
 		[Test]

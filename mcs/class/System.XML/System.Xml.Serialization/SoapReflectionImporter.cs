@@ -212,18 +212,10 @@ namespace System.Xml.Serialization {
 
 			// Import members
 
-			try
-			{
-				ICollection members = GetReflectionMembers (type);
-				foreach (XmlReflectionMember rmember in members)
-				{
-					if (rmember.SoapAttributes.SoapIgnore) continue;
-					classMap.AddMember (CreateMapMember (rmember, map.Namespace));
-				}
-			}
-			catch (Exception ex) 
-			{
-				throw helper.CreateError (map, ex.Message);
+			ICollection members = GetReflectionMembers (type);
+			foreach (XmlReflectionMember rmember in members) {
+				if (rmember.SoapAttributes.SoapIgnore) continue;
+				classMap.AddMember (CreateMapMember (rmember, defaultNamespace));
 			}
 
 			// Import included classes
@@ -421,6 +413,13 @@ namespace System.Xml.Serialization {
 			{
 				// An attribute
 
+				if (typeData.SchemaType != SchemaTypes.Enum && typeData.SchemaType != SchemaTypes.Primitive) {
+					throw new InvalidOperationException (string.Format (CultureInfo.InvariantCulture,
+						"Cannot serialize member '{0}' of type {1}. " +
+						"SoapAttribute cannot be used to encode complex types.",
+						rmember.MemberName, typeData.FullTypeName));
+				}
+
 				if (atts.SoapElement != null)
 					throw new Exception ("SoapAttributeAttribute and SoapElementAttribute cannot be applied to the same member");
 
@@ -436,6 +435,7 @@ namespace System.Xml.Serialization {
 
 				typeData = TypeTranslator.GetTypeData (rmember.MemberType, atts.SoapAttribute.DataType);
 				mapMember = mapAttribute;
+				mapMember.DefaultValue = GetDefaultValue (typeData, atts.SoapDefaultValue);
 			}
 			else
 			{
@@ -492,8 +492,36 @@ namespace System.Xml.Serialization {
 			return new NotSupportedException ("Cannot serialize " + type.FullName + ". Nested structs are not supported with encoded SOAP");
 		}
 
+		private object GetDefaultValue (TypeData typeData, object defaultValue)
+		{
+			if (defaultValue == DBNull.Value || typeData.SchemaType != SchemaTypes.Enum)
+				return defaultValue;
 
-		
+			if (typeData.Type != defaultValue.GetType ()) {
+				string msg = string.Format (CultureInfo.InvariantCulture,
+					"Enum {0} cannot be converted to {1}.",
+					defaultValue.GetType ().FullName, typeData.FullTypeName);
+				throw new InvalidOperationException (msg);
+			}
+
+			// get string representation of enum value
+			string namedValue = Enum.Format (typeData.Type, defaultValue, "g");
+			// get decimal representation of enum value
+			string decimalValue = Enum.Format (typeData.Type, defaultValue, "d");
+
+			// if decimal representation matches string representation, then
+			// the value is not defined in the enum type (as the "g" format
+			// will return the decimal equivalent of the value if the value
+			// is not equal to a combination of named enumerated constants
+			if (namedValue == decimalValue) {
+				string msg = string.Format (CultureInfo.InvariantCulture,
+					"Value '{0}' cannot be converted to {1}.", defaultValue,
+					defaultValue.GetType ().FullName);
+				throw new InvalidOperationException (msg);
+			}
+
+			return namedValue.Replace (',', ' ');
+		}
 
 		#endregion // Methods
 	}

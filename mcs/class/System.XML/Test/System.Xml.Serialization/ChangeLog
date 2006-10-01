@@ -1,3 +1,7 @@
+2006-10-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SoapReflectionImporterTests.cs: Added tests for bug #78206.
+
 2006-05-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializerTests.cs : added tailored version of bug #78536 test.

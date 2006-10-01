@@ -1,3 +1,10 @@
+2006-10-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SoapReflectionImporter.cs: To match MS.NET, let exceptions that are
+	thrown during creation of map member bubble up. Only allow
+	SoapAttribute on primitive types and enums. Obtain default value for
+	attribute members.
+
 2006-09-20  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* XmlTypeAttribute.cs: added property AnonymousType for 2.0
