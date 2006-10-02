@@ -1,5 +1,8 @@
 2006-10-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* object.c (mono_runtime_class_init): Handle a corner case in handling failure of
+	static initialization.
+
 	* domain-internals.h (MonoDomain): Add a 'type_init_exception_hash' field.
 
 	* class-internals.h (MonoVTable): Add an 'init_failed' flag.
