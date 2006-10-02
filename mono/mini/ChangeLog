@@ -1,3 +1,8 @@
+2006-10-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_handle_native_sigsegv): Add some code to print out
+	more precise debugging information using gdb.
+
 2006-09-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* inssel-ia64.brg: Make the helper methods static.
