@@ -1,8 +1,9 @@
 //
-// Copyright (c) 2005 Novell, Inc.
+// Copyright (c) 2005-2006 Novell, Inc.
 //
 // Authors:
 //      Ritvik Mayank (mritvik@novell.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 
 using System;
@@ -88,17 +89,52 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		public void NotifyDefaultTest ()
-		{
-			Button B1 = new Button ();
-			Assert.AreEqual ("System.Windows.Forms.Button, Text: ", B1.ToString (), "#8");
-		}
-
-		[Test]
 		public void ToStringTest ()
 		{
 			Button B1 = new Button ();
 			Assert.AreEqual ("System.Windows.Forms.Button, Text: " , B1.ToString (), "#9");
+		}
+	}
+
+	[TestFixture]
+	[Category ("NotWorking")] // see bug #79552
+	public class ButtonInheritorTest : Button {
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Constructor_Null ()
+		{
+			new ButtonBaseAccessibleObject (null);
+		}
+
+		[Test]
+		public void Constructor ()
+		{
+			ButtonBaseAccessibleObject bbao = new ButtonBaseAccessibleObject (this);
+			Assert.IsNotNull (bbao.Owner, "Owner");
+			Assert.IsTrue (Object.ReferenceEquals (this, bbao.Owner), "ReferenceEquals");
+			Assert.AreEqual ("Press", bbao.DefaultAction, "DefaultAction");
+			Assert.IsNull (bbao.Description, "Description");
+			Assert.IsNull (bbao.Help, "Help");
+			Assert.IsNull (bbao.Name, "Name");
+			Assert.AreEqual (AccessibleRole.PushButton, bbao.Role, "Role");
+			Assert.AreEqual (AccessibleStates.None, bbao.State, "State");
+		}
+
+		[Test]
+		public void CreateAccessibilityInstanceTest ()
+		{
+			AccessibleObject ao = base.CreateAccessibilityInstance ();
+			Button.ButtonBaseAccessibleObject bbao = (ao as Button.ButtonBaseAccessibleObject);
+			Assert.IsNotNull (bbao, "ButtonBaseAccessibleObject");
+			Assert.IsNotNull (bbao.Owner, "Owner");
+			Assert.IsTrue (Object.ReferenceEquals (this, bbao.Owner), "ReferenceEquals");
+			Assert.AreEqual ("Press", bbao.DefaultAction, "DefaultAction");
+			Assert.IsNull (bbao.Description, "Description");
+			Assert.IsNull (bbao.Help, "Help");
+			Assert.IsNull (bbao.Name, "Name");
+			Assert.AreEqual (AccessibleRole.PushButton, bbao.Role, "Role");
+			Assert.AreEqual (AccessibleStates.None, bbao.State, "State");
 		}
 	}
 }

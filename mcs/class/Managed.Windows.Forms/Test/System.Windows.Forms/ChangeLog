@@ -1,3 +1,8 @@
+2006-10-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ButtonTest.cs: Added new test cases for ButtonBaseAccessibleObject
+	as NonWorking (see bug #79552). Fixed line-endings.
+
 2006-09-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SystemInformationTest.cs: Add tests case for MenuFont.
