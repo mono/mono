@@ -1,3 +1,7 @@
+2006-10-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* static-constructor.cs: Add a new test.
+
 2006-09-30  Jonathan Chambers  <joncham@gmail.com>
 
 	* marshal7.cs: Added tests for size of structs containing
