@@ -1,5 +1,7 @@
 2006-10-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-exceptions.c (ves_icall_get_trace): Remove debug printf.
+
 	* aot-runtime.c (mono_aot_get_class_from_name): Avoid a memory allocation.
 
 	* aot-compiler.c: Add a new option 'metadata-only' to only emit the cached
