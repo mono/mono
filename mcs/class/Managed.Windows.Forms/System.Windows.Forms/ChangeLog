@@ -1,3 +1,8 @@
+2006-10-02  Jackson Harper  <jackson@ximian.com>
+
+	* MdiWindowManager.cs: When maximizing use the containers client
+	rect, not it's bounds, so nc area is accounted correctly.
+
 2006-10-01  Chris Toshok  <toshok@ximian.com>
 
 	* ScrollableControl.cs: make sure neither right_edge or

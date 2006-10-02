@@ -258,7 +258,7 @@ namespace System.Windows.Forms {
 
 		internal void SizeMaximized ()
 		{
-			Rectangle pb = mdi_container.Bounds;
+			Rectangle pb = mdi_container.ClientRectangle;
 			int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
 			form.Bounds = new Rectangle (pb.Left - bw,
 					pb.Top - TitleBarHeight - bw,
