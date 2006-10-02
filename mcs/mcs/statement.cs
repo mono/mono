@@ -1538,24 +1538,37 @@ namespace Mono.CSharp {
 			known_variables [name] = info;
 		}
 
-		LocalInfo GetKnownVariableInfo (string name)
+		LocalInfo GetKnownVariableInfo (string name, bool recurse)
 		{
-			if (known_variables == null)
+			if (known_variables != null) {
+				LocalInfo vi = (LocalInfo) known_variables [name];
+				if (vi != null)
+					return vi;
+			}
+
+			if (!recurse || (children == null))
 				return null;
-			return (LocalInfo) known_variables [name];
+
+			foreach (Block block in children) {
+				LocalInfo vi = block.GetKnownVariableInfo (name, true);
+				if (vi != null)
+					return vi;
+			}
+
+			return null;
 		}
 
 		public bool CheckInvariantMeaningInBlock (string name, Expression e, Location loc)
 		{
 			Block b = this;
-			LocalInfo kvi = b.GetKnownVariableInfo (name);
+			LocalInfo kvi = b.GetKnownVariableInfo (name, true);
 			while (kvi == null) {
 				while (b.Implicit)
 					b = b.Parent;
 				b = b.Parent;
 				if (b == null)
 					return true;
-				kvi = b.GetKnownVariableInfo (name);
+				kvi = b.GetKnownVariableInfo (name, false);
 			}
 
 			if (kvi.Block == b)
@@ -1679,7 +1692,7 @@ namespace Mono.CSharp {
 
 		protected bool DoCheckError136 (string name, string scope, Location loc)
 		{
-			LocalInfo vi = GetKnownVariableInfo (name);
+			LocalInfo vi = GetKnownVariableInfo (name, false);
 			if (vi != null) {
 				Report.SymbolRelatedToPreviousError (vi.Location, name);
 				Error_AlreadyDeclared (loc, name, scope != null ? scope : "child");

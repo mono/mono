@@ -1,5 +1,9 @@
 2006-10-02  Martin Baulig  <martin@ximian.com>
 
+	* statement.cs: Fix the CS0135 check.
+
+2006-10-02  Martin Baulig  <martin@ximian.com>
+
 	* anonymous.cs: Add CS1688 check.
 
 2006-10-02  Martin Baulig  <martin@ximian.com>
