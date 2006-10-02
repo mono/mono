@@ -1,5 +1,12 @@
 2006-10-02  Chris Toshok  <toshok@ximian.com>
 
+	* XplatUIX11.cs (GetWindowState): use hwnd.client_window in the
+	call to XGetWindowAttributes instead of "handle".  fixes an X
+	error using notifyicon after the NotifyIconWindow to Form base
+	class switch.
+
+2006-10-02  Chris Toshok  <toshok@ximian.com>
+
 	* XplatUIX11.cs (QueryPointer): new function, encapsulating the
 	server grab and looping we need to do to get down to the most
 	deeply nested child window.
@@ -8,7 +15,7 @@
 	proper (fake) MotionNotify event to be enqueued in the destination
 	window's queue.
 	(GetCursorPos): call QueryPointer.
-	
+
 	Fixes #79556.
 
 2006-10-02  Jackson Harper  <jackson@ximian.com>

@@ -3740,7 +3740,7 @@ namespace System.Windows.Forms {
 			}
 
 			attributes = new XWindowAttributes();
-			XGetWindowAttributes(DisplayHandle, handle, ref attributes);
+			XGetWindowAttributes(DisplayHandle, hwnd.client_window, ref attributes);
 			if (attributes.map_state == MapState.IsUnmapped) {
 				throw new NotSupportedException("Cannot retrieve the state of an unmapped window");
 			}
