@@ -187,7 +187,7 @@ namespace Mono.CSharp {
 				EnsureNamespace (t.Namespace);
 		}
 
-		public override void Error_NamespaceDoesNotExist(Location loc, string name)
+		public override void Error_NamespaceDoesNotExist(DeclSpace ds, Location loc, string name)
 		{
 			Report.Error (400, loc, "The type or namespace name `{0}' could not be found in the global namespace (are you missing an assembly reference?)",
 				name);
@@ -304,10 +304,38 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public virtual void Error_NamespaceDoesNotExist (Location loc, string name)
+		public virtual void Error_NamespaceDoesNotExist (DeclSpace ds, Location loc, string name)
 		{
+			if (name.IndexOf ("`") > 0) {
+				FullNamedExpression retval = Lookup (ds, SimpleName.RemoveGenericArity (name), loc);
+				if (retval != null) {
+					Error_TypeArgumentsCannotBeUsed(retval.Type, loc, "type");
+					return;
+				}
+			} else {
+				Type t = LookForAnyGenericType (name);
+				if (t != null) {
+					Error_InvalidNumberOfTypeArguments(t, loc);
+					return;
+				}
+			}
+
 			Report.Error (234, loc, "The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?",
 				name, FullName);
+		}
+
+		public static void Error_InvalidNumberOfTypeArguments (Type t, Location loc)
+		{
+			Report.SymbolRelatedToPreviousError (t);
+			Report.Error (305, loc, "Using the generic type `{0}' requires `{1}' type argument(s)",
+				TypeManager.CSharpName(t), TypeManager.GetNumberOfTypeArguments(t).ToString());
+		}
+
+		public static void Error_TypeArgumentsCannotBeUsed(Type t, Location loc, string symbol)
+		{
+			Report.SymbolRelatedToPreviousError(t);
+			Report.Error(308, loc, "The non-generic {0} `{1}' cannot be used with the type argument(s)",
+				symbol, TypeManager.CSharpName(t));
 		}
 
 		public override void Emit (EmitContext ec)
@@ -376,6 +404,26 @@ namespace Mono.CSharp {
 			TypeExpr te = t == null ? null : new TypeExpression (t, Location.Null);
 			cached_types [name] = te;
 			return te;
+		}
+
+		///
+		/// Used for better error reporting only
+		/// 
+		public Type LookForAnyGenericType (string typeName)
+		{
+			typeName = SimpleName.RemoveGenericArity(typeName);
+
+			foreach (string type_item in declspaces.Keys) {
+				string[] sep_type = type_item.Split('`');
+				if (sep_type.Length < 2)
+					continue;
+
+				if (typeName == sep_type [0]) {
+					DeclSpace tdecl = (DeclSpace)declspaces [type_item];
+					return tdecl.TypeBuilder;
+				}
+			}
+			return null;
 		}
 
 		public FullNamedExpression Lookup (DeclSpace ds, string name, Location loc)

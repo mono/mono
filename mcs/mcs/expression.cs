@@ -2139,6 +2139,14 @@ namespace Mono.CSharp {
 						Error_OperatorAmbiguous (loc, oper, l, r);
 						return null;
 					}
+
+					if (oper == Operator.BitwiseOr && l != r && !(orig_right is Constant) && right is OpcodeCast &&
+						(r == TypeManager.sbyte_type || r == TypeManager.short_type ||
+						 r == TypeManager.int32_type || r == TypeManager.int64_type)) {
+							Report.Warning (675, 3, loc, "The operator `|' used on the sign-extended type `{0}'. Consider casting to a smaller unsigned type first",
+								TypeManager.CSharpName (r));
+					}
+					
 				} else if (!VerifyApplicable_Predefined (ec, TypeManager.bool_type)) {
 					Error_OperatorCannotBeApplied ();
 					return null;
@@ -7163,7 +7171,7 @@ namespace Mono.CSharp {
 #endif
 
 				if (retval == null)
-					ns.Error_NamespaceDoesNotExist (loc, Identifier);
+					ns.Error_NamespaceDoesNotExist (ec.DeclContainer, loc, Identifier);
 				return retval;
 			}
 
@@ -7286,7 +7294,7 @@ namespace Mono.CSharp {
 					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (rc, false);
 #endif
 				if (!silent && retval == null)
-					ns.Error_NamespaceDoesNotExist (loc, Identifier);
+					ns.Error_NamespaceDoesNotExist (rc.DeclContainer, loc, LookupIdentifier);
 				return retval;
 			}
 
@@ -8477,17 +8485,13 @@ namespace Mono.CSharp {
 		static EmptyExpression temp = new EmptyExpression ();
 		public static EmptyExpression Grab ()
 		{
-			if (temp == null)
-				throw new InternalErrorException ("Nested Grab");
-			EmptyExpression retval = temp;
+			EmptyExpression retval = temp == null ? new EmptyExpression () : temp;
 			temp = null;
 			return retval;
 		}
 
 		public static void Release (EmptyExpression e)
 		{
-			if (temp != null)
-				throw new InternalErrorException ("Already released");
 			temp = e;
 		}
 
