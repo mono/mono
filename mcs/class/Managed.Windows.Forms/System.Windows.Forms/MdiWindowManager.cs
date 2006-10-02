@@ -309,7 +309,7 @@ namespace System.Windows.Forms {
 			Point pnt =  XplatUI.GetMenuOrigin (mdi_container.ParentForm.Handle);
 			int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
 
-			close_button.Rectangle = new Rectangle (form.ClientRectangle.Right - bw - bs.Width - 2,
+			close_button.Rectangle = new Rectangle (mdi_container.ParentForm.ClientRectangle.Right - bw - bs.Width - 2,
 					pnt.Y + 2, bs.Width, bs.Height);
 
 			maximize_button.Rectangle = new Rectangle (close_button.Rectangle.Left - 2 - bs.Width,

@@ -2,6 +2,8 @@
 
 	* MdiWindowManager.cs: When maximizing use the containers client
 	rect, not it's bounds, so nc area is accounted correctly.
+	- Use the parent form's size for the menu position, since the
+	client isn't always the full form size.
 
 2006-10-01  Chris Toshok  <toshok@ximian.com>
 
