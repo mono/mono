@@ -1,3 +1,14 @@
+2006-10-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* domain-internals.h (MonoDomain): Add a 'type_init_exception_hash' field.
+
+	* class-internals.h (MonoVTable): Add an 'init_failed' flag.
+
+	* domain.c (mono_domain_free): Free up type_init_exception_hash.
+
+	* object.c (mono_runtime_class_init): Implement correct semantics when a static
+	ctor fails, i.e. throw the same exception on subsequent accesses.
+	
 2006-09-0  Jonathan Chambers  <joncham@gmail.com>
 
 	* domain.c, class-internals.h: Added ComInteropProxy class to MonoDefaults.
