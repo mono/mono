@@ -97,7 +97,6 @@ namespace MonoTests.System.Windows.Forms
 	}
 
 	[TestFixture]
-	[Category ("NotWorking")] // see bug #79552
 	public class ButtonInheritorTest : Button {
 
 		[Test]
