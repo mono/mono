@@ -2307,7 +2307,7 @@ namespace Mono.CSharp {
 					return mg.ResolveGeneric (ec, Arguments);
 				}
 
-				if (!me.IsStatic &&
+				if (!me.IsStatic && (me.InstanceExpression != null) &&
 				    TypeManager.IsNestedFamilyAccessible (me.InstanceExpression.Type, me.DeclaringType) &&
 				    me.InstanceExpression.Type != me.DeclaringType &&
 				    !TypeManager.IsFamilyAccessible (me.InstanceExpression.Type, me.DeclaringType) &&
