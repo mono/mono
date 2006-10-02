@@ -1,4 +1,14 @@
-﻿2006-10-02  Jonathan Pobst  <monkey@jpobst.com>
+2006-10-02  Jackson Harper  <jackson@ximian.com>
+
+	* NotifyIcon.cs: Derive the notify icon from a form, so things
+	like FindForm work on it.
+	- Swallow the WM_CONTEXTMENU message, since that is generated on
+	mouse down, and context menu is a mouse up kinda guy.  I believe
+	the correct fix here is probably to make the notify icon entirely
+	NC area, but this seems to work fine for anyone not manipulating
+	WndProc.
+
+2006-10-02  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStrip.cs, ToolStripButton.cs, ToolStripItem.cs,
 	  ToolStripItemCollection.cs, ToolStripLabel.cs,

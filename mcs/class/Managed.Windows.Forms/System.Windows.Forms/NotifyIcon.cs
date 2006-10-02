@@ -49,7 +49,7 @@ namespace System.Windows.Forms {
 		#endregion	// Local Variables
 
 		#region NotifyIconWindow Class
-		internal class NotifyIconWindow : Control {
+		internal class NotifyIconWindow : Form {
 			NotifyIcon	owner;
 			Rectangle	rect;
 
@@ -97,6 +97,13 @@ namespace System.Windows.Forms {
 						XplatUI.PaintEventEnd(Handle, false);
 						break;
 					}
+
+						//
+						//  NotifyIcon does CONTEXTMENU on mouse up, not down
+						//  so we swallow the message here, and handle it on our own
+						// 
+				        case Msg.WM_CONTEXTMENU:
+						return;
 
 					case Msg.WM_USER: {
 						switch ((Msg)m.LParam.ToInt32()) {
