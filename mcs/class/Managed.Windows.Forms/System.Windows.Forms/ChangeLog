@@ -1,3 +1,16 @@
+2006-10-02  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11.cs (QueryPointer): new function, encapsulating the
+	server grab and looping we need to do to get down to the most
+	deeply nested child window.
+	(SetCursorPos): use QueryPointer instead of GetCursorPos, and call
+	QueryPointer again after the WarpPointer so we can generate a
+	proper (fake) MotionNotify event to be enqueued in the destination
+	window's queue.
+	(GetCursorPos): call QueryPointer.
+	
+	Fixes #79556.
+
 2006-10-02  Jackson Harper  <jackson@ximian.com>
 
 	* NotifyIcon.cs: Derive the notify icon from a form, so things

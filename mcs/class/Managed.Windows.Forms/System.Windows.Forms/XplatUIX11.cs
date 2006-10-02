@@ -3016,7 +3016,7 @@ namespace System.Windows.Forms {
 			}
 
 			lock (XlibLock) {
-				XQueryPointer(DisplayHandle, use_handle, out root, out child, out root_x, out root_y, out win_x, out win_y, out keys_buttons);
+				QueryPointer (DisplayHandle, use_handle, out root, out child, out root_x, out root_y, out win_x, out win_y, out keys_buttons);
 			}
 
 			if (handle != IntPtr.Zero) {
@@ -4300,14 +4300,98 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		private void QueryPointer (IntPtr display, IntPtr w, out IntPtr root, out IntPtr child,
+					   out int root_x, out int root_y, out int child_x, out int child_y,
+					   out int mask)
+		{
+			/* this code was written with the help of
+			glance at gdk.  I never would have realized we
+			needed a loop in order to traverse down in the
+			hierarchy.  I would have assumed you'd get the
+			most deeply nested child and have to do
+			XQueryTree to move back up the hierarchy..
+			stupid me, of course. */
+			IntPtr c;
+
+			XGrabServer (display);
+
+			XQueryPointer(display, w, out root, out c,
+				      out root_x, out root_y, out child_x, out child_y,
+				      out mask);
+
+			if (root != w)
+				c = root;
+
+			IntPtr child_last = IntPtr.Zero;
+			while (c != IntPtr.Zero) {
+				child_last = c;
+				XQueryPointer(display, c, out root, out c,
+					      out root_x, out root_y, out child_x, out child_y,
+					      out mask);
+			}
+			XUngrabServer (display);
+
+			child = child_last;
+		}
+
 		internal override void SetCursorPos(IntPtr handle, int x, int y) {
 			if (handle == IntPtr.Zero) {
-				int cx, cy;
-				GetCursorPos (handle, out cx, out cy);
 				lock (XlibLock) {
-					XWarpPointer(DisplayHandle, IntPtr.Zero, IntPtr.Zero, 0, 0, 0, 0, x - cx, y - cy);
+					IntPtr root, child;
+					int root_x, root_y, child_x, child_y, mask;
+
+					/* we need to do a
+					 * QueryPointer before warping
+					 * because if the warp is on
+					 * the RootWindow, the x/y are
+					 * relative to the current
+					 * mouse position
+					 */
+					QueryPointer (DisplayHandle, RootWindow,
+						      out root,
+						      out child,
+						      out root_x, out root_y,
+						      out child_x, out child_y,
+						      out mask);
+
+					XWarpPointer(DisplayHandle, IntPtr.Zero, IntPtr.Zero, 0, 0, 0, 0, x - root_x, y - root_y);
+
+					XFlush (DisplayHandle);
+
+					/* then we need to a
+					 * QueryPointer after warping
+					 * to manually generate a
+					 * motion event for the window
+					 * we move into.
+					 */
+					QueryPointer (DisplayHandle, RootWindow,
+						      out root,
+						      out child,
+						      out root_x, out root_y,
+						      out child_x, out child_y,
+						      out mask);
+
+					Hwnd child_hwnd = Hwnd.ObjectFromHandle(child);
+					if (child_hwnd == null) {
+						return;
+					}
+
+					Control c = Control.FromHandle (child_hwnd.Handle);
+
+					XEvent xevent = new XEvent ();
+
+					xevent.type = XEventName.MotionNotify;
+					xevent.MotionEvent.display = DisplayHandle;
+					xevent.MotionEvent.window = child_hwnd.client_window;
+					xevent.MotionEvent.root = RootWindow;
+					xevent.MotionEvent.x = child_x;
+					xevent.MotionEvent.y = child_y;
+					xevent.MotionEvent.x_root = root_x;
+					xevent.MotionEvent.y_root = root_y;
+					xevent.MotionEvent.state = mask;
+
+					child_hwnd.Queue.Enqueue (xevent);
 				}
-				return;
 			} else {
 				Hwnd	hwnd;
 
@@ -4315,7 +4399,6 @@ namespace System.Windows.Forms {
 				lock (XlibLock) {
 					XWarpPointer(DisplayHandle, IntPtr.Zero, hwnd.client_window, 0, 0, 0, 0, x, y);
 				}
-				return;
 			}
 		}
 
