@@ -1288,7 +1288,9 @@ namespace Mono.CSharp {
 			IsDestructor = 32,
 			IsToplevel = 64,
 			Unsafe = 128,
-			HasVarargs = 256 // Used in ToplevelBlock
+			HasVarargs = 256, // Used in ToplevelBlock
+			IsIterator = 512
+
 		}
 		protected Flags flags;
 
@@ -1346,6 +1348,8 @@ namespace Mono.CSharp {
 		Block switch_block;
 
 		ExpressionStatement scope_init;
+
+		ArrayList anonymous_children;
 
 		protected static int id;
 
@@ -1597,22 +1601,75 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		bool CheckError136 (string name, string scope, bool is_child, Location loc)
+		public bool CheckError136_InParents (string name, Location loc)
 		{
-			if (!DoCheckError136 (name, scope, loc))
+			for (Block b = Parent; b != null; b = b.Parent) {
+				if (!b.DoCheckError136 (name, "parent or current", loc))
+					return false;
+			}
+
+			for (Block b = Toplevel.ContainerBlock; b != null; b = b.Toplevel.ContainerBlock) {
+				if (!b.CheckError136_InParents (name, loc))
+					return false;
+			}
+
+			return true;
+		}
+
+		public bool CheckError136_InChildren (string name, Location loc)
+		{
+			if (!DoCheckError136_InChildren (name, loc))
 				return false;
 
-			if (Toplevel.AnonymousChildren != null) {
-				foreach (ToplevelBlock child in Toplevel.AnonymousChildren) {
-					if (!child.CheckError136 (name, "child", true, loc))
+			Block b = this;
+			while (b.Implicit) {
+				if (!b.Parent.DoCheckError136_InChildren (name, loc))
+					return false;
+				b = b.Parent;
+			}
+
+			return true;
+		}
+
+		protected bool DoCheckError136_InChildren (string name, Location loc)
+		{
+			if (!DoCheckError136 (name, "child", loc))
+				return false;
+
+			if (AnonymousChildren != null) {
+				foreach (ToplevelBlock child in AnonymousChildren) {
+					if (!child.DoCheckError136_InChildren (name, loc))
 						return false;
 				}
 			}
 
-			if (is_child)
-				return true;
+			if (children != null) {
+				foreach (Block child in children) {
+					if (!child.DoCheckError136_InChildren (name, loc))
+						return false;
+				}
+			}
 
-			for (ToplevelBlock c = Toplevel.Container; c != null; c = c.Container) {
+			return true;
+		}
+
+		public bool CheckError136 (string name, string scope, bool check_parents,
+					   bool check_children, Location loc)
+		{
+			if (!DoCheckError136 (name, scope, loc))
+				return false;
+
+			if (check_parents) {
+				if (!CheckError136_InParents (name, loc))
+					return false;
+			}
+
+			if (check_children) {
+				if (!CheckError136_InChildren (name, loc))
+					return false;
+			}
+
+			for (Block c = Toplevel.ContainerBlock; c != null; c = c.Toplevel.ContainerBlock) {
 				if (!c.DoCheckError136 (name, "parent or current", loc))
 					return false;
 			}
@@ -1654,15 +1711,12 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (!CheckError136 (name, null, false, l))
+			if (!CheckError136 (name, null, true, true, l))
 				return null;
 
 			vi = new LocalInfo (type, name, this, l);
-
 			Variables.Add (name, vi);
-
-			for (Block b = this; b != null; b = b.Parent)
-				b.AddKnownVariable (name, vi);
+			AddKnownVariable (name, vi);
 
 			if ((flags & Flags.VariablesInitialized) != 0)
 				throw new Exception ();
@@ -1800,6 +1854,18 @@ namespace Mono.CSharp {
 				ScopeInfo = new ScopeInfo (Toplevel.AnonymousMethodHost, this);
 
 			return ScopeInfo;
+		}
+
+		public ArrayList AnonymousChildren {
+			get { return anonymous_children; }
+		}
+
+		public void AddAnonymousChild (ToplevelBlock b)
+		{
+			if (anonymous_children == null)
+				anonymous_children = new ArrayList ();
+
+			anonymous_children.Add (b);
 		}
 
 		/// <summary>
@@ -2197,15 +2263,19 @@ namespace Mono.CSharp {
 		// Pointer to the host of this anonymous method, or null
 		// if we are the topmost block
 		//
+		Block container;
+		ToplevelBlock child;	
 		GenericMethod generic;
-		ToplevelBlock container, child;
 		FlowBranchingToplevel top_level_branching;
 		AnonymousMethodHost anonymous_method_host;
-		ArrayList anonymous_children;
 
 		public bool HasVarargs {
 			get { return (flags & Flags.HasVarargs) != 0; }
 			set { flags |= Flags.HasVarargs; }
+		}
+
+		public bool IsIterator {
+			get { return (flags & Flags.IsIterator) != 0; }
 		}
 
 		//
@@ -2214,10 +2284,6 @@ namespace Mono.CSharp {
 		Parameters parameters;
 		public Parameters Parameters {
 			get { return parameters; }
-		}
-
-		public ArrayList AnonymousChildren {
-			get { return anonymous_children; }
 		}
 
 		public bool CompleteContexts (EmitContext ec)
@@ -2250,6 +2316,10 @@ namespace Mono.CSharp {
 		}
 
 		public ToplevelBlock Container {
+			get { return container != null ? container.Toplevel : null; }
+		}
+
+		public Block ContainerBlock {
 			get { return container; }
 		}
 
@@ -2257,12 +2327,12 @@ namespace Mono.CSharp {
 		// Parent is only used by anonymous blocks to link back to their
 		// parents
 		//
-		public ToplevelBlock (ToplevelBlock container, Parameters parameters, Location start) :
+		public ToplevelBlock (Block container, Parameters parameters, Location start) :
 			this (container, (Flags) 0, parameters, start)
 		{
 		}
 
-		public ToplevelBlock (ToplevelBlock container, Parameters parameters, GenericMethod generic,
+		public ToplevelBlock (Block container, Parameters parameters, GenericMethod generic,
 				      Location start) :
 			this (container, parameters, start)
 		{
@@ -2279,38 +2349,27 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public ToplevelBlock (ToplevelBlock container, Flags flags, Parameters parameters, Location start) :
+		public ToplevelBlock (Block container, Flags flags, Parameters parameters, Location start) :
 			base (null, flags | Flags.IsToplevel, start, Location.Null)
 		{
 			this.parameters = parameters == null ? Parameters.EmptyReadOnlyParameters : parameters;
 			this.container = container;
-
-			if (container != null)
-				container.AddAnonymousChild (this);
 		}
 
 		public ToplevelBlock (Location loc) : this (null, (Flags) 0, null, loc)
 		{
 		}
 
-		void AddAnonymousChild (ToplevelBlock b)
-		{
-			if (anonymous_children == null)
-				anonymous_children = new ArrayList ();
-
-			anonymous_children.Add (b);
-		}
-
 		public bool CheckError158 (string name, Location loc)
 		{
-			if (anonymous_children != null) {
-				foreach (ToplevelBlock child in anonymous_children) {
+			if (AnonymousChildren != null) {
+				foreach (ToplevelBlock child in AnonymousChildren) {
 					if (!child.CheckError158 (name, loc))
 						return false;
 				}
 			}
 
-			for (ToplevelBlock c = container; c != null; c = c.container) {
+			for (ToplevelBlock c = Container; c != null; c = c.Container) {
 				if (!c.DoCheckError158 (name, loc))
 					return false;
 			}
@@ -2334,9 +2393,9 @@ namespace Mono.CSharp {
 			if (anonymous_method_host != null)
 				return anonymous_method_host;
 
-			if (container != null)
+			if (Container != null)
 				anonymous_method_host = new AnonymousMethodHost (
-					this, container.anonymous_method_host, null, StartLocation);
+					this, Container.anonymous_method_host, null, StartLocation);
 			else
 				anonymous_method_host = new AnonymousMethodHost (
 					this, host, generic, StartLocation);
@@ -2360,8 +2419,8 @@ namespace Mono.CSharp {
 			get {
 				if (anonymous_method_host != null)
 					return anonymous_method_host;
-				else if (container != null)
-					return container.AnonymousMethodHost;
+				else if (Container != null)
+					return Container.AnonymousMethodHost;
 				else
 					return null;
 			}
@@ -2405,8 +2464,10 @@ namespace Mono.CSharp {
 			Parent = new_parent;
 			new_parent.child = this;
 
+#if FIXME
 			if (container != null)
 				container.AddAnonymousChild (this);
+#endif
 		}
 
 		//
@@ -2494,6 +2555,13 @@ namespace Mono.CSharp {
 			if (ip != null)
 				parameters = ip;
 
+			if (!IsIterator && (container != null) && (parameters != null)) {
+				foreach (Parameter p in parameters.FixedParameters) {
+					if (!CheckError136_InParents (p.Name, loc))
+						return false;
+				}
+			}
+
 			ResolveMeta (this, ec, ip);
 
 			if (child != null)
@@ -2512,7 +2580,7 @@ namespace Mono.CSharp {
 
 		public void MakeIterator (Iterator iterator)
 		{
-			Report.Debug (64, "TOPLEVEL MAKE ITERATOR", this, statements);
+			flags |= Flags.IsIterator;
 
 			Block block = new Block (this);
 			foreach (Statement stmt in statements)

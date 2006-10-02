@@ -1,3 +1,11 @@
+2006-10-02  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs: Fix the CS0136 check.
+
+	* anonymous.cs: The container of an anonymous method is now a
+	`Block' and not a `ToplevelBlock' anymore.  This became neccessary
+	to implement the CS0136 check correctly.
+
 2006-09-28  Marek Safar  <marek.safar@seznam.cz>
 
 	* namespace.cs (Namespace.Error_NamespaceDoesNotExist): Better error

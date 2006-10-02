@@ -849,7 +849,7 @@ namespace Mono.CSharp {
 
 	public interface IAnonymousContainer
 	{
-		ToplevelBlock Container {
+		Block Container {
 			get;
 		}
 
@@ -888,10 +888,10 @@ namespace Mono.CSharp {
 		public ToplevelBlock Block;
 		protected AnonymousMethod anonymous;
 
-		protected readonly ToplevelBlock container;
+		protected readonly Block container;
 		protected readonly GenericMethod generic;
 
-		public ToplevelBlock Container {
+		public Block Container {
 			get { return container; }
 		}
 
@@ -909,7 +909,7 @@ namespace Mono.CSharp {
 
 		public AnonymousMethodExpression (AnonymousMethodExpression parent,
 						  GenericMethod generic, TypeContainer host,
-						  Parameters parameters, ToplevelBlock container,
+						  Parameters parameters, Block container,
 						  Location loc)
 		{
 			this.Parent = parent;
@@ -929,6 +929,8 @@ namespace Mono.CSharp {
 		ArrayList children;
 		AnonymousMethodHost root_scope;
 
+		static int next_index;
+
 		void IAnonymousHost.SetYields ()
 		{
 			throw new InvalidOperationException ();
@@ -947,7 +949,7 @@ namespace Mono.CSharp {
 				      this, Host, container, loc);
 
 			if (container != null)
-				root_scope = container.CreateAnonymousMethodHost (Host);
+				root_scope = container.Toplevel.CreateAnonymousMethodHost (Host);
 
 			if (children != null) {
 				foreach (AnonymousMethodExpression child in children) {
@@ -1035,8 +1037,8 @@ namespace Mono.CSharp {
 								
 				for (int i = 0; i < invoke_pd.Count; i++){
 					fixedpars [i] = new Parameter (
-						invoke_pd.ParameterType (i),
-						"+" + i, invoke_pd.ParameterModifier (i), null, loc);
+						invoke_pd.ParameterType (i), "+" + (++next_index),
+						invoke_pd.ParameterModifier (i), null, loc);
 				}
 								
 				parameters = new Parameters (fixedpars);
@@ -1160,7 +1162,7 @@ namespace Mono.CSharp {
 
 		// The emit context for the anonymous method
 		protected bool unreachable;
-		protected readonly ToplevelBlock container;
+		protected readonly Block container;
 		protected readonly GenericMethod generic;
 
 		//
@@ -1170,7 +1172,7 @@ namespace Mono.CSharp {
 
 		protected AnonymousContainer (AnonymousContainer parent, TypeContainer host,
 					      GenericMethod generic, Parameters parameters,
-					      ToplevelBlock container, ToplevelBlock block,
+					      Block container, ToplevelBlock block,
 					      Type return_type, int mod, Location loc)
 		{
 			this.ContainerAnonymousMethod = parent;
@@ -1230,7 +1232,7 @@ namespace Mono.CSharp {
 
 		protected abstract Method DoCreateMethodHost (EmitContext ec);
 
-		public ToplevelBlock Container {
+		public Block Container {
 			get { return container; }
 		}
 
@@ -1287,7 +1289,7 @@ namespace Mono.CSharp {
 
 		public AnonymousMethod (AnonymousMethod parent, AnonymousMethodHost root_scope,
 					TypeContainer host, GenericMethod generic,
-					Parameters parameters, ToplevelBlock container,
+					Parameters parameters, Block container,
 					ToplevelBlock block, Type return_type, Type delegate_type,
 					Location loc)
 			: base (parent, host, generic, parameters, container, block,

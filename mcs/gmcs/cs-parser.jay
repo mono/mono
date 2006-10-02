@@ -72,7 +72,9 @@ namespace Mono.CSharp
 		///   Used to determine if we are parsing the get/set pair
 		///   of an indexer or a property
 		/// </summmary>
-		bool  parsing_indexer;
+		bool parsing_indexer;
+
+		bool parsing_anonymous_method;
 
 		///
 		/// An out-of-band stack.
@@ -3387,18 +3389,20 @@ anonymous_method_expression
 		// Force the next block to be created as a ToplevelBlock
 		oob_stack.Push (current_block);
 		oob_stack.Push (top_current_block);
-		current_block = null;
 
 		Location loc = (Location) $1;
 		current_anonymous_method = new AnonymousMethodExpression (
 			current_anonymous_method, current_generic_method, current_container,
 			(Parameters) $2, (ToplevelBlock) top_current_block, loc);
+
+		parsing_anonymous_method = true;
 	  }
 	  block
 	  {
 		Location loc = (Location) $1;
 		top_current_block = (Block) oob_stack.Pop ();
 		current_block = (Block) oob_stack.Pop ();
+
 		if (RootContext.Version == LanguageVersion.ISO_1){
 			Report.FeatureIsNotStandardized (loc, "anonymous methods");
 			$$ = null;
@@ -3406,9 +3410,6 @@ anonymous_method_expression
 			ToplevelBlock anon_block = (ToplevelBlock) $4;
 
 			anon_block.Parent = current_block;
-
-			Report.Debug (64, "PARSER", anon_block, current_anonymous_method, anonymous_host,
-				      loc);
 
 			current_anonymous_method.Block = anon_block;
 			if ((anonymous_host != null) && (current_anonymous_method.Parent == null))
@@ -4003,9 +4004,18 @@ type_parameter_constraint
 block
 	: OPEN_BRACE 
 	  {
-		if (current_block == null){
-			current_block = new ToplevelBlock ((ToplevelBlock) top_current_block, current_local_parameters,
-							   current_generic_method, (Location) $1);
+		if (parsing_anonymous_method) {
+			top_current_block = new ToplevelBlock (
+				current_block, current_local_parameters, current_generic_method,
+				(Location) $1);
+			if (current_block != null)
+				current_block.AddAnonymousChild ((ToplevelBlock) top_current_block);
+			current_block = top_current_block;
+			parsing_anonymous_method = false;
+		} else if (current_block == null) {
+			current_block = new ToplevelBlock (
+				(ToplevelBlock) top_current_block, current_local_parameters,
+				current_generic_method, (Location) $1);
 			top_current_block = current_block;
 		} else {
 			current_block = new Block (current_block, (Location) $1, Location.Null);

@@ -140,7 +140,7 @@ namespace Mono.CSharp {
 		TypeExpr generic_enumerable_type;
 
 		public IteratorHost (Iterator iterator)
-			: base (iterator.Container, iterator.Host, iterator.GenericMethod,
+			: base (iterator.Container.Toplevel, iterator.Host, iterator.GenericMethod,
 				iterator.Location)
 		{
 			this.Iterator = iterator;
@@ -383,7 +383,7 @@ namespace Mono.CSharp {
 
 				host.AddMethod (this);
 
-				Block = new ToplevelBlock (host.Iterator.Container, null, Location);
+				Block = new ToplevelBlock (host.Iterator.Container.Toplevel, null, Location);
 				Block.AddStatement (new GetEnumeratorStatement (host, Type));
 			}
 
@@ -810,9 +810,9 @@ namespace Mono.CSharp {
 			IteratorHost = new IteratorHost (this);
 			Block.CreateIteratorHost (IteratorHost);
 
-			OriginalBlock.ReParent (Container);
+			OriginalBlock.ReParent (Container.Toplevel);
 
-			m_container.Block = Container;
+			m_container.Block = Container.Toplevel;
 
 			OriginalBlock.MakeIterator (this);
 		}
