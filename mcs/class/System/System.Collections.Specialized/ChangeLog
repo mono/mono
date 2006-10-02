@@ -1,3 +1,10 @@
+2006-10-02  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CollectionsUtil.cs: Set eol-style to CRLF.
+	* StringDictionary.cs: Fixed line endings. Set eol-style to CRLF.
+	* StringEnumerator.cs: Set eol-style to CRLF.
+	* OrderDictionary.cs: Set eol-style to CRLF.
+
 2006-09-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OrderedDictionary.cs: IsReadOnly, indexers, Keys and Values should
