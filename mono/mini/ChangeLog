@@ -1,5 +1,10 @@
 2006-10-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (mono_aot_get_class_from_name): Avoid a memory allocation.
+
+	* aot-compiler.c: Add a new option 'metadata-only' to only emit the cached
+	metadata without any code.
+
 	* mini-exceptions.c (mono_handle_native_sigsegv): Add some code to print out
 	more precise debugging information using gdb.
 
