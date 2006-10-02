@@ -1,3 +1,7 @@
+2006-10-02	Leszek Ciesielski <skolima@gmail.com>
+
+	* README.tests : added information about net_2_0 profile.
+
 2006-09-26	Boris Kirzner <borisk@mainsoft.com>
 
 	* run-tests.test.bat: log files naming fix.
