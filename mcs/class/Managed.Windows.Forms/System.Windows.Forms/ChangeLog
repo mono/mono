@@ -1,3 +1,8 @@
+2006-10-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ButtonBase.cs: Fix CreateAccessibilityInstance to return an instance
+	of ButtonBaseAccessibleObject. Fix bug #79552.
+
 2006-10-02  Jackson Harper  <jackson@ximian.com>
 
 	* MdiWindowManager.cs: When maximizing use the containers client

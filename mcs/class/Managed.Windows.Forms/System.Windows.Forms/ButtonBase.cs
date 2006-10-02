@@ -57,8 +57,14 @@ namespace System.Windows.Forms {
 			#endregion	// ButtonBaseAccessibleObject Local Variables
 
 			#region ButtonBaseAccessibleObject Constructors
-			public ButtonBaseAccessibleObject(Control owner) : base(owner) {
+			public ButtonBaseAccessibleObject (Control owner)
+				: base (owner)
+			{
+				if (owner == null)
+					throw new ArgumentNullException ("owner");
 				this.owner = owner;
+				default_action = "Press";
+				role = AccessibleRole.PushButton;
 			}
 			#endregion	// ButtonBaseAccessibleObject Constructors
 
@@ -354,13 +360,9 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Methods
-		protected override AccessibleObject CreateAccessibilityInstance() {
-			AccessibleObject ao;
-			ao = base.CreateAccessibilityInstance();
-			ao.description = "Button";
-			ao.role = AccessibleRole.PushButton;
-
-			return ao;
+		protected override AccessibleObject CreateAccessibilityInstance ()
+		{
+			return new ButtonBaseAccessibleObject (this);
 		}
 
 		protected override void Dispose(bool Disposing) {
