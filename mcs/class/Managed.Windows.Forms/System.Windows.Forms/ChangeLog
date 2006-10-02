@@ -1,3 +1,12 @@
+﻿2006-10-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStrip.cs, ToolStripButton.cs, ToolStripItem.cs,
+	  ToolStripItemCollection.cs, ToolStripLabel.cs,
+	  ToolStripProfessionalRenderer.cs, ToolStripRenderer.cs,
+	  ToolStripSeparator.cs, ToolStripSplitStackLayout.cs:
+	  Initial implementation.
+	* TextRenderer.cs: Provide padding to MeasureText.
+
 2006-10-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ButtonBase.cs: Fix CreateAccessibilityInstance to return an instance

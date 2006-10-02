@@ -1,4 +1,7 @@
-﻿2006-09-18  Jonathan Pobst <monkey@jpobst.com>
+﻿2006-10-02  Jonathan Pobst  <monkey@jpobst.com>
+	* System.Windows.Forms.dll.sources: Add ToolStrip* classes.
+
+2006-09-18  Jonathan Pobst <monkey@jpobst.com>
 	* System.Windows.Forms.dll.sources: Add ToolStrip EventArgs/Handlers,
 	  add a few ToolStrip stub classes.
 

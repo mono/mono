@@ -28,7 +28,6 @@
 
 #if NET_2_0
 using System;
-using System.Text;
 using System.Drawing;
 using System.ComponentModel;
 
@@ -36,7 +35,6 @@ namespace System.Windows.Forms
 {
 	public class ToolStripButton : ToolStripItem
 	{
-		private bool auto_tool_tip;
 		private CheckState checked_state;
 		private bool check_on_click;
 
@@ -44,40 +42,140 @@ namespace System.Windows.Forms
 		public ToolStripButton ()
 			: this (String.Empty, null, null, String.Empty)
 		{
-
 		}
 
 		public ToolStripButton (Image image)
 			: this (String.Empty, image, null, String.Empty)
 		{
-
 		}
 
 		public ToolStripButton (string text)
 			: this (text, null, null, String.Empty)
 		{
-
 		}
 
 		public ToolStripButton (string text, Image image)
 			: this (text, image, null, String.Empty)
 		{
-
 		}
 
 		public ToolStripButton (string text, Image image, EventHandler onClick)
 			: this (text, image, onClick, String.Empty)
 		{
-
 		}
 
 		public ToolStripButton (string text, Image image, EventHandler onClick, string name)
 			: base (text, image, onClick, name)
 		{
-			this.is_selected = false;
 			this.checked_state = CheckState.Unchecked;
-			this.auto_tool_tip = true;
-			this.check_on_click = false;
+			this.ToolTipText = String.Empty;
+		}
+		#endregion
+
+		#region Public Properties
+		[MonoTODO ("Need 2.0 ToolTip to implement tool tips.")]
+		public bool AutoToolTip {
+			get { return base.AutoToolTip; }
+			set { base.AutoToolTip = value; }
+		}
+
+		public override bool CanSelect {
+			get { return true; }
+		}
+
+		public bool Checked {
+			get {
+				switch (this.checked_state) {
+					case CheckState.Unchecked:
+					default:
+						return false;
+					case CheckState.Checked:
+					case CheckState.Indeterminate:
+						return true;
+				}
+			}
+			set {
+				if (this.checked_state != (value ? CheckState.Checked : CheckState.Unchecked)) {
+					this.checked_state = value ? CheckState.Checked : CheckState.Unchecked;
+					this.OnCheckedChanged (EventArgs.Empty);
+					this.Invalidate ();
+				}
+			}
+		}
+
+		public bool CheckOnClick {
+			get { return this.check_on_click; }
+			set { this.check_on_click = value; }
+		}
+
+		public CheckState CheckState {
+			get { return this.checked_state; }
+			set {
+				if (!Enum.IsDefined (typeof (CheckState), value))
+					throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for CheckState", value));
+
+				this.checked_state = value;
+				OnCheckStateChanged (EventArgs.Empty);
+				this.Invalidate ();
+			}
+		}
+		#endregion
+
+		#region Protected Properties
+		protected override bool DefaultAutoToolTip { get { return true; } }
+		protected internal override Padding DefaultMargin { get { return new Padding (0, 1, 0, 2); } }
+		#endregion
+
+		#region Public Methods
+		public override Size GetPreferredSize (Size constrainingSize)
+		{
+			return base.GetPreferredSize (constrainingSize);
+		}
+		#endregion
+
+		#region Protected Methods
+		// TODO: CreateAccessibilityInstance
+
+		protected virtual void OnCheckedChanged (EventArgs e)
+		{
+			if (CheckedChanged != null) CheckedChanged (this, e);
+		}
+
+		protected virtual void OnCheckStateChanged (EventArgs e)
+		{
+			if (CheckStateChanged != null) CheckStateChanged (this, e);
+		}
+
+		protected override void OnClick (EventArgs e)
+		{
+			base.OnClick (e);
+
+			if (this.check_on_click)
+				this.Checked = !this.Checked;
+		}
+
+		protected override void OnPaint (System.Windows.Forms.PaintEventArgs e)
+		{
+			base.OnPaint (e);
+
+			if (this.Owner != null) {
+				Color font_color = this.Enabled ? this.ForeColor : SystemColors.GrayText;
+				Image draw_image = this.Enabled ? this.Image : ToolStripRenderer.CreateDisabledImage (this.Image);
+
+				this.Owner.Renderer.DrawButtonBackground (new System.Windows.Forms.ToolStripItemRenderEventArgs (e.Graphics, this));
+
+				Rectangle text_layout_rect;
+				Rectangle image_layout_rect;
+
+				this.CalculateTextAndImageRectangles (out text_layout_rect, out image_layout_rect);
+
+				if (text_layout_rect != Rectangle.Empty)
+					this.Owner.Renderer.DrawItemText (new System.Windows.Forms.ToolStripItemTextRenderEventArgs (e.Graphics, this, this.Text, text_layout_rect, font_color, this.Font, this.TextAlign));
+				if (image_layout_rect != Rectangle.Empty)
+					this.Owner.Renderer.DrawItemImage (new System.Windows.Forms.ToolStripItemImageRenderEventArgs (e.Graphics, this, draw_image, image_layout_rect));
+
+				return;
+			}
 		}
 		#endregion
 

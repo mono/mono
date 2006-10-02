@@ -41,12 +41,14 @@ namespace System.Windows.Forms
 		public static void DrawText (IDeviceContext dc, string text, Font font, Rectangle bounds, Color foreColor, TextFormatFlags flags)
 		{
 			if (Environment.OSVersion.Platform == PlatformID.Win32NT || Environment.OSVersion.Platform == PlatformID.Win32Windows) {
+				Rectangle new_bounds = bounds;
+				new_bounds.Offset ((int)(dc as Graphics).Transform.OffsetX + 0, (int)(dc as Graphics).Transform.OffsetY + 0);
 				IntPtr hdc = dc.GetHdc ();
 
 				SetTextColor (hdc, ColorTranslator.ToWin32 (foreColor));
 				SetBkMode (hdc, 1);	//1-Transparent, 2-Opaque
 
-				VisualStyles.UXTheme.RECT r = VisualStyles.UXTheme.RECT.FromRectangle (bounds);
+				VisualStyles.UXTheme.RECT r = VisualStyles.UXTheme.RECT.FromRectangle (new_bounds);
 
 				if (font != null)
 					SelectObject (hdc, font.ToHfont ());
@@ -131,13 +133,18 @@ namespace System.Windows.Forms
 				
 				g.ReleaseHdc();
 				
-				return text_size.ToSize();
+				Size retval = text_size.ToSize();
+				//retval.Height += 4;
+				if (retval.Width > 0) retval.Width += 6;
+				return retval;
 			}
 			else {
-			Bitmap b = new Bitmap (5, 5);
-			Graphics g = Graphics.FromImage (b);
+				Bitmap b = new Bitmap (5, 5);
+				Graphics g = Graphics.FromImage (b);
 
-			return g.MeasureString(text,font).ToSize();			
+				Size retval = g.MeasureString(text,font).ToSize();
+				if (retval.Width > 0) retval.Width += 6;
+				return retval;	
 			}
 		}
 		#endregion
