@@ -90,10 +90,10 @@ namespace System.Resources
 
 		void InitWriter ()
 		{
-			if (filename != null) {
+			if (filename != null)
 				stream = File.OpenWrite (filename);
+			if (textwriter == null)
 				textwriter = new StreamWriter (stream, Encoding.UTF8);
-			}
 
 			writer = new XmlTextWriter (textwriter);
 			writer.Formatting = Formatting.Indented;

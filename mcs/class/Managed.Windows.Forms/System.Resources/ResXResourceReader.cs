@@ -211,7 +211,7 @@ namespace System.Resources
 						object v = null;
 						string val = get_value (reader, "value");
 
-						if (mt != null && tt != null) {
+						if ((mt != null) && (mt.Length > 0) && (tt != null)) {
 							TypeConverter c = TypeDescriptor.GetConverter (tt);
 							v = c.ConvertFrom (Convert.FromBase64String (val));
 						} else if (tt != null) {
@@ -222,7 +222,7 @@ namespace System.Resources
 								TypeConverter c = TypeDescriptor.GetConverter (tt);
 								v = c.ConvertFromInvariantString (val);
 							}
-						} else if (mt != null) {
+						} else if ((mt != null) && (mt.Length > 0)) {
 							byte [] data = Convert.FromBase64String (val);
 							BinaryFormatter f = new BinaryFormatter ();
 							using (MemoryStream s = new MemoryStream (data)) {

@@ -1,3 +1,10 @@
+2006-10-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ResXResourceReader.cs: Handle empty mimetype just like a null 
+	mimetype. Fix bug #77481.
+	* ResXResourceWriter.cs: Fix to InitWriter method by Atsushi. Fix
+	bug #79039.
+
 2006-03-29  Mike Kestner  <mkestner@novell.com>
 
 	* ResXResourceWriter.cs: Make Dispose() virtual.
