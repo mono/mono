@@ -1,5 +1,9 @@
 2006-10-02  Martin Baulig  <martin@ximian.com>
 
+	* anonymous.cs: Add CS1688 check.
+
+2006-10-02  Martin Baulig  <martin@ximian.com>
+
 	* statement.cs: Fix the CS0136 check.
 
 	* anonymous.cs: The container of an anonymous method is now a
