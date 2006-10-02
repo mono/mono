@@ -38,6 +38,7 @@ using System.Runtime.InteropServices;
 namespace System.Collections.Generic
 {
 	[ComVisible (false)]
+	[Serializable]
 	public class Stack <T> : IEnumerable <T>, ICollection, IEnumerable {
 		
 		T [] data;
@@ -187,6 +188,7 @@ namespace System.Collections.Generic
 			return GetEnumerator ();
 		}
 		
+		[Serializable]
 		public struct Enumerator : IEnumerator <T>, IEnumerator, IDisposable {
 			const int NOT_STARTED = -2;
 			

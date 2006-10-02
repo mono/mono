@@ -150,14 +150,14 @@ namespace System.Collections.Specialized
 			}
 		}
 		
-		public virtual bool IsReadOnly
+		public bool IsReadOnly
 		{
 			get {
 				return readOnly;
 			}
 		}
 		
-		public virtual object this [object key]
+		public object this [object key]
 		{
 			get { return hash [key]; }
 			set {
@@ -172,7 +172,7 @@ namespace System.Collections.Specialized
 			}
 		}
 		
-		public virtual object this [int index]
+		public object this [int index]
 		{
 			get { return ((DictionaryEntry) list [index]).Value; }
 			set {
@@ -185,14 +185,14 @@ namespace System.Collections.Specialized
 			}
 		}
 		
-		public virtual ICollection Keys
+		public ICollection Keys
 		{
 			get {
 				return new OrderedCollection (list, true);
 			}
 		}
 		
-		public virtual ICollection Values
+		public ICollection Values
 		{
 			get {
 				return new OrderedCollection (list, false);

@@ -245,6 +245,7 @@ namespace System.Collections.Generic
 			return GetEnumerator ();
 		}
 		
+		[Serializable]
 		public struct Enumerator : IEnumerator <T>, IEnumerator, IDisposable {
 			const int NOT_STARTED = -2;
 			

@@ -38,8 +38,8 @@ using System.Collections;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
-namespace System.Collections.Generic {
-
+namespace System.Collections.Generic
+{
 	/// <summary>
 	///  Represents a collection of associated keys and values
 	///  that are sorted by the keys and are accessible by key
@@ -114,7 +114,7 @@ namespace System.Collections.Generic {
 
 		// ICollection
 
-		public virtual int Count {
+		public int Count {
 			get {
 				return inUse;
 			}
@@ -146,7 +146,7 @@ namespace System.Collections.Generic {
 			}
 		}
 
-		public virtual TValue this [TKey key] {
+		public TValue this [TKey key] {
 			get {
 				if (key == null)
 					throw new ArgumentNullException("key");
@@ -268,17 +268,7 @@ namespace System.Collections.Generic {
 		// Public instance methods.
 		//
 
-		// IDictionary<TKey, TValue>
-
-		void IDictionary<TKey,TValue>.Add (TKey key, TValue value)
-		{
-			if (key == null)
-				throw new ArgumentNullException ("key");
-
-			PutImpl (key, value, false);
-		}
-		
-		public virtual void Add (TKey key, TValue value)
+		public void Add (TKey key, TValue value)
 		{
 			if (key == null)
 				throw new ArgumentNullException ("key");
@@ -303,21 +293,7 @@ namespace System.Collections.Generic {
 			}
 		}
 
-		bool IDictionary<TKey,TValue>.Remove (TKey key)
-		{
-			if (key == null)
-				throw new ArgumentNullException ("key");
-
-			int i = IndexOfKey (key);
-			if (i >= 0) {
-				RemoveAt (i);
-				return true;
-			}
-			else
-				return false;
-		}
-
-		public virtual bool Remove (TKey key)
+		public bool Remove (TKey key)
 		{
 			if (key == null)
 				throw new ArgumentNullException ("key");
@@ -341,7 +317,7 @@ namespace System.Collections.Generic {
 			modificationCount++;
 		}
 
-		public virtual void Clear () 
+		public void Clear () 
 		{
 			defaultCapacity = INITIAL_SIZE;
 			this.table = new KeyValuePair<TKey, TValue> [defaultCapacity];
