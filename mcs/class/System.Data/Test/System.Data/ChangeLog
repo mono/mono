@@ -1,3 +1,9 @@
+2006-10-03	Hagit Yidov <hagity@mainsoft.com>
+
+	* DataRowCollectionTest.cs : added tests for IndexOf().
+	* DataSetTest.cs : added tests for CreateDataReader().
+	* DataTableTest.cs : added tests for CreateDataReader() and for Load().
+
 2006-09-18	Boris Kirzner <borisk@mainsoft.com>
 
 	* DataViewTest.cs : fix compilation error.

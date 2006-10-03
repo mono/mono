@@ -54,11 +54,17 @@ namespace MonoTests.System.Data
 		CultureInfo currentCultureBackup;
 
 		[SetUp]
-                public void GetReady()
-                {
+		public void Setup () {
 			currentCultureBackup = Thread.CurrentThread.CurrentCulture;
 			Thread.CurrentThread.CurrentCulture = new CultureInfo ("fi-FI");
-                }
+		}
+
+		//[SetUp]
+		//public void GetReady()
+		//{
+		//        currentCultureBackup = Thread.CurrentThread.CurrentCulture;
+		//        Thread.CurrentThread.CurrentCulture = new CultureInfo ("fi-FI");
+		//}
 
 		[TearDown]
 		public void Teardown ()
@@ -167,9 +173,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-#if NET_2_0
-		[Category("NotWorking")]
-#endif
 		public void OwnWriteXmlSchema ()
 		{
 			DataSet ds = new DataSet ("test_dataset");
@@ -543,9 +546,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
 		public void WriteXmlSchema ()
 		{
 			DataSet ds = new DataSet ();			
@@ -1038,9 +1038,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
 		public void SerializeDataSet ()
 		{
 			// see GetReady() for current culture
@@ -1486,9 +1483,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test] // bug #60469
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
 		public void WriteXmlSchema2 ()
 		{
 			string xml = @"<myDataSet xmlns='NetFrameWork'><myTable><id>0</id><item>item 0</item></myTable><myTable><id>1</id><item>item 1</item></myTable><myTable><id>2</id><item>item 2</item></myTable><myTable><id>3</id><item>item 3</item></myTable><myTable><id>4</id><item>item 4</item></myTable><myTable><id>5</id><item>item 5</item></myTable><myTable><id>6</id><item>item 6</item></myTable><myTable><id>7</id><item>item 7</item></myTable><myTable><id>8</id><item>item 8</item></myTable><myTable><id>9</id><item>item 9</item></myTable></myDataSet>";
@@ -1547,9 +1541,6 @@ namespace MonoTests.System.Data
 
 		// bug #66366
 		[Test]
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
 		public void WriteXmlSchema3 ()
 		{
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -1593,9 +1584,6 @@ namespace MonoTests.System.Data
 
 		// bug #67792.
 		[Test]
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
 		public void WriteXmlSchema4 ()
 		{
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -1638,9 +1626,6 @@ namespace MonoTests.System.Data
 
 		// bug # 68432
 		[Test]
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
 		public void WriteXmlSchema5 ()
 		{
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -1749,9 +1734,6 @@ namespace MonoTests.System.Data
 
 		// bug #67793
 		[Test]
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
 		public void WriteXmlSchema6 ()
 		{
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -1810,9 +1792,6 @@ namespace MonoTests.System.Data
 
 		// bug #61233
 		[Test]
-#if NET_2_0
-			[Category ("NotWorking")]
-#endif
 		public void WriteXmlExtendedProperties ()
 		{
 			string xml = @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -1847,9 +1826,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
 		public void WriteXmlModeSchema ()
 		{
 			// This is the MS output of WriteXmlSchema().
@@ -2189,8 +2165,122 @@ namespace MonoTests.System.Data
 				writer.GetStringBuilder ().ToString ()));
 		}
 
-        }
+#if NET_2_0
+		#region DataSet.CreateDataReader Tests
 
+		private DataSet ds;
+		private DataTable dt1, dt2;
+
+		private void localSetup () {
+			ds = new DataSet ("test");
+			dt1 = new DataTable ("test1");
+			dt1.Columns.Add ("id1", typeof (int));
+			dt1.Columns.Add ("name1", typeof (string));
+			dt1.PrimaryKey = new DataColumn[] { dt1.Columns["id"] };
+			dt1.Rows.Add (new object[] { 1, "mono 1" });
+			dt1.Rows.Add (new object[] { 2, "mono 2" });
+			dt1.Rows.Add (new object[] { 3, "mono 3" });
+			dt1.AcceptChanges ();
+			dt2 = new DataTable ("test2");
+			dt2.Columns.Add ("id2", typeof (int));
+			dt2.Columns.Add ("name2", typeof (string));
+			dt2.Columns.Add ("name3", typeof (string));
+			dt2.PrimaryKey = new DataColumn[] { dt2.Columns["id"] };
+			dt2.Rows.Add (new object[] { 4, "mono 4", "four" });
+			dt2.Rows.Add (new object[] { 5, "mono 5", "five" });
+			dt2.Rows.Add (new object[] { 6, "mono 6", "six" });
+			dt2.AcceptChanges ();
+			ds.Tables.Add (dt1);
+			ds.Tables.Add (dt2);
+			ds.AcceptChanges ();
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CreateDataReader1 () {
+			// For First CreateDataReader Overload
+			localSetup ();
+			DataTableReader dtr = ds.CreateDataReader ();
+			Assert ("HasRows", dtr.HasRows);
+			int ti = 0;
+			do {
+				AssertEquals ("CountCols-" + ti,
+					ds.Tables[ti].Columns.Count,
+					dtr.FieldCount);
+				int ri = 0;
+				while (dtr.Read ()) {
+					for (int i = 0; i < dtr.FieldCount; i++) {
+						AssertEquals ("RowData-"+ti+"-"+ri+"-"+i,
+							ds.Tables[ti].Rows[ri][i],
+							dtr[i]);
+					}
+					ri++;
+				}
+				ti++;
+			} while (dtr.NextResult ());
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		// CreateDataReader doesn't have a second overload in System.Data
+		// and is commented-out below
+		public void CreateDataReader2 () {
+			// For Second CreateDataReader Overload -
+			// compare to ds.Tables
+			localSetup ();
+			//DataTableReader dtr = ds.CreateDataReader (dt1, dt2);
+			//Assert ("HasRows", dtr.HasRows);
+			//int ti = 0;
+			//do {
+			//        AssertEquals ("CountCols-" + ti,
+			//                ds.Tables[ti].Columns.Count,
+			//                dtr.FieldCount);
+			//        int ri = 0;
+			//        while (dtr.Read ()) {
+			//                for (int i = 0; i < dtr.FieldCount; i++) {
+			//                        AssertEquals ("RowData-" + ti + "-" + ri + "-" + i,
+			//                                ds.Tables[ti].Rows[ri][i],
+			//                                dtr[i]);
+			//                }
+			//                ri++;
+			//        }
+			//        ti++;
+			//} while (dtr.NextResult ());
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		// CreateDataReader doesn't have a second overload in System.Data
+		// and is commented-out below
+		public void CreateDataReader3 () {
+			// For Second CreateDataReader Overload -
+			// compare to dt1 and dt2
+			localSetup ();
+			ds.Tables.Clear ();
+			//DataTableReader dtr = ds.CreateDataReader (dt1, dt2);
+			//Assert ("HasRows", dtr.HasRows);
+			//DataTable dtn = dt1;
+			//do {
+			//        AssertEquals ("CountCols-",
+			//                dtn.Columns.Count,
+			//                dtr.FieldCount);
+			//        int ri = 0;
+			//        while (dtr.Read ()) {
+			//                for (int i = 0; i < dtr.FieldCount; i++) {
+			//                        AssertEquals ("RowData-" + ri + "-" + i,
+			//                                dtn.Rows[ri][i],
+			//                                dtr[i]);
+			//                }
+			//                ri++;
+			//        }
+			//        dtn = dt2;
+			//} while (dtr.NextResult ());
+		}
+
+		#endregion // DataSet.CreateDataReader Tests
+#endif
+
+	}
 
 	 public  class MyDataSet:DataSet {
 

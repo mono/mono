@@ -45,6 +45,7 @@ namespace MonoTests.System.Data
 	[TestFixture]
 	public class DataTableTest : Assertion
 	{
+
 		[Test]
 		public void Ctor()
 		{
@@ -1539,10 +1540,299 @@ namespace MonoTests.System.Data
                 public void OnRowChanged (object src, DataRowChangeEventArgs args)
                 {
                         rowActionChanged = args.Action;
-                }
-                
-                                                                                                    
-        }
+		}
+
+
+#if NET_2_0
+		#region DataTable.CreateDataReader Tests and DataTable.Load Tests
+
+		private DataTable dt;
+
+		private void localSetup () {
+			dt = new DataTable ("test");
+			dt.Columns.Add ("id", typeof (int));
+			dt.Columns.Add ("name", typeof (string));
+			dt.PrimaryKey = new DataColumn[] { dt.Columns["id"] };
+
+			dt.Rows.Add (new object[] { 1, "mono 1" });
+			dt.Rows.Add (new object[] { 2, "mono 2" });
+			dt.Rows.Add (new object[] { 3, "mono 3" });
+
+			dt.AcceptChanges ();
+		}
+
+		[Test]
+		public void CreateDataReader1 () {
+			localSetup ();
+			DataTableReader dtr = dt.CreateDataReader ();
+			Assert ("HasRows", dtr.HasRows);
+			AssertEquals ("CountCols", dt.Columns.Count, dtr.FieldCount);
+			int ri = 0;
+			while (dtr.Read ()) {
+				for (int i = 0; i < dtr.FieldCount; i++) {
+					AssertEquals ("RowData-" + ri + "-" + i, dt.Rows[ri][i],
+						dtr[i]);
+				}
+				ri++;
+			}
+		}
+
+		[Test]
+		public void CreateDataReader2 () {
+			localSetup ();
+			DataTableReader dtr = dt.CreateDataReader ();
+			Assert ("HasRows", dtr.HasRows);
+			AssertEquals ("CountCols", dt.Columns.Count, dtr.FieldCount);
+			dtr.Read ();
+			AssertEquals ("RowData0-0", 1, dtr[0]);
+			AssertEquals ("RowData0-1", "mono 1", dtr[1]);
+			dtr.Read ();
+			AssertEquals ("RowData1-0", 2, dtr[0]);
+			AssertEquals ("RowData1-1", "mono 2", dtr[1]);
+			dtr.Read ();
+			AssertEquals ("RowData2-0", 3, dtr[0]);
+			AssertEquals ("RowData2-1", "mono 3", dtr[1]);
+		}
+
+		[Test]
+		public void Load_NoSchema () {
+			localSetup ();
+			DataTable dtLoad = new DataTable ("LoadNoSchema");
+			DataTableReader dtr = dt.CreateDataReader ();
+			dtLoad.Load (dtr);
+			TableAssert (dtLoad);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Load_Incompatible () {
+			localSetup ();
+			DataTable dtLoad = new DataTable ("LoadIncompatible");
+			dtLoad.Columns.Add ("name", typeof (double));
+			DataTableReader dtr = dt.CreateDataReader ();
+			dtLoad.Load (dtr);
+		}
+
+		[Test]
+		public void Load_ExtraColsEqualVal () {
+			localSetup ();
+			DataTable dtLoad = new DataTable ("LoadExtraCols");
+			dtLoad.Columns.Add ("id", typeof (int));
+			dtLoad.PrimaryKey = new DataColumn[] { dtLoad.Columns["id"] };
+			dtLoad.Rows.Add (new object[] { 1 });
+			dtLoad.Rows.Add (new object[] { 2 });
+			dtLoad.Rows.Add (new object[] { 3 });
+			dtLoad.AcceptChanges ();
+			DataTableReader dtr = dt.CreateDataReader ();
+			dtLoad.Load (dtr);
+			TableAssert (dtLoad);
+		}
+
+		[Test]
+		public void Load_ExtraColsNonEqualVal () {
+			localSetup ();
+			DataTable dtLoad = new DataTable ("LoadExtraCols");
+			dtLoad.Columns.Add ("id", typeof (int));
+			dtLoad.PrimaryKey = new DataColumn[] { dtLoad.Columns["id"] };
+			dtLoad.Rows.Add (new object[] { 4 });
+			dtLoad.Rows.Add (new object[] { 5 });
+			dtLoad.Rows.Add (new object[] { 6 });
+			dtLoad.AcceptChanges ();
+			DataTableReader dtr = dt.CreateDataReader ();
+			dtLoad.Load (dtr);
+			AssertEquals ("NColumns", 2, dtLoad.Columns.Count);
+			AssertEquals ("NRows", 6, dtLoad.Rows.Count);
+			AssertEquals ("RowData0-0", 4, dtLoad.Rows[0][0]);
+			AssertEquals ("RowData1-0", 5, dtLoad.Rows[1][0]);
+			AssertEquals ("RowData2-0", 6, dtLoad.Rows[2][0]);
+			AssertEquals ("RowData3-0", 1, dtLoad.Rows[3][0]);
+			AssertEquals ("RowData3-1", "mono 1", dtLoad.Rows[3][1]);
+			AssertEquals ("RowData4-0", 2, dtLoad.Rows[4][0]);
+			AssertEquals ("RowData4-1", "mono 2", dtLoad.Rows[4][1]);
+			AssertEquals ("RowData5-0", 3, dtLoad.Rows[5][0]);
+			AssertEquals ("RowData5-1", "mono 3", dtLoad.Rows[5][1]);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ConstraintException))]
+		public void Load_MissingColsNonNullable () {
+			localSetup ();
+			DataTable dtLoad = new DataTable ("LoadMissingCols");
+			dtLoad.Columns.Add ("id", typeof (int));
+			dtLoad.Columns.Add ("name", typeof (string));
+			dtLoad.Columns.Add ("missing", typeof (string));
+			dtLoad.Columns["missing"].AllowDBNull = false;
+			dtLoad.PrimaryKey = new DataColumn[] { dtLoad.Columns["id"] };
+			dtLoad.Rows.Add (new object[] { 4, "mono 4", "miss4" });
+			dtLoad.Rows.Add (new object[] { 5, "mono 5", "miss5" });
+			dtLoad.Rows.Add (new object[] { 6, "mono 6", "miss6" });
+			dtLoad.AcceptChanges ();
+			DataTableReader dtr = dt.CreateDataReader ();
+			dtLoad.Load (dtr);
+		}
+
+		[Test]
+		public void Load_MissingColsDefault () {
+			localSetup ();
+			DataTable dtLoad = new DataTable ("LoadMissingCols");
+			dtLoad.Columns.Add ("id", typeof (int));
+			dtLoad.Columns.Add ("name", typeof (string));
+			dtLoad.Columns.Add ("missing", typeof (string));
+			dtLoad.Columns["missing"].AllowDBNull = false;
+			dtLoad.Columns["missing"].DefaultValue = "DefaultValue";
+			dtLoad.PrimaryKey = new DataColumn[] { dtLoad.Columns["id"] };
+			dtLoad.Rows.Add (new object[] { 4, "mono 4", "miss4" });
+			dtLoad.Rows.Add (new object[] { 5, "mono 5", "miss5" });
+			dtLoad.Rows.Add (new object[] { 6, "mono 6", "miss6" });
+			dtLoad.AcceptChanges ();
+			DataTableReader dtr = dt.CreateDataReader ();
+			dtLoad.Load (dtr);
+			AssertEquals ("NColumns", 3, dtLoad.Columns.Count);
+			AssertEquals ("NRows", 6, dtLoad.Rows.Count);
+			AssertEquals ("RowData0-0", 4, dtLoad.Rows[0][0]);
+			AssertEquals ("RowData0-1", "mono 4", dtLoad.Rows[0][1]);
+			AssertEquals ("RowData0-2", "miss4", dtLoad.Rows[0][2]);
+			AssertEquals ("RowData1-0", 5, dtLoad.Rows[1][0]);
+			AssertEquals ("RowData1-1", "mono 5", dtLoad.Rows[1][1]);
+			AssertEquals ("RowData1-2", "miss5", dtLoad.Rows[1][2]);
+			AssertEquals ("RowData2-0", 6, dtLoad.Rows[2][0]);
+			AssertEquals ("RowData2-1", "mono 6", dtLoad.Rows[2][1]);
+			AssertEquals ("RowData2-2", "miss6", dtLoad.Rows[2][2]);
+			AssertEquals ("RowData3-0", 1, dtLoad.Rows[3][0]);
+			AssertEquals ("RowData3-1", "mono 1", dtLoad.Rows[3][1]);
+			AssertEquals ("RowData3-2", "DefaultValue", dtLoad.Rows[3][2]);
+			AssertEquals ("RowData4-0", 2, dtLoad.Rows[4][0]);
+			AssertEquals ("RowData4-1", "mono 2", dtLoad.Rows[4][1]);
+			AssertEquals ("RowData4-2", "DefaultValue", dtLoad.Rows[4][2]);
+			AssertEquals ("RowData5-0", 3, dtLoad.Rows[5][0]);
+			AssertEquals ("RowData5-1", "mono 3", dtLoad.Rows[5][1]);
+			AssertEquals ("RowData5-2", "DefaultValue", dtLoad.Rows[5][2]);
+		}
+
+		[Test]
+		public void Load_MissingColsNullable () {
+			localSetup ();
+			DataTable dtLoad = new DataTable ("LoadMissingCols");
+			dtLoad.Columns.Add ("id", typeof (int));
+			dtLoad.Columns.Add ("name", typeof (string));
+			dtLoad.Columns.Add ("missing", typeof (string));
+			dtLoad.Columns["missing"].AllowDBNull = true;
+			dtLoad.PrimaryKey = new DataColumn[] { dtLoad.Columns["id"] };
+			dtLoad.Rows.Add (new object[] { 4, "mono 4", "miss4" });
+			dtLoad.Rows.Add (new object[] { 5, "mono 5", "miss5" });
+			dtLoad.Rows.Add (new object[] { 6, "mono 6", "miss6" });
+			dtLoad.AcceptChanges ();
+			DataTableReader dtr = dt.CreateDataReader ();
+			dtLoad.Load (dtr);
+			AssertEquals ("NColumns", 3, dtLoad.Columns.Count);
+			AssertEquals ("NRows", 6, dtLoad.Rows.Count);
+			AssertEquals ("RowData0-0", 4, dtLoad.Rows[0][0]);
+			AssertEquals ("RowData0-1", "mono 4", dtLoad.Rows[0][1]);
+			AssertEquals ("RowData0-2", "miss4", dtLoad.Rows[0][2]);
+			AssertEquals ("RowData1-0", 5, dtLoad.Rows[1][0]);
+			AssertEquals ("RowData1-1", "mono 5", dtLoad.Rows[1][1]);
+			AssertEquals ("RowData1-2", "miss5", dtLoad.Rows[1][2]);
+			AssertEquals ("RowData2-0", 6, dtLoad.Rows[2][0]);
+			AssertEquals ("RowData2-1", "mono 6", dtLoad.Rows[2][1]);
+			AssertEquals ("RowData2-2", "miss6", dtLoad.Rows[2][2]);
+			AssertEquals ("RowData3-0", 1, dtLoad.Rows[3][0]);
+			AssertEquals ("RowData3-1", "mono 1", dtLoad.Rows[3][1]);
+			//AssertEquals ("RowData3-2", null, dtLoad.Rows[3][2]);
+			AssertEquals ("RowData4-0", 2, dtLoad.Rows[4][0]);
+			AssertEquals ("RowData4-1", "mono 2", dtLoad.Rows[4][1]);
+			//AssertEquals ("RowData4-2", null, dtLoad.Rows[4][2]);
+			AssertEquals ("RowData5-0", 3, dtLoad.Rows[5][0]);
+			AssertEquals ("RowData5-1", "mono 3", dtLoad.Rows[5][1]);
+			//AssertEquals ("RowData5-2", null, dtLoad.Rows[5][2]);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Load_RowStateChanges () {
+			localSetup ();
+			dt.Rows.Add (new object[] { 4, "mono 4" });
+			dt.AcceptChanges ();
+			DataTable dtLoad = new DataTable ("LoadRowStateChanges");
+			dtLoad.Columns.Add ("id", typeof (int));
+			dtLoad.Columns.Add ("name", typeof (string));
+			dtLoad.PrimaryKey = new DataColumn[] { dtLoad.Columns["id"] };
+			dtLoad.Rows.Add (new object[] { 1, "RowState 1" });
+			dtLoad.Rows.Add (new object[] { 2, "RowState 2" });
+			dtLoad.Rows.Add (new object[] { 3, "RowState 3" });
+			dtLoad.AcceptChanges ();
+			// Update Table with following changes:
+			// Row0 unmodified, Row1 modified, Row2 deleted, Row3 added.
+			dtLoad.Rows[1]["name"] = "Modify 2";
+			dtLoad.Rows[2].Delete ();
+			DataRow row = dtLoad.NewRow ();
+			row["id"] = 4;
+			row["name"] = "Add 4";
+			dtLoad.Rows.Add (row);
+			DataTableReader dtr = dt.CreateDataReader ();
+			dtLoad.Load (dtr);
+			// asserting Unchanged Row0
+			AssertEquals ("RowData0-C", "mono 1",
+				dtLoad.Rows[0][1,DataRowVersion.Current]);
+			AssertEquals ("RowData0-O", "mono 1",
+				dtLoad.Rows[0][1,DataRowVersion.Original]);
+			AssertEquals ("RowState0", DataRowState.Unchanged,
+				dtLoad.Rows[0].RowState);
+			// asserting Modified Row1
+			AssertEquals ("RowData1-C", "Modify 2",
+				dtLoad.Rows[1][1, DataRowVersion.Current]);
+			AssertEquals ("RowData1-O", "mono 2",
+				dtLoad.Rows[1][1, DataRowVersion.Original]);
+			AssertEquals ("RowState1", DataRowState.Modified,
+				dtLoad.Rows[1].RowState);
+			// asserting Deleted Row2
+			AssertEquals ("RowData1-O", "mono 3",
+				dtLoad.Rows[2][1, DataRowVersion.Original]);
+			AssertEquals ("RowState2", DataRowState.Deleted,
+				dtLoad.Rows[2].RowState);
+			// asserting Added Row3
+			AssertEquals ("RowData3-C", "Add 4",
+				dtLoad.Rows[3][1, DataRowVersion.Current]);
+			AssertEquals ("RowData3-O", "mono 4",
+				dtLoad.Rows[3][1, DataRowVersion.Original]);
+			AssertEquals ("RowState3", DataRowState.Modified,
+				dtLoad.Rows[3].RowState);
+		}
+
+		[Test]
+		[ExpectedException (typeof (VersionNotFoundException))]
+		[Category ("NotWorking")]
+		public void Load_RowStateChangeDelete () {
+			localSetup ();
+			DataTable dtLoad = new DataTable ("LoadRowStateChanges");
+			dtLoad.Columns.Add ("id", typeof (int));
+			dtLoad.Columns.Add ("name", typeof (string));
+			dtLoad.PrimaryKey = new DataColumn[] { dtLoad.Columns["id"] };
+			dtLoad.Rows.Add (new object[] { 1, "RowState 1" });
+			dtLoad.Rows.Add (new object[] { 2, "RowState 2" });
+			dtLoad.Rows.Add (new object[] { 3, "RowState 3" });
+			dtLoad.AcceptChanges ();
+			dtLoad.Rows[2].Delete ();
+			DataTableReader dtr = dt.CreateDataReader ();
+			dtLoad.Load (dtr);
+			AssertEquals ("RowData1-O", " ",
+				dtLoad.Rows[2][1, DataRowVersion.Current]);
+		}
+
+		private void TableAssert (DataTable dtAssert) {
+			AssertEquals ("NColumns", 2, dtAssert.Columns.Count);
+			AssertEquals ("NRows", 3, dtAssert.Rows.Count);
+			AssertEquals ("RowData0-0", 1, dtAssert.Rows[0][0]);
+			AssertEquals ("RowData0-1", "mono 1", dtAssert.Rows[0][1]);
+			AssertEquals ("RowData1-0", 2, dtAssert.Rows[1][0]);
+			AssertEquals ("RowData1-1", "mono 2", dtAssert.Rows[1][1]);
+			AssertEquals ("RowData2-0", 3, dtAssert.Rows[2][0]);
+			AssertEquals ("RowData2-1", "mono 3", dtAssert.Rows[2][1]);
+		}
+
+		#endregion // DataTable.CreateDataReader Tests and DataTable.Load Tests
+#endif // NET_2_0
+
+	}
                                                                                                     
                                                                                                     
          public  class MyDataTable:DataTable {

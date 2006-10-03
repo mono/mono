@@ -747,5 +747,47 @@ namespace MonoTests.System.Data
 			AssertEquals ("test#18", 1, Rows.Count);
 			AssertEquals ("test#19", "c", Rows [0] [0]);
 		}
+
+#if NET_2_0
+		[Test]
+		[Category ("NotWorking")]
+		// IndexOf does not exist in System.Data and is commented-out bellow
+		public void IndexOf () {
+			DataSet ds = new DataSet ();
+
+			DataTable dt = new DataTable ();
+			ds.Tables.Add (dt);
+
+			DataColumn dc = new DataColumn ("Column A");
+			dt.Columns.Add (dc);
+
+			dt.PrimaryKey = new DataColumn[] { dc };
+
+			DataRow dr1 = dt.NewRow ();
+			dr1[0] = "a";
+			dt.Rows.Add (dr1);
+
+			DataRow dr2 = dt.NewRow ();
+			dr2[0] = "b";
+			dt.Rows.Add (dr2);
+
+			DataRow dr3 = dt.NewRow ();
+			dr3[0] = "c";
+			dt.Rows.Add (dr3);
+
+			DataRow dr4 = dt.NewRow ();
+			dr4[0] = "d";
+			dt.Rows.Add (dr4);
+
+			DataRow dr5 = dt.NewRow ();
+			dr5[0] = "e";
+
+			//int index = ds.Tables[0].Rows.IndexOf (dr3);
+			//AssertEquals ("IndexOf-Yes", 2, index);
+			
+			//index = ds.Tables[0].Rows.IndexOf (dr5);
+			//AssertEquals ("IndexOf-No", -1, index);
+		}
+#endif
 	}
 }
