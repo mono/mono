@@ -144,6 +144,7 @@ System.Web.UI.WebControls/CallBackTest.cs
 System.Web.UI.WebControls/CheckBoxFieldTest.cs
 System.Web.UI.WebControls/CheckBoxListTest.cs
 System.Web.UI.WebControls/CheckBoxTest.cs
+System.Web.UI.WebControls/CircleHotSpotTest.cs
 System.Web.UI.WebControls/CommandFieldTest.cs
 System.Web.UI.WebControls/CompareValidatorTest.cs
 System.Web.UI.WebControls/CompleteWizardStepTest.cs
@@ -183,11 +184,14 @@ System.Web.UI.WebControls/FormViewRowTest.cs
 System.Web.UI.WebControls/GridViewTest.cs
 System.Web.UI.WebControls/GridViewRowCollectionTest.cs
 System.Web.UI.WebControls/GridViewRowTest.cs
-System.Web.UI.WebControls/HyperLinkColumnTest.cs
+System.Web.UI.WebControls/ImageFieldTest.cs
+System.Web.UI.WebControls/HotSpotCollectionTest.cs
+System.Web.UI.WebControls/HotSpotTest.cs
 System.Web.UI.WebControls/HyperLinkFieldTest.cs
 System.Web.UI.WebControls/HyperLinkTest.cs
 System.Web.UI.WebControls/ImageButtonTest.cs
 System.Web.UI.WebControls/ImageFieldTest.cs
+System.Web.UI.WebControls/ImageMapTest.cs
 System.Web.UI.WebControls/ImageTest.cs
 System.Web.UI.WebControls/LabelTest.cs
 System.Web.UI.WebControls/LinkButtonTest.cs
@@ -207,9 +211,11 @@ System.Web.UI.WebControls/MultiViewTest.cs
 System.Web.UI.WebControls/PagedDataSourceTest.cs
 System.Web.UI.WebControls/PagerSettingsTest.cs
 System.Web.UI.WebControls/PanelTest.cs
+System.Web.UI.WebControls/PolygonHotSpotTest.cs
 System.Web.UI.WebControls/RadioButtonListTest.cs
 System.Web.UI.WebControls/RadioButtonTest.cs
 System.Web.UI.WebControls/RangeValidatorTest.cs
+System.Web.UI.WebControls/RectangleHotSpotTest.cs
 System.Web.UI.WebControls/RegularExpressionValidatorTest.cs
 System.Web.UI.WebControls/RepeatInfoTest.auto.cs
 System.Web.UI.WebControls/RepeatInfoTest.auto.2.0.cs
