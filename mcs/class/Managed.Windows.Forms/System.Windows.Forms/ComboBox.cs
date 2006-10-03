@@ -228,6 +228,7 @@ namespace System.Windows.Forms
 						textbox_ctrl.Text = GetItemText (selected_item);
 					textbox_ctrl.BorderStyle = BorderStyle.None;
 					textbox_ctrl.TextChanged += new EventHandler (OnTextChangedEdit);
+					textbox_ctrl.Click += new EventHandler (OnTextBoxClick);
 
 					if (IsHandleCreated == true) {
 						Controls.AddImplicit (textbox_ctrl);
@@ -1190,6 +1191,11 @@ namespace System.Windows.Forms
 			Draw (ClientRectangle, pevent.Graphics);			
 		}
 		
+		private void OnTextBoxClick (object sender, EventArgs e)
+		{
+			OnClick (e);
+		}
+
 		private void OnTextChangedEdit (object sender, EventArgs e)
 		{
 			if (process_textchanged_event == false)
