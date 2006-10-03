@@ -38,11 +38,37 @@ using System.Text;
 
 namespace System.Windows.Forms
 {
-	internal struct DataGridRow {
+	internal class DataGridRelationshipRow {
+		DataGrid owner;
+
+		public DataGridRelationshipRow (DataGrid owner)
+		{
+			this.owner = owner;
+			IsSelected = false;
+			IsExpanded = false;
+			height = 0;
+			VerticalOffset = 0;
+			RelationHeight = 0;
+			relation_area = Rectangle.Empty;
+		}
+
+		public int height;
+
+		/* this needs to be a property so that the Autosize
+		 * example from the Windows.Forms FAQ will work */
+		public int Height {
+			get { return height; }
+			set {
+				if (height != value) {
+					height = value;
+					owner.UpdateRowsFrom (this);
+				}
+			}
+		}
+
 		public bool IsSelected;
 		public bool IsExpanded;
 		public int VerticalOffset;
-		public int Height;
 		public int RelationHeight;
 		public Rectangle relation_area; /* the Y coordinate of this rectangle is updated as needed */
 	}
@@ -66,8 +92,8 @@ namespace System.Windows.Forms
 			this.current = current;
 		}
 
-		DataGridRow[] rows;
-		public DataGridRow[] Rows {
+		DataGridRelationshipRow[] rows;
+		public DataGridRelationshipRow[] Rows {
 			get { return rows; }
 			set { rows = value; }
 		}
@@ -217,7 +243,7 @@ namespace System.Windows.Forms
 		string datamember;
 		CurrencyManager list_manager;
 		bool _readonly;
-		DataGridRow[] rows;
+		DataGridRelationshipRow[] rows;
 
 		/* column resize fields */
 		bool column_resize_active;
@@ -263,7 +289,7 @@ namespace System.Windows.Forms
 			parentrowslabel_style = DataGridParentRowsLabelStyle.Both;
 			selected_rows = new Hashtable ();
 			selection_start = -1;
-			rows = new DataGridRow [0];
+			rows = new DataGridRelationshipRow [0];
 
 			default_style = new DataGridTableStyle (true);
 			grid_style = new DataGridTableStyle ();
@@ -760,7 +786,7 @@ namespace System.Windows.Forms
 			set { grid_style.RowHeaderWidth = value; }
 		}
 
-		internal DataGridRow[] Rows {
+		internal DataGridRelationshipRow[] DataGridRows {
 			get { return rows; }
 		}
 
@@ -921,7 +947,7 @@ namespace System.Windows.Forms
 			for (int i = 1; i < rows.Length - row; i ++)
 				rows[row + i].VerticalOffset -= rows[row].RelationHeight;
 
-			rows[row].Height -= rows[row].RelationHeight;
+			rows[row].height -= rows[row].RelationHeight;
 			rows[row].RelationHeight = 0;
 			ResumeLayout (false);
 
@@ -1020,7 +1046,7 @@ namespace System.Windows.Forms
 
 			for (i = 1; i < rows.Length - row; i ++)
 				rows[row + i].VerticalOffset += rows[row].relation_area.Height;
-			rows[row].Height += rows[row].relation_area.Height;
+			rows[row].height += rows[row].relation_area.Height;
 			rows[row].RelationHeight = rows[row].relation_area.Height;
 
 			/* XX need to redraw from @row down */
@@ -1576,7 +1602,7 @@ namespace System.Windows.Forms
 				if (resize_row_height_delta + rows[resize_row].Height < 0)
 					resize_row_height_delta = -rows[resize_row].Height;
 
-				rows[resize_row].Height = rows[resize_row].Height + resize_row_height_delta;
+				rows[resize_row].height = rows[resize_row].Height + resize_row_height_delta;
 				for (int i = resize_row + 1; i < rows.Length; i ++)
 					rows[i].VerticalOffset += resize_row_height_delta;
 
@@ -2190,7 +2216,7 @@ namespace System.Windows.Forms
 
 		void RecreateDataGridRows ()
 		{
-			DataGridRow[] new_rows = new DataGridRow[RowsCount + (ShowEditRow ? 1 : 0)];
+			DataGridRelationshipRow[] new_rows = new DataGridRelationshipRow[RowsCount + (ShowEditRow ? 1 : 0)];
 			int start_index = 0;
 			if (rows != null) {
 				start_index = rows.Length;
@@ -2198,13 +2224,26 @@ namespace System.Windows.Forms
 			}
 
 			for (int i = start_index; i < new_rows.Length; i ++) {
-				new_rows[i] = new DataGridRow ();
-				new_rows[i].Height = RowHeight;
+				new_rows[i] = new DataGridRelationshipRow (this);
+				new_rows[i].height = RowHeight;
 				if (i > 0)
 					new_rows[i].VerticalOffset = new_rows[i-1].VerticalOffset + new_rows[i-1].Height;
 			}
 
 			rows = new_rows;
+
+			CalcAreasAndInvalidate ();
+		}
+
+		internal void UpdateRowsFrom (DataGridRelationshipRow row)
+		{
+			int start_index = Array.IndexOf (rows, row);
+			if (start_index == -1)
+				return;
+
+			for (int i = start_index + 1; i < rows.Length; i ++) {
+				rows[i].VerticalOffset = rows[i-1].VerticalOffset + rows[i-1].Height;
+			}
 
 			CalcAreasAndInvalidate ();
 		}

@@ -1,3 +1,10 @@
+2006-10-03  Chris Toshok  <toshok@ximian.com>
+
+	* ThemeWin32Classic.cs, DataGrid.cs: some changes so that the
+	incredibly hacky Windows.Forms FAQ autosize rows entry (it uses
+	reflection, an internal row type, properties on said type, etc.)
+	will work with our datagrid.  Fixes #79531.
+
 2006-10-03  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: Don't crash if a path is not accessible

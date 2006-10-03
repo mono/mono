@@ -1077,7 +1077,7 @@ namespace System.Windows.Forms
 
 		public override void DataGridPaintRowHeader (Graphics g, Rectangle bounds, int row, DataGrid grid)
 		{
-			bool is_add_row = grid.ShowEditRow && row == grid.Rows.Length - 1;
+			bool is_add_row = grid.ShowEditRow && row == grid.DataGridRows.Length - 1;
 			bool is_current_row = row == grid.CurrentCell.RowNumber;
 
 			// Background
@@ -1125,10 +1125,10 @@ namespace System.Windows.Forms
 			
 			bool showing_add_row = false;
 
-			if (grid.RowsCount < grid.Rows.Length) {
+			if (grid.RowsCount < grid.DataGridRows.Length) {
 				/* the table has an add row */
 
-				if (grid.FirstVisibleRow + grid.VisibleRowCount >= grid.Rows.Length) {
+				if (grid.FirstVisibleRow + grid.VisibleRowCount >= grid.DataGridRows.Length) {
 					showing_add_row = true;
 				}
 			}
@@ -1136,21 +1136,21 @@ namespace System.Windows.Forms
 			rect_row.Width = cells.Width + grid.RowHeadersArea.Width;
 			for (int r = 0; r < rowcnt; r++) {
 				int row = grid.FirstVisibleRow + r;
-				if (row == grid.Rows.Length - 1)
-					rect_row.Height = grid.Rows[row].Height;
+				if (row == grid.DataGridRows.Length - 1)
+					rect_row.Height = grid.DataGridRows[row].Height;
 				else
-					rect_row.Height = grid.Rows[row + 1].VerticalOffset - grid.Rows[row].VerticalOffset;
-				rect_row.Y = cells.Y + grid.Rows[row].VerticalOffset - grid.Rows[grid.FirstVisibleRow].VerticalOffset;
+					rect_row.Height = grid.DataGridRows[row + 1].VerticalOffset - grid.DataGridRows[row].VerticalOffset;
+				rect_row.Y = cells.Y + grid.DataGridRows[row].VerticalOffset - grid.DataGridRows[grid.FirstVisibleRow].VerticalOffset;
 				if (clip.IntersectsWith (rect_row)) {
 					if (grid.CurrentTableStyle.HasRelations
-					    && !(showing_add_row && row == grid.Rows.Length - 1))
+					    && !(showing_add_row && row == grid.DataGridRows.Length - 1))
 						DataGridPaintRelationRow (g, row, rect_row, false, clip, grid);
 					else
-						DataGridPaintRow (g, row, rect_row, showing_add_row && row == grid.Rows.Length - 1, clip, grid);
+						DataGridPaintRow (g, row, rect_row, showing_add_row && row == grid.DataGridRows.Length - 1, clip, grid);
 				}
 			}
 
-			// XXX this should be moved elsewhere and turned into 1 g.FillRectangle call, not grid.Rows.Length separate calls
+			// XXX this should be moved elsewhere and turned into 1 g.FillRectangle call, not grid.DataGridRows.Length separate calls
 			not_usedarea.Height = cells.Y + cells.Height - rect_row.Y - rect_row.Height;
 			not_usedarea.Y = rect_row.Y + rect_row.Height;
 			not_usedarea.Width = cells.Width + grid.RowHeadersArea.Width;
@@ -1198,12 +1198,12 @@ namespace System.Windows.Forms
 
 			Rectangle nested_rect = row_rect;
 
-			if (grid.Rows[row].IsExpanded)
-				nested_rect.Height -= grid.Rows[row].RelationHeight;
+			if (grid.DataGridRows[row].IsExpanded)
+				nested_rect.Height -= grid.DataGridRows[row].RelationHeight;
 
 			DataGridPaintRowContents (g, row, nested_rect, is_newrow, clip, grid);
 
-			if (grid.Rows[row].IsExpanded) {
+			if (grid.DataGridRows[row].IsExpanded) {
 				// XXX we should create this in the
 				// datagrid and cache it for use by
 				// the theme instead of doing it each
@@ -1229,7 +1229,7 @@ namespace System.Windows.Forms
 
 				rect_cell.X = row_rect.X + grid.GetColumnStartingPixel (grid.FirstVisibleColumn) - grid.HorizPixelOffset;
 				rect_cell.Y += nested_rect.Height;
-				rect_cell.Height = grid.Rows[row].RelationHeight;
+				rect_cell.Height = grid.DataGridRows[row].RelationHeight;
 				rect_cell.Width = 0;
 
 				int column_cnt = grid.FirstVisibleColumn + grid.VisibleColumnCount;
@@ -1244,7 +1244,7 @@ namespace System.Windows.Forms
 
 
 				/* draw the line leading from the +/- to the relation area */
-				Rectangle outline = grid.Rows[row].relation_area;
+				Rectangle outline = grid.DataGridRows[row].relation_area;
 				outline.Y = rect_cell.Y;
 				outline.Height --;
 
