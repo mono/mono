@@ -376,7 +376,8 @@ namespace System.Windows.Forms {
 			}
 
 			if (!show_always) {
-				if (((Control)sender).GetContainerControl().ActiveControl == null) {
+				IContainerControl cc = last_control.GetContainerControl ();
+				if ((cc == null) || (cc.ActiveControl == null)) {
 					return;
 				}
 			}

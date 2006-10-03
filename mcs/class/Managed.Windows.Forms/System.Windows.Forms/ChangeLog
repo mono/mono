@@ -1,3 +1,8 @@
+2006-10-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ToolTip.cs: Fix rare, but possible, NRE on MouseEnter when 
+	GetContainerControl returns null.
+
 2006-10-02  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIX11.cs (GetWindowState): use hwnd.client_window in the
