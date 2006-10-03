@@ -1,7 +1,3 @@
-2006-09-28  Andrew Skiba <andrews@mainsoft.com>
-
-	* Ping.cs: TARGET_JVM
-
 2006-03-11  Miguel de Icaza  <miguel@novell.com>
 
 	* NetworkChange.cs: Use pragmas to eliminate warnings from events

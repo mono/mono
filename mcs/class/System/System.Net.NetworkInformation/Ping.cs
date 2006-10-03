@@ -30,10 +30,7 @@ using System;
 using System.ComponentModel;
 
 namespace System.Net.NetworkInformation {
-	public class Ping : Component
-#if !TARGET_JVM
-		,IDisposable
-#endif
+	public class Ping : Component, IDisposable
 	{
 
 		public event PingCompletedEventHandler PingCompleted;
@@ -141,11 +138,9 @@ namespace System.Net.NetworkInformation {
 		{
 		}
 
-#if !TARGET_JVM
 		void IDisposable.Dispose ()
 		{
 		}
-#endif
 	}
 }
 #endif
