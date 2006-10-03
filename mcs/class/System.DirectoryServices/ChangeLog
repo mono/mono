@@ -1,3 +1,7 @@
+2006-10-03	Boris Kirzner <borisk@mainsoft.com>
+
+	* run-tests.bat: enable secure tests for TARGET_JVM.
+
 2006-09-26	Boris Kirzner <borisk@mainsoft.com>
 
 	* run-tests.bat,run-tests.test.bat: log files naming fix.
