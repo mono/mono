@@ -1,5 +1,10 @@
 2006-09-28  Andrew Skiba <andrews@mainsoft.com>
 
+	* ConfigurationSettings.cs: add support for requirePermission
+	attribute.
+
+2006-09-28  Andrew Skiba <andrews@mainsoft.com>
+
 	* ConfigurationSettings.cs: TARGET_JVM
 
 2006-08-23  Konstantin Triger <kostat@mainsoft.com>

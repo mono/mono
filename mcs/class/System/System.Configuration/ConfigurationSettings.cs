@@ -216,7 +216,7 @@ namespace System.Configuration
 		MachineOnly,
 		MachineToApplication
 	}
-	
+
 	class SectionData
 	{
 		public readonly string SectionName;
@@ -224,17 +224,19 @@ namespace System.Configuration
 		public readonly bool AllowLocation;
 		public readonly AllowDefinition AllowDefinition;
 		public string FileName;
+		public readonly bool RequirePermission;
 
 		public SectionData (string sectionName, string typeName,
-				    bool allowLocation, AllowDefinition allowDefinition)
+			    bool allowLocation, AllowDefinition allowDefinition, bool requirePermission)
 		{
 			SectionName = sectionName;
 			TypeName = typeName;
 			AllowLocation = allowLocation;
 			AllowDefinition = allowDefinition;
+			RequirePermission = requirePermission;
 		}
 	}
-	
+
 
 	class ConfigurationData
 	{
@@ -249,15 +251,15 @@ namespace System.Configuration
 #endif
 		Hashtable cache;
 
-                Hashtable FileCache {
-                        get {
+		Hashtable FileCache {
+			get {
 				if (cache != null)
 					return cache;
 
 				cache = new Hashtable ();
-                                return cache;
-                        }
-                }
+				return cache;
+			}
+		}
 
 		public ConfigurationData () : this (null)
 		{
@@ -313,7 +315,7 @@ namespace System.Configuration
 #endif
 			return true;
 		}
-
+		
 		object GetHandler (string sectionName)
 		{
 			lock (factories) {
@@ -392,7 +394,7 @@ namespace System.Configuration
 
 			return GetInnerDoc (doc, 0, sectionPath);
 		}
-                
+		
 		object GetConfigInternal (string sectionName)
 		{
 			object handler = GetHandler (sectionName);
@@ -423,11 +425,11 @@ namespace System.Configuration
 				config = this.FileCache [sectionName];
 			}
 
-                        if (config == emptyMark)
-                                return null;
+			if (config == emptyMark)
+				return null;
 
-                        if (config != null)
-                                return config;
+			if (config != null)
+				return config;
 
 			lock (this) {
 				config = GetConfigInternal (sectionName);
@@ -435,7 +437,7 @@ namespace System.Configuration
 			}
 
 			return config;
-                }
+		}
 
 		private object LookForFactory (string key)
 		{
@@ -482,6 +484,8 @@ namespace System.Configuration
 			string nameValue = null;
 			string typeValue = null;
 			string allowLoc = null, allowDef = null;
+			bool requirePermission = false;
+			string requirePer = null;
 			bool allowLocation = true;
 			AllowDefinition allowDefinition = AllowDefinition.Everywhere;
 
@@ -499,6 +503,16 @@ namespace System.Configuration
 					if (!allowLocation && allowLoc != "false")
 						ThrowException ("Invalid attribute value", reader);
 
+					continue;
+				}
+
+				if (attName == "requirePermission") {
+					if (requirePer != null)
+						ThrowException ("Duplicated requirePermission attribute.", reader);
+					requirePer = reader.Value;
+					requirePermission = (requirePer == "true");
+					if (!requirePermission && requirePer != "false")
+						ThrowException ("Invalid attribute value", reader);
 					continue;
 				}
 
@@ -546,7 +560,8 @@ namespace System.Configuration
 			object o = LookForFactory (nameValue);
 			if (o != null && o != removedMark)
 				ThrowException ("Already have a factory for " + nameValue, reader);
-			SectionData section = new SectionData (nameValue, typeValue, allowLocation, allowDefinition);
+			SectionData section = new SectionData (nameValue, typeValue, allowLocation,
+				allowDefinition, requirePermission);
 			section.FileName = fileName;
 			factories [nameValue] = section;
 
@@ -587,7 +602,7 @@ namespace System.Configuration
 						ThrowException ("Duplicate 'name' attribute.", reader);
 					value = reader.Value;
 				}
-				else 
+				else
 #if NET_2_0
 				if (reader.Name != "type")
 #endif
@@ -596,10 +611,10 @@ namespace System.Configuration
 
 			if (value == null)
 				ThrowException ("No 'name' attribute.", reader);
-
+			
 			if (value == "location")
 				ThrowException ("location is a reserved section name", reader);
-			
+
 			if (configSection != null)
 				value = configSection + '/' + value;
 
@@ -674,7 +689,7 @@ namespace System.Configuration
 				}
 			}
 		}
-				
+		
 		private void ThrowException (string text, XmlTextReader reader)
 		{
 			throw new ConfigurationException (text, fileName, reader.LineNumber);
