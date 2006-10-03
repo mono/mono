@@ -49,6 +49,30 @@ namespace System.Collections.Specialized
 			this.comparer = comparer;
 		}
 
+		private DictionaryNode FindEntry (object key)
+		{
+			if (key == null)
+				throw new ArgumentNullException ("key", "Attempted lookup for a null key.");
+
+			DictionaryNode entry = head;
+			DictionaryNode prev = null;
+			if (comparer == null) {
+				while (entry != null) {
+					if (key.Equals (entry.key))
+						break;
+					prev = entry;
+					entry = entry.next;
+				}
+			} else {
+				while (entry != null) {
+					if (comparer.Compare (key, entry.key) == 0)
+						break;
+					prev = entry;
+					entry = entry.next;
+				}
+			}
+			return entry;
+		}
 		private DictionaryNode FindEntry (object key, out DictionaryNode prev)
 		{
 			if (key == null)
@@ -137,8 +161,7 @@ namespace System.Collections.Specialized
 		// Indexer
 		public object this [object key] {
 			get {
-				DictionaryNode prev;
-				DictionaryNode entry = FindEntry (key, out prev);
+				DictionaryNode entry = FindEntry (key);
 				return entry == null ? null : entry.value;
 			}
 
@@ -179,8 +202,7 @@ namespace System.Collections.Specialized
 
 		public bool Contains (object key)
 		{
-			DictionaryNode prev;
-			return FindEntry (key, out prev) != null;
+			return FindEntry (key) != null;
 		}
 
 		public IDictionaryEnumerator GetEnumerator ()
