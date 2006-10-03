@@ -1,3 +1,10 @@
+2006-10-03  Chris Toshok  <toshok@ximian.com>
+
+	* DataGrid.cs: fix a crash when switching datasources if the
+	vertical scrollbar is at someplace other than Value = 0.  Also,
+	reduce the number of recalculation passes we do in SetDataSource
+	from 2 to 1.
+
 2006-10-03  Jackson Harper  <jackson@ximian.com>
 
 	* TextBoxBase.cs: Move the if value the same bail check up, we

@@ -969,7 +969,7 @@ namespace System.Windows.Forms
 			is_changing = true;
 
 			if (cursor_in_add_row && need_invalidate)
-				RecreateDataGridRows ();
+				RecreateDataGridRows (true);
 
 			if (need_invalidate)
 				InvalidateRowHeader (CurrentRow);
@@ -2197,8 +2197,15 @@ namespace System.Windows.Forms
 			else
 				current_style.CreateColumnsForTable (false);
 
+			/* reset first_visiblerow to 0 here before
+			 * doing anything that'll requires us to
+			 * figure out if we need a scrollbar. */
+			vert_scrollbar.Value = 0;
+			horiz_scrollbar.Value = 0;
+			first_visiblerow = 0;
+
 			if (recreate_rows)
-				RecreateDataGridRows ();
+				RecreateDataGridRows (false);
 
 			CalcAreasAndInvalidate ();
 
@@ -2214,7 +2221,7 @@ namespace System.Windows.Forms
 			from_positionchanged_handler = false;
 		}
 
-		void RecreateDataGridRows ()
+		void RecreateDataGridRows (bool recalc)
 		{
 			DataGridRelationshipRow[] new_rows = new DataGridRelationshipRow[RowsCount + (ShowEditRow ? 1 : 0)];
 			int start_index = 0;
@@ -2232,7 +2239,8 @@ namespace System.Windows.Forms
 
 			rows = new_rows;
 
-			CalcAreasAndInvalidate ();
+			if (recalc)
+				CalcAreasAndInvalidate ();
 		}
 
 		internal void UpdateRowsFrom (DataGridRelationshipRow row)
@@ -2253,7 +2261,7 @@ namespace System.Windows.Forms
 			if (e.Index == -1) {
 				ResetSelection ();
 				if (rows == null || RowsCount != rows.Length - (ShowEditRow ? 1 : 0))
-					RecreateDataGridRows ();
+					RecreateDataGridRows (true);
 			}
 			else {
 				InvalidateRow (e.Index);
@@ -2621,7 +2629,7 @@ namespace System.Windows.Forms
 				UpdateVisibleRowCount ();
 
 				needHoriz = (width_of_all_columns > visible_cells_width);
-				needVert = (visiblerow_count != allrows);
+				needVert = (allrows > visiblerow_count);
 			}
 
 			int horiz_scrollbar_width = ClientRectangle.Width;
