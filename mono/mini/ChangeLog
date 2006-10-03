@@ -1,3 +1,8 @@
+
+Tue Oct 3 16:33:08 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c: fix loop for old compilers (bug #79521).
+
 2006-10-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-exceptions.c (ves_icall_get_trace): Remove debug printf.
