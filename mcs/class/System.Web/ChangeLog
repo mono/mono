@@ -1,3 +1,12 @@
+2006-10-03 Hagit Yidov <hagity@mainsoft.com>
+
+	* ImageMapTest.cs: New test was added
+	* HotSpotTest.cs: New test was added
+	* HotSpotCollectionTest.cs: New test was added
+	* CircleHotSpot.cs: New test was added
+	* RectangleHotSpot.cs: New test was added
+	* PolygonHotSpot.cs: New test was added
+
 2006-09-28 Yoni Klain <yonik@mainsoft.com>
 
     * MakeFile: add new resources for MasterPageTest.cs :
