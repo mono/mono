@@ -1,3 +1,8 @@
+2006-10-03  Dick Porter  <dick@ximian.com>
+
+	* mono.1: Document the new MONO_IO_PORTABILITY_HELP environment
+	variable
+
 2006-09-08  Robert Jordan  <robertj@gmx.net>
 
 	* mkbundle.1: The `-z' option is now supported under Windows.

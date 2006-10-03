@@ -1,3 +1,12 @@
+2006-10-03  Dick Porter  <dick@ximian.com>
+
+	* io-portability.h: 
+	* io-portability.c: Optional portability helpers and wrapped
+	system calls to try to cope with windows filenames in
+	applications.
+
+	* io.c: Use the wrapped system calls
+
 2006-09-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* critical-sections.h critical-sections.c: Make Enter/LeaveCriticalSection a macro

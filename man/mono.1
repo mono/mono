@@ -680,6 +680,21 @@ home directories that might be shared over the network.
 If set, extra checks are made during IO operations.  Currently, this
 includes only advisory locks around file writes.
 .TP
+.I "MONO_IO_PORTABILITY_HELP"
+Enables some filename rewriting support to assist badly-written
+applications that hard-code Windows paths.  Set to a colon-separated
+list of "drive" to strip drive letters, or "case" to do
+case-insensitive file matching in every directory in a path.  "all"
+enables all rewriting methods.  (Backslashes are always mapped to
+slashes if this variable is set to a valid option.)
+.fi
+.Sp
+For example:
+.nf
+
+	MONO_IO_PORTABILITY_HELP=drive:case
+
+.TP
 .I "MONO_THEME"
 The name of the theme to be used by Windows.Forms.   Available themes today
 include "clearlooks", "nice" and "win32".
