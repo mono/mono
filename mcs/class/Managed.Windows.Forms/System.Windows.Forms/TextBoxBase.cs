@@ -522,11 +522,11 @@ namespace System.Windows.Forms {
 			}
 
 			set {
+				if (value == Text)
+					return;
+
 				if ((value != null) && (value != "")) {
 					Line	line;
-
-					if (value == Text)
-						return;
 
 					if (multiline) {
 						string[]	lines;

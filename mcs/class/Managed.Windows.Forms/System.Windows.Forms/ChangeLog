@@ -1,3 +1,10 @@
+2006-10-03  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: Move the if value the same bail check up, we
+	don't want to empty the document if it is already empty, this
+	seems to severly mess up the caret.  TODO: I should probably fix
+	the empty statement to update teh caret somehow.
+
 2006-10-03  Chris Toshok  <toshok@ximian.com>
 
 	* ThemeWin32Classic.cs, DataGrid.cs: some changes so that the
