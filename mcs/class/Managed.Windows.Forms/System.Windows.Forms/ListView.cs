@@ -743,6 +743,8 @@ namespace System.Windows.Forms
 			return ret_size;
 		}
 
+		const int max_wrap_padding = 38;
+
 		// Sets the size of the biggest item text as per the view
 		private void CalcTextSize ()
 		{			
@@ -758,10 +760,8 @@ namespace System.Windows.Forms
 				Size temp = Size.Empty;
 				if (this.check_boxes)
 					temp.Width += 2 * this.CheckBoxSize.Width;
-				if (large_image_list != null)
-					temp.Width += large_image_list.ImageSize.Width;
-				if (temp.Width == 0)
-					temp.Width = 43;
+				int icon_w = LargeImageList == null ? 12 : LargeImageList.ImageSize.Width;
+				temp.Width += icon_w + max_wrap_padding;
 				// wrapping is done for two lines only
 				if (text_size.Width > temp.Width) {
 					text_size.Width = temp.Width;
@@ -848,7 +848,7 @@ namespace System.Windows.Forms
 
 			item_control.Height = ClientRectangle.Height - header_control.Height;
 
-			if (h_scroll.Visible) {
+			if (h_scroll.is_visible) {
 				h_scroll.Location = new Point (client_area.X, client_area.Bottom - h_scroll.Height);
 				h_scroll.Minimum = 0;
 
@@ -868,11 +868,11 @@ namespace System.Windows.Forms
 				item_control.Height -= h_scroll.Height;
 			}
 
-			if (header_control.Visible)
+			if (header_control.is_visible)
 				header_control.Width = ClientRectangle.Width;
 			item_control.Width = ClientRectangle.Width;
 
-			if (v_scroll.Visible) {
+			if (v_scroll.is_visible) {
 				v_scroll.Location = new Point (client_area.Right - v_scroll.Width, client_area.Y);
 				v_scroll.Minimum = 0;
 

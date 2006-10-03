@@ -1,3 +1,9 @@
+2006-10-03  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs : use is_visible instead of Visible to check if 
+	scrollbars should be placed/sized.  Also some max_wrap_width
+	love for LargeIcon view.  [Fixes #79533]
+
 2006-10-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TextControl.cs :
