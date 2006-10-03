@@ -1,3 +1,10 @@
+2006-10-03  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs: Don't crash if a path is not accessible
+	  (System.UnauthorizedAccessException). Fixes #79569.
+	* MimeIcon.cs: Workaround for a Uri bug. Unix paths/files can have
+	  a ':' too. Return unknown icon for those paths/files.
+
 2006-10-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ToolTip.cs: Fix rare, but possible, NRE on MouseEnter when 

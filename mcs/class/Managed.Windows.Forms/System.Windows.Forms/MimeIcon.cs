@@ -143,11 +143,18 @@ namespace System.Windows.Forms
 				
 				// not found, add it
 				if (oindex == null) {
-					oindex = platformMimeHandler.AddAndGetIconIndex (full_filename, mime_type);
+					int index = full_filename.IndexOf (':');
 					
-					// sanity check
-					if (oindex == null)
+					if (index > 1) {
 						oindex = MimeIconIndex ["unknown/unknown"];
+						
+					} else {
+						oindex = platformMimeHandler.AddAndGetIconIndex (full_filename, mime_type);
+						
+						// sanity check
+						if (oindex == null)
+							oindex = MimeIconIndex ["unknown/unknown"];
+					}
 				}
 				
 				return (int)oindex;

@@ -3017,22 +3017,29 @@ namespace System.Windows.Forms {
 			
 			directories_out = new ArrayList ();
 			
-			DirectoryInfo[] dirs = dirinfo.GetDirectories ();
+			DirectoryInfo[] dirs = null;
 			
-			for (int i = 0; i < dirs.Length; i++) {
-				directories_out.Add (GetDirectoryFSEntry (dirs [i], currentTopFolderFSEntry));
-			}
+			try {
+				dirs = dirinfo.GetDirectories ();
+			} catch (Exception) {}
+			
+			if (dirs != null)
+				for (int i = 0; i < dirs.Length; i++) {
+					directories_out.Add (GetDirectoryFSEntry (dirs [i], currentTopFolderFSEntry));
+				}
 			
 			files_out = new ArrayList ();
 			
 			ArrayList files = new ArrayList ();
 			
-			if (filters == null) {
-				files.AddRange (dirinfo.GetFiles ());
-			} else {
-				foreach (string s in filters)
-					files.AddRange (dirinfo.GetFiles (s));
-			}
+			try {
+				if (filters == null) {
+					files.AddRange (dirinfo.GetFiles ());
+				} else {
+					foreach (string s in filters)
+						files.AddRange (dirinfo.GetFiles (s));
+				}
+			} catch (Exception) {}
 			
 			for (int i = 0; i < files.Count; i++) {
 				files_out.Add (GetFileFSEntry (files [i] as FileInfo));
@@ -3045,11 +3052,16 @@ namespace System.Windows.Forms {
 			
 			ArrayList directories_out = new ArrayList ();
 			
-			DirectoryInfo[] dirs = dirinfo.GetDirectories ();
+			DirectoryInfo[] dirs = null;
 			
-			for (int i = 0; i < dirs.Length; i++) {
-				directories_out.Add (GetDirectoryFSEntry (dirs [i], currentTopFolderFSEntry));
-			}
+			try {
+				dirs = dirinfo.GetDirectories ();
+			} catch (Exception) {}
+			
+			if (dirs != null)
+				for (int i = 0; i < dirs.Length; i++) {
+					directories_out.Add (GetDirectoryFSEntry (dirs [i], currentTopFolderFSEntry));
+				}
 			
 			return directories_out;
 		}
