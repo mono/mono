@@ -3699,11 +3699,17 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			while (line_no <= lines) {
 				line = GetLine(line_no);
 
-				if (line != null && line.alignment != HorizontalAlignment.Left) {
-					if (line.alignment == HorizontalAlignment.Center) {
-						line.align_shift = (viewport_width - (int)line.widths[line.text.Length]) / 2;
-					} else {
-						line.align_shift = viewport_width - (int)line.widths[line.text.Length] - 1;
+				if (line != null) {
+					switch (line.alignment) {
+					case HorizontalAlignment.Left:
+						line.align_shift = 0;
+						break;
+					case HorizontalAlignment.Center:
+ 						line.align_shift = (viewport_width - (int)line.widths[line.text.Length]) / 2;
+						break;
+					case HorizontalAlignment.Right:
+ 						line.align_shift = viewport_width - (int)line.widths[line.text.Length];
+						break;
 					}
 				}
 
