@@ -1,6 +1,11 @@
 2006-10-03 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* FormView.cs: fixed: 
+	in Insert mode Select not invoked from DataSource
+		
+2006-10-03 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* FormView.cs: fixed: 
 	Pager is not shown when page count < 1
 	in Edit mode use EmptyDataTemplate if there is no DataItem
 	when page changed FormView stays in current state. 

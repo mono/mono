@@ -1044,6 +1044,12 @@ namespace System.Web.UI.WebControls
 		
 		public sealed override void DataBind ()
 		{
+			if (CurrentMode == FormViewMode.Insert) {
+				RequiresDataBinding = false;
+				PerformDataBinding (new object [] { null });
+				return;
+			}
+			
 			DataSourceView view = GetData ();
 			if (AllowPaging && view.CanPage) {
 				SelectArguments.StartRowIndex = PageIndex;
