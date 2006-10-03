@@ -843,7 +843,7 @@ namespace System.Web.UI.WebControls
 			}
 
 			pageCount = dataSource.DataSourceCount;
-			bool showPager = AllowPaging && (dataSource.Count > 0);
+			bool showPager = AllowPaging && (pageCount > 1);
 			
 			Controls.Clear ();
 			table = CreateTable ();
@@ -894,7 +894,7 @@ namespace System.Web.UI.WebControls
 			} else {
 				switch (CurrentMode) {
 				case FormViewMode.Edit:
-					itemRow = CreateRow (-1, DataControlRowType.DataRow, DataControlRowState.Edit);
+					itemRow = CreateRow (-1, DataControlRowType.EmptyDataRow, DataControlRowState.Edit);
 					break;
 				case FormViewMode.Insert:
 					itemRow = CreateRow (-1, DataControlRowType.DataRow, DataControlRowState.Insert);
@@ -1185,7 +1185,7 @@ namespace System.Web.UI.WebControls
 				newIndex = args.NewPageIndex;
 				if (newIndex < 0 || newIndex >= PageCount)
 					return;
-				EndRowEdit ();
+				EndRowEdit (false);
 				PageIndex = newIndex;
 				OnPageIndexChanged (EventArgs.Empty);
 			}
@@ -1321,7 +1321,13 @@ namespace System.Web.UI.WebControls
 		
 		void EndRowEdit ()
 		{
-			ChangeMode (DefaultMode);
+			EndRowEdit (true);
+		}
+
+		void EndRowEdit (bool switchToDefaultMode) 
+		{
+			if (switchToDefaultMode)
+				ChangeMode (DefaultMode);
 			oldEditValues = new DataKey (new OrderedDictionary ());
 			currentEditRowKeys = null;
 			currentEditOldValues = null;
