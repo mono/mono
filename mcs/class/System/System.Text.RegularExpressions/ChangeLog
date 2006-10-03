@@ -1,6 +1,6 @@
 2006-09-28  Andrew Skiba  <andrews@mainsoft.com>
 
-	* interpreter.cs, Regex.cs: TARGET_JVM
+	* Regex.cs: TARGET_JVM
 
 2006-05-30  Gert Driesen  <drieseng@users.sourceforge.net>
 

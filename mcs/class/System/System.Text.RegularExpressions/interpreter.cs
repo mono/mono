@@ -48,9 +48,7 @@ namespace System.Text.RegularExpressions {
 			this.qs = null;
 
 			// process info block
-#if !TARGET_JVM
 			Debug.Assert ((OpCode)program[0] == OpCode.Info, "Regex", "Cant' find info block");
-#endif
 			this.group_count = ReadProgramCount (1) + 1;
 			this.match_min = ReadProgramCount (3);
 			//this.match_max = ReadProgramCount (5);
@@ -685,9 +683,7 @@ namespace System.Text.RegularExpressions {
 				}
 
 				case OpCode.Info: {
-#if !TARGET_JVM
 					Debug.Assert (false, "Regex", "Info block found in pattern");
-#endif
 					goto Fail;
 				}
 				}
@@ -924,9 +920,7 @@ namespace System.Text.RegularExpressions {
 				//Group not previously matched
 				return false;
 			}
-#if !TARGET_JVM
 			Debug.Assert (marks [b].IsDefined, "Regex", "Balancng group not closed");
-#endif
 			if (gid > 0 && capture){ 
 				Open (gid, marks [b].Index + marks [b].Length);
 				Close (gid, ptr);
@@ -943,9 +937,7 @@ namespace System.Text.RegularExpressions {
 		}
 
 		private void Backtrack (int cp) {
-#if !TARGET_JVM
 			Debug.Assert (cp > mark_start, "Regex", "Attempt to backtrack forwards");
-#endif
 			for (int i = 0; i < groups.Length; ++ i) {
 				int m = groups [i];
 				while (cp <= m)
