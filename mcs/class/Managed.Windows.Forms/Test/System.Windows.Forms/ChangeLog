@@ -1,3 +1,8 @@
+2006-10-03  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* ContainerControlTest.cs: New. Add a few test cases for 
+	GetContainerControl method.
+
 2006-10-02  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* ButtonTest.cs: Activate tests for ButtonBaseAccessibleObject.
