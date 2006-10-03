@@ -371,6 +371,14 @@ namespace System.Web.Compilation
 			value = TrimDB (value);
 			CodeMemberMethod method;
 			string dbMethodName = builder.method.Name + "_DB_" + dataBoundAtts++;
+#if NET_2_0
+			bool need_if = false;
+			value = value.Trim ();
+			if (StrUtils.StartsWith (value, "Bind")) {
+				value = "Eval" + value.Substring (4);
+				need_if = true;
+			}
+#endif
 
 			method = CreateDBMethod (dbMethodName, GetContainerType (builder), builder.ControlType);
 
@@ -390,8 +398,20 @@ namespace System.Web.Compilation
 				CodeSnippetExpression snippet = new CodeSnippetExpression (value);
 				expr = new CodeCastExpression (type, snippet);
 			}
-			
-			method.Statements.Add (new CodeAssignStatement (field, expr));
+
+			CodeAssignStatement assign = new CodeAssignStatement (field, expr);
+#if NET_2_0
+			if (need_if) {
+				CodeExpression page = new CodePropertyReferenceExpression (new CodeThisReferenceExpression (), "Page");
+				CodeExpression left = new CodeMethodInvokeExpression (page, "GetDataItem");
+				CodeBinaryOperatorExpression ce = new CodeBinaryOperatorExpression (left, CodeBinaryOperatorType.IdentityInequality, new CodePrimitiveExpression (null));
+				CodeConditionStatement ccs = new CodeConditionStatement (ce, assign);
+				method.Statements.Add (ccs);
+			}
+			else
+#endif
+				method.Statements.Add (assign);
+
 			mainClass.Members.Add (method);
 			return method.Name;
 		}
@@ -441,7 +461,6 @@ namespace System.Web.Compilation
 						throw new HttpException ("Control of type '" + builder.ControlType + "' using two-way binding on property '" + propName + "' must have an ID.");
 					
 					templateBuilder.RegisterBoundProperty (builder.ControlType, propName, id, bindingName);
-					value = "<%# Eval" + str.Substring (4);
 				}
 			}
 		}
@@ -1468,4 +1487,5 @@ namespace System.Web.Compilation
 		}
 	}
 }
+
 

@@ -1,3 +1,12 @@
+2006-10-03 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* TemplateControlCompiler.cs: fixed: Bind functions (Data-Binding Syntax).
+	At run time, the Bind method calls the Eval method, if there is DataItem
+	!= null to bind to.
+	If there is DataItem == null (like InsertItemTemplate in FormView) Bind
+	method don't raise exception and works properly to extract data from
+	bounded controls on postback.
+		
 2006-09-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: if we are tracking non-server tags for
