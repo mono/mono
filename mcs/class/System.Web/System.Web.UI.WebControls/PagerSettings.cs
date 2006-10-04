@@ -270,7 +270,7 @@ namespace System.Web.UI.WebControls
 			get { return ViewState.IsTrackingViewState; }
 		}
 		
-		internal Table CreatePagerControl (int currentPage, int pageCount)
+		internal Table CreatePagerControl (int currentPage, int pageCount, Style style)
 		{
 			Table table = new Table ();
 			TableRow row = new TableRow ();
@@ -280,13 +280,13 @@ namespace System.Web.UI.WebControls
 			{
 				if (currentPage > 0) {
 					if (Mode == PagerButtons.NextPreviousFirstLast)
-						row.Cells.Add (CreateCell (FirstPageText, FirstPageImageUrl, "Page", "First"));
-					row.Cells.Add (CreateCell (PreviousPageText, PreviousPageImageUrl, "Page", "Prev"));
+						row.Cells.Add (CreateCell (FirstPageText, FirstPageImageUrl, "Page", "First", style));
+					row.Cells.Add (CreateCell (PreviousPageText, PreviousPageImageUrl, "Page", "Prev", style));
 				}
 				if (currentPage < pageCount - 1) {
-					row.Cells.Add (CreateCell (NextPageText, NextPageImageUrl, "Page", "Next"));
+					row.Cells.Add (CreateCell (NextPageText, NextPageImageUrl, "Page", "Next", style));
 					if (Mode == PagerButtons.NextPreviousFirstLast)
-						row.Cells.Add (CreateCell (LastPageText, LastPageImageUrl, "Page", "Last"));
+						row.Cells.Add (CreateCell (LastPageText, LastPageImageUrl, "Page", "Last", style));
 				}
 			}
 			else if (Mode == PagerButtons.Numeric || Mode == PagerButtons.NumericFirstLast)
@@ -300,26 +300,32 @@ namespace System.Web.UI.WebControls
 				
 				if (first > 0) {
 					if (Mode == PagerButtons.NumericFirstLast)
-						row.Cells.Add (CreateCell (FirstPageText, FirstPageImageUrl, "Page", "First"));
-					row.Cells.Add (CreateCell (PreviousPageText, PreviousPageImageUrl, "Page", "Prev"));
+						row.Cells.Add (CreateCell (FirstPageText, FirstPageImageUrl, "Page", "First", style));
+					row.Cells.Add (CreateCell (PreviousPageText, PreviousPageImageUrl, "Page", "Prev", style));
 				}
 				
 				for (int n = first; n < last; n++)
-					row.Cells.Add (CreateCell ((n+1).ToString(), string.Empty, (n != currentPage) ? "Page" : "", (n+1).ToString()));
+					row.Cells.Add (CreateCell ((n + 1).ToString (), string.Empty, (n != currentPage) ? "Page" : "", (n + 1).ToString (), style));
 				
 				if (last < pageCount - 1) {
-					row.Cells.Add (CreateCell (NextPageText, NextPageImageUrl, "Page", "Next"));
+					row.Cells.Add (CreateCell (NextPageText, NextPageImageUrl, "Page", "Next", style));
 					if (Mode == PagerButtons.NumericFirstLast)
-						row.Cells.Add (CreateCell (LastPageText, LastPageImageUrl, "Page", "Last"));
+						row.Cells.Add (CreateCell (LastPageText, LastPageImageUrl, "Page", "Last", style));
 				}
 			}
 			return table;
 		}
-		
-		TableCell CreateCell (string text, string image, string command, string argument)
-		{
+
+		TableCell CreateCell (string text, string image, string command, string argument, Style style) {
 			TableCell cell = new TableCell ();
-			cell.Controls.Add (new DataControlButton (ctrl, text, image, command, argument, true));
+			DataControlButton button = new DataControlButton (ctrl, text, image, command, argument, true);
+
+			if (image.Length > 0)
+				button.ButtonType = ButtonType.Image;
+			else if (command.Length > 0 && style != null)
+				button.ForeColor = style.ForeColor;
+			
+			cell.Controls.Add (button);
 			return cell;
 		}
 	}

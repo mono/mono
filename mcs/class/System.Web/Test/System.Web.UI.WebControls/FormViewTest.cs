@@ -1285,7 +1285,6 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 
 		[Test]
-		[Category ("NotWorking")]
 		public void FormView_RenderSimpleTemplate()
 		{
 			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();			

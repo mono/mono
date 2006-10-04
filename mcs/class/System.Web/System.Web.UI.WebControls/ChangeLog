@@ -1,5 +1,14 @@
 2006-10-04 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* FormView.cs:
+	* GridView.cs:
+	* DetailsView.cs: 
+	* PagerSettings.cs: 
+	corrected pager rendering: Color style applied to A tag,
+	Input type="image" used if ImageUrl is not empty.
+		
+2006-10-04 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* GridView.cs: corrected rendering 
 	* ContainedTable.cs: added new helper class 
 		
