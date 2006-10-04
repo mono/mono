@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,6 +35,52 @@ using Mono.Security.Cryptography;
 using NUnit.Framework;
 
 namespace MonoTests.Mono.Security.Cryptography {
+
+	/* copied from MD5SHA1 which is internal in Mono.Security.dll */
+	class MD5SHA1: HashAlgorithm {
+
+		private HashAlgorithm md5;
+		private HashAlgorithm sha;
+
+		public MD5SHA1 ()
+			: base ()
+		{
+			this.md5 = MD5.Create ();
+			this.sha = SHA1.Create ();
+
+			// Set HashSizeValue
+			this.HashSizeValue = this.md5.HashSize + this.sha.HashSize;
+		}
+
+		public override void Initialize ()
+		{
+			this.md5.Initialize ();
+			this.sha.Initialize ();
+		}
+
+		protected override byte[] HashFinal ()
+		{
+			// Finalize the original hash
+			this.md5.TransformFinalBlock (new byte[0], 0, 0);
+			this.sha.TransformFinalBlock (new byte[0], 0, 0);
+
+			byte[] hash = new byte[36];
+
+			Buffer.BlockCopy (this.md5.Hash, 0, hash, 0, 16);
+			Buffer.BlockCopy (this.sha.Hash, 0, hash, 16, 20);
+
+			return hash;
+		}
+
+		protected override void HashCore (
+			byte[] array,
+			int ibStart,
+			int cbSize)
+		{
+			this.md5.TransformBlock (array, ibStart, cbSize, array, ibStart);
+			this.sha.TransformBlock (array, ibStart, cbSize, array, ibStart);
+		}
+	}
 
 	[TestFixture]
 	public class PKCS1Test {
@@ -87,6 +133,24 @@ namespace MonoTests.Mono.Security.Cryptography {
 
 			decdata = PKCS1.Decrypt_v15 (rsa, Convert.FromBase64String (short890));
 			Assert.AreEqual ("<password>", Encoding.UTF8.GetString (decdata), "890");
-		 }
+		}
+
+		private byte[] GetValue (int size)
+		{
+			byte[] data = new byte [size];
+			for (int i = 0; i < size; i++)
+				data[i] = (byte) (i + 1);
+			return data;
+		}
+
+		[Test]
+		public void PKCS15_SignAndVerify_UnknownHash ()
+		{
+			// this hash algorithm isn't known from CryptoConfig so no OID is available
+			MD5SHA1 hash = new MD5SHA1 ();
+			byte[] value = GetValue (hash.HashSize >> 3);
+			byte[] unknown = PKCS1.Sign_v15 (rsa, hash, value);
+			Assert.IsTrue (PKCS1.Verify_v15 (rsa, hash, value, unknown), "Verify");
+		}
 	}
 }
