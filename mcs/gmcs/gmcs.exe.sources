@@ -1,5 +1,5 @@
 ../mcs/AssemblyInfo.cs
-anonymous.cs
+../mcs/anonymous.cs
 ../mcs/assign.cs
 ../mcs/attribute.cs
 ../mcs/driver.cs
@@ -18,7 +18,7 @@ cs-tokenizer.cs
 ../mcs/expression.cs
 ../mcs/flowanalysis.cs
 generic.cs
-iterators.cs
+../mcs/iterators.cs
 ../mcs/literal.cs
 ../mcs/location.cs
 ../mcs/modifiers.cs

@@ -1,5 +1,47 @@
 2006-10-04  Martin Baulig  <martin@ximian.com>
 
+	Merged the Anonymous Methods patch.
+
+	* anonymous.cs, iterators.cs: The new anonymous methods code.
+
+	* statement.cs (Variable): New public abstract class.
+	(LocalInfo.Variable): New public property.
+	(LocalInfo.ResolveVariable): New public method.
+	(Block.Flags): Add `IsIterator'.
+	(Block.AddVariable): Improved the CS0136 check.
+	(Block.AnonymousChildren): New public property.
+	(Block.AddAnonymousChild): New public method.
+	(ToplevelBlock): Update to use the new anonymous method framework.
+	(ToplevelBlock.ctor): `container' is now a `Block' and not a
+	`ToplevelBlock'; this is required to correctly implement the
+	CS0136 check.
+	(Fixed, Using): Use `TemporaryVariable' instead of directly
+	creating the `LocalBuilder'.
+
+	* parameter.cs (Parameter.ResolveVariable): New public method.
+	(Parameters.ResolveVariable): Likewise.
+
+	* ecore.cs (TemporaryVariable): Use the new `Variable' framework.
+
+	* class.cs (TypeContainer): Replaced the `iterators' list and
+	corresponding methods with a list of `CompilerGeneratedClass'es.
+	(TypeContainer.ResolveMembers): New public method.
+	(Method): `IIteratorContainer' has been replaced by
+	`IAnonymousHost'.
+
+	* expression.cs (VariableReference): New public abstract base
+	class for `LocalVariableReference', `ParameterReference' and
+	`This'.
+
+	* codegen.cs (EmitContext): Removed `capture_context',
+	`HaveCaptureInfo', `EmitScopeInitFromBlock()' and `Capture*()'.
+	(EmitContext.EmitThis): Removed.
+
+	* cs-parser.jay: Replace `iterator_container' with
+	`anonymous_host'.	
+
+2006-10-04  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (GenericMethod): Don't make this abstract.
 	(Constraints.Clone): Added dummy implementation.
 
@@ -46,6 +88,10 @@
 	of the `|' operator.
 
 	* report.cs: A new warning added.
+
+2006-09-27  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (GenericMethod): Don't make this abstract.
 
 2006-09-27  Martin Baulig  <martin@ximian.com>
 

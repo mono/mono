@@ -829,8 +829,8 @@ namespace Mono.CSharp {
 			
 			Expression e = a.Expr;
 
-			if (e is AnonymousMethod && RootContext.Version != LanguageVersion.ISO_1)
-				return ((AnonymousMethod) e).Compatible (ec, type);
+			if (e is AnonymousMethodExpression && RootContext.Version != LanguageVersion.ISO_1)
+				return ((AnonymousMethodExpression) e).Compatible (ec, type);
 
 			MethodGroupExpr mg = e as MethodGroupExpr;
 			if (mg != null)

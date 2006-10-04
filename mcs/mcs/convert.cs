@@ -857,8 +857,8 @@ namespace Mono.CSharp {
 				if (!TypeManager.IsDelegateType (target_type))
 					return false;
 
-				AnonymousMethod am = (AnonymousMethod) expr;
-				return am.ImplicitStandardConversionExists (target_type);
+				AnonymousMethodExpression ame = (AnonymousMethodExpression) expr;
+				return ame.ImplicitStandardConversionExists (target_type);
 			}
 
 			return false;
@@ -1335,20 +1335,14 @@ namespace Mono.CSharp {
 			}
 
 			if (expr_type == TypeManager.anonymous_method_type){
-				if (!TypeManager.IsDelegateType (target_type)){
-					Report.Error (1660, loc,
-						"Cannot convert anonymous method block to type `{0}' because it is not a delegate type",
-						TypeManager.CSharpName (target_type));
-					return null;
-				}
+				AnonymousMethodExpression ame = (AnonymousMethodExpression) expr;
 
-				AnonymousMethod am = (AnonymousMethod) expr;
 				int errors = Report.Errors;
 
-				Expression conv = am.Compatible (ec, target_type);
+				Expression conv = ame.Compatible (ec, target_type);
 				if (conv != null)
 					return conv;
-
+				
 				//
 				// We return something instead of null, to avoid
 				// the duplicate error, since am.Compatible would have
