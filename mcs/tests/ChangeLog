@@ -1,3 +1,8 @@
+2006-10-04  Martin Baulig  <martin@ximian.com>
+
+	* known-issues-mcs, known-issues-gmcs: Updated the anonymous
+	method section.
+
 2006-10-04  Raja R Harinath  <harinath@gmail.com>
 
 	* test-533.cs: New test based on #79553.
