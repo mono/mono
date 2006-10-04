@@ -1,3 +1,9 @@
+2006-10-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* InotifyWatcher.cs: workaround for a weird case. Someone is watching
+	/dev with recursion enabled and the inotify file descriptor shows up
+	as a directory that fails to open. Already reported to Robert Love.
+
 2006-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* InotifyWatcher.cs: fix file names for the rename event.

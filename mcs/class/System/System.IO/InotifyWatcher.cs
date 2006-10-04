@@ -154,12 +154,14 @@ namespace System.IO {
 					data.SubDirs = new Hashtable ();
 
 				data.Enabled = true;
-				StartMonitoringDirectory (data, false);
-				lock (this) {
-					watches [fsw] = data;
-					AppendRequestData (data);
-					stop = false;
-				}
+				try {
+					StartMonitoringDirectory (data, false);
+					lock (this) {
+						watches [fsw] = data;
+						AppendRequestData (data);
+						stop = false;
+					}
+				} catch {} // ignore the directory if StartMonitoringDirectory fails.
 			}
 		}
 		
@@ -292,9 +294,11 @@ namespace System.IO {
 						}
 					}
 
-					StartMonitoringDirectory (fd, justcreated);
-					fd.SubDirs [directory] = fd;
-					AppendRequestData (fd);
+					try {
+						StartMonitoringDirectory (fd, justcreated);
+						fd.SubDirs [directory] = fd;
+						AppendRequestData (fd);
+					} catch {} // ignore errors and don't add directory.
 				}
 			}
 
@@ -562,11 +566,13 @@ namespace System.IO {
 				for (int n = 0; n < count; n += 2) {
 					InotifyData newdir = (InotifyData) newdirs [n];
 					InotifyData parent = (InotifyData) newdirs [n + 1];
-					StartMonitoringDirectory (newdir, true);
-					AppendRequestData (newdir);
-					lock (parent) {
-						parent.SubDirs [newdir.Directory] = newdir;
-					}
+					try {
+						StartMonitoringDirectory (newdir, true);
+						AppendRequestData (newdir);
+						lock (parent) {
+							parent.SubDirs [newdir.Directory] = newdir;
+						}
+					} catch {} // ignore the given directory
 				}
 				newdirs.Clear ();
 			}
