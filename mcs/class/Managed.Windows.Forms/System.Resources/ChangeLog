@@ -1,3 +1,15 @@
+2006-10-03  Robert Jordan  <robertj@gmx.net>
+
+	* ResXResourceReader.cs: Factor out parse_data_node () from load_data ()
+	to be able to correctly handle data nodes that occur before resheader.
+	Fix the handling of objects that have a byte[] converter.
+	Use the type resolver.
+
+	* ResXResourceWriter.cs: Fix AddResource (string, object) to accept
+	only serializable type, matching MS.NET.
+	Fix WriteBytes to not emit the mimetype attribute when the
+	type is byte[], otherwise MS.NET won't parse correctly.
+
 2006-10-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ResXResourceReader.cs: Handle empty mimetype just like a null 

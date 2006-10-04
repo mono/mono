@@ -138,18 +138,21 @@ namespace System.Resources
 			writer.WriteString(sb.ToString());
 		}
 
-		void WriteBytes (string name, string typename, byte [] value, int offset, int length)
+		void WriteBytes (string name, Type type, byte [] value, int offset, int length)
 		{
 			writer.WriteStartElement ("data");
 			writer.WriteAttributeString ("name", name);
 
-			if (typename != null) {
-				writer.WriteAttributeString ("type", typename);
+			if (type != null) {
+				writer.WriteAttributeString ("type", type.AssemblyQualifiedName);
+                                // byte[] should never get a mimetype, otherwise MS.NET won't be able
+                                // to parse the data.
+                                if (type != typeof (byte[]))
+                                    writer.WriteAttributeString ("mimetype", ByteArraySerializedObjectMimeType);
 				writer.WriteStartElement ("value");
 				WriteNiceBase64(value, offset, length);
 			} else {
-				writer.WriteAttributeString ("mimetype",
-						"application/x-microsoft.net.object.binary.base64");
+				writer.WriteAttributeString ("mimetype", BinSerializedObjectMimeType);
 				writer.WriteStartElement ("value");
 				writer.WriteBase64 (value, offset, length);
 			}
@@ -158,9 +161,9 @@ namespace System.Resources
 			writer.WriteEndElement ();
 		}
 
-		void WriteBytes (string name, string typename, byte [] value)
+		void WriteBytes (string name, Type type, byte [] value)
 		{
-			WriteBytes (name, typename, value, 0, value.Length);
+			WriteBytes (name, type, value, 0, value.Length);
 		}
 
 		void WriteString (string name, string value)
@@ -168,12 +171,12 @@ namespace System.Resources
                         WriteString (name, value, null);
 		}
 
-		void WriteString (string name, string value, string typename)
+		void WriteString (string name, string value, Type type)
 		{
 			writer.WriteStartElement ("data");
 			writer.WriteAttributeString ("name", name);
-                        if (typename != null)
-                                writer.WriteAttributeString ("type", typename);
+                        if (type != null)
+                                writer.WriteAttributeString ("type", type.AssemblyQualifiedName);
 			writer.WriteStartElement ("value");
 			writer.WriteString (value);
 			writer.WriteEndElement ();
@@ -195,7 +198,7 @@ namespace System.Resources
 			if (writer == null)
 				InitWriter ();
 
-			WriteBytes (name, value.GetType ().AssemblyQualifiedName, value);
+			WriteBytes (name, value.GetType (), value);
 		}
 
 		public void AddResource (string name, object value)
@@ -216,6 +219,9 @@ namespace System.Resources
 			if (value == null)
 				throw new ArgumentNullException ("value");
 
+                        if (!value.GetType ().IsSerializable)
+                                throw new InvalidOperationException (String.Format ("The element '{0}' of type '{1}' is not serializable.", name, value.GetType ().Name));
+
 			if (written)
 				throw new InvalidOperationException ("The resource is already generated.");
 
@@ -225,13 +231,13 @@ namespace System.Resources
 			TypeConverter converter = TypeDescriptor.GetConverter (value);
 			if (converter != null && converter.CanConvertTo (typeof (string)) && converter.CanConvertFrom (typeof (string))) {
 				string str = (string) converter.ConvertToInvariantString (value);
-				WriteString (name, str, value.GetType ().AssemblyQualifiedName);
+				WriteString (name, str, value.GetType ());
 				return;
 			}
 			
 			if (converter != null && converter.CanConvertTo (typeof (byte[])) && converter.CanConvertFrom (typeof (byte[]))) {
 				byte[] b = (byte[]) converter.ConvertTo (value, typeof (byte[]));
-				WriteBytes (name, value.GetType().AssemblyQualifiedName, b);
+				WriteBytes (name, value.GetType (), b);
 				return;
 			}
 			

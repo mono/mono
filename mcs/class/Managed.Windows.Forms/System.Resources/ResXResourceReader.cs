@@ -180,11 +180,7 @@ namespace System.Resources
 					/* resheader apparently can appear anywhere, so we collect
 					 * the data even if we haven't validated yet.
 					 */
-					string n = get_attr (reader, "name");
-					if (n != null) {
-						string v = get_value (reader, "value");
-						hasht [n] = v;
-					}
+					parse_data_node ();
 				}
 			}
 			return gotmime;
@@ -193,51 +189,66 @@ namespace System.Resources
 		private void load_data ()
 		{
 			while (reader.Read ()) {
-				if (reader.NodeType == XmlNodeType.Element && String.Compare (reader.Name, "data", true) == 0) {
-					string n = get_attr (reader, "name");
-					string t = get_attr (reader, "type");
-					string mt = get_attr (reader, "mimetype");
+				if (reader.NodeType == XmlNodeType.Element && String.Compare (reader.Name, "data", true) == 0)
+					parse_data_node ();
 
-					Type tt = t == null ? null : Type.GetType (t);
-
-					if (t != null && tt == null) {
-						throw new SystemException ("The type `" + t +"' could not be resolved");
-					}
-					if (tt == typeof (ResXNullRef)) {
-						hasht [n] = null;
-						continue;
-					}
-					if (n != null) {
-						object v = null;
-						string val = get_value (reader, "value");
-
-						if ((mt != null) && (mt.Length > 0) && (tt != null)) {
-							TypeConverter c = TypeDescriptor.GetConverter (tt);
-							v = c.ConvertFrom (Convert.FromBase64String (val));
-						} else if (tt != null) {
-							// MS seems to handle Byte[] without any mimetype :-(
-							if (t.StartsWith("System.Byte[], mscorlib")) {
-								v = Convert.FromBase64String(val);
-							} else {
-								TypeConverter c = TypeDescriptor.GetConverter (tt);
-								v = c.ConvertFromInvariantString (val);
-							}
-						} else if ((mt != null) && (mt.Length > 0)) {
-							byte [] data = Convert.FromBase64String (val);
-							BinaryFormatter f = new BinaryFormatter ();
-							using (MemoryStream s = new MemoryStream (data)) {
-								v = f.Deserialize (s);
-							}
-						} else {
-							v = val;
-						}
-						hasht [n] = v;
-					}
-				}
 			}
 		}
 
-		private Type GetType(string type) {
+		void parse_data_node ()
+		{
+			string name = get_attr (reader, "name");
+			string type_name = get_attr (reader, "type");
+			string mime_type = get_attr (reader, "mimetype");
+
+			if (name == null)
+				return;
+
+			Type type = type_name == null ? null : ResolveType (type_name);
+
+			if (type_name != null && type == null)
+				throw new ArgumentException (String.Format (
+					"The type '{0}' of the element '{1}' could not be resolved.", type_name, name));
+
+			if (type == typeof (ResXNullRef)) {
+				hasht [name] = null;
+				return;
+			}
+
+			string value = get_value (reader, "value");
+			object obj = null;
+
+			if (type != null) {
+				TypeConverter c = TypeDescriptor.GetConverter (type);
+
+				if (c == null) {
+					obj = null;
+				} else if (c.CanConvertFrom (typeof (string))) {
+					obj = c.ConvertFromInvariantString (value);
+				} else if (c.CanConvertFrom (typeof (byte[]))) {
+					obj = c.ConvertFrom (Convert.FromBase64String (value));
+				} else {
+					// the type must be a byte[]
+					obj  = Convert.FromBase64String(value);
+				}
+			} else if (mime_type != null && mime_type != String.Empty) {
+				if (mime_type == ResXResourceWriter.BinSerializedObjectMimeType) {
+					byte [] data = Convert.FromBase64String (value);
+					BinaryFormatter f = new BinaryFormatter ();
+					using (MemoryStream s = new MemoryStream (data)) {
+						obj = f.Deserialize (s);
+					}
+				} else {
+					// invalid mime type
+					obj = null;
+				}
+			} else {
+				obj = value;
+			}
+			hasht [name] = obj;
+		}
+
+		private Type ResolveType (string type) {
 			if (typeresolver == null) {
 				return Type.GetType(type);
 			} else {
