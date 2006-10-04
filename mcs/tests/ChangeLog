@@ -1,3 +1,7 @@
+2006-10-04  Raja R Harinath  <harinath@gmail.com>
+
+	* test-533.cs: New test based on #79553.
+
 2006-09-30  Raja R Harinath  <harinath@gmail.com>
 
 	* test-444.cs (Compiler options): Add.  Ensure that the file
