@@ -4,6 +4,7 @@
 // Authors:
 //	Peter Dennis Bartok (pbartok@novell.com)
 //	Sebastien Pouliot  <sebastien@ximian.com>
+//      Yoni Klain         <yonik@mainsoft.com>
 //
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
@@ -38,6 +39,7 @@ using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
+using System.Collections;
 
 namespace MonoTests.System.Web.UI {
 
@@ -81,6 +83,24 @@ namespace MonoTests.System.Web.UI {
 
 	[TestFixture]	
 	public class PageTest {
+
+		[TestFixtureSetUp]
+		public void CopyTestResources ()
+		{
+#if DOT_NET
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageValidationTest.aspx", "PageValidationTest.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageLifecycleTest.aspx", "PageLifecycleTest.aspx");
+#else
+			WebTest.CopyResource (GetType (), "PageValidationTest.aspx", "PageValidationTest.aspx");
+			WebTest.CopyResource (GetType (), "PageLifecycleTest.aspx", "PageLifecycleTest.aspx");
+#endif
+		}
+
+		[SetUp]
+		public void SetUpTest ()
+		{
+			Thread.Sleep (100);
+		}
 
 		[Test]
 		[ExpectedException (typeof(HttpException))]
@@ -334,7 +354,326 @@ namespace MonoTests.System.Web.UI {
 			Assert.AreEqual (1, page.GetValidators ("VG2").Count, "Page_ValidationGroup#6");
 		}
 #endif
+#if NET_2_0
 
+		// This test are testing validation fixture using RequiredFieldValidator for example
+		
+		[Test]
+		[Category ("NunitWeb")]
+		public void Page_ValidationCollection () 
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (ValidationCollectionload));
+			t.Run ();
+		}
+
+		public static void ValidationCollectionload (Page p)
+		{
+			RequiredFieldValidator validator = new RequiredFieldValidator ();
+			validator.ID = "v";
+			RequiredFieldValidator validator1 = new RequiredFieldValidator ();
+			validator.ID = "v1";
+			p.Controls.Add (validator);
+			p.Controls.Add (validator1);
+			Assert.AreEqual (2, p.Validators.Count, "Validators collection count fail");
+			Assert.AreEqual (true, p.Validators[0].IsValid, "Validators collection value#1 fail");
+			Assert.AreEqual (true, p.Validators[1].IsValid, "Validators collection value#2 fail");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void Page_ValidatorTest1 ()
+		{
+			WebTest t = new WebTest ("PageValidationTest.aspx");
+			string PageRenderHtml = t.Run ();
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("TextBox1");
+			PageDelegates pd = new PageDelegates ();
+			pd.PreRender = ValidatorTest1PreRender;
+			t.Invoker = new PageInvoker (pd);
+			fr.Controls["TextBox1"].Value = "";
+			t.Request = fr;
+
+			PageRenderHtml = t.Run ();
+			Assert.IsNotNull(t.UserData, "Validate server side method not raised fail");
+			ArrayList list = t.UserData as ArrayList;
+			if (list == null)
+				Assert.Fail ("User data not created fail#1");
+			Assert.AreEqual (1, list.Count, "Just validate with no validation group must be called fail#1");
+			Assert.AreEqual ("Validate", list[0].ToString (), "Validate with no validation group must be called fail#1");
+		}
+
+		public static void ValidatorTest1PreRender (Page p)
+		{
+			Assert.AreEqual (1, p.Validators.Count, "Validators count fail#1");
+			Assert.AreEqual (false, p.Validators[0].IsValid, "Specific validator value filed#1");
+			Assert.AreEqual (false, p.IsValid, "Page validation Failed#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void Page_ValidatorTest2 ()
+		{
+			WebTest t = new WebTest ("PageValidationTest.aspx");
+			string PageRenderHtml = t.Run ();
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("TextBox1");
+			PageDelegates pd = new PageDelegates ();
+			pd.PreRender = ValidatorTest2PreRender;
+			t.Invoker = new PageInvoker (pd);
+			fr.Controls["TextBox1"].Value = "test";
+			t.Request = fr;
+
+			PageRenderHtml = t.Run ();
+			Assert.IsNotNull ( t.UserData, "Validate server side method not raised fail#2");
+			ArrayList list = t.UserData as ArrayList;
+			if (list == null)
+			Assert.Fail ("User data not created fail#2");
+			Assert.AreEqual (1, list.Count, "Just validate with no validation group must be called fail#2");
+			Assert.AreEqual ("Validate", list[0].ToString (), "Validate with no validation group must be called fail#2");
+		}
+
+		public static void ValidatorTest2PreRender (Page p)
+		{
+			Assert.AreEqual (1, p.Validators.Count, "Validators count fail#2");
+			Assert.AreEqual (true, p.Validators[0].IsValid, "Specific validator value fail#2");
+			Assert.AreEqual (true, p.IsValid, "Page validation Fail#2");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void Page_ValidatorTest3 ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (ValidatorTest3Load));
+			t.Run ();
+		}
+
+		public static void ValidatorTest3Load (Page p)
+		{
+			TextBox tbx = new TextBox ();
+			tbx.ID = "tbx";
+			RequiredFieldValidator vld = new RequiredFieldValidator ();
+			vld.ID = "vld";
+			vld.ControlToValidate = "tbx";
+			p.Controls.Add (tbx);
+			p.Controls.Add (vld);
+			vld.Validate ();
+			Assert.AreEqual (false, p.Validators[0].IsValid, "RequiredField result fail #1");
+			tbx.Text = "test";
+			vld.Validate ();
+			Assert.AreEqual (true, p.Validators[0].IsValid, "RequiredField result fail #2");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void Page_ValidatorTest4 ()
+		{
+			WebTest t = new WebTest ("PageValidationTest.aspx");
+			string PageRenderHtml = t.Run ();
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("TextBox1");
+			fr.Controls.Add ("Button1");
+
+			PageDelegates pd = new PageDelegates ();
+			pd.PreRender = ValidatorTest4PreRender;
+			t.Invoker = new PageInvoker (pd);
+			fr.Controls["__EVENTTARGET"].Value = "";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			fr.Controls["TextBox1"].Value = "";
+			fr.Controls["Button1"].Value = "Button";
+			t.Request = fr;
+
+			PageRenderHtml = t.Run ();
+			Assert.IsNotNull (t.UserData, "Validate server side method not raised fail#3");
+			ArrayList list = t.UserData as ArrayList;
+			if (list == null)
+				Assert.Fail ("User data not created fail#3");
+			Assert.AreEqual (1, list.Count, "Just validate with validation group must be called fail#3");
+			Assert.AreEqual ("Validate_WithGroup", list[0].ToString (), "Validate with validation group must be called fail#3");
+		}
+
+		public static void ValidatorTest4PreRender (Page p)
+		{
+			Assert.AreEqual (1, p.Validators.Count, "Validators count fail#3");
+			Assert.AreEqual (false, p.Validators[0].IsValid, "Specific validator value filed#3");
+			Assert.AreEqual (false, p.IsValid, "Page validation Failed#3");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void Page_ValidatorTest5 ()
+		{
+			WebTest t = new WebTest ("PageValidationTest.aspx");
+			string PageRenderHtml = t.Run ();
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("TextBox1");
+			fr.Controls.Add ("Button1");
+
+			PageDelegates pd = new PageDelegates ();
+			pd.PreRender = ValidatorTest5PreRender;
+			t.Invoker = new PageInvoker (pd);
+			fr.Controls["__EVENTTARGET"].Value = "";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			fr.Controls["TextBox1"].Value = "Test";
+			fr.Controls["Button1"].Value = "Button";
+			t.Request = fr;
+
+			PageRenderHtml = t.Run ();
+			Assert.IsNotNull ( t.UserData, "Validate server side method not raised fail#3");
+			ArrayList list = t.UserData as ArrayList;
+			if (list == null)
+				Assert.Fail ("User data not created fail#3");
+			Assert.AreEqual (1, list.Count, "Just validate with validation group must be called fail#3");
+			Assert.AreEqual ("Validate_WithGroup", list[0].ToString (), "Validate with validation group must be called fail#3");
+		}
+
+		public static void ValidatorTest5PreRender (Page p)
+		{
+			Assert.AreEqual (1, p.Validators.Count, "Validators count fail#3");
+			Assert.AreEqual (true, p.Validators[0].IsValid, "Specific validator value filed#3");
+			Assert.AreEqual (true, p.IsValid, "Page validation Failed#3");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void Page_ValidatorTest6 ()
+		{
+			WebTest t = new WebTest ("PageValidationTest.aspx");
+			string PageRenderHtml = t.Run ();
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("TextBox1");
+			fr.Controls.Add ("Button1");
+
+			PageDelegates pd = new PageDelegates ();
+			pd.PreRender = ValidatorTest6PreRender;
+			pd.Load = ValidatorTest6Load;
+			t.Invoker = new PageInvoker (pd);
+			fr.Controls["__EVENTTARGET"].Value = "";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			fr.Controls["TextBox1"].Value = "Test";
+			fr.Controls["Button1"].Value = "Button";
+			t.Request = fr;
+
+			PageRenderHtml = t.Run ();
+			Assert.IsNotNull (t.UserData, "Validate server side method not raised fail#3");
+			ArrayList list = t.UserData as ArrayList;
+			if (list == null)
+				Assert.Fail ("User data not created fail#3");
+			Assert.AreEqual (1, list.Count, "Just validate with validation group must be called fail#3");
+			Assert.AreEqual ("Validate_WithGroup", list[0].ToString (), "Validate with validation group must be called fail#3");
+		}
+
+		public static void ValidatorTest6PreRender (Page p)
+		{
+			Assert.AreEqual (1, p.Validators.Count, "Validators count fail#3");
+			Assert.AreEqual (false, p.Validators[0].IsValid, "Specific validator value filed#3");
+			Assert.AreEqual (false, p.IsValid, "Page validation Failed#3");
+		}
+
+		public static void ValidatorTest6Load (Page p)
+		{
+			if (p.IsPostBack) {
+				RequiredFieldValidator rfv = p.FindControl ("RequiredFieldValidator1") as RequiredFieldValidator;
+				if (rfv == null)
+					Assert.Fail ("RequiredFieldValidator does not created fail");
+				rfv.InitialValue = "Test";
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void Page_ValidatorTest7 ()
+		{
+			WebTest t = new WebTest ("PageValidationTest.aspx");
+			string PageRenderHtml = t.Run ();
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("TextBox1");
+			fr.Controls.Add ("Button1");
+
+			PageDelegates pd = new PageDelegates ();
+			pd.PreRender = ValidatorTest7PreRender;
+			pd.Load = ValidatorTest7Load;
+			t.Invoker = new PageInvoker (pd);
+			fr.Controls["__EVENTTARGET"].Value = "";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			fr.Controls["TextBox1"].Value = "Test";
+			fr.Controls["Button1"].Value = "Button";
+			t.Request = fr;
+
+			PageRenderHtml = t.Run ();
+			Assert.IsNotNull (t.UserData, "Validate server side method not raised fail#4");
+			ArrayList list = t.UserData as ArrayList;
+			if (list == null)
+				Assert.Fail ("User data not created fail#4");
+			Assert.AreEqual (1, list.Count, "Just validate with validation group must be called fail#4");
+			Assert.AreEqual ("Validate_WithGroup", list[0].ToString (), "Validate with validation group must be called fail#4");
+		}
+
+		public static void ValidatorTest7PreRender (Page p)
+		{
+			Assert.AreEqual (2, p.Validators.Count, "Validators count fail#4");
+			Assert.AreEqual (true, p.Validators[0].IsValid, "Specific validator value filed_1#4");
+			Assert.AreEqual (true, p.Validators[1].IsValid, "Specific validator value filed#4_2#4");
+			Assert.AreEqual (true, p.IsValid, "Page validation Failed#4");
+		}
+
+		public static void ValidatorTest7Load (Page p)
+		{
+			RequiredFieldValidator validator = new RequiredFieldValidator ();
+			validator.ID = "validator";
+			validator.ControlToValidate = "TextBox1";
+			validator.ValidationGroup = "fake";
+			validator.InitialValue = "Test";
+			p.Form.Controls.Add (validator);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void Page_Lifecycle ()
+		{
+			WebTest t = new WebTest ("PageLifecycleTest.aspx");
+			string PageRenderHtml = t.Run ();
+			ArrayList eventlist = t.UserData as ArrayList;
+			if (eventlist == null)
+				Assert.Fail ("User data does not been created fail");
+
+			Assert.AreEqual ("OnPreInit", eventlist[0], "Live Cycle Flow #1");
+			Assert.AreEqual ("OnInit", eventlist[1], "Live Cycle Flow #2");
+			Assert.AreEqual ("OnInitComplete", eventlist[2], "Live Cycle Flow #3");
+			Assert.AreEqual ("OnPreLoad", eventlist[3], "Live Cycle Flow #4");
+			Assert.AreEqual ("OnLoad", eventlist[4], "Live Cycle Flow #5");
+			Assert.AreEqual ("OnLoadComplete", eventlist[5], "Live Cycle Flow #6");
+			Assert.AreEqual ("OnPreRender", eventlist[6], "Live Cycle Flow #7");
+			Assert.AreEqual ("OnPreRenderComplete", eventlist[7], "Live Cycle Flow #8");
+			Assert.AreEqual ("OnSaveStateComplete", eventlist[8], "Live Cycle Flow #9");
+			Assert.AreEqual ("OnUnload", eventlist[9], "Live Cycle Flow #10");
+		}
+#endif
+
+		[TestFixtureTearDown]
+		public void TearDown ()
+		{
+			WebTest.Unload ();
+		}
 	}
-	
 }

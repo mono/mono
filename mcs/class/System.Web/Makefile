@@ -117,6 +117,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/MyPageWithDerivedMaster.aspx \
 	Test/mainsoft/NunitWebResources/MasterTypeTest1.aspx \
 	Test/mainsoft/NunitWebResources/MasterTypeTest2.aspx \
+	Test/mainsoft/NunitWebResources/PageLifecycleTest.aspx \
+	Test/mainsoft/NunitWebResources/PageValidationTest.aspx \
 	Test/mainsoft/MainsoftWebTest/nunitweb_config.xml 
 
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)

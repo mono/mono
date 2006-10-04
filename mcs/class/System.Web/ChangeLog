@@ -1,3 +1,9 @@
+2006-10-04 Yoni Klain <yonik@mainsoft.com>
+	* System.Web.UI.Page.Test.cs new tests added;
+    * MakeFile: add new resources for PageTest.cs :
+    Test/mainsoft/NunitWebResources/PageLifecycleTest.aspx ;
+	Test/mainsoft/NunitWebResources/PageValidationTest.aspx ;
+	
 2006-10-03 Hagit Yidov <hagity@mainsoft.com>
 
 	* ImageMapTest.cs: New test was added
