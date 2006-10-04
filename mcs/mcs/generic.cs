@@ -26,6 +26,11 @@ namespace Mono.CSharp
 
 	public abstract class Constraints : GenericConstraints
 	{
+		public Constraints Clone ()
+		{
+			throw new NotImplementedException ();
+		}
+
 		public abstract Location Location {
 			get;
 		}
@@ -223,11 +228,21 @@ namespace Mono.CSharp
 		}
 	}
 
-	public abstract class GenericMethod : DeclSpace
+	public class GenericMethod : DeclSpace
 	{
 		public GenericMethod (NamespaceEntry ns, DeclSpace parent, MemberName name,
 				      Expression return_type, Parameters parameters)
 			: base (ns, parent, name, null)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override TypeBuilder DefineType ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override bool Define ()
 		{
 			throw new NotImplementedException ();
 		}
@@ -243,6 +258,30 @@ namespace Mono.CSharp
 			throw new NotImplementedException ();
 		}
 
+		public override bool DefineMembers ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override MemberList FindMembers (MemberTypes mt, BindingFlags bf,
+							MemberFilter filter, object criteria)
+		{
+			throw new NotImplementedException ();
+		}		
+
+		public override MemberCache MemberCache {
+			get { throw new NotImplementedException (); }
+		}
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Method | AttributeTargets.ReturnValue;
+			}
+		}
+
+		public override string DocCommentHeader {
+			get { return "M:"; }
+		}
 
 		public new void VerifyClsCompliance ()
 		{
