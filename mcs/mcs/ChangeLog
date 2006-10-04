@@ -1,5 +1,9 @@
 2006-10-04  Raja R Harinath  <harinath@gmail.com>
 
+	Fix #79577
+	* namespace.cs (LookForAnyGenericType): Avoid nullref on
+	'declspaces'.  Avoid allocating arrays willy-nilly.
+
 	Fix #79553
 	* cfold.cs (BinaryFold): Move boolean Equality and Inequality
 	cases out of the switch.

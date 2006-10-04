@@ -309,13 +309,13 @@ namespace Mono.CSharp {
 			if (name.IndexOf ("`") > 0) {
 				FullNamedExpression retval = Lookup (ds, SimpleName.RemoveGenericArity (name), loc);
 				if (retval != null) {
-					Error_TypeArgumentsCannotBeUsed(retval.Type, loc, "type");
+					Error_TypeArgumentsCannotBeUsed (retval.Type, loc, "type");
 					return;
 				}
 			} else {
 				Type t = LookForAnyGenericType (name);
 				if (t != null) {
-					Error_InvalidNumberOfTypeArguments(t, loc);
+					Error_InvalidNumberOfTypeArguments (t, loc);
 					return;
 				}
 			}
@@ -411,17 +411,16 @@ namespace Mono.CSharp {
 		/// 
 		public Type LookForAnyGenericType (string typeName)
 		{
-			typeName = SimpleName.RemoveGenericArity(typeName);
+			if (declspaces == null)
+				return null;
 
-			foreach (string type_item in declspaces.Keys) {
-				string[] sep_type = type_item.Split('`');
-				if (sep_type.Length < 2)
-					continue;
+			typeName = SimpleName.RemoveGenericArity (typeName);
 
-				if (typeName == sep_type [0]) {
-					DeclSpace tdecl = (DeclSpace)declspaces [type_item];
-					return tdecl.TypeBuilder;
-				}
+			foreach (DictionaryEntry de in declspaces) {
+				string type_item = (string) de.Key;
+				int pos = type_item.LastIndexOf ('`');
+				if (pos == typeName.Length && String.Compare (typeName, 0, type_item, 0, pos) == 0)
+					return ((DeclSpace) de.Value).TypeBuilder;
 			}
 			return null;
 		}

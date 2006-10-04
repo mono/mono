@@ -1,3 +1,7 @@
+2006-10-04  Raja R Harinath  <harinath@gmail.com>
+
+	* cs0246-17.cs: An embarassingly simple testcase based on #79577.
+
 2006-09-28  Raja R Harinath  <rharinath@novell.com>
 
 	* gcs1502.cs: New test from #79013.
