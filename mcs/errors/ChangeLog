@@ -1,3 +1,8 @@
+2006-10-04  Martin Baulig  <martin@ximian.com>
+
+	* known-issues-mcs, known-issues-gmcs: Update; the anonymous
+	method tests are now working.
+
 2006-10-04  Raja R Harinath  <harinath@gmail.com>
 
 	* cs0246-17.cs: An embarassingly simple testcase based on #79577.
