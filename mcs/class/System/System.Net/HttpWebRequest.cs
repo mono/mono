@@ -170,7 +170,7 @@ namespace System.Net
 		
 		internal bool InternalAllowBuffering {
 			get {
-				return (allowBuffering && (method == "PUT" || method == "POST"));
+				return (allowBuffering && (method != "HEAD" && method != "GET"));
 			}
 		}
 		
