@@ -1,3 +1,8 @@
+2006-10-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RSAManagedTest.cs: Forgot to update test cases after right padding 
+	was added.
+
 2006-09-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RSAManagedTest.cs: Add a test case for #79269 (wrong exception).

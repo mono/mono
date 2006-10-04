@@ -225,7 +225,8 @@ namespace MonoTests.Mono.Security.Cryptography {
 			byte[] enc = pubkey.EncryptValue (data);
 
 			byte[] dec = rsa.DecryptValue (enc);
-			Assert.AreEqual (BitConverter.ToString (data), BitConverter.ToString (dec), msg);
+			// note: the decrypted value is now right padded with zeros
+			Assert.IsTrue (BitConverter.ToString (dec).EndsWith (BitConverter.ToString (data)), msg);
 		}
 
 		// Validate that we can sign with every keypair and verify the signature
