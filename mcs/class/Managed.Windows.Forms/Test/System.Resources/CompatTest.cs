@@ -38,6 +38,9 @@ namespace MonoTests.System.Resources
                                 Assert.AreEqual (16, ((byte[]) h["ByteArray2"])[1], fileName + "#8");
                                 Assert.AreEqual (1013, ((int[]) h["IntArray"])[1], fileName + "#9");
                                 Assert.AreEqual ("world", ((string[]) h["StringArray"])[1], fileName + "#10");
+                                Assert.IsNull (h["InvalidMimeType"]);
+                                Assert.IsNotNull (h["Image"], fileName + "#11");
+                                Assert.AreEqual (typeof (Bitmap), h["Image"].GetType (), fileName + "#12");
                         }
                 }
 
@@ -45,7 +48,14 @@ namespace MonoTests.System.Resources
                 public void TestReader ()
                 {
                         Helper.TestReader ("Test/System.Resources/compat_1_1.resx");
+                }
+
+#if NET_2_0
+                [Test]
+                public void TestReader_2_0 ()
+                {
                         Helper.TestReader ("Test/System.Resources/compat_2_0.resx");
                 }
+#endif
         }
 }

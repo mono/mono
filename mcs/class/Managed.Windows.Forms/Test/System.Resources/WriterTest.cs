@@ -7,9 +7,12 @@
 
 using System;
 using System.Collections;
+using System.ComponentModel;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Resources;
+using System.Text;
 using NUnit.Framework;
 
 namespace MonoTests.System.Resources
@@ -33,6 +36,16 @@ namespace MonoTests.System.Resources
                         w.AddResource ("ByteArray2", (object) new byte[] {15, 16, 17});
                         w.AddResource ("IntArray", new int[] {1012, 1013, 1014});
                         w.AddResource ("StringArray", new string[] {"hello", "world"});
+                        w.AddResource ("Image", new Bitmap (1, 1));
+                        w.AddResource ("StrType", new MyStrType ("hello"));
+                        w.AddResource ("BinType", new MyBinType ("world"));
+
+                        try {
+                                w.AddResource ("NonSerType", new MyNonSerializableType ());
+                                Assert.Fail ("#0");
+                        } catch (InvalidOperationException) {
+                        }
+
                         w.Generate ();
                         w.Close ();
 
@@ -53,8 +66,141 @@ namespace MonoTests.System.Resources
                         Assert.AreEqual (16, ((byte[]) h["ByteArray2"])[1], "#8");
                         Assert.AreEqual (1013, ((int[]) h["IntArray"])[1], "#9");
                         Assert.AreEqual ("world", ((string[]) h["StringArray"])[1], "#10");
+                        Assert.AreEqual (typeof (Bitmap), h["Image"].GetType (), "#11");
+                        Assert.AreEqual ("hello", ((MyStrType) h["StrType"]).Value, "#12");
+                        Assert.AreEqual ("world", ((MyBinType) h["BinType"]).Value, "#13");
 
                         File.Delete (fileName);
                 }
         }
+
+	[Serializable]
+	[TypeConverter (typeof (MyStrTypeConverter))]
+	public class MyStrType
+	{
+		public string Value;
+
+		public MyStrType (string s)
+		{
+			Value = s;
+		}
+	}
+
+	public class MyStrTypeConverter : TypeConverter
+	{
+		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+		{
+			if (destinationType == typeof (string)) 
+				return true;
+			return base.CanConvertTo (context, destinationType);
+		}
+
+		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+		{
+			if (sourceType == typeof (string)) 
+				return true;
+			return base.CanConvertFrom (context, sourceType);
+		}
+
+		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+		{
+			if (destinationType == typeof (string)) 
+				return ((MyStrType) value).Value;
+			return base.ConvertTo (context, culture, value, destinationType);
+		}
+
+		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+		{
+			if (value.GetType() == typeof (string))
+				return new MyStrType((string) value);
+			return base.ConvertFrom (context, culture, value);
+		}
+
+	}
+
+
+	[Serializable]
+	[TypeConverter (typeof (MyBinTypeConverter))]
+	public class MyBinType
+	{
+		public string Value;
+
+		public MyBinType (string s)
+		{
+			Value = s;
+		}
+	}
+
+	public class MyBinTypeConverter : TypeConverter
+	{
+		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+		{
+			if (destinationType == typeof (byte[])) 
+				return true;
+			return base.CanConvertTo (context, destinationType);
+		}
+
+		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+		{
+			if (sourceType == typeof (byte[])) 
+				return true;
+			return base.CanConvertFrom (context, sourceType);
+		}
+
+		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+		{
+			if (destinationType == typeof (byte[])) 
+				return Encoding.Default.GetBytes (((MyBinType) value).Value);
+			return base.ConvertTo (context, culture, value, destinationType);
+		}
+
+		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+		{
+			if (value.GetType() == typeof (byte[]))
+				return new MyBinType (Encoding.Default.GetString ((byte[]) value));
+			return base.ConvertFrom (context, culture, value);
+		}
+
+	}
+
+
+	[TypeConverter (typeof (MyNonSerializableTypeConverter))]
+	public class MyNonSerializableType
+	{
+		public MyNonSerializableType ()
+		{
+		}
+	}
+
+	public class MyNonSerializableTypeConverter : TypeConverter
+	{
+		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+		{
+			if (destinationType == typeof (byte[])) 
+				return true;
+			return base.CanConvertTo (context, destinationType);
+		}
+
+		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+		{
+			if (sourceType == typeof (byte[])) 
+				return true;
+			return base.CanConvertFrom (context, sourceType);
+		}
+
+		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+		{
+			if (destinationType == typeof (byte[])) 
+				return new byte[] {0, 1, 2, 3};
+			return base.ConvertTo (context, culture, value, destinationType);
+		}
+
+		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+		{
+			if (value.GetType() == typeof (byte[]))
+				return new MyNonSerializableType ();
+			return base.ConvertFrom (context, culture, value);
+		}
+
+	}
 }
