@@ -1,3 +1,13 @@
+2006-10-04  Jackson Harper  <jackson@ximian.com>
+
+	* TabPage.cs: Ignore setting of Visible, and add an internal
+	method for setting the controls visibility.  TabPage's Visible
+	property is a little strange on MS, this seems to make us
+	compatible, and fixes cases where people set all the tab pages to
+	visible.
+	* TabControl.cs: Use the new internal setting on tab pages
+	visibility.
+
 2006-10-03  Mike Kestner  <mkestner@novell.com>
 
 	* ComboBox.cs : raise Click on ComboTextBox clicks. Fixes #79555.

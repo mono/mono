@@ -242,7 +242,7 @@ namespace System.Windows.Forms {
 				if (selected_index != -1) {
 					if (!refresh)
 						invalid = GetTabRect (selected_index);
-					Controls [selected_index].Visible = false;
+					((TabPage) Controls [selected_index]).SetVisible (false);
 				}
 				selected_index = value;
 
@@ -253,7 +253,7 @@ namespace System.Windows.Forms {
 				if (selected_index != -1) {
 					selected = (TabPage) Controls [selected_index];
 					invalid = Rectangle.Union (invalid, GetTabRect (selected_index));
-					selected.Visible = true;
+					selected.SetVisible (true);
 				}
 
 				ResumeLayout ();
@@ -1052,12 +1052,13 @@ namespace System.Windows.Forms {
 
 			public override void Add (Control value)
 			{
-				if (!(value is TabPage))
+				TabPage page = value as TabPage;
+				if (page == null)
 					throw new ArgumentException ("Cannot add " +
 						value.GetType ().Name + " to TabControl. " +
 						"Only TabPages can be directly added to TabControls.");
 
-				value.Visible = false;
+				page.SetVisible (false);
 				base.Add (value);
 				if (Count == 1) {
 					owner.SelectedIndex = 0;

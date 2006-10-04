@@ -149,7 +149,7 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new bool Visible {
 			get { return base.Visible; }
-			set { base.Visible = value; }
+			set { /* according to MS docs we can ignore this */ }
 		}
 
 		#endregion	// Public Instance Properties
@@ -199,6 +199,11 @@ namespace System.Windows.Forms {
 
 		private TabControl Owner {
 			get { return base.Parent as TabControl; }
+		}
+
+		internal void SetVisible (bool value)
+		{
+			base.Visible = value;
 		}
 
 		#endregion	// Internal & Private Methods and Properties
