@@ -296,18 +296,7 @@ namespace Mono.Security.Cryptography {
 			byte[] m = RSAVP1 (rsa, s);
 			byte[] EM2 = I2OSP (m, size);
 			byte[] EM = Encode_v15 (hash, hashValue, size);
-			bool result = Compare (EM, EM2);
-			if (!result) {
-				// NOTE: some signatures don't include the hash OID (pretty lame but real)
-				// and compatible with MS implementation
-				if ((EM2 [0] != 0x00) || (EM2 [1] != 0x01))
-					return false;
-				// TODO: add more validation
-				byte[] decryptedHash = new byte [hashValue.Length];
-				Buffer.BlockCopy (EM2, EM2.Length - hashValue.Length, decryptedHash, 0, decryptedHash.Length);
-				result = Compare (decryptedHash, hashValue);
-			}
-			return result;
+			return Compare (EM, EM2);
 		}
 	
 		// PKCS #1 v.2.1, Section 9.2
