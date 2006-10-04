@@ -577,11 +577,16 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 		
 		[Test]
-		public void GridView_CreateChildTable()
-		{
+		public void GridView_CreateChildTable () {
 			PokerGridView g = new PokerGridView ();
-			Assert.IsNotNull (g.DoCreateChildTable (), "CreateChildTable");  
-			Assert.IsTrue (g.DoCreateChildTable() is Table, "CreateChildTable");  
+			g.ID = "PokerGridView";
+			g.Caption = "Caption";
+			g.CaptionAlign = TableCaptionAlign.Right;
+			g.CellPadding = 2;
+			g.CellSpacing = 2;
+			Table t = g.DoCreateChildTable ();
+			Assert.IsNotNull (t, "CreateChildTable#1");
+			Assert.AreEqual (false, t.ControlStyleCreated, "CreateChildTable#2");
 		}
 
 		[Test]
@@ -2089,4 +2094,5 @@ namespace MonoTests.System.Web.UI.WebControls
 }
 
 #endif
+
 

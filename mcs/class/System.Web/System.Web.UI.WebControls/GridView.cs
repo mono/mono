@@ -66,7 +66,6 @@ namespace System.Web.UI.WebControls
 		DataControlFieldCollection columns;
 		PagerSettings pagerSettings;
 		
-		TableStyle style;
 		TableItemStyle alternatingRowStyle;
 		TableItemStyle editRowStyle;
 		TableItemStyle emptyDataRowStyle;
@@ -410,13 +409,12 @@ namespace System.Web.UI.WebControls
 		[EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string BackImageUrl {
 			get {
-				object ob = ViewState ["BackImageUrl"];
-				if (ob != null) return (string) ob;
-				return string.Empty;
+				if (ControlStyleCreated)
+					return ((TableStyle) ControlStyle).BackImageUrl;
+				return String.Empty;
 			}
 			set {
-				ViewState ["BackImageUrl"] = value;
-				RequireBinding ();
+				((TableStyle) ControlStyle).BackImageUrl = value;
 			}
 		}
 
@@ -464,13 +462,12 @@ namespace System.Web.UI.WebControls
 		public virtual int CellPadding
 		{
 			get {
-				object o = ViewState ["CellPadding"];
-				if (o != null) return (int) o;
+				if (ControlStyleCreated)
+					return ((TableStyle) ControlStyle).CellPadding;
 				return -1;
 			}
 			set {
-				ViewState ["CellPadding"] = value;
-				RequireBinding ();
+				((TableStyle) ControlStyle).CellPadding = value;
 			}
 		}
 
@@ -479,13 +476,12 @@ namespace System.Web.UI.WebControls
 		public virtual int CellSpacing
 		{
 			get {
-				object o = ViewState ["CellSpacing"];
-				if (o != null) return (int) o;
+				if (ControlStyleCreated)
+					return ((TableStyle) ControlStyle).CellSpacing;
 				return 0;
 			}
 			set {
-				ViewState ["CellSpacing"] = value;
-				RequireBinding ();
+				((TableStyle) ControlStyle).CellSpacing = value;
 			}
 		}
 		
@@ -654,12 +650,12 @@ namespace System.Web.UI.WebControls
 		[DefaultValueAttribute (GridLines.Both)]
 		public virtual GridLines GridLines {
 			get {
-				object ob = ViewState ["GridLines"];
-				if (ob != null) return (GridLines) ob;
+				if (ControlStyleCreated)
+					return ((TableStyle) ControlStyle).GridLines;
 				return GridLines.Both;
 			}
 			set {
-				ViewState ["GridLines"] = value;
+				((TableStyle) ControlStyle).GridLines = value;
 			}
 		}
 
@@ -705,13 +701,12 @@ namespace System.Web.UI.WebControls
 		[DefaultValueAttribute (HorizontalAlign.NotSet)]
 		public virtual HorizontalAlign HorizontalAlign {
 			get {
-				object ob = ViewState ["HorizontalAlign"];
-				if (ob != null) return (HorizontalAlign) ob;
+				if (ControlStyleCreated)
+					return ((TableStyle) ControlStyle).HorizontalAlign;
 				return HorizontalAlign.NotSet;
 			}
 			set {
-				ViewState ["HorizontalAlign"] = value;
-				RequireBinding ();
+				((TableStyle) ControlStyle).HorizontalAlign = value;
 			}
 		}
 
@@ -1091,14 +1086,7 @@ namespace System.Web.UI.WebControls
 		
 		protected virtual Table CreateChildTable ()
 		{
-			Table table = new Table ();
-			table.Caption = Caption;
-			table.CaptionAlign = CaptionAlign;
-			table.CellPadding = CellPadding;
-			table.CellSpacing = CellSpacing;
-			table.HorizontalAlign = HorizontalAlign;
-			table.BackImageUrl = BackImageUrl;
-			return table;
+			return new ContainedTable (this);
 		}
 	
 		protected override int CreateChildControls (IEnumerable data, bool dataBinding)
@@ -1207,10 +1195,9 @@ namespace System.Web.UI.WebControls
 			return dataSource.DataSourceCount;
 		}
 
-		[MonoTODO]
 		protected override Style CreateControlStyle ()
 		{
-			style = new TableStyle (ViewState);
+			TableStyle style = new TableStyle (ViewState);
 			style.GridLines = GridLines.Both;
 			style.CellSpacing = 0;
 			return style;
@@ -1822,20 +1809,16 @@ namespace System.Web.UI.WebControls
 				Page.ClientScript.GetPostBackClientHyperlink (this, "");
 			}
 		}
-		
+
 		protected internal override void Render (HtmlTextWriter writer)
 		{
 			if (EnableSortingAndPagingCallbacks)
-				base.RenderBeginTag (writer);
-			else
-				writer.RenderBeginTag (HtmlTextWriterTag.Div);
+				writer.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
+			writer.RenderBeginTag (HtmlTextWriterTag.Div);
 
 			RenderGrid (writer);
-			
-			if (EnableSortingAndPagingCallbacks)
-				base.RenderEndTag (writer);
-			else
-				writer.RenderEndTag ();
+
+			writer.RenderEndTag ();
 		}
 		
 		void RenderGrid (HtmlTextWriter writer)
@@ -1843,7 +1826,8 @@ namespace System.Web.UI.WebControls
 			if (table == null)
 				return;
 
-			table.GridLines = GridLines;
+			table.Caption = Caption;
+			table.CaptionAlign = CaptionAlign;
 			table.RenderBeginTag (writer);
 			
 			foreach (GridViewRow row in table.Rows)

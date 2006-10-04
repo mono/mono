@@ -1,3 +1,8 @@
+2006-10-04 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* GridView.cs: corrected rendering 
+	* ContainedTable.cs: added new helper class 
+		
 2006-10-03 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* FormView.cs: fixed: 

@@ -682,6 +682,7 @@ System.Web.UI.WebControls/CompareValidator.cs
 System.Web.UI.WebControls/CompleteWizardStep.cs
 System.Web.UI.WebControls/CompositeControl.cs
 System.Web.UI.WebControls/CompositeDataBoundControl.cs
+System.Web.UI.WebControls/ContainedTable.cs
 System.Web.UI.WebControls/ContentControlBuilderInternal.cs
 System.Web.UI.WebControls/Content.cs
 System.Web.UI.WebControls/ContentDirection.cs
