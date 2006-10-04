@@ -1,3 +1,10 @@
+2006-10-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS1.cs: Remove compatibility block where all padding wasn't 
+	verified (can't find the original test case for it). Note: the 
+	existing implementation wasn't affected by CVE-2006-4339, aka RSA 
+	PKCS#1 1.5 signature forgery (but we're stronger without it).
+
 2006-09-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RSAManaged.cs: Ensure that the results of Encrypt and Decrypt will
