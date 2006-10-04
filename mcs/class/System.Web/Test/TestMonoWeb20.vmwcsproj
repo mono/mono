@@ -76,7 +76,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-rt="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jre5\lib\rt.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\mscorlib.jar" REFS-JarPath-htmlcompare="mainsoft\MainsoftWebTest\bin\Debug_Java\HtmlCompare.jar" REFS-JarPath-nunit-framework="mainsoft\MainsoftWebTest\bin\Debug_Java\nunit.framework.jar" REFS-JarPath-nunitweb="mainsoft\NunitWeb\NunitWeb\bin\Debug_Java20\NunitWeb.jar" REFS-JarPath-system="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.jar" REFS-JarPath-system-configuration="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Configuration.jar" REFS-JarPath-system-data="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Data.jar" REFS-JarPath-system-drawing="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Drawing.jar;..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\jai_imageio.jar;..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\jai_core.jar;..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\jai_codec.jar;..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\clibwrapper_jiio.jar;..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\mlibwrapper_jai.jar" REFS-JarPath-system-web="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Web.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Xml.jar" />
+      <UserProperties REFS-JarPath-system-xml="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Xml.jar" REFS-JarPath-system-web="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Web.jar" REFS-JarPath-system-drawing="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Drawing.jar;..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\jai_imageio.jar;..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\jai_core.jar;..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\jai_codec.jar;..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\clibwrapper_jiio.jar;..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\mlibwrapper_jai.jar" REFS-JarPath-system-data="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Data.jar" REFS-JarPath-system-configuration="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.Configuration.jar" REFS-JarPath-system="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\System.jar" REFS-JarPath-nunitweb="mainsoft\NunitWeb\NunitWeb\bin\Debug_Java20\NunitWeb.jar" REFS-JarPath-nunit-framework="mainsoft\MainsoftWebTest\bin\Debug_Java\nunit.framework.jar" REFS-JarPath-htmlcompare="mainsoft\MainsoftWebTest\bin\Debug_Java\HtmlCompare.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\mscorlib.jar" REFS-JarPath-rt="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jre5\lib\rt.jar" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
@@ -93,9 +93,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>mainsoft\NunitWeb\NunitWeb\bin\Debug_Java20\NunitWeb.dll</HintPath>
       <Private>True</Private>
-    </Reference>
-    <Reference Include="rt, Version=0.0.0.0, Culture=neutral">
-      <Private>False</Private>
     </Reference>
     <Reference Include="System">
       <HintPath>..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.dll</HintPath>
@@ -116,7 +113,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="System.Web.Caching\CacheStress.cs" />
+    <Compile Include="System.Web.Configuration\AnonymousIdentificationSectionTest.cs" />
     <Compile Include="System.Web.Configuration\AssemblyCollectionTest.cs" />
     <Compile Include="System.Web.Configuration\AssemblyInfoTest.cs" />
     <Compile Include="System.Web.Configuration\AuthenticationSectionTest.cs">
@@ -127,6 +124,7 @@
     <Compile Include="System.Web.Configuration\AuthorizationSectionTest.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="System.Web.Configuration\BufferModeSettingsTest.cs" />
     <Compile Include="System.Web.Configuration\BuildProviderTest.cs" />
     <Compile Include="System.Web.Configuration\CacheSectionTest.cs" />
     <Compile Include="System.Web.Configuration\ClientTargetSectionTest.cs" />
@@ -138,105 +136,217 @@
     <Compile Include="System.Web.Configuration\CustomErrorsSectionTest.cs" />
     <Compile Include="System.Web.Configuration\DeploymentSectionTest.cs" />
     <Compile Include="System.Web.Configuration\GlobalizationSectionTest.cs" />
-    <Compile Include="System.Web.Configuration\HealthMonitoringSectionTest.cs" />
     <Compile Include="System.Web.Configuration\HostingEnvironmentSectionTest.cs" />
+    <Compile Include="System.Web.Configuration\MachineKeyValidationConverterTest.cs" />
+    <Compile Include="System.Web.Configuration\NullableStringValidatorTest.cs" />
     <Compile Include="System.Web.Configuration\ProfilePropertySettingsTest.cs" />
+    <Compile Include="System.Web.Configuration\SiteMapSectionTest.cs" />
+    <Compile Include="System.Web.Configuration\WebConfigurationManagerTest.cs" />
+    <Compile Include="System.Web.Hosting\ApplicationHostTest.cs" />
+    <Compile Include="System.Web.Hosting\HostingEnvironmentTest.cs" />
+    <Compile Include="System.Web.Hosting\SimpleWorkerRequestTest.cs" />
+    <Compile Include="System.Web.Hosting\VirtualPathProviderTest.cs" />
     <Compile Include="System.Web.Profile\ProfileInfoTest.cs" />
     <Compile Include="System.Web.Security\FormsAuthenticationTest.cs" />
     <Compile Include="System.Web.Security\FormsIdentityTest.cs" />
     <Compile Include="System.Web.Security\MembershipProviderCollectionTest.cs" />
+    <Compile Include="System.Web.Security\MembershipProviderTest.cs" />
     <Compile Include="System.Web.Security\MembershipTest.cs" />
     <Compile Include="System.Web.Security\MembershipUserCollectionTest.cs" />
     <Compile Include="System.Web.Security\RolePrincipalTest.cs" />
+    <Compile Include="System.Web.Security\RolesTest.cs" />
+    <Compile Include="System.Web.UI.HtmlControls\HtmlAnchorTest.cs" />
     <Compile Include="System.Web.UI.HtmlControls\HtmlButtonTest.cs" />
     <Compile Include="System.Web.UI.HtmlControls\HtmlContainerControlTest.cs" />
+    <Compile Include="System.Web.UI.HtmlControls\HtmlFormTest.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="System.Web.UI.HtmlControls\HtmlImageTest.cs" />
     <Compile Include="System.Web.UI.HtmlControls\HtmlInputButtonTest.cs" />
+    <Compile Include="System.Web.UI.HtmlControls\HtmlInputCheckBoxTest.cs" />
+    <Compile Include="System.Web.UI.HtmlControls\HtmlInputControlTest.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="System.Web.UI.HtmlControls\HtmlInputFileTest.cs" />
     <Compile Include="System.Web.UI.HtmlControls\HtmlInputHiddenTest.cs" />
     <Compile Include="System.Web.UI.HtmlControls\HtmlInputPasswordTest.cs" />
     <Compile Include="System.Web.UI.HtmlControls\HtmlInputRadioButtonTest.cs" />
     <Compile Include="System.Web.UI.HtmlControls\HtmlInputResetTest.cs" />
     <Compile Include="System.Web.UI.HtmlControls\HtmlInputSubmitTest.cs" />
+    <Compile Include="System.Web.UI.HtmlControls\HtmlInputTextTest.cs" />
     <Compile Include="System.Web.UI.HtmlControls\HtmlLinkTest.cs" />
+    <Compile Include="System.Web.UI.HtmlControls\HtmlMetaTest.cs" />
     <Compile Include="System.Web.UI.HtmlControls\HtmlSelectTest.cs" />
     <Compile Include="System.Web.UI.HtmlControls\HtmlTableCellTest.cs" />
     <Compile Include="System.Web.UI.HtmlControls\HtmlTableRowTest.cs" />
     <Compile Include="System.Web.UI.HtmlControls\HtmlTableTest.cs" />
     <Compile Include="System.Web.UI.HtmlControls\HtmlTextAreaTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\AccessDataSourceTest.cs" />
     <Compile Include="System.Web.UI.WebControls\AdCreatedEventArgsTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\AutoGeneratedFieldTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\BaseCompareValidatorTest.cs" />
     <Compile Include="System.Web.UI.WebControls\BaseDataBoundControlTest.cs" />
     <Compile Include="System.Web.UI.WebControls\BaseDataListTest.cs" />
     <Compile Include="System.Web.UI.WebControls\BaseValidatorTest.cs" />
     <Compile Include="System.Web.UI.WebControls\BoundColumnTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\BoundFieldTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\BulletedListTest.cs" />
     <Compile Include="System.Web.UI.WebControls\ButtonColumnTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\ButtonFieldBaseTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\ButtonFieldTest.cs" />
     <Compile Include="System.Web.UI.WebControls\ButtonTest.cs" />
     <Compile Include="System.Web.UI.WebControls\CalendarDayTest.cs" />
     <Compile Include="System.Web.UI.WebControls\CalendarTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\CallBackTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\CheckBoxFieldTest.cs" />
     <Compile Include="System.Web.UI.WebControls\CheckBoxListTest.cs" />
     <Compile Include="System.Web.UI.WebControls\CheckBoxTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\CircleHotSpotTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\CommandFieldTest.cs" />
     <Compile Include="System.Web.UI.WebControls\CompareValidatorTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\CompleteWizardStepTest.cs" />
     <Compile Include="System.Web.UI.WebControls\CompositeControlTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\ContentTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\CreateUserWizardStepTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\CreateUserWizardTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\CrossPagePostingTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\CustomValidatorTest.cs" />
     <Compile Include="System.Web.UI.WebControls\DataBoundControlTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\DataControlFieldCollectionTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\DataControlFieldTest.cs" />
     <Compile Include="System.Web.UI.WebControls\DataGridColumnTest.cs" />
     <Compile Include="System.Web.UI.WebControls\DataGridItemCollectionTest.cs" />
     <Compile Include="System.Web.UI.WebControls\DataGridItemTest.cs" />
     <Compile Include="System.Web.UI.WebControls\DataGridPagerStyleTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\DataGridTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\DataKeyArrayTest.cs" />
     <Compile Include="System.Web.UI.WebControls\DataKeyCollectionTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\DataKeyTest.cs" />
     <Compile Include="System.Web.UI.WebControls\DataListItemCollectionTest.cs" />
     <Compile Include="System.Web.UI.WebControls\DataListItemTest.cs" />
     <Compile Include="System.Web.UI.WebControls\DataListTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\DataSourceControlTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\DataSourceViewTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\DetailsViewRowCollectionTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\DetailsViewRowTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\DetailsViewTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\DropDownListTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\EditCommandColumnTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\FileUploadTest.cs" />
     <Compile Include="System.Web.UI.WebControls\FontInfoTest.cs" />
     <Compile Include="System.Web.UI.WebControls\FontNamesConverterTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\FontUnitTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\FormViewRowTest.cs" />
     <Compile Include="System.Web.UI.WebControls\FormViewTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\GridViewRowCollectionTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\GridViewRowTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\GridViewTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\HierarchicalDataBoundControlTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\HotSpotCollectionTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\HotSpotTest.cs" />
     <Compile Include="System.Web.UI.WebControls\HyperLinkColumnTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\HyperLinkFieldTest.cs" />
     <Compile Include="System.Web.UI.WebControls\HyperLinkTest.cs" />
     <Compile Include="System.Web.UI.WebControls\ImageButtonTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\ImageFieldTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\ImageMapTest.cs" />
     <Compile Include="System.Web.UI.WebControls\ImageTest.cs" />
     <Compile Include="System.Web.UI.WebControls\LabelTest.cs" />
     <Compile Include="System.Web.UI.WebControls\LinkButtonTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\ListBoxTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\ListControlTest.cs" />
     <Compile Include="System.Web.UI.WebControls\ListItemCollectionTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\ListItemTest.cs" />
     <Compile Include="System.Web.UI.WebControls\LiteralTest.cs" />
     <Compile Include="System.Web.UI.WebControls\LoginNameTest.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\LoginStatusTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\LoginTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\LoginViewTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\MappingUrlTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\MasterPageTest.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="System.Web.UI.WebControls\MenuTest.cs" />
     <Compile Include="System.Web.UI.WebControls\MonthChangedEventArgsTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\MultiViewTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\ObjectDataSourceTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\ObjectDataSourceViewTest.cs" />
     <Compile Include="System.Web.UI.WebControls\PagedDataSourceTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\PagerSettingsTest.cs" />
     <Compile Include="System.Web.UI.WebControls\PanelTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\PolygonHotSpotTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\RadioButtonListTest.cs" />
     <Compile Include="System.Web.UI.WebControls\RadioButtonTest.cs" />
     <Compile Include="System.Web.UI.WebControls\RangeValidatorTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\RectangleHotSpotTest.cs" />
     <Compile Include="System.Web.UI.WebControls\RegularExpressionValidatorTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\RepeaterItemCollectionTest.cs" />
     <Compile Include="System.Web.UI.WebControls\RepeaterTest.cs" />
     <Compile Include="System.Web.UI.WebControls\RepeatInfoTest.auto.2.0.cs" />
     <Compile Include="System.Web.UI.WebControls\RepeatInfoTest.auto.cs" />
     <Compile Include="System.Web.UI.WebControls\RepeatInfoTest.cs" />
-    <Compile Include="System.Web.UI.WebControls\RepeatInfoTest.gen.cs" />
     <Compile Include="System.Web.UI.WebControls\RoleGroupCollectionTest.cs" />
     <Compile Include="System.Web.UI.WebControls\RoleGroupTest.cs" />
     <Compile Include="System.Web.UI.WebControls\SelectedDatesCollectionTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\SiteMapDataSourceTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\SiteMapPathTest.cs" />
     <Compile Include="System.Web.UI.WebControls\SqlDataSourceTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\SqlDataSourceViewTest.cs" />
     <Compile Include="System.Web.UI.WebControls\StyleTest.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="System.Web.UI.WebControls\TableCellTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\TableFooterRowTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\TableHeaderCellTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\TableHeaderRowTest.cs" />
     <Compile Include="System.Web.UI.WebControls\TableItemStyleTest.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="System.Web.UI.WebControls\TableRowTest.cs" />
     <Compile Include="System.Web.UI.WebControls\TableSectionStyleTest.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="System.Web.UI.WebControls\TableStyleTest.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="System.Web.UI.WebControls\TableTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\TargetConverterTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\TemplateFieldTest.cs" />
     <Compile Include="System.Web.UI.WebControls\TestControlIDConverter.cs" />
+    <Compile Include="System.Web.UI.WebControls\TextBoxTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\ThemeTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\TreeNodeBindingCollectionTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\TreeNodeBindingTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\TreeNodeCollectionTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\TreeNodeStyleCollectionTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\TreeNodeStyleTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\TreeNodeTest.cs" />
     <Compile Include="System.Web.UI.WebControls\TreeViewTest.cs" />
     <Compile Include="System.Web.UI.WebControls\UnitConverterTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\UnitTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\ValidatedControlConverterTest.cs" />
     <Compile Include="System.Web.UI.WebControls\ValidationSummaryTest.cs" />
     <Compile Include="System.Web.UI.WebControls\ValidatorTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\ViewTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\WebColorConverterTest.cs" />
     <Compile Include="System.Web.UI.WebControls\WebControlTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\WizardStepBaseTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\WizardStepCollectionTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\WizardStepTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\WizardTest.cs" />
     <Compile Include="System.Web.UI.WebControls\XmlDataSourceTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\XmlTest.cs" />
     <Compile Include="System.Web.UI\AttributeCollectionTest.cs" />
     <Compile Include="System.Web.UI\ChtmlTextWriterTest.cs" />
     <Compile Include="System.Web.UI\CleanHtmlTextWriter.cs" />
+    <Compile Include="System.Web.UI\ClientScriptManagerTest.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="System.Web.UI\ControlCollectionTest.cs" />
     <Compile Include="System.Web.UI\ControlTest.cs" />
+    <Compile Include="System.Web.UI\CssStyleCollectionTest.cs" />
     <Compile Include="System.Web.UI\DataBindingCollectionTest.cs" />
     <Compile Include="System.Web.UI\DataBindingHandlerAttributeTest.cs" />
     <Compile Include="System.Web.UI\HtmlTextWriterTest.cs" />
@@ -245,7 +355,10 @@
     <Compile Include="System.Web.UI\PageTest.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="System.Web.UI\PropertyConverterTest.cs" />
     <Compile Include="System.Web.UI\StateBagTest.cs" />
+    <Compile Include="System.Web.UI\TemplateControlTest.cs" />
+    <Compile Include="System.Web.UI\TemplateInstanceAttributeTest.cs" />
     <Compile Include="System.Web.UI\TestUrlPropertyAttribute.cs" />
     <Compile Include="System.Web.UI\ToolboxDataAttributeTest.cs" />
     <Compile Include="System.Web.UI\XhtmlTextWriterTest.cs" />
@@ -255,7 +368,17 @@
     <Compile Include="System.Web\HttpContext.cs" />
     <Compile Include="System.Web\HttpCookieCollectionTest.cs" />
     <Compile Include="System.Web\HttpCookieTest.cs" />
+    <Compile Include="System.Web\HttpRequestTest.cs" />
     <Compile Include="System.Web\HttpResponseTest.cs" />
+    <Compile Include="System.Web\HttpServerUtilityTest.cs" />
+    <Compile Include="System.Web\HttpUtilityTest.cs" />
+    <Compile Include="System.Web\HttpWorkerRequestTest.cs" />
+    <Compile Include="System.Web\SiteMapNodeTest.cs" />
+    <Compile Include="System.Web\SiteMapProviderTest.cs" />
+    <Compile Include="System.Web\StaticSiteMapProviderTest.cs" />
+    <Compile Include="System.Web\VirtualPathUtilityTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="System.Web.Caching\ChangeLog" />
@@ -272,5 +395,8 @@
     <None Include="System.Web.UI\ChangeLog" />
     <None Include="System.Web.Util\ChangeLog" />
     <None Include="System.Web\ChangeLog" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="System.Web.Compilation\" />
   </ItemGroup>
 </Project>
