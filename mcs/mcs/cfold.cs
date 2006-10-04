@@ -215,6 +215,10 @@ namespace Mono.CSharp {
 					return new BoolConstant (lv || rv, left.Location);
 				case Binary.Operator.ExclusiveOr:
 					return new BoolConstant (lv ^ rv, left.Location);
+				case Binary.Operator.Equality:
+					return new BoolConstant (lv == rv, left.Location);
+				case Binary.Operator.Inequality:
+					return new BoolConstant (lv != rv, left.Location);
 				default:
 					throw new InternalErrorException ("Invalid operator on booleans: " + oper);
 				}
@@ -1029,12 +1033,6 @@ namespace Mono.CSharp {
 				break;
 
 			case Binary.Operator.Equality:
-				if (left is BoolConstant && right is BoolConstant){
-					return new BoolConstant (
-						((BoolConstant) left).Value ==
-						((BoolConstant) right).Value, left.Location);
-				
-				}
 				if (left is NullConstant){
 					if (right is NullConstant)
 						return new BoolConstant (true, left.Location);
@@ -1084,11 +1082,6 @@ namespace Mono.CSharp {
 				return new BoolConstant (bool_res, left.Location);
 
 			case Binary.Operator.Inequality:
-				if (left is BoolConstant && right is BoolConstant){
-					return new BoolConstant (
-						((BoolConstant) left).Value !=
-						((BoolConstant) right).Value, left.Location);
-				}
 				if (left is NullConstant){
 					if (right is NullConstant)
 						return new BoolConstant (false, left.Location);

@@ -14,6 +14,16 @@
 	`Block' and not a `ToplevelBlock' anymore.  This became neccessary
 	to implement the CS0136 check correctly.
 
+2006-10-04  Raja R Harinath  <harinath@gmail.com>
+
+	Fix #79577
+	* namespace.cs (LookForAnyGenericType): Avoid nullref on
+	'declspaces'.  Avoid allocating arrays willy-nilly.
+
+	Fix #79553
+	* cfold.cs (BinaryFold): Move boolean Equality and Inequality
+	cases out of the switch.
+
 2006-09-28  Marek Safar  <marek.safar@seznam.cz>
 
 	* namespace.cs (Namespace.Error_NamespaceDoesNotExist): Better error
