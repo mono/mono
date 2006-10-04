@@ -1,3 +1,8 @@
+2006-10-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_object_to_ptr_conv): Avoid using short branches around IL
+	sequences which can be unbounded in size. Fixes #79583.
+
 2006-10-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* object.c (mono_runtime_class_init): Handle a corner case in handling failure of
