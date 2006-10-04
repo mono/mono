@@ -1,3 +1,9 @@
+2006-10-03  Chris Toshok  <toshok@ximian.com>
+
+	* Form.cs (ProcessDialogKey): if the focused control is in this
+	form and is a button, call its PerformClick method here.  Fixes
+	#79534.
+
 2006-10-04  Jackson Harper  <jackson@ximian.com>
 
 	* TabPage.cs: Ignore setting of Visible, and add an internal

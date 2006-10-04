@@ -1614,9 +1614,17 @@ namespace System.Windows.Forms {
 
 		protected override bool ProcessDialogKey(Keys keyData) {
 			if ((keyData & Keys.Modifiers) == 0) {
-				if (keyData == Keys.Enter && accept_button != null) {
-					accept_button.PerformClick();
-					return true;
+				if (keyData == Keys.Enter) {
+					IntPtr window = XplatUI.GetFocus ();
+					Control c = Control.FromHandle (window);
+					if (c is Button && c.FindForm () == this) {
+						((Button)c).PerformClick ();
+						return true;
+					}
+					else if (accept_button != null) {
+						accept_button.PerformClick();
+						return true;
+					}
 				} else if (keyData == Keys.Escape && cancel_button != null) {
 					cancel_button.PerformClick();
 					return true;
