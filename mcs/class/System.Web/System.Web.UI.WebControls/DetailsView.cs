@@ -1294,7 +1294,7 @@ namespace System.Web.UI.WebControls
 						if (n == 0 && field.ShowHeader) {
 							if (fieldHeaderStyle != null && !fieldHeaderStyle.IsEmpty)
 								fcell.ControlStyle.CopyFrom (fieldHeaderStyle);
-							if (field.HeaderStyleCreated)
+							if (field.HeaderStyleCreated && !field.HeaderStyle.IsEmpty)
 								fcell.ControlStyle.CopyFrom (field.HeaderStyle);
 						}
 						else {
@@ -1304,7 +1304,7 @@ namespace System.Web.UI.WebControls
 									if (wc != null)
 										wc.ControlStyle.MergeWith (field.ControlStyle);
 								}
-							if (field.ItemStyleCreated)
+							if (field.ItemStyleCreated && !field.ItemStyle.IsEmpty)
 								fcell.ControlStyle.CopyFrom (field.ItemStyle);
 						}
 					}
