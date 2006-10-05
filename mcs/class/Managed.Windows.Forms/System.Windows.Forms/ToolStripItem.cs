@@ -108,6 +108,7 @@ namespace System.Windows.Forms
 			this.visible = true;
 
 			this.Click = onClick;
+			OnLayout (new LayoutEventArgs (null, ""));
 		}
 		#endregion
 
@@ -152,7 +153,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public Color BackColor {
+		public virtual Color BackColor {
 			get { return this.back_color; }
 			set {
 				if (this.back_color != value) {
@@ -252,7 +253,8 @@ namespace System.Windows.Forms
 			get { return this.bounds.Height; }
 			set { 
 				this.bounds.Height = value; 
-				this.CalculateAutoSize (); 
+				this.CalculateAutoSize ();
+				this.OnBoundsChanged (EventArgs.Empty);
 				this.Invalidate (); 
 			}
 		}
@@ -360,7 +362,8 @@ namespace System.Windows.Forms
 			get { return this.bounds.Size; }
 			set { 
 				this.bounds.Size = value; 
-				this.CalculateAutoSize (); 
+				this.CalculateAutoSize ();
+				OnBoundsChanged (EventArgs.Empty);
 			}
 		}
 
@@ -435,6 +438,7 @@ namespace System.Windows.Forms
 			set { 
 				this.bounds.Width = value; 
 				this.CalculateAutoSize (); 
+				this.OnBoundsChanged(EventArgs.Empty);
 			}
 		}
 		#endregion
@@ -448,7 +452,11 @@ namespace System.Windows.Forms
 		protected internal virtual bool DismissWhenClicked { get { return false; } }
 		protected internal ToolStrip Parent {
 			get { return this.parent; }
-			set { this.parent = value; }
+			set { 
+				ToolStrip old_parent = this.parent;
+				this.parent = value; 
+				OnParentChanged(old_parent, this.parent);
+			}
 		}
 		protected internal virtual bool ShowKeyboardCues { get { return true; } }
 		#endregion
@@ -536,6 +544,7 @@ namespace System.Windows.Forms
 
 		protected virtual void OnBoundsChanged (EventArgs e)
 		{
+			OnLayout (new LayoutEventArgs(null, ""));
 		}
 
 		protected virtual void OnClick (EventArgs e)
@@ -642,6 +651,10 @@ namespace System.Windows.Forms
 			if (Paint != null) Paint (this, e);
 		}
 
+		protected virtual void OnParentChanged (ToolStrip oldParent, ToolStrip newParent)
+		{
+		}
+		
 		protected virtual void OnTextChanged (EventArgs e)
 		{
 			if (TextChanged != null) TextChanged (this, e);
@@ -707,7 +720,7 @@ namespace System.Windows.Forms
 
 		internal void CalculateAutoSize ()
 		{
-			if (!this.auto_size)
+			if (!this.auto_size || this is ToolStripControlHost)
 				return;
 
 			this.text_size = TextRenderer.MeasureText (this.Text, this.Font);

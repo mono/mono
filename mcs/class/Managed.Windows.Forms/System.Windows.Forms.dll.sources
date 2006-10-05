@@ -609,9 +609,11 @@ System.Windows.Forms/ToolStrip.cs
 System.Windows.Forms/ToolStripArrowRenderEventArgs.cs
 System.Windows.Forms/ToolStripArrowRenderEventHandler.cs
 System.Windows.Forms/ToolStripButton.cs
+System.Windows.Forms/ToolStripComboBox.cs
 System.Windows.Forms/ToolStripContentPanel.cs
 System.Windows.Forms/ToolStripContentPanelRenderEventArgs.cs
 System.Windows.Forms/ToolStripContentPanelRenderEventHandler.cs
+System.Windows.Forms/ToolStripControlHost.cs
 System.Windows.Forms/ToolStripDropDownCloseReason.cs
 System.Windows.Forms/ToolStripDropDownClosedEventArgs.cs
 System.Windows.Forms/ToolStripDropDownClosedEventHandler.cs
@@ -648,6 +650,7 @@ System.Windows.Forms/ToolStripPanel.cs
 System.Windows.Forms/ToolStripPanelRenderEventArgs.cs
 System.Windows.Forms/ToolStripPanelRenderEventHandler.cs
 System.Windows.Forms/ToolStripProfessionalRenderer.cs
+System.Windows.Forms/ToolStripProgressBar.cs
 System.Windows.Forms/ToolStripRenderer.cs
 System.Windows.Forms/ToolStripRenderEventArgs.cs
 System.Windows.Forms/ToolStripRenderEventHandler.cs
@@ -657,6 +660,7 @@ System.Windows.Forms/ToolStripSeparatorRenderEventArgs.cs
 System.Windows.Forms/ToolStripSeparatorRenderEventHandler.cs
 System.Windows.Forms/ToolStripSplitStackLayout.cs
 System.Windows.Forms/ToolStripStatusLabelBorderSides.cs
+System.Windows.Forms/ToolStripTextBox.cs
 System.Windows.Forms/ToolStripTextDirection.cs
 System.Windows.Forms/ToolTip.cs
 System.Windows.Forms/ToolTipIcon.cs

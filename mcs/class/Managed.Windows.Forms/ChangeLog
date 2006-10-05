@@ -1,9 +1,13 @@
+﻿2006-10-05  Jonathan Pobst  <monkey@jpobst.com>
+	* System.Windows.Forms.dll.sources: Add ToolStripComboBox.cs,
+	ToolStripControlHost.cs, ToolStripProgressBar.cs, ToolStripTextBox.cs.
+
 2006-10-03  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* System.Windows.Forms_test.dll.sources: Add ContainerControlTest.cs
 	to the unit tests build.
 
-﻿2006-10-02  Jonathan Pobst  <monkey@jpobst.com>
+2006-10-02  Jonathan Pobst  <monkey@jpobst.com>
 	* System.Windows.Forms.dll.sources: Add ToolStrip* classes.
 
 2006-09-18  Jonathan Pobst <monkey@jpobst.com>
