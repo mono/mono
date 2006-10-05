@@ -1,3 +1,19 @@
+2006-10-05  Wade Berrier <wberrier@novell.com>
+
+	* TempFileCollection.cs: Bring in changes from HEAD for serialization
+	security fix:
+	* r51229: Added a call to GC.SuppressFinalize in Dispose.
+	* r52181: Changed BasePath property to use Path.
+	GetTempPath (Environment check) and added the PathDiscovery check on
+	the combined result. Fixed TempDir so it's value never change (i.e.
+	imply that it doesn't need any permissions). Fixed SyncRoot to always
+	return null.
+	* r57836: Implement explicitly some interface methods to get rid of 
+	the "!" errors on CorCompare.
+	* r60253: Make sure generated file names are unique. Fixes bug #76125 
+	and #78230.
+	* r65441: Create files in a temporary subdirectory, for security reasons.
+
 2005-01-27  LLuis Sanchez Gual  <lluis@novell.com>
 
 	* CodeGenerator.cs: Write 'f' suffix for float constants.
