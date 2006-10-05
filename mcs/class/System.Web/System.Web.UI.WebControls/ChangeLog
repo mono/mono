@@ -1,3 +1,9 @@
+2006-10-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HyperLink.cs: don't render the img tag 'by hand' but use an Image
+	instead, which takes care of the 0/0px case. Also set the ToolTip
+	property. Fixes bug #79585.
+
 2006-10-05 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DetailsView.cs: optimization for previous patch

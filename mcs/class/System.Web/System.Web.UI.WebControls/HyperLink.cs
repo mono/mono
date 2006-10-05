@@ -102,21 +102,21 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void RenderContents (HtmlTextWriter w)	
 		{
-			if (HasControls ())
+			if (HasControls ()) {
 				base.RenderContents (w);
-			else if (ImageUrl != "") {
-				w.AddAttribute (HtmlTextWriterAttribute.Src, ResolveClientUrl (ImageUrl));
-#if NET_2_0
-				string s = Text;
-				if (s.Length > 0)
-					w.AddAttribute (HtmlTextWriterAttribute.Alt, s);
-				w.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, "0px");
-#else
-				w.AddAttribute (HtmlTextWriterAttribute.Alt, Text);
-				w.AddAttribute (HtmlTextWriterAttribute.Border, "0");
-#endif
-				w.RenderBeginTag (HtmlTextWriterTag.Img);
-				w.RenderEndTag ();
+				return;
+			}
+			string image_url = ImageUrl;
+			if (image_url != "") {
+				Image img = new Image ();
+				img.ImageUrl = ResolveClientUrl (image_url);
+				string str = Text;
+				if (str != "")
+					img.AlternateText = str;
+				str = ToolTip;
+				if (str != "")
+					img.ToolTip = str;
+				img.RenderControl (w);
 			} else {
 				w.Write (Text);
 			}
