@@ -1,3 +1,11 @@
+2006-10-05 Wade Berrier <wberrier@novell.com>
+
+	* Pull in changes from HEAD: r61761
+
+	2006-10-05 Neale Ferguson <neale@sinenomine.net>
+	* atomic.h: More tinkering with InterlockedExchange/InterlockedCompareExchange
+	for s390/s390x.
+
 2006-07-17  Dick Porter  <dick@ximian.com>
 
 	* processes.c (CreateProcess): Don't change directory unless a new

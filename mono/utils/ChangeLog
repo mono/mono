@@ -1,3 +1,11 @@
+2006-10-05  Wade Berrier <wberrier@novell.com>
+
+	* Pull in changes from HEAD: r63578
+
+	2006-08-10  Zoltan Varga  <vargaz@gmail.com>
+	* mono-compiler.h: Fix TLS definitions so libmono can be loaded dynamically as a
+	module. Fixes #78767.
+
 2006-01-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-codeman.c (new_codechunk): Fix warnings.
