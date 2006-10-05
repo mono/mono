@@ -508,8 +508,7 @@ namespace System.Web.UI.WebControls {
 
 		protected virtual Style CreateControlStyle() 
 		{
-			style = new Style (ViewState);
-			return style;
+			return new Style (ViewState);
 		}
 
 		protected override void LoadViewState (object savedState) 

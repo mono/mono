@@ -178,6 +178,19 @@ namespace MonoTests.System.Web.UI.WebControls
 				return result;
 			}
 
+			public Style DoCreateControlStyle () {
+				return base.CreateControlStyle ();
+			}
+		}
+
+		[Test]
+		public void CreateControlStyle () {
+			WebControlTestClass w = new WebControlTestClass ();
+			Assert.AreEqual (false, w.ControlStyleCreated, "CreateControlStyle#1");
+			Style s = w.DoCreateControlStyle ();
+			Assert.AreEqual (false, w.ControlStyleCreated, "CreateControlStyle#2");
+			s = w.ControlStyle;
+			Assert.AreEqual (true, w.ControlStyleCreated, "CreateControlStyle#3");
 		}
 
 		[Test]

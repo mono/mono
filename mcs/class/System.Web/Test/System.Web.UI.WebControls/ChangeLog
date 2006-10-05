@@ -1,3 +1,7 @@
+2006-10-05 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* WebControlTest.cs: added test
+			
 2006-10-04 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* FormViewTest.cs: removed NotWorking attribute
