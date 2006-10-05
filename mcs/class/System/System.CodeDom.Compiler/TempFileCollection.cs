@@ -5,8 +5,7 @@
 //	Dick Porter (dick@ximian.com)
 //
 // (C) Copyright 2003 Ximian, Inc.
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,11 +27,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.IO;
 using System.Collections;
+using System.IO;
+using System.Security;
+using System.Security.Permissions;
+using System.Runtime.InteropServices;
 
-namespace System.CodeDom.Compiler
-{
+namespace System.CodeDom.Compiler {
+
+#if NET_2_0
+	[Serializable]
+#endif
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	public class TempFileCollection:ICollection, IEnumerable, IDisposable
 	{
 		Hashtable filehash;
@@ -40,19 +46,22 @@ namespace System.CodeDom.Compiler
 		bool keepfiles;
 		string basepath;
 		Random rnd;
+		string ownTempDir;
 		
-		public TempFileCollection(): this(null, false)
+		public TempFileCollection ()
+			: this (String.Empty, false)
 		{
 		}
 
-		public TempFileCollection(string tempDir): this(tempDir, false)
+		public TempFileCollection(string tempDir)
+			: this (tempDir, false)
 		{
 		}
 
 		public TempFileCollection(string tempDir, bool keepFiles)
 		{
 			filehash=new Hashtable();
-			tempdir=tempDir;
+			tempdir = (tempDir == null) ? String.Empty : tempDir;
 			keepfiles=keepFiles;
 		}
 
@@ -60,22 +69,82 @@ namespace System.CodeDom.Compiler
 		{
 			get {
 				if(basepath==null) {
-					if (tempdir==null) {
-						/* Get the system temp dir */
-						MonoIO.GetTempPath(out tempdir);
-					}
-
+				
 					if (rnd == null)
 						rnd = new Random ();
 
-					string random = rnd.Next (10000,99999).ToString ();
-					basepath = Path.Combine (tempdir, random);
+					// note: this property *cannot* change TempDir property
+					string temp = tempdir;
+					if (temp.Length == 0)
+						temp = GetOwnTempDir ();
+
+					// Create a temporary file at the target directory. This ensures
+					// that the generated file name is unique.
+					FileStream f = null;
+					do {
+						int num = rnd.Next ();
+						num++;
+						basepath = Path.Combine (temp, num.ToString("x"));
+						string path = basepath + ".tmp";
+
+						try {
+							f = new FileStream (path, FileMode.CreateNew);
+						}
+						catch (System.IO.IOException) {
+							f = null;
+							continue;
+						}
+						catch {
+							// avoid endless loop
+							throw;
+						}
+					} while (f == null);
+					
+					f.Close ();
+					
+					// and you must have discovery access to the combined path
+					// note: the cache behaviour is tested in the CAS tests
+					if (SecurityManager.SecurityEnabled) {
+						new FileIOPermission (FileIOPermissionAccess.PathDiscovery, basepath).Demand ();
+					}
 				}
 
 				return(basepath);
 			}
 		}
+		
+		string GetOwnTempDir ()
+		{
+			if (ownTempDir != null)
+				return ownTempDir;
 
+			// this call ensure the Environment permissions check
+			string basedir = Path.GetTempPath ();
+			
+			// Create a subdirectory with the correct user permissions
+			int res = -1;
+			do {
+				int num = rnd.Next ();
+				num++;
+				ownTempDir = Path.Combine (basedir, num.ToString("x"));
+				if (Directory.Exists (ownTempDir))
+					continue;
+				res = mkdir (ownTempDir, 0x1c0);
+				if (res != 0) {
+					if (!Directory.Exists (ownTempDir))
+						throw new IOException ();
+					// Somebody already created the dir, keep trying
+				}
+			} while (res != 0);
+			return ownTempDir;
+		}
+
+		int ICollection.Count {
+			get {
+				return filehash.Count;
+			}
+		}
+		
 		public int Count
 		{
 			get {
@@ -96,11 +165,9 @@ namespace System.CodeDom.Compiler
 		public string TempDir
 		{
 			get {
-				if(tempdir==null) {
-					return(String.Empty);
-				} else {
-					return(tempdir);
-				}
+				// note: we only return what we were supplied so there
+				// is no permission protecting this information
+				return tempdir;
 			}
 		}
 
@@ -133,7 +200,7 @@ namespace System.CodeDom.Compiler
 
 		object ICollection.SyncRoot {
 			get {
-				return filehash.SyncRoot;
+				return null;
 			}
 		}
 
@@ -150,17 +217,33 @@ namespace System.CodeDom.Compiler
 		
 		public void Delete()
 		{
-			string[] filenames=new string[filehash.Count];
-			filehash.Keys.CopyTo(filenames, 0);
+			bool allDeleted = true;
+			string[] filenames = new string[filehash.Count];
+			filehash.Keys.CopyTo (filenames, 0);
 
 			foreach(string file in filenames) {
 				if((bool)filehash[file]==false) {
 					File.Delete(file);
 					filehash.Remove(file);
-				}
+				} else
+					allDeleted = false;
+			}
+			if (basepath != null) {
+				string tmpFile = basepath + ".tmp";
+				File.Delete (tmpFile);
+				basepath = null;
+			}
+			if (allDeleted && ownTempDir != null) {
+				Directory.Delete (ownTempDir, true);
+				ownTempDir = null;
 			}
 		}
 
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return(filehash.Keys.GetEnumerator());
+		}
+		
 		public IEnumerator GetEnumerator()
 		{
 			return(filehash.Keys.GetEnumerator());
@@ -169,6 +252,9 @@ namespace System.CodeDom.Compiler
 		protected virtual void Dispose(bool disposing)
 		{
 			Delete();
+			if (disposing) {
+				GC.SuppressFinalize (true);
+			}
 		}
 
 		~TempFileCollection()
@@ -176,5 +262,6 @@ namespace System.CodeDom.Compiler
 			Dispose(false);
 		}
 		
+		[DllImport ("libc")] private static extern int mkdir (string olpath, uint mode);
 	}
 }
