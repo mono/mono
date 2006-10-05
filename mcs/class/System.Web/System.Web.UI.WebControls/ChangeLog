@@ -1,5 +1,11 @@
 2006-10-05 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* FormView.cs:
+	implemented PrepareControlHierarchy()
+	styles are applied correct
+
+2006-10-05 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* GridView.cs:
 	* DataControlButton.cs:
 	* DataControlField.cs:

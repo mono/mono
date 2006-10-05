@@ -286,13 +286,12 @@ namespace System.Web.UI.WebControls
 		[EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string BackImageUrl {
 			get {
-				object ob = ViewState ["BackImageUrl"];
-				if (ob != null) return (string) ob;
-				return string.Empty;
+				if (ControlStyleCreated)
+					return ((TableStyle) ControlStyle).BackImageUrl;
+				return String.Empty;
 			}
 			set {
-				ViewState ["BackImageUrl"] = value;
-				RequireBinding ();
+				((TableStyle) ControlStyle).BackImageUrl = value;
 			}
 		}
 
@@ -340,15 +339,12 @@ namespace System.Web.UI.WebControls
 		public virtual int CellPadding
 		{
 			get {
-				object o = ViewState ["CellPadding"];
-				if (o != null) return (int) o;
+				if (ControlStyleCreated)
+					return ((TableStyle) ControlStyle).CellPadding;
 				return -1;
 			}
 			set {
-				if (value < -1)
-					throw new ArgumentOutOfRangeException ("< -1");
-				ViewState ["CellPadding"] = value;
-				RequireBinding ();
+				((TableStyle) ControlStyle).CellPadding = value;
 			}
 		}
 
@@ -357,15 +353,12 @@ namespace System.Web.UI.WebControls
 		public virtual int CellSpacing
 		{
 			get {
-				object o = ViewState ["CellSpacing"];
-				if (o != null) return (int) o;
+				if (ControlStyleCreated)
+					return ((TableStyle) ControlStyle).CellSpacing;
 				return 0;
 			}
 			set {
-				if (value < -1)
-					throw new ArgumentOutOfRangeException ("< -1");
-				ViewState["CellSpacing"] = value;
-				RequireBinding ();
+				((TableStyle) ControlStyle).CellSpacing = value;
 			}
 		}
 		
@@ -536,7 +529,9 @@ namespace System.Web.UI.WebControls
 		[DefaultValueAttribute (GridLines.None)]
 		public virtual GridLines GridLines {
 			get {
-				return ((TableStyle) ControlStyle).GridLines;
+				if (ControlStyleCreated)
+					return ((TableStyle) ControlStyle).GridLines;
+				return GridLines.None;
 			}
 			set {
 				((TableStyle) ControlStyle).GridLines = value;
@@ -596,13 +591,12 @@ namespace System.Web.UI.WebControls
 		[DefaultValueAttribute (HorizontalAlign.NotSet)]
 		public virtual HorizontalAlign HorizontalAlign {
 			get {
-				object ob = ViewState ["HorizontalAlign"];
-				if (ob != null) return (HorizontalAlign) ob;
+				if (ControlStyleCreated)
+					return ((TableStyle) ControlStyle).HorizontalAlign;
 				return HorizontalAlign.NotSet;
 			}
 			set {
-				ViewState ["HorizontalAlign"] = value;
-				RequireBinding ();
+				((TableStyle) ControlStyle).HorizontalAlign = value;
 			}
 		}
 
@@ -802,14 +796,7 @@ namespace System.Web.UI.WebControls
 		
 		protected virtual Table CreateTable ()
 		{
-			Table table = new Table ();
-			table.Caption = Caption;
-			table.CaptionAlign = CaptionAlign;
-			table.CellPadding = CellPadding;
-			table.CellSpacing = CellSpacing;
-			table.HorizontalAlign = HorizontalAlign;
-			table.BackImageUrl = BackImageUrl;
-			return table;
+			return new ContainedTable (this);
 		}
 
 		[MonoTODO]
@@ -1075,10 +1062,44 @@ namespace System.Web.UI.WebControls
 			base.PerformDataBinding (data);
 		}
 
-		[MonoTODO]
 		protected internal virtual void PrepareControlHierarchy ()
 		{
-			throw new NotImplementedException ();
+			if (table == null)
+				return;
+
+			table.Caption = Caption;
+			table.CaptionAlign = CaptionAlign;
+
+			foreach (FormViewRow row in table.Rows) {
+				switch (row.RowType) {
+				case DataControlRowType.Header:
+					if (headerStyle != null && !headerStyle.IsEmpty)
+						row.ControlStyle.CopyFrom (headerStyle);
+					break;
+				case DataControlRowType.Footer:
+					if (footerStyle != null && !footerStyle.IsEmpty)
+						row.ControlStyle.CopyFrom (footerStyle);
+					break;
+				case DataControlRowType.Pager:
+					if (pagerStyle != null && !pagerStyle.IsEmpty)
+						row.ControlStyle.CopyFrom (pagerStyle);
+					break;
+				case DataControlRowType.EmptyDataRow:
+					if (emptyDataRowStyle != null && !emptyDataRowStyle.IsEmpty)
+						row.ControlStyle.CopyFrom (emptyDataRowStyle);
+					break;
+				case DataControlRowType.DataRow:
+					if (rowStyle != null && !rowStyle.IsEmpty)
+						row.ControlStyle.CopyFrom (rowStyle);
+					if ((row.RowState & DataControlRowState.Edit) != 0 && editRowStyle != null)
+						row.ControlStyle.CopyFrom (editRowStyle);
+					if ((row.RowState & DataControlRowState.Insert) != 0 && insertRowStyle != null)
+						row.ControlStyle.CopyFrom (insertRowStyle);
+					break;
+				default:
+					break;
+				}
+			}
 		}
 		
 		protected internal override void OnInit (EventArgs e)
@@ -1424,64 +1445,12 @@ namespace System.Web.UI.WebControls
 		
 		protected internal override void Render (HtmlTextWriter writer)
 		{
-			switch (GridLines) {
-			case GridLines.Horizontal:
-				writer.AddAttribute (HtmlTextWriterAttribute.Rules, "rows");
-				writer.AddAttribute (HtmlTextWriterAttribute.Border, "1");
-				break;
-			case GridLines.Vertical:
-				writer.AddAttribute (HtmlTextWriterAttribute.Rules, "cols");
-				writer.AddAttribute (HtmlTextWriterAttribute.Border, "1");
-				break;
-			case GridLines.Both:
-				writer.AddAttribute (HtmlTextWriterAttribute.Rules, "all");
-				writer.AddAttribute (HtmlTextWriterAttribute.Border, "1");
-				break;
-			default:
-				writer.AddAttribute (HtmlTextWriterAttribute.Border, "0");
-				break;
-			}
+			PrepareControlHierarchy ();
 			
-			writer.AddAttribute (HtmlTextWriterAttribute.Cellspacing, "0");
-			if (!string.IsNullOrEmpty (ControlStyle.CssClass))
-				writer.AddAttribute (HtmlTextWriterAttribute.Class, ControlStyle.CssClass);
+			if (table == null)
+				return;
 
-			table.ControlStyle.MergeWith (ControlStyle);
-			table.RenderBeginTag (writer);
-			
-			foreach (FormViewRow row in table.Rows)
-			{
-				switch (row.RowType) {
-				case DataControlRowType.Header:
-					if (headerStyle != null)headerStyle.AddAttributesToRender (writer, row);
-					break;
-				case DataControlRowType.Footer:
-					if (footerStyle != null) footerStyle.AddAttributesToRender (writer, row);
-					break;
-				case DataControlRowType.Pager:
-					if (pagerStyle != null) pagerStyle.AddAttributesToRender (writer, row);
-					break;
-				case DataControlRowType.EmptyDataRow:
-					if (emptyDataRowStyle != null) emptyDataRowStyle.AddAttributesToRender (writer, row);
-					break;
-				default:
-					if (rowStyle != null) rowStyle.AddAttributesToRender (writer, row);
-					break;
-				}
-
-				if ((row.RowState & DataControlRowState.Edit) != 0 && editRowStyle != null)
-					editRowStyle.AddAttributesToRender (writer, row);
-				if ((row.RowState & DataControlRowState.Insert) != 0 && insertRowStyle != null)
-					insertRowStyle.AddAttributesToRender (writer, row);
-					
-				row.RenderBeginTag (writer);
-				
-				for (int n=0; n<row.Cells.Count; n++)
-					row.Cells[n].Render (writer);
-
-				row.RenderEndTag (writer);
-			}
-			table.RenderEndTag (writer);
+			table.Render (writer);
 		}
 
 		PostBackOptions IPostBackContainer.GetPostBackOptions (IButtonControl control)
