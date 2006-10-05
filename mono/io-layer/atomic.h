@@ -286,12 +286,8 @@ InterlockedCompareExchange(volatile gint32 *dest,
 	gint32 old;
 
 	__asm__ __volatile__ ("\tLA\t1,%0\n"
-			      "0:\tL\t%1,%0\n"
-			      "\tCR\t%1,%3\n"
-			      "\tJNE\t1f\n"
+			      "\tLR\t%1,%3\n"
 			      "\tCS\t%1,%2,0(1)\n"
-			      "\tJNZ\t0b\n"
-			      "1:\n"
 			      : "+m" (*dest), "=r" (old)
 			      : "r" (exch), "r" (comp)
 			      : "1", "cc");	
@@ -306,12 +302,8 @@ InterlockedCompareExchangePointer(volatile gpointer *dest,
 	gpointer old;
 
 	__asm__ __volatile__ ("\tLA\t1,%0\n"
-			      "0:\tL\t%1,%0\n"
-			      "\tCR\t%1,%3\n"
-			      "\tJNE\t1f\n"
+			      "\tLR\t%1,%3\n"
 			      "\tCS\t%1,%2,0(1)\n"
-			      "\tJNZ\t0b\n"
-			      "1:\n"
 			      : "+m" (*dest), "=r" (old)
 			      : "r" (exch), "r" (comp)
 			      : "1", "cc");	
@@ -326,12 +318,8 @@ InterlockedCompareExchangePointer(volatile gpointer *dest,
 	gpointer old;
 
 	__asm__ __volatile__ ("\tLA\t1,%0\n"
-			      "0:\tLG\t%1,%0\n"
-			      "\tCGR\t%1,%3\n"
-			      "\tJNE\t1f\n"
+			      "\tLGR\t%1,%3\n"
 			      "\tCSG\t%1,%2,0(1)\n"
-			      "\tJNZ\t0b\n"
-			      "1:\n"
 			      : "+m" (*dest), "=r" (old)
 			      : "r" (exch), "r" (comp)
 			      : "1", "cc");
@@ -340,7 +328,7 @@ InterlockedCompareExchangePointer(volatile gpointer *dest,
 }
 # endif
 
-
+# ifndef __s390x__
 static inline gint32 
 InterlockedIncrement(volatile gint32 *val)
 {
@@ -358,7 +346,27 @@ InterlockedIncrement(volatile gint32 *val)
 
 	return(tmp);
 }
+# else
+static inline gint32 
+InterlockedIncrement(volatile gint32 *val)
+{
+	gint32 tmp;
+	
+	__asm__ __volatile__ ("\tLA\t2,%1\n"
+			      "0:\tLGF\t%0,%1\n"
+			      "\tLGFR\t1,%0\n"
+			      "\tAGHI\t1,1\n"
+			      "\tCS\t%0,1,0(2)\n"
+			      "\tJNZ\t0b\n"
+			      "\tLGFR\t%0,1"
+			      : "=r" (tmp), "+m" (*val)
+			      : : "1", "2", "cc");
 
+	return(tmp);
+}
+# endif
+
+# ifndef __s390x__
 static inline gint32 
 InterlockedDecrement(volatile gint32 *val)
 {
@@ -376,7 +384,25 @@ InterlockedDecrement(volatile gint32 *val)
 
 	return(tmp);
 }
+# else
+static inline gint32 
+InterlockedDecrement(volatile gint32 *val)
+{
+	gint32 tmp;
+	
+	__asm__ __volatile__ ("\tLA\t2,%1\n"
+			      "0:\tLGF\t%0,%1\n"
+			      "\tLGFR\t1,%0\n"
+			      "\tAGHI\t1,-1\n"
+			      "\tCS\t%0,1,0(2)\n"
+			      "\tJNZ\t0b\n"
+			      "\tLGFR\t%0,1"
+			      : "=r" (tmp), "+m" (*val)
+			      : : "1", "2", "cc");
 
+	return(tmp);
+}
+# endif
 
 static inline gint32 
 InterlockedExchange(volatile gint32 *val, gint32 new_val)
@@ -428,6 +454,7 @@ InterlockedExchangePointer(volatile gpointer *val, gpointer new_val)
 }
 # endif
 
+# ifndef __s390x__
 static inline gint32 
 InterlockedExchangeAdd(volatile gint32 *val, gint32 add)
 {
@@ -445,6 +472,25 @@ InterlockedExchangeAdd(volatile gint32 *val, gint32 add)
 	
 	return(ret);
 }
+# else
+static inline gint32 
+InterlockedExchangeAdd(volatile gint32 *val, gint32 add)
+{
+	gint32 ret;
+
+	__asm__ __volatile__ ("\tLA\t2,%1\n"
+			      "0:\tLGF\t%0,%1\n"
+			      "\tLGFR\t1,%0\n"
+			      "\tAGR\t1,%2\n"
+			      "\tCS\t%0,1,0(2)\n"
+			      "\tJNZ\t0b"
+			      : "=r" (ret), "+m" (*val)
+			      : "r" (add) 
+			      : "1", "2", "cc");
+	
+	return(ret);
+}
+# endif
 
 #elif defined(__ppc__) || defined (__powerpc__)
 #define WAPI_ATOMIC_ASM

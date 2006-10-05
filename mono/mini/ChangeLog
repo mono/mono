@@ -1,3 +1,13 @@
+2006-06-09  Neale Ferguson <neale@sinenomine.net>
+
+	* mini-exceptions.c (ves_icall_get_frame_info): Fix this function on s390/s390x.
+	* mono/io-layer/atomic.h: Fix atomic operations for s390x (not really broken
+	but changed to use full 64-bit opcodes).
+	* mono/mini/mini-s390x.c: Correct ATOMIC operations (incorrect register for CS
+	instruction).
+	* mono/mini/mini-s390x.h: Simplify MCONTEXT_GET_BP.
+	* mono/mini/cpu-s390x.md: Fix max. length values for a couple of instructions.
+
 2006-05-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c (mono_arch_instrument_epilog): Fix handling of 

@@ -1,3 +1,14 @@
+2006-06-14 Neale Ferguson <neale@sinenomine.net>
+
+	* atomic.h: Fix atomic exchange pointer operations for s390x - these
+	were broken as they used 32-bit instructions rather than their 64-bit
+	versions.
+
+2006-06-09 Neale Ferguson <neale@sinenomine.net>
+
+	* atomic.h: Fix atomic operations for s390x (not really broken
+	but changed to use full 64-bit opcodes).
+
 2006-04-26  Dick Porter  <dick@ximian.com>
 
 	* sockets.c (WSAIoctl): Check the output buffer is valid before
