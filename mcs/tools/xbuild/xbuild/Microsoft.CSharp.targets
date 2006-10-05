@@ -1,4 +1,5 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
 	<PropertyGroup>
 		<TargetExt Condition="'$(OutputType)' == 'Winexe'">.exe</TargetExt>
 		<TargetExt Condition="'$(OutputType)' == 'Exe'">.exe</TargetExt>
@@ -8,12 +9,17 @@
 
 	<PropertyGroup>
 		<AllowUnsafeBlocks Condition="'$(AllowUnsafeBlocks)' == ''">false</AllowUnsafeBlocks>
+		<AssemblyName Condition="'$(AssemblyName)' == ''">$(RootNamespace)</AssemblyName>
+		<!--<OutputPath Condition="'$(OutputPath)' != ''">$(OutputPath)\</OutputPath>-->
 		<WarningLevel Condition="'$(WarningLevel)' == ''" >2</WarningLevel>
 	</PropertyGroup>
 
-	<!-- We are passing references just as they are to Csc task. It can only work with references like:
-	System, System.Xml. (that exist in compiler's directory) ResolveAssemblyReferences task should be given
-	the references and should output list of .dll/.exe files that should be passed to Csc task.-->
+	<Target Name="PrepareForBuild">
+		<MakeDir 
+			Condition="'$(OutputPath)' != ''"
+			Directories="$(OutputPath)"
+		/>
+	</Target>
 
 	<Target Name="ResolveAssemblyReferences">
 		<ResolveAssemblyReference
@@ -23,12 +29,12 @@
 		</ResolveAssemblyReference>
 	</Target>
 
-	<Target Name="Build" DependsOnTargets="ResolveAssemblyReferences">
+	<Target Name="Build" DependsOnTargets="PrepareForBuild;ResolveAssemblyReferences">
 		<Csc
 			AllowUnsafeBlocks="$(AllowUnsafeBlocks)"
 			DefineConstants="$(DefineConstants)"
 			NoConfig="true"
-			OutputAssembly="$(AssemblyName)$(TargetExt)"
+			OutputAssembly="$(OutputPath)$(AssemblyName)$(TargetExt)"
 			References="@(ResolvedFiles)"
 			Sources="@(Compile)"
 			TargetType="$(OutputType)"
