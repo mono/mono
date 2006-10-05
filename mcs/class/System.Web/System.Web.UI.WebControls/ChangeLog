@@ -1,5 +1,14 @@
 2006-10-05 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* GridView.cs:
+	* DataControlButton.cs:
+	* DataControlField.cs:
+	implemented PrepareControlHierarchy()
+	styles are applied correct
+	command buttons inherit ForeColor
+
+2006-10-05 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* WebControl.cs: fixed: CreateControlStyle()
 
 2006-10-04 Igor Zelmanovich <igorz@mainsoft.com>

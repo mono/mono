@@ -33,6 +33,7 @@ using System.Web;
 using System.Web.UI;
 using System.ComponentModel;
 using System.ComponentModel.Design;
+using System.Drawing;
 
 namespace System.Web.UI.WebControls
 {
@@ -90,6 +91,10 @@ namespace System.Web.UI.WebControls
 
 		protected internal override void Render (HtmlTextWriter writer)
 		{
+			if (CommandName.Length > 0 && ButtonType == ButtonType.Link) {
+				EnsureForeColor ();
+			}
+
 			if (CommandName.Length > 0 || ButtonType == ButtonType.Button)
 			{
 				string postScript = null;
@@ -171,6 +176,21 @@ namespace System.Web.UI.WebControls
 					writer.Write (Text);
 					writer.RenderEndTag ();
 				}
+			}
+		}
+
+		private void EnsureForeColor () {
+			if (ForeColor != Color.Empty)
+				return;
+
+			for (Control parent = Parent; parent != null; parent = parent.Parent) {
+				WebControl wc = parent as WebControl;
+				if (wc != null && wc.ForeColor != Color.Empty) {
+					ForeColor = wc.ForeColor;
+					break;
+				}
+				if (parent == container)
+					break;
 			}
 		}
 	}

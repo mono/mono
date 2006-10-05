@@ -204,6 +204,14 @@ namespace System.Web.UI.WebControls {
 			return new System.NotSupportedException ("The property '" + propName + "' is not supported in " + GetType().Name); 
 		}
 
+		internal bool ControlStyleCreated { get { return controlStyle != null; } }
+		
+		internal bool HeaderStyleCreated { get { return headerStyle != null; } }
+		
+		internal bool FooterStyleCreated { get { return footerStyle != null; } }
+		
+		internal bool ItemStyleCreated { get { return itemStyle != null; } }
+
 		[MonoTODO ("Render this")]
 		[DefaultValueAttribute ("")]
 		[LocalizableAttribute (true)]
