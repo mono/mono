@@ -561,32 +561,6 @@ For platforms that do not otherwise have a way of obtaining random bytes
 this can be set to the name of a file system socket on which an egd or
 prngd daemon is listening.
 .TP
-.I "MONO_EXTERNAL_ENCODINGS"
-If set, contains a colon-separated list of text encodings to try when
-turning externally-generated text (e.g. command-line arguments or
-filenames) into Unicode.  The encoding names come from the list
-provided by iconv, and the special case "default_locale" which refers
-to the current locale's default encoding.
-.IP
-When reading externally-generated text strings UTF-8 is tried first,
-and then this list is tried in order with the first successful
-conversion ending the search.  When writing external text (e.g. new
-filenames or arguments to new processes) the first item in this list
-is used, or UTF-8 if the environment variable is not set.
-.IP
-The problem with using MONO_EXTERNAL_ENCODINGS to process your
-files is that it results in a problem: although its possible to get
-the right file name it is not necessarily possible to open the file.
-In general if you have problems with encodings in your filenames you
-should use the "convmv" program.
-.TP
-.I "MONO_GAC_PREFIX"
-Provides a prefix the runtime uses to look for Global Assembly Caches.
-Directories are separated by the platform path separator (colons on
-unix). MONO_GAC_PREFIX should point to the top directory of a prefixed
-install. Or to the directory provided in the gacutil /gacdir command. Example:
-.B /home/username/.mono:/usr/local/mono/
-.TP
 .I "MONO_EVENTLOG_TYPE"
 Sets the type of event log provider to use (for System.Diagnostics.EventLog).
 .Sp
@@ -622,6 +596,47 @@ Silently discards any events.
 The default is "null" on Unix (and versions of Windows before NT), and 
 "win32" on Windows NT (and higher).
 .RE
+.TP
+.I "MONO_EXTERNAL_ENCODINGS"
+If set, contains a colon-separated list of text encodings to try when
+turning externally-generated text (e.g. command-line arguments or
+filenames) into Unicode.  The encoding names come from the list
+provided by iconv, and the special case "default_locale" which refers
+to the current locale's default encoding.
+.IP
+When reading externally-generated text strings UTF-8 is tried first,
+and then this list is tried in order with the first successful
+conversion ending the search.  When writing external text (e.g. new
+filenames or arguments to new processes) the first item in this list
+is used, or UTF-8 if the environment variable is not set.
+.IP
+The problem with using MONO_EXTERNAL_ENCODINGS to process your
+files is that it results in a problem: although its possible to get
+the right file name it is not necessarily possible to open the file.
+In general if you have problems with encodings in your filenames you
+should use the "convmv" program.
+.TP
+.I "MONO_GAC_PREFIX"
+Provides a prefix the runtime uses to look for Global Assembly Caches.
+Directories are separated by the platform path separator (colons on
+unix). MONO_GAC_PREFIX should point to the top directory of a prefixed
+install. Or to the directory provided in the gacutil /gacdir command. Example:
+.B /home/username/.mono:/usr/local/mono/
+.TP
+.I "MONO_IO_PORTABILITY_HELP"
+Enables some filename rewriting support to assist badly-written
+applications that hard-code Windows paths.  Set to a colon-separated
+list of "drive" to strip drive letters, or "case" to do
+case-insensitive file matching in every directory in a path.  "all"
+enables all rewriting methods.  (Backslashes are always mapped to
+slashes if this variable is set to a valid option.)
+.fi
+.Sp
+For example:
+.nf
+
+	MONO_IO_PORTABILITY_HELP=drive:case
+
 .TP
 .I "MONO_MANAGED_WATCHER"
 If set to any value, System.IO.FileSystemWatcher will use the default
@@ -679,21 +694,6 @@ home directories that might be shared over the network.
 .I "MONO_STRICT_IO_EMULATION"
 If set, extra checks are made during IO operations.  Currently, this
 includes only advisory locks around file writes.
-.TP
-.I "MONO_IO_PORTABILITY_HELP"
-Enables some filename rewriting support to assist badly-written
-applications that hard-code Windows paths.  Set to a colon-separated
-list of "drive" to strip drive letters, or "case" to do
-case-insensitive file matching in every directory in a path.  "all"
-enables all rewriting methods.  (Backslashes are always mapped to
-slashes if this variable is set to a valid option.)
-.fi
-.Sp
-For example:
-.nf
-
-	MONO_IO_PORTABILITY_HELP=drive:case
-
 .TP
 .I "MONO_THEME"
 The name of the theme to be used by Windows.Forms.   Available themes today
