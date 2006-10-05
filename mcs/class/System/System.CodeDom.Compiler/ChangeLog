@@ -1,3 +1,13 @@
+2006-10-05  Wade Berrier <wberrier@novell.com>
+
+	* TempFileCollection.cs: Bring in changes from HEAD for serialization
+	security fix:
+	* r57836: Implement explicitly some interface methods to get rid of
+	the "!" errors on CorCompare.
+	* r60253: Make sure generated file names are unique. Fixes bug #76125
+	and #78230.
+	* r65441: Create files in a temporary subdirectory, for security reasons.
+
 2006-02-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* CodeDomProvider.cs: Fix the [ToolboxItem] attribute. Fixes #77513.
