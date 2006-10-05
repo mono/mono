@@ -1091,9 +1091,9 @@ namespace System.Web.UI.WebControls
 				case DataControlRowType.DataRow:
 					if (rowStyle != null && !rowStyle.IsEmpty)
 						row.ControlStyle.CopyFrom (rowStyle);
-					if ((row.RowState & DataControlRowState.Edit) != 0 && editRowStyle != null)
+					if ((row.RowState & DataControlRowState.Edit) != 0 && editRowStyle != null && !editRowStyle.IsEmpty)
 						row.ControlStyle.CopyFrom (editRowStyle);
-					if ((row.RowState & DataControlRowState.Insert) != 0 && insertRowStyle != null)
+					if ((row.RowState & DataControlRowState.Insert) != 0 && insertRowStyle != null && !insertRowStyle.IsEmpty)
 						row.ControlStyle.CopyFrom (insertRowStyle);
 					break;
 				default:
