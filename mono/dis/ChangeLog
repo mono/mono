@@ -1,3 +1,7 @@
+2006-10-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* dump.c main.c: Allow dumping the *Ptr tables.
+
 2006-09-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* declsec.c: Fix windows VC build.
