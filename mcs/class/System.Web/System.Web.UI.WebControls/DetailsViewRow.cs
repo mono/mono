@@ -45,6 +45,7 @@ namespace System.Web.UI.WebControls
 		int rowIndex;
 		DataControlRowState rowState;
 		DataControlRowType rowType;
+		DataControlField containingField;
 		
 		public DetailsViewRow (int rowIndex, DataControlRowType rowType, DataControlRowState rowState)
 		{
@@ -65,6 +66,11 @@ namespace System.Web.UI.WebControls
 			get { return rowType; }
 		}
 		
+		internal DataControlField ContainingField {
+			get { return containingField; }
+			set { containingField = value; }
+		}
+
 		protected override bool OnBubbleEvent (object source, EventArgs e)
 		{
 			if (base.OnBubbleEvent (source, e)) return true;
