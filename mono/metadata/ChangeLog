@@ -1,3 +1,22 @@
+2006-10-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* row-indexes.h: Add definitions for *Ptr tables.
+
+	* metadata-internals.h (MonoImage): Add an 'uncompressed_metadata' flag.
+
+	* metadata.c (mono_metadata_translate_token_index): New helper function to
+	translate table indexes used in uncompressed metadata.
+	(mono_metadata_decode_table_row): Ditto.
+	(mono_metadata_decode_table_row_col): Ditto.
+
+	* metadata.c: Add table schema for *Ptr tables.
+
+	* class.c loader.c: Use the new helper function to access the affected metadata
+	tables.
+	
+	* image.c (load_metadata_ptrs): Allow assemblies with uncompressed metadata. Fixes
+	#38532.
+	
 2006-10-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (emit_object_to_ptr_conv): Avoid using short branches around IL
