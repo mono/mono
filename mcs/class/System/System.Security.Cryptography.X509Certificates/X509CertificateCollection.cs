@@ -37,7 +37,7 @@ using System.Security.Cryptography;
 namespace System.Security.Cryptography.X509Certificates {
 
 [Serializable]
-public class X509CertificateCollection : CollectionBase, IEnumerable {
+public class X509CertificateCollection : CollectionBase {
 	
 	public X509CertificateCollection ()
 	{
@@ -110,11 +110,6 @@ public class X509CertificateCollection : CollectionBase, IEnumerable {
 	public new X509CertificateEnumerator GetEnumerator ()
 	{
 		return new X509CertificateEnumerator (this);
-	}
-	
-	IEnumerator IEnumerable.GetEnumerator ()
-	{
-		return InnerList.GetEnumerator ();
 	}
 	
 	public override int GetHashCode () 

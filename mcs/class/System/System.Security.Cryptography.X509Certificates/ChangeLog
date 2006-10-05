@@ -1,3 +1,8 @@
+2006-10-05  Andrew Skiba  <andrews@mainsoft.com>
+
+	* X509CertificateCollection.cs: remove IEnumerable private imple-
+	mentation to match MSDN.
+	
 2006-09-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* X509Certificate2.cs : in .ctor(X509Certificate) call base copy .ctor()
