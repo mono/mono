@@ -1,3 +1,11 @@
+2006-10-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (emit_load_volatile_arguments): New function to handle arguments of
+	tail calls as on other platforms.
+
+	* mini.c (mono_method_to_ir): Fix a few tailcall problems. Fixes #79557.
+
+	* iltests.il: Add a few tailcall tests.
 
 Tue Oct 3 16:33:08 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
