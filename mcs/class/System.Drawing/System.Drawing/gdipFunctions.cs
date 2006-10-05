@@ -102,7 +102,16 @@ namespace System.Drawing
 
 			GdiplusStartupInput input = GdiplusStartupInput.MakeGdiplusStartupInput();
 			GdiplusStartupOutput output = GdiplusStartupOutput.MakeGdiplusStartupOutput();
-			GdiplusStartup (ref GdiPlusToken, ref input, ref output);
+			try {
+				GdiplusStartup (ref GdiPlusToken, ref input, ref output);
+			} catch (TypeInitializationException tie){
+				Console.Error.WriteLine (
+					"* ERROR: Can not initialize GDI+ library\n" +
+					"\n" +
+					"Please check http://www.mono-project.com/Problem:GDIPlusInit for details");
+				
+			}
+			
 			AppDomain.CurrentDomain.ProcessExit += new EventHandler (ProcessExit);
 		}
 		
