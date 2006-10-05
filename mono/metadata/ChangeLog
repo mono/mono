@@ -1,5 +1,9 @@
 2006-10-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* loader.c (mono_method_signature): Fix a use of MONO_TABLE_METHOD missed earlier.
+
+	* metadata.c (mono_metadata_get_param_attrs): Ditto.
+
 	* row-indexes.h: Add definitions for *Ptr tables.
 
 	* metadata-internals.h (MonoImage): Add an 'uncompressed_metadata' flag.
