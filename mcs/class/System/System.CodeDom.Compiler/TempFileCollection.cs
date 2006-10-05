@@ -31,6 +31,7 @@ using System.Collections;
 using System.IO;
 using System.Security;
 using System.Security.Permissions;
+using System.Runtime.InteropServices;
 
 namespace System.CodeDom.Compiler {
 
@@ -45,6 +46,7 @@ namespace System.CodeDom.Compiler {
 		bool keepfiles;
 		string basepath;
 		Random rnd;
+		string ownTempDir;
 		
 		public TempFileCollection ()
 			: this (String.Empty, false)
@@ -67,15 +69,14 @@ namespace System.CodeDom.Compiler {
 		{
 			get {
 				if(basepath==null) {
-					// note: this property *cannot* change TempDir property
-					string temp = tempdir;
-					if (temp.Length == 0) {
-						// this call ensure the Environment permissions check
-						temp = Path.GetTempPath ();
-					}
-
+				
 					if (rnd == null)
 						rnd = new Random ();
+
+					// note: this property *cannot* change TempDir property
+					string temp = tempdir;
+					if (temp.Length == 0)
+						temp = GetOwnTempDir ();
 
 					// Create a temporary file at the target directory. This ensures
 					// that the generated file name is unique.
@@ -110,6 +111,32 @@ namespace System.CodeDom.Compiler {
 
 				return(basepath);
 			}
+		}
+		
+		string GetOwnTempDir ()
+		{
+			if (ownTempDir != null)
+				return ownTempDir;
+
+			// this call ensure the Environment permissions check
+			string basedir = Path.GetTempPath ();
+			
+			// Create a subdirectory with the correct user permissions
+			int res = -1;
+			do {
+				int num = rnd.Next ();
+				num++;
+				ownTempDir = Path.Combine (basedir, num.ToString("x"));
+				if (Directory.Exists (ownTempDir))
+					continue;
+				res = mkdir (ownTempDir, 0x1c0);
+				if (res != 0) {
+					if (!Directory.Exists (ownTempDir))
+						throw new IOException ();
+					// Somebody already created the dir, keep trying
+				}
+			} while (res != 0);
+			return ownTempDir;
 		}
 
 		int ICollection.Count {
@@ -190,18 +217,25 @@ namespace System.CodeDom.Compiler {
 		
 		public void Delete()
 		{
-			string[] filenames=new string[filehash.Count];
-			filehash.Keys.CopyTo(filenames, 0);
+			bool allDeleted = true;
+			string[] filenames = new string[filehash.Count];
+			filehash.Keys.CopyTo (filenames, 0);
 
 			foreach(string file in filenames) {
 				if((bool)filehash[file]==false) {
 					File.Delete(file);
 					filehash.Remove(file);
-				}
+				} else
+					allDeleted = false;
 			}
 			if (basepath != null) {
 				string tmpFile = basepath + ".tmp";
 				File.Delete (tmpFile);
+				basepath = null;
+			}
+			if (allDeleted && ownTempDir != null) {
+				Directory.Delete (ownTempDir, true);
+				ownTempDir = null;
 			}
 		}
 
@@ -228,5 +262,6 @@ namespace System.CodeDom.Compiler {
 			Dispose(false);
 		}
 		
+		[DllImport ("libc")] private static extern int mkdir (string olpath, uint mode);
 	}
 }

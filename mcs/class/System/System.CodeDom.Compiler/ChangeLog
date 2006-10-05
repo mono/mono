@@ -1,3 +1,9 @@
+2006-09-15  LLuis Sanchez Gual  <lluis@novell.com>
+
+	* TempFileCollection.cs: Create files in a temporary subdirectory,
+	for security reasons.
+	* CodeCompiler.cs: Let TempFileCollection choose the temp dir.
+
 2006-05-04  LLuis Sanchez Gual  <lluis@novell.com>
 
 	* TempFileCollection.cs: Make sure generated file names

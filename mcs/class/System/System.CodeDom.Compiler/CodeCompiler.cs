@@ -128,7 +128,7 @@ namespace System.CodeDom.Compiler {
 			if (null == fileNames)
 				throw new ArgumentNullException ("fileNames");
 
-			options.TempFiles = new TempFileCollection (Path.GetTempPath ());
+			options.TempFiles = new TempFileCollection ();
 			foreach (string file in fileNames) {
 				options.TempFiles.AddFile (file, keepFiles);
 			}
