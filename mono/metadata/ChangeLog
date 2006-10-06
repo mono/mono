@@ -1,5 +1,8 @@
 2006-10-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (mono_module_get_object): Avoid an assert when operating on
+	modules with no metadata. Fixes #79596.
+
 	* image.c (load_metadata_ptrs): Put back the error message when
 	the #- heap is encountered since the support is not complete yet.
 
