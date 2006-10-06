@@ -1,3 +1,8 @@
+2006-10-06  Miguel de Icaza  <miguel@novell.com>
+
+	* io-portability.c (find_file): Rename from
+	MONO_IO_PORTABILITY_HELP to MONO_IOMAP.
+
 2006-10-03  Dick Porter  <dick@ximian.com>
 
 	* io-portability.h: 
