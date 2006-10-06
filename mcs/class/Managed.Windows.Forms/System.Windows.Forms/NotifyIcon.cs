@@ -90,7 +90,7 @@ namespace System.Windows.Forms {
 			protected override void WndProc(ref Message m) {
 				switch((Msg)m.Msg) {
 					case Msg.WM_NCPAINT: {
-						PaintEventArgs	paint_event;
+						PaintEventArgs  paint_event;
 
 						paint_event = XplatUI.PaintEventStart(Handle, false);
 						OnPaintInternal (paint_event);
@@ -213,7 +213,7 @@ namespace System.Windows.Forms {
 			}
 
 			private void HandleMouseUp(object sender, MouseEventArgs e) {
-				if (owner.context_menu != null) {
+				if ((e.Button & MouseButtons.Right) == MouseButtons.Right && owner.context_menu != null) {
 					owner.context_menu.Show(this, new Point(e.X, e.Y));
 				}
 
