@@ -409,6 +409,13 @@ namespace TestRunner {
 
 			MethodInfo mi = null;
 			string file = Path.Combine (files_folder, Path.GetFileNameWithoutExtension (filename) + ".exe");
+
+			// Enable .dll only tests (no execution required)
+			if (!File.Exists(file)) {
+				HandleFailure (filename, TestResult.Success, null);
+				return true;
+			}
+
 			if (!appdomain_limit_reached) {
 				try {
 					mi = Assembly.LoadFile (file).EntryPoint;
