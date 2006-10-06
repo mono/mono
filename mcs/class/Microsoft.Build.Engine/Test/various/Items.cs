@@ -51,6 +51,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
+		[Ignore ("Too messy test")]
 		// FIXME: split it to several tests and add more tests
 		public void TestItems1 ()
 		{
