@@ -1,3 +1,8 @@
+2006-10-06  Miguel de Icaza  <miguel@novell.com>
+
+	* main.c (dis_directive_assembly): Fix the rendering of .locale to
+	be a data dump.
+
 2006-10-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* dump.c main.c: Applied patch from Jb. Allow dumping the PropertyPtr table.
