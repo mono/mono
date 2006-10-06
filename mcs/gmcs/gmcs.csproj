@@ -54,7 +54,9 @@
     <Compile Include="..\mcs\AssemblyInfo.cs">
       <Link>AssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="anonymous.cs" />
+    <Compile Include="..\mcs\anonymous.cs">
+      <Link>anonymous.cs</Link>
+    </Compile>
     <Compile Include="..\mcs\assign.cs">
       <Link>assign.cs</Link>
     </Compile>
@@ -106,7 +108,9 @@
       <Link>flowanalysis.cs</Link>
     </Compile>
     <Compile Include="generic.cs" />
-    <Compile Include="iterators.cs" />
+    <Compile Include="..\mcs\iterators.cs">
+      <Link>iterators.cs</Link>
+    </Compile>
     <Compile Include="..\mcs\literal.cs">
       <Link>literal.cs</Link>
     </Compile>
