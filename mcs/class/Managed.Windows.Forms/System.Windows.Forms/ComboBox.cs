@@ -1821,8 +1821,8 @@ namespace System.Windows.Forms
 					if (vscrollbar_ctrl == null || !vscrollbar_ctrl.FireMouseDown (e))
 		    				HideWindow ();
 				} else {
-					owner.OnSelectionChangeCommitted (new EventArgs ());
 					owner.SelectedIndex = index;
+					owner.OnSelectionChangeCommitted (new EventArgs ());
 					HideWindow ();
 				}
 
