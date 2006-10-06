@@ -479,8 +479,24 @@ namespace System.Reflection.Emit {
 						version_res.LegalCopyright = cb.string_arg ();
 					else if (attrname == "System.Reflection.AssemblyTrademarkAttribute")
 						version_res.LegalTrademarks = cb.string_arg ();
-					else if (attrname == "System.Reflection.AssemblyCultureAttribute")
-						version_res.FileLanguage = new CultureInfo (GetCultureString (cb.string_arg ())).LCID;
+					else if (attrname == "System.Reflection.AssemblyCultureAttribute"){
+						int lcid;
+						
+						try {
+							lcid = new CultureInfo (GetCultureString (cb.string_arg ())).LCID;
+						} catch (ArgumentException){
+							//
+							// This means that the resource is set to the invariant, but
+							// the locale encoded will come from the AssemblyName anyways.
+							//
+							// In fact, my exploration of MS.NEt shows that this is always
+							// set to zero, so I wonder if we should completely drop this
+							// code from here. 
+							//
+							lcid = CultureInfo.InvariantCulture.LCID;
+						}
+						version_res.FileLanguage = lcid;
+					}
 					else if (attrname == "System.Reflection.AssemblyFileVersionAttribute")
 						version_res.FileVersion = cb.string_arg ();
 					else if (attrname == "System.Reflection.AssemblyInformationalVersionAttribute")

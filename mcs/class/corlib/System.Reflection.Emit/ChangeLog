@@ -1,3 +1,16 @@
+2006-10-06  Miguel de Icaza  <miguel@novell.com>
+
+	* AssemblyBuilder.cs: Am doing a try/catch for pulling the LCID
+	from the AssemblyCulture that is provided, as Microsoft allows
+	arbitrary locales (even non-existing ones) to be specified.
+
+	The .locale information is actually pulled from the AssemblyName,
+	not from this lcid.  But this LCID is used to encode the
+	resource.  In my exploration of this, we are setting this field,
+	even if CSC never sets the field itself (its always zero).
+
+	Maybe we should completely remove this.
+
 2006-09-12  Mart Roosma  <roosma@gmail.com>
 
 	* DynamicMethod.cs: Allow empty name and null return type. 
