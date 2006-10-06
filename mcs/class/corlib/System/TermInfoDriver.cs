@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #if NET_2_0
+//#define DEBUG
 using System.Collections;
 using System.IO;
 using System.Text;
@@ -78,6 +79,9 @@ namespace System {
 		Hashtable keymap;
 		ByteMatcher rootmap;
 		bool home_1_1; // if true, we have to add 1 to x and y when using cursorAddress
+#if DEBUG
+		StreamWriter logger;
+#endif
 
 		static string SearchTerminfo (string term)
 		{
@@ -121,6 +125,10 @@ namespace System {
 
 		public TermInfoDriver (string term)
 		{
+#if DEBUG
+			File.Delete ("console.log");
+			logger = new StreamWriter (File.OpenWrite ("console.log"));
+#endif
 			this.term = term;
 
 			if (term == "xterm") {
@@ -202,6 +210,10 @@ namespace System {
 			}
 
 			GetCursorPosition ();
+#if DEBUG
+			logger.WriteLine ("noGetPosition: {0} left: {1} top: {2}", noGetPosition, cursorLeft, cursorTop);
+			logger.Flush ();
+#endif
 			if (noGetPosition) {
 				WriteConsole (clear);
 				cursorLeft = 0;
@@ -252,19 +264,21 @@ namespace System {
 			return 0;
 		}
 
+		void IncrementX ()
+		{
+			cursorLeft++;
+			if (cursorLeft >= WindowWidth) {
+				cursorTop++;
+				cursorLeft = 0;
+				if (cursorTop >= WindowHeight) {
+					cursorTop--;
+					//Scroll up
+				}
+			}
+		}
+
 		public bool NotifyWrite (ConsoleKeyInfo key)
 		{
-			if (key.Key >= ConsoleKey.A && key.Key <= ConsoleKey.Z) {
-				cursorLeft++;
-				if (cursorLeft >= WindowWidth) {
-					cursorTop++;
-					cursorLeft = 0;
-					if (cursorTop >= WindowHeight) {
-						cursorTop--;
-					}
-				}
-				return true;
-			}	
 			switch (key.Key) {
 			case ConsoleKey.Backspace:
 				if (cursorLeft > 0) {
@@ -273,261 +287,41 @@ namespace System {
 					WriteConsole (" ");
 					SetCursorPosition (cursorLeft, cursorTop);
 				}
+#if DEBUG
+				logger.WriteLine ("BS left: {0} top: {1}", cursorLeft, cursorTop);
+				logger.Flush ();
+#endif
 				return false;
 			case ConsoleKey.Tab:
-				break;
+				int n = 8 - (cursorLeft % 8);
+				for (int i = 0; i < n; i++) IncrementX ();
+				return true;
 			case ConsoleKey.Clear:
-				break;
+				return false;
 			case ConsoleKey.Enter:
-				break;
-			case ConsoleKey.Pause:
-				break;
-			case ConsoleKey.Escape:
-				break;
-			case ConsoleKey.Spacebar:
-				break;
-			case ConsoleKey.PageUp:
-				break;
-			case ConsoleKey.PageDown:
-				break;
-			case ConsoleKey.End:
-				break;
-			case ConsoleKey.Home:
-				break;
-			case ConsoleKey.LeftArrow:
-				break;
-			case ConsoleKey.UpArrow:
-				break;
-			case ConsoleKey.RightArrow:
-				break;
-			case ConsoleKey.DownArrow:
-				break;
-			case ConsoleKey.Select:
-				break;
-			case ConsoleKey.Print:
-				break;
-			case ConsoleKey.Execute:
-				break;
-			case ConsoleKey.PrintScreen:
-				break;
-			case ConsoleKey.Insert:
-				break;
-			case ConsoleKey.Delete:
-				break;
-			case ConsoleKey.Help:
-				break;
-			case ConsoleKey.D0:
-				break;
-			case ConsoleKey.D1:
-				break;
-			case ConsoleKey.D2:
-				break;
-			case ConsoleKey.D3:
-				break;
-			case ConsoleKey.D4:
-				break;
-			case ConsoleKey.D5:
-				break;
-			case ConsoleKey.D6:
-				break;
-			case ConsoleKey.D7:
-				break;
-			case ConsoleKey.D8:
-				break;
-			case ConsoleKey.D9:
-				break;
-			case ConsoleKey.LeftWindows:
-				break;
-			case ConsoleKey.RightWindows:
-				break;
-			case ConsoleKey.Applications:
-				break;
-			case ConsoleKey.Sleep:
-				break;
-			case ConsoleKey.NumPad0:
-				break;
-			case ConsoleKey.NumPad1:
-				break;
-			case ConsoleKey.NumPad2:
-				break;
-			case ConsoleKey.NumPad3:
-				break;
-			case ConsoleKey.NumPad4:
-				break;
-			case ConsoleKey.NumPad5:
-				break;
-			case ConsoleKey.NumPad6:
-				break;
-			case ConsoleKey.NumPad7:
-				break;
-			case ConsoleKey.NumPad8:
-				break;
-			case ConsoleKey.NumPad9:
-				break;
-			case ConsoleKey.Multiply:
-				break;
-			case ConsoleKey.Add:
-				break;
-			case ConsoleKey.Separator:
-				break;
-			case ConsoleKey.Subtract:
-				break;
-			case ConsoleKey.Decimal:
-				break;
-			case ConsoleKey.Divide:
-				break;
-			case ConsoleKey.F1:
-				break;
-			case ConsoleKey.F2:
-				break;
-			case ConsoleKey.F3:
-				break;
-			case ConsoleKey.F4:
-				break;
-			case ConsoleKey.F5:
-				break;
-			case ConsoleKey.F6:
-				break;
-			case ConsoleKey.F7:
-				break;
-			case ConsoleKey.F8:
-				break;
-			case ConsoleKey.F9:
-				break;
-			case ConsoleKey.F10:
-				break;
-			case ConsoleKey.F11:
-				break;
-			case ConsoleKey.F12:
-				break;
-			case ConsoleKey.F13:
-				break;
-			case ConsoleKey.F14:
-				break;
-			case ConsoleKey.F15:
-				break;
-			case ConsoleKey.F16:
-				break;
-			case ConsoleKey.F17:
-				break;
-			case ConsoleKey.F18:
-				break;
-			case ConsoleKey.F19:
-				break;
-			case ConsoleKey.F20:
-				break;
-			case ConsoleKey.F21:
-				break;
-			case ConsoleKey.F22:
-				break;
-			case ConsoleKey.F23:
-				break;
-			case ConsoleKey.F24:
-				break;
-			case ConsoleKey.BrowserBack:
-				break;
-			case ConsoleKey.BrowserForward:
-				break;
-			case ConsoleKey.BrowserRefresh:
-				break;
-			case ConsoleKey.BrowserStop:
-				break;
-			case ConsoleKey.BrowserSearch:
-				break;
-			case ConsoleKey.BrowserFavorites:
-				break;
-			case ConsoleKey.BrowserHome:
-				break;
-			case ConsoleKey.VolumeMute:
-				break;
-			case ConsoleKey.VolumeDown:
-				break;
-			case ConsoleKey.VolumeUp:
-				break;
-			case ConsoleKey.MediaNext:
-				break;
-			case ConsoleKey.MediaPrevious:
-				break;
-			case ConsoleKey.MediaStop:
-				break;
-			case ConsoleKey.MediaPlay:
-				break;
-			case ConsoleKey.LaunchMail:
-				break;
-			case ConsoleKey.LaunchMediaSelect:
-				break;
-			case ConsoleKey.LaunchApp1:
-				break;
-			case ConsoleKey.LaunchApp2:
-				break;
-			case ConsoleKey.Oem1:
-				break;
-			case ConsoleKey.OemPlus:
-				break;
-			case ConsoleKey.OemComma:
-				break;
-			case ConsoleKey.OemMinus:
-				break;
-			case ConsoleKey.OemPeriod:
-				break;
-			case ConsoleKey.Oem2:
-				break;
-			case ConsoleKey.Oem3:
-				break;
-			case ConsoleKey.Oem4:
-				break;
-			case ConsoleKey.Oem5:
-				break;
-			case ConsoleKey.Oem6:
-				break;
-			case ConsoleKey.Oem7:
-				break;
-			case ConsoleKey.Oem8:
-				break;
-			case ConsoleKey.Oem102:
-				break;
-			case ConsoleKey.Process:
-				break;
-			case ConsoleKey.Packet:
-				break;
-			case ConsoleKey.Attention:
-				break;
-			case ConsoleKey.CrSel:
-				break;
-			case ConsoleKey.ExSel:
-				break;
-			case ConsoleKey.EraseEndOfFile:
-				break;
-			case ConsoleKey.Play:
-				break;
-			case ConsoleKey.Zoom:
-				break;
-			case ConsoleKey.NoName:
-				break;
-			case ConsoleKey.Pa1:
-				break;
-			case ConsoleKey.OemClear:
-				break;
-			default:
+				cursorLeft = 0;
+				cursorTop++;
+				if (cursorTop >= WindowHeight) {
+					cursorTop--;
+					//TODO: scroll up
+				}
+#if DEBUG
+				logger.WriteLine ("ENTER left: {0} top: {1}", cursorLeft, cursorTop);
+				logger.Flush ();
+#endif
 				return true;
 			}
+			IncrementX ();
+#if DEBUG
+			logger.WriteLine ("left: {0} top: {1}", cursorLeft, cursorTop);
+			logger.Flush ();
+#endif
 			return true;
 		}
 
 		public bool NotifyWrite (char val)
 		{
-			if (val == verase) {
-				string str = reader.Get (TermInfoStrings.EraseChars);
-				if (str != null) {
-					Console.Error.WriteLine ("{0}", TermInfoReader.Escape (str));
-				} else {
-					Console.Error.WriteLine ("FUCK");
-				}
-				return false;
-			} else {
-				//TODO: compute cursor position
-				return true;
-			}
+			return NotifyWrite (CreateKeyInfoFromInt (val));
 		}
 
 		public ConsoleColor BackgroundColor {
