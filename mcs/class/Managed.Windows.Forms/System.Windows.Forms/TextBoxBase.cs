@@ -1727,7 +1727,7 @@ namespace System.Windows.Forms {
 				}
 
 				// Check if we moved out of view to the right
-				if ((pos.X >= (document.ViewPortWidth + document.ViewPortX)) && (hscroll.Enabled && (hscroll.Value != hscroll.Maximum))) {
+				if ((pos.X >= (document.ViewPortWidth + document.ViewPortX)) && (hscroll.Value != hscroll.Maximum)) {
 					if ((pos.X - document.ViewPortWidth + 1) <= hscroll.Maximum) {
 						if (pos.X - document.ViewPortWidth >= 0) {
 							hscroll.Value = pos.X - document.ViewPortWidth + 1;
