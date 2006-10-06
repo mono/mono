@@ -1,5 +1,10 @@
 2006-10-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* TermInfoDriver.cs: don't allow backspace if we're at the beginning
+	position for a ReadLine.
+
+2006-10-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* TermInfoDriver.cs: ironpython autocompletion works now.
 
 2006-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>

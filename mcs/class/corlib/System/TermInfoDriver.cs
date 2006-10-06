@@ -79,6 +79,7 @@ namespace System {
 		Hashtable keymap;
 		ByteMatcher rootmap;
 		bool home_1_1; // if true, we have to add 1 to x and y when using cursorAddress
+		int rl_startx = -1, rl_starty = -1;
 #if DEBUG
 		StreamWriter logger;
 #endif
@@ -282,6 +283,8 @@ namespace System {
 			switch (key.Key) {
 			case ConsoleKey.Backspace:
 				if (cursorLeft > 0) {
+					if (cursorLeft <= rl_startx && cursorTop == rl_starty)
+						return false;
 					cursorLeft--;
 					SetCursorPosition (cursorLeft, cursorTop);
 					WriteConsole (" ");
@@ -704,6 +707,8 @@ namespace System {
 			StringBuilder builder = new StringBuilder ();
 			bool exit = false;
 			CStreamWriter writer = (CStreamWriter) Console.stdout;
+			rl_startx = cursorLeft;
+			rl_starty = cursorLeft;
 			do {
 				ConsoleKeyInfo key = ReadKeyInternal ();
 				char c = key.KeyChar;
@@ -714,6 +719,8 @@ namespace System {
 			} while (!exit);
 			if (prevEcho == false)
 				Echo = prevEcho;
+			rl_startx = -1;
+			rl_starty = -1;
 			return builder.ToString ();
  		}
 
