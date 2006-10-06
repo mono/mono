@@ -1,5 +1,12 @@
 2006-10-05  Chris Toshok  <toshok@ximian.com>
 
+	* DataGrid.cs: move back to a more lazy scheme for creating the
+	CurrencyManager, so we aren't updating it every time you set
+	either DataSource or DataMember.  Also, don't call
+	RecreateDataGridRows if the currency manager hasn't changed.
+
+2006-10-05  Chris Toshok  <toshok@ximian.com>
+
 	* ComboBox.cs: by the time the OnSelectionChangeCommitted event is
 	emitted, SelectedIndex should already be updated.  Fixes bug
 	#78929.

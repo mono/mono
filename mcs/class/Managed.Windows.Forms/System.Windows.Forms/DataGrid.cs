@@ -565,7 +565,9 @@ namespace System.Windows.Forms
 		public string DataMember {
 			get { return datamember; }
 			set {
-				SetDataSource (datasource, value);
+				if (list_manager != null)
+					list_manager = null;
+				datamember = value;
 			}
 		}
 
@@ -575,7 +577,10 @@ namespace System.Windows.Forms
 		public object DataSource {
 			get { return datasource; }
 			set {
-				SetDataSource (value, ListManager == null ? datamember : string.Empty);
+				if (list_manager != null)
+					list_manager = null;
+				datasource = value;
+				datamember = string.Empty;
 			}
 		}
 
@@ -690,7 +695,7 @@ namespace System.Windows.Forms
 		protected internal CurrencyManager ListManager {
 			get {
 				if (list_manager == null)
-					SetDataSource (DataSource, DataMember);
+					SetDataSource (datasource, datamember);
 
 				return list_manager;
 			}
@@ -2143,6 +2148,8 @@ namespace System.Windows.Forms
 		bool in_setdatasource;
 		private void SetDataSource (object source, string member, bool recreate_rows)
 		{
+			CurrencyManager old_lm = list_manager;
+
 			/* we need this bool flag to work around a
 			 * problem with OnBindingContextChanged.  once
 			 * that stuff works properly, remove this
@@ -2197,17 +2204,19 @@ namespace System.Windows.Forms
 			else
 				current_style.CreateColumnsForTable (false);
 
-			/* reset first_visiblerow to 0 here before
-			 * doing anything that'll requires us to
-			 * figure out if we need a scrollbar. */
-			vert_scrollbar.Value = 0;
-			horiz_scrollbar.Value = 0;
-			first_visiblerow = 0;
+			if (old_lm != list_manager) {
+				/* reset first_visiblerow to 0 here before
+				 * doing anything that'll requires us to
+				 * figure out if we need a scrollbar. */
+				vert_scrollbar.Value = 0;
+				horiz_scrollbar.Value = 0;
+				first_visiblerow = 0;
 
-			if (recreate_rows)
-				RecreateDataGridRows (false);
+				if (recreate_rows)
+					RecreateDataGridRows (false);
 
-			CalcAreasAndInvalidate ();
+				CalcAreasAndInvalidate ();
+			}
 
 			in_setdatasource = false;
 
