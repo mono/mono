@@ -458,26 +458,23 @@ namespace System.Windows.Forms {
 			// Grab our new coordinates
 			prev_split_position = split_position;
 
-			// Prepare the event
-			if (horizontal) {
-				sevent.split_x = 0;
-				sevent.split_y = split_position;
-			} else {
-				sevent.split_x = split_position;
-				sevent.split_y = 0;
-			}
+			int candidate = horizontal ? pt.Y : pt.X;
+
+			// Enforce limit on what we send to the event
+			if (candidate < limit_min)
+				candidate = limit_min;
+			else if (candidate > limit_max)
+				candidate = limit_max;
 
 			sevent.x = pt.X;
 			sevent.y = pt.Y;
+			sevent.split_x = horizontal ? 0 : candidate;
+			sevent.split_y = horizontal ? candidate : 0;
 
 			// Fire the event
 			OnSplitterMoving(sevent);
 
-			if (horizontal) {
-				split_position = sevent.split_y;
-			} else {
-				split_position = sevent.split_x;
-			}
+			split_position = horizontal ? sevent.split_y : sevent.split_x;
 
 			// Enforce limits
 			if (split_position < limit_min) {

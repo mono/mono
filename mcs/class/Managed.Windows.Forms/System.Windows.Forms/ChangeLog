@@ -1,3 +1,9 @@
+2006-10-06  Chris Toshok  <toshok@ximian.com>
+
+	* Splitter.cs: doh, fix splitters that don't want to cancel the
+	movement when you drag them.  Also, impose the limits on the
+	values we send to the SplitterMovingEvent.  Fixes #79598.
+
 2006-10-06  Jackson Harper  <jackson@ximian.com>
 
 	* TextBoxBase.cs: Ignore whether or not the scrollbar is enabled,
