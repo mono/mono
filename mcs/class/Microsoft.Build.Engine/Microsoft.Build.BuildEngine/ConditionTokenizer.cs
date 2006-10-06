@@ -205,6 +205,7 @@ namespace Microsoft.Build.BuildEngine {
 				temp = sb.ToString ();
 				
 				// FIXME: test extreme cases
+				// it fails on '$(something) == ''
 				token = new Token (temp.Substring (1, temp.Length - 2), TokenType.String);
 				
 				return;

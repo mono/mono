@@ -229,13 +229,7 @@ namespace Microsoft.Build.BuildEngine {
 			e = new OldExpression (parentProject);
 			e.ParseSource (raw);
 			
-			if (type == typeof (ITaskItem)) {
-				result = e.ConvertTo (typeof (ITaskItem));
-			} else if (type == typeof (ITaskItem[])) {
-				result = e.ConvertTo (typeof (ITaskItem[]));
-			} else {
-				result = e.ConvertTo (type);
-			}
+			result = e.ConvertTo (type);
 			
 			return result;
 		}

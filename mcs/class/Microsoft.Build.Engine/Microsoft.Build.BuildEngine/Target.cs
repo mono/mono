@@ -123,9 +123,10 @@ namespace Microsoft.Build.BuildEngine {
 			
 			if (this.batchingImpl.BuildNeeded ()) {
 				foreach (BuildTask bt in buildTasks) {
-					if (this.batchingImpl.BatchBuildTask (bt) == false && bt.ContinueOnError == false) {
+					result = batchingImpl.BatchBuildTask (bt);
+				
+					if (!result && !bt.ContinueOnError) {
 						executeOnErrors = true;
-						result = false;
 						break;
 					}
 				}

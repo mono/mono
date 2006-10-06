@@ -1,3 +1,11 @@
+2006-10-06  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Target.cs: Reformatted.
+	* TaskEngine.cs: Removed redundant code.
+	* BuildPropertyGroup.cs: Fixed Clear () and AddNewProperty ().
+	* Engine.cs: Made BuildProjectFile () load project file if it's not
+	loaded yet.
+
 2006-09-21  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* ConditionRelationalExpression.cs: Change comparers to case

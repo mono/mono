@@ -95,11 +95,11 @@ namespace Microsoft.Build.BuildEngine {
 					xe.InnerText = propertyValue;
 				
 				prop = new BuildProperty (parentProject, xe);
+				AddProperty (prop);
+				return prop;
 			} else {
-				prop = new BuildProperty (propertyName, propertyValue);
+				throw new InvalidOperationException ("This method is only valid for persisted <System.Object[]> elements.");
 			}
-			AddProperty (prop);
-			return prop;
 		}
 
 		internal void AddProperty (BuildProperty property)
@@ -122,7 +122,10 @@ namespace Microsoft.Build.BuildEngine {
 		[MonoTODO]
 		public void Clear ()
 		{
-			throw new NotImplementedException ();
+			if (FromXml)
+				properties = new List <BuildProperty> ();
+			else
+				propertiesByName = new Dictionary <string, BuildProperty> ();
 		}
 
 		[MonoTODO]
@@ -170,7 +173,8 @@ namespace Microsoft.Build.BuildEngine {
 					 bool treatPropertyValueAsLiteral)
 		{
 			if (!propertiesByName.ContainsKey (propertyName)) {
-				AddNewProperty (propertyName, propertyValue);
+				BuildProperty bp = new BuildProperty (propertyName, propertyValue);
+				AddProperty (bp);
 			}
 			propertiesByName [propertyName].Value = propertyValue;
 		}

@@ -172,9 +172,12 @@ namespace Microsoft.Build.BuildEngine {
 				project = (Project) projects [projectFile];
 				LogProjectStarted (project, targetNames);
 				result = project.Build (targetNames, targetOutputs);
+			} else {
+				project = CreateNewProject ();
+				project.Load (projectFile);
+				LogProjectStarted (project, targetNames);
+				result = project.Build (targetNames, targetOutputs);
 			}
-			else
-				return false;
 			
 			LogProjectFinished (project, result);
 			
