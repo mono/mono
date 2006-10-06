@@ -45,7 +45,9 @@ using System.Security;
 [assembly: NeutralResourcesLanguage ("en-US")]
 
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../msfinal.pub")]
+#if !TARGET_JVM
+[assembly: AssemblyKeyFile ("../ecma.pub")]
+#endif
 
 #if NET_2_0
 [assembly: AssemblyCompany ("MONO development team")]
