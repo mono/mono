@@ -46,10 +46,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			binPath = "../../tools/xbuild/xbuild";
 		}
 
-		/*
+		
 		[Test]
-		// NOTE: It's throwing nullrefexception on NET 2.0
-		[ExpectedException (typeof (ArgumentNullException))]
+		[Ignore ("NullRefException on MS NET 2.0")]
 		public void TestCopyTo1 ()
 		{
 			string documentString = @"
@@ -67,7 +66,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			
 			project.PropertyGroups.CopyTo (null, 0);
 		}
-		*/
 
 		[Test]
 		[ExpectedException (typeof (IndexOutOfRangeException),
@@ -90,10 +88,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project.PropertyGroups.CopyTo (new BuildPropertyGroup [1], -1);
 		}
 
-		/*
 		[Test]
-		// NOTE: that's msbuild's internal error
-		[ExpectedException (typeof (InvalidCastException))]
+		[Ignore ("Throws InvalidCastException on MS NET 2.0")]
 		public void TestCopyTo3 ()
 		{
 			string documentString = @"
@@ -112,7 +108,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project.PropertyGroups.CopyTo (new BuildPropertyGroup [][] { new BuildPropertyGroup [] {
 				new BuildPropertyGroup ()}}, 0);
 		}
-		*/
 
 		[Test]
 		[ExpectedException (typeof (IndexOutOfRangeException),

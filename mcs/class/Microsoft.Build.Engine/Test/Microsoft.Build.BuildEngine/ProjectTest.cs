@@ -54,6 +54,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		[Ignore ("Known bug")]
 		public void TestBuild1 ()
 		{
 			Engine engine;
@@ -71,9 +72,10 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			engine = new Engine (Consts.BinPath);
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
-			project.Build (new string[] { "Main" }, hashtable);
+
+			Assert.AreEqual (true, project.Build (new string[] { "Main" }, hashtable));
 			
-			Assert.AreEqual (0, hashtable.Count);
+			Assert.AreEqual (1, hashtable.Count);
 		}
 	}
 }

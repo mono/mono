@@ -1,3 +1,11 @@
+2006-10-06  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildItemTest.cs:
+	* BuildPropertyTest.cs:
+	* ProjectTest.cs:
+	* BuildPropertyGroupCollectionTest.cs: Uncommented tests and added
+	[Ignore] to them.
+
 2006-06-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* UsingTaskCollectionTest.cs, UsingTaskTest.cs: Updated names.
