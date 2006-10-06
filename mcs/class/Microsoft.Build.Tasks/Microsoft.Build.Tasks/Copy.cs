@@ -28,6 +28,7 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Build.Framework;
@@ -57,10 +58,8 @@ namespace Microsoft.Build.Tasks {
 					throw new Exception ("You must specify only one attribute from DestinationFiles and DestinationFolder");
 				if (destinationFiles != null) {
 					IEnumerator <ITaskItem> source, destination;
-					source = (IEnumerator <ITaskItem>) sourceFiles.GetEnumerator ();
-					destination = (IEnumerator <ITaskItem>) destinationFiles.GetEnumerator ();
-					source.Reset ();
-					destination.Reset ();
+					source = ((IEnumerable <ITaskItem>) sourceFiles).GetEnumerator ();
+					destination = ((IEnumerable <ITaskItem>) destinationFiles).GetEnumerator ();
 					while (source.MoveNext ()) {
 						destination.MoveNext ();
 						ITaskItem sourceItem = source.Current;
@@ -89,7 +88,6 @@ namespace Microsoft.Build.Tasks {
 					
 					IEnumerator <ITaskItem> source;
 					source = (IEnumerator <ITaskItem>) sourceFiles.GetEnumerator ();
-					source.Reset ();
 					while (source.MoveNext ()) {
 						ITaskItem sourceItem = source.Current;
 						string sourceFile = sourceItem.GetMetadata ("FullPath");

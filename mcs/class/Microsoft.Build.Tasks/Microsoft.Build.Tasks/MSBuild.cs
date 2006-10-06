@@ -51,13 +51,17 @@ namespace Microsoft.Build.Tasks {
 		{
 			string filename;
 			bool result = true;
+			stopOnFirstFailure = false;
 		
 			foreach (ITaskItem project in projects) {
 				filename = project.GetMetadata ("FullPath");
 				
 				result = BuildEngine.BuildProjectFile (filename, targets, new Hashtable (), new Hashtable ());
-				if (result == false)
-					break;
+				if (result == false) {
+					Log.LogError ("Error while building {0}", filename);
+					if (stopOnFirstFailure)
+						break;
+				}
 			}
 			return result;
 		}
