@@ -1226,33 +1226,29 @@ namespace Mono.CSharp {
 			if (!(this is CompilerGeneratedClass))
 				RootContext.RegisterOrder (this); 
 
-			if (base_type != null) {
-				if (IsGeneric && TypeManager.IsAttributeType (base_type.Type)) {
-					Report.Error (698, base_type.Location,
-						      "A generic type cannot derive from `{0}' " +
-						      "because it is an attribute class",
-						      base_type.Name);
-					return false;
-				}
+			if (IsGeneric && base_type != null && TypeManager.IsAttributeType (base_type.Type)) {
+				Report.Error (698, base_type.Location,
+					      "A generic type cannot derive from `{0}' because it is an attribute class",
+					      base_type.Name);
+				return false;
+			}
 
+			if (!CheckRecursiveDefinition (this))
+				return false;
+
+			if (base_type != null) {
 				TypeBuilder.SetParent (base_type.Type);
 
 				ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (base_type.Type);
-				if (obsolete_attr != null && !IsInObsoleteScope) {
+				if (obsolete_attr != null && !IsInObsoleteScope)
 					AttributeTester.Report_ObsoleteMessage (obsolete_attr, base_type.GetSignatureForError (), Location);
-				}
-			}
-
-			if (!CheckRecursiveDefinition (this)) {
-				return false;
 			}
 
 			// add interfaces that were not added at type creation
 			if (iface_exprs != null) {
 				ifaces = TypeManager.ExpandInterfaces (iface_exprs);
-				if (ifaces == null) {
+				if (ifaces == null)
 					return false;
-				}
 
 				foreach (Type itype in ifaces)
  					TypeBuilder.AddInterfaceImplementation (itype);
@@ -1264,9 +1260,8 @@ namespace Mono.CSharp {
 							oa, ie.GetSignatureForError (), Location);
 				}
 
-				if (!CheckGenericInterfaces (ifaces)) {
+				if (!CheckGenericInterfaces (ifaces))
 					return false;
-				}
 
 				TypeManager.RegisterBuilder (TypeBuilder, ifaces);
 			}
@@ -1544,8 +1539,8 @@ namespace Mono.CSharp {
 
 			InTransit = tc;
 
-			if (BaseType != null) {
-				Type t = TypeManager.DropGenericTypeArguments (BaseType);
+			if (base_type != null) {
+				Type t = TypeManager.DropGenericTypeArguments (base_type.Type);
 				TypeContainer ptc = TypeManager.LookupTypeContainer (t);
 				if ((ptc != null) && !ptc.CheckRecursiveDefinition (this))
 					return false;

@@ -1,3 +1,7 @@
+2006-10-06  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0146-5.cs: New test from #79584.
+
 2006-10-04  Martin Baulig  <martin@ximian.com>
 
 	* known-issues-mcs, known-issues-gmcs: Update; the anonymous

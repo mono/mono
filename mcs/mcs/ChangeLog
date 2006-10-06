@@ -1,3 +1,12 @@
+2006-10-06  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #79584
+	* class.cs (DefineTypeBuilder): Check circular dependencies before
+	setting the parent of the TypeBuilder.
+	(CheckRecursiveDefinition): Don't use 'BaseType', since
+	it may not be valid until after DefineTypeBuilder.  Use
+	'base_type' instead.
+
 2006-10-04  Martin Baulig  <martin@ximian.com>
 
 	Merged the Anonymous Methods patch.
