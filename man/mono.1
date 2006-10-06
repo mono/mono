@@ -39,6 +39,22 @@ is an ECMA assembly.  They typically have a .exe or .dll extension.
 The runtime provides a number of configuration options for running
 applications, for developping and debugging, and for testing and
 debugging the runtime itself.
+.SH PORTABILITY
+On Unix-based systems, Mono provides a mechanism to emulate the 
+Windows-style file access, this includes providing a case insensitive
+view of the file system, directory separator mapping (from \ to /) and
+stripping the drive letters.
+.PP
+This functionality is enabled by setting the 
+.B MONO_IOMAP 
+environment variable to one of 
+.B all, drive
+and 
+.B case.
+.PP
+See the description for 
+.B MONO_IOMAP
+in the environment variables section for more details.
 .SH RUNTIME OPTIONS
 The following options are available:
 .TP
@@ -623,7 +639,7 @@ unix). MONO_GAC_PREFIX should point to the top directory of a prefixed
 install. Or to the directory provided in the gacutil /gacdir command. Example:
 .B /home/username/.mono:/usr/local/mono/
 .TP
-.I "MONO_IO_PORTABILITY_HELP"
+.I "MONO_IOMAP"
 Enables some filename rewriting support to assist badly-written
 applications that hard-code Windows paths.  Set to a colon-separated
 list of "drive" to strip drive letters, or "case" to do
@@ -632,11 +648,22 @@ enables all rewriting methods.  (Backslashes are always mapped to
 slashes if this variable is set to a valid option.)
 .fi
 .Sp
-For example:
+For example, this would work from the shell:
 .nf
 
-	MONO_IO_PORTABILITY_HELP=drive:case
+	MONO_IOMAP=drive:case
+	export MONO_IOMAP
 
+.fi
+If you are using mod_mono to host your web applications, you can use
+the 
+.B MonoSetEnv
+directive, like this:
+.nf
+
+	MonoSetEnv MONO_IOMAP=all
+
+.fi
 .TP
 .I "MONO_MANAGED_WATCHER"
 If set to any value, System.IO.FileSystemWatcher will use the default
