@@ -219,9 +219,8 @@ namespace Mono.CSharp {
 					return new BoolConstant (lv == rv, left.Location);
 				case Binary.Operator.Inequality:
 					return new BoolConstant (lv != rv, left.Location);
-				default:
-					throw new InternalErrorException ("Invalid operator on booleans: " + oper);
 				}
+				return null;
 			}
 
 			Type wrap_as;
