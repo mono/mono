@@ -1,3 +1,7 @@
+2006-10-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* dump.c main.c: Applied patch from Jb. Allow dumping the PropertyPtr table.
+
 2006-10-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* dump.c main.c: Allow dumping the *Ptr tables.
