@@ -211,18 +211,16 @@ namespace System.Windows.Forms {
 		// 'Constants'
 		private static int		DoubleClickInterval;	// msec; max interval between clicks to count as double click
 
-		const EventMask SelectInputMask = EventMask.ButtonPressMask | 
-		                                  EventMask.ButtonReleaseMask | 
-		                                  EventMask.KeyPressMask | 
-		                                  EventMask.KeyReleaseMask | 
-		                                  EventMask.EnterWindowMask | 
-		                                  EventMask.LeaveWindowMask |
-		                                  EventMask.ExposureMask |
-		                                  EventMask.FocusChangeMask |
-		                                  EventMask.PointerMotionMask | 
-		                                  EventMask.VisibilityChangeMask |
-		                                  EventMask.SubstructureNotifyMask |
-		                                  EventMask.StructureNotifyMask;
+		const EventMask SelectInputMask = (EventMask.ButtonPressMask | 
+						   EventMask.ButtonReleaseMask | 
+						   EventMask.KeyPressMask | 
+						   EventMask.KeyReleaseMask | 
+						   EventMask.EnterWindowMask | 
+						   EventMask.LeaveWindowMask |
+						   EventMask.ExposureMask |
+						   EventMask.FocusChangeMask |
+						   EventMask.PointerMotionMask | 
+						   EventMask.SubstructureNotifyMask);
 
 		static readonly object lockobj = new object ();
 
@@ -2343,7 +2341,13 @@ namespace System.Windows.Forms {
 			}
 
 			lock (XlibLock) {
-				XSelectInput(DisplayHandle, hwnd.whole_window, new IntPtr ((int)SelectInputMask));
+				EventMask whole_window_mask = SelectInputMask;
+				/* if we're a toplevel form, we want
+				 * to know about user-driven resizes.
+				 * otherwise, ignore them. */
+				if (!StyleSet (cp.Style, WindowStyles.WS_CHILD))
+					whole_window_mask |= EventMask.StructureNotifyMask;
+				XSelectInput(DisplayHandle, hwnd.whole_window, new IntPtr ((int)whole_window_mask));
 				XSelectInput(DisplayHandle, hwnd.client_window, new IntPtr ((int)SelectInputMask));
 
 				if (StyleSet (cp.Style, WindowStyles.WS_VISIBLE)) {

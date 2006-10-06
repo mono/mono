@@ -1,5 +1,31 @@
 2006-10-06  Chris Toshok  <toshok@ximian.com>
 
+	* XplatUIX11.cs: This is perhaps a dangerous change, but it seems
+	to have no evil effects.
+
+	- Stop selecting StructureNotifyMask on non-toplevel windows.
+
+	  The only way children should be resized is by using the SWF api,
+	  and we already send WM_WINDOWPOSCHANGED messages in those cases.
+	  Toplevel windows can be interacted with via the window manager,
+	  and so we keep the input mask there.
+
+	  The other event StructureNotifyMask gives us (that we care
+	  about) is DestroyNotify.  The code is already structured such
+	  that it assumes we won't be getting a DestroyNotify event for
+	  the window we pass to XDestroyWindow (which is what
+	  StructureNotifyMask is supposed to guarantee.)  So, that code
+	  shouldn't be affected by this either.
+
+	- Stop selecting VisibilityChangeMask altogether.
+
+	  We weren't doing anything with the resulting events anyway.
+	
+	This vastly reduces the number of X requests and events we see
+	when resizing/laying out a large ui.
+
+2006-10-06  Chris Toshok  <toshok@ximian.com>
+
 	* ScrollableControl.cs (DisplayRectangle): we need to take into
 	account the DockPadding regardless of whether or not auto_scroll
 	== true.  rework this slightly to this effect, and fix bug #79606,
