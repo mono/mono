@@ -3,10 +3,12 @@
 //
 // Author:
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Jonathan Chambers (joncham@gmail.com)
 //
 
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006 Jonathan Chambers
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,18 +30,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Diagnostics;
+using System.Threading;
+using System.Collections;
+
 namespace System.Runtime.InteropServices
 {
 	public sealed class ExtensibleClassFactory
 	{
+		static Hashtable hashtable;
+
+		static ExtensibleClassFactory ()
+		{
+			hashtable = new Hashtable ();
+		}
+
 		private ExtensibleClassFactory ()
 		{
 		}
 
-		[MonoTODO ("implement")]
+		internal static ObjectCreationDelegate GetObjectCreationCallback (Type t)
+		{
+			return hashtable[t] as ObjectCreationDelegate;
+		}
+
 		public static void RegisterObjectCreationCallback (ObjectCreationDelegate callback)
 		{
-			throw new NotImplementedException ();
+			StackTrace trace = new StackTrace (Thread.CurrentThread, false);
+			StackFrame frame = trace.GetFrame (0);
+			hashtable.Add (frame.GetMethod ().DeclaringType, callback);
 		}
 	}
 }

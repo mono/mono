@@ -1,3 +1,7 @@
+2006-10-06  Jonathan Chambers  <joncham@gmail.com>
+
+	* ExtensibleClassFactory.cs: Implement RegisterObjectCreationCallback.
+	
 2006-08-31 Robert Jordan  <robertj@gmx.net>
 
 	* Marshal.cs: Replaced the *Auto internal calls with managed
