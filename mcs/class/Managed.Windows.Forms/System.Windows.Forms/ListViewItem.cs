@@ -147,15 +147,8 @@ namespace System.Windows.Forms
 				is_checked = value;
 
 				if (owner != null) {
-					if (is_checked) {
-						if (owner.CheckedItems.Contains (this) == false) {
-							owner.CheckedItems.list.Add (this);
-						}
-					}
-					else {
-						owner.CheckedItems.list.Remove (this);
-					}
-					
+					// force re-population of list
+					owner.CheckedItems.Reset ();
 					Layout ();
 				}			
 				Invalidate ();
@@ -270,11 +263,15 @@ namespace System.Windows.Forms
 				if (selected == value)
 					return;
 
-				selected = value;
-
 				if (owner != null) {
-					owner.UpdateSelection (this);
+					if (value && !owner.MultiSelect)
+						owner.SelectedItems.Clear ();
+					selected = value;
+					// force re-population of list
+					owner.SelectedItems.Reset ();
 					Layout ();
+				} else {
+					selected = value;
 				}
 				Invalidate ();
 			}

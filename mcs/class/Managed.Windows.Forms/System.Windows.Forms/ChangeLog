@@ -1,3 +1,16 @@
+2006-10-06  Gert Driesen  <drieseng@users.souceforge.net>
+
+	* ListViewItem.cs: Collections of selected and checked items are now
+	dynamically rebuilt. Whenever an item is (un)checked or (de)selected
+	we mark the collection "dirty".
+	* ListView.cs: Marked collections readonly. Modified UpdateSelection
+	to only clear SelectedItems when a new item is selected and MultiSelect
+	is enabled. CheckedItems and SelectedItems now subscribe to Changed
+	event of ListViewItemCollection, and mark its list dirty whenever
+	that event is fire. This allows us to return selected/checked items 
+	in the same order as they are in the Items collection. This matches
+	the MS behavior.
+
 2006-10-06  Chris Toshok  <toshok@ximian.com>
 
 	* NotifyIcon.cs (HandleMouseUp): only show the context menu on
@@ -604,7 +617,7 @@
 	* TextBoxBase.cs: in CalculateScrollBars make sure LargeChange is
 	>= 0.  Fixes bug #79370.
 
-﻿2006-09-15  Jonathan Pobst <monkey@jpobst.com>
+2006-09-15  Jonathan Pobst <monkey@jpobst.com>
 	* FlowLayoutPanel.cs, FlowLayoutSettings.cs: Initial commit.
 	* Control.cs:
    	    Add properties: LayoutEngine, Margin, DefaultMargin.
@@ -672,7 +685,7 @@
 
 	* FileDialog.cs: Store the configuration file in ~/.mono/mwf_config
 
-﻿2006-09-13  Jonathan Pobst <monkey@jpobst.com>
+2006-09-13  Jonathan Pobst <monkey@jpobst.com>
 
 	* SplitContainer.cs, SplitterPanel.cs: Initial implementation [2.0].
 

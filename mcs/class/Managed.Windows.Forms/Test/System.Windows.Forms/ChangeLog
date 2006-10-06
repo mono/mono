@@ -1,3 +1,8 @@
+2006-10-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ListViewCollectionsTest.cs: Added tests for bug #79415.
+	* ListViewTest.cs: Enabled test for bug #79416.
+
 2006-10-03  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* ContainerControlTest.cs: New. Add a few test cases for 

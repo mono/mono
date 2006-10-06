@@ -149,6 +149,54 @@ namespace MonoTests.System.Windows.Forms
 			((IList)listview.CheckedItems).Add (5);
 		}
 
+		[Test]
+		public void CheckedItemCollectionTest_Order ()
+		{
+			Form form = new Form ();
+			ListView lvw = new ListView ();
+			lvw.CheckBoxes = true;
+			form.Controls.Add (lvw);
+			ListViewItem itemA = lvw.Items.Add ("A");
+			itemA.Checked = true;
+			ListViewItem itemB = lvw.Items.Add ("B");
+			itemB.Checked = true;
+			ListViewItem itemC = lvw.Items.Add ("C");
+			itemC.Checked = true;
+
+			Assert.AreEqual (3, lvw.CheckedItems.Count, "#A1");
+			Assert.AreSame (itemA, lvw.CheckedItems [0], "#A2");
+			Assert.AreSame (itemB, lvw.CheckedItems [1], "#A3");
+			Assert.AreSame (itemC, lvw.CheckedItems [2], "#A3");
+
+			itemB.Checked = false;
+
+			Assert.AreEqual (2, lvw.CheckedItems.Count, "#B1");
+			Assert.AreSame (itemA, lvw.CheckedItems [0], "#B2");
+			Assert.AreSame (itemC, lvw.CheckedItems [1], "#B3");
+
+			itemB.Checked = true;
+
+			Assert.AreEqual (3, lvw.CheckedItems.Count, "#C1");
+			Assert.AreSame (itemA, lvw.CheckedItems [0], "#C2");
+			Assert.AreSame (itemB, lvw.CheckedItems [1], "#C3");
+			Assert.AreSame (itemC, lvw.CheckedItems [2], "#C4");
+
+			lvw.Sorting = SortOrder.Descending;
+
+			Assert.AreEqual (3, lvw.CheckedItems.Count, "#D1");
+			Assert.AreSame (itemA, lvw.CheckedItems [0], "#D2");
+			Assert.AreSame (itemB, lvw.CheckedItems [1], "#D3");
+			Assert.AreSame (itemC, lvw.CheckedItems [2], "#D4");
+
+			// sorting only takes effect when listview is created
+			form.Show ();
+
+			Assert.AreEqual (3, lvw.CheckedItems.Count, "#E1");
+			Assert.AreSame (itemC, lvw.CheckedItems [0], "#E2");
+			Assert.AreSame (itemB, lvw.CheckedItems [1], "#E3");
+			Assert.AreSame (itemA, lvw.CheckedItems [2], "#E4");
+		}
+
 		[Test, ExpectedException (typeof (NotSupportedException))]
 		public void CheckedItemCollectionTest_PropertiesTest_Remove_ExceptionTest ()
 		{
@@ -362,13 +410,13 @@ namespace MonoTests.System.Windows.Forms
 
 			try  {
 				ListViewItem x = lvw.SelectedItems [0];
-				Assert.Fail ("#A1" + x.ToString ());
+				Assert.Fail ("#A1: " + x.ToString ());
 			} catch (ArgumentOutOfRangeException) {
 			}
 
 			try {
 				ListViewItem x = list [0] as ListViewItem;
-				Assert.Fail ("#A2" + x.ToString ());
+				Assert.Fail ("#A2: " + x.ToString ());
 			} catch (ArgumentOutOfRangeException) {
 			}
 
@@ -399,6 +447,48 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (-1, lvw.SelectedItems.IndexOf (new ListViewItem ()), "#B2");
 			Assert.AreEqual (0, list.IndexOf (item), "#B3");
 			Assert.AreEqual (-1, list.IndexOf (new ListViewItem ()), "#B4");
+		}
+
+		[Test]
+		public void SelectedItemCollectionTest_Order ()
+		{
+			Form form = new Form ();
+			ListView lvw = new ListView ();
+			lvw.MultiSelect = true;
+			form.Controls.Add (lvw);
+			ListViewItem itemA = lvw.Items.Add ("A");
+			itemA.Selected = true;
+			ListViewItem itemB = lvw.Items.Add ("B");
+			itemB.Selected = true;
+			ListViewItem itemC = lvw.Items.Add ("C");
+			itemC.Selected = true;
+
+			form.Show ();
+
+			Assert.AreEqual (3, lvw.SelectedItems.Count, "#A1");
+			Assert.AreSame (itemA, lvw.SelectedItems [0], "#A2");
+			Assert.AreSame (itemB, lvw.SelectedItems [1], "#A3");
+			Assert.AreSame (itemC, lvw.SelectedItems [2], "#A3");
+
+			itemB.Selected = false;
+
+			Assert.AreEqual (2, lvw.SelectedItems.Count, "#B1");
+			Assert.AreSame (itemA, lvw.SelectedItems [0], "#B2");
+			Assert.AreSame (itemC, lvw.SelectedItems [1], "#B3");
+
+			itemB.Selected = true;
+
+			Assert.AreEqual (3, lvw.SelectedItems.Count, "#C1");
+			Assert.AreSame (itemA, lvw.SelectedItems [0], "#C2");
+			Assert.AreSame (itemB, lvw.SelectedItems [1], "#C3");
+			Assert.AreSame (itemC, lvw.SelectedItems [2], "#C4");
+
+			lvw.Sorting = SortOrder.Descending;
+
+			Assert.AreEqual (3, lvw.SelectedItems.Count, "#D1");
+			Assert.AreSame (itemC, lvw.SelectedItems [0], "#D2");
+			Assert.AreSame (itemB, lvw.SelectedItems [1], "#D3");
+			Assert.AreSame (itemA, lvw.SelectedItems [2], "#D4");
 		}
 
 		/*

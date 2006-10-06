@@ -191,8 +191,7 @@ namespace MonoTests.System.Windows.Forms
 			entryList.Items.Add (item);
 		}
 
-		[Test]
-		[Category ("NotWorking")] // once listview is created, multiple items cannot be selected through code
+		[Test] // bug #79416
 		public void MultiSelect ()
 		{
 			Form form = new Form ();

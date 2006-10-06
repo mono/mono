@@ -52,9 +52,9 @@ namespace System.Windows.Forms
 		private bool allow_column_reorder = false;
 		private bool auto_arrange = true;
 		private bool check_boxes = false;
-		private CheckedIndexCollection checked_indices;
-		private CheckedListViewItemCollection checked_items;
-		private ColumnHeaderCollection columns;
+		private readonly CheckedIndexCollection checked_indices;
+		private readonly CheckedListViewItemCollection checked_items;
+		private readonly ColumnHeaderCollection columns;
 		internal ListViewItem focused_item;
 		private bool full_row_select = false;
 		private bool grid_lines = false;
@@ -62,13 +62,13 @@ namespace System.Windows.Forms
 		private bool hide_selection = true;
 		private bool hover_selection = false;
 		private IComparer item_sorter;
-		private ListViewItemCollection items;
+		private readonly ListViewItemCollection items;
 		private bool label_edit = false;
 		private bool label_wrap = true;
 		private bool multiselect = true;
 		private bool scrollable = true;
-		private SelectedIndexCollection selected_indices;
-		private SelectedListViewItemCollection selected_items;
+		private readonly SelectedIndexCollection selected_indices;
+		private readonly SelectedListViewItemCollection selected_items;
 		private SortOrder sort_order = SortOrder.None;
 		private ImageList state_image_list;
 		private bool updating = false;
@@ -130,11 +130,11 @@ namespace System.Windows.Forms
 		public ListView ()
 		{
 			background_color = ThemeEngine.Current.ColorWindow;
+			items = new ListViewItemCollection (this);
 			checked_indices = new CheckedIndexCollection (this);
 			checked_items = new CheckedListViewItemCollection (this);
 			columns = new ColumnHeaderCollection (this);
 			foreground_color = SystemColors.WindowText;
-			items = new ListViewItemCollection (this);
 			selected_indices = new SelectedIndexCollection (this);
 			selected_items = new SelectedListViewItemCollection (this);
 
@@ -1098,19 +1098,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal void UpdateSelection (ListViewItem item)
-		{
-			if (item.Selected) {
-				if (!MultiSelect && SelectedItems.Count > 0)
-					SelectedItems.Clear ();
-
-				if (!SelectedItems.list.Contains (item))
-					SelectedItems.list.Add (item);
-			} else {
-				SelectedItems.list.Remove (item);
-			}
-		}
-
 		private bool KeySearchString (KeyEventArgs ke)
 		{
 			int current_tickcnt = Environment.TickCount;
@@ -1192,7 +1179,7 @@ namespace System.Windows.Forms
 		private bool SelectItems (ArrayList sel_items)
 		{
 			bool changed = false;
-			ArrayList curr_items = (ArrayList) SelectedItems.list.Clone ();
+			ArrayList curr_items = SelectedItems.List;
 			foreach (ListViewItem item in curr_items)
 				if (!sel_items.Contains (item)) {
 					item.Selected = false;
@@ -1516,8 +1503,8 @@ namespace System.Windows.Forms
 						else
 							box_select_mode = BoxSelect.Normal;
 						box_select_start = pt; 
-						prev_selection = (ArrayList) owner.SelectedItems.list.Clone ();
-					} else if (owner.selected_indices.Count > 0) {
+						prev_selection = owner.SelectedItems.List;
+					} else if (owner.SelectedItems.Count > 0) {
 						owner.SelectedItems.Clear ();
 						owner.OnSelectedIndexChanged (EventArgs.Empty);
 					}
@@ -1930,7 +1917,7 @@ namespace System.Windows.Forms
 				return;
 			}
 			
-			items.list.Sort (item_sorter);
+			items.Sort (item_sorter);
 			if (redraw)
 				this.Redraw (true);
 		}
@@ -2284,9 +2271,10 @@ namespace System.Windows.Forms
 
 			private int [] GetIndices ()
 			{
-				int [] indices = new int [Count];
-				for (int i = 0; i < owner.CheckedItems.Count; i++) {
-					ListViewItem item = owner.CheckedItems [i];
+				ArrayList checked_items = owner.CheckedItems.List;
+				int [] indices = new int [checked_items.Count];
+				for (int i = 0; i < checked_items.Count; i++) {
+					ListViewItem item = (ListViewItem) checked_items [i];
 					indices [i] = item.Index;
 				}
 				return indices;
@@ -2295,14 +2283,15 @@ namespace System.Windows.Forms
 
 		public class CheckedListViewItemCollection : IList, ICollection, IEnumerable
 		{
-			internal readonly ArrayList list;
 			private readonly ListView owner;
+			private ArrayList list;
 
 			#region Public Constructor
 			public CheckedListViewItemCollection (ListView owner)
 			{
-				list = new ArrayList ();
 				this.owner = owner;
+				this.owner.Items.Changed += new CollectionChangedHandler (
+					ItemsCollection_Changed);
 			}
 			#endregion	// Public Constructor
 
@@ -2312,7 +2301,7 @@ namespace System.Windows.Forms
 				get {
 					if (!owner.CheckBoxes)
 						return 0;
-					return list.Count;
+					return List.Count;
 				}
 			}
 
@@ -2322,14 +2311,15 @@ namespace System.Windows.Forms
 
 			public ListViewItem this [int index] {
 				get {
-					if (index < 0 || index >= Count)
+					ArrayList checked_items = List;
+					if (index < 0 || index >= checked_items.Count)
 						throw new ArgumentOutOfRangeException ("index");
-					return (ListViewItem) list [index];
+					return (ListViewItem) checked_items [index];
 				}
 			}
 
 			bool ICollection.IsSynchronized {
-				get { return list.IsSynchronized; }
+				get { return false; }
 			}
 
 			object ICollection.SyncRoot {
@@ -2351,21 +2341,21 @@ namespace System.Windows.Forms
 			{
 				if (!owner.CheckBoxes)
 					return false;
-				return list.Contains (item);
+				return List.Contains (item);
 			}
 
 			public void CopyTo (Array dest, int index)
 			{
 				if (!owner.CheckBoxes)
 					return;
-				list.CopyTo (dest, index);
+				List.CopyTo (dest, index);
 			}
 
 			public IEnumerator GetEnumerator ()
 			{
 				if (!owner.CheckBoxes)
 					return (new ListViewItem [0]).GetEnumerator ();
-				return list.GetEnumerator ();
+				return List.GetEnumerator ();
 			}
 
 			int IList.Add (object value)
@@ -2411,9 +2401,33 @@ namespace System.Windows.Forms
 			{
 				if (!owner.CheckBoxes)
 					return -1;
-				return list.IndexOf (item);
+				return List.IndexOf (item);
 			}
 			#endregion	// Public Methods
+
+			internal ArrayList List {
+				get {
+					if (list == null) {
+						list = new ArrayList ();
+						foreach (ListViewItem item in owner.Items) {
+							if (item.Checked)
+								list.Add (item);
+						}
+					}
+					return list;
+				}
+			}
+
+			internal void Reset ()
+			{
+				// force re-population of list
+				list = null;
+			}
+
+			private void ItemsCollection_Changed ()
+			{
+				Reset ();
+			}
 		}	// CheckedListViewItemCollection
 
 		public class ColumnHeaderCollection : IList, ICollection, IEnumerable
@@ -2606,7 +2620,7 @@ namespace System.Windows.Forms
 
 		public class ListViewItemCollection : IList, ICollection, IEnumerable
 		{
-			internal ArrayList list;
+			private readonly ArrayList list;
 			private readonly ListView owner;
 
 			#region Public Constructor
@@ -2643,6 +2657,7 @@ namespace System.Windows.Forms
 
 					value.Owner = owner;
 					list [displayIndex] = value;
+					OnChange ();
 
 					owner.Redraw (true);
 				}
@@ -2667,6 +2682,7 @@ namespace System.Windows.Forms
 						this [index] = (ListViewItem) value;
 					else
 						this [index] = new ListViewItem (value.ToString ());
+					OnChange ();
 				}
 			}
 			#endregion	// Public Properties
@@ -2681,6 +2697,7 @@ namespace System.Windows.Forms
 				list.Add (value);
 
 				owner.Sort (false);
+				OnChange ();
 				owner.Redraw (true);
 				return value;
 			}
@@ -2700,8 +2717,6 @@ namespace System.Windows.Forms
 			public void AddRange (ListViewItem [] values)
 			{
 				list.Clear ();
-				owner.SelectedItems.list.Clear ();
-				owner.CheckedItems.list.Clear ();
 
 				foreach (ListViewItem item in values) {
 					item.Owner = owner;
@@ -2709,6 +2724,7 @@ namespace System.Windows.Forms
 				}
 
 				owner.Sort (false);
+				OnChange ();
 				owner.Redraw (true);
 			}
 
@@ -2717,8 +2733,7 @@ namespace System.Windows.Forms
 				owner.SetFocusedItem (null);
 				owner.h_scroll.Value = owner.v_scroll.Value = 0;
 				list.Clear ();
-				owner.SelectedItems.list.Clear ();
-				owner.CheckedItems.list.Clear ();
+				OnChange ();
 				owner.Redraw (true);
 			}
 
@@ -2752,6 +2767,7 @@ namespace System.Windows.Forms
 
 				li.Owner = owner;
 				result = list.Add (li);
+				OnChange ();
 				owner.Redraw (true);
 
 				return result;
@@ -2795,6 +2811,7 @@ namespace System.Windows.Forms
 
 				item.Owner = owner;
 				list.Insert (index, item);
+				OnChange ();
 				owner.Redraw (true);
 				return item;
 			}
@@ -2814,22 +2831,34 @@ namespace System.Windows.Forms
 				if (!list.Contains (item))
 					return;
 	 				
-				owner.SelectedItems.list.Remove (item);
-				owner.CheckedItems.list.Remove (item);
 				list.Remove (item);
+				OnChange ();
 				owner.Redraw (true);				
 			}
 
 			public virtual void RemoveAt (int index)
 			{
-				ListViewItem item = this [index];
+				if (index < 0 || index >= Count)
+					throw new ArgumentOutOfRangeException ("index");
 				list.RemoveAt (index);
-				owner.SelectedItems.list.Remove (item);
-				owner.CheckedItems.list.Remove (item);
+				OnChange ();
 				owner.Redraw (false);
 			}
 			#endregion	// Public Methods
 
+			internal event CollectionChangedHandler Changed;
+
+			internal void Sort (IComparer comparer)
+			{
+				list.Sort (comparer);
+				OnChange ();
+			}
+
+			internal void OnChange ()
+			{
+				if (Changed != null)
+					Changed ();
+			}
 		}	// ListViewItemCollection
 
 		public class SelectedIndexCollection : IList, ICollection, IEnumerable
@@ -2957,26 +2986,27 @@ namespace System.Windows.Forms
 
 			private int [] GetIndices ()
 			{
-				int [] indices = new int [Count];
-				for (int i = 0; i < owner.SelectedItems.Count; i++) {
-					ListViewItem item = owner.SelectedItems [i];
+				ArrayList selected_items = owner.SelectedItems.List;
+				int [] indices = new int [selected_items.Count];
+				for (int i = 0; i < selected_items.Count; i++) {
+					ListViewItem item = (ListViewItem) selected_items [i];
 					indices [i] = item.Index;
 				}
 				return indices;
 			}
-
 		}	// SelectedIndexCollection
 
 		public class SelectedListViewItemCollection : IList, ICollection, IEnumerable
 		{
-			internal ArrayList list;
 			private readonly ListView owner;
+			private ArrayList list;
 
 			#region Public Constructor
 			public SelectedListViewItemCollection (ListView owner)
 			{
-				list = new ArrayList ();
 				this.owner = owner;
+				this.owner.Items.Changed += new CollectionChangedHandler (
+					ItemsCollection_Changed);
 			}
 			#endregion	// Public Constructor
 
@@ -2986,7 +3016,7 @@ namespace System.Windows.Forms
 				get {
 					if (!owner.IsHandleCreated)
 						return 0;
-					return list.Count;
+					return List.Count;
 				}
 			}
 
@@ -2996,14 +3026,15 @@ namespace System.Windows.Forms
 
 			public ListViewItem this [int index] {
 				get {
-					if (index < 0 || index >= Count)
+					ArrayList selected_items = List;
+					if (!owner.IsHandleCreated || index < 0 || index >= selected_items.Count)
 						throw new ArgumentOutOfRangeException ("index");
-					return (ListViewItem) list [index];
+					return (ListViewItem) selected_items [index];
 				}
 			}
 
 			bool ICollection.IsSynchronized {
-				get { return list.IsSynchronized; }
+				get { return false; }
 			}
 
 			object ICollection.SyncRoot {
@@ -3026,32 +3057,29 @@ namespace System.Windows.Forms
 				if (!owner.IsHandleCreated)
 					return;
 
-				ArrayList copy = (ArrayList) list.Clone ();
-				for (int i = 0; i < copy.Count; i++)
-					((ListViewItem) copy [i]).Selected = false;
-
-				list.Clear ();
+				foreach (ListViewItem item in List)
+					item.Selected = false;
 			}
 
 			public bool Contains (ListViewItem item)
 			{
 				if (!owner.IsHandleCreated)
 					return false;
-				return list.Contains (item);
+				return List.Contains (item);
 			}
 
 			public void CopyTo (Array dest, int index)
 			{
 				if (!owner.IsHandleCreated)
 					return;
-				list.CopyTo (dest, index);
+				List.CopyTo (dest, index);
 			}
 
 			public IEnumerator GetEnumerator ()
 			{
 				if (!owner.IsHandleCreated)
 					return (new ListViewItem [0]).GetEnumerator ();
-				return list.GetEnumerator ();
+				return List.GetEnumerator ();
 			}
 
 			int IList.Add (object value)
@@ -3092,11 +3120,36 @@ namespace System.Windows.Forms
 			{
 				if (!owner.IsHandleCreated)
 					return -1;
-				return list.IndexOf (item);
+				return List.IndexOf (item);
 			}
 			#endregion	// Public Methods
 
+			internal ArrayList List {
+				get {
+					if (list == null) {
+						list = new ArrayList ();
+						foreach (ListViewItem item in owner.Items) {
+							if (item.Selected)
+								list.Add (item);
+						}
+					}
+					return list;
+				}
+			}
+
+			internal void Reset ()
+			{
+				// force re-population of list
+				list = null;
+			}
+
+			private void ItemsCollection_Changed ()
+			{
+				Reset ();
+			}
 		}	// SelectedListViewItemCollection
+
+		internal delegate void CollectionChangedHandler ();
 
 		#endregion // Subclasses
 	}
