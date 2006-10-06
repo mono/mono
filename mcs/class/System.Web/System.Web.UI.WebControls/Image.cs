@@ -182,11 +182,11 @@ namespace System.Web.UI.WebControls {
 			if (s.Length > 0)
 				writer.AddAttribute (HtmlTextWriterAttribute.Longdesc, ResolveClientUrl (s));
 #else
-			// alt is always present, even if empty, in 1.x
-			writer.AddAttribute (HtmlTextWriterAttribute.Alt, AlternateText);
 			string s = ImageUrl;
 			if (s.Length > 0)
 				writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveClientUrl (s));
+			// alt is always present, even if empty, in 1.x
+			writer.AddAttribute (HtmlTextWriterAttribute.Alt, AlternateText);
 			// added in Fx 1.1 SP1 but the HtmlTextWriterAttribute wasn't
 			s = DescriptionUrl;
 			if (s.Length > 0)
