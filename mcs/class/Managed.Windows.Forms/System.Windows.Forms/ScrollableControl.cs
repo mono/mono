@@ -370,35 +370,41 @@ namespace System.Windows.Forms {
 
 		public override Rectangle DisplayRectangle {
 			get {
-				int		width;
-				int		height;
+				if (auto_scroll) {
+					int		width;
+					int		height;
 
-				if (!auto_scroll) {
-					return base.DisplayRectangle;
-				}
-
-				if (canvas_size.Width <= base.DisplayRectangle.Width) {
-					width = base.DisplayRectangle.Width;
-					if (vscroll_visible) {
-						width -= vscrollbar.Width;
+					if (canvas_size.Width <= base.DisplayRectangle.Width) {
+						width = base.DisplayRectangle.Width;
+						if (vscroll_visible) {
+							width -= vscrollbar.Width;
+						}
+					} else {
+						width = canvas_size.Width;
 					}
-				} else {
-					width = canvas_size.Width;
-				}
 
-				if (canvas_size.Height <= base.DisplayRectangle.Height) {
-					height = base.DisplayRectangle.Height;
-					if (hscroll_visible) {
-						height -= hscrollbar.Height;
+					if (canvas_size.Height <= base.DisplayRectangle.Height) {
+						height = base.DisplayRectangle.Height;
+						if (hscroll_visible) {
+							height -= hscrollbar.Height;
+						}
+					} else {
+						height = canvas_size.Height;
 					}
-				} else {
-					height = canvas_size.Height;
+
+					display_rectangle.X = -scroll_position.X;
+					display_rectangle.Y = -scroll_position.Y;
+					display_rectangle.Width = Math.Max(auto_scroll_min_size.Width, width);
+					display_rectangle.Height = Math.Max(auto_scroll_min_size.Height, height);
+				}
+				else {
+					display_rectangle = base.DisplayRectangle;
 				}
 
-				display_rectangle.X = -scroll_position.X + dock_padding.Left;
-				display_rectangle.Y = -scroll_position.Y + dock_padding.Top;
-				display_rectangle.Width = Math.Max(auto_scroll_min_size.Width, width) - dock_padding.Left - dock_padding.Right;
-				display_rectangle.Height = Math.Max(auto_scroll_min_size.Height, height) - dock_padding.Top - dock_padding.Bottom;
+				display_rectangle.X += dock_padding.Left;
+				display_rectangle.Y += dock_padding.Top;
+				display_rectangle.Width -= dock_padding.Left + dock_padding.Right;
+				display_rectangle.Height -= dock_padding.Top + dock_padding.Bottom;
 
 				return display_rectangle;
 			}
@@ -594,16 +600,6 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Internal & Private Methods
-		private Size Canvas {
-			get {
-				if (!canvas_size.IsEmpty) {
-					return canvas_size;
-				}
-				CalculateCanvasSize();
-				return canvas_size;
-			}
-		}
-
 		private void CalculateCanvasSize() {
 			Control		child;
 			int		num_of_children;

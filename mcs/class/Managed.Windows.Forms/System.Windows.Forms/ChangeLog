@@ -1,3 +1,11 @@
+2006-10-06  Chris Toshok  <toshok@ximian.com>
+
+	* ScrollableControl.cs (DisplayRectangle): we need to take into
+	account the DockPadding regardless of whether or not auto_scroll
+	== true.  rework this slightly to this effect, and fix bug #79606,
+	and part of #72499 (you can now see the drag handles and drag
+	toolbars around).
+
 2006-10-06  Gert Driesen  <drieseng@users.souceforge.net>
 
 	* ListViewItem.cs: Collections of selected and checked items are now
