@@ -156,8 +156,6 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		protected internal override void ConcedeFocus ()
 		{
-			SetState (row, GetState (null, row) & ~CheckState.Selected);			
-			grid.Invalidate (grid.GetCurrentCellBounds ());
 		}
 
 		protected internal override void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string instantText,  bool cellIsVisible)

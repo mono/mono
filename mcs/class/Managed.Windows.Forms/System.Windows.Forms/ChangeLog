@@ -1,5 +1,11 @@
 2006-10-05  Chris Toshok  <toshok@ximian.com>
 
+	* DataGridBoolColumn.cs: Nuke the code from ConcedeFocus.  I'm
+	beginning to think that most datagrid column types don't need this
+	method.  Fixes bug #79392.
+
+2006-10-05  Chris Toshok  <toshok@ximian.com>
+
 	* DataGrid.cs: move back to a more lazy scheme for creating the
 	CurrencyManager, so we aren't updating it every time you set
 	either DataSource or DataMember.  Also, don't call
