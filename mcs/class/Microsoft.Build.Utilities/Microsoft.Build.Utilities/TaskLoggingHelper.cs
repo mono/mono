@@ -128,7 +128,7 @@ namespace Microsoft.Build.Utilities
 
 		public void LogErrorFromException (Exception e)
 		{
-			LogErrorFromException (e, false);
+			LogErrorFromException (e, true);
 		}
 
 		public void LogErrorFromException (Exception e,

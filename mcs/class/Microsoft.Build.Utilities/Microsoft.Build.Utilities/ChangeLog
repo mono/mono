@@ -1,3 +1,8 @@
+2006-10-06  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* TaskLoggingHelper.cs: Made LogErrorFromException () show stack trace
+	by default.
+
 2006-09-30  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* ReservedNameUtils.cs: Added a null check.
