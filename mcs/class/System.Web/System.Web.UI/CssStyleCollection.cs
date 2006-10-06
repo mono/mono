@@ -41,16 +41,25 @@ namespace System.Web.UI {
 	{
 		StateBag bag;
 		StateBag style;
-		string last_string;
 
 		internal CssStyleCollection (StateBag bag)
 		{
 			this.bag = bag;
-			if (bag != null) {
-				last_string = (string) bag ["style"];
+			if (bag != null)
+				InitFromStyle ();
+		}
+
+		void InitFromStyle ()
+		{
+			if (style == null) {
 				style = new StateBag ();
-				if (last_string != null)
-					FillStyle (last_string);
+			} else {
+				style.Clear ();
+			}
+
+			string att = (string) bag ["style"];
+			if (att != null) {
+				FillStyle (att);
 			}
 		}
 
@@ -82,32 +91,27 @@ namespace System.Web.UI {
 
 		string BagToString ()
 		{
-			if (last_string != null)
-				return last_string;
-
 			StringBuilder sb = new StringBuilder ();
-			foreach (string key in Keys) {
+			foreach (string key in style.Keys) {
 				if (key == "background-image")
 					sb.AppendFormat ("{0}:url({1});", key, HttpUtility.UrlPathEncode ((string) style [key]));
 				else
 					sb.AppendFormat ("{0}:{1};", key, style [key]);
 			}
 
-			last_string = sb.ToString ();
-			return last_string;
+			return sb.ToString ();
 		}
 
-		public int Count
-		{
+		public int Count {
 			get {
-				if (bag == null)
-					throw new NullReferenceException ();
+				InitFromStyle ();
 				return style.Count;
 			}
 		}
 
 		public string this [string key] {
 			get {
+				InitFromStyle ();
 				return style [key] as string;
 			}
 
@@ -117,15 +121,16 @@ namespace System.Web.UI {
 		}
 
 		public ICollection Keys {
-			get { return style.Keys; }
+			get {
+				InitFromStyle ();
+				return style.Keys;
+			}
 		}
 
 		public void Add (string key, string value)
 		{
-			if (style == null)
-				style = new StateBag ();
+			InitFromStyle ();
 			style [key] = value;
-			last_string = null;
 			bag ["style"] = BagToString ();
 		}
 
@@ -141,22 +146,22 @@ namespace System.Web.UI {
 
 		public void Clear ()
 		{
-			if (style != null)
-				style.Clear ();
-			last_string = null;
 			bag.Remove ("style");
+			InitFromStyle ();
 		}
 
 		public void Remove (string key)
 		{
-			if (style != null)
-				style.Remove (key);
-			last_string = null;
+			InitFromStyle ();
+			if (style == null || style [key] == null)
+				return;
+			style.Remove (key);
 			bag ["style"] = BagToString ();
 		}
 #if NET_2_0
 		public string this [HtmlTextWriterStyle key] {
 			get {
+				InitFromStyle ();
 				return style [HtmlTextWriter.StaticGetStyleName (key)] as string;
 			}
 			set {
@@ -176,13 +181,8 @@ namespace System.Web.UI {
 		string Value {
 			get { return BagToString (); }
 			set {
-				if (style != null)
-					style = new StateBag ();
-				style.Clear ();
-				last_string = value;
 				bag ["style"] = value;
-				if (value != null)
-					FillStyle (value);
+				InitFromStyle ();
 			}
 		}
 	}

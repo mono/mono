@@ -1,3 +1,9 @@
+2006-10-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CssStyleCollection.cs: 'style' can be modified on our back, so build
+	the style table every time instead of keeping one that is not in sync.
+	Fixes bug #79587.
+
 2006-09-25 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Page.cs: fixed: Cross-page postback feature in ASP.NET 2.0
