@@ -84,62 +84,72 @@ public class EnumTest : TestCase
 		try {
 			TestingEnum x = TestingEnum.Test;
 			Enum.Format(null, x, "G");
-			Fail("null first arg not caught.");
-		} catch (ArgumentNullException) {
-			// do nothing
+			Fail("#A1: null first arg not caught.");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#A2", "enumType", ex.ParamName);
 		} catch (Exception e) {
-			Fail("first arg null, wrong exception: " + e.ToString());
+			Fail("#A3: first arg null, wrong exception: " + e.ToString());
 		}
 
 		try {
 			Enum.Format(typeof(TestingEnum), null, "G");
-			Fail("null second arg not caught.");
-		} catch (ArgumentNullException) {
-			// do nothing
+			Fail("#B1: null second arg not caught.");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#B2", "value", ex.ParamName);
 		} catch (Exception e) {
-			Fail("second arg null, wrong exception: " + e.ToString());
+			Fail("#B3: second arg null, wrong exception: " + e.ToString());
 		}
 
 		try {
 			TestingEnum x = TestingEnum.Test;
 			Enum.Format(x.GetType(), x, null);
-			Fail("null third arg not caught.");
-		} catch (ArgumentNullException) {
-			// do nothing
+			Fail("#C1: null third arg not caught.");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#C2", "format", ex.ParamName);
 		} catch (Exception e) {
-			Fail("third arg null, wrong exception: " + e.ToString());
+			Fail("#C3: third arg null, wrong exception: " + e.ToString());
 		}
 
 		try {
 			TestingEnum x = TestingEnum.Test;
 			Enum.Format(typeof(string), x, "G");
-			Fail("bad type arg not caught.");
+			Fail("#D1: bad type arg not caught.");
 		} catch (ArgumentException) {
-			// do nothing
+			// Type provided must be an Enum
 		} catch (Exception e) {
-			Fail("bad type, wrong exception: " + e.ToString());
+			Fail("#D2: bad type, wrong exception: " + e.ToString());
 		}
 
 		try {
 			TestingEnum x = TestingEnum.Test;
 			TestingEnum2 y = TestingEnum2.Test;
 			Enum.Format(y.GetType(), x, "G");
-			Fail("wrong enum type not caught.");
-		} catch (ArgumentException) {
-			// do nothing
+			Fail("#E1: wrong enum type not caught.");
+		} catch (ArgumentException ex) {
+			// Object must be the same type as the enum. The type passed in was
+			// MonoTests.System.EnumTest.TestingEnum2; the enum type was
+			// MonoTests.System.EnumTest.TestingEnum
+			AssertNotNull ("#E2", ex.Message);
+			Assert ("#E3", ex.Message.IndexOf (typeof (TestingEnum2).FullName) != -1);
+			Assert ("#E4", ex.Message.IndexOf (typeof (TestingEnum).FullName) != -1);
 		} catch (Exception e) {
-			Fail("wrong enum type, wrong exception: " + e.ToString());
+			Fail("#E5: wrong enum type, wrong exception: " + e.ToString());
 		}
 
 		try {
 			String bad = "huh?";
 			TestingEnum x = TestingEnum.Test;
 			Enum.Format(x.GetType(), bad, "G");
-			Fail("non-enum object not caught.");
-		} catch (ArgumentException) {
-			// do nothing
+			Fail("#F1: non-enum object not caught.");
+		} catch (ArgumentException ex) {
+			// Enum underlying type and the object must be the same type or
+			// object. Type passed in was String.String; the enum underlying
+			// was System.Int32
+			AssertNotNull ("#F2", ex.Message);
+			Assert ("#F3", ex.Message.IndexOf (typeof (string).FullName) != -1);
+			Assert ("#F4", ex.Message.IndexOf (typeof (int).FullName) != -1);
 		} catch (Exception e) {
-			Fail("non-enum object, wrong exception: " + e.ToString());
+			Fail("#F5: non-enum object, wrong exception: " + e.ToString());
 		}
 
 		string[] codes = {"a", "b", "c", "ad", "e", "af", "ag", "h", 
@@ -159,17 +169,17 @@ public class EnumTest : TestCase
 			}
 		}
 
-		TestingEnum ex = TestingEnum.Test;
-		AssertEquals("decimal format wrong", 
-			     "3", Enum.Format(ex.GetType(), ex, "d"));
+		TestingEnum test = TestingEnum.Test;
+		AssertEquals("decimal format wrong",
+				 "3", Enum.Format (test.GetType (), test, "d"));
 		AssertEquals("decimal format wrong for ulong enums", 
 			     "18446744073709551615", Enum.Format(typeof(TestingEnum3), TestingEnum3.Test, "d"));
-		AssertEquals("named format wrong", 
-			     "Test", Enum.Format(ex.GetType(), ex, "g"));
-		AssertEquals("hex format wrong", 
-			     "00000003", Enum.Format(ex.GetType(), ex, "x"));
-		AssertEquals("bitfield format wrong", 
-			     "Test", Enum.Format(ex.GetType(), ex, "f"));
+		AssertEquals("named format wrong",
+				 "Test", Enum.Format (test.GetType (), test, "g"));
+		AssertEquals("hex format wrong",
+				 "00000003", Enum.Format (test.GetType (), test, "x"));
+		AssertEquals("bitfield format wrong",
+				 "Test", Enum.Format (test.GetType (), test, "f"));
 	}
 
 	public void TestFormat_FormatSpecifier ()

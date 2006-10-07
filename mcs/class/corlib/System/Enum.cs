@@ -664,13 +664,22 @@ namespace System
 				throw new ArgumentNullException ("format");
 
 			if (!enumType.IsEnum)
-				throw new ArgumentException ("enumType is not an Enum Type.");
+				throw new ArgumentException ("Type provided must be an Enum.");
 			
 			Type vType = value.GetType();
-			if (vType != enumType && vType != Enum.GetUnderlyingType (enumType))
-				throw new ArgumentException (string.Format(CultureInfo.InvariantCulture,
-					"Object must be the same type as the enum. The type passed in " +
-					"was {0}; the enum type was {1}.", vType.FullName, enumType.FullName));
+			Type underlyingType = Enum.GetUnderlyingType (enumType);
+			if (vType.IsEnum) {
+				if (vType != enumType)
+					throw new ArgumentException (string.Format(CultureInfo.InvariantCulture,
+						"Object must be the same type as the enum. The type" +
+						" passed in was {0}; the enum type was {1}.",
+						vType.FullName, enumType.FullName));
+			} else if (vType != underlyingType) {
+				throw new ArgumentException (string.Format (CultureInfo.InvariantCulture,
+					"Enum underlying type and the object must be the same type" +
+					" or object. Type passed in was {0}; the enum underlying" +
+					" type was {1}.", vType.FullName, underlyingType.FullName));
+			}
 
 			if (format.Length != 1)
 				throw new FormatException ("Format String can be only \"G\",\"g\",\"X\"," + 
@@ -701,7 +710,7 @@ namespace System
 				break;
 			case 'D':
 			case 'd':
-				if (Enum.GetUnderlyingType (enumType) == typeof (ulong)) {
+				if (underlyingType == typeof (ulong)) {
 					ulong ulongValue = Convert.ToUInt64 (value);
 					retVal = ulongValue.ToString ();
 				} else {

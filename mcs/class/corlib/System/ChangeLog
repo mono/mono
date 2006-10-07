@@ -1,3 +1,9 @@
+2006-10-07 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* Enum.cs: Use different exception message depending on whether the
+	type of the passed in value is an Enum or not. Avoid looking up the
+	enum's underlying type twice in case of "D" or "d" format specifier.
+
 2006-10-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TermInfoDriver.cs: don't allow backspace if we're at the beginning

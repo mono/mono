@@ -1,3 +1,8 @@
+2006-10-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* EnumTest.cs: Improved TestFormat_Args tests to check whether correct
+	exception is thrown.
+
 2006-09-05  Raja R Harinath  <rharinath@novell.com>
 
 	* DateTimeTest.cs (Kind): Add test for DateTime.Today.
