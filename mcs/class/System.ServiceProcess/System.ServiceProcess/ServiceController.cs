@@ -154,7 +154,7 @@ namespace System.ServiceProcess
 				// you'd expect the DependentServices and ServiceDependedOn cache
 				// to be cleared too, but the MS implementation doesn't do this
 				//
-				// bug submitted:
+				// categorized as by design:
 				// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=201762
 
 				// release any handles and clear cache
@@ -181,7 +181,7 @@ namespace System.ServiceProcess
 				// you'd expect the DependentServices and ServiceDependedOn cache
 				// to be cleared too, but the MS implementation doesn't do this
 				//
-				// bug submitted:
+				// categorized as by design:
 				// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=201762
 
 				// release any handles and clear cache
@@ -220,7 +220,7 @@ namespace System.ServiceProcess
 				// you'd expect the DependentServices and ServiceDependedOn cache
 				// to be cleared too, but the MS implementation doesn't do this
 				//
-				// bug submitted:
+				// categorized as by design:
 				// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=201762
 
 				// release any handles and clear cache

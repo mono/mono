@@ -1506,7 +1506,7 @@ namespace MonoTests.System.ServiceProcess
 			Assert.AreEqual (1, dependentServices.Length, "#A2");
 			Assert.AreEqual ("dmadmin", dependentServices [0].ServiceName, "#A3");
 
-			// MSBUG: modifying ServiceName does not cause cache to be cleared
+			// modifying ServiceName does not cause cache to be cleared:
 			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=201762
 			sc.ServiceName = "alerter";
 			dependentServices = sc.DependentServices;
@@ -1514,7 +1514,7 @@ namespace MonoTests.System.ServiceProcess
 			Assert.AreEqual (1, dependentServices.Length, "#B2");
 			Assert.AreEqual ("dmadmin", dependentServices [0].ServiceName, "#B3");
 
-			// MSBUG: modifying DisplayName does not cause cache to be cleared
+			// modifying DisplayName does not cause cache to be cleared:
 			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=201762
 			sc.DisplayName = "Spooler";
 			dependentServices = sc.DependentServices;
@@ -1522,7 +1522,7 @@ namespace MonoTests.System.ServiceProcess
 			Assert.AreEqual (1, dependentServices.Length, "#C2");
 			Assert.AreEqual ("dmadmin", dependentServices [0].ServiceName, "#C3");
 
-			// MSBUG: modifying MachineName does not cause cache to be cleared
+			// modifying MachineName does not cause cache to be cleared:
 			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=201762
 			sc.MachineName = "doesnotexist";
 			dependentServices = sc.DependentServices;
@@ -1536,21 +1536,21 @@ namespace MonoTests.System.ServiceProcess
 			Assert.IsNotNull (dependentServices, "#E1");
 			Assert.AreEqual (0, dependentServices.Length, "#E2");
 
-			// MSBUG: modifying ServiceName does not cause cache to be cleared
+			// modifying ServiceName does not cause cache to be cleared:
 			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=201762
 			sc.ServiceName = "dmserver";
 			dependentServices = sc.DependentServices;
 			Assert.IsNotNull (dependentServices, "#F1");
 			Assert.AreEqual (0, dependentServices.Length, "#F2");
 
-			// MSBUG: modifying DisplayName does not cause cache to be cleared
+			// modifying DisplayName does not cause cache to be cleared:
 			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=201762
 			sc.DisplayName = "Workstation";
 			dependentServices = sc.DependentServices;
 			Assert.IsNotNull (dependentServices, "#G1");
 			Assert.AreEqual (0, dependentServices.Length, "#G2");
 
-			// MSBUG: modifying MachineName does not cause cache to be cleared
+			// modifying MachineName does not cause cache to be cleared:
 			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=201762
 			sc.MachineName = Environment.MachineName;
 			dependentServices = sc.DependentServices;
@@ -1565,7 +1565,7 @@ namespace MonoTests.System.ServiceProcess
 			Assert.AreEqual ("RasAuto", dependentServices [0].ServiceName, "#I3");
 			Assert.AreEqual ("RasMan", dependentServices [1].ServiceName, "#I4");
 
-			// MSBUG: modifying ServiceName does not cause cache to be cleared
+			// modifying ServiceName does not cause cache to be cleared:
 			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=201762
 			sc.ServiceName = "spooler";
 			dependentServices = sc.DependentServices;
@@ -1574,7 +1574,7 @@ namespace MonoTests.System.ServiceProcess
 			Assert.AreEqual ("RasAuto", dependentServices [0].ServiceName, "#J4");
 			Assert.AreEqual ("RasMan", dependentServices [1].ServiceName, "#J5");
 
-			// MSBUG: modifying DisplayName does not cause cache to be cleared
+			// modifying DisplayName does not cause cache to be cleared:
 			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=201762
 			sc.DisplayName = "Alerter";
 			dependentServices = sc.DependentServices;
@@ -1583,7 +1583,7 @@ namespace MonoTests.System.ServiceProcess
 			Assert.AreEqual ("RasAuto", dependentServices [0].ServiceName, "#K3");
 			Assert.AreEqual ("RasMan", dependentServices [1].ServiceName, "#K4");
 
-			// MSBUG: modifying MachineName does not cause cache to be cleared
+			// modifying MachineName does not cause cache to be cleared:
 			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=201762
 			sc.MachineName = Environment.MachineName;
 			dependentServices = sc.DependentServices;
@@ -4006,7 +4006,7 @@ namespace MonoTests.System.ServiceProcess
 			Assert.AreEqual (1, servicesDependedOn.Length, "#A2");
 			Assert.AreEqual ("RPCSS", servicesDependedOn [0].ServiceName, "#A3");
 
-			// MSBUG: modifying ServiceName does not cause cache to be cleared
+			// modifying ServiceName does not cause cache to be cleared:
 			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=201762
 			sc.ServiceName = "lanmanworkstation";
 			servicesDependedOn = sc.ServicesDependedOn;
@@ -4014,7 +4014,7 @@ namespace MonoTests.System.ServiceProcess
 			Assert.AreEqual (1, servicesDependedOn.Length, "#B2");
 			Assert.AreEqual ("RPCSS", servicesDependedOn [0].ServiceName, "#B3");
 
-			// MSBUG: modifying DisplayName does not cause cache to be cleared
+			// modifying DisplayName does not cause cache to be cleared:
 			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=201762
 			sc.DisplayName = "alerter";
 			servicesDependedOn = sc.ServicesDependedOn;
@@ -4022,7 +4022,7 @@ namespace MonoTests.System.ServiceProcess
 			Assert.AreEqual (1, servicesDependedOn.Length, "#C2");
 			Assert.AreEqual ("RPCSS", servicesDependedOn [0].ServiceName, "#C3");
 
-			// MSBUG: modifying MachineName does not cause cache to be cleared
+			// modifying MachineName does not cause cache to be cleared:
 			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=201762
 			sc.MachineName = "doesnotexist";
 			servicesDependedOn = sc.ServicesDependedOn;
@@ -4036,21 +4036,21 @@ namespace MonoTests.System.ServiceProcess
 			Assert.IsNotNull (servicesDependedOn, "#E1");
 			Assert.AreEqual (0, servicesDependedOn.Length, "#E2");
 
-			// MSBUG: modifying ServiceName does not cause cache to be cleared
+			// modifying ServiceName does not cause cache to be cleared:
 			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=201762
 			sc.ServiceName = "spooler";
 			servicesDependedOn = sc.ServicesDependedOn;
 			Assert.IsNotNull (servicesDependedOn, "#F1");
 			Assert.AreEqual (0, servicesDependedOn.Length, "#F2");
 
-			// MSBUG: modifying DisplayName does not cause cache to be cleared
+			// modifying DisplayName does not cause cache to be cleared:
 			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=201762
 			sc.DisplayName = "Alerter";
 			servicesDependedOn = sc.ServicesDependedOn;
 			Assert.IsNotNull (servicesDependedOn, "#G1");
 			Assert.AreEqual (0, servicesDependedOn.Length, "#G2");
 
-			// MSBUG: modifying MachineName does not cause cache to be cleared
+			// modifying MachineName does not cause cache to be cleared:
 			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=201762
 			sc.MachineName = Environment.MachineName;
 			servicesDependedOn = sc.ServicesDependedOn;
@@ -4067,7 +4067,7 @@ namespace MonoTests.System.ServiceProcess
 			Assert.IsTrue (ContainsService (servicesDependedOn, "PlugPlay"), "#I4");
 			Assert.IsTrue (ContainsService (servicesDependedOn, "DmServer"), "#I5");
 
-			// MSBUG: modifying ServiceName does not cause cache to be cleared
+			// modifying ServiceName does not cause cache to be cleared:
 			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=201762
 			sc.ServiceName = "spooler";
 			servicesDependedOn = sc.ServicesDependedOn;
@@ -4078,7 +4078,7 @@ namespace MonoTests.System.ServiceProcess
 			Assert.IsTrue (ContainsService (servicesDependedOn, "PlugPlay"), "#J4");
 			Assert.IsTrue (ContainsService (servicesDependedOn, "DmServer"), "#J5");
 
-			// MSBUG: modifying DisplayName does not cause cache to be cleared
+			// modifying DisplayName does not cause cache to be cleared:
 			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=201762
 			sc.DisplayName = "Alerter";
 			servicesDependedOn = sc.ServicesDependedOn;
@@ -4089,7 +4089,7 @@ namespace MonoTests.System.ServiceProcess
 			Assert.IsTrue (ContainsService (servicesDependedOn, "PlugPlay"), "#K4");
 			Assert.IsTrue (ContainsService (servicesDependedOn, "DmServer"), "#K5");
 
-			// MSBUG: modifying MachineName does not cause cache to be cleared
+			// modifying MachineName does not cause cache to be cleared:
 			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=201762
 			sc.MachineName = Environment.MachineName;
 			servicesDependedOn = sc.ServicesDependedOn;

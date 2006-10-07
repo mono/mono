@@ -1,3 +1,9 @@
+2006-10-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ServiceControllerTest.cs: Modifying ServiceService, DisplayName
+	or MachineName does not cause cache to be cleared. Categorized as
+	"By Design" by MS.
+
 2006-09-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ServiceControllerPermissionTest.cs: Set eol-style to native. Fixed

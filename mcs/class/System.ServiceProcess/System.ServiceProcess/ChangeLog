@@ -1,3 +1,7 @@
+2006-10-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	
+
 2006-09-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ServiceProcessInstaller.cs: Added missing ServiceProcessDescription
