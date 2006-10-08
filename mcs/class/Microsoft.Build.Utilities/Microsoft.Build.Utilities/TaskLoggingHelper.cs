@@ -56,8 +56,8 @@ namespace Microsoft.Build.Utilities
 			if (message == null)
 				throw new ArgumentNullException ("message");
 				
-			messageWithoutCodePrefix = "";
-			return "";
+			messageWithoutCodePrefix = String.Empty;
+			return String.Empty;
 		}
 
 		[MonoTODO]

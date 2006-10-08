@@ -1,3 +1,7 @@
+2006-10-08  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* TaskLoggingHelper.cs: Changed "" to String.Empty.
+
 2006-10-06  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* TaskLoggingHelper.cs: Made LogErrorFromException () show stack trace
