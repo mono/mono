@@ -94,7 +94,7 @@ namespace Mono.XBuild.Framework {
 					assemblyName.Version = new Version (version);
 				if (culture != null) {
 					if (culture == "neutral")
-						culture = "";
+						culture = String.Empty;
 					assemblyName.CultureInfo = new CultureInfo (culture);
 				}
 				if (publicKeyToken != null) {
