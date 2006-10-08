@@ -102,6 +102,7 @@ namespace System.Web.UI.WebControls
 		// Control state
 		int pageIndex;
 		FormViewMode currentMode = FormViewMode.ReadOnly; 
+		bool hasCurrentMode;
 		int pageCount = 0;
 		
 		public FormView ()
@@ -366,7 +367,11 @@ namespace System.Web.UI.WebControls
 		[BrowsableAttribute (false)]
 		public FormViewMode CurrentMode {
 			get {
-				return currentMode;
+				return hasCurrentMode ? currentMode : DefaultMode;
+			}
+			private set {
+				hasCurrentMode = true;
+				currentMode = value;
 			}
 		}
 
@@ -835,9 +840,6 @@ namespace System.Web.UI.WebControls
 			Controls.Clear ();
 			table = CreateTable ();
 			Controls.Add (table);
-				
-			if (!Page.IsPostBack)
-				currentMode = DefaultMode;
 
 			// Gets the current data item
 			
@@ -1091,7 +1093,7 @@ namespace System.Web.UI.WebControls
 				case DataControlRowType.DataRow:
 					if (rowStyle != null && !rowStyle.IsEmpty)
 						row.ControlStyle.CopyFrom (rowStyle);
-					if ((row.RowState & DataControlRowState.Edit) != 0 && editRowStyle != null && !editRowStyle.IsEmpty)
+					if ((row.RowState & (DataControlRowState.Edit | DataControlRowState.Insert)) != 0 && editRowStyle != null && !editRowStyle.IsEmpty)
 						row.ControlStyle.CopyFrom (editRowStyle);
 					if ((row.RowState & DataControlRowState.Insert) != 0 && insertRowStyle != null && !insertRowStyle.IsEmpty)
 						row.ControlStyle.CopyFrom (insertRowStyle);
@@ -1223,7 +1225,7 @@ namespace System.Web.UI.WebControls
 			FormViewModeEventArgs args = new FormViewModeEventArgs (newMode, false);
 			OnModeChanging (args);
 			if (!args.Cancel) {
-				currentMode = args.NewMode;
+				CurrentMode = args.NewMode;
 				OnModeChanged (EventArgs.Empty);
 				RequireBinding ();
 			}
@@ -1248,7 +1250,7 @@ namespace System.Web.UI.WebControls
 			if (causesValidation)
 				Page.Validate ();
 			
-			if (currentMode != FormViewMode.Edit) throw new NotSupportedException ();
+			if (CurrentMode != FormViewMode.Edit) throw new NotSupportedException ();
 			
 			currentEditOldValues = oldEditValues.Values;
 			currentEditRowKeys = DataKey.Values;
@@ -1288,7 +1290,7 @@ namespace System.Web.UI.WebControls
 			if (causesValidation)
 				Page.Validate ();
 			
-			if (currentMode != FormViewMode.Insert) throw new NotSupportedException ();
+			if (CurrentMode != FormViewMode.Insert) throw new NotSupportedException ();
 			
 			currentEditNewValues = GetRowValues (true);
 			FormViewInsertEventArgs args = new FormViewInsertEventArgs (param, currentEditNewValues);
@@ -1369,7 +1371,7 @@ namespace System.Web.UI.WebControls
 			base.LoadControlState (state[0]);
 			pageIndex = (int) state[1];
 			pageCount = (int) state[2];
-			currentMode = (FormViewMode) state[3];
+			CurrentMode = (FormViewMode) state[3];
 			defaultMode = (FormViewMode) state[4];
 			dataKeyNames = (string[]) state[5];
 		}
@@ -1378,7 +1380,7 @@ namespace System.Web.UI.WebControls
 		{
 			object bstate = base.SaveControlState ();
 			return new object[] {
-				bstate, pageIndex, pageCount, currentMode, defaultMode, dataKeyNames
+				bstate, pageIndex, pageCount, CurrentMode, defaultMode, dataKeyNames
 			};
 		}
 		

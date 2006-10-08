@@ -1,5 +1,9 @@
 2006-10-08 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* FormView.cs: fixed: CurrentMode property.
+
+2006-10-08 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* FormView.cs:
 	* GridView.cs:
 	* DetailsView.cs: 

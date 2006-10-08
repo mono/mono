@@ -1666,10 +1666,15 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			Assert.AreEqual (true, pageHTML.Contains ("FormView1_Label1"), "EmptyTemplateTest1"); 
 			Assert.AreEqual (true, pageHTML.Contains ("The Database is empty"), "EmptyTemplateTest2");
 		}
-		
-		
 
-
+		[Test]
+		public void FormView_CurrentMode () {
+			FormView view = new FormView ();
+			view.DefaultMode = FormViewMode.Insert;
+			Assert.AreEqual (FormViewMode.Insert, view.CurrentMode, "FormView_CurrentMode#1");
+			view.ChangeMode (FormViewMode.Edit);
+			Assert.AreEqual (FormViewMode.Edit, view.CurrentMode, "FormView_CurrentMode#2");
+		}
 	}
 
 	public class TestMyData
