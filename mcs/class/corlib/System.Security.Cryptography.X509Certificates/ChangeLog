@@ -1,3 +1,8 @@
+2006-10-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate.cs: Ensure we can load certificates from read-only
+	files (fix bug #79616). Refactored to avoid code duplication.
+
 2006-08-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate.cs: A unrequired password can be supplied to the 

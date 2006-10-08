@@ -1,5 +1,5 @@
 //
-// X509Certificates.cs: Handles X.509 certificates.
+// X509Certificate.cs: Handles X.509 certificates.
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -97,12 +97,7 @@ namespace System.Security.Cryptography.X509Certificates {
 	
 		public static X509Certificate CreateFromCertFile (string filename) 
 		{
-			byte[] data = null;
-			using (FileStream fs = File.OpenRead (filename)) {
-				data = new byte [fs.Length];
-				fs.Read (data, 0, data.Length);
-				fs.Close ();
-			}
+			byte[] data = Load (filename);
 			return new X509Certificate (data);
 		}
 	
@@ -581,17 +576,6 @@ namespace System.Security.Cryptography.X509Certificates {
 			Import (rawData, (string)null, keyStorageFlags);
 		}
 
-		private byte[] Load (string fileName)
-		{
-			byte[] data = null;
-			using (FileStream fs = new FileStream (fileName, FileMode.Open)) {
-				data = new byte [fs.Length];
-				fs.Read (data, 0, data.Length);
-				fs.Close ();
-			}
-			return data;
-		}
-
 		[MonoTODO]
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
@@ -610,5 +594,15 @@ namespace System.Security.Cryptography.X509Certificates {
 			get { return (IntPtr) 0; }
 		}
 #endif
+		private static byte[] Load (string fileName)
+		{
+			byte[] data = null;
+			using (FileStream fs = File.OpenRead (fileName)) {
+				data = new byte [fs.Length];
+				fs.Read (data, 0, data.Length);
+				fs.Close ();
+			}
+			return data;
+		}
 	}
 }
