@@ -1,4 +1,9 @@
-2006-09-05  Marek Sieradzki  <marek.sieradzki@gmail.com>
+2006-10-08  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* xbuild/Microsoft.CSharp.targets: Added parameters that should be
+	passed to Csc.
+
+2006-10-05  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* xbuild/Microsoft.CSharp.targets: Make $(OutputPath) directory before
 	compiling and put output in this directory.
