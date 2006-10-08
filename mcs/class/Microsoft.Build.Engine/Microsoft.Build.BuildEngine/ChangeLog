@@ -1,3 +1,16 @@
+2006-10-08  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Target.cs: Changed "" to String.Empty.
+	* TaskEngine.cs: Don't try to convert a parameter to specific type if
+	string was evaluated to String.Empty.
+	* InternalLoggerException.cs:
+	* InvalidProjectFileException.cs: Added LinkDemand before
+	GetObjectData ().
+	* ConsoleLogger.cs: Changed "" to String.Empty.
+	* TargetCollection.cs: Fixed GetEnumerator () (stupid bug introduced
+	with change to generics).
+	* Project.cs: Made Build () throw more meaningful exception.
+
 2006-10-06  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Target.cs: Reformatted.

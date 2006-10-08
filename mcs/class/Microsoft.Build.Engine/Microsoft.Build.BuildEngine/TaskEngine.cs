@@ -63,6 +63,7 @@ namespace Microsoft.Build.BuildEngine {
 			Dictionary <string, object>	values;
 			PropertyInfo	currentProperty;
 			PropertyInfo[]	properties;
+			object		value;
 			
 			this.task = task;
 			this.taskElement = taskElement;
@@ -74,7 +75,11 @@ namespace Microsoft.Build.BuildEngine {
 				if (currentProperty == null)
 					throw new InvalidProjectFileException (String.Format ("Task does not have property \"{0}\" defined",
 						de.Key));
-				values.Add (de.Key, GetObjectFromString (de.Value, currentProperty.PropertyType));
+				
+				value = GetObjectFromString (de.Value, currentProperty.PropertyType);		
+				
+				if (value != null)
+					values.Add (de.Key, value);
 			}
 			
 			properties = taskType.GetProperties ();
@@ -107,9 +112,9 @@ namespace Microsoft.Build.BuildEngine {
 					
 					if (xmlElement.Name != "Output")
 						throw new InvalidProjectFileException ("Only Output elements can be Task's child nodes.");
-					if (xmlElement.GetAttribute ("ItemName") != "" && xmlElement.GetAttribute ("PropertyName") != "")
+					if (xmlElement.GetAttribute ("ItemName") != String.Empty && xmlElement.GetAttribute ("PropertyName") != String.Empty)
 						throw new InvalidProjectFileException ("Only one of ItemName and ProperytyName attributes can be specified.");
-					if (xmlElement.GetAttribute ("TaskParameter") == "")
+					if (xmlElement.GetAttribute ("TaskParameter") == String.Empty)
 						throw new InvalidProjectFileException ("TaskParameter attribute must be specified.");
 						
 					taskParameter = xmlElement.GetAttribute ("TaskParameter");
@@ -228,6 +233,9 @@ namespace Microsoft.Build.BuildEngine {
 			
 			e = new OldExpression (parentProject);
 			e.ParseSource (raw);
+			
+			if ((string) e.ConvertTo (typeof (string)) == String.Empty)
+				return null;
 			
 			result = e.ConvertTo (type);
 			

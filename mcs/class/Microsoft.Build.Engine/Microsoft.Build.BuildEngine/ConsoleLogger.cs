@@ -100,7 +100,7 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public void BuildStartedHandler (object sender, BuildStartedEventArgs args)
 		{
-			WriteLine ("");
+			WriteLine (String.Empty);
 			WriteLine (String.Format ("Build started {0}.", args.Timestamp));
 			WriteLine ("__________________________________________________");
 			buildStart = args.Timestamp;
@@ -119,7 +119,7 @@ namespace Microsoft.Build.BuildEngine {
 				TimeSpan timeElapsed = args.Timestamp - buildStart;
 				WriteLine (String.Format ("\t {0} Warning(s)", warningCount));
 				WriteLine (String.Format ("\t {0} Error(s)", errorCount));
-				WriteLine ("");
+				WriteLine (String.Empty);
 				WriteLine (String.Format ("Time Elapsed {0}", timeElapsed));
 			} 
 		}
@@ -127,14 +127,14 @@ namespace Microsoft.Build.BuildEngine {
 		public void ProjectStartedHandler (object sender, ProjectStartedEventArgs args)
 		{
 			WriteLine (String.Format ("Project \"{0}\" ({1} target(s)):", args.ProjectFile, args.TargetNames));
-			WriteLine ("");
+			WriteLine (String.Empty);
 		}
 		
 		public void ProjectFinishedHandler (object sender, ProjectFinishedEventArgs args)
 		{
 			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Diagnostic)) {
 				WriteLine (String.Format ("Done building project \"{0}\".", args.ProjectFile));
-				WriteLine ("");
+				WriteLine (String.Empty);
 			}
 		}
 		
@@ -150,7 +150,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (IsVerbosityGreaterOrEqual (LoggerVerbosity.Diagnostic))
 				WriteLine (String.Format ("Done building target \"{0}\" in project \"{1}\".",
 					args.TargetName, args.ProjectFile));
-			WriteLine ("");
+			WriteLine (String.Empty);
 		}
 		
 		public void TaskStartedHandler (object sender, TaskStartedEventArgs args)

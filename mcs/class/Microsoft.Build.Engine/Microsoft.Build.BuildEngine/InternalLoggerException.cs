@@ -29,6 +29,7 @@
 
 using System;
 using System.Runtime.Serialization;
+using System.Security.Permissions;
 using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.BuildEngine {
@@ -66,6 +67,7 @@ namespace Microsoft.Build.BuildEngine {
 			helpKeyword = info.GetString ("HelpKeywordPrefix");
 		}
 
+		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
 		public override void GetObjectData (SerializationInfo info,
 						    StreamingContext context)
 		{

@@ -69,7 +69,7 @@ namespace Microsoft.Build.BuildEngine {
 		public IEnumerator GetEnumerator ()
 		{
 			foreach (KeyValuePair <string, Target> kvp in targetsByName) {
-				yield return kvp.Key;
+				yield return kvp.Value;
 			}
 		}
 

@@ -29,6 +29,7 @@
 
 using System;
 using System.Runtime.Serialization;
+using System.Security.Permissions;
 using System.Xml;
 
 namespace Microsoft.Build.BuildEngine {
@@ -109,6 +110,7 @@ namespace Microsoft.Build.BuildEngine {
 			this.projectFile = info.GetString ("ProjectFile");
 		}
 
+		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
 		public override void GetObjectData (SerializationInfo info,
 						    StreamingContext context)
 		{

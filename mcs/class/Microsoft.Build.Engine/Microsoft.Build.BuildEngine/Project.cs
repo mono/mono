@@ -159,7 +159,7 @@ namespace Microsoft.Build.BuildEngine {
 		public bool Build (string targetName)
 		{
 			if (targets.Exists (targetName) == false)
-				throw new Exception ("Target specified to build does not exist.");
+				throw new Exception (String.Format ("Target {0} does not exist.", targetName));
 			
 			return this.targets [targetName].Build ();
 		}

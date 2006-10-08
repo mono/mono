@@ -88,7 +88,7 @@ namespace Microsoft.Build.BuildEngine {
 			buildState = BuildState.Started;
 			if (dependsOnTargets == null) {
 				;
-			} else if (dependsOnTargets.Value == "") {
+			} else if (dependsOnTargets.Value == String.Empty) {
 				;
 			} else {
 				OldExpression dependencies = new OldExpression (Project);
