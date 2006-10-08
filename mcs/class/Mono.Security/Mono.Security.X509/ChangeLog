@@ -1,3 +1,8 @@
+2006-10-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS12.cs: A String.Empty is different from a null password. Fix bug
+	#79617.
+
 2006-09-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate.cs: Don't reset RSA or DSA property if the new value

@@ -425,18 +425,23 @@ namespace Mono.Security.X509 {
 
 		public string Password {
 			set {
-				if ((value != null) && (value.Length > 0)) {
-					int size = value.Length;
-					int nul = 0;
-					if (size < MaximumPasswordLength) {
-						// if not present, add space for a NULL (0x00) character
-						if (value[size - 1] != 0x00)
-							nul = 1;
+				if (value != null) {
+					if (value.Length > 0) {
+						int size = value.Length;
+						int nul = 0;
+						if (size < MaximumPasswordLength) {
+							// if not present, add space for a NULL (0x00) character
+							if (value[size - 1] != 0x00)
+								nul = 1;
+						} else {
+							size = MaximumPasswordLength;
+						}
+						_password = new byte[(size + nul) << 1]; // double for unicode
+						Encoding.BigEndianUnicode.GetBytes (value, 0, size, _password, 0);
 					} else {
-						size = MaximumPasswordLength;
+						// double-byte (Unicode) NULL (0x00) - see bug #79617
+						_password = new byte[2];
 					}
-					_password = new byte[(size + nul) << 1]; // double for unicode
-					Encoding.BigEndianUnicode.GetBytes (value, 0, size, _password, 0);
 				} else {
 					// no password
 					_password = null;
