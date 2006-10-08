@@ -1,3 +1,9 @@
+2006-10-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS12Test.cs: Added OpenSSL generated test case with an empty 
+	password (#79717). Changed results for existing test case with empty
+	password.
+
 2006-07-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509CrlTest.cs: Added regression test for bug #78901.
