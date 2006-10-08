@@ -317,7 +317,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		private byte[] Load (string fileName)
 		{
 			byte[] data = null;
-			using (FileStream fs = new FileStream (fileName, FileMode.Open)) {
+			using (FileStream fs = File.OpenRead (fileName)) {
 				data = new byte [fs.Length];
 				fs.Read (data, 0, data.Length);
 				fs.Close ();

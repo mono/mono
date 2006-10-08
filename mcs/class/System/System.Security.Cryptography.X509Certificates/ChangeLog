@@ -1,3 +1,8 @@
+2006-10-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate2.cs: Ensure we can load certificates from read-only
+	files (fix bug #79616).
+
 2006-10-05  Andrew Skiba  <andrews@mainsoft.com>
 
 	* X509CertificateCollection.cs: remove IEnumerable private imple-
