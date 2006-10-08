@@ -1884,7 +1884,7 @@ namespace Mono.CSharp {
 			//
 			// Unboxing conversions; only object types can be convertible to enum
 			//
-			if (expr_type == TypeManager.object_type && target_type.IsValueType || expr_type == TypeManager.enum_type)
+			if (expr_type == TypeManager.object_type && target_type.IsValueType)
 				return new UnboxCast (expr, target_type);
 
 			if (TypeManager.IsEnumType (expr_type)) {
@@ -1895,6 +1895,9 @@ namespace Mono.CSharp {
 			}
 
 			if (TypeManager.IsEnumType (target_type)){
+				if (expr_type == TypeManager.enum_type)
+					return new UnboxCast (expr, target_type);
+
 				Expression ce = ExplicitConversionCore (ec, expr, TypeManager.EnumToUnderlying (target_type), loc);
 				if (ce != null)
 					return new EmptyCast (ce, target_type);
