@@ -1133,7 +1133,7 @@ namespace System.Web.UI.WebControls
 			if (pagerTemplate != null)
 				pagerTemplate.InstantiateIn (cell);
 			else
-				cell.Controls.Add (PagerSettings.CreatePagerControl (dataSource.CurrentPageIndex, dataSource.PageCount, pagerStyle));
+				cell.Controls.Add (PagerSettings.CreatePagerControl (dataSource.CurrentPageIndex, dataSource.PageCount));
 			
 			row.Cells.Add (cell);
 		}

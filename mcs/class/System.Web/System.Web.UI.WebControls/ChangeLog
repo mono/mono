@@ -1,3 +1,11 @@
+2006-10-08 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* FormView.cs:
+	* GridView.cs:
+	* DetailsView.cs: 
+	* PagerSettings.cs: 
+	reverted r66222, problem solved in r66283: command buttons inherit ForeColor
+		
 2006-10-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Image.cs: write 'alt' after 'src' so that the HyperLink test do not
