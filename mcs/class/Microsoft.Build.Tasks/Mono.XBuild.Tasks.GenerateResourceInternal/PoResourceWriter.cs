@@ -98,7 +98,7 @@ namespace Mono.XBuild.Tasks.GenerateResourceInternal {
 			
 			s.WriteLine ("msgid \"{0}\"", Escape (name));
 			s.WriteLine ("msgstr \"{0}\"", Escape (value));
-			s.WriteLine ("");
+			s.WriteLine (String.Empty);
 		}
 		
 		void WriteHeader ()
