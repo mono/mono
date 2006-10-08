@@ -29,6 +29,7 @@
 
 using System;
 using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace Microsoft.Build.Framework {
 	[Serializable]
@@ -70,6 +71,7 @@ namespace Microsoft.Build.Framework {
 			helpKeyword = info.GetString ("HelpKeyword");
 		}
 		
+		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
 		public override void GetObjectData (SerializationInfo info,
 						    StreamingContext context)
 		{
