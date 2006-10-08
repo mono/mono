@@ -1,3 +1,8 @@
+2006-10-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS12.cs: Synch implementation with Mono.Security.dll. Fix bug
+	#79617.
+
 2006-09-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate.cs: Keep in sync with Mono.Security.dll (#79262).

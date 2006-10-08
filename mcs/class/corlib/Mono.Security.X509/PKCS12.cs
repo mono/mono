@@ -5,12 +5,10 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004,2005,2006 Novell Inc. (http://www.novell.com)
 //
 // Key derivation translated from Bouncy Castle JCE (http://www.bouncycastle.org/)
 // See bouncycastle.txt for license.
-//
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -428,13 +426,26 @@ namespace Mono.Security.X509 {
 		public string Password {
 			set {
 				if (value != null) {
-					if (value.EndsWith ("\0"))
-						_password = Encoding.BigEndianUnicode.GetBytes (value);	
-					else
-						_password = Encoding.BigEndianUnicode.GetBytes (value + "\0");					
+					if (value.Length > 0) {
+						int size = value.Length;
+						int nul = 0;
+						if (size < MaximumPasswordLength) {
+							// if not present, add space for a NULL (0x00) character
+							if (value[size - 1] != 0x00)
+								nul = 1;
+						} else {
+							size = MaximumPasswordLength;
+						}
+						_password = new byte[(size + nul) << 1]; // double for unicode
+						Encoding.BigEndianUnicode.GetBytes (value, 0, size, _password, 0);
+					} else {
+						// double-byte (Unicode) NULL (0x00) - see bug #79617
+						_password = new byte[2];
+					}
+				} else {
+					// no password
+					_password = null;
 				}
-				else
-					_password = null;	// no password
 			}
 		}
 
@@ -1242,28 +1253,11 @@ namespace Mono.Security.X509 {
 
 		private bool CompareAsymmetricAlgorithm (AsymmetricAlgorithm a1, AsymmetricAlgorithm a2)
 		{
-			bool result = a1.KeyExchangeAlgorithm.Equals (a2.KeyExchangeAlgorithm);
-			result = result && a1.KeySize == a2.KeySize;
-
-			KeySizes[] keysizes = a2.LegalKeySizes;
-			if (a1.LegalKeySizes.Length != keysizes.Length)
+			// fast path
+			if (a1.KeySize != a2.KeySize)
 				return false;
-
-			for (int i = 0; i < a1.LegalKeySizes.Length; i++) {
-				result = result && CompareKeySizes (a1.LegalKeySizes [i], keysizes [i]);
-			}
-
-			result = result && a1.SignatureAlgorithm == a2.SignatureAlgorithm;
-			
-			return result;
-		}
-
-		private bool CompareKeySizes (KeySizes k1, KeySizes k2)
-		{ 
-			bool result = k1.MaxSize == k2.MaxSize;
-			result = result && k1.MinSize == k2.MinSize;
-			result = result && k1.SkipSize == k2.SkipSize;
-			return result;
+			// compare public keys - if they match we can assume the private match too
+			return (a1.ToXmlString (false) == a2.ToXmlString (false));
 		}
 
 		public void AddPkcs8ShroudedKeyBag (AsymmetricAlgorithm aa)
@@ -1706,6 +1700,29 @@ namespace Mono.Security.X509 {
 			clone.IterationCount = this.IterationCount;
 
 			return clone;
+		}
+
+		// static
+
+		public const int CryptoApiPasswordLimit = 32;
+		
+		static private int password_max_length = Int32.MaxValue;
+
+		// static properties
+		
+		// MS CryptoAPI limits the password to a maximum of 31 characters
+		// other implementations, like OpenSSL, have no such limitation.
+		// Setting a maximum value will truncate the password length to 
+		// ensure compatibility with MS's PFXImportCertStore API.
+		static public int MaximumPasswordLength {
+			get { return password_max_length; }
+			set {
+				if (value < CryptoApiPasswordLimit) {
+					string msg = Locale.GetText ("Maximum password length cannot be less than {0}.", CryptoApiPasswordLimit);
+					throw new ArgumentOutOfRangeException (msg);
+				}
+				password_max_length = value;
+			}
 		}
 
 		// static methods
