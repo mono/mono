@@ -1,4 +1,9 @@
 
+
+Mon Oct 9 16:08:51 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* jit-icalls.h: flag functions as internal here, too.
+
 Mon Oct 9 15:58:18 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini.h, aliasing.h, declsec.h, regalloc.h, trace.h: mark internal
