@@ -1,3 +1,8 @@
+2006-10-07  Andreia Gaita <shana.ufie@gmail.com>
+	* Form.cs: The active control should be selected after the 
+	OnLoad so that any child control initialization that affects
+	the selection is done. Fixes #79406
+
 2006-10-06  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIX11.cs: This is perhaps a dangerous change, but it seems

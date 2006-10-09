@@ -1446,13 +1446,14 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnCreateControl() {
 			base.OnCreateControl ();
-			SelectActiveControl ();
 
 			if (menu != null) {
 				XplatUI.SetMenu(window.Handle, menu);
 			}
 
 			OnLoad(EventArgs.Empty);
+			
+			SelectActiveControl ();
 
 			// Send initial location
 			OnLocationChanged(EventArgs.Empty);
