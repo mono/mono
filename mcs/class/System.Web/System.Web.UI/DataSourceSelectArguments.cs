@@ -76,21 +76,27 @@ namespace System.Web.UI
 			this.dsc = this.dsc | srcCapabilities;
 		}
 
+		// MSDN: The DataSourceSelectArguments class overrides the Object.Equals method to test 
+		// equality using the various properties of the objects. If the MaximumRows, 
+		// RetrieveTotalRowCount, SortExpression, StartRowIndex, and TotalRowCount properties 
+		// are all equal in value, the Equals(Object) method returns true.
 		public override bool Equals (object obj)
 		{
-			if (!(obj is DataSourceSelectArguments))
+			DataSourceSelectArguments args = obj as DataSourceSelectArguments;
+			if (args == null)
 				return false;
 
-			DataSourceSelectArguments args = (DataSourceSelectArguments)obj;
-			return (this.sortExpression == args.sortExpression &&
-				this.startingRowIndex == args.startingRowIndex &&
-				this.maxRows == args.maxRows);
+			return (this.SortExpression == args.SortExpression &&
+				this.StartRowIndex == args.StartRowIndex &&
+				this.MaximumRows == args.MaximumRows &&
+				this.RetrieveTotalRowCount == args.RetrieveTotalRowCount &&
+				this.TotalRowCount == args.TotalRowCount);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			return sortExpression.GetHashCode ();
+			int hash = SortExpression != null ? SortExpression.GetHashCode() : 0;
+			return hash ^ StartRowIndex ^ MaximumRows ^ RetrieveTotalRowCount.GetHashCode() ^ TotalRowCount;
 		}
 
 		public void RaiseUnsupportedCapabilitiesError (DataSourceView view)
