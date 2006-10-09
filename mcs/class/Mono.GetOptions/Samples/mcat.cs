@@ -155,7 +155,8 @@ The command line options where processed by Mono.GetOptions and resulted as:
 		if (options.GotNoArguments || options.FirstArgument == "-")
 			Console.WriteLine("No arguments provided so cat would be copying stdin to stdout");
 		else 
-			Console.WriteLine("Would be copying these files to stdout: {0}", String.Join(", ", options.RemainingArguments));
+			Console.WriteLine("Would be copying these files to stdout: {0}", 
+				String.Join(", ", options.RemainingArguments));
 		Console.WriteLine("\nFollows help screen\n---------------------------------------------\n");
 		options.DoHelp();
 		return 0;
