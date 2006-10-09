@@ -1,4 +1,9 @@
 
+Mon Oct 9 15:58:18 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, aliasing.h, declsec.h, regalloc.h, trace.h: mark internal
+	functions with the internal attribute.
+
 Mon Oct 9 15:52:45 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* aot-compiler.c: fclose the file descriptor in the profile read loop.
