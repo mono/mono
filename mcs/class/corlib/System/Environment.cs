@@ -475,7 +475,10 @@ namespace System {
 #endif
 			case SpecialFolder.DesktopDirectory:
 				return Path.Combine (home, "Desktop");
-			
+
+			case SpecialFolder.MyMusic:
+				return Path.Combine (home, "Music");
+				
 			// these simply dont exist on Linux
 			// The spec says if a folder doesnt exist, we
 			// should return ""
@@ -484,7 +487,6 @@ namespace System {
 			case SpecialFolder.SendTo:
 			case SpecialFolder.StartMenu:
 			case SpecialFolder.Startup:
-			case SpecialFolder.MyMusic:
 			case SpecialFolder.MyPictures:
 			case SpecialFolder.Templates:
 			case SpecialFolder.Cookies:

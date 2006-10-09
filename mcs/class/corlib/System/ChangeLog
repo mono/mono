@@ -1,3 +1,7 @@
+2006-10-09  Miguel de Icaza  <miguel@novell.com>
+
+	* Environment.cs: Handle SpecialFolder.MyMusic
+
 2006-10-07 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* Enum.cs: Use different exception message depending on whether the
