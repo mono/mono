@@ -1,3 +1,15 @@
+2006-10-09  Martin Baulig  <martin@ximian.com>
+
+	* delegate.cs
+	(Delegate.DefineType): Don't call TypeParameter.Resolve() here;
+	moved that into Define() and also do the other type parameter
+	checks there.  Fixes #79094.  Added gtest-292.cs.
+
+	* expression.cs
+	(ArrayCreation.EmitDynamicInitializers): Use `etype.IsValueType'
+	since that doesn't include type parameters; don't use `Ldelema'
+	for type parameters.  Fixes #78980.  Added gtest-293.cs.
+
 2006-10-08  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for #77796

@@ -6449,10 +6449,9 @@ namespace Mono.CSharp {
 					// If we are dealing with a struct, get the
 					// address of it, so we can store it.
 					//
-					if ((dims == 1) && 
-						TypeManager.IsValueType (etype) &&
-						(!TypeManager.IsBuiltinOrEnum (etype) ||
-						etype == TypeManager.decimal_type)) {
+					if ((dims == 1) && etype.IsValueType &&
+					    (!TypeManager.IsBuiltinOrEnum (etype) ||
+					     etype == TypeManager.decimal_type)) {
 						if (e is New){
 							New n = (New) e;
 

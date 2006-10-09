@@ -78,14 +78,6 @@ namespace Mono.CSharp {
 			if (TypeBuilder != null)
 				return TypeBuilder;
 
-#if GMCS_SOURCE
-			if (IsGeneric) {
-				foreach (TypeParameter type_param in TypeParameters)
-					if (!type_param.Resolve (this))
-						return null;
-			}
-#endif
-			
 			if (TypeManager.multicast_delegate_type == null && !RootContext.StdLib) {
 				Namespace system = RootNamespace.Global.GetNamespace ("System", true);
 				TypeExpr expr = system.Lookup (this, "MulticastDelegate", Location) as TypeExpr;
@@ -151,8 +143,20 @@ namespace Mono.CSharp {
 		{
 #if GMCS_SOURCE
 			if (IsGeneric) {
-				foreach (TypeParameter type_param in TypeParameters)
-					type_param.DefineType (this);
+				foreach (TypeParameter type_param in TypeParameters) {
+					if (!type_param.Resolve (this))
+						return false;
+				}
+
+				foreach (TypeParameter type_param in TypeParameters) {
+					if (!type_param.DefineType (this))
+						return false;
+				}
+
+				foreach (TypeParameter type_param in TypeParameters) {
+					if (!type_param.CheckDependencies ())
+						return false;
+				}
 			}
 #endif
 
