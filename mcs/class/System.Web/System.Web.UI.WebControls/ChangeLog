@@ -1,3 +1,7 @@
+2006-10-09 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* CommandField.cs: ValidateSupportsCallback(): exception's message.
+
 2006-10-08 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* FormView.cs: fixed: CurrentMode property.

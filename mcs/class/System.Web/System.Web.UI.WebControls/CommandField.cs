@@ -363,7 +363,7 @@ namespace System.Web.UI.WebControls {
 		public override void ValidateSupportsCallback ()
 		{
 			if (ShowSelectButton)
-				throw new NotSupportedException ("ShowSelectButton = true");
+				throw new NotSupportedException ("Callbacks are not supported on CommandField when the select button is enabled because other controls on your page that are dependent on the selected value of '" + Control.ID + "' for their rendering will not update in a callback.  Turn callbacks off on '" + Control.ID + "'.");
 		}
 	}
 }
