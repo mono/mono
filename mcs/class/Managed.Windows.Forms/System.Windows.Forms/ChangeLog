@@ -4,6 +4,8 @@
 	we use the scrollbar for autoscrolling and the default value is
 	100.  If we don't do this the caret won't keep up with typing
 	after about 18 characters.
+	* TextControl.cs: Make sure the selection is offset by the
+	viewport x.  This fixes selection when using auto scrolling.
 
 2006-10-07  Andreia Gaita <shana.ufie@gmail.com>
 	* Form.cs: The active control should be selected after the 

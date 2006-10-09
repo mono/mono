@@ -1925,7 +1925,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 									// Now the highlight
 									g.FillRectangle(
 										hilight,								// Brush
-										line.widths[selection_start.pos] + line.align_shift,			// X
+										line.widths[selection_start.pos] + line.align_shift - viewport_x,			// X
 										line.Y + tag.shift - viewport_y,					// Y
 										line.widths[selection_end.pos] - line.widths[selection_start.pos],	// Width
 										tag.height);								// Height
@@ -1955,7 +1955,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 									// The highlighted part
 									g.FillRectangle(
 										hilight, 
-										line.widths[selection_start.pos] + line.align_shift, 
+										line.widths[selection_start.pos] + line.align_shift - viewport_x, 
 										line.Y + tag.shift - viewport_y, 
 										line.widths[tag.start + tag.length - 1] - line.widths[selection_start.pos], 
 										tag.height);
