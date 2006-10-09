@@ -1,3 +1,7 @@
+2006-10-09  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11.cs (SendMessage): fix NRE.
+
 2006-10-09  Jackson Harper  <jackson@ximian.com>
 
 	* TextBoxBase.cs: Implement horizontal autoscrolling.
@@ -21,6 +25,7 @@
 	viewport x.  This fixes selection when using auto scrolling.
 
 2006-10-07  Andreia Gaita <shana.ufie@gmail.com>
+	
 	* Form.cs: The active control should be selected after the 
 	OnLoad so that any child control initialization that affects
 	the selection is done. Fixes #79406

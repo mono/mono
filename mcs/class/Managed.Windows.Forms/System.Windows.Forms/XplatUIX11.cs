@@ -4195,7 +4195,7 @@ namespace System.Windows.Forms {
 			Hwnd	h;
 			h = Hwnd.ObjectFromHandle(hwnd);
 
-			if (h.queue != ThreadQueue (Thread.CurrentThread)) {
+			if (h != null && h.queue != ThreadQueue (Thread.CurrentThread)) {
 				AsyncMethodResult	result;
 				AsyncMethodData		data;
 
