@@ -121,12 +121,14 @@ namespace System.Windows.Forms {
 			hscroll.control_style &= ~ControlStyles.Selectable;
 			hscroll.Enabled = false;
 			hscroll.Visible = false;
+			hscroll.Maximum = Int32.MaxValue;
 
 			vscroll = new ImplicitVScrollBar();
 			vscroll.ValueChanged += new EventHandler(vscroll_ValueChanged);
 			vscroll.control_style &= ~ControlStyles.Selectable;
 			vscroll.Enabled = false;
 			vscroll.Visible = false;
+			vscroll.Maximum = Int32.MaxValue;
 
 			SuspendLayout ();
 			this.Controls.AddImplicit (hscroll);

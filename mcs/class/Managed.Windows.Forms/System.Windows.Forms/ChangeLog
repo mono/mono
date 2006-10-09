@@ -1,3 +1,10 @@
+2006-10-09  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: Set the default max values to MaxValue since
+	we use the scrollbar for autoscrolling and the default value is
+	100.  If we don't do this the caret won't keep up with typing
+	after about 18 characters.
+
 2006-10-07  Andreia Gaita <shana.ufie@gmail.com>
 	* Form.cs: The active control should be selected after the 
 	OnLoad so that any child control initialization that affects
