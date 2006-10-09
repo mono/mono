@@ -94,7 +94,9 @@ namespace System.Windows.Forms {
 		WordBack,	// Move to the beginning of the previous word (or beginning of line)
 		WordForward,	// Move to the beginning of the next word (or end of line)
 		SelectionStart,	// Move to the beginning of the current selection
-		SelectionEnd	// Move to the end of the current selection
+		SelectionEnd,	// Move to the end of the current selection
+		CharForwardNoWrap,   // Move a char forward, but don't wrap onto the next line
+		CharBackNoWrap      // Move a char backward, but don't wrap onto the previous line
 	}
 
 	// Being cloneable should allow for nice line and document copies...
@@ -1507,11 +1509,16 @@ namespace System.Windows.Forms {
 		internal void MoveCaret(CaretDirection direction) {
 			// FIXME should we use IsWordSeparator to detect whitespace, instead 
 			// of looking for actual spaces in the Word move cases?
+
+			bool nowrap = false;
 			switch(direction) {
+				case CaretDirection.CharForwardNoWrap:
+					nowrap = true;
+					goto case CaretDirection.CharForward;
 				case CaretDirection.CharForward: {
 					caret.pos++;
 					if (caret.pos > caret.line.text.Length) {
-						if (multiline) {
+						if (multiline && !nowrap) {
 							// Go into next line
 							if (caret.line.line_no < this.lines) {
 								caret.line = GetLine(caret.line.line_no+1);
@@ -1533,6 +1540,9 @@ namespace System.Windows.Forms {
 					return;
 				}
 
+				case CaretDirection.CharBackNoWrap:
+					nowrap = true;
+					goto case CaretDirection.CharBack;
 				case CaretDirection.CharBack: {
 					if (caret.pos > 0) {
 						// caret.pos--; // folded into the if below
@@ -1542,13 +1552,14 @@ namespace System.Windows.Forms {
 							}
 						}
 					} else {
-						if (caret.line.line_no > 1) {
+						if (caret.line.line_no > 1 && !nowrap) {
 							caret.line = GetLine(caret.line.line_no - 1);
 							caret.pos = caret.line.text.Length;
 							caret.tag = LineTag.FindTag(caret.line, caret.pos);
+							UpdateCaret();
 						}
 					}
-					UpdateCaret();
+					
 					return;
 				}
 

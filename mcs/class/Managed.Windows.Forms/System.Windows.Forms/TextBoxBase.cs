@@ -60,6 +60,7 @@ namespace System.Windows.Forms {
 		internal ImplicitHScrollBar	hscroll;
 		internal ImplicitVScrollBar	vscroll;
 		internal RichTextBoxScrollBars	scrollbars;
+		internal Timer			scroll_timer;
 		internal bool			richtext;
 		internal bool			show_selection;		// set to true to always show selection, even if no focus is set
 		internal int			selection_length;	// set to the user-specified selection length, or -1 if none
@@ -1509,6 +1510,9 @@ namespace System.Windows.Forms {
 				} else {
 					document.ExpandSelection(click_mode, true);
 				}
+				if (scroll_timer != null) {
+					scroll_timer.Enabled = false;
+				}
 				return;
 			}
 		}
@@ -1676,6 +1680,24 @@ namespace System.Windows.Forms {
 		private void TextBoxBase_MouseMove(object sender, MouseEventArgs e) {
 			// FIXME - handle auto-scrolling if mouse is to the right/left of the window
 			if (Capture) {
+
+				if (e.X < Left || e.X > Right) {
+					if (scroll_timer == null) {
+						scroll_timer = new Timer ();
+						scroll_timer.Interval = 100;
+						scroll_timer.Tick += new EventHandler (ScrollTimerTickHandler);
+					}
+
+					if (!scroll_timer.Enabled) {
+						scroll_timer.Start ();
+
+						// Force the first tick
+						ScrollTimerTickHandler (null, EventArgs.Empty);
+					}
+
+					return;
+				}
+
 				document.PositionCaret(e.X + document.ViewPortX, e.Y + document.ViewPortY);
 				if (click_mode == CaretSelection.Position) {
 					document.SetSelectionToCaret(false);
@@ -1698,6 +1720,25 @@ namespace System.Windows.Forms {
 				}
 				// Make sure the caret height is matching the new font height
 				document.AlignCaret();
+			}
+		}
+
+		private void ScrollTimerTickHandler (object sender, EventArgs e)
+		{
+			Point pt = Cursor.Position;
+
+			pt = PointToClient (pt);
+
+			if (pt.X < bounds.Left) {
+				document.MoveCaret(CaretDirection.CharBackNoWrap);
+				document.SetSelectionToCaret(false);
+				
+				CaretMoved(this, null);
+			} else if (pt.X > bounds.Right) {
+				document.MoveCaret(CaretDirection.CharForwardNoWrap);
+				document.SetSelectionToCaret(false);
+				
+				CaretMoved(this, null);
 			}
 		}
 
