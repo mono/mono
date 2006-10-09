@@ -1,4 +1,6 @@
+2006-10-09  Robert Jordan <robertj@gmx.net>
 
+	* mini.c: Disable the CrashReporter on MacOS X
 
 Mon Oct 9 17:06:41 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
