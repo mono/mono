@@ -1,3 +1,8 @@
+2006-10-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c loader.c metadata.c: Revert the mono_metadata_decode_table_... changes,
+	until the correct solution is found.
+
 2006-10-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (mono_module_get_object): Avoid an assert when operating on
