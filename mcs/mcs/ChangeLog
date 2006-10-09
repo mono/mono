@@ -1,3 +1,10 @@
+2006-10-09  Marek Safar  <marek.safar@seznam.cz>
+
+	A fix for bug #78568
+	* cs-tokenizer.cs (Deambiguate_CloseParens): Expression cannot be cast
+	when contains binary operators.
+	* cs-parser.jay: Updated.
+
 2006-10-09  Martin Baulig  <martin@ximian.com>
 
 	* delegate.cs

@@ -3,6 +3,7 @@
 //                  This also implements the preprocessor
 //
 // Author: Miguel de Icaza (miguel@gnu.org)
+//         Marek Safar (marek.safar@seznam.cz)
 //
 // Licensed under the terms of the GNU GPL
 //
@@ -656,9 +657,14 @@ namespace Mono.CSharp
 
 		int deambiguate_close_parens = 0;
 
-		public void Deambiguate_CloseParens ()
+		public void Deambiguate_CloseParens (object expression)
 		{
 			putback (')');
+
+			// When any binary operation is used we are sure it is not a cast
+			if (expression is Binary)
+				return;
+
 			deambiguate_close_parens++;
 		}
 

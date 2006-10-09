@@ -2964,9 +2964,9 @@ parenthesized_expression_0
 	: OPEN_PARENS expression CLOSE_PARENS
 	  {
 		$$ = $2;
-		lexer.Deambiguate_CloseParens ();
+		lexer.Deambiguate_CloseParens ($$);
 		// After this, the next token returned is one of
-		// CLOSE_PARENS_CAST, CLOSE_PARENS_NO_CAST, CLOSE_PARENS_OPEN_PARENS
+		// CLOSE_PARENS_CAST, CLOSE_PARENS_NO_CAST (CLOSE_PARENS), CLOSE_PARENS_OPEN_PARENS
 		// or CLOSE_PARENS_MINUS.
 	  }
 	| OPEN_PARENS expression error { CheckToken (1026, yyToken, "Expecting ')'", lexer.Location); }
@@ -2976,7 +2976,11 @@ parenthesized_expression
 	: parenthesized_expression_0 CLOSE_PARENS_NO_CAST
 	  {
 		$$ = $1;
-	  }
+	  }  
+	| parenthesized_expression_0 CLOSE_PARENS
+	  {
+		$$ = $1;
+	  } 	  
 	| parenthesized_expression_0 CLOSE_PARENS_MINUS
 	  {
 		// If a parenthesized expression is followed by a minus, we need to wrap
