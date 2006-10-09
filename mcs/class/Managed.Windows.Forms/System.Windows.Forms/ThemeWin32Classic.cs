@@ -1760,7 +1760,9 @@ namespace System.Windows.Forms
 			else
 				format.Alignment = StringAlignment.Near;
 			
-			if (!control.LabelWrap)
+			if (control.LabelWrap)
+				format.FormatFlags = StringFormatFlags.LineLimit;
+			else
 				format.FormatFlags = StringFormatFlags.NoWrap;
 			
 			Rectangle highlight_rect = text_rect;

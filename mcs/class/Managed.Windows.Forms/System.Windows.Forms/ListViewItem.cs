@@ -165,6 +165,7 @@ namespace System.Windows.Forms
 
 				is_focused = value; 
 
+				Invalidate ();
 				if (owner != null)
 					Layout ();
 				Invalidate ();
@@ -548,6 +549,18 @@ namespace System.Windows.Forms
 			case View.LargeIcon:
 				label_rect = icon_rect = Rectangle.Empty;
 
+				SizeF sz = owner.DeviceContext.MeasureString (Text, Font);
+				if ((int) sz.Width > text_size.Width) {
+					if (Focused) {
+						int text_width = text_size.Width;
+						StringFormat format = new StringFormat ();
+						format.Alignment = StringAlignment.Center;
+						sz = owner.DeviceContext.MeasureString (Text, Font, text_width, format);
+						text_size.Height = (int) sz.Height;
+					} else
+						text_size.Height = 2 * (int) sz.Height;
+				}
+
 				if (owner.LargeImageList != null) {
 					icon_rect.Width = owner.LargeImageList.ImageSize.Width;
 					icon_rect.Height = owner.LargeImageList.ImageSize.Height;
@@ -557,7 +570,6 @@ namespace System.Windows.Forms
 					icon_rect.Y = checkbox_rect.Height - icon_rect.Height;
 				else
 					checkbox_rect.Y = icon_rect.Height - checkbox_rect.Height;
-
 
 				if (text_size.Width <= icon_rect.Width) {
 			 		icon_rect.X = checkbox_rect.Width + 1;
