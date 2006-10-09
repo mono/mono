@@ -1,5 +1,7 @@
 2006-10-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* gc.c (finalizer_thread): Use a non-alertable wait here.
+
 	* class.c loader.c metadata.c: Revert the mono_metadata_decode_table_... changes,
 	until the correct solution is found.
 
