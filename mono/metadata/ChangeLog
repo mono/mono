@@ -1,3 +1,8 @@
+
+Mon Oct 9 19:27:26 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* loader.c: check for NULL before initializing.
+
 2006-10-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* gc.c (finalizer_thread): Use a non-alertable wait here.
