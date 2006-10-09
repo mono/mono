@@ -265,10 +265,12 @@ namespace System.Web.UI.WebControls {
 			field.HtmlEncode = HtmlEncode;
 		}
 
-		[MonoTODO]
+		// MSDN: The ValidateSupportsCallback method is a helper method used to determine 
+		// whether the controls contained in a BoundField object support callbacks. 
+		// This method has been implemented as an empty method (a method that does not contain 
+		// any code) to indicate that callbacks are supported.
 		public override void ValidateSupportsCallback ()
 		{
-			throw new NotImplementedException ();
 		}
 
 	}

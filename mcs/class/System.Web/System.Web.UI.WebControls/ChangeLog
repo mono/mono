@@ -1,5 +1,9 @@
 2006-10-09 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* BoundField.cs: implemented ValidateSupportsCallback().
+
+2006-10-09 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* CommandField.cs: ValidateSupportsCallback(): exception's message.
 
 2006-10-08 Igor Zelmanovich <igorz@mainsoft.com>
