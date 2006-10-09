@@ -1,3 +1,8 @@
+2006-10-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CssStyleCollection.cs: don't clear the collection of properties, but
+	create a new one.
+
 2006-10-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CssStyleCollection.cs: 'style' can be modified on our back, so build

@@ -51,12 +51,7 @@ namespace System.Web.UI {
 
 		void InitFromStyle ()
 		{
-			if (style == null) {
-				style = new StateBag ();
-			} else {
-				style.Clear ();
-			}
-
+			style = new StateBag ();
 			string att = (string) bag ["style"];
 			if (att != null) {
 				FillStyle (att);
