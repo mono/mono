@@ -1,4 +1,4 @@
-// cs0118-8.cs:
+// Cs1002: Expecting `;'
 // Line: 9
 
 class D {
