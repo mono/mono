@@ -30,14 +30,34 @@
 //
 
 using System;
+using System.Collections;
 using System.Globalization;
 using System.Resources;
 using System.Threading;
+using System.IO;
 
 using NUnit.Framework;
 
 namespace MonoTests.System.Resources
 {
+	class ResourceManagerPoker : ResourceManager
+	{
+		public ResourceManagerPoker ()
+		{
+			BaseNameField = String.Format ("Test{0}resources{0}MyResources", Path.DirectorySeparatorChar);
+		}
+
+		public Hashtable GetResourceSets ()
+		{
+			return base.ResourceSets;
+		}
+
+		public void InitResourceSets ()
+		{
+			base.ResourceSets = new Hashtable ();
+		}
+	}
+
 	[TestFixture]
 	public class ResourceManagerTest
 	{
@@ -61,6 +81,55 @@ namespace MonoTests.System.Resources
 			Assert.AreEqual ("Hello World", rm.GetObject ("HelloWorld"), "#02");
 			Assert.AreEqual ("Hallo Welt", rm.GetString ("deHelloWorld"), "#03");
 			Assert.AreEqual ("Hallo Welt", rm.GetObject ("deHelloWorld"), "#04");
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		[Category("NotWorking")]
+		public void TestResourceManagerGetResourceSetEmpty ()
+		{
+			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+			ResourceManagerPoker rm = new ResourceManagerPoker ();
+			ResourceSet rs = rm.GetResourceSet (CultureInfo.InvariantCulture,
+							    true, true);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		[Category("NotWorking")]
+		public void TestResourceManagerReleaseAllResourcesEmpty ()
+		{
+			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+			ResourceManagerPoker rm = new ResourceManagerPoker ();
+			rm.ReleaseAllResources ();
+		}
+
+		[Test]
+		public void TestResourceManagerReleaseAllResources ()
+		{
+			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+			ResourceManagerPoker rm = new ResourceManagerPoker ();
+			rm.InitResourceSets ();
+			rm.ReleaseAllResources ();
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public void TestResourceManagerResourceSets ()
+		{
+			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+			ResourceManagerPoker rm = new ResourceManagerPoker ();
+
+			rm.InitResourceSets ();
+
+			ResourceSet rs = rm.GetResourceSet (CultureInfo.InvariantCulture,
+							    true, true);
+
+			Assert.AreEqual (1, rm.GetResourceSets().Keys.Count, "#01");
+
+			rs.Close ();
+
+			Assert.AreEqual (1, rm.GetResourceSets().Keys.Count, "#02");
 		}
 	}
 }
