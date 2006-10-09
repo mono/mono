@@ -1,5 +1,9 @@
 
 
+Mon Oct 9 17:06:41 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h: do not leave gaps in the opcode values.
+
 Mon Oct 9 16:08:51 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* jit-icalls.h: flag functions as internal here, too.
