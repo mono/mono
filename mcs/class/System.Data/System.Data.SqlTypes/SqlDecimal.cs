@@ -31,7 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !TARGET_JVM
 using Mono.Data.Tds.Protocol;
+#endif
 using System;
 using System.Text;
 using System.Globalization;
@@ -327,6 +329,7 @@ namespace System.Data.SqlTypes
 			return AdjustScale (n, -(n.Scale), false);
 		}
 
+#if !TARGET_JVM
 		internal static SqlDecimal FromTdsBigDecimal (TdsBigDecimal x)
 		{
 			if (x == null)
@@ -334,6 +337,7 @@ namespace System.Data.SqlTypes
 			else
 				return new SqlDecimal (x.Precision, x.Scale, !x.IsNegative, x.Data);
 		}
+#endif
 
 		public override int GetHashCode ()
 		{
