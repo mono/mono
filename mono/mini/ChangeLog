@@ -1,4 +1,8 @@
 
+Mon Oct 9 15:52:45 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* aot-compiler.c: fclose the file descriptor in the profile read loop.
+
 Fri Oct 6 16:01:38 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c, jit-icalls.c, inssel-float.brg: beginnings of support
