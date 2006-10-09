@@ -3247,14 +3247,13 @@ namespace Mono.CSharp {
 					return this;
 				}
 
-				if (unwrap != null) {
-					expr = Convert.ImplicitConversion (ec, unwrap, rtype, loc);
-					if (expr != null) {
-						left = expr;
-						expr = right;
-						type = expr.Type;
-						return this;
-					}
+				Expression left_null = unwrap != null ? unwrap : left;
+				expr = Convert.ImplicitConversion (ec, left_null, rtype, loc);
+				if (expr != null) {
+					left = expr;
+					expr = right;
+					type = rtype;
+					return this;
 				}
 
 				Binary.Error_OperatorCannotBeApplied (loc, "??", ltype, rtype);
