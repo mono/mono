@@ -1,4 +1,10 @@
 
+Mon Oct 9 19:28:56 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: put data in the text section.
+	* icall.c: recognize more types in type_from_typename ().
+	* process.c, marshal.c: added some GC FIXMEs.
+
 Mon Oct 9 19:27:26 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* loader.c: check for NULL before initializing.
