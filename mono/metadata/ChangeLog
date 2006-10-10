@@ -1,4 +1,9 @@
 
+Tue Oct 10 15:39:39 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: allow retrieving attributes for arguments in generic
+	methods (bug #79241).
+
 Tue Oct 10 11:45:50 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* debug-mono-symfile.c: properly check fopen () result (found by
