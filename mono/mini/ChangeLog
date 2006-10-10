@@ -1,3 +1,8 @@
+
+Tue Oct 10 11:35:20 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* genmdesc.c: removed now dead code.
+
 2006-10-09  Robert Jordan <robertj@gmx.net>
 
 	* mini.c: Disable the CrashReporter on MacOS X; Fixes #74869
