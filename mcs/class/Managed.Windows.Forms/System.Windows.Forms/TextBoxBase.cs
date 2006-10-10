@@ -495,6 +495,7 @@ namespace System.Windows.Forms {
 				} else {
 					document.SetSelectionEnd(value);
 				}
+				document.PositionCaret(document.selection_start.line, document.selection_start.pos);
 				ScrollToCaret();
 			}
 		}

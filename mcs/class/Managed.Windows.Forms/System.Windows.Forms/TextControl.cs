@@ -1556,10 +1556,9 @@ namespace System.Windows.Forms {
 							caret.line = GetLine(caret.line.line_no - 1);
 							caret.pos = caret.line.text.Length;
 							caret.tag = LineTag.FindTag(caret.line, caret.pos);
-							UpdateCaret();
 						}
 					}
-					
+					UpdateCaret();
 					return;
 				}
 

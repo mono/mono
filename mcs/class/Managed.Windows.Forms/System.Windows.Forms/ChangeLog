@@ -1,3 +1,10 @@
+2006-10-10  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: When we set the selection start position the
+	caret.
+	* TextControl.cs: Need to update the caret when we decrement it to
+	zero.
+
 2006-10-09  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Don't update scrollbars when we aren't visible.
