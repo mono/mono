@@ -3,6 +3,7 @@
 //
 // Author:
 //	Chris Toshok (toshok@novell.com)
+//      Yoni Klain   (Yonik@mainsoft.com)
 //
 
 //
@@ -36,6 +37,7 @@ using System.Threading;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using MonoTests.SystemWeb.Framework;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -104,8 +106,30 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 	}
 	
-	[TestFixture]	
-	public class BaseCompareValidatorTest : ValidatorTest {
+	[TestFixture]
+	public class BaseCompareValidatorTest : ValidatorTest
+	{
+
+		[Test]
+		[Category("NotWorking")]
+		public void DefaultProperties ()
+		{
+			BaseCompareValidatorPoker p = new BaseCompareValidatorPoker ();
+#if NET_2_0
+			Assert.AreEqual (false, p.CultureInvariantValues, "CultureInvariantValues");
+#endif 
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void AssignProperties ()
+		{
+			BaseCompareValidatorPoker p = new BaseCompareValidatorPoker ();
+#if NET_2_0
+			p.CultureInvariantValues = true;
+			Assert.AreEqual (true, p.CultureInvariantValues, "CultureInvariantValues");
+#endif
+		}
 
 		[Test]
 		public void ViewState ()
@@ -452,6 +476,110 @@ namespace MonoTests.System.Web.UI.WebControls
 			Thread.CurrentThread.CurrentCulture = new CultureInfo ("af-ZA", false);
 			Assert.AreEqual (p.GetDateElementOrder (), "ymd", "E6");
 		}
-	}
 
+#if NET_2_0
+		[Test]
+		[Category ("NotWorking")]
+		public void CultureInvariantValues_1 ()
+		{
+			Page p = new Page ();
+
+			CompareValidator v = new CompareValidator ();
+			v.ControlToValidate = "tb1";
+			v.Type = ValidationDataType.Date;
+			v.ValueToCompare = "2005/12/24";
+			v.CultureInvariantValues = true;
+
+			TextBox tb1 = new TextBox ();
+			tb1.ID = "tb1";
+			tb1.Text = "12.24.2005";
+
+			p.Controls.Add (tb1);
+			p.Controls.Add (v);
+
+			v.Validate ();
+			Assert.AreEqual (true, v.IsValid, "CultureInvariantValues#1");
+
+			tb1.Text = "12/24/2005";
+			v.Validate ();
+			Assert.AreEqual (true, v.IsValid, "CultureInvariantValues#2");
+
+			tb1.Text = "2005.12.24";
+			v.Validate ();
+			Assert.AreEqual (true, v.IsValid, "CultureInvariantValues#3");
+
+			tb1.Text = "2005.24.12";
+			v.Validate ();
+			Assert.AreEqual (false, v.IsValid, "CultureInvariantValues#4");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CultureInvariantValues_2 ()
+		{
+
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-GB", false);
+			//  Current date format --> "dmy"
+			Page p = new Page ();
+
+			CompareValidator v = new CompareValidator ();
+			v.ControlToValidate = "tb1";
+			v.Type = ValidationDataType.Date;
+			v.ValueToCompare = "24/12/2005";
+			v.CultureInvariantValues = false;
+
+			TextBox tb1 = new TextBox ();
+			tb1.ID = "tb1";
+			tb1.Text = "24.12.2005";
+
+			p.Controls.Add (tb1);
+			p.Controls.Add (v);
+
+			v.Validate ();
+			Assert.AreEqual (true, v.IsValid, "CultureInvariantValues#1");
+
+			tb1.Text = "24-12-2005";
+			v.Validate ();
+			Assert.AreEqual (true, v.IsValid, "CultureInvariantValues#2");
+
+			tb1.Text = "2005/12/24";
+			v.Validate ();
+			Assert.AreEqual (true, v.IsValid, "CultureInvariantValues#3");
+
+			tb1.Text = "2005.24.12";
+			v.Validate ();
+			Assert.AreEqual (false, v.IsValid, "CultureInvariantValues#4");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException(typeof(HttpException))]
+		public void CultureInvariantValues_Exception ()
+		{
+
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-GB", false);
+			//  Current date format --> "dmy"
+			Page p = new Page ();
+
+			CompareValidator v = new CompareValidator ();
+			v.ControlToValidate = "tb1";
+			v.Type = ValidationDataType.Date;
+			v.ValueToCompare = "12/24/2005";
+			v.CultureInvariantValues = false;
+
+			TextBox tb1 = new TextBox ();
+			tb1.ID = "tb1";
+			tb1.Text = "24.12.2005";
+
+			p.Controls.Add (tb1);
+			p.Controls.Add (v);
+
+			v.Validate ();
+			Assert.AreEqual (true, v.IsValid, "CultureInvariantValues#1");
+
+			tb1.Text = "24-12-2005";
+			v.Validate ();
+		}
+#endif
+	}
 }
