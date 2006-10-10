@@ -4,6 +4,10 @@
 	caret.
 	* TextControl.cs: Need to update the caret when we decrement it to
 	zero.
+	- Make sure that the selection_visible flag gets reset to false if
+	the selection isn't visible.  Before this you could get it set to
+	visible by changing the selection start, then changing the end to
+	equal the start.
 
 2006-10-09  Jackson Harper  <jackson@ximian.com>
 
