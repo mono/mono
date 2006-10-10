@@ -45,6 +45,8 @@ namespace System.Web.J2EE
 		static LocalDataStoreSlot _servletResponseSlot = Thread.GetNamedDataSlot(J2EEConsts.SERVLET_RESPONSE);
 		static LocalDataStoreSlot _servletSlot = Thread.GetNamedDataSlot(J2EEConsts.CURRENT_SERVLET);
 
+		static String DataDirectory = String.Concat (System.IO.Path.DirectorySeparatorChar, "App_Data", System.IO.Path.DirectorySeparatorChar);
+
 
 		public BaseHttpServlet()
 		{
@@ -101,6 +103,8 @@ namespace System.Web.J2EE
 				AppDomain servletDomain = (AppDomain)this.getServletContext().getAttribute(J2EEConsts.APP_DOMAIN);
 				servletDomain.SetData(IAppDomainConfig.APP_VIRT_DIR, req.getContextPath());
 				servletDomain.SetData(".hostingVirtualPath", req.getContextPath());
+				//Set DataDirectory substitution string (http://blogs.msdn.com/dataaccess/archive/2005/10/28/486273.aspx)
+				servletDomain.SetData ("DataDirectory", String.Concat (req.getContextPath (), DataDirectory));
 
 				// Put to the TLS current AppDomain of the servlet, so anyone can use it.
 				vmw.@internal.EnvironmentUtils.setAppDomain(servletDomain);
