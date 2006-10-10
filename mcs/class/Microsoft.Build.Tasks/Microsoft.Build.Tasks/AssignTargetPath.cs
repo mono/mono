@@ -48,6 +48,7 @@ namespace Microsoft.Build.Tasks {
 			return false;
 		}
 		
+		[Output]
 		public ITaskItem[] AssignedFiles {
 			get { return assignedFiles; }
 		}
@@ -57,6 +58,7 @@ namespace Microsoft.Build.Tasks {
 			set { files = value; }
 		}
 		
+		[Required]
 		public string RootFolder {
 			get { return rootFolder; }
 			set { rootFolder = value; }

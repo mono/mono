@@ -48,6 +48,7 @@ namespace Microsoft.Build.Tasks {
 			return false;
 		}
 		
+		[Output]
 		public ITaskItem[] AssignedProjects {
 			get { return assignedProjects; }
 			set { assignedProjects = value; }
@@ -58,6 +59,7 @@ namespace Microsoft.Build.Tasks {
 			set { solutionConfigurationContents = value; }
 		}
 		
+		[Output]
 		public ITaskItem[] UnassignedProjects {
 			get { return unassignedProjects; }
 			set { unassignedProjects = value; }

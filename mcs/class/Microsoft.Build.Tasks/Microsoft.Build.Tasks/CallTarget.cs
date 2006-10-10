@@ -53,6 +53,7 @@ namespace Microsoft.Build.Tasks {
 			set { runEachTargetSeparately = value; }
 		}
 		
+		[Output]
 		public ITaskItem[] TargetOutputs {
 			get { return targetOutputs; }
 		}

@@ -50,22 +50,27 @@ namespace Microsoft.Build.Tasks {
 			return false;
 		}
 		
+		[Output]
 		public ITaskItem[] AssignedFiles {
 			get { return assignedFiles; }
 		}
 		
+		[Output]
 		public ITaskItem[] AssignedFilesWithCulture {
 			get { return assignedFilesWithCulture; }
 		}
 		
+		[Output]
 		public ITaskItem[] AssignedFilesWithNoCulture {
 			get { return assignedFilesWithNoCulture; }
 		}
 		
+		[Output]
 		public ITaskItem[] CultureNeutralAssignedFiles {
 			get { return cultureNeutralAssignedFiles; }
 		}
 		
+		[Required]
 		public ITaskItem[] Files {
 			get { return files; }
 			set { files = value; }

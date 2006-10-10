@@ -116,10 +116,12 @@ namespace Microsoft.Build.Tasks {
 			set { candidateAssemblyFiles = value; }
 		}
 		
+		[Output]
 		public ITaskItem[] CopyLocalFiles {
 			get { return copyLocalFiles; }
 		}
 		
+		[Output]
 		public ITaskItem[] FilesWritten {
 			get { return filesWritten; }
 			set { filesWritten = value; }
@@ -150,36 +152,38 @@ namespace Microsoft.Build.Tasks {
 			set { installedAssemblyTables = value; }
 		}
 		
+		[Output]
 		public ITaskItem[] RelatedFiles {
 			get { return relatedFiles; }
-			set { relatedFiles = value; }
 		}
 		
+		[Output]
 		public ITaskItem[] ResolvedDependencyFiles {
 			get { return resolvedDependencyFiles; }
-			set { resolvedDependencyFiles = value; }
 		}
 		
 		[Output]
 		public ITaskItem[] ResolvedFiles {
 			get { return resolvedFiles; }
-			set { resolvedFiles = value; }
 		}
 		
+		[Output]
 		public ITaskItem[] SatelliteFiles {
 			get { return satelliteFiles; }
-			set { satelliteFiles = value; }
 		}
 		
+		[Output]
 		public ITaskItem[] ScatterFiles {
 			get { return scatterFiles; }
 		}
 		
+		[Required]
 		public string[] SearchPaths {
 			get { return searchPaths; }
 			set { searchPaths = value; }
 		}
 		
+		[Output]
 		public ITaskItem[] SerializationAssemblyFiles {
 			get { return serializationAssemblyFiles; }
 		}
@@ -194,9 +198,9 @@ namespace Microsoft.Build.Tasks {
 			set { stateFile = value; }
 		}
 		
+		[Output]
 		public ITaskItem[] SuggestedRedirects {
 			get { return suggestedRedirects; }
-			set { suggestedRedirects = value; }
 		}
 		
 		public string[] TargetFrameworkDirectories {

@@ -51,6 +51,7 @@ namespace Microsoft.Build.Tasks {
 			set { inputUrl = value; }
 		}
 		
+		[Output]
 		public string OutputUrl {
 			get { return outputUrl; }
 			set { outputUrl = value; }

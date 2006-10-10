@@ -52,6 +52,7 @@ namespace Microsoft.Build.Tasks {
 			set { formatType = value; }
 		}
 		
+		[Output]
 		public string OutputVersion {
 			get { return outputVersion; }
 			set { outputVersion = value; }

@@ -63,11 +63,13 @@ namespace Microsoft.Build.Tasks {
 		protected abstract bool	IsSourceFile (string fileName);
 		
 		[MonoTODO]
+		[Output]
 		public ITaskItem[] ManifestResourceNames {
 			get { return manifestResourceNames; }
 		}
 		
 		[MonoTODO]
+		[Required]
 		public ITaskItem[] ResourceFiles {
 			get { return resourceFiles; }
 			set { resourceFiles = value; }

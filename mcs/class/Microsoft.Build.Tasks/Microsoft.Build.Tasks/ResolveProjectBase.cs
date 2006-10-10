@@ -42,17 +42,12 @@ namespace Microsoft.Build.Tasks {
 		}
 		
 		[MonoTODO]
-		public override bool Execute ()
-		{
-			return false;
-		}
-		
-		[MonoTODO]
 		protected string GetProjectItem (ITaskItem projectRef)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[Required]
 		public ITaskItem[] ProjectReferences {
 			get { return projectReferences; }
 			set { projectReferences = value; }
