@@ -1,3 +1,6 @@
+2006-10-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* object-internals.h: Remove duplicate definition of mono_method_get_signature_full ().
 
 Mon Oct 9 19:41:44 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
