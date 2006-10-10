@@ -54,6 +54,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		class MyDataBoundControl : DataBoundControl
 		{
+			public int CreateDataSourceSelectArgumentsCalled;
 			private StringBuilder dataBindTrace = new StringBuilder ();
 			public string DataBindTrace {
 				get { return dataBindTrace.ToString (); }
@@ -108,6 +109,15 @@ namespace MonoTests.System.Web.UI.WebControls
 			public void DoEnsureDataBound () {
 				EnsureDataBound();
 			}
+
+			protected override DataSourceSelectArguments CreateDataSourceSelectArguments () {
+				CreateDataSourceSelectArgumentsCalled++;
+				return base.CreateDataSourceSelectArguments ();
+			}
+
+			public DataSourceSelectArguments GetSelectArguments () {
+				return SelectArguments;
+			}
 		}
 
 		[Test]
@@ -150,7 +160,22 @@ namespace MonoTests.System.Web.UI.WebControls
 			string expected = "[Start DataBind][Start PerformSelect][Start GetData][End GetData][Start OnDataBinding][End OnDataBinding][Start PerformDataBinding][End PerformDataBinding][Start OnDataBound][End OnDataBound][End PerformSelect][End DataBind]";
 			Assert.AreEqual (expected, dc.DataBindTrace, "DataBindFlow");
 		}
-
+		
+		[Test]
+		public void DataBoundControl_DataBindFlow3 () {
+			Page p = new Page ();
+			MyDataBoundControl dc = new MyDataBoundControl ();
+			p.Controls.Add (dc);
+			DataSourceSelectArguments arg1 = dc.GetSelectArguments ();
+			Assert.AreEqual (1, dc.CreateDataSourceSelectArgumentsCalled, "CreateDataSourceSelectArgumentsCalled#1");
+			dc.DataBind ();
+			DataSourceSelectArguments arg2 = dc.GetSelectArguments ();
+			Assert.AreEqual (2, dc.CreateDataSourceSelectArgumentsCalled, "CreateDataSourceSelectArgumentsCalled#2");
+			dc.DataBind ();
+			Assert.AreEqual (3, dc.CreateDataSourceSelectArgumentsCalled, "CreateDataSourceSelectArgumentsCalled#3");
+			Assert.IsTrue(object.ReferenceEquals(arg1, arg1), "CreateDataSourceSelectArgumentsCalled#4");
+		}
+		
 		[Test]
 		public void Defaults ()
 		{

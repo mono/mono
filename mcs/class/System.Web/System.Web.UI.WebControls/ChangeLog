@@ -1,3 +1,9 @@
+2006-10-10 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DataBoundControl.cs: fixed: DataBind flow
+	CreateDataSourceSelectArguments() is called 
+	each time as DataBind() is called	
+
 2006-10-09 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* BoundField.cs: implemented ValidateSupportsCallback().
