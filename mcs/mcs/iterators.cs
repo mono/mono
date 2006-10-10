@@ -311,12 +311,8 @@ namespace Mono.CSharp {
 
 		ConstructorInfo GetInvalidOperationException ()
 		{
-			MethodGroupExpr mg = (MethodGroupExpr) Expression.MemberLookup (
-				TypeBuilder, TypeManager.invalid_operation_exception_type,
-				".ctor", Location);
-			if (mg == null)
-				throw new InternalErrorException ();
-			return (ConstructorInfo) mg.Methods [0];
+			return TypeManager.GetConstructor (
+				TypeManager.invalid_operation_exception_type, Type.EmptyTypes);
 		}
 
 		protected override ScopeInitializer CreateScopeInitializer ()
