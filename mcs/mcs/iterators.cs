@@ -877,6 +877,8 @@ namespace Mono.CSharp {
 			Report.Debug (64, "RESOLVE ITERATOR #1", this, method, method.Parent,
 				      RootScope, ec);
 
+			if (!RootScope.ResolveType ())
+				return false;
 			if (!RootScope.ResolveMembers ())
 				return false;
 			if (!RootScope.DefineMembers ())

@@ -388,7 +388,8 @@ namespace Mono.CSharp {
 			public readonly ScopeInfo ChildScope;
 
 			public CapturedScope (ScopeInfo root, ScopeInfo child)
-				: base (root, child.ID + "_scope", child.TypeBuilder)
+				: base (root, child.ID + "_scope",
+					child.IsGeneric ? child.CurrentType : child.TypeBuilder)
 			{
 				this.ChildScope = child;
 			}
