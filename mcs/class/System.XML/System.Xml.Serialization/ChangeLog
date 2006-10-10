@@ -1,3 +1,8 @@
+2006-10-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlSerializer.cs: Output namespace declarations in same order as
+	MS.
+
 2006-10-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlSerializer.cs: Corrected exception message when deserialization

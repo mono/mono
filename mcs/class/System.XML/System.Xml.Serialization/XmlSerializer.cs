@@ -454,8 +454,13 @@ namespace System.Xml.Serialization
 
 				if (namespaces == null || namespaces.Count == 0) {
 					namespaces = new XmlSerializerNamespaces ();
+#if NET_2_0
+					namespaces.Add ("xsi", XmlSchema.InstanceNamespace);
+					namespaces.Add ("xsd", XmlSchema.Namespace);
+#else
 					namespaces.Add ("xsd", XmlSchema.Namespace);
 					namespaces.Add ("xsi", XmlSchema.InstanceNamespace);
+#endif
 				}
 
 				xsWriter.Initialize (writer, namespaces);

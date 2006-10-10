@@ -1,3 +1,7 @@
+2006-10-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlSerializerTests.cs: Added a few tests. Fixed coding style.
+
 2006-10-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DeserializeTest.cs: Added several tests.
