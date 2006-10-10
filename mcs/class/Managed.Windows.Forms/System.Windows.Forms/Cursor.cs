@@ -196,9 +196,8 @@ namespace System.Windows.Forms {
 			set {
 				if (current != value) {
 					current = value;
-					if (value != null){
+					if (current == null){
 						// FIXME - define and set empty cursor
-						current = null;
 						XplatUI.OverrideCursor(IntPtr.Zero);
 					} else
 						XplatUI.OverrideCursor(current.handle);

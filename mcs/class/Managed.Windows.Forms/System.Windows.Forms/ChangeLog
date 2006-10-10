@@ -1,3 +1,8 @@
+2006-10-10  Chris Toshok  <toshok@ximian.com>
+
+	* Cursor.cs: Apply a slightly different patch to the one suggested
+	in #79609.
+
 2006-10-10  Jackson Harper  <jackson@ximian.com>
 
 	* MenuItem.cs: Make sure to put the mdi child in the hashtable,
