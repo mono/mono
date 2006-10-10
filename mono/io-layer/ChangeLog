@@ -1,3 +1,10 @@
+2006-10-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* handles.c (timedwait_signal_poll_cond): Add an alertable parameter, and if it
+	is FALSE, avoid busy waiting.
+
+	* wait.c: Add an alertable parameter to the wait routines.
+
 2006-10-06  Miguel de Icaza  <miguel@novell.com>
 
 	* io-portability.c (find_file): Rename from
