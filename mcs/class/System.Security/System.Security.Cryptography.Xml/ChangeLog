@@ -1,3 +1,8 @@
+2006-10-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SignedXml.cs : when SigningMethod does not match the algorithm that
+	  the key actually supports, it raises an error.
+
 2006-09-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* EncryptedXml.cs : use Padding member instead of const ISO10126 (though

@@ -623,8 +623,11 @@ namespace System.Security.Cryptography.Xml {
 		public void ComputeSignature () 
 		{
 			if (key != null) {
-				// required before hashing
-				m_signature.SignedInfo.SignatureMethod = key.SignatureAlgorithm;
+				if (m_signature.SignedInfo.SignatureMethod == null)
+					// required before hashing
+					m_signature.SignedInfo.SignatureMethod = key.SignatureAlgorithm;
+				else if (m_signature.SignedInfo.SignatureMethod != key.SignatureAlgorithm)
+					throw new CryptographicException ("Specified SignatureAlgorithm is not supported by the signing key.");
 				DigestReferences ();
 
 				AsymmetricSignatureFormatter signer = null;

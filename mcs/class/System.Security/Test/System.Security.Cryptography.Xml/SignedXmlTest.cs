@@ -155,6 +155,26 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void SignatureMethodMismatch () 
+		{
+			SignedXml signedXml = MSDNSample ();
+
+			RSA key = RSA.Create ();
+			signedXml.SigningKey = key;
+			signedXml.SignedInfo.SignatureMethod = SignedXml.XmlDsigHMACSHA1Url;
+
+			// Add a KeyInfo.
+			KeyInfo keyInfo = new KeyInfo ();
+			keyInfo.AddClause (new RSAKeyValue (key));
+			signedXml.KeyInfo = keyInfo;
+
+			AssertNotNull ("SignatureMethod", signedXml.SignatureMethod);
+			// Compute the signature - causes unsupported algorithm by the key.
+			signedXml.ComputeSignature ();
+		}
+
+		[Test]
 		public void AsymmetricRSASignature () 
 		{
 			SignedXml signedXml = MSDNSample ();
