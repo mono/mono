@@ -1,3 +1,8 @@
+2006-10-09  Marek Habersack  <grendello@gmail.com>
+
+	* HttpApplication.cs: change the pipeline order for ASP.NET 2.0 to
+	comply with the Microsoft documentation.
+
 2006-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: this makes the test run successfully. Still need

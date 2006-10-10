@@ -864,6 +864,12 @@ namespace System.Web {
 				foreach (bool stop in RunHooks (ResolveRequestCache))
 					yield return stop;
 
+#if NET_2_0
+			if (PostResolveRequestCache != null)
+				foreach (bool stop in RunHooks (PostResolveRequestCache))
+					yield return stop;
+#endif
+
 			// Obtain the handler for the request.
 			IHttpHandler handler = null;
 			try {
@@ -884,10 +890,6 @@ namespace System.Web {
 				yield return true;
 
 #if NET_2_0
-			if (PostResolveRequestCache != null)
-				foreach (bool stop in RunHooks (PostResolveRequestCache))
-					yield return stop;
-
 			if (PostMapRequestHandler != null)
 				foreach (bool stop in RunHooks (PostMapRequestHandler))
 					yield return stop;
