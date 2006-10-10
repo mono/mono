@@ -34,6 +34,8 @@ using System.IO;
 using System.Security.Permissions;
 using System.Web;
 using System.Web.UI;
+using System.Collections;
+using System.Web.UI.WebControls;
 
 namespace MonoCasTests.System.Web.UI
 {
@@ -41,6 +43,43 @@ namespace MonoCasTests.System.Web.UI
 	[TestFixture]
 	public class DataSourceSelectArgumentsTest
 	{
+
+		public class PockerDataSourceView : DataSourceView
+		{
+			public PockerDataSourceView ()
+				: base (new ObjectDataSource (), "") {
+			}
+
+			public DataSourceCapabilities DataSourceCapabilities;
+			public bool RaiseUnsupportedCapabilityErrorCalled;
+
+			public override bool CanPage {
+				get {
+					return true;
+				}
+			}
+
+			public override bool CanSort {
+				get {
+					return true;
+				}
+			}
+
+			public override bool CanRetrieveTotalRowCount {
+				get {
+					return true;
+				}
+			}
+
+			protected override IEnumerable ExecuteSelect (DataSourceSelectArguments arguments) {
+				throw new Exception ("The method or operation is not implemented.");
+			}
+
+			protected override void RaiseUnsupportedCapabilityError (DataSourceCapabilities capability) {
+				RaiseUnsupportedCapabilityErrorCalled = true;
+				DataSourceCapabilities = capability;
+			}
+		}
 
 		[Test]
 		public void Equals ()
@@ -72,6 +111,71 @@ namespace MonoCasTests.System.Web.UI
 
 			Assert.IsTrue (arg1.Equals (arg2), "Equals#4");
 			Assert.IsTrue (arg1.GetHashCode () == arg2.GetHashCode (), "GetHashCode#4");
+		}
+
+		[Test]
+		public void RaiseUnsupportedCapabilitiesError () {
+			PockerDataSourceView view = new PockerDataSourceView ();
+			DataSourceSelectArguments arg = new DataSourceSelectArguments ();
+			arg.RaiseUnsupportedCapabilitiesError (view);
+			Assert.IsFalse (view.RaiseUnsupportedCapabilityErrorCalled, "RaiseUnsupportedCapabilitiesError");
+
+			view = new PockerDataSourceView ();
+			arg = new DataSourceSelectArguments ();
+			arg.StartRowIndex = 10;
+			arg.RaiseUnsupportedCapabilitiesError (view);
+			Assert.IsTrue (view.RaiseUnsupportedCapabilityErrorCalled, "RaiseUnsupportedCapabilitiesError");
+			Assert.AreEqual (DataSourceCapabilities.Page, view.DataSourceCapabilities, "RaiseUnsupportedCapabilitiesError");
+
+			view = new PockerDataSourceView ();
+			arg = new DataSourceSelectArguments ();
+			arg.MaximumRows = 5;
+			arg.RaiseUnsupportedCapabilitiesError (view);
+			Assert.IsTrue (view.RaiseUnsupportedCapabilityErrorCalled, "RaiseUnsupportedCapabilitiesError");
+			Assert.AreEqual (DataSourceCapabilities.Page, view.DataSourceCapabilities, "RaiseUnsupportedCapabilitiesError");
+
+			view = new PockerDataSourceView ();
+			arg = new DataSourceSelectArguments ();
+			arg.SortExpression = "Sort";
+			arg.RaiseUnsupportedCapabilitiesError (view);
+			Assert.IsTrue (view.RaiseUnsupportedCapabilityErrorCalled, "RaiseUnsupportedCapabilitiesError");
+			Assert.AreEqual (DataSourceCapabilities.Sort, view.DataSourceCapabilities, "RaiseUnsupportedCapabilitiesError");
+
+			view = new PockerDataSourceView ();
+			arg = new DataSourceSelectArguments ();
+			arg.RetrieveTotalRowCount = true;
+			arg.RaiseUnsupportedCapabilitiesError (view);
+			Assert.IsTrue (view.RaiseUnsupportedCapabilityErrorCalled, "RaiseUnsupportedCapabilitiesError");
+			Assert.AreEqual (DataSourceCapabilities.RetrieveTotalRowCount, view.DataSourceCapabilities, "RaiseUnsupportedCapabilitiesError");
+
+			view = new PockerDataSourceView ();
+			arg = new DataSourceSelectArguments ();
+			arg.AddSupportedCapabilities (DataSourceCapabilities.Page | DataSourceCapabilities.Sort | DataSourceCapabilities.RetrieveTotalRowCount);
+			arg.SortExpression = "Sort";
+			arg.StartRowIndex = 10;
+			arg.MaximumRows = 5;
+			arg.RetrieveTotalRowCount = true;
+			arg.RaiseUnsupportedCapabilitiesError (view);
+			Assert.IsFalse (view.RaiseUnsupportedCapabilityErrorCalled, "RaiseUnsupportedCapabilitiesError");
+
+			view = new PockerDataSourceView ();
+			arg = new DataSourceSelectArguments ();
+			arg.SortExpression = "Sort";
+			arg.StartRowIndex = 10;
+			arg.MaximumRows = 5;
+			arg.RetrieveTotalRowCount = true;
+			arg.RaiseUnsupportedCapabilitiesError (view);
+			Assert.IsTrue (view.RaiseUnsupportedCapabilityErrorCalled, "RaiseUnsupportedCapabilitiesError");
+			Assert.AreEqual (DataSourceCapabilities.RetrieveTotalRowCount, view.DataSourceCapabilities, "RaiseUnsupportedCapabilitiesError");
+
+			view = new PockerDataSourceView ();
+			arg = new DataSourceSelectArguments ();
+			arg.SortExpression = "Sort";
+			arg.StartRowIndex = 10;
+			arg.MaximumRows = 5;
+			arg.RaiseUnsupportedCapabilitiesError (view);
+			Assert.IsTrue (view.RaiseUnsupportedCapabilityErrorCalled, "RaiseUnsupportedCapabilitiesError");
+			Assert.AreEqual (DataSourceCapabilities.Page, view.DataSourceCapabilities, "RaiseUnsupportedCapabilitiesError");
 		}
 	}
 }

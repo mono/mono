@@ -1,3 +1,8 @@
+2006-10-10 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DataSourceSelectArguments.cs: 
+	fixed: RaiseUnsupportedCapabilitiesError method.
+
 2006-10-09 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DataSourceSelectArguments.cs: fixed: Equals method.

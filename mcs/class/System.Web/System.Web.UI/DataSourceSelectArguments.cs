@@ -99,9 +99,38 @@ namespace System.Web.UI
 			return hash ^ StartRowIndex ^ MaximumRows ^ RetrieveTotalRowCount.GetHashCode() ^ TotalRowCount;
 		}
 
+		// The RaiseUnsupportedCapabilitiesError method is used by data-bound controls 
+		// to compare additional requested capabilities represented by the properties 
+		// of the DataSourceSelectArguments class, such as the ability to sort or page 
+		// through a result set, with the capabilities supported by the data source view. 
+		// The view calls its own RaiseUnsupportedCapabilityError method for each possible 
+		// capability defined in the DataSourceCapabilities enumeration. 
 		public void RaiseUnsupportedCapabilitiesError (DataSourceView view)
 		{
-			view.RaiseUnsupportedCapabilityError (this.dsc);
+			DataSourceCapabilities requestedCaps = RequestedCapabilities;
+			DataSourceCapabilities notSupportedCaps = (requestedCaps ^ dsc) & requestedCaps;
+			if (notSupportedCaps == DataSourceCapabilities.None)
+				return;
+
+			if ((notSupportedCaps & DataSourceCapabilities.RetrieveTotalRowCount) > 0)
+				notSupportedCaps = DataSourceCapabilities.RetrieveTotalRowCount;
+			else if ((notSupportedCaps & DataSourceCapabilities.Page) > 0)
+				notSupportedCaps = DataSourceCapabilities.Page;
+
+			view.RaiseUnsupportedCapabilityError (notSupportedCaps);
+		}
+
+		DataSourceCapabilities RequestedCapabilities {
+			get {
+				DataSourceCapabilities caps = DataSourceCapabilities.None;
+				if (!String.IsNullOrEmpty (SortExpression))
+					caps |= DataSourceCapabilities.Sort;
+				if (RetrieveTotalRowCount)
+					caps |= DataSourceCapabilities.RetrieveTotalRowCount;
+				if (StartRowIndex > 0 || MaximumRows > 0)
+					caps |= DataSourceCapabilities.Page;
+				return caps;
+			}
 		}
 
 		public int MaximumRows {
