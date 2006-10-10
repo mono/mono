@@ -2096,8 +2096,8 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			int		base_line;
 			string[]	ins;
 			int		insert_lines;
-
-
+			int		old_line_count;
+			
 			// The formatting at the insertion point is used for the inserted text
 			if (tag == null) {
 				tag = LineTag.FindTag(line, pos);
@@ -2114,7 +2114,8 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			}
 
 			insert_lines = ins.Length;
-
+			old_line_count = lines;
+			
 			// Bump the text at insertion point a line down if we're inserting more than one line
 			if (insert_lines > 1) {
 				Split(line, pos);
@@ -2129,16 +2130,16 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 					Add(base_line + i, ins[i], line.alignment, tag.font, tag.color);
 				}
 				if (!s.EndsWith("\n\n")) {
-					this.Combine(base_line + insert_lines - 1, base_line + insert_lines);
+					this.Combine(base_line + (lines - old_line_count) - 1, base_line + lines - old_line_count);
 				}
 			}
 
-			UpdateView(line, insert_lines + 1, pos);
+			UpdateView(line, lines - old_line_count, pos);
 
 			if (update_caret) {
 				// Move caret to the end of the inserted text
 				if (insert_lines > 1) {
-					Line l = GetLine (line.line_no + insert_lines + 1);
+					Line l = GetLine (line.line_no + lines - old_line_count);
 					PositionCaret(l, l.text.Length);
 				} else {
 					PositionCaret(line, pos + ins[0].Length);

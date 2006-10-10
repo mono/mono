@@ -2,6 +2,9 @@
 
 	* MenuItem.cs: Make sure to put the mdi child in the hashtable,
 	not the parent form.
+	* TextControl.cs: use difference in old line count vs new count to
+	calculate how many lines were added, this takes into account soft
+	line breaks properly.
 
 2006-10-10  Chris Toshok  <toshok@ximian.com>
 
