@@ -1,4 +1,9 @@
 
+Tue Oct 10 11:45:50 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* debug-mono-symfile.c: properly check fopen () result (found by
+	coverity).
+
 Tue Oct 10 11:30:52 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: make error message clearer and fixed two
