@@ -1,3 +1,6 @@
+2006-10-10 Yoni Klain <yonik@mainsoft.com>
+	* System.Web.UI.WebControls.CustomValidatorTest.cs new tests added;
+
 2006-10-04 Yoni Klain <yonik@mainsoft.com>
 	* System.Web.UI.Page.Test.cs new tests added;
     * MakeFile: add new resources for PageTest.cs :

@@ -3,6 +3,7 @@
 //
 // Author:
 //	Peter Dennis Bartok (pbartok@novell.com)
+//      Klain Yoni          (yonik@mainsoft.com)
 //
 
 //
@@ -145,6 +146,51 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+		[Category("NotWorking")]
+		public void DefaultsNotWorking ()
+		{
+			CustomValidatorTestClass c = new CustomValidatorTestClass ();
+#if NET_2_0
+			Assert.AreEqual (false, c.ValidateEmptyText, "ValidateEmptyText");
+#endif
+		}
+
+
+#if NET_2_0
+		// Variable for checking events 
+		private bool checker;
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ValidateEmptyText ()
+		{
+			CustomValidatorTestClass c = new CustomValidatorTestClass ();
+			Page p = new Page ();
+			TextBox tb = new TextBox ();
+			tb.ID = "tb";
+			
+			CustomValidator v = new CustomValidator ();
+			v.ServerValidate += new ServerValidateEventHandler (ServerValidate);
+			v.ControlToValidate = "tb";
+			p.Controls.Add (tb);
+			p.Controls.Add (v);
+
+			v.Validate ();
+			Assert.AreEqual (false, checker, "Validate with ValidateEmptyText = false");
+			v.ValidateEmptyText = true;
+			v.Validate ();
+			Assert.AreEqual (true, checker, "Validate with ValidateEmptyText = true");
+		}
+
+		void ServerValidate (object source, ServerValidateEventArgs value)
+		{
+			checker = true;
+		}
+#endif
+
+
+		[Test]
+		[Category ("NotWorking")]
 		public void Render () {
 			CustomValidatorTestClass	c;
 			TextBox				t;
