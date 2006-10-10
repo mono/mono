@@ -535,7 +535,7 @@ namespace System.Windows.Forms
 						MenuItem item = new MenuItem (mdichild.Text);
 						item.Click += new EventHandler (MdiWindowClickHandler);
 						MenuItems.AddNoEvents (item);
-						mdilist_items.Add (item, form);
+						mdilist_items [item] = mdichild;
 					}
 
 				} while (false);

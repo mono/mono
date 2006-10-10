@@ -1,3 +1,8 @@
+2006-10-10  Jackson Harper  <jackson@ximian.com>
+
+	* MenuItem.cs: Make sure to put the mdi child in the hashtable,
+	not the parent form.
+
 2006-10-10  Chris Toshok  <toshok@ximian.com>
 
 	* LinkLabel.cs: don't call MeasureCharacterRanges against a
