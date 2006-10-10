@@ -1,3 +1,19 @@
+2006-10-10  Miguel de Icaza  <miguel@novell.com>
+
+	Fixes #59800
+	
+	* typemanager.cs (uintptr_type): another core known type.   
+
+	* ecore.cs (OperatorCast): routine used to do cast operations that
+	depend on op_Explicit.  We could change some of the Decimal
+	conversions to use this.
+
+	This one has a probe mechanism that checks both types for an op_
+	which it coudl be used to eliminate two classes: CastToDecimal
+	and CastFromDecimal.
+
+	* convert.cs: Implement the conversions documented in #59800
+	
 2006-10-10  Martin Baulig  <martin@ximian.com>
 
 	* iterators.cs (Iterator.Resolve): Call RootScope.ResolveType()

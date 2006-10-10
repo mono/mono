@@ -674,13 +674,14 @@ namespace Mono.CSharp {
 
 			if (expr_type == TypeManager.sbyte_type){
 				//
-				// From sbyte to short, int, long, float, double, decimal
+				// From sbyte to short, int, long, float, double, uintptr, decimal
 				//
 				if ((target_type == TypeManager.int32_type) ||
 				    (target_type == TypeManager.int64_type) ||
 				    (target_type == TypeManager.double_type) ||
 				    (target_type == TypeManager.float_type)  ||
 				    (target_type == TypeManager.short_type) ||
+				    (target_type == TypeManager.uintptr_type) ||
 				    (target_type == TypeManager.decimal_type))
 					return true;
 
@@ -701,12 +702,13 @@ namespace Mono.CSharp {
 
 			} else if (expr_type == TypeManager.short_type){
 				//
-				// From short to int, long, double, float, decimal
+				// From short to int, long, double, float, decimal and uintptr
 				//
 				if ((target_type == TypeManager.int32_type) ||
 				    (target_type == TypeManager.int64_type) ||
 				    (target_type == TypeManager.double_type) ||
 				    (target_type == TypeManager.float_type) ||
+				    (target_type == TypeManager.uintptr_type) ||
 				    (target_type == TypeManager.decimal_type))
 					return true;
 
@@ -725,11 +727,12 @@ namespace Mono.CSharp {
 
 			} else if (expr_type == TypeManager.int32_type){
 				//
-				// From int to long, double, float, decimal
+				// From int to long, double, float, decimal, uintptr
 				//
 				if ((target_type == TypeManager.int64_type) ||
 				    (target_type == TypeManager.double_type) ||
 				    (target_type == TypeManager.float_type) ||
+				    (target_type == TypeManager.uintptr_type) ||
 				    (target_type == TypeManager.decimal_type))
 					return true;
 
@@ -773,6 +776,14 @@ namespace Mono.CSharp {
 				// float to double
 				//
 				if (target_type == TypeManager.double_type)
+					return true;
+			} else if (expr_type == TypeManager.uintptr_type){
+				if ((target_type == TypeManager.sbyte_type) ||
+				    (target_type == TypeManager.short_type) ||
+				    (target_type == TypeManager.int32_type))
+					return true;
+			} else if (expr_type == TypeManager.intptr_type){
+				if (target_type == TypeManager.uint64_type)
 					return true;
 			}
 
@@ -1436,6 +1447,24 @@ namespace Mono.CSharp {
 
 		/// <summary>
 		///   Performs the explicit numeric conversions
+		///
+		/// There are a few conversions that are not part of the C# standard,
+		/// they were interim hacks in the C# compiler that were supposed to
+		/// become explicit operators in the UIntPtr class and IntPtr class,
+		/// but for historical reasons it did not happen, so the C# compiler
+		/// ended up with these special hacks.
+		///
+		/// See bug 59800 for details.
+		///
+		/// The conversion are:
+		///   UIntPtr->SByte
+		///   UIntPtr->Int16
+		///   UIntPtr->Int32
+		///   IntPtr->UInt64
+		///   UInt64->IntPtr
+		///   SByte->UIntPtr
+		///   Int16->UIntPtr
+		///
 		/// </summary>
 		public static Expression ExplicitNumericConversion (Expression expr, Type target_type)
 		{
@@ -1444,7 +1473,7 @@ namespace Mono.CSharp {
 
 			if (expr_type == TypeManager.sbyte_type){
 				//
-				// From sbyte to byte, ushort, uint, ulong, char
+				// From sbyte to byte, ushort, uint, ulong, char, uintptr
 				//
 				if (real_target_type == TypeManager.byte_type)
 					return new ConvCast (expr, target_type, ConvCast.Mode.I1_U1);
@@ -1456,6 +1485,13 @@ namespace Mono.CSharp {
 					return new ConvCast (expr, target_type, ConvCast.Mode.I1_U8);
 				if (real_target_type == TypeManager.char_type)
 					return new ConvCast (expr, target_type, ConvCast.Mode.I1_CH);
+
+				// One of the built-in conversions that belonged in the class library
+				if (real_target_type == TypeManager.uintptr_type){
+					Expression u8e = new ConvCast (expr, TypeManager.uint64_type, ConvCast.Mode.I1_U8);
+
+					return new OperatorCast (u8e, TypeManager.uintptr_type, true);
+				}
 			} else if (expr_type == TypeManager.byte_type){
 				//
 				// From byte to sbyte and char
@@ -1466,7 +1502,7 @@ namespace Mono.CSharp {
 					return new ConvCast (expr, target_type, ConvCast.Mode.U1_CH);
 			} else if (expr_type == TypeManager.short_type){
 				//
-				// From short to sbyte, byte, ushort, uint, ulong, char
+				// From short to sbyte, byte, ushort, uint, ulong, char, uintptr
 				//
 				if (real_target_type == TypeManager.sbyte_type)
 					return new ConvCast (expr, target_type, ConvCast.Mode.I2_I1);
@@ -1480,6 +1516,13 @@ namespace Mono.CSharp {
 					return new ConvCast (expr, target_type, ConvCast.Mode.I2_U8);
 				if (real_target_type == TypeManager.char_type)
 					return new ConvCast (expr, target_type, ConvCast.Mode.I2_CH);
+
+				// One of the built-in conversions that belonged in the class library
+				if (real_target_type == TypeManager.uintptr_type){
+					Expression u8e = new ConvCast (expr, TypeManager.uint64_type, ConvCast.Mode.I2_U8);
+
+					return new OperatorCast (u8e, TypeManager.uintptr_type, true);
+				}
 			} else if (expr_type == TypeManager.ushort_type){
 				//
 				// From ushort to sbyte, byte, short, char
@@ -1494,7 +1537,7 @@ namespace Mono.CSharp {
 					return new ConvCast (expr, target_type, ConvCast.Mode.U2_CH);
 			} else if (expr_type == TypeManager.int32_type){
 				//
-				// From int to sbyte, byte, short, ushort, uint, ulong, char
+				// From int to sbyte, byte, short, ushort, uint, ulong, char, uintptr
 				//
 				if (real_target_type == TypeManager.sbyte_type)
 					return new ConvCast (expr, target_type, ConvCast.Mode.I4_I1);
@@ -1510,6 +1553,13 @@ namespace Mono.CSharp {
 					return new ConvCast (expr, target_type, ConvCast.Mode.I4_U8);
 				if (real_target_type == TypeManager.char_type)
 					return new ConvCast (expr, target_type, ConvCast.Mode.I4_CH);
+
+				// One of the built-in conversions that belonged in the class library
+				if (real_target_type == TypeManager.uintptr_type){
+					Expression u8e = new ConvCast (expr, TypeManager.uint64_type, ConvCast.Mode.I2_U8);
+
+					return new OperatorCast (u8e, TypeManager.uintptr_type, true);
+				}
 			} else if (expr_type == TypeManager.uint32_type){
 				//
 				// From uint to sbyte, byte, short, ushort, int, char
@@ -1566,6 +1616,12 @@ namespace Mono.CSharp {
 					return new ConvCast (expr, target_type, ConvCast.Mode.U8_I8);
 				if (real_target_type == TypeManager.char_type)
 					return new ConvCast (expr, target_type, ConvCast.Mode.U8_CH);
+
+				// One of the built-in conversions that belonged in the class library
+				if (real_target_type == TypeManager.intptr_type){
+					return new OperatorCast (new EmptyCast (expr, TypeManager.int64_type),
+								 TypeManager.intptr_type, true);
+				}
 			} else if (expr_type == TypeManager.char_type){
 				//
 				// From char to sbyte, byte, short
@@ -1630,6 +1686,28 @@ namespace Mono.CSharp {
 					return new ConvCast (expr, target_type, ConvCast.Mode.R8_R4);
 				if (real_target_type == TypeManager.decimal_type)
 					return new CastToDecimal (expr, true);
+			} else if (expr_type == TypeManager.uintptr_type){
+				//
+				// Various built-in conversions that belonged in the class library
+				//
+				// from uintptr to sbyte, short, int32
+				//
+				if (real_target_type == TypeManager.sbyte_type){
+					Expression uint32e = new OperatorCast (expr, TypeManager.uint32_type, true);
+					return new ConvCast (uint32e, TypeManager.sbyte_type, ConvCast.Mode.U4_I1);
+				}
+				if (real_target_type == TypeManager.short_type){
+					Expression uint32e = new OperatorCast (expr, TypeManager.uint32_type, true);
+					return new ConvCast (uint32e, TypeManager.sbyte_type, ConvCast.Mode.U4_I2);
+				}
+				if (real_target_type == TypeManager.int32_type)
+					return new EmptyCast (new OperatorCast (expr, TypeManager.uint64_type, true),
+							      TypeManager.int32_type);
+			} else if (expr_type == TypeManager.intptr_type){
+				if (real_target_type == TypeManager.uint64_type){
+					return new EmptyCast (new OperatorCast (expr, TypeManager.int64_type, true),
+							      TypeManager.uint64_type);
+				}
 			} else if (expr_type == TypeManager.decimal_type) {
 				return new CastFromDecimal (expr, target_type).Resolve ();
 			}

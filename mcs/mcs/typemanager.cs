@@ -70,6 +70,7 @@ public partial class TypeManager {
 	static public Type iasyncresult_type;
 	static public Type asynccallback_type;
 	static public Type intptr_type;
+	static public Type uintptr_type;
 	static public Type monitor_type;
 	static public Type interlocked_type;
 	static public Type runtime_field_handle_type;
@@ -298,7 +299,7 @@ public partial class TypeManager {
 
 		if (!(mi is MethodBase))
 			return false;
-		
+
 		if (mi.Name != sig.name)
 			return false;
 
@@ -899,7 +900,7 @@ public partial class TypeManager {
 		return GetMethod (t, name, args, false, report_errors);
 	}
 
-	static MethodInfo GetMethod (Type t, string name, Type [] args)
+	public static MethodInfo GetMethod (Type t, string name, Type [] args)
 	{
 		return GetMethod (t, name, args, true);
 	}
@@ -1018,6 +1019,7 @@ public partial class TypeManager {
 		interlocked_type     = CoreLookupType ("System.Threading", "Interlocked");
 		monitor_type         = CoreLookupType ("System.Threading", "Monitor");
 		intptr_type          = CoreLookupType ("System", "IntPtr");
+		uintptr_type         = CoreLookupType ("System", "UIntPtr");
 
 		attribute_type       = CoreLookupType ("System", "Attribute");
 		attribute_usage_type = CoreLookupType ("System", "AttributeUsageAttribute");

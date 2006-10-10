@@ -1266,11 +1266,68 @@ namespace Mono.CSharp {
 		}
 
 	}
+
+	/// <summary>
+	///    Performs a cast using an operator (op_Explicit or op_Implicit)
+	/// </summary>
+	public class OperatorCast : EmptyCast {
+		MethodInfo conversion_operator;
+		bool find_explicit;
+			
+		public OperatorCast (Expression child, Type target_type) : this (child, target_type, false) {}
+
+		public OperatorCast (Expression child, Type target_type, bool find_explicit)
+			: base (child, target_type)
+		{
+			this.find_explicit = find_explicit;
+		}
+
+		// Returns the implicit operator that converts from
+		// 'child.Type' to our target type (type)
+		MethodInfo GetConversionOperator (bool find_explicit)
+		{
+			string operator_name = find_explicit ? "op_Explicit" : "op_Implicit";
+
+			MemberInfo [] mi;
+
+			mi = TypeManager.MemberLookup (child.Type, child.Type, child.Type, MemberTypes.Method,
+				BindingFlags.Static | BindingFlags.Public, operator_name, null);
+
+			if (mi == null){
+				mi = TypeManager.MemberLookup (type, type, type, MemberTypes.Method,
+							       BindingFlags.Static | BindingFlags.Public, operator_name, null);
+			}
+			
+			foreach (MethodInfo oper in mi) {
+				ParameterData pd = TypeManager.GetParameterData (oper);
+
+				if (pd.ParameterType (0) == child.Type && oper.ReturnType == type)
+					return oper;
+			}
+
+			return null;
+
+
+		}
+		public override void Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+
+			child.Emit (ec);
+			conversion_operator = GetConversionOperator (find_explicit);
+
+			if (conversion_operator == null)
+				throw new InternalErrorException ("Outer conversion routine is out of sync");
+
+			ig.Emit (OpCodes.Call, conversion_operator);
+		}
+		
+	}
+	
 	/// <summary>
 	/// 	This is a numeric cast to a Decimal
 	/// </summary>
 	public class CastToDecimal : EmptyCast {
-
 		MethodInfo conversion_operator;
 
 		public CastToDecimal (Expression child)
@@ -1358,6 +1415,7 @@ namespace Mono.CSharp {
 		}
 	}
 
+	
 	//
 	// Constant specialization of EmptyCast.
 	// We need to special case this since an empty cast of
