@@ -1,3 +1,9 @@
+2006-10-09  Miguel de Icaza  <miguel@novell.com>
+
+	* strtod.c: Replace the BSD implementation which was fairly old
+	and complex with a cleaner version from Tcl/Tk.   Fixes the hang
+	that we have in the Double parsing tests in our class libraries.
+
 2006-09-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* strtod.c (IEEE_8087): Applied patch from Sergey Tikhonov <tsv@solvo.ru>. Define
