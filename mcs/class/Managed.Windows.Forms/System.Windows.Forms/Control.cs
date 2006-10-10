@@ -3982,8 +3982,7 @@ namespace System.Windows.Forms
 					Rectangle old_clip_rect = Rectangle.Empty;
 					if (ThemeEngine.Current.DoubleBufferingSupported) {
 						if ((control_style & ControlStyles.DoubleBuffer) != 0) {
-							old_clip_rect = paint_event.ClipRectangle;
-							paint_event.ClipRectangle = ClientRectangle;
+							old_clip_rect = paint_event.SetClipRectangle (ClientRectangle);
 							dc = paint_event.SetGraphics (DeviceContext);
 							reset_context = true;
 						}
@@ -4003,7 +4002,7 @@ namespace System.Windows.Forms
 
 					if (ThemeEngine.Current.DoubleBufferingSupported)
 						if ((control_style & ControlStyles.DoubleBuffer) != 0) {
-							paint_event.ClipRectangle = old_clip_rect;
+							paint_event.SetClipRectangle (old_clip_rect);
 							dc.DrawImage (ImageBuffer, paint_event.ClipRectangle, paint_event.ClipRectangle, GraphicsUnit.Pixel);
 							paint_event.SetGraphics (dc);
 							needs_redraw = false;

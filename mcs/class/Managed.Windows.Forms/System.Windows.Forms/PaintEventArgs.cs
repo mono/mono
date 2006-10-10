@@ -52,9 +52,6 @@ namespace System.Windows.Forms {
 			get {
 				return this.clip_rectangle;
 			}
-			internal set {
-				this.clip_rectangle = value;
-			}
 		}
 
 		public Graphics Graphics {
@@ -76,6 +73,14 @@ namespace System.Windows.Forms {
 		{
 			Graphics res = graphics;
 			graphics = g;
+
+			return res;
+		}
+
+		internal Rectangle SetClipRectangle (Rectangle r)
+		{
+			Rectangle res = clip_rectangle;
+			clip_rectangle = r;
 
 			return res;
 		}

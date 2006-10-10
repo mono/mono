@@ -1,5 +1,10 @@
 2006-10-10  Chris Toshok  <toshok@ximian.com>
 
+	* Control.cs, PaintEventArgs.cs: "internal set { .. }" isn't loved
+	by .net 1.1, so switch to an internal method instead.
+
+2006-10-10  Chris Toshok  <toshok@ximian.com>
+
 	* Control.cs (WM_PAINT): when a control is double buffered we draw
 	initially to the ImageBuffer and then copy from there.  But when a
 	parent control which has child controls is double buffered, the
