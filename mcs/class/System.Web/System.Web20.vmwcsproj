@@ -475,6 +475,7 @@
 		<Compile Include="System.Web.UI.WebControls\CompleteWizardStep.cs"/>
 		<Compile Include="System.Web.UI.WebControls\CompositeControl.cs"/>
 		<Compile Include="System.Web.UI.WebControls\CompositeDataBoundControl.cs"/>
+		<Compile Include="System.Web.UI.WebControls\ContainedTable.cs"/>
 		<Compile Include="System.Web.UI.WebControls\Content.cs"/>
 		<Compile Include="System.Web.UI.WebControls\ContentDirection.cs"/>
 		<Compile Include="System.Web.UI.WebControls\ContentPlaceHolder.cs"/>
