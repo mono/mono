@@ -1682,7 +1682,7 @@ namespace System.Windows.Forms {
 			// FIXME - handle auto-scrolling if mouse is to the right/left of the window
 			if (Capture) {
 
-				if (e.X < Left || e.X > Right) {
+				if (!bounds.Contains (e.X, e.Y)) {
 					if (scroll_timer == null) {
 						scroll_timer = new Timer ();
 						scroll_timer.Interval = 100;
@@ -1737,6 +1737,16 @@ namespace System.Windows.Forms {
 				CaretMoved(this, null);
 			} else if (pt.X > bounds.Right) {
 				document.MoveCaret(CaretDirection.CharForwardNoWrap);
+				document.SetSelectionToCaret(false);
+				
+				CaretMoved(this, null);
+			} else if (pt.Y > bounds.Bottom) {
+				document.MoveCaret(CaretDirection.LineDown);
+				document.SetSelectionToCaret(false);
+				
+				CaretMoved(this, null);
+			} else if (pt.Y < bounds.Top) {
+				document.MoveCaret(CaretDirection.LineUp);
 				document.SetSelectionToCaret(false);
 				
 				CaretMoved(this, null);

@@ -1,3 +1,7 @@
+2006-10-10  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: Finish off the autoscrolling stuff.
+
 2006-10-10  Chris Toshok  <toshok@ximian.com>
 
 	* Cursor.cs: Apply a slightly different patch to the one suggested
