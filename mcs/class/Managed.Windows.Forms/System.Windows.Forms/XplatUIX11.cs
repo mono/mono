@@ -4380,8 +4380,6 @@ namespace System.Windows.Forms {
 						return;
 					}
 
-					Control c = Control.FromHandle (child_hwnd.Handle);
-
 					XEvent xevent = new XEvent ();
 
 					xevent.type = XEventName.MotionNotify;
