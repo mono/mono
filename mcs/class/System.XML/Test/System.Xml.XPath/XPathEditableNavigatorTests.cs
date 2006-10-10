@@ -750,6 +750,14 @@ namespace MonoTests.System.Xml.XPath
 			w.Close ();
 			Assert.IsNotNull (f.FirstChild as XmlElement);
 		}
+
+		[Test]
+		public void CanEdit ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			Assert.IsTrue (doc.CreateNavigator ().CanEdit);
+			Assert.IsTrue (GetInstance ("<root/>").CanEdit);
+		}
 	}
 }
 

@@ -1,3 +1,8 @@
+2006-10-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathEditableDocument.cs : (XmlDocumentEditableNavigator)
+	  implement CanEdit to return true.
+
 2006-09-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathEditableDocument.cs : DocumentFragment should also be allowed

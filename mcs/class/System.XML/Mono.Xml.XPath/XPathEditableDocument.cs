@@ -452,6 +452,10 @@ namespace Mono.Xml.XPath
 			get { return navigator.BaseURI; }
 		}
 
+		public override bool CanEdit {
+			get { return true; }
+		}
+
 		public override bool IsEmptyElement {
 			get { return navigator.IsEmptyElement; }
 		}
