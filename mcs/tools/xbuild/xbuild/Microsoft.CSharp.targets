@@ -29,6 +29,7 @@
 	<Target Name="ResolveAssemblyReferences">
 		<ResolveAssemblyReference
 			Assemblies="@(Reference)"
+			SearchPaths=" "
 		>
 			<Output TaskParameter="ResolvedFiles" ItemName="ResolvedFiles"/>
 		</ResolveAssemblyReference>
