@@ -34,6 +34,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
 using System.Globalization;
+using System.IO;
 
 namespace Mainsoft.Data.Configuration
 {
@@ -44,6 +45,7 @@ namespace Mainsoft.Data.Configuration
 		private readonly IDictionary _dictionary;
 		private readonly NameValueCollection _mapping;
 		private readonly NameValueCollection _actualKeys;
+		const string DataDirectoryPlaceholder = "|DataDirectory|";
 
 		#endregion // Fields
 
@@ -95,6 +97,17 @@ namespace Mainsoft.Data.Configuration
 				return userParameters;
 			}
 			//connectionString += ";";
+
+			if (connectionString.IndexOf (DataDirectoryPlaceholder, StringComparison.Ordinal) >= 0) {
+				string dataDirectory = (string) AppDomain.CurrentDomain.GetData ("DataDirectory");
+				if (dataDirectory != null && dataDirectory.Length > 0) {
+					char lastChar = dataDirectory [dataDirectory.Length - 1];
+					if (lastChar != Path.DirectorySeparatorChar &&
+						lastChar != Path.AltDirectorySeparatorChar)
+						dataDirectory += '/';
+				}
+				connectionString.Replace (DataDirectoryPlaceholder, dataDirectory);
+			}
 
 			bool inQuote = false;
 			bool inDQuote = false;
