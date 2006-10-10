@@ -582,13 +582,9 @@ namespace System.Windows.Forms
 			string_format.FormatFlags = StringFormatFlags.NoClip;
 			string_format.SetMeasurableCharacterRanges (ranges);
 
-			SizeF size = DeviceContext.MeasureString (Text, link_font, ClientRectangle.Location, string_format);
-
-			RectangleF layout_rect = new RectangleF (0.0f, 0.0f, size.Width, size.Height);			
-
 			Region[] regions = DeviceContext.MeasureCharacterRanges (Text,
 										 link_font,
-										 layout_rect,
+										 ClientRectangle,
 										 string_format);
 
 			for (int i = 0; i < pieces.Length; i ++)
