@@ -1,3 +1,19 @@
+2006-10-10  Chris Toshok  <toshok@ximian.com>
+
+	* Control.cs (WM_PAINT): when a control is double buffered we draw
+	initially to the ImageBuffer and then copy from there.  But when a
+	parent control which has child controls is double buffered, the
+	initial drawing doesn't encompass the entire ClientRectangle of
+	the parent control, so we end up with uninitialized bits (this is
+	easily seen by dragging the top toolbar in
+	wf-apps/ToolBarDockExample to the right, quickly).  The fix is to
+	manually set the ClipRectangle of the paint_event (only the one we
+	use to populate the ImageBuffer) to ClientRectangle.  Fixes more
+	of the nastiness in bug #72499.
+
+	* PaintEventArgs.cs: Add an internal setter for ClipRectangle,
+	which we use in Control.cs's WM_PAINT handling.
+
 2006-10-10  Jackson Harper  <jackson@ximian.com>
 
 	* TextBoxBase.cs: Finish off the autoscrolling stuff.
