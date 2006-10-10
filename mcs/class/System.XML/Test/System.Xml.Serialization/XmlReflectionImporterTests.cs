@@ -1237,6 +1237,121 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		public void TypeMapping_InvalidDefault ()
+		{
+			XmlAttributes attrs = new XmlAttributes (typeof (Field).GetMember ("Modifiers") [0]);
+			attrs.XmlDefaultValue = 2; // not a defined enum value
+			XmlAttributeOverrides overrides = new XmlAttributeOverrides ();
+			overrides.Add (typeof (Field), "Modifiers", attrs);
+
+			try {
+				Map (typeof (Field), overrides);
+				Assert.Fail ("#A1");
+			} catch (InvalidOperationException ex) {
+				// There was an error reflecting type MonoTests.System.Xml.TestClasses.Field
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+				Assert.IsNotNull (ex.Message, "#A3");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (Field).FullName) != -1, "#A4");
+				Assert.IsNotNull (ex.InnerException, "#A5");
+
+				// There was an error reflecting field 'Modifiers'
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#A6");
+				Assert.IsNotNull (ex.InnerException.Message, "#A7");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'Modifiers'") != -1, "#A8");
+				Assert.IsNotNull (ex.InnerException.InnerException, "#A9");
+
+				// Value '2' cannot be converted to System.Int32
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.InnerException.GetType (), "#A10");
+				Assert.IsNotNull (ex.InnerException.InnerException.Message, "#A11");
+				Assert.IsTrue (ex.InnerException.InnerException.Message.IndexOf ("'2'") != -1, "#A12");
+				Assert.IsTrue (ex.InnerException.InnerException.Message.IndexOf (typeof (int).FullName) != -1, "#A13");
+				Assert.IsNull (ex.InnerException.InnerException.InnerException, "#A14");
+			}
+
+			attrs.XmlDefaultValue = "2"; // not of the same type as the underlying enum type (System.Int32)
+
+			try {
+				Map (typeof (Field), overrides);
+				Assert.Fail ("#B1");
+			} catch (InvalidOperationException ex) {
+				// There was an error reflecting type MonoTests.System.Xml.TestClasses.Field
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (Field).FullName) != -1, "#B4");
+				Assert.IsNotNull (ex.InnerException, "#B5");
+
+				// There was an error reflecting field 'Modifiers'
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#B6");
+				Assert.IsNotNull (ex.InnerException.Message, "#B7");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'Modifiers'") != -1, "#B8");
+				Assert.IsNotNull (ex.InnerException.InnerException, "#B9");
+
+				// Enum underlying type and the object must be same type or object.
+				// Type passed in was 'System.String'; the enum underlying type was
+				// 'System.Int32'.
+				Assert.AreEqual (typeof (ArgumentException), ex.InnerException.InnerException.GetType (), "#B10");
+				Assert.IsNotNull (ex.InnerException.InnerException.Message, "#B11");
+				Assert.IsTrue (ex.InnerException.InnerException.Message.IndexOf (typeof (string).FullName) != -1, "#B12");
+				Assert.IsTrue (ex.InnerException.InnerException.Message.IndexOf (typeof (int).FullName) != -1, "#B13");
+				Assert.IsNull (ex.InnerException.InnerException.InnerException, "#B14");
+			}
+
+			attrs.XmlDefaultValue = EnumDefaultValueNF.e2; // other enum type
+
+			try {
+				Map (typeof (Field), overrides);
+				Assert.Fail ("#C1");
+			} catch (InvalidOperationException ex) {
+				// There was an error reflecting type MonoTests.System.Xml.TestClasses.Field
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#C2");
+				Assert.IsNotNull (ex.Message, "#C3");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (Field).FullName) != -1, "#C4");
+				Assert.IsNotNull (ex.InnerException, "#C5");
+
+				// There was an error reflecting field 'Modifiers'
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#C6");
+				Assert.IsNotNull (ex.InnerException.Message, "#C7");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'Modifiers'") != -1, "#C8");
+				Assert.IsNotNull (ex.InnerException.InnerException, "#C9");
+
+				// Object must be the same type as the enum. The type passed in
+				// was MonoTests.System.Xml.TestClasses.EnumDefaultValueNF; the
+				// enum type was MonoTests.System.Xml.TestClasses.MapModifiers
+				Assert.AreEqual (typeof (ArgumentException), ex.InnerException.InnerException.GetType (), "#C10");
+				Assert.IsNotNull (ex.InnerException.InnerException.Message, "#C11");
+				Assert.IsTrue (ex.InnerException.InnerException.Message.IndexOf (typeof (EnumDefaultValueNF).FullName) != -1, "#C12");
+				Assert.IsTrue (ex.InnerException.InnerException.Message.IndexOf (typeof (MapModifiers).FullName) != -1, "#C13");
+				Assert.IsNull (ex.InnerException.InnerException.InnerException, "#C14");
+			}
+
+			attrs.XmlDefaultValue = (MapModifiers) 20; // non-existing enum value
+
+			try {
+				Map (typeof (Field), overrides);
+				Assert.Fail ("#D1");
+			} catch (InvalidOperationException ex) {
+				// There was an error reflecting type MonoTests.System.Xml.TestClasses.Field
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#D2");
+				Assert.IsNotNull (ex.Message, "#D3");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (Field).FullName) != -1, "#D4");
+				Assert.IsNotNull (ex.InnerException, "#D5");
+
+				// There was an error reflecting field 'Modifiers'
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#D6");
+				Assert.IsNotNull (ex.InnerException.Message, "#D7");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'Modifiers'") != -1, "#D8");
+				Assert.IsNotNull (ex.InnerException.InnerException, "#D9");
+
+				// Value '20' cannot be converted to MonoTests.System.Xml.TestClasses.MapModifiers
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.InnerException.GetType (), "#D10");
+				Assert.IsNotNull (ex.InnerException.InnerException.Message, "#D11");
+				Assert.IsTrue (ex.InnerException.InnerException.Message.IndexOf ("'20'") != -1, "#D12");
+				Assert.IsTrue (ex.InnerException.InnerException.Message.IndexOf (typeof (MapModifiers).FullName) != -1, "#D13");
+				Assert.IsNull (ex.InnerException.InnerException.InnerException, "#D14");
+			}
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void TypeMapping_Null ()
 		{

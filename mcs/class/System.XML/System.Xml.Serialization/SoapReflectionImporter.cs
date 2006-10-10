@@ -520,7 +520,9 @@ namespace System.Xml.Serialization {
 				throw new InvalidOperationException (msg);
 			}
 
-			return namedValue.Replace (',', ' ');
+			// XmlSerializer expects integral enum value
+			//return namedValue.Replace (',', ' ');
+			return defaultValue;
 		}
 
 		#endregion // Methods

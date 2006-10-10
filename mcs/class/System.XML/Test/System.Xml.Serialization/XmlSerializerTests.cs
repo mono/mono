@@ -60,14 +60,12 @@ namespace MonoTests.System.XmlSerialization
 			xtw.Formatting = Formatting.None;
 		}
 		
-		private string WriterText 
-		{
-			get
-			{
-				string val = sw.GetStringBuilder().ToString();
-				int offset = val.IndexOf('>') + 1;
-				val = val.Substring(offset);
-				return Infoset(val);
+		private string WriterText {
+			get {
+				string val = sw.GetStringBuilder ().ToString ();
+				int offset = val.IndexOf ('>') + 1;
+				val = val.Substring (offset);
+				return Infoset (val);
 			}
 		}
 
@@ -122,6 +120,13 @@ namespace MonoTests.System.XmlSerialization
 		{
 			XmlTypeMapping mapping = CreateSoapMapping (type);
 			SetUpWriter ();
+			xs = new XmlSerializer (mapping);
+			xs.Serialize (xtw, o);
+		}
+
+		private void SerializeEncoded (XmlTextWriter xtw, object o, Type type)
+		{
+			XmlTypeMapping mapping = CreateSoapMapping (type);
 			xs = new XmlSerializer (mapping);
 			xs.Serialize (xtw, o);
 		}
@@ -620,6 +625,204 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		public void TestSerializeField ()
+		{
+			Field f = new Field ();
+			Serialize (f, typeof (Field));
+			Assert.AreEqual (Infoset ("<field xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' flag1='' flag2='' flag3='' flag4='' modifiers='public' modifiers2='public' modifiers4='public' />"), WriterText, "#A");
+
+			f.Flags1 = FlagEnum.e1;
+			f.Flags2 = FlagEnum.e1;
+			f.Flags3 = FlagEnum.e2;
+			f.Modifiers = MapModifiers.Protected;
+			f.Modifiers2 = MapModifiers.Public;
+			f.Modifiers3 = MapModifiers.Public;
+			f.Modifiers4 = MapModifiers.Protected;
+			f.Modifiers5 = MapModifiers.Public;
+			Serialize (f, typeof (Field));
+			Assert.AreEqual (Infoset ("<field xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' flag3='two' flag4='' modifiers='protected' modifiers2='public' />"), WriterText, "#B");
+
+			f.Flags1 = (FlagEnum) 1;
+			f.Flags1 = FlagEnum.e2;
+			f.Flags2 = FlagEnum.e2;
+			f.Flags3 = FlagEnum.e1 |FlagEnum.e2;
+			f.Modifiers = MapModifiers.Public;
+			f.Modifiers2 = MapModifiers.Protected;
+			f.Modifiers3 = MapModifiers.Protected;
+			f.Modifiers4 = MapModifiers.Public;
+			f.Modifiers5 = MapModifiers.Protected;
+			Serialize (f, typeof (Field));
+			Assert.AreEqual (Infoset ("<field xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' flag1='two' flag2='two' flag4='' modifiers='public' modifiers2='protected' modifiers3='protected' modifiers4='public' modifiers5='protected' />"), WriterText, "#C");
+
+			f.Flags2 = (FlagEnum) 444;
+			f.Flags3 = (FlagEnum) 555;
+			f.Modifiers = (MapModifiers) 666;
+			f.Modifiers2 = (MapModifiers) 777;
+			f.Modifiers3 = (MapModifiers) 0;
+			f.Modifiers4 = (MapModifiers) 888;
+			f.Modifiers5 = (MapModifiers) 999;
+#if NET_2_0
+			try {
+				Serialize (f, typeof (Field));
+				Assert.Fail ("#D1");
+			} catch (InvalidOperationException ex) {
+				// There was an error generating the XML document
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#D2");
+				Assert.IsNotNull (ex.Message, "#D3");
+				Assert.IsNotNull (ex.InnerException, "#D4");
+
+				// Instance validation error: '444' is not a valid value for
+				// MonoTests.System.Xml.TestClasses.FlagEnum
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#D5");
+				Assert.IsNotNull (ex.InnerException.Message, "#D6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'444'") != -1, "#D7");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (FlagEnum).FullName) != -1, "#D8");
+				Assert.IsNull (ex.InnerException.InnerException, "#D9");
+			}
+#else
+			Serialize (f, typeof (Field));
+			Assert.AreEqual (Infoset ("<field xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' flag1='two' flag2='444' flag3='555' flag4='' modifiers='666' modifiers2='777' modifiers4='888' modifiers5='999' />"), WriterText, "#D");
+#endif
+		}
+
+		[Test]
+		[Category ("NotDotNet")] // MS bug
+		public void TestSerializeField_Encoded ()
+		{
+			Field_Encoded f = new Field_Encoded ();
+			SerializeEncoded (f, typeof (Field_Encoded));
+			Assert.AreEqual ("<?xml version='1.0' encoding='utf-16'?>"
+				+ "<q1:field xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' id='id1' flag1='' flag2='' flag3='' flag4='' modifiers='PuBlIc' modifiers2='PuBlIc' modifiers4='PuBlIc' xmlns:q1='some:urn' />",
+				sw.GetStringBuilder ().ToString (), "#A");
+
+			f.Flags1 = FlagEnum_Encoded.e1;
+			f.Flags2 = FlagEnum_Encoded.e1;
+			f.Flags3 = FlagEnum_Encoded.e2;
+			f.Modifiers = MapModifiers.Protected;
+			f.Modifiers2 = MapModifiers.Public;
+			f.Modifiers3 = MapModifiers.Public;
+			f.Modifiers4 = MapModifiers.Protected;
+			f.Modifiers5 = MapModifiers.Public;
+			SerializeEncoded (f, typeof (Field_Encoded));
+			Assert.AreEqual ("<?xml version='1.0' encoding='utf-16'?>"
+				+ "<q1:field xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' id='id1' flag3='two' flag4='' modifiers='Protected' modifiers2='PuBlIc' xmlns:q1='some:urn' />",
+				sw.GetStringBuilder ().ToString (), "#B");
+
+			f.Flags1 = FlagEnum_Encoded.e2;
+			f.Flags2 = FlagEnum_Encoded.e2;
+			f.Flags3 = FlagEnum_Encoded.e1 | FlagEnum_Encoded.e2;
+			f.Modifiers = MapModifiers.Public;
+			f.Modifiers2 = MapModifiers.Protected;
+			f.Modifiers3 = MapModifiers.Protected;
+			f.Modifiers4 = MapModifiers.Public;
+			f.Modifiers5 = MapModifiers.Protected;
+			SerializeEncoded (f, typeof (Field_Encoded));
+			Assert.AreEqual ("<?xml version='1.0' encoding='utf-16'?>"
+				+ "<q1:field xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' id='id1' flag1='two' flag2='two' flag4='' modifiers='PuBlIc' modifiers2='Protected' modifiers3='Protected' modifiers4='PuBlIc' modifiers5='Protected' xmlns:q1='some:urn' />",
+				sw.GetStringBuilder ().ToString (), "#C");
+
+			f.Flags1 = (FlagEnum_Encoded) 1;
+			f.Flags2 = (FlagEnum_Encoded) 444;
+			f.Flags3 = (FlagEnum_Encoded) 555;
+			f.Modifiers = (MapModifiers) 666;
+			f.Modifiers2 = (MapModifiers) 777;
+			f.Modifiers3 = (MapModifiers) 0;
+			f.Modifiers4 = (MapModifiers) 888;
+			f.Modifiers5 = (MapModifiers) 999;
+#if NET_2_0
+			try {
+#endif
+				SerializeEncoded (f, typeof (Field_Encoded));
+#if NET_2_0
+				Assert.Fail ("#D1");
+			} catch (InvalidOperationException ex) {
+				// There was an error generating the XML document
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#D2");
+				Assert.IsNotNull (ex.Message, "#D3");
+				Assert.IsNotNull (ex.InnerException, "#D4");
+
+				// Instance validation error: '444' is not a valid value for
+				// MonoTests.System.Xml.TestClasses.FlagEnum_Encoded
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#D5");
+				Assert.IsNotNull (ex.InnerException.Message, "#D6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'444'") != -1, "#D7");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (FlagEnum_Encoded).FullName) != -1, "#D8");
+				Assert.IsNull (ex.InnerException.InnerException, "#D9");
+			}
+#else
+				Assert.AreEqual ("<?xml version='1.0' encoding='utf-16'?>"
+					+ "<q1:field xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' id='id1' flag2='444' flag3='555' flag4='' modifiers='666' modifiers2='777' modifiers4='888' modifiers5='999' xmlns:q1='some:urn' />",
+					sw.GetStringBuilder ().ToString (), "#D");
+#endif
+		}
+
+		[Test]
+		public void TestSerializeGroup ()
+		{
+			Group myGroup = new Group();
+			myGroup.GroupName = ".NET";
+
+			Byte [] hexByte = new Byte[] { 0x64, 0x32 };
+			myGroup.GroupNumber = hexByte;
+
+			DateTime myDate = new DateTime(2002,5,2);
+			myGroup.Today = myDate;
+			myGroup.PostitiveInt= "10000";
+			myGroup.IgnoreThis = true;
+			Car thisCar =(Car)  myGroup.myCar("1234566");
+			myGroup.MyVehicle = thisCar;
+
+			SetUpWriter ();
+			xtw.WriteStartDocument (true);
+			xtw.WriteStartElement ("Wrapper");
+			SerializeEncoded (xtw, myGroup, typeof (Group));
+			xtw.WriteEndElement ();
+			xtw.Close ();
+
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<Wrapper>" +
+				"<Group xmlns:xsd='{0}' xmlns:xsi='{1}' xmlns:d2p1='http://www.cpandl.com' CreationDate='2002-05-02' d2p1:GroupName='.NET' GroupNumber='ZDI=' id='id1'>" +
+				"<PosInt xsi:type='xsd:nonNegativeInteger'>10000</PosInt>" +
+				"<Grouptype xsi:type='GroupType'>Small</Grouptype>" +
+				"<MyVehicle href='#id2' />" +
+				"</Group>" +
+				"<Car xmlns:d2p1='{1}' id='id2' d2p1:type='Car'>" +
+				"<licenseNumber xmlns:q1='{0}' d2p1:type='q1:string'>1234566</licenseNumber>" +
+				"<makeDate xmlns:q2='{0}' d2p1:type='q2:date'>0001-01-01</makeDate>" +
+				"</Car>" +
+				"</Wrapper>",
+				"http://www.w3.org/2001/XMLSchema", "http://www.w3.org/2001/XMLSchema-instance")),
+				WriterText, "#1");
+
+			myGroup.GroupName = null;
+			myGroup.Grouptype = GroupType.B;
+			myGroup.MyVehicle.licenseNumber = null;
+			myGroup.MyVehicle.weight = "450";
+
+			SetUpWriter ();
+			xtw.WriteStartDocument (true);
+			xtw.WriteStartElement ("Wrapper");
+			SerializeEncoded (xtw, myGroup, typeof (Group));
+			xtw.WriteEndElement ();
+			xtw.Close ();
+
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<Wrapper>" +
+				"<Group xmlns:xsd='{0}' xmlns:xsi='{1}' CreationDate='2002-05-02' GroupNumber='ZDI=' id='id1'>" +
+				"<PosInt xsi:type='xsd:nonNegativeInteger'>10000</PosInt>" +
+				"<Grouptype xsi:type='GroupType'>Large</Grouptype>" +
+				"<MyVehicle href='#id2' />" +
+				"</Group>" +
+				"<Car xmlns:d2p1='{1}' id='id2' d2p1:type='Car'>" +
+				"<makeDate xmlns:q1='{0}' d2p1:type='q1:date'>0001-01-01</makeDate>" +
+				"<weight xmlns:q2='{0}' d2p1:type='q2:string'>450</weight>" +
+				"</Car>" +
+				"</Wrapper>",
+				"http://www.w3.org/2001/XMLSchema", "http://www.w3.org/2001/XMLSchema-instance")),
+				WriterText, "#2");
+		}
+
+		[Test]
 		public void TestSerializeZeroFlagEnum_InvalidValue ()
 		{
 #if NET_2_0
@@ -851,60 +1054,59 @@ namespace MonoTests.System.XmlSerialization
 			try {
 				attr.XmlText = new XmlTextAttribute(typeof(byte[]));
 				Serialize(simple, overrides);
-				Assert.Fail("XmlText.Type does not match the type it serializes: this should have failed");
+				Assert.Fail("#A1: XmlText.Type does not match the type it serializes: this should have failed");
 			} catch (InvalidOperationException ex) {
-				// FIXME
-
-				/*
-				// there was an error reflecting type 'MonoTests.System.Xml.TestClasses.SimpleClass'.
-				Assert.IsNotNull (ex.Message, "#A1");
-				Assert.IsTrue (ex.Message.IndexOf (typeof (SimpleClass).FullName) != -1, "#A2");
+				// there was an error reflecting type 'MonoTests.System.Xml.TestClasses.SimpleClass'
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+				Assert.IsNotNull (ex.Message, "#A3");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (SimpleClass).FullName) != -1, "#A4");
+				Assert.IsNotNull (ex.InnerException, "#A5");
 
 				// there was an error reflecting field 'something'.
-				Assert.IsNotNull (ex.InnerException, "#A3");
-				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#A4");
-				Assert.IsNotNull (ex.InnerException.Message, "#A5");
-				Assert.IsTrue (ex.InnerException.Message.IndexOf ("something") != -1, "#A6");
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#A6");
+				Assert.IsNotNull (ex.InnerException.Message, "#A7");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("something") != -1, "#A8");
+				Assert.IsNotNull (ex.InnerException.InnerException, "#A9");
 
 				// the type for XmlText may not be specified for primitive types.
-				Assert.IsNotNull (ex.InnerException.InnerException, "#A7");
-				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#A8");
-				Assert.IsNotNull (ex.InnerException.Message, "#A9");
-
-				Assert.IsNull (ex.InnerException.InnerException.InnerException, "#A10");
-				*/
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.InnerException.GetType (), "#A10");
+				Assert.IsNotNull (ex.InnerException.InnerException.Message, "#A11");
+				Assert.IsNull (ex.InnerException.InnerException.InnerException, "#A12");
 			}
 			
 			try {
 				attr.XmlText = new XmlTextAttribute();
 				attr.XmlText.DataType = "sometype";
 				Serialize(simple, overrides);
-				Assert.Fail("XmlText.DataType does not match the type it serializes: this should have failed");
+				Assert.Fail("#B1: XmlText.DataType does not match the type it serializes: this should have failed");
 			} catch (InvalidOperationException ex) {
-				// there was an error reflecting type 'MonoTests.System.Xml.TestClasses.SimpleClass'.
-				Assert.IsNotNull (ex.Message, "#B1");
-				Assert.IsTrue (ex.Message.IndexOf (typeof (SimpleClass).FullName) != -1, "#B2");
+				// There was an error reflecting type 'MonoTests.System.Xml.TestClasses.SimpleClass'.
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (SimpleClass).FullName) != -1, "#B4");
+				Assert.IsNotNull (ex.InnerException, "#B5");
 
-				// there was an error reflecting field 'something'.
-				Assert.IsNotNull (ex.InnerException, "#B3");
-				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#B4");
-				Assert.IsNotNull (ex.InnerException.Message, "#B5");
-				Assert.IsTrue (ex.InnerException.Message.IndexOf ("something") != -1, "#B6");
+				// There was an error reflecting field 'something'.
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#B6");
+				Assert.IsNotNull (ex.InnerException.Message, "#B7");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("something") != -1, "#B8");
+				Assert.IsNotNull (ex.InnerException.InnerException, "#B9");
 
-				// there was an error reflecting type 'System.String'.
-				Assert.IsNotNull (ex.InnerException.InnerException, "#B7");
-				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.InnerException.GetType (), "#B8");
-				Assert.IsNotNull (ex.InnerException.InnerException.Message, "#B9");
-				Assert.IsTrue (ex.InnerException.InnerException.Message.IndexOf (typeof (string).FullName) != -1, "#B10");
+				//FIXME
+				/*
+				// There was an error reflecting type 'System.String'.
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.InnerException.GetType (), "#B10");
+				Assert.IsNotNull (ex.InnerException.InnerException.Message, "#B11");
+				Assert.IsTrue (ex.InnerException.InnerException.Message.IndexOf (typeof (string).FullName) != -1, "#B12");
+				Assert.IsNotNull (ex.InnerException.InnerException.InnerException, "#B13");
 
 				// Value 'sometype' cannot be used for the XmlElementAttribute.DataType property. 
 				// The datatype 'http://www.w3.org/2001/XMLSchema:sometype' is missing.
-				Assert.IsNotNull (ex.InnerException.InnerException.InnerException, "#B11");
-				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.InnerException.InnerException.GetType (), "#B12");
-				Assert.IsNotNull (ex.InnerException.InnerException.InnerException.Message, "#B13");
-				Assert.IsTrue (ex.InnerException.InnerException.InnerException.Message.IndexOf ("http://www.w3.org/2001/XMLSchema:sometype") != -1, "#B14");
-			} catch (NotSupportedException ex) {
-				// FIXME: we should report InvalidOperationException
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.InnerException.InnerException.GetType (), "#B14");
+				Assert.IsNotNull (ex.InnerException.InnerException.InnerException.Message, "#B15");
+				Assert.IsTrue (ex.InnerException.InnerException.InnerException.Message.IndexOf ("http://www.w3.org/2001/XMLSchema:sometype") != -1, "#B16");
+				Assert.IsNull (ex.InnerException.InnerException.InnerException.InnerException, "#B17");
+				*/
 			}
 		}
 		

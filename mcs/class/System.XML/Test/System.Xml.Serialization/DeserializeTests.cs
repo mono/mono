@@ -397,7 +397,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (0, cont.Collection4.Count, "#E2");
 			Assert.AreEqual ("root", cont.Collection4.Container, "#E3");
 		}
-		
+
 		[Test]
 		public void TestDeserializeObjectNilCollectionsAreNotNull ()
 		{
@@ -698,6 +698,196 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		[Category ("NotWorking")] // DefaultValue should not be used when deserializing
+		public void TestDeserialize_Field ()
+		{
+			Field f = null;
+
+			f = (Field) Deserialize (typeof (Field),
+				string.Format (CultureInfo.InvariantCulture, "<?xml version='1.0' encoding='utf-16'?>" +
+				"<field xmlns:xsd='{0}' xmlns:xsi='{1}' flag1='' flag2='' flag4='' modifiers='public' modifiers2='public' modifiers4='public' />",
+				XmlSchemaNamespace, XmlSchemaInstanceNamespace));
+			Assert.AreEqual ((FlagEnum) 0, f.Flags1, "#A1");
+			Assert.AreEqual ((FlagEnum) 0, f.Flags2, "#A2");
+			Assert.AreEqual ((FlagEnum) 0, f.Flags3, "#A3");
+			Assert.AreEqual ((FlagEnum) 0, f.Flags4, "#A4");
+			Assert.AreEqual (MapModifiers.Public, f.Modifiers, "#A5");
+			Assert.AreEqual (MapModifiers.Public, f.Modifiers2, "#A6");
+			Assert.AreEqual (MapModifiers.Public, f.Modifiers3, "#A7");
+			Assert.AreEqual (MapModifiers.Public, f.Modifiers4, "#A8");
+			Assert.AreEqual (MapModifiers.Public, f.Modifiers5, "#A9");
+			Assert.IsNull (f.Names, "#A10");
+			Assert.IsNull (f.Street, "#A11");
+
+			f = (Field) Deserialize (typeof (Field),
+				string.Format (CultureInfo.InvariantCulture, "<?xml version='1.0' encoding='utf-16'?>" +
+				"<field xmlns:xsd='{0}' xmlns:xsi='{1}' flag3='two' flag4='' modifiers='protected' modifiers2='public' />",
+				XmlSchemaNamespace, XmlSchemaInstanceNamespace));
+			Assert.AreEqual ((FlagEnum) 0, f.Flags1, "#B1");
+			Assert.AreEqual ((FlagEnum) 0, f.Flags2, "#B2");
+			Assert.AreEqual (FlagEnum.e2, f.Flags3, "#B3");
+			Assert.AreEqual ((FlagEnum) 0, f.Flags4, "#B4");
+			Assert.AreEqual (MapModifiers.Protected, f.Modifiers, "#B5");
+			Assert.AreEqual (MapModifiers.Public, f.Modifiers2, "#B6");
+			Assert.AreEqual (MapModifiers.Public, f.Modifiers3, "#B7");
+			Assert.AreEqual (MapModifiers.Public, f.Modifiers4, "#B8");
+			Assert.AreEqual (MapModifiers.Public, f.Modifiers5, "#B9");
+			Assert.IsNull (f.Names, "#B10");
+			Assert.IsNull (f.Street, "#B11");
+
+			f = (Field) Deserialize (typeof (Field),
+				string.Format (CultureInfo.InvariantCulture, "<?xml version='1.0' encoding='utf-16'?>" +
+				"<field xmlns:xsd='{0}' xmlns:xsi='{1}' flag1='two' flag2='two' flag4='' modifiers='public' modifiers2='protected' modifiers3='protected' modifiers4='public' modifiers5='protected' />",
+				XmlSchemaNamespace, XmlSchemaInstanceNamespace));
+			Assert.AreEqual (FlagEnum.e2, f.Flags1, "#C1");
+			Assert.AreEqual (FlagEnum.e2, f.Flags2, "#C2");
+			Assert.AreEqual ((FlagEnum) 0, f.Flags3, "#C3");
+			Assert.AreEqual ((FlagEnum) 0, f.Flags4, "#C4");
+			Assert.AreEqual (MapModifiers.Public, f.Modifiers, "#C5");
+			Assert.AreEqual (MapModifiers.Protected, f.Modifiers2, "#C6");
+			Assert.AreEqual (MapModifiers.Protected, f.Modifiers3, "#C7");
+			Assert.AreEqual (MapModifiers.Public, f.Modifiers4, "#C8");
+			Assert.AreEqual (MapModifiers.Protected, f.Modifiers5, "#C9");
+			Assert.IsNull (f.Names, "#C10");
+			Assert.IsNull (f.Street, "#C11");
+
+			try {
+				f = (Field) Deserialize (typeof (Field),
+					string.Format (CultureInfo.InvariantCulture, "<?xml version='1.0' encoding='utf-16'?>" +
+					"<field xmlns:xsd='{0}' xmlns:xsi='{1}' flag2='444' />",
+					XmlSchemaNamespace, XmlSchemaInstanceNamespace));
+				Assert.Fail ("#D1");
+			} catch (InvalidOperationException ex) {
+				// There was an error generating the XML document
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#D2");
+				Assert.IsNotNull (ex.Message, "#D3");
+				Assert.IsNotNull (ex.InnerException, "#D4");
+
+				// '444' is not a valid value for MonoTests.System.Xml.TestClasses.FlagEnum
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#D5");
+				Assert.IsNotNull (ex.InnerException.Message, "#D6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'444'") != -1, "#D7");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (FlagEnum).FullName) != -1, "#D8");
+				Assert.IsNull (ex.InnerException.InnerException, "#D9");
+			}
+
+			try {
+				f = (Field) Deserialize (typeof (Field),
+					string.Format (CultureInfo.InvariantCulture, "<?xml version='1.0' encoding='utf-16'?>" +
+					"<field xmlns:xsd='{0}' xmlns:xsi='{1}' flag2='Garbage' />",
+					XmlSchemaNamespace, XmlSchemaInstanceNamespace));
+				Assert.Fail ("#E1");
+			} catch (InvalidOperationException ex) {
+				// There was an error generating the XML document
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#E2");
+				Assert.IsNotNull (ex.Message, "#E3");
+				Assert.IsNotNull (ex.InnerException, "#E4");
+
+				// 'Garbage' is not a valid value for MonoTests.System.Xml.TestClasses.FlagEnum
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#E5");
+				Assert.IsNotNull (ex.InnerException.Message, "#E6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'Garbage'") != -1, "#E7");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (FlagEnum).FullName) != -1, "#E8");
+				Assert.IsNull (ex.InnerException.InnerException, "#E9");
+			}
+
+			try {
+				f = (Field) Deserialize (typeof (Field),
+					string.Format (CultureInfo.InvariantCulture, "<?xml version='1.0' encoding='utf-16'?>" +
+					"<field xmlns:xsd='{0}' xmlns:xsi='{1}' flag2='{2}' />",
+					XmlSchemaNamespace, XmlSchemaInstanceNamespace, ((int) FlagEnum.e2).ToString (CultureInfo.InvariantCulture)));
+				Assert.Fail ("#F1");
+			} catch (InvalidOperationException ex) {
+				// There was an error generating the XML document
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#F2");
+				Assert.IsNotNull (ex.Message, "#F3");
+				Assert.IsNotNull (ex.InnerException, "#F4");
+
+				// '2' is not a valid value for MonoTests.System.Xml.TestClasses.FlagEnum
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#F5");
+				Assert.IsNotNull (ex.InnerException.Message, "#F6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'2'") != -1, "#F7");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (FlagEnum).FullName) != -1, "#F8");
+				Assert.IsNull (ex.InnerException.InnerException, "#F9");
+			}
+		}
+
+		[Test]
+		[Category ("NotDotNet")] // MS.NET does not allow SoapAttribute backed by enum ??
+		public void TestDeserialize_Field_Encoded ()
+		{
+			Field_Encoded f = null;
+
+			f = (Field_Encoded) DeserializeEncoded (typeof (Field_Encoded),
+				string.Format (CultureInfo.InvariantCulture, "<?xml version='1.0' encoding='utf-16'?>" +
+				"<q1:field xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' flag1='' flag2='' flag4='' modifiers='PuBlIc' modifiers2='PuBlIc' modifiers4='PuBlIc' xmlns:q1='{2}' />",
+				XmlSchemaNamespace, XmlSchemaInstanceNamespace, ANamespace));
+			Assert.AreEqual ((FlagEnum_Encoded) 0, f.Flags1, "#A1");
+			Assert.AreEqual ((FlagEnum_Encoded) 0, f.Flags2, "#A2");
+			Assert.AreEqual (FlagEnum_Encoded.e1 | FlagEnum_Encoded.e2, f.Flags3, "#A3");
+			Assert.AreEqual ((FlagEnum_Encoded) 0, f.Flags4, "#A4");
+			Assert.AreEqual (MapModifiers.Public, f.Modifiers, "#A5");
+			Assert.AreEqual (MapModifiers.Public, f.Modifiers2, "#A6");
+			Assert.AreEqual (MapModifiers.Public, f.Modifiers3, "#A7");
+			Assert.AreEqual (MapModifiers.Public, f.Modifiers4, "#A8");
+			Assert.AreEqual (MapModifiers.Public, f.Modifiers5, "#A9");
+			Assert.IsNull (f.Names, "#A10");
+			Assert.IsNull (f.Street, "#A11");
+
+			f = (Field_Encoded) DeserializeEncoded (typeof (Field_Encoded),
+				string.Format (CultureInfo.InvariantCulture, "<?xml version='1.0' encoding='utf-16'?>" +
+				"<q1:field xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' flag3='two' flag4='' modifiers='Protected' modifiers2='PuBlIc' xmlns:q1='{2}' />",
+				XmlSchemaNamespace, XmlSchemaInstanceNamespace, ANamespace));
+			Assert.AreEqual (FlagEnum_Encoded.e1, f.Flags1, "#B1");
+			Assert.AreEqual (FlagEnum_Encoded.e1, f.Flags2, "#B2");
+			Assert.AreEqual (FlagEnum_Encoded.e2, f.Flags3, "#B3");
+			Assert.AreEqual ((FlagEnum_Encoded) 0, f.Flags4, "#B4");
+			Assert.AreEqual (MapModifiers.Protected, f.Modifiers, "#B5");
+			Assert.AreEqual (MapModifiers.Public, f.Modifiers2, "#B6");
+			Assert.AreEqual (MapModifiers.Public, f.Modifiers3, "#B7");
+			Assert.AreEqual (MapModifiers.Protected, f.Modifiers4, "#B8");
+			Assert.AreEqual (MapModifiers.Public, f.Modifiers5, "#B9");
+			Assert.IsNull (f.Names, "#B10");
+			Assert.IsNull (f.Street, "#B11");
+
+			f = (Field_Encoded) DeserializeEncoded (typeof (Field_Encoded),
+				string.Format (CultureInfo.InvariantCulture, "<?xml version='1.0' encoding='utf-16'?>" +
+				"<q1:field xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' flag1='two' flag2='two' flag4='' modifiers='PuBlIc' modifiers2='Protected' modifiers3='Protected' modifiers4='PuBlIc' modifiers5='Protected' xmlns:q1='{2}' />",
+				XmlSchemaNamespace, XmlSchemaInstanceNamespace, ANamespace));
+			Assert.AreEqual (FlagEnum_Encoded.e2, f.Flags1, "#C1");
+			Assert.AreEqual (FlagEnum_Encoded.e2, f.Flags2, "#C2");
+			Assert.AreEqual (FlagEnum_Encoded.e1 | FlagEnum_Encoded.e2, f.Flags3, "#C3");
+			Assert.AreEqual ((FlagEnum_Encoded) 0, f.Flags4, "#C4");
+			Assert.AreEqual (MapModifiers.Public, f.Modifiers, "#C5");
+			Assert.AreEqual (MapModifiers.Protected, f.Modifiers2, "#C6");
+			Assert.AreEqual (MapModifiers.Protected, f.Modifiers3, "#C7");
+			Assert.AreEqual (MapModifiers.Public, f.Modifiers4, "#C8");
+			Assert.AreEqual (MapModifiers.Protected, f.Modifiers5, "#C9");
+			Assert.IsNull (f.Names, "#C10");
+			Assert.IsNull (f.Street, "#C11");
+
+			try {
+				f = (Field_Encoded) DeserializeEncoded (typeof (Field_Encoded),
+					string.Format (CultureInfo.InvariantCulture, "<?xml version='1.0' encoding='utf-16'?>" +
+					"<q1:field xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' flag2='444' flag3='555' flag4='' modifiers='666' modifiers2='777' modifiers4='888' modifiers5='999' xmlns:q1='{2}' />",
+					XmlSchemaNamespace, XmlSchemaInstanceNamespace, ANamespace));
+				Assert.Fail ("#D1");
+			} catch (InvalidOperationException ex) {
+				// There was an error generating the XML document
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#D2");
+				Assert.IsNotNull (ex.Message, "#D3");
+				Assert.IsNotNull (ex.InnerException, "#D4");
+
+				// '444' is not a valid value for MonoTests.System.Xml.TestClasses.FlagEnum_Encoded
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#D5");
+				Assert.IsNotNull (ex.InnerException.Message, "#D6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'444'") != -1, "#D7");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (FlagEnum_Encoded).FullName) != -1, "#D8");
+				Assert.IsNull (ex.InnerException.InnerException, "#D9");
+			}
+		}
+
+		[Test]
 		public void TestDeserialize_FlagEnum ()
 		{
 			FlagEnum e;
@@ -763,6 +953,175 @@ namespace MonoTests.System.XmlSerialization
 				Assert.IsNotNull (ex.InnerException.Message, "#D5");
 				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'something'") != -1, "#D6");
 				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (FlagEnum).FullName) != -1, "#D7");
+			}
+		}
+
+		[Test]
+		public void TestDeserialize_Group ()
+		{
+			string xml = string.Format (CultureInfo.InvariantCulture,
+				"<Wrapper>" +
+				"<Group xmlns:xsd='{0}' xmlns:xsi='{1}' xmlns:d2p1='http://www.cpandl.com' CreationDate='2002-05-02' d2p1:GroupName='.NET' GroupNumber='ZDI=' id='id1'>" +
+				"<PosInt xsi:type='xsd:nonNegativeInteger'>10000</PosInt>" +
+				"<Grouptype xsi:type='GroupType'>Small</Grouptype>" +
+				"<MyVehicle href='#id2' />" +
+				"</Group>" +
+				"<Car xmlns:d2p1='{1}' id='id2' d2p1:type='Car'>" +
+				"<licenseNumber xmlns:q1='{0}' d2p1:type='q1:string'>1234566</licenseNumber>" +
+				"<makeDate xmlns:q2='{0}' d2p1:type='q2:date'>0001-01-01</makeDate>" +
+				"</Car>" +
+				"</Wrapper>",
+				"http://www.w3.org/2001/XMLSchema", "http://www.w3.org/2001/XMLSchema-instance");
+
+			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			xtr.ReadStartElement ("Wrapper");
+
+			Group group = (Group) DeserializeEncoded (typeof (Group), xtr);
+
+			Assert.AreEqual (new DateTime (2002, 5, 2), group.Today, "#A1");
+			Assert.AreEqual (".NET", group.GroupName, "#A2");
+			Assert.AreEqual (new byte [] { 0x64, 0x32 }, group.GroupNumber, "#A3");
+			Assert.AreEqual (GroupType.A, group.Grouptype, "#A4");
+			Assert.AreEqual ("10000", group.PostitiveInt, "#A5");
+			Assert.IsFalse (group.IgnoreThis, "#A6");
+			Assert.IsNotNull (group.MyVehicle, "#A7");
+			Assert.AreEqual (typeof (Car), group.MyVehicle.GetType (), "#A8");
+			Assert.AreEqual ("1234566", group.MyVehicle.licenseNumber, "#A9");
+			Assert.AreEqual (new DateTime (1, 1, 1), group.MyVehicle.makeDate, "#A10");
+			Assert.IsNull (group.MyVehicle.weight, "#A11");
+
+			xml = string.Format (CultureInfo.InvariantCulture,
+				"<Wrapper>" +
+				"<Group xmlns:xsd='{0}' xmlns:xsi='{1}' CreationDate='2002-05-02' GroupNumber='ZDI=' id='id1'>" +
+				"<PosInt xsi:type='xsd:nonNegativeInteger'>10000</PosInt>" +
+				"<Grouptype xsi:type='GroupType'>Large</Grouptype>" +
+				"<MyVehicle href='#id2' />" +
+				"</Group>" +
+				"<Car xmlns:d2p1='{1}' id='id2' d2p1:type='Car'>" +
+				"<weight xmlns:q2='{0}' d2p1:type='q2:string'>450</weight>" +
+				"</Car>" +
+				"</Wrapper>",
+				"http://www.w3.org/2001/XMLSchema", "http://www.w3.org/2001/XMLSchema-instance");
+
+			xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			xtr.ReadStartElement ("Wrapper");
+
+			group = (Group) DeserializeEncoded (typeof (Group), xtr);
+
+			Assert.AreEqual (new DateTime (2002, 5, 2), group.Today, "#B1");
+			Assert.IsNull (group.GroupName, "#B2");
+			Assert.AreEqual (new byte [] { 0x64, 0x32 }, group.GroupNumber, "#B3");
+			Assert.AreEqual (GroupType.B, group.Grouptype, "#B4");
+			Assert.AreEqual ("10000", group.PostitiveInt, "#B5");
+			Assert.IsFalse (group.IgnoreThis, "#B6");
+			Assert.IsNotNull (group.MyVehicle, "#B7");
+			Assert.AreEqual (typeof (Car), group.MyVehicle.GetType (), "#B8");
+			Assert.IsNull (group.MyVehicle.licenseNumber, "#B9");
+			Assert.AreEqual (DateTime.MinValue, group.MyVehicle.makeDate, "#B10");
+			Assert.AreEqual ("450", group.MyVehicle.weight, "#B11");
+
+			xml = string.Format (CultureInfo.InvariantCulture,
+				"<Wrapper>" +
+				"<Group xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' />" +
+				"</Wrapper>",
+				"http://www.w3.org/2001/XMLSchema", "http://www.w3.org/2001/XMLSchema-instance");
+
+			xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			xtr.ReadStartElement ("Wrapper");
+
+			group = (Group) DeserializeEncoded (typeof (Group), xtr);
+
+			Assert.AreEqual (DateTime.MinValue, group.Today, "#C1");
+			Assert.IsNull (group.GroupName, "#C2");
+			Assert.AreEqual (null, group.GroupNumber, "#C3");
+			Assert.AreEqual (GroupType.A, group.Grouptype, "#C4");
+			Assert.IsNull (group.PostitiveInt, "#C5");
+			Assert.IsFalse (group.IgnoreThis, "#C6");
+			Assert.IsNull (group.MyVehicle, "#C7");
+
+			xml = string.Format (CultureInfo.InvariantCulture,
+				"<Wrapper>" +
+				"<Group xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1'>" +
+				"<Grouptype xsi:type='GroupType'>666</Grouptype>" +
+				"</Group>" +
+				"</Wrapper>",
+				"http://www.w3.org/2001/XMLSchema", "http://www.w3.org/2001/XMLSchema-instance");
+
+			xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			xtr.ReadStartElement ("Wrapper");
+
+			try {
+				group = (Group) DeserializeEncoded (typeof (Group), xtr);
+				Assert.Fail ("#D1");
+			} catch (InvalidOperationException ex) {
+				// There is an error in XML document (1, 174)
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#D2");
+				Assert.IsNotNull (ex.Message, "#D3");
+				Assert.IsNotNull (ex.InnerException, "#D4");
+
+				// '666' is not a valid value for GroupType
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#D5");
+				Assert.IsNotNull (ex.InnerException.Message, "#D6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'666'") != -1, "#D7");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (GroupType).Name) != -1, "#D8");
+				Assert.IsNull (ex.InnerException.InnerException, "#D9");
+			}
+
+			xml = string.Format (CultureInfo.InvariantCulture,
+				"<Wrapper>" +
+				"<Group xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1'>" +
+				"<Grouptype xsi:type='GroupType'>Garbage</Grouptype>" +
+				"</Group>" +
+				"</Wrapper>",
+				"http://www.w3.org/2001/XMLSchema", "http://www.w3.org/2001/XMLSchema-instance");
+
+			xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			xtr.ReadStartElement ("Wrapper");
+
+			try {
+				group = (Group) DeserializeEncoded (typeof (Group), xtr);
+				Assert.Fail ("#E1");
+			} catch (InvalidOperationException ex) {
+				// There is an error in XML document (1, 178)
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#E2");
+				Assert.IsNotNull (ex.Message, "#E3");
+				Assert.IsNotNull (ex.InnerException, "#E4");
+
+				// 'Garbage' is not a valid value for GroupType
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#E5");
+				Assert.IsNotNull (ex.InnerException.Message, "#E6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'Garbage'") != -1, "#E7");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (GroupType).Name) != -1, "#E8");
+				Assert.IsNull (ex.InnerException.InnerException, "#E9");
+			}
+
+			xml = string.Format (CultureInfo.InvariantCulture,
+				"<Wrapper>" +
+				"<Group xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1'>" +
+				"<Grouptype xsi:type='GroupType'>{2}</Grouptype>" +
+				"</Group>" +
+				"</Wrapper>",
+				"http://www.w3.org/2001/XMLSchema", "http://www.w3.org/2001/XMLSchema-instance",
+				((int) GroupType.B).ToString (CultureInfo.InvariantCulture));
+
+			xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			xtr.ReadStartElement ("Wrapper");
+
+			try {
+				group = (Group) DeserializeEncoded (typeof (Group), xtr);
+				Assert.Fail ("#F1");
+			} catch (InvalidOperationException ex) {
+				// There is an error in XML document (1, 172)
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#F2");
+				Assert.IsNotNull (ex.Message, "#F3");
+				Assert.IsNotNull (ex.InnerException, "#F4");
+
+				// '1' is not a valid value for GroupType
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#F5");
+				Assert.IsNotNull (ex.InnerException.Message, "#F6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'1'") != -1, "#F7");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (GroupType).Name) != -1, "#F8");
+				Assert.IsNull (ex.InnerException.InnerException, "#F9");
 			}
 		}
 

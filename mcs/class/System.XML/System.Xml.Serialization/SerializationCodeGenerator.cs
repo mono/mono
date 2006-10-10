@@ -33,6 +33,7 @@ using System.Reflection;
 using System.Xml.Serialization;
 using System.Collections;
 using System.Globalization;
+using System.Text;
 
 namespace System.Xml.Serialization
 {
@@ -2669,7 +2670,28 @@ namespace System.Xml.Serialization
 				XmlQualifiedName qn = (XmlQualifiedName)ob;
 				return "new XmlQualifiedName (" + GetLiteral(qn.Name) + "," + GetLiteral(qn.Namespace) + ")";
 			}
-			if (ob is Enum) return ob.GetType () + "." + ob;
+			if (ob is Enum) {
+				string typeName = ob.GetType ().FullName;
+				StringBuilder sb = new StringBuilder ();
+				string namedValue = Enum.Format (ob.GetType (), ob, "g");
+				string[] names = namedValue.Split (',');
+				foreach (string name in names) {
+					// individual named constants can be seperated by a comma
+					// combined with some additional whitespace characters
+					string cleanName = name.Trim ();
+					if (cleanName.Length == 0)
+						continue;
+
+					if (sb.Length > 0)
+						sb.Append (" | ");
+
+					sb.Append (typeName);
+					sb.Append ('.');
+					sb.Append (cleanName);
+				}
+				return sb.ToString ();
+			}
+
 			return (ob is IFormattable) ? ((IFormattable) ob).ToString (null, CultureInfo.InvariantCulture) : ob.ToString ();
 		}
 		

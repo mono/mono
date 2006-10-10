@@ -331,7 +331,7 @@ namespace System.Xml.Serialization {
 					XmlTypeMapMember mem = CreateMapMember (type, rmember, ns);
 					mem.CheckOptionalValueType (type);
 					classMap.AddMember (mem);
-				} catch (InvalidOperationException ex) {
+				} catch (Exception ex) {
 					throw new InvalidOperationException (string.Format (
 						CultureInfo.InvariantCulture, "There was an error" +
 						" reflecting field '{0}'.", rmember.MemberName), ex);
@@ -873,7 +873,7 @@ namespace System.Xml.Serialization {
 				mapMember = member;
 			}
 
-			mapMember.DefaultValue = atts.XmlDefaultValue;
+			mapMember.DefaultValue = GetDefaultValue (typeData, atts.XmlDefaultValue);
 			mapMember.TypeData = typeData;
 			mapMember.Name = rmember.MemberName;
 			mapMember.IsReturnValue = rmember.IsReturnValue;
@@ -1061,6 +1061,32 @@ namespace System.Xml.Serialization {
 			
 			foreach (XmlIncludeAttribute at in ats)
 				IncludeType (at.Type);
+		}
+
+		private object GetDefaultValue (TypeData typeData, object defaultValue)
+		{
+			if (defaultValue == DBNull.Value || typeData.SchemaType != SchemaTypes.Enum)
+				return defaultValue;
+
+			// get string representation of enum value
+			string namedValue = Enum.Format (typeData.Type, defaultValue, "g");
+			// get decimal representation of enum value
+			string decimalValue = Enum.Format (typeData.Type, defaultValue, "d");
+
+			// if decimal representation matches string representation, then
+			// the value is not defined in the enum type (as the "g" format
+			// will return the decimal equivalent of the value if the value
+			// is not equal to a combination of named enumerated constants
+			if (namedValue == decimalValue) {
+				string msg = string.Format (CultureInfo.InvariantCulture,
+					"Value '{0}' cannot be converted to {1}.", defaultValue,
+					defaultValue.GetType ().FullName);
+				throw new InvalidOperationException (msg);
+			}
+
+			// XmlSerializer expects integral enum value
+			//return namedValue.Replace (',', ' ');
+			return defaultValue;
 		}
 
 		#endregion // Methods

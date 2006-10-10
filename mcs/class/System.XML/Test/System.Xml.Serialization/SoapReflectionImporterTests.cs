@@ -1428,10 +1428,10 @@ namespace MonoTests.System.XmlSerialization
 				Assert.Fail ("#B1");
 			} catch (InvalidOperationException ex) {
 				// Enum System.String cannot be converted to MonoTests.System.Xml.TestClasses.MapModifiers
-				Assert.IsNotNull (ex.Message, "#A2");
-				Assert.IsTrue (ex.Message.IndexOf (typeof (string).FullName) != -1, "#A3");
-				Assert.IsTrue (ex.Message.IndexOf (typeof (MapModifiers).FullName) != -1, "#A4");
-				Assert.IsNull (ex.InnerException, "#A5");
+				Assert.IsNotNull (ex.Message, "#B2");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (string).FullName) != -1, "#B3");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (MapModifiers).FullName) != -1, "#B4");
+				Assert.IsNull (ex.InnerException, "#B5");
 			}
 
 			attrs.SoapDefaultValue = EnumDefaultValueNF.e2; // other enum type
@@ -1441,23 +1441,23 @@ namespace MonoTests.System.XmlSerialization
 				Assert.Fail ("#C1");
 			} catch (InvalidOperationException ex) {
 				// Enum MonoTests.System.Xml.TestClasses.EnumDefaultValueNF cannot be converted to MonoTests.System.Xml.TestClasses.MapModifiers
-				Assert.IsNotNull (ex.Message, "#A2");
-				Assert.IsTrue (ex.Message.IndexOf (typeof (EnumDefaultValueNF).FullName) != -1, "#A3");
-				Assert.IsTrue (ex.Message.IndexOf (typeof (MapModifiers).FullName) != -1, "#A4");
-				Assert.IsNull (ex.InnerException, "#A5");
+				Assert.IsNotNull (ex.Message, "#C2");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (EnumDefaultValueNF).FullName) != -1, "#C3");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (MapModifiers).FullName) != -1, "#C4");
+				Assert.IsNull (ex.InnerException, "#C5");
 			}
 
 			attrs.SoapDefaultValue = (MapModifiers) 20; // non-existing enum value
 
 			try {
 				Map (typeof (Field_Encoded), overrides);
-				Assert.Fail ("#C1");
+				Assert.Fail ("#D1");
 			} catch (InvalidOperationException ex) {
 				// Value '20' cannot be converted to MonoTests.System.Xml.TestClasses.MapModifiers
-				Assert.IsNotNull (ex.Message, "#A2");
-				Assert.IsTrue (ex.Message.IndexOf ("'20'") != -1, "#A3");
-				Assert.IsTrue (ex.Message.IndexOf (typeof (MapModifiers).FullName) != -1, "#A4");
-				Assert.IsNull (ex.InnerException, "#A5");
+				Assert.IsNotNull (ex.Message, "#D2");
+				Assert.IsTrue (ex.Message.IndexOf ("'20'") != -1, "#D3");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (MapModifiers).FullName) != -1, "#D4");
+				Assert.IsNull (ex.InnerException, "#D5");
 			}
 		}
 

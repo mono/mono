@@ -200,6 +200,7 @@ namespace MonoTests.System.Xml.TestClasses
 	public enum MapModifiers
 	{
 		[XmlEnum("public")]
+		[SoapEnum ("PuBlIc")]
 		Public = 0,
 		[XmlEnum("protected")]
 		Protected = 1,
@@ -691,5 +692,62 @@ namespace MonoTests.System.Xml.TestClasses
 
 		private bool _isEmptySpecified;
 	}
-}
 
+	public class Group
+	{
+		[SoapAttribute (Namespace = "http://www.cpandl.com")]
+		public string GroupName;
+
+		[SoapAttribute (DataType = "base64Binary")]
+		public Byte [] GroupNumber;
+
+		[SoapAttribute (DataType = "date", AttributeName = "CreationDate")]
+		public DateTime Today;
+
+		[SoapElement (DataType = "nonNegativeInteger", ElementName = "PosInt")]
+		public string PostitiveInt;
+
+		[SoapIgnore]
+		public bool IgnoreThis;
+
+		[DefaultValue (GroupType.B)]
+		public GroupType Grouptype;
+		public Vehicle MyVehicle;
+
+		[SoapInclude (typeof (Car))]
+		public Vehicle myCar (string licNumber)
+		{
+			Vehicle v;
+			if (licNumber == string.Empty) {
+				v = new Car();
+				v.licenseNumber = "!!!!!!";
+			} else {
+				v = new Car();
+				v.licenseNumber = licNumber;
+			}
+			return v;
+		}
+	}
+
+	[SoapInclude (typeof (Car))]
+	public abstract class Vehicle
+	{
+		public string licenseNumber;
+		[SoapElement (DataType = "date")]
+		public DateTime makeDate;
+		[DefaultValue ("450")]
+		public string weight;
+	}
+
+	public class Car: Vehicle
+	{
+	}
+
+	public enum GroupType
+	{
+		[SoapEnum ("Small")]
+		A,
+		[SoapEnum ("Large")]
+		B
+	}
+}

@@ -360,8 +360,8 @@ namespace System.Xml.Serialization
 					return serializerData.ReaderMethod.Invoke (reader, null);
 			} catch (Exception ex) {
 				if (ex is InvalidOperationException || ex is InvalidCastException)
-					throw new InvalidOperationException ("There was an error generating" +
-						" the XML document.", ex);
+					throw new InvalidOperationException ("There is an error in"
+						+ " XML document.", ex);
 				throw;
 			}
 		}

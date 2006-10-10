@@ -1,3 +1,14 @@
+2006-10-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlSerializer.cs: Corrected exception message when deserialization
+	fails.
+	* SerializationCodeGenerator.cs: Added support for flag enums.
+	* XmlReflectionImporter.cs: Use InvalidOperationException wrapper for
+	all exceptions that occur while reflecting member. Validate default
+	values to match MS.
+	* SoapReflectionImporter.cs: Revert small part of previous patch as
+	XmlSerializer expects enum value.
+
 2006-10-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SoapReflectionImporter.cs: To match MS.NET, let exceptions that are
