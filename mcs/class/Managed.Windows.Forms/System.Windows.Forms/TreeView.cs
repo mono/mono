@@ -1290,7 +1290,7 @@ namespace System.Windows.Forms {
 
 		internal void UpdateScrollBars ()
 		{
-			if (IsDisposed || update_stack > 0)
+			if (IsDisposed || update_stack > 0 || !IsHandleCreated || !Visible)
 				return;
 
 			bool vert = false;

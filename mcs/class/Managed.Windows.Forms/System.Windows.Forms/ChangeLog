@@ -1,3 +1,9 @@
+2006-10-09  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Don't update scrollbars when we aren't visible.
+	* TreeNodeCollection.cs: Only need to update scrollbars if being
+	added to an expanded visible node or the root node.
+
 2006-10-09  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIX11.cs (SendMessage): fix NRE.
