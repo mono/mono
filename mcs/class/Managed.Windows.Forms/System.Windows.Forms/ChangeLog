@@ -1,5 +1,21 @@
 2006-10-11  Chris Toshok  <toshok@ximian.com>
 
+	* Control.cs: switch to using an "invalid_region" to track which
+	parts of the image buffer need updating.  This is more code than
+	the simple fix from r66532.  That version just attempted to always
+	fill the entire buffer on redraw, which turns out to be
+	inefficient when invalidating small rectangles.  This version
+	simply adds the invalid rectangle to the invalid region.  When we
+	get any WM_PAINT message we see if it can be filled using the
+	image buffer, and if it can't (if the paint event's clip rectangle
+	is visible in the invalid region) we first fill the image buffer.
+	So, the image buffer is still a cache, we just fill it lazily.
+
+	* PaintEventArgs.cs: remove the SetClipRectangle method, we don't
+	need it any longer.
+
+2006-10-11  Chris Toshok  <toshok@ximian.com>
+
 	* XplatUIX11.cs (SetWindowPos): we need to update both position as
 	well as size after calling XMoveResizeWindow.  This keeps us from
 	ignoring future SetWindowPos calls.  Fixes the disappearing

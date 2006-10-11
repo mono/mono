@@ -77,14 +77,6 @@ namespace System.Windows.Forms {
 			return res;
 		}
 
-		internal Rectangle SetClipRectangle (Rectangle r)
-		{
-			Rectangle res = clip_rectangle;
-			clip_rectangle = r;
-
-			return res;
-		}
-
 		#region Protected Instance Methods
 		~PaintEventArgs() {
 			Dispose(false);

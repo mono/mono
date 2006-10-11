@@ -118,7 +118,7 @@ namespace System.Windows.Forms
 		private Graphics		dc_mem;			// Graphics context for double buffering
 		private GraphicsState		dc_state;		// Pristine graphics context to reset after paint code alters dc_mem
 		private Bitmap			bmp_mem;		// Bitmap for double buffering control
-		private bool			needs_redraw = true;
+		private Region                  invalid_region;
 
 		private ControlBindingsCollection data_bindings;
 
@@ -773,6 +773,10 @@ namespace System.Windows.Forms
 					bmp_mem=null;
 				}
 
+				if (invalid_region!=null) {
+					invalid_region.Dispose();
+					invalid_region=null;
+				}
 				if (this.InvokeRequired) {
 					if (Application.MessageLoop) {
 						this.BeginInvokeInternal(new MethodInvoker(DestroyHandle), null, true);
@@ -921,6 +925,12 @@ namespace System.Windows.Forms
 			dc_state = dc_mem.Save();
 		}
 
+		private void ImageBufferNeedsRedraw () {
+			if (invalid_region != null)
+				invalid_region.Dispose();
+			invalid_region = new Region (ClientRectangle);
+		}
+
 		private Bitmap ImageBuffer {
 			get {
 				if (bmp_mem==null) {
@@ -947,7 +957,7 @@ namespace System.Windows.Forms
 
 			bmp_mem = new Bitmap (width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 			dc_mem = Graphics.FromImage (bmp_mem);
-			needs_redraw = true;
+			ImageBufferNeedsRedraw ();
 		}
 
 		internal void InvalidateBuffers ()
@@ -960,7 +970,7 @@ namespace System.Windows.Forms
 
 			dc_mem = null;
 			bmp_mem = null;
-			needs_redraw = true;
+			ImageBufferNeedsRedraw ();
 		}
 
 		internal static void SetChildColor(Control parent) {
@@ -3327,7 +3337,6 @@ namespace System.Windows.Forms
 		}
 
 		public void Update() {
-			needs_redraw = true;
 			if (IsHandleCreated) {
 				XplatUI.UpdateWindow(window.Handle);
 			}
@@ -3971,7 +3980,7 @@ namespace System.Windows.Forms
 						return;
 					}
 
-					if (!needs_redraw) {
+					if (invalid_region != null && !invalid_region.IsVisible (paint_event.ClipRectangle)) {
 						// Just blit the previous image
 						paint_event.Graphics.DrawImage (ImageBuffer, paint_event.ClipRectangle, paint_event.ClipRectangle, GraphicsUnit.Pixel);
 						XplatUI.PaintEventEnd(Handle, true);
@@ -4005,7 +4014,7 @@ namespace System.Windows.Forms
 							paint_event.SetClipRectangle (old_clip_rect);
 							dc.DrawImage (ImageBuffer, paint_event.ClipRectangle, paint_event.ClipRectangle, GraphicsUnit.Pixel);
 							paint_event.SetGraphics (dc);
-							needs_redraw = false;
+							invalid_region.Exclude (paint_event.ClipRectangle);
 						}
 
 					XplatUI.PaintEventEnd(Handle, true);
@@ -4452,7 +4461,20 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnInvalidated(InvalidateEventArgs e) {
-			needs_redraw = true;
+			// should this block be here?  seems like it
+			// would be more at home in
+			// NotifyInvalidated..
+			if (e.InvalidRect == ClientRectangle) {
+				ImageBufferNeedsRedraw ();
+			}
+			else {
+				// we need this Inflate call here so
+				// that the border of the rectangle is
+				// considered Visible (the
+				// invalid_region.IsVisible call) in
+				// the WM_PAINT handling below.
+				invalid_region.Union (Rectangle.Inflate(e.InvalidRect, 1,1));
+			}
 			if (Invalidated!=null) Invalidated(this, e);
 		}
 
@@ -4705,8 +4727,6 @@ namespace System.Windows.Forms
 				}
 			}
 
-			needs_redraw = true;
-			
 			if (VisibleChanged!=null) VisibleChanged(this, e);
 
 			// We need to tell our kids
