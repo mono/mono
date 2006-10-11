@@ -674,14 +674,13 @@ namespace Mono.CSharp {
 
 			if (expr_type == TypeManager.sbyte_type){
 				//
-				// From sbyte to short, int, long, float, double, uintptr, decimal
+				// From sbyte to short, int, long, float, double, decimal
 				//
 				if ((target_type == TypeManager.int32_type) ||
 				    (target_type == TypeManager.int64_type) ||
 				    (target_type == TypeManager.double_type) ||
 				    (target_type == TypeManager.float_type)  ||
 				    (target_type == TypeManager.short_type) ||
-				    (target_type == TypeManager.uintptr_type) ||
 				    (target_type == TypeManager.decimal_type))
 					return true;
 
@@ -702,13 +701,12 @@ namespace Mono.CSharp {
 
 			} else if (expr_type == TypeManager.short_type){
 				//
-				// From short to int, long, double, float, decimal and uintptr
+				// From short to int, long, double, float, decimal 
 				//
 				if ((target_type == TypeManager.int32_type) ||
 				    (target_type == TypeManager.int64_type) ||
 				    (target_type == TypeManager.double_type) ||
 				    (target_type == TypeManager.float_type) ||
-				    (target_type == TypeManager.uintptr_type) ||
 				    (target_type == TypeManager.decimal_type))
 					return true;
 
@@ -727,12 +725,11 @@ namespace Mono.CSharp {
 
 			} else if (expr_type == TypeManager.int32_type){
 				//
-				// From int to long, double, float, decimal, uintptr
+				// From int to long, double, float, decimal
 				//
 				if ((target_type == TypeManager.int64_type) ||
 				    (target_type == TypeManager.double_type) ||
 				    (target_type == TypeManager.float_type) ||
-				    (target_type == TypeManager.uintptr_type) ||
 				    (target_type == TypeManager.decimal_type))
 					return true;
 
@@ -757,12 +754,6 @@ namespace Mono.CSharp {
 				    (target_type == TypeManager.decimal_type))
 					return true;
 
-				//
-				// From uint64 to IntPtr, from the extra conversions.
-				//
-				if (target_type == TypeManager.intptr_type && expr_type == TypeManager.uint64_type)
-					return true;
-				
 			} else if (expr_type == TypeManager.char_type){
 				//
 				// From char to ushort, int, uint, ulong, long, float, double, decimal
@@ -782,14 +773,6 @@ namespace Mono.CSharp {
 				// float to double
 				//
 				if (target_type == TypeManager.double_type)
-					return true;
-			} else if (expr_type == TypeManager.uintptr_type){
-				if ((target_type == TypeManager.sbyte_type) ||
-				    (target_type == TypeManager.short_type) ||
-				    (target_type == TypeManager.int32_type))
-					return true;
-			} else if (expr_type == TypeManager.intptr_type){
-				if (target_type == TypeManager.uint64_type)
 					return true;
 			}
 

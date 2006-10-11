@@ -35,4 +35,15 @@ class X {
 		_uptr = (UIntPtr) _short;
 		_uptr = (UIntPtr) _int;
 	}
+
+	static void Compile ()
+	{
+		IntPtr a = (IntPtr) 1;
+		M (a);
+	}
+	
+	static void M (long l){}
+	static void M (UInt64 l){}
+	static void M (object o){}
+	
 }
