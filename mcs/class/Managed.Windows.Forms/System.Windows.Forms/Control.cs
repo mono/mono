@@ -3988,7 +3988,6 @@ namespace System.Windows.Forms
 					}
 
 					Graphics dc = null;
-					Rectangle old_clip_rect = Rectangle.Empty;
 					if (ThemeEngine.Current.DoubleBufferingSupported) {
 						if ((control_style & ControlStyles.DoubleBuffer) != 0) {
 							dc = paint_event.SetGraphics (DeviceContext);
@@ -4010,7 +4009,6 @@ namespace System.Windows.Forms
 
 					if (ThemeEngine.Current.DoubleBufferingSupported)
 						if ((control_style & ControlStyles.DoubleBuffer) != 0) {
-							paint_event.SetClipRectangle (old_clip_rect);
 							dc.DrawImage (ImageBuffer, paint_event.ClipRectangle, paint_event.ClipRectangle, GraphicsUnit.Pixel);
 							paint_event.SetGraphics (dc);
 							invalid_region.Exclude (paint_event.ClipRectangle);
