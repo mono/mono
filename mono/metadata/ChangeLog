@@ -1,3 +1,11 @@
+
+Wed Oct 11 17:27:05 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* console-io.h, filewatcher.h, locales.h, marshal.h, monitor.h,
+	process.h, rand.h, rawbuffer.h, security-manager.h, security.h,
+	socket-io.h, string-icalls.h, sysmath.h, threadpool-internals.h,
+	threadpool.h, threads-types.h: mark more internal functions.
+
 2006-10-11  Dick Porter  <dick@ximian.com>
 
 	* socket-io.c (ves_icall_System_Net_Sockets_Socket_Poll_internal):
