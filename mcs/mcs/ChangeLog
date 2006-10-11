@@ -1,5 +1,8 @@
 2006-10-10  Miguel de Icaza  <miguel@novell.com>
 
+	* convert.cs: Added one missing case in
+	ImplicitStandardConversionExists uint64 to intptr.
+
 	Fixes #59800
 	
 	* typemanager.cs (uintptr_type): another core known type.   

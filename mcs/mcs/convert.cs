@@ -757,6 +757,12 @@ namespace Mono.CSharp {
 				    (target_type == TypeManager.decimal_type))
 					return true;
 
+				//
+				// From uint64 to IntPtr, from the extra conversions.
+				//
+				if (target_type == TypeManager.intptr_type && expr_type == TypeManager.uint64_type)
+					return true;
+				
 			} else if (expr_type == TypeManager.char_type){
 				//
 				// From char to ushort, int, uint, ulong, long, float, double, decimal
