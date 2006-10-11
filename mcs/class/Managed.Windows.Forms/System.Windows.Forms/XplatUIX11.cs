@@ -858,6 +858,13 @@ namespace System.Windows.Forms {
 			mwmHints.functions = (IntPtr)functions;
 			mwmHints.decorations = (IntPtr)decorations;
 
+			FormWindowState current_state = FormWindowState.Normal;
+			try {
+				current_state = GetWindowState (hwnd.Handle);
+			}
+			catch (NotSupportedException) {
+			}
+
 			client_rect = hwnd.ClientRect;
 			lock (XlibLock) {
 				// needed! map toolwindows to _NET_WM_WINDOW_TYPE_UTILITY to make newer metacity versions happy
@@ -887,6 +894,17 @@ namespace System.Windows.Forms {
 
 				if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
 					atoms[atom_count++] = _NET_WM_STATE_NO_TASKBAR.ToInt32();
+				}
+				/* we need to add these atoms in the
+				 * event we're maximized, since we're
+				 * replacing the existing
+				 * _NET_WM_STATE here.  If we don't
+				 * add them, future calls to
+				 * GetWindowState will return Normal
+				 * for a window which is maximized. */
+				if (current_state == FormWindowState.Maximized) {
+					atoms[atom_count++] = _NET_WM_STATE_MAXIMIZED_HORZ.ToInt32();
+					atoms[atom_count++] = _NET_WM_STATE_MAXIMIZED_VERT.ToInt32();
 				}
 				XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_STATE, (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, atom_count);
 

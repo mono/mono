@@ -1,3 +1,12 @@
+2006-10-11  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11.cs (SetWMStyles): make sure we include the MAXIMIZED
+	atoms in _NET_WM_STATE here if the window is maximized.  We need
+	to do this because we're *replacing* the existing _NET_WM_STATE
+	property, so those atoms will be lost otherwise, and any further
+	call to GetWindowState will return Normal for a window which is
+	actually maximized.  Fixes #79338.
+
 2006-10-11  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: Special case for setting selection end to
