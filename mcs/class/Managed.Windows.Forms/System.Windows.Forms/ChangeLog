@@ -1,3 +1,9 @@
+2006-10-11  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: Special case for setting selection end to
+	selection start, we basically kill the anchor.
+	- some todo comments.
+
 2006-10-11  Chris Toshok  <toshok@ximian.com>
 
 	* Control.cs: switch to using an "invalid_region" to track which

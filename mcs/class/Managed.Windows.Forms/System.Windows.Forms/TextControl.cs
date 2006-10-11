@@ -2168,6 +2168,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			line.text.Insert(pos, s);
 			tag.length += len;
 
+			// TODO: sometimes getting a null tag here when pasting ???
 			tag = tag.next;
 			while (tag != null) {
 				tag.start += len;
@@ -3208,7 +3209,18 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 		}
 
 		internal void SetSelectionEnd(Line end, int end_pos) {
-			if ((end.line_no < selection_anchor.line.line_no) || ((end == selection_anchor.line) && (end_pos <= selection_anchor.pos))) {
+
+			if (end == selection_end.line && end_pos == selection_start.pos) {
+				selection_anchor.line = selection_start.line;
+				selection_anchor.tag = selection_start.tag;
+				selection_anchor.pos = selection_start.pos;
+
+				selection_end.line = selection_start.line;
+				selection_end.tag = selection_start.tag;
+				selection_end.pos = selection_start.pos;
+
+				selection_end_anchor = false;
+			} else if ((end.line_no < selection_anchor.line.line_no) || ((end == selection_anchor.line) && (end_pos <= selection_anchor.pos))) {
 				selection_start.line = end;
 				selection_start.tag = LineTag.FindTag(end, end_pos);
 				selection_start.pos = end_pos;
@@ -3235,6 +3247,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 				Invalidate(selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
 			} else {
 				selection_visible = false;
+				// ?? Do I need to invalidate here, tests seem to work without it, but I don't think they should :-s
 			}
 		}
 
@@ -3350,6 +3363,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 					Combine(selection_start.line.line_no, start);
 				}
 			}
+
 
 			Insert(selection_start.line, null, selection_start.pos, true, s);
 
