@@ -1,3 +1,19 @@
+2006-10-11  Sergey Tikhonov <tsv@solvo.ru>
+
+	* atomic.h: Fix atomic decrement.
+
+	* mini/cpu-alpha.md: Use native long shift insts
+
+	* mono/mono/mini/tramp-alpha.c: Implemented
+	mono_arch_patch_delegate_trampoline method
+
+	* Started work on using global registers
+	
+	* Use byte/word memory load/store insts if cpu supports it
+	
+	* Code clean up
+
+	
 2006-10-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* handles.c (timedwait_signal_poll_cond): Add an alertable parameter, and if it
