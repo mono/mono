@@ -244,11 +244,11 @@ namespace System.Windows.Forms.RTF {
 
 		/// <summary>Read the next character from the input</summary>
 		private char GetChar() {
-			char	c;
+			int	c;
 			bool	old_bump_line;
 
 SkipCRLF:
-			if ((c = (char)source.Read()) != EOF) {
+			if ((c = source.Read()) != -1) {
 				this.text_buffer.Append(c);
 			}
 
@@ -278,8 +278,8 @@ SkipCRLF:
 				this.line_pos = 1;
 			}
 
-			this.prev_char = c;
-			return c;
+			this.prev_char = (char) c;
+			return (char) c;
 		}
 
 		/// <summary>Parse the RTF stream</summary>
