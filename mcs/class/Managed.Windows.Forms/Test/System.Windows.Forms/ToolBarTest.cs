@@ -16,11 +16,11 @@ using System.Runtime.Remoting;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	[Ignore ("This test has to be completly reviewed")]
 	public class ToolBarTest 
 	{
 
 		[Test]
+		[Ignore ("This test has to be completly reviewed")]
 		public void ToolBarPropertyTest ()
 		{	
 			Form myform = new Form ();
@@ -85,12 +85,36 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
+		[Ignore ("This test has to be completly reviewed")]
 		public void ToStringMethodTest () 
 		{
 			ToolBar myToolBar = new ToolBar ();
 			myToolBar.Text = "New ToolBar";
 			Assert.AreEqual ("System.Windows.Forms.ToolBar, Buttons.Count: 0", myToolBar.ToString (), "#T3");
 		}
+
+		[Test]
+		public void ToolbarButtonRectangleTest ()
+		{
+			ToolBar myToolBar = new ToolBar ();
+			ToolBarButton tbb = new ToolBarButton ("hi");
+
+			Assert.IsTrue (tbb.Rectangle.IsEmpty, "#T0");
+
+			myToolBar.Visible = false;
+			myToolBar.Buttons.Add (tbb);
+
+			Assert.IsFalse (tbb.Rectangle.IsEmpty, "#T1");
+
+			myToolBar.Visible = true;
+
+			Assert.IsFalse (tbb.Rectangle.IsEmpty, "#T2");
+
+			tbb.Visible = false;
+
+			Assert.IsTrue (tbb.Rectangle.IsEmpty, "#T3");
+		}
+
       	}
 	// [MonoTODO ("Add test for ButtonClickEvent (Visual Test)"]
 	// [MonoTODO ("Add test for ButtonDropDownEvent (Visual Test)"]
