@@ -1,5 +1,9 @@
 2006-10-11  Chris Toshok  <toshok@ximian.com>
 
+	* Control.cs (OnInvalidated): fix NRE relating to last change.
+
+2006-10-11  Chris Toshok  <toshok@ximian.com>
+
 	* XplatUIX11.cs (SetWMStyles): make sure we include the MAXIMIZED
 	atoms in _NET_WM_STATE here if the window is maximized.  We need
 	to do this because we're *replacing* the existing _NET_WM_STATE

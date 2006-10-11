@@ -4470,7 +4470,11 @@ namespace System.Windows.Forms
 				// considered Visible (the
 				// invalid_region.IsVisible call) in
 				// the WM_PAINT handling below.
-				invalid_region.Union (Rectangle.Inflate(e.InvalidRect, 1,1));
+				Rectangle r = Rectangle.Inflate(e.InvalidRect, 1,1);
+				if (invalid_region == null)
+					invalid_region = new Region (r);
+				else
+					invalid_region.Union (r);
 			}
 			if (Invalidated!=null) Invalidated(this, e);
 		}
