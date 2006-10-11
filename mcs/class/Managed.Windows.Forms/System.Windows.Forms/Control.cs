@@ -3991,7 +3991,6 @@ namespace System.Windows.Forms
 					Rectangle old_clip_rect = Rectangle.Empty;
 					if (ThemeEngine.Current.DoubleBufferingSupported) {
 						if ((control_style & ControlStyles.DoubleBuffer) != 0) {
-							old_clip_rect = paint_event.SetClipRectangle (ClientRectangle);
 							dc = paint_event.SetGraphics (DeviceContext);
 							reset_context = true;
 						}
