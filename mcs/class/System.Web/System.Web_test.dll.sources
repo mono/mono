@@ -151,6 +151,8 @@ System.Web.UI.WebControls/CompareValidatorTest.cs
 System.Web.UI.WebControls/CompleteWizardStepTest.cs
 System.Web.UI.WebControls/CompositeControlTest.cs
 System.Web.UI.WebControls/ContentTest.cs
+System.Web.UI.WebControls/ControlParameterTest.cs
+System.Web.UI.WebControls/CookieParameterTest.cs
 System.Web.UI.WebControls/CreateUserWizardStepTest.cs
 System.Web.UI.WebControls/CreateUserWizardTest.cs
 System.Web.UI.WebControls/CrossPagePostingTest.cs
@@ -214,6 +216,7 @@ System.Web.UI.WebControls/PagedDataSourceTest.cs
 System.Web.UI.WebControls/PagerSettingsTest.cs
 System.Web.UI.WebControls/PanelTest.cs
 System.Web.UI.WebControls/PolygonHotSpotTest.cs
+System.Web.UI.WebControls/QueryStringParameterTest.cs
 System.Web.UI.WebControls/RadioButtonListTest.cs
 System.Web.UI.WebControls/RadioButtonTest.cs
 System.Web.UI.WebControls/RangeValidatorTest.cs
@@ -231,6 +234,7 @@ System.Web.UI.WebControls/SqlDataSourceTest.cs
 System.Web.UI.WebControls/SqlDataSourceViewTest.cs
 System.Web.UI.WebControls/ObjectDataSourceTest.cs
 System.Web.UI.WebControls/ObjectDataSourceViewTest.cs
+System.Web.UI.WebControls/SessionParameterTest.cs
 System.Web.UI.WebControls/StyleTest.cs
 System.Web.UI.WebControls/TableCellTest.cs
 System.Web.UI.WebControls/TableFooterRowTest.cs
