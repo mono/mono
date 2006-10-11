@@ -162,6 +162,30 @@ public class CryptoConfigTest {
 		CreateFromName ("http://www.w3.org/2000/09/xmldsig# RetrievalMethod", "System.Security.Cryptography.Xml.KeyInfoRetrievalMethod");
 	}
 
+	[Test]
+	public void CreateFromName_UpperCase () 
+	{
+		CreateFromName ("SHA", "System.Security.Cryptography.SHA1CryptoServiceProvider");
+		CreateFromName ("SYSTEM.SECURITY.CRYPTOGRAPHY.TRIPLEDES", "System.Security.Cryptography.TripleDESCryptoServiceProvider");  
+		CreateFromName ("HTTP://WWW.W3.ORG/2000/09/XMLDSIG#DSA-SHA1", "System.Security.Cryptography.DSASignatureDescription");
+	}
+
+	[Test]
+	public void CreateFromName_LowerCase () 
+	{
+		CreateFromName ("sha", "System.Security.Cryptography.SHA1CryptoServiceProvider");
+		CreateFromName ("system.security.cryptography.tripledes", "System.Security.Cryptography.TripleDESCryptoServiceProvider");  
+		CreateFromName ("http://www.w3.org/2000/09/xmldsig#dsa-sha1", "System.Security.Cryptography.DSASignatureDescription");
+	}
+
+	[Test]
+	public void CreateFromName_MixedCase () 
+	{
+		CreateFromName ("ShA", "System.Security.Cryptography.SHA1CryptoServiceProvider");
+		CreateFromName ("SyStEm.SeCuRiTy.CrYpToGrApHy.TrIpLeDeS", "System.Security.Cryptography.TripleDESCryptoServiceProvider");  
+		CreateFromName ("hTtP://wWw.W3.oRg/2000/09/xMlDsIg#dSa-sHa1", "System.Security.Cryptography.DSASignatureDescription");
+	}
+
 	// Tests created using "A Layer Man Guide to ASN.1" from RSA, page 19-20
 	// Need to find an OID ? goto http://www.alvestrand.no/~hta/objectid/top.html
 	static byte[] oidETSI = { 0x06, 0x03, 0x04, 0x00, 0x00 };
@@ -299,21 +323,18 @@ public class CryptoConfigTest {
 		MapNameToOID ("TripleDESKeyWrap", "1.2.840.113549.1.9.16.3.6");
 #if NET_2_0
 		// new OID defined in Fx 2.0
-//		MapNameToOID ("RSA", "1.2.840.113549.1.1.1");
-		MapNameToOID ("DSA", "1.2.840.10040.4.1");
 		MapNameToOID ("DES", "1.3.14.3.2.7");
-		MapNameToOID ("3DES", "1.2.840.113549.3.7");
 		MapNameToOID ("TripleDES", "1.2.840.113549.3.7");
 		MapNameToOID ("RC2", "1.2.840.113549.3.2");
 #else
 		// no OID defined before Fx 2.0
-		MapNameToOID ("RSA", null);
-		MapNameToOID ("DSA", null);
 		MapNameToOID ("DES", null);
-		MapNameToOID ("3DES", null);
 		MapNameToOID ("TripleDES", null);
 		MapNameToOID ("RC2", null);
 #endif
+		MapNameToOID ("RSA", null);
+		MapNameToOID ("DSA", null);
+		MapNameToOID ("3DES", null);
 		// no OID defined ?
 		MapNameToOID ("System.Security.Cryptography.RSA", null);
 		MapNameToOID ("System.Security.Cryptography.AsymmetricAlgorithm", null);
@@ -349,6 +370,27 @@ public class CryptoConfigTest {
 		MapNameToOID ("System.Security.Cryptography.MACTripleDES", null);
 		// non existing algo should return null (without exception)
 		MapNameToOID ("NonExistingAlgorithm", null);
+	}
+
+	[Test]
+	public void MapNameToOID_UpperCase () 
+	{
+		MapNameToOID ("SHA1", "1.3.14.3.2.26");
+		MapNameToOID ("SYSTEM.SECURITY.CRYPTOGRAPHY.MD5CRYPTOSERVICEPROVIDER", "1.2.840.113549.2.5");
+	}
+
+	[Test]
+	public void MapNameToOID_LowerCase () 
+	{
+		MapNameToOID ("sha1", "1.3.14.3.2.26");
+		MapNameToOID ("system.security.cryptography.md5cryptoserviceprovider", "1.2.840.113549.2.5");
+	}
+
+	[Test]
+	public void MapNameToOID_MixedCase () 
+	{
+		MapNameToOID ("sHa1", "1.3.14.3.2.26");
+		MapNameToOID ("SySteM.SeCuRiTy.CrYpToGrApHy.Md5cRyPtOsErViCePrOvIdEr", "1.2.840.113549.2.5");
 	}
 
 	[Test]

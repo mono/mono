@@ -1,3 +1,10 @@
+2006-10-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConfigTest.cs: Added test cases to ensure lower/mixed-case of 
+	algorithm names are supported by CreateFromName and MapNameToOID (fix 
+	bug #79641). Updated some OID that were changed (well nulled) in the 
+	final 2.0 release of MS framework.
+
 2006-09-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RSACryptoServiceProviderTest.cs: Added test cases for decoding bad
