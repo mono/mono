@@ -216,7 +216,7 @@ namespace System.Windows.Forms
 
 		public Rectangle Rectangle {
 			get {
-				if (Visible && Parent != null && Parent.Visible) {
+				if (Visible && Parent != null) {
 					Rectangle result = bounds;
 					if (Style == ToolBarButtonStyle.DropDownButton && Parent.DropDownArrows)
 						result.Width += ThemeEngine.Current.ToolBarDropDownWidth;
