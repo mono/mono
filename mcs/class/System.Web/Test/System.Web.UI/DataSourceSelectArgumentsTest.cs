@@ -177,6 +177,26 @@ namespace MonoCasTests.System.Web.UI
 			Assert.IsTrue (view.RaiseUnsupportedCapabilityErrorCalled, "RaiseUnsupportedCapabilitiesError");
 			Assert.AreEqual (DataSourceCapabilities.Page, view.DataSourceCapabilities, "RaiseUnsupportedCapabilitiesError");
 		}
+
+		[Test]
+		public void Empty () {
+			DataSourceSelectArguments arg1 = DataSourceSelectArguments.Empty;
+			DataSourceSelectArguments arg2 = DataSourceSelectArguments.Empty;
+
+			Assert.IsFalse (Object.ReferenceEquals (arg1, arg2), "Not Cached instance");
+		}
+
+		[Test]
+		public void SortExpression () {
+			DataSourceSelectArguments arg1 = new DataSourceSelectArguments();
+			Assert.IsNotNull (arg1.SortExpression, "SortExpression is not null #1");
+
+			arg1 = new DataSourceSelectArguments (null);
+			Assert.IsNotNull (arg1.SortExpression, "SortExpression is not null #2");
+
+			arg1.SortExpression = null;
+			Assert.IsNotNull (arg1.SortExpression, "SortExpression is not null #3");
+		}
 	}
 }
 #endif

@@ -35,17 +35,17 @@ namespace System.Web.UI
 {
 	public sealed class DataSourceSelectArguments
 	{
-		string sortExpression = string.Empty;
-		int startingRowIndex = 0;
-		int maxRows = 0;
-		bool getTotalRowCount = false;
+		string sortExpression;
+		int startingRowIndex;
+		int maxRows;
+		bool getTotalRowCount;
 		int totalRowCount = -1;
 		DataSourceCapabilities dsc = DataSourceCapabilities.None;
 
-		static DataSourceSelectArguments empty = new DataSourceSelectArguments();
+		// MSDN: Gets a DataSourceSelectArguments object with the sort expression set to Empty. 
 		public static DataSourceSelectArguments Empty {
 			get {
-				return empty;
+				return new DataSourceSelectArguments ();
 			}
 		}
 
@@ -144,7 +144,11 @@ namespace System.Web.UI
 		}
 
 		public string SortExpression {
-			get { return this.sortExpression; }
+			get {
+				if (sortExpression == null)
+					return String.Empty;
+				return this.sortExpression;
+			}
 			set { this.sortExpression = value; }
 		}
 
