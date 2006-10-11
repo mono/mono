@@ -485,7 +485,6 @@ System.Windows.Forms/ProgressBarStyle.cs
 System.Windows.Forms/PropertiesTab.cs
 System.Windows.Forms/PropertyGrid.cs
 System.Windows.Forms/PropertyGridCommands.cs
-System.Windows.Forms/PropertyGridEntry.cs
 System.Windows.Forms/PropertyGridTextBox.cs
 System.Windows.Forms/PropertyGridView.cs
 System.Windows.Forms/PropertyManager.cs
