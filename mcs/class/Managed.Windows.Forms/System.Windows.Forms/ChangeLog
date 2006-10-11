@@ -1,3 +1,13 @@
+2006-10-10  Chris Toshok  <toshok@ximian.com>
+
+	* TextBoxBase.cs: reorder things a bit when it comes to
+	resizing-causing-recalculation.  we were recalculating the
+	document when our position was changed, which shouldn't happen.
+	We only care about size changes.  Clear up some more redundant
+	recalculation calls while I'm at it.  This makes the toolbar dock
+	example snappy when you're just dragging toolbars around (since it
+	causes a relayout whenever you move one.)
+
 2006-10-11  Chris Toshok  <toshok@ximian.com>
 
 	* ToolBarButton.cs (get_Rectangle): this only returns

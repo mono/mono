@@ -1203,9 +1203,6 @@ namespace System.Windows.Forms {
 			}
 
 			base.SetBoundsCore (x, y, width, height, specified);
-
-			TextBoxBase_SizeChanged(this, EventArgs.Empty);
-			CalculateDocument();
 		}
 
 		protected override void WndProc(ref Message m) {
@@ -1518,7 +1515,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void TextBoxBase_SizeChanged(object sender, EventArgs e) {
+		private void PositionControls ()
+		{
 			if (hscroll.Visible) {
 				//vscroll.Maximum += hscroll.Height;
 				canvas_height = ClientSize.Height - hscroll.Height;
@@ -1541,6 +1539,10 @@ namespace System.Windows.Forms {
 			hscroll.Bounds = new Rectangle (ClientRectangle.Left, ClientRectangle.Height - hscroll.Height, ClientSize.Width - (vscroll.Visible ? vscroll.Width : 0), hscroll.Height);
 			vscroll.Bounds = new Rectangle (ClientRectangle.Right - vscroll.Width, ClientRectangle.Top, vscroll.Width, ClientSize.Height - (hscroll.Visible ? hscroll.Height : 0));
 			
+		}
+
+		private void TextBoxBase_SizeChanged(object sender, EventArgs e) {
+			CalculateDocument();
 		}
 
 		private void TextBoxBase_MouseWheel(object sender, MouseEventArgs e) {
@@ -1631,7 +1633,7 @@ namespace System.Windows.Forms {
 				vscroll.Visible = false;
 			}
 
-			TextBoxBase_SizeChanged(this, EventArgs.Empty);
+			PositionControls ();
 		}
 
 		private void document_WidthChanged(object sender, EventArgs e) {
