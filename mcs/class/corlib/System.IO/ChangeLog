@@ -1,3 +1,8 @@
+2006-10-11  Dick Porter  <dick@ximian.com>
+
+	* FileStream.cs: Cope with 2.0 FileShare.Delete values.  Patch by
+	Peter Dettman <peter.dettman@iinet.net.au> fixing bug 79250.
+
 2006-09-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileInfo.cs: added 2.0 IsReadOnly. Patch by Joel Reed.

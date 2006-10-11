@@ -169,7 +169,11 @@ namespace System.IO
 			if (access < FileAccess.Read || access > FileAccess.ReadWrite)
 				throw new ArgumentOutOfRangeException ("access", "Enum value was out of legal range.");
 
+#if NET_2_0
+			if (share < FileShare.None || share > FileShare.Delete)
+#else
 			if (share < FileShare.None || share > FileShare.ReadWrite)
+#endif
 				throw new ArgumentOutOfRangeException ("share", "Enum value was out of legal range.");
 
 			if (name.IndexOfAny (Path.InvalidPathChars) != -1) {
