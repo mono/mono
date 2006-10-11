@@ -261,7 +261,12 @@ namespace System.Web.UI.WebControls
 		}
 		
 		public override bool CanRetrieveTotalRowCount {
-			get { return SelectCountMethod.Length > 0; }
+			get {
+				if( SelectCountMethod.Length > 0)
+					return true;
+
+				return !EnablePaging;
+			}
 		}
 		
 		public override bool CanSort {
@@ -1097,4 +1102,5 @@ namespace System.Web.UI.WebControls
 	}
 }
 #endif
+
 

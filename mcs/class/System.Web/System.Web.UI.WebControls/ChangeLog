@@ -1,3 +1,8 @@
+2006-10-11 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ObjectDataSourceView.cs: fixed: 
+	CanRetrieveTotalRowCount returns true if EnablePaging = false
+
 2006-10-10 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DataBoundControl.cs: fixed: DataBind flow

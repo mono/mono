@@ -346,6 +346,27 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+		public void CanRetrieveTotalRowCount () {
+			ObjectDataSource ds = new ObjectDataSource ();
+			ObjectDataSourceView view = new ObjectDataSourceView (ds, "DefaultView", null);
+
+			Assert.IsFalse (view.CanPage, "CanPage#1");
+			Assert.IsTrue (view.CanRetrieveTotalRowCount, "CanRetrieveTotalRowCount#1");
+
+			view.EnablePaging = true;
+			Assert.IsTrue (view.CanPage, "CanPage#2");
+			Assert.IsFalse (view.CanRetrieveTotalRowCount, "CanRetrieveTotalRowCount#2");
+
+			view.SelectCountMethod = "SelectCountMethod";
+			Assert.IsTrue (view.CanPage, "CanPage#3");
+			Assert.IsTrue (view.CanRetrieveTotalRowCount, "CanRetrieveTotalRowCount#3");
+
+			view.EnablePaging = false;
+			Assert.IsFalse (view.CanPage, "CanPage#4");
+			Assert.IsTrue (view.CanRetrieveTotalRowCount, "CanRetrieveTotalRowCount#4");
+		}
+
+		[Test]
 		public void OldValuesParameterFormatString ()
 		{
 			ObjectDataSource ds = new ObjectDataSource ();
