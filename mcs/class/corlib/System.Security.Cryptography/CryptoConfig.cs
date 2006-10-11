@@ -215,7 +215,7 @@ public class CryptoConfig {
 
 	private static void Initialize () 
 	{
-		Hashtable algorithms = new Hashtable ();
+		Hashtable algorithms = new Hashtable (new CaseInsensitiveHashCodeProvider (), new CaseInsensitiveComparer ());
 		// see list @ http://msdn.microsoft.com/library/en-us/cpref/html/
 		// frlrfSystemSecurityCryptographyCryptoConfigClassTopic.asp
 		algorithms.Add (nameSHA1a, defaultSHA1);
@@ -311,7 +311,7 @@ public class CryptoConfig {
 		algorithms.Add (urlKeyValueRSA, defaultKeyValueRSA);
 		algorithms.Add (urlRetrievalMethod, defaultRetrievalMethod);
 
-		Hashtable oid = new Hashtable ();
+		Hashtable oid = new Hashtable (new CaseInsensitiveHashCodeProvider (), new CaseInsensitiveComparer ());
 		// comments here are to match with MS implementation (but not with doc)
 		// LAMESPEC: only HashAlgorithm seems to have their OID included
 		oid.Add (defaultSHA1, oidSHA1);
@@ -339,10 +339,7 @@ public class CryptoConfig {
 		oid.Add (name3DESKeyWrap, oid3DESKeyWrap);
 
 #if NET_2_0
-//		oid.Add (nameRSAa, oidRSA);
-		oid.Add (nameDSAa, oidDSA);
 		oid.Add (nameDESa, oidDES);
-		oid.Add (name3DESa, oid3DES);
 		oid.Add (name3DESb, oid3DES);
 		oid.Add (nameRC2a, oidRC2);
 #endif

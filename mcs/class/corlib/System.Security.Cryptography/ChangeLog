@@ -1,3 +1,10 @@
+2006-10-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConfig.cs: Accept lower/mixed-case algorithm names in 
+	CreateFromName and MapNameToOID methods (fix bug #79641). Removed OID
+	mappings in 2.0 for DSA and 3DES (they were part of the betas but not
+	in the final 2.0 release of the framework).
+
 2006-09-20  Kazuki Oikawa  <kazuki@panicode.com>
 
 	* RijndaelManaged.cs: improves the performance.
