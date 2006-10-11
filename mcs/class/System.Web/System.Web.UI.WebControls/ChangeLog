@@ -1,5 +1,11 @@
 2006-10-11 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* GridView.cs: fixed: 
+	CreateDataSourceSelectArguments works according to MSDN.
+	(corresponding test does not work because bug in ObjectDataSourceView)
+
+2006-10-11 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* ObjectDataSourceView.cs: fixed: 
 	CanRetrieveTotalRowCount returns true if EnablePaging = false
 

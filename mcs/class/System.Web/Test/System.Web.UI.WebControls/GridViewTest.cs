@@ -46,6 +46,7 @@ using MyWebControl = System.Web.UI.WebControls;
 using System.Data;
 using System.Drawing;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -113,6 +114,15 @@ namespace MonoTests.System.Web.UI.WebControls
 		public Style DoCreateControlStyle ()
 		{
 			return base.CreateControlStyle ();
+		}
+
+		public DataSourceSelectArguments DoCreateDataSourceSelectArguments ()
+		{
+			return CreateDataSourceSelectArguments();
+		}
+
+		public DataSourceView DoGetData () {
+			return GetData ();		
 		}
 
 		public GridViewRow doCreateRow (int rowIndex, int dataSourceIndex, DataControlRowType rowType, DataControlRowState rowState)
@@ -294,6 +304,35 @@ namespace MonoTests.System.Web.UI.WebControls
 	[TestFixture]
 	public class GridViewTest
 	{
+		public class DataSourceObject
+		{
+			public static List<string> GetList (string sortExpression, int startRowIndex, int maximumRows) {
+				return GetList ();
+			}
+
+			public static List<string> GetList (int startRowIndex, int maximumRows) {
+				return GetList ();
+			}
+
+			public static List<string> GetList (string sortExpression) {
+				return GetList ();
+			}
+
+			public static List<string> GetList () {
+				List<string> list = new List<string> ();
+				list.Add ("Norway");
+				list.Add ("Sweden");
+				list.Add ("France");
+				list.Add ("Italy");
+				list.Add ("Israel");
+				list.Add ("Russia");
+				return list;
+			}
+
+			public static int GetCount () {
+				return GetList ().Count;
+			}
+		}
 
 		public const string BOOLFIELD = "bool";
 		public const string STRINGFIELD = "str";
@@ -464,6 +503,88 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			PokerGridView g = new PokerGridView ();
 			Assert.AreEqual (HtmlTextWriterTag.Table, g.PTagKey, "TagKey");
+		}
+
+		// MSDN: The CreateDataSourceSelectArguments method is a helper method called by 
+		// the GridView control to create the DataSourceSelectArguments object that 
+		// contains the arguments passed to the data source. In this implementation, 
+		// the DataSourceSelectArguments object contains the arguments for paging operations.
+		[Test]
+		[Category ("NotWorking")]
+		public void GridView_CreateDataSourceSelectArguments () {
+			DataSourceView view;
+			Page p = new Page ();
+
+			PokerGridView g = new PokerGridView ();
+			g.Sorting += new GridViewSortEventHandler (g_Sorting);
+			g.Sorted += new EventHandler (g_Sorted);
+			p.Controls.Add (g);
+
+			ObjectDataSource data = new ObjectDataSource ();
+			data.TypeName = typeof (DataSourceObject).AssemblyQualifiedName;
+			data.SelectMethod = "GetList";
+			data.SortParameterName = "sortExpression";
+			DataSourceSelectArguments arg;
+			p.Controls.Add (data);
+
+			g.DataSource = data;
+			g.DataBind ();
+
+			arg = g.DoCreateDataSourceSelectArguments ();
+			Assert.IsTrue (arg.Equals (DataSourceSelectArguments.Empty), "Default");
+
+			g.AllowPaging = true;
+			g.PageIndex = 2;
+			g.PageSize = 3;
+			arg = g.DoCreateDataSourceSelectArguments ();
+			view = g.DoGetData ();
+			Assert.IsFalse (view.CanPage);
+			Assert.IsTrue (view.CanRetrieveTotalRowCount);
+			Assert.IsTrue (arg.Equals (DataSourceSelectArguments.Empty), "AllowPaging = true, CanPage = false, CanRetrieveTotalRowCount = true");
+
+			// make DataSourceView.CanPage = true
+			data.EnablePaging = true;
+
+			arg = g.DoCreateDataSourceSelectArguments ();
+			view = g.DoGetData ();
+			Assert.IsTrue (view.CanPage);
+			Assert.IsFalse (view.CanRetrieveTotalRowCount);
+			Assert.IsTrue (arg.Equals (new DataSourceSelectArguments (6, -1)), "AllowPaging = true, CanPage = true, CanRetrieveTotalRowCount = false");
+
+			g.AllowPaging = false;
+			arg = g.DoCreateDataSourceSelectArguments ();
+			Assert.IsTrue (arg.Equals (DataSourceSelectArguments.Empty), "AllowPaging = false, CanPage = true, CanRetrieveTotalRowCount = false");
+
+			// make DataSourceView.CanRetrieveTotalRowCount = true
+			data.SelectCountMethod = "GetCount";
+
+			arg = g.DoCreateDataSourceSelectArguments ();
+			Assert.IsTrue (arg.Equals (DataSourceSelectArguments.Empty), "AllowPaging = false, CanPage = true, CanRetrieveTotalRowCount = true");
+
+			g.AllowPaging = true;
+			arg = g.DoCreateDataSourceSelectArguments ();
+			DataSourceSelectArguments arg1 = new DataSourceSelectArguments (6, 3);
+			arg1.RetrieveTotalRowCount = true;
+			view = g.DoGetData ();
+			Assert.IsTrue (view.CanPage);
+			Assert.IsTrue (view.CanRetrieveTotalRowCount);
+			Assert.IsTrue (arg.Equals (arg1), "AllowPaging = true, CanPage = true, CanRetrieveTotalRowCount = true");
+
+			g.AllowPaging = false;
+			g.AllowSorting = true;
+			g.Sort ("Col_1", SortDirection.Ascending);
+			g.DataBind ();
+			arg = g.DoCreateDataSourceSelectArguments ();
+			view = g.DoGetData ();
+			Assert.IsTrue (view.CanSort);
+			Assert.IsTrue (arg.Equals (DataSourceSelectArguments.Empty), "AllowSorting = true");
+
+		}
+
+		void g_Sorted (object sender, EventArgs e) {
+		}
+
+		void g_Sorting (object sender, GridViewSortEventArgs e) {
 		}
 
 		[Test]

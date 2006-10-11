@@ -966,9 +966,25 @@ namespace System.Web.UI.WebControls
 			return type.IsPrimitive || type == typeof(string) || type == typeof(DateTime) || type == typeof(Guid);
 		}
 		
+		// MSDN: The CreateDataSourceSelectArguments method is a helper method called by 
+		// the GridView control to create the DataSourceSelectArguments object that 
+		// contains the arguments passed to the data source. In this implementation, 
+		// the DataSourceSelectArguments object contains the arguments for paging operations.
 		protected override DataSourceSelectArguments CreateDataSourceSelectArguments ()
 		{
-			return base.CreateDataSourceSelectArguments ();
+			DataSourceSelectArguments arg = DataSourceSelectArguments.Empty;
+			DataSourceView view= GetData();
+			if (AllowPaging && view.CanPage) {
+				arg.StartRowIndex = PageIndex * PageSize;
+				if (view.CanRetrieveTotalRowCount) {
+					arg.RetrieveTotalRowCount = true;
+					arg.MaximumRows = PageSize;
+				}
+				else {
+					arg.MaximumRows = -1;
+				}
+			}
+			return arg;
 		}
 		
 		protected virtual ICollection CreateColumns (PagedDataSource dataSource, bool useDataSource)
