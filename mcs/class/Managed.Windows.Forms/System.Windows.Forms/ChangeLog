@@ -1,4 +1,11 @@
-2006-10-10  Chris Toshok  <toshok@ximian.com>
+2006-10-11  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11.cs (SetWindowPos): we need to update both position as
+	well as size after calling XMoveResizeWindow.  This keeps us from
+	ignoring future SetWindowPos calls.  Fixes the disappearing
+	DateTimePicker in the ToolBarDockExample from bug #72499.
+
+2006-10-11  Chris Toshok  <toshok@ximian.com>
 
 	* TextBoxBase.cs: reorder things a bit when it comes to
 	resizing-causing-recalculation.  we were recalculating the

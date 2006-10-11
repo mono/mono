@@ -4638,7 +4638,12 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			// Prevent an old queued ConfigureNotify from setting our width with outdated data, set it now
+			// Update our position/size immediately, so
+			// that future calls to SetWindowPos aren't
+			// kept from calling XMoveResizeWindow (by the
+			// "Save a server roundtrip" block above).
+			hwnd.x = x;
+			hwnd.y = y;
 			hwnd.width = width;
 			hwnd.height = height;
 		}
