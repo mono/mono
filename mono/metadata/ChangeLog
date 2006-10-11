@@ -1,3 +1,8 @@
+2006-10-11  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c (ves_icall_System_Net_Sockets_Socket_Poll_internal):
+	Fix typo spotted by Robert Jordan in bug 79352 (though I can't
+	reproduce the bug even before applying the fix.)
 
 Tue Oct 10 15:39:39 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
