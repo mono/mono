@@ -52,6 +52,8 @@ namespace System.Diagnostics
 #if !NO_LOCK_FREE
 				if (settings == null) {
 					object s = ConfigurationSettings.GetConfig ("system.diagnostics");
+					if (s == null)
+						throw new Exception ("INTERNAL configuration error: failed to get configuration 'system.diagnostics'");
 					Thread.MemoryBarrier ();
 					while (Interlocked.CompareExchange (ref settings, s, null) == null) {
 						// do nothing; we're just setting settings.
