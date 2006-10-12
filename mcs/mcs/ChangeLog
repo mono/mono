@@ -1,3 +1,8 @@
+2006-10-12  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs
+	(Using.EmitLocalVariableDeclFinally): Small fix for iterators.
+
 2006-10-11  Miguel de Icaza  <miguel@novell.com>
 
 	* convert.cs: Remove broken code: I was doing the "Existance"

@@ -4308,8 +4308,9 @@ namespace Mono.CSharp {
 			for (int ii = 0; ii < var_list.Count; ++ii){
 				Expression var = resolved_vars [--i];
 				Label skip = ig.DefineLabel ();
-				
-				ig.BeginFinallyBlock ();
+
+				if (emit_finally)
+					ig.BeginFinallyBlock ();
 				
 				if (!var.Type.IsValueType) {
 					var.Emit (ec);
@@ -4445,7 +4446,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			ResolveFinally (branching);					
+			ResolveFinally (branching);
 			FlowBranching.Reachability reachability = ec.EndFlowBranching ();
 
 			if (!reachability.AlwaysReturns) {
