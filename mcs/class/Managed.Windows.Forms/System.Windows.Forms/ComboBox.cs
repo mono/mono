@@ -396,14 +396,15 @@ namespace System.Windows.Forms
 						SetControlText (GetItemText (Items [value]));
     				}
 
-    				OnSelectedValueChanged (new EventArgs ());
-    				OnSelectedIndexChanged  (new EventArgs ());
-    				OnSelectedItemChanged (new EventArgs ());
 				if (DropDownStyle == ComboBoxStyle.DropDownList)
     					Invalidate ();
 
 				if (listbox_ctrl != null)
 					listbox_ctrl.HighlightedIndex = value;
+
+				OnSelectedValueChanged (new EventArgs ());
+				OnSelectedIndexChanged (new EventArgs ());
+				OnSelectedItemChanged (new EventArgs ());
 			}
 		}
 
@@ -1711,7 +1712,7 @@ namespace System.Windows.Forms
 					if (highlighted_index == value)
 						return;
 
-    					if (highlighted_index != -1)
+					if (highlighted_index != -1 && highlighted_index < this.owner.Items.Count)
 						Invalidate (GetItemDisplayRectangle (highlighted_index, top_item));
 					highlighted_index = value;
     					if (highlighted_index != -1)

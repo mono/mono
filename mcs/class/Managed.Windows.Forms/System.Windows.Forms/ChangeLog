@@ -8,6 +8,14 @@
 
 2006-10-12  Rolf Bjarne Kvinge  <rolfkvinge@ya.com>
 
+	* ComboBox.cs: move the events in set_SelectedIndex to 
+	after the call to HighlightIndex in order to avoid 
+	possible recursion and subsequent problems with the call
+	to HighlightIndex and include a range check in 
+	set_HighlightIndex. Fixes #79588
+	
+2006-10-12  Rolf Bjarne Kvinge  <rolfkvinge@ya.com>
+
 	* MonthCalendar.cs: When FirstDayOfWeek is default set firstday 
 	to ui thread's settings instead of sunday. 
 	* ThemeWin32Classic.cs: Localize the day string. Fixes #79563
