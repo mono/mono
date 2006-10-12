@@ -929,13 +929,13 @@ namespace System.Web.UI.WebControls
 		[DefaultValueAttribute (SortDirection.Ascending)]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public virtual SortDirection SortDirection {
-			get { return sortDirection; }
+			get { return IsBoundUsingDataSourceID ? sortDirection : SortDirection.Ascending; }
 		}
 		
 		[BrowsableAttribute (false)]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public virtual string SortExpression {
-			get { return sortExpression; }
+			get { return IsBoundUsingDataSourceID ? sortExpression : String.Empty; }
 		}
 		
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
@@ -984,6 +984,14 @@ namespace System.Web.UI.WebControls
 					arg.MaximumRows = -1;
 				}
 			}
+
+			if (IsBoundUsingDataSourceID && !String.IsNullOrEmpty (sortExpression)) {
+				if (sortDirection == SortDirection.Ascending)
+					arg.SortExpression = sortExpression;
+				else
+					arg.SortExpression = sortExpression + " DESC";
+			}
+			
 			return arg;
 		}
 		
@@ -1343,21 +1351,6 @@ namespace System.Web.UI.WebControls
 		
 		public sealed override void DataBind ()
 		{
-			DataSourceView view = GetData ();
-			if (AllowPaging && view.CanPage) {
-				SelectArguments.StartRowIndex = PageIndex * PageSize;
-				SelectArguments.MaximumRows = PageSize;
-				if (view.CanRetrieveTotalRowCount)
-					SelectArguments.RetrieveTotalRowCount = true;
-			}
-
-			if (sortExpression != "") {
-				if (sortDirection == SortDirection.Ascending)
-					SelectArguments.SortExpression = sortExpression;
-				else
-					SelectArguments.SortExpression = sortExpression + " DESC";
-			}
-			
 			cachedKeyProperties = null;
 			base.DataBind ();
 		}

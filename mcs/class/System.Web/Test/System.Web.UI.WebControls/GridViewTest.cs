@@ -505,6 +505,43 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (HtmlTextWriterTag.Table, g.PTagKey, "TagKey");
 		}
 
+		[Test]
+		[Category ("NotWorking")]
+		public void GridView_Sort_and_DataSourceSelectArguments () {
+			DataSourceView view;
+			DataSourceSelectArguments arg;
+			Page p = new Page ();
+
+			PokerGridView g = new PokerGridView ();
+			g.Columns.Add (new BoundField ());
+			g.AllowSorting = true;
+			p.Controls.Add (g);
+
+			ObjectDataSource data = new ObjectDataSource ();
+			data.TypeName = typeof (DataSourceObject).AssemblyQualifiedName;
+			data.SelectMethod = "GetList";
+			data.SortParameterName = "sortExpression";
+			data.ID = "Data";
+			p.Controls.Add (data);
+
+			g.DataSourceID = "Data";
+			g.DataBind ();
+			
+			g.Sort ("sort", SortDirection.Descending);
+
+			arg = g.DoCreateDataSourceSelectArguments();
+			view = g.DoGetData ();
+			Assert.IsTrue (view.CanSort);
+			Assert.AreEqual ("sort", g.SortExpression, "SortExpression, Bound by DataSourceID");
+			Assert.AreEqual (SortDirection.Descending, g.SortDirection, "SortDirection, Bound by DataSourceID");
+			Assert.AreEqual ("sort DESC", arg.SortExpression, "AllowSorting = true, Bound by DataSourceID");
+
+			g.AllowSorting = false;
+			arg = g.DoCreateDataSourceSelectArguments ();
+			Assert.AreEqual ("sort DESC", arg.SortExpression, "AllowSorting = false, Bound by DataSourceID");
+		
+		}
+
 		// MSDN: The CreateDataSourceSelectArguments method is a helper method called by 
 		// the GridView control to create the DataSourceSelectArguments object that 
 		// contains the arguments passed to the data source. In this implementation, 
@@ -517,7 +554,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			PokerGridView g = new PokerGridView ();
 			g.Sorting += new GridViewSortEventHandler (g_Sorting);
-			g.Sorted += new EventHandler (g_Sorted);
 			p.Controls.Add (g);
 
 			ObjectDataSource data = new ObjectDataSource ();
@@ -572,19 +608,19 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			g.AllowPaging = false;
 			g.AllowSorting = true;
-			g.Sort ("Col_1", SortDirection.Ascending);
-			g.DataBind ();
+			g.Sort ("sort", SortDirection.Descending);
 			arg = g.DoCreateDataSourceSelectArguments ();
 			view = g.DoGetData ();
 			Assert.IsTrue (view.CanSort);
-			Assert.IsTrue (arg.Equals (DataSourceSelectArguments.Empty), "AllowSorting = true");
+			Assert.AreEqual (String.Empty, g.SortExpression, "SortExpression, Bound by DataSource");
+			Assert.AreEqual (SortDirection.Ascending, g.SortDirection, "SortDirection, Bound by DataSource");
+			Assert.IsTrue (arg.Equals (DataSourceSelectArguments.Empty), "AllowSorting = true, Bound by DataSource");
 
 		}
 
-		void g_Sorted (object sender, EventArgs e) {
-		}
-
-		void g_Sorting (object sender, GridViewSortEventArgs e) {
+		static void g_Sorting (object sender, GridViewSortEventArgs e) {
+			Assert.AreEqual ("sort", e.SortExpression, "GridViewSortEventArgs.SortExpression");
+			Assert.AreEqual (SortDirection.Descending, e.SortDirection, "GridViewSortEventArgs.SortDirection");
 		}
 
 		[Test]
