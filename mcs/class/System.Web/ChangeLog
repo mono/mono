@@ -160,7 +160,6 @@
 
 	* MenuTest.cs: new tests were added
 
->>>>>>> .r63580
 2006-08-09 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* HierarchicalDataBoundControlTest.cs: added new tests
