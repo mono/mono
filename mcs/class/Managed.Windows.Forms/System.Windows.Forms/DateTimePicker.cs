@@ -21,12 +21,9 @@
 //
 // Authors:
 //	John BouAntoun	jba-mono@optusnet.com.au
+//	Rolf Bjarne Kvinge	rolfkvinge@ya.com
 //
 // TODO:
-//		- implement custom formatting of the date time value
-//		- implement any behaviour associate with UseUpDown (painting, key and mouse)
-//		- implement key processing and responding
-//		- fix MonthCalendar Popdown on form move
 //		- wire in all events from monthcalendar
 
 
@@ -70,13 +67,21 @@ namespace System.Windows.Forms {
 		DateTime						min_date;
 		bool							show_check_box;
 		bool							show_up_down;
-		string							text;
 		DateTime						date_value;
 		
 		// variables used for drawing and such
-		internal int 					up_down_width;
+		internal const int					up_down_width = check_box_size;
 		internal bool 					is_drop_down_visible;
-		
+		internal bool						is_up_pressed;
+		internal bool						is_down_pressed;
+		internal Timer						updown_timer;
+		internal const int					initial_timer_delay = 500;
+		internal const int					subsequent_timer_delay = 100;
+		internal bool						is_checkbox_selected;
+
+		// variables for determining how to format the string
+		internal PartData[]					part_data;
+
 		#endregion	// Local variables
 		
 		#region DateTimePickerAccessibleObject Subclass
@@ -109,7 +114,7 @@ namespace System.Windows.Forms {
 
 			public override string Value {
 				get {
-					return owner.text;
+					return owner.Text;
 				}
 			}
 			#endregion	// DateTimePickerAccessibleObject Properties
@@ -131,6 +136,9 @@ namespace System.Windows.Forms {
 			month_calendar.TitleForeColor = DefaultTitleForeColor;
 			month_calendar.TrailingForeColor = DefaultTrailingForeColor;
 			month_calendar.Visible = false;
+			// initialize the timer
+			updown_timer = new Timer();
+			updown_timer.Interval = initial_timer_delay;
 
 			
 			// initialise other variables
@@ -143,20 +151,26 @@ namespace System.Windows.Forms {
 			show_check_box = false;
 			show_up_down = false;
 			date_value = DateTime.Now;
-			text = FormatValue ();		
-			
-			up_down_width = 10;
+						
 			is_drop_down_visible = false;
 			
 			month_calendar.DateChanged += new DateRangeEventHandler (MonthCalendarDateChangedHandler);
 			month_calendar.DateSelected += new DateRangeEventHandler (MonthCalendarDateSelectedHandler);
+			month_calendar.LostFocus += new EventHandler (MonthCalendarLostFocusHandler);
+			month_calendar.MouseDown += new MouseEventHandler (MonthCalendarMouseDownHandler);
+			updown_timer.Tick += new EventHandler (UpDownTimerTick);
 			KeyPress += new KeyPressEventHandler (KeyPressHandler);
-//			LostFocus += new EventHandler (LostFocusHandler);
+			KeyDown += new KeyEventHandler (KeyDownHandler);
+			LostFocus += new EventHandler (LostFocusHandler);
 			MouseDown += new MouseEventHandler (MouseDownHandler);			
+			MouseUp += new MouseEventHandler (MouseUpHandler);
 			Paint += new PaintEventHandler (PaintHandler);
-			
+			Resize += new EventHandler (ResizeHandler);
 			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick, false);
 			SetStyle (ControlStyles.FixedHeight, true);
+			SetStyle (ControlStyles.Selectable, true);
+
+			CalculateFormats ();
 		}
 		
 		#endregion
@@ -251,8 +265,11 @@ namespace System.Windows.Forms {
 				if (is_checked != value) {
 					is_checked = value;
 					// invalidate the value inside this control
-					if (ShowCheckBox)
+					if (ShowCheckBox) {
+						for (int i = 0; i < part_data.Length; i++)
+							part_data [i].is_selected = false;
 						Invalidate (date_area_rect);
+					}
 				}
 			}
 			get {
@@ -268,7 +285,7 @@ namespace System.Windows.Forms {
 				if (custom_format != value) {
 					custom_format = value;
 					if (this.Format == DateTimePickerFormat.Custom) {
-						// TODO: change the text value of the dtp						
+						CalculateFormats ();
 					}
 				}
 			}
@@ -308,6 +325,7 @@ namespace System.Windows.Forms {
 			set {
 				if (format != value) {
 					format = value;
+					CalculateFormats ();
 					this.OnFormatChanged (EventArgs.Empty);
 					// invalidate the value inside this control
 					this.Invalidate (date_area_rect);
@@ -411,15 +429,31 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override string Text {
 			set {
-				// TODO: if the format is a custom format we need to do a custom parse here
-				DateTime parsed_value = DateTime.Parse (value);
+				DateTime parsed_value;
+				if (format == DateTimePickerFormat.Custom) {
+					// TODO: if the format is a custom format we need to do a custom parse here
+					// This implementation will fail if the custom format is set to something that can
+					// be a standard datetime format string
+					// http://msdn2.microsoft.com/en-us/library/az4se3k1.aspx
+					parsed_value = DateTime.ParseExact (value, GetExactFormat (), null);
+				} else {
+					parsed_value = DateTime.ParseExact (value, GetExactFormat (), null);
+				}
+				
 				if (date_value != parsed_value) {
 					Value = parsed_value;
 				}
-				text = FormatValue (); 
 			}
 			get {
-				return text;
+				if (format == DateTimePickerFormat.Custom) {
+					System.Text.StringBuilder result = new System.Text.StringBuilder ();
+					for (int i = 0; i < part_data.Length; i++) { 
+						result.Append(part_data[i].GetText(date_value));
+					}
+					return result.ToString ();
+				} else {
+					return Value.ToString (GetExactFormat ());
+				}
 			}
 		}	
 
@@ -429,7 +463,6 @@ namespace System.Windows.Forms {
 			set {
 				if (date_value != value) {
 					date_value = value;
-					text = FormatValue ();
 					this.OnValueChanged (EventArgs.Empty);
 					this.Invalidate (date_area_rect);
 				}
@@ -563,12 +596,20 @@ namespace System.Windows.Forms {
 		
 		// not sure why we're overriding this one
 		protected override void Dispose (bool disposing) {
+			updown_timer.Dispose ();
 			base.Dispose (disposing);
 		}
 		
 		// find out if this key is an input key for us, depends on which date part is focused
 		protected override bool IsInputKey (Keys keyData) {
-			// TODO: fix this implementation of IsInputKey
+			switch (keyData)
+			{
+				case Keys.Up:
+				case Keys.Down:
+				case Keys.Left:
+				case Keys.Right:
+					return true;
+			}
 			return false;
 		}
 		
@@ -701,7 +742,200 @@ namespace System.Windows.Forms {
 		#endregion
 		
 		#region internal / private methods
+
+		// if the user clicks outside of the monthcalendar, hide it.
+		private void MonthCalendarMouseDownHandler (object sender, MouseEventArgs e)
+		{
+			if (!month_calendar.ClientRectangle.Contains (e.X, e.Y)) {
+				DropDownMonthCalendar ();
+			}
+		}
+
+		private void ResizeHandler (object sender, EventArgs e)
+		{
+			Invalidate ();
+		}
+
+		private void UpDownTimerTick (object sender, EventArgs e)
+		{
+			if (updown_timer.Interval == initial_timer_delay)
+				updown_timer.Interval = subsequent_timer_delay;
+
+			if (is_down_pressed)
+				IncrementSelectedPart (-1);
+			else if (is_up_pressed)
+				IncrementSelectedPart (1);
+			else
+				updown_timer.Enabled = false;
+		}
 		
+		// calculates the maximum width 
+		internal Single CalculateMaxWidth(string format, Graphics gr, StringFormat string_format)
+		{
+			SizeF size;
+			float result = 0;
+			string text;
+			Font font = this.Font;
+
+			switch (format)
+			{
+				case "M":
+				case "MM":
+				case "MMM":
+				case "MMMM":
+					for (int i = 1; i <= 12; i++) {
+						text = PartData.GetText (Value.AddMonths (i), format);
+						size = gr.MeasureString (text, font, int.MaxValue, string_format);
+						result = Math.Max (result, size.Width);
+					}
+					return result;
+				case "d":
+				case "dd":
+				case "ddd":
+				case "dddd":
+					for (int i = 1; i <= 12; i++) {
+						text = PartData.GetText (Value.AddDays (i), format);
+						size = gr.MeasureString (text, font, int.MaxValue, string_format);
+						result = Math.Max (result, size.Width);
+					}
+					return result;
+				case "h":
+				case "hh":
+					for (int i = 1; i <= 12; i++) {
+						text = PartData.GetText (Value.AddHours (i), format);
+						size = gr.MeasureString (text, font, int.MaxValue, string_format);
+						result = Math.Max (result, size.Width);
+					}
+					return result;
+				case "H":
+				case "HH":
+					for (int i = 1; i <= 24; i++) {
+						text = PartData.GetText (Value.AddDays (i), format);
+						size = gr.MeasureString (text, font, int.MaxValue, string_format);
+						result = Math.Max (result, size.Width);
+					}
+					return result;
+				case "m":
+				case "mm":
+					for (int i = 1; i <= 60; i++) {
+						text = PartData.GetText (Value.AddMinutes (i), format);
+						size = gr.MeasureString (text, font, int.MaxValue, string_format);
+						result = Math.Max (result, size.Width);
+					}
+					return result;
+				case "s":
+				case "ss":
+					for (int i = 1; i <= 60; i++) {
+						text = PartData.GetText (Value.AddSeconds (i), format);
+						size = gr.MeasureString (text, font, int.MaxValue, string_format);
+						result = Math.Max (result, size.Width);
+					}
+					return result;
+				case "t":
+				case "tt":
+					for (int i = 1; i <= 2; i++) {
+						text = PartData.GetText (Value.AddHours (i * 12), format);
+						size = gr.MeasureString (text, font, int.MaxValue, string_format);
+						result = Math.Max (result, size.Width);
+					}
+					return result;
+				case "y":
+				case "yy":
+				case "yyyy":
+					for (int i = 1; i <= 10; i++) {
+						text = PartData.GetText (Value.AddYears (i), format);
+						size = gr.MeasureString (text, font, int.MaxValue, string_format);
+						result = Math.Max (result, size.Width);
+					}
+					return result;
+				default:
+					return gr.MeasureString (format, font, int.MaxValue, string_format).Width;
+			}
+		}
+
+		// returns the format of the date as a string 
+		// (i.e. resolves the Format enum values to it's corresponding string format)
+		private string GetExactFormat()
+		{
+			switch (this.format) {
+			case DateTimePickerFormat.Long:
+				return Threading.Thread.CurrentThread.CurrentUICulture.DateTimeFormat.LongDatePattern;
+			case DateTimePickerFormat.Short:
+				return Threading.Thread.CurrentThread.CurrentUICulture.DateTimeFormat.ShortDatePattern;
+			case DateTimePickerFormat.Time:
+				return Threading.Thread.CurrentThread.CurrentUICulture.DateTimeFormat.LongTimePattern;
+			case DateTimePickerFormat.Custom:
+				return this.custom_format;
+			default:
+				return Threading.Thread.CurrentThread.CurrentUICulture.DateTimeFormat.LongDatePattern;
+			}
+		}
+
+		private void CalculateFormats()
+		{
+			string real_format;
+			System.Text.StringBuilder literal = new System.Text.StringBuilder ();
+			System.Collections.ArrayList formats = new ArrayList ();
+			bool is_literal = false;
+			char lastch = (char) 0;
+			char ch;
+
+			real_format = GetExactFormat ();
+
+			// parse the format string
+			for (int i = 0; i < real_format.Length; i++)
+			{
+				ch = real_format [i];
+
+				if (is_literal && ch != '\'')
+				{
+					literal.Append (ch);
+					continue;
+				}
+
+				switch (ch)
+				{
+					case 't':
+					case 'd':
+					case 'h':
+					case 'H':
+					case 'm':
+					case 'M':
+					case 's':
+					case 'y':
+						if (!(lastch == ch || lastch == 0) && literal.Length != 0)
+						{
+							formats.Add (new PartData(literal.ToString (), false));
+							literal.Length = 0;
+						}
+						literal.Append (ch);
+						break;
+					case '\'':
+						if (literal.Length == 0)
+							break;
+						formats.Add (new PartData (literal.ToString (), is_literal));
+						literal.Length = 0;
+						is_literal = !is_literal;
+						break;
+					default:
+						if (literal.Length != 0)
+						{
+							formats.Add (new PartData(literal.ToString (), false));
+							literal.Length = 0;
+						}
+						formats.Add (new PartData (ch.ToString(), true));
+						break;
+
+				}
+				lastch = ch;
+			}
+			if (literal.Length >= 0)
+				formats.Add (new PartData (literal.ToString (), false));
+
+			part_data = new PartData [formats.Count];
+			formats.CopyTo (part_data);
+		}
+
 		private Point CalculateDropDownLocation (Rectangle parent_control_rect, Size child_size, bool align_left)
 		{
 			// default bottom left
@@ -721,6 +955,10 @@ namespace System.Windows.Forms {
 			if (screen_location.Y + child_size.Height > working_area.Bottom) {
 				screen_location.Y -= (parent_control_rect.Height + child_size.Height);
 			}
+
+			// since the parent of the month calendar is the form, adjust accordingly.
+			month_calendar.PointToClient(this.PointToScreen(screen_location));
+
 			return screen_location;
 		}
 		
@@ -746,10 +984,10 @@ namespace System.Windows.Forms {
 				align_area,
 				month_calendar.Size,
 				(this.DropDownAlign == LeftRightAlignment.Left));
+			month_calendar.parent = this.FindForm ();
 			month_calendar.Show ();
 			month_calendar.Focus ();
-			month_calendar.Capture = true;	
-			
+
 			// fire any registered events
 			if (this.DropDown != null) {
 				this.DropDown (this, EventArgs.Empty);
@@ -760,33 +998,401 @@ namespace System.Windows.Forms {
 		internal void HideMonthCalendar () 
 		{
 			this.is_drop_down_visible = false;
-    		Invalidate (drop_down_arrow_rect);
-    		month_calendar.Capture = false;
-    		if (month_calendar.Visible) {
-    			month_calendar.Hide ();
-    		}
+    			Invalidate (drop_down_arrow_rect);
+    			month_calendar.Capture = false;
+			if (month_calendar.Visible) {
+				month_calendar.Hide ();
+			}
     	}
 
+		private int GetSelectedPartIndex()
+		{
+			for (int i = 0; i < part_data.Length; i++)
+			{
+				if (part_data[i].is_selected && !part_data[i].is_literal)
+					return i;
+			}
+			return -1;
+		}
+
+		private void IncrementSelectedPart(int delta)
+		{
+			int selected_index = GetSelectedPartIndex();
+
+			if (selected_index == -1) {
+				return;
+			}
+			
+			switch (part_data[selected_index].value)
+			{
+				case "d":
+				case "dd": // number day formats
+					if (delta < 0) {
+						if (Value.Day == 1)
+							SetPart(DateTime.DaysInMonth(Value.Year, Value.Month), 'd');
+						else
+							SetPart(Value.Day + delta, 'd');
+					} else {
+						if (Value.Day == DateTime.DaysInMonth(Value.Year, Value.Month))
+							SetPart(1, 'd');
+						else
+							SetPart(Value.Day + delta, 'd') ;
+					}
+					break;
+				case "ddd":
+				case "dddd": // text day formats
+					Value = Value.AddDays(delta);
+					break;
+				case "h":
+				case "hh":
+				case "H":
+				case "HH": // hour formats
+					SetPart(Value.Hour + delta, 'h');
+					break;
+				case "m":
+				case "mm": // minute formats
+					SetPart(Value.Minute + delta, 'm');
+					break;
+				case "M":
+				case "MM":
+				case "MMM":
+				case "MMMM": // month formats
+					SetPart(Value.Month + delta, 'M');
+					break;
+				case "s":
+				case "ss": // second format
+					SetPart(Value.Second + delta, 's');
+					break;
+				case "t":
+				case "tt": // AM / PM specifier
+					SetPart(Value.Hour + delta * 12, 'h');
+					break;
+				case "y":
+				case "yy":
+				case "yyy":
+				case "yyyy":
+					SetPart(Value.Year + delta, 'y');
+					break;
+			}
+		}
+
+		private void SelectNextPart()
+		{
+			int selected_index;
+			if (is_checkbox_selected) {
+				for (int i = 0; i < part_data.Length; i++)
+				{
+					if (!part_data[i].is_literal)
+					{
+						is_checkbox_selected = false;
+						part_data[i].is_selected = true;
+						Invalidate();
+						break;
+					}
+				}
+			} else {
+				selected_index = GetSelectedPartIndex();
+				if (selected_index >= 0)
+					part_data[selected_index].is_selected = false;
+				for (int i = selected_index + 1; i < part_data.Length; i++)
+				{
+					if (!part_data[i].is_literal)
+					{
+						part_data[i].is_selected = true;
+						Invalidate();
+						break;
+					}
+				}
+				if (GetSelectedPartIndex() == -1)
+				{ // if no part was found before the end, look from the beginning
+					if (ShowCheckBox)
+					{
+						is_checkbox_selected = true;
+						Invalidate();
+					}
+					else
+					{
+						for (int i = 0; i <= selected_index; i++)
+						{
+							if (!part_data[i].is_literal)
+							{
+								part_data[i].is_selected = true;
+								Invalidate();
+								break;
+							}
+						}
+					}
+				}
+			}
+
+		}
+
+		private void SelectPreviousPart()
+		{
+			if (is_checkbox_selected)
+			{
+				for (int i = part_data.Length - 1; i >= 0; i--)
+				{
+					if (!part_data[i].is_literal)
+					{
+						is_checkbox_selected = false;
+						part_data[i].is_selected = true;
+						Invalidate();
+						break;
+					}
+				}
+			}
+			else
+			{
+				int selected_index = GetSelectedPartIndex();
+
+				if (selected_index >= 0)
+					part_data[selected_index].is_selected = false;
+
+				for (int i = selected_index - 1; i >= 0; i--)
+				{
+					if (!part_data[i].is_literal)
+					{
+						part_data[i].is_selected = true;
+						Invalidate();
+						break;
+					}
+				}
+				if (GetSelectedPartIndex() == -1)
+				{	// if no part was found before the beginning, look from the end
+					if (ShowCheckBox)
+					{
+						is_checkbox_selected = true;
+						Invalidate();
+					}
+					else
+					{
+						for (int i = part_data.Length - 1; i >= selected_index; i--)
+						{
+							if (!part_data[i].is_literal)
+							{
+								part_data[i].is_selected = true;
+								Invalidate();
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// raised by key down events.
+		private void KeyDownHandler(object sender, KeyEventArgs e)
+		{
+			switch (e.KeyCode)
+			{
+				case Keys.Add:
+				case Keys.Up:
+					{
+						if (ShowCheckBox && Checked == false)
+							break;
+						IncrementSelectedPart(1);
+						e.Handled = true;
+						break;
+					}
+				case Keys.Subtract:
+				case Keys.Down:
+					{
+						if (ShowCheckBox && Checked == false)
+							break;
+						IncrementSelectedPart(-1);
+						e.Handled = true;
+						break;
+					}
+				case Keys.Left:
+					{// select the next part to the left
+						if (ShowCheckBox && Checked == false)
+							break;
+						SelectPreviousPart();
+						e.Handled = true;
+						break;
+					}
+				case Keys.Right:
+					{// select the next part to the right
+						if (ShowCheckBox && Checked == false)
+							break;
+						SelectNextPart();
+						e.Handled = true;
+						break;
+					}
+				case Keys.F4:
+					if (!is_drop_down_visible)
+						DropDownMonthCalendar();
+					break;
+			}
+		}
+
 		// raised by any key down events
-		private void KeyPressHandler (object sender, KeyPressEventArgs e) {
+		private void KeyPressHandler (object sender, KeyPressEventArgs e)
+		{
 			switch (e.KeyChar) {
+				case ' ':
+					if (is_checkbox_selected)
+					{
+						Checked = !Checked;
+					}
+					break;
+				case '0':
+				case '1':
+				case '2':
+				case '3':
+				case '4':
+				case '5':
+				case '6':
+				case '7':
+				case '8':
+				case '9':
+					int number = e.KeyChar - (int) '0';
+					int selected_index = GetSelectedPartIndex();
+					if (selected_index == -1)
+						break;
+					if (!part_data[selected_index].is_numeric_format)
+						break;
+					switch (part_data[selected_index].value)
+					{
+						case "d":
+						case "dd":
+							int newDay = Value.Day * 10 + number;
+							if (DateTime.DaysInMonth(Value.Year, Value.Month) < newDay)
+								newDay = number;
+							SetPart(newDay, 'd');
+							break;
+						case "M":
+						case "MM":
+							int newMonth = Value.Month * 10 + number;
+							if (newMonth > 12)
+								newMonth = number;
+							SetPart(newMonth, 'M');
+							break;
+						case "y":
+						case "yy":
+						case "yyyy":
+							int newYear = Value.Year * 10 + number;
+							if (newYear > 9999)
+								newYear = number;
+							SetPart(newYear, 'y');
+							break;
+						case "h":
+						case "hh":
+						case "H":
+						case "HH":
+							int newHour = Value.Hour * 10 + number;
+							if (newHour >= 24)
+								newHour = number;
+							SetPart(newHour, 'h');
+							break;
+						case "m":
+						case "mm":
+							int newMinute = Value.Minute* 10 + number;
+							if (newMinute >= 60)
+								newMinute = number;
+							SetPart(newMinute, 'm');
+							break;
+						case "s":
+						case "ss":
+							int newSecond = Value.Second * 10 + number;
+							if (newSecond >= 60)
+								newSecond = number;
+							SetPart(newSecond, 's');
+							break;
+
+					}
+					break;
 				default:
 					break;
 			}
 			e.Handled = true;
 		}
-		
-//		// if we lose focus and the drop down is up, then close it
-//		private void LostFocusHandler (object sender, EventArgs e) 
-//		{
-//			if (is_drop_down_visible && !month_calendar.Focused) {
-//				this.HideMonthCalendar ();				
-//			}			
-//		}
-		
+
+		// set the specified part of the date to the specified value
+		private void SetPart(int value, char part)
+		{
+			switch (part)
+			{
+				case 's': // seconds
+					value %= 60;
+					if (value == -1)
+						value = 59;
+					if (value >= 0 && value <= 59)
+						Value = new DateTime(Value.Year, Value.Month, Value.Day, Value.Hour, Value.Minute, value, Value.Millisecond);
+					break;
+				case 'm': // minutes
+					value %= 60;
+					if (value == -1)
+						value = 59;
+					if (value >= 0 && value <= 59)
+						Value = new DateTime(Value.Year, Value.Month, Value.Day, Value.Hour, value, Value.Second, Value.Millisecond);
+					break;
+				case 'h':
+				case 'H': // hours
+					value %= 24;
+					if (value == -1)
+						value = 23;
+					if (value >= 0 && value <= 23)
+						Value = new DateTime(Value.Year, Value.Month, Value.Day, value, Value.Minute, Value.Second, Value.Millisecond);
+					break;
+				case 'd': // days
+					int max_days = DateTime.DaysInMonth(Value.Year, Value.Month);
+					if (value > max_days)
+						Value = new DateTime(Value.Year, Value.Month, max_days, Value.Hour, Value.Minute, Value.Second, Value.Millisecond);
+					if (value >= 1 && value <= 31)
+						Value = new DateTime(Value.Year, Value.Month, value, Value.Hour, Value.Minute, Value.Second, Value.Millisecond);
+					break;
+				case 'M': // months
+					value %= 12;
+					if (value == 0)
+						value = 12;
+					if (value >= 1 && value <= 12)
+						Value = new DateTime(Value.Year, value, Value.Day, Value.Hour, Value.Minute, Value.Second, Value.Millisecond);
+					break;
+				case 'y': // years
+					value %= 10000;
+					if (value > 0 && value <= 9999)
+						Value = new DateTime(value, Value.Month, Value.Day, Value.Hour, Value.Minute, Value.Second, Value.Millisecond);
+					break;
+			}
+		}
+
+		// if we loose focus deselect any selected parts.
+		private void LostFocusHandler (object sender, EventArgs e) 
+		{
+			int selected_index = GetSelectedPartIndex ();
+			if (selected_index != -1)
+			{
+				part_data [selected_index].is_selected = false;
+				Rectangle invalidate_rect = Rectangle.Ceiling (part_data [selected_index].drawing_rectangle);
+				invalidate_rect.Inflate (2, 2);
+				Invalidate (invalidate_rect);
+			}
+			else if (is_checkbox_selected)
+			{
+				is_checkbox_selected = false;
+				Invalidate (CheckBoxRect);
+			}
+		}
+
+		// if month calendar looses focus and the drop down is up, then close it
+		private void MonthCalendarLostFocusHandler(object sender, EventArgs e)
+		{
+			if (is_drop_down_visible && !month_calendar.Focused)
+			{
+				//this.HideMonthCalendar(); 
+				//This is handled from the monthcalender itself, 
+				//it may loose focus, but still has to be visible,
+				//for instance when the context menu is displayed.
+			}
+
+		}
+
 		private void MonthCalendarDateChangedHandler (object sender, DateRangeEventArgs e)
 		{
-			this.Value = e.Start.Date.Add (this.Value.TimeOfDay);
+			if (month_calendar.Visible)
+				this.Value = e.Start.Date.Add (this.Value.TimeOfDay);
 		}
 
 		// fired when a user clicks on the month calendar to select a date
@@ -796,29 +1402,89 @@ namespace System.Windows.Forms {
 			this.Focus ();			
 		} 
 
+		private void MouseUpHandler(object sender, MouseEventArgs e)
+		{
+			if (ShowUpDown)
+			{
+				if (is_up_pressed || is_down_pressed)
+				{
+					updown_timer.Enabled = false;
+					is_up_pressed = false;
+					is_down_pressed = false;
+					Invalidate (drop_down_arrow_rect);
+				}
+			}
+		}
+
 		// to check if the mouse has come down on this control
 		private void MouseDownHandler (object sender, MouseEventArgs e)
 		{
-			/* Click On button*/
-			if (ShowUpDown) {
-				// TODO: Process clicking for UPDown
-			} else if (ShowCheckBox && CheckBoxRect.Contains (e.X, e.Y))
-				Checked = !Checked;
-			else {
-				if (is_drop_down_visible == false && drop_down_arrow_rect.Contains (e.X, e.Y)) {
-					is_drop_down_visible = true;
-					if (!Checked)
-						Checked = true;
+			// Only left clicks are handled.
+			if (e.Button != MouseButtons.Left)
+				return;
 
+			is_checkbox_selected = false;
+
+			if (ShowCheckBox && CheckBoxRect.Contains(e.X, e.Y))
+			{
+				is_checkbox_selected = true;
+				Checked = !Checked;
+				return;
+			}
+
+
+			if (ShowUpDown && drop_down_arrow_rect.Contains (e.X, e.Y))
+			{
+				if (!(ShowCheckBox && Checked == false))
+				{
+					if (e.Y < this.Height / 2) {
+						is_up_pressed = true;
+						is_down_pressed = false;
+						IncrementSelectedPart (1);
+					} else {
+						is_up_pressed = false;
+						is_down_pressed = true;
+						IncrementSelectedPart (-1);
+					}
 					Invalidate (drop_down_arrow_rect);
-					DropDownMonthCalendar ();
+					updown_timer.Interval = initial_timer_delay;
+					updown_timer.Enabled = true;
+				}
+			} else if (is_drop_down_visible == false && drop_down_arrow_rect.Contains (e.X, e.Y)) {
+				is_drop_down_visible = true;
+				if (!Checked)
+					Checked = true;
+				Invalidate (drop_down_arrow_rect);
+				DropDownMonthCalendar ();
     			} else {
     				// mouse down on this control anywhere else collapses it
     				if (is_drop_down_visible) {    				
     					HideMonthCalendar ();
+					this.Focus ();
     				}
-    			} 
-    		}
+				if (!(ShowCheckBox && Checked == false))
+				{
+					// go through the parts to see if the click is in any of them
+					bool invalidate_afterwards = false;
+					for (int i = 0; i < part_data.Length; i++) {
+						bool old = part_data [i].is_selected;
+
+						if (part_data [i].is_literal)
+							continue;
+
+						if (part_data [i].drawing_rectangle.Contains (e.X, e.Y)) {
+							part_data [i].is_selected = true;
+						} else {
+							part_data [i].is_selected = false;
+						}
+						if (old != part_data [i].is_selected) 
+							invalidate_afterwards = true;
+					}
+					if (invalidate_afterwards)
+						Invalidate ();
+				}
+				
+			}
 		}
 		
 		
@@ -830,24 +1496,73 @@ namespace System.Windows.Forms {
 			Draw (pe.ClipRectangle, pe.Graphics);
 		}
 		
-		private string FormatValue () {
-			string ret_value = string.Empty;
-			switch (format) {
-				case DateTimePickerFormat.Custom:
-					// TODO implement custom text formatting
-					ret_value = date_value.ToString ();
-					break;
-				case DateTimePickerFormat.Short:
-					ret_value = date_value.ToShortDateString ();
-					break;
-				case DateTimePickerFormat.Time:
-					ret_value = date_value.ToLongTimeString ();
-					break;
-				default:
-					ret_value = date_value.ToLongDateString ();
-					break;
+		#endregion		
+
+		#region internal classes
+		internal class PartData
+		{
+			internal string value;
+			internal bool is_literal;
+			internal bool is_selected;
+			internal RectangleF drawing_rectangle;
+
+			internal bool is_numeric_format
+			{
+				get
+				{
+					if (is_literal)
+						return false;
+					switch (value) {
+					case "m":
+					case "mm":
+					case "d":
+					case "dd":
+					case "h":
+					case "hh":
+					case "H":
+					case "HH":
+					case "M":
+					case "MM":
+					case "s":
+					case "ss":
+					case "y":
+					case "yy":
+					case "yyyy":
+						return true;
+					case "ddd":
+					case "dddd":
+						return false;
+					default:
+						return false;
+					}
+				}
 			}
-			return ret_value;
+
+			internal PartData(string value, bool is_literal)
+			{
+				this.value = value;
+				this.is_literal = is_literal;
+			}
+
+			// calculate the string to show for this data
+			internal string GetText(DateTime date)
+			{
+				if (is_literal) {
+					return value;
+				} else {
+					return GetText (date, value);
+				}
+			}
+
+			static internal string GetText(DateTime date, string format)
+			{
+				switch (format) {
+				case "h": return (date.Hour % 12).ToString ("#0");
+				case "H": return date.Hour.ToString ("#0");
+				default: return date.ToString (format);
+				}
+
+			}
 		}
 		
 		#endregion		

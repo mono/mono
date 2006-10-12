@@ -1,3 +1,11 @@
+2006-10-12  Rolf Bjarne Kvinge  <rolfkvinge@ya.com>
+
+	* DateTimePicker.cs
+	* MonthCalendar.cs
+	* ThemeWin32Classic.cs: rewrote DateTimePicker to fix bug #78364
+	and implement missing functionality (selecting different parts 
+	of the date and edit them individually with the keyboard).
+	
 2006-10-11  Chris Toshok  <toshok@ximian.com>
 
 	* Control.cs (OnInvalidated): fix NRE relating to last change.

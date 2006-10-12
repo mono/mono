@@ -61,7 +61,10 @@ namespace System.Windows.Forms {
 		ContextMenu		menu;
 		NumericUpDown	year_updown;
 		Timer		 	timer;
-		
+		Timer			updown_timer;
+		bool			showing_context_menu;
+		bool			updown_has_focus;
+
 		// internal variables used
 		internal DateTime 		current_month;			// the month that is being displayed in top left corner of the grid		
 		internal DateTimePicker	owner;					// used if this control is popped up
@@ -174,7 +177,7 @@ namespace System.Windows.Forms {
 
 			
 			// event handlers
-//			LostFocus += new EventHandler (LostFocusHandler);
+			LostFocus += new EventHandler (LostFocusHandler);
 			timer.Tick += new EventHandler (TimerHandler);
 			MouseMove += new MouseEventHandler (MouseMoveHandler);
 			MouseDown += new MouseEventHandler (MouseDownHandler);
@@ -896,6 +899,8 @@ namespace System.Windows.Forms {
 			year_updown.Visible = false;
 			this.Controls.AddImplicit (year_updown);
 			year_updown.ValueChanged += new EventHandler(UpDownYearChangedHandler);
+			year_updown.GotFocus += new EventHandler(UpDownYearGotFocusHandler);
+			year_updown.LostFocus += new EventHandler(UpDownYearLostFocusHandler);
 		}
 
 		// not sure why this needs to be overriden
@@ -1618,17 +1623,62 @@ namespace System.Windows.Forms {
 			this.is_next_clicked = false;
 			this.is_date_clicked = false;
 		}
-		
-//		// need when in windowed mode
-//		private void LostFocusHandler (object sender, EventArgs e) 
-//		{
-//			if (this.owner != null) {
-//				if (this.Visible) {
-//					this.owner.HideMonthCalendar ();
-//				}
-//			}
-//		}
-		
+
+		// need when in windowed mode
+		private void LostFocusHandler(object sender, EventArgs e)
+		{
+			StartHideTimer ();
+		}
+
+		// needed when in windowed mode to close the calendar if no 
+		// part of it has focus.
+		private void UpDownTimerTick(object sender, EventArgs e)
+		{
+			HideMonthCalendarIfWindowed ();
+			if (updown_timer != null)
+			{
+				updown_timer.Dispose();
+				updown_timer = null;
+			}
+		}
+
+		// Needed when in windowed mode.
+		private void UpDownYearLostFocusHandler(object sender, EventArgs e)
+		{
+			updown_has_focus = false;
+			StartHideTimer ();
+		}
+
+		// Needed when in windowed mode.
+		private void UpDownYearGotFocusHandler(object sender, EventArgs e)
+		{
+			updown_has_focus = true;
+		}
+
+		// Needed when in windowed mode.
+		private void StartHideTimer()
+		{
+			if (updown_timer == null) {
+				updown_timer = new Timer ();
+				updown_timer.Interval = 50;
+				updown_timer.Tick += new EventHandler (UpDownTimerTick);
+				updown_timer.Enabled = true;
+			}
+		}
+
+		// needed when in windowed mode.
+		private void HideMonthCalendarIfWindowed()
+		{
+			if (this.owner != null && this.Visible) {
+				if (updown_has_focus)  
+					return; 
+				if (showing_context_menu)  
+					return; 
+
+				this.owner.HideMonthCalendar ();
+			}
+		}
+
 		// occurs when mouse moves around control, used for selection
 		private void MouseMoveHandler (object sender, MouseEventArgs e) {
 			HitTestInfo hti = this.HitTest (e.X, e.Y);
@@ -1713,7 +1763,9 @@ namespace System.Windows.Forms {
 					break;
 				case HitArea.TitleMonth:
 					month_title_click_location = hti.Point;
+					showing_context_menu = true;
 					menu.Show (this, hti.Point);		
+					showing_context_menu = false;
 					break;
 				case HitArea.TitleYear:
 					// place the numeric up down

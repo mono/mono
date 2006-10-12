@@ -1371,55 +1371,146 @@ namespace System.Windows.Forms
 		#endregion // Datagrid
 		
 		#region DateTimePicker
-	
-		public override void DrawDateTimePicker (Graphics dc,  Rectangle clip_rectangle, DateTimePicker dtp) {
-			// if not showing the numeric updown control then render border
-			if (!dtp.ShowUpDown && clip_rectangle.IntersectsWith (dtp.ClientRectangle)) {
-				// draw the outer border
-				Rectangle button_bounds = dtp.ClientRectangle;
-				this.CPDrawBorder3D (dc, button_bounds, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom, dtp.BackColor);
-				
-				// deflate by the border width
-				if (clip_rectangle.IntersectsWith (dtp.drop_down_arrow_rect)) {
-					button_bounds.Inflate (-2,-2);
+
+		public override void DrawDateTimePicker(Graphics dc, Rectangle clip_rectangle, DateTimePicker dtp)
+		{
+
+			if (!clip_rectangle.IntersectsWith (dtp.ClientRectangle))
+				return;
+
+			// draw the outer border
+			Rectangle button_bounds = dtp.ClientRectangle;
+			this.CPDrawBorder3D (dc, button_bounds, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom, dtp.BackColor);
+
+			// deflate by the border width
+			if (clip_rectangle.IntersectsWith (dtp.drop_down_arrow_rect)) {
+				button_bounds.Inflate (-2,-2);
+				if (!dtp.ShowUpDown) {
 					ButtonState state = dtp.is_drop_down_visible ? ButtonState.Pushed : ButtonState.Normal;
 					this.CPDrawComboButton ( 
 					  dc, 
 					  dtp.drop_down_arrow_rect, 
 					  state);
+				} else {
+					ButtonState up_state = dtp.is_up_pressed ? ButtonState.Pushed : ButtonState.Normal;
+					ButtonState down_state = dtp.is_down_pressed ? ButtonState.Pushed : ButtonState.Normal;
+					Rectangle up_bounds = dtp.drop_down_arrow_rect;
+					Rectangle down_bounds = dtp.drop_down_arrow_rect;
+
+					up_bounds.Height = up_bounds.Height / 2;
+					down_bounds.Y = up_bounds.Height;
+					down_bounds.Height = dtp.Height - up_bounds.Height;
+					if (down_bounds.Height > up_bounds.Height)
+					{
+						down_bounds.Y += 1;
+						down_bounds.Height -= 1;
+					}
+
+					up_bounds.Inflate (-1, -1);
+					down_bounds.Inflate (-1, -1);
+
+					ControlPaint.DrawScrollButton (dc, up_bounds, ScrollButton.Up, up_state);
+					ControlPaint.DrawScrollButton (dc, down_bounds, ScrollButton.Down, down_state);
 				}
 			}
 
 			// render the date part
-			if (clip_rectangle.IntersectsWith (dtp.date_area_rect)) {
-				// fill the background
-				dc.FillRectangle (SystemBrushes.Window, dtp.date_area_rect);
-				
-				// fill the currently highlighted area
-				if (dtp.hilight_date_area != Rectangle.Empty) {
-					dc.FillRectangle (SystemBrushes.Highlight, dtp.hilight_date_area);
-				}
+			if (!clip_rectangle.IntersectsWith (dtp.date_area_rect))
+				return;
 
-				// Update date_area_rect if we are drawing the checkbox
-				Rectangle date_area_rect = dtp.date_area_rect;
-				if (dtp.ShowCheckBox) {
-					Rectangle check_box_rect = dtp.CheckBoxRect;
-					date_area_rect.X = date_area_rect.X + check_box_rect.Width + DateTimePicker.check_box_space*2;
-					date_area_rect.Width = date_area_rect.Width - check_box_rect.Width - DateTimePicker.check_box_space*2;
+			// fill the background
+			dc.FillRectangle (SystemBrushes.Window, dtp.date_area_rect);
 
-					ButtonState bs = dtp.Checked ? ButtonState.Checked : ButtonState.Normal;
-					CPDrawCheckBox (dc, check_box_rect, bs);
+			// Update date_area_rect if we are drawing the checkbox
+			Rectangle date_area_rect = dtp.date_area_rect;
+			if (dtp.ShowCheckBox) {
+				Rectangle check_box_rect = dtp.CheckBoxRect;
+				date_area_rect.X = date_area_rect.X + check_box_rect.Width + DateTimePicker.check_box_space * 2;
+				date_area_rect.Width = date_area_rect.Width - check_box_rect.Width - DateTimePicker.check_box_space * 2;
+
+				ButtonState bs = dtp.Checked ? ButtonState.Checked : ButtonState.Normal;
+				CPDrawCheckBox(dc, check_box_rect, bs);
+
+				if (dtp.is_checkbox_selected)
+					CPDrawFocusRectangle (dc, check_box_rect, dtp.foreground_color, dtp.background_color);
+			}
+
+			// render each text part
+			using (StringFormat text_format = StringFormat.GenericTypographic)
+			{
+				text_format.LineAlignment = StringAlignment.Near;
+				text_format.Alignment = StringAlignment.Near;
+				text_format.FormatFlags = text_format.FormatFlags | StringFormatFlags.MeasureTrailingSpaces | StringFormatFlags.NoWrap | StringFormatFlags.FitBlackBox;
+				text_format.FormatFlags &= ~StringFormatFlags.NoClip;
+
+				// Calculate the rectangles for each part 
+				if (dtp.part_data.Length > 0 && dtp.part_data[0].drawing_rectangle.IsEmpty)
+				{
+					Graphics gr = dc;
+					for (int i = 0; i < dtp.part_data.Length; i++)
+					{
+						DateTimePicker.PartData fd = dtp.part_data[i];
+						RectangleF text_rect = new RectangleF();
+						string text = fd.GetText(dtp.Value);
+						text_rect.Size = gr.MeasureString (text, dtp.Font, 250, text_format);
+						if (!fd.is_literal)
+							text_rect.Width = Math.Max (dtp.CalculateMaxWidth(fd.value, gr, text_format), text_rect.Width);
+
+						if (i > 0) {
+							text_rect.X = dtp.part_data[i - 1].drawing_rectangle.Right;
+						} else {
+							text_rect.X = date_area_rect.X;
+						}
+						text_rect.Y = 2;
+						text_rect.Inflate (1, 0);
+						fd.drawing_rectangle = text_rect;
+					}
 				}
 				
 				// draw the text part
-				// TODO: if date format is CUstom then we need to draw the dates as separate parts
-				StringFormat text_format = new StringFormat();
-				text_format.LineAlignment = StringAlignment.Center;
-				text_format.Alignment = StringAlignment.Near;					
 				Brush text_brush = ResPool.GetSolidBrush (dtp.ShowCheckBox && dtp.Checked == false ?
 						SystemColors.GrayText : dtp.ForeColor); // Use GrayText if Checked is false
-				dc.DrawString (dtp.Text, dtp.Font, text_brush, Rectangle.Inflate (date_area_rect, -1, -1), text_format);
-				text_format.Dispose ();
+				RectangleF clip_rectangleF = clip_rectangle;
+
+				for (int i = 0; i < dtp.part_data.Length; i++)
+				{
+					DateTimePicker.PartData fd = dtp.part_data [i];
+					string text;
+
+					if (!clip_rectangleF.IntersectsWith (fd.drawing_rectangle))
+						continue;
+
+					text = fd.GetText (dtp.Value);
+
+					PointF text_position = new PointF ();
+					SizeF text_size;
+					RectangleF text_rect;
+
+					text_size = dc.MeasureString (text, dtp.Font, 250, text_format);
+					text_position.X = (fd.drawing_rectangle.Left + fd.drawing_rectangle.Width / 2) - text_size.Width / 2;
+					text_position.Y = (fd.drawing_rectangle.Top + fd.drawing_rectangle.Height / 2) - text_size.Height / 2;
+					text_rect = new RectangleF (text_position, text_size);
+					text_rect = RectangleF.Intersect (text_rect, date_area_rect);
+					
+					if (text_rect.IsEmpty)
+						break;
+
+					if (text_rect.Right >= date_area_rect.Right)
+						text_format.FormatFlags &= ~StringFormatFlags.NoClip;
+					else
+						text_format.FormatFlags |= StringFormatFlags.NoClip;
+					
+					if (fd.is_selected) {
+						dc.FillRectangle (SystemBrushes.Highlight, text_rect);
+						dc.DrawString (text, dtp.Font, SystemBrushes.HighlightText, text_rect, text_format);
+					
+					} else {
+						dc.DrawString (text, dtp.Font, text_brush, text_rect, text_format);
+					}
+
+					if (fd.drawing_rectangle.Right > date_area_rect.Right)
+						break; // the next part would be not be visible, so don't draw anything more.
+				}
 			}
 		}
 		
