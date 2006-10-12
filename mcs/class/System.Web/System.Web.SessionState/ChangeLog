@@ -1,3 +1,15 @@
+2006-10-12 Hubert FONGARNAND <informatique.internet@fiducial.fr>
+
+	Patch from Hubert FONGARNAND
+	
+	* SessionSQLServerHandler.cs (selectCommand): Instead of using
+	SELECT * for pulling the data out of the ASPStateTempSessions, use
+	the explicit column names.  This allows users to change the table
+	and not have any undesired side effects for our code.
+
+	(ReadBytes): This patch corrects a bug too in ReadBytes. The index parameter
+	was not properly used when calculating the size of the data.
+	
 2006-09-03  Robert Jordan  <robertj@gmx.net>
 
 	* SessionSQLServerHandler.cs: persist and handle the "timeout" and

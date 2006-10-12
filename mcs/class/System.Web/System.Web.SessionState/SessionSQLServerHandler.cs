@@ -50,7 +50,7 @@ namespace System.Web.SessionState {
                 
 		const string defaultParamPrefix = ":";
 		string paramPrefix;
-		string selectCommand = "SELECT * FROM ASPStateTempSessions WHERE SessionID = :SessionID AND Expires > :Expires";
+		string selectCommand = "SELECT timeout,staticobjectsdata,sessiondata FROM ASPStateTempSessions WHERE SessionID = :SessionID AND Expires > :Expires";
 		string insertCommand = "INSERT INTO ASPStateTempSessions VALUES (:SessionID, :Created, :Expires, :Timeout, :StaticObjectsData, :SessionData)";
 		string updateCommand = "UPDATE ASPStateTempSessions SET expires = :Expires, timeout = :Timeout, SessionData = :SessionData WHERE SessionId = :SessionID";
 		string deleteCommand = "DELETE FROM ASPStateTempSessions WHERE SessionId = :SessionID";
@@ -348,7 +348,7 @@ namespace System.Web.SessionState {
 
 		private byte [] ReadBytes (IDataReader reader, int index)
 		{
-			int len = (int) reader.GetBytes (reader.FieldCount-1, 0, null, 0, 0);
+			int len = (int) reader.GetBytes (index, 0, null, 0, 0);
 			byte [] data = new byte [len];
 			reader.GetBytes (index, 0, data, 0, len);
 			return data;
