@@ -1,5 +1,11 @@
 2006-10-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* metadata.c (mono_type_size): Change the align parameter to guint32 for
+	consistency with the other _size functions.
+	(mono_type_stack_size): Ditto.
+
+	* class.c object.c icall.c: Fix warnings caused by the above change.
+
 	* class.c (mono_class_get_method_from_name_flags): Fix a typo.
 
 	* image.c (load_metadata_ptrs): Reenable loading of modules with uncompressed metadata.
