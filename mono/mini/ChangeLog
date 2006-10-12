@@ -1,7 +1,9 @@
 2006-10-12  Zoltan Varga  <vargaz@gmail.com>
 
-	* mini.c trace.c mini-x86.c: Remove warning workarounds after the mono_type_size ()
-	signature change.
+       * mini.c trace.c mini-x86.c: Revert these too.
+	
+       * mini.c trace.c mini-x86.c: Remove warning workarounds after the mono_type_size ()
+       signature change.
 
 Tue Oct 10 11:35:20 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
