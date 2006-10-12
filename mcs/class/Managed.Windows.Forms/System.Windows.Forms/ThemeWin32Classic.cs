@@ -2484,6 +2484,7 @@ namespace System.Windows.Forms
 			Size title_size = (Size)((object)mc.title_size);
 			Size date_cell_size = (Size)((object)mc.date_cell_size);
 			DateTime current_month = (DateTime)((object)mc.current_month);
+			DateTime sunday = new DateTime(2006, 10, 1);
 			
 			// draw the title back ground
 			DateTime this_month = current_month.AddMonths (row*mc.CalendarDimensions.Width+col);
@@ -2545,7 +2546,7 @@ namespace System.Windows.Forms
 						day_name_rect.Y,
 						date_cell_size.Width,
 						date_cell_size.Height);
-					dc.DrawString (((DayOfWeek)i).ToString().Substring(0, 3), mc.Font, ResPool.GetSolidBrush (mc.TitleBackColor), day_rect, mc.centered_format);
+					dc.DrawString (sunday.AddDays (i + (int) first_day_of_week).ToString ("ddd"), mc.Font, ResPool.GetSolidBrush (mc.TitleBackColor), day_rect, mc.centered_format);
 				}
 				
 				// draw the vertical divider
