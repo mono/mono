@@ -525,9 +525,14 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.Controls.Add (data);
 
 			g.DataSourceID = "Data";
+			g.EditIndex = 2;
+			g.PageIndex = 1;
 			g.DataBind ();
 			
 			g.Sort ("sort", SortDirection.Descending);
+
+			Assert.AreEqual (-1, g.EditIndex, "EditIndex after Sort, Bound by DataSourceID");
+			Assert.AreEqual (0, g.PageIndex, "PageIndex after Sort, Bound by DataSourceID");
 
 			arg = g.DoCreateDataSourceSelectArguments();
 			view = g.DoGetData ();
@@ -608,7 +613,13 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			g.AllowPaging = false;
 			g.AllowSorting = true;
+			g.EditIndex = 2;
+			g.PageIndex = 1;
 			g.Sort ("sort", SortDirection.Descending);
+
+			Assert.AreEqual (2, g.EditIndex, "EditIndex after Sort, Bound by DataSource");
+			Assert.AreEqual (1, g.PageIndex, "PageIndex after Sort, Bound by DataSource");
+			
 			arg = g.DoCreateDataSourceSelectArguments ();
 			view = g.DoGetData ();
 			Assert.IsTrue (view.CanSort);

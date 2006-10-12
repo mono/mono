@@ -1,6 +1,11 @@
 2006-10-12 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* GridView.cs: fixed: Sorting feature.
+	When sorting EditIndex and PageIndex are reseted
+
+2006-10-12 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* GridView.cs: fixed: Sorting feature.
 	CreateDataSourceSelectArguments considers SortExpression and SortDirection.
 	(corresponding test does not work because bug in ObjectDataSourceView)
 

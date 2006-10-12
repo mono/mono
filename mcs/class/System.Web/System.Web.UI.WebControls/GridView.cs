@@ -929,13 +929,13 @@ namespace System.Web.UI.WebControls
 		[DefaultValueAttribute (SortDirection.Ascending)]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public virtual SortDirection SortDirection {
-			get { return IsBoundUsingDataSourceID ? sortDirection : SortDirection.Ascending; }
+			get { return sortDirection; }
 		}
 		
 		[BrowsableAttribute (false)]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public virtual string SortExpression {
-			get { return IsBoundUsingDataSourceID ? sortExpression : String.Empty; }
+			get { return sortExpression; }
 		}
 		
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
@@ -1557,15 +1557,10 @@ namespace System.Web.UI.WebControls
 		
 		void Sort (string newSortExpression)
 		{
-			SortDirection newDirection;
-			if (sortExpression == newSortExpression) {
-				if (sortDirection == SortDirection.Ascending)
-					newDirection = SortDirection.Descending;
-				else
-					newDirection = SortDirection.Ascending;
-			} else
-				newDirection = sortDirection;
-			
+			SortDirection newDirection = SortDirection.Ascending;
+			if (sortExpression == newSortExpression && sortDirection == SortDirection.Ascending)
+				newDirection = SortDirection.Descending;
+
 			Sort (newSortExpression, newDirection);
 		}
 		
@@ -1575,9 +1570,13 @@ namespace System.Web.UI.WebControls
 			OnSorting (args);
 			if (args.Cancel) return;
 			
+		if (IsBoundUsingDataSourceID) {
+			EditIndex = -1;
+			PageIndex = 0;
 			sortExpression = args.SortExpression;
 			sortDirection = args.SortDirection;
 			RequireBinding ();
+		}
 			
 			OnSorted (EventArgs.Empty);
 		}

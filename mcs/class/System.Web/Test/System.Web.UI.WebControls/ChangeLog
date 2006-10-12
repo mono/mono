@@ -1,5 +1,9 @@
 2006-10-12 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* GridViewTest.cs: added tests
+			
+2006-10-12 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* GridViewTest.cs: added test
 			
 2006-10-11 Igor Zelmanovich <igorz@mainsoft.com>
