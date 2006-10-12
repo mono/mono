@@ -1,0 +1,19 @@
+2006-10-12  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* IProductBuilderCollection.cs
+	* IBuildMessage.cs
+	* ComponentsLocation.cs
+	* BuildSettings.cs
+	* BuildResults.cs
+	* ProductBuilder.cs
+	* IProduct.cs
+	* IBuildSettings.cs
+	* IBuildResults.cs
+	* BootstrapperBuilder.cs
+	* ProductCollection.cs
+	* BuildMessageSeverity.cs
+	* IProductBuilder.cs
+	* ProductBuilderCollection.cs
+	* IBootstrapperBuilder.cs
+	* BuildMessage.cs
+	* IProductCollection.cs: Added stubs needed for generating docs.
