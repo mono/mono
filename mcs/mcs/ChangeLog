@@ -1,5 +1,10 @@
 2006-10-12  Martin Baulig  <martin@ximian.com>
 
+	* anonymous.cs
+	(AnonymousContainer.Resolve): Inflate the `ReturnType'.  Fixes #79592.
+	
+2006-10-12  Martin Baulig  <martin@ximian.com>
+
 	* statement.cs
 	(Using.EmitLocalVariableDeclFinally): Small fix for iterators.
 

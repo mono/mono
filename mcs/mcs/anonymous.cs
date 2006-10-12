@@ -1161,7 +1161,7 @@ namespace Mono.CSharp {
 		public readonly ToplevelBlock Block;
 
 		public readonly int ModFlags;
-		public readonly Type ReturnType;
+		public Type ReturnType;
 		public readonly TypeContainer Host;
 
 		//
@@ -1211,6 +1211,18 @@ namespace Mono.CSharp {
 		{
 			Report.Debug (64, "RESOLVE ANONYMOUS METHOD", this, Location, ec,
 				      RootScope, Parameters, ec.IsStatic);
+
+			if (ReturnType != null) {
+				TypeExpr return_type_expr;
+				if (RootScope != null)
+					return_type_expr = RootScope.InflateType (ReturnType);
+				else
+					return_type_expr = new TypeExpression (ReturnType, Location);
+				return_type_expr = return_type_expr.ResolveAsTypeTerminal (ec, false);
+				if ((return_type_expr == null) || (return_type_expr.Type == null))
+					return false;
+				ReturnType = return_type_expr.Type;
+			}
 
 			aec = new EmitContext (
 				ec.ResolveContext, ec.TypeContainer,

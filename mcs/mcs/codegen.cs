@@ -288,7 +288,7 @@ namespace Mono.CSharp {
 		///   The value that is allowed to be returned or NULL if there is no
 		///   return type.
 		/// </summary>
-		public Type ReturnType;
+		public readonly Type ReturnType;
 
 		/// <summary>
 		///   Points to the Type (extracted from the TypeContainer) that
