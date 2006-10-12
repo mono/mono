@@ -616,7 +616,10 @@
 	Which drives the process, it first resolves the topblock, then
 	emits the required metadata (local variable definitions) and
 	finally emits the code.
-		
+
+	A detailed description of anonymous methods and iterators is
+	on the new-anonymous-design.txt file in this directory.
+
 * Miscellaneous
 
 ** Error Processing.
