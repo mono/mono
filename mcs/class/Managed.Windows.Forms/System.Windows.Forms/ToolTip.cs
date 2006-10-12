@@ -55,12 +55,10 @@ namespace System.Windows.Forms {
 		internal class ToolTipWindow : Control {
 			#region ToolTipWindow Class Local Variables
 			internal StringFormat string_format;
-			ToolTip	owner;
 			#endregion	// ToolTipWindow Class Local Variables
 
 			#region ToolTipWindow Class Constructor
-			internal ToolTipWindow(ToolTip owner) : base() {
-				this.owner = owner;
+			internal ToolTipWindow() {
 
 				string_format = new StringFormat();
 				string_format.LineAlignment = StringAlignment.Center;
@@ -185,7 +183,7 @@ namespace System.Windows.Forms {
 			tooltip_strings = new Hashtable(5);
 			controls = new ArrayList(5);
 
-			tooltip_window = new ToolTipWindow(this);
+			tooltip_window = new ToolTipWindow();
 			tooltip_window.MouseLeave += new EventHandler(control_MouseLeave);
 
 			timer = new Timer();

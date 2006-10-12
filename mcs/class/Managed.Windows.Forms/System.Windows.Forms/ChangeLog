@@ -1,3 +1,11 @@
+2006-10-12  Mike Kestner  <mkestner@novell.com>
+
+	* ErrorProvider.cs : new ToolTipWindow ctor sig.
+	* HelpProvider.cs : new ToolTipWindow ctor sig.
+	* ToolTip.cs : remove ToolTip param from Window sig since it is
+	not used.
+	* ToolBar.cs : add tooltip support.  Fixes #79565.
+
 2006-10-12  Rolf Bjarne Kvinge  <rolfkvinge@ya.com>
 
 	* MonthCalendar.cs: When FirstDayOfWeek is default set firstday 

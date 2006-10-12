@@ -116,6 +116,7 @@ namespace System.Windows.Forms
 			GotFocus += new EventHandler (FocusChanged);
 			LostFocus += new EventHandler (FocusChanged);
 			MouseDown += new MouseEventHandler (ToolBar_MouseDown);
+			MouseHover += new EventHandler (ToolBar_MouseHover);
 			MouseLeave += new EventHandler (ToolBar_MouseLeave);
 			MouseMove += new MouseEventHandler (ToolBar_MouseMove);
 			MouseUp += new MouseEventHandler (ToolBar_MouseUp);
@@ -652,14 +653,66 @@ namespace System.Windows.Forms
 			}
 		}
 
-		private void ToolBar_MouseLeave (object sender, EventArgs e)
+		private ToolBarButton ButtonAtPoint (Point pt)
 		{
-			if (!Enabled || appearance != ToolBarAppearance.Flat || current_button == null) 
+			foreach (ToolBarButton button in buttons)
+				if (button.Rectangle.Contains (pt)) 
+					return button;
+
+			return null;
+		}
+
+		ToolTip.ToolTipWindow tip_window = null;
+		Timer tipdown_timer = null;
+
+		private void PopDownTip (object o, EventArgs args)
+		{
+			tip_window.Hide ();
+		}
+
+		private Timer TipDownTimer {
+			get {
+				if (tipdown_timer == null) {
+					tipdown_timer = new Timer ();
+					tipdown_timer.Enabled = false;
+					tipdown_timer.Interval = 5000;
+					tipdown_timer.Tick += new EventHandler (PopDownTip);
+				}
+				return tipdown_timer;
+			}
+		}
+
+		private void ToolBar_MouseHover (object sender, EventArgs e)
+		{
+			if (Capture)
 				return;
 
-			if (current_button.Hilight) {
+			tip_window = new ToolTip.ToolTipWindow ();
+
+			ToolBarButton btn = ButtonAtPoint (PointToClient (Control.MousePosition));
+			current_button = btn;
+
+			if (btn == null || btn.ToolTipText.Length == 0)
+				return;
+
+			tip_window.Present (this, btn.ToolTipText);
+			TipDownTimer.Start ();
+		}
+
+		private void ToolBar_MouseLeave (object sender, EventArgs e)
+		{
+			if (tipdown_timer != null)
+				tipdown_timer.Dispose ();
+			tipdown_timer = null;
+			if (tip_window != null)
+				tip_window.Dispose ();
+			tip_window = null;
+
+			if (!Enabled || current_button == null) 
+				return;
+
+			if (appearance != ToolBarAppearance.Flat) 
 				current_button.Hilight = false;
-			}
 			current_button = null;
 		}
 
@@ -668,9 +721,14 @@ namespace System.Windows.Forms
 			if (!Enabled) 
 				return;
 
+			if (tip_window != null && tip_window.Visible) {
+				TipDownTimer.Stop ();
+				TipDownTimer.Start ();
+			}
+
 			Point loc = new Point (me.X, me.Y);
 
-			if (this.Capture) {
+			if (Capture) {
 				// If the button was pressed and we leave, release the 
 				// button press and vice versa
 				foreach (ToolBarButton button in buttons) {
@@ -681,15 +739,29 @@ namespace System.Windows.Forms
 						break;
 					}
 				}
-			}
-			// following is only for flat style toolbar
-			else if (appearance == ToolBarAppearance.Flat) {
-				if (current_button != null && current_button.Rectangle.Contains (loc)) {
+				return;
+			} 
+
+			if (current_button != null && current_button.Rectangle.Contains (loc)) {
+				if (appearance == ToolBarAppearance.Flat) {
 					if (current_button.Hilight || current_button.Pushed)
 						return;
 					current_button.Hilight = true;
 				}
-				else {
+			} else {
+				if (tip_window != null) {
+					if (tip_window.Visible) {
+						tip_window.Hide ();
+						TipDownTimer.Stop ();
+					}
+					current_button = ButtonAtPoint (loc);
+					if (current_button != null && current_button.ToolTipText.Length > 0) {
+						tip_window.Present (this, current_button.ToolTipText);
+						TipDownTimer.Start ();
+					}
+				}
+
+				if (appearance == ToolBarAppearance.Flat) {
 					foreach (ToolBarButton button in buttons) {
 						if (button.Rectangle.Contains (loc) && button.Enabled) {
 							current_button = button;

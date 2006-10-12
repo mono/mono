@@ -282,7 +282,7 @@ namespace System.Windows.Forms {
 			blinkstyle = ErrorBlinkStyle.BlinkIfDifferentError;
 
 			icon = (Icon)Locale.GetResource("errorProvider.ico");
-			tooltip = new ToolTip.ToolTipWindow(null);
+			tooltip = new ToolTip.ToolTipWindow();
 		}
 
 		public ErrorProvider(ContainerControl parentControl) : this() {

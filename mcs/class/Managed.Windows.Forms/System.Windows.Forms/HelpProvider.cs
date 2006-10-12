@@ -95,7 +95,7 @@ namespace System.Windows.Forms {
 		#region Public Constructors
 		public HelpProvider() {
 			controls = new Hashtable();
-			tooltip = new ToolTip.ToolTipWindow(null);
+			tooltip = new ToolTip.ToolTipWindow();
 
 			HideToolTipHandler = new EventHandler(HideToolTip);
 			HideToolTipKeyHandler = new KeyPressEventHandler(HideToolTipKey);
