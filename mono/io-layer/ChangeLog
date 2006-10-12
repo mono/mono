@@ -1,3 +1,10 @@
+2006-10-12  Dick Porter  <dick@ximian.com>
+
+	* processes.c (_wapi_process_reap): Unref a process handle if we
+	reaped it, found by Zoltan.  Fixes bug 79286.
+	(process_wait): Don't wait again if we've already waited for a
+	process.
+
 2006-10-11  Sergey Tikhonov <tsv@solvo.ru>
 
 	* atomic.h: Fix atomic decrement.
