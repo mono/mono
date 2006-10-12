@@ -1,5 +1,7 @@
 2006-10-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_get_method_from_name_flags): Fix a typo.
+
 	* image.c (load_metadata_ptrs): Reenable loading of modules with uncompressed metadata.
 
 	* metadata.c class.c loader.c: Add proper support for uncompressed metadata.
