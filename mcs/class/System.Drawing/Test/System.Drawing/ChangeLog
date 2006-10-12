@@ -1,3 +1,9 @@
+2006-10-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestGraphics.cs: Added test case to measure strings, some aren't yet
+	working. Modified some to get better checks (e.g. Int32.MaxValue for 
+	#79643).
+
 2006-10-03 	Boris Kirzner <borisk@mainsoft.com>
 
 	* TestStringFormat.cs: mark tests not working in TARGET_JVM.

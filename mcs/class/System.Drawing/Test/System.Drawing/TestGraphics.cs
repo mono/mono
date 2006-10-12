@@ -1373,22 +1373,32 @@ namespace MonoTests.System.Drawing
 			}
 		}
 
-		[Test]
-		public void MeasureString_StringFontInt ()
+		private void MeasureString_StringFontInt (string s)
 		{
 			if (font == null)
 				Assert.Ignore ("Couldn't create required font");
 
 			using (Bitmap bitmap = new Bitmap (20, 20)) {
 				using (Graphics g = Graphics.FromImage (bitmap)) {
-					SizeF size = g.MeasureString ("a", font, 0);
-					Assert.IsFalse (size.IsEmpty, "MeasureString(a,font,0)");
-					size = g.MeasureString ("a", font, Int32.MinValue);
-					Assert.IsFalse (size.IsEmpty, "MeasureString(a,font,min)");
-					size = g.MeasureString ("a", font, Int32.MaxValue);
-					Assert.IsFalse (size.IsEmpty, "MeasureString(a,font,max)");
+					SizeF size0 = g.MeasureString (s, font, 0);
+					SizeF sizeN = g.MeasureString (s, font, Int32.MinValue);
+					SizeF sizeP = g.MeasureString (s, font, Int32.MaxValue);
+					Assert.AreEqual (size0, sizeN, "0-Min");
+					Assert.AreEqual (size0, sizeP, "0-Max");
 				}
 			}
+		}
+
+		[Test]
+		public void MeasureString_StringFontInt_ShortString ()
+		{
+			MeasureString_StringFontInt ("a");
+		}
+
+		[Test]
+		public void MeasureString_StringFontInt_LongString ()
+		{
+			MeasureString_StringFontInt ("A very long string..."); // see bug #79643
 		}
 
 		[Test]
@@ -1425,6 +1435,18 @@ namespace MonoTests.System.Drawing
 					AssertEquals ("text null/null font", 0, regions.Length);
 					regions = g.MeasureCharacterRanges (String.Empty, null, new RectangleF (), null);
 					AssertEquals ("text empty/null font", 0, regions.Length);
+				}
+			}
+		}
+
+		[Test]
+		public void MeasureCharacterRanges_EmptyStringFormat ()
+		{
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					// string format without character ranges
+					Region[] regions = g.MeasureCharacterRanges ("Mono", font, new RectangleF (), new StringFormat ());
+					AssertEquals ("empty stringformat", 0, regions.Length);
 				}
 			}
 		}
@@ -1543,6 +1565,191 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void MeasureCharacterRanges_NullStringFormat ()
+		{
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					g.MeasureCharacterRanges ("Mono", font, new RectangleF (), null);
+				}
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void MeasureCharacterRanges_StringFormat_Alignment ()
+		{
+			if (font == null)
+				Assert.Ignore ("Couldn't create required font");
+
+			string text = "Hello Mono::";
+			CharacterRange[] ranges = new CharacterRange[1];
+			ranges[0] = new CharacterRange (5, 4);
+			StringFormat string_format = new StringFormat ();
+			string_format.SetMeasurableCharacterRanges (ranges);
+
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					string_format.Alignment = StringAlignment.Near;
+					Region[] regions = g.MeasureCharacterRanges (text, font, new RectangleF (0, 0, 320, 32), string_format);
+					Assert.AreEqual (1, regions.Length, "Near.Region");
+					RectangleF near = regions[0].GetBounds (g);
+
+					string_format.Alignment = StringAlignment.Center;
+					regions = g.MeasureCharacterRanges (text, font, new RectangleF (0, 0, 320, 32), string_format);
+					Assert.AreEqual (1, regions.Length, "Center.Region");
+					RectangleF center = regions[0].GetBounds (g);
+
+					string_format.Alignment = StringAlignment.Far;
+					regions = g.MeasureCharacterRanges (text, font, new RectangleF (0, 0, 320, 32), string_format);
+					Assert.AreEqual (1, regions.Length, "Far.Region");
+					RectangleF far = regions[0].GetBounds (g);
+
+					Assert.IsTrue (near.X < center.X, "near-center/X");
+					Assert.IsTrue (near.Y == center.Y, "near-center/Y");
+					Assert.IsTrue (near.Width == center.Width, "near-center/Width");
+					Assert.IsTrue (near.Height == center.Height, "near-center/Height");
+
+					Assert.IsTrue (center.X < far.X, "center-far/X");
+					Assert.IsTrue (center.Y == far.Y, "center-far/Y");
+					Assert.IsTrue (center.Width == far.Width, "center-far/Width");
+					Assert.IsTrue (center.Height == far.Height, "center-far/Height");
+				}
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void MeasureCharacterRanges_StringFormat_LineAlignment ()
+		{
+			if (font == null)
+				Assert.Ignore ("Couldn't create required font");
+
+			string text = "Hello Mono::";
+			CharacterRange[] ranges = new CharacterRange[1];
+			ranges[0] = new CharacterRange (5, 4);
+			StringFormat string_format = new StringFormat ();
+			string_format.SetMeasurableCharacterRanges (ranges);
+
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					string_format.LineAlignment = StringAlignment.Near;
+					Region[] regions = g.MeasureCharacterRanges (text, font, new RectangleF (0, 0, 320, 32), string_format);
+					Assert.AreEqual (1, regions.Length, "Near.Region");
+					RectangleF near = regions[0].GetBounds (g);
+
+					string_format.LineAlignment = StringAlignment.Center;
+					regions = g.MeasureCharacterRanges (text, font, new RectangleF (0, 0, 320, 32), string_format);
+					Assert.AreEqual (1, regions.Length, "Center.Region");
+					RectangleF center = regions[0].GetBounds (g);
+
+					string_format.LineAlignment = StringAlignment.Far;
+					regions = g.MeasureCharacterRanges (text, font, new RectangleF (0, 0, 320, 32), string_format);
+					Assert.AreEqual (1, regions.Length, "Far.Region");
+					RectangleF far = regions[0].GetBounds (g);
+
+					Assert.IsTrue (near.X == center.X, "near-center/X");
+					Assert.IsTrue (near.Y < center.Y, "near-center/Y");
+					Assert.IsTrue (near.Width == center.Width, "near-center/Width");
+					Assert.IsTrue (near.Height == center.Height, "near-center/Height");
+
+					Assert.IsTrue (center.X == far.X, "center-far/X");
+					Assert.IsTrue (center.Y < far.Y, "center-far/Y");
+					Assert.IsTrue (center.Width == far.Width, "center-far/Width");
+					Assert.IsTrue (center.Height == far.Height, "center-far/Height");
+				}
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void MeasureCharacterRanges_StringFormat_Alignment_DirectionVertical ()
+		{
+			if (font == null)
+				Assert.Ignore ("Couldn't create required font");
+
+			string text = "Hello Mono::";
+			CharacterRange[] ranges = new CharacterRange[1];
+			ranges[0] = new CharacterRange (5, 4);
+			StringFormat string_format = new StringFormat ();
+			string_format.FormatFlags = StringFormatFlags.DirectionVertical;
+			string_format.SetMeasurableCharacterRanges (ranges);
+
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					string_format.Alignment = StringAlignment.Near;
+					Region[] regions = g.MeasureCharacterRanges (text, font, new RectangleF (0, 0, 320, 32), string_format);
+					Assert.AreEqual (1, regions.Length, "Near.Region");
+					RectangleF near = regions[0].GetBounds (g);
+
+					string_format.Alignment = StringAlignment.Center;
+					regions = g.MeasureCharacterRanges (text, font, new RectangleF (0, 0, 320, 32), string_format);
+					Assert.AreEqual (1, regions.Length, "Center.Region");
+					RectangleF center = regions[0].GetBounds (g);
+
+					string_format.Alignment = StringAlignment.Far;
+					regions = g.MeasureCharacterRanges (text, font, new RectangleF (0, 0, 320, 32), string_format);
+					Assert.AreEqual (1, regions.Length, "Far.Region");
+					RectangleF far = regions[0].GetBounds (g);
+
+					Assert.IsTrue (near.X < center.X, "near-center/X"); // ???
+					Assert.IsTrue (near.Y < center.Y, "near-center/Y");
+					Assert.IsTrue (near.Width > center.Width, "near-center/Width"); // ???
+					Assert.IsTrue (near.Height == center.Height, "near-center/Height");
+
+					Assert.IsTrue (center.X == far.X, "center-far/X");
+					Assert.IsTrue (center.Y < far.Y, "center-far/Y");
+					Assert.IsTrue (center.Width == far.Width, "center-far/Width");
+					Assert.IsTrue (center.Height == far.Height, "center-far/Height");
+				}
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void MeasureCharacterRanges_StringFormat_LineAlignment_DirectionVertical ()
+		{
+			if (font == null)
+				Assert.Ignore ("Couldn't create required font");
+
+			string text = "Hello Mono::";
+			CharacterRange[] ranges = new CharacterRange[1];
+			ranges[0] = new CharacterRange (5, 4);
+			StringFormat string_format = new StringFormat ();
+			string_format.FormatFlags = StringFormatFlags.DirectionVertical;
+			string_format.SetMeasurableCharacterRanges (ranges);
+
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					string_format.LineAlignment = StringAlignment.Near;
+					Region[] regions = g.MeasureCharacterRanges (text, font, new RectangleF (0, 0, 320, 32), string_format);
+					Assert.AreEqual (1, regions.Length, "Near.Region");
+					RectangleF near = regions[0].GetBounds (g);
+
+					string_format.LineAlignment = StringAlignment.Center;
+					regions = g.MeasureCharacterRanges (text, font, new RectangleF (0, 0, 320, 32), string_format);
+					Assert.AreEqual (1, regions.Length, "Center.Region");
+					RectangleF center = regions[0].GetBounds (g);
+
+					string_format.LineAlignment = StringAlignment.Far;
+					regions = g.MeasureCharacterRanges (text, font, new RectangleF (0, 0, 320, 32), string_format);
+					Assert.AreEqual (1, regions.Length, "Far.Region");
+					RectangleF far = regions[0].GetBounds (g);
+
+					Assert.IsTrue (near.X < center.X, "near-center/X");
+					Assert.IsTrue (near.Y == center.Y, "near-center/Y");
+					Assert.IsTrue (near.Width == center.Width, "near-center/Width");
+					Assert.IsTrue (near.Height == center.Height, "near-center/Height");
+
+					Assert.IsTrue (center.X < far.X, "center-far/X");
+					Assert.IsTrue (center.Y == far.Y, "center-far/Y");
+					Assert.IsTrue (center.Width == far.Width, "center-far/Width");
+					Assert.IsTrue (center.Height == far.Height, "center-far/Height");
+				}
+			}
+		}
+
+		[Test]
 		public void DrawString_EndlessLoop_Bug77699 ()
 		{
 			if (font == null)
@@ -1579,6 +1786,22 @@ namespace MonoTests.System.Drawing
 					fmt.LineAlignment = StringAlignment.Center;
 					fmt.Trimming = StringTrimming.EllipsisWord;
 					g.DrawString ("Test String", font, Brushes.Black, rect, fmt);
+				}
+			}
+		}
+
+		[Test]
+		public void MeasureString_Wrapping_Dots ()
+		{
+			string text = "this is really long text........................................... with a lot o periods.";
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					using (StringFormat format = new StringFormat ()) {
+						format.Alignment = StringAlignment.Center;
+						SizeF sz = g.MeasureString (text, font, 80, format);
+						Assert.IsTrue (sz.Width < 80, "Width");
+						Assert.IsTrue (sz.Height > font.Height * 2, "Height");
+					}
 				}
 			}
 		}
