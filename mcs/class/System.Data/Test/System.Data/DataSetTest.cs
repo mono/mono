@@ -4,9 +4,11 @@
 //   Ville Palo <vi64pa@koti.soon.fi>
 //   Martin Willemoes Hansen <mwh@sysrq.dk>
 //   Atsushi Enomoto <atsushi@ximian.com>
+//   Hagit Yidov <hagity@mainsoft.com>
 //
 // (C) Copyright 2002 Ville Palo
 // (C) Copyright 2003 Martin Willemoes Hansen
+// (C) 2005 Mainsoft Corporation (http://www.mainsoft.com)
 
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
@@ -2166,7 +2168,7 @@ namespace MonoTests.System.Data
 		}
 
 #if NET_2_0
-		#region DataSet.CreateDataReader Tests
+		#region DataSet.CreateDataReader Tests and DataSet.Load Tests
 
 		private DataSet ds;
 		private DataTable dt1, dt2;
@@ -2277,7 +2279,222 @@ namespace MonoTests.System.Data
 			//} while (dtr.NextResult ());
 		}
 
-		#endregion // DataSet.CreateDataReader Tests
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CreateDataReaderNoTable () {
+			DataSet dsr = new DataSet ();
+			DataTableReader dtr = dsr.CreateDataReader ();
+		}
+
+		internal struct fillErrorStruct {
+			internal string error;
+			internal string tableName;
+			internal int rowKey;
+			internal bool contFlag;
+			internal void init (string tbl, int row, bool cont, string err) {
+				tableName = tbl;
+				rowKey = row;
+				contFlag = cont;
+				error = err;
+			}
+		}
+		private fillErrorStruct[] fillErr = new fillErrorStruct[3];
+		private int fillErrCounter;
+		private void fillErrorHandler (object sender, FillErrorEventArgs e) {
+			e.Continue = fillErr[fillErrCounter].contFlag;
+			AssertEquals ("fillErr-T", fillErr[fillErrCounter].tableName, e.DataTable.TableName);
+			AssertEquals ("fillErr-R", fillErr[fillErrCounter].rowKey, e.Values[0]);
+			AssertEquals ("fillErr-C", fillErr[fillErrCounter].contFlag, e.Continue);
+			AssertEquals ("fillErr-E", fillErr[fillErrCounter].error, e.Errors.Message);
+			fillErrCounter++;
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		// Load is not implemented for DataSet and is commented-out below
+		public void Load_Basic () {
+			localSetup ();
+			DataSet dsLoad = new DataSet ("LoadBasic");
+			DataTable table1 = new DataTable ();
+			dsLoad.Tables.Add (table1);
+			DataTable table2 = new DataTable ();
+			dsLoad.Tables.Add (table2);
+			DataTableReader dtr = ds.CreateDataReader ();
+			//dsLoad.Load (dtr, LoadOption.OverwriteChanges, table1, table2);
+			CompareTables (dsLoad);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		[Category ("NotWorking")]
+		// Load is not implemented for DataSet and is commented-out below
+		public void Load_TableUnknown () {
+			localSetup ();
+			DataSet dsLoad = new DataSet ("LoadTableUnknown");
+			DataTable table1 = new DataTable ();
+			dsLoad.Tables.Add (table1);
+			DataTable table2 = new DataTable ();
+			// table2 is not added to dsLoad [dsLoad.Tables.Add (table2);]
+			DataTableReader dtr = ds.CreateDataReader ();
+			//dsLoad.Load (dtr, LoadOption.OverwriteChanges, table1, table2);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		// Load is not implemented for DataSet and is commented-out below
+		public void Load_TableConflictT () {
+			fillErr[0].init ("Table1", 1, true,
+				"Input string was not in a correct format.Couldn't store <mono 1> in name1 Column.  Expected type is Double.");
+			fillErr[1].init ("Table1", 2, true,
+				"Input string was not in a correct format.Couldn't store <mono 2> in name1 Column.  Expected type is Double.");
+			fillErr[2].init ("Table1", 3, true,
+				"Input string was not in a correct format.Couldn't store <mono 3> in name1 Column.  Expected type is Double.");
+			localSetup ();
+			DataSet dsLoad = new DataSet ("LoadTableConflict");
+			DataTable table1 = new DataTable ();
+			table1.Columns.Add ("name1", typeof (double));
+			dsLoad.Tables.Add (table1);
+			DataTable table2 = new DataTable ();
+			dsLoad.Tables.Add (table2);
+			DataTableReader dtr = ds.CreateDataReader ();
+			//dsLoad.Load (dtr, LoadOption.PreserveChanges,
+			//        fillErrorHandler, table1, table2);
+		}
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		[Category ("NotWorking")]
+		// Load is not implemented for DataSet and is commented-out below
+		public void Load_TableConflictF () {
+			fillErr[0].init ("Table1", 1, false,
+				"Input string was not in a correct format.Couldn't store <mono 1> in name1 Column.  Expected type is Double.");
+			localSetup ();
+			DataSet dsLoad = new DataSet ("LoadTableConflict");
+			DataTable table1 = new DataTable ();
+			table1.Columns.Add ("name1", typeof (double));
+			dsLoad.Tables.Add (table1);
+			DataTable table2 = new DataTable ();
+			dsLoad.Tables.Add (table2);
+			DataTableReader dtr = ds.CreateDataReader ();
+			//dsLoad.Load (dtr, LoadOption.Upsert,
+			//        fillErrorHandler, table1, table2);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		// Load is not implemented for DataSet and is commented-out below
+		public void Load_StringsAsc () {
+			localSetup ();
+			DataSet dsLoad = new DataSet ("LoadStrings");
+			DataTable table1 = new DataTable ("First");
+			dsLoad.Tables.Add (table1);
+			DataTable table2 = new DataTable ("Second");
+			dsLoad.Tables.Add (table2);
+			DataTableReader dtr = ds.CreateDataReader ();
+			//dsLoad.Load (dtr, LoadOption.OverwriteChanges, "First", "Second");
+			CompareTables (dsLoad);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		// Load is not implemented for DataSet and is commented-out below
+		public void Load_StringsDesc () {
+			localSetup ();
+			DataSet dsLoad = new DataSet ("LoadStrings");
+			DataTable table1 = new DataTable ("First");
+			dsLoad.Tables.Add (table1);
+			DataTable table2 = new DataTable ("Second");
+			dsLoad.Tables.Add (table2);
+			DataTableReader dtr = ds.CreateDataReader ();
+			//dsLoad.Load (dtr, LoadOption.PreserveChanges, "Second", "First");
+			AssertEquals ("Tables", 2, dsLoad.Tables.Count);
+			AssertEquals ("T1-Rows", 3, dsLoad.Tables[0].Rows.Count);
+			AssertEquals ("T1-Columns", 3, dsLoad.Tables[0].Columns.Count);
+			AssertEquals ("T2-Rows", 3, dsLoad.Tables[1].Rows.Count);
+			AssertEquals ("T2-Columns", 2, dsLoad.Tables[1].Columns.Count);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		// Load is not implemented for DataSet and is commented-out below
+		public void Load_StringsNew () {
+			localSetup ();
+			DataSet dsLoad = new DataSet ("LoadStrings");
+			DataTable table1 = new DataTable ("First");
+			dsLoad.Tables.Add (table1);
+			DataTable table2 = new DataTable ("Second");
+			dsLoad.Tables.Add (table2);
+			DataTableReader dtr = ds.CreateDataReader ();
+			//dsLoad.Load (dtr, LoadOption.Upsert, "Third", "Fourth");
+			AssertEquals ("Tables", 4, dsLoad.Tables.Count);
+			AssertEquals ("T1-Name", "First", dsLoad.Tables[0].TableName);
+			AssertEquals ("T1-Rows", 0, dsLoad.Tables[0].Rows.Count);
+			AssertEquals ("T1-Columns", 0, dsLoad.Tables[0].Columns.Count);
+			AssertEquals ("T2-Name", "Second", dsLoad.Tables[1].TableName);
+			AssertEquals ("T2-Rows", 0, dsLoad.Tables[1].Rows.Count);
+			AssertEquals ("T2-Columns", 0, dsLoad.Tables[1].Columns.Count);
+			AssertEquals ("T3-Name", "Third", dsLoad.Tables[2].TableName);
+			AssertEquals ("T3-Rows", 3, dsLoad.Tables[2].Rows.Count);
+			AssertEquals ("T3-Columns", 2, dsLoad.Tables[2].Columns.Count);
+			AssertEquals ("T4-Name", "Fourth", dsLoad.Tables[3].TableName);
+			AssertEquals ("T4-Rows", 3, dsLoad.Tables[3].Rows.Count);
+			AssertEquals ("T4-Columns", 3, dsLoad.Tables[3].Columns.Count);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		// Load is not implemented for DataSet and is commented-out below
+		public void Load_StringsNewMerge () {
+			localSetup ();
+			DataSet dsLoad = new DataSet ("LoadStrings");
+			DataTable table1 = new DataTable ("First");
+			table1.Columns.Add ("col1", typeof (string));
+			table1.Rows.Add (new object[] { "T1Row1" });
+			dsLoad.Tables.Add (table1);
+			DataTable table2 = new DataTable ("Second");
+			table2.Columns.Add ("col2", typeof (string));
+			table2.Rows.Add (new object[] { "T2Row1" });
+			table2.Rows.Add (new object[] { "T2Row2" });
+			dsLoad.Tables.Add (table2);
+			DataTableReader dtr = ds.CreateDataReader ();
+			//dsLoad.Load (dtr, LoadOption.OverwriteChanges, "Third", "First");
+			AssertEquals ("Tables", 3, dsLoad.Tables.Count);
+			AssertEquals ("T1-Name", "First", dsLoad.Tables[0].TableName);
+			AssertEquals ("T1-Rows", 4, dsLoad.Tables[0].Rows.Count);
+			AssertEquals ("T1-Columns", 4, dsLoad.Tables[0].Columns.Count);
+			AssertEquals ("T2-Name", "Second", dsLoad.Tables[1].TableName);
+			AssertEquals ("T2-Rows", 2, dsLoad.Tables[1].Rows.Count);
+			AssertEquals ("T2-Columns", 1, dsLoad.Tables[1].Columns.Count);
+			AssertEquals ("T3-Name", "Third", dsLoad.Tables[2].TableName);
+			AssertEquals ("T3-Rows", 3, dsLoad.Tables[2].Rows.Count);
+			AssertEquals ("T3-Columns", 2, dsLoad.Tables[2].Columns.Count);
+		}
+
+		private void CompareTables (DataSet dsLoad) {
+			AssertEquals ("NumTables",
+				ds.Tables.Count, dsLoad.Tables.Count);
+			for (int tc = 0; tc < dsLoad.Tables.Count; tc++) {
+				AssertEquals ("Table" + tc + "-NumCols",
+					ds.Tables[tc].Columns.Count,
+					dsLoad.Tables[tc].Columns.Count);
+				AssertEquals ("Table" + tc + "-NumRows",
+					ds.Tables[tc].Rows.Count,
+					dsLoad.Tables[tc].Rows.Count);
+				for (int cc = 0; cc < dsLoad.Tables[tc].Columns.Count; cc++) {
+					AssertEquals ("Table" + tc + "-" + "Col" + cc + "-Name",
+						ds.Tables[tc].Columns[cc].ColumnName,
+						dsLoad.Tables[tc].Columns[cc].ColumnName);
+				}
+				for (int rc = 0; rc < dsLoad.Tables[tc].Rows.Count; rc++) {
+					for (int cc = 0; cc < dsLoad.Tables[tc].Columns.Count; cc++) {
+						AssertEquals ("Table" + tc + "-Row" + rc + "-Col" + cc + "-Data",
+							ds.Tables[tc].Rows[rc].ItemArray[cc],
+							dsLoad.Tables[tc].Rows[rc].ItemArray[cc]);
+					}
+				}
+			}
+		}
+
+		#endregion // DataSet.CreateDataReader Tests and DataSet.Load Tests
 #endif
 
 	}

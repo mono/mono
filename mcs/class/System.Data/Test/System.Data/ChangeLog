@@ -1,3 +1,8 @@
+2006-10-12	Hagit Yidov <hagity@mainsoft.com>
+
+	* DataSetTest.cs : added tests for Load().
+	* DataTableTest.cs : added more tests for Load() and added LoadDataRow().
+
 2006-10-03	Hagit Yidov <hagity@mainsoft.com>
 
 	* DataRowCollectionTest.cs : added tests for IndexOf().
