@@ -70,9 +70,8 @@ namespace System.Drawing {
 		{
 			if (nativeStrFmt != IntPtr.Zero) {
 				Status status = GDIPlus.GdipDeleteStringFormat (nativeStrFmt);
-				GDIPlus.CheckStatus (status);
-				
 				nativeStrFmt = IntPtr.Zero;
+				GDIPlus.CheckStatus (status);
 			}
 		}
 

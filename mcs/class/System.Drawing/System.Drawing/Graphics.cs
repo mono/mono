@@ -5,10 +5,10 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com) (stubbed out)
 //      Alexandre Pigolkine(pigolkine@gmx.de)
 //	Jordi Mas i Hernandez (jordi@ximian.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2003 Ximian, Inc. (http://www.ximian.com)
-//
-// Copyright (C) 2004-2005 Novell, Inc. (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -1884,9 +1884,12 @@ namespace System.Drawing
 				throw new ArgumentNullException ("font");
 
 			if (stringFormat == null)
-				stringFormat = StringFormat.GenericDefault;
+				throw new ArgumentException ("stringFormat");
 
 			int regcount = stringFormat.GetMeasurableCharacterRangeCount ();
+			if (regcount == 0)
+				return new Region[0];
+
 			IntPtr[] native_regions = new IntPtr [regcount];
 			Region[] regions = new Region [regcount];
 			
@@ -1940,7 +1943,7 @@ namespace System.Drawing
 				throw new ArgumentNullException ("font");
 
 			RectangleF boundingBox = new RectangleF ();
-			RectangleF rect = new RectangleF (0, 0, width, 999999);
+			RectangleF rect = new RectangleF (0, 0, width, Int32.MaxValue);
 			int charactersFitted, linesFilled;
 
 			Status status = GDIPlus.GdipMeasureString (nativeObject, text, text.Length, 
@@ -1965,7 +1968,7 @@ namespace System.Drawing
 		public SizeF MeasureString (string text, Font font, int width, StringFormat format)
 		{
 			int charactersFitted, linesFilled;			
-			return MeasureString (text, font, new SizeF (width, 999999), 
+			return MeasureString (text, font, new SizeF (width, Int32.MaxValue), 
 					      format, out charactersFitted, out linesFilled);
 		}
 

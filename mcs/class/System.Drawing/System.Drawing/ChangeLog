@@ -1,3 +1,12 @@
+2006-10-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Graphics.cs: In MeasureCharacterRanges throw an ArgumentException if
+	StringFormat is null and return an empty region array if no range exists 
+	(avoid GDI+ error/exeception). In MeasureString (2 overloads) replace 
+	999999 by Int32.MaxValue (now that the real bug is fixed).
+	* StringFormat.cs: Ensure we are clearing the handle before throwing
+	any exception.
+
 2006-09-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* gdipFunctions.cs: Throw an OverflowException for the ValueOverflow
