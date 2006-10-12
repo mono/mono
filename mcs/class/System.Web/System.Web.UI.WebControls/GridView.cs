@@ -98,11 +98,11 @@ namespace System.Web.UI.WebControls
 		
 		// Control state
 		int pageIndex;
-		int pageCount = 0;
+		int pageCount;
 		int selectedIndex = -1;
 		int editIndex = -1;
 		SortDirection sortDirection = SortDirection.Ascending;
-		string sortExpression = string.Empty;
+		string sortExpression;
 		
 		public GridView ()
 		{
@@ -535,6 +535,8 @@ namespace System.Web.UI.WebControls
 				return editIndex;
 			}
 			set {
+				if (value == editIndex)
+					return;
 				editIndex = value;
 				RequireBinding ();
 			}
@@ -728,6 +730,8 @@ namespace System.Web.UI.WebControls
 				return pageIndex;
 			}
 			set {
+				if (value == pageIndex)
+					return;
 				pageIndex = value;
 				RequireBinding ();
 			}
@@ -930,12 +934,28 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public virtual SortDirection SortDirection {
 			get { return sortDirection; }
+			private set {
+				if (sortDirection == value)
+					return;
+				sortDirection = value;
+				RequireBinding ();
+			}
 		}
 		
 		[BrowsableAttribute (false)]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public virtual string SortExpression {
-			get { return sortExpression; }
+			get {
+				if (sortExpression == null)
+					return String.Empty;
+				return sortExpression;
+			}
+			private set {
+				if (sortExpression == value)
+					return;
+				sortExpression = value;
+				RequireBinding ();
+			}
 		}
 		
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
@@ -1573,9 +1593,8 @@ namespace System.Web.UI.WebControls
 		if (IsBoundUsingDataSourceID) {
 			EditIndex = -1;
 			PageIndex = 0;
-			sortExpression = args.SortExpression;
-			sortDirection = args.SortDirection;
-			RequireBinding ();
+			SortExpression = args.SortExpression;
+			SortDirection = args.SortDirection;
 		}
 			
 			OnSorted (EventArgs.Empty);
@@ -1708,6 +1727,12 @@ namespace System.Web.UI.WebControls
 		
 		protected internal override object SaveControlState ()
 		{
+			if (EnableSortingAndPagingCallbacks) {
+				Page.ClientScript.RegisterHiddenField (ClientID + "_Page", PageIndex.ToString ());
+				Page.ClientScript.RegisterHiddenField (ClientID + "_SortExpression", SortExpression);
+				Page.ClientScript.RegisterHiddenField (ClientID + "_SortDirection", ((int)SortDirection).ToString());
+			}
+
 			object bstate = base.SaveControlState ();
 			return new object[] {
 				bstate, pageIndex, pageCount, selectedIndex, editIndex, sortExpression, sortDirection, DataKeyNames
@@ -1811,24 +1836,15 @@ namespace System.Web.UI.WebControls
 			RaiseCallbackEvent (eventArgs);
 		}
 		
-		string callbackResult;
 		protected virtual void RaiseCallbackEvent (string eventArgs)
 		{
 			string[] clientData = eventArgs.Split ('|');
-			pageIndex = int.Parse (clientData[0]);
-			sortExpression = HttpUtility.UrlDecode (clientData[1]);
-			if (sortExpression == "") sortExpression = null;
-			RequireBinding ();
+			PageIndex = int.Parse (clientData[0]);
+			SortExpression = HttpUtility.UrlDecode (clientData [1]);
+			SortDirection = (SortDirection) int.Parse (clientData [2]);
 			
-			RaisePostBackEvent (clientData[2]);
-			EnsureDataBound ();
-			
-			StringWriter sw = new StringWriter ();
-			sw.Write (PageIndex.ToString() + '|' + SortExpression + '|');
-
-			HtmlTextWriter writer = new HtmlTextWriter (sw);
-			RenderGrid (writer);
-			callbackResult = sw.ToString ();
+			RaisePostBackEvent (clientData[3]);
+			DataBind ();
 		}
 		
 		string ICallbackEventHandler.GetCallbackResult ()
@@ -1838,7 +1854,14 @@ namespace System.Web.UI.WebControls
 
 		protected virtual string GetCallbackResult ()
 		{
-			return callbackResult;
+			PrepareControlHierarchy ();
+			
+			StringWriter sw = new StringWriter ();
+			sw.Write (PageIndex.ToString () + '|' + SortExpression + '|' + (int) SortDirection + '|');
+
+			HtmlTextWriter writer = new HtmlTextWriter (sw);
+			RenderGrid (writer);
+			return sw.ToString ();
 		}
 
 		string ICallbackContainer.GetCallbackScript (IButtonControl control, string argument)
@@ -1854,10 +1877,19 @@ namespace System.Web.UI.WebControls
 				return null;
 		}
 		
-		[MonoTODO]
 		protected override void OnPagePreLoad (object sender, EventArgs e)
 		{
 			base.OnPagePreLoad (sender, e);
+
+			if (Page.IsPostBack && EnableSortingAndPagingCallbacks) {
+				int page;
+				if (int.TryParse (Page.Request.Form [ClientID + "_Page"], out page))
+					PageIndex = page;
+				int dir;
+				if (int.TryParse (Page.Request.Form [ClientID + "_SortDirection"], out dir))
+					SortDirection = (SortDirection) dir;
+				SortExpression = Page.Request.Form [ClientID + "_SortExpression"];
+			}
 		}
 		
 		protected internal override void OnPreRender (EventArgs e)
@@ -1875,6 +1907,7 @@ namespace System.Web.UI.WebControls
 				string script = string.Format ("var {0} = new Object ();\n", cgrid);
 				script += string.Format ("{0}.pageIndex = {1};\n", cgrid, ClientScriptManager.GetScriptLiteral (PageIndex));
 				script += string.Format ("{0}.sortExp = {1};\n", cgrid, ClientScriptManager.GetScriptLiteral (SortExpression == null ? "" : SortExpression));
+				script += string.Format ("{0}.sortDir = {1};\n", cgrid, ClientScriptManager.GetScriptLiteral ((int) SortDirection));
 				script += string.Format ("{0}.uid = {1};\n", cgrid, ClientScriptManager.GetScriptLiteral (UniqueID));
 				Page.ClientScript.RegisterStartupScript (typeof(TreeView), this.UniqueID, script, true);
 				

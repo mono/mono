@@ -1,5 +1,11 @@
 2006-10-12 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* GridView.cs: fixed: EnableSortingAndPagingCallbacks feature.
+	when postback is invoked after callback control state is restored
+	properly. 
+
+2006-10-12 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* GridView.cs: fixed: Sorting feature.
 	When sorting EditIndex and PageIndex are reseted
 
