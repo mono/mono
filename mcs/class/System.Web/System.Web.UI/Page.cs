@@ -1145,7 +1145,11 @@ public class Page : TemplateControl, IHttpHandler
 #endif
 			
 		renderingForm = false;	
+#if NET_2_0
+		if (IsPostBack || IsCallback) {
+#else
 		if (IsPostBack) {
+#endif
 			Trace.Write ("aspx.page", "Begin LoadViewState");
 			LoadPageViewState ();
 			Trace.Write ("aspx.page", "End LoadViewState");
@@ -1159,7 +1163,11 @@ public class Page : TemplateControl, IHttpHandler
 #endif
 
 		LoadRecursive ();
+#if NET_2_0
+		if (IsPostBack || IsCallback) {
+#else
 		if (IsPostBack) {
+#endif
 			Trace.Write ("aspx.page", "Begin ProcessPostData Second Try");
 			ProcessPostData (secondPostData, true);
 			Trace.Write ("aspx.page", "End ProcessPostData Second Try");

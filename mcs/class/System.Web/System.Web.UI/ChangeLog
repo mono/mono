@@ -1,3 +1,9 @@
+2006-10-12 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Page.cs: fixed: for 2.0 only
+	When Page processes Callback IsPostBack = false, but it still needs
+	LoadViewState/ControlState and ProcessPostData
+
 2006-10-11 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DataSourceSelectArguments.cs: fixed: 
