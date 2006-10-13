@@ -42,8 +42,8 @@
 // Extra detailed debug
 #undef DriverDebugExtra
 #undef DriverDebugParent
-#undef DriverDebugCreate
-#undef DriverDebugDestroy
+#define DriverDebugCreate
+#define DriverDebugDestroy
 #undef DriverDebugThreads
 
 using System;
@@ -1623,18 +1623,12 @@ namespace System.Windows.Forms {
 
 					hwnd = Hwnd.ObjectFromHandle(c.Handle);
 					CleanupCachedWindows (hwnd);
+					hwnd.zombie = true;
 					SendMessage(c.Handle, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
 				}
 
 				for (i = 0; i < controls.Length; i++) {
 					SendWMDestroyMessages(controls[i]);
-					if (controls[i].IsHandleCreated) {
-						/* set all the children hwnd's to zombies so all events will
-						   be ignored (except DestroyNotify) until their X windows are
-						   reset) */
-						hwnd = Hwnd.ObjectFromHandle(controls[i].Handle);
-						hwnd.zombie = true;
-					}
 				}
 			}
 		}

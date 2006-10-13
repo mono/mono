@@ -1,3 +1,10 @@
+2006-10-13  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11.cs: set hwnd.zombie to true before calling
+	SendMessage (WM_DESTROY).  this keeps us from marking the new
+	window a zombie, and also keeps us from calling sendmessage at
+	all.
+
 2006-10-13  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: Do not show the caret and selection at the same
