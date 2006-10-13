@@ -53,30 +53,36 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
+		[DefaultValue (false)]
 		public bool AcceptsReturn {
 			get { return this.TextBox.AcceptsReturn; }
 			set { this.TextBox.AcceptsReturn = value; }
 		}
 
+		[DefaultValue (false)]
 		public bool AcceptsTab {
 			get { return this.TextBox.AcceptsTab; }
 			set { this.TextBox.AcceptsTab = value; }
 		}
 
+		[DefaultValue (BorderStyle.FixedSingle)]
 		public BorderStyle BorderStyle {
 			get { return this.border_style; }
 			set { this.border_style = value; }
 		}
 
+		[Browsable (false)]
 		public bool CanUndo {
 			get { return this.TextBox.CanUndo; }
 		}
 
+		[DefaultValue (CharacterCasing.Normal)]
 		public CharacterCasing CharacterCasing {
 			get { return this.TextBox.CharacterCasing; }
 			set { this.TextBox.CharacterCasing = value; }
 		}
 
+		[DefaultValue (true)]
 		public bool HideSelection {
 			get { return this.TextBox.HideSelection; }
 			set { this.TextBox.HideSelection = value; }
@@ -89,11 +95,13 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (true)]
+		[DefaultValue (32767)]
 		public int MaxLength {
 			get { return this.TextBox.MaxLength; }
 			set { this.TextBox.MaxLength = value; }
 		}
 
+		[Browsable (false)]
 		public bool Modified {
 			get { return this.TextBox.Modified; }
 			set { this.TextBox.Modified = value; }
@@ -102,41 +110,49 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DefaultValue (false)]
 		public bool Multiline {
 			get { return this.TextBox.Multiline; }
 			set { this.TextBox.Multiline = value; }
 		}
 
+		[DefaultValue (false)]
 		public bool ReadOnly {
 			get { return this.TextBox.ReadOnly; }
 			set { this.TextBox.ReadOnly = value; }
 		}
 
+		[Browsable (false)]
 		public string SelectedText {
 			get { return this.TextBox.SelectedText; }
 			set { this.TextBox.SelectedText = value; }
 		}
 
+		[Browsable (false)]
 		public int SelectionLength {
 			get { return this.TextBox.SelectionLength; }
 			set { this.TextBox.SelectionLength = value; }
 		}
 
+		[Browsable (false)]
 		public int SelectionStart {
 			get { return this.TextBox.SelectionStart; }
 			set { this.TextBox.SelectionStart = value; }
 		}
 
+		[Browsable (false)]
 		public TextBox TextBox {
 			get { return (TextBox)base.Control; }
 		}
 
 		[Localizable (true)]
+		[DefaultValue (HorizontalAlignment.Left)]
 		public HorizontalAlignment TextBoxTextAlign {
 			get { return this.TextBox.TextAlign; }
 			set { this.TextBox.TextAlign = value; }
 		}
 
+		[Browsable (false)]
 		public int TextLength {
 			get { return this.TextBox.TextLength; }
 		}
@@ -144,6 +160,7 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DefaultValue (false)]
 		public bool WordWrap {
 			get { return this.TextBox.WordWrap; }
 			set { this.TextBox.WordWrap = value; }

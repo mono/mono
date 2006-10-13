@@ -33,9 +33,15 @@ using System.ComponentModel;
 
 namespace System.Windows.Forms
 {
+	[DefaultEvent ("Click")]
+	[DefaultProperty ("Text")]
+	[DesignTimeVisible (false)]
+	[ToolboxItem (false)]
 	public abstract class ToolStripItem : Component, IDropTarget, IComponent, IDisposable
 	{
 		#region Private Variables
+		private AccessibleObject accessibility_object;
+		private string accessible_default_action_description;
 		private ToolStripItemAlignment alignment;
 		private bool auto_size;
 		private bool auto_tool_tip;
@@ -108,12 +114,66 @@ namespace System.Windows.Forms
 			this.visible = true;
 
 			this.Click = onClick;
+			this.can_select = this is ToolStripMenuItem ? true : false;
 			OnLayout (new LayoutEventArgs (null, ""));
 		}
 		#endregion
 
 		#region Public Properties
+		public AccessibleObject AccessibilityObject {
+			get { 
+				if (this.accessibility_object == null)
+					this.accessibility_object = CreateAccessibilityInstance ();
+					
+				return this.accessibility_object;
+			}
+		}
+		
+		public string AccessibleDefaultActionDescription {
+			get {
+				if (this.accessibility_object == null)
+					return null;
+				
+				return this.accessible_default_action_description;
+			}
+			set { this.accessible_default_action_description = value; }
+		}
+
+		[Localizable (true)]
+		public string AccessibleDescription {
+			get {
+				if (this.accessibility_object == null)
+					return null;
+				
+				return this.AccessibilityObject.Description;
+			}
+			set { this.AccessibilityObject.description = value; }
+		}
+
+		[Localizable (true)]
+		public string AccessibleName {
+			get { 
+				if (this.accessibility_object == null)
+					return null;
+					
+				return this.AccessibilityObject.Name; 
+			}
+			set { this.AccessibilityObject.Name = value; }
+		}
+		
+		public AccessibleRole AccessibleRole {
+			get
+			{
+				if (this.accessibility_object == null)
+					return AccessibleRole.Default;
+				
+				return this.AccessibilityObject.Role;
+			}
+			set { this.AccessibilityObject.role = value; }
+		}
+		
 		[MonoTODO]
+		[DefaultValue (ToolStripItemAlignment.Left)]
 		public ToolStripItemAlignment Alignment {
 			get { return this.alignment; }
 			set {
@@ -125,6 +185,7 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (true)]
+		[DefaultValue (true)]
 		public bool AutoSize {
 			get { return this.auto_size; }
 			set { 
@@ -134,11 +195,13 @@ namespace System.Windows.Forms
 		}
 
 		[MonoTODO ("Need 2.0 ToolTip to implement tool tips.")]
+		[DefaultValue (true)]
 		public bool AutoToolTip {
 			get { return this.auto_tool_tip; }
 			set { this.auto_tool_tip = value; }
 		}
 
+		[Browsable (false)]
 		public bool Available {
 			get { return this.visible; }
 			set {
@@ -164,14 +227,17 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
 		public virtual Rectangle Bounds {
 			get { return this.bounds; }
 		}
 
+		[Browsable (false)]
 		public virtual bool CanSelect {
 			get { return this.can_select; }
 		}
 
+		[Browsable (false)]
 		public Rectangle ContentRectangle {
 			get {
 				// ToolStripLabels don't have a border
@@ -194,6 +260,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
+		[DefaultValue (DockStyle.None)]
 		public DockStyle Dock {
 			get { return this.dock; }
 			set {
@@ -207,12 +275,14 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (false)]
 		public bool DoubleClickEnabled {
 			get { return this.double_click_enabled; }
 			set { this.double_click_enabled = value; }
 		}
 
 		[Localizable (true)]
+		[DefaultValue (true)]
 		public virtual bool Enabled {
 			get { return enabled; }
 			set { 
@@ -249,12 +319,13 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
 		public int Height {
 			get { return this.bounds.Height; }
 			set { 
 				this.bounds.Height = value; 
 				this.CalculateAutoSize ();
-				this.OnBoundsChanged (EventArgs.Empty);
+				this.OnBoundsChanged ();
 				this.Invalidate (); 
 			}
 		}
@@ -270,6 +341,7 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (true)]
+		[DefaultValue (ContentAlignment.MiddleLeft)]
 		public ContentAlignment ImageAlign {
 			get { return this.image_align; }
 			set {
@@ -295,6 +367,7 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (true)]
+		[DefaultValue (ToolStripItemImageScaling.SizeToFit)]
 		public ToolStripItemImageScaling ImageScaling {
 			get { return this.image_scaling; }
 			set { 
@@ -304,10 +377,11 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
 		public bool IsOnDropDown {
 			get {
-				//if (this.owner == null && this.owner is ToolStripDropDown)
-				//        return true;
+				//if (this.owner != null && this.owner is ToolStripDropDown)
+				//	return true;
 
 				return false;
 			}
@@ -321,11 +395,14 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (null)]
 		public string Name {
 			get { return this.name; }
 			set { this.name = value; }
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public ToolStrip Owner {
 			get { return this.owner; }
 			set { 
@@ -337,12 +414,10 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public ToolStripItem OwnerItem {
 			get { return this.owner_item; }
-			set {
-				this.owner_item = value; 
-				this.CalculateAutoSize ();
-			}
 		}
 
 		public virtual Padding Padding {
@@ -354,27 +429,34 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual bool Pressed { get { return this.is_pressed; } }
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual bool Selected { get { return this.is_selected; } }
 
+		[Localizable (true)]
 		public virtual Size Size {
 			get { return this.bounds.Size; }
 			set { 
 				this.bounds.Size = value; 
 				this.CalculateAutoSize ();
-				OnBoundsChanged (EventArgs.Empty);
+				OnBoundsChanged ();
 			}
 		}
 
 		[Localizable (false)]
 		[Bindable (true)]
+		[DefaultValue (null)]
 		public Object Tag {
 			get { return this.tag; }
 			set { this.tag = value; }
 		}
 
 		[Localizable (true)]
+		[DefaultValue ("")]
 		public virtual string Text
 		{
 			get { return this.text; }
@@ -389,6 +471,7 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (true)]
+		[DefaultValue (ContentAlignment.MiddleRight)]
 		public virtual ContentAlignment TextAlign {
 			get { return this.text_align; }
 			set {
@@ -400,6 +483,7 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (true)]
+		[DefaultValue (TextImageRelation.ImageBeforeText)]
 		public TextImageRelation TextImageRelation {
 			get { return this.text_image_relation; }
 			set { 
@@ -432,13 +516,13 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public int Width
-		{
+		[Browsable (false)]
+		public int Width {
 			get { return this.bounds.Width; }
 			set { 
 				this.bounds.Width = value; 
 				this.CalculateAutoSize (); 
-				this.OnBoundsChanged(EventArgs.Empty);
+				this.OnBoundsChanged();
 			}
 		}
 		#endregion
@@ -450,6 +534,8 @@ namespace System.Windows.Forms
 		protected virtual Padding DefaultPadding { get { return new Padding (); } }
 		protected virtual Size DefaultSize { get { return new Size (23, 23); } }
 		protected internal virtual bool DismissWhenClicked { get { return false; } }
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		protected internal ToolStrip Parent {
 			get { return this.parent; }
 			set { 
@@ -489,33 +575,26 @@ namespace System.Windows.Forms
 			this.OnClick (EventArgs.Empty); 
 		}
 
-		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual void ResetBackColor () { this.BackColor = Control.DefaultBackColor; }
 
-		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual void ResetDisplayStyle () { this.display_style = this.DefaultDisplayStyle; }
 
-		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual void ResetFont () { this.font = new Font ("Tahoma", 8.25f); }
 
-		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual void ResetForeColor () { this.ForeColor = Control.DefaultForeColor; }
 
-		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual void ResetImage () { this.image = null; }
 
-		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public virtual void ResetMargin () { this.margin = this.DefaultMargin; }
+		public void ResetMargin () { this.margin = this.DefaultMargin; }
 
-		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public virtual void ResetPadding () { this.padding = this.DefaultPadding; }
+		public void ResetPadding () { this.padding = this.DefaultPadding; }
 
 		public void Select ()
 		{
@@ -532,6 +611,11 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
+		protected virtual AccessibleObject CreateAccessibilityInstance ()
+		{
+			return new ToolStripItemAccessibleObject (this);
+		}
+		
 		protected virtual void OnAvailableChanged (EventArgs e)
 		{
 			if (AvailableChanged != null) AvailableChanged (this, e);
@@ -542,7 +626,7 @@ namespace System.Windows.Forms
 			if (BackColorChanged != null) BackColorChanged (this, e);
 		}
 
-		protected virtual void OnBoundsChanged (EventArgs e)
+		protected virtual void OnBoundsChanged ()
 		{
 			OnLayout (new LayoutEventArgs(null, ""));
 		}
@@ -669,15 +753,15 @@ namespace System.Windows.Forms
 		{
 			if (this.bounds != bounds) {
 				this.bounds = bounds;
-				OnBoundsChanged (EventArgs.Empty);
+				OnBoundsChanged ();
 			}
 		}
 		#endregion
 
 		#region Public Events
+		[Browsable (false)]
 		public event EventHandler AvailableChanged;
 		public event EventHandler BackColorChanged;
-		public event EventHandler BoundsChanged;
 		public event EventHandler Click;
 		public event EventHandler DisplayStyleChanged;
 		public event EventHandler DoubleClick;
@@ -889,6 +973,96 @@ namespace System.Windows.Forms
 		internal void DoPaint (PaintEventArgs e)
 		{ this.OnPaint (e); }
 		#endregion
+		
+		public class ToolStripItemAccessibleObject : AccessibleObject
+		{
+			private ToolStripItem owner;
+			
+			public ToolStripItemAccessibleObject (ToolStripItem ownerItem)
+			{
+				if (ownerItem == null)
+					throw new ArgumentNullException ("ownerItem");
+					
+				this.owner = ownerItem;
+				base.default_action = string.Empty;
+				base.keyboard_shortcut = string.Empty;
+				base.name = string.Empty;
+				base.value = string.Empty;
+			}
+
+			#region Public Properties
+			public override Rectangle Bounds {
+				get {
+					return owner.Visible ? owner.Bounds : Rectangle.Empty;
+				}
+			}
+
+			public override string DefaultAction {
+				get { return base.DefaultAction; }
+			}
+
+			public override string Description {
+				get { return base.Description; }
+			}
+
+			public override string Help {
+				get { return base.Help; }
+			}
+
+			public override string KeyboardShortcut {
+				get { return base.KeyboardShortcut; }
+			}
+
+			public override string Name {
+				get {
+					if (base.name == string.Empty)
+						return owner.Text;
+						
+					return base.Name;
+				}
+				set { base.Name = value; }
+			}
+
+			public override AccessibleObject Parent {
+				get { return base.Parent; }
+			}
+
+			public override AccessibleRole Role {
+				get { return base.Role; }
+			}
+
+			public override AccessibleStates State {
+				get { return base.State; }
+			}
+			#endregion
+
+			#region Public Methods
+			public void AddState (AccessibleStates state)
+			{
+				base.state = state;
+			}
+
+			public override void DoDefaultAction ()
+			{
+				base.DoDefaultAction ();
+			}
+
+			public override int GetHelpTopic (out string FileName)
+			{
+				return base.GetHelpTopic (out FileName);
+			}
+
+			public override AccessibleObject Navigate (AccessibleNavigation navdir)
+			{
+				return base.Navigate (navdir);
+			}
+
+			public override string ToString ()
+			{
+				return string.Format ("ToolStripItemAccessibleObject: Owner = {0}", owner.ToString());
+			}
+			#endregion
+		}
 	}
 }
 #endif

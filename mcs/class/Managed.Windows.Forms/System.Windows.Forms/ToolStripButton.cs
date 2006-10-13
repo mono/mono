@@ -74,6 +74,7 @@ namespace System.Windows.Forms
 
 		#region Public Properties
 		[MonoTODO ("Need 2.0 ToolTip to implement tool tips.")]
+		[DefaultValue (true)]
 		public bool AutoToolTip {
 			get { return base.AutoToolTip; }
 			set { base.AutoToolTip = value; }
@@ -83,6 +84,7 @@ namespace System.Windows.Forms
 			get { return true; }
 		}
 
+		[DefaultValue (false)]
 		public bool Checked {
 			get {
 				switch (this.checked_state) {
@@ -103,11 +105,13 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (false)]
 		public bool CheckOnClick {
 			get { return this.check_on_click; }
 			set { this.check_on_click = value; }
 		}
 
+		[DefaultValue (CheckState.Unchecked)]
 		public CheckState CheckState {
 			get { return this.checked_state; }
 			set {
@@ -123,7 +127,6 @@ namespace System.Windows.Forms
 
 		#region Protected Properties
 		protected override bool DefaultAutoToolTip { get { return true; } }
-		protected internal override Padding DefaultMargin { get { return new Padding (0, 1, 0, 2); } }
 		#endregion
 
 		#region Public Methods
@@ -134,7 +137,16 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
-		// TODO: CreateAccessibilityInstance
+		protected override AccessibleObject CreateAccessibilityInstance ()
+		{
+			ToolStripItemAccessibleObject ao = new ToolStripItemAccessibleObject (this);
+
+			ao.default_action = "Press";
+			ao.role = AccessibleRole.PushButton;
+			ao.state = AccessibleStates.Focusable;	
+
+			return ao;
+		}
 
 		protected virtual void OnCheckedChanged (EventArgs e)
 		{

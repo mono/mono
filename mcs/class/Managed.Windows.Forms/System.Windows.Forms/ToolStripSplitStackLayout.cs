@@ -40,7 +40,9 @@ namespace System.Windows.Forms
 			ToolStrip ts = (ToolStrip)container;
 
 			if (ts.Orientation == Orientation.Horizontal) {
-				int x = ts.DisplayRectangle.Left + 2;
+				int x = ts.DisplayRectangle.Left;
+				//if (!(ts is MenuStrip))
+					x += 2;
 				int y = ts.DisplayRectangle.Top;
 
 				foreach (ToolStripItem tsi in ts.Items) {
@@ -49,7 +51,7 @@ namespace System.Windows.Forms
 					x += tsi.Margin.Left;
 
 					new_bounds.Location = new Point (x, y + (tsi is ToolStripSeparator ? 0 : tsi.Margin.Top));
-					new_bounds.Height = ts.Height - tsi.Margin.Vertical;
+					new_bounds.Height = ts.DisplayRectangle.Height - tsi.Margin.Vertical;
 					new_bounds.Width = tsi.GetPreferredSize (new Size (0, new_bounds.Height)).Width;
 
 					tsi.SetBounds (new_bounds);

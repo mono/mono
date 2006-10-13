@@ -28,6 +28,7 @@
 #if NET_2_0
 
 using System.Drawing;
+using System.ComponentModel;
 
 namespace System.Windows.Forms
 {
@@ -94,6 +95,7 @@ namespace System.Windows.Forms
 
 		public override bool CanSelect { get { return false; } }
 		
+		[DefaultValue (false)]
 		public bool IsLink {
 			get { return this.is_link; }
 			set {
@@ -102,6 +104,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (LinkBehavior.SystemDefault)]
 		public LinkBehavior LinkBehavior {
 			get { return this.link_behavior; }
 			set {
@@ -118,6 +121,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (false)]
 		public bool LinkVisited {
 			get { return this.link_visited; }
 			set {
@@ -137,6 +141,16 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
+		protected override AccessibleObject CreateAccessibilityInstance ()
+		{
+			ToolStripItemAccessibleObject ao = new ToolStripItemAccessibleObject (this);
+
+			ao.role = AccessibleRole.StaticText;
+			ao.state = AccessibleStates.ReadOnly;	
+
+			return ao;
+		}
+		
 		protected override void OnFontChanged (EventArgs e)
 		{
 			base.OnFontChanged (e);

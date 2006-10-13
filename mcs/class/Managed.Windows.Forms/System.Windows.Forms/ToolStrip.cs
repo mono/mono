@@ -37,6 +37,8 @@ namespace System.Windows.Forms
 {
 	[ComVisible (true)]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[DefaultEvent ("ItemClicked")]
+	[DefaultProperty ("Items")]
 	public class ToolStrip : ScrollableControl, IComponent, IDisposable
 	{
 		#region Private Variables
@@ -118,6 +120,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (DockStyle.Top)]
 		public override DockStyle Dock {
 			get { return base.Dock; }
 			set {
@@ -142,11 +145,13 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
 		public Color ForeColor {
 			get { return this.fore_color; }
 			set { this.fore_color = value; }
 		}
 
+		[Browsable (false)]
 		public ToolStripGripDisplayStyle GripDisplayStyle {
 			get { return this.orientation == Orientation.Vertical ? ToolStripGripDisplayStyle.Horizontal : ToolStripGripDisplayStyle.Vertical; }
 		}
@@ -156,6 +161,7 @@ namespace System.Windows.Forms
 			set { this.grip_margin = value; }
 		}
 
+		[Browsable (false)]
 		public Rectangle GripRectangle {
 			get {
 				if (this.grip_style == ToolStripGripStyle.Hidden)
@@ -168,6 +174,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (ToolStripGripStyle.Visible)]
 		public ToolStripGripStyle GripStyle {
 			get { return grip_style; }
 			set {
@@ -182,6 +189,7 @@ namespace System.Windows.Forms
 			set { this.image_scaling_size = value; }
 		}
 
+		[Browsable (false)]
 		public bool IsDropDown {
 			get {
 				//if (this is ToolStripDropDown)
@@ -210,10 +218,12 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
 		public Orientation Orientation {
 			get { return this.orientation; }
 		}
 
+		[Browsable (false)]
 		public ToolStripRenderer Renderer {
 			get { return this.renderer; }
 			set { this.renderer = value; }
@@ -235,6 +245,7 @@ namespace System.Windows.Forms
 		}
 
 		[MonoTODO ("Need 2.0 ToolTip to implement tool tips.")]
+		[DefaultValue (true)]
 		public bool ShowItemToolTips {
 			get { return this.show_item_tool_tips; }
 			set { this.show_item_tool_tips = value; }
@@ -298,6 +309,15 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
+		protected override AccessibleObject CreateAccessibilityInstance ()
+		{
+			AccessibleObject ao = new AccessibleObject (this);
+			
+			ao.role = AccessibleRole.ToolBar;
+			
+			return ao;
+		}
+		
 		protected override ControlCollection CreateControlsInstance ()
 		{
 			return base.CreateControlsInstance ();
@@ -456,9 +476,9 @@ namespace System.Windows.Forms
 		{
 			base.OnPaintBackground (pevent);
 
-			this.renderer.DrawToolStripBackground (new ToolStripRenderEventArgs (pevent.Graphics, this, this.Bounds, Color.Empty));
-
 			Rectangle affected_bounds = new Rectangle (new Point (0, 0), this.Size);
+
+			this.renderer.DrawToolStripBackground (new ToolStripRenderEventArgs (pevent.Graphics, this, affected_bounds, Color.Empty));
 			this.renderer.DrawToolStripBorder (new ToolStripRenderEventArgs (pevent.Graphics, this, affected_bounds, Color.Empty));
 		}
 
@@ -554,7 +574,10 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Events
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public event EventHandler AutoSizeChanged;
+		[Browsable (false)]
 		public event EventHandler ForeColorChanged;
 		public event ToolStripItemEventHandler ItemAdded;
 		public event ToolStripItemClickedEventHandler ItemClicked;

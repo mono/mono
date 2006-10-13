@@ -33,7 +33,7 @@ using System.Drawing.Drawing2D;
 
 namespace System.Windows.Forms
 {
-	class ToolStripProfessionalRenderer : ToolStripRenderer
+	public class ToolStripProfessionalRenderer : ToolStripRenderer
 	{
 		private ProfessionalColorTable color_table;
 		private bool rounded_edges;
@@ -101,7 +101,7 @@ namespace System.Windows.Forms
 			if (e.Item.Selected && !e.Item.Pressed)
 				using (Pen p = new Pen (this.ColorTable.ButtonSelectedBorder))
 					e.Graphics.DrawRectangle (p, paint_here);
-			else if (e.Item.Pressed)
+			else if (e.Item.Pressed) // || (e.Item.Owner is MenuStrip && (e.Item as ToolStripMenuItem).DropDown.Visible == true))
 				using (Pen p = new Pen (this.ColorTable.ButtonPressedBorder))
 					e.Graphics.DrawRectangle (p, paint_here);
 			else if (e.Item is ToolStripButton && (e.Item as ToolStripButton).Checked)
@@ -214,6 +214,16 @@ namespace System.Windows.Forms
 		protected override void OnRenderMenuItemBackground (ToolStripItemRenderEventArgs e)
 		{
 			base.OnRenderMenuItemBackground (e);
+
+			Rectangle paint_here = new Rectangle (2, 0, e.Item.Width - 4, e.Item.Height - 1);
+
+			if (e.Item.Selected) {
+				using (Brush b = new SolidBrush (this.ColorTable.MenuItemSelected))
+					e.Graphics.FillRectangle (b, paint_here);
+				
+				using (Pen p = new Pen (this.ColorTable.MenuItemBorder))
+					e.Graphics.DrawRectangle (p, paint_here);				
+			}
 		}
 
 		protected override void OnRenderOverflowButtonBackground (ToolStripItemRenderEventArgs e)
@@ -237,13 +247,18 @@ namespace System.Windows.Forms
 				}
 			}
 			else {
+				if (!e.Item.IsOnDropDown)
 				using (Brush light_brush = new SolidBrush (this.ColorTable.SeparatorLight)) {
 					Rectangle r = new Rectangle (6, 4, e.Item.Width - 10, 1);
 					e.Graphics.FillRectangle (light_brush, r);
 				}
 
 				using (Brush dark_brush = new SolidBrush (this.ColorTable.SeparatorDark)) {
-					Rectangle r = new Rectangle (5, 3, e.Item.Width - 10, 1);
+					Rectangle r;
+					if (e.Item.IsOnDropDown)
+						r = new Rectangle (35, 3, e.Item.Width - 36, 1);
+					else
+						r = new Rectangle (5, 3, e.Item.Width - 10, 1);
 					e.Graphics.FillRectangle (dark_brush, r);
 				}
 			}
@@ -259,12 +274,22 @@ namespace System.Windows.Forms
 			base.OnRenderToolStripBackground (e);
 
 			//if (e.ToolStrip is ToolStripDropDown) {
-			//        e.Graphics.Clear (this.ColorTable.ToolStripDropDownBackground);
-			//        return;
+				//e.Graphics.Clear (this.ColorTable.ToolStripDropDownBackground);
+				//Rectangle side_gradient = new Rectangle (2, 2, 22, e.ToolStrip.Height - 4);
+				//using (LinearGradientBrush b = new LinearGradientBrush (side_gradient, this.ColorTable.ToolStripGradientBegin, this.ColorTable.ToolStripGradientEnd, LinearGradientMode.Horizontal))
+					//e.Graphics.FillRectangle (b, side_gradient);
+				//return;
 			//}
 			
-			using (LinearGradientBrush b = new LinearGradientBrush (e.AffectedBounds, this.ColorTable.ToolStripGradientBegin, this.ColorTable.ToolStripGradientEnd, e.ToolStrip.Orientation == Orientation.Vertical ? LinearGradientMode.Horizontal : LinearGradientMode.Vertical))
-				e.Graphics.FillRectangle (b, e.AffectedBounds);
+			//if (e.ToolStrip is MenuStrip)
+			//{
+				//using (LinearGradientBrush b = new LinearGradientBrush (e.AffectedBounds, this.ColorTable.MenuStripGradientBegin, this.ColorTable.MenuStripGradientEnd, e.ToolStrip.Orientation == Orientation.Horizontal ? LinearGradientMode.Horizontal : LinearGradientMode.Vertical))
+					//e.Graphics.FillRectangle (b, e.AffectedBounds);
+			
+			//}
+			//else
+				using (LinearGradientBrush b = new LinearGradientBrush (e.AffectedBounds, this.ColorTable.ToolStripGradientBegin, this.ColorTable.ToolStripGradientEnd, e.ToolStrip.Orientation == Orientation.Vertical ? LinearGradientMode.Horizontal : LinearGradientMode.Vertical))
+					e.Graphics.FillRectangle (b, e.AffectedBounds);
 		}
 
 		protected override void OnRenderToolStripBorder (ToolStripRenderEventArgs e)
@@ -272,15 +297,18 @@ namespace System.Windows.Forms
 			base.OnRenderToolStripBorder (e);
 
 			//if (e.ToolStrip is ToolStripDropDown) {
-			//        e.Graphics.DrawLines (new Pen (this.ColorTable.ToolStripBorder), new Point[] { e.AffectedBounds.Location, new Point (e.AffectedBounds.Left, e.AffectedBounds.Bottom - 1), new Point (e.AffectedBounds.Right - 1, e.AffectedBounds.Bottom - 1), new Point (e.AffectedBounds.Right - 1, e.AffectedBounds.Top), new Point (e.AffectedBounds.Left + e.ConnectedArea.Right, e.AffectedBounds.Top) });
-			//        return;
+				//e.Graphics.DrawLines (new Pen (this.ColorTable.ToolStripBorder), new Point[] { e.AffectedBounds.Location, new Point (e.AffectedBounds.Left, e.AffectedBounds.Bottom - 1), new Point (e.AffectedBounds.Right - 1, e.AffectedBounds.Bottom - 1), new Point (e.AffectedBounds.Right - 1, e.AffectedBounds.Top), new Point (e.AffectedBounds.Left + e.ConnectedArea.Right, e.AffectedBounds.Top) });
+				//return;
 			//}
 
+			//if (e.ToolStrip is MenuStrip)
+			//	return;
+				
 			using (Pen p = new Pen (this.ColorTable.ToolStripBorder)) {
 				if (this.RoundedEdges == true) {
-					e.Graphics.DrawLine (p, new Point (e.ToolStrip.Left + 2, e.ToolStrip.Bottom - 1), new Point (e.ToolStrip.Right - 3, e.ToolStrip.Bottom - 1));
-					e.Graphics.DrawLine (p, new Point (e.ToolStrip.Right - 2, e.ToolStrip.Bottom - 2), new Point (e.ToolStrip.Right - 1, e.ToolStrip.Bottom - 2));
-					e.Graphics.DrawLine (p, new Point (e.ToolStrip.Right - 1, e.ToolStrip.Top + 2), new Point (e.ToolStrip.Right - 1, e.ToolStrip.Bottom - 3));
+					e.Graphics.DrawLine (p, new Point (2, e.ToolStrip.Height - 1), new Point (e.ToolStrip.Width - 3, e.ToolStrip.Height - 1));
+					e.Graphics.DrawLine (p, new Point (e.ToolStrip.Width - 2, e.ToolStrip.Height - 2), new Point (e.ToolStrip.Width - 1, e.ToolStrip.Height - 2));
+					e.Graphics.DrawLine (p, new Point (e.ToolStrip.Width - 1, 2), new Point (e.ToolStrip.Width - 1, e.ToolStrip.Height - 3));
 				}
 				else
 					e.Graphics.DrawLine (p, new Point (e.ToolStrip.Left, e.ToolStrip.Bottom - 1), new Point (e.ToolStrip.Width, e.ToolStrip.Bottom - 1));

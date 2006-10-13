@@ -72,10 +72,13 @@ namespace System.Windows.Forms
 			get { return control.CanSelect; }
 		}
 
+		[Browsable (false)]
 		public Control Control {
 			get { return this.control; }
 		}
 
+		[Browsable (false)]
+		[DefaultValue (ContentAlignment.MiddleCenter)]
 		public ContentAlignment ControlAlign {
 			get { return this.control_align; }
 			set {
@@ -88,18 +91,21 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public override ToolStripItemDisplayStyle DisplayStyle {
+		public ToolStripItemDisplayStyle DisplayStyle {
 			get { return base.DisplayStyle; }
 			set { base.DisplayStyle = value; }
 		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DefaultValue (false)]
 		public bool DoubleClickEnabled {
 			get { return this.double_click_enabled; }
 			set { this.double_click_enabled = value; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override bool Enabled {
 			get { return base.Enabled; }
 			set {
@@ -160,6 +166,7 @@ namespace System.Windows.Forms
 			get { return base.Selected; }
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override ISite Site {
 			get { return base.Site; }
 			set { 
@@ -168,6 +175,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue ("")]
 		public override string Text {
 			get { return base.Text; }
 			set {
@@ -213,14 +221,12 @@ namespace System.Windows.Forms
 			return this.Size;
 		}
 
-		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override void ResetBackColor ()
 		{
 			base.ResetBackColor ();
 		}
 
-		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override void ResetForeColor ()
 		{
@@ -229,9 +235,14 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
-		protected override void OnBoundsChanged (EventArgs e)
+		protected override AccessibleObject CreateAccessibilityInstance ()
 		{
-			base.OnBoundsChanged (e);
+			return this.Control.AccessibilityObject;
+		}
+		
+		protected override void OnBoundsChanged ()
+		{
+			base.OnBoundsChanged ();
 
 			if (this.Parent != null) {
 				control.Size = this.Size;
@@ -331,13 +342,19 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Events
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public event EventHandler DisplayStyleChanged;
 		public event EventHandler Enter;
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public event EventHandler GotFocus;
 		public event KeyEventHandler KeyDown;
 		public event KeyPressEventHandler KeyPress;
 		public event KeyEventHandler KeyUp;
 		public event EventHandler Leave;
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public event EventHandler LostFocus;
 		public event EventHandler Validated;
 		public event CancelEventHandler Validating;

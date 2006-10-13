@@ -172,7 +172,17 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
-		[Browsable (false)]
+		protected override AccessibleObject CreateAccessibilityInstance ()
+		{
+			ToolStripItemAccessibleObject ao = new ToolStripItemAccessibleObject (this);
+
+			ao.default_action = "Press";
+			ao.role = AccessibleRole.Separator;
+			ao.state = AccessibleStates.None;
+
+			return ao;
+		}
+		
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected override void OnFontChanged (EventArgs e)
 		{
@@ -184,7 +194,12 @@ namespace System.Windows.Forms
 			base.OnPaint (e);
 			
 			if (this.Owner != null)
-				this.Owner.Renderer.DrawSeparator(new ToolStripSeparatorRenderEventArgs(e.Graphics, this, this.Owner.Orientation == Orientation.Horizontal ? true : false));
+			{
+				if (this.IsOnDropDown)
+					this.Owner.Renderer.DrawSeparator (new ToolStripSeparatorRenderEventArgs (e.Graphics, this, this.Owner.Orientation == Orientation.Horizontal ? false : true));
+				else
+					this.Owner.Renderer.DrawSeparator (new ToolStripSeparatorRenderEventArgs (e.Graphics, this, this.Owner.Orientation == Orientation.Horizontal ? true : false));
+			}
 		}
 
 		protected internal override void SetBounds (Rectangle bounds)

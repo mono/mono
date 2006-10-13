@@ -31,6 +31,7 @@ using System.ComponentModel;
 
 namespace System.Windows.Forms
 {
+	[DefaultProperty ("Items")]
 	public class ToolStripComboBox : ToolStripControlHost
 	{
 		#region Public Constructors
@@ -50,10 +51,12 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
+		[Browsable (false)]
 		public ComboBox ComboBox {
 			get { return (ComboBox)base.Control; }
 		}
 
+		[DefaultValue (ComboBoxStyle.DropDown)]
 		public ComboBoxStyle DropDownStyle {
 			get { return this.ComboBox.DropDownStyle; }
 			set { this.ComboBox.DropDownStyle = value; }
@@ -64,12 +67,14 @@ namespace System.Windows.Forms
 			set { this.ComboBox.DropDownWidth = value; }
 		}
 
+		[Browsable (false)]
 		public bool DroppedDown {
 			get { return this.ComboBox.DroppedDown; }
 			set { this.ComboBox.DroppedDown = value; }
 		}
 
 		[Localizable (true)]
+		[DefaultValue (true)]
 		public bool IntegralHeight {
 			get { return this.ComboBox.IntegralHeight; }
 			set { this.ComboBox.IntegralHeight = value; }
@@ -81,43 +86,51 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (true)]
+		[DefaultValue (8)]
 		public int MaxDropDownItems {
 			get { return this.ComboBox.MaxDropDownItems; }
 			set { this.ComboBox.MaxDropDownItems = value; }
 		}
 
 		[Localizable (true)]
+		[DefaultValue (0)]
 		public int MaxLength {
 			get { return this.ComboBox.MaxLength; }
 			set { this.ComboBox.MaxLength = value; }
 		}
 
+		[Browsable (false)]
 		public int SelectedIndex {
 			get { return this.ComboBox.SelectedIndex; }
 			set { this.ComboBox.SelectedIndex = value; }
 		}
 
 		[Bindable (true)]
+		[Browsable (false)]
 		public Object SelectedItem {
 			get { return this.ComboBox.SelectedItem; }
 			set { this.ComboBox.SelectedItem = value; }
 		}
 
+		[Browsable (false)]
 		public string SelectedText {
 			get { return this.ComboBox.SelectedText; }
 			set { this.ComboBox.SelectedText = value; }
 		}
 
+		[Browsable (false)]
 		public int SelectionLength {
 			get { return this.ComboBox.SelectionLength; }
 			set { this.ComboBox.SelectionLength = value; }
 		}
 
+		[Browsable (false)]
 		public int SelectionStart {
 			get { return this.ComboBox.SelectionStart; }
 			set { this.ComboBox.SelectionStart = value; }
 		}
 
+		[DefaultValue (false)]
 		public bool Sorted {
 			get { return this.ComboBox.Sorted; }
 			set { this.ComboBox.Sorted = value; }
@@ -147,7 +160,7 @@ namespace System.Windows.Forms
 
 		public int FindString (string s, int startIndex)
 		{
-			return this.ComboBox.FindString (s, startIndex);
+		 	return this.ComboBox.FindString (s, startIndex);
 		}
 
 		public int FindStringExact (string s)

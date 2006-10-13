@@ -31,6 +31,7 @@ using System.ComponentModel;
 
 namespace System.Windows.Forms
 {
+	[DefaultProperty ("Value")]
 	public class ToolStripProgressBar : ToolStripControlHost
 	{
 		#region Public Constructors
@@ -45,36 +46,44 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
+		[DefaultValue (100)]
 		public int Maximum {
 			get { return this.ProgressBar.Maximum; }
 			set { this.ProgressBar.Maximum = value; }
 		}
 
+		[DefaultValue (0)]
 		public int Minimum {
 			get { return this.ProgressBar.Minimum; }
 			set { this.ProgressBar.Minimum = value; }
 		}
 
+		[Browsable (false)]
 		public ProgressBar ProgressBar {
 			get { return (ProgressBar)base.Control; }
 		}
 
+		[DefaultValue (10)]
 		public int Step {
 			get { return this.ProgressBar.Step; }
 			set { this.ProgressBar.Step = value; }
 		}
 
+		[DefaultValue (ProgressBarStyle.Blocks)]
 		public ProgressBarStyle Style {
 			get { return this.ProgressBar.Style; }
 			set { this.ProgressBar.Style = value; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override string Text {
 			get { return base.Text; }
 			set { base.Text = value; }
 		}
 
 		[Bindable (true)]
+		[DefaultValue (0)]
 		public int Value {
 			get { return this.ProgressBar.Value; }
 			set { this.ProgressBar.Value = value; }

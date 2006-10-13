@@ -1,3 +1,11 @@
+﻿2006-10-12  Jonathan Pobst  <monkey@jpobst.com>
+	* ToolStrip.cs, ToolStripButton.cs, ToolStripComboBox.cs,
+	  ToolStripControlHost.cs, ToolStripItem.cs, ToolStripLabel.cs,
+	  ToolStripProfessionalRenderer.cs, ToolStripProgressBar.cs,
+	  ToolStripSeparator.cs, ToolStripSplitStackLayout.cs,
+	  ToolStripTextBox.cs: Add accessibility, fix attributes/API and
+	add additional functionality.
+
 2006-10-12  Mike Kestner  <mkestner@novell.com>
 
 	* ErrorProvider.cs : new ToolTipWindow ctor sig.
