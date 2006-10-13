@@ -1,5 +1,12 @@
 2006-10-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ConfigurationSettings.cs :
+	  Handle <section> inside <section> as expected.
+	  Fixed some ReadSections() consumers that it does _not_ consume
+	  the surrounding EndElement. For now all issues I found are gone.
+
+2006-10-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ConfigurationSettings.cs : another MoveToNextElement() elimination.
 	  When there is another section group after "system.drawing"
 	  section in the existing machine.config, it borked as if there were

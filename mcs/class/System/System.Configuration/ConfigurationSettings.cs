@@ -571,7 +571,17 @@ namespace System.Configuration
 			section.FileName = fileName;
 			factories [nameValue] = section;
 
-			MoveToNextElement (reader);
+			if (reader.IsEmptyElement)
+				reader.Skip ();
+			else {
+				reader.Read ();
+				reader.MoveToContent ();
+				if (reader.NodeType != XmlNodeType.EndElement)
+					// sub-section inside a section
+					ReadSections (reader, nameValue);
+				reader.ReadEndElement ();
+			}
+			reader.MoveToContent ();
 		}
 
 		private void ReadRemoveSection (XmlTextReader reader, string sectionName)
@@ -638,16 +648,19 @@ namespace System.Configuration
 				reader.MoveToContent ();
 				if (reader.NodeType != XmlNodeType.EndElement)
 					ReadSections (reader, value);
-				else
-					reader.Read ();
+				reader.ReadEndElement ();
 				reader.MoveToContent ();
 			}
 		}
 
+		// It stops XmlReader consumption at where it found
+		// surrounding EndElement i.e. EndElement is not consumed here
 		private void ReadSections (XmlTextReader reader, string configSection)
 		{
 			int depth = reader.Depth;
-			while (reader.Depth == depth) {
+			for (reader.MoveToContent ();
+			     reader.Depth == depth;
+			     reader.MoveToContent ()) {
 				string name = reader.Name;
 				if (name == "section") {
 					ReadSection (reader, configSection);
@@ -703,8 +716,7 @@ namespace System.Configuration
 						reader.MoveToContent ();
 						if (reader.NodeType != XmlNodeType.EndElement)
 							ReadSections (reader, null);
-						else
-							reader.Read ();
+						reader.ReadEndElement ();
 					}
 				} else if (name != null && name != "") {
 					StorePending (name, reader);
