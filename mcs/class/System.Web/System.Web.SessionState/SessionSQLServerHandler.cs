@@ -51,7 +51,7 @@ namespace System.Web.SessionState {
 		const string defaultParamPrefix = ":";
 		string paramPrefix;
 		string selectCommand = "SELECT timeout,staticobjectsdata,sessiondata FROM ASPStateTempSessions WHERE SessionID = :SessionID AND Expires > :Expires";
-		string insertCommand = "INSERT INTO ASPStateTempSessions VALUES (:SessionID, :Created, :Expires, :Timeout, :StaticObjectsData, :SessionData)";
+		string insertCommand = "INSERT INTO ASPStateTempSessions (SessionId, Created, expires, timeout, StaticObjectsData, SessionData)  VALUES (:SessionID, :Created, :Expires, :Timeout, :StaticObjectsData, :SessionData)";
 		string updateCommand = "UPDATE ASPStateTempSessions SET expires = :Expires, timeout = :Timeout, SessionData = :SessionData WHERE SessionId = :SessionID";
 		string deleteCommand = "DELETE FROM ASPStateTempSessions WHERE SessionId = :SessionID";
 
