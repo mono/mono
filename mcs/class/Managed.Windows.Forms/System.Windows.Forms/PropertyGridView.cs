@@ -516,14 +516,16 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		}
 
 		private void SetPropertyValue(object newVal) {
-			if (this.property_grid.SelectedGridItem != null) {
-				PropertyDescriptor desc = property_grid.SelectedGridItem.PropertyDescriptor;
-				if (desc != null) {
-					object target = property_grid.SelectedObject;
-					if (property_grid.SelectedGridItem.Parent != null)
-						target = property_grid.SelectedGridItem.Parent.Value;
-					desc.SetValue(target, newVal);
-				}
+			if (property_grid.SelectedGridItem == null)
+				return;
+
+			PropertyDescriptor desc = property_grid.SelectedGridItem.PropertyDescriptor;
+			if (desc == null)
+				return;
+
+			for (int i = 0; i < ((GridEntry)property_grid.SelectedGridItem).SelectedObjects.Length; i ++) {
+				object target = property_grid.GetTarget (property_grid.SelectedGridItem, i);
+				desc.SetValue(target, newVal);
 			}
 		}
 
@@ -540,9 +542,10 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					listBox.Dock = DockStyle.Fill;
 					int selected_index = 0;
 					int i = 0;
+					object selected_value = property_grid.SelectedGridItem.Value;
 					foreach (object obj in property_grid.SelectedGridItem.PropertyDescriptor.Converter.GetStandardValues()) {
 						listBox.Items.Add(obj);
-						if (property_grid.SelectedGridItem.Value.Equals(obj))
+						if (selected_value != null && selected_value.Equals(obj))
 							selected_index = i;
 						i++;
 					}
@@ -613,7 +616,10 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				grid_textbox.Visible = false;
 
 			if (e.NewSelection.PropertyDescriptor != null) {
-				grid_textbox.Text = e.NewSelection.PropertyDescriptor.Converter.ConvertToString(e.NewSelection.Value);
+				if (e.NewSelection.Value == null)
+					grid_textbox.Text = "";
+				else
+					grid_textbox.Text = e.NewSelection.PropertyDescriptor.Converter.ConvertToString(e.NewSelection.Value);
 				if (e.NewSelection.PropertyDescriptor.CanResetValue(property_grid.SelectedObject))
 					grid_textbox.Font = bold_font;
 				else

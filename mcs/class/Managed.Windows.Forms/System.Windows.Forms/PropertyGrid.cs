@@ -466,19 +466,18 @@ namespace System.Windows.Forms {
 					
 				current_property_value = value.Value;
 				if (oldItem != null && oldItem.PropertyDescriptor != null) {
-					object target = SelectedObject;
-					if (oldItem.Parent != null)
-						target = oldItem.Parent.Value;
-					oldItem.PropertyDescriptor.RemoveValueChanged(target, new EventHandler(HandlePropertyValueChanged));
+					for (int i = 0; i < ((GridEntry)oldItem).SelectedObjects.Length; i ++) {
+						object target = GetTarget (oldItem, i);
+						oldItem.PropertyDescriptor.RemoveValueChanged(target, new EventHandler(HandlePropertyValueChanged));
+					}
 				}
 				if (selected_grid_item.PropertyDescriptor != null) {
-					object target = SelectedObject;
-					if (selected_grid_item.Parent != null)
-						target = selected_grid_item.Parent.Value;
-					selected_grid_item.PropertyDescriptor.AddValueChanged(target, new EventHandler(HandlePropertyValueChanged));
+					for (int i = 0; i < ((GridEntry)selected_grid_item).SelectedObjects.Length; i ++) {
+						object target = GetTarget (selected_grid_item, i);
+						selected_grid_item.PropertyDescriptor.AddValueChanged(target, new EventHandler(HandlePropertyValueChanged));
+					}
 				}
-				OnSelectedGridItemChanged(new SelectedGridItemChangedEventArgs( oldItem, selected_grid_item));
-				
+				OnSelectedGridItemChanged(new SelectedGridItemChangedEventArgs (oldItem, selected_grid_item));
 			}
 		}
 
@@ -494,15 +493,20 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				selected_objects = new object[] {value};
-				if (this.SelectedObject == null)
-					return;
-				PropertyTabAttribute[] propTabs = (PropertyTabAttribute[])this.SelectedObject.GetType().GetCustomAttributes(typeof(PropertyTabAttribute),true);
-				if (propTabs.Length > 0) {
-					foreach (Type tabType in propTabs[0].TabClasses) {
-						this.PropertyTabs.AddTabType(tabType);
+				if (value == null)
+					selected_objects = new object[0];
+				else
+					selected_objects = new object[] {value};
+
+				if (value != null) {
+					PropertyTabAttribute[] propTabs = (PropertyTabAttribute[])this.SelectedObject.GetType().GetCustomAttributes(typeof(PropertyTabAttribute),true);
+					if (propTabs.Length > 0) {
+						foreach (Type tabType in propTabs[0].TabClasses) {
+							this.PropertyTabs.AddTabType(tabType);
+						}
 					}
 				}
+
 				RefreshTabs(PropertyTabScope.Component);
 				ReflectObjects();
 				property_grid_view.Refresh();
@@ -517,6 +521,10 @@ namespace System.Windows.Forms {
 			}
 
 			set {
+				for (int i = 0; i < value.Length; i ++) {
+					if (value[i] == null)
+						throw new ArgumentException (String.Format ("Item {0} in the objs array is null.", i));
+				}
 				selected_objects = value;
 				ReflectObjects();
 			}
@@ -951,43 +959,85 @@ namespace System.Windows.Forms {
 
 		private void ReflectObjects () {
 			grid_items = new GridItemCollection();
-			foreach (object obj in selected_objects) {
-				if (obj != null) {
-					PopulateGridItemCollection(obj,grid_items, true, null);
-				}
-			}
+
+			if (selected_objects.Length > 0)
+				PopulateMergedGridItems (selected_objects, grid_items, true, null);
 		}
 
-		private void PopulateGridItemCollection (object obj, GridItemCollection grid_item_coll, bool recurse, GridItem parent_grid_item) {
-			if (!recurse && !TypeDescriptor.GetConverter(obj).GetPropertiesSupported())
-				return;
-			PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(obj);
-			foreach (PropertyDescriptor property in properties) {
-				if (property.IsBrowsable) {
-					GridEntry grid_entry = new GridEntry(obj, property);
-					grid_entry.SetParent (parent_grid_item);
-					if (property_sort == PropertySort.Alphabetical || !recurse) {
-						if (grid_item_coll[property.Name] == null)
-							grid_item_coll.Add(property.Name,grid_entry);
-					}
-					else if (property_sort == PropertySort.Categorized || property_sort == PropertySort.CategorizedAlphabetical) {
+		private void PopulateMergedGridItems (object[] objs, GridItemCollection grid_item_coll, bool recurse, GridItem parent_grid_item)
+		{
+			ArrayList intersection = null;
 
-						string category = property.Category;
-						GridItem cat_item = grid_item_coll[category];
-						if (cat_item == null) {
-							cat_item = new CategoryGridEntry(category);
-							(cat_item as CategoryGridEntry).SetParent (parent_grid_item);
-							grid_item_coll.Add(category,cat_item);
-						}
-						cat_item.GridItems.Add(property.Name,grid_entry);
+			for (int i = 0; i < objs.Length; i ++) {
+				ArrayList new_intersection = new ArrayList ();
+				Type type = objs[i].GetType();
+
+				/* i tried using filter attributes, but there's no way to do it for EditorBrowsableAttributes,
+				   since that type lacks an override for IsDefaultAttribute, and for some reason the
+				   BrowsableAttribute.Yes filter wasn't working */
+				PropertyDescriptorCollection properties = TypeDescriptor.GetProperties (type);
+
+				foreach (PropertyDescriptor p in (i == 0 ? (ICollection)properties : (ICollection)intersection)) {
+					PropertyDescriptor property = (i == 0 ? p : properties [p.Name]);
+					if (property == null) {
+						/* since the property doesn't exist in at least one of the other types, 
+						   exclude it */
 					}
-					if (recurse) {
-						object propObj = property.GetValue(obj);
-						if (propObj != null)
-							PopulateGridItemCollection(propObj,grid_entry.GridItems, false, grid_entry);
+					else if (!property.IsBrowsable
+					    || (objs.Length > 0 && property.Attributes.Contains (MergablePropertyAttribute.No))
+					    || property.Attributes.Contains (new EditorBrowsableAttribute (EditorBrowsableState.Never))
+					    || property.Attributes.Contains (new EditorBrowsableAttribute (EditorBrowsableState.Advanced))) {
+						/* if the property isn't supposed to be displayed in the merged view,
+						   excluded it */
 					}
-					grid_entry.Expanded = false;
+					else {
+						Type p_type = p.ComponentType;
+						Type property_type = property.ComponentType;
+
+						if (p_type.IsAssignableFrom (type))
+							new_intersection.Add (p);
+						else if (property_type.IsAssignableFrom (p_type))
+							new_intersection.Add (property);
+					}
 				}
+
+				intersection = new_intersection;
+			}
+
+			if (intersection.Count > 0)
+				PopulateGridItemsFromProperties (objs, intersection, grid_item_coll, recurse, parent_grid_item);
+		}
+
+		private void PopulateGridItemsFromProperties (object[] objs, ArrayList properties,
+							      GridItemCollection grid_item_coll, bool recurse, GridItem parent_grid_item) {
+			foreach (PropertyDescriptor property in properties) {
+
+				GridEntry grid_entry = new GridEntry (objs, property);
+				grid_entry.SetParent (parent_grid_item);
+				if (property_sort == PropertySort.Alphabetical || !recurse) {
+					if (grid_item_coll[property.Name] == null)
+						grid_item_coll.Add(property.Name,grid_entry);
+				}
+				else if (property_sort == PropertySort.Categorized || property_sort == PropertySort.CategorizedAlphabetical) {
+
+					string category = property.Category;
+					GridItem cat_item = grid_item_coll[category];
+					if (cat_item == null) {
+						cat_item = new CategoryGridEntry(category);
+						(cat_item as CategoryGridEntry).SetParent (parent_grid_item);
+						grid_item_coll.Add(category,cat_item);
+					}
+					if (cat_item.GridItems[property.Name] == null)
+						cat_item.GridItems.Add(property.Name,grid_entry);
+				}
+
+				if (recurse && TypeDescriptor.GetConverter(property.PropertyType).GetPropertiesSupported()) {
+					object[] subobjs = new object[objs.Length];
+					for (int i = 0; i < objs.Length; i ++)
+						subobjs[i] = property.GetValue (objs[i]);
+					PopulateMergedGridItems (subobjs, grid_entry.GridItems, false, grid_entry);
+				}
+				grid_entry.Expanded = false;
 			}
 		}
 
@@ -996,6 +1046,15 @@ namespace System.Windows.Forms {
 			e.Graphics.DrawRectangle(SystemPens.ControlDark, 0,0,help_panel.Width-1,help_panel.Height-1 );
 		}
 
+		internal object GetTarget (GridItem item, int selected_index)
+		{
+			object target = ((GridEntry)item).SelectedObjects[selected_index];
+
+			if (item.Parent != null)
+				target = item.Parent.PropertyDescriptor.GetValue (((GridEntry)item.Parent).SelectedObjects[selected_index]);
+
+			return target;
+		}
 		#endregion	// Private Helper Methods
 
 

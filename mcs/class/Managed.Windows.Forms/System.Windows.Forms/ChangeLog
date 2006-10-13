@@ -1,3 +1,30 @@
+2006-10-13  Chris Toshok  <toshok@ximian.com>
+
+	* PropertyGridView.cs:
+	- Rewrite SetPropertyValue to loop over SelectedGridItem's
+	SelectedObjects.
+
+	- Deal with GridItem.Value == null a few places.
+
+	* PropertyGrid.cs: 
+	- replace the PopulateGridItemCollection with a pair of methods
+	which compute the intersection of all the properties in the
+	SelectedObjects array.  Fixes #79615.
+
+	- Throw ArgumentException from set_SelectedObjects if there's a
+	null in the array.
+
+	- Add GetTarget method which can be used to traverse up the
+	GridItem.Parent chain.  It depends on the assumption that
+	selected_objects for different GridEntries are always in the same
+	order (a safe assumption).  Use this method and loop over all the
+	selected objects in the entry when calling RemoveValueChanged and
+	AddValueChanged.
+	
+	* GridEntry.cs: Make this handle multiple selected objects.
+	.Value returns null if not all the selected objects share the same
+	value.
+
 ﻿2006-10-12  Jonathan Pobst  <monkey@jpobst.com>
 	* ToolStrip.cs, ToolStripButton.cs, ToolStripComboBox.cs,
 	  ToolStripControlHost.cs, ToolStripItem.cs, ToolStripLabel.cs,

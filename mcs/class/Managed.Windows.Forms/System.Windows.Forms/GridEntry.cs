@@ -39,7 +39,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 		private GridItemCollection grid_items;
 		private GridItem parent;
 		private PropertyDescriptor property_descriptor;
-		private object selected_object;
+		private object[] selected_objects;
 		private string label;
 		private int top;
 		private Rectangle plus_minus_bounds;
@@ -54,8 +54,8 @@ namespace System.Windows.Forms.PropertyGridInternal
 			grid_items = new GridItemCollection();
 		}
 
-		public GridEntry(object obj, PropertyDescriptor prop_desc) : this() {
-			selected_object = obj;
+		public GridEntry(object[] objs, PropertyDescriptor prop_desc) : this() {
+			selected_objects = objs;
 			property_descriptor = prop_desc;
 		}
 		#endregion	// Constructors
@@ -117,10 +117,20 @@ namespace System.Windows.Forms.PropertyGridInternal
 		public override object Value
 		{
 			get {
-				object return_value = null;
-				if (selected_object != null)
-					return_value = property_descriptor.GetValue(selected_object);
-				return return_value;
+				/* we should probably put this logic
+				 * someplace else, maybe when we're
+				 * initially populating the
+				 * PropertyGrid? */
+				if (selected_objects == null || selected_objects.Length == 0)
+					return null;
+
+				object v = property_descriptor.GetValue(selected_objects[0]);
+				for (int i = 1; i < selected_objects.Length; i ++) {
+					if (!Object.Equals (v, property_descriptor.GetValue(selected_objects[i])))
+						return null;
+				}
+
+				return v;
 			}
 		}
 		#endregion	// Public Instance Properties
@@ -131,6 +141,12 @@ namespace System.Windows.Forms.PropertyGridInternal
 			throw new NotImplementedException();
 		}
 		#endregion	// Public Instance Methods
+
+		internal object[] SelectedObjects {
+			get {
+				return selected_objects;
+			}
+		}
 
 		internal override int Top {
 			get {
