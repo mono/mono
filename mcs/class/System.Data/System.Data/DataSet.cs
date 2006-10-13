@@ -1227,7 +1227,7 @@ namespace System.Data {
 					si.AddValue ("DataTable_" + i + ".DataColumn_" + j + ".Expression",
 						     dt.Columns[j].Expression);
 				}
-				dt.DataSet = this;
+				dt.dataSet = this;
 				dt.BinarySerialize (si, "DataTable_" + i + ".");
 			}
 			ArrayList relationList = new ArrayList ();
@@ -1329,7 +1329,7 @@ namespace System.Data {
 			}
 			for (int i = 0; i < tableCount; i++) {
 				dt = Tables [i];
-				dt.DataSet = this;
+				dt.dataSet = this;
 				arrayList = (ArrayList) info.GetValue ("DataTable_" + i + ".Constraints",
 								       typeof (ArrayList));
 				if (dt.Constraints == null)

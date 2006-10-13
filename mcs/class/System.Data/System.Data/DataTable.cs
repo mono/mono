@@ -150,74 +150,70 @@ namespace System.Data {
 #if NET_2_0
 		internal void DeserializeConstraints (ArrayList arrayList)
 		{
-			bool bParentColumn = true;
-			bool bUniqueConstraintNavigate = false;
-			UniqueConstraint unique = null;
-			PropertyCollection extendedProperty = null;
+			bool fKeyNavigate = false;
 			for (int i = 0; i < arrayList.Count; i++) {
-				ArrayList tmpArrayList = (ArrayList) arrayList[i];
-				ArrayList fKeyChildColumns = new ArrayList ();
-				ArrayList fKeyParentColumns = new ArrayList ();
-				ArrayList uniqueDataColumns = new ArrayList ();
-				bParentColumn = true;
-				for (int j = 0; j < tmpArrayList.Count; j++) {
-					int [] array = tmpArrayList [j] as int [];
-					if (array == null)
-						continue;
-					int len = array.Length;
-					if (len == 1) {
-						uniqueDataColumns.Add (Columns [array [0]]);
-						if (bUniqueConstraintNavigate == false &&
-						    (string) tmpArrayList [0] == "U") {
-							bUniqueConstraintNavigate = false;
-							unique = new UniqueConstraint ((string) tmpArrayList[1],
-										       (DataColumn[]) uniqueDataColumns.
-										       ToArray (typeof (DataColumn)));
-							/*
-							  If UniqueConstraint already exist, don't add them
-							*/
-							if (Constraints.IndexOf (unique) != -1 ||
-							    Constraints.IndexOf ((string) tmpArrayList[1]) != -1)
-								continue;
-							Constraints.Add (unique);
-							for (j = 0; j < tmpArrayList.Count; j++) {
-								if (typeof (PropertyCollection) == tmpArrayList [j].GetType ()) {
-									Constraints [Constraints.Count - 1].
-									  ExtendedProperties = (PropertyCollection) tmpArrayList [j];
-									break;
-								}
-							}
-						}
-					} else if (len == 2) {
-						bUniqueConstraintNavigate = true;
-						if (bParentColumn) {
-							fKeyParentColumns.Add (dataSet.Tables [array[0]].
-									       Columns [array[1]]);
-							bParentColumn = false;
-						} else {
-							fKeyChildColumns.Add (dataSet.Tables [array[0]].
-									      Columns [array[1]]);
-							bParentColumn = true;
-						}
-					}
-				}
+				ArrayList tmpArrayList = arrayList [i] as ArrayList;
+				if (tmpArrayList == null)
+					continue;
 				if ((string) tmpArrayList [0] == "F") {
-					ForeignKeyConstraint fKeyConstraint = new 
+					int [] constraintsArray = tmpArrayList [2] as int [];
+
+					if (constraintsArray == null)
+						continue;
+					ArrayList parentColumns = new ArrayList ();
+					DataTable dt = dataSet.Tables [constraintsArray [0]];
+					for (int j = 0; j < constraintsArray.Length - 1; j++) {
+						parentColumns.Add (dt.Columns [constraintsArray [j + 1]]);
+					}
+
+					constraintsArray = tmpArrayList [3] as int [];
+
+					if (constraintsArray == null)
+						continue;
+					ArrayList childColumns  = new ArrayList ();
+					dt = dataSet.Tables [constraintsArray [0]];
+					for (int j = 0; j < constraintsArray.Length - 1; j++) {
+						childColumns.Add (dt.Columns [constraintsArray [j + 1]]);
+					}
+
+					ForeignKeyConstraint fKeyConstraint = new
 					  ForeignKeyConstraint ((string) tmpArrayList [1],
-								(DataColumn []) fKeyParentColumns.ToArray (typeof (DataColumn)),
-								(DataColumn []) fKeyChildColumns.ToArray (typeof (DataColumn)));
-					Constraints.Add (fKeyConstraint);
+								(DataColumn []) parentColumns.ToArray (typeof (DataColumn)),
+								(DataColumn []) childColumns.ToArray (typeof (DataColumn)));
 					Array ruleArray = (Array) tmpArrayList [4];
 					fKeyConstraint.AcceptRejectRule = (AcceptRejectRule) ruleArray.GetValue (0);
 					fKeyConstraint.UpdateRule = (Rule) ruleArray.GetValue (1);
 					fKeyConstraint.DeleteRule = (Rule) ruleArray.GetValue (2);
-					for (int j = 0; j < tmpArrayList.Count; j++) {
-						if (typeof (PropertyCollection) == tmpArrayList [j].GetType ()) {
-							Constraints [Constraints.Count - 1].
-							  ExtendedProperties = (PropertyCollection) tmpArrayList [j];
-							break;
-						}
+					fKeyConstraint.ExtendedProperties = (PropertyCollection) tmpArrayList [5];
+					Constraints.Add (fKeyConstraint);
+					fKeyNavigate = true;
+				} else if (fKeyNavigate == false &&
+					   (string) tmpArrayList [0] == "U") {
+					UniqueConstraint unique = null;
+					ArrayList uniqueDataColumns = new ArrayList ();
+					int [] constraintsArray = tmpArrayList [2] as int [];
+
+					if (constraintsArray == null)
+						continue;
+
+					for (int j = 0; j < constraintsArray.Length; j++) {
+						uniqueDataColumns.Add (Columns [constraintsArray [j]]);
 					}
+					unique = new UniqueConstraint ((string) tmpArrayList[1],
+								       (DataColumn[]) uniqueDataColumns.
+								       ToArray (typeof (DataColumn)),
+								       (bool) tmpArrayList [3]);
+					/*
+					  If UniqueConstraint already exist, don't add them
+					*/
+					if (Constraints.IndexOf (unique) != -1 ||
+					    Constraints.IndexOf ((string) tmpArrayList[1]) != -1) {
+						continue;
+					}
+					unique.ExtendedProperties = (PropertyCollection) tmpArrayList [4];
+					Constraints.Add (unique);
+				} else {
+					fKeyNavigate = false;
 				}
 			}
 		}
@@ -557,12 +553,7 @@ namespace System.Data {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataSet DataSet {
 			get { return dataSet; }
-#if NET_2_0
-			set { dataSet = value; }
-#endif
 		}
-
-		
 
 		/// <summary>
 		/// Gets a customized view of the table which may 
@@ -1476,7 +1467,7 @@ namespace System.Data {
 			ArrayList constraintArrayList = new ArrayList ();
 			for (int j = 0; j < Constraints.Count; j++) {
 				ArrayList constraintList = new ArrayList ();
-				if (Constraints[j].GetType () == typeof (UniqueConstraint)) {
+				if (Constraints[j] is UniqueConstraint) {
 					constraintList.Add ("U");
 					UniqueConstraint unique = (UniqueConstraint) Constraints [j];
 					constraintList.Add (unique.ConstraintName);
@@ -1487,26 +1478,26 @@ namespace System.Data {
 					constraintList.Add (tmpArray);
 					constraintList.Add (unique.IsPrimaryKey);
 					constraintList.Add (unique.ExtendedProperties);
-				} else if (Constraints[j].GetType() == typeof (ForeignKeyConstraint)) {
+				} else if (Constraints[j] is ForeignKeyConstraint) {
 					constraintList.Add ("F");
 					ForeignKeyConstraint fKey = (ForeignKeyConstraint) Constraints [j];
 					constraintList.Add (fKey.ConstraintName);
 
-					// Parent Columns - FIXME: To handle multiple parent columns
-					int [] tmpArray = new int[2];
-					DataTable tmpDataTable = fKey.RelatedTable;
-					tmpArray [0] = DataSet.Tables.IndexOf (tmpDataTable);
-					tmpArray [1] = tmpDataTable.Columns.IndexOf (fKey.RelatedColumns[0]);
+					int [] tmpArray = new int [fKey.RelatedColumns.Length + 1];
+					tmpArray [0] = DataSet.Tables.IndexOf (fKey.RelatedTable);
+					for (int i = 0; i < fKey.Columns.Length; i++) {
+						tmpArray [i + 1] = fKey.RelatedColumns [i].Ordinal;
+					}
 					constraintList.Add (tmpArray);
 
-					// Child Columns - FIXME: To handle multiple child columns
-					tmpArray = new int [2];
-					tmpDataTable = fKey.Table;
-					tmpArray [0] = DataSet.Tables.IndexOf (tmpDataTable);
-					tmpArray [1] = tmpDataTable.Columns.IndexOf (fKey.Columns [0]);
+					tmpArray = new int [fKey.Columns.Length + 1];
+					tmpArray [0] = DataSet.Tables.IndexOf (fKey.Table);
+					for (int i = 0; i < fKey.Columns.Length; i++) {
+						tmpArray [i + 1] = fKey.Columns [i].Ordinal;
+					}
 					constraintList.Add (tmpArray);
 
-					tmpArray = new int[3];
+					tmpArray = new int [3];
 					tmpArray [0] = (int) fKey.AcceptRejectRule;
 					tmpArray [1] = (int) fKey.UpdateRule;
 					tmpArray [2] = (int) fKey.DeleteRule;

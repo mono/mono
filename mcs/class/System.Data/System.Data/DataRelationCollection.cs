@@ -515,6 +515,13 @@ namespace System.Data {
 
 		public virtual bool Contains(string name)
 		{
+			DataSet tmpDataSet = GetDataSet();
+			if (tmpDataSet != null) {
+				DataRelation tmpRelation = tmpDataSet.Relations [name];
+				if (tmpRelation != null) {
+					return true;
+				}
+			}
 			return (-1 != IndexOf (name, false));
 		}
 
