@@ -1,19 +1,23 @@
-2006-10-12	Hagit Yidov <hagity@mainsoft.com>
+2006-10-13  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataRelationTest2.cs: Enabled test for bug #79233.
+
+2006-10-12  Hagit Yidov <hagity@mainsoft.com>
 
 	* DataSetTest.cs : added tests for Load().
 	* DataTableTest.cs : added more tests for Load() and added LoadDataRow().
 
-2006-10-03	Hagit Yidov <hagity@mainsoft.com>
+2006-10-03  Hagit Yidov <hagity@mainsoft.com>
 
 	* DataRowCollectionTest.cs : added tests for IndexOf().
 	* DataSetTest.cs : added tests for CreateDataReader().
 	* DataTableTest.cs : added tests for CreateDataReader() and for Load().
 
-2006-09-18	Boris Kirzner <borisk@mainsoft.com>
+2006-09-18  Boris Kirzner <borisk@mainsoft.com>
 
 	* DataViewTest.cs : fix compilation error.
 
-2006-09-17	Boris Kirzner <borisk@mainsoft.com>
+2006-09-17  Boris Kirzner <borisk@mainsoft.com>
 
 	* DataViewTest.cs : marked not wroker test for TARGET_JVM.
 	* DataSetTest.cs : marked not working net_2_0 tests.

@@ -534,7 +534,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void bug79233 ()
 		{
 			DataSet ds = new DataSet ();
