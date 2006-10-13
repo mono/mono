@@ -463,6 +463,7 @@ namespace System.Configuration
 			MoveToNextElement (reader);
 		}
 
+		// FIXME: this approach is not always safe and likely to cause bugs.
 		private void MoveToNextElement (XmlTextReader reader)
 		{
 			while (reader.Read ()) {
@@ -623,8 +624,19 @@ namespace System.Configuration
 				ThrowException ("Already have a factory for " + value, reader);
 
 			factories [value] = groupMark;
-			MoveToNextElement (reader);
-			ReadSections (reader, value);
+
+			if (reader.IsEmptyElement) {
+				reader.Skip ();
+				reader.MoveToContent ();
+			} else {
+				reader.Read ();
+				reader.MoveToContent ();
+				if (reader.NodeType != XmlNodeType.EndElement)
+					ReadSections (reader, value);
+				else
+					reader.Read ();
+				reader.MoveToContent ();
+			}
 		}
 
 		private void ReadSections (XmlTextReader reader, string configSection)

@@ -1,3 +1,9 @@
+2006-10-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConfigurationSettings.cs : when there is no content in
+	  sectionGroup, all the following contents were incorrectly read
+	  as the empty group's subsection.
+
 2006-09-28  Andrew Skiba <andrews@mainsoft.com>
 
 	* ConfigurationSettings.cs: add support for requirePermission
