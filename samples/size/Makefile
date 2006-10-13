@@ -9,4 +9,4 @@ objectinspector.dll: objectinspector.cs
 	mcs -target:library objectinspector.cs
 
 libmono-profiler-size.so: size.c
-	gcc -Wall -shared -o libmono-profiler-size.so size.c `pkg-config --cflags --libs mono`
+	gcc -Wall -g -shared -o libmono-profiler-size.so size.c `pkg-config --cflags --libs mono`

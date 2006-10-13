@@ -8,70 +8,92 @@
 #include <string.h>
 
 #define FIELD_ATTRIBUTE_STATIC 0x10
+#define FIELD_ATTRIBUTE_HAS_FIELD_RVA 0x100
 
-int
-memory_usage (MonoObject *this, GHashTable *visited)
+static int memory_usage (MonoObject *obj, GHashTable *visited);
+
+static int
+memory_usage_array (MonoArray *array, GHashTable *visited)
 {
-	int total = 0;
-	MonoClass *class;
-	gpointer iter = (gpointer) 0;
-	MonoClassField *field;
-	
-	if (g_hash_table_lookup (visited, this))
-		return total;
+        int total = 0;
+        MonoClass *array_class = mono_object_get_class ((MonoObject *) array);
+        MonoClass *element_class = mono_class_get_element_class (array_class);
+        MonoType *element_type = mono_class_get_type (element_class);
 
-	class = mono_object_get_class (this);
-	
-	g_hash_table_insert (visited, this, this);
+        if (MONO_TYPE_IS_REFERENCE (element_type)) {
+                int i;
 
-	while ((field = mono_class_get_fields (class, &iter)) != NULL){
-		MonoType *ftype = mono_field_get_type (field);
-		void *value;
+                for (i = 0; i < mono_array_length (array); i++) {
+                        MonoObject *element = mono_array_get (array, gpointer, i);
 
-		if ((ftype->attrs & FIELD_ATTRIBUTE_STATIC) != 0)
-			continue;
+                        if (element != NULL)
+                                total += memory_usage (element, visited);
+                }
+        }
 
-		switch (ftype->type){
-		case MONO_TYPE_CLASS: 
-		case MONO_TYPE_OBJECT:
-			mono_field_get_value (this, field, &value);
+        return total;
+}
 
-			if (value != NULL)
-				total += memory_usage ((MonoObject *) value, visited);
-			break;
+static int
+memory_usage (MonoObject *obj, GHashTable *visited)
+{
+        int total = 0;
+        MonoClass *klass;
+        MonoType *type;
+        gpointer iter = NULL;
+        MonoClassField *field;
 
-		case MONO_TYPE_SZARRAY:
-			{
-				int len, i;
-				mono_field_get_value (this, field, &value);
-				len = mono_array_length ((MonoArray *)value);
-				for (i = 0; i < len; i++){
-					MonoObject *item = mono_array_get ((MonoArray *) value, gpointer, i);
-					if (item != NULL)
-						total += memory_usage (item, visited);
-				}
-			}
-			break;
-			
-		case MONO_TYPE_I4:
-		case MONO_TYPE_I1:
-		case MONO_TYPE_I2:
-		case MONO_TYPE_U4:
-		case MONO_TYPE_U2:
-		case MONO_TYPE_U1:
-		case MONO_TYPE_VOID:
-		case MONO_TYPE_BOOLEAN:
-		case MONO_TYPE_CHAR:
-			/* ignore */
-			break;
-		default:
-			printf ("unhandled type: 0x%x\n", ftype->type);
-		}
-	}
-	
-	total += mono_class_instance_size (class);
+        if (g_hash_table_lookup (visited, obj))
+                return 0;
 
-	return total;
+        g_hash_table_insert (visited, obj, obj);
+
+        klass = mono_object_get_class (obj);
+        type = mono_class_get_type (klass);
+
+        /* This is an array, so drill down into it */
+        if (type->type == MONO_TYPE_SZARRAY)
+                total += memory_usage_array ((MonoArray *) obj, visited);
+
+        while ((field = mono_class_get_fields (klass, &iter)) != NULL) {
+                MonoType *ftype = mono_field_get_type (field);
+                gpointer value;
+
+                if ((ftype->attrs & (FIELD_ATTRIBUTE_STATIC | FIELD_ATTRIBUTE_HAS_FIELD_RVA)) != 0)
+                        continue;
+
+                /* FIXME: There are probably other types we need to drill down into */
+                switch (ftype->type) {
+
+                case MONO_TYPE_CLASS:
+                case MONO_TYPE_OBJECT:
+                        mono_field_get_value (obj, field, &value);
+
+                        if (value != NULL)
+                                total += memory_usage ((MonoObject *) value, visited);
+
+                        break;
+
+                case MONO_TYPE_SZARRAY:
+                        mono_field_get_value (obj, field, &value);
+
+                        if (value != NULL) {
+                                total += memory_usage_array ((MonoArray *) value, visited);
+                                total += mono_object_get_size ((MonoObject *) value);
+                        }
+
+                        break;
+
+                default:
+                        /* printf ("Got type 0x%x\n", ftype->type); */
+                        /* ignore, this will be included in mono_object_get_size () */
+                        break;
+                }
+        }
+
+        total += mono_object_get_size (obj);
+
+        return total;
 }
 
 /*
