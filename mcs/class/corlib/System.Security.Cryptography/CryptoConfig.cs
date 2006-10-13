@@ -359,62 +359,14 @@ public class CryptoConfig {
 		if (!File.Exists (filename))
 			return;
 
-		SecurityParser sp = new SecurityParser ();
-		StreamReader sr = new StreamReader (filename);
 		try {
-			sp.LoadXml (sr.ReadToEnd ());
-		}
-		finally {
-			sr.Close ();
-		}
-
-		try {
-			SecurityElement root = sp.ToXml ();
-			SecurityElement mscorlib = root.SearchForChildByTag ("mscorlib");
-			if (mscorlib == null)
-				return;
-			SecurityElement cryptographySettings = mscorlib.SearchForChildByTag ("cryptographySettings");
-			if (cryptographySettings == null)
-				return;
-
-			// algorithms
-			SecurityElement cryptoNameMapping = cryptographySettings.SearchForChildByTag ("cryptoNameMapping");
-			if (cryptoNameMapping != null) {
-				SecurityElement cryptoClasses = cryptoNameMapping.SearchForChildByTag ("cryptoClasses");
-				if (cryptoClasses != null) {
-					foreach (SecurityElement nameEntry in cryptoNameMapping.Children) {
-						if (nameEntry.Tag == "nameEntry") {
-							string name = (string) nameEntry.Attributes ["name"];
-							string clas = (string) nameEntry.Attributes ["class"];
-							foreach (SecurityElement cryptoClass in cryptoClasses.Children) {
-								string fullname = (string) cryptoClass.Attributes [clas];
-								if (fullname != null) {
-									if (algorithms.ContainsKey (name)) 
-										algorithms.Remove (name);
-									algorithms.Add (name, fullname);
-									break;
-								}
-							}
-						}
-					}
-				}
-			}
-
-			// oid
-			SecurityElement oidMap = cryptographySettings.SearchForChildByTag ("oidMap");
-			if (oidMap == null)
-				return;
-			foreach (SecurityElement oidEntry in oidMap.Children) {
-				if (oidEntry.Tag == "oidEntry") {
-					string oids = (string) oidEntry.Attributes ["OID"];
-					if (oid.ContainsKey (oids)) 
-						oid.Remove (oids);
-					oid.Add (oids, oidEntry.Attributes ["name"]);
-				}
+			using (TextReader reader = new StreamReader (filename)) {
+				CryptoHandler handler = new CryptoHandler (algorithms, oid);
+				SmallXmlParser parser = new SmallXmlParser ();
+				parser.Parse (reader, handler);
 			}
 		}
 		catch {
-			// there's no error/warning in case the machine.config contains bad entries
 		}
 	}
 
@@ -558,6 +510,130 @@ public class CryptoConfig {
 
 		return (string)oid [name];
 	}
-}
 
+	class CryptoHandler: SmallXmlParser.IContentHandler {
+
+		private Hashtable algorithms;
+		private Hashtable oid;
+		private Hashtable names;
+		private Hashtable classnames;
+		int level;
+
+		public CryptoHandler (Hashtable algorithms, Hashtable oid)
+		{
+			this.algorithms = algorithms;
+			this.oid = oid;
+			// temporary tables to reconstruct algorithms
+			names = new Hashtable ();
+			classnames = new Hashtable ();
+		}
+
+		public void OnStartParsing (SmallXmlParser parser)
+		{
+			// don't care
+		}
+
+		public void OnEndParsing (SmallXmlParser parser)
+		{
+			foreach (DictionaryEntry de in names) {
+				try {
+					algorithms.Add (de.Key, classnames[de.Value]);
+				}
+				catch {
+				}
+			}
+			// matching is done, data no more required
+			names.Clear ();
+			classnames.Clear ();
+		}
+
+		private string Get (SmallXmlParser.IAttrList attrs, string name)
+		{
+			for (int i = 0; i < attrs.Names.Length; i++) {
+				if (attrs.Names[i] == name)
+					return attrs.Values[i];
+			}
+			return String.Empty;
+		}
+
+		public void OnStartElement (string name, SmallXmlParser.IAttrList attrs)
+		{
+			switch (level) {
+			case 0:
+				if (name == "configuration")
+					level++;
+				break;
+			case 1:
+				if (name == "mscorlib")
+					level++;
+				break;
+			case 2:
+				if (name == "cryptographySettings")
+					level++;
+				break;
+			case 3:
+				if (name == "oidMap")
+					level++;
+				else if (name == "cryptoNameMapping")
+					level++;
+				break;
+			case 4:
+				if (name == "oidEntry") {
+					oid.Add (Get (attrs, "OID"), Get (attrs, "name"));
+				} else if (name == "nameEntry") {
+					names.Add (Get (attrs, "name"), Get (attrs, "class"));
+				} else if (name == "cryptoClasses") {
+					level++;
+				}
+				break;
+			case 5:
+				if (name == "cryptoClass")
+					classnames.Add (attrs.Names[0], attrs.Values[0]);
+				break;
+			}
+		}
+
+		public void OnEndElement (string name)
+		{
+			// parser will make sure the XML structure is respected
+			switch (level) {
+			case 1:
+				if (name == "configuration")
+					level--;
+				break;
+			case 2:
+				if (name == "mscorlib")
+					level--;
+				break;
+			case 3:
+				if (name == "cryptographySettings")
+					level--;
+				break;
+			case 4:
+				if ((name == "oidMap") || (name == "cryptoNameMapping"))
+					level--;
+				break;
+			case 5:
+				if (name == "cryptoClasses")
+					level--;
+				break;
+			}
+		}
+
+		public void OnProcessingInstruction (string name, string text)
+		{
+			// don't care
+		}
+
+		public void OnChars (string text)
+		{
+			// don't care
+		}
+
+		public void OnIgnorableWhitespace (string text)
+		{
+			// don't care
+		}
+	}
+}
 }

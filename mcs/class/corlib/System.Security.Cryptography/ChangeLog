@@ -1,3 +1,8 @@
+2006-10-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConfig.cs: Use SmallXmlParser with a custom handler to reduce
+	memory requirements to process machine.config. Fix #79653 (beagle).
+
 2006-10-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConfig.cs: Accept lower/mixed-case algorithm names in 
