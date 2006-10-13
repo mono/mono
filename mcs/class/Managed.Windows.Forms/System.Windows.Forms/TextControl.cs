@@ -1092,6 +1092,15 @@ namespace System.Windows.Forms {
 			return total;
 		}
 
+		private void SetSelectionVisible (bool value)
+		{
+			selection_visible = value;
+
+			// cursor and selection are enemies, we can't have both in the same room at the same time
+			if (owner.IsHandleCreated)
+				XplatUI.CaretVisible (owner.Handle, !selection_visible);
+		}
+
 		private void DecrementLines(int line_no) {
 			int	current;
 
@@ -1372,7 +1381,8 @@ namespace System.Windows.Forms {
 			this.RecalculateDocument(owner.CreateGraphicsInternal());
 			PositionCaret(0, 0);
 
-			selection_visible = false;
+			SetSelectionVisible (false);
+
 			selection_start.line = this.document;
 			selection_start.pos = 0;
 			selection_start.tag = selection_start.line.tags;
@@ -1432,11 +1442,7 @@ namespace System.Windows.Forms {
 				XplatUI.CreateCaret(owner.Handle, caret_width, caret.height);
 				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y + caret_shift);
 
-				if (!selection_visible) {
-					XplatUI.CaretVisible(owner.Handle, true);
-				} else {
-					XplatUI.CaretVisible(owner.Handle, false);
-				}
+				DisplayCaret ();
 			}
 		}
 
@@ -1460,7 +1466,7 @@ namespace System.Windows.Forms {
 			if (owner.Focused) {
 				XplatUI.CreateCaret(owner.Handle, caret_width, caret.height);
 				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y + caret_shift);
-				XplatUI.CaretVisible(owner.Handle, true);
+				DisplayCaret ();
 			}
 
 			if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
@@ -1481,7 +1487,8 @@ namespace System.Windows.Forms {
 			}
 
 			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y + caret_shift);
-			XplatUI.CaretVisible(owner.Handle, true);
+
+			DisplayCaret ();
 
 			if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
 		}
@@ -1491,7 +1498,7 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			if (owner.Focused) {
+			if (owner.Focused && !selection_visible) {
 				XplatUI.CaretVisible(owner.Handle, true);
 			}
 		}
@@ -1626,10 +1633,8 @@ namespace System.Windows.Forms {
 
 						pixel = (int)caret.line.widths[caret.pos];
 						PositionCaret(pixel, GetLine(caret.line.line_no - 1).Y);
-						if (!owner.IsHandleCreated) {
-							return;
-						}
-						XplatUI.CaretVisible(owner.Handle, true);
+
+						DisplayCaret ();
 					}
 					return;
 				}
@@ -1640,10 +1645,8 @@ namespace System.Windows.Forms {
 
 						pixel = (int)caret.line.widths[caret.pos];
 						PositionCaret(pixel, GetLine(caret.line.line_no + 1).Y);
-						if (!owner.IsHandleCreated) {
-							return;
-						}
-						XplatUI.CaretVisible(owner.Handle, true);
+
+						DisplayCaret ();
 					}
 					return;
 				}
@@ -1676,7 +1679,7 @@ namespace System.Windows.Forms {
 						owner.vscroll.Value = 0;
 						line = GetLine(1);
 						PositionCaret(line, 0);
-						XplatUI.CaretVisible(owner.Handle, true);
+						DisplayCaret ();
 						owner.Invalidate();
 						return;
 					}
@@ -1702,7 +1705,9 @@ namespace System.Windows.Forms {
 					} else {
 						owner.vscroll.Value = new_y;
 					}
-					XplatUI.CaretVisible(owner.Handle, true);
+
+					DisplayCaret ();
+
 					owner.Invalidate();
 					return;
 				}
@@ -1717,7 +1722,7 @@ namespace System.Windows.Forms {
 						owner.vscroll.Value = owner.vscroll.Maximum;
 						line = GetLine(lines);
 						PositionCaret(line, line.Text.Length);
-						XplatUI.CaretVisible(owner.Handle, true);
+						DisplayCaret ();
 						owner.Invalidate();
 						return;
 					}
@@ -1747,17 +1752,14 @@ namespace System.Windows.Forms {
 					} else {
 						owner.vscroll.Value = new_y;
 					}
-					XplatUI.CaretVisible(owner.Handle, true);
+					DisplayCaret ();
 					owner.Invalidate();
 					return;
 				}
 
 				case CaretDirection.CtrlPgUp: {
 					PositionCaret(0, viewport_y);
-					if (!owner.IsHandleCreated) {
-						return;
-					}
-					XplatUI.CaretVisible(owner.Handle, true);
+					DisplayCaret ();
 					return;
 				}
 
@@ -1773,10 +1775,7 @@ namespace System.Windows.Forms {
 						line = tag.line;
 					}
 					PositionCaret(line, line.Text.Length);
-					if (!owner.IsHandleCreated) {
-						return;
-					}
-					XplatUI.CaretVisible(owner.Handle, true);
+					DisplayCaret ();
 					return;
 				}
 
@@ -2144,9 +2143,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 				} else {
 					PositionCaret(line, pos + ins[0].Length);
 				}
-				if (owner.IsHandleCreated) {
-					XplatUI.CaretVisible(owner.Handle, true);
-				}
+				DisplayCaret ();
 			}
 		}
 
@@ -3065,11 +3062,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 				}
 			}
 
-			if (selection_start == selection_end) {
-				selection_visible = false;
-			} else {
-				selection_visible = true;
-			}
+			SetSelectionVisible (!(selection_start == selection_end));
 		}
 
 		internal void SetSelectionToCaret(bool start) {
@@ -3124,11 +3117,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 				}
 			}
 
-			if (selection_start == selection_end) {
-				selection_visible = false;
-			} else {
-				selection_visible = true;
-			}
+			SetSelectionVisible (!(selection_start == selection_end));
 		}
 
 		internal void SetSelection(Line start, int start_pos, Line end, int end_pos) {
@@ -3163,10 +3152,9 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			selection_anchor.pos = start_pos;
 
 			if (((start == end) && (start_pos == end_pos)) || start == null || end == null) {
-				selection_visible = false;
+				SetSelectionVisible (false);
 			} else {
-				selection_visible = true;
-
+				SetSelectionVisible (true);
 			}
 		}
 
@@ -3185,12 +3173,12 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			selection_end_anchor = false;
 
 			if ((selection_end.line != selection_start.line) || (selection_end.pos != selection_start.pos)) {
-				selection_visible = true;
+				SetSelectionVisible (true);
 
 				// This could be calculated better
 				Invalidate(selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
 			} else {
-				selection_visible = false;
+				SetSelectionVisible (false);
 			}
 
 		}
@@ -3243,10 +3231,10 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			}
 
 			if ((selection_end.line != selection_start.line) || (selection_end.pos != selection_start.pos)) {
-				selection_visible = true;
+				SetSelectionVisible (true);
 				Invalidate(selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
 			} else {
-				selection_visible = false;
+				SetSelectionVisible (false);
 				// ?? Do I need to invalidate here, tests seem to work without it, but I don't think they should :-s
 			}
 		}
@@ -3282,7 +3270,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			selection_anchor.pos = start_pos;
 
 			selection_end_anchor = false;
-			selection_visible = false;
+			SetSelectionVisible (false);
 		}
 
 		internal void InvalidateSelectionArea() {
@@ -3371,7 +3359,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			selection_end.pos = selection_start.pos;
 			selection_end.tag = selection_start.tag;
 
-			selection_visible = false;
+			SetSelectionVisible (false);
 		}
 
 		internal void CharIndexToLineTag(int index, out Line line_out, out LineTag tag_out, out int pos) {
@@ -4711,7 +4699,8 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 						XplatUI.DestroyCaret(document.owner.Handle);
 						XplatUI.CreateCaret(document.owner.Handle, 2, document.caret.height);
 						XplatUI.SetCaretPos(document.owner.Handle, (int)document.caret.tag.line.widths[document.caret.pos] + document.caret.line.align_shift - document.viewport_x, document.caret.line.Y + document.caret.tag.shift - document.viewport_y + Document.caret_shift);
-						XplatUI.CaretVisible(document.owner.Handle, true);
+
+						document.DisplayCaret ();
 					}
 
 					// FIXME - enable call
