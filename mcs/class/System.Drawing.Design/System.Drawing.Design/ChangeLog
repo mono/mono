@@ -1,3 +1,11 @@
+2006-10-13  Chris Toshok  <toshok@ximian.com>
+
+	* ColorEditor.cs: windows allows a null to be passed in to
+	EditValue (indeed, the property grid when showing a merged view
+	requires it).  Also, if no change is made we need to return the
+	initial value (so, if you pass null in, and don't make a change,
+	null should be returned.
+
 2006-07-31  Jonathan Chambers <joncham@gmail.com>
 
 	* ColorEditor.cs: Add custom color picker tab.

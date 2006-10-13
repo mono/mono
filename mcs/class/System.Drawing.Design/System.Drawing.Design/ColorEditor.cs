@@ -45,6 +45,7 @@ namespace System.Drawing.Design
 	{
 		private IWindowsFormsEditorService editorService;
 		private Color selected_color;
+		private bool color_chosen;
 
 		public ColorEditor()
 		{
@@ -106,21 +107,28 @@ namespace System.Drawing.Design
 					tab_control.TabPages.Add(web_tab);
 					tab_control.TabPages.Add(system_tab);
 
-					Color current_color = (Color)value;
-					if (current_color.IsSystemColor) 
-					{
-						system_listbox.SelectedValue = current_color;
-						tab_control.SelectedTab = system_tab;
-					}
-					else if (current_color.IsKnownColor)
-					{
-						web_listbox.SelectedValue = current_color;
-						tab_control.SelectedTab = web_tab;
+					if (value != null) {
+						Color current_color = (Color)value;
+						if (current_color.IsSystemColor) 
+						{
+							system_listbox.SelectedValue = current_color;
+							tab_control.SelectedTab = system_tab;
+						}
+						else if (current_color.IsKnownColor)
+						{
+							web_listbox.SelectedValue = current_color;
+							tab_control.SelectedTab = web_tab;
+						}
 					}
 
 
 					editorService.DropDownControl(tab_control);
-					return selected_color;
+					if (color_chosen) {
+						return selected_color;
+					}
+					else {
+						return null;
+					}
 				}
 			}
 			return base.EditValue(context, provider, value);
@@ -129,11 +137,13 @@ namespace System.Drawing.Design
 		private void HandleChange(object sender, EventArgs e) 
 		{
 			selected_color = (Color)((ColorListBox)sender).Items[((ColorListBox)sender).SelectedIndex];
+			color_chosen = true;
 		}
 
 		private void CustomColorPicked (object sender, EventArgs e)
 		{
 			selected_color = (Color)sender;
+			color_chosen = true;
 			if (editorService != null)
 				editorService.CloseDropDown ();
 		}
