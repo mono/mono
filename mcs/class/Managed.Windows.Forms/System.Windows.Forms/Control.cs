@@ -1198,9 +1198,15 @@ namespace System.Windows.Forms
 				index = -1;
 			}
 
-			for (int i = 0; i < end; i++) {
+
+			for (int i = 0, pos = -1; i < end; i++) {
+				if (start == container.child_controls[i]) {
+					pos = i;
+					continue;
+				}
+
 				if (found == null) {
-					if (container.child_controls[i].tab_index > index) {
+					if (container.child_controls[i].tab_index > index || (pos > -1 && pos < i && container.child_controls[i].tab_index == index)) {
 						found = container.child_controls[i];
 					}
 				} else if (found.tab_index > container.child_controls[i].tab_index) {
@@ -1219,7 +1225,8 @@ namespace System.Windows.Forms
 			found = null;
 
 			if (start != null) {
-				if ((start is IContainerControl) || start.GetStyle(ControlStyles.ContainerControl)) {
+				if (start.child_controls != null && start.child_controls.Count > 0 &&
+					!((start is IContainerControl) && start.GetStyle(ControlStyles.ContainerControl))) {
 					found = FindControlForward(start, null);
 					if (found != null) {
 						return found;
@@ -1260,9 +1267,15 @@ namespace System.Windows.Forms
 				index++;
 			}
 
-			for (int i = 0; i < end; i++) {
+			for (int i = end-1, pos = -1; i >= 0; i--) {
+				if (start == container.child_controls[i]) {
+					pos = i;
+					continue;
+				}
+
 				if (found == null) {
-					if (container.child_controls[i].tab_index < index) {
+					if (container.child_controls[i].tab_index < index || 
+						(pos > -1 && pos > i && container.child_controls[i].tab_index == index)) {
 						found = container.child_controls[i];
 					}
 				} else if (found.tab_index < container.child_controls[i].tab_index) {
@@ -1285,8 +1298,6 @@ namespace System.Windows.Forms
 					if (start.parent != container) {
 						return start.parent;
 					}
-				} else {
-					return found;
 				}
 			}
 			if (found == null) {
@@ -1294,9 +1305,9 @@ namespace System.Windows.Forms
 			}
 
 			if (container != start) {
-				while ((found != null) && (!found.Contains(start)) && ((found is IContainerControl) || found.GetStyle(ControlStyles.ContainerControl))) {
+				while ((found != null) && (!found.Contains(start)) && found.child_controls != null && found.child_controls.Count > 0 && !(found is IContainerControl)) {// || found.GetStyle(ControlStyles.ContainerControl))) {
 					found = FindControlBackward(found, null);
-					if (found != null) {
+					 if (found != null) {
 						return found;
 					}
 				}
@@ -2821,7 +2832,7 @@ namespace System.Windows.Forms
 
 		public bool Focus() {
 			if (CanFocus && IsHandleCreated && !has_focus) {
-				XplatUI.SetFocus(window.Handle);
+				Select(this);
 			}
 			return has_focus;
 		}
@@ -2851,17 +2862,8 @@ namespace System.Windows.Forms
 		}
 
 		public Control GetNextControl(Control ctl, bool forward) {
-			// If we're not a container we don't play
-			if (!(this is IContainerControl) && !this.GetStyle(ControlStyles.ContainerControl)) {
-				return null;
-			}
 
-			// Special cases
-			if (this == ctl) {
-				if (!forward) {
-					return FindFlatBackward(ctl, null);
-				}
-			} else {
+			if (this != ctl) {
 				if ((parent == null) && (ctl is IContainerControl) && ctl.GetStyle(ControlStyles.ContainerControl)) {
 					if (forward) {
 						return FindFlatForward(this, ctl);

@@ -205,8 +205,10 @@ namespace System.Windows.Forms {
 		public int SelectedIndex {
 			get { return selected_index; }
 			set {
-				if (selected_index == value)
+				if (selected_index == value) {
+					Invalidate(GetTabRect (selected_index));
 					return;
+				}
 				if (selected_index < -1) {
 					throw new ArgumentException ("'" + value + "' is not a valid value for 'value'. " +
 							"'value' must be greater than or equal to -1.");
@@ -225,8 +227,8 @@ namespace System.Windows.Forms {
 				}
 
 				if (-1 != value) {
-        				int le = TabPages [value].TabBounds.Right;
-                                	int re = ThemeEngine.Current.GetTabControlLeftScrollRect (this).Left;
+					int le = TabPages [value].TabBounds.Right;
+					int re = ThemeEngine.Current.GetTabControlLeftScrollRect (this).Left;
 					if (show_slider && le > re) {
 						int i = 0;
 
@@ -500,7 +502,6 @@ namespace System.Windows.Forms {
 			case Keys.End:
 			case Keys.Left:
 			case Keys.Right:
-			case Keys.Tab:
 				return true;
 			}
 			return base.IsInputKey (key);
@@ -552,6 +553,21 @@ namespace System.Windows.Forms {
 			Draw (pe.Graphics, pe.ClipRectangle);
 			pe.Handled = true;
 		}
+
+		internal override void OnGotFocusInternal(EventArgs e) {
+			has_focus = true;
+			Invalidate(GetTabRect(selected_index));
+			base.OnGotFocusInternal (e);
+		}
+
+
+		internal override void OnLostFocusInternal(EventArgs e) {
+			has_focus = false;
+			Invalidate(GetTabRect(selected_index));
+			base.OnLostFocusInternal (e);
+		}
+
+
 		#endregion	// Protected Instance Methods
 
 		#region Internal & Private Methods

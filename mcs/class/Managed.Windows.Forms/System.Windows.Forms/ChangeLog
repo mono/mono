@@ -1,3 +1,31 @@
+2006-10-13  Andreia Gaita  <shana.ufie@gmail.com>
+
+	* Control.cs: see #78650
+	- Fixed GetNextControl for several cases:
+		- Changed FindFlatForward to return 
+		correct sibling control when more than one
+		control has same TabIndex as the currently 
+		focused one.
+		- Changed FindFlatBackward to loop children
+		from last to first and apply same logic as in
+		FindFlatForward
+		- Changed FindControlForward to search for
+		children when control is not a container
+		but has children, or search for siblings if
+		control is a container...
+		- Changed FindControlBackward	to continue
+		searching for child controls when hitting 
+		Panel-like parents
+		
+	- Fixed Focus method to update ActiveControl
+	(FocusTest.FocusSetsActive failure)
+	
+	* TabControl.cs:
+	- Focus rectangle now refreshes when gaining
+	or losing focus
+	- Removed grab for Tab key on IsInputKey that 
+	was keeping tab navigation from working (#78650)
+
 2006-10-13  Chris Toshok  <toshok@ximian.com>
 
 	* PropertyGridView.cs:

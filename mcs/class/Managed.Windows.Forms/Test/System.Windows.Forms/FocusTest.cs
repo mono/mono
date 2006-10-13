@@ -281,6 +281,9 @@ namespace MonoTests.System.Windows.Forms {
 			form.Show ();
 
 			// top level movement, 
+			Assert.AreEqual (form.GetNextControl (null, true), con_a, "null-1");
+			Assert.AreEqual (form.GetNextControl (null, false), con_c, "null-2");
+
 			Assert.AreEqual (form.GetNextControl (form, true), con_a, "form-1");
 			Assert.AreEqual (form.GetNextControl (form, false), con_c, "form-2");
 			
@@ -341,6 +344,9 @@ namespace MonoTests.System.Windows.Forms {
 			form.Show ();
 
 			// top level movement, 
+			Assert.AreEqual (con_a.GetNextControl (null, true), ctrls_a [0], "null-1");
+			Assert.AreEqual (con_a.GetNextControl (null, false), ctrls_a [2], "null-2");
+
 			Assert.AreEqual (con_a.GetNextControl (form, true), ctrls_a [0], "form-1");
 			Assert.AreEqual (con_a.GetNextControl (form, false), ctrls_a [2], "form-2");
 			
@@ -401,6 +407,9 @@ namespace MonoTests.System.Windows.Forms {
 			form.Show ();
 
 			// top level movement
+			Assert.AreEqual (con_b.GetNextControl (null, true), ctrls_b [0], "null-1");
+			Assert.AreEqual (con_b.GetNextControl (null, false), ctrls_b [2], "null-2");
+
 			Assert.AreEqual (con_b.GetNextControl (form, true), ctrls_b [0], "form-1");
 			Assert.AreEqual (con_b.GetNextControl (form, false), ctrls_b [2], "form-2");
 			
@@ -461,6 +470,9 @@ namespace MonoTests.System.Windows.Forms {
 			form.Show ();
 
 			// top level movement, 
+			Assert.AreEqual (con_c.GetNextControl (null, true), ctrls_c [0], "null-1");
+			Assert.AreEqual (con_c.GetNextControl (null, false), ctrls_c [2], "null-2");
+
 			Assert.AreEqual (con_c.GetNextControl (form, true), ctrls_c [0], "form-1");
 			Assert.AreEqual (con_c.GetNextControl (form, false), ctrls_c [2], "form-2");
 			
@@ -513,6 +525,9 @@ namespace MonoTests.System.Windows.Forms {
 			form.Show ();
 
 			// top level movement, 
+			Assert.AreEqual (form.GetNextControl (null, true), con_a, "null-1");
+			Assert.AreEqual (form.GetNextControl (null, false), ctrl_b, "null-2");
+
 			Assert.AreEqual (form.GetNextControl (form, true), con_a, "form-1");
 			Assert.AreEqual (form.GetNextControl (form, false), ctrl_b, "form-2");
 
@@ -579,6 +594,20 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (gbp.GetNextControl (null, false), flat_controls [2], "gb-4");
 			Assert.AreEqual (gbp.GetNextControl (gbp, true), flat_controls [0], "gb-5");
 			Assert.AreEqual (gbp.GetNextControl (gbp, false), flat_controls [2], "gb-6");
+
+			Assert.AreEqual (form.GetNextControl (flat_controls [0], true), flat_controls [1], "form-ctrls-0-forward");
+			Assert.AreEqual (form.GetNextControl (flat_controls [0], false), gbp, "form-ctrls-0-backward");
+			Assert.AreEqual (form.GetNextControl (flat_controls [1], true), flat_controls [2], "form-ctrls-1-forward");
+			Assert.AreEqual (form.GetNextControl (flat_controls [1], false), flat_controls [0], "form-ctrls-1-backward");
+			Assert.AreEqual (form.GetNextControl (flat_controls [2], true), null, "form-ctrls-2-forward");
+			Assert.AreEqual (form.GetNextControl (flat_controls [2], false), flat_controls [1],"form-ctrls-2-backward");
+
+			Assert.AreEqual (gbp.GetNextControl (flat_controls [0], true), flat_controls [1], "gbp-ctrls-0-forward");
+			Assert.AreEqual (gbp.GetNextControl (flat_controls [0], false), null, "gbp-ctrls-0-backward");
+			Assert.AreEqual (gbp.GetNextControl (flat_controls [1], true), flat_controls [2], "gbp-ctrls-1-forward");
+			Assert.AreEqual (gbp.GetNextControl (flat_controls [1], false), flat_controls [0], "gbp-ctrls-1-backward");
+			Assert.AreEqual (gbp.GetNextControl (flat_controls [2], true), null, "gbp-ctrls-2-forward");
+			Assert.AreEqual (gbp.GetNextControl (flat_controls [2], false), flat_controls [1],"gbp-ctrls-2-backward");		
 		}
 
 		[Test]
@@ -606,6 +635,52 @@ namespace MonoTests.System.Windows.Forms {
 
 			Assert.AreEqual (form.GetNextControl (page2, true), null, "page-two-1");
 			Assert.AreEqual (form.GetNextControl (page2, false), page1, "page-two-2");
+		}
+
+		[Test]
+		public void GetNextControlFromTabControl2 () {
+			Form form = new Form ();
+			TabControl tab = new TabControl ();
+			
+			TabPage page1 = new TabPage ("page one");
+			page1.Controls.AddRange (flat_controls);
+
+			TabPage page2 = new TabPage ("page two");
+
+			tab.TabPages.Add (page1);
+
+			tab.TabPages.Add (page2);
+
+			form.Controls.Add (tab);
+			form.Show ();
+
+			Assert.AreEqual (form.GetNextControl (null, true), tab, "form-1");
+			Assert.AreEqual (form.GetNextControl (null, false), page2, "form-2");
+
+			Assert.AreEqual (form.GetNextControl (tab, true), page1, "tab-1");
+			Assert.AreEqual (form.GetNextControl (tab, false), null, "tab-2");
+
+			Assert.AreEqual (form.GetNextControl (page1, true), flat_controls [0], "page-one-1");
+			Assert.AreEqual (form.GetNextControl (page1, false), tab, "page-one-2");
+
+			Assert.AreEqual (form.GetNextControl (page2, true), null, "page-two-1");
+			Assert.AreEqual (form.GetNextControl (page2, false), flat_controls [2], "page-two-2");
+
+			Assert.AreEqual (form.GetNextControl (flat_controls [0], false), page1, "form-ctrls-0-backward");
+			Assert.AreEqual (form.GetNextControl (flat_controls [2], true), page2, "form-ctrls-2-forward");
+
+			Assert.AreEqual (tab.GetNextControl (null, true), page1, "tab-null-forward");
+			Assert.AreEqual (tab.GetNextControl (page1, false), null, "tab-page1-backward");
+
+			Assert.AreEqual (tab.GetNextControl (flat_controls [0], false), page1, "tab-ctrls-0-backward");
+			Assert.AreEqual (tab.GetNextControl (flat_controls [2], true), page2, "tab-ctrls-2-forward");
+
+			Assert.AreEqual (page1.GetNextControl (flat_controls [0], true), flat_controls [1], "page1-ctrls-0-forward");
+			Assert.AreEqual (page1.GetNextControl (flat_controls [0], false), null, "page1-ctrls-0-backward");
+			Assert.AreEqual (page1.GetNextControl (flat_controls [1], true), flat_controls [2], "page1-ctrls-1-forward");
+			Assert.AreEqual (page1.GetNextControl (flat_controls [1], false), flat_controls [0], "page1-ctrls-1-backward");
+			Assert.AreEqual (page1.GetNextControl (flat_controls [2], true), null, "page1-ctrls-2-forward");
+			Assert.AreEqual (page1.GetNextControl (flat_controls [2], false), flat_controls [1],"page1-ctrls-2-backward");
 		}
 
 		[Test]
