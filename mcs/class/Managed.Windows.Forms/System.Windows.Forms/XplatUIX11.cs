@@ -42,8 +42,8 @@
 // Extra detailed debug
 #undef DriverDebugExtra
 #undef DriverDebugParent
-#define DriverDebugCreate
-#define DriverDebugDestroy
+#undef DriverDebugCreate
+#undef DriverDebugDestroy
 #undef DriverDebugThreads
 
 using System;
@@ -1608,28 +1608,29 @@ namespace System.Windows.Forms {
 			return 0;
 		}
 
-		private void SendWMDestroyMessages(Control c) {
-			Hwnd		hwnd;
-			int		i;
-			Control[]	controls;
-
+		private void AccumulateDestroyedHandles (Control c, ArrayList list)
+		{
 			if (c != null) {
-				controls = c.child_controls.GetAllControls ();
+				Control[] controls = c.child_controls.GetAllControls ();
 
 				if (c.IsHandleCreated && !c.IsDisposed) {
-					#if DriverDebugDestroy
-						Console.WriteLine("Destroying {0}, child of {1}", XplatUI.Window(c.Handle), (c.Parent != null) ? XplatUI.Window(c.Parent.Handle) : "<none>");
-					#endif
+					Hwnd hwnd = Hwnd.ObjectFromHandle(c.Handle);
 
-					hwnd = Hwnd.ObjectFromHandle(c.Handle);
+					list.Add (hwnd.Handle);
 					CleanupCachedWindows (hwnd);
 					hwnd.zombie = true;
-					SendMessage(c.Handle, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
 				}
 
-				for (i = 0; i < controls.Length; i++) {
-					SendWMDestroyMessages(controls[i]);
+				for (int  i = 0; i < controls.Length; i ++) {
+					AccumulateDestroyedHandles (controls[i], list);
 				}
+			}
+			
+		}
+
+		private void SendWMDestroyMessages(ArrayList handles) {
+			foreach (IntPtr handle in handles) {
+				SendMessage(handle, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
 			}
 		}
 
@@ -2824,7 +2825,9 @@ namespace System.Windows.Forms {
 
 			CleanupCachedWindows (hwnd);
 
-			SendWMDestroyMessages(Control.ControlNativeWindow.ControlFromHandle(hwnd.Handle));
+			ArrayList windows = new ArrayList ();
+
+			AccumulateDestroyedHandles (Control.ControlNativeWindow.ControlFromHandle(hwnd.Handle), windows);
 
 			lock (XlibLock) {
 				if (hwnd.whole_window != IntPtr.Zero) {
@@ -2835,6 +2838,9 @@ namespace System.Windows.Forms {
 				}
 
 			}
+
+			SendWMDestroyMessages(windows);
+
 			hwnd.Dispose();
 		}
 
@@ -3607,13 +3613,17 @@ namespace System.Windows.Forms {
 							Console.WriteLine("Received X11 Destroy Notification for {0}", XplatUI.Window(hwnd.client_window));
 						#endif
 
-						msg.hwnd = hwnd.client_window;
-						msg.message=Msg.WM_DESTROY;
-						hwnd.Dispose();
-
-						#if DriverDebug
-							Console.WriteLine("Got DestroyNotify on Window {0:X}", msg.hwnd.ToInt32());
-						#endif
+						if (hwnd.zombie) {
+							/* this window is being destroyed via DestroyWindow, so we let that code
+							   take care of sending the WM_DESTROY message.  Just dispose of it here. */
+							hwnd.Dispose ();
+							goto ProcessNextMessage;
+						}
+						else {
+							msg.hwnd = hwnd.client_window;
+							msg.message=Msg.WM_DESTROY;
+							hwnd.Dispose();
+						}
 					} else {
 						goto ProcessNextMessage;
 					}

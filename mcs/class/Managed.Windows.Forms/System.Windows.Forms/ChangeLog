@@ -1,5 +1,19 @@
 2006-10-13  Chris Toshok  <toshok@ximian.com>
 
+	* XplatUIX11.cs: more Destroy work.  the current code does the
+	following things, in order:
+
+	1. Enumerates all handles of all controls at or below the one
+	being destroyed, in pre-order.  As it is doing this, it marks the
+	handles as zombie and clears all references to them.
+	
+	2. calls XDestroyWindow on the window passed in.
+
+	3. SendMessage's WM_DESTROY to all he handles in the accumulated
+	list.
+
+2006-10-13  Chris Toshok  <toshok@ximian.com>
+
 	* XplatUIX11.cs: set hwnd.zombie to true before calling
 	SendMessage (WM_DESTROY).  this keeps us from marking the new
 	window a zombie, and also keeps us from calling sendmessage at
