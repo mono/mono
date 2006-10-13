@@ -82,7 +82,7 @@ namespace System.Windows.Forms {
 		
 		#region Contructors
 		public PropertyGrid() {
-			selected_objects = new object[1];
+			selected_objects = new object[0];
 			grid_items = new GridItemCollection();
 			property_tabs = new PropertyTabCollection();
 
@@ -489,7 +489,9 @@ namespace System.Windows.Forms {
 		[TypeConverter("System.Windows.Forms.PropertyGrid+SelectedObjectConverter, " + Consts.AssemblySystem_Windows_Forms)]
 		public object SelectedObject {
 			get {
-				return selected_objects[0];
+				if (selected_objects.Length > 0)
+					return selected_objects[0];
+				return null;
 			}
 
 			set {
@@ -521,11 +523,15 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				for (int i = 0; i < value.Length; i ++) {
-					if (value[i] == null)
-						throw new ArgumentException (String.Format ("Item {0} in the objs array is null.", i));
+				if (value != null) {
+					for (int i = 0; i < value.Length; i++) {
+						if (value [i] == null)
+							throw new ArgumentException (String.Format ("Item {0} in the objs array is null.", i));
+					}
+					selected_objects = value;
+				} else {
+					selected_objects = new object [0];
 				}
-				selected_objects = value;
 				ReflectObjects();
 			}
 		}
@@ -969,6 +975,9 @@ namespace System.Windows.Forms {
 			ArrayList intersection = null;
 
 			for (int i = 0; i < objs.Length; i ++) {
+				if (objs [i] == null)
+					continue;
+
 				ArrayList new_intersection = new ArrayList ();
 				Type type = objs[i].GetType();
 
@@ -1004,7 +1013,7 @@ namespace System.Windows.Forms {
 				intersection = new_intersection;
 			}
 
-			if (intersection.Count > 0)
+			if (intersection != null && intersection.Count > 0)
 				PopulateGridItemsFromProperties (objs, intersection, grid_item_coll, recurse, parent_grid_item);
 		}
 

@@ -1,5 +1,9 @@
 2006-10-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* PropertyGridTest.cs: Enabled previously not-working tests.
+
+2006-10-13  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* PropertyGridTest.cs: Added some tests for PropertyGrid.
 
 2006-10-13  Andreia Gaita  <shana.ufie@gmail.com>

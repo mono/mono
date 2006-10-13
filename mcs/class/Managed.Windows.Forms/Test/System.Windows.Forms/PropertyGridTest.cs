@@ -18,7 +18,6 @@ namespace MonoTests.System.Windows.Forms
 	public class PropertyGridTest
 	{
 		[Test]
-		[Category ("NotWorking")]
 		public void SelectedObject ()
 		{
 			PropertyGrid pg = new PropertyGrid ();
@@ -35,7 +34,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void SelectedObject_Null ()
 		{
 			PropertyGrid pg = new PropertyGrid ();
@@ -49,7 +47,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #79615
-		[Category ("NotWorking")]
 		public void SelectedObjects_Multiple ()
 		{
 			Form form = new Form ();
@@ -70,7 +67,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void SelectedObjects_Null ()
 		{
 			PropertyGrid pg = new PropertyGrid ();
