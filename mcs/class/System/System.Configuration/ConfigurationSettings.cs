@@ -302,8 +302,8 @@ namespace System.Configuration
 				}
 #endif
 				reader = new XmlTextReader (fs);
-				InitRead (reader);
-				ReadConfigFile (reader);
+				if (InitRead (reader))
+					ReadConfigFile (reader);
 			} catch (ConfigurationException) {
 				throw;
 			} catch (Exception e) {
@@ -451,7 +451,7 @@ namespace System.Configuration
 			return null;
 		}
 #if (XML_DEP)
-		private void InitRead (XmlTextReader reader)
+		private bool InitRead (XmlTextReader reader)
 		{
 			reader.MoveToContent ();
 			if (reader.NodeType != XmlNodeType.Element || reader.Name != "configuration")
@@ -459,8 +459,13 @@ namespace System.Configuration
 
 			if (reader.HasAttributes)
 				ThrowException ("Unrecognized attribute in root element", reader);
-
-			MoveToNextElement (reader);
+			if (reader.IsEmptyElement) {
+				reader.Skip ();
+				return false;
+			}
+			reader.Read ();
+			reader.MoveToContent ();
+			return reader.NodeType != XmlNodeType.EndElement;
 		}
 
 		// FIXME: this approach is not always safe and likely to cause bugs.
@@ -684,15 +689,23 @@ namespace System.Configuration
 		private void ReadConfigFile (XmlTextReader reader)
 		{
 			int depth = reader.Depth;
-			while (!reader.EOF && reader.Depth == depth) {
+			for (reader.MoveToContent ();
+			     !reader.EOF && reader.NodeType != XmlNodeType.EndElement;
+			     reader.MoveToContent ()) {
 				string name = reader.Name;
 				if (name == "configSections") {
 					if (reader.HasAttributes)
 						ThrowException ("Unrecognized attribute in <configSections>.", reader);
-
-					MoveToNextElement (reader);
-					if (reader.Depth > depth)
-						ReadSections (reader, null);
+					if (reader.IsEmptyElement)
+						reader.Skip ();
+					else {
+						reader.Read ();
+						reader.MoveToContent ();
+						if (reader.NodeType != XmlNodeType.EndElement)
+							ReadSections (reader, null);
+						else
+							reader.Read ();
+					}
 				} else if (name != null && name != "") {
 					StorePending (name, reader);
 					MoveToNextElement (reader);
