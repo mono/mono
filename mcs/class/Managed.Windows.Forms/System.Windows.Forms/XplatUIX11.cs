@@ -1627,6 +1627,7 @@ namespace System.Windows.Forms {
 				}
 
 				for (i = 0; i < controls.Length; i++) {
+					SendWMDestroyMessages(controls[i]);
 					if (controls[i].IsHandleCreated) {
 						/* set all the children hwnd's to zombies so all events will
 						   be ignored (except DestroyNotify) until their X windows are
@@ -1634,7 +1635,6 @@ namespace System.Windows.Forms {
 						hwnd = Hwnd.ObjectFromHandle(controls[i].Handle);
 						hwnd.zombie = true;
 					}
-					SendWMDestroyMessages(controls[i]);
 				}
 			}
 		}
@@ -3104,6 +3104,15 @@ namespace System.Windows.Forms {
 			hwnd = Hwnd.GetObjectFromWindow(xevent.AnyEvent.window);
 
 			// Handle messages for windows that are already or are about to be destroyed.
+
+			// we need a special block for this because unless we remove the hwnd from the paint
+			// queue it will always stay there (since we don't handle the expose), and we'll
+			// effectively loop infinitely trying to repaint a non-existant window.
+			if (hwnd != null && hwnd.zombie && xevent.type == XEventName.Expose) {
+				hwnd.expose_pending = hwnd.nc_expose_pending = false;
+				hwnd.Queue.Paint.Remove (hwnd);
+				goto ProcessNextMessage;
+			}
 
 			// We need to make sure we only allow DestroyNotify events through for zombie
 			// hwnds, since much of the event handling code makes requests using the hwnd's

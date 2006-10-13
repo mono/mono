@@ -1,3 +1,12 @@
+2006-10-13  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11.cs (SendWMDestroyMessages): set the hwnd to be a
+	zombie after we do the recursive call, so we actually do call
+	SendMessage on the children controls.
+	(GetMessage): if we find a pending paint event for a zombie hwnd,
+	remove the hwnd from the paint queue, or else it will always be
+	there (and we'll effectively loop infinitely)
+
 2006-10-13  Mike Kestner  <mkestner@novell.com>
 
 	* MenuItem.cs : add Selected format under keynav too.
