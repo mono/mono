@@ -1519,8 +1519,6 @@ namespace System.Windows.Forms {
 		
 		private EventHandler on_directory_changed;
 		
-		private bool currentpath_internal_change = false;
-		
 		private Stack folderStack = new Stack();
 		
 		private static readonly int indent = 6;
@@ -1574,8 +1572,6 @@ namespace System.Windows.Forms {
 		public string CurrentFolder {
 			set {
 				currentPath = value;
-				
-				currentpath_internal_change = true;
 				
 				CreateComboList ();
 			}
@@ -1754,15 +1750,13 @@ namespace System.Windows.Forms {
 				DirComboBoxItem dcbi = Items [SelectedIndex] as DirComboBoxItem;
 				
 				currentPath = dcbi.Path;
-				// call DirectoryChange event only if the user changes the index with the ComboBox
-				
-				if (!currentpath_internal_change) {
-					if (on_directory_changed != null)
-						on_directory_changed (this, EventArgs.Empty);
-				}
 			}
-			
-			currentpath_internal_change = false;
+		}
+		
+		protected override void OnSelectionChangeCommitted (EventArgs e)
+		{
+			if (on_directory_changed != null)
+				on_directory_changed (this, EventArgs.Empty);
 		}
 		
 		public event EventHandler DirectoryChanged {
