@@ -72,7 +72,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			grid_textbox.DropDownButtonClicked +=new EventHandler(DropDownButtonClicked);
 			grid_textbox.DialogButtonClicked +=new EventHandler(DialogButtonClicked);
 
-			
 			dropdown_form = new PropertyGridDropDown();
 			dropdown_form.FormBorderStyle = FormBorderStyle.None;
 			dropdown_form.StartPosition = FormStartPosition.Manual;
@@ -484,10 +483,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			}
 		}
 
-		private void dropdown_form_Deactivate (object sender, EventArgs e) {
-			dropdown_form.Hide();
-		}
-
 		private void listBox_MouseUp(object sender, MouseEventArgs e) {
 			AcceptListBoxSelection (sender);
 		}
@@ -499,7 +494,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				AcceptListBoxSelection (sender);
 				return;
 			case Keys.Escape:
-				dropdown_form.Hide();
+				CloseDropDown ();
 				return;
 			}
 		}
@@ -511,7 +506,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					SetPropertyValue(((ListBox)sender).SelectedItem);
 				}
 			}
-			dropdown_form.Hide();
+			CloseDropDown ();
 			Refresh();
 		}
 
@@ -533,13 +528,11 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			UITypeEditor editor = property_grid.SelectedGridItem.PropertyDescriptor.GetEditor (typeof (UITypeEditor)) as UITypeEditor;
 			if (editor == null) {
 				if (dropdown_form.Visible) {
-					dropdown_form.Hide ();
+					CloseDropDown ();
 				}
 				else {
-					dropdown_form.Deactivate +=new EventHandler(dropdown_form_Deactivate);
 					ListBox listBox = new ListBox();
 					listBox.BorderStyle = BorderStyle.FixedSingle;
-					listBox.Dock = DockStyle.Fill;
 					int selected_index = 0;
 					int i = 0;
 					object selected_value = property_grid.SelectedGridItem.Value;
@@ -552,12 +545,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					listBox.SelectedIndex = selected_index;
 					listBox.KeyDown += new KeyEventHandler(listBox_KeyDown);
 					listBox.MouseUp+=new MouseEventHandler(listBox_MouseUp);
-					dropdown_form.Controls.Clear();
-					dropdown_form.Controls.Add(listBox);
-					dropdown_form.Location = PointToScreen(new Point(SplitterLocation,grid_textbox.Location.Y+row_height));
-					dropdown_form.Width = this.Width - this.SplitterLocation;
-					dropdown_form.ActiveControl = listBox;
-					dropdown_form.Show();
+
+					DropDownControl (listBox, false);
 				}
 			} else { // use editor
 				SetPropertyValueFromUITypeEditor (editor);
@@ -568,11 +557,15 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		{
 			ServiceContainer service_container = new ServiceContainer ();
 			service_container.AddService (typeof (IWindowsFormsEditorService), this);
+			object initial_value = property_grid.SelectedGridItem.Value;
 			object value = editor.EditValue (
 				new ITypeDescriptorContextImpl (this.property_grid),
 				service_container,
-				property_grid.SelectedGridItem.Value);
-			SetPropertyValue (value);
+				initial_value);
+			if (!Object.Equals (value, initial_value)) {
+				Console.WriteLine ("initial_value = {0}, new value = {1}", initial_value, value);
+				SetPropertyValue (value);
+			}
 		}
 		
 		private void DialogButtonClicked(object sender, EventArgs e) {
@@ -639,21 +632,19 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					grid_textbox.Font = this.Font;
 			}
 		}
-		
 
-		
-		#endregion
-
-		#region IWindowsFormsEditorService Members
-
-		public void CloseDropDown() {
-			dropdown_form.Hide();
+		private void OnDropDownMouseDown (object sender, MouseEventArgs e)
+		{
+			Control c = (Control)sender;
+			if (!c.ClientRectangle.Contains (e.X, e.Y)) {
+				c.Capture = false;
+				CloseDropDown();
+			}
 		}
 
-		public void DropDownControl(Control control) {
+		private void DropDownControl(Control control, bool block) {
 			Object	queue_id;
 
-			dropdown_form.Deactivate +=new EventHandler(dropdown_form_Deactivate);
 			dropdown_form.Size = control.Size;
 			control.Dock = DockStyle.Fill;
 			dropdown_form.Controls.Clear();
@@ -662,12 +653,32 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			dropdown_form.Width = Width - SplitterLocation;
 
 			dropdown_form.Show();
-			System.Windows.Forms.MSG msg = new MSG();
-			queue_id = XplatUI.StartLoop(Thread.CurrentThread);
-			while (XplatUI.GetMessage(queue_id, ref msg, IntPtr.Zero, 0, 0) && dropdown_form.Visible) {
-				XplatUI.TranslateMessage(ref msg);
-				XplatUI.DispatchMessage(ref msg);
+
+			control.Capture = true;
+
+			control.MouseDown += new MouseEventHandler (OnDropDownMouseDown);
+
+			if (block) {
+				System.Windows.Forms.MSG msg = new MSG();
+				queue_id = XplatUI.StartLoop(Thread.CurrentThread);
+				while (XplatUI.GetMessage(queue_id, ref msg, IntPtr.Zero, 0, 0) && dropdown_form.Visible) {
+					XplatUI.TranslateMessage(ref msg);
+					XplatUI.DispatchMessage(ref msg);
+				}
 			}
+		}
+		
+		#endregion
+
+		#region IWindowsFormsEditorService Members
+
+		public void CloseDropDown() {
+			dropdown_form.Hide();
+			Refresh ();
+		}
+
+		public void DropDownControl(Control control) {
+			DropDownControl (control, true);
 		}
 
 		public System.Windows.Forms.DialogResult ShowDialog(Form dialog) {

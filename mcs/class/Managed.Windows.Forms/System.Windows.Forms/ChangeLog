@@ -1,3 +1,25 @@
+2006-10-13  Chris Toshok  <toshok@ximian.com>
+
+	* PropertyGridView.cs:
+
+	- do a little refactoring so that only one place calls
+	dropdown_form.Hide, and that is CloseDropDown.  make everywhere
+	else call that.  Also make it Refresh, since there are redraw bugs
+	otherwise (we should take a look at that...)
+
+	- do a little more refactoring work to share the body of code
+	involved with the drop down.  it was duplicated in the code
+	dealing with the listbox handling and in the code dealing with the
+	UITypeEditors.
+
+	- add a Capture to the dropdown form's control once it's
+	displayed, and add a MouseDown handler that checks to make sure
+	the position is inside the control.  If it's not, close the
+	dropdown.  This fixes #78190.
+
+	- in SetPropertyValueFromUITypeEditor, only call SetPropertyValue
+	if the value is different than the initial value.
+	
 2006-10-13  Andreia Gaita  <shana.ufie@gmail.com>
 
 	* Control.cs: see #78650
