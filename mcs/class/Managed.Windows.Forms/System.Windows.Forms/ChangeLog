@@ -1,5 +1,12 @@
 2006-10-13  Chris Toshok  <toshok@ximian.com>
 
+	* Control.cs (OnInvalidated) only futz with the invalid_region if
+	the control is double buffered.  this fixes the apparent hang in
+	the ListView unit tests.  Someone needs to make the
+	BeginEndUpdateTest not call OnInvalidated 15004 times, though..
+
+2006-10-13  Chris Toshok  <toshok@ximian.com>
+
 	* PropertyGridView.cs:
 
 	- do a little refactoring so that only one place calls

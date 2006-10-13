@@ -4460,24 +4460,27 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnInvalidated(InvalidateEventArgs e) {
-			// should this block be here?  seems like it
-			// would be more at home in
-			// NotifyInvalidated..
-			if (e.InvalidRect == ClientRectangle) {
-				ImageBufferNeedsRedraw ();
-			}
-			else {
-				// we need this Inflate call here so
-				// that the border of the rectangle is
-				// considered Visible (the
-				// invalid_region.IsVisible call) in
-				// the WM_PAINT handling below.
-				Rectangle r = Rectangle.Inflate(e.InvalidRect, 1,1);
-				if (invalid_region == null)
-					invalid_region = new Region (r);
-				else
-					invalid_region.Union (r);
-			}
+			if (ThemeEngine.Current.DoubleBufferingSupported)
+				if ((control_style & ControlStyles.DoubleBuffer) != 0) {
+					// should this block be here?  seems like it
+					// would be more at home in
+					// NotifyInvalidated..
+					if (e.InvalidRect == ClientRectangle) {
+						ImageBufferNeedsRedraw ();
+					}
+					else {
+						// we need this Inflate call here so
+						// that the border of the rectangle is
+						// considered Visible (the
+						// invalid_region.IsVisible call) in
+						// the WM_PAINT handling below.
+						Rectangle r = Rectangle.Inflate(e.InvalidRect, 1,1);
+						if (invalid_region == null)
+							invalid_region = new Region (r);
+						else
+							invalid_region.Union (r);
+					}
+				}
 			if (Invalidated!=null) Invalidated(this, e);
 		}
 
