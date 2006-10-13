@@ -362,7 +362,7 @@ namespace System.Windows.Forms
 				DrawItemState status = DrawItemState.None;
 				MenuTracker tracker = Parent.Tracker;
 				if (Selected)
-					status |= (tracker.active ? DrawItemState.Selected : DrawItemState.HotLight);
+					status |= (tracker.active || tracker.Navigating ? DrawItemState.Selected : DrawItemState.HotLight);
 				if (!Enabled)
 					status |= DrawItemState.Grayed | DrawItemState.Disabled;
 				if (Checked)

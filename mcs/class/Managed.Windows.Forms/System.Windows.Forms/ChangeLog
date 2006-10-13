@@ -1,3 +1,8 @@
+2006-10-13  Mike Kestner  <mkestner@novell.com>
+
+	* MenuItem.cs : add Selected format under keynav too.
+	Fixes #79528.
+
 2006-10-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* PropertyGrid.cs: Fixed some NRE's and small difference between our
