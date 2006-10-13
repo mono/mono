@@ -1,5 +1,10 @@
 2006-10-13  Chris Toshok  <toshok@ximian.com>
 
+	* ColorEditor.cs: we also need to make sure we set selected_color
+	and color_chosen initially.
+
+2006-10-13  Chris Toshok  <toshok@ximian.com>
+
 	* ColorEditor.cs: windows allows a null to be passed in to
 	EditValue (indeed, the property grid when showing a merged view
 	requires it).  Also, if no change is made we need to return the

@@ -119,6 +119,8 @@ namespace System.Drawing.Design
 							web_listbox.SelectedValue = current_color;
 							tab_control.SelectedTab = web_tab;
 						}
+						selected_color = current_color;
+						color_chosen = true;
 					}
 
 
