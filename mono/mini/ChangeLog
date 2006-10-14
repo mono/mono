@@ -1,5 +1,8 @@
 2006-10-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c: Save/restore the current LMF structure more efficiently using
+	the mono_lmf TLS variable.
+
 	* mini-exceptions.c: Access the LMF structure through accessors.
 
 	* mini.c: Allow the backends the option for storing the lmf in a dedicated TLS 
