@@ -1,3 +1,10 @@
+2006-10-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-amd64.c (mono_arch_find_jit_info): Only access lmf->method in 
+	trampoline lmf frames.
+
+	* mini-amd64.c (mono_arch_emit_prolog): Do not set lmf->method as it is not needed.
+
 2006-10-12  Zoltan Varga  <vargaz@gmail.com>
 
        * mini.c trace.c mini-x86.c: Revert these too.
