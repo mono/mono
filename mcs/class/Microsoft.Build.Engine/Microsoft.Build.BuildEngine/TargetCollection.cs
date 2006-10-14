@@ -36,12 +36,12 @@ namespace Microsoft.Build.BuildEngine {
 	public class TargetCollection : ICollection, IEnumerable {
 		
 		Dictionary <string, Target>	targetsByName;
-		Project				parentProject;
+		//Project				parentProject;
 	
 		internal TargetCollection (Project project)
 		{
 			this.targetsByName = new Dictionary <string, Target> ();
-			this.parentProject = project;
+			//this.parentProject = project;
 		}
 
 		// This must create a new xml element and stuff.

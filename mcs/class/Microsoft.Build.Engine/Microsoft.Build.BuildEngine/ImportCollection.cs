@@ -37,11 +37,11 @@ namespace Microsoft.Build.BuildEngine {
 	public class ImportCollection : ICollection, IEnumerable {
 		
 		List <Import>	imports;
-		Project		parentProject;
+		//Project		parentProject;
 		
 		internal ImportCollection (Project parentProject)
 		{
-			this.parentProject = parentProject;
+		//	this.parentProject = parentProject;
 			this.imports = new List <Import> ();
 		}
 		

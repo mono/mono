@@ -35,14 +35,14 @@ namespace Microsoft.Build.BuildEngine {
 	internal class BuildChoose {
 		
 		BuildWhen	otherwise;
-		Project		project;
-		XmlElement	xmlElement;
+		//Project		project;
+		//XmlElement	xmlElement;
 		List <BuildWhen>	whens;
 		
 		public BuildChoose (XmlElement xmlElement, Project project)
 		{
-			this.xmlElement = xmlElement;
-			this.project = project;
+			//this.xmlElement = xmlElement;
+			//this.project = project;
 			this.whens = new List <BuildWhen> ();
 		}
 		

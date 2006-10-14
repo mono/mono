@@ -31,12 +31,14 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
 
 namespace Microsoft.Build.BuildEngine {
 
 	internal sealed class ConditionTokenizer {
+	
 		string	inputString = null;
 		int	position = 0;
 		int	tokenPosition = 0;
@@ -46,7 +48,7 @@ namespace Microsoft.Build.BuildEngine {
 		bool	ignoreWhiteSpace = true;
 		
 		static TokenType[] charIndexToTokenType = new TokenType[128];
-		static Hashtable keywordToTokenType = CollectionsUtil.CreateCaseInsensitiveHashtable ();
+		static Dictionary <string, TokenType> keywords = new Dictionary <string, TokenType> (StringComparer.InvariantCultureIgnoreCase);
 
 		static ConditionTokenizer ()
 		{
@@ -56,6 +58,8 @@ namespace Microsoft.Build.BuildEngine {
 			foreach (CharToTokenType cht in charToTokenType)
 				charIndexToTokenType [(int) cht.ch] = cht.tokenType;
 			
+			keywords.Add ("and", TokenType.And);
+			keywords.Add ("or", TokenType.Or);
 		}
 		
 		public ConditionTokenizer ()
@@ -226,12 +230,11 @@ namespace Microsoft.Build.BuildEngine {
 				
 				string temp = sb.ToString ();
 				
-				if (temp.ToLower () == "and")
-					token = new Token (temp, TokenType.And);
-				else if (temp.ToLower () == "or")
-					token = new Token (temp, TokenType.Or);
+				if (keywords.ContainsKey (temp))
+					token = new Token (temp, keywords [temp]);
 				else
-					token = new Token (sb.ToString (), TokenType.String);
+					token = new Token (temp, TokenType.String);
+					
 				return;
 			}
 			

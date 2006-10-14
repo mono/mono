@@ -46,7 +46,7 @@ namespace Microsoft.Build.BuildEngine {
 		string		itemInclude;
 		string		name;
 		BuildItemGroup	parentItemGroup;
-		string		recursiveDir;
+		//string		recursiveDir;
 		IDictionary	evaluatedMetadata;
 		IDictionary	unevaluatedMetadata;
 

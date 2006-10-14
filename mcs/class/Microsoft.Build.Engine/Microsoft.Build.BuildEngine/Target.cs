@@ -193,7 +193,6 @@ namespace Microsoft.Build.BuildEngine {
 
 		public void RemoveTask (BuildTask buildTask)
 		{
-			//taskElements.Remove (taskElement);
 			buildTasks.Remove (buildTask);
 		}
 

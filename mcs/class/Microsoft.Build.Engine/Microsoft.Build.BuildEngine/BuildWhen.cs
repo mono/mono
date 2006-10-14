@@ -34,13 +34,13 @@ using System.Xml;
 namespace Microsoft.Build.BuildEngine {
 	internal class BuildWhen {
 		XmlAttribute		condition;
-		Project			parentProject;
+		//Project			parentProject;
 		GroupingCollection	groupingCollection;
 		XmlElement		whenElement;
 	
 		public BuildWhen (Project parentProject)
 		{
-			this.parentProject = parentProject;
+		//	this.parentProject = parentProject;
 			this.groupingCollection = new GroupingCollection ();
 		}
 		

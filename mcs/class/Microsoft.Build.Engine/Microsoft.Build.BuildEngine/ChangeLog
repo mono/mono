@@ -1,3 +1,16 @@
+2006-10-14  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Engine.cs: Removed redundant cast.
+	* BuildWhen.cs:
+	* UsingTaskCollection.cs:
+	* ImportCollection:
+	* BuildChoose.cs:
+	* BuildItem.cs:
+	* TargetCollection.cs: Comment unused variable.
+	* ConditionTokenizer.cs: Simplified checking if current token is a
+	keyword.
+	* Target.cs: Removed old code.
+
 2006-10-08  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Target.cs: Changed "" to String.Empty.

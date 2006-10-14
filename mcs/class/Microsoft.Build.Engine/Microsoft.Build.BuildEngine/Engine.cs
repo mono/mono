@@ -47,7 +47,7 @@ namespace Microsoft.Build.BuildEngine {
 		BuildPropertyGroup	globalProperties;
 		//IDictionary		importedProjects;
 		List <ILogger>		loggers;
-		bool			onlyLogCriticalEvents;
+		//bool			onlyLogCriticalEvents;
 		Dictionary <string, Project>	projects;
 
 		static Engine		globalEngine;
@@ -207,7 +207,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (projectFullFileName == null)
 				throw new ArgumentNullException ("projectFullFileName");
 			
-			return (Project) projects [projectFullFileName];
+			return projects [projectFullFileName];
 		}
 
 		internal void RemoveLoadedProject (Project p)
@@ -238,7 +238,7 @@ namespace Microsoft.Build.BuildEngine {
 		public void UnloadAllProjects ()
 		{
 			foreach (KeyValuePair <string, Project> e in projects)
-				UnloadProject ((Project) e.Value);
+				UnloadProject (e.Value);
 		}
 
 		[MonoTODO]

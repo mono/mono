@@ -35,13 +35,13 @@ using System.Collections.Generic;
 namespace Microsoft.Build.BuildEngine {
 	public class UsingTaskCollection : ICollection, IEnumerable {
 	
-		Project		parentProject;
+		//Project		parentProject;
 		object		syncRoot;
 		List <UsingTask>	usingTasks;
 		
 		internal UsingTaskCollection (Project parentProject)
 		{
-			this.parentProject = parentProject;
+			//this.parentProject = parentProject;
 			this.syncRoot = new Object ();
 			this.usingTasks = new List <UsingTask> ();
 		}
