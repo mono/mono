@@ -1,5 +1,12 @@
 2006-10-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-exceptions.c: Access the LMF structure through accessors.
+
+	* mini.c: Allow the backends the option for storing the lmf in a dedicated TLS 
+	variable instead of in jit_tls->lmf.
+
+	* mini-x86.c mini-amd64.c: Update after lmf->lmf_addr name change.
+	
 	* exceptions-amd64.c (mono_arch_find_jit_info): Only access lmf->method in 
 	trampoline lmf frames.
 
