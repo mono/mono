@@ -1,3 +1,10 @@
+2006-10-14  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Exec.cs: Added AddCommandLineCommands ().
+	* GenerateBootstrapper.cs: Added missing attributes.
+	* GenerateManifestBase.cs: Added missing attributes.
+	* GenerateApplicationManifest.cs: Added ValidateInputs ().
+
 2006-10-10  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* FormatUrl.cs

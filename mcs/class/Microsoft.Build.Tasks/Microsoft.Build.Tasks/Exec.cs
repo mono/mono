@@ -54,7 +54,14 @@ namespace Microsoft.Build.Tasks {
 		{
 			ignoreExitCode = false;
 		}
-
+		
+		// FIXME: what does that method do?
+		[MonoTODO]
+		protected internal override void AddCommandLineCommands (CommandLineBuilderExtension commandLine)
+		{
+			base.AddCommandLineCommands (commandLine);
+		}
+		
 		/*public override bool Execute ()
 		{
 			StringCollection temporaryOutputs = new StringCollection ();

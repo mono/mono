@@ -73,6 +73,7 @@ namespace Microsoft.Build.Tasks {
 			set { applicationUrl = value; }
 		}
 		
+		[Output]
 		public string[] BootstrapperComponentFiles {
 			get { return bootstrapperComponentFiles; }
 			set { bootstrapperComponentFiles = value; }
@@ -83,6 +84,7 @@ namespace Microsoft.Build.Tasks {
 			set { bootstrapperItems = value; }
 		}
 		
+		[Output]
 		public string BootstrapperKeyFile {
 			get { return bootstrapperKeyFile; }
 			set { bootstrapperKeyFile = value; }

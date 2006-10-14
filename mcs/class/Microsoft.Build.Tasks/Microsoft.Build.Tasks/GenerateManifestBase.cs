@@ -138,6 +138,7 @@ namespace Microsoft.Build.Tasks {
 			set { maxTargetPath = value; }
 		}
 		
+		[Output]
 		public ITaskItem OutputManifest {
 			get { return outputManifest; }
 			set { outputManifest = value; }

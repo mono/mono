@@ -48,11 +48,6 @@ namespace Microsoft.Build.Tasks {
 		{
 		}
 
-		public override bool Execute ()
-		{
-			return false;
-		}
-		
 		[MonoTODO]
 		protected override Type GetObjectType ()
 		{
@@ -67,6 +62,12 @@ namespace Microsoft.Build.Tasks {
 		
 		[MonoTODO]
 		protected override bool OnManifestResolved (Manifest manifest)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		protected internal override bool ValidateInputs ()
 		{
 			throw new NotImplementedException ();
 		}
