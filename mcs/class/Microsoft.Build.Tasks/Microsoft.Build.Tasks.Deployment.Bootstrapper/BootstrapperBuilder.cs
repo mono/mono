@@ -54,7 +54,14 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper {
 			get { return products; }
 		}
 		
+		[MonoTODO]
 		public BuildResults Build (BuildSettings settings)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public string[] GetOutputFolders (string[] productCodes, string culture, string fallbackCulture)
 		{
 			throw new NotImplementedException ();
 		}

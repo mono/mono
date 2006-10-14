@@ -1,3 +1,10 @@
+2006-10-14  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* ComponentsLocation.cs: Changed order to match MS.
+	* BootstrapperBuilder.cs: Added GetOutputFolders ().
+	* IProductCollection.cs, ProductCollection.cs: Changed indexer to
+	method.
+
 2006-10-12  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* IProductBuilderCollection.cs

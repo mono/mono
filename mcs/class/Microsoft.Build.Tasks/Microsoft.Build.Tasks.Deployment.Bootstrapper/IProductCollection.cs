@@ -42,9 +42,7 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper {
 			get;
 		}
 		
-		Product this [int index] {
-			get;
-		}
+		Product Item (int index);
 		
 		Product Product (string productCode);
 	}

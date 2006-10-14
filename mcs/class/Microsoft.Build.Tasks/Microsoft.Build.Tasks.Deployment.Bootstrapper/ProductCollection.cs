@@ -51,8 +51,9 @@ namespace Microsoft.Build.Tasks.Deployment.Bootstrapper {
 		}
 		
 		[MonoTODO]
-		public Product this [int index] {
-			get { throw new NotImplementedException (); }
+		public Product Item (int index)
+		{
+			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
