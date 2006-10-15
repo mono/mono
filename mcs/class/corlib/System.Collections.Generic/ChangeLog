@@ -1,3 +1,9 @@
+2006-09-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* List.cs: Fixed binary serialization compatibility with MS.NET.
+	Increment version whenever _items is modified; this fixes version
+	checks in Enumerator.
+
 2006-09-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* Dictionary.cs: Speed up get_Item/set_Item/GetPrev () a bit. Increase capacity

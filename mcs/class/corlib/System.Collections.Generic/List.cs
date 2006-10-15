@@ -38,16 +38,16 @@ using System.Runtime.InteropServices;
 namespace System.Collections.Generic {
 	[Serializable]
 	public class List <T> : IList <T>, IList, ICollection {
-		T [] data;
-		int size;
-		int version;
+		T [] _items;
+		int _size;
+		int _version;
 		
 		static readonly T [] EmptyArray = new T [0]; 
 		const int DefaultCapacity = 4;
 		
 		public List ()
 		{
-			data = EmptyArray;
+			_items = EmptyArray;
 		}
 		
 		public List (IEnumerable <T> collection)
@@ -58,12 +58,12 @@ namespace System.Collections.Generic {
 			ICollection <T> c = collection as ICollection <T>;
 			if (c == null)
 			{
-				data = EmptyArray;
+				_items = EmptyArray;
 				AddEnumerable (collection);
 			}
 			else
 			{
-				data = new T [c.Count];
+				_items = new T [c.Count];
 				AddCollection (c);
 			}
 		}
@@ -72,24 +72,25 @@ namespace System.Collections.Generic {
 		{
 			if (capacity < 0)
 				throw new ArgumentOutOfRangeException ("capacity");
-			data = new T [capacity];
+			_items = new T [capacity];
 		}
 		
 		internal List (T [] data, int size)
 		{
-			this.data = data;
-			this.size = size;
+			_items = data;
+			_size = size;
 		}
 		public void Add (T item)
 		{
 			GrowIfNeeded (1);
-			data [size ++] = item;
+			_items [_size ++] = item;
+			_version++;
 		}
 		
 		void GrowIfNeeded (int newCount)
 		{
-			int minimumSize = size + newCount;
-			if (minimumSize > data.Length)
+			int minimumSize = _size + newCount;
+			if (minimumSize > _items.Length)
 				Capacity = Math.Max (Math.Max (Capacity * 2, DefaultCapacity), minimumSize);
 		}
 		
@@ -101,7 +102,7 @@ namespace System.Collections.Generic {
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count");
 
-			if ((uint) idx + (uint) count > (uint) size)
+			if ((uint) idx + (uint) count > (uint) _size)
 				throw new ArgumentException ("index and count exceed length of list");
 		}
 		
@@ -109,8 +110,8 @@ namespace System.Collections.Generic {
 		{
 			int collectionCount = collection.Count;
 			GrowIfNeeded (collectionCount);			 
-			collection.CopyTo (data, size);
-			size += collectionCount;
+			collection.CopyTo (_items, _size);
+			_size += collectionCount;
 		}
 		void AddEnumerable (IEnumerable <T> enumerable)
 		{
@@ -129,6 +130,7 @@ namespace System.Collections.Generic {
 				AddCollection (c);
 			else
 				AddEnumerable (collection);
+			_version++;
 		}
 		
 		public ReadOnlyCollection <T> AsReadOnly ()
@@ -138,31 +140,32 @@ namespace System.Collections.Generic {
 		
 		public int BinarySearch (T item)
 		{
-			return Array.BinarySearch <T> (data, 0, size, item);
+			return Array.BinarySearch <T> (_items, 0, _size, item);
 		}
 		
 		public int BinarySearch (T item, IComparer <T> comparer)
 		{
-			return Array.BinarySearch <T> (data, 0, size, item, comparer);
+			return Array.BinarySearch <T> (_items, 0, _size, item, comparer);
 		}
 		
 		public int BinarySearch (int index, int count, T item, IComparer <T> comparer)
 		{
 			CheckRange (index, count);
-			return Array.BinarySearch <T> (data, index, count, item, comparer);
+			return Array.BinarySearch <T> (_items, index, count, item, comparer);
 		}
 		
 		public void Clear ()
 		{
-			Array.Clear (data, 0, data.Length);
-			size = 0;
+			Array.Clear (_items, 0, _items.Length);
+			_size = 0;
+			_version++;
 		}
 		
 		public bool Contains (T item)
 		{
 			EqualityComparer<T> equalityComparer = EqualityComparer<T>.Default;
-			for (int i = 0; i < size; i++)
-				if (equalityComparer.Equals (data[i], item))
+			for (int i = 0; i < _size; i++)
+				if (equalityComparer.Equals (_items[i], item))
 					return true;
 			return false;
 		}
@@ -171,7 +174,7 @@ namespace System.Collections.Generic {
 		{
 			if (converter == null)
 				throw new ArgumentNullException ("converter");
-			List <TOutput> u = new List <TOutput> (size);
+			List <TOutput> u = new List <TOutput> (_size);
 			foreach (T t in this)
 				u.Add (converter (t));
 			return u;
@@ -179,18 +182,18 @@ namespace System.Collections.Generic {
 		
 		public void CopyTo (T [] array)
 		{
-			Array.Copy (data, 0, array, 0, size);
+			Array.Copy (_items, 0, array, 0, _size);
 		}
 		
 		public void CopyTo (T [] array, int arrayIndex)
 		{
-			Array.Copy (data, 0, array, arrayIndex, size);
+			Array.Copy (_items, 0, array, arrayIndex, _size);
 		}
 		
 		public void CopyTo (int index, T [] array, int arrayIndex, int count)
 		{
 			CheckRange (index, count);
-			Array.Copy (data, index, array, arrayIndex, count);
+			Array.Copy (_items, index, array, arrayIndex, count);
 		}
 
 		public bool Exists (Predicate <T> match)
@@ -201,7 +204,7 @@ namespace System.Collections.Generic {
 		public T Find (Predicate <T> match)
 		{
 			int i = FindIndex (match);
-			return (i != -1) ? data [i] : default (T);
+			return (i != -1) ? _items [i] : default (T);
 		}
 		void CheckMatch (Predicate <T> match)
 		{
@@ -227,14 +230,14 @@ namespace System.Collections.Generic {
 		public int FindIndex (Predicate <T> match)
 		{
 			CheckMatch (match);
-			return GetIndex (0, size, match);
+			return GetIndex (0, _size, match);
 		}
 		
 		public int FindIndex (int startIndex, Predicate <T> match)
 		{
 			CheckMatch (match);
 			CheckIndex (startIndex);
-			return GetIndex (startIndex, size - startIndex, match);
+			return GetIndex (startIndex, _size - startIndex, match);
 		}
 		public int FindIndex (int startIndex, int count, Predicate <T> match)
 		{
@@ -245,7 +248,7 @@ namespace System.Collections.Generic {
 		int GetIndex (int startIndex, int count, Predicate <T> match)
 		{
 			for (int i = startIndex; i < startIndex + count; i ++)
-				if (match (data [i]))
+				if (match (_items [i]))
 					return i;
 				
 			return -1;
@@ -254,14 +257,14 @@ namespace System.Collections.Generic {
 		public T FindLast (Predicate <T> match)
 		{
 			CheckMatch (match);
-			int i = GetLastIndex (0, size, match);
+			int i = GetLastIndex (0, _size, match);
 			return i == -1 ? default (T) : this [i];
 		}
 		
 		public int FindLastIndex (Predicate <T> match)
 		{
 			CheckMatch (match);
-			return GetLastIndex (0, size, match);
+			return GetLastIndex (0, _size, match);
 		}
 		
 		public int FindLastIndex (int startIndex, Predicate <T> match)
@@ -283,7 +286,7 @@ namespace System.Collections.Generic {
 		{
 			// unlike FindLastIndex, takes regular params for search range
 			for (int i = startIndex + count; i != startIndex;)
-				if (match (data [--i]))
+				if (match (_items [--i]))
 					return i;
 			return -1;	
 		}
@@ -305,19 +308,19 @@ namespace System.Collections.Generic {
 		{
 			CheckRange (index, count);
 			T [] tmpArray = new T [count];
-			Array.Copy (data, index, tmpArray, 0, count);
+			Array.Copy (_items, index, tmpArray, 0, count);
 			return new List <T> (tmpArray, count);
 		}
 		
 		public int IndexOf (T item)
 		{
-			return Array.IndexOf<T> (data, item, 0, size);
+			return Array.IndexOf<T> (_items, item, 0, _size);
 		}
 		
 		public int IndexOf (T item, int index)
 		{
 			CheckIndex (index);
-			return Array.IndexOf<T> (data, item, index, size - index);
+			return Array.IndexOf<T> (_items, item, index, _size - index);
 		}
 		
 		public int IndexOf (T item, int index, int count)
@@ -328,10 +331,10 @@ namespace System.Collections.Generic {
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count");
 
-			if ((uint) index + (uint) count > (uint) size)
+			if ((uint) index + (uint) count > (uint) _size)
 				throw new ArgumentOutOfRangeException ("index and count exceed length of list");
 
-			return Array.IndexOf<T> (data, item, index, count);
+			return Array.IndexOf<T> (_items, item, index, count);
 		}
 		
 		void Shift (int start, int delta)
@@ -339,14 +342,14 @@ namespace System.Collections.Generic {
 			if (delta < 0)
 				start -= delta;
 			
-			Array.Copy (data, start, data, start + delta, size - start);
+			Array.Copy (_items, start, _items, start + delta, _size - start);
 			
-			size += delta;
+			_size += delta;
 		}
 
 		void CheckIndex (int index)
 		{
-			if (index < 0 || (uint) index > (uint) size)
+			if (index < 0 || (uint) index > (uint) _size)
 				throw new ArgumentOutOfRangeException ("index");
 		}
 		
@@ -356,7 +359,7 @@ namespace System.Collections.Generic {
 			GrowIfNeeded (1);
 			Shift (index, 1);
 			this [index] = item;
-				
+			_version++;
 		}
 
 		void CheckCollection (IEnumerable <T> collection)
@@ -374,6 +377,7 @@ namespace System.Collections.Generic {
 				InsertCollection (index, c);
 			else
 				InsertEnumeration (index, collection);
+			_version++;
 		}
 
 		void InsertCollection (int index, ICollection <T> collection)
@@ -382,7 +386,7 @@ namespace System.Collections.Generic {
 			GrowIfNeeded (collectionCount);
 			
 			Shift (index, collectionCount);
-			collection.CopyTo (data, index);
+			collection.CopyTo (_items, index);
 		}
 		void InsertEnumeration (int index, IEnumerable <T> enumerable)
 		{
@@ -392,13 +396,13 @@ namespace System.Collections.Generic {
 
 		public int LastIndexOf (T item)
 		{
-			return Array.LastIndexOf<T> (data, item, size - 1, size);
+			return Array.LastIndexOf<T> (_items, item, _size - 1, _size);
 		}
 		
 		public int LastIndexOf (T item, int index)
 		{
 			CheckIndex (index);
-			return Array.LastIndexOf<T> (data, item, index, index + 1);
+			return Array.LastIndexOf<T> (_items, item, index, index + 1);
 		}
 		
 		public int LastIndexOf (T item, int index, int count)
@@ -412,7 +416,7 @@ namespace System.Collections.Generic {
 			if (index - count + 1 < 0)
 				throw new ArgumentOutOfRangeException ("cound", count, "count is too large");
 
-			return Array.LastIndexOf<T> (data, item, index, count);
+			return Array.LastIndexOf<T> (_items, item, index, count);
 		}
 		
 		public bool Remove (T item)
@@ -431,12 +435,12 @@ namespace System.Collections.Generic {
 
 			int index = 0;
 			int c = 0;
-			while ((index = GetIndex (index, size - index, match)) != -1) {
+			while ((index = GetIndex (index, _size - index, match)) != -1) {
 				RemoveAt (index);
 				c ++;
 			}
 			
-			Array.Clear (data, size, c);
+			Array.Clear (_items, _size, c);
 			return c;
 		}
 		
@@ -444,57 +448,67 @@ namespace System.Collections.Generic {
 		{
 			CheckIndex (index);
 			Shift (index, -1);
-			Array.Clear (data, size, 0);
+			Array.Clear (_items, _size, 0);
+			_version++;
 		}
 		
 		public void RemoveRange (int index, int count)
 		{
 			CheckRange (index, count);
-			Shift (index, -count);
-			Array.Clear (data, size, count);
+			if (count > 0) {
+				Shift (index, -count);
+				Array.Clear (_items, _size, count);
+				_version++;
+			}
 		}
 		
 		public void Reverse ()
 		{
-			Array.Reverse (data, 0, size);
+			Array.Reverse (_items, 0, _size);
+			_version++;
 		}
 		public void Reverse (int index, int count)
 		{
 			CheckRange (index, count);
-			Array.Reverse (data, index, count);
+			Array.Reverse (_items, index, count);
+			_version++;
 		}
 		
 		public void Sort ()
 		{
-			Array.Sort<T> (data, 0, size, Comparer <T>.Default);
+			Array.Sort<T> (_items, 0, _size, Comparer <T>.Default);
+			_version++;
 		}
 		public void Sort (IComparer <T> comparer)
 		{
-			Array.Sort<T> (data, 0, size, comparer);
+			Array.Sort<T> (_items, 0, _size, comparer);
+			_version++;
 		}
 
 		public void Sort (Comparison <T> comparison)
 		{
-			Array.Sort<T> (data, size, comparison);
+			Array.Sort<T> (_items, _size, comparison);
+			_version++;
 		}
 		
 		public void Sort (int index, int count, IComparer <T> comparer)
 		{
 			CheckRange (index, count);
-			Array.Sort<T> (data, index, count, comparer);
+			Array.Sort<T> (_items, index, count, comparer);
+			_version++;
 		}
 
 		public T [] ToArray ()
 		{
-			T [] t = new T [size];
-			Array.Copy (data, t, size);
+			T [] t = new T [_size];
+			Array.Copy (_items, t, _size);
 			
 			return t;
 		}
 		
 		public void TrimExcess ()
 		{
-			Capacity = size;
+			Capacity = _size;
 		}
 		
 		public bool TrueForAll (Predicate <T> match)
@@ -510,29 +524,29 @@ namespace System.Collections.Generic {
 		
 		public int Capacity {
 			get { 
-				return data.Length;
+				return _items.Length;
 			}
 			set {
-				if ((uint) value < (uint) size)
+				if ((uint) value < (uint) _size)
 					throw new ArgumentOutOfRangeException ();
 				
-				Array.Resize (ref data, value);
+				Array.Resize (ref _items, value);
 			}
 		}
 		
 		public int Count {
-			get { return size; }
+			get { return _size; }
 		}
 		
 		public T this [int index] {
 			get {
-				if ((uint) index >= (uint) size)
+				if ((uint) index >= (uint) _size)
 					throw new ArgumentOutOfRangeException ("index");
-				return data [index];
+				return _items [index];
 			}
 			set {
 				CheckIndex (index);
-				data [index] = value;
+				_items [index] = value;
 			}
 		}
 		
@@ -544,7 +558,7 @@ namespace System.Collections.Generic {
 		
 		void ICollection.CopyTo (Array array, int arrayIndex)
 		{
-			Array.Copy (data, 0, array, arrayIndex, size);
+			Array.Copy (_items, 0, array, arrayIndex, _size);
 		}
 		
 		IEnumerator IEnumerable.GetEnumerator ()
@@ -555,7 +569,7 @@ namespace System.Collections.Generic {
 		int IList.Add (object item)
 		{
 			Add ((T) item);
-			return size - 1;
+			return _size - 1;
 		}
 		
 		bool IList.Contains (object item)
@@ -618,7 +632,7 @@ namespace System.Collections.Generic {
 			{
 				this.l = l;
 				idx = NOT_STARTED;
-				ver = l.version;
+				ver = l._version;
 			}
 			
 			// for some fucked up reason, MSFT added a useless dispose to this class
@@ -631,11 +645,12 @@ namespace System.Collections.Generic {
 			
 			public bool MoveNext ()
 			{
-				if (ver != l.version)
-					throw new InvalidOperationException ();
+				if (ver != l._version)
+					throw new InvalidOperationException ("Collection was modified;"
+						+ "enumeration operation may not execute.");
 				
 				if (idx == NOT_STARTED)
-					idx = l.size;
+					idx = l._size;
 				
 				return idx != FINISHED && -- idx != FINISHED;
 			}
@@ -645,14 +660,15 @@ namespace System.Collections.Generic {
 					if (idx < 0)
 						throw new InvalidOperationException ();
 					
-					return l.data [l.size - 1 - idx];
+					return l._items [l._size - 1 - idx];
 				}
 			}
 			
 			void IEnumerator.Reset ()
 			{
-				if (ver != l.version)
-					throw new InvalidOperationException ();
+				if (ver != l._version)
+					throw new InvalidOperationException ("Collection was modified;"
+						+ "enumeration operation may not execute.");
 				
 				idx = NOT_STARTED;
 			}

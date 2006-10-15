@@ -33,7 +33,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+
 using NUnit.Framework;
 
 namespace MonoTests.System.Collections.Generic {
@@ -60,7 +63,28 @@ namespace MonoTests.System.Collections.Generic {
 	[TestFixture]
 	public class ListTest
 	{
-
+		static byte [] _serializedList = new byte [] {
+			0x00, 0x01, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0x01, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x01, 0x00, 0x00, 0x00,
+			0x7e, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x2e, 0x43, 0x6f, 0x6c,
+			0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x2e, 0x47, 0x65,
+			0x6e, 0x65, 0x72, 0x69, 0x63, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x60,
+			0x31, 0x5b, 0x5b, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x2e, 0x49,
+			0x6e, 0x74, 0x33, 0x32, 0x2c, 0x20, 0x6d, 0x73, 0x63, 0x6f, 0x72,
+			0x6c, 0x69, 0x62, 0x2c, 0x20, 0x56, 0x65, 0x72, 0x73, 0x69, 0x6f,
+			0x6e, 0x3d, 0x32, 0x2e, 0x30, 0x2e, 0x30, 0x2e, 0x30, 0x2c, 0x20,
+			0x43, 0x75, 0x6c, 0x74, 0x75, 0x72, 0x65, 0x3d, 0x6e, 0x65, 0x75,
+			0x74, 0x72, 0x61, 0x6c, 0x2c, 0x20, 0x50, 0x75, 0x62, 0x6c, 0x69,
+			0x63, 0x4b, 0x65, 0x79, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x3d, 0x62,
+			0x37, 0x37, 0x61, 0x35, 0x63, 0x35, 0x36, 0x31, 0x39, 0x33, 0x34,
+			0x65, 0x30, 0x38, 0x39, 0x5d, 0x5d, 0x03, 0x00, 0x00, 0x00, 0x06,
+			0x5f, 0x69, 0x74, 0x65, 0x6d, 0x73, 0x05, 0x5f, 0x73, 0x69, 0x7a,
+			0x65, 0x08, 0x5f, 0x76, 0x65, 0x72, 0x73, 0x69, 0x6f, 0x6e, 0x07,
+			0x00, 0x00, 0x08, 0x08, 0x08, 0x09, 0x02, 0x00, 0x00, 0x00, 0x03,
+			0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x0f, 0x02, 0x00, 0x00,
+			0x00, 0x04, 0x00, 0x00, 0x00, 0x08, 0x05, 0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			0x0b };
 		int [] _list1_contents;
 		List <int> _list1;
 
@@ -101,7 +125,7 @@ namespace MonoTests.System.Collections.Generic {
 			// List <int> newRange = new List <int> (items);
 			List <int> newRange = new List <int> (3);
 			foreach (int i in items)
-				   newRange.Add (i);
+				newRange.Add (i);
 			_list1.InsertRange (1, newRange);
 			Assert.AreEqual (count + 3, _list1.Count);
 			Assert.AreEqual (55, _list1 [0]);
@@ -250,6 +274,40 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.AreEqual (0, l.BinarySearch (22));
 			Assert.AreEqual (-2, l.BinarySearch (23));
 			Assert.AreEqual (- (l.Count + 1), l.BinarySearch (int.MaxValue));
+		}
+
+		[Test]
+		public void SerializeTest ()
+		{
+			List <int> list = new List <int> ();
+			list.Add (5);
+			list.Add (0);
+			list.Add (7);
+
+			BinaryFormatter bf = new BinaryFormatter ();
+			MemoryStream ms = new MemoryStream ();
+			bf.Serialize (ms, list);
+
+			byte [] buffer = new byte [ms.Length];
+			ms.Position = 0;
+			ms.Read (buffer, 0, buffer.Length);
+
+			Assert.AreEqual (_serializedList, buffer);
+		}
+
+		[Test]
+		public void DeserializeTest ()
+		{
+			MemoryStream ms = new MemoryStream ();
+			ms.Write (_serializedList, 0, _serializedList.Length);
+			ms.Position = 0;
+
+			BinaryFormatter bf = new BinaryFormatter ();
+			List<int> list = (List<int>) bf.Deserialize (ms);
+			Assert.AreEqual (3, list.Count, "#1");
+			Assert.AreEqual (5, list [0], "#2");
+			Assert.AreEqual (0, list [1], "#3");
+			Assert.AreEqual (7, list [2], "#4");
 		}
 
 		[Test]
@@ -493,7 +551,7 @@ namespace MonoTests.System.Collections.Generic {
 		}
 
 		[Test]
-	        public void RemoveRangeFromEmptyListTest ()
+		public void RemoveRangeFromEmptyListTest ()
 		{
 			List<int> l = new List<int> ();
 			l.RemoveRange (0, 0);
@@ -599,6 +657,268 @@ namespace MonoTests.System.Collections.Generic {
 			Dictionary<string, int> d = new Dictionary<string, int> ();
 			l.AddRange (d.Values);
 			Assert.AreEqual (0, l.Count, "Count");
+		}
+
+		[Test]
+		public void VersionCheck_Add ()
+		{
+			List<int> list = new List<int> ();
+			IEnumerator enumerator = list.GetEnumerator ();
+			list.Add (5);
+
+			try {
+				enumerator.MoveNext ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				enumerator.Reset ();
+				Assert.Fail ("#2");
+			} catch (InvalidOperationException) {
+			}
+
+			enumerator = list.GetEnumerator ();
+			enumerator.MoveNext ();
+		}
+
+		[Test]
+		public void VersionCheck_AddRange ()
+		{
+			List<int> list = new List<int> ();
+			IEnumerator enumerator = list.GetEnumerator ();
+			list.AddRange (new int [] { 5, 7 });
+
+			try {
+				enumerator.MoveNext ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				enumerator.Reset ();
+				Assert.Fail ("#2");
+			} catch (InvalidOperationException) {
+			}
+
+			enumerator = list.GetEnumerator ();
+			enumerator.MoveNext ();
+		}
+
+		[Test]
+		public void VersionCheck_Clear ()
+		{
+			List<int> list = new List<int> ();
+			IEnumerator enumerator = list.GetEnumerator ();
+			list.Clear ();
+
+			try {
+				enumerator.MoveNext ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				enumerator.Reset ();
+				Assert.Fail ("#2");
+			} catch (InvalidOperationException) {
+			}
+
+			enumerator = list.GetEnumerator ();
+			enumerator.MoveNext ();
+		}
+
+		[Test]
+		public void VersionCheck_Insert ()
+		{
+			List<int> list = new List<int> ();
+			IEnumerator enumerator = list.GetEnumerator ();
+			list.Insert (0, 7);
+
+			try {
+				enumerator.MoveNext ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				enumerator.Reset ();
+				Assert.Fail ("#2");
+			} catch (InvalidOperationException) {
+			}
+
+			enumerator = list.GetEnumerator ();
+			enumerator.MoveNext ();
+		}
+
+		[Test]
+		public void VersionCheck_InsertRange ()
+		{
+			List<int> list = new List<int> ();
+			IEnumerator enumerator = list.GetEnumerator ();
+			list.InsertRange (0, new int [] { 5, 7 });
+
+			try {
+				enumerator.MoveNext ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				enumerator.Reset ();
+				Assert.Fail ("#2");
+			} catch (InvalidOperationException) {
+			}
+
+			enumerator = list.GetEnumerator ();
+			enumerator.MoveNext ();
+		}
+
+		[Test]
+		public void VersionCheck_Remove ()
+		{
+			List<int> list = new List<int> ();
+			list.Add (5);
+			IEnumerator enumerator = list.GetEnumerator ();
+			// version number is not incremented if item does not exist in list
+			list.Remove (7);
+			enumerator.MoveNext ();
+			list.Remove (5);
+
+			try {
+				enumerator.MoveNext ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				enumerator.Reset ();
+				Assert.Fail ("#2");
+			} catch (InvalidOperationException) {
+			}
+
+			enumerator = list.GetEnumerator ();
+			enumerator.MoveNext ();
+		}
+
+		[Test]
+		public void VersionCheck_RemoveAll ()
+		{
+			List<int> list = new List<int> ();
+			list.Add (5);
+			IEnumerator enumerator = list.GetEnumerator ();
+			// version is not incremented if there are no items to remove
+			list.RemoveAll (FindMultipleOfFour);
+			enumerator.MoveNext ();
+			list.Add (4);
+
+			enumerator = list.GetEnumerator ();
+			list.RemoveAll (FindMultipleOfFour);
+
+			try {
+				enumerator.MoveNext ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				enumerator.Reset ();
+				Assert.Fail ("#2");
+			} catch (InvalidOperationException) {
+			}
+
+			enumerator = list.GetEnumerator ();
+			enumerator.MoveNext ();
+		}
+
+		[Test]
+		public void VersionCheck_RemoveAt ()
+		{
+			List<int> list = new List<int> ();
+			list.Add (5);
+			IEnumerator enumerator = list.GetEnumerator ();
+			list.RemoveAt (0);
+
+			try {
+				enumerator.MoveNext ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				enumerator.Reset ();
+				Assert.Fail ("#2");
+			} catch (InvalidOperationException) {
+			}
+
+			enumerator = list.GetEnumerator ();
+			enumerator.MoveNext ();
+		}
+
+		[Test]
+		public void VersionCheck_RemoveRange ()
+		{
+			List<int> list = new List<int> ();
+			list.Add (5);
+			IEnumerator enumerator = list.GetEnumerator ();
+			// version is not incremented if count is zero
+			list.RemoveRange (0, 0);
+			enumerator.MoveNext ();
+			enumerator.Reset ();
+			list.RemoveRange (0, 1);
+
+			try {
+				enumerator.MoveNext ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				enumerator.Reset ();
+				Assert.Fail ("#2");
+			} catch (InvalidOperationException) {
+			}
+
+			enumerator = list.GetEnumerator ();
+			enumerator.MoveNext ();
+		}
+
+		[Test]
+		public void VersionCheck_Reverse ()
+		{
+			List<int> list = new List<int> ();
+			IEnumerator enumerator = list.GetEnumerator ();
+			list.Reverse ();
+
+			try {
+				enumerator.MoveNext ();
+				Assert.Fail ("#A1");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				enumerator.Reset ();
+				Assert.Fail ("#A2");
+			} catch (InvalidOperationException) {
+			}
+
+			enumerator = list.GetEnumerator ();
+			list.Reverse (0, 0);
+
+			try {
+				enumerator.MoveNext ();
+				Assert.Fail ("#B1");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				enumerator.Reset ();
+				Assert.Fail ("#B2");
+			} catch (InvalidOperationException) {
+			}
+
+			enumerator = list.GetEnumerator ();
+			enumerator.MoveNext ();
 		}
 
 		class SortTestComparer: IComparer<string> {
@@ -744,7 +1064,6 @@ namespace MonoTests.System.Collections.Generic {
 			{
 				return this._x == other._x;
 			}
-
 		}
 	}
 }
