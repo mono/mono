@@ -1,3 +1,7 @@
+2006-10-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-sparc.h (MONO_ARCH_ENABLE_EMIT_STATE_OPT): Define this on sparc as well.
+
 2006-10-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c: Save/restore the current LMF structure more efficiently using
