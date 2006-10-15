@@ -1,3 +1,8 @@
+2006-10-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (encode_named_val): Implement proper encoding of arrays. Fixes
+	#79465.
+
 2006-10-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata.c (mono_type_size): Change the align parameter to guint32 for
