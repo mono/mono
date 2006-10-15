@@ -1,5 +1,7 @@
 2006-10-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* threads.h: Revert the last change for now.
+
 	* threads.h (mono_thread_get_pending_exception): Rename this to
 	mono_thread_get_undeniable_exception ().
 
