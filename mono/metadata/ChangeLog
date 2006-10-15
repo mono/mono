@@ -1,3 +1,8 @@
+2006-10-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.h (mono_thread_get_pending_exception): Rename this to
+	mono_thread_get_undeniable_exception ().
+
 2006-10-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* appdomain.c: Use mono_get_exception_bad_image_format2 to construct
