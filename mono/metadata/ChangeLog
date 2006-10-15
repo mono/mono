@@ -1,3 +1,19 @@
+2006-10-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* appdomain.c: Use mono_get_exception_bad_image_format2 to construct
+	BadImageFormatException in ves_icall_System_Reflection_Assembly_LoadFrom
+	when fname does not refer to valid assembly. This result in a more
+	meaningful error message.
+	* exception.c: added mono_get_exception_bad_image_format2 which 
+	constructs a BadImageFormatException using the ctor taking a custom
+	message and the file name. Passing in a NULL msg results in a default
+	message.
+	* exception.h: define mono_get_exception_bad_image_format2 function.
+	* icall.c: in InternalGetAssemblyName, throw BadImageFormatException 
+	when file name pointed to an invalid IL image. Use 
+	mono_get_exception_file_not_found2 to construct FileNotFoundException,
+	as this results in a more meaningful error message.
+
 2006-10-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (encode_named_val): Implement proper encoding of arrays. Fixes
