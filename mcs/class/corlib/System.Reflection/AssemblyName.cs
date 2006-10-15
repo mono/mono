@@ -317,7 +317,7 @@ namespace System.Reflection {
 				throw new ArgumentNullException ("assemblyFile");
 
 			AssemblyName aname = new AssemblyName ();
-			Assembly.InternalGetAssemblyName (System.IO.Path.GetFullPath (assemblyFile), aname);
+			Assembly.InternalGetAssemblyName (assemblyFile, aname);
 			return aname;
 		}
 

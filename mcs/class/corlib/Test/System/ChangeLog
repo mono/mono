@@ -1,3 +1,7 @@
+2006-10-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* BadImageFormatExceptionTest.cs: Added ctors tests.
+
 2006-10-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* EnumTest.cs: Improved TestFormat_Args tests to check whether correct

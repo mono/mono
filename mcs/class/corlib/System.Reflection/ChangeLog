@@ -1,3 +1,9 @@
+2006-10-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AssemblyName.cs: No need to convert filename to absolute path before
+	passing it to Assembly.InternalGetAssemblyName. This allows our
+	exception messages to be better match those of MS.
+
 2006-09-29  Jb Evain  <jbevain@gmail.com>
 
 	* MonoFieldInfo.cs: throw a FieldAccessException when setting a literal field.

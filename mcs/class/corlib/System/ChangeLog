@@ -1,3 +1,10 @@
+2006-10-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* BadImageFormatException.cs: Changed message for default ctor to
+	match MS. Use internal message field of Exception to check whether
+	Message is null. Match MS default messages when no message is 
+	set. Fixed ToString to match MS.
+
 2006-10-09  Miguel de Icaza  <miguel@novell.com>
 
 	* Environment.cs: Handle SpecialFolder.MyMusic
