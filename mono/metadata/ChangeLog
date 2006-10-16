@@ -1,3 +1,9 @@
+
+Mon Oct 16 15:08:41 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* sgen-gc.c: added ability to allocate even when the nursery is fully
+	pinned and fixed a couple of bugs.
+
 2006-10-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.h: Revert the last change for now.
