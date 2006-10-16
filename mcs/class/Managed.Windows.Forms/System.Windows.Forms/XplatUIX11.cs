@@ -3902,20 +3902,11 @@ namespace System.Windows.Forms {
 				Caret.Paused = true;
 				HideCaret();
 			}
-			
-			if (client) {
-#if true
-				hwnd.client_dc = Graphics.FromHwnd (hwnd.client_window);
-#else
-				// Protected against illegal cross-thread painting
-				lock (XlibLock) {
-					if (hwnd.client_dc != null) {
-						return null;
-					}
 
-					hwnd.client_dc = Graphics.FromHwnd (hwnd.client_window);
-				}
-#endif
+			Graphics dc;
+
+			if (client) {
+				dc = Graphics.FromHwnd (hwnd.client_window);
 
 				Region clip_region = new Region ();
 				clip_region.MakeEmpty();
@@ -3928,25 +3919,29 @@ namespace System.Windows.Forms {
 					clip_region.Intersect(hwnd.UserClip);
 				}
 
-				hwnd.client_dc.Clip = clip_region;
-				paint_event = new PaintEventArgs(hwnd.client_dc, hwnd.Invalid);
+				dc.Clip = clip_region;
+				paint_event = new PaintEventArgs(dc, hwnd.Invalid);
 				hwnd.expose_pending = false;
 
 				hwnd.ClearInvalidArea();
 
+				hwnd.drawing_stack.Push (dc);
+
 				return paint_event;
 			} else {
-				hwnd.non_client_dc = Graphics.FromHwnd (hwnd.whole_window);
+				dc = Graphics.FromHwnd (hwnd.whole_window);
 
 				if (!hwnd.nc_invalid.IsEmpty) {
-					hwnd.non_client_dc.SetClip (hwnd.nc_invalid);
-					paint_event = new PaintEventArgs(hwnd.non_client_dc, hwnd.nc_invalid);
+					dc.SetClip (hwnd.nc_invalid);
+					paint_event = new PaintEventArgs(dc, hwnd.nc_invalid);
 				} else {
-					paint_event = new PaintEventArgs(hwnd.non_client_dc, new Rectangle(0, 0, hwnd.width, hwnd.height));
+					paint_event = new PaintEventArgs(dc, new Rectangle(0, 0, hwnd.width, hwnd.height));
 				}
 				hwnd.nc_expose_pending = false;
 
 				hwnd.ClearNcInvalidArea ();
+
+				hwnd.drawing_stack.Push (dc);
 
 				return paint_event;
 			}
@@ -3957,24 +3952,9 @@ namespace System.Windows.Forms {
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-			if (client) {
-#if true
-				hwnd.client_dc.Flush();
-				hwnd.client_dc.Dispose();
-				hwnd.client_dc = null;
-#else
-				lock (XlibLock) {
-					hwnd.client_dc.Flush();
-					hwnd.client_dc.Dispose();
-					hwnd.client_dc = null;
-				}
-#endif
-			} else {
-				hwnd.non_client_dc.Flush ();
-				hwnd.non_client_dc.Dispose ();
-				hwnd.non_client_dc = null;
-			}
-
+			Graphics dc = (Graphics)hwnd.drawing_stack.Pop ();
+			dc.Flush();
+			dc.Dispose();
 
 			if (Caret.Visible == true) {
 				ShowCaret();

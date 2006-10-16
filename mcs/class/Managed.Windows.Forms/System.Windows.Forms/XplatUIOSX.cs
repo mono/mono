@@ -1351,9 +1351,14 @@ namespace System.Windows.Forms {
 				HideCaret();
 			}
 
-			hwnd.client_dc  = Graphics.FromHwnd (hwnd.client_window);
-			paint_event = new PaintEventArgs(hwnd.client_dc, hwnd.Invalid);
-			
+			Graphics dc = Graphics.FromHwnd (hwnd.client_window);
+			paint_event = new PaintEventArgs(dc, hwnd.Invalid);
+
+			hwnd.expose_pending = false;
+			hwnd.ClearInvalidArea();
+
+			hwnd.drawing_stack.Push (dc);
+
 			return paint_event;
 		}
 		
@@ -1362,12 +1367,9 @@ namespace System.Windows.Forms {
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-			hwnd.ClearInvalidArea();
-
-			hwnd.client_dc.Flush();
-			hwnd.client_dc.Dispose();
-			hwnd.client_dc = null;
-			hwnd.expose_pending = false;
+			Graphics dc = (Graphics)hwnd.drawing_stack.Pop();
+			dc.Flush ();
+			dc.Dispose ();
 			
 			if (Caret.Visible == 1) {
 				ShowCaret();

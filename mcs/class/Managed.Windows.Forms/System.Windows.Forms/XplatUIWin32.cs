@@ -1255,47 +1255,52 @@ namespace System.Windows.Forms {
 				if (Win32GetUpdateRect(handle, ref rect, false)) {
 					hdc = Win32BeginPaint(handle, ref ps);
 
-					hwnd.user_data = (object)ps;
+					hwnd.drawing_stack.Push (ps);
 
 					clip_rect = new Rectangle(ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right-ps.rcPaint.left, ps.rcPaint.bottom-ps.rcPaint.top);
 				} else {
 					hdc = Win32GetDC(handle);
 					// FIXME: Add the DC to internal list
+
+					hwnd.drawing_stack.Push (null);
+
 					clip_rect = new Rectangle(rect.top, rect.left, rect.right-rect.left, rect.bottom-rect.top);
 				}
 			} else {
 				hdc = Win32GetWindowDC (handle);
-				hwnd.user_data = (object)hdc;
+
+				hwnd.drawing_stack.Push (hdc);
 
 				// HACK this in for now
 				Win32GetWindowRect (handle, out rect);
 				clip_rect = new Rectangle(0, 0, rect.right-rect.left, rect.bottom-rect.top);
 			}
 
-			hwnd.client_dc = Graphics.FromHdc(hdc);
-			paint_event = new PaintEventArgs(hwnd.client_dc, clip_rect);
+			Graphics dc = Graphics.FromHdc(hdc);
+			hwnd.drawing_stack.Push (dc);
+
+			paint_event = new PaintEventArgs(dc, clip_rect);
 
 			return paint_event;
 		}
 
 		internal override void PaintEventEnd(IntPtr handle, bool client) {
 			Hwnd		hwnd;
-			PAINTSTRUCT	ps;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
-			hwnd.client_dc.Dispose();
+
+			Graphics dc = (Graphics)hwnd.drawing_stack.Pop();
+			dc.Dispose ();
 
 			if (client) {
-				if (hwnd.user_data != null) {
-					ps = (PAINTSTRUCT)hwnd.user_data;
+				object o = hwnd.drawing_stack.Pop();
+				if (o != null) {
+					PAINTSTRUCT ps = (PAINTSTRUCT)o;
 					Win32EndPaint(handle, ref ps);
-					hwnd.user_data = null;
 				}
 			} else {
-				if (hwnd.user_data != null) {
-					Win32ReleaseDC(handle, (IntPtr)hwnd.user_data);
-					hwnd.user_data = null;
-				}
+				IntPtr hdc = (IntPtr)hwnd.drawing_stack.Pop();
+				Win32ReleaseDC(handle, hdc);
 			}
 		}
 

@@ -1,3 +1,17 @@
+2006-10-16  Chris Toshok  <toshok@ximian.com>
+
+	* Hwnd.cs: replace the user_data/client_dc/non_client_dc with
+	drawing_stack.  Nuke the ClientDC/NonClientDC properties.
+
+	* XplatUIX11.cs: move away from using hwnd.client_dc and
+	hwnd.non_client_dc and on to a stack of dc's (and in window's
+	case, PAINTSTRUCT's), so we can deal with nested Paint calls
+	without puking or not disposing of Graphics objects.
+
+	* XplatUIOSX.cs: same.
+
+	* XplatUIWin32.cs: same.
+
 2006-10-03  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: Don't call on_directory_changed inside
