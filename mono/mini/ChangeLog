@@ -1,3 +1,14 @@
+2006-10-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (mono_aot_get_method): Change this to return the native code
+	address instead of a MonoJitInfo* to avoid decoding the exception info for the
+	method.
+
+	* aot-runtime.c aot-compiler.c: Use uint16 instead of uint32 entries in the
+	name cache to reduce its size.
+
+	* mini.h (MONO_AOT_FILE_VERSION): Bump aot file format version.
+
 2006-10-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c: Save/restore the current LMF structure more efficiently using
