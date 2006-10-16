@@ -1,4 +1,9 @@
 
+Mon Oct 16 16:53:12 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* sgen-gc.c, gc-internal.h, gc.c: added API to collect and remove
+	all the objects with finalizers belonging to an unloading appdomain.
+
 Mon Oct 16 15:08:41 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* sgen-gc.c: added ability to allocate even when the nursery is fully
