@@ -1,5 +1,10 @@
 2006-10-17 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* DataBoundControl.cs: fixed: DataBind calls
+	CreateDataSourceSelectArguments() and stores result in 	SelectArguments
+
+2006-10-17 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* DetailsView.cs: 
 	* DetailsView.js: 
 	fixed: EnablePagingCallbacks feature.

@@ -188,7 +188,8 @@ namespace System.Web.UI.WebControls {
 			if (!IsBoundUsingDataSourceID)
 				OnDataBinding (EventArgs.Empty);
 
-			GetData ().Select (CreateDataSourceSelectArguments (), new DataSourceViewSelectCallback (OnSelect));
+			SelectArguments = CreateDataSourceSelectArguments ();
+			GetData ().Select (SelectArguments, new DataSourceViewSelectCallback (OnSelect));
 			MarkAsDataBound ();
 			
 			// Raise the DataBound event.
@@ -217,6 +218,9 @@ namespace System.Web.UI.WebControls {
 				if (selectArguments == null)
 					selectArguments = CreateDataSourceSelectArguments ();
 				return selectArguments;
+			}
+			private set {
+				selectArguments = value;
 			}
 		}
 

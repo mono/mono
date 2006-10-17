@@ -55,6 +55,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		class MyDataBoundControl : DataBoundControl
 		{
 			public int CreateDataSourceSelectArgumentsCalled;
+			public DataSourceSelectArguments CreatedDataSourceSelectArguments;
 			private StringBuilder dataBindTrace = new StringBuilder ();
 			public string DataBindTrace {
 				get { return dataBindTrace.ToString (); }
@@ -112,7 +113,8 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			protected override DataSourceSelectArguments CreateDataSourceSelectArguments () {
 				CreateDataSourceSelectArgumentsCalled++;
-				return base.CreateDataSourceSelectArguments ();
+				CreatedDataSourceSelectArguments = base.CreateDataSourceSelectArguments ();
+				return CreatedDataSourceSelectArguments;
 			}
 
 			public DataSourceSelectArguments GetSelectArguments () {
@@ -169,11 +171,13 @@ namespace MonoTests.System.Web.UI.WebControls
 			DataSourceSelectArguments arg1 = dc.GetSelectArguments ();
 			Assert.AreEqual (1, dc.CreateDataSourceSelectArgumentsCalled, "CreateDataSourceSelectArgumentsCalled#1");
 			dc.DataBind ();
+			DataSourceSelectArguments argCreated2 = dc.CreatedDataSourceSelectArguments;
 			DataSourceSelectArguments arg2 = dc.GetSelectArguments ();
 			Assert.AreEqual (2, dc.CreateDataSourceSelectArgumentsCalled, "CreateDataSourceSelectArgumentsCalled#2");
 			dc.DataBind ();
+			DataSourceSelectArguments argCreated3 = dc.CreatedDataSourceSelectArguments;
 			Assert.AreEqual (3, dc.CreateDataSourceSelectArgumentsCalled, "CreateDataSourceSelectArgumentsCalled#3");
-			Assert.IsTrue(object.ReferenceEquals(arg1, arg1), "CreateDataSourceSelectArgumentsCalled#4");
+			Assert.IsTrue (object.ReferenceEquals (argCreated2, arg2), "CreateDataSourceSelectArgumentsCalled#4");
 		}
 		
 		[Test]
