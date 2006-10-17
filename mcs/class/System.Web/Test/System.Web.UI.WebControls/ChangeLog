@@ -1,5 +1,9 @@
 2006-10-17 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* FormViewTest.cs: added tests
+			
+2006-10-17 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* DataBoundControlTest.cs: added test
 			
 2006-10-17 Vladimir Krasnov <vladimirk@mainsoft.com>

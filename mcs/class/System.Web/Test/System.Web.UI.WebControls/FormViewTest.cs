@@ -54,6 +54,37 @@ namespace MonoTests.System.Web.UI.WebControls
 {
 	[TestFixture]	
 	public class FormViewTest {	
+
+		public class DataSourceObject
+		{
+			public static List<string> GetList (string sortExpression, int startRowIndex, int maximumRows) {
+				return GetList ();
+			}
+
+			public static List<string> GetList (int startRowIndex, int maximumRows) {
+				return GetList ();
+			}
+
+			public static List<string> GetList (string sortExpression) {
+				return GetList ();
+			}
+
+			public static List<string> GetList () {
+				List<string> list = new List<string> ();
+				list.Add ("Norway");
+				list.Add ("Sweden");
+				list.Add ("France");
+				list.Add ("Italy");
+				list.Add ("Israel");
+				list.Add ("Russia");
+				return list;
+			}
+
+			public static int GetCount () {
+				return GetList ().Count;
+			}
+		}
+		
 		public class Poker : FormView {
 			public bool isInitializePager=false;
 			public bool ensureDataBound=false;
@@ -93,6 +124,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			public DataSourceSelectArguments DoCreateDataSourceSelectArguments ()
 			{
 				return CreateDataSourceSelectArguments ();
+			}
+
+			public DataSourceView DoGetData ()
+			{
+				return GetData ();
 			}
 
 			public FormViewRow DoCreateRow (int itemIndex,DataControlRowType rowType,DataControlRowState rowState)
@@ -1674,6 +1710,65 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			Assert.AreEqual (FormViewMode.Insert, view.CurrentMode, "FormView_CurrentMode#1");
 			view.ChangeMode (FormViewMode.Edit);
 			Assert.AreEqual (FormViewMode.Edit, view.CurrentMode, "FormView_CurrentMode#2");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void FormView_CreateDataSourceSelectArguments2 () {
+			DataSourceView view;
+			Page p = new Page ();
+
+			Poker dv = new Poker ();
+			p.Controls.Add (dv);
+
+			ObjectDataSource data = new ObjectDataSource ();
+			data.TypeName = typeof (DataSourceObject).AssemblyQualifiedName;
+			data.SelectMethod = "GetList";
+			data.SortParameterName = "sortExpression";
+			DataSourceSelectArguments arg;
+			p.Controls.Add (data);
+
+			dv.DataSource = data;
+			dv.DataBind ();
+
+			arg = dv.DoCreateDataSourceSelectArguments ();
+			Assert.IsTrue (arg.Equals (DataSourceSelectArguments.Empty), "Default");
+
+			dv.AllowPaging = true;
+			dv.PageIndex = 2;
+			arg = dv.DoCreateDataSourceSelectArguments ();
+			view = dv.DoGetData ();
+			Assert.IsFalse (view.CanPage);
+			Assert.IsTrue (view.CanRetrieveTotalRowCount);
+			Assert.IsTrue (arg.Equals (DataSourceSelectArguments.Empty), "AllowPaging = true, CanPage = false, CanRetrieveTotalRowCount = true");
+
+			// make DataSourceView.CanPage = true
+			data.EnablePaging = true;
+
+			arg = dv.DoCreateDataSourceSelectArguments ();
+			view = dv.DoGetData ();
+			Assert.IsTrue (view.CanPage);
+			Assert.IsFalse (view.CanRetrieveTotalRowCount);
+			Assert.IsTrue (arg.Equals (new DataSourceSelectArguments (2, -1)), "AllowPaging = true, CanPage = true, CanRetrieveTotalRowCount = false");
+
+			dv.AllowPaging = false;
+			arg = dv.DoCreateDataSourceSelectArguments ();
+			Assert.IsTrue (arg.Equals (DataSourceSelectArguments.Empty), "AllowPaging = false, CanPage = true, CanRetrieveTotalRowCount = false");
+
+			// make DataSourceView.CanRetrieveTotalRowCount = true
+			data.SelectCountMethod = "GetCount";
+
+			arg = dv.DoCreateDataSourceSelectArguments ();
+			Assert.IsTrue (arg.Equals (DataSourceSelectArguments.Empty), "AllowPaging = false, CanPage = true, CanRetrieveTotalRowCount = true");
+
+			dv.AllowPaging = true;
+			arg = dv.DoCreateDataSourceSelectArguments ();
+			DataSourceSelectArguments arg1 = new DataSourceSelectArguments (2, 1);
+			arg1.RetrieveTotalRowCount = true;
+			view = dv.DoGetData ();
+			Assert.IsTrue (view.CanPage);
+			Assert.IsTrue (view.CanRetrieveTotalRowCount);
+			Assert.IsTrue (arg.Equals (arg1), "AllowPaging = true, CanPage = true, CanRetrieveTotalRowCount = true");
 		}
 	}
 

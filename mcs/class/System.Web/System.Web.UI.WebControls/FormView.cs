@@ -781,7 +781,19 @@ namespace System.Web.UI.WebControls
 		
 		protected override DataSourceSelectArguments CreateDataSourceSelectArguments ()
 		{
-			return base.CreateDataSourceSelectArguments ();
+			DataSourceSelectArguments arg = new DataSourceSelectArguments ();
+			DataSourceView view = GetData ();
+			if (AllowPaging && view.CanPage) {
+				arg.StartRowIndex = PageIndex;
+				if (view.CanRetrieveTotalRowCount) {
+					arg.RetrieveTotalRowCount = true;
+					arg.MaximumRows = 1;
+				}
+				else {
+					arg.MaximumRows = -1;
+				}
+			}
+			return arg;
 		}
 		
 		protected virtual FormViewRow CreateRow (int rowIndex, DataControlRowType rowType, DataControlRowState rowState)
@@ -1037,14 +1049,6 @@ namespace System.Web.UI.WebControls
 				RequiresDataBinding = false;
 				PerformDataBinding (new object [] { null });
 				return;
-			}
-			
-			DataSourceView view = GetData ();
-			if (AllowPaging && view.CanPage) {
-				SelectArguments.StartRowIndex = PageIndex;
-				SelectArguments.MaximumRows = 1;
-				if (view.CanRetrieveTotalRowCount)
-					SelectArguments.RetrieveTotalRowCount = true;
 			}
 
 			cachedKeyProperties = null;
