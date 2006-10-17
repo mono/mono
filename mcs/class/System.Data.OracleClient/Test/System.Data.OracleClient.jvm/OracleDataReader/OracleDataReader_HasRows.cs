@@ -35,7 +35,9 @@ namespace MonoTests.System.Data.OracleClient
 {
 
 [TestFixture]
+#if !TARGET_JVM
 [Category("NotWorking")]
+#endif
 public class OracleDataReader_HasRows : GHTBase
 {
 	Exception exp;

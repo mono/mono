@@ -70,7 +70,8 @@ namespace MonoTests.System.Data.OracleClient
 		public void TearDown()
 		{
 			// transaction use was add for PostgreSQL
-			tr.Commit();
+			if (tr != null)
+				tr.Commit();
 			if (con != null)
 			{
 				if (con.State == ConnectionState.Open) con.Close();
