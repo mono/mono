@@ -1,4 +1,9 @@
 
+Tue Oct 17 16:59:59 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: small cleanup, using a function to insert a MonoString
+	in the string heap.
+
 Tue Oct 17 16:45:27 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: moving GC fixes.
