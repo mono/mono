@@ -43,6 +43,7 @@ using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
+using System.Collections.Generic;
 
 
 namespace MonoTests.System.Web.UI.WebControls
@@ -50,7 +51,37 @@ namespace MonoTests.System.Web.UI.WebControls
 	[TestFixture]	
 	public class DetailsViewTest {
 
-		public class PokerDetailsView: DetailsView 
+		public class DataSourceObject
+		{
+			public static List<string> GetList (string sortExpression, int startRowIndex, int maximumRows) {
+				return GetList ();
+			}
+
+			public static List<string> GetList (int startRowIndex, int maximumRows) {
+				return GetList ();
+			}
+
+			public static List<string> GetList (string sortExpression) {
+				return GetList ();
+			}
+
+			public static List<string> GetList () {
+				List<string> list = new List<string> ();
+				list.Add ("Norway");
+				list.Add ("Sweden");
+				list.Add ("France");
+				list.Add ("Italy");
+				list.Add ("Israel");
+				list.Add ("Russia");
+				return list;
+			}
+
+			public static int GetCount () {
+				return GetList ().Count;
+			}
+		}
+		
+		public class PokerDetailsView : DetailsView 
 		{
 			public bool ensureDataBound=false;
 			public bool isInitializePager = false;
@@ -290,6 +321,16 @@ namespace MonoTests.System.Web.UI.WebControls
 			public void DoEnsureChildControls ()
 			{
 				base.EnsureChildControls ();
+			}
+
+			public DataSourceSelectArguments DoCreateDataSourceSelectArguments ()
+			{
+				return CreateDataSourceSelectArguments ();
+			}
+
+			public DataSourceView DoGetData ()
+			{
+				return GetData ();
 			}
 		}
 
@@ -1796,8 +1837,64 @@ namespace MonoTests.System.Web.UI.WebControls
 			dv.UpdateItem (true);
 		}
 
+		[Test]
+		[Category ("NotWorking")]
+		public void DetailsView_CreateDataSourceSelectArguments () {
+			DataSourceView view;
+			Page p = new Page ();
 
+			PokerDetailsView dv = new PokerDetailsView ();
+			p.Controls.Add (dv);
 
+			ObjectDataSource data = new ObjectDataSource ();
+			data.TypeName = typeof (DataSourceObject).AssemblyQualifiedName;
+			data.SelectMethod = "GetList";
+			data.SortParameterName = "sortExpression";
+			DataSourceSelectArguments arg;
+			p.Controls.Add (data);
+
+			dv.DataSource = data;
+			dv.DataBind ();
+
+			arg = dv.DoCreateDataSourceSelectArguments ();
+			Assert.IsTrue (arg.Equals (DataSourceSelectArguments.Empty), "Default");
+
+			dv.AllowPaging = true;
+			dv.PageIndex = 2;
+			arg = dv.DoCreateDataSourceSelectArguments ();
+			view = dv.DoGetData ();
+			Assert.IsFalse (view.CanPage);
+			Assert.IsTrue (view.CanRetrieveTotalRowCount);
+			Assert.IsTrue (arg.Equals (DataSourceSelectArguments.Empty), "AllowPaging = true, CanPage = false, CanRetrieveTotalRowCount = true");
+
+			// make DataSourceView.CanPage = true
+			data.EnablePaging = true;
+
+			arg = dv.DoCreateDataSourceSelectArguments ();
+			view = dv.DoGetData ();
+			Assert.IsTrue (view.CanPage);
+			Assert.IsFalse (view.CanRetrieveTotalRowCount);
+			Assert.IsTrue (arg.Equals (new DataSourceSelectArguments (2, -1)), "AllowPaging = true, CanPage = true, CanRetrieveTotalRowCount = false");
+
+			dv.AllowPaging = false;
+			arg = dv.DoCreateDataSourceSelectArguments ();
+			Assert.IsTrue (arg.Equals (DataSourceSelectArguments.Empty), "AllowPaging = false, CanPage = true, CanRetrieveTotalRowCount = false");
+
+			// make DataSourceView.CanRetrieveTotalRowCount = true
+			data.SelectCountMethod = "GetCount";
+
+			arg = dv.DoCreateDataSourceSelectArguments ();
+			Assert.IsTrue (arg.Equals (DataSourceSelectArguments.Empty), "AllowPaging = false, CanPage = true, CanRetrieveTotalRowCount = true");
+
+			dv.AllowPaging = true;
+			arg = dv.DoCreateDataSourceSelectArguments ();
+			DataSourceSelectArguments arg1 = new DataSourceSelectArguments (2, 1);
+			arg1.RetrieveTotalRowCount = true;
+			view = dv.DoGetData ();
+			Assert.IsTrue (view.CanPage);
+			Assert.IsTrue (view.CanRetrieveTotalRowCount);
+			Assert.IsTrue (arg.Equals (arg1), "AllowPaging = true, CanPage = true, CanRetrieveTotalRowCount = true");
+		}
 	}
 
 	public class DTemplate : ITemplate

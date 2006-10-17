@@ -1,3 +1,7 @@
+2006-10-17 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DetailsViewTest.cs: added tests
+			
 2006-10-12 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* GridViewTest.cs: added tests

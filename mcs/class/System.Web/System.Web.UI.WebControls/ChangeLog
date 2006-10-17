@@ -1,3 +1,8 @@
+2006-10-17 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DetailsView.cs: fixed: CreateDataSourceSelectArguments method.
+	(corresponding test does not work because bug in ObjectDataSourceView)
+
 2006-10-12 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* GridView.cs: fixed: EnableSortingAndPagingCallbacks feature.
