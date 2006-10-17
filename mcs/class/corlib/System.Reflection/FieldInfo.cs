@@ -233,6 +233,11 @@ namespace System.Reflection {
 		public virtual Type[] GetRequiredCustomModifiers () {
 			throw new NotImplementedException ();
 		}
+
+		public virtual object GetRawConstantValue ()
+		{
+			throw new NotSupportedException ("This non-CLS method is not implemented.");
+		}
 #endif
 
 		void _FieldInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)

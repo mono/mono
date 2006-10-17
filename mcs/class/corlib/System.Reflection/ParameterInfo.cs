@@ -103,23 +103,53 @@ namespace System.Reflection
 		}
 
 		public bool IsIn {
-			get {return (AttrsImpl & ParameterAttributes.In) != 0;}
+			get {
+#if NET_2_0
+				return (Attributes & ParameterAttributes.In) != 0;
+#else
+				return (AttrsImpl & ParameterAttributes.In) != 0;
+#endif
+			}
 		}
 
 		public bool IsLcid {
-			get {return (AttrsImpl & ParameterAttributes.Lcid) != 0;}
+			get {
+#if NET_2_0
+				return (Attributes & ParameterAttributes.Lcid) != 0;
+#else
+				return (AttrsImpl & ParameterAttributes.Lcid) != 0;
+#endif
+			}
 		}
 
 		public bool IsOptional {
-			get {return (AttrsImpl & ParameterAttributes.Optional) != 0;}
+			get {
+#if NET_2_0
+				return (Attributes & ParameterAttributes.Optional) != 0;
+#else
+				return (AttrsImpl & ParameterAttributes.Optional) != 0;
+#endif
+			}
 		}
 
 		public bool IsOut {
-			get {return (AttrsImpl & ParameterAttributes.Out) != 0;}
+			get {
+#if NET_2_0
+				return (Attributes & ParameterAttributes.Out) != 0;
+#else
+				return (AttrsImpl & ParameterAttributes.Out) != 0;
+#endif
+			}
 		}
 
 		public bool IsRetval {
-			get {return (AttrsImpl & ParameterAttributes.Retval) != 0;}
+			get {
+#if NET_2_0
+				return (Attributes & ParameterAttributes.Retval) != 0;
+#else
+				return (AttrsImpl & ParameterAttributes.Retval) != 0;
+#endif
+			}
 		}
 
 		public virtual MemberInfo Member {

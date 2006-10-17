@@ -1,3 +1,10 @@
+2006-10-17  Kornél Pál  <kornelpal@gmail.com>
+
+	* FieldInfo.cs: Added GetRawConstantValue (). Note that throwing a
+	  NotSupportedException is the proper implementation.
+	* ParameterInfo.cs: Use Attributes in Is... properties on profile 2.0
+	  that is expected by subclasses.
+
 2006-10-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyName.cs: No need to convert filename to absolute path before
