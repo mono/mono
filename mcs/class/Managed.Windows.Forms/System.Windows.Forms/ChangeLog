@@ -1,3 +1,7 @@
+2006-10-17  Rolf Bjarne Kvinge  <rolfkvinge@ya.com>
+	* ThemeWin32Classic.cs: changed drawing of selected days
+	to make them look better.
+
 2006-10-16  Chris Toshok  <toshok@ximian.com>
 
 	* Hwnd.cs: replace the user_data/client_dc/non_client_dc with

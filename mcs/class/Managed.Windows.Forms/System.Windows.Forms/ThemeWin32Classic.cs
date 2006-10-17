@@ -2731,18 +2731,18 @@ namespace System.Windows.Forms
 				date_color = mc.ForeColor;
 			}
 
-
+			const int inflate = -1;
 			if (date == mc.SelectionStart && date == mc.SelectionEnd) {
 				// see if the date is in the start of selection
 				date_color = mc.BackColor;
 				// draw the left hand of the back ground
-				Rectangle selection_rect = Rectangle.Inflate(rectangle, -3, -3);				
-				dc.FillPie (ResPool.GetSolidBrush (mc.TitleBackColor), selection_rect, 0, 359);
+				Rectangle selection_rect = Rectangle.Inflate (rectangle, inflate, inflate);				
+				dc.FillPie (ResPool.GetSolidBrush (mc.TitleBackColor), selection_rect, 0, 360);
 			} else if (date == mc.SelectionStart) {
 				// see if the date is in the start of selection
 				date_color = mc.BackColor;
 				// draw the left hand of the back ground
-				Rectangle selection_rect = Rectangle.Inflate(rectangle, -3, -3);				
+				Rectangle selection_rect = Rectangle.Inflate (rectangle, inflate, inflate);				
 				dc.FillPie (ResPool.GetSolidBrush (mc.TitleBackColor), selection_rect, 90, 180);
 				// fill the other side as a straight rect
 				if (date < mc.SelectionEnd) 
@@ -2756,7 +2756,7 @@ namespace System.Windows.Forms
 				// see if it is the end of selection
 				date_color = mc.BackColor;
 				// draw the left hand of the back ground
-				Rectangle selection_rect = Rectangle.Inflate(rectangle, -3, -3);
+				Rectangle selection_rect = Rectangle.Inflate (rectangle, inflate, inflate);
 				dc.FillPie (ResPool.GetSolidBrush (mc.TitleBackColor), selection_rect, 270, 180);
 				// fill the other side as a straight rect
 				if (date > mc.SelectionStart) {
@@ -2768,7 +2768,7 @@ namespace System.Windows.Forms
 				// now see if it's in the middle
 				date_color = mc.BackColor;
 				// draw the left hand of the back ground
-				Rectangle selection_rect = Rectangle.Inflate(rectangle, 0, -3);
+				Rectangle selection_rect = Rectangle.Inflate (rectangle, 0, inflate);
 				dc.FillRectangle (ResPool.GetSolidBrush (mc.TitleBackColor), selection_rect);
 			}
 
