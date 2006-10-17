@@ -1,3 +1,11 @@
+2006-10-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-sparc.c: Call mono_arch_flush_icache () in a couple of places.
+
+	* mini-sparc.c (mono_sparc_flushw): Call mono_arch_flush_icache ().
+
+	* mini-exceptions.c: Add proper include files for getpid ().
+
 2006-10-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (mono_aot_get_method): Change this to return the native code
