@@ -1,3 +1,11 @@
+2006-10-17 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DetailsView.cs: 
+	* DetailsView.js: 
+	fixed: EnablePagingCallbacks feature.
+	when postback is invoked after callback control state is restored
+	properly. 
+
 2006-10-17 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* SqlDataSource.cs, SqlDataSourceView.cs: redesign and bug fixes

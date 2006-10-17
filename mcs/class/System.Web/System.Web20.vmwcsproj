@@ -1299,6 +1299,9 @@
 		<EmbeddedResource Include="System.Web.UI.WebControls\GridView.js">
 			<LogicalName>GridView.js</LogicalName>
 		</EmbeddedResource>
+		<EmbeddedResource Include="System.Web.UI.WebControls\DetailsView.js">
+			<LogicalName>DetailsView.js</LogicalName>
+		</EmbeddedResource>
 		<EmbeddedResource Include="System.Web.UI.WebControls\Menu.js">
 			<LogicalName>Menu.js</LogicalName>
 		</EmbeddedResource>

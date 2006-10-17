@@ -105,7 +105,7 @@ namespace System.Web.UI.WebControls
 		// Control state
 		int pageIndex;
 		DetailsViewMode currentMode = DetailsViewMode.ReadOnly; 
-		int pageCount = 0;
+		int pageCount;
 		
 		public DetailsView ()
 		{
@@ -765,6 +765,8 @@ namespace System.Web.UI.WebControls
 				return pageIndex;
 			}
 			set {
+				if (value == pageIndex)
+					return;
 				pageIndex = value;
 				RequireBinding ();
 			}
@@ -1688,22 +1690,13 @@ namespace System.Web.UI.WebControls
 			RaiseCallbackEvent (eventArgs);
 		}
 		
-		string callbackResult;
 		protected virtual void RaiseCallbackEvent (string eventArgs)
 		{
 			string[] clientData = eventArgs.Split ('|');
-			pageIndex = int.Parse (clientData[0]);
-			RequireBinding ();
+			PageIndex = int.Parse (clientData[0]);
 			
-			RaisePostBackEvent (clientData[2]);
-			EnsureDataBound ();
-			
-			StringWriter sw = new StringWriter ();
-			sw.Write (PageIndex.ToString());
-
-			HtmlTextWriter writer = new HtmlTextWriter (sw);
-			RenderGrid (writer);
-			callbackResult = sw.ToString ();
+			RaisePostBackEvent (clientData[1]);
+			DataBind ();
 		}
 
 		string ICallbackEventHandler.GetCallbackResult ()
@@ -1713,7 +1706,14 @@ namespace System.Web.UI.WebControls
 
 		protected virtual string GetCallbackResult ()
 		{
-			return callbackResult;
+			PrepareControlHierarchy ();
+
+			StringWriter sw = new StringWriter ();
+			sw.Write (PageIndex.ToString () + '|');
+
+			HtmlTextWriter writer = new HtmlTextWriter (sw);
+			RenderGrid (writer);
+			return sw.ToString ();
 		}
 
 		[MonoTODO]
@@ -1725,15 +1725,20 @@ namespace System.Web.UI.WebControls
 		string ICallbackContainer.GetCallbackScript (IButtonControl control, string argument)
 		{
 			if (EnablePagingCallbacks)
-				return "javascript:GridView_ClientEvent (\"" + ClientID + "\",\"" + control.CommandName + "$" + control.CommandArgument + "\"); return false;";
+				return "javascript:DetailsView_ClientEvent (\"" + ClientID + "\",\"" + control.CommandName + "$" + control.CommandArgument + "\"); return false;";
 			else
 				return null;
 		}
 
-		[MonoTODO]
 		protected override void OnPagePreLoad (object sender, EventArgs e)
 		{
 			base.OnPagePreLoad (sender, e);
+
+			if (Page.IsPostBack && EnablePagingCallbacks) {
+				int page;
+				if (int.TryParse (Page.Request.Form [ClientID + "_Page"], out page))
+					PageIndex = page;
+			}
 		}
 		
 		protected internal override void OnPreRender (EventArgs e)
@@ -1742,10 +1747,11 @@ namespace System.Web.UI.WebControls
 			
 			if (EnablePagingCallbacks)
 			{
-				if (!Page.ClientScript.IsClientScriptIncludeRegistered (typeof(GridView), "GridView.js")) {
-					string url = Page.ClientScript.GetWebResourceUrl (typeof(GridView), "GridView.js");
-					Page.ClientScript.RegisterClientScriptInclude (typeof(GridView), "GridView.js", url);
+				if (!Page.ClientScript.IsClientScriptIncludeRegistered (typeof(DetailsView), "DetailsView.js")) {
+					string url = Page.ClientScript.GetWebResourceUrl (typeof(DetailsView), "DetailsView.js");
+					Page.ClientScript.RegisterClientScriptInclude (typeof(DetailsView), "DetailsView.js", url);
 				}
+				Page.ClientScript.RegisterHiddenField (ClientID + "_Page", PageIndex.ToString ());
 				
 				string cgrid = ClientID + "_data";
 				string script = string.Format ("var {0} = new Object ();\n", cgrid);
