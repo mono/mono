@@ -8,7 +8,7 @@
 #ifndef INC_Mono_Posix_map_ICALLS_H
 #define INC_Mono_Posix_map_ICALLS_H
 
-#include <glib/gtypes.h>
+#include <glib.h>
 
 G_BEGIN_DECLS
 
