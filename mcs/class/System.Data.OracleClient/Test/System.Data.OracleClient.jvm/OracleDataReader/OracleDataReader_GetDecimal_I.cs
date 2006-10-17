@@ -34,6 +34,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Data.OracleClient
 {
 [TestFixture]
+[Category("NotWorking")]
 public class OracleDataReader_GetDecimal_I : ADONetTesterClass
 {
 	private int testTypesInvocations;

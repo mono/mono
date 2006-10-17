@@ -35,6 +35,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Data.OracleClient
 {
 	[TestFixture]
+	[Category("NotWorking")]
 	public class OracleDataReader_GetDateTime : ADONetTesterClass
 	{
 		private OracleConnection con;

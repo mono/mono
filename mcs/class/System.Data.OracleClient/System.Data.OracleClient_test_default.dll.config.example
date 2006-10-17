@@ -1,5 +1,5 @@
 <configuration>
 	<appSettings>
-		<add key="OracleConnectionString" value="Data Source=;User ID=;Password=;" />
+		<add key="ConnectionString" value="Data Source=;User ID=GHTDB;Password=GHTDB;" />
 	</appSettings>
 </configuration>

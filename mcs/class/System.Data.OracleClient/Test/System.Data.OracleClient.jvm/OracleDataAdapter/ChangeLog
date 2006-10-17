@@ -1,0 +1,8 @@
+2006-10-17 Leszek Ciesielski <skolima@gmail.com>
+
+	* OracleDataAdapter_RowUpdating.cs:
+	* OracleDataAdapter_Update_Dr.cs:
+	* OracleDataAdapter_Update_Dt.cs:
+	* OracleDataAdapter_RowUpdated.cs:
+	* OracleDataAdapter_Update_DsStr.cs:
+	* OracleDataAdapter_Update_Ds.cs: Set attribute NotWorking

@@ -461,7 +461,7 @@ namespace System.Data.OracleClient {
 
 		public object ExecuteScalar ()
 		{
-			object output = DBNull.Value;
+			object output = null;//if we find nothing we return this
 
 			AssertConnectionIsOpen ();
 			AssertTransactionMatch ();
@@ -486,9 +486,8 @@ namespace System.Data.OracleClient {
 
 					if (statement.Fetch ()) {
 						OciDefineHandle defineHandle = (OciDefineHandle) statement.Values [0];
-						if (defineHandle.IsNull)
-							output = DBNull.Value;
-						else {
+						if (!defineHandle.IsNull)
+						{
 							switch (defineHandle.DataType) {
 							case OciDataType.Blob:
 							case OciDataType.Clob:
@@ -505,8 +504,6 @@ namespace System.Data.OracleClient {
 							}
 						}
 					}
-					else
-						output = DBNull.Value;
 					UpdateParameterValues ();
 				}
 			}

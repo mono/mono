@@ -33,6 +33,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Data.OracleClient
 {
 	[TestFixture]
+	[Category("NotWorking")]
 	public class OracleDataReader_GetValues : ADONetTesterClass 
 	{
 		public static void Main()

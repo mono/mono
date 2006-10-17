@@ -72,7 +72,10 @@ namespace MonoTests.System.Data.Utils {
 
 		public static string ConnectionString {
 			get {
-				return Sys.Configuration.ConfigurationSettings.AppSettings["ConnectionString"];
+                                string connection_string = Sys.Configuration.ConfigurationSettings.AppSettings["ConnectionString"];
+                                if(connection_string == null)
+                                        NUnit.Framework.Assert.Ignore ("Please consult README.tests.");
+                                return connection_string;
 			}
 		}
 

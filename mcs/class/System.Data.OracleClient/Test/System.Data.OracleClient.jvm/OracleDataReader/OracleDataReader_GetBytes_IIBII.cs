@@ -34,6 +34,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Data.OracleClient
 {
 	[TestFixture]
+	[Category("NotWorking")]
 	public class OracleDataReader_GetBytes_IIBII : GHTBase
 	{
 		int testTypesInvocations;

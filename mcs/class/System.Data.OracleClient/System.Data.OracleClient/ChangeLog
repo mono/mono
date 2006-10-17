@@ -1,3 +1,12 @@
+2006-10-17  Leszek Ciesielski <skolima@gmail.com>
+
+	* OracleCommand.cs: changed returned value of ExecuteScalar to null when no recods are
+	found
+	* OracleDataReader.cs: Marked GetSchemaTable with MonoTODO
+	* OracleParameter.cs: fixed the constructor (it ignored some
+	parameters and could not handle System.DBNull)
+	* OciDefineHandle.cs: applied patch for trimming strings with unicode,
+	although I can't test it :-/
 2006-05-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OciGlue.cs: Set eol-style to native.

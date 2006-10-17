@@ -263,9 +263,8 @@ namespace System.Data.OracleClient.Oci
 		{
 			fieldType = typeof (System.String);
 
-			// The buffer is able to contain twice the defined size
-			// to allow usage of multibyte characters
-			value = Marshal.AllocHGlobal (definedSize * 2);
+			int maxByteCount = Encoding.UTF8.GetMaxByteCount (definedSize);
+			value = Marshal.AllocHGlobal (maxByteCount);
 
 			ociType = OciDataType.Char;
 
@@ -276,7 +275,7 @@ namespace System.Data.OracleClient.Oci
 						ErrorHandle,
 						position + 1,
 						value,
-						definedSize * 2,
+						maxByteCount,
 						ociType,
 						ref indicator,
 						ref rlenp,

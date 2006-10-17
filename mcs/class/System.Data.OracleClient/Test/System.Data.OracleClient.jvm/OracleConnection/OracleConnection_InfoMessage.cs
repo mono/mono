@@ -32,6 +32,7 @@ using System.Data.OracleClient;
 namespace MonoTests.System.Data.OracleClient
 {
 	[TestFixture]
+	[Category("NotWorking")]
 	public class OracleConnection_InfoMessage : GHTBase
 	{
 		private int errorCounter=0;

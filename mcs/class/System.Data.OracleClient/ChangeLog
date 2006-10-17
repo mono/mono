@@ -1,3 +1,9 @@
+2006-10-17	Leszek Ciesielski <skolima@gmail.com>
+
+	* System.Data.OracleClient_test.dll.sources:
+	* System.Data.OracleClient_test_default.dll.config.example:
+	* README.tests: integrated the Mainsoft test suite
+
 2006-10-02	Leszek Ciesielski <skolima@gmail.com>
 
 	* README.tests : added information about net_2_0 profile.

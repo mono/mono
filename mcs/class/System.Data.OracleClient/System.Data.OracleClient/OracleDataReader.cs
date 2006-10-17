@@ -581,6 +581,7 @@ namespace System.Data.OracleClient {
 			}
 		}
 
+		[MonoTODO("Implement this properly, with all needed information.")]
 		public DataTable GetSchemaTable ()
 		{
 			StringCollection keyinfo = null;

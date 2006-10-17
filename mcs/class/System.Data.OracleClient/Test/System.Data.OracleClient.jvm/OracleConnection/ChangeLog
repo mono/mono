@@ -1,0 +1,4 @@
+2006-10-17 Leszek Ciesielski <skolima@gmail.com>
+
+	* OracleConnection_InfoMessage.cs:
+	* OracleParameter_ctor_SOtype.cs: Set attribute NotWorking

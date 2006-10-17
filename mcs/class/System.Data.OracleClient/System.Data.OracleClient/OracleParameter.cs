@@ -121,8 +121,13 @@ namespace System.Data.OracleClient {
 		public OracleParameter (string name, OracleType dataType, int size, ParameterDirection direction, bool isNullable, byte precision, byte scale, string srcColumn, DataRowVersion srcVersion, object value)
 		{
 			this.name = name;
+			if(size < 0)
+				throw new ArgumentException("Size must be not be negative.");
 			this.size = size;
 			this.value = value;
+			this.isNullable = isNullable;
+			this.precision = precision;
+			this.scale = scale;
 
 			OracleType = dataType;
 			Direction = direction;
@@ -219,9 +224,13 @@ namespace System.Data.OracleClient {
 		[DefaultValue (null)]
 		[RefreshProperties (RefreshProperties.All)]
 		[TypeConverter (typeof(StringConverter))]
+		[MonoTODO("InferOracleType is not always needed")]
 		public object Value {
 			get { return this.value; }
-			set { this.value = value; }
+			set {
+				this.value = value;
+				InferOracleType(value);
+			}
 		}
 
 		#endregion // Properties
@@ -650,6 +659,8 @@ namespace System.Data.OracleClient {
 			case "System.Int16":
 				SetOracleType (OracleType.Int16);
 				break;
+			case "System.DBNull":
+				break; //unable to guess type
 			default:
 				throw new ArgumentException (exception);
 			}
