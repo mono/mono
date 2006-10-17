@@ -262,7 +262,7 @@ class HeaderFileGenerator : FileGenerator {
 		WriteHeader (sh, assembly_name);
 		sh.WriteLine ("#ifndef INC_Mono_Posix_" + file_prefix + "_H");
 		sh.WriteLine ("#define INC_Mono_Posix_" + file_prefix + "_H\n");
-		sh.WriteLine ("#include <glib/gtypes.h>\n");
+		sh.WriteLine ("#include <glib.h>\n");
 		sh.WriteLine ("G_BEGIN_DECLS\n");
 	}
 
@@ -724,7 +724,7 @@ class MphPrototypeFileGenerator : FileGenerator {
 		WriteHeader (icall, assembly_name);
 		icall.WriteLine ("#ifndef INC_Mono_Posix_" + file_prefix + "_ICALLS_H");
 		icall.WriteLine ("#define INC_Mono_Posix_" + file_prefix + "_ICALLS_H\n");
-		icall.WriteLine ("#include <glib/gtypes.h>\n");
+		icall.WriteLine ("#include <glib.h>\n");
 		icall.WriteLine ("G_BEGIN_DECLS\n");
 
 		// Kill warning about unused method
