@@ -1,4 +1,8 @@
 
+Tue Oct 17 16:45:27 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: moving GC fixes.
+
 Mon Oct 16 16:53:12 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* sgen-gc.c, gc-internal.h, gc.c: added API to collect and remove
