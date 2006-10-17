@@ -54,6 +54,8 @@ set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.Runtime.Serializatio
 rem set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.Drawing.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%J2SE.Helpers.jar
 
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%VMW_HOME%\jgac\jdbc\derby.jar
+
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;Test\mainsoft\NunitWeb\NunitWeb\bin\Debug_Java20\NunitWeb.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;Test\mainsoft\NunitWeb\NunitWeb\bin\Debug_Java20\HtmlCompare.jar
 set NUNIT_OPTIONS=/exclude=NotWorking

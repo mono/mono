@@ -1,3 +1,7 @@
+2006-10-17 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* SqlDataSource.cs, SqlDataSourceView.cs: redesign and bug fixes
+
 2006-10-17 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DetailsView.cs: fixed: CreateDataSourceSelectArguments method.

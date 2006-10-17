@@ -292,6 +292,7 @@
     <Compile Include="System.Web.UI.WebControls\SelectedDatesCollectionTest.cs" />
     <Compile Include="System.Web.UI.WebControls\SiteMapDataSourceTest.cs" />
     <Compile Include="System.Web.UI.WebControls\SiteMapPathTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\SqlDataSourceDerbyTest.cs" />
     <Compile Include="System.Web.UI.WebControls\SqlDataSourceTest.cs" />
     <Compile Include="System.Web.UI.WebControls\SqlDataSourceViewTest.cs" />
     <Compile Include="System.Web.UI.WebControls\StyleTest.cs">

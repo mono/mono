@@ -156,116 +156,94 @@ namespace System.Web.UI.WebControls {
 				((IStateManager) view).TrackViewState ();
 		}
 
-#region TODO
-		[MonoTODO]
-		[DefaultValue ("")]
-		public virtual string CacheKeyDependency {
-			get { return ViewState.GetString ("CacheKeyDependency", ""); }
-			set { ViewState ["CacheKeyDependency"] = value; }
-		}
-
 		[MonoTODO]
 		[DefaultValue (true)]
 		public virtual bool CancelSelectOnNullParameter {
-			get { return ViewState.GetBool ("CancelSelectOnNullParameter", true); }
-			set { ViewState["CancelSelectOnNullParameter"] = value; }
+			get { return View.CancelSelectOnNullParameter; }
+			set { View.CancelSelectOnNullParameter = value; }
 		}
 
-		[MonoTODO]
 		[DefaultValue (ConflictOptions.OverwriteChanges)]
 		public ConflictOptions ConflictDetection {
-			get { return (ConflictOptions) ViewState.GetInt ("ConflictDetection", (int)ConflictOptions.OverwriteChanges); }
-			set { ViewState ["ConflictDetection"] = value; }
+			get { return View.ConflictDetection; }
+			set { View.ConflictDetection = value; }
 		}
 
-		[MonoTODO]
 		[DefaultValue (SqlDataSourceCommandType.Text)]
 		public SqlDataSourceCommandType DeleteCommandType {
-			get { return (SqlDataSourceCommandType) ViewState.GetInt ("DeleteCommandType", (int)SqlDataSourceCommandType.StoredProcedure); }
-			set { ViewState ["DeleteCommandType"] = value; }
+			get { return View.DeleteCommandType; }
+			set { View.DeleteCommandType = value; }
 		}
 
-		[MonoTODO]
 		[DefaultValue (SqlDataSourceCommandType.Text)]
 		public SqlDataSourceCommandType InsertCommandType {
-			get { return (SqlDataSourceCommandType) ViewState.GetInt ("InsertCommandType", (int)SqlDataSourceCommandType.StoredProcedure); }
-			set { ViewState ["InsertCommandType"] = value; }
+			get { return View.InsertCommandType; }
+			set { View.InsertCommandType = value; }
 		}
 
-		[MonoTODO]
 		[DefaultValue (SqlDataSourceCommandType.Text)]
 		public SqlDataSourceCommandType SelectCommandType {
-			get { return (SqlDataSourceCommandType) ViewState.GetInt ("SelectCommandType", (int)SqlDataSourceCommandType.StoredProcedure); }
-			set { ViewState ["SelectCommandType"] = value; }
+			get { return View.SelectCommandType; }
+			set { View.SelectCommandType = value; }
 		}
 
-		[MonoTODO]
 		[DefaultValue (SqlDataSourceCommandType.Text)]
 		public SqlDataSourceCommandType UpdateCommandType {
-			get { return (SqlDataSourceCommandType) ViewState.GetInt ("UpdateCommandType", (int)SqlDataSourceCommandType.StoredProcedure); }
-			set { ViewState ["UpdateCommandType"] = value; }
+			get { return View.UpdateCommandType; }
+			set { View.UpdateCommandType = value; }
 		}
 
-		[MonoTODO]
 		[DefaultValue ("{0}")]
 		public string OldValuesParameterFormatString {
-			get { return ViewState.GetString ("OldValuesParameterFormatString", "{0}"); }
-			set { ViewState ["OldValuesParameterFormatString"] = value; }
+			get { return View.OldValuesParameterFormatString; }
+			set { View.OldValuesParameterFormatString = value; }
 		}
-		
+
 		[DefaultValue ("")]
-		[MonoTODO]
-		public virtual string SqlCacheDependency {
-			get { return ViewState.GetString ("SqlCacheDependency", ""); }
-			set { ViewState ["SqlCacheDependency"] = value; }
+		public string SortParameterName
+		{
+			get { return View.SortParameterName; }
+			set { View.SortParameterName = value; }
 		}
 
-		[MonoTODO]
-		[DefaultValue ("")]
-		public string SortParameterName {
-			get { return ViewState.GetString ("SortParameterName", ""); }
-			set { ViewState ["SortParameterName"] = value; }
+		[DefaultValueAttribute ("")]
+		public string FilterExpression
+		{
+			get { return View.FilterExpression; }
+			set { View.FilterExpression = value; }
 		}
-
-		[DefaultValue (0)]
-		//		[TypeConverter (typeof (DataSourceCacheDurationConverter))]
-		public virtual int CacheDuration {
-			get { return ViewState.GetInt ("CacheDuration", 0); }
-			set { ViewState ["CacheDuration"] = value; }
-		}
-
-		[DefaultValue (DataSourceCacheExpiry.Absolute)]
-		public virtual DataSourceCacheExpiry CacheExpirationPolicy {
-			get { return (DataSourceCacheExpiry) ViewState.GetInt ("CacheExpirationPolicy", (int)DataSourceCacheExpiry.Absolute); }
-			set { ViewState ["CacheExpirationPolicy"] = value; }
-		}
-
-		[DefaultValue (false)]
-		public virtual bool EnableCaching {
-			get { return ViewState.GetBool ("EnableCaching", false); }
-			set { ViewState ["EnableCaching"] = value; }
-		}
-#endregion
 
 		[DefaultValueAttribute ("")]
 		[TypeConverterAttribute ("System.Web.UI.Design.WebControls.DataProviderNameConverter, " + Consts.AssemblySystem_Design)]
 		public virtual string ProviderName {
 			get { return ViewState.GetString ("ProviderName", ""); }
-			set { ViewState ["ProviderName"] = value; }
+			set
+			{
+				ViewState ["ProviderName"] = value;
+				RaiseDataSourceChangedEvent (EventArgs.Empty);
+			}
 		}
-		
-		
+
 		[EditorAttribute ("System.Web.UI.Design.WebControls.SqlDataSourceConnectionStringEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[DefaultValueAttribute ("")]
 		public virtual string ConnectionString {
 			get { return ViewState.GetString ("ConnectionString", ""); }
-			set { ViewState ["ConnectionString"] = value; }
+			set
+			{
+
+				ViewState ["ConnectionString"] = value;
+				RaiseDataSourceChangedEvent (EventArgs.Empty);
+			}
 		}
 		
 		[DefaultValueAttribute (SqlDataSourceMode.DataSet)]
 		public SqlDataSourceMode DataSourceMode {
 			get { return (SqlDataSourceMode) ViewState.GetInt ("DataSourceMode", (int)SqlDataSourceMode.DataSet); }
-			set { ViewState ["DataSourceMode"] = value; }
+			set
+			{
+				ViewState ["DataSourceMode"] = value;
+				RaiseDataSourceChangedEvent (EventArgs.Empty);
+			}
 		}
 				
 		[DefaultValueAttribute ("")]
@@ -332,11 +310,43 @@ namespace System.Web.UI.WebControls {
 			get { return View.UpdateParameters; }
 		}
 		
-		[DefaultValueAttribute ("")]
-		public string FilterExpression {
-			get { return View.FilterExpression; }
-			set { View.FilterExpression = value; }
+#region TODO
+		[MonoTODO]
+		[DefaultValue ("")]
+		public virtual string CacheKeyDependency
+		{
+			get { return ViewState.GetString ("CacheKeyDependency", ""); }
+			set { ViewState ["CacheKeyDependency"] = value; }
 		}
+
+		[MonoTODO]
+		[DefaultValue ("")]
+		public virtual string SqlCacheDependency {
+			get { return ViewState.GetString ("SqlCacheDependency", ""); }
+			set { ViewState ["SqlCacheDependency"] = value; }
+		}
+
+		[MonoTODO]
+		[DefaultValue (0)]
+		public virtual int CacheDuration {
+			get { return ViewState.GetInt ("CacheDuration", 0); }
+			set { ViewState ["CacheDuration"] = value; }
+		}
+
+		[MonoTODO]
+		[DefaultValue (DataSourceCacheExpiry.Absolute)]
+		public virtual DataSourceCacheExpiry CacheExpirationPolicy {
+			get { return (DataSourceCacheExpiry) ViewState.GetInt ("CacheExpirationPolicy", (int)DataSourceCacheExpiry.Absolute); }
+			set { ViewState ["CacheExpirationPolicy"] = value; }
+		}
+
+		[MonoTODO]
+		[DefaultValue (false)]
+		public virtual bool EnableCaching {
+			get { return ViewState.GetBool ("EnableCaching", false); }
+			set { ViewState ["EnableCaching"] = value; }
+		}
+#endregion
 		
 		public event SqlDataSourceStatusEventHandler Deleted {
 			add { View.Deleted += value; }

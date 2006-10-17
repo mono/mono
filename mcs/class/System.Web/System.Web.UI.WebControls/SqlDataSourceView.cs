@@ -55,9 +55,9 @@ namespace System.Web.UI.WebControls {
 
 		void InitConnection ()
 		{
-                        if (factory == null) factory = owner.GetDbProviderFactoryInternal ();
-                        if (connection == null) {
-				connection = factory.CreateConnection();
+			if (factory == null) factory = owner.GetDbProviderFactoryInternal ();
+			if (connection == null) {
+				connection = factory.CreateConnection ();
 				connection.ConnectionString = owner.ConnectionString;
 			}
 		}
@@ -67,7 +67,6 @@ namespace System.Web.UI.WebControls {
 			return ExecuteDelete (keys, oldValues);
 		}
 		
-		[MonoTODO ("Handle keys, oldValues, parameters and check for path for AccessDBFile")]
 		protected override int ExecuteDelete (IDictionary keys, IDictionary oldValues)
 		{
 			if (!CanDelete)
@@ -80,10 +79,23 @@ namespace System.Web.UI.WebControls {
 			DbCommand command = factory.CreateCommand ();
 			command.CommandText = DeleteCommand;
 			command.Connection = connection;
-			command.CommandType = CommandType.Text;
+			if (DeleteCommandType == SqlDataSourceCommandType.Text)
+				command.CommandType = CommandType.Text;
+			else
+				command.CommandType = CommandType.StoredProcedure;
 
-                        if (DeleteParameters.Count > 0)
-                                InitializeParameters (command, DeleteParameters, null);
+			IDictionary oldDataValues;
+			if (ConflictDetection == ConflictOptions.CompareAllValues) {
+				oldDataValues = new Hashtable ();
+				foreach (DictionaryEntry de in keys)
+					oldDataValues [de.Key] = de.Value;
+				foreach (DictionaryEntry de in oldValues)
+					oldDataValues [de.Key] = de.Value;
+			}
+			else
+				oldDataValues = keys;
+			
+			InitializeParameters (command, DeleteParameters, null, oldDataValues, null, false);
 
 			OnDeleting (new SqlDataSourceCommandEventArgs (command));
 
@@ -111,10 +123,9 @@ namespace System.Web.UI.WebControls {
 		
 		public int Insert (IDictionary values)
 		{
-			return Insert (values);
+			return ExecuteInsert (values);
 		}
-		
-		[MonoTODO ("Handle values and parameters")]
+
 		protected override int ExecuteInsert (IDictionary values)
 		{
 			if (!CanInsert)
@@ -125,22 +136,24 @@ namespace System.Web.UI.WebControls {
 			DbCommand command = factory.CreateCommand ();
 			command.CommandText = InsertCommand;
 			command.Connection = connection;
-			command.CommandType = CommandType.Text;
+			if (InsertCommandType == SqlDataSourceCommandType.Text)
+				command.CommandType = CommandType.Text;
+			else
+				command.CommandType = CommandType.StoredProcedure;
 
-                        if (InsertParameters.Count > 0)
-                                InitializeParameters (command, InsertParameters, null);
+			InitializeParameters (command, InsertParameters, values, null, null, true);
 
 			OnInserting (new SqlDataSourceCommandEventArgs (command));
 
 			bool closed = connection.State == ConnectionState.Closed;
-
 			if (closed)
-				connection.Open();
+				connection.Open ();
 			Exception exception = null;
 			int result = -1;
 			try {
-				result = command.ExecuteNonQuery();
-			} catch (Exception e) {
+				result = command.ExecuteNonQuery ();
+			}
+			catch (Exception e) {
 				exception = e;
 			}
 
@@ -159,42 +172,98 @@ namespace System.Web.UI.WebControls {
 			return ExecuteSelect (arguments);
 		}
 
-		[MonoTODO ("Handle @arguments")]
 		protected internal override IEnumerable ExecuteSelect (DataSourceSelectArguments arguments)
 		{
+			if (SortParameterName.Length > 0 && SelectCommandType == SqlDataSourceCommandType.Text)
+				throw new NotSupportedException ("The SortParameterName property is only supported with stored procedure commands in SqlDataSource");
+
+			if (arguments.SortExpression.Length > 0 && owner.DataSourceMode == SqlDataSourceMode.DataReader)
+				throw new NotSupportedException ("SqlDataSource cannot sort. Set DataSourceMode to DataSet to enable sorting.");
+
+			if (arguments.StartRowIndex > 0 || arguments.MaximumRows > 0)
+				throw new NotSupportedException ("SqlDataSource does not have paging enabled. Set the DataSourceMode to DataSet to enable paging.");
+
+			if (FilterExpression.Length > 0 && owner.DataSourceMode == SqlDataSourceMode.DataReader)
+				throw new NotSupportedException ("SqlDataSource only supports filtering when the data source's DataSourceMode is set to DataSet.");
+
 			InitConnection ();
 
 			DbCommand command = factory.CreateCommand ();
 			command.CommandText = SelectCommand;
 			command.Connection = connection;
-			command.CommandType = CommandType.Text;
+			if (SelectCommandType == SqlDataSourceCommandType.Text)
+				command.CommandType = CommandType.Text;
+			else {
+				command.CommandType = CommandType.StoredProcedure;
+				if (SortParameterName.Length > 0 && arguments.SortExpression.Length > 0)
+					command.Parameters.Add (CreateDbParameter (ParameterPrefix + SortParameterName, arguments.SortExpression));
+			}
 
-                        if (SelectParameters.Count > 0)
-                                InitializeParameters (command, SelectParameters, null);
+			if (SelectParameters.Count > 0)
+				InitializeParameters (command, SelectParameters, null, null, null, false);
 
 			OnSelecting (new SqlDataSourceSelectingEventArgs (command, arguments));
 
+			Exception exception = null;
 			if (owner.DataSourceMode == SqlDataSourceMode.DataSet) {
-				DbDataAdapter adapter = factory.CreateDataAdapter ();
+				DataView dataView = null;
 
-				adapter.SelectCommand = command;
+				try {
+					DbDataAdapter adapter = factory.CreateDataAdapter ();
+					DataSet dataset = new DataSet ();
 
-				DataSet dataset = new DataSet ();
+					adapter.SelectCommand = command;
+					adapter.Fill (dataset, name);
 
-				adapter.Fill (dataset, name);
+					dataView = dataset.Tables [0].DefaultView;
+					if (dataView == null)
+						throw new InvalidOperationException ();
+				}
+				catch (Exception e) {
+					exception = e;
+				}
+				int rowsAffected = (dataView == null) ? 0 : dataView.Count;
+				OnSelected (new SqlDataSourceStatusEventArgs (command, rowsAffected, exception));
 
-				if (dataset.Tables.Count >= 1)
-					return dataset.Tables[0].DefaultView;
-				else
-					return dataset.CreateDataReader ();
+				if (exception != null)
+					throw exception;
+
+				if (SortParameterName.Length == 0 || SelectCommandType == SqlDataSourceCommandType.Text)
+					dataView.Sort = arguments.SortExpression;
+
+				if (FilterExpression.Length > 0) {
+					IOrderedDictionary fparams = FilterParameters.GetValues (context, owner);
+					SqlDataSourceFilteringEventArgs fargs = new SqlDataSourceFilteringEventArgs (fparams);
+					OnFiltering (fargs);
+					if (!fargs.Cancel) {
+						object [] formatValues = new object [fparams.Count];
+						for (int n = 0; n < formatValues.Length; n++) {
+							formatValues [n] = fparams [n];
+							if (formatValues [n] == null) return dataView;
+						}
+						dataView.RowFilter = string.Format (FilterExpression, formatValues);
+					}
+				}
+
+				return dataView;
 			}
 			else {
+				DbDataReader reader = null;
 				bool closed = connection.State == ConnectionState.Closed;
 
-                                if (closed)
-                                        connection.Open ();
+				if (closed)
+					connection.Open ();
+				try {
+					reader = command.ExecuteReader (closed ? CommandBehavior.CloseConnection : CommandBehavior.Default);
+				}
+				catch (Exception e) {
+					exception = e;
+				}
+				OnSelected (new SqlDataSourceStatusEventArgs (command, reader.RecordsAffected, exception));
+				if (exception != null)
+					throw exception;
 
-                                return command.ExecuteReader (closed ? CommandBehavior.CloseConnection : CommandBehavior.Default);
+				return reader;
 			}
 		}
 
@@ -203,7 +272,6 @@ namespace System.Web.UI.WebControls {
 			return ExecuteUpdate (keys, values, oldValues);
 		}
 
-		[MonoTODO ("Handle keys, values and oldValues")]
 		protected override int ExecuteUpdate (IDictionary keys, IDictionary values, IDictionary oldValues)
 		{
 			if (!CanUpdate)
@@ -216,22 +284,39 @@ namespace System.Web.UI.WebControls {
 			DbCommand command = factory.CreateCommand ();
 			command.CommandText = UpdateCommand;
 			command.Connection = connection;
-			command.CommandType = CommandType.Text;
+			if (UpdateCommandType == SqlDataSourceCommandType.Text)
+				command.CommandType = CommandType.Text;
+			else
+				command.CommandType = CommandType.StoredProcedure;
 
-                        if (UpdateParameters.Count > 0)
-                                InitializeParameters (command, UpdateParameters, null);
+			IDictionary dataValues;
+			IDictionary oldDataValues;
+			if (ConflictDetection == ConflictOptions.CompareAllValues) {
+				oldDataValues = new OrderedDictionary ();
+				dataValues = values;
+				foreach (DictionaryEntry de in keys)
+					oldDataValues [de.Key] = de.Value;
+				foreach (DictionaryEntry de in oldValues)
+					oldDataValues [de.Key] = de.Value;
+			}
+			else {
+				oldDataValues = keys;
+				dataValues = values;
+			}
+
+			InitializeParameters (command, UpdateParameters, dataValues, oldDataValues, null, false);
 
 			OnUpdating (new SqlDataSourceCommandEventArgs (command));
 
 			bool closed = connection.State == ConnectionState.Closed;
-
 			if (closed)
-				connection.Open();
+				connection.Open ();
 			Exception exception = null;
 			int result = -1;
 			try {
-			 	result = command.ExecuteNonQuery ();
-			}catch (Exception e) {
+				result = command.ExecuteNonQuery ();
+			}
+			catch (Exception e) {
 				exception = e;
 			}
 
@@ -245,20 +330,72 @@ namespace System.Web.UI.WebControls {
 			return result;
 		}
 
-                void InitializeParameters (DbCommand command, ParameterCollection parameters, IDictionary exclusionList)
-                {
-                        IOrderedDictionary values = parameters.GetValues (HttpContext.Current, owner);
+		string FormatOldParameter (string name)
+		{
+			string f = OldValuesParameterFormatString;
+			if (f.Length > 0)
+				return String.Format (f, name);
+			else
+				return name;
+		}
+		
+		void InitializeParameters (DbCommand command, ParameterCollection parameters, IDictionary values, IDictionary oldValues, IDictionary exclusionList, bool allwaysAddNewValues)
+		{
+			foreach (Parameter p in parameters) {
+				bool oldAdded = false;
+				if (oldValues != null && oldValues.Contains (p.Name)) {
+					object val = Convert.ChangeType (oldValues [p.Name], p.Type);
+					command.Parameters.Add (CreateDbParameter (FormatOldParameter (p.Name), val, p.Direction, p.Size));
+					oldAdded = true;
+				}
+				else if (oldValues != null) {
+					string ufName = p.Name.Replace (FormatOldParameter (string.Empty), string.Empty);
+					if (oldValues != null && oldValues.Contains (ufName) && !command.Parameters.Contains (p.Name)) {
+						object val = Convert.ChangeType (oldValues [ufName], p.Type);
+						command.Parameters.Add (CreateDbParameter (p.Name, val, p.Direction, p.Size));
+						oldAdded = true;
+					}
+				}
 
-                        foreach (Parameter p in parameters) {
-                                DbParameter dbp = factory.CreateParameter ();
+				if (values != null && values.Contains (p.Name)) {
+					object val = Convert.ChangeType (values [p.Name], p.Type);
+					command.Parameters.Add (CreateDbParameter (p.Name, val, p.Direction, p.Size));
+				}
+				else if (!oldAdded || allwaysAddNewValues) {
+					object val = p.GetValue (context, owner);
+					if (!command.Parameters.Contains (p.Name))
+						command.Parameters.Add (CreateDbParameter (p.Name, val, p.Direction, p.Size));
+				}
+			}
+			if (values != null) {
+				foreach (DictionaryEntry de in values)
+					if (!command.Parameters.Contains ((string) de.Key))
+						command.Parameters.Add (CreateDbParameter ((string) de.Key, de.Value));
+			}
 
-                                dbp.ParameterName = p.Name;
-                                dbp.Value = values[p.Name];
-                                dbp.Direction = p.Direction;
-                                dbp.Size = p.Size;
-                                command.Parameters.Add (dbp);
-                        }
-                }
+			if (oldValues != null) {
+				foreach (DictionaryEntry de in oldValues)
+					if (!command.Parameters.Contains (FormatOldParameter ((string) de.Key)))
+						command.Parameters.Add (CreateDbParameter (FormatOldParameter ((string) de.Key), de.Value));
+			}
+		}
+
+		private DbParameter CreateDbParameter (string name, object value)
+		{
+			return CreateDbParameter (name, value, ParameterDirection.Input, -1);
+		}
+		
+		private DbParameter CreateDbParameter (string name, object value, ParameterDirection dir, int size)
+		{
+			DbParameter dbp = factory.CreateParameter ();
+			dbp.ParameterName = name;
+			dbp.Value = value;
+			dbp.Direction = dir;
+			if (size != -1)
+				dbp.Size = size;
+
+			return dbp;
+		}
 
 		void IStateManager.LoadViewState (object savedState)
 		{
@@ -321,6 +458,7 @@ namespace System.Web.UI.WebControls {
 			get { return IsTrackingViewState; }
 		}
 
+		[MonoTODO]
 		bool cancelSelectOnNullParameter = true;
 		public bool CancelSelectOnNullParameter {
 			get { return cancelSelectOnNullParameter; }
@@ -370,9 +508,8 @@ namespace System.Web.UI.WebControls {
 			set { ViewState ["DeleteCommand"] = value; }
 		}
 
-		[MonoTODO]
 		public SqlDataSourceCommandType DeleteCommandType {
-			get { return (SqlDataSourceCommandType) ViewState.GetInt ("DeleteCommandType", (int)SqlDataSourceCommandType.StoredProcedure); }
+			get { return (SqlDataSourceCommandType) ViewState.GetInt ("DeleteCommandType", (int)SqlDataSourceCommandType.Text); }
 			set { ViewState ["DeleteCommandType"] = value; }
 		}
 
@@ -400,9 +537,8 @@ namespace System.Web.UI.WebControls {
 			set { ViewState ["InsertCommand"] = value; }
 		}
 
-		[MonoTODO]
 		public SqlDataSourceCommandType InsertCommandType {
-			get { return (SqlDataSourceCommandType) ViewState.GetInt ("InsertCommandType", (int)SqlDataSourceCommandType.StoredProcedure); }
+			get { return (SqlDataSourceCommandType) ViewState.GetInt ("InsertCommandType", (int) SqlDataSourceCommandType.Text); }
 			set { ViewState ["InsertCommandType"] = value; }
 		}
 
@@ -417,7 +553,6 @@ namespace System.Web.UI.WebControls {
 			get { return tracking; }
 		}
 
-		[MonoTODO]
 		[DefaultValue ("{0}")]
 		public string OldValuesParameterFormatString {
 			get { return ViewState.GetString ("OldValuesParameterFormatString", "{0}"); }
@@ -429,9 +564,8 @@ namespace System.Web.UI.WebControls {
 			set { ViewState ["SelectCommand"] = value; }
 		}
 
-		[MonoTODO]
 		public SqlDataSourceCommandType SelectCommandType {
-			get { return (SqlDataSourceCommandType) ViewState.GetInt ("SelectCommandType", (int)SqlDataSourceCommandType.StoredProcedure); }
+			get { return (SqlDataSourceCommandType) ViewState.GetInt ("SelectCommandType", (int) SqlDataSourceCommandType.Text); }
 			set { ViewState ["SelectCommandType"] = value; }
 		}
 		
@@ -439,7 +573,6 @@ namespace System.Web.UI.WebControls {
 			get { return GetParameterCollection (ref selectParameters); }
 		}
 
-		[MonoTODO]
 		public string SortParameterName {
 			get { return ViewState.GetString ("SortParameterName", ""); }
 			set { ViewState ["SortParameterName"] = value; }
@@ -450,9 +583,8 @@ namespace System.Web.UI.WebControls {
 			set { ViewState ["UpdateCommand"] = value; }
 		}
 
-		[MonoTODO]
 		public SqlDataSourceCommandType UpdateCommandType {
-			get { return (SqlDataSourceCommandType) ViewState.GetInt ("UpdateCommandType", (int)SqlDataSourceCommandType.StoredProcedure); }
+			get { return (SqlDataSourceCommandType) ViewState.GetInt ("UpdateCommandType", (int) SqlDataSourceCommandType.Text); }
 			set { ViewState ["UpdateCommandType"] = value; }
 		}
 
