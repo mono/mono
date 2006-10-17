@@ -1689,9 +1689,10 @@ namespace Mono.CSharp {
 					Expression uint32e = new OperatorCast (expr, TypeManager.uint32_type, true);
 					return new ConvCast (uint32e, TypeManager.sbyte_type, ConvCast.Mode.U4_I2);
 				}
-				if (real_target_type == TypeManager.int32_type)
-					return new EmptyCast (new OperatorCast (expr, TypeManager.uint64_type, true),
+				if (real_target_type == TypeManager.int32_type){
+					return new EmptyCast (new OperatorCast (expr, TypeManager.uint32_type, true),
 							      TypeManager.int32_type);
+				}
 			} else if (expr_type == TypeManager.intptr_type){
 				if (real_target_type == TypeManager.uint64_type){
 					return new EmptyCast (new OperatorCast (expr, TypeManager.int64_type, true),

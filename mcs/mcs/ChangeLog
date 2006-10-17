@@ -1,3 +1,7 @@
+2006-10-17  Miguel de Icaza  <miguel@novell.com>
+
+	* convert.cs: Fix typo, fixes the test-535.cs.
+
 2006-10-12  Martin Baulig  <martin@ximian.com>
 
 	* anonymous.cs
