@@ -1,6 +1,7 @@
 2006-10-17  Miguel de Icaza  <miguel@novell.com>
 
-	* convert.cs: Fix typo, fixes the test-535.cs.
+	* convert.cs: Fix typo, fixes the test-535.cs, we were casting to
+	an int32, but requesting an int64 from the conversion
 
 2006-10-12  Martin Baulig  <martin@ximian.com>
 
