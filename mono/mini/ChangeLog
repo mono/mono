@@ -1,5 +1,9 @@
 2006-10-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (GET_CONTEXT): Correct the definition of this for sparc/linux.
+
+	* mini-sparc.h: Don't use sigaction on sparc/linux.
+
 	* exceptions-sparc.c: Call mono_arch_flush_icache () in a couple of places.
 
 	* mini-sparc.c (mono_sparc_flushw): Call mono_arch_flush_icache ().
