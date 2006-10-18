@@ -1251,6 +1251,8 @@ namespace System.Web.UI.WebControls
 			if (dataItem != null) {
 				if (CurrentMode == DetailsViewMode.Edit)
 					oldEditValues = new DataKey (GetRowValues (false, true));
+				else
+					oldEditValues = new DataKey (new OrderedDictionary ());
 				key = new DataKey (CreateRowDataKey (dataItem), DataKeyNames);
 			}
 		}
@@ -1351,6 +1353,7 @@ namespace System.Web.UI.WebControls
 			if (args != null) {
 				OnItemCommand (args);
 				ProcessEvent (args.CommandName, args.CommandArgument as string);
+				return true;
 			}
 			return base.OnBubbleEvent (source, e);
 		}
@@ -1384,13 +1387,15 @@ namespace System.Web.UI.WebControls
 					newIndex = PageCount - 1;
 					break;
 				case DataControlCommands.NextPageCommandArgument:
-					if (PageIndex < PageCount - 1) newIndex = PageIndex + 1;
+					newIndex = PageIndex + 1;
 					break;
 				case DataControlCommands.PreviousPageCommandArgument:
-					if (PageIndex > 0) newIndex = PageIndex - 1;
+					newIndex = PageIndex - 1;
 					break;
 				default:
-					newIndex = int.Parse (param) - 1;
+					int paramIndex = 0;
+					int.TryParse (param, out paramIndex);
+					newIndex = paramIndex - 1;
 					break;
 				}
 				ShowPage (newIndex);
@@ -1494,9 +1499,12 @@ namespace System.Web.UI.WebControls
 			OnItemUpdating (args);
 			if (!args.Cancel) {
 				DataSourceView view = GetData ();
-				if (view == null) throw new HttpException ("The DataSourceView associated to data bound control was null");
-				view.Update (currentEditRowKeys, currentEditNewValues, currentEditOldValues, new DataSourceViewOperationCallback (UpdateCallback));
-			} else
+				if (view == null)
+					throw new HttpException ("The DataSourceView associated to data bound control was null");
+				if (view.CanUpdate)
+					view.Update (currentEditRowKeys, currentEditNewValues, currentEditOldValues, new DataSourceViewOperationCallback (UpdateCallback));
+			}
+			else
 				EndRowEdit ();
 		}
 
@@ -1528,10 +1536,10 @@ namespace System.Web.UI.WebControls
 			OnItemInserting (args);
 			if (!args.Cancel) {
 				DataSourceView view = GetData ();
-				if (view == null)
-					return;
-				view.Insert (currentEditNewValues, new DataSourceViewOperationCallback (InsertCallback));
-			} else
+				if (view != null && view.CanInsert)
+					view.Insert (currentEditNewValues, new DataSourceViewOperationCallback (InsertCallback));
+			}
+			else
 				EndRowEdit ();
 		}
 		
@@ -1559,7 +1567,7 @@ namespace System.Web.UI.WebControls
 					PageIndex --;
 				RequireBinding ();
 				DataSourceView view = GetData ();
-				if (view != null)
+				if (view != null && view.CanDelete)
 					view.Delete (currentEditRowKeys, currentEditNewValues, new DataSourceViewOperationCallback (DeleteCallback));
 				else {
 					DetailsViewDeletedEventArgs dargs = new DetailsViewDeletedEventArgs (0, null, currentEditRowKeys, currentEditNewValues);

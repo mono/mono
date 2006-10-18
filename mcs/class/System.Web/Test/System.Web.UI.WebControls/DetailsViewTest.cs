@@ -202,9 +202,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			{
 				OnUnload (e);
 			}
-			public void DoOnBubbleEvent (Object sender, EventArgs e)
+			public bool DoOnBubbleEvent (Object sender, EventArgs e)
 			{
-				OnBubbleEvent (sender,e);
+				return OnBubbleEvent (sender, e);
 			}
 
 			public Object DoSaveControlState ()
@@ -1493,7 +1493,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")] 
 		public void DetailsView_BubbleEvents ()
 		{
 			ResetEvents ();
@@ -1503,7 +1502,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			Page page = new Page ();
 			Button bt = new Button ();
 			dv.AllowPaging = true;
-			page.Controls.Add (dv);		
+			dv.DataSource = myds;
+			page.Controls.Add (dv);
+			dv.DataBind ();
 			dv.ItemCommand += new DetailsViewCommandEventHandler (dv_ItemCommand );
 			dv.ItemDeleted += new DetailsViewDeletedEventHandler (dv_ItemDeleted );
 			//Delete
@@ -1511,7 +1512,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			com = new DetailsViewCommandEventArgs (bt, new CommandEventArgs ("Delete", null));
 			Assert.AreEqual (false, itemCommand, "BeforeDeleteCommandBubbleEvent");
 			Assert.AreEqual (false, itemDeleting, "BeforeDeleteBubbleEvent");			
-			dv.DoOnBubbleEvent (bt, com);
+			Assert.IsTrue (dv.DoOnBubbleEvent (bt, com), "OnBubbleEvent - Delete");
 			Assert.AreEqual (true, itemDeleting, "AfterDeleteBubbleEvent");			
 			Assert.AreEqual (true, itemCommand, "AfterDeleteCommandBubbleEvent");
 
@@ -1522,7 +1523,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			com = new DetailsViewCommandEventArgs (bt, new CommandEventArgs ("Insert", null));
 			Assert.AreEqual (false, itemCommand, "BeforeInsertCommandBubbleEvent");
 			Assert.AreEqual (false, itemInserting, "BeforeInsertBubbleEvent");
-			dv.DoOnBubbleEvent (bt, com);
+			Assert.IsTrue (dv.DoOnBubbleEvent (bt, com), "OnBubbleEvent - Insert");
 			Assert.AreEqual (true, itemCommand, "AfterInsertCommandBubbleEvent");
 			Assert.AreEqual (true, itemInserting, "AfterInsertBubbleEvent");
 
@@ -1533,7 +1534,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			com = new DetailsViewCommandEventArgs (bt, new CommandEventArgs ("Update", null));
 			Assert.AreEqual (false, itemUpdating, "BeforeUpdateEvent");
 			Assert.AreEqual (false, itemCommand, "BeforeUpdateCommandEvent");
-			dv.DoOnBubbleEvent (bt, com);
+			Assert.IsTrue (dv.DoOnBubbleEvent (bt, com), "OnBubbleEvent - Update");
 			Assert.AreEqual (true, itemCommand, "AfterUpdateCommandBubbleEvent");
 			Assert.AreEqual (true, itemUpdating, "AfterUpdateBubbleEvent");
 
@@ -1543,7 +1544,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			com = new DetailsViewCommandEventArgs (bt, new CommandEventArgs ("Cancel", null));
 			Assert.AreEqual (false, itemCommand, "BeforeCancelCommandBubbleEvent");
 			Assert.AreEqual (false, modeChanging, "BeforeCancelBubbleEvent");
-			dv.DoOnBubbleEvent (bt, com);
+			Assert.IsTrue (dv.DoOnBubbleEvent (bt, com), "OnBubbleEvent - Cancel");
 			Assert.AreEqual (true, itemCommand, "AfterCancelCommandBubbleEvent");
 			Assert.AreEqual (true, modeChanging, "AfterCancelBubbleEvent");
 
@@ -1553,7 +1554,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			com = new DetailsViewCommandEventArgs (bt, new CommandEventArgs ("Edit", null));
 			Assert.AreEqual (false, itemCommand, "BeforeEditCommandBubbleEvent");
 			Assert.AreEqual (false, modeChanging, "BeforeEditBubbleEvent");
-			dv.DoOnBubbleEvent (bt, com);
+			Assert.IsTrue (dv.DoOnBubbleEvent (bt, com), "OnBubbleEvent - Edit");
 			Assert.AreEqual (true, itemCommand, "AfterEditCommandBubbleEvent");
 			Assert.AreEqual (true, modeChanging, "AfterEditBubbleEvent");
 
@@ -1563,7 +1564,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			com = new DetailsViewCommandEventArgs (bt, new CommandEventArgs ("New", null));
 			Assert.AreEqual (false, itemCommand, "BeforeNewCommandBubbleEvent");
 			Assert.AreEqual (false, modeChanging, "BeforeNewBubbleEvent");
-			dv.DoOnBubbleEvent (bt, com);
+			Assert.IsTrue (dv.DoOnBubbleEvent (bt, com), "OnBubbleEvent - New");
 			Assert.AreEqual (true, itemCommand, "AfterNewCommandBubbleEvent");
 			Assert.AreEqual (true, modeChanging, "AfterNewBubbleEvent");
 
@@ -1573,9 +1574,10 @@ namespace MonoTests.System.Web.UI.WebControls
 			com = new DetailsViewCommandEventArgs (bt, new CommandEventArgs ("Page", null));
 			Assert.AreEqual (false, itemCommand, "BeforePageCommandBubbleEvent");
 			Assert.AreEqual (false, pageIndexChanging, "BeforePageBubbleEvent");
-			dv.DoOnBubbleEvent (bt, com);
+			Assert.IsTrue (dv.DoOnBubbleEvent (bt, com), "OnBubbleEvent - Page Index default");
 			Assert.AreEqual (true, itemCommand, "AfterPageCommandBubbleEvent");
 			Assert.AreEqual (true, pageIndexChanging, "AfterPageBubbleEvent");
+			Assert.AreEqual (-1, newPageIndex, "PageIndex");
 
 			//Next Page
 			itemCommand = false;
@@ -1583,7 +1585,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			com = new DetailsViewCommandEventArgs (bt, new CommandEventArgs ("Page", "Next"));
 			Assert.AreEqual (false, itemCommand, "BeforeNextPageCommandBubbleEvent");
 			Assert.AreEqual (false, pageIndexChanging, "BeforeNextPageBubbleEvent");
-			dv.DoOnBubbleEvent (bt, com);
+			Assert.IsTrue (dv.DoOnBubbleEvent (bt, com), "OnBubbleEvent - Next Page");
 			Assert.AreEqual (true, itemCommand, "AfterNextPageCommandBubbleEvent");
 			Assert.AreEqual (true, pageIndexChanging, "AfterNextPageBubbleEvent");
 			Assert.AreEqual (1, newPageIndex, "NextPageIndex");
@@ -1594,7 +1596,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			com = new DetailsViewCommandEventArgs (bt, new CommandEventArgs ("Page", "Prev"));
 			Assert.AreEqual (false, itemCommand, "BeforePrevPageCommandBubbleEvent");
 			Assert.AreEqual (false, pageIndexChanging, "BeforePrevPageBubbleEvent");
-			dv.DoOnBubbleEvent (bt, com);
+			Assert.IsTrue (dv.DoOnBubbleEvent (bt, com), "OnBubbleEvent - Prev Page");
 			Assert.AreEqual (true, itemCommand, "AfterPrevPageCommandBubbleEvent");
 			Assert.AreEqual (true, pageIndexChanging, "AfterPrevPageBubbleEvent");
 			Assert.AreEqual (-1, newPageIndex, "PrevPageIndex");
@@ -1605,7 +1607,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			com = new DetailsViewCommandEventArgs (bt, new CommandEventArgs ("Page", "First"));
 			Assert.AreEqual (false, itemCommand, "BeforeFirstPageCommandBubbleEvent");
 			Assert.AreEqual (false, pageIndexChanging, "BeforeFirstPageBubbleEvent");
-			dv.DoOnBubbleEvent (bt, com);
+			Assert.IsTrue (dv.DoOnBubbleEvent (bt, com), "OnBubbleEvent - First Page");
 			Assert.AreEqual (true, itemCommand, "AfterFirstPageCommandBubbleEvent");
 			Assert.AreEqual (true, pageIndexChanging, "AfterFirstPageBubbleEvent");
 			Assert.AreEqual (0, newPageIndex, "FirstPageIndex");
@@ -1616,10 +1618,10 @@ namespace MonoTests.System.Web.UI.WebControls
 			com = new DetailsViewCommandEventArgs (bt, new CommandEventArgs ("Page", "Last"));
 			Assert.AreEqual (false, itemCommand, "BeforeLastPageCommandBubbleEvent");
 			Assert.AreEqual (false, pageIndexChanging, "BeforeLastPageBubbleEvent");
-			dv.DoOnBubbleEvent (bt, com);
+			Assert.IsTrue (dv.DoOnBubbleEvent (bt, com), "OnBubbleEvent - Last Page");
 			Assert.AreEqual (true, itemCommand, "AfterLastPageCommandBubbleEvent");
 			Assert.AreEqual (true, pageIndexChanging, "AfterLastPageBubbleEvent");
-			Assert.AreEqual (-1, newPageIndex, "FirstPageIndex");
+			Assert.AreEqual (5, newPageIndex, "FirstPageIndex");
 
 		}
 
@@ -1725,6 +1727,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			pageIndexChanging = true;
 			newPageIndex = e.NewPageIndex;
+			e.NewPageIndex = -1;
 		}
 
 		void dv_PageIndexChanged (object sender, EventArgs e)
@@ -2044,4 +2047,5 @@ namespace MonoTests.System.Web.UI.WebControls
 	}
 }
 #endif
+
 

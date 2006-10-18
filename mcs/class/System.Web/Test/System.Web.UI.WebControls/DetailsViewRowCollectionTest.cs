@@ -66,7 +66,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		//properties
 
 		[Test]
-		[Category ("NotWorking")] //SyncRootProperty - ArrayList instead of DetailsViewRowCollection  
 		public void DetailsViewRowCollection_Properties ()
 		{
 			DetailsViewRowCollection coll = new DetailsViewRowCollection (myArr);
