@@ -32,6 +32,7 @@
 
 using System.ComponentModel;
 using System.IO;
+using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
@@ -122,6 +123,51 @@ namespace System.Web.Services.Discovery {
 				ClientProtocol.References.Add (this);
 		}
                 
+		internal void ResolveInternal (DiscoveryClientProtocol prot, XmlSchema xsd) 
+		{
+			if (xsd.Includes.Count == 0) return;
+			
+			foreach (XmlSchemaExternal ext in xsd.Includes)
+			{
+				if (ext.SchemaLocation == null)
+					continue;
+
+				// Make relative uris to absoulte
+
+				Uri uri = new Uri (BaseUri, ext.SchemaLocation);
+				string url = uri.ToString ();
+
+				if (prot.Documents.Contains (url)) 	// Already resolved
+					continue;
+
+				try
+				{
+					string contentType = null;
+					Stream stream = prot.Download (ref url, ref contentType);
+					XmlTextReader reader = new XmlTextReader (url, stream);
+					reader.XmlResolver = null;
+					reader.MoveToContent ();
+					
+					DiscoveryReference refe;
+					XmlSchema schema = XmlSchema.Read (reader, null);
+					refe = new SchemaReference ();
+					refe.ClientProtocol = prot;
+					refe.Url = url;
+					prot.Documents.Add (url, schema);
+					((SchemaReference)refe).ResolveInternal (prot, schema);
+					
+					if (!prot.References.Contains (url))
+						prot.References.Add (refe);
+						
+					stream.Close ();
+				}
+				catch (Exception ex)
+				{
+					ReportError (url, ex);
+				}
+			}
+		}
+
 		public override void WriteDocument (object document, Stream stream) 
 		{
 			((XmlSchema)document).Write (stream);

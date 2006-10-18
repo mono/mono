@@ -1,3 +1,10 @@
+2006-10-18  Atsushi Enomotot  <atsushi@ximian.com>
+
+	* SchemaReference.cs,
+	  DiscoveryClientProtocol.cs,
+	  ContractReference.cs: handle imported schemas in DiscoverAny().
+	  Fixed bug #78995.
+
 2006-09-05  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* DiscoveryClientProtocol.cs: In ReadAll, load wsdl files from a

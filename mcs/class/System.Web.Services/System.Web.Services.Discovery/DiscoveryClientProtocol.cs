@@ -85,6 +85,7 @@ namespace System.Web.Services.Discovery {
 		{
 			Stream stream = Download (ref url);
 			XmlTextReader reader = new XmlTextReader (url, stream);
+			reader.XmlResolver = null;
 			if (!DiscoveryDocument.CanRead (reader)) 
 				throw new InvalidOperationException ("The url '" + url + "' does not point to a valid discovery document");
 				
@@ -135,6 +136,7 @@ namespace System.Web.Services.Discovery {
 				}
 				
 				XmlTextReader reader = new XmlTextReader (url, stream);
+				reader.XmlResolver = null;
 				reader.MoveToContent ();
 				DiscoveryDocument doc;
 				DiscoveryReference refe = null;
@@ -162,6 +164,7 @@ namespace System.Web.Services.Discovery {
 					documents.Add (url, schema);
 					doc = new DiscoveryDocument ();
 					refe = new SchemaReference ();
+					((SchemaReference)refe).ResolveInternal (this, schema);
 					doc.References.Add (refe);
 				}
 				

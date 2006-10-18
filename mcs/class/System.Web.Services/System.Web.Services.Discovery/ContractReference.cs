@@ -148,6 +148,7 @@ namespace System.Web.Services.Discovery {
 					string contentType = null;
 					Stream stream = prot.Download (ref url, ref contentType);
 					XmlTextReader reader = new XmlTextReader (url, stream);
+					reader.XmlResolver = null;
 					reader.MoveToContent ();
 					
 					DiscoveryReference refe;
@@ -178,6 +179,18 @@ namespace System.Web.Services.Discovery {
 				{
 					ReportError (url, ex);
 				}
+			}
+
+			foreach (XmlSchema schema in wsdl.Types.Schemas)
+			{
+				// the schema itself is not added to the
+				// references, but it has to resolve includes.
+				Uri uri = BaseUri;
+				string url = uri.ToString ();
+				SchemaReference refe = new SchemaReference ();
+				refe.ClientProtocol = prot;
+				refe.Url = url;
+				refe.ResolveInternal (prot, schema);
 			}
 		}
                 
