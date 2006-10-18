@@ -1,3 +1,8 @@
+2006-10-18  Marek Habersack  <grendello@gmail.com>
+
+	* Makefile: Change the order of assembly compilation to make it
+	possible to compile the global/local resources compiler.
+
 2006-09-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile (BROKEN_SUBDIRS): Fix make dist.

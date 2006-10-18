@@ -85,6 +85,7 @@ namespace System.Web.UI {
 			imports.Add ("System.Text.RegularExpressions");
 			imports.Add ("System.Web");
 			imports.Add ("System.Web.Caching");
+			imports.Add ("System.Resources"); // should perhaps be conditional on App_Global/LocalResources existence?
 			imports.Add ("System.Web.Security");
 			imports.Add ("System.Web.SessionState");
 			imports.Add ("System.Web.UI");

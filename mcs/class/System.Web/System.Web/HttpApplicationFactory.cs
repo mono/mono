@@ -40,6 +40,10 @@ using System.Web.Compilation;
 using vmw.common;
 #endif
 
+#if NET_2_0 && !TARGET_J2EE
+using System.CodeDom.Compiler;
+#endif
+
 namespace System.Web {
 	class HttpApplicationFactory {
 		// Initialized in InitType
@@ -379,7 +383,18 @@ namespace System.Web {
 #else
 				WebConfigurationSettings.Init (context);
 #endif
-				
+		
+#if NET_2_0 && !TARGET_J2EE
+				AppGlobalResourcesCompiler agrc = new AppGlobalResourcesCompiler();
+				CompilerResults cr = agrc.Compile();
+				if (cr != null && cr.CompiledAssembly != null)
+					WebConfigurationManager.ExtraAssemblies.Add(cr.PathToAssembly);
+				AppLocalResourcesCompiler alrc  = new AppLocalResourcesCompiler ();
+				cr = alrc.Compile ();
+				if (cr != null && cr.CompiledAssembly != null)
+					WebConfigurationManager.ExtraAssemblies.Add (cr.PathToAssembly);
+#endif
+
 				if (File.Exists (app_file)) {
 #if TARGET_J2EE
 					app_type = System.Web.J2EE.PageMapper.GetObjectType(app_file);

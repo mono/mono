@@ -41,8 +41,10 @@ using System.Web.UI.WebControls;
 using System.Web.Util;
 using System.ComponentModel.Design.Serialization;
 #if NET_2_0
+using System.Configuration;
 using System.Collections.Specialized;
 using System.Text.RegularExpressions;
+using System.Web.Configuration;
 #endif
 
 namespace System.Web.Compilation
@@ -416,15 +418,22 @@ namespace System.Web.Compilation
 			return method.Name;
 		}
 
-		void AddCodeForPropertyOrField (ControlBuilder builder, Type type, string var_name, string att, MemberInfo member, bool isDataBound)
+		void AddCodeForPropertyOrField (ControlBuilder builder, Type type, string var_name, string att, MemberInfo member, bool isDataBound, bool isExpression)
 		{
 			CodeMemberMethod method = builder.method;
-			if (isDataBound && IsWritablePropertyOrField (member)) {
+			bool isWritable = IsWritablePropertyOrField (member);
+			if (isDataBound && isWritable) {
 				string dbMethodName = DataBoundProperty (builder, type, var_name, att);
 				AddEventAssign (method, "DataBinding", typeof (EventHandler), dbMethodName);
 				return;
 			}
-
+#if NET_2_0
+			else if (isExpression && isWritable) {
+				AddExpressionAssign (method, member, type, var_name, att);
+				return;
+			}
+#endif
+			
 			CodeAssignStatement assign = new CodeAssignStatement ();
 			assign.Left = new CodePropertyReferenceExpression (ctrlVar, var_name);
 			currentLocation = builder.location;
@@ -443,6 +452,14 @@ namespace System.Web.Compilation
 		}
 
 #if NET_2_0
+		bool IsExpression (string value)
+		{
+			if (value == null || value == "")
+				return false;
+			string str = value.Trim ();
+			return (StrUtils.StartsWith (str, "<%$") && StrUtils.EndsWith (str, "%>"));
+		}		
+
 		void RegisterBindingInfo (ControlBuilder builder, string propName, ref string value)
 		{
 			string str = value.Trim ();
@@ -507,12 +524,16 @@ namespace System.Web.Compilation
 		}
 
 		bool ProcessPropertiesAndFields (ControlBuilder builder, MemberInfo member, string id,
-						string attValue, string prefix)
+						 string attValue, string prefix)
 		{
 			int hyphen = id.IndexOf ('-');
 			bool isPropertyInfo = (member is PropertyInfo);
 			bool isDataBound = IsDataBound (attValue);
-
+#if NET_2_0
+			bool isExpression = !isDataBound && IsExpression (attValue);
+#else
+			bool isExpression = false;
+#endif
 			Type type;
 			if (isPropertyInfo) {
 				type = ((PropertyInfo) member).PropertyType;
@@ -522,12 +543,14 @@ namespace System.Web.Compilation
 
 			if (InvariantCompareNoCase (member.Name, id)) {
 #if NET_2_0
-				if (isDataBound) RegisterBindingInfo (builder, member.Name, ref attValue);
+				if (isDataBound)
+					RegisterBindingInfo (builder, member.Name, ref attValue);
+				
 #endif
 				if (!IsWritablePropertyOrField (member))
 					return false;
 
-				AddCodeForPropertyOrField (builder, type, member.Name, attValue, member, isDataBound);
+				AddCodeForPropertyOrField (builder, type, member.Name, attValue, member, isDataBound, isExpression);
 				return true;
 			}
 			
@@ -569,12 +592,198 @@ namespace System.Web.Compilation
 			if (isDataBound) RegisterBindingInfo (builder, prefix + member.Name + "." + subprop.Name, ref attValue);
 #endif
 			AddCodeForPropertyOrField (builder, subprop.PropertyType,
-						prefix + member.Name + "." + subprop.Name,
-						val, subprop, isDataBound);
+						   prefix + member.Name + "." + subprop.Name,
+						   val, subprop, isDataBound, isExpression);
 
 			return true;
 		}
 
+#if NET_2_0
+		void AddExpressionAssign (CodeMemberMethod method, MemberInfo member, Type type, string name, string value)
+		{
+			CodeAssignStatement assign = new CodeAssignStatement ();
+			assign.Left = new CodePropertyReferenceExpression (ctrlVar, name);
+
+			// First let's find the correct expression builder
+			string expr = value.Substring (3, value.Length - 5).Trim ();
+			int colon = expr.IndexOf (':');
+			if (colon == -1)
+				return;
+			string prefix = expr.Substring (0, colon).Trim ();
+			
+			System.Configuration.Configuration config = WebConfigurationManager.OpenWebConfiguration ("");
+			if (config == null)
+				return;
+			CompilationSection cs = (CompilationSection)config.GetSection ("system.web/compilation");
+			if (cs == null)
+				return;
+			if (cs.ExpressionBuilders == null || cs.ExpressionBuilders.Count == 0)
+				return;
+
+			System.Web.Configuration.ExpressionBuilder ceb = cs.ExpressionBuilders[prefix];
+			if (ceb == null)
+				return;
+			string builderType = ceb.Type;
+
+			Type t;
+			try {
+				t = System.Type.GetType (builderType, true);
+			} catch (Exception e) {
+				throw new HttpException (
+					String.Format ("Failed to load expression builder type `{0}'", builderType), e);
+			}
+
+			if (!typeof (System.Web.Compilation.ExpressionBuilder).IsAssignableFrom (t))
+				throw new HttpException (
+					String.Format (
+						"Type {0} is not descendant from System.Web.Compilation.ExpressionBuilder",
+						builderType));
+
+			System.Web.Compilation.ExpressionBuilder eb = null;
+			ResourceExpressionFields fields;
+			ExpressionBuilderContext ctx;
+			
+			try {
+				eb = Activator.CreateInstance (t) as System.Web.Compilation.ExpressionBuilder;
+				ctx = new ExpressionBuilderContext (HttpContext.Current.Request.FilePath);
+				fields = eb.ParseExpression (expr.Substring (colon + 1).Trim (),
+							     type,
+							     ctx) as ResourceExpressionFields;
+			} catch (Exception e) {
+				throw new HttpException (
+					String.Format ("Failed to create an instance of type `{0}'", builderType), e);
+			}
+			// FIXME: create and pass an instance of BoundPropertyEntry
+			CodeMethodInvokeExpression convert = new CodeMethodInvokeExpression ();
+			convert.Method = new CodeMethodReferenceExpression (
+				new CodeTypeReferenceExpression (typeof(Convert)),
+				"ToString");
+			convert.Parameters.Add (eb.GetCodeExpression (null, fields, ctx));
+			convert.Parameters.Add (
+				new CodePropertyReferenceExpression (
+					new CodeTypeReferenceExpression (typeof(Globalization.CultureInfo)),
+					"CurrentCulture"));
+			
+			assign.Right = convert;
+			
+			method.Statements.Add (assign);
+		}
+
+		void AssignPropertyFromResources (CodeMemberMethod method, MemberInfo mi, string attvalue, string varname)
+		{
+			string resname = String.Format ("{0}.{1}", attvalue, mi.Name);
+			bool isProperty = mi.MemberType == MemberTypes.Property;
+			bool isField = !isProperty && (mi.MemberType == MemberTypes.Field);
+
+			if (!isProperty && !isField || !IsWritablePropertyOrField (mi))
+				return;
+			
+			Type member_type = null;
+			if (isProperty) {
+				PropertyInfo pi = mi as PropertyInfo;
+				member_type = pi.PropertyType;
+			} else if (isField) { 
+				FieldInfo fi = mi as FieldInfo;
+				member_type = fi.FieldType;
+			} else // should never happen
+				return;
+
+			// __ctrl.Text = System.Convert.ToString(this.GetLocalResourceObject("ButtonResource1.Text"), System.Globalization.CultureInfo.CurrentCulture);
+			object obj = HttpContext.GetLocalResourceObject (HttpContext.Current.Request.FilePath,
+									 resname);
+			if (obj == null)
+				return;
+			
+			CodeAssignStatement assign = new CodeAssignStatement ();
+			assign.Left = new CodePropertyReferenceExpression (ctrlVar, mi.Name);
+			CodeMethodInvokeExpression getlro = new CodeMethodInvokeExpression (
+				new CodeThisReferenceExpression (),
+				"GetLocalResourceObject",
+				new CodeExpression [] { new CodePrimitiveExpression (resname) });
+			
+			CodeMethodInvokeExpression convert = new CodeMethodInvokeExpression ();
+			convert.Method = new CodeMethodReferenceExpression (
+				new CodeTypeReferenceExpression (typeof(System.Convert)),
+				"ToString");
+			convert.Parameters.Add (getlro);
+			convert.Parameters.Add (
+				new CodePropertyReferenceExpression (
+					new CodeTypeReferenceExpression (typeof(Globalization.CultureInfo)),
+					"CurrentCulture"));
+			assign.Right = convert;
+			
+// 			assign.Left = new CodeVariableReferenceExpression (varname);
+// 			assign.Right = new CodeMethodInvokeExpression (
+// 				new CodeThisReferenceExpression (),
+// 				"GetLocalResourceObject",
+// 				new CodeExpression [] { new CodePrimitiveExpression (resname) });
+// 			method.Statements.Add (assign);
+
+// 			// if (localResourceObject != null && localResourceObject.GetType() == typeof(member_type))
+// 			CodeConditionStatement ccs = new CodeConditionStatement ();
+// 			CodeBinaryOperatorExpression exp1 = new CodeBinaryOperatorExpression (
+// 				new CodeVariableReferenceExpression (varname),
+// 				CodeBinaryOperatorType.IdentityInequality,
+// 				new CodePrimitiveExpression (null));
+			
+// 			CodeBinaryOperatorExpression exp2 = new CodeBinaryOperatorExpression (
+// 				new CodeMethodInvokeExpression (
+// 					new CodeVariableReferenceExpression (varname),
+// 					"GetType",
+// 					new CodeExpression [] {}),
+// 				CodeBinaryOperatorType.IdentityEquality,
+// 				new CodeTypeOfExpression (
+// 					new CodeTypeReference (member_type.ToString ())));
+// 			ccs.Condition = new CodeBinaryOperatorExpression (
+// 				exp1,
+// 				CodeBinaryOperatorType.BooleanAnd,
+// 				exp2);
+			
+// 			//   ctrlVar.Property = (member_type)obj;
+// 			assign = new CodeAssignStatement ();
+// 			assign.Left = new CodePropertyReferenceExpression (ctrlVar, mi.Name);
+// 			assign.Right = new CodeCastExpression (
+// 				member_type.ToString (),
+// 				new CodeVariableReferenceExpression (varname));
+// 			ccs.TrueStatements.Add (assign);
+			method.Statements.Add (assign);
+		}
+		
+		void AssignPropertiesFromResources (ControlBuilder builder, string attvalue)
+		{
+			if (attvalue == null || attvalue.Length == 0)
+				return;
+			
+			Type controlType = builder.ControlType;
+			if (controlType == null)
+				return;
+
+			// object obj = null;
+			
+			// Process all public fields and properties of the control. We don't use GetMembers to make the code
+			// faster
+			FieldInfo [] fields = controlType.GetFields (
+				BindingFlags.Instance | BindingFlags.Static |
+				BindingFlags.Public | BindingFlags.FlattenHierarchy);
+			PropertyInfo [] properties = controlType.GetProperties (
+				BindingFlags.Instance | BindingFlags.Static |
+				BindingFlags.Public | BindingFlags.FlattenHierarchy);
+
+			if (fields.Length > 0 || properties.Length > 0) {
+				CodeVariableDeclarationStatement cvds = new CodeVariableDeclarationStatement (
+					typeof (object),
+					"localResourceObject",
+					new CodePrimitiveExpression (null));
+				builder.method.Statements.Add (cvds);
+			}
+			
+			foreach (FieldInfo fi in fields)
+				AssignPropertyFromResources (builder.method, fi, attvalue, "localResourceObject");
+			foreach (PropertyInfo pi in properties)
+				AssignPropertyFromResources (builder.method, pi, attvalue, "localResourceObject");
+		}
+#endif
+		
 		void AddEventAssign (CodeMemberMethod method, string name, Type type, string value)
 		{
 			//"__ctrl.{0} += new {1} (this.{2});"
@@ -611,6 +820,13 @@ namespace System.Web.Compilation
 
 			}
 
+#if NET_2_0
+			if (id.ToLower () == "meta:resourcekey") {
+				AssignPropertiesFromResources (builder, attvalue);
+				return;
+			}
+#endif
+			
 			int hyphen = id.IndexOf ('-');
 			string alt_id = id;
 			if (hyphen != -1)
@@ -628,6 +844,7 @@ namespace System.Web.Compilation
 			string val;
 			CodeMemberMethod method = builder.method;
 			bool databound = IsDataBound (attvalue);
+
 			if (databound) {
 				val = attvalue.Substring (3);
 				val = val.Substring (0, val.Length - 2);

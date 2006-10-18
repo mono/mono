@@ -41,6 +41,11 @@ using System.Web.Configuration;
 using System.Web.UI;
 using System.Threading;
 
+#if NET_2_0
+using System.CodeDom.Compiler;
+using System.Web.Compilation;
+#endif
+
 namespace System.Web {
 	
 	// CAS - no InheritanceDemand here as the class is sealed
@@ -255,6 +260,15 @@ namespace System.Web {
 			} else {
 				context.ApplicationInstance = app;
 			
+#if NET_2_0
+				//
+				// Compile the local resources, if any
+				//
+				AppLocalResourcesCompiler alrc = new AppLocalResourcesCompiler();
+				CompilerResults cr = alrc.Compile();
+				if (cr != null && cr.CompiledAssembly != null)
+					WebConfigurationManager.ExtraAssemblies.Add(cr.PathToAssembly);
+#endif			
 				//
 				// Ask application to service the request
 				//

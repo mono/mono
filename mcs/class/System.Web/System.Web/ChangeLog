@@ -1,3 +1,13 @@
+2006-10-18  Marek Habersack  <grendello@gmail.com>
+
+	* HttpRuntime.cs: add support for compilation of local resources
+	at the start of request.
+
+	* HttpContext.cs: implement the GetGlobalResourceObject APIs
+
+	* HttpApplicationFactory.cs: include the bootstrap code for the
+	global/local resources compiler.
+
 2006-10-09  Marek Habersack  <grendello@gmail.com>
 
 	* HttpApplication.cs: change the pipeline order for ASP.NET 2.0 to

@@ -47,52 +47,61 @@ namespace System.Web.Configuration {
 		static IInternalConfigConfigurationFactory configFactory;
 		static Hashtable configurations = new Hashtable ();
 #else
-        static internal IInternalConfigConfigurationFactory configFactory
-        {
-            get{
-                IInternalConfigConfigurationFactory factory = (IInternalConfigConfigurationFactory)AppDomain.CurrentDomain.GetData("WebConfigurationManager.configFactory");
-                if (factory == null){
-                    lock (AppDomain.CurrentDomain){
-                        object initialized = AppDomain.CurrentDomain.GetData("WebConfigurationManager.configFactory.initialized");
-                        if (initialized == null){
-                            PropertyInfo prop = typeof(ConfigurationManager).GetProperty("ConfigurationFactory", BindingFlags.Static | BindingFlags.NonPublic);
-                            if (prop != null){
-                                factory = prop.GetValue(null, null) as IInternalConfigConfigurationFactory;
-                                configFactory = factory;
-                            }
-                        }
-                    }
-                }
-                return factory != null ? factory : configFactory;
-            }
-            set{
-                AppDomain.CurrentDomain.SetData("WebConfigurationManager.configFactory", value);
-                AppDomain.CurrentDomain.SetData("WebConfigurationManager.configFactory.initialized", true);
-            }
-        }
+		static internal IInternalConfigConfigurationFactory configFactory
+		{
+			get{
+				IInternalConfigConfigurationFactory factory = (IInternalConfigConfigurationFactory)AppDomain.CurrentDomain.GetData("WebConfigurationManager.configFactory");
+				if (factory == null){
+					lock (AppDomain.CurrentDomain){
+						object initialized = AppDomain.CurrentDomain.GetData("WebConfigurationManager.configFactory.initialized");
+						if (initialized == null){
+							PropertyInfo prop = typeof(ConfigurationManager).GetProperty("ConfigurationFactory", BindingFlags.Static | BindingFlags.NonPublic);
+							if (prop != null){
+								factory = prop.GetValue(null, null) as IInternalConfigConfigurationFactory;
+								configFactory = factory;
+							}
+						}
+					}
+				}
+				return factory != null ? factory : configFactory;
+			}
+			set{
+				AppDomain.CurrentDomain.SetData("WebConfigurationManager.configFactory", value);
+				AppDomain.CurrentDomain.SetData("WebConfigurationManager.configFactory.initialized", true);
+			}
+		}
 
-        static internal Hashtable configurations
-        {
-            get{
-                Hashtable table = (Hashtable)AppDomain.CurrentDomain.GetData("WebConfigurationManager.configurations");
-                if (table == null){
-                    lock (AppDomain.CurrentDomain){
-                        object initialized = AppDomain.CurrentDomain.GetData("WebConfigurationManager.configurations.initialized");
-                        if (initialized == null){
-                            table = new Hashtable();
-                            configurations = table;
-                        }
-                    }
-                }
-                return table != null ? table : configurations;
+		static internal Hashtable configurations
+		{
+			get{
+				Hashtable table = (Hashtable)AppDomain.CurrentDomain.GetData("WebConfigurationManager.configurations");
+				if (table == null){
+					lock (AppDomain.CurrentDomain){
+						object initialized = AppDomain.CurrentDomain.GetData("WebConfigurationManager.configurations.initialized");
+						if (initialized == null){
+							table = new Hashtable();
+							configurations = table;
+						}
+					}
+				}
+				return table != null ? table : configurations;
 
-            }
-            set{
-                AppDomain.CurrentDomain.SetData("WebConfigurationManager.configurations", value);
-                AppDomain.CurrentDomain.SetData("WebConfigurationManager.configurations.initialized", true);
-            }
-        }
+			}
+			set{
+				AppDomain.CurrentDomain.SetData("WebConfigurationManager.configurations", value);
+				AppDomain.CurrentDomain.SetData("WebConfigurationManager.configurations.initialized", true);
+			}
+		}
 #endif
+
+		static internal ArrayList extra_assemblies = null;
+		static internal ArrayList ExtraAssemblies {
+			get {
+				if (extra_assemblies == null)
+					extra_assemblies = new ArrayList();
+				return extra_assemblies;
+			}
+		}
 		
 		static WebConfigurationManager ()
 		{

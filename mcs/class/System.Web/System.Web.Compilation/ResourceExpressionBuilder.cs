@@ -32,6 +32,7 @@
 
 using System;
 using System.CodeDom;
+using System.Web;
 using System.Web.UI;
 
 namespace System.Web.Compilation {
@@ -44,16 +45,20 @@ namespace System.Web.Compilation {
 		{
 		}
 
-		[MonoTODO]
 		public override object EvaluateExpression (object target, BoundPropertyEntry entry, object parsedData, ExpressionBuilderContext context)
 		{
-			throw new NotImplementedException ();
+			ResourceExpressionFields fields = parsedData as ResourceExpressionFields;
+			return HttpContext.GetGlobalResourceObject (fields.ClassKey, fields.ResourceKey);
 		}
 
-		[MonoTODO]
 		public override CodeExpression GetCodeExpression (BoundPropertyEntry entry, object parsedData, ExpressionBuilderContext context)
 		{
-			throw new NotImplementedException ();
+			ResourceExpressionFields fields = parsedData as ResourceExpressionFields;
+			return new CodeMethodInvokeExpression (
+				new CodeThisReferenceExpression (),
+				"GetGlobalResourceObject",
+				new CodeExpression [] { new CodePrimitiveExpression (fields.ClassKey),
+							new CodePrimitiveExpression (fields.ResourceKey) });
 		}
 
 		public static ResourceExpressionFields ParseExpression (string expression)
@@ -66,10 +71,10 @@ namespace System.Web.Compilation {
 								     expression.Substring (comma + 1).Trim ());
 		}
 
-		[MonoTODO]
 		public override object ParseExpression (string expression, Type propertyType, ExpressionBuilderContext context)
 		{
-			throw new NotImplementedException ();
+			//FIXME: not sure what the propertyType should be used for
+			return ParseExpression (expression);
 		}
 
 		public override bool SupportsEvaluate {

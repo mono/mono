@@ -1,3 +1,11 @@
+2006-10-18  Marek Habersack  <grendello@gmail.com>
+
+	* System.Web.dll.sources: add global/local resources compiler
+	files.
+
+	* Makefile: System.Windows.Forms.dll is needed for global/local
+	resource compiler now.
+
 2006-10-17 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* run-mono-tests.bat: added Derby to tests classpath

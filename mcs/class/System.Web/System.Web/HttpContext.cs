@@ -42,6 +42,8 @@ using System.Web.SessionState;
 using System.Web.UI;
 using System.Web.Util;
 #if NET_2_0
+using System.Reflection;
+using System.Resources;
 using System.Web.Profile;
 using CustomErrorMode = System.Web.Configuration.CustomErrorsMode;
 #endif
@@ -340,16 +342,67 @@ namespace System.Web {
 		}
 
 #if NET_2_0
-		[MonoTODO]
-		public static object GetGlobalResourceObject (string classKey, string resourceKey)
+		internal static Type GetGLResourceType (string typeName)
 		{
-			throw new NotImplementedException ();
+			Type type = null;
+			Assembly [] assemblies = AppDomain.CurrentDomain.GetAssemblies ();
+
+			foreach (Assembly ass in assemblies) {
+				type = ass.GetType (typeName);
+				if (type == null)
+					continue;
+
+				return type;
+			}
+
+			throw new MissingManifestResourceException (String.Format ("Missing resource class {0}", typeName));
 		}
 
-		[MonoTODO]
+		internal static object GetGLResourceObject (Type type, string resourceKey)
+		{
+			object ret = null;
+			try {
+				PropertyInfo pi = type.GetProperty (resourceKey,
+								    BindingFlags.GetProperty |
+								    BindingFlags.Public |
+								    BindingFlags.Static);
+				if (pi == null)
+					return null;
+				ret = pi.GetValue (null, null);
+			} catch {
+			}
+			
+			return ret;
+		}
+
+		internal static void SetGLResourceObjectCulture (Type type, CultureInfo ci)
+		{
+			try {
+				PropertyInfo pi = type.GetProperty ("Culture",
+								    BindingFlags.SetProperty |
+								    BindingFlags.Public |
+								    BindingFlags.Static);
+				if (pi == null)
+					return; // internal error actually...
+				pi.SetValue (null, ci, null);
+			} catch {
+			}
+		}
+		
+		public static object GetGlobalResourceObject (string classKey, string resourceKey)
+		{
+			string className = String.Format ("System.Resources.{0}", classKey);
+			Type type = GetGLResourceType (className);
+			SetGLResourceObjectCulture (type, null);
+			return GetGLResourceObject (type, resourceKey);
+		}
+
 		public static object GetGlobalResourceObject (string classKey, string resourceKey, CultureInfo culture)
 		{
-			throw new NotImplementedException ();
+			string className = String.Format ("System.Resources.{0}", classKey);
+			Type type = GetGLResourceType (className);
+			SetGLResourceObjectCulture (type, culture);
+			return GetGLResourceObject (type, resourceKey);
 		}
 
 		[MonoTODO]

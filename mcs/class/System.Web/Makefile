@@ -125,7 +125,7 @@ TEST_RESOURCE_FILES = \
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
 ifeq (net_2_0, $(PROFILE))
 OTHER_RES += $(RESOURCE_FILES_2)
-OTHER_LIB_MCS_FLAGS = -nowarn:618 -r:System.Configuration.dll
+OTHER_LIB_MCS_FLAGS = -nowarn:618 -r:System.Configuration.dll -r:System.Windows.Forms.dll
 endif
 
 LIB_MCS_FLAGS = \

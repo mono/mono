@@ -47,6 +47,10 @@ common_dirs := \
 	System.Data			\
 	Mono.Data			\
 	Mono.GetOptions			\
+	$(MONO_SYMBOLWRITER)		\
+	$(MONO_POSIX)			\
+	Accessibility			\
+	Managed.Windows.Forms		\
 	System.Web			\
 	System.Web.Services		\
 	System.Web			\
@@ -54,16 +58,12 @@ common_dirs := \
 	System.Runtime.Remoting		\
 	System.Configuration.Install 	\
 	System.Management		\
-	$(MONO_SYMBOLWRITER)		\
-	$(MONO_POSIX)			\
 	Mono.Data.SqliteClient		\
 	Mono.Data.SybaseClient		\
 	Mono.Data.TdsClient		\
 	System.Data.OracleClient	\
-	Accessibility			\
 	Microsoft.VisualC		\
 	Cscompmgd			\
-	Managed.Windows.Forms		\
 	System.Design			\
 	PEAPI				\
 	Npgsql				\

@@ -251,6 +251,31 @@ namespace System.Web.UI {
 			throw new NotSupportedException ();
 		}
 
+#if NET_2_0
+		protected object GetGlobalResourceObject (string className, string resourceKey)
+		{
+			return HttpContext.GetGlobalResourceObject (className, resourceKey);
+		}
+
+		[MonoTODO]
+		protected object GetGlobalResourceObject (string className, string resourceKey, Type objType, string propName)
+		{
+			// FIXME: not sure how to implement that one yet
+			throw new NotSupportedException();
+		}
+
+		protected object GetLocalResourceObject (string resourceKey)
+		{
+			return HttpContext.GetLocalResourceObject (Context.Request.CurrentExecutionFilePath, resourceKey);
+		}
+		
+		protected object GetLocalResourceObject (string resourceKey, Type objType, string propName)
+		{
+			// FIXME: not sure how to implement that one yet
+			throw new NotSupportedException();
+		}
+#endif
+		
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public static object ReadStringResource (Type t)
 		{

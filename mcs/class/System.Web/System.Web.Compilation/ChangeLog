@@ -1,3 +1,18 @@
+2006-10-18  Marek Habersack  <grendello@gmail.com>
+
+	* TemplateControlCompiler.cs: add support for resource
+	expressions in tag attributes.
+
+	* ResourceExpressionBuilder.cs: add support for resource
+	expressions in tag attributes.
+
+	* BaseCompiler.cs: add global/local resource assemblies to
+	compilation references, if present.
+
+	* AppResourcesCompiler.cs: global/local resources compiler.
+
+	* AppResourceFilesCompiler.cs: compiler of resource files.
+
 2006-10-03 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* TemplateControlCompiler.cs: fixed: Bind functions (Data-Binding Syntax).
