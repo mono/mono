@@ -1,5 +1,12 @@
 2006-10-18  Chris Toshok  <toshok@ximian.com>
 
+	* Form.cs: when getting the backcolor of the form, don't get
+	base.BackColor, as this allows parents to influence the background
+	color.  This breaks mdi forms.  Instead, if the background_color
+	is empty, return the default.
+
+2006-10-18  Chris Toshok  <toshok@ximian.com>
+
 	* XplatUIX11.cs: change some debug ifdefs, and return XGetParent
 	to being private instead of internal static.
 

@@ -282,7 +282,14 @@ namespace System.Windows.Forms {
 
 		public override Color BackColor {
 			get {
-				return base.BackColor;
+				/* we don't let parents override our
+				 default background color for forms.
+				 this fixes the default color for mdi
+				 children. */
+				if (background_color.IsEmpty)
+					return DefaultBackColor;
+				else
+					return background_color;
 			}
 			set {
 				base.BackColor = value;
