@@ -1441,7 +1441,9 @@ namespace System.Web.UI.WebControls
 			DetailsViewPageEventArgs args = new DetailsViewPageEventArgs (newIndex);
 			OnPageIndexChanging (args);
 			if (!args.Cancel) {
-				EndRowEdit ();
+				if (args.NewPageIndex < 0 || args.NewPageIndex >= PageCount)
+					return;
+				EndRowEdit (false);
 				PageIndex = args.NewPageIndex;
 				OnPageIndexChanged (EventArgs.Empty);
 			}
@@ -1571,7 +1573,12 @@ namespace System.Web.UI.WebControls
 		
 		void EndRowEdit ()
 		{
-			ChangeMode (DefaultMode);
+			EndRowEdit (true);
+		}
+
+		void EndRowEdit (bool switchToDefaultMode) {
+			if (switchToDefaultMode)
+				ChangeMode (DefaultMode);
 			oldEditValues = new DataKey (new OrderedDictionary ());
 			currentEditRowKeys = null;
 			currentEditOldValues = null;
