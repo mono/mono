@@ -3829,12 +3829,6 @@ namespace System.Windows.Forms
 					PerformLayout(this, "visible");
 				}
 			}
-			else {
-				Hwnd hwnd = Hwnd.ObjectFromHandle (window.Handle);
-				if (is_visible != hwnd.visible) {
-					Console.WriteLine ("oops");
-				}
-			}
 		}
 	
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
