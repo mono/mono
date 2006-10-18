@@ -1184,6 +1184,9 @@ namespace System.Web.UI.WebControls
 				cell.ColumnSpan = 2;
 			row.Cells.Add (cell);
 			field.InitializeCell (cell, DataControlCellType.DataCell, row.RowState, row.RowIndex);
+
+			if (CurrentMode == DetailsViewMode.Insert && !field.InsertVisible)
+				row.Visible = false;
 		}
 		
 		IOrderedDictionary CreateRowDataKey (object dataItem)
