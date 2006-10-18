@@ -1,5 +1,9 @@
 2006-10-18 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* DetailsView.cs: fixed: CurrentMode property.
+
+2006-10-18 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* DetailsView.cs: fixed: current state are not changed during paging.
 
 2006-10-18 Igor Zelmanovich <igorz@mainsoft.com>

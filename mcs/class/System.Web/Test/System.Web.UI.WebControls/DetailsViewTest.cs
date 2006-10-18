@@ -1895,6 +1895,15 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.IsTrue (view.CanRetrieveTotalRowCount);
 			Assert.IsTrue (arg.Equals (arg1), "AllowPaging = true, CanPage = true, CanRetrieveTotalRowCount = true");
 		}
+
+		[Test]
+		public void DetailsView_CurrentMode () {
+			DetailsView view = new DetailsView ();
+			view.DefaultMode = DetailsViewMode.Insert;
+			Assert.AreEqual (DetailsViewMode.Insert, view.CurrentMode, "DetailsView_CurrentMode#1");
+			view.ChangeMode (DetailsViewMode.Edit);
+			Assert.AreEqual (DetailsViewMode.Edit, view.CurrentMode, "DetailsView_CurrentMode#2");
+		}
 	}
 
 	public class DTemplate : ITemplate

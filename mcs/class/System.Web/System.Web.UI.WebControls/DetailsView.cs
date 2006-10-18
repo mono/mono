@@ -105,6 +105,7 @@ namespace System.Web.UI.WebControls
 		// Control state
 		int pageIndex;
 		DetailsViewMode currentMode = DetailsViewMode.ReadOnly; 
+		bool hasCurrentMode;
 		int pageCount;
 		
 		public DetailsView ()
@@ -458,7 +459,11 @@ namespace System.Web.UI.WebControls
 		[BrowsableAttribute (false)]
 		public DetailsViewMode CurrentMode {
 			get {
-				return currentMode;
+				return hasCurrentMode ? currentMode : DefaultMode;
+			}
+			private set {
+				hasCurrentMode = true;
+				currentMode = value;
 			}
 		}
 
@@ -1041,10 +1046,6 @@ namespace System.Web.UI.WebControls
 			Controls.Add (table);
 				
 			ArrayList list = new ArrayList ();
-
-			if (Page == null || !Page.IsPostBack)
-				currentMode = DefaultMode;
-
 			
 			// Gets the current data item
 			
@@ -1454,7 +1455,7 @@ namespace System.Web.UI.WebControls
 			DetailsViewModeEventArgs args = new DetailsViewModeEventArgs (newMode, false);
 			OnModeChanging (args);
 			if (!args.Cancel) {
-				currentMode = args.NewMode;
+				CurrentMode = args.NewMode;
 				OnModeChanged (EventArgs.Empty);
 				RequireBinding ();
 			}
@@ -1479,7 +1480,7 @@ namespace System.Web.UI.WebControls
 			if (causesValidation)
 				Page.Validate ();
 			
-			if (currentMode != DetailsViewMode.Edit) throw new NotSupportedException ();
+			if (CurrentMode != DetailsViewMode.Edit) throw new NotSupportedException ();
 			
 			currentEditOldValues = oldEditValues.Values;
 
@@ -1517,7 +1518,7 @@ namespace System.Web.UI.WebControls
 			if (causesValidation)
 				Page.Validate ();
 			
-			if (currentMode != DetailsViewMode.Insert) throw new NotSupportedException ();
+			if (CurrentMode != DetailsViewMode.Insert) throw new NotSupportedException ();
 			
 			currentEditNewValues = GetRowValues (false, true);
 			DetailsViewInsertEventArgs args = new DetailsViewInsertEventArgs (param, currentEditNewValues);
@@ -1593,7 +1594,7 @@ namespace System.Web.UI.WebControls
 			base.LoadControlState (state[0]);
 			pageIndex = (int) state[1];
 			pageCount = (int) state[2];
-			currentMode = (DetailsViewMode) state[3];
+			CurrentMode = (DetailsViewMode) state[3];
 			dataKeyNames = (string[]) state[4];
 			defaultMode = (DetailsViewMode) state[5];
 		}
@@ -1602,7 +1603,7 @@ namespace System.Web.UI.WebControls
 		{
 			object bstate = base.SaveControlState ();
 			return new object[] {
-				bstate, pageIndex, pageCount, currentMode, dataKeyNames, defaultMode
+				bstate, pageIndex, pageCount, CurrentMode, dataKeyNames, defaultMode
 					};
 		}
 		
