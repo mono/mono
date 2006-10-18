@@ -1,3 +1,8 @@
+2006-10-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestGraphics.cs: Ignore new test cases when font is null (not 
+	available). Add pixel size compares to MeasureString_Bug76664.
+
 2006-10-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestGraphics.cs: Added test case to measure strings, some aren't yet

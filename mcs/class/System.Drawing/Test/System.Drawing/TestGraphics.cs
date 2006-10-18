@@ -1413,10 +1413,15 @@ namespace MonoTests.System.Drawing
 					SizeF size = g.MeasureString (s, font);
 
 					int chars, lines;
-					size = g.MeasureString (s, font, new SizeF (80, size.Height), null, out chars, out lines);
+					SizeF size2 = g.MeasureString (s, font, new SizeF (80, size.Height), null, out chars, out lines);
+
+					// in pixels
+					Assert.IsTrue (size2.Width < size.Width, "Width/pixel");
+					Assert.AreEqual (size2.Height, size.Height, "Height/pixel");
+
+					Assert.AreEqual (1, lines, "lines fitted");
 					// LAMESPEC: documentation seems to suggest chars is total length
 					Assert.IsTrue (chars < s.Length, "characters fitted");
-					AssertEquals ("lines fitted", 1, lines);
 				}
 			}
 		}
@@ -1442,6 +1447,9 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void MeasureCharacterRanges_EmptyStringFormat ()
 		{
+			if (font == null)
+				Assert.Ignore ("Couldn't create required font");
+
 			using (Bitmap bitmap = new Bitmap (20, 20)) {
 				using (Graphics g = Graphics.FromImage (bitmap)) {
 					// string format without character ranges
@@ -1568,6 +1576,9 @@ namespace MonoTests.System.Drawing
 		[ExpectedException (typeof (ArgumentException))]
 		public void MeasureCharacterRanges_NullStringFormat ()
 		{
+			if (font == null)
+				Assert.Ignore ("Couldn't create required font");
+
 			using (Bitmap bitmap = new Bitmap (20, 20)) {
 				using (Graphics g = Graphics.FromImage (bitmap)) {
 					g.MeasureCharacterRanges ("Mono", font, new RectangleF (), null);
@@ -1793,6 +1804,9 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void MeasureString_Wrapping_Dots ()
 		{
+			if (font == null)
+				Assert.Ignore ("Couldn't create required font");
+
 			string text = "this is really long text........................................... with a lot o periods.";
 			using (Bitmap bitmap = new Bitmap (20, 20)) {
 				using (Graphics g = Graphics.FromImage (bitmap)) {
