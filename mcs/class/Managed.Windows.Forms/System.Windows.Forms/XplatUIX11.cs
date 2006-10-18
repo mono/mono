@@ -1581,7 +1581,7 @@ namespace System.Windows.Forms {
 
 			return (IntPtr)result;
 		}
-		internal static IntPtr XGetParent(IntPtr handle) {
+		private IntPtr XGetParent(IntPtr handle) {
 			IntPtr	Root;
 			IntPtr	Parent;
 			IntPtr	Children;
@@ -1618,6 +1618,7 @@ namespace System.Windows.Forms {
 
 					#if DriverDebug || DriverDebugDestroy
 					Console.WriteLine (" + adding {0} to the list of zombie windows", XplatUI.Window (hwnd.Handle));
+					Console.WriteLine (" + parent X window is {0:X}", XGetParent (hwnd.whole_window).ToInt32());
 					#endif
 
 					list.Add (hwnd);
@@ -2824,7 +2825,6 @@ namespace System.Windows.Forms {
 
 			#if DriverDebug || DriverDebugDestroy
 				Console.WriteLine("Destroying window {0}", XplatUI.Window(hwnd.client_window));
-				Console.WriteLine (Environment.StackTrace);
 			#endif
 
 			CleanupCachedWindows (hwnd);
@@ -4221,7 +4221,7 @@ namespace System.Windows.Forms {
 				data.Result = result;
 				
 				SendAsyncMethod (data);
-				#if DriverDebug || DriverDebugParent
+				#if DriverDebug || DriverDebugThreads
 				Console.WriteLine ("Sending {0} message across.", message);
 				#endif
 

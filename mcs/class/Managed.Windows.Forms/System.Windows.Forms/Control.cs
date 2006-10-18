@@ -74,7 +74,6 @@ namespace System.Windows.Forms
 		internal bool			is_captured;		// tracks if the control has captured the mouse
 		internal bool			is_toplevel;		// tracks if the control is a toplevel window
 		internal bool			is_recreating;		// tracks if the handle for the control is being recreated
-		internal ArrayList              children_to_recreate;   // keep track of the children which need to be recreated
 		internal bool			causes_validation;	// tracks if validation is executed on changes
 		internal int			tab_index;		// position in tab order of siblings
 		internal bool			tab_stop = true;	// is the control a tab stop?
@@ -882,32 +881,8 @@ namespace System.Windows.Forms
 
 		internal bool IsRecreating {
 			get {
-				if (is_recreating) {
-					return true;
-				}
-
-				return ParentWaitingOnRecreation(this);
+				return is_recreating;
 			}
-		}
-
-		internal bool ChildNeedsRecreating (Control child)
-		{
-			if (children_to_recreate != null && children_to_recreate.Contains (child))
-					return true;
-			return ParentWaitingOnRecreation (this);
-		}
-
-		internal void RemoveChildFromRecreateList (Control child)
-		{
-			if (children_to_recreate != null)
-				children_to_recreate.Remove (child);
-		}
-
-		private bool ParentWaitingOnRecreation (Control c) {
-			if (parent != null) {
-				return parent.ChildNeedsRecreating (c);
-			}
-			return false;
 		}
 
 		internal Graphics DeviceContext {
@@ -3578,19 +3553,27 @@ namespace System.Windows.Forms
 			// MS Internal
 		}
 
+		private void SetIsRecreating (bool flag)
+		{
+			is_recreating=true;
+
+			foreach (Control c in Controls) {
+				c.SetIsRecreating (flag);
+			}
+		}
+
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void RecreateHandle() {
 #if DebugRecreate
 			Console.WriteLine("Recreating control {0}", XplatUI.Window(window.Handle));
 #endif
-			is_recreating=true;
+
+			SetIsRecreating (true);
 
 			if (IsHandleCreated) {
 #if DebugRecreate
 				Console.WriteLine(" + handle is created, destroying it.");
 #endif
-				children_to_recreate = new ArrayList();
-				children_to_recreate.AddRange (child_controls.GetAllControls ());
 				DestroyHandle();
 				// WM_DESTROY will CreateHandle for us
 			} else {
@@ -3602,13 +3585,10 @@ namespace System.Windows.Forms
 				} else {
 					CreateHandle();
 				}
-				if (parent != null)
-					parent.RemoveChildFromRecreateList (this);
 
 				is_recreating = false;
 #if DebugRecreate
 				Console.WriteLine (" + new handle = {0:X}", Handle.ToInt32());
-				Console.WriteLine (" + new parent = {0:X}", XplatUIX11.XGetParent (XplatUIX11.XGetParent (Handle)).ToInt32 ());
 #endif
 			}
 
@@ -3954,19 +3934,13 @@ namespace System.Windows.Forms
 #endif
 					window.InvalidateHandle();
 
-					if (ParentWaitingOnRecreation (this)) {
-#if DebugRecreate
-						Console.WriteLine ("Recreating handle for {0:X}, as parent is waiting on us", handle);
-#endif
-						RecreateHandle();
-					} else if (is_recreating) {
+					if (is_recreating) {
 #if DebugRecreate
 						Console.WriteLine ("Creating handle for {0:X}", handle.ToInt32());
 #endif
 						CreateHandle();
 #if DebugRecreate
 						Console.WriteLine (" + new handle = {0:X}", Handle.ToInt32());
-						Console.WriteLine (" + new parent = {0:X}", XplatUIX11.XGetParent (XplatUIX11.XGetParent (Handle)).ToInt32 ());
 #endif
 						is_recreating = false;
 					}

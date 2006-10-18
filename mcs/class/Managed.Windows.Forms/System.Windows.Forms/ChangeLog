@@ -1,3 +1,17 @@
+2006-10-18  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11.cs: change some debug ifdefs, and return XGetParent
+	to being private instead of internal static.
+
+	* Control.cs: remove all the stupid ParentWaitingOnRecreation
+	crap, it wasn't working for more deeply nested controls anyway,
+	and we already have the is_recreating flag - use that instead.
+	Before calling DestroyHandle in RecreateHandle, recurse through
+	the control tree setting it to true.  this returns the recreate
+	code to much of its original simplicity, while now guaranteeing we
+	actually recreate everything we're supposed to.  This change gets
+	fyireporting actually showing mdi children.
+
 2006-10-17  Chris Toshok  <toshok@ximian.com>
 
 	* Form.cs: remove some debug spew, and collapse some duplicate
