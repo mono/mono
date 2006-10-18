@@ -1235,6 +1235,12 @@ namespace System.Web.UI.WebControls
 		
 		public sealed override void DataBind ()
 		{
+			if (CurrentMode == DetailsViewMode.Insert) {
+				RequiresDataBinding = false;
+				PerformDataBinding (new object [] { null });
+				return;
+			}
+			
 			cachedKeyProperties = null;
 			base.DataBind ();
 			
