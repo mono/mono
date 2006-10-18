@@ -1,5 +1,22 @@
 2006-10-18  Chris Toshok  <toshok@ximian.com>
 
+	* XplatUIX11.cs (SystrayAdd): a rather convoluted change, but the
+	systray stuff is rather convoluted to begin with.
+
+	systray icons are a single window for some reason (that I haven't
+	figured out yet), and for them, client_window == whole_window.
+	Given the way the tests are structured elsewhere to determine
+	which paints are pending (client vs. nc), that situation will
+	always yield PAINT, not NCPAINT.  So, if we have a pending
+	nc_expose and no pending expose, remove the hwnd from the paint
+	queue, and also set nc_expose_pending to false, to keep us from
+	blocking further expose's adding the hwnd to the paint queue.
+
+	phew.  like i said, a rather convoluted change.  Fixes the
+	notifyicon repaint issues in bug #79645.
+
+2006-10-18  Chris Toshok  <toshok@ximian.com>
+
 	* Form.cs: when getting the backcolor of the form, don't get
 	base.BackColor, as this allows parents to influence the background
 	color.  This breaks mdi forms.  Instead, if the background_color

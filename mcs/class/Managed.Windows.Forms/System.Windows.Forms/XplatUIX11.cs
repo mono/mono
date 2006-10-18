@@ -3137,7 +3137,7 @@ namespace System.Windows.Forms {
 
 			if (hwnd.client_window == xevent.AnyEvent.window) {
 				client = true;
-				//Console.WriteLine("Client message, sending to window {0:X}", msg.hwnd.ToInt32());
+				//Console.WriteLine("Client message {1}, sending to window {0:X}", msg.hwnd.ToInt32(), xevent.type);
 			} else {
 				client = false;
 				//Console.WriteLine("Non-Client message, sending to window {0:X}", msg.hwnd.ToInt32());
@@ -4822,6 +4822,16 @@ namespace System.Windows.Forms {
 				if (hwnd.client_window != hwnd.whole_window) {
 					XDestroyWindow(DisplayHandle, hwnd.client_window);
 					hwnd.client_window = hwnd.whole_window;
+
+					/* by virtue of the way the tests are ordered when determining if it's PAINT
+					   or NCPAINT, client_window == whole_window will always be PAINT.  So, if we're
+					   waiting on an nc_expose, drop it and remove the hwnd from the list (unless
+					   there's a pending expose). */
+					if (hwnd.nc_expose_pending) {
+						hwnd.nc_expose_pending = false;
+						if (!hwnd.expose_pending)
+							hwnd.Queue.Paint.Remove (hwnd);
+					}
 				}
 
 				size_hints = new XSizeHints();
