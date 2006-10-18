@@ -1,3 +1,16 @@
+2006-10-18  Kornél Pál  <kornelpal@gmail.com>
+
+	* Type.cs: Removed is_subtype_of because IsSubclassOf should be used
+	  that is public and virtual. IsClass: Checking for ValueType is
+	  unnecessary. IsEnum: UnderlyingSystemType is not used anymore so
+	  no EnumBuilder hack is necessary. Checking for Enum is
+	  unnecessary. IsSerializable: Walk BaseType for user defined types.
+	  IsSubclassOf: Walk BaseType for user defined types.
+
+	* MonoType.cs: IsValueTypeImpl is unnecessary. IsSubclassOf: Unlike
+	  Type system types throw ArgumentNullException on null Type
+	  argument.
+
 2006-10-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* BadImageFormatException.cs: Changed message for default ctor to

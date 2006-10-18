@@ -299,13 +299,14 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		protected extern override bool IsPrimitiveImpl ();
 
-		protected override bool IsValueTypeImpl ()
+		public override bool IsSubclassOf (Type type)
 		{
-			return type_is_subtype_of (this, typeof (System.ValueType), false) &&
-				this != typeof (System.ValueType) &&
-				this != typeof (System.Enum);
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
+			return base.IsSubclassOf (type);
 		}
-		
+
 		public override object InvokeMember (string name, BindingFlags invokeAttr,
 						     Binder binder, object target, object[] args,
 						     ParameterModifier[] modifiers,

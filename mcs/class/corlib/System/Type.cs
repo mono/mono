@@ -208,15 +208,10 @@ namespace System {
 
 		public bool IsClass {
 			get {
-				//
-				// This code used to probe for "this == typeof (System.Enum)", but in
-				// The .NET Framework 1.0, the above test return false
-				//
-				if (this == typeof (System.ValueType))
-					return true;
 				if (IsInterface)
 					return false;
-				return !is_subtype_of (this, typeof (System.ValueType), false);
+
+				return !IsSubclassOf (typeof (ValueType));
 			}
 		}
 
@@ -234,12 +229,7 @@ namespace System {
 
 		public bool IsEnum {
 			get {
-				// This hack is needed because EnumBuilder's UnderlyingSystemType returns the enum's basetype
-				if (this is EnumBuilder)
-					return true;
-
-				return is_subtype_of (this, typeof (System.Enum), false) &&
-					this != typeof (System.Enum);
+				return IsSubclassOf (typeof (Enum));
 			}
 		}
 
@@ -341,9 +331,28 @@ namespace System {
 
 		public bool IsSerializable {
 			get {
+				if ((Attributes & TypeAttributes.Serializable) != 0)
+					return true;
+
 				// Enums and delegates are always serializable
-				return (Attributes & TypeAttributes.Serializable) != 0 || IsEnum || 
-					is_subtype_of (this, typeof (System.Delegate), false);
+
+				Type type = UnderlyingSystemType;
+				if (type == null)
+					return false;
+
+				// Fast check for system types
+				if (type.IsSystemType)
+					return type_is_subtype_of (type, typeof (Enum), false) || type_is_subtype_of (type, typeof (Delegate), false);
+
+				// User defined types depend on this behavior
+				do {
+					if ((type == typeof (Enum)) || (type == typeof (Delegate)))
+						return true;
+
+					type = type.BaseType;
+				} while (type != null);
+
+				return false;
 			}
 		}
 
@@ -544,17 +553,6 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern bool type_is_assignable_from (Type a, Type b);
 
-		internal static bool is_subtype_of (Type a, Type b, bool check_interfaces)
-		{
-			a = a.UnderlyingSystemType;
-			b = b.UnderlyingSystemType;
-
-			if (!a.IsSystemType || !b.IsSystemType)
-				return false;
-			else
-				return type_is_subtype_of (a, b, check_interfaces);
-		}
-
 		public new Type GetType ()
 		{
 			return base.GetType ();
@@ -565,10 +563,19 @@ namespace System {
 #endif
 		public virtual bool IsSubclassOf (Type c)
 		{
-			if (c == null)
+			if (c == null || c == this)
 				return false;
 
-			return (this != c) && is_subtype_of (this, c, false);
+			// Fast check for system types
+			if (IsSystemType)
+				return c.IsSystemType && type_is_subtype_of (this, c, false);
+
+			// User defined types depend on this behavior
+			for (Type type = BaseType; type != null; type = type.BaseType)
+				if (type == c)
+					return true;
+
+			return false;
 		}
 
 		public virtual Type[] FindInterfaces (TypeFilter filter, object filterCriteria)
@@ -896,7 +903,7 @@ namespace System {
 
 		protected virtual bool IsValueTypeImpl ()
 		{
-			if (this == typeof (Enum) || this == typeof (ValueType))
+			if (this == typeof (ValueType) || this == typeof (Enum))
 				return false;
 
 			return IsSubclassOf (typeof (ValueType));
