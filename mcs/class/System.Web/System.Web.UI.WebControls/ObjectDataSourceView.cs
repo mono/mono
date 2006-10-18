@@ -506,16 +506,9 @@ namespace System.Web.UI.WebControls
     
 	        private Type LoadType(string typeName)
 		{
-    			Type type = null;
-    			Assembly [] assemblies = AppDomain.CurrentDomain.GetAssemblies ();
-
-    			foreach (Assembly ass in assemblies) {
-    				type = ass.GetType (typeName);
-    				if (type == null)
-        				continue;
-
-    				return type;
-    			}
+				Type type = Type.GetType (typeName);
+				if (type != null)
+					return type;
 
     			if (!Directory.Exists (PrivateBinPath))
     				return null;

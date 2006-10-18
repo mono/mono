@@ -1,3 +1,7 @@
+2006-10-18 Konstantin Triger <kostat@mainsoft.com>
+
+	* ObjectDataSourceView.cs: use Type.GetType for loading full qualified types.
+
 2006-10-17 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* FormView.cs: fixed: CreateDataSourceSelectArguments method.
