@@ -1,5 +1,9 @@
 2006-10-18 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* FormView.cs: fixed: OnBubbleEvent returns true when event is handled.
+
+2006-10-18 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* DetailsView.cs: fixed: OnBubbleEvent works properly.
 
 2006-10-18 Igor Zelmanovich <igorz@mainsoft.com>

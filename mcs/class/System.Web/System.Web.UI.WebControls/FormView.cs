@@ -1120,6 +1120,7 @@ namespace System.Web.UI.WebControls
 			if (args != null) {
 				OnItemCommand (args);
 				ProcessEvent (args.CommandName, args.CommandArgument as string);
+				return true;
 			}
 			return base.OnBubbleEvent (source, e);
 		}

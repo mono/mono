@@ -1,5 +1,9 @@
 2006-10-18 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* FormViewTest.cs: added test
+			
+2006-10-18 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* DetailsViewTest.cs: removed NotWorking attributes
 	* DetailsViewRowCollectionTest.cs: removed NotWorking attributes
 			
