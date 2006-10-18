@@ -1,4 +1,10 @@
+2006-10-18  Jonathan Chambers  <joncham@gmail.com>
 
+	* icall.c: Have ves_icall_System_Diagnostics_DefaultTraceListener_WriteWindowsDebugString
+	call kernel32 function OutputDebugString directly.
+	
+	Signed-off-by: Jonathan Chambers <joncham@gmail.com>
+	
 Tue Oct 17 16:59:59 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: small cleanup, using a function to insert a MonoString
