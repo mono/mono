@@ -91,7 +91,6 @@ namespace System.Windows.Forms {
 		private void ControlAddedHandler (object sender, ControlEventArgs e)
 		{
 			if (mdi_container != null) {
-				Console.WriteLine ("SENDING TO BACK");
 				mdi_container.SendToBack ();
 			}
 		}
@@ -1298,7 +1297,6 @@ namespace System.Windows.Forms {
 				return;
 
 			if (Environment.GetEnvironmentVariable ("MONO_MWF_SCALING") == "disable"){
-				Console.WriteLine ("Not scaling");
 				return;
 			}
 			
@@ -1722,14 +1720,8 @@ namespace System.Windows.Forms {
 
 			clientsize_set = new Size(x, y);
 
-			if (!IsMdiChild) {
-				if (XplatUI.CalculateWindowRect(ref ClientRect, cp.Style, cp.ExStyle, cp.menu, out WindowRect)) {
-					SetBounds(bounds.X, bounds.Y, WindowRect.Width, WindowRect.Height, BoundsSpecified.Size);
-				}
-			} else {
-				if (XplatUI.CalculateWindowRect(ref ClientRect, cp.Style, cp.ExStyle, cp.menu, out WindowRect)) {
-					SetBounds(bounds.X, bounds.Y, WindowRect.Width, WindowRect.Height, BoundsSpecified.Size);
-				}
+			if (XplatUI.CalculateWindowRect(ref ClientRect, cp.Style, cp.ExStyle, cp.menu, out WindowRect)) {
+				SetBounds(bounds.X, bounds.Y, WindowRect.Width, WindowRect.Height, BoundsSpecified.Size);
 			}
 		}
 

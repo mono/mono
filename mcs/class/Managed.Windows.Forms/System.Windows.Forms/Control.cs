@@ -32,6 +32,8 @@
 
 // COMPLETE 
 
+#undef DebugRecreate
+
 using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
@@ -44,7 +46,6 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Threading;
-
 
 namespace System.Windows.Forms
 {
@@ -116,7 +117,6 @@ namespace System.Windows.Forms
 		internal ContextMenu		context_menu;		// Context menu associated with the control
 
 		private Graphics		dc_mem;			// Graphics context for double buffering
-		private GraphicsState		dc_state;		// Pristine graphics context to reset after paint code alters dc_mem
 		private Bitmap			bmp_mem;		// Bitmap for double buffering control
 		private Region                  invalid_region;
 
@@ -914,15 +914,9 @@ namespace System.Windows.Forms
 			get { 
 				if (dc_mem == null) {
 					CreateBuffers(this.Width, this.Height);
-					dc_state = dc_mem.Save();
 				}
 				return dc_mem;
 			}
-		}
-
-		internal void ResetDeviceContext() {
-			dc_mem.Restore(dc_state);
-			dc_state = dc_mem.Save();
 		}
 
 		private void ImageBufferNeedsRedraw () {
@@ -941,12 +935,6 @@ namespace System.Windows.Forms
 		}
 
 		internal void CreateBuffers (int width, int height) {
-			if (dc_mem != null) {
-				dc_mem.Dispose ();
-			}
-			if (bmp_mem != null)
-				bmp_mem.Dispose ();
-
 			if (width < 1) {
 				width = 1;
 			}
@@ -965,8 +953,6 @@ namespace System.Windows.Forms
 			if (dc_mem != null) {
 				dc_mem.Dispose ();
 			}
-			if (bmp_mem != null)
-				bmp_mem.Dispose ();
 
 			dc_mem = null;
 			bmp_mem = null;
@@ -3384,6 +3370,7 @@ namespace System.Windows.Forms
 				creator_thread = Thread.CurrentThread;
 
 				XplatUI.EnableWindow(window.Handle, is_enabled);
+				XplatUI.SetVisible(window.Handle, is_visible);
 
 				if (clip_region != null) {
 					XplatUI.SetClipRegion(Handle, clip_region);
@@ -3593,14 +3580,23 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void RecreateHandle() {
+#if DebugRecreate
+			Console.WriteLine("Recreating control {0}", XplatUI.Window(window.Handle));
+#endif
 			is_recreating=true;
 
 			if (IsHandleCreated) {
+#if DebugRecreate
+				Console.WriteLine(" + handle is created, destroying it.");
+#endif
 				children_to_recreate = new ArrayList();
 				children_to_recreate.AddRange (child_controls.GetAllControls ());
 				DestroyHandle();
 				// WM_DESTROY will CreateHandle for us
 			} else {
+#if DebugRecreate
+				Console.WriteLine(" + handle is not created, creating it.");
+#endif
 				if (!is_created) {
 					CreateControl();
 				} else {
@@ -3608,9 +3604,14 @@ namespace System.Windows.Forms
 				}
 				if (parent != null)
 					parent.RemoveChildFromRecreateList (this);
+
+				is_recreating = false;
+#if DebugRecreate
+				Console.WriteLine (" + new handle = {0:X}", Handle.ToInt32());
+				Console.WriteLine (" + new parent = {0:X}", XplatUIX11.XGetParent (XplatUIX11.XGetParent (Handle)).ToInt32 ());
+#endif
 			}
 
-			is_recreating = false;
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -3828,6 +3829,12 @@ namespace System.Windows.Forms
 					PerformLayout(this, "visible");
 				}
 			}
+			else {
+				Hwnd hwnd = Hwnd.ObjectFromHandle (window.Handle);
+				if (is_visible != hwnd.visible) {
+					Console.WriteLine ("oops");
+				}
+			}
 		}
 	
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -3948,12 +3955,26 @@ namespace System.Windows.Forms
 			switch((Msg)m.Msg) {
 				case Msg.WM_DESTROY: {
 					OnHandleDestroyed(EventArgs.Empty);
+#if DebugRecreate
+					IntPtr handle = window.Handle;
+#endif
 					window.InvalidateHandle();
 
 					if (ParentWaitingOnRecreation (this)) {
+#if DebugRecreate
+						Console.WriteLine ("Recreating handle for {0:X}, as parent is waiting on us", handle);
+#endif
 						RecreateHandle();
 					} else if (is_recreating) {
+#if DebugRecreate
+						Console.WriteLine ("Creating handle for {0:X}", handle.ToInt32());
+#endif
 						CreateHandle();
+#if DebugRecreate
+						Console.WriteLine (" + new handle = {0:X}", Handle.ToInt32());
+						Console.WriteLine (" + new parent = {0:X}", XplatUIX11.XGetParent (XplatUIX11.XGetParent (Handle)).ToInt32 ());
+#endif
+						is_recreating = false;
 					}
 					return;
 				}
@@ -3973,10 +3994,8 @@ namespace System.Windows.Forms
 				// and here http://msdn.microsoft.com/msdnmag/issues/06/03/WindowsFormsPerformance/
 				case Msg.WM_PAINT: {
 					PaintEventArgs	paint_event;
-					bool		reset_context;
 
 					paint_event = XplatUI.PaintEventStart(Handle, true);
-					reset_context = false;
 
 					if (paint_event == null) {
 						return;
@@ -3990,10 +4009,13 @@ namespace System.Windows.Forms
 					}
 
 					Graphics dc = null;
+					Graphics back_dc = null;
+					Bitmap backbuffer = null;
 					if (ThemeEngine.Current.DoubleBufferingSupported) {
 						if ((control_style & ControlStyles.DoubleBuffer) != 0) {
-							dc = paint_event.SetGraphics (DeviceContext);
-							reset_context = true;
+							backbuffer = ImageBuffer;
+							back_dc = Graphics.FromImage (backbuffer);
+							dc = paint_event.SetGraphics (back_dc);
 						}
 					}
 
@@ -4014,13 +4036,12 @@ namespace System.Windows.Forms
 							dc.DrawImage (ImageBuffer, paint_event.ClipRectangle, paint_event.ClipRectangle, GraphicsUnit.Pixel);
 							paint_event.SetGraphics (dc);
 							invalid_region.Exclude (paint_event.ClipRectangle);
+							back_dc.Dispose ();
+							if (backbuffer != bmp_mem)
+								backbuffer.Dispose();
 						}
 
 					XplatUI.PaintEventEnd(Handle, true);
-
-					if (reset_context) {
-						ResetDeviceContext();
-					}
 
 					return;
 				}

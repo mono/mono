@@ -1581,7 +1581,7 @@ namespace System.Windows.Forms {
 
 			return (IntPtr)result;
 		}
-		private IntPtr XGetParent(IntPtr handle) {
+		internal static IntPtr XGetParent(IntPtr handle) {
 			IntPtr	Root;
 			IntPtr	Parent;
 			IntPtr	Children;
@@ -1616,7 +1616,11 @@ namespace System.Windows.Forms {
 				if (c.IsHandleCreated && !c.IsDisposed) {
 					Hwnd hwnd = Hwnd.ObjectFromHandle(c.Handle);
 
-					list.Add (hwnd.Handle);
+					#if DriverDebug || DriverDebugDestroy
+					Console.WriteLine (" + adding {0} to the list of zombie windows", XplatUI.Window (hwnd.Handle));
+					#endif
+
+					list.Add (hwnd);
 					CleanupCachedWindows (hwnd);
 					hwnd.zombie = true;
 				}
@@ -1626,12 +1630,6 @@ namespace System.Windows.Forms {
 				}
 			}
 			
-		}
-
-		private void SendWMDestroyMessages(ArrayList handles) {
-			foreach (IntPtr handle in handles) {
-				SendMessage(handle, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
-			}
 		}
 
 		void CleanupCachedWindows (Hwnd hwnd)
@@ -2059,11 +2057,16 @@ namespace System.Windows.Forms {
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-			if (hwnd != null) lock (XlibLock) {
-				SendNetWMMessage(hwnd.whole_window, _NET_ACTIVE_WINDOW, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
-				//XRaiseWindow(DisplayHandle, handle);
+			if (hwnd != null) {
+				lock (XlibLock) {
+					if (true /* the window manager supports NET_ACTIVE_WINDOW */) {
+						SendNetWMMessage(hwnd.whole_window, _NET_ACTIVE_WINDOW, (IntPtr)1, IntPtr.Zero, IntPtr.Zero);
+					}
+					else {
+						//XRaiseWindow(DisplayHandle, handle);
+					}
+				}
 			}
-			return;
 		}
 
 		internal override void AudibleAlert() {
@@ -2820,7 +2823,8 @@ namespace System.Windows.Forms {
 			}
 
 			#if DriverDebug || DriverDebugDestroy
-				Console.WriteLine("Destroying window {0:X}", handle.ToInt32());
+				Console.WriteLine("Destroying window {0}", XplatUI.Window(hwnd.client_window));
+				Console.WriteLine (Environment.StackTrace);
 			#endif
 
 			CleanupCachedWindows (hwnd);
@@ -2831,17 +2835,23 @@ namespace System.Windows.Forms {
 
 			lock (XlibLock) {
 				if (hwnd.whole_window != IntPtr.Zero) {
+					#if DriverDebug || DriverDebugDestroy
+					Console.WriteLine ("XDestroyWindow (whole_window = {0:X})", hwnd.whole_window.ToInt32());
+					#endif
 					XDestroyWindow(DisplayHandle, hwnd.whole_window);
 				}
 				else if (hwnd.client_window != IntPtr.Zero) {
+					#if DriverDebug || DriverDebugDestroy
+					Console.WriteLine ("XDestroyWindow (client_window = {0:X})", hwnd.client_window.ToInt32());
+					#endif
 					XDestroyWindow(DisplayHandle, hwnd.client_window);
 				}
 
 			}
 
-			SendWMDestroyMessages(windows);
-
-			hwnd.Dispose();
+			foreach (Hwnd h in windows) {
+				SendMessage (h.Handle, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
+			}
 		}
 
 		internal override IntPtr DispatchMessage(ref MSG msg) {
@@ -3118,8 +3128,8 @@ namespace System.Windows.Forms {
 			// hwnds, since much of the event handling code makes requests using the hwnd's
 			// client_window, and that'll result in BadWindow errors if there's some lag
 			// between the XDestroyWindow call and the DestroyNotify event.
-			if (hwnd == null || (hwnd.zombie && xevent.type != XEventName.DestroyNotify)) {
-				#if DriverDebug
+			if (hwnd == null || hwnd.zombie) {
+				#if DriverDebug || DriverDebugDestroy
 					Console.WriteLine("GetMessage(): Got message {0} for non-existent or already destroyed window {1:X}", xevent.type, xevent.AnyEvent.window.ToInt32());
 				#endif
 				goto ProcessNextMessage;
@@ -3613,17 +3623,9 @@ namespace System.Windows.Forms {
 							Console.WriteLine("Received X11 Destroy Notification for {0}", XplatUI.Window(hwnd.client_window));
 						#endif
 
-						if (hwnd.zombie) {
-							/* this window is being destroyed via DestroyWindow, so we let that code
-							   take care of sending the WM_DESTROY message.  Just dispose of it here. */
-							hwnd.Dispose ();
-							goto ProcessNextMessage;
-						}
-						else {
-							msg.hwnd = hwnd.client_window;
-							msg.message=Msg.WM_DESTROY;
-							hwnd.Dispose();
-						}
+						msg.hwnd = hwnd.client_window;
+						msg.message=Msg.WM_DESTROY;
+						hwnd.Dispose();
 					} else {
 						goto ProcessNextMessage;
 					}
@@ -4769,7 +4771,7 @@ namespace System.Windows.Forms {
 					XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_USER_TIME, (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, atoms, 1);
 
 					XRaiseWindow(DisplayHandle, hwnd.whole_window);
-					SendNetWMMessage(hwnd.whole_window, _NET_ACTIVE_WINDOW, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+					SendNetWMMessage(hwnd.whole_window, _NET_ACTIVE_WINDOW, (IntPtr)1, IntPtr.Zero, IntPtr.Zero);
 					return true;
 					//throw new ArgumentNullException("after_handle", "Need sibling to adjust z-order");
 				}
