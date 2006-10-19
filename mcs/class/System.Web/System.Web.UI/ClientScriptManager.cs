@@ -336,7 +336,7 @@ namespace System.Web.UI
 	
 			foreach (string key in hiddenFields.Keys) {
 				string value = hiddenFields [key] as string;
-				writer.WriteLine ("\n<input type=\"hidden\" name=\"{0}\" value=\"{1}\" />", key, value);
+				writer.WriteLine ("\n<input type=\"hidden\" name=\"{0}\" id=\"{0}\" value=\"{1}\" />", key, value);
 			}
 	
 			hiddenFields = null;

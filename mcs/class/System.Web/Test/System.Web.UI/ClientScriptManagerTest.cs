@@ -359,7 +359,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void ClientScriptManager_RegisterHiddenField ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (RegisterHiddenField));

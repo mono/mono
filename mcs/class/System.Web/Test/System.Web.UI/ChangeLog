@@ -1,3 +1,7 @@
+2006-10-19  Igor Zelmanovich   <igorz@mainsoft.com>
+
+	* ClientScriptManagerTest.cs: removed NotWorking attribute.
+
 2006-10-11  Igor Zelmanovich   <igorz@mainsoft.com>
 
 	* DataSourceSelectArgumentsTest.cs: New tests.
