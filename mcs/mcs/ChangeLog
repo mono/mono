@@ -1,3 +1,7 @@
+2006-10-18  Martin Baulig <martin@ximian.com>
+
+       * anonymous.cs: Propagate the IsStatic state, fixes the crasher in banshee.
+
 2006-10-12  Martin Baulig  <martin@ximian.com>
 
 	* anonymous.cs
