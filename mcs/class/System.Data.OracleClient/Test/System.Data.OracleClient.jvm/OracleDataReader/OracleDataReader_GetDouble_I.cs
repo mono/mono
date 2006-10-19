@@ -34,9 +34,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Data.OracleClient
 {
 	[TestFixture]
-#if !TARGET_JVM
-	[Category("NotWorking")]
-#endif
 	public class OracleDataReader_GetDouble_I : GHTBase
 	{
 		private Exception exp = null;

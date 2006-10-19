@@ -33,9 +33,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Data.OracleClient
 {
 	[TestFixture]
-#if !TARGET_JVM
-	[Category("NotWorking")]
-#endif
 	public class OracleType_Date : GHTBase
 	{
 		private string dateColumnName;

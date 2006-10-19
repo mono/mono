@@ -1,0 +1,2 @@
+2006-10-19 Leszek Ciesielski <skolima@gmail.com>
+	* OracleTransaction_Rollback.cs : Set attribute NotWorking

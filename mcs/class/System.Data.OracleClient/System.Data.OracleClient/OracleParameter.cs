@@ -624,7 +624,7 @@ namespace System.Data.OracleClient {
 		private void InferOracleType (object value)
 		{
 			Type type = value.GetType ();
-			string exception = String.Format ("The parameter data type of {0} is invalid.", type.Name);
+			string exception = String.Format ("The parameter data type of {0} is invalid.", type.FullName);
 			switch (type.FullName) {
 			case "System.Int64":
 				SetOracleType (OracleType.Number);

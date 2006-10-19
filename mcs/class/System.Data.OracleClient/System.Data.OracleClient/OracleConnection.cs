@@ -316,13 +316,26 @@ namespace System.Data.OracleClient
 		}
 
                 // An instance of IFormatProvider for locale - independent IFormattable.ToString () in Bind ()
+		[MonoTODO("Handle other culture-specific informations, restrict buffer sizes")]
                 internal IFormatProvider SessionFormatProvider {
                         get {
+				if (format_info == null && state == ConnectionState.Open)
+				{
+					NumberFormatInfo numberFormatInfo = new NumberFormatInfo ();
+					numberFormatInfo.NumberGroupSeparator
+					= GetNlsInfo (Session, (uint)OciNlsServiceType.MAXBUFSZ, OciNlsServiceType.GROUP);
+					numberFormatInfo.NumberDecimalSeparator
+					= GetNlsInfo (Session, (uint)OciNlsServiceType.MAXBUFSZ, OciNlsServiceType.DECIMAL);
+					numberFormatInfo.CurrencyGroupSeparator
+					= GetNlsInfo (Session, (uint)OciNlsServiceType.MAXBUFSZ, OciNlsServiceType.MONGROUP);
+					numberFormatInfo.CurrencyDecimalSeparator
+					= GetNlsInfo (Session, (uint)OciNlsServiceType.MAXBUFSZ, OciNlsServiceType.MONDECIMAL);
+					format_info = numberFormatInfo;
+				}
                                 return format_info;
                         }
                 }
 
-                [MonoTODO("Handle other culture-specific informations, restrict buffer sizes")]
 		public void Open () 
 		{
 			PersistSecurityInfo ();
@@ -336,17 +349,6 @@ namespace System.Data.OracleClient
 				oci = pool.GetConnection ();
 			}
 			state = ConnectionState.Open;
-
-                        NumberFormatInfo numberFormatInfo = new NumberFormatInfo ();
-                        numberFormatInfo.NumberGroupSeparator
-                                        = GetNlsInfo (Session, (uint)OciNlsServiceType.MAXBUFSZ, OciNlsServiceType.GROUP);
-                        numberFormatInfo.NumberDecimalSeparator
-                                        = GetNlsInfo (Session, (uint)OciNlsServiceType.MAXBUFSZ, OciNlsServiceType.DECIMAL);
-                        numberFormatInfo.CurrencyGroupSeparator
-                                        = GetNlsInfo (Session, (uint)OciNlsServiceType.MAXBUFSZ, OciNlsServiceType.MONGROUP);
-                        numberFormatInfo.CurrencyDecimalSeparator
-                                        = GetNlsInfo (Session, (uint)OciNlsServiceType.MAXBUFSZ, OciNlsServiceType.MONDECIMAL);
-                        format_info = numberFormatInfo;
 
 			CreateStateChange (ConnectionState.Closed, ConnectionState.Open);
 		}
