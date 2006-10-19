@@ -1,3 +1,7 @@
+2006-10-18  Martin Baulig <martin@ximian.com>
+
+	* anonymous.cs: Propagate the IsStatic state, fixes the crasher in banshee.
+
 2006-10-17  Miguel de Icaza  <miguel@novell.com>
 
 	* convert.cs: Fix typo, fixes the test-535.cs, we were casting to

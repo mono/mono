@@ -1232,6 +1232,7 @@ namespace Mono.CSharp {
 
 			aec.CurrentAnonymousMethod = this;
 			aec.IsFieldInitializer = ec.IsFieldInitializer;
+			aec.IsStatic = ec.IsStatic;
 
 			Report.Debug (64, "RESOLVE ANONYMOUS METHOD #1", this, Location, ec, aec,
 				      RootScope, Parameters, Block);
