@@ -59,7 +59,7 @@ namespace MonoTests.System.Data.OracleClient
 		[TearDown]
 		public void TearDown()
 		{
-			if (con.State == ConnectionState.Open) con.Close();
+			if (con != null && con.State == ConnectionState.Open) con.Close();
 		}
 
 		public static void Main()
