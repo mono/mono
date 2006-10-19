@@ -1,3 +1,8 @@
+2006-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AssemblyNameTest.cs: Added test for CodeBase of AssemblyName
+	filled by AssemblyName.GetAssemblyName. Added tests for bug #79661.
+
 2006-09-29  Jb Evain  <jbevain@gmail.com>
 
 	* FieldInfoTest.cs: Test for FieldInfo.SetValue on a literal field.

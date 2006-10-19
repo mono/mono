@@ -1,3 +1,9 @@
+2006-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AssemblyName.cs: Revert change where filename was not converted to
+	absolute path before passing it to Assembly.InternalGetAssemblyName
+	as the CodeBase is not set in that case.
+
 2006-10-17  Kornél Pál  <kornelpal@gmail.com>
 
 	* FieldInfo.cs: Added GetRawConstantValue (). Note that throwing a

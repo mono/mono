@@ -521,6 +521,53 @@ public class AssemblyNameTest {
 		Assert.AreEqual (an.VersionCompatibility, clone.VersionCompatibility, "VersionCompatibility");
 	}
 
+	[Test]
+	[ExpectedException (typeof (FileNotFoundException))]
+	public void GetAssemblyName_AssemblyFile_DoesNotExist ()
+	{
+		AssemblyName.GetAssemblyName (Path.Combine (tempDir, "doesnotexist.dll"));
+	}
+
+	[Test]
+	[Category ("NotWorking")]
+	public void GetAssemblyName_AssemblyFile_LoadFailure ()
+	{
+		string file = Path.Combine (tempDir, "loadfailure.dll");
+		using (FileStream fs = File.Open (file, FileMode.OpenOrCreate, FileAccess.Read, FileShare.None)) {
+			try {
+				AssemblyName.GetAssemblyName (file);
+				Assert.Fail ("#1");
+			} catch (FileLoadException ex) {
+			}
+		}
+		File.Delete (file);
+	}
+
+	[Test]
+	public void GetAssemblyName_AssemblyFile_BadImage ()
+	{
+		string file = Path.Combine (tempDir, "badimage.dll");
+		using (StreamWriter sw = File.CreateText (file)) {
+			sw.WriteLine ("somegarbage");
+		}
+		try {
+			AssemblyName.GetAssemblyName (file);
+			Assert.Fail ("#1");
+		} catch (BadImageFormatException ex) {
+		}
+		File.Delete (file);
+	}
+
+	[Test]
+	public void GetAssemblyName_CodeBase ()
+	{
+		Assembly execAssembly = Assembly.GetExecutingAssembly ();
+
+		AssemblyName aname = AssemblyName.GetAssemblyName (execAssembly.Location);
+		Assert.IsNotNull (aname.CodeBase, "#1");
+		Assert.AreEqual (execAssembly.CodeBase, aname.CodeBase, "#2");
+	}
+
 	// helpers
 
 	private string GetTokenString (byte[] value)
