@@ -249,7 +249,7 @@ namespace System.Windows.Forms.RTF {
 
 SkipCRLF:
 			if ((c = source.Read()) != -1) {
-				this.text_buffer.Append(c);
+				this.text_buffer.Append((char) c);
 			}
 
 			if (this.prev_char == EOF) {

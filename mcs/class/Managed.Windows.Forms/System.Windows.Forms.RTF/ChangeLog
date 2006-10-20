@@ -1,3 +1,7 @@
+2006-10-20  Jackson Harper  <jackson@ximian.com>
+
+	* RTF.cs: Need to cast this to a char now.
+
 2006-10-11  Jackson Harper  <jackson@ximian.com>
 
 	* RTF.cs: When reading in chars use an int so that we can
