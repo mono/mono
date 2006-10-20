@@ -68,7 +68,7 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				if ((active_control==value) || (value==null)) {
+				if (value==null || (active_control == value && active_control.has_focus) || !this.child_controls.Contains(value)) {
 					return;
 				}
 
@@ -377,7 +377,7 @@ namespace System.Windows.Forms {
 				c = GetNextControl(c, true);
 				if (c != null) {
 					// This is stupid. I want to be able to call c.ProcessMnemonic directly
-					if (c.ProcessControlMnemonic(charCode)) {
+					if (c.CanSelect && c.ProcessControlMnemonic(charCode)) {
 						return(true);
 					}
 					continue;
@@ -422,14 +422,12 @@ namespace System.Windows.Forms {
 				        mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()),
 					HighOrder ((int) m.LParam.ToInt32 ()), 0));
 				return;
-				/*
 			case Msg.WM_SETFOCUS:
 				if (active_control != null)
 					Select (active_control);
 				else
 					SelectNextControl (null, true, true, true, false);
 				break;
-				*/
 			case Msg.WM_KILLFOCUS:
 				break;
 			}

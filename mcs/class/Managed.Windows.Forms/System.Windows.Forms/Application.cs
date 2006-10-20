@@ -551,8 +551,7 @@ namespace System.Windows.Forms {
 			if (Modal) {
 				Control c;
 
-				context.MainForm.Hide();
-				context.MainForm.is_modal = false;
+				Control old = context.MainForm;
 
 				while (toplevels.Count>0) {
 					#if DebugRunLoop
@@ -561,6 +560,7 @@ namespace System.Windows.Forms {
 					c = (Control)toplevels.Dequeue();
 					if (c.IsHandleCreated) {
 						XplatUI.EnableWindow(c.window.Handle, true);
+						Application.MWFThread.Current.Context.MainForm = (Form)c;
 					}
 				}
 				#if DebugRunLoop
@@ -572,6 +572,7 @@ namespace System.Windows.Forms {
 				#if DebugRunLoop
 					Console.WriteLine("   Done with the SetModal");
 				#endif
+				old.Dispose();
 			}
 
 			#if DebugRunLoop

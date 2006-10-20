@@ -1,3 +1,27 @@
+2006-10-20 Andreia Gaita <shana.ufie@gmail.com>
+	Fixes #79384, #79394, #79652, #79667
+	* Application.cs: 
+	
+	- Modal windows are now destroyed in the proper order for windows
+	
+	* ContainerControl.cs:
+	
+	- ActiveControl setter has more conditions on when to return:
+		- if we're reselecting the active control, but it actually
+		didn't have focus (window hidden or some such), it runs
+		- if the active control being selected doesn't actually 
+		exist in the container, it returns
+	
+	* Form.cs
+	
+	- The ShowDialog now gets the current form as the owner when
+	invoking without parameters, and correctly activates the owner 
+	when returning
+	
+	* MessageBox.cs
+	
+	- MessageBox now catches the Escape key to exit
+
 2006-10-20  Chris Toshok  <toshok@ximian.com>
 
 	* PropertyGridView.cs: fix a number of issues (bug #78565, and

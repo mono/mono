@@ -1199,11 +1199,10 @@ namespace System.Windows.Forms {
 		}
 
 		public DialogResult ShowDialog() {
-			return ShowDialog(null);
+			return ShowDialog(this.owner);
 		}
 
 		public DialogResult ShowDialog(IWin32Window ownerWin32) {
-			Form		previous;
 			Rectangle	area;
 			bool		confined;
 			IntPtr		capture_window;
@@ -1247,8 +1246,6 @@ namespace System.Windows.Forms {
 				XplatUI.UngrabWindow(capture_window);
 			}
 
-			previous = Form.ActiveForm;
-
 #if not
 			// Commented out; we instead let the Visible=true inside the runloop create the control
 			// otherwise setting DialogResult inside any of the events that are triggered by the
@@ -1262,9 +1259,9 @@ namespace System.Windows.Forms {
 
 			Application.RunLoop(true, new ApplicationContext(this));
 
-			if (previous != null) {
+			if (owner != null) {
 				// Cannot use Activate(), it has a check for the current active window...
-				XplatUI.Activate(previous.window.Handle);
+				XplatUI.Activate(owner.window.Handle);
 			}
 
 			if (DialogResult != DialogResult.None) {

@@ -253,6 +253,16 @@ namespace System.Windows.Forms
 				}
 
 			}
+
+			protected override bool ProcessDialogKey(Keys keyData) {
+				if (keyData == Keys.Escape) {
+					this.CancelClick(this, null);
+					return true;
+				}
+
+				return base.ProcessDialogKey (keyData);
+			}
+
 			#endregion	// MessageBoxForm Methods
 
 			#region Functions for Adding buttons
