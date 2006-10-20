@@ -45,7 +45,9 @@ using System.Globalization;
 using System.Threading;
 using System.IO;
 using System.Runtime.Serialization;
+#if NET_2_0
 using System.Runtime.Serialization.Formatters.Binary;
+#endif
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -1538,29 +1540,33 @@ namespace System.Data {
 				WriteTable ( writer, table, mode, version);
 		}
 
-		private void WriteTable (XmlWriter writer, DataTable table, XmlWriteMode mode, DataRowVersion version)
+		internal static void WriteTable (XmlWriter writer, DataTable table, XmlWriteMode mode, DataRowVersion version)
 		{
 			DataRow[] rows = table.NewRowArray(table.Rows.Count);
 			table.Rows.CopyTo (rows, 0);
 			WriteTable (writer, rows, mode, version, true);
 		}
 
-		private void WriteTable (XmlWriter writer,
+		internal static void WriteTable (XmlWriter writer,
 			DataRow [] rows,
 			XmlWriteMode mode,
 			DataRowVersion version, bool skipIfNested)
 		{
+			if (rows.Length == 0) return;
+			DataTable table = rows[0].Table;
+
+			if (table.TableName == null || table.TableName == "")
+				throw new InvalidOperationException("Cannot serialize the DataTable. DataTable name is not set.");
+
 			//The columns can be attributes, hidden, elements, or simple content
 			//There can be 0-1 simple content cols or 0-* elements
 			System.Collections.ArrayList atts;
 			System.Collections.ArrayList elements;
 			DataColumn simple = null;
 
-			if (rows.Length == 0) return;
-			DataTable table = rows[0].Table;
 			SplitColumns (table, out atts, out elements, out simple);
 			//sort out the namespacing
-			string nspc = table.Namespace.Length > 0 ? table.Namespace : Namespace;
+			string nspc = (table.Namespace.Length > 0 || table.DataSet == null) ? table.Namespace : table.DataSet.Namespace;
 			int relationCount = table.ParentRelations.Count;
 			DataRelation oneRel = relationCount == 1 ? table.ParentRelations [0] : null;
 
@@ -1628,7 +1634,7 @@ namespace System.Data {
 
 		}
 
-		private void WriteColumnAsElement (XmlWriter writer, XmlWriteMode mode, DataColumn col, DataRow row, DataRowVersion version)
+		internal static void WriteColumnAsElement (XmlWriter writer, XmlWriteMode mode, DataColumn col, DataRow row, DataRowVersion version)
 		{
 			string colnspc = null;
 			object rowObject = row [col, version];
@@ -1645,16 +1651,16 @@ namespace System.Data {
 			writer.WriteEndElement ();
 		}
 
-		private void WriteColumnAsAttribute (XmlWriter writer, XmlWriteMode mode, DataColumn col, DataRow row, DataRowVersion version)
+		internal static void WriteColumnAsAttribute (XmlWriter writer, XmlWriteMode mode, DataColumn col, DataRow row, DataRowVersion version)
 		{
 			if (!row.IsNull (col))
 				WriteAttributeString (writer, mode, col.Namespace, col.Prefix, XmlHelper.Encode (col.ColumnName), WriteObjectXml (row[col, version]));
 		}
 
-		private void WriteTableElement (XmlWriter writer, XmlWriteMode mode, DataTable table, DataRow row, DataRowVersion version)
+		internal static void WriteTableElement (XmlWriter writer, XmlWriteMode mode, DataTable table, DataRow row, DataRowVersion version)
 		{
 			//sort out the namespacing
-			string nspc = table.Namespace.Length > 0 ? table.Namespace : Namespace;
+			string nspc = (table.Namespace.Length > 0 || table.DataSet == null) ? table.Namespace : table.DataSet.Namespace;
 
 			WriteStartElement (writer, mode, nspc, table.Prefix, XmlHelper.Encode (table.TableName));
 
@@ -1672,12 +1678,12 @@ namespace System.Data {
 			}
 		}
 		    
-		private void WriteStartElement (XmlWriter writer, XmlWriteMode mode, string nspc, string prefix, string name)
+		internal static void WriteStartElement (XmlWriter writer, XmlWriteMode mode, string nspc, string prefix, string name)
 		{
 			writer.WriteStartElement (prefix, name, nspc);
 		}
 		
-		private void WriteAttributeString (XmlWriter writer, XmlWriteMode mode, string nspc, string prefix, string name, string stringValue)
+		internal static void WriteAttributeString (XmlWriter writer, XmlWriteMode mode, string nspc, string prefix, string name, string stringValue)
 		{
 			switch ( mode) {
 				case XmlWriteMode.WriteSchema:
@@ -1695,7 +1701,7 @@ namespace System.Data {
 		internal void WriteIndividualTableContent (XmlWriter writer, DataTable table, XmlWriteMode mode)
 		{
 			if (mode == XmlWriteMode.DiffGram) {
-				SetTableRowsID (table);
+				table.SetRowsID ();
 				WriteDiffGramElement (writer);
 			}
 			
@@ -1760,7 +1766,7 @@ namespace System.Data {
 			}
 		}
 
-		private void WriteDiffGramElement(XmlWriter writer)
+		internal static void WriteDiffGramElement(XmlWriter writer)
 		{
 			WriteStartElement (writer, XmlWriteMode.DiffGram, XmlConstants.DiffgrNamespace, XmlConstants.DiffgrPrefix, "diffgram");
 			WriteAttributeString(writer, XmlWriteMode.DiffGram, null, "xmlns", XmlConstants.MsdataPrefix, XmlConstants.MsdataNamespace);
@@ -1768,18 +1774,10 @@ namespace System.Data {
 
 		private void SetRowsID()
 		{
-			foreach (DataTable Table in Tables)
-				SetTableRowsID (Table);
+			foreach (DataTable table in Tables)
+				table.SetRowsID();
 		}
 		
-		private void SetTableRowsID (DataTable Table)
-		{
-			int dataRowID = 0;
-			foreach (DataRow Row in Table.Rows) {
-				Row.XmlRowID = dataRowID;
-				dataRowID++;
-			}
-		}
 		#endregion //Private Xml Serialisation
 	}
 }

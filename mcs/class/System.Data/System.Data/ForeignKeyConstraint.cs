@@ -248,14 +248,16 @@ namespace System.Data {
 			}	
 
 
+			int identicalCols = 0;
 			for (int i = 0; i < parentColumns.Length; i++)
 			{
 				DataColumn pc = parentColumns[i];
 				DataColumn cc = childColumns[i];
 				
-				//Can't be the same column
-				if (pc == cc)
-					throw new InvalidOperationException("Parent and child columns can't be the same column.");
+				if (pc == cc) {
+					identicalCols++;
+					continue;
+				}
 
 				if (!pc.DataTypeMatches (cc)) {
 					//LAMESPEC: spec says throw InvalidConstraintException
@@ -264,6 +266,8 @@ namespace System.Data {
 						+ " column.");
 				}
 			}
+			if (identicalCols == parentColumns.Length)
+				throw new InvalidOperationException ("Property not accessible because 'ParentKey and ChildKey are identical.'.");
 			
 		}
 		

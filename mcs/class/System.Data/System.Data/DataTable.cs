@@ -43,6 +43,9 @@
 using System;
 using System.Data.Common;
 using System.Collections;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
@@ -1920,10 +1923,49 @@ namespace System.Data {
 		}
 
 #if NET_2_0
-		[MonoTODO]
-		XmlReadMode ReadXml (Stream stream)
+		public XmlReadMode ReadXml (Stream stream)
 		{
-			throw new NotImplementedException ();
+			return ReadXml (new XmlTextReader(stream, null));
+		}
+
+		public XmlReadMode ReadXml (string fileName)
+		{
+			XmlReader reader = new XmlTextReader(fileName);
+			try {
+				return ReadXml (reader);
+			} finally {
+				reader.Close();
+			}
+		}
+
+		public XmlReadMode ReadXml (TextReader reader)
+		{
+			return ReadXml (new XmlTextReader(reader));
+		}
+
+		[MonoTODO]
+		public XmlReadMode ReadXml (XmlReader reader)
+		{
+			// The documentation from MS for this method is rather
+			// poor.  The following cases have been observed
+			// during testing:
+			//
+			//     Reading a table from XML may create a DataSet to
+			//     store child tables.
+			//
+			//     If the table has at least one column present,
+			//     we do not require the schema to be present in
+			//     the xml.  If the table has no columns, neither
+			//     regular data nor diffgrams will be read, but
+			//     will throw an error indicating that schema
+			//     will not be inferred.
+			//
+			//     We will likely need to take advantage of the
+			//     msdata:MainDataTable attribute added to the
+			//     schema info to load into the appropriate
+			//     locations.
+
+			throw new NotImplementedException();
 		}
 
 		public void ReadXmlSchema (Stream stream)
@@ -2235,54 +2277,155 @@ namespace System.Data {
 		{
 			XmlWriterSettings s = new XmlWriterSettings ();
 			s.Indent = true;
+			s.OmitXmlDeclaration = true;
 			return s;
 		}
 
 		public void WriteXml (Stream stream)
 		{
-			WriteXml (stream, XmlWriteMode.IgnoreSchema);
+			WriteXml (stream, XmlWriteMode.IgnoreSchema, false);
 		}
 
 		public void WriteXml (TextWriter writer)
 		{
-			WriteXml (writer, XmlWriteMode.IgnoreSchema);
+			WriteXml (writer, XmlWriteMode.IgnoreSchema, false);
 		}
 
 		public void WriteXml (XmlWriter writer)
 		{
-			WriteXml (writer, XmlWriteMode.IgnoreSchema);
+			WriteXml (writer, XmlWriteMode.IgnoreSchema, false);
 		}
 
 		public void WriteXml (string fileName)
 		{
-			WriteXml (fileName, XmlWriteMode.IgnoreSchema);
+			WriteXml (fileName, XmlWriteMode.IgnoreSchema, false);
 		}
 
 		public void WriteXml (Stream stream, XmlWriteMode mode)
 		{
-			WriteXml (XmlWriter.Create (stream, GetWriterSettings ()), mode);
+			WriteXml (stream, mode, false);
 		}
 
 		public void WriteXml (TextWriter writer, XmlWriteMode mode)
 		{
-			WriteXml (XmlWriter.Create (writer, GetWriterSettings ()), mode);
+			WriteXml (writer, mode, false);
 		}
 
-		[MonoTODO]
 		public void WriteXml (XmlWriter writer, XmlWriteMode mode)
 		{
-			throw new NotImplementedException ();
+			WriteXml (writer, mode, false);
 		}
 
 		public void WriteXml (string fileName, XmlWriteMode mode)
 		{
+			WriteXml (fileName, mode, false);
+		}
+
+		public void WriteXml (Stream stream, bool writeHierarchy)
+		{
+			WriteXml (stream, XmlWriteMode.IgnoreSchema, writeHierarchy);
+		}
+
+		public void WriteXml (string fileName, bool writeHierarchy)
+		{
+			WriteXml (fileName, XmlWriteMode.IgnoreSchema, writeHierarchy);
+		}
+
+		public void WriteXml (TextWriter writer, bool writeHierarchy)
+		{
+			WriteXml (writer, XmlWriteMode.IgnoreSchema, writeHierarchy);
+		}
+
+		public void WriteXml (XmlWriter writer, bool writeHierarchy)
+		{
+			WriteXml (writer, XmlWriteMode.IgnoreSchema, writeHierarchy);
+		}
+
+		public void WriteXml (Stream stream, XmlWriteMode mode, bool writeHierarchy)
+		{
+			WriteXml (XmlWriter.Create (stream, GetWriterSettings ()), mode, writeHierarchy);
+		}
+
+		public void WriteXml (string fileName, XmlWriteMode mode, bool writeHierarchy)
+		{
 			XmlWriter xw = null;
 			try {
 				xw = XmlWriter.Create (fileName, GetWriterSettings ());
-				WriteXml (xw, mode);
+				WriteXml (xw, mode, writeHierarchy);
 			} finally {
 				if (xw != null)
 					xw.Close ();
+			}
+		}
+
+		public void WriteXml (TextWriter writer, XmlWriteMode mode, bool writeHierarchy)
+		{
+			WriteXml (XmlWriter.Create (writer, GetWriterSettings ()), mode, writeHierarchy);
+		}
+
+		public void WriteXml (XmlWriter writer, XmlWriteMode mode, bool writeHierarchy)
+		{
+			// If we're in mode XmlWriteMode.WriteSchema, we need to output an extra
+			// msdata:MainDataTable attribute that wouldn't normally be part of the
+			// DataSet WriteXml output.
+			//
+			// For the writeHierarchy == true case, we write what would be output by
+			// a DataSet write, but we limit ourselves to our table and its descendants.
+			//
+			// For the writeHierarchy == false case, we write what would be output by
+			// a DataSet write, but we limit ourselves to this table.
+			//
+			// If the table is not in a DataSet, we follow the following behaviour:
+			//   For WriteSchema cases, we do a write as if there is a wrapper
+			//   dataset called NewDataSet.
+			//   For IgnoreSchema or DiffGram cases, we do a write as if there
+			//   is a wrapper dataset called DocumentElement.
+			
+			// Generate a list of tables to write.
+			List<DataTable> tables = new List<DataTable>();	
+			if (writeHierarchy == false)
+				tables.Add(this);
+			else
+				FindAllChildren(tables, this);
+
+			// If we're in a DataSet, generate a list of relations to write.
+			List<DataRelation> relations = new List<DataRelation>();
+			if (DataSet != null)
+			{
+				foreach(DataRelation relation in DataSet.Relations)
+				{
+					if(tables.Contains(relation.ParentTable) &&
+					   tables.Contains(relation.ChildTable))
+						relations.Add(relation);
+				}
+			}
+
+			// Add the msdata:MainDataTable info if we're writing schema data.
+			string mainDataTable = null;
+			if (mode == XmlWriteMode.WriteSchema)
+				mainDataTable = this.TableName;
+
+			// Figure out the DataSet name.
+			string dataSetName = null;
+			if (DataSet != null)
+				dataSetName = DataSet.DataSetName;
+			else if (DataSet == null && mode == XmlWriteMode.WriteSchema)
+				dataSetName = "NewDataSet";
+			else
+				dataSetName = "DocumentElement";
+				
+			XmlTableWriter.WriteTables(writer, mode, tables, relations, mainDataTable, dataSetName);
+		}
+
+		private void FindAllChildren(List<DataTable> list, DataTable root)
+		{
+			if (!list.Contains(root))
+			{
+				list.Add(root);
+				foreach (DataRelation relation in root.ChildRelations)
+				{
+					FindAllChildren(list, relation.ChildTable);
+				}
 			}
 		}
 
@@ -2571,6 +2714,15 @@ namespace System.Data {
 
 		internal void ResetPropertyDescriptorsCache() {
 			_propertyDescriptorsCache = null;
+		}
+
+		internal void SetRowsID()
+		{
+			int dataRowID = 0;
+			foreach (DataRow row in Rows) {
+				row.XmlRowID = dataRowID;
+				dataRowID++;
+			}
 		}
 	}
 }

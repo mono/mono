@@ -1,3 +1,8 @@
+2006-10-18  Nagappan A  <anagappan@novell.com>
+
+	* ForeignKeyConstraint.cs (_validateColumns): Parent and child
+	columns can't be the same column - Exception, bug # 79689
+
 2006-10-13  Nagappan A  <anagappan@novell.com>
 
 	* DataTable.cs (DeserializeConstraints): Fine tuned the
@@ -6,6 +11,11 @@
 	* DataRelationCollection.cs (Contains): Fixes bug
 	#79233. DuplicateNameException when two relations for different
 	DataTables in DataSet are defined
+
+2006-10-06  Patrick Earl <mono@patearl.net>
+
+	* DataTable.cs, XmlTableWriter.cs, XmlSchemaWriter.cs, DataSet.cs:
+	Implemented DataTable.WriteXml
 
 2006-09-26  Nagappan A  <anagappan@novell.com>
 

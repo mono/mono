@@ -64,16 +64,50 @@ namespace System.Data
 			XmlWriter writer, DataTableCollection tables,
 			DataRelationCollection relations)
 		{
-			ds = dataset;
+			dataSetName = dataset.DataSetName;
+			dataSetNamespace = dataset.Namespace;
+			dataSetLocale = dataset.Locale;
+			dataSetProperties = dataset.ExtendedProperties;
+			w = writer;
+			if (tables != null) {
+				this.tables = new DataTable[tables.Count];
+				for(int i=0;i<tables.Count;i++) this.tables[i] = tables[i];
+			}
+			if (relations != null) {
+				this.relations = new DataRelation[relations.Count];
+				for(int i=0;i<relations.Count;i++) this.relations[i] = relations[i];
+			}
+		}
+
+		public XmlSchemaWriter (XmlWriter writer,
+			DataTable[] tables,
+			DataRelation[] relations,
+			string mainDataTable,
+			string dataSetName)
+		{
 			w = writer;
 			this.tables = tables;
 			this.relations = relations;
+			this.mainDataTable = mainDataTable;
+			this.dataSetName = dataSetName;
+			this.dataSetProperties = new PropertyCollection();
+			if (tables[0].DataSet != null) {
+				dataSetNamespace = tables[0].DataSet.Namespace;
+				dataSetLocale = tables[0].DataSet.Locale;
+			} else {
+				dataSetNamespace = tables[0].Namespace;
+				dataSetLocale = tables[0].Locale;
+			}
 		}
 
-		DataSet ds;
 		XmlWriter w;
-		DataTableCollection tables;
-		DataRelationCollection relations;
+		DataTable[] tables;
+		DataRelation[] relations;
+		string mainDataTable;
+		string dataSetName;
+		string dataSetNamespace;
+		PropertyCollection dataSetProperties;
+		CultureInfo dataSetLocale;
 
 		ArrayList globalTypeTables = new ArrayList ();
 		Hashtable additionalNamespaces = new Hashtable ();
@@ -81,7 +115,7 @@ namespace System.Data
 		ArrayList annotation = new ArrayList ();
 
 		public string ConstraintPrefix {
-			get { return ds.Namespace != String.Empty ? XmlConstants.TnsPrefix + ':' : String.Empty; }
+			get { return dataSetNamespace != String.Empty ? XmlConstants.TnsPrefix + ':' : String.Empty; }
 		}
 
 		// the whole DataSet
@@ -99,18 +133,18 @@ namespace System.Data
 			}
 
 			w.WriteStartElement ("xs", "schema", xmlnsxs);
-			w.WriteAttributeString ("id", XmlHelper.Encode (ds.DataSetName));
+			w.WriteAttributeString ("id", XmlHelper.Encode (dataSetName));
 
-			if (ds.Namespace != String.Empty) {
+			if (dataSetNamespace != String.Empty) {
 				w.WriteAttributeString ("targetNamespace",
-					ds.Namespace);
+					dataSetNamespace);
 				w.WriteAttributeString (
 					"xmlns",
 					XmlConstants.TnsPrefix,
 					XmlConstants.XmlnsNS,
-					ds.Namespace);
+					dataSetNamespace);
 			}
-			w.WriteAttributeString ("xmlns", ds.Namespace);
+			w.WriteAttributeString ("xmlns", dataSetNamespace);
 
 			w.WriteAttributeString ("xmlns", "xs",
 				XmlConstants.XmlnsNS, xmlnsxs);
@@ -125,7 +159,7 @@ namespace System.Data
 					XmlConstants.XmlnsNS,
 					XmlConstants.MspropNamespace);
 
-			if (ds.Namespace != String.Empty) {
+			if (dataSetNamespace != String.Empty) {
 				w.WriteAttributeString ("attributeFormDefault", "qualified");
 				w.WriteAttributeString ("elementFormDefault", "qualified");
 			}
@@ -156,12 +190,19 @@ namespace System.Data
 		private void WriteDataSetElement ()
 		{
 			w.WriteStartElement ("xs", "element", xmlnsxs);
-			w.WriteAttributeString ("name", XmlHelper.Encode (ds.DataSetName));
+			w.WriteAttributeString ("name", XmlHelper.Encode (dataSetName));
 			w.WriteAttributeString (XmlConstants.MsdataPrefix,
 				"IsDataSet", XmlConstants.MsdataNamespace,
 				"true");
+
+			if(mainDataTable != null && mainDataTable != "")
+				w.WriteAttributeString (
+					XmlConstants.MsdataPrefix,
+					"MainDataTable",
+					XmlConstants.MsdataNamespace,
+					mainDataTable);
 #if NET_2_0
-			if (ds.Locale == CultureInfo.CurrentCulture) {
+			if (dataSetLocale == CultureInfo.CurrentCulture) {
 				w.WriteAttributeString (
 					XmlConstants.MsdataPrefix,
 					"UseCurrentCulture",
@@ -175,10 +216,10 @@ namespace System.Data
 					XmlConstants.MsdataPrefix,
 					"Locale",
 					XmlConstants.MsdataNamespace,
-					ds.Locale.Name);
+					dataSetLocale.Name);
 			}
 
-			AddExtendedPropertyAttributes (ds.ExtendedProperties);
+			AddExtendedPropertyAttributes (dataSetProperties);
 
 			w.WriteStartElement ("xs", "complexType", xmlnsxs);
 			w.WriteStartElement ("xs", "choice", xmlnsxs);
@@ -194,7 +235,7 @@ namespace System.Data
 				}
 				
 				if (isTopLevel) {
-					if (ds.Namespace != table.Namespace) {
+					if (dataSetNamespace != table.Namespace) {
 						// <xs:element ref="X:y" />
 						w.WriteStartElement ("xs",
 							"element",
@@ -286,7 +327,12 @@ namespace System.Data
 					}
 
 					ForeignKeyConstraint fk = c as ForeignKeyConstraint;
-					if (fk != null && (relations == null || !(relations.Contains (fk.ConstraintName)))) {
+					bool haveConstraint = false;
+					if (relations != null)
+						foreach (DataRelation r in relations)
+							if(r.RelationName == fk.ConstraintName)
+								haveConstraint = true;
+					if (fk != null && !haveConstraint) {
 						DataRelation rel = new DataRelation (fk.ConstraintName,
 										fk.RelatedColumns, fk.Columns);
 						AddForeignKeys (rel, names, true);
@@ -399,12 +445,12 @@ namespace System.Data
 			// first try to find the concatenated name. If we didn't find it - use constraint name.
 			if (names.Contains (concatName)) {
 				w.WriteStartAttribute ("refer", String.Empty);
-				w.WriteQualifiedName (concatName, ds.Namespace);
+				w.WriteQualifiedName (concatName, dataSetNamespace);
 				w.WriteEndAttribute ();
 			}
 			else {
 				w.WriteStartAttribute ("refer", String.Empty);
-				w.WriteQualifiedName (XmlHelper.Encode (uqConst.ConstraintName), ds.Namespace);
+				w.WriteQualifiedName (XmlHelper.Encode (uqConst.ConstraintName), dataSetNamespace);
 				w.WriteEndAttribute ();
 			}
 
@@ -445,10 +491,10 @@ namespace System.Data
 		// ExtendedProperties
 
 		private bool CheckExtendedPropertyExists (
-			DataTableCollection tables,
-			DataRelationCollection relations)
+			DataTable[] tables,
+			DataRelation[] relations)
 		{
-			if (ds.ExtendedProperties.Count > 0)
+			if (dataSetProperties.Count > 0)
 				return true;
 			foreach (DataTable dt in tables) {
 				if (dt.ExtendedProperties.Count > 0)
@@ -640,7 +686,7 @@ namespace System.Data
 
 		private void WriteChildRelations (DataRelation rel)
 		{
-			if (rel.ChildTable.Namespace != ds.Namespace) {
+			if (rel.ChildTable.Namespace != dataSetNamespace) {
 				w.WriteStartElement ("xs", "element", xmlnsxs);
 				w.WriteStartAttribute ("ref", String.Empty);
 				w.WriteQualifiedName (
@@ -734,8 +780,8 @@ namespace System.Data
 		{
 			if (ns == String.Empty)
 				return;
-			if (ds.Namespace != ns) {
-				if (names [prefix] != ns) {
+			if (dataSetNamespace != ns) {
+				if ((string)names [prefix] != ns) {
 					for (int i = 1; i < int.MaxValue; i++) {
 						string p = "app" + i;
 						if (names [p] == null) {
