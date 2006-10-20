@@ -1,3 +1,8 @@
+2006-10-20  Chris Toshok  <toshok@ximian.com>
+
+	* PropertyGridView.cs: the dropdown should be MIN(number of items
+	in list, 15).  Fixes #79551.
+
 2006-10-20 Andreia Gaita <shana.ufie@gmail.com>
 	Fixes #79384, #79394, #79652, #79667
 	* Application.cs: 

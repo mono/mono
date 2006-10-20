@@ -668,6 +668,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 							selected_index = i;
 						i++;
 					}
+					listBox.Height = row_height * Math.Min (listBox.Items.Count, 15);
 					listBox.SelectedIndex = selected_index;
 					listBox.KeyDown += new KeyEventHandler(listBox_KeyDown);
 					listBox.MouseUp+=new MouseEventHandler(listBox_MouseUp);
