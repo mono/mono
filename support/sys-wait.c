@@ -10,7 +10,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#include <glib/gtypes.h>
+#include <glib.h>
 
 #include "mph.h"
 #include "map.h"

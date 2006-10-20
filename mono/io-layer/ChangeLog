@@ -1,3 +1,51 @@
+2006-10-18  Miguel de Icaza  <miguel@novell.com>
+
+	* io-portability.c (find_in_dir): First string dup, then closedir.
+
+2006-10-12  Dick Porter  <dick@ximian.com>
+
+	* processes.c (_wapi_process_reap): Unref a process handle if we
+	reaped it, found by Zoltan.  Fixes bug 79286.
+	(process_wait): Don't wait again if we've already waited for a
+	process.
+
+2006-10-11  Sergey Tikhonov <tsv@solvo.ru>
+
+	* atomic.h: Fix atomic decrement.
+
+	* mini/cpu-alpha.md: Use native long shift insts
+
+	* mono/mono/mini/tramp-alpha.c: Implemented
+	mono_arch_patch_delegate_trampoline method
+
+	* Started work on using global registers
+	
+	* Use byte/word memory load/store insts if cpu supports it
+	
+	* Code clean up
+
+	
+2006-10-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* handles.c (timedwait_signal_poll_cond): Add an alertable parameter, and if it
+	is FALSE, avoid busy waiting.
+
+	* wait.c: Add an alertable parameter to the wait routines.
+
+2006-10-06  Miguel de Icaza  <miguel@novell.com>
+
+	* io-portability.c (find_file): Rename from
+	MONO_IO_PORTABILITY_HELP to MONO_IOMAP.
+
+2006-10-03  Dick Porter  <dick@ximian.com>
+
+	* io-portability.h: 
+	* io-portability.c: Optional portability helpers and wrapped
+	system calls to try to cope with windows filenames in
+	applications.
+
+	* io.c: Use the wrapped system calls
+
 2006-09-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* critical-sections.h critical-sections.c: Make Enter/LeaveCriticalSection a macro

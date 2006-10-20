@@ -25,9 +25,23 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+#include <config.h>
 #include <stdio.h>
 #include <math.h>
 #include <glib.h>
+#include <mono/os/gc_wrapper.h>
+#include "mono-hash.h"
+#include "metadata/gc-internal.h"
+
+#ifdef HAVE_BOEHM_GC
+#define mg_new0(type,n)  ((type *) GC_MALLOC(sizeof(type) * (n)))
+#define mg_new(type,n)   ((type *) GC_MALLOC(sizeof(type) * (n)))
+#define mg_free(x)       do { } while (0)
+#else
+#define mg_new0(x,n)     g_new0(x,n)
+#define mg_new(type,n)   g_new(type,n)
+#define mg_free(x)       g_free(x)
+#endif
 
 typedef struct _Slot Slot;
 
@@ -39,7 +53,7 @@ struct _Slot {
 
 static gpointer KEYMARKER_REMOVED = &KEYMARKER_REMOVED;
 
-struct _GHashTable {
+struct _MonoGHashTable {
 	GHashFunc      hash_func;
 	GEqualFunc     key_equal_func;
 
@@ -49,6 +63,7 @@ struct _GHashTable {
 	int   threshold;
 	int   last_rehash;
 	GDestroyNotify value_destroy_func, key_destroy_func;
+	MonoGHashGCType gc_type;
 };
 
 static const int prime_tbl[] = {
@@ -86,44 +101,42 @@ calc_prime (int x)
 	return x;
 }
 
-guint
-g_spaced_primes_closest (guint x)
+MonoGHashTable *
+mono_g_hash_table_new_type (GHashFunc hash_func, GEqualFunc key_equal_func, MonoGHashGCType type)
 {
-	int i;
+	MonoGHashTable *hash = mono_g_hash_table_new (hash_func, key_equal_func);
+
+	hash->gc_type = type;
 	
-	for (i = 0; i < G_N_ELEMENTS (prime_tbl); i++) {
-		if (x <= prime_tbl [i])
-			return prime_tbl [i];
-	}
-	return calc_prime (x);
+	return hash;
 }
 
-GHashTable *
-g_hash_table_new (GHashFunc hash_func, GEqualFunc key_equal_func)
+MonoGHashTable *
+mono_g_hash_table_new (GHashFunc hash_func, GEqualFunc key_equal_func)
 {
-	GHashTable *hash;
+	MonoGHashTable *hash;
 
 	if (hash_func == NULL)
 		hash_func = g_direct_hash;
 	if (key_equal_func == NULL)
 		key_equal_func = g_direct_equal;
-	hash = g_new0 (GHashTable, 1);
+	hash = mg_new0 (MonoGHashTable, 1);
 
 	hash->hash_func = hash_func;
 	hash->key_equal_func = key_equal_func;
 
 	hash->table_size = g_spaced_primes_closest (1);
-	hash->table = g_new0 (Slot *, hash->table_size);
+	hash->table = mg_new0 (Slot *, hash->table_size);
 	hash->last_rehash = hash->table_size;
 	
 	return hash;
 }
 
-GHashTable *
-g_hash_table_new_full (GHashFunc hash_func, GEqualFunc key_equal_func,
-		       GDestroyNotify key_destroy_func, GDestroyNotify value_destroy_func)
+MonoGHashTable *
+mono_g_hash_table_new_full (GHashFunc hash_func, GEqualFunc key_equal_func,
+			    GDestroyNotify key_destroy_func, GDestroyNotify value_destroy_func)
 {
-	GHashTable *hash = g_hash_table_new (hash_func, key_equal_func);
+	MonoGHashTable *hash = mono_g_hash_table_new (hash_func, key_equal_func);
 	if (hash == NULL)
 		return NULL;
 	
@@ -134,7 +147,7 @@ g_hash_table_new_full (GHashFunc hash_func, GEqualFunc key_equal_func,
 }
 
 static void
-do_rehash (GHashTable *hash)
+do_rehash (MonoGHashTable *hash)
 {
 	int current_size, i;
 	Slot **table;
@@ -145,7 +158,7 @@ do_rehash (GHashTable *hash)
 	hash->table_size = g_spaced_primes_closest (hash->in_use);
 	/* printf ("New size: %d\n", hash->table_size); */
 	table = hash->table;
-	hash->table = g_new0 (Slot *, hash->table_size);
+	hash->table = mg_new0 (Slot *, hash->table_size);
 	
 	for (i = 0; i < current_size; i++){
 		Slot *s, *next;
@@ -158,11 +171,11 @@ do_rehash (GHashTable *hash)
 			hash->table [hashcode] = s;
 		}
 	}
-	g_free (table);
+	mg_free (table);
 }
 
 static void
-rehash (GHashTable *hash)
+rehash (MonoGHashTable *hash)
 {
 	int diff = ABS (hash->last_rehash, hash->in_use);
 
@@ -174,43 +187,8 @@ rehash (GHashTable *hash)
 	do_rehash (hash);
 }
 
-void
-g_hash_table_insert_replace (GHashTable *hash, gpointer key, gpointer value, gboolean replace)
-{
-	guint hashcode;
-	Slot *s;
-	GEqualFunc equal;
-	
-	g_return_if_fail (hash != NULL);
-
-	equal = hash->key_equal_func;
-	if (hash->in_use >= hash->threshold)
-		rehash (hash);
-
-	hashcode = ((*hash->hash_func) (key)) % hash->table_size;
-	for (s = hash->table [hashcode]; s != NULL; s = s->next){
-		if ((*equal) (s->key, key)){
-			if (replace){
-				if (hash->key_destroy_func != NULL)
-					(*hash->key_destroy_func)(s->key);
-				s->key = key;
-			}
-			if (hash->value_destroy_func != NULL)
-				(*hash->value_destroy_func) (s->value);
-			s->value = value;
-			return;
-		}
-	}
-	s = g_new (Slot, 1);
-	s->key = key;
-	s->value = value;
-	s->next = hash->table [hashcode];
-	hash->table [hashcode] = s;
-	hash->in_use++;
-}
-
 guint
-g_hash_table_size (GHashTable *hash)
+mono_g_hash_table_size (MonoGHashTable *hash)
 {
 	g_return_val_if_fail (hash != NULL, 0);
 	
@@ -218,18 +196,18 @@ g_hash_table_size (GHashTable *hash)
 }
 
 gpointer
-g_hash_table_lookup (GHashTable *hash, gconstpointer key)
+mono_g_hash_table_lookup (MonoGHashTable *hash, gconstpointer key)
 {
 	gpointer orig_key, value;
 	
-	if (g_hash_table_lookup_extended (hash, key, &orig_key, &value))
+	if (mono_g_hash_table_lookup_extended (hash, key, &orig_key, &value))
 		return value;
 	else
 		return NULL;
 }
 
 gboolean
-g_hash_table_lookup_extended (GHashTable *hash, gconstpointer key, gpointer *orig_key, gpointer *value)
+mono_g_hash_table_lookup_extended (MonoGHashTable *hash, gconstpointer key, gpointer *orig_key, gpointer *value)
 {
 	GEqualFunc equal;
 	Slot *s;
@@ -251,7 +229,7 @@ g_hash_table_lookup_extended (GHashTable *hash, gconstpointer key, gpointer *ori
 }
 
 void
-g_hash_table_foreach (GHashTable *hash, GHFunc func, gpointer user_data)
+mono_g_hash_table_foreach (MonoGHashTable *hash, GHFunc func, gpointer user_data)
 {
 	int i;
 	
@@ -266,26 +244,8 @@ g_hash_table_foreach (GHashTable *hash, GHFunc func, gpointer user_data)
 	}
 }
 
-gpointer
-g_hash_table_find (GHashTable *hash, GHRFunc predicate, gpointer user_data)
-{
-	int i;
-	
-	g_return_val_if_fail (hash != NULL, NULL);
-	g_return_val_if_fail (predicate != NULL, NULL);
-
-	for (i = 0; i < hash->table_size; i++){
-		Slot *s;
-
-		for (s = hash->table [i]; s != NULL; s = s->next)
-			if ((*predicate)(s->key, s->value, user_data))
-				return s->value;
-	}
-	return NULL;
-}
-
 gboolean
-g_hash_table_remove (GHashTable *hash, gconstpointer key)
+mono_g_hash_table_remove (MonoGHashTable *hash, gconstpointer key)
 {
 	GEqualFunc equal;
 	Slot *s, *last;
@@ -306,7 +266,7 @@ g_hash_table_remove (GHashTable *hash, gconstpointer key)
 				hash->table [hashcode] = s->next;
 			else
 				last->next = s->next;
-			g_free (s);
+			mg_free (s);
 			hash->in_use--;
 			return TRUE;
 		}
@@ -316,7 +276,7 @@ g_hash_table_remove (GHashTable *hash, gconstpointer key)
 }
 
 guint
-g_hash_table_foreach_remove (GHashTable *hash, GHRFunc func, gpointer user_data)
+mono_g_hash_table_foreach_remove (MonoGHashTable *hash, GHRFunc func, gpointer user_data)
 {
 	int i;
 	int count = 0;
@@ -343,7 +303,7 @@ g_hash_table_foreach_remove (GHashTable *hash, GHRFunc func, gpointer user_data)
 					last->next = s->next;
 					n = last->next;
 				}
-				g_free (s);
+				mg_free (s);
 				hash->in_use--;
 				count++;
 				s = n;
@@ -359,7 +319,7 @@ g_hash_table_foreach_remove (GHashTable *hash, GHRFunc func, gpointer user_data)
 }
 
 void
-g_hash_table_destroy (GHashTable *hash)
+mono_g_hash_table_destroy (MonoGHashTable *hash)
 {
 	int i;
 	
@@ -375,7 +335,7 @@ g_hash_table_destroy (GHashTable *hash)
 				(*hash->key_destroy_func)(s->key);
 			if (hash->value_destroy_func != NULL)
 				(*hash->value_destroy_func)(s->value);
-			g_free (s);
+			mg_free (s);
 		}
 	}
 	g_free (hash->table);
@@ -383,44 +343,15 @@ g_hash_table_destroy (GHashTable *hash)
 	g_free (hash);
 }
 
-gboolean
-g_direct_equal (gconstpointer v1, gconstpointer v2)
+void
+mono_g_hash_table_insert (MonoGHashTable *h, gpointer k, gpointer v)
 {
-	return v1 == v2;
+	mono_g_hash_table_insert_replace (h, k, v, FALSE);
 }
 
-guint
-g_direct_hash (gconstpointer v1)
+void
+mono_g_hash_table_replace(MonoGHashTable *h, gpointer k, gpointer v)
 {
-	return GPOINTER_TO_UINT (v1);
+	mono_g_hash_table_insert_replace (h, k, v, TRUE);
 }
 
-gboolean
-g_int_equal (gconstpointer v1, gconstpointer v2)
-{
-	return GPOINTER_TO_INT (v1) == GPOINTER_TO_INT (v2);
-}
-
-guint
-g_int_hash (gconstpointer v1)
-{
-	return GPOINTER_TO_UINT(v1);
-}
-
-gboolean
-g_str_equal (gconstpointer v1, gconstpointer v2)
-{
-	return strcmp (v1, v2) == 0;
-}
-
-guint
-g_str_hash (gconstpointer v1)
-{
-	guint hash = 0;
-	char *p = (char *) v1;
-
-	while (*p++)
-		hash = (hash << 5) - (hash + *p);
-
-	return hash;
-}

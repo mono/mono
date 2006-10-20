@@ -286,6 +286,13 @@ ves_icall_System_GC_SuppressFinalize (MonoObject *obj)
 {
 	MONO_ARCH_SAVE_REGS;
 
+	/* delegates have no finalizers, but we register them to deal with the
+	 * unmanaged->managed trampoline. We don't let the user suppress it
+	 * otherwise we'd leak it.
+	 */
+	if (obj->vtable->klass->delegate)
+		return;
+
 	object_register_finalizer (obj, NULL);
 }
 
@@ -753,11 +760,12 @@ collect_objects (gpointer key, gpointer value, gpointer user_data)
 static void
 finalize_domain_objects (DomainFinalizationReq *req)
 {
-	int i;
-	GPtrArray *objs;
 	MonoDomain *domain = req->domain;
-	
+
+#ifdef HAVE_BOEHM_GC
 	while (g_hash_table_size (domain->finalizable_objects_hash) > 0) {
+		int i;
+		GPtrArray *objs;
 		/* 
 		 * Since the domain is unloading, nobody is allowed to put
 		 * new entries into the hash table. But finalize_object might
@@ -776,6 +784,17 @@ finalize_domain_objects (DomainFinalizationReq *req)
 
 		g_ptr_array_free (objs, TRUE);
 	}
+#elif defined(HAVE_SGEN_GC)
+#define NUM_FOBJECTS 64
+	MonoObject *to_finalize [NUM_FOBJECTS];
+	int count;
+	while ((count = mono_gc_finalizers_for_domain (domain, to_finalize, NUM_FOBJECTS))) {
+		int i;
+		for (i = 0; i < count; ++i) {
+			run_finalize (to_finalize [i], 0);
+		}
+	}
+#endif
 
 	/* Process finalizers which are already in the queue */
 	mono_gc_invoke_finalizers ();
@@ -797,7 +816,8 @@ static guint32 finalizer_thread (gpointer unused)
 		/* Wait to be notified that there's at least one
 		 * finaliser to run
 		 */
-		WaitForSingleObjectEx (finalizer_event, INFINITE, TRUE);
+		/* Use alertable=FALSE since we will be asked to exit using the event too */
+		WaitForSingleObjectEx (finalizer_event, INFINITE, FALSE);
 
 		if (domains_to_finalize) {
 			mono_finalizer_lock ();

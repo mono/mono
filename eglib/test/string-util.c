@@ -64,7 +64,11 @@ test_split ()
 			to_split, v[0]);
 	}
 	g_strfreev(v);
-	
+
+	v = g_strsplit ("", ":", 0);
+	if (v == NULL)
+		return FAILED ("g_strsplit returned NULL");
+	g_strfreev (v);
 	return OK;
 }
 
@@ -225,6 +229,146 @@ test_filename_from_uri ()
 	return OK;
 }
 
+RESULT
+test_ascii_xdigit_value ()
+{
+	int i;
+
+	i = g_ascii_xdigit_value ('9' + 1);
+	if (i != -1)
+		return FAILED ("'9' + 1");
+	i = g_ascii_xdigit_value ('0' - 1);
+	if (i != -1)
+		return FAILED ("'0' - 1");
+	i = g_ascii_xdigit_value ('a' - 1);
+	if (i != -1)
+		return FAILED ("'a' - 1");
+	i = g_ascii_xdigit_value ('f' + 1);
+	if (i != -1)
+		return FAILED ("'f' + 1");
+	i = g_ascii_xdigit_value ('A' - 1);
+	if (i != -1)
+		return FAILED ("'A' - 1");
+	i = g_ascii_xdigit_value ('F' + 1);
+	if (i != -1)
+		return FAILED ("'F' + 1");
+
+	for (i = '0'; i < '9'; i++) {
+		int c = g_ascii_xdigit_value (i);
+		if (c  != (i - '0'))
+			return FAILED ("Digits %c -> %d", i, c);
+	}
+	for (i = 'a'; i < 'f'; i++) {
+		int c = g_ascii_xdigit_value (i);
+		if (c  != (i - 'a' + 10))
+			return FAILED ("Lower %c -> %d", i, c);
+	}
+	for (i = 'A'; i < 'F'; i++) {
+		int c = g_ascii_xdigit_value (i);
+		if (c  != (i - 'A' + 10))
+			return FAILED ("Upper %c -> %d", i, c);
+	}
+	return OK;
+}
+
+RESULT
+test_strdelimit ()
+{
+	gchar *str;
+
+	str = g_strdup (G_STR_DELIMITERS);
+	str = g_strdelimit (str, NULL, 'a');
+	if (0 != strcmp ("aaaaaaa", str))
+		return FAILED ("All delimiters: '%s'", str);
+	g_free (str);
+	str = g_strdup ("hola");
+	str = g_strdelimit (str, "ha", '+');
+	if (0 != strcmp ("+ol+", str))
+		return FAILED ("2 delimiters: '%s'", str);
+	g_free (str);
+	return OK;
+}
+
+RESULT
+test_strlcpy ()
+{
+	const gchar *src = "onetwothree";
+	gchar *dest;
+	int i;
+
+	dest = g_malloc (strlen (src) + 1);
+	memset (dest, 0, strlen (src) + 1);
+	i = g_strlcpy (dest, src, -1);
+	if (i != strlen (src))
+		return FAILED ("Test1 got %d", i);
+
+	if (0 != strcmp (dest, src))
+		return FAILED ("Src and dest not equal");
+
+	i = g_strlcpy (dest, src, 3);
+	if (i != strlen (src))
+		return FAILED ("Test1 got %d", i);
+	if (0 != strcmp (dest, "on"))
+		return FAILED ("Test2");
+
+	i = g_strlcpy (dest, src, 1);
+	if (i != strlen (src))
+		return FAILED ("Test3 got %d", i);
+	if (*dest != '\0')
+		return FAILED ("Test4");
+
+	i = g_strlcpy (dest, src, 12345);
+	if (i != strlen (src))
+		return FAILED ("Test4 got %d", i);
+	if (0 != strcmp (dest, src))
+		return FAILED ("Src and dest not equal 2");
+	g_free (dest);
+	return OK;
+}
+
+RESULT
+test_strescape ()
+{
+	gchar *str;
+
+	str = g_strescape ("abc", NULL);
+	if (strcmp ("abc", str))
+		return FAILED ("#1");
+	str = g_strescape ("\t\b\f\n\r\\\"abc", NULL);
+	if (strcmp ("\\t\\b\\f\\n\\r\\\\\\\"abc", str))
+		return FAILED ("#2 %s", str);
+	str = g_strescape ("\001abc", NULL);
+	if (strcmp ("\\001abc", str))
+		return FAILED ("#3 %s", str);
+	str = g_strescape ("\001abc", "\001");
+	if (strcmp ("\001abc", str))
+		return FAILED ("#3 %s", str);
+	return OK;
+}
+
+RESULT
+test_ascii_strncasecmp ()
+{
+	int n;
+
+	n = g_ascii_strncasecmp ("123", "123", 1);
+	if (n != 0)
+		return FAILED ("Should have been 0");
+	
+	n = g_ascii_strncasecmp ("423", "123", 1);
+	if (n != 3)
+		return FAILED ("Should have been 3, got %d", n);
+
+	n = g_ascii_strncasecmp ("123", "423", 1);
+	if (n != -3)
+		return FAILED ("Should have been -3, got %d", n);
+
+	n = g_ascii_strncasecmp ("1", "1", 10);
+	if (n != 0)
+		return FAILED ("Should have been 0, got %d", n);
+	return OK;
+}
+
 static Test strutil_tests [] = {
 	{"g_strfreev", test_strfreev},
 	{"g_strconcat", test_concat},
@@ -236,6 +380,11 @@ static Test strutil_tests [] = {
 	{"g_strstrip", test_strstrip},
 	{"g_filename_to_uri", test_filename_to_uri},
 	{"g_filename_from_uri", test_filename_from_uri},
+	{"g_ascii_xdigit_value", test_ascii_xdigit_value},
+	{"g_strdelimit", test_strdelimit},
+	{"g_strlcpy", test_strlcpy},
+	{"g_strescape", test_strescape},
+	{"g_ascii_strncasecmp", test_ascii_strncasecmp },
 	{NULL, NULL}
 };
 

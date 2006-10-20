@@ -25,7 +25,6 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
@@ -66,5 +65,16 @@ g_set_error (GError **err, gpointer domain, gint code, const gchar *format, ...)
 		va_start (args, format);
 		*err = g_error_new (domain, code, format, args);
 		va_end (args);
+	}
+}
+
+void
+g_propagate_error (GError **dest, GError *src)
+{
+	if (dest == NULL){
+		if (src)
+			g_error_free (src);
+	} else {
+		*dest = src;
 	}
 }

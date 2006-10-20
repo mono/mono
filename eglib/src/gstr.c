@@ -26,7 +26,6 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-#define _GNU_SOURCE
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -205,7 +204,10 @@ g_strsplit (const gchar *string, const gchar *delimiter, gint max_tokens)
 		}
 	}
 
-	if(vector != NULL && size > 0) {
+	if (vector == NULL){
+		vector = (gchar **) g_malloc (2 * sizeof (vector));
+		vector [0] = NULL;
+	} else if (size > 0){
 		vector[size - 1] = NULL;
 	}
 	
@@ -272,6 +274,37 @@ g_strjoin (const gchar *separator, ...)
 	}
 	va_end (args);
 
+	return res;
+}
+
+gchar *
+g_strjoinv (const gchar *separator, gchar **str_array)
+{
+	char *res;
+	int slen, len, i;
+	
+	if (separator != NULL)
+		slen = strlen (separator);
+	else
+		slen = 0;
+	
+	len = 0;
+	for (i = 0; str_array [i] != NULL; i++){
+		len += strlen (str_array [i]);
+		len += slen;
+	}
+	if (len == 0)
+		return g_strdup ("");
+	if (slen > 0 && len > 0)
+		len -= slen;
+	len++;
+	res = g_malloc (len);
+	strcpy (res, str_array [0]);
+	for (i = 1; str_array [i] != NULL; i++){
+		if (separator != NULL)
+			strcat (res, separator);
+		strcat (res, str_array [i]);
+	}
 	return res;
 }
 
@@ -475,3 +508,180 @@ g_filename_from_uri (const gchar *uri, gchar **hostname, GError **error)
 	}
 	return result;
 }
+
+void
+g_strdown (gchar *string)
+{
+	g_return_if_fail (string != NULL);
+
+	while (*string){
+		*string = tolower (*string);
+		string++;
+	}
+}
+
+gchar *
+g_ascii_strdown (const gchar *str, gssize len)
+{
+	char *ret;
+	int i;
+	
+	g_return_val_if_fail  (str != NULL, NULL);
+
+	if (len == -1)
+		len = strlen (str);
+	
+	ret = g_malloc (len + 1);
+	for (i = 0; i < len; i++){
+		guchar c = (guchar) str [i];
+		if (c >= 'A' && c <= 'Z')
+			c += 'a' - 'A';
+		ret [i] = c;
+	}
+	ret [i] = 0;
+	
+	return ret;
+}
+
+gint
+g_ascii_strncasecmp (const gchar *s1, const gchar *s2, gsize n)
+{
+	int i;
+	
+	g_return_val_if_fail (s1 != NULL, 0);
+	g_return_val_if_fail (s2 != NULL, 0);
+
+	for (i = 0; i < n; i++){
+		gchar c1 = *s1++;
+		gchar c2 = *s2++;
+		
+		if (c1 == c2)
+			continue;
+		
+		if (c1 == 0)
+			return -1;
+		if (c2 == 0)
+			return 1;
+		return c1-c2;
+	}
+	return 0;
+}
+
+gchar *
+g_strdelimit (gchar *string, const gchar *delimiters, gchar new_delimiter)
+{
+	gchar *ptr;
+
+	g_return_val_if_fail (string != NULL, NULL);
+
+	if (delimiters == NULL)
+		delimiters = G_STR_DELIMITERS;
+
+	for (ptr = string; *ptr; ptr++) {
+		if (strchr (delimiters, *ptr))
+			*ptr = new_delimiter;
+	}
+	
+	return string;
+}
+
+#ifndef HAVE_STRLCPY
+gsize 
+g_strlcpy (gchar *dest, const gchar *src, gsize dest_size)
+{
+	gchar *d;
+	const gchar *s;
+	gchar c;
+	gsize len;
+	
+	g_return_val_if_fail (src != NULL, 0);
+	g_return_val_if_fail (dest != NULL, 0);
+
+	len = dest_size;
+	if (len == 0)
+		return 0;
+
+	s = src;
+	d = dest;
+	while (--len) {
+		c = *s++;
+		*d++ = c;
+		if (c == '\0')
+			return (dest_size - len - 1);
+	}
+
+	/* len is 0 i we get here */
+	*d = '\0';
+	/* we need to return the length of src here */
+	while (*s++) ; /* instead of a plain strlen, we use 's' */
+	return s - src - 1;
+}
+#endif
+
+static const gchar escaped_dflt [256] = {
+	1, 1, 1, 1, 1, 1, 1, 1, 'b', 't', 'n', 1, 'f', 'r', 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	0, 0, '"', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '\\', 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+};
+
+gchar *
+g_strescape (const gchar *source, const gchar *exceptions)
+{
+	gchar escaped [256];
+	const gchar *ptr;
+	gchar c;
+	int op;
+	gchar *result;
+	gchar *res_ptr;
+
+	g_return_val_if_fail (source != NULL, NULL);
+
+	memcpy (escaped, escaped_dflt, 256);
+	if (exceptions != NULL) {
+		for (ptr = exceptions; *ptr; ptr++)
+			escaped [(int) *ptr] = 0;
+	}
+	result = g_malloc (strlen (source) * 4 + 1); /* Worst case: everything octal. */
+	res_ptr = result;
+	for (ptr = source; *ptr; ptr++) {
+		c = *ptr;
+		op = escaped [(int) c];
+		if (op == 0) {
+			*res_ptr++ = c;
+		} else {
+			*res_ptr++ = '\\';
+			if (op != 1) {
+				*res_ptr++ = op;
+			} else {
+				*res_ptr++ = '0' + ((c >> 6) & 3);
+				*res_ptr++ = '0' + ((c >> 3) & 7);
+				*res_ptr++ = '0' + (c & 7);
+			}
+		}
+	}
+	*res_ptr = '\0';
+	return result;
+}
+
+gchar *
+g_strdup (const gchar *str)
+{
+	if (str == NULL)
+		return NULL;
+
+	return strdup (str);
+}
+

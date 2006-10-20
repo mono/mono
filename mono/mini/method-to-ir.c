@@ -6257,6 +6257,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				/* Prevent inlining of methods with tail calls (the call stack would be altered) */
 				INLINE_FAILURE;
 
+				/*
+				 * We implement tail calls by storing the actual arguments into the 
+				 * argument variables, then emitting a CEE_JMP.
+				 */
 				for (i = 0; i < n; ++i) {
 					/* Prevent argument from being register allocated */
 					arg_array [i]->flags |= MONO_INST_VOLATILE;
@@ -10065,10 +10069,13 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   running generics.exe.
  * - create a helper function for allocating a stack slot, taking into account 
  *   MONO_CFG_HAS_SPILLUP.
- * - merge new GC changes in mini.c
- * - merge the stack merge stuff
+ * - merge new GC changes in mini.c.
+ * - merge the stack merge stuff.
+ * - merge the soft float support.
+ * - use the op_ opcodes in the old JIT as well.
  * - remove unused opcodes from mini-ops.h, remove "op_" from the opcode names,
  *   remove the op_ opcodes from the cpu-..md files, clean up the cpu-..md files.
+ * - make the cpu_ tables smaller when the usage of the cee_ opcodes is removed.
  * - optimize mono_regstate2_alloc_int/float.
  * - patch_delegate_trampoline () only works on call_membase, but the new JIT can't create
  *   such code.
@@ -10076,7 +10083,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   parts of the tree could be separated by other instructions, killing the tree
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
- * - LAST MERGE: 65915.
+ * - LAST MERGE: 66841.
  */
 
 /*

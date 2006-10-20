@@ -50,7 +50,8 @@ typedef enum {
 	TEXT,
 	FLUSH_TEXT,
 	CLOSING_ELEMENT,
-	COMMENT
+	COMMENT,
+	SKIP_XML_DECLARATION
 } ParseState;
 
 struct _GMarkupParseContext {
@@ -117,7 +118,8 @@ parse_value (const char *p, const char *end, char **value, GError **error)
 		return end;
 	}
 	start = ++p;
-	for (++p; p < end && *p != '"'; p++)
+	for (; p < end && *p != '"'; p++)
+		;
 	if (p == end)
 		return end;
 	l = p - start;
@@ -151,7 +153,7 @@ parse_name (const char *p, const char *end, char **value)
 }
 
 static const char *
-parse_attributes (const char *p, const char *end, char ***names, char ***values, GError **error, int *full_stop)
+parse_attributes (const char *p, const char *end, char ***names, char ***values, GError **error, int *full_stop, int state)
 {
 	int nnames = 0;
 
@@ -164,6 +166,11 @@ parse_attributes (const char *p, const char *end, char ***names, char ***values,
 			*full_stop = 0;
 			return p; 
 		}
+		if (state == SKIP_XML_DECLARATION && *p == '?' && ((p+1) < end) && *(p+1) == '>'){
+			*full_stop = 0;
+			return p+1;
+		}
+		
 		if (*p == '/' && ((p+1) < end && *(p+1) == '>')){
 			*full_stop = 1;
 			return p+1;
@@ -238,19 +245,23 @@ g_markup_parse_context_parse (GMarkupParseContext *context,
 	
 	for (p = text; p < end; p++){
 		char c = *p;
-		
+
 		switch (context->state){
 		case START:
 			if (c == ' ' || c == '\t' || c == '\f' || c == '\n')
 				continue;
 			if (c == '<'){
-				context->state = START_ELEMENT;
+				if (p+1 < end && p [1] == '?'){
+					context->state = SKIP_XML_DECLARATION;
+					p++;
+				} else
+					context->state = START_ELEMENT;
 				continue;
 			}
 			set_error ("Expected < to start the document");
 			goto fail;
 
-
+		case SKIP_XML_DECLARATION:
 		case START_ELEMENT: {
 			const char *element_start = p, *element_end;
 			char *ename = NULL;
@@ -275,7 +286,7 @@ g_markup_parse_context_parse (GMarkupParseContext *context,
 				goto fail;
 			}
 			
-			for (++p; p < end && isalnum (*p); p++)
+			for (++p; p < end && (isalnum (*p) || (*p == '.')); p++)
 				;
 			if (p == end){
 				set_error ("Expected an element");
@@ -289,7 +300,7 @@ g_markup_parse_context_parse (GMarkupParseContext *context,
 				set_error ("Unfinished element");
 				goto fail;
 			}
-			p = parse_attributes (p, end, &names, &values, error, &full_stop);
+			p = parse_attributes (p, end, &names, &values, error, &full_stop, context->state);
 			if (p == end){
 				if (names != NULL) {
 					g_strfreev (names);
@@ -306,12 +317,13 @@ g_markup_parse_context_parse (GMarkupParseContext *context,
 				goto fail;
 			strncpy (ename, element_start, l);
 			ename [l] = 0;
-			
-			if (context->parser.start_element != NULL)
-				context->parser.start_element (context, ename,
-							       (const gchar **) names,
-							       (const gchar **) values,
-							       context->user_data, error);
+
+			if (context->state == START_ELEMENT)
+				if (context->parser.start_element != NULL)
+					context->parser.start_element (context, ename,
+								       (const gchar **) names,
+								       (const gchar **) values,
+								       context->user_data, error);
 
 			if (names != NULL){
 				g_strfreev (names);
@@ -324,7 +336,7 @@ g_markup_parse_context_parse (GMarkupParseContext *context,
 			}
 			
 			if (full_stop){
-				if (context->parser.end_element != NULL){
+				if (context->parser.end_element != NULL &&  context->state == START_ELEMENT){
 					context->parser.end_element (context, ename, context->user_data, error);
 					if (error != NULL && *error != NULL){
 						free (ename);
@@ -332,8 +344,9 @@ g_markup_parse_context_parse (GMarkupParseContext *context,
 					}
 				}
 				free (ename);
-			} else
+			} else {
 				context->level = g_slist_prepend (context->level, ename);
+			}
 			
 			context->state = TEXT;
 			break;
@@ -360,7 +373,7 @@ g_markup_parse_context_parse (GMarkupParseContext *context,
 				p += 2;
 				break;
 			}
-
+			break;
 			
 		case FLUSH_TEXT:
 			if (context->parser.text != NULL){
@@ -386,8 +399,8 @@ g_markup_parse_context_parse (GMarkupParseContext *context,
 				set_error ("Too many closing tags, not enough open tags");
 				goto fail;
 			}
-			text = current->data;
 			
+			text = current->data;
 			if (context->parser.end_element != NULL){
 				context->parser.end_element (context, text, context->user_data, error);
 				if (error != NULL && *error != NULL){
@@ -396,9 +409,13 @@ g_markup_parse_context_parse (GMarkupParseContext *context,
 				}
 			}
 			free (text);
+
+			while (p < end && *p != '>')
+				p++;
 			
 			context->level = context->level->next;
 			g_slist_free_1 (current);
+			context->state = TEXT;
 			break;
 		} /* case CLOSING_ELEMENT */
 			
@@ -408,7 +425,7 @@ g_markup_parse_context_parse (GMarkupParseContext *context,
 
 	return TRUE;
  fail:
-	if (context->parser.error)
+	if (context->parser.error && *error)
 		context->parser.error (context, *error, context->user_data);
 	
 	destroy_parse_state (context);

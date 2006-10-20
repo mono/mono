@@ -1,6 +1,150 @@
-2006-09-27  Zoltan Varga  <vargaz@gmail.com>
+2006-10-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c: Add some new comments.
+
+	* mini.c (GET_CONTEXT): Correct the definition of this for sparc/linux.
+
+	* mini-sparc.h: Don't use sigaction on sparc/linux.
+
+	* exceptions-sparc.c: Call mono_arch_flush_icache () in a couple of places.
+
+	* mini-sparc.c (mono_sparc_flushw): Call mono_arch_flush_icache ().
+
+	* mini-exceptions.c: Add proper include files for getpid ().
+
+2006-10-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (mono_aot_get_method): Change this to return the native code
+	address instead of a MonoJitInfo* to avoid decoding the exception info for the
+	method.
+
+	* aot-runtime.c aot-compiler.c: Use uint16 instead of uint32 entries in the
+	name cache to reduce its size.
+
+	* mini.h (MONO_AOT_FILE_VERSION): Bump aot file format version.
+
+2006-10-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c: Save/restore the current LMF structure more efficiently using
+	the mono_lmf TLS variable.
+
+	* exceptions-x86.c (mono_arch_find_jit_info): Only access lmf->method in 
+	trampoline lmf frames.	
+
+	* mini-sparc.h (MONO_ARCH_ENABLE_EMIT_STATE_OPT): Define this on sparc as well.
+
+2006-10-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c: Save/restore the current LMF structure more efficiently using
+	the mono_lmf TLS variable.
+
+	* mini-exceptions.c: Access the LMF structure through accessors.
+
+	* mini.c: Allow the backends the option for storing the lmf in a dedicated TLS 
+	variable instead of in jit_tls->lmf.
+
+	* mini-x86.c mini-amd64.c: Update after lmf->lmf_addr name change.
+	
+	* exceptions-amd64.c (mono_arch_find_jit_info): Only access lmf->method in 
+	trampoline lmf frames.
+
+	* mini-amd64.c (mono_arch_emit_prolog): Do not set lmf->method as it is not needed.
+
+2006-10-12  Zoltan Varga  <vargaz@gmail.com>
+
+       * mini.c trace.c mini-x86.c: Revert these too.
+	
+       * mini.c trace.c mini-x86.c: Remove warning workarounds after the mono_type_size ()
+       signature change.
+
+Tue Oct 10 11:35:20 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* genmdesc.c: removed now dead code.
+
+2006-10-09  Robert Jordan <robertj@gmx.net>
+
+	* mini.c: Disable the CrashReporter on MacOS X; Fixes #74869
+
+Mon Oct 9 17:06:41 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h: do not leave gaps in the opcode values.
+
+Mon Oct 9 16:08:51 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* jit-icalls.h: flag functions as internal here, too.
+
+Mon Oct 9 15:58:18 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, aliasing.h, declsec.h, regalloc.h, trace.h: mark internal
+	functions with the internal attribute.
+
+Mon Oct 9 15:52:45 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* aot-compiler.c: fclose the file descriptor in the profile read loop.
+
+Fri Oct 6 16:01:38 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, jit-icalls.c, inssel-float.brg: beginnings of support
+	for soft-float.
+
+2006-10-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (emit_load_volatile_arguments): New function to handle arguments of
+	tail calls as on other platforms.
+
+	* mini.c (mono_method_to_ir): Fix a few tailcall problems. Fixes #79557.
+
+	* iltests.il: Add a few tailcall tests.
+
+Tue Oct 3 16:33:08 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c: fix loop for old compilers (bug #79521).
+
+2006-10-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (ves_icall_get_trace): Remove debug printf.
+
+	* aot-runtime.c (mono_aot_get_class_from_name): Avoid a memory allocation.
+
+	* aot-compiler.c: Add a new option 'metadata-only' to only emit the cached
+	metadata without any code.
+
+	* mini-exceptions.c (mono_handle_native_sigsegv): Add some code to print out
+	more precise debugging information using gdb.
+
+2006-09-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel-ia64.brg: Make the helper methods static.
+
+Thu Sep 28 16:40:07 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* inssel-x86.brg: make the helper methods static.
+
+Thu Sep 28 16:31:32 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* inssel-amd64.brg, mini-amd64.c: small cleanup, use inst_call.
+
+Thu Sep 28 15:36:07 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: updates for monoburg changes.
+	* inssel.brg: make a few helper functions static as they should.
+
+2006-09-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Move mini-codegen.c to common_sources.
+
+Wed Sep 27 15:07:08 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h: instroduce inst_call in MonoInst for use in OUTARG
+	instructions.
+	* Makefile.am, cpu-g4.md, inssel-ppc.brg, mini-codegen.c, mini-ppc.c,
+	mini-ppc.h: port to use the common local register allocator.
+
+2006-09-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h: Remove the comment too then.
+
+Tue Sep 26 14:02:58 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 2006-09-26  Zoltan Varga  <vargaz@gmail.com>
 

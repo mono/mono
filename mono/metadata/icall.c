@@ -2743,7 +2743,7 @@ ves_icall_InternalExecute (MonoReflectionMethod *method, MonoObject *this, MonoA
 		} else if (!strcmp (m->name, "FieldSetter")) {
 			MonoClass *k = this->vtable->klass;
 			MonoString *name;
-			int size, align;
+			guint32 size, align;
 			char *str;
 			
 			/* If this is a proxy, then it must be a CBO */
@@ -4489,7 +4489,10 @@ ves_icall_System_Reflection_Assembly_InternalGetAssemblyName (MonoString *fname,
 		MonoException *exc;
 
 		g_free (filename);
-		exc = mono_get_exception_file_not_found (fname);
+		if (status == MONO_IMAGE_IMAGE_INVALID)
+			exc = mono_get_exception_bad_image_format2 (NULL, fname);
+		else
+			exc = mono_get_exception_file_not_found2 (NULL, fname);
 		mono_raise_exception (exc);
 	}
 
@@ -6027,36 +6030,7 @@ static void
 ves_icall_System_Diagnostics_DefaultTraceListener_WriteWindowsDebugString (MonoString *message)
 {
 #if defined (PLATFORM_WIN32)
-	static void (*output_debug) (gunichar2 *);
-	static gboolean tried_loading = FALSE;
-
-	MONO_ARCH_SAVE_REGS;
-
-	if (!tried_loading && output_debug == NULL) {
-		GModule *k32;
-
-		tried_loading = TRUE;
-		k32 = g_module_open ("kernel32", G_MODULE_BIND_LAZY);
-		if (!k32) {
-			gchar *error = g_strdup (g_module_error ());
-			g_warning ("Failed to load kernel32.dll: %s\n", error);
-			g_free (error);
-			return;
-		}
-
-		g_module_symbol (k32, "OutputDebugStringW", (gpointer *) &output_debug);
-		if (!output_debug) {
-			gchar *error = g_strdup (g_module_error ());
-			g_warning ("Failed to load OutputDebugStringW: %s\n", error);
-			g_free (error);
-			return;
-		}
-	}
-
-	if (output_debug == NULL)
-		return;
-	
-	output_debug (mono_string_chars (message));
+	OutputDebugString (mono_string_chars (message));
 #else
 	g_warning ("WriteWindowsDebugString called and PLATFORM_WIN32 not defined!\n");
 #endif
@@ -6143,7 +6117,7 @@ mono_ArgIterator_Setup (MonoArgIterator *iter, char* argsp, char* start)
 	if (start) {
 		iter->args = start;
 	} else {
-		int i, align, arg_size;
+		guint32 i, align, arg_size;
 		iter->args = argsp + sizeof (gpointer);
 #ifndef MONO_ARCH_REGPARMS
 		for (i = 0; i < iter->sig->sentinelpos; ++i) {
@@ -6160,7 +6134,7 @@ mono_ArgIterator_Setup (MonoArgIterator *iter, char* argsp, char* start)
 static MonoTypedRef
 mono_ArgIterator_IntGetNextArg (MonoArgIterator *iter)
 {
-	gint i, align, arg_size;
+	guint32 i, align, arg_size;
 	MonoTypedRef res;
 	MONO_ARCH_SAVE_REGS;
 
@@ -6184,7 +6158,7 @@ mono_ArgIterator_IntGetNextArg (MonoArgIterator *iter)
 static MonoTypedRef
 mono_ArgIterator_IntGetNextArgT (MonoArgIterator *iter, MonoType *type)
 {
-	gint i, align, arg_size;
+	guint32 i, align, arg_size;
 	MonoTypedRef res;
 	MONO_ARCH_SAVE_REGS;
 
@@ -6830,6 +6804,14 @@ type_from_typename (char *typename)
 		klass = mono_defaults.int32_class;
 	else if (!strcmp (typename, "uint32"))
 		klass = mono_defaults.uint32_class;
+	else if (!strcmp (typename, "int8"))
+		klass = mono_defaults.sbyte_class;
+	else if (!strcmp (typename, "uint8"))
+		klass = mono_defaults.byte_class;
+	else if (!strcmp (typename, "int16"))
+		klass = mono_defaults.int16_class;
+	else if (!strcmp (typename, "uint16"))
+		klass = mono_defaults.uint16_class;
 	else if (!strcmp (typename, "long"))
 		klass = mono_defaults.int64_class;
 	else if (!strcmp (typename, "ulong"))

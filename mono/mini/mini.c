@@ -14,6 +14,14 @@
 #include <math.h>
 #include <sys/time.h>
 
+#ifdef PLATFORM_MACOSX
+#include <mach/mach.h>
+#include <mach/mach_error.h>
+#include <mach/exception.h>
+#include <mach/task.h>
+#include <pthread.h>
+#endif
+
 #ifdef HAVE_VALGRIND_MEMCHECK_H
 #include <valgrind/memcheck.h>
 #endif
@@ -1192,6 +1200,27 @@ mono_type_to_load_membase (MonoType *type)
 	}
 	return -1;
 }
+
+#ifdef MONO_ARCH_SOFT_FLOAT
+static int
+condbr_to_fp_br (int opcode)
+{
+	switch (opcode) {
+	case CEE_BEQ: return OP_FBEQ;
+	case CEE_BGE: return OP_FBGE;
+	case CEE_BGT: return OP_FBGT;
+	case CEE_BLE: return OP_FBLE;
+	case CEE_BLT: return OP_FBLT;
+	case CEE_BNE_UN: return OP_FBNE_UN;
+	case CEE_BGE_UN: return OP_FBGE_UN;
+	case CEE_BGT_UN: return OP_FBGT_UN;
+	case CEE_BLE_UN: return OP_FBLE_UN;
+	case CEE_BLT_UN: return OP_FBLT_UN;
+	}
+	g_assert_not_reached ();
+	return 0;
+}
+#endif
 
 /*
  * Returns the type used in the eval stack when @type is loaded.
@@ -4902,14 +4931,25 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				/* Prevent inlining of methods with tail calls (the call stack would be altered) */
 				INLINE_FAILURE;
 				/* FIXME: This assumes the two methods has the same number and type of arguments */
+				/*
+				 * We implement tail calls by storing the actual arguments into the 
+				 * argument variables, then emitting a CEE_JMP. Since the actual arguments
+				 * can refer to the arg variables, we have to spill them.
+				 */
+				handle_loaded_temps (cfg, bblock, sp, sp + n);
 				for (i = 0; i < n; ++i) {
+					/* Prevent argument from being register allocated */
+					arg_array [i]->flags |= MONO_INST_VOLATILE;
+
 					/* Check if argument is the same */
+					/* 
+					 * FIXME: This loses liveness info, so it can only be done if the
+					 * argument is not register allocated.
+					 */
 					NEW_ARGLOAD (cfg, ins, i);
 					if ((ins->opcode == sp [i]->opcode) && (ins->inst_i0 == sp [i]->inst_i0))
 						continue;
 
-					/* Prevent argument from being register allocated */
-					arg_array [i]->flags |= MONO_INST_VOLATILE;
 					NEW_ARGSTORE (cfg, ins, i, sp [i]);
 					ins->cil_code = ip;
 					if (ins->opcode == CEE_STOBJ) {
@@ -5210,7 +5250,20 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			ins->cil_code = ip++;
 			target = ip + 1 + *(signed char*)ip;
 			ip++;
+#ifdef MONO_ARCH_SOFT_FLOAT
+			if (sp [-1]->type == STACK_R8 || sp [-2]->type == STACK_R8) {
+				ins->opcode = condbr_to_fp_br (ins->opcode);
+				sp -= 2;
+				ins->inst_left = sp [0];
+				ins->inst_right = sp [1];
+				*sp++ = emit_tree (cfg, bblock, ins, ins->cil_code);
+				ADD_UNCOND (TRUE);
+			} else {
+				ADD_BINCOND (NULL);
+			}
+#else
 			ADD_BINCOND (NULL);
+#endif
 			if (sp != stack_start) {
 				handle_stack_args (cfg, bblock, stack_start, sp - stack_start);
 				sp = stack_start;
@@ -5271,7 +5324,20 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			ins->cil_code = ip++;
 			target = ip + 4 + (gint32)read32(ip);
 			ip += 4;
-			ADD_BINCOND(NULL);
+#ifdef MONO_ARCH_SOFT_FLOAT
+			if (sp [-1]->type == STACK_R8 || sp [-2]->type == STACK_R8) {
+				ins->opcode = condbr_to_fp_br (ins->opcode);
+				sp -= 2;
+				ins->inst_left = sp [0];
+				ins->inst_right = sp [1];
+				*sp++ = emit_tree (cfg, bblock, ins, ins->cil_code);
+				ADD_UNCOND (TRUE);
+			} else {
+				ADD_BINCOND (NULL);
+			}
+#else
+			ADD_BINCOND (NULL);
+#endif
 			if (sp != stack_start) {
 				handle_stack_args (cfg, bblock, stack_start, sp - stack_start);
 				sp = stack_start;
@@ -8923,6 +8989,13 @@ mono_destroy_compile (MonoCompile *cfg)
 
 #ifdef HAVE_KW_THREAD
 static __thread gpointer mono_lmf_addr MONO_TLS_FAST;
+#ifdef MONO_ARCH_ENABLE_MONO_LMF_VAR
+/* 
+ * When this is defined, the current lmf is stored in this tls variable instead of in 
+ * jit_tls->lmf.
+ */
+static __thread gpointer mono_lmf MONO_TLS_FAST;
+#endif
 #endif
 
 guint32
@@ -8934,9 +9007,37 @@ mono_get_jit_tls_key (void)
 gint32
 mono_get_lmf_tls_offset (void)
 {
+#if defined(HAVE_KW_THREAD) && defined(MONO_ARCH_ENABLE_MONO_LMF_VAR)
+	int offset;
+	MONO_THREAD_VAR_OFFSET(mono_lmf,offset);
+	return offset;
+#else
+	return -1;
+#endif
+}
+
+gint32
+mono_get_lmf_addr_tls_offset (void)
+{
 	int offset;
 	MONO_THREAD_VAR_OFFSET(mono_lmf_addr,offset);
 	return offset;
+}
+
+MonoLMF *
+mono_get_lmf (void)
+{
+#if defined(HAVE_KW_THREAD) && defined(MONO_ARCH_ENABLE_MONO_LMF_VAR)
+	return mono_lmf;
+#else
+	MonoJitTlsData *jit_tls;
+
+	if ((jit_tls = TlsGetValue (mono_jit_tls_id)))
+		return jit_tls->lmf;
+
+	g_assert_not_reached ();
+	return NULL;
+#endif
 }
 
 MonoLMF **
@@ -9006,10 +9107,18 @@ setup_jit_tls_data (gpointer stack_start, gpointer abort_func)
 	lmf = g_new0 (MonoLMF, 1);
 	lmf->ebp = -1;
 
-	jit_tls->lmf = jit_tls->first_lmf = lmf;
+	jit_tls->first_lmf = lmf;
 
-#ifdef HAVE_KW_THREAD
-	mono_lmf_addr = &jit_tls->lmf;
+#if defined(HAVE_KW_THREAD) && defined(MONO_ARCH_ENABLE_MONO_LMF_VAR)
+	/* jit_tls->lmf is unused */
+	mono_lmf = lmf;
+	mono_lmf_addr = &mono_lmf;
+#else
+#if defined(HAVE_KW_THREAD)
+	mono_lmf_addr = &jit_tls->lmf;	
+#endif
+
+	jit_tls->lmf = lmf;
 #endif
 
 	mono_arch_setup_jit_tls_data (jit_tls);
@@ -10144,7 +10253,6 @@ emit_state (MonoCompile *cfg, MBState *state, int goal)
 	MBState *kids [10];
 	int ern = mono_burg_rule (state, goal);
 	const guint16 *nts = mono_burg_nts_data + mono_burg_nts [ern];
-	MBEmitFunc emit;
 
 	//g_print ("rule: %s\n", mono_burg_rule_string [ern]);
 	switch (goal) {
@@ -10196,8 +10304,7 @@ emit_state (MonoCompile *cfg, MBState *state, int goal)
 	}
 
 //	g_print ("emit: %s (%p)\n", mono_burg_rule_string [ern], state);
-	if ((emit = mono_burg_func [ern]))
-		emit (state, state->tree, cfg);	
+	mono_burg_emit (ern, state, state->tree, cfg);
 }
 
 #define DEBUG_SELECTION
@@ -11126,17 +11233,15 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 
 #ifdef MONO_USE_AOT_COMPILER
 	if ((opt & MONO_OPT_AOT) && !(mono_profiler_get_events () & MONO_PROFILE_JIT_COMPILATION)) {
-		MonoJitInfo *info;
 		MonoDomain *domain = mono_domain_get ();
 
-		mono_domain_lock (domain);
-
 		mono_class_init (method->klass);
-		if ((info = mono_aot_get_method (domain, method))) {
-			g_hash_table_insert (domain->jit_code_hash, method, info);
+
+		mono_domain_lock (domain);
+		if ((code = mono_aot_get_method (domain, method))) {
 			mono_domain_unlock (domain);
 			mono_runtime_class_init (mono_class_vtable (domain, method->klass));
-			return info->code_start;
+			return code;
 		}
 
 		mono_domain_unlock (domain);
@@ -11468,12 +11573,12 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 #define GET_CONTEXT \
 	struct sigcontext *ctx = (struct sigcontext*)_dummy;
 #else
-#ifdef __sparc
+#ifdef MONO_ARCH_USE_SIGACTION
 #define GET_CONTEXT \
     void *ctx = context;
-#elif defined (MONO_ARCH_USE_SIGACTION)
+#elif defined(__sparc__)
 #define GET_CONTEXT \
-    void *ctx = context;
+    void *ctx = sigctx;
 #else
 #define GET_CONTEXT \
 	void **_p = (void **)&_dummy; \
@@ -11483,6 +11588,8 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 
 #ifdef MONO_ARCH_USE_SIGACTION
 #define SIG_HANDLER_SIGNATURE(ftn) ftn (int _dummy, siginfo_t *info, void *context)
+#elif defined(__sparc__)
+#define SIG_HANDLER_SIGNATURE(ftn) ftn (int _dummy, void *sigctx)
 #else
 #define SIG_HANDLER_SIGNATURE(ftn) ftn (int _dummy)
 #endif
@@ -11657,6 +11764,127 @@ SIG_HANDLER_SIGNATURE (sigusr2_signal_handler)
 	mono_trace_enable (!enabled);
 }
 
+#ifdef PLATFORM_MACOSX
+
+/*
+ * This code disables the CrashReporter of MacOS X by installing
+ * a dummy Mach exception handler.
+ */
+
+/*
+ * http://darwinsource.opendarwin.org/10.4.3/xnu-792.6.22/osfmk/man/exc_server.html
+ */
+extern
+boolean_t
+exc_server (mach_msg_header_t *request_msg,
+	    mach_msg_header_t *reply_msg);
+
+/*
+ * The exception message
+ */
+typedef struct {
+	mach_msg_base_t msg;  /* common mach message header */
+	char payload [1024];  /* opaque */
+} mach_exception_msg_t;
+
+/* The exception port */
+static mach_port_t mach_exception_port = VM_MAP_NULL;
+
+/*
+ * Implicitly called by exc_server. Must be public.
+ *
+ * http://darwinsource.opendarwin.org/10.4.3/xnu-792.6.22/osfmk/man/catch_exception_raise.html
+ */
+kern_return_t
+catch_exception_raise (
+	mach_port_t exception_port,
+	mach_port_t thread,
+	mach_port_t task,
+	exception_type_t exception,
+	exception_data_t code,
+	mach_msg_type_number_t code_count)
+{
+	/* consume the exception */
+	return KERN_FAILURE;
+}
+
+/*
+ * Exception thread handler.
+ */
+static
+void *
+mach_exception_thread (void *arg)
+{
+	for (;;) {
+		mach_exception_msg_t request;
+		mach_exception_msg_t reply;
+		mach_msg_return_t result;
+
+		/* receive from "mach_exception_port" */
+		result = mach_msg (&request.msg.header,
+				   MACH_RCV_MSG | MACH_RCV_LARGE,
+				   0,
+				   sizeof (request),
+				   mach_exception_port,
+				   MACH_MSG_TIMEOUT_NONE,
+				   MACH_PORT_NULL);
+
+		g_assert (result == MACH_MSG_SUCCESS);
+
+		/* dispatch to catch_exception_raise () */
+		exc_server (&request.msg.header, &reply.msg.header);
+
+		/* send back to sender */
+		result = mach_msg (&reply.msg.header,
+				   MACH_SEND_MSG,
+				   reply.msg.header.msgh_size,
+				   0,
+				   MACH_PORT_NULL,
+				   MACH_MSG_TIMEOUT_NONE,
+				   MACH_PORT_NULL);
+
+		g_assert (result == MACH_MSG_SUCCESS);
+	}
+	return NULL;
+}
+
+static void
+macosx_register_exception_handler ()
+{
+	mach_port_t task;
+	pthread_attr_t attr;
+	pthread_t thread;
+
+	if (mach_exception_port != VM_MAP_NULL)
+		return;
+
+	task = mach_task_self ();
+
+	/* create the "mach_exception_port" with send & receive rights */
+	g_assert (mach_port_allocate (task, MACH_PORT_RIGHT_RECEIVE,
+				      &mach_exception_port) == KERN_SUCCESS);
+	g_assert (mach_port_insert_right (task, mach_exception_port, mach_exception_port,
+					  MACH_MSG_TYPE_MAKE_SEND) == KERN_SUCCESS);
+
+	/* create the exception handler thread */
+	g_assert (!pthread_attr_init (&attr));
+	g_assert (!pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_DETACHED));
+	g_assert (!pthread_create (&thread, &attr, mach_exception_thread, NULL));
+	pthread_attr_destroy (&attr);
+
+	/*
+	 * register "mach_exception_port" as a receiver for the
+	 * EXC_BAD_ACCESS exception
+	 *
+	 * http://darwinsource.opendarwin.org/10.4.3/xnu-792.6.22/osfmk/man/task_set_exception_ports.html
+	 */
+	g_assert (task_set_exception_ports (task, EXC_MASK_BAD_ACCESS,
+					    mach_exception_port,
+					    EXCEPTION_DEFAULT,
+					    MACHINE_THREAD_STATE) == KERN_SUCCESS);
+}
+#endif
+
 #ifndef PLATFORM_WIN32
 static void
 add_signal_handler (int signo, gpointer handler)
@@ -11704,6 +11932,11 @@ mono_runtime_install_handlers (void)
 		win32_seh_set_handler(SIGINT, sigint_signal_handler);
 
 #else /* !PLATFORM_WIN32 */
+
+
+#ifdef PLATFORM_MACOSX
+	macosx_register_exception_handler ();
+#endif
 
 	if (debug_options.handle_sigint)
 		add_signal_handler (SIGINT, sigint_signal_handler);
@@ -12097,6 +12330,8 @@ mini_init (const char *filename)
 	mono_register_opcode_emulation (OP_IMUL, "__emul_op_imul", "int32 int32 int32", mono_imul, TRUE);
 	mono_register_opcode_emulation (OP_IMUL_OVF, "__emul_op_imul_ovf", "int32 int32 int32", mono_imul_ovf, TRUE);
 	mono_register_opcode_emulation (OP_IMUL_OVF_UN, "__emul_op_imul_ovf_un", "int32 int32 int32", mono_imul_ovf_un, TRUE);
+#endif
+#if defined(MONO_ARCH_EMULATE_MUL_DIV) || defined(MONO_ARCH_SOFT_FLOAT)
 	mono_register_opcode_emulation (OP_FDIV, "__emul_fdiv", "double double double", mono_fdiv, FALSE);
 #endif
 
@@ -12123,6 +12358,30 @@ mini_init (const char *filename)
 #endif
 #ifdef MONO_ARCH_EMULATE_FREM
 	mono_register_opcode_emulation (OP_FREM, "__emul_frem", "double double double", fmod, FALSE);
+#endif
+
+#ifdef MONO_ARCH_SOFT_FLOAT
+	mono_register_opcode_emulation (OP_FSUB, "__emul_fsub", "double double double", mono_fsub, FALSE);
+	mono_register_opcode_emulation (OP_FADD, "__emul_fadd", "double double double", mono_fadd, FALSE);
+	mono_register_opcode_emulation (OP_FMUL, "__emul_fmul", "double double double", mono_fmul, FALSE);
+	mono_register_opcode_emulation (OP_FNEG, "__emul_fneg", "double double", mono_fneg, FALSE);
+	mono_register_opcode_emulation (OP_FCONV_TO_R4, "__emul_fconv_to_r4", "double double", mono_fconv_r4, FALSE);
+	mono_register_opcode_emulation (OP_FCONV_TO_I1, "__emul_fconv_to_i1", "int8 double", mono_fconv_i1, FALSE);
+	mono_register_opcode_emulation (OP_FCONV_TO_I2, "__emul_fconv_to_i2", "int16 double", mono_fconv_i2, FALSE);
+	mono_register_opcode_emulation (OP_FCONV_TO_I4, "__emul_fconv_to_i4", "int32 double", mono_fconv_i4, FALSE);
+	mono_register_opcode_emulation (OP_FCONV_TO_U1, "__emul_fconv_to_u1", "uint8 double", mono_fconv_u1, FALSE);
+	mono_register_opcode_emulation (OP_FCONV_TO_U2, "__emul_fconv_to_u2", "uint16 double", mono_fconv_u2, FALSE);
+
+	mono_register_opcode_emulation (OP_FBEQ, "__emul_fcmp_eq", "uint32 double double", mono_fcmp_eq, FALSE);
+	mono_register_opcode_emulation (OP_FBLT, "__emul_fcmp_lt", "uint32 double double", mono_fcmp_lt, FALSE);
+	mono_register_opcode_emulation (OP_FBGT, "__emul_fcmp_gt", "uint32 double double", mono_fcmp_gt, FALSE);
+	mono_register_opcode_emulation (OP_FBLE, "__emul_fcmp_le", "uint32 double double", mono_fcmp_le, FALSE);
+	mono_register_opcode_emulation (OP_FBGE, "__emul_fcmp_ge", "uint32 double double", mono_fcmp_ge, FALSE);
+	mono_register_opcode_emulation (OP_FBNE_UN, "__emul_fcmp_ne_un", "uint32 double double", mono_fcmp_ne_un, FALSE);
+	mono_register_opcode_emulation (OP_FBLT_UN, "__emul_fcmp_lt_un", "uint32 double double", mono_fcmp_lt_un, FALSE);
+	mono_register_opcode_emulation (OP_FBGT_UN, "__emul_fcmp_gt_un", "uint32 double double", mono_fcmp_gt_un, FALSE);
+	mono_register_opcode_emulation (OP_FBLE_UN, "__emul_fcmp_le_un", "uint32 double double", mono_fcmp_le_un, FALSE);
+	mono_register_opcode_emulation (OP_FBGE_UN, "__emul_fcmp_ge_un", "uint32 double double", mono_fcmp_ge_un, FALSE);
 #endif
 
 #if SIZEOF_VOID_P == 4

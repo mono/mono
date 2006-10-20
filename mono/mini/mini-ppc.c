@@ -79,14 +79,30 @@ offsets_from_pthread_key (guint32 key, int *offset2)
 
 const char*
 mono_arch_regname (int reg) {
-	static const char * rnames[] = {
-		"ppc_r0", "ppc_sp", "ppc_r2", "ppc_r3", "ppc_r4",
-		"ppc_r5", "ppc_r6", "ppc_r7", "ppc_r8", "ppc_r9",
-		"ppc_r10", "ppc_r11", "ppc_r12", "ppc_r13", "ppc_r14",
-		"ppc_r15", "ppc_r16", "ppc_r17", "ppc_r18", "ppc_r19",
-		"ppc_r20", "ppc_r21", "ppc_r22", "ppc_r23", "ppc_r24",
-		"ppc_r25", "ppc_r26", "ppc_r27", "ppc_r28", "ppc_r29",
-		"ppc_r30", "ppc_r31"
+	static const char rnames[][4] = {
+		"r0", "sp", "r2", "r3", "r4",
+		"r5", "r6", "r7", "r8", "r9",
+		"r10", "r11", "r12", "r13", "r14",
+		"r15", "r16", "r17", "r18", "r19",
+		"r20", "r21", "r22", "r23", "r24",
+		"r25", "r26", "r27", "r28", "r29",
+		"r30", "r31"
+	};
+	if (reg >= 0 && reg < 32)
+		return rnames [reg];
+	return "unknown";
+}
+
+const char*
+mono_arch_fregname (int reg) {
+	static const char rnames[][4] = {
+		"f0", "f1", "f2", "f3", "f4",
+		"f5", "f6", "f7", "f8", "f9",
+		"f10", "f11", "f12", "f13", "f14",
+		"f15", "f16", "f17", "f18", "f19",
+		"f20", "f21", "f22", "f23", "f24",
+		"f25", "f26", "f27", "f28", "f29",
+		"f30", "f31"
 	};
 	if (reg >= 0 && reg < 32)
 		return rnames [reg];
@@ -278,9 +294,6 @@ mono_arch_get_allocatable_int_vars (MonoCompile *cfg)
 	return vars;
 }
 
-#define USE_EXTRA_TEMPS ((1<<30) | (1<<29))
-//#define USE_EXTRA_TEMPS 0
-
 GList *
 mono_arch_get_global_int_regs (MonoCompile *cfg)
 {
@@ -288,9 +301,6 @@ mono_arch_get_global_int_regs (MonoCompile *cfg)
 	int i, top = 32;
 	if (cfg->frame_reg != ppc_sp)
 		top = 31;
-#if USE_EXTRA_TEMPS
-	top = 29;
-#endif
 	for (i = 13; i < top; ++i)
 		regs = g_list_prepend (regs, GUINT_TO_POINTER (i));
 
@@ -688,7 +698,6 @@ calculate_sizes (MonoMethodSignature *sig, gboolean is_pinvoke)
 
 	{
 		simpletype = mono_type_get_underlying_type (sig->ret)->type;
-enum_retvalue:
 		switch (simpletype) {
 		case MONO_TYPE_BOOLEAN:
 		case MONO_TYPE_I1:
@@ -756,6 +765,7 @@ mono_arch_allocate_vars (MonoCompile *m)
 	int i, offset, size, align, curinst;
 	int frame_reg = ppc_sp;
 
+	m->flags |= MONO_CFG_HAS_SPILLUP;
 
 	/* allow room for the vararg method args: void* and long/double */
 	if (mono_jit_trace_calls != NULL && mono_trace_eval (m->method))
@@ -972,6 +982,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 			in = call->args [i];
 			arg->cil_code = in->cil_code;
 			arg->inst_left = in;
+			arg->inst_call = call;
 			arg->type = in->type;
 			/* prepend, we'll need to reverse them later */
 			arg->next = call->out_args;
@@ -987,17 +998,24 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 				call->used_iregs |= 1 << ainfo->reg;
 			} else if (ainfo->regtype == RegTypeStructByVal) {
 				int cur_reg;
+				MonoPPCArgInfo *ai = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoPPCArgInfo));
 				/* mark the used regs */
 				for (cur_reg = 0; cur_reg < ainfo->size; ++cur_reg) {
 					call->used_iregs |= 1 << (ainfo->reg + cur_reg);
 				}
 				arg->opcode = OP_OUTARG_VT;
-				arg->backend.arg_info = ainfo->reg | (ainfo->size << 8) | (ainfo->vtsize << 16);
-				arg->inst_imm = ainfo->offset;
+				ai->reg = ainfo->reg;
+				ai->size = ainfo->size;
+				ai->vtsize = ainfo->vtsize;
+				ai->offset = ainfo->offset;
+				arg->backend.data = ai;
 			} else if (ainfo->regtype == RegTypeBase) {
-				arg->opcode = OP_OUTARG;
-				arg->backend.arg_info = ainfo->reg | (ainfo->size << 8);
-				arg->inst_imm = ainfo->offset;
+				MonoPPCArgInfo *ai = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoPPCArgInfo));
+				arg->opcode = OP_OUTARG_MEMBASE;
+				ai->reg = ainfo->reg;
+				ai->size = ainfo->size;
+				ai->offset = ainfo->offset;
+				arg->backend.data = ai;
 			} else if (ainfo->regtype == RegTypeFP) {
 				arg->opcode = OP_OUTARG_R8;
 				arg->backend.reg3 = ainfo->reg;
@@ -1441,160 +1459,31 @@ branch_b1_table [] = {
 	PPC_BR_LT 
 };
 
-/*
- * returns the offset used by spillvar. It allocates a new
- * spill variable if necessary. 
- */
-static int
-mono_spillvar_offset (MonoCompile *cfg, int spillvar)
-{
-	MonoSpillInfo **si, *info;
-	int i = 0;
-
-	si = &cfg->spill_info; 
-	
-	while (i <= spillvar) {
-
-		if (!*si) {
-			*si = info = mono_mempool_alloc (cfg->mempool, sizeof (MonoSpillInfo));
-			info->next = NULL;
-			info->offset = cfg->stack_offset;
-			cfg->stack_offset += sizeof (gpointer);
-		}
-
-		if (i == spillvar)
-			return (*si)->offset;
-
-		i++;
-		si = &(*si)->next;
-	}
-
-	g_assert_not_reached ();
-	return 0;
-}
-
-static int
-mono_spillvar_offset_float (MonoCompile *cfg, int spillvar)
-{
-	MonoSpillInfo **si, *info;
-	int i = 0;
-
-	si = &cfg->spill_info_float; 
-	
-	while (i <= spillvar) {
-
-		if (!*si) {
-			*si = info = mono_mempool_alloc (cfg->mempool, sizeof (MonoSpillInfo));
-			info->next = NULL;
-			cfg->stack_offset += 7;
-			cfg->stack_offset &= ~7;
-			info->offset = cfg->stack_offset;
-			cfg->stack_offset += sizeof (double);
-		}
-
-		if (i == spillvar)
-			return (*si)->offset;
-
-		i++;
-		si = &(*si)->next;
-	}
-
-	g_assert_not_reached ();
-	return 0;
-}
-
-#undef DEBUG
-#define DEBUG(a) if (cfg->verbose_level > 1) a
-//#define DEBUG(a)
-/* use ppc_r3-ppc_10,ppc_r12 as temp registers, f1-f13 for FP registers */
-#define PPC_CALLER_REGS ((0xff<<3) | (1<<12) | USE_EXTRA_TEMPS)
-#define PPC_CALLER_FREGS (0x3ffe)
-
-#define reg_is_freeable(r) (PPC_CALLER_REGS & 1 << (r))
-#define freg_is_freeable(r) ((r) >= 1 && (r) <= 13)
-
-typedef struct {
-	int born_in;
-	int killed_in;
-	int last_use;
-	int prev_use;
-} RegTrack;
-
 static const char*const * ins_spec = ppcg4;
 
 static void
-print_ins (int i, MonoInst *ins)
+insert_after_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst *to_insert)
 {
-	const char *spec = ins_spec [ins->opcode];
-	g_print ("\t%-2d %s", i, mono_inst_name (ins->opcode));
-	if (spec [MONO_INST_DEST]) {
-		if (ins->dreg >= MONO_MAX_IREGS)
-			g_print (" R%d <-", ins->dreg);
-		else
-			g_print (" %s <-", mono_arch_regname (ins->dreg));
-	}
-	if (spec [MONO_INST_SRC1]) {
-		if (ins->sreg1 >= MONO_MAX_IREGS)
-			g_print (" R%d", ins->sreg1);
-		else
-			g_print (" %s", mono_arch_regname (ins->sreg1));
-	}
-	if (spec [MONO_INST_SRC2]) {
-		if (ins->sreg2 >= MONO_MAX_IREGS)
-			g_print (" R%d", ins->sreg2);
-		else
-			g_print (" %s", mono_arch_regname (ins->sreg2));
-	}
-	if (spec [MONO_INST_CLOB])
-		g_print (" clobbers: %c", spec [MONO_INST_CLOB]);
-	g_print ("\n");
-}
-
-static void
-print_regtrack (RegTrack *t, int num)
-{
-	int i;
-	char buf [32];
-	const char *r;
-	
-	for (i = 0; i < num; ++i) {
-		if (!t [i].born_in)
-			continue;
-		if (i >= MONO_MAX_IREGS) {
-			g_snprintf (buf, sizeof(buf), "R%d", i);
-			r = buf;
-		} else
-			r = mono_arch_regname (i);
-		g_print ("liveness: %s [%d - %d]\n", r, t [i].born_in, t[i].last_use);
+	if (ins == NULL) {
+		ins = bb->code;
+		bb->code = to_insert;
+		to_insert->next = ins;
+	} else {
+		to_insert->next = ins->next;
+		ins->next = to_insert;
 	}
 }
 
-typedef struct InstList InstList;
+#define NEW_INS(cfg,dest,op) do {       \
+		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));       \
+		(dest)->opcode = (op);  \
+		insert_after_ins (bb, last_ins, (dest)); \
+	} while (0)
 
-struct InstList {
-	InstList *prev;
-	InstList *next;
-	MonoInst *data;
-};
-
-static inline InstList*
-inst_list_prepend (MonoMemPool *pool, InstList *list, MonoInst *data)
-{
-	InstList *item = mono_mempool_alloc (pool, sizeof (InstList));
-	item->data = data;
-	item->prev = NULL;
-	item->next = list;
-	if (list)
-		list->prev = item;
-	return item;
-}
-
-/*
- * Force the spilling of the variable in the symbolic register 'reg'.
- */
 static int
-get_register_force_spilling (MonoCompile *cfg, InstList *item, MonoInst *ins, int reg)
+map_to_reg_reg_op (int op)
 {
+<<<<<<< .working
 	MonoInst *load;
 	int i, sel, spill;
 	
@@ -1613,16 +1502,74 @@ get_register_force_spilling (MonoCompile *cfg, InstList *item, MonoInst *ins, in
 	if (item->prev) {
 		while (ins->next != item->prev->data)
 			ins = ins->next;
+=======
+	switch (op) {
+	case OP_ADD_IMM:
+		return CEE_ADD;
+	case OP_SUB_IMM:
+		return CEE_SUB;
+	case OP_AND_IMM:
+		return CEE_AND;
+	case OP_COMPARE_IMM:
+		return OP_COMPARE;
+	case OP_ADDCC_IMM:
+		return OP_ADDCC;
+	case OP_ADC_IMM:
+		return OP_ADC;
+	case OP_SUBCC_IMM:
+		return OP_SUBCC;
+	case OP_SBB_IMM:
+		return OP_SBB;
+	case OP_OR_IMM:
+		return CEE_OR;
+	case OP_XOR_IMM:
+		return CEE_XOR;
+	case OP_MUL_IMM:
+		return CEE_MUL;
+	case OP_LOAD_MEMBASE:
+		return OP_LOAD_MEMINDEX;
+	case OP_LOADI4_MEMBASE:
+		return OP_LOADI4_MEMINDEX;
+	case OP_LOADU4_MEMBASE:
+		return OP_LOADU4_MEMINDEX;
+	case OP_LOADU1_MEMBASE:
+		return OP_LOADU1_MEMINDEX;
+	case OP_LOADI2_MEMBASE:
+		return OP_LOADI2_MEMINDEX;
+	case OP_LOADU2_MEMBASE:
+		return OP_LOADU2_MEMINDEX;
+	case OP_LOADI1_MEMBASE:
+		return OP_LOADI1_MEMINDEX;
+	case OP_LOADR4_MEMBASE:
+		return OP_LOADR4_MEMINDEX;
+	case OP_LOADR8_MEMBASE:
+		return OP_LOADR8_MEMINDEX;
+	case OP_STOREI1_MEMBASE_REG:
+		return OP_STOREI1_MEMINDEX;
+	case OP_STOREI2_MEMBASE_REG:
+		return OP_STOREI2_MEMINDEX;
+	case OP_STOREI4_MEMBASE_REG:
+		return OP_STOREI4_MEMINDEX;
+	case OP_STORE_MEMBASE_REG:
+		return OP_STORE_MEMINDEX;
+	case OP_STORER4_MEMBASE_REG:
+		return OP_STORER4_MEMINDEX;
+	case OP_STORER8_MEMBASE_REG:
+		return OP_STORER8_MEMINDEX;
+	case OP_STORE_MEMBASE_IMM:
+		return OP_STORE_MEMBASE_REG;
+	case OP_STOREI1_MEMBASE_IMM:
+		return OP_STOREI1_MEMBASE_REG;
+	case OP_STOREI2_MEMBASE_IMM:
+		return OP_STOREI2_MEMBASE_REG;
+	case OP_STOREI4_MEMBASE_IMM:
+		return OP_STOREI4_MEMBASE_REG;
+>>>>>>> .merge-right.r66840
 	}
-	load->next = ins->next;
-	ins->next = load;
-	DEBUG (g_print ("SPILLED LOAD (%d at 0x%08x(%%sp)) R%d (freed %s)\n", spill, load->inst_offset, i, mono_arch_regname (sel)));
-	i = mono_regstate_alloc_int (cfg->rs, 1 << sel);
-	g_assert (i == sel);
-
-	return sel;
+	g_assert_not_reached ();
 }
 
+<<<<<<< .working
 static int
 get_register_spilling (MonoCompile *cfg, InstList *item, MonoInst *ins, guint32 regmask, int reg)
 {
@@ -1845,26 +1792,24 @@ alloc_int_reg (MonoCompile *cfg, InstList *curinst, MonoInst *ins, int sym_reg, 
 	return val;
 }
 
+=======
+#define compare_opcode_is_unsigned(opcode) \
+		(((opcode) >= CEE_BNE_UN && (opcode) <= CEE_BLT_UN) ||	\
+		((opcode) >= OP_COND_EXC_NE_UN && (opcode) <= OP_COND_EXC_LT_UN) ||	\
+		((opcode) == OP_CLT_UN || (opcode) == OP_CGT_UN))
+>>>>>>> .merge-right.r66840
 /*
- * Local register allocation.
- * We first scan the list of instructions and we save the liveness info of
- * each register (when the register is first used, when it's value is set etc.).
- * We also reverse the list of instructions (in the InstList list) because assigning
- * registers backwards allows for more tricks to be used.
+ * Remove from the instruction list the instructions that can't be
+ * represented with very simple instructions with no register
+ * requirements.
  */
-void
-mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
+static void
+mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	MonoInst *ins;
-	MonoRegState *rs = cfg->rs;
-	int i, val;
-	RegTrack *reginfo, *reginfof;
-	RegTrack *reginfo1, *reginfo2, *reginfod;
-	InstList *tmp, *reversed = NULL;
-	const char *spec;
-	guint32 src1_mask, src2_mask, dest_mask;
-	guint32 cur_iregs, cur_fregs;
+	MonoInst *ins, *next, *temp, *last_ins = NULL;
+	int imm;
 
+<<<<<<< .working
 	if (!bb->code)
 		return;
 	rs->next_vreg = bb->max_vreg;
@@ -1873,56 +1818,26 @@ mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	reginfof = reginfo;
 	rs->ifree_mask = PPC_CALLER_REGS;
 	rs->ffree_mask = PPC_CALLER_FREGS;
+=======
+	/* setup the virtual reg allocator */
+	if (bb->max_ireg > cfg->rs->next_vireg)
+		cfg->rs->next_vireg = bb->max_ireg;
+>>>>>>> .merge-right.r66840
 
 	ins = bb->code;
-	i = 1;
-	DEBUG (g_print ("LOCAL regalloc: basic block: %d\n", bb->block_num));
-	/* forward pass on the instructions to collect register liveness info */
 	while (ins) {
-		spec = ins_spec [ins->opcode];
-		DEBUG (print_ins (i, ins));
-		/*if (spec [MONO_INST_CLOB] == 'c') {
-			MonoCallInst * call = (MonoCallInst*)ins;
-			int j;
-		}*/
-		if (spec [MONO_INST_SRC1]) {
-			if (spec [MONO_INST_SRC1] == 'f')
-				reginfo1 = reginfof;
-			else
-				reginfo1 = reginfo;
-			reginfo1 [ins->sreg1].prev_use = reginfo1 [ins->sreg1].last_use;
-			reginfo1 [ins->sreg1].last_use = i;
-		} else {
-			ins->sreg1 = -1;
-		}
-		if (spec [MONO_INST_SRC2]) {
-			if (spec [MONO_INST_SRC2] == 'f')
-				reginfo2 = reginfof;
-			else
-				reginfo2 = reginfo;
-			reginfo2 [ins->sreg2].prev_use = reginfo2 [ins->sreg2].last_use;
-			reginfo2 [ins->sreg2].last_use = i;
-		} else {
-			ins->sreg2 = -1;
-		}
-		if (spec [MONO_INST_DEST]) {
-			if (spec [MONO_INST_DEST] == 'f')
-				reginfod = reginfof;
-			else
-				reginfod = reginfo;
-			if (spec [MONO_INST_DEST] != 'b') /* it's not just a base register */
-				reginfod [ins->dreg].killed_in = i;
-			reginfod [ins->dreg].prev_use = reginfod [ins->dreg].last_use;
-			reginfod [ins->dreg].last_use = i;
-			if (reginfod [ins->dreg].born_in == 0 || reginfod [ins->dreg].born_in > i)
-				reginfod [ins->dreg].born_in = i;
-			if (spec [MONO_INST_DEST] == 'l') {
-				/* result in eax:edx, the virtual register is allocated sequentially */
-				reginfod [ins->dreg + 1].prev_use = reginfod [ins->dreg + 1].last_use;
-				reginfod [ins->dreg + 1].last_use = i;
-				if (reginfod [ins->dreg + 1].born_in == 0 || reginfod [ins->dreg + 1].born_in > i)
-					reginfod [ins->dreg + 1].born_in = i;
+loop_start:
+		switch (ins->opcode) {
+		case OP_ADD_IMM:
+		case OP_ADDCC_IMM:
+			if (!ppc_is_imm16 (ins->inst_imm)) {
+				NEW_INS (cfg, temp, OP_ICONST);
+				temp->inst_c0 = ins->inst_imm;
+				temp->dreg = mono_regstate_next_int (cfg->rs);
+				ins->sreg2 = temp->dreg;
+				ins->opcode = map_to_reg_reg_op (ins->opcode);
 			}
+<<<<<<< .working
 		} else {
 			ins->dreg = -1;
 		}
@@ -1992,11 +1907,29 @@ mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				}
 			} else {
 				prev_dreg = -1;
+=======
+			break;
+		case OP_SUB_IMM:
+			if (!ppc_is_imm16 (-ins->inst_imm)) {
+				NEW_INS (cfg, temp, OP_ICONST);
+				temp->inst_c0 = ins->inst_imm;
+				temp->dreg = mono_regstate_next_int (cfg->rs);
+				ins->sreg2 = temp->dreg;
+				ins->opcode = map_to_reg_reg_op (ins->opcode);
+>>>>>>> .merge-right.r66840
 			}
-			if (freg_is_freeable (ins->dreg) && prev_dreg >= 0 && (reginfof [prev_dreg].born_in >= i || !(cur_fregs & (1 << ins->dreg)))) {
-				DEBUG (g_print ("\tfreeable float %s (R%d) (born in %d)\n", mono_arch_regname (ins->dreg), prev_dreg, reginfof [prev_dreg].born_in));
-				mono_regstate_free_float (rs, ins->dreg);
+			break;
+		case OP_AND_IMM:
+		case OP_OR_IMM:
+		case OP_XOR_IMM:
+			if ((ins->inst_imm & 0xffff0000) && (ins->inst_imm & 0xffff)) {
+				NEW_INS (cfg, temp, OP_ICONST);
+				temp->inst_c0 = ins->inst_imm;
+				temp->dreg = mono_regstate_next_int (cfg->rs);
+				ins->sreg2 = temp->dreg;
+				ins->opcode = map_to_reg_reg_op (ins->opcode);
 			}
+<<<<<<< .working
 		} else if (ins->dreg >= MONO_MAX_IREGS) {
 			val = rs->vassign [ins->dreg];
 			prev_dreg = ins->dreg;
@@ -2005,7 +1938,28 @@ mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				if (val < -1) {
 					/* the register gets spilled after this inst */
 					spill = -val -1;
+=======
+			break;
+		case OP_SBB_IMM:
+		case OP_SUBCC_IMM:
+		case OP_ADC_IMM:
+			NEW_INS (cfg, temp, OP_ICONST);
+			temp->inst_c0 = ins->inst_imm;
+			temp->dreg = mono_regstate_next_int (cfg->rs);
+			ins->sreg2 = temp->dreg;
+			ins->opcode = map_to_reg_reg_op (ins->opcode);
+			break;
+		case OP_COMPARE_IMM:
+			if (compare_opcode_is_unsigned (ins->next->opcode)) {
+				if (!ppc_is_uimm16 (ins->inst_imm)) {
+					NEW_INS (cfg, temp, OP_ICONST);
+					temp->inst_c0 = ins->inst_imm;
+					temp->dreg = mono_regstate_next_int (cfg->rs);
+					ins->sreg2 = temp->dreg;
+					ins->opcode = map_to_reg_reg_op (ins->opcode);
+>>>>>>> .merge-right.r66840
 				}
+<<<<<<< .working
 				val = mono_regstate_alloc_int (rs, dest_mask);
 				if (val < 0)
 					val = get_register_spilling (cfg, tmp, ins, dest_mask, ins->dreg);
@@ -2031,78 +1985,24 @@ mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 					rs->vassign [hreg] = val;
 					if (spill)
 						create_spilled_store (cfg, spill, val, hreg, ins);
-				}
-				DEBUG (g_print ("\tassigned hreg %s to dest R%d\n", mono_arch_regname (val), hreg));
-				rs->isymbolic [val] = hreg;
-				/* FIXME:? ins->dreg = val; */
-				if (ins->dreg == ppc_r4) {
-					if (val != ppc_r3)
-						create_copy_ins (cfg, val, ppc_r3, ins);
-				} else if (ins->dreg == ppc_r3) {
-					if (val == ppc_r4) {
-						/* swap */
-						create_copy_ins (cfg, ppc_r4, ppc_r0, ins);
-						create_copy_ins (cfg, ppc_r3, ppc_r4, ins);
-						create_copy_ins (cfg, ppc_r0, ppc_r3, ins);
-					} else {
-						/* two forced copies */
-						create_copy_ins (cfg, ins->dreg, ppc_r4, ins);
-						create_copy_ins (cfg, val, ppc_r3, ins);
-					}
-				} else {
-					if (val == ppc_r3) {
-						create_copy_ins (cfg, ins->dreg, ppc_r4, ins);
-					} else {
-						/* two forced copies */
-						create_copy_ins (cfg, val, ppc_r3, ins);
-						create_copy_ins (cfg, ins->dreg, ppc_r4, ins);
-					}
-				}
-				if (reg_is_freeable (val) && hreg >= 0 && (reginfo [hreg].born_in >= i && !(cur_iregs & (1 << val)))) {
-					DEBUG (g_print ("\tfreeable %s (R%d)\n", mono_arch_regname (val), hreg));
-					mono_regstate_free_int (rs, val);
-				}
-			} else if (spec [MONO_INST_DEST] == 'a' && ins->dreg != ppc_r3 && spec [MONO_INST_CLOB] != 'd') {
-				/* this instruction only outputs to ppc_r3, need to copy */
-				create_copy_ins (cfg, ins->dreg, ppc_r3, ins);
-			}
-		} else {
-			prev_dreg = -1;
-		}
-		if (spec [MONO_INST_DEST] == 'f' && freg_is_freeable (ins->dreg) && prev_dreg >= 0 && (reginfof [prev_dreg].born_in >= i)) {
-			DEBUG (g_print ("\tfreeable float %s (R%d) (born in %d)\n", mono_arch_regname (ins->dreg), prev_dreg, reginfof [prev_dreg].born_in));
-			mono_regstate_free_float (rs, ins->dreg);
-		} else if (spec [MONO_INST_DEST] != 'f' && reg_is_freeable (ins->dreg) && prev_dreg >= 0 && (reginfo [prev_dreg].born_in >= i)) {
-			DEBUG (g_print ("\tfreeable %s (R%d) (born in %d)\n", mono_arch_regname (ins->dreg), prev_dreg, reginfo [prev_dreg].born_in));
-			mono_regstate_free_int (rs, ins->dreg);
-		}
-		if (spec [MONO_INST_SRC1] == 'f') {
-			src1_mask = cur_fregs;
-			if (ins->sreg1 >= MONO_MAX_FREGS) {
-				val = rs->fassign [ins->sreg1];
-				prev_sreg1 = ins->sreg1;
-				if (val < 0) {
-					int spill = 0;
-					if (val < -1) {
-						/* the register gets spilled after this inst */
-						spill = -val -1;
-					}
-					//g_assert (val == -1); /* source cannot be spilled */
-					val = mono_regstate_alloc_float (rs, src1_mask);
-					if (val < 0)
-						val = get_float_register_spilling (cfg, tmp, ins, src1_mask, ins->sreg1);
-					rs->fassign [ins->sreg1] = val;
-					DEBUG (g_print ("\tassigned sreg1 %s to R%d\n", mono_arch_regname (val), ins->sreg1));
-					if (spill) {
-						MonoInst *store = create_spilled_store_float (cfg, spill, val, prev_sreg1, NULL);
-						insert_before_ins (ins, tmp, store);
-					}
-				}
-				rs->fsymbolic [val] = prev_sreg1;
-				ins->sreg1 = val;
+=======
 			} else {
-				prev_sreg1 = -1;
+				if (!ppc_is_imm16 (ins->inst_imm)) {
+					NEW_INS (cfg, temp, OP_ICONST);
+					temp->inst_c0 = ins->inst_imm;
+					temp->dreg = mono_regstate_next_int (cfg->rs);
+					ins->sreg2 = temp->dreg;
+					ins->opcode = map_to_reg_reg_op (ins->opcode);
+>>>>>>> .merge-right.r66840
+				}
 			}
+			break;
+		case OP_MUL_IMM:
+			if (ins->inst_imm == 1) {
+				ins->opcode = OP_MOVE;
+				break;
+			}
+<<<<<<< .working
 		} else if (ins->sreg1 >= MONO_MAX_IREGS) {
 			val = rs->vassign [ins->sreg1];
 			prev_sreg1 = ins->sreg1;
@@ -2137,36 +2037,20 @@ mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 					MonoInst *store = create_spilled_store (cfg, spill, val, prev_sreg1, NULL);
 					insert_before_ins (ins, tmp, store);
 				}
+=======
+			if (ins->inst_imm == 0) {
+				ins->opcode = OP_ICONST;
+				ins->inst_c0 = 0;
+				break;
+>>>>>>> .merge-right.r66840
 			}
-			rs->isymbolic [val] = prev_sreg1;
-			ins->sreg1 = val;
-		} else {
-			prev_sreg1 = -1;
-		}
-		if (spec [MONO_INST_SRC2] == 'f') {
-			src2_mask = cur_fregs;
-			if (ins->sreg2 >= MONO_MAX_FREGS) {
-				val = rs->fassign [ins->sreg2];
-				prev_sreg2 = ins->sreg2;
-				if (val < 0) {
-					int spill = 0;
-					if (val < -1) {
-						/* the register gets spilled after this inst */
-						spill = -val -1;
-					}
-					val = mono_regstate_alloc_float (rs, src2_mask);
-					if (val < 0)
-						val = get_float_register_spilling (cfg, tmp, ins, src2_mask, ins->sreg2);
-					rs->fassign [ins->sreg2] = val;
-					DEBUG (g_print ("\tassigned sreg2 %s to R%d\n", mono_arch_regname (val), ins->sreg2));
-					if (spill)
-						create_spilled_store_float (cfg, spill, val, prev_sreg2, ins);
-				}
-				rs->fsymbolic [val] = prev_sreg2;
-				ins->sreg2 = val;
-			} else {
-				prev_sreg2 = -1;
+			imm = mono_is_power_of_two (ins->inst_imm);
+			if (imm > 0) {
+				ins->opcode = OP_SHL_IMM;
+				ins->inst_imm = imm;
+				break;
 			}
+<<<<<<< .working
 		} else if (ins->sreg2 >= MONO_MAX_IREGS) {
 			val = rs->vassign [ins->sreg2];
 			prev_sreg2 = ins->sreg2;
@@ -2183,36 +2067,75 @@ mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				DEBUG (g_print ("\tassigned sreg2 %s to R%d\n", mono_arch_regname (val), ins->sreg2));
 				if (spill)
 					create_spilled_store (cfg, spill, val, prev_sreg2, ins);
+=======
+			if (!ppc_is_imm16 (ins->inst_imm)) {
+				NEW_INS (cfg, temp, OP_ICONST);
+				temp->inst_c0 = ins->inst_imm;
+				temp->dreg = mono_regstate_next_int (cfg->rs);
+				ins->sreg2 = temp->dreg;
+				ins->opcode = map_to_reg_reg_op (ins->opcode);
+>>>>>>> .merge-right.r66840
 			}
-			rs->isymbolic [val] = prev_sreg2;
-			ins->sreg2 = val;
-		} else {
-			prev_sreg2 = -1;
+			break;
+		case OP_LOAD_MEMBASE:
+		case OP_LOADI4_MEMBASE:
+		case OP_LOADU4_MEMBASE:
+		case OP_LOADI2_MEMBASE:
+		case OP_LOADU2_MEMBASE:
+		case OP_LOADI1_MEMBASE:
+		case OP_LOADU1_MEMBASE:
+		case OP_LOADR4_MEMBASE:
+		case OP_LOADR8_MEMBASE:
+		case OP_STORE_MEMBASE_REG:
+		case OP_STOREI4_MEMBASE_REG:
+		case OP_STOREI2_MEMBASE_REG:
+		case OP_STOREI1_MEMBASE_REG:
+		case OP_STORER4_MEMBASE_REG:
+		case OP_STORER8_MEMBASE_REG:
+			/* we can do two things: load the immed in a register
+			 * and use an indexed load, or see if the immed can be
+			 * represented as an ad_imm + a load with a smaller offset
+			 * that fits. We just do the first for now, optimize later.
+			 */
+			if (ppc_is_imm16 (ins->inst_offset))
+				break;
+			NEW_INS (cfg, temp, OP_ICONST);
+			temp->inst_c0 = ins->inst_offset;
+			temp->dreg = mono_regstate_next_int (cfg->rs);
+			ins->sreg2 = temp->dreg;
+			ins->opcode = map_to_reg_reg_op (ins->opcode);
+			break;
+		case OP_STORE_MEMBASE_IMM:
+		case OP_STOREI1_MEMBASE_IMM:
+		case OP_STOREI2_MEMBASE_IMM:
+		case OP_STOREI4_MEMBASE_IMM:
+			NEW_INS (cfg, temp, OP_ICONST);
+			temp->inst_c0 = ins->inst_imm;
+			temp->dreg = mono_regstate_next_int (cfg->rs);
+			ins->sreg1 = temp->dreg;
+			ins->opcode = map_to_reg_reg_op (ins->opcode);
+			last_ins = temp;
+			goto loop_start; /* make it handle the possibly big ins->inst_offset */
 		}
-
-		if (spec [MONO_INST_CLOB] == 'c') {
-			int j, s;
-			guint32 clob_mask = PPC_CALLER_REGS;
-			for (j = 0; j < MONO_MAX_IREGS; ++j) {
-				s = 1 << j;
-				if ((clob_mask & s) && !(rs->ifree_mask & s) && j != ins->sreg1) {
-					//g_warning ("register %s busy at call site\n", mono_arch_regname (j));
-				}
-			}
-		}
-		/*if (reg_is_freeable (ins->sreg1) && prev_sreg1 >= 0 && reginfo [prev_sreg1].born_in >= i) {
-			DEBUG (g_print ("freeable %s\n", mono_arch_regname (ins->sreg1)));
-			mono_regstate_free_int (rs, ins->sreg1);
-		}
-		if (reg_is_freeable (ins->sreg2) && prev_sreg2 >= 0 && reginfo [prev_sreg2].born_in >= i) {
-			DEBUG (g_print ("freeable %s\n", mono_arch_regname (ins->sreg2)));
-			mono_regstate_free_int (rs, ins->sreg2);
-		}*/
-		
-		//DEBUG (print_ins (i, ins));
-		tmp = tmp->next;
+		last_ins = ins;
+		ins = ins->next;
 	}
+<<<<<<< .working
 	cfg->max_vreg = MAX (cfg->max_vreg, rs->max_vreg);
+=======
+	bb->last_ins = last_ins;
+	bb->max_ireg = cfg->rs->next_vireg;
+	
+>>>>>>> .merge-right.r66840
+}
+
+void
+mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
+{
+	if (!bb->code)
+		return;
+	mono_arch_lowering_pass (cfg, bb);
+	mono_local_regalloc (cfg, bb);
 }
 
 static guchar*
@@ -2316,6 +2239,12 @@ search_thunk_slot (void *data, int csize, int bsize, void *user_data) {
 				ppc_patch (pdata->code, (guchar*)thunks);
 				mono_arch_flush_icache (pdata->code, 4);
 				pdata->found = 1;
+				/*{
+					static int num_thunks = 0;
+					num_thunks++;
+					if ((num_thunks % 20) == 0)
+						g_print ("num_thunks lookup: %d\n", num_thunks);
+				}*/
 				return 1;
 			} else if ((thunks [0] == 0) && (thunks [1] == 0)) {
 				/* found a free slot instead: emit thunk */
@@ -2329,6 +2258,12 @@ search_thunk_slot (void *data, int csize, int bsize, void *user_data) {
 				ppc_patch (pdata->code, (guchar*)thunks);
 				mono_arch_flush_icache (pdata->code, 4);
 				pdata->found = 1;
+				/*{
+					static int num_thunks = 0;
+					num_thunks++;
+					if ((num_thunks % 20) == 0)
+						g_print ("num_thunks: %d\n", num_thunks);
+				}*/
 				return 1;
 			}
 			/* skip 16 bytes, the size of the thunk */
@@ -2510,58 +2445,30 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			emit_tls_access (code, ins->dreg, ins->inst_offset);
 			break;
 		case OP_BIGMUL:
-			ppc_mullw (code, ppc_r4, ins->sreg1, ins->sreg2);
+			ppc_mullw (code, ppc_r0, ins->sreg1, ins->sreg2);
 			ppc_mulhw (code, ppc_r3, ins->sreg1, ins->sreg2);
+			ppc_mr (code, ppc_r4, ppc_r0);
 			break;
 		case OP_BIGMUL_UN:
-			ppc_mullw (code, ppc_r4, ins->sreg1, ins->sreg2);
+			ppc_mullw (code, ppc_r0, ins->sreg1, ins->sreg2);
 			ppc_mulhwu (code, ppc_r3, ins->sreg1, ins->sreg2);
+			ppc_mr (code, ppc_r4, ppc_r0);
 			break;
 		case OP_MEMORY_BARRIER:
 			ppc_sync (code);
-			break;
-		case OP_STOREI1_MEMBASE_IMM:
-			ppc_li (code, ppc_r0, ins->inst_imm);
-			if (ppc_is_imm16 (ins->inst_offset)) {
-				ppc_stb (code, ppc_r0, ins->inst_offset, ins->inst_destbasereg);
-			} else {
-				ppc_load (code, ppc_r11, ins->inst_offset);
-				ppc_stbx (code, ppc_r0, ppc_r11, ins->inst_destbasereg);
-			}
-			break;
-		case OP_STOREI2_MEMBASE_IMM:
-			ppc_li (code, ppc_r0, ins->inst_imm);
-			if (ppc_is_imm16 (ins->inst_offset)) {
-				ppc_sth (code, ppc_r0, ins->inst_offset, ins->inst_destbasereg);
-			} else {
-				ppc_load (code, ppc_r11, ins->inst_offset);
-				ppc_sthx (code, ppc_r0, ppc_r11, ins->inst_destbasereg);
-			}
-			break;
-		case OP_STORE_MEMBASE_IMM:
-		case OP_STOREI4_MEMBASE_IMM:
-			ppc_load (code, ppc_r0, ins->inst_imm);
-			if (ppc_is_imm16 (ins->inst_offset)) {
-				ppc_stw (code, ppc_r0, ins->inst_offset, ins->inst_destbasereg);
-			} else {
-				ppc_load (code, ppc_r11, ins->inst_offset);
-				ppc_stwx (code, ppc_r0, ppc_r11, ins->inst_destbasereg);
-			}
 			break;
 		case OP_STOREI1_MEMBASE_REG:
 			if (ppc_is_imm16 (ins->inst_offset)) {
 				ppc_stb (code, ins->sreg1, ins->inst_offset, ins->inst_destbasereg);
 			} else {
-				ppc_load (code, ppc_r11, ins->inst_offset);
-				ppc_stbx (code, ins->sreg1, ppc_r11, ins->inst_destbasereg);
+				g_assert_not_reached ();
 			}
 			break;
 		case OP_STOREI2_MEMBASE_REG:
 			if (ppc_is_imm16 (ins->inst_offset)) {
 				ppc_sth (code, ins->sreg1, ins->inst_offset, ins->inst_destbasereg);
 			} else {
-				ppc_load (code, ppc_r11, ins->inst_offset);
-				ppc_sthx (code, ins->sreg1, ppc_r11, ins->inst_destbasereg);
+				g_assert_not_reached ();
 			}
 			break;
 		case OP_STORE_MEMBASE_REG:
@@ -2569,9 +2476,18 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (ppc_is_imm16 (ins->inst_offset)) {
 				ppc_stw (code, ins->sreg1, ins->inst_offset, ins->inst_destbasereg);
 			} else {
-				ppc_load (code, ppc_r11, ins->inst_offset);
-				ppc_stwx (code, ins->sreg1, ppc_r11, ins->inst_destbasereg);
+				g_assert_not_reached ();
 			}
+			break;
+		case OP_STOREI1_MEMINDEX:
+			ppc_stbx (code, ins->sreg1, ins->sreg2, ins->inst_destbasereg);
+			break;
+		case OP_STOREI2_MEMINDEX:
+			ppc_sthx (code, ins->sreg1, ins->sreg2, ins->inst_destbasereg);
+			break;
+		case OP_STORE_MEMINDEX:
+		case OP_STOREI4_MEMINDEX:
+			ppc_stwx (code, ins->sreg1, ins->sreg2, ins->inst_destbasereg);
 			break;
 		case CEE_LDIND_I:
 		case CEE_LDIND_I4:
@@ -2581,8 +2497,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_LOADU4_MEM:
 			g_assert_not_reached ();
-			//x86_mov_reg_imm (code, ins->dreg, ins->inst_p0);
-			//x86_mov_reg_membase (code, ins->dreg, ins->dreg, 0, 4);
 			break;
 		case OP_LOAD_MEMBASE:
 		case OP_LOADI4_MEMBASE:
@@ -2590,8 +2504,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (ppc_is_imm16 (ins->inst_offset)) {
 				ppc_lwz (code, ins->dreg, ins->inst_offset, ins->inst_basereg);
 			} else {
-				ppc_load (code, ppc_r11, ins->inst_offset);
-				ppc_lwzx (code, ins->dreg, ppc_r11, ins->inst_basereg);
+				g_assert_not_reached ();
 			}
 			break;
 		case OP_LOADI1_MEMBASE:
@@ -2599,8 +2512,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (ppc_is_imm16 (ins->inst_offset)) {
 				ppc_lbz (code, ins->dreg, ins->inst_offset, ins->inst_basereg);
 			} else {
-				ppc_load (code, ppc_r11, ins->inst_offset);
-				ppc_lbzx (code, ins->dreg, ppc_r11, ins->inst_basereg);
+				g_assert_not_reached ();
 			}
 			if (ins->opcode == OP_LOADI1_MEMBASE)
 				ppc_extsb (code, ins->dreg, ins->dreg);
@@ -2609,17 +2521,33 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (ppc_is_imm16 (ins->inst_offset)) {
 				ppc_lhz (code, ins->dreg, ins->inst_offset, ins->inst_basereg);
 			} else {
-				ppc_load (code, ppc_r11, ins->inst_offset);
-				ppc_lhzx (code, ins->dreg, ppc_r11, ins->inst_basereg);
+				g_assert_not_reached ();
 			}
 			break;
 		case OP_LOADI2_MEMBASE:
 			if (ppc_is_imm16 (ins->inst_offset)) {
 				ppc_lha (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
 			} else {
-				ppc_load (code, ppc_r11, ins->inst_offset);
-				ppc_lhax (code, ins->dreg, ppc_r11, ins->inst_basereg);
+				g_assert_not_reached ();
 			}
+			break;
+		case OP_LOAD_MEMINDEX:
+		case OP_LOADI4_MEMINDEX:
+		case OP_LOADU4_MEMINDEX:
+			ppc_lwzx (code, ins->dreg, ins->sreg2, ins->inst_basereg);
+			break;
+		case OP_LOADU2_MEMINDEX:
+			ppc_lhzx (code, ins->dreg, ins->sreg2, ins->inst_basereg);
+			break;
+		case OP_LOADI2_MEMINDEX:
+			ppc_lhax (code, ins->dreg, ins->sreg2, ins->inst_basereg);
+			break;
+		case OP_LOADU1_MEMINDEX:
+			ppc_lbzx (code, ins->dreg, ins->sreg2, ins->inst_basereg);
+			break;
+		case OP_LOADI1_MEMINDEX:
+			ppc_lbzx (code, ins->dreg, ins->sreg2, ins->inst_basereg);
+			ppc_extsb (code, ins->dreg, ins->dreg);
 			break;
 		case CEE_CONV_I1:
 			ppc_extsb (code, ins->dreg, ins->sreg1);
@@ -2634,31 +2562,23 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ppc_rlwinm (code, ins->dreg, ins->sreg1, 0, 16, 31);
 			break;
 		case OP_COMPARE:
-			if (ins->next && 
-					((ins->next->opcode >= CEE_BNE_UN && ins->next->opcode <= CEE_BLT_UN) ||
-					(ins->next->opcode >= OP_COND_EXC_NE_UN && ins->next->opcode <= OP_COND_EXC_LT_UN) ||
-					(ins->next->opcode == OP_CLT_UN || ins->next->opcode == OP_CGT_UN)))
+			if (ins->next && compare_opcode_is_unsigned (ins->next->opcode))
 				ppc_cmpl (code, 0, 0, ins->sreg1, ins->sreg2);
 			else
 				ppc_cmp (code, 0, 0, ins->sreg1, ins->sreg2);
 			break;
 		case OP_COMPARE_IMM:
-			if (ins->next && 
-					((ins->next->opcode >= CEE_BNE_UN && ins->next->opcode <= CEE_BLT_UN) ||
-					(ins->next->opcode >= OP_COND_EXC_NE_UN && ins->next->opcode <= OP_COND_EXC_LT_UN) ||
-					(ins->next->opcode == OP_CLT_UN || ins->next->opcode == OP_CGT_UN))) {
+			if (ins->next && compare_opcode_is_unsigned (ins->next->opcode)) {
 				if (ppc_is_uimm16 (ins->inst_imm)) {
 					ppc_cmpli (code, 0, 0, ins->sreg1, (ins->inst_imm & 0xffff));
 				} else {
-					ppc_load (code, ppc_r11, ins->inst_imm);
-					ppc_cmpl (code, 0, 0, ins->sreg1, ppc_r11);
+					g_assert_not_reached ();
 				}
 			} else {
 				if (ppc_is_imm16 (ins->inst_imm)) {
 					ppc_cmpi (code, 0, 0, ins->sreg1, (ins->inst_imm & 0xffff));
 				} else {
-					ppc_load (code, ppc_r11, ins->inst_imm);
-					ppc_cmp (code, 0, 0, ins->sreg1, ppc_r11);
+					g_assert_not_reached ();
 				}
 			}
 			break;
@@ -2678,21 +2598,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (ppc_is_imm16 (ins->inst_imm)) {
 				ppc_addic (code, ins->dreg, ins->sreg1, ins->inst_imm);
 			} else {
-				ppc_load (code, ppc_r11, ins->inst_imm);
-				ppc_addc (code, ins->dreg, ins->sreg1, ppc_r11);
+				g_assert_not_reached ();
 			}
 			break;
 		case OP_ADD_IMM:
 			if (ppc_is_imm16 (ins->inst_imm)) {
 				ppc_addi (code, ins->dreg, ins->sreg1, ins->inst_imm);
 			} else {
-				ppc_load (code, ppc_r11, ins->inst_imm);
-				ppc_add (code, ins->dreg, ins->sreg1, ppc_r11);
+				g_assert_not_reached ();
 			}
-			break;
-		case OP_ADC_IMM:
-			ppc_load (code, ppc_r11, ins->inst_imm);
-			ppc_adde (code, ins->dreg, ins->sreg1, ppc_r11);
 			break;
 		case CEE_ADD_OVF:
 			/* check XER [0-3] (SO, OV, CA): we can't use mcrxr
@@ -2761,10 +2675,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_SUBCC:
 			ppc_subfc (code, ins->dreg, ins->sreg2, ins->sreg1);
 			break;
-		case OP_SUBCC_IMM:
-			ppc_load (code, ppc_r11, ins->inst_imm);
-			ppc_subfc (code, ins->dreg, ppc_r11, ins->sreg1);
-			break;
 		case CEE_SUB:
 			ppc_subf (code, ins->dreg, ins->sreg2, ins->sreg1);
 			break;
@@ -2776,13 +2686,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (ppc_is_imm16 (-ins->inst_imm))
 				ppc_addi (code, ins->dreg, ins->sreg1, -ins->inst_imm);
 			else {
-				ppc_load (code, ppc_r11, ins->inst_imm);
-				ppc_sub (code, ins->dreg, ins->sreg1, ppc_r11);
+				g_assert_not_reached ();
 			}
-			break;
-		case OP_SBB_IMM:
-			ppc_load (code, ppc_r11, ins->inst_imm);
-			ppc_subfe (code, ins->dreg, ppc_r11, ins->sreg1);
 			break;
 		case OP_PPC_SUBFIC:
 			g_assert (ppc_is_imm16 (ins->inst_imm));
@@ -2801,8 +2706,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			} else if (!(ins->inst_imm & 0xffff)) {
 				ppc_andisd (code, ins->sreg1, ins->dreg, ((guint32)ins->inst_imm >> 16));
 			} else {
-				ppc_load (code, ppc_r11, ins->inst_imm);
-				ppc_and (code, ins->sreg1, ins->dreg, ppc_r11);
+				g_assert_not_reached ();
 			}
 			break;
 		case CEE_DIV: {
@@ -2878,8 +2782,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			} else if (!(ins->inst_imm & 0xffff)) {
 				ppc_oris (code, ins->sreg1, ins->dreg, ((guint32)(ins->inst_imm) >> 16));
 			} else {
-				ppc_load (code, ppc_r11, ins->inst_imm);
-				ppc_or (code, ins->sreg1, ins->dreg, ppc_r11);
+				g_assert_not_reached ();
 			}
 			break;
 		case CEE_XOR:
@@ -2891,8 +2794,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			} else if (!(ins->inst_imm & 0xffff)) {
 				ppc_xoris (code, ins->sreg1, ins->dreg, ((guint32)(ins->inst_imm) >> 16));
 			} else {
-				ppc_load (code, ppc_r11, ins->inst_imm);
-				ppc_xor (code, ins->sreg1, ins->dreg, ppc_r11);
+				g_assert_not_reached ();
 			}
 			break;
 		case CEE_SHL:
@@ -2900,21 +2802,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_SHL_IMM:
 			ppc_rlwinm (code, ins->dreg, ins->sreg1, (ins->inst_imm & 0x1f), 0, (31 - (ins->inst_imm & 0x1f)));
-			//ppc_load (code, ppc_r11, ins->inst_imm);
-			//ppc_slw (code, ins->sreg1, ins->dreg, ppc_r11);
 			break;
 		case CEE_SHR:
 			ppc_sraw (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
 		case OP_SHR_IMM:
-			// there is also ppc_srawi
-			//ppc_load (code, ppc_r11, ins->inst_imm);
-			//ppc_sraw (code, ins->dreg, ins->sreg1, ppc_r11);
 			ppc_srawi (code, ins->dreg, ins->sreg1, (ins->inst_imm & 0x1f));
 			break;
 		case OP_SHR_UN_IMM:
-			/*ppc_load (code, ppc_r11, ins->inst_imm);
-			ppc_srw (code, ins->dreg, ins->sreg1, ppc_r11);*/
 			ppc_rlwinm (code, ins->dreg, ins->sreg1, (32 - (ins->inst_imm & 0x1f)), (ins->inst_imm & 0x1f), 31);
 			break;
 		case CEE_SHR_UN:
@@ -2933,8 +2828,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (ppc_is_imm16 (ins->inst_imm)) {
 			    ppc_mulli (code, ins->dreg, ins->sreg1, ins->inst_imm);
 			} else {
-			    ppc_load (code, ppc_r11, ins->inst_imm);
-			    ppc_mullw (code, ins->dreg, ins->sreg1, ppc_r11);
+			    g_assert_not_reached ();
 			}
 			break;
 		case CEE_MUL_OVF:
@@ -3279,16 +3173,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (ppc_is_imm16 (ins->inst_offset)) {
 				ppc_stfd (code, ins->sreg1, ins->inst_offset, ins->inst_destbasereg);
 			} else {
-				ppc_load (code, ppc_r11, ins->inst_offset);
-				ppc_stfdx (code, ins->sreg1, ppc_r11, ins->inst_destbasereg);
+				g_assert_not_reached ();
 			}
 			break;
 		case OP_LOADR8_MEMBASE:
 			if (ppc_is_imm16 (ins->inst_offset)) {
 				ppc_lfd (code, ins->dreg, ins->inst_offset, ins->inst_basereg);
 			} else {
-				ppc_load (code, ppc_r11, ins->inst_offset);
-				ppc_lfdx (code, ins->dreg, ppc_r11, ins->inst_basereg);
+				g_assert_not_reached ();
 			}
 			break;
 		case OP_STORER4_MEMBASE_REG:
@@ -3296,17 +3188,28 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (ppc_is_imm16 (ins->inst_offset)) {
 				ppc_stfs (code, ins->sreg1, ins->inst_offset, ins->inst_destbasereg);
 			} else {
-				ppc_load (code, ppc_r11, ins->inst_offset);
-				ppc_stfsx (code, ins->sreg1, ppc_r11, ins->inst_destbasereg);
+				g_assert_not_reached ();
 			}
 			break;
 		case OP_LOADR4_MEMBASE:
 			if (ppc_is_imm16 (ins->inst_offset)) {
 				ppc_lfs (code, ins->dreg, ins->inst_offset, ins->inst_basereg);
 			} else {
-				ppc_load (code, ppc_r11, ins->inst_offset);
-				ppc_lfsx (code, ins->dreg, ppc_r11, ins->inst_basereg);
+				g_assert_not_reached ();
 			}
+			break;
+		case OP_LOADR4_MEMINDEX:
+			ppc_lfsx (code, ins->dreg, ins->sreg2, ins->inst_basereg);
+			break;
+		case OP_LOADR8_MEMINDEX:
+			ppc_lfdx (code, ins->dreg, ins->sreg2, ins->inst_basereg);
+			break;
+		case OP_STORER4_MEMINDEX:
+			ppc_frsp (code, ins->sreg1, ins->sreg1);
+			ppc_stfsx (code, ins->sreg1, ins->sreg2, ins->inst_destbasereg);
+			break;
+		case OP_STORER8_MEMINDEX:
+			ppc_stfdx (code, ins->sreg1, ins->sreg2, ins->inst_destbasereg);
 			break;
 		case CEE_CONV_R_UN: {
 			static const guint64 adjust_val = 0x4330000000000000ULL;
@@ -3541,9 +3444,7 @@ mono_arch_patch_code (MonoMethod *method, MonoDomain *domain, guint8 *code, Mono
 			gpointer *table = (gpointer *)patch_info->data.table->table;
 			int i;
 
-			// FIXME: inspect code to get the register
-			ppc_load (ip, ppc_r11, table);
-			//*((gconstpointer *)(ip + 2)) = patch_info->data.target;
+			patch_lis_ori (ip, table);
 
 			for (i = 0; i < patch_info->data.table->table_size; i++) { 
 				table [i] = (int)patch_info->data.table->table [i] + code;
@@ -3627,8 +3528,11 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		ppc_mflr (code, ppc_r0);
 		ppc_stw (code, ppc_r0, PPC_RET_ADDR_OFFSET, ppc_sp);
 	}
+<<<<<<< .working
 	if (cfg->max_vreg >= 29)
 		cfg->used_int_regs |= USE_EXTRA_TEMPS;
+=======
+>>>>>>> .merge-right.r66840
 
 	alloc_size = cfg->stack_offset;
 	pos = 0;
@@ -4313,8 +4217,9 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 		MONO_INST_NEW (cfg, this, OP_SETREG);
 		this->type = this_type;
 		this->sreg1 = this_reg;
-		this->dreg = this_dreg;
+		this->dreg = mono_regstate_next_int (cfg->rs);
 		mono_bblock_add_inst (cfg->cbb, this);
+		mono_call_inst_add_outarg_reg (cfg, inst, this->dreg, this_dreg, FALSE);
 	}
 
 	if (vt_reg != -1) {
@@ -4322,8 +4227,9 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 		MONO_INST_NEW (cfg, vtarg, OP_SETREG);
 		vtarg->type = STACK_MP;
 		vtarg->sreg1 = vt_reg;
-		vtarg->dreg = ppc_r3;
+		vtarg->dreg = mono_regstate_next_int (cfg->rs);
 		mono_bblock_add_inst (cfg->cbb, vtarg);
+		mono_call_inst_add_outarg_reg (cfg, inst, vtarg->dreg, ppc_r3, FALSE);
 	}
 }
 

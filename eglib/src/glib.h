@@ -6,9 +6,15 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <stddef.h>
 #include <ctype.h>
 #include <eglib-config.h>
 
+#ifndef offsetof
+#   define offsetof(s_name,n_name) (size_t)(char *)&(((s_name*)0)->m_name)
+#endif
+
+#define __EGLIB_X11 1
 /*
  * Basic data types
  */
@@ -46,17 +52,28 @@ typedef uint16_t       gunichar2;
 
 #define G_MAXINT32           INT32_MAX
 #define G_MININT32           INT32_MIN
+#define G_MININT64           INT64_MIN
+#define G_MAXINT64	     INT64_MAX
 
 #define G_LITTLE_ENDIAN 1234
 #define G_BIG_ENDIAN    4321
 #define G_STMT_START    do 
 #define G_STMT_END      while (0)
 
+#define G_USEC_PER_SEC  1000000
+
 #define ABS(a,b)        (((a)>(b)) ? ((a)-(b)) : ((b)-(a)))
 
-#define G_STRUCT_OFFSET(p_type,field) \
-        ((long) (((char *) (&(((p_type)NULL)->field))) - ((char *) NULL)))
+#define G_STRUCT_OFFSET(p_type,field) offsetof(p_type,field)
 
+#define EGLIB_STRINGIFY(x) #x
+#define EGLIB_TOSTRING(x) EGLIB_STRINGIFY(x)
+#define G_STRLOC __FILE__ ":" EGLIB_TOSTRING(__LINE__) ":"
+
+#define G_BEGIN_DECLS
+#define G_END_DECLS
+ 
+#define G_CONST_RETURN const
 
 /*
  * Allocation
@@ -65,7 +82,6 @@ typedef uint16_t       gunichar2;
 #define g_new0(type,size)       ((type *) calloc (sizeof (type), (size)))
 #define g_newa(type,size)       ((type *) alloca (sizeof (type) * (size)))
 #define g_realloc(obj,size)     realloc((obj), (size))
-#define g_strdup(x)             strdup(x)
 #define g_malloc(x)             malloc(x)
 #define g_try_malloc(x)         malloc(x)
 #define g_try_realloc(obj,size) realloc((obj),(size))
@@ -76,7 +92,18 @@ typedef uint16_t       gunichar2;
 #define g_free                  free
 
 gpointer g_memdup (gconstpointer mem, guint byte_size);
+gchar   *g_strdup (const gchar *str);
 
+typedef struct {
+	gpointer (*malloc)      (gsize    n_bytes);
+	gpointer (*realloc)     (gpointer mem, gsize n_bytes);
+	void     (*free)        (gpointer mem);
+	gpointer (*calloc)      (gsize    n_blocks, gsize n_block_bytes);
+	gpointer (*try_malloc)  (gsize    n_bytes);
+	gpointer (*try_realloc) (gpointer mem, gsize n_bytes);
+} GMemVTable;
+
+#define g_mem_set_vtable(x)
 /*
  * Misc.
  */
@@ -117,6 +144,8 @@ gpointer        g_hash_table_find            (GHashTable *hash, GHRFunc predicat
 gboolean        g_hash_table_remove          (GHashTable *hash, gconstpointer key);
 guint           g_hash_table_foreach_remove  (GHashTable *hash, GHRFunc func, gpointer user_data);
 void            g_hash_table_destroy         (GHashTable *hash);
+
+guint           g_spaced_primes_closest      (guint x);
 
 #define g_hash_table_insert(h,k,v)    g_hash_table_insert_replace ((h),(k),(v),FALSE)
 #define g_hash_table_replace(h,k,v)   g_hash_table_insert_replace ((h),(k),(v),TRUE)
@@ -163,6 +192,8 @@ guint        g_strv_length    (gchar **str_array);
 gchar       *g_strjoin        (const gchar *separator, ...);
 gchar       *g_strchug        (gchar *str);
 gchar       *g_strchomp       (gchar *str);
+gchar       *g_strdelimit     (gchar *string, const gchar *delimiters, gchar new_delimiter);
+gchar       *g_strescape      (const gchar *source, const gchar *exceptions);
 
 gchar       *g_filename_to_uri   (const gchar *filename, const gchar *hostname, GError **error);
 gchar       *g_filename_from_uri (const gchar *uri, gchar **hostname, GError **error);
@@ -177,16 +208,30 @@ gint         g_snprintf        (gchar *string, gulong n, gchar const *format, ..
 #define g_vsnprintf vsnprintf
 #define g_vasprintf vasprintf
 
-#define g_ascii_isspace(c) (isspace (c) != 0)
-#define g_ascii_isalpha(c) (isalpha (c) != 0)
-#define g_ascii_isprint(c) (isprint (c) != 0)
+#ifdef HAVE_STRLCPY
+#define g_strlcpy	strlcpy
+#else
+gsize       g_strlcpy          (gchar *dest, const gchar *src, gsize dest_size);
+#endif
+
+gchar  *g_ascii_strdown     (const gchar *str, gssize len);
+gint    g_ascii_strncasecmp (const gchar *s1, const gchar *s2, gsize n);
+#define g_ascii_isspace(c)  (isspace (c) != 0)
+#define g_ascii_isalpha(c)  (isalpha (c) != 0)
+#define g_ascii_isprint(c)  (isprint (c) != 0)
 #define g_ascii_isxdigit(c) (isxdigit (c) != 0)
+#define g_ascii_xdigit_value(c) ((isxdigit (c) == 0) ? -1 : \
+					((c >= '0' && c <= '9') ? (c - '0') : \
+					 	((c >= 'a' && c <= 'f') ? (c - 'a' + 10) : \
+						 (c - 'A' + 10))))
 
 /* FIXME: g_strcasecmp supports utf8 unicode stuff */
 #define g_strcasecmp strcasecmp
 #define g_ascii_strcasecmp strcasecmp
 #define g_strncasecmp strncasecmp
 #define g_strstrip(a) g_strchug (g_strchomp (a))
+
+#define	G_STR_DELIMITERS "_-|> <."
 
 /*
  * String type
@@ -265,7 +310,7 @@ struct _GList {
   GList *prev;
 };
 
-#define g_list_next(list) ((list) ? (((GList *) (list))->next) : NULL);
+#define g_list_next(list) ((list) ? (((GList *) (list))->next) : NULL)
 
 GList *g_list_alloc         (void);
 GList *g_list_append        (GList         *list,
@@ -337,7 +382,7 @@ struct _GPtrArray {
 	guint len;
 };
 
-GPtrArray *g_ptr_array_new                ();
+GPtrArray *g_ptr_array_new                (void);
 GPtrArray *g_ptr_array_sized_new          (guint reserved_size);
 void       g_ptr_array_add                (GPtrArray *array, gpointer data);
 gboolean   g_ptr_array_remove             (GPtrArray *array, gpointer data);
@@ -367,23 +412,6 @@ gboolean g_queue_is_empty  (GQueue   *queue);
 GQueue  *g_queue_new       (void);
 void     g_queue_free      (GQueue   *queue);
 
-
-/*
- * Modules
- */
-typedef enum {
-	G_MODULE_BIND_LAZY = 0x01,
-	G_MODULE_BIND_LOCAL = 0x02,
-	G_MODULE_BIND_MASK = 0x03
-} GModuleFlags;
-typedef struct _GModule GModule;
-
-GModule *g_module_open (const gchar *file, GModuleFlags flags);
-gboolean g_module_symbol (GModule *module, const gchar *symbol_name,
-			  gpointer *symbol);
-const gchar *g_module_error (void);
-gboolean g_module_close (GModule *module);
-gchar *  g_module_build_path (const gchar *directory, const gchar *module_name);
 /*
  * Messages
  */
@@ -417,11 +445,13 @@ void           g_log                  (const gchar *log_domain, GLogLevelFlags l
 #define g_message(format...)  g_log (G_LOG_DOMAIN, G_LOG_LEVEL_MESSAGE, format)
 #define g_debug(format...)    g_log (G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG, format)
 
+#define g_log_set_handler(a,b,c,d)
+#define g_printerr(format...) fprintf (stderr, format)
 /*
  * Conversions
  */
 
-gpointer g_convert_error_quark();
+gpointer g_convert_error_quark(void);
 
 
 /*
@@ -440,6 +470,10 @@ GUnicodeType   g_unichar_type    (gunichar c);
 
 #ifndef MAX
 #define MAX(a,b) (((a)>(b)) ? (a) : (b))
+#endif
+
+#ifndef MIN
+#define MIN(a,b) (((a)<(b)) ? (a) : (b))
 #endif
 
 /* FIXME: Implement these two for gcc */
@@ -462,9 +496,7 @@ typedef enum {
 } GConvertError;
 
 gunichar2 *g_utf8_to_utf16 (const gchar *str, glong len, glong *items_read, glong     *items_written, GError **error);
-glong     utf8_to_utf16_len (const gchar *str, glong len, glong *items_read, GError **error);
 gchar     *g_utf16_to_utf8 (const gunichar2 *str, glong len, glong *items_read, glong     *items_written, GError **error);
-glong     utf16_to_utf8_len (const gunichar2 *str, glong len, glong *items_read, GError **error);
 
 /*
  * Path
@@ -480,12 +512,16 @@ gboolean g_path_is_absolute    (const char *filename);
 const gchar *g_get_home_dir    (void);
 const gchar *g_get_tmp_dir     (void);
 const gchar *g_get_user_name   (void);
+gchar *g_get_prgname           (void);
+void  g_set_prgname            (const gchar *prgname);
 
 /*
  * Shell
  */
 
-gboolean g_shell_parse_argv (const gchar *command_line, gint *argcp, gchar ***argvp, GError **error);
+gboolean  g_shell_parse_argv (const gchar *command_line, gint *argcp, gchar ***argvp, GError **error);
+gchar    *g_shell_unquote    (const gchar *quoted_string, GError **error);
+gchar    *g_shell_quote      (const gchar *unquoted_string);
 
 /*
  * Spawn
@@ -644,5 +680,59 @@ gboolean             g_markup_parse_context_parse (GMarkupParseContext *context,
 gboolean         g_markup_parse_context_end_parse (GMarkupParseContext *context,
 						   GError **error);
 
+/*
+ * Character set conversion
+ */
+gboolean  g_get_charset        (char **charset);
+gchar    *g_locale_to_utf8     (const gchar *opsysstring, gssize len,
+				gsize *bytes_read, gsize *bytes_written,
+				GError **error);
+gchar    *g_locale_from_utf8   (const gchar *utf8string, gssize len, gsize *bytes_read,
+				gsize *bytes_written, GError **error);
+gchar    *g_filename_from_utf8 (const gchar *utf8string, gssize len, gsize *bytes_read,
+				gsize *bytes_written, GError **error);
+gchar    *g_convert            (const gchar *str, gssize len,
+				const gchar *to_codeset, const gchar *from_codeset,
+				gsize *bytes_read, gsize *bytes_written, GError **error);
+gboolean  g_utf8_validate      (const gchar *str, gssize max_len, const gchar **end);
+
+/*
+ * Empty thread functions, not used by eglib
+ */
+#define g_thread_supported()   TRUE
+#define g_thread_init(x)       G_STMT_START { if (x != NULL) { g_error ("No vtable supported in g_thread_init"); } } G_STMT_END
+
+#define GUINT16_SWAP_LE_BE(x) ((guint16) (((guint16) x) >> 8) | ((((guint16)(x)) & 0xff) << 8))
+#define GUINT32_SWAP_LE_BE(x) ((guint32) \
+			       ( (((guint32) (x)) << 24)| \
+				 ((((guint32) (x)) & 0xff0000) >> 8) | \
+		                 ((((guint32) (x)) & 0xff00) << 8) | \
+			         (((guint32) (x)) >> 24)) )
+ 
+#define GUINT64_SWAP_LE_BE(x) ((guint64) (((guint64)(GUINT32_SWAP_LE_BE(((guint64)x) & 0xffffffff))) << 32) | \
+	      	               GUINT32_SWAP_LE_BE(((guint64)x) >> 32))
+
+				  
+ 
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+#   define GUINT32_TO_LE(x) (x)
+#   define GUINT64_TO_LE(x) (x)
+#   define GUINT16_TO_LE(x) (x)
+#else
+#   define GUINT32_TO_LE(x) GUINT32_SWAP_LE_BE(x)
+#   define GUINT64_TO_LE(x) GUINT64_SWAP_LE_BE(x)
+#   define GUINT16_TO_LE(x) GUINT16_SWAP_LE_BE(x)
+#endif
+
+#define GUINT32_FROM_LE(x)  (GUINT32_TO_LE (x))
+#define GUINT64_FROM_LE(x)  (GUINT64_TO_LE (x))
+#define GUINT16_FROM_LE(x)  (GUINT16_TO_LE (x))
+
+#define _EGLIB_MAJOR  2
+#define _EGLIB_MIDDLE 4
+#define _EGLIB_MINOR  0
+ 
+#define GLIB_CHECK_VERSION(a,b,c) ((a < _EGLIB_MAJOR) || (a == _EGLIB_MAJOR && (b < _EGLIB_MIDDLE || (b == _EGLIB_MIDDLE && c <= _EGLIB_MINOR))))
+ 
 #endif
 

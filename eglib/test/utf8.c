@@ -193,6 +193,25 @@ test_utf8_to_utf16 ()
 	return OK;
 }
 
+RESULT
+test_convert ()
+{
+	gsize n;
+	char *s = g_convert ("\242\241\243\242\241\243\242\241\243\242\241\243", -1, "UTF-8", "ISO-8859-1", NULL, &n, NULL);
+	guchar *u = (guchar *) s;
+	
+	if (strlen (s) != 24)
+		return FAILED ("Expected 24 bytes, got: %d", strlen (s));
+
+	if (u [1] != 162 || u [2] != 194 ||
+	    u [3] != 161 || u [4] != 194 ||
+	    u [5] != 163 || u [6] != 194)
+		return FAILED ("Incorrect conversion");
+	
+	g_free (s);
+	
+	return OK;
+}
 
 /*
  * test initialization
@@ -201,6 +220,7 @@ test_utf8_to_utf16 ()
 static Test utf8_tests [] = {
 	{"g_utf16_to_utf8", test_utf16_to_utf8},
 	{"g_utf8_to_utf16", test_utf8_to_utf16},
+	{"g_convert", test_convert },
 	{NULL, NULL}
 };
 

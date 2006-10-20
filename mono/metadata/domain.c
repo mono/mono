@@ -803,6 +803,10 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_defaults.com_object_class = mono_class_from_name (
 	        mono_defaults.corlib, "System", "__ComObject");
 
+	mono_defaults.com_interop_proxy_class = mono_class_from_name (
+	        mono_defaults.corlib, "Mono.Interop", "ComInteropProxy");
+
+
 	/*
 	 * Note that mono_defaults.generic_*_class is only non-NULL if we're
 	 * using the 2.0 corlib.
@@ -1073,6 +1077,10 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	if (domain->refobject_hash) {
 		mono_g_hash_table_destroy (domain->refobject_hash);
 		domain->refobject_hash = NULL;
+	}
+	if (domain->type_init_exception_hash) {
+		mono_g_hash_table_destroy (domain->type_init_exception_hash);
+		domain->type_init_exception_hash = NULL;
 	}
 	g_hash_table_destroy (domain->class_init_trampoline_hash);
 	domain->class_init_trampoline_hash = NULL;

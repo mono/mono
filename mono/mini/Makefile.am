@@ -113,7 +113,6 @@ x86_sources = \
 	mini-x86.h		\
 	exceptions-x86.c	\
 	tramp-x86.c			\
-	mini-codegen.c		\
 	mini-trampolines.c
 
 amd64_sources = \
@@ -121,7 +120,6 @@ amd64_sources = \
 	mini-amd64.h		\
 	exceptions-amd64.c	\
 	tramp-amd64.c		\
-	mini-codegen.c		\
 	mini-trampolines.c
 
 ppc_sources = \
@@ -134,29 +132,25 @@ arm_sources = \
 	mini-arm.c		\
 	mini-arm.h		\
 	exceptions-arm.c	\
-	tramp-arm.c		\
-	mini-codegen.c
+	tramp-arm.c
 
 sparc_sources = \
 	mini-sparc.c		\
 	mini-sparc.h		\
 	exceptions-sparc.c	\
 	tramp-sparc.c		\
-	mini-codegen.c		\
 	mini-trampolines.c
 
 s390_sources = \
 	mini-s390.c		\
 	mini-s390.h		\
 	exceptions-s390.c	\
-	mini-codegen.c		\
 	tramp-s390.c
 
 s390x_sources = \
 	mini-s390x.c		\
 	mini-s390x.h		\
 	exceptions-s390x.c	\
-	mini-codegen.c		\
 	tramp-s390x.c
 
 ia64_sources = \
@@ -164,7 +158,6 @@ ia64_sources = \
 	mini-ia64.h			\
 	exceptions-ia64.c	\
 	tramp-ia64.c		\
-	mini-codegen.c		\
 	mini-trampolines.c
 
 alpha_sources = \
@@ -172,7 +165,6 @@ alpha_sources = \
 	mini-alpha.h	\
 	exceptions-alpha.c	\
 	tramp-alpha.c	\
-	mini-codegen.c	\
 	mini-trampolines.c
 
 common_sources = \
@@ -210,6 +202,7 @@ common_sources = \
 	aot-runtime.c		\
 	graph.c		\
 	mini-exceptions.c	\
+	mini-codegen.c		\
 	declsec.c	\
 	declsec.h	\
 	wapihandles.c	\

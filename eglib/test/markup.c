@@ -194,10 +194,39 @@ mono_domain (void)
 	return NULL;
 }
 
+RESULT
+mcs_config (void)
+{
+	return markup_test ("<configuration>\r\n  <system.diagnostics>\r\n    <trace autoflush=\"true\" indentsize=\"4\">\r\n      <listeners>\r\n        <add name=\"compilerLogListener\" type=\"System.Diagnostics.TextWriterTraceListener,System\"/>      </listeners>    </trace>   </system.diagnostics> </configuration>");
+
+}
+
+RESULT
+xml_parse (void)
+{
+	return markup_test ("<?xml version=\"1.0\" encoding=\"utf-8\"?><a></a>");
+}
+
+RESULT
+machine_config (void)
+{
+	char *data;
+	gsize size;
+	
+	if (g_file_get_contents ("../../data/net_1_1/machine.config", &data, &size, NULL)){
+		return markup_test (data);
+	}
+	printf ("Ignoring this test\n");
+	return NULL;
+}
+
 static Test markup_tests [] = {
 	{"invalid_documents", invalid_documents},
 	{"good_documents", valid_documents},
 	{"mono_domain", mono_domain},
+	{"mcs_config", mcs_config},
+	{"xml_parse", xml_parse},
+	{"machine_config", machine_config},
 	{NULL, NULL}
 };
 

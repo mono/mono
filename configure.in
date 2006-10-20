@@ -6,7 +6,7 @@ AC_CANONICAL_SYSTEM
 m4_ifdef([_A][M_PROG_TAR],[_A][M_SET_OPTION([tar-ustar])])
 
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(mono,1.1.17)
+AM_INIT_AUTOMAKE(mono,1.1.18)
 AM_MAINTAINER_MODE
 
 AC_PROG_LN_S
@@ -72,7 +72,6 @@ case "$host" in
 		libdl=
 		libgc_threads=win32
 		gc_default=included
-		with_nptl=default
 		with_sigaltstack=no
 		LN_S=cp
 		# This forces libgc to use the DllMain based thread registration code on win32
@@ -113,7 +112,6 @@ case "$host" in
 		libdl=
 		libgc_threads=pthreads
 # TLS isn't implemented at all on 4-STABLE
-		with_nptl=no
 		with_tls=pthread
 		;;
 	*-*-*freebsd5*)
@@ -206,7 +204,7 @@ case "$host" in
 		libmono_cflags="-D_REENTRANT"
 		libgc_threads=pthreads
 		# This doesn't seem to work on solaris/x86, but the configure test runs
-		with_nptl=no
+		with_tls=pthread
 		;;
 	*-*-darwin*)
 		platform_win32=no
@@ -412,14 +410,14 @@ AC_ARG_WITH([glib],
 case $with_glib in
 embedded) 
   GLIB_CFLAGS='-I$(top_srcdir)/eglib/src'
-  GLIB_LIBS='-L$(top_builddir)/eglib/src -leglib'
+  GLIB_LIBS='-L$(top_builddir)/eglib/src -leglib -lm'
+  BUILD_GLIB_CFLAGS="$GLIB_CFLAGS"
+  BUILD_GLIB_LIBS="$GLIB_LIBS"
   AC_CONFIG_SUBDIRS(eglib)
   ;;
 system)
   BUILD_GLIB_CFLAGS=`$PKG_CONFIG --cflags glib-2.0 gthread-2.0`
   BUILD_GLIB_LIBS=`$PKG_CONFIG --libs glib-2.0 gthread-2.0`
-  AC_SUBST(BUILD_GLIB_CFLAGS)
-  AC_SUBST(BUILD_GLIB_LIBS)
 
   ## Versions of dependencies
   GLIB_REQUIRED_VERSION=1.3.11
@@ -434,11 +432,14 @@ system)
 *)
   AC_MSG_ERROR([Invalid argument to --with-glib.])
 esac
+AM_CONDITIONAL(EGLIB_BUILD, test x$with_glib = xembedded)
   
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
 AC_SUBST(GMODULE_CFLAGS)
 AC_SUBST(GMODULE_LIBS)
+AC_SUBST(BUILD_GLIB_CFLAGS)
+AC_SUBST(BUILD_GLIB_LIBS)
 
 if test x$cross_compiling$platform_win32 = xnoyes; then
    AC_MSG_CHECKING(for cygwin glib2-dev package)
@@ -466,20 +467,6 @@ AC_ARG_WITH(gc, [  --with-gc=boehm,included,none],[gc=$with_gc],[gc=$gc_default]
 # Enable support for fast thread-local storage
 # Some systems have broken support, so we allow to disable it.
 AC_ARG_WITH(tls, [  --with-tls=__thread,pthread       select Thread Local Storage implementation],[],[with_tls=__thread])
-
-# Kept for compatibility
-AC_ARG_WITH(nptl, [  --with-nptl=yes,no      deprecated, use --with-tls instead],[],[with_nptl=default])
-
-if test "x$with_nptl" != "xdefault"; then
-   if test "x$with_nptl" = "xyes"; then
-      AC_MSG_WARN([--with-nptl=yes is deprecated, use --with-tls=__thread option instead.])
-	  with_tls=__thread
-   fi
-   if test "x$with_nptl" = "xno"; then
-      AC_MSG_WARN([--with-nptl=no is deprecated, use --with-tls=pthread option instead.])
-	  with_tls=pthread
-   fi
-fi
 
 # Enable support for using sigaltstack for SIGSEGV and stack overflow handling
 # This does not work on some platforms (bug #55253)
@@ -901,7 +888,7 @@ if test x$platform_win32 = xno; then
 	dnl *****************************
 	dnl *** Checks for libnsl     ***
 	dnl *****************************
-	AC_CHECK_LIB(nsl, gethostbyaddr, LIBS="$LIBS -lnsl")
+	AC_CHECK_FUNC(gethostbyaddr, , AC_CHECK_LIB(nsl, gethostbyaddr, LIBS="$LIBS -lnsl"))
 
 	AC_CHECK_FUNCS(inet_pton inet_aton)
 
@@ -1566,6 +1553,8 @@ case "$host" in
 		esac
 	       ;;
 	*-*-mingw*|*-*-cygwin*)
+		# When this is enabled, it leads to very strange crashes at runtime (gcc-3.4.4)
+		have_visibility_hidden=no
 		INTL="intl"
 		;;
 	hppa2.0w-hp-hpux11.00 | hppa64-hp-hpux11.00)

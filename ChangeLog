@@ -1,3 +1,26 @@
+2006-10-16  Kornél Pál  <kornelpal@gmail.com>
+
+	* libmono.vcproj: Removed unicode.h and unicode.c. Changed absolute
+	  path in AdditionalLibraryDirectories to relative.
+
+2006-10-13  Joe Shaw  <joeshaw@novell.com>
+
+	* samples/size/size.c: Flesh this out quite a bit more so that
+	its results are more accurate.
+	* samples/size/sample.cs: Add a few more test cases.
+
+2006-10-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* configure.in: Disable visibility("hidden") on cygwin as well.
+
+2006-10-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in: Get rid of --with-nptl.
+
+Sat Sep 30 12:11:56 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* configure.in: link to libnsl only if needed.
+
 2006-09-19  Raja R Harinath  <rharinath@novell.com>
 
 	* runtime/Makefile.am (etc/mono/config): Fix rule to avoid writing

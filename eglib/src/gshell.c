@@ -25,7 +25,6 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-#define _GNU_SOURCE
 #include <stdio.h>
 #include <glib.h>
 
@@ -134,3 +133,16 @@ g_shell_parse_argv (const gchar *command_line, gint *argcp, gchar ***argvp, GErr
 	return TRUE;
 }
 
+gchar *
+g_shell_quote (const gchar *unquoted_string)
+{
+	g_error ("Not implemented");
+	return NULL;
+}
+
+gchar *
+g_shell_unquote (const gchar *quoted_string, GError **error)
+{
+	g_error ("Not implemented");
+	return NULL;
+}

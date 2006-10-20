@@ -364,6 +364,7 @@ struct MonoVTable {
 	guint8      rank;
 	guint remote          : 1; /* class is remotely activated */
 	guint initialized     : 1; /* cctor has been run */
+	guint init_failed     : 1; /* cctor execution failed */
 	/* do not add any fields after vtable, the structure is dynamically extended */
         gpointer    vtable [MONO_ZERO_LEN_ARRAY];	
 };
@@ -714,6 +715,7 @@ typedef struct {
 	MonoClass *generic_nullable_class;
 	MonoClass *variant_class;
 	MonoClass *com_object_class;
+	MonoClass *com_interop_proxy_class;
 } MonoDefaults;
 
 extern MonoDefaults mono_defaults MONO_INTERNAL;

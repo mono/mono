@@ -1470,6 +1470,21 @@ mono_test_marshal_pass_out_custom (int i, guint32 **ptr, int j)
 }
 
 STDCALL int
+mono_test_marshal_pass_inout_custom (int i, guint32 *ptr, int j)
+{
+	ptr [0] = 0;
+	ptr [1] = i + ptr [1] + j;
+
+	return 0;
+}
+
+STDCALL int
+mono_test_marshal_pass_out_byval_custom (int i, guint32 *ptr, int j)
+{
+	return ptr == NULL ? 0 : 1;
+}
+
+STDCALL int
 mono_test_marshal_pass_byref_custom (int i, guint32 **ptr, int j)
 {
 	(*ptr)[1] += i + j;
@@ -1998,6 +2013,22 @@ mono_test_marshal_variant_in_bstr(VARIANT variant)
 }
 
 STDCALL int
+mono_test_marshal_variant_in_bool_true (VARIANT variant)
+{
+	if (variant.vt == VT_BOOL && variant.ullVal == VARIANT_TRUE)
+		return 0;
+	return 1;
+}
+
+STDCALL int
+mono_test_marshal_variant_in_bool_false (VARIANT variant)
+{
+	if (variant.vt == VT_BOOL && variant.ullVal == VARIANT_FALSE)
+		return 0;
+	return 1;
+}
+
+STDCALL int
 mono_test_marshal_variant_out_sbyte(VARIANT* variant)
 {
 	variant->vt = VT_I1;
@@ -2092,6 +2123,24 @@ mono_test_marshal_variant_out_bstr(VARIANT* variant)
 {
 	variant->vt = VT_BSTR;
 	variant->bstrVal = SysAllocString(L"PI");
+
+	return 0;
+}
+
+STDCALL int
+mono_test_marshal_variant_out_bool_true (VARIANT* variant)
+{
+	variant->vt = VT_BOOL;
+	variant->bstrVal = VARIANT_TRUE;
+
+	return 0;
+}
+
+STDCALL int
+mono_test_marshal_variant_out_bool_false (VARIANT* variant)
+{
+	variant->vt = VT_BOOL;
+	variant->bstrVal = VARIANT_FALSE;
 
 	return 0;
 }

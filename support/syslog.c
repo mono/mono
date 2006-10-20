@@ -12,7 +12,7 @@
 #include <errno.h>
 
 #include "mph.h"
-#include <glib/gtypes.h>
+#include <glib.h>
 
 G_BEGIN_DECLS
 

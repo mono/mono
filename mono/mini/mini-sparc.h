@@ -97,7 +97,14 @@ typedef struct MonoCompileArch {
 		MONO_CONTEXT_SET_BP ((ctx), __builtin_frame_address (0));	\
 	} while (0)
 
+#ifndef __linux__
+/* 
+ * Can't use sigaction on sparc/linux, since it doesn't support SA_SIGINFO. Instead, we
+ * have to use the obsolete sigcontext parameter:
+ * http://www.ussg.iu.edu/hypermail/linux/kernel/0110.3/1531.html.
+ */
 #define MONO_ARCH_USE_SIGACTION 1
+#endif
 
 #ifdef HAVE_WORKING_SIGALTSTACK
 #define MONO_ARCH_SIGSEGV_ON_ALTSTACK
@@ -110,6 +117,7 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_EMULATE_LCONV_TO_R8_UN 1
 #define MONO_ARCH_EMULATE_FREM 1
 #define MONO_ARCH_NEED_DIV_CHECK 1
+#define MONO_ARCH_ENABLE_EMIT_STATE_OPT 1
 #define MONO_ARCH_HAVE_THROW_CORLIB_EXCEPTION 1
 #define MONO_ARCH_HAVE_CREATE_TRAMPOLINE_FROM_TOKEN 1
 #define MONO_ARCH_HAVE_CREATE_SPECIFIC_TRAMPOLINE 1

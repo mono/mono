@@ -25,8 +25,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
- 
-#define _GNU_SOURCE
+
 #include <stdlib.h>
 #include <glib.h>
 
@@ -36,11 +35,11 @@
 #define element_length(p,i) ((i) * (p)->element_size)
 
 typedef struct {
-  GArray array;
-  gboolean clear_;
-  gboolean element_size;
-  gboolean zero_terminated;
-  gint capacity;
+	GArray array;
+	gboolean clear_;
+	gboolean element_size;
+	gboolean zero_terminated;
+	gint capacity;
 } GArrayPriv;
 
 static void
@@ -86,6 +85,9 @@ g_array_free (GArray *array,
 	      gboolean free_segment)
 {
 	gchar* rv = NULL;
+
+	g_return_val_if_fail (array != NULL, NULL);
+
 	if (free_segment)
 		g_free (array->data);
 	else
@@ -102,6 +104,8 @@ g_array_append_vals (GArray *array,
 		     guint len)
 {
 	GArrayPriv *priv = (GArrayPriv*)array;
+
+	g_return_val_if_fail (array != NULL, NULL);
 
 	ensure_capacity (priv, priv->array.len + len + (priv->zero_terminated ? 1 : 0));
   
@@ -127,18 +131,21 @@ g_array_insert_vals (GArray *array,
 		     guint len)
 {
 	GArrayPriv *priv = (GArrayPriv*)array;
+	guint extra = (priv->zero_terminated ? 1 : 0);
 
-	ensure_capacity (priv, array->len + len + (priv->zero_terminated ? 1 : 0));
+	g_return_val_if_fail (array != NULL, NULL);
+
+	ensure_capacity (priv, array->len + len + extra);
   
 	/* first move the existing elements out of the way */
 	memmove (element_offset (priv, index_ + len),
 		 element_offset (priv, index_),
-		 element_length (priv, len - index_));
+		 element_length (priv, array->len - index_));
 
 	/* then copy the new elements into the array */
-	memmove (element_offset (priv, array->len),
+	memmove (element_offset (priv, index_),
 		 data,
-		 element_length (priv, index_));
+		 element_length (priv, len));
 
 	array->len += len;
 
@@ -157,6 +164,8 @@ g_array_remove_index (GArray *array,
 {
 	GArrayPriv *priv = (GArrayPriv*)array;
 
+	g_return_val_if_fail (array != NULL, NULL);
+
 	memmove (element_offset (priv, index_),
 		 element_offset (priv, index_ + 1),
 		 element_length (priv, array->len - index_));
@@ -171,3 +180,4 @@ g_array_remove_index (GArray *array,
 
 	return array;
 }
+

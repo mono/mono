@@ -1,3 +1,4 @@
+<<<<<<< .working
 2006-09-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* interlocked-2.2.cs: Fix problem with previous change.
@@ -12,6 +13,26 @@
 
 	* libtest.c: Fix merge problem.
 
+=======
+2006-10-20  Jonathan Chambers  <joncham@gmail.com>
+
+	* cominterop.cs: Added more tests for Variant.
+	* libtest.c: Added more tests for Variant.
+	
+2006-10-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* static-constructor.cs: Add a new test.
+
+2006-09-30  Jonathan Chambers  <joncham@gmail.com>
+
+	* marshal7.cs: Added tests for size of structs containing
+	objects with MarshalAs.Interface,IUnknown,IDispatch, and Struct.
+
+2006-09-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal9.cs libtest.c: Add tests for some custom marshalling corner cases.
+
+>>>>>>> .merge-right.r66840
 2006-09-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* libtest.c (mono_test_marshal_stringbuilder_default): Null terminate string to

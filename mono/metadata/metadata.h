@@ -380,6 +380,10 @@ mono_type_get_class      (MonoType *type);
 MonoArrayType*
 mono_type_get_array_type (MonoType *type);
 
+/* For MONO_TYPE_PTR */
+MonoType*
+mono_type_get_ptr_type (MonoType *type);
+
 MonoClass*
 mono_type_get_modifiers  (MonoType *type, gboolean *is_required, gpointer *iter);
 
@@ -507,6 +511,17 @@ guint32 mono_metadata_token_from_dor (guint32 dor_index);
 char *mono_guid_to_string (const guint8 *guid);
 
 guint32 mono_metadata_declsec_from_index (MonoImage *meta, guint32 idx);
+
+guint32 mono_metadata_translate_token_index (MonoImage *image, int table, guint32 idx);
+
+void    mono_metadata_decode_table_row (MonoImage *image, int table,
+				       int                    idx,
+				       guint32               *res,
+				       int                    res_size);
+
+guint32      mono_metadata_decode_table_row_col (MonoImage *image, int table,
+					   int            idx, 
+					   guint          col);
 
 G_END_DECLS
 

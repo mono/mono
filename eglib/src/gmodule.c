@@ -28,13 +28,14 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 #include <glib.h>
+#include <gmodule.h>
 
 #ifdef G_OS_UNIX
 #include <dlfcn.h>
 
 /* For Linux and Solaris, need to add others as we port this */
-#define LIBSUFFIX "lib"
-#define LIBPREFIX ".so"
+#define LIBPREFIX "lib"
+#define LIBSUFFIX ".so"
 
 struct _GModule {
 	void *handle;

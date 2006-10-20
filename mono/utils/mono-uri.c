@@ -1,95 +1,50 @@
-/* GLIB - Library of useful routines for C programming
+/*
+ * mono-uri.c: Simple routine used to escape uris.
  *
- * gconvert.c: Convert between character sets using iconv
- * Copyright Red Hat Inc., 2000
- * Authors: Havoc Pennington <hp@redhat.com>, Owen Taylor <otaylor@redhat.com
+ * Author:
+ *   Miguel de Icaza (miguel@novell.com)
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * (C) 2006 Ximian, Inc.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
  */
-#include <glib.h>
 #include "mono-uri.h"
 
-typedef enum {
-  UNSAFE_ALL        = 0x1,  /* Escape all unsafe characters   */
-  UNSAFE_ALLOW_PLUS = 0x2,  /* Allows '+'  */
-  UNSAFE_PATH       = 0x4,  /* Allows '/' and '?' and '&' and '='  */
-  UNSAFE_DOS_PATH   = 0x8,  /* Allows '/' and '?' and '&' and '=' and ':' */
-  UNSAFE_HOST       = 0x10, /* Allows '/' and ':' and '@' */
-  UNSAFE_SLASHES    = 0x20  /* Allows all characters except for '/' and '%' */
-} UnsafeCharacterSet;
-
-static const guchar acceptable[96] = {
-  /* A table of the ASCII chars from space (32) to DEL (127) */
-  /*      !    "    #    $    %    &    '    (    )    *    +    ,    -    .    / */ 
-  0x00,0x3F,0x20,0x20,0x20,0x00,0x2C,0x3F,0x3F,0x3F,0x3F,0x22,0x20,0x3F,0x3F,0x1C,
-  /* 0    1    2    3    4    5    6    7    8    9    :    ;    <    =    >    ? */
-  0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x38,0x20,0x20,0x2C,0x20,0x2C,
-  /* @    A    B    C    D    E    F    G    H    I    J    K    L    M    N    O */
-  0x30,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,
-  /* P    Q    R    S    T    U    V    W    X    Y    Z    [    \    ]    ^    _ */
-  0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x20,0x20,0x20,0x20,0x3F,
-  /* `    a    b    c    d    e    f    g    h    i    j    k    l    m    n    o */
-  0x20,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,
-  /* p    q    r    s    t    u    v    w    x    y    z    {    |    }    ~  DEL */
-  0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x20,0x20,0x20,0x3F,0x20
-};
-
-static const gchar hex[] = "0123456789ABCDEF";
-
-/* Note: This escape function works on file: URIs, but if you want to
- * escape something else, please read RFC-2396 */
 gchar *
 mono_escape_uri_string (const gchar *string)
 {
-#define ACCEPTABLE(a) ((a)>=32 && (a)<128 && (acceptable[(a)-32] & use_mask))
+	GString *str = g_string_new ("");
+	char *ret;
+	int c;
 
-  const gchar *p;
-  gchar *q;
-  gchar *result;
-  int c;
-  gint unacceptable;
-  UnsafeCharacterSet use_mask;
-  
-  unacceptable = 0;
-  use_mask = UNSAFE_DOS_PATH;
-  for (p = string; *p != '\0'; p++)
-    {
-      c = (guchar) *p;
-      if (!ACCEPTABLE (c)) 
-	unacceptable++;
-    }
-  
-  result = g_malloc (p - string + unacceptable * 2 + 1);
-  
-  for (q = result, p = string; *p != '\0'; p++)
-    {
-      c = (guchar) *p;
-      
-      if (!ACCEPTABLE (c))
-	{
-	  *q++ = '%'; /* means hex coming */
-	  *q++ = hex[c >> 4];
-	  *q++ = hex[c & 15];
+	while ((c = (guchar) *string) != 0){
+		if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '-' && c <= ':') || (c >= '&' && c <= '*'))
+			g_string_append_c (str, c);
+		else if (c == '!' || c == '=' || c == '?' || c == '?' || c == '_' || c == '_' || c == '~')
+			g_string_append_c (str, c);
+		else {
+			g_string_append_c (str, '%');
+			g_string_append_c (str, "0123456789ABCDEF" [c >> 4]);
+			g_string_append_c (str, "0123456789ABCDEF" [c & 0xf]);
+		}
+		string++;
 	}
-      else
-	*q++ = *p;
-    }
-  
-  *q = '\0';
-  
-  return result;
+	ret = str->str;
+	g_string_free (str, FALSE);
+	return ret;
 }
 
+#if TEST
+int main ()
+{
+	char *s = malloc (256);
+	int i = 0;
+	
+	s [255] = 0;
+
+	for (i = 1; i < 256; i++)
+		s [i-1] = i;
+
+	if (strcmp (mono_escape_uri_string (s), "%01%02%03%04%05%06%07%08%09%0A%0B%0C%0D%0E%0F%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F%20!%22%23%24%25&'()*%2B%2C-./0123456789:%3B%3C=%3E?%40ABCDEFGHIJKLMNOPQRSTUVWXYZ%5B%5C%5D%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D~%7F%80%81%82%83%84%85%86%87%88%89%8A%8B%8C%8D%8E%8F%90%91%92%93%94%95%96%97%98%99%9A%9B%9C%9D%9E%9F%A0%A1%A2%A3%A4%A5%A6%A7%A8%A9%AA%AB%AC%AD%AE%AF%B0%B1%B2%B3%B4%B5%B6%B7%B8%B9%BA%BB%BC%BD%BE%BF%C0%C1%C2%C3%C4%C5%C6%C7%C8%C9%CA%CB%CC%CD%CE%CF%D0%D1%D2%D3%D4%D5%D6%D7%D8%D9%DA%DB%DC%DD%DE%DF%E0%E1%E2%E3%E4%E5%E6%E7%E8%E9%EA%EB%EC%ED%EE%EF%F0%F1%F2%F3%F4%F5%F6%F7%F8%F9%FA%FB%FC%FD%FE%FF") != 0)
+		printf ("Failed test\n");
+}
+#endif

@@ -185,6 +185,43 @@ mono_type_initialization_cleanup (void)
 	DeleteCriticalSection (&ldstr_section);
 }
 
+/**
+ * get_type_init_exception_for_vtable:
+ *
+ *   Return the stored type initialization exception for VTABLE.
+ */
+static MonoException*
+get_type_init_exception_for_vtable (MonoVTable *vtable)
+{
+	MonoDomain *domain = vtable->domain;
+	MonoClass *klass = vtable->klass;
+	MonoException *ex;
+	gchar *full_name;
+
+	g_assert (vtable->init_failed);
+
+	/* 
+	 * If the initializing thread was rudely aborted, the exception is not stored
+	 * in the hash.
+	 */
+	ex = NULL;
+	mono_domain_lock (domain);
+	if (domain->type_init_exception_hash)
+		ex = mono_g_hash_table_lookup (domain->type_init_exception_hash, klass);
+	mono_domain_unlock (domain);
+
+	if (!ex) {
+		if (klass->name_space && *klass->name_space)
+			full_name = g_strdup_printf ("%s.%s", klass->name_space, klass->name);
+		else
+			full_name = g_strdup (klass->name);
+		ex = mono_get_exception_type_initialization (full_name, NULL);
+		g_free (full_name);
+	}
+
+	return ex;
+}
+
 /*
  * mono_runtime_class_init:
  * @vtable: vtable that needs to be initialized
@@ -223,6 +260,13 @@ mono_runtime_class_init (MonoVTable *vtable)
 			mono_type_initialization_unlock ();
 			return;
 		}
+		if (vtable->init_failed) {
+			mono_type_initialization_unlock ();
+
+			/* The type initialization already failed once, rethrow the same exception */
+			mono_raise_exception (get_type_init_exception_for_vtable (vtable));
+			return;
+		}			
 		lock = g_hash_table_lookup (type_initialization_hash, vtable);
 		if (lock == NULL) {
 			/* This thread will get to do the initialization */
@@ -276,6 +320,33 @@ mono_runtime_class_init (MonoVTable *vtable)
 
 		if (do_initialization) {
 			mono_runtime_invoke (method, NULL, NULL, (MonoObject **) &exc);
+
+			/* If the initialization failed, mark the class as unusable. */
+			/* Avoid infinite loops */
+			if (!(exc == NULL ||
+				  (klass->image == mono_defaults.corlib &&		
+				   !strcmp (klass->name_space, "System") &&
+				   !strcmp (klass->name, "TypeInitializationException")))) {
+				vtable->init_failed = 1;
+
+				if (klass->name_space && *klass->name_space)
+					full_name = g_strdup_printf ("%s.%s", klass->name_space, klass->name);
+				else
+					full_name = g_strdup (klass->name);
+				exc_to_throw = mono_get_exception_type_initialization (full_name, exc);
+				g_free (full_name);
+
+				/* 
+				 * Store the exception object so it could be thrown on subsequent 
+				 * accesses.
+				 */
+				mono_domain_lock (domain);
+				if (!domain->type_init_exception_hash)
+					domain->type_init_exception_hash = mono_g_hash_table_new_type (mono_aligned_addr_hash, NULL, MONO_HASH_VALUE_GC);
+				mono_g_hash_table_insert (domain->type_init_exception_hash, klass, exc_to_throw);
+				mono_domain_unlock (domain);
+			}
+
 			if (last_domain)
 				mono_domain_set (last_domain, TRUE);
 			lock->done = TRUE;
@@ -295,37 +366,34 @@ mono_runtime_class_init (MonoVTable *vtable)
 			g_hash_table_remove (type_initialization_hash, vtable);
 			g_free (lock);
 		}
-		vtable->initialized = 1;
-		/* FIXME: if the cctor fails, the type must be marked as unusable */
+		if (!vtable->init_failed)
+			vtable->initialized = 1;
 		mono_type_initialization_unlock ();
+
+		if (vtable->init_failed) {
+			/* Either we were the initializing thread or we waited for the initialization */
+			mono_raise_exception (get_type_init_exception_for_vtable (vtable));
+		}
 	} else {
 		vtable->initialized = 1;
 		return;
 	}
-
-	if (exc == NULL ||
-	    (klass->image == mono_defaults.corlib &&		
-	     !strcmp (klass->name_space, "System") &&
-	     !strcmp (klass->name, "TypeInitializationException")))
-		return; /* No static constructor found or avoid infinite loop */
-
-	if (klass->name_space && *klass->name_space)
-		full_name = g_strdup_printf ("%s.%s", klass->name_space, klass->name);
-	else
-		full_name = g_strdup (klass->name);
-
-	exc_to_throw = mono_get_exception_type_initialization (full_name, exc);
-	g_free (full_name);
-
-	mono_raise_exception (exc_to_throw);
 }
 
 static
 gboolean release_type_locks (gpointer key, gpointer value, gpointer user)
 {
+	MonoVTable *vtable = (MonoVTable*)key;
+
 	TypeInitializationLock *lock = (TypeInitializationLock*) value;
 	if (lock->initializing_tid == GPOINTER_TO_UINT (user) && !lock->done) {
 		lock->done = TRUE;
+		/* 
+		 * Have to set this since it cannot be set by the normal code in 
+		 * mono_runtime_class_init (). In this case, the exception object is not stored,
+		 * and get_type_init_exception_for_class () needs to be aware of this.
+		 */
+		vtable->init_failed = 1;
 		LeaveCriticalSection (&lock->initialization_section);
 		--lock->waiting_count;
 		if (lock->waiting_count == 0) {
@@ -815,8 +883,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class)
 		if (!(field->type->attrs & FIELD_ATTRIBUTE_LITERAL)) {
 			gint32 special_static = class->no_special_static_fields ? SPECIAL_STATIC_NONE : field_is_special_static (class, field);
 			if (special_static != SPECIAL_STATIC_NONE) {
-				guint32 size, offset;
-				int align;
+				guint32 size, offset, align;
 				size = mono_type_size (field->type, &align);
 				offset = mono_alloc_special_static_data (special_static, size, align);
 				if (!domain->special_static_fields)

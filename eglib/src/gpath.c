@@ -25,7 +25,6 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-#define _GNU_SOURCE
 #include <stdio.h>
 #include <glib.h>
 #include <unistd.h>
@@ -61,13 +60,14 @@ g_build_path (const gchar *separator, const gchar *first_element, ...)
 		}
 		g_string_append_len (result, s, p - s);
 
-		if (next){
+		if (next && *next){
 			g_string_append (result, separator);
 
 			for (; strncmp (next, separator, slen) == 0; )
 				next += slen;
 		}
 	}
+	g_string_append_c (result, 0);
 	va_end (args);
 
 	return g_string_free (result, FALSE);

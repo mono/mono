@@ -1,3 +1,11 @@
+
+Thu Sep 28 15:37:51 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* monoburg.c: the emit code for each rule is now run
+	from a single function, avoiding hundreds of relocations.
+	The C code present in .brg files is emitted at the start of
+	generated source file, allowing the use of static helper functions.
+
 2006-08-31  Zoltan Varga  <vargaz@freemail.hu>
 
 	* monoburg.vcproj: Fix include paths for newer glib versions.

@@ -403,9 +403,9 @@ mono_field_from_token (MonoImage *image, guint32 token, MonoClass **retklass,
 		if (!type)
 			return NULL;
 		k = mono_class_get (image, MONO_TOKEN_TYPE_DEF | type);
-		mono_class_init (k);
 		if (!k)
 			return NULL;
+		mono_class_init (k);
 		if (retklass)
 			*retklass = k;
 		field = mono_class_get_field (k, token);
@@ -1303,7 +1303,7 @@ mono_get_method_from_token (MonoImage *image, guint32 token, MonoClass *klass,
 		return result;
 	}
 
-	mono_metadata_decode_row (&tables [table], idx - 1, cols, 6);
+	mono_metadata_decode_row (&image->tables [MONO_TABLE_METHOD], idx - 1, cols, 6);
 
 	if ((cols [2] & METHOD_ATTRIBUTE_PINVOKE_IMPL) ||
 	    (cols [1] & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL))
@@ -1537,7 +1537,9 @@ mono_method_get_param_names (MonoMethod *method, const char **names)
 	idx = mono_method_get_index (method);
 	if (idx > 0) {
 		guint32 cols [MONO_PARAM_SIZE];
-		guint param_index = mono_metadata_decode_row_col (methodt, idx - 1, MONO_METHOD_PARAMLIST);
+		guint param_index;
+
+		param_index = mono_metadata_decode_row_col (methodt, idx - 1, MONO_METHOD_PARAMLIST);
 
 		if (idx < methodt->rows)
 			lastp = mono_metadata_decode_row_col (methodt, idx, MONO_METHOD_PARAMLIST);
@@ -1962,8 +1964,12 @@ mono_method_get_index (MonoMethod *method) {
 
 	mono_class_setup_methods (klass);
 	for (i = 0; i < klass->method.count; ++i) {
-		if (method == klass->methods [i])
-			return klass->method.first + 1 + i;
+		if (method == klass->methods [i]) {
+			if (klass->image->uncompressed_metadata)
+				return mono_metadata_translate_token_index (klass->image, MONO_TABLE_METHOD, klass->method.first + i + 1);
+			else
+				return klass->method.first + i + 1;
+		}
 	}
 	return 0;
 }

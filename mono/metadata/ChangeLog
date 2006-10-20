@@ -1,6 +1,224 @@
+2006-10-18  Jonathan Chambers  <joncham@gmail.com>
+
+	* icall.c: Have ves_icall_System_Diagnostics_DefaultTraceListener_WriteWindowsDebugString
+	call kernel32 function OutputDebugString directly.
+	
+	Signed-off-by: Jonathan Chambers <joncham@gmail.com>
+	
+Tue Oct 17 16:59:59 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: small cleanup, using a function to insert a MonoString
+	in the string heap.
+
+Tue Oct 17 16:45:27 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: moving GC fixes.
+
+Mon Oct 16 16:53:12 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* sgen-gc.c, gc-internal.h, gc.c: added API to collect and remove
+	all the objects with finalizers belonging to an unloading appdomain.
+
+Mon Oct 16 15:08:41 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* sgen-gc.c: added ability to allocate even when the nursery is fully
+	pinned and fixed a couple of bugs.
+
+2006-10-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.h: Revert the last change for now.
+
+	* threads.h (mono_thread_get_pending_exception): Rename this to
+	mono_thread_get_undeniable_exception ().
+
+2006-10-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* appdomain.c: Use mono_get_exception_bad_image_format2 to construct
+	BadImageFormatException in ves_icall_System_Reflection_Assembly_LoadFrom
+	when fname does not refer to valid assembly. This result in a more
+	meaningful error message.
+	* exception.c: added mono_get_exception_bad_image_format2 which 
+	constructs a BadImageFormatException using the ctor taking a custom
+	message and the file name. Passing in a NULL msg results in a default
+	message.
+	* exception.h: define mono_get_exception_bad_image_format2 function.
+	* icall.c: in InternalGetAssemblyName, throw BadImageFormatException 
+	when file name pointed to an invalid IL image. Use 
+	mono_get_exception_file_not_found2 to construct FileNotFoundException,
+	as this results in a more meaningful error message.
+
+2006-10-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (encode_named_val): Implement proper encoding of arrays. Fixes
+	#79465.
+
+2006-10-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c (mono_type_size): Change the align parameter to guint32 for
+	consistency with the other _size functions.
+	(mono_type_stack_size): Ditto.
+
+	* class.c object.c icall.c: Fix warnings caused by the above change.
+
+	* class.c (mono_class_get_method_from_name_flags): Fix a typo.
+
+	* image.c (load_metadata_ptrs): Reenable loading of modules with uncompressed metadata.
+
+	* metadata.c class.c loader.c: Add proper support for uncompressed metadata.
+
+Wed Oct 11 17:27:05 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* console-io.h, filewatcher.h, locales.h, marshal.h, monitor.h,
+	process.h, rand.h, rawbuffer.h, security-manager.h, security.h,
+	socket-io.h, string-icalls.h, sysmath.h, threadpool-internals.h,
+	threadpool.h, threads-types.h: mark more internal functions.
+
+2006-10-11  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c (ves_icall_System_Net_Sockets_Socket_Poll_internal):
+	Fix typo spotted by Robert Jordan in bug 79352 (though I can't
+	reproduce the bug even before applying the fix.)
+
+Tue Oct 10 15:39:39 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: allow retrieving attributes for arguments in generic
+	methods (bug #79241).
+
+Tue Oct 10 11:45:50 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* debug-mono-symfile.c: properly check fopen () result (found by
+	coverity).
+
+Tue Oct 10 11:30:52 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: make error message clearer and fixed two
+	issuelets found by Coverity.
+
+2006-10-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* object-internals.h: Remove duplicate definition of mono_method_get_signature_full ().
+
+Mon Oct 9 19:41:44 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* object-internals.h, gc-internal.h, profiler-private.h:
+	mark internal functions.
+
+Mon Oct 9 19:28:56 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: put data in the text section.
+	* icall.c: recognize more types in type_from_typename ().
+	* process.c, marshal.c: added some GC FIXMEs.
+
+Mon Oct 9 19:27:26 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* loader.c: check for NULL before initializing.
+
+2006-10-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* gc.c (finalizer_thread): Use a non-alertable wait here.
+
+	* class.c loader.c metadata.c: Revert the mono_metadata_decode_table_... changes,
+	until the correct solution is found.
+
+2006-10-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_module_get_object): Avoid an assert when operating on
+	modules with no metadata. Fixes #79596.
+
+	* image.c (load_metadata_ptrs): Put back the error message when
+	the #- heap is encountered since the support is not complete yet.
+
+Fri Oct 6 16:57:26 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c: do not allow the user to SuppressFinalize () a
+	delegate because it would leak the trampoline if present.
+
+2006-10-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c metadata.c row-indexes.h blob.h: Applied patch from Jb. Add support for the
+	PropertyPtr table.
+
+2006-10-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* loader.c (mono_method_signature): Fix a use of MONO_TABLE_METHOD missed earlier.
+
+	* metadata.c (mono_metadata_get_param_attrs): Ditto.
+
+	* row-indexes.h: Add definitions for *Ptr tables.
+
+	* metadata-internals.h (MonoImage): Add an 'uncompressed_metadata' flag.
+
+	* metadata.c (mono_metadata_translate_token_index): New helper function to
+	translate table indexes used in uncompressed metadata.
+	(mono_metadata_decode_table_row): Ditto.
+	(mono_metadata_decode_table_row_col): Ditto.
+
+	* metadata.c: Add table schema for *Ptr tables.
+
+	* class.c loader.c: Use the new helper function to access the affected metadata
+	tables.
+	
+	* image.c (load_metadata_ptrs): Allow assemblies with uncompressed metadata. Fixes
+	#38532.
+	
+2006-10-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_object_to_ptr_conv): Avoid using short branches around IL
+	sequences which can be unbounded in size. Fixes #79583.
+
+2006-10-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_runtime_class_init): Handle a corner case in handling failure of
+	static initialization.
+
+	* domain-internals.h (MonoDomain): Add a 'type_init_exception_hash' field.
+
+	* class-internals.h (MonoVTable): Add an 'init_failed' flag.
+
+	* domain.c (mono_domain_free): Free up type_init_exception_hash.
+
+	* object.c (mono_runtime_class_init): Implement correct semantics when a static
+	ctor fails, i.e. throw the same exception on subsequent accesses.
+	
+2006-09-0  Jonathan Chambers  <joncham@gmail.com>
+
+	* domain.c, class-internals.h: Added ComInteropProxy class to MonoDefaults.
+	* marshal.c: Return correct unmanaged size for object when MarshalAs.Struct.
+	Emit exception rather than crash in case of COM Callable Wrapper (not yet implemented).
+	Handle marshalling of interfaces and VARIANTs contained in structs.
+	
+	Code is contributed under MIT/X11 license.
+	
+2006-09-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_marshal_custom): Fix some corner cases. Fixes	#79471.
+	
+	* marshal.c (mono_marshal_load_type_info): Allocate memory from the image
+	mempool.
+
+2006-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* console-io.c: ignore previous SIGINT handler.
+
+2006-09-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c class.c: Applied patch from Ricardo Fernandez Pascual 
+	(ricardo.fernandez@st.com). Add some new MonoClass and MonoType accessors. Fixes
+	#79460, #79461, #79485.
+
+	* class.c (mono_class_from_name_case): Fix incorrect comments. Fixes #79504.
+
+	* marshal.c (mono_marshal_load_type_info): Fix a typo which caused an assert. Fixes
+	#79217.
+
+2006-09-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_delegate_invoke): Tweak the IL a little so better code
+	could be generated from it.
 
 Mon Sep 25 13:29:53 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
+=======
 	* rand.c: fix read loop to correctly handle EINTR.
 
 Mon Sep 25 11:33:06 CEST 2006 Paolo Molaro <lupus@ximian.com>
@@ -10,6 +228,7 @@ Mon Sep 25 11:33:06 CEST 2006 Paolo Molaro <lupus@ximian.com>
 	type and allow a significant reduction in runtime relocations and
 	memory usage.
 
+>>>>>>> .r66841
 2006-09-21 Gert Driesen  <drieseng@users.sourceforge.net>
 
         * appdomain.c: Pass NULL to mono_get_exception_file_not_found2 as

@@ -183,9 +183,16 @@ dis_directive_assembly (MonoImage *m)
 		 cols [MONO_ASSEMBLY_HASH_ALG],
 		 cols [MONO_ASSEMBLY_MAJOR_VERSION], cols [MONO_ASSEMBLY_MINOR_VERSION], 
 		 cols [MONO_ASSEMBLY_BUILD_NUMBER], cols [MONO_ASSEMBLY_REV_NUMBER]);
-	if (cols [MONO_ASSEMBLY_CULTURE])
-		fprintf (output, "  .locale %s\n", mono_metadata_string_heap (m, cols [MONO_ASSEMBLY_CULTURE]));
-	if (cols [MONO_ASSEMBLY_PUBLIC_KEY]) {
+	if (cols [MONO_ASSEMBLY_CULTURE]){
+		const char *locale = mono_metadata_string_heap (m, cols [MONO_ASSEMBLY_CULTURE]);
+		glong items_read, items_written;
+		gunichar2 *render = g_utf8_to_utf16 (locale, strlen (locale), &items_read, &items_written, NULL);
+		char *dump = data_dump ((const char *) render, items_written * sizeof (gunichar2), "\t\t");
+		fprintf (output, "  .locale %s\n", dump);
+		g_free (dump);
+		g_free (render);
+		
+	} if (cols [MONO_ASSEMBLY_PUBLIC_KEY]) {
 		const char* b = mono_metadata_blob_heap (m, cols [MONO_ASSEMBLY_PUBLIC_KEY]);
 		int len = mono_metadata_decode_blob_size (b, &b);
 		char *dump = data_dump (b, len, "\t\t");
@@ -1445,6 +1452,11 @@ struct {
 	{ "--typespec",    MONO_TABLE_TYPESPEC,     	dump_table_typespec },
 	{ "--implmap",     MONO_TABLE_IMPLMAP,     	dump_table_implmap },
 	{ "--standalonesig", MONO_TABLE_STANDALONESIG,  dump_table_standalonesig },
+	{ "--methodptr", MONO_TABLE_METHOD_POINTER,  dump_table_methodptr },
+	{ "--fieldptr", MONO_TABLE_FIELD_POINTER,  dump_table_fieldptr },
+	{ "--paramptr", MONO_TABLE_PARAM_POINTER,  dump_table_paramptr },
+	{ "--eventptr", MONO_TABLE_EVENT_POINTER,  dump_table_eventptr },
+	{ "--propertyptr", MONO_TABLE_PROPERTY_POINTER,  dump_table_propertyptr },
 	{ "--blob",	   0,			dump_stream_blob },
 	{ NULL, -1, }
 };
