@@ -1,3 +1,8 @@
+2006-10-20  Jonathan Chambers  <joncham@gmail.com>
+
+	* cominterop.cs: Added more tests for Variant.
+	* libtest.c: Added more tests for Variant.
+	
 2006-10-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* static-constructor.cs: Add a new test.
