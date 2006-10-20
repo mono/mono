@@ -1,3 +1,9 @@
+2006-10-20  Jackson Harper  <jackson@ximian.com>
+
+	* RichTextBox.cs: Handle some special chars better, and don't skip
+	the entire group when we encounter a special char that we don't
+	handle correctly.
+
 2006-10-18  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIX11.cs (SystrayAdd): a rather convoluted change, but the

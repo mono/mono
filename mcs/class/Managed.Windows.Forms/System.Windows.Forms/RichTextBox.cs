@@ -1164,6 +1164,7 @@ namespace System.Windows.Forms {
 
 		#region Private Methods
 		private void HandleControl(RTF.RTF rtf) {
+//			Console.WriteLine ("HANDLING MAJOR:  {0}      MINOR:  {1}", rtf.Major, rtf.Minor);
 			switch(rtf.Major) {
 				case RTF.Major.Unicode: {
 					switch(rtf.Minor) {
@@ -1182,7 +1183,7 @@ namespace System.Windows.Forms {
 				}
 
 				case RTF.Major.Destination: {
-					Console.Write("[Got Destination control {0}]", rtf.Minor);
+//					Console.Write("[Got Destination control {0}]", rtf.Minor);
 					rtf.SkipGroup();
 					break;
 				}
@@ -1306,30 +1307,36 @@ namespace System.Windows.Forms {
 				}
 
 				case Minor.Tab: {
-					Console.Write("\t");
+					rtf_line.Append ("\t");
+//					FlushText (rtf, false);
 					break;
 				}
 
+				case Minor.NoReqHyphen:
 				case Minor.NoBrkHyphen: {
-					Console.Write("-");
+					rtf_line.Append ("-");
+//					FlushText (rtf, false);
 					break;
 				}
 
 				case Minor.Bullet: {
-					Console.Write("*");
+					Console.WriteLine("*");
 					break;
 				}
 
+			case Minor.WidowCtrl:
+				break;
+
 				case Minor.EmDash: {
-					Console.Write("\u2014");
+				rtf_line.Append ("\u2014");
 					break;
 				}
 
 				case Minor.EnDash: {
-					Console.Write("\u2013");
+					rtf_line.Append ("\u2013");
 					break;
 				}
-
+/*
 				case Minor.LQuote: {
 					Console.Write("\u2018");
 					break;
@@ -1349,9 +1356,10 @@ namespace System.Windows.Forms {
 					Console.Write("\u201D");
 					break;
 				}
-
+*/
 				default: {
-					rtf.SkipGroup();
+//					Console.WriteLine ("skipped special char:   {0}", rtf.Minor);
+//					rtf.SkipGroup();
 					break;
 				}
 			}
