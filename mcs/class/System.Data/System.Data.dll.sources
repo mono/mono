@@ -318,6 +318,7 @@ System.Data.SqlClient/OnChangeEventHandler.cs
 System.Data/XmlDataLoader.cs
 System.Data/XmlSchemaDataImporter.cs
 System.Data/XmlSchemaWriter.cs
+System.Data/XmlTableWriter.cs
 System.Xml/XmlDataDocument.cs
 Mono.Data.SqlExpressions/Tokenizer.cs
 Mono.Data.SqlExpressions/Numeric.cs
