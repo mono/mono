@@ -1,5 +1,11 @@
 2006-10-20  Mike Kestner  <mkestner@novell.com>
 
+	* MainMenu.cs : go back to Draw in OnMenuChanged.  Until we get
+	a working win32 NC invalidation mechanism, we can't invalidate
+	menus.  [Fixes #79705]
+
+2006-10-20  Mike Kestner  <mkestner@novell.com>
+
 	* ListBox.cs : don't update the VScrollbar if the list is empty,
 	just hide it.  [Fixes #79692]
 
