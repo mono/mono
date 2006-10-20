@@ -88,6 +88,9 @@ namespace System
 		[FieldOffset(8)]
 		public uint uintVal;
 
+        [FieldOffset(8)]
+        public IntPtr pdispVal;
+
 		public void SetValue(object obj) {
 			vt = (short)VarEnum.VT_EMPTY;
 			if (obj == null)
@@ -148,10 +151,23 @@ namespace System
 			{
 				vt = (short)VarEnum.VT_BSTR;
 				bstrVal = Marshal.StringToBSTR((string)obj);
-			}
-			else
-			{
-				throw new NotImplementedException(string.Format("Variant couldn't handle object of type {0}", obj.GetType()));
+            }
+            else if (t == typeof(bool))
+            {
+                vt = (short)VarEnum.VT_BOOL;
+                lVal = ((bool)obj) ? -1 : 0;
+            }
+            else
+            {
+                try 
+                {
+                    vt = (short)VarEnum.VT_DISPATCH;
+                    pdispVal = Marshal.GetIUnknownForObject(obj);
+                }
+                catch (Exception ex)
+                {
+                    throw new NotImplementedException(string.Format("Variant couldn't handle object of type {0}", obj.GetType()), ex);
+                }
 			}
 		}
 
@@ -189,18 +205,29 @@ namespace System
 			case VarEnum.VT_R8:
 				obj = dblVal;
 				break;
+			case VarEnum.VT_BOOL:
+				obj = !(lVal == 0);
+				break;
 			case VarEnum.VT_BSTR:
 				obj = Marshal.PtrToStringBSTR(bstrVal);
 				break;
+            case VarEnum.VT_UNKNOWN:
+            case VarEnum.VT_DISPATCH:
+                obj = Marshal.GetObjectForIUnknown(pdispVal);
+                break;
 			}
 			return obj;
 		}
 
-		public void Clear() {
-			if ((VarEnum)vt == VarEnum.VT_BSTR)
-			{
-				Marshal.FreeBSTR(bstrVal);
+		public void Clear ()
+		{
+			if ((VarEnum)vt == VarEnum.VT_BSTR) {
+				Marshal.FreeBSTR (bstrVal);
 			}
+			else if ((VarEnum)vt == VarEnum.VT_DISPATCH || (VarEnum)vt == VarEnum.VT_UNKNOWN) {
+				if (pdispVal != IntPtr.Zero)
+					Marshal.Release (pdispVal);
+            }
 		}
 	}
 }

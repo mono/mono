@@ -1,3 +1,7 @@
+2006-10-20  Jonathan Chambers  <joncham@gmail.com>
+
+	* Variant.cs: Add support for bool and interfaces.
+	
 2006-10-18  Kornél Pál  <kornelpal@gmail.com>
 
 	* Type.cs: Removed is_subtype_of because IsSubclassOf should be used
