@@ -1,3 +1,7 @@
+2006-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* VersionTest.cs: Reworked tests for NUnit 2.2.x.
+
 2006-10-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* BadImageFormatExceptionTest.cs: Added ctors tests.
