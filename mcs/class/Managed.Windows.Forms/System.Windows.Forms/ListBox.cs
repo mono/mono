@@ -1846,7 +1846,7 @@ namespace System.Windows.Forms
 		/* Determines if the vertical scrollbar has to be displyed */
 		private bool UpdateVerticalScrollBar ()
 		{
-			if (MultiColumn) {
+			if (MultiColumn || Items.Count == 0) {
 				vscrollbar.Visible = false;
 				return false;
 			}

@@ -1,3 +1,8 @@
+2006-10-20  Mike Kestner  <mkestner@novell.com>
+
+	* ListBox.cs : don't update the VScrollbar if the list is empty,
+	just hide it.  [Fixes #79692]
+
 2006-10-20  Jackson Harper  <jackson@ximian.com>
 
 	* RichTextBox.cs: Handle some special chars better, and don't skip
