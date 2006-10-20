@@ -1,3 +1,21 @@
+
+2006-10-20  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+        *Npgsql/NpgsqlCommand.resx,
+         Npgsql/NpgsqlConnection.cs,
+         Npgsql/NpgsqlCommand.cs,
+         Npgsql/NpgsqlState.cs,
+         Npgsql/NpgsqlConnectorPool.cs,
+         Npgsql/NpgsqlCommandBuilder.cs,
+         Npgsql/NpgsqlDataReader.cs,
+         NpgsqlTypes/LargeObjectManager.cs,
+         NpgsqlTypes/NpgsqlDbType.cs,
+         NpgsqlTypes/LargeObject.cs,
+         NpgsqlTypes/NpgsqlTypesHelper.cs,
+         NpgsqlTypes/FastPath.cs: Updated to 1.0 final version. 
+
+
+
 2006-09-06  Kornél Pál  <kornelpal@gmail.com>
 
 	* Test/TestConfiguration.cs: Moved from build/common.

@@ -871,6 +871,17 @@ namespace Npgsql
                     throw new NotSupportedException();
             }
         }
+
+	public void ClearPool()
+	{
+	    NpgsqlConnectorPool.ConnectorPoolMgr.ClearPool(this);
+        }
+
+        public void ClearAllPools()
+        {
+            NpgsqlConnectorPool.ConnectorPoolMgr.ClearAllPools();
+        }
+
     }
 
 

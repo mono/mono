@@ -116,7 +116,7 @@ namespace NpgsqlTypes
 
 
             if (res == null)
-                throw new Exception("postgresql.lo.init");
+                throw new NpgsqlException("postgresql.lo.init");
 
 
             fp.AddFunctions(res);
@@ -128,7 +128,7 @@ namespace NpgsqlTypes
          *
          * @param oid of large object
          * @return LargeObject instance providing access to the object
-         * @exception SQLException on error
+         * @exception NpgsqlException on error
          */
         public LargeObject Open(Int32 oid)
         {
@@ -141,7 +141,7 @@ namespace NpgsqlTypes
          * @param oid of large object
          * @param mode mode of open
          * @return LargeObject instance providing access to the object
-         * @exception SQLException on error
+         * @exception NpgsqlException on error
          */
         public LargeObject Open(Int32 oid, Int32 mode)
         {
@@ -154,7 +154,7 @@ namespace NpgsqlTypes
          * <p>It defaults to READWRITE for the new object's attributes.
          *
          * @return oid of new object
-         * @exception SQLException on error
+         * @exception NpgsqlException on error
          */
         public Int32 Create()
         {
@@ -168,7 +168,7 @@ namespace NpgsqlTypes
          *
          * @param mode a bitmask describing different attributes of the new object
          * @return oid of new object
-         * @exception SQLException on error
+         * @exception NpgsqlException on error
          */
         public Int32 Create(Int32 mode)
         {
@@ -181,7 +181,7 @@ namespace NpgsqlTypes
          * This deletes a large object.
          *
          * @param oid describing object to delete
-         * @exception SQLException on error
+         * @exception NpgsqlException on error
          */
         public void Delete(Int32 oid)
         {
@@ -197,7 +197,7 @@ namespace NpgsqlTypes
          * unlink.
          *
          * @param oid describing object to delete
-         * @exception SQLException on error
+         * @exception NpgsqlException on error
          */
         public void Unlink(Int32 oid)
         {

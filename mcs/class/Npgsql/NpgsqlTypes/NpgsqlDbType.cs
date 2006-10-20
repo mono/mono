@@ -56,7 +56,8 @@ namespace NpgsqlTypes
         Varchar,
         Refcursor,
         Inet,
-        Bit
+        Bit,
+        TimestampTZ
 
     }
 

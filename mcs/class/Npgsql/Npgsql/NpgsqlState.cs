@@ -146,7 +146,16 @@ namespace Npgsql
                 // Process commandTimeout behavior.
                 
                 if ((context.Mediator.CommandTimeout > 0) && (!context.Socket.Poll(1000000 * context.Mediator.CommandTimeout, SelectMode.SelectRead)))
-                    context.CancelRequest();
+                {
+                    // If timeout occurs when establishing the session with server then
+                    // throw an exception instead of trying to cancel query. This helps to prevent loop as CancelRequest will also try to stablish a connection and sends commands.
+                    if ((this is NpgsqlStartupState || this is NpgsqlConnectedState))
+                        throw new NpgsqlException(resman.GetString("Exception_ConnectionTimeout"));
+                   else
+                       context.CancelRequest();
+
+                }
+                    
                 
                 
                 switch (context.BackendProtocolVersion)
@@ -427,6 +436,10 @@ namespace Npgsql
 
                     // Wait for ReadForQuery message
                     break;
+
+                case -1:
+                    // Connection broken. Mono returns -1 instead of throw an exception as ms.net does.
+                    throw new IOException();
 
                 default :
                     // This could mean a number of things
@@ -746,6 +759,10 @@ namespace Npgsql
                     PGUtil.ReadInt32(stream, inputBuffer);
                     break;
 
+
+                case -1:
+		    // Connection broken. Mono returns -1 instead of throw an exception as ms.net does.
+		    throw new IOException();
 
                 default :
                     // This could mean a number of things

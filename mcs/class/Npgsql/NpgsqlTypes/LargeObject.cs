@@ -60,13 +60,13 @@ namespace NpgsqlTypes
         /*
          * This opens a large object.
          *
-         * <p>If the object does not exist, then an SQLException is thrown.
+         * <p>If the object does not exist, then an NpgsqlException is thrown.
          *
          * @param fp FastPath API for the connection to use
          * @param oid of the Large Object to open
          * @param mode Mode of opening the large object
          * (defined in LargeObjectManager)
-         * @exception SQLException if a database-access error occurs.
+         * @exception NpgsqlException if a database-access error occurs.
          * @see org.postgresql.largeobject.LargeObjectManager
          */
         public LargeObject(Fastpath fp, Int32 oid, Int32 mode)
@@ -92,7 +92,7 @@ namespace NpgsqlTypes
         /*
          * This method closes the object. You must not call methods in this
          * object after this is called.
-         * @exception SQLException if a database-access error occurs.
+         * @exception NpgsqlException if a database-access error occurs.
          */
         public void Close()
         {
@@ -112,7 +112,7 @@ namespace NpgsqlTypes
          *
          * @param len number of bytes to read
          * @return byte[] array containing data read
-         * @exception SQLException if a database-access error occurs.
+         * @exception NpgsqlException if a database-access error occurs.
          */
         public Byte[] Read(Int32 len)
         {
@@ -155,7 +155,7 @@ namespace NpgsqlTypes
          * @param off offset within array
          * @param len number of bytes to read
          * @return the number of bytes actually read
-         * @exception SQLException if a database-access error occurs.
+         * @exception NpgsqlException if a database-access error occurs.
          */
         public Int32 Read(Byte[] buf, Int32 off, Int32 len)
         {
@@ -170,7 +170,7 @@ namespace NpgsqlTypes
          * Writes an array to the object
          *
          * @param buf array to write
-         * @exception SQLException if a database-access error occurs.
+         * @exception NpgsqlException if a database-access error occurs.
          */
         public void Write(Byte[] buf)
         {
@@ -186,7 +186,7 @@ namespace NpgsqlTypes
          * @param buf destination array
          * @param off offset within array
          * @param len number of bytes to write
-         * @exception SQLException if a database-access error occurs.
+         * @exception NpgsqlException if a database-access error occurs.
          */
         public void Write(Byte[] buf, Int32 off, Int32 len)
         {
@@ -204,7 +204,7 @@ namespace NpgsqlTypes
          *
          * @param pos position within object
          * @param ref Either SEEK_SET, SEEK_CUR or SEEK_END
-         * @exception SQLException if a database-access error occurs.
+         * @exception NpgsqlException if a database-access error occurs.
          */
         public void Seek(Int32 pos, Int32 refi)
         {
@@ -222,7 +222,7 @@ namespace NpgsqlTypes
          * allows you to have random access to the large object.
          *
          * @param pos position within object from begining
-         * @exception SQLException if a database-access error occurs.
+         * @exception NpgsqlException if a database-access error occurs.
          */
         public void Seek(Int32 pos)
         {
@@ -231,7 +231,7 @@ namespace NpgsqlTypes
 
         /*
          * @return the current position within the object
-         * @exception SQLException if a database-access error occurs.
+         * @exception NpgsqlException if a database-access error occurs.
          */
         public Int32 Tell()
         {
@@ -248,7 +248,7 @@ namespace NpgsqlTypes
          * <p>A better method will be found in the future.
          *
          * @return the size of the large object
-         * @exception SQLException if a database-access error occurs.
+         * @exception NpgsqlException if a database-access error occurs.
          */
         public Int32 Size()
         {

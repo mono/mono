@@ -127,4 +127,7 @@
 	<data name="Exception_ParamNotInQuery">
 		<value>Parameter {0} not found in query.</value>
 	</data>
+	<data name="Exception_ConnectionBroken">
+		<value>The Connection is broken.</value>
+	</data>
 </root>

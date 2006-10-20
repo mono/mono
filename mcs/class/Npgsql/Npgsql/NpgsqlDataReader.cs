@@ -42,6 +42,7 @@ namespace Npgsql
         private ArrayList			_responses;
         private Int32 				_rowIndex;
         private Int32				_resultsetIndex;
+        private Int32               _recordsAffected;
         private	NpgsqlResultSet		_currentResultset;
         private DataTable			_currentResultsetSchema;
         private CommandBehavior     _behavior;
@@ -58,10 +59,12 @@ namespace Npgsql
             _responses = responses;
             _connection = command.Connection;
             _rowIndex = -1;
-            _resultsetIndex = 0;
+            _resultsetIndex = -1;
+            _recordsAffected = -1;
 
-            if (_resultsets.Count > 0)
-                _currentResultset = (NpgsqlResultSet)_resultsets[_resultsetIndex];
+            // positioned before the first results.
+            // move to the first results
+            NextResult();
 
             _behavior = behavior;
             _isClosed = false;
@@ -153,22 +156,7 @@ namespace Npgsql
             get
             {
                 NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "RecordsAffected");
-
-                if (HaveResultSet())
-                {
-                    return -1;
-                }
-
-                String[] _returnStringTokens = ((String)_responses[_resultsetIndex]).Split(null);	// whitespace separator.
-
-                try
-                {
-                    return Int32.Parse(_returnStringTokens[_returnStringTokens.Length - 1]);
-                }
-                catch (FormatException)
-                {
-                    return -1;
-                }
+                return _recordsAffected;
             }
         }
 
@@ -213,15 +201,41 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "NextResult");
 
-            if((_resultsetIndex + 1) < _resultsets.Count)
+            _currentResultset = null;
+            while((_resultsetIndex + 1) < _resultsets.Count && !HaveResultSet())
             {
                 _resultsetIndex++;
                 _rowIndex = -1;
                 _currentResultset = (NpgsqlResultSet)_resultsets[_resultsetIndex];
-                return true;
+
+                if (!HaveResultSet())
+                {
+                    String[] _returnStringTokens = ((String)_responses[_resultsetIndex]).Split(null);	// whitespace separator.
+                    int responseAffectedRows = 0;
+
+                    try
+                    {
+                        responseAffectedRows = Int32.Parse(_returnStringTokens[_returnStringTokens.Length - 1]);
+                    }
+                    catch (FormatException)
+                    {
+                        responseAffectedRows = -1;
+                    }
+
+                    if (responseAffectedRows != -1)
+                    {
+                        if (_recordsAffected == -1)
+                        {
+                            _recordsAffected = responseAffectedRows;
+                        }
+                        else
+                        {
+                            _recordsAffected += responseAffectedRows;
+                        }
+                    }
+                }
             }
-            else
-                return false;
+            return HaveResultSet();
 
         }
 

@@ -85,17 +85,25 @@ namespace NpgsqlTypes
          * @param resulttype True if the result is an integer, false for other results
          * @param args FastpathArguments to pass to fastpath
          * @return null if no data, Integer if an integer result, or byte[] otherwise
-         * @exception SQLException if a database-access error occurs.
+         * @exception NpgsqlException if a database-access error occurs.
          */
         public Object FastpathCall(Int32 fnid, Boolean resulttype, FastpathArg[] args)
         {
-            if (conn.BackendProtocolVersion == ProtocolVersion.Version3)
+            try
             {
-                return FastpathV3(fnid, resulttype, args);
+                if (conn.BackendProtocolVersion == ProtocolVersion.Version3)
+                {
+                    return FastpathV3(fnid, resulttype, args);
+                }
+                else
+                {
+                    return FastpathV2(fnid, resulttype, args);
+                }
             }
-            else
+            catch(IOException e)
             {
-                return FastpathV2(fnid, resulttype, args);
+                conn.ClearPool();
+                throw new NpgsqlException("The Connection is broken.");
             }
         }
 
@@ -105,33 +113,29 @@ namespace NpgsqlTypes
             lock (stream)
             {
                 // send the function call
-                try
+
                 {
                     Int32 l_msgLen = 0;
                     l_msgLen += 16;
                     for (Int32 i=0;i < args.Length;i++)
                         l_msgLen += args[i].SendSize();
-
+    
                     stream.WriteByte((Byte)'F');
                     PGUtil.WriteInt32(stream,l_msgLen);
                     PGUtil.WriteInt32(stream,fnid);
                     PGUtil.WriteInt16(stream,1);
                     PGUtil.WriteInt16(stream,1);
                     PGUtil.WriteInt16(stream,(short)args.Length);
-
+    
                     for (Int32 i = 0;i < args.Length;i++)
                         args[i].Send(stream);
-
+    
                     PGUtil.WriteInt16(stream,1);
-
+    
                     // This is needed, otherwise data can be lost
                     stream.Flush();
+                }
 
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(ex.ToString());
-                }
 
                 // Now handle the result
 
@@ -162,7 +166,7 @@ namespace NpgsqlTypes
                     case 'E':
                         NpgsqlError e = new NpgsqlError(conn.BackendProtocolVersion);
                         e.ReadFromStream(stream,conn.Connector.Encoding);
-                        throw new Exception(e.ToString());
+                        throw new NpgsqlException(e.ToString());
 
                         //------------------------------
                         // Notice from backend
@@ -216,14 +220,14 @@ namespace NpgsqlTypes
                     case 'Z':
                         //TODO: use size better
                         if (PGUtil.ReadInt32(stream,input_buffer) != 5)
-                            throw new Exception("Received Z" );
+                            throw new NpgsqlException("Received Z" );
                         //TODO: handle transaction status
                         Char l_tStatus = (Char)stream.ReadByte();
                         l_endQuery = true;
                         break;
 
                     default:
-                        throw new Exception("postgresql.fp.protocol received " + c.ToString());
+                        throw new NpgsqlException("postgresql.fp.protocol received " + c.ToString());
                     }
                 }
 
@@ -240,29 +244,22 @@ namespace NpgsqlTypes
             lock (stream)
             {
                 // send the function call
-                try
-                {
-                    // 70 is 'F' in ASCII. Note: don't use SendChar() here as it adds padding
-                    // that confuses the backend. The 0 terminates the command line.
-                    stream.WriteByte((Byte)70);
-                    stream.WriteByte((Byte)0);
+                
+                // 70 is 'F' in ASCII. Note: don't use SendChar() here as it adds padding
+                // that confuses the backend. The 0 terminates the command line.
+                stream.WriteByte((Byte)70);
+                stream.WriteByte((Byte)0);
 
-                    PGUtil.WriteInt32(stream,fnid);
-                    PGUtil.WriteInt32(stream,args.Length);
+                PGUtil.WriteInt32(stream,fnid);
+                PGUtil.WriteInt32(stream,args.Length);
 
 
-                    for (Int32 i = 0;i < args.Length;i++)
-                        args[i].Send(stream);
+                for (Int32 i = 0;i < args.Length;i++)
+                    args[i].Send(stream);
 
-                    // This is needed, otherwise data can be lost
-                    stream.Flush();
+                // This is needed, otherwise data can be lost
+                stream.Flush();
 
-                }
-                catch (IOException ioe)
-                {
-                    //Should be sending exception as second arg.
-                    throw new Exception("postgresql.fp.send: "  + ioe.ToString());
-                }
 
                 // Now handle the result
 
@@ -343,12 +340,12 @@ namespace NpgsqlTypes
                         break;
 
                     default:
-                        throw new Exception("postgresql.fp.protocol " + c.ToString());
+                        throw new NpgsqlException("postgresql.fp.protocol " + c.ToString());
                     }
                 }
 
                 if ( errorMessage != null )
-                    throw new Exception("postgresql.fp.error" + errorMessage);
+                    throw new NpgsqlException("postgresql.fp.error" + errorMessage);
 
                 return result;
             }
@@ -370,7 +367,7 @@ namespace NpgsqlTypes
          * results
          * @param args FastpathArguments to pass to fastpath
          * @return null if no data, Integer if an integer result, or byte[] otherwise
-         * @exception SQLException if name is unknown or if a database-access error
+         * @exception NpgsqlException if name is unknown or if a database-access error
          * occurs.
          * @see org.postgresql.largeobject.LargeObject
          */
@@ -384,7 +381,7 @@ namespace NpgsqlTypes
          * @param name Function name
          * @param args Function arguments
          * @return integer result
-         * @exception SQLException if a database-access error occurs or no result
+         * @exception NpgsqlException if a database-access error occurs or no result
          */
         public Int32 GetInteger(String name, FastpathArg[] args)
         {
@@ -398,7 +395,7 @@ namespace NpgsqlTypes
          * @param name Function name
          * @param args Function arguments
          * @return byte[] array containing result
-         * @exception SQLException if a database-access error occurs or no result
+         * @exception NpgsqlException if a database-access error occurs or no result
          */
         public Byte[] GetData(String name, FastpathArg[] args)
         {
@@ -450,7 +447,7 @@ namespace NpgsqlTypes
          * unwarranted headaches in the future.
          *
          * @param rs ResultSet
-         * @exception SQLException if a database-access error occurs.
+         * @exception NpgsqlException if a database-access error occurs.
          * @see org.postgresql.largeobject.LargeObjectManager
          */
         public void AddFunctions(IDataReader rs)
@@ -467,11 +464,11 @@ namespace NpgsqlTypes
          * This returns the function id associated by its name
          *
          * <p>If addFunction() or addFunctions() have not been called for this name,
-         * then an SQLException is thrown.
+         * then an NpgsqlException is thrown.
          *
          * @param name Function name to lookup
          * @return Function ID for fastpath call
-         * @exception SQLException is function is unknown.
+         * @exception NpgsqlException is function is unknown.
          */
         public Int32 GetID(String name)
         {

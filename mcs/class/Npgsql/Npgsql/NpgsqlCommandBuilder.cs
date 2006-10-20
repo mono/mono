@@ -1,9 +1,9 @@
 // NpgsqlCommandBuilder.cs
 //
 // Author:
-//   Pedro Mart√≠nez Juli√° (yoros@wanadoo.es)
+//   Pedro MartÌnez Juli· (yoros@wanadoo.es)
 //
-// Copyright (C) 2003 Pedro Mart√≠nez Juli√°
+// Copyright (C) 2003 Pedro MartÌnez Juli·
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -150,14 +150,39 @@ namespace Npgsql
 	/// <param name="command">NpgsqlCommand whose function parameters will be obtained.</param>
         public static void DeriveParameters (NpgsqlCommand command)
         {
-            String query = "select proargtypes from pg_proc where proname = :procname";
-    
+
+            // Updated after 0.99.3 to support the optional existence of a name qualifying schema and case insensitivity when the schema ror procedure name do not contain a quote.
+            // This fixed an incompatibility with NpgsqlCommand.CheckFunctionReturn(String ReturnType)
+            String query = null;
+            string procedureName = null;
+            string schemaName = null;
+            string[] fullName = command.CommandText.Split('.');
+            if (fullName.Length > 1 && fullName[0].Length > 0)
+            {
+                query = "select proargtypes from pg_proc p left join pg_namespace n on p.pronamespace = n.oid where proname=:proname and n.nspname=:nspname";
+                schemaName = (fullName[0].IndexOf("\"") != -1) ? fullName[0] : fullName[0].ToLower();
+                procedureName = (fullName[1].IndexOf("\"") != -1) ? fullName[1] : fullName[1].ToLower();
+            }
+            else
+            {
+                query = "select proargtypes from pg_proc where proname = :proname";
+                procedureName = (fullName[0].IndexOf("\"") != -1) ? fullName[0] : fullName[0].ToLower();
+            }
+
             NpgsqlCommand c = new NpgsqlCommand(query, command.Connection);
-            c.Parameters.Add(new NpgsqlParameter("procname", NpgsqlDbType.Text));
-            c.Parameters[0].Value = command.CommandText;
+            c.Parameters.Add(new NpgsqlParameter("proname", NpgsqlDbType.Text));
+
+            
+            c.Parameters[0].Value = procedureName.Replace("\"", "").Trim();
+
+            if (fullName.Length > 1 && schemaName.Length > 0)
+            {
+                NpgsqlParameter prm = c.Parameters.Add(new NpgsqlParameter("nspname", NpgsqlDbType.Text));
+                prm.Value = schemaName.Replace("\"", "").Trim();
+            }
     
             String types = (String) c.ExecuteScalar();
-            
+
             if (types == null)
                 throw new InvalidOperationException (String.Format(resman.GetString("Exception_InvalidFunctionName"), command.CommandText));
     

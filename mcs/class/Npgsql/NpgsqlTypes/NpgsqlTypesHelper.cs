@@ -242,6 +242,9 @@ namespace NpgsqlTypes
 
                 NativeTypeMapping.AddTypeAlias("timestamp", typeof(DateTime));
 
+                NativeTypeMapping.AddType("timestamptz", NpgsqlDbType.TimestampTZ, DbType.DateTime, true,
+                new ConvertNativeToBackendHandler(BasicNativeToBackendTypeConverter.ToDateTime));
+
                 NativeTypeMapping.AddType("point", NpgsqlDbType.Point, DbType.Object, true,
                 new ConvertNativeToBackendHandler(ExtendedNativeToBackendTypeConverter.ToPoint));
 
