@@ -36,7 +36,7 @@ using System.Threading;
 using System.Windows.Forms.Design;
 
 namespace System.Windows.Forms.PropertyGridInternal {
-	internal class PropertyGridView : System.Windows.Forms.ScrollableControl, IWindowsFormsEditorService {
+	internal class PropertyGridView : ScrollableControl, IWindowsFormsEditorService {
 
 		#region Private Members
 		private double splitter_percent = .5;
@@ -106,12 +106,12 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			ForeColorChanged+=new EventHandler(RedrawEvent);
 			BackColorChanged+=new System.EventHandler(RedrawEvent);
 			FontChanged+=new EventHandler(RedrawEvent);
-			SizeChanged+=new EventHandler(RedrawEvent);
 			
+			SetStyle(ControlStyles.Selectable, true);
 			SetStyle(ControlStyles.DoubleBuffer, true);
 			SetStyle(ControlStyles.UserPaint, true);
 			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-			SetStyle(ControlStyles.ResizeRedraw, false);
+			SetStyle(ControlStyles.ResizeRedraw, true);
 		}
 
 		#endregion
@@ -126,12 +126,30 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			base.OnFontChanged (e);
 		}
 
+		void InvalidateGridItemLabel (GridItem item)
+		{
+			Invalidate (new Rectangle (0, item.Top, SplitterLocation, row_height));
+		}
+
+		void InvalidateGridItem (GridItem item)
+		{
+			Invalidate (new Rectangle (0, item.Top, Width, row_height));
+		}
+
+		void InvalidateFromGridItemDown (GridItem item)
+		{
+			Invalidate(new Rectangle (0, item.Top, Width, Height - item.Top));
+		}
+
 		protected override void OnDoubleClick(EventArgs e) {
-			if (property_grid.SelectedGridItem.Expandable)
+			if (property_grid.SelectedGridItem.Expandable) {
 				property_grid.SelectedGridItem.Expanded = !property_grid.SelectedGridItem.Expanded;
-			else 
+				InvalidateFromGridItemDown (property_grid.SelectedGridItem);
+			}
+			else {
 				ToggleValue();
-			Invalidate();
+				Invalidate();
+			}
 			base.OnDoubleClick (e);
 		}
 
@@ -142,19 +160,10 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			// Background
 			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), ClientRectangle);
 			
-			// Left column
-			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (property_grid.LineColor), 0,0,V_INDENT, ClientRectangle.Height);
-			
-
 			int yLoc = -vbar.Value*row_height;
 			DrawGridItems(property_grid.grid_items, e, 1, ref yLoc);
 
-			// Grid
-			DrawGrid(e);
-
 			UpdateScrollBar();
-			
-			base.OnPaint(e);
 		}
 
 		protected override void OnMouseWheel(MouseEventArgs e) {
@@ -175,8 +184,15 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 			if (resizing_grid) {
 				int loc = Math.Max(e.X,2*V_INDENT);
+				int old_splitter_location = SplitterLocation;
 				SplitterPercent = 1.0*loc/Width;
-				Refresh();
+
+				if (old_splitter_location != SplitterLocation) {
+					grid_textbox_Hide ();
+					int x = old_splitter_location > SplitterLocation ? SplitterLocation : old_splitter_location;
+					Invalidate(new Rectangle (x, 0, Width - x, Height));
+					grid_textbox_Show (property_grid.SelectedGridItem);
+				}
 			}
 			if (e.X > SplitterLocation - RESIZE_WIDTH && e.X < SplitterLocation + RESIZE_WIDTH) 
 				this.Cursor = Cursors.SizeWE;
@@ -197,7 +213,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					if (foundItem.Expandable) {
 						if (e.X >=3 && e.X <= 11 && (e.Y % row_height >= row_height/2-2 && e.Y % row_height <= row_height/2+4)) {
 							foundItem.Expanded = !foundItem.Expanded;
-							Invalidate();
+							InvalidateFromGridItemDown (foundItem);
 						}
 					}
 					this.property_grid.SelectedGridItem = foundItem;
@@ -212,10 +228,153 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			base.OnMouseUp (e);
 		}
 
-		protected override void OnKeyPress(KeyPressEventArgs e) {
-			if (property_grid.SelectedGridItem.Expandable)
-				property_grid.SelectedGridItem.Expanded = !property_grid.SelectedGridItem.Expanded;
-			base.OnKeyPress (e);
+		private void UnfocusSelection ()
+		{
+			Select (this);
+		}
+
+		protected override bool ProcessDialogKey (Keys keyData) {
+			GridItem selectedItem = property_grid.SelectedGridItem;
+			if (selectedItem != null
+			    && grid_textbox.Visible
+			    /* if the textbox has focus? */) {
+				switch (keyData) {
+				case Keys.Enter:
+					SetPropertyValue(selectedItem.PropertyDescriptor.Converter.ConvertFromString(grid_textbox.Text));
+					UnfocusSelection ();
+					return true;
+				case Keys.Escape:
+					grid_textbox.Text = selectedItem.PropertyDescriptor.Converter.ConvertToString(selectedItem.Value);
+					UnfocusSelection ();
+					return true;
+				default:
+					return false;
+				}
+			}
+			return base.ProcessDialogKey (keyData);
+		}
+
+
+		protected override bool IsInputKey (Keys keyData) {
+			switch (keyData) {
+			case Keys.Left:
+			case Keys.Right:
+			case Keys.Enter:
+			case Keys.Escape:
+			case Keys.Up:
+			case Keys.Down:
+				return true;
+			default:
+				return false;
+			}
+		}
+
+		protected override void OnKeyDown(KeyEventArgs e) {
+			GridEntry selectedItem = (GridEntry)property_grid.SelectedGridItem;
+			GridItemCollection items;
+			int index;
+
+			if (selectedItem == null) {
+				/* XXX not sure what MS does, but at least we shouldn't crash */
+				base.OnKeyDown (e);
+				return;
+			}
+
+			if (selectedItem.UIParent != null)
+				items = selectedItem.UIParent.GridItems;
+			else
+				items = property_grid.grid_items;
+
+			switch (e.KeyData) {
+			case Keys.Left:
+				/* if the node is expandable and is expanded, collapse it.
+				   otherwise, act just like the user pressed up */
+				if (selectedItem.Expandable && selectedItem.Expanded) {
+					selectedItem.Expanded = false;
+					InvalidateFromGridItemDown (property_grid.SelectedGridItem);
+					e.Handled = true;
+					break;
+				}
+				else
+					goto case Keys.Up;
+			case Keys.Right:
+				/* if the node is expandable and not expanded, expand it.
+				   otherwise, act just like the user pressed down */
+				if (selectedItem.Expandable && !selectedItem.Expanded) {
+					selectedItem.Expanded = true;
+					InvalidateFromGridItemDown (property_grid.SelectedGridItem);
+					e.Handled = true;
+					break;
+				}
+				else
+					goto case Keys.Down;
+			case Keys.Enter:
+				/* toggle the expanded state of the selected item */
+				if (selectedItem.Expandable) {
+					selectedItem.Expanded = !selectedItem.Expanded;
+					InvalidateFromGridItemDown (property_grid.SelectedGridItem);
+				}
+				e.Handled = true;
+				break;
+			case Keys.Up:
+				index = items.IndexOf (selectedItem);
+
+				if (index == 0) {
+					/* if we're at the first child, just bump back up to
+					 * the parent, if we have one.  if we don't have one,
+					 * we're at the top of the list and don't do anything */
+					if (selectedItem.UIParent == null)
+						break;
+
+					property_grid.SelectedGridItem = selectedItem.UIParent;
+					e.Handled = true;
+					break;
+				}
+
+				/* if the previous node in the collection is expanded, most to its
+				   last child (since that's the row directly above us) */
+				GridItem prev_item = items[index-1];
+				if (prev_item.Expandable && prev_item.Expanded) {
+					property_grid.SelectedGridItem = prev_item.GridItems[prev_item.GridItems.Count - 1];
+					e.Handled = true;
+					break;
+				}
+
+				/* the easy case, we just move to the previous one in the collection */
+				property_grid.SelectedGridItem = items[index-1];
+				e.Handled = true;
+				break;				
+			case Keys.Down:
+				index = items.IndexOf (selectedItem);
+
+				/* if we're a parent node and we're expanded, move to our first child */
+				if (selectedItem.Expandable && selectedItem.Expanded) {
+					property_grid.SelectedGridItem = selectedItem.GridItems[0];
+					e.Handled = true;
+					break;
+				}
+
+				/* if we're at the last node in the current collection, bump up to our
+				   parent and retry the down movement */
+				if (index == items.Count - 1) {
+					if (selectedItem.UIParent == null)
+						break;
+
+					if (selectedItem.UIParent.UIParent != null)
+						items = selectedItem.UIParent.UIParent.GridItems;
+					else
+						items = property_grid.grid_items;
+
+					index = items.IndexOf (selectedItem.UIParent);
+				}
+				
+				/* the easy case, we just move to the next one in the collection */
+				property_grid.SelectedGridItem = items[index+1];
+				e.Handled = true;
+				break;
+			}
+
+			base.OnKeyDown (e);
 		}
 
 		#endregion
@@ -266,19 +425,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 		#region Drawing Code
 
-		private void DrawGrid(PaintEventArgs pevent) {
-			Pen pen = ThemeEngine.Current.ResPool.GetPen(property_grid.LineColor);
-			// vertical divider line
-			pevent.Graphics.DrawLine(pen, SplitterLocation, 0, SplitterLocation, (open_grid_item_count-skipped_grid_items)*row_height);
-			
-			int y = 0;
-			while (y < ClientRectangle.Height && y/row_height + skipped_grid_items < open_grid_item_count) {
-				// horizontal lines
-				pevent.Graphics.DrawLine(pen, 0, y, ClientRectangle.Width, y);
-				y += row_height;
-			}
-		}
-
 		private void DrawGridItems(GridItemCollection grid_items, PaintEventArgs pevent, int depth, ref int yLoc) {
 			foreach (GridItem grid_item in grid_items) {
 				DrawGridItem (grid_item, pevent, depth, ref yLoc);
@@ -287,11 +433,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			}
 		}
 
-		private void DrawGridItemLabel(GridItem grid_item, PaintEventArgs pevent, Rectangle rect) {
-			int x = rect.X+1;
-			if (grid_item.Parent != null && grid_item.Parent.GridItemType != GridItemType.Category)
-				x += V_INDENT;
-
+		private void DrawGridItemLabel(GridItem grid_item, PaintEventArgs pevent, int depth, Rectangle rect) {
 			Font font = this.Font;
 			Brush brush = SystemBrushes.WindowText;
 			if (grid_item.GridItemType == GridItemType.Category) {
@@ -300,24 +442,31 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			}
 
 			if (grid_item == property_grid.SelectedGridItem && grid_item.GridItemType != GridItemType.Category) {
-				pevent.Graphics.FillRectangle (SystemBrushes.Highlight, rect);
+				Rectangle highlight = rect;
+				if (depth > 1) {
+					highlight.X -= V_INDENT;
+					highlight.Width += V_INDENT;
+				}
+				pevent.Graphics.FillRectangle (SystemBrushes.Highlight, highlight);
 				// Label
 				brush = SystemBrushes.HighlightText;
 			}
 
 			
 			if (grid_item.GridItemType == GridItemType.Category) {
-				pevent.Graphics.DrawString(grid_item.Label,font,brush,x, rect.Y + 2);
+				pevent.Graphics.DrawString (grid_item.Label, font, brush, rect.X + 1, rect.Y + 2);
 				if (grid_item == property_grid.SelectedGridItem) {
-					SizeF size = pevent.Graphics.MeasureString(grid_item.Label, bold_font);
-					ControlPaint.DrawFocusRectangle(pevent.Graphics, new Rectangle(x,rect.Y+2, (int)size.Width, (int)size.Height));
+					SizeF size = pevent.Graphics.MeasureString (grid_item.Label, bold_font);
+					ControlPaint.DrawFocusRectangle (pevent.Graphics, new Rectangle(rect.X + 1, rect.Y+2, (int)size.Width, (int)size.Height));
 				}
 			}
 			else
-				pevent.Graphics.DrawString(grid_item.Label,font,brush,new Rectangle(x, rect.Y + 2,x-rect.X+rect.Width-2,rect.Height-2),string_format);
+				pevent.Graphics.DrawString (grid_item.Label, font, brush,
+							    new Rectangle (rect.X + 1, rect.Y + 2, rect.Width - 2, rect.Height - 2),
+							    string_format);
 		}
 
-		private void DrawGridItemValue(GridItem grid_item, PaintEventArgs pevent, Rectangle rect) {
+		private void DrawGridItemValue(GridItem grid_item, PaintEventArgs pevent, int depth, Rectangle rect) {
 			// Value
 			if (grid_item.PropertyDescriptor != null) {
 
@@ -328,43 +477,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				if (editor != null) {
 					paintsValue = editor.GetPaintValueSupported();
 				}
-
-				if (grid_item == property_grid.SelectedGridItem) {
-					grid_textbox.ReadOnly = false;
-					grid_textbox.DropDownButtonVisible = false;
-					grid_textbox.DialogButtonVisible = false;
-					if (editor != null) {
-						UITypeEditorEditStyle style = editor.GetEditStyle();
-					
-						switch (style) {
-							case UITypeEditorEditStyle.DropDown:
-								grid_textbox.DropDownButtonVisible = true;
-								break;
-							case UITypeEditorEditStyle.Modal:
-								grid_textbox.DialogButtonVisible = true;
-								break;
-						}
-					}
-					else {
-						try {
-							if (grid_item.PropertyDescriptor.Converter != null) {
-								if (grid_item.PropertyDescriptor.Converter.GetStandardValuesSupported()) {
-							
-									grid_textbox.DropDownButtonVisible = true;
-									grid_textbox.ReadOnly = true;
-								}
-							}
-							else {
-								System.Console.WriteLine("Converter not available for type {0}",grid_item.PropertyDescriptor.PropertyType);
-							}
-						
-						}
-						catch (Exception) {
-						}
-					}
-				}
-
-				
 
 				int xLoc = SplitterLocation+1;
 				if (paintsValue) {
@@ -396,14 +508,16 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				}
 				catch (Exception) {
 				}
-				if (grid_item == property_grid.SelectedGridItem && grid_item.GridItemType != GridItemType.Category) {
-					grid_textbox.SetBounds(xLoc, rect.Top, ClientRectangle.Width-xLoc - (vbar.Visible ? vbar.Width: 0),row_height);
-				}
 			}
 		}
 
 		private void DrawGridItem (GridItem grid_item, PaintEventArgs pevent, int depth, ref int yLoc) {
 			if (yLoc > -row_height && yLoc < ClientRectangle.Height) {
+
+				// Left column
+				pevent.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (property_grid.LineColor),
+							       0, yLoc, V_INDENT, row_height);
+			
 				if (grid_item.Expandable) {
 					grid_item.PlusMinusBounds = DrawPlusMinus(pevent.Graphics, 3, yLoc+row_height/2-3, grid_item.Expanded, grid_item.GridItemType == GridItemType.Category);
 				}
@@ -412,8 +526,21 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					pevent.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (property_grid.LineColor), depth*V_INDENT,yLoc,ClientRectangle.Width-(depth*V_INDENT), row_height);
 				}
 
-				DrawGridItemLabel(grid_item, pevent, new Rectangle(depth*V_INDENT,yLoc, SplitterLocation-depth*V_INDENT, row_height));
-				DrawGridItemValue(grid_item, pevent, new Rectangle(SplitterLocation+2,yLoc, ClientRectangle.Width-SplitterLocation-2, row_height));
+				DrawGridItemLabel(grid_item, pevent,
+						  depth,
+						  new Rectangle(depth * V_INDENT, yLoc, SplitterLocation - depth * V_INDENT, row_height));
+				DrawGridItemValue(grid_item, pevent,
+						  depth,
+						  new Rectangle(SplitterLocation + 2 , yLoc, ClientRectangle.Width - SplitterLocation - 2 - (vbar.Visible ? vbar.Width : 0), row_height));
+
+				if (grid_item.GridItemType != GridItemType.Category) {
+					Pen pen = ThemeEngine.Current.ResPool.GetPen(property_grid.LineColor);
+					// vertical divider line
+					pevent.Graphics.DrawLine(pen, SplitterLocation, yLoc, SplitterLocation, yLoc + row_height);
+			
+					// draw the horizontal line
+					pevent.Graphics.DrawLine(pen, 0, yLoc + row_height, ClientRectangle.Width, yLoc + row_height);
+				}
 			}
 			grid_item.Top = yLoc;
 			yLoc += row_height;
@@ -507,7 +634,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				}
 			}
 			CloseDropDown ();
-			Refresh();
 		}
 
 		private void SetPropertyValue(object newVal) {
@@ -563,7 +689,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				service_container,
 				initial_value);
 			if (!Object.Equals (value, initial_value)) {
-				Console.WriteLine ("initial_value = {0}, new value = {1}", initial_value, value);
 				SetPropertyValue (value);
 			}
 		}
@@ -581,14 +706,21 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			if (vbar.Value > vbar.Maximum-ClientRectangle.Height/row_height) {
 				vbar.Value = vbar.Maximum-ClientRectangle.Height/row_height+1;
 			}
-			
+
 			int scroll_amount = (skipped_grid_items-vbar.Value)*row_height;
-			XplatUI.ScrollWindow(Handle, 0, scroll_amount, false);
+
+			if (scroll_amount == 0)
+				return;
+
+			grid_textbox_Hide ();
+
 			skipped_grid_items = vbar.Value;
-			if (scroll_amount > 0)
-				Invalidate(new Rectangle(0,0,Width,scroll_amount+1));
-			else
-				Invalidate(new Rectangle(0,Height+scroll_amount-1,Width,1-scroll_amount));
+			XplatUI.ScrollWindow(Handle, 0, scroll_amount, false);
+			Invalidate ();
+			Update ();
+
+			if (property_grid.SelectedGridItem != null)
+				grid_textbox_Show (property_grid.SelectedGridItem);
 		}
 
 		private void grid_textbox_ToggleValue(object sender, EventArgs e) {
@@ -596,31 +728,100 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			Invalidate();
 		}
 
-		private void HandleSelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e) {			
-			// Region not working correctly
-			//Region clip = new Region();
-			//if (property_grid.SelectedGridItem != null)
-			//	clip.Union(new Rectangle(0,property_grid.SelectedGridItem.Top, ClientRectangle.Width, row_height));
-			//	clip.Union(new Rectangle(0,property_grid.SelectedGridItem.Top, ClientRectangle.Width, row_height));
+		private void grid_textbox_Show (GridItem forItem)
+		{
+			if (forItem == null || forItem.PropertyDescriptor == null)
+				return;
 
-			if (e.NewSelection.GridItemType == GridItemType.Property)
-				grid_textbox.Visible = true;
+			SuspendLayout ();
+
+			if (forItem.PropertyDescriptor.CanResetValue(property_grid.SelectedObject))
+				grid_textbox.Font = bold_font;
 			else
-				grid_textbox.Visible = false;
+				grid_textbox.Font = this.Font;
 
-			if (e.NewSelection.PropertyDescriptor != null) {
-				if (e.NewSelection.Value == null)
-					grid_textbox.Text = "";
-				else
-					grid_textbox.Text = e.NewSelection.PropertyDescriptor.Converter.ConvertToString(e.NewSelection.Value);
-				if (e.NewSelection.PropertyDescriptor.CanResetValue(property_grid.SelectedObject))
-					grid_textbox.Font = bold_font;
-				else
-					grid_textbox.Font = this.Font;
+			grid_textbox.ReadOnly = false;
+			grid_textbox.DropDownButtonVisible = false;
+			grid_textbox.DialogButtonVisible = false;
+
+			bool paintsValue = false;
+			UITypeEditor editor = null;
+			object temp = forItem.PropertyDescriptor.GetEditor(typeof(UITypeEditor));
+			editor = (UITypeEditor)temp;//forItem.PropertyDescriptor.GetEditor(typeof(UITypeEditor));
+			if (editor != null) {
+				paintsValue = editor.GetPaintValueSupported();
 			}
 
-			Invalidate(/*clip*/this.ClientRectangle);
-			Update();
+			if (editor != null) {
+				UITypeEditorEditStyle style = editor.GetEditStyle();
+					
+				switch (style) {
+				case UITypeEditorEditStyle.DropDown:
+					grid_textbox.DropDownButtonVisible = true;
+					break;
+				case UITypeEditorEditStyle.Modal:
+					grid_textbox.DialogButtonVisible = true;
+					break;
+				}
+			}
+			else {
+				try {
+					if (forItem.PropertyDescriptor.Converter != null) {
+						if (forItem.PropertyDescriptor.Converter.GetStandardValuesSupported()) {
+							
+							grid_textbox.DropDownButtonVisible = true;
+							grid_textbox.ReadOnly = true;
+						}
+					}
+					else {
+						System.Console.WriteLine("Converter not available for type {0}",forItem.PropertyDescriptor.PropertyType);
+					}
+						
+				}
+				catch (Exception) {
+				}
+			}
+				
+			int xloc = SplitterLocation + 1 + (paintsValue ? 27 : 0);
+			grid_textbox.SetBounds (xloc,
+						forItem.Top + 1,
+						ClientRectangle.Width - xloc - (vbar.Visible ? vbar.Width : 0),
+						row_height - 2);
+			grid_textbox.Visible = true;
+
+			ResumeLayout (false);
+		}
+
+		private void grid_textbox_Hide ()
+		{
+			SuspendLayout ();
+			grid_textbox.Bounds = Rectangle.Empty;
+			grid_textbox.Visible = false;
+			ResumeLayout (false);
+		}
+
+		private void HandleSelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e) {
+			if (e.OldSelection != null)
+				InvalidateGridItemLabel (e.OldSelection);
+			InvalidateGridItemLabel (e.NewSelection);
+
+			if (e.NewSelection.GridItemType == GridItemType.Property) {
+				if (e.NewSelection.PropertyDescriptor != null) {
+					if (e.NewSelection.Value == null)
+						grid_textbox.Text = "";
+					else
+						grid_textbox.Text = e.NewSelection.PropertyDescriptor.Converter.ConvertToString(e.NewSelection.Value);
+					if (e.NewSelection.PropertyDescriptor.CanResetValue(property_grid.SelectedObject))
+						grid_textbox.Font = bold_font;
+					else
+						grid_textbox.Font = this.Font;
+
+					grid_textbox_Show (e.NewSelection);
+				}
+			}
+			else {
+				grid_textbox_Hide ();
+			}
 		}
 
 		private void HandlePropertyValueChanged(object s, PropertyValueChangedEventArgs e) {
@@ -650,7 +851,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			dropdown_form.Controls.Clear();
 			dropdown_form.Controls.Add(control);
 			dropdown_form.Location = PointToScreen(new Point(SplitterLocation,grid_textbox.Location.Y+row_height));
-			dropdown_form.Width = Width - SplitterLocation;
+			dropdown_form.Width = ClientRectangle.Width - SplitterLocation - (vbar.Visible ? vbar.Width : 0);
 
 			dropdown_form.Show();
 
@@ -674,7 +875,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 		public void CloseDropDown() {
 			dropdown_form.Hide();
-			Refresh ();
 		}
 
 		public void DropDownControl(Control control) {

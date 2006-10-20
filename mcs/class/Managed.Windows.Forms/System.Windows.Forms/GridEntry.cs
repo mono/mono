@@ -38,6 +38,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 		private bool expanded = true;
 		private GridItemCollection grid_items;
 		private GridItem parent;
+		private GridEntry ui_parent;
 		private PropertyDescriptor property_descriptor;
 		private object[] selected_objects;
 		private string label;
@@ -79,14 +80,14 @@ namespace System.Windows.Forms.PropertyGridInternal
 			}
 		}
 
-		public override System.Windows.Forms.GridItemCollection GridItems
+		public override GridItemCollection GridItems
 		{
 			get {
 				return grid_items;
 			}
 		}
 
-		public override System.Windows.Forms.GridItemType GridItemType
+		public override GridItemType GridItemType
 		{
 			get {
 				return GridItemType.Property;
@@ -100,14 +101,14 @@ namespace System.Windows.Forms.PropertyGridInternal
 			}
 		}
 
-		public override System.Windows.Forms.GridItem Parent
+		public override GridItem Parent
 		{
 			get {
 				return parent;
 			}
 		}
 
-		public override System.ComponentModel.PropertyDescriptor PropertyDescriptor
+		public override PropertyDescriptor PropertyDescriptor
 		{
 			get {
 				return property_descriptor;
@@ -183,5 +184,16 @@ namespace System.Windows.Forms.PropertyGridInternal
 			this.parent = parent;
 		}
 
+		internal void SetUIParent (GridEntry ui_parent)
+		{
+			this.ui_parent = ui_parent;
+		}
+
+		internal GridEntry UIParent
+		{
+			get {
+				return ui_parent;
+			}
+		}
 	}
 }

@@ -27,6 +27,7 @@
 
 using System;
 using System.Drawing;
+using System.ComponentModel;
 
 namespace System.Windows.Forms
 {
@@ -63,12 +64,12 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public abstract new System.Windows.Forms.GridItemCollection GridItems
+		public abstract new GridItemCollection GridItems
 		{
 			get;
 		}
 
-		public abstract new System.Windows.Forms.GridItemType GridItemType
+		public abstract new GridItemType GridItemType
 		{
 			get;
 		}
@@ -79,13 +80,13 @@ namespace System.Windows.Forms
 		}
 
 
-		public abstract new System.Windows.Forms.GridItem Parent
+		public abstract new GridItem Parent
 		{
 			get;
 		}
 
 
-		public abstract new System.ComponentModel.PropertyDescriptor PropertyDescriptor
+		public abstract new PropertyDescriptor PropertyDescriptor
 		{
 			get;
 		}

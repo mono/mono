@@ -1,3 +1,43 @@
+2006-10-20  Chris Toshok  <toshok@ximian.com>
+
+	* PropertyGridView.cs: fix a number of issues (bug #78565, and
+	most of bug #79676):
+
+	- you can navigate around the property grid with the arrow keys.
+
+	- the dropdown is sized properly when the pg has a vertical
+	scrollbar.
+
+	- fix the indentation for subentries, and properly select the
+	entire label rect.
+
+	- fix the gray bar's drawing (only draw it to the last element,
+	not for the height of the control.  Also make sure we draw that
+	last horizontal grid line.
+
+	- use the same mechanism the datagrid uses wrt the editing textbox
+	when scrolling/resizing/etc.  Namely, we hide it first, do the
+	operation, then show it again (if it's still visible).
+	
+	- aggressively remove a lot of unnecessary refreshes (and also
+	calls to Invalidate(). call more limited variants, and only redraw
+	what we need.)
+	
+	* PropertyGrid.cs:
+
+	- when we're populating the merged collection, fill in the UI
+	parent with either the passed in item, or the category item we
+	create.
+
+	- remove the Refresh call from the BorderHelpControl.OnSizeChanged.
+
+	* GridItem.cs: drop some fully qualified names.
+	
+	* GridEntry.cs: add a "UIParent", which is basically the parent
+	treenode.
+
+	* GridItemCollection.cs: add an IndexOf method.
+
 2006-10-20  Mike Kestner  <mkestner@novell.com>
 
 	* MainMenu.cs : go back to Draw in OnMenuChanged.  Until we get
@@ -14,6 +54,19 @@
 	* RichTextBox.cs: Handle some special chars better, and don't skip
 	the entire group when we encounter a special char that we don't
 	handle correctly.
+
+2006-10-18  Chris Toshok  <toshok@ximian.com>
+
+	* PropertyGridView.cs: address a number of issues from bug #79676,
+	mostly of the cosmetic variety.
+
+	- The highlight rectangle for indented items not extends all the
+	way to the left.
+
+	- Indented items aren't indented so much.
+
+	- the dropdown is properly sized width-wise if the pg has a
+	vertical scrollbar.
 
 2006-10-18  Chris Toshok  <toshok@ximian.com>
 

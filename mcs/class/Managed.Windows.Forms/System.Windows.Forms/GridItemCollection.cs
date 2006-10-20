@@ -52,6 +52,11 @@ namespace System.Windows.Forms
 		{
 			list.Add(key,grid_item);
 		}
+
+		internal int IndexOf (GridItem grid_item)
+		{
+			return list.IndexOfValue (grid_item);
+		}
 		#endregion	// Internal Properties and Methods
 
 		#region	Public Instance Properties

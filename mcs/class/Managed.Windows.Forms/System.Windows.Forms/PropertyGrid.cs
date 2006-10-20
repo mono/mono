@@ -1024,20 +1024,25 @@ namespace System.Windows.Forms {
 				GridEntry grid_entry = new GridEntry (objs, property);
 				grid_entry.SetParent (parent_grid_item);
 				if (property_sort == PropertySort.Alphabetical || !recurse) {
-					if (grid_item_coll[property.Name] == null)
+					if (grid_item_coll[property.Name] == null) {
 						grid_item_coll.Add(property.Name,grid_entry);
+						grid_entry.SetUIParent ((GridEntry)parent_grid_item);
+					}
 				}
 				else if (property_sort == PropertySort.Categorized || property_sort == PropertySort.CategorizedAlphabetical) {
 
 					string category = property.Category;
-					GridItem cat_item = grid_item_coll[category];
+					CategoryGridEntry cat_item = grid_item_coll[category] as CategoryGridEntry;
 					if (cat_item == null) {
 						cat_item = new CategoryGridEntry(category);
-						(cat_item as CategoryGridEntry).SetParent (parent_grid_item);
+						cat_item.SetParent (parent_grid_item);
+						cat_item.SetUIParent ((GridEntry)parent_grid_item);
 						grid_item_coll.Add(category,cat_item);
 					}
-					if (cat_item.GridItems[property.Name] == null)
+					if (cat_item.GridItems[property.Name] == null) {
 						cat_item.GridItems.Add(property.Name,grid_entry);
+						grid_entry.SetUIParent (cat_item);
+					}
 				}
 
 				if (recurse && TypeDescriptor.GetConverter(property.PropertyType).GetPropertiesSupported()) {
@@ -1105,8 +1110,6 @@ namespace System.Windows.Forms {
 					
 					control.Width = ClientRectangle.Width - 2;
 					control.Height = ClientRectangle.Height - 2;
-					
-					Refresh ();
 				}
 				base.OnSizeChanged (e);
 			}
