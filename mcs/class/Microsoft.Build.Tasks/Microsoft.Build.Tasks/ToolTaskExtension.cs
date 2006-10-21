@@ -88,6 +88,8 @@ namespace Microsoft.Build.Tasks {
 		public new TaskLoggingHelper Log {
 			get { return base.Log; }
 		}
+
+		internal ToolTaskExtension () {}
 	}
 }
 
