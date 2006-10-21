@@ -209,7 +209,7 @@ namespace Microsoft.JScript.Vsa {
 
 			try {
 				script_obj = (ScriptObject) globals.Pop ();
-			} catch (NullReferenceException e) {
+			} catch (NullReferenceException) {
 			}
 			return script_obj;
 		}
@@ -218,7 +218,7 @@ namespace Microsoft.JScript.Vsa {
 		{
 			try {
 				globals.Push (obj);
-			} catch (NullReferenceException e) {
+			} catch (NullReferenceException) {
 			}
 		}
 
@@ -281,7 +281,7 @@ namespace Microsoft.JScript.Vsa {
 
 			try {
 				opt = options [name];
-			} catch (NotSupportedException e) {
+			} catch (NotSupportedException) {
 				throw new VsaException (VsaError.OptionNotSupported);
 			}
 			return opt;
@@ -296,7 +296,7 @@ namespace Microsoft.JScript.Vsa {
 		{
 			try {
 				options [name] = val;
-			} catch (NotSupportedException e) {
+			} catch (NotSupportedException) {
 				throw new VsaException (VsaError.OptionNotSupported);
 			}
 		}

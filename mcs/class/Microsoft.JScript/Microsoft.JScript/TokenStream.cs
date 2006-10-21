@@ -163,24 +163,22 @@ internal class TokenStream {
 		SourceName = source_name;
 		this.line_number = line_number;
 		if (source_reader != null) {
-			if (source_string != null)
-				;
 			this.source_reader = source_reader;
 			source_buffer = new char [512];
 			source_end = 0;
 		} else {
-			if (source_string == null)
-				;
 			this.source_string = source_string;
 			source_end = source_string.Length;
 		}
 		source_cursor = 0;
 	}
 
+#if false
 	static bool IsKeyword (string s)
 	{
 		return Token.EOF != StringToKeyword (s);
 	}
+#endif
 
 	static int StringToKeyword (string name)
 	{
@@ -587,8 +585,10 @@ internal class TokenStream {
 	internal void UnGetToken (int tt)
 	{
 		// Can not unreadmore than one token
+#if false
 		if (pushback_token != Token.EOF && tt != Token.ERROR)
 			;
+#endif
 		pushback_token = tt;
 		TokenNumber--;
 	}
@@ -808,7 +808,7 @@ internal class TokenStream {
 						try {
 							// Use C# conversion to number from string
 							dval = Double.Parse (num_string, CultureInfo.InvariantCulture);
-						} catch (FormatException ex) {
+						} catch (FormatException) {
 							ReportCurrentLineError ("msg.caught.nfe");
 							return Token.ERROR;
 						} catch (OverflowException) {
@@ -1366,8 +1366,10 @@ internal class TokenStream {
 	void UnGetChar (int c)
 	{
 		// can not unread past across line boundary
+#if false
 		if (unget_cursor != 0 && unget_buffer [unget_cursor - 1] == '\n')
 			;
+#endif
 		unget_buffer [unget_cursor++] = c;
 	}
 
@@ -1451,8 +1453,10 @@ internal class TokenStream {
 
 	bool FillSourceBuffer ()
 	{
+#if false
 		if (source_string == null)
 			;
+#endif
 		if (source_end == source_buffer.Length) {
 			if (line_start != 0) {
 				Array.Copy (source_buffer, line_start, source_buffer, 0, source_end - line_start);

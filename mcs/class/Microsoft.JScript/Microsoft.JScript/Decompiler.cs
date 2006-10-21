@@ -244,8 +244,11 @@ internal class Decompiler {
 		} else {
 			// we can ignore negative values, bc they're already prefixed
 			// by NEG
+
+#if false
 			if (lbits < 0)
 				;
+#endif
                
 			// will it fit in a char?
 			// this gives a short encoding for integer values up to 2^16.

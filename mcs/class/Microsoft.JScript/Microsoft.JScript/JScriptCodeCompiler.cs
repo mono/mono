@@ -218,6 +218,7 @@ namespace Microsoft.JScript
 		{
 			StringBuilder args = new StringBuilder ();
 
+#if false
 			if (options.GenerateExecutable)
 				; // args.Append ("/target:exe ");
 			else
@@ -236,6 +237,7 @@ namespace Microsoft.JScript
 
 			if (options.WarningLevel >= 0)
 				; //  args.AppendFormat ("/warn:{0} ", options.WarningLevel);
+#endif
 
 			if (options.OutputAssembly == null)
 				options.OutputAssembly = GetTempFileNameWithExtension (options.TempFiles, "dll", 

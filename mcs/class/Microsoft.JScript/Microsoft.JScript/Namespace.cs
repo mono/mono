@@ -38,11 +38,11 @@ namespace Microsoft.JScript {
 	public sealed class Namespace {
 
 		static Hashtable namespaces;
-		static string fullname;
+		//static string fullname;
 
 		public Namespace (string name)
 		{
-			fullname = name;
+			//fullname = name;
 		}
 
 		static Namespace ()

@@ -377,7 +377,7 @@ namespace Microsoft.Vsa {
 
 				return MonikerState.Valid;
 
-			} catch (UriFormatException e) {
+			} catch (UriFormatException) {
 				return MonikerState.Invalid;
 			}
 		}
@@ -488,7 +488,7 @@ namespace Microsoft.Vsa {
 			
 			try {			
 				opt =  GetSpecificOption (name);
-			} catch (VsaException e) {
+			} catch (VsaException) {
 				throw;
 			}
 			return opt;

@@ -135,7 +135,7 @@ namespace Microsoft.JScript {
 									   location.SourceName, location.LineNumber, arg.ToString ());
 
 							if (arg.left is Identifier && arg.right is Identifier) {
-								string _base = ((Identifier) arg.left).name.Value;
+								//string _base = ((Identifier) arg.left).name.Value;
 								string property = ((Identifier) arg.right).name.Value;
 
 								Type lb_type = typeof (LateBinding);
@@ -963,9 +963,7 @@ namespace Microsoft.JScript {
 				else
 					CodeGenerator.EmitBox (ig, ast);
 
-				if (ast is StringLiteral)
-					;
-				else {
+				if (!(ast is StringLiteral)){
 					ig.Emit (OpCodes.Ldc_I4_1);
 					ig.Emit (OpCodes.Call, to_string);
 				}

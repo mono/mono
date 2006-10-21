@@ -185,7 +185,7 @@ namespace Microsoft.JScript {
 			ts = new TokenStream (null, source_string, source_location, line_number);
 			try {
 				return Parse ();
-			} catch (IOException ex) {
+			} catch (IOException) {
 				throw new Exception ("Illegal state exception");
 			}
 		}
@@ -241,7 +241,7 @@ namespace Microsoft.JScript {
 					if (tt == Token.FUNCTION) {
 						try {
 							n = Function (current_script_or_fn, FunctionType.Statement);
-						} catch (ParserException e) {
+						} catch (ParserException) {
 							ok = false;
 							break;
 						}
@@ -251,7 +251,7 @@ namespace Microsoft.JScript {
 					}
 					current_script_or_fn.Add (n);
 				}
-			} catch (StackOverflowException ex) {
+			} catch (StackOverflowException) {
 				throw new Exception ("Error: too deep parser recursion.");
 			}
 
@@ -286,7 +286,7 @@ namespace Microsoft.JScript {
 						n = Statement (parent);
 					pn.Add (n);
 				}
-			} catch (ParserException e) {
+			} catch (ParserException) {
 				ok = false;
 			} finally {
 				--nesting_of_function;
@@ -416,9 +416,11 @@ namespace Microsoft.JScript {
 				assign.Init (member_expr, pn, false);
 				pn = assign;
 
+#if false
 				// FIXME, research about createExprStatement
 				if (ft != FunctionType.Expression)
 					;
+#endif
 			}
 			return pn;
 		}
@@ -509,7 +511,7 @@ namespace Microsoft.JScript {
 		{
 			try {
 				return StatementHelper (parent);
-			} catch (ParserException e) {
+			} catch (ParserException) {
 				// skip to end of statement
 				int t;
 				do {

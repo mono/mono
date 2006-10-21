@@ -457,7 +457,11 @@ namespace Microsoft.JScript {
 				return 0;
 			// Would return an empty string if regular expression match returned 0.
 			object o = float_re.Match (string_obj).Value;
-			string_obj = (o == "") ? string_obj : (string) o;
+			if (o is string){
+				string os = (string) o;
+				if (o != "")
+					string_obj = os;
+			}
 
 			double result;
 			if (Double.TryParse (string_obj, NumberStyles.Float, CultureInfo.InvariantCulture, out result))

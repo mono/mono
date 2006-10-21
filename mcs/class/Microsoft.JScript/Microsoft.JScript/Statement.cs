@@ -860,7 +860,7 @@ namespace Microsoft.JScript {
 		{
 			try {
 				SemanticAnalyser.AddLabel (name, this);
-			} catch (ArgumentException e) {
+			} catch (ArgumentException) {
 				throw new Exception ("error JS1025: Label redefined");
 			}
 			if (stm != null)

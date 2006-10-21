@@ -597,7 +597,7 @@ namespace Microsoft.JScript {
 		}
 
 		#region Cache Helpers
-		private const bool USE_CACHE = true;
+		static private bool USE_CACHE = true;
 
 		private static bool GetCacheEntry (out ScriptObject prop_obj, ScriptObject obj, string key)
 		{

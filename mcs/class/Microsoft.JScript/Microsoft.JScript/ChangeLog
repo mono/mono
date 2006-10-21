@@ -1,3 +1,11 @@
+2006-10-21  Miguel de Icaza  <miguel@novell.com>
+
+	* JScriptCodeCompiler.cs: Ifdefed out unused code.
+	
+	* Decompiler.cs: ditto.
+
+	* expression.cs: Ditto
+
 2006-07-26  César Octavio López Natarén  <cesar.nataren@gmail.com>
 
 	* JScriptCodeGenerator.cs, JScriptCodeProvider.cs: Use

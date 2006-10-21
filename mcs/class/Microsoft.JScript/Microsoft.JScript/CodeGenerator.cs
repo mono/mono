@@ -597,9 +597,7 @@ namespace Microsoft.JScript {
 
 			Type box_type = GetBoxType (obj);
 
-			if (box_type == null)
-				;
-			else
+			if (box_type != null)
 				ig.Emit (OpCodes.Box, box_type);
 		}
 
