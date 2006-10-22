@@ -637,7 +637,6 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test] // bug #79715
-		[Category ("NotWorking")]
 		public void Load_PartialVersion ()
 		{
 			string tempDir = Path.Combine (Path.GetTempPath (),
