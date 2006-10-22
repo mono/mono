@@ -40,6 +40,8 @@ endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:618
 
+TEST_MONO_PATH = .
+
 EXTRA_DISTFILES = \
 	TODO					\
 	Test/System.Data/region.xml		\

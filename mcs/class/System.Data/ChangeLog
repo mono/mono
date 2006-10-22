@@ -1,3 +1,7 @@
+2006-10-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile (TEST_MONO_PATH): Add '.' to TEST_MONO_PATH.
+
 2006-09-26	Boris Kirzner <borisk@mainsoft.com>
 
 	* run-tests.test.disconnected.bat,run-tests.test.connected.bat: 
