@@ -1,3 +1,7 @@
+2006-10-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile (EXTRA_DISTFILES): Add some missing test files.
+
 2006-09-26	Boris Kirzner <borisk@mainsoft.com>
 
 	* run-W3C-tests.bat, run-XSLT-tests.bat: log files naming fix.
