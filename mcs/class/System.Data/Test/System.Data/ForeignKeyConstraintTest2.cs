@@ -633,5 +633,29 @@ namespace MonoTests_System.Data
 			} catch (InvalidOperationException e) {}
 		}
 #endif
+
+		[Test] // bug #79689
+		public void ParentChildSameColumn ()
+		{
+			DataTable dataTable = new DataTable ("Menu");
+			DataColumn colID = dataTable.Columns.Add ("ID", typeof (int));
+			DataColumn colCulture = dataTable.Columns.Add ("Culture", typeof (string));
+			dataTable.Columns.Add ("Name", typeof (string));
+			DataColumn colParentID = dataTable.Columns.Add ("ParentID", typeof (int));
+
+			// table PK (ID, Culture)
+			dataTable.Constraints.Add (new UniqueConstraint (
+				"MenuPK",
+				new DataColumn [] { colID, colCulture },
+				true));
+
+			// add a FK referencing the same table: (ID, Culture) <- (ParentID, Culture)
+			ForeignKeyConstraint fkc = new ForeignKeyConstraint (
+				"MenuParentFK",
+				new DataColumn [] { colID, colCulture },
+				new DataColumn [] { colParentID, colCulture });
+
+			dataTable.Constraints.Add (fkc);
+		}
 	}
 }
