@@ -1,3 +1,7 @@
+2006-10-22  Igor Zelmanovich   <igorz@mainsoft.com>
+
+	* CssStyleCollectionTest.cs: new tests.
+
 2006-10-19  Igor Zelmanovich   <igorz@mainsoft.com>
 
 	* ClientScriptManagerTest.cs: removed NotWorking attribute.

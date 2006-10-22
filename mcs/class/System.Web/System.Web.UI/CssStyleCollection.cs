@@ -32,6 +32,8 @@ using System.IO;
 using System.Collections;
 using System.Security.Permissions;
 using System.Text;
+using System.Collections.Specialized;
+using System.Globalization;
 
 namespace System.Web.UI {
 
@@ -40,7 +42,7 @@ namespace System.Web.UI {
 	public sealed class CssStyleCollection
 	{
 		StateBag bag;
-		StateBag style;
+		HybridDictionary style;
 
 		internal CssStyleCollection (StateBag bag)
 		{
@@ -51,7 +53,11 @@ namespace System.Web.UI {
 
 		void InitFromStyle ()
 		{
-			style = new StateBag ();
+#if NET_2_0
+			style = new HybridDictionary (true);
+#else
+			style = new HybridDictionary (false);
+#endif
 			string att = (string) bag ["style"];
 			if (att != null) {
 				FillStyle (att);
@@ -88,7 +94,7 @@ namespace System.Web.UI {
 		{
 			StringBuilder sb = new StringBuilder ();
 			foreach (string key in style.Keys) {
-				if (key == "background-image")
+				if (key == "background-image" && 0 != String.Compare ("url", ((string) style [key]).Substring (0, 3), true, CultureInfo.InvariantCulture))
 					sb.AppendFormat ("{0}:url({1});", key, HttpUtility.UrlPathEncode ((string) style [key]));
 				else
 					sb.AppendFormat ("{0}:{1};", key, style [key]);
@@ -99,14 +105,12 @@ namespace System.Web.UI {
 
 		public int Count {
 			get {
-				InitFromStyle ();
 				return style.Count;
 			}
 		}
 
 		public string this [string key] {
 			get {
-				InitFromStyle ();
 				return style [key] as string;
 			}
 
@@ -117,14 +121,12 @@ namespace System.Web.UI {
 
 		public ICollection Keys {
 			get {
-				InitFromStyle ();
 				return style.Keys;
 			}
 		}
 
 		public void Add (string key, string value)
 		{
-			InitFromStyle ();
 			style [key] = value;
 			bag ["style"] = BagToString ();
 		}
@@ -141,14 +143,13 @@ namespace System.Web.UI {
 
 		public void Clear ()
 		{
+			style.Clear ();
 			bag.Remove ("style");
-			InitFromStyle ();
 		}
 
 		public void Remove (string key)
 		{
-			InitFromStyle ();
-			if (style == null || style [key] == null)
+			if (style [key] == null)
 				return;
 			style.Remove (key);
 			bag ["style"] = BagToString ();
@@ -156,7 +157,6 @@ namespace System.Web.UI {
 #if NET_2_0
 		public string this [HtmlTextWriterStyle key] {
 			get {
-				InitFromStyle ();
 				return style [HtmlTextWriter.StaticGetStyleName (key)] as string;
 			}
 			set {

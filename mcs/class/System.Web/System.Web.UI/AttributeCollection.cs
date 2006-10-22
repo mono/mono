@@ -89,11 +89,16 @@ namespace System.Web.UI {
 
 		public void Clear ()
 		{
+			CssStyle.Clear ();
 			bag.Clear ();
 		}
 
 		public void Remove (string key)
 		{
+			if (0 == String.Compare (key, "style", true, CultureInfo.InvariantCulture)) {
+				CssStyle.Clear ();
+				return;
+			}
 			bag.Remove (key);
 		}
 

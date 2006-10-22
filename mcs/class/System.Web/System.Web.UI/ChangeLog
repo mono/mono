@@ -1,3 +1,9 @@
+2006-10-22 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* CssStyleCollection.cs:
+	* AttributeCollection.cs:
+	fixed: style collection is synchronized with style attribute 
+
 2006-10-19 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ClientScriptManager.cs: fixed: renders id attribute in hidden field
