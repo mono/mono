@@ -246,8 +246,12 @@ namespace MonoTests.System
 
 		[Test] // bug #79720
 		[Category ("NotWorking")]
-		public void Load_IgnoreLoaded ()
+		public void Load_Loaded_Ignore ()
 		{
+			int assemblyStartCount = AppDomain.CurrentDomain.GetAssemblies ().Length;
+
+			// PART A
+
 			string assemblyFile = Path.Combine (tempDir, "bug79720A.dll");
 			AssemblyName aname = new AssemblyName ();
 			aname.Name = "bug79720A";
@@ -255,17 +259,10 @@ namespace MonoTests.System
 
 			GenerateAssembly (aname, assemblyFile);
 
-			aname = new AssemblyName ();
-			aname.Name = "bug79720A";
-			try {
-				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#A1");
-			} catch (FileNotFoundException) {
-			}
+			Assert.AreEqual (assemblyStartCount, AppDomain.CurrentDomain.GetAssemblies ().Length, "#A1");
 
 			aname = new AssemblyName ();
 			aname.Name = "bug79720A";
-			aname.Version = new Version (0, 0, 0, 0);
 			try {
 				AppDomain.CurrentDomain.Load (aname);
 				Assert.Fail ("#A2");
@@ -274,20 +271,33 @@ namespace MonoTests.System
 
 			aname = new AssemblyName ();
 			aname.Name = "bug79720A";
-			aname.Version = new Version (2, 4);
+			aname.Version = new Version (0, 0, 0, 0);
 			try {
 				AppDomain.CurrentDomain.Load (aname);
 				Assert.Fail ("#A3");
 			} catch (FileNotFoundException) {
 			}
 
+			aname = new AssemblyName ();
+			aname.Name = "bug79720A";
+			aname.Version = new Version (2, 4);
+			try {
+				AppDomain.CurrentDomain.Load (aname);
+				Assert.Fail ("#A4");
+			} catch (FileNotFoundException) {
+			}
+
+			Assert.AreEqual (assemblyStartCount, AppDomain.CurrentDomain.GetAssemblies ().Length, "#A5");
+
 			Assembly.LoadFrom (assemblyFile);
+
+			Assert.AreEqual (assemblyStartCount + 1, AppDomain.CurrentDomain.GetAssemblies ().Length, "#A6");
 
 			aname = new AssemblyName ();
 			aname.Name = "bug79720A";
 			try {
 				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#A4");
+				Assert.Fail ("#A7");
 			} catch (FileNotFoundException) {
 			}
 
@@ -296,7 +306,7 @@ namespace MonoTests.System
 			aname.Version = new Version (0, 0, 0, 0);
 			try {
 				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#A5");
+				Assert.Fail ("#A8");
 			} catch (FileNotFoundException) {
 			}
 
@@ -305,7 +315,7 @@ namespace MonoTests.System
 			aname.Version = new Version (2, 4);
 			try {
 				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#A6");
+				Assert.Fail ("#A9");
 			} catch (FileNotFoundException) {
 			}
 
@@ -315,7 +325,7 @@ namespace MonoTests.System
 			aname.CultureInfo = CultureInfo.InvariantCulture;
 			try {
 				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#A7");
+				Assert.Fail ("#A10");
 			} catch (FileNotFoundException) {
 			}
 
@@ -325,9 +335,11 @@ namespace MonoTests.System
 			aname.CultureInfo = CultureInfo.InvariantCulture;
 			try {
 				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#A8");
+				Assert.Fail ("#A11");
 			} catch (FileNotFoundException) {
 			}
+
+			Assert.AreEqual (assemblyStartCount + 1, AppDomain.CurrentDomain.GetAssemblies ().Length, "#A12");
 
 			// PART B
 
@@ -339,17 +351,10 @@ namespace MonoTests.System
 
 			GenerateAssembly (aname, assemblyFile);
 
-			aname = new AssemblyName ();
-			aname.Name = "bug79720B";
-			try {
-				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#B1");
-			} catch (FileNotFoundException) {
-			}
+			Assert.AreEqual (assemblyStartCount + 1, AppDomain.CurrentDomain.GetAssemblies ().Length, "#B1");
 
 			aname = new AssemblyName ();
 			aname.Name = "bug79720B";
-			aname.Version = new Version (0, 0, 0, 0);
 			try {
 				AppDomain.CurrentDomain.Load (aname);
 				Assert.Fail ("#B2");
@@ -358,7 +363,7 @@ namespace MonoTests.System
 
 			aname = new AssemblyName ();
 			aname.Name = "bug79720B";
-			aname.Version = new Version (2, 4, 1);
+			aname.Version = new Version (0, 0, 0, 0);
 			try {
 				AppDomain.CurrentDomain.Load (aname);
 				Assert.Fail ("#B3");
@@ -368,20 +373,33 @@ namespace MonoTests.System
 			aname = new AssemblyName ();
 			aname.Name = "bug79720B";
 			aname.Version = new Version (2, 4, 1);
-			aname.CultureInfo = new CultureInfo ("nl-BE");
 			try {
 				AppDomain.CurrentDomain.Load (aname);
 				Assert.Fail ("#B4");
 			} catch (FileNotFoundException) {
 			}
 
+			aname = new AssemblyName ();
+			aname.Name = "bug79720B";
+			aname.Version = new Version (2, 4, 1);
+			aname.CultureInfo = new CultureInfo ("nl-BE");
+			try {
+				AppDomain.CurrentDomain.Load (aname);
+				Assert.Fail ("#B5");
+			} catch (FileNotFoundException) {
+			}
+
+			Assert.AreEqual (assemblyStartCount + 1, AppDomain.CurrentDomain.GetAssemblies ().Length, "#B6");
+
 			Assembly.LoadFrom (assemblyFile);
+
+			Assert.AreEqual (assemblyStartCount + 2, AppDomain.CurrentDomain.GetAssemblies ().Length, "#B7");
 
 			aname = new AssemblyName ();
 			aname.Name = "bug79720B";
 			try {
 				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#B5");
+				Assert.Fail ("#B8");
 			} catch (FileNotFoundException) {
 			}
 
@@ -390,7 +408,7 @@ namespace MonoTests.System
 			aname.Version = new Version (0, 0, 0, 0);
 			try {
 				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#B6");
+				Assert.Fail ("#B9");
 			} catch (FileNotFoundException) {
 			}
 
@@ -399,7 +417,7 @@ namespace MonoTests.System
 			aname.Version = new Version (2, 4, 1);
 			try {
 				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#B7");
+				Assert.Fail ("#B10");
 			} catch (FileNotFoundException) {
 			}
 
@@ -409,9 +427,11 @@ namespace MonoTests.System
 			aname.CultureInfo = new CultureInfo ("nl-BE");
 			try {
 				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#B8");
+				Assert.Fail ("#B11");
 			} catch (FileNotFoundException) {
 			}
+
+			Assert.AreEqual (assemblyStartCount + 2, AppDomain.CurrentDomain.GetAssemblies ().Length, "#B12");
 
 			// PART C
 
@@ -424,17 +444,10 @@ namespace MonoTests.System
 
 			GenerateAssembly (aname, assemblyFile);
 
-			aname = new AssemblyName ();
-			aname.Name = "bug79720C";
-			try {
-				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#C1");
-			} catch (FileNotFoundException) {
-			}
+			Assert.AreEqual (assemblyStartCount + 2, AppDomain.CurrentDomain.GetAssemblies ().Length, "#C1");
 
 			aname = new AssemblyName ();
 			aname.Name = "bug79720C";
-			aname.Version = new Version (0, 0, 0, 0);
 			try {
 				AppDomain.CurrentDomain.Load (aname);
 				Assert.Fail ("#C2");
@@ -443,7 +456,7 @@ namespace MonoTests.System
 
 			aname = new AssemblyName ();
 			aname.Name = "bug79720C";
-			aname.Version = new Version (2, 4, 1);
+			aname.Version = new Version (0, 0, 0, 0);
 			try {
 				AppDomain.CurrentDomain.Load (aname);
 				Assert.Fail ("#C3");
@@ -453,7 +466,6 @@ namespace MonoTests.System
 			aname = new AssemblyName ();
 			aname.Name = "bug79720C";
 			aname.Version = new Version (2, 4, 1);
-			aname.CultureInfo = new CultureInfo ("nl-BE");
 			try {
 				AppDomain.CurrentDomain.Load (aname);
 				Assert.Fail ("#C4");
@@ -464,45 +476,31 @@ namespace MonoTests.System
 			aname.Name = "bug79720C";
 			aname.Version = new Version (2, 4, 1);
 			aname.CultureInfo = new CultureInfo ("nl-BE");
-			aname.SetPublicKey (publicKey);
 			try {
 				AppDomain.CurrentDomain.Load (aname);
 				Assert.Fail ("#C5");
 			} catch (FileNotFoundException) {
 			}
 
-			Assembly.LoadFrom (assemblyFile);
-
 			aname = new AssemblyName ();
 			aname.Name = "bug79720C";
+			aname.Version = new Version (2, 4, 1);
+			aname.CultureInfo = new CultureInfo ("nl-BE");
+			aname.SetPublicKey (publicKey);
 			try {
 				AppDomain.CurrentDomain.Load (aname);
 				Assert.Fail ("#C6");
 			} catch (FileNotFoundException) {
 			}
 
-			aname = new AssemblyName ();
-			aname.Name = "bug79720C";
-			aname.Version = new Version (0, 0, 0, 0);
-			try {
-				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#C7");
-			} catch (FileNotFoundException) {
-			}
+			Assert.AreEqual (assemblyStartCount + 2, AppDomain.CurrentDomain.GetAssemblies ().Length, "#C7");
+
+			Assembly.LoadFrom (assemblyFile);
+
+			Assert.AreEqual (assemblyStartCount + 3, AppDomain.CurrentDomain.GetAssemblies ().Length, "#C8");
 
 			aname = new AssemblyName ();
 			aname.Name = "bug79720C";
-			aname.Version = new Version (2, 4);
-			try {
-				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#C8");
-			} catch (FileNotFoundException) {
-			}
-
-			aname = new AssemblyName ();
-			aname.Name = "bug79720C";
-			aname.Version = new Version (2, 4);
-			aname.CultureInfo = new CultureInfo ("nl-BE");
 			try {
 				AppDomain.CurrentDomain.Load (aname);
 				Assert.Fail ("#C9");
@@ -511,13 +509,176 @@ namespace MonoTests.System
 
 			aname = new AssemblyName ();
 			aname.Name = "bug79720C";
+			aname.Version = new Version (0, 0, 0, 0);
+			try {
+				AppDomain.CurrentDomain.Load (aname);
+				Assert.Fail ("#C10");
+			} catch (FileNotFoundException) {
+			}
+
+			aname = new AssemblyName ();
+			aname.Name = "bug79720C";
+			aname.Version = new Version (2, 4);
+			try {
+				AppDomain.CurrentDomain.Load (aname);
+				Assert.Fail ("#C11");
+			} catch (FileNotFoundException) {
+			}
+
+			aname = new AssemblyName ();
+			aname.Name = "bug79720C";
+			aname.Version = new Version (2, 4);
+			aname.CultureInfo = new CultureInfo ("nl-BE");
+			try {
+				AppDomain.CurrentDomain.Load (aname);
+				Assert.Fail ("#C12");
+			} catch (FileNotFoundException) {
+			}
+
+			aname = new AssemblyName ();
+			aname.Name = "bug79720C";
 			aname.Version = new Version (2, 4);
 			aname.CultureInfo = new CultureInfo ("nl-BE");
 			aname.SetPublicKey (publicKey);
 			try {
 				AppDomain.CurrentDomain.Load (aname);
-				Assert.Fail ("#C10");
+				Assert.Fail ("#C13");
 			} catch (FileNotFoundException) {
+			}
+
+			Assert.AreEqual (assemblyStartCount + 3, AppDomain.CurrentDomain.GetAssemblies ().Length, "#C14");
+		}
+
+		[Test]
+		public void Load_Loaded_Multiple ()
+		{
+			string cultureDir = Path.Combine (tempDir, "nl-BE");
+			if (!Directory.Exists (cultureDir))
+				Directory.CreateDirectory (cultureDir);
+
+			AppDomain ad = CreateTestDomain (tempDir, true);
+			try {
+				CrossDomainTester cdt = CreateCrossDomainTester (ad);
+
+				int assemblyCount = cdt.AssemblyCount;
+
+				// PART A
+
+				AssemblyName aname = new AssemblyName ();
+				aname.Name = "multipleA";
+				aname.Version = new Version (1, 2, 3, 4);
+				cdt.GenerateAssembly (aname, Path.Combine (tempDir, "multipleA.dll"));
+
+				Assert.AreEqual (assemblyCount + 1, cdt.AssemblyCount, "#A1");
+
+				aname = new AssemblyName ();
+				aname.Name = "multipleA";
+				Assert.IsTrue (cdt.AssertLoad (aname), "#A2");
+
+				Assert.AreEqual (assemblyCount + 2, cdt.AssemblyCount, "#A3");
+
+				aname = new AssemblyName ();
+				aname.Name = "multipleA";
+				Assert.IsTrue (cdt.AssertLoad (aname), "#A4");
+
+				aname = new AssemblyName ();
+				aname.Name = "multipleA";
+				aname.CultureInfo = CultureInfo.InvariantCulture;
+				Assert.IsTrue (cdt.AssertLoad (aname), "#A5");
+
+				aname = new AssemblyName ();
+				aname.Name = "multipleA";
+				aname.CultureInfo = CultureInfo.InvariantCulture;
+				Assert.IsTrue (cdt.AssertLoad (aname), "#A6");
+
+				aname = new AssemblyName ();
+				aname.Name = "multipleA";
+				aname.CultureInfo = CultureInfo.InvariantCulture;
+				aname.Version = new Version (1, 2, 3, 4);
+				Assert.IsTrue (cdt.AssertLoad (aname), "#A7");
+
+				aname = new AssemblyName ();
+				aname.Name = "multipleA";
+				aname.CultureInfo = CultureInfo.InvariantCulture;
+				aname.Version = new Version (1, 2, 3, 4);
+				Assert.IsTrue (cdt.AssertLoad (aname), "#A8");
+
+				Assert.AreEqual (assemblyCount + 2, cdt.AssemblyCount, "#A9");
+
+				// PART B
+
+				aname = new AssemblyName ();
+				aname.Name = "multipleB";
+				aname.CultureInfo = new CultureInfo ("nl-BE");
+				aname.Version = new Version (2, 4, 1, 0);
+				cdt.GenerateAssembly (aname, Path.Combine (tempDir, "nl-BE/multipleB.dll"));
+
+				Assert.AreEqual (assemblyCount + 3, cdt.AssemblyCount, "#B1");
+
+				aname = new AssemblyName ();
+				aname.Name = "multipleB";
+				Assert.IsTrue (cdt.AssertLoad (aname), "#B2");
+
+				Assert.AreEqual (assemblyCount + 4, cdt.AssemblyCount, "#B3");
+
+				aname = new AssemblyName ();
+				aname.Name = "multipleB";
+				Assert.IsTrue (cdt.AssertLoad (aname), "#B4");
+
+				aname = new AssemblyName ();
+				aname.Name = "multipleB";
+				aname.CultureInfo = new CultureInfo ("nl-BE");
+				Assert.IsTrue (cdt.AssertLoad (aname), "#B5");
+
+				aname = new AssemblyName ();
+				aname.Name = "multipleB";
+				aname.CultureInfo = new CultureInfo ("nl-BE");
+				Assert.IsTrue (cdt.AssertLoad (aname), "#B6");
+
+				aname = new AssemblyName ();
+				aname.Name = "multipleB";
+				aname.CultureInfo = new CultureInfo ("nl-BE");
+				aname.Version = new Version (2, 4, 1, 0);
+				Assert.IsTrue (cdt.AssertLoad (aname), "#B7");
+
+				aname = new AssemblyName ();
+				aname.Name = "multipleB";
+				aname.CultureInfo = new CultureInfo ("nl-BE");
+				aname.Version = new Version (2, 4, 1, 0);
+				Assert.IsTrue (cdt.AssertLoad (aname), "#B8");
+
+				Assert.AreEqual (assemblyCount + 4, cdt.AssemblyCount, "#B9");
+
+				// PART C
+
+				aname = new AssemblyName ();
+				aname.Name = "multipleC";
+				aname.CultureInfo = new CultureInfo ("nl-BE");
+				aname.Version = new Version (2, 4, 0, 0);
+				aname.KeyPair = new StrongNameKeyPair (keyPair);
+				cdt.GenerateAssembly (aname, Path.Combine (tempDir, "nl-BE/multipleC.dll"));
+
+				Assert.AreEqual (assemblyCount + 5, cdt.AssemblyCount, "#C1");
+
+				aname = new AssemblyName ();
+				aname.Name = "multipleC";
+				aname.CultureInfo = new CultureInfo ("nl-BE");
+				aname.Version = new Version (2, 4, 0, 0);
+				aname.SetPublicKey (publicKey);
+				Assert.IsTrue (cdt.AssertLoad (aname), "#C2");
+
+				Assert.AreEqual (assemblyCount + 6, cdt.AssemblyCount, "#C3");
+
+				aname = new AssemblyName ();
+				aname.Name = "multipleC";
+				aname.CultureInfo = new CultureInfo ("nl-BE");
+				aname.Version = new Version (2, 4, 0, 0);
+				aname.SetPublicKey (publicKey);
+				Assert.IsTrue (cdt.AssertLoad (aname), "#C4");
+
+				Assert.AreEqual (assemblyCount + 6, cdt.AssemblyCount, "#C5");
+			} finally {
+				AppDomain.Unload (ad);
 			}
 		}
 
@@ -961,7 +1122,6 @@ namespace MonoTests.System
 		}
 
 		[Test] // bug #79715
-		[Category ("NotWorking")]
 		public void Load_PartialVersion ()
 		{
 			AppDomain ad = CreateTestDomain (tempDir, true);
@@ -1167,6 +1327,12 @@ namespace MonoTests.System
 				AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
 					aname, AssemblyBuilderAccess.Save, Path.GetDirectoryName (path));
 				ab.Save (Path.GetFileName (path));
+			}
+
+			public int AssemblyCount {
+				get {
+					return AppDomain.CurrentDomain.GetAssemblies ().Length;
+				}
 			}
 
 			public void Load (AssemblyName assemblyRef)

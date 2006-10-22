@@ -1,5 +1,11 @@
 2006-10-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* AppDomainTest.cs: Modified test for bug #79720 to also check the
+	number of loaded assemblies. Added additional test for bug #79720 to
+	ensure no regressions are introduced. Enabled test for bug #79715.
+
+2006-10-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* AppDomainTest.cs: Added tests for bug #79715, #79522, #79720.
 	All marked NotWorking until patches have been approved.
 
