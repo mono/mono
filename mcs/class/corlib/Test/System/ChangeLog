@@ -1,3 +1,8 @@
+2006-10-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AppDomainTest.cs: Added tests for bug #79715, #79522, #79720.
+	All marked NotWorking until patches have been approved.
+
 2006-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* VersionTest.cs: Reworked tests for NUnit 2.2.x.
