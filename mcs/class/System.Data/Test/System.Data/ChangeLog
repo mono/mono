@@ -1,3 +1,9 @@
+
+2006-10-12  Hagit Yidov <hagity@mainsoft.com>
+
+	* DataTableTest.cs : added tests for ReadXmlSchema() and WriteXmlSchema().
+(Some of the tests use following files: own_schema1.xsd, own_schema2.xsd, region.xml, store.xsd)
+
 2006-10-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataRelationTest2.cs: Enabled test for bug #79233.
