@@ -1,3 +1,7 @@
+2006-10-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* VBCodeProviderTest.cs: Mark this as NotWorking since mbas is no more.
+
 2006-08-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* VBCodeProviderTest.cs: Modified tests to verify fix for bug

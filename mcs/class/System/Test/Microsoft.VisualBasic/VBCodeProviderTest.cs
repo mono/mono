@@ -32,6 +32,8 @@ namespace MonoTests.Microsoft.VisualBasic
 	}
 
 	[TestFixture]
+	// mbas no longer exists
+	[Category ("NotWorking")]
 	public class VBCodeProviderTest
 	{
 		private string _tempDir;
