@@ -316,7 +316,7 @@ namespace MonoTests.System.Reflection
 
 			try {
 				// execute test in separate appdomain to allow assembly to be unloaded
-				AppDomain testDomain = CreateTestDomain ();
+				AppDomain testDomain = CreateTestDomain (AppDomain.CurrentDomain.BaseDirectory, false);
 				CrossDomainTester crossDomainTester = CreateCrossDomainTester (testDomain);
 				try {
 					crossDomainTester.bug78464 (assemblyFileName);
@@ -354,7 +354,7 @@ namespace MonoTests.System.Reflection
 					fs.Close ();
 				}
 
-				AppDomain testDomain = CreateTestDomain ();
+				AppDomain testDomain = CreateTestDomain (AppDomain.CurrentDomain.BaseDirectory, false);
 				CrossDomainTester crossDomainTester = CreateCrossDomainTester (testDomain);
 				try {
 					crossDomainTester.bug78465 (assemblyFileName);
@@ -428,7 +428,7 @@ namespace MonoTests.System.Reflection
 				string assemblyFileNameB = Path.Combine (Path.GetTempPath (),
 					"bug78468b.dll");
 
-				AppDomain testDomain = CreateTestDomain ();
+				AppDomain testDomain = CreateTestDomain (AppDomain.CurrentDomain.BaseDirectory, false);
 				CrossDomainTester crossDomainTester = CreateCrossDomainTester (testDomain);
 				try {
 					crossDomainTester.bug78468 (assemblyFileNameB);
@@ -473,24 +473,304 @@ namespace MonoTests.System.Reflection
 		}
 #endif
 
-		private static AppDomain CreateTestDomain ()
+		[Test]
+		[Category ("NotWorking")] // patch for bug #79720 must be committed first
+		public void Load_Culture ()
 		{
-			return AppDomain.CreateDomain ("CompileFromDom", AppDomain.CurrentDomain.Evidence,
-				AppDomain.CurrentDomain.SetupInformation);
+			string tempDir = Path.Combine (Path.GetTempPath (),
+				"MonoTests.System.Reflection.AssemblyTest");
+			string cultureTempDir = Path.Combine (tempDir, "nl-BE");
+			if (!Directory.Exists (cultureTempDir))
+				Directory.CreateDirectory (cultureTempDir);
+			cultureTempDir = Path.Combine (tempDir, "en-US");
+			if (!Directory.Exists (cultureTempDir))
+				Directory.CreateDirectory (cultureTempDir);
+
+
+			AppDomain ad = CreateTestDomain (tempDir, true);
+			try {
+				CrossDomainTester cdt = CreateCrossDomainTester (ad);
+
+				// PART A
+
+				AssemblyName aname = new AssemblyName ();
+				aname.Name = "culturea";
+				cdt.GenerateAssembly (aname, Path.Combine (tempDir, "culturea.dll"));
+
+				aname = new AssemblyName ();
+				aname.Name = "culturea";
+				Assert.IsTrue (cdt.AssertLoad(aname), "#A1");
+
+				aname = new AssemblyName ();
+				aname.Name = "culturea";
+				aname.CultureInfo = new CultureInfo ("nl-BE");
+				Assert.IsTrue (cdt.AssertFileNotFoundException (aname), "#A2");
+
+				aname = new AssemblyName ();
+				aname.Name = "culturea";
+				aname.CultureInfo = CultureInfo.InvariantCulture;
+				Assert.IsTrue (cdt.AssertLoad(aname), "#A3");
+
+				// PART B
+
+				aname = new AssemblyName ();
+				aname.Name = "cultureb";
+				aname.CultureInfo = new CultureInfo ("nl-BE");
+				cdt.GenerateAssembly (aname, Path.Combine (tempDir, "cultureb.dll"));
+
+				aname = new AssemblyName ();
+				aname.Name = "cultureb";
+				aname.CultureInfo = new CultureInfo ("nl-BE");
+				Assert.IsTrue (cdt.AssertFileNotFoundException (aname), "#B1");
+
+				aname = new AssemblyName ();
+				aname.Name = "cultureb";
+				Assert.IsTrue (cdt.AssertLoad (aname), "#B2");
+
+				aname = new AssemblyName ();
+				aname.Name = "cultureb";
+				aname.CultureInfo = new CultureInfo ("en-US");
+				Assert.IsTrue (cdt.AssertFileNotFoundException (aname), "#B3");
+
+				// PART C
+
+				aname = new AssemblyName ();
+				aname.Name = "culturec";
+				aname.CultureInfo = new CultureInfo ("nl-BE");
+				cdt.GenerateAssembly (aname, Path.Combine (tempDir, "nl-BE/culturec.dll"));
+
+				aname = new AssemblyName ();
+				aname.Name = "culturec";
+				aname.CultureInfo = new CultureInfo ("nl-BE");
+				Assert.IsTrue (cdt.AssertLoad (aname), "#C1");
+
+				aname = new AssemblyName ();
+				aname.Name = "culturec";
+				Assert.IsTrue (cdt.AssertFileNotFoundException (aname), "#C2");
+
+				aname = new AssemblyName ();
+				aname.Name = "culturec";
+				aname.CultureInfo = CultureInfo.InvariantCulture;
+				Assert.IsTrue (cdt.AssertFileNotFoundException (aname), "#C3");
+
+				// PART D
+
+				aname = new AssemblyName ();
+				aname.Name = "cultured";
+				aname.CultureInfo = new CultureInfo ("nl-BE");
+				cdt.GenerateAssembly (aname, Path.Combine (tempDir, "en-US/cultured.dll"));
+
+				aname = new AssemblyName ();
+				aname.Name = "cultured";
+				aname.CultureInfo = new CultureInfo ("nl-BE");
+				Assert.IsTrue (cdt.AssertFileNotFoundException (aname), "#D1");
+
+				aname = new AssemblyName ();
+				aname.Name = "cultured";
+				Assert.IsTrue (cdt.AssertFileNotFoundException (aname), "#D2");
+
+				aname = new AssemblyName ();
+				aname.Name = "cultured";
+				aname.CultureInfo = CultureInfo.InvariantCulture;
+				Assert.IsTrue (cdt.AssertFileNotFoundException (aname), "#D3");
+			} finally {
+				AppDomain.Unload (ad);
+				if (Directory.Exists (tempDir))
+					Directory.Delete (tempDir, true);
+			}
+		}
+
+		[Test] // bug #79712
+#if NET_2_0
+		[Category ("NotWorking")] // in non-default domain, MS throws FileNotFoundException
+#else
+		[Category ("NotWorking")]
+#endif
+		public void Load_Culture_Mismatch ()
+		{
+			string tempDir = Path.Combine (Path.GetTempPath (),
+				"MonoTests.System.Reflection.AssemblyTest");
+			string cultureTempDir = Path.Combine (tempDir, "en-US");
+			if (!Directory.Exists (cultureTempDir))
+				Directory.CreateDirectory (cultureTempDir);
+
+			AppDomain ad = CreateTestDomain (tempDir, true);
+			try {
+				CrossDomainTester cdt = CreateCrossDomainTester (ad);
+
+				// PART A
+
+				AssemblyName aname = new AssemblyName ();
+				aname.Name = "bug79712a";
+				aname.CultureInfo = new CultureInfo ("nl-BE");
+				cdt.GenerateAssembly (aname, Path.Combine (tempDir, "bug79712a.dll"));
+
+				aname = new AssemblyName ();
+				aname.Name = "bug79712a";
+				aname.CultureInfo = CultureInfo.InvariantCulture;
+#if NET_2_0
+				Assert.IsTrue (cdt.AssertFileNotFoundException (aname), "#A1");
+#else
+				Assert.IsTrue (cdt.AssertFileLoadException (aname), "#A2");
+#endif
+
+				// PART B
+
+				aname = new AssemblyName ();
+				aname.Name = "bug79712b";
+				aname.CultureInfo = new CultureInfo ("nl-BE");
+				cdt.GenerateAssembly (aname, Path.Combine (tempDir, "en-US/bug79712b.dll"));
+
+				aname = new AssemblyName ();
+				aname.Name = "bug79712b";
+				aname.CultureInfo = new CultureInfo ("en-US");
+#if NET_2_0
+				Assert.IsTrue (cdt.AssertFileNotFoundException (aname), "#B1");
+#else
+				Assert.IsTrue (cdt.AssertFileLoadException (aname), "#B2");
+#endif
+			} finally {
+				AppDomain.Unload (ad);
+				if (Directory.Exists (tempDir))
+					Directory.Delete (tempDir, true);
+			}
+		}
+
+		[Test] // bug #79715
+		[Category ("NotWorking")]
+		public void Load_PartialVersion ()
+		{
+			string tempDir = Path.Combine (Path.GetTempPath (),
+				"MonoTests.System.Reflection.AssemblyTest");
+			if (!Directory.Exists (tempDir))
+				Directory.CreateDirectory (tempDir);
+
+			AppDomain ad = CreateTestDomain (tempDir, true);
+			try {
+				CrossDomainTester cdt = CreateCrossDomainTester (ad);
+
+				AssemblyName aname = new AssemblyName ();
+				aname.Name = "bug79715";
+				aname.Version = new Version (1, 2, 3, 4);
+				cdt.GenerateAssembly (aname, Path.Combine (tempDir, "bug79715.dll"));
+
+				aname = new AssemblyName ();
+				aname.Name = "bug79715";
+				aname.Version = new Version (1, 2);
+				Assert.IsTrue (cdt.AssertLoad (aname), "#A1");
+				Assert.IsTrue (cdt.AssertLoad (aname.FullName), "#A2");
+
+				aname = new AssemblyName ();
+				aname.Name = "bug79715";
+				aname.Version = new Version (1, 2, 3);
+				Assert.IsTrue (cdt.AssertLoad (aname), "#B1");
+				Assert.IsTrue (cdt.AssertLoad (aname.FullName), "#B2");
+
+				aname = new AssemblyName ();
+				aname.Name = "bug79715";
+				aname.Version = new Version (1, 2, 3, 4);
+				Assert.IsTrue (cdt.AssertLoad (aname), "#C1");
+				Assert.IsTrue (cdt.AssertLoad (aname.FullName), "#C2");
+			} finally {
+				AppDomain.Unload (ad);
+				if (Directory.Exists (tempDir))
+					Directory.Delete (tempDir, true);
+			}
+		}
+
+		private static AppDomain CreateTestDomain (string baseDirectory, bool assemblyResolver)
+		{
+			AppDomainSetup setup = new AppDomainSetup ();
+			setup.ApplicationBase = baseDirectory;
+			setup.ApplicationName = "testdomain";
+
+			AppDomain ad = AppDomain.CreateDomain ("testdomain", 
+				AppDomain.CurrentDomain.Evidence, setup);
+
+			if (assemblyResolver) {
+				Assembly ea = Assembly.GetExecutingAssembly ();
+				ad.CreateInstanceFrom (ea.CodeBase,
+					typeof (AssemblyResolveHandler).FullName,
+					false,
+					BindingFlags.Public | BindingFlags.Instance,
+					null,
+					new object [] { ea.Location, ea.FullName },
+					CultureInfo.InvariantCulture,
+					null,
+					null);
+			}
+
+			return ad;
 		}
 
 		private static CrossDomainTester CreateCrossDomainTester (AppDomain domain)
 		{
 			Type testerType = typeof (CrossDomainTester);
-
 			return (CrossDomainTester) domain.CreateInstanceAndUnwrap (
 				testerType.Assembly.FullName, testerType.FullName, false,
 				BindingFlags.Public | BindingFlags.Instance, null, new object[0],
-				CultureInfo.InvariantCulture, new object[0], domain.Evidence);
+				CultureInfo.InvariantCulture, new object[0], null);
 		}
 
 		private class CrossDomainTester : MarshalByRefObject
 		{
+			public void GenerateAssembly (AssemblyName aname, string path)
+			{
+				AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+					aname, AssemblyBuilderAccess.Save, Path.GetDirectoryName (path));
+				ab.Save (Path.GetFileName (path));
+			}
+
+			public void Load (AssemblyName assemblyRef)
+			{
+				Assembly.Load (assemblyRef);
+			}
+
+			public void LoadFrom (string assemblyFile)
+			{
+				Assembly.LoadFrom (assemblyFile);
+			}
+
+			public bool AssertLoad (AssemblyName assemblyRef)
+			{
+				try {
+					Assembly.Load (assemblyRef);
+					return true;
+				} catch {
+					return false;
+				}
+			}
+
+			public bool AssertLoad (string assemblyString)
+			{
+				try {
+					Assembly.Load (assemblyString);
+					return true;
+				} catch {
+					return false;
+				}
+			}
+
+			public bool AssertFileLoadException (AssemblyName assemblyRef)
+			{
+				try {
+					Assembly.Load (assemblyRef);
+					return false;
+				} catch (FileLoadException) {
+					return true;
+				}
+			}
+
+			public bool AssertFileNotFoundException (AssemblyName assemblyRef)
+			{
+				try {
+					Assembly.Load (assemblyRef);
+					return false;
+				} catch (FileNotFoundException) {
+					return true;
+				}
+			}
+
 			public void bug78464 (string assemblyFileName)
 			{
 				AssemblyName assemblyName = new AssemblyName ();
@@ -563,6 +843,30 @@ namespace MonoTests.System.Reflection
 				Assert.IsNotNull (s, "#B10");
 				s.Close ();
 			}
+		}
+
+		[Serializable ()]
+		private class AssemblyResolveHandler
+		{
+			public AssemblyResolveHandler (string assemblyFile, string assemblyName)
+			{
+				_assemblyFile = assemblyFile;
+				_assemblyName = assemblyName;
+
+				AppDomain.CurrentDomain.AssemblyResolve +=
+					new ResolveEventHandler (ResolveAssembly);
+			}
+
+			private Assembly ResolveAssembly (Object sender, ResolveEventArgs args)
+			{
+				if (args.Name == _assemblyName)
+					return Assembly.LoadFrom (_assemblyFile);
+
+				return null;
+			}
+
+			private readonly string _assemblyFile;
+			private readonly string _assemblyName;
 		}
 	}
 }
