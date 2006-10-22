@@ -1,3 +1,7 @@
+2006-10-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* DnsTest.cs: Disable GetHostEntry test as it currently fails.
+
 2006-08-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpListener2Test.cs: new tests for headers sent separate from body

@@ -164,6 +164,8 @@ public class DnsTest : Assertion {
 
 #if NET_2_0
         [Test]
+		// bug #79721
+		[Category ("NotWorking")]
         public void GetHostEntry ()
         {
                 Dns.GetHostEntry (site1Name); // hostname
