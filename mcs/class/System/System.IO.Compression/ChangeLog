@@ -1,3 +1,8 @@
+2006-10-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* DeflateStream.cs: Throw a more meaningfull exception when zlib initialization
+	fails.
+
 2006-09-28  Andrew Skiba  <andrews@mainsoft.com>
 
 	* DeflateStream.cs: TARGET_JVM

@@ -87,7 +87,7 @@ namespace System.IO.Compression {
 			this.sized_buffer = Marshal.AllocHGlobal (BUFFER_SIZE);
 			this.z_stream = create_z_stream (mode, gzip);
 			if (z_stream == IntPtr.Zero) {
-				throw new OutOfMemoryException ();
+				throw new NotImplementedException ("Failed to initialize zlib. You probably have an old zlib installed. Version 1.2.0.4 or later is required.");
 			}
 			this.open = true;
 			if (mode == CompressionMode.Compress) {
