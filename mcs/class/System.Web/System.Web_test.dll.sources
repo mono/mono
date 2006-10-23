@@ -150,6 +150,7 @@ System.Web.UI.WebControls/CommandFieldTest.cs
 System.Web.UI.WebControls/CompareValidatorTest.cs
 System.Web.UI.WebControls/CompleteWizardStepTest.cs
 System.Web.UI.WebControls/CompositeControlTest.cs
+System.Web.UI.WebControls/CompositeDataBoundControlTest.cs
 System.Web.UI.WebControls/ContentTest.cs
 System.Web.UI.WebControls/ControlParameterTest.cs
 System.Web.UI.WebControls/CookieParameterTest.cs

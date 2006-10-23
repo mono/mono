@@ -51,14 +51,14 @@ namespace System.Web.UI.WebControls
 
 		protected internal override void CreateChildControls ()
 		{
-			base.CreateChildControls ();
+			Controls.Clear ();
 
 			object itemCount = ViewState ["_ItemCount"];
 			if (itemCount != null) {
 				object [] data = new object [(int) itemCount];
 				ViewState ["_ItemCount"] = CreateChildControls (data, false);
 			}
-			else
+			else if (RequiresDataBinding)
 				EnsureDataBound ();
 		}
 		
