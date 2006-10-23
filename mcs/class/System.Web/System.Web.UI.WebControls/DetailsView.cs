@@ -1815,12 +1815,19 @@ namespace System.Web.UI.WebControls
 			table.Render (writer);
 		}
 
-
-		[MonoTODO]
 		PostBackOptions IPostBackContainer.GetPostBackOptions (IButtonControl control)
 		{
-			PostBackOptions pbo = new PostBackOptions (this, control.CommandName + "$" + control.CommandArgument);
-			return pbo;
+			if (control == null)
+				throw new ArgumentNullException ("control");
+
+			if (control.CausesValidation)
+				throw new InvalidOperationException ("A button that causes validation in DetailsView '" + ID + "' is attempting to use the container GridView as the post back target.  The button should either turn off validation or use itself as the post back container.");
+
+			PostBackOptions options = new PostBackOptions (this);
+			options.Argument = control.CommandName + "$" + control.CommandArgument;
+			options.RequiresJavaScriptProtocol = true;
+
+			return options;
 		}
 	}
 }

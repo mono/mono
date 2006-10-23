@@ -1,5 +1,9 @@
 2006-10-23 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* DetailsViewTest.cs: new tests were added
+			
+2006-10-23 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* GridViewTest.cs: new tests were added
 			
 2006-10-23 Merav Sudri <meravs@mainosft.com>

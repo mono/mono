@@ -1878,6 +1878,69 @@ namespace MonoTests.System.Web.UI.WebControls
 			view.ChangeMode (DetailsViewMode.Edit);
 			Assert.AreEqual (DetailsViewMode.Edit, view.CurrentMode, "DetailsView_CurrentMode#2");
 		}
+
+		[Test]
+		public void DetailsView_GetPostBackOptions () {
+			DetailsView dv = new DetailsView ();
+			dv.Page = new Page ();
+			IButtonControl btn = new Button ();
+			btn.CausesValidation = false;
+			Assert.IsFalse (btn.CausesValidation);
+			Assert.AreEqual (String.Empty, btn.CommandName);
+			Assert.AreEqual (String.Empty, btn.CommandArgument);
+			Assert.AreEqual (String.Empty, btn.PostBackUrl);
+			Assert.AreEqual (String.Empty, btn.ValidationGroup);
+			PostBackOptions options = ((IPostBackContainer) dv).GetPostBackOptions (btn);
+			Assert.IsFalse (options.PerformValidation);
+			Assert.IsFalse (options.AutoPostBack);
+			Assert.IsFalse (options.TrackFocus);
+			Assert.IsTrue (options.ClientSubmit);
+			Assert.IsTrue (options.RequiresJavaScriptProtocol);
+			Assert.AreEqual ("$", options.Argument);
+			Assert.AreEqual (null, options.ActionUrl);
+			Assert.AreEqual (null, options.ValidationGroup);
+
+			btn.ValidationGroup = "VG";
+			btn.CommandName = "CMD";
+			btn.CommandArgument = "ARG";
+			btn.PostBackUrl = "Page.aspx";
+			Assert.IsFalse (btn.CausesValidation);
+			Assert.AreEqual ("CMD", btn.CommandName);
+			Assert.AreEqual ("ARG", btn.CommandArgument);
+			Assert.AreEqual ("Page.aspx", btn.PostBackUrl);
+			Assert.AreEqual ("VG", btn.ValidationGroup);
+			options = ((IPostBackContainer) dv).GetPostBackOptions (btn);
+			Assert.IsFalse (options.PerformValidation);
+			Assert.IsFalse (options.AutoPostBack);
+			Assert.IsFalse (options.TrackFocus);
+			Assert.IsTrue (options.ClientSubmit);
+			Assert.IsTrue (options.RequiresJavaScriptProtocol);
+			Assert.AreEqual ("CMD$ARG", options.Argument);
+			Assert.AreEqual (null, options.ActionUrl);
+			Assert.AreEqual (null, options.ValidationGroup);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void DetailsView_GetPostBackOptions_CausesValidation () {
+			DetailsView dv = new DetailsView ();
+			dv.Page = new Page ();
+			IButtonControl btn = new Button ();
+			Assert.IsTrue (btn.CausesValidation);
+			Assert.AreEqual (String.Empty, btn.CommandName);
+			Assert.AreEqual (String.Empty, btn.CommandArgument);
+			Assert.AreEqual (String.Empty, btn.PostBackUrl);
+			Assert.AreEqual (String.Empty, btn.ValidationGroup);
+			PostBackOptions options = ((IPostBackContainer) dv).GetPostBackOptions (btn);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void DetailsView_GetPostBackOptions_Null_Argument () {
+			DetailsView dv = new DetailsView ();
+			dv.Page = new Page ();
+			PostBackOptions options = ((IPostBackContainer) dv).GetPostBackOptions (null);
+		}
 	}
 
 	public class DTemplate : ITemplate
@@ -2018,6 +2081,7 @@ namespace MonoTests.System.Web.UI.WebControls
 	}
 }
 #endif
+
 
 
 
