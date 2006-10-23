@@ -1,3 +1,9 @@
+
+Mon Oct 23 02:49:08 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* sgen-gc.c: fix some warnings and start adding support for
+	complete object removal on domain unload.
+
 2006-10-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* assembly.c: build_assembly_name should not consider a version
