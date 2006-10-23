@@ -44,11 +44,12 @@ namespace System.Web.UI.WebControls
 		public DataControlButton (Control container)
 		{
 			this.container = container;
+			CausesValidation = false;
 		}
 		
 		public DataControlButton (Control container, string text, string image, string command, string commandArg, bool allowCallback)
+			: this (container)
 		{
-			this.container = container;
 			Text = text;
 			ImageUrl = image;
 			CommandName = command;

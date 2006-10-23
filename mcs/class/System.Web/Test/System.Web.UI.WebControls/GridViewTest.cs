@@ -1758,14 +1758,68 @@ namespace MonoTests.System.Web.UI.WebControls
 		/////		   GRIDVIEW   POSTBACK           //////
 		///////////////////////////////////////////////////////
 
-		/// <summary>
-		/// Urgent Note!
-		/// All postback event are failed on reason
-		/// System.NotImplementedException: 
-		/// The requested feature is not implemented.
-		/// At System.Web.UI.WebControls.GridView.System.Web.UI.WebControls.IPostBackContainer.GetPostBackOptions (IButtonControl control)
-		/// [0x00000] in C:\cygwin\monobuild\mcs\class\System.Web\System.Web.UI.WebControls\GridView.cs:1891 
-		/// </summary>
+		[Test]
+		public void GridView_GetPostBackOptions () {
+			GridView gv = new GridView ();
+			gv.Page = new Page ();
+			IButtonControl btn = new Button ();
+			btn.CausesValidation = false;
+			Assert.IsFalse (btn.CausesValidation);
+			Assert.AreEqual (String.Empty, btn.CommandName);
+			Assert.AreEqual (String.Empty, btn.CommandArgument);
+			Assert.AreEqual (String.Empty, btn.PostBackUrl);
+			Assert.AreEqual (String.Empty, btn.ValidationGroup);
+			PostBackOptions options = ((IPostBackContainer) gv).GetPostBackOptions (btn);
+			Assert.IsFalse (options.PerformValidation);
+			Assert.IsFalse (options.AutoPostBack);
+			Assert.IsFalse (options.TrackFocus);
+			Assert.IsTrue (options.ClientSubmit);
+			Assert.IsTrue (options.RequiresJavaScriptProtocol);
+			Assert.AreEqual ("$", options.Argument);
+			Assert.AreEqual (null, options.ActionUrl);
+			Assert.AreEqual (null, options.ValidationGroup);
+
+			btn.ValidationGroup = "VG";
+			btn.CommandName = "CMD";
+			btn.CommandArgument = "ARG";
+			btn.PostBackUrl = "Page.aspx";
+			Assert.IsFalse (btn.CausesValidation);
+			Assert.AreEqual ("CMD", btn.CommandName);
+			Assert.AreEqual ("ARG", btn.CommandArgument);
+			Assert.AreEqual ("Page.aspx", btn.PostBackUrl);
+			Assert.AreEqual ("VG", btn.ValidationGroup);
+			options = ((IPostBackContainer) gv).GetPostBackOptions (btn);
+			Assert.IsFalse (options.PerformValidation);
+			Assert.IsFalse (options.AutoPostBack);
+			Assert.IsFalse (options.TrackFocus);
+			Assert.IsTrue (options.ClientSubmit);
+			Assert.IsTrue (options.RequiresJavaScriptProtocol);
+			Assert.AreEqual ("CMD$ARG", options.Argument);
+			Assert.AreEqual (null, options.ActionUrl);
+			Assert.AreEqual (null, options.ValidationGroup);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void GridView_GetPostBackOptions_CausesValidation () {
+			GridView gv = new GridView ();
+			gv.Page = new Page ();
+			IButtonControl btn = new Button ();
+			Assert.IsTrue (btn.CausesValidation);
+			Assert.AreEqual (String.Empty, btn.CommandName);
+			Assert.AreEqual (String.Empty, btn.CommandArgument);
+			Assert.AreEqual (String.Empty, btn.PostBackUrl);
+			Assert.AreEqual (String.Empty, btn.ValidationGroup);
+			PostBackOptions options = ((IPostBackContainer) gv).GetPostBackOptions (btn);
+		}
+		
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void GridView_GetPostBackOptions_Null_Argument () {
+			GridView gv = new GridView ();
+			gv.Page = new Page ();
+			PostBackOptions options = ((IPostBackContainer) gv).GetPostBackOptions (null);
+		}
 
 		[Test]
 		[Category ("NunitWeb")]
@@ -2262,5 +2316,6 @@ namespace MonoTests.System.Web.UI.WebControls
 }
 
 #endif
+
 
 

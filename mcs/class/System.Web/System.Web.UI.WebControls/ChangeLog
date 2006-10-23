@@ -1,5 +1,11 @@
 2006-10-23 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* GridView.cs: fixed: IPostBackContainer.GetPostBackOptions method.
+	* DataControlButton.cs:	
+	* CommandField.cs: CausesValidation feature must be implemented other way
+
+2006-10-23 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* CompositeDataBoundControl.cs: fixed: CreateChildControls flow.
 
 2006-10-18 Igor Zelmanovich <igorz@mainsoft.com>
