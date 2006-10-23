@@ -4644,7 +4644,7 @@ namespace Mono.CSharp {
 				if (!may_fail && errors == Report.Errors) {
 					string report_name = me.Name;
 					if (report_name == ".ctor")
-						report_name = me.DeclaringType.ToString ();
+						report_name = TypeManager.CSharpName (me.DeclaringType);
                                         
 #if GMCS_SOURCE
 					//
@@ -7313,20 +7313,20 @@ namespace Mono.CSharp {
 				rc.DeclContainer.TypeBuilder, expr_type, expr_type, LookupIdentifier,
 				MemberTypes.NestedType, BindingFlags.Public | BindingFlags.NonPublic, loc);
 			if (member_lookup == null) {
-				int errors = Report.Errors;
-				MemberLookupFailed (
-					rc.DeclContainer.TypeBuilder, expr_type, expr_type,
-					LookupIdentifier, null, false, loc);
+				if (silent)
+					return null;
 
-				if (!silent && errors == Report.Errors) {
+		                member_lookup = MemberLookup(
+                		    rc.DeclContainer.TypeBuilder, expr_type, expr_type, LookupIdentifier,
+                    			MemberTypes.All, BindingFlags.Public | BindingFlags.NonPublic, loc);
+
+		                if (member_lookup == null) {
 					Report.Error (426, loc, "The nested type `{0}' does not exist in the type `{1}'",
 						      Identifier, new_expr.GetSignatureForError ());
-				}
-				return null;
-			}
-
-			if (!(member_lookup is TypeExpr)) {
-				new_expr.Error_UnexpectedKind (rc.DeclContainer, "type", loc);
+				} else {
+    				// TODO: Report.SymbolRelatedToPreviousError
+				    member_lookup.Error_UnexpectedKind (null, "type", loc);
+    				}
 				return null;
 			}
 

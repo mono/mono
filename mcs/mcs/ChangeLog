@@ -1,3 +1,12 @@
+2006-10-23  Marek Safar  <marek.safar@seznam.cz>
+
+	A fix for bug #79231
+	* ecore.cs (ResolveAsBaseTerminal): Removed redundant error test.
+	* expression.cs (OverloadResolve): Always convert type name for
+	an error message.
+	(ResolveNamespaceOrType): Don't confuse a nested type with any 
+	other member.
+
 2006-10-18  Martin Baulig <martin@ximian.com>
 
 	* anonymous.cs: Propagate the IsStatic state, fixes the crasher in banshee.
