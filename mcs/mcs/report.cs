@@ -308,7 +308,7 @@ namespace Mono.CSharp {
 		static public void SymbolRelatedToPreviousError (MemberInfo mi)
 		{
 			Type dt = TypeManager.DropGenericTypeArguments (mi.DeclaringType);
-			TypeContainer temp_ds = TypeManager.LookupTypeContainer (dt);
+			DeclSpace temp_ds = TypeManager.LookupDeclSpace (dt);
 			if (temp_ds == null) {
 				SymbolRelatedToPreviousError (dt.Assembly.Location, TypeManager.GetFullNameSignature (mi));
 			} else {

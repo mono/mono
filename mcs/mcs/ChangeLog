@@ -1,5 +1,11 @@
 2006-10-23  Marek Safar  <marek.safar@seznam.cz>
 
+	A fix for bug #79724
+	* report.cs (SymbolRelatedToPreviousError): Uses DeclSpace instead of
+	TypeContainer for type lookup.
+
+2006-10-23  Marek Safar  <marek.safar@seznam.cz>
+
 	A fix for bug #79231
 	* ecore.cs (ResolveAsBaseTerminal): Removed redundant error test.
 	* expression.cs (OverloadResolve): Always convert type name for
