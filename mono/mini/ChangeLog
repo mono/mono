@@ -1,3 +1,9 @@
+2006-10-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* driver.c (mini_regression): Fix --regression with AOT.
+
+	* aot-compiler.c (emit_method_info): Fix AOT on amd64.
+
 2006-10-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (GET_CONTEXT): Correct the definition of this for sparc/linux.
