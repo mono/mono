@@ -1,3 +1,7 @@
+2006-10-23 Merav Sudri <meravs@mainosft.com>
+
+	* FormParameterTest.cs and ParameterTest.cs were added
+
 2006-10-23 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* CompositeDataBoundControlTest.cs: new Test

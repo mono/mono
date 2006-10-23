@@ -183,6 +183,7 @@ System.Web.UI.WebControls/FileUploadTest.cs
 System.Web.UI.WebControls/FontInfoTest.cs
 System.Web.UI.WebControls/FontNamesConverterTest.cs
 System.Web.UI.WebControls/FontUnitTest.cs
+System.Web.UI.WebControls/FormParameterTest.cs
 System.Web.UI.WebControls/FormViewTest.cs
 System.Web.UI.WebControls/FormViewRowTest.cs
 System.Web.UI.WebControls/GridViewTest.cs
@@ -216,6 +217,7 @@ System.Web.UI.WebControls/MultiViewTest.cs
 System.Web.UI.WebControls/PagedDataSourceTest.cs
 System.Web.UI.WebControls/PagerSettingsTest.cs
 System.Web.UI.WebControls/PanelTest.cs
+System.Web.UI.WebControls/ParameterTest.cs
 System.Web.UI.WebControls/PolygonHotSpotTest.cs
 System.Web.UI.WebControls/QueryStringParameterTest.cs
 System.Web.UI.WebControls/RadioButtonListTest.cs
