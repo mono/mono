@@ -1820,6 +1820,140 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 #endregion
 	}
+
+public class FormViewDataObject
+	{
+
+		public static DataTable ds = CreateDataTable();
+
+		public static DataTable Select()
+		{
+
+			return ds;
+
+		}
+
+
+
+		public static DataTable Delete(string ID, string FName, string LName)
+		{
+
+			DataRow dr = ds.Rows.Find(ID);
+
+			if (dr != null)
+			{
+
+				ds.Rows.Remove(dr);
+
+			}
+
+			return ds;
+
+		}
+
+
+
+		public static DataTable Insert(string ID, string FName, string LName)
+		{
+
+			DataRow dr = ds.NewRow();
+			dr["ID"] = ID;
+			dr["FName"] = FName;
+			dr["LName"] = LName;
+			ds.Rows.Add(dr);
+			return ds;
+		}
+
+
+
+		public static DataTable Update(string ID, string FName, string LName)
+		{
+			DataRow dr = ds.Rows.Find(ID);
+			if (dr == null)
+			{
+				Label lbl = new Label();
+				lbl.Text = "ID doesn't exist ";
+				return ds;
+			}
+			dr["FName"] = FName;
+			dr["LName"] = LName;
+			return ds;
+
+		}
+
+
+
+		public static DataTable CreateDataTable()
+		{
+
+			DataTable aTable = new DataTable("A");
+			DataColumn dtCol;
+			DataRow dtRow;
+
+			// Create ID column and add to the DataTable.
+
+			dtCol = new DataColumn();
+			dtCol.DataType = Type.GetType("System.Int32");
+			dtCol.ColumnName = "ID";
+			dtCol.AutoIncrement = true;
+			dtCol.Caption = "ID";
+			dtCol.ReadOnly = true;
+			dtCol.Unique = true;
+			aTable.Columns.Add(dtCol);
+
+
+
+			// Create Name column and add to the table
+
+			dtCol = new DataColumn();
+			dtCol.DataType = Type.GetType("System.String");
+			dtCol.ColumnName = "FName";
+			dtCol.AutoIncrement = false;
+			dtCol.Caption = "First Name";
+			dtCol.ReadOnly = false;
+			dtCol.Unique = false;
+			aTable.Columns.Add(dtCol);
+
+
+
+			// Create Last Name column and add to the table.
+
+			dtCol = new DataColumn();
+			dtCol.DataType = Type.GetType("System.String");
+			dtCol.ColumnName = "LName";
+			dtCol.AutoIncrement = false;
+			dtCol.Caption = "Last Name";
+			dtCol.ReadOnly = false;
+			dtCol.Unique = false;
+			aTable.Columns.Add(dtCol);
+
+
+
+			// Create three rows to the table
+
+			dtRow = aTable.NewRow();
+			dtRow["ID"] = 1001;
+			dtRow["FName"] = "Mahesh";
+			dtRow["LName"] = "Chand";
+			aTable.Rows.Add(dtRow);
+
+			dtRow = aTable.NewRow();
+			dtRow["ID"] = 1002;
+			dtRow["FName"] = "Melanie";
+			dtRow["LName"] = "Talmadge";
+			aTable.Rows.Add(dtRow);
+
+			dtRow = aTable.NewRow();
+			dtRow["ID"] = 1003;
+			dtRow["FName"] = "Vinay";
+			dtRow["LName"] = "Bansal";
+			aTable.Rows.Add(dtRow);
+
+			aTable.PrimaryKey = new DataColumn[] { aTable.Columns["ID"] };
+			return aTable;
+
+		}
+	}
 }
 
 
