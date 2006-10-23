@@ -91,7 +91,7 @@
 		</Reference>
 		<Reference Include="nunit.framework, Version=0.0.0.0, Culture=neutral">
 			<SpecificVersion>False</SpecificVersion>
-      <Private>True</Private>
+			<HintPath>..\..\..\..\..\nunit20\nunit-console\bin\Debug_Java20\nunit.framework.dll</HintPath>
 			<Private>True</Private>
 		</Reference>
 		<Reference Include="rt, Version=0.0.0.0, Culture=neutral">
