@@ -1,5 +1,9 @@
 2006-10-23 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* FormView.cs: fixed: IPostBackContainer.GetPostBackOptions method.
+
+2006-10-23 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* DetailsView.cs: fixed: IPostBackContainer.GetPostBackOptions method.
 
 2006-10-23 Igor Zelmanovich <igorz@mainsoft.com>
