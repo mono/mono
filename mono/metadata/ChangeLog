@@ -1,4 +1,8 @@
 
+Mon Oct 23 03:06:06 CEST 2006 Paolo Molaro <lupus@ximian.com>
+
+	* sgengc.c: small cleanup of timer code.
+
 Mon Oct 23 02:49:08 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* sgen-gc.c: fix some warnings and start adding support for
