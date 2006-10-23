@@ -44,14 +44,14 @@ namespace System.Web.UI
 		private bool clientSubmit;
 		private bool performValidation;
 		private string validationGroup;
-		
-		public PostBackOptions (Control control) : this (control, null, null, false, true, false, 
-								true, false, null)
+
+		public PostBackOptions (Control control)
+			: this (control, null, null, false, false, false, true, false, null)
 		{
 		}
 
-		public PostBackOptions (Control control, string argument) : this (control, argument, null, false, 
-										true, false, true, false, null)
+		public PostBackOptions (Control control, string argument)
+			: this (control, argument, null, false, false, false, true, false, null)
 		{
 		}
 
@@ -60,14 +60,14 @@ namespace System.Web.UI
 					bool isValidationPerformed, string validatingGroup)
 		{
 			this.control = control;
-			this.argument = argument == null ? String.Empty : argument;
-			this.actionUrl = actionUrl == null ? String.Empty : actionUrl;
+			this.argument = argument;
+			this.actionUrl = actionUrl;
 			this.autoPostBack = isAutoPostBack;
 			this.requiresJavaScriptProtocol = isJavaScriptProtocolRequired;
 			this.trackFocus = isTrackFocus;
 			this.clientSubmit = isClientSubmit;
 			this.performValidation = isValidationPerformed;
-			this.validationGroup = validatingGroup == null ? String.Empty : validatingGroup;
+			this.validationGroup = validatingGroup;
 		}
 
 		[DefaultValue ("")]

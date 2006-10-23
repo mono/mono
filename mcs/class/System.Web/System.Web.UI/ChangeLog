@@ -1,3 +1,7 @@
+2006-10-23 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* PostBackOptions.cs: fixed: default values of properties 
+
 2006-10-22 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* CssStyleCollection.cs:

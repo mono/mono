@@ -118,6 +118,7 @@ System.Web.UI/HtmlTextWriterTest.cs
 System.Web.UI/MinimizableAttributeTypeConverterTest.cs
 System.Web.UI/OutputCacheParametersTest.cs
 System.Web.UI/PageTest.cs
+System.Web.UI/PostBackOptionsTest.cs
 System.Web.UI/PropertyConverterTest.cs
 System.Web.UI/StateBagTest.cs
 System.Web.UI/TemplateControlTest.cs
