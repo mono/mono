@@ -74,7 +74,6 @@ namespace System.Windows.Forms
 	{
 		public static ImageList SmallIcons = new ImageList();
 		public static ImageList LargeIcons = new ImageList();
-		public static ImageList ThumbnailIL = new ImageList ();
 		
 		private static EPlatformHandler platform = EPlatformHandler.Default;
 		
@@ -504,11 +503,6 @@ namespace System.Windows.Forms
 			
 			return gtk_icon_theme_has_icon (default_icon_theme, name);
 		}
-	}
-		
-	internal class ThumbNailer
-	{
-		public static ThumbNailer TN = new ThumbNailer ();
 	}
 }
 
