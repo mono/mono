@@ -276,43 +276,51 @@ namespace System.Web.UI.WebControls
 			TableRow row = new TableRow ();
 			table.Rows.Add (row);
 
-			if (Mode == PagerButtons.NextPrevious || Mode == PagerButtons.NextPreviousFirstLast)
-			{
-				if (currentPage > 0) {
-					if (Mode == PagerButtons.NextPreviousFirstLast)
-						row.Cells.Add (CreateCell (FirstPageText, FirstPageImageUrl, "Page", "First"));
-					row.Cells.Add (CreateCell (PreviousPageText, PreviousPageImageUrl, "Page", "Prev"));
-				}
-				if (currentPage < pageCount - 1) {
-					row.Cells.Add (CreateCell (NextPageText, NextPageImageUrl, "Page", "Next"));
-					if (Mode == PagerButtons.NextPreviousFirstLast)
-						row.Cells.Add (CreateCell (LastPageText, LastPageImageUrl, "Page", "Last"));
-				}
+			int buttonCount = (Mode == PagerButtons.Numeric || Mode == PagerButtons.NumericFirstLast) ? PageButtonCount : 1;
+			int first = buttonCount * (currentPage / buttonCount);
+			int last = first + buttonCount;
+			if (last > pageCount) {
+				last = pageCount;
+				if (last - first < buttonCount)
+					first = last - buttonCount;
+				if (first < 0)
+					first = 0;
 			}
-			else if (Mode == PagerButtons.Numeric || Mode == PagerButtons.NumericFirstLast)
-			{
-				int pbc = PageButtonCount;
-				int cp = currentPage + 1;
-				int pbp = pbc <= cp ? cp / pbc : 0;
-				int first = cp < pbc ? 0 : (cp + (pbp % pbc) - (pbc + pbp)) + 1;
-				int last = first + pbc;
-				if (last >= pageCount) last = pageCount;
-				
-				if (first > 0) {
-					if (Mode == PagerButtons.NumericFirstLast)
-						row.Cells.Add (CreateCell (FirstPageText, FirstPageImageUrl, "Page", "First"));
+
+			// First button
+			if (Mode == PagerButtons.NumericFirstLast || Mode == PagerButtons.NextPreviousFirstLast) {
+				if (first > 0)
+					row.Cells.Add (CreateCell (FirstPageText, FirstPageImageUrl, "Page", "First"));
+			}
+
+			// Prev button
+			if (Mode == PagerButtons.NextPrevious || Mode == PagerButtons.NextPreviousFirstLast) {
+				if (first > 0)
 					row.Cells.Add (CreateCell (PreviousPageText, PreviousPageImageUrl, "Page", "Prev"));
-				}
-				
+			}
+
+			// Numbers
+			if (Mode == PagerButtons.Numeric || Mode == PagerButtons.NumericFirstLast) {
+				if (first > 0)
+					row.Cells.Add (CreateCell ("...", string.Empty, "Page", first.ToString ()));
 				for (int n = first; n < last; n++)
 					row.Cells.Add (CreateCell ((n + 1).ToString (), string.Empty, (n != currentPage) ? "Page" : "", (n + 1).ToString ()));
-				
-				if (last < pageCount - 1) {
-					row.Cells.Add (CreateCell (NextPageText, NextPageImageUrl, "Page", "Next"));
-					if (Mode == PagerButtons.NumericFirstLast)
-						row.Cells.Add (CreateCell (LastPageText, LastPageImageUrl, "Page", "Last"));
-				}
+				if (last < pageCount)
+					row.Cells.Add (CreateCell ("...", string.Empty, "Page", (last + 1).ToString ()));
 			}
+
+			// Next button
+			if (Mode == PagerButtons.NextPrevious || Mode == PagerButtons.NextPreviousFirstLast) {
+				if (last < pageCount)
+					row.Cells.Add (CreateCell (NextPageText, NextPageImageUrl, "Page", "Next"));
+			}
+
+			// Last button
+			if (Mode == PagerButtons.NumericFirstLast || Mode == PagerButtons.NextPreviousFirstLast) {
+				if (last < pageCount)
+					row.Cells.Add (CreateCell (LastPageText, LastPageImageUrl, "Page", "Last"));
+			}
+			
 			return table;
 		}
 

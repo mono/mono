@@ -1309,6 +1309,60 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+		[Category("NunitWeb")]
+		public void GridView_RenderAllowPaging2 () {
+			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderAllowPaging2)).Run ();
+			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
+			string OriginControlHtml = @"<div>
+										<table cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;"">
+											<tr>
+												<th scope=""col"">Item</th>
+											</tr><tr>
+												<td>France</td>
+											</tr><tr>
+												<td>Italy</td>
+											</tr><tr>
+												<td><table border=""0"">
+													<tr>
+														<td><a href=""javascript:__doPostBack('ctl01','Page$1')"">1</a></td><td><span>2</span></td><td><a href=""javascript:__doPostBack('ctl01','Page$3')"">3</a></td><td><a href=""javascript:__doPostBack('ctl01','Page$4')"">4</a></td><td><a href=""javascript:__doPostBack('ctl01','Page$5')"">...</a></td><td><a href=""javascript:__doPostBack('ctl01','Page$Last')"">&gt;&gt;</a></td>
+													</tr>
+												</table></td>
+											</tr>
+										</table>
+									</div>";
+			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "RenderDefault");
+		}
+
+		public static void RenderAllowPaging2 (Page p) {
+			ArrayList myds = new ArrayList ();
+			myds.Add ("Norway");
+			myds.Add ("Sweden");
+			myds.Add ("France");
+			myds.Add ("Italy");
+			myds.Add ("Norway");
+			myds.Add ("Sweden");
+			myds.Add ("France");
+			myds.Add ("Italy");
+			myds.Add ("Norway");
+			myds.Add ("Sweden");
+			myds.Add ("France");
+			myds.Add ("Italy");
+			LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
+			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
+			PokerGridView b = new PokerGridView ();
+			p.Form.Controls.Add (lcb);
+			p.Form.Controls.Add (b);
+			b.AllowPaging = true;
+			b.PageSize = 2;
+			b.PageIndex = 1;
+			b.PagerSettings.PageButtonCount = 4;
+			b.PagerSettings.Mode= PagerButtons.NumericFirstLast;
+			b.DataSource = myds;
+			b.DataBind ();
+			p.Form.Controls.Add (lce);
+		}
+
+		[Test]
 		public void GridView_RenderProperty ()
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderProperty)).Run ();
@@ -2311,6 +2365,7 @@ namespace MonoTests.System.Web.UI.WebControls
 }
 
 #endif
+
 
 
 

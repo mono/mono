@@ -1,5 +1,9 @@
 2006-10-24 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* PagerSettings.cs: fixed: CreatePagerControl.
+
+2006-10-24 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* CommandField.cs: fixed: 
 	considers CaseValidation, ValidationGroup, ButtonType.
 	* DataControlButton.cs: refactoring:

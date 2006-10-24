@@ -1,5 +1,9 @@
 2006-10-24 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* GridViewTest.cs: new test was added
+			
+2006-10-24 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* GridViewTest.cs: removed NotWorking attributes
 			
 2006-10-23 Igor Zelmanovich <igorz@mainsoft.com>
