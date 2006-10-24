@@ -1,3 +1,9 @@
+2006-10-24  Marek Safar  <marek.safar@seznam.cz>
+
+	A fix for bug #79666
+	expression.cs (ArrayCreation.GetAttributableValue): An initializer can be
+	ignored when is optimized (= default value) as its value is already set.
+
 2006-10-23  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for bug #79724

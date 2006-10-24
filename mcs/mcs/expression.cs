@@ -6560,8 +6560,10 @@ namespace Mono.CSharp {
 			for (int i = 0; i < ret.Length; ++i)
 			{
 				Expression e = (Expression)array_data [i];
-				if (e == null) // Is null when initializer is optimized away
-					e = (Expression)initializers [i];
+
+				// Is null when an initializer is optimized (value == predefined value)
+				if (e == null) 
+					continue;
 
 				if (!e.GetAttributableValue (array_element_type, out element_value)) {
 					value = null;
