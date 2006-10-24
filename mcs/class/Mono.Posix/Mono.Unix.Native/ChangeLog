@@ -1,3 +1,21 @@
+2006-10-24  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* HeaderAttribute.cs: Removed.  Use create-native-map command-line arguments
+	  instead of HeaderAttribute.Includes & HeaderAttribute.Defines.
+	* make-map.cs: Moved to mono-tools/create-native-map/src/create-native-map.cs.
+	* MapAttribute.cs: Moved from ../Mono.Unix.  Can now be
+	  specified on Class, Delegeate, Enum, Field, & Struct (instead of just
+	  Enum).  Add NativeType property.
+	* NativeConvert.generated.cs: Flush (adds new .TryCopy methods to copy [Map]'d
+	  structures).
+	* NativeConvert.cs: Add .TryCopy methods for Statvfs.
+	* Syscall.cs: Remove HeaderAttribute declaration; Markup [Map]'d structure 
+	  members with [Map] attributes (or MapAttribute subclasses) to specify the 
+	  native types they correspond to (used by create-native-map).
+	* TypeAttributes.cs: Added; internal subclasses of MapAttribute to help
+	  markup structures (e.g. so I can use [blkcnt_t] instead of 
+	  [Map ("blkcnt_t")], thus minimizing the liklihood of a spelling error).
+
 2006-09-15  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Syscall.cs: "Remove" crypt(3), encrypt(3), setkey(3).  These use an

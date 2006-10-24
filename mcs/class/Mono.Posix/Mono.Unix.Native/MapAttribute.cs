@@ -1,8 +1,8 @@
 //
-// IncludeAttribute.cs
+// MapAttribute.cs
 //
 // Author:
-//   Jonathan Pryor (jonpryor@vt.edu)
+//   Miguel de Icaza (miguel@gnome.org)
 //
 // (C) Novell, Inc.  
 //
@@ -29,22 +29,26 @@
 //
 using System;
 
-namespace Mono.Unix.Native {
+[AttributeUsage (
+		AttributeTargets.Class    |
+		AttributeTargets.Delegate |
+		AttributeTargets.Enum     |
+		AttributeTargets.Field    |
+		AttributeTargets.Struct)]
+internal class MapAttribute : Attribute {
+	private string nativeType;
 
-	[AttributeUsage (AttributeTargets.Assembly)]
-	internal class HeaderAttribute : Attribute {
-		string includes = "";
-		string defines = "";
-		
-		public string Includes {
-			get {return includes;}
-			set {includes = value;}
-		}
+	public MapAttribute ()
+	{
+	}
 
-		public string Defines {
-			get {return defines;}
-			set {defines = value;}
-		}
+	public MapAttribute (string nativeType)
+	{
+		this.nativeType = nativeType;
+	}
+
+	public string NativeType {
+		get {return nativeType;}
 	}
 }
 

@@ -6,7 +6,7 @@
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
 // (C) 2003 Novell, Inc.
-// (C) 2004-2005 Jonathan Pryor
+// (C) 2004-2006 Jonathan Pryor
 //
 // This file implements the low-level syscall interface to the POSIX
 // subsystem.
@@ -59,27 +59,6 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 using Mono.Unix.Native;
-
-[assembly:Mono.Unix.Native.HeaderAttribute (
-	Includes=
-		"sys/types.h," + 
-		"sys/stat.h," + 
-		"ah:sys/poll.h," + 
-		"ah:sys/wait.h," +
-		"ah:sys/statvfs.h," +
-		"ah:sys/xattr.h," +
-		"ah:sys/mman.h," +
-		"unistd.h," + 
-		"fcntl.h," + 
-		"signal.h," + 
-		"ah:poll.h," + 
-		"ah:grp.h," + 
-		"errno.h," + 
-		"ah:syslog.h",
-	Defines=
-		"_GNU_SOURCE," +
-		"_XOPEN_SOURCE"
-)]
 
 namespace Mono.Unix.Native {
 
@@ -737,9 +716,9 @@ namespace Mono.Unix.Native {
 		public LockType         l_type;    // Type of lock: F_RDLCK, F_WRLCK, F_UNLCK
 		[CLSCompliant (false)]
 		public SeekFlags        l_whence;  // How to interpret l_start
-		public /* off_t */ long l_start;   // Starting offset for lock
-		public /* off_t */ long l_len;     // Number of bytes to lock
-		public /* pid_t */ int  l_pid;     // PID of process blocking our lock (F_GETLK only)
+		[off_t] public long     l_start;   // Starting offset for lock
+		[off_t] public long     l_len;     // Number of bytes to lock
+		[pid_t] public int      l_pid;     // PID of process blocking our lock (F_GETLK only)
 
 		public override int GetHashCode ()
 		{
@@ -776,6 +755,7 @@ namespace Mono.Unix.Native {
 		}
 	}
 
+	[Map ("struct pollfd")]
 	public struct Pollfd
 #if NET_2_0
 		: IEquatable <Pollfd>
@@ -816,33 +796,35 @@ namespace Mono.Unix.Native {
 		}
 	}
 
+	[Map ("struct stat")]
 	public struct Stat
 #if NET_2_0
 		: IEquatable <Stat>
 #endif
 	{
 		[CLSCompliant (false)]
-		public  /* dev_t */     ulong   st_dev;     // device
+		[dev_t]     public ulong    st_dev;     // device
 		[CLSCompliant (false)]
-		public  /* ino_t */     ulong   st_ino;     // inode
+		[ino_t]     public  ulong   st_ino;     // inode
 		[CLSCompliant (false)]
-		public  FilePermissions         st_mode;    // protection
+		public  FilePermissions     st_mode;    // protection
 		[CLSCompliant (false)]
-		private uint                    _padding_;  // padding for structure alignment
+		[NonSerialized]
+		private uint                _padding_;  // padding for structure alignment
 		[CLSCompliant (false)]
-		public  /* nlink_t */   ulong   st_nlink;   // number of hard links
+		[nlink_t]   public  ulong   st_nlink;   // number of hard links
 		[CLSCompliant (false)]
-		public  /* uid_t */     uint    st_uid;     // user ID of owner
+		[uid_t]     public  uint    st_uid;     // user ID of owner
 		[CLSCompliant (false)]
-		public  /* gid_t */     uint    st_gid;     // group ID of owner
+		[gid_t]     public  uint    st_gid;     // group ID of owner
 		[CLSCompliant (false)]
-		public  /* dev_t */     ulong   st_rdev;    // device type (if inode device)
-		public  /* off_t */     long    st_size;    // total size, in bytes
-		public  /* blksize_t */ long    st_blksize; // blocksize for filesystem I/O
-		public  /* blkcnt_t */  long    st_blocks;  // number of blocks allocated
-		public  /* time_t */    long    st_atime;   // time of last access
-		public  /* time_t */    long    st_mtime;   // time of last modification
-		public  /* time_t */    long    st_ctime;   // time of last status change
+		[dev_t]     public  ulong   st_rdev;    // device type (if inode device)
+		[off_t]     public  long    st_size;    // total size, in bytes
+		[blksize_t] public  long    st_blksize; // blocksize for filesystem I/O
+		[blkcnt_t]  public  long    st_blocks;  // number of blocks allocated
+		[time_t]    public  long    st_atime;   // time of last access
+		[time_t]    public  long    st_mtime;   // time of last modification
+		[time_t]    public  long    st_ctime;   // time of last status change
 
 		public override int GetHashCode ()
 		{
@@ -909,6 +891,8 @@ namespace Mono.Unix.Native {
 		}
 	}
 
+	// `struct statvfs' isn't portable, so don't generate To/From methods.
+	[Map]
 	[CLSCompliant (false)]
 	public struct Statvfs
 #if NET_2_0
@@ -917,12 +901,12 @@ namespace Mono.Unix.Native {
 	{
 		public                  ulong f_bsize;	  // file system block size
 		public                  ulong f_frsize;   // fragment size
-		public /* fsblkcnt_t */ ulong f_blocks;   // size of fs in f_frsize units
-		public /* fsblkcnt_t */ ulong f_bfree;    // # free blocks
-		public /* fsblkcnt_t */ ulong f_bavail;   // # free blocks for non-root
-		public /* fsfilcnt_t */ ulong f_files;    // # inodes
-		public /* fsfilcnt_t */ ulong f_ffree;    // # free inodes
-		public /* fsfilcnt_t */ ulong f_favail;   // # free inodes for non-root
+		[fsblkcnt_t] public     ulong f_blocks;   // size of fs in f_frsize units
+		[fsblkcnt_t] public     ulong f_bfree;    // # free blocks
+		[fsblkcnt_t] public     ulong f_bavail;   // # free blocks for non-root
+		[fsfilcnt_t] public     ulong f_files;    // # inodes
+		[fsfilcnt_t] public     ulong f_ffree;    // # free inodes
+		[fsfilcnt_t] public     ulong f_favail;   // # free inodes for non-root
 		public                  ulong f_fsid;     // file system id
 		public MountFlags             f_flag;     // mount flags
 		public                  ulong f_namemax;  // maximum filename length
@@ -986,13 +970,14 @@ namespace Mono.Unix.Native {
 		}
 	}
 
+	[Map ("struct timeval")]
 	public struct Timeval
 #if NET_2_0
 		: IEquatable <Timeval>
 #endif
 	{
-		public  /* time_t */      long    tv_sec;   // seconds
-		public  /* suseconds_t */ long    tv_usec;  // microseconds
+		[time_t]      public long tv_sec;   // seconds
+		[suseconds_t] public long tv_usec;  // microseconds
 
 		public override int GetHashCode ()
 		{
@@ -1023,6 +1008,7 @@ namespace Mono.Unix.Native {
 		}
 	}
 
+	[Map ("struct timezone")]
 	public struct Timezone
 #if NET_2_0
 		: IEquatable <Timezone>
@@ -1065,8 +1051,8 @@ namespace Mono.Unix.Native {
 		: IEquatable <Utimbuf>
 #endif
 	{
-		public  /* time_t */      long    actime;   // access time
-		public  /* time_t */      long    modtime;  // modification time
+		[time_t] public long    actime;   // access time
+		[time_t] public long    modtime;  // modification time
 
 		public override int GetHashCode ()
 		{
@@ -1803,8 +1789,8 @@ namespace Mono.Unix.Native {
 		public static extern int rewinddir (IntPtr dir);
 
 		private struct _Dirent {
-			public /* ino_t */ ulong  d_ino;
-			public /* off_t */ long   d_off;
+			[ino_t] public ulong      d_ino;
+			[off_t] public long       d_off;
 			public ushort             d_reclen;
 			public byte               d_type;
 			public IntPtr             d_name;
@@ -1938,6 +1924,7 @@ namespace Mono.Unix.Native {
 		//
 		// <fstab.h>  -- COMPLETE
 		//
+		[Map]
 		private struct _Fstab {
 			public IntPtr fs_spec;
 			public IntPtr fs_file;
@@ -2067,11 +2054,12 @@ namespace Mono.Unix.Native {
 			return setgroups ((ulong) list.Length, list);
 		}
 
+		[Map]
 		private struct _Group
 		{
 			public IntPtr           gr_name;
 			public IntPtr           gr_passwd;
-			public /* gid_t */ uint gr_gid;
+			[gid_t] public uint     gr_gid;
 			public int              _gr_nmem_;
 			public IntPtr           gr_mem;
 			public IntPtr           _gr_buf_;
@@ -2239,12 +2227,13 @@ namespace Mono.Unix.Native {
 		//
 		// SKIPPING: getpw(3): it's dangerous.  Use getpwuid(3) instead.
 
+		[Map]
 		private struct _Passwd
 		{
 			public IntPtr           pw_name;
 			public IntPtr           pw_passwd;
-			public /* uid_t */ uint pw_uid;
-			public /* gid_t */ uint pw_gid;
+			[uid_t] public uint     pw_uid;
+			[gid_t] public uint     pw_gid;
 			public IntPtr           pw_gecos;
 			public IntPtr           pw_dir;
 			public IntPtr           pw_shell;

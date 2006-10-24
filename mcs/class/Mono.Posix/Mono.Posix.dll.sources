@@ -8,7 +8,6 @@
 ./Mono.Unix/FileHandleOperations.cs
 ./Mono.Unix/FileSpecialAttributes.cs
 ./Mono.Unix/FileTypes.cs
-./Mono.Unix/MapAttribute.cs
 ./Mono.Unix/PeerCred.cs
 ./Mono.Unix/StdioFileStream.cs
 ./Mono.Unix/UnixClient.cs
@@ -31,11 +30,12 @@
 ./Mono.Unix/UnixUserInfo.cs
 ./Mono.Unix.Native/CdeclFunction.cs
 ./Mono.Unix.Native/FileNameMarshaler.cs
-./Mono.Unix.Native/HeaderAttribute.cs
+./Mono.Unix.Native/MapAttribute.cs
 ./Mono.Unix.Native/NativeConvert.cs
 ./Mono.Unix.Native/NativeConvert.generated.cs
 ./Mono.Unix.Native/Stdlib.cs
 ./Mono.Unix.Native/Syscall.cs
+./Mono.Unix.Native/TypeAttributes.cs
 ./Mono.Posix/Catalog.cs
 ./Mono.Posix/PeerCred.cs
 ./Mono.Posix/Syscall.cs

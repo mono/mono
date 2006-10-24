@@ -10,16 +10,11 @@ TEST_MCS_FLAGS = /r:Mono.Posix.dll /r:System.dll /nowarn:0219,0618
 
 include ../../build/library.make
 
-EXTRA_DISTFILES = Mono.Unix.Native/make-map.cs
+update-mappings:
+	cp `pkg-config --variable=Sources create-native-map` Mono.Unix.Native
+	cp `pkg-config --variable=Programs create-native-map` Mono.Unix.Native
+	mono --debug Mono.Unix.Native/create-native-map.exe \
+		--library=MonoPosixHelper \
+		--rename-namespace Mono.Unix.Native=Mono.Posix \
+		$(the_lib) Mono.Unix.Native/NativeConvert.generated
 
-all-local: Mono.Unix.Native/make-map.exe 
-
-Mono.Unix.Native/make-map.exe: Mono.Unix.Native/make-map.cs $(the_lib)
-	cp $(the_lib) Mono.Unix.Native/
-ifneq ($(PLATFORM),win32)
-	$(CSCOMPILE) -debug+ -out:Mono.Unix.Native/make-map.exe -r:Mono.Posix.dll Mono.Unix.Native/make-map.cs
-else
-	$(CSCOMPILE) -debug+ -out:Mono.Unix.Native/make-map.exe -r:Mono.Posix.dll Mono.Unix.Native\\make-map.cs
-endif
-
-CLEAN_FILES = Mono.Unix.Native/make-map.exe Mono.Unix.Native/Mono.Posix.dll

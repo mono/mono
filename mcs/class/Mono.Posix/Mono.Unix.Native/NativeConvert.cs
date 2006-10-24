@@ -299,6 +299,22 @@ namespace Mono.Unix.Native {
 				throw new ArgumentException (fopen_mode);
 			return fopen_mode;
 		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromStatvfs")]
+		private static extern int FromStatvfs (ref Statvfs source, IntPtr destination);
+
+		public static bool TryCopy (ref Statvfs source, IntPtr destination)
+		{
+			return FromStatvfs (ref source, destination) == 0;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToStatvfs")]
+		private static extern int ToStatvfs (IntPtr source, out Statvfs destination);
+
+		public static bool TryCopy (IntPtr source, out Statvfs destination)
+		{
+			return ToStatvfs (source, out destination) == 0;
+		}
 	}
 }
 
