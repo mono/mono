@@ -1045,7 +1045,7 @@ namespace System.Windows.Forms {
 					}
 				}
 
-				if (recurse && TypeDescriptor.GetConverter(property.PropertyType).GetPropertiesSupported()) {
+				if (recurse && property.Converter != null && property.Converter.GetPropertiesSupported()) {
 					object[] subobjs = new object[objs.Length];
 					for (int i = 0; i < objs.Length; i ++)
 						subobjs[i] = property.GetValue (objs[i]);
