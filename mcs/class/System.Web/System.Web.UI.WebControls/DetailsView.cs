@@ -1741,18 +1741,17 @@ namespace System.Web.UI.WebControls
 			return sw.ToString ();
 		}
 
-		[MonoTODO]
 		protected virtual string GetCallbackScript (IButtonControl buttonControl, string argument)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		string ICallbackContainer.GetCallbackScript (IButtonControl control, string argument)
 		{
 			if (EnablePagingCallbacks)
 				return "javascript:DetailsView_ClientEvent (\"" + ClientID + "\",\"" + control.CommandName + "$" + control.CommandArgument + "\"); return false;";
 			else
 				return null;
+		}
+		
+		string ICallbackContainer.GetCallbackScript (IButtonControl control, string argument)
+		{
+			return GetCallbackScript (control, argument);
 		}
 
 		protected override void OnPagePreLoad (object sender, EventArgs e)
