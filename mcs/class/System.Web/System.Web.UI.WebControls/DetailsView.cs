@@ -1744,7 +1744,7 @@ namespace System.Web.UI.WebControls
 		protected virtual string GetCallbackScript (IButtonControl buttonControl, string argument)
 		{
 			if (EnablePagingCallbacks)
-				return "javascript:DetailsView_ClientEvent (\"" + ClientID + "\",\"" + control.CommandName + "$" + control.CommandArgument + "\"); return false;";
+				return "javascript:DetailsView_ClientEvent (\"" + ClientID + "\",\"" + buttonControl.CommandName + "$" + buttonControl.CommandArgument + "\"); return false;";
 			else
 				return null;
 		}
