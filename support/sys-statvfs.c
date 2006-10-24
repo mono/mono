@@ -4,7 +4,7 @@
  * Authors:
  *   Jonathan Pryor (jonpryor@vt.edu)
  *
- * Copyright (C) 2004 Jonathan Pryor
+ * Copyright (C) 2004-2006 Jonathan Pryor
  */
 
 #include <errno.h>
@@ -27,35 +27,51 @@
 
 G_BEGIN_DECLS
 
-struct Mono_Posix_Statvfs {
-	guint64         f_bsize;    /* file system block size */
-	guint64         f_frsize;   /* fragment size */
-	mph_fsblkcnt_t  f_blocks;   /* size of fs in f_frsize units */
-	mph_fsblkcnt_t  f_bfree;    /* # free blocks */
-	mph_fsblkcnt_t  f_bavail;   /* # free blocks for non-root */
-	mph_fsfilcnt_t  f_files;    /* # inodes */
-	mph_fsfilcnt_t  f_ffree;    /* # free inodes */
-	mph_fsfilcnt_t  f_favail;   /* # free inodes for non-root */
-	guint64         f_fsid;     /* file system id */
-	guint64         f_flag;     /* mount flags */
-	guint64         f_namemax;  /* maximum filename length */
-};
-
 #ifdef HAVE_SYS_STATVFS_H
-static void
-copy_statvfs (struct Mono_Posix_Statvfs *to, struct statvfs *from)
+int
+Mono_Posix_ToStatvfs (void *_from, struct Mono_Posix_Statvfs *to)
 {
-  to->f_bsize   = from->f_bsize;
-  to->f_frsize  = from->f_frsize;
-  to->f_blocks  = from->f_blocks;
-  to->f_bfree   = from->f_bfree;
-  to->f_bavail  = from->f_bavail;
-  to->f_files   = from->f_files;
-  to->f_ffree   = from->f_ffree;
-  to->f_favail  = from->f_favail;
-  to->f_fsid    = from->f_fsid;
-  Mono_Posix_ToMountFlags (from->f_flag, &to->f_flag);
-  to->f_namemax =	from->f_namemax;
+	struct statvfs *from = _from;
+
+	to->f_bsize   = from->f_bsize;
+	to->f_frsize  = from->f_frsize;
+	to->f_blocks  = from->f_blocks;
+	to->f_bfree   = from->f_bfree;
+	to->f_bavail  = from->f_bavail;
+	to->f_files   = from->f_files;
+	to->f_ffree   = from->f_ffree;
+	to->f_favail  = from->f_favail;
+	to->f_fsid    = from->f_fsid;
+	to->f_namemax =	from->f_namemax;
+
+	if (Mono_Posix_ToMountFlags (from->f_flag, &to->f_flag) != 0)
+		return -1;
+
+	return 0;
+}
+
+int
+Mono_Posix_FromStatvfs (struct Mono_Posix_Statvfs *from, void *_to)
+{
+	struct statvfs *to = _to;
+	guint64 flag;
+
+	to->f_bsize   = from->f_bsize;
+	to->f_frsize  = from->f_frsize;
+	to->f_blocks  = from->f_blocks;
+	to->f_bfree   = from->f_bfree;
+	to->f_bavail  = from->f_bavail;
+	to->f_files   = from->f_files;
+	to->f_ffree   = from->f_ffree;
+	to->f_favail  = from->f_favail;
+	to->f_fsid    = from->f_fsid;
+	to->f_namemax =	from->f_namemax;
+
+	if (Mono_Posix_FromMountFlags (from->f_flag, &flag) != 0)
+		return -1;
+	to->f_flag = flag;
+
+	return 0;
 }
 #endif /* ndef HAVE_SYS_STATVFS_H */
 
@@ -76,7 +92,7 @@ Mono_Posix_Syscall_statvfs (const char *path, struct Mono_Posix_Statvfs *buf)
 	}
 
 	if ((r = statvfs (path, &s)) == 0)
-		copy_statvfs (buf, &s);
+		r = Mono_Posix_ToStatvfs (&s, buf);
 
 	return r;
 }
@@ -95,7 +111,7 @@ Mono_Posix_Syscall_fstatvfs (gint32 fd, struct Mono_Posix_Statvfs *buf)
 	}
 
 	if ((r = fstatvfs (fd, &s)) == 0)
-		copy_statvfs (buf, &s);
+		r = Mono_Posix_ToStatvfs (&s, buf);
 
 	return r;
 }
@@ -108,21 +124,52 @@ Mono_Posix_Syscall_fstatvfs (gint32 fd, struct Mono_Posix_Statvfs *buf)
  */
 
 #if (defined (HAVE_STATFS) || defined (HAVE_FSTATFS)) && !defined (HAVE_STATVFS)
-static void
-copy_statfs (struct Mono_Posix_Statvfs *to, struct statfs *from)
+int
+Mono_Posix_ToStatvfs (void *_from, struct Mono_Posix_Statvfs *to)
 {
-  to->f_bsize   = from->f_bsize;
-  to->f_frsize  = from->f_bsize;
-  to->f_blocks  = from->f_blocks;
-  to->f_bfree   = from->f_bfree;
-  to->f_bavail  = from->f_bavail;
-  to->f_files   = from->f_files;
-  to->f_ffree   = from->f_ffree;
-  to->f_favail  = from->f_ffree; /* OSX doesn't have f_avail */
-  Mono_Posix_ToMountFlags (from->f_flags, &to->f_flag);
+	struct statfs *from = _from;
+
+	to->f_bsize   = from->f_bsize;
+	to->f_frsize  = from->f_bsize;
+	to->f_blocks  = from->f_blocks;
+	to->f_bfree   = from->f_bfree;
+	to->f_bavail  = from->f_bavail;
+	to->f_files   = from->f_files;
+	to->f_ffree   = from->f_ffree;
+	to->f_favail  = from->f_ffree; /* OSX doesn't have f_avail */
+
 	// from->f_fsid is an int32[2], to->f_fsid is a uint64, 
 	// so this shouldn't lose anything.
 	memcpy (&to->f_fsid, &from->f_fsid, sizeof(to->f_fsid));
+
+	if (Mono_Posix_ToMountFlags (from->f_flags, &to->f_flag) != 0)
+		return -1;
+
+	return 0;
+}
+
+int
+Mono_Posix_FromStatvfs (struct Mono_Posix_Statvfs *from, void *to)
+{
+	struct statfs *to = _to;
+
+	to->f_bsize   = from->f_bsize;
+	to->f_frsize  = from->f_bsize;
+	to->f_blocks  = from->f_blocks;
+	to->f_bfree   = from->f_bfree;
+	to->f_bavail  = from->f_bavail;
+	to->f_files   = from->f_files;
+	to->f_ffree   = from->f_ffree;
+	to->f_favail  = from->f_ffree; /* OSX doesn't have f_avail */
+
+	// from->f_fsid is an int32[2], to->f_fsid is a uint64, 
+	// so this shouldn't lose anything.
+	memcpy (&to->f_fsid, &from->f_fsid, sizeof(to->f_fsid));
+
+	if (Mono_Posix_FromMountFlags (from->f_flags, &to->f_flag) != 0)
+		return -1;
+
+	return 0;
 }
 
 static void
@@ -150,8 +197,8 @@ Mono_Posix_Syscall_statvfs (const char *path, struct Mono_Posix_Statvfs *buf)
 		return -1;
 	}
 
-	if ((r = statfs (path, &s)) == 0) {
-		copy_statfs (buf, &s);
+	if ((r = statfs (path, &s)) == 0 &&
+			(r = Mono_Posix_ToStatvfs (&s, buf)) == 0) {
 		set_namemax (path, buf);
 	}
 
@@ -171,8 +218,8 @@ Mono_Posix_Syscall_fstatvfs (gint32 fd, struct Mono_Posix_Statvfs *buf)
 		return -1;
 	}
 
-	if ((r = fstatfs (fd, &s)) == 0) {
-		copy_statfs (buf, &s);
+	if ((r = statfs (path, &s)) == 0 &&
+			(r = Mono_Posix_ToStatvfs (&s, buf)) == 0) {
 		set_fnamemax (fd, buf);
 	}
 

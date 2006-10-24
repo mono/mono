@@ -4,13 +4,14 @@
  * Authors:
  *   Jonathan Pryor (jonpryor@vt.edu)
  *
- * Copyright (C) 2004-2005 Jonathan Pryor
+ * Copyright (C) 2004-2006 Jonathan Pryor
  */
 
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "map.h"
 #include "mph.h"
 
 G_BEGIN_DECLS
@@ -30,7 +31,7 @@ Mono_Posix_Syscall_L_cuserid (void)
 #endif /* ndef PLATFORM_WIN32 */
 
 mph_size_t
-Mono_Posix_Stdlib_fread (void *ptr, mph_size_t size, mph_size_t nmemb, void *stream)
+Mono_Posix_Stdlib_fread (unsigned char *ptr, mph_size_t size, mph_size_t nmemb, void *stream)
 {
 	mph_return_if_size_t_overflow (size);
 	mph_return_if_size_t_overflow (nmemb);
@@ -39,7 +40,7 @@ Mono_Posix_Stdlib_fread (void *ptr, mph_size_t size, mph_size_t nmemb, void *str
 }
 
 mph_size_t
-Mono_Posix_Stdlib_fwrite (void *ptr, mph_size_t size, mph_size_t nmemb, void *stream)
+Mono_Posix_Stdlib_fwrite (unsigned char *ptr, mph_size_t size, mph_size_t nmemb, void *stream)
 {
 	mph_return_if_size_t_overflow (size);
 	mph_return_if_size_t_overflow (nmemb);

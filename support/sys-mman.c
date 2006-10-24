@@ -4,7 +4,7 @@
  * Authors:
  *   Jonathan Pryor (jonpryor@vt.edu)
  *
- * Copyright (C) 2004 Jonathan Pryor
+ * Copyright (C) 2004-2006 Jonathan Pryor
  */
 
 #define _XOPEN_SOURCE 600
@@ -27,7 +27,7 @@ Mono_Posix_Syscall_mmap (void *start, mph_size_t length, int prot, int flags,
 	mph_return_val_if_size_t_overflow (length, MAP_FAILED);
 	mph_return_val_if_off_t_overflow (offset, MAP_FAILED);
 
-	if (Mono_Posix_FromMmapProt (prot, &_prot) == -1)
+	if (Mono_Posix_FromMmapProts (prot, &_prot) == -1)
 		return MAP_FAILED;
 	if (Mono_Posix_FromMmapFlags (flags, &_flags) == -1)
 		return MAP_FAILED;
@@ -49,7 +49,7 @@ Mono_Posix_Syscall_mprotect (void *start, mph_size_t len, int prot)
 	int _prot;
 	mph_return_if_size_t_overflow (len);
 
-	if (Mono_Posix_FromMmapProt (prot, &_prot) == -1)
+	if (Mono_Posix_FromMmapProts (prot, &_prot) == -1)
 		return -1;
 
 	return mprotect (start, (size_t) len, _prot);
@@ -102,11 +102,11 @@ Mono_Posix_Syscall_mremap (void *old_address, mph_size_t old_size,
 #endif /* def HAVE_MREMAP */
 
 int
-Mono_Posix_Syscall_mincore (void *start, mph_size_t length, void *vec)
+Mono_Posix_Syscall_mincore (void *start, mph_size_t length, unsigned char *vec)
 {
 	mph_return_if_size_t_overflow (length);
 
-	return mincore (start, (size_t) length, (unsigned char*) vec);
+	return mincore (start, (size_t) length, vec);
 }
 
 #ifdef HAVE_POSIX_MADVISE
@@ -132,7 +132,7 @@ Mono_Posix_Syscall_remap_file_pages (void *start, mph_size_t size,
 	mph_return_if_size_t_overflow (size);
 	mph_return_if_ssize_t_overflow (pgoff);
 
-	if (Mono_Posix_FromMmapProt (prot, &_prot) == -1)
+	if (Mono_Posix_FromMmapProts (prot, &_prot) == -1)
 		return -1;
 	if (Mono_Posix_FromMmapFlags (flags, &_flags) == -1)
 		return -1;

@@ -16,16 +16,6 @@
 
 G_BEGIN_DECLS
 
-struct Mono_Posix_Timeval {
-	/* time_t */      mph_time_t  tv_sec;   /* seconds */
-	/* suseconds_t */ gint64      tv_usec;  /* microseconds */
-};
-
-struct Mono_Posix_Timezone {
-	int tz_minuteswest;  /* minutes W of Greenwich */
-	int tz_dsttime;      /* ignored */
-};
-
 gint32
 Mono_Posix_Syscall_gettimeofday (
 	struct Mono_Posix_Timeval *tv,

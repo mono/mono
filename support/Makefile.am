@@ -86,9 +86,40 @@ libMonoSupportW_la_SOURCES =			\
 libMonoSupportW_la_LIBADD =			\
 		$(GLIB_LIBS)
 
+update-create-native-map:
+	cp `pkg-config --variable=Programs create-native-map` .
+
 # 
 # Use this target to refresh the values in map.[ch]
 #
 refresh:
-	$(top_builddir)/runtime/mono-wrapper $(mcs_topdir)/class/Mono.Posix/Mono.Unix.Native/make-map.exe $(mcs_topdir)/class/lib/default/Mono.Posix.dll map
+	$(top_builddir)/runtime/mono-wrapper create-native-map.exe \
+	--autoconf-member=d_off                               \
+	--autoconf-member=d_reclen                            \
+	--autoconf-member=d_type                              \
+	--exclude-native-symbol=Mono_Posix_Stdlib_snprintf    \
+	--impl-macro=_GNU_SOURCE --impl-macro=_XOPEN_SOURCE   \
+	--impl-header="<sys/types.h>"                         \
+	--impl-header="<sys/stat.h>"                          \
+	--impl-header="<sys/time.h>"                          \
+	--autoconf-header="<sys/poll.h>"                      \
+	--autoconf-header="<sys/wait.h>"                      \
+	--autoconf-header="<sys/statvfs.h>"                   \
+	--autoconf-header="<sys/xattr.h>"                     \
+	--autoconf-header="<sys/mman.h>"                      \
+	--impl-header="<unistd.h>"                            \
+	--impl-header="<fcntl.h>"                             \
+	--impl-header="<signal.h>"                            \
+	--autoconf-header="<poll.h>"                          \
+	--autoconf-header="<grp.h>"                           \
+	--impl-header="<errno.h>"                             \
+	--autoconf-header="<syslog.h>"                        \
+	--impl-header="<dirent.h>"                            \
+	--impl-header="<utime.h>"                             \
+	--rename-member=st_atime=st_atime_                    \
+	--rename-member=st_ctime=st_ctime_                    \
+	--rename-member=st_mtime=st_mtime_                    \
+	--rename-namespace=Mono.Unix.Native=Mono.Posix        \
+	--library=MonoPosixHelper                             \
+	$(mcs_topdir)/class/lib/net_2_0/Mono.Posix.dll map
 

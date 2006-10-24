@@ -1,3 +1,21 @@
+2006-10-24  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* dirent.c, errno.c, fcntl.c, fstab.c, grp.c, macros.c, pwd.c, signal.c, 
+	  stdio.c, stdlib.c, string.c, sys-mman.c, sys-sendfile.c, sys-stat.c, 
+	  sys-statvfs.c, sys-time.c, sys-xattr.c syslog.c, time.c, unistd.c, 
+	  utime.c: Remove structure definitions, and use the
+	  create-native-map generated definitions within map.h.  Update function
+	  prototypes to match current map.h declarations.
+	* map.c, map.h: Flush (current create-native-map output).
+	* mph.h: Don't include "map-icalls.h"; "icalls" are now in map.h.
+	* create-native-map.exe: Added; cached version of create-native-map.exe
+	  used to update map.c, map.h.  (create-native-map.exe source within
+	  mono-tools/create-native-map.)
+	* Makefile.am: Added update-create-native-map target to update 
+	  create-native-map.exe using pkg-config & the create-native-map.pc package. 
+		Use create-native-map.exe to generate map.* files instead of make-map.exe.
+	* sys-statvfs.c: Add Mono_Posix_ToStatvfs, Mono_Posix_FromStatvfs exports.
+
 2006-09-15  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Makefile.am: Remove CRYPT_LIBS use; we no longer rely on libcrypt.

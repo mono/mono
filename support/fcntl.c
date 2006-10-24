@@ -4,7 +4,7 @@
  * Authors:
  *   Jonathan Pryor (jonpryor@vt.edu)
  *
- * Copyright (C) 2004 Jonathan Pryor
+ * Copyright (C) 2004, 2006 Jonathan Pryor
  */
 
 #ifndef _GNU_SOURCE
@@ -21,14 +21,6 @@
 #include "mph.h"
 
 G_BEGIN_DECLS
-
-struct Mono_Posix_Flock {
-	gint16    l_type;
-	gint16    l_whence;
-	mph_off_t l_start;
-	mph_off_t l_len;
-	mph_pid_t l_pid;
-};
 
 gint32
 Mono_Posix_Syscall_fcntl (gint32 fd, gint32 cmd)

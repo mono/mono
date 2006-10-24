@@ -10,6 +10,7 @@
 #include <sys/types.h>
 #include <errno.h>
 
+#include "map.h"
 #include "mph.h"
 
 #ifdef HAVE_SYS_SENDFILE_H
