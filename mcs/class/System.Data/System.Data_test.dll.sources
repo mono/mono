@@ -41,6 +41,7 @@ System.Data/DataTableTest2.cs
 System.Data/DataTableLoadRowTest.cs
 System.Data/DataTableReaderTest.cs
 System.Data/DataTableReadWriteXmlTest.cs
+System.Data/DataTableReadXmlSchemaTest.cs
 System.Data/DataViewManagerTest.cs
 System.Data/DataViewTest.cs
 System.Data/DataViewTest2.cs

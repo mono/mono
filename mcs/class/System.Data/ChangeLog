@@ -1,3 +1,9 @@
+2006-10-24  Hagit Yidov  <hagity@mainsoft.com>
+
+	* System.Data.dll.sources:
+		- Added to build :
+			Test/System.Data/DataTableReadXmlSchemaTest.cs
+	
 2006-10-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile (TEST_MONO_PATH): Add '.' to TEST_MONO_PATH.
