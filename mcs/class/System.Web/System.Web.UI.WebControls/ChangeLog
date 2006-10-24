@@ -1,5 +1,11 @@
 2006-10-24 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* CommandField.cs: fixed: 
+	considers CaseValidation, ValidationGroup, ButtonType.
+	* DataControlButton.cs: refactoring:
+
+2006-10-24 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* DetailsView.cs: implemented: GetCallbackScript method.
 
 2006-10-23 Igor Zelmanovich <igorz@mainsoft.com>

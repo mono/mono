@@ -506,7 +506,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GridView_Sort_and_DataSourceSelectArguments () {
 			DataSourceView view;
 			DataSourceSelectArguments arg;
@@ -552,7 +551,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		// contains the arguments passed to the data source. In this implementation, 
 		// the DataSourceSelectArguments object contains the arguments for paging operations.
 		[Test]
-		[Category ("NotWorking")]
 		public void GridView_CreateDataSourceSelectArguments () {
 			DataSourceView view;
 			Page p = new Page ();
@@ -781,7 +779,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GridView_GetCallbackResult()
 		{
 			Page page = new Page ();
@@ -1194,7 +1191,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GridView_PrepareControlHierarchy ()
 		{
 			PokerGridView gv = new PokerGridView ();
@@ -1508,7 +1504,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GridView_RenderingButtonField ()
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderingButtonField)).Run ();
@@ -2316,6 +2311,7 @@ namespace MonoTests.System.Web.UI.WebControls
 }
 
 #endif
+
 
 
 

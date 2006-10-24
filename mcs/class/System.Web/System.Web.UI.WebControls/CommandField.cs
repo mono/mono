@@ -317,7 +317,14 @@ namespace System.Web.UI.WebControls {
 		DataControlButton CreateButton (string text, string image, string command, string arg)
 		{
 			DataControlButton c = new DataControlButton (Control, text, image, command, arg, false);
-			//c.CausesValidation = CausesValidation;
+			c.ButtonType = ButtonType;
+			if (CausesValidation) {
+				if (command == DataControlCommands.UpdateCommandName || command == DataControlCommands.InsertCommandName) {
+					c.Container = null;
+					c.CausesValidation = true;
+					c.ValidationGroup = ValidationGroup;
+				}
+			}
 			return c;
 		}
 		

@@ -57,6 +57,11 @@ namespace System.Web.UI.WebControls
 			AllowCallback = allowCallback;
 		}
 		
+		public Control Container {
+			get { return container; }
+			set { container = value; }
+		}
+
 		public string ImageUrl {
 			get {
 				object o = ViewState["iu"];
@@ -100,19 +105,17 @@ namespace System.Web.UI.WebControls
 			{
 				string postScript = null;
 				string callScript = null;
-				
+				PostBackOptions ops = null;
+
 				IPostBackContainer pcner = container as IPostBackContainer;
 				if (pcner != null) {
-					PostBackOptions ops = pcner.GetPostBackOptions (this);
-					postScript = container.Page.ClientScript.GetPostBackEventReference (ops);
-				} else
-					postScript = Page.ClientScript.GetPostBackEventReference (this, "");
-
-				if (CausesValidation && Page.Validators.Count > 0) {
-					// TOSHOK: review if this is the correct usage of the "fresh" client side stuff
-					ClientScriptManager csm = new ClientScriptManager (Page);
-					postScript = csm.GetClientValidationEvent () + postScript;
+					ops = pcner.GetPostBackOptions (this);
+					ops.RequiresJavaScriptProtocol = ButtonType == ButtonType.Link;
 				}
+				else
+					ops = GetPostBackOptions ();
+
+				postScript = Page.ClientScript.GetPostBackEventReference (ops);
 				
 				if (AllowCallback) {
 					ICallbackContainer ccner = container as ICallbackContainer;
@@ -138,10 +141,8 @@ namespace System.Web.UI.WebControls
 				if (ButtonType == ButtonType.Link) {
 					if (callScript != null) {
 						writer.AddAttribute (HtmlTextWriterAttribute.Onclick, callScript);
-						writer.AddAttribute (HtmlTextWriterAttribute.Href, "javascript:");
 					}
-					else
-						writer.AddAttribute (HtmlTextWriterAttribute.Href, "javascript:" + postScript);
+					writer.AddAttribute (HtmlTextWriterAttribute.Href, postScript);
 					writer.RenderBeginTag (HtmlTextWriterTag.A);
 					writer.Write (Text);
 					writer.RenderEndTag ();
@@ -152,7 +153,7 @@ namespace System.Web.UI.WebControls
 					else
 						writer.AddAttribute (HtmlTextWriterAttribute.Onclick, postScript);
 
-					writer.AddAttribute (HtmlTextWriterAttribute.Type, "submit");
+					writer.AddAttribute (HtmlTextWriterAttribute.Type, "button");
 					writer.AddAttribute (HtmlTextWriterAttribute.Name, ClientID);
 					writer.AddAttribute (HtmlTextWriterAttribute.Value, Text);
 					writer.RenderBeginTag (HtmlTextWriterTag.Input);
@@ -178,6 +179,18 @@ namespace System.Web.UI.WebControls
 					writer.RenderEndTag ();
 				}
 			}
+		}
+		
+		protected override PostBackOptions GetPostBackOptions () {
+			PostBackOptions options = new PostBackOptions (this);
+			options.Argument = "";
+			options.RequiresJavaScriptProtocol = ButtonType == ButtonType.Link;
+			options.ClientSubmit = true;
+			options.PerformValidation = CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup);
+			if (options.PerformValidation)
+				options.ValidationGroup = ValidationGroup;
+
+			return options;
 		}
 
 		private void EnsureForeColor () {
