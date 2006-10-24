@@ -1,3 +1,9 @@
+2006-10-24  Alexander Olk  <alex.olk@googlemail.com>
+
+	* MimeIcon.cs, Mime.cs:
+	  Fallback to the default platform handler if no shared mime info
+	  stuff exists (fixes #79693).
+
 2006-10-20 Andreia Gaita <shana.ufie@gmail.com>
 	* ContainerControl.cs: Incorrect contains check in ActiveControl 
 	from previous fix (duh).

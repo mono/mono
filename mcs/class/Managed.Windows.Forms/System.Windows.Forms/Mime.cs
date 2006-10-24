@@ -88,6 +88,8 @@ namespace System.Windows.Forms
 		
 		private int bytes_read = 0;
 		
+		private bool mime_available = false;
+		
 		public static NameValueCollection Aliases;
 		public static NameValueCollection SubClasses;
 		
@@ -125,6 +127,14 @@ namespace System.Windows.Forms
 			
 			if (buffer_length != -1) {
 				buffer = new byte[ buffer_length ];
+				mime_available = true;
+			}
+		}
+		
+		public static bool MimeAvailable
+		{
+			get {
+				return Instance.mime_available;
 			}
 		}
 		
@@ -517,7 +527,7 @@ namespace System.Windows.Forms
 				
 				if ( key[0] == '*' )
 				{
-					if (FastEndsWidth(filename, key.Replace( "*", "" )))
+					if (FastEndsWidth(filename, key.Replace( "*", String.Empty )))
 					{
 						global_result = GlobalSufPref[ i ];
 						CheckGlobalResult( );
@@ -526,7 +536,7 @@ namespace System.Windows.Forms
 				}
 				else
 				{
-					if ( FastStartsWith(filename, key.Replace( "*", "" ) ) )
+					if ( FastStartsWith(filename, key.Replace( "*", String.Empty ) ) )
 					{
 						global_result = GlobalSufPref[ i ];
 						CheckGlobalResult( );
@@ -732,7 +742,7 @@ namespace System.Windows.Forms
 			{
 				index += 13; // Length of string "Content-type:"
 				
-				global_result = "";
+				global_result = String.Empty;
 				
 				while ( search_string[ index ] != ';' )
 				{
@@ -852,7 +862,7 @@ namespace System.Windows.Forms
 						// indent
 						char c;
 						if (br.PeekChar () != '>') {
-							string indent_string = "";
+							string indent_string = String.Empty;
 							while (true) {
 								if (br.PeekChar () == '>')
 									break;
@@ -1088,7 +1098,7 @@ namespace System.Windows.Forms
 		
 		private int ReadValue ()
 		{
-			string result_string = "";
+			string result_string = String.Empty;
 			int result = 0;
 			char c;
 			
@@ -1108,7 +1118,7 @@ namespace System.Windows.Forms
 		private string ReadPriorityAndMimeType (ref int priority)
 		{
 			if (br.ReadChar () == '[') {
-				string priority_string = "";
+				string priority_string = String.Empty;
 				while (true) {
 					char c = br.ReadChar ();
 					if (c == ':')
@@ -1118,7 +1128,7 @@ namespace System.Windows.Forms
 				
 				priority = System.Convert.ToInt32 (priority_string);
 				
-				string mime_type_result = "";
+				string mime_type_result = String.Empty;
 				while (true) {
 					char c = br.ReadChar ();
 					if (c == ']')
