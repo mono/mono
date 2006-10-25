@@ -462,6 +462,7 @@
 		<Compile Include="System.Web.UI.WebControls\Calendar.cs"/>
 		<Compile Include="System.Web.UI.WebControls\CalendarDay.cs"/>
 		<Compile Include="System.Web.UI.WebControls\CalendarSelectionMode.cs"/>
+		<Compile Include="System.Web.UI.WebControls\ChangePassword.cs"/>
 		<Compile Include="System.Web.UI.WebControls\CheckBox.cs"/>
 		<Compile Include="System.Web.UI.WebControls\CheckBoxField.cs"/>
 		<Compile Include="System.Web.UI.WebControls\CheckBoxList.cs"/>

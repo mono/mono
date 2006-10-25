@@ -1,5 +1,9 @@
 2006-10-25 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* ChangePassword.cs: new class was implemented.
+
+2006-10-25 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* EmbeddedMailObject.cs: new class was implemented.
 	* EmbeddedMailObjectsCollection.cs: new class was implemented.
 	* MailDefinition.cs: new class was implemented.

@@ -672,6 +672,7 @@ System.Web.UI.WebControls/ButtonType.cs
 System.Web.UI.WebControls/Calendar.cs
 System.Web.UI.WebControls/CalendarDay.cs
 System.Web.UI.WebControls/CalendarSelectionMode.cs
+System.Web.UI.WebControls/ChangePassword.cs
 System.Web.UI.WebControls/CheckBox.cs
 System.Web.UI.WebControls/CheckBoxField.cs
 System.Web.UI.WebControls/CheckBoxList.cs
