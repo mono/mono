@@ -278,6 +278,9 @@ namespace System.Windows.Forms {
 		//	or a sub-popup menu has to be shown
 		void ExecFocusedItem (Menu menu, MenuItem item)
 		{
+			if (item == null)
+				return;
+
 			if (!item.Enabled)
 			 	return;			 
 			 	
