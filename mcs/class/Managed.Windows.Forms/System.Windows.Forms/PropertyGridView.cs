@@ -263,14 +263,94 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			case Keys.Escape:
 			case Keys.Up:
 			case Keys.Down:
+			case Keys.PageDown:
+			case Keys.PageUp:
+			case Keys.Home:
+			case Keys.End:
 				return true;
 			default:
 				return false;
 			}
 		}
 
+		private GridEntry MoveUpFromItem (GridEntry item, int up_count)
+		{
+			GridItemCollection items;
+			int index;
+
+			/* move back up the visible rows (and up the hierarchy as necessary) until
+			   up_count == 0, or we reach the top of the display */
+			while (up_count > 0) {
+				items = item.UIParent != null ? item.UIParent.GridItems : property_grid.grid_items;
+				index = items.IndexOf (item);
+
+				if (index == 0) {
+					if (item.UIParent == null) // we're at the top row
+						return item;
+					item = (GridEntry)item.UIParent;
+					up_count --;
+				}
+				else {
+					GridEntry prev_item = (GridEntry)items[index-1];
+					if (prev_item.Expandable && prev_item.Expanded) {
+						item = (GridEntry)prev_item.GridItems[prev_item.GridItems.Count - 1];
+					}
+					else {
+						item = prev_item;
+					}
+					up_count --;
+				}
+			}
+			return item;
+		}
+
+		private GridEntry MoveDownFromItem (GridEntry item, int down_count)
+		{
+			GridItemCollection items;
+			int index;
+
+			while (down_count > 0) {
+				items = item.UIParent != null ? item.UIParent.GridItems : property_grid.grid_items;
+				index = items.IndexOf (item);
+
+				/* if we're a parent node and we're expanded, move to our first child */
+				if (item.Expandable && item.Expanded) {
+					item = (GridEntry)item.GridItems[0];
+					down_count--;
+				}
+				else {
+					GridEntry searchItem = item;
+					GridItemCollection searchItems = items;
+					int searchIndex = searchItems.IndexOf (searchItem);
+
+					while (searchIndex == searchItems.Count - 1) {
+						searchItem = searchItem.UIParent;
+
+						if (searchItem == null)
+							break;
+
+						searchItems = (searchItem.UIParent != null) ? searchItem.UIParent.GridItems : property_grid.grid_items;
+						searchIndex = searchItems.IndexOf (searchItem);
+					}
+
+					if (searchIndex == searchItems.Count - 1) {
+						/* if we got all the way back to the root with no nodes after
+						   us, the original item was the last one */
+						return item;
+					}
+					else {
+						item = (GridEntry)searchItems[searchIndex+1];
+						down_count--;
+					}
+				}
+			}
+
+			return item;
+		}
+
 		protected override void OnKeyDown(KeyEventArgs e) {
 			GridEntry selectedItem = (GridEntry)property_grid.SelectedGridItem;
+			GridEntry item; /* used in a few places below where we need to recurse through the tree */
 			GridItemCollection items;
 			int index;
 
@@ -317,69 +397,34 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				e.Handled = true;
 				break;
 			case Keys.Up:
-				index = items.IndexOf (selectedItem);
-
-				if (index == 0) {
-					/* if we're at the first child, just bump back up to
-					 * the parent, if we have one.  if we don't have one,
-					 * we're at the top of the list and don't do anything */
-					if (selectedItem.UIParent == null)
-						break;
-
-					property_grid.SelectedGridItem = selectedItem.UIParent;
-					e.Handled = true;
-					break;
-				}
-
-				/* if the previous node in the collection is expanded, most to its
-				   last child (since that's the row directly above us) */
-				GridItem prev_item = items[index-1];
-				if (prev_item.Expandable && prev_item.Expanded) {
-					property_grid.SelectedGridItem = prev_item.GridItems[prev_item.GridItems.Count - 1];
-					e.Handled = true;
-					break;
-				}
-
-				/* the easy case, we just move to the previous one in the collection */
-				property_grid.SelectedGridItem = items[index-1];
+				property_grid.SelectedGridItem = MoveUpFromItem (selectedItem, 1);
 				e.Handled = true;
-				break;				
+				break;
 			case Keys.Down:
-				index = items.IndexOf (selectedItem);
-
-				/* if we're a parent node and we're expanded, move to our first child */
-				if (selectedItem.Expandable && selectedItem.Expanded) {
-					property_grid.SelectedGridItem = selectedItem.GridItems[0];
-					e.Handled = true;
-					break;
-				}
-
-				GridEntry item = selectedItem;
-				
-				/* if we're at the last node in the current collection, bump up to our
-				   parent and retry the down movement */
-				while (index == items.Count - 1) {
-					item = item.UIParent;
-					if (item == null)
-						break;
-
-					if (item.UIParent != null)
-						items = item.UIParent.GridItems;
-					else
-						items = property_grid.grid_items;
-
-					index = items.IndexOf (item);
-				}
-
-				if (index != items.Count - 1) {
-					/* the easy case, we just move to the next one in the collection */
-					property_grid.SelectedGridItem = items[index+1];
-					e.Handled = true;
-				}
-
+				property_grid.SelectedGridItem = MoveDownFromItem (selectedItem, 1);
+				e.Handled = true;
+				break;
+			case Keys.PageUp:
+				property_grid.SelectedGridItem = MoveUpFromItem (selectedItem, vbar.LargeChange);
+				e.Handled = true;
+				break;
+			case Keys.PageDown:
+				property_grid.SelectedGridItem = MoveDownFromItem (selectedItem, vbar.LargeChange);
+				e.Handled = true;
+				break;
+			case Keys.End:
+				/* find the last, most deeply nested visible item */
+				item = (GridEntry)property_grid.grid_items[property_grid.grid_items.Count - 1];
+				while (item.Expandable && item.Expanded)
+					item = (GridEntry)item.GridItems[item.GridItems.Count - 1];
+				property_grid.SelectedGridItem = item;
+				e.Handled = true;
+				break;
+			case Keys.Home:
+				property_grid.SelectedGridItem = property_grid.grid_items[0];
+				e.Handled = true;
 				break;
 			}
-			// XXX page up/down?
 
 			base.OnKeyDown (e);
 		}

@@ -1,7 +1,12 @@
 2006-10-25  Chris Toshok  <toshok@ximian.com>
 
+	* PropertyGridView.cs: factor out the up/down handling, and reuse
+	it for page up/down.  also add End/Home support.
+
+2006-10-25  Chris Toshok  <toshok@ximian.com>
+
 	* PropertyGridView.cs:
-	
+
 	- ensure the selected grid item is visible in the scrolled area,
 	fixes bug #79572.
 
