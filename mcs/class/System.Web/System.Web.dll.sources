@@ -761,6 +761,8 @@ System.Web.UI.WebControls/DetailsViewUpdateEventArgs.cs
 System.Web.UI.WebControls/DetailsViewUpdateEventHandler.cs
 System.Web.UI.WebControls/DropDownList.cs
 System.Web.UI.WebControls/EditCommandColumn.cs
+System.Web.UI.WebControls/EmbeddedMailObject.cs
+System.Web.UI.WebControls/EmbeddedMailObjectsCollection.cs
 System.Web.UI.WebControls/FileUpload.cs
 System.Web.UI.WebControls/FirstDayOfWeek.cs
 System.Web.UI.WebControls/FontInfo.cs
@@ -863,6 +865,7 @@ System.Web.UI.WebControls/LoginStatus.cs
 System.Web.UI.WebControls/LoginTextLayout.cs
 System.Web.UI.WebControls/LoginView.cs
 System.Web.UI.WebControls/LogoutAction.cs
+System.Web.UI.WebControls/MailDefinition.cs
 System.Web.UI.WebControls/MailMessageEventArgs.cs
 System.Web.UI.WebControls/MailMessageEventHandler.cs
 System.Web.UI.WebControls/Menu.cs

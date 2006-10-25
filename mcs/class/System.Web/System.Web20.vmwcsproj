@@ -551,6 +551,8 @@
 		<Compile Include="System.Web.UI.WebControls\DetailsViewUpdateEventHandler.cs"/>
 		<Compile Include="System.Web.UI.WebControls\DropDownList.cs"/>
 		<Compile Include="System.Web.UI.WebControls\EditCommandColumn.cs"/>
+		<Compile Include="System.Web.UI.WebControls\EmbeddedMailObject.cs"/>
+		<Compile Include="System.Web.UI.WebControls\EmbeddedMailObjectsCollection.cs"/>
 		<Compile Include="System.Web.UI.WebControls\FileUpload.cs"/>
 		<Compile Include="System.Web.UI.WebControls\FirstDayOfWeek.cs"/>
 		<Compile Include="System.Web.UI.WebControls\FontInfo.cs"/>
@@ -648,6 +650,7 @@
 		<Compile Include="System.Web.UI.WebControls\LoginTextLayout.cs"/>
 		<Compile Include="System.Web.UI.WebControls\LoginView.cs"/>
 		<Compile Include="System.Web.UI.WebControls\LogoutAction.cs"/>
+		<Compile Include="System.Web.UI.WebControls\MailDefinition.cs"/>
 		<Compile Include="System.Web.UI.WebControls\MailMessageEventArgs.cs"/>
 		<Compile Include="System.Web.UI.WebControls\MailMessageEventHandler.cs"/>
 		<Compile Include="System.Web.UI.WebControls\Menu.cs"/>
