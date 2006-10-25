@@ -144,10 +144,10 @@ namespace System.Windows.Forms {
 			SelectItem (item.Parent, item, item.IsPopup);
 			if (item.IsPopup) {
 				active = true;
-				grab_control.ActiveTracker = this;
 				item.Parent.InvalidateItem (item);
 			} else if (item.Parent is MainMenu)
 				active = false;
+			grab_control.ActiveTracker = this;
 		}
 
 		public void OnMotion (MouseEventArgs args)
