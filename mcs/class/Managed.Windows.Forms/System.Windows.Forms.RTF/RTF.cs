@@ -679,7 +679,7 @@ SkipCRLF:
 
 						sb = new StringBuilder();
 
-						while ((rtf.rtf_class != TokenClass.EOF) && (!rtf.CheckCM(TokenClass.Text, (Major)';')) && (!rtf.CheckCM(TokenClass.Group, Major.EndGroup))) {
+						while ((rtf.rtf_class != TokenClass.EOF) && (!rtf.CheckCM(TokenClass.Text, (Major)';')) && (!rtf.CheckCM(TokenClass.Group, Major.EndGroup)) && (!rtf.CheckCM(TokenClass.Group, Major.BeginGroup))) {
 							sb.Append((char)rtf.major);
 							rtf.GetToken();
 						}
