@@ -1,3 +1,7 @@
+2006-10-25  Wade berrier  <wberrier@novell.com>
+
+	* Makefile.am: remove map-icalls.h so make dist succeeds
+
 2006-10-24  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* dirent.c, errno.c, fcntl.c, fstab.c, grp.c, macros.c, pwd.c, signal.c, 
