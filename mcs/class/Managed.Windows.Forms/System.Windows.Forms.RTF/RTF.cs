@@ -105,6 +105,7 @@ namespace System.Windows.Forms.RTF {
 			destination_callbacks = new DestinationCallback();
 			class_callbacks = new ClassCallback();
 
+			destination_callbacks [Minor.OptDest] = new DestinationDelegate (HandleOptDest);
 			destination_callbacks[Minor.FontTbl] = new DestinationDelegate(ReadFontTbl);
 			destination_callbacks[Minor.ColorTbl] = new DestinationDelegate(ReadColorTbl);
 			destination_callbacks[Minor.StyleSheet] = new DestinationDelegate(ReadStyleSheet);
@@ -540,6 +541,8 @@ SkipCRLF:
 			obj = key_table[token.Substring(1)];
 			if (obj == null) {
 				rtf_class = TokenClass.Unknown;
+				major = (Major) -1;
+				minor = (Minor) -1;
 				return;
 			}
 
@@ -575,6 +578,12 @@ SkipCRLF:
 		#endregion	// Methods
 
 		#region Default Delegates
+
+		private void HandleOptDest (RTF rtf)
+		{
+			rtf.SkipGroup ();
+		}
+
 		private void ReadFontTbl(RTF rtf) {
 			int	old;
 			Font	font;
@@ -789,9 +798,6 @@ SkipCRLF:
 					}
 
 					if (rtf.rtf_class == TokenClass.Control) {
-						if (rtf.CheckMM(Major.SpecialChar, Minor.OptDest)) {
-							continue;
-						}
 						if (rtf.CheckMM(Major.ParAttr, Minor.StyleNum)) {
 							style.Num = rtf.param;
 							style.Type = StyleType.Paragraph;

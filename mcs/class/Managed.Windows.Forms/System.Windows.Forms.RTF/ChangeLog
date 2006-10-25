@@ -3,6 +3,10 @@
 	* RTF.cs: Kick out of the text swallowing loop if we begin a new
 	group, this happens when there is an alternate font name.  TODO:
 	We should probably handle alternate font names somehow.
+	- Skip over all OptDest tags, these are 'new' RTF features that we
+	don't need to handle
+	* KeysInit.cs: Make OptDest a destination, since that's what it
+	is.
 
 2006-10-20  Jackson Harper  <jackson@ximian.com>
 
