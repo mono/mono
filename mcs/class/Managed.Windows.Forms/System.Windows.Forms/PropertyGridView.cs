@@ -228,6 +228,12 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			base.OnMouseUp (e);
 		}
 
+		protected override void OnResize(EventArgs e) {
+			grid_textbox.Hide ();
+			base.OnResize (e);
+			grid_textbox_Show (property_grid.SelectedGridItem);
+		}
+
 		private void UnfocusSelection ()
 		{
 			Select (this);
@@ -306,12 +312,9 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 		private GridEntry MoveDownFromItem (GridEntry item, int down_count)
 		{
-			GridItemCollection items;
-			int index;
-
 			while (down_count > 0) {
-				items = item.UIParent != null ? item.UIParent.GridItems : property_grid.grid_items;
-				index = items.IndexOf (item);
+				GridItemCollection items = item.UIParent != null ? item.UIParent.GridItems : property_grid.grid_items;
+				int index = items.IndexOf (item);
 
 				/* if we're a parent node and we're expanded, move to our first child */
 				if (item.Expandable && item.Expanded) {
@@ -487,35 +490,40 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 		private void DrawGridItemLabel(GridItem grid_item, PaintEventArgs pevent, int depth, Rectangle rect) {
 			Font font = this.Font;
-			Brush brush = SystemBrushes.WindowText;
+			Brush brush;
+
 			if (grid_item.GridItemType == GridItemType.Category) {
 				font = bold_font;
 				brush = SystemBrushes.ControlDark;
-			}
 
-			if (grid_item == property_grid.SelectedGridItem && grid_item.GridItemType != GridItemType.Category) {
-				Rectangle highlight = rect;
-				if (depth > 1) {
-					highlight.X -= V_INDENT;
-					highlight.Width += V_INDENT;
-				}
-				pevent.Graphics.FillRectangle (SystemBrushes.Highlight, highlight);
-				// Label
-				brush = SystemBrushes.HighlightText;
-			}
-
-			
-			if (grid_item.GridItemType == GridItemType.Category) {
 				pevent.Graphics.DrawString (grid_item.Label, font, brush, rect.X + 1, rect.Y + 2);
 				if (grid_item == property_grid.SelectedGridItem) {
-					SizeF size = pevent.Graphics.MeasureString (grid_item.Label, bold_font);
+					SizeF size = pevent.Graphics.MeasureString (grid_item.Label, font);
 					ControlPaint.DrawFocusRectangle (pevent.Graphics, new Rectangle(rect.X + 1, rect.Y+2, (int)size.Width, (int)size.Height));
 				}
 			}
-			else
-				pevent.Graphics.DrawString (grid_item.Label, font, brush,
-							    new Rectangle (rect.X + 1, rect.Y + 2, rect.Width - 2, rect.Height - 2),
-							    string_format);
+			else {
+				if (grid_item == property_grid.SelectedGridItem) {
+					Rectangle highlight = rect;
+					if (depth > 1) {
+						highlight.X -= V_INDENT;
+						highlight.Width += V_INDENT;
+					}
+					pevent.Graphics.FillRectangle (SystemBrushes.Highlight, highlight);
+					// Label
+					brush = SystemBrushes.HighlightText;
+				}
+				else {
+					brush = SystemBrushes.WindowText;
+					if (grid_item.PropertyDescriptor.IsReadOnly
+					    && !grid_item.Expandable)
+						brush = SystemBrushes.InactiveCaption;
+				}
+			}
+
+			pevent.Graphics.DrawString (grid_item.Label, font, brush,
+						    new Rectangle (rect.X + 1, rect.Y + 2, rect.Width - 2, rect.Height - 2),
+						    string_format);
 		}
 
 		private void DrawGridItemValue(GridItem grid_item, PaintEventArgs pevent, int depth, Rectangle rect) {
@@ -523,9 +531,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			if (grid_item.PropertyDescriptor != null) {
 
 				bool paintsValue = false;
-				UITypeEditor editor = null;
-				object temp = grid_item.PropertyDescriptor.GetEditor(typeof(UITypeEditor));
-				editor = (UITypeEditor)temp;//grid_item.PropertyDescriptor.GetEditor(typeof(UITypeEditor));
+				UITypeEditor editor = (UITypeEditor)grid_item.PropertyDescriptor.GetEditor(typeof(UITypeEditor));
 				if (editor != null) {
 					paintsValue = editor.GetPaintValueSupported();
 				}
@@ -537,21 +543,29 @@ namespace System.Windows.Forms.PropertyGridInternal {
 						editor.PaintValue(grid_item.Value, pevent.Graphics, new Rectangle(SplitterLocation+3,rect.Y+3, 19, row_height-5));
 					}
 					catch (Exception ex) {
-						System.Console.WriteLine(ex.Message);
-						System.Console.WriteLine("Paint Value failed for type {0}",grid_item.PropertyDescriptor.PropertyType);
-						// design time stuff is not playing nice
+						System.Console.WriteLine(ex);
 					}
 					xLoc += 27;
 				}
 
-				Font font = this.Font;
 				try {
 					if (grid_item.PropertyDescriptor.Converter != null) {
+						Font font = this.Font;
+						Brush brush;
+
 						string value = grid_item.PropertyDescriptor.Converter.ConvertToString(grid_item.Value);
 						if (grid_item.PropertyDescriptor.CanResetValue(property_grid.SelectedObject))
 							font = bold_font;
 				
-						pevent.Graphics.DrawString(value,font,SystemBrushes.WindowText,new RectangleF(xLoc,rect.Y+2, ClientRectangle.Width-(xLoc), row_height),string_format);
+						brush = SystemBrushes.WindowText;
+						if (grid_item.PropertyDescriptor.IsReadOnly
+						    && !grid_item.Expandable)
+							brush = SystemBrushes.InactiveCaption;
+
+						pevent.Graphics.DrawString(value, font,
+									   brush,
+									   new RectangleF(xLoc, rect.Y+2,
+											  ClientRectangle.Width-(xLoc), row_height),string_format);
 					}
 					else {
 						System.Console.WriteLine("No converter for type {0}",grid_item.PropertyDescriptor.PropertyType);
@@ -798,9 +812,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			grid_textbox.DialogButtonVisible = false;
 
 			bool paintsValue = false;
-			UITypeEditor editor = null;
-			object temp = forItem.PropertyDescriptor.GetEditor(typeof(UITypeEditor));
-			editor = (UITypeEditor)temp;//forItem.PropertyDescriptor.GetEditor(typeof(UITypeEditor));
+			UITypeEditor editor = (UITypeEditor)forItem.PropertyDescriptor.GetEditor(typeof(UITypeEditor));
 			if (editor != null) {
 				paintsValue = editor.GetPaintValueSupported();
 			}
@@ -835,6 +847,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				}
 			}
 				
+			grid_textbox.ReadOnly = grid_textbox.ReadOnly || forItem.PropertyDescriptor.IsReadOnly;
+
 			int xloc = SplitterLocation + 1 + (paintsValue ? 27 : 0);
 			grid_textbox.SetBounds (xloc,
 						forItem.Top + 1,

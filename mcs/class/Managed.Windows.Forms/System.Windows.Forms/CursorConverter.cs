@@ -30,6 +30,7 @@ using System.Drawing.Imaging;
 using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
@@ -98,11 +99,13 @@ namespace System.Windows.Forms {
 
 		public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
 		{
-			PropertyDescriptorCollection props = TypeDescriptor.GetProperties (typeof (Cursors));
+			PropertyInfo[] props = typeof (Cursors).GetProperties();
+			
 			ArrayList vals = new ArrayList ();
 
-			for (int i = 0; i < props.Count; i++)
-				vals.Add (props [i].GetValue (null));
+			for (int i = 0; i < props.Length; i++) {
+				vals.Add (props [i].GetValue (null, null));
+			}
 			return new StandardValuesCollection (vals);
 		}
 
