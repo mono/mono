@@ -1,7 +1,12 @@
 2006-10-25  Andreia Gaita <shana.ufie@gmail.com>
 
+	* CheckedListBox.cs: nunit no longer crashes when selecting 
+	Project/Edit menu option
+	
+2006-10-25  Andreia Gaita <shana.ufie@gmail.com>
+
 	* MenuAPI.cs: prevent ExecFocusedItem from blowing up if there
-	is no menu selected
+	is no menu selected. fixes #79739
 
 2006-10-25  Chris Toshok  <toshok@ximian.com>
 

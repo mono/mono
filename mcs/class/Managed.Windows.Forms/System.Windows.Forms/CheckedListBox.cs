@@ -384,7 +384,7 @@ namespace System.Windows.Forms
 				if (check != CheckState.Unchecked)
 					owner.check_states [item] = check;
 				if (check == CheckState.Checked)
-					owner.OnItemCheck (new ItemCheckEventArgs (Count, check, CheckState.Unchecked));
+					owner.OnItemCheck (new ItemCheckEventArgs (Count-1, check, CheckState.Unchecked));
 				owner.UpdateCollections ();
 				return Count;
 			}
