@@ -129,8 +129,10 @@ namespace System.Drawing.Design
 			Graphics G = e.Graphics;
 
 			if (e.Value != null) {
-				Image I = (Image) e.Value;
-				G.DrawImage (I, e.Bounds);
+				Icon i = (Icon) e.Value;
+				Image img = i.ToBitmap ();
+				G.DrawImage (img, e.Bounds);
+				img.Dispose ();
 			}
 
 			G.DrawRectangle (Pens.Black, e.Bounds);
