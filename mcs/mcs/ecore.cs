@@ -3708,10 +3708,10 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (lvalue_instance)
+			InstanceExpression = InstanceExpression.DoResolve (ec);
+			if (lvalue_instance && InstanceExpression != null)
 				InstanceExpression = InstanceExpression.ResolveLValue (ec, EmptyExpression.LValueMemberAccess, loc);
-			else
-				InstanceExpression = InstanceExpression.DoResolve (ec);
+
 			if (InstanceExpression == null)
 				return false;
 

@@ -1,3 +1,9 @@
+2006-10-26  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #78820
+	* ecore.cs (PropertyExpr.InstanceResolve): Always resolve the
+	instance as an rvalue, even when we later resolve as an lvalue.
+
 2006-10-25  Martin Baulig  <martin@ximian.com>
 
 	* anonymous.cs: Fix #79673.
