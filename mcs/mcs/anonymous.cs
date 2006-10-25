@@ -1348,10 +1348,13 @@ namespace Mono.CSharp {
 			MemberName member_name;
 
 			GenericMethod generic_method = null;
+#if GMCS_SOURCE
 			if (TypeManager.IsGenericType (DelegateType)) {
 				TypeArguments args = new TypeArguments (Location);
 
-				Type[] tparam = TypeManager.GetTypeArguments (DelegateType);
+				Type dt = DelegateType.GetGenericTypeDefinition ();
+
+				Type[] tparam = TypeManager.GetTypeArguments (dt);
 				for (int i = 0; i < tparam.Length; i++)
 					args.Add (new SimpleName (tparam [i].Name, Location));
 
@@ -1363,6 +1366,7 @@ namespace Mono.CSharp {
 
 				generic_method.SetParameterInfo (null);
 			} else
+#endif
 				member_name = new MemberName (name, Location);
 
 			return new AnonymousMethodMethod (

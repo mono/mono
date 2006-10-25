@@ -1,3 +1,7 @@
+2006-10-25  Martin Baulig  <martin@ximian.com>
+
+	* anonymous.cs: Fix #79673.
+
 2006-10-24  Marek Safar  <marek.safar@seznam.cz>
 
 	A fix for bug #79666
