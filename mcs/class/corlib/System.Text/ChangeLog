@@ -1,3 +1,8 @@
+2006-10-25  Ben Maurer  <bmaurer@andrew.cmu.edu>
+
+	* Encoding.cs: Make the GetByteCcount method used fixed pointers
+	removes quite a few allocations from Banshee.
+
 2006-09-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* StringBuilder.cs (.ctor): Add a comment.

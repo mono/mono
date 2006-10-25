@@ -211,12 +211,21 @@ public abstract class Encoding
 	// Convenience wrappers for "GetByteCount".
 	public virtual int GetByteCount (String s)
 	{
-		if (s != null) {
-			char[] chars = s.ToCharArray ();
-			return GetByteCount (chars, 0, chars.Length);
-		} else {
+		if (s == null)
 			throw new ArgumentNullException ("s");
+
+		if (s.Length == 0)
+			return 0;
+#if NET_2_0
+		unsafe {
+			fixed (char* cptr = s) {
+				return GetByteCount (cptr, s.Length);
+			}
 		}
+#else
+		char[] chars = s.ToCharArray ();
+		return GetByteCount (chars, 0, chars.Length);
+#endif
 	}
 	public virtual int GetByteCount (char[] chars)
 	{
