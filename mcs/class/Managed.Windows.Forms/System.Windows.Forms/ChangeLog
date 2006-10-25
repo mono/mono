@@ -1,11 +1,18 @@
 2006-10-25  Chris Toshok  <toshok@ximian.com>
 
+	* PropertyGridView.cs: factor out the splitter invalidation code
+	into the SplitterPercent setter, and for kicks implement the
+	Ctrl-Left/Ctrl-Right handling that moves the splitter by a small
+	amount in either direction.
+
+2006-10-25  Chris Toshok  <toshok@ximian.com>
+
 	* PropertyGridView.cs: do some cleanup of the brush used to draw
 	text - read only fields should be grayed out.  not sure how to do
 	this with the textbox, though.  but the textbox's should also be
 	readonly now at least.  Also, hide/show the textbox when resizing
 	the control.
-
+	
 	* CursorConverter.cs: use System.Reflection when getting the
 	properties of Cursors, as TypeDescriptor.GetProperties isn't
 	returning static properties.

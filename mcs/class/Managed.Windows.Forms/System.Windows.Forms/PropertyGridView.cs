@@ -184,15 +184,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 			if (resizing_grid) {
 				int loc = Math.Max(e.X,2*V_INDENT);
-				int old_splitter_location = SplitterLocation;
 				SplitterPercent = 1.0*loc/Width;
-
-				if (old_splitter_location != SplitterLocation) {
-					grid_textbox_Hide ();
-					int x = old_splitter_location > SplitterLocation ? SplitterLocation : old_splitter_location;
-					Invalidate(new Rectangle (x, 0, Width - x, Height));
-					grid_textbox_Show (property_grid.SelectedGridItem);
-				}
 			}
 			if (e.X > SplitterLocation - RESIZE_WIDTH && e.X < SplitterLocation + RESIZE_WIDTH) 
 				this.Cursor = Cursors.SizeWE;
@@ -353,9 +345,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 		protected override void OnKeyDown(KeyEventArgs e) {
 			GridEntry selectedItem = (GridEntry)property_grid.SelectedGridItem;
-			GridEntry item; /* used in a few places below where we need to recurse through the tree */
-			GridItemCollection items;
-			int index;
 
 			if (selectedItem == null) {
 				/* XXX not sure what MS does, but at least we shouldn't crash */
@@ -363,34 +352,47 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				return;
 			}
 
-			if (selectedItem.UIParent != null)
-				items = selectedItem.UIParent.GridItems;
-			else
-				items = property_grid.grid_items;
-
-			switch (e.KeyData) {
+			switch (e.KeyData & Keys.KeyCode) {
 			case Keys.Left:
-				/* if the node is expandable and is expanded, collapse it.
-				   otherwise, act just like the user pressed up */
-				if (selectedItem.Expandable && selectedItem.Expanded) {
-					selectedItem.Expanded = false;
-					InvalidateFromGridItemDown (property_grid.SelectedGridItem);
+				if (e.Control) {
+					if (SplitterLocation > 2 * V_INDENT)
+						SplitterPercent -= 0.01;
+
 					e.Handled = true;
 					break;
 				}
-				else
-					goto case Keys.Up;
+				else {
+					/* if the node is expandable and is expanded, collapse it.
+					   otherwise, act just like the user pressed up */
+					if (selectedItem.Expandable && selectedItem.Expanded) {
+						selectedItem.Expanded = false;
+						InvalidateFromGridItemDown (property_grid.SelectedGridItem);
+						e.Handled = true;
+						break;
+					}
+					else
+						goto case Keys.Up;
+				}
 			case Keys.Right:
-				/* if the node is expandable and not expanded, expand it.
-				   otherwise, act just like the user pressed down */
-				if (selectedItem.Expandable && !selectedItem.Expanded) {
-					selectedItem.Expanded = true;
-					InvalidateFromGridItemDown (property_grid.SelectedGridItem);
+				if (e.Control) {
+					if (SplitterLocation < Width)
+						SplitterPercent += 0.01;
+
 					e.Handled = true;
 					break;
 				}
-				else
-					goto case Keys.Down;
+				else {
+					/* if the node is expandable and not expanded, expand it.
+					   otherwise, act just like the user pressed down */
+					if (selectedItem.Expandable && !selectedItem.Expanded) {
+						selectedItem.Expanded = true;
+						InvalidateFromGridItemDown (property_grid.SelectedGridItem);
+						e.Handled = true;
+						break;
+					}
+					else
+						goto case Keys.Down;
+				}
 			case Keys.Enter:
 				/* toggle the expanded state of the selected item */
 				if (selectedItem.Expandable) {
@@ -417,7 +419,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				break;
 			case Keys.End:
 				/* find the last, most deeply nested visible item */
-				item = (GridEntry)property_grid.grid_items[property_grid.grid_items.Count - 1];
+				GridEntry item = (GridEntry)property_grid.grid_items[property_grid.grid_items.Count - 1];
 				while (item.Expandable && item.Expanded)
 					item = (GridEntry)item.GridItems[item.GridItems.Count - 1];
 				property_grid.SelectedGridItem = item;
@@ -444,7 +446,19 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 		private double SplitterPercent{
 			set {
+				int old_splitter_location = SplitterLocation;
+				
 				splitter_percent = Math.Max(Math.Min(value, .9),.1);
+
+				if (old_splitter_location != SplitterLocation) {
+					grid_textbox_Hide ();
+					int x = old_splitter_location > SplitterLocation ? SplitterLocation : old_splitter_location;
+					Invalidate(new Rectangle (x, 0, Width - x, Height));
+					grid_textbox_Show (property_grid.SelectedGridItem);
+				}
+			}
+			get {
+				return splitter_percent;
 			}
 		}
 
