@@ -2448,7 +2448,7 @@ namespace System.Web.Services.Description
 	}
 
 
-	public class BaseXmlSerializer : System.Xml.Serialization.XmlSerializer
+	internal class BaseXmlSerializer : System.Xml.Serialization.XmlSerializer
 	{
 		protected override System.Xml.Serialization.XmlSerializationReader CreateReader () {
 			return new ServiceDescriptionReaderBase ();
@@ -2463,7 +2463,7 @@ namespace System.Web.Services.Description
 		}
 	}
 
-	public sealed class definitionsSerializer : BaseXmlSerializer
+	internal sealed class definitionsSerializer : BaseXmlSerializer
 	{
 		protected override void Serialize (object obj, System.Xml.Serialization.XmlSerializationWriter writer) {
 			((ServiceDescriptionWriterBase)writer).WriteRoot_ServiceDescription(obj);
@@ -2474,7 +2474,7 @@ namespace System.Web.Services.Description
 		}
 	}
 #if !TARGET_JVM
-	public class XmlSerializerContract : System.Xml.Serialization.IXmlSerializerImplementation
+	internal class XmlSerializerContract : System.Xml.Serialization.IXmlSerializerImplementation
 	{
 		System.Collections.Hashtable readMethods = null;
 		System.Collections.Hashtable writeMethods = null;
