@@ -1549,8 +1549,8 @@ namespace Mono.CSharp {
 				if (agc != null) {
 					if (agc is Constraints)
 						((Constraints) agc).Resolve (ec);
-					is_class = agc.HasReferenceTypeConstraint;
-					is_struct = agc.HasValueTypeConstraint;
+					is_class = agc.IsReferenceType;
+					is_struct = agc.IsValueType;
 				} else {
 					is_class = is_struct = false;
 				}

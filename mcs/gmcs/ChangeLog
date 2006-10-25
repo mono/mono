@@ -1,3 +1,9 @@
+2006-10-25  Brian Crowell  <brian@fluggo.com>
+
+	Fix #79703
+	* generic.cs (CheckConstraints): Allow generic parameters with
+	inheritance constraints to satisfy reference type constraints.
+
 2006-10-09  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs
