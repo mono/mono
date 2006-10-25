@@ -285,9 +285,10 @@ namespace System.Xml.Serialization
 			GenerationResult main = (GenerationResult) generatedMaps[0];
 			
 			string baseSerializerName = GetUniqueClassName ("BaseXmlSerializer");
+			string access_mod = (_config == null || !_config.GenerateAsInternal) ? "public" : "internal";
 			
 			WriteLine ("");
-			WriteLine ("public class " + baseSerializerName + " : System.Xml.Serialization.XmlSerializer");
+			WriteLine (access_mod + " class " + baseSerializerName + " : System.Xml.Serialization.XmlSerializer");
 			WriteLineInd ("{");
 			WriteLineInd ("protected override System.Xml.Serialization.XmlSerializationReader CreateReader () {");
 			WriteLine ("return new " + main.ReaderClassName + " ();");
@@ -312,7 +313,7 @@ namespace System.Xml.Serialization
 			{
 				res.SerializerClassName = GetUniqueClassName (res.Mapping.ElementName + "Serializer");
 				
-				WriteLine ("public sealed class " + res.SerializerClassName + " : " + baseSerializerName);
+				WriteLine (access_mod + " sealed class " + res.SerializerClassName + " : " + baseSerializerName);
 				WriteLineInd ("{");
 				WriteLineInd ("protected override void Serialize (object obj, System.Xml.Serialization.XmlSerializationWriter writer) {");
 				WriteLine ("((" + res.WriterClassName + ")writer)." + res.WriteMethodName + "(obj);");
@@ -327,7 +328,7 @@ namespace System.Xml.Serialization
 				WriteLine ("");
 			}
 
-			WriteLine ("public class XmlSerializerContract : System.Xml.Serialization.IXmlSerializerImplementation");
+			WriteLine (access_mod + " class XmlSerializerContract : System.Xml.Serialization.IXmlSerializerImplementation");
 			WriteLineInd ("{");
 			
 			WriteLine ("System.Collections.Hashtable readMethods = null;");

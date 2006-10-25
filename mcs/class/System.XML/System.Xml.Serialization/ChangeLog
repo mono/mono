@@ -1,3 +1,8 @@
+2006-10-25  Ankit Jain  <jankit@novell.com>
+
+	* SerializationCodeGenerator.cs (GenerateContract): Handle
+	'generateAsInternal' config option.
+
 2006-10-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlSerializer.cs: Output namespace declarations in same order as
