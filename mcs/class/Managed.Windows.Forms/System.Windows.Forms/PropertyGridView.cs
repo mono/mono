@@ -354,25 +354,32 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					break;
 				}
 
+				GridEntry item = selectedItem;
+				
 				/* if we're at the last node in the current collection, bump up to our
 				   parent and retry the down movement */
-				if (index == items.Count - 1) {
-					if (selectedItem.UIParent == null)
+				while (index == items.Count - 1) {
+					item = item.UIParent;
+					if (item == null)
 						break;
 
-					if (selectedItem.UIParent.UIParent != null)
-						items = selectedItem.UIParent.UIParent.GridItems;
+					if (item.UIParent != null)
+						items = item.UIParent.GridItems;
 					else
 						items = property_grid.grid_items;
 
-					index = items.IndexOf (selectedItem.UIParent);
+					index = items.IndexOf (item);
 				}
-				
-				/* the easy case, we just move to the next one in the collection */
-				property_grid.SelectedGridItem = items[index+1];
-				e.Handled = true;
+
+				if (index != items.Count - 1) {
+					/* the easy case, we just move to the next one in the collection */
+					property_grid.SelectedGridItem = items[index+1];
+					e.Handled = true;
+				}
+
 				break;
 			}
+			// XXX page up/down?
 
 			base.OnKeyDown (e);
 		}
@@ -801,10 +808,28 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			ResumeLayout (false);
 		}
 
+		void EnsureItemIsVisible (GridItem item)
+		{
+			if (item.Top < 0) {
+				// the new item is above the viewable area
+				vbar.Value += item.Top / row_height;
+			}
+			else if (item.Top + row_height > Height) {
+				// the new item is below the viewable area
+				vbar.Value += ((item.Top + row_height) - Height) / row_height + 1;
+			}
+			else {
+				// do nothing
+			}
+		}
+
+
 		private void HandleSelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e) {
 			if (e.OldSelection != null)
 				InvalidateGridItemLabel (e.OldSelection);
 			InvalidateGridItemLabel (e.NewSelection);
+
+			EnsureItemIsVisible (e.NewSelection);
 
 			if (e.NewSelection.GridItemType == GridItemType.Property) {
 				if (e.NewSelection.PropertyDescriptor != null) {

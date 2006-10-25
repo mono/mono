@@ -1,3 +1,13 @@
+2006-10-25  Chris Toshok  <toshok@ximian.com>
+
+	* PropertyGridView.cs:
+	
+	- ensure the selected grid item is visible in the scrolled area,
+	fixes bug #79572.
+
+	- fix Keys.Down handling when you're on the last item in the
+	propertygrid.
+
 2006-10-25  Mike Kestner  <mkestner@novell.com>
 
 	* MenuAPI.cs : set the ActiveTracker for MainMenu non-popup 
