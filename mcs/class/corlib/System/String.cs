@@ -6,6 +6,7 @@
 //   Jeffrey Stedfast (fejj@ximian.com)
 //   Dan Lewis (dihlewis@yahoo.co.uk)
 //   Sebastien Pouliot  <sebastien@ximian.com>
+//   Marek Safar (marek.safar@seznam.cz)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004-2005 Novell (http://www.novell.com)
@@ -1451,13 +1452,13 @@ namespace System
 
 		public unsafe static String Concat (String s1, String s2)
 		{
-			if (s1 == null) {
-				if (s2 == null)
+			if (s1 == null || s1.Length == 0) {
+				if (s2 == null || s2.Length == 0)
 					return String.Empty;
 				return s2;
 			}
 
-			if (s2 == null)
+			if (s2 == null || s2.Length == 0)
 				return s1; 
 
 			String tmp = InternalAllocateStr (s1.length + s2.length);
@@ -1478,24 +1479,24 @@ namespace System
 
 		public unsafe static String Concat (String s1, String s2, String s3)
 		{
-			if (s1 == null){
-				if (s2 == null){
-					if (s3 == null)
+			if (s1 == null || s1.Length == 0){
+				if (s2 == null || s2.Length == 0){
+					if (s3 == null || s3.Length == 0)
 						return String.Empty;
 					return s3;
 				} else {
-					if (s3 == null)
+					if (s3 == null || s3.Length == 0)
 						return s2;
 				}
 				s1 = String.Empty;
 			} else {
-				if (s2 == null){
-					if (s3 == null)
+				if (s2 == null || s2.Length == 0){
+					if (s3 == null || s3.Length == 0)
 						return s1;
 					else
 						s2 = String.Empty;
 				} else {
-					if (s3 == null)
+					if (s3 == null || s3.Length == 0)
 						s3 = String.Empty;
 				}
 			}

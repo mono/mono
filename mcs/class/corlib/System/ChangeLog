@@ -1,3 +1,7 @@
+2006-10-26  Marek Safar  <marek.safar@seznam.cz>
+
+	* String.cs (Concat): Add fast-path for empty strings.
+
 2006-10-20  Jonathan Chambers  <joncham@gmail.com>
 
 	* Variant.cs: Add support for bool and interfaces.
