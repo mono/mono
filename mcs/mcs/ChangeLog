@@ -1,3 +1,8 @@
+2006-10-26  Marek Safar  <marek.safar@gmail.com>
+
+	* codegen.cs (AssemblyClass.ApplyAttributeBuilder): Don't allow to have
+	type forwarder of the same type multiple times.
+
 2006-10-26  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #78820

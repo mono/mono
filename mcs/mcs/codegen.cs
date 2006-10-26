@@ -997,6 +997,7 @@ namespace Mono.CSharp {
 #if GMCS_SOURCE
 		public AssemblyName Name;
 		MethodInfo add_type_forwarder;
+		ListDictionary emitted_forwarders;
 #endif
 
 		// Module is here just because of error messages
@@ -1266,6 +1267,17 @@ namespace Mono.CSharp {
 					Report.Error (735, a.Location, "Invalid type specified as an argument for TypeForwardedTo attribute");
 					return;
 				}
+
+				if (emitted_forwarders == null) {
+					emitted_forwarders = new ListDictionary();
+				} else if (emitted_forwarders.Contains(t)) {
+					Report.SymbolRelatedToPreviousError(((Attribute)emitted_forwarders[t]).Location, null);
+					Report.Error(739, a.Location, "A duplicate type forward of type `{0}'",
+						TypeManager.CSharpName(t));
+					return;
+				}
+
+				emitted_forwarders.Add(t, a);
 
 				if (TypeManager.LookupDeclSpace (t) != null) {
 					Report.SymbolRelatedToPreviousError (t);
