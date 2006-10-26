@@ -127,6 +127,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+        [Category ("NotWorking")]
 #if !NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 #endif
@@ -251,6 +252,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
+        [Category ("NotWorking")]
 		public void NameIsUniqueID ()
 		{
 			ListBoxPoker list = new ListBoxPoker ();
@@ -260,6 +263,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			ctrl.ID = "ctrl";
 			page.Controls.Add (ctrl);
 			ctrl.Controls.Add (list);
+			string str = list.Render();
 			Assert.IsTrue (-1 != list.Render ().IndexOf (':'), "unique");
 		}
 

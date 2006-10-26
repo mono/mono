@@ -26,6 +26,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+// ************IMPORTANT**********
+// Note: This test completed ,but cannot be run by Framework limitations!
 
 #if NET_2_0
 
@@ -58,6 +60,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
+        [Category ("NotDotNet")]
 		[Category ("NotWorking")]
 		public void MappingUrl()
 		{

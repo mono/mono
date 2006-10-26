@@ -482,6 +482,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")]
 		public void CultureInvariantValues_1 ()
 		{
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US", false);
+			//  Current date format --> "dmy"
 			Page p = new Page ();
 
 			CompareValidator v = new CompareValidator ();

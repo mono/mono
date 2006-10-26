@@ -140,6 +140,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
+        [Category ("NotWorking")]
 		public void NullProperties ()
 		{
 			ListControlPoker p = new ListControlPoker ();
@@ -249,6 +250,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
+        [Category ("NotWorking")]
 		public void ViewStateContents ()
 		{
 			ListControlPoker p = new ListControlPoker ();
@@ -330,6 +332,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
+        [Category ("NotWorking")]
 #if !NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 #endif
@@ -362,6 +365,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
+        [Category ("NotWorking")]
 		public void DataBinding1 ()
 		{
 			ListControlPoker p = new ListControlPoker ();
@@ -391,6 +395,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
+        [Category("NotWorking")]
 		public void DataBinding3 ()
 		{
 			ListControlPoker p = new ListControlPoker ();
@@ -440,6 +445,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
+        [Category("NotWorking")]
 		public void DataBinding5 ()
 		{
 			ListControlPoker p = new ListControlPoker ();
@@ -457,6 +463,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
+        [Category("NotWorking")]
 		public void DataBindingFormat1 ()
 		{
 			ListControlPoker p = new ListControlPoker ();
@@ -472,6 +479,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
+        [Category("NotWorking")]
 		public void DataBindingFormat2 ()
 		{
 			ListControlPoker p = new ListControlPoker ();
@@ -527,12 +535,15 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+        [Category ("NotWorking")]
 		public void ValueNotFound1 ()
 		{
 			ListControlPoker p = new ListControlPoker ();
 			p.Items.Add ("one");
 			p.SelectedValue = "dos";
+            Assert.AreEqual("", p.SelectedValue, "SelectedValue");
+            Assert.AreEqual(null, p.SelectedItem, "SelectedItem");
+            Assert.AreEqual(-1, p.SelectedIndex, "SelectedIndex");
 		}
 
 		[Test]
@@ -540,6 +551,9 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			ListControlPoker p = new ListControlPoker ();
 			p.SelectedValue = "dos";
+            Assert.AreEqual("", p.SelectedValue, "SelectedValue");
+            Assert.AreEqual(null, p.SelectedItem, "SelectedItem");
+            Assert.AreEqual(-1, p.SelectedIndex, "SelectedIndex");
 		}
 	}
 }

@@ -264,6 +264,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
+        [Category ("NotWorking")]
 		public void WizardStepBase_PostBackAllowReturnTest ()
 		{
 			// This test examine the rendering 2 steps and make postbake
@@ -322,6 +323,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
+        [Category ("NotWorking")]
 		public void WizardStepBase_Theme ()
 		{
 #if DOT_NET
@@ -371,27 +373,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			ws.SkinID = "WizardTest";
 			w.WizardSteps.Add (ws);
 			p.Form.Controls.Add (w);
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		[ExpectedException (typeof (NullReferenceException))]
-		public void WizardStepBase_RenderChildrenException ()
-		{
-			PokerWizardStepBase step = new PokerWizardStepBase ();
-			LiteralControl lc = new LiteralControl ("test");
-			step.Controls.Add (lc);
-			step.RenderChildren ();
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		[ExpectedException(typeof(InvalidOperationException))]
-		public void WizardStepBase_LoadEventException ()
-		{
-			PokerWizardStepBase step = new PokerWizardStepBase ();
-			step.Load += new EventHandler (eventchecker);
-			step.DoOnLoad (new EventArgs());
 		}
 
 		private void eventchecker (object o, EventArgs e)

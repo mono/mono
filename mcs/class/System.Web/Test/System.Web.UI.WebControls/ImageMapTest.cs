@@ -397,18 +397,21 @@ namespace MonoTests.System.Web.UI.WebControls
 
         [Test]
         [Category("NunitWeb")]
-        [Category ("NotWorking")]
         public void ImageMap_PostBack_RenderBefore()
         {
             WebTest t = new WebTest(PageInvoker.CreateOnLoad(myPageLoad));
-            string strTarget = "\r\n\r\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\r\n\r\n<html xmlns=\"http://www.w3.org/1999/xhtml\" >\r\n<head id=\"Head1\"><title>\r\n\tUntitled Page\r\n</title></head>\r\n<body>\r\n    <form name=\"form1\" method=\"post\" action=\"MyPage.aspx\" id=\"form1\">\r\n<div>\r\n<input type=\"hidden\" name=\"__VIEWSTATE\" id=\"__VIEWSTATE\" value=\"/wEPDwUJNzgzNDMwNTMzZGQLJhX40CY+Fx8qOnHuztm6bjnQ2Q==\" />\r\n</div>\r\n\r\n    <div>\r\n    \r\n    </div>\r\n    <img id=\"imgmap\" src=\"\" usemap=\"#ImageMapimgmap\" style=\"border-width:0px;\" /><map name=\"ImageMapimgmap\">\r\n\t<area shape=\"rect\" coords=\"0,0,0,0\" href=\"javascript:__doPostBack('imgmap','0')\" title=\"\" alt=\"\" /><area shape=\"poly\" coords=\"\" href=\"javascript:__doPostBack('imgmap','1')\" title=\"\" alt=\"\" /><area shape=\"circle\" coords=\"0,0,0\" href=\"javascript:__doPostBack('imgmap','2')\" title=\"\" alt=\"\" />\r\n</map>\r\n<div>\r\n\r\n\t<input type=\"hidden\" name=\"__EVENTTARGET\" id=\"__EVENTTARGET\" value=\"\" />\r\n\t<input type=\"hidden\" name=\"__EVENTARGUMENT\" id=\"__EVENTARGUMENT\" value=\"\" />\r\n\t<input type=\"hidden\" name=\"__EVENTVALIDATION\" id=\"__EVENTVALIDATION\" value=\"/wEWBAKI4M7BBgK1psP5CwKqpsP5CwKrpsP5CwAupEuqBRJSlI+HDS5yr7hx8YjV\" />\r\n</div>\r\n<script type=\"text/javascript\">\r\n<!--\r\nvar theForm = document.forms['form1'];\r\nif (!theForm) {\r\n    theForm = document.form1;\r\n}\r\nfunction __doPostBack(eventTarget, eventArgument) {\r\n    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {\r\n        theForm.__EVENTTARGET.value = eventTarget;\r\n        theForm.__EVENTARGUMENT.value = eventArgument;\r\n        theForm.submit();\r\n    }\r\n}\r\n// -->\r\n</script>\r\n\r\n</form>\r\n</body>\r\n</html>\r\n";
-            string str = t.Run();
-            HtmlDiff.AssertAreEqual(strTarget, str, "BeforePostBack");
+            #region orig
+            string strTarget = @"<img id=""imgmap"" src="""" usemap=""#ImageMapimgmap"" style=""border-width:0px;"" /><map name=""ImageMapimgmap"">
+	                                <area shape=""rect"" coords=""0,0,0,0"" href=""javascript:__doPostBack('imgmap','0')"" title="""" alt="""" /><area shape=""poly"" coords="""" href=""javascript:__doPostBack('imgmap','1')"" title="""" alt="""" /><area shape=""circle"" coords=""0,0,0"" href=""javascript:__doPostBack('imgmap','2')"" title="""" alt="""" />
+                                 </map>";
+            #endregion
+            string RenderedPageHtml = t.Run();
+            string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml(RenderedPageHtml);
+            HtmlDiff.AssertAreEqual(strTarget, RenderedControlHtml, "BeforePostBack");
         }
 
         [Test]
         [Category("NunitWeb")]
-        [Category ("NotWorking")]
         public void ImageMap_PostBack_RenderAfter()
         {
             WebTest t = new WebTest(PageInvoker.CreateOnLoad(myPageLoad));
@@ -419,9 +422,14 @@ namespace MonoTests.System.Web.UI.WebControls
             fr.Controls["__EVENTTARGET"].Value = "imgmap";
             fr.Controls["__EVENTARGUMENT"].Value = "0";
             t.Request = fr;
-            string strTarget = "\r\n\r\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\r\n\r\n<html xmlns=\"http://www.w3.org/1999/xhtml\" >\r\n<head id=\"Head1\"><title>\r\n\tUntitled Page\r\n</title></head>\r\n<body>\r\n    <form name=\"form1\" method=\"post\" action=\"MyPage.aspx\" id=\"form1\">\r\n<div>\r\n<input type=\"hidden\" name=\"__VIEWSTATE\" id=\"__VIEWSTATE\" value=\"/wEPDwUJNzgzNDMwNTMzZGQLJhX40CY+Fx8qOnHuztm6bjnQ2Q==\" />\r\n</div>\r\n\r\n    <div>\r\n    \r\n    </div>\r\n    <img id=\"imgmap\" src=\"\" usemap=\"#ImageMapimgmap\" style=\"border-width:0px;\" /><map name=\"ImageMapimgmap\">\r\n\t<area shape=\"rect\" coords=\"0,0,0,0\" href=\"javascript:__doPostBack('imgmap','0')\" title=\"\" alt=\"\" /><area shape=\"poly\" coords=\"\" href=\"javascript:__doPostBack('imgmap','1')\" title=\"\" alt=\"\" /><area shape=\"circle\" coords=\"0,0,0\" href=\"javascript:__doPostBack('imgmap','2')\" title=\"\" alt=\"\" />\r\n</map>\r\n<div>\r\n\r\n\t<input type=\"hidden\" name=\"__EVENTTARGET\" id=\"__EVENTTARGET\" value=\"\" />\r\n\t<input type=\"hidden\" name=\"__EVENTARGUMENT\" id=\"__EVENTARGUMENT\" value=\"\" />\r\n\t<input type=\"hidden\" name=\"__EVENTVALIDATION\" id=\"__EVENTVALIDATION\" value=\"/wEWBAKI4M7BBgK1psP5CwKqpsP5CwKrpsP5CwAupEuqBRJSlI+HDS5yr7hx8YjV\" />\r\n</div>\r\n<script type=\"text/javascript\">\r\n<!--\r\nvar theForm = document.forms['form1'];\r\nif (!theForm) {\r\n    theForm = document.form1;\r\n}\r\nfunction __doPostBack(eventTarget, eventArgument) {\r\n    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {\r\n        theForm.__EVENTTARGET.value = eventTarget;\r\n        theForm.__EVENTARGUMENT.value = eventArgument;\r\n        theForm.submit();\r\n    }\r\n}\r\n// -->\r\n</script>\r\n\r\n</form>\r\n</body>\r\n</html>\r\n";
-            string str = t.Run();
-            HtmlDiff.AssertAreEqual(strTarget, str, "AfterPostBack");
+            #region orig
+            string strTarget = @"<img id=""imgmap"" src="""" usemap=""#ImageMapimgmap"" style=""border-width:0px;"" /><map name=""ImageMapimgmap"">
+	                                <area shape=""rect"" coords=""0,0,0,0"" href=""javascript:__doPostBack('imgmap','0')"" title="""" alt="""" /><area shape=""poly"" coords="""" href=""javascript:__doPostBack('imgmap','1')"" title="""" alt="""" /><area shape=""circle"" coords=""0,0,0"" href=""javascript:__doPostBack('imgmap','2')"" title="""" alt="""" />
+                                 </map>";
+            #endregion
+            string RenderedPageHtml = t.Run();
+            string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml(RenderedPageHtml);
+            HtmlDiff.AssertAreEqual(strTarget, RenderedControlHtml, "AfterPostBack");
         }
 
         public static void myPageLoad(Page page)
@@ -443,7 +451,12 @@ namespace MonoTests.System.Web.UI.WebControls
             CircleHotSpot circle = new CircleHotSpot();
             circle.PostBackValue = "Circle";
             imgmap.HotSpots.Add(circle);
+            // Two marks for getting controls from form
+            LiteralControl lcb = new LiteralControl(HtmlDiff.BEGIN_TAG);
+            LiteralControl lce = new LiteralControl(HtmlDiff.END_TAG);
+            page.Form.Controls.Add(lcb);
             page.Form.Controls.Add(imgmap);
+            page.Form.Controls.Add(lce);
         }
 
         [SetUp]
@@ -454,7 +467,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
         [TestFixtureTearDown]
         public void TearDown()
-	{
+	    {
             WebTest.Unload();
         }
     }

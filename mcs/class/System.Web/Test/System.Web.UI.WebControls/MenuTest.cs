@@ -856,6 +856,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
+        [Category ("NotWorking")]
 		public void Menu_DefaultRender ()
 		{
 		        string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (_DefaultRender)).Run ();
@@ -936,6 +937,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
+        [Category ("NotWorking")]
 		public void Menu_RenderStaticItems () {
 			string RenderedPageHtml, RenderedControlHtml, OriginControlHtml;
 			RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (Menu_RenderStaticItems_Vertical)).Run ();
@@ -1351,6 +1353,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			}
 		}
 		[Test]
+        [Category ("NotWorking")]
 		public void MenuClass ()
 		{
 #if DOT_NET
@@ -1370,6 +1373,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
+        [Category ("NotWorking")]
 		public void Menu_PostBack ()
 		{
 #if DOT_NET

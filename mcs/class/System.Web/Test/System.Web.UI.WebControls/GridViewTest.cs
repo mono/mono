@@ -1929,7 +1929,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			if (pageHTML.IndexOf ("DeleteSuccess") < 0) {
 				Assert.Fail ("DeleteFail");
 			}
-		}
+
+            Unload();
+        }
 
 		[Test]
 		[Category ("NunitWeb")]
@@ -1953,7 +1955,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			t.Request = fr;
 			pageHTML = t.Run ();
 			Assert.AreEqual (0, t.UserData , "ObjectDataSource after delete from grid");
-		}
+
+            Unload();
+        }
 
 		public static void GridView_checkrows (Page p)
 		{
@@ -2051,7 +2055,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("1001", merged_data[1], "Row before update#1");
 			Assert.AreEqual ("TestEname", merged_data[2], "Row before update#2");
 			Assert.AreEqual ("TestLname", merged_data[3], "Row before update#3");
-		}
+            Unload();
+        }
 
 		public static void GridView_postbackupdateitem (Page p)
 		{
@@ -2127,7 +2132,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			if (pageHTML.IndexOf ("EditSuccess") < 0) {
 				Assert.Fail ("EditFail");
 			}
-		}
+            Unload();
+        }
 
 		[Test]
 		[Category ("NunitWeb")]
@@ -2217,6 +2223,18 @@ namespace MonoTests.System.Web.UI.WebControls
 			PokerGridView g = new PokerGridView ();
 			object o = g.SelectedValue;
 		}
+
+        public void Unload()
+        {
+            WebTest.Unload();
+        }
+
+        [TestFixtureTearDown]
+        public void TearDown()
+        {
+            WebTest.Unload();
+        }
+
 
 		public static DataTable CreateDataSource ()
 		{

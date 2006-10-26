@@ -1197,6 +1197,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		
 		[Test]
+		[Category ("NotDotNet")] //TODO
 		public void PageIndex ()
 		{
 			ObjectDataSource ds = new ObjectDataSource ();
@@ -1304,6 +1305,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 		[Test]
 		[Category("NunitWeb")]
+		[Category ("NotWorking")]
 		public void FormViewCssClass ()
 		{
 			string res = new WebTest ("FormView.aspx").Run ();
@@ -1321,6 +1323,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 
 		[Test]
+		[Category ("NotWorking")]
 		public void FormView_RenderSimpleTemplate()
 		{
 			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();			
@@ -1373,6 +1376,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 		[Test]
 		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
 		public void FormView_RenderWithHeader()
 		{
 			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();
@@ -1396,6 +1400,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 		[Test]
 		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
 		public void FormView_Render ()
 		{
 			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();
@@ -1580,6 +1585,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 		[Test]
 		[Category ("NotWorking")]
+		[Category ("NotDotNet")] //TODO
 		public void FormView_InsertPostback ()
 		{
 			WebTest t = new WebTest ("FormViewInsertEditDelete.aspx");
@@ -1653,6 +1659,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 		[Test]
 		[Category ("NotWorking")]
+		[Category ("NotDotNet")] //TODO
 		public void FormView_DeleteAndEmptyTemplatePostback ()
 		{
 			WebTest t = new WebTest ("FormViewInsertEditDelete.aspx");

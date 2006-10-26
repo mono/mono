@@ -1,3 +1,9 @@
+2006-10-26 Yoni Klain <yonik@mainsoft.com>
+	
+	* Changed tests for to be runned on run-tests-ondotnet,
+	and added categories for ondotnet, and notworking for 
+	mono. 
+	
 2006-10-24 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* GridViewTest.cs: new test was added
