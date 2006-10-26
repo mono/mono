@@ -1,5 +1,11 @@
 2006-10-26  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* create-native-map.exe: Update; Adds support for integral limit fallback.
+	* map.c: Flush (adds integral limits fallback, so that if G_MININT8 doesn't
+	  exist we can fallback sanely instead of breaking the build).
+
+2006-10-26  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* Makefile.am: Add "mph.h" to the generated code for map.c, so that
 	  EOVERFLOW is defined on Win32.
 	* map.c: Flush (adds #include "mph.h").
