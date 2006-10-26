@@ -1,3 +1,20 @@
+2006-10-26  Chris Toshok  <toshok@ximian.com>
+
+	* PropertyGridView.cs: 
+
+	- ifdef all the code specific to the double
+	buffer case, and provide some alternatives in the non-doublebuffer
+	code, which makes heavy use of XplatUI.ScrollWindow to move things
+	around without having to invalidate (and cause flicker).  There
+	are still some drawing problems in the non-doublebuffered case, so
+	DOUBLEBUFFER is defined by default.
+
+	- Fix the way dropdowns are handled.  now we explicitly watch for
+	the events which might cause the dropdown to close, and break out
+	of the nested event loop there.  This gets rid of all Capture
+	code, at the expense of the Msg special casing.  Seems to work,
+	though, and fixes bug #79743.
+
 2006-10-27  Rolf Bjarne Kvinge <RKvinge@novell.com>
 	* Control.cs: SetIsRecreating now recreates implicitly added
 	child controls as well. Finally fixes #79629. The flag passed to 

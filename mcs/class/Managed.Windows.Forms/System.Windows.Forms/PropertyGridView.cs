@@ -1,3 +1,5 @@
+#define DOUBLEBUFFER
+
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -55,6 +57,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		private ImplicitVScrollBar vbar;
 		private StringFormat string_format;
 		private Font bold_font;
+		private int cached_splitter_location;
 		#endregion
 
 		#region Contructors
@@ -109,10 +112,14 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			FontChanged+=new EventHandler(RedrawEvent);
 			
 			SetStyle(ControlStyles.Selectable, true);
+#if DOUBLEBUFFER
 			SetStyle(ControlStyles.DoubleBuffer, true);
+#endif
 			SetStyle(ControlStyles.UserPaint, true);
 			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+#if DOUBLEBUFFER
 			SetStyle(ControlStyles.ResizeRedraw, true);
+#endif
 		}
 
 		#endregion
@@ -120,11 +127,10 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		#region Protected Instance Methods
 
 		protected override void OnFontChanged(EventArgs e) {
-			bold_font = new Font(this.Font, FontStyle.Bold);
-
-			
-			row_height = Font.Height + font_height_padding;
 			base.OnFontChanged (e);
+
+			bold_font = new Font(this.Font, FontStyle.Bold);
+			row_height = Font.Height + font_height_padding;
 		}
 
 		void InvalidateGridItemLabel (GridItem item)
@@ -137,15 +143,48 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			Invalidate (new Rectangle (0, item.Top, Width, row_height));
 		}
 
-		void InvalidateFromGridItemDown (GridItem item)
+		void CalcHeightOfGridItems (GridItemCollection col, ref int amount)
 		{
+			foreach (GridItem i in col) {
+				amount += row_height;
+				if (i.Expanded)
+					CalcHeightOfGridItems (i.GridItems, ref amount);
+			}
+		}
+
+		void RedrawBelowItemOnExpansion (GridItem item)
+		{
+#if DOUBLEBUFFER
 			Invalidate(new Rectangle (0, item.Top, Width, Height - item.Top));
+#else
+			// ugh, we need to recurse down into all our
+			// group items to figure out the space to
+			// scroll..
+			int amount = 0;
+
+			CalcHeightOfGridItems (item.GridItems, ref amount);
+
+			if (item.Expanded) {
+				XplatUI.ScrollWindow (Handle,
+						      new Rectangle (0, item.Top + row_height,
+								     Width, Height - item.Top - row_height),
+						      0, amount, false);
+			}
+			else {
+				XplatUI.ScrollWindow (Handle,
+						      new Rectangle (0, item.Top + row_height,
+								     Width, Height - item.Top - row_height),
+						      0, -amount, false);
+			}
+			InvalidateGridItem (item);
+			Update();
+#endif
 		}
 
 		protected override void OnDoubleClick(EventArgs e) {
 			if (property_grid.SelectedGridItem.Expandable) {
 				property_grid.SelectedGridItem.Expanded = !property_grid.SelectedGridItem.Expanded;
-				InvalidateFromGridItemDown (property_grid.SelectedGridItem);
+				RedrawBelowItemOnExpansion (property_grid.SelectedGridItem);
 			}
 			else {
 				ToggleValue();
@@ -206,7 +245,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					if (foundItem.Expandable) {
 						if (e.X >=3 && e.X <= 11 && (e.Y % row_height >= row_height/2-2 && e.Y % row_height <= row_height/2+4)) {
 							foundItem.Expanded = !foundItem.Expanded;
-							InvalidateFromGridItemDown (foundItem);
+							RedrawBelowItemOnExpansion (foundItem);
 						}
 					}
 					this.property_grid.SelectedGridItem = foundItem;
@@ -222,9 +261,33 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		}
 
 		protected override void OnResize(EventArgs e) {
+			SuspendLayout ();
 			grid_textbox.Hide ();
+			ResumeLayout (false);
+
+#if !DOUBLEBUFFER
+			// we need to explicitly handle this redraw
+			// before getting to the scrollwindow, or we
+			// end up having to redraw the entire item
+			// value area because the exposed areas are
+			// unioned.
+			Update ();
+#endif
+
 			base.OnResize (e);
+#if !DOUBLEBUFFER
+			if (cached_splitter_location != SplitterLocation) {
+				int x = cached_splitter_location > SplitterLocation ? SplitterLocation : cached_splitter_location;
+				XplatUI.ScrollWindow (Handle,
+						      new Rectangle (x, 0, Width - x - (vbar.Visible ? vbar.Width : 0), Height),
+						      SplitterLocation - cached_splitter_location, 0, false);
+				Update();
+			}
+			cached_splitter_location = SplitterLocation;
+#endif
+			SuspendLayout ();
 			grid_textbox_Show (property_grid.SelectedGridItem);
+			ResumeLayout (false);
 		}
 
 		private void UnfocusSelection ()
@@ -365,7 +428,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					   otherwise, act just like the user pressed up */
 					if (selectedItem.Expandable && selectedItem.Expanded) {
 						selectedItem.Expanded = false;
-						InvalidateFromGridItemDown (property_grid.SelectedGridItem);
+						RedrawBelowItemOnExpansion (property_grid.SelectedGridItem);
 						e.Handled = true;
 						break;
 					}
@@ -385,7 +448,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					   otherwise, act just like the user pressed down */
 					if (selectedItem.Expandable && !selectedItem.Expanded) {
 						selectedItem.Expanded = true;
-						InvalidateFromGridItemDown (property_grid.SelectedGridItem);
+						RedrawBelowItemOnExpansion (property_grid.SelectedGridItem);
 						e.Handled = true;
 						break;
 					}
@@ -396,7 +459,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				/* toggle the expanded state of the selected item */
 				if (selectedItem.Expandable) {
 					selectedItem.Expanded = !selectedItem.Expanded;
-					InvalidateFromGridItemDown (property_grid.SelectedGridItem);
+					RedrawBelowItemOnExpansion (property_grid.SelectedGridItem);
 				}
 				e.Handled = true;
 				break;
@@ -452,9 +515,18 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				if (old_splitter_location != SplitterLocation) {
 					grid_textbox_Hide ();
 					int x = old_splitter_location > SplitterLocation ? SplitterLocation : old_splitter_location;
-					Invalidate(new Rectangle (x, 0, Width - x, Height));
+#if DOUBLEBUFFER
+					Invalidate(new Rectangle (x, 0, Width - x - (vbar.Visible ? vbar.Width : 0), Height));
+#else
+					XplatUI.ScrollWindow (Handle,
+							      new Rectangle (x, 0, Width - x - (vbar.Visible ? vbar.Width : 0), Height),
+							      SplitterLocation - old_splitter_location, 0, false);
+					Update ();
+#endif
 					grid_textbox_Show (property_grid.SelectedGridItem);
 				}
+
+				cached_splitter_location = SplitterLocation;
 			}
 			get {
 				return splitter_percent;
@@ -762,7 +834,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					listBox.KeyDown += new KeyEventHandler(listBox_KeyDown);
 					listBox.MouseUp+=new MouseEventHandler(listBox_MouseUp);
 
-					DropDownControl (listBox, false);
+					DropDownControl (listBox);
 				}
 			} else { // use editor
 				SetPropertyValueFromUITypeEditor (editor);
@@ -806,7 +878,9 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 			skipped_grid_items = vbar.Value;
 			XplatUI.ScrollWindow(Handle, 0, scroll_amount, false);
+#if DOUBLEBUFFER
 			Invalidate ();
+#endif
 			Update ();
 
 			if (property_grid.SelectedGridItem != null)
@@ -874,7 +948,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 			int xloc = SplitterLocation + 1 + (paintsValue ? 27 : 0);
 			grid_textbox.SetBounds (xloc,
-						forItem.Top + 1,
+						forItem.Top + 2,
 						ClientRectangle.Width - xloc - (vbar.Visible ? vbar.Width : 0),
 						row_height - 2);
 			grid_textbox.Visible = true;
@@ -946,15 +1020,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			}
 		}
 
-		private void OnDropDownMouseDown (object sender, MouseEventArgs e)
-		{
-			Control c = (Control)sender;
-			if (!c.ClientRectangle.Contains (e.X, e.Y)) {
-				c.Capture = false;
-				CloseDropDown();
-			}
-		}
-
 		private void DropDownControl(Control control, bool block) {
 			Object	queue_id;
 
@@ -965,27 +1030,48 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			dropdown_form.Location = PointToScreen(new Point(SplitterLocation,grid_textbox.Location.Y+row_height));
 			dropdown_form.Width = ClientRectangle.Width - SplitterLocation - (vbar.Visible ? vbar.Width : 0);
 
+			FindForm ().AddOwnedForm (dropdown_form);
+
 			dropdown_form.Show();
-
-			control.Capture = true;
-
-			control.MouseDown += new MouseEventHandler (OnDropDownMouseDown);
 
 			if (block) {
 				System.Windows.Forms.MSG msg = new MSG();
 				queue_id = XplatUI.StartLoop(Thread.CurrentThread);
-				while (XplatUI.GetMessage(queue_id, ref msg, IntPtr.Zero, 0, 0) && dropdown_form.Visible) {
+				while (dropdown_form.Visible && XplatUI.GetMessage(queue_id, ref msg, IntPtr.Zero, 0, 0)) {
+
+					if ((msg.message == Msg.WM_NCLBUTTONDOWN ||
+					     msg.message == Msg.WM_NCMBUTTONDOWN ||
+					     msg.message == Msg.WM_NCRBUTTONDOWN ||
+					     msg.message == Msg.WM_LBUTTONDOWN ||
+					     msg.message == Msg.WM_MBUTTONDOWN ||
+					     msg.message == Msg.WM_RBUTTONDOWN)
+					    && !HwndInControl (dropdown_form, msg.hwnd)) {
+						CloseDropDown ();
+						break;
+					}
 					XplatUI.TranslateMessage(ref msg);
 					XplatUI.DispatchMessage(ref msg);
 				}
 			}
 		}
-		
+
+		private bool HwndInControl (Control c, IntPtr hwnd)
+		{
+			if (hwnd == c.window.Handle)
+				return true;
+			foreach (Control cc in c.Controls.GetAllControls ())
+				if (HwndInControl (cc, hwnd))
+					return true;
+			return false;
+		}
+
 		#endregion
 
 		#region IWindowsFormsEditorService Members
 
 		public void CloseDropDown() {
+			Control c = dropdown_form.Controls[0];
+			c.Capture = false;
 			dropdown_form.Hide();
 		}
 
@@ -1055,7 +1141,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		internal class PropertyGridDropDown : Form {
 			protected override CreateParams CreateParams {
 				get {
-					CreateParams cp = base.CreateParams;				
+					CreateParams cp = base.CreateParams;
 					cp.Style = unchecked ((int)(WindowStyles.WS_POPUP | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CLIPCHILDREN));
 					cp.ExStyle |= (int)(WindowExStyles.WS_EX_TOOLWINDOW | WindowExStyles.WS_EX_TOPMOST);				
 					return cp;
