@@ -1,3 +1,8 @@
+2006-10-26  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #76591
+	* cs-tokenizer.cs (IsCastToken): Enable a cast of anonymous methods.
+
 2006-10-25  Brian Crowell  <brian@fluggo.com>
 
 	Fix #79703

@@ -1,5 +1,10 @@
 2006-10-26  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #76591
+	* cs-tokenizer.cs (IsCastToken): Enable a cast of anonymous method.
+
+2006-10-26  Marek Safar  <marek.safar@gmail.com>
+
 	* codegen.cs (AssemblyClass.ApplyAttributeBuilder): Don't allow to have
 	type forwarder of the same type multiple times.
 

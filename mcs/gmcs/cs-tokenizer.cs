@@ -1377,6 +1377,7 @@ namespace Mono.CSharp
 			case Token.LITERAL_STRING:
 			case Token.BASE:
 			case Token.CHECKED:
+			case Token.DELEGATE:
 			case Token.FALSE:
 			case Token.FIXED:
 			case Token.NEW:
