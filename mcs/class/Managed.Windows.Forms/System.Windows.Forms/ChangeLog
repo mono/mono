@@ -1,3 +1,8 @@
+2006-10-27  Rolf Bjarne Kvinge <RKvinge@novell.com>
+	* Control.cs: SetIsRecreating now recreates implicitly added
+	child controls as well. Finally fixes #79629. The flag passed to 
+	SetIsRecreating has also been removed since it wasn't used.
+	
 2006-10-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* PageSetupDialog.cs: Clean some code, fix some bits, 

@@ -3553,11 +3553,11 @@ namespace System.Windows.Forms
 			// MS Internal
 		}
 
-		private void SetIsRecreating (bool flag)
+		private void SetIsRecreating ()
 		{
 			is_recreating=true;
 
-			foreach (Control c in Controls) {
+			foreach (Control c in Controls.GetAllControls()) {
 				c.SetIsRecreating (flag);
 			}
 		}
@@ -3568,7 +3568,7 @@ namespace System.Windows.Forms
 			Console.WriteLine("Recreating control {0}", XplatUI.Window(window.Handle));
 #endif
 
-			SetIsRecreating (true);
+			SetIsRecreating ();
 
 			if (IsHandleCreated) {
 #if DebugRecreate
