@@ -64,6 +64,7 @@ namespace System.Windows.Forms {
 		private RadioButton radio_portrait;
 		private GroupBox groupbox_margin;
 		private Label label_left;
+		private Button button_help;
 		private Button button_ok;
 		private Button button_cancel;
 		private Button button_printer;
@@ -76,17 +77,31 @@ namespace System.Windows.Forms {
 		private TextBox textbox_bottom;
 		private ComboBox combobox_source;
 		private ComboBox combobox_size;
+		private PrinterForm printer_helper_form;
 		#endregion // Local variables
 
 		#region Public Constructors
-		public PageSetupDialog () {
+		public PageSetupDialog () 
+		{
 			InitializeComponent();
+			Reset ();
 		}
 		#endregion // Public Constructors
 
 
 		#region Public Instance Methods
-		public override void Reset () {
+		public override void Reset () 
+		{
+			AllowMargins = true;
+			AllowOrientation = true;
+			AllowPaper = true;
+			AllowPrinter = true;
+			ShowHelp = false;
+			ShowNetwork = true;
+			MinMargins = new Margins (0, 0, 0, 0);
+			PrinterSettings = null;
+			PageSettings = null;
+			Document = null;
 		}
 		#endregion // Public Instance Methods
 
@@ -118,7 +133,13 @@ namespace System.Windows.Forms {
 		[DefaultValue(null)]
 		public PrintDocument Document {
 			get { return document; }
-			set { document = value; }
+			set { 
+				document = value;
+				if (document != null) {
+					printer_settings = document.PrinterSettings;
+					page_settings = document.DefaultPageSettings;
+				}
+			}
 		}
 
 		public Margins MinMargins {
@@ -131,7 +152,10 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public PageSettings PageSettings {
 			get { return page_settings; }
-			set { page_settings = value; }
+			set { 
+				page_settings = value;
+				document = null;
+			}
 		}
 
 		[Browsable(false)]
@@ -139,13 +163,21 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public PrinterSettings PrinterSettings {
 			get { return printer_settings; }
-			set { printer_settings = value; }
+			set { 
+				printer_settings = value;
+				document = null;
+			}
 		}
 
 		[DefaultValue(false)]
 		public bool ShowHelp {
 			get { return show_help; }
-			set { show_help = value; }
+			set { 
+				if (value != show_help) {
+					show_help = value;
+					ShowHelpButton ();
+				}
+			}
 		}
 
 		[DefaultValue(true)]
@@ -222,7 +254,7 @@ namespace System.Windows.Forms {
 			// 
 			// label_source
 			// 
-			this.label_source.Location = new System.Drawing.Point(10, 58);
+			this.label_source.Location = new System.Drawing.Point(13, 58);
 			this.label_source.Name = "label_source";
 			this.label_source.Size = new System.Drawing.Size(48, 16);
 			this.label_source.TabIndex = 1;
@@ -230,7 +262,7 @@ namespace System.Windows.Forms {
 			// 
 			// label_size
 			// 
-			this.label_size.Location = new System.Drawing.Point(10, 25);
+			this.label_size.Location = new System.Drawing.Point(13, 25);
 			this.label_size.Name = "label_size";
 			this.label_size.Size = new System.Drawing.Size(52, 16);
 			this.label_size.TabIndex = 0;
@@ -282,7 +314,7 @@ namespace System.Windows.Forms {
 			// 
 			// label_left
 			// 
-			this.label_left.Location = new System.Drawing.Point(10, 25);
+			this.label_left.Location = new System.Drawing.Point(11, 25);
 			this.label_left.Name = "label_left";
 			this.label_left.Size = new System.Drawing.Size(40, 23);
 			this.label_left.TabIndex = 0;
@@ -313,10 +345,11 @@ namespace System.Windows.Forms {
 			this.button_printer.Size = new System.Drawing.Size(72, 23);
 			this.button_printer.TabIndex = 5;
 			this.button_printer.Text = "&Printer...";
+			this.button_printer.Click += new EventHandler (OnClickPrinterButton);
 			// 
 			// label_top
 			// 
-			this.label_top.Location = new System.Drawing.Point(10, 57);
+			this.label_top.Location = new System.Drawing.Point(11, 57);
 			this.label_top.Name = "label_top";
 			this.label_top.Size = new System.Drawing.Size(40, 23);
 			this.label_top.TabIndex = 1;
@@ -408,6 +441,16 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		// .Net uses PrinterSettings property if it is not null.
+		// Otherwise, it uses PageSettings.PrinterSettings to set values.
+		// We use this property internally to automatically select the available one.
+		PrinterSettings InternalPrinterSettings {
+			get {
+				return (printer_settings == null ? page_settings.PrinterSettings :
+						printer_settings);
+			}
+		}
+
 		private string ToLocalizedLength (int marginsUnit)
 		{
 			return (UseYardPound ?
@@ -422,31 +465,37 @@ namespace System.Windows.Forms {
 		
 		private void SetPrinterDetails ()
 		{
+			if (PageSettings == null)
+				throw new ArgumentException ("PageSettings");
+
 			combobox_size.Items.Clear ();
-			foreach (PaperSize paper_size in PrinterSettings.PaperSizes) {
+			foreach (PaperSize paper_size in InternalPrinterSettings.PaperSizes)
 				combobox_size.Items.Add (paper_size.PaperName);
-			}
 			combobox_size.SelectedItem = page_settings.PaperSize.PaperName;
 			
 			combobox_source.Items.Clear ();
-			foreach (PaperSource paper_source in PrinterSettings.PaperSources) {
+			foreach (PaperSource paper_source in InternalPrinterSettings.PaperSources)
 				combobox_source.Items.Add (paper_source.SourceName);
-			}
 			combobox_source.SelectedItem = page_settings.PaperSource.SourceName;
 			
-			if (PageSettings.Landscape) {
+			if (PageSettings.Landscape)
 				radio_landscape.Checked = true;
-				radio_portrait.Checked = false;
-			} else {
-				radio_landscape.Checked = false;
+			else
 				radio_portrait.Checked = true;
-			}
+
+			if (ShowHelp)
+				ShowHelpButton ();
+
+			button_printer.Enabled = AllowPrinter && PrinterSettings != null;
+			groupbox_orientation.Enabled = AllowOrientation;
+			groupbox_paper.Enabled = AllowPaper;
+			groupbox_margin.Enabled = AllowMargins;
 		}
 		
 		private void OnClickOkButton (object sender, EventArgs e)
 		{			
 			if (combobox_size.SelectedItem != null) {
-				foreach (PaperSize paper_size in PrinterSettings.PaperSizes) {
+				foreach (PaperSize paper_size in InternalPrinterSettings.PaperSizes) {
 					if (paper_size.PaperName == (string) combobox_size.SelectedItem) {
 						PageSettings.PaperSize = paper_size;
 						break;
@@ -455,17 +504,270 @@ namespace System.Windows.Forms {
 			}
 			
 			if (combobox_source.SelectedItem != null) {
-				foreach (PaperSource paper_source in PrinterSettings.PaperSources) {
+				foreach (PaperSource paper_source in InternalPrinterSettings.PaperSources) {
 					if (paper_source.SourceName == (string) combobox_source.SelectedItem) {
 						PageSettings.PaperSource = paper_source;
 						break;
 					}
 				}
 			}
-			
+
 			PageSettings.Landscape = radio_landscape.Checked;
 			form.DialogResult = DialogResult.OK;
 		}
+
+		void ShowHelpButton ()
+		{
+			if (button_help == null) {
+				button_help = new Button ();
+				button_help.Location = new System.Drawing.Point (12, 358);
+				button_help.Name = "button_help";
+				button_help.Size = new System.Drawing.Size (72, 23);
+				button_help.Text = "&Help";
+				form.Controls.Add (button_help);
+			}
+
+			button_help.Visible = show_help;
+		}
+
+		void OnClickPrinterButton (object sender, EventArgs args)
+		{
+			if (printer_helper_form == null)
+				printer_helper_form = new PrinterForm (this);
+
+			printer_helper_form.UpdateValues ();
+
+			// Here update values for PrinterSettings
+			if (printer_helper_form.ShowDialog () == DialogResult.OK)
+				if (printer_helper_form.SelectedPrinter != PrinterSettings.PrinterName)
+					PrinterSettings.PrinterName = printer_helper_form.SelectedPrinter;
+
+			button_ok.Select ();
+		}
 		#endregion // Private Helper
+
+		class PrinterForm : Form
+		{
+			private System.Windows.Forms.GroupBox groupbox_printer;
+			private System.Windows.Forms.ComboBox combobox_printers;
+			private System.Windows.Forms.Label label_name;
+			private System.Windows.Forms.Label label_status;
+			private System.Windows.Forms.Button button_properties;
+			private System.Windows.Forms.Button button_network;
+			private System.Windows.Forms.Button button_cancel;
+			private System.Windows.Forms.Button button_ok;
+			private System.Windows.Forms.Label label_status_text;
+			private System.Windows.Forms.Label label_type;
+			private System.Windows.Forms.Label label_where;
+			private System.Windows.Forms.Label label_where_text;
+			private System.Windows.Forms.Label label_type_text;
+			private System.Windows.Forms.Label label_comment;
+			private System.Windows.Forms.Label label_comment_text;
+			PageSetupDialog page_setup_dialog;
+
+			public PrinterForm (PageSetupDialog page_setup_dialog)
+			{
+				InitializeComponent();
+				this.page_setup_dialog = page_setup_dialog;
+			}
+
+			public string SelectedPrinter {
+				get {
+					return (string) combobox_printers.SelectedItem;
+				}
+				set {
+					combobox_printers.SelectedItem = value;
+					label_type_text.Text = value;
+				}
+			}
+
+			public void UpdateValues ()
+			{
+				combobox_printers.Items.Clear ();
+				foreach (string printer_name in PrinterSettings.InstalledPrinters)
+					combobox_printers.Items.Add (printer_name);
+
+				// Select the printer indicated by PageSetupDialog.PrinterSettings
+				SelectedPrinter = page_setup_dialog.PrinterSettings.PrinterName;
+
+				button_network.Enabled = page_setup_dialog.ShowNetwork;
+			}
+
+#region Windows Form Designer generated code
+			private void InitializeComponent()
+			{
+				this.groupbox_printer = new System.Windows.Forms.GroupBox();
+				this.combobox_printers = new System.Windows.Forms.ComboBox();
+				this.button_network = new System.Windows.Forms.Button();
+				this.button_cancel = new System.Windows.Forms.Button();
+				this.button_ok = new System.Windows.Forms.Button();
+				this.label_name = new System.Windows.Forms.Label();
+				this.label_status = new System.Windows.Forms.Label();
+				this.label_status_text = new System.Windows.Forms.Label();
+				this.label_type = new System.Windows.Forms.Label();
+				this.label_type_text = new System.Windows.Forms.Label();
+				this.label_where = new System.Windows.Forms.Label();
+				this.label_comment = new System.Windows.Forms.Label();
+				this.label_where_text = new System.Windows.Forms.Label();
+				this.label_comment_text = new System.Windows.Forms.Label();
+				this.button_properties = new System.Windows.Forms.Button();
+				this.groupbox_printer.SuspendLayout();
+				this.SuspendLayout();
+				// 
+				// groupbox_printer
+				// 
+				this.groupbox_printer.Controls.AddRange(new System.Windows.Forms.Control[] {
+						this.button_properties,
+						this.label_comment_text,
+						this.label_where_text,
+						this.label_comment,
+						this.label_where,
+						this.label_type_text,
+						this.label_type,
+						this.label_status_text,
+						this.label_status,
+						this.label_name,
+						this.combobox_printers});
+				this.groupbox_printer.Location = new System.Drawing.Point(12, 8);
+				this.groupbox_printer.Name = "groupbox_printer";
+				this.groupbox_printer.Size = new System.Drawing.Size(438, 136);
+				this.groupbox_printer.Text = "Printer";
+				// 
+				// combobox_printers
+				// 
+				this.combobox_printers.Location = new System.Drawing.Point(64, 24);
+				this.combobox_printers.Name = "combobox_printers";
+				this.combobox_printers.SelectedValueChanged += new EventHandler (OnSelectedValueChangedPrinters);
+				this.combobox_printers.Size = new System.Drawing.Size(232, 21);
+				this.combobox_printers.TabIndex = 1;
+				// 
+				// button_network
+				// 
+				this.button_network.Location = new System.Drawing.Point(16, 160);
+				this.button_network.Name = "button_network";
+				this.button_network.Size = new System.Drawing.Size(68, 22);
+				this.button_network.TabIndex = 5;
+				this.button_network.Text = "Network...";
+				// 
+				// button_cancel
+				// 
+				this.button_cancel.DialogResult = DialogResult.Cancel;
+				this.button_cancel.Location = new System.Drawing.Point(376, 160);
+				this.button_cancel.Name = "button_cancel";
+				this.button_cancel.Size = new System.Drawing.Size(68, 22);
+				this.button_cancel.TabIndex = 4;
+				this.button_cancel.Text = "Cancel";
+				// 
+				// button_ok
+				// 
+				this.button_ok.DialogResult = DialogResult.OK;
+				this.button_ok.Location = new System.Drawing.Point(300, 160);
+				this.button_ok.Name = "button_ok";
+				this.button_ok.Size = new System.Drawing.Size(68, 22);
+				this.button_ok.TabIndex = 3;
+				this.button_ok.Text = "OK";
+				// 
+				// label_name
+				// 
+				this.label_name.Location = new System.Drawing.Point(12, 28);
+				this.label_name.Name = "label_name";
+				this.label_name.Size = new System.Drawing.Size(48, 20);
+				this.label_name.Text = "Name:";
+				// 
+				// label_status
+				// 
+				this.label_status.Location = new System.Drawing.Point(6, 52);
+				this.label_status.Name = "label_status";
+				this.label_status.Size = new System.Drawing.Size(58, 14);
+				this.label_status.Text = "Status:";
+				// 
+				// label_status_text
+				// 
+				this.label_status_text.Location = new System.Drawing.Point(64, 52);
+				this.label_status_text.Name = "label_status_text";
+				this.label_status_text.Size = new System.Drawing.Size(64, 14);
+				this.label_status_text.Text = String.Empty;
+				// 
+				// label_type
+				// 
+				this.label_type.Location = new System.Drawing.Point(6, 72);
+				this.label_type.Name = "label_type";
+				this.label_type.Size = new System.Drawing.Size(58, 14);
+				this.label_type.Text = "Type:";
+				// 
+				// label_type_text
+				// 
+				this.label_type_text.Location = new System.Drawing.Point(64, 72);
+				this.label_type_text.Name = "label_type_text";
+				this.label_type_text.Size = new System.Drawing.Size(232, 14);
+				this.label_type_text.TabIndex = 5;
+				this.label_type_text.Text = String.Empty;
+				// 
+				// label_where
+				// 
+				this.label_where.Location = new System.Drawing.Point(6, 92);
+				this.label_where.Name = "label_where";
+				this.label_where.Size = new System.Drawing.Size(58, 16);
+				this.label_where.TabIndex = 6;
+				this.label_where.Text = "Where:";
+				// 
+				// label_comment
+				// 
+				this.label_comment.Location = new System.Drawing.Point(6, 112);
+				this.label_comment.Name = "label_comment";
+				this.label_comment.Size = new System.Drawing.Size(56, 16);
+				this.label_comment.Text = "Comment:";
+				// 
+				// label_where_text
+				// 
+				this.label_where_text.Location = new System.Drawing.Point(64, 92);
+				this.label_where_text.Name = "label_where_text";
+				this.label_where_text.Size = new System.Drawing.Size(232, 16);
+				this.label_where_text.Text = String.Empty;
+				// 
+				// label_comment_text
+				// 
+				this.label_comment_text.Location = new System.Drawing.Point(64, 112);
+				this.label_comment_text.Name = "label_comment_text";
+				this.label_comment_text.Size = new System.Drawing.Size(232, 16);
+				this.label_comment_text.Text = String.Empty;
+				// 
+				// button_properties
+				// 
+				this.button_properties.Location = new System.Drawing.Point(308, 22);
+				this.button_properties.Name = "button_properties";
+				this.button_properties.Size = new System.Drawing.Size(92, 22);
+				this.button_properties.TabIndex = 2;
+				this.button_properties.Text = "Properties...";
+				// 
+				// PrinterForm
+				// 
+				this.AllowDrop = true;
+				this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+				this.AcceptButton = button_ok;
+				this.CancelButton = button_cancel;
+				this.ClientSize = new System.Drawing.Size(456, 194);
+				this.Controls.AddRange(new System.Windows.Forms.Control[] {
+						this.button_ok,
+						this.button_cancel,
+						this.button_network,
+						this.groupbox_printer});
+				this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+				this.HelpButton = true;
+				this.MaximizeBox = false;
+				this.MinimizeBox = false;
+				this.Name = "PrinterForm";
+				this.ShowInTaskbar = false;
+				this.Text = "Configure page";
+				this.groupbox_printer.ResumeLayout(false);
+				this.ResumeLayout(false);
+			}
+#endregion
+			void OnSelectedValueChangedPrinters (object sender, EventArgs args)
+			{
+				SelectedPrinter = (string) combobox_printers.SelectedItem;
+			}
+		}
+
 	}
 }
