@@ -58,6 +58,7 @@
 #endif /* ndef HAVE_SYSLOG_H */
 #include <dirent.h>
 #include <utime.h>
+#include "mph.h"
 
 #include "map.h"
 

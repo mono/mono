@@ -115,6 +115,7 @@ refresh:
 	--autoconf-header="<syslog.h>"                        \
 	--impl-header="<dirent.h>"                            \
 	--impl-header="<utime.h>"                             \
+	--impl-header="\"mph.h\""                             \
 	--rename-member=st_atime=st_atime_                    \
 	--rename-member=st_ctime=st_ctime_                    \
 	--rename-member=st_mtime=st_mtime_                    \
