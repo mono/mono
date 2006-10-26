@@ -71,96 +71,72 @@
 
 #if defined (G_MININT8)
 #define CNM_MININT8 G_MININT8
-#elif defined (INT8_MIN)
-#define CNM_MININT8 INT8_MIN
 #else
 #define CNM_MININT8 (-128)
 #endif
 
 #if defined (G_MAXINT8)
 #define CNM_MAXINT8 G_MAXINT8
-#elif defined (INT8_MAX)
-#define CNM_MAXINT8 INT8_MAX
 #else
 #define CNM_MAXINT8 (127)
 #endif
 
 #if defined (G_MAXUINT8)
 #define CNM_MAXUINT8 G_MAXUINT8
-#elif defined (UINT8_MAX)
-#define CNM_MAXUINT8 UINT8_MAX
 #else
 #define CNM_MAXUINT8 (255)
 #endif
 
 #if defined (G_MININT16)
 #define CNM_MININT16 G_MININT16
-#elif defined (INT16_MIN)
-#define CNM_MININT16 INT16_MIN
 #else
 #define CNM_MININT16 (-32768)
 #endif
 
 #if defined (G_MAXINT16)
 #define CNM_MAXINT16 G_MAXINT16
-#elif defined (INT16_MAX)
-#define CNM_MAXINT16 INT16_MAX
 #else
 #define CNM_MAXINT16 (32767)
 #endif
 
 #if defined (G_MAXUINT16)
 #define CNM_MAXUINT16 G_MAXUINT16
-#elif defined (UINT16_MAX)
-#define CNM_MAXUINT16 UINT16_MAX
 #else
 #define CNM_MAXUINT16 (65535)
 #endif
 
 #if defined (G_MININT32)
 #define CNM_MININT32 G_MININT32
-#elif defined (INT32_MIN)
-#define CNM_MININT32 INT32_MIN
 #else
 #define CNM_MININT32 (-2147483648)
 #endif
 
 #if defined (G_MAXINT32)
 #define CNM_MAXINT32 G_MAXINT32
-#elif defined (INT32_MAX)
-#define CNM_MAXINT32 INT32_MAX
 #else
 #define CNM_MAXINT32 (2147483647)
 #endif
 
 #if defined (G_MAXUINT32)
 #define CNM_MAXUINT32 G_MAXUINT32
-#elif defined (UINT32_MAX)
-#define CNM_MAXUINT32 UINT32_MAX
 #else
 #define CNM_MAXUINT32 (4294967295U)
 #endif
 
 #if defined (G_MININT64)
 #define CNM_MININT64 G_MININT64
-#elif defined (INT64_MIN)
-#define CNM_MININT64 INT64_MIN
 #else
 #define CNM_MININT64 (-9223372036854775808LL)
 #endif
 
 #if defined (G_MAXINT64)
 #define CNM_MAXINT64 G_MAXINT64
-#elif defined (INT64_MAX)
-#define CNM_MAXINT64 INT64_MAX
 #else
 #define CNM_MAXINT64 (9223372036854775807LL)
 #endif
 
 #if defined (G_MAXUINT64)
 #define CNM_MAXUINT64 G_MAXUINT64
-#elif defined (UINT64_MAX)
-#define CNM_MAXUINT64 UINT64_MAX
 #else
 #define CNM_MAXUINT64 (18446744073709551615ULL)
 #endif

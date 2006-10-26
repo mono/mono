@@ -1,5 +1,13 @@
 2006-10-26  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* create-native-map.exe: Remove.  Just grab a new copy whenever we need to
+	  refresh map.[ch].
+	* Makefile.am: Remove `update-create-native-map' target, and just have the
+	  `refresh' target grab the latest create-native-map.exe program.
+	* map.c: Flush (remove fallback to <inttypes.h> constants).
+
+2006-10-26  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* create-native-map.exe: Update; Adds support for integral limit fallback.
 	* map.c: Flush (adds integral limits fallback, so that if G_MININT8 doesn't
 	  exist we can fallback sanely instead of breaking the build).

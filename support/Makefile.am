@@ -85,13 +85,11 @@ libMonoSupportW_la_SOURCES =			\
 libMonoSupportW_la_LIBADD =			\
 		$(GLIB_LIBS)
 
-update-create-native-map:
-	cp `pkg-config --variable=Programs create-native-map` .
-
 # 
 # Use this target to refresh the values in map.[ch]
 #
 refresh:
+	cp `pkg-config --variable=Programs create-native-map` . && \
 	$(top_builddir)/runtime/mono-wrapper create-native-map.exe \
 	--autoconf-member=d_off                               \
 	--autoconf-member=d_reclen                            \
