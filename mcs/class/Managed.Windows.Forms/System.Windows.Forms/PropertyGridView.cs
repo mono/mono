@@ -61,8 +61,9 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		public PropertyGridView (PropertyGrid propertyGrid) {
 			property_grid = propertyGrid;
 
-			property_grid.SelectedGridItemChanged+=new SelectedGridItemChangedEventHandler(HandleSelectedGridItemChanged);
-			property_grid.PropertyValueChanged+=new PropertyValueChangedEventHandler(HandlePropertyValueChanged);
+			property_grid.SelectedGridItemChanged += new SelectedGridItemChangedEventHandler (SelectedGridItemChanged);
+			property_grid.PropertyValueChanged += new PropertyValueChangedEventHandler (PropertyValueChanged);
+			property_grid.SelectedObjectsChanged += new EventHandler (SelectedObjectsChanged);
 
 			string_format = new StringFormat();
 			string_format.FormatFlags = StringFormatFlags.NoWrap;
@@ -306,8 +307,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		{
 			while (down_count > 0) {
 				GridItemCollection items = item.UIParent != null ? item.UIParent.GridItems : property_grid.grid_items;
-				int index = items.IndexOf (item);
-
 				/* if we're a parent node and we're expanded, move to our first child */
 				if (item.Expandable && item.Expanded) {
 					item = (GridEntry)item.GridItems[0];
@@ -907,7 +906,11 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		}
 
 
-		private void HandleSelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e) {
+		private void SelectedObjectsChanged (object sender, EventArgs args) {
+			grid_textbox_Hide ();
+		}
+
+		private void SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e) {
 			if (e.OldSelection != null)
 				InvalidateGridItemLabel (e.OldSelection);
 			InvalidateGridItemLabel (e.NewSelection);
@@ -933,7 +936,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			}
 		}
 
-		private void HandlePropertyValueChanged(object s, PropertyValueChangedEventArgs e) {
+		private void PropertyValueChanged(object s, PropertyValueChangedEventArgs e) {
 			if (e.ChangedItem.PropertyDescriptor != null) {
 				grid_textbox.Text = e.ChangedItem.PropertyDescriptor.Converter.ConvertToString(e.ChangedItem.Value);
 				if (e.ChangedItem.PropertyDescriptor.CanResetValue(property_grid.SelectedObject))

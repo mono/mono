@@ -1,5 +1,16 @@
 2006-10-26  Chris Toshok  <toshok@ximian.com>
 
+	* PropertyGrid.cs: make set_SelectedObject call
+	set_SelectedObjects, and move the duplicate logic to the
+	SelectedObjects setter.  Also, raise SelectedObjectsChanged.
+
+	* PropertyGridView.cs: hide the textbox when we get a
+	SelectedObjectsChanged event.
+
+	Fixes bug #79748.
+
+2006-10-26  Chris Toshok  <toshok@ximian.com>
+
 	* PropertyGridView.cs: deal with the type converter not supporting
 	GetStandardValues() or GetStandardValues() returning null, which
 	is does in the default case.  Fixes #79742.

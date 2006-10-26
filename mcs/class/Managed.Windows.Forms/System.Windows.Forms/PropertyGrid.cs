@@ -496,22 +496,10 @@ namespace System.Windows.Forms {
 
 			set {
 				if (value == null)
-					selected_objects = new object[0];
+					SelectedObjects = new object[0];
 				else
-					selected_objects = new object[] {value};
+					SelectedObjects = new object[] {value};
 
-				if (value != null) {
-					PropertyTabAttribute[] propTabs = (PropertyTabAttribute[])this.SelectedObject.GetType().GetCustomAttributes(typeof(PropertyTabAttribute),true);
-					if (propTabs.Length > 0) {
-						foreach (Type tabType in propTabs[0].TabClasses) {
-							this.PropertyTabs.AddTabType(tabType);
-						}
-					}
-				}
-
-				RefreshTabs(PropertyTabScope.Component);
-				ReflectObjects();
-				property_grid_view.Refresh();
 			}
 		}
 
@@ -532,7 +520,20 @@ namespace System.Windows.Forms {
 				} else {
 					selected_objects = new object [0];
 				}
+
+				if (selected_objects.Length > 0) {
+					PropertyTabAttribute[] propTabs = (PropertyTabAttribute[])this.SelectedObject.GetType().GetCustomAttributes(typeof(PropertyTabAttribute),true);
+					if (propTabs.Length > 0) {
+						foreach (Type tabType in propTabs[0].TabClasses) {
+							this.PropertyTabs.AddTabType(tabType);
+						}
+					}
+				}
+
+				RefreshTabs(PropertyTabScope.Component);
 				ReflectObjects();
+				property_grid_view.Refresh();
+				OnSelectedObjectsChanged (EventArgs.Empty);
 			}
 		}
 
