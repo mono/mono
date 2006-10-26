@@ -3558,7 +3558,7 @@ namespace System.Windows.Forms
 			is_recreating=true;
 
 			foreach (Control c in Controls.GetAllControls()) {
-				c.SetIsRecreating (flag);
+				c.SetIsRecreating ();
 			}
 		}
 
