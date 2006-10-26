@@ -84,18 +84,6 @@ namespace MonoTests.System.Web.UI {
 	[TestFixture]	
 	public class PageTest {
 
-		[TestFixtureSetUp]
-		public void CopyTestResources ()
-		{
-#if DOT_NET
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageValidationTest.aspx", "PageValidationTest.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageLifecycleTest.aspx", "PageLifecycleTest.aspx");
-#else
-			WebTest.CopyResource (GetType (), "PageValidationTest.aspx", "PageValidationTest.aspx");
-			WebTest.CopyResource (GetType (), "PageLifecycleTest.aspx", "PageLifecycleTest.aspx");
-#endif
-		}
-
 		[SetUp]
 		public void SetUpTest ()
 		{
@@ -384,6 +372,12 @@ namespace MonoTests.System.Web.UI {
 		[Category ("NunitWeb")]
 		public void Page_ValidatorTest1 ()
 		{
+#if DOT_NET
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageValidationTest.aspx", "PageValidationTest.aspx");
+#else
+			WebTest.CopyResource (GetType (), "PageValidationTest.aspx", "PageValidationTest.aspx");
+#endif
+
 			WebTest t = new WebTest ("PageValidationTest.aspx");
 			string PageRenderHtml = t.Run ();
 
@@ -416,6 +410,12 @@ namespace MonoTests.System.Web.UI {
 		[Category ("NunitWeb")]
 		public void Page_ValidatorTest2 ()
 		{
+#if DOT_NET
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageValidationTest.aspx", "PageValidationTest.aspx");
+#else
+			WebTest.CopyResource (GetType (), "PageValidationTest.aspx", "PageValidationTest.aspx");
+#endif
+
 			WebTest t = new WebTest ("PageValidationTest.aspx");
 			string PageRenderHtml = t.Run ();
 
@@ -472,6 +472,12 @@ namespace MonoTests.System.Web.UI {
 		[Category ("NunitWeb")]
 		public void Page_ValidatorTest4 ()
 		{
+#if DOT_NET
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageValidationTest.aspx", "PageValidationTest.aspx");
+#else
+			WebTest.CopyResource (GetType (), "PageValidationTest.aspx", "PageValidationTest.aspx");
+#endif
+
 			WebTest t = new WebTest ("PageValidationTest.aspx");
 			string PageRenderHtml = t.Run ();
 
@@ -511,6 +517,12 @@ namespace MonoTests.System.Web.UI {
 		[Category ("NunitWeb")]
 		public void Page_ValidatorTest5 ()
 		{
+#if DOT_NET
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageValidationTest.aspx", "PageValidationTest.aspx");
+#else
+			WebTest.CopyResource (GetType (), "PageValidationTest.aspx", "PageValidationTest.aspx");
+#endif
+
 			WebTest t = new WebTest ("PageValidationTest.aspx");
 			string PageRenderHtml = t.Run ();
 
@@ -550,6 +562,12 @@ namespace MonoTests.System.Web.UI {
 		[Category ("NunitWeb")]
 		public void Page_ValidatorTest6 ()
 		{
+#if DOT_NET
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageValidationTest.aspx", "PageValidationTest.aspx");
+#else
+			WebTest.CopyResource (GetType (), "PageValidationTest.aspx", "PageValidationTest.aspx");
+#endif
+
 			WebTest t = new WebTest ("PageValidationTest.aspx");
 			string PageRenderHtml = t.Run ();
 
@@ -600,6 +618,12 @@ namespace MonoTests.System.Web.UI {
 		[Category ("NunitWeb")]
 		public void Page_ValidatorTest7 ()
 		{
+#if DOT_NET
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageValidationTest.aspx", "PageValidationTest.aspx");
+#else
+			WebTest.CopyResource (GetType (), "PageValidationTest.aspx", "PageValidationTest.aspx");
+#endif
+
 			WebTest t = new WebTest ("PageValidationTest.aspx");
 			string PageRenderHtml = t.Run ();
 
@@ -651,6 +675,12 @@ namespace MonoTests.System.Web.UI {
 		[Category ("NunitWeb")]
 		public void Page_Lifecycle ()
 		{
+#if DOT_NET
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageLifecycleTest.aspx", "PageLifecycleTest.aspx");
+#else
+			WebTest.CopyResource (GetType (), "PageLifecycleTest.aspx", "PageLifecycleTest.aspx");
+#endif
+
 			WebTest t = new WebTest ("PageLifecycleTest.aspx");
 			string PageRenderHtml = t.Run ();
 			ArrayList eventlist = t.UserData as ArrayList;
@@ -668,12 +698,14 @@ namespace MonoTests.System.Web.UI {
 			Assert.AreEqual ("OnSaveStateComplete", eventlist[8], "Live Cycle Flow #9");
 			Assert.AreEqual ("OnUnload", eventlist[9], "Live Cycle Flow #10");
 		}
-#endif
 
 		[TestFixtureTearDown]
 		public void TearDown ()
 		{
 			WebTest.Unload ();
 		}
+#endif
+
+		
 	}
 }

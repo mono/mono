@@ -1,3 +1,9 @@
+2006-10-26 Yoni Klain <yonik@mainsoft.com>
+	
+	* Changed tests for to be runned on run-tests-ondotnet,
+	and added categories for ondotnet, and notworking for 
+	mono. 
+
 2006-10-23  Igor Zelmanovich   <igorz@mainsoft.com>
 
 	* PostBackOptionsTest.cs: new Test.
