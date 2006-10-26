@@ -65,10 +65,6 @@
 #include <errno.h>    /* errno, EOVERFLOW */
 #include <glib.h>     /* g* types, g_assert_not_reached() */
 
-#ifdef HAVE_INTTYPES_H
-#include <inttypes.h>
-#endif /* ndef HAVE_INTTYPES_H */
-
 #if defined (G_MININT8)
 #define CNM_MININT8 G_MININT8
 #else
@@ -3579,6 +3575,7 @@ int Mono_Posix_ToPollEvents (short x, short *r)
 	return 0;
 }
 
+#ifdef HAVE_STRUCT_POLLFD
 int
 Mono_Posix_FromPollfd (struct Mono_Posix_Pollfd *from, struct pollfd *to)
 {
@@ -3596,8 +3593,10 @@ Mono_Posix_FromPollfd (struct Mono_Posix_Pollfd *from, struct pollfd *to)
 
 	return 0;
 }
+#endif /* ndef HAVE_STRUCT_POLLFD */
 
 
+#ifdef HAVE_STRUCT_POLLFD
 int
 Mono_Posix_ToPollfd (struct pollfd *from, struct Mono_Posix_Pollfd *to)
 {
@@ -3615,6 +3614,7 @@ Mono_Posix_ToPollfd (struct pollfd *from, struct Mono_Posix_Pollfd *to)
 
 	return 0;
 }
+#endif /* ndef HAVE_STRUCT_POLLFD */
 
 
 int Mono_Posix_FromPosixFadviseAdvice (int x, int *r)
@@ -4201,6 +4201,7 @@ int Mono_Posix_ToSignum (int x, int *r)
 	errno = EINVAL; return -1;
 }
 
+#ifdef HAVE_STRUCT_STAT
 int
 Mono_Posix_FromStat (struct Mono_Posix_Stat *from, struct stat *to)
 {
@@ -4237,8 +4238,10 @@ Mono_Posix_FromStat (struct Mono_Posix_Stat *from, struct stat *to)
 
 	return 0;
 }
+#endif /* ndef HAVE_STRUCT_STAT */
 
 
+#ifdef HAVE_STRUCT_STAT
 int
 Mono_Posix_ToStat (struct stat *from, struct Mono_Posix_Stat *to)
 {
@@ -4275,6 +4278,7 @@ Mono_Posix_ToStat (struct stat *from, struct Mono_Posix_Stat *to)
 
 	return 0;
 }
+#endif /* ndef HAVE_STRUCT_STAT */
 
 
 int Mono_Posix_FromSysconfName (int x, int *r)
@@ -6691,6 +6695,7 @@ int Mono_Posix_ToSyslogOptions (int x, int *r)
 	return 0;
 }
 
+#ifdef HAVE_STRUCT_TIMEVAL
 int
 Mono_Posix_FromTimeval (struct Mono_Posix_Timeval *from, struct timeval *to)
 {
@@ -6704,8 +6709,10 @@ Mono_Posix_FromTimeval (struct Mono_Posix_Timeval *from, struct timeval *to)
 
 	return 0;
 }
+#endif /* ndef HAVE_STRUCT_TIMEVAL */
 
 
+#ifdef HAVE_STRUCT_TIMEVAL
 int
 Mono_Posix_ToTimeval (struct timeval *from, struct Mono_Posix_Timeval *to)
 {
@@ -6719,8 +6726,10 @@ Mono_Posix_ToTimeval (struct timeval *from, struct Mono_Posix_Timeval *to)
 
 	return 0;
 }
+#endif /* ndef HAVE_STRUCT_TIMEVAL */
 
 
+#ifdef HAVE_STRUCT_TIMEZONE
 int
 Mono_Posix_FromTimezone (struct Mono_Posix_Timezone *from, struct timezone *to)
 {
@@ -6734,8 +6743,10 @@ Mono_Posix_FromTimezone (struct Mono_Posix_Timezone *from, struct timezone *to)
 
 	return 0;
 }
+#endif /* ndef HAVE_STRUCT_TIMEZONE */
 
 
+#ifdef HAVE_STRUCT_TIMEZONE
 int
 Mono_Posix_ToTimezone (struct timezone *from, struct Mono_Posix_Timezone *to)
 {
@@ -6749,6 +6760,7 @@ Mono_Posix_ToTimezone (struct timezone *from, struct Mono_Posix_Timezone *to)
 
 	return 0;
 }
+#endif /* ndef HAVE_STRUCT_TIMEZONE */
 
 
 int Mono_Posix_FromWaitOptions (int x, int *r)

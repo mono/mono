@@ -1,5 +1,10 @@
 2006-10-26  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* map.c: Enclose structure conversion functions with HAVE_<<STRUCT NAME>>,
+	  so that Unix-specific structures don't break the Win32 build.
+
+2006-10-26  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* create-native-map.exe: Remove.  Just grab a new copy whenever we need to
 	  refresh map.[ch].
 	* Makefile.am: Remove `update-create-native-map' target, and just have the
