@@ -737,12 +737,22 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					CloseDropDown ();
 				}
 				else {
+					TypeConverter converter = property_grid.SelectedGridItem.PropertyDescriptor.Converter;
+					ICollection std_values;
+
+					if (!converter.GetStandardValuesSupported ())
+						return;
+
+					std_values = converter.GetStandardValues();
+					if (std_values == null)
+						return;
+
 					ListBox listBox = new ListBox();
 					listBox.BorderStyle = BorderStyle.FixedSingle;
 					int selected_index = 0;
 					int i = 0;
 					object selected_value = property_grid.SelectedGridItem.Value;
-					foreach (object obj in property_grid.SelectedGridItem.PropertyDescriptor.Converter.GetStandardValues()) {
+					foreach (object obj in std_values) {
 						listBox.Items.Add(obj);
 						if (selected_value != null && selected_value.Equals(obj))
 							selected_index = i;
