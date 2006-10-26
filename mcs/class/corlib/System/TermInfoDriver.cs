@@ -272,8 +272,9 @@ namespace System {
 				cursorTop++;
 				cursorLeft = 0;
 				if (cursorTop >= WindowHeight) {
+					// Writing beyond the initial screen
+					if (rl_starty != -1) rl_starty--;
 					cursorTop--;
-					//Scroll up
 				}
 			}
 		}
@@ -706,7 +707,7 @@ namespace System {
 				Echo  = true;
 			StringBuilder builder = new StringBuilder ();
 			bool exit = false;
-			CStreamWriter writer = (CStreamWriter) Console.stdout;
+			CStreamWriter writer = Console.stdout as CStreamWriter;
 			rl_startx = cursorLeft;
 			rl_starty = cursorLeft;
 			do {
@@ -715,7 +716,10 @@ namespace System {
 				exit = (c == '\n');
 				if (!exit)
 					builder.Append (c);
-				writer.WriteKey (key);
+				if (writer != null)
+					writer.WriteKey (key);
+				else
+					Console.stdout.Write (c);
 			} while (!exit);
 			if (prevEcho == false)
 				Echo = prevEcho;

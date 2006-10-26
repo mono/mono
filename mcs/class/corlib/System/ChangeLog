@@ -1,3 +1,7 @@
+2006-10-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TermInfoDriver.cs: prevent an invalid cast.
+
 2006-10-26  Marek Safar  <marek.safar@seznam.cz>
 
 	* String.cs (Concat): Add fast-path for empty strings.
