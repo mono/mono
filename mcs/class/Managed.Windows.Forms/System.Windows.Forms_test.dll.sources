@@ -60,6 +60,7 @@ System.Windows.Forms/SystemInformationTest.cs
 System.Windows.Forms/TabControlTest.cs
 System.Windows.Forms/TestImageIndexConverter.cs
 System.Windows.Forms/ToolBarTest.cs
+System.Windows.Forms/ToolBarButtonTest.cs
 System.Windows.Forms/ToolTipTest.cs
 System.Windows.Forms/TreeNodeTest.cs
 System.Windows.Forms/TreeViewTest.cs
