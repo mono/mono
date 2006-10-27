@@ -7207,11 +7207,18 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (member_lookup is TypeExpr) {
+			TypeExpr texpr = member_lookup as TypeExpr;
+			if (texpr != null) {
 				if (!(new_expr is TypeExpr) && 
 				    (original == null || !original.IdenticalNameAndTypeName (ec, new_expr, loc))) {
 					Report.Error (572, loc, "`{0}': cannot reference a type through an expression; try `{1}' instead",
 						Identifier, member_lookup.GetSignatureForError ());
+					return null;
+				}
+
+				if (!texpr.CheckAccessLevel (ec.DeclContainer)) {
+					Report.SymbolRelatedToPreviousError (member_lookup.Type);
+					ErrorIsInaccesible (loc, TypeManager.CSharpName (member_lookup.Type));
 					return null;
 				}
 
