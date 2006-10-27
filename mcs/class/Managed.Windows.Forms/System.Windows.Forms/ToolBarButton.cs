@@ -253,6 +253,8 @@ namespace System.Windows.Forms
 		public string Text {
 			get { return text; }
 			set {
+				if (value == null) value = "";
+
 				if (value == text)
 					return;
 
@@ -266,7 +268,10 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		public string ToolTipText {
 			get { return tooltip; }
-			set { tooltip = value; }
+			set {
+				if (value == null) value = "";
+				tooltip = value;
+			}
 		}
 
 		[DefaultValue (true)]
