@@ -1,5 +1,6 @@
-// cs0131.cs: The left-hand side of an assignment or mutating operation must be a variable, property or indexer
-// Line:
+// CS0131: The left-hand side of an assignment must be a variable, a property or an indexer
+// Line: 7
+
 class X {
 	void A ()
 	{
