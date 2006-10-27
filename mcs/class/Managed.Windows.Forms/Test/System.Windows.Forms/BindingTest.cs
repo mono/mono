@@ -73,6 +73,57 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.IsNull (b.PropertyName, "ctornull1");
 			Assert.IsNull (b.DataSource, "ctornull2");
 		}
+
+		[Test]
+		/* create control and set binding context */
+		public void BindingContextChangedTest ()
+		{
+			Control c = new Control ();
+			// Test BindingContextChanged Event
+			c.BindingContextChanged += new EventHandler (Event_Handler1);
+			BindingContext bcG1 = new BindingContext ();
+			eventcount = 0;
+			c.BindingContext = bcG1;
+			Assert.AreEqual (1, eventcount, "A1");
+		}
+
+		[Test]
+		/* create control and show control */
+		public void BindingContextChangedTest2 ()
+		{
+			Form f = new Form ();
+			Control c = new Control ();
+			f.Controls.Add (c);
+
+			c.BindingContextChanged += new EventHandler (Event_Handler1);
+			eventcount = 0;
+			f.Show ();
+			Assert.AreEqual (2, eventcount, "A1");
+			f.Close ();
+		}
+
+		[Test]
+		/* create control, set binding context, and show control */
+		public void BindingContextChangedTest3 ()
+		{
+			Form f = new Form ();
+			Control c = new Control ();
+			f.Controls.Add (c);
+
+			c.BindingContextChanged += new EventHandler (Event_Handler1);
+			eventcount = 0;
+			c.BindingContext = new BindingContext ();;
+			f.Show ();
+			Assert.AreEqual (1, eventcount, "A1");
+			f.Close ();
+		}
+
+		int eventcount;
+		public void Event_Handler1 (object sender, EventArgs e)
+		{
+			Console.WriteLine (Environment.StackTrace);
+			eventcount++;
+		}
 	}
 
 }
