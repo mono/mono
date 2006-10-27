@@ -1,3 +1,9 @@
+2006-10-27  Jackson Harper  <jackson@ximian.com>
+
+	* TextMap.cs: Since we map udieresis as a standard char we need to
+	have a text mapping for it.  At some point I should go through all
+	the standard chars and make sure we have mappings for them.
+
 2006-10-25  Jackson Harper  <jackson@ximian.com>
 
 	* RTF.cs: Kick out of the text swallowing loop if we begin a new

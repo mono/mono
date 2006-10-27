@@ -222,6 +222,11 @@ namespace System.Windows.Forms.RTF {
 			table[(int)StandardCharCode.tilde] = "~";
 			table[(int)StandardCharCode.trademark] = "(TM)";
 			table[(int)StandardCharCode.trademarksans] = "(TM)";
+
+			table[(int)StandardCharCode.udieresis] = "\xFC";
+			table[(int)StandardCharCode.Udieresis] = "\xDC";
+			table[(int)StandardCharCode.odieresis] = "\xF6";
+			table[(int)StandardCharCode.Odieresis] = "\xD6";
 		}
 		#endregion	// Public Static Methods
 	}
