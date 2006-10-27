@@ -1,3 +1,9 @@
+2006-10-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs : Fixed bug #79650. Enumeration facet was
+	  not validated for attributes. Also, simple type restriction should
+	  require namespace manager to resolve QNames.
+
 2006-08-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdIdentityState.cs : Fixed bug #78985. If there are two identical

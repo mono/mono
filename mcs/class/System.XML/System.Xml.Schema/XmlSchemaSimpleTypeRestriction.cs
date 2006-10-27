@@ -586,7 +586,7 @@ namespace System.Xml.Schema
 					if (ActualBaseSchemaType is XmlSchemaSimpleType) {
 						XmlSchemaSimpleTypeContent st = ((XmlSchemaSimpleType) ActualBaseSchemaType).Content as XmlSchemaSimpleTypeContent;
 						if (st is XmlSchemaSimpleTypeRestriction) {
-							if (((XmlSchemaSimpleTypeRestriction)st).ValidateValueWithFacets(value, null)) {
+							if (((XmlSchemaSimpleTypeRestriction)st).ValidateValueWithFacets(value, null, null)) {
 								return ret;
 							} else {
 								return null;
@@ -601,7 +601,7 @@ namespace System.Xml.Schema
 			return ret;
 		}
 
-		internal bool ValidateValueWithFacets (string value, XmlNameTable nt)
+		internal bool ValidateValueWithFacets (string value, XmlNameTable nt, XmlNamespaceManager nsmgr)
 		{
 			/*
 			 * FIXME: Shouldn't this be recursing more? What if this is a 
@@ -612,12 +612,12 @@ namespace System.Xml.Schema
 
 			// numeric
 			if (listType != null)
-				return ValidateListValueWithFacets (value, nt);
+				return ValidateListValueWithFacets (value, nt, nsmgr);
 			else
-				return ValidateNonListValueWithFacets (value, nt);
+				return ValidateNonListValueWithFacets (value, nt, nsmgr);
 		}
 
-		private bool ValidateListValueWithFacets (string value, XmlNameTable nt)
+		private bool ValidateListValueWithFacets (string value, XmlNameTable nt, XmlNamespaceManager nsmgr)
 		{
 			string [] list = ((XsdAnySimpleType) XmlSchemaDatatype.FromName ("anySimpleType", XmlSchema.Namespace)).ParseListValue (value, nt);
 
@@ -634,7 +634,16 @@ namespace System.Xml.Schema
 				for (int l = 0; l < list.Length; l++) {
 					bool matched = false;
 					for (int i = 0; i < this.enumarationFacetValues.Length; i++) {
+#if true
+						// FIXME: enum values must be checked by value space, not literal space
 						if (list [l] == this.enumarationFacetValues [i]) {
+#else
+						// FIXME: enum values should be parsed only once.
+						XsdAnySimpleType dt = getDatatype ();
+						if (dt == null)
+							dt = (XsdAnySimpleType) XmlSchemaDatatype.FromName ("anySimpleType", XmlSchema.Namespace);
+						if (XmlSchemaUtil.IsSchemaDatatypeEquals (dt, dt.ParseValue (list [l], nt, nsmgr), dt, dt.ParseValue (this.enumarationFacetValues [i], nt, nsmgr))) {
+#endif
 							matched = true;
 							break;
 						}
@@ -658,7 +667,7 @@ namespace System.Xml.Schema
 			return true;
 		}
 
-		private bool ValidateNonListValueWithFacets (string value, XmlNameTable nt)
+		private bool ValidateNonListValueWithFacets (string value, XmlNameTable nt, XmlNamespaceManager nsmgr)
 		{
 			// pattern
 			// Patterns are the only facets that need to be checked on this
@@ -674,11 +683,23 @@ namespace System.Xml.Schema
 				if (!matched)
 					return false;
 			}
+
+			XsdAnySimpleType dt = getDatatype ();
+
 			// enumeration
 			if (this.enumarationFacetValues != null) {
 				bool matched = false;
+				XsdAnySimpleType edt = dt;
+				if (edt == null)
+					edt = (XsdAnySimpleType) XmlSchemaDatatype.FromName ("anySimpleType", XmlSchema.Namespace);
 				for (int i = 0; i < this.enumarationFacetValues.Length; i++) {
-					if (value == this.enumarationFacetValues [i]) {
+#if true
+					// FIXME: enum values must be checked by value space, not literal space
+					if (value == enumarationFacetValues [i]) {
+#else
+					// FIXME: the enum value should be parsed only once.
+					if (XmlSchemaUtil.IsSchemaDatatypeEquals (edt, edt.ParseValue (value, nt, nsmgr), edt, edt.ParseValue (this.enumarationFacetValues [i], nt, nsmgr))) {
+#endif
 						matched = true;
 						break;
 					}
@@ -686,7 +707,6 @@ namespace System.Xml.Schema
 				if (!matched)
 					return false;
 			}
-			XsdAnySimpleType dt = getDatatype ();
 			
 			// Need to skip length tests for 
 			// types derived from QName or NOTATION

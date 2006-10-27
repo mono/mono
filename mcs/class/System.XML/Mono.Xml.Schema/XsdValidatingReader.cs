@@ -555,6 +555,20 @@ namespace Mono.Xml.Schema
 			XsDatatype validatedDatatype = dt;
 			if (st != null) {
 				string normalized = validatedDatatype.Normalize (value);
+				ValidateRestrictedSimpleTypeValue (st, ref validatedDatatype, normalized);
+			}
+			if (validatedDatatype != null) {
+				try {
+					validatedDatatype.ParseValue (value, NameTable, NamespaceManager);
+				} catch (Exception ex) {	// FIXME: (wishlist) It is bad manner ;-(
+					HandleError ("Invalidly typed data was specified.", ex);
+				}
+			}
+		}
+
+		void ValidateRestrictedSimpleTypeValue (SimpleType st, ref XsDatatype dt, string normalized)
+		{
+			{
 				string [] values;
 				XsDatatype itemDatatype;
 				SimpleType itemSimpleType;
@@ -624,22 +638,15 @@ namespace Mono.Xml.Schema
 						 // mmm, will check later.
 						SimpleType baseType = st.BaseXmlSchemaType as SimpleType;
 						if (baseType != null) {
-							 AssessStringValid(baseType, dt, value);
+							 AssessStringValid(baseType, dt, normalized);
 						}
-						if (!str.ValidateValueWithFacets (value, NameTable)) {
+						if (!str.ValidateValueWithFacets (normalized, NameTable, NamespaceManager)) {
 							HandleError ("Specified value was invalid against the facets.");
 							break;
 						}
 					}
-					validatedDatatype = st.Datatype;
+					dt = st.Datatype;
 					break;
-				}
-			}
-			if (validatedDatatype != null) {
-				try {
-					validatedDatatype.ParseValue (value, NameTable, NamespaceManager);
-				} catch (Exception ex) {	// FIXME: (wishlist) It is bad manner ;-(
-					HandleError ("Invalidly typed data was specified.", ex);
 				}
 			}
 		}
@@ -954,12 +961,20 @@ namespace Mono.Xml.Schema
 			if (dt != SimpleType.AnySimpleType || attr.ValidatedFixedValue != null) {
 				string normalized = dt.Normalize (reader.Value);
 				object parsedValue = null;
+
+				// check part of 3.14.4 StringValid
+				SimpleType st = attr.AttributeType as SimpleType;
+				if (st != null)
+					ValidateRestrictedSimpleTypeValue (st, ref dt, normalized);
+
 				try {
 					parsedValue = dt.ParseValue (normalized, reader.NameTable, NamespaceManager);
 				} catch (Exception ex) { // FIXME: (wishlist) It is bad manner ;-(
 					HandleError ("Attribute value is invalid against its data type " + dt.TokenizedType, ex);
 				}
-				if (attr.ValidatedFixedValue != null && attr.ValidatedFixedValue != normalized) {
+
+				if (attr.ValidatedFixedValue != null &&
+				    attr.ValidatedFixedValue != normalized) {
 					HandleError ("The value of the attribute " + attr.QualifiedName + " does not match with its fixed value.");
 					parsedValue = dt.ParseValue (attr.ValidatedFixedValue, reader.NameTable, NamespaceManager);
 				}

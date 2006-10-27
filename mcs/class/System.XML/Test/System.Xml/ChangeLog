@@ -1,5 +1,9 @@
 2006-10-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlValidatingReaderTests.cs : added bug #79650 case.
+
+2006-10-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextReaderTests.cs : added bug #79683 case.
 
 2006-09-26  Atsushi Enomoto <atsushi@ximian.com>

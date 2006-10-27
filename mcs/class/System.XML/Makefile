@@ -65,6 +65,7 @@ EXTRA_DISTFILES = \
 	Test/XmlFiles/xsd/77687inc.xsd 	\
 	Test/XmlFiles/xsd/78985.xml     \
 	Test/XmlFiles/xsd/78985.xsd     \
+	Test/XmlFiles/xsd/79650.xsd     \
 	Test/XmlFiles/xsd/inter-inc-1.xsd \
 	Test/XmlFiles/xsl/91834.xml 	\
 	Test/XmlFiles/xsl/91834.xsl 	\

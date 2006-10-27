@@ -319,5 +319,18 @@ namespace MonoTests.System.Xml
 			while (reader.Read ())
 				;
 		}
+
+		[Test] // bug #79650
+		[ExpectedException (typeof (XmlSchemaException))]
+		public void EnumerationFacetOnAttribute ()
+		{
+			string xml = "<test mode='NOT A ENUMERATION VALUE' />";
+			XmlSchema schema = XmlSchema.Read (new XmlTextReader ("Test/XmlFiles/xsd/79650.xsd"), null);
+			XmlValidatingReader xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
+			xvr.ValidationType = ValidationType.Schema;
+			xvr.Schemas.Add (schema);
+			while (!xvr.EOF)
+				xvr.Read ();
+		}
 	}
 }
