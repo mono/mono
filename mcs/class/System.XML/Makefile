@@ -58,6 +58,7 @@ EXTRA_DISTFILES = \
 	Test/Mono.Test.csproj		\
 	Test/MonoMicro.Test.csproj	\
 	Test/XmlFiles/76102.xml		\
+	Test/XmlFiles/79683.dtd		\
 	Test/XmlFiles/xsd/multi-schemaLocation.xml \
 	Test/XmlFiles/xsd/datatypesTest.xsd \
 	Test/XmlFiles/xsd/77687.xsd 	\

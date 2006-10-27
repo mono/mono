@@ -990,17 +990,22 @@ namespace System.Xml
 				case 'O':
 					Expect ("OTATION");
 					def.Datatype = XmlSchemaDatatype.FromName ("NOTATION", XmlSchema.Namespace);
+					TryExpandPERefSpaceKeep ();
 					if (!SkipWhitespace ())
-						throw NotWFError ("Whitespace is required between name and content in DTD attribute definition.");
+						throw NotWFError ("Whitespace is required after notation name in DTD attribute definition.");
 					Expect ('(');
 					SkipWhitespace ();
+					TryExpandPERef ();
 					def.EnumeratedNotations.Add (ReadName ());		// notation name
 					SkipWhitespace ();
+					TryExpandPERef ();
 					while(PeekChar () == '|') {
 						ReadChar ();
 						SkipWhitespace ();
+						TryExpandPERef ();
 						def.EnumeratedNotations.Add (ReadName ());	// notation name
 						SkipWhitespace ();
+						TryExpandPERef ();
 					}
 					Expect (')');
 					break;
@@ -1013,15 +1018,18 @@ namespace System.Xml
 				TryExpandPERef ();
 				Expect ('(');
 				SkipWhitespace ();
+				TryExpandPERef ();
 				def.EnumeratedAttributeDeclaration.Add (
 					def.Datatype.Normalize (ReadNmToken ()));	// enum value
 				SkipWhitespace ();
 				while(PeekChar () == '|') {
 					ReadChar ();
 					SkipWhitespace ();
+					TryExpandPERef ();
 					def.EnumeratedAttributeDeclaration.Add (
 						def.Datatype.Normalize (ReadNmToken ()));	// enum value
 					SkipWhitespace ();
+					TryExpandPERef ();
 				}
 				Expect (')');
 				break;

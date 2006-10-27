@@ -1,3 +1,7 @@
+2006-10-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : added 79683.dtd to dist file.
+
 2006-10-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile (EXTRA_DISTFILES): Add some missing test files.

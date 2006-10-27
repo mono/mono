@@ -1223,5 +1223,15 @@ namespace MonoTests.System.Xml
 			AssertEquals ("#1", XmlNodeType.Whitespace, xtr.NodeType);
 			AssertEquals ("#2", " ", xtr.Value);
 		}
+
+		// bug #79683
+		[Test]
+		public void NotationPERef ()
+		{
+			string xml = "<!DOCTYPE root SYSTEM 'Test/XmlFiles/79683.dtd'><root/>";
+			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			while (!xtr.EOF)
+				xtr.Read ();
+		}
 	}
 }
