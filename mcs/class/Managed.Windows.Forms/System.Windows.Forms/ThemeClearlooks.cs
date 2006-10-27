@@ -316,8 +316,10 @@ namespace System.Windows.Forms {
 					using (LinearGradientBrush lgbr2 = new LinearGradientBrush (new Point (buttonRectangle.X, buttonRectangle.Y + 3),
 												    new Point (buttonRectangle.X, buttonRectangle.Bottom - 3),
 												    top_color, bottom_color)) {
-						dc.FillRectangle (lgbr2, buttonRectangle.X + 1, buttonRectangle.Y + 3, 1, buttonRectangle.Height - 6);
-						dc.FillRectangle (lgbr2, buttonRectangle.Right - 2, buttonRectangle.Y + 3, 1, buttonRectangle.Height - 6);
+						using (Pen lgbrpen = new Pen (lgbr2)) {
+							dc.DrawLine (lgbrpen, buttonRectangle.X + 1, buttonRectangle.Y + 3, buttonRectangle.X + 1, buttonRectangle.Bottom - 3);
+							dc.DrawLine (lgbrpen, buttonRectangle.Right - 2, buttonRectangle.Y + 3, buttonRectangle.Right - 2, buttonRectangle.Bottom - 3);
+						}
 					}
 				} else {
 					Point[] points_button_complete = {
@@ -345,8 +347,10 @@ namespace System.Windows.Forms {
 				using (LinearGradientBrush lgbr2 = new LinearGradientBrush (new Point (buttonRectangle.X, buttonRectangle.Y + 2),
 											    new Point (buttonRectangle.X, buttonRectangle.Bottom - 1),
 											    button_outer_border_dark_color, button_outer_border_light_color)) {
-					dc.FillRectangle (lgbr2, buttonRectangle.X, buttonRectangle.Y + 2, 1, buttonRectangle.Height - 4);
-					dc.FillRectangle (lgbr2, buttonRectangle.Right - 1, buttonRectangle.Y + 2, 1, buttonRectangle.Height - 4);
+					using (Pen lgbrpen = new Pen(lgbr2)) {
+						dc.DrawLine (lgbrpen, buttonRectangle.X, buttonRectangle.Y + 2, buttonRectangle.X, buttonRectangle.Bottom - 3);
+						dc.DrawLine (lgbrpen, buttonRectangle.Right - 1, buttonRectangle.Y + 2, buttonRectangle.Right - 1, buttonRectangle.Bottom - 3);
+					}
 				}
 				
 				// inner border
@@ -1159,9 +1163,11 @@ namespace System.Windows.Forms {
 					dc.DrawLine (tmp_pen, bounds.Right - 2, bounds.Top, bounds.Right, bounds.Top + 2);
 					
 					using (LinearGradientBrush lgbr = new LinearGradientBrush (new Point (bounds.Left, bounds.Top + 2), new Point (bounds.Left, bounds.Bottom - 1), border_pressed_dark_color, border_pressed_light_color)) {
-						int diff = is_selected ? 4 : 3;
-						dc.FillRectangle (lgbr, bounds.Left, bounds.Top + 2, 1, bounds.Height - diff);
-						dc.FillRectangle (lgbr, bounds.Right, bounds.Top + 2, 1, bounds.Height - diff);
+						int diff = is_selected ? 3 : 2;
+						using (Pen lgbrpen = new Pen (lgbr)) {
+							dc.DrawLine (lgbrpen, bounds.Left, bounds.Top + 2, bounds.Left, bounds.Bottom - diff);
+							dc.DrawLine (lgbrpen, bounds.Right, bounds.Top + 2, bounds.Right, bounds.Bottom - diff);
+						}
 					}
 					
 					if (page.Focused) {
@@ -1208,9 +1214,11 @@ namespace System.Windows.Forms {
 					dc.DrawLine (tmp_pen, bounds.Right - 2, bounds.Bottom, bounds.Right, bounds.Bottom - 2);
 					
 					using (LinearGradientBrush lgbr = new LinearGradientBrush (new Point (bounds.Left, bounds.Top + 2), new Point (bounds.Left, bounds.Bottom - 1), border_pressed_light_color, border_pressed_dark_color)) {
-						int diff = is_selected ? 4 : 3;
-						dc.FillRectangle (lgbr, bounds.Left, bounds.Top + 2, 1, bounds.Height - diff);
-						dc.FillRectangle (lgbr, bounds.Right, bounds.Top + 2, 1, bounds.Height - diff);
+						int diff = is_selected ? 3 : 2;
+						using (Pen lgbrpen = new Pen (lgbr)) {
+							dc.DrawLine (lgbrpen, bounds.Left, bounds.Top + 2, bounds.Left, bounds.Bottom - 1 - diff);
+							dc.DrawLine (lgbrpen, bounds.Right, bounds.Top + 2, bounds.Left, bounds.Bottom - 1 - diff);
+						}
 					}
 					
 					if (page.Focused) {
@@ -1259,10 +1267,12 @@ namespace System.Windows.Forms {
 					dc.DrawLine (tmp_pen, bounds.Left, bounds.Bottom - 2, bounds.Left + 2, bounds.Bottom);
 					
 					using (LinearGradientBrush lgbr = new LinearGradientBrush (new Point (bounds.Left, bounds.Top + 2), new Point (bounds.Right - 2, bounds.Top + 2), border_pressed_dark_color, border_pressed_light_color)) {
-						int diff = is_selected ? 4 : 2;
+						int diff = is_selected ? 3 : 1;
 						
-						dc.FillRectangle (lgbr, bounds.Left + 2, bounds.Top, bounds.Width - diff, 1);
-						dc.FillRectangle (lgbr, bounds.Left + 2, bounds.Bottom, bounds.Width - diff, 1);
+						using (Pen lgbrpen = new Pen (lgbr)) {
+							dc.DrawLine (lgbrpen, bounds.Left + 2, bounds.Top, bounds.Right - diff, bounds.Left + 2);
+							dc.DrawLine (lgbrpen, bounds.Left + 2, bounds.Bottom, bounds.Right - diff, bounds.Left + 2);
+						}
 					}
 					
 					if (page.Focused) {
@@ -1313,10 +1323,12 @@ namespace System.Windows.Forms {
 					dc.DrawLine (tmp_pen, bounds.Right - 1, bounds.Bottom - 2, bounds.Right - 3, bounds.Bottom);
 					
 					using (LinearGradientBrush lgbr = new LinearGradientBrush (new Point (bounds.Left, bounds.Top + 2), new Point (bounds.Right - 2, bounds.Top + 2), border_pressed_light_color, border_pressed_dark_color)) {
-						int diff = is_selected ? 4 : 2;
+						int diff = is_selected ? 3 : 1;
 						
-						dc.FillRectangle (lgbr, bounds.Left + l_diff, bounds.Top, bounds.Width - diff, 1);
-						dc.FillRectangle (lgbr, bounds.Left + l_diff, bounds.Bottom, bounds.Width - diff, 1);
+						using (Pen lgbrpen = new Pen (lgbr)) {
+							dc.DrawLine (lgbrpen, bounds.Left + l_diff, bounds.Top, bounds.Right - diff, bounds.Top);
+							dc.DrawLine (lgbrpen, bounds.Left + l_diff, bounds.Bottom, bounds.Right - diff, bounds.Bottom);
+						}
 					}
 					
 					if (page.Focused) {
@@ -1443,7 +1455,7 @@ namespace System.Windows.Forms {
 			
 			P1 = new Point( rect.Left, centerY );
 			P2 = new Point( centerX, rect.Bottom );
-			P3 = new Point( rect.Right, centerY );
+			P3 = new Point( rect.Right - 1, centerY );
 			
 			arrow[ 0 ] = P1;
 			arrow[ 1 ] = P2;
@@ -1469,7 +1481,7 @@ namespace System.Windows.Forms {
 				
 				P1 = new Point( rect.Left, centerY );
 				P2 = new Point( centerX, rect.Bottom );
-				P3 = new Point( rect.Right, centerY );
+				P3 = new Point( rect.Right - 1, centerY );
 				
 				arrow[ 0 ] = P1;
 				arrow[ 1 ] = P2;
@@ -3077,10 +3089,6 @@ namespace System.Windows.Forms {
 		protected override void CPDrawBorder3D( Graphics dc, Rectangle rectangle, Border3DStyle style, Border3DSide sides, Color control_color ) {
 			// currently we don't take care of Border3DStyle or Border3DSide
 			
-			// FIXME: temporary fix for artefacts, it should use the backcolor of the parent control
-			dc.DrawLine( ResPool.GetPen( ColorControl ), rectangle.X, rectangle.Y, rectangle.X, rectangle.Bottom - 1 );
-			dc.DrawLine( ResPool.GetPen( ColorControl ), rectangle.Right - 1, rectangle.Y, rectangle.Right - 1, rectangle.Bottom - 1 );
-			
 			Pen tmp_pen = ResPool.GetPen( edge_bottom_inner_color );
 			dc.DrawLine( tmp_pen, rectangle.X + 1, rectangle.Y + 2, rectangle.X + 2, rectangle.Y + 1 );
 			dc.DrawLine( tmp_pen, rectangle.Right - 3, rectangle.Y + 1, rectangle.Right - 2, rectangle.Y + 2 );
@@ -3129,9 +3137,11 @@ namespace System.Windows.Forms {
 			tmp_pen = ResPool.GetPen( button_outer_border_light_color );
 			dc.DrawLines( tmp_pen, points_bottom_outer );
 			
-			using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( 0, 2 ), new Point( 0, rectangle.Height - 1 ), button_outer_border_dark_color, button_outer_border_light_color ) ) {
-				dc.FillRectangle( lgbr, rectangle.X, rectangle.Y + 2, 1, rectangle.Height - 4 );
-				dc.FillRectangle( lgbr, rectangle.Right - 1, rectangle.Y + 2, 1, rectangle.Height - 4 );
+			using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( rectangle.X, rectangle.Y + 2 ), new Point( rectangle.X, rectangle.Bottom - 3 ), button_outer_border_dark_color, button_outer_border_light_color ) ) {
+				using (Pen lgbrpen = new Pen (lgbr)) {
+					dc.DrawLine (lgbrpen, rectangle.X, rectangle.Y + 2, rectangle.X, rectangle.Bottom - 3 );
+					dc.DrawLine (lgbrpen, rectangle.Right - 1, rectangle.Y + 2, rectangle.Right - 1, rectangle.Bottom - 3 );
+				}
 			}
 			
 			tmp_pen = ResPool.GetPen( button_edge_top_outer_color );
