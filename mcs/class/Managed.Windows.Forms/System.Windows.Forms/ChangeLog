@@ -1,5 +1,10 @@
 2006-10-27  Chris Toshok  <toshok@ximian.com>
 
+	* Control.cs: implement Control.FromChildHandle in a way that
+	matches the docs (and fixes the failed test.)
+
+2006-10-27  Chris Toshok  <toshok@ximian.com>
+
 	* DataGridTableStyle.cs: reproduce buggy MS behavior (with
 	comments).
 

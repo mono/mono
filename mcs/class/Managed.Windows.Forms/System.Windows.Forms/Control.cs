@@ -161,6 +161,21 @@ namespace System.Windows.Forms
 				return null;
 			}
 
+			static internal Control ControlFromChildHandle (IntPtr handle) {
+				ControlNativeWindow	window;
+
+				Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
+				while (hwnd != null) {
+					window = (ControlNativeWindow)window_collection[hwnd.Handle];
+					if (window != null) {
+						return window.owner;
+					}
+					hwnd = hwnd.Parent;
+				}
+
+				return null;
+			}
+
 			protected override void WndProc(ref Message m) {
 				owner.WndProc(ref m);
 			}
@@ -2632,37 +2647,12 @@ namespace System.Windows.Forms
 		#region Public Static Methods
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public static Control FromChildHandle(IntPtr handle) {
-			lock (Control.controls) {
-				IEnumerator control = Control.controls.GetEnumerator();
-
-				while (control.MoveNext()) {
-					if (((Control)control.Current).window.Handle == handle) {
-						// Found it
-						if (((Control)control.Current).Parent != null) {
-							return ((Control)control.Current).Parent;
-						}
-					}
-				}
-				return null;
-			}
+			return Control.ControlNativeWindow.ControlFromChildHandle (handle);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public static Control FromHandle(IntPtr handle) {
-#if not
-			IEnumerator control = Control.controls.GetEnumerator();
-
-			while (control.MoveNext()) {
-				if (((Control)control.Current).window.Handle == handle) {
-					// Found it
-					return ((Control)control.Current);
-				}
-			}
-
-			return null;
-#else
 			return Control.ControlNativeWindow.ControlFromHandle(handle);
-#endif
 		}
 
 		public static bool IsMnemonic(char charCode, string text) {
