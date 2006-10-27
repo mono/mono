@@ -1,3 +1,7 @@
+2006-10-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : nested delegates were not handled. Fixed bug #79754.
+
 2006-10-26  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #76591

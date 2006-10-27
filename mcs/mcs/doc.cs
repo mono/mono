@@ -62,6 +62,9 @@ namespace Mono.CSharp {
 				foreach (TypeContainer tc in t.Types)
 					tc.GenerateDocComment (t);
 
+			if (t.Delegates != null)
+				foreach (Delegate de in t.Delegates)
+					de.GenerateDocComment (t);
 			if (t.Enums != null)
 				foreach (Enum en in t.Enums)
 					en.GenerateDocComment (t);

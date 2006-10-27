@@ -1,3 +1,7 @@
+2006-10-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* test-xml-052.cs, test-xml-052-ref.xml : new test for bug #79754.
+
 2006-10-25  Brian Crowell  <brian@fluggo.com>
 
 	* gtest-295.cs: New test from #79703.
