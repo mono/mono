@@ -901,7 +901,11 @@ namespace Mono.CSharp {
 				if (expr == null)
 					return null;
 			} else {
-				expr.Error_UnexpectedKind (ec.DeclContainer, "variable, indexer or property access", loc);
+				if (expr.eclass == ExprClass.Value) {
+					Error_ValueAssignment (loc);
+				} else {
+					expr.Error_UnexpectedKind (ec.DeclContainer, "variable, indexer or property access", loc);
+				}
 				return null;
 			}
 

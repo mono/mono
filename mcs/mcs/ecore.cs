@@ -340,7 +340,7 @@ namespace Mono.CSharp {
 
 			if (Type != TypeManager.string_type && this is Constant && !(this is EmptyConstantCast)) {
 				Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
-					GetSignatureForError (), TypeManager.CSharpName (target));
+					((Constant)(this)).GetValue ().ToString (), TypeManager.CSharpName (target));
 				return;
 			}
 
@@ -354,6 +354,11 @@ namespace Mono.CSharp {
 		{
 			Report.Error (117, loc, "`{0}' does not contain a definition for `{1}'",
 				TypeManager.CSharpName (type), name);
+		}
+
+		protected static void Error_ValueAssignment (Location loc)
+		{
+			Report.Error (131, loc, "The left-hand side of an assignment must be a variable, a property or an indexer");
 		}
 
 		ResolveFlags ExprClassToResolveFlags
@@ -486,7 +491,7 @@ namespace Mono.CSharp {
 					if (out_access)
 						Report.Error (1510, loc, "A ref or out argument must be an assignable variable");
 					else
-						Report.Error (131, loc, "The left-hand side of an assignment or mutating operation must be a variable, property or indexer");
+						Error_ValueAssignment (loc);
 				}
 				return null;
 			}

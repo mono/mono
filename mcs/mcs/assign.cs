@@ -408,9 +408,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!(target is IAssignMethod) && (target.eclass != ExprClass.EventAccess)) {
-				Report.Error (131, loc,
-					      "Left hand of an assignment must be a variable, " +
-					      "a property or an indexer");
+				Error_ValueAssignment (loc);
 				return null;
 			}
 

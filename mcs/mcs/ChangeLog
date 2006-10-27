@@ -1,5 +1,16 @@
 2006-10-27  Marek Safar  <marek.safar@gmail.com>
 
+	assign.cs: Reuses error method.
+
+	ecore.cs (Expression.Error_ValueCannotBeConverted): Report a value
+	instead of type for constants.
+	(Expression.Error_ValueAssignment): Common error method.
+
+	* expression.cs (UnaryMutator.ResolveOperator): Value cannot be used
+	for any assignment.
+
+2006-10-27  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #79081
 	* expression.cs (MemberAccess.DoResolve): Check nested type
 	accessibility.
