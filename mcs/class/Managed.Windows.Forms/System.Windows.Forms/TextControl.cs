@@ -3172,15 +3172,14 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 
 			selection_end_anchor = false;
 
+			
 			if ((selection_end.line != selection_start.line) || (selection_end.pos != selection_start.pos)) {
 				SetSelectionVisible (true);
-
-				// This could be calculated better
-				Invalidate(selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
 			} else {
 				SetSelectionVisible (false);
 			}
 
+			Invalidate(selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
 		}
 
 		internal void SetSelectionStart(int character_index) {
