@@ -1033,7 +1033,7 @@ namespace System.Xml.Schema
 						if (baseType != null) {
 							 ret = AssessStringValid (baseType, dt, value);
 						}
-						if (!str.ValidateValueWithFacets (value, nameTable)) {
+						if (!str.ValidateValueWithFacets (value, nameTable, nsResolver)) {
 							HandleError ("Specified value was invalid against the facets.");
 							break;
 						}

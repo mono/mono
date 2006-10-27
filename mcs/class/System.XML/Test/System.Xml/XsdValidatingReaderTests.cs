@@ -321,7 +321,12 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test] // bug #79650
+#if NET_2_0
+		// annoyance
+		[ExpectedException (typeof (XmlSchemaValidationException))]
+#else
 		[ExpectedException (typeof (XmlSchemaException))]
+#endif
 		public void EnumerationFacetOnAttribute ()
 		{
 			string xml = "<test mode='NOT A ENUMERATION VALUE' />";

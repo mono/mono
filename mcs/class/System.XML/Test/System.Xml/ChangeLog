@@ -1,6 +1,11 @@
 2006-10-27  Atsushi Enomoto <atsushi@ximian.com>
 
-	* XmlValidatingReaderTests.cs : added bug #79650 case.
+	* XsdValidatingReaderTests.cs : the previous test raises different
+	  exception in 2.0.
+
+2006-10-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdValidatingReaderTests.cs : added bug #79650 case.
 
 2006-10-27  Atsushi Enomoto <atsushi@ximian.com>
 

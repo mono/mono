@@ -1,5 +1,12 @@
 2006-10-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaValidator.cs : it must also be fixed for method signature
+	  change.
+	* XmlSchemaSimpleTypeRestriction.cs : on .NET 2.0, use 
+	  IXmlNamespaceResolver for XmlSchemaValidator.
+
+2006-10-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaSimpleTypeRestriction.cs : for facet validation, it should
 	  use namespacemanager. Though the change is not perfect, thus I
 	  disable this change for now.

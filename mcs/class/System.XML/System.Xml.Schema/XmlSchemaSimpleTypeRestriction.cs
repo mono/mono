@@ -30,6 +30,12 @@ using System.Xml.Serialization;
 using Mono.Xml.Schema;
 using System.Globalization;
 
+#if NET_2_0
+using NSResolver = System.Xml.IXmlNamespaceResolver;
+#else
+using NSResolver = System.Xml.XmlNamespaceManager;
+#endif
+
 namespace System.Xml.Schema
 {
 	/// <summary>
@@ -601,7 +607,7 @@ namespace System.Xml.Schema
 			return ret;
 		}
 
-		internal bool ValidateValueWithFacets (string value, XmlNameTable nt, XmlNamespaceManager nsmgr)
+		internal bool ValidateValueWithFacets (string value, XmlNameTable nt, NSResolver nsmgr)
 		{
 			/*
 			 * FIXME: Shouldn't this be recursing more? What if this is a 
@@ -617,7 +623,7 @@ namespace System.Xml.Schema
 				return ValidateNonListValueWithFacets (value, nt, nsmgr);
 		}
 
-		private bool ValidateListValueWithFacets (string value, XmlNameTable nt, XmlNamespaceManager nsmgr)
+		private bool ValidateListValueWithFacets (string value, XmlNameTable nt, NSResolver nsmgr)
 		{
 			string [] list = ((XsdAnySimpleType) XmlSchemaDatatype.FromName ("anySimpleType", XmlSchema.Namespace)).ParseListValue (value, nt);
 
@@ -667,7 +673,7 @@ namespace System.Xml.Schema
 			return true;
 		}
 
-		private bool ValidateNonListValueWithFacets (string value, XmlNameTable nt, XmlNamespaceManager nsmgr)
+		private bool ValidateNonListValueWithFacets (string value, XmlNameTable nt, NSResolver nsmgr)
 		{
 			// pattern
 			// Patterns are the only facets that need to be checked on this
