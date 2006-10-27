@@ -74,7 +74,7 @@ namespace System.Xml.Xsl
 		
 		internal virtual IXsltContextVariable ResolveVariable (XmlQualifiedName name)
 		{
-			return ResolveVariable (name.Name, name.Namespace);
+			return ResolveVariable (LookupPrefix (name.Namespace), name.Name);
 		}
 		
 		internal virtual IXsltContextFunction ResolveFunction (XmlQualifiedName name, XPathResultType [] argTypes)

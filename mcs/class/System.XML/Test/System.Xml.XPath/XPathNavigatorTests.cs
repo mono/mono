@@ -13,6 +13,7 @@ using System;
 using System.IO;
 using System.Xml;
 using System.Xml.XPath;
+using System.Xml.Xsl;
 
 using NUnit.Framework;
 
@@ -282,6 +283,128 @@ namespace MonoTests.System.Xml
 			nav.MoveToFirstChild ();
 			AssertEquals ("#2", XPathNodeType.SignificantWhitespace,
 				nav.NodeType);
+		}
+
+		[Test]
+		public void VariableReference ()
+		{
+			XPathDocument xpd = new XPathDocument (
+				new StringReader ("<root>sample text</root>"));
+			XPathNavigator nav = xpd.CreateNavigator ();
+
+			XPathExpression expr = nav.Compile ("foo(string(.),$idx)");
+			XsltArgumentList args = new XsltArgumentList ();
+			args.AddParam ("idx", "", 5);
+			MyContext ctx = new MyContext (nav.NameTable as NameTable, args);
+			ctx.AddNamespace ("x", "urn:foo");
+
+			expr.SetContext (ctx);
+
+			XPathNodeIterator iter = nav.Select ("/root");
+			iter.MoveNext ();
+			AssertEquals ("e", iter.Current.Evaluate (expr));
+		}
+
+		class MyContext : XsltContext
+		{
+			XsltArgumentList args;
+
+			public MyContext (NameTable nt, XsltArgumentList args)
+				: base (nt)
+			{
+				this.args = args;
+			}
+
+			public override IXsltContextFunction ResolveFunction (
+				string prefix, string name, XPathResultType [] argtypes)
+			{
+				if (name == "foo")
+					return new MyFunction (argtypes);
+				return null;
+			}
+
+			public override IXsltContextVariable ResolveVariable (string prefix, string name)
+			{
+				return new MyVariable (name);
+			}
+
+			public override bool PreserveWhitespace (XPathNavigator nav)
+			{
+				return false;
+			}
+
+			public override int CompareDocument (string uri1, string uri2)
+			{
+				return String.CompareOrdinal (uri1, uri2);
+			}
+
+			public override bool Whitespace {
+				get { return false; }
+			}
+
+			public object GetParam (string name, string ns)
+			{
+				return args.GetParam (name, ns);
+			}
+		}
+
+		public class MyFunction : IXsltContextFunction
+		{
+			XPathResultType [] argtypes;
+
+			public MyFunction (XPathResultType [] argtypes)
+			{
+				this.argtypes = argtypes;
+			}
+
+			public XPathResultType [] ArgTypes {
+				get { return argtypes; }
+			}
+
+			public int Maxargs {
+				get { return 2; }
+			}
+
+			public int Minargs {
+				get { return 2; }
+			}
+
+			public XPathResultType ReturnType {
+				get { return XPathResultType.String; }
+			}
+
+			public object Invoke (XsltContext xsltContext,
+				object [] args, XPathNavigator instanceContext)
+			{
+				return ((string) args [0]) [(int) (double) args [1]].ToString ();
+			}
+		}
+
+		public class MyVariable : IXsltContextVariable
+		{
+			string name;
+
+			public MyVariable (string name)
+			{
+				this.name = name;
+			}
+
+			public object Evaluate (XsltContext ctx)
+			{
+				return ((MyContext) ctx).GetParam (name, String.Empty);
+			}
+
+			public bool IsLocal {
+				get { return false; }
+			}
+
+			public bool IsParam {
+				get { return false; }
+			}
+
+			public XPathResultType VariableType {
+				get { return XPathResultType.Any; }
+			}
 		}
 
 #if NET_2_0

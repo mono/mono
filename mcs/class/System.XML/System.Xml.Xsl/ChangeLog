@@ -1,3 +1,8 @@
+2006-10-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsltContext.cs : finally created a non-copyright-infringing test
+	  for bug #46751 and fixed it.
+
 2006-07-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslCompiledTransform.cs : making stub more complete :|
