@@ -14,7 +14,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class TextBoxBaseTest
+	public class TextBoxTest
 	{
 		TextBox textBox;
 
@@ -113,6 +113,21 @@ namespace MonoTests.System.Windows.Forms
 			f.Controls.Add (textBox2);
 			textBox2.AppendText (textBox.Text);
 			Assert.AreEqual ("TextBox1", textBox2.Text, "#27");
+		}
+
+		[Test]
+		public void AppendTextTest2 ()
+		{
+			TextBox textBox2 = new TextBox ();
+			textBox2.AppendText ("hi");
+			textBox2.AppendText ("hi");
+			Assert.AreEqual ("hihi", textBox2.Text, "A1");
+
+			textBox2.Text = "";
+			textBox2.AppendText ("hi\r\n");
+			textBox2.AppendText ("hi\r\n");
+			Assert.AreEqual (3, textBox2.Lines.Length, "A2");
+			Assert.AreEqual ("hi", textBox2.Lines[1], "A3");
 		}
 
 		[Test]
