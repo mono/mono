@@ -45,7 +45,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (Exception))]
 		public void DataSourceWrongArgumentType ()
 		{
 			ListControlChild lc = new ListControlChild ();
