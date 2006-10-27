@@ -1,5 +1,13 @@
 2006-10-27  Chris Toshok  <toshok@ximian.com>
 
+	* DataGridTableStyle.cs: reproduce buggy MS behavior (with
+	comments).
+
+	* DataGrid.cs: implement ResetForeColor such that the tests
+	succeed.
+	
+2006-10-27  Chris Toshok  <toshok@ximian.com>
+
 	* ToolBarButton.cs: setting text/tooltiptext to null results in it
 	being set to "".  Fixes bug #79759.
 

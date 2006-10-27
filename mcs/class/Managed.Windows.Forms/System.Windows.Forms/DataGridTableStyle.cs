@@ -171,7 +171,8 @@ namespace System.Windows.Forms
 
 				if (backcolor != value) {
 					backcolor = value;
-					OnBackColorChanged (EventArgs.Empty);
+					// XXX This should be OnBackColorChanged, MS made a c&p error, I think
+					OnForeColorChanged (EventArgs.Empty);
 
 					if (datagrid != null) {
 						datagrid.Refresh ();
@@ -221,7 +222,8 @@ namespace System.Windows.Forms
 
 				if (forecolor != value) {
 					forecolor = value;
-					OnForeColorChanged (EventArgs.Empty);
+					// XXX This should be OnForeColorChanged, MS made a c&p error, I think
+					OnBackColorChanged (EventArgs.Empty);
 
 					if (datagrid != null) {
 						datagrid.Refresh ();
@@ -358,7 +360,8 @@ namespace System.Windows.Forms
 			set {
 				if (link_hovercolor != value) {
 					link_hovercolor = value;
-					OnLinkHoverColorChanged (EventArgs.Empty);
+					// XXX MS doesn't emit this event (even though they should...)
+					// OnLinkHoverColorChanged (EventArgs.Empty);
 				}
 			}
 		}

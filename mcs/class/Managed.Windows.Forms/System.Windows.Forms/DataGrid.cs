@@ -1933,7 +1933,7 @@ namespace System.Windows.Forms
 
 		public override void ResetForeColor ()
 		{
-			base.ResetForeColor ();
+			grid_style.ForeColor = default_style.ForeColor;
 		}
 
 		public void ResetGridLineColor ()
