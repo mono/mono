@@ -1,3 +1,9 @@
+2006-10-27  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* map.c: Improve handling of [Flags] enumerations which mix bitfields and
+	  non-bitfield values (i.e. FilePermissions and S_IFREG, which isn't a bit
+	  field, along with a few other FilePermissions values).  Fixes #79161.
+
 2006-10-26  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* map.c: Enclose structure conversion functions with HAVE_<<STRUCT NAME>>,
