@@ -1,8 +1,10 @@
+2006-10-27  Massimiliano Mantione  <massi@ximian.com>
+	* loader.c: Fixed bug 79684.
+
 2006-10-27  Dick Porter  <dick@ximian.com>
 
 	* file-io.c (get_file_attributes): Force symlinks to directories
 	to be returned as a regular file.  Fixes bug 79733.
-
 2006-10-26  Dick Porter  <dick@ximian.com>
 
 	* file-io.c (ves_icall_System_IO_MonoIO_Open): If we're calling
