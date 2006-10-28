@@ -1,5 +1,9 @@
 2006-10-28  Alexander Olk  <alex.olk@googlemail.com>
 
+	* MimeIcon.cs: If a gnome icon doesn't exist add a default icon.
+
+2006-10-28  Alexander Olk  <alex.olk@googlemail.com>
+
 	* ThemeClearlooks.cs: A little speedup.
 
 2006-10-27  Chris Toshok  <toshok@ximian.com>

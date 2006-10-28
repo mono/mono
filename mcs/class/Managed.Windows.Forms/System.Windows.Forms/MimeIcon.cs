@@ -33,7 +33,6 @@ using System;
 using System.Reflection;
 using System.Drawing;
 using System.Collections;
-//using System.Collections.Specialized;
 using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
@@ -281,10 +280,9 @@ namespace System.Windows.Forms
 			MimeIconEngine.AddIconByImage ("desktop/desktop",  ResourceImageLoader.Get ("user-desktop.png"));
 			MimeIconEngine.AddIconByImage ("directory/home",  ResourceImageLoader.Get ("user-home.png"));
 			
-			// fix
-			MimeIconEngine.AddIconByImage ("network/network",  ResourceImageLoader.Get ("document-open.png"));
+			MimeIconEngine.AddIconByImage ("network/network",  ResourceImageLoader.Get ("folder-remote.png"));
 			MimeIconEngine.AddIconByImage ("recently/recently",  ResourceImageLoader.Get ("document-open.png"));
-			MimeIconEngine.AddIconByImage ("workplace/workplace",  ResourceImageLoader.Get ("document-open.png"));
+			MimeIconEngine.AddIconByImage ("workplace/workplace",  ResourceImageLoader.Get ("computer.png"));
 			
 			return MimeExtensionHandlerStatus.OK; // return always ok
 		}
@@ -326,6 +324,32 @@ namespace System.Windows.Forms
 			}
 			
 			Image image = GnomeUtil.GetIcon (name, 48);
+			
+			if (image == null) {
+				if (internal_mime_type == "unknown/unknown")
+					image = ResourceImageLoader.Get ("text-x-generic.png");
+				else
+				if (internal_mime_type == "inode/directory")
+					image = ResourceImageLoader.Get ("folder.png");
+				else
+				if (internal_mime_type == "directory/home")
+					image = ResourceImageLoader.Get ("user-home.png");
+				else
+				if (internal_mime_type == "desktop/desktop")
+					image = ResourceImageLoader.Get ("user-desktop.png");
+				else
+				if (internal_mime_type == "recently/recently")
+					image = ResourceImageLoader.Get ("document-open.png");
+				else
+				if (internal_mime_type == "workplace/workplace")
+					image = ResourceImageLoader.Get ("computer.png");
+				else
+				if (internal_mime_type == "network/network" || internal_mime_type == "nfs/nfs" || internal_mime_type == "smb/smb")
+					image = ResourceImageLoader.Get ("folder-remote.png");
+				else
+				if (internal_mime_type == "harddisk/harddisk" || internal_mime_type == "cdrom/cdrom" || internal_mime_type == "removable/removable")
+					image = ResourceImageLoader.Get ("text-x-generic.png");
+			}
 			
 			index = MimeIconEngine.SmallIcons.Images.Add (image, Color.Transparent);
 			MimeIconEngine.LargeIcons.Images.Add (image, Color.Transparent);
