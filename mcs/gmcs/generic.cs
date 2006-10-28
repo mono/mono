@@ -1249,11 +1249,13 @@ namespace Mono.CSharp {
 				if (te is TypeParameterExpr)
 					has_type_args = true;
 
+#if !MS_COMPATIBLE
 				if (te.Type.IsSealed && te.Type.IsAbstract) {
 					Report.Error (718, Location, "`{0}': static classes cannot be used as generic arguments",
 						te.GetSignatureForError ());
 					return false;
 				}
+#endif
 				if (te.Type.IsPointer) {
 					Report.Error (306, Location, "The type `{0}' may not be used " +
 							  "as a type argument", TypeManager.CSharpName (te.Type));
@@ -1453,6 +1455,11 @@ namespace Mono.CSharp {
 
 		public override bool AsAccessible (DeclSpace ds, int flags)
 		{
+			foreach (Type t in atypes) {
+				if (!ds.AsAccessible (t, flags))
+					return false;
+			}
+
 			return ds.AsAccessible (gt, flags);
 		}
 
