@@ -294,8 +294,8 @@ namespace Mono.CSharp {
 
 		protected static void Error_CannotAccessProtected (Location loc, MemberInfo m, Type qualifier, Type container)
 		{
-			Report.Error (1540, loc, "Cannot access protected member `{0}' via a qualifier of type `{1}';"
-				+ " the qualifier must be of type `{2}' (or derived from it)", 
+			Report.Error (1540, loc, "Cannot access protected member `{0}' via a qualifier of type `{1}'."
+				+ " The qualifier must be of type `{2}' or derived from it", 
 				TypeManager.GetFullNameSignature (m),
 				TypeManager.CSharpName (qualifier),
 				TypeManager.CSharpName (container));
@@ -3724,8 +3724,8 @@ namespace Mono.CSharp {
 
 			if (must_do_cs1540_check && (InstanceExpression != EmptyExpression.Null) &&
 			    !TypeManager.IsInstantiationOfSameGenericType (InstanceExpression.Type, ec.ContainerType) &&
-			    TypeManager.IsFamilyAccessible (ec.ContainerType, PropertyInfo.DeclaringType) &&
-			    !TypeManager.IsFamilyAccessible (InstanceExpression.Type, ec.ContainerType)) {
+			    !TypeManager.IsSubclassOf (InstanceExpression.Type, ec.ContainerType)) {
+				Report.SymbolRelatedToPreviousError (PropertyInfo);
 				Error_CannotAccessProtected (loc, PropertyInfo, InstanceExpression.Type, ec.ContainerType);
 				return false;
 			}

@@ -1,3 +1,9 @@
+2006-10-28  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #78965
+	ecore.cs (PropertyExpr.InstanceResolve): The qualifier for access
+	to protected member must derive from current type.
+
 2006-10-27  Marek Safar  <marek.safar@gmail.com>
 
 	assign.cs: Reuses error method.
