@@ -1,4 +1,4 @@
-// cs1540-7.cs: Cannot access protected member `A.Test' via a qualifier of type `B'; the qualifier must be of type `C' (or derived from it)
+// cs1540-7.cs: Cannot access protected member `A.Test' via a qualifier of type `B'. The qualifier must be of type `C' or derived from it
 // Line: 17
 
 class A

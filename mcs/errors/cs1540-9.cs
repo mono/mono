@@ -1,4 +1,4 @@
-// CS1540: Cannot access protected member `A.Test(int)' via a qualifier of type `B'; the qualifier must be of type `C' (or derived from it)
+// CS1540: Cannot access protected member `A.Test(int)' via a qualifier of type `B'. The qualifier must be of type `C' or derived from it
 // Line: 28
 using System;
 
