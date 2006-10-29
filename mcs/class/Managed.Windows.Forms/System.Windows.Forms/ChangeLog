@@ -1,5 +1,16 @@
 2006-10-29  Chris Toshok  <toshok@ximian.com>
 
+	* Form.cs: remove the try-catch's around calls to GetWindowState.
+	We can just check the return value.
+
+	* XplatUIX11.cs: don't throw exceptions from GetWindowState.
+	Instead return -1.
+
+	* XplatUI.cs: Add note about additional return value for
+	GetWindowState.
+
+2006-10-29  Chris Toshok  <toshok@ximian.com>
+
 	* Control.cs (CreateHandle): when we create our handle, we also
 	create the handles of our child controls.  Fixes one of the
 	Control unit tests (CH11).

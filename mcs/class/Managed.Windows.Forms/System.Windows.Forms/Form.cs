@@ -925,12 +925,9 @@ namespace System.Windows.Forms {
 					if (window_manager != null)
 						return window_manager.GetWindowState ();
 
-					try {
-						window_state = XplatUI.GetWindowState(Handle);
-					}
-
-					catch(NotSupportedException) {
-					}
+					FormWindowState new_state = XplatUI.GetWindowState(Handle);
+					if (new_state != (FormWindowState)(-1))
+						window_state = new_state;
 				}
 
 				return window_state;
@@ -946,12 +943,7 @@ namespace System.Windows.Forms {
 						return;
 					}
 
-					try {
-						XplatUI.SetWindowState(Handle, value);
-					}
-
-					catch(NotSupportedException) {
-					}
+					XplatUI.SetWindowState(Handle, value);
 				}
 			}
 		}

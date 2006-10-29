@@ -858,12 +858,9 @@ namespace System.Windows.Forms {
 			mwmHints.functions = (IntPtr)functions;
 			mwmHints.decorations = (IntPtr)decorations;
 
-			FormWindowState current_state = FormWindowState.Normal;
-			try {
-				current_state = GetWindowState (hwnd.Handle);
-			}
-			catch (NotSupportedException) {
-			}
+			FormWindowState current_state = GetWindowState (hwnd.Handle);
+			if (current_state == (FormWindowState)(-1))
+				current_state = FormWindowState.Normal;
 
 			client_rect = hwnd.ClientRect;
 			lock (XlibLock) {
@@ -3779,7 +3776,7 @@ namespace System.Windows.Forms {
 			attributes = new XWindowAttributes();
 			XGetWindowAttributes(DisplayHandle, hwnd.client_window, ref attributes);
 			if (attributes.map_state == MapState.IsUnmapped) {
-				throw new NotSupportedException("Cannot retrieve the state of an unmapped window");
+				return (FormWindowState)(-1);
 			}
 
 
@@ -4667,12 +4664,7 @@ namespace System.Windows.Forms {
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-			try {
-				current_state = GetWindowState(handle);
-			}
-			catch (NotSupportedException) {
-				current_state = (FormWindowState)(-1);
-			}
+			current_state = GetWindowState(handle);
 
 			if (current_state == state) {
 				return;

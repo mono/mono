@@ -545,6 +545,12 @@ namespace System.Windows.Forms {
 			driver.GetWindowPos(handle, is_toplevel, out x, out y, out width, out height, out client_width, out client_height);
 		}
 
+		/* this method can (and does, on X11) return
+		 * (FormWindowState)(-1), when the state of the window
+		 * cannot be determined (in the X11 case, when the
+		 * window isn't mapped.)  Checking for the additional
+		 * return value is less expensive than
+		 * throwing/catching an exception. */
 		internal static FormWindowState GetWindowState(IntPtr handle) {
 			#if DriverDebug
 				Console.WriteLine("GetWindowState({0}): Called", Window(handle));
