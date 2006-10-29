@@ -365,7 +365,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-        [Category ("NotWorking")]
 		public void DataBinding1 ()
 		{
 			ListControlPoker p = new ListControlPoker ();
@@ -395,7 +394,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-        [Category("NotWorking")]
 		public void DataBinding3 ()
 		{
 			ListControlPoker p = new ListControlPoker ();
@@ -445,7 +443,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-        [Category("NotWorking")]
 		public void DataBinding5 ()
 		{
 			ListControlPoker p = new ListControlPoker ();
@@ -463,7 +460,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-        [Category("NotWorking")]
 		public void DataBindingFormat1 ()
 		{
 			ListControlPoker p = new ListControlPoker ();
@@ -479,7 +475,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-        [Category("NotWorking")]
 		public void DataBindingFormat2 ()
 		{
 			ListControlPoker p = new ListControlPoker ();
@@ -557,4 +552,5 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 	}
 }
+
 

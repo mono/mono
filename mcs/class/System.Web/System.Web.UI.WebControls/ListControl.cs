@@ -325,9 +325,11 @@ namespace System.Web.UI.WebControls {
 		{
 			base.OnDataBinding (e);
 
+#if !NET_2_0
 			IEnumerable list = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
 			if (list == null)
 				return;
+#endif
 
 #if NET_2_0
 			if (!AppendDataBoundItems)
@@ -337,14 +339,6 @@ namespace System.Web.UI.WebControls {
 #if !NET_2_0
 			DoDataBinding (list);
 #endif
-			if (saved_selected_value != null) {
-				SelectedValue = saved_selected_value;
-				if (saved_selected_index != -2 && saved_selected_index != SelectedIndex)
-					throw new ArgumentException ("SelectedIndex and SelectedValue are mutually exclusive.");
-			} else if (saved_selected_index != -2) {
-				SelectedIndex = saved_selected_index;
-				// No need to check saved_selected_value here, as it's done before.
-			}
 		}
 
 #if NET_2_0
@@ -391,6 +385,16 @@ namespace System.Web.UI.WebControls {
 
 					coll.Add (new ListItem (text, val));
 				}
+			}
+			
+			if (saved_selected_value != null) {
+				SelectedValue = saved_selected_value;
+				if (saved_selected_index != -2 && saved_selected_index != SelectedIndex)
+					throw new ArgumentException ("SelectedIndex and SelectedValue are mutually exclusive.");
+			}
+			else if (saved_selected_index != -2) {
+				SelectedIndex = saved_selected_index;
+				// No need to check saved_selected_value here, as it's done before.
 			}
 		}
 
@@ -561,4 +565,5 @@ namespace System.Web.UI.WebControls {
 #endif
 	}
 }
+
 

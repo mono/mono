@@ -1,3 +1,8 @@
+2006-10-29 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ListControl.cs: fixed: DataBinding for 2.0.
+	for 1.x refactoring only.	
+
 2006-10-25 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ChangePassword.cs: new class was implemented.
