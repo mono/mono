@@ -1,3 +1,8 @@
+2006-10-29  Robert Jordan  <robertj@gmx.net>
+
+	* SoapReader.cs, SoapWriter.cs [NET_2_0]:
+	Use the SerializationObjectManager.
+
 2006-07-10  Lluis Sanchez Gual <lluis@novell.com>
 
 	* SoapReader.cs: Register strings in the object manager. 
