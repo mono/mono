@@ -1,4 +1,8 @@
 2006-10-29  Robert Jordan  <robertj@gmx.net>
+
+	* corlib_test.dll.sources: Added SerializationCallbackTest.cs
+
+2006-10-29  Robert Jordan  <robertj@gmx.net>
 	
 	* corlib.dll.sources: Added NET_2_0 serialization events files.
 

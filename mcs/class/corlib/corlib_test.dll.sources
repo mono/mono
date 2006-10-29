@@ -136,6 +136,7 @@ System.Runtime.Remoting.Contexts/SynchronizationAttributeTest.cs
 System.Runtime.Serialization/FormatterServicesTests.cs
 System.Runtime.Serialization/ObjectIDGeneratorTests.cs
 System.Runtime.Serialization/SerializationTest.cs
+System.Runtime.Serialization/SerializationCallbackTest.cs
 System.Runtime.Serialization/ArraySerializationTest.cs
 System.Runtime.Serialization/ObjectManagerTest.cs
 System.Runtime.Serialization.Formatters.Binary/BinaryFormatterTest.cs
