@@ -37,6 +37,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			mychklstbox.SetItemChecked (1,true);
 			Assert.AreEqual (true, eventhandled, "#A2");
+			myform.Dispose ();
 		}
 	}
 }

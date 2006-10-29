@@ -14,7 +14,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	[Ignore ("This test has to be completly reviewed")]
 	public class ButtonTest
 	{
 		[Test]
@@ -74,6 +73,7 @@ namespace MonoTests.System.Windows.Forms
 			B1.Visible = true;
 			f.Controls.Add (B1);
 			Assert.AreEqual (DialogResult.No, B1.DialogResult, "#6");
+			f.Dispose ();
 		}
 
 		[Test]
@@ -86,6 +86,7 @@ namespace MonoTests.System.Windows.Forms
 			f.Controls.Add (B1);
 			B1.PerformClick ();
 			Assert.AreEqual (DialogResult.None, B1.DialogResult, "#7");
+			f.Dispose ();
 		}
 
 		[Test]

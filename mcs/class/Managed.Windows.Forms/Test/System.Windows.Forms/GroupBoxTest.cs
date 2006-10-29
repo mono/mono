@@ -35,6 +35,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (FlatStyle.Flat, mygrpbox.FlatStyle, "#3");
 			mygrpbox.FlatStyle = FlatStyle.System;
 			Assert.AreEqual (FlatStyle.System, mygrpbox.FlatStyle, "#4");
+			myform.Dispose ();
 		}
 	}
 }

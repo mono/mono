@@ -51,6 +51,12 @@ namespace MonoTests.System.Windows.Forms
 			form = new Form();
 		}
 
+		[TearDown]
+		public void TearDown()
+		{
+			form.Dispose ();
+		}
+
 		[Test]
 		public void ListBoxPropertyTest ()
 		{

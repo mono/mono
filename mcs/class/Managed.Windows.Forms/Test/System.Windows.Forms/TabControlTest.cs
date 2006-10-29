@@ -82,6 +82,8 @@ namespace MonoTests.System.Windows.Forms {
 			// T
 			Assert.AreEqual (0, myTabControl.TabCount, "#T1");
 			Assert.AreEqual (0, myTabControl.TabPages.Count, "#T2");
+
+			myForm.Dispose ();
 		}
 
 		[Test]
@@ -151,6 +153,7 @@ namespace MonoTests.System.Windows.Forms {
 			f.Show ();
 			c.SelectedIndex = 2; // beyond the pages - ignored
 			Assert.AreEqual (0, c.SelectedIndex, "#2");
+			f.Dispose ();
 		}
 
 		[Test]

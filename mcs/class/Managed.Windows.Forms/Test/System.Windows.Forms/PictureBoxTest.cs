@@ -42,6 +42,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (PictureBoxSizeMode.Normal, myPicBox.SizeMode, "#P1");
 			myPicBox.SizeMode = PictureBoxSizeMode.AutoSize;
 			Assert.AreEqual (PictureBoxSizeMode.AutoSize, myPicBox.SizeMode, "#P2");
+
+			myForm.Dispose ();
 		}
 			
 		
@@ -76,6 +78,7 @@ namespace MonoTests.System.Windows.Forms
 				eventhandled = false;
 				myPicBox.SizeMode = PictureBoxSizeMode.StretchImage;
 				Assert.AreEqual (true, eventhandled, "#SM3");	
+				myForm.Dispose ();
 			}
 		}
 	}

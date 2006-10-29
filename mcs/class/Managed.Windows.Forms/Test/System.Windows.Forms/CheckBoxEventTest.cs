@@ -32,13 +32,14 @@ namespace MonoTests.System.Windows.Forms
 			chkbox.AppearanceChanged += new EventHandler (CheckBox_EventHandler);
 			chkbox.Appearance = Appearance.Button;
 			Assert.AreEqual (true, eventhandled, "#A1");
+			myform.Dispose ();
 		}
 
 		[Test]
 		public void CheckedChangedEventTest ()
 		{
-			eventhandled = false;
 			Form myform = new Form ();
+			eventhandled = false;
 			myform.Visible = true;
 			CheckBox chkbox = new CheckBox ();
 			chkbox.Visible = true;
@@ -46,13 +47,14 @@ namespace MonoTests.System.Windows.Forms
 			chkbox.CheckedChanged += new EventHandler (CheckBox_EventHandler);
 			chkbox.CheckState = CheckState.Indeterminate;
 			Assert.AreEqual (true, eventhandled, "#A2");
+			myform.Dispose ();
 		}
 
 		[Test]
 		public void CheckStateChangedEventTest ()
 		{
-			eventhandled = false;
 			Form myform = new Form ();
+			eventhandled = false;
 			myform.Visible = true;
 			CheckBox chkbox = new CheckBox ();
 			chkbox.Visible = true;
@@ -60,6 +62,7 @@ namespace MonoTests.System.Windows.Forms
 			chkbox.CheckStateChanged += new EventHandler (CheckBox_EventHandler);
 			chkbox.CheckState = CheckState.Checked;
 			Assert.AreEqual (true, eventhandled, "#A3");
+			myform.Dispose ();
 		}
 	}
 }

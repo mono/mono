@@ -195,6 +195,7 @@ namespace MonoTests.System.Windows.Forms
 				Thread.CurrentThread.CurrentUICulture = oldcui;
 				InputLanguage.CurrentInputLanguage = oldil;
 			}
+			myform.Dispose ();
 		}
 	}
 
@@ -232,6 +233,7 @@ namespace MonoTests.System.Windows.Forms
 				Thread.CurrentThread.CurrentUICulture = oldcui;
 				InputLanguage.CurrentInputLanguage = oldil;
 			}
+			myform.Dispose ();
 		}
 	}
 }

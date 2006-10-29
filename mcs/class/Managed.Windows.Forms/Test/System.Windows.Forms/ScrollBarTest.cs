@@ -396,6 +396,7 @@ public class MyScrollBar : HScrollBar
 		       myHscrlbar.BackColor = Color.Red;
 		       Assert.AreEqual (true, eventhandled, "B4");
 		       eventhandled = false;
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -409,6 +410,7 @@ public class MyScrollBar : HScrollBar
 		       myHscrlbar.BackgroundImage = Image.FromFile ("Test/System.Windows.Forms/bitmaps/a.png");
 		       Assert.AreEqual (true, eventhandled, "B5");
 		       eventhandled = false;
+		       myform.Dispose ();
 	       }
 
 	    [Test, Ignore ("Need to send proper Click / DoubleClick")]
@@ -422,6 +424,7 @@ public class MyScrollBar : HScrollBar
 		       myHscrlbar.MouseClick ();
 
 		       Assert.AreEqual (false, eventhandled, "C1");
+		       myform.Dispose ();
 	       }
 
 	    [Test, Ignore ("Need to send proper Click / DoubleClick")]
@@ -435,6 +438,7 @@ public class MyScrollBar : HScrollBar
 		       myHscrlbar.MouseDoubleClick ();
 
 		       Assert.AreEqual (false, eventhandled, "D1");
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -450,6 +454,7 @@ public class MyScrollBar : HScrollBar
 		       myHscrlbar.Font = myFontDialog.Font;
 		       Assert.AreEqual (true, eventhandled, "F2");
 		       eventhandled = false;
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -463,6 +468,7 @@ public class MyScrollBar : HScrollBar
 		       myHscrlbar.ForeColor = Color.Azure;
 		       Assert.AreEqual (true, eventhandled, "F3");
 		       eventhandled = false;
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -476,6 +482,7 @@ public class MyScrollBar : HScrollBar
 		       myHscrlbar.ImeMode = ImeMode.Katakana;
 		       Assert.AreEqual (true, eventhandled, "I2");
 		       eventhandled = false;
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -490,6 +497,7 @@ public class MyScrollBar : HScrollBar
 
 		       Assert.AreEqual (true, eventhandled, "M5");
 		       eventhandled = false;
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -504,6 +512,7 @@ public class MyScrollBar : HScrollBar
 
 		       Assert.AreEqual (true, eventhandled, "M6");
 		       eventhandled = false;
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -518,6 +527,7 @@ public class MyScrollBar : HScrollBar
 
 		       Assert.AreEqual (true, eventhandled, "M7");
 		       eventhandled = false;
+		       myform.Dispose ();
 	       }
 
 	    [Test, Ignore ("How can we force it to pain?")]
@@ -533,6 +543,7 @@ public class MyScrollBar : HScrollBar
 
 		       Assert.AreEqual (true, eventhandled, "P1");
 		       eventhandled = false;
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -547,6 +558,7 @@ public class MyScrollBar : HScrollBar
 
 		       Assert.AreEqual (true, eventhandled, "S4");
 		       eventhandled = false;
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -561,6 +573,7 @@ public class MyScrollBar : HScrollBar
 
 		       Assert.AreEqual (true, eventhandled, "T6");
 		       eventhandled = false;
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -575,6 +588,7 @@ public class MyScrollBar : HScrollBar
 		       myHscrlbar.Value = 50 ;
 		       Assert.AreEqual (true, eventhandled, "V3");
 		       eventhandled = false;
+		       myform.Dispose ();
 	       }
     }
 
@@ -671,6 +685,7 @@ public class MyVScrollBar : VScrollBar
 		       myform.Controls.Add (s);
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -690,6 +705,7 @@ public class MyVScrollBar : VScrollBar
 		       s.BackColor = Color.Aqua;
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -709,6 +725,7 @@ public class MyVScrollBar : VScrollBar
 		       s.BackgroundImage = Image.FromFile ("Test/System.Windows.Forms/bitmaps/a.png");
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test, Ignore ("Need to send proper Click / DoubleClick")]
@@ -726,6 +743,7 @@ public class MyVScrollBar : VScrollBar
 		       s.MouseClick ();
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test, Ignore ("Need to send proper Click / DoubleClick")]
@@ -743,6 +761,7 @@ public class MyVScrollBar : VScrollBar
 		       s.MouseDoubleClick ();
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -761,6 +780,7 @@ public class MyVScrollBar : VScrollBar
 		       s.Font = myFontDialog.Font;
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -780,6 +800,7 @@ public class MyVScrollBar : VScrollBar
 		       s.ForeColor = Color.Aqua;
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -798,6 +819,7 @@ public class MyVScrollBar : VScrollBar
 		       s.ImeMode = ImeMode.Katakana;
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -816,6 +838,7 @@ public class MyVScrollBar : VScrollBar
 		       s.MouseRightDown ();
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -835,6 +858,7 @@ public class MyVScrollBar : VScrollBar
 		       s.MoveMouse ();
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -853,6 +877,7 @@ public class MyVScrollBar : VScrollBar
 		       s.MouseRightUp ();
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -871,6 +896,7 @@ public class MyVScrollBar : VScrollBar
 		       s.Visible = true;
 		       s.Refresh ();
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -890,6 +916,7 @@ public class MyVScrollBar : VScrollBar
 		       s.ScrollNow ();
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -908,6 +935,7 @@ public class MyVScrollBar : VScrollBar
 		       s.Text = "foobar";
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -926,6 +954,7 @@ public class MyVScrollBar : VScrollBar
 		       s.Value = 10;
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
     }
 
@@ -1196,6 +1225,7 @@ public class MyScrollBar2 : HScrollBar
 		       myform.Controls.Add (s);
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -1215,6 +1245,7 @@ public class MyScrollBar2 : HScrollBar
 		       s.BackColor = Color.Aqua;
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -1235,6 +1266,7 @@ public class MyScrollBar2 : HScrollBar
 		       s.BackgroundImage = Image.FromFile ("Test/System.Windows.Forms/bitmaps/a.png");
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test, Ignore ("Need to send proper Click / DoubleClick")]
@@ -1252,6 +1284,7 @@ public class MyScrollBar2 : HScrollBar
 		       s.MouseClick ();
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test, Ignore ("Need to send proper Click / DoubleClick")]
@@ -1269,6 +1302,7 @@ public class MyScrollBar2 : HScrollBar
 		       s.MouseDoubleClick ();
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -1287,6 +1321,7 @@ public class MyScrollBar2 : HScrollBar
 		       s.Font = myFontDialog.Font;
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -1306,6 +1341,7 @@ public class MyScrollBar2 : HScrollBar
 		       s.ForeColor = Color.Aqua;
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -1324,6 +1360,7 @@ public class MyScrollBar2 : HScrollBar
 		       s.ImeMode = ImeMode.Katakana;
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -1342,6 +1379,7 @@ public class MyScrollBar2 : HScrollBar
 		       s.MouseRightDown ();
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -1360,6 +1398,7 @@ public class MyScrollBar2 : HScrollBar
 		       s.MoveMouse ();
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -1378,6 +1417,7 @@ public class MyScrollBar2 : HScrollBar
 		       s.MouseRightUp ();
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -1397,6 +1437,7 @@ public class MyScrollBar2 : HScrollBar
 		       s.Refresh ();
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -1416,6 +1457,7 @@ public class MyScrollBar2 : HScrollBar
 		       s.ScrollNow ();
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -1434,6 +1476,7 @@ public class MyScrollBar2 : HScrollBar
 		       s.Text = "foobar";
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
 
 	    [Test]
@@ -1452,6 +1495,7 @@ public class MyScrollBar2 : HScrollBar
 		       s.Value = 10;
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
+		       myform.Dispose ();
 	       }
     }
 

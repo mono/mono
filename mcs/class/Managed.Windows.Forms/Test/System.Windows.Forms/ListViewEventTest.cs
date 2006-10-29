@@ -40,6 +40,8 @@ namespace MonoTests.System.Windows.Forms
 			myform.Controls.Add (mylistview);
 			myform.ShowDialog ();
 			Assert.AreEqual (true, eventhandled, "#A1");
+
+			myform.Dispose ();
 		}
 
 		[Test]
@@ -59,6 +61,7 @@ namespace MonoTests.System.Windows.Forms
 			myform.Controls.Add (mylistview);
 			myform.ShowDialog ();
 			Assert.AreEqual (true, eventhandled, "#A2");
+			myform.Dispose ();
 		}
 	}
 
@@ -90,6 +93,7 @@ namespace MonoTests.System.Windows.Forms
 			myform.ShowDialog ();
 			mylistview.Sort ();
 			Assert.AreEqual (true, eventhandled, "#A3");
+			myform.Dispose ();
 		}
 	}
 
@@ -120,6 +124,7 @@ namespace MonoTests.System.Windows.Forms
 			myform.Controls.Add (mylistview);
 			myform.ShowDialog ();
 			Assert.AreEqual (true, eventhandled, "#A4");
+			myform.Dispose ();
 		}
 
 		[Test]
@@ -139,6 +144,7 @@ namespace MonoTests.System.Windows.Forms
 			myform.Controls.Add (mylistview);
 			myform.ShowDialog ();
 			Assert.AreEqual (true, eventhandled, "#A5");
+			myform.Dispose ();
 		}
 	}
 
@@ -171,6 +177,7 @@ namespace MonoTests.System.Windows.Forms
 			myform.ShowDialog ();
 			mylistview.Visible = true;
 			Assert.AreEqual (true, eventhandled, "#A6");
+			myform.Dispose ();
 		}
 	}
 
@@ -203,6 +210,7 @@ namespace MonoTests.System.Windows.Forms
 			mylistview.Visible = true;
 			mylistview.DoDragDrop (mylistview.SelectedItems, DragDropEffects.Link);
 			Assert.AreEqual (true, eventhandled, "#A7");
+			myform.Dispose ();
 		}
 	}
 }

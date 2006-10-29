@@ -113,6 +113,7 @@ namespace MonoTests.System.Windows.Forms
 			f.Controls.Add (textBox2);
 			textBox2.AppendText (textBox.Text);
 			Assert.AreEqual ("TextBox1", textBox2.Text, "#27");
+			f.Dispose ();
 		}
 
 		[Test]

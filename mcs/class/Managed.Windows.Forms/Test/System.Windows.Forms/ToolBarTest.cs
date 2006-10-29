@@ -82,6 +82,8 @@ namespace MonoTests.System.Windows.Forms
 
 			// WXYZ
 			Assert.AreEqual (true, myToolBar.Wrappable, "#W1");
+
+			myform.Dispose ();
 		}
 		
 		[Test]

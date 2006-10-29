@@ -35,6 +35,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (ContentAlignment.MiddleLeft, mychkbox.CheckAlign, "#7");
 			Assert.AreEqual (ContentAlignment.MiddleLeft, mychkbox.TextAlign, "#8");
 			Assert.AreEqual (false, mychkbox.ThreeState, "#9");
+			myform.Dispose();
 		}
 	}
 }

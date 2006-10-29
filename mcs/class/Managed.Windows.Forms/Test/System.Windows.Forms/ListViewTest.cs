@@ -69,6 +69,7 @@ namespace MonoTests.System.Windows.Forms
 			mylistview.Items.Add ("Item 2");
 			mylistview.View = View.LargeIcon;
 			mylistview.ArrangeIcons ();
+			myform.Dispose ();
 		}
 
 		[Test]
@@ -85,6 +86,7 @@ namespace MonoTests.System.Windows.Forms
 				mylistview.Items.Add ("Item " + x.ToString());   
 			}
 			mylistview.EndUpdate ();
+			myform.Dispose ();
 		}	
 
 		[Test]
@@ -126,6 +128,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreSame (itemB, lvw.CheckedItems [0], "#E2");
 			Assert.AreEqual (1, lvw.CheckedIndices.Count, "#E3");
 			Assert.AreEqual (1, lvw.CheckedIndices [0], "#E4");
+			form.Dispose ();
 		}
 
 		[Test]
@@ -143,6 +146,7 @@ namespace MonoTests.System.Windows.Forms
 			mylistview.Clear ();
 			Assert.AreEqual (0, mylistview.Columns.Count, "#33");
 			Assert.AreEqual (0, mylistview.Items.Count, "#34");
+			myform.Dispose ();
 		}
 
 		[Test]
@@ -159,6 +163,7 @@ namespace MonoTests.System.Windows.Forms
 			}
 			mylistview.EndUpdate ();
 			mylistview.EnsureVisible (4999);
+			myform.Dispose ();
 		}
 
 		[Test]
@@ -271,6 +276,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("C", lvw.SelectedItems [0].Text, "#I2");
 			Assert.AreEqual (1, lvw.SelectedIndices.Count, "#I3");
 			Assert.AreEqual (2, lvw.SelectedIndices [0], "#I4");
+			form.Dispose ();
 		}
 
 		[Test]
@@ -294,6 +300,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (2, lvw.SelectedIndices.Count, "#C4");
 			Assert.AreEqual (0, lvw.SelectedIndices [0], "#C5");
 			Assert.AreEqual (2, lvw.SelectedIndices [1], "#C6");
+			form.Dispose ();
 		}
 
 		[Test]
@@ -719,6 +726,7 @@ namespace MonoTests.System.Windows.Forms
 
 			// record compare count
 			compareCount = mc.CompareCount;
+			form.Dispose ();
 		}
 
 		private void AssertSortIcon_NotCreated (View view)
@@ -863,6 +871,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("BB", lvw.Items [1].Text, "#O3");
 			Assert.AreEqual ("B", lvw.Items [2].Text, "#O4");
 			Assert.AreEqual ("A", lvw.Items [3].Text, "#O5");
+
+			form.Dispose ();
 		}
 
 		private void AssertSortNoIcon_Created (View view)
@@ -1217,6 +1227,8 @@ namespace MonoTests.System.Windows.Forms
 
 			// record compare count
 			compareCount = mc.CompareCount;
+
+			form.Dispose ();
 		}
 
 		private void AssertSortNoIcon_NotCreated (View view)
@@ -1413,6 +1425,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("BB", lvw.Items [1].Text, "#T3");
 			Assert.AreEqual ("B", lvw.Items [2].Text, "#T4");
 			Assert.AreEqual ("A", lvw.Items [3].Text, "#T5");
+
+			form.Dispose ();
 		}
 
 		private void AssertSort_Checked (View view)
@@ -1479,6 +1493,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, lvw.CheckedIndices.Count, "#H2");
 			Assert.AreEqual ("C", lvw.CheckedItems [0].Text, "#H3");
 			Assert.AreEqual (1, lvw.CheckedIndices [0], "#H4");
+
+			form.Dispose ();
 		}
 
 		private void AssertSort_Selected (View view)
@@ -1544,6 +1560,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, lvw.SelectedIndices.Count, "#H2");
 			Assert.AreEqual ("C", lvw.SelectedItems [0].Text, "#H3");
 			Assert.AreEqual (1, lvw.SelectedIndices [0], "#H4");
+
+			form.Dispose ();
 		}
 
 		private ListView CreateListView (View view)

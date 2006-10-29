@@ -60,6 +60,7 @@ namespace MonoTests.System.Windows.Forms
 			mysbar.Text = "MONO STATUSBAR";
 			Assert.AreEqual ("MONO STATUSBAR", mysbar.Text, "#T2");
 
+			myform.Dispose ();
 		}
 		
 		[Test]

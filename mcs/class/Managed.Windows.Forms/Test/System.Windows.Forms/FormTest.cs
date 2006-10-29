@@ -78,6 +78,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (false, myform.TopMost, "#36");
 			Assert.AreEqual (Color.Empty, myform.TransparencyKey, "#37");
 			Assert.AreEqual (FormWindowState.Normal, myform.WindowState, "#38");
+			myform.Dispose ();
 		}
 
 		[Test]
@@ -89,6 +90,7 @@ namespace MonoTests.System.Windows.Forms
 			myform.Name = "FormTest";
 			myform.Activate ();
 			Assert.AreEqual (true, myform.Focus (), "#40");
+			myform.Dispose ();
 		}		
 
 		[Test]
@@ -101,6 +103,8 @@ namespace MonoTests.System.Windows.Forms
 			parent.AddOwnedForm (ownedForm);
 			ownedForm.Show ();
 			Assert.AreEqual ("NewParent", ownedForm.Owner.Text, "#41");
+			ownedform.Dispose ();
+			parent.Dispose ();
 		}
 
 		[Test]
@@ -112,6 +116,7 @@ namespace MonoTests.System.Windows.Forms
 			myform.Name = "FormTest";
 			myform.Close ();
 			Assert.IsTrue (myform.Size.Height > 0, "#42");
+			myform.Dispose ();
 		}
 
 		[Test]
@@ -137,6 +142,7 @@ namespace MonoTests.System.Windows.Forms
 			myform.RemoveOwnedForm (myform);
 			myform.Show ();
 			Assert.AreEqual (null, myform.Owner, "#44");
+			myform.Dispose ();
 		}
 
 		[Test]
@@ -148,6 +154,7 @@ namespace MonoTests.System.Windows.Forms
 			myform.Name = "FormTest";
 			myform.SetDesktopBounds (10, 10, 200 , 200);
 			Assert.AreEqual (200, myform.DesktopBounds.Height, "#45");
+			myform.Dispose ();
 		}
 
 		[Test]
@@ -159,6 +166,7 @@ namespace MonoTests.System.Windows.Forms
 			myform.Name = "FormTest";
 			myform.SetDesktopLocation (10, 10);
 			Assert.AreEqual (10, myform.DesktopLocation.X, "#46");
+			myform.Dispose ();
 		}
 
 		[Test, Ignore ("Needs Manual Intervention")]
@@ -188,6 +196,7 @@ namespace MonoTests.System.Windows.Forms
 				Assert.Fail ("#49");
 			} catch (InvalidEnumArgumentException) {
 			}
+			myform.Dispose ();
 		}
 	}
 }

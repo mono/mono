@@ -78,6 +78,7 @@ namespace MonoTests.System.Windows.Forms
 				cmbbox.Items.Add ("Item " + x.ToString ());
 			}
 			cmbbox.EndUpdate ();
+			myform.Dispose ();
 		}
 
 		[Test]
@@ -233,6 +234,7 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual (true, eventFired, "DW1");
 			Assert.AreEqual (0, drawItemsArgs.Index, "DW2");
+			myform.Dispose ();
 		}
 
 		[Test]

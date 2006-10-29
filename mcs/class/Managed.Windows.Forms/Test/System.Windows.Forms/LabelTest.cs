@@ -175,6 +175,7 @@ namespace MonoTests.System.Windows.Forms
 		     l.AutoSize = true;
 		     Assert.AreEqual (true, eventhandled, "B4");
 		     eventhandled = false;
+		     myform.Dispose();
 	     }
 
 	   [Test]
@@ -189,6 +190,7 @@ namespace MonoTests.System.Windows.Forms
 		     l.BackgroundImage = Image.FromFile ("Test/System.Windows.Forms/bitmaps/a.png");
 		     Assert.AreEqual (true, eventhandled, "B4");
 		     eventhandled = false;
+		     myform.Dispose();
 	     }
 
 	   [Test]
@@ -203,6 +205,7 @@ namespace MonoTests.System.Windows.Forms
 		     l.ImeMode = ImeMode.Katakana;
 		     Assert.AreEqual (true, eventhandled, "I16");
 		     eventhandled = false;
+		     myform.Dispose();
 	     }
 
 	   [Test]
@@ -218,6 +221,7 @@ namespace MonoTests.System.Windows.Forms
 
 		     Assert.AreEqual (true, eventhandled, "K1");
 		     eventhandled = false;
+		     myform.Dispose();
 	     }
 
 	   [Test]
@@ -232,6 +236,7 @@ namespace MonoTests.System.Windows.Forms
 		     l.TabStop = true;
 		     Assert.AreEqual (true, eventhandled, "T3");
 		     eventhandled = false;
+		     myform.Dispose();
 	     }
 
 	   [Test]
@@ -246,6 +251,7 @@ namespace MonoTests.System.Windows.Forms
 		     l.TextAlign = ContentAlignment.TopRight;
 		     Assert.AreEqual (true, eventhandled, "T4");
 		     eventhandled = false;
+		     myform.Dispose();
 	     }
    }
 
@@ -478,6 +484,7 @@ public class MyLabel : Label
 		     myform.Controls.Add (l);
 
 		     Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		     myform.Dispose();
 	     }
 
 	   [Test]
@@ -499,6 +506,7 @@ public class MyLabel : Label
 		     l.Size = new Size (150, 20);
 
 		     Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		     myform.Dispose();
 	     }
 
 	   [Test]
@@ -521,6 +529,7 @@ public class MyLabel : Label
 		     l.AutoSize = true;
 
 		     Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		     myform.Dispose();
 	     }
 
 	   [Test]
@@ -540,6 +549,7 @@ public class MyLabel : Label
 		     l.BackgroundImage = Image.FromFile ("Test/System.Windows.Forms/bitmaps/a.png");
 
 		     Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		     myform.Dispose();
 	     }
 
 	   [Test]
@@ -558,6 +568,7 @@ public class MyLabel : Label
 		     l.ImeMode = ImeMode.Katakana;
 
 		     Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		     myform.Dispose();
 	     }
 
 	   [Test]
@@ -578,6 +589,7 @@ public class MyLabel : Label
 		     l.KeyPressA ();
 
 		     Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		     myform.Dispose();
 	     }
 
 	   [Test]
@@ -595,6 +607,7 @@ public class MyLabel : Label
 		     l.TabStop = true;
 PrintList("TabStopChanged", l.Results);
 		     Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		     myform.Dispose();
 	     }
 
 	   [Test]
@@ -613,6 +626,7 @@ PrintList("TabStopChanged", l.Results);
 		     l.TextAlign = ContentAlignment.TopRight;
 
 		     Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		     myform.Dispose();
 	     }
 
 	   [Test]
@@ -637,7 +651,7 @@ PrintList("TabStopChanged", l.Results);
 		     l.Invalidate (rect);
 
 		     Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
-
+		     myform.Dispose();
 	     }
 
 	   [Test]
@@ -658,6 +672,7 @@ PrintList("TabStopChanged", l.Results);
 		     l.TextAlign = ContentAlignment.TopRight;
 		     l.Refresh ();
 		     Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		     myform.Dispose();
 	     }
 
    }
@@ -841,6 +856,7 @@ public class MyLabel2 : Label
 		     myform.Controls.Add (l);
 
 		     Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		     myform.Dispose();
 	     }
 
 	   [Test]
@@ -862,6 +878,7 @@ public class MyLabel2 : Label
 		     l.Size = new Size (150, 20);
 
 		     Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		     myform.Dispose();
 	     }
 
 	   [Test]
@@ -884,6 +901,7 @@ public class MyLabel2 : Label
 		     l.AutoSize = true;
 
 		     Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		     myform.Dispose();
 	     }
 
 	   [Test]
@@ -903,6 +921,7 @@ public class MyLabel2 : Label
 		     l.BackgroundImage = Image.FromFile ("Test/System.Windows.Forms/bitmaps/a.png");
 
 		     Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		     myform.Dispose();
 	     }
 
 	   [Test]
@@ -921,6 +940,7 @@ public class MyLabel2 : Label
 		     l.ImeMode = ImeMode.Katakana;
 
 		     Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		     myform.Dispose();
 	     }
 
 	   [Test]
@@ -941,6 +961,7 @@ public class MyLabel2 : Label
 		     l.KeyPressA ();
 
 		     Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		     myform.Dispose();
 	     }
 
 	   [Test]
@@ -958,6 +979,7 @@ public class MyLabel2 : Label
 		     l.TabStop = true;
 
 		     Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		     myform.Dispose();
 	     }
 
 	   [Test]
@@ -976,6 +998,7 @@ public class MyLabel2 : Label
 		     l.TextAlign = ContentAlignment.TopRight;
 
 		     Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		     myform.Dispose();
 	     }
 
 	   [Test]
@@ -996,6 +1019,7 @@ public class MyLabel2 : Label
 		     l.TextAlign = ContentAlignment.TopRight;
 		     l.Refresh ();
 		     Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		     myform.Dispose();
 	     }
 
    }

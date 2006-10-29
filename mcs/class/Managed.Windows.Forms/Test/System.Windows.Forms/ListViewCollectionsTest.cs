@@ -195,6 +195,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreSame (itemC, lvw.CheckedItems [0], "#E2");
 			Assert.AreSame (itemB, lvw.CheckedItems [1], "#E3");
 			Assert.AreSame (itemA, lvw.CheckedItems [2], "#E4");
+			form.Dispose ();
 		}
 
 		[Test, ExpectedException (typeof (NotSupportedException))]
@@ -316,6 +317,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (item.Selected, "#C1");
 			Assert.AreEqual (0, lvw.SelectedItems.Count, "#C2");
 			Assert.IsFalse (lvw.SelectedItems.Contains (item), "#C3");
+			form.Dispose ();
 		}
 
 		[Test]
@@ -339,6 +341,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (lvw.SelectedItems.Contains (new ListViewItem ()), "#B2");
 			Assert.IsTrue (list.Contains (item), "#B3");
 			Assert.IsFalse (list.Contains (new ListViewItem ()), "#B4");
+			form.Dispose ();
 		}
 
 		[Test]
@@ -366,6 +369,7 @@ namespace MonoTests.System.Windows.Forms
 				Assert.Fail ("#B2");
 			} catch (ArgumentException) {
 			}
+			form.Dispose ();
 		}
 
 		[Test]
@@ -380,6 +384,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, lvw.SelectedItems.Count, "#1");
 			form.Show ();
 			Assert.AreEqual (1, lvw.SelectedItems.Count, "#2");
+			form.Dispose ();
 		}
 
 		[Test]
@@ -396,6 +401,8 @@ namespace MonoTests.System.Windows.Forms
 			form.Show ();
 
 			Assert.IsTrue (lvw.SelectedItems.GetEnumerator ().MoveNext (), "#B1");
+
+			form.Dispose ();
 		}
 
 		[Test]
@@ -424,6 +431,8 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreSame (item, lvw.SelectedItems [0], "#B1");
 			Assert.AreSame (item, list [0], "#B2");
+
+			form.Dispose ();
 		}
 
 		[Test]
@@ -447,6 +456,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (-1, lvw.SelectedItems.IndexOf (new ListViewItem ()), "#B2");
 			Assert.AreEqual (0, list.IndexOf (item), "#B3");
 			Assert.AreEqual (-1, list.IndexOf (new ListViewItem ()), "#B4");
+
+			form.Dispose ();
 		}
 
 		[Test]
@@ -489,6 +500,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreSame (itemC, lvw.SelectedItems [0], "#D2");
 			Assert.AreSame (itemB, lvw.SelectedItems [1], "#D3");
 			Assert.AreSame (itemA, lvw.SelectedItems [2], "#D4");
+
+			form.Dispose ();
 		}
 
 		/*
@@ -644,6 +657,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (itemD, lvw.SelectedItems [0], "#E3");
 			Assert.AreEqual (1, lvw.CheckedItems.Count, "#E4");
 			Assert.AreEqual (itemD, lvw.CheckedItems [0], "#E5");
+
+			form.Dispose ();
 		}
 
 		[Test]
@@ -698,6 +713,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("D", lvw.SelectedItems [0].Text, "#E3");
 			Assert.AreEqual (1, lvw.CheckedItems.Count, "#E4");
 			Assert.AreEqual ("D", lvw.CheckedItems [0].Text, "#E5");
+
+			form.Dispose ();
 		}
 	}
 }

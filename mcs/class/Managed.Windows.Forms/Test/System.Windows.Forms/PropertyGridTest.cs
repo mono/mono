@@ -64,6 +64,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreSame (button2, pg.SelectedObjects [1], "#4");
 			Assert.IsNotNull (pg.SelectedObject, "#5");
 			Assert.AreSame (button1, pg.SelectedObject, "#6");
+			form.Dispose ();
 		}
 
 		[Test]

@@ -69,6 +69,7 @@ namespace MonoTests.System.Windows.Forms
 			mymainmenu1.MenuItems.Add (menuitem1);
 			myform.Menu = mymainmenu1;
 			Assert.AreEqual ("New Form", mymainmenu1.GetForm().Name, "#10");
+			myform.Dispose ();
 		}
 		
 		[Test]
@@ -81,6 +82,7 @@ namespace MonoTests.System.Windows.Forms
 			menuItem1.Text = "1";
 			mycontextmenu.MenuItems.Add (menuItem1);
 			Assert.AreEqual (mycontextmenu, menuItem1.GetContextMenu (),"#11");
+			myform.Dispose ();
 		}
 	}
 }

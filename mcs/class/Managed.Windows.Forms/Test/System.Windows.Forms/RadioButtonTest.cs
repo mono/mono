@@ -69,6 +69,7 @@ namespace MonoTests.System.Windows.Forms
 			myForm.Show ();
 			rButton1.PerformClick ();
 			Assert.AreEqual (true, eventhandled, "#2");
+			myForm.Dispose ();
 		}
 
 		[Test]
@@ -84,6 +85,7 @@ namespace MonoTests.System.Windows.Forms
 			rButton1.AppearanceChanged += new EventHandler (RadioButton_EventHandler);
 			rButton1.Appearance = Appearance.Button;
 			Assert.AreEqual (true, eventhandled, "#2");
+			myForm.Dispose ();
 		}
 	
 		[Test]
@@ -99,6 +101,7 @@ namespace MonoTests.System.Windows.Forms
 			rButton1.CheckedChanged += new EventHandler (RadioButton_EventHandler);
 			rButton1.Checked = true;
 			Assert.AreEqual (true, eventhandled, "#3");
+			myForm.Dispose ();
 		}
 	}
 }

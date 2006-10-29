@@ -34,6 +34,7 @@ namespace MonoTests.System.Windows.Forms
 			myform.Controls.Add (lb1);
 			myform.Show ();
 			Assert.AreEqual (true, eventhandled, "#A1");
+			myform.Dispose();
 		}
 
 		[TestFixture]
@@ -59,6 +60,7 @@ namespace MonoTests.System.Windows.Forms
 				lb1.MeasureItem += new MeasureItemEventHandler (MeasureItem_EventHandler);		
 				lb1.DrawMode = DrawMode.OwnerDrawVariable;
 				Assert.AreEqual (true, eventhandled, "#A2");
+				myform.Dispose();
 			}
 		}
 	}

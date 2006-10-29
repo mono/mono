@@ -398,6 +398,7 @@ namespace MWF.MonoTest
 
 			Assert.AreEqual(null, TestControl(label1, label1, false), "Tab31");
 			Assert.AreEqual(null, TestControl(radio11, radio21, false), "Tab32");
+			form.Dispose ();
 		}
 
 		[Test]

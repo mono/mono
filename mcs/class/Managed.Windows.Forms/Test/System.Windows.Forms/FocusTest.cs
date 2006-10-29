@@ -127,6 +127,7 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.IsFalse (flat_controls [1].Focused, "A14");
 			Assert.IsFalse (flat_controls [2].Focused, "A15");
 			Assert.AreEqual (flat_controls [0], form.ActiveControl, "A16");
+			form.Dispose ();
 		}
 
 		[Test]
@@ -148,6 +149,7 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.IsFalse (flat_controls [1].Focused, "A6");
 			Assert.IsFalse (flat_controls [2].Focused, "A7");
 			Assert.AreEqual (flat_controls [0], form.ActiveControl, "A8");
+			form.Dispose ();
 		}
 
 		[Test]
@@ -166,6 +168,7 @@ namespace MonoTests.System.Windows.Forms {
 
 			flat_controls [0]._Select (true, true);
 			Assert.AreEqual (flat_controls [0], form.ActiveControl, "A3");
+			form.Dispose ();
 		}
 
 		[Test]
@@ -178,6 +181,7 @@ namespace MonoTests.System.Windows.Forms {
 
 			form.SelectNextControl (null, true, false, false, false);
 			Assert.IsTrue (flat_controls [0].directed_select_called, "A1");
+			form.Dispose ();
 		}
 
 		[Test]
@@ -205,6 +209,7 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.IsFalse (flat_controls [2].Focused, "A8");
 			Assert.AreEqual (flat_controls [0], cp.ActiveControl, "A9");
 			Assert.AreEqual (cp, form.ActiveControl, "A10");
+			form.Dispose ();
 		}
 
 		[Test]
@@ -232,6 +237,7 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.IsTrue (flat_controls [2].Focused, "A8");
 			Assert.AreEqual (flat_controls [2], cp.ActiveControl, "A9");
 			Assert.AreEqual (cp, form.ActiveControl, "A10");
+			form.Dispose ();
 		}
 
 		[Test]
@@ -251,6 +257,7 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.IsFalse (flat_controls [2].Focused, "A3");
 			Assert.AreEqual (null, cp.ActiveControl, "A4");
 			Assert.AreEqual (cp, form.ActiveControl, "A5");
+			form.Dispose ();
 		}
 
 		[Test]
@@ -314,6 +321,7 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (form.GetNextControl (ctrls_c [1], false), ctrls_c [0], "ctrls-c-4");
 			Assert.AreEqual (form.GetNextControl (ctrls_c [2], true), null, "ctrls-c-5");
 			Assert.AreEqual (form.GetNextControl (ctrls_c [2], false), ctrls_c [1], "ctrls-c-6");
+			form.Dispose ();
 		}
 
 		[Test]
@@ -377,6 +385,7 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (con_a.GetNextControl (ctrls_c [1], false), ctrls_a [2], "ctrls-c-4");
 			Assert.AreEqual (con_a.GetNextControl (ctrls_c [2], true), ctrls_a [0], "ctrls-c-5");
 			Assert.AreEqual (con_a.GetNextControl (ctrls_c [2], false), ctrls_a [2], "ctrls-c-6");
+			form.Dispose ();
 		}
 
 		[Test]
@@ -440,6 +449,7 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (con_b.GetNextControl (ctrls_c [1], false), ctrls_b [2], "ctrls-c-4");
 			Assert.AreEqual (con_b.GetNextControl (ctrls_c [2], true), ctrls_b [0], "ctrls-c-5");
 			Assert.AreEqual (con_b.GetNextControl (ctrls_c [2], false), ctrls_b [2], "ctrls-c-6");
+			form.Dispose ();
 		}
 
 		[Test]
@@ -503,6 +513,7 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (con_c.GetNextControl (ctrls_c [1], false), ctrls_c [0], "ctrls-c-4");
 			Assert.AreEqual (con_c.GetNextControl (ctrls_c [2], true), null, "ctrls-c-5");
 			Assert.AreEqual (con_c.GetNextControl (ctrls_c [2], false), ctrls_c [1], "ctrls-c-6");
+			form.Dispose ();
 		}
 
 		[Test]
@@ -543,7 +554,7 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (form.GetNextControl (ctrls_a [1], false), ctrls_a [0], "ctrl-a-2");
 			Assert.AreEqual (form.GetNextControl (ctrls_a [2], true), ctrl_b, "ctrl-a-1");
 			Assert.AreEqual (form.GetNextControl (ctrls_a [2], false), ctrls_a [1], "ctrl-a-2");
-
+			form.Dispose();
 		}
 
 		[Test]
@@ -572,6 +583,7 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (flat_controls [0].GetNextControl (flat_controls [1], false), null, "ctrls-0-6");
 			Assert.AreEqual (flat_controls [0].GetNextControl (flat_controls [2], true), null, "ctrls-0-7");
 			Assert.AreEqual (flat_controls [0].GetNextControl (flat_controls [2], false), null,"ctrls-0-8");
+			form.Dispose ();
 		}
 
 		[Test]
@@ -608,6 +620,7 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (gbp.GetNextControl (flat_controls [1], false), flat_controls [0], "gbp-ctrls-1-backward");
 			Assert.AreEqual (gbp.GetNextControl (flat_controls [2], true), null, "gbp-ctrls-2-forward");
 			Assert.AreEqual (gbp.GetNextControl (flat_controls [2], false), flat_controls [1],"gbp-ctrls-2-backward");		
+			form.Dispose ();
 		}
 
 		[Test]
@@ -635,6 +648,7 @@ namespace MonoTests.System.Windows.Forms {
 
 			Assert.AreEqual (form.GetNextControl (page2, true), null, "page-two-1");
 			Assert.AreEqual (form.GetNextControl (page2, false), page1, "page-two-2");
+			form.Dispose ();
 		}
 
 		[Test]
@@ -681,6 +695,7 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (page1.GetNextControl (flat_controls [1], false), flat_controls [0], "page1-ctrls-1-backward");
 			Assert.AreEqual (page1.GetNextControl (flat_controls [2], true), null, "page1-ctrls-2-forward");
 			Assert.AreEqual (page1.GetNextControl (flat_controls [2], false), flat_controls [1],"page1-ctrls-2-backward");
+			form.Dispose ();
 		}
 
 		[Test]
@@ -716,6 +731,7 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (form.GetNextControl (ctrls [4], true), null, "A11");
 			Assert.AreEqual (form.GetNextControl (ctrls [4], false), ctrls [3], "A12");
 
+			form.Dispose ();
 		}
 
 		[Test]
@@ -753,6 +769,7 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (form.GetNextControl (ctrls [4], true), null, "A11");
 			Assert.AreEqual (form.GetNextControl (ctrls [4], false), ctrls [3], "A12");
 
+			form.Dispose ();
 		}
 
 		[Test]
@@ -771,6 +788,8 @@ namespace MonoTests.System.Windows.Forms {
 
 			Assert.AreEqual (form.GetNextControl (a, true), b, "form-1");
 			Assert.AreEqual (form.GetNextControl (a, false), null, "form-2");
+
+			form.Dispose ();
 		}
 
 		[Test]
@@ -786,6 +805,8 @@ namespace MonoTests.System.Windows.Forms {
 			flat_controls [1].Focus ();
 
 			Assert.AreEqual (form.ActiveControl, flat_controls [1], "A2");
+
+			form.Dispose ();
 		}
 	}
 

@@ -75,6 +75,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (DateTime.Today, myMonthCal1.TodayDate, "#T3");
 			Assert.AreEqual (false, myMonthCal1.TodayDateSet, "#T4");
 			Assert.AreEqual ("GrayText", myMonthCal1.TrailingForeColor.Name, "#T5");
+
+			myfrm.Dispose ();
 		}
 	
 		[Test]		
@@ -119,6 +121,7 @@ namespace MonoTests.System.Windows.Forms
 			myMonthCal.AddAnnuallyBoldedDate (new DateTime (2005, 09, 01));
 			myForm.Controls.Add (myMonthCal);
 			Assert.AreEqual (new DateTime (2005, 09, 01), myMonthCal.AnnuallyBoldedDates.GetValue (0), "#add1");
+			myForm.Dispose ();
 		}
 
 		[Test]
@@ -129,6 +132,7 @@ namespace MonoTests.System.Windows.Forms
 			myMonthCal.AddBoldedDate (new DateTime (2005, 09, 02));
 			myForm.Controls.Add (myMonthCal);
 			Assert.AreEqual (new DateTime (2005, 09, 02), myMonthCal.BoldedDates.GetValue (0), "#add2");
+			myForm.Dispose ();
 		}
 
 		[Test]
@@ -139,6 +143,7 @@ namespace MonoTests.System.Windows.Forms
 			myMonthCal.AddMonthlyBoldedDate (new DateTime (2005, 09, 03));
 			myForm.Controls.Add (myMonthCal);
 			Assert.AreEqual (new DateTime (2005, 09, 03), myMonthCal.MonthlyBoldedDates.GetValue (0), "#add2");
+			myForm.Dispose ();
 		}
 		
 		[Test]
@@ -152,6 +157,7 @@ namespace MonoTests.System.Windows.Forms
 			mySelRange.End = new DateTime (2005, 09, 30);
 			Assert.AreEqual (mySelRange.Start, myMonthCal.GetDisplayRange (true).Start, "#Get1");
 			Assert.AreEqual (mySelRange.End, myMonthCal.GetDisplayRange (true).End, "#Get22");
+			myForm.Dispose ();
 		}
 		
 		[Test]

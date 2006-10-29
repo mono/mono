@@ -99,7 +99,7 @@ namespace MonoTests.System.Windows.Forms {
 			eventcount = 0;
 			f.Show ();
 			Assert.AreEqual (2, eventcount, "A1");
-			f.Close ();
+			f.Dispose();
 		}
 
 		[Test]
@@ -107,6 +107,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void BindingContextChangedTest3 ()
 		{
 			Form f = new Form ();
+
 			Control c = new Control ();
 			f.Controls.Add (c);
 
@@ -115,7 +116,7 @@ namespace MonoTests.System.Windows.Forms {
 			c.BindingContext = new BindingContext ();;
 			f.Show ();
 			Assert.AreEqual (1, eventcount, "A1");
-			f.Close ();
+			f.Dispose ();
 		}
 
 		int eventcount;

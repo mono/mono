@@ -182,6 +182,7 @@ namespace MonoTests.System.Windows.Forms
 			rTextBox.Text = "sample text for richtextbox";
 			myForm.Controls.Add (rTextBox);
 			Assert.AreEqual ('m', rTextBox.GetCharFromPosition (new Point (10, 10)), "#21");
+			myForm.Dispose ();
 		}
 		//[MonoTODO("Add test for method Paste (Visual Test)")]
 	}

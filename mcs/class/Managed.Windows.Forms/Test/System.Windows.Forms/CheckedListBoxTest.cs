@@ -52,6 +52,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (3, mychklistbox.Items.Count, "#7");
 			Assert.AreEqual (SelectionMode.One, mychklistbox.SelectionMode, "#8");
 			Assert.AreEqual (false , mychklistbox.ThreeDCheckBoxes, "#9");
+			myform.Dispose ();
 		}
 
 		[Test]
@@ -68,6 +69,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (true, mychklistbox.GetItemChecked (0), "#10");
 			Assert.AreEqual (true, mychklistbox.GetItemChecked (1), "#11");
 			Assert.AreEqual (false, mychklistbox.GetItemChecked (2), "#12");
+			f.Dispose ();
 		}	
 
 		[Test]
@@ -93,6 +95,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (CheckState.Checked, mychklistbox.GetItemCheckState (0), "#14");
 			Assert.AreEqual (CheckState.Indeterminate, mychklistbox.GetItemCheckState (1), "#15");
 			Assert.AreEqual (CheckState.Unchecked, mychklistbox.GetItemCheckState (2), "#16");
+			f.Dispose ();
 		}	
 
 		[Test]
@@ -109,6 +112,7 @@ namespace MonoTests.System.Windows.Forms
 			mychklistbox.SetItemChecked (1,false);
 			Assert.AreEqual (CheckState.Checked, mychklistbox.GetItemCheckState (0), "#17");
 			Assert.AreEqual (CheckState.Unchecked, mychklistbox.GetItemCheckState (1), "#18");
+			myform.Dispose ();
 		}
 
 		[Test]
@@ -128,6 +132,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (CheckState.Checked, mychklistbox.GetItemCheckState (0), "#19");
 			Assert.AreEqual (CheckState.Indeterminate, mychklistbox.GetItemCheckState (1), "#20");
 			Assert.AreEqual (CheckState.Unchecked, mychklistbox.GetItemCheckState (2), "#21");
+			myform.Dispose ();
 		}	
 	}
 }

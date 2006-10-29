@@ -32,6 +32,7 @@ namespace MonoTests.System.Windows.Forms {
 
 			f.Controls.Add (tv);
 			f.Show ();
+			f.Dispose ();
 		}
 
 		[Test]

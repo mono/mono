@@ -87,6 +87,7 @@ namespace MonoTests.System.Windows.Forms
 				myimagelist.Images.Add (myImage);
 				myimagelist.ColorDepth = ColorDepth.Depth32Bit;
 				Assert.AreEqual (true, eventhandled, "#2");
+				myform.Dispose ();
 			}
 
 		}

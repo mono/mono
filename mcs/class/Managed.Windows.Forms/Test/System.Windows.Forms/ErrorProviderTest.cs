@@ -65,6 +65,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (myErrorProvider.CanExtend (myControl), true, "#ext1");
 			Assert.AreEqual (myErrorProvider.CanExtend (myToolBar), false, "#ext2");
 			Assert.AreEqual (myErrorProvider.CanExtend (myForm), false, "#ext3");
+			myForm.Dispose ();
 		}
 	
 		[Test]
@@ -75,6 +76,7 @@ namespace MonoTests.System.Windows.Forms
 			ErrorProvider myErrorProvider = new ErrorProvider ();
 			myErrorProvider.SetError(myLabel, "New Error msg for Label");
 			Assert.AreEqual ("New Error msg for Label", myErrorProvider.GetError (myLabel), "#getset1");
+			myForm.Dispose ();
 		}
 		
 		[Test]
@@ -93,6 +95,7 @@ namespace MonoTests.System.Windows.Forms
 			ErrorProvider myErrorProvider = new ErrorProvider ();
 			myErrorProvider.SetIconPadding (myForm, 2);
 			Assert.AreEqual (2, myErrorProvider.GetIconPadding (myForm), "#getset3");
+			myForm.Dispose ();
 		}
 	}
 }
