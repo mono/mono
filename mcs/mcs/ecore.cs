@@ -823,7 +823,6 @@ namespace Mono.CSharp {
 						// then we are in this situation.
 						Error_CannotAccessProtected (loc, m, qualifier_type, container_type);
 					} else {
-						Report.SymbolRelatedToPreviousError (m);
 						ErrorIsInaccesible (loc, TypeManager.GetFullNameSignature (m));
 					}
 				}
@@ -3724,6 +3723,7 @@ namespace Mono.CSharp {
 
 			if (must_do_cs1540_check && (InstanceExpression != EmptyExpression.Null) &&
 			    !TypeManager.IsInstantiationOfSameGenericType (InstanceExpression.Type, ec.ContainerType) &&
+			    !TypeManager.IsNestedChildOf (ec.ContainerType, InstanceExpression.Type) &&
 			    !TypeManager.IsSubclassOf (InstanceExpression.Type, ec.ContainerType)) {
 				Report.SymbolRelatedToPreviousError (PropertyInfo);
 				Error_CannotAccessProtected (loc, PropertyInfo, InstanceExpression.Type, ec.ContainerType);

@@ -1,3 +1,9 @@
+2006-10-29  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #78602
+	ecore.cs (PropertyExpr.InstanceResolve): The qualifier for access
+	to protected member can be nested type.
+
 2006-10-28  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #78965
