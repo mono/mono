@@ -1,3 +1,9 @@
+2006-10-29  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ResourceSet.cs, ResourceManager.cs: Calling ResourceSet.Close()
+	  disposes a resource set. A closed resource set will now be
+	  removed from ResourceSets. Fixes bug #79182.
+
 2006-03-14  Robert Jordan  <robertj@gmx.net>
 
 	* ResourceManager.cs: Don't stop the resource set lookup until

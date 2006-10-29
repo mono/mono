@@ -71,7 +71,6 @@ namespace System.ComponentModel {
 						pi.SetValue (value, Convert.ChangeType (di.Value, pi.PropertyType), null);
 				}
 			}
-			rset.Close ();
 		}
 	}
 }

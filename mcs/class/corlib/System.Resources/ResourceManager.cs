@@ -290,8 +290,11 @@ namespace System.Resources
 			}
 			/* if we already have this resource set, return it */
 			set=(ResourceSet)ResourceSets[culture];
-			if(set!=null) {
+			if(set!=null && !set.isDisposed) {
 				return(set);
+			} else if (set!=null && set.isDisposed) {
+				ResourceSets.Remove (set);
+				set = null;
 			}
 
 			if(MainAssembly != null) {
