@@ -273,10 +273,12 @@ namespace System.Web.UI.WebControls {
 					}
 				}
 
+#if !NET_2_0
 				if (thr) {
 					string msg = String.Format ("Argument value is out of range: {0}", value);
 					throw new ArgumentOutOfRangeException (msg);
 				}
+#endif
 			}
 		}
 

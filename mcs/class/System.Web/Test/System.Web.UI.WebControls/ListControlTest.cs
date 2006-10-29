@@ -531,7 +531,9 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-        [Category ("NotWorking")]
+#if !NET_2_0
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+#endif
 		public void ValueNotFound1 ()
 		{
 			ListControlPoker p = new ListControlPoker ();
