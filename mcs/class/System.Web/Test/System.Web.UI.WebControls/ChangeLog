@@ -1,5 +1,10 @@
 2006-10-29 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* DataBoundControlTest.cs: new test was added
+	* ListControlTest.cs: removed NotWorking attributes
+			
+2006-10-29 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* ListControlTest.cs: removed NotWorking attributes
 			
 2006-10-29 Igor Zelmanovich <igorz@mainsoft.com>

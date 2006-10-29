@@ -50,6 +50,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			{
 				Console.WriteLine ("PerformSelect\n{0}", Environment.StackTrace);
 			}
+
+			public void DoValidateDataSource (object dataSource)
+			{
+				ValidateDataSource (dataSource);
+			}
 		}
 
 		class MyDataBoundControl : DataBoundControl
@@ -186,6 +191,13 @@ namespace MonoTests.System.Web.UI.WebControls
 			Poker p = new Poker ();
 			Assert.AreEqual ("", p.DataMember, "A1");
 			Assert.AreEqual ("", p.DataSourceID, "A2");
+		}
+		
+		[Test]
+		public void ValidateDataSource () {
+			Poker p = new Poker ();
+			// Allows null
+			p.DoValidateDataSource (null);
 		}
 	}
 }

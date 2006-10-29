@@ -155,7 +155,7 @@ namespace System.Web.UI.WebControls {
 
 		protected override void ValidateDataSource (object dataSource)
 		{
-			if (dataSource is IListSource || dataSource is IEnumerable || dataSource is IDataSource)
+			if (dataSource == null || dataSource is IListSource || dataSource is IEnumerable || dataSource is IDataSource)
 				return;
 			throw new ArgumentException ("Invalid data source source type. The data source must be of type IListSource, IEnumerable or IDataSource.");
 		}
@@ -241,6 +241,7 @@ namespace System.Web.UI.WebControls {
 	}
 }
 #endif
+
 
 
 
