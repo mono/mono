@@ -14,7 +14,7 @@ using System.Runtime.Remoting;
 
 using NUnit.Framework;
 
-namespace MWF.MonoTest
+namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
 	public class ControlTest
@@ -144,7 +144,6 @@ namespace MWF.MonoTest
 			Assert.AreEqual(null, c.Tag, "T3");
 			Assert.AreEqual("", c.Text, "T4");
 			Assert.AreEqual(0, c.Top, "T5");
-			Assert.AreEqual(null, c.TopLevelControl, "T6");
 
 			// U
 
@@ -155,6 +154,26 @@ namespace MWF.MonoTest
 			Assert.AreEqual(0, c.Width, "W1");
 
 			// XYZ
+		}
+
+		[Test]
+		public void TopLevelControlTest () {
+			Control c = new Control ();
+
+			Assert.AreEqual(null, c.TopLevelControl, "T1");
+
+			Panel p = new Panel ();
+
+			p.Controls.Add (c);
+
+			Assert.AreEqual(null, c.TopLevelControl, "T2");
+
+			Form f = new Form ();
+
+			f.Controls.Add (p);
+
+			Assert.AreEqual (f, c.TopLevelControl, "T3");
+			Assert.AreEqual (f, f.TopLevelControl, "T4");
 		}
 
 		[Test]
@@ -226,7 +245,7 @@ namespace MWF.MonoTest
 
 			form = new Form();
 
-			form.ClientSize = new System.Drawing.Size (520, 520);
+			form.ClientSize = new Size (520, 520);
 			Assert.AreEqual(new Size(520, 520), form.ClientSize, "Tab1");
 
 			form.Text = "SWF Taborder Test App Form";
@@ -446,10 +465,10 @@ namespace MWF.MonoTest
 			//r1.DataBindings = System.Windows.Forms.Binding ;
 			//r1.ResetBindings() ;
 			//Assert.AreEqual(ControlBindingsCollection , r1.DataBindings  , "#83");
-			r1.BackColor = System.Drawing.Color.Black ;
+			r1.BackColor = Color.Black ;
 			r1.ResetBackColor() ;
 			Assert.AreEqual( SystemColors.Control , r1.BackColor  , "#84");
-			r1.BackColor = System.Drawing.Color.Black ;
+			r1.BackColor = Color.Black ;
 			r1.Refresh() ;
 			Assert.AreEqual( null , r1.Region , "#85");
 			Rectangle M = new Rectangle(10, 20, 30 ,40);
@@ -564,7 +583,7 @@ namespace MWF.MonoTest
 		public delegate void TestDelegate ();
 
 		[Test]
-		[ExpectedException(typeof(System.InvalidOperationException))]
+		[ExpectedException(typeof(InvalidOperationException))]
 		public void InvokeException1 () {
 			Control c = new Control ();
 			IAsyncResult result;
@@ -794,7 +813,7 @@ namespace MWF.MonoTest
 		}
 
 		[Test]
-		[ExpectedException(typeof(System.ArgumentException))]
+		[ExpectedException(typeof(ArgumentException))]
 		public void TransparentBackgroundTest1() {
 			Control	c;
 
