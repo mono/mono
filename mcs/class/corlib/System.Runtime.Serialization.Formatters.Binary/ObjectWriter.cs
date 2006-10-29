@@ -221,6 +221,9 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		FormatterTypeStyle _typeFormat;
 		byte[] arrayBuffer;
 		int ArrayBufferLength = 4096;
+#if NET_2_0
+		SerializationObjectManager _manager;
+#endif
 		
 		class MetadataReference
 		{
@@ -240,6 +243,9 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			_context = context;
 			_assemblyFormat = assemblyFormat;
 			_typeFormat = typeFormat;
+#if NET_2_0
+			_manager = new SerializationObjectManager (context);
+#endif
 		}
 
 		public void WriteObjectGraph (BinaryWriter writer, object obj, Header[] headers)
@@ -249,6 +255,9 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			QueueObject (obj);
 			WriteQueuedObjects (writer);
 			WriteSerializationEnd (writer);
+#if NET_2_0
+			_manager.RaiseOnSerializedEvent ();
+#endif
 		}
 
 		public void QueueObject (object obj)
@@ -375,6 +384,10 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			// Check if the object is marked with the Serializable attribute
 
 			BinaryCommon.CheckSerializable (instanceType, _surrogateSelector, _context);
+
+#if NET_2_0
+			_manager.RegisterObject (obj);
+#endif
 
 			ISerializable ser = obj as ISerializable;
 

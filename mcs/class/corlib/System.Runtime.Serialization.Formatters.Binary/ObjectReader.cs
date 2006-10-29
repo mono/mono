@@ -262,6 +262,9 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			else
 #endif
 				objectInstance = FormatterServices.GetUninitializedObject (metadata.Type);
+#if NET_2_0
+			_manager.RaiseOnDeserializingEvent (objectInstance);
+#endif
 				
 			info = metadata.NeedsSerializationInfo ? new SerializationInfo(metadata.Type, new FormatterConverter()) : null;
 
