@@ -7,6 +7,7 @@
 	  it finally possible to create language dependent resources
 	  that do not have to include everything from a parent culture
 	  resource (mostly invariant culture).
+	  Throw an ArgumentNullException if value or objectName is null.
 
 2006-10-29 Alexander Olk <alex.olk@googlemail.com>
 

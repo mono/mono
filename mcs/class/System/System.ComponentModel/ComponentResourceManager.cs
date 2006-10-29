@@ -56,6 +56,12 @@ namespace System.ComponentModel {
 
 		public virtual void ApplyResources (object value, string objectName, CultureInfo culture)
 		{
+			if (value == null)
+				throw new ArgumentNullException ("value is null.");
+			
+			if (objectName == null)
+				throw new ArgumentNullException ("objectName is null.");
+			
 			string objKey = objectName + ".";
 			Type type = value.GetType ();
 			PropertyInfo[] propinfos = type.GetProperties ();
