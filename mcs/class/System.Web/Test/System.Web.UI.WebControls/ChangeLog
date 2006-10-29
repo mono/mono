@@ -2,6 +2,10 @@
 
 	* ListControlTest.cs: removed NotWorking attributes
 			
+2006-10-29 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ListControlTest.cs: removed NotWorking attributes
+			
 2006-10-26 Yoni Klain <yonik@mainsoft.com>
 	
 	* Changed tests for to be runned on run-tests-ondotnet,

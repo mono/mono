@@ -201,6 +201,13 @@ namespace System.Web.UI.WebControls {
 					return;
 				}
 
+#if NET_2_0
+				if (value >= Items.Count) {
+					ClearSelection ();
+					return;
+				}
+#endif
+
 				if (value < -1 || value >= Items.Count)
 					throw new ArgumentOutOfRangeException ("value");
 
@@ -565,5 +572,6 @@ namespace System.Web.UI.WebControls {
 #endif
 	}
 }
+
 
 

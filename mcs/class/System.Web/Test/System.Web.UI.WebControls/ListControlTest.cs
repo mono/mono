@@ -332,7 +332,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-        [Category ("NotWorking")]
 #if !NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 #endif
@@ -342,6 +341,9 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 			l.Items.Add ("foo");
 			l.SelectedIndex = 1;
+#if NET_2_0
+			Assert.AreEqual (-1, l.SelectedIndex, "#01");
+#endif
 		}
 
 		[Test]
@@ -552,5 +554,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 	}
 }
+
 
 
