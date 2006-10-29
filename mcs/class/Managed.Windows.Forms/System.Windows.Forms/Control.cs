@@ -2455,7 +2455,7 @@ namespace System.Windows.Forms
 					p = p.parent;
 				}
 
-				return p;
+				return p is Form ? p : null;
 			}
 		}
 
