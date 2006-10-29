@@ -1,3 +1,11 @@
+2006-10-29  Miguel de Icaza  <miguel@novell.com>
+
+	* UnixRegistryApi.cs (KeyHandler.MachineStore): Add support for
+	loading/storing values from the system registry, instead of having
+	the system ones be user-based. 
+
+	(KeyHandler, Load): turn IO exceptions into Security exceptions.
+
 2006-09-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* IRegistryApi.cs: Added OpenRemoteBaseKey method.

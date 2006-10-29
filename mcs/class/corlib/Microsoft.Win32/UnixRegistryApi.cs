@@ -94,20 +94,20 @@ namespace Microsoft.Win32 {
 		static Hashtable key_to_handler = new Hashtable ();
 		static Hashtable dir_to_handler = new Hashtable (
 			new CaseInsensitiveHashCodeProvider (), new CaseInsensitiveComparer ());
-		/*
-		 const string MACHINE_STORE_VAR = "MONO_REGISTRY_MACHINE";
-		*/
-
 		public string Dir;
 
 		Hashtable values;
 		string file;
 		bool dirty;
-		
+
 		KeyHandler (RegistryKey rkey, string basedir)
 		{
 			if (!Directory.Exists (basedir)){
-				Directory.CreateDirectory (basedir);
+				try {
+					Directory.CreateDirectory (basedir);
+				} catch (UnauthorizedAccessException){
+					throw new SecurityException ("No access to the given key");
+				}
 			}
 			Dir = basedir;
 			file = Path.Combine (Dir, "values.xml");
@@ -136,6 +136,9 @@ namespace Microsoft.Win32 {
 						}
 					}
 				}
+			} catch (UnauthorizedAccessException){
+				values.Clear ();
+				throw new SecurityException ("No access to the given key");
 			} catch (Exception e){
 				Console.Error.WriteLine ("While loading registry key at {0}: {1}", file, e);
 				values.Clear ();
@@ -253,9 +256,9 @@ namespace Microsoft.Win32 {
 				case RegistryHive.LocalMachine:
 				case RegistryHive.PerformanceData:
 				case RegistryHive.Users:
-					string machineDir = Path.Combine (MachineStore, x.ToString ());
-					k = new KeyHandler (rkey, machineDir);
-					dir_to_handler [machineDir] = k;
+					string machine_dir = Path.Combine (MachineStore, x.ToString ());
+					k = new KeyHandler (rkey, machine_dir);
+					dir_to_handler [machine_dir] = k;
 					break;
 				default:
 					throw new Exception ("Unknown RegistryHive");
@@ -535,13 +538,14 @@ namespace Microsoft.Win32 {
 
 		private static string MachineStore {
 			get {
-				/*
-				string machineStore = Environment.GetEnvironmentVariable (MACHINE_STORE_VAR);
-				if (machineStore != null)
-					return machineStore;
-				*/
-				return UserStore;
-				// return "/var/lib/mono/registry";
+				string s;
+
+				s = Environment.GetEnvironmentVariable ("MONO_REGISTRY_PATH");
+				if (s != null)
+					return s;
+				s = Environment.GetMachineConfigPath ();
+				int p = s.IndexOf ("machine.config");
+				return Path.Combine (Path.Combine (s.Substring (0, p-1), ".."), "registry");
 			}
 		}
 	}
