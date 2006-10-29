@@ -37,6 +37,8 @@ using System.IO;
 using System.Web;
 using System.Web.UI;
 using System.Globalization;
+using MonoTests.SystemWeb.Framework;
+using MonoTests.stand_alone.WebHarness;
 
 
 namespace MonoTests.System.Web.UI.WebControls {
@@ -105,11 +107,33 @@ namespace MonoTests.System.Web.UI.WebControls {
 #endif
 		}	
 
-		[Test]
 #if NET_2_0
-		// FIXME: missing some info to start rendering ?
-		[ExpectedException (typeof (NullReferenceException))]
-#endif
+		[Test]
+		[Category ("NunitWeb")]
+		public void Render ()
+		{
+			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (Render_Load)).Run ();
+			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
+			string OriginControlHtml = @"<table id=""ctl01"" border=""0"">
+											<tr>
+												<td><input id=""ctl01_0"" type=""radio"" name=""ctl01"" value=""value1"" /><label for=""ctl01_0"">text2</label></td>
+											</tr>
+										</table>";
+			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "Render");
+		}
+
+		public static void Render_Load (Page p)
+		{
+			LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
+			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
+			TestRadioButtonList c = new TestRadioButtonList ();
+			p.Form.Controls.Add (lcb);
+			p.Form.Controls.Add (c);
+			p.Form.Controls.Add (lce);
+			c.Items.Add (new ListItem ("text2", "value1"));
+		}
+#else
+		[Test]
 		public void Render ()
 		{
 			TestRadioButtonList c = new TestRadioButtonList ();
@@ -122,6 +146,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.IsTrue (s.ToLower ().IndexOf ("value1") !=  -1, "value");
 			Assert.IsTrue (s.ToLower ().IndexOf ("text2") !=  -1, "text");
 		}
+#endif
 
 		// Exceptions
 		[Test]

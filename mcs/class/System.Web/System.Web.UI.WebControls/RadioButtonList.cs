@@ -338,6 +338,10 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void Render (HtmlTextWriter writer)
 		{
+#if NET_2_0
+			if (Items.Count == 0)
+				return;
+#endif
 			RepeatInfo repeat = new RepeatInfo ();
 			repeat.RepeatColumns = RepeatColumns;
 			repeat.RepeatDirection = RepeatDirection;
@@ -353,4 +357,5 @@ namespace System.Web.UI.WebControls {
 	}
 
 }
+
 

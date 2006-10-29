@@ -1,5 +1,9 @@
 2006-10-29 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* RadioButtonList.cs: fixed: has no html output when Items.Count=0.
+
+2006-10-29 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* ListControl.cs: fixed: setting SelectedVolue for 2.0.
 
 2006-10-29 Igor Zelmanovich <igorz@mainsoft.com>
