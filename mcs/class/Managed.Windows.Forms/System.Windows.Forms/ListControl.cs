@@ -81,8 +81,8 @@ namespace System.Windows.Forms
 				if (value == null)
 					display_member = String.Empty;
 				else if (!(value is IList || value is IListSource))
-					throw new ArgumentException ("Complex DataBinding accepts as a data source " +
-							"either an IList or an IListSource");
+					throw new Exception ("Complex DataBinding accepts as a data source " +
+							     "either an IList or an IListSource");
 
 				data_source = value;
 				ConnectToDataSource ();
