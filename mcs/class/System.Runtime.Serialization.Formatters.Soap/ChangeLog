@@ -1,3 +1,7 @@
+2006-10-29  Robert Jordan  <robertj@gmx.net>
+
+	* added SerializationCallbackTest.cs. See bug #78594.
+
 2006-04-04 roei erez <roeie@mainsoft.com>
 	* added InternalSoapValuesTest.cs to Tests sources
 	* SoapReader.cs: bug 77563 competability with MS.NET in
