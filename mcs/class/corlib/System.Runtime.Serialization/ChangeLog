@@ -1,3 +1,9 @@
+2006-10-29  Robert Jordan  <robertj@gmx.net>
+
+	* SerializationObjectManager.cs,
+	SerializationCallbacks.cs: Add support for NET_2_0 serialization
+	events. See bug #78594.
+
 2006-08-06  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* ObjectManager.cs: Add support for nested IObjectReference.
