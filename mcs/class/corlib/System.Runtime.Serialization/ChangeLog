@@ -1,5 +1,9 @@
 2006-10-29  Robert Jordan  <robertj@gmx.net>
 
+	* ObjectManager.cs: Add NET_2_0 serialization callbacks.
+	
+2006-10-29  Robert Jordan  <robertj@gmx.net>
+
 	* SerializationObjectManager.cs,
 	SerializationCallbacks.cs: Add support for NET_2_0 serialization
 	events. See bug #78594.

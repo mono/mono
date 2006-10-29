@@ -35,6 +35,9 @@ using System.Reflection;
 
 namespace System.Runtime.Serialization
 {
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisibleAttribute (true)]
+#endif
 	public class ObjectManager
 	{
 		// All objects are chained in the same order as they have been registered
@@ -42,6 +45,9 @@ namespace System.Runtime.Serialization
 		ObjectRecord _lastObjectRecord = null;
 
 		ArrayList _deserializedRecords = new ArrayList();
+#if NET_2_0
+		ArrayList _onDeserializedCallbackRecords = new ArrayList();
+#endif
 		Hashtable _objectRecords = new Hashtable();
 		bool _finalFixup = false;
 
@@ -83,6 +89,13 @@ namespace System.Runtime.Serialization
 					{
 						if (record.OriginalObject is IDeserializationCallback)
 							_deserializedRecords.Add (record);
+
+#if NET_2_0
+						SerializationCallbacks sc = SerializationCallbacks
+							.GetSerializationCallbacks (record.OriginalObject.GetType ());
+						if (sc.HasDeserializedCallbacks)
+							_onDeserializedCallbackRecords.Add (record);
+#endif
 						next = record.Next;
 					}
 					else
@@ -142,13 +155,37 @@ namespace System.Runtime.Serialization
 
 		public virtual void RaiseDeserializationEvent ()
 		{
+#if NET_2_0
+			for (int i = _onDeserializedCallbackRecords.Count-1; i >= 0; i--)
+			{
+				ObjectRecord record = (ObjectRecord) _onDeserializedCallbackRecords [i];
+				RaiseOnDeserializedEvent (record.OriginalObject);
+			}
+#endif
 			for (int i = _deserializedRecords.Count-1; i >= 0; i--)
 			{
 				ObjectRecord record = (ObjectRecord) _deserializedRecords [i];
 				IDeserializationCallback obj = record.OriginalObject as IDeserializationCallback;
 				if (obj != null) obj.OnDeserialization (this);
 			}
+
 		}
+
+#if NET_2_0
+		public void RaiseOnDeserializingEvent (object obj)
+		{
+			SerializationCallbacks sc = SerializationCallbacks
+				.GetSerializationCallbacks (obj.GetType ());
+			sc.RaiseOnDeserializing (obj, _context);
+		}
+
+		void RaiseOnDeserializedEvent (object obj)
+		{
+			SerializationCallbacks sc = SerializationCallbacks
+				.GetSerializationCallbacks (obj.GetType ());
+			sc.RaiseOnDeserialized (obj, _context);
+		}
+#endif
 
 		private void AddFixup (BaseFixupRecord record)
 		{
