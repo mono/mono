@@ -3351,9 +3351,7 @@ namespace System.Windows.Forms
 
 				children = child_controls.GetAllControls ();
 				for (int i = 0; i < children.Length; i++ ) {
-					if (children[i].IsHandleCreated) {
-						XplatUI.SetParent(children[i].Handle, window.Handle); 
-					}
+					XplatUI.SetParent(children[i].Handle, window.Handle); 
 				}
 
 				UpdateStyles();
