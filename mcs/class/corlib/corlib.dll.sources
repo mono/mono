@@ -984,10 +984,12 @@ System.Runtime.Serialization/OnSerializedAttribute.cs
 System.Runtime.Serialization/OnSerializingAttribute.cs
 System.Runtime.Serialization/OptionalFieldAttribute.cs
 System.Runtime.Serialization/SerializationBinder.cs
+System.Runtime.Serialization/SerializationCallbacks.cs
 System.Runtime.Serialization/SerializationEntry.cs
 System.Runtime.Serialization/SerializationException.cs
 System.Runtime.Serialization/SerializationInfo.cs
 System.Runtime.Serialization/SerializationInfoEnumerator.cs
+System.Runtime.Serialization/SerializationObjectManager.cs
 System.Runtime.Serialization/StreamingContext.cs
 System.Runtime.Serialization/StreamingContextStates.cs
 System.Runtime.Serialization/SurrogateSelector.cs

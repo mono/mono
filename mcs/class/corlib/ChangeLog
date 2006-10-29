@@ -1,3 +1,7 @@
+2006-10-29  Robert Jordan  <robertj@gmx.net>
+	
+	* corlib.dll.sources: Added NET_2_0 serialization events files.
+
 2006-10-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* corlib_test.dll.sources: Added BadImageFormatExceptionTest.cs.
