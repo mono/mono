@@ -103,7 +103,7 @@ namespace MonoTests.System.Windows.Forms
 			parent.AddOwnedForm (ownedForm);
 			ownedForm.Show ();
 			Assert.AreEqual ("NewParent", ownedForm.Owner.Text, "#41");
-			ownedform.Dispose ();
+			ownedForm.Dispose ();
 			parent.Dispose ();
 		}
 

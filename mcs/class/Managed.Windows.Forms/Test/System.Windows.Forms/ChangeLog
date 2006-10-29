@@ -1,3 +1,7 @@
+2006-10-29  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FormTest.cs: Fix typo.
+
 2006-10-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* PropertyGridTest.cs: Enabled previously not-working tests.
