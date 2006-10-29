@@ -29,7 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_1_1
 
 using System;
 using System.Resources;
@@ -59,20 +58,18 @@ namespace System.ComponentModel {
 		{
 			string objKey = objectName + ".";
 			Type type = value.GetType ();
+			PropertyInfo[] propinfos = type.GetProperties ();
 			
-			ResourceSet rset = GetResourceSet (culture, true, true);
-			foreach (DictionaryEntry di in rset)
-			{
-				string key = di.Key as string;
-				if (key.StartsWith (objKey)) {
-					key = key.Substring (objKey.Length);
-					PropertyInfo pi = type.GetProperty (key);
-					if (pi != null && pi.CanWrite)
-						pi.SetValue (value, Convert.ChangeType (di.Value, pi.PropertyType), null);
-				}
+			foreach(PropertyInfo pinfo in propinfos) {
+				if (!pinfo.CanWrite)
+					continue;
+				
+				object obj = GetObject (objKey + pinfo.Name, culture);
+					
+				if (obj != null)
+					pinfo.SetValue (value, Convert.ChangeType (obj, pinfo.PropertyType), null);
 			}
 		}
 	}
 }
 
-#endif
