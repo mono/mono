@@ -657,6 +657,8 @@ namespace System.Web.UI.WebControls
 				return pageIndex;
 			}
 			set {
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ("PageIndex must be non-negative");
 				if (pageIndex == value)
 					return;
 				pageIndex = value;
@@ -907,12 +909,6 @@ namespace System.Web.UI.WebControls
 				table.Rows.Add (itemRow);
 				InitializeRow (itemRow);
 			}
-				
-			if (showPager && PagerSettings.Position == PagerPosition.Bottom || PagerSettings.Position == PagerPosition.TopAndBottom) {
-				bottomPagerRow = CreateRow (0, DataControlRowType.Pager, DataControlRowState.Normal);
-				InitializePager (bottomPagerRow, dataSource);
-				table.Rows.Add (bottomPagerRow);
-			}
 
 			if (FooterText.Length != 0 || footerTemplate != null) {
 				footerRow = CreateRow (-1, DataControlRowType.Footer, DataControlRowState.Normal);
@@ -920,6 +916,12 @@ namespace System.Web.UI.WebControls
 				table.Rows.Add (footerRow);
 			}
 			
+			if (showPager && PagerSettings.Position == PagerPosition.Bottom || PagerSettings.Position == PagerPosition.TopAndBottom) {
+				bottomPagerRow = CreateRow (0, DataControlRowType.Pager, DataControlRowState.Normal);
+				InitializePager (bottomPagerRow, dataSource);
+				table.Rows.Add (bottomPagerRow);
+			}
+
 			if (dataBinding)
 				DataBind (false);
 			
@@ -1255,7 +1257,7 @@ namespace System.Web.UI.WebControls
 			if (causesValidation)
 				Page.Validate ();
 			
-			if (CurrentMode != FormViewMode.Edit) throw new NotSupportedException ();
+			if (currentMode != FormViewMode.Edit) throw new HttpException ("Must be in Edit mode");
 			
 			currentEditOldValues = oldEditValues.Values;
 			currentEditRowKeys = DataKey.Values;
@@ -1295,7 +1297,7 @@ namespace System.Web.UI.WebControls
 			if (causesValidation)
 				Page.Validate ();
 			
-			if (CurrentMode != FormViewMode.Insert) throw new NotSupportedException ();
+			if (currentMode != FormViewMode.Insert) throw new HttpException ("Must be in Insert mode");
 			
 			currentEditNewValues = GetRowValues (true);
 			FormViewInsertEventArgs args = new FormViewInsertEventArgs (param, currentEditNewValues);

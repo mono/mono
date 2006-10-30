@@ -1168,7 +1168,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void PageIndexException ()
 		{
@@ -1344,7 +1343,6 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void FormView_RenderFooterAndPager()
 		{
 			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();			
