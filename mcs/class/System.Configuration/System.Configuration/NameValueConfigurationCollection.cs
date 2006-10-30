@@ -41,6 +41,13 @@ namespace System.Configuration {
 					   CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
 	public sealed class NameValueConfigurationCollection : ConfigurationElementCollection
 	{
+		static ConfigurationPropertyCollection properties;
+
+		static NameValueConfigurationCollection ()
+		{
+			properties = new ConfigurationPropertyCollection ();
+		}
+
 		public NameValueConfigurationCollection ()
 		{
 		}
@@ -62,7 +69,7 @@ namespace System.Configuration {
 
 		protected internal override ConfigurationPropertyCollection Properties {
 			get {
-				throw new NotImplementedException ();
+				return properties;
 			}
 		}
 

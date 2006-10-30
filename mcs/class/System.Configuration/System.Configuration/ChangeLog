@@ -1,3 +1,8 @@
+2006-10-30  Joel Reed <joel.reed@ddiworld.com>
+
+	* NameValueConfigurationCollection.cs: Implement the Properties
+	property. 
+
 2006-08-23  Konstantin Triger <kostat@mainsoft.com>
 
 	* ConfigurationLocation.cs: do not read root element, correctly close stream.

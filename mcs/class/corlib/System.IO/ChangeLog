@@ -1,3 +1,7 @@
+2006-10-30 Joel Reed  <joel.reed@ddiworld.com>
+
+	* DirectoryInfo.cs: Implement SearchOption.AllDirectories option.
+
 2006-10-11  Dick Porter  <dick@ximian.com>
 
 	* FileStream.cs: Cope with 2.0 FileShare.Delete values.  Patch by

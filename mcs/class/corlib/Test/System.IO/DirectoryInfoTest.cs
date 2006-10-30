@@ -325,15 +325,20 @@ namespace MonoTests.System.IO
 				Directory.CreateDirectory (path + DSC + "test210");
 				Directory.CreateDirectory (path + DSC + "atest330");
 				Directory.CreateDirectory (path + DSC + "test220");
+				Directory.CreateDirectory (path + DSC + "rest");
+				Directory.CreateDirectory (path + DSC + "rest" + DSC + "subdir");
 				File.Create (path + DSC + "filetest").Close ();
 				
-				AssertEquals ("test#02", 4, info.GetDirectories ("*").Length);
+				AssertEquals ("test#02", 5, info.GetDirectories ("*").Length);
 				AssertEquals ("test#03", 3, info.GetDirectories ("test*").Length);
 				AssertEquals ("test#04", 2, info.GetDirectories ("test?20").Length);
 				AssertEquals ("test#05", 0, info.GetDirectories ("test?").Length);
 				AssertEquals ("test#06", 0, info.GetDirectories ("test[12]*").Length);
 				AssertEquals ("test#07", 2, info.GetDirectories ("test2*0").Length);
 				AssertEquals ("test#08", 4, info.GetDirectories ("*test*").Length);
+#if NET_2_0
+				AssertEquals ("test#09", 6, info.GetDirectories ("*", SearchOption.AllDirectories).Length);
+#endif
 				
 			} finally {
 				DeleteDir (path);

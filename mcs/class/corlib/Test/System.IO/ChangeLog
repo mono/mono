@@ -1,3 +1,8 @@
+2006-10-30 Joel Reed  <joel.reed@ddiworld.com>
+
+	* DirectoryInfoTest.cs: Updated tests to support the DirectoryInfo
+	SearchOption.AllDirectories
+
 2006-09-24  Raja R Harinath  <harinath@gmail.com>
 
 	* FileInfoTest.cs (IsReadOnly): Fix compilation.  Mark as NotWorking.

@@ -203,14 +203,25 @@ namespace System.IO {
 #if NET_2_0
 		// additional search methods
 
-		[MonoTODO ("AllDirectories isn't implemented")]
 		public DirectoryInfo[] GetDirectories (string pattern, SearchOption searchOption)
 		{
 			switch (searchOption) {
 			case SearchOption.TopDirectoryOnly:
 				return GetDirectories (pattern);
 			case SearchOption.AllDirectories:
-				throw new NotImplementedException ();
+				Queue workq = new Queue(GetDirectories(pattern));
+				Queue doneq = new Queue();
+				while (workq.Count > 0)
+					{
+						DirectoryInfo cinfo = (DirectoryInfo) workq.Dequeue();
+						DirectoryInfo[] cinfoDirs = cinfo.GetDirectories(pattern);
+						foreach (DirectoryInfo i in cinfoDirs) workq.Enqueue(i);
+						doneq.Enqueue(cinfo);
+					}
+
+				DirectoryInfo[] infos = new DirectoryInfo[doneq.Count];
+				doneq.CopyTo(infos, 0);
+				return infos;
 			default:
 				string msg = Locale.GetText ("Invalid enum value '{0}' for '{1}'.", searchOption, "SearchOption");
 				throw new ArgumentOutOfRangeException ("searchOption", msg);
