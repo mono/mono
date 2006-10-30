@@ -575,7 +575,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		
 		[Test]
 		[Category ("NunitWeb")]
-        [Category ("NotWorking")]
 		public void DetailsView_EmptyDataTextPropertyRender ()
 		{	
 			PageDelegate pd = new PageDelegate (DetailsView_EmptyDataTextProperty);
@@ -909,7 +908,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void DetailsView_EnsureChildControls ()
 		{
 			PokerDetailsView dv = new PokerDetailsView ();
@@ -990,7 +988,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")] 
 		public void DetailsView_GetCallBackResult ()
 		{
 
@@ -1049,7 +1046,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")] 
 		public void DetailsView_PrepareControlHierarchy ()
 		{
 			PokerDetailsView dv = new PokerDetailsView ();
