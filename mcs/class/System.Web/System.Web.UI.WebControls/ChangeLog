@@ -1,3 +1,7 @@
+2006-10- Igor Zelmanovich <igorz@mainsoft.com>
+
+	* RadioButtonList.cs: fixed: has no html output when Items.Count=0.
+
 2006-10-29 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* RadioButtonList.cs: fixed: has no html output when Items.Count=0.
@@ -47,9 +51,9 @@
 
 	* FormView.cs: fixed: IPostBackContainer.GetPostBackOptions method.
 
-2006-10-23 Igor Zelmanovich <igorz@mainsoft.com>
+2006-10-30 Igor Zelmanovich <igorz@mainsoft.com>
 
-	* DetailsView.cs: fixed: IPostBackContainer.GetPostBackOptions method.
+	* DropDownList.cs: fixed: rendering "name" attribute".
 
 2006-10-23 Igor Zelmanovich <igorz@mainsoft.com>
 

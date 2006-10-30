@@ -125,7 +125,7 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 			if (writer == null)
 				return;
-			if (ID != null)
+			if (!String.IsNullOrEmpty (UniqueID))
 				writer.AddAttribute(HtmlTextWriterAttribute.Name, this.UniqueID, true);
 #else
 			writer.AddAttribute(HtmlTextWriterAttribute.Name, this.UniqueID, true);

@@ -310,7 +310,6 @@ namespace MonoTests.System.Web.UI.WebControls
 #endif
 
 		[Test]
-        [Category ("NotWorking")]
 		public void DropDownNamingTest () {
 			NamingContainer container = new NamingContainer ();
 			DropDownListTestClass child = new DropDownListTestClass ();
