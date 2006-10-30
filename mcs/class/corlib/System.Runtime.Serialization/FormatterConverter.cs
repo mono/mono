@@ -33,6 +33,9 @@ using System;
 using System.Runtime.Serialization;
 
 namespace System.Runtime.Serialization {
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisibleAttribute (true)]
+#endif
 	public class FormatterConverter : IFormatterConverter {
 
 		public FormatterConverter ()

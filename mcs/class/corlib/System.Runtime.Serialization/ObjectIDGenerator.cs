@@ -33,6 +33,9 @@ namespace System.Runtime.Serialization
 {
 	[Serializable]
 	[MonoTODO ("Fix serialization compatibility with MS.NET")]
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisibleAttribute (true)]
+#endif
 	public class ObjectIDGenerator
 	{
 		// Private field

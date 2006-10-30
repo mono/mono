@@ -32,6 +32,9 @@
 namespace System.Runtime.Serialization
 {
 	[Serializable]
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisibleAttribute (true)]
+#endif
 	public abstract class SerializationBinder
 	{
 		// Constructor

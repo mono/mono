@@ -33,6 +33,9 @@
 namespace System.Runtime.Serialization {
 
 	[Serializable]
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisibleAttribute (true)]
+#endif
 	public struct StreamingContext {
 		StreamingContextStates state;
 		object additional;

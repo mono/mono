@@ -33,6 +33,9 @@
 
 namespace System.Runtime.Serialization {
 	[CLSCompliant(false)]
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisibleAttribute (true)]
+#endif
 	public interface IFormatterConverter {
 		object Convert (object o, Type t);
 		object Convert (object o, TypeCode tc);

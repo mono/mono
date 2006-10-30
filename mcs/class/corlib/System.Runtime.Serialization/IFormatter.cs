@@ -36,6 +36,9 @@ namespace System.Runtime.Serialization {
 
 	/// <summary>
 	/// Formatting for serialized objects</summary>
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisibleAttribute (true)]
+#endif
 	public interface IFormatter {
 
 		//

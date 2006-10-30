@@ -39,6 +39,10 @@ namespace System.Runtime.Serialization {
 	/// <summary>
 	/// </summary>
 	[Flags]
+#if NET_2_0
+	[Serializable]
+	[System.Runtime.InteropServices.ComVisibleAttribute (true)]
+#endif
 	public enum StreamingContextStates {
 
 		/// <summary>
