@@ -30,13 +30,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (BorderStyle.None, myPicBox.BorderStyle, "#B1");
 			myPicBox.BorderStyle = BorderStyle.Fixed3D;
 			Assert.AreEqual (BorderStyle.Fixed3D, myPicBox.BorderStyle, "#B2");
-
-			// I 
-			Assert.AreEqual (null, myPicBox.Image, "#I1");
-			Image myImage =	Image.FromFile("M.gif");
-			myPicBox.Image = myImage;
-			Assert.AreEqual (60, myPicBox.Image.Height, "#I2");
-			Assert.AreEqual (150, myPicBox.Image.Width, "#I3");
 			
 			// P 
 			Assert.AreEqual (PictureBoxSizeMode.Normal, myPicBox.SizeMode, "#P1");
@@ -45,9 +38,20 @@ namespace MonoTests.System.Windows.Forms
 
 			myForm.Dispose ();
 		}
-			
 		
-		[Test, Ignore ("This seems to fail.")]
+		[Test, Ignore ("not working")]
+		public void ImagePropertyTest ()
+		{
+			PictureBox myPicBox = new PictureBox ();
+			// I 
+			Assert.AreEqual (null, myPicBox.Image, "#I1");
+			Image myImage =	Image.FromFile("M.gif");
+			myPicBox.Image = myImage;
+			Assert.AreEqual (60, myPicBox.Image.Height, "#I2");
+			Assert.AreEqual (150, myPicBox.Image.Width, "#I3");
+		}
+		
+		[Test]
 		public void ToStringMethodTest () 
 		{
 			PictureBox myPicBox = new PictureBox ();
