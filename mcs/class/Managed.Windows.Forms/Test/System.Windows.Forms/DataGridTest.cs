@@ -322,5 +322,140 @@ namespace MonoTests.System.Windows.Forms
 
 			dg.SetDataBinding (ds, "DataTable");
 		}
+
+		int data_source_changed_count = 0;
+		void OnDataSourceChanged (object sender, EventArgs e)
+		{
+			data_source_changed_count ++;
+		}
+
+		[Test]
+		public void TestManager1 ()
+		{
+			TestDataGrid dg = new TestDataGrid ();
+
+			data_source_changed_count = 0;
+			dg.DataSourceChanged += new EventHandler (OnDataSourceChanged);
+
+			/* make sure everything is fine to start with */
+			Assert.IsNull (dg.Manager, "A1");
+			Assert.IsNull (dg.DataSource, "A2");
+			Assert.AreEqual (dg.DataMember, "", "A3");
+			Assert.AreEqual (0, data_source_changed_count, "A4");
+		}
+
+		[Test]
+		public void TestManagerSetDataMember ()
+		{
+			TestDataGrid dg = new TestDataGrid ();
+
+			data_source_changed_count = 0;
+			dg.DataSourceChanged += new EventHandler (OnDataSourceChanged);
+
+			/* set the datamember to something */
+			dg.DataMember = "hi there";
+			Assert.IsNull (dg.Manager, "A1");
+			Assert.AreEqual (0, data_source_changed_count, "A2");
+		}
+
+		[Test]
+		public void TestManagerSetDataSource ()
+		{
+			TestDataGrid dg = new TestDataGrid ();
+
+			data_source_changed_count = 0;
+			dg.DataSourceChanged += new EventHandler (OnDataSourceChanged);
+
+			/* set our datasource to something */
+			dg = new TestDataGrid ();
+			DataSet ds = new DataSet ("DataSet");
+			DataTable dt = new DataTable ("DataTable");
+			DataColumn dc = new DataColumn ("C");
+			ds.Tables.Add (dt);
+
+			dg.DataSource = ds;
+			Assert.IsNull (dg.Manager, "A1");
+
+			/* set the datamember to something as well.. anything yet? */
+			dg.DataMember = "DataTable";
+			Assert.IsNull (dg.Manager, "A2");
+			Assert.AreEqual (0, data_source_changed_count, "A3");
+		}
+
+		[Test]
+		public void TestManagerCreateHandle ()
+		{
+			TestDataGrid dg = new TestDataGrid ();
+
+			data_source_changed_count = 0;
+			dg.DataSourceChanged += new EventHandler (OnDataSourceChanged);
+
+			/* set our datasource to something */
+			dg = new TestDataGrid ();
+			DataSet ds = new DataSet ("DataSet");
+			DataTable dt = new DataTable ("DataTable");
+			DataColumn dc = new DataColumn ("C");
+			ds.Tables.Add (dt);
+
+			dg.DataSource = ds;
+
+			/* cause the control to create its handle and
+			 * see if that does anything */
+			Assert.IsNotNull (dg.Handle, "A1");
+			Assert.IsNull (dg.Manager, "A2");
+			Assert.AreEqual (0, data_source_changed_count, "A3");
+		}
+
+		[Test]
+		public void TestManagerSetBindingContext ()
+		{
+			TestDataGrid dg = new TestDataGrid ();
+
+			data_source_changed_count = 0;
+			dg.DataSourceChanged += new EventHandler (OnDataSourceChanged);
+
+			/* set our datasource to something */
+			dg = new TestDataGrid ();
+			DataSet ds = new DataSet ("DataSet");
+			DataTable dt = new DataTable ("DataTable");
+			DataColumn dc = new DataColumn ("C");
+			ds.Tables.Add (dt);
+
+			dg.DataSource = ds;
+			dg.DataMember = "DataTable";
+
+			/* now set the BindingContext and see if something changes */
+			dg.BindingContext = new BindingContext ();
+			Assert.IsNotNull (dg.Manager, "A1");
+			Assert.AreEqual (0, data_source_changed_count, "A2");
+		}
+
+		[Test]
+		public void TestManagerAfterSetBindingContext ()
+		{
+			TestDataGrid dg = new TestDataGrid ();
+
+			data_source_changed_count = 0;
+			dg.DataSourceChanged += new EventHandler (OnDataSourceChanged);
+
+			dg.BindingContext = new BindingContext ();
+
+			/* set our datasource to something */
+			dg = new TestDataGrid ();
+			DataSet ds = new DataSet ("DataSet");
+			DataTable dt = new DataTable ("DataTable");
+			DataColumn dc = new DataColumn ("C");
+			ds.Tables.Add (dt);
+
+			dg.DataSource = ds;
+			Assert.IsNull (dg.Manager, "A1");
+
+			dg.DataMember = "DataTable";
+			Assert.IsNull (dg.Manager, "A2");
+
+			dg.BindingContext = new BindingContext ();
+			Assert.IsNotNull (dg.Manager, "A3");
+			Assert.AreEqual (0, data_source_changed_count, "A4");
+		}
 	}
 }
