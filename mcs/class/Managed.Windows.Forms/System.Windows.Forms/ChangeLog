@@ -1,5 +1,11 @@
 2006-10-30  Chris Toshok  <toshok@ximian.com>
 
+	* XplatUIX11.cs (SetWMStyles): reinstate the XSetTransientForHint
+	for non-WS_EX_APPWINDOW windows.  This is what keeps them from
+	showing up in the gnome taskbar.  Fixes bug #79790.
+
+2006-10-30  Chris Toshok  <toshok@ximian.com>
+
 	* ApplicationContext.cs: guard against a NRE.
 
 	* Application.cs: null out the old MainForm for the context, so we

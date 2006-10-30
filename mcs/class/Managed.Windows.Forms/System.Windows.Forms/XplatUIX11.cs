@@ -879,7 +879,8 @@ namespace System.Windows.Forms {
 
 					XSetTransientForHint(DisplayHandle, hwnd.whole_window, hwnd.parent.whole_window);
 				} else if (!ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_APPWINDOW)) {
-//					XSetTransientForHint(DisplayHandle, hwnd.whole_window, FosterParent);
+					/* this line keeps the window from showing up in gnome's taskbar */
+					XSetTransientForHint(DisplayHandle, hwnd.whole_window, FosterParent);
 				}
 				if ((client_rect.Width < 1) || (client_rect.Height < 1)) {
 					XMoveResizeWindow(DisplayHandle, hwnd.client_window, -5, -5, 1, 1);
