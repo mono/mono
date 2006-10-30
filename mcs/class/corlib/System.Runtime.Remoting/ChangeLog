@@ -1,3 +1,9 @@
+2006-10-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* RemotingServices.cs: Explicitly set FormatterAssemblyStyle to Full
+	in 2.0 profile, as the default has changed from Full to Simple.
+	Fixes bug #79732.
+
 2006-08-23  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* ObjRef.cs: Throw a TypeLoadException exception if the referenced

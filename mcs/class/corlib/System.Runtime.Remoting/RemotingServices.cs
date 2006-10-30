@@ -49,6 +49,7 @@ using System.Security.Permissions;
 
 #if NET_2_0
 using System.Runtime.ConstrainedExecution;
+using System.Runtime.Serialization.Formatters;
 #endif
 
 namespace System.Runtime.Remoting
@@ -78,6 +79,10 @@ namespace System.Runtime.Remoting
 			StreamingContext context = new StreamingContext (StreamingContextStates.Remoting, null);
 			_serializationFormatter = new BinaryFormatter (surrogateSelector, context);
 			_deserializationFormatter = new BinaryFormatter (null, context);
+#if NET_2_0
+			_serializationFormatter.AssemblyFormat = FormatterAssemblyStyle.Full;
+			_deserializationFormatter.AssemblyFormat = FormatterAssemblyStyle.Full;
+#endif
 			
 			RegisterInternalChannels ();
 			app_id = Guid.NewGuid().ToString().Replace('-', '_') + "/";
