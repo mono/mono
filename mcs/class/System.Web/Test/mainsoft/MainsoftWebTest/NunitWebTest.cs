@@ -40,12 +40,7 @@ using NUnit.Framework;
 
 namespace MonoTests.stand_alone.WebHarness
 {
-	public abstract class XmlComparableTest
-	{
-		public abstract bool XmlCompare(XmlDocument d1, XmlDocument d2, bool ignoreAlmost);
-	}
-
-	public class HtmlDiff : XmlComparableTest
+	public class HtmlDiff
 	{
 		public const string BEGIN_TAG = "begint";
 		public const string END_TAG = "endt";
@@ -91,14 +86,20 @@ namespace MonoTests.stand_alone.WebHarness
 
 		public static void AssertAreEqual (string origin, string derived, string msg)
 		{
-			bool test = HtmlComparer (origin, derived);
+			bool test = false;
+			try {
+				test = HtmlComparer (origin, derived);
+			}
+			catch (Exception e) {
+				//swallow e when there is XML error and fallback
+				//to the text comparison
+			}
 			if (!test) {
 				Assert.AreEqual (_compareExpect, _compareActual, msg);
-				       
 			}
 		}
 
-		public static bool HtmlComparer (string origin, string derived)
+		private static bool HtmlComparer (string origin, string derived)
 		{
 			XmlDocument or = new XmlDocument ();
 			MonoTests.stand_alone.WebHarness.HtmlDiff helper = new MonoTests.stand_alone.WebHarness.HtmlDiff ();
@@ -108,7 +109,7 @@ namespace MonoTests.stand_alone.WebHarness
 			return helper.XmlCompare (or, dr, false);
 		}
 
-		public override bool XmlCompare(XmlDocument expected, XmlDocument actual, bool ignoreAlmost)
+		private bool XmlCompare(XmlDocument expected, XmlDocument actual, bool ignoreAlmost)
 		{
 			XmlComparer comparer = new XmlComparer();
 			if (ignoreAlmost == false)
@@ -123,54 +124,42 @@ namespace MonoTests.stand_alone.WebHarness
 			return c;
 		}
 
-		public string HtmltoXml(string html)
+		public string HtmltoXml (string html) //throws XmlException
 		{
-			HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-			doc.LoadHtml (html.Trim (new char [] { '\r', '\n', ' ' })); // bug in HtmlAgilityPack
+			HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument ();
+			doc.LoadHtml (html.Trim (new char[] { '\r', '\n', ' ' })); // bug in HtmlAgilityPack
 
-			StringBuilder fixedxml = new StringBuilder();
-			StringWriter sw = new StringWriter(fixedxml);
+			StringBuilder fixedxml = new StringBuilder ();
+			StringWriter sw = new StringWriter (fixedxml);
 
-			try
-			{
-				StringBuilder tempxml = new StringBuilder();
-				StringWriter tsw = new StringWriter(tempxml);
+			StringBuilder tempxml = new StringBuilder ();
+			StringWriter tsw = new StringWriter (tempxml);
 
-				doc.OptionOutputAsXml = true;
-				doc.Save(tsw);
+			doc.OptionOutputAsXml = true;
+			doc.Save (tsw);
 
-				// fix style attribute
-				// the reason is that style attribute name-value pairs come in different order
-				// in .NET and GH
-				// Here I will sort the values of style attribute
-				XmlDocument tempDoc = new XmlDocument();
-				tempDoc.LoadXml(tempxml.ToString());
+			// fix style attribute
+			// the reason is that style attribute name-value pairs come in different order
+			// in .NET and GH
+			// Here I will sort the values of style attribute
+			XmlDocument tempDoc = new XmlDocument ();
+			tempDoc.LoadXml (tempxml.ToString ());
 
-				XmlNodeList allNodes = tempDoc.SelectNodes("//*");
-				foreach (XmlNode n in allNodes)
-				{
-					if (n.Attributes["style"] != null)
-					{
-						string att = n.Attributes["style"].Value;
-						string [] style = att.Trim(new char[]{' ', ';'}).Split(';');
+			XmlNodeList allNodes = tempDoc.SelectNodes ("//*");
+			foreach (XmlNode n in allNodes) {
+				if (n.Attributes["style"] != null) {
+					string att = n.Attributes["style"].Value;
+					string[] style = att.Trim (new char[] { ' ', ';' }).Split (';');
 
-						for (int styleIndex=0; styleIndex<style.Length; styleIndex++)
-						{
-							style[styleIndex] = FixStyleNameValue(style[styleIndex]);
-						}
-						Array.Sort(style);
-						n.Attributes["style"].Value = string.Join(";", style);
+					for (int styleIndex = 0; styleIndex < style.Length; styleIndex++) {
+						style[styleIndex] = FixStyleNameValue (style[styleIndex]);
 					}
+					Array.Sort (style);
+					n.Attributes["style"].Value = string.Join (";", style);
 				}
-				tempDoc.Save(sw);
 			}
-			catch (Exception)
-			{
-				Console.WriteLine("Error parsing html response...");
-				Console.WriteLine("Test case aborted");
-				return "<TestCaseAborted></TestCaseAborted>";
-			}
-			return fixedxml.ToString();
+			tempDoc.Save (sw);
+			return fixedxml.ToString ();
 		}
 
 		private string FixStyleNameValue(string nameValue)

@@ -1,3 +1,7 @@
+2006-10-30  Andrew Skiba  <andrews@mainsoft.com>
+
+	* NunitWebTest.cs: fallback for HtmlCompare to the text diff
+
 2006-09-28  Vladimir Krasniv  <vladimirk@mainsoft.com>
 
 	* added SystemWebTest20.csproj, SystemWebTest20.vmwcsproj for VS2005
