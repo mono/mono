@@ -1254,7 +1254,7 @@ namespace System.Web.UI.WebControls
 		
 		void UpdateItem (string param, bool causesValidation)
 		{
-			if (causesValidation)
+			if (causesValidation && Page != null)
 				Page.Validate ();
 			
 			if (currentMode != FormViewMode.Edit) throw new HttpException ("Must be in Edit mode");
@@ -1294,7 +1294,7 @@ namespace System.Web.UI.WebControls
 		
 		void InsertItem (string param, bool causesValidation)
 		{
-			if (causesValidation)
+			if (causesValidation && Page != null)
 				Page.Validate ();
 			
 			if (currentMode != FormViewMode.Insert) throw new HttpException ("Must be in Insert mode");

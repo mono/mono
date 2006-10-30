@@ -1176,7 +1176,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (HttpException))]
 		public void InsertItemException ()
 		{
@@ -1185,7 +1184,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (HttpException))]
 		public void UpdateItemException ()
 		{
