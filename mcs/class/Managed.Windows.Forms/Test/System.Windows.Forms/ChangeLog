@@ -3,6 +3,7 @@
 	* PictureBoxTest.cs: Enable the previously not working
 	  ToStringMethodTest and move the not working Image property
 	  test to its own method.
+	* UpDownTest.cs: Added
 
 2006-10-29  Chris Toshok  <toshok@ximian.com>
 
