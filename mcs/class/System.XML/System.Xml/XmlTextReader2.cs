@@ -591,8 +591,9 @@ namespace System.Xml
 			else {
 				if (source.NodeType != XmlNodeType.EntityReference)
 					throw new InvalidOperationException ("The current node is not an Entity Reference");
-				XmlTextReaderImpl entReader = 
-					ParserContext.Dtd.GenerateEntityContentReader (source.Name, ParserContext);
+				XmlTextReaderImpl entReader = null;
+				if (ParserContext.Dtd != null)
+					entReader = ParserContext.Dtd.GenerateEntityContentReader (source.Name, ParserContext);
 				if (entReader == null)
 					throw new XmlException (this as IXmlLineInfo, this.BaseURI, String.Format ("Reference to undeclared entity '{0}'.", source.Name));
 				if (entityNameStack == null)
