@@ -67,6 +67,7 @@ System.Windows.Forms/ToolBarButtonTest.cs
 System.Windows.Forms/ToolTipTest.cs
 System.Windows.Forms/TreeNodeTest.cs
 System.Windows.Forms/TreeViewTest.cs
+System.Windows.Forms/UpDownTest.cs
 System.Resources/CompatTest.cs
 System.Resources/CultureTest.cs
 System.Resources/WriterTest.cs
