@@ -814,13 +814,6 @@ namespace System.Windows.Forms {
 			return driver.SetTopmost(handle, hWndOwner, Enabled);
 		}
 
-		internal static bool SetVisible(IntPtr handle, bool visible) {
-			#if DriverDebug || DriverDebugState
-				Console.WriteLine("SetVisible({0}, {1}): Called", Window(handle), visible);
-			#endif
-			return driver.SetVisible(handle, visible);
-		}
-
 		internal static bool SetVisible (IntPtr handle, bool visible, bool activate)
 		{
 			#if DriverDebug || DriverDebugState

@@ -1584,7 +1584,7 @@ namespace System.Windows.Forms {
 		}
 		
 		
-		internal override bool SetVisible(IntPtr handle, bool visible) {
+		internal override bool SetVisible(IntPtr handle, bool visible, bool activate) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
 			object window = WindowMapping [hwnd.Handle];
 			if (window != null)
@@ -1597,11 +1597,6 @@ namespace System.Windows.Forms {
 			HIViewSetVisible (hwnd.client_window, visible);
 			hwnd.visible = visible;
 			return true;
-		}
-
-		internal override bool SetVisible (IntPtr handle, bool visible, bool activate)
-		{
-			return SetVisible (handle, visible);
 		}
 		
 		internal override void SetBorderStyle(IntPtr handle, FormBorderStyle border_style) {

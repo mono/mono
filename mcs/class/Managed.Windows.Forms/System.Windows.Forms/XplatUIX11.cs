@@ -4529,7 +4529,7 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		internal override bool SetVisible(IntPtr handle, bool visible) {
+		internal override bool SetVisible(IntPtr handle, bool visible, bool activate) {
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
@@ -4558,11 +4558,6 @@ namespace System.Windows.Forms {
 				}
 			}
 			return true;
-		}
-
-		internal override bool SetVisible (IntPtr handle, bool visible, bool activate)
-		{
-			return SetVisible (handle, visible);
 		}
 
 		internal override void SetWindowMinMax(IntPtr handle, Rectangle maximized, Size min, Size max) {

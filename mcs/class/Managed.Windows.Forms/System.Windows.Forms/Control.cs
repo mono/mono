@@ -3335,7 +3335,7 @@ namespace System.Windows.Forms
 				creator_thread = Thread.CurrentThread;
 
 				XplatUI.EnableWindow(window.Handle, is_enabled);
-				XplatUI.SetVisible(window.Handle, is_visible);
+				XplatUI.SetVisible(window.Handle, is_visible, true);
 
 				if (clip_region != null) {
 					XplatUI.SetClipRegion(Handle, clip_region);
@@ -3771,7 +3771,7 @@ namespace System.Windows.Forms
 				is_visible=value;
 
 				if (IsHandleCreated) {
-					XplatUI.SetVisible(Handle, value);
+					XplatUI.SetVisible(Handle, value, true);
 					// Explicitly move Toplevel windows to where we want them;
 					// apparently moving unmapped toplevel windows doesn't work
 					if (is_visible && (this is Form)) {

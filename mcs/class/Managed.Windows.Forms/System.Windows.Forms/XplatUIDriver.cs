@@ -179,7 +179,6 @@ namespace System.Windows.Forms {
 
 		internal abstract bool GetText(IntPtr handle, out string text);
 		internal abstract bool Text(IntPtr handle, string text);
-		internal abstract bool SetVisible(IntPtr handle, bool visible);
 		internal abstract bool SetVisible(IntPtr handle, bool visible, bool activate);
 		internal abstract bool IsVisible(IntPtr handle);
 		internal abstract bool IsEnabled(IntPtr handle);

@@ -1542,26 +1542,6 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		internal override bool SetVisible(IntPtr handle, bool visible) {
-			if (visible) {
-				if (Control.FromHandle(handle) is Form) {
-					Form f;
-
-					f = (Form)Control.FromHandle(handle);
-					switch (f.WindowState) {
-						case FormWindowState.Normal:	Win32ShowWindow(handle, WindowPlacementFlags.SW_SHOWNORMAL); break;
-						case FormWindowState.Minimized:	Win32ShowWindow(handle, WindowPlacementFlags.SW_MINIMIZE); break;
-						case FormWindowState.Maximized:	Win32ShowWindow(handle, WindowPlacementFlags.SW_MAXIMIZE); break;
-					}
-				} else {
-					Win32ShowWindow(handle, WindowPlacementFlags.SW_SHOWNORMAL);
-				}
-			} else {
-				Win32ShowWindow(handle, WindowPlacementFlags.SW_HIDE);
-			}
-			return true;
-		}
-
 		internal override bool SetVisible (IntPtr handle, bool visible, bool activate)
 		{
 			if (visible) {
@@ -1610,7 +1590,7 @@ namespace System.Windows.Forms {
 				}
 			}
 			else
-				SetVisible (handle, c.Visible);
+				SetVisible (handle, c.Visible, true);
 				
 			return Win32SetParent(handle, parent);
 		}

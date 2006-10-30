@@ -1,5 +1,12 @@
 2006-10-30  Jonathan Pobst  <monkey@jpobst.com>
 
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIWin32.cs, XplatUIOSX.cs,
+	  XplatUIX11.cs: Remove old 2 parameter SetVisible.
+
+	* Control.cs: Use the new 3 parameter SetVisible with activate = true.
+
+2006-10-30  Jonathan Pobst  <monkey@jpobst.com>
+
 	* XplatUI.cs, XplatUIDriver.cs, XplatUIWin32.cs: Add an overload
 	of SetVisible that allows a window to be shown, but not activated.
 	This is needed on Windows for MenuStrip, and can probably be used
