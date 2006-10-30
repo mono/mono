@@ -565,9 +565,14 @@ namespace System.Windows.Forms
 		public string DataMember {
 			get { return datamember; }
 			set {
-				if (list_manager != null)
-					list_manager = null;
-				datamember = value;
+				if (BindingContext != null) {
+					SetDataSource (datasource, value);
+				}
+				else {
+					if (list_manager != null)
+						list_manager = null;
+					datamember = value;
+				}
 			}
 		}
 
@@ -577,10 +582,17 @@ namespace System.Windows.Forms
 		public object DataSource {
 			get { return datasource; }
 			set {
-				if (list_manager != null)
-					list_manager = null;
-				datasource = value;
-				datamember = string.Empty;
+				if (BindingContext != null) {
+					SetDataSource (value, ListManager == null ? datamember : string.Empty);
+				}
+				else {
+					datasource = value;
+					if (list_manager != null)
+						datamember = string.Empty;
+
+					if (list_manager != null)
+						list_manager = null;
+				}
 			}
 		}
 
