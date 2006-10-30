@@ -682,7 +682,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void FormView_PrepareControlHierarcy ()
 		{
 			Poker fv = new Poker ();
@@ -1305,7 +1304,6 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 		[Test]
 		[Category("NunitWeb")]
-		[Category ("NotWorking")]
 		public void FormViewCssClass ()
 		{
 			string res = new WebTest ("FormView.aspx").Run ();
@@ -1323,7 +1321,6 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 
 		[Test]
-		[Category ("NotWorking")]
 		public void FormView_RenderSimpleTemplate()
 		{
 			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();			
@@ -1376,7 +1373,6 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void FormView_RenderWithHeader()
 		{
 			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();
@@ -1400,7 +1396,6 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void FormView_Render ()
 		{
 			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();
@@ -1720,7 +1715,6 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void FormView_CreateDataSourceSelectArguments2 () {
 			DataSourceView view;
 			Page p = new Page ();
