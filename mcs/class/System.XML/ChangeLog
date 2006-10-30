@@ -1,3 +1,8 @@
+2006-10-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* README, Mono.System.XML.csproj, Mono.System.XML.sln :
+	  remove old files.
+
 2006-10-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : added 79650.xsd to dist file.
