@@ -37,7 +37,7 @@ namespace System.Net {
 		Dictionary<ListenerPrefix, HttpListener> prefixes;
 		List<ListenerPrefix> unhandled; // host = '*'
 		List<ListenerPrefix> all; // host = '+'
-		bool secure; // Can a port have listeners for secure and not secure at the same time?
+		bool secure; // Can a port have listeners for secure and not secure at the same time? No!
 
 		public EndPointListener (IPAddress addr, int port, bool secure)
 		{
@@ -59,9 +59,20 @@ namespace System.Net {
 			} catch {
 				// Anything to do here?
 			} finally {
-				epl.sock.BeginAccept (OnAccept, epl);
+				try {
+					epl.sock.BeginAccept (OnAccept, epl);
+				} catch {
+					if (accepted != null) {
+						try {
+							accepted.Close ();
+						} catch {}
+						accepted = null;
+					}
+				} 
 			}
 
+			if (accepted == null)
+				return;
 			HttpConnection conn = new HttpConnection (accepted, epl, epl.secure);
 			conn.BeginReadRequest ();
 		}
