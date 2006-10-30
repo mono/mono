@@ -64,11 +64,7 @@ namespace System.Net
 		private static int maxServicePointIdleTime = 900000; // 15 minutes
 		private static int maxServicePoints = 0;
 		private static bool _checkCRL = false;
-#if (NET_1_0 || NET_1_1)
-		private static SecurityProtocolType _securityProtocol = SecurityProtocolType.Ssl3;
-#else
-		private static SecurityProtocolType _securityProtocol = SecurityProtocolType.Default;
-#endif
+		private static SecurityProtocolType _securityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
 #if NET_1_1
 		static bool expectContinue = true;
 		static bool useNagle;

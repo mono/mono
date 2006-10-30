@@ -33,18 +33,11 @@
 
 namespace System.Net {
 
-
-	/// <summary>
-	/// </summary>
+	[Flags]
 	public enum NetworkAccess {
-
-		/// <summary>
-		/// </summary>
 		Accept = 128,
 
-		/// <summary>
-		/// </summary>
 		Connect = 64,
-	} // NetworkAccess
+	}
 
-} // System.Net
+} 

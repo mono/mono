@@ -1,3 +1,11 @@
+2006-10-30  Miguel de Icaza  <miguel@novell.com>
+
+	* WebRequestMethods.cs: Another typo fix.
+
+	* ServicePointManager.cs: Set the default properly.
+
+	* SecurityProtocolType.cs: Remove non-existant defines. 
+
 2006-10-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: internally allow buffer if it's not a known

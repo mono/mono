@@ -46,7 +46,7 @@ namespace System.Net
 			public const string DeleteFile = "DELE";
 			public const string DownloadFile = "RETR";
 			public const string GetFileSize = "SIZE";
-			public const string GetDateTimestamps = "MDTM";
+			public const string GetDateTimestamp = "MDTM";
 			public const string ListDirectory = "NLST";
 			public const string ListDirectoryDetails = "LIST";
 			public const string MakeDirectory = "MKD";

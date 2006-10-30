@@ -31,17 +31,8 @@ namespace System.Net {
 
 	[Flags]
 	[Serializable]
-#if NET_1_0
-	internal
-#else
 	public
-#endif
 	enum SecurityProtocolType {
-
-#if NET_2_0
-		Default = -1073741824,
-		Ssl2 = 12,
-#endif
 		Ssl3 = 48,
 		Tls = 192
 	}
