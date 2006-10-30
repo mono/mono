@@ -1,3 +1,7 @@
+2006-10-30  Alexander Olk  <alex.olk@googlemail.com>
+
+	* PictureBox.cs: Fix the output of the ToString method.
+
 2006-10-29  Chris Toshok  <toshok@ximian.com>
 
 	* Control.cs (get_TopLevelControl): fix bug #79781.

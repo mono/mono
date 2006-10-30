@@ -339,7 +339,7 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Methods
 		public override string ToString() {
-			return base.ToString ();
+			return String.Format("{0}, SizeMode: {1}", base.ToString (), SizeMode);
 		}
 		#endregion
 
