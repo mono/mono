@@ -58,7 +58,9 @@ namespace System.Windows.Forms {
 						main_form.HandleDestroyed -= new EventHandler(OnMainFormClosed);
 					}
 					main_form = value;
-					main_form.HandleDestroyed += new EventHandler(OnMainFormClosed);
+					if (main_form != null) {
+						main_form.HandleDestroyed += new EventHandler(OnMainFormClosed);
+					}
 				}
 			}
 		}

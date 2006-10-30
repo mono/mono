@@ -1,5 +1,12 @@
 2006-10-30  Chris Toshok  <toshok@ximian.com>
 
+	* ApplicationContext.cs: guard against a NRE.
+
+	* Application.cs: null out the old MainForm for the context, so we
+	don't try to use it again once it's disposed.  Fixes bug #79783.
+
+2006-10-30  Chris Toshok  <toshok@ximian.com>
+
 	* DataGrid.cs (set_DataSource, set_DataMember): if we have a
 	BindingContext, set the data source directly, otherwise do the
 	lazy approach - the actual ListManager will be created when we get

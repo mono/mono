@@ -478,8 +478,10 @@ namespace System.Windows.Forms {
 				}
 				// FIXME - need activate?
 				/* make sure the MainForm is enabled */
-				XplatUI.EnableWindow (context.MainForm.Handle, true);
-				XplatUI.SetModal(context.MainForm.Handle, true);
+				if (context.MainForm != null) {
+					XplatUI.EnableWindow (context.MainForm.Handle, true);
+					XplatUI.SetModal(context.MainForm.Handle, true);
+				}
 			} else {
 				toplevels = null;
 			}
@@ -553,6 +555,8 @@ namespace System.Windows.Forms {
 
 				Control old = context.MainForm;
 
+				context.MainForm = null;
+
 				while (toplevels.Count>0) {
 					#if DebugRunLoop
 						Console.WriteLine("      Re-Enabling form form {0}", toplevels.Peek());
@@ -560,13 +564,13 @@ namespace System.Windows.Forms {
 					c = (Control)toplevels.Dequeue();
 					if (c.IsHandleCreated) {
 						XplatUI.EnableWindow(c.window.Handle, true);
-						Application.MWFThread.Current.Context.MainForm = (Form)c;
+						context.MainForm = (Form)c;
 					}
 				}
 				#if DebugRunLoop
 					Console.WriteLine("   Done with the re-enable");
 				#endif
-				if (context.MainForm.IsHandleCreated) {
+				if (context.MainForm != null && context.MainForm.IsHandleCreated) {
 					XplatUI.SetModal(context.MainForm.Handle, false);
 				}
 				#if DebugRunLoop
