@@ -1562,6 +1562,38 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
+		internal override bool SetVisible (IntPtr handle, bool visible, bool activate)
+		{
+			if (visible) {
+				if (Control.FromHandle (handle) is Form) {
+					Form f;
+
+					f = (Form)Control.FromHandle (handle);
+					WindowPlacementFlags flags = WindowPlacementFlags.SW_SHOWNORMAL;
+					switch (f.WindowState) {
+						case FormWindowState.Normal: flags = WindowPlacementFlags.SW_SHOWNORMAL; break;
+						case FormWindowState.Minimized: flags = WindowPlacementFlags.SW_MINIMIZE; break;
+						case FormWindowState.Maximized: flags = WindowPlacementFlags.SW_MAXIMIZE; break;
+					}
+					
+					if (!activate)
+						flags |= WindowPlacementFlags.SW_SHOWNOACTIVATE;
+						
+					Win32ShowWindow (handle, flags);
+				}
+				else {
+					if (activate)
+						Win32ShowWindow (handle, WindowPlacementFlags.SW_SHOWNORMAL);
+					else
+						Win32ShowWindow (handle, WindowPlacementFlags.SW_SHOWNOACTIVATE);
+				}
+			}
+			else {
+				Win32ShowWindow (handle, WindowPlacementFlags.SW_HIDE);
+			}
+			return true;
+		}
+
 		internal override bool IsEnabled(IntPtr handle) {
 			return IsWindowEnabled (handle);
 		}

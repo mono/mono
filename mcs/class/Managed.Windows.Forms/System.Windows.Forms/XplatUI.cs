@@ -821,6 +821,14 @@ namespace System.Windows.Forms {
 			return driver.SetVisible(handle, visible);
 		}
 
+		internal static bool SetVisible (IntPtr handle, bool visible, bool activate)
+		{
+			#if DriverDebug || DriverDebugState
+				Console.WriteLine("SetVisible({0}, {1}, {2}): Called", Window(handle), visible, activate);
+			#endif
+			return driver.SetVisible (handle, visible, activate);
+		}
+
 		internal static void SetWindowMinMax(IntPtr handle, Rectangle maximized, Size min, Size max) {
 			#if DriverDebug || DriverDebugState
 				Console.WriteLine("SetWindowMinMax({0}, {1}, {2}, {3}): Called", Window(handle), maximized, min, max);

@@ -1598,6 +1598,11 @@ namespace System.Windows.Forms {
 			hwnd.visible = visible;
 			return true;
 		}
+
+		internal override bool SetVisible (IntPtr handle, bool visible, bool activate)
+		{
+			return SetVisible (handle, visible);
+		}
 		
 		internal override void SetBorderStyle(IntPtr handle, FormBorderStyle border_style) {
 			Hwnd	hwnd;

@@ -4560,6 +4560,11 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
+		internal override bool SetVisible (IntPtr handle, bool visible, bool activate)
+		{
+			return SetVisible (handle, visible);
+		}
+
 		internal override void SetWindowMinMax(IntPtr handle, Rectangle maximized, Size min, Size max) {
 			Hwnd		hwnd;
 			XSizeHints	hints;

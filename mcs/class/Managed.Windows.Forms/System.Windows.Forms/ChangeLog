@@ -1,3 +1,13 @@
+2006-10-30  Jonathan Pobst  <monkey@jpobst.com>
+
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIWin32.cs: Add an overload
+	of SetVisible that allows a window to be shown, but not activated.
+	This is needed on Windows for MenuStrip, and can probably be used
+	with MainMenu and ComboBox to fix the focus stealing issues on
+	Windows.
+
+	* XplatUIOSX.cs, XplatUIX11.cs: Not needed, call existing SetVisible.
+
 2006-10-30  Alexander Olk  <alex.olk@googlemail.com>
 
 	* PictureBox.cs: Fix the output of the ToString method.
