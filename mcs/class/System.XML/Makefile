@@ -45,9 +45,6 @@ xmlfiles_files = \
 	xsd/ChangeLog xsd/1.xsd xsd/2.xsd xsd/3.xsd xsd/4.xsd xsd/5.xsd xsd/6.xsd xsd/xml.xsd
 
 EXTRA_DISTFILES = \
-	Mono.System.XML.csproj		\
-	Mono.System.XML.sln		\
-	README				\
 	System.Xml.Schema/BUGS-MS.txt	\
 	System.Xml.Schema/BUGS.txt	\
 	$(wildcard System.Xml.Serialization/standalone_tests/*.cs) \
