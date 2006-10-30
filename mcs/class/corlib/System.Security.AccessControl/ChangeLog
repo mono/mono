@@ -1,3 +1,7 @@
+2006-10-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrivilegeNotHeldException.cs: Fix namespace.
+
 2006-07-06  Dick Porter  <dick@ximian.com>
 
 	* Completely stubbed the System.Security.AccessControl namespace

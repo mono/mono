@@ -32,7 +32,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 
-namespace System.Security {
+namespace System.Security.AccessControl {
 
 	[Serializable]
 	public sealed class PrivilegeNotHeldException : UnauthorizedAccessException, ISerializable
