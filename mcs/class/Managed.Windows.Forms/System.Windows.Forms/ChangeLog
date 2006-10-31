@@ -1,3 +1,13 @@
+2006-10-31	Andreia Gaita <shana.ufie@gmail.com>
+
+	* ContainerControl.cs: reversed Contains check from
+	ActiveControl due to hanging problems. This fix
+	partly regresses #79667 (button does not have
+	initial focus), so this might be a symptom for 
+	a larger parenting problem (set_ActiveControl
+	is being called but the child control does
+	not have the parent set yet?)	
+	
 2006-10-31  Mike Kestner  <mkestner@novell.com>
 
 	* MenuAPI.cs : fix keynav when menu is click activated.
