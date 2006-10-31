@@ -242,6 +242,13 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void SelectedIndexException2 ()
+		{
+			listBox.SelectedIndex = listBox.Items.Count;
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void SelectedIndexModeNoneException ()
 		{
@@ -259,13 +266,31 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void SelectedValueNull()
 		{
+			listBox.Items.Clear ();
+
+			listBox.Items.Add ("A");
+			listBox.Items.Add ("B");
+			listBox.Items.Add ("C");
+			listBox.Items.Add ("D");
+
+			listBox.SelectedIndex = 2;
 			listBox.SelectedValue = null;
+			Assert.AreEqual (listBox.SelectedIndex, 2);
 		}
 
 		[Test]
 		public void SelectedValueEmptyString()
 		{
-			listBox.SelectedValue = String.Empty;
+			listBox.Items.Clear ();
+
+			listBox.Items.Add ("A");
+			listBox.Items.Add ("B");
+			listBox.Items.Add ("C");
+			listBox.Items.Add ("D");
+
+			listBox.SelectedIndex = 2;
+			listBox.SelectedValue = null;
+			Assert.AreEqual (listBox.SelectedIndex, 2);
 		}
 
 		//
