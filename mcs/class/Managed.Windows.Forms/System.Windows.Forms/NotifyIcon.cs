@@ -89,15 +89,6 @@ namespace System.Windows.Forms {
 
 			protected override void WndProc(ref Message m) {
 				switch((Msg)m.Msg) {
-					case Msg.WM_NCPAINT: {
-						PaintEventArgs  paint_event;
-
-						paint_event = XplatUI.PaintEventStart(Handle, false);
-						OnPaintInternal (paint_event);
-						XplatUI.PaintEventEnd(Handle, false);
-						break;
-					}
-
 						//
 						//  NotifyIcon does CONTEXTMENU on mouse up, not down
 						//  so we swallow the message here, and handle it on our own
@@ -180,7 +171,10 @@ namespace System.Windows.Forms {
 			internal override void OnPaintInternal (PaintEventArgs e) {
 				if (owner.icon != null) {
 					e.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(SystemColors.Window), rect);
-					e.Graphics.DrawImage(owner.icon_bitmap, rect);
+					e.Graphics.DrawImage(owner.icon_bitmap,
+							     rect,
+							     new Rectangle (0, 0, owner.icon_bitmap.Width, owner.icon_bitmap.Height),
+							     GraphicsUnit.Pixel);
 
 				}
 			}

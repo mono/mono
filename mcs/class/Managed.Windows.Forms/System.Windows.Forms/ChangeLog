@@ -1,5 +1,22 @@
 2006-10-30  Chris Toshok  <toshok@ximian.com>
 
+	[ fixes the oversized notify icon issue in bug #79745 ]
+	
+	* NotifyIcon.cs: scale the icon down to the size we're given by
+	the XplatUI layer (this would be faster if we did it once instead
+	of whenever we paint..)  Also, remove the WM_NCPAINT handling,
+	since it's never invoked.
+
+	* XplatUIX11.cs: the gnome and kde systrays use icons that are 24
+	pixels high by default, so let's hardcode our systray icon to that
+	size.  The SYSTEM_TRAY protocol should really have a way for
+	client apps to query for the correct icon size.. but oh well.  A
+	couple of patches to deal with the screwy client_window ==
+	whole_window notifyicon stuff (we don't want to PerformNCCalc, for
+	instance, and also make sure we don't XSelectInput twice).
+
+2006-10-30  Chris Toshok  <toshok@ximian.com>
+
 	* Control.cs: ugh, the unit test fix (CH11, yesterday) breaks when
 	recreating forms.  Control recreation is the bane of my existence.
 	Fix it in a way that keeps everyone happy.

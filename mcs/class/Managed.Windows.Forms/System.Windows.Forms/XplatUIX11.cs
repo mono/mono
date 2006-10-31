@@ -2354,7 +2354,8 @@ namespace System.Windows.Forms {
 
 			lock (XlibLock) {
 				XSelectInput(DisplayHandle, hwnd.whole_window, new IntPtr ((int)(SelectInputMask | EventMask.StructureNotifyMask)));
-				XSelectInput(DisplayHandle, hwnd.client_window, new IntPtr ((int)SelectInputMask));
+				if (hwnd.whole_window != hwnd.client_window)
+					XSelectInput(DisplayHandle, hwnd.client_window, new IntPtr ((int)SelectInputMask));
 
 				if (StyleSet (cp.Style, WindowStyles.WS_VISIBLE)) {
 					MapWindow(hwnd, WindowType.Both);
@@ -2369,7 +2370,8 @@ namespace System.Windows.Forms {
 
 				XSetTransientForHint (DisplayHandle, hwnd.whole_window, RootWindow);
 			} else if (!ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_APPWINDOW)) {
-//				XSetTransientForHint (DisplayHandle, hwnd.whole_window, FosterParent);
+				/* this line keeps the window from showing up in gnome's taskbar */
+				XSetTransientForHint (DisplayHandle, hwnd.whole_window, FosterParent);
 			}
 
 			SetWMStyles(hwnd, cp);
@@ -3488,7 +3490,8 @@ namespace System.Windows.Forms {
 							hwnd.configure_pending = false;
 
 							// We need to adjust our client window to track the resize of whole_window
-							PerformNCCalc(hwnd);
+							if (hwnd.whole_window != hwnd.client_window)
+								PerformNCCalc(hwnd);
 //						}
 					}
 					goto ProcessNextMessage;
@@ -4820,16 +4823,15 @@ namespace System.Windows.Forms {
 
 				size_hints = new XSizeHints();
 
-				XGetWMNormalHints(DisplayHandle, hwnd.whole_window, ref size_hints, out dummy);
 				size_hints.flags = (IntPtr)(XSizeHintsFlags.PMinSize | XSizeHintsFlags.PMaxSize | XSizeHintsFlags.PBaseSize);
-				size_hints.min_width = icon.Width;
-				size_hints.min_height = icon.Height;
 
-				size_hints.max_width = icon.Width;
-				size_hints.max_height = icon.Height;
+ 				size_hints.min_width = 24;
+ 				size_hints.min_height = 24;
+ 				size_hints.max_width = 24;
+ 				size_hints.max_height = 24;
+ 				size_hints.base_width = 24;
+ 				size_hints.base_height = 24;
 
-				size_hints.base_width = icon.Width;
-				size_hints.base_height = icon.Height;
 				XSetWMNormalHints(DisplayHandle, hwnd.whole_window, ref size_hints);
 
 				int[] atoms = new int[2];
