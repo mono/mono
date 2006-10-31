@@ -1,3 +1,10 @@
+2006-10-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SmtpException.cs: Fix visibility on .ctor(SerializationInfo,
+	StreamingContext).
+	* SmtpPermissionAttribute.cs: New (2.0). Security attribute for SMTP.
+	* SmtpPermission.cs: New (2.0). Security permission for SMTP.
+
 2006-09-28  Andrew Skiba  <andrews@mainsoft.com>
 
 	* SmtpClient.cs: TARGET_JVM

@@ -58,7 +58,7 @@ namespace System.Net.Mail {
 		{
 		}
 
-		public SmtpException (SerializationInfo info, StreamingContext context)
+		protected SmtpException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
