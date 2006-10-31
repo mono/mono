@@ -1,6 +1,11 @@
-
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// AssemblyHash.cs
+//
+// Authors:
+//	Tomas Restrepo (tomasr@mvps.org)
+//	Sebastien Pouliot  <sebastien@ximian.com>
+//
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -22,73 +27,73 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-//
-// AssemblyHash.cs
-//
-//    Implementation of the 
-//    System.Configuration.Assemblies.AssemblyHash
-//    class for the Mono Class Library
-//
-// Author:
-//    Tomas Restrepo (tomasr@mvps.org)
-//
+using System.Runtime.InteropServices;
 
 namespace System.Configuration.Assemblies {
-   
+
 	[Serializable]
-   public struct AssemblyHash : System.ICloneable
-   {
-      private AssemblyHashAlgorithm _algorithm;
-      private byte[] _value;
+#if NET_2_0
+	[ComVisible (true)]
+	[Obsolete]
+#endif
+	public struct AssemblyHash : ICloneable {
 
-      public static readonly AssemblyHash Empty = 
-         new AssemblyHash(AssemblyHashAlgorithm.None,null);
+		private AssemblyHashAlgorithm _algorithm;
+		private byte[] _value;
+
+		public static readonly AssemblyHash Empty = new AssemblyHash (AssemblyHashAlgorithm.None, null);
+
+#if NET_2_0
+		[Obsolete]
+#endif
+		public AssemblyHashAlgorithm Algorithm {
+			get { return _algorithm; }
+			set { _algorithm = value; }
+		}
 
 
-      //
-      // properties
-      //
-      public AssemblyHashAlgorithm Algorithm {
-         get { return _algorithm; }
-         set { _algorithm = value; }
-      }
+#if NET_2_0
+		[Obsolete]
+#endif
+		public AssemblyHash (AssemblyHashAlgorithm algorithm, byte[] value)
+		{
+			_algorithm = algorithm;
+			if (value != null)
+				_value = (byte[]) value.Clone ();
+			else
+				_value = null;
+		}
 
+#if NET_2_0
+		[Obsolete]
+#endif
+		public AssemblyHash (byte[] value)
+			: this (AssemblyHashAlgorithm.SHA1, value)
+		{
+		}
 
-      //
-      // construction
-      //
-      public AssemblyHash ( AssemblyHashAlgorithm algorithm, byte[] value )
-      {
-         _algorithm = algorithm;
-         _value = null;
-         if ( value != null )
-         {
-            int size = value.Length;
-            _value = new byte[size];
-            System.Array.Copy ( value, _value, size );
-         }
-      }
+#if NET_2_0
+		[Obsolete]
+#endif
+		public object Clone ()
+		{
+			return new AssemblyHash (_algorithm, _value);
+		}
 
-      public AssemblyHash ( byte[] value )
-         : this(AssemblyHashAlgorithm.SHA1, value)
-      {
-      }
+#if NET_2_0
+		[Obsolete]
+#endif
+		public byte[] GetValue ()
+		{
+			return _value;
+		}
 
-      public object Clone()
-      {
-         return new AssemblyHash(_algorithm,_value);
-      }
-
-      public byte[] GetValue()
-      {
-         return _value;
-      }
-      public void SetValue ( byte[] value )
-      {
-         _value = value;
-      }
-
-   } // class AssemblyHash
-
-} // namespace System.Configuration.Assemblies
-
+#if NET_2_0
+		[Obsolete]
+#endif
+		public void SetValue (byte[] value)
+		{
+			_value = value;
+		}
+	}
+}
