@@ -226,16 +226,6 @@ namespace System.Windows.Forms
 			{
 				SetStyle (ControlStyles.Selectable, selectable);
 			}
-
-			internal override void OnGotFocusInternal (EventArgs e)
-			{
-				owner.Select (false, true);
-			}
-
-			internal override void OnLostFocusInternal (EventArgs e)
-			{
-				owner.Select (false, true);
-			}
 		}
 		#endregion	// UpDownSpinner Sub-class
 
@@ -262,17 +252,6 @@ namespace System.Windows.Forms
 				else
 					document.CaretLostFocus ();
 			}
-
-			
-			internal override void OnGotFocusInternal (EventArgs e)
-			{
-				owner.Select (false, true);
-			}
-
-			internal override void OnLostFocusInternal (EventArgs e)
-			{
-				owner.Select (false, true);
-			}			
 		}
 
 		#region Local Variables
@@ -381,6 +360,7 @@ namespace System.Windows.Forms
 			txtView.SetSelectable (true);
 			spnSpinner.SetSelectable (true);
 		}
+
 		#endregion	// Private Methods
 
 		#region Public Instance Properties
@@ -725,8 +705,10 @@ namespace System.Windows.Forms
 			case Msg.WM_CHAR:
 				XplatUI.SendMessage (txtView.Handle, (Msg) m.Msg, m.WParam, m.LParam);
 				break;
+			default:
+				base.WndProc (ref m);
+				break;
 			}
-			base.WndProc (ref m);
 		}
 		#endregion	// Protected Instance Methods
 

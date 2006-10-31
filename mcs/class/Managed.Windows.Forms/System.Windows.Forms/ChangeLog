@@ -1,5 +1,11 @@
 2006-10-31  Chris Toshok  <toshok@ximian.com>
 
+	* UpDownBase.cs: remove the OnGotFocusInternal/OnLostFocusInternal
+	calls for the textbox/spinner, to keep from recursing to the point
+	where we crash.  Fixes #79760.
+
+2006-10-31  Chris Toshok  <toshok@ximian.com>
+
 	* ListControl.cs (set_SelectedValue): don't throw exceptions on
 	null/"" value, just return.  matches ms's behavior and fixes some
 	failing tests.
