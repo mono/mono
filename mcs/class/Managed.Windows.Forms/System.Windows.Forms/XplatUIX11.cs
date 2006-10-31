@@ -1325,11 +1325,8 @@ namespace System.Windows.Forms {
 				}
 
 				hwnd = Hwnd.GetObjectFromWindow(xevent.AnyEvent.window);
-				if (hwnd == null) {
-					if (xevent.type == XEventName.Expose) {
-					}
+				if (hwnd == null)
 					continue;
-				}
 
 				switch (xevent.type) {
 					case XEventName.Expose:
@@ -2356,13 +2353,7 @@ namespace System.Windows.Forms {
 			}
 
 			lock (XlibLock) {
-				EventMask whole_window_mask = SelectInputMask;
-				/* if we're a toplevel form, we want
-				 * to know about user-driven resizes.
-				 * otherwise, ignore them. */
-				if (!StyleSet (cp.Style, WindowStyles.WS_CHILD))
-					whole_window_mask |= EventMask.StructureNotifyMask;
-				XSelectInput(DisplayHandle, hwnd.whole_window, new IntPtr ((int)whole_window_mask));
+				XSelectInput(DisplayHandle, hwnd.whole_window, new IntPtr ((int)(SelectInputMask | EventMask.StructureNotifyMask)));
 				XSelectInput(DisplayHandle, hwnd.client_window, new IntPtr ((int)SelectInputMask));
 
 				if (StyleSet (cp.Style, WindowStyles.WS_VISIBLE)) {

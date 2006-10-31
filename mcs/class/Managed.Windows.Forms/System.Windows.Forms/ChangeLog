@@ -1,5 +1,12 @@
 2006-10-30  Chris Toshok  <toshok@ximian.com>
 
+	* XplatUIX11.cs: use StructureNotifyMask on all whole_windows, not
+	just non-CHILD ones.  otherwise sometimes scrollbars end up with
+	client_windows not being resized to the proper size (ReportBuilder
+	shows this extremely well).
+
+2006-10-30  Chris Toshok  <toshok@ximian.com>
+
 	* XplatUIX11.cs (SetWMStyles): reinstate the XSetTransientForHint
 	for non-WS_EX_APPWINDOW windows.  This is what keeps them from
 	showing up in the gnome taskbar.  Fixes bug #79790.
