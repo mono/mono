@@ -73,7 +73,7 @@ namespace System.Net
 			WebRequestMethods.Ftp.AppendFile, // APPE
 			WebRequestMethods.Ftp.DeleteFile, // DELE
 			WebRequestMethods.Ftp.ListDirectoryDetails, // LIST
-			WebRequestMethods.Ftp.GetDateTimestamps, // MDTM
+			WebRequestMethods.Ftp.GetDateTimestamp, // MDTM
 			WebRequestMethods.Ftp.MakeDirectory, // MKD
 			WebRequestMethods.Ftp.ListDirectory, // NLST
 			WebRequestMethods.Ftp.PrintWorkingDirectory, // PWD
@@ -342,7 +342,7 @@ namespace System.Net
 					break;
 				// Get info from control connection
 				case WebRequestMethods.Ftp.GetFileSize:
-				case WebRequestMethods.Ftp.GetDateTimestamps:
+				case WebRequestMethods.Ftp.GetDateTimestamp:
 					GetInfoFromControl ();
 					break;
 				case WebRequestMethods.Ftp.Rename:
@@ -402,7 +402,7 @@ namespace System.Net
 				return;
 			}
 			
-			if (method == WebRequestMethods.Ftp.GetDateTimestamps) {
+			if (method == WebRequestMethods.Ftp.GetDateTimestamp) {
 				// Here parse the format the date time (different formats)
 				asyncRead.SetCompleted (true, ftpResponse);
 				return;
@@ -837,7 +837,7 @@ namespace System.Net
 				controlStream.Write (cmd, 0, cmd.Length);
 			} catch (IOException) {
 				//controlStream.Close ();
-				return FtpStatusCode.ServiceNotAvalaible;
+				return FtpStatusCode.ServiceNotAvailable;
 			}
 
 			return GetResponseCode ();
@@ -853,12 +853,12 @@ namespace System.Net
 			}
 
 			if (responseString == null || responseString.Length < 3)
-				return FtpStatusCode.ServiceNotAvalaible;
+				return FtpStatusCode.ServiceNotAvailable;
 
 			string codeString = responseString.Substring (0, 3);
 			int code;
 			if (!Int32.TryParse (codeString, out code))
-				return FtpStatusCode.ServiceNotAvalaible;
+				return FtpStatusCode.ServiceNotAvailable;
 
 			statusDescription = responseString;
 			return statusCode = (FtpStatusCode) code;
