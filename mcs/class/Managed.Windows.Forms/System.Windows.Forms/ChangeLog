@@ -1,3 +1,9 @@
+2006-10-31  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11.cs: fix a couple of compiler warnings, and follow the
+	convention of clearing hwnd.ClientRect when we set the
+	width/height (so it'll be recalculated by Hwnd).
+
 2006-10-31	Andreia Gaita <shana.ufie@gmail.com>
 
 	* ContainerControl.cs: reversed Contains check from

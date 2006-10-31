@@ -2058,9 +2058,9 @@ namespace System.Windows.Forms {
 					if (true /* the window manager supports NET_ACTIVE_WINDOW */) {
 						SendNetWMMessage(hwnd.whole_window, _NET_ACTIVE_WINDOW, (IntPtr)1, IntPtr.Zero, IntPtr.Zero);
 					}
-					else {
-						//XRaiseWindow(DisplayHandle, handle);
-					}
+// 					else {
+// 						XRaiseWindow(DisplayHandle, handle);
+// 					}
 				}
 			}
 		}
@@ -4651,6 +4651,7 @@ namespace System.Windows.Forms {
 			hwnd.y = y;
 			hwnd.width = width;
 			hwnd.height = height;
+			hwnd.ClientRect = Rectangle.Empty;
 		}
 
 		internal override void SetWindowState(IntPtr handle, FormWindowState state) {
@@ -4797,7 +4798,6 @@ namespace System.Windows.Forms {
 
 			if (SystrayMgrWindow != IntPtr.Zero) {
 				XSizeHints	size_hints;
-				IntPtr		dummy;
 				Hwnd		hwnd;
 
 				hwnd = Hwnd.ObjectFromHandle(handle);
