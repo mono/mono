@@ -4920,6 +4920,12 @@ namespace Mono.CSharp {
 					if (!GetEnumeratorFilter (ec, mi))
 						continue;
 
+					if (result != null) {
+						Report.SymbolRelatedToPreviousError (result);
+						Report.SymbolRelatedToPreviousError (mi);
+						Report.Warning (278, 2, loc, "`{0}' contains ambiguous implementation of `{1}' pattern. Method `{2}' is ambiguous with method `{3}'",
+							TypeManager.CSharpName (t), "enumerable", TypeManager.CSharpSignature (result), TypeManager.CSharpSignature (mi));
+					}
 					result = mi;
 					tmp_move_next = move_next;
 					tmp_get_cur = get_current;

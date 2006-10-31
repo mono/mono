@@ -1,3 +1,11 @@
+2006-10-31  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #67689
+	statement.cs.cs (CollectionForeach.TryType): Issue a warning when
+	GetEnumerator is ambiguous.
+
+	* report.cs: Add new warning.
+
 2006-10-29  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #78602
