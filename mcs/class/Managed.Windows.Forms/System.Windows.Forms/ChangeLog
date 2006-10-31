@@ -1,5 +1,11 @@
 2006-10-30  Chris Toshok  <toshok@ximian.com>
 
+	* Control.cs: ugh, the unit test fix (CH11, yesterday) breaks when
+	recreating forms.  Control recreation is the bane of my existence.
+	Fix it in a way that keeps everyone happy.
+
+2006-10-30  Chris Toshok  <toshok@ximian.com>
+
 	* XplatUIX11.cs: use StructureNotifyMask on all whole_windows, not
 	just non-CHILD ones.  otherwise sometimes scrollbars end up with
 	client_windows not being resized to the proper size (ReportBuilder
