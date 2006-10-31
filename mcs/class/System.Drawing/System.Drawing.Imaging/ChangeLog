@@ -1,3 +1,9 @@
+2006-10-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MetaHeader.cs: Fix layout (order is important in sequential structs)
+	and use the struct field names;
+	* WmfPlaceableFileHeader.cs: Implement all TODO.
+
 2006-09-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BitmapData.cs: Change fields visibility to private as they either

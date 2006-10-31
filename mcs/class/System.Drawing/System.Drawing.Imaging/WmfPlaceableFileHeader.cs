@@ -1,14 +1,13 @@
 //
 // System.Drawing.Imaging.WmfPlaceableFileHeader.cs
 //
+// Authors:
+//	Everaldo Canuto  <everaldo.canuto@bol.com.br>
+//	Dennis Hayes (dennish@raytek.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
+//
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
-// Author: Everaldo Canuto
-// eMail: everaldo.canuto@bol.com.br
-// Dennis Hayes (dennish@raytek.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,75 +28,77 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
+
 using System.Runtime.InteropServices;
 
 namespace System.Drawing.Imaging {
 
-	[StructLayout(LayoutKind.Sequential)]
+	[StructLayout (LayoutKind.Sequential)]
 	public sealed class WmfPlaceableFileHeader {
 
-		// constructors
-		[MonoTODO]
-		public WmfPlaceableFileHeader() {
-			throw new NotImplementedException ();
+		// field order match: http://wvware.sourceforge.net/caolan/ora-wmf.html
+		// for PLACEABLEMETAHEADER structure
+		private int key;
+		private short handle;
+		private short left;
+		private short top;
+		private short right;
+		private short bottom;
+		private short inch;
+		private int reserved;
+		private short checksum;
+
+
+		public WmfPlaceableFileHeader ()
+		{
+			// header magic number
+			key = unchecked ((int) 0x9AC6CDD7);
 		}
 
-		// properties
-		[MonoTODO]
+
 		public short BboxBottom {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return bottom; }
+			set { bottom = value; }
 		}
 		
-		[MonoTODO]
 		public short BboxLeft {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return left; }
+			set { left = value; }
 		}
 		
-		[MonoTODO]
 		public short BboxRight {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return right; }
+			set { right = value; }
 		}
 		
-		[MonoTODO]
 		public short BboxTop {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return top; }
+			set { top = value; }
 		}
 		
-		[MonoTODO]
 		public short Checksum {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return checksum; }
+			set { checksum = value; }
 		}
 		
-		[MonoTODO]
 		public short Hmf {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return handle; }
+			set { handle = value; }
 		}
 		
-		[MonoTODO]
 		public short Inch {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return inch; }
+			set { inch = value; }
 		}
 		
-		[MonoTODO]
 		public int Key {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return key; }
+			set { key = value; }
 		}
 		
-		[MonoTODO]
 		public int Reserved {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return reserved; }
+			set { reserved = value; }
 		}				
-		
 	}
-
 }
