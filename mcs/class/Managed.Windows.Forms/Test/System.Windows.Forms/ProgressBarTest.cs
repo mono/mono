@@ -16,7 +16,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	[Ignore ("This test has to be completly reviewed")]
 	public class ProgressBarBaseTest
 	{
 		[Test]
@@ -29,8 +28,6 @@ namespace MonoTests.System.Windows.Forms
 			
 			// B
 			Assert.AreEqual ("Control", myProgressBar.BackColor.Name, "#B1");
-			myProgressBar.BackColor = Color.White;
-			Assert.AreEqual (255, myProgressBar.BackColor.R, "#B2");
 			Assert.AreEqual (null, myProgressBar.BackgroundImage, "#B3");
 			string gif = "M.gif";
 			myProgressBar.BackgroundImage = Image.FromFile (gif);

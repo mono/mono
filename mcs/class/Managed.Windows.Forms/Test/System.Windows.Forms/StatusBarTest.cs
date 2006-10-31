@@ -16,7 +16,6 @@ using System.Runtime.Remoting;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	[Ignore ("This test has to be completly reviewed")]
 	public class StatusBarTest 
 	{
 
@@ -35,10 +34,6 @@ namespace MonoTests.System.Windows.Forms
 			
 			// B
 			Assert.AreEqual ("Control", mysbar.BackColor.Name, "#B1");
-			mysbar.BackColor = Color.Red;
-			Assert.AreEqual (212, mysbar.BackColor.R, "#B2");
-			mysbar.BackgroundImage = Image.FromFile ("M.gif");
-			Assert.AreEqual (60, mysbar.BackgroundImage.Height, "#B3");
 
 			// D
 			Assert.AreEqual (DockStyle.Bottom, mysbar.Dock, "#D1");

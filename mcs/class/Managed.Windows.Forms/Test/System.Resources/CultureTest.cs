@@ -22,7 +22,7 @@ namespace MonoTests.System.Resources
                 string fileName = Path.GetTempFileName ();
 
                 [Test]
-                public void TestWriter ()
+                public void Test ()
                 {
                         Thread.CurrentThread.CurrentCulture =
                                 Thread.CurrentThread.CurrentUICulture = new CultureInfo ("de-DE");
@@ -31,13 +31,6 @@ namespace MonoTests.System.Resources
                         w.AddResource ("point", new Point (42, 43));
                         w.Generate ();
                         w.Close ();
-                }
-
-                [Test]
-                public void TestReader ()
-                {
-                        Thread.CurrentThread.CurrentCulture =
-                                Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
                         int count = 0;
                         ResXResourceReader r = new ResXResourceReader (fileName);

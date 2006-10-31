@@ -20,7 +20,6 @@ namespace MonoTests.System.Windows.Forms
 	{
 
 		[Test]
-		[Ignore ("This test has to be completly reviewed")]
 		public void ToolBarPropertyTest ()
 		{	
 			Form myform = new Form ();
@@ -39,8 +38,6 @@ namespace MonoTests.System.Windows.Forms
 			
 			// B
 			Assert.AreEqual ("Control", myToolBar.BackColor.Name, "#B1");
-			myToolBar.BackColor = Color.Red;
-			Assert.AreEqual (255, myToolBar.BackColor.R, "#B2");
 			myToolBar.BackgroundImage = Image.FromFile ("M.gif");
 			Assert.AreEqual (60, myToolBar.BackgroundImage.Height, "#B3");
 			Assert.AreEqual (BorderStyle.None, myToolBar.BorderStyle, "#B4");
@@ -87,7 +84,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
-		[Ignore ("This test has to be completly reviewed")]
 		public void ToStringMethodTest () 
 		{
 			ToolBar myToolBar = new ToolBar ();

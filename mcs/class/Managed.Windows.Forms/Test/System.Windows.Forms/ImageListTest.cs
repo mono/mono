@@ -19,7 +19,6 @@ namespace MonoTests.System.Windows.Forms
 {
 
 	[TestFixture]
-	[Ignore ("This test has to be completly reviewed")]
 	public class ImageListTest
 	{
 		[Test]
@@ -59,7 +58,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[TestFixture]
-		[Ignore ("This test has to be completly reviewed")]
 		public class ImageListRecreateHandleEventClass
 		{
 			static bool eventhandled = false;

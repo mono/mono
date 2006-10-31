@@ -38,13 +38,11 @@ namespace MonoTests.System.Windows.Forms {
 		[SetUp]
 		protected virtual void SetUp ()
 		{
-			Console.WriteLine ("SETTING UP");
 		}
 
 		[TearDown]
 		protected virtual void TearDown ()
 		{
-			Console.WriteLine ("TEARING DOWN");
 		}
 
 		[Test]

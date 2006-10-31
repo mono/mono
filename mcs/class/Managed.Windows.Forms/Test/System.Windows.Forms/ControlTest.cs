@@ -119,14 +119,10 @@ namespace MonoTests.System.Windows.Forms
 
 			// P
 			Assert.AreEqual(null, c.Parent, "P1");
-			name = c.ProductName;
-			if (!name.Equals("Novell Mono MWF") && !name.Equals("Microsoft (R) .NET Framework"))
-				Assert.Fail("ProductName property does not match any accepted value - P2");
-
-			name = c.ProductVersion;
-			if (!name.Equals("1.1.4322.2032")) {
-				Assert.Fail("This test is being run against the wrong framework version.\nExpected is Net 1.1sp1. - P3");
-			}
+			Assert.IsNotNull(c.ProductName, "P2");
+			Assert.IsTrue(c.ProductName != "", "P3");
+			Assert.IsNotNull(c.ProductVersion, "P4");
+			Assert.IsTrue(c.ProductVersion != "", "P5");
 
 			// R
 			Assert.AreEqual(false, c.RecreatingHandle, "R1");
@@ -582,6 +578,10 @@ namespace MonoTests.System.Windows.Forms
 		bool delegateCalled = false;
 		public delegate void TestDelegate ();
 
+		public void delegate_call () {
+			delegateCalled = true;
+		}
+
 		[Test]
 		[ExpectedException(typeof(InvalidOperationException))]
 		public void InvokeException1 () {
@@ -590,29 +590,6 @@ namespace MonoTests.System.Windows.Forms
 
 			result = c.BeginInvoke (new TestDelegate (delegate_call));
 			c.EndInvoke (result);
-		}
-
-		[Test]
-		[Ignore("Seems to hang")]
-		public void InvokeTest () {
-			Control c = null;
-
-			try {
-				c = new Control ();
-				IAsyncResult result;
-
-				c.CreateControl ();
-				result = c.BeginInvoke (new TestDelegate (delegate_call));
-				c.EndInvoke (result);
-				Assert.AreEqual (true, delegateCalled, "Invoke1");
-			} finally {
-				if (c != null)
-					c.Dispose ();
-			}
-		}
-
-		public void delegate_call () {
-			delegateCalled = true;
 		}
 
 		[Test]
@@ -885,6 +862,71 @@ namespace MonoTests.System.Windows.Forms
 			child.Enabled = false;
 			grandma.Enabled = false;
 			Assert.AreEqual(3, EnabledCalledCount, "Child Enabled Event not properly fired");
+		}
+	}
+
+	[TestFixture]
+	public class ControlInvokeTest {
+		public delegate void TestDelegate ();
+
+		Form f;
+		Control c;
+		Thread control_t;
+		ApplicationContext control_context;
+		bool delegateCalled = false;
+
+		object m;
+
+		void CreateControl ()
+		{
+			f = new Form ();
+			
+			c = new Control ();
+
+			f.Controls.Add (c);
+
+			Console.WriteLine ("f.Handle = {0}", f.Handle);
+			Console.WriteLine ("c.Handle = {0}", c.Handle);
+
+			control_context = new ApplicationContext (f);
+
+			Monitor.Enter (m);
+			Console.WriteLine ("pulsing");
+			Monitor.Pulse (m);
+			Monitor.Exit (m);
+			Console.WriteLine ("control thread running");
+			Application.Run (control_context);
+			c.Dispose ();
+		}
+
+		[Test]
+		public void InvokeTest ()
+		{
+			m = new object ();
+
+			control_t = new Thread(CreateControl);
+
+			Monitor.Enter (m);
+
+			control_t.Start ();
+
+			Console.WriteLine ("waiting on monitor");
+			Monitor.Wait (m);
+
+			Console.WriteLine ("making async call");
+
+			IAsyncResult result;
+			result = c.BeginInvoke (new TestDelegate (delegate_call));
+			c.EndInvoke (result);
+
+			Assert.AreEqual (true, delegateCalled, "Invoke1");
+		}
+
+		public void delegate_call () {
+			/* invoked on control_context's thread */
+			delegateCalled = true;
+			f.Dispose ();
+			Application.Exit ();
 		}
 	}
 }
