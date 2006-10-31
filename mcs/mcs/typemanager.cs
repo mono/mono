@@ -31,7 +31,7 @@ using System.Diagnostics;
 
 namespace Mono.CSharp {
 
-public /*partial*/ class TypeManager {
+public partial class TypeManager {
 	//
 	// A list of core types that the compiler requires or uses
 	//
