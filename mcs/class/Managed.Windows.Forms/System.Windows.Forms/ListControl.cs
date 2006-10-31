@@ -131,15 +131,13 @@ namespace System.Windows.Forms
 				return fil;
 			}
 			set {
-				if (value == null) {
-					throw new InvalidOperationException("ListControl.SelectedValue cannot be set to null");
-				}
+				if (value == null)
+					return;
 
 				if (value is string) {
 					string valueString = value as string;
-					if (valueString == String.Empty) {
-						throw new InvalidOperationException("ListControl.SelectedValue cannot be set to empty string");
-					}
+					if (valueString == String.Empty)
+						return;
 				}
 
 				if (data_manager != null) {

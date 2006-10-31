@@ -1,5 +1,11 @@
 2006-10-31  Chris Toshok  <toshok@ximian.com>
 
+	* ListControl.cs (set_SelectedValue): don't throw exceptions on
+	null/"" value, just return.  matches ms's behavior and fixes some
+	failing tests.
+
+2006-10-31  Chris Toshok  <toshok@ximian.com>
+
 	* Control.cs (set_Capture): make a logic a little easier to
 	follow.
 
