@@ -1792,11 +1792,27 @@ namespace System.Windows.Forms {
 					return;
 				}
 
+#if NET_2_0
+				case Msg.WM_SYSCOMMAND: {
+					// Let *Strips know the app's title bar was clicked
+					if (XplatUI.IsEnabled (Handle))
+						ToolStripMenuTracker.FireAppClicked ();
+						
+					base.WndProc(ref m);
+					break;
+				}
+#endif
+	
 				case Msg.WM_ACTIVATE: {
 					if (m.WParam != (IntPtr)WindowActiveFlags.WA_INACTIVE) {
 						OnActivated(EventArgs.Empty);
 					} else {
 						OnDeactivate(EventArgs.Empty);
+#if NET_2_0
+						// Let *Strips know the app lost focus
+						if (XplatUI.IsEnabled (Handle))
+							ToolStripMenuTracker.FireAppFocusChanged ();
+#endif
 					}
 					return;
 				}
@@ -1944,6 +1960,17 @@ namespace System.Windows.Forms {
 					}
 					break;
 				}
+				
+#if NET_2_0
+				case Msg.WM_MOUSEACTIVATE: {
+					// Let *Strips know the form or another control has been clicked
+					if (XplatUI.IsEnabled (Handle))
+						ToolStripMenuTracker.FireAppClicked ();
+						
+					base.WndProc (ref m);
+					break;				
+				}
+#endif
 
 				default: {
 					base.WndProc (ref m);

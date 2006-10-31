@@ -36,6 +36,10 @@ namespace System.Windows.Forms
 {
 	public sealed class TextRenderer
 	{
+		private TextRenderer ()
+		{
+		}
+		
 		#region Public Methods
 		[MonoTODO("This should be correct for Windows, other platforms need a more accurate fallback method than the one provided")]
 		public static void DrawText (IDeviceContext dc, string text, Font font, Rectangle bounds, Color foreColor, TextFormatFlags flags)

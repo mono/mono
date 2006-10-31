@@ -166,7 +166,7 @@ namespace System.Windows.Forms
 			get { return base.Selected; }
 		}
 
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public override ISite Site {
 			get { return base.Site; }
 			set { 
@@ -347,14 +347,14 @@ namespace System.Windows.Forms
 		public event EventHandler DisplayStyleChanged;
 		public event EventHandler Enter;
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public event EventHandler GotFocus;
 		public event KeyEventHandler KeyDown;
 		public event KeyPressEventHandler KeyPress;
 		public event KeyEventHandler KeyUp;
 		public event EventHandler Leave;
 		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public event EventHandler LostFocus;
 		public event EventHandler Validated;
 		public event CancelEventHandler Validating;

@@ -75,6 +75,12 @@ namespace System.Windows.Forms
 			get { return this.tool_strip; }
 		}
 		#endregion
+
+		#region Internal Properties
+		internal Rectangle InternalConnectedArea {
+			set { this.connected_area = value; }
+		}
+		#endregion
 	}
 }
 #endif

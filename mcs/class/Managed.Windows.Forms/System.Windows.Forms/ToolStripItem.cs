@@ -59,12 +59,12 @@ namespace System.Windows.Forms
 		private ContentAlignment image_align;
 		private int image_index;
 		private ToolStripItemImageScaling image_scaling;
-		private bool is_pressed;
+		protected bool is_pressed;
 		private bool is_selected;
 		private Padding margin;
 		private string name;
 		private ToolStrip owner;
-		private ToolStripItem owner_item;
+		internal ToolStripItem owner_item;
 		private Padding padding;
 		private Object tag;
 		private string text;
@@ -195,7 +195,7 @@ namespace System.Windows.Forms
 		}
 
 		[MonoTODO ("Need 2.0 ToolTip to implement tool tips.")]
-		[DefaultValue (true)]
+		[DefaultValue (false)]
 		public bool AutoToolTip {
 			get { return this.auto_tool_tip; }
 			set { this.auto_tool_tip = value; }
@@ -341,7 +341,7 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (true)]
-		[DefaultValue (ContentAlignment.MiddleLeft)]
+		[DefaultValue (ContentAlignment.MiddleCenter)]
 		public ContentAlignment ImageAlign {
 			get { return this.image_align; }
 			set {
@@ -380,8 +380,8 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		public bool IsOnDropDown {
 			get {
-				//if (this.owner != null && this.owner is ToolStripDropDown)
-				//	return true;
+				if (this.owner != null && this.owner is ToolStripDropDown)
+					return true;
 
 				return false;
 			}
@@ -471,7 +471,7 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (true)]
-		[DefaultValue (ContentAlignment.MiddleRight)]
+		[DefaultValue (ContentAlignment.MiddleCenter)]
 		public virtual ContentAlignment TextAlign {
 			get { return this.text_align; }
 			set {
@@ -683,12 +683,11 @@ namespace System.Windows.Forms
 
 		protected virtual void OnMouseEnter (EventArgs e)
 		{
-			if (this.Enabled) {
-				if (MouseEnter != null) MouseEnter (this, e);
-				if (this.CanSelect) {
-					this.is_selected = true;
-					this.Invalidate ();
-				}
+			if (MouseEnter != null) MouseEnter (this, e);
+			
+			if (this.CanSelect) {
+				this.is_selected = true;
+				this.Invalidate ();
 			}
 		}
 
@@ -700,13 +699,12 @@ namespace System.Windows.Forms
 
 		protected virtual void OnMouseLeave (EventArgs e)
 		{
-			if (this.Enabled) {
-				if (MouseLeave != null) MouseLeave (this, e);
-				if (this.CanSelect) {
-					this.is_selected = false;
-					this.is_pressed = false;
-					this.Invalidate ();
-				}
+			if (MouseLeave != null) MouseLeave (this, e);
+			
+			if (this.CanSelect) {
+				this.is_selected = false;
+				this.is_pressed = false;
+				this.Invalidate ();
 			}
 		}
 
@@ -949,29 +947,33 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal void DoDoubleClick (EventArgs e)
-		{ this.OnDoubleClick (e); }
-
-		internal void DoMouseDown (MouseEventArgs e)
-		{ this.OnMouseDown (e); }
-
-		internal void DoMouseEnter (EventArgs e)
-		{ this.OnMouseEnter (e); }
-
-		internal void DoMouseHover (EventArgs e)
-		{ this.OnMouseHover (e); }
-
-		internal void DoMouseLeave (EventArgs e)
-		{ this.OnMouseLeave (e); }
-
-		internal void DoMouseMove (MouseEventArgs e)
-		{ this.OnMouseMove (e); }
-
-		internal void DoMouseUp (MouseEventArgs e)
-		{ this.OnMouseUp (e); }
-
-		internal void DoPaint (PaintEventArgs e)
-		{ this.OnPaint (e); }
+		internal void FireEvent (EventArgs e, ToolStripItemEventType met)
+		{
+			switch (met) {
+				case ToolStripItemEventType.MouseUp:
+					this.OnMouseUp ((MouseEventArgs)e);
+					this.OnClick ((MouseEventArgs)e);
+					break;
+				case ToolStripItemEventType.MouseDown:
+					this.OnMouseDown ((MouseEventArgs)e);
+					break;
+				case ToolStripItemEventType.MouseEnter:
+					this.OnMouseEnter (e);
+					break;
+				case ToolStripItemEventType.MouseHover:
+					this.OnMouseHover (e);
+					break;
+				case ToolStripItemEventType.MouseLeave:
+					this.OnMouseLeave (e);
+					break;
+				case ToolStripItemEventType.MouseMove:
+					this.OnMouseMove ((MouseEventArgs)e);
+					break;
+				case ToolStripItemEventType.Paint:
+					this.OnPaint ((PaintEventArgs)e);
+					break;
+			}
+		}
 		#endregion
 		
 		public class ToolStripItemAccessibleObject : AccessibleObject

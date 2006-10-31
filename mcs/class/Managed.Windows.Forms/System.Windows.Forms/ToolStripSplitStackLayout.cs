@@ -41,7 +41,7 @@ namespace System.Windows.Forms
 
 			if (ts.Orientation == Orientation.Horizontal) {
 				int x = ts.DisplayRectangle.Left;
-				//if (!(ts is MenuStrip))
+				if (!(ts is MenuStrip))
 					x += 2;
 				int y = ts.DisplayRectangle.Top;
 

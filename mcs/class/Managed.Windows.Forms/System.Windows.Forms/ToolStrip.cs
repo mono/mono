@@ -57,6 +57,8 @@ namespace System.Windows.Forms
 		private bool show_item_tool_tips;
 
 		private ToolStripItem mouse_currently_over;
+		private bool menu_selected;
+		private bool need_to_release_menu;
 		#endregion
 
 		#region Public Constructors
@@ -111,7 +113,7 @@ namespace System.Windows.Forms
 					if (this.grip_style == ToolStripGripStyle.Hidden)
 						return new Rectangle (this.Padding.Left, this.Padding.Top, this.Width - this.Padding.Horizontal, this.Height - this.Padding.Vertical);
 					else
-						return new Rectangle (this.GripRectangle.Right + this.GripMargin.Right + this.Padding.Left, this.Padding.Top, this.Width - this.Padding.Horizontal - this.GripRectangle.Right - this.GripMargin.Right, this.Height - this.Padding.Vertical);
+						return new Rectangle (this.GripRectangle.Right + this.GripMargin.Right, this.Padding.Top, this.Width - this.Padding.Horizontal - this.GripRectangle.Right - this.GripMargin.Right, this.Height - this.Padding.Vertical);
 				else
 					if (this.grip_style == ToolStripGripStyle.Hidden)
 						return new Rectangle (this.Padding.Left, this.Padding.Top, this.Width - this.Padding.Horizontal, this.Height - this.Padding.Vertical);
@@ -328,6 +330,9 @@ namespace System.Windows.Forms
 			if (text == "-")
 				return new ToolStripSeparator ();
 
+			if (this is ToolStripDropDown)
+				return new ToolStripMenuItem (text, image, onClick);
+				
 			return new ToolStripButton (text, image, onClick);
 		}
 
@@ -407,7 +412,31 @@ namespace System.Windows.Forms
 			base.OnMouseDown (mea);
 
 			if (mouse_currently_over != null)
-				mouse_currently_over.DoMouseDown (mea);
+			{
+				if (this is MenuStrip && !(mouse_currently_over as ToolStripMenuItem).HasDropDownItems) {
+					if (!menu_selected)
+						(this as MenuStrip).FireMenuActivate ();
+					
+					need_to_release_menu = true; 
+					return;
+				}
+					
+				mouse_currently_over.FireEvent (mea, ToolStripItemEventType.MouseDown);
+				
+				need_to_release_menu = false;
+
+				if (this is MenuStrip && !menu_selected) {
+					(this as MenuStrip).FireMenuActivate ();
+					menu_selected = true;				
+				} else if (this is MenuStrip && menu_selected)
+					need_to_release_menu = true;
+			} else {
+				if (this is MenuStrip)
+					this.HideMenus (true, ToolStripDropDownCloseReason.AppClicked);
+			}
+			
+			if (this is MenuStrip)
+				this.Capture = false;
 		}
 
 		protected override void OnMouseLeave (EventArgs e)
@@ -415,7 +444,7 @@ namespace System.Windows.Forms
 			base.OnMouseLeave (e);
 
 			if (mouse_currently_over != null) {
-				mouse_currently_over.DoMouseLeave (e);
+				mouse_currently_over.FireEvent (e, ToolStripItemEventType.MouseLeave);
 				mouse_currently_over = null;
 			}
 		}
@@ -428,19 +457,32 @@ namespace System.Windows.Forms
 
 			if (tsi != null) {
 				if (tsi == mouse_currently_over) 
-					tsi.DoMouseMove (mea);
+					tsi.FireEvent (mea, ToolStripItemEventType.MouseMove);
 				else {
-					if (mouse_currently_over != null)
-						mouse_currently_over.DoMouseLeave (mea);
-
+					if (mouse_currently_over != null) {
+						mouse_currently_over.FireEvent (mea, ToolStripItemEventType.MouseLeave);
+						
+						if (mouse_currently_over is ToolStripMenuItem)
+							(mouse_currently_over as ToolStripMenuItem).HideDropDown(ToolStripDropDownCloseReason.Keyboard);
+					} else {
+						foreach (ToolStripItem tsi2 in this.Items)
+							if (tsi2 is ToolStripMenuItem)
+								(tsi2 as ToolStripMenuItem).HideDropDown (ToolStripDropDownCloseReason.Keyboard);
+					}
+						
 					mouse_currently_over = tsi;
-					tsi.DoMouseEnter (mea);
-					tsi.DoMouseMove (mea);
+					
+					tsi.FireEvent (mea, ToolStripItemEventType.MouseEnter);
+					tsi.FireEvent (mea, ToolStripItemEventType.MouseMove);
+
+					if (menu_selected && mouse_currently_over is ToolStripDropDownItem && (mouse_currently_over as ToolStripDropDownItem).HasDropDownItems) {
+						(mouse_currently_over as ToolStripDropDownItem).DropDown.OwnerItem = (ToolStripMenuItem)mouse_currently_over;
+						(mouse_currently_over as ToolStripDropDownItem).DropDown.Show ((mouse_currently_over as ToolStripDropDownItem).DropDownLocation);
+					}
 				}
-			}
-			else {
+			} else {
 				if (mouse_currently_over != null) {
-					mouse_currently_over.DoMouseLeave (mea);
+					mouse_currently_over.FireEvent (mea, ToolStripItemEventType.MouseLeave);
 					mouse_currently_over = null;
 				}
 			}
@@ -450,8 +492,25 @@ namespace System.Windows.Forms
 		{
 			base.OnMouseUp (mea);
 
-			if (mouse_currently_over != null)
-				mouse_currently_over.DoMouseUp (mea);
+			if (mouse_currently_over != null) {
+				mouse_currently_over.FireEvent (mea, ToolStripItemEventType.MouseUp);
+
+				// The event handler may have blocked until the mouse moved off of the ToolStripItem
+				if (mouse_currently_over == null)
+					return;
+					
+				OnItemClicked (new ToolStripItemClickedEventArgs (mouse_currently_over));
+				
+				if (mouse_currently_over.IsOnDropDown)
+					need_to_release_menu = true;
+					
+				if (this is MenuStrip)
+					if (!(mouse_currently_over as ToolStripMenuItem).HasDropDownItems && !(need_to_release_menu && menu_selected))
+						(this as MenuStrip).FireMenuDeactivate ();
+			}
+
+			if (this is MenuStrip && need_to_release_menu)
+				this.HideMenus (true, ToolStripDropDownCloseReason.ItemClicked);
 		}
 
 		protected override void OnPaint (PaintEventArgs e)
@@ -467,7 +526,7 @@ namespace System.Windows.Forms
 					continue;
 
 				e.Graphics.TranslateTransform (tsi.Bounds.Left, tsi.Bounds.Top);
-				tsi.DoPaint (e);
+				tsi.FireEvent (e, ToolStripItemEventType.Paint);
 				e.Graphics.ResetTransform ();
 			}
 		}
@@ -477,20 +536,29 @@ namespace System.Windows.Forms
 			base.OnPaintBackground (pevent);
 
 			Rectangle affected_bounds = new Rectangle (new Point (0, 0), this.Size);
+			Rectangle connected_area = Rectangle.Empty;
 
-			this.renderer.DrawToolStripBackground (new ToolStripRenderEventArgs (pevent.Graphics, this, affected_bounds, Color.Empty));
-			this.renderer.DrawToolStripBorder (new ToolStripRenderEventArgs (pevent.Graphics, this, affected_bounds, Color.Empty));
+			if (this is ToolStripDropDown && !(this as ToolStripDropDown).OwnerItem.IsOnDropDown)
+				connected_area = new Rectangle (1, 0, (this as ToolStripDropDown).OwnerItem.Width - 2, 2);
+			
+			ToolStripRenderEventArgs e = new ToolStripRenderEventArgs (pevent.Graphics, this, affected_bounds, Color.Empty);
+			e.InternalConnectedArea = connected_area;
+			
+			this.renderer.DrawToolStripBackground (e);
+			this.renderer.DrawToolStripBorder (e);
 		}
 
 		protected internal virtual void OnPaintGrip (PaintEventArgs e)
 		{
 			if (PaintGrip != null) PaintGrip (this, e);
 
-			if (this.orientation == Orientation.Horizontal)
-				e.Graphics.TranslateTransform (2, 0);
-			else
-				e.Graphics.TranslateTransform (0, 2);
-				
+			if (!(this is MenuStrip)) {
+				if (this.orientation == Orientation.Horizontal)
+					e.Graphics.TranslateTransform (2, 0);
+				else
+					e.Graphics.TranslateTransform (0, 2);
+			}
+			
 			this.renderer.DrawGrip (new ToolStripGripRenderEventArgs (e.Graphics, this, this.GripRectangle, this.grip_display_style, this.grip_style));
 			e.Graphics.ResetTransform ();
 		}
@@ -551,31 +619,11 @@ namespace System.Windows.Forms
 			base.OnMouseHover (e);
 
 			if (mouse_currently_over != null)
-				mouse_currently_over.DoMouseHover (e);
-		}
-
-		protected override void OnClick (EventArgs e)
-		{
-			base.OnClick (e);
-
-			if (mouse_currently_over != null) {
-				mouse_currently_over.PerformClick ();
-				OnItemClicked (new ToolStripItemClickedEventArgs (mouse_currently_over));
-			}
-		}
-
-		protected override void OnDoubleClick (EventArgs e)
-		{
-			base.OnDoubleClick (e);
-
-			if (mouse_currently_over != null)
-				mouse_currently_over.DoDoubleClick (e);
+				mouse_currently_over.FireEvent (e, ToolStripItemEventType.MouseHover);
 		}
 		#endregion
 
 		#region Public Events
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
 		public event EventHandler AutoSizeChanged;
 		[Browsable (false)]
 		public event EventHandler ForeColorChanged;
@@ -616,6 +664,19 @@ namespace System.Windows.Forms
 			}
 
 			return new_size;
+		}
+		
+		internal void HideMenus (bool release, ToolStripDropDownCloseReason reason)
+		{
+			if (this is MenuStrip && release && menu_selected)
+				(this as MenuStrip).FireMenuDeactivate ();
+				
+			if (release)
+				menu_selected = false;
+				
+			foreach (ToolStripDropDownItem tsi in this.Items)
+				if (tsi.Visible)
+					tsi.DropDown.Close ();
 		}
 		#endregion
 	}

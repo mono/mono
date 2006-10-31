@@ -70,14 +70,14 @@ namespace System.Windows.Forms
 		#region Public Methods
 		public ToolStripItem Add (Image image)
 		{
-			ToolStripButton tsb = new ToolStripButton (image);
+			ToolStripItem tsb = owner.CreateDefaultItem (string.Empty, image, null);
 			this.Add (tsb);
 			return tsb;
 		}
 
 		public ToolStripItem Add (string text)
 		{
-			ToolStripButton tsb = new ToolStripButton (text);
+			ToolStripItem tsb = owner.CreateDefaultItem (text, null, null);
 			this.Add (tsb);
 			return tsb;
 		}
@@ -96,14 +96,14 @@ namespace System.Windows.Forms
 
 		public ToolStripItem Add (string text, Image image)
 		{
-			ToolStripButton tsb = new ToolStripButton (text, image);
+			ToolStripItem tsb = owner.CreateDefaultItem (text, image, null);
 			this.Add (tsb);
 			return tsb;
 		}
 
 		public ToolStripItem Add (string text, Image image, EventHandler onClick)
 		{
-			ToolStripButton tsb = new ToolStripButton (text, image, onClick);
+			ToolStripItem tsb = owner.CreateDefaultItem (text, image, onClick);
 			this.Add (tsb);
 			return tsb;
 		}

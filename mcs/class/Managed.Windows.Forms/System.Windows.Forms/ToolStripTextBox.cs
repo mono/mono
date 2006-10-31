@@ -39,7 +39,7 @@ namespace System.Windows.Forms
 		public ToolStripTextBox () : base (new ToolStripTextBoxControl ())
 		{
 			base.Control.border_style = BorderStyle.None;
-			this.border_style = BorderStyle.FixedSingle;
+			this.border_style = BorderStyle.Fixed3D;
 		}
 
 		public ToolStripTextBox (Control c) : base (c)
@@ -65,7 +65,7 @@ namespace System.Windows.Forms
 			set { this.TextBox.AcceptsTab = value; }
 		}
 
-		[DefaultValue (BorderStyle.FixedSingle)]
+		[DefaultValue (BorderStyle.Fixed3D)]
 		public BorderStyle BorderStyle {
 			get { return this.border_style; }
 			set { this.border_style = value; }
@@ -160,7 +160,7 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		[DefaultValue (false)]
+		[DefaultValue (true)]
 		public bool WordWrap {
 			get { return this.TextBox.WordWrap; }
 			set { this.TextBox.WordWrap = value; }

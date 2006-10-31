@@ -1,3 +1,11 @@
+2006-10-31  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStrip*: Version 0.2.
+
+	* MenuStrip.cs: Version 0.1.
+
+	* Form.cs: Add a 2.0 MenuStrip tracker like the 1.1 Menu one.
+
 2006-10-30  Chris Toshok  <toshok@ximian.com>
 
 	[ fixes the oversized notify icon issue in bug #79745 ]

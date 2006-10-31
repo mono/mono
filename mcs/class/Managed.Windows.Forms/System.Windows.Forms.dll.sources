@@ -613,6 +613,7 @@ System.Windows.Forms/ToolStripContentPanel.cs
 System.Windows.Forms/ToolStripContentPanelRenderEventArgs.cs
 System.Windows.Forms/ToolStripContentPanelRenderEventHandler.cs
 System.Windows.Forms/ToolStripControlHost.cs
+System.Windows.Forms/ToolStripDropDown.cs
 System.Windows.Forms/ToolStripDropDownCloseReason.cs
 System.Windows.Forms/ToolStripDropDownClosedEventArgs.cs
 System.Windows.Forms/ToolStripDropDownClosedEventHandler.cs
@@ -632,6 +633,7 @@ System.Windows.Forms/ToolStripItemCollection.cs
 System.Windows.Forms/ToolStripItemDisplayStyle.cs
 System.Windows.Forms/ToolStripItemEventArgs.cs
 System.Windows.Forms/ToolStripItemEventHandler.cs
+System.Windows.Forms/ToolStripItemEventType.cs
 System.Windows.Forms/ToolStripItemImageRenderEventArgs.cs
 System.Windows.Forms/ToolStripItemImageRenderEventHandler.cs
 System.Windows.Forms/ToolStripItemImageScaling.cs
@@ -645,6 +647,7 @@ System.Windows.Forms/ToolStripLabel.cs
 System.Windows.Forms/ToolStripLayoutStyle.cs
 System.Windows.Forms/ToolStripManagerRenderMode.cs
 System.Windows.Forms/ToolStripMenuItem.cs
+System.Windows.Forms/ToolStripMenuTracker.cs
 System.Windows.Forms/ToolStripPanel.cs
 System.Windows.Forms/ToolStripPanelRenderEventArgs.cs
 System.Windows.Forms/ToolStripPanelRenderEventHandler.cs
