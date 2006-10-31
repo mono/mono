@@ -1,3 +1,10 @@
+2006-10-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.dll.sources: Add System.Net.Mail.SmtpPermission[Attribute] to
+	the build.
+	* System_test.dll.sources: Add unit tests for System.Net.Mail 
+	SmtpPermission[Attribute] to the build.
+
 2006-08-22  Miguel de Icaza  <miguel@novell.com>
 
 	* System.ComponentModel.Design/HelpKeywordAttribute.cs: Add new

@@ -656,6 +656,8 @@ System.Net.Mail/SmtpDeliveryMethod.cs
 System.Net.Mail/SmtpException.cs
 System.Net.Mail/SmtpFailedRecipientException.cs
 System.Net.Mail/SmtpFailedRecipientsException.cs
+System.Net.Mail/SmtpPermission.cs
+System.Net.Mail/SmtpPermissionAttribute.cs
 System.Net.Mail/SmtpStatusCode.cs
 System.Net.Mime/ContentDisposition.cs
 System.Net.Mime/ContentType.cs
