@@ -1,3 +1,7 @@
+2006-10-31  Mike Kestner  <mkestner@novell.com>
+
+	* MenuAPI.cs : fix keynav when menu is click activated.
+
 2006-10-31  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStrip*: Version 0.2.

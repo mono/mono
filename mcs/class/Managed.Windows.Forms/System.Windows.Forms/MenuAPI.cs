@@ -64,7 +64,7 @@ namespace System.Windows.Forms {
 		KeyNavState keynav_state = KeyNavState.Idle;
 
 		public bool Navigating {
-			get { return keynav_state != KeyNavState.Idle; }
+			get { return keynav_state != KeyNavState.Idle || active; }
 		}
 
 		internal static Point ScreenToMenu (Menu menu, Point pnt)		
@@ -654,9 +654,9 @@ namespace System.Windows.Forms {
 				return true;
 			} else if ((keyData & Keys.Alt) == Keys.Alt)
 				return ProcessMnemonic (msg, keyData);
-			else if ((Msg)msg.Msg == Msg.WM_SYSKEYUP || keynav_state == KeyNavState.Idle)
+			else if ((Msg)msg.Msg == Msg.WM_SYSKEYUP)
 				return false;
-			else if (!active && !Navigating)
+			else if (!Navigating)
 				return false;
 
 			switch (keyData) {
