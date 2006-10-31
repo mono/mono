@@ -1720,11 +1720,11 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (this.IsHandleCreated) {
-					if (value && !is_captured) {
+				if (this.IsHandleCreated && value != is_captured) {
+					if (value) {
 						is_captured = true;
 						XplatUI.GrabWindow(this.window.Handle, IntPtr.Zero);
-					} else if (!value && is_captured) {
+					} else {
 						XplatUI.UngrabWindow(this.window.Handle);
 						is_captured = false;
 					}

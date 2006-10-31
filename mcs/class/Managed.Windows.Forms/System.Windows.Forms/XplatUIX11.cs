@@ -1640,6 +1640,11 @@ namespace System.Windows.Forms {
 				FocusWindow = IntPtr.Zero;
 			}
 
+			if (Grab.Hwnd == hwnd.Handle) {
+				Grab.Hwnd = IntPtr.Zero;
+				Grab.Confined = false;
+			}
+
 			DestroyCaret (hwnd.Handle);
 		}
 

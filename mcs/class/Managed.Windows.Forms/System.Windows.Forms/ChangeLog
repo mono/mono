@@ -1,5 +1,14 @@
 2006-10-31  Chris Toshok  <toshok@ximian.com>
 
+	* Control.cs (set_Capture): make a logic a little easier to
+	follow.
+
+	* XplatUIX11.cs (CleanupCachedWindows): zero out the Grab window
+	if it's being destroyed.  A necessary fix surely, but a bandaid
+	also, to fix the stuck capture problem in bug #78413.
+
+2006-10-31  Chris Toshok  <toshok@ximian.com>
+
 	* XplatUIX11.cs: fix a couple of compiler warnings, and follow the
 	convention of clearing hwnd.ClientRect when we set the
 	width/height (so it'll be recalculated by Hwnd).
