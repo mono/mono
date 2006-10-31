@@ -1,3 +1,9 @@
+2006-10-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MetaHeaderTest.cs: New. Unit tests for MetaHeader.
+	* WmfPlaceableFileHeaderTest.cs: New. Unit tests for 
+	WmfPlaceableFileHeader.
+
 2006-09-18	Boris Kirzner <borisk@mainsoft.com>
 
 	* TestBmpCodec.cs,TestColorMatrix.cs,TestJpegCodec.cs : mark tests
