@@ -1,15 +1,12 @@
 //
-// System.AuthenticationException.cs
+// System.Security.Authentication.InvalidCredentialException
 //
 // Author:
 //   Joe Shaw (joe@ximian.com)
 //   Miguel de Icaza (miguel@novell.com)
+//   Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (C) 2006 Novell, Inc.  http://www.novell.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,16 +29,16 @@
 //
 
 #if NET_2_0
+
 using System.Runtime.Serialization;
 
-namespace System.Security.Authentication
-{
+namespace System.Security.Authentication {
+
 	[Serializable]
-	public sealed class InvalidCredentialException : SystemException
-	{
-		// Constructors
+	public class InvalidCredentialException : AuthenticationException {
+
 		public InvalidCredentialException ()
-			: base (Locale.GetText ("Authentication exception.")) 
+			: base (Locale.GetText ("Invalid credentials exception.")) 
 		{
 		}
 
@@ -55,8 +52,8 @@ namespace System.Security.Authentication
 		{
 		}
 
-		internal InvalidCredentialException (SerializationInfo serializationInfo, StreamingContext streamingContext)
-			: base(serializationInfo, streamingContext)
+		protected InvalidCredentialException (SerializationInfo serializationInfo, StreamingContext streamingContext)
+			: base (serializationInfo, streamingContext)
 		{
 		}
 	}

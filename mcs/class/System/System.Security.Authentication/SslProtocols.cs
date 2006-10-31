@@ -3,11 +3,10 @@
 //
 // Authors:
 //	Tim Coleman (tim@timcoleman.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) Tim Coleman, 2004
-// (c) 2004 Novell, Inc. (http://www.novell.com)
-//
-
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,18 +30,15 @@
 
 #if NET_2_0 
 
-using System;
+namespace System.Security.Authentication {
 
-namespace System.Security.Authentication
-{
 	[Flags]
-	public enum SslProtocols
-	{
-		Default,
+	public enum SslProtocols {
 		None,
-		Ssl2,
-		Ssl3,
-		Tls
+		Ssl2 = 12,
+		Ssl3 = 48,
+		Tls = 192,
+		Default = Ssl3 | Tls
 	}
 }
 

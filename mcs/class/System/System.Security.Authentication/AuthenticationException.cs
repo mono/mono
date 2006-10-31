@@ -1,15 +1,12 @@
 //
-// System.AuthenticationException.cs
+// System.Security.Authentication.AuthenticationException
 //
 // Author:
 //   Joe Shaw (joe@ximian.com)
 //   Miguel de Icaza (miguel@novell.com)
+//   Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (C) 2006 Novell, Inc.  http://www.novell.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,14 +29,14 @@
 //
 
 #if NET_2_0
+
 using System.Runtime.Serialization;
 
-namespace System.Security.Authentication
-{
+namespace System.Security.Authentication {
+
 	[Serializable]
-	public sealed class AuthenticationException : SystemException
-	{
-		// Constructors
+	public class AuthenticationException : SystemException {
+
 		public AuthenticationException ()
 			: base (Locale.GetText ("Authentication exception.")) 
 		{
@@ -55,10 +52,11 @@ namespace System.Security.Authentication
 		{
 		}
 
-		internal AuthenticationException (SerializationInfo serializationInfo, StreamingContext streamingContext)
-			: base(serializationInfo, streamingContext)
+		protected AuthenticationException (SerializationInfo serializationInfo, StreamingContext streamingContext)
+			: base (serializationInfo, streamingContext)
 		{
 		}
 	}
 }
+
 #endif
