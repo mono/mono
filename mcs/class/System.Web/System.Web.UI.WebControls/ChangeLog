@@ -1,6 +1,6 @@
-2006-10- Igor Zelmanovich <igorz@mainsoft.com>
+2006-10-31 Igor Zelmanovich <igorz@mainsoft.com>
 
-	* RadioButtonList.cs: fixed: has no html output when Items.Count=0.
+	* DetailsView.cs: fixed: PageIndex, UpdateItem, InsertItem.
 
 2006-10-29 Igor Zelmanovich <igorz@mainsoft.com>
 

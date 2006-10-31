@@ -108,7 +108,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		private bool dataUpdating=false;
 
 		[Test]
-		[Category ("NotWorking")]// NullReferenceException
 		public void DetailsViewRow_BubbleEvent ()
 		{
 			DetailsView dv = new DetailsView ();

@@ -542,14 +542,13 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")] 
 		public void DetailsView_AssignedPropertiesRender ()
 		{
 			string RenderedPageHtml = new WebTest ("DetailsViewProperties1.aspx").Run ();
 			string newHtmlValue = RenderedPageHtml.Substring (RenderedPageHtml.IndexOf ("starttest") + 9, RenderedPageHtml.IndexOf ("endtest") - RenderedPageHtml.IndexOf ("starttest") - 9);
 			string origHtmlValue = @" <div>
 			<div>
-			<table cellspacing=""20"" cellpadding=""30"" rules=""all"" border=""1"" id=""DetailsView1"" style=""height:50px;width:125px;background-image:url(Blue%20hills.jpg);"">
+			<table cellspacing=""20"" cellpadding=""30"" rules=""all"" border=""1"" id=""DetailsView1"" style=""height:50px;width:125px;background-image:url(Blue_hills.jpg);"">
 			<caption align=""Bottom"">
 			Caption Test
 			</caption><tr>
@@ -567,8 +566,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (true, origHtmlValue.Contains (@"cellspacing=""20"""), "CellspacingRender");
 			Assert.AreEqual (true, origHtmlValue.Contains ("Caption Test"), "CaptionRender");
 			Assert.AreEqual (true, origHtmlValue.Contains (@"caption align=""Bottom"""), "CaptionalignRender");
-			Assert.AreEqual (true, origHtmlValue.Contains ("Blue%20hills.jpg"), "BackImageRender");
-			Assert.AreEqual (true, origHtmlValue.Contains ("Blue%20hills.jpg"), "BackImageRender");
+			Assert.AreEqual (true, origHtmlValue.Contains ("Blue_hills.jpg"), "BackImageRender");
 			//GridLines and HorizontalAlign were set but can not be shown in this rendering.
 		}
 
@@ -777,7 +775,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		//ToDo: UpdateItem method should be checked using postback
 		private bool updateItem = false;
 		[Test]
-		[Category ("NotWorking")] 
 		public void DetailsView_UpdateItem ()
 		{
 			PokerDetailsView dv = new PokerDetailsView ();
@@ -1784,7 +1781,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")] 
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void PageIndexException ()
 		{
@@ -1793,7 +1789,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")] 
 		[ExpectedException (typeof (HttpException))]
 		public void InsertItemException ()
 		{
@@ -1802,7 +1797,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")] 
 		[ExpectedException (typeof (HttpException))]
 		public void UpdateItemException ()
 		{

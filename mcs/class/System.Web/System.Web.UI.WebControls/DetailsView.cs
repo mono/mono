@@ -770,6 +770,8 @@ namespace System.Web.UI.WebControls
 				return pageIndex;
 			}
 			set {
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ("PageIndex must be non-negative");
 				if (value == pageIndex)
 					return;
 				pageIndex = value;
@@ -809,8 +811,7 @@ namespace System.Web.UI.WebControls
 		
 		
 		[DefaultValue (null)]
-		/* DataControlPagerCell isnt specified in the docs */
-		//[TemplateContainer (typeof(DataControlPagerCell), BindingDirection.OneWay)]
+		[TemplateContainer (typeof (DetailsView), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[Browsable (false)]
 		public virtual ITemplate PagerTemplate {
@@ -1485,12 +1486,15 @@ namespace System.Web.UI.WebControls
 		
 		void UpdateItem (string param, bool causesValidation)
 		{
-			if (causesValidation)
+			if (causesValidation && Page != null)
 				Page.Validate ();
 			
-			if (CurrentMode != DetailsViewMode.Edit) throw new NotSupportedException ();
+			if (CurrentMode != DetailsViewMode.Edit) throw new HttpException ();
 			
-			currentEditOldValues = oldEditValues.Values;
+			if (oldEditValues == null)
+				currentEditOldValues = new OrderedDictionary ();
+			else
+				currentEditOldValues = oldEditValues.Values;
 
 			currentEditRowKeys = DataKey.Values;
 			currentEditNewValues = GetRowValues (false, false);
@@ -1526,17 +1530,19 @@ namespace System.Web.UI.WebControls
 		
 		void InsertItem (string param, bool causesValidation)
 		{
-			if (causesValidation)
+			if (causesValidation && Page != null)
 				Page.Validate ();
 			
-			if (CurrentMode != DetailsViewMode.Insert) throw new NotSupportedException ();
+			if (CurrentMode != DetailsViewMode.Insert) throw new HttpException ();
 			
 			currentEditNewValues = GetRowValues (false, true);
 			DetailsViewInsertEventArgs args = new DetailsViewInsertEventArgs (param, currentEditNewValues);
 			OnItemInserting (args);
 			if (!args.Cancel) {
 				DataSourceView view = GetData ();
-				if (view != null && view.CanInsert)
+				if (view == null)
+					throw new HttpException ("The DataSourceView associated to data bound control was null");
+				if (view.CanInsert)
 					view.Insert (currentEditNewValues, new DataSourceViewOperationCallback (InsertCallback));
 			}
 			else

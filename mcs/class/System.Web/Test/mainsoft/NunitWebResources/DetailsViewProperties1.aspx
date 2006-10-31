@@ -10,7 +10,7 @@
     <form id="form1" runat="server">
     starttest
     <div>
-        <asp:DetailsView ID="DetailsView1" runat="server" BackImageUrl="Blue hills.jpg"
+        <asp:DetailsView ID="DetailsView1" runat="server" BackImageUrl="Blue_hills.jpg"
             Caption="Caption Test" CaptionAlign="Bottom" CellPadding="30" CellSpacing="20"
             DataSourceID="ObjectDataSource1" Height="50px" Width="125px">
         </asp:DetailsView>
