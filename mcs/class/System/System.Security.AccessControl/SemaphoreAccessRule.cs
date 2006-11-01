@@ -40,6 +40,7 @@ namespace System.Security.AccessControl {
 		public SemaphoreAccessRule (IdentityReference identity,
 					    SemaphoreRights semaphoreRights,
 					    AccessControlType type)
+			: base (identity, 0, false, InheritanceFlags.None, PropagationFlags.None, type)
 		{
 			this.semaphoreRights = semaphoreRights;
 		}
@@ -47,6 +48,7 @@ namespace System.Security.AccessControl {
 		public SemaphoreAccessRule (string identity,
 					    SemaphoreRights semaphoreRights,
 					    AccessControlType type)
+			: base (null, 0, false, InheritanceFlags.None, PropagationFlags.None, type)
 		{
 			this.semaphoreRights = semaphoreRights;
 		}

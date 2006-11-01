@@ -35,11 +35,14 @@ using System.Security.Principal;
 namespace System.Security.AccessControl {
 	[ComVisible (false)]
 	public sealed class SemaphoreSecurity : NativeObjectSecurity {
+
 		public SemaphoreSecurity ()
+			: base (false, ResourceType.Unknown)
 		{
 		}
 
 		public SemaphoreSecurity (string name, AccessControlSections includesections)
+			: base (false, ResourceType.Unknown, name, includesections)
 		{
 		}
 		

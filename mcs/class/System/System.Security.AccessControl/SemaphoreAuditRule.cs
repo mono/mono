@@ -43,6 +43,7 @@ namespace System.Security.AccessControl {
 		public SemaphoreAuditRule (IdentityReference identity,
 					   SemaphoreRights semaphoreRights,
 					   AuditFlags flags)
+			: base (identity, 0, false, InheritanceFlags.None, PropagationFlags.None, flags)
 		{
 			this.semaphoreRights = semaphoreRights;
 		}
