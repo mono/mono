@@ -24,6 +24,7 @@ namespace MonoTests.System.Windows.Forms
 		public void StatusBarPropertyTest ()
 		{	
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			StatusBar mysbar = new StatusBar ();
 			StatusBarPanel sbarpanel1 = new StatusBarPanel ();
 			StatusBarPanel sbarpanel2 = new StatusBarPanel ();

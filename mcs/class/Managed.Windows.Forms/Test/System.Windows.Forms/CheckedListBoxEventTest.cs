@@ -25,6 +25,7 @@ namespace MonoTests.System.Windows.Forms
 		public void ItemCheckTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			CheckedListBox mychklstbox = new CheckedListBox ();
 			mychklstbox.Items.Add ("test1"); 
 			mychklstbox.Items.Add ("test2"); 

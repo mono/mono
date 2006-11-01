@@ -390,6 +390,7 @@ public class MyScrollBar : HScrollBar
 	    public void BackColorChangedTest ()
 	       {
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       ScrollBar myHscrlbar = new HScrollBar ();
 		       myform.Controls.Add (myHscrlbar);
@@ -404,6 +405,7 @@ public class MyScrollBar : HScrollBar
 	    public void BackgroundImageChangedTest ()
 	       {
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       ScrollBar myHscrlbar = new HScrollBar ();
 		       myform.Controls.Add (myHscrlbar);
@@ -418,6 +420,7 @@ public class MyScrollBar : HScrollBar
 	    public void FontChangedTest ()
 	       {
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       ScrollBar myHscrlbar = new HScrollBar ();
 		       myform.Controls.Add (myHscrlbar);
@@ -434,6 +437,7 @@ public class MyScrollBar : HScrollBar
 	    public void ForeColorChangedTest ()
 	       {
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       ScrollBar myHscrlbar = new HScrollBar ();
 		       myform.Controls.Add (myHscrlbar);
@@ -448,6 +452,7 @@ public class MyScrollBar : HScrollBar
 	    public void ImeModehangedTest ()
 	       {
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       ScrollBar myHscrlbar = new HScrollBar ();
 		       myform.Controls.Add (myHscrlbar);
@@ -462,6 +467,7 @@ public class MyScrollBar : HScrollBar
 	    public void MouseDownTest ()
 	       {
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar myHscrlbar = new MyScrollBar ();
 		       myform.Controls.Add (myHscrlbar);
@@ -477,6 +483,7 @@ public class MyScrollBar : HScrollBar
 	    public void MouseMoveTest ()
 	       {
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar myHscrlbar = new MyScrollBar ();
 		       myform.Controls.Add (myHscrlbar);
@@ -492,6 +499,7 @@ public class MyScrollBar : HScrollBar
 	    public void MouseUpTest ()
 	       {
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar myHscrlbar = new MyScrollBar ();
 		       myform.Controls.Add (myHscrlbar);
@@ -508,6 +516,7 @@ public class MyScrollBar : HScrollBar
 	    public void ScrollTest ()
 	       {
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar myHscrlbar = new MyScrollBar ();
 		       myform.Controls.Add (myHscrlbar);
@@ -523,6 +532,7 @@ public class MyScrollBar : HScrollBar
 	    public void TextChangedTest ()
 	       {
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar myHscrlbar = new MyScrollBar ();
 		       myform.Controls.Add (myHscrlbar);
@@ -538,6 +548,7 @@ public class MyScrollBar : HScrollBar
 	    public void ValueChangeTest ()
 	       {
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar myHscrlbar = new MyScrollBar ();
 		       myform.Controls.Add (myHscrlbar);
@@ -638,6 +649,7 @@ public class MyVScrollBar : VScrollBar
 				 "OnBindingContextChanged"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar s = new MyScrollBar ();
 		       myform.Controls.Add (s);
@@ -657,6 +669,7 @@ public class MyVScrollBar : VScrollBar
 				 "OnInvalidated"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar s = new MyScrollBar ();
 		       myform.Controls.Add (s);
@@ -677,6 +690,7 @@ public class MyVScrollBar : VScrollBar
 				 "OnInvalidated"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar s = new MyScrollBar ();
 		       myform.Controls.Add (s);
@@ -695,6 +709,7 @@ public class MyVScrollBar : VScrollBar
 				 "OnBindingContextChanged"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar s = new MyScrollBar ();
 		       myform.Controls.Add (s);
@@ -713,6 +728,7 @@ public class MyVScrollBar : VScrollBar
 				 "OnBindingContextChanged"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar s = new MyScrollBar ();
 		       myform.Controls.Add (s);
@@ -731,6 +747,7 @@ public class MyVScrollBar : VScrollBar
 				 "OnBindingContextChanged"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar s = new MyScrollBar ();
 		       myform.Controls.Add (s);
@@ -752,6 +769,7 @@ public class MyVScrollBar : VScrollBar
 				 "OnInvalidated"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar s = new MyScrollBar ();
 		       myform.Controls.Add (s);
@@ -771,6 +789,7 @@ public class MyVScrollBar : VScrollBar
 				 "OnImeModeChanged"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar s = new MyScrollBar ();
 		       myform.Controls.Add (s);
@@ -790,6 +809,7 @@ public class MyVScrollBar : VScrollBar
 				 "OnMouseDown"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar s = new MyScrollBar ();
 		       myform.Controls.Add (s);
@@ -810,6 +830,7 @@ public class MyVScrollBar : VScrollBar
 				 "OnMouseHover"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar s = new MyScrollBar ();
 		       myform.Controls.Add (s);
@@ -829,6 +850,7 @@ public class MyVScrollBar : VScrollBar
 				 "OnMouseUp"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar s = new MyScrollBar ();
 		       myform.Controls.Add (s);
@@ -848,6 +870,7 @@ public class MyVScrollBar : VScrollBar
 				 "OnInvalidated"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar s = new MyScrollBar ();
 		       myform.Controls.Add (s);
@@ -868,6 +891,7 @@ public class MyVScrollBar : VScrollBar
 				 "OnValueChanged"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar s = new MyScrollBar ();
 		       myform.Controls.Add (s);
@@ -887,6 +911,7 @@ public class MyVScrollBar : VScrollBar
 				 "OnTextChanged"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar s = new MyScrollBar ();
 		       myform.Controls.Add (s);
@@ -906,6 +931,7 @@ public class MyVScrollBar : VScrollBar
 				 "OnValueChanged"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar s = new MyScrollBar ();
 		       myform.Controls.Add (s);
@@ -1178,6 +1204,7 @@ public class MyScrollBar2 : HScrollBar
 				 "BindingContextChanged"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar2 s = new MyScrollBar2 ();
 		       myform.Controls.Add (s);
@@ -1197,6 +1224,7 @@ public class MyScrollBar2 : HScrollBar
 				 "BackColorChanged"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar2 s = new MyScrollBar2 ();
 		       myform.Controls.Add (s);
@@ -1218,6 +1246,7 @@ public class MyScrollBar2 : HScrollBar
 
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar2 s = new MyScrollBar2 ();
 		       myform.Controls.Add (s);
@@ -1236,6 +1265,7 @@ public class MyScrollBar2 : HScrollBar
 				 "BindingContextChanged"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar2 s = new MyScrollBar2 ();
 		       myform.Controls.Add (s);
@@ -1254,6 +1284,7 @@ public class MyScrollBar2 : HScrollBar
 				 "BindingContextChanged"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar2 s = new MyScrollBar2 ();
 		       myform.Controls.Add (s);
@@ -1272,6 +1303,7 @@ public class MyScrollBar2 : HScrollBar
 				 "BindingContextChanged"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar2 s = new MyScrollBar2 ();
 		       myform.Controls.Add (s);
@@ -1293,6 +1325,7 @@ public class MyScrollBar2 : HScrollBar
 				 "ForeColorChanged"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar2 s = new MyScrollBar2 ();
 		       myform.Controls.Add (s);
@@ -1312,6 +1345,7 @@ public class MyScrollBar2 : HScrollBar
 				 "ImeModeChanged"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar2 s = new MyScrollBar2 ();
 		       myform.Controls.Add (s);
@@ -1331,6 +1365,7 @@ public class MyScrollBar2 : HScrollBar
 				 "MouseDown"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar2 s = new MyScrollBar2 ();
 		       myform.Controls.Add (s);
@@ -1350,6 +1385,7 @@ public class MyScrollBar2 : HScrollBar
 				 "MouseMove"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar2 s = new MyScrollBar2 ();
 		       myform.Controls.Add (s);
@@ -1369,6 +1405,7 @@ public class MyScrollBar2 : HScrollBar
 				 "MouseUp"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar2 s = new MyScrollBar2 ();
 		       myform.Controls.Add (s);
@@ -1388,6 +1425,7 @@ public class MyScrollBar2 : HScrollBar
 				 "Invalidated"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar2 s = new MyScrollBar2 ();
 		       myform.Controls.Add (s);
@@ -1409,6 +1447,7 @@ public class MyScrollBar2 : HScrollBar
 				 "ValueChanged"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar2 s = new MyScrollBar2 ();
 		       myform.Controls.Add (s);
@@ -1428,6 +1467,7 @@ public class MyScrollBar2 : HScrollBar
 				 "TextChanged"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar2 s = new MyScrollBar2 ();
 		       myform.Controls.Add (s);
@@ -1447,6 +1487,7 @@ public class MyScrollBar2 : HScrollBar
 				 "ValueChanged"
 		       };
 		       Form myform = new Form ();
+		       myform.ShowInTaskbar = false;
 		       myform.Visible = true;
 		       MyScrollBar2 s = new MyScrollBar2 ();
 		       myform.Controls.Add (s);

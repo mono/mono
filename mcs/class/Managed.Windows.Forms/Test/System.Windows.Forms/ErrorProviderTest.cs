@@ -60,6 +60,7 @@ namespace MonoTests.System.Windows.Forms
 		{
 			Control myControl = new Control ();
 			Form myForm = new Form ();
+			myForm.ShowInTaskbar = false;
 			ToolBar myToolBar = new ToolBar ();
 			ErrorProvider myErrorProvider = new ErrorProvider ();
 			Assert.AreEqual (myErrorProvider.CanExtend (myControl), true, "#ext1");
@@ -72,6 +73,7 @@ namespace MonoTests.System.Windows.Forms
 		public void GetandSetErrorTest ()
 		{
 			Form myForm = new Form ();
+			myForm.ShowInTaskbar = false;
 			Label myLabel = new Label ();
 			ErrorProvider myErrorProvider = new ErrorProvider ();
 			myErrorProvider.SetError(myLabel, "New Error msg for Label");
@@ -92,6 +94,7 @@ namespace MonoTests.System.Windows.Forms
 		public void GetandSetIconPaddingTest ()
 		{
 			Form myForm = new Form ();
+			myForm.ShowInTaskbar = false;
 			ErrorProvider myErrorProvider = new ErrorProvider ();
 			myErrorProvider.SetIconPadding (myForm, 2);
 			Assert.AreEqual (2, myErrorProvider.GetIconPadding (myForm), "#getset3");

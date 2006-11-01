@@ -62,6 +62,7 @@ namespace MonoTests.System.Windows.Forms
 		public void GetFormTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			myform.Name = "New Form";
 			MainMenu mymainmenu1 = new MainMenu ();
 			MenuItem menuitem1 = new MenuItem ();
@@ -76,6 +77,7 @@ namespace MonoTests.System.Windows.Forms
 		public void GetContextMenuTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			ContextMenu mycontextmenu = new ContextMenu ();
 			myform.ContextMenu= mycontextmenu;
 			MenuItem menuItem1 = new MenuItem ();

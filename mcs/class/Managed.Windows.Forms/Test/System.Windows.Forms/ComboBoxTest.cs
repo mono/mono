@@ -68,6 +68,7 @@ namespace MonoTests.System.Windows.Forms
 		public void BeginEndUpdateTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			myform.Visible = true;
 			ComboBox cmbbox = new ComboBox ();
 			cmbbox.Items.Add ("A");
@@ -220,6 +221,7 @@ namespace MonoTests.System.Windows.Forms
 			eventFired = false;
 			drawItemsArgs = null;
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			ComboBox cmbbox = new ComboBox ();
 			cmbbox.DropDownStyle = ComboBoxStyle.Simple;
 			cmbbox.DrawMode = DrawMode.OwnerDrawFixed;

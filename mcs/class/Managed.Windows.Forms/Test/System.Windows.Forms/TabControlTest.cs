@@ -39,6 +39,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void TabControlPropertyTest ()
 		{
 			Form myForm = new Form ();
+			myForm.ShowInTaskbar = false;
 			TabControl myTabControl = new TabControl ();
 			myTabControl.Visible = true;
 			myTabControl.Name = "Mono TabControl";
@@ -149,6 +150,7 @@ namespace MonoTests.System.Windows.Forms {
 			c.TabPages.Add (new TabPage ());
 			Assert.AreEqual (0, c.SelectedIndex, "#1");
 			Form f = new Form ();
+			f.ShowInTaskbar = false;
 			f.Controls.Add (c);
 			f.Show ();
 			c.SelectedIndex = 2; // beyond the pages - ignored

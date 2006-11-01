@@ -22,6 +22,7 @@ namespace MonoTests.System.Windows.Forms
 		public void GroupBoxPropertyTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			GroupBox mygrpbox = new GroupBox ();
 			RadioButton myradiobutton1 = new RadioButton ();
 			RadioButton myradiobutton2 = new RadioButton ();

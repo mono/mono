@@ -60,6 +60,7 @@ namespace MonoTests.System.Windows.Forms
 		public void PanelClickTest ()
 		{
 			Form myForm = new Form ();
+			myForm.ShowInTaskbar = false;
 			RadioButton rButton1 = new RadioButton ();
 			rButton1.Select ();
 			rButton1.Visible = true;
@@ -76,6 +77,7 @@ namespace MonoTests.System.Windows.Forms
 		public void ApperanceChangedTest ()
 		{
 			Form myForm = new Form ();
+			myForm.ShowInTaskbar = false;
 			RadioButton rButton1 = new RadioButton ();
 			rButton1.Select ();
 			rButton1.Visible = true;
@@ -92,6 +94,7 @@ namespace MonoTests.System.Windows.Forms
 		public void CheckedChangedTest ()
 		{
 			Form myForm = new Form ();
+			myForm.ShowInTaskbar = false;
 			RadioButton rButton1 = new RadioButton ();
 			rButton1.Select ();
 			rButton1.Visible = true;

@@ -50,6 +50,7 @@ namespace MonoTests.System.Windows.Forms
 		public void SelectedObjects_Multiple ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			Button button1 = new Button ();
 			Button button2 = new Button ();
 

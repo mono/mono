@@ -25,6 +25,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void SimpleShowTest ()
 		{
 			Form f = new Form ();
+			f.ShowInTaskbar = false;
 			TreeView tv = new TreeView ();
 			//tv.BorderStyle = BorderStyle.FixedSingle;
 			tv.Location = new Point (20, 20);

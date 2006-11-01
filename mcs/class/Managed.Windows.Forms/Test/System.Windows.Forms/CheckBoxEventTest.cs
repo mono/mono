@@ -25,6 +25,7 @@ namespace MonoTests.System.Windows.Forms
 		public void ApperanceEventTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			myform.Visible = true;
 			CheckBox chkbox = new CheckBox ();
 			chkbox.Visible = true;
@@ -39,6 +40,7 @@ namespace MonoTests.System.Windows.Forms
 		public void CheckedChangedEventTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			eventhandled = false;
 			myform.Visible = true;
 			CheckBox chkbox = new CheckBox ();
@@ -54,6 +56,7 @@ namespace MonoTests.System.Windows.Forms
 		public void CheckStateChangedEventTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			eventhandled = false;
 			myform.Visible = true;
 			CheckBox chkbox = new CheckBox ();

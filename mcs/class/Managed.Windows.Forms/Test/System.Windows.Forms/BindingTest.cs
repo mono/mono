@@ -91,6 +91,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void BindingContextChangedTest2 ()
 		{
 			Form f = new Form ();
+			f.ShowInTaskbar = false;
 			Control c = new Control ();
 			f.Controls.Add (c);
 
@@ -106,6 +107,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void BindingContextChangedTest3 ()
 		{
 			Form f = new Form ();
+			f.ShowInTaskbar = false;
 
 			Control c = new Control ();
 			f.Controls.Add (c);

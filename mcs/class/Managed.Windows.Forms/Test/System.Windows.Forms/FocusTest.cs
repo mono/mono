@@ -96,6 +96,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void ControlSelectNextFlatTest ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 
 			form.Controls.AddRange (flat_controls);
 			form.Show ();
@@ -134,6 +135,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void SelectNextControlNullTest ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 
 			form.Show ();
 			form.Controls.AddRange (flat_controls);
@@ -156,6 +158,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void SelectControlTest ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 
 			form.Show ();
 			form.Controls.AddRange (flat_controls);
@@ -175,6 +178,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void EnsureDirectedSelectUsed ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 
 			form.Show ();
 			form.Controls.AddRange (flat_controls);
@@ -188,6 +192,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void ContainerSelectDirectedForward ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ContainerPoker cp = new ContainerPoker ("container-a");
 			
 			form.Show ();
@@ -216,6 +221,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void ContainerSelectDirectedBackward ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ContainerPoker cp = new ContainerPoker ("container-a");
 			
 			form.Show ();
@@ -245,6 +251,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void ContainerSelectUndirectedForward ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ContainerPoker cp = new ContainerPoker ("container-a");
 			
 			form.Show ();
@@ -265,6 +272,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void GetNextControlFromForm ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ContainerPoker con_a = new ContainerPoker ("container-a");
 			ContainerPoker con_b = new ContainerPoker ("container-b");
 			ContainerPoker con_c = new ContainerPoker ("container-c");
@@ -329,6 +337,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void GetNextControlFromContainerA ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ContainerPoker con_a = new ContainerPoker ("container-a");
 			ContainerPoker con_b = new ContainerPoker ("container-b");
 			ContainerPoker con_c = new ContainerPoker ("container-c");
@@ -393,6 +402,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void GetNextControlFromContainerB ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ContainerPoker con_a = new ContainerPoker ("container-a");
 			ContainerPoker con_b = new ContainerPoker ("container-b");
 			ContainerPoker con_c = new ContainerPoker ("container-c");
@@ -457,6 +467,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void GetNextControlFromContainerC ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ContainerPoker con_a = new ContainerPoker ("container-a");
 			ContainerPoker con_b = new ContainerPoker ("container-b");
 			ContainerPoker con_c = new ContainerPoker ("container-c");
@@ -521,6 +532,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void GetNextControl2FromForm ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ContainerPoker con_a = new ContainerPoker ("container-a");
 			ContainerPoker con_b = new ContainerPoker ("container-b");
 			ContainerPoker con_c = new ContainerPoker ("container-c");
@@ -562,6 +574,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void GetNextControlFlat ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 
 			form.Controls.AddRange (flat_controls);
 			form.Show ();
@@ -592,6 +605,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void GetNextGroupBoxControlFlat ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			GroupBoxPoker gbp = new GroupBoxPoker ("group-box");
 
 			gbp.Controls.AddRange (flat_controls);
@@ -630,6 +644,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void GetNextControlFromTabControl ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			TabControl tab = new TabControl ();
 			TabPage page1 = new TabPage ("page one");
 			TabPage page2 = new TabPage ("page two");
@@ -658,6 +673,7 @@ namespace MonoTests.System.Windows.Forms {
 		[Category ("NotWorking")]
 		public void GetNextControlFromTabControl2 () {
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			TabControl tab = new TabControl ();
 			
 			TabPage page1 = new TabPage ("page one");
@@ -706,6 +722,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void GetNextControlTabIndex ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ControlPoker [] ctrls = new ControlPoker [5];
 
 			for (int i = 0; i < 5; i++) {
@@ -742,6 +759,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void GetNextControlDuplicateTabIndex ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ControlPoker [] ctrls = new ControlPoker [5];
 
 			for (int i = 0; i < 5; i++) {
@@ -780,6 +798,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void GetNextControlComposite ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ControlPoker a = new ControlPoker ("a");
 			ControlPoker b = new ControlPoker ("b");
 			ControlPoker c = new ControlPoker ("c");
@@ -801,6 +820,7 @@ namespace MonoTests.System.Windows.Forms {
 		public void FocusSetsActive ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 
 			form.Controls.AddRange (flat_controls);
 			form.Show ();

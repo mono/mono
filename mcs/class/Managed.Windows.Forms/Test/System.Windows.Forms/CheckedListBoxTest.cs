@@ -21,6 +21,7 @@ namespace MonoTests.System.Windows.Forms
 		public void CheckedListBoxPropertyTest () 
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			myform.Visible = true;
 			CheckedListBox mychklistbox = new CheckedListBox ();
 			ArrayList checked_items = new ArrayList (2);
@@ -59,6 +60,7 @@ namespace MonoTests.System.Windows.Forms
 		public void GetItemCheckedTest ()
 		{
 			Form f = new Form ();
+			f.ShowInTaskbar = false;
 			f.Visible = true;
 			CheckedListBox mychklistbox = new CheckedListBox ();
 			mychklistbox.Items.Add ("test1",true);
@@ -85,6 +87,7 @@ namespace MonoTests.System.Windows.Forms
 		public void GetItemCheckStateTest ()
 		{
 			Form f = new Form ();
+			f.ShowInTaskbar = false;
 			f.Visible = true;
 			CheckedListBox mychklistbox = new CheckedListBox ();
 			mychklistbox.Items.Add ("test1",true);
@@ -102,6 +105,7 @@ namespace MonoTests.System.Windows.Forms
 		public void SetItemCheckedTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			myform.Visible = true;
 			CheckedListBox mychklistbox = new CheckedListBox ();
 			mychklistbox.Items.Add ("test1");
@@ -119,6 +123,7 @@ namespace MonoTests.System.Windows.Forms
 		public void SetItemCheckStateTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			myform.Visible = true;
 			CheckedListBox mychklistbox = new CheckedListBox ();
 			mychklistbox.Items.Add ("test1");

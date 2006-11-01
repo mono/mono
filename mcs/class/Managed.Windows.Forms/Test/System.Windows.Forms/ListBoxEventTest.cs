@@ -26,6 +26,7 @@ namespace MonoTests.System.Windows.Forms
 		public void DrawItemTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			ListBox lb1 = new ListBox ();
 			lb1.Items.Add ("A");
 			// Test DrawItem Event
@@ -51,6 +52,7 @@ namespace MonoTests.System.Windows.Forms
 			public void MeasureItemTest ()
 			{
 				Form myform = new Form ();
+				myform.ShowInTaskbar = false;
 				myform.Visible = true;
 				ListBox lb1 = new ListBox ();
 				lb1.Items.Add ("B");

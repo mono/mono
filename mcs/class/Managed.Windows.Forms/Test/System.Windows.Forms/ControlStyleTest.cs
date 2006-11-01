@@ -564,7 +564,10 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(Form_want, GetStyles(new Form()), "FormStyles");
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			Assert.AreEqual(Form_want, GetStyles(f), "FormStyles");
+			f.Dispose ();
 		}
 
 

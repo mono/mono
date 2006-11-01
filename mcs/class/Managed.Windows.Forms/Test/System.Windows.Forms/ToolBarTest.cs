@@ -24,6 +24,7 @@ namespace MonoTests.System.Windows.Forms
 		public void ToolBarPropertyTest ()
 		{	
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			ToolBar myToolBar = new ToolBar ();
 			ToolBarButton myToolBarButton1 = new ToolBarButton ();
 			ToolBarButton myToolBarButton2 = new ToolBarButton ();

@@ -102,7 +102,10 @@ namespace TestApp {
 				TestStyles(file, new ProgressBar(), "ProgressBar");
 				TestStyles(file, new ScrollableControl(), "ScrollableControl");
 				TestStyles(file, new ContainerControl(), "ContainerControl");
-				TestStyles(file, new Form(), "Form");
+				Form f = new Form ();
+				f.ShowInTaskbar = false;
+				TestStyles(file, f, "Form");
+				f.Dispose ();
 				TestStyles(file, new PropertyGrid(), "PropertyGrid");
 				TestStyles(file, new DomainUpDown(), "DomainUpDown");
 				TestStyles(file, new NumericUpDown(), "NumericUpDown");

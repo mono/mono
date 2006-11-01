@@ -70,6 +70,7 @@ namespace MonoTests.System.Windows.Forms
 			public void RecreateHandleEvenTest ()
 			{
 				Form myform = new Form ();
+				myform.ShowInTaskbar = false;
 				Graphics mygraphics = null;
 				ImageList myimagelist = new ImageList ();
 				Image myImage =	Image.FromFile("M.gif");

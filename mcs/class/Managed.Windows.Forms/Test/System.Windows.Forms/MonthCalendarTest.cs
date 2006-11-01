@@ -23,6 +23,7 @@ namespace MonoTests.System.Windows.Forms
 		public void MonthCalendarPropertyTest ()
 		{
 			Form myfrm = new Form ();
+			myfrm.ShowInTaskbar = false;
 			MonthCalendar myMonthCal1 = new MonthCalendar ();
 			MonthCalendar myMonthCal2 = new MonthCalendar ();
 			myMonthCal1.Name = "MonthCendar";
@@ -117,6 +118,7 @@ namespace MonoTests.System.Windows.Forms
 		public void AddAnnuallyBoldedDateTest ()
 		{
 			Form myForm = new Form ();
+			myForm.ShowInTaskbar = false;
 			MonthCalendar myMonthCal = new MonthCalendar ();
 			myMonthCal.AddAnnuallyBoldedDate (new DateTime (2005, 09, 01));
 			myForm.Controls.Add (myMonthCal);
@@ -128,6 +130,7 @@ namespace MonoTests.System.Windows.Forms
 		public void AddBoldedDateTest ()
 		{
 			Form myForm = new Form ();
+			myForm.ShowInTaskbar = false;
 			MonthCalendar myMonthCal = new MonthCalendar ();
 			myMonthCal.AddBoldedDate (new DateTime (2005, 09, 02));
 			myForm.Controls.Add (myMonthCal);
@@ -139,6 +142,7 @@ namespace MonoTests.System.Windows.Forms
 		public void AddMonthlyBoldedDateTest ()
 		{
 			Form myForm = new Form ();
+			myForm.ShowInTaskbar = false;
 			MonthCalendar myMonthCal = new MonthCalendar ();
 			myMonthCal.AddMonthlyBoldedDate (new DateTime (2005, 09, 03));
 			myForm.Controls.Add (myMonthCal);
@@ -150,6 +154,7 @@ namespace MonoTests.System.Windows.Forms
 		public void GetDispalyRangeTest ()
 		{
 			Form myForm = new Form ();
+			myForm.ShowInTaskbar = false;
 			MonthCalendar myMonthCal = new MonthCalendar ();
 			myForm.Controls.Add (myMonthCal);
 			SelectionRange mySelRange = new SelectionRange ();
@@ -164,6 +169,7 @@ namespace MonoTests.System.Windows.Forms
 		public void HitTest ()
 		{
 			Form myForm = new Form ();
+			myForm.ShowInTaskbar = false;
 			MonthCalendar myMonthCal = new MonthCalendar ();
 			myForm.Controls.Add (myMonthCal);
 			Assert.AreEqual (new DateTime (01, 01, 01), myMonthCal.HitTest(10, 10).Time, "#Hit1");

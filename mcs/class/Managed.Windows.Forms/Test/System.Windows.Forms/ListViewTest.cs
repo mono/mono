@@ -63,6 +63,7 @@ namespace MonoTests.System.Windows.Forms
 		public void ArrangeIconsTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			ListView mylistview = new ListView ();
 			myform.Controls.Add (mylistview);
 			mylistview.Items.Add ("Item 1");
@@ -76,6 +77,7 @@ namespace MonoTests.System.Windows.Forms
 		public void BeginEndUpdateTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			myform.Visible = true;
 			ListView mylistview = new ListView();
 			mylistview.Items.Add ("A");
@@ -93,6 +95,7 @@ namespace MonoTests.System.Windows.Forms
 		public void CheckBoxes ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ListView lvw = new ListView ();
 			form.Controls.Add (lvw);
 			lvw.Items.Add ("A");
@@ -135,6 +138,7 @@ namespace MonoTests.System.Windows.Forms
 		public void ClearTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			myform.Visible = true;
 			ListView mylistview = new ListView ();
 			mylistview.Items.Add ("A");
@@ -153,6 +157,7 @@ namespace MonoTests.System.Windows.Forms
 		public void EnsureVisibleTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			myform.Visible = true;
 			ListView mylistview = new ListView ();
 			mylistview.Items.Add ("A");
@@ -200,6 +205,7 @@ namespace MonoTests.System.Windows.Forms
 		public void MultiSelect ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ListView lvw = CreateListView (View.Details);
 			form.Controls.Add (lvw);
 			lvw.MultiSelect = true;
@@ -283,6 +289,7 @@ namespace MonoTests.System.Windows.Forms
 		public void Selected ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ListView lvw = CreateListView (View.Details);
 			form.Controls.Add (lvw);
 			lvw.MultiSelect = true;
@@ -431,6 +438,7 @@ namespace MonoTests.System.Windows.Forms
 			int compareCount = 0;
 
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ListView lvw = CreateListView (view);
 			form.Controls.Add (lvw);
 			Assert.IsNull (lvw.ListViewItemSorter, "#A");
@@ -732,6 +740,7 @@ namespace MonoTests.System.Windows.Forms
 		private void AssertSortIcon_NotCreated (View view)
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ListView lvw = CreateListView (view);
 			form.Controls.Add (lvw);
 
@@ -880,6 +889,7 @@ namespace MonoTests.System.Windows.Forms
 			int compareCount = 0;
 
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ListView lvw = CreateListView (view);
 			form.Controls.Add (lvw);
 			Assert.IsNull (lvw.ListViewItemSorter, "#A");
@@ -1234,6 +1244,7 @@ namespace MonoTests.System.Windows.Forms
 		private void AssertSortNoIcon_NotCreated (View view)
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ListView lvw = CreateListView (view);
 			form.Controls.Add (lvw);
 
@@ -1432,6 +1443,7 @@ namespace MonoTests.System.Windows.Forms
 		private void AssertSort_Checked (View view)
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ListView lvw = CreateListView (view);
 			lvw.CheckBoxes = true;
 			form.Controls.Add (lvw);
@@ -1500,6 +1512,7 @@ namespace MonoTests.System.Windows.Forms
 		private void AssertSort_Selected (View view)
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ListView lvw = CreateListView (view);
 			form.Controls.Add (lvw);
 

@@ -153,6 +153,7 @@ namespace MonoTests.System.Windows.Forms
 		public void CheckedItemCollectionTest_Order ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ListView lvw = new ListView ();
 			lvw.CheckBoxes = true;
 			form.Controls.Add (lvw);
@@ -294,6 +295,7 @@ namespace MonoTests.System.Windows.Forms
 		public void SelectedItemCollectionTest_Clear ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ListView lvw = new ListView ();
 			form.Controls.Add (lvw);
 			ListViewItem item = lvw.Items.Add ("Title");
@@ -324,6 +326,7 @@ namespace MonoTests.System.Windows.Forms
 		public void SelectedItemCollectionTest_Contains ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ListView lvw = new ListView ();
 			form.Controls.Add (lvw);
 			ListViewItem item = lvw.Items.Add ("Title");
@@ -348,6 +351,7 @@ namespace MonoTests.System.Windows.Forms
 		public void SelectedItemCollectionTest_CopyTo ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ListView lvw = new ListView ();
 			form.Controls.Add (lvw);
 			ListViewItem item = lvw.Items.Add ("Title");
@@ -376,6 +380,7 @@ namespace MonoTests.System.Windows.Forms
 		public void SelectedItemCollectionTest_Count ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ListView lvw = new ListView ();
 			form.Controls.Add (lvw);
 			ListViewItem item = lvw.Items.Add ("Title");
@@ -391,6 +396,7 @@ namespace MonoTests.System.Windows.Forms
 		public void SelectedItemCollectionTest_GetEnumerator ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ListView lvw = new ListView ();
 			form.Controls.Add (lvw);
 			ListViewItem item = lvw.Items.Add ("Title");
@@ -409,6 +415,7 @@ namespace MonoTests.System.Windows.Forms
 		public void SelectedItemCollectionTest_Indexer ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ListView lvw = new ListView ();
 			form.Controls.Add (lvw);
 			ListViewItem item = lvw.Items.Add ("Title");
@@ -439,6 +446,7 @@ namespace MonoTests.System.Windows.Forms
 		public void SelectedItemCollectionTest_IndexOf ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ListView lvw = new ListView ();
 			form.Controls.Add (lvw);
 			ListViewItem item = lvw.Items.Add ("Title");
@@ -464,6 +472,7 @@ namespace MonoTests.System.Windows.Forms
 		public void SelectedItemCollectionTest_Order ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ListView lvw = new ListView ();
 			lvw.MultiSelect = true;
 			form.Controls.Add (lvw);
@@ -608,6 +617,7 @@ namespace MonoTests.System.Windows.Forms
 		public void ListViewItemCollectionTest_Remove ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ListView lvw = new ListView ();
 			form.Controls.Add (lvw);
 			lvw.MultiSelect = true;
@@ -665,6 +675,7 @@ namespace MonoTests.System.Windows.Forms
 		public void ListViewItemCollectionTest_RemoveAt ()
 		{
 			Form form = new Form ();
+			form.ShowInTaskbar = false;
 			ListView lvw = new ListView ();
 			form.Controls.Add (lvw);
 			lvw.MultiSelect = true;

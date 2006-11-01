@@ -167,6 +167,7 @@ namespace MonoTests.System.Windows.Forms
 	   public void AutoSizeChangedChangedTest ()
 	     {
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     Label l = new Label ();
 		     l.Visible = true;
@@ -182,6 +183,7 @@ namespace MonoTests.System.Windows.Forms
 	   public void BackgroundImageChangedTest ()
 	     {
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     Label l = new Label ();
 		     l.Visible = true;
@@ -197,6 +199,7 @@ namespace MonoTests.System.Windows.Forms
 	   public void ImeModeChangedTest ()
 	     {
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     Label l = new Label ();
 		     l.Visible = true;
@@ -212,6 +215,7 @@ namespace MonoTests.System.Windows.Forms
 	   public void KeyDownTest ()
 	     {
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     MyLabel l = new MyLabel ();
 		     l.Visible = true;
@@ -228,6 +232,7 @@ namespace MonoTests.System.Windows.Forms
 	   public void TabStopChangedTest ()
 	     {
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     Label l = new Label ();
 		     l.Visible = true;
@@ -243,6 +248,7 @@ namespace MonoTests.System.Windows.Forms
 	   public void TextAlignChangedTest ()
 	     {
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     Label l = new Label ();
 		     l.Visible = true;
@@ -479,6 +485,7 @@ public class MyLabel : Label
 			       "OnBindingContextChanged"
 		     };
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     MyLabel l = new MyLabel ();
 		     myform.Controls.Add (l);
@@ -500,6 +507,7 @@ public class MyLabel : Label
 			       "OnLayout"
 		     };
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     MyLabel l = new MyLabel ();
 		     myform.Controls.Add (l);
@@ -523,6 +531,7 @@ public class MyLabel : Label
 			       "OnAutoSizeChanged"
 		     };
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     MyLabel l = new MyLabel ();
 		     myform.Controls.Add (l);
@@ -543,6 +552,7 @@ public class MyLabel : Label
 			       "OnInvalidated"
 		     };
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     MyLabel l = new MyLabel ();
 		     myform.Controls.Add (l);
@@ -562,6 +572,7 @@ public class MyLabel : Label
 			       "OnImeModeChanged"
 		     };
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     MyLabel l = new MyLabel ();
 		     myform.Controls.Add (l);
@@ -583,6 +594,7 @@ public class MyLabel : Label
 			       "OnKeyUp,A"
 		     };
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     MyLabel l = new MyLabel ();
 		     myform.Controls.Add (l);
@@ -601,6 +613,7 @@ public class MyLabel : Label
 			       "OnBindingContextChanged"
 		     };
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     MyLabel l = new MyLabel ();
 		     myform.Controls.Add (l);
@@ -620,6 +633,7 @@ PrintList("TabStopChanged", l.Results);
 			       "OnInvalidated"
 		     };
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     MyLabel l = new MyLabel ();
 		     myform.Controls.Add (l);
@@ -635,6 +649,7 @@ PrintList("TabStopChanged", l.Results);
 		     Rectangle rect = new Rectangle (new Point (0,0), new Size (2, 2));
 
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     MyLabelInvalidate l = new MyLabelInvalidate ();
 		     myform.Controls.Add (l);
@@ -666,6 +681,7 @@ PrintList("TabStopChanged", l.Results);
 			       "OnPaint"
 		     };
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     MyLabel l = new MyLabel ();
 		     myform.Controls.Add (l);
@@ -851,6 +867,7 @@ public class MyLabel2 : Label
 			       "BindingContextChanged"
 		     };
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     MyLabel2 l = new MyLabel2 ();
 		     myform.Controls.Add (l);
@@ -872,6 +889,7 @@ public class MyLabel2 : Label
 			       "SizeChanged"
 		     };
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     MyLabel2 l = new MyLabel2 ();
 		     myform.Controls.Add (l);
@@ -895,6 +913,7 @@ public class MyLabel2 : Label
 			       "AutoSizeChanged"
 		     };
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     MyLabel2 l = new MyLabel2 ();
 		     myform.Controls.Add (l);
@@ -915,6 +934,7 @@ public class MyLabel2 : Label
 			       "BackgroundImageChanged"
 		     };
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     MyLabel2 l = new MyLabel2 ();
 		     myform.Controls.Add (l);
@@ -934,6 +954,7 @@ public class MyLabel2 : Label
 			       "ImeModeChanged"
 		     };
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     MyLabel2 l = new MyLabel2 ();
 		     myform.Controls.Add (l);
@@ -955,6 +976,7 @@ public class MyLabel2 : Label
 			       "KeyUp,A"
 		     };
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     MyLabel2 l = new MyLabel2 ();
 		     myform.Controls.Add (l);
@@ -973,6 +995,7 @@ public class MyLabel2 : Label
 			       "BindingContextChanged"
 		     };
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     MyLabel2 l = new MyLabel2 ();
 		     myform.Controls.Add (l);
@@ -992,6 +1015,7 @@ public class MyLabel2 : Label
 			       "Invalidated"
 		     };
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     MyLabel2 l = new MyLabel2 ();
 		     myform.Controls.Add (l);
@@ -1013,6 +1037,7 @@ public class MyLabel2 : Label
 			       "Paint"
 		     };
 		     Form myform = new Form ();
+		     myform.ShowInTaskbar = false;
 		     myform.Visible = true;
 		     MyLabel2 l = new MyLabel2 ();
 		     myform.Controls.Add (l);

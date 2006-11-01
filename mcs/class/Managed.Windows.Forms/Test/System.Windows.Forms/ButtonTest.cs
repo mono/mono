@@ -68,6 +68,7 @@ namespace MonoTests.System.Windows.Forms
 		public void DialogResultTest ()
 		{
 			Form f = new Form ();
+			f.ShowInTaskbar = false;
 			Button B1 = new Button ();
 			B1.Text = "DialogResult";
 			B1.DialogResult = DialogResult.No;
@@ -82,6 +83,7 @@ namespace MonoTests.System.Windows.Forms
 		public void PerformClickTest ()
 		{
 			Form f = new Form ();
+			f.ShowInTaskbar = false;
 			Button B1 = new Button ();
 			B1.Text = "DialogResult";
 			B1.Visible = true;

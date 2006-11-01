@@ -29,6 +29,7 @@ namespace MonoTests.System.Windows.Forms
 		public void ActivatedTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			myform.Activated += new EventHandler (New_EventHandler);
 			myform.Activate ();
 			myform.ShowDialog ();
@@ -39,6 +40,7 @@ namespace MonoTests.System.Windows.Forms
 		public void ClosedTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			myform.Closed += new EventHandler (New_EventHandler);
 			eventhandled = false;
 			myform.Close ();
@@ -50,6 +52,7 @@ namespace MonoTests.System.Windows.Forms
 		public void DeactivateTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			myform.Deactivate += new EventHandler (New_EventHandler);
 			eventhandled = false;
 			myform.Close ();
@@ -62,6 +65,7 @@ namespace MonoTests.System.Windows.Forms
 		public void LoadTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			myform.Load += new EventHandler (New_EventHandler);
 			eventhandled = false;
 			myform.ShowDialog ();
@@ -92,6 +96,7 @@ namespace MonoTests.System.Windows.Forms
 		public void MaximumSizeChangedTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			myform.MaximumSizeChanged += new EventHandler (New_EventHandler);
 			eventhandled = false;
 			myform.MaximumSize = new Size (500, 500);
@@ -103,6 +108,7 @@ namespace MonoTests.System.Windows.Forms
 		public void MdiChildActivateTest ()
 		{
 			Form parent = new Form ();
+			parent.ShowInTaskbar = false;
 			Form child = new Form ();
 			parent.IsMdiContainer = true;
 			child.IsMdiContainer = false;
@@ -124,6 +130,7 @@ namespace MonoTests.System.Windows.Forms
 		public void MinimumSizeChangedTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			myform.MinimumSizeChanged += new EventHandler (New_EventHandler);
 			eventhandled = false;
 			myform.MinimumSize = new Size(100, 100);
@@ -147,6 +154,7 @@ namespace MonoTests.System.Windows.Forms
 		public void ClosingEventTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			myform.Closing += new CancelEventHandler (Closing_Handler);
 			myform.Show ();
 			args = null;
@@ -174,6 +182,7 @@ namespace MonoTests.System.Windows.Forms
 		public void InputLanguageChangedEventTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			CultureInfo oldci = Thread.CurrentThread.CurrentCulture;
 			CultureInfo oldcui = Thread.CurrentThread.CurrentUICulture;
 			InputLanguage oldil = InputLanguage.CurrentInputLanguage;
@@ -212,6 +221,7 @@ namespace MonoTests.System.Windows.Forms
 		public void InputLanguageChangingEventTest ()		
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			CultureInfo oldci = Thread.CurrentThread.CurrentCulture;
 			CultureInfo oldcui = Thread.CurrentThread.CurrentUICulture;
 			InputLanguage oldil = InputLanguage.CurrentInputLanguage;

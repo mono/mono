@@ -23,6 +23,7 @@ namespace MonoTests.System.Windows.Forms
 		public void FormPropertyTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			myform.Visible = true;
 			myform.Text = "NewForm";
 			myform.Name = "FormTest";
@@ -85,6 +86,7 @@ namespace MonoTests.System.Windows.Forms
 		public void ActivateTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			myform.Visible = true;
 			myform.Text = "NewForm";
 			myform.Name = "FormTest";
@@ -97,8 +99,10 @@ namespace MonoTests.System.Windows.Forms
 		public void AddOwnedFormTest ()
 		{
 			Form parent = new Form ();
+			parent.ShowInTaskbar = false;
 			parent.Text = "NewParent";
 			Form ownedForm = new Form ();
+			ownedForm.ShowInTaskbar = false;
 			ownedForm.Text = "Owned Form";
 			parent.AddOwnedForm (ownedForm);
 			ownedForm.Show ();
@@ -111,6 +115,7 @@ namespace MonoTests.System.Windows.Forms
 		public void CloseTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			myform.Visible = true;
 			myform.Text = "NewForm";
 			myform.Name = "FormTest";
@@ -124,6 +129,7 @@ namespace MonoTests.System.Windows.Forms
 		public void LayoutMdiTest ()
 		{
 			Form parent = new Form ();
+			parent.ShowInTaskbar = false;
 			Form child = new Form ();
 			parent.IsMdiContainer = true;
 			child.IsMdiContainer = false;
@@ -137,6 +143,7 @@ namespace MonoTests.System.Windows.Forms
 		public void RemoveOwnedFormTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			myform.Text = "NewForm";
 			myform.Name = "FormTest";
 			myform.RemoveOwnedForm (myform);
@@ -149,6 +156,7 @@ namespace MonoTests.System.Windows.Forms
 		public void SetDesktopBoundsTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			myform.Visible = true;
 			myform.Text = "NewForm";
 			myform.Name = "FormTest";
@@ -161,6 +169,7 @@ namespace MonoTests.System.Windows.Forms
 		public void SetDesktopLocationTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			myform.Visible = true;
 			myform.Text = "NewForm";
 			myform.Name = "FormTest";
@@ -173,6 +182,7 @@ namespace MonoTests.System.Windows.Forms
 		public void ShowDialogTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			myform.Visible = false;
 			myform.Text = "NewForm";
 			myform.Name = "FormTest";
@@ -185,6 +195,7 @@ namespace MonoTests.System.Windows.Forms
 		public void SetDialogResult ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			try {
 				myform.DialogResult = (DialogResult) (-1);
 				Assert.Fail ("#48");

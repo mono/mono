@@ -22,6 +22,7 @@ namespace MonoTests.System.Windows.Forms
 		public void CheckBoxPropertyTest () 
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			CheckBox mychkbox = new CheckBox(); 
 			myform.Controls.Add (mychkbox);
 			Assert.AreEqual (Appearance.Normal, mychkbox.Appearance, "#1");

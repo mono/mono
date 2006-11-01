@@ -49,6 +49,7 @@ namespace MonoTests.System.Windows.Forms
 		{
 			listBox = new ListBox();
 			form = new Form();
+			form.ShowInTaskbar = false;
 		}
 
 		[TearDown]

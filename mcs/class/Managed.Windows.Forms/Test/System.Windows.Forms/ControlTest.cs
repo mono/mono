@@ -181,6 +181,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual(null, c.TopLevelControl, "T2");
 
 			Form f = new Form ();
+			f.ShowInTaskbar = false;
 
 			f.Controls.Add (p);
 
@@ -245,6 +246,7 @@ namespace MonoTests.System.Windows.Forms
 			RadioButton	radio34 = new RadioButton();
 
 			form = new Form();
+			form.ShowInTaskbar = false;
 
 			form.ClientSize = new Size (520, 520);
 			Assert.AreEqual(new Size(520, 520), form.ClientSize, "Tab1");
@@ -601,6 +603,7 @@ namespace MonoTests.System.Windows.Forms
 		public void FindFormTest () {
 			Form f = new Form ();
 
+			f.ShowInTaskbar = false;
 			f.Name = "form";
 			Control c = null;
 
@@ -636,6 +639,7 @@ namespace MonoTests.System.Windows.Forms
 
 			try {
 				f = new Form ();
+				f.ShowInTaskbar = false;
 				f.Visible = true;
 				c = new Button ();
 				c.Visible = true;
@@ -885,6 +889,7 @@ namespace MonoTests.System.Windows.Forms
 		void CreateControl ()
 		{
 			f = new Form ();
+			f.ShowInTaskbar = false;
 			
 			c = new Control ();
 

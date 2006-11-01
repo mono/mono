@@ -28,6 +28,7 @@ namespace MonoTests.System.Windows.Forms
 		public void AfterLabelEditTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			ListView mylistview = new ListView ();
 			mylistview.LabelEdit = true ;
 			mylistview.AfterLabelEdit += new LabelEditEventHandler (LabelEdit_EventHandler);
@@ -48,6 +49,7 @@ namespace MonoTests.System.Windows.Forms
 		public void BeforeLabelEditTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			ListView mylistview = new ListView ();
 			mylistview.LabelEdit = true ;
 			mylistview.BeforeLabelEdit += new LabelEditEventHandler (LabelEdit_EventHandler);
@@ -79,6 +81,7 @@ namespace MonoTests.System.Windows.Forms
 		public void ColumnClickTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			ListView mylistview = new ListView ();
 
 			mylistview.LabelEdit = true ;
@@ -111,6 +114,7 @@ namespace MonoTests.System.Windows.Forms
 		public void ItemActivateTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			ListView mylistview = new ListView ();
 			mylistview.Activation = ItemActivation.OneClick;
 			mylistview.LabelEdit = true ;
@@ -131,6 +135,7 @@ namespace MonoTests.System.Windows.Forms
 		public void SelectedIndexChangedTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			ListView mylistview = new ListView ();
 			mylistview.LabelEdit = true ;
 			mylistview.SelectedIndexChanged += new EventHandler (New_EventHandler);		
@@ -163,6 +168,7 @@ namespace MonoTests.System.Windows.Forms
 		public void ItemCheckTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			ListView mylistview = new ListView ();
 			mylistview.CheckBoxes = true;
 			mylistview.LabelEdit = true ;
@@ -197,6 +203,7 @@ namespace MonoTests.System.Windows.Forms
 		public void ItemDragTest ()
 		{
 			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
 			ListView mylistview = new ListView ();
 			mylistview.ItemDrag += new ItemDragEventHandler (ItemDragEventHandler);
 			mylistview.View = View.Details;

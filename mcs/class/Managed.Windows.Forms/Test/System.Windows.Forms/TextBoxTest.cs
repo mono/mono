@@ -106,6 +106,7 @@ namespace MonoTests.System.Windows.Forms
 		public void AppendTextTest ()
 		{   
 			Form f = new Form (); 
+			f.ShowInTaskbar = false;
 			f.Visible = true;
 			textBox.Visible = true;
 			textBox.Text = "TextBox1";

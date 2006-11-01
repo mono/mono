@@ -23,6 +23,7 @@ namespace MonoTests.System.Windows.Forms
 		public void PictureBoxPropertyTest ()
 		{
 			Form myForm = new Form ();
+			myForm.ShowInTaskbar = false;
 			PictureBox myPicBox = new PictureBox ();
 			myForm.Controls.Add (myPicBox);
 			
@@ -72,6 +73,7 @@ namespace MonoTests.System.Windows.Forms
 			public void PictureBoxEvenTest ()
 			{
 				Form myForm = new Form ();
+				myForm.ShowInTaskbar = false;
 				PictureBox myPicBox = new PictureBox ();
 				myForm.Controls.Add (myPicBox);
 				myPicBox.SizeModeChanged += new EventHandler (SizeMode_EventHandler);
