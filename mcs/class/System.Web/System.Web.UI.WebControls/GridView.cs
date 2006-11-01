@@ -1117,7 +1117,6 @@ namespace System.Web.UI.WebControls
 		protected virtual GridViewRow CreateRow (int rowIndex, int dataSourceIndex, DataControlRowType rowType, DataControlRowState rowState)
 		{
 			GridViewRow row = new GridViewRow (rowIndex, dataSourceIndex, rowType, rowState);
-			OnRowCreated (new GridViewRowEventArgs (row));
 			return row;
 		}
 		
@@ -1149,7 +1148,7 @@ namespace System.Web.UI.WebControls
 					dataSource.CurrentPageIndex = PageIndex;
 					if (view.CanPage) {
 						dataSource.AllowServerPaging = true;
-						if (view.CanRetrieveTotalRowCount)
+						if (SelectArguments.RetrieveTotalRowCount)
 							dataSource.VirtualCount = SelectArguments.TotalRowCount;
 					}
 				}
@@ -1193,11 +1192,13 @@ namespace System.Web.UI.WebControls
 			if (showPager && PagerSettings.Position == PagerPosition.Top || PagerSettings.Position == PagerPosition.TopAndBottom) {
 				topPagerRow = CreatePagerRow (fields.Length, dataSource);
 				table.Rows.Add (topPagerRow);
+				OnRowCreated (new GridViewRowEventArgs (topPagerRow));
 			}
 
 			GridViewRow headerRow = CreateRow (0, 0, DataControlRowType.Header, DataControlRowState.Normal);
 			table.Rows.Add (headerRow);
 			InitializeRow (headerRow, fields);
+			OnRowCreated (new GridViewRowEventArgs (headerRow));
 			
 			foreach (object obj in dataSource) {
 				DataControlRowState rstate = GetRowState (list.Count);
@@ -1206,6 +1207,7 @@ namespace System.Web.UI.WebControls
 				list.Add (row);
 				table.Rows.Add (row);
 				InitializeRow (row, fields);
+				OnRowCreated (new GridViewRowEventArgs (row));
 				if (dataBinding) {
 					row.DataBind ();
 					OnRowDataBound (new GridViewRowEventArgs (row));
@@ -1221,17 +1223,22 @@ namespace System.Web.UI.WebControls
 				if (list.Count >= PageSize)
 					break;
 			}
-			
-			if (list.Count == 0)
-				table.Rows.Add (CreateEmptyrRow (fields.Length));
+
+			if (list.Count == 0) {
+				GridViewRow emptyRow = CreateEmptyrRow (fields.Length);
+				table.Rows.Add (emptyRow);
+				OnRowCreated (new GridViewRowEventArgs (emptyRow));
+			}
 
 			GridViewRow footerRow = CreateRow (0, 0, DataControlRowType.Footer, DataControlRowState.Normal);
 			table.Rows.Add (footerRow);
 			InitializeRow (footerRow, fields);
+			OnRowCreated (new GridViewRowEventArgs (footerRow));
 
 			if (showPager && PagerSettings.Position == PagerPosition.Bottom || PagerSettings.Position == PagerPosition.TopAndBottom) {
 				bottomPagerRow = CreatePagerRow (fields.Length, dataSource);
 				table.Rows.Add (bottomPagerRow);
+				OnRowCreated (new GridViewRowEventArgs (bottomPagerRow));
 			}
 
 			rows = new GridViewRowCollection (list);
@@ -1486,6 +1493,7 @@ namespace System.Web.UI.WebControls
 						param = row.RowIndex.ToString();
 				}
 				ProcessEvent (args.CommandName, param);
+				return true;
 			}
 			return base.OnBubbleEvent (source, e);
 		}
@@ -1519,13 +1527,15 @@ namespace System.Web.UI.WebControls
 					newIndex = PageCount - 1;
 					break;
 				case DataControlCommands.NextPageCommandArgument:
-					if (PageIndex < PageCount - 1) newIndex = PageIndex + 1;
+					newIndex = PageIndex + 1;
 					break;
 				case DataControlCommands.PreviousPageCommandArgument:
-					if (PageIndex > 0) newIndex = PageIndex - 1;
+					newIndex = PageIndex - 1;
 					break;
 				default:
-					newIndex = int.Parse (param) - 1;
+					int paramIndex = 0;
+					int.TryParse (param, out paramIndex);
+					newIndex = paramIndex - 1;
 					break;
 				}
 				ShowPage (newIndex);
@@ -1642,12 +1652,15 @@ namespace System.Web.UI.WebControls
 		[MonoTODO ("Support two-way binding expressions")]
 		public virtual void UpdateRow (int rowIndex, bool causesValidation)
 		{
-			if (causesValidation)
+			if (causesValidation && Page != null)
 				Page.Validate ();
 			
 			if (rowIndex != EditIndex) throw new NotSupportedException ();
-			
-			currentEditOldValues = oldEditValues.Values;
+
+			if (oldEditValues == null)
+				currentEditOldValues = new OrderedDictionary ();
+			else
+				currentEditOldValues = oldEditValues.Values;
 
 			GridViewRow row = Rows [rowIndex];
 			currentEditRowKeys = DataKeys [rowIndex].Values;
@@ -1657,8 +1670,10 @@ namespace System.Web.UI.WebControls
 			OnRowUpdating (args);
 			if (!args.Cancel) {
 				DataSourceView view = GetData ();
-				if (view == null) throw new HttpException ("The DataSourceView associated to data bound control was null");
-				view.Update (currentEditRowKeys, currentEditNewValues, currentEditOldValues, new DataSourceViewOperationCallback (UpdateCallback));
+				if (view == null)
+					throw new HttpException ("The DataSourceView associated to data bound control was null");
+				if(view.CanUpdate)
+					view.Update (currentEditRowKeys, currentEditNewValues, currentEditOldValues, new DataSourceViewOperationCallback (UpdateCallback));
 			} else
 				EndRowEdit ();
 		}
@@ -1686,7 +1701,7 @@ namespace System.Web.UI.WebControls
 			if (!args.Cancel) {
 				RequireBinding ();
 				DataSourceView view = GetData ();
-				if (view != null)
+				if (view != null && view.CanDelete)
 					view.Delete (currentEditRowKeys, currentEditNewValues, new DataSourceViewOperationCallback (DeleteCallback));
 				else {
 					GridViewDeletedEventArgs dargs = new GridViewDeletedEventArgs (0, null, currentEditRowKeys, currentEditNewValues);

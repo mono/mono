@@ -1,5 +1,9 @@
 2006-11-01 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* GridViewTest.cs: removed NotWorking attributes, fixed tests
+			
+2006-11-01 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* FormViewRowTest.cs: removed NotWorking attributes
 	* FormViewTest.cs: removed NotWorking attributes, fixed tests
 			

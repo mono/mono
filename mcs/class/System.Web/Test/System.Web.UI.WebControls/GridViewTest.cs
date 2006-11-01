@@ -647,10 +647,17 @@ namespace MonoTests.System.Web.UI.WebControls
 
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GridView_DeleteItem()
 		{
 			PokerGridView g = new PokerGridView ();
+			ArrayList myds = new ArrayList ();
+			myds.Add ("Norway");
+			myds.Add ("Sweden");
+			myds.Add ("France");
+			myds.Add ("Italy");
+
+			g.DataSource = myds;
+			g.DataBind ();
 			Assert.AreEqual (false, deleteitemchecker, "DeleteItem#1");
 			g.RowDeleting += new GridViewDeleteEventHandler (RowDeletingHandler);
 			g.DeleteRow (0);
@@ -663,10 +670,14 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GridView_RowCreated ()
 		{
 			GridView g = new GridView ();
+			ButtonField field = new ButtonField ();
+			field.ButtonType = ButtonType.Link;
+			field.Text = "Click";
+			field.CommandName = "CMD";
+			g.Columns.Add (field);
 			g.RowCreated += new GridViewRowEventHandler (RowCreatedHandler);
 
 			Assert.AreEqual (false, rowcreatedchecker, "RowCreated#1");
@@ -686,6 +697,22 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			if (e.Row.Cells.Count > 0)
 				rowcreatedchecker = true;
+
+			// Example from MSDN: GridView.RowCreated Event 
+ 
+			// The GridViewCommandEventArgs class does not contain a 
+			// property that indicates which row's command button was
+			// clicked. To identify which row's button was clicked, use 
+			// the button's CommandArgument property by setting it to the 
+			// row's index.
+			if (e.Row.RowType == DataControlRowType.DataRow) {
+				// Retrieve the LinkButton control from the first column.
+				IButtonControl addButton = (IButtonControl) e.Row.Cells [0].Controls [0];
+
+				// Set the LinkButton's CommandArgument property with the
+				// row's index.
+				addButton.CommandArgument = e.Row.RowIndex.ToString ();
+			}
 		}
 		
 		[Test]
@@ -728,8 +755,15 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void GridView_CreateChildControls ()
 		{
 			PokerGridView g = new PokerGridView ();
+			g.Page = new Page ();
 			g.DataSource = myds;
+			g.DataBind ();
 			Assert.AreEqual(6,g.DoCreateChildControls(myds,true),"CreateChildControls#1");
+
+			g.AllowPaging = true;
+			g.PageSize = 3;
+			g.DataBind ();
+			Assert.AreEqual (6, g.DoCreateChildControls (myds, true), "CreateChildControls#1");
 		}
 
 		[Test]
@@ -838,7 +872,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		private int newPageIndex;
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GridView_BubbleEvent ()
 		{
 			PokerGridView gv = new PokerGridView ();
@@ -846,6 +879,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			LinkButton lb = new LinkButton ();
 			gv.AllowPaging = true;
 			page.Controls.Add (gv);
+			gv.DataSource = myds;
+			gv.DataBind ();
+			gv.EditIndex = 0;
 			// 
 			gv.RowDeleting += new GridViewDeleteEventHandler (gv_RowDeleting);
 			gv.RowUpdating += new GridViewUpdateEventHandler (gv_RowUpdating);
@@ -855,17 +891,17 @@ namespace MonoTests.System.Web.UI.WebControls
 			gv.SelectedIndexChanging+=new GridViewSelectEventHandler(gv_SelectedIndexChanging);
 			gv.PageIndexChanging+=new GridViewPageEventHandler(gv_PageIndexChanging);
 			// Delete
-			GridViewCommandEventArgs com1 = new GridViewCommandEventArgs (lb, new CommandEventArgs ("Delete", null));
+			GridViewCommandEventArgs com1 = new GridViewCommandEventArgs (lb, new CommandEventArgs ("Delete", "0"));
 			Assert.AreEqual (false, bubbledeleterow, "BeforeBubbleEventDeleteRow");
 			gv.DoOnBubbleEvent (gv, com1);
 			Assert.AreEqual (true, bubbledeleterow, "AfterBubbleEventDeleteRow");
 			// Update
-			GridViewCommandEventArgs com2 = new GridViewCommandEventArgs (lb, new CommandEventArgs ("Update", null));
+			GridViewCommandEventArgs com2 = new GridViewCommandEventArgs (lb, new CommandEventArgs ("Update", "0"));
 			Assert.AreEqual (false, bubbleupdaterow, "BeforeBubbleEventUpdateRow");
 			gv.DoOnBubbleEvent (gv, com2);
 			Assert.AreEqual (true, bubbleupdaterow, "AfterBubbleEventUpdateRow");
 			// Edit
-			GridViewCommandEventArgs com3 = new GridViewCommandEventArgs (lb, new CommandEventArgs ("Edit", null));
+			GridViewCommandEventArgs com3 = new GridViewCommandEventArgs (lb, new CommandEventArgs ("Edit", "0"));
 			Assert.AreEqual (false, bubbleeditingrow, "BeforeBubbleEventEditingRow");
 			gv.DoOnBubbleEvent (gv, com3);
 			Assert.AreEqual (true, bubbleeditingrow, "AfterBubbleEventEditingRow");
@@ -953,6 +989,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			bubblepage = true;
 			pageIndexChanging = true;
 			newPageIndex = e.NewPageIndex;
+			e.NewPageIndex = 0;
 		}
 
 		private void ResetEvents ()
@@ -1912,7 +1949,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void GridView_PostBackDelete ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (GridView_postback));
