@@ -1,5 +1,10 @@
 2006-11-01  Jackson Harper  <jackson@ximian.com>
 
+	* TextControl.cs: When replacing the selection move the selection
+	start/end/anchor to the end of the new text.
+
+2006-11-01  Jackson Harper  <jackson@ximian.com>
+
 	* XplatUIWin32.cs: When setting the parent change the controls
 	visibility to it's visibility flag, not to it's old parents
 	visibility (.Visible walks the parent chain).

@@ -3312,6 +3312,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 		internal void ReplaceSelection(string s) {
 			int		i;
 
+			int selection_start_pos = LineTagToCharIndex (selection_start.line, selection_start.pos);
 			// First, delete any selected text
 			if ((selection_start.pos != selection_end.pos) || (selection_start.line != selection_end.line)) {
 				if (!multiline || (selection_start.line == selection_end.line)) {
@@ -3351,13 +3352,19 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 				}
 			}
 
-
+			
 			Insert(selection_start.line, null, selection_start.pos, true, s);
 
+			CharIndexToLineTag(selection_start_pos + s.Length, out selection_start.line,
+					out selection_start.tag, out selection_start.pos);
+			
 			selection_end.line = selection_start.line;
 			selection_end.pos = selection_start.pos;
 			selection_end.tag = selection_start.tag;
-
+			selection_anchor.line = selection_start.line;
+			selection_anchor.pos = selection_start.pos;
+			selection_anchor.tag = selection_start.tag;
+			
 			SetSelectionVisible (false);
 		}
 
