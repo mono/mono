@@ -1,3 +1,10 @@
+2006-11-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RuntimeWrappedExceptionCas.cs: New. CAS tests for 
+	RuntimeWrappedException.
+	* RuntimeWrappedExceptionTest.cs: New. Unit tests for 
+	RuntimeWrappedException.
+
 2003-04-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* RuntimeHelpersTest.cs: Added tests for Equals() and GetHashCode ()
