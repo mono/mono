@@ -1320,9 +1320,12 @@ namespace System.Web.UI.WebControls
 		{
 			base.RenderEndTag (writer);
 
+			if (StaticDisplayLevels == 1 && MaximumDynamicDisplayLevels > 0)
+				RenderDynamicMenu (writer, Items);
+
 			if (SkipLinkText != "") {
 				System.Web.UI.HtmlControls.HtmlAnchor anchor = new System.Web.UI.HtmlControls.HtmlAnchor ();
-				anchor.ID = "SkipLink";
+				anchor.ID = ClientID + "_SkipLink";
 				anchor.Render (writer);
 			}
 		}

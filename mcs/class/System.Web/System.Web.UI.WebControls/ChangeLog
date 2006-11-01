@@ -1,5 +1,10 @@
 2006-11-01 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Menu.cs: fixed: RenderEndTag.
+	Dynamic menu is rendered when StaticDisplayLevels=1	
+
+2006-11-01 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* GridView.cs: fixed: UpdateRow, DeleteRow, RowCreated.
 
 2006-11-01 Igor Zelmanovich <igorz@mainsoft.com>
