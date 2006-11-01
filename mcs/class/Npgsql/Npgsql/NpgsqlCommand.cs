@@ -665,8 +665,16 @@ namespace Npgsql
                     }
                     else
                     {
-                        parameterFormatCodes[i] = (Int16) FormatCode.Binary;
-                        parameterValues[i]=(byte[])parameters[i].Value;
+                        if (parameters[i].Value!=DBNull.Value)
+                        {
+                            parameterFormatCodes[i] = (Int16) FormatCode.Binary;
+                            parameterValues[i]=(byte[])parameters[i].Value;
+                        }
+                        else
+                        {
+                            parameterValues[i] = parameters[i].TypeInfo.ConvertToBackend(parameters[i].Value, true);
+                        }
+
                     }
                 }
                 bind.ParameterValues = parameterValues;

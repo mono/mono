@@ -1,4 +1,9 @@
 
+2006-11-01  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+	
+	*Npgsql/NpgsqlCommand.cs: [#1000765] InvalidCastException for ByteA
+	Parameter when command.Prepare() Thanks Hubert Fongarnand for patch!
+
 2006-10-20  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
         *Npgsql/NpgsqlCommand.resx,
