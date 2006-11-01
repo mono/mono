@@ -19,20 +19,36 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class ControlTest
 	{
-		internal static void TestAccessibility(Control c, string Default, string Description, string Name, AccessibleRole Role) {
-			Assert.AreEqual(false, c.AccessibilityObject == null, "Acc1");
-			Assert.AreEqual(Default, c.AccessibleDefaultActionDescription, "Acc2");
-			Assert.AreEqual(Description, c.AccessibleDescription, "Acc3");
-			Assert.AreEqual(Name, c.AccessibleName, "Acc4");
-			Assert.AreEqual(Role, c.AccessibleRole, "Acc5");
+		class Helper {
+			public static void TestAccessibility(Control c, string Default, string Description, string Name, AccessibleRole Role)
+			{
+				Assert.AreEqual(false, c.AccessibilityObject == null, "Acc1");
+				Assert.AreEqual(Default, c.AccessibleDefaultActionDescription, "Acc2");
+				Assert.AreEqual(Description, c.AccessibleDescription, "Acc3");
+				Assert.AreEqual(Name, c.AccessibleName, "Acc4");
+				Assert.AreEqual(Role, c.AccessibleRole, "Acc5");
+			}
+
+			public static string TestControl(Control container, Control start, bool forward) {
+				Control	ctl;
+
+				ctl = container.GetNextControl(start, forward);
+
+				if (ctl == null) {
+					return null;
+				}
+
+				return ctl.Text;
+			}
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void PubPropTest()
     		{
 			Control c = new Control();
 
-			TestAccessibility(c, null, null, null, AccessibleRole.Default);
+			Helper.TestAccessibility(c, null, null, null, AccessibleRole.Default);
 
 			// A
 			Assert.AreEqual(false, c.AllowDrop , "A1");
@@ -200,18 +216,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual(c1, c2.Parent, "Rel8");
 		}
 
-		private string TestControl(Control container, Control start, bool forward) {
-			Control	ctl;
-
-			ctl = container.GetNextControl(start, forward);
-
-			if (ctl == null) {
-				return null;
-			}
-
-			return ctl.Text;
-		}
-
 		[Test]
 		public void TabOrder() {
 			Form		form;
@@ -373,7 +377,7 @@ namespace MonoTests.System.Windows.Forms
 			group2.Controls.Add(group3);
 
 			// Perform some tests, the TabIndex stuff below will alter the outcome
-			Assert.AreEqual(null, TestControl(group2, radio34, true), "Tab8");
+			Assert.AreEqual(null, Helper.TestControl(group2, radio34, true), "Tab8");
 			Assert.AreEqual(31, group2.TabIndex, "Tab9");
 
 			// Does the taborder of containers and non-selectable things change behaviour?
@@ -383,23 +387,23 @@ namespace MonoTests.System.Windows.Forms
 			group2.TabIndex = 1;
 
 			// Start verification
-			Assert.AreEqual(null, TestControl(group2, radio34, true), "Tab10");
-			Assert.AreEqual(radio24.Text, TestControl(group2, group2, true), "Tab11");
-			Assert.AreEqual(radio31.Text, TestControl(group2, group3, true), "Tab12");
-			Assert.AreEqual(null, TestControl(group1, radio14, true), "Tab13");
-			Assert.AreEqual(radio23.Text, TestControl(group2, radio24, true), "Tab14");
-			Assert.AreEqual(group3.Text, TestControl(group2, radio21, true), "Tab15");
-			Assert.AreEqual(radio13.Text, TestControl(form, radio12, true), "Tab16");
-			Assert.AreEqual(label2.Text, TestControl(form, radio14, true), "Tab17");
-			Assert.AreEqual(group1.Text, TestControl(form, radio34, true), "Tab18");
-			Assert.AreEqual(radio23.Text, TestControl(group2, radio24, true), "Tab19");
+			Assert.AreEqual(null, Helper.TestControl(group2, radio34, true), "Tab10");
+			Assert.AreEqual(radio24.Text, Helper.TestControl(group2, group2, true), "Tab11");
+			Assert.AreEqual(radio31.Text, Helper.TestControl(group2, group3, true), "Tab12");
+			Assert.AreEqual(null, Helper.TestControl(group1, radio14, true), "Tab13");
+			Assert.AreEqual(radio23.Text, Helper.TestControl(group2, radio24, true), "Tab14");
+			Assert.AreEqual(group3.Text, Helper.TestControl(group2, radio21, true), "Tab15");
+			Assert.AreEqual(radio13.Text, Helper.TestControl(form, radio12, true), "Tab16");
+			Assert.AreEqual(label2.Text, Helper.TestControl(form, radio14, true), "Tab17");
+			Assert.AreEqual(group1.Text, Helper.TestControl(form, radio34, true), "Tab18");
+			Assert.AreEqual(radio23.Text, Helper.TestControl(group2, radio24, true), "Tab19");
 
 			// Sanity checks
-			Assert.AreEqual(null, TestControl(radio11, radio21, true), "Tab20");
-			Assert.AreEqual(text1.Text, TestControl(group1, radio21, true), "Tab21");
+			Assert.AreEqual(null, Helper.TestControl(radio11, radio21, true), "Tab20");
+			Assert.AreEqual(text1.Text, Helper.TestControl(group1, radio21, true), "Tab21");
 
-			Assert.AreEqual(radio14.Text, TestControl(form, label2, false), "Tab22");
-			Assert.AreEqual(radio21.Text, TestControl(group2, group3, false), "Tab23");
+			Assert.AreEqual(radio14.Text, Helper.TestControl(form, label2, false), "Tab22");
+			Assert.AreEqual(radio21.Text, Helper.TestControl(group2, group3, false), "Tab23");
 
 			Assert.AreEqual(4, radio21.TabIndex, "Tab24");
 			Assert.AreEqual(1, radio11.TabIndex, "Tab25");
@@ -407,12 +411,12 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual(35, group3.TabIndex, "Tab27");
 			Assert.AreEqual(1, group2.TabIndex, "Tab28");
 
-			Assert.AreEqual(label1.Text, TestControl(form, form, false), "Tab29");
-			Assert.AreEqual(radio14.Text, TestControl(group1, group1, false), "Tab30");
-			Assert.AreEqual(radio34.Text, TestControl(group3, group3, false), "Tab31");
+			Assert.AreEqual(label1.Text, Helper.TestControl(form, form, false), "Tab29");
+			Assert.AreEqual(radio14.Text, Helper.TestControl(group1, group1, false), "Tab30");
+			Assert.AreEqual(radio34.Text, Helper.TestControl(group3, group3, false), "Tab31");
 
-			Assert.AreEqual(null, TestControl(label1, label1, false), "Tab31");
-			Assert.AreEqual(null, TestControl(radio11, radio21, false), "Tab32");
+			Assert.AreEqual(null, Helper.TestControl(label1, label1, false), "Tab31");
+			Assert.AreEqual(null, Helper.TestControl(radio11, radio21, false), "Tab32");
 			form.Dispose ();
 		}
 

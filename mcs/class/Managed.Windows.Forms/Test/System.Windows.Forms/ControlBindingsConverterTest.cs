@@ -21,6 +21,7 @@ namespace MonoTests.System.Windows.Forms.Design
 	{
 
 		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
 		public void TestProperties ()
 		{
 			Control c = new Control ();

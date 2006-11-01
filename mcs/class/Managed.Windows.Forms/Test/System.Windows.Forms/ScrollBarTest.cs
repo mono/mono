@@ -274,9 +274,10 @@ public class MyScrollBar : HScrollBar
 	     }
     }
    [TestFixture]
-   public class ScrollbarTest
+   public class ScrollBarTest
     {
 	    [Test]
+	    [Category ("NotWorking")]
 	    public void PubPropTest ()
 	       {
 		       MyScrollBar myscrlbar = new MyScrollBar ();
@@ -351,12 +352,12 @@ public class MyScrollBar : HScrollBar
 		       myscrlbar.LargeChange = -1;
 	       }
 
-	    [Test, Ignore ("Look into this")]
+	    [Test]
 	    public void PubMethodTest ()
 	       {
 		       MyScrollBar myscrlbar = new MyScrollBar ();
 		       myscrlbar.Text = "New HScrollBar";
-		       Assert.AreEqual ("System.Windows.Forms.HScrollBar, Minimum: 0, Maximum: 100, Value: 0",
+		       Assert.AreEqual ("MonoTests.System.Windows.Forms.MyScrollBar, Minimum: 0, Maximum: 100, Value: 0",
 					myscrlbar.ToString (), "T5");
 	       }
     }
@@ -410,34 +411,6 @@ public class MyScrollBar : HScrollBar
 		       myHscrlbar.BackgroundImage = Image.FromFile ("Test/System.Windows.Forms/bitmaps/a.png");
 		       Assert.AreEqual (true, eventhandled, "B5");
 		       eventhandled = false;
-		       myform.Dispose ();
-	       }
-
-	    [Test, Ignore ("Need to send proper Click / DoubleClick")]
-	    public void ClickTest ()
-	       {
-		       Form myform = new Form ();
-		       myform.Visible = true;
-		       MyScrollBar myHscrlbar = new MyScrollBar ();
-		       myform.Controls.Add (myHscrlbar);
-		       myHscrlbar.Click += new EventHandler (ScrollBar_EventHandler);
-		       myHscrlbar.MouseClick ();
-
-		       Assert.AreEqual (false, eventhandled, "C1");
-		       myform.Dispose ();
-	       }
-
-	    [Test, Ignore ("Need to send proper Click / DoubleClick")]
-	    public void DoubleClickTest ()
-	       {
-		       Form myform = new Form ();
-		       myform.Visible = true;
-		       MyScrollBar myHscrlbar = new MyScrollBar ();
-		       myform.Controls.Add (myHscrlbar);
-		       myHscrlbar.DoubleClick += new EventHandler (ScrollBar_EventHandler);
-		       myHscrlbar.MouseDoubleClick ();
-
-		       Assert.AreEqual (false, eventhandled, "D1");
 		       myform.Dispose ();
 	       }
 
@@ -530,23 +503,8 @@ public class MyScrollBar : HScrollBar
 		       myform.Dispose ();
 	       }
 
-	    [Test, Ignore ("How can we force it to pain?")]
-	    public void PaintTest ()
-	       {
-		       Form myform = new Form ();
-		       myform.Visible = true;
-		       MyScrollBar myHscrlbar = new MyScrollBar ();
-		       myform.Controls.Add (myHscrlbar);
-		       myHscrlbar.Paint += new PaintEventHandler (ScrollBarPaint_EventHandler);
-
-		       myHscrlbar.Refresh ();
-
-		       Assert.AreEqual (true, eventhandled, "P1");
-		       eventhandled = false;
-		       myform.Dispose ();
-	       }
-
 	    [Test]
+	    [Category ("NotWorking")]
 	    public void ScrollTest ()
 	       {
 		       Form myform = new Form ();

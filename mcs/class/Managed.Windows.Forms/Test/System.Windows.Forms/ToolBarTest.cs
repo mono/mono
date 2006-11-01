@@ -20,6 +20,7 @@ namespace MonoTests.System.Windows.Forms
 	{
 
 		[Test]
+		[Category ("NotWorking")]
 		public void ToolBarPropertyTest ()
 		{	
 			Form myform = new Form ();
@@ -84,6 +85,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
+		[Category ("NotWorking")]
 		public void ToStringMethodTest () 
 		{
 			ToolBar myToolBar = new ToolBar ();

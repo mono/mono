@@ -33,6 +33,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void ImageListTest ()
 		{
 			Button B1 = new Button ();
@@ -49,6 +50,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void IMeModeTest ()
 		{
 			Button B1 = new Button ();

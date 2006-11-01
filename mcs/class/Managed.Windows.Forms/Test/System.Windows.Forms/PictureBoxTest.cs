@@ -39,7 +39,8 @@ namespace MonoTests.System.Windows.Forms
 			myForm.Dispose ();
 		}
 		
-		[Test, Ignore ("not working")]
+		[Test]
+		[Category ("NotWorking")]
 		public void ImagePropertyTest ()
 		{
 			PictureBox myPicBox = new PictureBox ();

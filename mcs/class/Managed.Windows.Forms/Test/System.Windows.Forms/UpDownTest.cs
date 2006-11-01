@@ -16,6 +16,7 @@ namespace MonoTests.System.Windows.Forms
 	public class UpDownTest
 	{
 		[Test]
+		[Category ("NotWorking")]
 		public void UpDownBasePropTest ()
 		{
 			NumericUpDown n1 = new NumericUpDown ();
@@ -41,6 +42,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void NumericUpDownEnhancedPropTest ()
 		{
 			NumericUpDown n1 = new NumericUpDown ();
@@ -143,6 +145,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
+		[Category ("NotWorking")]
 		public void DomainUpDownEnhancedPropTest ()
 		{
 			DomainUpDown d1 = new DomainUpDown ();

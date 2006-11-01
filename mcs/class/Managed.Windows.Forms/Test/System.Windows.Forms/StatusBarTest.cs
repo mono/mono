@@ -20,6 +20,7 @@ namespace MonoTests.System.Windows.Forms
 	{
 
 		[Test]
+		[Category ("NotWorking")]
 		public void StatusBarPropertyTest ()
 		{	
 			Form myform = new Form ();

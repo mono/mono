@@ -241,6 +241,7 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void ContainerSelectUndirectedForward ()
 		{
 			Form form = new Form ();

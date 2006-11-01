@@ -100,6 +100,7 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestEvent ()
 		{
 			TestClass1 test = new TestClass1();

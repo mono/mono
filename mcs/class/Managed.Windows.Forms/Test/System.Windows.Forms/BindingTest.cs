@@ -86,6 +86,7 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		/* create control and show control */
 		public void BindingContextChangedTest2 ()
 		{

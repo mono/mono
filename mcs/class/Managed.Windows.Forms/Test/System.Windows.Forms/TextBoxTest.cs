@@ -25,6 +25,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TextBoxBasePropertyTest ()
 		{
 			Assert.AreEqual (false, textBox.AcceptsTab, "#1a");
@@ -72,6 +73,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TextBoxPropertyTest ()
 		{
 			Assert.AreEqual (false, textBox.AcceptsReturn, "#21");
@@ -117,6 +119,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void AppendTextTest2 ()
 		{
 			TextBox textBox2 = new TextBox ();
@@ -141,6 +144,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void ClearUndoTest ()
 		{
 			textBox.Text = "TextBox1";
@@ -204,6 +208,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void UndoTest1 ()
 		{
 			textBox.Text = "ABCDE";

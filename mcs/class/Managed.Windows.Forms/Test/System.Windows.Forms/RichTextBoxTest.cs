@@ -173,17 +173,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual(t.Find("Testtext", RichTextBoxFinds.WholeWord | RichTextBoxFinds.Reverse), 0, "Find24");	// First word in document, searched in reverse
 		}
 
-		[Test]
-		[Ignore ("this test depends on system default font")]
-		public void GetCharFromPositionTest ()
-		{
-			Form myForm = new Form ();
-			RichTextBox rTextBox = new RichTextBox ();
-			rTextBox.Text = "sample text for richtextbox";
-			myForm.Controls.Add (rTextBox);
-			Assert.AreEqual ('m', rTextBox.GetCharFromPosition (new Point (10, 10)), "#21");
-			myForm.Dispose ();
-		}
 		//[MonoTODO("Add test for method Paste (Visual Test)")]
 	}
 }

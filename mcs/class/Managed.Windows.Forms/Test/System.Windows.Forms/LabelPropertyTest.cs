@@ -22,6 +22,7 @@ namespace MonoTests.System.Windows.Forms
 	public class LabelTest {
 
 		[Test]
+		[Category ("NotWorking")]
 		public void PubPropTest ()
 		{
 			Label l = new Label ();

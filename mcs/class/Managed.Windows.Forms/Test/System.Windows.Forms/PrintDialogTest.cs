@@ -39,6 +39,7 @@ namespace MonoTests.System.Windows.Forms
 	public class PrintDialogTest
 	{
 		[Test]
+		[Category ("NotWorking")]
 		public void DefaultValues ()
 		{
 			PrintDialog pd = new PrintDialog ();

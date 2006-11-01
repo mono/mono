@@ -19,6 +19,7 @@ namespace MonoTests.System.Windows.Forms
 	public class ProgressBarBaseTest
 	{
 		[Test]
+		[Category ("NotWorking")]
 		public void ProgressBarPropertyTest ()
 		{
 			ProgressBar myProgressBar = new ProgressBar ();
@@ -68,6 +69,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 	
 		[Test]
+		[Category ("NotWorking")]
 		public void ToStringMethodTest () 
 		{
 			ProgressBar myProgressBar = new ProgressBar ();

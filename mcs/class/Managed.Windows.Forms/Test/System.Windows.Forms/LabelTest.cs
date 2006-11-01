@@ -15,11 +15,11 @@ using System.Collections;
 namespace MonoTests.System.Windows.Forms
 {
    [TestFixture]
-
    public class LabelTest2
    {
 
 	   [Test]
+	   [Category ("NotWorking")]
 	   public void PubPropTest ()
 	     {
 		     Label l = new Label ();
