@@ -39,14 +39,19 @@ namespace System.Xml.Serialization
 {
 	public abstract class SchemaImporter
 	{
+		SchemaImporterExtensionCollection extensions;
+
 		internal SchemaImporter ()
 		{
 		}
 		
-		[MonoTODO]
 		public SchemaImporterExtensionCollection Extensions
 		{
-			get { throw new NotImplementedException (); }
+			get {
+				if (extensions == null)
+					extensions = new SchemaImporterExtensionCollection ();
+				return extensions;
+			}
 		}
 	}
 }

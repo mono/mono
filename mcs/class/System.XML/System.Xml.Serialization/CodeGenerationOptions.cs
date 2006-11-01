@@ -33,18 +33,26 @@ using System;
 namespace System.Xml.Serialization 
 {
 	[Flags]
-	[Serializable]
 #if NET_2_0
 	public
 #else
+	[Serializable]
 	internal
 #endif
 	enum CodeGenerationOptions
 	{
+		[XmlIgnore]
 		None = 0,
-		[Obsolete] UseSqlTypes = 1,
-		GenerateProperties = 2,
-		GenerateNewAsync = 4,
-		GenerateOldAsync = 8
+		[XmlEnum ("properties")]
+		GenerateProperties = 1,
+		[XmlEnum ("newAsync")]
+		GenerateNewAsync = 2,
+		[XmlEnum ("oldAsync")]
+		GenerateOldAsync = 4,
+		[XmlEnum ("order")]
+		GenerateOrder = 8,
+		[XmlEnum ("enableDataBinding")]
+		EnableDataBinding = 16,
+		
 	}
 }

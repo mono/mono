@@ -69,7 +69,6 @@ namespace System.Xml.Serialization
 			set { _type = value; }
 		}
 		
-		[Obsolete]
 		public string Version
 		{
 			get { return _version; }

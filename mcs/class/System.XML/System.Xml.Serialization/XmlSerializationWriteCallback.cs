@@ -32,7 +32,9 @@ using System;
 
 namespace System.Xml.Serialization {
 	
+#if !NET_2_0
 	[Serializable]
+#endif
 	public delegate void XmlSerializationWriteCallback (object o);
 }
 
