@@ -1,5 +1,11 @@
 2006-11-01  Chris Toshok  <toshok@ximian.com>
 
+	* XplatUIX11.cs: revert the #79790 fix, as the simple.
+	XSetTransientForHint fix breaks paint .net's tool windows.  more
+	work needed for that one.
+
+2006-11-01  Chris Toshok  <toshok@ximian.com>
+
 	* ScrollBar.cs: throw ArgumentException instead of Exception in
 	LargeChange/SmallChange setters.  fixes unit tests.
 
