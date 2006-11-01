@@ -588,6 +588,7 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void GetNextGroupBoxControlFlat ()
 		{
 			Form form = new Form ();
@@ -625,6 +626,7 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void GetNextControlFromTabControl ()
 		{
 			Form form = new Form ();
@@ -653,6 +655,7 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void GetNextControlFromTabControl2 () {
 			Form form = new Form ();
 			TabControl tab = new TabControl ();
@@ -794,6 +797,7 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void FocusSetsActive ()
 		{
 			Form form = new Form ();

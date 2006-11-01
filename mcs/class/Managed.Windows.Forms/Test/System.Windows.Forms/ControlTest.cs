@@ -217,6 +217,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TabOrder() {
 			Form		form;
 			Control		active;
