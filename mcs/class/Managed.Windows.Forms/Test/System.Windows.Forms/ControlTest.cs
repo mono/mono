@@ -909,7 +909,7 @@ namespace MonoTests.System.Windows.Forms
 		{
 			m = new object ();
 
-			control_t = new Thread(CreateControl);
+			control_t = new Thread(new ThreadStart(CreateControl));
 
 			Monitor.Enter (m);
 

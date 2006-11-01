@@ -1,3 +1,7 @@
+2006-11-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ControlTest.cs: Fixed build using csc 1.x.
+
 2006-10-30  Alexander Olk  <alex.olk@googlemail.com>
 
 	* PictureBoxTest.cs: Enable the previously not working
