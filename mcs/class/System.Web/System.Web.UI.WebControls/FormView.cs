@@ -839,11 +839,11 @@ namespace System.Web.UI.WebControls
 			dataSource.PageSize = 1;
 			dataSource.CurrentPageIndex = PageIndex;
 
-			if (dataBinding) {
+			if (dataBinding && CurrentMode != FormViewMode.Insert) {
 				DataSourceView view = GetData ();
 				if (view != null && view.CanPage) {
 					dataSource.AllowServerPaging = true;
-					if (view.CanRetrieveTotalRowCount)
+					if (SelectArguments.RetrieveTotalRowCount)
 						dataSource.VirtualCount = SelectArguments.TotalRowCount;
 				}
 			}
@@ -1259,7 +1259,10 @@ namespace System.Web.UI.WebControls
 			
 			if (currentMode != FormViewMode.Edit) throw new HttpException ("Must be in Edit mode");
 			
-			currentEditOldValues = oldEditValues.Values;
+			if (oldEditValues == null)
+				currentEditOldValues = new OrderedDictionary ();
+			else
+				currentEditOldValues = oldEditValues.Values;
 			currentEditRowKeys = DataKey.Values;
 			currentEditNewValues = GetRowValues (false);
 			
@@ -1333,8 +1336,8 @@ namespace System.Web.UI.WebControls
 			OnItemDeleting (args);
 
 			if (!args.Cancel) {
-				if (PageIndex == PageCount - 1)
-					PageIndex --;
+				if (PageIndex > 0 && PageIndex == PageCount - 1)
+					PageIndex--;
 					
 				RequireBinding ();
 					

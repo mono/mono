@@ -1,7 +1,7 @@
-2006-10-30 Igor Zelmanovich <igorz@mainsoft.com>
+2006-11-01 Igor Zelmanovich <igorz@mainsoft.com>
 
-	* DetailsViewRowTest.cs: removed NotWorking attributes
-	* DetailsViewTest.cs: removed NotWorking attributes
+	* FormViewRowTest.cs: removed NotWorking attributes
+	* FormViewTest.cs: removed NotWorking attributes, fixed tests
 			
 2006-10-30 Igor Zelmanovich <igorz@mainsoft.com>
 

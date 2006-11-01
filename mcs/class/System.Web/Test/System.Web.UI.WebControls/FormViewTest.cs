@@ -1427,6 +1427,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		
 
 		[Test]
+		[Category ("NotDotNet")] // becaue Naming container: use "FormView1$....." for DotNet
 		[Category ("NotWorking")]
 		public void FormView_EditPostback ()
 		{
@@ -1461,7 +1462,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls["__EVENTTARGET"].Value = "FormView1$EditButton";
+			fr.Controls["__EVENTTARGET"].Value = "FormView1:EditButton";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			t.Request = fr;
 			pageHTML = t.Run ();
@@ -1492,12 +1493,12 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("FormView1$FNameEdit");
-			fr.Controls.Add ("FormView1$LNameEdit");
-			fr.Controls["__EVENTTARGET"].Value = "FormView1$UpdateButton";
+			fr.Controls.Add ("FormView1:FNameEdit");
+			fr.Controls.Add ("FormView1:LNameEdit");
+			fr.Controls["__EVENTTARGET"].Value = "FormView1:UpdateButton";
 			fr.Controls["__EVENTARGUMENT"].Value = "";			
-			fr.Controls["FormView1$FNameEdit"].Value = "Merav";
-			fr.Controls["FormView1$LNameEdit"].Value = "Test";			
+			fr.Controls["FormView1:FNameEdit"].Value = "Merav";
+			fr.Controls["FormView1:LNameEdit"].Value = "Test";			
 			t.Request = fr;
 			pageHTML = t.Run ();
 			newHtml = pageHTML.Substring (pageHTML.IndexOf ("start") + 5, pageHTML.IndexOf ("end") - pageHTML.IndexOf ("start") - 5);
@@ -1528,7 +1529,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls["__EVENTTARGET"].Value = "FormView1$EditButton";
+			fr.Controls["__EVENTTARGET"].Value = "FormView1:EditButton";
 			fr.Controls["__EVENTARGUMENT"].Value = "";			
 			t.Request = fr;
 			pageHTML = t.Run ();
@@ -1540,11 +1541,11 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("FormView1$FNameEdit");
-			fr.Controls.Add ("FormView1$LNameEdit");
-			fr.Controls["FormView1$FNameEdit"].Value = "EditFirstName";
-			fr.Controls["FormView1$LNameEdit"].Value = "EditLastName";
-			fr.Controls["__EVENTTARGET"].Value = "FormView1$CancelUpdateButton";
+			fr.Controls.Add ("FormView1:FNameEdit");
+			fr.Controls.Add ("FormView1:LNameEdit");
+			fr.Controls["FormView1:FNameEdit"].Value = "EditFirstName";
+			fr.Controls["FormView1:LNameEdit"].Value = "EditLastName";
+			fr.Controls["__EVENTTARGET"].Value = "FormView1:CancelUpdateButton";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			t.Request = fr;
 			pageHTML = t.Run ();
@@ -1576,7 +1577,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 		[Test]
 		[Category ("NotWorking")]
-		[Category ("NotDotNet")] //TODO
+		[Category ("NotDotNet")] // becaue Naming container: use "FormView1$....." for DotNet
 		public void FormView_InsertPostback ()
 		{
 			WebTest t = new WebTest ("FormViewInsertEditDelete.aspx");
@@ -1588,7 +1589,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			FormRequest fr = new FormRequest (t.Response, "form1"); 
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");			
-			fr.Controls["__EVENTTARGET"].Value = "FormView1$NewButton";
+			fr.Controls["__EVENTTARGET"].Value = "FormView1:NewButton";
 			fr.Controls["__EVENTARGUMENT"].Value = "";						
 			t.Request = fr;
 			pageHTML = t.Run ();
@@ -1618,13 +1619,13 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("FormView1$IDInsert");
-			fr.Controls.Add ("FormView1$FNameInsert");
-			fr.Controls.Add ("FormView1$LNameInsert");
-			fr.Controls["FormView1$IDInsert"].Value = "33";
-			fr.Controls["FormView1$FNameInsert"].Value = "InsertFirstName";
-			fr.Controls["FormView1$LNameInsert"].Value ="InsertLastName";
-			fr.Controls["__EVENTTARGET"].Value = "FormView1$InsertButton";
+			fr.Controls.Add ("FormView1:IDInsert");
+			fr.Controls.Add ("FormView1:FNameInsert");
+			fr.Controls.Add ("FormView1:LNameInsert");
+			fr.Controls["FormView1:IDInsert"].Value = "33";
+			fr.Controls["FormView1:FNameInsert"].Value = "InsertFirstName";
+			fr.Controls["FormView1:LNameInsert"].Value ="InsertLastName";
+			fr.Controls["__EVENTTARGET"].Value = "FormView1:InsertButton";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			t.Request = fr;
 			pageHTML = t.Run ();			
@@ -1649,8 +1650,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		}		
 
 		[Test]
-		[Category ("NotWorking")]
-		[Category ("NotDotNet")] //TODO
+		[Category ("NotDotNet")] // becaue Naming container: use "FormView1$DeleteButton" for DotNet
 		public void FormView_DeleteAndEmptyTemplatePostback ()
 		{
 			WebTest t = new WebTest ("FormViewInsertEditDelete.aspx");
@@ -1664,7 +1664,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls["__EVENTTARGET"].Value = "FormView1$DeleteButton";
+			fr.Controls["__EVENTTARGET"].Value = "FormView1:DeleteButton";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			t.Request = fr;
 			pageHTML = t.Run ();			
@@ -1679,7 +1679,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls["__EVENTTARGET"].Value = "FormView1$DeleteButton";
+			fr.Controls["__EVENTTARGET"].Value = "FormView1:DeleteButton";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			t.Request = fr;
 			pageHTML = t.Run ();
@@ -1693,7 +1693,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls["__EVENTTARGET"].Value = "FormView1$DeleteButton";
+			fr.Controls["__EVENTTARGET"].Value = "FormView1:DeleteButton";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			t.Request = fr;
 			pageHTML = t.Run ();			
