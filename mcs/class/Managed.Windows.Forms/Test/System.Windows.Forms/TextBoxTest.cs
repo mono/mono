@@ -119,19 +119,75 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void AppendTextTest2 ()
 		{
 			TextBox textBox2 = new TextBox ();
 			textBox2.AppendText ("hi");
-			textBox2.AppendText ("hi");
-			Assert.AreEqual ("hihi", textBox2.Text, "A1");
+			textBox2.AppendText ("ho");
+			Assert.AreEqual ("hiho", textBox2.Text, "#1");
+			Assert.IsNotNull (textBox2.Lines, "#2");
+			Assert.AreEqual (1, textBox2.Lines.Length, "#3");
+			Assert.AreEqual ("hiho", textBox2.Lines [0], "#4");
+		}
 
-			textBox2.Text = "";
-			textBox2.AppendText ("hi\r\n");
-			textBox2.AppendText ("hi\r\n");
-			Assert.AreEqual (3, textBox2.Lines.Length, "A2");
-			Assert.AreEqual ("hi", textBox2.Lines[1], "A3");
+		[Test]
+		[Category ("NotWorking")] // bug #79799
+		public void AppendText_Multiline_CRLF ()
+		{
+			TextBox textBox = new TextBox ();
+			textBox.Text = "ha";
+			textBox.AppendText ("hi\r\n\r\n");
+			textBox.AppendText ("ho\r\n");
+			Assert.AreEqual ("hahi\r\n\r\nho\r\n", textBox.Text, "#A1");
+			Assert.IsNotNull (textBox.Lines, "#A2");
+			Assert.AreEqual (4, textBox.Lines.Length, "#A3");
+			Assert.AreEqual ("hahi", textBox.Lines [0], "#A4");
+			Assert.AreEqual (string.Empty, textBox.Lines [1], "#A5");
+			Assert.AreEqual ("ho", textBox.Lines [2], "#A6");
+			Assert.AreEqual (string.Empty, textBox.Lines [3], "#A7");
+
+			textBox.Multiline = true;
+
+			textBox.Text = "ha";
+			textBox.AppendText ("hi\r\n\r\n");
+			textBox.AppendText ("ho\r\n");
+			Assert.AreEqual ("hahi\r\n\r\nho\r\n", textBox.Text, "#B1");
+			Assert.IsNotNull (textBox.Lines, "#B2");
+			Assert.AreEqual (4, textBox.Lines.Length, "#B3");
+			Assert.AreEqual ("hahi", textBox.Lines [0], "#B4");
+			Assert.AreEqual (string.Empty, textBox.Lines [1], "#B5");
+			Assert.AreEqual ("ho", textBox.Lines [2], "#B6");
+			Assert.AreEqual (string.Empty, textBox.Lines [3], "#B7");
+		}
+
+		[Test]
+		[Category ("NotWorking")] // bug #79799
+		public void AppendText_Multiline_LF ()
+		{
+			TextBox textBox = new TextBox ();
+			textBox.Text = "ha";
+			textBox.AppendText ("hi\n\n");
+			textBox.AppendText ("ho\n");
+			Assert.AreEqual ("hahi\n\nho\n", textBox.Text, "#A1");
+			Assert.IsNotNull (textBox.Lines, "#A2");
+			Assert.AreEqual (4, textBox.Lines.Length, "#A3");
+			Assert.AreEqual ("hahi", textBox.Lines [0], "#A4");
+			Assert.AreEqual (string.Empty, textBox.Lines [1], "#A5");
+			Assert.AreEqual ("ho", textBox.Lines [2], "#A6");
+			Assert.AreEqual (string.Empty, textBox.Lines [3], "#A7");
+
+			textBox.Multiline = true;
+
+			textBox.Text = "ha";
+			textBox.AppendText ("hi\n\n");
+			textBox.AppendText ("ho\n");
+			Assert.AreEqual ("hahi\n\nho\n", textBox.Text, "#B1");
+			Assert.IsNotNull (textBox.Lines, "#B2");
+			Assert.AreEqual (4, textBox.Lines.Length, "#B3");
+			Assert.AreEqual ("hahi", textBox.Lines [0], "#B4");
+			Assert.AreEqual (string.Empty, textBox.Lines [1], "#B5");
+			Assert.AreEqual ("ho", textBox.Lines [2], "#B6");
+			Assert.AreEqual (string.Empty, textBox.Lines [3], "#B7");
 		}
 
 		[Test]
