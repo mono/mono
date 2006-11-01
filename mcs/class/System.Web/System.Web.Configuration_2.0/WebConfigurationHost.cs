@@ -34,6 +34,7 @@ using System.Security;
 using System.Configuration;
 using System.Configuration.Internal;
 using System.Web.Util;
+using System.Reflection;
 
 /*
  * this class needs to be rewritten to support usage of the
@@ -86,11 +87,52 @@ namespace System.Web.Configuration
 		{
 			return configPath + "/" + locatinSubPath;
 		}
+
+		private static string privateBinPath;
+
+		private static string PrivateBinPath {
+			get {
+				if (privateBinPath != null)
+					return privateBinPath;
+				
+				AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
+				privateBinPath = Path.Combine(setup.ApplicationBase, setup.PrivateBinPath);
+				return privateBinPath;
+			}
+		}
 		
-		[MonoTODO ("this should consult with the build provider machinery")]
+		private Type LoadType(string typeName)
+		{
+			Type type = null;
+			Assembly [] assemblies = AppDomain.CurrentDomain.GetAssemblies ();
+			
+			foreach (Assembly ass in assemblies) {
+				type = ass.GetType (typeName);
+				if (type == null)
+					continue;
+				
+				return type;
+			}
+			
+			if (!Directory.Exists (PrivateBinPath))
+				return null;
+			
+			string[] binDlls = Directory.GetFiles(PrivateBinPath, "*.dll");
+			foreach (string s in binDlls) {
+				Assembly binA = Assembly.LoadFrom (s);
+				type = binA.GetType (typeName);
+				if (type == null)
+					continue;
+				
+				return type;
+			}
+			
+			return null;
+		}
+		
 		public virtual Type GetConfigType (string typeName, bool throwOnError)
 		{
-			Type type = Type.GetType (typeName);
+		        Type type = LoadType(typeName);
 			if (type == null && throwOnError)
 				throw new ConfigurationErrorsException ("Type not found: '" + typeName + "'");
 			return type;
