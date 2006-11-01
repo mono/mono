@@ -31,10 +31,12 @@
 using System.Runtime.InteropServices;
 
 namespace System.Security.AccessControl {
+
 	public abstract class NativeObjectSecurity : CommonObjectSecurity {
+
 		protected internal delegate Exception ExceptionFromErrorCode (int errorCode, string name, SafeHandle handle, object context);
 		
-		protected NativeObjectSecurity ()
+		internal NativeObjectSecurity ()
 		{
 			/* Give it a 0-param constructor */
 		}

@@ -33,6 +33,10 @@ using System.Security.Principal;
 namespace System.Security.AccessControl {
 	public abstract class KnownAce : GenericAce
 	{
+		internal KnownAce ()
+		{
+		}
+
 		public int AccessMask
 		{
 			get {

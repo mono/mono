@@ -1,3 +1,11 @@
+2006-10-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AccessRule.cs, AceEnumerator.cs, AuditRule.cs, 
+	AuthorizationRuleCollection.cs, AuthorizationRule.cs, CommonAcl.cs,
+	CommonObjectSecurity.cs, FileSystemSecurity.cs, GenericAce.cs,
+	KnownAce.cs, NativeObjectSecurity.cs, ObjectSecurity.cs, 
+	QualifiedAce.cs: Hide extraneous public empty .ctor.
+
 2006-10-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PrivilegeNotHeldException.cs: Fix namespace.

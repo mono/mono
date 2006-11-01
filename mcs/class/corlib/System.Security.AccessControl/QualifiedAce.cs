@@ -31,6 +31,10 @@
 namespace System.Security.AccessControl {
 	public abstract class QualifiedAce : KnownAce
 	{
+		internal QualifiedAce ()
+		{
+		}
+
 		public AceQualifier AceQualifier
 		{
 			get {

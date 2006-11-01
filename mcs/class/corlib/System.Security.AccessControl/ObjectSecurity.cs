@@ -32,8 +32,10 @@ using System.Security.Principal;
 using System.Runtime.InteropServices;
 
 namespace System.Security.AccessControl {
+
 	public abstract class ObjectSecurity {
-		protected ObjectSecurity ()
+
+		internal ObjectSecurity ()
 		{
 			/* Give it a 0-param constructor */
 		}

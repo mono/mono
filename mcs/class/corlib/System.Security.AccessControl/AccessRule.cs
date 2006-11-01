@@ -35,7 +35,7 @@ namespace System.Security.AccessControl {
 	{
 		AccessControlType type;
 		
-		protected AccessRule ()
+		internal AccessRule ()
 		{
 			/* Give it a 0-param constructor */
 		}

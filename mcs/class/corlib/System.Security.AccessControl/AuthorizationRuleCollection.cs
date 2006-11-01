@@ -33,6 +33,10 @@ using System.Collections;
 namespace System.Security.AccessControl {
 	public sealed class AuthorizationRuleCollection : ReadOnlyCollectionBase
 	{
+		private AuthorizationRuleCollection ()
+		{
+		}
+
 		public AuthorizationRule this[int index]
 		{
 			get {

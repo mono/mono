@@ -33,6 +33,10 @@ using System.Collections;
 namespace System.Security.AccessControl {
 	public sealed class AceEnumerator : IEnumerator
 	{
+		private AceEnumerator ()
+		{
+		}
+
 		public GenericAce Current
 		{
 			get {

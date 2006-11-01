@@ -39,7 +39,7 @@ namespace System.Security.AccessControl {
 		InheritanceFlags inheritanceFlags;
 		PropagationFlags propagationFlags;
 		
-		protected AuthorizationRule ()
+		internal AuthorizationRule ()
 		{
 			/* Give it a 0-param constructor */
 		}

@@ -35,7 +35,7 @@ namespace System.Security.AccessControl {
 	{
 		AuditFlags auditFlags;
 		
-		protected AuditRule ()
+		internal AuditRule ()
 		{
 			/* Give it a 0-param constructor */
 		}

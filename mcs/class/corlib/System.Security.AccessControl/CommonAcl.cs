@@ -36,6 +36,10 @@ namespace System.Security.AccessControl {
 	 */
 	public abstract class CommonAcl : GenericAcl
 	{
+		internal CommonAcl ()
+		{
+		}
+
 		public override sealed int BinaryLength
 		{
 			get {

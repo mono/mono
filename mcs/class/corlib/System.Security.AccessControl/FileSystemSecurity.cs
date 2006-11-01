@@ -31,7 +31,13 @@
 using System.Security.Principal;
 
 namespace System.Security.AccessControl {
+
 	public abstract class FileSystemSecurity : NativeObjectSecurity {
+
+		internal FileSystemSecurity ()
+		{
+		}
+
 		public override Type AccessRightType
 		{
 			get {

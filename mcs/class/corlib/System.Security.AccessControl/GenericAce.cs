@@ -34,7 +34,11 @@ namespace System.Security.AccessControl {
 	public abstract class GenericAce
 	{
 		AceFlags aceflags;
-		
+
+		internal GenericAce ()
+		{
+		}
+
 		public AceFlags AceFlags
 		{
 			get {
