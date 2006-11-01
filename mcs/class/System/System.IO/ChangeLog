@@ -1,3 +1,13 @@
+2006-11-01  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* ErrorEventHandler.cs: Remove [Serializable] in NET_2_0.
+	* FileSystemEventHandler.cs: Remove [Serializable] in NET_2_0.
+	* FileSystemWatcher.cs: Add missing attributes for NET_2_0.
+	* InvalidDataException.cs: Seal class and remove serialization ctor.
+	* NotifyFilters.cs: Remove [Serializable] in NET_2_0.
+	* RenamedEventHandler.cs: Remove [Serializable] in NET_2_0.
+	* WatcherChangeTypes.cs: Remove [Serializable] in NET_2_0.
+
 2006-10-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* InotifyWatcher.cs: workaround for a weird case. Someone is watching

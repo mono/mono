@@ -5,8 +5,7 @@
 //   Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Tim Coleman, 2002
-//
-
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,11 +27,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
 namespace System.IO {
+
 	[Flags]
+#if ONLY_1_1
 	[Serializable]
+#endif
 	public enum NotifyFilters {
 		Attributes = 4,
 		CreationTime = 64,

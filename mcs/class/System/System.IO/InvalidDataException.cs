@@ -5,7 +5,7 @@
 //   Christopher James Lahey <clahey@ximian.com>
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
-// (C) 2004 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 
 #if NET_2_0
@@ -16,7 +16,7 @@ using System.Runtime.Serialization;
 namespace System.IO
 {
 	[Serializable]
-	public class InvalidDataException : SystemException
+	public sealed class InvalidDataException : SystemException
 	{
 		const int Result = unchecked ((int)0x80131503);
 
@@ -37,11 +37,6 @@ namespace System.IO
 			: base (message, innerException)
 		{
 			HResult = Result;
-		}
-
-		protected InvalidDataException (SerializationInfo info, StreamingContext context)
-			: base (info, context)
-		{
 		}
 	}
 }
