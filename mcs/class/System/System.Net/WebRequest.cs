@@ -142,7 +142,7 @@ namespace System.Net
 		[MonoTODO("Needs to respect Module, Proxy.AutoDetect, and Proxy.ScriptLocation config settings")]
 		static IWebProxy GetDefaultWebProxy ()
 		{
-			WebProxy p;
+			WebProxy p = null;
 			
 #if CONFIGURATION_DEP
 			System.Configuration.Configuration config = ConfigurationManager.OpenMachineConfiguration ();
