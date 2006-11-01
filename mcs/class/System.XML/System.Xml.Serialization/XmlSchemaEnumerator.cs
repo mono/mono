@@ -1,10 +1,10 @@
 // 
-// System.Xml.Serialization.XmlSerializationGeneratedCode.cs 
+// System.Xml.Serialization.XmlSerializerVersionAttribute.cs 
 //
 // Author:
-//   Lluis Sanchez Gual (lluis@ximian.com)
+//   Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) Novell, Inc., 2004
+// Copyright (C) 2006 Novell, Inc.
 //
 
 //
@@ -31,15 +31,43 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Xml.Schema;
 
-namespace System.Xml.Serialization 
+namespace System.Xml.Serialization
 {
-	public abstract class XmlSerializationGeneratedCode
+	[MonoTODO]
+	public class XmlSchemaEnumerator : IEnumerator<XmlSchema>, IDisposable, IEnumerator
 	{
-		protected XmlSerializationGeneratedCode ()
+		IEnumerator e;
+
+		public XmlSchemaEnumerator (XmlSchemas list)
 		{
+			e = list.GetEnumerator ();
+		}
+
+		public XmlSchema Current {
+			get { return (XmlSchema) e.Current; }
+		}
+
+		public void Dispose ()
+		{
+		}
+
+		public bool MoveNext ()
+		{
+			return e.MoveNext ();
+		}
+
+		object IEnumerator.Current {
+			get { return Current; }
+		}
+
+		void IEnumerator.Reset ()
+		{
+			e.Reset ();
 		}
 	}
 }
-
 #endif

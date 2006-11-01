@@ -1,10 +1,10 @@
 // 
-// System.Xml.Serialization.IXmlSerializerImplementation.cs 
+// XmlSerializerImplementation.cs 
 //
 // Author:
-//   Lluis Sanchez Gual (lluis@ximian.com)
+//   Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) Novell, Inc., 2004
+// Copyright (C) 2006 Novell, Inc.
 //
 
 //
@@ -31,7 +31,7 @@
 using System;
 using System.Collections;
 
-namespace System.Xml.Serialization 
+namespace System.Xml.Serialization
 {
 #if NET_2_0
 	public
@@ -39,15 +39,31 @@ namespace System.Xml.Serialization
 	internal
 #endif
 	
-	interface IXmlSerializerImplementation
+	abstract class XmlSerializerImplementation
 	{
-		XmlSerializationReader Reader {get;}
-		Hashtable ReadMethods {get;}
-		Hashtable TypedSerializers {get;}
-		Hashtable WriteMethods {get;}
-		XmlSerializationWriter Writer {get;}
-		
-		bool CanSerialize (Type type);
+		public virtual XmlSerializationReader Reader {
+			get { throw new NotSupportedException (); }
+		}
+		public virtual Hashtable ReadMethods {
+			get { throw new NotSupportedException (); }
+		}
+		public virtual Hashtable TypedSerializers {
+			get { throw new NotSupportedException (); }
+		}
+		public virtual Hashtable WriteMethods {
+			get { throw new NotSupportedException (); }
+		}
+		public virtual XmlSerializationWriter Writer {
+			get { throw new NotSupportedException (); }
+		}
+		public virtual bool CanSerialize (Type type)
+		{
+			throw new NotSupportedException ();
+		}
+		public virtual XmlSerializer GetSerializer (Type type)
+		{
+			throw new NotSupportedException ();
+		}
 	}
 }
 

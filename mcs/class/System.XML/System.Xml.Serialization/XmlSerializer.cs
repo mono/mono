@@ -73,7 +73,7 @@ namespace System.Xml.Serialization
 			public Type WriterType;
 			public MethodInfo WriterMethod;
 			public GenerationBatch Batch;
-			public IXmlSerializerImplementation Implementation = null;
+			public XmlSerializerImplementation Implementation = null;
 			
 			public XmlSerializationReader CreateReader () {
 				if (ReaderType != null)
@@ -532,29 +532,6 @@ namespace System.Xml.Serialization
 			return GenerateSerializers (batch, parameters);
 		}
 #endif
-
-		[MonoTODO]
-		[Obsolete]
-		public static Assembly GenerateSerializer (Type[] types, 
-			XmlMapping[] mappings, 
-			string codePath, 
-			bool debug, 
-			bool keepFiles)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		[Obsolete]
-		public static Assembly GenerateSerializer (Type[] types, 
-			XmlMapping[] mappings, 
-			string codePath, 
-			bool debug, 
-			bool keepFiles, 
-			string compilerOptions)
-		{
-			throw new NotImplementedException ();
-		}
 
 		public static string GetXmlSerializerAssemblyName (Type type)
 		{

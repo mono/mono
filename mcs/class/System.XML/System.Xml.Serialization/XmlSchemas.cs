@@ -29,10 +29,19 @@
 //
 
 using System.Collections;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 using System.Xml.Schema;
 
-namespace System.Xml.Serialization {
-	public class XmlSchemas : CollectionBase {
+namespace System.Xml.Serialization
+{
+#if NET_2_0
+	public class XmlSchemas : CollectionBase, IEnumerable<XmlSchema>
+#else
+	public class XmlSchemas : CollectionBase
+#endif
+	{
 
 		#region Fields
 		private static string msdataNS = "urn:schemas-microsoft-com:xml-msdata";
@@ -73,14 +82,11 @@ namespace System.Xml.Serialization {
 		}
 		
 		[MonoTODO]
-		public ICollection Schemas 
-		{
-			get { throw new NotImplementedException (); }
-		}
-		
-		[MonoTODO]
 		public void Compile (ValidationEventHandler handler, bool fullCompile)
 		{
+			foreach (XmlSchema xs in this)
+				if (fullCompile || !xs.IsCompiled)
+					xs.Compile (handler);
 		}
 #endif
 
@@ -227,6 +233,13 @@ namespace System.Xml.Serialization {
 		{
 			List.Remove (schema);
 		}
+
+#if NET_2_0
+		IEnumerator<XmlSchema> IEnumerable<XmlSchema>.GetEnumerator ()
+		{
+			return new XmlSchemaEnumerator (this);
+		}
+#endif
 
 		#endregion // Methods
 	}

@@ -1,5 +1,19 @@
 2006-11-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSerializationGeneratedCode.cs : removed InternalSyncObject.
+	* SerializationCodeGenerator.cs : since IXmlSerializerImplementation
+	  became a class, it needs explicit "override".
+	  Since InternalSyncObject is gone, it needs another lock target.
+	* IXmlSerializerImplementation.cs : removed.
+	* XmlSerializerImplementation.cs : added.
+	* XmlSerializer.cs : removed extra GenerateSerializer() overloads.
+	  IXmlSerializerImplementation -> XmlSerializerImplementation.
+	* XmlSchemas.cs : removed Schemas. hacked Compile().
+	  Now it implements IEnumerable<XmlSchema>.
+	* XmlSchemaEnumerator.cs : added missing type.
+
+2006-11-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlAttributeEventArgs.cs : added ExpectedAttributes. Note that it
 	  is not considered in XmlSerializationReader yet.
 	* XmlElementEventArgs.cs : added ExpectedElements. Note that it
