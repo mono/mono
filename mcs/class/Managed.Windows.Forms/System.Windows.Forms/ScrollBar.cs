@@ -323,7 +323,7 @@ namespace System.Windows.Forms
 			}
 			set {
 				if (value < 0)
-					throw new Exception( string.Format("Value '{0}' must be greater than or equal to 0.", value));
+					throw new ArgumentException( string.Format("Value '{0}' must be greater than or equal to 0.", value));
 
 				if (large_change != value) {
 					large_change = value;
@@ -428,7 +428,7 @@ namespace System.Windows.Forms
 			get { return small_change; }
 			set {
 				if ( value < 0 )
-					throw new Exception( string.Format("Value '{0}' must be greater than or equal to 0.", value));
+					throw new ArgumentException( string.Format("Value '{0}' must be greater than or equal to 0.", value));
 
 				if (small_change != value) {
 					small_change = value;
