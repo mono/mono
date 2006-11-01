@@ -1,3 +1,7 @@
+2006-11-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RuntimeWrappedException.cs: Add missing GetObjectData method.
+
 2006-08-22  Miguel de Icaza  <miguel@novell.com>
 
 	* MethodImplOptions.cs, MethodCodeType.cs, LoadHint.cs,

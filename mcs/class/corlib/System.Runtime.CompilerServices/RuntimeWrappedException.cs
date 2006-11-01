@@ -4,9 +4,7 @@
 // Author: Zoltan Varga (vargaz@gmail.com)
 //
 // (C) Copyright, Ximian Inc.
-
-//
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,9 +26,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
 #if NET_2_0
+
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace System.Runtime.CompilerServices {
 
@@ -42,13 +41,21 @@ namespace System.Runtime.CompilerServices {
 #endregion
 
 		// Called by the runtime
-		private RuntimeWrappedException () {
+		private RuntimeWrappedException () 
+		{
 		}
 
 		public object WrappedException {
 			get {
 				return wrapped_exception;
 			}
+		}
+
+		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData (info, context);
+			info.AddValue ("WrappedException", wrapped_exception);
 		}
 	}
 }
