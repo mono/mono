@@ -1,3 +1,8 @@
+2006-10-31  Mike Kestner  <mkestner@novell.com>
+
+	* CheckedListBox.cs : off by one error in returned index from
+	ObjectCollection.Add.  Fixes #79758.
+
 2006-10-31  Chris Toshok  <toshok@ximian.com>
 
 	* UpDownBase.cs: remove the OnGotFocusInternal/OnLostFocusInternal
