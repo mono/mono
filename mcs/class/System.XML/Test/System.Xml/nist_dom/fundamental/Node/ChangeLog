@@ -1,7 +1,0 @@
-2004-04-24  Atsushi Enomoto <atsushi@ximian.com>
-
-	* Node.cs : Don't check locale-dependent message. Just check type name.
-
-2004-03-31  Atsushi Enomoto <atsushi@ximian.com>
-
-	* Added nist_dom tests by Mainsoft hackers.

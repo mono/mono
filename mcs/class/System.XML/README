@@ -1,8 +1,0 @@
-Build instructions for use with the mono runtime.
-
-Run:
-	mcs @list.unix
-
-If no errors occourred, copy the generated System.Xml.dll file to the runtime dir
-(probably /usr/local/lib).
-
