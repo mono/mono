@@ -1,3 +1,9 @@
+2006-11-01  Jackson Harper  <jackson@ximian.com>
+
+	* XplatUIWin32.cs: When setting the parent change the controls
+	visibility to it's visibility flag, not to it's old parents
+	visibility (.Visible walks the parent chain).
+
 2006-11-01  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIX11.cs: revert the #79790 fix, as the simple.

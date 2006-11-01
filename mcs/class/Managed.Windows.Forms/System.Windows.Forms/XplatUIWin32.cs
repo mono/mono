@@ -1590,7 +1590,7 @@ namespace System.Windows.Forms {
 				}
 			}
 			else
-				SetVisible (handle, c.Visible, true);
+				SetVisible (handle, c.is_visible, true);
 				
 			return Win32SetParent(handle, parent);
 		}
