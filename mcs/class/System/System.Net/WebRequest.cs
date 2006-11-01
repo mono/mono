@@ -119,6 +119,54 @@ namespace System.Net
 			set { throw new NotImplementedException (); }
 		}
 		
+#if NET_2_0
+		volatile static IWebProxy proxy;
+		static readonly object lockobj = new object ();
+		
+		public static IWebProxy DefaultWebProxy {
+			get {
+				lock (lockobj) {
+					if (proxy == null)
+						proxy = GetDefaultWebProxy ();
+					return proxy;
+				}
+			}
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("WebRequest.DefaultWebProxy",
+							"null IWebProxy not allowed.");
+				proxy = value;
+			}
+		}
+		
+		[MonoTODO("Needs to respect Module, Proxy.AutoDetect, and Proxy.ScriptLocation config settings")]
+		static IWebProxy GetDefaultWebProxy ()
+		{
+			WebProxy p;
+			
+#if CONFIGURATION_DEP
+			System.Configuration.Configuration config = ConfigurationManager.OpenMachineConfiguration ();
+			DefaultProxySection sec = config.GetSection ("system.net/defaultProxy") as DefaultProxySection;
+			if (sec == null)
+				return GlobalProxySelection.GetEmptyWebProxy ();
+			
+			ProxyElement pe = sec.Proxy;
+			
+			if ((pe.UseSystemDefault == ProxyElement.UseSystemDefaultValues.True) && (pe.ProxyAddress == null))
+				p = (WebProxy) GetSystemWebProxy ();
+			else
+				p = new WebProxy ();
+			
+			if (pe.ProxyAddress != null)
+				p.Address = pe.ProxyAddress;
+			
+			if (pe.BypassOnLocal != ProxyElement.BypassOnLocalValues.Unspecified)
+				p.BypassProxyOnLocal = (pe.BypassOnLocal == ProxyElement.BypassOnLocalValues.True);
+#endif
+			return p;
+		}		
+#endif
+
 		// Methods
 		
 		public virtual void Abort()
@@ -177,6 +225,21 @@ namespace System.Net
 			throw new NotImplementedException ();
 		}
 		
+#if NET_2_0
+		[MonoTODO("Look in other places for proxy config info")]
+		public static IWebProxy GetSystemWebProxy ()
+		{
+			string address = Environment.GetEnvironmentVariable ("http_proxy");
+			if (address != null) {
+				try {
+					WebProxy p = new WebProxy (address);
+					return p;
+				} catch (UriFormatException) {}
+			}
+			return new WebProxy ();
+		}
+#endif
+
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo,
 		   				  StreamingContext streamingContext)
 		{

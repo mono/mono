@@ -37,15 +37,19 @@ using System.Net.Configuration;
 
 namespace System.Net 
 {
+#if NET_2_0
+	[ObsoleteAttribute("Use WebRequest.DefaultProxy instead")]
+#endif
 	public class GlobalProxySelection
 	{
-		volatile static IWebProxy proxy;
-		static readonly object lockobj = new object ();
-		
 		// Constructors
 		public GlobalProxySelection() { }
 		
 		// Properties
+
+#if !NET_2_0
+		volatile static IWebProxy proxy;
+		static readonly object lockobj = new object ();
 		
 		static IWebProxy GetProxy ()
 		{
@@ -56,25 +60,18 @@ namespace System.Net
 				object p = ConfigurationSettings.GetConfig ("system.net/defaultProxy");
 				if (p == null)
 					p = new EmptyWebProxy ();
-#if NET_2_0 && CONFIGURATION_DEP
-				DefaultProxySection s = p as DefaultProxySection;
-				if (s != null) {
-					// FIXME: handle Module
-					ProxyElement e = s.Proxy;
-					// FIXME: handle AutoDetect, ScriptLocation, UseSystemDefault
-					if (e.BypassOnLocal == ProxyElement.BypassOnLocalValues.Unspecified)
-						p = new WebProxy (e.ProxyAddress);
-					else
-						p = new WebProxy (e.ProxyAddress, e.BypassOnLocal == ProxyElement.BypassOnLocalValues.True);
-				}
-#endif
 				proxy = (IWebProxy) p;
 			}
 
 			return proxy;
 		}
+#endif
 		
 		public static IWebProxy Select {
+#if NET_2_0
+			get { return WebRequest.DefaultWebProxy; }
+			set { WebRequest.DefaultWebProxy = value; }
+#else
 			get { return GetProxy (); }
 			set {
 				if (value == null)
@@ -82,6 +79,7 @@ namespace System.Net
 							"null IWebProxy not allowed. Use GetEmptyWebProxy ()");
 				proxy = value; 
 			}
+#endif
 		}
 		
 		// Methods

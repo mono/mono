@@ -1,3 +1,11 @@
+2006-11-01  Michael Hutchinson  <m.j.hutchinson@gmail.com>
+
+	* GlobalProxySelection.cs: Obsolete GlobalProxySelection under 2.0 
+	  profile, and move code to new property WebRequest.DefaultWebProxy.
+	* WebRequest.cs: Implement new 2.0 property DefaultWebProxy.
+	  Add support for config option UseSystemDefault using simplistic
+	  implementation of new 2.0 method GetSystemWebProxy ().
+
 2006-10-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* FtpWebRequest.cs : more build fixes.
