@@ -1,3 +1,7 @@
+2006-10-01  Robert Jordan  <robertj@gmx.net>
+
+	* Makefile (net_2_0_SUBDIRS): Add 'mkbundle'.
+
 2006-08-30  Robert Jordan  <robertj@gmx.net>
 
 	* Makefile (net_2_0_SUBDIRS): Add 'mono-service'.

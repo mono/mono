@@ -1,3 +1,7 @@
+2006-11-01  Robert Jordan  <robertj@gmx.net>
+
+	* Makefile: Enable the NET_2_0 build.
+	
 2006-09-08  Robert Jordan  <robertj@gmx.net>
 
 	* mkbundle.cs, TODO: The `-z' option is now supported under
