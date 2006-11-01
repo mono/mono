@@ -43,16 +43,22 @@ namespace MonoTests.System.Web {
 
 			return c;
 		}
-			
-		[Test] public void Properties ()
+		
+		
+		[Test]
+		[Category ("NotDotNet")] // Cannot be runned on .net with no web context
+		public void Properties ()
 		{
 			HttpContext c;
 
 			c = Cook (10);
 			Assert.AreEqual (null, c.AllErrors, "P1");
 		}
+
 		
-		[Test] public void Validation_Test_Cookies ()
+		[Test]
+		[Category ("NotDotNet")] // Cannot be runned on .net with no web context
+		public void Validation_Test_Cookies ()
 		{
 			HttpContext c;
 
@@ -60,7 +66,10 @@ namespace MonoTests.System.Web {
 			
 		}
 
-		[Test] public void Items ()
+		
+		[Test]
+		[Category ("NotDotNet")] // Cannot be runned on .net with no web context
+		public void Items ()
 		{
 			HttpContext c = Cook (10);
 
@@ -70,6 +79,7 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+		[Category ("NotDotNet")] // Cannot be runned on .net with no web context
 		public void NullConstructor ()
 		{
 			HttpContext ctx = new HttpContext (null);

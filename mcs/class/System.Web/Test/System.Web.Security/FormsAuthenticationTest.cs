@@ -22,10 +22,8 @@ namespace MonoTests.System.Web.Security {
 	public class FormsAuthenticationTest {
 
 		[Test]
+		[Category ("NotDotNet")] // Dot.net url must include Namespace name
 		[Category("NunitWeb")]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void DefaultValues ()
 		{
 			new WebTest(new HandlerInvoker (DefaultValues_delegate)).Run ();
@@ -50,10 +48,8 @@ namespace MonoTests.System.Web.Security {
 		}
 
 		[Test]
+		[Category ("NotDotNet")] // Dot.net url must include Namespace name
 		[Category("NunitWeb")]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void Initialize ()
 		{
 			new WebTest(new HandlerInvoker (Initialize_delegate)).Run ();

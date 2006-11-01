@@ -854,6 +854,7 @@ namespace MonoTests.System.Web {
 		HttpContext context = null;
 
 		[SetUp]
+		[Category ("NotDotNet")] // Cannot be runned on .net with no web context
 		public void SetUp()
 		{
 			HttpWorkerRequest workerRequest = new FakeHttpWorkerRequest();
@@ -861,19 +862,21 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+		[Category ("NotDotNet")] // Cannot be runned on .net with no web context
 		public void ContentLength()
 		{
 			Assert.AreEqual(7, context.Request.ContentLength);
 		}
 
 		[Test]
+		[Category ("NotDotNet")] // Cannot be runned on .net with no web context
 		public void Form_Count()
 		{
 			Assert.AreEqual(1, context.Request.Form.Count);
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
+		[Category ("NotDotNet")] // Cannot be runned on .net with no web context
 		public void Form_Item()
 		{
 			// I would have expected the extra two characters to be stripped
@@ -917,6 +920,7 @@ namespace MonoTests.System.Web {
 		HttpContext context = null;
 
 		[SetUp]
+		[Category ("NotDotNet")] // Cannot be runned on .net with no web context
 		public void SetUp()
 		{
 			HttpWorkerRequest workerRequest = new FakeHttpWorkerRequest();
@@ -924,12 +928,14 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+		[Category ("NotDotNet")] // Cannot be runned on .net with no web context
 		public void Form_Count()
 		{
 			Assert.AreEqual(1, context.Request.Form.Count);
 		}
 
 		[Test]
+		[Category ("NotDotNet")] // Cannot be runned on .net with no web context
 		public void Form_Item()
 		{
 			Assert.AreEqual("b\xE1r", context.Request.Form["foo"]);

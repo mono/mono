@@ -141,6 +141,7 @@ namespace MonoTests.System.Web.Hosting {
 		}
 		
 		[Test]
+		[Category ("NotDotNet")] // D2 and D3 asserts will fail in windows on because file system environment 
 		public void ConstructorTest ()
 		{
 			object o = ApplicationHost.CreateApplicationHost (typeof (MBR), "/app", Environment.CurrentDirectory);

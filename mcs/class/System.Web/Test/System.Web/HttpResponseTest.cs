@@ -166,6 +166,9 @@ namespace MonoTests.System.Web {
 	[TestFixture]
 	public class HttpResponseTest {
 
+		// NOTE : This test cannot be runned on .net with no web context ....
+		// ONLY MONO TESTS
+
 		HttpContext Cook (int re, out FakeHttpWorkerRequest2 f)
 		{
 			f = new FakeHttpWorkerRequest2 (re);
@@ -173,7 +176,8 @@ namespace MonoTests.System.Web {
 
 			return c;
 		}
-		
+
+		[Category ("NotDotNet")] //This test cannot be runned on .net with no web context ....
 		[Test] public void Test_Response ()
 		{
 			FakeHttpWorkerRequest2 f;
@@ -194,7 +198,7 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
+		[Category ("NotDotNet")]  //This test cannot be runned on .net with no web context ....
 		public void TestResponse_Chunked ()
 		{
 			FakeHttpWorkerRequest2 f;
@@ -211,6 +215,7 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+		[Category ("NotDotNet")] //This test cannot be runned on .net with no web context ....
 		public void Status1 ()
 		{
 			FakeHttpWorkerRequest2 f;
@@ -239,6 +244,7 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+		[Category ("NotDotNet")] //This test cannot be runned on .net with no web context ....
 		[ExpectedException (typeof (HttpException))]
 		public void Status2 ()
 		{
@@ -250,6 +256,7 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+		[Category ("NotDotNet")] //This test cannot be runned on .net with no web context ....
 		[ExpectedException (typeof (HttpException))]
 		public void Status3 ()
 		{
@@ -261,6 +268,7 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+		[Category ("NotDotNet")] //This test cannot be runned on .net with no web context ....
 		public void Status4 ()
 		{
 			FakeHttpWorkerRequest2 f;
@@ -289,6 +297,7 @@ namespace MonoTests.System.Web {
 		//`
 
 		[Test]
+		[Category ("NotDotNet")] //This test cannot be runned on .net with no web context ....
 		public void SetCacheability ()
 		{
 			FakeHttpWorkerRequest2 f;
@@ -321,6 +330,7 @@ namespace MonoTests.System.Web {
 		// "no-cache" from the spec is also allowed
 		//
 		[Test]
+		[Category ("NotDotNet")] //This test cannot be runned on .net with no web context ....
 		public void CacheControl ()
 		{
 			FakeHttpWorkerRequest2 f;

@@ -33,7 +33,7 @@ using System.IO;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
-
+using MonoTests.stand_alone.WebHarness;
 using NUnit.Framework;
 
 namespace MonoTests.System.Web.UI.HtmlControls {
@@ -197,11 +197,13 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		}
 
 		[Test]
+		[Category ("NotDotNet")] // Implementation details changes : Control name will diffrent.
 		public void RenderName1 ()
 		{
 			UserControl ctrl = new UserControl ();
 			ctrl.ID = "UC";
 			Page page = new Page ();
+			page.EnableEventValidation = false;
 			TestHtmlTextArea ta = new TestHtmlTextArea ();
 			page.Controls.Add (ctrl);
 			ctrl.Controls.Add (ta);
