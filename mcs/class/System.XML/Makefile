@@ -33,6 +33,20 @@ LIB_MCS_FLAGS += \
 endif
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169
 
+ifeq (2.0, $(FRAMEWORK_VERSION))
+# Happens on net_2_0_bootstrap and net_2_0 profiles
+CONFIGURATION_DEP := System.Configuration.dll
+CONFIGURATION_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(CONFIGURATION_DEP))
+CYCLIC_DEPS += $(CONFIGURATION_DEP)
+CYCLIC_DEP_FILES += $(CONFIGURATION_DEP_FILE)
+TEST_MCS_FLAGS += -r:System.Configuration
+endif
+
+ifdef CONFIGURATION_DEP_FILE
+LIB_MCS_FLAGS += -define:CONFIGURATION_DEP -r:$(CONFIGURATION_DEP)
+$(the_lib): $(CONFIGURATION_DEP_FILE)
+endif
+
 nist_dom_files = \
 	ChangeLog ITest.cs readme.txt util.cs \
 	fundamental/ChangeLog \
