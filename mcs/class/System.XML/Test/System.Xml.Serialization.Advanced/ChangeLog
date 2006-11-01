@@ -1,0 +1,4 @@
+2006-11-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SchemaImporterExtensionCollectionTests.cs,
+	  SchemaImporterExtensionTests.cs : new testfixtures.
