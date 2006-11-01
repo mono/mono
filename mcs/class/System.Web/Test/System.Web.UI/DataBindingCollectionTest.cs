@@ -39,6 +39,7 @@ using System.Web.UI;
 namespace MonoCasTests.System.Web.UI {
 
 	[TestFixture]
+	[Category ("CAS")]
 	public class DataBindingCollectionTest
 	{
 		bool changed = false;

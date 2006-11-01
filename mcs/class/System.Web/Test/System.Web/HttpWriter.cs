@@ -39,6 +39,7 @@ using System.Web.Caching;
 namespace MonoCasTests.System.Web {
 
 	[TestFixture]
+	[Category ("CAS")]
 	public class HttpWriterTest {
 
 		private HttpWriter writer;
