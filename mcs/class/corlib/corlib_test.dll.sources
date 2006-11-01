@@ -126,6 +126,7 @@ System/ResolveEventArgsTest.cs
 System.Resources/ResourceReaderTest.cs
 System.Resources/ResourceManagerTest.cs
 System.Runtime.CompilerServices/RuntimeHelpersTest.cs
+System.Runtime.CompilerServices/RuntimeWrappedExceptionTest.cs
 System.Runtime.InteropServices/GCHandleTest.cs
 System.Runtime.InteropServices/MarshalTest.cs
 System.Runtime.InteropServices/RuntimeEnvironmentTest.cs
@@ -345,6 +346,7 @@ System.Reflection/StrongNameKeyPairCas.cs
 System.Reflection.Emit/MethodRentalCas.cs
 System.Resources/ResourceReaderCas.cs
 System.Resources/ResourceSetCas.cs
+System.Runtime.CompilerServices/RuntimeWrappedExceptionCas.cs
 System.Runtime.InteropServices/RuntimeEnvironmentCas.cs
 System.Runtime.Serialization.Formatters.Binary/BinaryFormatterCas.cs
 System.Runtime.Versioning/ResourceConsumptionAttributeCas.cs

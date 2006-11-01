@@ -1,3 +1,8 @@
+2006-11-01  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* corlib_test.dll.sources: Added unit tests and CAS tests for 
+	class System.Runtime.CompilerServices.RuntimeWrappedException.
+
 2006-10-29  Robert Jordan  <robertj@gmx.net>
 
 	* corlib_test.dll.sources: Added SerializationCallbackTest.cs
