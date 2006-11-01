@@ -1,0 +1,9 @@
+2006-11-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeSerializationSection.cs
+	  SerializationSectionGroup.cs
+	  XmlSerializerSection.cs
+	  SchemaImporterExtensionElementCollection.cs
+	  SchemaImporterExtensionsSection.cs
+	  SchemaImporterExtensionElement.cs : new files. config support it
+	  not functional yet.
