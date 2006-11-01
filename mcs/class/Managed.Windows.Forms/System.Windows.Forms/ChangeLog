@@ -1,3 +1,15 @@
+2006-10-31	Andreia Gaita <shana.ufie@gmail.com>
+
+	* ContainerControl.cs: reverted rev.67183 (which was itself
+	a reversion of rev.66853... eh).
+	
+	* Control.cs: Fixes Reflector hang by changing Focus() call
+	to what it was before rev.66643 (calling Select() here sets 
+	ActiveControl, which in some situations calls back Focus and 
+	eventually does a stack overflow). Temp fix.	
+	Changes to GetNextControl() to not look for children to select when
+	parent cannot be selectable (so it looks for siblings instead)	
+	
 2006-10-31  Mike Kestner  <mkestner@novell.com>
 
 	* CheckedListBox.cs : off by one error in returned index from

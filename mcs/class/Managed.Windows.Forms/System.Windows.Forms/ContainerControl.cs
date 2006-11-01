@@ -68,7 +68,7 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				if (value==null || (active_control == value && active_control.has_focus) /*|| !Contains(value)*/) {
+				if (value==null || (active_control == value && active_control.has_focus) || !Contains(value)) {
 					return;
 				}
 

@@ -2783,7 +2783,7 @@ namespace System.Windows.Forms
 
 		public bool Focus() {
 			if (CanFocus && IsHandleCreated && !has_focus) {
-				Select(this);
+				XplatUI.SetFocus(this.window.Handle);
 			}
 			return has_focus;
 		}
@@ -2814,8 +2814,10 @@ namespace System.Windows.Forms
 
 		public Control GetNextControl(Control ctl, bool forward) {
 
-			if (this != ctl) {
-				if ((parent == null) && (ctl is IContainerControl) && ctl.GetStyle(ControlStyles.ContainerControl)) {
+			if (ctl != null && this != ctl) {
+				if (!ctl.CanSelect || 
+					((parent == null) && (ctl is IContainerControl) && ctl.GetStyle(ControlStyles.ContainerControl))
+				   ) {
 					if (forward) {
 						return FindFlatForward(this, ctl);
 					} else {
