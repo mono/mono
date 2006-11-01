@@ -1,5 +1,10 @@
 2006-11-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SchemaImporterExtension.cs,
+	  SchemaImporterExtensionCollection.cs : moved to S.X.S.Advanced.
+
+2006-11-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSerializationGeneratedCode.cs : removed InternalSyncObject.
 	* SerializationCodeGenerator.cs : since IXmlSerializerImplementation
 	  became a class, it needs explicit "override".
