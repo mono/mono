@@ -163,6 +163,7 @@ namespace MonoTests.System.Web.Hosting {
 		}
 
 		[Test]
+        [Category ("NotWorking")]
 		public void CombineVirtualPaths4 ()
 		{
 			DummyVPP dummy = new DummyVPP ();

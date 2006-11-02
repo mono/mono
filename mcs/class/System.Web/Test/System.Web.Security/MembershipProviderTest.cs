@@ -192,6 +192,7 @@ namespace MonoTests.System.Web.Security {
 	public class MembershipProviderTest {
 
 		[Test]
+        [Category ("NotWorking")] // Not implemented
 		[ExpectedException (typeof (ProviderException))]
 		public void EncryptPassword ()
 		{

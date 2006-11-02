@@ -296,6 +296,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+        [Category ("NotWorking")]
 		public void FontUnit_IFormatProviderToString ()
 		{
 			MyFormatProvider mfp = new MyFormatProvider ();

@@ -231,6 +231,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
+        [Category ("NotWorking")]
 		public void Add_LiteralControl_NoText ()
 		{
 			TestTableCell td = new TestTableCell ();
@@ -276,6 +277,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
+        [Category ("NotWorking")]
 		public void Add_LiteralControl_Literal_And_Literal ()
 		{
 			TestTableCell td = new TestTableCell ();

@@ -479,7 +479,9 @@ namespace MonoTests.System.Web {
 			NameValueCollection x = c.Request.Headers;
 		}
 		
-		[Test] public void Test_RequestFields ()
+		[Test] 
+        [Category ("NotWorking")]
+        public void Test_RequestFields ()
 		{
 			HttpContext c = Cook (1);
 

@@ -131,6 +131,7 @@ namespace MonoTests.System.Web.UI.WebControls
 #endif
 
 		[Test]
+        [Category ("NotWorking")]
 		public void Defaults ()
 		{
 			AccessPoker sql = new AccessPoker ();

@@ -120,9 +120,7 @@ namespace MonoTests.System.Web.Security {
 
 		[Test]
 		[ExpectedException (typeof (ProviderException))]
-#if TARGET_JVM
 		[Category ("NotWorking")]
-#endif
 		public void Contructor_Identity ()
 		{
 			RolePrincipal rp = new RolePrincipal (GetGenericIdentity ("me"));

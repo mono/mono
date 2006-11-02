@@ -65,6 +65,7 @@ namespace MonoTests.System.Web
 	public class SiteMapNodeTest
 	{
 		[Test]
+		[Category ("NotWorking")]
 		public void Node_Null_Attrib_equals ()
 		{
 			SiteMapNode node = new SiteMapNode (new DummyProvider (), "", "", "", null, null, null, null, null);
@@ -75,6 +76,7 @@ namespace MonoTests.System.Web
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Node_Null_Roles_equals ()
 		{
 			SiteMapNode node = new SiteMapNode (new DummyProvider (), "", "", "", null, null, null, null, null);

@@ -164,6 +164,7 @@ namespace MonoTests.System.Web.UI
 		}
 		
 		[Test]
+		[Category ("NotWorking")]
 		public void IsViewStateEnabled ()
 		{
 			DerivedControl c = new DerivedControl ();

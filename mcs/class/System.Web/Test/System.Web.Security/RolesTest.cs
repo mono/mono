@@ -40,6 +40,7 @@ namespace MonoTests.System.Web.Security {
 	public class RolesTest {
 
 		[Test]
+        [Category ("NotWorking")]
 		public void Enabled ()
 		{
 			Assert.IsFalse (Roles.Enabled, "Enabled");

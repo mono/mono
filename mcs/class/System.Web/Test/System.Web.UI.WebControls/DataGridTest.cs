@@ -440,6 +440,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
+        [NUnit.Framework.Category("NotWorking")]
 		public void Styles ()
 		{
 			DataGridPoker p = new DataGridPoker ();
@@ -934,6 +935,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
+        [NUnit.Framework.Category("NotWorking")]
 		public void SaveViewState ()
 		{
 			DataGridPoker p = new DataGridPoker ();

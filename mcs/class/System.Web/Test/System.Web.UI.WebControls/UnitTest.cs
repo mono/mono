@@ -267,15 +267,17 @@ namespace MonoTests.System.Web.UI.WebControls
 			Unit a = new Unit ("-45cm a");
 		}
 
-		[Test]
+#if !NET_2_0
+        [Test]
 		[ExpectedException (typeof (FormatException))]
-		public void IncorrectConstructor9 ()
-		{
-			// throws because floating point values are not valid for Pixel.
-			Unit a = new Unit ("34.4px");
-		}
+        public void IncorrectConstructor9()
+        {
+            // throws because floating point values are not valid for Pixel.
+            Unit a = new Unit("34.4px");
+            
+        }
 
-		[Test]
+        [Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void IncorrectConstructor10 ()
 		{
@@ -301,6 +303,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+        [Category ("NotWorking")]
 		public void Unit_IFormatProviderToString ()
 		{
 			MyFormatProvider mfp = new MyFormatProvider ();

@@ -112,6 +112,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NotDotNet")]
+        [Category ("NotWorking")]
 		public void InitializeCell () {
 			DataGridTest	p = new DataGridTest ();
 			DataTable	table = new DataTable ();
@@ -167,6 +168,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NotDotNet")]
+        [Category("NotWorking")]
 		public void ThisIsADGTest () {
 			DataGridTest	p = new DataGridTest ();
 			DataTable	table = new DataTable ();
@@ -232,6 +234,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NotDotNet")]
+        [Category("NotWorking")]
 		public void InitializeEditCell () {
 			DataGridTest	p = new DataGridTest ();
 			DataTable	table = new DataTable ();

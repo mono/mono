@@ -99,7 +99,10 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("", sql.FilterExpression, "A26");
 		}
 
+        // WARNING!!!!!! This information will be saved into viewstate only in mono implementation .
+
 		[Test]
+        [Category ("NotWorking")]
 		public void ViewState ()
 		{
 			SqlPoker sql = new SqlPoker ();

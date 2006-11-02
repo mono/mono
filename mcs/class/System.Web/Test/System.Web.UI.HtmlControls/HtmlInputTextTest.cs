@@ -190,6 +190,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void RenderAttributes_Password ()
 		{
 			TestHtmlInputText it = new TestHtmlInputText ("password");

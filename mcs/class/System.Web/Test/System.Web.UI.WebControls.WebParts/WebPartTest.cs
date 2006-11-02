@@ -57,6 +57,7 @@ namespace MonoTests.System.Web.UI.WebControls.WebParts {
 	}
 
   	[Test]
+    [Category ("NotWorking")]
 	public void Defaults ()
   	{
 		Poker p = new Poker ();

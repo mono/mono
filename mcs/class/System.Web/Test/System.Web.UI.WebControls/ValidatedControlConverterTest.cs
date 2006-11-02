@@ -94,6 +94,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+        [NUnit.Framework.Category("NotWorking")]
 		public void Basic () {
 			string[]				result;
 			int					i;

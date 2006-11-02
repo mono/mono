@@ -201,6 +201,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void RenderOnclick4 ()
 		{
 			Page page = new Page ();

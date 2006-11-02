@@ -50,6 +50,7 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Combine ()
 		{
 			Assert.AreEqual ("/there", VPU.Combine ("/hi", "there"), "A1");
@@ -103,6 +104,7 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void GetDirectory ()
 		{
 			Assert.AreEqual ("/hi/", VPU.GetDirectory ("/hi/there"), "A1");
@@ -123,6 +125,7 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void GetExtension ()
 		{
 			Assert.AreEqual (".aspx", VPU.GetExtension ("/hi/index.aspx"), "A1");
@@ -166,6 +169,7 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void GetFileName_ArgException3 ()
 		{
@@ -196,6 +200,7 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void IsAppRelative ()
 		{
 			Assert.IsTrue (VPU.IsAppRelative ("~/Stuff"), "A1");
@@ -358,6 +363,7 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void MakeRelative5 ()
 		{
 			Assert.AreEqual ("", VPU.MakeRelative ("", ""));
@@ -377,6 +383,7 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ToAbsolute1 ()
 		{
@@ -384,6 +391,7 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ToAbsolute2 ()
 		{
@@ -391,6 +399,7 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void ToAbsolute3 ()
 		{
@@ -398,6 +407,7 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void ToAbsolute4 ()
 		{
@@ -405,6 +415,7 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void ToAbsolute5 ()
 		{

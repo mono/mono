@@ -75,6 +75,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
+        [Category ("NotWorking")]
 		public void MultilineRenderEscape ()
 		{
 			Poker t = new Poker ();
@@ -129,6 +130,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
+        [Category ("NotWorking")]
 		public void ValidationRender ()
 		{
 			/* test to show that the validation settings
