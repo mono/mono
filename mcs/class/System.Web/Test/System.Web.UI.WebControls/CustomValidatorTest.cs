@@ -146,7 +146,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void DefaultsNotWorking ()
 		{
 			CustomValidatorTestClass c = new CustomValidatorTestClass ();
@@ -161,7 +160,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		private bool checker;
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ValidateEmptyText ()
 		{
 			CustomValidatorTestClass c = new CustomValidatorTestClass ();

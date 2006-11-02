@@ -1,5 +1,9 @@
 2006-11-02 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* CustomValidatorTest.cs: removed NotWorking attributes.
+			
+2006-11-02 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* BaseCompareValidatorTest.cs: removed NotWorking attributes, fixed tests
 			
 2006-11-01 Igor Zelmanovich <igorz@mainsoft.com>

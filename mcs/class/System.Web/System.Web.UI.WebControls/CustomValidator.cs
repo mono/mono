@@ -61,12 +61,8 @@ namespace System.Web.UI.WebControls {
 		[Themeable (false)]
 		[DefaultValue (false)]
 		public bool ValidateEmptyText {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return ViewState.GetBool ("ValidateEmptyText", false); }
+			set { ViewState ["ValidateEmptyText"] = value; }
 		}
 #endif
 		#endregion	// Public Instance Properties
@@ -96,7 +92,12 @@ namespace System.Web.UI.WebControls {
 
 		protected override bool EvaluateIsValid() {
 			if (ControlToValidate.Length > 0) {
-				return OnServerValidate(GetControlValidationValue(ControlToValidate));
+				string value = GetControlValidationValue (ControlToValidate);
+#if NET_2_0
+				if (String.IsNullOrEmpty (value) && !ValidateEmptyText)
+					return true;
+#endif
+				return OnServerValidate (value);
 			}
 			return OnServerValidate(string.Empty);
 		}

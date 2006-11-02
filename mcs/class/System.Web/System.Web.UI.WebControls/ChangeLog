@@ -1,5 +1,9 @@
 2006-11-02 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* CustomValidator.cs: implemented ValidateEmptyText fixture.
+
+2006-11-02 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* BaseCompareValidator.cs: fixed: CultureInvariantValues, Type properties.
 
 2006-11-01 Igor Zelmanovich <igorz@mainsoft.com>
