@@ -1,7 +1,12 @@
+2006-11-02  Marek Safar  <marek.safar@gmail.com>
+
+	* statement.cs.cs (CollectionForeach.TryType): Issue a error when
+	IEnumerable<T> is ambiguous.
+
 2006-10-31  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #67689
-	statement.cs.cs (CollectionForeach.TryType): Issue a warning when
+	* statement.cs.cs (CollectionForeach.TryType): Issue a warning when
 	GetEnumerator is ambiguous.
 
 	* report.cs: Add new warning.
