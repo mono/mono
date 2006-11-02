@@ -58,6 +58,12 @@ namespace System.Xml.Serialization.Configuration
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
+
+		public void InitializeDefault ()
+		{
+			// not sure what is expected here.
+			// Configuration would work without it.
+		}
 	}
 }
 
