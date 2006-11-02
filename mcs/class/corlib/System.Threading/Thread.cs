@@ -5,7 +5,7 @@
 //   Dick Porter (dick@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -586,12 +586,13 @@ namespace System.Threading {
 			Abort_internal (stateInfo);
 		}
 		
-
-		[MonoTODO]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern void Interrupt_internal ();
+		
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 		public void Interrupt ()
 		{
-			throw new NotImplementedException ();
+			Interrupt_internal ();
 		}
 
 		// The current thread joins with 'this'. Set ms to 0 to block
@@ -639,13 +640,16 @@ namespace System.Threading {
 			Resume_internal ();
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static void SpinWait_internal (int iterations);
+
+
 #if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
 		public static void SpinWait (int iterations) 
 		{
-			throw new NotImplementedException ();
+			SpinWait_internal (iterations);
 		}
 
 		public void Start() {

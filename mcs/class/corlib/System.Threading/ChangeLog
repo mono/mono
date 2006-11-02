@@ -1,3 +1,7 @@
+2006-11-02  Dick Porter  <dick@ximian.com>
+
+	* Thread.cs: Use the new Interrupt and SpinWait icalls.
+
 2006-07-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WaitHandle.cs : CheckArray() is also used in WaitAny(), so added
