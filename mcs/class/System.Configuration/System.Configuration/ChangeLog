@@ -1,3 +1,8 @@
+2006-11-02  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ConfigurationElement.cs: typo in DefaultCollectionProperty
+	method
+
 2006-10-30  Joel Reed <joel.reed@ddiworld.com>
 
 	* NameValueConfigurationCollection.cs: Implement the Properties

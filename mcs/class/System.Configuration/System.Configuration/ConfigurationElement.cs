@@ -634,8 +634,10 @@ namespace System.Configuration
 				if (defaultCollectionProperty == null) {
 					if (properties != null)
 						foreach (ConfigurationProperty p in properties) {
-							if (p.IsDefaultCollection) defaultCollectionProperty = p;
-							break;
+							if (p.IsDefaultCollection) {
+								defaultCollectionProperty = p;
+								break;
+							}
 						}
 				}
 				return defaultCollectionProperty;
