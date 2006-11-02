@@ -145,14 +145,13 @@ namespace System.Net
 			WebProxy p = null;
 			
 #if CONFIGURATION_DEP
-			System.Configuration.Configuration config = ConfigurationManager.OpenMachineConfiguration ();
-			DefaultProxySection sec = config.GetSection ("system.net/defaultProxy") as DefaultProxySection;
+			DefaultProxySection sec = ConfigurationManager.GetSection ("system.net/defaultProxy") as DefaultProxySection;
 			if (sec == null)
-				return GlobalProxySelection.GetEmptyWebProxy ();
+				return GetSystemWebProxy ();
 			
 			ProxyElement pe = sec.Proxy;
 			
-			if ((pe.UseSystemDefault == ProxyElement.UseSystemDefaultValues.True) && (pe.ProxyAddress == null))
+			if ((pe.UseSystemDefault != ProxyElement.UseSystemDefaultValues.False) && (pe.ProxyAddress == null))
 				p = (WebProxy) GetSystemWebProxy ();
 			else
 				p = new WebProxy ();
