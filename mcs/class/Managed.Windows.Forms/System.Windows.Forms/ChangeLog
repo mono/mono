@@ -1,3 +1,12 @@
+2006-11-02  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* TrackBar.cs: Now orientation only switches height / width if
+	the control's handle is created (Win32 does it like this). Also 
+	fixed a typo in ToString() for a test to pass, changed the 
+	exception thrown in set_LargeChange and set_SmallChange to 
+	match Win32 behaviour, and added TrackBar tests to the unit 
+	tests.
+
 2006-11-02  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIX11.cs: the atom we want is _NET_WM_STATE_SKIP_TASKBAR,
@@ -13,7 +22,7 @@
 	* TextBoxBase.cs: Use client rectangle not bounds for checking if
 	the mouse is in the client rectangle (duh).
 
-2006-11-02  Rolf Bjarne KVinge  <RKvinge@novell.com>
+2006-11-02  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 	
 	* TrackBar.cs: Fixed trackbar jumping around when clicking
 	on it - the trackbar was not detecting correctly at which

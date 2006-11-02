@@ -57,7 +57,15 @@ namespace MonoTests.System.Windows.Forms
 			TrackBar myTrackBar = new TrackBar ();
 			myTrackBar.LargeChange = -1;
 		}
-	
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]		
+		public void SmallChangeTest ()
+		{
+			TrackBar myTrackBar = new TrackBar ();
+			myTrackBar.SmallChange = -1;
+		}
+
 		[Test]
 		public void SetRangeTest () 
 		{
@@ -74,6 +82,42 @@ namespace MonoTests.System.Windows.Forms
 			myTrackBar.Text = "New TrackBar";
 			Assert.AreEqual ("System.Windows.Forms.TrackBar, Minimum: 0, Maximum: 10, Value: 0", myTrackBar.ToString (), "#T3");
 		}
-	}
+
+		[Test]
+		public void OrientationSizeTest ()
+		{	
+			int width;
+			int height ;
+			using (TrackBar myTrackBar = new TrackBar()) {
+				width = myTrackBar.Width;
+				height = myTrackBar.Height;
+				myTrackBar.Orientation = Orientation.Vertical;
+				Assert.AreEqual(width, myTrackBar.Width, "#OS1");
+				Assert.AreEqual(height, myTrackBar.Height, "#OS2");
+			}
+			
+			using (Form myForm = new Form()) {
+				using ( TrackBar myTrackBar = new TrackBar()) {
+					width = myTrackBar.Width;
+					height = myTrackBar.Height;
+					myForm.Controls.Add(myTrackBar);
+					IntPtr handle = myTrackBar.Handle; // causes the handle to be created.
+					myTrackBar.Orientation = Orientation.Vertical;
+					Assert.AreEqual(height, myTrackBar.Width,  "#OS3");
+					Assert.AreEqual(width, myTrackBar.Height, "#OS4");
+				}
+			}
+
+			using (Form myForm = new Form()) {
+				using ( TrackBar myTrackBar = new TrackBar()) {
+					myForm.Controls.Add(myTrackBar);
+					IntPtr handle = myTrackBar.Handle; // causes the handle to be created.
+					myTrackBar.Width = 200;
+					myTrackBar.Orientation = Orientation.Vertical;
+					Assert.AreEqual(200, myTrackBar.Height, "#OS5");
+				}
+			}
+		}
+}
 }
 

@@ -25,12 +25,12 @@
 //
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
-//
+//	Rolf Bjarne Kvinge, RKvinge@novell.com
+// 
 // TODO:
 //		- The AutoSize functionality seems quite broken for vertical controls in .Net 1.1. Not
 //		sure if we are implementing it the right way.
 //
-
 
 // NOT COMPLETE
 
@@ -64,7 +64,7 @@ namespace System.Windows.Forms
 		internal int thumb_mouseclick;		
 		private bool mouse_clickmove;
 		private bool is_moving_right; // which way the thumb should move when mouse is down (right=up, left=down) 
-
+	
 		#region events
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -226,7 +226,7 @@ namespace System.Windows.Forms
 			get { return largeChange; }
 			set {
 				if (value < 0)
-					throw new Exception( string.Format("Value '{0}' must be greater than or equal to 0.", value));
+					throw new ArgumentOutOfRangeException( string.Format("Value '{0}' must be greater than or equal to 0.", value));
 
 				largeChange = value;				
 			}
@@ -276,11 +276,13 @@ namespace System.Windows.Forms
 				/* Orientation can be changed once the control has been created */
 				if (orientation != value) {
 					orientation = value;
-				
-					int old_witdh = Width;
-					Width = Height;
-					Height = old_witdh;
-					Refresh (); 
+					
+					if (this.IsHandleCreated) {
+						int old_witdh = Width;
+						Width = Height;
+						Height = old_witdh;
+						Refresh (); 
+					}
 				}
 			}
 		}
@@ -290,7 +292,7 @@ namespace System.Windows.Forms
 			get { return smallChange;}
 			set {
 				if ( value < 0 )
-					throw new Exception( string.Format("Value '{0}' must be greater than or equal to 0.", value));
+					throw new ArgumentOutOfRangeException( string.Format("Value '{0}' must be greater than or equal to 0.", value));
 
 				if (smallChange != value) {
 					smallChange = value;					
@@ -440,7 +442,7 @@ namespace System.Windows.Forms
 
 		public override string ToString()
 		{
-			return string.Format("System.Windows.Forms.Trackbar, Minimum: {0}, Maximum: {1}, Value: {2}",
+			return string.Format("System.Windows.Forms.TrackBar, Minimum: {0}, Maximum: {1}, Value: {2}",
 						Minimum, Maximum, Value);
 		}
 							
@@ -545,7 +547,6 @@ namespace System.Windows.Forms
 					thumb_pressed = true;
 					thumb_mouseclick = e.Y;
 					Invalidate (thumb_area);
-					
 				}
 				else {
 					if (ClientRectangle.Contains (point)) {
@@ -668,10 +669,13 @@ namespace System.Windows.Forms
 
 		protected override void SetBoundsCore (int x, int y,int width, int height, BoundsSpecified specified)
 		{
-			base.SetBoundsCore (x, y,width,	height, specified);
+			if (orientation == Orientation.Vertical) {
+				width = DefaultSize.Height;
+			} else {
+				height = DefaultSize.Height;
+			}
+			base.SetBoundsCore (x, y,width, height, specified);
 		}
-
-		
     		#endregion // Private Methods
 	}
 }
