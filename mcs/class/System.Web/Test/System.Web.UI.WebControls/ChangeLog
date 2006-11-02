@@ -1,3 +1,7 @@
+2006-11-02 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* BaseCompareValidatorTest.cs: removed NotWorking attributes, fixed tests
+			
 2006-11-01 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* MenuTest.cs: removed NotWorking attributes

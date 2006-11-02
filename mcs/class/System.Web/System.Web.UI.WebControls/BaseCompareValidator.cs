@@ -39,8 +39,6 @@ namespace System.Web.UI.WebControls {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class BaseCompareValidator : BaseValidator {
 
-		ValidationDataType type;
-
 #if NET_2_0
 		protected
 #else
@@ -48,13 +46,12 @@ namespace System.Web.UI.WebControls {
 #endif
 		BaseCompareValidator ()
 		{
-			type = ValidationDataType.String;
 		}
 
 		protected override void AddAttributesToRender (HtmlTextWriter w)
 		{
 			if (RenderUplevel) {
-				w.AddAttribute ("datatype", type.ToString());
+				w.AddAttribute ("datatype", Type.ToString());
 			}
 
 			base.AddAttributesToRender (w);
@@ -211,16 +208,11 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		[DefaultValue (false)]
 		[Themeable (false)]
 		public bool CultureInvariantValues {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return ViewState.GetBool ("CultureInvariantValues", false); }
+			set { ViewState ["CultureInvariantValues"] = value; }
 		}
 #endif
 
@@ -237,12 +229,8 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription("")]
 		[WebCategory("Behavior")]
 		public ValidationDataType Type {
-			get {
-				return type;
-			}
-			set {
-				type = value;
-			}
+			get { return ViewState ["Type"] == null ? ValidationDataType.String : (ValidationDataType) ViewState ["Type"]; }
+			set { ViewState ["Type"] = value; }
 		}
 
 #if NET_2_0

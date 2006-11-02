@@ -1,3 +1,7 @@
+2006-11-02 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* BaseCompareValidator.cs: fixed: CultureInvariantValues, Type properties.
+
 2006-11-01 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Menu.cs: fixed: RenderEndTag.

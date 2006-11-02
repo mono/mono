@@ -111,20 +111,23 @@ namespace MonoTests.System.Web.UI.WebControls
 	{
 
 		[Test]
-		[Category("NotWorking")]
 		public void DefaultProperties ()
 		{
 			BaseCompareValidatorPoker p = new BaseCompareValidatorPoker ();
+			
+			Assert.AreEqual (ValidationDataType.String, p.Type, "CultureInvariantValues");
 #if NET_2_0
 			Assert.AreEqual (false, p.CultureInvariantValues, "CultureInvariantValues");
 #endif 
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void AssignProperties ()
 		{
 			BaseCompareValidatorPoker p = new BaseCompareValidatorPoker ();
+			
+			p.Type = ValidationDataType.Double;
+			Assert.AreEqual (ValidationDataType.Double, p.Type, "CultureInvariantValues");
 #if NET_2_0
 			p.CultureInvariantValues = true;
 			Assert.AreEqual (true, p.CultureInvariantValues, "CultureInvariantValues");
@@ -136,8 +139,18 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			BaseCompareValidatorPoker p = new BaseCompareValidatorPoker ();
 
-			p.Type = ValidationDataType.String;
-			Assert.AreEqual (p.Type, ValidationDataType.String, "A1");
+			p.Type = ValidationDataType.Double;
+#if NET_2_0
+			p.CultureInvariantValues = true;
+#endif
+
+			BaseCompareValidatorPoker copy = new BaseCompareValidatorPoker ();
+			copy.LoadState (p.SaveState ());
+
+			Assert.AreEqual (ValidationDataType.Double, copy.Type, "A1");
+#if NET_2_0
+			Assert.AreEqual (true, copy.CultureInvariantValues, "A1");
+#endif
 		}
 
 		[Test]
@@ -479,7 +492,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 #if NET_2_0
 		[Test]
-		[Category ("NotWorking")]
 		public void CultureInvariantValues_1 ()
 		{
 			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US", false);
@@ -516,7 +528,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CultureInvariantValues_2 ()
 		{
 
