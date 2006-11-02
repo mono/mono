@@ -1,3 +1,8 @@
+2006-11-02  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11.cs: the atom we want is _NET_WM_STATE_SKIP_TASKBAR,
+	not _NET_WM_STATE_NO_TASKBAR.
+
 2006-11-02  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: Increment count by one, since in the update view

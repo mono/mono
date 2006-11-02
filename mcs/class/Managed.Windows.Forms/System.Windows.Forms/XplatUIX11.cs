@@ -174,7 +174,7 @@ namespace System.Windows.Forms {
 		private static IntPtr _XEMBED;
 		private static IntPtr _XEMBED_INFO;
 		private static IntPtr _MOTIF_WM_HINTS;
-		private static IntPtr _NET_WM_STATE_NO_TASKBAR;
+		private static IntPtr _NET_WM_STATE_SKIP_TASKBAR;
 		private static IntPtr _NET_WM_STATE_ABOVE;
 		private static IntPtr _NET_WM_STATE_MODAL;
 		private static IntPtr _NET_WM_STATE_HIDDEN;
@@ -608,7 +608,7 @@ namespace System.Windows.Forms {
 
 			_MOTIF_WM_HINTS = XInternAtom(DisplayHandle, "_MOTIF_WM_HINTS", false);
 
-			_NET_WM_STATE_NO_TASKBAR = XInternAtom(DisplayHandle, "_NET_WM_STATE_NO_TASKBAR", false);
+			_NET_WM_STATE_SKIP_TASKBAR = XInternAtom(DisplayHandle, "_NET_WM_STATE_SKIP_TASKBAR", false);
 			_NET_WM_STATE_ABOVE = XInternAtom(DisplayHandle, "_NET_WM_STATE_ABOVE", false);
 			_NET_WM_STATE_MODAL = XInternAtom(DisplayHandle, "_NET_WM_STATE_MODAL", false);
 			_NET_WM_CONTEXT_HELP = XInternAtom(DisplayHandle, "_NET_WM_CONTEXT_HELP", false);
@@ -891,7 +891,7 @@ namespace System.Windows.Forms {
 				atom_count = 0;
 
 				if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
-					atoms[atom_count++] = _NET_WM_STATE_NO_TASKBAR.ToInt32();
+					atoms[atom_count++] = _NET_WM_STATE_SKIP_TASKBAR.ToInt32();
 				}
 				/* we need to add these atoms in the
 				 * event we're maximized, since we're
