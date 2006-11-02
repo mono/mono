@@ -1683,8 +1683,7 @@ namespace System.Windows.Forms {
 		private void TextBoxBase_MouseMove(object sender, MouseEventArgs e) {
 			// FIXME - handle auto-scrolling if mouse is to the right/left of the window
 			if (Capture) {
-
-				if (!bounds.Contains (e.X, e.Y)) {
+				if (!ClientRectangle.Contains (e.X, e.Y)) {
 					if (scroll_timer == null) {
 						scroll_timer = new Timer ();
 						scroll_timer.Interval = 100;
@@ -1732,22 +1731,22 @@ namespace System.Windows.Forms {
 
 			pt = PointToClient (pt);
 
-			if (pt.X < bounds.Left) {
+			if (pt.X < ClientRectangle.Left) {
 				document.MoveCaret(CaretDirection.CharBackNoWrap);
 				document.SetSelectionToCaret(false);
 				
 				CaretMoved(this, null);
-			} else if (pt.X > bounds.Right) {
+			} else if (pt.X > ClientRectangle.Right) {
 				document.MoveCaret(CaretDirection.CharForwardNoWrap);
 				document.SetSelectionToCaret(false);
 				
 				CaretMoved(this, null);
-			} else if (pt.Y > bounds.Bottom) {
+			} else if (pt.Y > ClientRectangle.Bottom) {
 				document.MoveCaret(CaretDirection.LineDown);
 				document.SetSelectionToCaret(false);
 				
 				CaretMoved(this, null);
-			} else if (pt.Y < bounds.Top) {
+			} else if (pt.Y < ClientRectangle.Top) {
 				document.MoveCaret(CaretDirection.LineUp);
 				document.SetSelectionToCaret(false);
 				
