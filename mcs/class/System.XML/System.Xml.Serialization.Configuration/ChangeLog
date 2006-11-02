@@ -1,6 +1,11 @@
 2006-11-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SchemaImporterExtensionsSection.cs :
+	  oops, it was protected override.
+
+2006-11-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SchemaImporterExtensionsSection.cs :
 	  added missing InitializeDefault().
 
 2006-11-01  Atsushi Enomoto  <atsushi@ximian.com>

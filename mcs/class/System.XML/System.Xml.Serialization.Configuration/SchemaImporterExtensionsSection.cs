@@ -59,10 +59,11 @@ namespace System.Xml.Serialization.Configuration
 			get { return properties; }
 		}
 
-		public void InitializeDefault ()
+		protected override void InitializeDefault ()
 		{
 			// not sure what is expected here.
 			// Configuration would work without it.
+			base.InitializeDefault ();
 		}
 	}
 }
