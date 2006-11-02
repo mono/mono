@@ -198,7 +198,7 @@ int
 Mono_Posix_Stdlib_clearerr (void* stream)
 {
 	errno = 0;
-	clearerr (stream);
+	clearerr (((FILE*) stream));
 	return errno == 0 ? 0 : -1;
 }
 

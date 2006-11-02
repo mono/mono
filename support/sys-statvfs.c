@@ -149,25 +149,25 @@ Mono_Posix_ToStatvfs (void *_from, struct Mono_Posix_Statvfs *to)
 }
 
 int
-Mono_Posix_FromStatvfs (struct Mono_Posix_Statvfs *from, void *to)
+Mono_Posix_FromStatvfs (struct Mono_Posix_Statvfs *from, void *_to)
 {
 	struct statfs *to = _to;
+	guint64 flag;
 
 	to->f_bsize   = from->f_bsize;
-	to->f_frsize  = from->f_bsize;
 	to->f_blocks  = from->f_blocks;
 	to->f_bfree   = from->f_bfree;
 	to->f_bavail  = from->f_bavail;
 	to->f_files   = from->f_files;
 	to->f_ffree   = from->f_ffree;
-	to->f_favail  = from->f_ffree; /* OSX doesn't have f_avail */
 
 	// from->f_fsid is an int32[2], to->f_fsid is a uint64, 
 	// so this shouldn't lose anything.
 	memcpy (&to->f_fsid, &from->f_fsid, sizeof(to->f_fsid));
 
-	if (Mono_Posix_FromMountFlags (from->f_flags, &to->f_flag) != 0)
+	if (Mono_Posix_FromMountFlags (from->f_flag, &flag) != 0)
 		return -1;
+	to->f_flags = flag;
 
 	return 0;
 }
@@ -218,7 +218,7 @@ Mono_Posix_Syscall_fstatvfs (gint32 fd, struct Mono_Posix_Statvfs *buf)
 		return -1;
 	}
 
-	if ((r = statfs (path, &s)) == 0 &&
+	if ((r = fstatfs (fd, &s)) == 0 &&
 			(r = Mono_Posix_ToStatvfs (&s, buf)) == 0) {
 		set_fnamemax (fd, buf);
 	}

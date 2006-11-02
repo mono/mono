@@ -1,5 +1,11 @@
 2006-11-01  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* stdio.c: Some BSDs define clearerr(3) as a macro, so we need to cast
+	  `stream' to a `FILE*' to avoid derefing a `void*'.
+	* sys-statvfs.c: Build fix to support OS X 10.3.9 & systems w/o statvfs(2).
+
+2006-11-01  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* mph.h: Add fallback typedefs for blkcnt_t, blksize_t, suseconds_t so that
 	  map.c can rely on their presence.  (Some versions of OS X don't provide
 	  these typedefs.)
