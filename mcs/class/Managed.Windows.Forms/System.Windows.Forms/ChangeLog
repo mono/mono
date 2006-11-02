@@ -1,3 +1,8 @@
+2006-11-02  Everaldo Canuto  <everaldo@simios.org>
+
+	* ListBox.cs: scroll visible area when change SelectedIndex to
+	a non visible area.  Fixes #79481.
+
 2006-11-01  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: When replacing the selection move the selection

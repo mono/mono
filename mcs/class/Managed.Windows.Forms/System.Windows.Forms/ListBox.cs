@@ -416,6 +416,18 @@ namespace System.Windows.Forms
 				else if (SelectionMode == SelectionMode.One)
 					UnSelectItem (selected_index, true);
 
+    				if (value < top_index)
+    				{
+    					top_index = value;
+    					UpdateTopItem ();
+    				} else {
+    					int rows = items_area.Height / ItemHeight;
+    					if (value >= (top_index + rows))
+    					{
+    						top_index = value - rows + 1;
+    						UpdateTopItem ();
+    					}
+    				}
     				SelectItem (value);
     				selected_index = value;
     				FocusedItem = value;
