@@ -1,3 +1,9 @@
+2006-11-02  Rolf Bjarne KVinge  <RKvinge@novell.com>
+	
+	* TrackBar.cs: Fixed trackbar jumping around when clicking
+	on it - the trackbar was not detecting correctly at which
+	side of the thumb the click was done. (fixes #79718)
+
 2006-11-02  Everaldo Canuto  <everaldo@simios.org>
 
 	* ListBox.cs: scroll visible area when change SelectedIndex to

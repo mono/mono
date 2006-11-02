@@ -63,6 +63,7 @@ namespace System.Windows.Forms
 		private System.Timers.Timer holdclick_timer = new System.Timers.Timer ();
 		internal int thumb_mouseclick;		
 		private bool mouse_clickmove;
+		private bool is_moving_right; // which way the thumb should move when mouse is down (right=up, left=down) 
 
 		#region events
 		[Browsable (false)]
@@ -526,7 +527,8 @@ namespace System.Windows.Forms
 				}
 				else {
 					if (ClientRectangle.Contains (point)) {
-						if (e.X > thumb_pos.X + thumb_pos.Width)
+						is_moving_right = e.X > thumb_pos.X + thumb_pos.Width; 
+						if (is_moving_right)
 							LargeIncrement ();
 						else
 							LargeDecrement ();
@@ -547,7 +549,8 @@ namespace System.Windows.Forms
 				}
 				else {
 					if (ClientRectangle.Contains (point)) {
-						if (e.Y > thumb_pos.Y + thumb_pos.Height)
+						is_moving_right = e.Y > thumb_pos.Y + thumb_pos.Width;
+						if (is_moving_right)
 							LargeDecrement ();
 						else
 							LargeIncrement ();
@@ -630,25 +633,36 @@ namespace System.Windows.Forms
 		{						
 			Point pnt;
 			pnt = PointToClient (MousePosition);			
-
+			/*
+				On Win32 the thumb only moves in one direction after a click, 
+				if the thumb passes the clicked point it will never go in the 
+				other way unless the mouse is released and clicked again. This
+				is also true if the mouse moves while beeing hold down.
+			*/
+		
 			if (thumb_area.Contains (pnt)) 	{
+				bool invalidate = false;
 				if (orientation == Orientation.Horizontal) {
-					if (pnt.X > thumb_pos.X + thumb_pos.Width)
+					if (pnt.X > thumb_pos.X + thumb_pos.Width && is_moving_right) {
 						LargeIncrement ();
-
-					if (pnt.X < thumb_pos.X)
-						LargeDecrement ();						
-				}
-				else 				{
-					if (pnt.Y > thumb_pos.Y + thumb_pos.Height)
-						LargeIncrement ();
-
-					if (pnt.Y < thumb_pos.Y)
-						LargeDecrement ();
-				}
-
-				Invalidate (thumb_area);
-
+						invalidate = true;
+					} else if (pnt.X < thumb_pos.X && !is_moving_right) {
+						LargeDecrement ();			
+						invalidate = true;
+					}					
+				} else {
+					if (pnt.Y > thumb_pos.Y + thumb_pos.Width && is_moving_right) {
+						LargeDecrement ();		
+						invalidate = true;
+					} else if (pnt.Y < thumb_pos.Y && !is_moving_right) {
+						LargeIncrement ();		
+						invalidate = true;
+					}
+ 				}
+ 				if (invalidate)
+ 					// A Refresh is necessary because the mouse is down and if we just invalidate
+ 					// we'll only get paint events once in a while.
+ 					Refresh();
 			}			
 		}					
 
