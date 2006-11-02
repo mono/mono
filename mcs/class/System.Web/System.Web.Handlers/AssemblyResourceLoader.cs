@@ -50,11 +50,17 @@ namespace System.Web.Handlers {
 				atime = "&t=" + File.GetLastWriteTimeUtc (apath).Ticks;
 			}
 
-			return "WebResource.axd?a=" 
-				+ aname 
-				+ "&r=" 
-				+ HttpUtility.UrlEncode (resourceName)
-				+ atime;
+			string href = "WebResource.axd?a=" + aname + "&r=" + HttpUtility.UrlEncode (resourceName) + atime;
+			
+			if (HttpContext.Current != null && HttpContext.Current.Request != null) {
+				string appPath = HttpContext.Current.Request.ApplicationPath;
+				if (!appPath.EndsWith ("/"))
+					appPath += "/";
+
+				href = appPath + href;
+			}
+			
+			return href;
 		}
 
 	

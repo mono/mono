@@ -116,16 +116,21 @@ namespace System.Web.UI
 		
 		public string GetCallbackEventReference (Control control, string argument, string clientCallback, string context)
 		{
-			return GetCallbackEventReference (control.UniqueID, argument, clientCallback, context, null, false);
+			return GetCallbackEventReference (control, argument, clientCallback, context, null, false);
 		}
 
 		public string GetCallbackEventReference (Control control, string argument, string clientCallback, string context, bool useAsync)
 		{
-			return GetCallbackEventReference (control.UniqueID, argument, clientCallback, context, null, useAsync);
+			return GetCallbackEventReference (control, argument, clientCallback, context, null, useAsync);
 		}
 
 		public string GetCallbackEventReference (Control control, string argument, string clientCallback, string context, string clientErrorCallback, bool useAsync)
 		{
+			if (control == null)
+				throw new ArgumentNullException ("control");
+			if(!(control is ICallbackEventHandler))
+				throw new InvalidOperationException ("The control must implement the ICallbackEventHandler interface and provide a RaiseCallbackEvent method.");
+
 			return GetCallbackEventReference (control.UniqueID, argument, clientCallback, context, clientErrorCallback, useAsync);
 		}
 
@@ -136,7 +141,7 @@ namespace System.Web.UI
 			if (!IsClientScriptIncludeRegistered (typeof(Page), "callback"))
 				RegisterClientScriptInclude (typeof(Page), "callback", GetWebResourceUrl (typeof(Page), "callback.js"));
 			
-			return string.Format ("WebForm_DoCallback ('{0}', {1}, {2}, {3}, {4})", target, argument, clientCallback, context, clientErrorCallback);
+			return string.Format ("WebForm_DoCallback('{0}',{1},{2},{3},{4},{5})", target, argument, clientCallback, context, ((clientErrorCallback == null) ? "null" : clientErrorCallback), (useAsync ? "true" : "false"));
 		}
 #endif
 		
@@ -246,11 +251,14 @@ namespace System.Web.UI
 	
 		public void RegisterClientScriptBlock (Type type, string key, string script)
 		{
-			RegisterScript (ref clientScriptBlocks, type, key, script, false);
+			RegisterClientScriptBlock (type, key, script, false);
 		}
 	
 		public void RegisterClientScriptBlock (Type type, string key, string script, bool addScriptTags)
 		{
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
 			RegisterScript (ref clientScriptBlocks, type, key, script, addScriptTags);
 		}
 	
@@ -270,6 +278,9 @@ namespace System.Web.UI
 	
 		public void RegisterOnSubmitStatement (Type type, string key, string script)
 		{
+			if (type == null)
+				throw new ArgumentNullException ("type");
+			
 			RegisterScript (ref submitStatements, type, key, script, false);
 		}
 	
@@ -280,21 +291,29 @@ namespace System.Web.UI
 		
 		public void RegisterStartupScript (Type type, string key, string script)
 		{
-			RegisterScript (ref startupScriptBlocks, type, key, script, false);
+			RegisterStartupScript (type, key, script, false);
 		}
 		
 		public void RegisterStartupScript (Type type, string key, string script, bool addScriptTags)
 		{
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
 			RegisterScript (ref startupScriptBlocks, type, key, script, addScriptTags);
 		}
 
 		public void RegisterClientScriptInclude (string key, string url)
 		{
-			RegisterScript (ref scriptIncludes, GetType(), key, url, false);
+			RegisterClientScriptInclude (GetType (), key, url);
 		}
 		
 		public void RegisterClientScriptInclude (Type type, string key, string url)
 		{
+			if (type == null)
+				throw new ArgumentNullException ("type");
+			if (url == null || url.Length == 0)
+				throw new ArgumentException ("url");
+
 			RegisterScript (ref scriptIncludes, type, key, url, false);
 		}
 
@@ -317,6 +336,36 @@ namespace System.Web.UI
 						     string attributeName, 
 						     string attributeValue, 
 						     bool encode)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void RegisterForEventValidation (PostBackOptions options)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public void RegisterForEventValidation (string uniqueId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void RegisterForEventValidation (string uniqueId, string argument)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void ValidateEvent (string uniqueId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void ValidateEvent (string uniqueId, string argument)
 		{
 			throw new NotImplementedException ();
 		}

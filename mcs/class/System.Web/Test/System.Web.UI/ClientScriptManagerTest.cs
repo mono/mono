@@ -39,7 +39,7 @@ using MonoTests.SystemWeb.Framework;
 using System.Text;
 using System.Threading;
 
-namespace MonoTests.System.Web.UI.WebControls
+namespace MonoTests.System.Web.UI
 {
 
 	public class MyPage : Page, ICallbackEventHandler
@@ -81,7 +81,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void ClientScriptManager_GetCallbackEventReference_1 ()
 		{
 			MyPage p = new MyPage ();
@@ -100,7 +99,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ClientScriptManager_GetCallbackEventReference_2 ()
 		{
 			MyPage p = new MyPage ();
@@ -119,7 +117,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ClientScriptManager_GetCallbackEventReference_3 ()
 		{
 			MyPage p = new MyPage ();
@@ -138,7 +135,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ClientScriptManager_GetPostBackEventReference_1 ()
 		{
 			MyPage p = new MyPage ();
@@ -167,7 +163,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category("NunitWeb")]
-		[Category ("NotWorking")]
 		public void ClientScriptManager_GetWebResourceUrl ()
 		{
 			string html = new WebTest (PageInvoker.CreateOnLoad (GetWebResourceUrlLoad)).Run();
@@ -176,13 +171,12 @@ namespace MonoTests.System.Web.UI.WebControls
 		public static void GetWebResourceUrlLoad (Page p)
 		{
 			ClientScriptManager cs = p.ClientScript;
-			String cbReference = cs.GetWebResourceUrl (typeof (MonoTests.System.Web.UI.WebControls.ClientScriptManagerTest), "ClientScript.js");
+			String cbReference = cs.GetWebResourceUrl (typeof (MonoTests.System.Web.UI.ClientScriptManagerTest), "ClientScript.js");
 			if (cbReference.IndexOf("/NunitWeb/WebResource.axd?")<0)
 				Assert.Fail ("GetWebResourceUrlFail");
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ClientScriptManager_IsClientScriptBlockRegistered ()
 		{
 			Page p = new Page ();
@@ -194,11 +188,10 @@ namespace MonoTests.System.Web.UI.WebControls
 			cstext2.Append ("alert('Text from client script.')} </");
 			cstext2.Append ("script>");
 			cs.RegisterClientScriptBlock (cstype, csname2, cstext2.ToString ());
-			Assert.AreEqual (true, cs.IsClientScriptBlockRegistered (csname2), "ClientScriptBlockRegisterFail#1");
+			Assert.AreEqual (true, cs.IsClientScriptBlockRegistered (cstype, csname2), "ClientScriptBlockRegisterFail#1");
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ClientScriptManager_IsRegisterClientScriptInclude ()
 		{
 			Page p = new Page ();
@@ -207,12 +200,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			Type cstype = p.GetType ();
 			ClientScriptManager cs = p.ClientScript;
 			cs.RegisterClientScriptInclude (cstype, csname, csurl);
-			bool registry = cs.IsClientScriptIncludeRegistered (csname);
+			bool registry = cs.IsClientScriptIncludeRegistered (cstype, csname);
 			Assert.AreEqual (true, registry, "RegisterClientScriptIncludeFail");
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ClientScriptManager_IsRegisterOnSubmitStatement ()
 		{
 			Page p = new Page ();
@@ -220,13 +212,13 @@ namespace MonoTests.System.Web.UI.WebControls
 			Type cstype = p.GetType ();
 			ClientScriptManager cs = p.ClientScript;
 			cs.RegisterClientScriptInclude (cstype, csname, "document.write('Text from OnSubmit statement');");
-			bool registry = cs.IsClientScriptIncludeRegistered (csname);
+			bool registry = cs.IsClientScriptIncludeRegistered (cstype, csname);
 			Assert.AreEqual (true, registry, "RegisterClientScriptIncludeFail");
 		}
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // implementation specific
 		public void ClientScriptManager_RegisterOnSubmitStatement ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (RegisterOnSubmitStatement));
@@ -286,8 +278,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void ClientScriptManager_IsRegisterStartupScript ()
 		{
 			Page p = new Page ();
@@ -296,7 +286,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			ClientScriptManager cs = p.ClientScript;
 			String cstext1 = "alert('Hello World');";
 			cs.RegisterStartupScript (cstype, csname1, cstext1);
-			Assert.AreEqual (true,cs.IsStartupScriptRegistered(csname1) , "StartupScriptRegisteredFail"); 	
+			Assert.AreEqual (true, cs.IsStartupScriptRegistered (cstype, csname1), "StartupScriptRegisteredFail"); 	
 		}
 
 		[Test]
@@ -342,7 +332,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // Not Implemented
 		public void ClientScriptManager_RegisterExpandAttribute ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (RegisterExpandAttribute));
@@ -462,7 +452,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ClientScriptManager_IsRegisterStartupScriptException ()
 		{
@@ -473,7 +462,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ClientScriptManager_RegisterOnSubmitStatementException ()
 		{
@@ -485,7 +473,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ClientScriptManager_RegisterClientScriptIncludeException_1 ()
 		{
@@ -499,7 +486,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ClientScriptManager_RegisterClientScriptIncludeException_2 ()
 		{
@@ -512,7 +498,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ClientScriptManager_ClientScriptBlockRegisterException_2 ()
 		{
@@ -520,7 +505,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			ClientScriptManager cs = p.ClientScript;
 			String csname2 = "ButtonClickScript";
 			cs.RegisterClientScriptBlock (null, csname2, "");
-			Assert.AreEqual (true, cs.IsClientScriptBlockRegistered (csname2), "ClientScriptBlockRegisterFail");
 		}
 
 
@@ -543,7 +527,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void ClientScriptManager_GetCallbackEventReferenceException_1 ()
 		{
@@ -556,7 +539,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ClientScriptManager_GetCallbackEventReferenceException_2 ()
 		{
@@ -576,5 +558,6 @@ namespace MonoTests.System.Web.UI.WebControls
 	}
 }
 #endif
+
 
 
