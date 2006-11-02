@@ -38,15 +38,30 @@ namespace System.Xml.Serialization {
 		#region Fields
 
 		bool useCamelCasing;
-		Hashtable table = new Hashtable ();
-		Hashtable reserved = new Hashtable ();
+		Hashtable table;
+		Hashtable reserved;
 
 		#endregion
 
 		#region Constructors
 
 		public CodeIdentifiers ()
+			: this (true)
 		{
+		}
+
+		public CodeIdentifiers (bool caseSensitive)
+		{
+#if NET_2_0
+			StringComparer c = caseSensitive ?
+				StringComparer.Ordinal :
+				StringComparer.OrdinalIgnoreCase;
+			table = new Hashtable (c);
+			reserved = new Hashtable (c);
+#else
+			table = new Hashtable ();
+			reserved = new Hashtable ();
+#endif
 		}
 
 		#endregion // Constructors

@@ -1,5 +1,20 @@
 2006-11-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CodeIdentifier.cs : in 2.0 profile, .ctor() is exposed to
+	  explicitly say Obsolete instantiation.
+	* CodeIdentifiers.cs : implemented case-insensitive mode.
+	* XmlSerializerAssemblyAttribute.cs : added missing .ctor().
+	* SoapIncludeAttribute.cs, XmlIncludeAttribute.cs :
+	  in 2.0 profile it could also be applied to an interface.
+	* SoapReflectionImporter.cs,
+	  XmlReflectionImporter.cs,
+	  XmlMappingAccess.cs :
+	  added missing ImportMembersMapping overload and moved actual
+	  implementation to most lengthy-arglist one. To make it possible,
+	  XmlMappingAccess is included in 1.x as internal enum.
+
+2006-11-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSchemaImporter.cs : initialize extensions from configuration.
 
 2006-11-01  Atsushi Enomoto  <atsushi@ximian.com>

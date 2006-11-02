@@ -32,11 +32,14 @@ using System;
 
 namespace System.Xml.Serialization
 {
-	/// <summary>
-	/// Summary description for SoapIncludeAttribute.
-	/// </summary>
+#if NET_2_0
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct |
+		 AttributeTargets.Interface | AttributeTargets.Method,
+		 AllowMultiple=true)]
+#else
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct |
 		 AttributeTargets.Method, AllowMultiple=true)]
+#endif
 	public class SoapIncludeAttribute : Attribute
 	{
 		private Type type;

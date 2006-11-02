@@ -40,12 +40,17 @@ namespace System.Xml.Serialization
 		string _assemblyName;
 		string _codeBase;
 		
+		public XmlSerializerAssemblyAttribute ()
+		{
+		}
+
 		public XmlSerializerAssemblyAttribute (string assemblyName)
 		{
 			_assemblyName = assemblyName;
 		}
 
 		public XmlSerializerAssemblyAttribute (string assemblyName, string codeBase)
+			: this (assemblyName)
 		{
 			_codeBase = codeBase;
 		}

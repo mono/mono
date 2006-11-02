@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using System;
 using System.Xml.Schema;
@@ -36,12 +35,13 @@ using System.Xml.Schema;
 namespace System.Xml.Serialization
 {
 	[Flags]
-	public enum XmlMappingAccess
+#if NET_2_0
+	public
+#endif
+	enum XmlMappingAccess
 	{
 		None,
 		Read,
 		Write
 	}
 }
-
-#endif

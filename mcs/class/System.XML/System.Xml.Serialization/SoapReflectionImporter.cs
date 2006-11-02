@@ -82,6 +82,15 @@ namespace System.Xml.Serialization {
 
 		public XmlMembersMapping ImportMembersMapping (string elementName, string ns, XmlReflectionMember[] members, bool hasWrapperElement, bool writeAccessors, bool validate)
 		{
+			return ImportMembersMapping (elementName, ns, members, hasWrapperElement, writeAccessors, validate, XmlMappingAccess.Read | XmlMappingAccess.Write);
+		}
+
+#if NET_2_0
+		[MonoTODO]
+		public
+#endif
+		XmlMembersMapping ImportMembersMapping (string elementName, string ns, XmlReflectionMember[] members, bool hasWrapperElement, bool writeAccessors, bool validate, XmlMappingAccess access)
+		{
 			elementName = XmlConvert.EncodeLocalName (elementName);
 			XmlMemberMapping[] mapping = new XmlMemberMapping[members.Length];
 			for (int n=0; n<members.Length; n++)

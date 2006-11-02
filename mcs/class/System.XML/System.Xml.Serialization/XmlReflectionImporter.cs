@@ -106,6 +106,48 @@ namespace System.Xml.Serialization {
 			XmlReflectionMember [] members,
 			bool hasWrapperElement)
 		{
+			return ImportMembersMapping (elementName, ns, members, hasWrapperElement, true);
+		}
+
+#if NET_2_0
+		[MonoTODO]
+		public
+#endif
+		XmlMembersMapping ImportMembersMapping (string elementName, 
+			string ns, 
+			XmlReflectionMember[] members, 
+			bool hasWrapperElement, 
+			bool writeAccessors)
+		{
+			return ImportMembersMapping (elementName, ns, members, hasWrapperElement, writeAccessors, true);
+		}
+
+#if NET_2_0
+		[MonoTODO]
+		public
+#endif
+		XmlMembersMapping ImportMembersMapping (string elementName, 
+			string ns, 
+			XmlReflectionMember[] members, 
+			bool hasWrapperElement, 
+			bool writeAccessors, 
+			bool validate)
+		{
+			return ImportMembersMapping (elementName, ns, members, hasWrapperElement, writeAccessors, validate, XmlMappingAccess.Read | XmlMappingAccess.Write);
+		}
+
+#if NET_2_0
+		[MonoTODO ("writeAccessors, validate, mapping access")]
+		public
+#endif
+		XmlMembersMapping ImportMembersMapping (string elementName, 
+			string ns, 
+			XmlReflectionMember[] members, 
+			bool hasWrapperElement, 
+			bool writeAccessors, 
+			bool validate,
+			XmlMappingAccess access)
+		{
 //			Reset ();	Disabled. See ChangeLog
 
 			XmlMemberMapping[] mapping = new XmlMemberMapping[members.Length];
@@ -123,29 +165,6 @@ namespace System.Xml.Serialization {
 			if (allowPrivateTypes) mps.Source.CanBeGenerated = false;
 			return mps;
 		}
-
-#if NET_2_0
-		[MonoTODO]
-		public XmlMembersMapping ImportMembersMapping (string elementName, 
-			string ns, 
-			XmlReflectionMember[] members, 
-			bool hasWrapperElement, 
-			bool rpc)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public XmlMembersMapping ImportMembersMapping (string elementName, 
-			string ns, 
-			XmlReflectionMember[] members, 
-			bool hasWrapperElement, 
-			bool rpc, 
-			bool openModel)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 
 		public XmlTypeMapping ImportTypeMapping (Type type)
 		{
