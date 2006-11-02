@@ -1,5 +1,10 @@
 2006-11-02  Jackson Harper  <jackson@ximian.com>
 
+	* TextControl.cs: Increment count by one, since in the update view
+	count - 1 is used.
+
+2006-11-02  Jackson Harper  <jackson@ximian.com>
+
 	* TextBoxBase.cs: Use client rectangle not bounds for checking if
 	the mouse is in the client rectangle (duh).
 

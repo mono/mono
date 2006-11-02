@@ -2133,7 +2133,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 				}
 			}
 
-			UpdateView(line, lines - old_line_count, pos);
+			UpdateView(line, lines - old_line_count + 1, pos);
 
 			if (update_caret) {
 				// Move caret to the end of the inserted text
