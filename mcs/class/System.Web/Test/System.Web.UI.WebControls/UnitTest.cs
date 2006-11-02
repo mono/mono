@@ -266,18 +266,17 @@ namespace MonoTests.System.Web.UI.WebControls
 			// throws because there is stuff after cm (a)
 			Unit a = new Unit ("-45cm a");
 		}
-
-#if !NET_2_0
-        [Test]
+	
+		[Test]
 		[ExpectedException (typeof (FormatException))]
-        public void IncorrectConstructor9()
-        {
-            // throws because floating point values are not valid for Pixel.
-            Unit a = new Unit("34.4px");
-            
-        }
+		public void IncorrectConstructor9()
+		{
+		    // throws because floating point values are not valid for Pixel.
+		    Unit a = new Unit("34.4px");
+	            
+		}
 
-        [Test]
+		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void IncorrectConstructor10 ()
 		{
@@ -303,7 +302,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-        [Category ("NotWorking")]
+		[Category ("NotWorking")]
 		public void Unit_IFormatProviderToString ()
 		{
 			MyFormatProvider mfp = new MyFormatProvider ();
