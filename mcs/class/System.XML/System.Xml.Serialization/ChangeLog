@@ -1,3 +1,7 @@
+2006-11-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaImporter.cs : initialize extensions from configuration.
+
 2006-11-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SchemaImporterExtension.cs,
