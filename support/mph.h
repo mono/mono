@@ -65,6 +65,19 @@ typedef    gint64 mph_clock_t;
 typedef   guint64 mph_fsblkcnt_t;
 typedef   guint64 mph_fsfilcnt_t;
 
+/* Some versions of OS X don't define these typedefs, needed by map.c */
+#ifndef HAVE_BLKCNT_T
+typedef mph_blkcnt_t blkcnt_t;
+#endif
+
+#ifndef HAVE_BLKSIZE_T
+typedef mph_blksize_t blksize_t;
+#endif
+
+#ifndef HAVE_SUSECONDS_T
+typedef gint64 suseconds_t;
+#endif
+
 #ifdef HAVE_LARGE_FILE_SUPPORT
 #define MPH_OFF_T_MAX G_MAXINT64
 #define MPH_OFF_T_MIN G_MININT64
