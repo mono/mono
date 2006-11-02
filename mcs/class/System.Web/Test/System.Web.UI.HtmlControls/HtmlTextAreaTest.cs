@@ -203,7 +203,9 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			UserControl ctrl = new UserControl ();
 			ctrl.ID = "UC";
 			Page page = new Page ();
+#if NET_2_0
 			page.EnableEventValidation = false;
+#endif
 			TestHtmlTextArea ta = new TestHtmlTextArea ();
 			page.Controls.Add (ctrl);
 			ctrl.Controls.Add (ta);
