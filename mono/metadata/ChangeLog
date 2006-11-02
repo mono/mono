@@ -1,3 +1,14 @@
+2006-11-02  Dick Porter  <dick@ximian.com>
+
+	* icall-def.h: 
+	* object-internals.h: 
+	* exception.c (mono_get_exception_thread_interrupted): 
+	* threads.c: Implement Thread.Interrupt and Thread.SpinWait.
+	Fixes bug 74525.
+
+	* monitor.c (ves_icall_System_Threading_Monitor_Monitor_wait):
+	Check for pending Thread.Interrupt.
+
 2006-10-27  Massimiliano Mantione  <massi@ximian.com>
 	* loader.c: Fixed bug 79684.
 
