@@ -1,3 +1,8 @@
+2006-11-03  Mike Kestner  <mkestner@novell.com>
+
+	* ComboBox.cs : use ToString instead of casts in AddItem for
+	sorting functionality.  Fixes #79812.
+
 2006-11-03  Chris Toshok  <toshok@ximian.com>
 
 	* Application.cs: pave the way for actually using the thread

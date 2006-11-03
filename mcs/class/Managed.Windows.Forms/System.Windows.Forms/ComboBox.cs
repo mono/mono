@@ -1424,8 +1424,8 @@ namespace System.Windows.Forms
 
 				if (owner.Sorted) {
 					int index = 0;
-					foreach (string s in object_items) {
-						if (String.Compare (item as String, s) < 0) {
+					foreach (object o in object_items) {
+						if (String.Compare (item.ToString (), o.ToString ()) < 0) {
 							object_items.Insert (index, item);
 							return index;
 						}
