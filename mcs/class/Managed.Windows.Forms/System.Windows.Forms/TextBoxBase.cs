@@ -289,7 +289,7 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[Editor("System.Windows.Forms.Design.StringArrayEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		[Localizable(true)]
-		[MWFCategory("Layout")]
+		[MWFCategory("Appearance")]
 		public string[] Lines {
 			get {
 				string[]	lines;
