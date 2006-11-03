@@ -4862,22 +4862,26 @@ namespace System.Windows.Forms
 			
 			if ((sides & Border3DSide.Left) != 0) {
 				graphics.DrawLine (penTopLeft, rect.Left, rect.Bottom - 2, rect.Left, rect.Top);
-				graphics.DrawLine (penTopLeftInner, rect.Left + 1, rect.Bottom - 2, rect.Left + 1, rect.Top);
+				if (rect.Width > 2)
+					graphics.DrawLine (penTopLeftInner, rect.Left + 1, rect.Bottom - 2, rect.Left + 1, rect.Top);
 			}
 			
 			if ((sides & Border3DSide.Top) != 0) {
 				graphics.DrawLine (penTopLeft, rect.Left, rect.Top, rect.Right - 2, rect.Top);
-				graphics.DrawLine (penTopLeftInner, rect.Left + 1, rect.Top + 1, rect.Right - 3, rect.Top + 1);
+				if (rect.Height > 2)
+					graphics.DrawLine (penTopLeftInner, rect.Left + 1, rect.Top + 1, rect.Right - 3, rect.Top + 1);
 			}
 			
 			if ((sides & Border3DSide.Right) != 0) {
 				graphics.DrawLine (penBottomRight, rect.Right - 1, rect.Top, rect.Right - 1, rect.Bottom - 1);
-				graphics.DrawLine (penBottomRightInner, rect.Right - 2, rect.Top + 1, rect.Right - 2, rect.Bottom - 2);
+				if (rect.Width > 3)
+					graphics.DrawLine (penBottomRightInner, rect.Right - 2, rect.Top + 1, rect.Right - 2, rect.Bottom - 2);
 			}
 			
 			if ((sides & Border3DSide.Bottom) != 0) {
 				graphics.DrawLine (penBottomRight, rect.Left, rect.Bottom - 1, rect.Right - 1, rect.Bottom - 1);
-				graphics.DrawLine (penBottomRightInner, rect.Left + 1, rect.Bottom - 2, rect.Right - 2, rect.Bottom - 2);
+				if (rect.Height > 3)
+					graphics.DrawLine (penBottomRightInner, rect.Left + 1, rect.Bottom - 2, rect.Right - 2, rect.Bottom - 2);
 			}
 		}
 

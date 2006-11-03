@@ -1,3 +1,8 @@
+2006-11-03  Everaldo Canuto  <everaldo@simios.org>
+
+	* ThemeWin32Classic.cs: Dont paint inner lines of 3D border when
+	it dont need.  Fixes #79537.
+
 2006-11-02  Jackson Harper  <jackson@ximian.com>
 
 	* X11Dnd.cs: We always allow copy, since XDND implies Copy.  Also
