@@ -3,6 +3,9 @@
 	* TextBoxBase.cs: Don't bail from the scrollbar calcs for non
 	multiline textboxes anymore.  This method also determines the
 	width/height of a textboxes canvas area.
+	- Sorta a revert of the last patch.  For multiline just position
+	the controls, then bail.  This way the scrollbar width won't be
+	altered.
 
 2006-11-03  Everaldo Canuto  <everaldo@simios.org>
 
