@@ -1,3 +1,8 @@
+2006-11-02  Jackson Harper  <jackson@ximian.com>
+
+	* X11Dnd.cs: We always allow copy, since XDND implies Copy.  Also
+	send the status after firing the DndOver event.
+
 2006-11-02  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* TrackBar.cs: Now orientation only switches height / width if

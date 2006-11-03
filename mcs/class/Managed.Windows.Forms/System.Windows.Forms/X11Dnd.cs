@@ -639,7 +639,8 @@ namespace System.Windows.Forms {
 			pos_x = (int) xevent.ClientMessageEvent.ptr3 >> 16;
 			pos_y = (int) xevent.ClientMessageEvent.ptr3 & 0xFFFF;
 
-			allowed = EffectFromAction (xevent.ClientMessageEvent.ptr5);
+			// Copy is implicitly allowed
+			allowed = EffectFromAction (xevent.ClientMessageEvent.ptr5) | DragDropEffects.Copy;
 
 			IntPtr parent, child, new_child, last_drop_child;
 			parent = XplatUIX11.XRootWindow (display, 0);
@@ -697,8 +698,8 @@ namespace System.Windows.Forms {
 			} else {
 				drag_event.x = pos_x;
 				drag_event.y = pos_y;
-				SendStatus (source, drag_event.Effect);
 				control.DndOver (drag_event);
+				SendStatus (source, drag_event.Effect);
 			}
 			
 			return true;
