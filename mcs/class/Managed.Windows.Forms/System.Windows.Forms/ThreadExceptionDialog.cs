@@ -189,9 +189,13 @@ namespace System.Windows.Forms
 			if (details) {
 				buttonDetails.Text = "Hide &Details";
 				Height = 410;
+				label1.Visible = true;
+				textBoxDetails.Visible = true;
 				return;
 			}
 			buttonDetails.Text = "Show &Details";
+			label1.Visible = false;
+			textBoxDetails.Visible = false;
 			Height = 180;
 		}
 
