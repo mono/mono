@@ -23,7 +23,6 @@ namespace MonoTests.System.Windows.Forms
 		public void FormPropertyTest ()
 		{
 			Form myform = new Form ();
-			myform.ShowInTaskbar = false;
 			myform.Visible = true;
 			myform.Text = "NewForm";
 			myform.Name = "FormTest";
@@ -34,8 +33,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (13, myform.AutoScaleBaseSize.Height, "#4");
 			Assert.AreEqual (5, myform.AutoScaleBaseSize.Width, "#5");
 			Assert.AreEqual (null, myform.CancelButton, "#6");
-			Assert.AreEqual (273, myform.ClientSize.Height, "#7");
-			Assert.AreEqual (292, myform.ClientSize.Width, "#8");
 			Assert.AreEqual (true, myform.ControlBox, "#9");
 			Assert.IsTrue (myform.DesktopBounds.X > 0, "#10a");
 			Assert.IsTrue (myform.DesktopBounds.Y > 0, "#10b");
@@ -112,34 +109,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		public void CloseTest ()
-		{
-			Form myform = new Form ();
-			myform.ShowInTaskbar = false;
-			myform.Visible = true;
-			myform.Text = "NewForm";
-			myform.Name = "FormTest";
-			myform.Close ();
-			Assert.IsTrue (myform.Size.Height > 0, "#42");
-			myform.Dispose ();
-		}
-
-		[Test]
-		[Ignore ("System.NotImplementedException. LayoutMdi not implemented")]	
-		public void LayoutMdiTest ()
-		{
-			Form parent = new Form ();
-			parent.ShowInTaskbar = false;
-			Form child = new Form ();
-			parent.IsMdiContainer = true;
-			child.IsMdiContainer = false;
-			child.MdiParent = parent;
-			parent.LayoutMdi (MdiLayout.TileHorizontal);
-			child.Visible = true;
-			parent.Show ();
-		}
-
-		[Test]
 		public void RemoveOwnedFormTest ()
 		{
 			Form myform = new Form ();
@@ -178,21 +147,8 @@ namespace MonoTests.System.Windows.Forms
 			myform.Dispose ();
 		}
 
-		[Test, Ignore ("Needs Manual Intervention")]
-		public void ShowDialogTest ()
-		{
-			Form myform = new Form ();
-			myform.ShowInTaskbar = false;
-			myform.Visible = false;
-			myform.Text = "NewForm";
-			myform.Name = "FormTest";
-			myform.ShowDialog ();
-			Assert.AreEqual (DialogResult.Cancel, myform.DialogResult, "#47");
-			myform.Dispose ();
-		}
-
 		[Test]
-		public void SetDialogResult ()
+		public void SetDialogResultOutOfRange ()
 		{
 			Form myform = new Form ();
 			myform.ShowInTaskbar = false;
@@ -208,6 +164,58 @@ namespace MonoTests.System.Windows.Forms
 			} catch (InvalidEnumArgumentException) {
 			}
 			myform.Dispose ();
+		}
+
+		void myform_set_dialogresult (object sender, EventArgs e)
+		{
+			Form f = (Form)sender;
+
+			f.DialogResult = DialogResult.OK;
+		}
+
+		void myform_close (object sender, EventArgs e)
+		{
+			Form f = (Form)sender;
+
+			f.Close();
+		}
+
+		[Test]
+		public void SetDialogResult ()
+		{
+			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
+			myform.Visible = true;
+
+			myform.DialogResult = DialogResult.Cancel;
+
+			Assert.IsTrue (myform.Visible, "A1");
+			Assert.IsFalse (myform.IsDisposed, "A2");
+
+			myform.Close ();
+
+			Assert.IsFalse (myform.Visible, "A3");
+			Assert.IsTrue (myform.IsDisposed, "A4");
+
+			DialogResult result;
+
+			myform = new Form ();
+			myform.ShowInTaskbar = false;
+			myform.VisibleChanged += new EventHandler (myform_set_dialogresult);
+			result = myform.ShowDialog ();
+
+			Assert.AreEqual (result, DialogResult.OK, "A5");
+			Assert.IsFalse (myform.Visible, "A6");
+			Assert.IsFalse (myform.IsDisposed, "A7");
+
+			myform = new Form ();
+			myform.ShowInTaskbar = false;
+			myform.VisibleChanged += new EventHandler (myform_close);
+			result = myform.ShowDialog ();
+
+			Assert.AreEqual (result, DialogResult.Cancel, "A8");
+			Assert.IsFalse (myform.Visible, "A9");
+			Assert.IsFalse (myform.IsDisposed, "A10");
 		}
 	}
 }
