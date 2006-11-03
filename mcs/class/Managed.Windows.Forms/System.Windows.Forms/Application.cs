@@ -591,9 +591,9 @@ namespace System.Windows.Forms {
 			XplatUI.EndLoop(Thread.CurrentThread);
 
 			if (Modal) {
-				Control c;
+				Form c;
 
-				Control old = context.MainForm;
+				Form old = context.MainForm;
 
 				context.MainForm = null;
 
@@ -601,10 +601,10 @@ namespace System.Windows.Forms {
 					#if DebugRunLoop
 						Console.WriteLine("      Re-Enabling form form {0}", toplevels.Peek());
 					#endif
-					c = (Control)toplevels.Dequeue();
+					c = (Form)toplevels.Dequeue();
 					if (c.IsHandleCreated) {
 						XplatUI.EnableWindow(c.window.Handle, true);
-						context.MainForm = (Form)c;
+						context.MainForm = c;
 					}
 				}
 				#if DebugRunLoop
@@ -616,7 +616,7 @@ namespace System.Windows.Forms {
 				#if DebugRunLoop
 					Console.WriteLine("   Done with the SetModal");
 				#endif
-				old.Dispose();
+				old.Close();
 			}
 
 			#if DebugRunLoop

@@ -1169,6 +1169,10 @@ namespace System.Windows.Forms {
 		public void Close () {
 			if (!IsDisposed) {
 				XplatUI.SendMessage(this.Handle, Msg.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+				if (is_modal)
+					Hide ();
+				else
+					Dispose ();
 			}
 		}
 
@@ -1769,8 +1773,8 @@ namespace System.Windows.Forms {
 						OnClosing (args);
 						if (!args.Cancel) {
 							OnClosed (EventArgs.Empty);
-							Dispose ();
 						}
+						Dispose ();
 						return;
 					} else {
 						OnClosing (args);

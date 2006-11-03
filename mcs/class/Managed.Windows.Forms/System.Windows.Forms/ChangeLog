@@ -1,5 +1,18 @@
 2006-11-03  Chris Toshok  <toshok@ximian.com>
 
+	* Form.cs (Close): if the form is modal, don't Dispose of it, only
+	Hide it.
+	(WndProc): don't Dispose after handling the WM_CLOSE message.
+
+	* Application.cs (RunLoop): toplevels is a list of Forms, so treat
+	them as such, instead of using casts from Control to Form.  Also,
+	don't Dispose of the modal dialog when we fall out of the loop -
+	Close() it instead.
+
+	fixes bug #79813.
+
+2006-11-03  Chris Toshok  <toshok@ximian.com>
+
 	* Control.cs (Dispose): only go through the dispose thing if we're
 	@disposing, and we haven't already been disposed.  Fixes bug
 	#79814.
