@@ -385,6 +385,9 @@ namespace System.Windows.Forms
 		public override int SelectedIndex {
 			get { return selected_index; }
 			set {
+				if (selected_index == value)
+					return;
+
 				if (value <= -2 || value >= Items.Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
     				selected_index = value;

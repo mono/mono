@@ -48,6 +48,7 @@ namespace System.Windows.Forms {
 			#region Fields
 			private ApplicationContext	context;
 			private bool			messageloop_started;
+			private bool                    handling_exception;
 			private int			thread_id;
 
 			private static Hashtable	threads = new Hashtable();
@@ -79,6 +80,16 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			public bool HandlingException {
+				get {
+					return handling_exception;
+				}
+
+				set {
+					handling_exception = value;
+				}
+
+			}
 
 			public static int LoopCount {
 				get {
@@ -190,7 +201,7 @@ namespace System.Windows.Forms {
 		#region Public Static Properties
 		public static bool AllowQuit {
 			get {
-				return browser_embedded;
+				return !browser_embedded;
 			}
 		}
 
@@ -394,6 +405,8 @@ namespace System.Windows.Forms {
 		}
 
 		public static void OnThreadException(Exception t) {
+			MWFThread.Current.HandlingException = true;
+
 			if (Application.ThreadException != null) {
 				Application.ThreadException(null, new ThreadExceptionEventArgs(t));
 				return;
@@ -404,7 +417,10 @@ namespace System.Windows.Forms {
 				form.ShowDialog ();
 			} else {
 				Console.WriteLine (t.ToString ());
+				Application.Exit ();
 			}
+
+			MWFThread.Current.HandlingException = false;
 		}
 
 		public static void RemoveMessageFilter(IMessageFilter filter) {
@@ -423,6 +439,30 @@ namespace System.Windows.Forms {
 
 		public static void Run(ApplicationContext context) {
 			RunLoop(false, context);
+		}
+
+		static void DispatchMessage (ref MSG msg)
+		{
+			try {
+				XplatUI.DispatchMessage(ref msg);
+			}
+#if USE_EXCEPTION_DIALOG
+			catch (Exception e) {
+				if (MWFThread.Current.HandlingException) {
+					/* we're already handling an exception and we got
+					   another one?  print it out and exit, this means
+					   we've got a runtime/SWF bug. */
+					Console.WriteLine (e);
+					Application.Exit();
+				}
+
+				Application.OnThreadException (e);
+			}
+#else
+			catch {
+				throw;
+			}
+#endif
 		}
 
 		internal static void RunLoop(bool Modal, ApplicationContext context) {
@@ -529,7 +569,7 @@ namespace System.Windows.Forms {
 					}
 					default: {
 						XplatUI.TranslateMessage(ref msg);
-						XplatUI.DispatchMessage(ref msg);
+						DispatchMessage (ref msg);
 						break;
 					}
 				}
