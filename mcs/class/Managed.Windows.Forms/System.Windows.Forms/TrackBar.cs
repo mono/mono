@@ -226,7 +226,7 @@ namespace System.Windows.Forms
 			get { return largeChange; }
 			set {
 				if (value < 0)
-					throw new ArgumentOutOfRangeException( string.Format("Value '{0}' must be greater than or equal to 0.", value));
+					throw new ArgumentException( string.Format("Value '{0}' must be greater than or equal to 0.", value));
 
 				largeChange = value;				
 			}
@@ -292,7 +292,7 @@ namespace System.Windows.Forms
 			get { return smallChange;}
 			set {
 				if ( value < 0 )
-					throw new ArgumentOutOfRangeException( string.Format("Value '{0}' must be greater than or equal to 0.", value));
+					throw new ArgumentException( string.Format("Value '{0}' must be greater than or equal to 0.", value));
 
 				if (smallChange != value) {
 					smallChange = value;					
