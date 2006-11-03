@@ -1584,11 +1584,6 @@ namespace System.Windows.Forms {
 
 		internal void CalculateScrollBars() {
 			// FIXME - need separate calculations for center and right alignment
-			// No scrollbars for a single line
-
-			if (!multiline) {
-				return;
-			}
 
 			if (document.Width >= document.ViewPortWidth) {
 				hscroll.Enabled = true;
