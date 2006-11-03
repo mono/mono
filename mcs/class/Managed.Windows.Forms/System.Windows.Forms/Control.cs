@@ -774,7 +774,7 @@ namespace System.Windows.Forms
 		private delegate void RemoveDelegate(object c);
 
 		protected override void Dispose(bool disposing) {
-			if (disposing) {
+			if (!is_disposed && disposing) {
 				Capture = false;
 
 				if (dc_mem!=null) {

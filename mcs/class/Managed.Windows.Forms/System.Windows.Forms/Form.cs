@@ -1769,7 +1769,7 @@ namespace System.Windows.Forms {
 						OnClosing (args);
 						if (!args.Cancel) {
 							OnClosed (EventArgs.Empty);
-							base.Dispose();
+							Dispose ();
 						}
 						return;
 					} else {

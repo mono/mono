@@ -1,3 +1,12 @@
+2006-11-03  Chris Toshok  <toshok@ximian.com>
+
+	* Control.cs (Dispose): only go through the dispose thing if we're
+	@disposing, and we haven't already been disposed.  Fixes bug
+	#79814.
+
+	* Form.cs: no reason to call "base.Dispose()" here instead of
+	"Dispose()".
+
 2006-11-03  Mike Kestner  <mkestner@novell.com>
 
 	* ComboBox.cs : use ToString instead of casts in AddItem for
