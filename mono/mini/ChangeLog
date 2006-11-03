@@ -1,3 +1,9 @@
+2006-11-03  Robert Jordan  <robertj@gmx.net>
+
+	* Makefile.am: [WIN32] Add monow.exe target.
+	* driver.c: [WIN32] Don't detach the console when debugging.
+	Fixes bug #79797.
+	
 2006-10-30  Miguel de Icaza  <miguel@novell.com>
 
 	* tramp-x86.c (mono_arch_patch_delegate_trampoline): Eliminate warning.
