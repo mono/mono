@@ -1,3 +1,7 @@
+2006-11-03  Dick Porter  <dick@ximian.com>
+
+	* DnsTest.cs: Re-enable GetHostEntry
+
 2006-10-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* DnsTest.cs: Disable GetHostEntry test as it currently fails.
