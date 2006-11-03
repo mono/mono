@@ -1,5 +1,10 @@
 2006-11-03  Chris Toshok  <toshok@ximian.com>
 
+	* Application.cs: pave the way for actually using the thread
+	exception dialog.  it's ifdefed out at the moment.
+
+2006-11-03  Chris Toshok  <toshok@ximian.com>
+
 	* ThreadExceptionDialog.cs: until we get a better layout, actually
 	hide the details textbox and label when we shouldn't see them.
 
