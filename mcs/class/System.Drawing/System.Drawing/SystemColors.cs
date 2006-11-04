@@ -195,32 +195,32 @@ namespace System.Drawing {
 
 		// When this method is called, we teach any new color(s) to the Color class
 		private static void UpdateColors() {
-			Color.UpdateKnownColor (active_border.A, active_border.R, active_border.G, active_border.B, "ActiveBorder", KnownColor.ActiveBorder);
-			Color.UpdateKnownColor (active_caption.A, active_caption.R, active_caption.G, active_caption.B, "ActiveCaption", KnownColor.ActiveCaption);
-			Color.UpdateKnownColor (active_caption_text.A, active_caption_text.R, active_caption_text.G, active_caption_text.B, "ActiveCaptionText", KnownColor.ActiveCaptionText);
-			Color.UpdateKnownColor (app_workspace.A, app_workspace.R, app_workspace.G, app_workspace.B, "AppWorkspace", KnownColor.AppWorkspace);
-			Color.UpdateKnownColor (control.A, control.R, control.G, control.B, "Control", KnownColor.Control);
-			Color.UpdateKnownColor (control_dark.A, control_dark.R, control_dark.G, control_dark.B, "ControlDark", KnownColor.ControlDark);
-			Color.UpdateKnownColor (control_dark_dark.A, control_dark_dark.R, control_dark_dark.G, control_dark_dark.B, "ControlDarkDark", KnownColor.ControlDarkDark);
-			Color.UpdateKnownColor (control_light.A, control_light.R, control_light.G, control_light.B, "ControlLight", KnownColor.ControlLight);
-			Color.UpdateKnownColor (control_light_light.A, control_light_light.R, control_light_light.G, control_light_light.B, "ControlLightLight", KnownColor.ControlLightLight);
-			Color.UpdateKnownColor (control_text.A, control_text.R, control_text.G, control_text.B, "ControlText", KnownColor.ControlText);
-			Color.UpdateKnownColor (desktop.A, desktop.R, desktop.G, desktop.B, "Desktop", KnownColor.Desktop);
-			Color.UpdateKnownColor (gray_text.A, gray_text.R, gray_text.G, gray_text.B, "GrayText", KnownColor.GrayText);
-			Color.UpdateKnownColor (highlight.A, highlight.R, highlight.G, highlight.B, "Highlight", KnownColor.Highlight);
-			Color.UpdateKnownColor (highlight_text.A, highlight_text.R, highlight_text.G, highlight_text.B, "HighlightText", KnownColor.HighlightText);
-			Color.UpdateKnownColor (hot_track.A, hot_track.R, hot_track.G, hot_track.B, "HotTrack", KnownColor.HotTrack);
-			Color.UpdateKnownColor (inactive_border.A, inactive_border.R, inactive_border.G, inactive_border.B, "InactiveBorder", KnownColor.InactiveBorder);
-			Color.UpdateKnownColor (inactive_caption.A, inactive_caption.R, inactive_caption.G, inactive_caption.B, "InactiveCaption", KnownColor.InactiveCaption);
-			Color.UpdateKnownColor (inactive_caption_text.A, inactive_caption_text.R, inactive_caption_text.G, inactive_caption_text.B, "InactiveCaptionText", KnownColor.InactiveCaptionText);
-			Color.UpdateKnownColor (info.A, info.R, info.G, info.B, "Info", KnownColor.Info);
-			Color.UpdateKnownColor (info_text.A, info_text.R, info_text.G, info_text.B, "InfoText", KnownColor.InfoText);
-			Color.UpdateKnownColor (menu.A, menu.R, menu.G, menu.B, "Menu", KnownColor.Menu);
-			Color.UpdateKnownColor (menu_text.A, menu_text.R, menu_text.G, menu_text.B, "MenuText", KnownColor.MenuText);
-			Color.UpdateKnownColor (scroll_bar.A, scroll_bar.R, scroll_bar.G, scroll_bar.B, "ScrollBar", KnownColor.ScrollBar);
-			Color.UpdateKnownColor (window.A, window.R, window.G, window.B, "Window", KnownColor.Window);
-			Color.UpdateKnownColor (window_frame.A, window_frame.R, window_frame.G, window_frame.B, "WindowFrame", KnownColor.WindowFrame);
-			Color.UpdateKnownColor (window_text.A, window_text.R, window_text.G, window_text.B, "WindowText", KnownColor.WindowText);
+			active_border = Color.UpdateKnownColor (active_border.A, active_border.R, active_border.G, active_border.B, "ActiveBorder", KnownColor.ActiveBorder);
+			active_caption = Color.UpdateKnownColor (active_caption.A, active_caption.R, active_caption.G, active_caption.B, "ActiveCaption", KnownColor.ActiveCaption);
+			active_caption_text = Color.UpdateKnownColor (active_caption_text.A, active_caption_text.R, active_caption_text.G, active_caption_text.B, "ActiveCaptionText", KnownColor.ActiveCaptionText);
+			app_workspace = Color.UpdateKnownColor (app_workspace.A, app_workspace.R, app_workspace.G, app_workspace.B, "AppWorkspace", KnownColor.AppWorkspace);
+			control = Color.UpdateKnownColor (control.A, control.R, control.G, control.B, "Control", KnownColor.Control);
+			control_dark = Color.UpdateKnownColor (control_dark.A, control_dark.R, control_dark.G, control_dark.B, "ControlDark", KnownColor.ControlDark);
+			control_dark_dark = Color.UpdateKnownColor (control_dark_dark.A, control_dark_dark.R, control_dark_dark.G, control_dark_dark.B, "ControlDarkDark", KnownColor.ControlDarkDark);
+			control_light = Color.UpdateKnownColor (control_light.A, control_light.R, control_light.G, control_light.B, "ControlLight", KnownColor.ControlLight);
+			control_light_light = Color.UpdateKnownColor (control_light_light.A, control_light_light.R, control_light_light.G, control_light_light.B, "ControlLightLight", KnownColor.ControlLightLight);
+			control_text = Color.UpdateKnownColor (control_text.A, control_text.R, control_text.G, control_text.B, "ControlText", KnownColor.ControlText);
+			desktop = Color.UpdateKnownColor (desktop.A, desktop.R, desktop.G, desktop.B, "Desktop", KnownColor.Desktop);
+			gray_text = Color.UpdateKnownColor (gray_text.A, gray_text.R, gray_text.G, gray_text.B, "GrayText", KnownColor.GrayText);
+			highlight = Color.UpdateKnownColor (highlight.A, highlight.R, highlight.G, highlight.B, "Highlight", KnownColor.Highlight);
+			highlight_text = Color.UpdateKnownColor (highlight_text.A, highlight_text.R, highlight_text.G, highlight_text.B, "HighlightText", KnownColor.HighlightText);
+			hot_track = Color.UpdateKnownColor (hot_track.A, hot_track.R, hot_track.G, hot_track.B, "HotTrack", KnownColor.HotTrack);
+			inactive_border = Color.UpdateKnownColor (inactive_border.A, inactive_border.R, inactive_border.G, inactive_border.B, "InactiveBorder", KnownColor.InactiveBorder);
+			inactive_caption = Color.UpdateKnownColor (inactive_caption.A, inactive_caption.R, inactive_caption.G, inactive_caption.B, "InactiveCaption", KnownColor.InactiveCaption);
+			inactive_caption_text = Color.UpdateKnownColor (inactive_caption_text.A, inactive_caption_text.R, inactive_caption_text.G, inactive_caption_text.B, "InactiveCaptionText", KnownColor.InactiveCaptionText);
+			info = Color.UpdateKnownColor (info.A, info.R, info.G, info.B, "Info", KnownColor.Info);
+			info_text = Color.UpdateKnownColor (info_text.A, info_text.R, info_text.G, info_text.B, "InfoText", KnownColor.InfoText);
+			menu = Color.UpdateKnownColor (menu.A, menu.R, menu.G, menu.B, "Menu", KnownColor.Menu);
+			menu_text = Color.UpdateKnownColor (menu_text.A, menu_text.R, menu_text.G, menu_text.B, "MenuText", KnownColor.MenuText);
+			scroll_bar = Color.UpdateKnownColor (scroll_bar.A, scroll_bar.R, scroll_bar.G, scroll_bar.B, "ScrollBar", KnownColor.ScrollBar);
+			window = Color.UpdateKnownColor (window.A, window.R, window.G, window.B, "Window", KnownColor.Window);
+			window_frame = Color.UpdateKnownColor (window_frame.A, window_frame.R, window_frame.G, window_frame.B, "WindowFrame", KnownColor.WindowFrame);
+			window_text = Color.UpdateKnownColor (window_text.A, window_text.R, window_text.G, window_text.B, "WindowText", KnownColor.WindowText);
 		}
 
 		static SystemColors () {

@@ -226,9 +226,11 @@ namespace System.Drawing
 			}
 		}
 
-		internal static void UpdateKnownColor (int alpha, int red, int green, int blue, string name, KnownColor known_color) {
+		internal static Color UpdateKnownColor (int alpha, int red, int green, int blue, string name, KnownColor known_color) {
 			FillColorNames ();
-			knownColors[(int)known_color] = Color.FromArgbSystem(alpha, red, green, blue, name, known_color);
+			Color new_color = Color.FromArgbSystem(alpha, red, green, blue, name, known_color);
+			knownColors[(int)known_color] = new_color;
+			return new_color;
 		}
 		
 		public static Color FromName (string colorName)

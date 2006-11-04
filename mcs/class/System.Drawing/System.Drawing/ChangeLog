@@ -1,3 +1,12 @@
+2006-11-04  Chris Toshok  <toshok@ximian.com>
+
+	* SystemColors.cs: reassign the given color to the return value of
+	UpdateKnownColor.  This makes sure that the color has the same
+	SystemColor name.  So, SystemColors.Control.Name always equals
+	"Control", regardless of the values the theme has stuffed in it.
+
+	* Color.cs: UpdateKnownColor now returns the new color.
+
 2006-10-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Graphics.cs: In MeasureCharacterRanges throw an ArgumentException if
