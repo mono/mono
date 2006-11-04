@@ -217,5 +217,16 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (myform.Visible, "A9");
 			Assert.IsFalse (myform.IsDisposed, "A10");
 		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void AccessDisposedForm ()
+		{
+			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
+
+			myform.Close (); // this should result in the form being disposed
+			myform.Show (); // and this line should result in the ODE being thrown
+		}
 	}
 }
