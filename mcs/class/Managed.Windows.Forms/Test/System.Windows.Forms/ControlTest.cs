@@ -22,11 +22,11 @@ namespace MonoTests.System.Windows.Forms
 		class Helper {
 			public static void TestAccessibility(Control c, string Default, string Description, string Name, AccessibleRole Role)
 			{
-				Assert.AreEqual(false, c.AccessibilityObject == null, "Acc1");
-				Assert.AreEqual(Default, c.AccessibleDefaultActionDescription, "Acc2");
-				Assert.AreEqual(Description, c.AccessibleDescription, "Acc3");
-				Assert.AreEqual(Name, c.AccessibleName, "Acc4");
-				Assert.AreEqual(Role, c.AccessibleRole, "Acc5");
+				Assert.IsNotNull (c.AccessibilityObject, "Acc1");
+				Assert.AreEqual (Default, c.AccessibleDefaultActionDescription, "Acc2");
+				Assert.AreEqual (Description, c.AccessibleDescription, "Acc3");
+				Assert.AreEqual (Name, c.AccessibleName, "Acc4");
+				Assert.AreEqual (Role, c.AccessibleRole, "Acc5");
 			}
 
 			public static string TestControl(Control container, Control start, bool forward) {
@@ -43,129 +43,126 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void CreatedTest ()
+		{
+			Control c = new Control ();
+			Assert.IsFalse (c.Created, "A1");
+		}
+
+		[Test]
 		[Category ("NotWorking")]
+		public void CreatedAccessibilityTest ()
+		{
+			Control c = new Control ();
+			Assert.IsFalse (c.Created, "A1");
+
+			Helper.TestAccessibility(c, null, null, null, AccessibleRole.Default);
+
+			Assert.IsTrue (c.Created, "A2");
+
+			c.Dispose ();
+
+			Assert.IsFalse (c.Created, "A3");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void BoundsTest ()
+		{
+			Control c = new Control ();
+			Assert.IsTrue (c.Bounds.IsEmpty, "A1");
+			Assert.IsTrue (c.Size.IsEmpty, "A2");
+			Assert.IsTrue (c.ClientSize.IsEmpty, "A3");
+			Assert.IsTrue (c.ClientRectangle.IsEmpty, "A4");
+
+			Assert.AreEqual (((IWin32Window)c).Handle, c.Handle, "A5");
+
+			/* this part fails on linux because we can't allocate X windows which are 0x0,
+			   and the Control bounds directly reflect the size of the X window */
+
+			Assert.IsTrue (c.Bounds.IsEmpty, "A6");
+			Assert.IsTrue (c.Size.IsEmpty, "A7");
+			Assert.IsTrue (c.ClientSize.IsEmpty, "A8");
+			Assert.IsTrue (c.ClientRectangle.IsEmpty, "A9");
+		}
+
+		[Test]
 		public void PubPropTest()
     		{
 			Control c = new Control();
 
-			Helper.TestAccessibility(c, null, null, null, AccessibleRole.Default);
-
-			// A
-			Assert.AreEqual(false, c.AllowDrop , "A1");
+			Assert.IsFalse (c.AllowDrop , "A1");
 			Assert.AreEqual(AnchorStyles.Top | AnchorStyles.Left, c.Anchor, "A2");
 
-			// B
-			Assert.AreEqual("Control", c.BackColor.Name , "B1");
-			Assert.AreEqual(null, c.BackgroundImage, "B2");
-			Assert.AreEqual(null, c.BindingContext, "B3");
-			Assert.AreEqual(0, c.Bottom, "B4");
-			Assert.AreEqual (new Rectangle (0,0, 0, 0) , c.Bounds , "B5");
+			Assert.AreEqual ("Control", c.BackColor.Name , "B1");
+			Assert.IsNull (c.BackgroundImage, "B2");
+			Assert.IsNull (c.BindingContext, "B3");
 
-			// C
-			Assert.AreEqual(false, c.CanFocus, "C1");
-			Assert.AreEqual(true, c.CanSelect, "C2");
-			Assert.AreEqual(false, c.Capture, "C3");
-			Assert.AreEqual(true, c.CausesValidation, "C4");
-			Assert.AreEqual (new Rectangle(0, 0, 0, 0) , c.ClientRectangle , "C5");
-			Assert.AreEqual (new Size(0, 0), c.ClientSize , "C6");
+			Assert.IsFalse (c.CanFocus, "C1");
+			Assert.IsTrue (c.CanSelect, "C2");
+			Assert.IsFalse (c.Capture, "C3");
+			Assert.IsTrue (c.CausesValidation, "C4");
 
-			string name = c.CompanyName;
-			if (!name.Equals("Mono Project, Novell, Inc.") && !name.Equals("Microsoft Corporation")) {
-				Assert.Fail("CompanyName property does not match any accepted value - C7");
-			}
-			Assert.AreEqual(null, c.Container, "C8");
-			Assert.AreEqual(false, c.ContainsFocus, "C9");
-			Assert.AreEqual(null, c.ContextMenu, "C10");
-			Assert.AreEqual(0, c.Controls.Count, "C11");
-			Assert.AreEqual(true, c.Created, "C12");
-			Assert.AreEqual(Cursors.Default, c.Cursor, "C13");
+			Assert.IsNotNull (c.CompanyName, "C7");
+			Assert.IsNull (c.Container, "C8");
+			Assert.IsFalse (c.ContainsFocus, "C9");
+			Assert.IsNull (c.ContextMenu, "C10");
+			Assert.AreEqual (0, c.Controls.Count, "C11");
+			Assert.IsFalse (c.Created, "C12");
+			Assert.AreEqual (Cursors.Default, c.Cursor, "C13");
 
-			// D
-			Assert.AreEqual(false, c.DataBindings == null, "D1");
+			Assert.IsNotNull(c.DataBindings, "D1");
 			Assert.AreEqual("Control", Control.DefaultBackColor.Name, "D2");
 			Assert.AreEqual("ControlText", Control.DefaultForeColor.Name, "D3");
 			Assert.AreEqual(FontStyle.Regular, Control.DefaultFont.Style, "D4");
 			Assert.AreEqual (new Rectangle(0, 0, 0, 0), c.DisplayRectangle , "D5");
-			Assert.AreEqual(false, c.Disposing, "D6");
+			Assert.IsFalse (c.Disposing, "D6");
 			Assert.AreEqual(DockStyle.None, c.Dock, "D7");
 
-			// E
-			Assert.AreEqual(true, c.Enabled, "E1");
+			Assert.IsTrue (c.Enabled, "E1");
 
-			// F
-			Assert.AreEqual(false, c.Focused, "F1");
-			Assert.AreEqual(FontStyle.Regular, c.Font.Style, "F2");
-			Assert.AreEqual(SystemColors.ControlText, c.ForeColor, "F3");
+			Assert.IsFalse  (c.Focused, "F1");
+			Assert.AreEqual (FontStyle.Regular, c.Font.Style, "F2");
+			Assert.AreEqual (SystemColors.ControlText, c.ForeColor, "F3");
 
-			// G
+			Assert.IsFalse  (c.HasChildren, "H2");
 
-			// H
-			Assert.AreEqual (((IWin32Window)c).Handle, c.Handle, "H1");
-			Assert.AreEqual(false, c.HasChildren, "H2");
-			Assert.AreEqual(0, c.Height, "H3");
-
-			// I
 			Assert.AreEqual (ImeMode.NoControl, c.ImeMode, "I1");
-			Assert.AreEqual(false, c.InvokeRequired, "I2");
-			Assert.AreEqual(false, c.IsAccessible, "I3");
-			Assert.AreEqual(false, c.IsDisposed, "I4");
-			Assert.AreEqual(true, c.IsHandleCreated, "I5");
+			Assert.IsFalse (c.InvokeRequired, "I2");
+			Assert.IsFalse (c.IsAccessible, "I3");
+			Assert.IsFalse (c.IsDisposed, "I4");
+			Assert.IsFalse (c.IsHandleCreated, "I5");
 
-			// J
-
-			// K
-
-			// L
-			Assert.AreEqual(0, c.Left, "L1");
 			Assert.AreEqual(Point.Empty, c.Location, "L2");
 
-			// M
 #if NET_2_0
 			Assert.IsTrue(c.MaximumSize.IsEmpty);
 			Assert.IsTrue(c.MinimumSize.IsEmpty);
 #endif
-			Assert.AreEqual(Keys.None, Control.ModifierKeys, "M1");
-			Assert.AreEqual(false, Control.MousePosition.IsEmpty, "M2");
-			Assert.AreEqual(MouseButtons.None, Control.MouseButtons, "M3");
+			Assert.AreEqual (Keys.None, Control.ModifierKeys, "M1");
+			Assert.IsFalse (Control.MousePosition.IsEmpty, "M2");
+			Assert.AreEqual (MouseButtons.None, Control.MouseButtons, "M3");
 
-			// N
 			Assert.AreEqual("", c.Name, "N1");
 
-			// O
+			Assert.IsNull (c.Parent, "P1");
+			Assert.IsNotNull (c.ProductName, "P2");
+			Assert.IsTrue (c.ProductName != "", "P3");
+			Assert.IsNotNull (c.ProductVersion, "P4");
+			Assert.IsTrue (c.ProductVersion != "", "P5");
 
-			// P
-			Assert.AreEqual(null, c.Parent, "P1");
-			Assert.IsNotNull(c.ProductName, "P2");
-			Assert.IsTrue(c.ProductName != "", "P3");
-			Assert.IsNotNull(c.ProductVersion, "P4");
-			Assert.IsTrue(c.ProductVersion != "", "P5");
+			Assert.IsFalse (c.RecreatingHandle, "R1");
+			Assert.IsNull (c.Region, "R2");
+			Assert.AreEqual (RightToLeft.No, c.RightToLeft, "R4");
 
-			// R
-			Assert.AreEqual(false, c.RecreatingHandle, "R1");
-			Assert.AreEqual(null, c.Region, "R2");
-			Assert.AreEqual(0, c.Right, "R3");
-			Assert.AreEqual(RightToLeft.No, c.RightToLeft, "R4");
+			Assert.IsNull (c.Site, "S1");
 
-			// S
-			Assert.AreEqual(null, c.Site, "S1");
-			Assert.AreEqual (new Size(0, 0), c.Size, "S2");
+			Assert.AreEqual (0, c.TabIndex , "T1");
+			Assert.IsTrue (c.TabStop, "T2");
+			Assert.IsNull (c.Tag, "T3");
+			Assert.AreEqual ("", c.Text, "T4");
 
-			// T
-			Assert.AreEqual(0, c.TabIndex , "T1");
-			Assert.AreEqual(true, c.TabStop, "T2");
-			Assert.AreEqual(null, c.Tag, "T3");
-			Assert.AreEqual("", c.Text, "T4");
-			Assert.AreEqual(0, c.Top, "T5");
-
-			// U
-
-			// V
-			Assert.AreEqual(true, c.Visible, "V1");
-
-			// W
-			Assert.AreEqual(0, c.Width, "W1");
-
-			// XYZ
+			Assert.IsTrue (c.Visible, "V1");
 		}
 
 		[Test]
