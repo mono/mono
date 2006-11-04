@@ -1167,13 +1167,17 @@ namespace System.Windows.Forms {
 		}
 
 		public void Close () {
-			if (!IsDisposed) {
-				XplatUI.SendMessage(this.Handle, Msg.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
-				if (is_modal)
-					Hide ();
-				else
-					Dispose ();
-			}
+			if (IsDisposed)
+				return;
+
+			if (!is_visible)
+				return;
+
+			XplatUI.SendMessage(this.Handle, Msg.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+			if (is_modal)
+				Hide ();
+			else
+				Dispose ();
 		}
 
 		public void LayoutMdi(MdiLayout value) {

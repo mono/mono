@@ -1,3 +1,7 @@
+2006-11-04  Chris Toshok  <toshok@ximian.com>
+
+	* Form.cs: if the form isn't visible, Close() does nothing.
+
 2006-11-03  Chris Toshok  <toshok@ximian.com>
 
 	* Form.cs (Close): if the form is modal, don't Dispose of it, only
