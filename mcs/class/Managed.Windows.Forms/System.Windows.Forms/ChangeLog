@@ -1,5 +1,11 @@
 2006-11-04  Chris Toshok  <toshok@ximian.com>
 
+	* Theme.cs: add a Clamp method, just for kicks.
+
+	* ThemeWin32Classic.cs: clamp all color components to [0..255].
+
+2006-11-04  Chris Toshok  <toshok@ximian.com>
+
 	* Form.cs: if the form isn't visible, Close() does nothing.
 
 2006-11-03  Chris Toshok  <toshok@ximian.com>

@@ -4888,7 +4888,11 @@ namespace System.Windows.Forms
 		public override void CPDrawButton (Graphics dc, Rectangle rectangle, ButtonState state)
 		{
 			// sadly enough, the rectangle gets always filled with a hatchbrush
-			dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (ColorControl.R + 3, ColorControl.G, ColorControl.B), ColorControl), rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2);
+			dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50,
+								 Color.FromArgb (Clamp (ColorControl.R + 3, 0, 255),
+										 ColorControl.G, ColorControl.B),
+								 ColorControl),
+					  rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2);
 			
 			if ((state & ButtonState.All) == ButtonState.All || ((state & ButtonState.Checked) == ButtonState.Checked && (state & ButtonState.Flat) == ButtonState.Flat)) {
 				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorControlLight, ColorControl), rectangle.X + 2, rectangle.Y + 2, rectangle.Width - 4, rectangle.Height - 4);
@@ -5029,7 +5033,10 @@ namespace System.Windows.Forms
 				Rectangle rect = new Rectangle (x_pos, y_pos, check_box_visible_size, check_box_visible_size);
 				
 				if (((state & ButtonState.Pushed) == ButtonState.Pushed) || ((state & ButtonState.Inactive) == ButtonState.Inactive)) {
-					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (ColorControl.R + 3, ColorControl.G, ColorControl.B), ColorControl), rect.X + 2, rect.Y + 2, rect.Width - 3, rect.Height - 3);
+					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50,
+										 Color.FromArgb (Clamp (ColorControl.R + 3, 0, 255),
+												 ColorControl.G, ColorControl.B),
+										 ColorControl), rect.X + 2, rect.Y + 2, rect.Width - 3, rect.Height - 3);
 				} else
 					dc.FillRectangle (SystemBrushes.ControlLightLight, rect.X + 2, rect.Y + 2, rect.Width - 3, rect.Height - 3);
 				
@@ -5046,7 +5053,9 @@ namespace System.Windows.Forms
 				dc.DrawLine (pen, rect.X, rect.Bottom, rect.Right, rect.Bottom);
 				
 				// oh boy, matching ms is like fighting against windmills
-				using (Pen h_pen = new Pen (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (ColorControl.R + 3, ColorControl.G, ColorControl.B), ColorControl))) {
+				using (Pen h_pen = new Pen (ResPool.GetHatchBrush (HatchStyle.Percent50,
+										   Color.FromArgb (Clamp (ColorControl.R + 3, 0, 255),
+												   ColorControl.G, ColorControl.B), ColorControl))) {
 					dc.DrawLine (h_pen, rect.X + 1, rect.Bottom - 1, rect.Right - 1, rect.Bottom - 1);
 					dc.DrawLine (h_pen, rect.Right - 1, rect.Y + 1, rect.Right - 1, rect.Bottom - 1);
 				}
@@ -5443,17 +5452,18 @@ namespace System.Windows.Forms
 			Brush brush = null;
 			
 			if ((state & ButtonState.All) == ButtonState.All) {
-				brush = ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (ColorControl.R + 3, ColorControl.G, ColorControl.B), ColorControl);
+				brush = ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (Clamp (ColorControl.R + 3, 0, 255),
+												     ColorControl.G, ColorControl.B), ColorControl);
 				dot_color = cpcolor.Dark;
 			} else
 			if ((state & ButtonState.Flat) == ButtonState.Flat) {
 				if (((state & ButtonState.Inactive) == ButtonState.Inactive) || ((state & ButtonState.Pushed) == ButtonState.Pushed))
-					brush = ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (ColorControl.R + 3, ColorControl.G, ColorControl.B), ColorControl);
+					brush = ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (Clamp (ColorControl.R + 3, 0, 255), ColorControl.G, ColorControl.B), ColorControl);
 				else
 					brush = SystemBrushes.ControlLightLight;
 			} else {
 				if (((state & ButtonState.Inactive) == ButtonState.Inactive) || ((state & ButtonState.Pushed) == ButtonState.Pushed))
-					brush = ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (ColorControl.R + 3, ColorControl.G, ColorControl.B), ColorControl);
+					brush = ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (Clamp (ColorControl.R + 3, 0, 255), ColorControl.G, ColorControl.B), ColorControl);
 				else
 					brush = SystemBrushes.ControlLightLight;
 				
@@ -5477,7 +5487,7 @@ namespace System.Windows.Forms
 			if (bottom_right_inner != Color.Transparent)
 				dc.DrawArc (ResPool.GetSizedPen (bottom_right_inner, line_width), Rectangle.Inflate (rb_rect, -line_width, -line_width), 315.0f, 180.0f);
 			else
-				using (Pen h_pen = new Pen (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (ColorControl.R + 3, ColorControl.G, ColorControl.B), ColorControl), line_width)) {
+				using (Pen h_pen = new Pen (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (Clamp (ColorControl.R + 3, 0, 255), ColorControl.G, ColorControl.B), ColorControl), line_width)) {
 					dc.DrawArc (h_pen, Rectangle.Inflate (rb_rect, -line_width, -line_width), 315.0f, 180.0f);
 				}
 			

@@ -527,7 +527,14 @@ namespace System.Windows.Forms
 				return 16;
 			}
 		}
-		
+
+		public int Clamp (int value, int lower, int upper)
+		{
+			if (value < lower) return lower;
+			else if (value > upper) return upper;
+			else return value;
+		}
+
 		[MonoTODO("Figure out where to point for My Network Places")]
 		public virtual string Places(UIIcon index) {
 			switch (index) {
