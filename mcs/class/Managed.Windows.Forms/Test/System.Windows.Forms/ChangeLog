@@ -1,3 +1,8 @@
+2006-11-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ComboBoxTests.cs: Moved to correct namespace. Added test for bug
+	#79812. Added (NotWorking) SelectedText tests.
+
 2006-11-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TextBoxTest.cs: Added tests for part of bug #79799.
