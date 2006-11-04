@@ -1,5 +1,10 @@
 2006-11-04  Chris Toshok  <toshok@ximian.com>
 
+	* FormTest.cs: add a few more tests to determine various aspects
+	of the Close() method.
+
+2006-11-04  Chris Toshok  <toshok@ximian.com>
+
 	* FormTest.cs: add a test to more accurately test for bug #79155
 	(make sure an ObjectDisposedException is thrown if you Show() a
 	Form you just Close()'d).

@@ -225,8 +225,63 @@ namespace MonoTests.System.Windows.Forms
 			Form myform = new Form ();
 			myform.ShowInTaskbar = false;
 
+			myform.Show ();
 			myform.Close (); // this should result in the form being disposed
 			myform.Show (); // and this line should result in the ODE being thrown
+		}
+
+		[Test]
+		public void FormClose ()
+		{
+			Form myform = new Form ();
+			myform.ShowInTaskbar = false;
+
+			Assert.IsFalse (myform.Visible, "A1");
+			Assert.IsFalse (myform.IsDisposed, "A2");
+
+			myform.Close ();
+
+			Assert.IsFalse (myform.Visible, "A3");
+			Assert.IsFalse (myform.IsDisposed, "A4");
+
+			myform.Show ();
+
+			Assert.IsTrue (myform.Visible, "A5");
+			Assert.IsFalse (myform.IsDisposed, "A6");
+
+			myform.Close ();
+
+			Assert.IsFalse (myform.Visible, "A7");
+			Assert.IsTrue (myform.IsDisposed, "A8");
+		}
+
+		[Test]
+		public void FormClose2 ()
+		{
+			WMCloseWatcher f = new WMCloseWatcher ();
+			f.ShowInTaskbar = false;
+
+			f.close_count = 0;
+			Assert.IsFalse (f.Visible, "A1");
+			f.Close ();
+			Assert.AreEqual (0, f.close_count, "A2");
+
+
+			f.Show ();
+			f.Close ();
+			Assert.AreEqual (1, f.close_count, "A3");
+		}
+
+		class WMCloseWatcher : Form {
+			public int close_count;
+
+			protected override void WndProc (ref Message msg) {
+				if (msg.Msg == 0x0010 /* WM_CLOSE */) {
+					close_count ++;
+				}
+
+				base.WndProc (ref msg);
+			}
 		}
 	}
 }
