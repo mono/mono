@@ -626,7 +626,7 @@ namespace System.Web {
 					if (pipeline == null || (bool)pipeline.Current)
 						PipelineDone ();
 				}
-			} catch (ThreadAbortException) {
+			} catch (ThreadAbortException taex) {
 				object obj = taex.ExceptionState;
 				Thread.ResetAbort ();
 				stop_processing = true;
