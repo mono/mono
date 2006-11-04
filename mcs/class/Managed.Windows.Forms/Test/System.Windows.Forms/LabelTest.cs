@@ -15,138 +15,121 @@ using System.Collections;
 namespace MonoTests.System.Windows.Forms
 {
    [TestFixture]
-   public class LabelTest2
+   public class LabelTest
    {
+		[Test]
+		public void LabelAccessibility ()
+		{
+			Label l = new Label ();
+			Assert.IsNotNull (l.AccessibilityObject, "1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void PreferredSize ()
+		{
+			Label l = new Label();
+
+			Assert.AreEqual (16, l.PreferredHeight, "1");
+			Assert.AreEqual (0, l.PreferredWidth, "2");
+		}
+
+		[Test]
+		public void BoundsTest ()
+		{
+			Label l = new Label ();
+
+			Assert.AreEqual (new Rectangle (0,0,100,23), l.Bounds, "1");
+			Assert.AreEqual (new Rectangle (0,0,100,23), l.ClientRectangle, "2");
+			Assert.AreEqual (new Size (100,23), l.ClientSize, "3");
+		}
+
+		[Test]
+		public void PubPropTest ()
+		{
+			Label l = new Label ();
+
+			Assert.IsFalse (l.AutoSize, "#3");
+			
+			Assert.AreEqual ("Control", l.BackColor.Name  , "#6");
+			Assert.IsNull (l.BackgroundImage, "#8");
+			Assert.AreEqual (BorderStyle.None , l.BorderStyle, "#9");		
+			
+			Assert.IsNull (l.Container, "#19");
+			Assert.IsFalse (l.ContainsFocus, "#20");
+			Assert.IsNull (l.ContextMenu, "#21");
+			Assert.IsFalse (l.Created, "#23");
+			Assert.AreEqual (Cursors.Default , l.Cursor, "#24");
+			
+			Assert.IsNotNull (l.DataBindings, "#25");
+			Assert.AreEqual (DockStyle.None, l.Dock, "#28");
+			
+			Assert.IsTrue (l.Enabled, "#29");
+			
+			Assert.AreEqual (FlatStyle.Standard, l.FlatStyle, "#30");
+			Assert.IsFalse (l.Focused, "#31");
+			Assert.AreEqual (FontFamily.GenericSansSerif, l.Font.FontFamily, "#32");
+			Assert.AreEqual (SystemColors.ControlText, l.ForeColor, "#33");
+			
+			Assert.IsFalse (l.HasChildren, "#35");
+			
+			Assert.IsNull   (l.Image, "#37");
+			Assert.AreEqual (ContentAlignment.MiddleCenter, l.ImageAlign, "#38");
+			Assert.AreEqual (-1, l.ImageIndex, "#39");
+			Assert.IsNull   (l.ImageList, "#40");
+			Assert.IsFalse  (l.InvokeRequired, "#42");
+			Assert.IsFalse  (l.IsAccessible, "#43");
+			Assert.IsFalse  (l.IsDisposed, "#44");
+			
+			Assert.IsNull (l.Parent, "#49");
+
+			Assert.IsFalse (l.RecreatingHandle, "#54");
+			Assert.IsNull (l.Region, "#55");
+			Assert.AreEqual (RightToLeft.No, l.RightToLeft, "#57");
+			
+			Assert.IsNull (l.Site, "#58");
+			
+			Assert.AreEqual (0, l.TabIndex, "#60");
+			Assert.IsNull (l.Tag, "#61");
+			Assert.AreEqual ("", l.Text, "#62");
+			Assert.AreEqual (ContentAlignment.TopLeft, l.TextAlign, "#63");
+			Assert.IsNull (l.TopLevelControl, "#65");
+			
+			Assert.IsTrue (l.UseMnemonic, "#66");
+			
+			Assert.IsTrue (l.Visible, "#67");
+		}
+
+		[Test]
+		public void LabelEqualsTest () {
+			Label s1 = new Label ();
+			Label s2 = new Label ();
+			s1.Text = "abc";
+			s2.Text = "abc";
+			Assert.IsFalse (s1.Equals (s2), "#69");
+			Assert.IsTrue (s1.Equals (s1), "#70");
+		}
+		
+		[Test]
+		public void LabelScaleTest () {
+			Label r1 = new Label ();
+			r1.Width = 40;
+			r1.Height = 20 ;
+			r1.Scale (2);
+			Assert.AreEqual (80, r1.Width, "#71");
+			Assert.AreEqual (40, r1.Height, "#72");
+
+		}		
 
 	   [Test]
-	   [Category ("NotWorking")]
-	   public void PubPropTest ()
-	     {
-		     Label l = new Label ();
+	   public void ToStringTest ()
+	   {
+		   Label l = new Label ();
 
-		     // A
-		     Assert.AreEqual (false, l.AutoSize, "A1");
-		     l.AutoSize = true;
-		     Assert.AreEqual (true, l.AutoSize, "A2");
-		     l.AutoSize = false;
-		     Assert.AreEqual (false, l.AutoSize, "A3");
+		   l.Text = "My Label";
 
-		     // B
-		     Assert.AreEqual (null, l.BackgroundImage, "B1");
-		     l.BackgroundImage = Image.FromFile ("Test/System.Windows.Forms/bitmaps/a.png");
-		     Assert.IsNotNull (l.BackgroundImage, "B2");
-		     Bitmap bmp = (Bitmap)l.BackgroundImage;
-		     Assert.IsNotNull (bmp.GetPixel (0, 0), "B3");
-
-		     Assert.AreEqual (BorderStyle.None, l.BorderStyle, "B4");
-		     l.BorderStyle = BorderStyle.FixedSingle;
-		     Assert.AreEqual (BorderStyle.FixedSingle, l.BorderStyle, "B5");
-		     l.BorderStyle = BorderStyle.Fixed3D;
-		     Assert.AreEqual (BorderStyle.Fixed3D, l.BorderStyle, "B6");
-		     l.BorderStyle = BorderStyle.None;
-		     Assert.AreEqual (BorderStyle.None, l.BorderStyle, "B7");
-
-		     // C
-		     string name = l.CompanyName;
-		     if (!name.Equals("Mono Project, Novell, Inc.") && !name.Equals("Microsoft Corporation")) {
-			     Assert.Fail("CompanyName property does not match any accepted value - C1");
-		     }
-
-		     // F
-		     Assert.AreEqual (FlatStyle.Standard, l.FlatStyle, "F1");
-		     l.FlatStyle = FlatStyle.Flat;
-		     Assert.AreEqual (FlatStyle.Flat, l.FlatStyle, "F1");
-		     l.FlatStyle = FlatStyle.Popup;
-		     Assert.AreEqual (FlatStyle.Popup, l.FlatStyle, "F2");
-		     l.FlatStyle = FlatStyle.Standard;
-		     Assert.AreEqual (FlatStyle.Standard, l.FlatStyle, "F3");
-		     l.FlatStyle = FlatStyle.System;
-		     Assert.AreEqual (FlatStyle.System, l.FlatStyle, "F4");
-
-		     // I
-		     Assert.AreEqual (ContentAlignment.MiddleCenter, l.ImageAlign, "I1");
-		     l.ImageAlign = ContentAlignment.TopLeft;
-		     Assert.AreEqual (ContentAlignment.TopLeft, l.ImageAlign, "I2");
-		     l.ImageAlign = ContentAlignment.TopCenter;
-		     Assert.AreEqual (ContentAlignment.TopCenter, l.ImageAlign, "I3");
-		     l.ImageAlign = ContentAlignment.TopRight;
-		     Assert.AreEqual (ContentAlignment.TopRight, l.ImageAlign, "I4");
-		     l.ImageAlign = ContentAlignment.MiddleLeft;
-		     Assert.AreEqual (ContentAlignment.MiddleLeft, l.ImageAlign, "I5");
-		     l.ImageAlign = ContentAlignment.MiddleCenter;
-		     Assert.AreEqual (ContentAlignment.MiddleCenter, l.ImageAlign, "I6");
-		     l.ImageAlign = ContentAlignment.MiddleRight;
-		     Assert.AreEqual (ContentAlignment.MiddleRight, l.ImageAlign, "I7");
-		     l.ImageAlign = ContentAlignment.BottomLeft;
-		     Assert.AreEqual (ContentAlignment.BottomLeft, l.ImageAlign, "I8");
-		     l.ImageAlign = ContentAlignment.BottomCenter;
-		     Assert.AreEqual (ContentAlignment.BottomCenter, l.ImageAlign, "I9");
-		     l.ImageAlign = ContentAlignment.BottomRight;
-		     Assert.AreEqual (ContentAlignment.BottomRight, l.ImageAlign, "I10");
-		     Assert.AreEqual (-1, l.ImageIndex, "I11");
-		     Assert.AreEqual (null, l.ImageList, "I12");
-		     Assert.AreEqual (null, l.Image, "I13");
-		     l.Image = Image.FromFile ("Test/System.Windows.Forms/bitmaps/a.png");
-		     Assert.IsNotNull (l.Image, "I14");
-		     bmp = (Bitmap)l.Image;
-		     Assert.IsNotNull (bmp.GetPixel (0, 0), "I15");
-
-		     ImageList il = new ImageList ();
-		     il.ColorDepth = ColorDepth.Depth32Bit;
-		     il.ImageSize = new Size (15, 15);
-		     il.Images.Add (Image.FromFile ("Test/System.Windows.Forms/bitmaps/a.png"));
-		     l.ImageList = il;
-		     l.ImageIndex = 0;
-
-		     Assert.AreEqual (0, l.ImageIndex, "I16");
-		     Assert.IsNotNull (l.ImageList, "I17");
-
-		     // PreferredHeight
-		     // PregerredWidth
-		     // RenderTransparent
-		     //
-		     // T
-		     // Assert.AreEqual (false, l.TabStop, "T1");
-		     Assert.AreEqual (ContentAlignment.TopLeft, l.TextAlign, "T2");
-
-		     // U
-		     Assert.AreEqual (true, l.UseMnemonic, "U1");
-		     l.UseMnemonic = false;
-		     Assert.AreEqual (false, l.UseMnemonic, "U2");
-	     }
-
-	   [Test]
-	   public void LabelEqualsTest ()
-	     {
-		     Label s1 = new Label ();
-		     Label s2 = new Label ();
-		     s1.Text = "abc";
-		     s2.Text = "abc";
-		     Assert.AreEqual (false, s1.Equals (s2), "E1");
-		     Assert.AreEqual (true, s1.Equals (s1), "E2");
-	     }
-
-	   [Test]
-	   public void LabelScaleTest ()
-	     {
-		     Label r1 = new Label ();
-		     r1.Width = 40;
-		     r1.Height = 20 ;
-		     r1.Scale (2);
-		     Assert.AreEqual (80, r1.Width, "W1");
-		     Assert.AreEqual (40, r1.Height, "H1");
-	     }
-
-	   [Test]
-	   public void PubMethodTest ()
-	     {
-		     Label l = new Label ();
-
-		     l.Text = "My Label";
-
-		     Assert.AreEqual ("System.Windows.Forms.Label, Text: My Label", l.ToString (), "T1");
-
-	     }
+		   Assert.AreEqual ("System.Windows.Forms.Label, Text: My Label", l.ToString (), "T1");
+	   }
    }
 
    [TestFixture]
