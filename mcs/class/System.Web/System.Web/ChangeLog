@@ -1,3 +1,8 @@
+2006-11-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: the unexpected 'tick' exceptions can be an abort
+	exception due to timeout or end of the request.
+
 2006-10-18  Marek Habersack  <grendello@gmail.com>
 
 	* HttpRuntime.cs: add support for compilation of local resources

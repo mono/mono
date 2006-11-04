@@ -626,6 +626,14 @@ namespace System.Web {
 					if (pipeline == null || (bool)pipeline.Current)
 						PipelineDone ();
 				}
+			} catch (ThreadAbortException) {
+				object obj = taex.ExceptionState;
+				Thread.ResetAbort ();
+				stop_processing = true;
+				if (obj is StepTimeout)
+					ProcessError (new HttpException ("The request timed out."));
+				else
+					PipelineDone ();
 			} catch (Exception e) {
 				Console.WriteLine ("Tick caught an exception that has not been propagated:\n" + e);
 			}
