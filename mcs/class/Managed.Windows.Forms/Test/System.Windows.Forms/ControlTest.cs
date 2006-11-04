@@ -144,6 +144,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (MouseButtons.None, Control.MouseButtons, "M3");
 
 			Assert.AreEqual("", c.Name, "N1");
+			c.Name = "Control Name";
+			Assert.AreEqual("Control Name", c.Name, "N2");
 
 			Assert.IsNull (c.Parent, "P1");
 			Assert.IsNotNull (c.ProductName, "P2");
