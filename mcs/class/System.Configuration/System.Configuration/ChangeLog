@@ -1,3 +1,11 @@
+2006-11-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* added: ConfigurationRemoveElement.cs, common element for <remove>
+	* ConnectionStringSettingsCollection.cs: reverted last fix for
+	<remove> element
+	* ConfigurationElementCollection.cs: fixed the way that
+	OnDeserializeUnrecognizedElement method handles <remove> element
+
 2006-11-02  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ConfigurationElement.cs: typo in DefaultCollectionProperty

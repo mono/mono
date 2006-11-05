@@ -157,6 +157,7 @@
 		<Compile Include="System.Configuration\ConfigurationPropertyAttribute.cs"/>
 		<Compile Include="System.Configuration\ConfigurationPropertyCollection.cs"/>
 		<Compile Include="System.Configuration\ConfigurationPropertyOptions.cs"/>
+		<Compile Include="System.Configuration\ConfigurationRemoveElement.cs" />
 		<Compile Include="System.Configuration\ConfigurationSaveMode.cs"/>
 		<Compile Include="System.Configuration\ConfigurationSection.cs"/>
 		<Compile Include="System.Configuration\ConfigurationSectionCollection.cs"/>

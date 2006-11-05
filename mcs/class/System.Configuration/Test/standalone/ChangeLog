@@ -1,3 +1,8 @@
+2006-11-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* t37.cs, t37.exe.config, t37.exe.expected: added some tests
+	for <remove> element
+
 2006-09-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* t37.cs, t37.exe.config, t37.exe.expected: new test for

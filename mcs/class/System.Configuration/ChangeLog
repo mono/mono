@@ -1,16 +1,21 @@
-2006-09-26	Boris Kirzner <borisk@mainsoft.com>
+2006-11-05  Vladimir Krasnov  <vladimirk@mainssft.com>
+
+	* System.Configuration.dll.sources, System.Configuration20.vmwcsproj: 
+	added ConfigurationRemoveElement.cs
+
+2006-09-26  Boris Kirzner  <borisk@mainsoft.com>
 
 	* run-tests.test.bat : log files naming fix.
 
-2006-05-09	Boris Kirzner <borisk@mainsoft.com>
+2006-05-09  Boris Kirzner  <borisk@mainsoft.com>
 
 	* run-tests.test.bat : small fixes for TARGET_JVM.
 
-2006-05-09	Boris Kirzner <borisk@mainsoft.com>
+2006-05-09  Boris Kirzner  <borisk@mainsoft.com>
 
 	* run-tests.test.bat : small fixes for TARGET_JVM.
 
-2006-05-09	Boris Kirzner <borisk@mainsoft.com>
+2006-05-09  Boris Kirzner  <borisk@mainsoft.com>
 
 	* run-tests.bat,  run-tests.test.bat: added scripts for NET_2_0
 	TARGET_JVM tests.

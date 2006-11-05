@@ -78,19 +78,8 @@ namespace System.Configuration
                         return new ConnectionStringSettings ();
                 }
 
-                protected override ConfigurationElement CreateNewElement (string elementName)
-                {
-                        if (elementName == RemoveElementName)
-                                return new NameValueConfigurationElement (null, null);
-
-                        return base.CreateNewElement (elementName);
-                }
-
                 protected override object GetElementKey (ConfigurationElement element)
                 {
-                        if (element is NameValueConfigurationElement)
-                                return ((NameValueConfigurationElement) element).Name;
-                    
                         return ((ConnectionStringSettings) element).Name;
                 }
 

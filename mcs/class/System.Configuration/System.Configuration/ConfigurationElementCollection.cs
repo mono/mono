@@ -475,9 +475,10 @@ namespace System.Configuration
 					return true;
 				}
 				else if (elementName == removeElementName) {
-					ConfigurationElement elem = CreateNewElementInternal (removeElementName);
-					elem.DeserializeElement (reader, true);
-					BaseRemove (GetElementKey (elem));
+					ConfigurationElement elem = CreateNewElementInternal (null);
+					ConfigurationRemoveElement removeElem = new ConfigurationRemoveElement (elem);
+					removeElem.DeserializeElement (reader, true);
+					BaseRemove (removeElem.KeyValue);
 					modified = false;
 					return true;
 				}
