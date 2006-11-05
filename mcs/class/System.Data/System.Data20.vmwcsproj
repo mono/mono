@@ -456,6 +456,7 @@
     <Compile Include="System.Data\XmlReadMode.cs" />
     <Compile Include="System.Data\XmlSchemaDataImporter.cs" />
     <Compile Include="System.Data\XmlSchemaWriter.cs" />
+    <Compile Include="System.Data\XmlTableWriter.cs" />
     <Compile Include="System.Data\XmlWriteMode.cs" />
     <Compile Include="System.Xml\XmlDataDocument.cs" />
   </ItemGroup>
@@ -463,7 +464,6 @@
     <Compile Include="..\..\build\common\Consts.cs.in">
       <Link>Assembly\Consts.cs.in</Link>
     </Compile>
-    <Compile Include="System.Data\DataTableReadXmlSchemaTest.cs" />
     <None Include="Mono.Data.SqlExpressions\Parser.jay" />
   </ItemGroup>
   <ItemGroup>
