@@ -29,8 +29,10 @@
 #if NET_2_0
 using System;
 using System.IO;
+using System.ComponentModel;
 using System.Runtime.Serialization.Formatters.Binary;
 #if (XML_DEP)
+using System.Xml;
 using System.Xml.Serialization;
 #endif
 
@@ -78,9 +80,12 @@ namespace System.Configuration
 		public object PropertyValue {
 			get {
 				if (needPropertyValue) {
+					propertyValue = GetDeserializedValue ();
+					if (propertyValue == null) {
+						propertyValue = property.DefaultValue;
+						defaulted = true;
+					}
 					needPropertyValue = false;
-					propertyValue = property.DefaultValue;
-					defaulted = true;
 				}
 
 #if notyet
@@ -142,6 +147,7 @@ namespace System.Configuration
 			}
 			set {
 				serializedValue = value;
+				needPropertyValue = true;
 			}
 		}
 
@@ -151,13 +157,48 @@ namespace System.Configuration
 			}
 		}
 
+		private object GetDeserializedValue ()
+		{
+			if (serializedValue == null)
+				return null;
+
+			object deserializedObject = null;
+
+			try {
+				switch (property.SerializeAs) {
+					case SettingsSerializeAs.String:
+						if (((string) serializedValue).Length > 0)
+							deserializedObject = TypeDescriptor.GetConverter (property.PropertyType).ConvertFromString ((string) serializedValue);
+						break;
+#if (XML_DEP)
+					case SettingsSerializeAs.Xml:
+						XmlSerializer serializer = new XmlSerializer (property.PropertyType);
+						StringReader str = new StringReader ((string) serializedValue);
+						deserializedObject = serializer.Deserialize (XmlReader.Create (str));
+						break;
+#endif
+					case SettingsSerializeAs.Binary:
+						BinaryFormatter bf = new BinaryFormatter ();
+						MemoryStream ms = new MemoryStream ((byte []) serializedValue);
+						deserializedObject = bf.Deserialize (ms);
+						break;
+				}
+			}
+			catch (Exception e) {
+				if (property.ThrowOnErrorDeserializing)
+					throw e;
+			}
+
+			return deserializedObject;
+		}
+
 		SettingsProperty property;
 		object propertyValue;
 		object serializedValue;
 		bool needSerializedValue;
 		bool needPropertyValue;
 		bool dirty;
-		bool defaulted;
+		bool defaulted = false;
 		bool deserialized;
 	}
 

@@ -162,6 +162,48 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
+		public void String_Deserialize ()
+		{
+			SettingsProperty p = new SettingsProperty ("property",
+								   typeof (int),
+								   null,
+								   true,
+								   10,
+								   SettingsSerializeAs.String,
+								   null,
+								   true,
+								   false);
+
+			SettingsPropertyValue v = new SettingsPropertyValue (p);
+			v.SerializedValue = "123";
+
+			Assert.AreEqual (123, v.PropertyValue, "A1");
+			Assert.AreEqual (typeof(int), v.PropertyValue.GetType (), "A2");
+			Assert.AreEqual (false, v.UsingDefaultValue, "A3");
+		}
+
+		[Test]
+		public void Xml_Deserialize ()
+		{
+			SettingsProperty p = new SettingsProperty ("property",
+								   typeof (int),
+								   null,
+								   true,
+								   10,
+								   SettingsSerializeAs.Xml,
+								   null,
+								   true,
+								   false);
+
+			SettingsPropertyValue v = new SettingsPropertyValue (p);
+			v.SerializedValue = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\n<int>123</int>";
+
+			Assert.AreEqual (123, v.PropertyValue, "A1");
+			Assert.AreEqual (typeof(int), v.PropertyValue.GetType (), "A2");
+			Assert.AreEqual (false, v.UsingDefaultValue, "A3");
+		}
+
+		[Test]
 		public void String_Xml_Serialize ()
 		{
 			SettingsProperty p = new SettingsProperty ("property",
