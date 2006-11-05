@@ -1,5 +1,15 @@
 2006-11-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* TreeNodeCollection.cs: To match MS, in 1.0 profile throw 
+	NullReferenceException when attempting to remove node that is not in
+	collection. Throw NullReferenceException when null is passed to 
+	Remove.	Allow first element of the collection to be removed. Fixes
+	bug #79831.  In GetEnumerator ().Current return null if positioned 
+	before the first element of the collection. In GetEnumerator ().Reset,
+	position before first element of the collection.
+
+2006-11-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* PropertyGrid.cs: To match MS, remove default title and description
 	for panel. Fixed tooltips for Categorized and Alphabetic toolbar
 	buttons.

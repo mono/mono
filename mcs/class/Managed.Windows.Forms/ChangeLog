@@ -1,3 +1,8 @@
+2006-11-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.Windows.Forms_test.dll.sources: Added 
+	TreeNodeCollectionTest.cs.
+
 2006-10-30  Jonathan Pobst  <monkey@jpobst.com>
 	* System.Windows.Forms.dll.sources: Add ToolStripDropDown.cs,
 	  ToolStripItemEventType.cs, ToolStripMenuTracker.cs.

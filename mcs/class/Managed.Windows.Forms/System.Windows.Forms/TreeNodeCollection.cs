@@ -193,9 +193,16 @@ namespace System.Windows.Forms {
 
 		public void Remove (TreeNode node)
 		{
+			if (node == null)
+				throw new NullReferenceException ();
+
 			int index = IndexOf (node);
-			if (index > 0)
+			if (index != -1)
 				RemoveAt (index);
+#if ONLY_1_1
+			else
+				throw new NullReferenceException ();
+#endif
 		}
 
 		public virtual void RemoveAt (int index)
@@ -210,7 +217,7 @@ namespace System.Windows.Forms {
 			TreeNode new_selected = null;
 			bool visible = removed.IsVisible;
 
-                        TreeView tree_view = null;
+			TreeView tree_view = null;
 			if (owner != null)
 				tree_view = owner.TreeView;
 
@@ -399,7 +406,11 @@ namespace System.Windows.Forms {
 			}
 
 			public object Current {
-				get { return collection [index]; }
+				get {
+					if (index == -1)
+						return null;
+					return collection [index];
+				}
 			}
 
 			public bool MoveNext ()
@@ -412,7 +423,7 @@ namespace System.Windows.Forms {
 
 			public void Reset ()
 			{
-				index = 0;
+				index = -1;
 			}
 		}
 

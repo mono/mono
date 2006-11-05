@@ -16,6 +16,10 @@
 
 2006-11-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* TreeNodeCollectionTest.cs: Added tests for TreeNodeCollection.
+
+2006-11-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* ComboBoxTests.cs: Moved to correct namespace. Added test for bug
 	#79812. Added (NotWorking) SelectedText tests.
 
