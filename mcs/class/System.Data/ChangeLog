@@ -1,3 +1,7 @@
+2006-11-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* System.Data20.vmwcsproj: added OleDbFactory.cs
+
 2006-10-24  Hagit Yidov  <hagity@mainsoft.com>
 
 	* System.Data.dll.sources:

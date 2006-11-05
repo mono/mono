@@ -1,3 +1,7 @@
+2006-11-05 Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* added: OleDbFactory.cs
+
 2006-05-23 Boris Kirzner <borisk@mainsoft.com>
 	* OleDbConnection.cs: add MonoTODO to GetOleDbSchemaTable.
 

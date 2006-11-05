@@ -215,6 +215,7 @@
     <Compile Include="System.Data.OleDb.jvm\OleDbError.cs" />
     <Compile Include="System.Data.OleDb.jvm\OleDbErrorCollection.cs" />
     <Compile Include="System.Data.OleDb.jvm\OleDbException.cs" />
+    <Compile Include="System.Data.OleDb.jvm\OleDbFactory.cs" />
     <Compile Include="System.Data.OleDb.jvm\OleDbInfoMessageEventArgs.cs" />
     <Compile Include="System.Data.OleDb.jvm\OleDbInfoMessageEventHandler.cs" />
     <Compile Include="System.Data.OleDb.jvm\OleDbLiteral.cs" />
