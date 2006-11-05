@@ -108,7 +108,6 @@ namespace System.Windows.Forms {
 			help_title_label.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			help_title_label.Name = "help_title_label";
 			help_title_label.Font = new Font(this.Font,FontStyle.Bold);
-			help_title_label.Text = "Title";
 			help_title_label.Location = new Point(2,2);
 			help_title_label.Height = 17;
 			help_title_label.Width = help_panel.Width - 4;
@@ -118,7 +117,6 @@ namespace System.Windows.Forms {
 			help_description_label.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			help_description_label.Name = "help_description_label";
 			help_description_label.Font = this.Font;
-			help_description_label.Text = "The long important Description";
 			help_description_label.Location = new Point(2,help_title_label.Top+help_title_label.Height);
 			help_description_label.Width = help_panel.Width - 4;
 			help_description_label.Height = 17;
@@ -161,11 +159,11 @@ namespace System.Windows.Forms {
 
 			categorized_toolbarbutton.ImageIndex = 0;
 			categorized_toolbarbutton.Style = ToolBarButtonStyle.ToggleButton;
-			categorized_toolbarbutton.ToolTipText = (string)Locale.GetResource( "Categorized");
+			categorized_toolbarbutton.ToolTipText = Locale.GetText ("Categorized");
 
 			alphabetic_toolbarbutton.ImageIndex = 1;
 			alphabetic_toolbarbutton.Style = ToolBarButtonStyle.ToggleButton;
-			alphabetic_toolbarbutton.ToolTipText = (string)Locale.GetResource( "Alphabetic");
+			alphabetic_toolbarbutton.ToolTipText = Locale.GetText ("Alphabetic");
 
 			separator_toolbarbutton.Style = ToolBarButtonStyle.Separator;
 
