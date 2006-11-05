@@ -53,16 +53,16 @@ namespace System.Windows.Forms {
 		private bool addExtension = true;
 		private bool checkFileExists = false;
 		private bool checkPathExists = true;
-		private string defaultExt = "";
+		private string defaultExt = String.Empty;
 		private bool dereferenceLinks = true;
-		private string fileName = "";
+		private string fileName = String.Empty;
 		private string[] fileNames;
 		private string filter;
 		private int filterIndex = 1;
-		private string initialDirectory = "";
+		private string initialDirectory = String.Empty;
 		private bool restoreDirectory = false;
 		private bool showHelp = false;
-		private string title = "";
+		private string title = String.Empty;
 		private bool validateNames = true;
 		
 		private Button cancelButton;
@@ -87,7 +87,7 @@ namespace System.Windows.Forms {
 		
 		private bool multiSelect = false;
 		
-		private string restoreDirectoryString = "";
+		private string restoreDirectoryString = String.Empty;
 		
 		internal FileDialogType fileDialogType;
 		
@@ -100,7 +100,7 @@ namespace System.Windows.Forms {
 		
 		internal FileFilter fileFilter;
 		
-		private string lastFolder = "";
+		private string lastFolder = String.Empty;
 		
 		private MWFVFS vfs;
 		
@@ -576,16 +576,16 @@ namespace System.Windows.Forms {
 			addExtension = true;
 			checkFileExists = false;
 			checkPathExists = true;
-			defaultExt = "";
+			defaultExt = String.Empty;
 			dereferenceLinks = true;
-			fileName = "";
+			fileName = String.Empty;
 			fileNames = null;
-			Filter = "";
+			Filter = String.Empty;
 			filterIndex = 1;
-			initialDirectory = "";
+			initialDirectory = String.Empty;
 			restoreDirectory = false;
 			ShowHelp = false;
-			Title = "";
+			Title = String.Empty;
 			validateNames = true;
 			
 			UpdateFilters ();
@@ -754,7 +754,7 @@ namespace System.Windows.Forms {
 				}
 			}
 			
-			string internalfullfilename = "";
+			string internalfullfilename = String.Empty;
 			
 			if (!multiSelect) {
 				string fileFromComboBox = fileNameComboBox.Text.Trim ();
@@ -823,8 +823,8 @@ namespace System.Windows.Forms {
 				
 				if (fileDialogType == FileDialogType.SaveFileDialog) {
 					if (addExtension) {
-						string extension_to_use = "";
-						string filter_exentsion = "";
+						string extension_to_use = String.Empty;
+						string filter_exentsion = String.Empty;
 						
 						if (fileFilter != null) {
 							FilterStruct filterstruct = (FilterStruct)fileFilter.FilterArrayList [filterIndex - 1];
@@ -843,10 +843,10 @@ namespace System.Windows.Forms {
 							}
 						}
 						
-						if (filter_exentsion != "")
+						if (filter_exentsion != String.Empty)
 							extension_to_use = filter_exentsion;
 						else
-						if (defaultExt != "")
+						if (defaultExt != String.Empty)
 							extension_to_use = "." + defaultExt;
 						
 						internalfullfilename += extension_to_use;
@@ -1079,10 +1079,10 @@ namespace System.Windows.Forms {
 				}
 			}
 			
-			if (initialDirectory != "")
+			if (initialDirectory != String.Empty)
 				lastFolder = initialDirectory;
 			else
-			if (lastFolder == null || lastFolder == "")
+			if (lastFolder == null || lastFolder == String.Empty)
 				lastFolder = Environment.CurrentDirectory;
 			
 			if (RestoreDirectory)
@@ -2116,7 +2116,7 @@ namespace System.Windows.Forms {
 			TextEntryDialog ted = new TextEntryDialog ();
 			ted.IconPictureBoxImage = MimeIconEngine.LargeIcons.Images.GetImage (fsEntry.IconIndex);
 			
-			string folder = "";
+			string folder = String.Empty;
 			
 			if (currentFolderFSEntry.RealName != null)
 				folder = currentFolderFSEntry.RealName;
@@ -2393,7 +2393,7 @@ namespace System.Windows.Forms {
 		protected override void OnSelectedIndexChanged (EventArgs e)
 		{
 			if (SelectedItems.Count > 0) {
-				selectedFilesString = "";
+				selectedFilesString = String.Empty;
 				
 				if (SelectedItems.Count == 1) {
 					FileViewListViewItem listViewItem = SelectedItems [0] as FileViewListViewItem;
@@ -2448,7 +2448,8 @@ namespace System.Windows.Forms {
 					
 					toolTip.Active = true;
 				}
-			}
+			} else
+				toolTip.Active = false;
 			
 			base.OnMouseMove (e);
 		}
@@ -2548,7 +2549,7 @@ namespace System.Windows.Forms {
 			
 			switch (fsEntry.FileType) {
 				case FSEntry.FSEntryType.Directory:
-					SubItems.Add ("");
+					SubItems.Add (String.Empty);
 					SubItems.Add ("Directory");
 					SubItems.Add (fsEntry.LastAccessTime.ToShortDateString () + " " + fsEntry.LastAccessTime.ToShortTimeString ());	
 					break;
@@ -2566,12 +2567,12 @@ namespace System.Windows.Forms {
 					SubItems.Add (fsEntry.LastAccessTime.ToShortDateString () + " " + fsEntry.LastAccessTime.ToShortTimeString ());	
 					break;
 				case FSEntry.FSEntryType.Device:
-					SubItems.Add ("");
+					SubItems.Add (String.Empty);
 					SubItems.Add ("Device");
 					SubItems.Add (fsEntry.LastAccessTime.ToShortDateString () + " " + fsEntry.LastAccessTime.ToShortTimeString ());	
 					break;
 				case FSEntry.FSEntryType.RemovableDevice:
-					SubItems.Add ("");
+					SubItems.Add (String.Empty);
 					SubItems.Add ("RemovableDevice");
 					SubItems.Add (fsEntry.LastAccessTime.ToShortDateString () + " " + fsEntry.LastAccessTime.ToShortTimeString ());	
 					break;
@@ -2649,7 +2650,7 @@ namespace System.Windows.Forms {
 			newNameTextBox.Location = new Point (16, 128);
 			newNameTextBox.Size = new Size (200, 20);
 			newNameTextBox.TabIndex = 5;
-			newNameTextBox.Text = "";
+			newNameTextBox.Text = String.Empty;
 			
 			// okButton
 			okButton.DialogResult = DialogResult.OK;
@@ -2865,7 +2866,7 @@ namespace System.Windows.Forms {
 	#region FileSystem
 	internal abstract class FileSystem
 	{
-		protected string currentTopFolder = "";
+		protected string currentTopFolder = String.Empty;
 		protected FSEntry currentFolderFSEntry = null;
 		protected FSEntry currentTopFolderFSEntry = null;
 		
@@ -3036,7 +3037,9 @@ namespace System.Windows.Forms {
 			} catch (Exception) {}
 			
 			for (int i = 0; i < files.Count; i++) {
-				files_out.Add (GetFileFSEntry (files [i] as FileInfo));
+				FSEntry fs = GetFileFSEntry (files [i] as FileInfo);
+				if (fs != null)
+					files_out.Add (fs);
 			}
 		}
 		
@@ -3077,6 +3080,11 @@ namespace System.Windows.Forms {
 		
 		protected virtual FSEntry GetFileFSEntry (FileInfo fileinfo)
 		{
+			// *sigh* FileInfo gives us no usable information for links to directories
+			// so, return null
+			if ((fileinfo.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
+				return null;
+			
 			FSEntry fs = new FSEntry ();
 			
 			fs.Attributes = fileinfo.Attributes;
@@ -3084,10 +3092,8 @@ namespace System.Windows.Forms {
 			fs.Name = fileinfo.Name;
 			fs.FileType = FSEntry.FSEntryType.File;
 			fs.IconIndex = MimeIconEngine.GetIconIndexForFile (fileinfo.FullName);
+			fs.FileSize = fileinfo.Length;
 			fs.LastAccessTime = fileinfo.LastAccessTime;
-			// the following catches broken symbolic links
-			if ((int)fs.Attributes != 0)
-				fs.FileSize = fileinfo.Length;
 			
 			return fs;
 		}
@@ -3268,7 +3274,7 @@ namespace System.Windows.Forms {
 				}
 			} else {
 				XmlDocument xml_doc = new XmlDocument ();
-				xml_doc.AppendChild (xml_doc.CreateXmlDeclaration ("1.0", "", ""));
+				xml_doc.AppendChild (xml_doc.CreateXmlDeclaration ("1.0", String.Empty, String.Empty));
 				
 				XmlElement recentFiles_element = xml_doc.CreateElement ("RecentFiles");
 				
@@ -3328,8 +3334,11 @@ namespace System.Windows.Forms {
 							xtr.Read ();
 							Uri uri = new Uri (xtr.Value);
 							if (!files_al.Contains (uri.LocalPath))
-								if (File.Exists (uri.LocalPath))
-									files_al.Add (GetFileFSEntry (new FileInfo (uri.LocalPath)));
+								if (File.Exists (uri.LocalPath)) {
+									FSEntry fs = GetFileFSEntry (new FileInfo (uri.LocalPath));
+									if (fs != null)
+										files_al.Add (fs);
+								}
 						}
 					}
 					xtr.Close ();
@@ -3351,13 +3360,16 @@ namespace System.Windows.Forms {
 						line = line.Trim ();
 						
 						if (line.StartsWith ("URL=")) {
-							line = line.Replace ("URL=", "");
+							line = line.Replace ("URL=", String.Empty);
 							line = line.Replace ("$HOME", personal_folder);
 							
 							Uri uri = new Uri (line);
 							if (!files_al.Contains (uri.LocalPath))
-								if (File.Exists (uri.LocalPath))
-									files_al.Add (GetFileFSEntry (new FileInfo (uri.LocalPath)));
+								if (File.Exists (uri.LocalPath)) {
+									FSEntry fs = GetFileFSEntry (new FileInfo (uri.LocalPath));
+									if (fs != null)
+										files_al.Add (fs);
+								}
 							break;
 						}
 						
@@ -3600,7 +3612,9 @@ namespace System.Windows.Forms {
 			FileInfo[] fileinfos = di.GetFiles ();
 			
 			foreach (FileInfo fi in fileinfos) {
-				al.Add (GetFileFSEntry (fi));
+				FSEntry fs = GetFileFSEntry (fi);
+				if (fs != null)
+					al.Add (fs);
 			}
 			
 			return al;
@@ -4008,7 +4022,7 @@ namespace System.Windows.Forms {
 				Mount mount = new Mount ();
 				
 				if (split [0].StartsWith ("/dev/"))
-					mount.device_short = split [0].Replace ("/dev/", "");
+					mount.device_short = split [0].Replace ("/dev/", String.Empty);
 				else 
 					mount.device_short = split [0];
 				
@@ -4526,7 +4540,7 @@ namespace System.Windows.Forms {
 				
 				private void WriteSingleContent (XmlTextWriter xtw)
 				{
-					string type_string = "";
+					string type_string = String.Empty;
 					
 					if (value is string)
 						type_string = "string";
@@ -4550,8 +4564,8 @@ namespace System.Windows.Forms {
 				
 				private void WriteArrayContent (XmlTextWriter xtw)
 				{
-					string type_string = "";
-					string type_name = "";
+					string type_string = String.Empty;
+					string type_name = String.Empty;
 					
 					if (value is string[]) {
 						type_string = "string-array";

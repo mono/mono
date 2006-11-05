@@ -1,3 +1,10 @@
+2006-11-05  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs: *sigh* Because of recent runtime changes (r67043) I
+	  had to remove support for links that point to a directory. FileInfo
+	  returns no usefull information (means, the directory they point to)
+	  for such links. Replaced some empty string ("") with String.Empty.
+
 2006-11-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TreeNodeCollection.cs: To match MS, in 1.0 profile throw 
