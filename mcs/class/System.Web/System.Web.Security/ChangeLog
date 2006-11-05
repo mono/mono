@@ -1,5 +1,9 @@
 2006-11-05 Vladimir Krasnov <vladimirk@mainsoft.com>
 
+	* AnonymousIdentificationModule.cs: fixed anonymous id cookie
+
+2006-11-05 Vladimir Krasnov <vladimirk@mainsoft.com>
+
 	* MembershipProvider.cs, SqlMembershipProvider.cs:
 	refactoring of DecryptPassword and EncryptPassword methods according
 	to documentation
