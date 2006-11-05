@@ -1,3 +1,9 @@
+2006-11-05 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* MembershipProvider.cs, SqlMembershipProvider.cs:
+	refactoring of DecryptPassword and EncryptPassword methods according
+	to documentation
+
 2006-09-10 Konstantin Triger <kostat@mainsoft.com>
 
 	* SqlRoleProvider.cs: throw on empty connection string.
