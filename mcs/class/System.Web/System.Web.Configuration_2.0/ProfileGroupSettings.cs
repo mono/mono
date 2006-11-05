@@ -38,26 +38,6 @@ namespace System.Web.Configuration
 {
 	public sealed class ProfileGroupSettings : ConfigurationElement
 	{
-		static ConfigurationPropertyCollection properties;
-		static ConfigurationProperty nameProp;
-		static ConfigurationProperty propertySettingsProp;
-
-		static ProfileGroupSettings ()
-		{
-			nameProp = new ConfigurationProperty ("name", typeof (string), null,
-							      TypeDescriptor.GetConverter (typeof (string)),
-							      new ProfilePropertyNameValidator (),
-							      ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
-			propertySettingsProp = new ConfigurationProperty ("", typeof (ProfilePropertySettingsCollection), null,
-									  null,
-									  PropertyHelper.DefaultValidator,
-									  ConfigurationPropertyOptions.IsDefaultCollection);
-
-			properties = new ConfigurationPropertyCollection ();
-			properties.Add (nameProp);
-			properties.Add (propertySettingsProp);
-		}
-
 		internal ProfileGroupSettings ()
 		{
 		}
@@ -67,10 +47,16 @@ namespace System.Web.Configuration
 			this.Name = name;
 		}
 
-		[MonoTODO]
 		public override bool Equals (object obj)
 		{
-			throw new NotImplementedException ();
+			ProfileGroupSettings other = obj as ProfileGroupSettings;
+			if (other == null)
+				return false;
+
+			if (GetType () != other.GetType ())
+				return false;
+
+			return Name.Equals (other.Name);
 		}
 
 		public override int GetHashCode ()
@@ -78,19 +64,17 @@ namespace System.Web.Configuration
 			return Name.GetHashCode ();
 		}
 
-		[ConfigurationProperty ("name", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
+		[ConfigurationProperty ("name", IsRequired = true, IsKey = true)]
 		public string Name {
-			get { return (string)base [nameProp]; }
-			internal set{ base [nameProp] = value; }
+			get { return (string)base ["name"]; }
+			internal set { base ["name"] = value; }
 		}
 
 		[ConfigurationProperty ("", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
+		//[ConfigurationProperty ("", IsDefaultCollection = true)]
+		[ConfigurationCollection (typeof (ProfilePropertySettingsCollection), AddItemName = "add", ClearItemsName = "clear")]
 		public ProfilePropertySettingsCollection PropertySettings {
-			get { return (ProfilePropertySettingsCollection) base [propertySettingsProp]; }
-		}
-
-		protected override ConfigurationPropertyCollection Properties {
-			get { return properties; }
+			get { return (ProfilePropertySettingsCollection) base [""]; }
 		}
 	}
 }

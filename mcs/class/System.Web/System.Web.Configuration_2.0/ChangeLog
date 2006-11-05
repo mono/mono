@@ -1,3 +1,10 @@
+2006-11-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ProfileGroupSettings.cs, ProfileGroupSettingsCollection.cs
+	ProfilePropertySettingsCollection.cs, ProfileSection.cs
+	RootProfilePropertySettingsCollection.cs: refactoring and fix of
+	<group> element
+
 2006-10-18  Marek Habersack  <grendello@gmail.com>
 
 	* WebConfigurationManager.cs: implement support for extra

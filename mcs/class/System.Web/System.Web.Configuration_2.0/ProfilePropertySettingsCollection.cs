@@ -36,20 +36,8 @@ using System.Xml;
 
 namespace System.Web.Configuration
 {
-	[ConfigurationCollection (typeof (ProfilePropertySettings), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
 	public class ProfilePropertySettingsCollection : ConfigurationElementCollection
 	{
-		static ConfigurationPropertyCollection properties;
-
-		static ProfilePropertySettingsCollection ()
-		{
-			properties = new ConfigurationPropertyCollection ();
-		}
-
-		public ProfilePropertySettingsCollection ()
-		{
-		}
-
 		public void Add (ProfilePropertySettings propertySettings)
 		{
 			BaseAdd (propertySettings);
@@ -60,6 +48,11 @@ namespace System.Web.Configuration
 			BaseClear ();
 		}
 
+		public override ConfigurationElementCollectionType CollectionType
+		{
+			get { return ConfigurationElementCollectionType.AddRemoveClearMap; }
+		}
+		
 		protected override ConfigurationElement CreateNewElement ()
 		{
 			return new ProfilePropertySettings ();
@@ -92,12 +85,6 @@ namespace System.Web.Configuration
 		public int IndexOf (ProfilePropertySettings propertySettings)
 		{
 			return BaseIndexOf (propertySettings);
-		}
-
-		[MonoTODO]
-		protected override bool OnDeserializeUnrecognizedElement (string elementName, XmlReader reader)
-		{
-			throw new NotImplementedException ();
 		}
 
 		public void Remove (string name)
@@ -133,15 +120,10 @@ namespace System.Web.Configuration
 			}
 		}
 
-		[MonoTODO]
 		protected virtual bool AllowClear {
 			get {
-				throw new NotImplementedException ();
+				return false;
 			}
-		}
-
-		protected override ConfigurationPropertyCollection Properties {
-			get { return properties; }
 		}
 
 		public ProfilePropertySettings this[int index] {
@@ -149,14 +131,11 @@ namespace System.Web.Configuration
 			set { if (Get (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
-		public new ProfilePropertySettings this[string name] {
-			get { return Get (name); }				
-		}
-
 		protected override bool ThrowOnDuplicate {
-			get { return false; }
+			get {
+				return true;
+			}
 		}
-
 	}
 }
 

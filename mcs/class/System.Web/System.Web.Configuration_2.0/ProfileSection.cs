@@ -48,10 +48,11 @@ namespace System.Web.Configuration
 		static ProfileSection ()
 		{
 			autoSaveEnabledProp = new ConfigurationProperty ("automaticSaveEnabled", typeof (bool), true);
-			defaultProviderProp = new ConfigurationProperty ("defaultProviderProp", typeof (string), "AspNetSqlProfileProvider");
+			defaultProviderProp = new ConfigurationProperty ("defaultProvider", typeof (string), "AspNetSqlProfileProvider");
 			inheritsProp = new ConfigurationProperty ("inheritsProps", typeof (string), "");
-			propertySettingsProp = new ConfigurationProperty ("propertiesProp", typeof (RootProfilePropertySettingsCollection), null);
+			propertySettingsProp = new ConfigurationProperty ("properties", typeof (RootProfilePropertySettingsCollection), null);
 			providersProp = new ConfigurationProperty ("providers", typeof (ProviderSettingsCollection), null);
+			enabledProp = new ConfigurationProperty ("enabled", typeof (bool), false);
 
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (autoSaveEnabledProp);
@@ -59,6 +60,7 @@ namespace System.Web.Configuration
 			properties.Add (inheritsProp);
 			properties.Add (propertySettingsProp);
 			properties.Add (providersProp);
+			properties.Add (enabledProp);
 		}
 
 		public ProfileSection ()

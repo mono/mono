@@ -35,20 +35,8 @@ using System.Configuration;
 
 namespace System.Web.Configuration
 {
-	[ConfigurationCollection (typeof (ProfileGroupSettings), AddItemName = "group", CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
 	public sealed class ProfileGroupSettingsCollection : ConfigurationElementCollection
 	{
-		static ConfigurationPropertyCollection properties;
-
-		static ProfileGroupSettingsCollection ()
-		{
-			properties = new ConfigurationPropertyCollection ();
-		}
-
-		public ProfileGroupSettingsCollection ()
-		{
-		}
-
 		public void Add (ProfileGroupSettings group)
 		{
 			BaseAdd (group);
@@ -57,6 +45,11 @@ namespace System.Web.Configuration
 		public void Clear ()
 		{
 			BaseClear ();
+		}
+
+		public override ConfigurationElementCollectionType CollectionType
+		{
+			get { return ConfigurationElementCollectionType.AddRemoveClearMap; }
 		}
 
 		protected override ConfigurationElement CreateNewElement ()
@@ -76,7 +69,7 @@ namespace System.Web.Configuration
 
 		protected override object GetElementKey (ConfigurationElement element)
 		{
-			return ((ProfileGroupSettings)element).Name;
+			return ((ProfileGroupSettings) element).Name;
 		}
 
 		public string GetKey (int index)
@@ -89,12 +82,6 @@ namespace System.Web.Configuration
 			return BaseIndexOf (group);
 		}
 
-		[MonoTODO]
-		protected override bool IsModified ()
-		{
-			throw new NotImplementedException ();
-		}
-
 		public void Remove (string name)
 		{
 			BaseRemove (name);
@@ -103,12 +90,6 @@ namespace System.Web.Configuration
 		public void RemoveAt (int index)
 		{
 			BaseRemoveAt (index);
-		}
-
-		[MonoTODO]
-		protected override void ResetModified ()
-		{
-			base.ResetModified ();
 		}
 
 		public void Set (ProfileGroupSettings group)
@@ -123,19 +104,6 @@ namespace System.Web.Configuration
 				RemoveAt (index);
 				BaseAdd (index, group);
 			}
-		}
-
-		public string[ ] AllKeys {
-			get {
-				string[] keys = new string[Count];
-				for (int i = 0; i < Count; i ++)
-					keys[i] = this[i].Name;
-				return keys;
-			}
-		}
-
-		protected override ConfigurationPropertyCollection Properties {
-			get { return properties; }
 		}
 
 		public ProfileGroupSettings this[int index] {

@@ -36,96 +36,56 @@ using System.Xml;
 
 namespace System.Web.Configuration
 {
-	[ConfigurationCollection (typeof (ProfilePropertySettings), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
 	public sealed class RootProfilePropertySettingsCollection : ProfilePropertySettingsCollection
 	{
-		static ConfigurationPropertyCollection properties;
-		static ConfigurationProperty groupSettingsProp;
-
-		static RootProfilePropertySettingsCollection ()
+		protected override ConfigurationElement CreateNewElement ()
 		{
-			groupSettingsProp = new ConfigurationProperty ("group", typeof (ProfileGroupSettingsCollection), null);
-
-			properties = new ConfigurationPropertyCollection ();
-			properties.Add (groupSettingsProp);
+			return new ProfilePropertySettings ();
 		}
 
-		public RootProfilePropertySettingsCollection ()
+		protected override Object GetElementKey (ConfigurationElement element)
 		{
+			return ((ProfilePropertySettings) element).Name;
 		}
 
-		[MonoTODO]
-		public override bool Equals (object rootProfilePropertySettingsCollection)
+		public override ConfigurationElementCollectionType CollectionType
 		{
-			throw new NotImplementedException ();
+			get { return ConfigurationElementCollectionType.AddRemoveClearMap; }
+		}
+		
+		public override bool Equals (object obj)
+		{
+			RootProfilePropertySettingsCollection col = obj as RootProfilePropertySettingsCollection;
+			if (col == null)
+				return false;
+
+			if (GetType () != col.GetType ())
+				return false;
+
+			if (Count != col.Count)
+				return false;
+
+			for (int n = 0; n < Count; n++) {
+				if (!BaseGet (n).Equals (col.BaseGet (n)))
+					return false;
+			}
+			return true;
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			int code = 0;
+			for (int n = 0; n < Count; n++)
+				code += BaseGet (n).GetHashCode ();
+			return code;
 		}
 
-		[MonoTODO]
-		protected override bool IsModified ()
-		{
-			return base.IsModified ();
-		}
-
-		[MonoTODO]
-		protected override bool OnDeserializeUnrecognizedElement (string elementName, XmlReader reader)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override void Reset (ConfigurationElement parentElement)
-		{
-			base.Reset (parentElement);
-		}
-
-		[MonoTODO]
-		protected override void ResetModified ()
-		{
-			base.ResetModified ();
-		}
-
-		[MonoTODO]
-		protected override bool SerializeElement (XmlWriter writer, bool serializeCollectionKey)
-		{
-			bool ret = base.SerializeElement (writer, serializeCollectionKey);
-
-			/* XXX more here? .. */
-
-			return ret;
-		}
-
-		[MonoTODO]
-		protected override void Unmerge (ConfigurationElement sourceElement, ConfigurationElement parentElement, ConfigurationSaveMode saveMode)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override bool AllowClear {
-			get { throw new NotImplementedException (); }
-		}
-
-		[ConfigurationProperty ("group")]
+		[ConfigurationProperty ("", IsDefaultCollection = true)]
+		[ConfigurationCollection (typeof (ProfileGroupSettingsCollection), AddItemName = "group")]
 		public ProfileGroupSettingsCollection GroupSettings {
-			get { return (ProfileGroupSettingsCollection) base [groupSettingsProp]; }
-		}
-
-		protected override ConfigurationPropertyCollection Properties {
-			get { return properties; }
-		}
-
-		[MonoTODO]
-		protected override bool ThrowOnDuplicate {
-			get { throw new NotImplementedException (); }
+			get { return (ProfileGroupSettingsCollection) base [""]; }
 		}
 	}
-
 }
 
 #endif
