@@ -69,6 +69,9 @@ namespace System.Web {
 		object config_timeout;
 		int timeout_possible;
 		DateTime time_stamp = DateTime.UtcNow;
+#if NET_2_0
+		ProfileBase profile = null;
+#endif
 #if TARGET_JVM // No remoting support (CallContext) yet in Grasshopper
 		static LocalDataStoreSlot _ContextSlot = Thread.GetNamedDataSlot ("Context");
 #endif
@@ -286,9 +289,17 @@ namespace System.Web {
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public ProfileBase Profile {
-			get { throw new NotImplementedException (); }
+			get 
+			{
+				if (profile == null) {
+					if (Request.IsAuthenticated)
+						profile = ProfileBase.Create (User.Identity.Name);
+					else
+						profile = ProfileBase.Create (Request.AnonymousID, false);
+				}
+				return profile;
+			}
 		}
 #endif
 
