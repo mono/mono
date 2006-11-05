@@ -1,10 +1,9 @@
 //
-// System.Web.UI.WebControls.ProfileProviderCollection.cs
+// System.Web.UI.MasterPageParser
 //
 // Authors:
-//	Chris Toshok (toshok@ximian.com)
+//	Vladimir Krasnov (vladimirk@mainsoft.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,31 +26,40 @@
 //
 
 #if NET_2_0
+
 using System;
-using System.Configuration;
-using System.Configuration.Provider;
+using System.Collections;
+using System.IO;
+using System.Web;
+using System.Web.Compilation;
+using System.Web.Util;
 
 namespace System.Web.Profile
 {
-	public sealed class ProfileProviderCollection : SettingsProviderCollection
+	internal sealed class ProfileParser
 	{
-		public ProfileProviderCollection ()
+		internal ProfileParser (HttpContext context)
 		{
 		}
 
-		public override void Add (ProviderBase provider)
+		public static Type GetProfileCommonType (HttpContext context)
 		{
-			base.Add (provider);
-		}
-
-		public new ProfileProvider this[string name] {
-			get {
-				return (ProfileProvider) base [name];
+			Type profileBaseType = Type.GetType ("ProfileCommon");
+			if (profileBaseType == null) {
+				//Compiler call
 			}
+			return profileBaseType;
 		}
 
+		public static Type GetProfileGroupType (HttpContext context, string groupName)
+		{
+			Type profileGroupType = Type.GetType ("ProfileGroup" + groupName);
+			if (profileGroupType == null) {
+				//Compiler call
+			}
+			return profileGroupType;
+		}
 	}
-	
 }
 
 #endif

@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
+//	Vladimir Krasnov (vladimirk@mainsoft.com)
 //
 // (C) 2005 Novell, Inc (http://www.novell.com)
 //
@@ -34,39 +35,37 @@ namespace System.Web.Profile
 {
 	public class ProfileGroupBase
 	{
-		[MonoTODO]
+		private ProfileBase _parent = null;
+		private string _name = null;
+
 		public ProfileGroupBase ()
 		{
 		}
 
-		[MonoTODO]
-		public object GetPropertyValue (string propertyName)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
 		public void Init (ProfileBase parent, string myName)
 		{
-			throw new NotImplementedException ();
+			_parent = parent;
+			_name = myName;
+		}
+		
+		public object GetPropertyValue (string propertyName)
+		{
+			return _parent.GetPropertyValue (propertyName);
 		}
 
-		[MonoTODO]
 		public void SetPropertyValue (string propertyName, object propertyValue)
 		{
-			throw new NotImplementedException ();
+			_parent.SetPropertyValue (propertyName, propertyValue);
 		}
 
-		[MonoTODO]
 		public object this [string propertyName] {
 			get {
-				throw new NotImplementedException ();
+				return GetPropertyValue (propertyName);
 			}
 			set {
-				throw new NotImplementedException ();
+				SetPropertyValue (propertyName, value);
 			}
 		}
-
 	}
 }
 

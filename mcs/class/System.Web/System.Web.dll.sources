@@ -345,6 +345,7 @@ System.Web.Profile/ProfileManager.cs
 System.Web.Profile/ProfileMigrateEventArgs.cs
 System.Web.Profile/ProfileMigrateEventHandler.cs
 System.Web.Profile/ProfileModule.cs
+System.Web.Profile/ProfileParser.cs
 System.Web.Profile/ProfileProviderAttribute.cs
 System.Web.Profile/ProfileProviderCollection.cs
 System.Web.Profile/ProfileProvider.cs

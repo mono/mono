@@ -29,6 +29,8 @@
 #if NET_2_0
 using System;
 using System.Web;
+using System.Web.Configuration;
+using System.Text;
 
 namespace System.Web.Profile
 {
@@ -36,27 +38,63 @@ namespace System.Web.Profile
 	{
 		HttpApplication app;
 		ProfileBase profile;
+		string anonymousCookieName = null;
 
-		[MonoTODO]
 		public ProfileModule ()
 		{
 		}
 
-		[MonoTODO]
 		public void Dispose ()
 		{
 			app.EndRequest -= OnLeave;
+			app.PostMapRequestHandler -= OnEnter;
 		}
 
-		[MonoTODO]
 		public void Init (HttpApplication app)
 		{
 			this.app = app;
+			app.PostMapRequestHandler += OnEnter;
 			app.EndRequest += OnLeave;
+
+			AnonymousIdentificationSection anonymousConfig = 
+				(AnonymousIdentificationSection) WebConfigurationManager.GetSection ("system.web/anonymousIdentification");
+
+			if (anonymousConfig == null)
+				return;
+
+			anonymousCookieName = anonymousConfig.CookieName;
+		}
+
+		void OnEnter (object o, EventArgs eventArgs)
+		{
+			if (!ProfileManager.Enabled)
+				return;
+
+			if (HttpContext.Current.Request.IsAuthenticated) {
+				HttpCookie cookie = app.Request.Cookies [anonymousCookieName];
+				if (cookie != null && (cookie.Expires != DateTime.MinValue && cookie.Expires > DateTime.Now)) {
+					if (MigrateAnonymous != null) {
+						ProfileMigrateEventArgs e = new ProfileMigrateEventArgs (HttpContext.Current,
+							Encoding.Unicode.GetString (Convert.FromBase64String (cookie.Value)));
+						MigrateAnonymous (this, e);
+					}
+
+					HttpCookie newCookie = new HttpCookie (anonymousCookieName);
+					newCookie.Path = app.Request.ApplicationPath;
+					newCookie.Expires = new DateTime (1970, 1, 1);
+					newCookie.Value = "";
+					app.Response.AppendCookie (newCookie);
+				}
+			}
 		}
 
 		void OnLeave (object o, EventArgs eventArgs)
 		{
+			if (!ProfileManager.Enabled)
+				return;
+
+			profile = app.Context.Profile;
+
 			if (profile == null)
 				return;
 
@@ -66,11 +104,11 @@ namespace System.Web.Profile
 				if (!args.ContinueWithProfileAutoSave)
 					return;
 			}
-
 			profile.Save();
 		}
 
 		public event ProfileMigrateEventHandler MigrateAnonymous;
+		[MonoTODO ("implement event rising")]
 		public event ProfileEventHandler Personalize;
 		public event ProfileAutoSaveEventHandler ProfileAutoSaving;
 	}

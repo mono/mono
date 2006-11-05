@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
+//	Vladimir Krasnov (vladimirk@mainsoft.com)
 //
 // (C) 2005 Novell, Inc (http://www.novell.com)
 //
@@ -29,110 +30,225 @@
 #if NET_2_0
 using System;
 using System.Configuration;
+using System.Configuration.Provider;
+using System.Web.Configuration;
 
 namespace System.Web.Profile
 {
 	public class ProfileBase : SettingsBase
 	{
-		[MonoTODO]
+		bool _propertiyValuesLoaded = false;
+		bool _dirty = false;
+		DateTime _lastActivityDate = DateTime.MinValue;
+		DateTime _lastUpdatedDate = DateTime.MinValue;
+		SettingsContext _settingsContext = null;
+		SettingsPropertyValueCollection _propertiyValues = null;
+
+#if TARGET_J2EE
+		const string Profiles_SettingsPropertyCollection = "Profiles.SettingsPropertyCollection";
+		static SettingsPropertyCollection _properties
+		{
+			get
+			{
+				object o = AppDomain.CurrentDomain.GetData (Profiles_SettingsPropertyCollection);
+				return (SettingsPropertyCollection) o;
+			}
+			set
+			{
+				AppDomain.CurrentDomain.SetData (Profiles_SettingsPropertyCollection, value);
+			}
+		}
+#else
+		static SettingsPropertyCollection _properties = null;
+#endif
+
+		static void InitProperties ()
+		{
+			_properties = new SettingsPropertyCollection ();
+
+			ProfileSection config = (ProfileSection) WebConfigurationManager.GetSection ("system.web/profile");
+			RootProfilePropertySettingsCollection ps = config.PropertySettings;
+
+			for (int i = 0; i < ps.GroupSettings.Count; i++) {
+				ProfileGroupSettings pgs = ps.GroupSettings [i];
+				ProfilePropertySettingsCollection ppsc = pgs.PropertySettings;
+
+				for (int s = 0; s < ppsc.Count; s++) {
+					_properties.Add (CreateSettingsPropery (pgs, ppsc [s]));
+				}
+			}
+
+			for (int s = 0; s < ps.Count; s++)
+				_properties.Add (CreateSettingsPropery (null, ps [s]));
+			
+			_properties.SetReadOnly ();
+		}
+		
 		public ProfileBase ()
 		{
 		}
 
-		[MonoTODO]
 		public static ProfileBase Create (string username)
 		{
-			throw new NotImplementedException ();
+			return Create (username, true);
 		}
 
-		[MonoTODO]
-		public static ProfileBase Create (string username,
-						  bool isAuthenticated)
+		public static ProfileBase Create (string username, bool isAuthenticated)
 		{
-			throw new NotImplementedException ();
+			ProfileBase profile = null;
+			Type profileType = ProfileParser.GetProfileCommonType (HttpContext.Current);
+			if (profileType != null)
+				profile = (ProfileBase) Activator.CreateInstance (profileType);
+			else
+				profile = (ProfileBase) new DefaultProfile ();
+
+			profile.Initialize (username, isAuthenticated);
+			return profile;
 		}
 
-		[MonoTODO]
 		public ProfileGroupBase GetProfileGroup (string groupName)
 		{
-			throw new NotImplementedException ();
+			ProfileGroupBase group = null;
+			Type groupType = ProfileParser.GetProfileGroupType (HttpContext.Current, "ProfileGroup" + groupName);
+			if (groupType != null)
+				group = (ProfileGroupBase) Activator.CreateInstance (groupType);
+			else
+				throw new ProviderException ("Group " + groupName + " not found");
+
+			group.Init (this, groupName);
+			return group;
 		}
 
-		[MonoTODO]
 		public object GetPropertyValue (string propertyName)
 		{
-			throw new NotImplementedException ();
+			if (!_propertiyValuesLoaded)
+				InitPropertiesValues ();
+
+			_lastActivityDate = DateTime.UtcNow;
+
+			return ((SettingsPropertyValue) _propertiyValues [propertyName]).PropertyValue;
 		}
 
-		[MonoTODO]
-		public void Initialize (string username,
-					bool isAuthenticated)
+		public void SetPropertyValue (string propertyName, object propertyValue)
 		{
-			throw new NotImplementedException ();
+			if (!_propertiyValuesLoaded)
+				InitPropertiesValues ();
+
+			if (_propertiyValues [propertyName] == null)
+				throw new SettingsPropertyNotFoundException ("The settings property '" + propertyName + "' was not found.");
+
+			((SettingsPropertyValue) _propertiyValues [propertyName]).PropertyValue = propertyValue;
+			_dirty = true;
+			_lastActivityDate = DateTime.UtcNow;
+			_lastUpdatedDate = _lastActivityDate;
 		}
 
-		[MonoTODO]
+		public override object this [string propertyName]
+		{
+			get
+			{
+				return GetPropertyValue (propertyName);
+			}
+			set
+			{
+				SetPropertyValue (propertyName, value);
+			}
+		}
+
+		void InitPropertiesValues ()
+		{
+			if (!_propertiyValuesLoaded) {
+				_propertiyValues = ProfileManager.Provider.GetPropertyValues (_settingsContext, Properties);
+				_propertiyValuesLoaded = true;
+			}
+		}
+
+		static SettingsProperty CreateSettingsPropery (ProfileGroupSettings pgs, ProfilePropertySettings pps)
+		{
+			string name = ((pgs == null) ? "" : pgs.Name + ".") + pps.Name;
+			SettingsProperty sp = new SettingsProperty (name);
+
+			sp.Attributes.Add ("AllowAnonymous", pps.AllowAnonymous);
+			sp.DefaultValue = pps.DefaultValue;
+			sp.IsReadOnly = pps.ReadOnly;
+			sp.Provider = ProfileManager.Provider;
+			sp.ThrowOnErrorDeserializing = false;
+			sp.ThrowOnErrorSerializing = true;
+
+			if (pps.Type.Length == 0 || pps.Type == "string")
+				sp.PropertyType = typeof (string);
+			else
+				sp.PropertyType = Type.GetType (pps.Type);
+
+			switch (pps.SerializeAs) {
+				case SerializationMode.Binary:
+					sp.SerializeAs = SettingsSerializeAs.Binary;
+					break;
+				case SerializationMode.ProviderSpecific:
+					sp.SerializeAs = SettingsSerializeAs.ProviderSpecific;
+					break;
+				case SerializationMode.String:
+					sp.SerializeAs = SettingsSerializeAs.String;
+					break;
+				case SerializationMode.Xml:
+					sp.SerializeAs = SettingsSerializeAs.Xml;
+					break;
+			}
+
+			return sp;
+		}
+
+
+		public void Initialize (string username, bool isAuthenticated)
+		{
+			_settingsContext = new SettingsContext ();
+			_settingsContext.Add ("UserName", username);
+			_settingsContext.Add ("IsAuthenticated", isAuthenticated);
+		}
+
 		public override void Save ()
 		{
-			base.Save ();
+			if (IsDirty) {
+				ProfileManager.Provider.SetPropertyValues (_settingsContext, _propertiyValues);
+			}
 		}
 
-		[MonoTODO]
-		public void SetPropertyValue (string propertyName,
-					      object propertyValue)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
 		public bool IsAnonymous {
 			get {
-				throw new NotImplementedException ();
+				return !(bool) _settingsContext ["IsAuthenticated"];
 			}
 		}
 
-		[MonoTODO]
 		public bool IsDirty {
 			get {
-				throw new NotImplementedException ();
+				return _dirty;
 			}
 		}
 
-		[MonoTODO]
-		public override object this [ string propertyName ] {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
 		public DateTime LastActivityDate {
 			get {
-				throw new NotImplementedException ();
+				return _lastActivityDate;
 			}
 		}
 
-		[MonoTODO]
 		public DateTime LastUpdatedDate {
 			get {
-				throw new NotImplementedException ();
+				return _lastUpdatedDate;
 			}
 		}
 
-		[MonoTODO]
 		public static SettingsPropertyCollection Properties {
 			get {
-				throw new NotImplementedException ();
+				if (_properties == null)
+					InitProperties ();
+
+				return _properties;
 			}
 		}
 
-		[MonoTODO]
 		public string UserName {
 			get {
-				throw new NotImplementedException ();
+				return (string) _settingsContext ["UserName"];
 			}
 		}
 	}

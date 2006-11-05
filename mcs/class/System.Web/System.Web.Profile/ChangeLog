@@ -1,3 +1,11 @@
+2006-11-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ProfileBase.cs, ProfileGroupBase.cs, ProfileManager.cs, 
+	ProfileModule.cs, ProfileProviderCollection.cs, SqlProfileProvider.cs:
+	implemented profile feature
+	* added: ProfileParser.cs, ProfileParser.jvm.cs stubs for profile
+	helper classes compilation
+
 2006-02-28  Chris Toshok  <toshok@ximian.com>
 
 	* ProfileBase.cs: corcompare work.

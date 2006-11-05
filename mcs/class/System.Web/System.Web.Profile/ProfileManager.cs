@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
+//	Vladimir Krasnov (vladimirk@mainsoft.com)
 //
 // (C) 2005 Novell, Inc (http://www.novell.com)
 //
@@ -29,143 +30,183 @@
 #if NET_2_0
 using System;
 using System.Web;
+using System.Web.Configuration;
 
 namespace System.Web.Profile
 {
 	public static class ProfileManager
 	{
-		[MonoTODO]
+#if TARGET_J2EE
+		const string Profiles_config = "Profiles.config";
+		const string Profiles_ProfileProviderCollection = "Profiles.ProfileProviderCollection";
+		private static ProfileSection config
+		{
+			get
+			{
+				object o = AppDomain.CurrentDomain.GetData (Profiles_config);
+				if (o == null) {
+					config = (ProfileSection) WebConfigurationManager.GetSection ("system.web/profile");
+					return (ProfileSection) config;
+				}
+
+				return (ProfileSection) o;
+			}
+			set
+			{
+				AppDomain.CurrentDomain.SetData (Profiles_config, value);
+			}
+		}
+		private static ProfileProviderCollection providersCollection
+		{
+			get
+			{
+				object o = AppDomain.CurrentDomain.GetData (Profiles_ProfileProviderCollection);
+				return (ProfileProviderCollection) o;
+			}
+			set
+			{
+				AppDomain.CurrentDomain.SetData (Profiles_ProfileProviderCollection, value);
+			}
+		}
+#else
+		private static ProfileSection config;
+		private static ProfileProviderCollection providersCollection;
+
+		static ProfileManager ()
+		{
+			config = (ProfileSection) WebConfigurationManager.GetSection ("system.web/profile");
+		}
+#endif
+
 		public static int DeleteInactiveProfiles (ProfileAuthenticationOption authenticationOption, DateTime userInactiveSinceDate)
 		{
-			throw new NotImplementedException ();
+			return Provider.DeleteInactiveProfiles (authenticationOption, userInactiveSinceDate);
 		}
 
-		[MonoTODO]
 		public static bool DeleteProfile (string username)
 		{
-			throw new NotImplementedException ();
+			return Provider.DeleteProfiles (new string [] { username }) > 0;
 		}
 
-		[MonoTODO]
 		public static int DeleteProfiles (string[] usernames)
 		{
-			throw new NotImplementedException ();
+			return Provider.DeleteProfiles (usernames);
 		}
 
-		[MonoTODO]
 		public static int DeleteProfiles (ProfileInfoCollection profiles)
 		{
-			throw new NotImplementedException ();
+			return Provider.DeleteProfiles (profiles);
 		}
 
-		[MonoTODO]
 		public static ProfileInfoCollection FindInactiveProfilesByUserName (ProfileAuthenticationOption authenticationOption,
 										    string usernameToMatch, DateTime userInactiveSinceDate)
 		{
-			throw new NotImplementedException ();
+			int totalRecords = 0;
+			return Provider.FindInactiveProfilesByUserName (authenticationOption, usernameToMatch, userInactiveSinceDate, 0, int.MaxValue, out totalRecords);
 		}
 
-		[MonoTODO]
 		public static ProfileInfoCollection FindInactiveProfilesByUserName (ProfileAuthenticationOption authenticationOption,
 										    string usernameToMatch, DateTime userInactiveSinceDate,
 										    int pageIndex, int pageSize, out int totalRecords)
 		{
-			throw new NotImplementedException ();
+			return Provider.FindInactiveProfilesByUserName (authenticationOption, usernameToMatch, userInactiveSinceDate, pageIndex, pageSize, out totalRecords);
 		}
 
-		[MonoTODO]
-		public static ProfileInfoCollection FindProfilesByUserName (ProfileAuthenticationOption authenticationOption,
-									    string usernameToMatch)
+		public static ProfileInfoCollection FindProfilesByUserName (ProfileAuthenticationOption authenticationOption, string usernameToMatch)
 		{
-			throw new NotImplementedException ();
+			int totalRecords = 0;
+			return Provider.FindProfilesByUserName (authenticationOption, usernameToMatch, 0, int.MaxValue, out totalRecords);
 		}
 
-		[MonoTODO]
-		public static ProfileInfoCollection FindProfilesByUserName (ProfileAuthenticationOption authenticationOption,
-									    string usernameToMatch, int pageIndex, int pageSize,
-									    out int totalRecords)
+		public static ProfileInfoCollection FindProfilesByUserName (ProfileAuthenticationOption authenticationOption, string usernameToMatch, int pageIndex, int pageSize, out int totalRecords)
 		{
-			throw new NotImplementedException ();
+			return Provider.FindProfilesByUserName (authenticationOption, usernameToMatch, pageIndex, pageSize, out totalRecords);
 		}
 
-		[MonoTODO]
-		public static ProfileInfoCollection GetAllInactiveProfiles (ProfileAuthenticationOption authenticationOption,
-									    DateTime userInactiveSinceDate)
+		public static ProfileInfoCollection GetAllInactiveProfiles (ProfileAuthenticationOption authenticationOption, DateTime userInactiveSinceDate)
 		{
-			throw new NotImplementedException ();
+			int totalRecords = 0;
+			return Provider.GetAllInactiveProfiles (authenticationOption, userInactiveSinceDate, 0, int.MaxValue, out totalRecords);
 		}
 
-		[MonoTODO]
 		public static ProfileInfoCollection GetAllInactiveProfiles (ProfileAuthenticationOption authenticationOption,
 									    DateTime userInactiveSinceDate, int pageIndex, int pageSize,
 									    out int totalRecords)
 		{
-			throw new NotImplementedException ();
+			return Provider.GetAllInactiveProfiles (authenticationOption, userInactiveSinceDate, pageIndex, pageSize, out totalRecords);
 		}
 
-		[MonoTODO]
 		public static ProfileInfoCollection GetAllProfiles (ProfileAuthenticationOption authenticationOption)
 		{
-			throw new NotImplementedException ();
+			int totalRecords = 0;
+			return Provider.GetAllProfiles (authenticationOption, 0, int.MaxValue, out totalRecords);
 		}
 
-		[MonoTODO]
-		public static ProfileInfoCollection GetAllProfiles (ProfileAuthenticationOption authenticationOption,
-								    int pageIndex, int pageSize, out int totalRecords)
+		public static ProfileInfoCollection GetAllProfiles (ProfileAuthenticationOption authenticationOption, int pageIndex, int pageSize, out int totalRecords)
 		{
-			throw new NotImplementedException ();
+			return Provider.GetAllProfiles (authenticationOption, pageIndex, pageSize, out totalRecords);
 		}
 
-		[MonoTODO]
-		public static int GetNumberOfInactiveProfiles (ProfileAuthenticationOption authenticationOption,
-							       DateTime userInactiveSinceDate)
+		public static int GetNumberOfInactiveProfiles (ProfileAuthenticationOption authenticationOption, DateTime userInactiveSinceDate)
 		{
-			throw new NotImplementedException ();
+			return Provider.GetNumberOfInactiveProfiles (authenticationOption, userInactiveSinceDate);
 		}
 
-		[MonoTODO]
 		public static int GetNumberOfProfiles (ProfileAuthenticationOption authenticationOption)
 		{
-			throw new NotImplementedException ();
+			int totalRecords = 0;
+			Provider.GetAllProfiles (authenticationOption, 0, 1, out totalRecords);
+			return totalRecords;
 		}
 
-		[MonoTODO]
 		public static string ApplicationName {
 			get {
-				throw new NotImplementedException ();
+				return Provider.ApplicationName;
 			}
 			set {
-				throw new NotImplementedException ();
+				Provider.ApplicationName = value;
 			}
 		}
 
-		[MonoTODO]
 		public static bool AutomaticSaveEnabled {
 			get {
-				throw new NotImplementedException ();
+				return config.AutomaticSaveEnabled;
 			}
 		}
 
-		[MonoTODO]
 		public static bool Enabled {
 			get {
-				throw new NotImplementedException ();
+				return config.Enabled;
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("check AspNetHostingPermissionLevel")]
 		public static ProfileProvider Provider {
-			get {
-				throw new NotImplementedException ();
+			get	{
+				ProfileProvider p = Providers [config.DefaultProvider];
+				if (p == null)
+					throw new HttpException ("Provider '" + config.DefaultProvider + "' was not found");
+				return p;
 			}
 		}
 
-		[MonoTODO]
 		public static ProfileProviderCollection Providers {
 			get {
-				throw new NotImplementedException ();
+				CheckEnabled ();
+				if (providersCollection == null) {
+					providersCollection = new ProfileProviderCollection ();
+					ProvidersHelper.InstantiateProviders (config.Providers, providersCollection, typeof (ProfileProvider));
+				}
+				return providersCollection;
 			}
 		}
+
+		private static void CheckEnabled ()
+		{
+			if (!Enabled)
+				throw new Exception ("This feature is not enabled.  To enable it, add <profile enabled=\"true\"> to your configuration file.");
+		}
+
 	}
 }
 
