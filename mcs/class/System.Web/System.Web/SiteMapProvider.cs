@@ -184,9 +184,10 @@ namespace System.Web {
 			*/
 
 			/* 1. */
-			foreach (string rolename in node.Roles)
-				if (context.User.IsInRole (rolename))
-					return true;
+			if (node.Roles != null)
+				foreach (string rolename in node.Roles)
+					if (context.User.IsInRole (rolename))
+						return true;
 
 			/* 2. */
 			/* XXX */

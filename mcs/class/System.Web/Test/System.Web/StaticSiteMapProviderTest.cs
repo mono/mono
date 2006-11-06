@@ -35,6 +35,7 @@ using System.Collections.Specialized;
 using NUnit.Framework;
 using System.Diagnostics;
 using MonoTests.SystemWeb.Framework;
+using System.Web.UI;
 
 namespace MonoTests.System.Web {
 	
@@ -100,10 +101,10 @@ namespace MonoTests.System.Web {
 
 			SiteMapNode n = new SiteMapNode (poker, "key", "url");
 
-			poker.DoAddNode (n);
+			poker.DoAddNode (n,poker.RootNode);
 			Assert.AreEqual (1, poker.GetChildNodes (poker.RootNode).Count, "A1");
 
-			poker.DoRemoveNode (n);
+			poker.DoRemoveNode(n);
 			Assert.AreEqual (0, poker.GetChildNodes (poker.RootNode).Count, "A2");
 		}
 		
@@ -141,6 +142,37 @@ namespace MonoTests.System.Web {
 			StaticPoker poker = new StaticPoker ();
 			poker.DoAddNode (new SiteMapNode (poker, "childKey", "childUrl"),
 					 new SiteMapNode (poker, "parentKey", "parentUrl"));
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void IsAccessibleFrom1 ()
+		{
+			new WebTest (new HandlerInvoker (IsAccessibleFrom1_delegate)).Run ();
+		}
+
+		static public void IsAccessibleFrom1_delegate ()
+		{
+			StaticPoker p = new StaticPoker ();
+			SiteMapNode n = new SiteMapNode (p, "childKey", "http://childUrl/");
+			n.Roles = null;
+			bool b = p.IsAccessibleToUser (HttpContext.Current, n);
+			Assert.IsTrue (b, "#1");
+		}
+		[Test]
+		[Category ("NunitWeb")]
+		public void IsAccessibleFrom2 ()
+		{
+			//new WebTest (new HandlerInvoker (IsAccessibleFrom2_delegate)).Run ();
+			new WebTest (PageInvoker.CreateOnLoad (IsAccessibleFrom2_delegate)).Run();
+		}
+
+		static public void IsAccessibleFrom2_delegate (Page pp)
+		{
+			StaticPoker p = new StaticPoker ();
+			SiteMapNode n = new SiteMapNode (p, "childKey", "http://childUrl/");
+			n.Roles = null;
+			bool b = p.IsAccessibleToUser (HttpContext.Current, n);
 		}
 	}
 }
