@@ -1402,6 +1402,124 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
+		public void MeasureString_StringFormat_Alignment ()
+		{
+			if (font == null)
+				Assert.Ignore ("Couldn't create required font");
+
+			string text = "Hello Mono::";
+			StringFormat string_format = new StringFormat ();
+
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					string_format.Alignment = StringAlignment.Near;
+					SizeF near = g.MeasureString (text, font, Int32.MaxValue, string_format);
+
+					string_format.Alignment = StringAlignment.Center;
+					SizeF center = g.MeasureString (text, font, Int32.MaxValue, string_format);
+
+					string_format.Alignment = StringAlignment.Far;
+					SizeF far = g.MeasureString (text, font, Int32.MaxValue, string_format);
+
+					Assert.AreEqual (near.Width, center.Width, 0.1, "near-center/Width");
+					Assert.AreEqual (near.Height, center.Height, 0.1, "near-center/Height");
+
+					Assert.AreEqual (center.Width, far.Width, 0.1, "center-far/Width");
+					Assert.AreEqual (center.Height, far.Height, 0.1, "center-far/Height");
+				}
+			}
+		}
+
+		[Test]
+		public void MeasureString_StringFormat_Alignment_DirectionVertical ()
+		{
+			if (font == null)
+				Assert.Ignore ("Couldn't create required font");
+
+			string text = "Hello Mono::";
+			StringFormat string_format = new StringFormat ();
+			string_format.FormatFlags = StringFormatFlags.DirectionVertical;
+
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					string_format.Alignment = StringAlignment.Near;
+					SizeF near = g.MeasureString (text, font, Int32.MaxValue, string_format);
+
+					string_format.Alignment = StringAlignment.Center;
+					SizeF center = g.MeasureString (text, font, Int32.MaxValue, string_format);
+
+					string_format.Alignment = StringAlignment.Far;
+					SizeF far = g.MeasureString (text, font, Int32.MaxValue, string_format);
+
+					Assert.AreEqual (near.Width, center.Width, 0.1, "near-center/Width");
+					Assert.AreEqual (near.Height, center.Height, 0.1, "near-center/Height");
+
+					Assert.AreEqual (center.Width, far.Width, 0.1, "center-far/Width");
+					Assert.AreEqual (center.Height, far.Height, 0.1, "center-far/Height");
+				}
+			}
+		}
+
+		[Test]
+		public void MeasureString_StringFormat_LineAlignment ()
+		{
+			if (font == null)
+				Assert.Ignore ("Couldn't create required font");
+
+			string text = "Hello Mono::";
+			StringFormat string_format = new StringFormat ();
+
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					string_format.LineAlignment = StringAlignment.Near;
+					SizeF near = g.MeasureString (text, font, Int32.MaxValue, string_format);
+
+					string_format.LineAlignment = StringAlignment.Center;
+					SizeF center = g.MeasureString (text, font, Int32.MaxValue, string_format);
+
+					string_format.LineAlignment = StringAlignment.Far;
+					SizeF far = g.MeasureString (text, font, Int32.MaxValue, string_format);
+
+					Assert.AreEqual (near.Width, center.Width, 0.1, "near-center/Width");
+					Assert.AreEqual (near.Height, center.Height, 0.1, "near-center/Height");
+
+					Assert.AreEqual (center.Width, far.Width, 0.1, "center-far/Width");
+					Assert.AreEqual (center.Height, far.Height, 0.1, "center-far/Height");
+				}
+			}
+		}
+
+		[Test]
+		public void MeasureString_StringFormat_LineAlignment_DirectionVertical ()
+		{
+			if (font == null)
+				Assert.Ignore ("Couldn't create required font");
+
+			string text = "Hello Mono::";
+			StringFormat string_format = new StringFormat ();
+			string_format.FormatFlags = StringFormatFlags.DirectionVertical;
+
+			using (Bitmap bitmap = new Bitmap (20, 20)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					string_format.LineAlignment = StringAlignment.Near;
+					SizeF near = g.MeasureString (text, font, Int32.MaxValue, string_format);
+
+					string_format.LineAlignment = StringAlignment.Center;
+					SizeF center = g.MeasureString (text, font, Int32.MaxValue, string_format);
+
+					string_format.LineAlignment = StringAlignment.Far;
+					SizeF far = g.MeasureString (text, font, Int32.MaxValue, string_format);
+
+					Assert.AreEqual (near.Width, center.Width, 0.1, "near-center/Width");
+					Assert.AreEqual (near.Height, center.Height, 0.1, "near-center/Height");
+
+					Assert.AreEqual (center.Width, far.Width, 0.1, "center-far/Width");
+					Assert.AreEqual (center.Height, far.Height, 0.1, "center-far/Height");
+				}
+			}
+		}
+
+		[Test]
 		public void MeasureString_Bug76664 ()
 		{
 			if (font == null)
@@ -1617,14 +1735,14 @@ namespace MonoTests.System.Drawing
 					RectangleF far = regions[0].GetBounds (g);
 
 					Assert.IsTrue (near.X < center.X, "near-center/X");
-					Assert.IsTrue (near.Y == center.Y, "near-center/Y");
-					Assert.IsTrue (near.Width == center.Width, "near-center/Width");
-					Assert.IsTrue (near.Height == center.Height, "near-center/Height");
+					Assert.AreEqual (near.Y, center.Y, 0.1, "near-center/Y");
+					Assert.AreEqual (near.Width, center.Width, 0.1, "near-center/Width");
+					Assert.AreEqual (near.Height, center.Height, 0.1, "near-center/Height");
 
 					Assert.IsTrue (center.X < far.X, "center-far/X");
-					Assert.IsTrue (center.Y == far.Y, "center-far/Y");
-					Assert.IsTrue (center.Width == far.Width, "center-far/Width");
-					Assert.IsTrue (center.Height == far.Height, "center-far/Height");
+					Assert.AreEqual (center.Y, far.Y, "center-far/Y");
+					Assert.AreEqual (center.Width, far.Width, 0.1, "center-far/Width");
+					Assert.AreEqual (center.Height, far.Height, 0.1, "center-far/Height");
 				}
 			}
 		}
@@ -1659,15 +1777,15 @@ namespace MonoTests.System.Drawing
 					Assert.AreEqual (1, regions.Length, "Far.Region");
 					RectangleF far = regions[0].GetBounds (g);
 
-					Assert.IsTrue (near.X == center.X, "near-center/X");
+					Assert.AreEqual (near.X, center.X, 0.1, "near-center/X");
 					Assert.IsTrue (near.Y < center.Y, "near-center/Y");
-					Assert.IsTrue (near.Width == center.Width, "near-center/Width");
-					Assert.IsTrue (near.Height == center.Height, "near-center/Height");
+					Assert.AreEqual (near.Width, center.Width, 0.1, "near-center/Width");
+					Assert.AreEqual (near.Height, center.Height, 0.1, "near-center/Height");
 
-					Assert.IsTrue (center.X == far.X, "center-far/X");
+					Assert.AreEqual (center.X, far.X, 0.1, "center-far/X");
 					Assert.IsTrue (center.Y < far.Y, "center-far/Y");
-					Assert.IsTrue (center.Width == far.Width, "center-far/Width");
-					Assert.IsTrue (center.Height == far.Height, "center-far/Height");
+					Assert.AreEqual (center.Width, far.Width, 0.1, "center-far/Width");
+					Assert.AreEqual (center.Height, far.Height, 0.1, "center-far/Height");
 				}
 			}
 		}
@@ -1706,12 +1824,12 @@ namespace MonoTests.System.Drawing
 					Assert.IsTrue (near.X < center.X, "near-center/X"); // ???
 					Assert.IsTrue (near.Y < center.Y, "near-center/Y");
 					Assert.IsTrue (near.Width > center.Width, "near-center/Width"); // ???
-					Assert.IsTrue (near.Height == center.Height, "near-center/Height");
+					Assert.AreEqual (near.Height, center.Height, 0.1, "near-center/Height");
 
-					Assert.IsTrue (center.X == far.X, "center-far/X");
+					Assert.AreEqual (center.X, far.X, 0.1, "center-far/X");
 					Assert.IsTrue (center.Y < far.Y, "center-far/Y");
-					Assert.IsTrue (center.Width == far.Width, "center-far/Width");
-					Assert.IsTrue (center.Height == far.Height, "center-far/Height");
+					Assert.AreEqual (center.Width, far.Width, 0.1, "center-far/Width");
+					Assert.AreEqual (center.Height, far.Height, 0.1, "center-far/Height");
 				}
 			}
 		}
@@ -1748,14 +1866,14 @@ namespace MonoTests.System.Drawing
 					RectangleF far = regions[0].GetBounds (g);
 
 					Assert.IsTrue (near.X < center.X, "near-center/X");
-					Assert.IsTrue (near.Y == center.Y, "near-center/Y");
-					Assert.IsTrue (near.Width == center.Width, "near-center/Width");
-					Assert.IsTrue (near.Height == center.Height, "near-center/Height");
+					Assert.AreEqual (near.Y, center.Y, 0.1, "near-center/Y");
+					Assert.AreEqual (near.Width, center.Width, 0.1, "near-center/Width");
+					Assert.AreEqual (near.Height, center.Height, 0.1, "near-center/Height");
 
 					Assert.IsTrue (center.X < far.X, "center-far/X");
-					Assert.IsTrue (center.Y == far.Y, "center-far/Y");
-					Assert.IsTrue (center.Width == far.Width, "center-far/Width");
-					Assert.IsTrue (center.Height == far.Height, "center-far/Height");
+					Assert.AreEqual (center.Y, far.Y, 0.1, "center-far/Y");
+					Assert.AreEqual (center.Width, far.Width, 0.1, "center-far/Width");
+					Assert.AreEqual (center.Height, far.Height, 0.1, "center-far/Height");
 				}
 			}
 		}

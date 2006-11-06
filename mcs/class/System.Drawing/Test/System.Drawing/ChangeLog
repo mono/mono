@@ -1,5 +1,6 @@
-2006-11-06  Sebastien Pouliot  <sebastien@ximian.com>
+2006-11-06  Sebastien Pouliot  <sebastien@ximian.com> 
 
+	* TestGraphics.cs: Add new MeasureString test cases.
 	* TestRectangle.cs: Add unit tests for == and != operators. Update 
 	tests to NUnit 2.2 syntax.
 	* TestRectangleF.cs: Add unit tests for == and != operators. Update 
