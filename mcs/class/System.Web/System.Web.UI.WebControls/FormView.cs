@@ -83,6 +83,7 @@ namespace System.Web.UI.WebControls
 		TableItemStyle pagerStyle;
 		TableItemStyle rowStyle;
 		
+		IOrderedDictionary _keyTable;
 		DataKey key;
 		DataKey oldEditValues;
 		
@@ -103,12 +104,7 @@ namespace System.Web.UI.WebControls
 		int pageIndex;
 		FormViewMode currentMode = FormViewMode.ReadOnly; 
 		bool hasCurrentMode;
-		int pageCount = 0;
-		
-		public FormView ()
-		{
-			key = new DataKey (new OrderedDictionary ());
-		}
+		int pageCount;
 		
 		public event EventHandler PageIndexChanged {
 			add { Events.AddHandler (PageIndexChangedEvent, value); }
@@ -300,7 +296,7 @@ namespace System.Web.UI.WebControls
 		[BrowsableAttribute (false)]
 		public virtual FormViewRow BottomPagerRow {
 			get {
-				EnsureDataBound ();
+				EnsureChildControls ();
 				return bottomPagerRow;
 			}
 		}
@@ -407,12 +403,32 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		IOrderedDictionary KeyTable {
+			get {
+				if (_keyTable == null) {
+					_keyTable = new OrderedDictionary (DataKeyNames.Length);
+				}
+				return _keyTable;
+			}
+		}
+
 		[BrowsableAttribute (false)]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public virtual DataKey DataKey {
 			get {
-				EnsureDataBound ();
+				if (key == null) {
+					key= new DataKey (KeyTable);
+				}
 				return key;
+			}
+		}
+
+		DataKey OldEditValues {
+			get {
+				if (oldEditValues == null) {
+					oldEditValues = new DataKey (new OrderedDictionary ());
+				}
+				return oldEditValues;
 			}
 		}
 
@@ -643,8 +659,6 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public virtual int PageCount {
 			get {
-				if (pageCount != 0) return pageCount;
-				EnsureDataBound ();
 				return pageCount;
 			}
 		}
@@ -711,7 +725,7 @@ namespace System.Web.UI.WebControls
 		[BrowsableAttribute (false)]
 		public virtual FormViewRow Row {
 			get {
-				EnsureDataBound ();
+				EnsureChildControls ();
 				return itemRow;
 			}
 		}
@@ -742,7 +756,7 @@ namespace System.Web.UI.WebControls
 		[BrowsableAttribute (false)]
 		public virtual FormViewRow TopPagerRow {
 			get {
-				EnsureDataBound ();
+				EnsureChildControls ();
 				return topPagerRow;
 			}
 		}
@@ -808,7 +822,6 @@ namespace System.Web.UI.WebControls
 		void RequireBinding ()
 		{
 			if (Initialized) {
-				pageCount = -1;
 				RequiresDataBinding = true;
 			}
 		}
@@ -888,12 +901,6 @@ namespace System.Web.UI.WebControls
 				itemRow = CreateRow (0, DataControlRowType.DataRow, rstate);
 				InitializeRow (itemRow);
 				table.Rows.Add (itemRow);
-				
-				if (!dataBinding) {
-					if (CurrentMode == FormViewMode.Edit)
-						oldEditValues = new DataKey (new OrderedDictionary ());
-					key = new DataKey (new OrderedDictionary (), DataKeyNames);
-				}
 			} else {
 				switch (CurrentMode) {
 				case FormViewMode.Edit:
@@ -989,8 +996,10 @@ namespace System.Web.UI.WebControls
 			row.Cells.Add (cell);
 		}
 		
-		IOrderedDictionary CreateRowDataKey (object dataItem)
+		void FillRowDataKey (object dataItem)
 		{
+			KeyTable.Clear ();
+
 			if (cachedKeyProperties == null) {
 				PropertyDescriptorCollection props = TypeDescriptor.GetProperties (dataItem);
 				cachedKeyProperties = new PropertyDescriptor [DataKeyNames.Length];
@@ -1001,11 +1010,8 @@ namespace System.Web.UI.WebControls
 					cachedKeyProperties [n] = p;
 				}
 			}
-			
-			OrderedDictionary dic = new OrderedDictionary ();
 			foreach (PropertyDescriptor p in cachedKeyProperties)
-				dic [p.Name] = p.GetValue (dataItem);
-			return dic;
+				KeyTable [p.Name] = p.GetValue (dataItem);
 		}
 		
 		IOrderedDictionary GetRowValues (bool includePrimaryKey)
@@ -1059,9 +1065,8 @@ namespace System.Web.UI.WebControls
 			if (pageCount > 0) {
 				if (CurrentMode == FormViewMode.Edit)
 					oldEditValues = new DataKey (GetRowValues (true));
-				else
-					oldEditValues = new DataKey (new OrderedDictionary ());
-				key = new DataKey (CreateRowDataKey (dataItem), DataKeyNames);
+				FillRowDataKey (dataItem);
+				key = new DataKey (KeyTable);
 			}
 		}
 		
@@ -1213,12 +1218,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		void ShowPage (int newIndex)
+		void ShowPage (int index)
 		{
-			FormViewPageEventArgs args = new FormViewPageEventArgs (newIndex);
+			FormViewPageEventArgs args = new FormViewPageEventArgs (index);
 			OnPageIndexChanging (args);
 			if (!args.Cancel) {
-				newIndex = args.NewPageIndex;
+				int newIndex = args.NewPageIndex;
 				if (newIndex < 0 || newIndex >= PageCount)
 					return;
 				EndRowEdit (false);
@@ -1258,11 +1263,8 @@ namespace System.Web.UI.WebControls
 				Page.Validate ();
 			
 			if (currentMode != FormViewMode.Edit) throw new HttpException ("Must be in Edit mode");
-			
-			if (oldEditValues == null)
-				currentEditOldValues = new OrderedDictionary ();
-			else
-				currentEditOldValues = oldEditValues.Values;
+
+			currentEditOldValues = OldEditValues.Values;
 			currentEditRowKeys = DataKey.Values;
 			currentEditNewValues = GetRowValues (false);
 			
@@ -1384,13 +1386,24 @@ namespace System.Web.UI.WebControls
 			CurrentMode = (FormViewMode) state[3];
 			defaultMode = (FormViewMode) state[4];
 			dataKeyNames = (string[]) state[5];
+			if (state [6] != null)
+				((IStateManager) DataKey).LoadViewState (state [6]);
+			if (state [7] != null)
+				((IStateManager) OldEditValues).LoadViewState (state [7]);
 		}
 		
 		protected internal override object SaveControlState ()
 		{
 			object bstate = base.SaveControlState ();
-			return new object[] {
-				bstate, pageIndex, pageCount, CurrentMode, defaultMode, dataKeyNames
+			return new object [] {
+				bstate, 
+				pageIndex, 
+				pageCount, 
+				CurrentMode, 
+				defaultMode, 
+				dataKeyNames,
+				(key == null ? null : ((IStateManager)key).SaveViewState()),
+				(oldEditValues == null ? null : ((IStateManager) oldEditValues).SaveViewState ())
 			};
 		}
 		
@@ -1405,23 +1418,20 @@ namespace System.Web.UI.WebControls
 			if (editRowStyle != null) ((IStateManager)editRowStyle).TrackViewState();
 			if (insertRowStyle != null) ((IStateManager)insertRowStyle).TrackViewState();
 			if (emptyDataRowStyle != null) ((IStateManager)emptyDataRowStyle).TrackViewState();
-			if (key != null) ((IStateManager)key).TrackViewState();
 		}
 
 		protected override object SaveViewState()
 		{
-			object[] states = new object [14];
+			object[] states = new object [10];
 			states[0] = base.SaveViewState();
-			states[2] = (pagerSettings == null ? null : ((IStateManager)pagerSettings).SaveViewState());
-			states[4] = (footerStyle == null ? null : ((IStateManager)footerStyle).SaveViewState());
-			states[5] = (headerStyle == null ? null : ((IStateManager)headerStyle).SaveViewState());
-			states[6] = (pagerStyle == null ? null : ((IStateManager)pagerStyle).SaveViewState());
-			states[7] = (rowStyle == null ? null : ((IStateManager)rowStyle).SaveViewState());
-			states[8] = (insertRowStyle == null ? null : ((IStateManager)insertRowStyle).SaveViewState());
-			states[9] = (editRowStyle == null ? null : ((IStateManager)editRowStyle).SaveViewState());
-			states[10] = (emptyDataRowStyle == null ? null : ((IStateManager)emptyDataRowStyle).SaveViewState());
-			states[11] = (key == null ? null : ((IStateManager)key).SaveViewState());
-			states[12] = (oldEditValues == null ? null : ((IStateManager)oldEditValues).SaveViewState());
+			states[1] = (pagerSettings == null ? null : ((IStateManager)pagerSettings).SaveViewState());
+			states[2] = (footerStyle == null ? null : ((IStateManager)footerStyle).SaveViewState());
+			states[3] = (headerStyle == null ? null : ((IStateManager)headerStyle).SaveViewState());
+			states[4] = (pagerStyle == null ? null : ((IStateManager)pagerStyle).SaveViewState());
+			states[5] = (rowStyle == null ? null : ((IStateManager)rowStyle).SaveViewState());
+			states[6] = (insertRowStyle == null ? null : ((IStateManager)insertRowStyle).SaveViewState());
+			states[7] = (editRowStyle == null ? null : ((IStateManager)editRowStyle).SaveViewState());
+			states[8] = (emptyDataRowStyle == null ? null : ((IStateManager)emptyDataRowStyle).SaveViewState());
 			
 			for (int i = states.Length - 1; i >= 0; i--) {
 				if (states [i] != null)
@@ -1441,18 +1451,15 @@ namespace System.Web.UI.WebControls
 			object [] states = (object []) savedState;
 			
 			base.LoadViewState (states[0]);
-			EnsureChildControls ();
 			
-			if (states[2] != null) ((IStateManager)PagerSettings).LoadViewState (states[2]);
-			if (states[4] != null) ((IStateManager)FooterStyle).LoadViewState (states[4]);
-			if (states[5] != null) ((IStateManager)HeaderStyle).LoadViewState (states[5]);
-			if (states[6] != null) ((IStateManager)PagerStyle).LoadViewState (states[6]);
-			if (states[7] != null) ((IStateManager)RowStyle).LoadViewState (states[7]);
-			if (states[8] != null) ((IStateManager)InsertRowStyle).LoadViewState (states[8]);
-			if (states[9] != null) ((IStateManager)EditRowStyle).LoadViewState (states[9]);
-			if (states[10] != null) ((IStateManager)EmptyDataRowStyle).LoadViewState (states[10]);
-			if (states[11] != null && DataKey != null) ((IStateManager)DataKey).LoadViewState (states[11]);
-			if (states[12] != null && oldEditValues != null) ((IStateManager)oldEditValues).LoadViewState (states[12]);
+			if (states[1] != null) ((IStateManager)PagerSettings).LoadViewState (states[1]);
+			if (states[2] != null) ((IStateManager)FooterStyle).LoadViewState (states[2]);
+			if (states[3] != null) ((IStateManager)HeaderStyle).LoadViewState (states[3]);
+			if (states[4] != null) ((IStateManager)PagerStyle).LoadViewState (states[4]);
+			if (states[5] != null) ((IStateManager)RowStyle).LoadViewState (states[5]);
+			if (states[6] != null) ((IStateManager)InsertRowStyle).LoadViewState (states[6]);
+			if (states[7] != null) ((IStateManager)EditRowStyle).LoadViewState (states[7]);
+			if (states[8] != null) ((IStateManager)EmptyDataRowStyle).LoadViewState (states[8]);
 		}
 		
 		protected internal override void Render (HtmlTextWriter writer)
