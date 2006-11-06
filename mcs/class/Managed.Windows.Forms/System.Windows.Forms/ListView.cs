@@ -1497,7 +1497,7 @@ namespace System.Windows.Forms
 							ToggleCheckState (clicked_item);
 					} else if (me.Clicks == 1) {
 						owner.OnClick (EventArgs.Empty);
-						if (!changed)
+						if (owner.LabelEdit && !changed)
 							BeginEdit (clicked_item); // this is probably not the correct place to execute BeginEdit
 					}
 				} else {
