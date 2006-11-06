@@ -201,8 +201,8 @@ namespace System.Drawing
 
 		public static bool operator != (RectangleF r1, RectangleF r2)
 		{
-			return (r1.X != r2.X) && (r1.Y != r2.Y) &&
-                                (r1.Width != r2.Width) && (r1.Height != r2.Height);
+			return (r1.X != r2.X) || (r1.Y != r2.Y) ||
+                                (r1.Width != r2.Width) || (r1.Height != r2.Height);
 		}
 		
 		/// <summary>

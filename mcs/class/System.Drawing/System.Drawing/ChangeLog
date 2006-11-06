@@ -1,3 +1,8 @@
+2006-11-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RectangleF.cs: Fix operator !=. Patch by Manuel Alejandro Cerón 
+	Estrada.
+
 2006-11-04  Chris Toshok  <toshok@ximian.com>
 
 	* SystemColors.cs: reassign the given color to the return value of
