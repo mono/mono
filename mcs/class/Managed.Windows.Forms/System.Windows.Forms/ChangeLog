@@ -1,3 +1,8 @@
+2006-11-06  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: If a suitable wrapping position isn't found,
+	just wrap right in the middle of a word.
+
 2006-11-06  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ListView.cs, ListViewItem.cs: Implement LabelEdit. Fixes

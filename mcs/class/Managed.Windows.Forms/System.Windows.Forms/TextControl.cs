@@ -479,6 +479,13 @@ namespace System.Windows.Forms {
 						len = this.text.Length;
 						retval = true;
 						wrapped = true;
+					} else if ((widths[pos] + w) > (doc.viewport_width - this.right_indent)) {
+						// No suitable wrap position was found so break right in the middle of a word
+						tag.width = tag.width + w;
+						doc.Split(this, tag, pos, true);
+						len = this.text.Length;
+						retval = true;
+						wrapped = true;
 					}
 				}
 
