@@ -1,3 +1,12 @@
+2006-11-06  Marek Habersack  <grendello@gmail.com>
+
+	* CodeDomProvider.cs: IsDefinedLanguage should return true if
+	CompilerInfo for the specified language exists.
+
+	* CodeDomConfigurationHandler.cs: add an instance of CompilerInfo
+	separately for each language name defined in the compiler's
+	definition.
+
 2006-09-15  LLuis Sanchez Gual  <lluis@novell.com>
 
 	* TempFileCollection.cs: Create files in a temporary subdirectory,

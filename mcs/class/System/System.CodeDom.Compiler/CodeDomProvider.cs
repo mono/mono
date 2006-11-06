@@ -273,7 +273,7 @@ namespace System.CodeDom.Compiler {
 
 			if (Config == null)
 				return false;
-			return (Config.GetCompilerInfo (language) == null);
+			return (Config.GetCompilerInfo (language) != null);
 		}
 
 		public virtual bool IsValidIdentifier (string value)

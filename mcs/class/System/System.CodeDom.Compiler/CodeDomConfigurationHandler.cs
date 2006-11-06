@@ -106,7 +106,9 @@ namespace System.CodeDom.Compiler
 				compiler.CompilerOptions = AttValue ("compilerOptions", child, true, true);
 				compiler.WarningLevel = AttUIntValue ("warningLevel", child, 0);
 				compiler.Init ();
-				config.Compilers [compiler.Languages] = compiler;
+				
+				foreach (string l in compiler.Languages.Split(';'))
+					config.Compilers [l] = compiler;
 			}
 		}
 
