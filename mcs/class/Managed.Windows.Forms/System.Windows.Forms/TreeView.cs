@@ -1330,7 +1330,8 @@ namespace System.Windows.Forms {
 			}
 
 			if (vert) {
-				vbar.SetValues (Math.Max (0, max_visible_order - 2), VisibleCount);
+				int visible_height = horz ? ClientRectangle.Height - hbar.Height : ClientRectangle.Height;
+				vbar.SetValues (Math.Max (0, max_visible_order - 2), visible_height / ItemHeight);
 				/*
 				vbar.Maximum = max_visible_order;
 				vbar.LargeChange = ClientRectangle.Height / ItemHeight;

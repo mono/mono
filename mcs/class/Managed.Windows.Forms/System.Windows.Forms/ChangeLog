@@ -1,3 +1,9 @@
+2006-11-06  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Can't use the VisibleCount property when setting
+	scrollbar heights, because this doesn't take into account whether
+	or not the horz scrollbar just came visible.
+
 2006-11-05  Everaldo Canuto  <everaldo@simios.org>
 
 	* MenuAPI.cs: Deactivate menu on mouse up when menus it is already
