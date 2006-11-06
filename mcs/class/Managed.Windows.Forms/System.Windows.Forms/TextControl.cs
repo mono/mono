@@ -3362,7 +3362,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			
 			Insert(selection_start.line, null, selection_start.pos, true, s);
 
-			CharIndexToLineTag(selection_start_pos + s.Length, out selection_start.line,
+			CharIndexToLineTag(selection_start_pos + s.Length + 1, out selection_start.line,
 					out selection_start.tag, out selection_start.pos);
 			
 			selection_end.line = selection_start.line;

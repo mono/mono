@@ -1,3 +1,10 @@
+2006-11-06  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: These are 1 based.
+	* TextBoxBase.cs: When setting the selected text, don't change the
+	selected text tags, this is done by ReplaceText, just position the
+	cursor at the end of the new text.
+
 2006-11-06  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ListView.cs: Allow label edit only when, when LabelEdit is
