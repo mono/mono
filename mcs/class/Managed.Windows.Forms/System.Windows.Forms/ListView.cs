@@ -1302,6 +1302,10 @@ namespace System.Windows.Forms
 			ListViewItem last_clicked_item;
 			bool hover_processed = false;
 			bool checking = false;
+			
+			ListViewLabelEditTextBox edit_text_box;
+			internal ListViewItem edit_item;
+			LabelEditEventArgs edit_args;
 
 			public ItemControl (ListView owner)
 			{
@@ -1491,8 +1495,11 @@ namespace System.Windows.Forms
 						owner.OnDoubleClick (EventArgs.Empty);
 						if (owner.CheckBoxes)
 							ToggleCheckState (clicked_item);
-					} else if (me.Clicks == 1)
+					} else if (me.Clicks == 1) {
 						owner.OnClick (EventArgs.Empty);
+						if (!changed)
+							BeginEdit (clicked_item); // this is probably not the correct place to execute BeginEdit
+					}
 				} else {
 					if (owner.MultiSelect) {
 						Keys mods = XplatUI.State.ModifierKeys;
@@ -1591,6 +1598,89 @@ namespace System.Windows.Forms
 				box_select_mode = BoxSelect.None;
 				checking = false;
 			}
+			
+			internal void LabelEditFinished (object sender, EventArgs e)
+			{
+				EndEdit (edit_item);
+			}
+			
+			internal void BeginEdit (ListViewItem item)
+			{
+				if (edit_item != null)
+					EndEdit (edit_item);
+				
+				if (edit_text_box == null) {
+					edit_text_box = new ListViewLabelEditTextBox ();
+					edit_text_box.BorderStyle = BorderStyle.FixedSingle;
+					edit_text_box.EditingFinished += new EventHandler (LabelEditFinished);
+					edit_text_box.Visible = false;
+					Controls.Add (edit_text_box);
+				}
+				
+				item.EnsureVisible();
+				
+				edit_text_box.Reset ();
+				
+				switch (owner.view) {
+					case View.List:
+					case View.SmallIcon:
+					case View.Details:
+						edit_text_box.TextAlign = HorizontalAlignment.Left;
+						edit_text_box.Bounds = item.GetBounds (ItemBoundsPortion.Label);
+						SizeF sizef = DeviceContext.MeasureString (item.Text, item.Font);
+						edit_text_box.Width = (int)sizef.Width + 4;
+						edit_text_box.MaxWidth = owner.ClientRectangle.Width - edit_text_box.Bounds.X;
+						edit_text_box.WordWrap = false;
+						edit_text_box.Multiline = false;
+						break;
+					case View.LargeIcon:
+						edit_text_box.TextAlign = HorizontalAlignment.Center;
+						edit_text_box.Bounds = item.GetBounds (ItemBoundsPortion.Label);
+						sizef = DeviceContext.MeasureString (item.Text, item.Font);
+						edit_text_box.Width = (int)sizef.Width + 4;
+						edit_text_box.MaxWidth = item.GetBounds(ItemBoundsPortion.Entire).Width;
+						edit_text_box.MaxHeight = owner.ClientRectangle.Height - edit_text_box.Bounds.Y;
+						edit_text_box.WordWrap = true;
+						edit_text_box.Multiline = true;
+						break;
+				}
+				
+				edit_text_box.Text = item.Text;
+				edit_text_box.Font = item.Font;
+				edit_text_box.Visible = true;
+				edit_text_box.Focus ();
+				edit_text_box.SelectAll ();
+				
+				edit_args = new LabelEditEventArgs (owner.Items.IndexOf(edit_item));
+				owner.OnBeforeLabelEdit (edit_args);
+				
+				if (edit_args.CancelEdit)
+					EndEdit (item);
+				
+				edit_item = item;
+			}
+			
+			internal void EndEdit (ListViewItem item)
+			{
+				if (edit_text_box != null && edit_text_box.Visible) {
+					edit_text_box.Visible = false;
+				}
+				
+				if (edit_item != null && edit_item == item) {
+					owner.OnAfterLabelEdit (edit_args);
+					
+					if (!edit_args.CancelEdit) {
+						if (edit_args.Label != null)
+							edit_item.Text = edit_args.Label;
+						else
+							edit_item.Text = edit_text_box.Text;
+					}
+					
+				}
+				
+				
+				edit_item = null;
+			}
 
 			internal override void OnPaintInternal (PaintEventArgs pe)
 			{
@@ -1601,6 +1691,158 @@ namespace System.Windows.Forms
 			{
 				owner.Focus ();
 			}
+		}
+		
+		internal class ListViewLabelEditTextBox : TextBox
+		{
+			int max_width = -1;
+			int min_width = -1;
+			
+			int max_height = -1;
+			int min_height = -1;
+			
+			int old_number_lines = 1;
+			
+			SizeF text_size_one_char;
+			
+			public ListViewLabelEditTextBox ()
+			{
+				min_height = DefaultSize.Height;
+				text_size_one_char = DeviceContext.MeasureString ("B", Font);
+			}
+			
+			public int MaxWidth {
+				set {
+					if (value < min_width)
+						max_width = min_width;
+					else
+						max_width = value;
+				}
+			}
+			
+			public int MaxHeight {
+				set {
+					if (value < min_height)
+						max_height = min_height;
+					else
+						max_height = value;
+				}
+			}
+			
+			public new int Width {
+				get {
+					return base.Width;
+				}
+				set {
+					min_width = value;
+					base.Width = value;
+				}
+			}
+			
+			public override Font Font {
+				get {
+					return base.Font;
+				}
+				set {
+					base.Font = value;
+					text_size_one_char = DeviceContext.MeasureString ("B", Font);
+				}
+			}
+			
+			protected override void OnTextChanged (EventArgs e)
+			{
+				SizeF text_size = DeviceContext.MeasureString (Text, Font);
+				
+				int new_width = (int)text_size.Width + 8;
+				
+				if (!Multiline)
+					ResizeTextBoxWidth (new_width);
+				else {
+					if (Width != max_width)
+						ResizeTextBoxWidth (new_width);
+					
+					int number_lines = Lines.Length;
+					
+					if (number_lines != old_number_lines) {
+						int new_height = number_lines * (int)text_size_one_char.Height + 4;
+						old_number_lines = number_lines;
+						
+						ResizeTextBoxHeight (new_height);
+					}
+				}
+				
+				base.OnTextChanged (e);
+			}
+			
+			protected override bool IsInputKey (Keys key_data)
+			{
+				if ((key_data & Keys.Alt) == 0) {
+					switch (key_data & Keys.KeyCode) {
+						case Keys.Enter:
+							return true;
+					}
+				}
+				return base.IsInputKey (key_data);
+			}
+			
+			protected override void OnKeyDown (KeyEventArgs e)
+			{
+				if (e.KeyCode == Keys.Return && Visible) {
+					this.Visible = false;
+					OnEditingFinished (e);
+				}
+			}
+			
+			protected override void OnLostFocus (EventArgs e)
+			{
+				if (Visible) {
+					OnEditingFinished (e);
+				}
+			}
+			
+			protected void OnEditingFinished (EventArgs e)
+			{
+				if (EditingFinished != null)
+					EditingFinished (this, EventArgs.Empty);
+			}
+			
+			private void ResizeTextBoxWidth (int new_width)
+			{
+				if (new_width > max_width)
+					base.Width = max_width;
+				else 
+				if (new_width >= min_width)
+					base.Width = new_width;
+				else
+					base.Width = min_width;
+			}
+			
+			private void ResizeTextBoxHeight (int new_height)
+			{
+				if (new_height > max_height)
+					base.Height = max_height;
+				else 
+				if (new_height >= min_height)
+					base.Height = new_height;
+				else
+					base.Height = min_height;
+			}
+			
+			public void Reset ()
+			{
+				max_width = -1;
+				min_width = -1;
+				
+				max_height = -1;
+				
+				old_number_lines = 1;
+				
+				Text = String.Empty;
+				
+				Size = DefaultSize;
+			}
+			
+			public event EventHandler EditingFinished;
 		}
 
 		internal override void OnPaintInternal (PaintEventArgs pe)
@@ -1664,6 +1906,8 @@ namespace System.Windows.Forms
 
 		private void HorizontalScroller (object sender, EventArgs e)
 		{
+			item_control.EndEdit (item_control.edit_item);
+			
 			// Avoid unnecessary flickering, when button is
 			// kept pressed at the end
 			if (h_marker != h_scroll.Value) {
@@ -1680,6 +1924,8 @@ namespace System.Windows.Forms
 
 		private void VerticalScroller (object sender, EventArgs e)
 		{
+			item_control.EndEdit (item_control.edit_item);
+			
 			// Avoid unnecessary flickering, when button is
 			// kept pressed at the end
 			if (v_marker != v_scroll.Value) {

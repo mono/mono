@@ -338,6 +338,9 @@ namespace System.Windows.Forms
 		#region Public Instance Methods
 		public void BeginEdit ()
 		{
+			if (owner != null && owner.LabelEdit) {
+				owner.item_control.BeginEdit (this);
+			}
 			// FIXME: TODO
 			// if (owner != null && owner.LabelEdit 
 			//    && owner.Activation == ItemActivation.Standard)

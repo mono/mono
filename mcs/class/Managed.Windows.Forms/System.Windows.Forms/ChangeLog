@@ -1,3 +1,8 @@
+2006-11-06  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ListView.cs, ListViewItem.cs: Implement LabelEdit. Fixes
+	  bug #79820.
+
 2006-11-06  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Can't use the VisibleCount property when setting
