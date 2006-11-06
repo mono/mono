@@ -37,6 +37,7 @@ namespace System.Windows.Forms {
 	internal class MenuTracker {
 
 		internal bool active;
+		internal bool popdown_menu;
 		public Menu CurrentMenu;
 		public Menu TopMenu;
 		Form grab_control;
@@ -140,7 +141,8 @@ namespace System.Windows.Forms {
 			if (item != null && !item.Enabled)
 				return;
 
-
+			popdown_menu = active;
+			
 			SelectItem (item.Parent, item, item.IsPopup);
 			if (item.IsPopup) {
 				active = true;
@@ -177,7 +179,7 @@ namespace System.Windows.Forms {
 			else {
 				/* releasing the mouse button on a
 				 * popup item leaves things active */
-				if (item.IsPopup)
+				if (item.IsPopup && !popdown_menu)
 					return;
 
 				/* otherwise we hide the menu and
