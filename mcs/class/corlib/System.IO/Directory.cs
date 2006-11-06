@@ -71,6 +71,11 @@ namespace System.IO
 
 			if (path.Trim ().Length == 0)
 				throw new ArgumentException ("Only blank characters in path");
+
+#if NET_2_0
+			if (File.Exists(path) || Directory.Exists(path))
+				throw new IOException ("Cannot create " + path + " because a file or directory with the same name already exists.");
+#endif
 			
 			// LAMESPEC: with .net 1.0 version this throw NotSupportedException and msdn says so too
 			// but v1.1 throws ArgumentException.
