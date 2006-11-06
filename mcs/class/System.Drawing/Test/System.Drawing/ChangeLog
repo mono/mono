@@ -1,3 +1,10 @@
+2006-11-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestRectangle.cs: Add unit tests for == and != operators. Update 
+	tests to NUnit 2.2 syntax.
+	* TestRectangleF.cs: Add unit tests for == and != operators. Update 
+	tests to NUnit 2.2 syntax.
+
 2006-10-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestGraphics.cs: Ignore new test cases when font is null (not 
