@@ -795,8 +795,10 @@ namespace System.Windows.Forms {
 			// We always have a blank line
 			owner.HandleCreated += new EventHandler(owner_HandleCreated);
 			owner.VisibleChanged += new EventHandler(owner_VisibleChanged);
+
 			Add(1, "", owner.Font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.ForeColor));
-			lines=1;
+			Line l = GetLine (1);
+			l.soft_break = true;
 
 			undo = new UndoClass(this);
 
@@ -1385,6 +1387,9 @@ namespace System.Windows.Forms {
 
 			// We always have a blank line
 			Add(1, "", owner.Font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.ForeColor));
+			Line l = GetLine (1);
+			l.soft_break = true;
+			
 			this.RecalculateDocument(owner.CreateGraphicsInternal());
 			PositionCaret(0, 0);
 

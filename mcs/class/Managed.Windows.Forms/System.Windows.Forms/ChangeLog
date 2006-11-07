@@ -2,6 +2,9 @@
 
 	* TextBoxBase.cs: When converting to Text don't put line breaks in
 	for soft line breaks.
+	* TextControl.cs: There is an initial "fake" line in the document,
+	this is now a soft break line, so that an extra line feed doesn't
+	get added to the end of documents.
 
 2006-11-07  Chris Toshok  <toshok@ximian.com>
 
