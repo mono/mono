@@ -182,7 +182,9 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		public void RenderOnclick2 ()
 		{
 			Page page = new Page ();
+#if NET_2_0
 			page.EnableEventValidation = false;
+#endif
 			HtmlInputButtonPoker it = new HtmlInputButtonPoker ("button");
 			page.Controls.Add (it);
 			it.ID = "id1";
@@ -206,7 +208,9 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		public void RenderOnclick4 ()
 		{
 			Page page = new Page ();
+#if NET_2_0
 			page.EnableEventValidation = false;
+#endif
 			HtmlInputButtonPoker it = new HtmlInputButtonPoker ("submit");
 			page.Controls.Add (it);
 			it.ID = "id1";
@@ -221,7 +225,9 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		public void RenderOnclick5 ()
 		{
 			Page page = new Page ();
+#if NET_2_0
 			page.EnableEventValidation = false;
+#endif
 			RequiredFieldValidator val = new RequiredFieldValidator ();
 			val.ControlToValidate = "id1";
 			page.Validators.Add (val);
