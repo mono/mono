@@ -1,4 +1,11 @@
 
+Tue Nov 7 11:02:42 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: don't load types that have an explicit unaligned
+	managed reference. Provide better info in the TypeLoad exception.
+	Part of the fix for bug #79744.
+	* object.c: use the correct check for class type load issues.
+
 Mon Nov 6 17:07:43 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: enforce alignment of fields with managed references
