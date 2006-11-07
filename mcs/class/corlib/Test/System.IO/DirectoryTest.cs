@@ -20,8 +20,8 @@ using System.Diagnostics;
 namespace MonoTests.System.IO {
 
 [TestFixture]
-public class DirectoryTest : Assertion {
-	
+public class DirectoryTest
+{
 	string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
 	static readonly char DSC = Path.DirectorySeparatorChar;
 
@@ -47,21 +47,24 @@ public class DirectoryTest : Assertion {
 		DeleteDirectory (path);
 		try {
 			DirectoryInfo info = Directory.CreateDirectory (path);
-			AssertEquals ("test#01", true, info.Exists);
-			AssertEquals ("test#02", ".1", info.Extension);
-			AssertEquals ("test#03", true, info.FullName.EndsWith ("DirectoryTest.Test.1"));
-			AssertEquals ("test#04", "DirectoryTest.Test.1", info.Name);
+			Assert.IsTrue (info.Exists, "#1");
+			Assert.AreEqual (".1", info.Extension, "#2");
+			Assert.IsTrue (info.FullName.EndsWith ("DirectoryTest.Test.1"), "#3");
+			Assert.AreEqual ("DirectoryTest.Test.1", info.Name, "#4");
 		} finally {
-			DeleteDirectory (path);		
+			DeleteDirectory (path);
 		}
 	}
 	
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
 	public void CreateDirectoryNotSupportedException ()
 	{
 		DeleteDirectory (":");
-		DirectoryInfo info = Directory.CreateDirectory (":");
+		try {
+			DirectoryInfo info = Directory.CreateDirectory (":");
+			Assert.Fail ();
+		} catch (ArgumentException) {
+		}
 		DeleteDirectory (":");
 	}
 
@@ -69,7 +72,7 @@ public class DirectoryTest : Assertion {
 	[ExpectedException(typeof(ArgumentNullException))]
 	public void CreateDirectoryArgumentNullException ()
 	{
-		DirectoryInfo info = Directory.CreateDirectory (null as string);		
+		DirectoryInfo info = Directory.CreateDirectory (null as string);
 	}
 
 	[Test]
@@ -83,7 +86,7 @@ public class DirectoryTest : Assertion {
 	[ExpectedException(typeof(ArgumentException))]
 	public void CreateDirectoryArgumentException2 ()
 	{
-		DirectoryInfo info = Directory.CreateDirectory ("            ");		
+		DirectoryInfo info = Directory.CreateDirectory ("            ");
 	}
 
 	[Test]
@@ -95,7 +98,7 @@ public class DirectoryTest : Assertion {
 		try {
 			path += Path.InvalidPathChars [0];
 			path += ".2";
-			DirectoryInfo info = Directory.CreateDirectory (path);		
+			DirectoryInfo info = Directory.CreateDirectory (path);
 		} finally {
 			DeleteDirectory (path);
 		}
@@ -110,18 +113,15 @@ public class DirectoryTest : Assertion {
 			DirectoryInfo info1 = Directory.CreateDirectory (path);
 			DirectoryInfo info2 = Directory.CreateDirectory (path);
 
-			AssertEquals ("test#01", true, info2.Exists);
-			AssertEquals ("test#02", true, info2.FullName.EndsWith ("DirectoryTest.Test.Exists"));
-			AssertEquals ("test#03", "DirectoryTest.Test.Exists", info2.Name);
+			Assert.IsTrue (info2.Exists, "#1");
+			Assert.IsTrue (info2.FullName.EndsWith ("DirectoryTest.Test.Exists"), "#2");
+			Assert.AreEqual ("DirectoryTest.Test.Exists", info2.Name, "#3");
 		} finally {
-			DeleteDirectory (path);		
+			DeleteDirectory (path);
 		}
 	}
 
 	[Test]
-#if NET_2_0
-	[ExpectedException (typeof(IOException))]
-#endif
 	public void CreateDirectoryAlreadyExistsAsFile ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.Test.ExistsAsFile";
@@ -132,11 +132,16 @@ public class DirectoryTest : Assertion {
 			fstream.Close();
 
 			DirectoryInfo dinfo = Directory.CreateDirectory (path);
-			AssertEquals ("test#01", false, dinfo.Exists);
-			AssertEquals ("test#02", true, dinfo.FullName.EndsWith ("DirectoryTest.Test.ExistsAsFile"));
-			AssertEquals ("test#03", "DirectoryTest.Test.ExistsAsFile", dinfo.Name);
+#if NET_2_0
+			Assert.Fail ("#1");
+		} catch (IOException ex) {
+#else
+			Assert.IsFalse (dinfo.Exists, "#2");
+			Assert.IsTrue (dinfo.FullName.EndsWith ("DirectoryTest.Test.ExistsAsFile"), "#3");
+			Assert.AreEqual ("DirectoryTest.Test.ExistsAsFile", dinfo.Name, "#4");
+#endif
 		} finally {
-			DeleteDirectory (path);		
+			DeleteDirectory (path);
 			DeleteFile (path);
 		}
 	}
@@ -148,27 +153,27 @@ public class DirectoryTest : Assertion {
 		DeleteDirectory (path);
 		try {
 			Directory.CreateDirectory (path);
-			AssertEquals ("test#01", true, Directory.Exists (path));
+			Assert.IsTrue (Directory.Exists (path), "#1");
 		
 			Directory.CreateDirectory (path + DSC + "DirectoryTest.Test.Delete.1.2");
-			AssertEquals ("test#02", true, Directory.Exists (path + DSC + "DirectoryTest.Test.Delete.1.2"));
+			Assert.IsTrue (Directory.Exists (path + DSC + "DirectoryTest.Test.Delete.1.2"), "#2");
 		
 			Directory.Delete (path + DSC + "DirectoryTest.Test.Delete.1.2");
-			AssertEquals ("test#03", false, Directory.Exists (path + DSC + "DirectoryTest.Test.Delete.1.2"));
-			AssertEquals ("test#04", true, Directory.Exists (path));
+			Assert.IsFalse (Directory.Exists (path + DSC + "DirectoryTest.Test.Delete.1.2"), "#3");
+			Assert.IsTrue (Directory.Exists (path), "#4");
 		
 			Directory.Delete (path);
-			AssertEquals ("test#05", false, Directory.Exists (path + DSC + "DirectoryTest.Test.Delete.1.2"));
-			AssertEquals ("test#06", false, Directory.Exists (path));		
+			Assert.IsFalse (Directory.Exists (path + DSC + "DirectoryTest.Test.Delete.1.2"), "#5");
+			Assert.IsFalse (Directory.Exists (path), "#6");
 	
 			Directory.CreateDirectory (path);
 			Directory.CreateDirectory (path + DSC + "DirectoryTest.Test.Delete.1.2");
-			AssertEquals ("test#07", true, Directory.Exists (path + DSC + "DirectoryTest.Test.Delete.1.2"));
-			AssertEquals ("test#08", true, Directory.Exists (path));
+			Assert.IsTrue (Directory.Exists (path + DSC + "DirectoryTest.Test.Delete.1.2"), "#7");
+			Assert.IsTrue (Directory.Exists (path), "#8");
 		
 			Directory.Delete (path, true);
-			AssertEquals ("test#09", false, Directory.Exists (path + DSC + "DirectoryTest.Test.Delete.1.2"));
-			AssertEquals ("test#10", false, Directory.Exists (path));
+			Assert.IsFalse (Directory.Exists (path + DSC + "DirectoryTest.Test.Delete.1.2"), "#9");
+			Assert.IsFalse (Directory.Exists (path), "#10");
 		} finally {
 			DeleteDirectory (path);
 		}
@@ -178,14 +183,14 @@ public class DirectoryTest : Assertion {
 	[ExpectedException(typeof(ArgumentException))]
 	public void DeleteArgumentException ()
 	{
-		Directory.Delete ("");		
+		Directory.Delete ("");
 	}
 
 	[Test]	
 	[ExpectedException(typeof(ArgumentException))]
 	public void DeleteArgumentException2 ()
 	{
-		Directory.Delete ("     ");		
+		Directory.Delete ("     ");
 	}
 
 	[Test]	
@@ -203,7 +208,7 @@ public class DirectoryTest : Assertion {
 	[ExpectedException(typeof(ArgumentNullException))]
 	public void DeleteArgumentNullException ()
 	{
-		Directory.Delete (null as string);		
+		Directory.Delete (null as string);
 	}
 
 	[Test]	
@@ -213,7 +218,7 @@ public class DirectoryTest : Assertion {
 		string path = TempFolder + DSC + "DirectoryTest.Test.5";
 		DeleteDirectory (path);
 		
-		Directory.Delete (path);		
+		Directory.Delete (path);
 	}
 
 	[Test]	
@@ -230,14 +235,14 @@ public class DirectoryTest : Assertion {
 		} finally {
 			if (s != null)
 				s.Close ();
-			DeleteDirectory (path);	
+			DeleteDirectory (path);
 		};
 	}
 
 	[Test]
 	public void Exists ()
 	{
-		AssertEquals ("test#01", false, Directory.Exists (null as string));
+		Assert.IsFalse (Directory.Exists (null as string));
 	}
 
 	[Test]
@@ -250,12 +255,11 @@ public class DirectoryTest : Assertion {
 			return; // this test does not work on Windows.
 
 		string path = TempFolder + DSC + "ExistsAccessDenied";
-		Process p;
 
 		Directory.CreateDirectory (path);
 		Process.Start ("/bin/chmod", "000 " + path).WaitForExit ();
 		try {
-			AssertEquals ("#1", false, Directory.Exists(path + DSC + "b"));
+			Assert.IsFalse (Directory.Exists(path + DSC + "b"));
 		} finally {
 			Process.Start ("/bin/chmod", "755 " + path).WaitForExit ();
 			Directory.Delete (path);
@@ -263,14 +267,14 @@ public class DirectoryTest : Assertion {
 	}
 	
 	[Test]
-	[ExpectedException(typeof(ArgumentNullException))]	
+	[ExpectedException(typeof(ArgumentNullException))]
 	public void GetCreationTimeException1 ()
 	{
 		Directory.GetCreationTime (null as string);
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void GetCreationTimeException2 ()
 	{
 		Directory.GetCreationTime ("");
@@ -289,12 +293,12 @@ public class DirectoryTest : Assertion {
 
 #if NET_2_0
 			DateTime expectedTime = (new DateTime (1601, 1, 1)).ToLocalTime ();
-			Assertion.AssertEquals ("#1", expectedTime.Year, time.Year);
-			Assertion.AssertEquals ("#2", expectedTime.Month, time.Month);
-			Assertion.AssertEquals ("#3", expectedTime.Day, time.Day);
-			Assertion.AssertEquals ("#4", expectedTime.Hour, time.Hour);
-			Assertion.AssertEquals ("#5", expectedTime.Second, time.Second);
-			Assertion.AssertEquals ("#6", expectedTime.Millisecond, time.Millisecond);
+			Assert.AreEqual (expectedTime.Year, time.Year, "#1");
+			Assert.AreEqual (expectedTime.Month, time.Month, "#2");
+			Assert.AreEqual (expectedTime.Day, time.Day, "#3");
+			Assert.AreEqual (expectedTime.Hour, time.Hour, "#4");
+			Assert.AreEqual (expectedTime.Second, time.Second, "#5");
+			Assert.AreEqual (expectedTime.Millisecond, time.Millisecond, "#6");
 #endif
 		} finally {
 			DeleteDirectory (path);
@@ -302,28 +306,28 @@ public class DirectoryTest : Assertion {
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void GetCreationTimeException4 ()
 	{
 		Directory.GetCreationTime ("    ");
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void GetCreationTimeException5 ()
 	{
 		Directory.GetCreationTime (Path.InvalidPathChars [0].ToString ());
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentNullException))]	
+	[ExpectedException(typeof(ArgumentNullException))]
 	public void GetCreationTimeUtcException1 ()
 	{
 		Directory.GetCreationTimeUtc (null as string);
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void GetCreationTimeUtcException2 ()
 	{
 		Directory.GetCreationTimeUtc ("");
@@ -342,12 +346,12 @@ public class DirectoryTest : Assertion {
 			DateTime time = Directory.GetCreationTimeUtc (path);
 
 #if NET_2_0
-			Assertion.AssertEquals ("#1", 1601, time.Year);
-			Assertion.AssertEquals ("#2", 1, time.Month);
-			Assertion.AssertEquals ("#3", 1, time.Day);
-			Assertion.AssertEquals ("#4", 0, time.Hour);
-			Assertion.AssertEquals ("#5", 0, time.Second);
-			Assertion.AssertEquals ("#6", 0, time.Millisecond);
+			Assert.AreEqual (1601, time.Year, "#1");
+			Assert.AreEqual (1, time.Month, "#2");
+			Assert.AreEqual (1, time.Day, "#3");
+			Assert.AreEqual (0, time.Hour, "#4");
+			Assert.AreEqual (0, time.Second, "#5");
+			Assert.AreEqual (0, time.Millisecond, "#6");
 #endif
 		} finally {
 			DeleteDirectory (path);
@@ -355,28 +359,28 @@ public class DirectoryTest : Assertion {
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void GetCreationTimeUtcException4 ()
 	{
 		Directory.GetCreationTimeUtc ("    ");
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void GetCreationTimeUtcException5 ()
 	{
 		Directory.GetCreationTime (Path.InvalidPathChars [0].ToString ());
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentNullException))]	
-	public void GetLastAccessTimeException1 ()
+	[ExpectedException(typeof(ArgumentNullException))]
+	public void GetLastAccessTime_Null ()
 	{
 		Directory.GetLastAccessTime (null as string);
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void GetLastAccessTimeException2 ()
 	{
 		Directory.GetLastAccessTime ("");
@@ -396,12 +400,12 @@ public class DirectoryTest : Assertion {
 
 #if NET_2_0
 			DateTime expectedTime = (new DateTime (1601, 1, 1)).ToLocalTime ();
-			Assertion.AssertEquals ("#1", expectedTime.Year, time.Year);
-			Assertion.AssertEquals ("#2", expectedTime.Month, time.Month);
-			Assertion.AssertEquals ("#3", expectedTime.Day, time.Day);
-			Assertion.AssertEquals ("#4", expectedTime.Hour, time.Hour);
-			Assertion.AssertEquals ("#5", expectedTime.Second, time.Second);
-			Assertion.AssertEquals ("#6", expectedTime.Millisecond, time.Millisecond);
+			Assert.AreEqual (expectedTime.Year, time.Year, "#1");
+			Assert.AreEqual (expectedTime.Month, time.Month, "#2");
+			Assert.AreEqual (expectedTime.Day, time.Day, "#3");
+			Assert.AreEqual (expectedTime.Hour, time.Hour, "#4");
+			Assert.AreEqual (expectedTime.Second, time.Second, "#5");
+			Assert.AreEqual (expectedTime.Millisecond, time.Millisecond, "#6");
 #endif
 		} finally {
 			DeleteDirectory (path);
@@ -409,28 +413,28 @@ public class DirectoryTest : Assertion {
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void GetLastAccessTimeException4 ()
 	{
 		Directory.GetLastAccessTime ("    ");
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void GetLastAccessTimeException5 ()
 	{
 		Directory.GetLastAccessTime (Path.InvalidPathChars [0].ToString ());
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentNullException))]	
-	public void GetLastAccessTimeUtcException1 ()
+	[ExpectedException(typeof(ArgumentNullException))]
+	public void GetLastAccessTimeUtc_Null ()
 	{
 		Directory.GetLastAccessTimeUtc (null as string);
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void GetLastAccessTimeUtcException2 ()
 	{
 		Directory.GetLastAccessTimeUtc ("");
@@ -448,12 +452,12 @@ public class DirectoryTest : Assertion {
 			DateTime time = Directory.GetLastAccessTimeUtc (path);
 
 #if NET_2_0
-			Assertion.AssertEquals ("#1", 1601, time.Year);
-			Assertion.AssertEquals ("#2", 1, time.Month);
-			Assertion.AssertEquals ("#3", 1, time.Day);
-			Assertion.AssertEquals ("#4", 0, time.Hour);
-			Assertion.AssertEquals ("#5", 0, time.Second);
-			Assertion.AssertEquals ("#6", 0, time.Millisecond);
+			Assert.AreEqual (1601, time.Year, "#1");
+			Assert.AreEqual (1, time.Month, "#2");
+			Assert.AreEqual (1, time.Day, "#3");
+			Assert.AreEqual (0, time.Hour, "#4");
+			Assert.AreEqual (0, time.Second, "#5");
+			Assert.AreEqual (0, time.Millisecond, "#6");
 #endif
 		} finally {
 			DeleteDirectory (path);
@@ -461,28 +465,28 @@ public class DirectoryTest : Assertion {
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void GetLastAccessTimeUtcException4 ()
 	{
 		Directory.GetLastAccessTimeUtc ("    ");
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void GetLastAccessTimeUtcException5 ()
 	{
 		Directory.GetLastAccessTimeUtc (Path.InvalidPathChars [0].ToString ());
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentNullException))]	
+	[ExpectedException(typeof(ArgumentNullException))]
 	public void GetLastWriteTimeException1 ()
 	{
 		Directory.GetLastWriteTime (null as string);
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void GetLastWriteTimeException2 ()
 	{
 		Directory.GetLastWriteTime ("");
@@ -501,12 +505,12 @@ public class DirectoryTest : Assertion {
 
 #if NET_2_0
 			DateTime expectedTime = (new DateTime (1601, 1, 1)).ToLocalTime ();
-			Assertion.AssertEquals ("#1", expectedTime.Year, time.Year);
-			Assertion.AssertEquals ("#2", expectedTime.Month, time.Month);
-			Assertion.AssertEquals ("#3", expectedTime.Day, time.Day);
-			Assertion.AssertEquals ("#4", expectedTime.Hour, time.Hour);
-			Assertion.AssertEquals ("#5", expectedTime.Second, time.Second);
-			Assertion.AssertEquals ("#6", expectedTime.Millisecond, time.Millisecond);
+			Assert.AreEqual (expectedTime.Year, time.Year, "#1");
+			Assert.AreEqual (expectedTime.Month, time.Month, "#2");
+			Assert.AreEqual (expectedTime.Day, time.Day, "#3");
+			Assert.AreEqual (expectedTime.Hour, time.Hour, "#4");
+			Assert.AreEqual (expectedTime.Second, time.Second, "#5");
+			Assert.AreEqual (expectedTime.Millisecond, time.Millisecond, "#6");
 #endif
 		} finally {
 			DeleteDirectory (path);
@@ -514,28 +518,28 @@ public class DirectoryTest : Assertion {
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void GetLastWriteTimeException4 ()
 	{
 		Directory.GetLastWriteTime ("    ");
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void GetLastWriteTimeException5 ()
 	{
 		Directory.GetLastWriteTime (Path.InvalidPathChars [0].ToString ());
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentNullException))]	
+	[ExpectedException(typeof(ArgumentNullException))]
 	public void GetLastWriteTimeUtcException1 ()
 	{
 		Directory.GetLastWriteTimeUtc (null as string);
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void GetLastWriteTimeUtcException2 ()
 	{
 		Directory.GetLastWriteTimeUtc ("");
@@ -553,12 +557,12 @@ public class DirectoryTest : Assertion {
 			DateTime time = Directory.GetLastWriteTimeUtc (path);
 
 #if NET_2_0
-			Assertion.AssertEquals ("#1", 1601, time.Year);
-			Assertion.AssertEquals ("#2", 1, time.Month);
-			Assertion.AssertEquals ("#3", 1, time.Day);
-			Assertion.AssertEquals ("#4", 0, time.Hour);
-			Assertion.AssertEquals ("#5", 0, time.Second);
-			Assertion.AssertEquals ("#6", 0, time.Millisecond);
+			Assert.AreEqual (1601, time.Year, "#1");
+			Assert.AreEqual (1, time.Month, "#2");
+			Assert.AreEqual (1, time.Day, "#3");
+			Assert.AreEqual (0, time.Hour, "#4");
+			Assert.AreEqual (0, time.Second, "#5");
+			Assert.AreEqual (0, time.Millisecond, "#6");
 #endif
 		} finally {
 			DeleteDirectory (path);
@@ -567,14 +571,14 @@ public class DirectoryTest : Assertion {
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void GetLastWriteTimeUtcException4 ()
 	{
 		Directory.GetLastWriteTimeUtc ("    ");
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void GetLastWriteTimeUtcException5 ()
 	{
 		Directory.GetLastWriteTimeUtc (Path.InvalidPathChars[0].ToString ());
@@ -590,17 +594,16 @@ public class DirectoryTest : Assertion {
 		try {
 			Directory.CreateDirectory (path);
 			Directory.CreateDirectory (path + DSC + "dir");
-			AssertEquals ("test#01", true, Directory.Exists (path + DSC + "dir"));
+			Assert.IsTrue (Directory.Exists (path + DSC + "dir"), "#1");
 		
 			Directory.Move (path, path2);
-			AssertEquals ("test#02", false, Directory.Exists (path + DSC + "dir"));		
-			AssertEquals ("test#03", true, Directory.Exists (path2 + DSC + "dir"));
-		
+			Assert.IsFalse (Directory.Exists (path + DSC + "dir"), "#2");
+			Assert.IsTrue (Directory.Exists (path2 + DSC + "dir"), "#3");
 		} finally {
 			DeleteDirectory (path);
 			DeleteDirectory (path2);
 			if (Directory.Exists (path2 + DSC + "dir"))
-				Directory.Delete (path2 + DSC + "dir", true);			
+				Directory.Delete (path2 + DSC + "dir", true);
 		}
 	}
 	
@@ -609,9 +612,9 @@ public class DirectoryTest : Assertion {
 	public void MoveException1 ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.Test.8";
-		DeleteDirectory (path);		
+		DeleteDirectory (path);
 		try {
-			Directory.Move (path, path);		
+			Directory.Move (path, path);
 		} finally {
 			DeleteDirectory (path);
 		}
@@ -622,9 +625,9 @@ public class DirectoryTest : Assertion {
 	public void MoveException2 ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.Test.11";
-		DeleteDirectory (path);		
+		DeleteDirectory (path);
 		try {
-			Directory.Move ("", path);		
+			Directory.Move ("", path);
 		} finally {
 			DeleteDirectory (path);
 		}
@@ -635,7 +638,7 @@ public class DirectoryTest : Assertion {
 	public void MoveException3 ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.Test.12";
-		DeleteDirectory (path);		
+		DeleteDirectory (path);
 		try {
 			Directory.Move ("             ", path);
 		} finally {
@@ -650,11 +653,11 @@ public class DirectoryTest : Assertion {
 	{
 		string path = TempFolder + DSC + "DirectoryTest.Test.13";
 		path += Path.InvalidPathChars [0];
-		string path2 = TempFolder + DSC + "DirectoryTest.Test.13";		
+		string path2 = TempFolder + DSC + "DirectoryTest.Test.13";
 		DeleteDirectory (path);
 		DeleteDirectory (path2);
 		try {
-			Directory.CreateDirectory (path2);		
+			Directory.CreateDirectory (path2);
 			Directory.Move (path2, path);
 		} finally {
 			DeleteDirectory (path);
@@ -669,7 +672,7 @@ public class DirectoryTest : Assertion {
 		string path = TempFolder + DSC + "DirectoryTest.Test.14";
 		DeleteDirectory (path);
 		try {
-			Directory.Move (path, path + "Test.Test");		
+			Directory.Move (path, path + "Test.Test");
 		} finally {
 			DeleteDirectory (path);
 			DeleteDirectory (path + "Test.Test");
@@ -683,11 +686,11 @@ public class DirectoryTest : Assertion {
 		string path = TempFolder + DSC + "DirectoryTest.Test.15";
 		DeleteDirectory (path);
 		try {
-			Directory.CreateDirectory (path);		
+			Directory.CreateDirectory (path);
 			Directory.Move (path, path + DSC + "dir");
 		} finally {
 			DeleteDirectory (path);
-			DeleteDirectory (path + DSC + "dir");			
+			DeleteDirectory (path + DSC + "dir");
 		}
 	}
 
@@ -699,21 +702,28 @@ public class DirectoryTest : Assertion {
 		string path2 = TempFolder + DSC + "DirectoryTest.Test.17";
 		
 		DeleteDirectory (path);
-		DeleteDirectory (path2);		
+		DeleteDirectory (path2);
 		try {
 			Directory.CreateDirectory (path);
 			Directory.CreateDirectory (path2);
 			Directory.Move (path, path2);
 		} finally {
 			DeleteDirectory (path);
-			DeleteDirectory (path2);		
+			DeleteDirectory (path2);
 		}
 	}
 	
 	[Test]
-        [Ignore("Unix doesnt support CreationTime")]
 	public void CreationTime ()
 	{
+		// check for Unix platforms - see FAQ for more details
+		// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
+		int platform = (int) Environment.OSVersion.Platform;
+		if ((platform == 4) || (platform == 128))
+			// Unix doesnt support CreationTime
+			// FIXME: use Assert.Ignore
+			return;
+
 		string path = TempFolder + DSC + "DirectoryTest.CreationTime.1";
 		DeleteDirectory (path);
 		
@@ -721,40 +731,40 @@ public class DirectoryTest : Assertion {
 			Directory.CreateDirectory (path);
 			Directory.SetCreationTime (path, new DateTime (2003, 6, 4, 6, 4, 0));
 
-			DateTime time = Directory.GetCreationTime (path);		
-			AssertEquals ("test#01", 2003, time.Year);
-			AssertEquals ("test#02", 6, time.Month);
-			AssertEquals ("test#03", 4, time.Day);
-			AssertEquals ("test#04", 6, time.Hour);
-			AssertEquals ("test#05", 4, time.Minute);
-			AssertEquals ("test#06", 0, time.Second);
+			DateTime time = Directory.GetCreationTime (path);
+			Assert.AreEqual (2003, time.Year, "#A1");
+			Assert.AreEqual (6, time.Month, "#A2");
+			Assert.AreEqual (4, time.Day, "#A3");
+			Assert.AreEqual (6, time.Hour, "#A4");
+			Assert.AreEqual (4, time.Minute, "#A5");
+			Assert.AreEqual (0, time.Second, "#A6");
 		
 			time = TimeZone.CurrentTimeZone.ToLocalTime (Directory.GetCreationTimeUtc (path));
-			AssertEquals ("test#07", 2003, time.Year);
-			AssertEquals ("test#08", 6, time.Month);
-			AssertEquals ("test#09", 4, time.Day);
-			AssertEquals ("test#10", 6, time.Hour);
-			AssertEquals ("test#11", 4, time.Minute);
-			AssertEquals ("test#12", 0, time.Second);
+			Assert.AreEqual (2003, time.Year, "#B1");
+			Assert.AreEqual (6, time.Month, "#B2");
+			Assert.AreEqual (4, time.Day, "#B3");
+			Assert.AreEqual (6, time.Hour, "#B4");
+			Assert.AreEqual (4, time.Minute, "#B5");
+			Assert.AreEqual (0, time.Second, "#B6");
 
 			Directory.SetCreationTimeUtc (path, new DateTime (2003, 6, 4, 6, 4, 0));
 			time = TimeZone.CurrentTimeZone.ToUniversalTime (Directory.GetCreationTime (path));
-			AssertEquals ("test#13", 2003, time.Year);
-			AssertEquals ("test#14", 6, time.Month);
-			AssertEquals ("test#15", 4, time.Day);
-			AssertEquals ("test#16", 6, time.Hour);
-			AssertEquals ("test#17", 4, time.Minute);
-			AssertEquals ("test#18", 0, time.Second);
+			Assert.AreEqual (2003, time.Year, "#C1");
+			Assert.AreEqual (6, time.Month, "#C2");
+			Assert.AreEqual (4, time.Day, "#C3");
+			Assert.AreEqual (6, time.Hour, "#C4");
+			Assert.AreEqual (4, time.Minute, "#C5");
+			Assert.AreEqual (0, time.Second, "#C6");
 
-			time = Directory.GetCreationTimeUtc (path);		
-			AssertEquals ("test#19", 2003, time.Year);
-			AssertEquals ("test#20", 6, time.Month);
-			AssertEquals ("test#21", 4, time.Day);
-			AssertEquals ("test#22", 6, time.Hour);
-			AssertEquals ("test#23", 4, time.Minute);
-			AssertEquals ("test#24", 0, time.Second);
+			time = Directory.GetCreationTimeUtc (path);
+			Assert.AreEqual (2003, time.Year, "#D1");
+			Assert.AreEqual (6, time.Month, "#D2");
+			Assert.AreEqual (4, time.Day, "#D3");
+			Assert.AreEqual (6, time.Hour, "#D4");
+			Assert.AreEqual (4, time.Minute, "#D5");
+			Assert.AreEqual (0, time.Second, "#D6");
 		} finally {
-			DeleteDirectory (path);	
+			DeleteDirectory (path);
 		}
 	}
 
@@ -768,38 +778,38 @@ public class DirectoryTest : Assertion {
 			Directory.CreateDirectory (path);
 			Directory.SetLastAccessTime (path, new DateTime (2003, 6, 4, 6, 4, 0));
 
-			DateTime time = Directory.GetLastAccessTime (path);		
-			AssertEquals ("test#01", 2003, time.Year);
-			AssertEquals ("test#02", 6, time.Month);
-			AssertEquals ("test#03", 4, time.Day);
-			AssertEquals ("test#04", 6, time.Hour);
-			AssertEquals ("test#05", 4, time.Minute);
-			AssertEquals ("test#06", 0, time.Second);
+			DateTime time = Directory.GetLastAccessTime (path);
+			Assert.AreEqual (2003, time.Year, "#A1");
+			Assert.AreEqual (6, time.Month, "#A2");
+			Assert.AreEqual (4, time.Day, "#A3");
+			Assert.AreEqual (6, time.Hour, "#A4");
+			Assert.AreEqual (4, time.Minute, "#A5");
+			Assert.AreEqual (0, time.Second, "#A6");
 		
 			time = TimeZone.CurrentTimeZone.ToLocalTime (Directory.GetLastAccessTimeUtc (path));
-			AssertEquals ("test#07", 2003, time.Year);
-			AssertEquals ("test#08", 6, time.Month);
-			AssertEquals ("test#09", 4, time.Day);
-			AssertEquals ("test#10", 6, time.Hour);
-			AssertEquals ("test#11", 4, time.Minute);
-			AssertEquals ("test#12", 0, time.Second);
+			Assert.AreEqual (2003, time.Year, "#B1");
+			Assert.AreEqual (6, time.Month, "#B2");
+			Assert.AreEqual (4, time.Day, "#B3");
+			Assert.AreEqual (6, time.Hour, "#B4");
+			Assert.AreEqual (4, time.Minute, "#B5");
+			Assert.AreEqual (0, time.Second, "#B6");
 
 			Directory.SetLastAccessTimeUtc (path, new DateTime (2003, 6, 4, 6, 4, 0));
 			time = TimeZone.CurrentTimeZone.ToUniversalTime (Directory.GetLastAccessTime (path));
-			AssertEquals ("test#13", 2003, time.Year);
-			AssertEquals ("test#14", 6, time.Month);
-			AssertEquals ("test#15", 4, time.Day);
-			AssertEquals ("test#16", 6, time.Hour);
-			AssertEquals ("test#17", 4, time.Minute);
-			AssertEquals ("test#18", 0, time.Second);
+			Assert.AreEqual (2003, time.Year, "#C1");
+			Assert.AreEqual (6, time.Month, "#C2");
+			Assert.AreEqual (4, time.Day, "#C3");
+			Assert.AreEqual (6, time.Hour, "#C4");
+			Assert.AreEqual (4, time.Minute, "#C5");
+			Assert.AreEqual (0, time.Second, "#C6");
 
-			time = Directory.GetLastAccessTimeUtc (path);		
-			AssertEquals ("test#19", 2003, time.Year);
-			AssertEquals ("test#20", 6, time.Month);
-			AssertEquals ("test#21", 4, time.Day);
-			AssertEquals ("test#22", 6, time.Hour);
-			AssertEquals ("test#23", 4, time.Minute);
-			AssertEquals ("test#24", 0, time.Second);
+			time = Directory.GetLastAccessTimeUtc (path);
+			Assert.AreEqual (2003, time.Year, "#D1");
+			Assert.AreEqual (6, time.Month, "#D2");
+			Assert.AreEqual (4, time.Day, "#D3");
+			Assert.AreEqual (6, time.Hour, "#D4");
+			Assert.AreEqual (4, time.Minute, "#D5");
+			Assert.AreEqual (0, time.Second, "#D6");
 		} finally {
 			DeleteDirectory (path);
 		}
@@ -809,51 +819,51 @@ public class DirectoryTest : Assertion {
 	public void LastWriteTime ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.WriteTime.1";
-		DeleteDirectory (path);		
+		DeleteDirectory (path);
 		
 		try {
 			Directory.CreateDirectory (path);
 			Directory.SetLastWriteTime (path, new DateTime (2003, 6, 4, 6, 4, 0));
 
-			DateTime time = Directory.GetLastWriteTime (path);		
-			AssertEquals ("test#01", 2003, time.Year);
-			AssertEquals ("test#02", 6, time.Month);
-			AssertEquals ("test#03", 4, time.Day);
-			AssertEquals ("test#04", 6, time.Hour);
-			AssertEquals ("test#05", 4, time.Minute);
-			AssertEquals ("test#06", 0, time.Second);
+			DateTime time = Directory.GetLastWriteTime (path);
+			Assert.AreEqual (2003, time.Year, "#A1");
+			Assert.AreEqual (6, time.Month, "#A2");
+			Assert.AreEqual (4, time.Day, "#A3");
+			Assert.AreEqual (6, time.Hour, "#A4");
+			Assert.AreEqual (4, time.Minute, "#A5");
+			Assert.AreEqual (0, time.Second, "#A6");
 		
 			time = TimeZone.CurrentTimeZone.ToLocalTime (Directory.GetLastWriteTimeUtc (path));
-			AssertEquals ("test#07", 2003, time.Year);
-			AssertEquals ("test#08", 6, time.Month);
-			AssertEquals ("test#09", 4, time.Day);
-			AssertEquals ("test#10", 6, time.Hour);
-			AssertEquals ("test#11", 4, time.Minute);
-			AssertEquals ("test#12", 0, time.Second);
+			Assert.AreEqual (2003, time.Year, "#B1");
+			Assert.AreEqual (6, time.Month, "#B2");
+			Assert.AreEqual (4, time.Day, "#B3");
+			Assert.AreEqual (6, time.Hour, "#B4");
+			Assert.AreEqual (4, time.Minute, "#B5");
+			Assert.AreEqual (0, time.Second, "#B6");
 
 			Directory.SetLastWriteTimeUtc (path, new DateTime (2003, 6, 4, 6, 4, 0));
 			time = TimeZone.CurrentTimeZone.ToUniversalTime (Directory.GetLastWriteTime (path));
-			AssertEquals ("test#13", 2003, time.Year);
-			AssertEquals ("test#14", 6, time.Month);
-			AssertEquals ("test#15", 4, time.Day);
-			AssertEquals ("test#16", 6, time.Hour);
-			AssertEquals ("test#17", 4, time.Minute);
-			AssertEquals ("test#18", 0, time.Second);
+			Assert.AreEqual (2003, time.Year, "#C1");
+			Assert.AreEqual (6, time.Month, "#C2");
+			Assert.AreEqual (4, time.Day, "#C3");
+			Assert.AreEqual (6, time.Hour, "#C4");
+			Assert.AreEqual (4, time.Minute, "#C5");
+			Assert.AreEqual (0, time.Second, "#C6");
 
-			time = Directory.GetLastWriteTimeUtc (path);		
-			AssertEquals ("test#19", 2003, time.Year);
-			AssertEquals ("test#20", 6, time.Month);
-			AssertEquals ("test#21", 4, time.Day);
-			AssertEquals ("test#22", 6, time.Hour);
-			AssertEquals ("test#23", 4, time.Minute);
-			AssertEquals ("test#24", 0, time.Second);
+			time = Directory.GetLastWriteTimeUtc (path);
+			Assert.AreEqual (2003, time.Year, "#D1");
+			Assert.AreEqual (6, time.Month, "#D2");
+			Assert.AreEqual (4, time.Day, "#D3");
+			Assert.AreEqual (6, time.Hour, "#D4");
+			Assert.AreEqual (4, time.Minute, "#D5");
+			Assert.AreEqual (0, time.Second, "#D6");
 		} finally {
-			DeleteDirectory (path);		
+			DeleteDirectory (path);
 		}
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentNullException))]	
+	[ExpectedException(typeof(ArgumentNullException))]
 	public void SetLastWriteTimeException1 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -864,7 +874,7 @@ public class DirectoryTest : Assertion {
 	[ExpectedException(typeof(ArgumentException))]	
 	public void SetLastWriteTimeException2 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		Directory.SetLastWriteTime ("", time);
 	}
 	
@@ -872,7 +882,7 @@ public class DirectoryTest : Assertion {
 	[ExpectedException(typeof(FileNotFoundException))]
 	public void SetLastWriteTimeException3 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		string path = TempFolder + DSC + "DirectoryTest.SetLastWriteTime.2";
 		DeleteDirectory (path);
 		try {
@@ -883,30 +893,30 @@ public class DirectoryTest : Assertion {
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void SetLastWriteTimeException4 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		Directory.SetLastWriteTime ("    ", time);
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void SetLastWriteTimeException5 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		Directory.SetLastWriteTime (Path.InvalidPathChars [0].ToString (), time);
 	}
 
 //	[Test]
-//	[ExpectedException(typeof(ArgumentOutOfRangeException))]	
+//	[ExpectedException(typeof(ArgumentOutOfRangeException))]
 //	public void SetLastWriteTimeException6 ()
 //	{
 //		DateTime time = new DateTime (1003, 4, 6, 6, 4, 2);
 //		string path = TempFolder + Path.DirectorySeparatorChar + "DirectoryTest.SetLastWriteTime.1";
 //
 //		try {
-//			if (!Directory.Exists (path))			
+//			if (!Directory.Exists (path))
 //				Directory.CreateDirectory (path);
 //		
 //			Directory.SetLastWriteTime (path, time);
@@ -917,18 +927,18 @@ public class DirectoryTest : Assertion {
 //	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentNullException))]	
+	[ExpectedException(typeof(ArgumentNullException))]
 	public void SetLastWriteTimeUtcException1 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		Directory.SetLastWriteTimeUtc (null as string, time);
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void SetLastWriteTimeUtcException2 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		Directory.SetLastWriteTimeUtc ("", time);
 	}
 	
@@ -936,7 +946,7 @@ public class DirectoryTest : Assertion {
 	[ExpectedException(typeof(FileNotFoundException))]
 	public void SetLastWriteTimeUtcException3 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		string path = TempFolder + DSC + "DirectoryTest.SetLastWriteTimeUtc.2";
 		DeleteDirectory (path);
 		try {
@@ -947,23 +957,23 @@ public class DirectoryTest : Assertion {
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void SetLastWriteTimeUtcException4 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		Directory.SetLastWriteTimeUtc ("    ", time);
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void SetLastWriteTimeUtcException5 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		Directory.SetLastWriteTimeUtc (Path.InvalidPathChars [0].ToString (), time);
 	}
 
 //	[Test]
-//	[ExpectedException(typeof(ArgumentOutOfRangeException))]	
+//	[ExpectedException(typeof(ArgumentOutOfRangeException))]
 //	public void SetLastWriteTimeUtcException6 ()
 //	{
 //		DateTime time = new DateTime (1000, 4, 6, 6, 4, 2);
@@ -979,7 +989,7 @@ public class DirectoryTest : Assertion {
 //	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentNullException))]	
+	[ExpectedException(typeof(ArgumentNullException))]
 	public void SetLastAccessTimeException1 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -987,10 +997,10 @@ public class DirectoryTest : Assertion {
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void SetLastAccessTimeException2 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		Directory.SetLastAccessTime ("", time);
 	}
 	
@@ -998,7 +1008,7 @@ public class DirectoryTest : Assertion {
 	[ExpectedException(typeof(FileNotFoundException))]
 	public void SetLastAccessTimeException3 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		string path = TempFolder + DSC + "DirectoryTest.SetLastAccessTime.2";
 		DeleteDirectory (path);
 		try {
@@ -1009,29 +1019,29 @@ public class DirectoryTest : Assertion {
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void SetLastAccessTimeException4 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		Directory.SetLastAccessTime ("    ", time);
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void SetLastAccessTimeException5 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		Directory.SetLastAccessTime (Path.InvalidPathChars [0].ToString (), time);
 	}
 
 //	[Test]
-//	[ExpectedException(typeof(ArgumentOutOfRangeException))]	
+//	[ExpectedException(typeof(ArgumentOutOfRangeException))]
 //	public void SetLastAccessTimeException6 ()
 //	{
 //		DateTime time = new DateTime (1003, 4, 6, 6, 4, 2);
 //		string path = TempFolder + DSC + "DirectoryTest.SetLastAccessTime.1";
 //
-//		if (!Directory.Exists (path))			
+//		if (!Directory.Exists (path))
 //			Directory.CreateDirectory (path);
 //		try {
 //			Directory.SetLastAccessTime (path, time);
@@ -1042,18 +1052,18 @@ public class DirectoryTest : Assertion {
 //	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentNullException))]	
+	[ExpectedException(typeof(ArgumentNullException))]
 	public void SetLastAccessTimeUtcException1 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		Directory.SetLastAccessTimeUtc (null as string, time);
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void SetLastAccessTimeUtcException2 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		Directory.SetLastAccessTimeUtc ("", time);
 	}
 	
@@ -1061,7 +1071,7 @@ public class DirectoryTest : Assertion {
 	[ExpectedException(typeof(FileNotFoundException))]
 	public void SetLastAccessTimeUtcException3 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		string path = TempFolder + DSC + "DirectoryTest.SetLastAccessTimeUtc.2";
 		DeleteDirectory (path);
 		try {
@@ -1072,23 +1082,23 @@ public class DirectoryTest : Assertion {
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void SetLastAccessTimeUtcException4 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		Directory.SetLastAccessTimeUtc ("    ", time);
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void SetLastAccessTimeUtcException5 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		Directory.SetLastAccessTimeUtc (Path.InvalidPathChars [0].ToString (), time);
 	}
 
 //	[Test]
-//	[ExpectedException(typeof(ArgumentOutOfRangeException))]	
+//	[ExpectedException(typeof(ArgumentOutOfRangeException))]
 //	public void SetLastAccessTimeUtcException6 ()
 //	{
 //		DateTime time = new DateTime (1000, 4, 6, 6, 4, 2);
@@ -1112,10 +1122,10 @@ public class DirectoryTest : Assertion {
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void SetCreationTimeException2 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		Directory.SetCreationTime ("", time);
 	}
 	
@@ -1123,7 +1133,7 @@ public class DirectoryTest : Assertion {
 	[ExpectedException(typeof(FileNotFoundException))]
 	public void SetCreationTimeException3 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		string path = TempFolder + DSC + "DirectoryTest.SetCreationTime.2";
 		DeleteDirectory (path);
 		
@@ -1135,33 +1145,33 @@ public class DirectoryTest : Assertion {
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void SetCreationTimeException4 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		Directory.SetCreationTime ("    ", time);
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void SetCreationTimeException5 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		Directory.SetCreationTime (Path.InvalidPathChars [0].ToString (), time);
 	}
 
 //	[Test]
-//	[ExpectedException(typeof(ArgumentOutOfRangeException))]	
+//	[ExpectedException(typeof(ArgumentOutOfRangeException))]
 //	public void SetCreationTimeException6 ()
 //	{
 //		DateTime time = new DateTime (1003, 4, 6, 6, 4, 2);
 //		string path = TempFolder + DSC + "DirectoryTest.SetCreationTime.1";
 //
-//		if (!Directory.Exists (path))			
+//		if (!Directory.Exists (path))
 //			Directory.CreateDirectory (path);
 //		try {
 //			Directory.SetCreationTime (path, time);
-//			DeleteDirectory (path);			
+//			DeleteDirectory (path);
 //		} finally {
 //			DeleteDirectory (path);
 //		}
@@ -1169,18 +1179,18 @@ public class DirectoryTest : Assertion {
 //	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentNullException))]	
+	[ExpectedException(typeof(ArgumentNullException))]
 	public void SetCreationTimeUtcException1 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		Directory.SetCreationTimeUtc (null as string, time);
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void SetCreationTimeUtcException2 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		Directory.SetCreationTimeUtc ("", time);
 	}
 	
@@ -1188,7 +1198,7 @@ public class DirectoryTest : Assertion {
 	[ExpectedException(typeof(FileNotFoundException))]
 	public void SetCreationTimeUtcException3 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		string path = TempFolder + DSC + "DirectoryTest.SetLastAccessTimeUtc.2";
 		DeleteDirectory (path);
 		
@@ -1201,23 +1211,23 @@ public class DirectoryTest : Assertion {
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void SetCreationTimeUtcException4 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		Directory.SetCreationTimeUtc ("    ", time);
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]	
+	[ExpectedException(typeof(ArgumentException))]
 	public void SetCreationTimeUtcException5 ()
 	{
-		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
+		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
 		Directory.SetCreationTimeUtc (Path.InvalidPathChars [0].ToString (), time);
 	}
 
 //	[Test]
-//	[ExpectedException(typeof(ArgumentOutOfRangeException))]	
+//	[ExpectedException(typeof(ArgumentOutOfRangeException))]
 //	public void SetCreationTimeUtcException6 ()
 //	{
 //		DateTime time = new DateTime (1000, 4, 6, 6, 4, 2);
@@ -1251,7 +1261,7 @@ public class DirectoryTest : Assertion {
 					return;
 			}
 		
-			Assert ("Directory Not Found", false);
+			Assert.Fail ("Directory Not Found");
 		} finally {
 			DeleteDirectory (DirPath);
 		}
@@ -1263,7 +1273,7 @@ public class DirectoryTest : Assertion {
 		DirectoryInfo info;
 
 		info = Directory.GetParent (Path.GetPathRoot (Path.GetTempPath ()));
-		AssertEquals (null, info);
+		Assert.IsNull (info);
 	}
 	
 	[Test]
@@ -1283,12 +1293,11 @@ public class DirectoryTest : Assertion {
 					return;
 			}
 		
-			Assert ("File Not Found", false);
+			Assert.Fail ("File Not Found");
 		} finally {
 			if (File.Exists (DirPath))
 				File.Delete (DirPath);
-			
-		}								
+		}
 	}
 
 	[Test]
@@ -1330,7 +1339,7 @@ public class DirectoryTest : Assertion {
 	private void DeleteDirectory (string path)
 	{
 		if (Directory.Exists (path))
-			Directory.Delete (path, true);		
+			Directory.Delete (path, true);
 	}
 
 	private void DeleteFile (string path)

@@ -1,3 +1,9 @@
+2006-11-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DirectoryTest.cs: Use Assert class intead of deriving from 
+	deprecated Assertion class. Only ignore CreationTime test on unix.
+	Removed extra tabs.
+
 2006-11-07  Dick Porter  <dick@ximian.com>
 
 	* DirectoryTest.cs: CreateDirectoryAlreadyExistsAsFile() should
