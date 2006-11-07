@@ -133,6 +133,7 @@ namespace System.Windows.Forms {
 			image		= null;
 			image_list	= null;
 			image_alignment	= ContentAlignment.MiddleCenter;
+			ime_mode        = ImeMode.Disable;
 			text_alignment	= ContentAlignment.MiddleCenter;
 			is_default	= false;
 			is_entered	= false;
@@ -232,9 +233,6 @@ namespace System.Windows.Forms {
 				if (value != null) {
 					if (image != null) {
 						image=null;
-					}
-					if (image_list.Images.Count >= image_index) {
-						image_index=image_list.Images.Count-1;
 					}
 				}
 				Redraw();
