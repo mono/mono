@@ -1941,6 +1941,8 @@ namespace System.Windows.Forms
 		protected override void CreateHandle ()
 		{
 			base.CreateHandle ();
+			if (SelectedItems.Count > 0)
+				OnSelectedIndexChanged (EventArgs.Empty);
 		}
 
 		protected override void Dispose (bool disposing)

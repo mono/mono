@@ -1,3 +1,8 @@
+2006-11-07  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs : raise OnSelectedIndexChanged in CreateHandle
+	if there's a selection.  Fixes #79849.
+
 2006-11-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* PropertyGrid.cs: Avoid fixed height of help description label.
