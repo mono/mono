@@ -1097,7 +1097,8 @@ public class StringTest : Assertion
 		AssertEquals("basic char index", 1, s1.LastIndexOf('r'));
 		AssertEquals("basic char index", 4, s1.LastIndexOf('i'));
 		AssertEquals("basic char index - no", -1, s1.LastIndexOf('q'));
-		
+
+		AssertEquals("basic string index", 7, s1.LastIndexOf(""));
 		AssertEquals("basic string index", 1, s1.LastIndexOf("rig"));
 		AssertEquals("basic string index", 4, s1.LastIndexOf("i"));
 		AssertEquals("basic string index - no", -1, 
