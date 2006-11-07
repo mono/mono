@@ -556,14 +556,16 @@ namespace System.Windows.Forms {
 
 		internal override void OnGotFocusInternal(EventArgs e) {
 			has_focus = true;
-			Invalidate(GetTabRect(selected_index));
+			if (selected_index != -1)
+				Invalidate(GetTabRect(selected_index));
 			base.OnGotFocusInternal (e);
 		}
 
 
 		internal override void OnLostFocusInternal(EventArgs e) {
 			has_focus = false;
-			Invalidate(GetTabRect(selected_index));
+			if (selected_index != -1)
+				Invalidate(GetTabRect(selected_index));
 			base.OnLostFocusInternal (e);
 		}
 
