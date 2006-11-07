@@ -1,3 +1,7 @@
+2006-11-06  Jackson Harper  <jackson@ximian.com>
+
+	* TreeNodeCollection.cs: Update scrollbars after clearing.
+
 2006-11-06  Chris Toshok  <toshok@ximian.com>
 
 	* NumericUpDown.cs: fix the ToString method for some unit test

@@ -155,6 +155,7 @@ namespace System.Windows.Forms {
 				if (tree_view != null) {
 					tree_view.UpdateBelow (owner);
 					tree_view.RecalculateVisibleOrder (owner);
+					tree_view.UpdateScrollBars ();
 				}
 			}
 		}
