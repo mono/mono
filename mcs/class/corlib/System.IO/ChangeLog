@@ -1,3 +1,9 @@
+2006-11-07  Dick Porter  <dick@ximian.com>
+
+	* Directory.cs: CreateDirectory() should only throw IOException in
+	the 2.0 profile if a file already exists with the same name, not a
+	directory.
+
 2006-11-03 Jensen Somers <jensen.somers@gmail.com>
 
 	* Directory.cs: CreateDirectory() should throw IOException if a
