@@ -124,7 +124,10 @@ public class DnsTest : Assertion {
 		Dns.GetHostByAddress ("not an IP address");
 	}
 
-	[Test, ExpectedException (typeof (SocketException))]
+	[Test]
+#if ONLY_1_1
+	[ExpectedException (typeof (SocketException))]
+#endif
         public void GetHostByAddressString5() {
 		Dns.GetHostByAddress (site1Dot);
 	}
