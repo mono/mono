@@ -31,6 +31,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsNotNull (pg.SelectedObjects, "#B3");
 			Assert.AreEqual (1, pg.SelectedObjects.Length, "#B4");
 			Assert.AreSame (button1, pg.SelectedObjects [0], "#B5");
+			Assert.IsNotNull (pg.SelectedGridItem, "#B6");
 		}
 
 		[Test]
