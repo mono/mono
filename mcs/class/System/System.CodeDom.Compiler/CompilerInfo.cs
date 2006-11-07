@@ -72,10 +72,16 @@ namespace System.CodeDom.Compiler {
 			get { return type != null; }
 		}
 
-		[MonoTODO]
 		public CompilerParameters CreateDefaultCompilerParameters ()
 		{
-			throw new NotImplementedException ();
+			CompilerParameters cparams = new CompilerParameters ();
+			if (CompilerOptions == null)
+				cparams.CompilerOptions = String.Empty;
+			else
+				cparams.CompilerOptions = CompilerOptions;
+			cparams.WarningLevel = WarningLevel;
+
+			return cparams;
 		}
 
 		public CodeDomProvider CreateProvider ()

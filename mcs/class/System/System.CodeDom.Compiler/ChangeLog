@@ -1,3 +1,11 @@
+2006-11-07  Marek Habersack  <grendello@gmail.com>
+
+	* CompilerInfo.cs: Implement the CreateDefaultCompilerParameters API.
+
+	* CodeDomConfigurationHandler.cs: WarningLevel of CompilerInfo
+	should default to -1 if it is absent from the config file, as per
+	MSDN.
+
 2006-11-06  Marek Habersack  <grendello@gmail.com>
 
 	* CodeDomProvider.cs: IsDefinedLanguage should return true if

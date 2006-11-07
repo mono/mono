@@ -104,7 +104,7 @@ namespace System.CodeDom.Compiler
 				compiler.Extensions = AttValue ("extension", child);
 				compiler.TypeName = AttValue ("type", child);
 				compiler.CompilerOptions = AttValue ("compilerOptions", child, true, true);
-				compiler.WarningLevel = AttUIntValue ("warningLevel", child, 0);
+				compiler.WarningLevel = AttUIntValue ("warningLevel", child, -1);
 				compiler.Init ();
 				
 				foreach (string l in compiler.Languages.Split(';'))
@@ -234,7 +234,7 @@ namespace System.CodeDom.Compiler
 				Init (parent);
 
 			if (compilers == null)
-				compilers = new CompilerCollection ();
+				compilers = new CompilerCollection ();			
 
 			if (temp_directory == null)
 				temp_directory = Path.GetTempPath ();
