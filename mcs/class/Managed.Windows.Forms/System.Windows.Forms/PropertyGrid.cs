@@ -530,6 +530,10 @@ namespace System.Windows.Forms {
 
 				RefreshTabs(PropertyTabScope.Component);
 				ReflectObjects();
+				if (grid_items.Count > 0) {
+					/* find the first non category grid item and select it */
+					SelectedGridItem = property_grid_view.FindFirstItem (grid_items);
+				}
 				property_grid_view.Refresh();
 				OnSelectedObjectsChanged (EventArgs.Empty);
 			}
@@ -992,7 +996,7 @@ namespace System.Windows.Forms {
 						   exclude it */
 					}
 					else if (!property.IsBrowsable
-					    || (objs.Length > 0 && property.Attributes.Contains (MergablePropertyAttribute.No))
+					    || (objs.Length > 1 && property.Attributes.Contains (MergablePropertyAttribute.No))
 					    || property.Attributes.Contains (new EditorBrowsableAttribute (EditorBrowsableState.Never))
 					    || property.Attributes.Contains (new EditorBrowsableAttribute (EditorBrowsableState.Advanced))) {
 						/* if the property isn't supposed to be displayed in the merged view,
@@ -1020,9 +1024,9 @@ namespace System.Windows.Forms {
 							      GridItemCollection grid_item_coll, bool recurse, GridItem parent_grid_item) {
 			foreach (PropertyDescriptor property in properties) {
 
-				GridEntry grid_entry = new GridEntry (objs, property);
+				GridEntry grid_entry = new GridEntry (property_grid_view, objs, property);
 				grid_entry.SetParent (parent_grid_item);
-				if (property_sort == PropertySort.Alphabetical || !recurse) {
+				if (property_sort == PropertySort.Alphabetical || /* XXX */property_sort == PropertySort.NoSort || !recurse) {
 					if (grid_item_coll[property.Name] == null) {
 						grid_item_coll.Add(property.Name,grid_entry);
 						grid_entry.SetUIParent ((GridEntry)parent_grid_item);
@@ -1033,7 +1037,7 @@ namespace System.Windows.Forms {
 					string category = property.Category;
 					CategoryGridEntry cat_item = grid_item_coll[category] as CategoryGridEntry;
 					if (cat_item == null) {
-						cat_item = new CategoryGridEntry(category);
+						cat_item = new CategoryGridEntry(property_grid_view, category);
 						cat_item.SetParent (parent_grid_item);
 						cat_item.SetUIParent ((GridEntry)parent_grid_item);
 						grid_item_coll.Add(category,cat_item);

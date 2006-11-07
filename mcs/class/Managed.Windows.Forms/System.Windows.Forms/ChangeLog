@@ -1,3 +1,45 @@
+2006-11-06  Chris Toshok  <toshok@ximian.com>
+
+	* PropertyGrid.cs:
+	- set the initial SelectedGridItem if we can.
+
+	- Exclude non-mergable properties only if we're merging > 1
+	object.  Merging 1 object isn't really merging, obviously.
+
+	- Handle PropertySort.NoSort just like Alphabetical, which is
+	wrong of course, but at least gets things on the screen.
+	
+	* PropertyGridView.cs:
+	- Add method "FindFirstItem" which finds the first property grid
+	item, so we can select it by default.
+
+	- make use of GridEntry.CanResetValue.
+
+	- Don't call RedrawBelowItemOnExpansion here anymore, the
+	individual GridEntry's will do that.
+
+	- Remove the ITypeDescriptorContextImpl internal class.
+	
+	* GridEntry.cs:
+	- this class needs to implement ITypeDescriptorContext, as it's
+	what MS's PropertyDescriptorGridEntry does, which means we can
+	remove the ITypeDescriptorContextImpl internal class from
+	PropertyGrid.cs.  This fixes the crashing portion of bug #79829.
+
+	- keep a reference to our PropertyGridView, and move the call to
+	RedrawBelowItemOnExpansion here from PGV.  This means
+	programmaticly setting Expanded actually does something visible.
+
+	- add a CanResetValue() function which takes into account our
+	possibly multiple "selected_objects" in the merged case.  Shifting
+	PropertyGridView to use this method fixes another unreported
+	crasher found running the test for #79829.
+
+	- when Top or Bounds is updated, make sure the PropertyGridTextBox
+	is updated to reflect this.
+
+	* CategoryGridEntry.cs: the ctor takes the PGV now.
+	
 2006-11-06  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: These are 1 based.

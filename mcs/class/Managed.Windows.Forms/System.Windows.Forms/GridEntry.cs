@@ -32,7 +32,7 @@ using System.Drawing;
 
 namespace System.Windows.Forms.PropertyGridInternal
 {
-	internal class GridEntry : GridItem
+	internal class GridEntry : GridItem, ITypeDescriptorContext
 	{
 		#region Local Variables
 		private bool expanded = true;
@@ -45,17 +45,20 @@ namespace System.Windows.Forms.PropertyGridInternal
 		private int top;
 		private Rectangle plus_minus_bounds;
 		private Rectangle bounds;
+		private PropertyGridView property_grid_view;
 		#endregion	// Local Variables
 
 		#region  Contructors
-		public GridEntry() : base() {
+		protected GridEntry (PropertyGridView view)
+		{
+			property_grid_view = view;
 			plus_minus_bounds = new Rectangle(0,0,0,0);
 			bounds = new Rectangle(0,0,0,0);
 			top = -1;
 			grid_items = new GridItemCollection();
 		}
 
-		public GridEntry(object[] objs, PropertyDescriptor prop_desc) : this() {
+		public GridEntry(PropertyGridView view, object[] objs, PropertyDescriptor prop_desc) : this (view) {
 			selected_objects = objs;
 			property_descriptor = prop_desc;
 		}
@@ -76,7 +79,11 @@ namespace System.Windows.Forms.PropertyGridInternal
 			}
 
 			set {
+				if (expanded == value)
+					return;
+
 				expanded = value;
+				property_grid_view.RedrawBelowItemOnExpansion (this);
 			}
 		}
 
@@ -115,6 +122,14 @@ namespace System.Windows.Forms.PropertyGridInternal
 			}
 		}
 
+		public bool CanResetValue ()
+		{
+			if (Value == null) /* not sure if this is always right.. */
+				return false;
+
+			return PropertyDescriptor.CanResetValue(selected_objects[0]);
+		}
+
 		public override object Value
 		{
 			get {
@@ -143,6 +158,47 @@ namespace System.Windows.Forms.PropertyGridInternal
 		}
 		#endregion	// Public Instance Methods
 
+		#region ITypeDescriptorContext Members
+
+		void ITypeDescriptorContext.OnComponentChanged() {
+			// TODO:  Add SystemComp.OnComponentChanged implementation
+		}
+
+		[MonoTODO ("this is broken, as PropertyGridView doesn't implement IContainer")]
+		IContainer ITypeDescriptorContext.Container {
+			get {
+				return property_grid_view as IContainer;
+			}
+		}
+
+		bool ITypeDescriptorContext.OnComponentChanging() {
+			// TODO:  Add SystemComp.OnComponentChanging implementation
+			return false;
+		}
+
+		object ITypeDescriptorContext.Instance {
+			get {
+				return Value;
+			}
+		}
+
+		PropertyDescriptor ITypeDescriptorContext.PropertyDescriptor {
+			get {
+				return PropertyDescriptor;
+			}
+		}
+
+		#endregion
+
+		#region IServiceProvider Members
+
+		object IServiceProvider.GetService(Type serviceType) {
+			// TODO:  Add SystemComp.GetService implementation
+			return null;
+		}
+
+		#endregion
+
 		internal object[] SelectedObjects {
 			get {
 				return selected_objects;
@@ -154,7 +210,12 @@ namespace System.Windows.Forms.PropertyGridInternal
 				return top;
 			}
 			set {
+				if (top == value)
+					return;
+
 				top = value;
+				if (property_grid_view.property_grid.SelectedGridItem == this)
+					property_grid_view.grid_textbox_Show (this);
 			}
 		}
 
@@ -175,7 +236,12 @@ namespace System.Windows.Forms.PropertyGridInternal
 			}
 			set
 			{
+				if (bounds == value)
+					return;
+
 				bounds = value;
+				if (property_grid_view.property_grid.SelectedGridItem == this)
+					property_grid_view.grid_textbox_Show (this);
 			}
 		}
 

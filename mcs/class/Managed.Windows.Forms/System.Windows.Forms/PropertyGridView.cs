@@ -48,7 +48,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		private const int RESIZE_WIDTH = 3;
 		private const int BUTTON_WIDTH = 25;
 		private PropertyGridTextBox grid_textbox;
-		private PropertyGrid property_grid;
+		internal PropertyGrid property_grid;
 		private bool resizing_grid;
 		private int open_grid_item_count = -1;
 		private int skipped_grid_items;
@@ -152,8 +152,9 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			}
 		}
 
-		void RedrawBelowItemOnExpansion (GridItem item)
+		public void RedrawBelowItemOnExpansion (GridItem item)
 		{
+			grid_textbox_Hide ();
 #if DOUBLEBUFFER
 			Invalidate(new Rectangle (0, item.Top, Width, Height - item.Top));
 #else
@@ -179,12 +180,12 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			InvalidateGridItem (item);
 			Update();
 #endif
+			grid_textbox_Show (property_grid.SelectedGridItem);
 		}
 
 		protected override void OnDoubleClick(EventArgs e) {
 			if (property_grid.SelectedGridItem.Expandable) {
 				property_grid.SelectedGridItem.Expanded = !property_grid.SelectedGridItem.Expanded;
-				RedrawBelowItemOnExpansion (property_grid.SelectedGridItem);
 			}
 			else {
 				ToggleValue();
@@ -245,7 +246,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					if (foundItem.Expandable) {
 						if (e.X >=3 && e.X <= 11 && (e.Y % row_height >= row_height/2-2 && e.Y % row_height <= row_height/2+4)) {
 							foundItem.Expanded = !foundItem.Expanded;
-							RedrawBelowItemOnExpansion (foundItem);
 						}
 					}
 					this.property_grid.SelectedGridItem = foundItem;
@@ -333,6 +333,22 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			default:
 				return false;
 			}
+		}
+
+		public GridItem FindFirstItem (GridItemCollection items)
+		{
+			foreach (GridItem item in items) {
+				if (item.GridItemType == GridItemType.Property)
+					return item;
+
+				if (item.GridItems.Count > 0) {
+					GridItem subitem = FindFirstItem (item.GridItems);
+					if (subitem != null)
+						return subitem;
+				}
+			}
+
+			return null;
 		}
 
 		private GridEntry MoveUpFromItem (GridEntry item, int up_count)
@@ -428,7 +444,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					   otherwise, act just like the user pressed up */
 					if (selectedItem.Expandable && selectedItem.Expanded) {
 						selectedItem.Expanded = false;
-						RedrawBelowItemOnExpansion (property_grid.SelectedGridItem);
 						e.Handled = true;
 						break;
 					}
@@ -448,7 +463,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					   otherwise, act just like the user pressed down */
 					if (selectedItem.Expandable && !selectedItem.Expanded) {
 						selectedItem.Expanded = true;
-						RedrawBelowItemOnExpansion (property_grid.SelectedGridItem);
 						e.Handled = true;
 						break;
 					}
@@ -459,7 +473,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				/* toggle the expanded state of the selected item */
 				if (selectedItem.Expandable) {
 					selectedItem.Expanded = !selectedItem.Expanded;
-					RedrawBelowItemOnExpansion (property_grid.SelectedGridItem);
 				}
 				e.Handled = true;
 				break;
@@ -627,8 +640,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					try {
 						editor.PaintValue(grid_item.Value, pevent.Graphics, new Rectangle(SplitterLocation+3,rect.Y+3, 19, row_height-5));
 					}
-					catch (Exception ex) {
-						System.Console.WriteLine(ex);
+					catch (Exception) {
 					}
 					xLoc += 27;
 				}
@@ -639,9 +651,9 @@ namespace System.Windows.Forms.PropertyGridInternal {
 						Brush brush;
 
 						string value = grid_item.PropertyDescriptor.Converter.ConvertToString(grid_item.Value);
-						if (grid_item.PropertyDescriptor.CanResetValue(property_grid.SelectedObject))
+						if (((GridEntry)grid_item).CanResetValue ())
 							font = bold_font;
-				
+
 						brush = SystemBrushes.WindowText;
 						if (grid_item.PropertyDescriptor.IsReadOnly
 						    && !grid_item.Expandable)
@@ -653,7 +665,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 											  ClientRectangle.Width-(xLoc), row_height),string_format);
 					}
 					else {
-						System.Console.WriteLine("No converter for type {0}",grid_item.PropertyDescriptor.PropertyType);
+						Console.WriteLine("No converter for type {0}",grid_item.PropertyDescriptor.PropertyType);
 					}
 
 				}
@@ -726,7 +738,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 							SetPropertyValue(desc.Converter.ConvertFromString(grid_textbox.Text));
 						}
 						else {
-							System.Console.WriteLine("No converter for type {0}",desc.PropertyType);
+							Console.WriteLine("No converter for type {0}",desc.PropertyType);
 						}
 					}
 					catch (Exception) {
@@ -847,7 +859,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			service_container.AddService (typeof (IWindowsFormsEditorService), this);
 			object initial_value = property_grid.SelectedGridItem.Value;
 			object value = editor.EditValue (
-				new ITypeDescriptorContextImpl (this.property_grid),
+				(ITypeDescriptorContext)property_grid.SelectedGridItem,
 				service_container,
 				initial_value);
 			if (!Object.Equals (value, initial_value)) {
@@ -892,14 +904,14 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			Invalidate();
 		}
 
-		private void grid_textbox_Show (GridItem forItem)
+		internal void grid_textbox_Show (GridItem forItem)
 		{
 			if (forItem == null || forItem.PropertyDescriptor == null)
 				return;
 
 			SuspendLayout ();
 
-			if (forItem.PropertyDescriptor.CanResetValue(property_grid.SelectedObject))
+			if (((GridEntry)forItem).CanResetValue ())
 				grid_textbox.Font = bold_font;
 			else
 				grid_textbox.Font = this.Font;
@@ -936,7 +948,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 						}
 					}
 					else {
-						System.Console.WriteLine("Converter not available for type {0}",forItem.PropertyDescriptor.PropertyType);
+						Console.WriteLine("Converter not available for type {0}",forItem.PropertyDescriptor.PropertyType);
 					}
 						
 				}
@@ -993,11 +1005,12 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 			if (e.NewSelection.GridItemType == GridItemType.Property) {
 				if (e.NewSelection.PropertyDescriptor != null) {
+
 					if (e.NewSelection.Value == null)
 						grid_textbox.Text = "";
 					else
 						grid_textbox.Text = e.NewSelection.PropertyDescriptor.Converter.ConvertToString(e.NewSelection.Value);
-					if (e.NewSelection.PropertyDescriptor.CanResetValue(property_grid.SelectedObject))
+					if (((GridEntry)e.NewSelection).CanResetValue ())
 						grid_textbox.Font = bold_font;
 					else
 						grid_textbox.Font = this.Font;
@@ -1013,7 +1026,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		private void PropertyValueChanged(object s, PropertyValueChangedEventArgs e) {
 			if (e.ChangedItem.PropertyDescriptor != null) {
 				grid_textbox.Text = e.ChangedItem.PropertyDescriptor.Converter.ConvertToString(e.ChangedItem.Value);
-				if (e.ChangedItem.PropertyDescriptor.CanResetValue(property_grid.SelectedObject))
+				if (((GridEntry)e.ChangedItem).CanResetValue())
 					grid_textbox.Font = bold_font;
 				else
 					grid_textbox.Font = this.Font;
@@ -1085,56 +1098,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 		#endregion
 
-		#region Internal Classes
-		internal class ITypeDescriptorContextImpl : System.ComponentModel.ITypeDescriptorContext {
-			private PropertyGrid property_grid;
-			public ITypeDescriptorContextImpl(PropertyGrid propertyGrid) {
-				property_grid = propertyGrid;
-			}
-			#region ITypeDescriptorContext Members
-
-			public void OnComponentChanged() {
-				// TODO:  Add SystemComp.OnComponentChanged implementation
-			}
-
-			public IContainer Container {
-				get {
-					return property_grid as IContainer;
-				}
-			}
-
-			public bool OnComponentChanging() {
-				// TODO:  Add SystemComp.OnComponentChanging implementation
-				return false;
-			}
-
-			public object Instance {
-				get {
-					return property_grid.SelectedGridItem.Value;
-				}
-			}
-
-			public PropertyDescriptor PropertyDescriptor {
-				get {
-					return property_grid.SelectedGridItem.PropertyDescriptor;
-				}
-			}
-
-			#endregion
-
-			#region IServiceProvider Members
-
-			public object GetService(Type serviceType) {
-				// TODO:  Add SystemComp.GetService implementation
-				return null;
-			}
-
-			#endregion
-
-		}
-
-
-		
 		/*
 			class ComboListBox
 		*/
@@ -1149,7 +1112,5 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			}
 
 		}
-
-		#endregion
 	}
 }

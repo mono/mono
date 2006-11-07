@@ -9,7 +9,8 @@ namespace System.Windows.Forms.PropertyGridInternal
 	internal class CategoryGridEntry : GridEntry
 	{
 		private string label;
-		public CategoryGridEntry(string category)
+		public CategoryGridEntry(PropertyGridView owner, string category)
+			: base (owner)
 		{
 			label = category;
 		}
