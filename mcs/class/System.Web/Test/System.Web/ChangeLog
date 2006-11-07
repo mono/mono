@@ -1,5 +1,9 @@
 2006-11-05 Andrew Skiba <andrews@mainsoft.com>
 
+	* HttpRequestTest.cs, HttpWorkerRequestTest.cs: TARGET_JVM
+
+2006-11-05 Andrew Skiba <andrews@mainsoft.com>
+
 	* StaticSiteMapProviderTest.cs: add 2 tests, one is fixed and the
 	other needs to be fixed yet.
 

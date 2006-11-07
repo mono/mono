@@ -147,6 +147,9 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+#if TARGET_JVM //BUG #6500
+		[Category ("NotWorking")]
+#endif
 		[Category ("NunitWeb")]
 		public void Test_PhysicalApplicationPath ()
 		{
@@ -165,6 +168,9 @@ namespace MonoTests.System.Web {
 
 		[Test]
 		[Category ("NunitWeb")]
+#if TARGET_JVM //BUG #6500
+		[Category ("NotWorking")]
+#endif
 		public void Test_MapPath ()
 		{
 			WebTest t = new WebTest (new HandlerInvoker (new HandlerDelegate (
