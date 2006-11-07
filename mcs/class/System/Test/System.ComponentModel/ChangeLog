@@ -1,3 +1,8 @@
+2006-11-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CollectionConverterTest.cs: New. Some unit tests done while tracking
+	an issue.
+
 2006-09-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.ComponentModel/ContainerTest.cs: new test.
