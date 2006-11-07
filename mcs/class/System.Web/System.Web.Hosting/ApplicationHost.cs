@@ -57,6 +57,19 @@ namespace System.Web.Hosting {
 			return r;
 		}
 
+		static object create_dir = new object ();
+		static void CreateDirectory (string directory)
+		{
+#if NET_2_0
+			lock (create_dir) {
+				if (!Directory.Exists (directory))
+					Directory.CreateDirectory (directory);
+			}
+#else
+			Directory.CreateDirectory (directory);
+#endif
+		}
+
 		//
 		// For further details see `Hosting the ASP.NET runtime'
 		//
@@ -112,9 +125,9 @@ namespace System.Web.Hosting {
 					String.Format ("{0}-temp-aspnet-{1:x}", user, i));
 			
 				try {
-					Directory.CreateDirectory (d);
+					CreateDirectory (d);
 					string stamp = Path.Combine (d, "stamp");
-					Directory.CreateDirectory (stamp);
+					CreateDirectory (stamp);
 					dynamic_dir = d;
 					Directory.Delete (stamp);
 					break;
@@ -123,7 +136,7 @@ namespace System.Web.Hosting {
 				}
 			}
 			setup.DynamicBase = dynamic_dir;
-			Directory.CreateDirectory (setup.DynamicBase);
+			CreateDirectory (setup.DynamicBase);
 
 			//
 			// Create app domain
