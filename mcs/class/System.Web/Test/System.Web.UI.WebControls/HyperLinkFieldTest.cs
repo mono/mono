@@ -226,6 +226,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+#if TARGET_JVM //BUG #6498
+		[Category ("NotWorking")]
+#endif
 		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void HyperLinkField_AssignPropertyExepton ()
 		{

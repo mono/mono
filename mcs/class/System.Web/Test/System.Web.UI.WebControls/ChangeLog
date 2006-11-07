@@ -1,5 +1,15 @@
 2006-11-07 Andrew Skiba <andrews@mainsoft.com>
 
+	* HyperLinkFieldTest.cs, SiteMapDataSourceTest.cs, ThemeTest.cs,
+	TreeNodeBindingTest.cs, TreeNodeTest.cs, WebColorConverterTest.cs:
+	TARGET_JVM
+
+2006-11-07 Andrew Skiba <andrews@mainsoft.com>
+
+	* ListControlTest.cs: add an assert to test
+
+2006-11-07 Andrew Skiba <andrews@mainsoft.com>
+
 	* DetailsViewTest.cs: TARGET_JVM and test message
 	* FormViewTest.cs, GridViewTest.cs: TARGET_JVM
 

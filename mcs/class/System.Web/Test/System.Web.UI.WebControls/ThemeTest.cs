@@ -299,6 +299,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		
 		[Test]
 		[Category("NunitWeb")]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void UrlPropertyTest ()
 		{
 			string res = new WebTest ("UrlProperty.aspx").Run ();

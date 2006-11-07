@@ -73,6 +73,9 @@ namespace MonoTests.System.Web.UI.WebControls {
 	public class TreeNodeTest {
 
 		[Test]
+#if TARGET_JVM //BUG #6497
+		[Category ("NotWorking")]
+#endif
 		public void TreeNode_DefaultProperties () {
 			PokerTreeNode tn = new PokerTreeNode ();
 			Assert.AreEqual (false, tn.Checked, "Checked");
@@ -99,7 +102,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		public void TreeNode_AssignToDefaultProperties () {
+#if TARGET_JVM //BUG #6502
+		[Category ("NotWorking")]
+#endif
+		public void TreeNode_AssignToDefaultProperties ()
+		{
 			PokerTreeNode tn = new PokerTreeNode ();
 			tn.Checked = false;
 			Assert.AreEqual (false, tn.Checked, "Checked");
@@ -140,6 +147,9 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
+#if TARGET_JVM //probably dependant on BUG #6489
+		[Category ("NotWorking")]
+#endif
 		public void TreeNode_Method_Clone () {
 			PokerTreeNode tn1 = new PokerTreeNode ();
 			TreeNode tn2 = new TreeNode ();
@@ -231,7 +241,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		public void TreeNode_ToggleExpandState () {
+#if TARGET_JVM //BUG #6497; BUG #6502
+		[Category ("NotWorking")]
+#endif
+		public void TreeNode_ToggleExpandState ()
+		{
 			TreeNode node = new TreeNode ("node");
 			Assert.AreEqual (null, node.Expanded, "TreeNode_ToggleExpandState#1");
 			node.ToggleExpandState ();

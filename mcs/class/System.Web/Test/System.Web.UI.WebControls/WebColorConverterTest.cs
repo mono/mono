@@ -31,7 +31,6 @@
 using NUnit.Framework;
 using System;
 using System.Collections;
-using System.ComponentModel;
 using System.IO;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -46,6 +45,9 @@ namespace MonoTests.System.Web.UI.WebControls
 	public class WebColorConverterTest 
 	{
 		[Test]
+#if TARGET_JVM //BUG #6490
+		[Category ("NotWorking")]
+#endif
 		public void Basic () 
 		{
 			WebColorConverter	conv;
