@@ -2474,7 +2474,7 @@ namespace System.Web.Services.Description
 		}
 	}
 #if !TARGET_JVM
-	internal class XmlSerializerContract : System.Xml.Serialization.IXmlSerializerImplementation
+	internal class XmlSerializerContract : System.Xml.Serialization.XmlSerializerImplementation
 	{
 		System.Collections.Hashtable readMethods = null;
 		System.Collections.Hashtable writeMethods = null;
@@ -2494,7 +2494,7 @@ namespace System.Web.Services.Description
 
 		public System.Collections.Hashtable ReadMethods {
 			get {
-				lock (System.Xml.Serialization.XmlSerializationGeneratedCode.InternalSyncObject) {
+				lock (this) {
 					if (readMethods == null) {
 						readMethods = new System.Collections.Hashtable ();
 						readMethods.Add (@"", @"ReadRoot_ServiceDescription");
@@ -2506,7 +2506,7 @@ namespace System.Web.Services.Description
 
 		public System.Collections.Hashtable WriteMethods {
 			get {
-				lock (System.Xml.Serialization.XmlSerializationGeneratedCode.InternalSyncObject) {
+				lock (this) {
 					if (writeMethods == null) {
 						writeMethods = new System.Collections.Hashtable ();
 						writeMethods.Add (@"", @"WriteRoot_ServiceDescription");
@@ -2518,7 +2518,7 @@ namespace System.Web.Services.Description
 
 		public System.Collections.Hashtable TypedSerializers {
 			get {
-				lock (System.Xml.Serialization.XmlSerializationGeneratedCode.InternalSyncObject) {
+				lock (this) {
 					if (typedSerializers == null) {
 						typedSerializers = new System.Collections.Hashtable ();
 						typedSerializers.Add (@"", new definitionsSerializer());
