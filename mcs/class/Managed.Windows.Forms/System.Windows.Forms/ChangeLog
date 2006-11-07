@@ -1,3 +1,8 @@
+2006-11-07  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11.cs: fix #79790 again, by using the
+	_NET_WM_STATE_SKIP_TASKBAR atom to implement Form.ShowInTaskbar.
+
 2006-11-07  Everaldo Canuto  <everaldo@simios.org>
 
 	* ToolBar.cs: Fix left click checking.

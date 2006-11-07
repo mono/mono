@@ -864,6 +864,8 @@ namespace System.Windows.Forms {
 
 			client_rect = hwnd.ClientRect;
 			lock (XlibLock) {
+				atom_count = 0;
+
 				// needed! map toolwindows to _NET_WM_WINDOW_TYPE_UTILITY to make newer metacity versions happy
 				// and get those windows in front of their parents
 				if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
@@ -880,15 +882,13 @@ namespace System.Windows.Forms {
 					XSetTransientForHint(DisplayHandle, hwnd.whole_window, hwnd.parent.whole_window);
 				} else if (!ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_APPWINDOW)) {
 					/* this line keeps the window from showing up in gnome's taskbar */
-					//XSetTransientForHint(DisplayHandle, hwnd.whole_window, FosterParent);
+					atoms[atom_count++] = _NET_WM_STATE_SKIP_TASKBAR.ToInt32();
 				}
 				if ((client_rect.Width < 1) || (client_rect.Height < 1)) {
 					XMoveResizeWindow(DisplayHandle, hwnd.client_window, -5, -5, 1, 1);
 				} else {
 					XMoveResizeWindow(DisplayHandle, hwnd.client_window, client_rect.X, client_rect.Y, client_rect.Width, client_rect.Height);
 				}
-
-				atom_count = 0;
 
 				if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
 					atoms[atom_count++] = _NET_WM_STATE_SKIP_TASKBAR.ToInt32();
@@ -2374,9 +2374,6 @@ namespace System.Windows.Forms {
 				XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_WINDOW_TYPE, (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
 
 				XSetTransientForHint (DisplayHandle, hwnd.whole_window, RootWindow);
-			} else if (!ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_APPWINDOW)) {
-				/* this line keeps the window from showing up in gnome's taskbar */
-				//XSetTransientForHint (DisplayHandle, hwnd.whole_window, FosterParent);
 			}
 
 			SetWMStyles(hwnd, cp);
