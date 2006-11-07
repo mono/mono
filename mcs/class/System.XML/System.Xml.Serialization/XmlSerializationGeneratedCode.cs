@@ -36,17 +36,9 @@ namespace System.Xml.Serialization
 {
 	public abstract class XmlSerializationGeneratedCode
 	{
-		[MonoTODO]
 		protected XmlSerializationGeneratedCode ()
 		{
 		}
-		
-		[MonoTODO]
-		public static object InternalSyncObject 
-		{
-			get { throw new NotImplementedException(); }
-		}
-
 	}
 }
 

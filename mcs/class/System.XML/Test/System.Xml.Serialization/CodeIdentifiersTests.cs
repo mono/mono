@@ -1,10 +1,10 @@
 //
-// System.Xml.Serialization.XmlSerializationCollectionFixupCallback.cs: 
+// CodeIdentifiersTest.cs
 //
 // Author:
-//   Tim Coleman (tim@timcoleman.com)
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) Tim Coleman, 2002
+// Copyright (C) 2006 Novell, Inc.
 //
 
 //
@@ -29,12 +29,29 @@
 //
 
 using System;
+using System.Xml.Serialization;
 
-namespace System.Xml.Serialization {
-	
-#if !NET_2_0
-	[Serializable]
+using NUnit.Framework;
+
+using MonoTests.System.Xml.TestClasses;
+
+namespace MonoTests.System.XmlSerialization
+{
+	[TestFixture]
+	public class CodeIdentifiersTests
+	{
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void IgnoreCase ()
+		{
+			CodeIdentifiers c = new CodeIdentifiers (false);
+			c.Add ("test", "x");
+			c.Add ("Test", "y");
+			Assert.IsTrue ("test" != c.AddUnique ("Test", "z"), "#1");
+			Assert.IsTrue (c.IsInUse ("tEsT"), "#2");
+			Assert.AreEqual ("camelCase", c.MakeRightCase ("CAMELCASE"), "#3");
+		}
 #endif
-	public delegate void XmlSerializationCollectionFixupCallback (object collection, object collectionItems);
+	}
 }
-

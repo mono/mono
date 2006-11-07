@@ -40,6 +40,9 @@ using System.Reflection;
 
 namespace System.Xml.Serialization 
 {
+#if NET_2_0
+	[MonoTODO ("provide expected elements/attributes on unknown elements/attributs")]
+#endif
 	public abstract class XmlSerializationReader 
 #if NET_2_0
 		: XmlSerializationGeneratedCode
@@ -717,7 +720,7 @@ namespace System.Xml.Serialization
 				XmlNode node = Document.ReadNode (reader);
 				
 				if (reportUnknown)
-					OnUnknownNode (node, null);
+					OnUnknownNode (node, null, null);
 
 				if (node.ChildNodes.Count == 0 && node.Attributes.Count == 0)
 					return new Object ();
@@ -875,6 +878,14 @@ namespace System.Xml.Serialization
 
 		protected void UnknownAttribute (object o, XmlAttribute attr)
 		{
+			UnknownAttribute (o, attr, null);
+		}
+
+#if NET_2_0
+		protected
+#endif
+		void UnknownAttribute (object o, XmlAttribute attr, string qnames)
+		{
 			int line_number, line_position;
 			
 			if (Reader is XmlTextReader){
@@ -885,12 +896,25 @@ namespace System.Xml.Serialization
 				line_position = 0;
 			}
 
+			XmlAttributeEventArgs args = new XmlAttributeEventArgs (attr, line_number, line_position, o);
+#if NET_2_0
+			args.ExpectedAttributes = qnames;
+#endif
+
 			if (eventSource != null)
-				eventSource.OnUnknownAttribute (new XmlAttributeEventArgs (attr, line_number, line_position, o));
+				eventSource.OnUnknownAttribute (args);
 		}
 
 		protected void UnknownElement (object o, XmlElement elem)
 		{
+			UnknownElement (o, elem, null);
+		}
+
+#if NET_2_0
+		protected
+#endif
+		void UnknownElement (object o, XmlElement elem, string qnames)
+		{
 			int line_number, line_position;
 			
 			if (Reader is XmlTextReader){
@@ -900,17 +924,30 @@ namespace System.Xml.Serialization
 				line_number = 0;
 				line_position = 0;
 			}
-	
+
+			XmlElementEventArgs args = new XmlElementEventArgs (elem, line_number, line_position, o);
+#if NET_2_0
+			args.ExpectedElements = qnames;
+#endif
+
 			if (eventSource != null)
-				eventSource.OnUnknownElement (new XmlElementEventArgs (elem, line_number, line_position,o));
+				eventSource.OnUnknownElement (args);
 		}
 
 		protected void UnknownNode (object o)
 		{
-			OnUnknownNode (ReadXmlNode (false), o);
+			UnknownNode (o, null);
+		}
+
+#if NET_2_0
+		protected
+#endif
+		void UnknownNode (object o, string qnames)
+		{
+			OnUnknownNode (ReadXmlNode (false), o, qnames);
 		}
 		
-		void OnUnknownNode (XmlNode node, object o)
+		void OnUnknownNode (XmlNode node, object o, string qnames)
 		{
 			int line_number, line_position;
 			
@@ -924,12 +961,12 @@ namespace System.Xml.Serialization
 	
 			if (node is XmlAttribute)
 			{
-				UnknownAttribute (o, (XmlAttribute)node);
+				UnknownAttribute (o, (XmlAttribute)node, qnames);
 				return;
 			}
 			else if (node is XmlElement)
 			{
-				UnknownElement (o, (XmlElement) node);
+				UnknownElement (o, (XmlElement) node, qnames);
 				return;
 			}
 			else

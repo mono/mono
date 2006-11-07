@@ -279,7 +279,6 @@ System.Xml.Schema/XmlSchemaReader.cs
 System.Xml.Schema/XmlSchemaValidationFlags.cs
 System.Xml.Schema/XmlTypeCode.cs
 System.Xml.Schema/XmlValueGetter.cs
-System.Xml.Serialization/IXmlSerializerImplementation.cs
 System.Xml.Serialization/IXmlTextParser.cs
 System.Xml.Serialization/CodeExporter.cs
 System.Xml.Serialization/CodeGenerationOptions.cs
@@ -290,8 +289,6 @@ System.Xml.Serialization/ImportContext.cs
 System.Xml.Serialization/MapCodeGenerator.cs
 System.Xml.Serialization/ReflectionHelper.cs
 System.Xml.Serialization/SchemaImporter.cs
-System.Xml.Serialization/SchemaImporterExtension.cs
-System.Xml.Serialization/SchemaImporterExtensionCollection.cs
 System.Xml.Serialization/SchemaTypes.cs
 System.Xml.Serialization/SerializationCodeGenerator.cs
 System.Xml.Serialization/SerializationCodeGeneratorConfiguration.cs
@@ -344,6 +341,7 @@ System.Xml.Serialization/XmlNodeEventArgs.cs
 System.Xml.Serialization/XmlReflectionImporter.cs
 System.Xml.Serialization/XmlReflectionMember.cs
 System.Xml.Serialization/XmlRootAttribute.cs
+System.Xml.Serialization/XmlSchemaEnumerator.cs
 System.Xml.Serialization/XmlSchemaExporter.cs
 System.Xml.Serialization/XmlSchemaImporter.cs
 System.Xml.Serialization/XmlSchemaProviderAttribute.cs
@@ -360,6 +358,7 @@ System.Xml.Serialization/XmlSerializationWriterInterpreter.cs
 System.Xml.Serialization/XmlSerializer.cs
 System.Xml.Serialization/XmlSerializerAssemblyAttribute.cs
 System.Xml.Serialization/XmlSerializerFactory.cs
+System.Xml.Serialization/XmlSerializerImplementation.cs
 System.Xml.Serialization/XmlSerializerNamespaces.cs
 System.Xml.Serialization/XmlSerializerVersionAttribute.cs
 System.Xml.Serialization/XmlTextAttribute.cs
@@ -372,5 +371,13 @@ System.Xml.Serialization/XmlTypeMapMemberNamespaces.cs
 System.Xml.Serialization/XmlTypeMapping.cs
 System.Xml.Serialization/XmlElementEventHandler.cs
 System.Xml.Serialization/XmlNodeEventHandler.cs
+System.Xml.Serialization.Advanced/SchemaImporterExtension.cs
+System.Xml.Serialization.Advanced/SchemaImporterExtensionCollection.cs
+System.Xml.Serialization.Configuration/DateTimeSerializationSection.cs
+System.Xml.Serialization.Configuration/SchemaImporterExtensionElement.cs
+System.Xml.Serialization.Configuration/SchemaImporterExtensionElementCollection.cs
+System.Xml.Serialization.Configuration/SchemaImporterExtensionsSection.cs
+System.Xml.Serialization.Configuration/SerializationSectionGroup.cs
+System.Xml.Serialization.Configuration/XmlSerializerSection.cs
 System.Xml/XQueryConvert.cs
 

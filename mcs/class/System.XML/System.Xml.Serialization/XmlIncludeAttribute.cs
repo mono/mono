@@ -32,7 +32,14 @@ using System;
 
 namespace System.Xml.Serialization
 {
-	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Method, AllowMultiple=true)]
+#if NET_2_0
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct |
+		 AttributeTargets.Interface | AttributeTargets.Method,
+		 AllowMultiple=true)]
+#else
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct |
+		 AttributeTargets.Method, AllowMultiple=true)]
+#endif
 	public class XmlIncludeAttribute : Attribute
 	{
 		private Type type;

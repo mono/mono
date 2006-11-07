@@ -1,3 +1,71 @@
+2006-11-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CodeIdentifier.cs : in 2.0 profile, .ctor() is exposed to
+	  explicitly say Obsolete instantiation.
+	* CodeIdentifiers.cs : implemented case-insensitive mode.
+	* XmlSerializerAssemblyAttribute.cs : added missing .ctor().
+	* SoapIncludeAttribute.cs, XmlIncludeAttribute.cs :
+	  in 2.0 profile it could also be applied to an interface.
+	* SoapReflectionImporter.cs,
+	  XmlReflectionImporter.cs,
+	  XmlMappingAccess.cs :
+	  added missing ImportMembersMapping overload and moved actual
+	  implementation to most lengthy-arglist one. To make it possible,
+	  XmlMappingAccess is included in 1.x as internal enum.
+
+2006-11-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaImporter.cs : initialize extensions from configuration.
+
+2006-11-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SchemaImporterExtension.cs,
+	  SchemaImporterExtensionCollection.cs : moved to S.X.S.Advanced.
+
+2006-11-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializationGeneratedCode.cs : removed InternalSyncObject.
+	* SerializationCodeGenerator.cs : since IXmlSerializerImplementation
+	  became a class, it needs explicit "override".
+	  Since InternalSyncObject is gone, it needs another lock target.
+	* IXmlSerializerImplementation.cs : removed.
+	* XmlSerializerImplementation.cs : added.
+	* XmlSerializer.cs : removed extra GenerateSerializer() overloads.
+	  IXmlSerializerImplementation -> XmlSerializerImplementation.
+	* XmlSchemas.cs : removed Schemas. hacked Compile().
+	  Now it implements IEnumerable<XmlSchema>.
+	* XmlSchemaEnumerator.cs : added missing type.
+
+2006-11-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlAttributeEventArgs.cs : added ExpectedAttributes. Note that it
+	  is not considered in XmlSerializationReader yet.
+	* XmlElementEventArgs.cs : added ExpectedElements. Note that it
+	  is not considered in XmlSerializationReader yet.
+	* XmlSerializationReader.cs : added some overloads for 
+	  UnknownElement()/-Attribute()/-Node().
+
+2006-11-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CodeGenerationOptions.cs : [XmlEnum], [XmlIgnore] and
+	  [Serializable].
+	* XmlSerializationCollectionFixupCallback.cs,
+	  XmlNodeEventHandler.cs,
+	  XmlSerializationReadCallback.cs,
+	  UnreferencedObjectEventHandler.cs,
+	  XmlSerializationWriteCallback.cs,
+	  XmlAttributeEventHandler.cs,
+	  XmlElementEventHandler.cs,
+	  XmlSerializationFixupCallback.cs :
+	  exclude [Serializable] in NET_2_0.
+	* XmlSerializerNamespaces.cs : removed beta-only AddInternal().
+	* XmlSerializerVersionAttribute.cs : removed [Obsolete].
+	* XmlMappingAccess.cs : it is [Flags].
+	* SchemaImporter.cs : implement Extensions.
+	* XmlAnyElementAttribute.cs,
+	  XmlArrayAttribute.cs : added Order.
+	  Note that it is not considered in XmlSerializer yet.
+
 2006-10-25  Ankit Jain  <jankit@novell.com>
 
 	* SerializationCodeGenerator.cs (GenerateContract): Handle

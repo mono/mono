@@ -328,7 +328,7 @@ namespace System.Xml.Serialization
 				WriteLine ("");
 			}
 
-			WriteLine (access_mod + " class XmlSerializerContract : System.Xml.Serialization.IXmlSerializerImplementation");
+			WriteLine (access_mod + " class XmlSerializerContract : System.Xml.Serialization.XmlSerializerImplementation");
 			WriteLineInd ("{");
 			
 			WriteLine ("System.Collections.Hashtable readMethods = null;");
@@ -336,23 +336,23 @@ namespace System.Xml.Serialization
 			WriteLine ("System.Collections.Hashtable typedSerializers = null;");
 			WriteLine ("");
 		
-			WriteLineInd ("public System.Xml.Serialization.XmlSerializationReader Reader {");
+			WriteLineInd ("public override System.Xml.Serialization.XmlSerializationReader Reader {");
 			WriteLineInd ("get {");
 			WriteLine ("return new " + main.ReaderClassName + "();");
 			WriteLineUni ("}");
 			WriteLineUni ("}");
 			WriteLine ("");
 			
-			WriteLineInd ("public System.Xml.Serialization.XmlSerializationWriter Writer {");
+			WriteLineInd ("public override System.Xml.Serialization.XmlSerializationWriter Writer {");
 			WriteLineInd ("get {");
 			WriteLine ("return new " + main.WriterClassName + "();");
 			WriteLineUni ("}");
 			WriteLineUni ("}");
 			WriteLine ("");
 			
-			WriteLineInd ("public System.Collections.Hashtable ReadMethods {");
+			WriteLineInd ("public override System.Collections.Hashtable ReadMethods {");
 			WriteLineInd ("get {");
-			WriteLineInd ("lock (System.Xml.Serialization.XmlSerializationGeneratedCode.InternalSyncObject) {");
+			WriteLineInd ("lock (this) {");
 			WriteLineInd ("if (readMethods == null) {");
 			WriteLine ("readMethods = new System.Collections.Hashtable ();");
 			foreach (GenerationResult res in generatedMaps)
@@ -364,9 +364,9 @@ namespace System.Xml.Serialization
 			WriteLineUni ("}");
 			WriteLine ("");
 			
-			WriteLineInd ("public System.Collections.Hashtable WriteMethods {");
+			WriteLineInd ("public override System.Collections.Hashtable WriteMethods {");
 			WriteLineInd ("get {");
-			WriteLineInd ("lock (System.Xml.Serialization.XmlSerializationGeneratedCode.InternalSyncObject) {");
+			WriteLineInd ("lock (this) {");
 			WriteLineInd ("if (writeMethods == null) {");
 			WriteLine ("writeMethods = new System.Collections.Hashtable ();");
 			foreach (GenerationResult res in generatedMaps)
@@ -378,9 +378,9 @@ namespace System.Xml.Serialization
 			WriteLineUni ("}");
 			WriteLine ("");
 			
-			WriteLineInd ("public System.Collections.Hashtable TypedSerializers {");
+			WriteLineInd ("public override System.Collections.Hashtable TypedSerializers {");
 			WriteLineInd ("get {");
-			WriteLineInd ("lock (System.Xml.Serialization.XmlSerializationGeneratedCode.InternalSyncObject) {");
+			WriteLineInd ("lock (this) {");
 			WriteLineInd ("if (typedSerializers == null) {");
 			WriteLine ("typedSerializers = new System.Collections.Hashtable ();");
 			foreach (GenerationResult res in generatedMaps)
@@ -391,7 +391,7 @@ namespace System.Xml.Serialization
 			WriteLineUni ("}");
 			WriteLineUni ("}");
 			
-			WriteLineInd ("public bool CanSerialize (System.Type type) {");
+			WriteLineInd ("public override bool CanSerialize (System.Type type) {");
 			foreach (GenerationResult res in generatedMaps) {
 				if (res.Mapping is XmlTypeMapping)
 					WriteLine ("if (type == typeof(" + (res.Mapping as XmlTypeMapping).TypeData.FullTypeName +  ")) return true;");

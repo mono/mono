@@ -35,6 +35,10 @@ using System.CodeDom.Compiler;
 #endif
 using System.Xml.Schema;
 using System.Collections;
+#if NET_2_0 && CONFIGURATION_DEP
+using System.Configuration;
+using System.Xml.Serialization.Configuration;
+#endif
 
 namespace System.Xml.Serialization 
 {
@@ -84,6 +88,8 @@ namespace System.Xml.Serialization
 		{
 			this.schemas = schemas;
 			typeIdentifiers = new CodeIdentifiers ();
+
+			InitializeExtensions ();
 		}
 
 		public XmlSchemaImporter (XmlSchemas schemas, CodeIdentifiers typeIdentifiers)
@@ -105,6 +111,8 @@ namespace System.Xml.Serialization
 			}
 			else
 				typeIdentifiers = new CodeIdentifiers ();
+
+			InitializeExtensions ();
 		}
 #endif
 
@@ -118,6 +126,8 @@ namespace System.Xml.Serialization
 			}
 			else
 				typeIdentifiers = new CodeIdentifiers ();
+
+			InitializeExtensions ();
 		}
 		
 
@@ -126,6 +136,8 @@ namespace System.Xml.Serialization
 			this.typeIdentifiers = typeIdentifiers;
 			this.schemas = schemas;
 			this.options = options;
+
+			InitializeExtensions ();
 		}
 
 		void InitSharedData (ImportContext context)
@@ -147,6 +159,19 @@ namespace System.Xml.Serialization
 		#endregion // Constructors
 
 		#region Methods
+
+		void InitializeExtensions ()
+		{
+#if NET_2_0 && CONFIGURATION_DEP
+			SerializationSectionGroup root = ConfigurationManager.GetSection ("system.xml.serialization") as SerializationSectionGroup;
+			if (root == null)
+				return;
+
+			foreach (SchemaImporterExtensionElement element in
+				 root.SchemaImporterExtensions.SchemaImporterExtensions)
+				Extensions.Add (element.Name, element.Type);
+#endif
+		}
 
 		public XmlMembersMapping ImportAnyType (XmlQualifiedName typeName, string elementName)
 		{

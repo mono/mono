@@ -1,10 +1,10 @@
-//
-// XmlElementEventArgs.cs: 
+// 
+// System.Xml.Serialization.XmlSerializerVersionAttribute.cs 
 //
 // Author:
-//   John Donagher (john@webmeta.com)
+//   Atsushi Enomoto <atsushi@ximian.com>
 //
-// (C) 2002 John Donagher
+// Copyright (C) 2006 Novell, Inc.
 //
 
 //
@@ -28,55 +28,46 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Xml;
+#if NET_2_0
+
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Xml.Schema;
 
 namespace System.Xml.Serialization
 {
-	/// <summary>
-	/// Summary description for XmlElementEventArgs.
-	/// </summary>
-	public class XmlElementEventArgs : EventArgs
+	[MonoTODO]
+	public class XmlSchemaEnumerator : IEnumerator<XmlSchema>, IDisposable, IEnumerator
 	{
-		private XmlElement attr;
-		private int lineNumber;
-		private int linePosition;
-		private object obj;
-		private string expectedElements;
+		IEnumerator e;
 
-		internal XmlElementEventArgs(XmlElement attr, int lineNum, int linePos, object source)
+		public XmlSchemaEnumerator (XmlSchemas list)
 		{
-			this.attr		= attr;
-			this.lineNumber = lineNum;
-			this.linePosition = linePos;
-			this.obj		= source;
+			e = list.GetEnumerator ();
 		}
 
-		public XmlElement Element
-		{ 
-			get { return attr; }
+		public XmlSchema Current {
+			get { return (XmlSchema) e.Current; }
 		}
 
-		public int LineNumber 
+		public void Dispose ()
 		{
-			get { return lineNumber; }
-		}
-		
-		public int LinePosition 
-		{
-			get { return linePosition; }
-		}
-		
-		public object ObjectBeingDeserialized 
-		{
-			get{ return obj; }
 		}
 
-#if NET_2_0
-		public string ExpectedElements {
-			get { return expectedElements; }
-			internal set { expectedElements = value; }
+		public bool MoveNext ()
+		{
+			return e.MoveNext ();
 		}
-#endif
+
+		object IEnumerator.Current {
+			get { return Current; }
+		}
+
+		void IEnumerator.Reset ()
+		{
+			e.Reset ();
+		}
 	}
 }
+#endif

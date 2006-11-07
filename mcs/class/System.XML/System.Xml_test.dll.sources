@@ -53,6 +53,7 @@ System.Xml.Schema/XmlSchemaLengthFacetTests.cs
 System.Xml.Schema/XmlSchemaTests.cs
 System.Xml.Schema/XmlSchemaTypeTests.cs
 System.Xml.Schema/XmlSchemaSetTests.cs
+System.Xml.Serialization/CodeIdentifiersTests.cs
 System.Xml.Serialization/ComplexDataStructure.cs
 System.Xml.Serialization/DeserializeTests.cs
 System.Xml.Serialization/SoapAttributeAttributeTests.cs
@@ -82,8 +83,11 @@ System.Xml.Serialization/XmlSerializationReaderTests.cs
 System.Xml.Serialization/XmlSerializationWriterTests.cs
 System.Xml.Serialization/XmlTextAttributeTests.cs
 System.Xml.Serialization/XmlTypeAttributeTests.cs
+System.Xml.Serialization/XmlSerializerImplementationTests.cs
 System.Xml.Serialization/XmlSerializerTests.cs
 System.Xml.Serialization/XmlSerializerTestClasses.cs
+System.Xml.Serialization.Advanced/SchemaImporterExtensionTests.cs
+System.Xml.Serialization.Advanced/SchemaImporterExtensionCollectionTests.cs
 System.Xml.XPath/SelectNodesTests.cs
 System.Xml.XPath/XPathEditableNavigatorTests.cs
 System.Xml.XPath/XPathNavigatorEvaluateTests.cs

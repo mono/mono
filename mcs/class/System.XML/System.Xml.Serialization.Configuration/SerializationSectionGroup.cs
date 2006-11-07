@@ -1,10 +1,10 @@
-// 
-// System.Xml.Serialization.IXmlSerializerImplementation.cs 
+//
+// SerializationSectionGroup.cs
 //
 // Author:
-//   Lluis Sanchez Gual (lluis@ximian.com)
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) Novell, Inc., 2004
+// Copyright (C) 2006 Novell, Inc.
 //
 
 //
@@ -28,26 +28,38 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0 && CONFIGURATION_DEP
 using System;
 using System.Collections;
+using System.Configuration;
+using System.Globalization;
+using System.Xml;
+using System.Text;
 
-namespace System.Xml.Serialization 
+namespace System.Xml.Serialization.Configuration
 {
-#if NET_2_0
-	public
-#else
-	internal
-#endif
-	
-	interface IXmlSerializerImplementation
+	public sealed class SerializationSectionGroup : ConfigurationSectionGroup
 	{
-		XmlSerializationReader Reader {get;}
-		Hashtable ReadMethods {get;}
-		Hashtable TypedSerializers {get;}
-		Hashtable WriteMethods {get;}
-		XmlSerializationWriter Writer {get;}
-		
-		bool CanSerialize (Type type);
+		DateTimeSerializationSection dateTime =
+			new DateTimeSerializationSection ();
+		XmlSerializerSection serializer = new XmlSerializerSection ();
+		SchemaImporterExtensionsSection extensions =
+			new SchemaImporterExtensionsSection ();
+
+		[ConfigurationProperty ("dateTimeSerialization")]
+		public DateTimeSerializationSection DateTimeSerialization {
+			get { return dateTime; }
+		}
+
+		[ConfigurationProperty ("schemaImporterExtensions")]
+		public SchemaImporterExtensionsSection SchemaImporterExtensions {
+			get { return extensions; }
+		}
+
+		public XmlSerializerSection XmlSerializer {
+			get { return serializer; }
+		}
 	}
 }
 
+#endif

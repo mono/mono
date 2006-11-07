@@ -66,14 +66,6 @@ namespace System.Xml.Serialization
 			namespaces[qname.Name] = qname;  
 		}
 
-#if NET_2_0
-		[MonoTODO]
-		public void AddInternal (string prefix, string ns)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
-
 		public XmlQualifiedName[] ToArray ()
 		{
 			XmlQualifiedName[] array = new XmlQualifiedName[namespaces.Count];

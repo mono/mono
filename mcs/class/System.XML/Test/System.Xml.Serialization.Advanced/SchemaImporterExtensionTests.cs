@@ -1,10 +1,10 @@
-// 
-// System.Xml.Serialization.XmlSerializerAssemblyAttribute.cs 
+﻿// 
+// SchemaImporterExtensionTests.cs 
 //
 // Author:
-//   Lluis Sanchez Gual (lluis@ximian.com)
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) Novell, Inc., 2004
+// Copyright (C) 2006 Novell, Inc.
 //
 
 //
@@ -31,40 +31,43 @@
 #if NET_2_0
 
 using System;
+using System.CodeDom;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
+using System.Xml.Serialization.Advanced;
+using NUnit.Framework;
 
-namespace System.Xml.Serialization 
+namespace MonoTests.System.Xml.Serialization.Advanced
 {
-	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface | AttributeTargets.Enum)]
-	public sealed class XmlSerializerAssemblyAttribute : Attribute
-	{	
-		string _assemblyName;
-		string _codeBase;
-		
-		public XmlSerializerAssemblyAttribute ()
+	[TestFixture]
+	public class SchemaImporterExtensionTests
+	{
+		class MyExtension : SchemaImporterExtension
 		{
 		}
 
-		public XmlSerializerAssemblyAttribute (string assemblyName)
+		[Test]
+		public void ImportAnyElement ()
 		{
-			_assemblyName = assemblyName;
+			Assert.IsNull(new MyExtension ().ImportAnyElement (
+				null, false, null, null, null, null, CodeGenerationOptions.None, null));
 		}
 
-		public XmlSerializerAssemblyAttribute (string assemblyName, string codeBase)
-			: this (assemblyName)
+		[Test]
+		public void ImportDefaultValue ()
 		{
-			_codeBase = codeBase;
-		}
-		
-		public string AssemblyName 
-		{
-			get { return _assemblyName; }
-			set { _assemblyName = value; }
+			Assert.IsNull (new MyExtension ().ImportDefaultValue (null, null), "#1");
+			Assert.IsNull (new MyExtension ().ImportDefaultValue ("test", "string"), "#2");
 		}
 
-		public string CodeBase 
+		[Test]
+		public void ImportSchemaType ()
 		{
-			get { return _codeBase; }
-			set { _codeBase = value; }
+			Assert.IsNull (new MyExtension ().ImportSchemaType (
+				null, null, null, null, null, null, CodeGenerationOptions.None, null), "#1");
+			Assert.IsNull (new MyExtension ().ImportSchemaType (
+				null, null, null, null, null, null, null, CodeGenerationOptions.None, null), "#2");
 		}
 	}
 }

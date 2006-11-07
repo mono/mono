@@ -1,10 +1,10 @@
-//
-// XmlElementEventArgs.cs: 
+// 
+// XmlSerializerImplementation.cs 
 //
 // Author:
-//   John Donagher (john@webmeta.com)
+//   Atsushi Enomoto  <atsushi@ximian.com>
 //
-// (C) 2002 John Donagher
+// Copyright (C) 2006 Novell, Inc.
 //
 
 //
@@ -28,55 +28,42 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Xml;
 using System;
+using System.Collections;
 
 namespace System.Xml.Serialization
 {
-	/// <summary>
-	/// Summary description for XmlElementEventArgs.
-	/// </summary>
-	public class XmlElementEventArgs : EventArgs
-	{
-		private XmlElement attr;
-		private int lineNumber;
-		private int linePosition;
-		private object obj;
-		private string expectedElements;
-
-		internal XmlElementEventArgs(XmlElement attr, int lineNum, int linePos, object source)
-		{
-			this.attr		= attr;
-			this.lineNumber = lineNum;
-			this.linePosition = linePos;
-			this.obj		= source;
-		}
-
-		public XmlElement Element
-		{ 
-			get { return attr; }
-		}
-
-		public int LineNumber 
-		{
-			get { return lineNumber; }
-		}
-		
-		public int LinePosition 
-		{
-			get { return linePosition; }
-		}
-		
-		public object ObjectBeingDeserialized 
-		{
-			get{ return obj; }
-		}
-
 #if NET_2_0
-		public string ExpectedElements {
-			get { return expectedElements; }
-			internal set { expectedElements = value; }
-		}
+	public
+#else
+	internal
 #endif
+	
+	abstract class XmlSerializerImplementation
+	{
+		public virtual XmlSerializationReader Reader {
+			get { throw new NotSupportedException (); }
+		}
+		public virtual Hashtable ReadMethods {
+			get { throw new NotSupportedException (); }
+		}
+		public virtual Hashtable TypedSerializers {
+			get { throw new NotSupportedException (); }
+		}
+		public virtual Hashtable WriteMethods {
+			get { throw new NotSupportedException (); }
+		}
+		public virtual XmlSerializationWriter Writer {
+			get { throw new NotSupportedException (); }
+		}
+		public virtual bool CanSerialize (Type type)
+		{
+			throw new NotSupportedException ();
+		}
+		public virtual XmlSerializer GetSerializer (Type type)
+		{
+			throw new NotSupportedException ();
+		}
 	}
 }
+

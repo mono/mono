@@ -1,3 +1,17 @@
+2006-11-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml_test.dll.sources : added following tests:
+	  - XmlSerializerImplementationTests.cs
+	  - SchemaImporterExtensionTests.cs
+	  - SchemaImporterExtensionCollectionTests.cs
+
+2006-11-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : Now it supports (and expects) cyclic build. You need
+	  another System.XML iteration in mcs/class/Makefile.
+	* System.Xml.dll.sources : moved extension classes, added config and
+	  XmlSchemaEnumerator.cs and removed IXmlSerializerImplementation.cs.
+
 2006-10-30  Wade Berrier  <wberrier@novell.com>
 
 	* Makefile: remove README, Mono.System.XML.csproj, 

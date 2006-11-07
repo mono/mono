@@ -45,7 +45,6 @@ namespace System.Xml.Serialization.Advanced
 		{
 		}
 
-		[MonoTODO]
 		public virtual string ImportAnyElement (
 			XmlSchemaAny any, 
 			bool mixed, 
@@ -57,16 +56,14 @@ namespace System.Xml.Serialization.Advanced
 			CodeDomProvider codeProvider
 		)
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 		
-		[MonoTODO]
 		public virtual CodeExpression ImportDefaultValue (string value, string type)
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 		
-		[MonoTODO]
 		public virtual string ImportSchemaType (
 			XmlSchemaType type, 
 			XmlSchemaObject context, 
@@ -78,10 +75,9 @@ namespace System.Xml.Serialization.Advanced
 			CodeDomProvider codeProvider
 		)
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 		
-		[MonoTODO]
 		public virtual string ImportSchemaType (
 			string name, 
 			string ns, 
@@ -94,7 +90,7 @@ namespace System.Xml.Serialization.Advanced
 			CodeDomProvider codeProvider
 		)
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 	}
 }

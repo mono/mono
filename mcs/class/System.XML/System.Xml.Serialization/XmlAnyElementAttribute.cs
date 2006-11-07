@@ -42,6 +42,7 @@ namespace System.Xml.Serialization
 	{
 		private string elementName;
 		private string ns;
+		private int order = -1;
 
 		public XmlAnyElementAttribute ()
 		{
@@ -72,6 +73,14 @@ namespace System.Xml.Serialization
 			get { return ns; }
 			set { ns = value; }
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public int Order {
+			get { return order; }
+			set { order = value; }
+		}
+#endif
 		
 		internal void AddKeyHash (System.Text.StringBuilder sb)
 		{

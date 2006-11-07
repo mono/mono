@@ -1,10 +1,10 @@
-// 
-// System.Xml.Serialization.XmlSerializerAssemblyAttribute.cs 
+//
+// XmlSerializerSection.cs
 //
 // Author:
-//   Lluis Sanchez Gual (lluis@ximian.com)
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) Novell, Inc., 2004
+// Copyright (C) 2006 Novell, Inc.
 //
 
 //
@@ -28,43 +28,36 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
+#if NET_2_0 && CONFIGURATION_DEP
 using System;
+using System.Collections;
+using System.Configuration;
+using System.Globalization;
+using System.Xml;
+using System.Text;
 
-namespace System.Xml.Serialization 
+namespace System.Xml.Serialization.Configuration
 {
-	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface | AttributeTargets.Enum)]
-	public sealed class XmlSerializerAssemblyAttribute : Attribute
-	{	
-		string _assemblyName;
-		string _codeBase;
-		
-		public XmlSerializerAssemblyAttribute ()
+	public sealed class XmlSerializerSection : ConfigurationSection
+	{
+		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty checkDeserializeAdvances;
+
+		static XmlSerializerSection ()
 		{
+			properties = new ConfigurationPropertyCollection ();
+			checkDeserializeAdvances = new ConfigurationProperty ("checkDeserializeAdvances", typeof (bool), false, ConfigurationPropertyOptions.None);
+			properties.Add (checkDeserializeAdvances);
 		}
 
-		public XmlSerializerAssemblyAttribute (string assemblyName)
-		{
-			_assemblyName = assemblyName;
+		[ConfigurationProperty ("checkDeserializeAdvances", DefaultValue = false, Options = ConfigurationPropertyOptions.None)]
+		public bool CheckDeserializeAdvances {
+			get { return (bool) this [checkDeserializeAdvances]; }
+			set { this [checkDeserializeAdvances] = value; }
 		}
 
-		public XmlSerializerAssemblyAttribute (string assemblyName, string codeBase)
-			: this (assemblyName)
-		{
-			_codeBase = codeBase;
-		}
-		
-		public string AssemblyName 
-		{
-			get { return _assemblyName; }
-			set { _assemblyName = value; }
-		}
-
-		public string CodeBase 
-		{
-			get { return _codeBase; }
-			set { _codeBase = value; }
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
 		}
 	}
 }
