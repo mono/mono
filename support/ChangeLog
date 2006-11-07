@@ -1,3 +1,9 @@
+2006-11-07  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Makefile.am: Add implementation macros for L_SET, L_INCR, and L_XTND.
+	* map.c: Make sure that L_SET, L_INCR, and L_XTND are defined.  Lets
+	  Mono_Posix_FromSeekFlags() work on Solaris, fixing Gnome Bugzilla 370081.
+
 2006-11-01  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* stdio.c: Some BSDs define clearerr(3) as a macro, so we need to cast
