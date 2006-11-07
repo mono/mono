@@ -1,4 +1,8 @@
 
+Tue Nov 7 18:17:52 GMT 2006 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-arm.c: fixed off by one error in stack walk code.
+
 Tue Nov 7 11:27:26 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini.h, mini.c: more precise tracking of type load exceptions.
