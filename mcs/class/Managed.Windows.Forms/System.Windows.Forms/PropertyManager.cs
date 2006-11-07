@@ -30,7 +30,7 @@ namespace System.Windows.Forms {
 
 	public class PropertyManager : BindingManagerBase {
 
-		private string property_name;
+		internal string property_name;
 		private PropertyDescriptor prop_desc;
 		private object data_source;
 		private EventDescriptor changed_event;

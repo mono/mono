@@ -35,6 +35,8 @@ namespace System.Windows.Forms {
 		public RelatedPropertyManager (BindingManagerBase parent, string property_name)
 		{
 			this.parent = parent;
+			this.property_name = property_name;
+
 			if (parent.Position != -1)
 				SetDataSource (parent.Current);
 			parent.PositionChanged += new EventHandler (parent_PositionChanged);

@@ -1,5 +1,12 @@
 2006-11-07  Chris Toshok  <toshok@ximian.com>
 
+	* RelatedPropertyManager.cs: set property_name in our ctor.  fixes
+	PropertyManager unit tests.
+
+	* PropertyManager.cs: make property_name internal.
+
+2006-11-07  Chris Toshok  <toshok@ximian.com>
+
 	* ButtonBase.cs: initialize base.ime_mode to ImeMode.Disable to
 	pass a unit test.  Also, don't set image_index to anything in
 	response to setting the ImageList property.
