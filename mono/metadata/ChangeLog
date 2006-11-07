@@ -1,4 +1,8 @@
 
+Tue Nov 7 16:56:24 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* threadpool.c: precise GC and locking fixes.
+
 Tue Nov 7 11:02:42 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: don't load types that have an explicit unaligned
