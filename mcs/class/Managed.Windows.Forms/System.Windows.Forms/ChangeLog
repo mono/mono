@@ -1,3 +1,9 @@
+2006-11-07  Everaldo Canuto  <everaldo@simios.org>
+
+	* ToolBar.cs: Ignore click events when mouse button is not a
+	left button, only accepts other button for dropdown menus.  
+	Fixes #79854.
+
 2006-11-07  Chris Toshok  <toshok@ximian.com>
 
 	* DataGrid.cs: make the back and parent row buttons a little less
