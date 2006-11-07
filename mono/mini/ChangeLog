@@ -1,3 +1,8 @@
+
+Tue Nov 7 11:27:26 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, mini.c: more precise tracking of type load exceptions.
+
 2006-11-03  Robert Jordan  <robertj@gmx.net>
 
 	* Makefile.am: [WIN32] Add monow.exe target.
