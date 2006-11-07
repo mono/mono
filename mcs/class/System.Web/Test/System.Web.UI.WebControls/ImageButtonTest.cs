@@ -118,7 +118,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			HtmlTextWriter tw = new HtmlTextWriter (sw);
 
 			Page page = new Page ();
+#if NET_2_0
             page.EnableEventValidation = false;
+#endif
 			ImageButton b = new ImageButton ();			
 			page.Controls.Add (b);
 			page.RenderControl (tw);
