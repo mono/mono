@@ -612,11 +612,11 @@ namespace System.Windows.Forms
 							}
 							break;
 						}
-					} else if (me.Button == MouseButtons.Left) {
-					button.pressed = true;
-					button.inside = true;
-					button.InvalidateBorder ();
-					break;
+					} else if ((me.Button & MouseButtons.Left) == MouseButtons.Left) {
+						button.pressed = true;
+						button.inside = true;
+						button.InvalidateBorder ();
+						break;
 					}
 				}
 			}
@@ -645,7 +645,7 @@ namespace System.Windows.Forms
 						}
 					}
 					// Fire a ButtonClick
-					if ((button.pressed) && (me.Button == MouseButtons.Left))
+					if ((button.pressed) && ((me.Button & MouseButtons.Left) == MouseButtons.Left))
 						OnButtonClick (new ToolBarButtonClickEventArgs (button));
 				} else if (button.pressed) {
 					button.pressed = false;

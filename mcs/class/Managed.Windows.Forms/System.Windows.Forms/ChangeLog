@@ -1,3 +1,7 @@
+2006-11-07  Everaldo Canuto  <everaldo@simios.org>
+
+	* ToolBar.cs: Fix left click checking.
+
 2006-11-07  Chris Toshok  <toshok@ximian.com>
 
 	* ProgressBar.cs: fix a typo in ToString().  fixes a unit test.
