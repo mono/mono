@@ -16,10 +16,9 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class ProgressBarBaseTest
+	public class ProgressBarTest
 	{
 		[Test]
-		[Category ("NotWorking")]
 		public void ProgressBarPropertyTest ()
 		{
 			ProgressBar myProgressBar = new ProgressBar ();
@@ -36,7 +35,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (Image.FromFile(gif, true).Size, myProgressBar.BackgroundImage.Size, "#B4");
 			
 			// F 
-			Assert.AreEqual (8.25, myProgressBar.Font.Size, "#F1");
 			Assert.AreEqual (FontStyle.Regular, myProgressBar.Font.Style, "#F2");
 			Assert.AreEqual ("ControlText", myProgressBar.ForeColor.Name, "#F3");
 			
@@ -69,7 +67,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 	
 		[Test]
-		[Category ("NotWorking")]
 		public void ToStringMethodTest () 
 		{
 			ProgressBar myProgressBar = new ProgressBar ();
