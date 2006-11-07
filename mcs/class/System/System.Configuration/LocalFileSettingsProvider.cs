@@ -27,7 +27,7 @@
 //
 
 #if NET_2_0
-#if CONFIGURATION_DEP
+#if CONFIGURATION_DEP && !TARGET_JVM
 extern alias PrebuiltSystem;
 using NameValueCollection = PrebuiltSystem.System.Collections.Specialized.NameValueCollection;
 #endif

@@ -1,3 +1,9 @@
+2006-11-07  Andrew Skiba  <andrews@mainsoft.com>
+
+	* ApplicationSettingsBase.cs, AppSettingsReader.cs,
+	ConfigurationSettings.cs, LocalFileSettingsProvider.cs: exclude using
+	PrebuiltSystem on TARGET_JVM
+
 2006-10-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.dll.sources: Add System.Net.Mail.SmtpPermission[Attribute] to
