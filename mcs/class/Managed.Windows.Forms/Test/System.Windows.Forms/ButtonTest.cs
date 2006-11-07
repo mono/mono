@@ -33,28 +33,43 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ImageListTest ()
 		{
 			Button B1 = new Button ();
 			B1.Image = Image.FromFile ("M.gif");
 			Assert.AreEqual (null, B1.ImageList, "#3a");
+
+			B1 = new Button ();
 			ImageList ImageList1 = new ImageList ();
 			ImageList1.Images.Add(Image.FromFile ("M.gif"));
+			ImageList1.Images.Add(Image.FromFile ("M.gif"));
+			Assert.AreEqual (2, ImageList1.Images.Count, "#3b");
 			B1.ImageList = ImageList1;
-			Assert.AreEqual (-1, B1.ImageIndex, "#3b");
-			B1.ImageIndex = 0;
-			Assert.AreEqual (1, B1.ImageList.Images.Count, "#3c");
-			Assert.AreEqual (16, B1.ImageList.ImageSize.Height, "#3d");
-			Assert.AreEqual (16, B1.ImageList.ImageSize.Width, "#3e");
+			Assert.AreEqual (-1, B1.ImageIndex, "#3c");
+
+
+			B1 = new Button ();
+			B1.ImageIndex = 1;
+			B1.ImageList = ImageList1;
+			Assert.AreEqual (1, B1.ImageIndex, "#3d");
+			Assert.AreEqual (2, B1.ImageList.Images.Count, "#3e");
+			Assert.AreEqual (16, B1.ImageList.ImageSize.Height, "#3f");
+			Assert.AreEqual (16, B1.ImageList.ImageSize.Width, "#3g");
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void IMeModeTest ()
 		{
 			Button B1 = new Button ();
-			Assert.AreEqual (ImeMode.Disable, B1.ImeMode, "#4");
+			Assert.AreEqual (ImeMode.Disable, B1.ImeMode, "#4a");
+			B1.ImeMode = ImeMode.Off;
+			Assert.AreEqual (ImeMode.Off, B1.ImeMode, "#4b");
+
+			B1 = new Button ();
+			Assert.AreEqual (ImeMode.Disable, ((Control)B1).ImeMode, "#4c");
+			((Control)B1).ImeMode = ImeMode.Off;
+			Assert.AreEqual (ImeMode.Off, ((Control)B1).ImeMode, "#4d");
+			Assert.AreEqual (ImeMode.Off, B1.ImeMode, "#4e");
 		}
 
 		[Test]
