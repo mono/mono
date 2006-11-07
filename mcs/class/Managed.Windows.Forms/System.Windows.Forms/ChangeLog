@@ -1,5 +1,10 @@
 2006-11-06  Chris Toshok  <toshok@ximian.com>
 
+	* NumericUpDown.cs: fix the ToString method for some unit test
+	love.
+
+2006-11-06  Chris Toshok  <toshok@ximian.com>
+
 	* PropertyGrid.cs:
 	- set the initial SelectedGridItem if we can.
 

@@ -57,7 +57,7 @@ namespace System.Windows.Forms {
 			decimal_places = 0;
 			hexadecimal = false;
 			increment = 1M;
-			maximum = 100.0M;
+			maximum = 100M;
 			minimum = 0.0M;
 			thousands_separator = false;
 		}
@@ -289,7 +289,7 @@ namespace System.Windows.Forms {
 		}
 
 		public override string ToString() {
-			return string.Format("{0}: value {1} in range [{2}, {3}]", base.ToString(), dvalue, minimum, maximum);
+			return string.Format("{0}, Minimum = {1}, Maximum = {2}", base.ToString(), minimum, maximum);
 		}
 
 		public override void UpButton() {
