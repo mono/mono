@@ -1,3 +1,28 @@
+2006-11-07  Chris Toshok  <toshok@ximian.com>
+
+	[ fix bug #79778 ]
+	
+	* CurrencyManager.cs: if the list is readonly, don't bother
+	checking if IBindingList.AllowNew is true.
+
+	* ThemeWin32Classic.cs (DataGridPaintParentRow): make this work
+	for non-DataRowView datasources..  or rather, make it not crash.
+	(DataGridPaintRelationRow): make sure we limit the row painting to
+	the area not covered by the row header, and make our cell width at
+	least large enough to cover the relation area.  This allows grids
+	that have relations but no rows to render correctly.
+	(DataGridPaintRowContents): same type of changes here.
+	(SetDataSource): move back to always calling
+	CalcAreasAndInvalidate.  this fixes a crash/drawing problem when
+	navigating back through relations.
+	(HitTest): handle the case where we have no cells but have
+	relations.  Right now we generate a hit in cell 0 of whatever the
+	row is, not sure if this is strictly correct, but it works for our
+	purposes.
+	
+	* DataGrid.cs (EndEdit, CancelEdit): if we have no columns, don't
+	bother doing anything.
+
 2006-11-07  Jonathan Pobst  <monkey@jpobst.com>
 
 	* StatusStrip.cs, ToolStripStatusLabel.cs: By request, an

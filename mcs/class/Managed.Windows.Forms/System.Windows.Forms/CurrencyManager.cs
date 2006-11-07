@@ -175,6 +175,10 @@ namespace System.Windows.Forms {
                 [MonoTODO ("this needs re-addressing once DataViewManager.AllowNew is implemented")]
                 internal bool CanAddRows {
                 	get {
+				/* if we're readonly, don't even bother checking if we can add new rows */
+				if (list.IsReadOnly)
+					return false;
+
 				if (list is IBindingList) {
 					return true;
 					//return ((IBindingList)list).AllowNew;

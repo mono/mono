@@ -28,6 +28,7 @@
 //
 
 using System.ComponentModel;
+using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -1000,7 +1001,10 @@ namespace System.Windows.Forms
 			text_format.LineAlignment = StringAlignment.Center;
 			text_format.Alignment = StringAlignment.Near;
 
-			string table_name = ((ITypedList)row.view.DataView).GetListName (null) + ": ";
+			string table_name = "";
+			if (row.view is DataRowView)
+				table_name = ((ITypedList)((DataRowView)row.view).DataView).GetListName (null) + ": ";
+			// XXX else?
 
 			Rectangle	text_rect;
 			Size		text_size;
@@ -1082,7 +1086,7 @@ namespace System.Windows.Forms
 
 			// Background
 			g.FillRectangle (ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderBackColor),
-				bounds);
+					 bounds);
 
 			// Draw arrow
 			if (is_current_row) {
@@ -1227,17 +1231,18 @@ namespace System.Windows.Forms
 				//Region current_clip;
 				Rectangle rect_cell = row_rect;
 
-				rect_cell.X = row_rect.X + grid.GetColumnStartingPixel (grid.FirstVisibleColumn) - grid.HorizPixelOffset;
+				rect_cell.X = nested_rect.X + grid.GetColumnStartingPixel (grid.FirstVisibleColumn) - grid.HorizPixelOffset;
 				rect_cell.Y += nested_rect.Height;
 				rect_cell.Height = grid.DataGridRows[row].RelationHeight;
-				rect_cell.Width = 0;
 
+				rect_cell.Width = 0;
 				int column_cnt = grid.FirstVisibleColumn + grid.VisibleColumnCount;
 				for (int column = grid.FirstVisibleColumn; column < column_cnt; column++) {
 					if (grid.CurrentTableStyle.GridColumnStyles[column].bound == false)
 						continue;
 					rect_cell.Width += grid.CurrentTableStyle.GridColumnStyles[column].Width;
 				}
+				rect_cell.Width = Math.Max (rect_cell.Width, grid.DataGridRows[row].relation_area.Width);
 
 				g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (grid.CurrentTableStyle.BackColor),
 						 rect_cell);
@@ -1281,7 +1286,7 @@ namespace System.Windows.Forms
 			int col_pixel;
 			Color backcolor, forecolor;
 			Brush backBrush, foreBrush;
-			Rectangle not_usedarea = new Rectangle ();
+			Rectangle not_usedarea = Rectangle.Empty;
 
 			rect_cell.Y = row_rect.Y;
 			rect_cell.Height = row_rect.Height;
@@ -1306,50 +1311,56 @@ namespace System.Windows.Forms
 			// PaintCells at row, column
 			int column_cnt = grid.FirstVisibleColumn + grid.VisibleColumnCount;
 
-			Region prev_clip = g.Clip;
-			Region current_clip;
+			if (column_cnt > 0) {
+				Region prev_clip = g.Clip;
+				Region current_clip;
 
-			for (int column = grid.FirstVisibleColumn; column < column_cnt; column++) {
-				if (grid.CurrentTableStyle.GridColumnStyles[column].bound == false)
-					continue;
+				for (int column = grid.FirstVisibleColumn; column < column_cnt; column++) {
+					if (grid.CurrentTableStyle.GridColumnStyles[column].bound == false)
+						continue;
 
-				col_pixel = grid.GetColumnStartingPixel (column);
+					col_pixel = grid.GetColumnStartingPixel (column);
 
-				rect_cell.X = row_rect.X + col_pixel - grid.HorizPixelOffset;
-				rect_cell.Width = grid.CurrentTableStyle.GridColumnStyles[column].Width;
+					rect_cell.X = row_rect.X + col_pixel - grid.HorizPixelOffset;
+					rect_cell.Width = grid.CurrentTableStyle.GridColumnStyles[column].Width;
 
-				if (clip.IntersectsWith (rect_cell)) {
-					current_clip = new Region (rect_cell);
-					current_clip.Intersect (row_rect);
-					current_clip.Intersect (prev_clip);
-					g.Clip = current_clip;
+					if (clip.IntersectsWith (rect_cell)) {
+						current_clip = new Region (rect_cell);
+						current_clip.Intersect (row_rect);
+						current_clip.Intersect (prev_clip);
+						g.Clip = current_clip;
 
-					if (is_newrow) {
-						grid.CurrentTableStyle.GridColumnStyles[column].PaintNewRow (g, rect_cell, 
-													     backBrush,
-													     foreBrush);
-					} else {
-						grid.CurrentTableStyle.GridColumnStyles[column].Paint (g, rect_cell, grid.ListManager, row,
-												       backBrush,
-												       foreBrush,
-												       grid.RightToLeft == RightToLeft.Yes);
+						if (is_newrow) {
+							grid.CurrentTableStyle.GridColumnStyles[column].PaintNewRow (g, rect_cell, 
+														     backBrush,
+														     foreBrush);
+						} else {
+							grid.CurrentTableStyle.GridColumnStyles[column].Paint (g, rect_cell, grid.ListManager, row,
+													       backBrush,
+													       foreBrush,
+													       grid.RightToLeft == RightToLeft.Yes);
+						}
+
+						current_clip.Dispose ();
 					}
+				}
 
-					current_clip.Dispose ();
+				g.Clip = prev_clip;
+			
+				if (row_rect.X + row_rect.Width > rect_cell.X + rect_cell.Width) {
+					not_usedarea.X = rect_cell.X + rect_cell.Width;
+					not_usedarea.Width = row_rect.X + row_rect.Width - rect_cell.X - rect_cell.Width;
+					not_usedarea.Y = row_rect.Y;
+					not_usedarea.Height = row_rect.Height;
 				}
 			}
-
-			g.Clip = prev_clip;
-			
-			if (row_rect.X + row_rect.Width > rect_cell.X + rect_cell.Width) {
-				not_usedarea.X = rect_cell.X + rect_cell.Width;
-				not_usedarea.Width = row_rect.X + row_rect.Width - rect_cell.X - rect_cell.Width;
-				not_usedarea.Y = row_rect.Y;
-				not_usedarea.Height = row_rect.Height;
-				if (clip.IntersectsWith (not_usedarea))
-					g.FillRectangle (ResPool.GetSolidBrush (grid.BackgroundColor),
-							 not_usedarea);
+			else {
+				not_usedarea = row_rect;
 			}
+
+			if (!not_usedarea.IsEmpty && clip.IntersectsWith (not_usedarea))
+				g.FillRectangle (ResPool.GetSolidBrush (grid.BackgroundColor),
+						 not_usedarea);
 		}
 
 		public override void DataGridPaintRow (Graphics g, int row, Rectangle row_rect, bool is_newrow,

@@ -77,16 +77,16 @@ namespace System.Windows.Forms
 	{
 		public DataGrid owner;
 		public CurrencyManager list_manager;
-		public DataRowView view;
+		public object view;
 		public string data_member;
 		public object data_source;
 		public DataGridCell current;
 
-		public DataGridDataSource (DataGrid owner, CurrencyManager list_manager, object data_source, string data_member, DataRowView view, DataGridCell current)
+		public DataGridDataSource (DataGrid owner, CurrencyManager list_manager, object data_source, string data_member, object view_data, DataGridCell current)
 		{
 			this.owner = owner;
 			this.list_manager = list_manager;
-			this.view = view;
+			this.view = view_data;
 			this.data_source = data_source;
 			this.data_member = data_member;
 			this.current = current;
@@ -936,6 +936,9 @@ namespace System.Windows.Forms
 
 		protected virtual void CancelEditing ()
 		{
+			if (CurrentTableStyle.GridColumnStyles.Count == 0)
+				return;
+
 			CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].ConcedeFocus ();
 
 			if (is_changing) {
@@ -1182,16 +1185,23 @@ namespace System.Windows.Forms
 				if (y <= pos_y + rows[row].Height) {
 					int col_pixel;
 					int column_cnt = first_visiblecolumn + visiblecolumn_count;
-					for (int column = first_visiblecolumn; column < column_cnt; column++) {
-						if (CurrentTableStyle.GridColumnStyles[column].bound == false)
-							continue;
-						col_pixel = GetColumnStartingPixel (column);
-						pos_x = cells_area.X + col_pixel - horiz_pixeloffset;
-						width = CurrentTableStyle.GridColumnStyles[column].Width;
+					if (column_cnt > 0) {
+						for (int column = first_visiblecolumn; column < column_cnt; column++) {
+							if (CurrentTableStyle.GridColumnStyles[column].bound == false)
+								continue;
+							col_pixel = GetColumnStartingPixel (column);
+							pos_x = cells_area.X + col_pixel - horiz_pixeloffset;
+							width = CurrentTableStyle.GridColumnStyles[column].Width;
 
-						if (x <= pos_x + width) { // Column found
-							return new HitTestInfo (row, column, HitTestType.Cell);
+							if (x <= pos_x + width) { // Column found
+								return new HitTestInfo (row, column, HitTestType.Cell);
+							}
 						}
+					}
+					else if (CurrentTableStyle.HasRelations) {
+						/* XXX this needs checking against MS somehow... */
+						if (x < rows[row].relation_area.X + rows[row].relation_area.Width)
+							return new HitTestInfo (row, 0/*XXX?*/, HitTestType.Cell);
 					}
 
 					break;
@@ -1233,7 +1243,7 @@ namespace System.Windows.Forms
 			if (allow_navigation == false)
 				return;
 
-			DataGridDataSource previous_source = new DataGridDataSource (this, list_manager, datasource, datamember, (DataRowView)list_manager.Current, CurrentCell);
+			DataGridDataSource previous_source = new DataGridDataSource (this, list_manager, datasource, datamember, list_manager.Current, CurrentCell);
 			previous_source.Rows = rows;
 			previous_source.SelectedRows = selected_rows;
 			previous_source.SelectionStart = selection_start;
@@ -2226,9 +2236,9 @@ namespace System.Windows.Forms
 
 				if (recreate_rows)
 					RecreateDataGridRows (false);
-
-				CalcAreasAndInvalidate ();
 			}
+
+			CalcAreasAndInvalidate ();
 
 			in_setdatasource = false;
 
@@ -2357,6 +2367,9 @@ namespace System.Windows.Forms
 
 		private void EndEdit ()
 		{
+			if (CurrentTableStyle.GridColumnStyles.Count == 0)
+				return;
+
 			if (CurrentTableStyle.GridColumnStyles[current_cell.ColumnNumber].bound == false)
 				return;
 
