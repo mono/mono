@@ -174,7 +174,6 @@ namespace MonoTests.System.Windows.Forms {
 			BindingManagerBase a = bc [data_source, "Items"];
 		}
 
-		[Category ("NotWorking")]
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void CantCreateChildList2 ()
