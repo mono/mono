@@ -1,3 +1,10 @@
+2006-10-05 Andrew Skiba <andrews@mainsoft.com>
+
+	* EventHandlerList.cs: Implement event handler list according to MS
+	definition. No hash table, just a simple list with good performance
+	for a small number of events (<20) and worse performance when number
+	of events is bigger (patch by eyala@mainsoft.com).
+
 2006-10-29 Alexander Olk <alex.olk@googlemail.com>
 
 	* ComponentResourceManager.cs: Make ApplyResources work.

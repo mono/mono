@@ -46,14 +46,13 @@ namespace System.ComponentModel {
 		
 		public EventHandlerList ()
 		{
+			head = null;
 		}
 
 		public Delegate this [object key] {
 			get {
-				if (table == null)
-					return null;
-
-				return table [key] as Delegate;
+				ListNode entry = FindEntry (key);
+				return entry == null ? null : entry.value;
 			}
 
 			set {
@@ -63,28 +62,54 @@ namespace System.ComponentModel {
 
 		public void AddHandler (object key, Delegate value)
 		{
-			if (table == null)
-				table = new Hashtable ();
-
-			Delegate prev = table [key] as Delegate;
-			prev = Delegate.Combine (prev, value);
-			table [key] = prev;
+			ListNode entry = FindEntry (key);
+			if (entry == null) {
+				head = new ListNode (key, value, head);
+				return;
+			}
+			entry.value = Delegate.Combine (entry.value, value);
 		}
 
 		public void RemoveHandler (object key, Delegate value)
 		{
-			if (table == null)
+			ListNode entry = FindEntry (key);
+			if (entry == null)
 				return;
 
-			Delegate prev = table [key] as Delegate;
-			prev = Delegate.Remove (prev, value);
-			table [key] = prev;
+			entry.value = Delegate.Remove (entry.value, value);
 		}
 
 		public void Dispose ()
 		{
-			table = null;
+			head = null;
 		}
+		private ListNode FindEntry (object key)
+		{
+			if (key == null)
+				throw new ArgumentNullException ("key", "Attempted lookup for a null key.");
+
+			for (ListNode entry = head; entry != null; entry = entry.next)
+				if (key == entry.key)
+					return entry;
+			return null;
+		}
+
+		[Serializable]
+		private class ListNode
+		{
+			public object key;
+			public Delegate value;
+			public ListNode next;
+			public ListNode (object key, Delegate value, ListNode next)
+			{
+				this.key = key;
+				this.value = value;
+				this.next = next;
+			}
+		}
+
+		private ListNode head;
+
 	}
 	
 }
