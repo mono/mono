@@ -1,3 +1,8 @@
+2006-11-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System_test.dll.sources: Add unit tests for System.ComponentModel.
+	CollectionConverter to the build.
+
 2006-11-07  Andrew Skiba  <andrews@mainsoft.com>
 
 	* ApplicationSettingsBase.cs, AppSettingsReader.cs,
