@@ -1,5 +1,9 @@
 2006-11-07  Chris Toshok  <toshok@ximian.com>
 
+	* ProgressBar.cs: fix a typo in ToString().  fixes a unit test.
+
+2006-11-07  Chris Toshok  <toshok@ximian.com>
+
 	* RelatedPropertyManager.cs: set property_name in our ctor.  fixes
 	PropertyManager unit tests.
 

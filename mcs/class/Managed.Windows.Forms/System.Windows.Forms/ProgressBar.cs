@@ -403,8 +403,8 @@ namespace System.Windows.Forms
 		{
 			return string.Format ("{0}, Minimum: {1}, Maximum: {2}, Value: {3}",
 				GetType().FullName.ToString (),
-				Maximum.ToString (),
 				Minimum.ToString (),
+				Maximum.ToString (),
 				Value.ToString () );
 		}
 
