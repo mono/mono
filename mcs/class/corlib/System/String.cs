@@ -925,7 +925,7 @@ namespace System
 				throw new ArgumentOutOfRangeException ("startIndex - count + 1 < 0");
 
 			if (value.Length == 0)
-				return 0;
+				return startIndex;
 
 			if (startIndex == 0 && this.length == 0)
 				return -1;
