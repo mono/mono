@@ -119,6 +119,9 @@ public class DirectoryTest : Assertion {
 	}
 
 	[Test]
+#if NET_2_0
+	[ExpectedException (typeof(IOException))]
+#endif
 	public void CreateDirectoryAlreadyExistsAsFile ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.Test.ExistsAsFile";

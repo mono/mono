@@ -1,3 +1,8 @@
+2006-11-07  Dick Porter  <dick@ximian.com>
+
+	* DirectoryTest.cs: CreateDirectoryAlreadyExistsAsFile() should
+	expect an IOException in the 2.0 profile
+
 2006-10-30 Joel Reed  <joel.reed@ddiworld.com>
 
 	* DirectoryInfoTest.cs: Updated tests to support the DirectoryInfo
