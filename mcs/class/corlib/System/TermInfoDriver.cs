@@ -194,7 +194,7 @@ namespace System {
 				csrVisible = reader.Get (TermInfoStrings.CursorVisible);
 
 			csrInvisible = reader.Get (TermInfoStrings.CursorInvisible);
-			if (term == "cygwin" || term == "linux" || term.StartsWith ("xterm") ||
+			if (term == "cygwin" || term == "linux" || (term != null && term.StartsWith ("xterm")) ||
 				term == "rxvt" || term == "dtterm") {
 				titleFormat = "\x1b]0;{0}\x7"; // icon + window title
 			} else if (term == "iris-ansi") {
