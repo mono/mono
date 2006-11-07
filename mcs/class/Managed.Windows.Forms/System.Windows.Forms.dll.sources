@@ -558,6 +558,7 @@ System.Windows.Forms/StatusBarPanelBorderStyle.cs
 System.Windows.Forms/StatusBarPanelClickEventArgs.cs
 System.Windows.Forms/StatusBarPanelClickEventHandler.cs
 System.Windows.Forms/StatusBarPanelStyle.cs
+System.Windows.Forms/StatusStrip.cs
 System.Windows.Forms/StructFormat.cs
 System.Windows.Forms/SystemInformation.cs
 System.Windows.Forms/SystemParameter.cs
@@ -661,6 +662,7 @@ System.Windows.Forms/ToolStripSeparator.cs
 System.Windows.Forms/ToolStripSeparatorRenderEventArgs.cs
 System.Windows.Forms/ToolStripSeparatorRenderEventHandler.cs
 System.Windows.Forms/ToolStripSplitStackLayout.cs
+System.Windows.Forms/ToolStripStatusLabel.cs
 System.Windows.Forms/ToolStripStatusLabelBorderSides.cs
 System.Windows.Forms/ToolStripTextBox.cs
 System.Windows.Forms/ToolStripTextDirection.cs

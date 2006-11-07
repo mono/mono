@@ -1,3 +1,9 @@
+2006-11-07  Jonathan Pobst  <monkey@jpobst.com>
+
+	* StatusStrip.cs, ToolStripStatusLabel.cs: By request, an
+	early version of StatusStrip.  Not responsible for eaten
+	application or firstborn children.
+
 2006-11-06  Chris Toshok  <toshok@ximian.com>
 
 	* TabControl.cs: in OnGotFocusInternal/OnLostFocusInternal don't
