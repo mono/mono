@@ -34,5 +34,18 @@ namespace MonoTests.System.Windows.Forms
 			p.MinWidth = 100;
 			Assert.AreEqual (100, p.Width, "1");
 		}
+
+		[Test]
+		public void ToStringTest ()
+		{
+			StatusBarPanel p = new StatusBarPanel ();
+			Assert.AreEqual ("StatusBarPanel: {}", p.ToString(), "1");
+
+			p.Text = "Hello";
+			Assert.AreEqual ("StatusBarPanel: {Hello}", p.ToString(), "2");
+
+			p.Text = "}";
+			Assert.AreEqual ("StatusBarPanel: {}}", p.ToString(), "3");
+		}
 	}
 }
