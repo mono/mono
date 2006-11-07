@@ -208,6 +208,16 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.IsTrue (p.CheckIsInputKey (Keys.End), "PH-TRUE-end");
 			Assert.IsTrue (p.CheckIsInputKey (Keys.Home), "PH-TRUE-home");
 		}
-	}
 
+		[Test] // bug #79847
+		public void NoTabPages ()
+		{
+			Form form = new Form ();
+			TabControl tc = new TabControl ();
+			form.Controls.Add (tc);
+			form.ShowInTaskbar = false;
+			form.Show ();
+			form.Dispose ();
+		}
+	}
 }

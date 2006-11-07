@@ -1,3 +1,7 @@
+2006-11-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TabControlTest.cs: Added test for bug #79847.
+
 2006-11-04  Chris Toshok  <toshok@ximian.com>
 
 	* ControlTest.cs: enable a bunch more of these on linux, and split
