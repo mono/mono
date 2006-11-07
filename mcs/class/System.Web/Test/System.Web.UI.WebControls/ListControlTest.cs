@@ -486,6 +486,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			p.DataTextFormatString = "{0:00}";
 			p.SelectedIndex = 2;
 			p.DataBind ();
+			Assert.IsNotNull (p.SelectedItem, "#00");
 			Assert.AreEqual ("03", p.SelectedItem.Text, "#01");
 		}
 
