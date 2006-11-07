@@ -68,11 +68,11 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			Assert.AreEqual ("", sql.CacheKeyDependency, "A1");
 			Assert.IsTrue (sql.CancelSelectOnNullParameter, "A2");
-			Assert.AreEqual (ConflictOptions.OverwriteChanges, sql.ConflictDetection, "A3");
-			Assert.AreEqual (SqlDataSourceCommandType.StoredProcedure, sql.DeleteCommandType, "A4");
-			Assert.AreEqual (SqlDataSourceCommandType.StoredProcedure, sql.InsertCommandType, "A5");
-			Assert.AreEqual (SqlDataSourceCommandType.StoredProcedure, sql.SelectCommandType, "A6");
-			Assert.AreEqual (SqlDataSourceCommandType.StoredProcedure, sql.UpdateCommandType, "A7");
+			Assert.AreEqual(ConflictOptions.OverwriteChanges, sql.ConflictDetection, "A3");
+			Assert.AreEqual(SqlDataSourceCommandType.Text, sql.DeleteCommandType, "A4");
+            Assert.AreEqual(SqlDataSourceCommandType.Text, sql.InsertCommandType, "A5");
+            Assert.AreEqual(SqlDataSourceCommandType.Text, sql.SelectCommandType, "A6");
+            Assert.AreEqual(SqlDataSourceCommandType.Text, sql.UpdateCommandType, "A7");
 			Assert.AreEqual ("{0}", sql.OldValuesParameterFormatString, "A8");
 			Assert.AreEqual ("", sql.SqlCacheDependency, "A9");
 			Assert.AreEqual ("", sql.SortParameterName, "A10");
@@ -103,17 +103,17 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
         [Category ("NotWorking")]
-		public void ViewState ()
+        public void ViewState ()
 		{
 			SqlPoker sql = new SqlPoker ();
 
 			sql.CacheKeyDependency = "hi";
 			sql.CancelSelectOnNullParameter = false;
 			sql.ConflictDetection = ConflictOptions.CompareAllValues;
-			sql.DeleteCommandType = SqlDataSourceCommandType.Text;
-			sql.InsertCommandType = SqlDataSourceCommandType.Text;
-			sql.SelectCommandType = SqlDataSourceCommandType.Text;
-			sql.UpdateCommandType = SqlDataSourceCommandType.Text;
+			sql.DeleteCommandType = SqlDataSourceCommandType.StoredProcedure;
+            sql.InsertCommandType = SqlDataSourceCommandType.StoredProcedure;
+            sql.SelectCommandType = SqlDataSourceCommandType.StoredProcedure;
+            sql.UpdateCommandType = SqlDataSourceCommandType.StoredProcedure;
 			sql.OldValuesParameterFormatString = "{1}";
 			sql.SqlCacheDependency = "hi";
 			sql.SortParameterName = "hi";
@@ -130,10 +130,10 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("hi", sql.CacheKeyDependency, "A1");
 			Assert.IsFalse (sql.CancelSelectOnNullParameter, "A2");
 			Assert.AreEqual (ConflictOptions.CompareAllValues, sql.ConflictDetection, "A3");
-			Assert.AreEqual (SqlDataSourceCommandType.Text, sql.DeleteCommandType, "A4");
-			Assert.AreEqual (SqlDataSourceCommandType.Text, sql.InsertCommandType, "A5");
-			Assert.AreEqual (SqlDataSourceCommandType.Text, sql.SelectCommandType, "A6");
-			Assert.AreEqual (SqlDataSourceCommandType.Text, sql.UpdateCommandType, "A7");
+			Assert.AreEqual(SqlDataSourceCommandType.StoredProcedure, sql.DeleteCommandType, "A4");
+            Assert.AreEqual(SqlDataSourceCommandType.StoredProcedure, sql.InsertCommandType, "A5");
+            Assert.AreEqual(SqlDataSourceCommandType.StoredProcedure, sql.SelectCommandType, "A6");
+            Assert.AreEqual(SqlDataSourceCommandType.StoredProcedure, sql.UpdateCommandType, "A7");
 			Assert.AreEqual ("{1}", sql.OldValuesParameterFormatString, "A8");
 			Assert.AreEqual ("hi", sql.SqlCacheDependency, "A9");
 			Assert.AreEqual ("hi", sql.SortParameterName, "A10");
@@ -152,28 +152,39 @@ namespace MonoTests.System.Web.UI.WebControls
 			sql = new SqlPoker ();
 			sql.LoadFromViewState (state);
 
-			Assert.AreEqual ("hi", sql.CacheKeyDependency, "B1");
-			Assert.IsFalse  (sql.CancelSelectOnNullParameter, "B2");
-			Assert.AreEqual (ConflictOptions.CompareAllValues, sql.ConflictDetection, "B3");
-			Assert.AreEqual (SqlDataSourceCommandType.Text, sql.DeleteCommandType, "B4");
-			Assert.AreEqual (SqlDataSourceCommandType.Text, sql.InsertCommandType, "B5");
-			Assert.AreEqual (SqlDataSourceCommandType.Text, sql.SelectCommandType, "B6");
-			Assert.AreEqual (SqlDataSourceCommandType.Text, sql.UpdateCommandType, "B7");
-			Assert.AreEqual ("{1}", sql.OldValuesParameterFormatString, "B8");
-			Assert.AreEqual ("hi", sql.SqlCacheDependency, "B9");
-			Assert.AreEqual ("hi", sql.SortParameterName, "B10");
-			Assert.AreEqual (1, sql.CacheDuration, "B11");
-			Assert.AreEqual (DataSourceCacheExpiry.Sliding, sql.CacheExpirationPolicy, "B12");
-			Assert.IsTrue   (sql.EnableCaching, "B13");
-			Assert.AreEqual (SqlDataSourceMode.DataReader, sql.DataSourceMode, "B16");
-			Assert.AreEqual ("DELETE foo", sql.DeleteCommand, "B17");
-			Assert.AreEqual ("INSERT foo", sql.InsertCommand, "B20");
-			Assert.AreEqual ("SELECT foo", sql.SelectCommand, "B22");
-			Assert.AreEqual ("UPDATE foo", sql.UpdateCommand, "B24");
-			Assert.AreEqual ("hi", sql.FilterExpression, "B26");
-		}
-	}
-
+            Assert.AreEqual("", sql.CacheKeyDependency, "B1");
+            Assert.IsTrue(sql.CancelSelectOnNullParameter, "B2");
+            Assert.AreEqual(ConflictOptions.OverwriteChanges, sql.ConflictDetection, "B3");
+            Assert.AreEqual(SqlDataSourceCommandType.Text, sql.DeleteCommandType, "B4");
+            Assert.AreEqual(SqlDataSourceCommandType.Text, sql.InsertCommandType, "B5");
+            Assert.AreEqual(SqlDataSourceCommandType.Text, sql.SelectCommandType, "B6");
+            Assert.AreEqual(SqlDataSourceCommandType.Text, sql.UpdateCommandType, "B7");
+            Assert.AreEqual("{0}", sql.OldValuesParameterFormatString, "B8");
+            Assert.AreEqual("", sql.SqlCacheDependency, "B9");
+            Assert.AreEqual("", sql.SortParameterName, "B10");
+            Assert.AreEqual(0, sql.CacheDuration, "B11");
+            Assert.AreEqual(DataSourceCacheExpiry.Absolute, sql.CacheExpirationPolicy, "B12");
+            Assert.IsFalse(sql.EnableCaching, "B13");
+            Assert.AreEqual("", sql.ProviderName, "B14");
+            Assert.AreEqual("", sql.ConnectionString, "B15");
+            Assert.AreEqual(SqlDataSourceMode.DataSet, sql.DataSourceMode, "B16");
+            Assert.AreEqual("", sql.DeleteCommand, "B17");
+            Assert.IsNotNull(sql.DeleteParameters, "B18");
+            Assert.AreEqual(0, sql.DeleteParameters.Count, "B18.1");
+            Assert.IsNotNull(sql.FilterParameters, "B19");
+            Assert.AreEqual(0, sql.FilterParameters.Count, "B19.1");
+            Assert.AreEqual("", sql.InsertCommand, "B20");
+            Assert.IsNotNull(sql.InsertParameters, "B21");
+            Assert.AreEqual(0, sql.InsertParameters.Count, "B21.1");
+            Assert.AreEqual("", sql.SelectCommand, "B22");
+            Assert.IsNotNull(sql.SelectParameters, "B23");
+            Assert.AreEqual(0, sql.SelectParameters.Count, "B23.1");
+            Assert.AreEqual("", sql.UpdateCommand, "B24");
+            Assert.IsNotNull(sql.UpdateParameters, "B25");
+            Assert.AreEqual(0, sql.UpdateParameters.Count, "B25.1");
+            Assert.AreEqual("", sql.FilterExpression, "B26");
+        }
+    }
 }
 
 #endif

@@ -167,6 +167,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			TestRadioButton b2 = new TestRadioButton ();
 			b2.GroupName = "mono";
 			Page p = new Page ();
+            p.EnableEventValidation = false;
 			p.ID = "MyPage";
 			p.Controls.Add (b1);
 			p.Controls.Add (b2);

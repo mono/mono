@@ -164,11 +164,11 @@ namespace MonoTests.System.Web.UI
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
+        [Category ("NotWorking")]
 		public void IsViewStateEnabled ()
 		{
 			DerivedControl c = new DerivedControl ();
-			Assert.IsFalse (c.DoIsViewStateEnabled);
+			Assert.IsTrue (c.DoIsViewStateEnabled);
 			Page p = new Page ();
 			c.Page = p;
 			p.Controls.Add (c);

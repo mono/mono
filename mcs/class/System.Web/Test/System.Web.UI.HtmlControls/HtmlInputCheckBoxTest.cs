@@ -31,7 +31,7 @@ using System;
 using System.IO;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
-
+using MonoTests.stand_alone.WebHarness;
 using NUnit.Framework;
 
 namespace MonoTests.System.Web.UI.HtmlControls {
@@ -86,7 +86,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			Assert.AreEqual (1, c.Attributes.Count, "Attributes.Count after");
 		}
 
-		[Test]
+		[Test] 
 		public void Render ()
 		{
 			TestHtmlInputCheckBox c = new TestHtmlInputCheckBox ();
@@ -101,9 +101,9 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			s = c.Render ();
 
 #if NET_2_0
-			Assert.AreEqual ("<input name=\"*1*\" type=\"checkbox\" id=\"*1*\" checked=\"checked\" />", s);
+			HtmlDiff.AssertAreEqual ("<input name=\"*1*\" id=\"*1*\" type=\"checkbox\" checked=\"checked\" />", s, "Render fail");
 #else
-			Assert.AreEqual ("<input name=\"*1*\" id=\"*1*\" type=\"checkbox\" checked=\"checked\" />", s);
+			HtmlDiff.AssertAreEqual ("<input name=\"*1*\" type=\"checkbox\" id=\"*1*\" checked=\"checked\" />", s, "Render fail");
 #endif
 		}
 	}

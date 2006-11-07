@@ -33,7 +33,7 @@ using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
-
+using MonoTests.stand_alone.WebHarness;
 using NUnit.Framework;
 
 namespace MonoTests.System.Web.UI.HtmlControls {
@@ -219,9 +219,9 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			FormPoker form = new FormPoker ();
 			form.Page = p;
 #if NET_2_0
-			Assert.AreEqual ("<div>\r\n<input type=\"hidden\" name=\"__VIEWSTATE\" id=\"\r\n__VIEWSTATE\" value=\"\" />\r\n</div>", form.RenderChildren ().Trim (), "A1");
+			HtmlDiff.AssertAreEqual ("<div>\r\n<input type=\"hidden\" name=\"__VIEWSTATE\" id=\"\r\n__VIEWSTATE\" value=\"\" />\r\n</div>", form.RenderChildren ().Trim (), "A1");
 #else
-			Assert.AreEqual ("<input type=\"hidden\" name=\"__VIEWSTATE\" value=\"\" />", form.RenderChildren ().Trim (), "A1");
+			HtmlDiff.AssertAreEqual ("<input type=\"hidden\" name=\"__VIEWSTATE\" value=\"\" />", form.RenderChildren ().Trim (), "A1");
 #endif
 		}
 

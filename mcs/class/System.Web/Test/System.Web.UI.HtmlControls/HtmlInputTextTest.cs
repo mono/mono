@@ -32,7 +32,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
-
+using MonoTests.stand_alone.WebHarness;
 using NUnit.Framework;
 
 namespace MonoTests.System.Web.UI.HtmlControls {
@@ -90,7 +90,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 #if NET_2_0
 		public bool LoadPost (string key, NameValueCollection nvc)
 		{
-			return base.LoadPostData (key, nvc);
+			return base.LoadPostData(key, nvc);
 		}
 
 		public void Raise ()
@@ -200,11 +200,11 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			it.Value = "s3kr3t";
 #if NET_2_0
 			// value is there, maybe because a new HtmlInputPassword class exists ?
-			Assert.AreEqual (" name=\"mono\" type=\"password\" id=\"mono\" maxlength=\"2\" size=\"4\" value=\"s3kr3t\" /", it.RenderAttributes ());
+			HtmlDiff.AssertAreEqual (" name=\"mono\" id=\"mono\" type=\"password\" maxlength=\"2\" size=\"4\" value=\"s3kr3t\" /", it.RenderAttributes (),"Render failed");
 			Assert.IsFalse (it.ViewStateValueChanged, "ViewStateValueChanged");
 			Assert.IsFalse (it.AttributeValueChanged, "AttributeValueChanged");
 #else
-			Assert.AreEqual (" name=\"mono\" id=\"mono\" type=\"password\" maxlength=\"2\" size=\"4\" /", it.RenderAttributes ());
+			HtmlDiff.AssertAreEqual(" name=\"mono\" id=\"mono\" type=\"password\" maxlength=\"2\" size=\"4\" /", it.RenderAttributes(),"Render failed");
 			Assert.IsTrue (it.ViewStateValueChanged, "ViewStateValueChanged");
 			Assert.IsTrue (it.AttributeValueChanged, "AttributeValueChanged");
 #endif

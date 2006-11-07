@@ -113,32 +113,35 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
-		public void InitialNoBag10 ()
+		[Category("NotWorking")]
+		public void InitialNoBag10()
 		{
-			AC ac = new AC (null);
-			CssStyleCollection css = ac.CssStyle;
-			int i = css.Count;
+		    AC ac = new AC(null);
+		    CssStyleCollection css = ac.CssStyle;
+		    int i = css.Count;
+		    Assert.AreEqual(0, i, "InitialNoBag10");
 		}
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
-		public void InitialNoBag11 ()
+		[Category("NotWorking")]
+		public void InitialNoBag11()
 		{
-			AC ac = new AC (null);
-			CssStyleCollection css = ac.CssStyle;
-			ICollection coll = css.Keys;
+		    AC ac = new AC(null);
+		    CssStyleCollection css = ac.CssStyle;
+		    ICollection coll = css.Keys;
+		    Assert.AreEqual(0, coll.Count, "InitialNoBag11");
 		}
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
-		public void InitialNoBag12 ()
+		[Category("NotWorking")]
+		public void InitialNoBag12()
 		{
-			AC ac = new AC (null);
-			CssStyleCollection css = ac.CssStyle;
-			string v = css ["hola"];
+		    AC ac = new AC(null);
+		    CssStyleCollection css = ac.CssStyle;
+		    string v = css["hola"];
+		    Assert.AreEqual(null, v, "InitialNoBag12");
 		}
-
+			
 		[Test]
 		public void InitialBag1 ()
 		{

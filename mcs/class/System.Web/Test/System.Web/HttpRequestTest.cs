@@ -35,6 +35,8 @@ using NUnit.Framework;
 using System.Diagnostics;
 using MonoTests.SystemWeb.Framework;
 using System.IO;
+using System.Threading;
+using System.Globalization;
 
 namespace MonoTests.System.Web {
 
@@ -135,11 +137,13 @@ namespace MonoTests.System.Web {
 		[Test]
 		public void Test_QueryStringDecoding()
 		{
+			// Note: The string to encode must exist in default encoding language 
+			// \r - will exist in all encodings
 			string url = "http://www.gnome.org/";
-			string qs = "umlaut=" + HttpUtility.UrlEncode("\u00e4", Encoding.Default);
+			string qs = "umlaut=" + HttpUtility.UrlEncode("\r", Encoding.Default);
 
 			HttpRequest r = new HttpRequest ("file", url, qs);
-			Assert.AreEqual("\u00e4", r.QueryString["umlaut"]);
+			Assert.AreEqual ("\r", r.QueryString["umlaut"]);
 		}
 
 		[Test]

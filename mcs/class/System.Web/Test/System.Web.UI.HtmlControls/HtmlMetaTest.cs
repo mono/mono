@@ -29,7 +29,7 @@
 #if NET_2_0
 
 using NUnit.Framework;
-
+using MonoTests.stand_alone.WebHarness;
 using System;
 using System.IO;
 using System.Web.UI;
@@ -87,7 +87,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			meta.Content = "Content";
 			meta.HttpEquiv = "Equiv";
 			meta.Scheme = "Scheme";
-			Assert.AreEqual ("<meta name=\"Name\" content=\"Content\" http-equiv=\"Equiv\" scheme=\"Scheme\" />", meta.Render(), "A1");
+			HtmlDiff.AssertAreEqual ("<meta name=\"Name\" content=\"Content\" http-equiv=\"Equiv\" scheme=\"Scheme\" />", meta.Render(), "A1");
 		}
 
 		[Test]

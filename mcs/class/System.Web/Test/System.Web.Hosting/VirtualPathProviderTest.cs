@@ -82,14 +82,14 @@ namespace MonoTests.System.Web.Hosting {
 		public void FileExists1 ()
 		{
 			DummyVPP dummy = new DummyVPP ();
-			Assert.IsNull (dummy.FileExists ("hola.aspx"));
+			Assert.IsFalse (dummy.FileExists ("hola.aspx"));
 		}
 
 		[Test]
 		public void DirectoryExists1 ()
 		{
 			DummyVPP dummy = new DummyVPP ();
-			Assert.IsNull (dummy.DirectoryExists ("hola"));
+			Assert.IsFalse (dummy.DirectoryExists ("hola"));
 		}
 
 		[Test]

@@ -65,12 +65,23 @@ namespace MonoTests.System.Web
 	public class SiteMapNodeTest
 	{
 		[Test]
-		[Category ("NotWorking")]
+        [Category ("NotWorking")]
 		public void Node_Null_Attrib_equals ()
 		{
+            // Note: dot.net implementation dosn't compare attributes
 			SiteMapNode node = new SiteMapNode (new DummyProvider (), "", "", "", null, null, null, null, null);
 			SiteMapNode node1 = new SiteMapNode (new DummyProvider (), "", "", "", null, null, null, null, null);
 			SiteMapNode node2 = new SiteMapNode (new DummyProvider (), "", "", "", null, null, new NameValueCollection (), null, null);
+			Assert.IsTrue (node.Equals (node1), "both nodes have attrib=null");
+			Assert.IsTrue (node.Equals (node2), "one node has attrib=null");
+		}
+
+		[Test]
+		public void Node_equals ()
+		{
+			SiteMapNode node = new SiteMapNode (new DummyProvider (), "Node", "1", "", null, null, null, null, null);
+			SiteMapNode node1 = new SiteMapNode (new DummyProvider (), "Node", "1", "", null, null, null, null, null);
+			SiteMapNode node2 = new SiteMapNode (new DummyProvider (), "Node", "2", "", null, null, new NameValueCollection (), null, null);
 			Assert.IsTrue (node.Equals (node1), "both nodes have attrib=null");
 			Assert.IsFalse (node.Equals (node2), "one node has attrib=null");
 		}
@@ -83,14 +94,16 @@ namespace MonoTests.System.Web
 			SiteMapNode node1 = new SiteMapNode (new DummyProvider (), "", "", "", null, null, null, null, null);
 			SiteMapNode node2 = new SiteMapNode (new DummyProvider (), "", "", "", null, new int[] { }, null, null, null);
 			Assert.IsTrue (node.Equals (node1));
-			Assert.IsFalse (node.Equals (node2));
+			Assert.IsTrue (node.Equals (node2));
 		}
 
 		[Test]
 		public void Node_Null_Attrib_clone ()
 		{
 			SiteMapNode node = new SiteMapNode (new DummyProvider (), "", "", "", null, null, null, null, null);
-			node.Clone ();
+			SiteMapNode copy = node.Clone ();
+			Assert.IsNotNull (copy, "Node not created");
+			Assert.AreEqual (copy, node, "Cloning failed");
 		}
 	}
 }

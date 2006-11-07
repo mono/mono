@@ -66,7 +66,8 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentException))]
 		public void Combine_ArgException2 ()
 		{
 			Assert.AreEqual ("hi/there", VPU.Combine ("hi/there", null), "A1");
@@ -255,7 +256,8 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentException))]
 		public void Combine2 ()
 		{
 			VPU.Combine ("something", null);
@@ -269,14 +271,14 @@ namespace MonoTests.System.Web {
 		}
 		
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetDirectory2 ()
 		{
 			VPU.GetDirectory ("");
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
+		[ExpectedException (typeof (ArgumentException))]
 		public void GetDirectory3 ()
 		{
 			VPU.GetDirectory ("hola");
@@ -310,7 +312,7 @@ namespace MonoTests.System.Web {
 		{
 			Assert.AreEqual ("", VPU.GetExtension ("/direc/somefilenoextension"));
 			Assert.AreEqual ("", VPU.GetExtension ("/"));
-			Assert.AreEqual (".aspx", VPU.GetDirectory ("/////direc///somefile.aspx"));
+			Assert.AreEqual ("/direc/", VPU.GetDirectory ("/////direc///somefile.aspx"));
 		}
 
 		[Test]

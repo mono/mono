@@ -139,10 +139,10 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("", sql.CacheKeyDependency, "A1");
 			Assert.IsTrue (sql.CancelSelectOnNullParameter, "A2");
 			Assert.AreEqual (ConflictOptions.OverwriteChanges, sql.ConflictDetection, "A3");
-			Assert.AreEqual (SqlDataSourceCommandType.StoredProcedure, sql.DeleteCommandType, "A4");
-			Assert.AreEqual (SqlDataSourceCommandType.StoredProcedure, sql.InsertCommandType, "A5");
-			Assert.AreEqual (SqlDataSourceCommandType.StoredProcedure, sql.SelectCommandType, "A6");
-			Assert.AreEqual (SqlDataSourceCommandType.StoredProcedure, sql.UpdateCommandType, "A7");
+            Assert.AreEqual(SqlDataSourceCommandType.Text, sql.DeleteCommandType, "A4");
+            Assert.AreEqual(SqlDataSourceCommandType.Text, sql.InsertCommandType, "A5");
+            Assert.AreEqual(SqlDataSourceCommandType.Text, sql.SelectCommandType, "A6");
+            Assert.AreEqual(SqlDataSourceCommandType.Text, sql.UpdateCommandType, "A7");
 			Assert.AreEqual ("{0}", sql.OldValuesParameterFormatString, "A8");
 
 			// SqlCacheDependency access should raise an exception
@@ -171,8 +171,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("", sql.FilterExpression, "A26");
 			Assert.AreEqual ("", sql.DataFile, "A27");
 		}
-	}
-
+    }
 }
 
 #endif

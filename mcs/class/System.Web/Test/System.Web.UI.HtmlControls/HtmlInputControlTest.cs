@@ -31,7 +31,7 @@ using System;
 using System.IO;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
-
+using MonoTests.stand_alone.WebHarness;
 using NUnit.Framework;
 
 namespace MonoTests.System.Web.UI.HtmlControls {
@@ -189,13 +189,13 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			ic.Name = "mono";
 			ic.Value = "value";
 
-			Assert.AreEqual (" name type=\"test\" value=\"value\" /", ic.RenderAttributes ());
+			HtmlDiff.AssertAreEqual (" name type=\"test\" value=\"value\" /", ic.RenderAttributes (), "RenderAttributes failed #1");
 
 			ic.ID = "toto";
 #if NET_2_0
-			Assert.AreEqual (" name=\"toto\" type=\"test\" id=\"toto\" value=\"value\" /", ic.RenderAttributes ());
+			HtmlDiff.AssertAreEqual (" name=\"toto\" id=\"toto\" type=\"test\" value=\"value\" /", ic.RenderAttributes (), "RenderAttributes failed #2");
 #else
-			Assert.AreEqual (" name=\"toto\" id=\"toto\" type=\"test\" value=\"value\" /", ic.RenderAttributes ());
+			HtmlDiff.AssertAreEqual(" name=\"toto\" id=\"toto\" type=\"test\" value=\"value\" /", ic.RenderAttributes() , "RenderAttributes failed #3");
 #endif
 		}
 
@@ -214,7 +214,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			ic.Value = "s3kr3t";
 
 			// logic to hide password isn't in HtmlInputControl
-			Assert.AreEqual (" name type=\"password\" value=\"s3kr3t\" /", ic.RenderAttributes ());
+			HtmlDiff.AssertAreEqual (" name type=\"password\" value=\"s3kr3t\" /", ic.RenderAttributes (), "Password failed");
 		}
 	}
 }

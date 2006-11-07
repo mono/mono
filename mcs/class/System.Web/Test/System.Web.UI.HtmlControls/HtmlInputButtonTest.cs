@@ -32,7 +32,7 @@ using System.IO;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
-
+using MonoTests.stand_alone.WebHarness;
 using NUnit.Framework;
 
 namespace MonoTests.System.Web.UI.HtmlControls {
@@ -137,9 +137,9 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 
 			p.DoRenderAttributes (tw);
 #if NET_2_0
-			Assert.AreEqual (" name type=\"button\" ValidationGroup=\"VG\" /", sw.ToString (), "A2");
+			HtmlDiff.AssertAreEqual (" name type=\"button\" ValidationGroup=\"VG\" /", sw.ToString (), "A2");
 #else
-			Assert.AreEqual (" name type=\"button\" /", sw.ToString (), "A2");
+			HtmlDiff.AssertAreEqual (" name type=\"button\" /", sw.ToString (), "A2");
 #endif
 		}
 
@@ -182,6 +182,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		public void RenderOnclick2 ()
 		{
 			Page page = new Page ();
+			page.EnableEventValidation = false;
 			HtmlInputButtonPoker it = new HtmlInputButtonPoker ("button");
 			page.Controls.Add (it);
 			it.ID = "id1";
@@ -201,22 +202,26 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+                [Category ("NotWorking")]
 		public void RenderOnclick4 ()
 		{
 			Page page = new Page ();
+			page.EnableEventValidation = false;
 			HtmlInputButtonPoker it = new HtmlInputButtonPoker ("submit");
 			page.Controls.Add (it);
 			it.ID = "id1";
 			it.ServerClick += new EventHandler (EmptyHandler);
 			string rendered = it.RenderToString ();
-			Assert.IsTrue (rendered.IndexOf ("onclick") == -1, "#01");
+			Assert.IsTrue (rendered.IndexOf ("onclick") != -1, "#01");
+			Assert.IsTrue (rendered.IndexOf ("__doPostBack") != -1, "#02");
+			Assert.IsTrue (rendered.IndexOf ("type=\"submit\"") != -1, "#03");
 		}
 
 		[Test]
 		public void RenderOnclick5 ()
 		{
 			Page page = new Page ();
+			page.EnableEventValidation = false;
 			RequiredFieldValidator val = new RequiredFieldValidator ();
 			val.ControlToValidate = "id1";
 			page.Validators.Add (val);

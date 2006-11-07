@@ -47,8 +47,8 @@ namespace MonoTests.System.Web.Profile {
 			ProfileInfoPoker poker = new ProfileInfoPoker();
 
 			Assert.IsNull (poker.UserName, "A1");
-			Assert.AreEqual (DateTime.MinValue, poker.LastUpdatedDate, "A2");
-			Assert.AreEqual (DateTime.MinValue, poker.LastActivityDate, "A3");
+			Assert.AreEqual (DateTime.MinValue, poker.LastUpdatedDate.Date, "A2");
+			Assert.AreEqual (DateTime.MinValue, poker.LastActivityDate.Date, "A3");
 			Assert.IsFalse  (poker.IsAnonymous, "A4");
 			Assert.AreEqual (0, poker.Size, "A5");
 		}

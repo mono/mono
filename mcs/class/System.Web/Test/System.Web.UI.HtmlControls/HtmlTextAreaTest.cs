@@ -190,10 +190,10 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			ta.Name = "mono";
 			ta.Value = "value";
 			// value is out
-			Assert.AreEqual (" name cols=\"4\" rows=\"2\"", ta.RenderAttributes ());
+			HtmlDiff.AssertAreEqual (" name cols=\"4\" rows=\"2\"", ta.RenderAttributes (),"RenderAttributes failed #1");
 
 			ta.ID = "go";
-			Assert.AreEqual (" name=\"go\" id=\"go\" cols=\"4\" rows=\"2\"", ta.RenderAttributes ());
+			HtmlDiff.AssertAreEqual (" name=\"go\" id=\"go\" cols=\"4\" rows=\"2\"", ta.RenderAttributes (),"RenderAttributes failed #2");
 		}
 
 		[Test]
@@ -223,10 +223,10 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			ta.Name = "mono";
 			ta.Value = "value";
 			// value is out
-			Assert.AreEqual ("<textarea name cols=\"4\" rows=\"2\">value</textarea>", ta.Render ());
+			HtmlDiff.AssertAreEqual ("<textarea name cols=\"4\" rows=\"2\">value</textarea>", ta.Render (),"Render #1");
 
 			ta.ID = "go";
-			Assert.AreEqual ("<textarea name=\"go\" id=\"go\" cols=\"4\" rows=\"2\">value</textarea>", ta.Render ());
+			HtmlDiff.AssertAreEqual ("<textarea name=\"go\" id=\"go\" cols=\"4\" rows=\"2\">value</textarea>", ta.Render (),"Render #2");
 		}
 
 		[Test]
