@@ -1,3 +1,10 @@
+2006-11-07  Dick Porter  <dick@ximian.com>
+
+	* DateTimeTest.cs: TestToString(): Must specify '+0' for GMT.
+
+	* TimeZoneTest.cs: Daylight saving ends at 2am in GMT.  (This test
+	fails on MS, they return "01/01/0001 00:00:00")
+
 2006-10-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* AppDomainTest.cs: Disable the not yet working #79720 test.

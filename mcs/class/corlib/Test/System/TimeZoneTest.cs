@@ -116,12 +116,12 @@ public class TimeZoneTest : TestCase {
 	
 		DaylightTime d1 = t1.GetDaylightChanges (2002);
 		AssertEquals("D03", "03/31/2002 01:00:00", d1.Start.ToString ("G"));
-		AssertEquals("D04", "10/27/2002 01:00:00", d1.End.ToString ("G"));
+		AssertEquals("D04", "10/27/2002 02:00:00", d1.End.ToString ("G"));
 		AssertEquals("D05", 36000000000L, d1.Delta.Ticks);
 	
 		DaylightTime d2 = t1.GetDaylightChanges (1996);
 		AssertEquals("D06", "03/31/1996 01:00:00", d2.Start.ToString ("G"));
-		AssertEquals("D07", "10/27/1996 01:00:00", d2.End.ToString ("G"));
+		AssertEquals("D07", "10/27/1996 02:00:00", d2.End.ToString ("G"));
 		AssertEquals("D08", 36000000000L, d2.Delta.Ticks);
 	
 		DateTime d3 = new DateTime (2002,2,25);

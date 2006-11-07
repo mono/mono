@@ -334,8 +334,9 @@ public class DateTimeTest : Assertion
 		AssertEquals("C24", "AM", t1.ToString ("tt"));
 		AssertEquals("C25", "PM", t2.ToString ("tt"));
 		long offset = TimeZone.CurrentTimeZone.GetUtcOffset(t1).Ticks / 36000000000;
-		AssertEquals("C26", offset.ToString("+#;-#;0"), t1.ToString ("%z"));
-		AssertEquals("C27", offset.ToString("+00;-00;00"), t1.ToString ("zz"));
+		// Must specify '+0' for GMT
+		AssertEquals("C26", offset.ToString("+#;-#;+0"), t1.ToString ("%z"));
+		AssertEquals("C27", offset.ToString("+00;-00;+00"), t1.ToString ("zz"));
 		// This does not work in, eg banglore, because their timezone has an offset of
 		// +05:30
 		//AssertEquals("C28", offset.ToString("+00;-00;00") + ":00", t1.ToString ("zzz"));
