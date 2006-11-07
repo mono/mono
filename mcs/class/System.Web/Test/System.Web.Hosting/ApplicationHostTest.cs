@@ -124,7 +124,11 @@ namespace MonoTests.System.Web.Hosting {
 			ApplicationHost.CreateApplicationHost (typeof (MBR), "/app", null);
 		}
 
-		[Test][ExpectedException(typeof(SerializationException))]
+		[Test]
+		[ExpectedException(typeof(SerializationException))]
+#if TARGET_JVM //System.Security.Policy.Evidence not implemented
+		[Category ("NotWorking")]
+#endif
 		public void Constructor_PlainType ()
 		{
 			ApplicationHost.CreateApplicationHost (typeof (ApplicationHostTest), "/app", Environment.CurrentDirectory);
