@@ -41,7 +41,7 @@ using System.Web.Configuration;
 using System.Web.UI;
 using System.Threading;
 
-#if NET_2_0
+#if NET_2_0 && !TARGET_JVM
 using System.CodeDom.Compiler;
 using System.Web.Compilation;
 #endif
@@ -260,7 +260,7 @@ namespace System.Web {
 			} else {
 				context.ApplicationInstance = app;
 			
-#if NET_2_0
+#if NET_2_0 && !TARGET_JVM
 				//
 				// Compile the local resources, if any
 				//
