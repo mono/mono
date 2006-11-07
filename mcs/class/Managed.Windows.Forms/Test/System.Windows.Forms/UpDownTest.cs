@@ -16,7 +16,6 @@ namespace MonoTests.System.Windows.Forms
 	public class UpDownTest
 	{
 		[Test]
-		[Category ("NotWorking")]
 		public void UpDownBasePropTest ()
 		{
 			NumericUpDown n1 = new NumericUpDown ();
@@ -24,7 +23,18 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (BorderStyle.Fixed3D, n1.BorderStyle, "#1");
 			Assert.AreEqual (true, n1.InterceptArrowKeys, "#2");
 			Assert.AreEqual (LeftRightAlignment.Right, n1.UpDownAlign, "#3");
-			Assert.AreEqual ("System.Windows.Forms.NumericUpDown, Minimum = 0, Maximum = 100", n1.ToString (), "#3a");
+		}
+
+		[Test]
+		public void ToStringTest ()
+		{
+			NumericUpDown n1 = new NumericUpDown ();
+
+			Assert.AreEqual ("System.Windows.Forms.NumericUpDown, Minimum = 0, Maximum = 100", n1.ToString (), "1");
+
+			n1.Minimum = 0.33m;
+			n1.Maximum = 100.33m;
+			Assert.AreEqual ("System.Windows.Forms.NumericUpDown, Minimum = 0.33, Maximum = 100.33", n1.ToString (), "2");
 		}
 		
 		[Test]
@@ -36,13 +46,12 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, n1.Minimum, "#5");
 			Assert.AreEqual (0, n1.Value, "#6");
 			Assert.AreEqual (0, n1.DecimalPlaces, "#7");
-			Assert.AreEqual (false, n1.Hexadecimal, "#8");
-			Assert.AreEqual (false, n1.ThousandsSeparator, "#9");
+			Assert.IsFalse (n1.Hexadecimal, "#8");
+			Assert.IsFalse (n1.ThousandsSeparator, "#9");
 			Assert.AreEqual (1, n1.Increment, "#10");
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void NumericUpDownEnhancedPropTest ()
 		{
 			NumericUpDown n1 = new NumericUpDown ();
@@ -69,23 +78,28 @@ namespace MonoTests.System.Windows.Forms
 			
 			n1.UpButton ();
 			Assert.AreEqual (90, n1.Value, "#16");
-			
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public void NumericUpDownEditValidateTest ()
+		{
 			NumericNew nn = new NumericNew ();
-			Assert.AreEqual (true, nn.update_edit_text_called, "#17");
+			Assert.IsTrue (nn.update_edit_text_called, "#17");
 			
-			Assert.AreEqual (false, nn.user_edit, "#18");
+			Assert.IsFalse (nn.user_edit, "#18");
 			
 			nn.Reset ();
 			nn.user_edit = true;
 			nn.Text = "10";
-			Assert.AreEqual (true, nn.validate_edit_text_called, "#19");
-			Assert.AreEqual (true, nn.update_edit_text_called, "#20");
+			Assert.IsTrue (nn.validate_edit_text_called, "#19");
+			Assert.IsTrue (nn.update_edit_text_called, "#20");
 			
 			nn.Reset ();
 			nn.user_edit = false;
 			nn.Text = "11";
-			Assert.AreEqual (true, nn.validate_edit_text_called, "#21");
-			Assert.AreEqual (true, nn.update_edit_text_called, "#22");
+			Assert.IsTrue (nn.validate_edit_text_called, "#21");
+			Assert.IsTrue (nn.update_edit_text_called, "#22");
 			
 			nn.DownButton ();
 			Assert.AreEqual (10, nn.Value, "#23");
