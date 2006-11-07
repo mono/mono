@@ -42,7 +42,7 @@ namespace System.Xml.Serialization {
 
 		internal static string FromByteArrayBase64 (byte[] value)
 		{
-			return Convert.ToBase64String(value);
+			return value == null ? String.Empty : Convert.ToBase64String(value);
 		}
 
 		internal static string FromByteArrayHex (byte[] value)
@@ -240,7 +240,7 @@ namespace System.Xml.Serialization {
 				case "unsignedLong": return XmlConvert.ToString ((UInt64)value);
 				case "guid": return XmlConvert.ToString ((Guid)value);
 				case "base64":
-				case "base64Binary": return Convert.ToBase64String ((byte[])value);
+				case "base64Binary": return value == null ? String.Empty : Convert.ToBase64String ((byte[])value);
 				case "duration": return XmlConvert.ToString ((TimeSpan) value);
 			default: return value is IFormattable ? ((IFormattable) value).ToString (null, CultureInfo.InvariantCulture) : value.ToString ();
 			}
@@ -302,7 +302,7 @@ namespace System.Xml.Serialization {
 				case "unsignedLong": return value + ".ToString(CultureInfo.InvariantCulture)";
 				case "guid": return "XmlConvert.ToString (" + value + ")";
 				case "base64":
-				case "base64Binary": return "Convert.ToBase64String (" + value + ")";
+				case "base64Binary": return value + " == null ? String.Empty : Convert.ToBase64String (" + value + ")";
 				case "duration": return "XmlConvert.ToString (" + value + ")";
 				case "NMTOKEN":
 				case "Name":
