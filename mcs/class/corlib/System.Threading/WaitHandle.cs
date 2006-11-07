@@ -50,9 +50,7 @@ namespace System.Threading
 			if (length > 64)
 				throw new NotSupportedException ("Too many handles");
 
-			if (waitAll && length > 1 &&
-			    (Thread.CurrentThread.ApartmentState == ApartmentState.STA ||
-			     Assembly.GetEntryAssembly ().EntryPoint.GetCustomAttributes (typeof (STAThreadAttribute), false).Length == 1))
+			if (waitAll && length > 1 && IsSTAThread)
 				throw new NotSupportedException ("WaitAll for multiple handles is not allowed on an STA thread.");
 			
 			foreach (WaitHandle w in handles) {
@@ -61,6 +59,23 @@ namespace System.Threading
 
 				if (w.os_handle == InvalidHandle)
 					throw new ArgumentException ("null element found", "waitHandle");
+			}
+		}
+
+		static bool IsSTAThread {
+			get {
+				bool isSTA = Thread.CurrentThread.ApartmentState ==
+					ApartmentState.STA;
+
+				// FIXME: remove this check after Thread.ApartmentState
+				// has been properly implemented.
+				if (!isSTA) {
+					Assembly asm = Assembly.GetEntryAssembly ();
+					if (asm != null)
+						isSTA = asm.EntryPoint.GetCustomAttributes (typeof (STAThreadAttribute), false).Length > 0;
+				}
+
+				return isSTA;
 			}
 		}
 		
