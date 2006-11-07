@@ -33,7 +33,16 @@ namespace MonoTests.SystemWeb.Framework
 				return string.Empty;
 			using (MemoryStream ms = new MemoryStream ()) {
 				SoapFormatter f = new SoapFormatter ();
-				f.Serialize (ms, o);
+				try {
+					f.Serialize (ms, o);
+				}
+				catch (Exception ex) {
+					Exception inner = o as Exception;
+					if (inner != null)
+						RethrowException (inner);
+					else
+						throw;
+				}
 				return HttpUtility.UrlEncode (ms.ToArray());
 			}
 		}
