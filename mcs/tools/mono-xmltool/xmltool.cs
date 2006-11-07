@@ -163,6 +163,7 @@ environment variable that affects behavior:
 			XmlTextReader schemaxml = new XmlTextReader (args [1]);
 			XSchema xsd = XSchema.Read (schemaxml, null);
 			schemaxml.Close ();
+			xsd.Compile (null);
 			for (int i = 2; i < args.Length; i++) {
 				XmlTextReader xtr = new XmlTextReader (args [i]);
 				XmlValidatingReader xvr = new XmlValidatingReader (xtr);
