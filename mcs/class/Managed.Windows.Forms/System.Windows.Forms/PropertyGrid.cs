@@ -119,7 +119,7 @@ namespace System.Windows.Forms {
 			help_description_label.Font = this.Font;
 			help_description_label.Location = new Point(2,help_title_label.Top+help_title_label.Height);
 			help_description_label.Width = help_panel.Width - 4;
-			help_description_label.Height = 17;
+			help_description_label.Height = help_panel.Height - help_description_label.Top - 2;
 
 			help_panel.Controls.Add(help_description_label);
 			help_panel.Controls.Add(help_title_label);

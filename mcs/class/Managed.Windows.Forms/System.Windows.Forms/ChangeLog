@@ -1,3 +1,8 @@
+2006-11-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* PropertyGrid.cs: Avoid fixed height of help description label.
+	Fixes part of bug #79829.
+
 2006-11-07  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIX11.cs: fix #79790 again, by using the
