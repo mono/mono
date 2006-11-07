@@ -500,6 +500,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+#if TARGET_JVM //BUG #6484
+		[Category ("NotWorking")]
+#endif
 		public void FormView_ItemsProperties ()
 		{
 			Poker p = new Poker ();
@@ -578,6 +581,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+#if TARGET_JVM //BUG #6484
+		[Category ("NotWorking")]
+#endif
 		public void FormView_InitializePager ()
 		{
 			Poker fv = new Poker ();
@@ -593,6 +599,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 		
 		[Test]
+#if TARGET_JVM //BUG #6484
+		[Category ("NotWorking")]
+#endif
 		public void FormView_CreateRow ()
 		{
 			Poker fv = new Poker ();
@@ -616,6 +625,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+#if TARGET_JVM //BUG #6484
+		[Category ("NotWorking")]
+#endif
 		public void FormView_CreateTable ()
 		{
 			Poker fv = new Poker ();
@@ -784,6 +796,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+#if TARGET_JVM //BUG #6484
+		[Category ("NotWorking")]
+#endif
 		public void FormView_DataBind ()
 		{
 			Poker fv = new Poker ();
@@ -801,6 +816,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		private bool isDeleted = false;
 
 		[Test]
+#if TARGET_JVM //BUG #6484
+		[Category ("NotWorking")]
+#endif
 		public void FormView_DeleteItem ()
 		{
 			Poker fv = new Poker ();
@@ -841,6 +859,9 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		private bool updateItem = false;
 		[Test]
+#if TARGET_JVM //BUG #6484
+		[Category ("NotWorking")]
+#endif
 		public void FormView_UpdateItem ()
 		{
 			Poker fv = new Poker ();
@@ -955,6 +976,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+#if TARGET_JVM //BUG #6484
+		[Category ("NotWorking")]
+#endif
 		public void FormView_BubbleEvent ()
 		{
 			FormViewCommandEventArgs com;
@@ -1834,6 +1858,9 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		}
 
 		[Test]
+#if TARGET_JVM //BUG #6484
+		[Category ("NotWorking")]
+#endif
 		public void FormView_GetPostBackOptions () {
 			FormView fv = new FormView ();
 			fv.Page = new Page ();
@@ -1900,7 +1927,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 	public class TestMyData
 	{
-		static IList<int> str = (IList<int>) new int[] { 1, 2, 3, 4, 5, 6 };
+		static IList<int> str = new List<int> (new int[] { 1, 2, 3, 4, 5, 6 });
 
 
 		public static IList<int> GetMyList ()

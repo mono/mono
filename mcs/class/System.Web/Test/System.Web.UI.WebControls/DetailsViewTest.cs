@@ -371,6 +371,9 @@ namespace MonoTests.System.Web.UI.WebControls
 
 
 		[Test]
+#if TARGET_JVM //probably dependant on BUG #6489
+		[Category ("NotWorking")]
+#endif
 		public void DetailsView_DefaultProperties ()
 		{
 			PokerDetailsView dv = new PokerDetailsView ();
@@ -426,6 +429,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+#if TARGET_JVM //probably dependant on BUG #6489
+		[Category ("NotWorking")]
+#endif
 		public void DetailsView_AssignToDefaultProperties ()
 		{
 			PokerDetailsView dv = new PokerDetailsView ();
@@ -636,6 +642,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+#if TARGET_JVM	//BUG #6484
+		[Category ("NotWorking")]
+#endif
 		public void FormView_DataBind ()
 		{
 			PokerDetailsView dv = new PokerDetailsView ();
@@ -676,6 +685,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		private bool isDeleted = false;
 
 		[Test]
+#if TARGET_JVM	//BUG #6484
+		[Category ("NotWorking")]
+#endif
 		public void DetailsView_DeleteItemHandler ()
 		{
 			PokerDetailsView dv = new PokerDetailsView ();
@@ -828,6 +840,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+#if TARGET_JVM	//BUG #6484
+		[Category ("NotWorking")]
+#endif
 		public void DetailsView_CreateChildControls ()
 		{
 			PokerDetailsView dv = new PokerDetailsView ();			
@@ -1013,6 +1028,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+#if TARGET_JVM	//BUG #6484
+		[Category ("NotWorking")]
+#endif
 		public void DetailsView_InitializePager ()
 		{
 			PokerDetailsView dv = new PokerDetailsView ();
@@ -1883,39 +1901,39 @@ namespace MonoTests.System.Web.UI.WebControls
 			dv.Page = new Page ();
 			IButtonControl btn = new Button ();
 			btn.CausesValidation = false;
-			Assert.IsFalse (btn.CausesValidation);
-			Assert.AreEqual (String.Empty, btn.CommandName);
-			Assert.AreEqual (String.Empty, btn.CommandArgument);
-			Assert.AreEqual (String.Empty, btn.PostBackUrl);
-			Assert.AreEqual (String.Empty, btn.ValidationGroup);
+			Assert.IsFalse (btn.CausesValidation, "DetailsView_GetPostBackOptions #1");
+			Assert.AreEqual (String.Empty, btn.CommandName, "DetailsView_GetPostBackOptions #2");
+			Assert.AreEqual (String.Empty, btn.CommandArgument, "DetailsView_GetPostBackOptions #3");
+			Assert.AreEqual (String.Empty, btn.PostBackUrl, "DetailsView_GetPostBackOptions #4");
+			Assert.AreEqual (String.Empty, btn.ValidationGroup, "DetailsView_GetPostBackOptions #5");
 			PostBackOptions options = ((IPostBackContainer) dv).GetPostBackOptions (btn);
-			Assert.IsFalse (options.PerformValidation);
-			Assert.IsFalse (options.AutoPostBack);
-			Assert.IsFalse (options.TrackFocus);
-			Assert.IsTrue (options.ClientSubmit);
-			Assert.IsTrue (options.RequiresJavaScriptProtocol);
-			Assert.AreEqual ("$", options.Argument);
-			Assert.AreEqual (null, options.ActionUrl);
-			Assert.AreEqual (null, options.ValidationGroup);
+			Assert.IsFalse (options.PerformValidation, "DetailsView_GetPostBackOptions #6");
+			Assert.IsFalse (options.AutoPostBack, "DetailsView_GetPostBackOptions #7");
+			Assert.IsFalse (options.TrackFocus, "DetailsView_GetPostBackOptions #8");
+			Assert.IsTrue (options.ClientSubmit, "DetailsView_GetPostBackOptions #9");
+			Assert.IsTrue (options.RequiresJavaScriptProtocol, "DetailsView_GetPostBackOptions #10");
+			Assert.AreEqual ("$", options.Argument, "DetailsView_GetPostBackOptions #11");
+			Assert.AreEqual (null, options.ActionUrl, "DetailsView_GetPostBackOptions #12");
+			Assert.AreEqual (null, options.ValidationGroup, "DetailsView_GetPostBackOptions #13");
 
 			btn.ValidationGroup = "VG";
 			btn.CommandName = "CMD";
 			btn.CommandArgument = "ARG";
 			btn.PostBackUrl = "Page.aspx";
-			Assert.IsFalse (btn.CausesValidation);
-			Assert.AreEqual ("CMD", btn.CommandName);
-			Assert.AreEqual ("ARG", btn.CommandArgument);
-			Assert.AreEqual ("Page.aspx", btn.PostBackUrl);
-			Assert.AreEqual ("VG", btn.ValidationGroup);
+			Assert.IsFalse (btn.CausesValidation, "DetailsView_GetPostBackOptions #14");
+			Assert.AreEqual ("CMD", btn.CommandName, "DetailsView_GetPostBackOptions #15");
+			Assert.AreEqual ("ARG", btn.CommandArgument, "DetailsView_GetPostBackOptions #16");
+			Assert.AreEqual ("Page.aspx", btn.PostBackUrl, "DetailsView_GetPostBackOptions #17");
+			Assert.AreEqual ("VG", btn.ValidationGroup, "DetailsView_GetPostBackOptions #18");
 			options = ((IPostBackContainer) dv).GetPostBackOptions (btn);
-			Assert.IsFalse (options.PerformValidation);
-			Assert.IsFalse (options.AutoPostBack);
-			Assert.IsFalse (options.TrackFocus);
-			Assert.IsTrue (options.ClientSubmit);
-			Assert.IsTrue (options.RequiresJavaScriptProtocol);
-			Assert.AreEqual ("CMD$ARG", options.Argument);
-			Assert.AreEqual (null, options.ActionUrl);
-			Assert.AreEqual (null, options.ValidationGroup);
+			Assert.IsFalse (options.PerformValidation, "DetailsView_GetPostBackOptions #19");
+			Assert.IsFalse (options.AutoPostBack, "DetailsView_GetPostBackOptions #20");
+			Assert.IsFalse (options.TrackFocus, "DetailsView_GetPostBackOptions #21");
+			Assert.IsTrue (options.ClientSubmit, "DetailsView_GetPostBackOptions #22");
+			Assert.IsTrue (options.RequiresJavaScriptProtocol, "DetailsView_GetPostBackOptions #23");
+			Assert.AreEqual ("CMD$ARG", options.Argument, "DetailsView_GetPostBackOptions #24");
+			Assert.AreEqual (null, options.ActionUrl, "DetailsView_GetPostBackOptions #25");
+			Assert.AreEqual (null, options.ValidationGroup, "DetailsView_GetPostBackOptions #26");
 		}
 
 		[Test]

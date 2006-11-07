@@ -1,3 +1,8 @@
+2006-11-07 Andrew Skiba <andrews@mainsoft.com>
+
+	* DetailsViewTest.cs: TARGET_JVM and test message
+	* FormViewTest.cs, GridViewTest.cs: TARGET_JVM
+
 2006-11-06 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* FormViewTest.cs: added tests, removed NotWorking attributes.
