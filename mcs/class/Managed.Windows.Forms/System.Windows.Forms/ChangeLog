@@ -1,3 +1,8 @@
+2006-11-07  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: When converting to Text don't put line breaks in
+	for soft line breaks.
+
 2006-11-07  Chris Toshok  <toshok@ximian.com>
 
 	[ fix bug #79778 ]

@@ -514,10 +514,12 @@ namespace System.Windows.Forms {
 
 					sb = new StringBuilder();
 
+					Line line = null;
 					for (i = 1; i < document.Lines; i++) {
-						if (i > 1)
+						if (line != null && !line.soft_break)
 							sb.Append (Environment.NewLine);
-						sb.Append(document.GetLine(i).text.ToString());
+						line = document.GetLine (i);
+						sb.Append(line.text.ToString());
 					}
 					sb.Append(document.GetLine(document.Lines).text.ToString());
 					return sb.ToString();
