@@ -86,7 +86,6 @@ namespace Mono.Security.X509 {
 			return sb.ToString ();
 		}
 
-#if INSIDE_CORLIB || NET_2_0
 		static public string ToString (ASN1 seq, bool reversed, string separator, bool quotes)
 		{
 			StringBuilder sb = new StringBuilder ();
@@ -112,7 +111,6 @@ namespace Mono.Security.X509 {
 			}
 			return sb.ToString ();
 		}
-#endif
 
 		static private void AppendEntry (StringBuilder sb, ASN1 entry, bool quotes)
 		{
