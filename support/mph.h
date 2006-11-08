@@ -49,6 +49,28 @@
 #define EOVERFLOW 75
 #endif /* def PLATFORM_WIN32 && ndef EOVERFLOW */
 
+#if !defined (PLATFORM_WIN32)
+
+/* 
+ * Solaris doesn't define these BSD values, and if they're not present then
+ * map.c:Mono_Posix_FromSeekFlags() breaks badly; see:
+ * http://bugzilla.gnome.org/show_bug.cgi?id=370081
+ */
+
+#ifndef L_SET
+#define L_SET SEEK_SET
+#endif /* ndef L_SET */
+
+#ifndef L_INCR
+#define L_INCR SEEK_CUR
+#endif /* ndef L_INCR */
+
+#ifndef L_XTND
+#define L_XTND SEEK_END
+#endif /* ndef L_XTND */
+
+#endif /* ndef PLATFORM_WIN32 */
+
 typedef    gint64 mph_blkcnt_t;
 typedef    gint64 mph_blksize_t;
 typedef   guint64 mph_dev_t;
