@@ -314,103 +314,124 @@ namespace Mono.CSharp
 			LoadAssembly (assembly, null, soft);
 		}
 
+		static void Error6 (string name, string log)
+		{
+			if (log != null && log.Length > 0)
+				Report.ExtraInformation (Location.Null, "Log:\n" + log + "\n(log related to previous ");
+			Report.Error (6, "cannot find metadata file `{0}'", name);
+		}
+
+		static void Error9 (string type, string filename, string log)
+		{
+			if (log != null && log.Length > 0)
+				Report.ExtraInformation (Location.Null, "Log:\n" + log + "\n(log related to previous ");
+			Report.Error (9, "file `{0}' has invalid `{1}' metadata", filename, type);
+		}
+
+		static void BadAssembly (string filename, string log)
+		{
+			MethodInfo adder_method = AssemblyClass.AddModule_Method;
+
+			if (adder_method != null) {
+				AssemblyName an = new AssemblyName ();
+				an.Name = ".temp";
+				AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Run);
+				if (adder_method.Invoke (ab, new object [] { filename }) != null) {
+					Report.Error (1509, "referenced file `{0}' is not an assembly; try using the '-addmodule' option", filename);
+					return;
+				}
+			}
+			Error9 ("assembly", filename, log);
+		}
+
 		static public void LoadAssembly (string assembly, string alias, bool soft)
 		{
-			Assembly a;
+			Assembly a = null;
 			string total_log = "";
 
 			try {
-				char[] path_chars = { '/', '\\' };
+				try {
+					char[] path_chars = { '/', '\\' };
 
-				if (assembly.IndexOfAny (path_chars) != -1) {
-					a = Assembly.LoadFrom (assembly);
-				} else {
-					string ass = assembly;
-					if (ass.EndsWith (".dll") || ass.EndsWith (".exe"))
-						ass = assembly.Substring (0, assembly.Length - 4);
-					a = Assembly.Load (ass);
+					if (assembly.IndexOfAny (path_chars) != -1) {
+						a = Assembly.LoadFrom (assembly);
+					} else {
+						string ass = assembly;
+						if (ass.EndsWith (".dll") || ass.EndsWith (".exe"))
+							ass = assembly.Substring (0, assembly.Length - 4);
+						a = Assembly.Load (ass);
+					}
+				} catch (FileNotFoundException) {
+					bool err = !soft;
+					foreach (string dir in link_paths) {
+						string full_path = Path.Combine (dir, assembly);
+						if (!assembly.EndsWith (".dll") && !assembly.EndsWith (".exe"))
+							full_path += ".dll";
+
+						try {
+							a = Assembly.LoadFrom (full_path);
+							err = false;
+							break;
+						} catch (FileNotFoundException ff) {
+							total_log += ff.FusionLog;
+						}
+					}
+					if (err) {
+						Error6 (assembly, total_log);
+						return;
+					}
 				}
+
 				// Extern aliased refs require special handling
 				if (alias == null)
 					RootNamespace.Global.AddAssemblyReference (a);
 				else
 					RootNamespace.DefineRootNamespace (alias, a);
 
-			} catch (FileNotFoundException){
-				foreach (string dir in link_paths){
-					string full_path = Path.Combine (dir, assembly);
-					if (!assembly.EndsWith (".dll") && !assembly.EndsWith (".exe"))
-						full_path += ".dll";
-
-					try {
-						a = Assembly.LoadFrom (full_path);
-						if (alias == null)
-							RootNamespace.Global.AddAssemblyReference (a);
-						else
-							RootNamespace.DefineRootNamespace (alias, a);
-						return;
-					} catch (FileNotFoundException ff) {
-						total_log += ff.FusionLog;
-						continue;
-					}
-				}
-				if (!soft) {
-					Report.Error (6, "Cannot find assembly file `{0}'", assembly);
-					Report.Stderr.WriteLine ("Log: \n" + total_log);
-				}
 			} catch (BadImageFormatException f) {
-				Report.Error(6, "Cannot load assembly (bad file format)" + f.FusionLog);
-			} catch (FileLoadException f){
-				Report.SymbolRelatedToPreviousError (Location.Null, f.FusionLog);
-				Report.Error(6, "Cannot load assembly file `{0}'", f.FileName);
-			} catch (ArgumentNullException){
-				Report.Error(6, "Cannot load assembly (null argument)");
+				// .NET 2.0 throws this if we try to load a module without an assembly manifest ...
+				BadAssembly (f.FileName, f.FusionLog);
+			} catch (FileLoadException f) {
+				// ... while .NET 1.1 throws this
+				BadAssembly (f.FileName, f.FusionLog);
 			}
 		}
 
-		static public void LoadModule (MethodInfo adder_method, string module)
+		static public void LoadModule (string module)
 		{
-			Module m;
+			Module m = null;
 			string total_log = "";
 
 			try {
 				try {
-					m = (Module)adder_method.Invoke (CodeGen.Assembly.Builder, new object [] { module });
-				}
-				catch (TargetInvocationException ex) {
-					throw ex.InnerException;
-				}
-				RootNamespace.Global.AddModuleReference (m);
+					m = CodeGen.Assembly.AddModule (module);
+				} catch (FileNotFoundException) {
+					bool err = true;
+					foreach (string dir in link_paths) {
+						string full_path = Path.Combine (dir, module);
+						if (!module.EndsWith (".netmodule"))
+							full_path += ".netmodule";
 
-			} 
-			catch (FileNotFoundException){
-				foreach (string dir in link_paths){
-					string full_path = Path.Combine (dir, module);
-					if (!module.EndsWith (".netmodule"))
-						full_path += ".netmodule";
-
-					try {
 						try {
-							m = (Module)adder_method.Invoke (CodeGen.Assembly.Builder, new object [] { full_path });
+							m = CodeGen.Assembly.AddModule (full_path);
+							err = false;
+							break;
+						} catch (FileNotFoundException ff) {
+							total_log += ff.FusionLog;
 						}
-						catch (TargetInvocationException ex) {
-							throw ex.InnerException;
-						}
-						RootNamespace.Global.AddModuleReference (m);
+					}
+					if (err) {
+						Error6 (module, total_log);
 						return;
-					} catch (FileNotFoundException ff) {
-						total_log += ff.FusionLog;
-						continue;
 					}
 				}
-				Report.Error (6, "Cannot find module `" + module + "'" );
-				Console.WriteLine ("Log: \n" + total_log);
+
+				RootNamespace.Global.AddModuleReference (m);
+
 			} catch (BadImageFormatException f) {
-				Report.Error(6, "Cannot load module (bad file format)" + f.FusionLog);
-			} catch (FileLoadException f){
-				Report.Error(6, "Cannot load module " + f.FusionLog);
-			} catch (ArgumentNullException){
-				Report.Error(6, "Cannot load module (null argument)");
+				Error9 ("module", f.FileName, f.FusionLog);
+			} catch (FileLoadException f) {
+				Error9 ("module", f.FileName, f.FusionLog);
 			}
 		}
 
@@ -1626,14 +1647,8 @@ namespace Mono.CSharp
 			RootNamespace.Global.AddModuleReference (CodeGen.Module.Builder);
 
 			if (modules.Count > 0) {
-				MethodInfo adder_method = typeof (AssemblyBuilder).GetMethod ("AddModule", BindingFlags.Instance|BindingFlags.NonPublic);
-				if (adder_method == null) {
-					Report.RuntimeMissingSupport (Location.Null, "/addmodule");
-					Environment.Exit (1);
-				}
-
 				foreach (string module in modules)
-					LoadModule (adder_method, module);
+					LoadModule (module);
 			}
 			
 			//

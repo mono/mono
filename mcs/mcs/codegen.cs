@@ -1364,6 +1364,30 @@ namespace Mono.CSharp {
 				return attribute_targets;
 			}
 		}
+
+		// Wrapper for AssemblyBuilder.AddModule
+		static MethodInfo adder_method;
+		static public MethodInfo AddModule_Method {
+			get {
+				if (adder_method == null)
+					adder_method = typeof (AssemblyBuilder).GetMethod ("AddModule", BindingFlags.Instance|BindingFlags.NonPublic);
+				return adder_method;
+			}
+		}
+		public Module AddModule (string module)
+		{
+			MethodInfo m = AddModule_Method;
+			if (m == null) {
+				Report.RuntimeMissingSupport (Location.Null, "/addmodule");
+				Environment.Exit (1);
+			}
+
+			try {
+				return (Module) m.Invoke (Builder, new object [] { module });
+			} catch (TargetInvocationException ex) {
+				throw ex.InnerException;
+			}
+		}		
 	}
 
 	public class ModuleClass : CommonAssemblyModulClass {

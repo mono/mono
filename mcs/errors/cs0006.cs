@@ -1,4 +1,4 @@
-// CS0006: Cannot find assembly file `a:b'
+// CS0006: cannot find metadata file `a:b'
 // Line: 0
 // Compiler options: -r:a:b
 

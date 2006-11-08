@@ -1,3 +1,12 @@
+2006-11-08  Raja R Harinath  <rharinath@novell.com>
+
+	Address parts of #58244 -- most of what's left is in the runtime
+	* driver.cs (LoadAssembly): Simplify slightly.  Add CS0009 and
+	CS1509 error checks, and handle them for all assembly loads, not
+	just the first invocation.
+	(LoadModule): Likewise.  Move handling of 'adder_method' ...
+	* codegen.cs (AssemblyClass.AddModule): ... here.
+
 2006-11-02  Marek Safar  <marek.safar@gmail.com>
 
 	* statement.cs.cs (CollectionForeach.TryType): Issue a error when
