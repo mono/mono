@@ -51,13 +51,74 @@ namespace System.ComponentModel
 		public override PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context,
 									    object value, Attribute[] attributes)
 		{
-			// LAMESPEC MS seems to always parse an PropertyDescriptorCollection without any PropertyDescriptors
-			return PropertyDescriptorCollection.Empty;
+			PropertyDescriptorCollection col = new PropertyDescriptorCollection (null);
+			if (value is Array) {
+				Array array = (Array)value;
+				for (int i = 0; i < array.Length; i ++) {
+					col.Add (new ArrayPropertyDescriptor (i, array.GetType()));
+				}
+			}
+
+			return col;
 		}
 
 		public override bool GetPropertiesSupported (ITypeDescriptorContext context)
 		{
 			return true;
+		}
+
+		internal class ArrayPropertyDescriptor : PropertyDescriptor
+		{
+			int index;
+			Type array_type;
+			public ArrayPropertyDescriptor (int index, Type array_type)
+				: base (String.Format ("[{0}]", index), null)
+			{
+				this.index = index;
+				this.array_type = array_type;
+			}
+
+			public override Type ComponentType {
+				get { return array_type; }
+			}
+
+			public override Type PropertyType {
+				get { return array_type.GetElementType(); }
+			}
+
+			public override bool IsReadOnly {
+				get { return false; }
+			}
+
+			public override object GetValue (object component)
+			{
+				if (component == null)
+					return null;
+
+				return ((Array)component).GetValue (index);
+			}
+
+			public override void SetValue (object component, object value)
+			{
+				if (component == null)
+					return;
+
+				((Array)component).SetValue (value, index);
+			}
+
+			public override void ResetValue (object component)
+			{
+			}
+
+			public override bool CanResetValue (object component)
+			{
+				return false;
+			}
+
+			public override bool ShouldSerializeValue (object component)
+			{
+				return false;
+			}
 		}
 	}
 }

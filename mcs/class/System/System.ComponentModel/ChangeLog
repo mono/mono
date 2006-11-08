@@ -1,3 +1,8 @@
+2006-11-08  Chris Toshok  <toshok@ximian.com>
+
+	* ArrayConverter.cs: implement GetProperties correctly, by
+	creating ArrayPropertyDescriptor objects for each array element.
+
 2006-10-05 Andrew Skiba <andrews@mainsoft.com>
 
 	* EventHandlerList.cs: Implement event handler list according to MS
