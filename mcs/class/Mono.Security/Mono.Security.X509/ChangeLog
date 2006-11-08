@@ -1,3 +1,11 @@
+2006-11-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X501Name.cs: Refactor ToString method to allow most options available 
+	when using fx 2.0.
+	* X509Certificate.cs: Add methods to retrieve the Issuer and Subject
+	Distinguished Names in binary (ASN.1) form. Reverse (actually correct)
+	the text representation of Issuer and Subject for 2.0.
+
 2006-10-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PKCS12.cs: A String.Empty is different from a null password. Fix bug
