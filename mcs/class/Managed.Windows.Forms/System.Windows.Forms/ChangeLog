@@ -1,3 +1,8 @@
+2006-11-08  Chris Toshok  <toshok@ximian.com>
+
+	* Application.cs: set the modal dialog to non modal after we close
+	it.  Fixes bug #79866.
+
 2006-11-08  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: When combining lines carry over the line end

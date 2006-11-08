@@ -617,6 +617,7 @@ namespace System.Windows.Forms {
 					Console.WriteLine("   Done with the SetModal");
 				#endif
 				old.Close();
+				old.is_modal = false;
 			}
 
 			#if DebugRunLoop
