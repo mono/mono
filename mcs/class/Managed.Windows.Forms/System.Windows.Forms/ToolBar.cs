@@ -722,8 +722,7 @@ namespace System.Windows.Forms
 			if (!Enabled || current_button == null) 
 				return;
 
-			if (appearance != ToolBarAppearance.Flat) 
-				current_button.Hilight = false;
+			current_button.Hilight = false;
 			current_button = null;
 		}
 

@@ -1,5 +1,10 @@
 2006-11-07  Everaldo Canuto  <everaldo@simios.org>
 
+	* Toolbar.cs: Release flat button borders when Toolbar lost focus. 
+	Fixes #79863.
+
+2006-11-07  Everaldo Canuto  <everaldo@simios.org>
+
 	* Toolbar.cs: Prevent toolbar to open more than one tooltip at same
 	time. Remove tooltips when ToolButton click events.  Fixes #79856.
 
