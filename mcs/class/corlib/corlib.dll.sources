@@ -1198,6 +1198,7 @@ System.Security.Cryptography/ToBase64Transform.cs
 System.Security.Cryptography/TripleDES.cs
 System.Security.Cryptography/TripleDESCryptoServiceProvider.cs
 System.Security.Cryptography.X509Certificates/X509Certificate.cs
+System.Security.Cryptography.X509Certificates/X509Certificate20.cs
 System.Security.Cryptography.X509Certificates/X509ContentType.cs
 System.Security.Cryptography.X509Certificates/X509KeyStorageFlags.cs
 System.Security.Permissions/CodeAccessSecurityAttribute.cs
