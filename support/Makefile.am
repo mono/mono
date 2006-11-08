@@ -114,9 +114,6 @@ refresh:
 	--impl-header="<dirent.h>"                            \
 	--impl-header="<utime.h>"                             \
 	--impl-header="\"mph.h\""                             \
-	--impl-macro="L_SET=SEEK_SET"                         \
-	--impl-macro="L_INCR=SEEK_CUR"                        \
-	--impl-macro="L_XTND=SEEK_END"                        \
 	--rename-member=st_atime=st_atime_                    \
 	--rename-member=st_ctime=st_ctime_                    \
 	--rename-member=st_mtime=st_mtime_                    \

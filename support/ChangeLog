@@ -1,3 +1,9 @@
+2006-11-08  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Makefile.am: Revert addition of L_SET et al; this breaks the Win32 build.
+	* map.c: Revert addition of L_SET et al; this breaks the Win32 build.
+	* mph.h: Add macros for L_SET, L_INCR, and L_XTND for non-Win32 platforms.
+
 2006-11-07  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Makefile.am: Add implementation macros for L_SET, L_INCR, and L_XTND.
