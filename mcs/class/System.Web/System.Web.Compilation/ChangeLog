@@ -12,6 +12,8 @@
 	* BuildManager.cs: Implement the CodeAssemblies property.
 	Added an internal TopLevelTypes property to be used in the custom
 	GetType methods. Implemented the GetCompiledCustomString method.
+	Implemented the GetType method overloads. Implemented the
+	GetVirtualPathDependencies method.
 
 	* BaseCompiler.cs: Reference the assemblies from App_Code, if any
 

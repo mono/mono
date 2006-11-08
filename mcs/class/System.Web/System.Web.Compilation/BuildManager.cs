@@ -163,23 +163,40 @@ namespace System.Web.Compilation {
 			return provider.GetGeneratedType (results);
 		}
 
-		// The 3 GetType() overloads work on the global.asax, App_GlobalResources, App_WebReferences or App_Browsers
-		[MonoTODO]
+		// The 2 GetType() overloads work on the global.asax, App_GlobalResources, App_WebReferences or App_Browsers
 		public static Type GetType (string typeName, bool throwOnError)
 		{
-			throw new NotImplementedException ();
+			return GetType (typeName, throwOnError, false);
 		}
 
-		[MonoTODO]
 		public static Type GetType (string typeName, bool throwOnError, bool ignoreCase)
 		{
-			throw new NotImplementedException ();
+			Type ret = null;
+			try {
+				foreach (Assembly asm in TopLevel_Assemblies) {
+					ret = asm.GetType (typeName, throwOnError, ignoreCase);
+					if (ret != null)
+						break;
+				}
+			} catch (Exception ex) {
+				throw new HttpException ("Failed to find the specified type.", ex);
+			}
+			return ret;
 		}
 
-		[MonoTODO]
+		internal static ICollection GetVirtualPathDependencies (string virtualPath, BuildProvider bprovider)
+		{
+			BuildProvider provider = bprovider;
+			if (provider == null)
+				provider = GetBuildProviderForPath (virtualPath, false);
+			if (provider == null)
+				return null;
+			return provider.VirtualPathDependencies;
+		}
+		
 		public static ICollection GetVirtualPathDependencies (string virtualPath)
 		{
-			throw new NotImplementedException ();
+			return GetVirtualPathDependencies (virtualPath, null);
 		}
 
 		// Assemblies built from the App_Code directory
