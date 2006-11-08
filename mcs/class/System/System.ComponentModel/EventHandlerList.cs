@@ -42,8 +42,6 @@ namespace System.ComponentModel {
 	//   Longer description
 	// </remarks>
 	public sealed class EventHandlerList : IDisposable {
-		Hashtable table;
-		
 		public EventHandlerList ()
 		{
 			head = null;
