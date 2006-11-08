@@ -227,7 +227,7 @@ namespace System.Net
 		{
 			protocolVersion = version;
 		}
-		
+#if !TARGET_JVM
 		WebConnectionGroup GetConnectionGroup (string name)
 		{
 			if (name == null)
@@ -253,7 +253,7 @@ namespace System.Net
 			
 			return cnc.SendRequest (request);
 		}
-
+#endif
 		internal void IncrementConnection ()
 		{
 			lock (locker) {
