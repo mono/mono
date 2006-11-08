@@ -1,4 +1,8 @@
 
+Wed Nov 8 16:40:02 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.c: some VFP updates.
+
 Tue Nov 7 19:45:51 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini-exceptions.c: 0 is a valid local var offset in some
