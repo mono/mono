@@ -276,5 +276,23 @@ namespace MonoTests.System.Windows.Forms
 			textBox.Undo ();
 			Assert.AreEqual ("ABCDE", textBox.Text, "#36");
 		}
+
+		[Test] // bug #79851
+		public void WrappedText ()
+		{
+			string text = "blabla blablabalbalbalbalbalbal blabla blablabl bal " +
+				"bal bla bal balajkdhfk dskfk ersd dsfjksdhf sdkfjshd f";
+
+			textBox.Multiline = true;
+			textBox.Size = new Size (30, 168);
+			textBox.Text = text;
+
+			Form form = new Form ();
+			form.Controls.Add (textBox);
+			form.ShowInTaskbar = false;
+			form.Show ();
+
+			Assert.AreEqual (text, textBox.Text);
+		}
 	}
 }
