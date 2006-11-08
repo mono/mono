@@ -282,6 +282,18 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assert.IsFalse (copy.HasPathLengthConstraint, "HasPathLengthConstraint");
 			Assert.AreEqual (0, copy.PathLengthConstraint, "PathLengthConstraint");
 		}
+
+		[Test]
+		public void CreateViaCryptoConfig ()
+		{
+			// extensions can be created with CryptoConfig
+			AsnEncodedData aed = new AsnEncodedData (new byte[] { 0x30, 0x00 });
+			X509BasicConstraintsExtension bc = (X509BasicConstraintsExtension) CryptoConfig.CreateFromName (oid, new object[2] { aed, false });
+			Assert.IsFalse (bc.CertificateAuthority, "CertificateAuthority");
+			Assert.IsFalse (bc.HasPathLengthConstraint, "HasPathLengthConstraint");
+			Assert.AreEqual (0, bc.PathLengthConstraint, "PathLengthConstraint");
+			Assert.AreEqual ("30-00", BitConverter.ToString (bc.RawData), "RawData");
+		}
 	}
 }
 

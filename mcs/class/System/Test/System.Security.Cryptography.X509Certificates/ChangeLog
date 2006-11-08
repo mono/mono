@@ -1,3 +1,19 @@
+2006-11-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X500DistinguishedNameTest.cs: Removed all 	NotWorking tags. Added
+	more Decode test cases.
+	* X509BasicConstraintsExtensionTest.cs: Added test case where the 
+	extension is created using CryptoConfig.
+	* X509Certificate2Test.cs: Added test cases for GetCertContentType,
+	DER encoded certificates, PKCS#12 certificates and removed all 
+	NotWorking tags.
+	* X509EnhancedKeyUsageExtensionTest.cs: Added test case where the 
+	extension is created using CryptoConfig.
+	* X509KeyUsageExtensionTest.cs: Added test case where the extension is
+	created using CryptoConfig.
+	* X509SubjectKeyIdentifierExtensionTest.cs: Added test case where the
+	extension is created using CryptoConfig.
+
 2006-09-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PublicKeyTest.cs: Add a test case where the key comes from a PKCS#12

@@ -1,11 +1,11 @@
 //
-// PublicKeyTest.cs - NUnit Test Cases for 
-//	System.Security.Cryptography.X509Certificates.PublicKey
+// X500DistinguishedNameTest.cs - NUnit Test Cases for 
+//	System.Security.Cryptography.X509Certificates.X500DistinguishedName
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -103,12 +103,13 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assert.AreEqual (rname, dn.Decode (X500DistinguishedNameFlags.DoNotUsePlusSign), "Decode(DoNotUsePlusSign)");
 			Assert.AreEqual ("C=US, O=RSA Data Security, Inc., OU=Secure Server Certification Authority", dn.Decode (X500DistinguishedNameFlags.DoNotUseQuotes), "Decode(DoNotUseQuotes)");
 			Assert.AreEqual (rname, dn.Decode (X500DistinguishedNameFlags.UseCommas), "Decode(UseCommas)");
-			Assert.AreEqual ("C=US\r\nO=\"RSA Data Security, Inc.\"\r\nOU=Secure Server Certification Authority", dn.Decode (X500DistinguishedNameFlags.UseNewLines), "Decode(UseNewLines)");
+			string newline = String.Format ("C=US{0}O=\"RSA Data Security, Inc.\"{0}OU=Secure Server Certification Authority", Environment.NewLine);
+			Assert.AreEqual (newline, dn.Decode (X500DistinguishedNameFlags.UseNewLines), "Decode(UseNewLines)");
 			Assert.AreEqual (rname, dn.Decode (X500DistinguishedNameFlags.UseUTF8Encoding), "Decode(UseUTF8Encoding)");
 			Assert.AreEqual (rname, dn.Decode (X500DistinguishedNameFlags.UseT61Encoding), "Decode(UseT61Encoding)");
 			Assert.AreEqual (rname, dn.Decode (X500DistinguishedNameFlags.ForceUTF8Encoding), "Decode(ForceUTF8Encoding)");
 
-			Assert.AreEqual ("C=US\r\nO=\"RSA Data Security, Inc.\"\r\nOU=Secure Server Certification Authority\r\n", dn.Format (true), "Format(true)");
+			Assert.AreEqual (newline + Environment.NewLine, dn.Format (true), "Format(true)");
 			Assert.AreEqual (rname, dn.Format (false), "Format(false)");
 		}
 
@@ -129,11 +130,11 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Constructor_AsnEncodedData ()
 		{
 			AsnEncodedData aed = new AsnEncodedData (cert_a_issuer_raw);
 			X500DistinguishedName dn = new X500DistinguishedName (aed);
+			Assert.IsNull (dn.Oid, "Oid");
 			RsaIssuer (dn);
 		}
 
@@ -156,10 +157,12 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Constructor_ByteArray ()
 		{
 			X500DistinguishedName dn = new X500DistinguishedName (cert_a_issuer_raw);
+			Assert.IsNotNull (dn.Oid, "Oid");
+			Assert.IsNull (dn.Oid.Value, "Oid.Value");
+			Assert.IsNull (dn.Oid.FriendlyName, "Oid.FriendlyName");
 			RsaIssuer (dn);
 		}
 
@@ -180,10 +183,12 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Constructor_String ()
 		{
 			X500DistinguishedName dn = new X500DistinguishedName ("OU=Secure Server Certification Authority, O=\"RSA Data Security, Inc.\", C=US");
+			Assert.IsNotNull (dn.Oid, "Oid");
+			Assert.IsNull (dn.Oid.Value, "Oid.Value");
+			Assert.IsNull (dn.Oid.FriendlyName, "Oid.FriendlyName");
 			RsaIssuer (dn);
 		}
 
@@ -212,7 +217,6 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Constructor_String_Flags_None ()
 		{
 			X500DistinguishedName dn = new X500DistinguishedName (rname, X500DistinguishedNameFlags.None);
@@ -225,14 +229,14 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assert.AreEqual (rname, dn.Decode (X500DistinguishedNameFlags.DoNotUsePlusSign), "Decode(DoNotUsePlusSign)");
 			Assert.AreEqual ("C=US, O=RSA Data Security, Inc., OU=Secure Server Certification Authority", dn.Decode (X500DistinguishedNameFlags.DoNotUseQuotes), "Decode(DoNotUseQuotes)");
 			Assert.AreEqual (rname, dn.Decode (X500DistinguishedNameFlags.UseCommas), "Decode(UseCommas)");
-			Assert.AreEqual ("C=US\r\nO=\"RSA Data Security, Inc.\"\r\nOU=Secure Server Certification Authority", dn.Decode (X500DistinguishedNameFlags.UseNewLines), "Decode(UseNewLines)");
+			string newline = String.Format ("C=US{0}O=\"RSA Data Security, Inc.\"{0}OU=Secure Server Certification Authority", Environment.NewLine);
+			Assert.AreEqual (newline, dn.Decode (X500DistinguishedNameFlags.UseNewLines), "Decode(UseNewLines)");
 			Assert.AreEqual (rname, dn.Decode (X500DistinguishedNameFlags.UseUTF8Encoding), "Decode(UseUTF8Encoding)");
 			Assert.AreEqual (rname, dn.Decode (X500DistinguishedNameFlags.UseT61Encoding), "Decode(UseT61Encoding)");
 			Assert.AreEqual (rname, dn.Decode (X500DistinguishedNameFlags.ForceUTF8Encoding), "Decode(ForceUTF8Encoding)");
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Constructor_String_Flags_Reversed ()
 		{
 			X500DistinguishedName dn = new X500DistinguishedName (name, X500DistinguishedNameFlags.None);
@@ -255,29 +259,38 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Constructor_X500DistinguishedName ()
 		{
 			X500DistinguishedName dn = new X500DistinguishedName (x509a.IssuerName);
+			Assert.IsNotNull (dn.Oid, "Oid");
+			Assert.IsNull (dn.Oid.Value, "Oid.Value");
+			Assert.IsNull (dn.Oid.FriendlyName, "Oid.FriendlyName");
 			RsaIssuer (dn);
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		public void MultipleConflictingSeparatorFlags ()
+		[ExpectedException (typeof (ArgumentException))]
+		public void Decode_BadFlag ()
 		{
-			X500DistinguishedName dn = new X500DistinguishedName (x509a.IssuerName);
-			string s = dn.Decode (X500DistinguishedNameFlags.UseSemicolons | X500DistinguishedNameFlags.UseCommas | X500DistinguishedNameFlags.UseNewLines);
-			Assert.AreEqual ("C=US; O=\"RSA Data Security, Inc.\"; OU=Secure Server Certification Authority", s, "UseSemicolons|UseCommas|UseNewLines");
-			
-			s = dn.Decode (X500DistinguishedNameFlags.UseSemicolons | X500DistinguishedNameFlags.UseNewLines);
-			Assert.AreEqual ("C=US; O=\"RSA Data Security, Inc.\"; OU=Secure Server Certification Authority", s, "UseSemicolons|UseNewLines");
+			new X500DistinguishedName (rname).Decode ((X500DistinguishedNameFlags) Int32.MinValue);
+		}
 
-			s = dn.Decode (X500DistinguishedNameFlags.UseSemicolons | X500DistinguishedNameFlags.UseCommas);
-			Assert.AreEqual ("C=US; O=\"RSA Data Security, Inc.\"; OU=Secure Server Certification Authority", s, "UseSemicolons|UseCommas");
+		[Test]
+		public void Decode_Separators ()
+		{
+			string semicolons = "C=US; O=\"RSA Data Security, Inc.\"; OU=Secure Server Certification Authority";
+			string newline = String.Format ("C=US{0}O=\"RSA Data Security, Inc.\"{0}OU=Secure Server Certification Authority", Environment.NewLine);
+			X500DistinguishedName dn = new X500DistinguishedName (rname, X500DistinguishedNameFlags.None);
+			Assert.AreEqual (rname, dn.Name, "Name");
+			Assert.AreEqual (rname, dn.Decode (X500DistinguishedNameFlags.None), "Decode(None)");
 
-			s = dn.Decode (X500DistinguishedNameFlags.UseCommas | X500DistinguishedNameFlags.UseNewLines);
-			Assert.AreEqual ("C=US, O=\"RSA Data Security, Inc.\", OU=Secure Server Certification Authority", s, "UseCommas|UseNewLines");
+			Assert.AreEqual (rname, dn.Decode (X500DistinguishedNameFlags.UseCommas), "Decode(UseCommas)");
+			Assert.AreEqual (semicolons, dn.Decode (X500DistinguishedNameFlags.UseSemicolons), "Decode(UseCommas|UseSemicolons)");
+			Assert.AreEqual (newline, dn.Decode (X500DistinguishedNameFlags.UseNewLines), "Decode(UseNewLines)");
+
+			Assert.AreEqual (semicolons, dn.Decode (X500DistinguishedNameFlags.UseCommas | X500DistinguishedNameFlags.UseSemicolons), "Decode(UseCommas|UseSemicolons)");
+			Assert.AreEqual (semicolons, dn.Decode (X500DistinguishedNameFlags.UseNewLines | X500DistinguishedNameFlags.UseSemicolons), "Decode(UseNewLines|UseSemicolons)");
+			Assert.AreEqual (rname, dn.Decode (X500DistinguishedNameFlags.UseCommas | X500DistinguishedNameFlags.UseNewLines), "Decode(UseCommas|UseNewLines)");
 		}
 	}
 }

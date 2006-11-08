@@ -5,7 +5,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -223,6 +223,19 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			//Assert.AreEqual (fname, copy.Oid.FriendlyName, "Oid.FriendlyName");
 			Assert.AreEqual (1, copy.EnhancedKeyUsages.Count, "EnhancedKeyUsages");
 			Assert.AreEqual ("1.2.3.4", copy.EnhancedKeyUsages[0].Value, "EnhancedKeyUsages Oid");
+		}
+
+		[Test]
+		public void CreateViaCryptoConfig ()
+		{
+			// extensions can be created with CryptoConfig
+			AsnEncodedData aed = new AsnEncodedData (new byte[] { 0x30, 0x05, 0x06, 0x03, 0x2A, 0x03, 0x04 });
+			X509EnhancedKeyUsageExtension eku = (X509EnhancedKeyUsageExtension) CryptoConfig.CreateFromName (oid, new object[2] { aed, true });
+			Assert.IsTrue (eku.Critical, "Critical");
+			Assert.AreEqual (7, eku.RawData.Length, "RawData");	// original Oid ignored
+			Assert.AreEqual (oid, eku.Oid.Value, "Oid.Value");
+			Assert.AreEqual (1, eku.EnhancedKeyUsages.Count, "EnhancedKeyUsages");
+			Assert.AreEqual ("1.2.3.4", eku.EnhancedKeyUsages[0].Value, "EnhancedKeyUsages Oid");
 		}
 	}
 }

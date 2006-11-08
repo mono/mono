@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -242,6 +242,18 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			// FIXME: Don't expect that FriendlyName is English. This test fails under non-English Windows.
 			//Assert.AreEqual (fname, copy.Oid.FriendlyName, "Oid.FriendlyName");
 			Assert.AreEqual (X509KeyUsageFlags.CrlSign, copy.KeyUsages, "KeyUsages");
+		}
+
+		[Test]
+		public void CreateViaCryptoConfig ()
+		{
+			// extensions can be created with CryptoConfig
+			AsnEncodedData aed = new AsnEncodedData (new byte[] { 0x03, 0x01, 0x00 });
+			X509KeyUsageExtension ku = (X509KeyUsageExtension) CryptoConfig.CreateFromName (oid, new object[2] { aed, true });
+			Assert.IsTrue (ku.Critical, "Critical");
+			Assert.AreEqual (3, ku.RawData.Length, "RawData");	// original Oid ignored
+			Assert.AreEqual (oid, ku.Oid.Value, "Oid.Value");
+			Assert.AreEqual (0, (int) ku.KeyUsages, "KeyUsages");
 		}
 	}
 }
