@@ -113,11 +113,16 @@ namespace System.Web.Compilation
 #if NET_2_0
 			ArrayList al = WebConfigurationManager.ExtraAssemblies;
 			if (al != null && al.Count > 0) {
-				foreach (object o in al) {
-					if (o is string) {
+				foreach (object o in al)
+					if (o is string)
 						unit.ReferencedAssemblies.Add ((string) o);
-					}
-				}
+			}
+
+			IList list = BuildManager.CodeAssemblies;
+			if (list != null && list.Count > 0) {
+				foreach (object o in list)
+					if (o is string)
+						unit.ReferencedAssemblies.Add ((string) o);
 			}
 #endif
 			// Late-bound generators specifics (as for MonoBASIC/VB.NET)

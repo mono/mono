@@ -393,6 +393,14 @@ namespace System.Web {
 				cr = alrc.Compile ();
 				if (cr != null && cr.CompiledAssembly != null)
 					WebConfigurationManager.ExtraAssemblies.Add (cr.PathToAssembly);
+				
+				// Todo: Process App_WebResources here
+				
+				// Todo: Generate profile properties assembly from Web.config here
+				
+				// Todo: Compile code from App_Code here
+				AppCodeCompiler acc = new AppCodeCompiler ();
+				acc.Compile ();
 #endif
 
 				if (File.Exists (app_file)) {

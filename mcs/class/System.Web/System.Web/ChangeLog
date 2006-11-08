@@ -1,3 +1,7 @@
+2006-11-08  Marek Habersack  <grendello@gmail.com>
+
+	* HttpApplicationFactory.cs: Add invocation of the App_Code compiler
+
 2006-11-07  Andrew Skiba  <andrews@mainsoft.com>
 
 	* HttpRuntime.cs: TARGET_JVM ifdef

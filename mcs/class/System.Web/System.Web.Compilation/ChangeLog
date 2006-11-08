@@ -1,3 +1,11 @@
+2006-11-08  Marek Habersack  <grendello@gmail.com>
+
+	* AppCodeCompiler.cs: The App_Code compiler classes
+
+	* BuildManager.cs: Implement the CodeAssemblies property
+
+	* BaseCompiler.cs: Reference the assemblies from App_Code, if any
+
 2006-10-18  Marek Habersack  <grendello@gmail.com>
 
 	* TemplateControlCompiler.cs: add support for resource

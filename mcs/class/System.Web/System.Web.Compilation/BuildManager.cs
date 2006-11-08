@@ -35,6 +35,7 @@ using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Web;
@@ -43,6 +44,8 @@ using System.Web.Hosting;
 
 namespace System.Web.Compilation {
 	public sealed class BuildManager {
+		private static List<string> AppCodeAssemblies = new List<string>();
+		
 		internal BuildManager ()
 		{
 		}
@@ -172,10 +175,9 @@ namespace System.Web.Compilation {
 		}
 
 		// Assemblies built from the App_Code directory
-		[MonoTODO]
 		public static IList CodeAssemblies {
 			get {
-				throw new NotImplementedException ();
+				return AppCodeAssemblies;
 			}
 		}
 
