@@ -2938,7 +2938,6 @@ namespace System.Windows.Forms {
 					Dnd.HandleButtonRelease (ref xevent);
 					switch (xevent.ButtonEvent.button) {
 					case 1: {
-							MouseState &= ~MouseButtons.Left;
 							if (client) {
 								msg.message = Msg.WM_LBUTTONUP;
 							} else {
@@ -2946,11 +2945,11 @@ namespace System.Windows.Forms {
 								WholeToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 							msg.wParam = GetMousewParam (0);
+							MouseState &= ~MouseButtons.Left;
 							break;
 						}
 						
 					case 2: {
-							MouseState &= ~MouseButtons.Middle;
 							if (client) {
 								msg.message = Msg.WM_MBUTTONUP;
 							} else {
@@ -2958,11 +2957,11 @@ namespace System.Windows.Forms {
 								WholeToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 							msg.wParam = GetMousewParam (0);
+							MouseState &= ~MouseButtons.Middle;
 							break;
 						}
 						
 					case 3: {
-							MouseState &= ~MouseButtons.Right;
 							if (client) {
 								msg.message = Msg.WM_RBUTTONUP;
 							} else {
@@ -2970,6 +2969,7 @@ namespace System.Windows.Forms {
 								WholeToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 							msg.wParam = GetMousewParam (0);
+							MouseState &= ~MouseButtons.Right;
 							break;
 						}
 						

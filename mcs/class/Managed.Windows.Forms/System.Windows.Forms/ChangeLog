@@ -1,3 +1,9 @@
+2006-11-07  Everaldo Canuto  <everaldo@simios.org>
+
+	* XplatUIX11.cs, XplatUIX11.cs: Fix MouseRelease to only release
+	MouseState after create wParam for message, this fixes mouse button 
+	equal none in mouse up events.
+	
 2006-11-07  Andreia Gaita  <shana.ufie@gmail.com>
 
 	* Control.cs : Focus() now calls Select to set the Container's
