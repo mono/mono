@@ -1,3 +1,14 @@
+2006-11-08  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: The RichTextBox and textbox have very different
+	word selection methods.  Implement the textbox's simple word
+	selection here, and let the RichTextBox override and provide it's
+	own.
+	- Don't do extra selection on mouseup
+	* RichTextBox.cs: Use the documents word selection algorithm, I
+	think ideally, this function will be pulled into the
+	RichTextBox.cs code someday.
+
 2006-11-08  Chris Toshok  <toshok@ximian.com>
 
 	* Application.cs: set the modal dialog to non modal after we close

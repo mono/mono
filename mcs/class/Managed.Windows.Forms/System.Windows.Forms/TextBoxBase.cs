@@ -1428,7 +1428,6 @@ namespace System.Windows.Forms {
 						click_mode = CaretSelection.Line;
 					} else {
 						document.SetSelectionToCaret(true);
-						click_mode = CaretSelection.Position;
 					}
 				} else {
 					// We select the line if the word is already selected, and vice versa
@@ -1437,7 +1436,8 @@ namespace System.Windows.Forms {
 							document.Invalidate(document.selection_start.line, 0, document.selection_start.line, document.selection_start.line.text.Length);
 						}
 						click_mode = CaretSelection.Word;
-						document.ExpandSelection(CaretSelection.Word, false);	// Setting initial selection
+
+						SelectWord ();
 					} else if (this is RichTextBox) {
 						click_mode = CaretSelection.Line;
 						document.ExpandSelection(CaretSelection.Line, false);	// Setting initial selection
@@ -1509,9 +1509,8 @@ namespace System.Windows.Forms {
 				if (click_mode == CaretSelection.Position) {
 					document.SetSelectionToCaret(false);
 					document.DisplayCaret();
-				} else {
-					document.ExpandSelection(click_mode, true);
 				}
+
 				if (scroll_timer != null) {
 					scroll_timer.Enabled = false;
 				}
@@ -1575,6 +1574,40 @@ namespace System.Windows.Forms {
 			} else {
 				vscroll.Value = vscroll.Maximum;
 			}
+		}
+
+		internal virtual void SelectWord ()
+		{
+			StringBuilder s = document.caret.line.text;
+			int start = document.caret.pos;
+			int end = document.caret.pos;
+
+			if (start > 0) {
+				start--;
+				end--;
+			}
+
+			// skip whitespace until we hit a word
+			while (start > 0 && s [start] == ' ')
+				start--;
+			if (start > 0) {
+				while (start > 0 && (s [start] != ' '))
+					start--;
+				if (s [start] == ' ')
+					start++;
+			}
+
+			if (s [end] == ' ') {
+				while (end < s.Length && s [end] == ' ')
+					end++;
+			} else {
+				while (end < s.Length && s [end] != ' ')
+					end++;
+				while (end < s.Length && s [end] == ' ')
+					end++;
+			}
+
+			document.SetSelection (document.caret.line, start, document.caret.line, end);
 		}
 
 		internal void CalculateDocument() {

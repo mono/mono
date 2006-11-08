@@ -1163,6 +1163,12 @@ namespace System.Windows.Forms {
 		#endregion	// Events
 
 		#region Private Methods
+
+		internal override void SelectWord ()
+		{
+			document.ExpandSelection(CaretSelection.Word, false);
+		}
+
 		private void HandleControl(RTF.RTF rtf) {
 //			Console.WriteLine ("HANDLING MAJOR:  {0}      MINOR:  {1}", rtf.Major, rtf.Minor);
 			switch(rtf.Major) {
