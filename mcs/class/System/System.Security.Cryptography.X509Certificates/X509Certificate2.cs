@@ -31,6 +31,7 @@
 
 using System.IO;
 using System.Text;
+using Mono.Security;
 using Mono.Security.Cryptography;
 using MX = Mono.Security.X509;
 
@@ -40,72 +41,68 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		private bool _archived;
 		private X509ExtensionCollection _extensions;
-		private string _name;
+		private string _name = String.Empty;
 		private string _serial;
 		private PublicKey _publicKey;
-		X500DistinguishedName _issuer_name;
+		private X500DistinguishedName issuer_name;
+		private X500DistinguishedName subject_name;
+		private Oid signature_algorithm;
 
 		private MX.X509Certificate _cert;
 
 		// constructors
 
-		public X509Certificate2 () : base () 
+		public X509Certificate2 ()
 		{
 			_cert = null;
 		}
 
-		public X509Certificate2 (byte[] rawData) : base (rawData) 
+		public X509Certificate2 (byte[] rawData)
 		{
-			_cert = new MX.X509Certificate (base.GetRawCertData ());
+			Import (rawData, (string)null, X509KeyStorageFlags.DefaultKeySet);
 		}
 
-		public X509Certificate2 (byte[] rawData, string password) : base (rawData, password) 
+		public X509Certificate2 (byte[] rawData, string password)
 		{
 			Import (rawData, password, X509KeyStorageFlags.DefaultKeySet);
 		}
 
-		public X509Certificate2 (byte[] rawData, SecureString password) : base (rawData, password) 
+		public X509Certificate2 (byte[] rawData, SecureString password)
 		{
 			Import (rawData, password, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		public X509Certificate2 (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
-			: base (rawData, password, keyStorageFlags) 
 		{
 			Import (rawData, password, keyStorageFlags);
 		}
 
 		public X509Certificate2 (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
-			: base (rawData, password, keyStorageFlags) 
 		{
 			Import (rawData, password, keyStorageFlags);
 		}
 
 		public X509Certificate2 (string fileName) : base (fileName) 
 		{
-			_cert = new MX.X509Certificate (base.GetRawCertData ());
+			Import (fileName, (string)null, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		public X509Certificate2 (string fileName, string password)
-			: base (fileName, password)
 		{
 			Import (fileName, password, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		public X509Certificate2 (string fileName, SecureString password)
-			: base (fileName, password)
 		{
 			Import (fileName, password, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		public X509Certificate2 (string fileName, string password, X509KeyStorageFlags keyStorageFlags)
-			: base (fileName, password, keyStorageFlags) 
 		{
 			Import (fileName, password, keyStorageFlags);
 		}
 
 		public X509Certificate2 (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags)
-			: base (fileName, password, keyStorageFlags) 
 		{
 			Import (fileName, password, keyStorageFlags);
 		}
@@ -129,7 +126,11 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 		public X509ExtensionCollection Extensions {
-			get { return _extensions; }
+			get {
+				if (_extensions == null)
+					_extensions = new X509ExtensionCollection (_cert);
+				return _extensions;
+			}
 		}
 
 		public string FriendlyName {
@@ -137,17 +138,16 @@ namespace System.Security.Cryptography.X509Certificates {
 			set { _name = value; }
 		}
 
-		[MonoTODO ("Probably it could be more efficient")]
+		// FIXME - Could be more efficient
 		public bool HasPrivateKey {
 			get { return PrivateKey != null; }
 		}
 
-		[MonoTODO]
 		public X500DistinguishedName IssuerName {
 			get {
-				if (_issuer_name == null)
-					_issuer_name = new X500DistinguishedName (Issuer);
-				return _issuer_name;
+				if (issuer_name == null)
+					issuer_name = new X500DistinguishedName (_cert.GetIssuerName ().GetBytes ());
+				return issuer_name;
 			}
 		} 
 
@@ -161,30 +161,27 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public AsymmetricAlgorithm PrivateKey {
 			get {
-				if (_cert.RSA != null) {
-					RSACryptoServiceProvider rcsp = _cert.RSA as RSACryptoServiceProvider;
-					if (rcsp != null)
-						return rcsp.PublicOnly ? null : rcsp;
-					RSAManaged rsam = _cert.RSA as RSAManaged;
-					if (rsam != null)
-						return rsam.PublicOnly ? null : rsam;
-					try {
+				try {
+					if (_cert.RSA != null) {
+						RSACryptoServiceProvider rcsp = _cert.RSA as RSACryptoServiceProvider;
+						if (rcsp != null)
+							return rcsp.PublicOnly ? null : rcsp;
+						RSAManaged rsam = _cert.RSA as RSAManaged;
+						if (rsam != null)
+							return rsam.PublicOnly ? null : rsam;
+
 						_cert.RSA.ExportParameters (true);
 						return _cert.RSA;
-					} catch (CryptographicException) {
-						return null;
-					}
-				}
-				else if (_cert.DSA != null) {
-					DSACryptoServiceProvider dcsp = _cert.DSA as DSACryptoServiceProvider;
-					if (dcsp != null)
-						return dcsp.PublicOnly ? null : dcsp;
-					try {
+					} else if (_cert.DSA != null) {
+						DSACryptoServiceProvider dcsp = _cert.DSA as DSACryptoServiceProvider;
+						if (dcsp != null)
+							return dcsp.PublicOnly ? null : dcsp;
+	
 						_cert.DSA.ExportParameters (true);
 						return _cert.DSA;
-					} catch (CryptographicException) {
-						return null;
 					}
+				}
+				catch {
 				}
 				return null;
 			}
@@ -201,7 +198,13 @@ namespace System.Security.Cryptography.X509Certificates {
 		public PublicKey PublicKey {
 			get { 
 				if (_publicKey == null) {
-					_publicKey = new PublicKey (_cert);
+					try {
+						_publicKey = new PublicKey (_cert);
+					}
+					catch (Exception e) {
+						string msg = Locale.GetText ("Unable to decode public key.");
+						throw new CryptographicException (msg, e);
+					}
 				}
 				return _publicKey;
 			}
@@ -230,12 +233,19 @@ namespace System.Security.Cryptography.X509Certificates {
 		} 
 
 		public Oid SignatureAlgorithm {
-			get { return null; }
+			get {
+				if (signature_algorithm == null)
+					signature_algorithm = new Oid (_cert.SignatureAlgorithm);
+				return signature_algorithm;
+			}
 		} 
 
-		[MonoTODO]
 		public X500DistinguishedName SubjectName {
-			get { return null; }
+			get {
+				if (subject_name == null)
+					subject_name = new X500DistinguishedName (_cert.GetSubjectName ().GetBytes ());
+				return subject_name;
+			}
 		} 
 
 		public string Thumbprint {
@@ -248,10 +258,34 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		// methods
 
-		[MonoTODO]
+		[MonoTODO ("always returns String.Empty")]
 		public string GetNameInfo (X509NameType nameType, bool forIssuer) 
 		{
-			return null;
+			switch (nameType) {
+			case X509NameType.SimpleName:
+			case X509NameType.EmailName:
+			case X509NameType.UpnName:
+			case X509NameType.DnsName:
+			case X509NameType.DnsFromAlternativeName:
+			case X509NameType.UrlName:
+				return String.Empty;
+			default:
+				throw new ArgumentException ("nameType");
+			}
+		}
+
+		private void ImportPkcs12 (byte[] rawData, string password)
+		{
+			MX.PKCS12 pfx = (password == null) ? new MX.PKCS12 (rawData) : new MX.PKCS12 (rawData, password);
+			if (pfx.Certificates.Count > 0) {
+				_cert = pfx.Certificates [0];
+			} else {
+				_cert = null;
+			}
+			if (pfx.Keys.Count > 0) {
+				_cert.RSA = (pfx.Keys [0] as RSA);
+				_cert.DSA = (pfx.Keys [0] as DSA);
+			}
 		}
 
 		public override void Import (byte[] rawData) 
@@ -264,21 +298,23 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 			base.Import (rawData, password, keyStorageFlags);
 			if (password == null) {
-				_cert = new Mono.Security.X509.X509Certificate (rawData);
-				// TODO - PKCS12 without password
+				try {
+					_cert = new Mono.Security.X509.X509Certificate (rawData);
+				}
+				catch (Exception e) {
+					try {
+						ImportPkcs12 (rawData, null);
+					}
+					catch {
+						string msg = Locale.GetText ("Unable to decode certificate.");
+						// inner exception is the original (not second) exception
+						throw new CryptographicException (msg, e);
+					}
+				}
 			} else {
 				// try PKCS#12
 				try {
-					MX.PKCS12 pfx = new MX.PKCS12 (rawData, password);
-					if (pfx.Certificates.Count > 0) {
-						_cert = pfx.Certificates [0];
-					} else {
-						_cert = null;
-					}
-					if (pfx.Keys.Count > 0) {
-						_cert.RSA = (pfx.Keys [0] as RSA);
-						_cert.DSA = (pfx.Keys [0] as DSA);
-					}
+					ImportPkcs12 (rawData, password);
 				}
 				catch {
 					// it's possible to supply a (unrequired/unusued) password
@@ -314,7 +350,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			Import (rawData, (string)null, keyStorageFlags);
 		}
 
-		private byte[] Load (string fileName)
+		private static byte[] Load (string fileName)
 		{
 			byte[] data = null;
 			using (FileStream fs = File.OpenRead (fileName)) {
@@ -332,16 +368,55 @@ namespace System.Security.Cryptography.X509Certificates {
 			base.Reset ();
 		}
 
-		[MonoTODO]
 		public override string ToString ()
 		{
-			return null;
+			return base.ToString (true);
 		}
 
-		[MonoTODO]
 		public override string ToString (bool verbose)
 		{
-			return null;
+			// the non-verbose X509Certificate2 == verbose X509Certificate
+			if (!verbose)
+				return base.ToString (true);
+
+			string nl = Environment.NewLine;
+			StringBuilder sb = new StringBuilder ();
+			sb.AppendFormat ("[Version]{0}  V{1}{0}{0}", nl, Version);
+			sb.AppendFormat ("[Subject]{0}  {1}{0}{0}", nl, Subject);
+			sb.AppendFormat ("[Issuer]{0}  {1}{0}{0}", nl, Issuer);
+			sb.AppendFormat ("[Serial Number]{0}  {1}{0}{0}", nl, SerialNumber);
+			sb.AppendFormat ("[Not Before]{0}  {1}{0}{0}", nl, NotBefore);
+			sb.AppendFormat ("[Not After]{0}  {1}{0}{0}", nl, NotAfter);
+			sb.AppendFormat ("[Thumbprint]{0}  {1}{0}{0}", nl, Thumbprint);
+			sb.AppendFormat ("[Signature Algorithm]{0}  {1}({2}){0}{0}", nl, SignatureAlgorithm.FriendlyName, 
+				SignatureAlgorithm.Value);
+
+			AsymmetricAlgorithm key = PublicKey.Key;
+			sb.AppendFormat ("[Public Key]{0}  Algorithm: ", nl);
+			if (key is RSA)
+				sb.Append ("RSA");
+			else if (key is DSA)
+				sb.Append ("DSA");
+			else
+				sb.Append (key.ToString ());
+			sb.AppendFormat ("{0}  Length: {1}{0}  Key Blob: ", nl, key.KeySize);
+			AppendBuffer (sb, PublicKey.EncodedKeyValue.RawData);
+			sb.AppendFormat ("{0}  Parameters: ", nl);
+			AppendBuffer (sb, PublicKey.EncodedParameters.RawData);
+			sb.Append (nl);
+
+			return sb.ToString ();
+		}
+
+		private static void AppendBuffer (StringBuilder sb, byte[] buffer)
+		{
+			if (buffer == null)
+				return;
+			for (int i=0; i < buffer.Length; i++) {
+				sb.Append (buffer [i].ToString ("x2"));
+				if (i < buffer.Length - 1)
+					sb.Append (" ");
+			}
 		}
 
 		[MonoTODO]
@@ -356,16 +431,54 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		// static methods
 
-		[MonoTODO]
+		[MonoTODO ("Detection limited to Cert, Pfx, Pkcs12 and Unknown")]
 		public static X509ContentType GetCertContentType (byte[] rawData)
 		{
-			return X509ContentType.Unknown;
+			if ((rawData == null) || (rawData.Length == 0))
+				throw new ArgumentException ("rawData");
+
+			X509ContentType type = X509ContentType.Unknown;
+			try {
+				ASN1 data = new ASN1 (rawData);
+				if (data.Tag != 0x30) {
+					string msg = Locale.GetText ("Unable to decode certificate.");
+					throw new CryptographicException (msg);
+				}
+
+				if (data.Count == 3) {
+					switch (data [0].Tag) {
+					case 0x30:
+						// SEQUENCE / SEQUENCE / BITSTRING
+						if ((data [1].Tag == 0x30) && (data [2].Tag == 0x03))
+							type = X509ContentType.Cert;
+						break;
+					case 0x02:
+						// INTEGER / SEQUENCE / SEQUENCE
+						if ((data [1].Tag == 0x30) && (data [2].Tag == 0x30))
+							type = X509ContentType.Pkcs12;
+						// note: Pfx == Pkcs12
+						break;
+					}
+				}
+			}
+			catch (Exception e) {
+				string msg = Locale.GetText ("Unable to decode certificate.");
+				throw new CryptographicException (msg, e);
+			}
+
+			return type;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Detection limited to Cert, Pfx, Pkcs12 and Unknown")]
 		public static X509ContentType GetCertContentType (string fileName)
 		{
-			return X509ContentType.Unknown;
+			if (fileName == null)
+				throw new ArgumentNullException ("fileName");
+			if (fileName.Length == 0)
+				throw new ArgumentException ("fileName");
+
+			byte[] data = Load (fileName);
+			return GetCertContentType (data);
 		}
 	}
 }

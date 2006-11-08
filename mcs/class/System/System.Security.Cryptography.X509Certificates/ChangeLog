@@ -1,3 +1,15 @@
+2006-11-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X500DistinguishedName.cs: Fix most common cases. Some flags are 
+	still not supported.
+	* X509Certificate2.cs: Fix importing PKCS#12 certificates (with keys)
+	in some cases. Implement GetCertContentType for Cert, Pfx and Pkcs12.
+	Implement ToString methods.
+	* X509ExtensionCollection.cs: Add an internal ctor that can populate
+	the collection from extensions coming from an Mono.Security.X509.
+	X509Certificate. CryptoConfig is used to allow extensibility to the
+	X509Extension class.
+
 2006-10-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate2.cs: Ensure we can load certificates from read-only

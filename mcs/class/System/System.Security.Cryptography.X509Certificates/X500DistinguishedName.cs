@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,6 +36,7 @@ using MX = Mono.Security.X509;
 
 namespace System.Security.Cryptography.X509Certificates {
 
+	[MonoTODO ("Some X500DistinguishedNameFlags options aren't supported, like DoNotUsePlusSign, DoNotUseQuotes and ForceUTF8Encoding")]
 	public sealed class X500DistinguishedName : AsnEncodedData {
 
 		private const X500DistinguishedNameFlags AllFlags = X500DistinguishedNameFlags.Reversed |
@@ -45,46 +46,38 @@ namespace System.Security.Cryptography.X509Certificates {
 			X500DistinguishedNameFlags.UseT61Encoding | X500DistinguishedNameFlags.ForceUTF8Encoding;
 
 		private string name;
-		private ArrayList list;
 
-		[MonoTODO]
+
 		public X500DistinguishedName (AsnEncodedData encodedDistinguishedName)
 		{
 			if (encodedDistinguishedName == null)
 				throw new ArgumentNullException ("encodedDistinguishedName");
+
 			RawData = encodedDistinguishedName.RawData;
-			DecodeRawData ();
-			name = Decode (X500DistinguishedNameFlags.None);
+			if (RawData.Length > 0)
+				DecodeRawData ();
+			else
+				name = String.Empty;
 		}
 
-		[MonoTODO]
 		public X500DistinguishedName (byte[] encodedDistinguishedName)
 		{
 			if (encodedDistinguishedName == null)
 				throw new ArgumentNullException ("encodedDistinguishedName");
+
 			Oid = new Oid ();
 			RawData = encodedDistinguishedName;
-			DecodeRawData ();
-			name = Decode (X500DistinguishedNameFlags.None);
-		}
-
-		[MonoTODO]
-		public X500DistinguishedName (string distinguishedName)
-		{
-			if (distinguishedName == null)
-				throw new ArgumentNullException ("distinguishedName");
-
-			if (distinguishedName.Length == 0) {
-				// empty (0x00) ASN.1 sequence (0x30)
-				RawData = new byte [2] { 0x30, 0x00 };
+			if (encodedDistinguishedName.Length > 0)
 				DecodeRawData ();
-			} else {
-				DecodeName ();
-				name = distinguishedName;
-			}
+			else
+				name = String.Empty;
 		}
 
-		[MonoTODO]
+		public X500DistinguishedName (string distinguishedName)
+			: this (distinguishedName, X500DistinguishedNameFlags.Reversed)
+		{
+		}
+
 		public X500DistinguishedName (string distinguishedName, X500DistinguishedNameFlags flag)
 		{
 			if (distinguishedName == null)
@@ -92,106 +85,96 @@ namespace System.Security.Cryptography.X509Certificates {
 			if ((flag != 0) && ((flag & AllFlags) == 0))
 				throw new ArgumentException ("flag");
 
+			Oid = new Oid ();
 			if (distinguishedName.Length == 0) {
 				// empty (0x00) ASN.1 sequence (0x30)
 				RawData = new byte [2] { 0x30, 0x00 };
 				DecodeRawData ();
 			} else {
-				DecodeName ();
-				name = distinguishedName;
+				ASN1 dn = MX.X501.FromString (distinguishedName);
+				if ((flag & X500DistinguishedNameFlags.Reversed) != 0) {
+					ASN1 rdn = new ASN1 (0x30);
+					for (int i = dn.Count - 1; i >= 0; i--)	
+						rdn.Add (dn [i]);
+					dn = rdn;
+				}
+				RawData = dn.GetBytes ();
+				if (flag == X500DistinguishedNameFlags.None)
+					name = distinguishedName;
+				else
+					name = Decode (flag);
 			}
 		}
 
-		[MonoTODO]
 		public X500DistinguishedName (X500DistinguishedName distinguishedName)
 		{
 			if (distinguishedName == null)
 				throw new ArgumentNullException ("distinguishedName");
+
+			Oid = new Oid ();
+			RawData = distinguishedName.RawData;
 			name = distinguishedName.name;
-			list = (ArrayList) distinguishedName.list.Clone ();
 		}
 
-		[MonoTODO]
+
 		public string Name {
 			get { return name; }
 		}
 
-		[MonoTODO]
+
 		public string Decode (X500DistinguishedNameFlags flag)
 		{
-			return String.Empty;
-		}
+			if ((flag != 0) && ((flag & AllFlags) == 0))
+				throw new ArgumentException ("flag");
 
-		[MonoTODO]
-		public override string Format (bool multiLine)
-		{
-			if (list.Count == 0)
+			if (RawData.Length == 0)
 				return String.Empty;
 
-			StringBuilder sb = new StringBuilder ();
-			foreach (DictionaryEntry de in list) {
-				FormatEntry (sb, de, X500DistinguishedNameFlags.None);
-				if (multiLine)
-					sb.Append (Environment.NewLine);
+			// Mono.Security reversed isn't the same as fx 2.0 (which is the reverse of 1.x)
+			bool reversed = ((flag & X500DistinguishedNameFlags.Reversed) != 0);
+			bool quotes = ((flag & X500DistinguishedNameFlags.DoNotUseQuotes) == 0);
+			string separator = GetSeparator (flag);
+
+			ASN1 rdn = new ASN1 (RawData);
+			return MX.X501.ToString (rdn, reversed, separator, quotes);
+		}
+
+		public override string Format (bool multiLine)
+		{
+			if (multiLine) {
+				string s = Decode (X500DistinguishedNameFlags.UseNewLines);
+				if (s.Length > 0)
+					return s + Environment.NewLine;
+				else
+					return s;
+			} else {
+				return Decode (X500DistinguishedNameFlags.UseCommas);
 			}
-			if (multiLine)
-				sb.Append (Environment.NewLine);
-			return sb.ToString ();
 		}
 
 		// private stuff
 
-		private void FormatEntry (StringBuilder sb, DictionaryEntry de, X500DistinguishedNameFlags flag)
-		{
-			sb.Append (de.Key);
-			sb.Append ("=");
-			// needs quotes ?
-		}
-
-#if false
-		private string GetSeparator (X500DistinguishedNameFlags flag)
+		private static string GetSeparator (X500DistinguishedNameFlags flag)
 		{
 			if ((flag & X500DistinguishedNameFlags.UseSemicolons) != 0)
-				return ";";
+				return "; ";
 			if ((flag & X500DistinguishedNameFlags.UseCommas) != 0)
-				return ",";
+				return ", ";
 			if ((flag & X500DistinguishedNameFlags.UseNewLines) != 0)
 				return Environment.NewLine;
-			return ","; //default
+			return ", "; //default
 		}
-#endif
 
 		// decode the DN using the (byte[]) RawData
 		private void DecodeRawData ()
 		{
-			list = new ArrayList ();
 			if ((RawData == null) || (RawData.Length < 3)) {
 				name = String.Empty;
 				return;
 			}
 
 			ASN1 sequence = new ASN1 (RawData);
-			for (int i=0; i < sequence.Count; i++) {
-			}
-		}
-
-		// decode the DN using the (string) name
-		private void DecodeName ()
-		{
-			if ((name == null) || (name.Length == 0))
-				return;
-
-			ASN1 dn = MX.X501.FromString (name);
-
-/*			int pos = 0;
-			ASN1 asn1 = new ASN1 (0x30);
-			while (pos < name.Length) {
-				MX.X520.AttributeTypeAndValue atv = ReadAttribute (name, ref pos);
-				atv.Value = ReadValue (name, ref pos);
-			}*/
-
-			RawData = dn.GetBytes ();
-			DecodeRawData ();
+			name = MX.X501.ToString (sequence, true, ", ", true);
 		}
 	}
 }

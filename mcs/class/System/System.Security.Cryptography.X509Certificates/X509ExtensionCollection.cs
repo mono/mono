@@ -32,6 +32,8 @@
 #if NET_2_0 && SECURITY_DEP
 
 using System.Collections;
+using Mono.Security;
+using MX = Mono.Security.X509;
 
 namespace System.Security.Cryptography.X509Certificates {
 
@@ -44,6 +46,33 @@ namespace System.Security.Cryptography.X509Certificates {
 		public X509ExtensionCollection ()
 		{
 			_list = new ArrayList ();
+		}
+
+		internal X509ExtensionCollection (MX.X509Certificate cert)
+		{
+			_list = new ArrayList (cert.Extensions.Count);
+			if (cert.Extensions.Count == 0)
+				return;
+
+			object[] parameters = new object [2];
+			foreach (MX.X509Extension ext in cert.Extensions) {
+				bool critical = ext.Critical;
+				string oid = ext.Oid;
+				byte[] raw_data = null;
+				// extension data is embedded in an octet stream (4)
+				ASN1 value = ext.Value;
+				if ((value.Tag == 0x04) && (value.Count > 0))
+					raw_data = value [0].GetBytes ();
+
+				parameters [0] = new AsnEncodedData (oid, raw_data);
+				parameters [1] = critical;
+				X509Extension newt = (X509Extension) CryptoConfig.CreateFromName (oid, parameters);
+				if (newt == null) {
+					// not registred in CryptoConfig, using default
+					newt = new X509Extension (oid, raw_data, critical);
+				}
+				_list.Add (newt);
+			}
 		}
 
 		// properties
