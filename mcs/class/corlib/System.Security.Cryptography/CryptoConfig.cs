@@ -7,7 +7,7 @@
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) Tim Coleman, 2004
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -206,6 +206,19 @@ public class CryptoConfig {
 	private const string urlKeyValueRSA = urlXmlDsig + " KeyValue/RSAKeyValue";	// space is required
 	private const string urlRetrievalMethod = urlXmlDsig + " RetrievalMethod";	// space is required
 
+#if NET_2_0
+	// new (2.0) X509 certificate extensions
+	private const string oidX509SubjectKeyIdentifier = "2.5.29.14";
+	private const string oidX509KeyUsage = "2.5.29.15";
+	private const string oidX509BasicConstraints = "2.5.29.19";
+	private const string oidX509EnhancedKeyUsage = "2.5.29.37";
+
+	private const string nameX509SubjectKeyIdentifier = defaultNamespace + "X509Certificates.X509SubjectKeyIdentifierExtension, " + Consts.AssemblySystem;
+	private const string nameX509KeyUsage = defaultNamespace + "X509Certificates.X509KeyUsageExtension, " + Consts.AssemblySystem;
+	private const string nameX509BasicConstraints = defaultNamespace + "X509Certificates.X509BasicConstraintsExtension, " + Consts.AssemblySystem;
+	private const string nameX509EnhancedKeyUsage = defaultNamespace + "X509Certificates.X509EnhancedKeyUsageExtension, " + Consts.AssemblySystem;
+#endif
+
 	static CryptoConfig () 
 	{
 		// lock(this) is bad
@@ -310,6 +323,14 @@ public class CryptoConfig {
 		algorithms.Add (urlKeyValueDSA, defaultKeyValueDSA);
 		algorithms.Add (urlKeyValueRSA, defaultKeyValueRSA);
 		algorithms.Add (urlRetrievalMethod, defaultRetrievalMethod);
+
+#if NET_2_0
+		// note: X.509 extensions aren't part of OID but names
+		algorithms.Add (oidX509SubjectKeyIdentifier, nameX509SubjectKeyIdentifier);
+		algorithms.Add (oidX509KeyUsage, nameX509KeyUsage);
+		algorithms.Add (oidX509BasicConstraints, nameX509BasicConstraints);
+		algorithms.Add (oidX509EnhancedKeyUsage, nameX509EnhancedKeyUsage);
+#endif
 
 		Hashtable oid = new Hashtable (new CaseInsensitiveHashCodeProvider (), new CaseInsensitiveComparer ());
 		// comments here are to match with MS implementation (but not with doc)
