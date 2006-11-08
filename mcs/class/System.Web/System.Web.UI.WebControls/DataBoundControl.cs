@@ -146,6 +146,10 @@ namespace System.Web.UI.WebControls {
 			if (!Page.IsPostBack || (IsViewStateEnabled && !IsDataBound))
 				RequiresDataBinding = true;
 
+			// MSDN: The ConfirmInitState method sets the initialized state of the data-bound 
+			// control. The method is called by the DataBoundControl class in its OnLoad method.
+			ConfirmInitState ();
+
 			base.OnLoad(e);
 		}
 		
@@ -241,6 +245,7 @@ namespace System.Web.UI.WebControls {
 	}
 }
 #endif
+
 
 
 

@@ -55,6 +55,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			{
 				ValidateDataSource (dataSource);
 			}
+			
+			public bool GetInitialized ()
+			{
+				return Initialized;
+			}
 		}
 
 		class MyDataBoundControl : DataBoundControl
@@ -198,6 +203,34 @@ namespace MonoTests.System.Web.UI.WebControls
 			Poker p = new Poker ();
 			// Allows null
 			p.DoValidateDataSource (null);
+		}
+
+		// MSDN: The ConfirmInitState method sets the initialized state of the data-bound 
+		// control. The method is called by the DataBoundControl class in its OnLoad method.
+		[Test]
+		[Category ("NunitWeb")]
+		public void Initialized ()
+		{
+			WebTest t = new WebTest ();
+			PageDelegates pd = new PageDelegates ();
+			pd.Load = Initialized_Load;
+			pd.PreRenderComplete = Initialized_PreRender;
+			t.Invoker = new PageInvoker (pd);
+			t.Run ();
+		}
+
+		public static void Initialized_Load (Page p)
+		{
+			Poker c = new Poker ();
+			p.Form.Controls.Clear ();
+			p.Form.Controls.Add (c);
+			Assert.IsFalse (c.GetInitialized (), "Initialized_Load");
+		}
+
+		public static void Initialized_PreRender (Page p)
+		{
+			Poker c = (Poker) p.Form.Controls [0];
+			Assert.IsTrue (c.GetInitialized (), "Initialized_PreRender");
 		}
 	}
 }

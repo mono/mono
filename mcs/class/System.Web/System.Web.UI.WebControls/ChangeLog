@@ -1,3 +1,9 @@
+2006-11-09 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DataBoundControl.cs: fixed: 
+	ConfirmInitState method s called by 
+	the DataBoundControl class in its OnLoad method.
+
 2006-11-06 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* FormView.cs: fixed: DataBinding flow.
