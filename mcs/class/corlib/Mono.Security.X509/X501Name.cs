@@ -5,9 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,6 +32,7 @@ using System.Globalization;
 using System.Text;
 
 using Mono.Security;
+using Mono.Security.Cryptography;
 
 namespace Mono.Security.X509 {
 
@@ -78,71 +77,7 @@ namespace Mono.Security.X509 {
 			StringBuilder sb = new StringBuilder ();
 			for (int i = 0; i < seq.Count; i++) {
 				ASN1 entry = seq [i];
-				// multiple entries are valid
-				for (int k = 0; k < entry.Count; k++) {
-					ASN1 pair = entry [k];
-					ASN1 s = pair [1];
-					if (s == null)
-						continue;
-
-					ASN1 poid = pair [0];
-					if (poid == null)
-						continue;
-
-					if (poid.CompareValue (countryName))
-						sb.Append ("C=");
-					else if (poid.CompareValue (organizationName))
-						sb.Append ("O=");
-					else if (poid.CompareValue (organizationalUnitName))
-						sb.Append ("OU=");
-					else if (poid.CompareValue (commonName))
-						sb.Append ("CN=");
-					else if (poid.CompareValue (localityName))
-						sb.Append ("L=");
-					else if (poid.CompareValue (stateOrProvinceName))
-						sb.Append ("S=");	// NOTE: RFC2253 uses ST=
-					else if (poid.CompareValue (streetAddress))
-						sb.Append ("STREET=");
-					else if (poid.CompareValue (domainComponent))
-						sb.Append ("DC=");
-					else if (poid.CompareValue (userid))
-						sb.Append ("UID=");
-					else if (poid.CompareValue (email))
-						sb.Append ("E=");	// NOTE: Not part of RFC2253
-					else {
-						// unknown OID
-						sb.Append ("OID.");	// NOTE: Not present as RFC2253
-						sb.Append (ASN1Convert.ToOid (poid));
-						sb.Append ("=");
-					}
-
-					string sValue = null;
-					// 16bits or 8bits string ? TODO not complete (+special chars!)
-					if (s.Tag == 0x1E) {
-						// BMPSTRING
-						StringBuilder sb2 = new StringBuilder ();
-						for (int j = 1; j < s.Value.Length; j += 2)
-							sb2.Append ((char)s.Value[j]);
-						sValue = sb2.ToString ();
-					} else {
-						sValue = System.Text.Encoding.UTF8.GetString (s.Value);
-						// in some cases we must quote (") the value
-						// Note: this doesn't seems to conform to RFC2253
-						char[] specials = { ',', '+', '"', '\\', '<', '>', ';' };
-						if (sValue.IndexOfAny (specials, 0, sValue.Length) > 0)
-							sValue = "\"" + sValue + "\"";
-						else if (sValue.StartsWith (" "))
-							sValue = "\"" + sValue + "\"";
-						else if (sValue.EndsWith (" "))
-							sValue = "\"" + sValue + "\"";
-					}
-
-					sb.Append (sValue);
-
-					// separator (not on last iteration)
-					if (k < entry.Count - 1)
-						sb.Append (", ");
-				}
+				AppendEntry (sb, entry, true);
 
 				// separator (not on last iteration)
 				if (i < seq.Count - 1)
@@ -151,9 +86,106 @@ namespace Mono.Security.X509 {
 			return sb.ToString ();
 		}
 
+#if INSIDE_CORLIB || NET_2_0
+		static public string ToString (ASN1 seq, bool reversed, string separator, bool quotes)
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			if (reversed) {
+				for (int i = seq.Count - 1; i >= 0; i--) {
+					ASN1 entry = seq [i];
+					AppendEntry (sb, entry, quotes);
+
+					// separator (not on last iteration)
+					if (i > 0)
+						sb.Append (separator);
+				}
+			} else {
+				for (int i = 0; i < seq.Count; i++) {
+					ASN1 entry = seq [i];
+					AppendEntry (sb, entry, quotes);
+
+					// separator (not on last iteration)
+					if (i < seq.Count - 1)
+						sb.Append (separator);
+				}
+			}
+			return sb.ToString ();
+		}
+#endif
+
+		static private void AppendEntry (StringBuilder sb, ASN1 entry, bool quotes)
+		{
+			// multiple entries are valid
+			for (int k = 0; k < entry.Count; k++) {
+				ASN1 pair = entry [k];
+				ASN1 s = pair [1];
+				if (s == null)
+					continue;
+
+				ASN1 poid = pair [0];
+				if (poid == null)
+					continue;
+
+				if (poid.CompareValue (countryName))
+					sb.Append ("C=");
+				else if (poid.CompareValue (organizationName))
+					sb.Append ("O=");
+				else if (poid.CompareValue (organizationalUnitName))
+					sb.Append ("OU=");
+				else if (poid.CompareValue (commonName))
+					sb.Append ("CN=");
+				else if (poid.CompareValue (localityName))
+					sb.Append ("L=");
+				else if (poid.CompareValue (stateOrProvinceName))
+					sb.Append ("S=");	// NOTE: RFC2253 uses ST=
+				else if (poid.CompareValue (streetAddress))
+					sb.Append ("STREET=");
+				else if (poid.CompareValue (domainComponent))
+					sb.Append ("DC=");
+				else if (poid.CompareValue (userid))
+					sb.Append ("UID=");
+				else if (poid.CompareValue (email))
+					sb.Append ("E=");	// NOTE: Not part of RFC2253
+				else {
+					// unknown OID
+					sb.Append ("OID.");	// NOTE: Not present as RFC2253
+					sb.Append (ASN1Convert.ToOid (poid));
+					sb.Append ("=");
+				}
+
+				string sValue = null;
+				// 16bits or 8bits string ? TODO not complete (+special chars!)
+				if (s.Tag == 0x1E) {
+					// BMPSTRING
+					StringBuilder sb2 = new StringBuilder ();
+					for (int j = 1; j < s.Value.Length; j += 2)
+						sb2.Append ((char)s.Value[j]);
+					sValue = sb2.ToString ();
+				} else {
+					sValue = Encoding.UTF8.GetString (s.Value);
+					// in some cases we must quote (") the value
+					// Note: this doesn't seems to conform to RFC2253
+					char[] specials = { ',', '+', '"', '\\', '<', '>', ';' };
+					if (quotes) {
+						if ((sValue.IndexOfAny (specials, 0, sValue.Length) > 0) ||
+						    sValue.StartsWith (" ") || (sValue.EndsWith (" ")))
+							sValue = "\"" + sValue + "\"";
+					}
+				}
+
+				sb.Append (sValue);
+
+				// separator (not on last iteration)
+				if (k < entry.Count - 1)
+					sb.Append (", ");
+			}
+		}
+
 		static private X520.AttributeTypeAndValue GetAttributeFromOid (string attributeType) 
 		{
-			switch (attributeType.ToUpper (CultureInfo.InvariantCulture).Trim ()) {
+			string s = attributeType.ToUpper (CultureInfo.InvariantCulture).Trim ();
+			switch (s) {
 				case "C":
 					return new X520.CountryName ();
 				case "O":
@@ -169,45 +201,172 @@ namespace Mono.Security.X509 {
 					return new X520.StateOrProvinceName ();
 				case "E":	// NOTE: Not part of RFC2253
 					return new X520.EmailAddress ();
-				case "DC":
-//					return streetAddress;
-				case "UID":
-//					return domainComponent;
+				case "DC":	// RFC2247
+					return new X520.DomainComponent ();
+				case "UID":	// RFC1274
+					return new X520.UserId ();
 				default:
-					return null;
+					if (s == "OID.") {
+						// MUST support it but it OID may be without it
+						return new X520.Oid (s.Substring (4));
+					} else {
+						if (IsOid (s))
+							return new X520.Oid (s);
+						else
+							return null;
+					}
 			}
+		}
+
+		static private bool IsOid (string oid)
+		{
+			try {
+				ASN1 asn = ASN1Convert.FromOid (oid);
+				return (asn.Tag == 0x06);
+			}
+			catch {
+				return false;
+			}
+		}
+
+		// no quote processing
+		static private X520.AttributeTypeAndValue ReadAttribute (string value, ref int pos)
+		{
+			while ((value[pos] == ' ') && (pos < value.Length))
+				pos++;
+
+			// get '=' position in substring
+			int equal = value.IndexOf ('=', pos);
+			if (equal == -1) {
+				string msg = Locale.GetText ("No attribute found.");
+				throw new FormatException (msg);
+			}
+
+			string s = value.Substring (pos, equal - pos);
+			X520.AttributeTypeAndValue atv = GetAttributeFromOid (s);
+			if (atv == null) {
+				string msg = Locale.GetText ("Unknown attribute '{0}'.");
+				throw new FormatException (String.Format (msg, s));
+			}
+			pos = equal + 1; // skip the '='
+			return atv;
+		}
+
+		static private bool IsHex (char c)
+		{
+			if (Char.IsDigit (c))
+				return true;
+			char up = Char.ToUpper (c, CultureInfo.InvariantCulture);
+			return ((up >= 'A') && (up <= 'F'));
+		}
+
+		static string ReadHex (string value, ref int pos)
+		{
+			StringBuilder sb = new StringBuilder ();
+			// it is (at least an) 8 bits char
+			sb.Append (value[pos++]);
+			sb.Append (value[pos]);
+			// look ahead for a 16 bits char
+			if ((pos < value.Length - 4) && (value[pos+1] == '\\') && IsHex (value[pos+2])) {
+				pos += 2; // pass last char and skip \
+				sb.Append (value[pos++]);
+				sb.Append (value[pos]);
+			}
+			byte[] data = CryptoConvert.FromHex (sb.ToString ());
+			return Encoding.UTF8.GetString (data);
+		}
+
+		static private int ReadEscaped (StringBuilder sb, string value, int pos)
+		{
+			switch (value[pos]) {
+			case '\\':
+			case '"':
+			case '=':
+			case ';':
+			case '<':
+			case '>':
+			case '+':
+			case '#':
+			case ',':
+				sb.Append (value[pos]);
+				return pos;
+			default:
+				if (pos >= value.Length - 2) {
+					string msg = Locale.GetText ("Malformed escaped value '{0}'.");
+					throw new FormatException (string.Format (msg, value.Substring (pos)));
+				}
+				// it's either a 8 bits or 16 bits char
+				sb.Append (ReadHex (value, ref pos));
+				return pos;
+			}
+		}
+
+		static private int ReadQuoted (StringBuilder sb, string value, int pos)
+		{
+			int original = pos;
+			while (pos <= value.Length) {
+				switch (value[pos]) {
+				case '"':
+					return pos;
+				case '\\':
+					return ReadEscaped (sb, value, pos);
+				default:
+					sb.Append (value[pos]);
+					pos++;
+					break;
+				}
+			}
+			string msg = Locale.GetText ("Malformed quoted value '{0}'.");
+			throw new FormatException (string.Format (msg, value.Substring (original)));
+		}
+
+		static private string ReadValue (string value, ref int pos)
+		{
+			int original = pos;
+			StringBuilder sb = new StringBuilder ();
+			while (pos < value.Length) {
+				switch (value [pos]) {
+				case '\\':
+					pos = ReadEscaped (sb, value, ++pos);
+					break;
+				case '"':
+					pos = ReadQuoted (sb, value, ++pos);
+					break;
+				case '=':
+				case ';':
+				case '<':
+				case '>':
+					string msg = Locale.GetText ("Malformed value '{0}' contains '{1}' outside quotes.");
+					throw new FormatException (string.Format (msg, value.Substring (original), value[pos]));
+				case '+':
+				case '#':
+					throw new NotImplementedException ();
+				case ',':
+					pos++;
+					return sb.ToString ();
+				default:
+					sb.Append (value[pos]);
+					break;
+				}
+				pos++;
+			}
+			return sb.ToString ();
 		}
 
 		static public ASN1 FromString (string rdn) 
 		{
 			if (rdn == null)
 				throw new ArgumentNullException ("rdn");
-			// get string from here to ',' or end of string
-			int start = 0;
-			int end = 0;
+
+			int pos = 0;
 			ASN1 asn1 = new ASN1 (0x30);
-			while (start < rdn.Length) {
-				end = rdn.IndexOf (',', end) + 1;
-				if (end == 0)
-					end = rdn.Length + 1;
-				string av = rdn.Substring (start, end - start - 1);
-				// get '=' position in substring
-				int equal = av.IndexOf ('=');
-				// get AttributeType
-				string attributeType = av.Substring (0, equal);
-				// get value
-				string attributeValue = av.Substring (equal + 1);
+			while (pos < rdn.Length) {
+				X520.AttributeTypeAndValue atv = ReadAttribute (rdn, ref pos);
+				atv.Value = ReadValue (rdn, ref pos);
 
-				X520.AttributeTypeAndValue atv = GetAttributeFromOid (attributeType);
-				atv.Value = attributeValue;
-				asn1.Add (new ASN1 (0x31, atv.GetBytes ()));
-
-				// next part
-				start = end;
-				if (start != - 1) {
-					if (end > rdn.Length)
-						break;
-				}
+				ASN1 sequence = new ASN1 (0x31);
+				sequence.Add (atv.GetASN1 ());
+				asn1.Add (sequence); 
 			}
 			return asn1;
 		}

@@ -55,9 +55,11 @@ namespace Mono.Security.X509 {
 		private byte[] m_encodedcert;
 		private DateTime m_from;
 		private DateTime m_until;
+		private ASN1 issuer;
 		private string m_issuername;
 		private string m_keyalgo;
 		private byte[] m_keyalgoparams;
+		private ASN1 subject;
 		private string m_subject;
 		private byte[] m_publickey;
 		private byte[] signature;
@@ -131,7 +133,7 @@ namespace Mono.Security.X509 {
 				tbs++;
 				// ASN1 signatureAlgo = tbsCertificate.Element (tbs++, 0x30); 
 		
-				ASN1 issuer = tbsCertificate.Element (tbs++, 0x30); 
+				issuer = tbsCertificate.Element (tbs++, 0x30); 
 				m_issuername = X501.ToString (issuer);
 		
 				ASN1 validity = tbsCertificate.Element (tbs++, 0x30);
@@ -140,7 +142,7 @@ namespace Mono.Security.X509 {
 				ASN1 notAfter = validity [1];
 				m_until = ASN1Convert.ToDateTime (notAfter);
 		
-				ASN1 subject = tbsCertificate.Element (tbs++, 0x30);
+				subject = tbsCertificate.Element (tbs++, 0x30);
 				m_subject = X501.ToString (subject);
 		
 				ASN1 subjectPublicKeyInfo = tbsCertificate.Element (tbs++, 0x30);
@@ -505,6 +507,16 @@ namespace Mono.Security.X509 {
 		}
 
 #if INSIDE_CORLIB || NET_2_0
+		public ASN1 GetIssuerName ()
+		{
+			return issuer;
+		}
+
+		public ASN1 GetSubjectName ()
+		{
+			return subject;
+		}
+
 		protected X509Certificate (SerializationInfo info, StreamingContext context)
 		{
 			Parse ((byte[]) info.GetValue ("raw", typeof (byte[])));
