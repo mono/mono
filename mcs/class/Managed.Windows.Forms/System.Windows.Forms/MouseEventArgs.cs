@@ -27,6 +27,7 @@
 // COMPLETE
 
 using System.Runtime.InteropServices;
+using System.Drawing;
 
 namespace System.Windows.Forms {
 	[ComVisible(true)]
@@ -77,6 +78,13 @@ namespace System.Windows.Forms {
 				return this.y;
 			}
 		}
+#if NET_2_0
+	    	public Point Location {
+		    	get {
+				return new Point (this.x, this.y);
+			}
+		}
+#endif
 		#endregion	// Public Instance Properties
 	}
 }
