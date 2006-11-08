@@ -212,7 +212,6 @@ namespace Mono.Security.Authenticode {
 
 			if (!signedHash.CompareValue (hash)) {
 				reason = 2;
-				return false;
 			}
 
 			// messageDigest is a hash of spcIndirectDataContext (which includes the file hash)
@@ -220,7 +219,8 @@ namespace Mono.Security.Authenticode {
 			ha.Initialize (); // re-using hash instance
 			byte[] messageDigest = ha.ComputeHash (spcIDC);
 
-			return VerifySignature (sd, messageDigest, ha);
+			bool sign = VerifySignature (sd, messageDigest, ha);
+			return (sign && (reason == 0));
 		}
 
 		private bool CompareIssuerSerial (string issuer, byte[] serial, X509Certificate x509) 
@@ -306,11 +306,13 @@ namespace Mono.Security.Authenticode {
 				if (CompareIssuerSerial (issuer, serial, x509)) {
 					// don't verify is key size don't match
 					if (x509.PublicKey.Length > (signature.Length >> 3)) {
+						// return the signing certificate even if the signature isn't correct
+						// (required behaviour for 2.0 support)
+						signingCertificate = x509;
 						RSACryptoServiceProvider rsa = (RSACryptoServiceProvider) x509.RSA;
 						if (rsa.VerifyHash (p7hash, hashOID, signature)) {
 							signerChain.LoadCertificates (coll);
 							trustedRoot = signerChain.Build (x509);
-							signingCertificate = x509;
 							break; 
 						}
 					}
