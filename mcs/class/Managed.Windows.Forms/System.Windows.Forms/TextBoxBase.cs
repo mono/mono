@@ -1411,7 +1411,7 @@ namespace System.Windows.Forms {
 
 				interval = DateTime.Now - click_last;
 				document.PositionCaret(e.X + document.ViewPortX, e.Y + document.ViewPortY);
-				
+
 				// Handle place caret/select word/select line behaviour
 				if (e.Clicks == 1) {
 					if (SystemInformation.DoubleClickTime < interval.TotalMilliseconds) {
@@ -1426,6 +1426,9 @@ namespace System.Windows.Forms {
 						#endif
 						document.ExpandSelection(CaretSelection.Line, false);
 						click_mode = CaretSelection.Line;
+					} else {
+						document.SetSelectionToCaret(true);
+						click_mode = CaretSelection.Position;
 					}
 				} else {
 					// We select the line if the word is already selected, and vice versa
