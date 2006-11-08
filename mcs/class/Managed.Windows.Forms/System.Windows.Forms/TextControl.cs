@@ -3170,6 +3170,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 				SetSelectionVisible (false);
 			} else {
 				SetSelectionVisible (true);
+				Invalidate(selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
 			}
 		}
 

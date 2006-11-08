@@ -7,6 +7,7 @@
 
 	* TextControl.cs: When combining lines carry over the line end
 	style from the end line.
+	- Invalidate the selected area when setting it, if it is visible.
 	* TextBoxBase.cs: Only rich text box can do full line selects.
 	- Make sure to set the cursor position when there is a click,
 	otherwise two clicks in separate areas could cause a large chunk
