@@ -1,5 +1,10 @@
 2006-11-07  Everaldo Canuto  <everaldo@simios.org>
 
+	* MenuAPI.cs: Ignore right click for menu actions and fixes
+	menu border when clicked.  Fixes #79846.
+
+2006-11-07  Everaldo Canuto  <everaldo@simios.org>
+
 	* XplatUIX11.cs, XplatUIX11.cs: Fix MouseRelease to only release
 	MouseState after create wParam for message, this fixes mouse button 
 	equal none in mouse up events.

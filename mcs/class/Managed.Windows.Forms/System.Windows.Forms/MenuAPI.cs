@@ -147,8 +147,10 @@ namespace System.Windows.Forms {
 			if (item.IsPopup) {
 				active = true;
 				item.Parent.InvalidateItem (item);
-			} else if (item.Parent is MainMenu)
-				active = false;
+			} else if (item.Parent is MainMenu){
+				active = true;
+				item.Parent.InvalidateItem (item);
+			}
 			grab_control.ActiveTracker = this;
 		}
 
@@ -170,6 +172,9 @@ namespace System.Windows.Forms {
 
 		public void OnMouseUp (MouseEventArgs args)
 		{
+			if ((args.Button & MouseButtons.Left) == 0)
+				return;
+			
 			MenuItem item = GetItemAtXY (args.X, args.Y);
 
 			if (item == null) {
@@ -177,15 +182,13 @@ namespace System.Windows.Forms {
 				Deactivate ();
 			}
 			else {
-				/* releasing the mouse button on a
-				 * popup item leaves things active */
-				if (item.IsPopup && !popdown_menu)
-					return;
-
-				/* otherwise we hide the menu and
-				 * click the menu item */
-				Deactivate ();
-				item.PerformClick ();
+				/* hide the menu when popdown */
+				if (popdown_menu || !item.IsPopup)
+					Deactivate ();
+				
+				/* Perform click when is not a popup */
+				if (!item.IsPopup)
+					item.PerformClick ();
 			}
 		}
 
