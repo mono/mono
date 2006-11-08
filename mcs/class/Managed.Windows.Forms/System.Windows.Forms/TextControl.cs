@@ -2442,6 +2442,9 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			// Combine the two tag chains into one
 			last = first.tags;
 
+			// Maintain the line ending style
+			first.soft_break = second.soft_break;
+
 			while (last.next != null) {
 				last = last.next;
 			}
