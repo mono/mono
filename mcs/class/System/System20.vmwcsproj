@@ -1,4 +1,23 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{25EA16E1-E3B8-4433-8533-23B0FB0F93BA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <AssemblyName>System</AssemblyName>
+    <JDKName>1.5.0_05</JDKName>
+    <GHProjectType>1</GHProjectType>
+    <GHProjectKind>framework</GHProjectKind>
+    <Version>2.0</Version>
+    <RootNamespace>System</RootNamespace>
+    <jarserver>iap2</jarserver>
+    <StartupObject>
+    </StartupObject>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20_bootstrap|AnyCPU' ">
     <OutputPath>bin\Release_Java20_bootstrap\</OutputPath>
     <DefineConstants>TRACE;TARGET_JVM;NET_1_1;NET_2_0</DefineConstants>
@@ -40,24 +59,6 @@
     <JDKName>1.5.0_05</JDKName>
     <jarserver>iap2</jarserver>
     <TargetPlatform>0</TargetPlatform>
-  </PropertyGroup>
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{25EA16E1-E3B8-4433-8533-23B0FB0F93BA}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>System</AssemblyName>
-    <JDKName>1.5.0_05</JDKName>
-    <GHProjectType>1</GHProjectType>
-    <Version>2.0</Version>
-    <RootNamespace>System</RootNamespace>
-    <jarserver>iap2</jarserver>
-    <StartupObject>
-    </StartupObject>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -107,6 +108,7 @@
     <Version>2.0</Version>
     <JDKName>1.5.0_05</JDKName>
     <jarserver>iap2</jarserver>
+    <GHProjectKind>framework</GHProjectKind>
     <TargetPlatform>0</TargetPlatform>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20_bootstrap|AnyCPU' ">
@@ -147,7 +149,7 @@
   <ItemGroup>
     <Reference Include="apache_http_client, Version=0.0.0.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Refs\apache_http_client.dll</HintPath>
+      <HintPath>..\lib\apache_http_client.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="J2SE.Helpers">
