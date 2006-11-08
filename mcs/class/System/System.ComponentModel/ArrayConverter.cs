@@ -43,7 +43,7 @@ namespace System.ComponentModel
 				throw new ArgumentNullException ("destinationType");
 
 			if (destinationType == typeof (string) && (value is Array))
-				return "(Array)";
+				return value.GetType ().Name + " Array";
 
 			return base.ConvertTo (context, culture, value, destinationType);
 		}
@@ -51,6 +51,9 @@ namespace System.ComponentModel
 		public override PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context,
 									    object value, Attribute[] attributes)
 		{
+			if (value == null)
+				throw new NullReferenceException ();
+
 			PropertyDescriptorCollection col = new PropertyDescriptorCollection (null);
 			if (value is Array) {
 				Array array = (Array)value;

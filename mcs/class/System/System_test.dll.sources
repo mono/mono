@@ -105,6 +105,7 @@ System.Collections.Specialized/NameValueCollectionTest.cs
 System.Collections.Specialized/OrderedDictionaryTest.cs
 System.Collections.Specialized/StringCollectionTest.cs
 System.Collections.Specialized/StringDictionaryTest.cs
+System.ComponentModel/ArrayConverterTests.cs
 System.ComponentModel/ByteConverterTests.cs
 System.ComponentModel/CollectionConverterTest.cs
 System.ComponentModel/ContainerTest.cs
