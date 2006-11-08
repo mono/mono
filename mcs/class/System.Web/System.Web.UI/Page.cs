@@ -1118,6 +1118,7 @@ public class Page : TemplateControl, IHttpHandler
 	void InternalProcessRequest ()
 	{
 		_requestValueCollection = this.DeterminePostBackMode();
+		LoadPageStateFromPersistenceMedium ();
 
 #if NET_2_0
 		// http://msdn2.microsoft.com/en-us/library/ms178141.aspx
@@ -1383,22 +1384,16 @@ public class Page : TemplateControl, IHttpHandler
 
 	internal void LoadPageViewState()
 	{
-		object sState = LoadPageStateFromPersistenceMedium ();
-		if (sState != null) {
+		if (_savedViewState != null) {
 #if NET_2_0
-			Triplet data = (Triplet) sState;
+			Triplet data = (Triplet) _savedViewState;
+#else
+			Pair data = (Pair) _savedViewState;
+#endif
 			if (allow_load) {
-				LoadPageControlState (data.Third);
 				LoadViewStateRecursive (data.First);
 				_requiresPostBack = data.Second as ArrayList;
 			}
-#else
-			Pair pair = (Pair) sState;
-			if (allow_load) {
-				LoadViewStateRecursive (pair.First);
-				_requiresPostBack = pair.Second as ArrayList;
-			}
-#endif
 		}
 	}
 
@@ -1737,8 +1732,25 @@ public class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public void RegisterRequiresControlState (Control control)
 	{
+		if (control == null)
+			throw new ArgumentNullException ("control");
+
+		if (RequiresControlState (control))
+			return;
+
 		if (requireStateControls == null) requireStateControls = new ArrayList ();
-		requireStateControls.Add (control);
+		int n = requireStateControls.Add (control);
+
+		if (IsPostBack || IsCallback) {
+			if (_savedViewState != null) {
+				object [] states = (object []) ((Triplet) _savedViewState).Third;
+				if (states != null && n < states.Length) {
+					object state = states [n];
+					if (state != null)
+						control.LoadControlState (state);
+				}
+			}
+		}
 	}
 	
 	public bool RequiresControlState (Control control)
@@ -1791,18 +1803,6 @@ public class Page : TemplateControl, IHttpHandler
 		}
 		if (allNull) return null;
 		else return state;
-	}
-	
-	void LoadPageControlState (object data)
-	{
-		if (requireStateControls == null) return;
-
-		object[] state = (object[]) data;
-		int max = Math.Min (requireStateControls.Count, state != null ? state.Length : requireStateControls.Count);
-		for (int n=0; n < max; n++) {
-			Control ctl = (Control) requireStateControls [n];
-			ctl.LoadControlState (state != null ? state [n] : null);
-		}
 	}
 
 	void LoadPreviousPageReference ()

@@ -1,3 +1,8 @@
+2006-11-09 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Page.cs: fixed: LoadControlState is called for controls 
+	that added on Load and latter, for 1.x refactoring only
+
 2006-11-02 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ClientScriptManager.cs: 
