@@ -75,6 +75,7 @@ namespace System.Windows.Forms
 		internal bool			is_toplevel;		// tracks if the control is a toplevel window
 		internal bool			is_recreating;		// tracks if the handle for the control is being recreated
 		internal bool			causes_validation;	// tracks if validation is executed on changes
+		internal bool 			is_focusing;		// tracks if Focus has been called on the control and has not yet finished
 		internal int			tab_index;		// position in tab order of siblings
 		internal bool			tab_stop = true;	// is the control a tab stop?
 		internal bool			is_disposed;		// has the window already been disposed?
@@ -2782,8 +2783,10 @@ namespace System.Windows.Forms
 		}
 
 		public bool Focus() {
-			if (CanFocus && IsHandleCreated && !has_focus) {
-				XplatUI.SetFocus(this.window.Handle);
+			if (CanFocus && IsHandleCreated && !has_focus && !is_focusing) {
+				is_focusing = true;
+				Select(this);
+				is_focusing = false;
 			}
 			return has_focus;
 		}

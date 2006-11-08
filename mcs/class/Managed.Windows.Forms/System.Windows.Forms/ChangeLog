@@ -1,3 +1,11 @@
+2006-11-07  Andreia Gaita  <shana.ufie@gmail.com>
+
+	* Control.cs : Focus() now calls Select to set the Container's
+	Active Control and to give it focus. To avoid infinite recursion
+	(because ActiveControl also calls Focus at one point), a check 
+	is made in Focus with the help of a new internal variable
+	is_focusing.
+
 2006-11-07  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs : raise OnSelectedIndexChanged in CreateHandle
