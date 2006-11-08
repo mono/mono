@@ -1,5 +1,9 @@
 2006-11-09  Igor Zelmanovich   <igorz@mainsoft.com>
 
+	* GridViewTest.cs: added tests, removed NotWorking attributes.
+
+2006-11-09  Igor Zelmanovich   <igorz@mainsoft.com>
+
 	* DataBoundControlTest.cs: added test.
 
 2006-11-07 Andrew Skiba <andrews@mainsoft.com>

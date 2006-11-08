@@ -298,6 +298,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			base.LoadControlState (savedState);
 		}
+
+		public void SetRequiresDataBinding (bool value)
+		{
+			RequiresDataBinding = value;
+		}
 	}
 
 	[Serializable]
@@ -547,6 +552,82 @@ namespace MonoTests.System.Web.UI.WebControls
 			arg = g.DoCreateDataSourceSelectArguments ();
 			Assert.AreEqual ("sort DESC", arg.SortExpression, "AllowSorting = false, Bound by DataSourceID");
 		
+		}
+
+		[Test]
+		public void GridView_PageCount () {
+			Page p = new Page ();
+
+			PokerGridView gv = new PokerGridView ();
+			gv.PageSize = 3;
+			gv.AllowPaging = true;
+			p.Controls.Add (gv);
+
+			ObjectDataSource data = new ObjectDataSource ();
+			data.ID = "ObjectDataSource1";
+			data.TypeName = typeof (DataSourceObject).AssemblyQualifiedName;
+			data.SelectMethod = "GetList";
+			p.Controls.Add (data);
+
+			gv.DataSourceID = "ObjectDataSource1";
+			gv.SetRequiresDataBinding (true);
+
+			Assert.AreEqual (0, gv.PageCount, "PageCount before binding");
+
+			gv.DataBind ();
+
+			Assert.AreEqual (2, gv.PageCount, "PageCount after binding");
+
+			PokerGridView copy = new PokerGridView ();
+			copy.LoadState (gv.SaveState ());
+
+			Assert.AreEqual (2, copy.PageCount, "PageCount from ViewState");
+		}
+
+		[Test]
+		public void GridView_DataKeys () {
+			Page p = new Page ();
+
+			PokerGridView gv = new PokerGridView ();
+			p.Controls.Add (gv);
+
+			ObjectDataSource data = new ObjectDataSource ();
+			data.TypeName = typeof (DataObject).AssemblyQualifiedName;
+			data.SelectMethod = "Select";
+			p.Controls.Add (data);
+
+			gv.DataSource = data;
+			gv.DataKeyNames = new string [] { "ID", "FName" };
+
+			DataKeyArray keys1 = gv.DataKeys;
+
+			Assert.AreEqual (0, keys1.Count, "DataKeys count before binding");
+
+			gv.DataBind ();
+
+			DataKeyArray keys2 = gv.DataKeys;
+			DataKeyArray keys3 = gv.DataKeys;
+
+			Assert.IsFalse (Object.ReferenceEquals (keys1, keys2), "DataKey returns the same instans");
+			Assert.IsTrue (Object.ReferenceEquals (keys2, keys3), "DataKey returns the same instans");
+
+			Assert.AreEqual (1, keys1.Count, "DataKeys count after binding");
+			Assert.AreEqual (1001, keys1 [0].Value, "DataKey.Value after binding");
+			Assert.AreEqual (2, keys1 [0].Values.Count, "DataKey.Values count after binding");
+			Assert.AreEqual (1001, keys1 [0].Values [0], "DataKey.Values[0] after binding");
+			Assert.AreEqual ("Mahesh", keys1 [0].Values [1], "DataKey.Values[1] after binding");
+
+			PokerGridView copy = new PokerGridView ();
+			object state = gv.DoSaveControlState ();
+			copy.DoLoadControlState (state);
+
+			DataKeyArray keys4 = copy.DataKeys;
+
+			Assert.AreEqual (1, keys4.Count, "DataKeys count from ControlState");
+			Assert.AreEqual (1001, keys4 [0].Value, "DataKey.Value from ControlState");
+			Assert.AreEqual (2, keys4 [0].Values.Count, "DataKey.Values count from ControlState");
+			Assert.AreEqual (1001, keys4 [0].Values [0], "DataKey.Values[0] from ControlState");
+			Assert.AreEqual ("Mahesh", keys4 [0].Values [1], "DataKey.Values[1] from ControlState");
 		}
 
 		// MSDN: The CreateDataSourceSelectArguments method is a helper method called by 
@@ -2062,7 +2143,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void GridView_PostBackUpdateItem ()
 		{
 			WebTest t = new WebTest ();
@@ -2091,7 +2171,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls["__EVENTARGUMENT"].Value = "Edit$0";
 			
 			t.Request = fr;
-			t.Run ();
+			pageHTML = t.Run ();
 
 			merged_data = t.UserData as string[];
 			if (merged_data == null) {
@@ -2146,6 +2226,21 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			grid.ID = "Grid";
 			grid.AutoGenerateEditButton = true;
+			
+			grid.AutoGenerateColumns = false;
+			
+			BoundField field = new BoundField ();
+			field.DataField = "ID";
+			grid.Columns.Add (field);
+
+			field = new BoundField ();
+			field.DataField = "FName";
+			grid.Columns.Add (field);
+
+			field = new BoundField ();
+			field.DataField = "LName";
+			grid.Columns.Add (field);
+
 			grid.DataSourceID = "ObjectDataSource2";
 			p.Form.Controls.Add (ds);
 			p.Form.Controls.Add (grid);

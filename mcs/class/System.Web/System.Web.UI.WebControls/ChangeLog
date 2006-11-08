@@ -1,5 +1,9 @@
 2006-11-09 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* GridView.cs: fixed: DataKeys, PageCount, DataBinding flow.
+
+2006-11-09 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* DataBoundControl.cs: fixed: 
 	ConfirmInitState method s called by 
 	the DataBoundControl class in its OnLoad method.
