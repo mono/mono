@@ -596,6 +596,15 @@ namespace System.Windows.Forms
 
 			Point loc = new Point (me.X, me.Y);
 
+			if (ButtonAtPoint (loc) == null)
+				return;
+			
+			// Hide tooltip when left mouse button 
+			if ((tip_window != null) && (tip_window.Visible) && ((me.Button & MouseButtons.Left) == MouseButtons.Left)) {
+				TipDownTimer.Stop ();
+				tip_window.Hide ();
+			}
+			
 			// draw the pushed button
 			foreach (ToolBarButton button in buttons) {
 				if (button.Enabled && button.Rectangle.Contains (loc)) {
@@ -688,7 +697,8 @@ namespace System.Windows.Forms
 			if (Capture)
 				return;
 
-			tip_window = new ToolTip.ToolTipWindow ();
+			if (tip_window == null)
+				tip_window = new ToolTip.ToolTipWindow ();
 
 			ToolBarButton btn = ButtonAtPoint (PointToClient (Control.MousePosition));
 			current_button = btn;
