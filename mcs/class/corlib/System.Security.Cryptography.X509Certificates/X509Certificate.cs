@@ -51,8 +51,7 @@ namespace System.Security.Cryptography.X509Certificates {
 	// X509v1 certificates and non-authenticode (code signing) certs.
 	[Serializable]
 #if NET_2_0
-	[ComVisible (true)]
-	public class X509Certificate : IDeserializationCallback, ISerializable {
+	public partial class X509Certificate : IDeserializationCallback, ISerializable {
 #else
 	public class X509Certificate {
 #endif
@@ -107,27 +106,33 @@ namespace System.Security.Cryptography.X509Certificates {
 			try {
 				AuthenticodeDeformatter a = new AuthenticodeDeformatter (filename);
 				if (a.SigningCertificate != null) {
+#if !NET_2_0
+					// before 2.0 the signing certificate is returned only if the signature is valid
 					if (a.Reason != 0) {
 						string msg = String.Format (Locale.GetText (
 							"Invalid digital signature on {0}, reason #{1}."),
 							filename, a.Reason);
 						throw new COMException (msg);
 					}
+#endif
 					return new X509Certificate (a.SigningCertificate.RawData);
 				}
-
-				// if no signature is present return an empty certificate
-				byte[] cert = null; // must not confuse compiler about null ;)
-				return new X509Certificate (cert);
 			}
 			catch (SecurityException) {
 				// don't wrap SecurityException into a COMException
 				throw;
 			}
 			catch (Exception e) {
-				string msg = String.Format (Locale.GetText ("Couldn't extract digital signature from {0}."), filename);
+				string msg = Locale.GetText ("Couldn't extract digital signature from {0}.", filename);
 				throw new COMException (msg, e);
 			}
+#if NET_2_0
+			throw new CryptographicException (Locale.GetText ("{0} isn't signed.", filename));
+#else
+			// if no signature is present return an empty certificate
+			byte[] cert = null; // must not confuse compiler about null ;)
+			return new X509Certificate (cert);
+#endif
 		}
 	
 		// constructors
@@ -137,7 +142,11 @@ namespace System.Security.Cryptography.X509Certificates {
 		internal X509Certificate (byte[] data, bool dates) 
 		{
 			if (data != null) {
+#if NET_2_0
+				Import (data, (string)null, X509KeyStorageFlags.DefaultKeySet);
+#else
 				x509 = new Mono.Security.X509.X509Certificate (data);
+#endif
 				hideDates = !dates;
 			}
 		}
@@ -146,27 +155,33 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 		}
 	
-		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public X509Certificate (IntPtr handle) 
 		{
+#if NET_2_0
+			if (handle == IntPtr.Zero)
+				throw new ArgumentException ("Invalid handle.");
+#endif
+			InitFromHandle (handle);
+		}
+
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+		private void InitFromHandle (IntPtr handle)
+		{
 			if (handle != IntPtr.Zero) {
+				// both Marshal.PtrToStructure and Marshal.Copy use LinkDemand (so they will always success from here)
 				CertificateContext cc = (CertificateContext) Marshal.PtrToStructure (handle, typeof (CertificateContext));
 				byte[] data = new byte [cc.cbCertEncoded];
 				Marshal.Copy (cc.pbCertEncoded, data, 0, (int)cc.cbCertEncoded);
 				x509 = new Mono.Security.X509.X509Certificate (data);
 			}
-#if NET_2_0
-			else
-				throw new ArgumentException ("Invalid handle.");
-#endif
-			// IntPtr.Zero results in an "empty" certificate instance
+			// for 1.x IntPtr.Zero results in an "empty" certificate instance
 		}
 	
 		public X509Certificate (System.Security.Cryptography.X509Certificates.X509Certificate cert) 
 		{
 #if NET_2_0
 			if (cert == null)
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("cert");
 #endif
 
 			if (cert != null) {
@@ -177,78 +192,18 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 		}
 
-#if NET_2_0
-		[MonoTODO]
-		public X509Certificate ()
-		{
-		}
-
-		[MonoTODO]
-		public X509Certificate (byte[] rawData, string password)
-		{
-			Import (rawData, password, X509KeyStorageFlags.DefaultKeySet);
-		}
-
-		[MonoTODO]
-		public X509Certificate (byte[] rawData, SecureString password)
-		{
-			Import (rawData, password, X509KeyStorageFlags.DefaultKeySet);
-		}
-
-		[MonoTODO]
-		public X509Certificate (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
-		{
-			Import (rawData, password, keyStorageFlags);
-		}
-
-		[MonoTODO]
-		public X509Certificate (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
-		{
-			Import (rawData, password, keyStorageFlags);
-		}
-
-		[MonoTODO]
-		public X509Certificate (string fileName)
-		{
-			Import (fileName, (string)null, X509KeyStorageFlags.DefaultKeySet);
-		}
-
-		[MonoTODO]
-		public X509Certificate (string fileName, string password)
-		{
-			Import (fileName, password, X509KeyStorageFlags.DefaultKeySet);
-		}
-
-		[MonoTODO]
-		public X509Certificate (string fileName, SecureString password)
-		{
-			Import (fileName, password, X509KeyStorageFlags.DefaultKeySet);
-		}
-
-		[MonoTODO]
-		public X509Certificate (string fileName, string password, X509KeyStorageFlags keyStorageFlags)
-		{
-			Import (fileName, password, keyStorageFlags);
-		}
-
-		[MonoTODO]
-		public X509Certificate (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags)
-		{
-			Import (fileName, password, keyStorageFlags);
-		}
-
-		[MonoTODO]
-		public X509Certificate (SerializationInfo info, StreamingContext context)
-		{
-		}
-#endif
 
 		// public methods
 	
 		public virtual bool Equals (System.Security.Cryptography.X509Certificates.X509Certificate cert)
 		{
-			if (cert != null) {
-				byte[] raw = cert.GetRawCertData ();
+			if (cert == null) {
+				return false;
+			} else {
+				if (cert.x509 == null)
+					return (x509 == null);
+
+				byte[] raw = cert.x509.RawData;
 				if (raw != null) {
 					if (x509 == null)
 						return false;
@@ -266,9 +221,7 @@ namespace System.Security.Cryptography.X509Certificates {
 						return false;
 				}
 			}
-			else
-				return false;
-			return x509 == null || (x509.RawData == null);
+			return ((x509 == null) || (x509.RawData == null));
 		}
 	
 		// LAMESPEC: This is the equivalent of the "thumbprint" that can be seen
@@ -277,6 +230,10 @@ namespace System.Security.Cryptography.X509Certificates {
 		// algorithm used to sign the certificate).
 		public virtual byte[] GetCertHash () 
 		{
+#if NET_2_0
+			if (x509 == null)
+				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
+#endif
 			// we'll hash the cert only once and only if required
 			if ((cachedCertificateHash == null) && (x509 != null)) {
 				SHA1 sha = SHA1.Create ();
@@ -297,6 +254,9 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (hideDates)
 				return null;
 #if NET_2_0
+			if (x509 == null)
+				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
+
 			return x509.ValidFrom.ToString ();
 #else
 			// LAMESPEC: Microsoft returns the local time from Pacific Time (GMT-8)
@@ -311,6 +271,9 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (hideDates)
 				return null;
 #if NET_2_0
+			if (x509 == null)
+				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
+
 			return x509.ValidUntil.ToString ();
 #else
 			// LAMESPEC: Microsoft returns the local time from Pacific Time (GMT-8)
@@ -327,6 +290,10 @@ namespace System.Security.Cryptography.X509Certificates {
 	
 		public override int GetHashCode ()
 		{
+#if NET_2_0
+			if (x509 == null)
+				return 0;
+#endif
 			// the cert hash may not be (yet) calculated
 			if (cachedCertificateHash == null)
 				GetCertHash();
@@ -344,22 +311,41 @@ namespace System.Security.Cryptography.X509Certificates {
 #endif
 		public virtual string GetIssuerName () 
 		{
+#if NET_2_0
+			if (x509 == null)
+				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
+#endif
 			return x509.IssuerName;
 		}
 	
 		public virtual string GetKeyAlgorithm () 
 		{
+#if NET_2_0
+			if (x509 == null)
+				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
+#endif
 			return x509.KeyAlgorithm;
 		}
 	
 		public virtual byte[] GetKeyAlgorithmParameters () 
 		{
+#if NET_2_0
+			if (x509 == null)
+				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
+
+			byte[] kap = x509.KeyAlgorithmParameters;
+			if (kap == null)
+				throw new CryptographicException (Locale.GetText ("Parameters not part of the certificate"));
+
+			return kap;
+#else
 			return x509.KeyAlgorithmParameters;
+#endif
 		}
 	
 		public virtual string GetKeyAlgorithmParametersString () 
 		{
-			return tostr (x509.KeyAlgorithmParameters);
+			return tostr (GetKeyAlgorithmParameters ());
 		}
 	
 #if NET_2_0
@@ -367,37 +353,65 @@ namespace System.Security.Cryptography.X509Certificates {
 #endif
 		public virtual string GetName ()
 		{
+#if NET_2_0
+			if (x509 == null)
+				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
+#endif
 			return x509.SubjectName;
 		}
 	
 		public virtual byte[] GetPublicKey () 
 		{
+#if NET_2_0
+			if (x509 == null)
+				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
+#endif
 			return x509.PublicKey;
 		}
 	
 		public virtual string GetPublicKeyString () 
 		{
-			return tostr (x509.PublicKey);
+			return tostr (GetPublicKey ());
 		}
 	
 		public virtual byte[] GetRawCertData () 
 		{
+#if NET_2_0
+			if (x509 == null)
+				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
+			return x509.RawData;
+#else
 			return ((x509 != null) ? x509.RawData : null);
+#endif
 		}
 	
 		public virtual string GetRawCertDataString () 
 		{
+#if NET_2_0
+			if (x509 == null)
+				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
+			return tostr (x509.RawData);
+#else
 			return ((x509 != null) ? tostr (x509.RawData) : null);
+#endif
 		}
 	
 		public virtual byte[] GetSerialNumber () 
 		{
+#if NET_2_0
+			if (x509 == null)
+				throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
+#endif
 			return x509.SerialNumber;
 		}
 	
 		public virtual string GetSerialNumberString () 
 		{
-			return tostr (x509.SerialNumber);
+			byte[] sn = GetSerialNumber ();
+#if NET_2_0
+			Array.Reverse (sn);
+#endif
+			return tostr (sn);
 		}
 	
 		// to please corcompare ;-)
@@ -408,192 +422,61 @@ namespace System.Security.Cryptography.X509Certificates {
 	
 		public virtual string ToString (bool details) 
 		{
-			if (details) {
-				string nl = Environment.NewLine;
-				StringBuilder sb = new StringBuilder ();
-				sb.Append ("CERTIFICATE:");
-				sb.Append (nl);
-				sb.Append ("\tFormat:  ");
-				sb.Append (GetFormat ());
-				if (x509.SubjectName != null) {
-					sb.Append (nl);
-					sb.Append ("\tName:  ");
-					sb.Append (GetName ());
-				}
-				if (x509.IssuerName != null) {
-					sb.Append (nl);
-					sb.Append ("\tIssuing CA:  ");
-					sb.Append (GetIssuerName ());
-				}
-				if (x509.SignatureAlgorithm != null) {
-					sb.Append (nl);
-					sb.Append ("\tKey Algorithm:  ");
-					sb.Append (GetKeyAlgorithm ());
-				}
-				if (x509.SerialNumber != null) {
-					sb.Append (nl);
-					sb.Append ("\tSerial Number:  ");
-					sb.Append (GetSerialNumberString ());
-				}
-				// Note: Algorithm is not spelled right as the actual 
-				// MS implementation (we do exactly the same for the
-				// comparison in the unit tests)
-				if (x509.KeyAlgorithmParameters != null) {
-					sb.Append (nl);
-					sb.Append ("\tKey Alogrithm Parameters:  ");
-					sb.Append (GetKeyAlgorithmParametersString ());
-				}
-				if (x509.PublicKey != null) {
-					sb.Append (nl);
-					sb.Append ("\tPublic Key:  ");
-					sb.Append (GetPublicKeyString ());
-				}
-				sb.Append (nl);
-				sb.Append (nl);
-				return sb.ToString ();
-			}
-			else
+			if (!details || (x509 == null))
 				return base.ToString ();
-		}
 
+			string nl = Environment.NewLine;
+			StringBuilder sb = new StringBuilder ();
 #if NET_2_0
-		public string Issuer {
-			get { return x509.IssuerName; }
-		}
-
-		public string Subject {
-			get { return x509.SubjectName; }
-		}
-
-		[ComVisible (false)]
-		public override bool Equals (object obj) 
-		{
-			X509Certificate x = (obj as X509Certificate);
-			if (x != null)
-				return this.Equals (x);
-			return false;
-		}
-
-		[MonoTODO ("incomplete")]
-		[ComVisible (false)]
-		public virtual byte[] Export (X509ContentType contentType)
-		{
-			return Export (contentType, (byte[])null);
-		}
-
-		[MonoTODO ("incomplete")]
-		[ComVisible (false)]
-		public virtual byte[] Export (X509ContentType contentType, string password)
-		{
-			return Export (contentType, Encoding.UTF8.GetBytes (password));
-		}
-
-		[MonoTODO ("incomplete")]
-		public virtual byte[] Export (X509ContentType contentType, SecureString password)
-		{
-			return Export (contentType, password.GetBuffer ());
-		}
-
-		[MonoTODO ("export!")]
-		internal byte[] Export (X509ContentType contentType, byte[] password)
-		{
-			try {
-				switch (contentType) {
-				case X509ContentType.Cert:
-					return x509.RawData;
-				default:
-					throw new NotSupportedException ();
-				}
+			sb.AppendFormat ("[Subject]{0}  {1}{0}{0}", nl, Subject);
+			sb.AppendFormat ("[Issuer]{0}  {1}{0}{0}", nl, Issuer);
+			sb.AppendFormat ("[Not Before]{0}  {1}{0}{0}", nl, GetEffectiveDateString ());
+			sb.AppendFormat ("[Not After]{0}  {1}{0}{0}", nl, GetExpirationDateString ());
+			sb.AppendFormat ("[Thumbprint]{0}  {1}{0}", nl, GetCertHashString ());
+#else
+			sb.Append ("CERTIFICATE:");
+			sb.Append (nl);
+			sb.Append ("\tFormat:  ");
+			sb.Append (GetFormat ());
+			if (x509.SubjectName != null) {
+				sb.Append (nl);
+				sb.Append ("\tName:  ");
+				sb.Append (GetName ());
 			}
-			finally {
-				// protect password
-				if (password != null)
-					Array.Clear (password, 0, password.Length);
+			if (x509.IssuerName != null) {
+				sb.Append (nl);
+				sb.Append ("\tIssuing CA:  ");
+				sb.Append (GetIssuerName ());
 			}
-		}
-
-		[MonoTODO]
-		void IDeserializationCallback.OnDeserialization (object sender)
-		{
-		}
-
-		[ComVisible (false)]
-		public virtual void Import (byte[] rawData)
-		{
-			Import (rawData, (string)null, X509KeyStorageFlags.DefaultKeySet);
-		}
-
-		[MonoTODO ("missing KeyStorageFlags support")]
-		[ComVisible (false)]
-		public virtual void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
-		{
-			if (password == null) {
-				x509 = new Mono.Security.X509.X509Certificate (rawData);
-				// TODO - PKCS12 without password
-			} else {
-				// try PKCS#12
-				try {
-					PKCS12 pfx = new PKCS12 (rawData, password);
-					if (pfx.Certificates.Count > 0) {
-						x509 = pfx.Certificates [0];
-					} else {
-						x509 = null;
-					}
-				}
-				catch {
-					// it's possible to supply a (unrequired/unusued) password
-					// fix bug #79028
-					x509 = new Mono.Security.X509.X509Certificate (rawData);
-				}
+			if (x509.SignatureAlgorithm != null) {
+				sb.Append (nl);
+				sb.Append ("\tKey Algorithm:  ");
+				sb.Append (GetKeyAlgorithm ());
 			}
-		}
-
-		[MonoTODO ("SecureString is incomplete")]
-		public virtual void Import (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
-		{
-			Import (rawData, (string)null, keyStorageFlags);
-		}
-
-		[ComVisible (false)]
-		public virtual void Import (string fileName)
-		{
-			byte[] rawData = Load (fileName);
-			Import (rawData, (string)null, X509KeyStorageFlags.DefaultKeySet);
-		}
-
-		[MonoTODO ("missing KeyStorageFlags support")]
-		[ComVisible (false)]
-		public virtual void Import (string fileName, string password, X509KeyStorageFlags keyStorageFlags)
-		{
-			byte[] rawData = Load (fileName);
-			Import (rawData, password, keyStorageFlags);
-		}
-
-		[MonoTODO ("SecureString is incomplete")]
-		public virtual void Import (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags)
-		{
-			byte[] rawData = Load (fileName);
-			Import (rawData, (string)null, keyStorageFlags);
-		}
-
-		[MonoTODO]
-		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
-		{
-		}
-
-		[MonoTODO]
-		[ComVisible (false)]
-		public virtual void Reset ()
-		{
-		}
-
-		// properties
-
-		[ComVisible (false)]
-		public IntPtr Handle {
-			get { return (IntPtr) 0; }
-		}
+			if (x509.SerialNumber != null) {
+				sb.Append (nl);
+				sb.Append ("\tSerial Number:  ");
+				sb.Append (GetSerialNumberString ());
+			}
+			// Note: Algorithm is not spelled right as the actual 
+			// MS implementation (we do exactly the same for the
+			// comparison in the unit tests)
+			if (x509.KeyAlgorithmParameters != null) {
+				sb.Append (nl);
+				sb.Append ("\tKey Alogrithm Parameters:  ");
+				sb.Append (GetKeyAlgorithmParametersString ());
+			}
+			if (x509.PublicKey != null) {
+				sb.Append (nl);
+				sb.Append ("\tPublic Key:  ");
+				sb.Append (GetPublicKeyString ());
+			}
+			sb.Append (nl);
 #endif
+			sb.Append (nl);
+			return sb.ToString ();
+		}
+
 		private static byte[] Load (string fileName)
 		{
 			byte[] data = null;

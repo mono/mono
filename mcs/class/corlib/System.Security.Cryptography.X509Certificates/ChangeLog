@@ -1,3 +1,10 @@
+2006-11-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate.cs: Refactored 2.0 support (partial class) and added
+	some missing features. All unit tests now works in both 1.x and 2.0.
+	* X509Certificate20.cs: Partial class for 2.0 specific properties and
+	methods for X509Certificate class.
+
 2006-10-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate.cs: Ensure we can load certificates from read-only
