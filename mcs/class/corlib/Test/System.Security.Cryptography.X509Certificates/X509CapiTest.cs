@@ -43,7 +43,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 
 		public void AssertEquals (string msg, byte[] array1, byte[] array2) 
 		{
-			AllTests.AssertEquals (msg, array1, array2);
+			Assert.AreEqual (array1, array2, msg);
 		}
 
 		public string ToString (byte[] data) 
@@ -153,7 +153,11 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assertion.AssertEquals ("GetRawCertDataString", ToString (cert), x509.GetRawCertDataString ());
 			byte[] serial = { 0xE8,0x06,0x00,0x72,0x02 };
 			AssertEquals ("GetSerialNumber", serial, x509.GetSerialNumber ());
-			Assertion.AssertEquals ("GetSerialNumberString", "E806007202", x509.GetSerialNumberString ());
+#if NET_2_0
+			Assert.AreEqual ("02720006E8", x509.GetSerialNumberString (), "GetSerialNumberString");
+#else
+			Assert.AreEqual ("E806007202", x509.GetSerialNumberString (), "GetSerialNumberString");
+#endif
 		}
 
 		[Test]

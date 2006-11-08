@@ -2,15 +2,17 @@
 // X509SpcTest.cs - NUnit Test Cases for X509 Software Publisher Certificate
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
 
 using NUnit.Framework;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
@@ -1012,8 +1014,10 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
+#if !NET_2_0
 		[ExpectedException (typeof (COMException))]
 		[Category ("NotWorking")]
+#endif
 		public void InvalidSignature () 
 		{
 			string filename = Path.GetFullPath ("smallspc-invalid.exe");
@@ -1024,16 +1028,28 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			WriteFile (filename, content);
 
 			X509Certificate spc = X509Certificate.CreateFromSignedFile (filename);
+#if NET_2_0
+			X509Certificate cert = new X509Certificate (motus);
+			AssertEquals ("CreateFromSignedFile", cert.GetRawCertDataString (), spc.GetRawCertDataString ());
+			// Invalid authenticode signature cannot be detected this way with 2.0 ?
+#endif
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (CryptographicException))]
+#endif
 		public void NonSignedAssembly () 
 		{
 			string filename = Path.GetFullPath ("small.exe");
 			WriteFile (filename, smallexe);
 
+#if NET_2_0
+			X509Certificate.CreateFromSignedFile (filename);
+#else
 			X509Certificate spc = X509Certificate.CreateFromSignedFile (filename);
 			AssertEquals ("NonSignedAssembly", 0, spc.GetHashCode ());
+#endif
 		}
 	}
 }

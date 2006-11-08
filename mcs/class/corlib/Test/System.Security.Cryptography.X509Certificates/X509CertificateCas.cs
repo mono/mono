@@ -52,6 +52,7 @@ namespace MonoCasTests.System.Security.Cryptography.X509Certificates {
 			0xD7,0xBA,0x18,0x3A,0x48,0xA6,0xCB,0xC2,0xFD,0x20,0x57,0xBC,0x63,0x1C };
 
 		private CultureInfo oldcult;
+		private CultureInfo olduicult;
 		private string temppath;
 		private string certfile;
 		private string signedfile;
@@ -69,7 +70,9 @@ namespace MonoCasTests.System.Security.Cryptography.X509Certificates {
 		{
 			// the current culture determines the result of formatting
 			oldcult = Thread.CurrentThread.CurrentCulture;
+			olduicult = Thread.CurrentThread.CurrentUICulture;
 			Thread.CurrentThread.CurrentCulture = new CultureInfo ("");
+			Thread.CurrentThread.CurrentUICulture = new CultureInfo ("");
 
 			temppath = Path.GetTempPath ();
 			certfile = Path.Combine (temppath, "temp.cer");
@@ -96,6 +99,7 @@ namespace MonoCasTests.System.Security.Cryptography.X509Certificates {
 		public void FixtureTearDown ()
 		{
 			Thread.CurrentThread.CurrentCulture = oldcult;
+			Thread.CurrentThread.CurrentUICulture = olduicult;
 
 			if (File.Exists (certfile))
 				File.Delete (certfile);
@@ -118,8 +122,16 @@ namespace MonoCasTests.System.Security.Cryptography.X509Certificates {
 			byte[] hash = { 0xD6,0x2F,0x48,0xD0,0x13,0xEE,0x7F,0xB5,0x8B,0x79,0x07,0x45,0x12,0x67,0x0D,0x9C,0x5B,0x3A,0x5D,0xA9 };
 			Assert.AreEqual (hash, x509.GetCertHash (), "GetCertHash");
 			Assert.AreEqual ("D62F48D013EE7FB58B79074512670D9C5B3A5DA9", x509.GetCertHashString (), "GetCertHashString");
+#if NET_2_0
+			DateTime from = DateTime.ParseExact (x509.GetEffectiveDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
+			Assert.AreEqual ("03/12/1996 18:38:47", from.ToString (), "GetEffectiveDateString");
+			DateTime until = DateTime.ParseExact (x509.GetExpirationDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
+			Assert.AreEqual ("03/12/1997 18:38:46", until.ToString (), "GetExpirationDateString");
+#else
+			// fx 1.x has a bug where the returned dates were always in the Seattle time zone
 			Assert.AreEqual ("03/12/1996 10:38:47", x509.GetEffectiveDateString (), "GetEffectiveDateString");
 			Assert.AreEqual ("03/12/1997 10:38:46", x509.GetExpirationDateString (), "GetExpirationDateString");
+#endif
 			Assert.AreEqual ("X509", x509.GetFormat (), "GetFormat");
 			Assert.AreEqual (-701544240, x509.GetHashCode (), "GetHashCode");
 			Assert.AreEqual ("C=US, O=\"RSA Data Security, Inc.\", OU=Secure Server Certification Authority", x509.GetIssuerName (), "GetIssuerName");
@@ -135,7 +147,11 @@ namespace MonoCasTests.System.Security.Cryptography.X509Certificates {
 			Assert.IsNotNull (x509.GetRawCertDataString (), "GetRawCertDataString");
 			byte[] serial = { 0xE8,0x06,0x00,0x72,0x02 };
 			Assert.AreEqual (serial, x509.GetSerialNumber (), "GetSerialNumber");
+#if NET_2_0
+			Assert.AreEqual ("02720006E8", x509.GetSerialNumberString (), "GetSerialNumberString");
+#else
 			Assert.AreEqual ("E806007202", x509.GetSerialNumberString (), "GetSerialNumberString");
+#endif
 			Assert.IsNotNull (x509.ToString (true), "ToString");
 		}	
 
@@ -179,7 +195,11 @@ namespace MonoCasTests.System.Security.Cryptography.X509Certificates {
 
 		[Test]
 		[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentException))]
+#else
 		[ExpectedException (typeof (SecurityException))]
+#endif
 		public void ConstructorIntPtr_DenyUnmanagedCode ()
 		{
 			// will fail before calling the constructor
@@ -188,6 +208,9 @@ namespace MonoCasTests.System.Security.Cryptography.X509Certificates {
 
 		[Test]
 		[SecurityPermission (SecurityAction.PermitOnly, UnmanagedCode = true)]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void ConstructorIntPtr_PermitOnlyUnmanagedCode ()
 		{
 			// will fail _when_ calling the constructor
