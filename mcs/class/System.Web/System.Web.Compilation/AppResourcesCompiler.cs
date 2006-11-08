@@ -106,9 +106,7 @@ namespace System.Web.Compilation
 			CodeDomProvider provider = GetCodeProvider ();
 			StringWriter sw = new StringWriter ();
 			provider.GenerateCodeFromCompileUnit (unit, sw, new CodeGeneratorOptions ());
-			Console.WriteLine ("Generated code:\n{0}", sw.ToString ());
 			CompilerResults ret = provider.CompileAssemblyFromDom (cp, unit);      
-			Console.WriteLine ("Assembly generated");
 			
 			if (ret.CompiledAssembly == null) {
 				Console.WriteLine ("Failed to compile {0}/*.resx. Errors:", ResourceDirectory);
