@@ -1,8 +1,17 @@
 2006-11-08  Marek Habersack  <grendello@gmail.com>
 
+	* BuildProvider.cs: Implemented the GetCustomString
+	method. Removed the necessity to retrieve the CompilationSection
+	twice when GetDefaultCompilerType is called.
+
+	* AppResourcesCompiler.cs: Added resource compiler results
+	handling.
+
 	* AppCodeCompiler.cs: The App_Code compiler classes
 
-	* BuildManager.cs: Implement the CodeAssemblies property
+	* BuildManager.cs: Implement the CodeAssemblies property.
+	Added an internal TopLevelTypes property to be used in the custom
+	GetType methods. Implemented the GetCompiledCustomString method.
 
 	* BaseCompiler.cs: Reference the assemblies from App_Code, if any
 

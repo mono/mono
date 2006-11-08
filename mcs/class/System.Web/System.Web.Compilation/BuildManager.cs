@@ -44,7 +44,8 @@ using System.Web.Hosting;
 
 namespace System.Web.Compilation {
 	public sealed class BuildManager {
-		private static List<string> AppCodeAssemblies = new List<string>();
+		private static List<string> AppCode_Assemblies = new List<string>();
+		private static List<Assembly> TopLevel_Assemblies = new List<Assembly>();
 		
 		internal BuildManager ()
 		{
@@ -79,6 +80,20 @@ namespace System.Web.Compilation {
 			return null; // null is ok here until we store the dependency set in the Cache.
 		}
 
+		internal static BuildProvider GetBuildProviderForPath (string virtualPath, bool throwOnMissing)
+		{
+			string extension = VirtualPathUtility.GetExtension (virtualPath);
+			object o = WebConfigurationManager.GetSection ("system.web/compilation/buildProviders", virtualPath);
+			BuildProviderCollection coll = o as BuildProviderCollection;
+			if (coll == null || coll.Count == 0)
+				ThrowNoProviderException (extension);
+			
+			BuildProvider provider = coll.GetProviderForExtension (extension);
+			if (provider == null && throwOnMissing)
+				ThrowNoProviderException (extension);
+			return provider;
+		}
+		
 		public static Assembly GetCompiledAssembly (string virtualPath)
 		{
 			BuildProvider provider;
@@ -101,17 +116,7 @@ namespace System.Web.Compilation {
 
 			if (!HostingEnvironment.VirtualPathProvider.FileExists (virtualPath))
 				throw new HttpException (String.Format ("The file '{0}' does not exist.", virtualPath));
-
-			object o = WebConfigurationManager.GetSection ("system.web/compilation/buildProviders", virtualPath);
-			BuildProviderCollection coll = (BuildProviderCollection) o;
-			string extension = VirtualPathUtility.GetExtension (virtualPath);
-			if (coll == null || coll.Count == 0)
-				ThrowNoProviderException (extension);
-
-			provider = coll.GetProviderForExtension (extension);
-			if (provider == null)
-				ThrowNoProviderException (extension);
-
+			provider = GetBuildProviderForPath (virtualPath, true);
 			CompilerType compiler_type = provider.CodeCompilerType;
 			Type ctype = compiler_type.CodeDomProviderType;
 			CodeDomProvider dom_provider = (CodeDomProvider) Activator.CreateInstance (ctype, null);
@@ -122,10 +127,13 @@ namespace System.Web.Compilation {
 			return abuilder;
 		}
 
-		[MonoTODO]
 		public static string GetCompiledCustomString (string virtualPath)
 		{
-			throw new NotImplementedException ();
+			BuildProvider provider = GetBuildProviderForPath (virtualPath, false);
+			if (provider == null)
+				return null;
+			// FIXME: where to get the CompilerResults from?
+			return provider.GetCustomString (null);
 		}
 
 		static CompilerParameters PrepareParameters (TempFileCollection temp_files,
@@ -177,10 +185,17 @@ namespace System.Web.Compilation {
 		// Assemblies built from the App_Code directory
 		public static IList CodeAssemblies {
 			get {
-				return AppCodeAssemblies;
+				return AppCode_Assemblies;
 			}
 		}
 
+		internal static IList TopLevelAssemblies 
+		{
+			get {
+				return TopLevel_Assemblies;
+			}
+		}
+		
 	}
 }
 

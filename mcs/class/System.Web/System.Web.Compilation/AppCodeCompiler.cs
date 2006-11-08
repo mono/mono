@@ -145,10 +145,8 @@ namespace System.Web.Compilation
 				parameters.OutputAssembly = assemblyName;
 				CompilerResults results = provider.CompileAssemblyFromFile (parameters, knownfiles.ToArray ());
 				if (results.Errors.Count == 0) {
-					IList assemblies = BuildManager.CodeAssemblies;
-					if (assemblies == null)
-						throw new HttpException ("Internal error compiling code from the App_Code folder.");
-					assemblies.Add (results.PathToAssembly);
+					BuildManager.CodeAssemblies.Add (results.PathToAssembly);
+					BuildManager.TopLevelAssemblies.Add (results.CompiledAssembly);
 				} else {
 					if (HttpContext.Current.IsCustomErrorEnabled)
 						throw new HttpException ("An error occurred while initializing application.");

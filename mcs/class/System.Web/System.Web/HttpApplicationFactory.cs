@@ -386,13 +386,7 @@ namespace System.Web {
 		
 #if NET_2_0 && !TARGET_J2EE
 				AppGlobalResourcesCompiler agrc = new AppGlobalResourcesCompiler();
-				CompilerResults cr = agrc.Compile();
-				if (cr != null && cr.CompiledAssembly != null)
-					WebConfigurationManager.ExtraAssemblies.Add(cr.PathToAssembly);
-				AppLocalResourcesCompiler alrc  = new AppLocalResourcesCompiler ();
-				cr = alrc.Compile ();
-				if (cr != null && cr.CompiledAssembly != null)
-					WebConfigurationManager.ExtraAssemblies.Add (cr.PathToAssembly);
+				agrc.Compile();
 				
 				// Todo: Process App_WebResources here
 				

@@ -66,17 +66,16 @@ namespace System.Web.Compilation {
 		{
 		}
 
-		[MonoTODO]
 		public virtual string GetCustomString (CompilerResults results)
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
 		protected CompilerType GetDefaultCompilerType ()
 		{
 			CompilationSection config;
 			config = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
-			return GetDefaultCompilerTypeForLanguage (config.DefaultLanguage);
+			return GetDefaultCompilerTypeForLanguage (config.DefaultLanguage, config);
 		}
 
 		void SetCommonParameters (CompilationSection config, CompilerParameters p)
@@ -120,14 +119,18 @@ namespace System.Web.Compilation {
 			}
 		}
 
-		protected CompilerType GetDefaultCompilerTypeForLanguage (string language)
+		internal CompilerType GetDefaultCompilerTypeForLanguage (string language, CompilationSection configSection)
 		{
 			// MS throws when accesing a Hashtable, we do here.
 			if (language == null || language == "")
 				throw new ArgumentNullException ("language");
 
 			CompilationSection config;
-			config = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
+			if (configSection == null)
+				config = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
+			else
+				config = configSection;
+			
 			Compiler compiler = config.Compilers.Get (language);
 			CompilerParameters p;
 			if (compiler != null) {
@@ -146,6 +149,11 @@ namespace System.Web.Compilation {
 			CompilerParameters par = info.CreateDefaultCompilerParameters ();
 			SetCommonParameters (config, par);
 			return new CompilerType (info.CodeDomProviderType, par);
+		}
+		
+		protected CompilerType GetDefaultCompilerTypeForLanguage (string language)
+		{
+			return GetDefaultCompilerTypeForLanguage (language, null);
 		}
 
 		public virtual Type GetGeneratedType (CompilerResults results)

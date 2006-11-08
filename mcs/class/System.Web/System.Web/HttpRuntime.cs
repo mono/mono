@@ -265,10 +265,9 @@ namespace System.Web {
 				// Compile the local resources, if any
 				//
 				AppLocalResourcesCompiler alrc = new AppLocalResourcesCompiler();
-				CompilerResults cr = alrc.Compile();
-				if (cr != null && cr.CompiledAssembly != null)
-					WebConfigurationManager.ExtraAssemblies.Add(cr.PathToAssembly);
-#endif			
+				alrc.Compile();
+#endif
+				
 				//
 				// Ask application to service the request
 				//

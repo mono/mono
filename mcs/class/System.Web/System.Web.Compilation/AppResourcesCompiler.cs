@@ -34,6 +34,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Web;
+using System.Web.Configuration;
 
 namespace System.Web.Compilation
 {
@@ -108,13 +109,17 @@ namespace System.Web.Compilation
 			provider.GenerateCodeFromCompileUnit (unit, sw, new CodeGeneratorOptions ());
 			CompilerResults ret = provider.CompileAssemblyFromDom (cp, unit);      
 			
-			if (ret.CompiledAssembly == null) {
+			if (ret.Errors.Count != 0) {
 				Console.WriteLine ("Failed to compile {0}/*.resx. Errors:", ResourceDirectory);
 				foreach (CompilerError ce in ret.Errors)
 					Console.WriteLine("{5} {0} ({1} {2}:{3}): {4}", ce.ErrorNumber,
 							  ce.FileName, ce.Line, ce.Column, ce.ErrorText,
 							  ce.IsWarning ? "warning" : "error");
+			} else {
+				WebConfigurationManager.ExtraAssemblies.Add(ret.PathToAssembly);
+				BuildManager.TopLevelAssemblies.Add (ret.CompiledAssembly);
 			}
+			
 			return ret;
 		}
 	}

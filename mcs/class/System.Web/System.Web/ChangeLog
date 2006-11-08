@@ -1,6 +1,14 @@
 2006-11-08  Marek Habersack  <grendello@gmail.com>
 
-	* HttpApplicationFactory.cs: Add invocation of the App_Code compiler
+	* HttpRuntime.cs: Moved the resource compiler results handling to
+	the resource compiler itself.
+
+	* HttpApplicationFactory.cs: Add invocation of the App_Code
+	compiler. Moved the resource compiler results handling to the
+	resource compiler itself. Removed compilation of the local
+	resources from here - it should be done only when a request
+	determines that the App_LocalResources directory exists.
+	
 
 2006-11-07  Andrew Skiba  <andrews@mainsoft.com>
 
