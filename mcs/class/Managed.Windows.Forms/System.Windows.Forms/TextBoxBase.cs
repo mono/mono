@@ -1420,7 +1420,7 @@ namespace System.Windows.Forms {
 						#endif
 						document.SetSelectionToCaret(true);
 						click_mode = CaretSelection.Position;
-					} else {
+					} else if (this is RichTextBox) {
 						#if DebugClick
 							Console.WriteLine("Tripple Click Selecting line");
 						#endif
@@ -1435,7 +1435,7 @@ namespace System.Windows.Forms {
 						}
 						click_mode = CaretSelection.Word;
 						document.ExpandSelection(CaretSelection.Word, false);	// Setting initial selection
-					} else {
+					} else if (this is RichTextBox) {
 						click_mode = CaretSelection.Line;
 						document.ExpandSelection(CaretSelection.Line, false);	// Setting initial selection
 					}

@@ -2,6 +2,7 @@
 
 	* TextControl.cs: When combining lines carry over the line end
 	style from the end line.
+	* TextBoxBase.cs: Only rich text box can do full line selects.
 
 2006-11-07  Everaldo Canuto  <everaldo@simios.org>
 
