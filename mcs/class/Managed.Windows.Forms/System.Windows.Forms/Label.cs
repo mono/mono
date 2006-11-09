@@ -620,9 +620,14 @@ namespace System.Windows.Forms
 
     		private void CalcPreferredWidth ()
 		{
-			SizeF size;
-    		 	size = DeviceContext.MeasureString (Text, Font, req_witdthsize, string_format);
-    		 	preferred_width = (int) size.Width + 3;
+			if (Text == string.Empty) {
+				preferred_width = 0;
+			}
+			else {
+				SizeF size;
+				size = DeviceContext.MeasureString (Text, Font, req_witdthsize, string_format);
+				preferred_width = (int) size.Width + 3;
+			}
 		}
 
     		private void OnHandleCreatedLB (Object o, EventArgs e)
