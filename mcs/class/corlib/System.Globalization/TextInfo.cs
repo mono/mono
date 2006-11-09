@@ -108,7 +108,6 @@ namespace System.Globalization {
 			m_listSeparator = textInfo.ListSeparator;
 			customCultureName = textInfo.CultureName;
 			ci = textInfo.ci;
-			parentCulture = textInfo.parentCulture;
 			handleDotI = textInfo.handleDotI;
 			data = textInfo.data;
 		}
