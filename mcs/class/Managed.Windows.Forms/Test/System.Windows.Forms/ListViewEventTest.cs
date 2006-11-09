@@ -266,7 +266,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void RemoveSelectedItem ()
 		{
 			Form form = new Form ();

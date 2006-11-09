@@ -3079,9 +3079,12 @@ namespace System.Windows.Forms
 				if (!list.Contains (item))
 					return;
 	 				
+				bool selection_changed = owner.SelectedItems.Contains (item);
 				list.Remove (item);
 				OnChange ();
 				owner.Redraw (true);				
+				if (selection_changed)
+					owner.OnSelectedIndexChanged (EventArgs.Empty);
 			}
 
 			public virtual void RemoveAt (int index)

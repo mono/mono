@@ -1,5 +1,10 @@
 2006-11-09  Mike Kestner  <mkestner@novell.com>
 
+	* ListView.cs : raise SelectedIndexChanged when a selected item is
+	removed from the item collection.
+
+2006-11-09  Mike Kestner  <mkestner@novell.com>
+
 	* ListView.cs : raise SelectedIndexChanged once per selected item
 	for compat with MS.  Fixes #79849+.
 
