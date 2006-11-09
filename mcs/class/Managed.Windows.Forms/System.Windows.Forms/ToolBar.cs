@@ -754,7 +754,7 @@ namespace System.Windows.Forms
 
 			if (current_button != null && current_button.Rectangle.Contains (loc)) {
 				if (appearance == ToolBarAppearance.Flat) {
-					if (current_button.Hilight || current_button.Pushed)
+					if (current_button.Hilight || current_button.Pushed || !current_button.Enabled)
 						return;
 					current_button.Hilight = true;
 				}

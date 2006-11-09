@@ -1,3 +1,7 @@
+2006-11-08  Everaldo Canuto  <everaldo@simios.org>
+
+	* Toolbar.cs: Prevent disabled button to highlight. Fixes #79868.
+
 2006-11-08  Chris Toshok  <toshok@ximian.com>
 
 	* PropertyGridView.cs: only call ToggleValue if the item is not
