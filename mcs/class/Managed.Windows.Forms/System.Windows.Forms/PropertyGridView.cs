@@ -188,10 +188,13 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				property_grid.SelectedGridItem.Expanded = !property_grid.SelectedGridItem.Expanded;
 			}
 			else {
-				ToggleValue();
-				Invalidate();
+				GridItem item = property_grid.SelectedGridItem;
+				if (item.GridItemType == GridItemType.Property
+				    && !item.PropertyDescriptor.IsReadOnly) {
+					ToggleValue();
+					Invalidate();
+				}
 			}
-			base.OnDoubleClick (e);
 		}
 
 		protected override void OnPaint(PaintEventArgs e) {
@@ -883,8 +886,10 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		}
 
 		private void grid_textbox_ToggleValue(object sender, EventArgs e) {
-			ToggleValue();
-			Invalidate();
+			if (!property_grid.SelectedGridItem.PropertyDescriptor.IsReadOnly) {
+				ToggleValue();
+				Invalidate();
+			}
 		}
 
 		internal void grid_textbox_Show (GridItem forItem)
