@@ -1,7 +1,7 @@
 2006-11-09  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs : raise SelectedIndexChanged when a selected item is
-	removed from the item collection.
+	removed from the item collection using Remove or RemoveAt.
 
 2006-11-09  Mike Kestner  <mkestner@novell.com>
 

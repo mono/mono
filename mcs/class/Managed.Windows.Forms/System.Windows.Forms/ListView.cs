@@ -3091,9 +3091,12 @@ namespace System.Windows.Forms
 			{
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("index");
+				bool selection_changed = owner.SelectedIndices.Contains (index);
 				list.RemoveAt (index);
 				OnChange ();
 				owner.Redraw (false);
+				if (selection_changed)
+					owner.OnSelectedIndexChanged (EventArgs.Empty);
 			}
 			#endregion	// Public Methods
 
