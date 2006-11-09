@@ -377,7 +377,7 @@ namespace Mono.Util {
 			foreach (string fileName in schemaNames)
 			{
 				StreamReader sr = new StreamReader (fileName);
-				schemas.Add (XmlSchema.Read (sr, null));
+				schemas.Add (XmlSchema.Read (sr, new ValidationEventHandler (HandleValidationError)));
 				sr.Close ();
 
 				if (targetFile == "") targetFile = Path.GetFileNameWithoutExtension (fileName);

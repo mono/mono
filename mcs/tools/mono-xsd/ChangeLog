@@ -1,5 +1,9 @@
 2006-11-09  Atsushi Enomoto <atsushi@ximian.com>
 
+	* NewMonoXSD.cs : and for Read() as well ;-)
+
+2006-11-09  Atsushi Enomoto <atsushi@ximian.com>
+
 	* NewMonoXSD.cs : Ankit wants good validation error reporting ;-)
 
 2006-11-09  Atsushi Enomoto <atsushi@ximian.com>
