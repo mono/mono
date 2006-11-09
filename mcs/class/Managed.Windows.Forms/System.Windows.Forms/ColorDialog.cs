@@ -312,6 +312,8 @@ namespace System.Windows.Forms {
 			redTextBox.LostFocus += new EventHandler (OnLostFocusTextBoxes);
 			greenTextBox.LostFocus += new EventHandler (OnLostFocusTextBoxes);
 			blueTextBox.LostFocus += new EventHandler (OnLostFocusTextBoxes);
+			
+			ResetCustomColors ();
 		}
 		#endregion	// Public Constructors
 		
@@ -398,11 +400,15 @@ namespace System.Windows.Forms {
 			}
 			
 			set {
-				if (allowFullOpen) {
-					customColors = value;
+				if (value == null)
+					ResetCustomColors ();
+				else {
+					int[] tmp_colors = value;
 					
-					baseColorControl.SetCustomColors ();
+					Array.Copy (tmp_colors, customColors, tmp_colors.Length);
 				}
+					
+				baseColorControl.SetCustomColors ();
 			}
 		}
 		
@@ -442,6 +448,7 @@ namespace System.Windows.Forms {
 			anyColor = false;
 			Color = Color.Black;
 			CustomColors = null;
+			ResetCustomColors ();
 			FullOpen = false;
 			ShowHelp = false;
 			solidColorOnly = false;
@@ -449,7 +456,7 @@ namespace System.Windows.Forms {
 		
 		public override string ToString ()
 		{
-			return base.ToString () + ", Color: " + Color.ToString ();
+			return base.ToString () + ",  Color: " + Color.ToString ();
 		}
 		#endregion	// Public Instance Methods
 		
@@ -710,6 +717,18 @@ namespace System.Windows.Forms {
 			UpdateHSBTextBoxes (col);
 			
 			UpdateControls (col);
+		}
+		
+		void ResetCustomColors ()
+		{
+			// check if this.customColors already exists
+			if (customColors == null)
+				customColors = new int [16];
+			
+			int default_color = Color.FromArgb(0, 255, 255, 255).ToArgb ();
+				
+			for (int i = 0; i < customColors.Length; i++)
+				customColors [i] = default_color;
 		}
 		#endregion
 		
@@ -1410,15 +1429,6 @@ namespace System.Windows.Forms {
 			public void SetUserColor (Color col)
 			{
 				userSmallColorControl [currentlyUsedUserSmallColorControl].InternalColor = col;
-				
-				// check if this.customColors already exists
-				if (customColors == null) {
-					customColors = new int [16];
-					int white = Color.White.ToArgb ();
-					
-					for (int i = 0; i < customColors.Length; i++)
-						customColors [i] = white;
-				}
 				
 				customColors [currentlyUsedUserSmallColorControl] = col.ToArgb ();
 				

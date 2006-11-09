@@ -1,3 +1,18 @@
+2006-11-09  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs:
+	  - Fix ToString ()
+	  - An ArgumentException is now thrown if a wrong filter
+	    is applied (matches ms). The previous filter doesn't change
+	    anymore if an exception is thrown.
+	  - Changing the FileName property also affects FileNames
+	* ColorDialog.cs: The length of the CustomColors array is always
+	  16. It doesn't matter if we use a smaller array or null to update
+	  or change the custom colors property.
+	* FolderBrowserDialog.cs: Throw an InvalidEnumArgumentException if
+	  for RootFolder if we get a undefined value.
+
+
 2006-11-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* StatusBarPanel.cs: 

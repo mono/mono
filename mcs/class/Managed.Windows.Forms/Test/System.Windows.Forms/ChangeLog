@@ -1,3 +1,7 @@
+2006-11-09  Alexander Olk  <alex.olk@googlemail.com>
+
+	* CommonDialogsTest.cs: Added
+
 2006-11-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	 * StatusBarPanelTest.cs: Added tests for bug #79842

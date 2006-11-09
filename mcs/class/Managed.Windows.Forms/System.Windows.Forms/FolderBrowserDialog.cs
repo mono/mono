@@ -193,6 +193,11 @@ namespace System.Windows.Forms {
 		[Localizable(false)]
 		public Environment.SpecialFolder RootFolder {
 			set {
+				int v = (int)value;
+				
+				if (!Enum.IsDefined(typeof(Environment.SpecialFolder), v))
+					throw new InvalidEnumArgumentException ();
+				
 				if (rootFolder != value)
 					rootFolder = value;
 				

@@ -57,7 +57,7 @@ namespace System.Windows.Forms {
 		private bool dereferenceLinks = true;
 		private string fileName = String.Empty;
 		private string[] fileNames;
-		private string filter;
+		private string filter = "";
 		private int filterIndex = 1;
 		private string initialDirectory = String.Empty;
 		private bool restoreDirectory = false;
@@ -441,8 +441,19 @@ namespace System.Windows.Forms {
 			
 			set {
 				if (value != null) {
-					if (SetFileName (value))
+					if (SetFileName (value)) {
 						fileName = value;
+						if (fileNames == null) {
+							fileNames = new string [1];
+							fileNames [0] = value;
+						}
+					}
+				} else {
+					fileName = String.Empty;
+					fileNames = new string [0];
+					// this does not match ms exactly,
+					// but there is no other way to clear that %#&?§ combobox
+					fileNameComboBox.Text = " ";
 				}
 			}
 		}
@@ -470,12 +481,18 @@ namespace System.Windows.Forms {
 			}
 			
 			set {
-				if (value == null)
-					throw new NullReferenceException ("Filter");
-				
-				filter = value;
-				
-				fileFilter = new FileFilter (filter);
+				if (value == null) {
+					filter = "";
+					if (fileFilter != null)
+						fileFilter.FilterArrayList.Clear ();
+				} else {
+					if (FileFilter.CheckFilter (value)) {
+						filter = value;
+						
+						fileFilter = new FileFilter (filter);
+					} else
+						throw new ArgumentException ();
+				}
 				
 				UpdateFilters ();
 			}
@@ -488,9 +505,6 @@ namespace System.Windows.Forms {
 			}
 			
 			set {
-				if (fileFilter != null && fileFilter.FilterArrayList.Count > value)
-					return;  // FIXME: throw an exception ?
-				
 				filterIndex = value;
 				
 				SelectFilter ();
@@ -578,8 +592,7 @@ namespace System.Windows.Forms {
 			checkPathExists = true;
 			defaultExt = String.Empty;
 			dereferenceLinks = true;
-			fileName = String.Empty;
-			fileNames = null;
+			FileName = String.Empty;
 			Filter = String.Empty;
 			filterIndex = 1;
 			initialDirectory = String.Empty;
@@ -593,7 +606,7 @@ namespace System.Windows.Forms {
 		
 		public override string ToString ()
 		{
-			return base.ToString ();
+			return String.Format("{0}: Title: {1}, FileName: {2}", base.ToString (), Title, fileName);
 		}
 		
 		public event CancelEventHandler FileOk {
@@ -690,7 +703,7 @@ namespace System.Windows.Forms {
 		
 		private void SelectFilter ()
 		{
-			if (FilterIndex > mwfFileView.FilterArrayList.Count)
+			if (mwfFileView.FilterArrayList == null || FilterIndex > mwfFileView.FilterArrayList.Count)
 				return;
 			
 			do_not_call_OnSelectedIndexChangedFileTypeComboBox = true;
@@ -999,6 +1012,9 @@ namespace System.Windows.Forms {
 		
 		private void UpdateFilters ()
 		{
+			if (fileFilter == null)
+				fileFilter = new FileFilter ();
+			
 			ArrayList filters = fileFilter.FilterArrayList;
 			
 			fileTypeComboBox.BeginUpdate ();
@@ -1009,7 +1025,8 @@ namespace System.Windows.Forms {
 				fileTypeComboBox.Items.Add (fs.filterName);
 			}
 			
-			fileTypeComboBox.SelectedIndex = FilterIndex - 1;
+			if (filters.Count > 0 && FilterIndex <= filters.Count)
+				fileTypeComboBox.SelectedIndex = FilterIndex - 1;
 			
 			fileTypeComboBox.EndUpdate ();
 			
@@ -1800,11 +1817,24 @@ namespace System.Windows.Forms {
 		public FileFilter ()
 		{}
 		
-		public FileFilter (string filter)
+		public FileFilter (string filter) : base ()
 		{
 			this.filter = filter;
 			
 			SplitFilter ();
+		}
+		
+		public static bool CheckFilter (string val)
+		{
+			if (val.Length == 0)
+				return true;
+			
+			string[] filters = val.Split (new char [] {'|'});
+			
+			if ((filters.Length % 2) != 0)
+				return false;
+			
+			return true;
 		}
 		
 		public ArrayList FilterArrayList {
@@ -1833,16 +1863,10 @@ namespace System.Windows.Forms {
 		{
 			filterArrayList.Clear ();
 			
-			if (filter == null)
-				throw new NullReferenceException ("Filter");
-			
 			if (filter.Length == 0)
 				return;
 			
 			string[] filters = filter.Split (new char [] {'|'});
-			
-			if ((filters.Length % 2) != 0)
-				throw new ArgumentException ("Filter");
 			
 			for (int i = 0; i < filters.Length; i += 2) {
 				FilterStruct filterStruct = new FilterStruct (filters [i], filters [i + 1]);
