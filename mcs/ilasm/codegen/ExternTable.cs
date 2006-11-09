@@ -146,11 +146,14 @@ namespace Mono.ILASM {
                 private byte [] hash;
                 private DeclSecurity decl_sec;
                 private AssemblyName asmb_name;
+                //flags
+                private PEAPI.AssemAttr attr;
 
-                public ExternAssembly (string name, AssemblyName asmb_name) : base (name)
+                public ExternAssembly (string name, AssemblyName asmb_name, PEAPI.AssemAttr attr) : base (name)
                 {
                         this.name = name;
                         this.asmb_name = asmb_name;
+                        this.attr = attr;
                         major = minor = build = revision = -1;
                 }
 
@@ -180,6 +183,7 @@ namespace Mono.ILASM {
                                 return;
 
                         AssemblyRef = code_gen.PEFile.AddExternAssembly (name);
+                        AssemblyRef.AddAssemblyAttr (attr);
                         if (major != -1)
                                 AssemblyRef.AddVersionInfo (major, minor, build, revision);
                         if (public_key != null)
@@ -256,14 +260,14 @@ namespace Mono.ILASM {
                         string mscorlib_name = "mscorlib";
                         AssemblyName mscorlib = new AssemblyName ();
                         mscorlib.Name = mscorlib_name;
-                        AddAssembly (mscorlib_name, mscorlib);
+                        AddAssembly (mscorlib_name, mscorlib, 0);
 
                         // Also need to alias corlib, normally corlib and
                         // mscorlib are used interchangably
                         assembly_table["corlib"] = assembly_table["mscorlib"];
                 }
 
-                public ExternAssembly AddAssembly (string name, AssemblyName asmb_name)
+                public ExternAssembly AddAssembly (string name, AssemblyName asmb_name, PEAPI.AssemAttr attr)
                 {
                         ExternAssembly ea = null;
 
@@ -275,7 +279,7 @@ namespace Mono.ILASM {
                                         return ea;
                         }
 
-                        ea = new ExternAssembly (name, asmb_name);
+                        ea = new ExternAssembly (name, asmb_name, attr);
 
                         assembly_table [name] = ea;
 
@@ -334,7 +338,7 @@ namespace Mono.ILASM {
                                 asmname.Name = asmb_name;
 
                                 Report.Warning (String.Format ("Reference to undeclared extern assembly '{0}', adding.", asmb_name));
-                                ext_asmb = AddAssembly (asmb_name, asmname);
+                                ext_asmb = AddAssembly (asmb_name, asmname, 0);
                         }
 
                         return ext_asmb.GetTypeRef (full_name, is_valuetype);

@@ -29,7 +29,7 @@ namespace PEAPI {
 	/// <summary>
 	/// Attributes for this assembly
 	/// </summary>
-	public enum AssemAttr { EnableJITCompileTracking = 0x8000, 
+	public enum AssemAttr { Retargetable = 0x100, EnableJITCompileTracking = 0x8000, 
 		DisableJITCompileOptimizer = 0x4000}
 
 	/// <summary>
@@ -4543,6 +4543,11 @@ namespace PEAPI {
 		internal AssemblyRef(MetaData md, string name) : base(name,md) 
 		{
 			tabIx = MDTable.AssemblyRef;
+		}
+
+		public void AddAssemblyAttr (AssemAttr aa)
+		{
+			flags |= (uint)aa;
 		}
 
 		/// <summary>

@@ -301,6 +301,7 @@ namespace Mono.ILASM {
                                 // keywords ["publickey"] = new ILToken (Token.K_PUBLICKEY, "publickey");
                                 keywords ["enablejittracking"] = new ILToken (Token.K_ENABLEJITTRACKING, "enablejittracking");
                                 keywords ["disablejitoptimizer"] = new ILToken (Token.K_DISABLEJITOPTIMIZER, "disablejitoptimizer");
+                                keywords ["retargetable"] = new ILToken (Token.K_RETARGETABLE, "retargetable");
                                 keywords ["preservesig"] = new ILToken (Token.K_PRESERVESIG, "preservesig");
                                 keywords ["beforefieldinit"] = new ILToken (Token.K_BEFOREFIELDINIT, "beforefieldinit");
                                 keywords ["alignment"] = new ILToken (Token.K_ALIGNMENT, "alignment");

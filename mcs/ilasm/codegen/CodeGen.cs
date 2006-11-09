@@ -238,12 +238,13 @@ namespace Mono.ILASM {
                         this.stack_reserve = stack_reserve;
                 }
 
-                public void SetAssemblyName (string name)
+                public void SetThisAssembly (string name, PEAPI.AssemAttr attr)
                 {
                         if (this_assembly != null && this_assembly.Name != name)
                                 Report.Error ("Multiple assembly declarations");
 
                         this_assembly = new Assembly (name);
+                        this_assembly.SetAssemblyAttr (attr);
                         if (name != "mscorlib")
                                 ExternTable.AddCorlib ();
                 }
@@ -409,9 +410,9 @@ namespace Mono.ILASM {
 
                 }
 
-                public void BeginAssemblyRef (string name, AssemblyName asmb_name)
+                public void BeginAssemblyRef (string name, AssemblyName asmb_name, PEAPI.AssemAttr attr)
                 {
-                        current_customattrtarget = current_assemblyref = ExternTable.AddAssembly (name, asmb_name);
+                        current_customattrtarget = current_assemblyref = ExternTable.AddAssembly (name, asmb_name, attr);
                         current_declsectarget = current_assemblyref;
                 }
 

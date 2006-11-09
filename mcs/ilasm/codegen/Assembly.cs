@@ -46,6 +46,7 @@ namespace Mono.ILASM {
                 private int revision_version;
                 private string locale;
                 private int hash_algorithm;
+                private PEAPI.AssemAttr attr;
 
                 public Assembly (string name)
                 {
@@ -87,6 +88,11 @@ namespace Mono.ILASM {
                         this.public_key = public_key;
                 }
 
+                public void SetAssemblyAttr (PEAPI.AssemAttr attr)
+                {
+                        this.attr = attr;
+                }
+
                 public void AddCustomAttribute (CustomAttr customattr)
                 {
                         if (customattr_list == null)
@@ -111,6 +117,7 @@ namespace Mono.ILASM {
                                 revision_version, public_key,
                                 (uint) hash_algorithm, locale);
 
+                        asm.AddAssemblyAttr (attr);
                 }
         }
 }

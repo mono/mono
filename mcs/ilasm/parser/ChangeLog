@@ -1,3 +1,10 @@
+2006-11-09  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (K_RETARGETABLE): New.
+	(asm_attr): Add rule for K_RETARGETABLE.
+	(assembly_head): Handle attributes.
+	(assemblyref_head): Add asm_attr.
+
 2006-06-07  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay : Update to use Report.Warning instead of

@@ -460,6 +460,7 @@ namespace Mono.ILASM {
 // %token K_PUBLICKEY
 %token K_ENABLEJITTRACKING
 %token K_DISABLEJITOPTIMIZER
+%token K_RETARGETABLE
 %token K_PRESERVESIG
 %token K_BEFOREFIELDINIT
 %token K_ALIGNMENT
@@ -3059,16 +3060,23 @@ assembly_all		: assembly_head OPEN_BRACE assembly_decls CLOSE_BRACE
 
 assembly_head		: D_ASSEMBLY asm_attr slashed_name
                           {
-                                codegen.SetAssemblyName ((string) $3);
+                                codegen.SetThisAssembly ((string) $3, (PEAPI.AssemAttr) $2);
                                 codegen.CurrentCustomAttrTarget = codegen.ThisAssembly;
 				codegen.CurrentDeclSecurityTarget = codegen.ThisAssembly;
                           }
 			;
 
 asm_attr		: /* EMPTY */
-			| asm_attr K_NOAPPDOMAIN
+			  {
+				  $$ = new PEAPI.AssemAttr ();
+			  }
+			/*| asm_attr K_NOAPPDOMAIN
 			| asm_attr K_NOPROCESS
-			| asm_attr K_NOMACHINE
+			| asm_attr K_NOMACHINE*/
+			| asm_attr K_RETARGETABLE
+			  {
+				  $$ = ((PEAPI.AssemAttr) $1) | PEAPI.AssemAttr.Retargetable;
+			  }
 			;
 
 assembly_decls		: /* EMPTY */
@@ -3112,19 +3120,19 @@ asm_or_ref_decl		: D_PUBLICKEY ASSIGN bytes_list
 assemblyref_all		: assemblyref_head OPEN_BRACE assemblyref_decls CLOSE_BRACE
 			;
 
-assemblyref_head	: D_ASSEMBLY K_EXTERN slashed_name
+assemblyref_head	: D_ASSEMBLY K_EXTERN asm_attr slashed_name
                           {
                                 System.Reflection.AssemblyName asmb_name = 
 					new System.Reflection.AssemblyName ();
-				asmb_name.Name = (string) $3;
-				codegen.BeginAssemblyRef ((string) $3, asmb_name);
+				asmb_name.Name = (string) $4;
+				codegen.BeginAssemblyRef ((string) $4, asmb_name, (PEAPI.AssemAttr) $3);
                           }
-			| D_ASSEMBLY K_EXTERN slashed_name K_AS slashed_name
+			| D_ASSEMBLY K_EXTERN asm_attr slashed_name K_AS slashed_name
                           {
                                 System.Reflection.AssemblyName asmb_name = 
 					new System.Reflection.AssemblyName ();
-				asmb_name.Name = (string) $3;
-				codegen.BeginAssemblyRef ((string) $5, asmb_name);
+				asmb_name.Name = (string) $4;
+				codegen.BeginAssemblyRef ((string) $6, asmb_name, (PEAPI.AssemAttr) $3);
                           }
 			;
 

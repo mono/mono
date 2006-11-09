@@ -1,3 +1,15 @@
+2006-11-09  Ankit Jain  <jankit@novell.com>
+
+	* CodeGen.cs (CodeGen.BeginAssemblyRef): Add param for attributes.
+	(SetAssemblyName): Rename to .. 
+	(SetThisAssembly): .. this. Add param for attributes.
+	* ExternTable (ExternAssembly.ctor): Likewise.
+	(ExternAssembly.Resolve): Add attributes.
+	(ExternTable.AddAssembly): Add param for attributes.
+	(ExternTable): Update to changes.
+	* Assembly.cs (Assembly.SetAssemblyAttr): New.
+	(Assembly.Resolve): Add the flags.
+
 2006-07-20  Ankit Jain  <jankit@novell.com>
 
 	* TypeDef.cs (.ctor): If the type is an interface, then make it
