@@ -186,7 +186,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ObjectDataSource_NotWorkingDefaultProperties ()
 		{
 			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
@@ -246,7 +245,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ObjectDataSource_NotWorkingAssignToDefaultProperties ()
 		{
 			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
@@ -267,11 +265,10 @@ namespace MonoTests.System.Web.UI.WebControls
 		//ViewState
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ObjectDataSource_ViewState ()
 		{
 			ObjectDataSourcePoker  ods = new ObjectDataSourcePoker ();
-			InitObjectDataSource (ods,"");	
+			//InitObjectDataSource (ods,"");	
 			ObjectDataSourcePoker copy = new ObjectDataSourcePoker ();
 			FormParameter p = new FormParameter ("ID", "TextBox1");
 			p.DefaultValue = "1002";
@@ -296,7 +293,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void ObjectDataSource_ConvertNullToDBNull ()
 		{
@@ -322,7 +318,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void ObjectDataSource_FilterExpression ()
 		{
@@ -358,7 +353,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void ObjectDataSource_FilterParameter ()
 		{
@@ -397,7 +391,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void ObjectDataSource_EnablePaging ()
 		{
@@ -458,7 +451,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		//public methods
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void ObjectDataSource_Delete ()
 		{
@@ -512,7 +504,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void ObjectDataSource_Select ()
 		{
@@ -541,7 +532,32 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void ObjectDataSource_Select_Cached ()
+		{
+			string html = new WebTest (PageInvoker.CreateOnLoad (
+				new PageDelegate (SelectMethodCached))).Run ();
+		}
+
+
+		public static void SelectMethodCached (Page p)
+		{
+			MyTableObject.ds = MyTableObject.CreateDataTable ();
+			ObjectDataSourcePoker ods = new ObjectDataSourcePoker ();
+			ods.EnableCaching = true;
+			InitObjectDataSource (ods, "");
+			p.Controls.Add (ods);
+			ods.Selecting += new ObjectDataSourceSelectingEventHandler (odc_Selecting);
+
+			selecting = false;
+			IEnumerable table = (IEnumerable) ods.Select ();
+			Assert.AreEqual (true, selecting, "AfterSelectingEvent");
+
+			selecting = false;
+			IEnumerable table2 = (IEnumerable) ods.Select ();
+			Assert.AreEqual (false, selecting, "AfterSelectingEvent");
+		}
+		[Test]
 		[Category ("NunitWeb")]
 		public void ObjectDataSource_Insert ()
 		{
@@ -570,7 +586,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void ObjectDataSource_Update ()
 		{
@@ -621,7 +636,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		// Tests for events Select,Update,Delete and Insert include in Select,Update,Delete and Insert methods tests.
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void ObjectDataSource_Events ()
 		{
@@ -719,7 +733,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		//Excpetions
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (NotSupportedException))]
 		[Category ("NunitWeb")]
 		public void ObjectDataSource_EnableCachingException ()
@@ -742,7 +755,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (NotSupportedException))]
 		[Category ("NunitWeb")]
 		public void ObjectDataSource_FilterExpressionException ()

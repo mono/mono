@@ -191,7 +191,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void DefaultsNotWorking ()
 		{
 			ObjectDataSource ds = new ObjectDataSource ();
@@ -253,7 +252,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ViewState ()
 		{
 			// Note :
@@ -391,13 +389,11 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category("NunitWeb")]
-		[Category ("NotWorking")]
 		public void DeleteMethod ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (delete));
 			string html = t.Run ();
-			string origin = @"<div></div>";
-			HtmlDiff.AssertAreEqual (origin, HtmlDiff.GetControlFromPageHtml (html), "ObjectDataSourceViewDelete");
+			Assert.AreEqual (-1, html.IndexOf("Yonik"), "ObjectDataSourceViewDelete");
 			WebTest.Unload ();
 		}
 
@@ -448,7 +444,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void SelectMethod ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (select));
@@ -497,7 +492,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void SelectCountMethod ()
 		{
 			// This method will render grid view with paging 
@@ -556,7 +550,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void InsertMethod ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (insert));
@@ -622,7 +615,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void UpdateMethod ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (update));
