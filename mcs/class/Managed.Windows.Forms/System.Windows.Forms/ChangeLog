@@ -1,4 +1,14 @@
- 2006-11-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+2006-11-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* StatusBarPanel.cs: 
+	- Width is set to MinWidth if Width is smaller than
+	MinWidth. Fixes #79842.
+	- MinWidth now always overrides Width (MSDN says MinWidth
+	is set to Width when AutoSize = None, but they do not 
+	behave like that).
+	- Style has now the the correct default value.
+	
+2006-11-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
  
  	* TrackBar.cs: 
  	- The control is completely invalidated on 

@@ -45,7 +45,7 @@ namespace System.Windows.Forms {
 		private HorizontalAlignment alignment = HorizontalAlignment.Left;
 		private StatusBarPanelAutoSize auto_size = StatusBarPanelAutoSize.None;
 		private StatusBarPanelBorderStyle border_style = StatusBarPanelBorderStyle.Sunken;
-		private StatusBarPanelStyle style;
+		private StatusBarPanelStyle style = StatusBarPanelStyle.Text;
 		private int width = 100;
 		private int twidth = -1;
 		private int min_width = 10;
@@ -102,8 +102,10 @@ namespace System.Windows.Forms {
 		[RefreshProperties(RefreshProperties.All)]
 		public int MinWidth {
 			get {
-				if (AutoSize == StatusBarPanelAutoSize.None)
-					return Width;
+			/*
+				MSDN says that when AutoSize = None then MinWidth is automatically
+				set to Width, but neither v1.1 nor v2.0 behave that way.
+			*/
 				return min_width;
 			}
 			set {
@@ -127,11 +129,8 @@ namespace System.Windows.Forms {
 				if (initializing)
 					twidth = value;
 				else
-					width = value;
+					SetWidth(value);
 				
-				if (min_width > width)
-					width = min_width;
-					
 				Invalidate ();
 			}
 		}
@@ -189,6 +188,8 @@ namespace System.Windows.Forms {
 		internal void SetWidth (int width)
 		{
 			this.width = width;
+			if (min_width > this.width)
+				this.width = min_width;
 		}
 
 		public override string ToString ()
@@ -210,7 +211,7 @@ namespace System.Windows.Forms {
 			if (!initializing || twidth == -1)
 				return;
 
-			width = twidth;
+			SetWidth(twidth);
 			twidth = -1;
 			initializing = false;
 		}

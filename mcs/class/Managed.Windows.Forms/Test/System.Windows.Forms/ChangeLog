@@ -1,6 +1,7 @@
 2006-11-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
-	 * StatusBarPanelTest.cs: Added tests for bug #79842.
+	 * StatusBarPanelTest.cs: Added tests for bug #79842
+	 and tests for default properties.
 
 2006-11-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
