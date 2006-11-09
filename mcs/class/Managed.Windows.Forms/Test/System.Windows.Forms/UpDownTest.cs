@@ -6,8 +6,10 @@
 //
 
 using System;
-using System.Windows.Forms;
 using System.Drawing;
+using System.Globalization;
+using System.Windows.Forms;
+
 using NUnit.Framework;
 
 namespace MonoTests.System.Windows.Forms
@@ -34,7 +36,9 @@ namespace MonoTests.System.Windows.Forms
 
 			n1.Minimum = 0.33m;
 			n1.Maximum = 100.33m;
-			Assert.AreEqual ("System.Windows.Forms.NumericUpDown, Minimum = 0.33, Maximum = 100.33", n1.ToString (), "2");
+			Assert.AreEqual (string.Format (CultureInfo.CurrentCulture,
+				"System.Windows.Forms.NumericUpDown, Minimum = {0}, Maximum = {1}",
+				0.33, 100.33), n1.ToString (), "2");
 		}
 		
 		[Test]

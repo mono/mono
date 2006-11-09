@@ -15,9 +15,10 @@ using System.Collections;
 
 namespace MonoTests.System.Windows.Forms
 {
-	[TestFixture, Ignore ("Needs Manual Intervention")]
-	public class ListViewEvent
-	{	
+	[TestFixture]
+	[Ignore ("Needs Manual Intervention")]
+	public class LabelEditEvent
+	{
 		static bool eventhandled = false;
 		public void LabelEdit_EventHandler (object sender,LabelEditEventArgs e)
 		{
@@ -67,10 +68,10 @@ namespace MonoTests.System.Windows.Forms
 		}
 	}
 
-	[TestFixture, Ignore ("Needs Manual Intervention")]
-
+	[TestFixture]
+	[Ignore ("Needs Manual Intervention")]
 	public class ColumnClickEvent
-	{	
+	{
 		static bool eventhandled = false;
 		public void ColumnClickEventHandler (object sender, ColumnClickEventArgs e)
 		{
@@ -100,10 +101,10 @@ namespace MonoTests.System.Windows.Forms
 		}
 	}
 
-	[TestFixture, Ignore ("Needs Manual Intervention")]
-
+	[TestFixture]
+	[Ignore ("Needs Manual Intervention")]
 	public class  MyEvent
-	{	
+	{
 		static bool eventhandled = false;
 		public void New_EventHandler (object sender, EventArgs e)
 		{
@@ -153,10 +154,10 @@ namespace MonoTests.System.Windows.Forms
 		}
 	}
 
-	[TestFixture, Ignore ("Needs Manual Intervention")]
-
+	[TestFixture]
+	[Ignore ("Needs Manual Intervention")]
 	public class ItemCheckEvent
-	{	
+	{
 		static bool eventhandled = false;
 		public void ItemCheckEventHandler (object sender, ItemCheckEventArgs e)
 
@@ -187,11 +188,10 @@ namespace MonoTests.System.Windows.Forms
 		}
 	}
 
-
-	[TestFixture, Ignore ("Needs Manual Intervention")]
-
+	[TestFixture]
+	[Ignore ("Needs Manual Intervention")]
 	public class ItemDragEvent
-	{	
+	{
 		static bool eventhandled = false;
 		public void ItemDragEventHandler (object sender, ItemDragEventArgs e)
 
@@ -218,6 +218,111 @@ namespace MonoTests.System.Windows.Forms
 			mylistview.DoDragDrop (mylistview.SelectedItems, DragDropEffects.Link);
 			Assert.AreEqual (true, eventhandled, "#A7");
 			myform.Dispose ();
+		}
+	}
+
+	[TestFixture]
+	public class SelectedIndexChangedEvent
+	{
+		int selectedIndexChanged;
+
+		public void ListView_SelectedIndexChanged (object sender, EventArgs e)
+		{
+			selectedIndexChanged++;
+		}
+
+		[SetUp]
+		public void SetUp ()
+		{
+			selectedIndexChanged = 0;
+		}
+
+		[Test] // bug #79849
+		[Category ("NotWorking")]
+		public void SelectBeforeCreationOfHandle ()
+		{
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+
+			ListView lvw = new ListView ();
+			lvw.SelectedIndexChanged += new EventHandler (ListView_SelectedIndexChanged);
+			lvw.View = View.Details;
+			ListViewItem itemA = new ListViewItem ("A");
+			lvw.Items.Add (itemA);
+			Assert.AreEqual (0, selectedIndexChanged, "#A1");
+			itemA.Selected = true;
+			Assert.AreEqual (0, selectedIndexChanged, "A2");
+
+			ListViewItem itemB = new ListViewItem ("B");
+			lvw.Items.Add (itemB);
+			Assert.AreEqual (0, selectedIndexChanged, "#B1");
+			itemB.Selected = true;
+			Assert.AreEqual (0, selectedIndexChanged, "B2");
+
+			form.Controls.Add (lvw);
+			Assert.AreEqual (0, selectedIndexChanged, "#C1");
+			form.Show ();
+			Assert.AreEqual (2, selectedIndexChanged, "#C2");
+			form.Dispose ();
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void RemoveSelectedItem ()
+		{
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+
+			ListView lvw = new ListView ();
+			lvw.SelectedIndexChanged += new EventHandler (ListView_SelectedIndexChanged);
+			lvw.View = View.Details;
+			ListViewItem itemA = new ListViewItem ("A");
+			lvw.Items.Add (itemA);
+			Assert.AreEqual (0, selectedIndexChanged, "#A1");
+			itemA.Selected = true;
+			Assert.AreEqual (0, selectedIndexChanged, "A2");
+
+			ListViewItem itemB = new ListViewItem ("B");
+			lvw.Items.Add (itemB);
+			Assert.AreEqual (0, selectedIndexChanged, "#B1");
+			itemB.Selected = true;
+			Assert.AreEqual (0, selectedIndexChanged, "B2");
+			lvw.Items.Remove (itemB);
+			Assert.IsTrue (itemB.Selected, "#B3");
+
+			form.Controls.Add (lvw);
+			Assert.AreEqual (0, selectedIndexChanged, "#C1");
+			form.Show ();
+			Assert.AreEqual (1, selectedIndexChanged, "#C2");
+			lvw.Items.Remove (itemA);
+			Assert.AreEqual (2, selectedIndexChanged, "#C3");
+			Assert.IsTrue (itemA.Selected, "#C4");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void AddAndSelectItem ()
+		{
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+
+			ListView lvw = new ListView ();
+			lvw.SelectedIndexChanged += new EventHandler (ListView_SelectedIndexChanged);
+			lvw.View = View.Details;
+			form.Controls.Add (lvw);
+			form.Show ();
+
+			ListViewItem itemA = new ListViewItem ();
+			lvw.Items.Add (itemA);
+			Assert.AreEqual (0, selectedIndexChanged, "#A1");
+			itemA.Selected = true;
+			Assert.AreEqual (1, selectedIndexChanged, "#A2");
+
+			ListViewItem itemB = new ListViewItem ();
+			lvw.Items.Add (itemB);
+			Assert.AreEqual (1, selectedIndexChanged, "#B1");
+			itemB.Selected = true;
+			Assert.AreEqual (2, selectedIndexChanged, "#B2");
 		}
 	}
 }
