@@ -26,7 +26,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void MinimumWidth2 ()
 		{
 			StatusBarPanel p = new StatusBarPanel ();
@@ -35,6 +34,26 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (100, p.Width, "1");
 		}
 
+		[Test]
+		public void MinimumWidth3 ()
+		{
+			StatusBarPanel p = new StatusBarPanel ();
+			p.Width = 50;
+			p.MinWidth = 200;
+			p.MinWidth = 25;
+			Assert.AreEqual (200, p.Width, "#1");
+			
+			p = new StatusBarPanel ();
+			p.Width = 50;
+			p.MinWidth = 25;
+			Assert.AreEqual (50, p.Width, "#2");
+			
+			p = new StatusBarPanel ();
+			p.Width = 50;
+			p.MinWidth = 100;
+			Assert.AreEqual (100, p.Width, "#3");
+		}
+		
 		[Test]
 		public void ToStringTest ()
 		{
@@ -47,5 +66,6 @@ namespace MonoTests.System.Windows.Forms
 			p.Text = "}";
 			Assert.AreEqual ("StatusBarPanel: {}}", p.ToString(), "3");
 		}
+		
 	}
 }

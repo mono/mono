@@ -1,5 +1,9 @@
 2006-11-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	 * StatusBarPanelTest.cs: Added tests for bug #79842.
+
+2006-11-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* TrackBarTest.cs: Added tests for bug #79718.
 	
 2006-11-08  Gert Driesen  <drieseng@users.sourceforge.net>
