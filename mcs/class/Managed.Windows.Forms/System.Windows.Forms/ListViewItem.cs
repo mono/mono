@@ -271,6 +271,7 @@ namespace System.Windows.Forms
 					// force re-population of list
 					owner.SelectedItems.Reset ();
 					Layout ();
+					owner.OnSelectedIndexChanged ();
 				} else {
 					selected = value;
 				}

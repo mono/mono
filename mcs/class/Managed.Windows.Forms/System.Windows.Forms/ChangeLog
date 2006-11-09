@@ -1,5 +1,11 @@
 2006-11-09  Mike Kestner  <mkestner@novell.com>
 
+	* ListView.cs : raise SelectedIndexChanged when an item is selected
+	programmatically via the Item.Selected property.  Gert's nice 
+	ListViewSelectedIndexChanged test fixture now runs clean.
+
+2006-11-09  Mike Kestner  <mkestner@novell.com>
+
 	* ListView.cs : raise SelectedIndexChanged when a selected item is
 	removed from the item collection using Remove or RemoveAt.
 

@@ -663,6 +663,12 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		internal void OnSelectedIndexChanged ()
+		{
+			if (IsHandleCreated)
+				OnSelectedIndexChanged (EventArgs.Empty);
+		}
+
 		internal int TotalWidth {
 			get { return Math.Max (this.Width, this.layout_wd); }
 		}

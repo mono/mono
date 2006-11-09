@@ -298,7 +298,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void AddAndSelectItem ()
 		{
 			Form form = new Form ();
