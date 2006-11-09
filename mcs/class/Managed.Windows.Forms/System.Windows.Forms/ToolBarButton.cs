@@ -308,7 +308,7 @@ namespace System.Windows.Forms
 
 			Size psize = Parent.ButtonSize;
 			Size size = psize;
-			if (!Parent.SizeSpecified) {
+			if ((!Parent.SizeSpecified) || (Style == ToolBarButtonStyle.Separator)) {
 				size = CalculateSize ();
 				if (size.Width == 0 || size.Height == 0)
 					size = psize;

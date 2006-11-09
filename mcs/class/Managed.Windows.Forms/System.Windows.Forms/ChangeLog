@@ -1,3 +1,8 @@
+2006-11-09  Everaldo Canuto  <everaldo@simios.org>
+
+	* Toolbar.cs, ToolBarButton.cs: Fix wrong separator size and
+	reduce number of calls to redraw method during toolbar creation.
+
 2006-11-09  Mike Kestner  <mkestner@novell.com>
 
 	* ListView.cs : raise SelectedIndexChanged when an item is selected

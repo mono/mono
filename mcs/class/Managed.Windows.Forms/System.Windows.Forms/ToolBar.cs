@@ -891,7 +891,7 @@ namespace System.Windows.Forms
 					if (!button.Visible)
 						continue;
 
-					if (size_specified) {
+					if (size_specified && (button.Style != ToolBarButtonStyle.Separator)) {
 						if (button.Layout (button_size))
 							changed = true;
 					}
@@ -956,6 +956,7 @@ namespace System.Windows.Forms
 			#region instance variables
 			private ArrayList list;
 			private ToolBar owner;
+			private bool redraw;
 			#endregion
 
 			#region constructors
@@ -963,6 +964,7 @@ namespace System.Windows.Forms
 			{
 				this.owner = owner;
 				list = new ArrayList ();
+				redraw = true;
 			}
 			#endregion
 
@@ -1019,14 +1021,22 @@ namespace System.Windows.Forms
 				int result;
 				button.SetParent (owner);
 				result = list.Add (button);
-				owner.Redraw (true);
+				if (redraw)
+					owner.Redraw (true);
 				return result;
 			}
 
 			public void AddRange (ToolBarButton [] buttons)
 			{
-				foreach (ToolBarButton button in buttons)
-					Add (button);
+				try {
+					redraw = false;
+					foreach (ToolBarButton button in buttons)
+						Add (button);
+				}
+				finally {
+					redraw = true;
+					owner.Redraw (true);
+				}
 			}
 
 			public void Clear ()
