@@ -222,7 +222,7 @@ namespace MonoTests.System.Windows.Forms
 	}
 
 	[TestFixture]
-	public class SelectedIndexChangedEvent
+	public class ListViewSelectedIndexChangedEvent
 	{
 		int selectedIndexChanged;
 
@@ -238,7 +238,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #79849
-		[Category ("NotWorking")]
 		public void SelectBeforeCreationOfHandle ()
 		{
 			Form form = new Form ();

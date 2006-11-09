@@ -1941,7 +1941,7 @@ namespace System.Windows.Forms
 		protected override void CreateHandle ()
 		{
 			base.CreateHandle ();
-			if (SelectedItems.Count > 0)
+			for (int i = 0; i < SelectedItems.Count; i++)
 				OnSelectedIndexChanged (EventArgs.Empty);
 		}
 
