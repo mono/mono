@@ -43,10 +43,10 @@ namespace System.Globalization
 	{
 		static readonly bool useManagedCollation =
 			Environment.internalGetEnvironmentVariable ("MONO_DISABLE_MANAGED_COLLATION")
-			!= "yes";
+			!= "yes" && MSCompatUnicodeTable.IsReady;
 
 		internal static bool UseManagedCollation {
-			get { return useManagedCollation && MSCompatUnicodeTable.IsReady; }
+			get { return useManagedCollation; }
 		}
 
 		// Keep in synch with MonoCompareInfo in the runtime. 

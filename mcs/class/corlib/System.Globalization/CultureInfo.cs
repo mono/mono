@@ -85,6 +85,8 @@ namespace System.Globalization
 		private unsafe readonly void *textinfo_data;
 		[NonSerialized]
 		private Calendar [] optional_calendars;
+		[NonSerialized]
+		CultureInfo parent_culture;
 				
 		int m_dataItem;		// MS.NET serializes this.
 		Calendar calendar;	// MS.NET serializes this.
@@ -92,6 +94,8 @@ namespace System.Globalization
 		// Deserialized instances will set this to false
 		[NonSerialized]
 		bool constructed;
+		
+		const int InvariantCultureId = 0x7F;
 
 		private static readonly string MSG_READONLY = "This instance is read only";
 		
@@ -103,7 +107,7 @@ namespace System.Globalization
 
 		static CultureInfo ()
 		{
-			invariant_culture_info = new CultureInfo (0x7f, false);
+			invariant_culture_info = new CultureInfo (InvariantCultureId, false);
 			invariant_culture_info.m_isReadOnly = true;
 		}
 		
@@ -193,12 +197,18 @@ namespace System.Globalization
 		public virtual CultureInfo Parent
 		{
 			get {
-				if (cultureID == 0x7f)
-					return this;
-				if (!constructed) Construct ();
-				if (parent_lcid == cultureID)
-					return null;
-				return new CultureInfo (parent_lcid);
+				if (parent_culture == null) {
+					if (parent_lcid == cultureID)
+						return null;
+					
+					if (parent_lcid == InvariantCultureId)
+						parent_culture = InvariantCulture;
+					else if (cultureID == InvariantCultureId)
+						parent_culture = this;
+					else
+						parent_culture = new CultureInfo (parent_lcid);
+				}
+				return parent_culture;
 			}
 		}
 
@@ -325,8 +335,10 @@ namespace System.Globalization
 		public virtual CompareInfo CompareInfo
 		{
 			get {
-				if (!constructed) Construct ();
 				if(compareInfo==null) {
+					if (!constructed)
+						Construct ();
+
 					lock (this) {
 						if(compareInfo==null) {
 							compareInfo=new CompareInfo (this);
@@ -549,7 +561,7 @@ namespace System.Globalization
 		private unsafe void ConstructInvariant (bool use_user_override)
 		{
 			m_isReadOnly=false;
-			cultureID=0x7f;
+			cultureID = InvariantCultureId;
 			this.m_useUserOverride=use_user_override;
 
 			/* NumberFormatInfo defaults to the invariant data */
@@ -560,9 +572,9 @@ namespace System.Globalization
 
 			textInfo=new TextInfo (this, cultureID, this.textinfo_data);
 
-			m_name="";
-			displayname="Invariant Language (Invariant Country)";
-			englishname="Invariant Language (Invariant Country)";
+			m_name=String.Empty;
+			displayname=
+			englishname=
 			nativename="Invariant Language (Invariant Country)";
 			iso3lang="IVL";
 			iso2lang="iv";
@@ -599,7 +611,7 @@ namespace System.Globalization
 
 			constructed = true;
 			
-			if(name=="") {
+			if(name.Length==0) {
 				/* Short circuit the invariant culture */
 				ConstructInvariant (use_user_override);
 				return;

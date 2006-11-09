@@ -1,3 +1,10 @@
+2006-11-09  Marek Safar  <marek.safar@gmail.com>
+
+	* CompareInfo.cs: Cache full UseManagedCollation value;
+	* CultureInfo.cs (Parent): Add caching to avoid re-creating culture info
+	  every time when the property is used.
+	* TextInfo.cs: Removed unused field.
+
 2006-08-19  Miguel de Icaza  <miguel@novell.com>
 
 	* CultureInfo.cs (GetCultureInfo): implement two of the 2.0

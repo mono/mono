@@ -69,9 +69,6 @@ namespace System.Globalization {
 		readonly CultureInfo ci;
 
 		[NonSerialized]
-		readonly CultureInfo parentCulture;
-
-		[NonSerialized]
 		readonly bool handleDotI;
 
 		[NonSerialized]
@@ -89,9 +86,8 @@ namespace System.Globalization {
 			}
 
 			CultureInfo tmp = ci;
-			while (tmp.Parent != null && tmp.Parent != tmp && tmp.Parent.LCID != 0x7F)
+			while (tmp.Parent != null && tmp.Parent.LCID != 0x7F && tmp.Parent != tmp)
 				tmp = tmp.Parent;
-			parentCulture = tmp;
 
 			if (tmp != null) {
 				switch (tmp.LCID) {
