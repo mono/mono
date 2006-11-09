@@ -5,7 +5,7 @@
 // Author:
 //	Chris Toshok  <toshok@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -142,6 +142,20 @@ namespace MonoTests.System.Configuration {
 		public string Username {
 			get { return (string)this["Username"]; }
 			set { this["Username"] = value; }
+		}
+	}
+
+	class TestSettings4 : ApplicationSettingsBase {
+
+		public TestSettings4 ()
+			: base ("TestSettings4")
+		{
+		}
+
+		[ApplicationScopedSetting]
+		[DefaultSettingValue ("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <string>go</string>\r\n  <string>mono</string>\r\n  </ArrayOfString>")]
+		public StringCollection Values {
+			get { return (StringCollection) this ["Values"]; }
 		}
 	}
 
@@ -326,8 +340,16 @@ namespace MonoTests.System.Configuration {
 				get { return ((int)(this ["IntSetting"])); }
 			}
 		}
-	}
 
+		[Test]
+		public void TestSettings4_StringCollection_DefaultSettingValue ()
+		{
+			TestSettings4 settings = new TestSettings4 ();
+			Assert.AreEqual (2, settings.Values.Count, "Count");
+			Assert.AreEqual ("go", settings.Values[0], "0");
+			Assert.AreEqual ("mono", settings.Values[1], "1");
+		}
+	}
 }
 
 #endif

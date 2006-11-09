@@ -1,3 +1,8 @@
+2006-11-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ApplicationSettingsBaseTest.cs: Added test case for StringCollection
+	properties (that encode the string list in XML).
+
 2006-11-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* SettingsPropertyValueTest.cs: added tests of value deserealization
