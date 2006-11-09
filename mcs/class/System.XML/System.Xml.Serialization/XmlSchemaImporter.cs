@@ -496,6 +496,11 @@ namespace System.Xml.Serialization
 				stype = elem.SchemaType;
 				qname = elem.QualifiedName;
 			}
+			else if (elem.ElementType == XmlSchemaComplexType.AnyType)
+			{
+				qname = anyType;
+				return true;
+			}
 			else
 			{
 				if (elem.SchemaTypeName.IsEmpty) return false;

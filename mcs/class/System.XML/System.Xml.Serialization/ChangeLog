@@ -1,5 +1,10 @@
 2006-11-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSchemaImporter.cs : top-level element might also have no type
+	  name specification, so just compare ElementType with anyType.
+
+2006-11-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSchemaImporter.cs : attributes might overlap by extending
 	  base content models. Since invalid content models are rejected by
 	  Compile(), simply ignore duplicating attributes. Note that it is
