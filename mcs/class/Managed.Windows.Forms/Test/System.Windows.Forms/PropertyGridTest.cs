@@ -193,5 +193,28 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (10, pg.SelectedGridItem.GridItems[0].Value, "3");
 			Assert.AreEqual (0, pg.SelectedGridItem.GridItems[0].GridItems.Count, "4");
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void PropertyGrid_ItemSelectTest ()
+		{
+			PropertyGrid pg = new PropertyGrid ();
+
+			pg.SelectedObject = new ArrayTest_object ();
+
+			// the selected grid item is the "Array" property item.
+			GridItem array_item = pg.SelectedGridItem;
+			GridItem misc_item = array_item.Parent;
+			GridItem root_item = misc_item.Parent;
+
+			Assert.IsTrue (misc_item.Select (), "1");
+			Assert.AreEqual (misc_item, pg.SelectedGridItem, "2");
+
+			Assert.IsTrue (array_item.Select (), "3");
+			Assert.AreEqual (array_item, pg.SelectedGridItem, "4");
+
+			Assert.IsFalse (root_item.Select (), "5");
+			Assert.AreEqual (array_item, pg.SelectedGridItem, "6");
+		}
 	}
 }
