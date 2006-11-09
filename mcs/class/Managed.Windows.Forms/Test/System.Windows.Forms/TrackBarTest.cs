@@ -94,6 +94,7 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void OrientationSizeTest ()
 		{	
+			IntPtr handle;
 			int width;
 			int height ;
 			using (TrackBar myTrackBar = new TrackBar()) {
@@ -109,9 +110,9 @@ namespace MonoTests.System.Windows.Forms
 					width = myTrackBar.Width;
 					height = myTrackBar.Height;
 					myForm.Controls.Add(myTrackBar);
-					IntPtr handle = myTrackBar.Handle; // causes the handle to be created.
+					handle = myTrackBar.Handle; // causes the handle to be created.
 					myTrackBar.Orientation = Orientation.Vertical;
-					Assert.AreEqual(height, myTrackBar.Width,  "#OS3");
+					Assert.AreEqual(45, myTrackBar.Width,  "#OS3");
 					Assert.AreEqual(width, myTrackBar.Height, "#OS4");
 				}
 			}
@@ -119,13 +120,144 @@ namespace MonoTests.System.Windows.Forms
 			using (Form myForm = new Form()) {
 				using ( TrackBar myTrackBar = new TrackBar()) {
 					myForm.Controls.Add(myTrackBar);
-					IntPtr handle = myTrackBar.Handle; // causes the handle to be created.
+					handle = myTrackBar.Handle; // causes the handle to be created.
 					myTrackBar.Width = 200;
 					myTrackBar.Orientation = Orientation.Vertical;
 					Assert.AreEqual(200, myTrackBar.Height, "#OS5");
 				}
 			}
+			Assert.AreEqual(handle, handle, "Removes warning");
 		}
-}
+			
+		[Test]
+		public void SizeTest ()
+		{
+			IntPtr handle;
+			
+			using (TrackBar myTrackBar = new TrackBar()) {
+				myTrackBar.Width = 200;
+				myTrackBar.Height = 250;
+				Assert.AreEqual(200, myTrackBar.Width, "#SIZE01");
+				Assert.AreEqual(45, myTrackBar.Height, "#SIZE02");
+			}
+			
+			using (TrackBar myTrackBar = new TrackBar()) {
+				myTrackBar.Width = 200;
+				myTrackBar.Height = 250;
+				myTrackBar.Orientation = Orientation.Vertical;
+				Assert.AreEqual(200, myTrackBar.Width, "#SIZE03");
+				Assert.AreEqual(45, myTrackBar.Height, "#SIZE04");
+			}
+
+			using (TrackBar myTrackBar = new TrackBar()) {
+				myTrackBar.AutoSize = false;
+				myTrackBar.Width = 200;
+				myTrackBar.Height = 250;
+				Assert.AreEqual(200, myTrackBar.Width, "#SIZE05");
+				Assert.AreEqual(250, myTrackBar.Height, "#SIZE06");
+			}
+
+			using (TrackBar myTrackBar = new TrackBar()) {
+				myTrackBar.AutoSize = false;
+				myTrackBar.Width = 200;
+				myTrackBar.Height = 250;
+				myTrackBar.Orientation = Orientation.Vertical;
+				Assert.AreEqual(200, myTrackBar.Width, "#SIZE07");
+				Assert.AreEqual(250, myTrackBar.Height, "#SIZE08");
+			}
+
+			using (TrackBar myTrackBar = new TrackBar()) {
+				myTrackBar.Width = 200;
+				myTrackBar.Height = 250;
+				myTrackBar.AutoSize = false;
+				Assert.AreEqual(200, myTrackBar.Width, "#SIZE09");
+				Assert.AreEqual(45, myTrackBar.Height, "#SIZE10");
+			}
+
+			using (TrackBar myTrackBar = new TrackBar()) {
+				myTrackBar.Width = 200;
+				myTrackBar.Height = 250;
+				myTrackBar.AutoSize = false;
+				myTrackBar.Orientation = Orientation.Vertical;
+				Assert.AreEqual(200, myTrackBar.Width, "#SIZE11");
+				Assert.AreEqual(45, myTrackBar.Height, "#SIZE12");
+			}
+	
+			using (TrackBar myTrackBar = new TrackBar()) {
+				using (Form myForm = new Form()) {
+					myForm.Controls.Add(myTrackBar);
+					myTrackBar.Width = 200;
+					myTrackBar.Height = 250;
+					myTrackBar.Orientation = Orientation.Vertical;
+					handle = myTrackBar.Handle;
+					
+					Assert.AreEqual(45, myTrackBar.Width, "#SIZE17");
+					Assert.AreEqual(45, myTrackBar.Height, "#SIZE18");
+				}
+			}
+
+			using (TrackBar myTrackBar = new TrackBar()) {
+				using (Form myForm = new Form()) {
+					myForm.Controls.Add(myTrackBar);
+					myTrackBar.Width = 200;
+					myTrackBar.Height = 250;
+					myTrackBar.Orientation = Orientation.Vertical;
+					handle = myTrackBar.Handle;
+					
+					Assert.AreEqual(45, myTrackBar.Width, "#SIZE19");
+					Assert.AreEqual(45, myTrackBar.Height, "#SIZE20");
+				}
+			}
+
+			using (TrackBar myTrackBar = new TrackBar()) {
+				using (Form myForm = new Form()) {
+					myForm.Controls.Add(myTrackBar);
+					myTrackBar.Width = 200;
+					myTrackBar.Height = 250;
+					myTrackBar.Orientation = Orientation.Vertical;
+					myTrackBar.Orientation = Orientation.Horizontal;
+					handle = myTrackBar.Handle;
+					
+					Assert.AreEqual(200, myTrackBar.Width, "#SIZE21");
+					Assert.AreEqual(45, myTrackBar.Height, "#SIZE22");
+				}
+			}
+
+			using (TrackBar myTrackBar = new TrackBar()) {
+				using (Form myForm = new Form()) {
+					myForm.Controls.Add(myTrackBar);
+					myTrackBar.Width = 200;
+					myTrackBar.Height = 250;
+					myTrackBar.Orientation = Orientation.Vertical;
+					handle = myTrackBar.Handle;
+					
+					myTrackBar.Orientation = Orientation.Horizontal;
+					
+					Assert.AreEqual(45, myTrackBar.Width, "#SIZE23");
+					Assert.AreEqual(45, myTrackBar.Height, "#SIZE24");
+				}
+			}
+			
+			using (TrackBar myTrackBar = new TrackBar()) {
+				myTrackBar.AutoSize = false;
+				myTrackBar.Height = 50;
+				myTrackBar.Width = 80;
+				myTrackBar.Orientation = Orientation.Vertical;
+				myTrackBar.Width = 100;
+				
+				Assert.AreEqual(50, myTrackBar.Height, "#SIZE2_1");
+				Assert.AreEqual(100, myTrackBar.Width, "#SIZE2_2");
+				
+				using (Form myForm = new Form()){
+					myForm.Controls.Add(myTrackBar);
+					myForm.Show();
+					
+					Assert.AreEqual(50, myTrackBar.Height, "#SIZE2_3");
+					Assert.AreEqual(100, myTrackBar.Width, "#SIZE2_4");
+				}
+			}
+			Assert.AreEqual(handle, handle, "Removes warning");
+		}
+	}
 }
 
