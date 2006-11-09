@@ -1,3 +1,9 @@
+2006-11-09  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #79872
+	* assembly.c (mono_assembly_load_from_full): Check that the given
+	image has an assembly manifest.
+
 2006-11-09  Ankit Jain  <jankit@novell.com>
 
 	* tabledefs.h (ASSEMBLYREF_RETARGETABLE_FLAG):
