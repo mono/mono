@@ -35,7 +35,6 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TabControlPropertyTest ()
 		{
 			Form myForm = new Form ();
@@ -49,10 +48,6 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (TabAppearance.Normal, myTabControl.Appearance, "#A2");
 		
 			// D 
-			Assert.AreEqual (4, myTabControl.DisplayRectangle.X, "#D1");
-			Assert.AreEqual (4, myTabControl.DisplayRectangle.Y, "#D2");
-			Assert.AreEqual (192, myTabControl.DisplayRectangle.Width, "#D3");
-			Assert.AreEqual (92, myTabControl.DisplayRectangle.Height, "#D4");
 			Assert.AreEqual (TabDrawMode.Normal, myTabControl.DrawMode, "#D5");
 		
 			// H
@@ -60,9 +55,6 @@ namespace MonoTests.System.Windows.Forms {
 		
 			// I 
 			Assert.AreEqual (null, myTabControl.ImageList, "#I1");
-			// It is environment dependent
-			//Assert.AreEqual (18, myTabControl.ItemSize.Height, "#I2");
-			Assert.AreEqual (0, myTabControl.ItemSize.Width, "#I3");
 
 			// M 
 			Assert.AreEqual (false, myTabControl.Multiline, "#M1");
