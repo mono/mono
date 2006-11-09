@@ -1,48 +1,43 @@
 Managed.Windows.Forms README
-$Revision: 1.2 $
 
 * Introduction
 
-Managed.Windows.Forms is a managed implementation of System.Windows.Forms.
-It implements a driver interface to allow running on multiple windowing systems,
-for example X11 or Windows. All controls are implemented in managed code,
-using System.Drawing to draw them.
+Managed.Windows.Forms is a managed implementation of
+System.Windows.Forms.  It implements a driver interface to allow
+running on multiple windowing systems, for example X11 or Windows. All
+controls are implemented in managed code, using System.Drawing to draw
+them.
 
 
 * Status
 
-This library is in pre-alpha state. Development is still in the very early
-stages. Bug reports are welcome, provided they don't just point out missing
-classes. Please use http://bugzilla.ximian.com/
+This library is in a beta state.  Development is still proceeding as
+at a rapid page on the 1.1 codebase.  A limitted number of 2.0
+controls have been implemented, but the 2.0 api is not supported at
+this time.  Bug reports are welcome.  Please use
+http://bugzilla.ximian.com/
 
 
 * Contributions
 
-No contributions providing only stubs will be accepted at this time. We ask
-that you submit contributions for review before committing them, our goal is 
-to have a consistent and complete implementation, ideally having most or all
-methods and properties of a class written by the same author. This will ensure
-a certain degree of consistency in the code. Please also check the 
-'Guidelines' file.
+Contributions are most welcome.  These can come in many different
+forms, depending on what you're interested in working on.  2.0
+controls need a lot of work, so ask on the mailing list or in irc if
+someone is working on it already, and if not, start in on it.  Also,
+the unit tests need a lot of work.  We can always use more of them,
+and there are still a small number of them which pass on MS .NET and
+fail on MWF.  For code contributions, please check the 'Guidelines'
+file.
 
-
-The core team for Managed.Windows.Forms currently are:
-	Jordi Mas i Hernandez	(jordi@ximian.com)
+The novell MWF team is currently:
+	Andreia Gaita		(shana.ufie@gmail.com)
 	Jackson Harper		(jackson@ximian.com)
-	Peter Bartok		(pbartok@novell.com)
-
-The Mac OS/X driver implementation is currently being done by:
-	Geoff Norton		(gnorton@customerdna.com)
-
+	Mike Kestner		(kestner@ximian.com)
+	Rolf Kvinge		(rolfkvinge@ya.com)
+	Chris Toshok		(toshok@ximian.com)
 
 * Mailing List
 
 There is a mailing list dedicated to Mono's System.Windows.Forms 
 implementation, mono-winforms-list, see 
 http://lists.ximian.com/mailman/listinfo/mono-winforms-list
-
-
-* To run System.Windows.Forms Applications
-
-You should use the old Wine-based implementation until this library is
-more functional and reaches beta-stage.
