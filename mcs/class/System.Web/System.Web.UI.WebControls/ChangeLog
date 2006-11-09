@@ -1,3 +1,10 @@
+2006-11-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ParameterCollection.cs: fixed SetDirtyObject method
+	* ObjectDataSource.cs, ObjectDataSourceView.cs: removed VievState
+	utilization for control's properties, implemented caching
+	* SqlDataSource.cs, SqlDataSourceView.cs: implemented caching
+
 2006-11-09 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* GridView.cs: fixed: DataKeys, PageCount, DataBinding flow.

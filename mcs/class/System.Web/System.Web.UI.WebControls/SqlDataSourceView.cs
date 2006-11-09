@@ -202,31 +202,39 @@ namespace System.Web.UI.WebControls {
 			if (SelectParameters.Count > 0)
 				InitializeParameters (command, SelectParameters, null, null, null, false);
 
-			OnSelecting (new SqlDataSourceSelectingEventArgs (command, arguments));
-
 			Exception exception = null;
 			if (owner.DataSourceMode == SqlDataSourceMode.DataSet) {
 				DataView dataView = null;
 
-				try {
-					DbDataAdapter adapter = factory.CreateDataAdapter ();
-					DataSet dataset = new DataSet ();
+				if (owner.EnableCaching)
+					dataView = (DataView) owner.Cache.GetCachedObject (SelectCommand, SelectParameters);
 
-					adapter.SelectCommand = command;
-					adapter.Fill (dataset, name);
+				if (dataView == null) {
+					OnSelecting (new SqlDataSourceSelectingEventArgs (command, arguments));
+					try {
+						DbDataAdapter adapter = factory.CreateDataAdapter ();
+						DataSet dataset = new DataSet ();
 
-					dataView = dataset.Tables [0].DefaultView;
-					if (dataView == null)
-						throw new InvalidOperationException ();
+						adapter.SelectCommand = command;
+						adapter.Fill (dataset, name);
+
+						dataView = dataset.Tables [0].DefaultView;
+						if (dataView == null)
+							throw new InvalidOperationException ();
+					}
+					catch (Exception e) {
+						exception = e;
+					}
+					int rowsAffected = (dataView == null) ? 0 : dataView.Count;
+					SqlDataSourceStatusEventArgs args = new SqlDataSourceStatusEventArgs (command, rowsAffected, exception);
+					OnSelected (args);
+
+					if (exception != null && !args.ExceptionHandled)
+						throw exception;
+
+					if (owner.EnableCaching)
+						owner.Cache.SetCachedObject (SelectCommand, selectParameters, dataView);
 				}
-				catch (Exception e) {
-					exception = e;
-				}
-				int rowsAffected = (dataView == null) ? 0 : dataView.Count;
-				OnSelected (new SqlDataSourceStatusEventArgs (command, rowsAffected, exception));
-
-				if (exception != null)
-					throw exception;
 
 				if (SortParameterName.Length == 0 || SelectCommandType == SqlDataSourceCommandType.Text)
 					dataView.Sort = arguments.SortExpression;
@@ -248,6 +256,8 @@ namespace System.Web.UI.WebControls {
 				return dataView;
 			}
 			else {
+				OnSelecting (new SqlDataSourceSelectingEventArgs (command, arguments));
+
 				DbDataReader reader = null;
 				bool closed = connection.State == ConnectionState.Closed;
 
@@ -749,6 +759,9 @@ namespace System.Web.UI.WebControls {
 		static readonly object EventUpdated = new object ();
 		protected virtual void OnUpdated (SqlDataSourceStatusEventArgs e)
 		{
+			if (owner.EnableCaching)
+				owner.Cache.Expire ();
+
 			if (!HasEvents ()) return;
 			SqlDataSourceStatusEventHandler h = Events [EventUpdated] as SqlDataSourceStatusEventHandler;
 			if (h != null)

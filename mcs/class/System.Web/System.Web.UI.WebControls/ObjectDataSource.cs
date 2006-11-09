@@ -49,7 +49,15 @@ namespace System.Web.UI.WebControls
 	[ToolboxBitmap ("bitmap file goes here")]
 	public class ObjectDataSource : DataSourceControl
 	{
+		static readonly string defaultViewName = "DefaultView";
 		ObjectDataSourceView defaultView;
+		
+		int cacheDuration = 0;
+		bool enableCaching = false;
+		string cacheKeyDependency = null;
+		string sqlCacheDependency = null;
+		DataSourceCacheManager cache = null;
+		DataSourceCacheExpiry cacheExpirationPolicy = DataSourceCacheExpiry.Absolute;
 
 		public ObjectDataSource ()
 		{
@@ -64,7 +72,7 @@ namespace System.Web.UI.WebControls
 		ObjectDataSourceView DefaultView {
 			get {
 				if (defaultView == null)
-					defaultView = new ObjectDataSourceView (this, "DefaultView", Context);
+					defaultView = new ObjectDataSourceView (this, defaultViewName, Context);
 				return defaultView;
 			}
 		}
@@ -136,42 +144,40 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (0)]
 		[TypeConverter ("System.Web.UI.DataSourceCacheDurationConverter, " + Consts.AssemblySystem_Web)]
-		[MonoTODO]
 		public virtual int CacheDuration 
 		{
 			get {
-				throw new NotImplementedException ();
+				return cacheDuration;
 			}
 			set {
-				throw new NotImplementedException ();
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ("value", "The duration must be non-negative");
+
+				cacheDuration = value;
 			}
 		}
 
 		[DefaultValue (DataSourceCacheExpiry.Absolute)]
-		[MonoTODO]
 		public virtual DataSourceCacheExpiry CacheExpirationPolicy 
 		{
 			get {
-				throw new NotImplementedException ();
+				return cacheExpirationPolicy;
 			}
 			set {
-				throw new NotImplementedException ();
+				cacheExpirationPolicy = value;
 			}
 		}
 
 		[DefaultValue ("")]
-		[MonoTODO]
 		public virtual string CacheKeyDependency 
 		{
 			get {
-				throw new NotImplementedException ();
+				return cacheKeyDependency != null ? cacheKeyDependency : string.Empty;
 			}
 			set {
-				throw new NotImplementedException ();
+				cacheKeyDependency = value;
 			}
 		}
-		
-		
 		
 		[WebCategoryAttribute ("Data")]
 		[DefaultValueAttribute (ConflictOptions.OverwriteChanges)]
@@ -181,17 +187,15 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue (false)]
-		[MonoTODO]
 		public bool ConvertNullToDBNull
 		{
 			get {
-				throw new NotImplementedException ();
+				return DefaultView.ConvertNullToDBNull;
 			}
 			set {
-				throw new NotImplementedException ();
+				DefaultView.ConvertNullToDBNull = value;
 			}
 		}
-		
 		
 		[WebCategoryAttribute ("Data")]
 		[DefaultValueAttribute ("")]
@@ -217,17 +221,10 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue (false)]
-		[MonoTODO]
-		public virtual bool EnableCaching 
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+		public virtual bool EnableCaching {
+			get { return enableCaching; }
+			set { enableCaching = value; }
 		}
-		
 		
 		[WebCategoryAttribute ("Paging")]
 		[DefaultValueAttribute (false)]
@@ -312,18 +309,12 @@ namespace System.Web.UI.WebControls
 			set { DefaultView.SortParameterName = value; }
 		}
 
+		[MonoTODO ("SQLServer specific")]
 		[DefaultValue ("")]
-		[MonoTODO]
-		public virtual string SqlCacheDependency
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+		public virtual string SqlCacheDependency {
+			get { return sqlCacheDependency != null ? sqlCacheDependency : string.Empty; }
+			set { sqlCacheDependency = value; }
 		}
-		
 		
 		[WebCategoryAttribute ("Paging")]
 		[DefaultValueAttribute ("startRowIndex")]
@@ -354,15 +345,26 @@ namespace System.Web.UI.WebControls
 		public ParameterCollection UpdateParameters {
 			get { return DefaultView.UpdateParameters; }
 		}
-		
+
+		internal DataSourceCacheManager Cache {
+			get {
+				if (cache == null)
+					cache = new DataSourceCacheManager (CacheDuration, CacheKeyDependency, CacheExpirationPolicy, UniqueID);
+				return cache;
+			}
+		}
+
 		protected override DataSourceView GetView (string viewName)
 		{
+			if (viewName == null)
+				throw new ArgumentException ("viewName");
+
 			return DefaultView;
 		}
 		
 		protected override ICollection GetViewNames ()
 		{
-			return new string [] { "DefaultView" };
+			return new string [] { defaultViewName };
 		}
 		
 		public IEnumerable Select ()

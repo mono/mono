@@ -46,6 +46,22 @@ namespace System.Web.UI.WebControls
 		HttpContext context;
 		Type objectType;
 		Type dataObjectType;
+
+		bool convertNullToDBNull = false;
+		bool enablePaging = false;
+		string dataObjectTypeName = null;
+		string filterExpression = null;
+		string maximumRowsParameterName = null;
+		string oldValuesParameterFormatString = null;
+		string deleteMethod = null;
+		string insertMethod = null;
+		string selectCountMethod = null;
+		string selectMethod = null;
+		string sortParameterName = null;
+		string startRowIndexParameterName = null;
+		string typeName = null;
+		string updateMethod = null;
+		private static string privateBinPath = null;
 		
 		StateBag viewState = new StateBag ();
 		ParameterCollection selectParameters;
@@ -286,34 +302,27 @@ namespace System.Web.UI.WebControls
 				ViewState ["ConflictDetection"] = value;
 			}
 		}
-		
-		public bool ConvertNullToDBNull {
-			get {
-				object ret = ViewState ["ConvertNullToDBNull"];
-				return ret != null ? (bool)ret : false;
-			}
-			set {
-				ViewState ["ConvertNullToDBNull"] = value;
-			}
+
+		public bool ConvertNullToDBNull	{
+			get { return convertNullToDBNull; }
+			set { convertNullToDBNull = value; }
 		}
-		
+
 		public string DataObjectTypeName {
 			get {
-				object ret = ViewState ["DataObjectTypeName"];
-				return ret != null ? (string)ret : string.Empty;
+				return dataObjectTypeName != null ? dataObjectTypeName : string.Empty;
 			}
 			set {
-				ViewState ["DataObjectTypeName"] = value;
+				dataObjectTypeName = value;
 			}
 		}
-		
+
 		public string DeleteMethod {
 			get {
-				object ret = ViewState ["DeleteMethod"];
-				return ret != null ? (string)ret : string.Empty;
+				return deleteMethod != null ? deleteMethod : string.Empty;
 			}
 			set {
-				ViewState ["DeleteMethod"] = value;
+				deleteMethod = value;
 			}
 		}
 		
@@ -328,27 +337,25 @@ namespace System.Web.UI.WebControls
 				return deleteParameters;
 			}
 		}
-		
+
 		public bool EnablePaging {
 			get {
-				object ret = ViewState ["EnablePaging"];
-				return ret != null ? (bool)ret : false;
+				return enablePaging;
 			}
 			set {
-				ViewState ["EnablePaging"] = value;
+				enablePaging = value;
 			}
 		}
-		
+
 		public string FilterExpression {
 			get {
-				object ret = ViewState ["FilterExpression"];
-				return ret != null ? (string)ret : string.Empty;
+				return filterExpression != null ? filterExpression : string.Empty;
 			}
 			set {
-				ViewState ["FilterExpression"] = value;
+				filterExpression = value;
 			}
 		}
-		
+
 		public ParameterCollection FilterParameters {
 			get {
 				if (filterParameters == null) {
@@ -360,17 +367,16 @@ namespace System.Web.UI.WebControls
 				return filterParameters;
 			}
 		}
-		
+
 		public string InsertMethod {
 			get {
-				object ret = ViewState ["InsertMethod"];
-				return ret != null ? (string)ret : string.Empty;
+				return insertMethod != null ? insertMethod : string.Empty;
 			}
 			set {
-				ViewState ["InsertMethod"] = value;
+				insertMethod = value;
 			}
 		}
-		
+
 		public ParameterCollection InsertParameters {
 			get {
 				if (insertParameters == null) {
@@ -382,48 +388,43 @@ namespace System.Web.UI.WebControls
 				return insertParameters;
 			}
 		}
-		
+
 		public string MaximumRowsParameterName {
 			get {
-				object ret = ViewState ["MaximumRowsParameterName"];
-				return ret != null ? (string)ret : "maximumRows";
+				return maximumRowsParameterName != null ? maximumRowsParameterName : "maximumRows";
 			}
 			set {
-				ViewState ["MaximumRowsParameterName"] = value;
+				maximumRowsParameterName = value;
 			}
 		}
-		
-		[DefaultValueAttribute ("{0}")]
+
 		public string OldValuesParameterFormatString {
 			get {
-				object ret = ViewState ["OldValuesParameterFormatString"];
-				return ret != null ? (string)ret : "{0}";
+				return oldValuesParameterFormatString != null ? oldValuesParameterFormatString : "{0}";
 			}
 			set {
-				ViewState ["OldValuesParameterFormatString"] = value;
+				oldValuesParameterFormatString = value;
 			}
 		}
-				
+
 		public string SelectCountMethod {
 			get {
-				object ret = ViewState ["SelectCountMethod"];
-				return ret != null ? (string)ret : string.Empty;
+				return selectCountMethod != null ? selectCountMethod : string.Empty;
 			}
 			set {
-				ViewState ["SelectCountMethod"] = value;
+				selectCountMethod = value;
 			}
 		}
-		
+
 		public string SelectMethod {
 			get {
-				object ret = ViewState ["SelectMethod"];
-				return ret != null ? (string)ret : string.Empty;
+				return selectMethod != null ? selectMethod : string.Empty;
 			}
 			set {
-				ViewState ["SelectMethod"] = value;
+				selectMethod = value;
 			}
 		}
-		
+
 		public ParameterCollection SelectParameters {
 			get {
 				if (selectParameters == null) {
@@ -435,48 +436,44 @@ namespace System.Web.UI.WebControls
 				return selectParameters;
 			}
 		}
-		
+
 		public string SortParameterName {
 			get {
-				object ret = ViewState ["SortParameterName"];
-				return ret != null ? (string)ret : string.Empty;
+				return sortParameterName != null ? sortParameterName : string.Empty;
 			}
 			set {
-				ViewState ["SortParameterName"] = value;
+				sortParameterName = value;
 			}
 		}
-		
+
 		public string StartRowIndexParameterName {
 			get {
-				object ret = ViewState ["StartRowIndexParameterName"];
-				return ret != null ? (string)ret : "startRowIndex";
+				return startRowIndexParameterName != null ? startRowIndexParameterName : "startRowIndex";
 			}
 			set {
-				ViewState ["StartRowIndexParameterName"] = value;
+				startRowIndexParameterName = value;
 			}
 		}
-		
+
 		public string TypeName {
 			get {
-				object ret = ViewState ["TypeName"];
-				return ret != null ? (string)ret : string.Empty;
+				return typeName != null ? typeName : string.Empty;
 			}
 			set {
-				ViewState ["TypeName"] = value;
+				typeName = value;
 				objectType = null;
 			}
 		}
-		
+
 		public string UpdateMethod {
 			get {
-				object ret = ViewState ["UpdateMethod"];
-				return ret != null ? (string)ret : string.Empty;
+				return updateMethod != null ? updateMethod : string.Empty;
 			}
 			set {
-				ViewState ["UpdateMethod"] = value;
+				updateMethod = value;
 			}
 		}
-		
+
 		public ParameterCollection UpdateParameters {
 			get {
 				if (updateParameters == null) {
@@ -489,41 +486,38 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private static string privateBinPath;
-    
-		private static string PrivateBinPath
-		{
+		private static string PrivateBinPath {
 			get {
-    				if (privateBinPath != null)
-        				return privateBinPath;
+				if (privateBinPath != null)
+					return privateBinPath;
 
-    				AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
-    				privateBinPath = Path.Combine(setup.ApplicationBase, setup.PrivateBinPath);
+				AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
+				privateBinPath = Path.Combine (setup.ApplicationBase, setup.PrivateBinPath);
 
-    				return privateBinPath;
-    			    }
+				return privateBinPath;
+			}
 		}
-    
-	        private Type LoadType(string typeName)
+
+		private Type LoadType (string typeName)
 		{
-				Type type = Type.GetType (typeName);
-				if (type != null)
-					return type;
+			Type type = Type.GetType (typeName);
+			if (type != null)
+				return type;
 
-    			if (!Directory.Exists (PrivateBinPath))
-    				return null;
+			if (!Directory.Exists (PrivateBinPath))
+				return null;
 
-    			string[] binDlls = Directory.GetFiles(PrivateBinPath, "*.dll");
-    			foreach (string s in binDlls) {
-    				Assembly binA = Assembly.LoadFrom (s);
-    				type = binA.GetType (typeName);
-    				if (type == null)
-        				continue;
+			string [] binDlls = Directory.GetFiles (PrivateBinPath, "*.dll");
+			foreach (string s in binDlls) {
+				Assembly binA = Assembly.LoadFrom (s);
+				type = binA.GetType (typeName);
+				if (type == null)
+					continue;
 
-    				return type;
-    			}
+				return type;
+			}
 
-    			return null;
+			return null;
 		}
     
 		Type ObjectType {
@@ -594,6 +588,9 @@ namespace System.Web.UI.WebControls
 			if (rargs.Exception != null && !rargs.ExceptionHandled)
 				throw rargs.Exception;
 
+			if (owner.EnableCaching)
+				owner.Cache.Expire ();
+			
 			OnDataSourceViewChanged (EventArgs.Empty);
 
 			return -1;
@@ -639,6 +636,9 @@ namespace System.Web.UI.WebControls
 			if (rargs.Exception != null && !rargs.ExceptionHandled)
 				throw rargs.Exception;
 
+			if (owner.EnableCaching)
+				owner.Cache.Expire ();
+			
 			OnDataSourceViewChanged (EventArgs.Empty);
 
 			return -1;
@@ -702,6 +702,9 @@ namespace System.Web.UI.WebControls
 			if (rargs.Exception != null && !rargs.ExceptionHandled)
 				throw rargs.Exception;
 
+			if (owner.EnableCaching)
+				owner.Cache.Expire ();
+			
 			OnDataSourceViewChanged (EventArgs.Empty);
 
 			return -1;
@@ -713,26 +716,43 @@ namespace System.Web.UI.WebControls
 
 			IOrderedDictionary paramValues = MergeParameterValues (SelectParameters, null, null, true);
 			ObjectDataSourceSelectingEventArgs args = new ObjectDataSourceSelectingEventArgs (paramValues, arguments, false);
-			OnSelecting (args);
-			if (args.Cancel)
-				return new ArrayList ();
-			
-			if (CanRetrieveTotalRowCount && arguments.RetrieveTotalRowCount)
-				arguments.TotalRowCount = QueryTotalRowCount (paramValues, arguments);
-			
-			if (CanPage) {
-				if (StartRowIndexParameterName.Length == 0)
-					throw new InvalidOperationException ("Paging is enabled, but the StartRowIndexParameterName property is not set.");
-				if (MaximumRowsParameterName.Length == 0)
-					throw new InvalidOperationException ("Paging is enabled, but the MaximumRowsParameterName property is not set.");
-				paramValues [StartRowIndexParameterName] = arguments.StartRowIndex;
-				paramValues [MaximumRowsParameterName] = arguments.MaximumRows;
+
+			object result = null;
+
+			if (owner.EnableCaching)
+				result = owner.Cache.GetCachedObject (SelectMethod, SelectParameters);
+
+			if (result == null) {
+				OnSelecting (args);
+				if (args.Cancel)
+					return new ArrayList ();
+
+				if (CanRetrieveTotalRowCount && arguments.RetrieveTotalRowCount)
+					arguments.TotalRowCount = QueryTotalRowCount (paramValues, arguments);
+
+				if (CanPage) {
+					if (StartRowIndexParameterName.Length == 0)
+						throw new InvalidOperationException ("Paging is enabled, but the StartRowIndexParameterName property is not set.");
+					if (MaximumRowsParameterName.Length == 0)
+						throw new InvalidOperationException ("Paging is enabled, but the MaximumRowsParameterName property is not set.");
+					paramValues [StartRowIndexParameterName] = arguments.StartRowIndex;
+					paramValues [MaximumRowsParameterName] = arguments.MaximumRows;
+				}
+
+				if (SortParameterName.Length > 0)
+					paramValues [SortParameterName] = arguments.SortExpression;
+
+				result = InvokeSelect (SelectMethod, paramValues);
+
+				if (owner.EnableCaching)
+					owner.Cache.SetCachedObject (SelectMethod, SelectParameters, result);
 			}
-			
-			if (SortParameterName.Length > 0)
-				paramValues [SortParameterName] = arguments.SortExpression;
-			
-			object result = InvokeSelect (SelectMethod, paramValues);
+
+			if (FilterExpression.Length > 0 && !(result is DataGrid || result is DataView || result is DataTable))
+				throw new NotSupportedException ("The FilterExpression property was set and the Select method does not return a DataSet, DataTable, or DataView.");
+
+			if (owner.EnableCaching && result is IDataReader)
+				throw new NotSupportedException ("Data source does not support caching objects that implement IDataReader");
 			
 			if (result is DataSet) {
 				DataSet dset = (DataSet) result;
@@ -1001,7 +1021,7 @@ namespace System.Web.UI.WebControls
 			if (value == null) {
 				if (targetType != TypeCode.Object && targetType != TypeCode.String)
 					value = 0;
-				else if (targetType == TypeCode.Object && ConvertNullToDBNull)
+				else if (ConvertNullToDBNull)
 					return DBNull.Value;
 			}
 			if (targetType == TypeCode.Object)

@@ -1,3 +1,8 @@
+2006-11-09 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* System.Web.dll.sources: added DataSourceCasheManager.cs
+	* System.Web20.vmwcsproj: added DataSourceCasheManager.cs
+
 2006-11-08  Marek Habersack  <grendello@gmail.com>
 
 	* System.Web.dll.sources: added the App_Code compiler

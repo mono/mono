@@ -158,9 +158,7 @@ namespace System.Web.UI.WebControls
 
 		protected override void SetDirtyObject (object o)
 		{
-			Parameter param = (Parameter)o;
-			if (Contains (param))
-				param.SetDirty ();
+			((Parameter)o).SetDirty ();
 		}
 
 		internal void CallOnParameterChanged ()

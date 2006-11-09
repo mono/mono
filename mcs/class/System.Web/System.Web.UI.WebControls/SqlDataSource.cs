@@ -311,41 +311,67 @@ namespace System.Web.UI.WebControls {
 		}
 		
 #region TODO
-		[MonoTODO]
+
+		int cacheDuration = 0;
+		bool enableCaching = false;
+		string cacheKeyDependency = null;
+		string sqlCacheDependency = null;
+		DataSourceCacheManager cache = null;
+		DataSourceCacheExpiry cacheExpirationPolicy = DataSourceCacheExpiry.Absolute;
+
+		internal DataSourceCacheManager Cache
+		{
+			get
+			{
+				if (cache == null)
+					cache = new DataSourceCacheManager (CacheDuration, CacheKeyDependency, CacheExpirationPolicy, UniqueID);
+				return cache;
+			}
+		}
+		
 		[DefaultValue ("")]
 		public virtual string CacheKeyDependency
 		{
-			get { return ViewState.GetString ("CacheKeyDependency", ""); }
-			set { ViewState ["CacheKeyDependency"] = value; }
+			get { return cacheKeyDependency != null ? cacheKeyDependency : string.Empty; }
+			set { cacheKeyDependency = value; }
 		}
 
-		[MonoTODO]
+		[MonoTODO ("SQLServer specific")]
 		[DefaultValue ("")]
 		public virtual string SqlCacheDependency {
-			get { return ViewState.GetString ("SqlCacheDependency", ""); }
-			set { ViewState ["SqlCacheDependency"] = value; }
+			get { return sqlCacheDependency != null ? sqlCacheDependency : string.Empty; }
+			set { sqlCacheDependency = value; }
 		}
 
-		[MonoTODO]
 		[DefaultValue (0)]
 		public virtual int CacheDuration {
-			get { return ViewState.GetInt ("CacheDuration", 0); }
-			set { ViewState ["CacheDuration"] = value; }
+			get { return cacheDuration; }
+			set
+			{
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ("value", "The duration must be non-negative");
+
+				cacheDuration = value;
+			}
 		}
 
-		[MonoTODO]
 		[DefaultValue (DataSourceCacheExpiry.Absolute)]
 		public virtual DataSourceCacheExpiry CacheExpirationPolicy {
-			get { return (DataSourceCacheExpiry) ViewState.GetInt ("CacheExpirationPolicy", (int)DataSourceCacheExpiry.Absolute); }
-			set { ViewState ["CacheExpirationPolicy"] = value; }
+			get { return cacheExpirationPolicy; ; }
+			set { cacheExpirationPolicy = value; }
 		}
 
-		[MonoTODO]
 		[DefaultValue (false)]
 		public virtual bool EnableCaching {
-			get { return ViewState.GetBool ("EnableCaching", false); }
-			set { ViewState ["EnableCaching"] = value; }
+			get { return enableCaching; }
+			set
+			{
+				if (DataSourceMode == SqlDataSourceMode.DataReader && value == true)
+					throw new NotSupportedException ();
+				enableCaching = value;
+			}
 		}
+
 #endregion
 		
 		public event SqlDataSourceStatusEventHandler Deleted {

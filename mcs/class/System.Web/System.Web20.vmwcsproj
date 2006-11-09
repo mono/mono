@@ -525,6 +525,7 @@
 		<Compile Include="System.Web.UI.WebControls\DataListItemCollection.cs"/>
 		<Compile Include="System.Web.UI.WebControls\DataListItemEventArgs.cs"/>
 		<Compile Include="System.Web.UI.WebControls\DataListItemEventHandler.cs"/>
+		<Compile Include="System.Web.UI.WebControls\DataSourceCacheManager.cs" />
 		<Compile Include="System.Web.UI.WebControls\DayNameFormat.cs"/>
 		<Compile Include="System.Web.UI.WebControls\DayRenderEventArgs.cs"/>
 		<Compile Include="System.Web.UI.WebControls\DayRenderEventHandler.cs"/>
