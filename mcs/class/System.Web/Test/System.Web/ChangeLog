@@ -1,5 +1,9 @@
 2006-11-05 Andrew Skiba <andrews@mainsoft.com>
 
+	* HttpWorkerRequestTest.cs: use IntPtr.Zero instead of (IntPtr) 0
+
+2006-11-05 Andrew Skiba <andrews@mainsoft.com>
+
 	* HttpRequestTest.cs, HttpWorkerRequestTest.cs: TARGET_JVM
 
 2006-11-05 Andrew Skiba <andrews@mainsoft.com>

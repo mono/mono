@@ -301,8 +301,8 @@ namespace MonoTests.System.Web {
 			Assert.AreEqual (null, f.GetUnknownRequestHeader ("IAMTHEUKNOWNN"), "F25");
 			Assert.AreEqual (null, f.GetUnknownRequestHeaders (), "F26");
 			Assert.AreEqual (0, f.GetUrlContextID (), "F27");
-			Assert.AreEqual ((IntPtr) 0, f.GetUserToken (), "F28");
-			Assert.AreEqual ((IntPtr) 0, f.GetVirtualPathToken (), "F29");
+			Assert.AreEqual (IntPtr.Zero, f.GetUserToken (), "F28");
+			Assert.AreEqual (IntPtr.Zero, f.GetVirtualPathToken (), "F29");
 			Assert.AreEqual (false, f.HasEntityBody (), "F30");
 			Assert.AreEqual (true, f.HeadersSent (), "F31");
 			Assert.AreEqual (true, f.IsClientConnected (), "F32");
