@@ -686,6 +686,8 @@ namespace System.Xml.Serialization
 		
 		void ImportAttributes (XmlQualifiedName typeQName, ClassMap cmap, XmlSchemaObjectCollection atts, XmlSchemaAnyAttribute anyat, CodeIdentifiers classIds)
 		{
+			atts = CollectAttributeUsesNonOverlap (atts, cmap);
+
 			if (anyat != null)
 			{
     			XmlTypeMapMemberAnyAttribute member = new XmlTypeMapMemberAnyAttribute ();
@@ -725,6 +727,20 @@ namespace System.Xml.Serialization
 					ImportAttributes (typeQName, cmap, grp.Attributes, grp.AnyAttribute, classIds);
 				}
 			}
+		}
+
+		// Attributes might be redefined, so there is an existing attribute for the same name, skip it.
+		// FIXME: this is nothing more than just a hack.
+		// Basically it should use
+		// XmlSchemaComplexType.AttributeUses.
+		XmlSchemaObjectCollection CollectAttributeUsesNonOverlap (
+			XmlSchemaObjectCollection src, ClassMap map)
+		{
+			XmlSchemaObjectCollection atts = new XmlSchemaObjectCollection ();
+			foreach (XmlSchemaAttribute a in src)
+				if (map.GetAttribute (a.QualifiedName.Name, a.QualifiedName.Namespace) == null)
+					atts.Add (a);
+			return atts;
 		}
 
 		ListMap BuildArrayMap (XmlQualifiedName typeQName, XmlSchemaComplexType stype, out TypeData arrayTypeData)
@@ -1628,7 +1644,7 @@ namespace System.Xml.Serialization
 			}
 			else
 			{
-				ns = typeQName.Namespace;
+				ns = attr.ParentIsSchema ? typeQName.Namespace : String.Empty;
 				return attr;
 			}
 		}
