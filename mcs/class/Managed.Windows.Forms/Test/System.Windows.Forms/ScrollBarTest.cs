@@ -277,7 +277,6 @@ public class MyScrollBar : HScrollBar
    public class ScrollBarTest
     {
 	    [Test]
-	    [Category ("NotWorking")]
 	    public void PubPropTest ()
 	       {
 		       MyScrollBar myscrlbar = new MyScrollBar ();
