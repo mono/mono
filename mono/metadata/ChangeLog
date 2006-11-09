@@ -1,3 +1,8 @@
+2006-11-09  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c (ves_icall_System_Net_Sockets_Socket_Poll_internal):
+	Use poll() not select().  Fixes bug 79397.
+
 2006-11-09  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #79872
