@@ -1,4 +1,0 @@
-bin\ConfigutationUtil.pdb
-obj\Debug\ResolveAssemblyReference.cache
-obj\Debug\ConfigutationUtil.dll
-obj\Debug\ConfigutationUtil.pdb

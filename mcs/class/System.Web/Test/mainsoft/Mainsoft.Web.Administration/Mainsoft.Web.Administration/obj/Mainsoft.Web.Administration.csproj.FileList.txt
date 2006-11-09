@@ -1,6 +1,0 @@
-bin\Mainsoft.Web.Administration.dll
-bin\Mainsoft.Web.Administration.pdb
-bin\ConfigutationUtil.pdb
-obj\Debug\ResolveAssemblyReference.cache
-obj\Debug\Mainsoft.Web.Administration.dll
-obj\Debug\Mainsoft.Web.Administration.pdb
