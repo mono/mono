@@ -207,14 +207,16 @@ namespace MonoTests.System.Windows.Forms
 			GridItem misc_item = array_item.Parent;
 			GridItem root_item = misc_item.Parent;
 
-			Assert.IsTrue (misc_item.Select (), "1");
-			Assert.AreEqual (misc_item, pg.SelectedGridItem, "2");
+			Assert.AreEqual (array_item, pg.SelectedGridItem, "1");
 
-			Assert.IsTrue (array_item.Select (), "3");
-			Assert.AreEqual (array_item, pg.SelectedGridItem, "4");
+			Assert.IsTrue (misc_item.Select (), "2");
+			Assert.AreEqual (misc_item, pg.SelectedGridItem, "3");
 
-			Assert.IsFalse (root_item.Select (), "5");
-			Assert.AreEqual (array_item, pg.SelectedGridItem, "6");
+			Assert.IsTrue (array_item.Select (), "4");
+			Assert.AreEqual (array_item, pg.SelectedGridItem, "5");
+
+			Assert.IsFalse (root_item.Select (), "6");
+			Assert.AreEqual (array_item, pg.SelectedGridItem, "7");
 		}
 	}
 }
