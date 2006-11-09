@@ -147,10 +147,10 @@ namespace System.Windows.Forms
 			item_control = new ItemControl (this);
 			Controls.AddImplicit (item_control);
 
-			h_scroll = new HScrollBar ();
+			h_scroll = new ImplicitHScrollBar ();
 			Controls.AddImplicit (this.h_scroll);
 
-			v_scroll = new VScrollBar ();
+			v_scroll = new ImplicitVScrollBar ();
 			Controls.AddImplicit (this.v_scroll);
 
 			h_marker = v_marker = 0;

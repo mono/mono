@@ -1,3 +1,8 @@
+2006-11-09  Mike Kestner  <mkestner@novell.com>
+
+	* ListView.cs : use Implicit scrollbars so that focus isn't 
+	stolen from the listview when they are clicked. Fixes #79850.
+
 2006-11-09  Chris Toshok  <toshok@ximian.com>
 
 	* PropertyGridView.cs (OnPaint): only call DrawGridItems if we
