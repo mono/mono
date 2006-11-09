@@ -1,4 +1,9 @@
 
+Thu Nov 9 16:56:13 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini-codegen.c, jit-icalls.c, jit-icalls.h:
+	more soft-float support WIP and fixes.
+
 Wed Nov 8 16:40:02 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini-arm.c: some VFP updates.
