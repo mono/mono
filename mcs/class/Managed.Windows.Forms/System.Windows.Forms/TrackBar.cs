@@ -64,6 +64,9 @@ namespace System.Windows.Forms
 		internal int thumb_mouseclick;		
 		private bool mouse_clickmove;
 		private bool is_moving_right; // which way the thumb should move when mouse is down (right=up, left=down) 
+		internal int mouse_down_x_offset; // how far from left side of thumb was the mouse clicked.
+		internal bool mouse_moved; // has the mouse moved since it was clicked?
+		private const int size_of_autosize = 45;
 	
 		#region events
 		[Browsable (false)]
@@ -143,6 +146,8 @@ namespace System.Windows.Forms
 			MouseUp += new MouseEventHandler (OnMouseUpTB); 
 			MouseMove += new MouseEventHandler (OnMouseMoveTB);
 			KeyDown += new KeyEventHandler (OnKeyDownTB);
+			LostFocus += new EventHandler (OnLostFocusTB);
+			GotFocus += new EventHandler (OnGotFocusTB);
 			holdclick_timer.Elapsed += new ElapsedEventHandler (OnFirstClickTimer);
 
 			SetStyle (ControlStyles.UserPaint | ControlStyles.Opaque, false);
@@ -227,7 +232,7 @@ namespace System.Windows.Forms
 			set {
 				if (value < 0)
 					throw new ArgumentException( string.Format("Value '{0}' must be greater than or equal to 0.", value));
-
+				
 				largeChange = value;				
 			}
 		}
@@ -278,9 +283,7 @@ namespace System.Windows.Forms
 					orientation = value;
 					
 					if (this.IsHandleCreated) {
-						int old_witdh = Width;
-						Width = Height;
-						Height = old_witdh;
+						Size = new Size (Height, Width);
 						Refresh (); 
 					}
 				}
@@ -367,6 +370,17 @@ namespace System.Windows.Forms
 			base.CreateHandle ();
 		}
 
+		protected override void SetBoundsCore (int x, int y,int width, int height, BoundsSpecified specified)
+		{
+			if (AutoSize) {
+				if (orientation == Orientation.Vertical) {
+					width = size_of_autosize;
+				} else {
+					height = size_of_autosize;
+				}
+			}
+			base.SetBoundsCore (x, y, width, height, specified);
+		}
 
 		public void EndInit ()		
 		{
@@ -515,6 +529,8 @@ namespace System.Windows.Forms
     		{
     			if (!Enabled) return;			    			
 
+			mouse_moved = false;
+
 			bool fire_timer = false;
     			
     			Point point = new Point (e.X, e.Y);
@@ -525,6 +541,7 @@ namespace System.Windows.Forms
 					this.Capture = true;
 					thumb_pressed = true;
 					thumb_mouseclick = e.X;
+					mouse_down_x_offset = e.X - thumb_pos.X;
 					Invalidate (thumb_area);
 				}
 				else {
@@ -542,10 +559,14 @@ namespace System.Windows.Forms
 				}
 			}
 			else {
-				if (thumb_pos.Contains (point)) {
+				Rectangle vertical_thumb_pos = thumb_pos;
+				vertical_thumb_pos.Width = thumb_pos.Height;
+				vertical_thumb_pos.Height = thumb_pos.Width;
+				if (vertical_thumb_pos.Contains (point)) {
 					this.Capture = true;
 					thumb_pressed = true;
 					thumb_mouseclick = e.Y;
+					mouse_down_x_offset = e.Y - thumb_pos.Y;
 					Invalidate (thumb_area);
 				}
 				else {
@@ -573,6 +594,8 @@ namespace System.Windows.Forms
     		{    			
     			if (!Enabled) return;
     		
+    			mouse_moved = true;
+
     			/* Moving the thumb */
     			if (thumb_pressed) {
 								 				
@@ -595,6 +618,15 @@ namespace System.Windows.Forms
 			ThemeEngine.Current.DrawTrackBar (pevent.Graphics, pevent.ClipRectangle, this);
 		}
 
+		private void OnLostFocusTB (object sender, EventArgs e)
+		{
+			Invalidate();
+		}
+
+		private void OnGotFocusTB (object sender, EventArgs e)
+		{
+			Invalidate();
+		}
 		private void OnKeyDownTB (object sender, KeyEventArgs e) 
 		{
 			switch (e.KeyCode) {
@@ -666,16 +698,6 @@ namespace System.Windows.Forms
  					Refresh();
 			}			
 		}					
-
-		protected override void SetBoundsCore (int x, int y,int width, int height, BoundsSpecified specified)
-		{
-			if (orientation == Orientation.Vertical) {
-				width = DefaultSize.Height;
-			} else {
-				height = DefaultSize.Height;
-			}
-			base.SetBoundsCore (x, y,width, height, specified);
-		}
     		#endregion // Private Methods
 	}
 }

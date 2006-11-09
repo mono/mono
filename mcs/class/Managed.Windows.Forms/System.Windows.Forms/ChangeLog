@@ -1,3 +1,18 @@
+ 2006-11-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+ 
+ 	* TrackBar.cs: 
+ 	- The control is completely invalidated on 
+ 	Got/LostFocus to draw the focus rectangle correctly.
+ 	- When AutoSize then height is always 45 (width for 
+ 	vertical controls).
+ 	
+ 	* ThemeWin32Classic.cs: The TrackBar thumb is now centered
+ 	on the mouse when moved and it doesn't move when grabbed
+ 	until the mouse moves as well. Also fixed some wrong 
+ 	calculations when clicking on the thumb (control thought
+ 	click was outside of thumb and didn't grab it).
+ 	Fixes some of the issues in #79718.
+
 2006-11-08  Everaldo Canuto  <everaldo@simios.org>
 
 	* Toolbar.cs: Prevent disabled button to highlight. Fixes #79868.

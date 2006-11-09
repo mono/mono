@@ -4233,15 +4233,23 @@ namespace System.Windows.Forms
 			
 			/* Convert thumb position from mouse position to value*/
 			if (mouse_value) {
-				if (value_pos < thumb_area.Bottom)
-					value_pos = (int) ((thumb_area.Bottom - value_pos) / pixels_betweenticks);
-				else
-					value_pos = 0;			
+				if (tb.mouse_moved) {
+					value_pos += (int) pixels_betweenticks / 2;
+					if (value_pos < thumb_area.Bottom) {
+						value_pos = (int) ((thumb_area.Bottom - value_pos - (int)(thumb_pos.Width / 2)) / pixels_betweenticks);
+					} else {
+						value_pos = 0;			
+					}
+	
+					if (value_pos + tb.Minimum > tb.Maximum)
+						value_pos = tb.Maximum - tb.Minimum;
+					else if (value_pos + tb.Minimum < tb.Minimum)
+						value_pos = 0;
 
-				if (value_pos + tb.Minimum > tb.Maximum)
-					value_pos = tb.Maximum - tb.Minimum;
-
-				tb.Value = value_pos + tb.Minimum;
+					tb.Value = value_pos + tb.Minimum;	
+				} else {
+					value_pos = tb.Value - tb.Minimum;
+				}
 			}			
 
 			// thumb_pos.Y = channel_startpoint.Y ; // + (int) (pixels_betweenticks * (float) value_pos);
@@ -4377,7 +4385,7 @@ namespace System.Windows.Forms
 			Does not matter the size of the control, Win32 always draws:
 				- Ticks starting from pixel 13, 8
 				- Channel starting at pos 8, 19 and ends at Width - 8
-				- Autosize makes always the control 40 pixels height
+				- Autosize makes always the control 45 pixels high
 				- Ticks are draw at (channel.Witdh - 10) / (Maximum - Minimum)
 				
 		*/
@@ -4439,15 +4447,22 @@ namespace System.Windows.Forms
 
 			/* Convert thumb position from mouse position to value*/
 			if (mouse_value) {			
-				if (value_pos >= channel_startpoint.X)
-					value_pos = (int)(((float) (value_pos - channel_startpoint.X)) / pixels_betweenticks);
-				else
-					value_pos = 0;				
+				if (tb.mouse_moved) {
+					value_pos += (int) pixels_betweenticks / 2;
+					if (value_pos >= channel_startpoint.X) {
+						value_pos = (int)(((float) (value_pos - channel_startpoint.X - (int)(thumb_pos.Width / 2))) / pixels_betweenticks);
+					} else
+						value_pos = 0;				
+	
+					if (value_pos + tb.Minimum > tb.Maximum)
+						value_pos = tb.Maximum - tb.Minimum;
+					else if(value_pos + tb.Minimum < tb.Minimum)
+						value_pos = 0;
 
-				if (value_pos + tb.Minimum > tb.Maximum)
-					value_pos = tb.Maximum - tb.Minimum;
-                                
-				tb.Value = value_pos + tb.Minimum;
+					tb.Value = value_pos + tb.Minimum;
+				} else {
+					value_pos = tb.Value - tb.Minimum;
+				}
 			}			
 			
 			thumb_pos.X = channel_startpoint.X + (int) (pixels_betweenticks * (float) value_pos);
@@ -4605,13 +4620,8 @@ namespace System.Windows.Forms
 				dc.FillRectangle (ResPool.GetSolidBrush (tb.BackColor), clip_rectangle);
 			}
 			
-
 			if (tb.Focused) {
-				Brush brush = ResPool.GetHatchBrush (HatchStyle.Percent50, ColorControl, Color.Black);
-				dc.FillRectangle (brush, area.X, area.Y, area.Width - 1, 1);
-				dc.FillRectangle (brush, area.X, area.Y + area.Height - 1, area.Width - 1, 1);
-				dc.FillRectangle (brush, area.X, area.Y, 1, area.Height - 1);
-				dc.FillRectangle (brush, area.X + area.Width - 1, area.Y, 1, area.Height - 1);
+				CPDrawFocusRectangle(dc, area, tb.ForeColor, tb.BackColor);
 			}
 
 			if (tb.Orientation == Orientation.Vertical) {

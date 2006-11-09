@@ -110,6 +110,8 @@ namespace System.Windows.Forms {
 				if (value < 0)
 					throw new ArgumentException ("value");
 				min_width = value;
+				if (min_width > width)
+					width = min_width;
 				Invalidate ();
 			}
 		}
@@ -126,7 +128,10 @@ namespace System.Windows.Forms {
 					twidth = value;
 				else
 					width = value;
-			
+				
+				if (min_width > width)
+					width = min_width;
+					
 				Invalidate ();
 			}
 		}
