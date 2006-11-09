@@ -29,7 +29,10 @@
 
 using NUnit.Framework;
 using System;
+using System.IO;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace MonoTests.System.ComponentModel {
 
@@ -37,11 +40,20 @@ namespace MonoTests.System.ComponentModel {
 	public class CollectionConverterTest {
 
 		private CollectionConverter cc;
+		private StringCollection sc;
 
 		[TestFixtureSetUp]
 		public void FixtureSetUp ()
 		{
 			cc = new CollectionConverter ();
+			sc = new StringCollection ();
+		}
+
+		[Test]
+		public void ApplicableTypes ()
+		{
+			Type t = cc.GetType ();
+			Assert.AreEqual (t, TypeDescriptor.GetConverter (typeof (StringCollection)).GetType (), "StringCollection");
 		}
 
 		[Test]
@@ -72,6 +84,56 @@ namespace MonoTests.System.ComponentModel {
 		public void ConvertFrom ()
 		{
 			cc.ConvertFrom (array_of_strings);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ConvertFrom_XmlSerializer ()
+		{
+			XmlSerializer xs = new XmlSerializer (typeof (string[]));
+			object o = xs.Deserialize (new StringReader (array_of_strings));
+			cc.ConvertFrom (o);
+		}
+
+		[Test]
+		public void ConvertTo ()
+		{
+			Assert.AreEqual (String.Empty, cc.ConvertTo (null, null, null, typeof (string)), "null");
+			Assert.AreEqual ("(Collection)", cc.ConvertTo (null, null, sc, typeof (string)), "0");
+			sc.Add ("some string value");
+			Assert.AreEqual ("(Collection)", cc.ConvertTo (null, null, sc, typeof (string)), "1");
+			sc.Clear ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ConvertTo_TypeNull ()
+		{
+			cc.ConvertTo (null, null, sc, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ConvertTo_TypeNotString ()
+		{
+			cc.ConvertTo (null, null, sc, typeof (int));
+		}
+
+		[Test]
+		public void GetProperties ()
+		{
+			// documented to always return null
+			Assert.IsNull (cc.GetProperties (null), "null");
+			Assert.IsNull (cc.GetProperties (null, null), "null,null");
+			Assert.IsNull (cc.GetProperties (null, null, null), "null,null,null");
+		}
+
+		[Test]
+		public void GetPropertiesSupported ()
+		{
+			// documented to always return false
+			Assert.IsFalse (cc.GetPropertiesSupported (), "empty");
+			Assert.IsFalse (cc.GetPropertiesSupported (null), "null");
 		}
 	}
 }

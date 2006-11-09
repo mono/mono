@@ -1,3 +1,7 @@
+2006-11-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CollectionConverterTest.cs: More test cases.
+
 2006-11-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ArrayConverterTests.cs: Added tests for ArrayConverter.
