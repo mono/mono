@@ -38,7 +38,6 @@ namespace System.Windows.Forms.PropertyGridInternal
 		private bool expanded = true;
 		private GridItemCollection grid_items;
 		private GridItem parent;
-		private GridEntry ui_parent;
 		private PropertyDescriptor property_descriptor;
 		private object[] selected_objects;
 		private string label;
@@ -153,8 +152,10 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 		#region Public Instance Methods
 		[MonoTODO]
-		public override bool Select () {
-			throw new NotImplementedException();
+		public override bool Select ()
+		{
+			property_grid_view.property_grid.SelectedGridItem = this;
+			return true;
 		}
 		#endregion	// Public Instance Methods
 
@@ -248,18 +249,6 @@ namespace System.Windows.Forms.PropertyGridInternal
 		internal void SetParent (GridItem parent)
 		{
 			this.parent = parent;
-		}
-
-		internal void SetUIParent (GridEntry ui_parent)
-		{
-			this.ui_parent = ui_parent;
-		}
-
-		internal GridEntry UIParent
-		{
-			get {
-				return ui_parent;
-			}
 		}
 	}
 }

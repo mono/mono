@@ -57,7 +57,7 @@ namespace System.Windows.Forms {
 		private PropertySort property_sort;
 		private PropertyTabCollection property_tabs;
 		private GridItem selected_grid_item;
-		internal GridItemCollection grid_items;
+		internal GridItem root_grid_item;
 		private object[] selected_objects;
 		private PropertyTab selected_tab;
 
@@ -83,7 +83,6 @@ namespace System.Windows.Forms {
 		#region Contructors
 		public PropertyGrid() {
 			selected_objects = new object[0];
-			grid_items = new GridItemCollection();
 			property_tabs = new PropertyTabCollection();
 
 			line_color = SystemColors.ScrollBar;
@@ -143,12 +142,11 @@ namespace System.Windows.Forms {
 
 			toolbar.Appearance = ToolBarAppearance.Flat;
 			toolbar.AutoSize = false;
-			toolbar.Buttons.AddRange(new ToolBarButton[] {
-															 categorized_toolbarbutton,
-															 alphabetic_toolbarbutton,
-															 separator_toolbarbutton,
-															 propertypages_toolbarbutton});
-
+			toolbar.Buttons.AddRange(new ToolBarButton[] {categorized_toolbarbutton,
+								      alphabetic_toolbarbutton,
+								      separator_toolbarbutton,
+								      propertypages_toolbarbutton});
+			
 			toolbar.ButtonSize = new System.Drawing.Size(20, 20);
 			toolbar.ImageList = toolbar_imagelist;
 			toolbar.Location = new System.Drawing.Point(0, 0);
@@ -530,9 +528,9 @@ namespace System.Windows.Forms {
 
 				RefreshTabs(PropertyTabScope.Component);
 				ReflectObjects();
-				if (grid_items.Count > 0) {
+				if (root_grid_item != null) {
 					/* find the first non category grid item and select it */
-					SelectedGridItem = property_grid_view.FindFirstItem (grid_items);
+					SelectedGridItem = FindFirstItem (root_grid_item);
 				}
 				property_grid_view.Refresh();
 				OnSelectedObjectsChanged (EventArgs.Empty);
@@ -647,16 +645,22 @@ namespace System.Windows.Forms {
 		protected override void Dispose(bool val) {
 			base.Dispose(val);
 		}
-		
+
+		[MonoTODO ("should this be recursive?  or just the toplevel items?")]
 		public void CollapseAllGridItems () {
-			foreach (GridItem item in this.grid_items) {
-				item.Expanded = false;
+			if (root_grid_item != null) {
+				foreach (GridItem item in root_grid_item.GridItems) {
+					item.Expanded = false;
+				}
 			}
 		}
 
+		[MonoTODO ("should this be recursive?  or just the toplevel items?")]
 		public void ExpandAllGridItems () {
-			foreach (GridItem item in this.grid_items) {
-				item.Expanded = true;
+			if (root_grid_item != null) {
+				foreach (GridItem item in root_grid_item.GridItems) {
+					item.Expanded = true;
+				}
 			}
 		}
 
@@ -932,6 +936,21 @@ namespace System.Windows.Forms {
 
 		#region Private Helper Methods
 
+		public GridItem FindFirstItem (GridItem root)
+		{
+			if (root.GridItemType == GridItemType.Property)
+				return root;
+
+			foreach (GridItem item in root.GridItems) {
+				GridItem subitem = FindFirstItem (item);
+				if (subitem != null)
+					return subitem;
+			}
+
+			return null;
+		}
+
+
 		private void toolbar_ButtonClick (object sender, ToolBarButtonClickEventArgs e) {
 			if (e.Button == alphabetic_toolbarbutton) {
 				this.PropertySort = PropertySort.Alphabetical;
@@ -967,10 +986,12 @@ namespace System.Windows.Forms {
 		}
 
 		private void ReflectObjects () {
-			grid_items = new GridItemCollection();
-
-			if (selected_objects.Length > 0)
-				PopulateMergedGridItems (selected_objects, grid_items, true, null);
+			if (selected_objects.Length > 0) {
+				root_grid_item = new RootGridEntry (property_grid_view,
+								    selected_objects.Length > 1 ? selected_objects : selected_objects[0]);
+									   
+				PopulateMergedGridItems (selected_objects, root_grid_item.GridItems, true, root_grid_item);
+			}
 		}
 
 		private void PopulateMergedGridItems (object[] objs, GridItemCollection grid_item_coll, bool recurse, GridItem parent_grid_item)
@@ -987,7 +1008,18 @@ namespace System.Windows.Forms {
 				/* i tried using filter attributes, but there's no way to do it for EditorBrowsableAttributes,
 				   since that type lacks an override for IsDefaultAttribute, and for some reason the
 				   BrowsableAttribute.Yes filter wasn't working */
-				PropertyDescriptorCollection properties = TypeDescriptor.GetProperties (type);
+				PropertyDescriptorCollection properties = null;
+
+				if (typeof (ICustomTypeDescriptor).IsAssignableFrom (type)) {
+					properties = ((ICustomTypeDescriptor)objs[i]).GetProperties ();
+				}
+				if (properties == null) {
+					TypeConverter cvt = TypeDescriptor.GetConverter (objs[i]);
+					properties = cvt.GetProperties (objs[i]);
+				}
+				if (properties == null) {
+					properties = TypeDescriptor.GetProperties (objs[i]);
+				}
 
 				foreach (PropertyDescriptor p in (i == 0 ? (ICollection)properties : (ICollection)intersection)) {
 					PropertyDescriptor property = (i == 0 ? p : properties [p.Name]);
@@ -1029,7 +1061,7 @@ namespace System.Windows.Forms {
 				if (property_sort == PropertySort.Alphabetical || /* XXX */property_sort == PropertySort.NoSort || !recurse) {
 					if (grid_item_coll[property.Name] == null) {
 						grid_item_coll.Add(property.Name,grid_entry);
-						grid_entry.SetUIParent ((GridEntry)parent_grid_item);
+						grid_entry.SetParent ((GridEntry)parent_grid_item);
 					}
 				}
 				else if (property_sort == PropertySort.Categorized || property_sort == PropertySort.CategorizedAlphabetical) {
@@ -1037,14 +1069,13 @@ namespace System.Windows.Forms {
 					string category = property.Category;
 					CategoryGridEntry cat_item = grid_item_coll[category] as CategoryGridEntry;
 					if (cat_item == null) {
-						cat_item = new CategoryGridEntry(property_grid_view, category);
+						cat_item = new CategoryGridEntry (property_grid_view, category);
 						cat_item.SetParent (parent_grid_item);
-						cat_item.SetUIParent ((GridEntry)parent_grid_item);
-						grid_item_coll.Add(category,cat_item);
+						grid_item_coll.Add (category, cat_item);
 					}
 					if (cat_item.GridItems[property.Name] == null) {
 						cat_item.GridItems.Add(property.Name,grid_entry);
-						grid_entry.SetUIParent (cat_item);
+						grid_entry.SetParent (cat_item);
 					}
 				}
 
@@ -1067,7 +1098,10 @@ namespace System.Windows.Forms {
 		{
 			object target = ((GridEntry)item).SelectedObjects[selected_index];
 
-			if (item.Parent != null)
+			while (item.Parent != null && item.Parent.GridItemType != GridItemType.Property)
+				item = item.Parent;
+
+			if (item.Parent != null && item.Parent.PropertyDescriptor != null)
 				target = item.Parent.PropertyDescriptor.GetValue (((GridEntry)item.Parent).SelectedObjects[selected_index]);
 
 			return target;
@@ -1121,5 +1155,11 @@ namespace System.Windows.Forms {
 		// needed! this little helper makes it possible to draw a different toolbar border
 		// and toolbar backcolor in ThemeWin32Classic
 		internal class PropertyToolBar : ToolBar {}
+
+
+		[MonoTODO ("not sure what this class does, but it's listed as a type converter for a property in this class, and this causes problems if it's not present")]
+		internal class SelectedObjectConverter : TypeConverter
+		{
+		}
 	}
 }

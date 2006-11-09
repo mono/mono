@@ -11,6 +11,23 @@
 
 2006-11-08  Chris Toshok  <toshok@ximian.com>
 
+	* RootGridEntry.cs: new class to represent GridItemType.Root.
+
+	* CategoryGridEntry.cs: reformat, and add boilerplate.
+	
+	* GridEntry.cs: remove the UIParent stuff - turns out .Parent
+	returns the UI parent anyway, and we need special handling to
+	implement the GetTarget method in the face of it.  Also, implement
+	Select().
+
+	* PropertyGrid.cs, PropertyGridView.cs: a number of fixes.  create
+	a root grid item, and use that instead of PropertyGrid.grid_items.
+	Also, make use of TypeConverters (and add limitted support for
+	ICustomTypeDescriptors) when initially populating the grid.
+	Arrays now show up more or less properly.
+
+2006-11-08  Chris Toshok  <toshok@ximian.com>
+
 	* Application.cs: set the modal dialog to non modal after we close
 	it.  Fixes bug #79866.
 

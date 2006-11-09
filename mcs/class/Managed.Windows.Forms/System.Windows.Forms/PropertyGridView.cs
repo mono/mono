@@ -202,7 +202,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), ClientRectangle);
 			
 			int yLoc = -vbar.Value*row_height;
-			DrawGridItems(property_grid.grid_items, e, 1, ref yLoc);
+			DrawGridItems(property_grid.root_grid_item.GridItems, e, 1, ref yLoc);
 
 			UpdateScrollBar();
 		}
@@ -240,7 +240,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			}
 			else {
 				int offset = -vbar.Value*row_height;
-				GridItem foundItem = GetSelectedGridItem(property_grid.grid_items, e.Y, ref offset);
+				GridItem foundItem = GetSelectedGridItem(property_grid.root_grid_item.GridItems, e.Y, ref offset);
 				
 				if (foundItem != null) {
 					if (foundItem.Expandable) {
@@ -335,22 +335,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			}
 		}
 
-		public GridItem FindFirstItem (GridItemCollection items)
-		{
-			foreach (GridItem item in items) {
-				if (item.GridItemType == GridItemType.Property)
-					return item;
-
-				if (item.GridItems.Count > 0) {
-					GridItem subitem = FindFirstItem (item.GridItems);
-					if (subitem != null)
-						return subitem;
-				}
-			}
-
-			return null;
-		}
-
 		private GridEntry MoveUpFromItem (GridEntry item, int up_count)
 		{
 			GridItemCollection items;
@@ -359,13 +343,13 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			/* move back up the visible rows (and up the hierarchy as necessary) until
 			   up_count == 0, or we reach the top of the display */
 			while (up_count > 0) {
-				items = item.UIParent != null ? item.UIParent.GridItems : property_grid.grid_items;
+				items = item.Parent != null ? item.Parent.GridItems : property_grid.root_grid_item.GridItems;
 				index = items.IndexOf (item);
 
 				if (index == 0) {
-					if (item.UIParent == null) // we're at the top row
+					if (item.Parent.GridItemType == GridItemType.Root) // we're at the top row
 						return item;
-					item = (GridEntry)item.UIParent;
+					item = (GridEntry)item.Parent;
 					up_count --;
 				}
 				else {
@@ -385,24 +369,23 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		private GridEntry MoveDownFromItem (GridEntry item, int down_count)
 		{
 			while (down_count > 0) {
-				GridItemCollection items = item.UIParent != null ? item.UIParent.GridItems : property_grid.grid_items;
 				/* if we're a parent node and we're expanded, move to our first child */
 				if (item.Expandable && item.Expanded) {
 					item = (GridEntry)item.GridItems[0];
 					down_count--;
 				}
 				else {
-					GridEntry searchItem = item;
-					GridItemCollection searchItems = items;
+					GridItem searchItem = item;
+					GridItemCollection searchItems = searchItem.Parent.GridItems;
 					int searchIndex = searchItems.IndexOf (searchItem);
 
 					while (searchIndex == searchItems.Count - 1) {
-						searchItem = searchItem.UIParent;
+						searchItem = searchItem.Parent;
 
-						if (searchItem == null)
+						if (searchItem == null || searchItem.Parent == null)
 							break;
 
-						searchItems = (searchItem.UIParent != null) ? searchItem.UIParent.GridItems : property_grid.grid_items;
+						searchItems = searchItem.Parent.GridItems;
 						searchIndex = searchItems.IndexOf (searchItem);
 					}
 
@@ -494,14 +477,14 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				break;
 			case Keys.End:
 				/* find the last, most deeply nested visible item */
-				GridEntry item = (GridEntry)property_grid.grid_items[property_grid.grid_items.Count - 1];
+				GridEntry item = (GridEntry)property_grid.root_grid_item.GridItems[property_grid.root_grid_item.GridItems.Count - 1];
 				while (item.Expandable && item.Expanded)
 					item = (GridEntry)item.GridItems[item.GridItems.Count - 1];
 				property_grid.SelectedGridItem = item;
 				e.Handled = true;
 				break;
 			case Keys.Home:
-				property_grid.SelectedGridItem = property_grid.grid_items[0];
+				property_grid.SelectedGridItem = property_grid.root_grid_item.GridItems[0];
 				e.Handled = true;
 				break;
 			}

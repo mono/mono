@@ -17,10 +17,10 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc.
+// Copyright (c) 2006 Novell, Inc.
 //
 // Authors:
-//	Jonathan Chambers (jonathan.chambers@ansys.com)
+//	Chris Toshok (toshok@novell.com)
 //
 
 using System;
@@ -29,23 +29,34 @@ using System.Drawing;
 namespace System.Windows.Forms.PropertyGridInternal
 {
 	/// <summary>
-	/// Summary description for CategoryGridEntry
+	/// Summary description for PropertyGridRootGridItem
 	/// </summary>
-	internal class CategoryGridEntry : GridEntry
+	[MonoTODO ("needs to implement IRootGridEntry")]
+	internal class RootGridEntry : GridEntry /*, IRootGridEntry */
 	{
-		private string label;
-		public CategoryGridEntry (PropertyGridView owner, string category)
+		object val;
+
+		public RootGridEntry (PropertyGridView owner, object obj)
 			: base (owner)
 		{
-			label = category;
+			val = obj;
 		}
 
 		public override GridItemType GridItemType {
-			get { return GridItemType.Category; }
+			get { return GridItemType.Root; }
 		}
 
 		public override string Label {
-			get { return label; }
+			get { return val.GetType().ToString(); }
+		}
+
+		public override object Value {
+			get { return val; }
+		}
+
+		public override bool Select ()
+		{
+			return false; /* root entries aren't selectable */
 		}
 	}
 }
