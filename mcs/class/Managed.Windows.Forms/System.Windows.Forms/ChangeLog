@@ -1,3 +1,8 @@
+2006-11-09  Chris Toshok  <toshok@ximian.com>
+
+	* PropertyGridView.cs (OnPaint): only call DrawGridItems if we
+	have a root item.  Fixes #79879.
+
 2006-11-09  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs:
@@ -11,7 +16,6 @@
 	  or change the custom colors property.
 	* FolderBrowserDialog.cs: Throw an InvalidEnumArgumentException if
 	  for RootFolder if we get a undefined value.
-
 
 2006-11-09  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 

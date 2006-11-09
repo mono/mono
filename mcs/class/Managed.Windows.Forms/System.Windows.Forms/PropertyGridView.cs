@@ -205,7 +205,9 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), ClientRectangle);
 			
 			int yLoc = -vbar.Value*row_height;
-			DrawGridItems(property_grid.root_grid_item.GridItems, e, 1, ref yLoc);
+
+			if (property_grid.root_grid_item != null)
+				DrawGridItems(property_grid.root_grid_item.GridItems, e, 1, ref yLoc);
 
 			UpdateScrollBar();
 		}
