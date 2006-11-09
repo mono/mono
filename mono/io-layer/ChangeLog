@@ -1,3 +1,10 @@
+2006-11-09  Dick Porter  <dick@ximian.com>
+
+	* sockets.c (_wapi_select): Do some sanity checking on the
+	fd_sets, to avoid file descriptors > FD_SETSIZE.
+	(_wapi_FD_CLR, _wapi_FD_ISSET, _wapi_FD_SET): Avoid file
+	descriptors > FD_SETSIZE.
+
 2006-10-27  Dick Porter  <dick@ximian.com>
 
 	* io.c (GetFileAttributes): Force symlinks to directories to be
