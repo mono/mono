@@ -234,7 +234,84 @@ namespace MonoTests.System.ComponentModel
 	{
 		public int TestVal;
 	}
-	
+
+	public class TestCustomTypeDescriptor : ICustomTypeDescriptor
+	{
+		public string methods_called = "";
+
+		public void ResetMethodsCalled ()
+		{
+			methods_called = "";
+		}
+
+		public TypeConverter GetConverter()
+		{
+			return new StringConverter();
+		}
+
+		public EventDescriptorCollection GetEvents(Attribute[] attributes)
+		{
+			methods_called += "1";
+			return null;
+		}
+
+		public EventDescriptorCollection GetEvents()
+		{
+			methods_called += "2";
+			return null;
+		}
+
+		public string GetComponentName()
+		{
+			return "MyComponentnName";
+		}
+
+		public object GetPropertyOwner(PropertyDescriptor pd)
+		{
+			return this;
+		}
+
+		public AttributeCollection GetAttributes()
+		{
+			methods_called += "3";
+			return null;
+		}
+
+		public PropertyDescriptorCollection GetProperties(Attribute[] attributes)
+		{
+			methods_called += "4";
+			return new PropertyDescriptorCollection(new PropertyDescriptor[0]);
+		}
+
+		public PropertyDescriptorCollection GetProperties()
+		{
+			methods_called += "5";
+			return new PropertyDescriptorCollection(new PropertyDescriptor[0]);
+		}
+
+		public object GetEditor(Type editorBaseType)
+		{
+			return null;
+		}
+
+		public PropertyDescriptor GetDefaultProperty()
+		{
+			methods_called += "6";
+			return null;
+		}
+
+		public EventDescriptor GetDefaultEvent()
+		{
+			methods_called += "7";
+			return null;
+		}
+
+		public string GetClassName()
+		{
+			return this.GetType().Name;
+		}
+	}
+
 	[TestFixture]
 	public class TypeDescriptorTests: Assertion
 	{
@@ -242,6 +319,48 @@ namespace MonoTests.System.ComponentModel
 		MyComponent sitedcom = new MyComponent (new MySite ());
 		AnotherComponent anothercom = new AnotherComponent ();
 		
+		[Test]
+		public void TestICustomTypeDescriptor ()
+		{
+			TestCustomTypeDescriptor test = new TestCustomTypeDescriptor ();
+
+			PropertyDescriptorCollection props;
+			PropertyDescriptor prop;
+			EventDescriptorCollection events;
+
+			test.ResetMethodsCalled ();
+			props = TypeDescriptor.GetProperties (test);
+			AssertEquals ("t1", "5", test.methods_called);
+
+			test.ResetMethodsCalled ();
+			props = TypeDescriptor.GetProperties (test, new Attribute[0]);
+			AssertEquals ("t2", "4", test.methods_called);
+
+			test.ResetMethodsCalled ();
+			props = TypeDescriptor.GetProperties (test, new Attribute[0], false);
+			AssertEquals ("t3", "4", test.methods_called);
+
+			test.ResetMethodsCalled ();
+			props = TypeDescriptor.GetProperties (test, false);
+			AssertEquals ("t4", "5", test.methods_called);
+
+			test.ResetMethodsCalled ();
+			prop = TypeDescriptor.GetDefaultProperty (test);
+			AssertEquals ("t5", "6", test.methods_called);
+
+			test.ResetMethodsCalled ();
+			events = TypeDescriptor.GetEvents (test);
+			AssertEquals ("t6", "2", test.methods_called);
+
+			test.ResetMethodsCalled ();
+			events = TypeDescriptor.GetEvents (test, new Attribute[0]);
+			AssertEquals ("t7", "1", test.methods_called);
+
+			test.ResetMethodsCalled ();
+			events = TypeDescriptor.GetEvents (test, false);
+			AssertEquals ("t8", "2", test.methods_called);
+		}
+
 		[Test]
 		public void TestCreateDesigner ()
 		{
