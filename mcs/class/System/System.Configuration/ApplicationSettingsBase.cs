@@ -17,13 +17,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
 //
 
 #if NET_2_0
 #if CONFIGURATION_DEP && !TARGET_JVM
 extern alias PrebuiltSystem;
 using NameValueCollection = PrebuiltSystem.System.Collections.Specialized.NameValueCollection;
+#endif
+#if CONFIGURATION_DEP
+using System.IO;
+using System.Xml.Serialization;
 #endif
 
 using System.ComponentModel;
@@ -263,7 +267,15 @@ namespace System.Configuration {
 								}
 								else if (a is DefaultSettingValueAttribute) {
 									defaultValue = ((DefaultSettingValueAttribute)a).Value; /* XXX this is a string.. do we convert? */
-									if (prop.PropertyType != typeof(string)) {
+									// note: for StringCollection, TypeDescriptor.GetConverter(prop.PropertyType) returns
+									// CollectionConverter, however this class cannot handle the XML serialized strings
+									if (prop.PropertyType == typeof(StringCollection)) {
+										XmlSerializer xs = new XmlSerializer (typeof (string[]));
+										string[] values = (string[]) xs.Deserialize (new StringReader ((string)defaultValue));
+										StringCollection sc = new StringCollection ();
+										sc.AddRange (values);
+										defaultValue = sc;
+									} else if (prop.PropertyType != typeof(string)) {
 										defaultValue = TypeDescriptor.GetConverter(prop.PropertyType).ConvertFromString((string)defaultValue);
 									}
 								}
