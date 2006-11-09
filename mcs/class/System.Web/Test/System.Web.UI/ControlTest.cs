@@ -233,6 +233,75 @@ namespace MonoTests.System.Web.UI
 			}
 		}
 #endif
+
+		[Test]
+		public void BindingContainer ()
+		{
+			ControlWithTemplate c = new ControlWithTemplate ();
+			c.Template = new CompiledTemplateBuilder (new BuildTemplateMethod (BindingContainer_BuildTemplate));
+
+			// cause CreateChildControls called
+			c.FindControl ("stam");
+		}
+
+		static void BindingContainer_BuildTemplate (Control control)
+		{
+			Control child1 = new Control ();
+			control.Controls.Add (child1);
+
+			Assert.IsTrue (Object.ReferenceEquals (child1.NamingContainer, control), "NamingContainer #1");
+			Assert.IsTrue (Object.ReferenceEquals (child1.BindingContainer, control), "BindingContainer #1");
+
+			NamingContainer nc = new NamingContainer ();
+			Control child2 = new Control ();
+			nc.Controls.Add (child2);
+			control.Controls.Add (nc);
+
+			Assert.IsTrue (Object.ReferenceEquals (child2.NamingContainer, nc), "NamingContainer #2");
+			Assert.IsTrue (Object.ReferenceEquals (child2.BindingContainer, nc), "BindingContainer #2");
+
+#if NET_2_0
+			// DetailsViewPagerRow marked to be not BindingContainer 
+			DetailsViewPagerRow row = new DetailsViewPagerRow (0, DataControlRowType.Pager, DataControlRowState.Normal);
+			TableCell cell = new TableCell ();
+			Control child3 = new Control ();
+			cell.Controls.Add (child3);
+			row.Cells.Add (cell);
+			control.Controls.Add (row);
+
+			Assert.IsTrue (Object.ReferenceEquals (child3.NamingContainer, row), "NamingContainer #3");
+			Assert.IsTrue (Object.ReferenceEquals (child3.BindingContainer, control), "BindingContainer #3");
+#endif
+		}
+
+		class NamingContainer : Control, INamingContainer
+		{
+		}
+
+		class ControlWithTemplate : Control
+		{
+			ITemplate _template;
+
+			[TemplateContainer (typeof(TemplateContainer))]
+			public ITemplate Template {
+				get { return _template; }
+				set { _template = value; }
+			}
+
+			protected override void CreateChildControls () {
+				Controls.Clear ();
+
+				TemplateContainer container = new TemplateContainer ();
+				Controls.Add (container);
+
+				if (Template != null)
+					Template.InstantiateIn (container);
+			}
+		}
+
+		class TemplateContainer : Control, INamingContainer
+		{
+		}
 	}
 }
 

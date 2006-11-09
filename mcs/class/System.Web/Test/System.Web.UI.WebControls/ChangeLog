@@ -1,3 +1,7 @@
+2006-11-09  Igor Zelmanovich   <igorz@mainsoft.com>
+
+	* DetailsViewTest.cs: removed NotWorking attributes.
+
 2006-11-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ObjectDataSourceTest.cs, ObjectDataSourceViewTest.cs: removed

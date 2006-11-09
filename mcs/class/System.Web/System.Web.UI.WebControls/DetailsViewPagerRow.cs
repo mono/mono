@@ -45,6 +45,7 @@ namespace System.Web.UI.WebControls {
 		)
 			:base (rowIndex, rowType, rowState)
 		{
+			SetBindingContainer (false);
 		}
 	}
 }

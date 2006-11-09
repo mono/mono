@@ -2,6 +2,10 @@
 
 	* ControlTest.cs: added test.
 
+2006-11-09  Igor Zelmanovich   <igorz@mainsoft.com>
+
+	* ControlTest.cs: added test.
+
 2006-11-02  Igor Zelmanovich   <igorz@mainsoft.com>
 
 	* ClientScriptManagerTest.cs: removed NotWorking attributes, fixed tests.

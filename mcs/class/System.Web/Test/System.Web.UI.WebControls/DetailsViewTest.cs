@@ -1122,7 +1122,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")] 
+		[Category ("NunitWeb")] 
 		public void DetailsView_RenderHeaderTemplate ()
 		{
 			//Header Template property is checked
@@ -1158,7 +1158,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")] 
+		[Category ("NunitWeb")] 
 		public void DetailsView_PagerTemplateRender ()
 		{
 			//Pager Template property is checked
@@ -1185,7 +1185,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")] 
+		[Category ("NunitWeb")] 
 		public void DetailsView_EditFieldsRender ()
 		{
 			string RenderedPageHtml = new WebTest ("DetailsViewTemplates.aspx").Run ();
@@ -2097,6 +2097,7 @@ namespace MonoTests.System.Web.UI.WebControls
 	}
 }
 #endif
+
 
 
 
