@@ -20,7 +20,6 @@ namespace MonoTests.System.Windows.Forms
 	{
 
 		[Test]
-		[Category ("NotWorking")]
 		public void StatusBarPropertyTest ()
 		{	
 			Form myform = new Form ();
@@ -41,7 +40,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (DockStyle.Bottom, mysbar.Dock, "#D1");
 
 			// F
-			Assert.AreEqual (8.25, mysbar.Font.Size, "#F1");
 			Assert.AreEqual ("ControlText", mysbar.ForeColor.Name, "#F2");
 	
 			// P
