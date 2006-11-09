@@ -1,3 +1,8 @@
+2006-11-09  Chris Toshok  <toshok@ximian.com>
+
+	* ReflectionPropertyDescriptor.cs: IsReadOnly needs to take into
+	account the ReadOnlyAttribute.
+
 2006-11-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ArrayConverter.cs: Modifed ConvertTo for Array => String to match

@@ -79,7 +79,13 @@ namespace System.ComponentModel
 		{
 			get
 			{
-				return !GetPropertyInfo ().CanWrite;
+				bool attr_ro = false;
+
+				ReadOnlyAttribute attrib = ((ReadOnlyAttribute) Attributes[typeof (ReadOnlyAttribute)]);
+				if (attrib != null)
+					attr_ro = attrib.IsReadOnly;
+
+				return !GetPropertyInfo ().CanWrite || attrib.IsReadOnly;
 			}
 		}
 
