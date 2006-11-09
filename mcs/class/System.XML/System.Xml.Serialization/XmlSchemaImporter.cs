@@ -446,7 +446,8 @@ namespace System.Xml.Serialization
 			XmlSchemaType stype;
 
 			XmlSchemaElement elem = (XmlSchemaElement) schemas.Find (name, typeof (XmlSchemaElement));
-			if (!LocateElement (elem, out qname, out stype)) return null;
+			if (!LocateElement (elem, out qname, out stype))
+				throw new InvalidOperationException (String.Format ("'{0}' is missing.", name));
 			
 			if (stype == null) {
 				// Importing a primitive type

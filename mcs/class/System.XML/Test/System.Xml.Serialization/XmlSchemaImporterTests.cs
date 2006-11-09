@@ -993,5 +993,15 @@ namespace MonoTests.System.XmlSerialization
 
 			return qnames;
 		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ImportTypeMappingNonExistent ()
+		{
+			XmlSchemas xss = new XmlSchemas ();
+			xss.Add (new XmlSchema ());
+			XmlSchemaImporter imp = new XmlSchemaImporter (xss);
+			imp.ImportTypeMapping (new XmlQualifiedName ("foo"));
+		}
 	}
 }

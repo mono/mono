@@ -1,3 +1,8 @@
+2006-11-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaImporterTests.cs : added ImportTypeMapping() test for
+	  nonexistent name.
+
 2006-11-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CodeIdentifiersTests.cs : new test.
