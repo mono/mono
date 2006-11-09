@@ -44,7 +44,7 @@ namespace System.Windows.Forms {
 		private ImageList image_list;
 		private Size item_size = Size.Empty;
 		private Point padding;
-		private int row_count = 1;
+		private int row_count = 0;
 		private bool hottrack;
 		private TabPageCollection tab_pages;
 		private bool show_tool_tips;
@@ -696,7 +696,8 @@ namespace System.Windows.Forms {
 			int xpos = 4;
 			Size spacing = TabSpacing;
 
-			row_count = 1;
+			if (TabPages.Count > 0)
+				row_count = 1;
 			show_slider = false;
 			
 			for (int i = 0; i < TabPages.Count; i++) {

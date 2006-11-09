@@ -1,5 +1,10 @@
 2006-11-09  Chris Toshok  <toshok@ximian.com>
 
+	* TabControl.cs: initialize row_count to 0, and set it to 1 when
+	we need to (if we have any tab pages).  Fixes unit test.
+
+2006-11-09  Chris Toshok  <toshok@ximian.com>
+
 	* Label.cs (CalcPreferredWidth): if Text == "", our preferred
 	width is 0, not 3.  Fixes a unit test.
 
