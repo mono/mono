@@ -147,7 +147,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void PropertyGrid_ArrayParentTest ()
 		{
 			PropertyGrid pg = new PropertyGrid ();
@@ -162,7 +161,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void PropertyGrid_ArrayRootTest ()
 		{
 			ArrayTest_object obj = new ArrayTest_object ();
@@ -195,7 +193,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void PropertyGrid_ItemSelectTest ()
 		{
 			PropertyGrid pg = new PropertyGrid ();
