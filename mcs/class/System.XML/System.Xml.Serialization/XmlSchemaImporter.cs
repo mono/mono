@@ -450,9 +450,18 @@ namespace System.Xml.Serialization
 				throw new InvalidOperationException (String.Format ("'{0}' is missing.", name));
 			
 			if (stype == null) {
-				// Importing a primitive type
-				TypeData td = TypeTranslator.GetPrimitiveTypeData (qname.Name);
-				return ReflectType (td, name.Namespace);
+				if (qname == anyType) {
+					// Importing anyType.
+					XmlTypeMapping xmap = GetTypeMapping (TypeTranslator.GetTypeData (typeof (object)));
+					// This also means, all complexTypes
+					// are imported as well.
+					BuildPendingMaps ();
+					return xmap;
+				} else {
+					// Importing a primitive type
+					TypeData td = TypeTranslator.GetPrimitiveTypeData (qname.Name);
+					return ReflectType (td, name.Namespace);
+				}
 			}
 			
 			XmlTypeMapping map = GetRegisteredTypeMapping (qname);

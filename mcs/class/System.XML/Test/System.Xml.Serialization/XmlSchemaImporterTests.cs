@@ -1003,5 +1003,37 @@ namespace MonoTests.System.XmlSerialization
 			XmlSchemaImporter imp = new XmlSchemaImporter (xss);
 			imp.ImportTypeMapping (new XmlQualifiedName ("foo"));
 		}
+
+		[Test]
+		public void AnyTypeTopLevelElementImportsAllComplexTypes ()
+		{
+			string xsd = @"
+<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+  <xs:element name='Root' type='xs:anyType' />
+  <xs:complexType name='FooType'>
+    <xs:sequence>
+      <xs:element name='Child1' type='xs:string' />
+      <xs:element name='Child2' type='xs:string' />
+      <xs:element name='Child3' type='xs:string' />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name='BarType' />
+</xs:schema>";
+			XmlSchemas xss = new XmlSchemas ();
+			xss.Add (XmlSchema.Read (new XmlTextReader (new StringReader (xsd)), null));
+			XmlSchemaImporter imp = new XmlSchemaImporter (xss);
+			CodeNamespace cns = new CodeNamespace ();
+			XmlCodeExporter exp = new XmlCodeExporter (cns);
+			exp.ExportTypeMapping (imp.ImportTypeMapping (new XmlQualifiedName ("Root")));
+			bool foo = false, bar = false;
+			foreach (CodeTypeDeclaration td in cns.Types) {
+				if (td.Name == "FooType")
+					foo = true;
+				else if (td.Name == "BarType")
+					bar = true;
+			}
+			Assert.IsTrue (foo, "FooType not found");
+			Assert.IsTrue (bar, "BarType not found");
+		}
 	}
 }
