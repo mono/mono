@@ -25,13 +25,32 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void PreferredSize ()
 		{
 			Label l = new Label();
 
 			Assert.AreEqual (16, l.PreferredHeight, "1");
+
+			// preferred width is 0 by default
 			Assert.AreEqual (0, l.PreferredWidth, "2");
+
+			// and after text is changed it's something else
+			l.Text = "hi";
+			Assert.IsTrue (l.PreferredWidth > 0, "3");
+
+			// now add it to a form and see
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			l.Text = "";
+
+			f.Controls.Add (l);
+			f.Show ();
+			Assert.AreEqual (0, l.PreferredWidth, "4");
+
+			l.Text = "hi";
+			Assert.IsTrue (l.PreferredWidth > 0, "5");
+
+			f.Dispose ();
 		}
 
 		[Test]
