@@ -403,9 +403,9 @@ namespace Mono.Util {
 			{
 				foreach (XmlSchema schema in schemas) {
 					if (!schema.IsCompiled) schema.Compile (null);
-					foreach (XmlSchemaObject ob in schema.Items)
-						if (ob is XmlSchemaElement)
-							qnames.Add (((XmlSchemaElement)ob).QualifiedName);
+					foreach (XmlSchemaElement el in schema.Elements.Values)
+						if (!qnames.Contains (el.QualifiedName))
+							qnames.Add (el.QualifiedName);
 				}
 			}
 

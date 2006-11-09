@@ -1,3 +1,8 @@
+2006-11-09  Atsushi Enomoto <atsushi@ximian.com>
+
+	* NewMonoXSD.cs : process all elements including imported ones. To do
+	  so, use post-compilation schema items.
+
 2004-07-12  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* NewMonoXSD.cs: Don't write the exception trace for common parameter
