@@ -402,7 +402,7 @@ namespace Mono.Util {
 			else
 			{
 				foreach (XmlSchema schema in schemas) {
-					if (!schema.IsCompiled) schema.Compile (null);
+					if (!schema.IsCompiled) schema.Compile (new ValidationEventHandler (HandleValidationError));
 					foreach (XmlSchemaElement el in schema.Elements.Values)
 						if (!qnames.Contains (el.QualifiedName))
 							qnames.Add (el.QualifiedName);
@@ -473,6 +473,14 @@ namespace Mono.Util {
 			sw.Close();
 
 			Console.WriteLine ("Written file " + genFile);
+		}
+
+		void HandleValidationError (object o, ValidationEventArgs e)
+		{
+			Console.WriteLine ("{0}: {1} {2}",
+				e.Severity == XmlSeverityType.Error ? "Error" : "Warning",
+				e.Message,
+				e.Exception != null ? e.Exception.Message : null);
 		}
 
 		public void Error (string msg)

@@ -1,5 +1,9 @@
 2006-11-09  Atsushi Enomoto <atsushi@ximian.com>
 
+	* NewMonoXSD.cs : Ankit wants good validation error reporting ;-)
+
+2006-11-09  Atsushi Enomoto <atsushi@ximian.com>
+
 	* NewMonoXSD.cs : process all elements including imported ones. To do
 	  so, use post-compilation schema items.
 
