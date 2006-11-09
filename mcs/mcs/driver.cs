@@ -336,9 +336,24 @@ namespace Mono.CSharp
 				AssemblyName an = new AssemblyName ();
 				an.Name = ".temp";
 				AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Run);
-				if (adder_method.Invoke (ab, new object [] { filename }) != null) {
-					Report.Error (1509, "referenced file `{0}' is not an assembly; try using the '-addmodule' option", filename);
-					return;
+				try {
+					object m = null;
+					try {
+						m = adder_method.Invoke (ab, new object [] { filename });
+					} catch (TargetInvocationException ex) {
+						throw ex.InnerException;
+					}
+
+					if (m != null) {
+						Report.Error (1509, "referenced file `{0}' is not an assembly; try using the '-addmodule' option", filename);
+						return;
+					}
+				} catch (FileNotFoundException) {
+					// did the file get deleted during compilation? who cares? swallow the exception
+				} catch (BadImageFormatException) {
+					// swallow exception
+				} catch (FileLoadException) {
+					// swallow exception
 				}
 			}
 			Error9 ("assembly", filename, log);
