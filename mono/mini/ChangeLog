@@ -1,3 +1,9 @@
+
+Fri Nov 10 18:38:15 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, jit-icalls.c, jit-icalls.h: added first cut at handling
+	loads and stores of 32 bit fp values.
+
 2006-11-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-sparc.c (is_regsize_var): Support PTR/FNPTR too.
