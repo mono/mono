@@ -1,3 +1,8 @@
+2006-11-10  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs: Always return the value for FilterIndex that
+	  was set. Internally convert it to values that make sense.
+
 2006-11-10  Everaldo Canuto  <everaldo@simios.org>
 	
 	* ThemeWin32Classic.cs: Fix drowp down arrow borders.

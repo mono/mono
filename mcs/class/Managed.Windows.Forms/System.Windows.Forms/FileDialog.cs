@@ -59,6 +59,7 @@ namespace System.Windows.Forms {
 		private string[] fileNames;
 		private string filter = "";
 		private int filterIndex = 1;
+		private int setFilterIndex = 1;
 		private string initialDirectory = String.Empty;
 		private bool restoreDirectory = false;
 		private bool showHelp = false;
@@ -501,11 +502,16 @@ namespace System.Windows.Forms {
 		[DefaultValue(1)]
 		public int FilterIndex {
 			get {
-				return filterIndex;
+				return setFilterIndex;
 			}
 			
 			set {
-				filterIndex = value;
+				setFilterIndex = value;
+				
+				if (value < 1)
+					filterIndex = 1;
+				else
+					filterIndex = value;
 				
 				SelectFilter ();
 			}
@@ -594,7 +600,7 @@ namespace System.Windows.Forms {
 			dereferenceLinks = true;
 			FileName = String.Empty;
 			Filter = String.Empty;
-			filterIndex = 1;
+			FilterIndex = 1;
 			initialDirectory = String.Empty;
 			restoreDirectory = false;
 			ShowHelp = false;
@@ -703,15 +709,15 @@ namespace System.Windows.Forms {
 		
 		private void SelectFilter ()
 		{
-			if (mwfFileView.FilterArrayList == null || FilterIndex > mwfFileView.FilterArrayList.Count)
+			if (mwfFileView.FilterArrayList == null || filterIndex > mwfFileView.FilterArrayList.Count)
 				return;
 			
 			do_not_call_OnSelectedIndexChangedFileTypeComboBox = true;
 			fileTypeComboBox.BeginUpdate ();
-			fileTypeComboBox.SelectedIndex = FilterIndex - 1;
+			fileTypeComboBox.SelectedIndex = filterIndex - 1;
 			fileTypeComboBox.EndUpdate ();
 			
-			mwfFileView.FilterIndex = FilterIndex;
+			mwfFileView.FilterIndex = filterIndex;
 		}
 		
 		private bool SetFileName (string fname)
@@ -1026,13 +1032,13 @@ namespace System.Windows.Forms {
 			}
 			
 			if (filters.Count > 0 && FilterIndex <= filters.Count)
-				fileTypeComboBox.SelectedIndex = FilterIndex - 1;
+				fileTypeComboBox.SelectedIndex = filterIndex - 1;
 			
 			fileTypeComboBox.EndUpdate ();
 			
 			mwfFileView.FilterArrayList = filters;
 			
-			mwfFileView.FilterIndex = FilterIndex;
+			mwfFileView.FilterIndex = filterIndex;
 		}
 		
 		private void ResizeAndRelocateForHelpOrReadOnly ()
