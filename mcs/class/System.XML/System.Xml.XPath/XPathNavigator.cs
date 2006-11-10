@@ -886,7 +886,10 @@ namespace System.Xml.XPath
 				if (NodeType != XPathNodeType.Root)
 					r.Read ();
 				StringWriter sw = new StringWriter ();
-				XmlWriter xtw = XmlWriter.Create (sw);
+				XmlWriterSettings s = new XmlWriterSettings ();
+				s.ConformanceLevel = ConformanceLevel.Fragment;
+				s.OmitXmlDeclaration = true;
+				XmlWriter xtw = XmlWriter.Create (sw, s);
 				while (!r.EOF && r.Depth > depth)
 					xtw.WriteNode (r, false);
 				return sw.ToString ();
@@ -910,6 +913,7 @@ namespace System.Xml.XPath
 				XmlWriterSettings s = new XmlWriterSettings ();
 				s.Indent = true;
 				s.OmitXmlDeclaration = true;
+				s.ConformanceLevel = ConformanceLevel.Fragment;
 				StringBuilder sb = new StringBuilder ();
 				using (XmlWriter w = XmlWriter.Create (sb, s)) {
 					WriteSubtree (w);

@@ -42,13 +42,6 @@ namespace Mono.Xml.XPath
 	{
 		public XPathNavigatorReader (XPathNavigator nav)
 		{
-			switch (nav.NodeType) {
-			case XPathNodeType.Element:
-			case XPathNodeType.Root:
-				break;
-			default:
-				throw new InvalidOperationException (String.Format ("NodeType {0} is not supported to read as a subtree of an XPathNavigator.", nav.NodeType));
-			}
 			current = nav.Clone ();
 		}
 

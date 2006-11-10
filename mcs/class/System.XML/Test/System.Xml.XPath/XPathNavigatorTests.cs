@@ -535,6 +535,22 @@ namespace MonoTests.System.Xml
 			nav.MoveToFirstChild ();
 			long l = nav.ValueAsLong;
 		}
+
+		[Test] // bug #79874
+		public void InnerXmlText ()
+		{
+			StringReader sr = new StringReader ("<Abc><Foo>Hello</Foo></Abc>");
+			XPathDocument doc = new XPathDocument (sr);
+			XPathNavigator nav = doc.CreateNavigator ();
+			XPathNodeIterator iter = nav.Select ("/Abc/Foo");
+			iter.MoveNext ();
+			AssertEquals ("#1", "Hello", iter.Current.InnerXml);
+			AssertEquals ("#2", "<Foo>Hello</Foo>", iter.Current.OuterXml);
+			iter = nav.Select ("/Abc/Foo/text()");
+			iter.MoveNext ();
+			AssertEquals ("#3", String.Empty, iter.Current.InnerXml);
+			AssertEquals ("#4", "Hello", iter.Current.OuterXml);
+		}
 #endif
 	}
 }

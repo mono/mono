@@ -1,3 +1,8 @@
+2006-11-10  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigatorReader.cs : removed node type restriction on 
+	  initialization.  Fixed bug #79874, when tied to XPathNavigator fix.
+
 2006-10-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathEditableDocument.cs : (XmlDocumentEditableNavigator)
