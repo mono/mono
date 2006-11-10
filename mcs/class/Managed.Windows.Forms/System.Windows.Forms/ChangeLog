@@ -1,3 +1,18 @@
+2006-11-10  Andreia Gaita  <shana.ufie@gmail.com>
+
+	* Button.cs: only perform click when button is Selectable (so as 
+	not to activate default buttons when they're disabled)
+	
+	* Control.cs: Rewrite of the SelectNextControl and related 
+	methods. HandleClick now selects next control if the current one
+	is being disabled.
+	
+	* Form.cs: OnActivated selects next active control only if Load 
+	has already occurred. If Load hasn't run, there's no point in 
+	selecting here, Load might change the state of controls.
+	
+	* FocusTest.cs: Tests marked as working again for these fixes
+
 2006-11-10  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIX11.cs: a couple of fixes.

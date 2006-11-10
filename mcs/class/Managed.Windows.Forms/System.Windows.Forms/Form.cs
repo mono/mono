@@ -78,6 +78,7 @@ namespace System.Windows.Forms {
 		internal ApplicationContext	context;
 		Color				transparency_key;
 		internal MenuTracker		active_tracker;
+		private bool			is_loaded;
 
 		#endregion	// Local Variables
 
@@ -1424,7 +1425,8 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnActivated(EventArgs e)
 		{
-			SelectActiveControl ();
+			if (is_loaded)
+				SelectActiveControl ();
 
 			if (Activated != null) {
 				Activated(this, e);
@@ -1527,6 +1529,7 @@ namespace System.Windows.Forms {
 						break;
 				}
 			}
+			is_loaded = true;
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]

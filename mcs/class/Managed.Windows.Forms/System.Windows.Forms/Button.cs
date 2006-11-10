@@ -75,7 +75,8 @@ namespace System.Windows.Forms {
 		}
 
 		public void PerformClick() {			// IButtonControl
-			OnClick(EventArgs.Empty);
+			if (CanSelect)
+				OnClick(EventArgs.Empty);
 		}
 
 		public override string ToString() {

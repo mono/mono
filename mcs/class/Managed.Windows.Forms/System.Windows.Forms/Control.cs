@@ -33,6 +33,7 @@
 // COMPLETE 
 
 #undef DebugRecreate
+#undef DebugFocus
 
 using System;
 using System.ComponentModel;
@@ -1197,30 +1198,27 @@ namespace System.Windows.Forms
 
 		private static Control FindControlForward(Control container, Control start) {
 			Control found;
-			Control	p;
 
 			found = null;
 
-			if (start != null) {
-				if (start.child_controls != null && start.child_controls.Count > 0 &&
-					!((start is IContainerControl) && start.GetStyle(ControlStyles.ContainerControl))) {
-					found = FindControlForward(start, null);
-					if (found != null) {
-						return found;
-					}
-				}
+			if (start == null) {
+				return FindFlatForward(container, start);
+			}
 
-				p = start.parent;
-				while (p != container) {
-					found = FindFlatForward(p, start);
+			if (start.child_controls != null && start.child_controls.Count > 0 && 
+				(start == container || !((start is IContainerControl) &&  start.GetStyle(ControlStyles.ContainerControl)))) {
+				return FindControlForward(start, null);
+			}
+			else {
+				while (start != container) {
+					found = FindFlatForward(start.parent, start);
 					if (found != null) {
 						return found;
 					}
-					start = p;
-					p = p.parent;
+					start = start.parent;
 				}
 			}
-			return FindFlatForward(container, start);
+			return null;
 		}
 
 		private static Control FindFlatBackward(Control container, Control start) {
@@ -1244,27 +1242,55 @@ namespace System.Windows.Forms
 				index++;
 			}
 
-			for (int i = end-1, pos = -1; i >= 0; i--) {
+			bool hit = false;
+					
+			for (int i = end - 1; i >= 0; i--) {
 				if (start == container.child_controls[i]) {
-					pos = i;
+					hit = true;
 					continue;
 				}
 
-				if (found == null) {
-					if (container.child_controls[i].tab_index < index || 
-						(pos > -1 && pos > i && container.child_controls[i].tab_index == index)) {
+				if (found == null || found.tab_index < container.child_controls[i].tab_index) {
+					if (container.child_controls[i].tab_index < index || (hit && container.child_controls[i].tab_index == index))
 						found = container.child_controls[i];
-					}
-				} else if (found.tab_index < container.child_controls[i].tab_index) {
-					if (container.child_controls[i].tab_index < index) {
-						found = container.child_controls[i];
-					}
+
 				}
 			}
 			return found;
 		}
 
 		private static Control FindControlBackward(Control container, Control start) {
+
+			Control found = null;
+
+			if (start == null) {
+				found = FindFlatBackward(container, start);
+			}
+			else if (start != container) {
+				if (start.parent != null) {
+					found = FindFlatBackward(start.parent, start);
+
+					if (found == null) {
+						if (start.parent != container)
+							return start.parent;
+						return null;
+					}
+				}
+			}
+		
+			if (found == null || start.parent == null)
+				found = start;
+
+			while (found != null && (found == container || (!((found is IContainerControl) && found.GetStyle(ControlStyles.ContainerControl))) &&
+				found.child_controls != null && found.child_controls.Count > 0)) {
+//				while (ctl.child_controls != null && ctl.child_controls.Count > 0 && 
+//					(ctl == this || (!((ctl is IContainerControl) && ctl.GetStyle(ControlStyles.ContainerControl))))) {
+				found = FindFlatBackward(found, null);
+			}
+
+			return found;
+
+/*
 			Control found;
 
 			found = null;
@@ -1289,8 +1315,8 @@ namespace System.Windows.Forms
 					}
 				}
 			}
-
 			return found;
+*/			
 		}
 
 		internal virtual void HandleClick(int clicks, MouseEventArgs me) {
@@ -1959,14 +1985,12 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (Enabled == value) {
-					is_enabled = value;
-					return;
-				}
+
+				bool old_value = is_enabled;
 
 				is_enabled = value;
-
-				// FIXME - we need to switch focus to next control if we're disabling the focused control
+				if (old_value != value && !value && this.has_focus)
+					SelectNextControl(this, true, true, true, true);
 
 				OnEnabledChanged (EventArgs.Empty);				
 			}
@@ -2817,30 +2841,21 @@ namespace System.Windows.Forms
 
 		public Control GetNextControl(Control ctl, bool forward) {
 
-			if (ctl != null && this != ctl) {
-				if (!ctl.CanSelect || 
-					((parent == null) && (ctl is IContainerControl) && ctl.GetStyle(ControlStyles.ContainerControl))
-				   ) {
-					if (forward) {
-						return FindFlatForward(this, ctl);
-					} else {
-						return FindFlatBackward(this, ctl);
-					}
-				}
-			}
-
-			// If ctl is not contained by this, we start at the first child of this
 			if (!this.Contains(ctl)) {
-				ctl = null;
+				ctl = this;
 			}
 
-			// Search through our controls, starting at ctl, stepping into children as we encounter them
-			// try to find the control with the tabindex closest to our own, or, if we're looking into
-			// child controls, the one with the smallest tabindex
 			if (forward) {
-				return FindControlForward(this, ctl);
+				ctl = FindControlForward(this, ctl);
 			}
-			return FindControlBackward(this, ctl);
+			else {
+				ctl = FindControlBackward(this, ctl);
+			}
+
+			if (ctl != this) {
+				return ctl;
+			}
+			return null;
 		}
 
 #if NET_2_0
@@ -3226,9 +3241,25 @@ namespace System.Windows.Forms
 			Select(false, false);
 		}
 
+#if DebugFocus
+		private void printTree(Control c, string t) {
+			foreach(Control i in c.child_controls) {
+				Console.WriteLine("{2}{0}.TabIndex={1}", i, i.tab_index, t);
+				printTree(i, t+"\t");
+			}
+		}
+#endif
 		public bool SelectNextControl(Control ctl, bool forward, bool tabStopOnly, bool nested, bool wrap) {
 			Control c;
 
+#if DebugFocus
+			Console.WriteLine("{0}", this.FindForm());
+			printTree(this, "\t");
+#endif
+
+			if (!this.Contains(ctl) || (!nested && (ctl.parent != this))) {
+				ctl = null;
+			}
 			c = ctl;
 			do {
 				c = GetNextControl(c, forward);
