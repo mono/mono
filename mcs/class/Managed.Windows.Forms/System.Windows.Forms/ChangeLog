@@ -4,6 +4,8 @@
 	BeforeSelect event.
 	* TextBoxBase.cs: There is no need to expand selection on
 	MouseMove.
+	- CanUndo means 'is there any undo operations', not 'is undo
+	allowed on this textcontrol. Fixed ClearUndo unit test.
 
 2006-11-10  Andreia Gaita  <shana.ufie@gmail.com>
 

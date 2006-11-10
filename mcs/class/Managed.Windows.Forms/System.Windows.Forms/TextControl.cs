@@ -1888,7 +1888,11 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 							// regular drawing, no selection to deal with
 							//g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
 							if (owner.is_enabled) {
-								g.DrawString(text.ToString(tag.start-1, tag.length), tag.font, tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+								try {
+									g.DrawString(text.ToString(tag.start-1, tag.length), tag.font, tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+								} catch (Exception e) {
+									Console.WriteLine ("CRASHED:  {0}  {1}  {2}", text, tag.start, tag.length);
+								}
 							} else {
 								Color a;
 								Color b;
