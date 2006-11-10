@@ -1,3 +1,8 @@
+2006-11-10  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Use the currently highlighted node for the
+	BeforeSelect event.
+
 2006-11-10  Andreia Gaita  <shana.ufie@gmail.com>
 
 	* Button.cs: only perform click when button is Selectable (so as 

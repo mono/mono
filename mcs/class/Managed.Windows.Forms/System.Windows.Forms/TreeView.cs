@@ -1584,7 +1584,7 @@ namespace System.Windows.Forms {
 			}
 			select_mmove = false;
 
-			TreeViewCancelEventArgs ce = new TreeViewCancelEventArgs (selected_node, false, TreeViewAction.ByMouse);
+			TreeViewCancelEventArgs ce = new TreeViewCancelEventArgs (highlighted_node, false, TreeViewAction.ByMouse);
 			OnBeforeSelect (ce);
 
 			Rectangle invalid;
