@@ -1,3 +1,24 @@
+2006-11-10  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11.cs: a couple of fixes.
+
+	- use XInternAtoms with almost all the atoms we need to register,
+	instead of many, many calls to XInternAtom.  should help a bit on
+	startup time, at the expense of making the code look a little
+	worse.
+
+	- fall back to setting TransientFor on TOOLWINDOW's if their hwnd
+	isn't reparented (which seems to be a clue that we're running fon
+	compiz) and they have an Owner form.  This fixes the tool windows
+	in paint.net when running under compiz.
+
+	- when setting the opacity of a window, support both the case
+	where the window has been reparented and also when it hasn't been.
+	Since compiz/beryl doesn't seem to reparent windows, and these are
+	the only window managers which support translucency, I'm not sure
+	why we need the hwnd.reparented case at all.. but leave it in.
+	now we get translucent windows in paint.net under compiz/beryl.
+
 2006-11-10  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: Always return the value for FilterIndex that

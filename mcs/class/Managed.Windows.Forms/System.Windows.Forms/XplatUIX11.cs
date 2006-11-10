@@ -551,90 +551,153 @@ namespace System.Windows.Forms {
 		}
 
 		private static void SetupAtoms() {
-			WM_PROTOCOLS = XInternAtom(DisplayHandle, "WM_PROTOCOLS", false);
-			WM_DELETE_WINDOW = XInternAtom(DisplayHandle, "WM_DELETE_WINDOW", false);
-			WM_TAKE_FOCUS = XInternAtom(DisplayHandle, "WM_TAKE_FOCUS", false);
+			// make sure this array stays in sync with the statements below
+			string [] atom_names = new string[] {
+				"WM_PROTOCOLS",
+				"WM_DELETE_WINDOW",
+				"WM_TAKE_FOCUS",
+				"_NET_SUPPORTED",
+				"_NET_CLIENT_LIST",
+				"_NET_NUMBER_OF_DESKTOPS",
+				"_NET_DESKTOP_GEOMETRY",
+				"_NET_DESKTOP_VIEWPORT",
+				"_NET_CURRENT_DESKTOP",
+				"_NET_DESKTOP_NAMES",
+				"_NET_ACTIVE_WINDOW",
+				"_NET_WORKAREA",
+				"_NET_SUPPORTING_WM_CHECK",
+				"_NET_VIRTUAL_ROOTS",
+				"_NET_DESKTOP_LAYOUT",
+				"_NET_SHOWING_DESKTOP",
+				"_NET_CLOSE_WINDOW",
+				"_NET_MOVERESIZE_WINDOW",
+				"_NET_WM_MOVERESIZE",
+				"_NET_RESTACK_WINDOW",
+				"_NET_REQUEST_FRAME_EXTENTS",
+				"_NET_WM_NAME",
+				"_NET_WM_VISIBLE_NAME",
+				"_NET_WM_ICON_NAME",
+				"_NET_WM_VISIBLE_ICON_NAME",
+				"_NET_WM_DESKTOP",
+				"_NET_WM_WINDOW_TYPE",
+				"_NET_WM_STATE",
+				"_NET_WM_ALLOWED_ACTIONS",
+				"_NET_WM_STRUT",
+				"_NET_WM_STRUT_PARTIAL",
+				"_NET_WM_ICON_GEOMETRY",
+				"_NET_WM_ICON",
+				"_NET_WM_PID",
+				"_NET_WM_HANDLED_ICONS",
+				"_NET_WM_USER_TIME",
+				"_NET_FRAME_EXTENTS",
+				"_NET_WM_PING",
+				"_NET_WM_SYNC_REQUEST",
+				"_NET_SYSTEM_TRAY_OPCODE",
+				"_NET_SYSTEM_TRAY_ORIENTATION",
+				"_NET_WM_STATE_MAXIMIZED_HORZ",
+				"_NET_WM_STATE_MAXIMIZED_VERT",
+				"_NET_WM_STATE_HIDDEN",
+				"_XEMBED",
+				"_XEMBED_INFO",
+				"_MOTIF_WM_HINTS",
+				"_NET_WM_STATE_SKIP_TASKBAR",
+				"_NET_WM_STATE_ABOVE",
+				"_NET_WM_STATE_MODAL",
+				"_NET_WM_CONTEXT_HELP",
+				"_NET_WM_WINDOW_OPACITY",
+				"_NET_WM_WINDOW_TYPE_DESKTOP",
+				"_NET_WM_WINDOW_TYPE_DOCK",
+				"_NET_WM_WINDOW_TYPE_TOOLBAR",
+				"_NET_WM_WINDOW_TYPE_MENU",
+				"_NET_WM_WINDOW_TYPE_UTILITY",
+				"_NET_WM_WINDOW_TYPE_DIALOG",
+				"_NET_WM_WINDOW_TYPE_SPLASH",
+				"_NET_WM_WINDOW_TYPE_NORMAL",
+				"CLIPBOARD",
+				"PRIMARY",
+				"COMPOUND_TEXT",
+				"UTF8_STRING",
+				"TARGETS",
+				"_SWF_AsyncAtom",
+				"_SWF_PostMessageAtom",
+				"_SWF_HoverAtom" };
 
-			_NET_SUPPORTED = XInternAtom(DisplayHandle, "_NET_SUPPORTED", false);
-			_NET_CLIENT_LIST = XInternAtom(DisplayHandle, "_NET_CLIENT_LIST", false);
-			_NET_NUMBER_OF_DESKTOPS = XInternAtom(DisplayHandle, "_NET_NUMBER_OF_DESKTOPS", false);
-			_NET_DESKTOP_GEOMETRY = XInternAtom(DisplayHandle, "_NET_DESKTOP_GEOMETRY", false);
-			_NET_DESKTOP_VIEWPORT = XInternAtom(DisplayHandle, "_NET_DESKTOP_VIEWPORT", false);
-			_NET_CURRENT_DESKTOP = XInternAtom(DisplayHandle, "_NET_CURRENT_DESKTOP", false);
-			_NET_DESKTOP_NAMES = XInternAtom(DisplayHandle, "_NET_DESKTOP_NAMES", false);
-			_NET_ACTIVE_WINDOW = XInternAtom(DisplayHandle, "_NET_ACTIVE_WINDOW", false);
-			_NET_WORKAREA = XInternAtom(DisplayHandle, "_NET_WORKAREA", false);
-			_NET_SUPPORTING_WM_CHECK = XInternAtom(DisplayHandle, "_NET_SUPPORTING_WM_CHECK", false);
-			_NET_VIRTUAL_ROOTS = XInternAtom(DisplayHandle, "_NET_VIRTUAL_ROOTS", false);
-			_NET_DESKTOP_LAYOUT = XInternAtom(DisplayHandle, "_NET_DESKTOP_LAYOUT", false);
-			_NET_SHOWING_DESKTOP = XInternAtom(DisplayHandle, "_NET_SHOWING_DESKTOP", false);
+			IntPtr[] atoms = new IntPtr [atom_names.Length];;
 
-			_NET_CLOSE_WINDOW = XInternAtom(DisplayHandle, "_NET_CLOSE_WINDOW", false);
-			_NET_MOVERESIZE_WINDOW = XInternAtom(DisplayHandle, "_NET_MOVERESIZE_WINDOW", false);
-			_NET_WM_MOVERESIZE = XInternAtom(DisplayHandle, "_NET_WM_MOVERESIZE", false);
-			_NET_RESTACK_WINDOW = XInternAtom(DisplayHandle, "_NET_RESTACK_WINDOW", false);
-			_NET_REQUEST_FRAME_EXTENTS = XInternAtom(DisplayHandle, "_NET_REQUEST_FRAME_EXTENTS", false);
+			XInternAtoms (DisplayHandle, atom_names, atom_names.Length, false, atoms);
 
-			_NET_WM_NAME = XInternAtom(DisplayHandle, "_NET_WM_NAME", false);
-			_NET_WM_VISIBLE_NAME = XInternAtom(DisplayHandle, "_NET_WM_VISIBLE_NAME", false);
-			_NET_WM_ICON_NAME = XInternAtom(DisplayHandle, "_NET_WM_ICON_NAME", false);
-			_NET_WM_VISIBLE_ICON_NAME = XInternAtom(DisplayHandle, "_NET_WM_VISIBLE_ICON_NAME", false);
-			_NET_WM_DESKTOP = XInternAtom(DisplayHandle, "_NET_WM_DESKTOP", false);
-			_NET_WM_WINDOW_TYPE = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE", false);
-			_NET_WM_STATE = XInternAtom(DisplayHandle, "_NET_WM_STATE", false);
-			_NET_WM_ALLOWED_ACTIONS = XInternAtom(DisplayHandle, "_NET_WM_ALLOWED_ACTIONS", false);
-			_NET_WM_STRUT = XInternAtom(DisplayHandle, "_NET_WM_STRUT", false);
-			_NET_WM_STRUT_PARTIAL = XInternAtom(DisplayHandle, "_NET_WM_STRUT_PARTIAL", false);
-			_NET_WM_ICON_GEOMETRY = XInternAtom(DisplayHandle, "_NET_WM_ICON_GEOMETRY", false);
-			_NET_WM_ICON = XInternAtom(DisplayHandle, "_NET_WM_ICON", false);
-			_NET_WM_PID = XInternAtom(DisplayHandle, "_NET_WM_PID", false);
-			_NET_WM_HANDLED_ICONS = XInternAtom(DisplayHandle, "_NET_WM_HANDLED_ICONS", false);
-			_NET_WM_USER_TIME = XInternAtom(DisplayHandle, "_NET_WM_USER_TIME", false);
-			_NET_FRAME_EXTENTS = XInternAtom(DisplayHandle, "_NET_FRAME_EXTENTS", false);
+			int off = 0;
+			WM_PROTOCOLS = atoms [off++];
+			WM_DELETE_WINDOW = atoms [off++];
+			WM_TAKE_FOCUS = atoms [off++];
+			_NET_SUPPORTED = atoms [off++];
+			_NET_CLIENT_LIST = atoms [off++];
+			_NET_NUMBER_OF_DESKTOPS = atoms [off++];
+			_NET_DESKTOP_GEOMETRY = atoms [off++];
+			_NET_DESKTOP_VIEWPORT = atoms [off++];
+			_NET_CURRENT_DESKTOP = atoms [off++];
+			_NET_DESKTOP_NAMES = atoms [off++];
+			_NET_ACTIVE_WINDOW = atoms [off++];
+			_NET_WORKAREA = atoms [off++];
+			_NET_SUPPORTING_WM_CHECK = atoms [off++];
+			_NET_VIRTUAL_ROOTS = atoms [off++];
+			_NET_DESKTOP_LAYOUT = atoms [off++];
+			_NET_SHOWING_DESKTOP = atoms [off++];
+			_NET_CLOSE_WINDOW = atoms [off++];
+			_NET_MOVERESIZE_WINDOW = atoms [off++];
+			_NET_WM_MOVERESIZE = atoms [off++];
+			_NET_RESTACK_WINDOW = atoms [off++];
+			_NET_REQUEST_FRAME_EXTENTS = atoms [off++];
+			_NET_WM_NAME = atoms [off++];
+			_NET_WM_VISIBLE_NAME = atoms [off++];
+			_NET_WM_ICON_NAME = atoms [off++];
+			_NET_WM_VISIBLE_ICON_NAME = atoms [off++];
+			_NET_WM_DESKTOP = atoms [off++];
+			_NET_WM_WINDOW_TYPE = atoms [off++];
+			_NET_WM_STATE = atoms [off++];
+			_NET_WM_ALLOWED_ACTIONS = atoms [off++];
+			_NET_WM_STRUT = atoms [off++];
+			_NET_WM_STRUT_PARTIAL = atoms [off++];
+			_NET_WM_ICON_GEOMETRY = atoms [off++];
+			_NET_WM_ICON = atoms [off++];
+			_NET_WM_PID = atoms [off++];
+			_NET_WM_HANDLED_ICONS = atoms [off++];
+			_NET_WM_USER_TIME = atoms [off++];
+			_NET_FRAME_EXTENTS = atoms [off++];
+			_NET_WM_PING = atoms [off++];
+			_NET_WM_SYNC_REQUEST = atoms [off++];
+			_NET_SYSTEM_TRAY_OPCODE = atoms [off++];
+			_NET_SYSTEM_TRAY_ORIENTATION = atoms [off++];
+			_NET_WM_STATE_MAXIMIZED_HORZ = atoms [off++];
+			_NET_WM_STATE_MAXIMIZED_VERT = atoms [off++];
+			_NET_WM_STATE_HIDDEN = atoms [off++];
+			_XEMBED = atoms [off++];
+			_XEMBED_INFO = atoms [off++];
+			_MOTIF_WM_HINTS = atoms [off++];
+			_NET_WM_STATE_SKIP_TASKBAR = atoms [off++];
+			_NET_WM_STATE_ABOVE = atoms [off++];
+			_NET_WM_STATE_MODAL = atoms [off++];
+			_NET_WM_CONTEXT_HELP = atoms [off++];
+			_NET_WM_WINDOW_OPACITY = atoms [off++];
+			_NET_WM_WINDOW_TYPE_DESKTOP = atoms [off++];
+			_NET_WM_WINDOW_TYPE_DOCK = atoms [off++];
+			_NET_WM_WINDOW_TYPE_TOOLBAR = atoms [off++];
+			_NET_WM_WINDOW_TYPE_MENU = atoms [off++];
+			_NET_WM_WINDOW_TYPE_UTILITY = atoms [off++];
+			_NET_WM_WINDOW_TYPE_DIALOG = atoms [off++];
+			_NET_WM_WINDOW_TYPE_SPLASH = atoms [off++];
+			_NET_WM_WINDOW_TYPE_NORMAL = atoms [off++];
+			CLIPBOARD = atoms [off++];
+			PRIMARY = atoms [off++];
+			OEMTEXT = atoms [off++];
+			UNICODETEXT = atoms [off++];
+			TARGETS = atoms [off++];
+			AsyncAtom = atoms [off++];
+			PostAtom = atoms [off++];
+			HoverState.Atom = atoms [off++];
 
-			_NET_WM_PING = XInternAtom(DisplayHandle, "_NET_WM_PING", false);
-			_NET_WM_SYNC_REQUEST = XInternAtom(DisplayHandle, "_NET_WM_SYNC_REQUEST", false);
-
-			_NET_SYSTEM_TRAY_S = XInternAtom(DisplayHandle, "_NET_SYSTEM_TRAY_S" + ScreenNo.ToString(), false);
-			_NET_SYSTEM_TRAY_OPCODE = XInternAtom(DisplayHandle, "_NET_SYSTEM_TRAY_OPCODE", false);
-			_NET_SYSTEM_TRAY_ORIENTATION = XInternAtom(DisplayHandle, "_NET_SYSTEM_TRAY_ORIENTATION", false);
-
-			_NET_WM_STATE_MAXIMIZED_HORZ = XInternAtom(DisplayHandle, "_NET_WM_STATE_MAXIMIZED_HORZ", false);
-			_NET_WM_STATE_MAXIMIZED_VERT = XInternAtom(DisplayHandle, "_NET_WM_STATE_MAXIMIZED_VERT", false);
-			_NET_WM_STATE_HIDDEN = XInternAtom(DisplayHandle, "_NET_WM_STATE_HIDDEN", false);
-
-			_XEMBED = XInternAtom(DisplayHandle, "_XEMBED", false);
-			_XEMBED_INFO = XInternAtom(DisplayHandle, "_XEMBED_INFO", false);
-
-			_MOTIF_WM_HINTS = XInternAtom(DisplayHandle, "_MOTIF_WM_HINTS", false);
-
-			_NET_WM_STATE_SKIP_TASKBAR = XInternAtom(DisplayHandle, "_NET_WM_STATE_SKIP_TASKBAR", false);
-			_NET_WM_STATE_ABOVE = XInternAtom(DisplayHandle, "_NET_WM_STATE_ABOVE", false);
-			_NET_WM_STATE_MODAL = XInternAtom(DisplayHandle, "_NET_WM_STATE_MODAL", false);
-			_NET_WM_CONTEXT_HELP = XInternAtom(DisplayHandle, "_NET_WM_CONTEXT_HELP", false);
-			_NET_WM_WINDOW_OPACITY = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_OPACITY", false);
-
-			_NET_WM_WINDOW_TYPE_DESKTOP = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_DESKTOP", false);
-			_NET_WM_WINDOW_TYPE_DOCK = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_DOCK", false);
-			_NET_WM_WINDOW_TYPE_TOOLBAR = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_TOOLBAR", false);
-			_NET_WM_WINDOW_TYPE_MENU = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_MENU", false);
-			_NET_WM_WINDOW_TYPE_UTILITY = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_UTILITY", false);
-			_NET_WM_WINDOW_TYPE_DIALOG = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_DIALOG", false);
-			_NET_WM_WINDOW_TYPE_SPLASH = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_SPLASH", false);
-			_NET_WM_WINDOW_TYPE_NORMAL = XInternAtom(DisplayHandle, "_NET_WM_WINDOW_TYPE_NORMAL", false);
-
-			// Clipboard support
-			CLIPBOARD = XInternAtom (DisplayHandle, "CLIPBOARD", false);
-			PRIMARY = XInternAtom (DisplayHandle, "PRIMARY", false);
 			DIB = (IntPtr)Atom.XA_PIXMAP;
-			OEMTEXT = XInternAtom(DisplayHandle, "COMPOUND_TEXT", false);
-			UNICODETEXT = XInternAtom(DisplayHandle, "UTF8_STRING", false);
-			TARGETS = XInternAtom(DisplayHandle, "TARGETS", false);
-
-			// Special Atoms
-			AsyncAtom = XInternAtom(DisplayHandle, "_SWF_AsyncAtom", false);
-			PostAtom = XInternAtom (DisplayHandle, "_SWF_PostMessageAtom", false);
-			HoverState.Atom = XInternAtom(DisplayHandle, "_SWF_HoverAtom", false);
+			_NET_SYSTEM_TRAY_S = XInternAtom (DisplayHandle, "_NET_SYSTEM_TRAY_S" + ScreenNo.ToString(), false);
 		}
 
 		private void GetSystrayManagerWindow() {
@@ -872,6 +935,16 @@ namespace System.Windows.Forms {
 					atoms [0] = _NET_WM_WINDOW_TYPE_UTILITY.ToInt32 ();
 					XChangeProperty (DisplayHandle, hwnd.whole_window,  _NET_WM_WINDOW_TYPE,
 							 (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
+
+					Form f = Control.FromHandle(hwnd.Handle) as Form;
+					if (f != null && !hwnd.reparented) {
+						if (f.Owner != null && f.Owner.Handle != IntPtr.Zero) {
+							Hwnd owner_hwnd = Hwnd.ObjectFromHandle(f.Owner.Handle);
+							if (owner_hwnd != null)
+								XSetTransientForHint(DisplayHandle, hwnd.whole_window,
+										     owner_hwnd.whole_window);
+						}
+					}
 				}
 				
 				XChangeProperty(DisplayHandle, hwnd.whole_window, _MOTIF_WM_HINTS, _MOTIF_WM_HINTS, 32, PropertyMode.Replace, ref mwmHints, 5);
@@ -2173,13 +2246,13 @@ namespace System.Windows.Forms {
 			//else if (format == "SymbolicLink" ) return 4;
 			//else if (format == "DataInterchangeFormat" ) return 5;
 			//else if (format == "Tiff" ) return 6;
-			else if (format == "OEMText" ) return XInternAtom(DisplayHandle, "COMPOUND_TEXT", false).ToInt32();
+			else if (format == "OEMText" ) return OEMTEXT.ToInt32();
 			else if (format == "DeviceIndependentBitmap" ) return (int)Atom.XA_PIXMAP;
 			else if (format == "Palette" ) return (int)Atom.XA_COLORMAP;	// Useless
 			//else if (format == "PenData" ) return 10;
 			//else if (format == "RiffAudio" ) return 11;
 			//else if (format == "WaveAudio" ) return 12;
-			else if (format == "UnicodeText" ) return XInternAtom(DisplayHandle, "UTF8_STRING", false).ToInt32();
+			else if (format == "UnicodeText" ) return UNICODETEXT.ToInt32();
 			//else if (format == "EnhancedMetafile" ) return 14;
 			//else if (format == "FileDrop" ) return 15;
 			//else if (format == "Locale" ) return 16;
@@ -4726,9 +4799,10 @@ namespace System.Windows.Forms {
 			hwnd.opacity = (uint)(0xffffffff * transparency);
 			opacity = (IntPtr)((int)hwnd.opacity);
 
-			if (hwnd.reparented) {
-				XChangeProperty(DisplayHandle, XGetParent(hwnd.whole_window), _NET_WM_WINDOW_OPACITY, (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, ref opacity, 1);
-			}
+			IntPtr w = hwnd.whole_window;
+			if (hwnd.reparented)
+				w = XGetParent (hwnd.whole_window);
+			XChangeProperty(DisplayHandle, w, _NET_WM_WINDOW_OPACITY, (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, ref opacity, 1);
 		}
 
 		internal override bool SetZOrder(IntPtr handle, IntPtr after_handle, bool top, bool bottom) {
@@ -5019,6 +5093,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XInternAtom")]
 		internal extern static IntPtr XInternAtom(IntPtr display, string atom_name, bool only_if_exists);
+
+		[DllImport ("libX11", EntryPoint="XInternAtoms")]
+		internal extern static int XInternAtoms(IntPtr display, string[] atom_names, int atom_count, bool only_if_exists, IntPtr[] atoms);
 
 		[DllImport ("libX11", EntryPoint="XSetWMProtocols")]
 		internal extern static int XSetWMProtocols(IntPtr display, IntPtr window, IntPtr[] protocols, int count);
