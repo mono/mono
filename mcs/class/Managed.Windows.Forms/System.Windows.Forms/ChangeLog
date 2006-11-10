@@ -1,3 +1,9 @@
+2006-11-10  Everaldo Canuto  <everaldo@simios.org>
+
+	* Toolbar.cs: Change default value of DropDownArrows to true, the 
+	signature still using false to make it compatible with MS but the 
+	initial value is true. Fixes #79855.
+
 2006-11-10  Alexander Olk  <alex.olk@googlemail.com>
 
 	* MimeIcon.cs: Don't throw an exception on windows. Mime stuff is

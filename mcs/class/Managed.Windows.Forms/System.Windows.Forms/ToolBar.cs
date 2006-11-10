@@ -264,7 +264,7 @@ namespace System.Windows.Forms
 			set { base.Dock = value; } 
 		}
 
-		bool drop_down_arrows = false;
+		bool drop_down_arrows = true;
 
 		[DefaultValue (false)]
 		[Localizable (true)]
