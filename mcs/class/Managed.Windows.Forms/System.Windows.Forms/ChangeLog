@@ -1,3 +1,8 @@
+2006-11-10  Alexander Olk  <alex.olk@googlemail.com>
+
+	* MimeIcon.cs: Don't throw an exception on windows. Mime stuff is
+	  only available on Linux.
+
 2006-11-09  Everaldo Canuto  <everaldo@simios.org>
 
 	* Toolbar.cs, ToolBarButton.cs: Fix wrong separator size and

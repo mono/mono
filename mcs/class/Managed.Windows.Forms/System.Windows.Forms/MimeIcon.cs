@@ -128,15 +128,11 @@ namespace System.Windows.Forms
 		public static int GetIconIndexForFile (string full_filename)
 		{
 			lock (lock_object) {
-				string mime_type = Mime.GetMimeTypeForFile (full_filename);
-				
 				if (platform == EPlatformHandler.Default) {
-					if (mime_type == "inode/directory") {
-						return (int)MimeIconIndex ["inode/directory"];
-					} else {
-						return (int)MimeIconIndex ["unknown/unknown"];
-					}
+					return (int)MimeIconIndex ["unknown/unknown"];
 				}
+				
+				string mime_type = Mime.GetMimeTypeForFile (full_filename);
 				
 				object oindex = GetIconIndex (mime_type);
 				
