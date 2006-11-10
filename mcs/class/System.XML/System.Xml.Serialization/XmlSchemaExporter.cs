@@ -209,7 +209,7 @@ namespace System.Xml.Serialization {
 				einfo.ElementName = xmlTypeMapping.ElementName;
 				if (xmlTypeMapping.TypeData.IsComplexType)
 					einfo.MappedType = xmlTypeMapping;
-				einfo.IsNullable = false;
+				einfo.IsNullable = xmlTypeMapping.IsNullable;
 				GetSchemaElement (schema, einfo, false, new XmlSchemaObjectContainer (schema));
 				SetElementExported (xmlTypeMapping);
 			}
@@ -463,6 +463,7 @@ namespace System.Xml.Serialization {
 			}
 			
 			XmlSchemaElement selem = new XmlSchemaElement ();
+			selem.IsNillable = einfo.IsNullable;
 			if (container != null)
 				container.Items.Add (selem);
 

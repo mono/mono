@@ -1,3 +1,9 @@
+2006-11-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaExporterTests.cs :
+	  fixed almost all test cases which expected totally wrong schemas.
+	  Schema elements are all nillable unless it is of value type.
+
 2006-11-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaImporterTests.cs :

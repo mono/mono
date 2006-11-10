@@ -86,7 +86,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportStruct_Array ()
 		{
@@ -99,10 +98,10 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSTimeSpanArray\" elementFormDefault=\"qualified\" targetNamespace=\"NSTimeSpanArray\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"ArrayOfTimeSpan\" type=\"tns:ArrayOfTimeSpan\" />{0}" +
+				"  <xs:element name=\"ArrayOfTimeSpan\" nillable=\"true\" type=\"tns:ArrayOfTimeSpan\" />{0}" +
 				"  <xs:complexType name=\"ArrayOfTimeSpan\">{0}" +
 				"    <xs:sequence>{0}" +
-				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"TimeSpan\" nillable=\"true\" type=\"tns:TimeSpan\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"TimeSpan\" type=\"tns:TimeSpan\" />{0}" +
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
 				"  <xs:complexType name=\"TimeSpan\" />{0}" +
@@ -117,10 +116,10 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"ArrayOfTimeSpan\" type=\"ArrayOfTimeSpan\" />{0}" +
+				"  <xs:element name=\"ArrayOfTimeSpan\" nillable=\"true\" type=\"ArrayOfTimeSpan\" />{0}" +
 				"  <xs:complexType name=\"ArrayOfTimeSpan\">{0}" +
 				"    <xs:sequence>{0}" +
-				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"TimeSpan\" nillable=\"true\" type=\"TimeSpan\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"TimeSpan\" type=\"TimeSpan\" />{0}" +
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
 				"  <xs:complexType name=\"TimeSpan\" />{0}" +
@@ -128,7 +127,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		public void ExportClass_SimpleClass ()
 		{
 			XmlAttributeOverrides overrides = new XmlAttributeOverrides ();
@@ -148,7 +146,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSSimpleClass\" elementFormDefault=\"qualified\" targetNamespace=\"NSSimpleClass\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"SimpleClass\" type=\"tns:SimpleClass\" />{0}" +
+				"  <xs:element name=\"SimpleClass\" nillable=\"true\" type=\"tns:SimpleClass\" />{0}" +
 				"  <xs:complexType name=\"SimpleClass\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" name=\"saying\" nillable=\"true\" type=\"xs:string\" />{0}" +
@@ -165,7 +163,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"SimpleClass\" type=\"SimpleClass\" />{0}" +
+				"  <xs:element name=\"SimpleClass\" nillable=\"true\" type=\"SimpleClass\" />{0}" +
 				"  <xs:complexType name=\"SimpleClass\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" name=\"saying\" nillable=\"true\" type=\"xs:string\" />{0}" +
@@ -175,7 +173,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		public void ExportClass_StringCollection ()
 		{
 			XmlSchemas schemas = Export (typeof (StringCollection), "NSStringCollection");
@@ -187,7 +184,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSStringCollection\" elementFormDefault=\"qualified\" targetNamespace=\"NSStringCollection\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"ArrayOfString\" type=\"tns:ArrayOfString\" />{0}" +
+				"  <xs:element name=\"ArrayOfString\" nillable=\"true\" type=\"tns:ArrayOfString\" />{0}" +
 				"  <xs:complexType name=\"ArrayOfString\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"string\" nillable=\"true\" type=\"xs:string\" />{0}" +
@@ -204,7 +201,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"ArrayOfString\" type=\"ArrayOfString\" />{0}" +
+				"  <xs:element name=\"ArrayOfString\" nillable=\"true\" type=\"ArrayOfString\" />{0}" +
 				"  <xs:complexType name=\"ArrayOfString\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"string\" nillable=\"true\" type=\"xs:string\" />{0}" +
@@ -214,7 +211,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		public void ExportClass_StringCollectionContainer ()
 		{
 			XmlSchemas schemas = Export (typeof (StringCollectionContainer), "NSStringCollectionContainer");
@@ -226,7 +222,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSStringCollectionContainer\" elementFormDefault=\"qualified\" targetNamespace=\"NSStringCollectionContainer\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"StringCollectionContainer\" type=\"tns:StringCollectionContainer\" />{0}" +
+				"  <xs:element name=\"StringCollectionContainer\" nillable=\"true\" type=\"tns:StringCollectionContainer\" />{0}" +
 				"  <xs:complexType name=\"StringCollectionContainer\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"Messages\" type=\"tns:ArrayOfString\" />{0}" +
@@ -248,7 +244,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"StringCollectionContainer\" type=\"StringCollectionContainer\" />{0}" +
+				"  <xs:element name=\"StringCollectionContainer\" nillable=\"true\" type=\"StringCollectionContainer\" />{0}" +
 				"  <xs:complexType name=\"StringCollectionContainer\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"Messages\" type=\"ArrayOfString\" />{0}" +
@@ -263,7 +259,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		public void ExportClass_ArrayContainer ()
 		{
 			XmlSchemas schemas = Export (typeof (ArrayContainer), "NSArrayContainer");
@@ -275,7 +270,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSArrayContainer\" elementFormDefault=\"qualified\" targetNamespace=\"NSArrayContainer\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"ArrayContainer\" type=\"tns:ArrayContainer\" />{0}" +
+				"  <xs:element name=\"ArrayContainer\" nillable=\"true\" type=\"tns:ArrayContainer\" />{0}" +
 				"  <xs:complexType name=\"ArrayContainer\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"items\" type=\"tns:ArrayOfAnyType\" />{0}" +
@@ -297,7 +292,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"ArrayContainer\" type=\"ArrayContainer\" />{0}" +
+				"  <xs:element name=\"ArrayContainer\" nillable=\"true\" type=\"ArrayContainer\" />{0}" +
 				"  <xs:complexType name=\"ArrayContainer\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"items\" type=\"ArrayOfAnyType\" />{0}" +
@@ -312,7 +307,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		public void ExportClass_ClassArrayContainer ()
 		{
 			XmlSchemas schemas = Export (typeof (ClassArrayContainer), "NSClassArrayContainer");
@@ -324,7 +318,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSClassArrayContainer\" elementFormDefault=\"qualified\" targetNamespace=\"NSClassArrayContainer\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"ClassArrayContainer\" type=\"tns:ClassArrayContainer\" />{0}" +
+				"  <xs:element name=\"ClassArrayContainer\" nillable=\"true\" type=\"tns:ClassArrayContainer\" />{0}" +
 				"  <xs:complexType name=\"ClassArrayContainer\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"items\" type=\"tns:ArrayOfSimpleClass\" />{0}" +
@@ -351,7 +345,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"ClassArrayContainer\" type=\"ClassArrayContainer\" />{0}" +
+				"  <xs:element name=\"ClassArrayContainer\" nillable=\"true\" type=\"ClassArrayContainer\" />{0}" +
 				"  <xs:complexType name=\"ClassArrayContainer\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"items\" type=\"ArrayOfSimpleClass\" />{0}" +
@@ -371,7 +365,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		public void ExportClass_SimpleClassWithXmlAttributes ()
 		{
 			XmlSchemas schemas = Export (typeof (SimpleClassWithXmlAttributes), "NSSimpleClassWithXmlAttributes");
@@ -383,7 +376,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSSimpleClassWithXmlAttributes\" elementFormDefault=\"qualified\" targetNamespace=\"NSSimpleClassWithXmlAttributes\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"simple\" type=\"tns:SimpleClassWithXmlAttributes\" />{0}" +
+				"  <xs:element name=\"simple\" nillable=\"true\" type=\"tns:SimpleClassWithXmlAttributes\" />{0}" +
 				"  <xs:complexType name=\"SimpleClassWithXmlAttributes\">{0}" +
 				"    <xs:attribute name=\"member\" type=\"xs:string\" />{0}" +
 				"  </xs:complexType>{0}" +
@@ -398,7 +391,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"simple\" type=\"SimpleClassWithXmlAttributes\" />{0}" +
+				"  <xs:element name=\"simple\" nillable=\"true\" type=\"SimpleClassWithXmlAttributes\" />{0}" +
 				"  <xs:complexType name=\"SimpleClassWithXmlAttributes\">{0}" +
 				"    <xs:attribute name=\"member\" type=\"xs:string\" />{0}" +
 				"  </xs:complexType>{0}" +
@@ -480,7 +473,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		public void ExportClass_MyList ()
 		{
 			XmlSchemas schemas = Export (typeof (MyList), "NSMyList");
@@ -492,7 +484,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSMyList\" elementFormDefault=\"qualified\" targetNamespace=\"NSMyList\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"ArrayOfAnyType\" type=\"tns:ArrayOfAnyType\" />{0}" +
+				"  <xs:element name=\"ArrayOfAnyType\" nillable=\"true\" type=\"tns:ArrayOfAnyType\" />{0}" +
 				"  <xs:complexType name=\"ArrayOfAnyType\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"anyType\" nillable=\"true\" />{0}" +
@@ -509,7 +501,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"ArrayOfAnyType\" type=\"ArrayOfAnyType\" />{0}" +
+				"  <xs:element name=\"ArrayOfAnyType\" nillable=\"true\" type=\"ArrayOfAnyType\" />{0}" +
 				"  <xs:complexType name=\"ArrayOfAnyType\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"anyType\" nillable=\"true\" />{0}" +
@@ -519,7 +511,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		public void ExportClass_Container ()
 		{
 			XmlSchemas schemas = Export (typeof (Container), "NSContainer");
@@ -531,7 +522,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSContainer\" elementFormDefault=\"qualified\" targetNamespace=\"NSContainer\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"Container\" type=\"tns:Container\" />{0}" +
+				"  <xs:element name=\"Container\" nillable=\"true\" type=\"tns:Container\" />{0}" +
 				"  <xs:complexType name=\"Container\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"Items\" type=\"tns:ArrayOfAnyType\" />{0}" +
@@ -553,7 +544,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"Container\" type=\"Container\" />{0}" +
+				"  <xs:element name=\"Container\" nillable=\"true\" type=\"Container\" />{0}" +
 				"  <xs:complexType name=\"Container\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"Items\" type=\"ArrayOfAnyType\" />{0}" +
@@ -568,7 +559,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		public void ExportClass_Container2 ()
 		{
 			XmlSchemas schemas = Export (typeof (Container2), "NSContainer2");
@@ -580,7 +570,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSContainer2\" elementFormDefault=\"qualified\" targetNamespace=\"NSContainer2\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"Container2\" type=\"tns:Container2\" />{0}" +
+				"  <xs:element name=\"Container2\" nillable=\"true\" type=\"tns:Container2\" />{0}" +
 				"  <xs:complexType name=\"Container2\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"Items\" type=\"tns:ArrayOfAnyType\" />{0}" +
@@ -602,7 +592,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"Container2\" type=\"Container2\" />{0}" +
+				"  <xs:element name=\"Container2\" nillable=\"true\" type=\"Container2\" />{0}" +
 				"  <xs:complexType name=\"Container2\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"Items\" type=\"ArrayOfAnyType\" />{0}" +
@@ -625,7 +615,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		public void ExportClass_CDataContainer ()
 		{
 			XmlSchemas schemas = Export (typeof (CDataContainer), "NSCDataContainer");
@@ -637,7 +626,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSCDataContainer\" elementFormDefault=\"qualified\" targetNamespace=\"NSCDataContainer\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"CDataContainer\" type=\"tns:CDataContainer\" />{0}" +
+				"  <xs:element name=\"CDataContainer\" nillable=\"true\" type=\"tns:CDataContainer\" />{0}" +
 				"  <xs:complexType name=\"CDataContainer\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"cdata\">{0}" +
@@ -660,7 +649,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"CDataContainer\" type=\"CDataContainer\" />{0}" +
+				"  <xs:element name=\"CDataContainer\" nillable=\"true\" type=\"CDataContainer\" />{0}" +
 				"  <xs:complexType name=\"CDataContainer\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"cdata\">{0}" +
@@ -676,7 +665,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		public void ExportClass_NodeContainer ()
 		{
 			XmlSchemas schemas = Export (typeof (NodeContainer), "NSNodeContainer");
@@ -688,7 +676,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSNodeContainer\" elementFormDefault=\"qualified\" targetNamespace=\"NSNodeContainer\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"NodeContainer\" type=\"tns:NodeContainer\" />{0}" +
+				"  <xs:element name=\"NodeContainer\" nillable=\"true\" type=\"tns:NodeContainer\" />{0}" +
 				"  <xs:complexType name=\"NodeContainer\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"node\">{0}" +
@@ -711,7 +699,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"NodeContainer\" type=\"NodeContainer\" />{0}" +
+				"  <xs:element name=\"NodeContainer\" nillable=\"true\" type=\"NodeContainer\" />{0}" +
 				"  <xs:complexType name=\"NodeContainer\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"node\">{0}" +
@@ -729,6 +717,8 @@ namespace MonoTests.System.XmlSerialization
 		[Test]
 		[Category ("NotWorking")] // Mono does not generate the <xs:choice> node
 		[Category ("NotDotNet")] // Mono bug ##77117 and MS.NET randomly modifies the order of the elements!
+		//
+		// Huh? The above comment makes no sense. Why could you complain about that !?
 		public void ExportClass_Choices ()
 		{
 			XmlSchemas schemas = Export (typeof (Choices), "NSChoices");
@@ -778,8 +768,6 @@ namespace MonoTests.System.XmlSerialization
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 #if ONLY_1_1
 		[Category ("NotDotNet")] // MS.NET 1.x does not escape spaces in a type name, bug is fixed in .NET 2.0
-#else
-		[Category ("NotDotNet")] // Mono bug ##77117
 #endif
 		public void ExportClass_TestSpace ()
 		{
@@ -792,7 +780,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSTestSpace\" elementFormDefault=\"qualified\" targetNamespace=\"NSTestSpace\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"Type_x0020_with_x0020_space\" type=\"tns:Type_x0020_with_x0020_space\" />{0}" +
+				"  <xs:element name=\"Type_x0020_with_x0020_space\" nillable=\"true\" type=\"tns:Type_x0020_with_x0020_space\" />{0}" +
 				"  <xs:complexType name=\"Type_x0020_with_x0020_space\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" name=\"Element_x0020_with_x0020_space\" type=\"xs:int\" />{0}" +
@@ -810,7 +798,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"Type_x0020_with_x0020_space\" type=\"Type_x0020_with_x0020_space\" />{0}" +
+				"  <xs:element name=\"Type_x0020_with_x0020_space\" nillable=\"true\" type=\"Type_x0020_with_x0020_space\" />{0}" +
 				"  <xs:complexType name=\"Type_x0020_with_x0020_space\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" name=\"Element_x0020_with_x0020_space\" type=\"xs:int\" />{0}" +
@@ -821,7 +809,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		public void ExportClass_ReadOnlyProperties ()
 		{
 			XmlSchemas schemas = Export (typeof (ReadOnlyProperties), "NSReadOnlyProperties");
@@ -833,7 +820,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSReadOnlyProperties\" elementFormDefault=\"qualified\" targetNamespace=\"NSReadOnlyProperties\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"ReadOnlyProperties\" type=\"tns:ReadOnlyProperties\" />{0}" +
+				"  <xs:element name=\"ReadOnlyProperties\" nillable=\"true\" type=\"tns:ReadOnlyProperties\" />{0}" +
 				"  <xs:complexType name=\"ReadOnlyProperties\" />{0}" +
 				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
 
@@ -846,13 +833,12 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"ReadOnlyProperties\" type=\"ReadOnlyProperties\" />{0}" +
+				"  <xs:element name=\"ReadOnlyProperties\" nillable=\"true\" type=\"ReadOnlyProperties\" />{0}" +
 				"  <xs:complexType name=\"ReadOnlyProperties\" />{0}" +
 				"</xs:schema>", Environment.NewLine), sw.ToString (), "#4");
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportClass_ListDefaults ()
 		{
@@ -865,7 +851,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSListDefaults\" elementFormDefault=\"qualified\" targetNamespace=\"NSListDefaults\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"root\" type=\"tns:ListDefaults\" />{0}" +
+				"  <xs:element name=\"root\" nillable=\"true\" type=\"tns:ListDefaults\" />{0}" +
 				"  <xs:complexType name=\"ListDefaults\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"list2\" type=\"tns:ArrayOfAnyType\" />{0}" +
@@ -902,7 +888,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"root\" type=\"ListDefaults\" />{0}" +
+				"  <xs:element name=\"root\" nillable=\"true\" type=\"ListDefaults\" />{0}" +
 				"  <xs:complexType name=\"ListDefaults\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"list2\" type=\"ArrayOfAnyType\" />{0}" +
@@ -932,7 +918,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		public void ExportClass_ClsPerson ()
 		{
 			XmlSchemas schemas = Export (typeof (clsPerson), "NSClsPerson");
@@ -944,7 +929,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSClsPerson\" elementFormDefault=\"qualified\" targetNamespace=\"NSClsPerson\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"clsPerson\" type=\"tns:clsPerson\" />{0}" +
+				"  <xs:element name=\"clsPerson\" nillable=\"true\" type=\"tns:clsPerson\" />{0}" +
 				"  <xs:complexType name=\"clsPerson\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"EmailAccounts\" type=\"tns:ArrayOfAnyType\" />{0}" +
@@ -966,7 +951,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"clsPerson\" type=\"clsPerson\" />{0}" +
+				"  <xs:element name=\"clsPerson\" nillable=\"true\" type=\"clsPerson\" />{0}" +
 				"  <xs:complexType name=\"clsPerson\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"EmailAccounts\" type=\"ArrayOfAnyType\" />{0}" +
@@ -981,7 +966,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		public void ExportClass_ArrayClass ()
 		{
 			XmlSchemas schemas = Export (typeof (ArrayClass), "NSArrayClass");
@@ -993,7 +977,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSArrayClass\" elementFormDefault=\"qualified\" targetNamespace=\"NSArrayClass\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"ArrayClass\" type=\"tns:ArrayClass\" />{0}" +
+				"  <xs:element name=\"ArrayClass\" nillable=\"true\" type=\"tns:ArrayClass\" />{0}" +
 				"  <xs:complexType name=\"ArrayClass\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"names\" />{0}" +
@@ -1010,7 +994,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"ArrayClass\" type=\"ArrayClass\" />{0}" +
+				"  <xs:element name=\"ArrayClass\" nillable=\"true\" type=\"ArrayClass\" />{0}" +
 				"  <xs:complexType name=\"ArrayClass\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"names\" />{0}" +
@@ -1020,7 +1004,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportClass_StructContainer ()
 		{
@@ -1033,7 +1016,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSStructContainer\" elementFormDefault=\"qualified\" targetNamespace=\"NSStructContainer\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"StructContainer\" type=\"tns:StructContainer\" />{0}" +
+				"  <xs:element name=\"StructContainer\" nillable=\"true\" type=\"tns:StructContainer\" />{0}" +
 				"  <xs:complexType name=\"StructContainer\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" name=\"Value\" type=\"tns:EnumDefaultValue\" />{0}" +
@@ -1053,7 +1036,7 @@ namespace MonoTests.System.XmlSerialization
 				"  </xs:simpleType>{0}" +
 				"  <xs:complexType name=\"ArrayOfTimeSpan\">{0}" +
 				"    <xs:sequence>{0}" +
-				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"TimeSpan\" nillable=\"true\" type=\"tns:TimeSpan\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"TimeSpan\" type=\"tns:TimeSpan\" />{0}" +
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
 				"  <xs:complexType name=\"TimeSpan\" />{0}" +
@@ -1068,7 +1051,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"StructContainer\" type=\"StructContainer\" />{0}" +
+				"  <xs:element name=\"StructContainer\" nillable=\"true\" type=\"StructContainer\" />{0}" +
 				"  <xs:complexType name=\"StructContainer\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" name=\"Value\" type=\"EnumDefaultValue\" />{0}" +
@@ -1088,7 +1071,7 @@ namespace MonoTests.System.XmlSerialization
 				"  </xs:simpleType>{0}" +
 				"  <xs:complexType name=\"ArrayOfTimeSpan\">{0}" +
 				"    <xs:sequence>{0}" +
-				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"TimeSpan\" nillable=\"true\" type=\"TimeSpan\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"TimeSpan\" type=\"TimeSpan\" />{0}" +
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
 				"  <xs:complexType name=\"TimeSpan\" />{0}" +
@@ -1104,7 +1087,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		public void ExportClass_Array ()
 		{
 			XmlAttributeOverrides overrides = new XmlAttributeOverrides ();
@@ -1124,7 +1106,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSSimpleClassArray\" elementFormDefault=\"qualified\" targetNamespace=\"NSSimpleClassArray\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"ArrayOfSimpleClass\" type=\"tns:ArrayOfSimpleClass\" />{0}" +
+				"  <xs:element name=\"ArrayOfSimpleClass\" nillable=\"true\" type=\"tns:ArrayOfSimpleClass\" />{0}" +
 				"  <xs:complexType name=\"ArrayOfSimpleClass\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"SimpleClass\" nillable=\"true\" type=\"tns:SimpleClass\" />{0}" +
@@ -1146,7 +1128,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"ArrayOfSimpleClass\" type=\"ArrayOfSimpleClass\" />{0}" +
+				"  <xs:element name=\"ArrayOfSimpleClass\" nillable=\"true\" type=\"ArrayOfSimpleClass\" />{0}" +
 				"  <xs:complexType name=\"ArrayOfSimpleClass\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"SimpleClass\" nillable=\"true\" type=\"SimpleClass\" />{0}" +
@@ -1250,7 +1232,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportXmlSerializable ()
 		{
@@ -1264,7 +1245,7 @@ namespace MonoTests.System.XmlSerialization
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSEmployee\" elementFormDefault=\"qualified\" targetNamespace=\"NSEmployee\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:import namespace=\"http://www.w3.org/2001/XMLSchema\" />{0}" +
-				"  <xs:element name=\"Employee\">{0}" +
+				"  <xs:element name=\"Employee\" nillable=\"true\">{0}" +
 				"    <xs:complexType>{0}" +
 				"      <xs:sequence>{0}" +
 				"        <xs:element ref=\"xs:schema\" />{0}" +
@@ -1284,7 +1265,7 @@ namespace MonoTests.System.XmlSerialization
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:import namespace=\"http://www.w3.org/2001/XMLSchema\" />{0}" +
-				"  <xs:element name=\"Employee\">{0}" +
+				"  <xs:element name=\"Employee\" nillable=\"true\">{0}" +
 				"    <xs:complexType>{0}" +
 				"      <xs:sequence>{0}" +
 				"        <xs:element ref=\"xs:schema\" />{0}" +
@@ -1296,7 +1277,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportXmlSerializable_Schema ()
 		{
@@ -1312,7 +1292,7 @@ namespace MonoTests.System.XmlSerialization
 #if ONLY_1_1
 				"  <xs:import namespace=\"urn:types-devx-com\" />{0}" +
 #endif
-				"  <xs:element name=\"EmployeeSchema\">{0}" +
+				"  <xs:element name=\"EmployeeSchema\" nillable=\"true\">{0}" +
 				"    <xs:complexType>{0}" +
 				"      <xs:sequence>{0}" +
 				"        <xs:any namespace=\"urn:types-devx-com\" />{0}" +
@@ -1347,7 +1327,7 @@ namespace MonoTests.System.XmlSerialization
 #if ONLY_1_1
 				"  <xs:import namespace=\"urn:types-devx-com\" />{0}" +
 #endif
-				"  <xs:element name=\"EmployeeSchema\">{0}" +
+				"  <xs:element name=\"EmployeeSchema\" nillable=\"true\">{0}" +
 				"    <xs:complexType>{0}" +
 				"      <xs:sequence>{0}" +
 				"        <xs:any namespace=\"urn:types-devx-com\" />{0}" +
@@ -1379,7 +1359,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSPrimitiveSchema\" elementFormDefault=\"qualified\" targetNamespace=\"NSPrimitiveSchema\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"PrimitiveSchema\">{0}" +
+				"  <xs:element name=\"PrimitiveSchema\" nillable=\"true\">{0}" +
 				"    <xs:complexType>{0}" +
 				"      <xs:sequence>{0}" +
 				"        <xs:any namespace=\"\" />{0}" +
@@ -1424,7 +1404,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 #if NET_2_0
 		[Category ("NotWorking")] // support for XmlSchemaProvider is not implemented
@@ -1445,7 +1424,7 @@ namespace MonoTests.System.XmlSerialization
 				"  <xs:element name=\"employeeRoot\" nillable=\"true\" xmlns:q1=\"urn:types-devx-com\" type=\"q1:employeeRoot\" />{0}" +
 #else
 				"  <xs:import namespace=\"http://www.w3.org/2001/XMLSchema\" />{0}" +
-				"  <xs:element name=\"EmployeeSchemaProvider\">{0}" +
+				"  <xs:element name=\"EmployeeSchemaProvider\" nillable=\"true\">{0}" +
 				"    <xs:complexType>{0}" +
 				"      <xs:sequence>{0}" +
 				"        <xs:element ref=\"xs:schema\" />{0}" +
@@ -1470,7 +1449,7 @@ namespace MonoTests.System.XmlSerialization
 				"  <xs:element name=\"employeeRoot\" nillable=\"true\" xmlns:q1=\"urn:types-devx-com\" type=\"q1:employeeRoot\" />{0}" +
 #else
 				"  <xs:import namespace=\"http://www.w3.org/2001/XMLSchema\" />{0}" +
-				"  <xs:element name=\"EmployeeSchemaProvider\">{0}" +
+				"  <xs:element name=\"EmployeeSchemaProvider\" nillable=\"true\">{0}" +
 				"    <xs:complexType>{0}" +
 				"      <xs:sequence>{0}" +
 				"        <xs:element ref=\"xs:schema\" />{0}" +
@@ -1495,7 +1474,7 @@ namespace MonoTests.System.XmlSerialization
 				"  <xs:element name=\"int\" nillable=\"true\" type=\"xs:int\" />{0}" +
 #else
 				"  <xs:import namespace=\"http://www.w3.org/2001/XMLSchema\" />{0}" +
-				"  <xs:element name=\"PrimitiveSchemaProvider\">{0}" +
+				"  <xs:element name=\"PrimitiveSchemaProvider\" nillable=\"true\">{0}" +
 				"    <xs:complexType>{0}" +
 				"      <xs:sequence>{0}" +
 				"        <xs:element ref=\"xs:schema\" />{0}" +
@@ -1519,7 +1498,7 @@ namespace MonoTests.System.XmlSerialization
 				"  <xs:element name=\"int\" nillable=\"true\" type=\"xs:int\" />{0}" +
 #else
 				"  <xs:import namespace=\"http://www.w3.org/2001/XMLSchema\" />{0}" +
-				"  <xs:element name=\"PrimitiveSchemaProvider\">{0}" +
+				"  <xs:element name=\"PrimitiveSchemaProvider\" nillable=\"true\">{0}" +
 				"    <xs:complexType>{0}" +
 				"      <xs:sequence>{0}" +
 				"        <xs:element ref=\"xs:schema\" />{0}" +
@@ -1532,7 +1511,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 #if NET_2_0
 		[Category ("NotWorking")] // support for XmlSchemaProvider is not implemented
@@ -1553,7 +1531,7 @@ namespace MonoTests.System.XmlSerialization
 #if NET_2_0
 				"  <xs:import />{0}" +
 #endif
-				"  <xs:element name=\"XmlSerializableContainer\" type=\"tns:XmlSerializableContainer\" />{0}" +
+				"  <xs:element name=\"XmlSerializableContainer\" nillable=\"true\" type=\"tns:XmlSerializableContainer\" />{0}" +
 				"  <xs:complexType name=\"XmlSerializableContainer\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"Slave\">{0}" +
@@ -1747,7 +1725,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		public void ExportXsdPrimitive ()
 		{
 			ArrayList types = new ArrayList ();
@@ -1782,7 +1759,7 @@ namespace MonoTests.System.XmlSerialization
 					"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 					"<xs:schema xmlns:tns=\"{1}\" elementFormDefault=\"qualified\" targetNamespace=\"{1}\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 					"  <xs:element name=\"{2}\" {3}type=\"xs:{2}\" />{0}" +
-					"</xs:schema>", Environment.NewLine, typeDesc.Type.Name, typeDesc.XmlType, ""),
+					"</xs:schema>", Environment.NewLine, typeDesc.Type.Name, typeDesc.XmlType, typeDesc.IsNillable ? "nillable=\"true\" " : String.Empty),
 					sw.ToString (), typeDesc.Type.FullName + "#2");
 
 				schemas = Export (typeDesc.Type);
@@ -1795,13 +1772,12 @@ namespace MonoTests.System.XmlSerialization
 					"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 					"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 					"  <xs:element name=\"{1}\" {2}type=\"xs:{1}\" />{0}" +
-					"</xs:schema>", Environment.NewLine, typeDesc.XmlType, ""),
+					"</xs:schema>", Environment.NewLine, typeDesc.XmlType, typeDesc.IsNillable ? "nillable=\"true\" " : String.Empty),
 					sw.ToString (), typeDesc.Type.FullName + "#4");
 			}
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportXsdPrimitive_Object ()
 		{
@@ -1814,7 +1790,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSAnyType\" elementFormDefault=\"qualified\" targetNamespace=\"NSAnyType\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"anyType\" />{0}" +
+				"  <xs:element name=\"anyType\" nillable=\"true\" />{0}" +
 				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
 
 			schemas = Export (typeof (object));
@@ -1826,12 +1802,11 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"anyType\" />{0}" +
+				"  <xs:element name=\"anyType\" nillable=\"true\" />{0}" +
 				"</xs:schema>", Environment.NewLine), sw.ToString (), "#4");
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		public void ExportXsdPrimitive_ByteArray ()
 		{
 			XmlSchemas schemas = Export (typeof (byte[]), "NSByteArray");
@@ -1843,7 +1818,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSByteArray\" elementFormDefault=\"qualified\" targetNamespace=\"NSByteArray\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"base64Binary\" type=\"xs:base64Binary\" />{0}" +
+				"  <xs:element name=\"base64Binary\" nillable=\"true\" type=\"xs:base64Binary\" />{0}" +
 				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
 
 			schemas = Export (typeof (byte[]));
@@ -1855,7 +1830,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"base64Binary\" type=\"xs:base64Binary\" />{0}" +
+				"  <xs:element name=\"base64Binary\" nillable=\"true\" type=\"xs:base64Binary\" />{0}" +
 				"</xs:schema>", Environment.NewLine), sw.ToString (), "#4");
 		}
 
@@ -1863,7 +1838,6 @@ namespace MonoTests.System.XmlSerialization
 #if NET_2_0
 		[Category ("NotWorking")] // in 2.0 profile, QName must be nillable
 #endif
-		[Category ("NotDotNet")] // Mono bug ##77117
 		public void ExportXsdPrimitive_Arrays ()
 		{
 			ArrayList types = new ArrayList ();
@@ -1896,7 +1870,7 @@ namespace MonoTests.System.XmlSerialization
 				Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 					"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 					"<xs:schema xmlns:tns=\"{1}\" elementFormDefault=\"qualified\" targetNamespace=\"{1}\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-					"  <xs:element name=\"ArrayOf{2}\" type=\"tns:ArrayOf{2}\" />{0}" +
+					"  <xs:element name=\"ArrayOf{2}\" nillable=\"true\" type=\"tns:ArrayOf{2}\" />{0}" +
 					"  <xs:complexType name=\"ArrayOf{2}\">{0}" +
 					"    <xs:sequence>{0}" +
 					"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"{3}\" {5}type=\"{4}:{3}\" />{0}" +
@@ -1915,7 +1889,7 @@ namespace MonoTests.System.XmlSerialization
 				Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 					"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 					"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-					"  <xs:element name=\"ArrayOf{1}\" type=\"ArrayOf{1}\" />{0}" +
+					"  <xs:element name=\"ArrayOf{1}\" nillable=\"true\" type=\"ArrayOf{1}\" />{0}" +
 					"  <xs:complexType name=\"ArrayOf{1}\">{0}" +
 					"    <xs:sequence>{0}" +
 					"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"{2}\" {4}type=\"{3}:{2}\" />{0}" +
@@ -1928,7 +1902,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono bug ##77117
 		public void ExportXsdPrimitive_Object_Arrays ()
 		{
 			XmlSchemas schemas = Export (typeof (object[]), "NSArrayOfAnyType");
@@ -1940,7 +1913,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSArrayOfAnyType\" elementFormDefault=\"qualified\" targetNamespace=\"NSArrayOfAnyType\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"ArrayOfAnyType\" type=\"tns:ArrayOfAnyType\" />{0}" +
+				"  <xs:element name=\"ArrayOfAnyType\" nillable=\"true\" type=\"tns:ArrayOfAnyType\" />{0}" +
 				"  <xs:complexType name=\"ArrayOfAnyType\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"anyType\" nillable=\"true\" />{0}" +
@@ -1957,7 +1930,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"ArrayOfAnyType\" type=\"ArrayOfAnyType\" />{0}" +
+				"  <xs:element name=\"ArrayOfAnyType\" nillable=\"true\" type=\"ArrayOfAnyType\" />{0}" +
 				"  <xs:complexType name=\"ArrayOfAnyType\">{0}" +
 				"    <xs:sequence>{0}" +
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"anyType\" nillable=\"true\" />{0}" +

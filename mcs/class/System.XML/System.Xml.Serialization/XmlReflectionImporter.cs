@@ -242,7 +242,7 @@ namespace System.Xml.Serialization {
 			string elementName;
 			bool includeInSchema = true;
 			XmlAttributes atts = null;
-			bool nullable = true;
+			bool nullable = CanBeNull (typeData);
 
 			if (defaultXmlType == null) defaultXmlType = typeData.XmlType;
 
@@ -1054,7 +1054,11 @@ namespace System.Xml.Serialization {
 		
 		bool CanBeNull (TypeData type)
 		{
-			return (type.SchemaType != SchemaTypes.Primitive || type.Type == typeof (string));
+#if !NET_2_0	// idiotic compatibility
+			if (type.Type == typeof (XmlQualifiedName))
+				return false;
+#endif
+			return !type.Type.IsValueType;
 		}
 		
 		public void IncludeType (Type type)

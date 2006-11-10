@@ -1,3 +1,12 @@
+2006-11-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	Fixed bug #77117.
+	* XmlReflectionImporter.cs : Compute nullable correctly. Elements are
+	  nillable when its type is a reference type.
+	* XmlSchemaExporter.cs :
+	  Set XmlTypeMapElementInfo.IsNullable from XmlTypeMapping.
+	  Set XmlSchemaElement.IsNillable from XmlTypeMapElementInfo.
+
 2006-11-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaImporter.cs : top-level element might also have no type
