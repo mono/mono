@@ -622,6 +622,48 @@ namespace MonoTests.System.Xml.XPath
 			Assert.IsTrue (r.MoveToNextAttribute (), label + "#4");
 			Assert.IsTrue (r.MoveToFirstAttribute (), label + "#5");
 		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ReadSubtreeAttribute ()
+		{
+			string xml = "<root a='b' />";
+			nav = GetXmlDocumentNavigator (xml);
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstAttribute ();
+			nav.ReadSubtree ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ReadSubtreeNamespace ()
+		{
+			string xml = "<root xmlns='urn:foo' />";
+			nav = GetXmlDocumentNavigator (xml);
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstNamespace ();
+			nav.ReadSubtree ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ReadSubtreePI ()
+		{
+			string xml = "<?pi ?><root xmlns='urn:foo' />";
+			nav = GetXmlDocumentNavigator (xml);
+			nav.MoveToFirstChild ();
+			nav.ReadSubtree ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ReadSubtreeComment ()
+		{
+			string xml = "<!-- comment --><root xmlns='urn:foo' />";
+			nav = GetXmlDocumentNavigator (xml);
+			nav.MoveToFirstChild ();
+			nav.ReadSubtree ();
+		}
 	}
 }
 

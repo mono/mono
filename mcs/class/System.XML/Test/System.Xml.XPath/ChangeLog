@@ -1,4 +1,11 @@
-2006-10-27  Atsushi Enomoto <atsushi@ximian.com>
+2006-11-10  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigatorTests.cs : added test for bug #79875, and some
+	  "escaped" text tests for InnerXml.
+	* XPathNavigatorReaderTests.cs : make sure that most of XPath nodes
+	  are rejected to read subtree.
+
+2006-11-10  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigatorTests.cs : added test for bug #79874.
 

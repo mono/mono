@@ -551,6 +551,47 @@ namespace MonoTests.System.Xml
 			AssertEquals ("#3", String.Empty, iter.Current.InnerXml);
 			AssertEquals ("#4", "Hello", iter.Current.OuterXml);
 		}
+
+		[Test] // bug #79875
+		public void InnerXmlAttribute ()
+		{
+			StringReader sr = new StringReader ("<Abc><Foo attr='val1'/></Abc>");
+			XPathDocument doc = new XPathDocument (sr);
+			XPathNavigator nav = doc.CreateNavigator ();
+
+			XPathNodeIterator iter = nav.Select ("/Abc/Foo/@attr");
+			iter.MoveNext ();
+			AssertEquals ("val1", iter.Current.InnerXml);
+		}
+
+		[Test]
+		public void InnerXmlTextEscape ()
+		{
+			StringReader sr = new StringReader ("<Abc><Foo>Hello&lt;\r\nInnerXml</Foo></Abc>");
+			XPathDocument doc = new XPathDocument (sr);
+			XPathNavigator nav = doc.CreateNavigator ();
+			XPathNodeIterator iter = nav.Select ("/Abc/Foo");
+			iter.MoveNext ();
+			AssertEquals ("#1", "Hello&lt;\r\nInnerXml", iter.Current.InnerXml);
+			AssertEquals ("#2", "<Foo>Hello&lt;\r\nInnerXml</Foo>", iter.Current.OuterXml);
+			iter = nav.Select ("/Abc/Foo/text()");
+			iter.MoveNext ();
+			AssertEquals ("#3", String.Empty, iter.Current.InnerXml);
+			AssertEquals ("#4", "Hello&lt;\r\nInnerXml", iter.Current.OuterXml);
+		}
+
+		[Test]
+		[Category ("NotDotNet")] // .NET bug; it should escape value
+		public void InnerXmlAttributeEscape ()
+		{
+			StringReader sr = new StringReader ("<Abc><Foo attr='val&quot;1&#13;&#10;&gt;'/></Abc>");
+			XPathDocument doc = new XPathDocument (sr);
+			XPathNavigator nav = doc.CreateNavigator ();
+
+			XPathNodeIterator iter = nav.Select ("/Abc/Foo/@attr");
+			iter.MoveNext ();
+			AssertEquals ("val&quot;1&#10;&gt;", iter.Current.InnerXml);
+		}
 #endif
 	}
 }

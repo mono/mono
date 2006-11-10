@@ -1,5 +1,13 @@
 2006-11-10  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPathNavigator.cs :
+	  - ReadSubtree() should reject everything but Element or Root.
+	  - InnerXml and OuterXml should not use ReadSubtree() when it is
+	    not positioned on an Element or the Root. Thus, implement them
+	    in their own ways. Fixed bug #79875.
+
+2006-11-10  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPathNavigator.cs : InnerXml should allow Text-only content. Fixed
 	  bug #79874, when tied to XPathNavigatorReader fix.
 

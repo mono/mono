@@ -834,7 +834,13 @@ namespace System.Xml.XPath
 
 		public virtual XmlReader ReadSubtree ()
 		{
-			return new XPathNavigatorReader (this);
+			switch (NodeType) {
+			case XPathNodeType.Element:
+			case XPathNodeType.Root:
+				return new XPathNavigatorReader (this);
+			default:
+				throw new InvalidOperationException (String.Format ("NodeType {0} is not supported to read as a subtree of an XPathNavigator.", NodeType));
+			}
 		}
 
 		public virtual XPathNodeIterator Select (string xpath, IXmlNamespaceResolver nsResolver)
@@ -874,9 +880,48 @@ namespace System.Xml.XPath
 			writer.WriteNode (this, false);
 		}
 
-		[MonoTODO]
+		static readonly char [] escape_text_chars =
+				new char [] {'&', '<', '>'};
+		static readonly char [] escape_attr_chars =
+				new char [] {'"', '&', '<', '>', '\r', '\n'};
+
+		static string EscapeString (string value, bool attr)
+		{
+			StringBuilder sb = null;
+			char [] escape = attr ? escape_attr_chars : escape_text_chars;
+			if (value.IndexOfAny (escape) < 0)
+				return value;
+			sb = new StringBuilder (value, value.Length + 10);
+			if (attr)
+				sb.Replace ("\"", "&quot;");
+			sb.Replace ("<", "&lt;");
+			sb.Replace (">", "&gt;");
+			if (attr) {
+				sb.Replace ("\r\n", "&#10;");
+				sb.Replace ("\r", "&#10;");
+				sb.Replace ("\n", "&#10;");
+			}
+			return sb.ToString ();
+		}
+
 		public virtual string InnerXml {
 			get {
+				switch (NodeType) {
+				case XPathNodeType.Element:
+				case XPathNodeType.Root:
+					break;
+				case XPathNodeType.Attribute:
+				case XPathNodeType.Namespace:
+					return EscapeString (Value, true);
+				case XPathNodeType.Text:
+				case XPathNodeType.Whitespace:
+				case XPathNodeType.SignificantWhitespace:
+					return String.Empty;
+				case XPathNodeType.ProcessingInstruction:
+				case XPathNodeType.Comment:
+					return Value;
+				}
+
 				XmlReader r = ReadSubtree ();
 				r.Read (); // start
 				// skip the element itself (or will reach to 
@@ -910,6 +955,32 @@ namespace System.Xml.XPath
 
 		public virtual string OuterXml {
 			get {
+				switch (NodeType) {
+				case XPathNodeType.Attribute:
+					return String.Concat (
+						Prefix,
+						Prefix.Length > 0 ? ":" : String.Empty,
+						LocalName,
+						"=\"",
+						EscapeString (Value, true),
+						"\"");
+					break;
+				case XPathNodeType.Namespace:
+					return String.Concat (
+						"xmlns",
+						LocalName.Length > 0 ? ":" : String.Empty,
+						LocalName,
+						"=\"",
+						EscapeString (Value, true),
+						"\"");
+					break;
+				case XPathNodeType.Text:
+					return EscapeString (Value, false);
+				case XPathNodeType.Whitespace:
+				case XPathNodeType.SignificantWhitespace:
+					return Value;
+				}
+
 				XmlWriterSettings s = new XmlWriterSettings ();
 				s.Indent = true;
 				s.OmitXmlDeclaration = true;
