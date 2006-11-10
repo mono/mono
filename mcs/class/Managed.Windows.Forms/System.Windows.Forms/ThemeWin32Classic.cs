@@ -4079,7 +4079,7 @@ namespace System.Windows.Forms
 				CPDrawBorder3D (dc, rect, Border3DStyle.Sunken, all_sides);
 			else if (is_flat) {
 				if (button.Hilight)
-					CPDrawBorder3D (dc, rect, Border3DStyle.RaisedOuter, all_sides);
+					CPDrawBorder3D (dc, rect, Border3DStyle.RaisedInner, all_sides);
 			} else
 				CPDrawBorder3D (dc, rect, Border3DStyle.Raised, all_sides);
 

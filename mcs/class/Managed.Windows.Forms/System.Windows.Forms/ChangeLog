@@ -1,4 +1,8 @@
 2006-11-10  Everaldo Canuto  <everaldo@simios.org>
+	
+	* ThemeWin32Classic.cs: Fix drowp down arrow borders.
+
+2006-11-10  Everaldo Canuto  <everaldo@simios.org>
 
 	* Toolbar.cs: Change default value of DropDownArrows to true, the 
 	signature still using false to make it compatible with MS but the 
