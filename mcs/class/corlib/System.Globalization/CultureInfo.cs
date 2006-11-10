@@ -216,6 +216,7 @@ namespace System.Globalization
 		{
 			get {
 				if (textInfo == null) {
+					if (!constructed) Construct ();
 					lock (this) {
 						if(textInfo == null) {
 							textInfo = new TextInfo (this, cultureID, textinfo_data);
