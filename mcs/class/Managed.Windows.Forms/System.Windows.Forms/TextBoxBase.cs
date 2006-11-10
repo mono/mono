@@ -1741,8 +1741,6 @@ namespace System.Windows.Forms {
 				if (click_mode == CaretSelection.Position) {
 					document.SetSelectionToCaret(false);
 					document.DisplayCaret();
-				} else {
-					document.ExpandSelection(click_mode, true);
 				}
 			}
 		}

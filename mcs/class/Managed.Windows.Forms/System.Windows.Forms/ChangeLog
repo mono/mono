@@ -2,6 +2,8 @@
 
 	* TreeView.cs: Use the currently highlighted node for the
 	BeforeSelect event.
+	* TextBoxBase.cs: There is no need to expand selection on
+	MouseMove.
 
 2006-11-10  Andreia Gaita  <shana.ufie@gmail.com>
 
