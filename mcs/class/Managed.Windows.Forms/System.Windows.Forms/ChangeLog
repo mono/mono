@@ -1,3 +1,8 @@
+2006-11-10  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs: Don't add an extension if the filename
+	  already ends with that extension.
+
 2006-11-10  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Use the currently highlighted node for the

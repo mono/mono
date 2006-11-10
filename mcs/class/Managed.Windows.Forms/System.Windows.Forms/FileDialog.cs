@@ -868,7 +868,8 @@ namespace System.Windows.Forms {
 						if (defaultExt != String.Empty)
 							extension_to_use = "." + defaultExt;
 						
-						internalfullfilename += extension_to_use;
+						if (!internalfullfilename.EndsWith (extension_to_use))
+							internalfullfilename += extension_to_use;
 					}
 				}
 				
