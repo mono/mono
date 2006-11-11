@@ -1,3 +1,10 @@
+2006-11-11  Miguel de Icaza  <miguel@novell.com>
+
+	* assembly.c (check_path_env, check_extra_gac_path_env): Do not
+	include empty directories from MONO_PATH or MONO_GAC_PREFIX in our
+	internal variables.  Fixes #79462 
+	
+
 2006-11-09  Dick Porter  <dick@ximian.com>
 
 	* socket-io.c (ves_icall_System_Net_Sockets_Socket_Poll_internal):
