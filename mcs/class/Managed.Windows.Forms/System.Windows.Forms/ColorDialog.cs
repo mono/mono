@@ -196,7 +196,9 @@ namespace System.Windows.Forms {
 			defineColoursButton.Location = new Point (5, 244);
 			defineColoursButton.Size = new Size (210, 22);
 			defineColoursButton.TabIndex = 6;
-			defineColoursButton.Text = Locale.GetText ("Define Colors >>");
+			// FIXME: update resource files
+			defineColoursButton.Text = "Define Custom Colors >>";
+			//defineColoursButton.Text = Locale.GetText ("Define Custom Colors >>");
 			// okButton
 			okButton.FlatStyle = FlatStyle.System;
 			okButton.Location = new Point (5, 271);
@@ -222,7 +224,9 @@ namespace System.Windows.Forms {
 			addColoursButton.Location = new Point (227, 271);
 			addColoursButton.Size = new Size (213, 22);
 			addColoursButton.TabIndex = 7;
-			addColoursButton.Text =  Locale.GetText ("Add Colors");
+			// FIXME: update resource files
+			addColoursButton.Text =  "Add To Custom Colors";
+			//addColoursButton.Text =  Locale.GetText ("Add To Custom Colors");
 			
 			// baseColorControl
 			baseColorControl.Location = new Point (3, 6);
@@ -448,7 +452,6 @@ namespace System.Windows.Forms {
 			anyColor = false;
 			Color = Color.Black;
 			CustomColors = null;
-			ResetCustomColors ();
 			FullOpen = false;
 			ShowHelp = false;
 			solidColorOnly = false;
@@ -953,7 +956,6 @@ namespace System.Windows.Forms {
 			private SmallColorControl selectedSmallColorControl;
 			
 			private int currentlyUsedUserSmallColorControl = 0;
-			private int[] customColors = null;
 			
 			private ColorDialog colorDialog = null;
 			
@@ -1430,10 +1432,7 @@ namespace System.Windows.Forms {
 			{
 				userSmallColorControl [currentlyUsedUserSmallColorControl].InternalColor = col;
 				
-				customColors [currentlyUsedUserSmallColorControl] = col.ToArgb ();
-				
-				// update ColorDialog dialog property
-				colorDialog.CustomColors = customColors;
+				colorDialog.customColors [currentlyUsedUserSmallColorControl] = col.ToArgb ();
 				
 				currentlyUsedUserSmallColorControl++;
 				if (currentlyUsedUserSmallColorControl > 15)
@@ -1442,16 +1441,8 @@ namespace System.Windows.Forms {
 			
 			public void SetCustomColors ()
 			{
-				int[] customColors = colorDialog.CustomColors;
-				
-				if (customColors != null) {
-					for (int i = 0; i < customColors.Length; i++) {
-						userSmallColorControl [i].InternalColor = Color.FromArgb (customColors [i]);
-					}
-				} else {
-					for (int i = 0; i < userSmallColorControl.Length; i++) {
-						userSmallColorControl [i].InternalColor = Color.White;
-					}
+				for (int i = 0; i < colorDialog.customColors.Length; i++) {
+					userSmallColorControl [i].InternalColor = Color.FromArgb (colorDialog.customColors [i]);
 				}
 			}
 		}
