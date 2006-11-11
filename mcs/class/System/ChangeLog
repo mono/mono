@@ -1,3 +1,9 @@
+2006-11-11  Marek Habersack  <grendello@gmail.com>
+
+	* System_test.dll.sources: Added DisplayNameAttributeTests.cs
+
+	* System.dll.sources: Added DisplayNameAttribute.cs
+
 2006-11-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added ArrayConverterTests.cs.
