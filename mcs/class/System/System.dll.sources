@@ -261,7 +261,6 @@ System.ComponentModel.Design/StandardCommands.cs
 System.ComponentModel.Design/StandardToolWindows.cs
 System.ComponentModel/DesignTimeVisibleAttribute.cs
 System.ComponentModel.Design/ViewTechnology.cs
-System.ComponentModel/DisplayNameAttribute.cs
 System.ComponentModel/DoubleConverter.cs
 System.ComponentModel/DoWorkEventHandler.cs
 System.ComponentModel/DoWorkEventArgs.cs
@@ -482,7 +481,6 @@ System.Diagnostics/ThreadPriorityLevel.cs
 System.Diagnostics/ThreadState.cs
 System.Diagnostics/ThreadWaitReason.cs
 System.Diagnostics/Trace.cs
-System.Diagnostics/TraceEventCache.cs
 System.Diagnostics/TraceImpl.cs
 System.Diagnostics/TraceLevel.cs
 System.Diagnostics/TraceListenerCollection.cs

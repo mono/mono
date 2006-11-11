@@ -1,8 +1,3 @@
-2006-11-11  Marek Habersack  <grendello@gmail.com>
-
-	* DisplayNameAttributeTests.cs: Added new test for
-	DisplayNameAttribute.
-
 2006-11-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CollectionConverterTest.cs: More test cases.

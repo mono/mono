@@ -1,8 +1,3 @@
-2006-11-11  Marek Habersack  <grendello@gmail.com>
-
-	* DisplayNameAttribute.cs: Added implementation of the
-	DisplayNameAttribute class.
-
 2006-11-09  Chris Toshok  <toshok@ximian.com>
 
 	* ReflectionPropertyDescriptor.cs: IsReadOnly needs to take into

@@ -111,7 +111,6 @@ System.ComponentModel/CollectionConverterTest.cs
 System.ComponentModel/ContainerTest.cs
 System.ComponentModel/DateTimeConverterTests.cs
 System.ComponentModel/DecimalConverterTests.cs
-System.ComponentModel/DisplayNameAttributeTests.cs
 System.ComponentModel/DoubleConverterTests.cs
 System.ComponentModel/EventHandlerListTests.cs
 System.ComponentModel/Int16ConverterTests.cs
