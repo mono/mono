@@ -334,6 +334,21 @@ addr2line utility that comes from the binutils package).
 There are a number of external profilers that have been developed for
 Mono, we will update this section to contain the profilers.
 .PP
+The heap Shot profiler can track all live objects, and references to
+these objects, and includes a GUI tool, this is our recommended
+profiler.
+To install you must download the profiler
+from Mono's SVN:
+.nf
+	svn co svn://svn.myrealbox.com/source/trunk/heap-shot
+	cd heap-shot
+	./autogen
+	make
+	make install
+.fi
+.PP
+See the included documentation for details on using it.
+.PP
 The Live Type profiler shows at every GC iteration all of the live
 objects of a given type.   To install you must download the profiler
 from Mono's SVN:
@@ -371,11 +386,21 @@ checkpoint 102.
 .PP
 Then on each line the type is displayed as well as the number of bytes
 that are being consumed by live instances of this object.
+.PP 
+The AOT profiler is used to feed back information to the AOT compiler
+about how to order code based on the access patterns for pages.  To
+use it, use:
+.nf
+	mono --profile=aot program.exe
+.fi
+The output of this profile can be fed back into Mono's AOT compiler to
+order the functions on the disk to produce precompiled images that
+have methods in sequential pages.
 .SH CUSTOM PROFILERS
 Mono provides a mechanism for loading other profiling modules which in
 the form of shared libraries.  These profiling modules can hook up to
 various parts of the Mono runtime to gather information about the code
-being executed.  
+being executed.
 .PP
 To use a third party profiler you must pass the name of the profiler
 to Mono, like this:
@@ -679,6 +704,14 @@ loader in subtle ways.
 .Sp
 Directories are separated by the platform path separator (colons on unix). Example:
 .B /home/username/lib:/usr/local/mono/lib
+.Sp
+Alternative solutions to MONO_PATH include: installing libraries into
+the Global Assembly Cache (see gacutil(1)) or having the dependent
+libraries side-by-side with the main executable.
+.Sp
+For a complete description of recommended practices for application
+deployment, see the
+http://www.mono-project.com/Guidelines:Application_Deployment page. 
 .TP
 .I "MONO_RTC"
 Experimental RTC support in the statistical profiler: if the user has
