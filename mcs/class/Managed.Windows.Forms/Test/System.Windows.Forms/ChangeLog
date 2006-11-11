@@ -1,3 +1,7 @@
+2006-11-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TreeViewTest.cs: Added (NotWorking) tests for BeforeSelect event.
+
 2006-11-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ListViewEventTest.cs: Added tests for SelectedIndexChanged event.
