@@ -1,5 +1,14 @@
 2006-11-11  Miguel de Icaza  <miguel@novell.com>
 
+	* process.c
+	(ves_icall_System_Diagnostics_Process_CreateProcess_internal):
+	Only close the handle if the value of the handle is not
+	INVALID_HANDLE_VALUE.  This just makes the process a bit more
+	robust.
+
+	Improvement for #75733, so that we do not run into this problem. 
+
+	
 	* assembly.c (check_path_env, check_extra_gac_path_env): Do not
 	include empty directories from MONO_PATH or MONO_GAC_PREFIX in our
 	internal variables.  Fixes #79462 
