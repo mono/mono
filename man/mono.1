@@ -83,9 +83,10 @@ information which is not availble on the generated file.  When
 precompiling code, you might want to compile with all optimizations
 (-O=all).  Pre-compiled code is position independent code.
 .Sp
-Pre compilation is just a mechanism to reduce startup time, and avoid
-just-in-time compilation costs.  The original assembly must still be
-present, as the metadata is contained there.
+Pre compilation is just a mechanism to reduce startup time, increase
+code sharing across multiple mono processes and avoid just-in-time
+compilation program startup costs.  The original assembly must still
+be present, as the metadata is contained there.
 .TP
 .I "--config filename"
 Load the specified configuration file instead of the default one(s).
