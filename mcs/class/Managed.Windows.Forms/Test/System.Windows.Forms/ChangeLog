@@ -1,3 +1,7 @@
+2006-11-12  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TextBoxTest.cs: Added (NotWorking) test for bug #79909.
+
 2006-11-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TreeViewTest.cs: Added (NotWorking) tests for BeforeSelect event.

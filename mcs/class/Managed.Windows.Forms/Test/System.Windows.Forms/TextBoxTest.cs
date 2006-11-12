@@ -294,5 +294,32 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual (text, textBox.Text);
 		}
+
+		[Test] // bug #79909
+		[Category ("NotWorking")]
+		public void MultilineText ()
+		{
+			string text = "line1\n\nline2\nline3\r\nline4";
+
+			textBox.Multiline = true;
+			textBox.Size = new Size (300, 168);
+			textBox.Text = text;
+
+			Form form = new Form ();
+			form.Controls.Add (textBox);
+			form.ShowInTaskbar = false;
+			form.Show ();
+
+			Assert.AreEqual (text, textBox.Text, "#1");
+
+			text = "line1\n\nline2\nline3\r\nline4\rline5\r\n\nline6\n\n\nline7";
+
+			textBox.Text = text;
+
+			form.Visible = false;
+			form.Show ();
+
+			Assert.AreEqual (text, textBox.Text, "#2");
+		}
 	}
 }
