@@ -34,6 +34,10 @@ namespace System.Runtime.Serialization {
 
 	/// <summary>
 	/// Creation of serialization surrogate selectors</summary>
+#if NET_2_0
+        [System.Runtime.InteropServices.ComVisibleAttribute (true)]
+#endif
+
 	public interface ISurrogateSelector {
 
 		/// <summary>

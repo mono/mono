@@ -35,7 +35,7 @@ namespace System.Runtime.Serialization {
 	[ComVisible(true)]
 	[Serializable]
 	[AttributeUsage (AttributeTargets.Method, Inherited=false)]
-	public class OnSerializingAttribute : Attribute {
+	public sealed class OnSerializingAttribute : Attribute {
 	}
 }
 #endif

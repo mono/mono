@@ -34,7 +34,7 @@ namespace System.Runtime.Serialization {
 
 	[ComVisible(true)]
 	[AttributeUsage (AttributeTargets.Field, Inherited=false)]
-	public class OptionalFieldAttribute : Attribute {
+	public sealed class OptionalFieldAttribute : Attribute {
 		int version_added;
 		
 		public int VersionAdded {
