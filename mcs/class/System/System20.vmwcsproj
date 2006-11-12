@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -11,6 +11,7 @@
     <JDKName>1.5.0_05</JDKName>
     <GHProjectType>1</GHProjectType>
     <GHProjectKind>framework</GHProjectKind>
+    <MergeExternal>..\lib\apache_http_client.jar</MergeExternal>
     <Version>2.0</Version>
     <RootNamespace>System</RootNamespace>
     <jarserver>iap2</jarserver>
@@ -964,22 +965,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>set td=%25random%25
-mkdir %25td%25
-cd %25td%25
-set classdir=..\..\..\..
-
-echo Unzipping System.jar...
-set jar=$(TargetDir)$(TargetName).jar
-jar xf "%25jar%25"
-echo Extracting apache_http_client.jar
-jar xf %25classdir%25\lib\apache_http_client.jar 
-
-echo Repackaging...
-jar cfm "%25jar%25" .\META-INF\MANIFEST.MF *
-
-echo Remove temp dir
-cd ..
-rmdir /S /Q %25td%25</PostBuildEvent>
+    <PostBuildEvent></PostBuildEvent>
   </PropertyGroup>
 </Project>
