@@ -78,8 +78,6 @@ namespace System.Windows.Forms {
 			
 			form.Text = "Color";
 			
-			form.Size = new Size (221, 332); // 300
-			
 			form.FormBorderStyle = FormBorderStyle.FixedDialog;
 			form.MaximizeBox = false;
 			
@@ -382,15 +380,12 @@ namespace System.Windows.Forms {
 					
 					if (fullOpen && allowFullOpen) {
 						defineColoursButton.Enabled = false;
-						
 						colorMatrixControl.ColorToShow = baseColorControl.ColorToShow;
-						
-						form.Size = new Size (448, 332);
+						form.Size = GetFormSize (true);
 					} else {
 						if (allowFullOpen)
 							defineColoursButton.Enabled = true;
-						
-						form.Size = new Size (221, 332); // 300
+						form.Size = GetFormSize (false);
 					}
 				}
 			}
@@ -482,6 +477,10 @@ namespace System.Windows.Forms {
 		#region Protected Instance Methods
 		protected override bool RunDialog (IntPtr hwndOwner)
 		{
+			defineColoursButton.Enabled = (AllowFullOpen && !FullOpen);
+			defineColoursButton.Refresh ();
+
+			form.Size = GetFormSize (FullOpen && AllowFullOpen);
 			// currently needed, otherwise there are a lot of drawing artefacts/transparent controls if the same dialog gets opened again
 			form.Refresh ();
 			
@@ -489,7 +488,16 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Protected Instance Methods
 		
-		#region Private Methods		
+		#region Private Methods
+
+		Size GetFormSize (bool fullOpen)
+		{
+			if (fullOpen)
+				return new Size (448, 332);
+			else
+				return new Size (221, 332); // 300
+		}
+
 		void OnClickCancelButton (object sender, EventArgs e)
 		{
 			form.DialogResult = DialogResult.Cancel;
@@ -509,10 +517,8 @@ namespace System.Windows.Forms {
 		{
 			if (allowFullOpen) {
 				defineColoursButton.Enabled = false;
-				
 				colorMatrixControl.ColorToShow = baseColorControl.ColorToShow;
-				
-				form.Size = new Size (448, 332);
+				form.Size = GetFormSize (true);
 			}
 		}
 		
