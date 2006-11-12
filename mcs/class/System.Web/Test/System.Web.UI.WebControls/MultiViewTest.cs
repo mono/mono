@@ -325,16 +325,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")] // On attempting add to MultiViewControlCollection not View Control, the HttpException must be thrown 
-		[ExpectedException (typeof (HttpException))]
-		public void MultiView_AddParsedSubObjectExeption ()
-		{
-			PokerMultiView pmv = new PokerMultiView ();
-			Button b1 = new Button ();
-			pmv.DoAddParsedSubObject (b1);
-		}
-
-		[Test]
 		public void MultiView_AddParsedSubObjectExeption2 ()
 		{
 			PokerMultiView pmv = new PokerMultiView ();
