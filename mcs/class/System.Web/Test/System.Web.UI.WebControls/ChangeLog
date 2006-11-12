@@ -1,3 +1,7 @@
+2006-11-12  Igor Zelmanovich   <igorz@mainsoft.com>
+
+	* DetailsViewTest.cs: added tests.
+
 2006-11-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* MultiViewTest.cs: removed NotWorking test

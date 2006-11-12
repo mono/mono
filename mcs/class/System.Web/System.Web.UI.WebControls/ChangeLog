@@ -1,3 +1,7 @@
+2006-11-12 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DetailsView.cs: fixed:  DataKeys, PageCount, DataBinding flow.
+
 2006-11-09 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DetailsViewPagerRow.cs: fixed: must be not resolved as BindingContainer.

@@ -332,6 +332,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			{
 				return GetData ();
 			}
+
+			public void SetRequiresDataBinding (bool value)
+			{
+				RequiresDataBinding = value;
+			}
 		}
 
 		ArrayList myds = new ArrayList ();
@@ -1820,6 +1825,81 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			PokerDetailsView dv = new PokerDetailsView ();
 			dv.UpdateItem (true);
+		}
+
+		[Test]
+		public void DetailsView_PageCount () {
+			Page p = new Page ();
+
+			PokerDetailsView gv = new PokerDetailsView ();
+			p.Controls.Add (gv);
+
+			ObjectDataSource data = new ObjectDataSource ();
+			data.ID = "ObjectDataSource1";
+			data.TypeName = typeof (TableObject).AssemblyQualifiedName;
+			data.SelectMethod = "GetMyData";
+			p.Controls.Add (data);
+
+			gv.DataSourceID = "ObjectDataSource1";
+			gv.DataKeyNames = new string [] { "ID", "FName" };
+			gv.SetRequiresDataBinding (true);
+
+			Assert.AreEqual (0, gv.PageCount, "PageCount before binding");
+
+			gv.DataBind ();
+
+			Assert.AreEqual (3, gv.PageCount, "PageCount after binding");
+
+			//PokerDetailsView copy = new PokerDetailsView ();
+			//object state = gv.SaveState ();
+			//copy.LoadState (state);
+
+			//Assert.AreEqual (3, copy.PageCount, "PageCount from ViewState");
+		}
+
+		[Test]
+		public void DetailsView_DataKey () {
+			Page p = new Page ();
+
+			PokerDetailsView fv = new PokerDetailsView ();
+			p.Controls.Add (fv);
+
+			ObjectDataSource data = new ObjectDataSource ();
+			data.TypeName = typeof (TableObject).AssemblyQualifiedName;
+			data.SelectMethod = "GetMyData";
+			p.Controls.Add (data);
+
+			fv.DataSource = data;
+			fv.DataKeyNames = new string [] { "ID", "FName" };
+
+			DataKey key1 = fv.DataKey;
+
+			Assert.AreEqual (null, key1.Value, "DataKey.Value before binding");
+			Assert.AreEqual (0, key1.Values.Count, "DataKey.Values count before binding");
+
+			fv.DataBind ();
+
+			DataKey key2 = fv.DataKey;
+			DataKey key3 = fv.DataKey;
+
+			Assert.IsFalse (Object.ReferenceEquals (key1, key2), "DataKey returns the same instans");
+			Assert.IsTrue (Object.ReferenceEquals (key2, key3), "DataKey returns the same instans");
+
+			Assert.AreEqual (1001, key1.Value, "DataKey.Value after binding");
+			Assert.AreEqual (2, key1.Values.Count, "DataKey.Values count after binding");
+			Assert.AreEqual (1001, key1.Values [0], "DataKey.Values[0] after binding");
+			Assert.AreEqual ("Mahesh", key1.Values [1], "DataKey.Values[1] after binding");
+
+			PokerDetailsView copy = new PokerDetailsView ();
+			object state = fv.DoSaveControlState ();
+			copy.DoLoadControlState (state);
+
+			DataKey key4 = copy.DataKey;
+
+			Assert.AreEqual (1001, key4.Value, "DataKey.Value from ControlState");
+			Assert.AreEqual (2, key4.Values.Count, "DataKey.Values count from ControlState");
+			Assert.AreEqual (1001, key4.Values [0], "DataKey.Values[0] from ControlState");
+			Assert.AreEqual ("Mahesh", key4.Values [1], "DataKey.Values[1] from ControlState");
 		}
 
 		[Test]
