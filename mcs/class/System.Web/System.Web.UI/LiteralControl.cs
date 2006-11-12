@@ -45,14 +45,18 @@ namespace System.Web.UI {
         {
                 string _text;
 
-                public LiteralControl () : this (null) {}
+			public LiteralControl ()
+			{
+				EnableViewState = false;
+				AutoID = false;
 
-                public LiteralControl (string text)
-                {
-			EnableViewState = false;
-			AutoID = false;
-			_text = text; // can be null in this case (see CAS unit tests)
-                }
+			}
+
+			public LiteralControl (string text)
+				: this ()
+			{
+				Text = text;
+			}
 
                 public virtual string Text {
                         get { return _text; }

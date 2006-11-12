@@ -91,6 +91,7 @@ System.Web.UI/ControlCollectionTest.cs
 System.Web.UI/CssStyleCollectionTest.cs
 System.Web.UI/DataBindingCollectionTest.cs
 System.Web.UI/DataBindingHandlerAttributeTest.cs
+System.Web.UI/LiteralControlTest.cs
 System.Web.UI.HtmlControls/HtmlAnchorTest.cs
 System.Web.UI.HtmlControls/HtmlButtonTest.cs
 System.Web.UI.HtmlControls/HtmlContainerControlTest.cs

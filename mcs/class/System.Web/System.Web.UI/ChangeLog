@@ -1,3 +1,7 @@
+2006-11-12 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* LiteralControl.cs: fixed: constructors & Text property
+
 2006-11-09 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Page.cs: fixed: LoadControlState is called for controls 
