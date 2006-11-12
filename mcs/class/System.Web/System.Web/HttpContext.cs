@@ -485,14 +485,38 @@ namespace System.Web {
 
 		public void RewritePath (string path)
 		{
-			int qmark = path.IndexOf ('?');
-			if (qmark != -1)
-				RewritePath (path.Substring (0, qmark), "", path.Substring (qmark + 1));
-			else
-				RewritePath (path, null, null);
+#if NET_2_0
+			RewritePath (path, true);
+#else
+			RewritePath (path, false);
+#endif
 		}
 
 		public void RewritePath (string filePath, string pathInfo, string queryString)
+		{
+			RewritePath (filePath, pathInfo, queryString, false);
+		}
+
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		void RewritePath (string path, bool rebaseClientPath)
+		{
+			int qmark = path.IndexOf ('?');
+			if (qmark != -1)
+				RewritePath (path.Substring (0, qmark), "", path.Substring (qmark + 1), rebaseClientPath);
+			else
+				RewritePath (path, null, null, rebaseClientPath);
+		}
+
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		void RewritePath (string filePath, string pathInfo, string queryString, bool setClientFilePath)
 		{
 			filePath = UrlUtils.Combine (Request.BaseVirtualDir, filePath);
 			if (!filePath.StartsWith (HttpRuntime.AppDomainAppVirtualPath))
@@ -506,15 +530,11 @@ namespace System.Web {
 
 			if (queryString != null)
 				Request.QueryStringRaw = queryString;
-		}
-
 #if NET_2_0
-		[MonoTODO]
-		public void RewritePath (string path, bool rebaseClientPath)
-		{
-			throw new NotImplementedException ();
-		}
+			if (setClientFilePath)
+				Request.SetFilePath (filePath);
 #endif
+		}
 
 #region internals
 		

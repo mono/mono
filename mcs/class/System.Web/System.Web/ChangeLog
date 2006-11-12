@@ -1,3 +1,7 @@
+2006-11-12  Marek Habersack  <grendello@gmail.com>
+
+	* HttpContext.cs: Implemented the 2.0 RewritePath overloads.
+
 2006-11-08  Marek Habersack  <grendello@gmail.com>
 
 	* HttpRuntime.cs: Moved the resource compiler results handling to
