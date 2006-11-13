@@ -4,7 +4,6 @@ Assembly/AssemblyInfo.cs
 ../../build/common/MonoTODOAttribute.cs
 System.Web/ApplicationShutdownReason.cs
 System.Web/BeginEventHandler.cs
-System.Web.Caching/AggregateCacheDependency.cs
 System.Web.Caching/Cache.cs
 System.Web.Caching/CacheDependency.cs
 System.Web.Caching/CacheItemPriority.cs
