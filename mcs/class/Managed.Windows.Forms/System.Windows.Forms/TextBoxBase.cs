@@ -1582,6 +1582,9 @@ namespace System.Windows.Forms {
 			int start = document.caret.pos;
 			int end = document.caret.pos;
 
+			if (s.Length < 1)
+				return;
+
 			if (start > 0) {
 				start--;
 				end--;
