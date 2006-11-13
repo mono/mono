@@ -69,6 +69,16 @@
 #define L_XTND SEEK_END
 #endif /* ndef L_XTND */
 
+/*
+ * XATTR_AUTO is a synonym for 0 within XattrFlags, but most systems don't
+ * define it.  map.c doesn't know that, though, so we ensure that it's defined
+ * so that the value 0 round-trips through MonoPosixHelper.
+ */
+
+#ifndef XATTR_AUTO
+#define XATTR_AUTO 0
+#endif /* ndef XATTR_AUTO */
+
 #endif /* ndef PLATFORM_WIN32 */
 
 typedef    gint64 mph_blkcnt_t;

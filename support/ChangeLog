@@ -1,3 +1,9 @@
+2006-11-13  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* mph.h: Add macro for XATTR_AUTO, so that XattrFlags mapping works (as
+	  XATTR_AUTO is a value which frequently isn't definedy by any OS, yet it
+	  has the value 0, a default value which is supported by most OS's).
+
 2006-11-08  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Makefile.am: Revert addition of L_SET et al; this breaks the Win32 build.
