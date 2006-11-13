@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-//#if NET_2_0 && TARGET_JVM
+#if NET_2_0 && TARGET_JVM
 
 using NUnit.Framework;
 using System;
@@ -268,4 +268,4 @@ namespace MonoTests.System.Web.UI.WebControls
 
 }
 
-//#endif
+#endif
