@@ -372,9 +372,7 @@ namespace System.Windows.Forms {
 							typeof (DialogResult));
 
 				dialog_result = value;
-				if (is_modal) {
-					closing = true;
-				}
+				closing = (dialog_result != DialogResult.None && is_modal);
 			}
 		}
 
