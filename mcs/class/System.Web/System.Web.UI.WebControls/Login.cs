@@ -1080,17 +1080,20 @@ namespace System.Web.UI.WebControls {
 				editable.Text = UserName;
 				editable.TextChanged += new EventHandler (UserName_TextChanged);
 			}
+			else
+				throw new HttpException ("LayoutTemplate does not contain an IEditableTextControl with ID UserName for the username.");
 
 			editable = container.PasswordTextBox as IEditableTextControl;
 
 			if (editable != null)
 				editable.TextChanged += new EventHandler (Password_TextChanged);
+			else
+				throw new HttpException ("LayoutTemplate does not contain an IEditableTextControl with ID Password for the password.");
 
 			ICheckBoxControl checkBox = container.RememberMeCheckBox as ICheckBoxControl;
 
 			if (checkBox != null)
 				checkBox.CheckedChanged += new EventHandler (RememberMe_CheckedChanged);
-			
 		}
 
 		protected override void LoadViewState (object savedState)

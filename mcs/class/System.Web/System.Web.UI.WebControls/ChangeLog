@@ -1,5 +1,11 @@
 2006-11-13  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* Login.cs: fixed CreateChildControls, throws exception if needed
+	control not found
+	* LoginView.cs: fixed CreateChildControls, check templates for null
+
+2006-11-13  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* Wizard.cs: fixed ActiveStepIndex property, fixed SideBar button
 	rendering, fixed history updating
 	* WizardStepCollection.cs: fixed implemented interfaces

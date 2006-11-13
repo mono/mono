@@ -121,17 +121,21 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[MonoTODO("Handle RoleGroups")]
+		[MonoTODO ("Handle RoleGroups")]
 		protected internal override void CreateChildControls ()
 		{
-			Controls.Clear();
-			Control c = new Control();
-			if (IsAuthenticated)
-				LoggedInTemplate.InstantiateIn (c);
-			else
-				AnonymousTemplate.InstantiateIn (c);
+			Controls.Clear ();
+			Control c = new Control ();
+			if (IsAuthenticated) {
+				if (LoggedInTemplate != null)
+					LoggedInTemplate.InstantiateIn (c);
+			}
+			else {
+				if (AnonymousTemplate != null)
+					AnonymousTemplate.InstantiateIn (c);
+			}
 
-			Controls.Add(c);
+			Controls.Add (c);
 		}
 
 		public override void DataBind ()
