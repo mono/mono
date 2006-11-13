@@ -74,22 +74,19 @@ namespace System.Web.UI.HtmlControls
 			get {
 				if (Controls.Count == 0)
 					return String.Empty;
-
-				bool is_literal = true;
-				StringBuilder text = new StringBuilder ();
-				foreach (Control ctrl in Controls) {
+				
+				if (Controls.Count == 1) {
+					Control ctrl = Controls [0];
 					LiteralControl lc = ctrl as LiteralControl;
-					if (lc == null) {
-						is_literal = false;
-						break;
-					}
-					text.Append (lc.Text);
-				}
-					
-				if (!is_literal)
-					throw new HttpException ("There is no literal content!");
+					if (lc != null)
+						return lc.Text;
 
-				return text.ToString ();
+					DataBoundLiteralControl dblc = ctrl as DataBoundLiteralControl;
+					if (dblc != null)
+						return dblc.Text;
+				}
+				
+				throw new HttpException ("There is no literal content!");
 			}
 
 			set {

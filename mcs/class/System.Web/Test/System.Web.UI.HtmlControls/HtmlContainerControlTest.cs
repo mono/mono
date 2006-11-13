@@ -64,6 +64,48 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		}
 
 		[Test]
+		public void InnerText () {
+			HtmlButton c = new HtmlButton ();
+			DataBoundLiteralControl db = new DataBoundLiteralControl (1, 0);
+			db.SetStaticString (0, "FFF");
+			c.Controls.Add (db);
+			Assert.AreEqual ("FFF", c.InnerText);
+		}
+
+		[Test]
+		[ExpectedException (typeof (HttpException))]
+		public void InnerText2 () {
+			HtmlButton c = new HtmlButton ();
+			DesignerDataBoundLiteralControl x = new DesignerDataBoundLiteralControl ();
+			x.Text = "FFF";
+			c.Controls.Add (x);
+			string s = c.InnerText;
+		}
+
+		[Test]
+		public void InnerText3 () {
+			HtmlButton c = new HtmlButton ();
+			LiteralControl x = new LiteralControl ();
+			x.Text = "FFF";
+			c.Controls.Add (x);
+			Assert.AreEqual("FFF", c.InnerText);
+		}
+
+		[Test]
+		[ExpectedException (typeof (HttpException))]
+		public void InnerText4 () {
+			HtmlButton c = new HtmlButton ();
+			LiteralControl x = new LiteralControl ();
+			x.Text = "FFF";
+			c.Controls.Add (x);
+			LiteralControl x2 = new LiteralControl ();
+			x2.Text = "BBB";
+			c.Controls.Add (x2);
+
+			string s = c.InnerText;
+		}
+
+		[Test]
 		public void NullProperties ()
 		{
 			TestHtmlContainerControl cc = new TestHtmlContainerControl ();

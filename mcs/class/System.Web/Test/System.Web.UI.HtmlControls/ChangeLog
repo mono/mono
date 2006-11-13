@@ -1,3 +1,7 @@
+2006-11-13  Igor Zelmanovich  <igorz@mainsoft.com>
+
+	* HtmlContainerControlTest.cs: added new tests
+
 2006-09-17  Igor Zelmanovich  <igorz@mainsoft.com>
 
 	* HtmlAnchorTest.cs: added test for ViewState
