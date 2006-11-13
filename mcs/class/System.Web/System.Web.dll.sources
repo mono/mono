@@ -4,6 +4,7 @@ Assembly/AssemblyInfo.cs
 ../../build/common/MonoTODOAttribute.cs
 System.Web/ApplicationShutdownReason.cs
 System.Web/BeginEventHandler.cs
+System.Web.Caching/AggregateCacheDependency.cs
 System.Web.Caching/Cache.cs
 System.Web.Caching/CacheDependency.cs
 System.Web.Caching/CacheItemPriority.cs
@@ -1080,6 +1081,7 @@ System.Web.UI/XPathBinder.cs
 System.Web.Util/AltSerialization.cs
 System.Web.Util/DataSourceHelper.cs
 System.Web.Util/DataSourceResolver.cs
+System.Web.Util/FileUtils.cs
 System.Web.Util/ICalls.cs
 System.Web.Util/IWebObjectFactory.cs
 System.Web.Util/IWebPropertyAccessor.cs
