@@ -1,5 +1,11 @@
 2006-11-13  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* Wizard.cs: fixed ActiveStepIndex property, fixed SideBar button
+	rendering, fixed history updating
+	* WizardStepCollection.cs: fixed implemented interfaces
+
+2006-11-13  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* XmlDataSource.cs: CacheKeyDependency fixed
 
 2006-11-12 Igor Zelmanovich <igorz@mainsoft.com>

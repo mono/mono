@@ -35,7 +35,7 @@ using System.Collections;
 
 namespace System.Web.UI.WebControls
 {
-	public sealed class WizardStepCollection: IList
+	public sealed class WizardStepCollection : IList, ICollection, IEnumerable
 	{
 		ArrayList list = new ArrayList ();
 		Wizard wizard;

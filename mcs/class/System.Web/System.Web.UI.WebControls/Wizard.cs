@@ -86,7 +86,9 @@ namespace System.Web.UI.WebControls
 		
 		// Control state
 		
-		int activeStepIndex;
+		int activeStepIndex = -1;
+		bool inited = false;
+		bool dontRender = false;
 		ArrayList history;
 
 		Table wizardTable;
@@ -200,21 +202,28 @@ namespace System.Web.UI.WebControls
 	    [ThemeableAttribute (false)]
 		public virtual int ActiveStepIndex {
 			get {
-				if (WizardSteps.Count == 0)
-					return -1;
-
 				return activeStepIndex;
 			}
 			set {
-				if (!AllowNavigationToStep (value))
+				if (value < -1 || (value > WizardSteps.Count && (inited || WizardSteps.Count > 0)))
+					throw new ArgumentOutOfRangeException ("The ActiveStepIndex must be less than WizardSteps.Count and at least -1");
+
+				if (inited && value == -1) {
+					dontRender = true;
+					activeStepIndex = -1;
 					return;
-				if (activeStepIndex != value) {
-					if (history == null) history = new ArrayList ();
-					history.Insert (0, activeStepIndex);
 				}
+
+				if (inited && !AllowNavigationToStep (value))
+					return;
+
 				activeStepIndex = value;
+				dontRender = false;
+
 				UpdateControls ();
-				OnActiveStepChanged (this, EventArgs.Empty);
+				if (inited) {
+					OnActiveStepChanged (this, EventArgs.Empty);
+				}
 			}
 		}
 		
@@ -840,6 +849,8 @@ namespace System.Web.UI.WebControls
 		
 		protected internal override void OnInit (EventArgs e)
 		{
+			inited = true;
+			
 			Page.RegisterRequiresControlState (this);
 			base.OnInit (e);
 		}
@@ -879,43 +890,48 @@ namespace System.Web.UI.WebControls
 					multiView.Views.Add (v);
 				}
 			}
-			
-			multiView.ActiveViewIndex = activeStepIndex;
-			
-			RegisterApplyStyle (viewCell, StepStyle);
-			viewCell.Controls.Add (multiView);
-			viewRow.Cells.Add (viewCell);
-			viewRow.Height = new Unit ("100%");
-			wizardTable.Rows.Add (viewRow);
-			
-			TableRow buttonRow = new TableRow ();
-			TableCell buttonCell = new TableCell ();
-			buttonCell.HorizontalAlign = HorizontalAlign.Right;
-			CreateButtonBar (buttonCell);
-			buttonRow.Cells.Add (buttonCell);
-			wizardTable.Rows.Add (buttonRow);
-			
-			if (DisplaySideBar && ActiveStep.StepType != WizardStepType.Complete) {
-				Table contentTable = wizardTable;
-				contentTable.Height = new Unit ("100%");
-				contentTable.Width = new Unit ("100%");
-				
-				wizardTable = new Table ();
-				wizardTable.CellPadding = CellPadding; 
-				wizardTable.CellSpacing = CellSpacing;
-				TableRow row = new TableRow ();
 
-				TableCellNamingContainer sideBarCell = new TableCellNamingContainer ();
-				sideBarCell.ControlStyle.Height = Unit.Percentage (100);
-				CreateSideBar (sideBarCell);
-				row.Cells.Add (sideBarCell);
-				
-				TableCell contentCell = new TableCell ();
-				contentCell.Controls.Add (contentTable);
-				contentCell.Height = new Unit ("100%");
-				row.Cells.Add (contentCell);
-				
-				wizardTable.Rows.Add (row);
+			if (ActiveStepIndex == -1 && !dontRender)
+				ActiveStepIndex = 0;
+
+			multiView.ActiveViewIndex = ActiveStepIndex;
+
+			if (ActiveStepIndex >= 0) {
+				RegisterApplyStyle (viewCell, StepStyle);
+				viewCell.Controls.Add (multiView);
+				viewRow.Cells.Add (viewCell);
+				viewRow.Height = new Unit ("100%");
+				wizardTable.Rows.Add (viewRow);
+
+				TableRow buttonRow = new TableRow ();
+				TableCell buttonCell = new TableCell ();
+				buttonCell.HorizontalAlign = HorizontalAlign.Right;
+				CreateButtonBar (buttonCell);
+				buttonRow.Cells.Add (buttonCell);
+				wizardTable.Rows.Add (buttonRow);
+
+				if (DisplaySideBar && ActiveStep.StepType != WizardStepType.Complete) {
+					Table contentTable = wizardTable;
+					contentTable.Height = new Unit ("100%");
+					contentTable.Width = new Unit ("100%");
+
+					wizardTable = new Table ();
+					wizardTable.CellPadding = CellPadding;
+					wizardTable.CellSpacing = CellSpacing;
+					TableRow row = new TableRow ();
+
+					TableCellNamingContainer sideBarCell = new TableCellNamingContainer ();
+					sideBarCell.ControlStyle.Height = Unit.Percentage (100);
+					CreateSideBar (sideBarCell);
+					row.Cells.Add (sideBarCell);
+
+					TableCell contentCell = new TableCell ();
+					contentCell.Controls.Add (contentTable);
+					contentCell.Height = new Unit ("100%");
+					row.Cells.Add (contentCell);
+
+					wizardTable.Rows.Add (row);
+				}
 			}
 			
 			Controls.SetReadonly (false);
@@ -1107,6 +1123,9 @@ namespace System.Web.UI.WebControls
 				IButtonControl button = (IButtonControl) e.Item.FindControl (SideBarButtonID);
 				WizardStep step = (WizardStep) e.Item.DataItem;
 
+				if (button is Button)
+					((Button) button).UseSubmitBehavior = false;
+
 				button.CommandName = Wizard.MoveToCommandName;
 				button.CommandArgument = WizardSteps.IndexOf (step).ToString ();
 				button.Text = step.Name;
@@ -1158,6 +1177,9 @@ namespace System.Web.UI.WebControls
 		
 		protected internal override object SaveControlState ()
 		{
+			if (GetHistory ().Count == 0 || (int) history [0] != ActiveStepIndex)
+				history.Insert (0, ActiveStepIndex);
+
 			object bstate = base.SaveControlState ();
 			return new object[] {
 				bstate, activeStepIndex, history
@@ -1190,7 +1212,7 @@ namespace System.Web.UI.WebControls
 		
 		protected override object SaveViewState ()
 		{
-			object[] state = new object [13];
+			object [] state = new object [13];
 			state [0] = base.SaveViewState ();
 			
 			if (stepStyle != null) state [1] = ((IStateManager)stepStyle).SaveViewState ();
