@@ -277,6 +277,15 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal int ActualItemHeight {
+			get {
+				int res = ItemHeight;
+				if (ImageList != null && ImageList.ImageSize.Height > res)
+					res = ImageList.ImageSize.Height;
+				return res;
+			}
+		}
+
 		[DefaultValue(false)]
 		public bool LabelEdit {
 			get { return label_edit; }
@@ -449,7 +458,7 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int VisibleCount {
 			get {
-				return ViewportRectangle.Height / ItemHeight;
+				return ViewportRectangle.Height / ActualItemHeight;
 			}
 		}
 
@@ -826,7 +835,7 @@ namespace System.Windows.Forms {
 				top_node = nodes [0];
 
 			OpenTreeNodeEnumerator o = new OpenTreeNodeEnumerator (TopNode);
-			int move = y / ItemHeight;
+			int move = y / ActualItemHeight;
 			for (int i = -1; i < move; i++) {
 				if (!o.MoveNext ())
 					return null;
@@ -869,13 +878,20 @@ namespace System.Windows.Forms {
 
 		private bool IsCheckboxArea (TreeNode node, int x)
 		{
+			int l = CheckBoxLeft (node);
+			return (x > l && x < l + 10);
+		}
+
+		private int CheckBoxLeft (TreeNode node)
+		{
 			int l = node.Bounds.Left + 5;
 
 			if (show_root_lines || node.Parent != null)
 				l -= indent;
 			if (ImageList != null)
 				l -= ImageList.ImageSize.Width + 3;
-			return (x > l && x < l + 10);
+
+			return l;
 		}
 
 		internal void RecalculateVisibleOrder (TreeNode start)
@@ -1027,7 +1043,7 @@ namespace System.Windows.Forms {
 				TreeNode current = walk.CurrentNode;
 
 				// Haven't gotten to visible nodes yet
-				if (current.GetY () + ItemHeight < clip.Top)
+				if (current.GetY () + ActualItemHeight < clip.Top)
 					continue;
 
 				// Past the visible nodes
@@ -1113,7 +1129,7 @@ namespace System.Windows.Forms {
 
 		private void DrawLinesToNext (TreeNode node, Graphics dc, Rectangle clip, Pen dash, int x, int y)
 		{
-			int middle = y + (ItemHeight / 2);
+			int middle = y + (ActualItemHeight / 2);
 
 			if (node.NextNode != null) {
 				int top = (node.Nodes.Count > 0 && show_plus_minus ? middle + 4 : middle);
@@ -1265,10 +1281,10 @@ namespace System.Windows.Forms {
 		{
 			int child_count = node.nodes.Count;
 			int y = node.GetY ();
-			int middle = y + (ItemHeight / 2);
+			int middle = y + (ActualItemHeight / 2);
 
 			if (full_row_select) {
-				Rectangle r = new Rectangle (1, y + 2, ViewportRectangle.Width - 2, ItemHeight);
+				Rectangle r = new Rectangle (1, y + 2, ViewportRectangle.Width - 2, ActualItemHeight);
 				DrawSelectionAndFocus (node, dc, r);
 			}
 
@@ -1276,7 +1292,7 @@ namespace System.Windows.Forms {
 				DrawNodePlusMinus (node, dc, node.GetLinesX () - Indent + 5, middle);
 
 			if (checkboxes)
-				DrawNodeCheckBox (node, dc, node.GetX () - 19, middle);
+				DrawNodeCheckBox (node, dc, CheckBoxLeft (node) - 3, middle);
 
 			if (show_lines)
 				DrawNodeLines (node, dc, clip, dash, node.GetLinesX (), y, middle);
@@ -1331,7 +1347,7 @@ namespace System.Windows.Forms {
 
 			if (vert) {
 				int visible_height = horz ? ClientRectangle.Height - hbar.Height : ClientRectangle.Height;
-				vbar.SetValues (Math.Max (0, max_visible_order - 2), visible_height / ItemHeight);
+				vbar.SetValues (Math.Max (0, max_visible_order - 2), visible_height / ActualItemHeight);
 				/*
 				vbar.Maximum = max_visible_order;
 				vbar.LargeChange = ClientRectangle.Height / ItemHeight;
@@ -1433,7 +1449,7 @@ namespace System.Windows.Forms {
 			}
 
 			top_node = new_top;
-			int y_move = diff * ItemHeight;
+			int y_move = diff * ActualItemHeight;
 			XplatUI.ScrollWindow (Handle, ViewportRectangle, 0, y_move, false);
 		}
 
@@ -1458,17 +1474,17 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			Rectangle below = new Rectangle (0, node.Bounds.Bottom, ViewportRectangle.Width,
+			Rectangle below = new Rectangle (0, node.Bounds.Bottom + 2, ViewportRectangle.Width,
 					ViewportRectangle.Height - node.Bounds.Bottom);
-				
-			int amount = count_to_next * ItemHeight;
+
+			int amount = count_to_next * ActualItemHeight;
 
 			if (amount > 0)
 				XplatUI.ScrollWindow (Handle, below, 0, amount, false);
 
 			if (show_plus_minus) {
 				//int linesx = node.GetLinesX ();
-				Invalidate (new Rectangle (0, node.GetY (), Width, ItemHeight));
+				Invalidate (new Rectangle (0, node.GetY (), Width, ActualItemHeight));
 			}
 		}
 
@@ -1479,16 +1495,17 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			Rectangle below = new Rectangle (0, node.Bounds.Bottom, ViewportRectangle.Width,
-					ViewportRectangle.Height - node.Bounds.Bottom);
-			int amount = count_to_next * ItemHeight;
+			Rectangle below = new Rectangle (0, node.Bounds.Bottom + 2, ViewportRectangle.Width,
+					ViewportRectangle.Height - node.Bounds.Bottom + 2);
+
+			int amount = count_to_next * ActualItemHeight;
 
 			if (amount > 0)
 				XplatUI.ScrollWindow (Handle, below, 0, -amount, false);
 
 			if (show_plus_minus) {
 				//int linesx = node.GetLinesX ();
-				Invalidate (new Rectangle (0, node.GetY (), Width, ItemHeight));
+				Invalidate (new Rectangle (0, node.GetY (), Width, ActualItemHeight));
 			}
 		}
 

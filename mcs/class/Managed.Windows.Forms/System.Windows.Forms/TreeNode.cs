@@ -186,7 +186,7 @@ namespace System.Windows.Forms {
 				if (width == -1)
 					width = TreeView.GetNodeWidth (this);
 
-				Rectangle res = new Rectangle (x, y, width, TreeView.ItemHeight);
+				Rectangle res = new Rectangle (x, y, width, TreeView.ActualItemHeight);
 				return res;
 			}
 		}
@@ -195,7 +195,7 @@ namespace System.Windows.Forms {
 		{
 			if (TreeView == null)
 				return 0;
-			return (visible_order - 1) * TreeView.ItemHeight - (TreeView.skipped_nodes * TreeView.ItemHeight);
+			return (visible_order - 1) * TreeView.ActualItemHeight - (TreeView.skipped_nodes * TreeView.ActualItemHeight);
 		}
 
 		internal int GetX ()

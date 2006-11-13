@@ -3,6 +3,13 @@
 	* TextControl.cs: When formatting text, compute the adjusted tag
 	lengths correctly, using FindTag for the end tag instead of trying
 	to figure it out outselves.
+	* TreeNode.cs: Use ActualItemHeight, which is the actual height of
+	the item, ItemHeight doesn't work, because trees with large
+	imagelists use those for their height
+	* TreeView.cs: ActualItemHeight factors in the image height
+	- compute left edge of checkboxes correctly
+	- when expanding/collapsing move the bottom down one pixel, so we
+	aren't moving part of the node
 
 2006-11-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
