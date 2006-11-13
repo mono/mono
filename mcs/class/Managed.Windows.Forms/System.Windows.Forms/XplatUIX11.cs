@@ -3994,6 +3994,7 @@ namespace System.Windows.Forms {
 
 				hwnd.ClearInvalidArea();
 
+				hwnd.drawing_stack.Push (paint_event);
 				hwnd.drawing_stack.Push (dc);
 
 				return paint_event;
@@ -4010,6 +4011,7 @@ namespace System.Windows.Forms {
 
 				hwnd.ClearNcInvalidArea ();
 
+				hwnd.drawing_stack.Push (paint_event);
 				hwnd.drawing_stack.Push (dc);
 
 				return paint_event;
@@ -4024,6 +4026,10 @@ namespace System.Windows.Forms {
 			Graphics dc = (Graphics)hwnd.drawing_stack.Pop ();
 			dc.Flush();
 			dc.Dispose();
+			
+			PaintEventArgs pe = (PaintEventArgs)hwnd.drawing_stack.Pop();
+			pe.SetGraphics (null);
+			pe.Dispose ();
 
 			if (Caret.Visible == true) {
 				ShowCaret();

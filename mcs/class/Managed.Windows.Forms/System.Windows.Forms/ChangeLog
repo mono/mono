@@ -1,3 +1,9 @@
+2006-11-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* XplatUIX11.cs: The PaintEventArgs is also added to the drawing
+	stack in PaintEventStart so that it won't get disposed by the gc
+	before reaching PaintEventEnd.
+
 2006-11-13  Jackson Harper  <jackson@ximian.com>
 
 	* TextBoxBase.cs: Don't select the word if we are on a line with
