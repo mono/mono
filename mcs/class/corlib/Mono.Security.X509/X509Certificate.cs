@@ -97,18 +97,20 @@ namespace Mono.Security.X509 {
 //		private byte[] subjectUniqueID;
 		private X509ExtensionCollection extensions;
 
+		private static string encoding_error = Locale.GetText ("Input data cannot be coded as a valid certificate.");
+
+
 		// that's were the real job is!
 		private void Parse (byte[] data) 
 		{
-			string e = "Input data cannot be coded as a valid certificate.";
 			try {
 				decoder = new ASN1 (data);
 				// Certificate 
 				if (decoder.Tag != 0x30)
-					throw new CryptographicException (e);
+					throw new CryptographicException (encoding_error);
 				// Certificate / TBSCertificate
 				if (decoder [0].Tag != 0x30)
-					throw new CryptographicException (e);
+					throw new CryptographicException (encoding_error);
 
 				ASN1 tbsCertificate = decoder [0];
 
@@ -125,7 +127,7 @@ namespace Mono.Security.X509 {
 				// Certificate / TBSCertificate / CertificateSerialNumber
 				ASN1 sn = decoder [0][tbs++];
 				if (sn.Tag != 0x02) 
-					throw new CryptographicException (e);
+					throw new CryptographicException (encoding_error);
 				serialnumber = sn.Value;
 				Array.Reverse (serialnumber, 0, serialnumber.Length);
 		
@@ -202,7 +204,7 @@ namespace Mono.Security.X509 {
 				m_encodedcert = (byte[]) data.Clone ();
 			}
 			catch (Exception ex) {
-				throw new CryptographicException (e, ex);
+				throw new CryptographicException (encoding_error, ex);
 			}
 		}
 
@@ -210,8 +212,18 @@ namespace Mono.Security.X509 {
 
 		public X509Certificate (byte[] data) 
 		{
-			if (data != null)
+			if (data != null) {
+				// does it looks like PEM ?
+				if ((data.Length > 0) && (data [0] == 0x2D)) {
+					try {
+						data = PEM ("CERTIFICATE", data);
+					}
+					catch (Exception ex) {
+						throw new CryptographicException (encoding_error, ex);
+					}
+				}
 				Parse (data);
+			}
 		}
 
 		private byte[] GetUnsignedBigInteger (byte[] integer) 
@@ -529,5 +541,16 @@ namespace Mono.Security.X509 {
 			// note: we NEVER serialize the private key
 		}
 #endif
+
+		static byte[] PEM (string type, byte[] data) 
+		{
+			string pem = Encoding.ASCII.GetString (data);
+			string header = String.Format ("-----BEGIN {0}-----", type);
+			string footer = String.Format ("-----END {0}-----", type);
+			int start = pem.IndexOf (header) + header.Length;
+			int end = pem.IndexOf (footer, start);
+			string base64 = pem.Substring (start, (end - start));
+			return Convert.FromBase64String (base64);
+		}
 	}
 }
