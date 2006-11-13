@@ -641,7 +641,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void Wizard_SideBarRendering ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnPreInit (_SideBarRendering));
@@ -1182,7 +1181,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Wizard_AllowNavigationToStep ()
 		{
 			PokerWizard wizard = new PokerWizard ();
@@ -1229,7 +1227,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Wizard_ControlState ()
 		{
 			PokerWizard wizard = new PokerWizard ();
@@ -1326,16 +1323,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			wizard.FinishButtonClick += new WizardNavigationEventHandler (wizard_handler);
 			wizard.DoOnFinishButtonClick (new WizardNavigationEventArgs (0, 0));
 			eventassert ("FinishButtonClick");
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		public void Wizard_Init ()
-		{
-			PokerWizard wizard = new PokerWizard ();
-			wizard.Init += new EventHandler (wizard_handler);
-			wizard.DoOnInit (new EventArgs ());
-			eventassert ("OnInit");
 		}
 
 		[Test]
@@ -1629,7 +1616,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void Wizard_PostBack()
 		{
 			WebTest t = new WebTest ();
@@ -1769,7 +1755,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void Wizard_ActiveStepException1 ()
 		{
@@ -1779,7 +1764,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Wizard_ActiveStepException2 ()
 		{

@@ -1,3 +1,8 @@
+2006-11-13  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* WizardTest.cs: removed NotWorking attributes,
+	removed Init test (implementeation specific)
+
 2006-11-12  Igor Zelmanovich   <igorz@mainsoft.com>
 
 	* DetailsViewTest.cs: added tests.
