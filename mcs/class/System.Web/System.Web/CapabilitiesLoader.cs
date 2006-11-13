@@ -166,8 +166,17 @@ namespace System.Web
 				return defaultCaps;
 
 			foreach (BrowserData bd in alldata) {
-				if (bd.IsMatch (userAgent))
-					return bd.GetProperties (new Hashtable ());
+				if (bd.IsMatch (userAgent)) {
+					Hashtable tbl;
+#if NET_2_0
+					tbl = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
+#else
+                        		tbl = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
+								CaseInsensitiveComparer.DefaultInvariant);
+#endif
+
+					return bd.GetProperties (tbl);
+				}
 			}
 			
 			return defaultCaps;

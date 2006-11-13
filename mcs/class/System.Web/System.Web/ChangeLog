@@ -1,5 +1,10 @@
 2006-11-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* CapabilitiesLoader.cs: made the hasstable that contains the properties
+	for the brower case insensitive. Fixes bug #79795.
+
+2006-11-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpResponse.cs: fix typo that prevented Server.Execute from restoring
 	the initial output stream used. Closes bug #79916.
 
