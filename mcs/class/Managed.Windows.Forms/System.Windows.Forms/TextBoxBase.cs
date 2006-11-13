@@ -1505,7 +1505,6 @@ namespace System.Windows.Forms {
 
 		private void TextBoxBase_MouseUp(object sender, MouseEventArgs e) {
 			if (e.Button == MouseButtons.Left) {
-				document.PositionCaret(e.X + document.ViewPortX, e.Y + document.ViewPortY);
 				if (click_mode == CaretSelection.Position) {
 					document.SetSelectionToCaret(false);
 					document.DisplayCaret();
@@ -1582,8 +1581,13 @@ namespace System.Windows.Forms {
 			int start = document.caret.pos;
 			int end = document.caret.pos;
 
-			if (s.Length < 1)
+			if (s.Length < 1) {
+				if (document.caret.line.line_no >= document.Lines)
+					return;
+				Line line = document.GetLine (document.caret.line.line_no + 1);
+				document.PositionCaret (line, 0);
 				return;
+			}
 
 			if (start > 0) {
 				start--;

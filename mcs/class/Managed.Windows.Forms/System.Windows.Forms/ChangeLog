@@ -2,6 +2,10 @@
 
 	* TextBoxBase.cs: Don't select the word if we are on a line with
 	no text.
+	- We don't need to position the caret on mouse up, since the mouse
+	move handler should be doing this
+	- When double clicking a blank line, the caret is advanced to the
+	next line.
 
 2006-11-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
