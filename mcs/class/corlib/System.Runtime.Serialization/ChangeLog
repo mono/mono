@@ -1,3 +1,9 @@
+2006-11-13  Jensen Somers  <jensen.somers@gmail.com>
+
+	* Removed [Serializable] from OnDeserializedAttribute,
+	OnDeserializingAttribute, OnSerializedAttribute,
+	OnSerializingAttribute.
+
 2006-11-10  Jensen Somers  <jensen.somers@gmail.com>
 
 	* Added ComVisibleAttribute in the ISerializable,
