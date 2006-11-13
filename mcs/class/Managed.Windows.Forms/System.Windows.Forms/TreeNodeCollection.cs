@@ -72,16 +72,12 @@ namespace System.Windows.Forms {
 
 		object IList.this [int index] {
 			get {
-				if (index < 0 || index >= Count)
-					throw new ArgumentOutOfRangeException ("index");
-				return nodes [index];
+				return this [index];
 			}
 			set {
-				if (index < 0 || index >= Count)
-					throw new ArgumentOutOfRangeException ("index");
-				TreeNode node = (TreeNode) value;
-				SetupNode (node);
-				nodes [index] = node;
+				if (!(value is TreeNode))
+					throw new ArgumentException ("value");
+				this [index] = (TreeNode) value;
 			}
 		}
 

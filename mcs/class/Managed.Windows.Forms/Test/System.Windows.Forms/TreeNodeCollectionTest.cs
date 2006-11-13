@@ -111,5 +111,85 @@ namespace MonoTests.System.Windows.Forms
 			enumerator.MoveNext ();
 			Assert.IsNull (enumerator.Current, "#B2");
 		}
+
+		[Test]
+		public void IList_Indexer_Get ()
+		{
+			TreeView tv = new TreeView ();
+			TreeNode nodeA = tv.Nodes.Add ("A");
+			TreeNode nodeB = tv.Nodes.Add ("B");
+			TreeNode nodeC = tv.Nodes.Add ("C");
+
+			IList list = (IList) tv.Nodes;
+
+			Assert.AreSame (nodeA, list [0], "#A1");
+			Assert.AreSame (nodeB, list [1], "#A2");
+			Assert.AreSame (nodeC, list [2], "#A3");
+
+			try {
+				object item = list [3];
+				Assert.Fail ("#B1: " + item);
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.ActualValue, "#B3");
+				Assert.IsNull (ex.InnerException, "#B4");
+				Assert.AreEqual ("index", ex.ParamName, "#B5");
+			}
+
+			try {
+				object item = list [-1];
+				Assert.Fail ("#C1: " + item);
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.ActualValue, "#C3");
+				Assert.IsNull (ex.InnerException, "#C4");
+				Assert.AreEqual ("index", ex.ParamName, "#C5");
+			}
+		}
+
+		[Test]
+		public void IList_Indexer_Set ()
+		{
+			TreeView tv = new TreeView ();
+			TreeNode nodeA = tv.Nodes.Add ("A");
+
+			IList list = (IList) tv.Nodes;
+			TreeNode nodeB = new TreeNode ("B");
+			list [0] = nodeB;
+			Assert.AreSame (nodeB, list [0], "#A1");
+
+			try {
+				list [1] = nodeA;
+				Assert.Fail ("#B1");
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.ActualValue, "#B3");
+				Assert.IsNull (ex.InnerException, "#B4");
+#if NET_2_0
+				Assert.AreEqual ("index", ex.ParamName, "#B5");
+#endif
+			}
+
+			try {
+				list [-1] = nodeA;
+				Assert.Fail ("#C1");
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.ActualValue, "#C3");
+				Assert.IsNull (ex.InnerException, "#C4");
+#if NET_2_0
+				Assert.AreEqual ("index", ex.ParamName, "#C5");
+#endif
+			}
+
+			try {
+				list [0] = "whatever";
+				Assert.Fail ("#D1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
+				Assert.IsNull (ex.InnerException, "#D3");
+				Assert.IsNull (ex.ParamName, "#D4");
+			}
+		}
 	}
 }

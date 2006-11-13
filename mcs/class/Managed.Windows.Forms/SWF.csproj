@@ -209,6 +209,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms.Design\ToolStripItemDesignerAvailability.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.Design\ToolStripItemDesignerAvailabilityAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms.Design\WindowsFormsComponentEditor.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2569,11 +2579,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\PropertyGridEntry.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Windows.Forms\PropertyGridTextBox.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2715,6 +2720,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\RightToLeft.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\RootGridEntry.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2935,6 +2945,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\StatusBarPanelStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\StatusStrip.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -3214,6 +3229,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\ToolStripDropDown.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ToolStripDropDownCloseReason.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -3309,6 +3329,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\ToolStripItemEventType.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ToolStripItemImageRenderEventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -3374,6 +3399,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\ToolStripMenuTracker.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ToolStripPanel.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -3435,6 +3465,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ToolStripSplitStackLayout.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ToolStripStatusLabel.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -3995,6 +4030,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms.VisualStyles\VisualStyleRenderer.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.VisualStyles\VisualStyleState.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

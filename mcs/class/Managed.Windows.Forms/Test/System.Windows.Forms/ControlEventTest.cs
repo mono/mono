@@ -296,4 +296,79 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (true, eventhandled, "#F2");
 		}
 	}
+
+	[TestFixture]
+	public class ControlRefresh
+	{
+		[SetUp]
+		public void SetUp ()
+		{
+			invalidated = 0;
+		}
+
+		[Test]
+		public void HandleNotCreated ()
+		{
+			Control c = new Control ();
+			c.Invalidated += new InvalidateEventHandler (Control_Invalidated);
+
+			c.Visible = true;
+			c.Refresh ();
+			Assert.AreEqual (0, invalidated, "#1");
+
+			c.Visible = false;
+			c.Refresh ();
+			Assert.AreEqual (0, invalidated, "#2");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Visible ()
+		{
+			Control c = new Control ();
+			c.Invalidated += new InvalidateEventHandler (Control_Invalidated);
+			c.Visible = true;
+
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Controls.Add (c);
+
+			form.Show ();
+			Assert.AreEqual (0, invalidated, "#1");
+
+			c.Refresh ();
+			Assert.AreEqual (1, invalidated, "#2");
+
+			form.Refresh ();
+			Assert.AreEqual (1, invalidated, "#3");
+		}
+
+		[Test]
+		public void NotVisible ()
+		{
+			Control c = new Control ();
+			c.Invalidated += new InvalidateEventHandler (Control_Invalidated);
+			c.Visible = false;
+
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Controls.Add (c);
+
+			form.Show ();
+			Assert.AreEqual (0, invalidated, "#1");
+
+			c.Refresh ();
+			Assert.AreEqual (0, invalidated, "#2");
+
+			form.Refresh ();
+			Assert.AreEqual (0, invalidated, "#3");
+		}
+
+		private void Control_Invalidated (object sender, InvalidateEventArgs e)
+		{
+			invalidated++;
+		}
+
+		private int invalidated;
+	}
 }
