@@ -1,3 +1,11 @@
+2006-11-13  Dick Porter  <dick@ximian.com>
+
+	* io.c (_wapi_stat_to_file_attributes): If the file is a symlink
+	add the FILE_ATTRIBUTE_REPARSE_POINT flag.  This is an attempt to
+	follow the specs for the windows symlink support, but will
+	probably have to be reworked when I have test data from a vista
+	machine.  Fixes bug 79887.
+
 2006-11-11  Miguel de Icaza  <miguel@novell.com>
 
 	* handles.c (CloseHandle): Cope here with the new value

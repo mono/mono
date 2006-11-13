@@ -1,5 +1,14 @@
 2006-11-13  Dick Porter  <dick@ximian.com>
 
+	* file-io.c (get_file_attributes): If the file is a symlink try
+	and get the stat data for the target, but also add the
+	FILE_ATTRIBUTE_REPARSE_POINT flag.  This is an attempt to follow
+	the specs for the windows symlink support, but will probably have
+	to be reworked when I have test data from a vista machine.  Fixes
+	bug 79887.
+
+2006-11-13  Dick Porter  <dick@ximian.com>
+
 	* gc.c (mono_domain_finalize): 
 	* marshal.c (mono_delegate_begin_invoke): 
 	* threadpool.c (socket_io_init, mono_thread_pool_init)
