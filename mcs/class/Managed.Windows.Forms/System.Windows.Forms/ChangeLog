@@ -1,3 +1,8 @@
+2006-11-13  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: Compute the value changes for the mouse wheel
+	teh simple way.
+
 2006-11-13  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIX11.cs, XplatUIStructs.cs: kind of a gross fix for

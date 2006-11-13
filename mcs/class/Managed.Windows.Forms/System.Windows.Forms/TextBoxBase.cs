@@ -1555,24 +1555,10 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			if (e.Delta < 0) {
-				line_no = document.GetLineByPixel(document.ViewPortY, false).line_no + SystemInformation.MouseWheelScrollLines;
-				if (line_no > document.Lines) {
-					line_no = document.Lines;
-				}
-			} else {
-				line_no = document.GetLineByPixel(document.ViewPortY, false).line_no - SystemInformation.MouseWheelScrollLines;
-				if (line_no < 1) {
-					line_no = 1;
-				}
-			}
-
-			line = document.GetLine(line_no);
-			if (line.Y < vscroll.Maximum) {
-				vscroll.Value = line.Y;
-			} else {
-				vscroll.Value = vscroll.Maximum;
-			}
+			if (e.Delta < 0)
+				vscroll.Value = Math.Min (vscroll.Value + SystemInformation.MouseWheelScrollLines, vscroll.Maximum - document.ViewPortHeight + 1);
+			else
+				vscroll.Value = Math.Max (0, vscroll.Value - SystemInformation.MouseWheelScrollLines);
 		}
 
 		internal virtual void SelectWord ()
