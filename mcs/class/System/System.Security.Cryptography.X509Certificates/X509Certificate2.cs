@@ -50,6 +50,8 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		private MX.X509Certificate _cert;
 
+		private static string empty_error = Locale.GetText ("Certificate instance is empty.");
+
 		// constructors
 
 		public X509Certificate2 ()
@@ -121,12 +123,22 @@ namespace System.Security.Cryptography.X509Certificates {
 		// properties
 
 		public bool Archived {
-			get { return _archived; }
-			set { _archived = value; }
+			get {
+				if (_cert == null)
+					throw new CryptographicException (empty_error);
+				return _archived;
+			}
+			set {
+				if (_cert == null)
+					throw new CryptographicException (empty_error);
+				_archived = value;
+			}
 		}
 
 		public X509ExtensionCollection Extensions {
 			get {
+				if (_cert == null)
+					throw new CryptographicException (empty_error);
 				if (_extensions == null)
 					_extensions = new X509ExtensionCollection (_cert);
 				return _extensions;
@@ -134,8 +146,16 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 		public string FriendlyName {
-			get { return _name; }
-			set { _name = value; }
+			get {
+				if (_cert == null)
+					throw new CryptographicException (empty_error);
+				return _name;
+			}
+			set {
+				if (_cert == null)
+					throw new CryptographicException (empty_error);
+				_name = value;
+			}
 		}
 
 		// FIXME - Could be more efficient
@@ -145,6 +165,8 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public X500DistinguishedName IssuerName {
 			get {
+				if (_cert == null)
+					throw new CryptographicException (empty_error);
 				if (issuer_name == null)
 					issuer_name = new X500DistinguishedName (_cert.GetIssuerName ().GetBytes ());
 				return issuer_name;
@@ -152,15 +174,25 @@ namespace System.Security.Cryptography.X509Certificates {
 		} 
 
 		public DateTime NotAfter {
-			get { return _cert.ValidUntil; }
+			get {
+				if (_cert == null)
+					throw new CryptographicException (empty_error);
+				return _cert.ValidUntil;
+			}
 		}
 
 		public DateTime NotBefore {
-			get { return _cert.ValidFrom; }
+			get {
+				if (_cert == null)
+					throw new CryptographicException (empty_error);
+				return _cert.ValidFrom;
+			}
 		}
 
 		public AsymmetricAlgorithm PrivateKey {
 			get {
+				if (_cert == null)
+					throw new CryptographicException (empty_error);
 				try {
 					if (_cert.RSA != null) {
 						RSACryptoServiceProvider rcsp = _cert.RSA as RSACryptoServiceProvider;
@@ -186,6 +218,9 @@ namespace System.Security.Cryptography.X509Certificates {
 				return null;
 			}
 			set {
+				if (_cert == null)
+					throw new CryptographicException (empty_error);
+
 				if (value is RSA)
 					_cert.RSA = (RSA) value;
 				else if (value is DSA)
@@ -197,6 +232,9 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public PublicKey PublicKey {
 			get { 
+				if (_cert == null)
+					throw new CryptographicException (empty_error);
+
 				if (_publicKey == null) {
 					try {
 						_publicKey = new PublicKey (_cert);
@@ -212,15 +250,18 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public byte[] RawData {
 			get {
-				if (_cert == null) {
-					throw new CryptographicException (Locale.GetText ("No certificate data."));
-				}
+				if (_cert == null)
+					throw new CryptographicException (empty_error);
+
 				return base.GetRawCertData ();
 			}
 		} 
 
 		public string SerialNumber {
 			get { 
+				if (_cert == null)
+					throw new CryptographicException (empty_error);
+
 				if (_serial == null) {
 					StringBuilder sb = new StringBuilder ();
 					byte[] serial = _cert.SerialNumber;
@@ -234,6 +275,9 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public Oid SignatureAlgorithm {
 			get {
+				if (_cert == null)
+					throw new CryptographicException (empty_error);
+
 				if (signature_algorithm == null)
 					signature_algorithm = new Oid (_cert.SignatureAlgorithm);
 				return signature_algorithm;
@@ -242,6 +286,9 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public X500DistinguishedName SubjectName {
 			get {
+				if (_cert == null)
+					throw new CryptographicException (empty_error);
+
 				if (subject_name == null)
 					subject_name = new X500DistinguishedName (_cert.GetSubjectName ().GetBytes ());
 				return subject_name;
@@ -253,24 +300,101 @@ namespace System.Security.Cryptography.X509Certificates {
 		} 
 
 		public int Version {
-			get { return _cert.Version; }
+			get {
+				if (_cert == null)
+					throw new CryptographicException (empty_error);
+				return _cert.Version;
+			}
 		}
 
 		// methods
 
-		[MonoTODO ("always returns String.Empty")]
+		[MonoTODO ("always return String.Empty for UpnName, DnsFromAlternativeName and UrlName")]
 		public string GetNameInfo (X509NameType nameType, bool forIssuer) 
 		{
 			switch (nameType) {
 			case X509NameType.SimpleName:
+				// return CN= or, if missing, the first part of the DN
+				ASN1 sn = forIssuer ? _cert.GetIssuerName () : _cert.GetSubjectName ();
+				ASN1 dn = Find (commonName, sn);
+				if (dn != null)
+					return GetValueAsString (dn);
+				if (sn.Count == 0)
+					return String.Empty;
+				ASN1 last_entry = sn [sn.Count - 1];
+				if (last_entry.Count == 0)
+					return String.Empty;
+				return GetValueAsString (last_entry [0]);
 			case X509NameType.EmailName:
+				// return the E= part of the DN (if present)
+				ASN1 e = Find (email, forIssuer ? _cert.GetIssuerName () : _cert.GetSubjectName ());
+				if (e != null)
+					return GetValueAsString (e);
+				return String.Empty;
 			case X509NameType.UpnName:
+				// FIXME - must find/create test case
+				return String.Empty;
 			case X509NameType.DnsName:
+				// return the CN= part of the DN (if present)
+				ASN1 cn = Find (commonName, forIssuer ? _cert.GetIssuerName () : _cert.GetSubjectName ());
+				if (cn != null)
+					return GetValueAsString (cn);
+				return String.Empty;
 			case X509NameType.DnsFromAlternativeName:
+				// FIXME - must find/create test case
+				return String.Empty;
 			case X509NameType.UrlName:
+				// FIXME - must find/create test case
 				return String.Empty;
 			default:
 				throw new ArgumentException ("nameType");
+			}
+		}
+
+		static byte[] commonName = { 0x55, 0x04, 0x03 };
+		static byte[] email = { 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x09, 0x01 };
+
+		private ASN1 Find (byte[] oid, ASN1 dn)
+		{
+			if (dn.Count == 0)
+				return null;
+
+			// process SET
+			for (int i = 0; i < dn.Count; i++) {
+				ASN1 set = dn [i];
+				for (int j = 0; j < set.Count; j++) {
+					ASN1 pair = set [j];
+					if (pair.Count != 2)
+						continue;
+
+					ASN1 poid = pair [0];
+					if (poid == null)
+						continue;
+
+					if (poid.CompareValue (oid))
+						return pair;
+				}
+			}
+			return null;
+		}
+
+		private string GetValueAsString (ASN1 pair)
+		{
+			if (pair.Count != 2)
+				return String.Empty;
+
+			ASN1 value = pair [1];
+			if ((value.Value == null) || (value.Length == 0))
+				return String.Empty;
+
+			if (value.Tag == 0x1E) {
+				// BMPSTRING
+				StringBuilder sb = new StringBuilder ();
+				for (int j = 1; j < value.Value.Length; j += 2)
+					sb.Append ((char)value.Value [j]);
+				return sb.ToString ();
+			} else {
+				return Encoding.UTF8.GetString (value.Value);
 			}
 		}
 
@@ -370,11 +494,17 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public override string ToString ()
 		{
+			if (_cert == null)
+				return "System.Security.Cryptography.X509Certificates.X509Certificate2";
+
 			return base.ToString (true);
 		}
 
 		public override string ToString (bool verbose)
 		{
+			if (_cert == null)
+				return "System.Security.Cryptography.X509Certificates.X509Certificate2";
+
 			// the non-verbose X509Certificate2 == verbose X509Certificate
 			if (!verbose)
 				return base.ToString (true);
@@ -419,9 +549,12 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("depends on incomplete X509Chain")]
 		public bool Verify ()
 		{
+			if (_cert == null)
+				throw new CryptographicException (empty_error);
+
 			X509Chain chain = new X509Chain ();
 			if (!chain.Build (this))
 				return false;
@@ -431,7 +564,9 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		// static methods
 
-		[MonoTODO ("Detection limited to Cert, Pfx, Pkcs12 and Unknown")]
+		private static byte[] signedData = new byte[] { 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x07, 0x02 };
+
+		[MonoTODO ("Detection limited to Cert, Pfx, Pkcs12, Pkcs7 and Unknown")]
 		public static X509ContentType GetCertContentType (byte[] rawData)
 		{
 			if ((rawData == null) || (rawData.Length == 0))
@@ -444,6 +579,9 @@ namespace System.Security.Cryptography.X509Certificates {
 					string msg = Locale.GetText ("Unable to decode certificate.");
 					throw new CryptographicException (msg);
 				}
+
+				if (data.Count == 0)
+					return type;
 
 				if (data.Count == 3) {
 					switch (data [0].Tag) {
@@ -460,6 +598,11 @@ namespace System.Security.Cryptography.X509Certificates {
 						break;
 					}
 				}
+
+				// check for PKCS#7 (count unknown but greater than 0)
+				// SEQUENCE / OID (signedData)
+				if ((data [0].Tag == 0x06) && data [0].CompareValue (signedData))
+					type = X509ContentType.Pkcs7;
 			}
 			catch (Exception e) {
 				string msg = Locale.GetText ("Unable to decode certificate.");

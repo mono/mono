@@ -1,3 +1,10 @@
+2006-11-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate2.cs: Throw a CryptographicException for (most) 
+	properties if the certificate is "empty". Implement GetNameInfo for
+	X509NameType.SimpleName, EmailName and DnsName. Add detection for 
+	X509ContentType.Pkcs7 in GetCertContentType.
+
 2006-11-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X500DistinguishedName.cs: Fix most common cases. Some flags are 
