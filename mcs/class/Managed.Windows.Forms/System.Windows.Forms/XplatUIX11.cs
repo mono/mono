@@ -3659,6 +3659,7 @@ namespace System.Windows.Forms {
 						IntPtr hrgn = region.GetHrgn (null); // Graphics object isn't needed
 						msg.message = Msg.WM_NCPAINT;
 						msg.wParam = hrgn == IntPtr.Zero ? (IntPtr)1 : hrgn;
+						msg.refobject = region;
 						break;
 					}
 					#if DriverDebugExtra

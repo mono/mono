@@ -422,6 +422,7 @@ namespace System.Windows.Forms {
 		internal IntPtr	lParam;
 		internal uint	time;  
 		internal POINT	pt;
+		internal object refobject;
 	}
 
 	internal enum WindowActiveFlags {

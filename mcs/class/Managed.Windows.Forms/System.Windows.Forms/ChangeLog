@@ -1,7 +1,14 @@
 2006-11-13  Chris Toshok  <toshok@ximian.com>
 
+	* XplatUIX11.cs, XplatUIStructs.cs: kind of a gross fix for
+	#79898.  force a reference to the Region to stick around so the
+	unmanaged object isn't collected (rendering our handle in the MSG
+	stale).
+
+2006-11-13  Chris Toshok  <toshok@ximian.com>
+
 	* XplatUIX11.cs: fix #79917 for window managers which support
-	_NET_WM_NAME.  Leave an XXX for non-compliant wm's, since we're
+
 	using XStoreName on the raw utf8, and we need to convert to
 	COMPOUND_TEXT if it's non-latin1.
 
