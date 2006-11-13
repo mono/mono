@@ -1,5 +1,11 @@
 2006-11-13  Jensen Somers  <jensen.somers@gmail.com>
 
+	* Fixed the Serializable attribute in OnDeserializedAttribute,
+	OnDeserializingAttribute, OnSerializedAttribute and
+	OnSerializingAttribute.
+
+2006-11-13  Jensen Somers  <jensen.somers@gmail.com>
+
 	* Removed [Serializable] from OnDeserializedAttribute,
 	OnDeserializingAttribute, OnSerializedAttribute,
 	OnSerializingAttribute.
