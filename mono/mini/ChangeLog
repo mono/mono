@@ -1,4 +1,8 @@
 
+Mon Nov 13 15:54:38 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.c: fixed wrnings.
+
 Fri Nov 10 19:18:32 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini-arm.c, mini-arm.h, cpu-arm.md, inssel-float.brg,
