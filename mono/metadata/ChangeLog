@@ -1,3 +1,17 @@
+2006-11-13  Dick Porter  <dick@ximian.com>
+
+	* gc.c (mono_domain_finalize): 
+	* marshal.c (mono_delegate_begin_invoke): 
+	* threadpool.c (socket_io_init, mono_thread_pool_init)
+	(mono_thread_pool_finish): 
+	* monitor.c (mono_monitor_try_enter_internal): 
+	* threads.c (mono_thread_resume, mono_thread_init)
+	(mono_thread_suspend_all_other_threads)
+	(mono_thread_execute_interruption): 
+	* appdomain.c (mono_domain_unload): Check for NULL error returns
+	from CreateThread(), CreateEvent() and CreateSemaphore().  See bug
+	75733.
+
 2006-11-11  Miguel de Icaza  <miguel@novell.com>
 
 	* process.c
