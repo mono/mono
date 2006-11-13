@@ -1,3 +1,8 @@
+2006-11-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Cert20Test.cs: Added test cases for importing PEM encoded
+	certificates and certificates enveloped into a PKCS#7 structure.
+
 2006-11-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509CapiTest.cs: Update test cases to work under 2.0 (serial number
