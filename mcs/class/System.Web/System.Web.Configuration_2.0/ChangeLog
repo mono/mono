@@ -1,3 +1,7 @@
+2006-11-13  Konstantin Triger  <kostat@mainsoft.com>
+
+        * WebConfigurationHost.cs: use Type.GetType for loading full qualified types.
+
 2006-11-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ProfileGroupSettings.cs, ProfileGroupSettingsCollection.cs
