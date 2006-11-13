@@ -1,3 +1,8 @@
+2006-11-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebResponse.cs: cookies are actually added to the request
+	container if any. Fixes bug #79821.
+
 2006-11-02  Michael Hutchinson  <m.j.hutchinson@gmail.com>
 
 	* WebRequest.cs: more closely follow MS behaviour: use system settings 
