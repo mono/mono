@@ -1,5 +1,20 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C4523363-42B4-486B-9422-B52B7D4CA3CF}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>System.Runtime.Remoting</RootNamespace>
+    <AssemblyName>System.Runtime.Remoting</AssemblyName>
+    <JDKName>1.5.0_05</JDKName>
+    <GHProjectType>1</GHProjectType>
+    <Version>2.0</Version>
+    <jarserver>ipa</jarserver>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
 		<OutputPath>bin\Release_Java20\</OutputPath>
 		<DefineConstants>TRACE;DEBUG;JAVA;NET_1_1;TARGET_JVM;NET_2_0</DefineConstants>
 		<BaseAddress>285212672</BaseAddress>
@@ -19,21 +34,6 @@
 		<JDKName>1.5.0_05</JDKName>
 		<jarserver>ipa</jarserver>
 		<TargetPlatform>0</TargetPlatform>
-	</PropertyGroup>
-	<PropertyGroup>
-		<Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
-		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-		<ProductVersion>8.0.50727</ProductVersion>
-		<SchemaVersion>2.0</SchemaVersion>
-		<ProjectGuid>{C4523363-42B4-486B-9422-B52B7D4CA3CF}</ProjectGuid>
-		<OutputType>Library</OutputType>
-		<AppDesignerFolder>Properties</AppDesignerFolder>
-		<RootNamespace>System.Runtime.Remoting</RootNamespace>
-		<AssemblyName>System.Runtime.Remoting</AssemblyName>
-		<JDKName>1.5.0_05</JDKName>
-		<GHProjectType>1</GHProjectType>
-		<Version>2.0</Version>
-		<jarserver>ipa</jarserver>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
 		<DebugSymbols>true</DebugSymbols>
@@ -72,7 +72,7 @@
 		<DebugType>full</DebugType>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<ErrorReport>prompt</ErrorReport>
-		<SkipValidation>false</SkipValidation>
+		<SkipValidation>true</SkipValidation>
 		<KeepIntermediate>false</KeepIntermediate>
 		<GHProjectType>1</GHProjectType>
 		<PreCompile>false</PreCompile>
@@ -92,7 +92,7 @@
 		<Compile Include="..\..\build\common\MonoTODOAttribute.cs">
 			<Link>MonoTODOAttribute.cs</Link>
 		</Compile>
-		<Compile Include="Properties\AssemblyInfo.cs"/>
+		<Compile Include="Assembly\AssemblyInfo.cs"/>
 		<Compile Include="System.Runtime.Remoting.Channels.Http\AggregateDictionary.cs"/>
 		<Compile Include="System.Runtime.Remoting.Channels.Http\HttpChannel.cs"/>
 		<Compile Include="System.Runtime.Remoting.Channels.Http\HttpClientChannel.cs"/>
@@ -143,12 +143,12 @@
 	<ItemGroup>
 		<Reference Include="J2SE.Helpers, Version=0.0.0.0, Culture=neutral">
 			<SpecificVersion>False</SpecificVersion>
-			<HintPath>..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\vmw4j2ee_110\J2SE.Helpers.dll</HintPath>
+			<HintPath>..\lib\J2SE.Helpers.dll</HintPath>
 			<Private>True</Private>
 		</Reference>
 		<Reference Include="rt, Version=0.0.0.0, Culture=neutral">
 			<SpecificVersion>False</SpecificVersion>
-			<HintPath>..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jgac\jre5\rt.dll</HintPath>
+			<HintPath>..\lib\rt.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
 		<Reference Include="System"/>
