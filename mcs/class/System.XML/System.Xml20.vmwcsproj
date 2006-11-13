@@ -15,7 +15,7 @@
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
 		<OutputPath>bin\Release_Java20\</OutputPath>
-		<DefineConstants>TRACE;NET_1_1;TARGET_JVM;NET_2_0</DefineConstants>
+		<DefineConstants>TRACE;NET_1_1;TARGET_JVM;NET_2_0;CONFIGURATION_DEP</DefineConstants>
 		<BaseAddress>285212672</BaseAddress>
 		<Optimize>true</Optimize>
 		<DebugType>pdbonly</DebugType>
@@ -67,7 +67,7 @@
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20|AnyCPU' ">
 		<DebugSymbols>true</DebugSymbols>
 		<OutputPath>bin\Debug_Java20\</OutputPath>
-		<DefineConstants>TRACE;DEBUG;NET_1_1;TARGET_JVM;NET_2_0</DefineConstants>
+		<DefineConstants>TRACE;DEBUG;NET_1_1;TARGET_JVM;NET_2_0;CONFIGURATION_DEP</DefineConstants>
 		<BaseAddress>285212672</BaseAddress>
 		<DebugType>full</DebugType>
 		<PlatformTarget>AnyCPU</PlatformTarget>
@@ -89,7 +89,14 @@
 			<HintPath>..\lib\rt.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
-		<Reference Include="System"/>
+		<Reference Include="System">
+			<HintPath>..\lib\System.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="System.Configuration">
+			<HintPath>..\lib\System.Configuration.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Include="..\..\build\common\Locale.cs">
@@ -273,7 +280,6 @@
 		<Compile Include="System.Xml.Serialization\CodeIdentifiers.cs"/>
 		<Compile Include="System.Xml.Serialization\ImportContext.cs"/>
 		<Compile Include="System.Xml.Serialization\IXmlSerializable.cs"/>
-		<Compile Include="System.Xml.Serialization\IXmlSerializerImplementation.cs"/>
 		<Compile Include="System.Xml.Serialization\IXmlTextParser.cs"/>
 		<Compile Include="System.Xml.Serialization\ReflectionHelper.cs"/>
 		<Compile Include="System.Xml.Serialization\SchemaTypes.cs"/>
@@ -318,6 +324,7 @@
 		<Compile Include="System.Xml.Serialization\XmlIgnoreAttribute.cs"/>
 		<Compile Include="System.Xml.Serialization\XmlIncludeAttribute.cs"/>
 		<Compile Include="System.Xml.Serialization\XmlMapping.cs"/>
+		<Compile Include="System.Xml.Serialization\XmlMappingAccess.cs"/>
 		<Compile Include="System.Xml.Serialization\XmlMemberMapping.cs"/>
 		<Compile Include="System.Xml.Serialization\XmlMembersMapping.cs"/>
 		<Compile Include="System.Xml.Serialization\XmlNamespaceDeclarationsAttribute.cs"/>
@@ -326,6 +333,7 @@
 		<Compile Include="System.Xml.Serialization\XmlReflectionImporter.cs"/>
 		<Compile Include="System.Xml.Serialization\XmlReflectionMember.cs"/>
 		<Compile Include="System.Xml.Serialization\XmlRootAttribute.cs"/>
+		<Compile Include="System.Xml.Serialization\XmlSchemaEnumerator.cs"/>
 		<Compile Include="System.Xml.Serialization\XmlSchemaExporter.cs"/>
 		<Compile Include="System.Xml.Serialization\XmlSchemaProviderAttribute.cs"/>
 		<Compile Include="System.Xml.Serialization\XmlSchemas.cs"/>
@@ -341,6 +349,7 @@
 		<Compile Include="System.Xml.Serialization\XmlSerializer.cs"/>
 		<Compile Include="System.Xml.Serialization\XmlSerializerAssemblyAttribute.cs"/>
 		<Compile Include="System.Xml.Serialization\XmlSerializerFactory.cs"/>
+		<Compile Include="System.Xml.Serialization\XmlSerializerImplementation.cs"/>
 		<Compile Include="System.Xml.Serialization\XmlSerializerNamespaces.cs"/>
 		<Compile Include="System.Xml.Serialization\XmlSerializerVersionAttribute.cs"/>
 		<Compile Include="System.Xml.Serialization\XmlTextAttribute.cs"/>
@@ -351,6 +360,12 @@
 		<Compile Include="System.Xml.Serialization\XmlTypeMapMemberElement.cs"/>
 		<Compile Include="System.Xml.Serialization\XmlTypeMapMemberNamespaces.cs"/>
 		<Compile Include="System.Xml.Serialization\XmlTypeMapping.cs"/>
+		<Compile Include="System.Xml.Serialization.Configuration\DateTimeSerializationSection.cs"/>
+		<Compile Include="System.Xml.Serialization.Configuration\SchemaImporterExtensionElement.cs"/>
+		<Compile Include="System.Xml.Serialization.Configuration\SchemaImporterExtensionElementCollection.cs"/>
+		<Compile Include="System.Xml.Serialization.Configuration\SchemaImporterExtensionsSection.cs"/>
+		<Compile Include="System.Xml.Serialization.Configuration\SerializationSectionGroup.cs"/>
+		<Compile Include="System.Xml.Serialization.Configuration\XmlSerializerSection.cs"/>
 		<Compile Include="System.Xml.XPath\DefaultContext.cs"/>
 		<Compile Include="System.Xml.XPath\Expression.cs"/>
 		<Compile Include="System.Xml.XPath\Iterator.cs"/>
