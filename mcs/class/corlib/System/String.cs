@@ -695,12 +695,12 @@ namespace System
 #if NET_2_0
 		public int IndexOf (string value, StringComparison comparison)
 		{
-			return IndexOf (value, 0, value.Length, comparison);
+			return IndexOf (value, 0, this.Length, comparison);
 		}
 
 		public int IndexOf (string value, int startIndex, StringComparison comparison)
 		{
-			return IndexOf (value, startIndex, value.Length - startIndex, comparison);
+			return IndexOf (value, startIndex, this.Length - startIndex, comparison);
 		}
 
 		public int IndexOf (string value, int startIndex, int count, StringComparison comparison)

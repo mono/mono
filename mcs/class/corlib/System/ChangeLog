@@ -1,3 +1,8 @@
+2006-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* String.cs : fixed incorrect startIndex/length count in
+	  IndexOf(string,StringComparison).
+
 2006-11-07  Marek Safar  <marek.safar@gmail.com>
 
 	* String.cs (LastIndexOf): If value is Empty, the return value is

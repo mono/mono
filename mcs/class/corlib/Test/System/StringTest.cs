@@ -790,6 +790,17 @@ public class StringTest : Assertion
 		"Mono".IndexOf ("no", 1, Int32.MaxValue);
 	}
 
+#if NET_2_0
+	public void IndexOfStringComparison ()
+	{
+		string text = "testing123456";
+		string text2 = "123";
+		string text3 = "NG";
+		AssertEquals ("#1", 7, text.IndexOf (text2, StringComparison.Ordinal));
+		AssertEquals ("#2", 5, text.IndexOf (text3, StringComparison.OrdinalIgnoreCase));
+	}
+#endif
+
 	public void TestIndexOfAny() {
 		string s1 = "abcdefghijklm";
 

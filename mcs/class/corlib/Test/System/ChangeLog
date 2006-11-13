@@ -1,3 +1,7 @@
+2006-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* StringTest.cs : added test for IndexOf(string,StringComparison).
+
 2006-11-07  Dick Porter  <dick@ximian.com>
 
 	* DateTimeTest.cs: TestToString(): Must specify '+0' for GMT.
