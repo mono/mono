@@ -35,6 +35,7 @@ using System.IO;
 using System.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 
 using NUnit.Framework;
 
@@ -279,12 +280,26 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates
 			0x22, 0x82, 0x8E, 0x25, 0x8E, 0x9F, 0xD5, 0x7B, 0xB6, 0x14, 0x15, 0x08, 0x61, 0xCD, 0xA6, 0xB3, 0x0F, 0xC8, 0xE8, 0xF9, 0xEE, 0xDB, 0xAF, 0x25, 0x40, 0x01, 0x85, 0x0E, 0x89, 0x0D, 0x0D, 0x85, 0xA6, 0xA3, 0xC9, 0x65, 0x64, 0x8A, 0xD1, 0xF7, 0x55, 0xF9, 0x31, 0x24, 0x41, 0x30, 0x3B, 0x30, 0x1F, 0x30, 0x07, 0x06, 0x05, 0x2B, 0x0E, 0x03, 0x02, 0x1A, 0x04, 0x14, 0xD4, 0x77, 0x3F, 0x92, 0xB6, 0xA6, 0x1B, 0xD5, 0x7F, 0xC1, 0x1B, 0x93, 0xB3, 0x6E, 0x87, 0x67, 0x80, 0xE7, 0x4C, 0x7C, 0x04, 0x14, 0x58, 0x4C, 0x92, 0xDD, 0x0B, 0xEF, 0x09, 0x35, 0xE0, 0x06, 0x33, 0x54, 0xB2, 0xA8, 0x8E, 0x0C, 0x60, 0x67, 
 			0xB5, 0x0F, 0x02, 0x02, 0x07, 0xD0 };
 
-		static public byte[] cert = {0x30,0x82,0x01,0xFF,0x30,0x82,0x01,0x6C,0x02,0x05,0x02,0x72,0x00,0x06,0xE8,0x30,0x0D,0x06,0x09,0x2A,0x86,0x48,0x86,0xF7,0x0D,0x01,0x01,0x02,0x05,0x00,0x30,0x5F,0x31,0x0B,0x30,0x09,0x06,0x03,0x55,0x04,0x06,0x13,0x02,0x55,0x53,0x31,0x20,0x30,0x1E,0x06,0x03,0x55,0x04,0x0A,0x13,0x17,0x52,0x53,0x41,0x20,0x44,0x61,0x74,0x61,0x20,0x53,0x65,0x63,0x75,0x72,0x69,0x74,0x79,0x2C,0x20,0x49,0x6E,0x63,0x2E,0x31,0x2E,0x30,0x2C,0x06,0x03,0x55,0x04,0x0B,0x13,0x25,0x53,0x65,0x63,0x75,0x72,0x65,0x20,0x53,0x65,0x72,0x76,0x65,0x72,0x20,0x43,0x65,0x72,0x74,0x69,0x66,0x69,0x63,0x61,0x74,0x69,0x6F,
-			0x6E,0x20,0x41,0x75,0x74,0x68,0x6F,0x72,0x69,0x74,0x79,0x30,0x1E,0x17,0x0D,0x39,0x36,0x30,0x33,0x31,0x32,0x31,0x38,0x33,0x38,0x34,0x37,0x5A,0x17,0x0D,0x39,0x37,0x30,0x33,0x31,0x32,0x31,0x38,0x33,0x38,0x34,0x36,0x5A,0x30,0x61,0x31,0x0B,0x30,0x09,0x06,0x03,0x55,0x04,0x06,0x13,0x02,0x55,0x53,0x31,0x13,0x30,0x11,0x06,0x03,0x55,0x04,0x08,0x13,0x0A,0x43,0x61,0x6C,0x69,0x66,0x6F,0x72,0x6E,0x69,0x61,0x31,0x14,0x30,0x12,0x06,0x03,0x55,0x04,0x0A,0x13,0x0B,0x43,0x6F,0x6D,0x6D,0x65,0x72,0x63,0x65,0x4E,0x65,0x74,0x31,0x27,0x30,0x25,0x06,0x03,0x55,0x04,0x0B,0x13,0x1E,0x53,0x65,0x72,0x76,0x65,0x72,0x20,0x43,
-			0x65,0x72,0x74,0x69,0x66,0x69,0x63,0x61,0x74,0x69,0x6F,0x6E,0x20,0x41,0x75,0x74,0x68,0x6F,0x72,0x69,0x74,0x79,0x30,0x70,0x30,0x0D,0x06,0x09,0x2A,0x86,0x48,0x86,0xF7,0x0D,0x01,0x01,0x01,0x05,0x00,0x03,0x5F,0x00,0x30,0x5C,0x02,0x55,0x2D,0x58,0xE9,0xBF,0xF0,0x31,0xCD,0x79,0x06,0x50,0x5A,0xD5,0x9E,0x0E,0x2C,0xE6,0xC2,0xF7,0xF9,0xD2,0xCE,0x55,0x64,0x85,0xB1,0x90,0x9A,0x92,0xB3,0x36,0xC1,0xBC,0xEA,0xC8,0x23,0xB7,0xAB,0x3A,0xA7,0x64,0x63,0x77,0x5F,0x84,0x22,0x8E,0xE5,0xB6,0x45,0xDD,0x46,0xAE,0x0A,0xDD,0x00,0xC2,0x1F,0xBA,0xD9,0xAD,0xC0,0x75,0x62,0xF8,0x95,0x82,0xA2,0x80,0xB1,0x82,0x69,0xFA,0xE1,0xAF,
-			0x7F,0xBC,0x7D,0xE2,0x7C,0x76,0xD5,0xBC,0x2A,0x80,0xFB,0x02,0x03,0x01,0x00,0x01,0x30,0x0D,0x06,0x09,0x2A,0x86,0x48,0x86,0xF7,0x0D,0x01,0x01,0x02,0x05,0x00,0x03,0x7E,0x00,0x54,0x20,0x67,0x12,0xBB,0x66,0x14,0xC3,0x26,0x6B,0x7F,0xDA,0x4A,0x25,0x4D,0x8B,0xE0,0xFD,0x1E,0x53,0x6D,0xAC,0xA2,0xD0,0x89,0xB8,0x2E,0x90,0xA0,0x27,0x43,0xA4,0xEE,0x4A,0x26,0x86,0x40,0xFF,0xB8,0x72,0x8D,0x1E,0xE7,0xB7,0x77,0xDC,0x7D,0xD8,0x3F,0x3A,0x6E,0x55,0x10,0xA6,0x1D,0xB5,0x58,0xF2,0xF9,0x0F,0x2E,0xB4,0x10,0x55,0x48,0xDC,0x13,0x5F,0x0D,0x08,0x26,0x88,0xC9,0xAF,0x66,0xF2,0x2C,0x9C,0x6F,0x3D,0xC3,0x2B,0x69,0x28,0x89,0x40,
-			0x6F,0x8F,0x35,0x3B,0x9E,0xF6,0x8E,0xF1,0x11,0x17,0xFB,0x0C,0x98,0x95,0xA1,0xC2,0xBA,0x89,0x48,0xEB,0xB4,0x06,0x6A,0x22,0x54,0xD7,0xBA,0x18,0x3A,0x48,0xA6,0xCB,0xC2,0xFD,0x20,0x57,0xBC,0x63,0x1C };
+		public const string base64_cert = @"-----BEGIN CERTIFICATE-----
+MIIBxTCCATKgAwIBAgIQx3WuSFObHp5EgBXKeBVHaTAJBgUrDgMCHQUAMCUxIzAh
+BgNVBAMeGgBDAEEAUwBUAE8AUgBcAHAAbwB1AHAAbwB1MB4XDTA1MDYwODEzMzg0
+N1oXDTA2MDYwODE5Mzg0N1owJTEjMCEGA1UEAx4aAEMAQQBTAFQATwBSAFwAcABv
+AHUAcABvAHUwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBANrqOTj2OvSL+eLH
+1Sz5GtV1zxess0a9fz+XOC4QQbLE2RQV2Ob5ETiAdePXH8CGpz4CEQTpV7XYV2Un
+e4+6ue+gjxWc7C+FY05Sa6bjM8qGIrr5Bujsy6elqOI+xyF0TsnpBV+ueBJRL/pq
+j3ywZCr7t7JAkSDnMlM/WMqAokHFAgMBAAEwCQYFKw4DAh0FAAOBgQCdV7All4Ei
+PMRhncnb2MfB7fsc3TWY10BYpEOGVPloloW1kby3grJ+e1i9gM40fiKHYjG1Axag
+IBed512qEvWS35Tmac32/IKb3NMwQLFxT0pky9wUyMF/byPO3RkiTyQeJxhmiHqa
+mgk3bWUV6ChegutbguiKrI/DbO7wPiDLxw==
+-----END CERTIFICATE-----";
 
+		static public byte[] farscape_pkcs7 = { 0x30, 0x82, 0x02, 0x59, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x07, 0x02, 0xA0, 0x82, 0x02, 0x4A, 0x30, 0x82, 0x02, 0x46, 0x02, 0x01, 0x01, 0x31, 0x00, 0x30, 0x0B, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x07, 0x01, 0xA0, 0x82, 0x02, 0x2E, 0x30, 0x82, 0x02, 0x2A, 0x30, 0x82, 0x01, 0x97, 0xA0, 0x03, 0x02, 0x01, 0x02, 0x02, 0x10, 0x91, 0xC4, 0x4B, 0x0D, 0xB7, 0xD8, 0x10, 0x84, 0x42, 0x26, 0x71, 0xB3, 0x97, 0xB5, 0x00, 0x97, 0x30, 0x09, 0x06, 0x05, 0x2B, 0x0E, 0x03, 0x02, 0x1D, 0x05, 0x00, 0x30, 0x28, 0x31, 0x26, 0x30, 0x24, 0x06, 0x03, 
+			0x55, 0x04, 0x03, 0x13, 0x1D, 0x4D, 0x6F, 0x74, 0x75, 0x73, 0x20, 0x54, 0x65, 0x63, 0x68, 0x6E, 0x6F, 0x6C, 0x6F, 0x67, 0x69, 0x65, 0x73, 0x20, 0x69, 0x6E, 0x63, 0x2E, 0x28, 0x74, 0x65, 0x73, 0x74, 0x29, 0x30, 0x1E, 0x17, 0x0D, 0x30, 0x33, 0x30, 0x38, 0x31, 0x33, 0x30, 0x30, 0x34, 0x33, 0x34, 0x37, 0x5A, 0x17, 0x0D, 0x33, 0x39, 0x31, 0x32, 0x33, 0x31, 0x32, 0x33, 0x35, 0x39, 0x35, 0x39, 0x5A, 0x30, 0x13, 0x31, 0x11, 0x30, 0x0F, 0x06, 0x03, 0x55, 0x04, 0x03, 0x13, 0x08, 0x46, 0x41, 0x52, 0x53, 0x43, 0x41, 0x50, 0x45, 0x30, 0x81, 0x9F, 0x30, 0x0D, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 
+			0x01, 0x01, 0x01, 0x05, 0x00, 0x03, 0x81, 0x8D, 0x00, 0x30, 0x81, 0x89, 0x02, 0x81, 0x81, 0x00, 0xD2, 0xCB, 0x47, 0x21, 0xF5, 0x62, 0xDD, 0x35, 0xBF, 0x1D, 0xEC, 0x9A, 0x4C, 0x07, 0x2C, 0x01, 0xF0, 0x28, 0xC2, 0x82, 0x17, 0x8E, 0x58, 0x32, 0xD5, 0x4C, 0xAC, 0x86, 0xB4, 0xC9, 0xEB, 0x21, 0x26, 0xF3, 0x22, 0x30, 0xC5, 0x7A, 0xA3, 0x5A, 0xDD, 0x53, 0xAB, 0x1C, 0x06, 0x3E, 0xB2, 0x13, 0xC4, 0x05, 0x1D, 0x95, 0x8B, 0x0A, 0x71, 0x71, 0x11, 0xA7, 0x47, 0x26, 0x61, 0xF1, 0x76, 0xBE, 0x35, 0x72, 0x32, 0xC5, 0xCB, 0x47, 0xA4, 0x22, 0x41, 0x1E, 0xAD, 0x29, 0x11, 0x0D, 0x39, 0x22, 0x0C, 0x79, 0x90, 0xC6, 
+			0x52, 0xA1, 0x10, 0xF6, 0x55, 0x09, 0x4E, 0x51, 0x26, 0x47, 0x0E, 0x94, 0xE6, 0x81, 0xF5, 0x18, 0x6B, 0x99, 0xF0, 0x76, 0xF3, 0xB2, 0x4C, 0x91, 0xE9, 0xBA, 0x3B, 0x3F, 0x6E, 0x63, 0xDA, 0x12, 0xD1, 0x0B, 0x73, 0x0E, 0x12, 0xC7, 0x70, 0x77, 0x22, 0x03, 0x9D, 0x5D, 0x02, 0x03, 0x01, 0x00, 0x01, 0xA3, 0x72, 0x30, 0x70, 0x30, 0x13, 0x06, 0x03, 0x55, 0x1D, 0x25, 0x04, 0x0C, 0x30, 0x0A, 0x06, 0x08, 0x2B, 0x06, 0x01, 0x05, 0x05, 0x07, 0x03, 0x01, 0x30, 0x59, 0x06, 0x03, 0x55, 0x1D, 0x01, 0x04, 0x52, 0x30, 0x50, 0x80, 0x10, 0xAE, 0xD7, 0x80, 0x88, 0xA6, 0x3D, 0xBA, 0x50, 0xA1, 0x7E, 0x57, 0xE5, 0x40, 
+			0xC9, 0x6F, 0xC5, 0xA1, 0x2A, 0x30, 0x28, 0x31, 0x26, 0x30, 0x24, 0x06, 0x03, 0x55, 0x04, 0x03, 0x13, 0x1D, 0x4D, 0x6F, 0x74, 0x75, 0x73, 0x20, 0x54, 0x65, 0x63, 0x68, 0x6E, 0x6F, 0x6C, 0x6F, 0x67, 0x69, 0x65, 0x73, 0x20, 0x69, 0x6E, 0x63, 0x2E, 0x28, 0x74, 0x65, 0x73, 0x74, 0x29, 0x82, 0x10, 0x9D, 0xAE, 0xA3, 0x39, 0x47, 0x0E, 0xD4, 0xA2, 0x49, 0x78, 0xEA, 0x6C, 0xBA, 0x0D, 0xDE, 0x9C, 0x30, 0x09, 0x06, 0x05, 0x2B, 0x0E, 0x03, 0x02, 0x1D, 0x05, 0x00, 0x03, 0x81, 0x81, 0x00, 0x32, 0x8A, 0x7E, 0xAD, 0xE7, 0x67, 0x9E, 0x5C, 0x4C, 0xD8, 0x33, 0x59, 0x68, 0xCF, 0x94, 0xC0, 0x36, 0x47, 0x7A, 0xA7, 
+			0x85, 0xC2, 0xDD, 0xD8, 0xDA, 0x11, 0x3C, 0x66, 0xC1, 0x83, 0xE3, 0xAB, 0x33, 0x06, 0x7C, 0xE3, 0x6A, 0x15, 0x72, 0xB8, 0x83, 0x3D, 0x0B, 0xAB, 0x3C, 0xEE, 0x75, 0x13, 0xBD, 0x5C, 0x96, 0x25, 0x56, 0x36, 0x05, 0xFA, 0xAE, 0xD4, 0xF4, 0xCF, 0x52, 0xEC, 0x11, 0xB5, 0xEA, 0x9F, 0x20, 0xA3, 0xC8, 0x34, 0x72, 0x59, 0x09, 0x51, 0xE7, 0x36, 0x87, 0x86, 0x86, 0x98, 0xB5, 0x30, 0x7B, 0xFB, 0x3D, 0xCC, 0x5E, 0xE8, 0xC9, 0x49, 0xE0, 0xC6, 0xEA, 0x02, 0x76, 0x01, 0xE0, 0xBB, 0x8A, 0x70, 0xEB, 0x07, 0x86, 0xE8, 0x04, 0xE7, 0x48, 0xE4, 0x6C, 0x90, 0xE6, 0x16, 0x42, 0xB4, 0xBB, 0xC0, 0xC4, 0x82, 0x5F, 0xF8, 
+			0xFB, 0x7E, 0xB2, 0x9E, 0xC2, 0x78, 0x26, 0x86, 0x31, 0x00 };
 
 		[Test]
 		public void Ctor_ByteArray ()
@@ -393,6 +408,19 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates
 			Assert.AreEqual ("OU=Server Certification Authority, O=CommerceNet, S=California, C=US", x.SubjectName.Name, "SubjectName");
 			Assert.AreEqual ("D62F48D013EE7FB58B79074512670D9C5B3A5DA9", x.Thumbprint, "Thumbprint");
 			Assert.AreEqual (1, x.Version, "Version");
+
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, true), "DnsFromAlternativeName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsName, true), "DnsName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, true), "EmailName,true");
+			Assert.AreEqual ("Secure Server Certification Authority", x.GetNameInfo (X509NameType.SimpleName, true), "SimpleName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, true), "UpnName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, true), "UrlName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, false), "DnsFromAlternativeName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsName, false), "DnsName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, false), "EmailName,false");
+			Assert.AreEqual ("Server Certification Authority", x.GetNameInfo (X509NameType.SimpleName, false), "SimpleName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, false), "UpnName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, false), "UrlName,false");
 		}
 
 		[Test]
@@ -416,6 +444,19 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates
 			Assert.AreEqual ("OU=Directory Services, O=AT&T, C=US", x.SubjectName.Name, "SubjectName");
 			Assert.AreEqual ("9E87803EC5689AEFE77F92F91ABFA7467C76ED02", x.Thumbprint, "Thumbprint");
 			Assert.AreEqual (1, x.Version, "Version");
+
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, true), "DnsFromAlternativeName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsName, true), "DnsName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, true), "EmailName,true");
+			Assert.AreEqual ("Directory Services", x.GetNameInfo (X509NameType.SimpleName, true), "SimpleName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, true), "UpnName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, true), "UrlName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, false), "DnsFromAlternativeName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsName, false), "DnsName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, false), "EmailName,false");
+			Assert.AreEqual ("Directory Services", x.GetNameInfo (X509NameType.SimpleName, false), "SimpleName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, false), "UpnName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, false), "UrlName,false");
 		}
 
 		[Test]
@@ -439,6 +480,19 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates
 			Assert.AreEqual ("CN=\"0+WKJx+wYEZabSSPVX9kLsnx92s=\", OU=Issuing Financial Institution, O=BrandID, C=US", x.SubjectName.Name, "SubjectName");
 			Assert.AreEqual ("395FBBFC148933277689B7593A7D1CFFF156F162", x.Thumbprint, "Thumbprint");
 			Assert.AreEqual (3, x.Version, "Version");
+
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, true), "DnsFromAlternativeName,true");
+			Assert.AreEqual ("Brand Name:Product Type", x.GetNameInfo (X509NameType.DnsName, true), "DnsName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, true), "EmailName,true");
+			Assert.AreEqual ("Brand Name:Product Type", x.GetNameInfo (X509NameType.SimpleName, true), "SimpleName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, true), "UpnName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, true), "UrlName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, false), "DnsFromAlternativeName,false");
+			Assert.AreEqual ("0+WKJx+wYEZabSSPVX9kLsnx92s=", x.GetNameInfo (X509NameType.DnsName, false), "DnsName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, false), "EmailName,false");
+			Assert.AreEqual ("0+WKJx+wYEZabSSPVX9kLsnx92s=", x.GetNameInfo (X509NameType.SimpleName, false), "SimpleName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, false), "UpnName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, false), "UrlName,false");
 
 			// extensions
 			X509Extension ext = x.Extensions[0];
@@ -498,6 +552,19 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates
 			Assert.AreEqual ("OU=Secure Server Certification Authority, O=\"RSA Data Security, Inc.\", C=US", x.SubjectName.Name, "SubjectName");
 			Assert.AreEqual ("0D974461703713CB74932D2A75ACBC714B281266", x.Thumbprint, "Thumbprint");
 			Assert.AreEqual (1, x.Version, "Version");
+
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, true), "DnsFromAlternativeName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsName, true), "DnsName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, true), "EmailName,true");
+			Assert.AreEqual ("Secure Server Certification Authority", x.GetNameInfo (X509NameType.SimpleName, true), "SimpleName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, true), "UpnName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, true), "UrlName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, false), "DnsFromAlternativeName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsName, false), "DnsName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, false), "EmailName,false");
+			Assert.AreEqual ("Secure Server Certification Authority", x.GetNameInfo (X509NameType.SimpleName, false), "SimpleName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, false), "UpnName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, false), "UrlName,false");
 		}
 
 		[Test]
@@ -521,6 +588,19 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates
 			Assert.AreEqual ("O=SET Root, C=US", x.SubjectName.Name, "SubjectName");
 			Assert.AreEqual ("63DB7A42673975392AC6A4FAE3D78446B467C326", x.Thumbprint, "Thumbprint");
 			Assert.AreEqual (3, x.Version, "Version");
+
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, true), "DnsFromAlternativeName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsName, true), "DnsName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, true), "EmailName,true");
+			Assert.AreEqual ("SET Root", x.GetNameInfo (X509NameType.SimpleName, true), "SimpleName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, true), "UpnName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, true), "UrlName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, false), "DnsFromAlternativeName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsName, false), "DnsName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, false), "EmailName,false");
+			Assert.AreEqual ("SET Root", x.GetNameInfo (X509NameType.SimpleName, false), "SimpleName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, false), "UpnName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, false), "UrlName,false");
 
 			// extensions
 			X509Extension ext = x.Extensions[0];
@@ -577,6 +657,19 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates
 			Assert.AreEqual ("A30A06B1B0D4F871678A60C54EE4D8663606CCE6", x.Thumbprint, "Thumbprint");
 			Assert.AreEqual (3, x.Version, "Version");
 
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, true), "DnsFromAlternativeName,true");
+			Assert.AreEqual ("Armed Forces Root", x.GetNameInfo (X509NameType.DnsName, true), "DnsName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, true), "EmailName,true");
+			Assert.AreEqual ("Armed Forces Root", x.GetNameInfo (X509NameType.SimpleName, true), "SimpleName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, true), "UpnName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, true), "UrlName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, false), "DnsFromAlternativeName,false");
+			Assert.AreEqual ("Armed Forces Root", x.GetNameInfo (X509NameType.DnsName, false), "DnsName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, false), "EmailName,false");
+			Assert.AreEqual ("Armed Forces Root", x.GetNameInfo (X509NameType.SimpleName, false), "SimpleName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, false), "UpnName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, false), "UrlName,false");
+
 			// extensions
 			X509Extension ext = x.Extensions[0];
 			Assert.AreEqual ("2.5.29.14", ext.Oid.Value, "Oid-0");
@@ -615,6 +708,19 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates
 			Assert.AreEqual ("E=david@formal.ie, CN=David T. Gray, OU=Digital ID Class 1 - Netscape, OU=\"www.verisign.com/repository/CPS Incorp. by Ref.,LIAB.LTD(c)96\", OU=VeriSign Class 1 CA - Individual Subscriber, O=\"VeriSign, Inc.\", L=Internet", x.SubjectName.Name, "SubjectName");
 			Assert.AreEqual ("52D1848F6A161BA5C6C19007F8164668F5A3B2CF", x.Thumbprint, "Thumbprint");
 			Assert.AreEqual (3, x.Version, "Version");
+
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, true), "DnsFromAlternativeName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsName, true), "DnsName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, true), "EmailName,true");
+			Assert.AreEqual ("VeriSign Class 1 CA - Individual Subscriber", x.GetNameInfo (X509NameType.SimpleName, true), "SimpleName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, true), "UpnName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, true), "UrlName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, false), "DnsFromAlternativeName,false");
+			Assert.AreEqual ("David T. Gray", x.GetNameInfo (X509NameType.DnsName, false), "DnsName,false");
+			Assert.AreEqual ("david@formal.ie", x.GetNameInfo (X509NameType.EmailName, false), "EmailName,false");
+			Assert.AreEqual ("David T. Gray", x.GetNameInfo (X509NameType.SimpleName, false), "SimpleName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, false), "UpnName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, false), "UrlName,false");
 
 			// extensions
 			X509Extension ext = x.Extensions[0];
@@ -664,6 +770,19 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates
 			Assert.AreEqual ("OID.1.3.6.1.4.1.42.2.11.2.1=keywitness@keywitness.ca, CN=Keywitness Canada Inc., C=CA", x.SubjectName.Name, "SubjectName");
 			Assert.AreEqual ("E0A00ABEB2CCA84540C21A75E0B3A406F9A624AC", x.Thumbprint, "Thumbprint");
 			Assert.AreEqual (1, x.Version, "Version");
+
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, true), "DnsFromAlternativeName,true");
+			Assert.AreEqual ("Keywitness Canada Inc.", x.GetNameInfo (X509NameType.DnsName, true), "DnsName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, true), "EmailName,true");
+			Assert.AreEqual ("Keywitness Canada Inc.", x.GetNameInfo (X509NameType.SimpleName, true), "SimpleName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, true), "UpnName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, true), "UrlName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, false), "DnsFromAlternativeName,false");
+			Assert.AreEqual ("Keywitness Canada Inc.", x.GetNameInfo (X509NameType.DnsName, false), "DnsName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, false), "EmailName,false");
+			Assert.AreEqual ("Keywitness Canada Inc.", x.GetNameInfo (X509NameType.SimpleName, false), "SimpleName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, false), "UpnName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, false), "UrlName,false");
 		}
 
 		[Test]
@@ -687,6 +806,19 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates
 			Assert.AreEqual ("CN=GTE CyberTrust Root, O=GTE Corporation, C=US", x.SubjectName.Name, "SubjectName");
 			Assert.AreEqual ("A275E026ACD854794A4AA2CB53F66233129C55B6", x.Thumbprint, "Thumbprint");
 			Assert.AreEqual (1, x.Version, "Version");
+
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, true), "DnsFromAlternativeName,true");
+			Assert.AreEqual ("GTE CyberTrust Root", x.GetNameInfo (X509NameType.DnsName, true), "DnsName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, true), "EmailName,true");
+			Assert.AreEqual ("GTE CyberTrust Root", x.GetNameInfo (X509NameType.SimpleName, true), "SimpleName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, true), "UpnName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, true), "UrlName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, false), "DnsFromAlternativeName,false");
+			Assert.AreEqual ("GTE CyberTrust Root", x.GetNameInfo (X509NameType.DnsName, false), "DnsName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, false), "EmailName,false");
+			Assert.AreEqual ("GTE CyberTrust Root", x.GetNameInfo (X509NameType.SimpleName, false), "SimpleName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, false), "UpnName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, false), "UrlName,false");
 		}
 
 		[Test]
@@ -710,6 +842,19 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates
 			Assert.AreEqual ("CN=Microsoft Corporation, OU=Copyright (c) 2002 Microsoft Corp., O=Microsoft Corporation, L=Redmond, S=Washington, C=US", x.SubjectName.Name, "SubjectName");
 			Assert.AreEqual ("282D9806C3DF7345929F64F5895EF2EA4AC29302", x.Thumbprint, "Thumbprint");
 			Assert.AreEqual (3, x.Version, "Version");
+
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, true), "DnsFromAlternativeName,true");
+			Assert.AreEqual ("Microsoft Code Signing PCA", x.GetNameInfo (X509NameType.DnsName, true), "DnsName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, true), "EmailName,true");
+			Assert.AreEqual ("Microsoft Code Signing PCA", x.GetNameInfo (X509NameType.SimpleName, true), "SimpleName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, true), "UpnName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, true), "UrlName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, false), "DnsFromAlternativeName,false");
+			Assert.AreEqual ("Microsoft Corporation", x.GetNameInfo (X509NameType.DnsName, false), "DnsName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, false), "EmailName,false");
+			Assert.AreEqual ("Microsoft Corporation", x.GetNameInfo (X509NameType.SimpleName, false), "SimpleName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, false), "UpnName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, false), "UrlName,false");
 
 			// extensions
 			X509Extension ext = x.Extensions[0];
@@ -763,6 +908,19 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates
 			Assert.AreEqual ("CN=DSA Parameters Inherited CA, O=Test Certificates, C=US", x.SubjectName.Name, "SubjectName");
 			Assert.AreEqual ("0E29CDDCA5E732A20DCED87B3D002446853EBBD1", x.Thumbprint, "Thumbprint");
 			Assert.AreEqual (3, x.Version, "Version");
+
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, true), "DnsFromAlternativeName,true");
+			Assert.AreEqual ("DSA CA", x.GetNameInfo (X509NameType.DnsName, true), "DnsName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, true), "EmailName,true");
+			Assert.AreEqual ("DSA CA", x.GetNameInfo (X509NameType.SimpleName, true), "SimpleName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, true), "UpnName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, true), "UrlName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, false), "DnsFromAlternativeName,false");
+			Assert.AreEqual ("DSA Parameters Inherited CA", x.GetNameInfo (X509NameType.DnsName, false), "DnsName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, false), "EmailName,false");
+			Assert.AreEqual ("DSA Parameters Inherited CA", x.GetNameInfo (X509NameType.SimpleName, false), "SimpleName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, false), "UpnName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, false), "UrlName,false");
 
 			// extensions
 			X509Extension ext = x.Extensions[0];
@@ -830,6 +988,19 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates
 			Assert.AreEqual ("3029694B22B2EE6AEC9B78449E510F7C348DBA33", x.Thumbprint, "Thumbprint");
 			Assert.AreEqual (3, x.Version, "Version");
 
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, true), "DnsFromAlternativeName,true");
+			Assert.AreEqual ("Mono SSL Intermediate CA", x.GetNameInfo (X509NameType.DnsName, true), "DnsName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, true), "EmailName,true");
+			Assert.AreEqual ("Mono SSL Intermediate CA", x.GetNameInfo (X509NameType.SimpleName, true), "SimpleName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, true), "UpnName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, true), "UrlName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, false), "DnsFromAlternativeName,false");
+			Assert.AreEqual ("FARSCAPE", x.GetNameInfo (X509NameType.DnsName, false), "DnsName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, false), "EmailName,false");
+			Assert.AreEqual ("FARSCAPE", x.GetNameInfo (X509NameType.SimpleName, false), "SimpleName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, false), "UpnName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, false), "UrlName,false");
+
 			// extensions
 			X509Extension ext = x.Extensions[0];
 			Assert.AreEqual ("2.5.29.37", ext.Oid.Value, "Oid-0");
@@ -874,7 +1045,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates
 		[ExpectedException (typeof (CryptographicException))]
 		public void Pkcs12_2_WithUnrequiredPassword ()
 		{
-			X509Certificate2 x = new X509Certificate2 (farscape_nopwd_pfx, "n0t n33d3d");
+			new X509Certificate2 (farscape_nopwd_pfx, "n0t n33d3d");
 		}
 
 		[Test]
@@ -893,6 +1064,123 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates
 		public void Pkcs12_5_Properties ()
 		{
 			CheckPkcs12 (new X509Certificate2 (farscape_strong_path_pfx, "farscape"));
+		}
+
+		private void CheckBase64 (X509Certificate2 x)
+		{
+			// note: the raw data is still the DER encoded ASN.1 (not the base64 string)
+			byte[] raw = { 0x30, 0x82, 0x01, 0xC5, 0x30, 0x82, 0x01, 0x32, 0xA0, 0x03, 0x02, 0x01, 0x02, 0x02, 0x10, 0xC7, 0x75, 0xAE, 0x48, 0x53, 0x9B, 0x1E, 0x9E, 0x44, 0x80, 0x15, 0xCA, 0x78, 0x15, 0x47, 0x69, 0x30, 0x09, 
+				0x06, 0x05, 0x2B, 0x0E, 0x03, 0x02, 0x1D, 0x05, 0x00, 0x30, 0x25, 0x31, 0x23, 0x30, 0x21, 0x06, 0x03, 0x55, 0x04, 0x03, 0x1E, 0x1A, 0x00, 0x43, 0x00, 0x41, 0x00, 0x53, 0x00, 0x54, 0x00, 0x4F, 0x00, 0x52, 
+				0x00, 0x5C, 0x00, 0x70, 0x00, 0x6F, 0x00, 0x75, 0x00, 0x70, 0x00, 0x6F, 0x00, 0x75, 0x30, 0x1E, 0x17, 0x0D, 0x30, 0x35, 0x30, 0x36, 0x30, 0x38, 0x31, 0x33, 0x33, 0x38, 0x34, 0x37, 0x5A, 0x17, 0x0D, 0x30, 
+				0x36, 0x30, 0x36, 0x30, 0x38, 0x31, 0x39, 0x33, 0x38, 0x34, 0x37, 0x5A, 0x30, 0x25, 0x31, 0x23, 0x30, 0x21, 0x06, 0x03, 0x55, 0x04, 0x03, 0x1E, 0x1A, 0x00, 0x43, 0x00, 0x41, 0x00, 0x53, 0x00, 0x54, 0x00, 
+				0x4F, 0x00, 0x52, 0x00, 0x5C, 0x00, 0x70, 0x00, 0x6F, 0x00, 0x75, 0x00, 0x70, 0x00, 0x6F, 0x00, 0x75, 0x30, 0x81, 0x9F, 0x30, 0x0D, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01, 0x05, 
+				0x00, 0x03, 0x81, 0x8D, 0x00, 0x30, 0x81, 0x89, 0x02, 0x81, 0x81, 0x00, 0xDA, 0xEA, 0x39, 0x38, 0xF6, 0x3A, 0xF4, 0x8B, 0xF9, 0xE2, 0xC7, 0xD5, 0x2C, 0xF9, 0x1A, 0xD5, 0x75, 0xCF, 0x17, 0xAC, 0xB3, 0x46, 
+				0xBD, 0x7F, 0x3F, 0x97, 0x38, 0x2E, 0x10, 0x41, 0xB2, 0xC4, 0xD9, 0x14, 0x15, 0xD8, 0xE6, 0xF9, 0x11, 0x38, 0x80, 0x75, 0xE3, 0xD7, 0x1F, 0xC0, 0x86, 0xA7, 0x3E, 0x02, 0x11, 0x04, 0xE9, 0x57, 0xB5, 0xD8, 
+				0x57, 0x65, 0x27, 0x7B, 0x8F, 0xBA, 0xB9, 0xEF, 0xA0, 0x8F, 0x15, 0x9C, 0xEC, 0x2F, 0x85, 0x63, 0x4E, 0x52, 0x6B, 0xA6, 0xE3, 0x33, 0xCA, 0x86, 0x22, 0xBA, 0xF9, 0x06, 0xE8, 0xEC, 0xCB, 0xA7, 0xA5, 0xA8, 
+				0xE2, 0x3E, 0xC7, 0x21, 0x74, 0x4E, 0xC9, 0xE9, 0x05, 0x5F, 0xAE, 0x78, 0x12, 0x51, 0x2F, 0xFA, 0x6A, 0x8F, 0x7C, 0xB0, 0x64, 0x2A, 0xFB, 0xB7, 0xB2, 0x40, 0x91, 0x20, 0xE7, 0x32, 0x53, 0x3F, 0x58, 0xCA, 
+				0x80, 0xA2, 0x41, 0xC5, 0x02, 0x03, 0x01, 0x00, 0x01, 0x30, 0x09, 0x06, 0x05, 0x2B, 0x0E, 0x03, 0x02, 0x1D, 0x05, 0x00, 0x03, 0x81, 0x81, 0x00, 0x9D, 0x57, 0xB0, 0x25, 0x97, 0x81, 0x22, 0x3C, 0xC4, 0x61, 
+				0x9D, 0xC9, 0xDB, 0xD8, 0xC7, 0xC1, 0xED, 0xFB, 0x1C, 0xDD, 0x35, 0x98, 0xD7, 0x40, 0x58, 0xA4, 0x43, 0x86, 0x54, 0xF9, 0x68, 0x96, 0x85, 0xB5, 0x91, 0xBC, 0xB7, 0x82, 0xB2, 0x7E, 0x7B, 0x58, 0xBD, 0x80, 
+				0xCE, 0x34, 0x7E, 0x22, 0x87, 0x62, 0x31, 0xB5, 0x03, 0x16, 0xA0, 0x20, 0x17, 0x9D, 0xE7, 0x5D, 0xAA, 0x12, 0xF5, 0x92, 0xDF, 0x94, 0xE6, 0x69, 0xCD, 0xF6, 0xFC, 0x82, 0x9B, 0xDC, 0xD3, 0x30, 0x40, 0xB1, 
+				0x71, 0x4F, 0x4A, 0x64, 0xCB, 0xDC, 0x14, 0xC8, 0xC1, 0x7F, 0x6F, 0x23, 0xCE, 0xDD, 0x19, 0x22, 0x4F, 0x24, 0x1E, 0x27, 0x18, 0x66, 0x88, 0x7A, 0x9A, 0x9A, 0x09, 0x37, 0x6D, 0x65, 0x15, 0xE8, 0x28, 0x5E, 
+				0x82, 0xEB, 0x5B, 0x82, 0xE8, 0x8A, 0xAC, 0x8F, 0xC3, 0x6C, 0xEE, 0xF0, 0x3E, 0x20, 0xCB, 0xC7 };
+
+			Assert.IsFalse (x.Archived, "Archived");
+			Assert.AreEqual (0, x.Extensions.Count, "Extensions");
+			Assert.AreEqual (0, x.FriendlyName.Length, "FriendlyName");
+			Assert.IsFalse (x.HasPrivateKey, "HasPrivateKey");
+			Assert.AreEqual ("CN=CASTOR\\poupou", x.Issuer, "Issuer");
+			Assert.AreEqual ("CN=CASTOR\\poupou", x.IssuerName.Name, "IssuerName");
+			Assert.AreEqual (632853923270000000, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter");
+			Assert.AreEqual (632538347270000000, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore");
+			Assert.IsNull (x.PrivateKey, "PrivateKey");
+			Assert.AreEqual ("<RSAKeyValue><Modulus>2uo5OPY69Iv54sfVLPka1XXPF6yzRr1/P5c4LhBBssTZFBXY5vkROIB149cfwIanPgIRBOlXtdhXZSd7j7q576CPFZzsL4VjTlJrpuMzyoYiuvkG6OzLp6Wo4j7HIXROyekFX654ElEv+mqPfLBkKvu3skCRIOcyUz9YyoCiQcU=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>", x.PublicKey.Key.ToXmlString (false), "PublicKey");
+			Assert.AreEqual (raw, x.RawData, "RawData");
+			Assert.AreEqual ("C775AE48539B1E9E448015CA78154769", x.SerialNumber, "SerialNumber");
+			Assert.AreEqual ("1.3.14.3.2.29", x.SignatureAlgorithm.Value, "SignatureAlgorithm");
+			Assert.AreEqual ("CN=CASTOR\\poupou", x.Subject, "Subject");
+			Assert.AreEqual ("CN=CASTOR\\poupou", x.SubjectName.Name, "SubjectName");
+			Assert.AreEqual ("1D53CC89D09F114A487F7F529ECBD186A3D58529", x.Thumbprint, "Thumbprint");
+			Assert.AreEqual (3, x.Version, "Version");
+
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, true), "DnsFromAlternativeName,true");
+			Assert.AreEqual ("CASTOR\\poupou", x.GetNameInfo (X509NameType.DnsName, true), "DnsName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, true), "EmailName,true");
+			Assert.AreEqual ("CASTOR\\poupou", x.GetNameInfo (X509NameType.SimpleName, true), "SimpleName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, true), "UpnName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, true), "UrlName,true");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.DnsFromAlternativeName, false), "DnsFromAlternativeName,false");
+			Assert.AreEqual ("CASTOR\\poupou", x.GetNameInfo (X509NameType.DnsName, false), "DnsName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.EmailName, false), "EmailName,false");
+			Assert.AreEqual ("CASTOR\\poupou", x.GetNameInfo (X509NameType.SimpleName, false), "SimpleName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UpnName, false), "UpnName,false");
+			Assert.AreEqual (String.Empty, x.GetNameInfo (X509NameType.UrlName, false), "UrlName,false");
+		}
+
+		[Test]
+		public void Base64_AsByteArray_Properties ()
+		{
+			// note: the X509Certificate(string) ctor is used for a filename
+			byte[] raw = Encoding.ASCII.GetBytes (base64_cert);
+			CheckBase64 (new X509Certificate2 (raw));
+		}
+
+		[Test]
+		public void Base64_AsFile_Properties ()
+		{
+			string temp = Path.GetTempFileName ();
+			try {
+				using (StreamWriter sw = new StreamWriter (temp)) {
+					sw.Write (base64_cert);
+				}
+				CheckBase64 (new X509Certificate2 (temp));
+			}
+			finally {
+				if (File.Exists (temp))
+					File.Delete (temp);
+			}
+		}
+
+		private bool RunningOnWindows ()
+		{
+			int i = (int) Environment.OSVersion.Platform;
+			return ((i != 4) && (i != 128));
+		}
+
+		[Test]
+		public void Base64_AsStringData ()
+		{
+			try {
+				new X509Certificate2 (base64_cert);
+				Assert.Fail ("Expected ArgumentException(Windows) or PathTooLongException(Linux)");
+			}
+			catch (ArgumentException) {
+				// path is invalid on Windows
+				if (!RunningOnWindows ())
+					throw;
+			}
+			catch (PathTooLongException) {
+				// path is too long on Linux
+				if (RunningOnWindows ())
+					throw;
+			}
+			catch (Exception e) {
+				Assert.Fail (e.ToString ());
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Pkcs7_Ctor ()
+		{
+			new X509Certificate2 (farscape_pkcs7);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Pkcs7_Import ()
+		{
+			X509Certificate2 x = new X509Certificate2 ();
+			x.Import (farscape_pkcs7);
 		}
 
 		[Test]
@@ -939,6 +1227,8 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates
 			Assert.AreEqual (X509ContentType.Pkcs12, X509Certificate2.GetCertContentType (farscape_path_pfx), "3-Pkcs12");
 			Assert.AreEqual (X509ContentType.Pkcs12, X509Certificate2.GetCertContentType (farscape_strong_pfx), "4-Pkcs12");
 			Assert.AreEqual (X509ContentType.Pkcs12, X509Certificate2.GetCertContentType (farscape_strong_path_pfx), "5-Pkcs12");
+
+			Assert.AreEqual (X509ContentType.Pkcs7, X509Certificate2.GetCertContentType (farscape_pkcs7), "1-Pkcs7");
 		}
 
 		[Test]
@@ -953,6 +1243,170 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates
 		public void GetCertContentType_String_Empty ()
 		{
 			X509Certificate2.GetCertContentType (String.Empty);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetNameInfo_Invalid_True ()
+		{
+			new X509Certificate2 ().GetNameInfo ((X509NameType) Int32.MinValue, true);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetNameInfo_Invalid_False ()
+		{
+			new X509Certificate2 ().GetNameInfo ((X509NameType) Int32.MinValue, false);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void Empty_GetNameInfo ()
+		{
+			new X509Certificate2 ().GetNameInfo (X509NameType.DnsName, true);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Empty_Verify ()
+		{
+			new X509Certificate2 ().Verify ();
+		}
+
+		[Test]
+		public void Empty_ToString ()
+		{
+			string expected = "System.Security.Cryptography.X509Certificates.X509Certificate2";
+			X509Certificate2 x = new X509Certificate2 ();
+			Assert.AreEqual (expected, x.ToString (), "ToString()");
+			Assert.AreEqual (expected, x.ToString (true), "ToString(true)");
+			Assert.AreEqual (expected, x.ToString (false), "ToString(false)");
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Empty_Archived_Get ()
+		{
+			Assert.IsFalse (new X509Certificate2 ().Archived);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Empty_Archived_Set ()
+		{
+			new X509Certificate2 ().Archived = false;
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Empty_Extensions ()
+		{
+			Assert.IsNull (new X509Certificate2 ().Extensions);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Empty_FriendlyName_Get ()
+		{
+			Assert.IsNull (new X509Certificate2 ().FriendlyName);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Empty_FriendlyName_Set ()
+		{
+			new X509Certificate2 ().FriendlyName = null;
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Empty_HasPrivateKey ()
+		{
+			Assert.IsFalse (new X509Certificate2 ().HasPrivateKey);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Empty_IssuerName ()
+		{
+			Assert.IsNull (new X509Certificate2 ().IssuerName);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Empty_NotAfter ()
+		{
+			Assert.AreEqual (DateTime.MinValue, new X509Certificate2 ().NotAfter);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Empty_NotBefore ()
+		{
+			Assert.AreEqual (DateTime.MinValue, new X509Certificate2 ().NotBefore);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Empty_PrivateKey_Get ()
+		{
+			Assert.IsNull (new X509Certificate2 ().PrivateKey);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Empty_PrivateKey_Set ()
+		{
+			new X509Certificate2 ().PrivateKey = null;
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Empty_PublicKey_Get ()
+		{
+			Assert.IsNull (new X509Certificate2 ().PublicKey);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Empty_RawData_Get ()
+		{
+			Assert.IsNull (new X509Certificate2 ().RawData);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Empty_SerialNumber_Get ()
+		{
+			Assert.IsNull (new X509Certificate2 ().SerialNumber);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Empty_SignatureAlgorithm_Get ()
+		{
+			Assert.IsNull (new X509Certificate2 ().SignatureAlgorithm);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Empty_SubjectName_Get ()
+		{
+			Assert.IsNull (new X509Certificate2 ().SubjectName);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Empty_Thumbprint_Get ()
+		{
+			Assert.IsNull (new X509Certificate2 ().Thumbprint);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Empty_Version_Get ()
+		{
+			Assert.IsNull (new X509Certificate2 ().Version);
 		}
 	}
 }

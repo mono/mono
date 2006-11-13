@@ -1,3 +1,9 @@
+2006-11-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate2Test.cs: Add property tests when using an "empty"
+	certificate. Add tests for GetNameInfo in all test cases. Add base64
+	certificate decoding tests. Add Pkcs7 import tests.
+
 2006-11-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X500DistinguishedNameTest.cs: Removed all 	NotWorking tags. Added
