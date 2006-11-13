@@ -1,3 +1,37 @@
+2006-11-13  Marek Habersack  <grendello@gmail.com>
+
+	* AssemblyBuilder.cs: Added referenced assemblies support. Added a
+	constructor with just the CodeDomProvider argument. CreateCodeFile
+	now uses the code provider's file extension. Added internal method
+	to add pre-generated source code files. Added a BuildAssembly
+	overload that takes no virtual path as  the
+	parameter. BuildAssembly now uses an array of source files instead
+	of compile units and also handles embedded resources and
+	referenced assemblies. BuildAssembly deletes the temporary files
+	if MONO_ASPNET_NODELET isn't set in the environment.
+
+	* AppCodeCompiler.cs: Use the FileUtils methods for temporary file
+	creation. Use the build providers collection to build unknown
+	files in App_Code. Use AssemblyBuilder to compile the assembly.
+
+	* AppResourceFilesCompiler.cs: Use the FileUtils methods for
+	temporary file creation.
+
+	* WebHandlerBuildProvider.cs: Added the BuildProviderAppliesTo
+	attribute.
+
+	* UserControlBuildProvider.cs: Added the BuildProviderAppliesTo
+	attribute.
+
+	* PageBuildProvider.cs: Added the BuildProviderAppliesTo
+	attribute.
+
+	* WebServiceBuildProvider.cs: Added the BuildProviderAppliesTo
+	attribute.
+
+	* IgnoreFileBuildProvider.cs: Added the BuildProviderAppliesTo
+	attribute.
+
 2006-11-08  Marek Habersack  <grendello@gmail.com>
 
 	* BuildProvider.cs: Implemented the GetCustomString

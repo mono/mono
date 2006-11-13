@@ -49,27 +49,35 @@ namespace System.Web.Compilation {
 		CodeDomProvider provider;
 		List <CodeCompileUnit> units;
 		List <string> source_files;
+		List <string> referenced_assemblies;
 		Dictionary <string, string> resource_files;
 		TempFileCollection temp_files;
 		string virtual_path;
 		//TODO: there should be a Compile () method here which is where all the compilation exceptions are thrown from.
+
+		internal AssemblyBuilder (CodeDomProvider provider)
+		: this (null, provider)
+		{}
 		
 		internal AssemblyBuilder (string virtualPath, CodeDomProvider provider)
 		{
 			this.provider = provider;
 			this.virtual_path = virtualPath;
 			units = new List <CodeCompileUnit> ();
-			units.Add (new CodeCompileUnit ());
 			temp_files = new TempFileCollection ();
+			referenced_assemblies = new List <string> ();
 			CompilationSection section;
-			section = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation", virtualPath);
+			if (virtualPath != null)
+				section = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation", virtualPath);
+			else
+				section = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
 			string tempdir = section.TempDirectory;
 			if (tempdir == null || tempdir == "")
 				tempdir = AppDomain.CurrentDomain.SetupInformation.DynamicBase;
 				
 			temp_files = new TempFileCollection (tempdir, KeepFiles);
 		}
-
+		
 		internal TempFileCollection TempFiles {
 			get { return temp_files; }
 		}
@@ -101,14 +109,10 @@ namespace System.Web.Compilation {
 		{
 			if (a == null)
 				throw new ArgumentNullException ("a");
-
-			StringCollection coll = units [units.Count - 1].ReferencedAssemblies;
-			string location = a.Location;
-			if (coll.IndexOf (location) == -1)
-				coll.Add (location);
+			
+			referenced_assemblies.Add (a.Location);
 		}
 
-		[MonoTODO ("Do something with the buildProvider argument")]
 		public void AddCodeCompileUnit (BuildProvider buildProvider, CodeCompileUnit compileUnit)
 		{
 			if (buildProvider == null)
@@ -120,18 +124,30 @@ namespace System.Web.Compilation {
 			units.Add (compileUnit);
 		}
 
-		[MonoTODO ("Anything to do with the buildProvider argument?")]
 		public TextWriter CreateCodeFile (BuildProvider buildProvider)
 		{
 			if (buildProvider == null)
 				throw new ArgumentNullException ("buildProvider");
 
-			string filename = temp_files.AddExtension ("temp", true);
+			// Generate a file name with the correct source language extension
+			string filename = GetTempFilePhysicalPath (provider.FileExtension);
 			SourceFiles.Add (filename);
 			return new StreamWriter (File.OpenWrite (filename), WebEncoding.FileEncoding);
 		}
 
-		[MonoTODO ("Anything to do with the buildProvider argument?")]
+		internal void AddCodeFile (string path)
+		{
+			if (path == null || path.Length == 0)
+				return;
+			string extension = Path.GetExtension (path);
+			if (extension == null || extension.Length == 0)
+				return; // maybe better to throw an exception here?
+			extension = extension.Substring (1);
+			string filename = GetTempFilePhysicalPath (extension);
+			File.Copy (path, filename, true);
+			SourceFiles.Add (filename);
+		}
+		
 		public Stream CreateEmbeddedResource (BuildProvider buildProvider, string name)
 		{
 			if (buildProvider == null)
@@ -140,7 +156,7 @@ namespace System.Web.Compilation {
 			if (name == null || name == "")
 				throw new ArgumentNullException ("name");
 
-			string filename = temp_files.AddExtension ("resource", true);
+			string filename = GetTempFilePhysicalPath ("resource");
 			Stream stream = File.OpenWrite (filename);
 			ResourceFiles [name] = filename;
 			return stream;
@@ -156,19 +172,59 @@ namespace System.Web.Compilation {
 		{
 			if (extension == null)
 				throw new ArgumentNullException ("extension");
-
-			return temp_files.AddExtension (extension, true);
+			
+			return temp_files.AddExtension (String.Format ("_{0}.{1}", temp_files.Count, extension), true);
 		}
 
 		public CodeDomProvider CodeDomProvider {
 			get { return provider; }
 		}
 
+		internal CompilerResults BuildAssembly (CompilerParameters options)
+		{
+			return BuildAssembly (null, options);
+		}
+		
 		internal CompilerResults BuildAssembly (string virtualPath, CompilerParameters options)
 		{
+			if (options == null)
+				throw new ArgumentNullException ("options");
+			
 			CompilerResults results;
 			CodeCompileUnit [] units = GetUnitsAsArray ();
-			results = provider.CompileAssemblyFromDom (options, units);
+
+			// Since we may have some source files and some code
+			// units, we generate code from all of them and then
+			// compile the assembly from the set of temporary source
+			// files. This also facilates possible debugging for the
+			// end user, since they get the code beforehand.
+			List <string> files = SourceFiles;
+			string filename;
+			StreamWriter sw = null;
+			foreach (CodeCompileUnit unit in units) {
+				filename = GetTempFilePhysicalPath (provider.FileExtension);
+				try {
+					sw = new StreamWriter (File.OpenWrite (filename), WebEncoding.FileEncoding);
+					provider.GenerateCodeFromCompileUnit (unit, sw, null);
+					files.Add (filename);
+				} catch {
+					throw;
+				} finally {
+					if (sw != null) {
+						sw.Flush ();
+						sw.Close ();
+					}
+				}
+			}
+
+			Dictionary <string, string> resources = ResourceFiles;
+			foreach (KeyValuePair <string, string> de in resources)
+				options.EmbeddedResources.Add (de.Value);
+			foreach (string refasm in referenced_assemblies)
+				options.ReferencedAssemblies.Add (refasm);
+			
+			results = provider.CompileAssemblyFromFile (options, files.ToArray ());
+			
 			// FIXME: generate the code and display it
 			if (results.NativeCompilerReturnValue != 0)
 				throw new CompilationException (virtualPath, results.Errors, "");
@@ -184,7 +240,8 @@ namespace System.Web.Compilation {
 				results.CompiledAssembly = Assembly.LoadFrom (options.OutputAssembly);
 			}
 
-			results.TempFiles.Delete ();
+			if (!KeepFiles)
+				results.TempFiles.Delete ();
 			return results;
 		}
 	}

@@ -40,6 +40,7 @@ using System.Web.UI;
 
 namespace System.Web.Compilation {
 
+	[BuildProviderAppliesTo (BuildProviderAppliesTo.Web)]
 	sealed class PageBuildProvider : BuildProvider {
 		PageCompiler pcompiler;
 		CompilerType compiler_type;

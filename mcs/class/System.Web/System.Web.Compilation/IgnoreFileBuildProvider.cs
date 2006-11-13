@@ -31,7 +31,7 @@
 #if NET_2_0
 
 namespace System.Web.Compilation {
-
+	[BuildProviderAppliesTo (BuildProviderAppliesTo.All)]
 	class IgnoreFileBuildProvider : BuildProvider
 	{
 		public override void GenerateCode (AssemblyBuilder assemblyBuilder)

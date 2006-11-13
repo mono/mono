@@ -37,6 +37,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Resources;
+using System.Web.Util;
 
 using Microsoft.CSharp;
 //using Microsoft.VisualBasic;
@@ -574,6 +575,13 @@ namespace System.Web.Compilation
 			return resfile;
 		}
 
+		object OnCreateRandomFile (string path)
+		{
+			FileStream f = new FileStream (path, FileMode.CreateNew);
+			f.Close ();
+			return path;
+		}
+		
 		protected string GenRandomFileName (string basepath)
 		{
 			return GenRandomFileName (basepath, null);
@@ -581,50 +589,18 @@ namespace System.Web.Compilation
 		
 		protected string GenRandomFileName (string basepath, string ext)
 		{
-			if (rnd == null)
-				rnd = new Random ();
-			FileStream f = null;
-			string path = null;
-			do {
-				int num = rnd.Next ();
-				num++;
-				path = Path.Combine (basepath, num.ToString ("x"));
-				if (ext != null)
-					path = String.Format ("{0}.{1}", path, ext);
-					
-				try {
-					f = new FileStream (path, FileMode.CreateNew);
-				} catch (System.IO.IOException) {
-					f = null;
-					continue;
-				} catch {
-					throw;
-				}
-			} while (f == null);
-			f.Close ();
-			return path;
+			return (string)FileUtils.CreateTemporaryFile (basepath, ext, OnCreateRandomFile);
+		}
+
+		object OnCreateRandomDir (string path)
+		{
+			DirectoryInfo di = Directory.CreateDirectory (path);
+			return di.FullName;
 		}
 		
 		protected string GenTempDir (string basepath)
 		{
-			if (rnd == null)
-				rnd = new Random ();
-			DirectoryInfo di = null;
-			string path;
-			do {
-				int num = rnd.Next ();
-				num++;
-				path = Path.Combine (basepath, num.ToString ("x"));
-				try {
-					di = Directory.CreateDirectory (path);
-				} catch (System.IO.IOException) {
-					di = null;
-					continue;
-				} catch {
-					throw;
-				}
-			} while (di == null);
-			return di.FullName;
+			return (string)FileUtils.CreateTemporaryFile (basepath, OnCreateRandomDir);
 		}
 	}
 }

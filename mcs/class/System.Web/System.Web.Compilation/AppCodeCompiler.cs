@@ -36,13 +36,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Web.Configuration;
+using System.Web.Util;
 
 namespace System.Web.Compilation
 {
 	internal class AppCodeAssembly
 	{
-		private static Random rnd = new Random ();
-		
 		private List<string> files;
 		private string name;
 		private string path;
@@ -81,6 +80,13 @@ namespace System.Web.Compilation
 		public void AddFile (string path)
 		{
 			files.Add (path);
+		}
+
+		object OnCreateTemporaryAssemblyFile (string path)
+		{
+			FileStream f = new FileStream (path, FileMode.CreateNew);
+			f.Close ();
+			return path;
 		}
 		
 		// Build and add the assembly to the BuildManager's
@@ -130,30 +136,96 @@ namespace System.Web.Compilation
 			}
 
 			CodeDomProvider provider = null;
-			// First the files in the language we are aware of
-			if (compilerInfo != null) {
+			if (compilerInfo == null) {
+				CompilationSection config = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
+				if (config == null || !CodeDomProvider.IsDefinedLanguage (config.DefaultLanguage))
+					throw new HttpException ("Failed to retrieve default source language");
+				compilerInfo = CodeDomProvider.GetCompilerInfo (config.DefaultLanguage);
+				if (compilerInfo == null || !compilerInfo.IsCodeDomProviderTypeValid)
+					throw new HttpException ("Internal error while initializing application");
 				provider = compilerInfo.CreateProvider ();
 				if (provider == null)
-					throw new HttpException ("Unable to create a compiler for App_Code contents");
+					throw new HttpException ("A code provider error occurred while initializing application.");
+			}
 
-				CompilerParameters parameters = compilerInfo.CreateDefaultCompilerParameters ();
-				int num = rnd.Next () + 1;
+			provider = compilerInfo.CreateProvider ();
+			if (provider == null)
+				throw new HttpException ("A code provider error occurred while initializing application.");
+
+			AssemblyBuilder abuilder = new AssemblyBuilder (provider);
+			foreach (string file in knownfiles)
+				abuilder.AddCodeFile (file);
+			
+			BuildProvider bprovider;
+			CompilationSection compilationSection = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
+			if (compilationSection != null) {
+				BuildProviderCollection buildProviders = compilationSection.BuildProviders;
 				
-				string assemblyName = Path.Combine (
-					AppDomain.CurrentDomain.SetupInformation.DynamicBase,
-					String.Format ("{0}.{1}.dll", name, num.ToString ("x")));
-				parameters.OutputAssembly = assemblyName;
-				CompilerResults results = provider.CompileAssemblyFromFile (parameters, knownfiles.ToArray ());
-				if (results.Errors.Count == 0) {
-					BuildManager.CodeAssemblies.Add (results.PathToAssembly);
-					BuildManager.TopLevelAssemblies.Add (results.CompiledAssembly);
-				} else {
-					if (HttpContext.Current.IsCustomErrorEnabled)
-						throw new HttpException ("An error occurred while initializing application.");
-					throw new CompilationException (null, results.Errors, null);
+				foreach (string file in unknownfiles) {
+					bprovider = GetBuildProviderFor (file, buildProviders);
+					if (bprovider == null)
+						continue;
+					bprovider.GenerateCode (abuilder);
 				}
 			}
+			
+			string assemblyName = (string)FileUtils.CreateTemporaryFile (
+				AppDomain.CurrentDomain.SetupInformation.DynamicBase,
+				name, "dll", OnCreateTemporaryAssemblyFile);
+			CompilerParameters parameters = compilerInfo.CreateDefaultCompilerParameters ();
+			parameters.OutputAssembly = assemblyName;
+			CompilerResults results = abuilder.BuildAssembly (parameters);
+			if (results.Errors.Count == 0) {
+				BuildManager.CodeAssemblies.Add (results.PathToAssembly);
+				BuildManager.TopLevelAssemblies.Add (results.CompiledAssembly);
+			} else {
+				if (HttpContext.Current.IsCustomErrorEnabled)
+					throw new HttpException ("An error occurred while initializing application.");
+				throw new CompilationException (null, results.Errors, null);
+			}
 		}
+
+		private BuildProvider GetBuildProviderFor (string file, BuildProviderCollection buildProviders)
+		{
+			if (file == null || file.Length == 0 || buildProviders == null || buildProviders.Count == 0)
+				return null;
+
+			foreach (BuildProvider bp in buildProviders)
+				if (IsCorrectBuilderType (bp))
+					return bp;
+
+			return null;
+		}
+
+		private bool IsCorrectBuilderType (BuildProvider bp)
+		{
+			if (bp == null)
+				return false;
+			Type type;
+			object[] attrs;
+
+			type = bp.GetType ();
+			attrs = type.GetCustomAttributes (true);
+			if (attrs == null)
+				return false;
+			
+			BuildProviderAppliesToAttribute bpAppliesTo;
+			bool attributeFound = false;
+			foreach (object attr in attrs) {
+				bpAppliesTo = attr as BuildProviderAppliesToAttribute;
+				if (bpAppliesTo == null)
+					continue;
+				attributeFound = true;
+				if ((bpAppliesTo.AppliesTo & BuildProviderAppliesTo.All) == BuildProviderAppliesTo.All ||
+				    (bpAppliesTo.AppliesTo & BuildProviderAppliesTo.Code) == BuildProviderAppliesTo.Code)
+					return true;
+			}
+
+			if (attributeFound)
+				return false;
+			return true;
+		}
+		
 	}
 	
 	internal class AppCodeCompiler

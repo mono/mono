@@ -39,7 +39,7 @@ using System.Reflection;
 using System.Web.UI;
 
 namespace System.Web.Compilation {
-
+	[BuildProviderAppliesTo (BuildProviderAppliesTo.Web)]
 	sealed class WebHandlerBuildProvider : BuildProvider {
 		WebServiceCompiler wscompiler;
 		CompilerType compiler_type;
