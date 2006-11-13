@@ -1,3 +1,11 @@
+2006-11-13  Dick Porter  <dick@ximian.com>
+
+	* Directory.cs: Don't follow symlinks when deleting directories.
+	Keeps bug 79733 fixed while fixing bug 79887.
+
+	* MonoIO.cs: ExistsSymlink() added, which checks for
+	FileAttributes.ReparsePoint.
+
 2006-11-07  Dick Porter  <dick@ximian.com>
 
 	* Directory.cs: CreateDirectory() should only throw IOException in

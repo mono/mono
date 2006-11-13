@@ -208,6 +208,20 @@ namespace System.IO
 			return true;
 		}
 
+		public static bool ExistsSymlink (string path,
+						  out MonoIOError error)
+		{
+			FileAttributes attrs = GetFileAttributes (path,
+								  out error);
+			if (attrs == InvalidFileAttributes)
+				return false;
+			
+			if ((attrs & FileAttributes.ReparsePoint) == 0)
+				return false;
+
+			return true;
+		}
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static bool GetFileStat (string path,
 						       out MonoIOStat stat,

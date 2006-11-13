@@ -132,8 +132,19 @@ namespace System.IO
 				throw new NotSupportedException ("Only ':' In path");
 
 			MonoIOError error;
+			bool success;
 			
-			if (!MonoIO.RemoveDirectory (path, out error)) {
+			if (MonoIO.ExistsSymlink (path, out error)) {
+				/* RemoveDirectory maps to rmdir()
+				 * which fails on symlinks (ENOTDIR)
+				 */
+				success = MonoIO.DeleteFile (path, out error);
+			} else {
+				success = MonoIO.RemoveDirectory (path,
+								  out error);
+			}
+			
+			if (!success) {
 				/*
 				 * FIXME:
 				 * In io-layer/io.c rmdir returns error_file_not_found if directory does not exists.
@@ -148,8 +159,15 @@ namespace System.IO
 
 		static void RecursiveDelete (string path)
 		{
-			foreach (string dir in GetDirectories (path))
-				RecursiveDelete (dir);
+			MonoIOError error;
+			
+			foreach (string dir in GetDirectories (path)) {
+				if (MonoIO.ExistsSymlink (dir, out error)) {
+					MonoIO.DeleteFile (dir, out error);
+				} else {
+					RecursiveDelete (dir);
+				}
+			}
 
 			foreach (string file in GetFiles (path))
 				File.Delete (file);
