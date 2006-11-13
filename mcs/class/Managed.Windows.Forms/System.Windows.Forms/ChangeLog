@@ -1,5 +1,12 @@
 2006-11-13  Chris Toshok  <toshok@ximian.com>
 
+	* XplatUIX11.cs: fix #79917 for window managers which support
+	_NET_WM_NAME.  Leave an XXX for non-compliant wm's, since we're
+	using XStoreName on the raw utf8, and we need to convert to
+	COMPOUND_TEXT if it's non-latin1.
+
+2006-11-13  Chris Toshok  <toshok@ximian.com>
+
 	* Form.cs (set_DialogResult): we need to set closing to false if
 	we're setting our result to None.  fixes bug #79908.
 

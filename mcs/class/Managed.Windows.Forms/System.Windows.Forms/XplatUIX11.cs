@@ -4992,8 +4992,19 @@ namespace System.Windows.Forms {
 		}
 
 		internal override bool Text(IntPtr handle, string text) {
+			Hwnd	hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
 			lock (XlibLock) {
-				// FIXME - use _NET properties
+				XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_NAME, UNICODETEXT, 8,
+						PropertyMode.Replace, text, Encoding.UTF8.GetByteCount (text));
+
+				// XXX this has problems with UTF8.
+				// we need to either use the actual
+				// text if it's latin-1, or convert it
+				// to compound text if it's in a
+				// different charset.
 				XStoreName(DisplayHandle, Hwnd.ObjectFromHandle(handle).whole_window, text);
 			}
 			return true;
