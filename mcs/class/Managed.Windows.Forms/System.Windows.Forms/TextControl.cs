@@ -4324,6 +4324,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 		internal static bool FormatText(Line line, int start, int length, Font font, Brush color) {
 			LineTag	tag;
 			LineTag	start_tag;
+			LineTag end_tag;
 			int	end;
 			bool	retval = false;		// Assume line-height doesn't change
 
@@ -4351,6 +4352,8 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 
 			//Console.WriteLine("Finding tag for {0} {1}", line, start);
 			start_tag = FindTag(line, start);
+			end_tag = FindTag (line, end);
+
 			if (start_tag == null) {	// FIXME - is there a better way to handle this, or do we even need it?
 				throw new Exception(String.Format("Could not find start_tag in document at line {0} position {1}", line.line_no, start));
 			}
@@ -4371,36 +4374,19 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 				}
 				start_tag.previous = tag;
 			} else {
-				// Insert ourselves 'in the middle'
-				if ((start_tag.next != null) && (start_tag.next.start < end)) {
-					tag.next = start_tag.next;
-				} else {
-					tag.next = new LineTag(line, start_tag.start, start_tag.length);
-					tag.next.font = start_tag.font;
-					tag.next.color = start_tag.color;
+				tag.next = end_tag;
 
-					if (start_tag.next != null) {
-						tag.next.next = start_tag.next;
-						tag.next.next.previous = tag.next;
-					}
+				if (end_tag != null) {
+					// Shorten up the end tag
+					end_tag.previous = tag;
+					end_tag.length = end - start_tag.start + start_tag.length;
+					end_tag.start = end;
 				}
-				tag.next.previous = tag;
-
-				start_tag.length = start - start_tag.start;
-
-				tag.previous = start_tag;
-				start_tag.next = tag;
-#if nope
-				if (tag.next.start > (tag.start + tag.length)) {
-					tag.next.length  += tag.next.start - (tag.start + tag.length);
-					tag.next.start = tag.start + tag.length;
-				}
-#endif
 			}
 
 			// Elimination loop
 			tag = tag.next;
-			while ((tag != null) && (tag.start < end)) {
+			while (tag != end_tag) {
 				if ((tag.start + tag.length) <= end) {
 					// remove the tag
 					tag.previous.next = tag.next;
@@ -4408,10 +4394,6 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 						tag.next.previous = tag.previous;
 					}
 					tag = tag.previous;
-				} else {
-					// Adjust the length of the tag
-					tag.length = (tag.start + tag.length) - end;
-					tag.start = end;
 				}
 				tag = tag.next;
 			}

@@ -1,3 +1,9 @@
+2006-11-13  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: When formatting text, compute the adjusted tag
+	lengths correctly, using FindTag for the end tag instead of trying
+	to figure it out outselves.
+
 2006-11-13  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* XplatUIX11.cs: The PaintEventArgs is also added to the drawing
