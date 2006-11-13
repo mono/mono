@@ -122,7 +122,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void LoginView_DefaultPropertiesNotWorking ()
 		{
 			LoginView l = new LoginView ();
@@ -158,7 +157,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void LoginView_LoggedInTemplate ()
 		{
 			TestLoginView l = new TestLoginView ();
@@ -187,7 +185,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		// This test is not compleated , must be continued after adding 
 		// possibilities to test framework (cookies and redirect)
 		public void LoginView_Render ()
@@ -227,7 +224,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void LoginView_PreRender ()
 		{
 			TestLoginView l = new TestLoginView ();

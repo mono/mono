@@ -36,6 +36,8 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using NUnit.Framework;
+using MonoTests.SystemWeb.Framework;
+using MonoTests.stand_alone.WebHarness;
 
 namespace MonoTests.System.Web.UI.WebControls {
 	
@@ -793,11 +795,19 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
+		[Category ("NunitWeb")]
 		public void OnBubbleEvent ()
 		{
+			WebTest t = new WebTest (PageInvoker.CreateOnPreInit (_OnBubbleEvent));
+			string html = t.Run ();
+		}
+
+		public static void _OnBubbleEvent(Page p)
+		{
 			TestLogin l = new TestLogin ();
-			l.Page = new Page ();
+			l.Page = p;
 			l.Page.Validate ();
+			l.MembershipProvider = "FakeProvider";
 			Button b = (Button)l.FindControl ("LoginButton");
 			Assert.IsNotNull (b, "LoginButton");
 			CommandEventArgs cea = new CommandEventArgs ("Login", null);
@@ -830,14 +840,22 @@ namespace MonoTests.System.Web.UI.WebControls {
 		[Test]
 		public void OnBubbleEvent_Authenticated_OnAuthenticate ()
 		{
+			WebTest t = new WebTest (PageInvoker.CreateOnPreInit (_OnBubbleEvent_Authenticated_OnAuthenticate));
+			string html = t.Run ();
+		}
+
+		public static void _OnBubbleEvent_Authenticated_OnAuthenticate (Page p)
+		{
 			TestLogin l = new TestLogin ();
-			l.Page = new Page ();
+			l.Page = p;
 			l.Page.Validate ();
-			Button b = (Button)l.FindControl ("LoginButton");
+			Button b = (Button) l.FindControl ("LoginButton");
 			Assert.IsNotNull (b, "LoginButton");
 			CommandEventArgs cea = new CommandEventArgs ("Login", null);
 			l.UserName = "me";
 			l.Authenticated = true;
+			l.MembershipProvider = "FakeProvider";
+			l.Authenticate += new AuthenticateEventHandler(l_Authenticate);
 			try {
 				l.DoBubbleEvent (b, cea);
 			}
@@ -847,6 +865,16 @@ namespace MonoTests.System.Web.UI.WebControls {
 			catch (HttpException) {
 				// no context is available
 			}
+		}
+
+		public static void l_Authenticate (object sender, AuthenticateEventArgs e)
+		{
+			if (e.Authenticated == true) {
+				TestLogin l = (TestLogin) sender;
+				l.Authenticated = false;
+			}
+			else
+				Assert.Fail ("Login failed: l_Authenticate");
 		}
 
 		private void OnLoggingIn (bool cancel)
