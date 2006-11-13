@@ -118,10 +118,8 @@ namespace System.Web {
 		
 		internal TextWriter SetTextWriter (TextWriter writer)
 		{
-			TextWriter prev = writer;
-			
+			TextWriter prev = this.writer;
 			this.writer = writer;
-			
 			return prev;
 		}
 		

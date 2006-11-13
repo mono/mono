@@ -1,3 +1,8 @@
+2006-11-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponse.cs: fix typo that prevented Server.Execute from restoring
+	the initial output stream used. Closes bug #79916.
+
 2006-11-12  Marek Habersack  <grendello@gmail.com>
 
 	* HttpContext.cs: Implemented the 2.0 RewritePath overloads.
