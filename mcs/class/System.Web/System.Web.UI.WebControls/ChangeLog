@@ -1,3 +1,7 @@
+2006-11-13  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* XmlDataSource.cs: CacheKeyDependency fixed
+
 2006-11-12 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DetailsView.cs: fixed:  DataKeys, PageCount, DataBinding flow.

@@ -174,8 +174,13 @@ namespace System.Web.UI.WebControls {
 					slidindExpiraion = new TimeSpan (CacheDuration * 10000);
 			}
 
-			DataCache.Add (GetDataKey (), xmlDocument,
-				new CacheDependency (new string [] { }, new string [] { CacheKeyDependency }),
+			CacheDependency dependency = null;
+			if (CacheKeyDependency.Length > 0)
+				dependency = new CacheDependency (new string [] { }, new string [] { CacheKeyDependency });
+			else
+				dependency = new CacheDependency (new string [] { }, new string [] { });
+
+			DataCache.Add (GetDataKey (), xmlDocument, dependency,
 				absoluteExpiration, slidindExpiraion, CacheItemPriority.Default, null);
 		}
 
