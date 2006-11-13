@@ -50,9 +50,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			public bool createChildControls1 = false;
 			public bool createChildControls2 = false;
 			public bool dataBind = false;
+			public bool CreateChildControls_ChildControlsCreated;
 
 			protected override int CreateChildControls (IEnumerable dataSource, bool dataBinding) {
 				createChildControls2 = true;
+				CreateChildControls_ChildControlsCreated = ChildControlsCreated;
 				return 10;
 			}
 
@@ -91,6 +93,10 @@ namespace MonoTests.System.Web.UI.WebControls
 			public void SetRequiresDataBinding (bool value) {
 				RequiresDataBinding = value;
 			}
+
+			public bool GetChildControlsCreated () {
+				return ChildControlsCreated;
+			}
 		}
 
 		[Test]
@@ -126,6 +132,17 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (1, c.Controls.Count);
 			c.DoCreateChildControls ();
 			Assert.AreEqual (0, c.Controls.Count);
+		}
+		
+		[Test]
+		public void DataBind_ChildControlsCreated () {
+			Page p = new Page ();
+			MyCompositeDataBoundControl c = new MyCompositeDataBoundControl ();
+			p.Controls.Add (c);
+			Assert.IsFalse (c.GetChildControlsCreated (), "ChildControlsCreated before DataBind");
+			c.DataBind ();
+			Assert.IsTrue (c.CreateChildControls_ChildControlsCreated, "ChildControlsCreated in CreateChildControls");
+			Assert.IsTrue (c.GetChildControlsCreated (), "ChildControlsCreated after DataBind");
 		}
 	}
 }

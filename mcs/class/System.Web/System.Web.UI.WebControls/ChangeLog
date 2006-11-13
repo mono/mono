@@ -1,3 +1,8 @@
+2006-11-13 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* CompositeDataBoundControl.cs: fixed: 
+	DataBind sets ChildControlsCreated=true.
+
 2006-11-13  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Login.cs: fixed CreateChildControls, throws exception if needed
