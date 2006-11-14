@@ -1,3 +1,7 @@
+2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MonoWSDL2.cs : 2.0 API fixes (WsiClaims -> WsiProfiles)
+
 2005-09-12  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* MonoWSDL.cs, MonoWSDL2.cs: Return exit code 0 even if there

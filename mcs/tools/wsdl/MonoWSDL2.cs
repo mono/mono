@@ -181,7 +181,7 @@ namespace Mono.WebServices
 				WebReference wr  = references [n];
 				
 				BasicProfileViolationCollection violations = new BasicProfileViolationCollection ();
-				if (!WebServicesInteroperability.CheckConformance (WsiClaims.BP10, wr, violations)) {
+				if (!WebServicesInteroperability.CheckConformance (WsiProfiles.BasicProfile1_1, wr, violations)) {
 					wr.Warnings |= ServiceDescriptionImportWarnings.WsiConformance;
 				}
 				
@@ -196,7 +196,7 @@ namespace Mono.WebServices
 					WriteText (urls[n], 2, 2);
 					
 					if ((wr.Warnings & ServiceDescriptionImportWarnings.WsiConformance) > 0) {
-						WriteText ("- This web reference does not conform to WS-I Basic Profile v1.0", 4, 6); 
+						WriteText ("- This web reference does not conform to WS-I Basic Profile v1.1", 4, 6); 
 						foreach (BasicProfileViolation vio in violations) {
 							WriteText (vio.NormativeStatement + ": " + vio.Details, 8, 8);
 							foreach (string ele in vio.Elements)
