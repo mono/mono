@@ -1,3 +1,9 @@
+2006-11-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Form.cs: if a mdi child's WindowState has changed
+	before it's creation, it would display wrong control
+	buttons.
+	
 2006-11-14  Alexander Olk  <alex.olk@googlemail.com>
 
 	* TreeView.cs: De-uglify TreeView checkbox checkmarks.

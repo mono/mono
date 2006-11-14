@@ -1408,6 +1408,10 @@ namespace System.Windows.Forms {
 					}
 				}
 			}
+			
+			if (window_manager != null && window_state != FormWindowState.Normal) {
+				window_manager.SetWindowState (FormWindowState.Normal, window_state);
+			}
 
 		}
 
