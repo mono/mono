@@ -1,10 +1,12 @@
 // 
-// genxs.cs
+// sgen.cs
 //
-// Author:
+// Authors:
 //   Lluis Sanchez Gual (lluis@ximian.com)
+//   Atsushi Enomoto (atsushi@ximian.com)
 //
 // Copyright (C) 2003 Ximian, Inc.
+// Copyright (C) 2006 Novell, Inc.
 //
 
 using System;
@@ -78,10 +80,15 @@ public class Driver
 		}
 		catch {}
 		
-		if (asm == null)
-			asm = Assembly.LoadFrom (assembly);
-			
-			
+		if (asm == null) {
+			try {
+				asm = Assembly.LoadFrom (assembly);
+			} catch {
+				Console.WriteLine ("Specified assembly cannot be loaded.");
+				Console.WriteLine ();
+				return 1;
+			}
+		}
 		ArrayList userTypes = new ArrayList ();
 		ArrayList maps = new ArrayList ();
 		XmlReflectionImporter imp = new XmlReflectionImporter ();
@@ -92,13 +99,14 @@ public class Driver
 		foreach (Type t in asm.GetTypes())
 		{
 			try {
+				if (types != null && !types.Contains (t.ToString()))
+					continue;
+
 				maps.Add (imp.ImportTypeMapping (t));
-				if (types == null || types.Contains (t.ToString())) {
-					userTypes.Add (t);
-					if (verbose) Console.WriteLine (" - " + t);
-				}
+				userTypes.Add (t);
+				if (verbose) Console.WriteLine (" - " + t);
 			}
-			catch (Exception ex)
+			catch (NotImplementedException ex)
 			{
 				if (verbose) {
 					Console.WriteLine (" - Warning: ignoring '" + t + "'");
@@ -142,7 +150,7 @@ public class Driver
 #else
 	public int Run (string[] args)
 	{
-		Console.WriteLine ("This tool is only supported in Mono 2.0");
+		Console.WriteLine ("This tool is only supported in 2.0 profile.");
 		return 1;
 	}
 
@@ -152,18 +160,18 @@ public class Driver
 	{
 		foreach (string arg in args)
 		{
-			
-			if (!arg.StartsWith ("--") && !arg.StartsWith ("/"))
+			int index = arg.Length > 2 && arg [0] == '-' && arg [1] == '-' ? 2 : -1;
+			index = index >= 0 ? index : arg.Length > 0 && arg [0] == '/' ? 1 : -1;
+			if (index < 0)
 			{
 				assembly = arg;
 				continue;
 			}
 			
-			int i = arg.IndexOf (":");
+			int i = arg.IndexOf (':', index);
 			if (i == -1) i = arg.Length;
-			string op = arg.Substring (1,i-1);
-			string param = (i<arg.Length-1) ? arg.Substring (i+1) : "";
-			
+			string op = arg.Substring (index, i - index);
+			string param = (i < arg.Length - index) ? arg.Substring (i + 1) : "";
 			if (op == "assembly" || op == "a") {
 				assembly = param;
 			}
