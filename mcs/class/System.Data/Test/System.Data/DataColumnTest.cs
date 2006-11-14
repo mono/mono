@@ -98,6 +98,29 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		public void AllowDBNull1()
+		{
+			DataTable tbl = _tbl;
+			tbl.Columns.Add ("id", typeof (int));
+			tbl.Columns.Add ("name", typeof (string));
+			tbl.PrimaryKey = new DataColumn [] { tbl.Columns ["id"] };
+			tbl.Rows.Add (new object [] { 1, "RowState 1" });
+			tbl.Rows.Add (new object [] { 2, "RowState 2" });
+			tbl.Rows.Add (new object [] { 3, "RowState 3" });
+			tbl.AcceptChanges ();
+			// Update Table with following changes: Row0 unmodified, 
+			// Row1 modified, Row2 deleted, Row3 added, Row4 not-present.
+			tbl.Rows [1] ["name"] = "Modify 2";
+			tbl.Rows [2].Delete ();
+
+			DataColumn col = tbl.Columns ["name"];
+			col.AllowDBNull = true;
+			col.AllowDBNull = false;
+
+			AssertEquals (false, col.AllowDBNull);
+		}
+
+		[Test]
 		public void AutoIncrement()
 		{
 			DataColumn col = new DataColumn("Auto",typeof(string));

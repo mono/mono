@@ -218,7 +218,9 @@ namespace System.Data {
 						bool nullsFound = false;
 						for(int r = 0; r < _table.Rows.Count; r++) {
 							DataRow row = _table.Rows[r];
-							if(row.IsNull(this)) {
+							DataRowVersion version = row.HasVersion (DataRowVersion.Default) ?
+								DataRowVersion.Default : DataRowVersion.Original;
+							if(row.IsNull(this, version)) {
 								nullsFound = true;
 								break;
 							}

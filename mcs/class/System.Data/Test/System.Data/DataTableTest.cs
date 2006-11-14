@@ -1675,7 +1675,6 @@ namespace MonoTests.System.Data
 			dtLoad.Load (dtr);
 		}
 		[Test]
-		[Category ("NotWorking")]
 		// Load doesn't have a third overload in System.Data
 		// and is commented-out below
 		public void Load_IncompatibleEHandlerT () {
@@ -1953,7 +1952,6 @@ namespace MonoTests.System.Data
 
 		[Test]
 		[ExpectedException (typeof (VersionNotFoundException))]
-		[Category ("NotWorking")]
 		public void Load_RowStateChangesDefaultDelete () {
 			localSetup ();
 			DataTable dtLoad = new DataTable ("LoadRowStateChanges");
@@ -2026,7 +2024,6 @@ namespace MonoTests.System.Data
 
 		[Test]
 		[ExpectedException (typeof (VersionNotFoundException))]
-		[Category ("NotWorking")]
 		public void Load_RowStatePreserveChangesDelete () {
 			localSetup ();
 			DataTable dtLoad = new DataTable ("LoadRowStateChanges");
@@ -2157,7 +2154,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Load_RowStateUpsertDuplicateKey1 () {
 			localSetup ();
 			dt.Rows.Add (new object[] { 4, "mono 4" });
@@ -2210,7 +2206,6 @@ namespace MonoTests.System.Data
 
 		[Test]
 		[ExpectedException (typeof (IndexOutOfRangeException))]
-		[Category ("NotWorking")]
 		public void Load_RowStateUpsertDuplicateKey2 () {
 			localSetup ();
 			dt.Rows.Add (new object[] { 4, "mono 4" });
@@ -2231,7 +2226,6 @@ namespace MonoTests.System.Data
 
 		[Test]
 		[ExpectedException (typeof (VersionNotFoundException))]
-		[Category ("NotWorking")]
 		public void Load_RowStateUpsertDelete1 () {
 			localSetup ();
 			DataTable dtLoad = new DataTable ("LoadRowStateChanges");
@@ -2251,7 +2245,6 @@ namespace MonoTests.System.Data
 
 		[Test]
 		[ExpectedException (typeof (VersionNotFoundException))]
-		[Category ("NotWorking")]
 		public void Load_RowStateUpsertDelete2 () {
 			localSetup ();
 			DataTable dtLoad = new DataTable ("LoadRowStateChanges");

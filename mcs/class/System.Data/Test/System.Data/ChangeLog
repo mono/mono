@@ -1,3 +1,7 @@
+2006-11-24  Konstantin Triger <kostat@mainsoft.com>
+
+	* DataColumnTest.cs: Added test for DataColunm.AllowDBNull
+	* DataTableTest.cs: removed fixed NotWorkings
 
 2006-10-24  Hagit Yidov <hagity@mainsoft.com>
 
