@@ -50,6 +50,7 @@ scripts_2_0 = \
 	monop2 			\
 	resgen2			\
 	wsdl2			\
+	sgen			\
 	xbuild
 
 scripts_service = mono-service mono-service2
