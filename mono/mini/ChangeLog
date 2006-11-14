@@ -1,4 +1,10 @@
 
+Tue Nov 14 16:06:37 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, inssel-float.brg, inssel-softfloat.brg:
+	put the soft-float rules in its own file since it seems to
+	break s390 compilation.
+
 Mon Nov 13 15:54:38 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini-arm.c: fixed wrnings.
