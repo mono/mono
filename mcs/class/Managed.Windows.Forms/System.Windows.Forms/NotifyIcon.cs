@@ -58,7 +58,9 @@ namespace System.Windows.Forms {
 				is_visible = false;
 				rect = new Rectangle(0, 0, 1, 1);
 
-				CreateControl();
+				FormBorderStyle = FormBorderStyle.None;
+
+				//CreateControl();
 
 				SizeChanged += new EventHandler(HandleSizeChanged);
 
@@ -142,30 +144,21 @@ namespace System.Windows.Forms {
 			}
 
 			internal void CalculateIconRect() {
-				if (owner != null && owner.icon != null) {
-					int		x;
-					int		y;
-					int		size;
+				int		x;
+				int		y;
+				int		size;
 
-					// Icons are always square. Try to center them in the window
-					if (ClientRectangle.Width < ClientRectangle.Height) {
-						size = ClientRectangle.Width;
-					} else {
-						size = ClientRectangle.Height;
-					}
-					x = this.ClientRectangle.Width / 2 - size / 2;
-					y = this.ClientRectangle.Height / 2 - size / 2;
-					rect = new Rectangle(x, y, size, size);
-
-					// Force our window to be square
-					if (Width != size) {
-						this.Width = size;
-					}
-
-					if (Height != size) {
-						this.Height = size;
-					}
+				// Icons are always square. Try to center them in the window
+				if (ClientRectangle.Width < ClientRectangle.Height) {
+					size = ClientRectangle.Width;
+				} else {
+					size = ClientRectangle.Height;
 				}
+				x = this.ClientRectangle.Width / 2 - size / 2;
+				y = this.ClientRectangle.Height / 2 - size / 2;
+				rect = new Rectangle(x, y, size, size);
+
+				Bounds = new Rectangle (0, 0, size, size);
 			}
 
 			internal override void OnPaintInternal (PaintEventArgs e) {
@@ -185,7 +178,7 @@ namespace System.Windows.Forms {
 
 
 			private void HandleSizeChanged(object sender, EventArgs e) {
-				CalculateIconRect();
+				owner.Recalculate ();
 			}
 
 			private void HandleClick(object sender, EventArgs e) {
@@ -235,29 +228,28 @@ namespace System.Windows.Forms {
 		#endregion	// Public Constructors
 
 		#region Private Methods
-		private void ShowSystray(bool property_changed) {
-			if (property_changed) {
-				window.CalculateIconRect();
-			}
+		private void Recalculate () 
+		{
+			window.CalculateIconRect ();
 
-			if (systray_active) {
-				if (property_changed) {
-					UpdateSystray();
-				}
-				return;
-			}
+			if (systray_active)
+				UpdateSystray ();
+		}
 
-			if (icon == null) {
+		private void ShowSystray()
+		{
+			systray_active = true;
+
+			if (icon == null)
 				return;
-			}
 
 			icon_bitmap = icon.ToBitmap();
 
-			systray_active = true;
 			XplatUI.SystrayAdd(window.Handle, text, icon, out tooltip);
 		}
 
-		private void HideSystray() {
+		private void HideSystray()
+		{
 			if (!systray_active) {
 				return;
 			}
@@ -266,7 +258,8 @@ namespace System.Windows.Forms {
 			XplatUI.SystrayRemove(window.Handle, ref tooltip);
 		}
 
-		private void UpdateSystray() {
+		private void UpdateSystray()
+		{
 			if (icon_bitmap != null) {
 				icon_bitmap.Dispose();
 			}
@@ -305,7 +298,12 @@ namespace System.Windows.Forms {
 			set {
 				if (icon != value) {
 					icon = value;
-					ShowSystray(true);
+					if (text == string.Empty && icon == null) {
+						HideSystray ();
+					}
+					else {
+						Recalculate ();
+					}
 				}
 			}
 		}
@@ -325,7 +323,7 @@ namespace System.Windows.Forms {
 					if (text == string.Empty && icon == null) {
 						HideSystray();
 					} else {
-						ShowSystray(true);
+						Recalculate ();
 					}
 				}
 			}
@@ -346,7 +344,7 @@ namespace System.Windows.Forms {
 					window.is_visible = value;
 
 					if (visible) {
-						ShowSystray(false);
+						ShowSystray ();
 					} else {
 						HideSystray();
 					}

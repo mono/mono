@@ -1533,4 +1533,20 @@ namespace System.Windows.Forms {
 		Both			= 3
 	}
 
+	internal enum XEmbedMessage {
+		EmbeddedNotify = 0,
+		WindowActivate = 1,
+		WindowDeactivate = 2,
+		RequestFocus = 3,
+		FocusIn = 4,
+		FocusOut = 5,
+		FocusNext = 6,
+		FocusPrev = 7,
+		/* 8-9 were used for XEMBED_GRAB_KEY/XEMBED_UNGRAB_KEY */
+		ModalityOn = 10,
+		ModalityOff = 11,
+		RegisterAccelerator = 12,
+		UnregisterAccelerator = 13,
+		ActivateAccelerator = 14
+	}
 }

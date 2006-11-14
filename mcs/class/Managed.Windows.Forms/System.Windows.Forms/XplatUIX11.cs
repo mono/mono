@@ -45,6 +45,7 @@
 #undef DriverDebugCreate
 #undef DriverDebugDestroy
 #undef DriverDebugThreads
+#undef DriverDebugXEmbed
 
 using System;
 using System.ComponentModel;
@@ -1402,220 +1403,220 @@ namespace System.Windows.Forms {
 					continue;
 
 				switch (xevent.type) {
-					case XEventName.Expose:
-						AddExpose (hwnd, xevent.ExposeEvent.window == hwnd.ClientWindow, xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
+				case XEventName.Expose:
+					AddExpose (hwnd, xevent.ExposeEvent.window == hwnd.ClientWindow, xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
+					break;
+
+				case XEventName.SelectionClear: {
+					// Should we do something?
+					break;
+				}
+
+				case XEventName.SelectionRequest: {
+					if (Dnd.HandleSelectionRequestEvent (ref xevent))
 						break;
+					XEvent sel_event;
 
-					case XEventName.SelectionClear: {
-						// Should we do something?
-						break;
-					}
+					sel_event = new XEvent();
+					sel_event.SelectionEvent.type = XEventName.SelectionNotify;
+					sel_event.SelectionEvent.send_event = true;
+					sel_event.SelectionEvent.display = DisplayHandle;
+					sel_event.SelectionEvent.selection = xevent.SelectionRequestEvent.selection;
+					sel_event.SelectionEvent.target = xevent.SelectionRequestEvent.target;
+					sel_event.SelectionEvent.requestor = xevent.SelectionRequestEvent.requestor;
+					sel_event.SelectionEvent.time = xevent.SelectionRequestEvent.time;
+					sel_event.SelectionEvent.property = IntPtr.Zero;
 
-					case XEventName.SelectionRequest: {
-						if (Dnd.HandleSelectionRequestEvent (ref xevent))
-							break;
-						XEvent sel_event;
+					// Seems that some apps support asking for supported types
+					if (xevent.SelectionEvent.target == TARGETS) {
+						int[]	atoms;
+						int	atom_count;
 
-						sel_event = new XEvent();
-						sel_event.SelectionEvent.type = XEventName.SelectionNotify;
-						sel_event.SelectionEvent.send_event = true;
-						sel_event.SelectionEvent.display = DisplayHandle;
-						sel_event.SelectionEvent.selection = xevent.SelectionRequestEvent.selection;
-						sel_event.SelectionEvent.target = xevent.SelectionRequestEvent.target;
-						sel_event.SelectionEvent.requestor = xevent.SelectionRequestEvent.requestor;
-						sel_event.SelectionEvent.time = xevent.SelectionRequestEvent.time;
-						sel_event.SelectionEvent.property = IntPtr.Zero;
+						atoms = new int[5];
+						atom_count = 0;
 
-						// Seems that some apps support asking for supported types
-						if (xevent.SelectionEvent.target == TARGETS) {
-							int[]	atoms;
-							int	atom_count;
-
-							atoms = new int[5];
-							atom_count = 0;
-
-							if (Clipboard.Item is String) {
-								atoms[atom_count++] = (int)Atom.XA_STRING;
-								atoms[atom_count++] = (int)OEMTEXT;
-								atoms[atom_count++] = (int)UNICODETEXT;
-							} else if (Clipboard.Item is Image) {
-								atoms[atom_count++] = (int)Atom.XA_PIXMAP;
-								atoms[atom_count++] = (int)Atom.XA_BITMAP;
-							} else {
-								// FIXME - handle other types
-							}
-
-							XChangeProperty(DisplayHandle, xevent.SelectionEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property, (IntPtr)xevent.SelectionRequestEvent.target, 32, PropertyMode.Replace, atoms, atom_count);
-						} else if (Clipboard.Item is string) {
-							IntPtr	buffer;
-							int	buflen;
-
-							buflen = 0;
-
-							if (xevent.SelectionRequestEvent.target == (IntPtr)Atom.XA_STRING) {
-								Byte[] bytes;
-
-								bytes = new ASCIIEncoding().GetBytes((string)Clipboard.Item);
-								buffer = Marshal.AllocHGlobal(bytes.Length);
-								buflen = bytes.Length;
-
-								for (int i = 0; i < buflen; i++) {
-									Marshal.WriteByte(buffer, i, bytes[i]);
-								}
-							} else if (xevent.SelectionRequestEvent.target == OEMTEXT) {
-								// FIXME - this should encode into ISO2022
-								buffer = Marshal.StringToHGlobalAnsi((string)Clipboard.Item);
-								while (Marshal.ReadByte(buffer, buflen) != 0) {
-									buflen++;
-								}
-							} else if (xevent.SelectionRequestEvent.target == UNICODETEXT) {
-								buffer = Marshal.StringToHGlobalAnsi((string)Clipboard.Item);
-								while (Marshal.ReadByte(buffer, buflen) != 0) {
-									buflen++;
-								}
-							} else {
-								buffer = IntPtr.Zero;
-							}
-
-							if (buffer != IntPtr.Zero) {
-								XChangeProperty(DisplayHandle, xevent.SelectionRequestEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property, (IntPtr)xevent.SelectionRequestEvent.target, 8, PropertyMode.Replace, buffer, buflen);
-								sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
-								Marshal.FreeHGlobal(buffer);
-							}
+						if (Clipboard.Item is String) {
+							atoms[atom_count++] = (int)Atom.XA_STRING;
+							atoms[atom_count++] = (int)OEMTEXT;
+							atoms[atom_count++] = (int)UNICODETEXT;
 						} else if (Clipboard.Item is Image) {
-							if (xevent.SelectionEvent.target == (IntPtr)Atom.XA_PIXMAP) {
-								// FIXME - convert image and store as property
-							} else if (xevent.SelectionEvent.target == (IntPtr)Atom.XA_PIXMAP) {
-								// FIXME - convert image and store as property
-							}
+							atoms[atom_count++] = (int)Atom.XA_PIXMAP;
+							atoms[atom_count++] = (int)Atom.XA_BITMAP;
+						} else {
+							// FIXME - handle other types
 						}
 
-						XSendEvent(DisplayHandle, xevent.SelectionRequestEvent.requestor, false, new IntPtr ((int)EventMask.NoEventMask), ref sel_event);
-						break;
-					}
+						XChangeProperty(DisplayHandle, xevent.SelectionEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property, (IntPtr)xevent.SelectionRequestEvent.target, 32, PropertyMode.Replace, atoms, atom_count);
+					} else if (Clipboard.Item is string) {
+						IntPtr	buffer;
+						int	buflen;
 
-					case XEventName.SelectionNotify: {
-						if (Clipboard.Enumerating) {
-							Clipboard.Enumerating = false;
-							if (xevent.SelectionEvent.property != IntPtr.Zero) {
-								XDeleteProperty(DisplayHandle, FosterParent, (IntPtr)xevent.SelectionEvent.property);
-								if (!Clipboard.Formats.Contains(xevent.SelectionEvent.property)) {
-									Clipboard.Formats.Add(xevent.SelectionEvent.property);
-									#if DriverDebugExtra
-										Console.WriteLine("Got supported clipboard atom format: {0}", xevent.SelectionEvent.property);
-									#endif
-								}
+						buflen = 0;
+
+						if (xevent.SelectionRequestEvent.target == (IntPtr)Atom.XA_STRING) {
+							Byte[] bytes;
+
+							bytes = new ASCIIEncoding().GetBytes((string)Clipboard.Item);
+							buffer = Marshal.AllocHGlobal(bytes.Length);
+							buflen = bytes.Length;
+
+							for (int i = 0; i < buflen; i++) {
+								Marshal.WriteByte(buffer, i, bytes[i]);
 							}
-						} else if (Clipboard.Retrieving) {
-							Clipboard.Retrieving = false;
-							if (xevent.SelectionEvent.property != IntPtr.Zero) {
-								TranslatePropertyToClipboard(xevent.SelectionEvent.property);
-							} else {
-								Clipboard.Item = null;
+						} else if (xevent.SelectionRequestEvent.target == OEMTEXT) {
+							// FIXME - this should encode into ISO2022
+							buffer = Marshal.StringToHGlobalAnsi((string)Clipboard.Item);
+							while (Marshal.ReadByte(buffer, buflen) != 0) {
+								buflen++;
+							}
+						} else if (xevent.SelectionRequestEvent.target == UNICODETEXT) {
+							buffer = Marshal.StringToHGlobalAnsi((string)Clipboard.Item);
+							while (Marshal.ReadByte(buffer, buflen) != 0) {
+								buflen++;
 							}
 						} else {
-							Dnd.HandleSelectionNotifyEvent (ref xevent);
+							buffer = IntPtr.Zero;
 						}
-						break;
+
+						if (buffer != IntPtr.Zero) {
+							XChangeProperty(DisplayHandle, xevent.SelectionRequestEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property, (IntPtr)xevent.SelectionRequestEvent.target, 8, PropertyMode.Replace, buffer, buflen);
+							sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
+							Marshal.FreeHGlobal(buffer);
+						}
+					} else if (Clipboard.Item is Image) {
+						if (xevent.SelectionEvent.target == (IntPtr)Atom.XA_PIXMAP) {
+							// FIXME - convert image and store as property
+						} else if (xevent.SelectionEvent.target == (IntPtr)Atom.XA_PIXMAP) {
+							// FIXME - convert image and store as property
+						}
 					}
 
-					case XEventName.MapNotify: {
-						if (hwnd.client_window == xevent.MapEvent.window) {
-							hwnd.mapped = true;
-						}
-						break;
-					}
+					XSendEvent(DisplayHandle, xevent.SelectionRequestEvent.requestor, false, new IntPtr ((int)EventMask.NoEventMask), ref sel_event);
+					break;
+				}
 
-					case XEventName.UnmapNotify: {
-						if (hwnd.client_window == xevent.MapEvent.window) {
-							hwnd.mapped = false;
-						}
-						break;
-					}
-
-					case XEventName.KeyRelease:
-						if (!detectable_key_auto_repeat && XPending (DisplayHandle) != 0) {
-							XEvent nextevent = new XEvent ();
-
-							XPeekEvent (DisplayHandle, ref nextevent);
-
-							if (nextevent.type == XEventName.KeyPress &&
-							nextevent.KeyEvent.keycode == xevent.KeyEvent.keycode &&
-							nextevent.KeyEvent.time == xevent.KeyEvent.time) {
-								continue;
+				case XEventName.SelectionNotify: {
+					if (Clipboard.Enumerating) {
+						Clipboard.Enumerating = false;
+						if (xevent.SelectionEvent.property != IntPtr.Zero) {
+							XDeleteProperty(DisplayHandle, FosterParent, (IntPtr)xevent.SelectionEvent.property);
+							if (!Clipboard.Formats.Contains(xevent.SelectionEvent.property)) {
+								Clipboard.Formats.Add(xevent.SelectionEvent.property);
+								#if DriverDebugExtra
+								Console.WriteLine("Got supported clipboard atom format: {0}", xevent.SelectionEvent.property);
+								#endif
 							}
 						}
-						goto case XEventName.KeyPress;
+					} else if (Clipboard.Retrieving) {
+						Clipboard.Retrieving = false;
+						if (xevent.SelectionEvent.property != IntPtr.Zero) {
+							TranslatePropertyToClipboard(xevent.SelectionEvent.property);
+						} else {
+							Clipboard.Item = null;
+						}
+					} else {
+						Dnd.HandleSelectionNotifyEvent (ref xevent);
+					}
+					break;
+				}
+
+				case XEventName.MapNotify: {
+					if (hwnd.client_window == xevent.MapEvent.window) {
+						hwnd.mapped = true;
+					}
+					break;
+				}
+
+				case XEventName.UnmapNotify: {
+					if (hwnd.client_window == xevent.MapEvent.window) {
+						hwnd.mapped = false;
+					}
+					break;
+				}
+
+				case XEventName.KeyRelease:
+					if (!detectable_key_auto_repeat && XPending (DisplayHandle) != 0) {
+						XEvent nextevent = new XEvent ();
+
+						XPeekEvent (DisplayHandle, ref nextevent);
+
+						if (nextevent.type == XEventName.KeyPress &&
+						    nextevent.KeyEvent.keycode == xevent.KeyEvent.keycode &&
+						    nextevent.KeyEvent.time == xevent.KeyEvent.time) {
+							continue;
+						}
+					}
+					goto case XEventName.KeyPress;
 					
-					case XEventName.MotionNotify: {
-						XEvent peek;
+				case XEventName.MotionNotify: {
+					XEvent peek;
 
-						if (hwnd.Queue.Count > 0) {
-							peek = hwnd.Queue.Peek();
-							if (peek.AnyEvent.type == XEventName.MotionNotify) {
-								continue;
-							}
+					if (hwnd.Queue.Count > 0) {
+						peek = hwnd.Queue.Peek();
+						if (peek.AnyEvent.type == XEventName.MotionNotify) {
+							continue;
 						}
-						goto case XEventName.KeyPress;
 					}
+					goto case XEventName.KeyPress;
+				}
 
-					case XEventName.KeyPress:
-					case XEventName.ButtonPress:
-					case XEventName.ButtonRelease:
-					case XEventName.EnterNotify:
-					case XEventName.LeaveNotify:
-					case XEventName.CreateNotify:
-					case XEventName.DestroyNotify:
-					case XEventName.FocusIn:
-					case XEventName.FocusOut:
-					case XEventName.ClientMessage:
-					case XEventName.ReparentNotify:
-						hwnd.Queue.Enqueue (xevent);
-						break;
+				case XEventName.KeyPress:
+				case XEventName.ButtonPress:
+				case XEventName.ButtonRelease:
+				case XEventName.EnterNotify:
+				case XEventName.LeaveNotify:
+				case XEventName.CreateNotify:
+				case XEventName.DestroyNotify:
+				case XEventName.FocusIn:
+				case XEventName.FocusOut:
+				case XEventName.ClientMessage:
+				case XEventName.ReparentNotify:
+					hwnd.Queue.Enqueue (xevent);
+					break;
 
-					case XEventName.ConfigureNotify:
-						AddConfigureNotify(xevent);
-						break;
+				case XEventName.ConfigureNotify:
+					AddConfigureNotify(xevent);
+					break;
 
-					case XEventName.PropertyNotify:
-						if (xevent.PropertyEvent.atom == _NET_ACTIVE_WINDOW) {
-							IntPtr	actual_atom;
-							int	actual_format;
-							IntPtr	nitems;
-							IntPtr	bytes_after;
-							IntPtr	prop = IntPtr.Zero;
-							IntPtr	prev_active;;
+				case XEventName.PropertyNotify:
+					if (xevent.PropertyEvent.atom == _NET_ACTIVE_WINDOW) {
+						IntPtr	actual_atom;
+						int	actual_format;
+						IntPtr	nitems;
+						IntPtr	bytes_after;
+						IntPtr	prop = IntPtr.Zero;
+						IntPtr	prev_active;;
 
-							prev_active = ActiveWindow;
-							XGetWindowProperty(DisplayHandle, RootWindow, _NET_ACTIVE_WINDOW, IntPtr.Zero, new IntPtr (1), false, (IntPtr)Atom.XA_WINDOW, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
-							if (((long)nitems > 0) && (prop != IntPtr.Zero)) {
-								ActiveWindow = Hwnd.GetHandleFromWindow((IntPtr)Marshal.ReadInt32(prop));
-								XFree(prop);
+						prev_active = ActiveWindow;
+						XGetWindowProperty(DisplayHandle, RootWindow, _NET_ACTIVE_WINDOW, IntPtr.Zero, new IntPtr (1), false, (IntPtr)Atom.XA_WINDOW, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+						if (((long)nitems > 0) && (prop != IntPtr.Zero)) {
+							ActiveWindow = Hwnd.GetHandleFromWindow((IntPtr)Marshal.ReadInt32(prop));
+							XFree(prop);
 
-								if (prev_active != ActiveWindow) {
-									if (prev_active != IntPtr.Zero) {
-										PostMessage(prev_active, Msg.WM_ACTIVATE, (IntPtr)WindowActiveFlags.WA_INACTIVE, IntPtr.Zero);
-									}
-									if (ActiveWindow != IntPtr.Zero) {
-										PostMessage(ActiveWindow, Msg.WM_ACTIVATE, (IntPtr)WindowActiveFlags.WA_ACTIVE, IntPtr.Zero);
-									}
+							if (prev_active != ActiveWindow) {
+								if (prev_active != IntPtr.Zero) {
+									PostMessage(prev_active, Msg.WM_ACTIVATE, (IntPtr)WindowActiveFlags.WA_INACTIVE, IntPtr.Zero);
 								}
-								if (ModalWindows.Count == 0) {
-									break;
-								} else {
-									// Modality handling, if we are modal and the new active window is one
-									// of ours but not the modal one, switch back to the modal window
-
-									if (NativeWindow.FindWindow(ActiveWindow) != null) {
-										if (ActiveWindow != (IntPtr)ModalWindows.Peek()) {
-											Activate((IntPtr)ModalWindows.Peek());
-										}
-									}
-									break;
+								if (ActiveWindow != IntPtr.Zero) {
+									PostMessage(ActiveWindow, Msg.WM_ACTIVATE, (IntPtr)WindowActiveFlags.WA_ACTIVE, IntPtr.Zero);
 								}
 							}
+							if (ModalWindows.Count == 0) {
+								break;
+							} else {
+								// Modality handling, if we are modal and the new active window is one
+								// of ours but not the modal one, switch back to the modal window
+
+								if (NativeWindow.FindWindow(ActiveWindow) != null) {
+									if (ActiveWindow != (IntPtr)ModalWindows.Peek()) {
+										Activate((IntPtr)ModalWindows.Peek());
+									}
+								}
+								break;
+							}
 						}
-						break;
+					}
+					break;
 
 				}
 			}
@@ -3726,12 +3727,23 @@ namespace System.Windows.Forms {
 						return true;
 					}
 
-					#if dontcare
 					if  (xevent.ClientMessageEvent.message_type == _XEMBED) {
-						Console.WriteLine("GOT EMBED MESSAGE {0:X}", xevent.ClientMessageEvent.ptr2.ToInt32());
-						break;
+#if DriverDebugXEmbed
+						Console.WriteLine("GOT EMBED MESSAGE {0:X}, detail {1:X}", xevent.ClientMessageEvent.ptr2.ToInt32(), xevent.ClientMessageEvent.ptr3.ToInt32());
+#endif
+
+						if (xevent.ClientMessageEvent.ptr2.ToInt32() == (int)XEmbedMessage.EmbeddedNotify) {
+							XSizeHints hints = new XSizeHints();
+							IntPtr dummy;
+
+							XGetWMNormalHints(DisplayHandle, hwnd.whole_window, ref hints, out dummy);
+
+							hwnd.width = hints.max_width;
+							hwnd.height = hints.max_height;
+							hwnd.ClientRect = Rectangle.Empty;
+							SendMessage(msg.hwnd, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
+						}
 					}
-					#endif
 
 					if  (xevent.ClientMessageEvent.message_type == WM_PROTOCOLS) {
 						if (xevent.ClientMessageEvent.ptr1 == WM_DELETE_WINDOW) {

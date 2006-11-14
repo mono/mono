@@ -1,3 +1,18 @@
+2006-11-13  Chris Toshok  <toshok@ximian.com>
+
+	[ fixes bug #79745 ]
+	
+	* NotifyIcon.cs: lots of cleanup.
+
+	* X11Structs.cs: add an enum for XEMBED messages.
+
+	* XplatUIX11.cs: reindent one of the giant switch statements, it
+	was taking up an additional tab stop, and this file is already way
+	too wide for my laptop's screen.
+
+	Also, add handling for the XEmbed EMBEDDED_NOTIFY message.  When
+	we get it, resize the hwnd to the WMNormalHints max_width/height.
+
 2006-11-13  Jackson Harper  <jackson@ximian.com>
 
 	* TextBoxBase.cs: Compute the value changes for the mouse wheel
