@@ -39,6 +39,8 @@ namespace System.Drawing.Printing
 	{
 		private Hashtable doc_info = new Hashtable ();
 		private bool cups_installed;
+		private string printer_name;
+		private bool is_printer_valid;
 
 		internal PrintingServicesUnix ()
 		{
@@ -57,6 +59,21 @@ namespace System.Drawing.Printing
 			}
 
 			cups_installed = true;
+		}
+		
+		internal override bool IsPrinterValid(string printer, bool force)
+		{
+			if (!cups_installed || printer == null | printer == String.Empty)
+				return false;
+
+			if (!force && this.printer_name != null && String.Intern(this.printer_name).Equals(printer))
+				return is_printer_valid;
+
+			IntPtr ptr = cupsGetPPD (printer);
+			string ppd_filename = Marshal.PtrToStringAnsi (ptr);
+			is_printer_valid = ppd_filename != null;
+			this.printer_name = printer; 
+			return is_printer_valid;
 		}
 
 		// Methods

@@ -35,9 +35,26 @@ namespace System.Drawing.Printing
 {
 	internal class PrintingServicesWin32 : PrintingServices
 	{
+		private string printer_name;
+		private bool is_printer_valid;
+
 		internal PrintingServicesWin32 ()
 		{
 
+		}
+
+		internal override bool IsPrinterValid(string printer, bool force)
+		{
+			if (printer == null | printer == String.Empty)
+				return false;
+
+			if (!force && this.printer_name != null && String.Intern(this.printer_name).Equals(printer))
+				return is_printer_valid;
+
+			int ret = Win32DocumentProperties (IntPtr.Zero, IntPtr.Zero, printer, IntPtr.Zero, IntPtr.Zero, 0);
+			is_printer_valid = (ret < 1);
+			this.printer_name = printer; 
+			return is_printer_valid;
 		}
 
 		internal override void LoadPrinterSettings (string printer, PrinterSettings settings)

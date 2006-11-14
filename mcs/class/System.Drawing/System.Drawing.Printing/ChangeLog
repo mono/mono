@@ -1,3 +1,33 @@
+2006-11-14 Andreia Gaita <avidigal@novell.com>
+	Fixes #79835, implements PrinterSettings.IsValid, throws proper
+	InvalidPrinterException with differentiated messages.
+	
+	* PrintingServices.cs: Declares IsPrinterValid to enable easy checking
+	if printer name is a valid printer
+	
+	* PrintingServicesWin32.cs: Implements IsPrinterValid, caches 
+	last assigned printer name and if it is valid to speed up next calls.
+	
+	* PrintingServicesUnix.cs: Implements IsPrinterValid, caches 
+	last assigned printer name and if it is valid to speed up next calls.
+	
+	* PageSettings.cs: 
+		- throw InvalidPrinterException in the properties,
+		according to the docs: Color, Landscape, PaperSize, PaperSource, 
+		PrinterResolution
+		- change the private fields above to internal, so that in the
+		constructor we can access them without triggering the exceptions
+		if there are no printers installed
+		
+	* PrinterSettings.cs: Implement IsValid to call IsPrinterValid
+	implemented above
+	
+	* PreviewPrintController.cs: throw InvalidPrinterException on 
+	StartPrint() if there's no valid printer configured
+	
+	* InvalidPrinterException.cs: New private GetMessage() to customize
+	printer error message, used by constructor
+
 2006-09-27 Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* PrintingServicesUnix.cs: Implements LoadPrinterPaperSources member,

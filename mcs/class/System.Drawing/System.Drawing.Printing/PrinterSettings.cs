@@ -340,10 +340,9 @@ namespace System.Drawing.Printing
 			get { return false; }
 		}
 
-		[MonoTODO("PrinterSettings.IsValid")]
 		public bool IsValid
 		{
-			get { return true; }
+			get { return SysPrn.Service.IsPrinterValid(this.printer_name, false); }
 		}
 		
 		public int LandscapeAngle
@@ -382,6 +381,8 @@ namespace System.Drawing.Printing
 		public PrinterSettings.PaperSizeCollection PaperSizes
 		{
 			get {
+				if (!this.IsValid)
+					throw new InvalidPrinterException(this);
 				if (paper_sizes == null) {
 					paper_sizes = new PrinterSettings.PaperSizeCollection (new PaperSize [] {});
 					SysPrn.Service.LoadPrinterPaperSizes (printer_name, this);
@@ -393,6 +394,8 @@ namespace System.Drawing.Printing
 		public PrinterSettings.PaperSourceCollection PaperSources
 		{
 			get {
+				if (!this.IsValid)
+					throw new InvalidPrinterException(this);
 				if (paper_sources == null) {
 					paper_sources = new PrinterSettings.PaperSourceCollection (new PaperSource [] {});
 					SysPrn.Service.LoadPrinterPaperSources (printer_name, this);
@@ -425,6 +428,8 @@ namespace System.Drawing.Printing
 		public PrinterSettings.PrinterResolutionCollection PrinterResolutions
 		{
 			get {
+				if (!this.IsValid)
+					throw new InvalidPrinterException(this);
 				if (printer_resolutions == null) {
 					printer_resolutions = new PrinterSettings.PrinterResolutionCollection (new PrinterResolution[] {});
 					SysPrn.Service.LoadPrinterResolutions (printer_name, this);

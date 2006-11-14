@@ -44,16 +44,16 @@ namespace System.Drawing.Printing
 #endif
 	public class PageSettings : ICloneable
 	{
-		bool _Color;
-		bool _Landscape;
+		internal bool _Color;
+		internal bool _Landscape;
+		internal PaperSize _PaperSize;
+		internal PaperSource _PaperSource;
+		internal PrinterResolution _PrinterResolution;
 		float _HardMarginX;
 		float _HardMarginY;
 		RectangleF _PrintableArea;
 		// create a new default Margins object (is 1 inch for all margins)
 		Margins _Margins = new Margins();
-		PaperSize _PaperSize;
-		PaperSource _PaperSource;
-		PrinterResolution _PrinterResolution;
 		PrinterSettings _PrinterSettings;
 		
 		public PageSettings() : this(new PrinterSettings())
@@ -64,11 +64,11 @@ namespace System.Drawing.Printing
 		{
 			PrinterSettings = printerSettings;
 			
-			Color = printerSettings.DefaultPageSettings.Color;
-			Landscape = printerSettings.DefaultPageSettings.Landscape;
-			PaperSize = printerSettings.DefaultPageSettings.PaperSize;
-			PaperSource = printerSettings.DefaultPageSettings.PaperSource;
-			PrinterResolution = printerSettings.DefaultPageSettings.PrinterResolution;
+			Color = printerSettings.DefaultPageSettings._Color;
+			Landscape = printerSettings.DefaultPageSettings._Landscape;
+			PaperSize = printerSettings.DefaultPageSettings._PaperSize;
+			PaperSource = printerSettings.DefaultPageSettings._PaperSource;
+			PrinterResolution = printerSettings.DefaultPageSettings._PrinterResolution;
 		}
 		
 		// used by PrinterSettings.DefaultPageSettings
@@ -76,11 +76,11 @@ namespace System.Drawing.Printing
 		{
 			PrinterSettings = printerSettings;
 			
-			Color = color;
-			Landscape = landscape;
-			PaperSize = paperSize;
-			PaperSource = paperSource;
-			PrinterResolution = printerResolution;
+			_Color = color;
+			_Landscape = landscape;
+			_PaperSize = paperSize;
+			_PaperSource = paperSource;
+			_PrinterResolution = printerResolution;
 		}
 
 		//props
@@ -104,6 +104,8 @@ namespace System.Drawing.Printing
 		
 		public bool Color{
 			get{
+				if (!this._PrinterSettings.IsValid)
+					throw new InvalidPrinterException(this._PrinterSettings);
 				return _Color;
 			}
 			set{
@@ -113,6 +115,8 @@ namespace System.Drawing.Printing
 		
 		public bool Landscape {
 			get{
+				if (!this._PrinterSettings.IsValid)
+					throw new InvalidPrinterException(this._PrinterSettings);
 				return _Landscape;
 			}
 			set{
@@ -122,6 +126,8 @@ namespace System.Drawing.Printing
 		
 		public Margins Margins{
 			get{
+				if (!this._PrinterSettings.IsValid)
+					throw new InvalidPrinterException(this._PrinterSettings);
 				return _Margins;
 			}
 			set{
@@ -131,6 +137,8 @@ namespace System.Drawing.Printing
 		
 		public PaperSize PaperSize{
 			get{
+				if (!this._PrinterSettings.IsValid)
+					throw new InvalidPrinterException(this._PrinterSettings);
 				return _PaperSize;
 			}
 			set{
@@ -140,6 +148,8 @@ namespace System.Drawing.Printing
 		
 		public PaperSource PaperSource{
 			get{
+				if (!this._PrinterSettings.IsValid)
+					throw new InvalidPrinterException(this._PrinterSettings);
 				return _PaperSource;
 			}
 			set{
@@ -149,6 +159,8 @@ namespace System.Drawing.Printing
 		
 		public PrinterResolution PrinterResolution{
 			get{
+				if (!this._PrinterSettings.IsValid)
+					throw new InvalidPrinterException(this._PrinterSettings);
 				return _PrinterResolution;
 			}
 			set{
