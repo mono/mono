@@ -30,7 +30,9 @@
 using System.Collections;
 using System.IO;
 using System.Security.Permissions;
+#if NET_2_0
 using System.Text;
+#endif
 
 namespace System.Web.Caching
 {
@@ -52,11 +54,13 @@ namespace System.Web.Caching
 		FileSystemWatcher[] watchers;
 #endif
 		bool hasChanged;
-		object locker = new object ();
 #if NET_2_0
-		string unique_id;
-
-		protected CacheDependency ()
+		bool used;
+#endif
+		object locker = new object ();
+		
+#if NET_2_0
+		public CacheDependency (): this (null, null, null, DateTime.Now)
 		{
 		}
 #endif
@@ -92,18 +96,11 @@ namespace System.Web.Caching
 		
 		public CacheDependency (string[] filenames, string[] cachekeys, CacheDependency dependency, DateTime start)
 		{
-#if NET_2_0
-			StringBuilder sb = new StringBuilder ();
-			sb.Append ("@UID@");
-#endif
 #if !TARGET_JVM
 			if (filenames != null) {
 				watchers = new FileSystemWatcher [filenames.Length];
 				for (int n=0; n<filenames.Length; n++) {
 					FileSystemWatcher watcher = new FileSystemWatcher ();
-#if NET_2_0
-					sb.Append (filenames [n]);
-#endif
 					if (Directory.Exists (filenames [n])) {
 						watcher.Path = filenames [n];
 					} else {
@@ -124,20 +121,30 @@ namespace System.Web.Caching
 			}
 #endif
 			this.cachekeys = cachekeys;
-#if NET_2_0
-			if (cachekeys != null) {
-				foreach (string s in cachekeys)
-					sb.Append (s);
-			}
-			if (sb.Length > 5) // 5 is the length of "@UID@"
-				unique_id = sb.ToString ();
-#endif
-
 			this.dependency = dependency;
 			if (dependency != null)
 				dependency.DependencyChanged += new EventHandler (OnChildDependencyChanged);
 			this.start = start;
 		}
+
+#if NET_2_0
+		public virtual string GetUniqueID ()
+		{
+			StringBuilder sb = new StringBuilder ();
+			lock (locker) {
+				if (watchers != null)
+					foreach (FileSystemWatcher fsw in watchers)
+						if (fsw != null && fsw.Path != null && fsw.Path.Length != 0)
+							sb.AppendFormat ("_{0}", fsw.Path);
+			}
+
+			if (cachekeys != null)
+				foreach (string key in cachekeys)
+					sb.AppendFormat ("_{0}", key);
+			return sb.ToString ();
+		}
+#endif
+		
 #if !TARGET_JVM
 		void OnChanged (object sender, FileSystemEventArgs args)
 		{
@@ -177,18 +184,23 @@ namespace System.Web.Caching
 		internal void SetCache (Cache c)
 		{
 			cache = c;
+#if NET_2_0
+			used = c != null;
+#endif
 		}
 		
 #if NET_2_0
-		public virtual string GetUniqueID ()
-		{
-			return unique_id;
+		internal bool IsUsed {
+			get { return used; }
 		}
 
-		public virtual bool HasChanged {
-#else
-		public bool HasChanged {
+		internal DateTime Start {
+			get { return start; }
+			set { start = value; }
+		}
 #endif
+		
+		public bool HasChanged {
 			get {
 				if (hasChanged)
 					return true;
@@ -217,12 +229,18 @@ namespace System.Web.Caching
 			OnDependencyChanged ();
 		}
 		
-		internal void OnDependencyChanged ()
+		void OnDependencyChanged ()
 		{
 			if (DependencyChanged != null)
 				DependencyChanged (this, null);
 		}
 		
+#if NET_2_0
+		internal void SignalDependencyChanged ()
+		{
+			OnDependencyChanged ();
+		}
+#endif
 		internal event EventHandler DependencyChanged;
 	}
 }

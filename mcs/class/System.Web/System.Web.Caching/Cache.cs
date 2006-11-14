@@ -176,6 +176,9 @@ namespace System.Web.Caching
 				CacheItem it = (CacheItem) cache [key];
 				if (it != null) {
 					if (it.Dependency != null) {
+#if NET_2_0
+						it.Dependency.SetCache (null);
+#endif
 						it.Dependency.DependencyChanged -= new EventHandler (OnDependencyChanged);
 						it.Dependency.Dispose ();
 					}

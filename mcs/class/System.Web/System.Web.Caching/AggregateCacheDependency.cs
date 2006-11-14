@@ -1,10 +1,10 @@
 //
-// System.Web.Caching.AggregateCacheDependency
+// System.Web.Compilation.AggregateCacheDependency
 //
-// Author(s):
-//	Gonzalo Paniagua Javier (gonzalo@novell.com)
+// Authors:
+//   Marek Habersack (grendello@gmail.com)
 //
-// (C) 2006 Novell, Inc (http://www.novell.com)
+// (C) 2006 Marek Habersack
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -14,10 +14,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -28,54 +28,58 @@
 //
 #if NET_2_0
 using System;
+using System.Collections.Generic;
 using System.Text;
+using System.Web;
 
-namespace System.Web.Caching {
-	public sealed class AggregateCacheDependency : CacheDependency {
-		bool changed;
-		DateTime last_modified;
-		CacheDependency [] deps;
-
+namespace System.Web.Caching 
+{
+	public sealed class AggregateCacheDependency : CacheDependency
+	{
+		private List <CacheDependency> dependencies;
+		
 		public AggregateCacheDependency ()
 		{
-		}
-
-		void OnChanged (object sender, EventArgs args)
-		{
-			changed = true;
-			last_modified = DateTime.UtcNow;
-			OnDependencyChanged ();
-		}
-
-		public bool HasChanged {
-			get { return changed; }
-		}
-
-		public DateTime UtcLastModified {
-			get { return last_modified; }
+			dependencies = new List <CacheDependency> ();
 		}
 
 		public void Add (params CacheDependency [] dependencies)
 		{
 			if (dependencies == null)
-				return;
+				throw new ArgumentNullException ("dependencies");
+			foreach (CacheDependency dep in dependencies)
+				if (dep == null || dep.IsUsed)
+					throw new InvalidOperationException ("Cache dependency already in use");
 
-			deps = dependencies;
-			for (int i = dependencies.Length; i >= 0; i--) {
-				dependencies [i].DependencyChanged += OnChanged;
+			bool somethingChanged = false;
+			lock (dependencies) {
+				this.dependencies.AddRange (dependencies);
+				foreach (CacheDependency dep in dependencies)
+					if (dep.HasChanged) {
+						somethingChanged = true;
+						break;
+					}
 			}
+			base.Start = DateTime.UtcNow;
+			if (somethingChanged)
+				base.SignalDependencyChanged ();
 		}
 
 		public override string GetUniqueID ()
 		{
-			if (deps == null)
+			if (dependencies == null)
 				return null;
-
+			
 			StringBuilder sb = new StringBuilder ();
-			foreach (CacheDependency dep in deps) {
-				sb.Append (dep.GetUniqueID ());				
+			lock (dependencies) {
+				string depid = null;
+				foreach (CacheDependency dep in dependencies) {
+					depid = dep.GetUniqueID ();
+					if (depid == null || depid.Length == 0)
+						return null;
+					sb.AppendFormat ("{0};", depid);
+				}
 			}
-
 			return sb.ToString ();
 		}
 	}

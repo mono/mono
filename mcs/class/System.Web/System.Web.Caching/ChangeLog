@@ -1,5 +1,6 @@
-2006-11-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+2006-11-14 Marek Habersack <grendel@caudium.net>
 
+	* Cache.cs:
 	* CacheDependency.cs:
 	* AggregateCacheDependency.cs: implement this one.
 
