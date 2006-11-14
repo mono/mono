@@ -81,7 +81,11 @@ namespace System.Web.Services.Description
 				s.ValidationEventHandler += validationEventHandler;
 			using (XmlReader r = XmlReader.Create (xmlReader, s)) {
 				XmlSerializer ser = implementation.GetSerializer (typeof (WebReferenceOptions));
-				return (WebReferenceOptions) ser.Deserialize (r);
+				try {
+					return (WebReferenceOptions) ser.Deserialize (r);
+				} catch (XmlSchemaValidationException ex) {
+					throw new InvalidOperationException ("There is an error in input webReference XML", ex);
+				}
 			}
 		}
 

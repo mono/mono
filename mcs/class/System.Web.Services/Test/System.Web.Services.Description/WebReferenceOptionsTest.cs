@@ -69,7 +69,7 @@ namespace MonoTests.System.Web.Services.Description
 			try {
 				Read (xml3);
 				Assert.Fail ("xml3 is invalid.");
-			} catch (XmlSchemaValidationException) {
+			} catch (InvalidOperationException) {
 			}
 		}
 
