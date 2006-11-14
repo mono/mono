@@ -1,3 +1,8 @@
+2006-11-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CacheDependency.cs:
+	* AggregateCacheDependency.cs: implement this one.
+
 2006-09-11 Andrew Skiba <andrews@mainsoft.com>
 
 	* CacheDependency.cs: ifdef TARGET_JVM

@@ -30,6 +30,7 @@
 using System.Collections;
 using System.IO;
 using System.Security.Permissions;
+using System.Text;
 
 namespace System.Web.Caching
 {
@@ -52,6 +53,13 @@ namespace System.Web.Caching
 #endif
 		bool hasChanged;
 		object locker = new object ();
+#if NET_2_0
+		string unique_id;
+
+		protected CacheDependency ()
+		{
+		}
+#endif
 		
 		public CacheDependency (string filename): this (new string[] { filename }, null, null, DateTime.Now)
 		{
@@ -84,11 +92,18 @@ namespace System.Web.Caching
 		
 		public CacheDependency (string[] filenames, string[] cachekeys, CacheDependency dependency, DateTime start)
 		{
+#if NET_2_0
+			StringBuilder sb = new StringBuilder ();
+			sb.Append ("@UID@");
+#endif
 #if !TARGET_JVM
 			if (filenames != null) {
 				watchers = new FileSystemWatcher [filenames.Length];
 				for (int n=0; n<filenames.Length; n++) {
 					FileSystemWatcher watcher = new FileSystemWatcher ();
+#if NET_2_0
+					sb.Append (filenames [n]);
+#endif
 					if (Directory.Exists (filenames [n])) {
 						watcher.Path = filenames [n];
 					} else {
@@ -109,6 +124,15 @@ namespace System.Web.Caching
 			}
 #endif
 			this.cachekeys = cachekeys;
+#if NET_2_0
+			if (cachekeys != null) {
+				foreach (string s in cachekeys)
+					sb.Append (s);
+			}
+			if (sb.Length > 5) // 5 is the length of "@UID@"
+				unique_id = sb.ToString ();
+#endif
+
 			this.dependency = dependency;
 			if (dependency != null)
 				dependency.DependencyChanged += new EventHandler (OnChildDependencyChanged);
@@ -155,7 +179,16 @@ namespace System.Web.Caching
 			cache = c;
 		}
 		
+#if NET_2_0
+		public virtual string GetUniqueID ()
+		{
+			return unique_id;
+		}
+
+		public virtual bool HasChanged {
+#else
 		public bool HasChanged {
+#endif
 			get {
 				if (hasChanged)
 					return true;
@@ -184,7 +217,7 @@ namespace System.Web.Caching
 			OnDependencyChanged ();
 		}
 		
-		void OnDependencyChanged ()
+		internal void OnDependencyChanged ()
 		{
 			if (DependencyChanged != null)
 				DependencyChanged (this, null);
