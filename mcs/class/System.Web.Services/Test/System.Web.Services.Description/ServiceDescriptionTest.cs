@@ -161,6 +161,18 @@ namespace MonoTests.System.Web.Services.Description
 			Assert.AreEqual (val, di.ExtensibleAttributes [0].Value);
 		}
 
+		[Test]
+		public void ReadInvalid ()
+		{
+			ServiceDescription sd = ServiceDescription.Read (XmlReader.Create (new StringReader ("<definitions xmlns='http://schemas.xmlsoap.org/wsdl/'><hoge/></definitions>")));
+		}
+
+		[Test]
+		public void ValidatingRead ()
+		{
+			ServiceDescription sd = ServiceDescription.Read (XmlReader.Create (new StringReader ("<definitions xmlns='http://schemas.xmlsoap.org/wsdl/'><hoge/></definitions>")), true);
+			Assert.IsTrue (sd.ValidationWarnings.Count > 0);
+		}
 #endif
 
     }

@@ -1,3 +1,10 @@
+2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* wsdl-1.1.xsd : imported from the spec site (schemas.xmlsoap.org)
+	  to be used for ServiceDescription.Schema.
+	* ServiceDescription.cs : added Schema property and validating Read() 
+	  overloads.
+
 2006-11-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceDescriptionSerializerBase2.cs :

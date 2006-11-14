@@ -1,3 +1,8 @@
+2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : added *.wsdl to the build.
+	  Added wsdl and genxs to EXTRA_DISTFILES.
+
 2006-09-06  Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* System.Web.Services20.vmwcsproj: added

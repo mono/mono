@@ -31,6 +31,7 @@
 
 using System.IO;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Reflection;
 using System.Web.Services;
 using System.Web.Services.Configuration;
@@ -71,6 +72,11 @@ namespace System.Web.Services.Description
 		string targetNamespace;
 		Types types;
 		static ServiceDescriptionSerializer serializer;
+#if NET_2_0
+		StringCollection validationWarnings;
+
+		static XmlSchema schema;
+#endif
 
 		#endregion // Fields
 
@@ -101,6 +107,17 @@ namespace System.Web.Services.Description
 		#endregion // Constructors
 
 		#region Properties
+
+#if NET_2_0
+		public static XmlSchema Schema {
+			get {
+				if (schema == null) {
+					schema = XmlSchema.Read (typeof (ServiceDescription).Assembly.GetManifestResourceStream ("wsdl-1.1.xsd"), null);
+				}
+				return schema;
+			}
+		}
+#endif
 
 		[XmlElement ("import")]
 		public ImportCollection Imports {
@@ -174,6 +191,12 @@ namespace System.Web.Services.Description
 			set { targetNamespace = value; }
 		}
 
+#if NET_2_0
+		public StringCollection ValidationWarnings {
+			get { return validationWarnings; }
+		}
+#endif
+
 		#endregion // Properties
 
 		#region Methods
@@ -184,6 +207,53 @@ namespace System.Web.Services.Description
 			return reader.LocalName == "definitions" && 
 				reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/";
 		}
+
+#if NET_2_0
+		public static ServiceDescription Read (string fileName, bool validate)
+		{
+			if (validate)
+				using (XmlReader reader = XmlReader.Create (fileName)) {
+					return Read (reader, true);
+				}
+			else
+				return Read (fileName);
+		}
+
+		public static ServiceDescription Read (Stream stream, bool validate)
+		{
+			if (validate)
+				return Read (XmlReader.Create (stream), true);
+			else
+				return Read (stream);
+		}
+
+		public static ServiceDescription Read (TextReader reader, bool validate)
+		{
+			if (validate)
+				return Read (XmlReader.Create (reader), true);
+			else
+				return Read (reader);
+		}
+
+		public static ServiceDescription Read (XmlReader reader, bool validate)
+		{
+			if (validate) {
+				StringCollection sc = new StringCollection ();
+				XmlReaderSettings s = new XmlReaderSettings ();
+				s.ValidationType = ValidationType.Schema;
+				s.Schemas.Add (Schema);
+				s.ValidationEventHandler += delegate (object o, ValidationEventArgs e) {
+					sc.Add (e.Message);
+				};
+
+				ServiceDescription ret = Read (XmlReader.Create (reader, s));
+				ret.validationWarnings = sc;
+				return ret;
+			}
+			else
+				return Read (reader);
+		}
+#endif
 
 		public static ServiceDescription Read (Stream stream)
 		{

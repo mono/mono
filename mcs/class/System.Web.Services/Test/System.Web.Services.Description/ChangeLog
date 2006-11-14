@@ -1,3 +1,7 @@
+2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceDescriptionTest.cs : added test for invalid Read() inputs.
+
 2006-09-07  Ankit Jain  <jankit@novell.com>
 
 	* ServiceDescriptionTest.cs (Ctor): New.
