@@ -1,5 +1,9 @@
 2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Makefile: added sgen to DIST_ONLY_SUBDIRS.
+
+2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile: added sgen to net_2_0_SUBDIRS.
 
 2006-10-01  Robert Jordan  <robertj@gmx.net>

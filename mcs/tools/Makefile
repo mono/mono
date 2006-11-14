@@ -10,7 +10,7 @@ net_2_0_bootstrap_SUBDIRS = resgen
 
 net_2_0_SUBDIRS = corcompare wsdl compiler-tester monop xbuild resgen mono-service mkbundle sgen
 
-DIST_ONLY_SUBDIRS = xbuild
+DIST_ONLY_SUBDIRS = xbuild sgen
 
 include ../build/rules.make
 
