@@ -42,6 +42,9 @@ namespace MonoTests.System.Web.UI.WebControls
 	[TestFixture]	
 	public class BaseDataBoundControlTest {	
 		class Poker : BaseDataBoundControl {
+			
+			public bool OnDataPropertyChangedCalled;
+
 			public Poker () {
 				TrackViewState ();
 			}
@@ -61,7 +64,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			protected override void ValidateDataSource (object dataSource)
 			{
-				Console.WriteLine ("PerformSelect\n{0}", Environment.StackTrace);
+				//Console.WriteLine ("PerformSelect\n{0}", Environment.StackTrace);
 			}
 
 			public bool GetIsBoundUsingDataSourceID ()
@@ -72,6 +75,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			public bool GetInitialized ()
 			{
 				return Initialized;
+			}
+
+			protected override void OnDataPropertyChanged () {
+				base.OnDataPropertyChanged ();
+				OnDataPropertyChangedCalled = true;
 			}
 		}
 		
@@ -97,6 +105,26 @@ namespace MonoTests.System.Web.UI.WebControls
 			copy.LoadState (state);
 
 			Assert.AreEqual ("hi", copy.DataSourceID, "A1");
+		}
+
+		[Test]
+		public void OnDataPropertyChanged ()
+		{
+			Poker p = new Poker ();
+			Assert.IsFalse (p.OnDataPropertyChangedCalled);
+
+			p.DataSourceID = "hi";
+			Assert.IsTrue (p.OnDataPropertyChangedCalled, "OnDataPropertyChanged: DataSourceID");
+		}
+
+		[Test]
+		public void OnDataPropertyChanged2 ()
+		{
+			Poker p = new Poker ();
+			Assert.IsFalse (p.OnDataPropertyChangedCalled);
+
+			p.DataSource = null;
+			Assert.IsTrue (p.OnDataPropertyChangedCalled, "OnDataPropertyChanged: DataSource");
 		}
 	}
 }

@@ -834,7 +834,9 @@ namespace System.Web.UI.WebControls
 		[BrowsableAttribute (false)]
 		public virtual GridViewRowCollection Rows {
 			get {
-				EnsureDataBound ();
+				EnsureChildControls ();
+				if (rows == null)
+					rows = new GridViewRowCollection (new ArrayList ());
 				return rows;
 			}
 		}
@@ -1157,6 +1159,15 @@ namespace System.Web.UI.WebControls
 	
 		protected override int CreateChildControls (IEnumerable data, bool dataBinding)
 		{
+			// clear GridView
+			Controls.Clear ();
+			table = null;
+			rows = null;
+			
+			if (data == null) {
+				return 0;
+			}
+
 			PagedDataSource dataSource;
 
 			if (dataBinding) {
@@ -1188,9 +1199,11 @@ namespace System.Web.UI.WebControls
 				}
 			}
 
+			if (dataSource.DataSourceCount == 0)
+				return 0;
+
 			bool showPager = AllowPaging && (PageCount > 1);
 			
-			Controls.Clear ();
 			table = CreateChildTable ();
 			Controls.Add (table);
 				

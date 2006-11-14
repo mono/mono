@@ -113,7 +113,7 @@ namespace System.Web.UI.WebControls {
 		protected override void OnDataPropertyChanged ()
 		{
 			base.OnDataPropertyChanged ();
-			UpdateViewData ();
+			currentView = null;
 		}
 		
 		protected virtual void OnDataSourceViewChanged (object sender, EventArgs e)

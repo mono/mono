@@ -1,5 +1,11 @@
 2006-11-14 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* GridView.cs: fixed: Rows property, DataBinding flow.
+	* DataBoundControl.cs:
+	* BaseDataBoundControl.cs:		
+	
+2006-11-14 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* CompositeDataBoundControl.cs: fixed: 
 	DataBind call Controls.Clear().
 

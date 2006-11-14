@@ -729,6 +729,17 @@ namespace MonoTests.System.Web.UI.WebControls
 			g.DataSource = myds;
 			g.DataBind ();
 			Assert.AreEqual (6, g.Rows.Count, "DataBind");
+
+			g.DataSource = null;
+			g.DataBind ();
+			Assert.AreEqual (0, g.Rows.Count, "DataBind");
+		}
+
+		[Test]
+		public void GridView_DataBind_NoDataSource () {
+			PokerGridView g = new PokerGridView ();
+			g.DataBind ();
+			Assert.AreEqual (0, g.Rows.Count, "GridView_DataBind_NoDataSource");
 		}
 
 		bool rowcreatedchecker;

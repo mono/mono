@@ -70,8 +70,7 @@ namespace System.Web.UI.WebControls {
 			set {
 				ValidateDataSource (value);
 				dataSource = value;
-				if (initialized)
-					OnDataPropertyChanged ();
+				OnDataPropertyChanged ();
 			}
 		}
 		
@@ -83,8 +82,7 @@ namespace System.Web.UI.WebControls {
 			}
 			set {
 				ViewState["DataSourceID"] = value;
-				if (initialized)
-					OnDataPropertyChanged ();
+				OnDataPropertyChanged ();
 			}
 		}
 		
