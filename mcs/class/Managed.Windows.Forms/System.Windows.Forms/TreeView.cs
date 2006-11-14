@@ -1075,16 +1075,20 @@ namespace System.Windows.Forms {
 
 		private void DrawNodeCheckBox (TreeNode node, Graphics dc, int x, int middle)
 		{
-			using(Pen pen = new Pen (Color.Black, 2) ) 
-				dc.DrawRectangle (pen, x+ 3, middle - 4, 11, 11);
+			Pen pen = ThemeEngine.Current.ResPool.GetSizedPen(Color.Black, 2);
+				dc.DrawRectangle (pen, x + 3, middle - 4, 11, 11);
 
 			if (node.Checked) {
-				using(Pen check_pen = new Pen (Color.Black, 1)) {
-					dc.DrawLine (check_pen, x + 6, middle + 0, x + 8, middle + 3);
-					dc.DrawLine (check_pen, x + 6, middle + 1, x + 8, middle + 4);
-	
-					dc.DrawLine (check_pen, x + 7, middle + 3, x + 13, middle - 2);
-					dc.DrawLine (check_pen, x + 7, middle + 4, x + 13, middle - 1);
+				Pen check_pen = ThemeEngine.Current.ResPool.GetPen(Color.Black);
+				
+				int check_size = 5;
+				int lineWidth = 3;
+				
+				Rectangle rect = new Rectangle (x + 5, middle - 2, check_size, check_size);
+				
+				for (int i = 0; i < lineWidth; i++) {
+					dc.DrawLine (check_pen, rect.Left + 1, rect.Top + lineWidth + i, rect.Left + 3, rect.Top + 5 + i);
+					dc.DrawLine (check_pen, rect.Left + 3, rect.Top + 5 + i, rect.Left + 7, rect.Top + 1 + i);
 				}
 			}
 		}
