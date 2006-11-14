@@ -21,12 +21,15 @@ public class X
 			d += temp;
 		}
 		Console.WriteLine ();
+		Console.WriteLine ("i = {0}, k = {1}", sum_i, sum_k);
 		if (sum_i != 62)
 			return 1;
 		if (sum_k != 62)
 			return 2;
 		sum_i = sum_k = 0;
 		d();
+		Console.WriteLine ();
+		Console.WriteLine ("i = {0}, k = {1}", sum_i, sum_k);
 		if (sum_i != 320)
 			return 3;
 		if (sum_k != 62)
@@ -39,6 +42,8 @@ public class X
 		int result = Test ();
 		if (result != 0)
 			Console.WriteLine ("ERROR: {0}", result);
+		else
+			Console.WriteLine ("OK");
 		return result;
 	}
 }
