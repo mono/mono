@@ -8,7 +8,7 @@ SUBDIRS = \
 net_1_1_bootstrap_SUBDIRS = gacutil security resgen
 net_2_0_bootstrap_SUBDIRS = resgen
 
-net_2_0_SUBDIRS = corcompare wsdl compiler-tester monop xbuild resgen mono-service mkbundle
+net_2_0_SUBDIRS = corcompare wsdl compiler-tester monop xbuild resgen mono-service mkbundle sgen
 
 DIST_ONLY_SUBDIRS = xbuild
 
