@@ -1,5 +1,10 @@
 2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* WebReferenceOptionsSerializer.cs : oops, surrounding #if NET_2_0
+	  is required when it is regenerated.
+
+2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* WebReferenceOptions.cs : actually Read() raises invalid operation
 	  when it raises an error.
 
