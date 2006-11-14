@@ -1,5 +1,10 @@
 2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceDescription.cs : add [XmlIgnore] to ValidationWarnings.
+	  (yes, it is a collection, thus we need explicit attribute.)
+
+2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ConformanceChecker.cs, WebServicesInteroperability.cs,
 	  BasicProfileViolation.cs, BasicProfileChecker.cs:
 	  2.0 API fixes (WsiClaims -> WsiProfiles).

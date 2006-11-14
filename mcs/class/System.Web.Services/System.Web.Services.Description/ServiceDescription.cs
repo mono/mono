@@ -192,6 +192,7 @@ namespace System.Web.Services.Description
 		}
 
 #if NET_2_0
+		[XmlIgnore]
 		public StringCollection ValidationWarnings {
 			get { return validationWarnings; }
 		}
