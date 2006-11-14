@@ -12,6 +12,15 @@ gmcs:
 test:
 	$(MONO) --debug $(PREFIX)/mono/mcs/class/lib/net_2_0/compiler-tester.exe positive 'martin-test-*.cs' $(PREFIX)/mono/mcs/gmcs/gmcs.exe known-issues martin.log
 
+test-mcs:	test
+	$(MAKE) -C /work/mordor/tests test-mcs
+
+test-gmcs:	test
+	$(MAKE) -C /work/mordor/tests test-gmcs
+
 test-all:	test
+	$(MAKE) -C /work/mordor/tests
+
+test-everything:	test
 	$(MAKE) -C $(PREFIX)/mono/mcs/tests test-everything
 
