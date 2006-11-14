@@ -127,8 +127,12 @@ namespace System.Xml
 
 		// This is used in XmlReader.Create() to indicate that string
 		// argument is uri, not an xml fragment.
-		internal XmlTextReader (bool dummy, string url, XmlNodeType fragType, XmlParserContext context)
+		internal XmlTextReader (bool dummy, XmlResolver resolver, string url, XmlNodeType fragType, XmlParserContext context)
 		{
+			if (resolver == null)
+				resolver = new XmlUrlResolver ();
+
+			this.XmlResolver = resolver;
 			string uriString;
 			Stream stream = GetStreamFromUrl (url, out uriString);
 			this.InitializeContext (uriString, context, new XmlStreamReader (stream), fragType);

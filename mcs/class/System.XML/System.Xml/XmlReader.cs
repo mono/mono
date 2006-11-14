@@ -310,7 +310,7 @@ namespace System.Xml
 			settings = PopulateSettings (settings);
 			if (context == null)
 				context = PopulateParserContext (settings, url);
-			XmlTextReader xtr = new XmlTextReader (true, url, GetNodeType (settings), context);
+			XmlTextReader xtr = new XmlTextReader (false, settings.XmlResolver, url, GetNodeType (settings), context);
 			XmlReader ret = CreateCustomizedTextReader (xtr, settings);
 			xtr.CloseInput = true;
 			return xtr;

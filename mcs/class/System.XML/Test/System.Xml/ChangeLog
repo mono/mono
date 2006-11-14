@@ -1,5 +1,11 @@
 2006-11-13  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlReaderSettingsTests.cs : added custom resolver case for primary
+	  XML stream (custom resolver is indeed used and here it should cause
+	  error).
+
+2006-11-13  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlReaderSettingsTests.cs : added NullResolver() case.
 
 2006-10-27  Atsushi Enomoto <atsushi@ximian.com>

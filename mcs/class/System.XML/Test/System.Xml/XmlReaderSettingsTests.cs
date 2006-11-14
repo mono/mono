@@ -10,6 +10,7 @@
 #if NET_2_0
 using System;
 using System.IO;
+using System.Net;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
@@ -312,6 +313,30 @@ namespace MonoTests.System.Xml
 		{
 			XmlReaderSettings settings = new XmlReaderSettings ();
 			settings.XmlResolver = null;
+			using (XmlReader xr = XmlReader.Create ("Test/XmlFiles/simple.xml", settings)) {
+				while (!xr.EOF)
+					xr.Read ();
+			}
+		}
+
+		class ThrowExceptionResolver : XmlResolver
+		{
+			public override ICredentials Credentials {
+				set { }
+			}
+
+			public override object GetEntity (Uri uri, string type, Type expected)
+			{
+				throw new ApplicationException ("error");
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ApplicationException))]
+		public void CustomResolverUsedForXmlStream ()
+		{
+			XmlReaderSettings settings = new XmlReaderSettings ();
+			settings.XmlResolver = new ThrowExceptionResolver ();
 			using (XmlReader xr = XmlReader.Create ("Test/XmlFiles/simple.xml", settings)) {
 				while (!xr.EOF)
 					xr.Read ();

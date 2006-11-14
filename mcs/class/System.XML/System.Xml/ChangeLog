@@ -1,3 +1,8 @@
+2006-11-13  Michael Meeks  <michael.meeks@novell.com>
+
+	* XmlReader.cs, XmlTextReader.cs, XmlTextReader2.cs:
+	pass the XmlResolver through to the GetStream impl.
+
 2006-10-30  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReader2.cs : if DTD does not exist, do not try to resolve
