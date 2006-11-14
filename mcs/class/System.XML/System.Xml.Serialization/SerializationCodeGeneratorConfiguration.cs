@@ -56,6 +56,12 @@ namespace System.Xml.Serialization
 		[XmlElement ("writer")]
 		public string WriterClassName;
 	
+		[XmlElement ("baseSerializer")]
+		public string BaseSerializerClassName;
+	
+		[XmlElement ("implementation")]
+		public string ImplementationClassName;
+	
 		[XmlElement ("noreader")]
 		public bool NoReader;
 		

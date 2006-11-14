@@ -30,6 +30,7 @@
 
 #if NET_2_0
 using System;
+using System.Collections;
 using System.Xml.Serialization;
 
 using NUnit.Framework;
@@ -97,6 +98,24 @@ namespace MonoTests.System.XmlSerialization
 		{
 			MyImplementation impl = new MyImplementation ();
 			Assert.IsNull (impl.GetSerializer (typeof (int)), "#1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void GetSerializer2 ()
+		{
+			MyImplementation2 impl = new MyImplementation2 ();
+			impl.TypedSerializers [typeof (int)] = new XmlSerializer (typeof (int));
+			XmlSerializer ser = impl.GetSerializer (typeof (int));
+		}
+
+		class MyImplementation2 : XmlSerializerImplementation
+		{
+			Hashtable serializers = new Hashtable ();
+
+			public override Hashtable TypedSerializers {
+				get { return serializers; }
+			}
 		}
 	}
 }

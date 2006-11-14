@@ -1,3 +1,10 @@
+2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationCodeGenerator.cs,
+	  SerializationCodeGeneratorConfiguration.cs :
+	  make "XmlSerializerContract" and "BaseXmlSerializer" customizible.
+	  (or it is impossible to use genxs more than twice in an assembly.)
+
 2006-11-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	Fixed bug #77117.

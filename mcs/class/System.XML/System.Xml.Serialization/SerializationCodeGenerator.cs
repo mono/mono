@@ -164,12 +164,16 @@ namespace System.Xml.Serialization
 			
 			string readerClassName = null;
 			string writerClassName = null;
+			string baseClassName = null;
+			string implClassName = null;
 			string namspace = null;
 			
 			if (_config != null)
 			{
 				readerClassName = _config.ReaderClassName;
 				writerClassName = _config.WriterClassName;
+				baseClassName = _config.BaseSerializerClassName;
+				implClassName = _config.ImplementationClassName;
 				namspace = _config.Namespace;
 			}
 
@@ -178,10 +182,14 @@ namespace System.Xml.Serialization
 
 			if (writerClassName == null || writerClassName.Length == 0)
 				writerClassName = "GeneratedWriter";
-				
+			if (baseClassName == null || baseClassName.Length == 0)
+				baseClassName = "BaseXmlSerializer";
+			if (implClassName == null || implClassName.Length == 0)
+				implClassName = "XmlSerializerContract";
 			readerClassName = GetUniqueClassName (readerClassName);
 			writerClassName = GetUniqueClassName (writerClassName);
-			
+			baseClassName = GetUniqueClassName (baseClassName);
+			implClassName = GetUniqueClassName (implClassName);
 			Hashtable mapsByNamespace = new Hashtable ();
 			Hashtable generatedMaps = new Hashtable ();
 			
@@ -207,6 +215,8 @@ namespace System.Xml.Serialization
 				
 				_result.ReaderClassName = readerClassName;
 				_result.WriterClassName = writerClassName;
+				_result.BaseSerializerClassName = baseClassName;
+				_result.ImplementationClassName = implClassName;
 
 				if (namspace == null || namspace.Length == 0)
 					_result.Namespace = "Mono.GeneratedSerializers." + _typeMap.Format;
@@ -284,7 +294,7 @@ namespace System.Xml.Serialization
 			
 			GenerationResult main = (GenerationResult) generatedMaps[0];
 			
-			string baseSerializerName = GetUniqueClassName ("BaseXmlSerializer");
+			string baseSerializerName = main.BaseSerializerClassName;
 			string access_mod = (_config == null || !_config.GenerateAsInternal) ? "public" : "internal";
 			
 			WriteLine ("");
@@ -328,7 +338,7 @@ namespace System.Xml.Serialization
 				WriteLine ("");
 			}
 
-			WriteLine (access_mod + " class XmlSerializerContract : System.Xml.Serialization.XmlSerializerImplementation");
+			WriteLine (access_mod + " class " + main.ImplementationClassName + " : System.Xml.Serialization.XmlSerializerImplementation");
 			WriteLineInd ("{");
 			
 			WriteLine ("System.Collections.Hashtable readMethods = null;");
@@ -390,6 +400,22 @@ namespace System.Xml.Serialization
 			WriteLineUni ("}");
 			WriteLineUni ("}");
 			WriteLineUni ("}");
+			WriteLine ("");
+
+			WriteLine ("public override XmlSerializer GetSerializer (Type type)");
+			WriteLineInd ("{");
+			WriteLine ("switch (type.FullName) {");
+			foreach (GenerationResult res in generatedMaps) {
+				if (res.Mapping is XmlTypeMapping) {
+					WriteLineInd ("case \"" + ((XmlTypeMapping) res.Mapping).TypeFullName + "\":");
+					WriteLine ("return (XmlSerializer) TypedSerializers [\"" + res.Mapping.GetKey () + "\"];");
+					WriteLineUni ("");
+				}
+			}
+			WriteLine ("}");
+			WriteLine ("return base.GetSerializer (type);");
+			WriteLineUni ("}");
+			WriteLine ("");
 			
 			WriteLineInd ("public override bool CanSerialize (System.Type type) {");
 			foreach (GenerationResult res in generatedMaps) {
@@ -2774,6 +2800,8 @@ namespace System.Xml.Serialization
 		public string WriteMethodName;
 		public string Namespace;
 		public string SerializerClassName;
+		public string BaseSerializerClassName;
+		public string ImplementationClassName;
 	}
 	
 }
