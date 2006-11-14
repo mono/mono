@@ -119,6 +119,7 @@ System.Web.Services.Description/SoapTransportImporter.cs
 System.Web.Services.Description/Types.cs
 System.Web.Services.Description/WebReference.cs
 System.Web.Services.Description/WebReferenceCollection.cs
+System.Web.Services.Description/WebReferenceOptions.cs
 System.Web.Services.Description/WebServicesInteroperability.cs
 System.Web.Services.Protocols/Methods.cs
 System.Web.Services.Protocols/AnyReturnReader.cs

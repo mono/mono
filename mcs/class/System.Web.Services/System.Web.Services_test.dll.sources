@@ -23,4 +23,5 @@ System.Web.Services.Description/ServiceDescriptionCollectionTest.cs
 System.Web.Services.Description/ServiceDescriptionReflectorTest.cs
 System.Web.Services.Description/SoapBodyBindingTest.cs
 System.Web.Services.Description/SoapOperationBindingTest.cs
+System.Web.Services.Description/WebReferenceOptionsTest.cs
 System.Web.Services.Protocols/WebClientProtocolTest.cs

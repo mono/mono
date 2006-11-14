@@ -1,5 +1,12 @@
 2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceDescriptionImportStyle.cs : added XmlEnum attributes in
+	  2.0 profile.
+	* WebReferenceOptions.cs : new 2.0 class.
+	* web-reference.xsd : new resource for WebReferenceOptions.Schema.
+
+2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceDescription.cs : add [XmlIgnore] to ValidationWarnings.
 	  (yes, it is a collection, thus we need explicit attribute.)
 
