@@ -2,6 +2,8 @@
 
 	* TextControl.cs: Make PageUp and PageDown more like the MS
 	versions.
+	* TextBoxBase.cs: When we set the text property position the
+	cursor at the beginning of the document.
 
 2006-11-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 

@@ -545,38 +545,19 @@ namespace System.Windows.Forms {
 						}
 						this.Lines = lines;
 
-						line = document.GetLine(1);
+						document.PositionCaret (0, 0);
+						document.SetSelectionToCaret (true);
 
-						if (!Focused) {
-							document.SetSelectionStart(line, 0);
-
-							line = document.GetLine(document.Lines);
-							document.SetSelectionEnd(line, line.text.Length);
-							selection_length = -1;
-							document.PositionCaret(line, line.text.Length);
-						} else {
-							document.SetSelectionStart(line, 0);
-							document.SetSelectionEnd(line, 0);
-							selection_length = -1;
-							document.PositionCaret(line, 0);
-						}
+						ScrollToCaret ();
 					} else {
 						document.Clear();
 						document.Add(1, CaseAdjust(value), alignment, Font, ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor));
 						CalculateDocument();
-						line = document.GetLine(1);
 
-						if (!Focused) {
-							document.SetSelectionStart(line, 0);
-							document.SetSelectionEnd(line, value.Length);
-							selection_length = -1;
-							document.PositionCaret(line, value.Length);
-						} else {
-							document.SetSelectionStart(line, 0);
-							document.SetSelectionEnd(line, 0);
-							selection_length = -1;
-							document.PositionCaret(line, 0);
-						}
+						document.PositionCaret (0, 0);
+						document.SetSelectionToCaret (true);
+
+						ScrollToCaret ();
 					}
 				} else {
 					document.Empty();
