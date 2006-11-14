@@ -1,5 +1,0 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
-	<Target Name="Main" >
-		<Message Text="Message's text." />
-	</Target>
-</Project>

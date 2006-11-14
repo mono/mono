@@ -1,3 +1,0 @@
-2006-06-02  Konstantin Triger <kostat@mainsoft.com>
-
-	* Asn1Object.cs: applying jldap patch, cvs revision 1.13.

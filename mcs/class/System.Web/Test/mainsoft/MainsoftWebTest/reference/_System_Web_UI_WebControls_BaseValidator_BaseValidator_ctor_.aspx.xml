@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<testresults name="">
-  <div id="GHTSubTest1" style="height:296px;left:16px;position:absolute;top:15px;width:553px;z-index:100">
-    <span evaluationfunction="RequiredFieldValidatorEvaluateIsValid" id="RequiredFieldValidator1" style="color:red;visibility:hidden" initialvalue="" controltovalidate="TextBox1" errormessage="RequiredFieldValidator">RequiredFieldValidator</span>
-    <input id="TextBox1" type="text" name="TextBox1" />
-  </div>
-</testresults>

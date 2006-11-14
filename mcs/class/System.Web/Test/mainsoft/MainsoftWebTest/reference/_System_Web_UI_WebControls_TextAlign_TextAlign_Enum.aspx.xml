@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<testresults name="">
-  <div id="GHTSubTest1" testname="System.Web.UI.WebControls.TextAlign">
-    <span>
-      <br />Left; Right; 1; 2; </span>
-  </div>
-</testresults>

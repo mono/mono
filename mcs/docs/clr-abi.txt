@@ -1,3 +1,0 @@
-* The generated code from the JIT by Microsoft uses registers
-  to pass arguments to functions rather than pushing then on the
-  stack.

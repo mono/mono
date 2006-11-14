@@ -1,8 +1,0 @@
-2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
-
-	* Accessibility.dll.sources:
-	* list.unix: AssemblyInfo.cs added
-
-2002-12-10  Jeroen Janssen <japj@darius.demon.nl>
-	
-	* updated .build file to correctly build with Nant

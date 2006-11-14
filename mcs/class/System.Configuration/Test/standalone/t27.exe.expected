@@ -1,1 +1,0 @@
-connStrings[LocalSqlServer] = data source=127.0.0.1; Integrated Security=SSPI

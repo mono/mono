@@ -1,7 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<testresults name="">
-  <div id="GHTSubTest1" style="height:152px;width:424px">
-    <label id="Label1" for="Button1">this is label1</label>
-    <input id="Button1" value="Button" type="submit" name="Button1" />
-  </div>
-</testresults>

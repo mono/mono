@@ -1,6 +1,0 @@
-<asp:Button runat="server" 
-  SkinID=""
-  BackColor="Red" 
-  ForeColor="White" 
-  Font-Name="Arial" 
-  Font-Size="9px" />

@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<testresults name="">
-  <div id="GHTSubTest1" style="height:96px;width:553px">
-    <form method="post" enctype="application/x-www-form-urlencoded" action="HtmlForm_Method2.aspx" id="myForm1" name="myForm1" />
-    <div>
-      <input id="__VIEWSTATE" value="/wEPDwULLTE1NjIyMzU2NDVkZNh4/fV8+i6bFUmg+Iios7CGdG+V" type="hidden" name="__VIEWSTATE" />
-    </div>
-  </div>
-</testresults>

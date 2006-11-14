@@ -1,9 +1,0 @@
-prefix=${pcfiledir}/../..
-exec_prefix=${prefix}
-libdir=${exec_prefix}/lib
-
-
-Name: Mono NUnit
-Description: Mono's version of NUnit
-Version: @VERSION@
-Libs: -r:${libdir}/mono/1.0/nunit.core.dll -r:${libdir}/mono/1.0/nunit.framework.dll -r:${libdir}/mono/1.0/nunit.util.dll

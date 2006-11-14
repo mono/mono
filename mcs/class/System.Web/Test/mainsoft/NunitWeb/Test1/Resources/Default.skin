@@ -1,2 +1,0 @@
-
-<asp:Image runat="server" skinid="myskin" imageurl="test.jpg" />

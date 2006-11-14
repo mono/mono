@@ -1,5 +1,0 @@
-2006-10-02  Jonathan Pobst <monkey@jpobst.com>
-	* ArrangedElementCollection.cs: Initial commit.
-
-2006-09-15  Jonathan Pobst <monkey@jpobst.com>
-	* DefaultLayout.cs, FlowLayout.cs: Initial commit.

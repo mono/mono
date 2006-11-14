@@ -1,8 +1,0 @@
-2006-02-28  Chris Toshok  <toshok@ximian.com>
-
-	* IInternalConfigWebHost.cs: corcompare work.
-
-2006-01-22  Chris Toshok  <toshok@ximian.com>
-
-	* IInternalConfigWebHost.cs: new 2.0 interface.
-

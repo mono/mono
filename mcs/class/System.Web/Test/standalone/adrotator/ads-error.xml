@@ -1,8 +1,0 @@
-<Advertisements>
-<Ad>
-	<ImageUrl>~/images/someimage.jpg</ImageUrl>
-	<NavigateUrl>http://www.novell.com</NavigateUrl>
-	<AlternateText>Novell</AlternateText>
-	<Impressions>80</Impressions>
-	<Keyword>novell</Keyword>
-</Ad>

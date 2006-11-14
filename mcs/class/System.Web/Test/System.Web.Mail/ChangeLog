@@ -1,5 +1,0 @@
-2005-09-09  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* MailAttachmentCas.cs: New. CAS unit tests for MailAttachment.
-	* MailMessageCas.cs: New. CAS unit tests for MailMessage.
-	* SmtpMailCas.cs: New. CAS unit tests for SmtpMail.

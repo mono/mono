@@ -1,9 +1,0 @@
-2006-03-03  Ankit Jain  <jankit@novell.com>
-
-	* System.Transactions_test.dll.sources: New.
-	* Test: New directory.
-
-2005-09-22  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* Makefile, System.Transactions.dll.sources : new files.
-

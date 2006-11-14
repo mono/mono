@@ -1,4 +1,0 @@
-connStrings[LocalSqlServer] = data source=127.0.0.1; Integrated Security=SSPI
-connStrings[AccessFileName] = null
-sect.Settings[hithere] = null
-rsa = null

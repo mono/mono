@@ -1,4 +1,0 @@
-<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' targetNamespace='urn:foo'>
-  <xs:import namespace='urn:bar' schemaLocation='inter-inc-2.xsd' />
-  <xs:element name='foo' />
-</xs:schema>

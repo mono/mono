@@ -1,2 +1,0 @@
-mget is a subset of wget implemented using Mono. It is useful for comparing 
-(file) output and performance between managed and native implementations.

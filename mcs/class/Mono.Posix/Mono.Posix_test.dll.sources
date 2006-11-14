@@ -1,7 +1,0 @@
-Mono.Unix/StdioFileStreamTest.cs
-Mono.Unix/UnixEncodingTest.cs
-Mono.Unix/UnixGroupTest.cs
-Mono.Unix/UnixMarshalTest.cs
-Mono.Unix/UnixPathTest.cs
-Mono.Unix/UnixUserTest.cs
-Mono.Unix.Native/StdlibTest.cs

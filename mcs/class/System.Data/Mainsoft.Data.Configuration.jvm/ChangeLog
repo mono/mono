@@ -1,7 +1,0 @@
-2006-10-10  Konstantin Triger <kostat@mainsoft.com>
-
-	* KeyMapperBase.cs: Add support for "|DataDirectory|" substitution string.
-
-2006-05-25  Konstantin Triger <kostat@mainsoft.com>
-
-	* ProvidersSectionHandler.cs: support configuration hierarchy merge.

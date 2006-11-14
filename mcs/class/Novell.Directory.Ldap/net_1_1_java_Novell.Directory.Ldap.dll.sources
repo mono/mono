@@ -1,3 +1,0 @@
-#include Novell.Directory.Ldap.dll.sources
-Novell.Directory.Ldap.Rfc2251/RfcLdapURL.cs
-Novell.Directory.Ldap.Security.jvm/*.cs

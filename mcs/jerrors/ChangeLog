@@ -1,6 +1,0 @@
-2004-07-21  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
-
-	* Added test cases for parsing errors that the new parser already
-	handles: js1003.js, js1004.js, js1005.js, js1006.js, js1007.js,
-	js1008.js, js1009.js, js1015.js, js1016.js, js1018.js, js1024.js,
-	js1028.js, js1033.js.

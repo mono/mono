@@ -1,6 +1,0 @@
-2005-10-31  Sebastien Pouliot  <sebastien@ximian.com> 
-
-	* ResourceConsumptionAttribute.cs: New. 2.0 attribute.
-	* ResourceExposureAttribute.cs: New. 2.0 attribute.
-	* ResourceScope.cs: New. 2.0 enum.
-	* VersioningHelper.cs: New. 2.0 public helper class.

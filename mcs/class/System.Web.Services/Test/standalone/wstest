@@ -1,1 +1,0 @@
-mono --debug wstest.exe "$@"

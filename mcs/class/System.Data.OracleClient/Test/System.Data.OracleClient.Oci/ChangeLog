@@ -1,4 +1,0 @@
-2006-10-17 Leszek Ciesielski <skolima@gmail.com>
-
-	* OciDefineHandleTest.cs: regression for bugs 79004 and 78840
-	(trimming of unicode strings)
