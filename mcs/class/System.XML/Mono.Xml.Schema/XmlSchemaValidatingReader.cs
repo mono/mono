@@ -135,6 +135,9 @@ namespace Mono.Xml.Schema
 			v.LineInfoProvider = this;
 			v.ValidationEventSender = reader;
 #if !NON_MONO
+			ValidationEventHandler += delegate (object o, ValidationEventArgs e) {
+				settings.OnValidationError (o, e);
+			};
 			if (settings != null && settings.Schemas != null)
 				v.XmlResolver = settings.Schemas.XmlResolver;
 			else
@@ -145,7 +148,10 @@ namespace Mono.Xml.Schema
 			v.Initialize ();
 		}
 
-		public ValidationEventHandler ValidationEventHandler;
+		public event ValidationEventHandler ValidationEventHandler {
+			add { v.ValidationEventHandler += value; }
+			remove { v.ValidationEventHandler -= value; }
+		}
 
 		public XmlSchemaType ElementSchemaType {
 			get {

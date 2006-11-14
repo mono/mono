@@ -342,6 +342,22 @@ namespace MonoTests.System.Xml
 					xr.Read ();
 			}
 		}
+
+		[Test]
+		[ExpectedException (typeof (ApplicationException))]
+		public void ValidationEventHandler ()
+		{
+			XmlReaderSettings settings = new XmlReaderSettings ();
+			settings.Schemas.Add (new XmlSchema ());
+			settings.ValidationType = ValidationType.Schema;
+			settings.ValidationEventHandler += delegate (object o, ValidationEventArgs e) {
+				throw new ApplicationException ();
+			};
+			XmlReader r = XmlReader.Create (
+				new StringReader ("<root/>"), settings);
+			while (!r.EOF)
+				r.Read ();
+		}
 	}
 }
 #endif

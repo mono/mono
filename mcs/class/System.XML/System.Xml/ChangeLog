@@ -1,3 +1,9 @@
+2006-11-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReaderSettings.cs : in copy constructor, copy (dispatch)
+	  validation event as well. Add OnValidationError() to be invoked
+	  by other internal stuff to raise the validation event.
+
 2006-11-13  Michael Meeks  <michael.meeks@novell.com>
 
 	* XmlReader.cs, XmlTextReader.cs, XmlTextReader2.cs:

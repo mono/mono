@@ -1,3 +1,9 @@
+2006-11-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaValidatingReader.cs : dispatch validation events from
+	  XmlReaderSettings. Turned out that outside System.Xml.dll
+	  XmlReaderSettings.ValidationEventHandler is useless.
+
 2006-10-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs : Fixed bug #79650. Enumeration facet was

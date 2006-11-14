@@ -79,6 +79,8 @@ namespace System.Xml
 			validationType = org.validationType;
 			nameTable = org.nameTable;
 			xmlResolver = org.xmlResolver;
+			if (org.ValidationEventHandler != null)
+				ValidationEventHandler += org.ValidationEventHandler;
 		}
 
 		public event ValidationEventHandler ValidationEventHandler;
@@ -173,6 +175,14 @@ namespace System.Xml
 				schemas = value;
 				schemasNeedsInitialization = false;
 			}
+		}
+
+		internal void OnValidationError (object o, ValidationEventArgs e)
+		{
+			if (ValidationEventHandler != null)
+				ValidationEventHandler (o, e);
+			else if (e.Severity == XmlSeverityType.Error)
+				throw e.Exception;
 		}
 
 		internal void SetSchemas (XmlSchemaSet schemas)
