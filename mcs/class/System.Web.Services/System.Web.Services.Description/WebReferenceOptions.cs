@@ -47,6 +47,8 @@ namespace System.Web.Services.Description
 	{
 		#region Static members
 		static XmlSchema schema;
+		static XmlSerializerImplementation implementation =
+			new WebReferenceOptionsSerializerImplementation ();
 
 		public const string TargetNamespace = "http://microsoft.com/webReference/";
 
@@ -72,7 +74,15 @@ namespace System.Web.Services.Description
 		public static WebReferenceOptions Read (XmlReader xmlReader,
 			ValidationEventHandler validationEventHandler)
 		{
-			throw new NotImplementedException ();
+			XmlReaderSettings s = new XmlReaderSettings ();
+			s.ValidationType = ValidationType.Schema;
+			s.Schemas.Add (Schema);
+			if (validationEventHandler != null)
+				s.ValidationEventHandler += validationEventHandler;
+			using (XmlReader r = XmlReader.Create (xmlReader, s)) {
+				XmlSerializer ser = implementation.GetSerializer (typeof (WebReferenceOptions));
+				return (WebReferenceOptions) ser.Deserialize (r);
+			}
 		}
 
 		#endregion

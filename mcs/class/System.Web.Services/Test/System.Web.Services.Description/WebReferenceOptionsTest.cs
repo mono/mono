@@ -24,26 +24,24 @@ namespace MonoTests.System.Web.Services.Description
 	[TestFixture]
 	public class WebReferenceOptionsTest
 	{
-		[Test]
-		[Category ("NotDotNet")] // why on earth does it allow invalid xml?
-		public void Schema ()
-		{
-			string xml1 = "<webReferenceOptions xmlns='http://microsoft.com/webReferences/' />";
-			string xml2 = @"
-<webReferenceOptions xmlns='http://microsoft.com/webReferences/'>
+		string xml1 = "<webReferenceOptions xmlns='http://microsoft.com/webReference/' />";
+		string xml2 = @"
+<webReferenceOptions xmlns='http://microsoft.com/webReference/'>
   <codeGenerationOptions>properties newAsync</codeGenerationOptions>
   <style>client</style>
   <verbose>false</verbose>
 </webReferenceOptions>
-			";
-			string xml3 = @"
-<webReferenceOptions xmlns='http://microsoft.com/webReferences/'>
+		";
+		string xml3 = @"
+<webReferenceOptions xmlns='http://microsoft.com/webReference/'>
   <gyabo/>
   <hoge/>
 </webReferenceOptions>";
 
-WebReferenceOptions.Schema.Write (Console.Out);
-
+		[Test]
+		[Category ("NotDotNet")] // why on earth does it allow invalid xml?
+		public void Schema ()
+		{
 			Validate (xml1);
 			Validate (xml2);
 			try {
@@ -61,6 +59,24 @@ WebReferenceOptions.Schema.Write (Console.Out);
 			XmlReader r = XmlReader.Create (new StringReader (xml), s);
 			while (!r.EOF)
 				r.Read ();
+		}
+
+		[Test]
+		public void Read ()
+		{
+			Read (xml1);
+			Read (xml2);
+			try {
+				Read (xml3);
+				Assert.Fail ("xml3 is invalid.");
+			} catch (XmlSchemaValidationException) {
+			}
+		}
+
+		void Read (string xml)
+		{
+			XmlReader r = XmlReader.Create (new StringReader (xml));
+			WebReferenceOptions.Read (r, null);
 		}
 	}
 }

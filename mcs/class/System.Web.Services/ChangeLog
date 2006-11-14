@@ -1,5 +1,10 @@
 2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* System.Web.Services.dll.sources :
+	  added WebReferenceOptionsSerializer.cs.
+
+2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* System.Web.Services.dll.sources : added WebReferenceOptions.cs.
 	* System.Web.Services_test.dll.sources :
 	  added WebReferenceOptionsTest.cs.

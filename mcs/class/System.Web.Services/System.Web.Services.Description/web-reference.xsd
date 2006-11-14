@@ -1,7 +1,7 @@
 <!-- You can guess this schema from http://msdn2.microsoft.com/en-us/library/7h3ystb6(VS.80).aspx -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-  elementFormDefault="qualified" xmlns:t="http://microsoft.com/webReferences/"
-  targetNamespace="http://microsoft.com/webReferences/">
+  elementFormDefault="qualified" xmlns:t="http://microsoft.com/webReference/"
+  targetNamespace="http://microsoft.com/webReference/">
   <xs:element name="webReferenceOptions" type="t:webReferenceOptionsType" />
   <xs:complexType name="webReferenceOptionsType">
     <xs:all>

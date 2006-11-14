@@ -1,5 +1,10 @@
 2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* WebReferenceOptionsTest.cs :
+	  added test for Read(). Fixed namespace URI.
+
+2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* WebReferenceOptionsTest.cs : new test.
 
 2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
