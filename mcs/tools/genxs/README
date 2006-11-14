@@ -36,6 +36,8 @@ The configuration file is an xml document based on the following grammar
 		<serializer class="name" assembly="name"> *
 			<reader>name</reader> ?
 			<writer>name</writer> ?
+			<baseSerializer>name</baseSerializer> ? (2.0-only)
+			<implementation>name</implementation> ? (2.0-only)
 			<namespace>name</namespace> ?
 			<namespaceImports> ?
 				<namespaceImport>namespace</namespaceImport> *
@@ -61,6 +63,8 @@ Generation options are specified in child elements:
 
  * reader: name of the reader class.
  * writer: name of the writer class.
+ * baseSerializer: 2.0 only. name of the base XML serializer class.
+ * implementation: 2.0 only. name of the serializer implementation class.
  * namespace: namespace of the reader and writer classes.
  * namespaceImport: a list of namespaces to be added as namespace imports
    ("using" declarations in C#) on the top of the output source.

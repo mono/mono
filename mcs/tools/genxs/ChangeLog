@@ -1,3 +1,8 @@
+2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* README: introduced <baseSerializer> and <implementation> elements
+	  for 2.0 stuff.
+
 2004-02-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* README: added description about new <namespaceImports> feature.
