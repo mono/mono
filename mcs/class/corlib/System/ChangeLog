@@ -1,3 +1,13 @@
+2006-11-14  Miguel de Icaza  <miguel@novell.com>
+
+	* Array.cs: TODOs will from now on be used to flag information
+	that will be developer-visible, not to flag internal information
+	that none of us reads or bothers about.
+
+	For those, use "FIXME" strings in the source code instead. 
+
+	* AppDomain.cs: Update to be more useful.
+
 2006-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* String.cs : fixed incorrect startIndex/length count in

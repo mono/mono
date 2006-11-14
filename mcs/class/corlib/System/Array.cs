@@ -43,8 +43,8 @@ using System.Runtime.ConstrainedExecution;
 namespace System
 {
 	[Serializable]
-	[MonoTODO ("We are doing way to many double/triple exception checks for the overloaded functions")]
-	[MonoTODO ("Sort overloads parameter checks are VERY inconsistent")]
+	// FIXME: We are doing way to many double/triple exception checks for the overloaded functions"
+	// FIXME: Sort overloads parameter checks are VERY inconsistent"
 	public abstract class Array : ICloneable, ICollection, IList, IEnumerable
 	{
 		// Constructor

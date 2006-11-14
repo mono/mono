@@ -706,7 +706,7 @@ namespace System {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern AppDomain createDomain (string friendlyName, AppDomainSetup info);
 
-		[MonoTODO ("allow setup in the other domain")]
+		[MonoTODO ("Currently it does not allow the setup in the other domain")]
 		[SecurityPermission (SecurityAction.Demand, ControlAppDomain = true)]
 		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo, AppDomainSetup info)
 		{
@@ -1015,7 +1015,7 @@ namespace System {
 
 		// methods
 
-		[MonoTODO ("what's the policy affecting names ?")]
+		[MonoTODO ("This routine only returns the parameter currently")]
 		[ComVisible (false)]
 		public string ApplyPolicy (string assemblyName)
 		{
