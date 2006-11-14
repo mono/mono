@@ -1,3 +1,7 @@
+2006-11-14  Igor Zelmanovich   <igorz@mainsoft.com>
+
+	* CompositeDataBoundControlTest.cs: added tests.
+
 2006-11-13  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* LoginTest.cs: login tests converted to webtest

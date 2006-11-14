@@ -51,10 +51,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			public bool createChildControls2 = false;
 			public bool dataBind = false;
 			public bool CreateChildControls_ChildControlsCreated;
+			public int CreateChildControls_Controls_Count;
 
 			protected override int CreateChildControls (IEnumerable dataSource, bool dataBinding) {
 				createChildControls2 = true;
 				CreateChildControls_ChildControlsCreated = ChildControlsCreated;
+				CreateChildControls_Controls_Count = Controls.Count;
 				return 10;
 			}
 
@@ -133,6 +135,17 @@ namespace MonoTests.System.Web.UI.WebControls
 			c.DoCreateChildControls ();
 			Assert.AreEqual (0, c.Controls.Count);
 		}
+
+		[Test]
+		public void DetailsView_CreateChildControls_Clear2 () {
+			MyCompositeDataBoundControl c = new MyCompositeDataBoundControl ();
+			c.Controls.Add (new WebControl (HtmlTextWriterTag.A));
+			Assert.AreEqual (1, c.Controls.Count, "Controls.Count before DataBind");
+			c.DataBind ();
+			Assert.AreEqual (0, c.CreateChildControls_Controls_Count, "Controls.Count in CreateChildControls");
+			Assert.AreEqual (0, c.Controls.Count, "Controls.Count after DataBind");
+
+		}
 		
 		[Test]
 		public void DataBind_ChildControlsCreated () {
@@ -141,6 +154,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.Controls.Add (c);
 			Assert.IsFalse (c.GetChildControlsCreated (), "ChildControlsCreated before DataBind");
 			c.DataBind ();
+			Assert.IsTrue (c.ensureCreateChildControls);
+			Assert.IsTrue (c.createChildControls1);
+			Assert.IsTrue (c.createChildControls2);
 			Assert.IsTrue (c.CreateChildControls_ChildControlsCreated, "ChildControlsCreated in CreateChildControls");
 			Assert.IsTrue (c.GetChildControlsCreated (), "ChildControlsCreated after DataBind");
 		}

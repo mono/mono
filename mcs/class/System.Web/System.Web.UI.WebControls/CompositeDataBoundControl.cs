@@ -64,7 +64,7 @@ namespace System.Web.UI.WebControls
 		
 		protected internal override void PerformDataBinding (IEnumerable data)
 		{
-			ChildControlsCreated = true;
+			Controls.Clear ();
 			ViewState ["_ItemCount"] = CreateChildControls (data, true);
 		}
 		

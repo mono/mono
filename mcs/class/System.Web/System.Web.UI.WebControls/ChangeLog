@@ -1,3 +1,8 @@
+2006-11-14 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* CompositeDataBoundControl.cs: fixed: 
+	DataBind call Controls.Clear().
+
 2006-11-13 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* CompositeDataBoundControl.cs: fixed: 
