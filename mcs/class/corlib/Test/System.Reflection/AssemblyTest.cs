@@ -844,6 +844,60 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
+		[Test]
+		public void bug79872 ()
+		{
+			Random rnd = new Random ();
+			string outdir;
+			int tries = 0;
+
+		retry:
+			outdir = Path.Combine (Path.GetTempPath (), "bug79872-" + rnd.Next (10000, 99999));
+			if (Directory.Exists (outdir)) {
+				try {
+					Directory.Delete (outdir, true);
+				} catch {
+					if (++tries <= 100)
+						goto retry;
+				}
+			}
+
+			Directory.CreateDirectory (outdir);
+
+			AssemblyName an = new AssemblyName ();
+			an.Name = "bug79872";
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Save, outdir);
+			string dllname = "bug79872.dll";
+			ModuleBuilder mb1 = ab.DefineDynamicModule ("bug79872", dllname);
+			string netmodule = "bug79872.netmodule";
+			ModuleBuilder mb2 = ab.DefineDynamicModule (netmodule, netmodule);
+			TypeBuilder a1 = mb2.DefineType ("A");
+			a1.CreateType ();
+			ab.Save (dllname);
+
+			bool ok = true;
+			try {
+				Assembly.LoadFrom (Path.Combine (outdir, dllname));
+			} catch {
+				ok = false;
+			}
+			Assert.IsTrue (ok, "Should load a .NET metadata file with an assembly manifest");
+
+			ok = false;
+			try {
+				Assembly.LoadFrom (Path.Combine (outdir, netmodule));
+			} catch (BadImageFormatException) {
+				ok = true; // mono and .net 2.0 throw this
+			} catch (FileLoadException) {
+				ok = true; // .net 1.1 throws this
+			} catch {
+				// swallow the rest
+			}
+			Assert.IsTrue (ok, "Complain on loading a .NET metadata file without an assembly manifest");
+
+			Directory.Delete (outdir, true);
+		}
+
 		[Serializable ()]
 		private class AssemblyResolveHandler
 		{
