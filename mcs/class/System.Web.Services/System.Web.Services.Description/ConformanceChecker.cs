@@ -37,7 +37,7 @@ namespace System.Web.Services.Description
 {
 	internal abstract class ConformanceChecker
 	{
-		public abstract WsiClaims Claims { get; }
+		public abstract WsiProfiles Claims { get; }
 
 		public virtual void Check (ConformanceCheckContext ctx, Binding value) { }
 		public virtual void Check (ConformanceCheckContext ctx, MessageBinding value) { }

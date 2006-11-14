@@ -42,7 +42,7 @@ namespace System.Web.Services.Description
 		}
 		
 		[MonoTODO]
-		public static bool CheckConformance (WsiClaims claims, ServiceDescription service, BasicProfileViolationCollection violations)
+		public static bool CheckConformance (WsiProfiles claims, ServiceDescription service, BasicProfileViolationCollection violations)
 		{
 			ServiceDescriptionCollection col = new ServiceDescriptionCollection ();
 			col.Add (service);
@@ -51,20 +51,20 @@ namespace System.Web.Services.Description
 		}
 
 		[MonoTODO]
-		public static bool CheckConformance (WsiClaims claims, ServiceDescriptionCollection services, BasicProfileViolationCollection violations)
+		public static bool CheckConformance (WsiProfiles claims, ServiceDescriptionCollection services, BasicProfileViolationCollection violations)
 		{
 			ConformanceCheckContext ctx = new ConformanceCheckContext (services, violations);
 			return Check (claims, ctx, services);
 		}
 
 		[MonoTODO]
-		public static bool CheckConformance (WsiClaims claims, WebReference webReference, BasicProfileViolationCollection violations)
+		public static bool CheckConformance (WsiProfiles claims, WebReference webReference, BasicProfileViolationCollection violations)
 		{
 			ConformanceCheckContext ctx = new ConformanceCheckContext (webReference, violations);
 			return Check (claims, ctx, webReference.Documents.Values);
 		}
 		
-		static bool Check (WsiClaims claims, ConformanceCheckContext ctx, IEnumerable documents)
+		static bool Check (WsiProfiles claims, ConformanceCheckContext ctx, IEnumerable documents)
 		{
 			ConformanceChecker[] checkers = GetCheckers (claims);
 			if (checkers == null) return true;
@@ -79,9 +79,9 @@ namespace System.Web.Services.Description
 			return ctx.Violations.Count == 0;
 		}
 		
-		static ConformanceChecker[] GetCheckers (WsiClaims claims)
+		static ConformanceChecker[] GetCheckers (WsiProfiles claims)
 		{
-			if ((claims & WsiClaims.BP10) != 0)
+			if ((claims & WsiProfiles.BasicProfile1_1) != 0)
 				return new ConformanceChecker[] { BasicProfileChecker.Instance };
 			return null;
 		}

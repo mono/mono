@@ -40,8 +40,8 @@ namespace System.Web.Services.Description
 	{
 		public static BasicProfileChecker Instance = new BasicProfileChecker ();
 		
-		public override WsiClaims Claims { 
-			get { return WsiClaims.BP10; }
+		public override WsiProfiles Claims { 
+			get { return WsiProfiles.BasicProfile1_1; }
 		}
 		
 		public override void Check (ConformanceCheckContext ctx, Import value) 

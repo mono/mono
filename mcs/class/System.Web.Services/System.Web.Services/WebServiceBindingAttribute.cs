@@ -29,7 +29,11 @@
 //
 
 namespace System.Web.Services {
+#if NET_2_0
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true, Inherited = true)]
+#else
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
+#endif
 	public sealed class WebServiceBindingAttribute : Attribute {
 
 		#region Fields
@@ -40,7 +44,6 @@ namespace System.Web.Services {
 		
 #if NET_2_0
 		bool emitConformanceClaims;
-		WsiClaims conformanceClaims;
 		
 		WsiProfiles conformsTo;
 #endif
@@ -92,13 +95,6 @@ namespace System.Web.Services {
 		
 #if NET_2_0
 
-		[System.Runtime.InteropServices.ComVisibleAttribute (false)]
-		public WsiClaims ConformanceClaims {
-			get { return conformanceClaims; }
-			set { conformanceClaims = value; }
-		}
-		
-		[System.Runtime.InteropServices.ComVisibleAttribute (false)]
 		public bool EmitConformanceClaims {
 			get { return emitConformanceClaims; }
 			set { emitConformanceClaims = value; }

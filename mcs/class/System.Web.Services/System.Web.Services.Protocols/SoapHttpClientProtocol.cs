@@ -53,7 +53,6 @@ namespace System.Web.Services.Protocols
 	{
 		SoapTypeStubInfo type_info;
 #if NET_2_0
-		WsiClaims conformanceClaims;
 		SoapProtocolVersion soapVersion;
 #endif
 
@@ -342,14 +341,6 @@ namespace System.Web.Services.Protocols
 		
 #if NET_2_0
 
-		[MonoTODO ("Do something with this")]
-		[System.Runtime.InteropServices.ComVisible(false)]
-		[Obsolete]
-		public WsiClaims ConformanceClaims {
-			get { return conformanceClaims; }
-			set { conformanceClaims = value; }
-		}
-		
 		[MonoTODO ("Do something with this")]
 		[System.Runtime.InteropServices.ComVisible(false)]
 		public SoapProtocolVersion SoapVersion {

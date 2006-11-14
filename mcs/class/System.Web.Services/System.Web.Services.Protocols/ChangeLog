@@ -1,3 +1,7 @@
+2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SoapHttpClientProtocol.cs : 2.0 API fix (WsiClaims -> WsiProfiles).
+
 2006-09-06  Lluis Sanchez Gual <lluis@novell.com> 
 
 	* ValueCollectionParameterReader.cs, MimeFormatter.cs: Support enums in

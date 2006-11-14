@@ -7,7 +7,6 @@ System.Web.Services/WebService.cs
 System.Web.Services/WebServiceAttribute.cs
 System.Web.Services/WebServiceBindingAttribute.cs
 System.Web.Services/WebServicesDescriptionAttribute.cs
-System.Web.Services/WsiClaims.cs
 System.Web.Services/WsiProfiles.cs
 System.Web.Services.Configuration/DiagnosticsElement.cs
 System.Web.Services.Configuration/PriorityGroup.cs

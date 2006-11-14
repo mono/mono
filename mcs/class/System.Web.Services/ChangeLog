@@ -1,5 +1,9 @@
 2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* System.Web.Services.dll.sources : removed obsolete WsiClaims.cs.
+
+2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile : added *.wsdl to the build.
 	  Added wsdl and genxs to EXTRA_DISTFILES.
 

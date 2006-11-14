@@ -37,18 +37,18 @@ namespace System.Web.Services.Description
 {
 	public class BasicProfileViolation
 	{
-		WsiClaims _claims;
+		WsiProfiles _claims;
 		StringCollection _elements;
 		ConformanceRule _rule;
 		
-		internal BasicProfileViolation (WsiClaims claims, ConformanceRule rule)
+		internal BasicProfileViolation (WsiProfiles claims, ConformanceRule rule)
 		{
 			_claims = claims;
 			_rule = rule;
 			_elements = new StringCollection ();
 		}
 		
-		public WsiClaims Claims {
+		public WsiProfiles Claims {
 			get { return _claims; }
 		}
 		
