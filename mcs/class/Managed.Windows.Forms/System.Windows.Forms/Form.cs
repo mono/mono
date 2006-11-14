@@ -1871,6 +1871,14 @@ namespace System.Windows.Forms {
 						pe = XplatUI.PaintEventStart(Handle, false);
 						pnt = XplatUI.GetMenuOrigin(window.Handle);
 
+						// The entire menu has to be in the clip rectangle because the 
+						// control buttons are right-aligned and otherwise they would
+						// stay painted when the window gets resized.
+						Rectangle clip = new Rectangle (pnt.X, pnt.Y, ClientSize.Width, 0);
+						clip = Rectangle.Union(clip, pe.ClipRectangle);
+						pe.SetClip(clip);
+						pe.Graphics.SetClip(clip);
+						
 						ActiveMenu.Draw (pe, new Rectangle (pnt.X, pnt.Y, ClientSize.Width, 0));
 
 						if (ActiveMaximizedMdiChild != null) {

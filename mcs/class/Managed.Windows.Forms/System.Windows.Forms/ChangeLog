@@ -1,3 +1,16 @@
+2006-11-14  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* XplatUIX11.cs: send a WM_NCPAINT on WM_NCCALCSIZE so that 
+	the window gets to paint its borders even if the window is
+	getting	smaller.
+	
+	* Form.cs: on a WM_NCPAINT invalidate the entire menu, 
+	otherwise the old control buttons would still be painted 
+	if the window gets bigger.
+	
+	* PaintEventArgs.cs: add an internal method so that the clip 
+	rectangle can be changed.
+	
 2006-11-13  Chris Toshok  <toshok@ximian.com>
 
 	[ fixes bug #79745 ]

@@ -77,6 +77,11 @@ namespace System.Windows.Forms {
 			return res;
 		}
 
+		internal void SetClip (Rectangle clip)
+		{
+			clip_rectangle = clip;
+		}
+		
 		#region Protected Instance Methods
 		~PaintEventArgs() {
 			Dispose(false);
