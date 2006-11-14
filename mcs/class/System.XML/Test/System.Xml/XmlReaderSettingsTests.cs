@@ -306,6 +306,17 @@ namespace MonoTests.System.Xml
 			// but don't reject because of that fact.
 			XmlReader r = XmlReader.Create (dr, settings);
 		}
+
+		[Test]
+		public void NullResolver ()
+		{
+			XmlReaderSettings settings = new XmlReaderSettings ();
+			settings.XmlResolver = null;
+			using (XmlReader xr = XmlReader.Create ("Test/XmlFiles/simple.xml", settings)) {
+				while (!xr.EOF)
+					xr.Read ();
+			}
+		}
 	}
 }
 #endif
