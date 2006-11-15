@@ -178,6 +178,7 @@
 		<Compile Include="System.Web.Services.Description\ServiceDescriptionImportStyle.cs"/>
 		<Compile Include="System.Web.Services.Description\ServiceDescriptionImportWarnings.cs"/>
 		<Compile Include="System.Web.Services.Description\ServiceDescriptionReflector.cs"/>
+		<Compile Include="System.Web.Services.Description\ServiceDescriptionSerializerBase.cs"/>
 		<Compile Include="System.Web.Services.Description\ServiceDescriptionSerializerBase2.cs"/>
 		<Compile Include="System.Web.Services.Description\Soap12AddressBinding.cs"/>
 		<Compile Include="System.Web.Services.Description\Soap12Binding.cs"/>
@@ -199,6 +200,8 @@
 		<Compile Include="System.Web.Services.Description\Types.cs"/>
 		<Compile Include="System.Web.Services.Description\WebReference.cs"/>
 		<Compile Include="System.Web.Services.Description\WebReferenceCollection.cs"/>
+		<Compile Include="System.Web.Services.Description\WebReferenceOptions.cs"/>
+		<Compile Include="System.Web.Services.Description\WebReferenceOptionsSerializer.cs"/>
 		<Compile Include="System.Web.Services.Description\WebServicesInteroperability.cs"/>
 		<Compile Include="System.Web.Services.Discovery\ContractReference.cs"/>
 		<Compile Include="System.Web.Services.Discovery\ContractSearchPattern.cs"/>
@@ -311,13 +314,20 @@
 		<Compile Include="System.Web.Services\WebServiceAttribute.cs"/>
 		<Compile Include="System.Web.Services\WebServiceBindingAttribute.cs"/>
 		<Compile Include="System.Web.Services\WebServicesDescriptionAttribute.cs"/>
-		<Compile Include="System.Web.Services\WsiClaims.cs"/>
 		<Compile Include="System.Web.Services\WsiProfiles.cs"/>
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="..\..\build\common\Consts.cs.in">
 			<Link>Consts.cs.in</Link>
 		</None>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="System.Web.Services.Description\wsdl-1.1.xsd">
+			<LogicalName>wsdl-1.1.xsd</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="System.Web.Services.Description\web-reference.xsd">
+			<LogicalName>web-reference.xsd</LogicalName>
+		</EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Properties\"/>
