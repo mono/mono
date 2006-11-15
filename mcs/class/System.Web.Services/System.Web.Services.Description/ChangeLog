@@ -1,3 +1,8 @@
+2006-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceDescriptionImporter.cs : API fix. Now we can use new
+	  WebReferenceOptions.
+
 2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebReferenceOptionsSerializer.cs : oops, surrounding #if NET_2_0

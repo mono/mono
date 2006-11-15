@@ -54,6 +54,7 @@ namespace System.Web.Services {
 		#region Properties
 
 		[Browsable (false)]
+		[Description ("The ASP.NET application object for the current request.")]
 		[WebServicesDescription ("The ASP.NET application object for the current request.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpApplicationState Application {
@@ -90,7 +91,9 @@ namespace System.Web.Services {
 
 #if NET_2_0
 		[MonoTODO]
-		public virtual System.Web.Services.Protocols.SoapProtocolVersion SoapVersion {
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public System.Web.Services.Protocols.SoapProtocolVersion SoapVersion {
 			get { throw new NotImplementedException (); }
 		}
 #endif

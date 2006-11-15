@@ -43,7 +43,7 @@ namespace System.Web.Services.Protocols
 		public static readonly XmlQualifiedName DataEncodingUnknownFaultCode 
 			= new XmlQualifiedName ("DataEncodingUnknown", "http://www.w3.org/2003/05/soap-envelope");
 			
-		public static readonly XmlQualifiedName EncodingMissingIDFaultCode
+		public static readonly XmlQualifiedName EncodingMissingIdFaultCode
 			= new XmlQualifiedName ("MissingID", "http://www.w3.org/2003/05/soap-encoding");
 			
 		public static readonly XmlQualifiedName EncodingUntypedValueFaultCode

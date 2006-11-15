@@ -67,7 +67,7 @@ namespace System.Web.Services.Protocols
 			string actor, 
 			string role, 
 			string lang, 
-			SoapFaultSubcode subcode, 
+			SoapFaultSubCode subcode, 
 			Exception innerException)
 			
 		: base (message, code, actor, role, lang, null, subcode, innerException)
@@ -80,7 +80,7 @@ namespace System.Web.Services.Protocols
 			XmlQualifiedName code, 
 			string actor, 
 			string role, 
-			SoapFaultSubcode subcode, 
+			SoapFaultSubCode subcode, 
 			Exception innerException)
 			
 		: base (message, code, actor, role, null, subcode, innerException)

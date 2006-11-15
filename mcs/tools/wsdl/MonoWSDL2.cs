@@ -174,7 +174,11 @@ namespace Mono.WebServices
 			CodeDomProvider provider = GetProvider();
 				
 			StringCollection validationWarnings;
-			validationWarnings = ServiceDescriptionImporter.GenerateWebReferences (references, options, style, provider, codeUnit, verbose);
+			WebReferenceOptions opts = new WebReferenceOptions ();
+			opts.CodeGenerationOptions = options;
+			opts.Style = style;
+			opts.Verbose = verbose;
+			validationWarnings = ServiceDescriptionImporter.GenerateWebReferences (references, provider, codeUnit, opts);
 			
 			for (int n=0; n<references.Count; n++)
 			{

@@ -34,17 +34,18 @@ using System.Xml;
 
 namespace System.Web.Services.Protocols 
 {
-	public class SoapFaultSubcode
+	[Serializable]
+	public class SoapFaultSubCode
 	{
 		XmlQualifiedName _code;
-		SoapFaultSubcode _subcode;
+		SoapFaultSubCode _subcode;
 		
-		public SoapFaultSubcode (XmlQualifiedName code)
+		public SoapFaultSubCode (XmlQualifiedName code)
 		{
 			_code = code;
 		}
 		
-		public SoapFaultSubcode (XmlQualifiedName code, SoapFaultSubcode subcode)
+		public SoapFaultSubCode (XmlQualifiedName code, SoapFaultSubCode subcode)
 		{
 			_code = code;
 			_subcode = subcode;
@@ -54,7 +55,7 @@ namespace System.Web.Services.Protocols
 			get { return _code; }
 		}
 
-		public SoapFaultSubcode Subcode {
+		public SoapFaultSubCode SubCode {
 			get { return _subcode; }
 		}
 

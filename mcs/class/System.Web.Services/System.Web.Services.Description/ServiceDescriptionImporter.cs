@@ -170,24 +170,12 @@ namespace System.Web.Services.Description {
 		
 #if NET_2_0
 
+		[MonoTODO] // where to use Verbose and Extensions in options?
 		public static StringCollection GenerateWebReferences (
 			WebReferenceCollection webReferences, 
-			CodeGenerationOptions options, 
-			ServiceDescriptionImportStyle style, 
-			CodeDomProvider codeGenerator)
-		{
-			CodeCompileUnit codeCompileUnit = new CodeCompileUnit ();
-			return GenerateWebReferences (webReferences, options, style, codeGenerator, codeCompileUnit, false);
-		}
-
-		[MonoTODO ("verbose?")]
-		public static StringCollection GenerateWebReferences (
-			WebReferenceCollection webReferences, 
-			CodeGenerationOptions options, 
-			ServiceDescriptionImportStyle style, 
 			CodeDomProvider codeGenerator, 
 			CodeCompileUnit codeCompileUnit, 
-			bool verbose)
+			WebReferenceOptions options)
 		{
 			StringCollection allWarnings = new StringCollection ();
 			ImportContext context = new ImportContext (new CodeIdentifiers(), true);
@@ -196,9 +184,9 @@ namespace System.Web.Services.Description {
 			{
 				ServiceDescriptionImporter importer = new ServiceDescriptionImporter ();
 				importer.CodeGenerator = codeGenerator;
-				importer.CodeGenerationOptions = options;
+				importer.CodeGenerationOptions = options.CodeGenerationOptions;
 				importer.Context = context;
-				importer.Style = style;
+				importer.Style = options.Style;
 				importer.ProtocolName = reference.ProtocolName;
 				
 				importer.AddReference (reference);

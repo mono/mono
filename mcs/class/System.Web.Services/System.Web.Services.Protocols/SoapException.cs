@@ -53,7 +53,7 @@ namespace System.Web.Services.Protocols
 #if NET_2_0
 		string lang;
 		string role;
-		SoapFaultSubcode subcode;
+		SoapFaultSubCode subcode;
 #endif
 		#endregion
 
@@ -102,14 +102,14 @@ namespace System.Web.Services.Protocols
 		}
 
 #if NET_2_0
-		public SoapException (string message, XmlQualifiedName code, SoapFaultSubcode subcode)
+		public SoapException (string message, XmlQualifiedName code, SoapFaultSubCode subcode)
 			: base (message)
 		{
 			this.code = code;
 			this.subcode = subcode;
 		}
 		
-		public SoapException (string message, XmlQualifiedName code, string actor, string role, XmlNode detail, SoapFaultSubcode subcode, Exception innerException)
+		public SoapException (string message, XmlQualifiedName code, string actor, string role, XmlNode detail, SoapFaultSubCode subcode, Exception innerException)
 			: base (message, innerException)
 		{
 			this.code = code;
@@ -119,7 +119,7 @@ namespace System.Web.Services.Protocols
 			this.role = role;
 		}
 		
-		public SoapException (string message, XmlQualifiedName code, string actor, string role, string lang, XmlNode detail, SoapFaultSubcode subcode, Exception innerException)
+		public SoapException (string message, XmlQualifiedName code, string actor, string role, string lang, XmlNode detail, SoapFaultSubCode subcode, Exception innerException)
 		{
 			this.code = code;
 			this.subcode = subcode;
@@ -187,7 +187,7 @@ namespace System.Web.Services.Protocols
 		}
 		
 		[System.Runtime.InteropServices.ComVisible(false)]
-		public SoapFaultSubcode SubCode {
+		public SoapFaultSubCode SubCode {
 			get { return subcode; }
 		}
 		

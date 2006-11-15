@@ -1,3 +1,7 @@
+2006-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MonoWSDL2.cs : 2.0 API fixes (use WebReferenceOptions)
+
 2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MonoWSDL2.cs : 2.0 API fixes (WsiClaims -> WsiProfiles)

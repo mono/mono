@@ -86,7 +86,7 @@ namespace System.Web.Services.Discovery {
 
 		#region Methods
 
-		protected static string FilenameFromUrl (string url)
+		public static string FilenameFromUrl (string url)
 		{
 			if (url.ToLower().EndsWith ("/wsdl"))
 				url = url.Substring (0,url.Length-5);
