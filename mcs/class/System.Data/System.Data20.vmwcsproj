@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -11,6 +11,7 @@
     <AssemblyName>System.Data</AssemblyName>
     <JDKName>1.5.0_05</JDKName>
     <GHProjectType>1</GHProjectType>
+    <GHProjectKind>framework</GHProjectKind>
     <Version>2.0</Version>
     <jarserver>iap2</jarserver>
   </PropertyGroup>
