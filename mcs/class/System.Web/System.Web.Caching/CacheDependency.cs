@@ -131,12 +131,14 @@ namespace System.Web.Caching
 		public virtual string GetUniqueID ()
 		{
 			StringBuilder sb = new StringBuilder ();
+#if !TARGET_JVM
 			lock (locker) {
 				if (watchers != null)
 					foreach (FileSystemWatcher fsw in watchers)
 						if (fsw != null && fsw.Path != null && fsw.Path.Length != 0)
 							sb.AppendFormat ("_{0}", fsw.Path);
 			}
+#endif
 
 			if (cachekeys != null)
 				foreach (string key in cachekeys)
