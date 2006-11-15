@@ -1,3 +1,9 @@
+2006-11-14  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* MapAttribute.cs: Update (changes SuppressFlags to a string holding mask).
+	* Syscall.cs: Specify the mask value for non-bitmask values in
+	  FilePermissions.
+
 2006-10-27  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* MapAttribute.cs: Update (adds SuppressFlags property).
