@@ -338,14 +338,7 @@ namespace System.Web.UI.WebControls {
 			IEnumerable list = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
 			if (list == null)
 				return;
-#endif
 
-#if NET_2_0
-			if (!AppendDataBoundItems)
-#endif
-				Items.Clear();
-
-#if !NET_2_0
 			DoDataBinding (list);
 #endif
 		}
@@ -363,6 +356,11 @@ namespace System.Web.UI.WebControls {
 		void DoDataBinding (IEnumerable dataSource)
 		{
 			if (dataSource != null) {
+#if NET_2_0
+				if (!AppendDataBoundItems)
+#endif
+					Items.Clear ();
+
 				string format = DataTextFormatString;
 				if (format == "")
 					format = null;
@@ -419,6 +417,8 @@ namespace System.Web.UI.WebControls {
 		{
 			base.PerformDataBinding (dataSource);
 
+			if (dataSource == null)
+				return;
 			DoDataBinding (dataSource);
 		}
 

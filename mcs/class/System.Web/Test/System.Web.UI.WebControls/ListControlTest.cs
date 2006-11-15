@@ -423,6 +423,21 @@ namespace MonoTests.System.Web.UI.WebControls {
 			p.DataBind ();
 		}
 
+		[Test]
+		public void DataBinding6 () {
+			ListControlPoker p = new ListControlPoker ();
+			ArrayList list = new ArrayList ();
+			list.Add (1);
+			list.Add (2);
+			list.Add (3);
+			p.DataSource = list;
+			p.DataBind ();
+			Assert.AreEqual (3, p.Items.Count, "#01");
+			p.DataSource = null;
+			p.DataBind ();
+			Assert.AreEqual (3, p.Items.Count, "#01");
+		}
+
 		class Data {
 			string name;
 			object val;
