@@ -15,6 +15,7 @@
     <Version>2.0</Version>
     <StartupObject>
     </StartupObject>
+    <jarserver>iap2</jarserver>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -65,8 +66,29 @@
     <JDKName>1.5.0_05</JDKName>
     <TargetPlatform>0</TargetPlatform>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Release_Java20\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;TARGET_JVM;NET_1_1;NET_2_0</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <SkipValidation>False</SkipValidation>
+    <KeepIntermediate>False</KeepIntermediate>
+    <GHProjectType>1</GHProjectType>
+    <PreCompile>false</PreCompile>
+    <AdditionalClassPath>
+    </AdditionalClassPath>
+    <ApplicationServerType>
+    </ApplicationServerType>
+    <Version>2.0</Version>
+    <JDKName>1.5.0_05</JDKName>
+    <jarserver>iap2</jarserver>
+    <TargetPlatform>0</TargetPlatform>
+  </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.csharp.targets" />
-  <Import Project="$(GHROOT)\bin\Mainsoft.Common.targets" />
+  <Import Project="$(VMW_HOME)\bin\Mainsoft.Common.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -85,9 +107,10 @@
       <HintPath>mainsoft\MainsoftWebTest\bin\Debug_Java20\HtmlCompare.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="nunit.framework, Version=0.0.0.0, Culture=neutral">
+    <Reference Include="nunit.framework, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>mainsoft\MainsoftWebTest\bin\Debug_Java\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="NunitWeb, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -142,10 +165,6 @@
     <Compile Include="System.Web.Configuration\ProfilePropertySettingsTest.cs" />
     <Compile Include="System.Web.Configuration\SiteMapSectionTest.cs" />
     <Compile Include="System.Web.Configuration\WebConfigurationManagerTest.cs" />
-    <Compile Include="System.Web.Hosting\ApplicationHostTest.cs" />
-    <Compile Include="System.Web.Hosting\HostingEnvironmentTest.cs" />
-    <Compile Include="System.Web.Hosting\SimpleWorkerRequestTest.cs" />
-    <Compile Include="System.Web.Hosting\VirtualPathProviderTest.cs" />
     <Compile Include="System.Web.Profile\ProfileInfoTest.cs" />
     <Compile Include="System.Web.Security\FormsAuthenticationTest.cs" />
     <Compile Include="System.Web.Security\FormsIdentityTest.cs" />
@@ -387,7 +406,6 @@
     <None Include="System.Web.Caching\README" />
     <None Include="System.Web.Configuration\ChangeLog" />
     <None Include="System.Web.Handlers\ChangeLog" />
-    <None Include="System.Web.Hosting\ChangeLog" />
     <None Include="System.Web.Mail\ChangeLog" />
     <None Include="System.Web.Security\ChangeLog" />
     <None Include="System.Web.SessionState\ChangeLog" />
