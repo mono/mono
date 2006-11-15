@@ -1,4 +1,10 @@
 
+Wed Nov 15 17:00:27 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ops.h, mini-arch.h, helpers.c, Makefile.am:
+	more mips integration work from Mark E Mason 
+	<mark.e.mason@broadcom.com>.
+
 Wed Nov 15 16:34:03 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* exceptions-mips.c, inssel-mips.brg, mini-mips.h,
