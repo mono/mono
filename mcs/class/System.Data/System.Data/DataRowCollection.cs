@@ -120,9 +120,11 @@ namespace System.Data
 			// Set the row id.
 			row.RowID = List.Count - 1;
 			row.AttachRow ();
+#if NET_2_0
 			if ((action & (DataRowAction.ChangeCurrentAndOriginal |
 							DataRowAction.ChangeOriginal)) != 0)
 				row.Original = row.Current;
+#endif
 			row.Table.ChangedDataRow (row, action);
 			if (row._rowChanged)
 				row._rowChanged = false;
