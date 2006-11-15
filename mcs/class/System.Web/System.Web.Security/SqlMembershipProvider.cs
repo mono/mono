@@ -398,7 +398,7 @@ namespace System.Web.Security {
 				AddParameter (command, "PageSize", pageSize);
 				AddParameter (command, "EmailToMatch", emailToMatch);
 				AddParameter (command, "ApplicationName", ApplicationName);
-				DbParameter returnValue = AddParameter (command, null, ParameterDirection.ReturnValue, null);
+				DbParameter returnValue = AddParameter (command, "ReturnValue", ParameterDirection.ReturnValue, null);
 
 				MembershipUserCollection c = BuildMembershipUserCollection (command, pageIndex, pageSize, out totalRecords);
 
@@ -430,7 +430,7 @@ namespace System.Web.Security {
 				AddParameter (command, "PageSize", pageSize);
 				AddParameter (command, "UserNameToMatch", nameToMatch);
 				AddParameter (command, "ApplicationName", ApplicationName);
-				DbParameter returnValue = AddParameter (command, null, ParameterDirection.ReturnValue, null);
+				DbParameter returnValue = AddParameter (command, "ReturnValue", ParameterDirection.ReturnValue, null);
 
 				MembershipUserCollection c = BuildMembershipUserCollection (command, pageIndex, pageSize, out totalRecords);
 
@@ -458,7 +458,7 @@ namespace System.Web.Security {
 				AddParameter (command, "ApplicationName", ApplicationName);
 				AddParameter (command, "PageIndex", pageIndex);
 				AddParameter (command, "PageSize", pageSize);
-				DbParameter returnValue = AddParameter (command, null, ParameterDirection.ReturnValue, null);
+				DbParameter returnValue = AddParameter (command, "ReturnValue", ParameterDirection.ReturnValue, null);
 
 				MembershipUserCollection c = BuildMembershipUserCollection (command, pageIndex, pageSize, out totalRecords);
 
