@@ -11,6 +11,7 @@
     <AssemblyName>System.Runtime.Remoting</AssemblyName>
     <JDKName>1.5.0_05</JDKName>
     <GHProjectType>1</GHProjectType>
+    <GHProjectKind>framework</GHProjectKind>
     <Version>2.0</Version>
     <jarserver>ipa</jarserver>
   </PropertyGroup>
