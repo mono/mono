@@ -1,3 +1,7 @@
+2006-11-15  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* map.c: Flush (removes warnings due to _cnm_return_val_if_overflow()).
+
 2006-11-14  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* map.c: Flush (fixes FilePermissions conversion, allowing Syscall.stat() to

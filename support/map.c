@@ -205,8 +205,10 @@
 #endif
 
 #define _cnm_return_val_if_overflow(to_t,from,val)  G_STMT_START {   \
-    if (!(_cnm_integral_type_min(to_t) <= from &&                    \
-          ((from < 0) || (from <= _cnm_integral_type_max(to_t))))) { \
+    gint64  sf = (gint64) from;                                      \
+    guint64 uf = (guint64) from;                                     \
+    if (!(_cnm_integral_type_min(to_t) <= sf &&                      \
+          ((from < 0) || (uf <= _cnm_integral_type_max(to_t))))) {   \
       _cnm_dump_(to_t, from);                                        \
       errno = EOVERFLOW;                                             \
       return (val);                                                  \
