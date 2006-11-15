@@ -20,9 +20,10 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
-
+#if !TARGET_JVM
 using Mono.Security.Authenticode;
 using Mono.Security.Protocol.Tls;
+#endif
 
 namespace MonoTests.System.Net
 {
@@ -91,7 +92,7 @@ namespace MonoTests.System.Net
 				Assertion.AssertEquals ("#04", true, object.ReferenceEquals (one, two));
 			}
 		}
-
+#if !TARGET_JVM //NotWorking
 		[Test]
 		public void SslClientBlock ()
 		{
@@ -123,8 +124,11 @@ namespace MonoTests.System.Net
 				ServicePointManager.CertificatePolicy = null;
 			}
 		}
-
+#endif
 		[Test]
+#if TARGET_JVM
+		[Category("NotWorking")]
+#endif
 		public void Missing_ContentEncoding ()
 		{
 			ServicePointManager.CertificatePolicy = new AcceptAllPolicy ();
@@ -147,6 +151,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void BadServer_ChunkedClose ()
 		{
 			// The server will send a chunked response without a 'last-chunked' mark
@@ -243,6 +250,7 @@ namespace MonoTests.System.Net
 			protected abstract void Run ();
 		}
 
+#if !TARGET_JVM
 		class SslHttpServer : HttpServer {
 			X509Certificate _certificate;
 
@@ -375,6 +383,7 @@ namespace MonoTests.System.Net
 				238, 60, 227, 77, 217, 93, 117, 122, 111, 46, 173, 113, 
 			};
 		}
+#endif
 	}
 }
 
