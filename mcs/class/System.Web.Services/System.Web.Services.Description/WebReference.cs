@@ -61,6 +61,11 @@ namespace System.Web.Services.Description
 			_proxyCode = proxyCode;
 		}
 		
+		public WebReference (DiscoveryClientDocumentCollection documents, CodeNamespace proxyCode, string appSettingUrlKey, string appSettingBaseUrl)
+			: this (documents, proxyCode, String.Empty, appSettingUrlKey, appSettingBaseUrl)
+		{
+		}
+		
 		public WebReference (DiscoveryClientDocumentCollection documents, CodeNamespace proxyCode, string protocolName, string appSettingUrlKey, string appSettingBaseUrl)
 		{
 			if (documents == null) throw new ArgumentNullException ("documents");

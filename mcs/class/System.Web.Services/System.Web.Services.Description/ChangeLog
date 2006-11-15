@@ -1,5 +1,9 @@
 2006-11-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* WebReference.cs : added missing .ctor().
+
+2006-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* WebReferenceOptionsSerializer.cs :
 	  (#if NET_2_0) oops, I did it again :-(
 

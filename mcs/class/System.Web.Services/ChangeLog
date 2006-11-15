@@ -1,3 +1,7 @@
+2006-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Web.Services_test.dll.sources : added WebReferenceTest.cs.
+
 2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Web.Services.dll.sources :

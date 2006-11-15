@@ -1,3 +1,7 @@
+2006-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebReferenceTest.cs : added new test (so minor).
+
 2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebReferenceOptionsTest.cs :
