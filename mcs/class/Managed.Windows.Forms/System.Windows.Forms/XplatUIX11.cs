@@ -3345,8 +3345,8 @@ namespace System.Windows.Forms {
 								msg.message = Msg.WM_NCLBUTTONUP;
 								MenuToScreen (xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
-							msg.wParam=GetMousewParam(0);
 							MouseState &= ~MouseButtons.Left;
+							msg.wParam=GetMousewParam(0);
 							break;
 						}
 
@@ -3357,8 +3357,8 @@ namespace System.Windows.Forms {
 								msg.message = Msg.WM_NCMBUTTONUP;
 								MenuToScreen (xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
-							msg.wParam=GetMousewParam(0);
 							MouseState &= ~MouseButtons.Middle;
+							msg.wParam=GetMousewParam(0);
 							break;
 						}
 
@@ -3369,8 +3369,8 @@ namespace System.Windows.Forms {
 								msg.message = Msg.WM_NCRBUTTONUP;
 								MenuToScreen (xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
-							msg.wParam=GetMousewParam(0);
 							MouseState &= ~MouseButtons.Right;
+							msg.wParam=GetMousewParam(0);
 							break;
 						}
 

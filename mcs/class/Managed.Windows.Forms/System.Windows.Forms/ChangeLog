@@ -1,3 +1,8 @@
+2006-11-15  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11.cs: mimic win32 behavior on BUTTONUP events, where
+	the button being released is not in wParam.
+
 2006-11-15  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Form.cs: Add the released button to MouseEventArgs.Button
