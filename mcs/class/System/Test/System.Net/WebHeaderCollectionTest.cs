@@ -151,7 +151,7 @@ public class WebHeaderCollectionTest
 		Assertion.AssertEquals ("#14", null, w.GetValues (""));
 		Assertion.AssertEquals ("#15", null, w.GetValues ("NotExistent"));
 	}
-	
+#if NET_1_0
         [Test]
 	public void Indexers ()
 	{
@@ -159,6 +159,7 @@ public class WebHeaderCollectionTest
 		Assertion.AssertEquals ("#2", "Value1", col ["Name1"]);
 		Assertion.AssertEquals ("#3", "Value1", col ["NAME1"]);
 	}
+#endif
 
 	[Test]
 	public void Remove ()

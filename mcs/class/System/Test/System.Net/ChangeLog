@@ -1,3 +1,7 @@
+2006-11-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebHeaderCollectionTest.cs: the Indexers test only compiles on 1.x
+
 2006-11-07  Dick Porter  <dick@ximian.com>
 
 	* DnsTest.cs: GetHostByAddressString5() should only throw
