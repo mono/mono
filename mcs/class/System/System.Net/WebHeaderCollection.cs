@@ -272,18 +272,46 @@ namespace System.Net
 				  
 			return sb.Append("\r\n").ToString();
 		}
-		
+
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo,
-		   				  StreamingContext streamingContext)
+						  StreamingContext streamingContext)
 		{
 			int count = base.Count;
 			serializationInfo.AddValue ("count", count);
-			for (int i = 0; i < count ; i++) {
+			for (int i = 0; i < count; i++) {
 				serializationInfo.AddValue ("k" + i, GetKey (i));
 				serializationInfo.AddValue ("v" + i, Get (i));
 			}
 		}
-		
+
+#if NET_2_0
+		[MonoTODO]
+		public string this[HttpRequestHeader hrh]
+		{
+			get
+			{
+				throw new NotImplementedException ();
+			}
+			set
+			{
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public string this[HttpResponseHeader hrh]
+		{
+			get
+			{
+				throw new NotImplementedException ();
+			}
+			set
+			{
+				throw new NotImplementedException ();
+			}
+		}
+#endif
+
 		// Internal Methods
 		
 		// With this we don't check for invalid characters in header. See bug #55994.

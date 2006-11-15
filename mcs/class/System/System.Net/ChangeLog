@@ -1,3 +1,7 @@
+2006-11-15  Andrew Skiba  <andrews@mainsoft.com>
+
+	* WebHeaderCollection.cs: add stubs for new 2.0 properties.
+
 2006-11-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebResponse.cs: cookies are actually added to the request
