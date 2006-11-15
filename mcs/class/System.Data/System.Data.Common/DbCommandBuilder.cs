@@ -39,6 +39,7 @@ namespace System.Data.Common {
 	public abstract class DbCommandBuilder : Component
 	{
 		bool _setAllValues = false;
+		DbDataAdapter _dbDataAdapter;
 
 		#region Constructors
 
@@ -72,12 +73,11 @@ namespace System.Data.Common {
 			set { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		public DbDataAdapter DataAdapter {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return _dbDataAdapter; }
+			set { _dbDataAdapter = value; }
 		}
 
 		[MonoTODO]
@@ -125,7 +125,7 @@ namespace System.Data.Common {
 		[MonoTODO]
 		public DbCommand GetDeleteCommand ()
 		{
-			throw new NotImplementedException ();
+			return (DbCommand) _dbDataAdapter._deleteCommand;
 		}
 
 		[MonoTODO]
@@ -137,7 +137,7 @@ namespace System.Data.Common {
 		[MonoTODO]
 		public DbCommand GetInsertCommand ()
 		{
-			throw new NotImplementedException ();
+			return (DbCommand) _dbDataAdapter._insertCommand;
 		}
 
 		[MonoTODO]
@@ -153,7 +153,7 @@ namespace System.Data.Common {
 		[MonoTODO]
 		public DbCommand GetUpdateCommand ()
 		{
-			throw new NotImplementedException ();
+			return (DbCommand) _dbDataAdapter._updateCommand;
 		}
 
 		[MonoTODO]

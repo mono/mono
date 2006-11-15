@@ -53,9 +53,9 @@ namespace System.Data.Common {
 
 #if NET_2_0
 		IDbCommand _selectCommand;
-		IDbCommand _updateCommand;
-		IDbCommand _deleteCommand;
-		IDbCommand _insertCommand;
+		internal IDbCommand _updateCommand;
+		internal IDbCommand _deleteCommand;
+		internal IDbCommand _insertCommand;
 #endif
 
 		#endregion // Fields
@@ -81,31 +81,26 @@ namespace System.Data.Common {
 			set { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		IDbCommand IDbDataAdapter.SelectCommand {
 			get { return _selectCommand; }
 			set { _selectCommand = value; }
 		}
 
-		[MonoTODO]
 		IDbCommand IDbDataAdapter.UpdateCommand{
 			get { return _updateCommand; }
 			set { _updateCommand = value; }
 		}
 
-		[MonoTODO]
 		IDbCommand IDbDataAdapter.DeleteCommand{
 			get { return _deleteCommand; }
 			set { _deleteCommand = value; }
 		}
 
-		[MonoTODO]
 		IDbCommand IDbDataAdapter.InsertCommand{
 			get { return _insertCommand; }
 			set { _insertCommand = value; }
 		}
 		
-		[MonoTODO]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand SelectCommand {
@@ -113,7 +108,6 @@ namespace System.Data.Common {
 			set { ((IDbDataAdapter) this).SelectCommand = value; }
 		}
 
-		[MonoTODO]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand DeleteCommand {
@@ -121,7 +115,6 @@ namespace System.Data.Common {
 			set { ((IDbDataAdapter) this).DeleteCommand = value; }
 		}
 
-		[MonoTODO]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand InsertCommand {
@@ -129,7 +122,6 @@ namespace System.Data.Common {
 			set { ((IDbDataAdapter) this).InsertCommand = value; }
 		}
 
-		[MonoTODO]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand UpdateCommand {
@@ -194,11 +186,13 @@ namespace System.Data.Common {
 		[MonoTODO]
 		protected virtual void OnRowUpdated (RowUpdatedEventArgs value)
 		{
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		protected virtual void OnRowUpdating (RowUpdatingEventArgs value)
 		{
+			throw new NotImplementedException ();
 		}
 #else
 		protected abstract RowUpdatedEventArgs CreateRowUpdatedEvent (DataRow dataRow, IDbCommand command,
@@ -477,6 +471,46 @@ namespace System.Data.Common {
                                         
                                 table.BeginLoadData ();
                                 table.LoadDataRow (values, loadOption);
+                                table.EndLoadData ();
+                                counter++;
+                        }
+                        return counter;
+                }
+
+		internal static int FillFromReader (DataTable table,
+                                                    IDataReader reader,
+                                                    int start, 
+                                                    int length,
+                                                    int [] mapping,
+                                                    LoadOption loadOption,
+                                                    FillErrorEventHandler errorHandler)
+                {
+                        if (reader.FieldCount == 0)
+				return 0 ;
+
+                        for (int i = 0; i < start; i++)
+                                reader.Read ();
+
+                        int counter = 0;
+                        object [] values = new object [mapping.Length];
+                        while (reader.Read () &&
+                               (length == 0 || counter < length)) {
+                                
+                                for (int i = 0 ; i < mapping.Length; i++)
+                                        values [i] = mapping [i] < 0 ? null : reader [mapping [i]];
+                                        
+                                table.BeginLoadData ();
+				try {
+					table.LoadDataRow (values, loadOption);
+				} catch (Exception e) {
+					FillErrorEventArgs args = new FillErrorEventArgs (table, values);
+					args.Errors = e;
+					args.Continue = false;
+					errorHandler (table, args);
+					// if args.Continue is not set to true or if a handler is not set, rethrow the error..
+					if(!args.Continue)
+						throw e;
+				}
                                 table.EndLoadData ();
                                 counter++;
                         }

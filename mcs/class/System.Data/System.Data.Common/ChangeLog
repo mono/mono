@@ -1,3 +1,15 @@
+2006-11-15  Nagappan A  <anagappan@novell.com>
+
+	* DbDataAdapter.cs (FillFromReader): Implemented missing API to
+	handle FillErrorEventHandler
+	(DataAdapter): Implemented missing .NET 2.0 function
+	(GetDeleteCommand): Returns DbDataAdapter deleteCommand internal
+	variable.
+	(GetInsertCommand): Returns DbDataAdapter insertCommand internal
+	variable.
+	(GetUpdateCommand): Returns DbDataAdapter updateCommand internal
+	variable.
+
 2006-09-06  Konstantin Triger <kostat@mainsoft.com>
 
 	* DbDataAdapter.cs: added basic implementation for some 2.0 features.
