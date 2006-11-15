@@ -1898,7 +1898,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Load_RowStateChangesDefault () {
 			localSetup ();
 			dt.Rows.Add (new object[] { 4, "mono 4" });
@@ -1970,7 +1969,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Load_RowStatePreserveChanges () {
 			localSetup ();
 			dt.Rows.Add (new object[] { 4, "mono 4" });
@@ -2042,7 +2040,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Load_RowStateOverwriteChanges () {
 			localSetup ();
 			dt.Rows.Add (new object[] { 4, "mono 4" });
@@ -2097,7 +2094,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Load_RowStateUpsert () {
 			localSetup ();
 			dt.Rows.Add (new object[] { 4, "mono 4" });

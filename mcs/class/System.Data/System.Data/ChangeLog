@@ -1,4 +1,9 @@
-2006-11-24  Konstantin Triger <kostat@mainsoft.com>
+2006-11-15  Konstantin Triger <kostat@mainsoft.com>
+
+	* DataTable.cs: Fixed LoadDataRow scenarios.
+	* DataRowCollection.cs: Added override for AddInternal taking DataRowAction parameter.
+
+2006-11-14  Konstantin Triger <kostat@mainsoft.com>
 
 	* DataColumn.cs: consider row version wen checking row.IsNull().
 

@@ -109,14 +109,21 @@ namespace System.Data
 			AddInternal(row);
 		}
 
-		internal void AddInternal(DataRow row) {
-			row.Table.ChangingDataRow (row, DataRowAction.Add);
+		internal void AddInternal (DataRow row) {
+			AddInternal (row, DataRowAction.Add);
+		}
+
+		internal void AddInternal(DataRow row, DataRowAction action) {
+			row.Table.ChangingDataRow (row, action);
 			row.HasParentCollection = true;
 			List.Add (row);
 			// Set the row id.
 			row.RowID = List.Count - 1;
 			row.AttachRow ();
-			row.Table.ChangedDataRow (row, DataRowAction.Add);
+			if ((action & (DataRowAction.ChangeCurrentAndOriginal |
+							DataRowAction.ChangeOriginal)) != 0)
+				row.Original = row.Current;
+			row.Table.ChangedDataRow (row, action);
 			if (row._rowChanged)
 				row._rowChanged = false;
 		}

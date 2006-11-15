@@ -1796,18 +1796,11 @@ namespace System.Data {
                                      
                                 if (loadOption == LoadOption.OverwriteChanges ||
                                     loadOption == LoadOption.PreserveChanges) {
-					Rows.AddInternal(row);
-					ChangingDataRow (row, DataRowAction.ChangeCurrentAndOriginal);
-					row.Original = row.Current;
-					ChangedDataRow (row, DataRowAction.ChangeCurrentAndOriginal);
+									Rows.AddInternal (row, DataRowAction.ChangeCurrentAndOriginal);
                                 } else
 					Rows.AddInternal(row);
                                 return row;
                         }
-
-                        if (row.RowState == DataRowState.Deleted 
-			    && loadOption == LoadOption.OverwriteChanges)
-                                row.RejectChanges ();                        
 
                         row.Load (values, loadOption);
 
