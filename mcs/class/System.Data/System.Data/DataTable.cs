@@ -2138,17 +2138,7 @@ namespace System.Data {
 		/// <returns></returns>
 		internal Index GetIndex(DataColumn[] columns, ListSortDirection[] sort, DataViewRowState rowState, IExpression filter, bool reset)
 		{
-			Index index = FindIndex(columns,sort,rowState,filter);
-			if (index == null ) {
-				index = new Index(new Key(this,columns,sort,rowState,filter));
-
-				AddIndex(index);
-			}
-			else if (reset) {
-				// reset existing index only if asked for this
-				index.Reset();
-			}
-			return index;
+			return GetIndex (columns, sort, rowState, filter, reset, true);
 		}
 
 		internal Index GetIndex (DataColumn[] columns, ListSortDirection[] sort,
