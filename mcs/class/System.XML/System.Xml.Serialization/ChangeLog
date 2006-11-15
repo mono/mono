@@ -1,3 +1,9 @@
+2006-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializationReader.cs : implement ToByteArray[Base64|Hex]().
+	  removed extra ReadSerializable().
+	* XmlTypeMapping.cs : added XsdTypeName and XsdTypeNamespace.
+
 2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationCodeGenerator.cs,

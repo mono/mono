@@ -790,25 +790,32 @@ namespace System.Xml.Serialization
 
 		protected byte[] ToByteArrayBase64 (bool isNull)
 		{
-			return Convert.FromBase64String (Reader.ReadString());
+			if (isNull) {
+				Reader.ReadString ();
+				return null;
+			}
+			else
+				return ToByteArrayBase64 (Reader.ReadString ());
 		}
 
-		[MonoTODO]
 		protected static byte[] ToByteArrayBase64 (string value)
 		{
-			throw new NotImplementedException ();
+			return Convert.FromBase64String (value);
 		}
 
-		[MonoTODO]
 		protected byte[] ToByteArrayHex (bool isNull)
 		{
-			throw new NotImplementedException ();
+			if (isNull) {
+				Reader.ReadString ();
+				return null;
+			}
+			else
+				return ToByteArrayHex (Reader.ReadString ());
 		}
 
-		[MonoTODO]
 		protected static byte[] ToByteArrayHex (string value)
 		{
-			throw new NotImplementedException ();
+			return XmlConvert.FromBinHexString (value);
 		}
 
 		protected static char ToChar (string value)
@@ -1130,12 +1137,6 @@ namespace System.Xml.Serialization
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		protected IXmlSerializable ReadSerializable (IXmlSerializable serializable, bool wrapped)
-		{
-			throw new NotImplementedException ();
-		}
-		
 		[MonoTODO]
 		protected string ReadString (string value, bool trim)
 		{

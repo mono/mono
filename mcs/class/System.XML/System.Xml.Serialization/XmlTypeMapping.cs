@@ -81,6 +81,18 @@ namespace System.Xml.Serialization
 			get { return type.TypeName; }
 		}
 
+#if NET_2_0
+		public string XsdTypeName
+		{
+			get { return XmlType; }
+		}
+
+		public string XsdTypeNamespace
+		{
+			get { return XmlTypeNamespace; }
+		}
+#endif
+
 		internal TypeData TypeData
 		{
 			get { return type; }
