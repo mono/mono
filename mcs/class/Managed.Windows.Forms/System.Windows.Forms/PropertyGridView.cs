@@ -227,6 +227,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 
 		protected override void OnMouseMove (MouseEventArgs e) {
+			if (property_grid.root_grid_item == null)
+				return;
 
 			if (resizing_grid) {
 				int loc = Math.Max(e.X,2*V_INDENT);
@@ -240,6 +242,9 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		}
 
 		protected override void OnMouseDown (MouseEventArgs e) {
+			if (property_grid.root_grid_item == null)
+				return;
+
 			if (e.X > SplitterLocation - RESIZE_WIDTH && e.X < SplitterLocation + RESIZE_WIDTH) {
 				resizing_grid = true;
 			}
