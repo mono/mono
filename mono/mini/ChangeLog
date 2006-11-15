@@ -1,4 +1,9 @@
 
+Wed Nov 15 18:45:47 GMT 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.c, inssel-arm.brg: ABI fix for longs and doubles
+	that are passed half on the stack and half in registers.
+
 Wed Nov 15 17:00:27 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ops.h, mini-arch.h, helpers.c, Makefile.am:
