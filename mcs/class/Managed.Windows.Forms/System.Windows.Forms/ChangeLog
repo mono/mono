@@ -1,5 +1,11 @@
 2006-11-15  Jonathan Pobst  <monkey@jpobst.com>
 
+	[Fixes 78346]
+
+	* ComboBox.cs: Set the Hwnd.no_activate flag for the ComboListBox.
+
+2006-11-15  Jonathan Pobst  <monkey@jpobst.com>
+
 	[Fixes 79433]
 
 	* Hwnd.cs: Add a flag to show a window, but not activate it, to 

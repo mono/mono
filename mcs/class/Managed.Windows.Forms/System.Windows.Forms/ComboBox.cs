@@ -1565,6 +1565,9 @@ namespace System.Windows.Forms
 				SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 				SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
 
+				this.is_visible = false;
+				Hwnd.ObjectFromHandle (this.Handle).no_activate = true;
+
 				if (owner.DropDownStyle == ComboBoxStyle.Simple)
 					InternalBorderStyle = BorderStyle.Fixed3D;
 				else
@@ -1907,4 +1910,5 @@ namespace System.Windows.Forms
 		}
 	}
 }
+
 
