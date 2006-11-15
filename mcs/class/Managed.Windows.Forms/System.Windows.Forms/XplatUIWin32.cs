@@ -1556,16 +1556,16 @@ namespace System.Windows.Forms {
 						case FormWindowState.Maximized: flags = WindowPlacementFlags.SW_MAXIMIZE; break;
 					}
 					
-					if (!activate)
+					if (Hwnd.ObjectFromHandle (handle).no_activate)
 						flags |= WindowPlacementFlags.SW_SHOWNOACTIVATE;
 						
 					Win32ShowWindow (handle, flags);
 				}
 				else {
-					if (activate)
-						Win32ShowWindow (handle, WindowPlacementFlags.SW_SHOWNORMAL);
-					else
+					if (Hwnd.ObjectFromHandle (handle).no_activate)
 						Win32ShowWindow (handle, WindowPlacementFlags.SW_SHOWNOACTIVATE);
+					else
+						Win32ShowWindow (handle, WindowPlacementFlags.SW_SHOWNORMAL);
 				}
 			}
 			else {

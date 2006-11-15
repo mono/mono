@@ -76,6 +76,7 @@ namespace System.Windows.Forms {
 		internal Region		user_clip;
 		internal static Bitmap	bmp = new Bitmap(1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 		internal XEventQueue	queue;
+		internal bool		no_activate;	// For Win32, popup windows will not steal focus
 		#endregion	// Local Variables
 
 		#region Constructors and destructors

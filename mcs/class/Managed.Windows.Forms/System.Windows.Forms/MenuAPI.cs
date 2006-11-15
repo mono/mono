@@ -699,6 +699,7 @@ namespace System.Windows.Forms {
 			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
 			is_visible = false;
+			Hwnd.ObjectFromHandle (this.Handle).no_activate = true;
 		}
 
 		protected override CreateParams CreateParams
@@ -759,4 +760,5 @@ namespace System.Windows.Forms {
 		}
 	}
 }
+
 

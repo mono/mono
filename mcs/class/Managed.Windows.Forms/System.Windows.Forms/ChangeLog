@@ -1,3 +1,15 @@
+2006-11-15  Jonathan Pobst  <monkey@jpobst.com>
+
+	[Fixes 79433]
+
+	* Hwnd.cs: Add a flag to show a window, but not activate it, to 
+	keep popup window types from stealing focus from the main form
+	on Windows.
+
+	* XPlatUIWin32.cs: Use SW_SHOWNOACTIVATE if above field is true.
+
+	* MenuAPI.cs: Set above flag to true.
+
 2006-11-15  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIX11.cs: mimic win32 behavior on BUTTONUP events, where
