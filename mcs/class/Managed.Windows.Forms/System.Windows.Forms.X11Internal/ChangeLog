@@ -1,0 +1,6 @@
+2006-11-14  Chris Toshok  <toshok@ximian.com>
+
+	* X11Hwnd.cs, X11RootHwnd.cs, X11Atoms.cs, X11Display.cs,
+	X11Exception.cs, Xlib.cs: Initial pass at refactoring the X11
+	backend.
+

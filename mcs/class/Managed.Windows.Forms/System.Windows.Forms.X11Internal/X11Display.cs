@@ -1,0 +1,2428 @@
+
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+// Copyright (c) 2006 Novell, Inc. (http://www.novell.com)
+//
+//
+
+using System;
+using System.Collections;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
+using System.Windows.Forms;
+
+// Only do the poll when building with mono for now
+#if __MonoCS__
+using Mono.Unix.Native;
+#endif
+
+
+namespace System.Windows.Forms.X11Internal {
+
+	internal class X11Display {
+
+		IntPtr display; /* our X handle */
+
+		// XXX internal because X11Hwnd needs them
+		internal IntPtr CustomVisual;    // Visual for window creation
+		internal IntPtr CustomColormap;  // Colormap for window creation
+
+		X11Keyboard Keyboard;
+		internal X11Dnd Dnd; // XXX X11Hwnd needs it to enable Dnd
+		bool detectable_key_auto_repeat;
+
+		X11Atoms atoms;
+		X11RootHwnd root_hwnd;
+		X11Hwnd foster_hwnd;
+
+		// Clipboard
+		IntPtr 		ClipMagic;
+		ClipboardStruct	Clipboard; // Our clipboard
+
+		// Focus tracking
+		internal X11Hwnd ActiveWindow;
+		X11Hwnd FocusWindow;
+
+		// Modality support
+		internal Stack ModalWindows; // Stack of our modal windows
+
+		// Caret
+		CaretStruct Caret;
+
+		// mouse hover message generation
+		// XXX internal because X11Atoms needs to access it..
+		internal HoverStruct HoverState;
+
+		// double click message generation
+		ClickStruct ClickPending;
+		int DoubleClickInterval; // msec; max interval between clicks to count as double click
+
+		// Support for mouse grab
+		GrabStruct Grab;
+
+		// State
+		Point MousePosition;     // Last position of mouse, in screen coords
+		MouseButtons MouseState; // Last state of mouse buttons
+
+
+#if __MonoCS__
+		Pollfd[] pollfds; // For watching the X11 socket
+		Socket listen;
+		Socket wake;
+		Socket wake_receive;
+		byte[] network_buffer;
+#endif
+
+		XErrorHandler	ErrorHandler;		// Error handler delegate
+		bool		ErrorExceptions;	// Throw exceptions on X errors
+
+		Thread event_thread; // the background thread that just watches our X socket
+
+		public X11Display (IntPtr display)
+		{
+			if (display == IntPtr.Zero) {
+				throw new ArgumentNullException("Display", "Could not open display (X-Server required. Check you DISPLAY environment variable)");
+			}
+
+			this.display = display;
+
+			// Debugging support
+			if (Environment.GetEnvironmentVariable ("MONO_XSYNC") != null) {
+				Xlib.XSynchronize (display, true);
+			}
+
+			if (Environment.GetEnvironmentVariable ("MONO_XEXCEPTIONS") != null) {
+				ErrorExceptions = true;
+			}
+
+			atoms = new X11Atoms (this);
+
+			DoubleClickInterval = 500;
+
+			HoverState.Interval = 500;
+			HoverState.Timer = new Timer();
+			HoverState.Timer.Enabled = false;
+			HoverState.Timer.Interval = HoverState.Interval;
+			HoverState.Timer.Tick += new EventHandler(MouseHover);
+			HoverState.Size = new Size(4, 4);
+			HoverState.X = -1;
+			HoverState.Y = -1;
+
+			ActiveWindow = null;
+			FocusWindow = null;
+			ModalWindows = new Stack(3);
+
+			MouseState = MouseButtons.None;
+			MousePosition = new Point(0, 0);
+
+			Caret.Timer = new Timer();
+			Caret.Timer.Interval = 500;		// FIXME - where should this number come from?
+			Caret.Timer.Tick += new EventHandler(CaretCallback);
+
+			// XXX multiscreen work here
+			root_hwnd = new X11RootHwnd (this, Xlib.XRootWindow (display, DefaultScreen));
+
+			// XXX do we need a per-screen foster parent?
+			// Create the foster parent
+			foster_hwnd = new X11Hwnd (this,
+						   Xlib.XCreateSimpleWindow (display, root_hwnd.WholeWindow,
+									     0, 0, 1, 1, 4, UIntPtr.Zero, UIntPtr.Zero));
+
+			Keyboard = new X11Keyboard(display, foster_hwnd.Handle);
+			Dnd = new X11Dnd (display);
+
+			// For sleeping on the X11 socket
+#if __MonoCS__
+			listen = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
+			IPEndPoint ep = new IPEndPoint(IPAddress.Loopback, 0);
+			listen.Bind(ep);
+			listen.Listen(1);
+
+			// To wake up when a timer is ready
+			network_buffer = new byte[10];
+
+			wake = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
+			wake.Connect(listen.LocalEndPoint);
+			wake_receive = listen.Accept();
+
+			pollfds = new Pollfd [2];
+			pollfds [0] = new Pollfd ();
+			pollfds [0].fd = Xlib.XConnectionNumber (display);
+			pollfds [0].events = PollEvents.POLLIN;
+
+			pollfds [1] = new Pollfd ();
+			pollfds [1].fd = wake_receive.Handle.ToInt32 ();
+			pollfds [1].events = PollEvents.POLLIN;
+#endif
+
+			ErrorExceptions = false;
+
+			// Handle any upcoming errors
+			ErrorHandler = new XErrorHandler (HandleError);
+			Xlib.XSetErrorHandler (ErrorHandler);
+
+			X11DesktopColors.Initialize(); // XXX we need to figure out how to make this display specific?
+
+			// Disable keyboard autorepeat
+			try {
+				Xlib.XkbSetDetectableAutoRepeat (display, true, IntPtr.Zero);
+				detectable_key_auto_repeat = true;
+			} catch {
+				Console.Error.WriteLine ("Could not disable keyboard auto repeat, will attempt to disable manually.");
+				detectable_key_auto_repeat = false;
+			}
+
+			// we re-set our error handler here, X11DesktopColor stuff might have stolen it (gtk does)
+			Xlib.XSetErrorHandler (ErrorHandler);
+
+			// create our event thread (just sits on the X socket waiting for events)
+			event_thread = new Thread (new ThreadStart (XEventThread));
+			event_thread.IsBackground = true;
+			event_thread.Start ();
+		}
+
+		#region	Callbacks
+		private void MouseHover(object sender, EventArgs e)
+		{
+			XEvent	xevent;
+			Hwnd	hwnd;
+
+			HoverState.Timer.Enabled = false;
+
+			if (HoverState.Window != IntPtr.Zero) {
+				hwnd = Hwnd.GetObjectFromWindow (HoverState.Window);
+				if (hwnd != null) {
+					xevent = new XEvent ();
+
+					xevent.type = XEventName.ClientMessage;
+					xevent.ClientMessageEvent.display = display;
+					xevent.ClientMessageEvent.window = HoverState.Window;
+					xevent.ClientMessageEvent.message_type = HoverState.Atom;
+					xevent.ClientMessageEvent.format = 32;
+					xevent.ClientMessageEvent.ptr1 = (IntPtr) (HoverState.Y << 16 | HoverState.X);
+
+					hwnd.Queue.EnqueueLocked (xevent);
+
+					//WakeupMain ();
+				}
+			}
+		}
+
+		private void CaretCallback (object sender, EventArgs e)
+		{
+			if (Caret.Paused) {
+				return;
+			}
+			Caret.On = !Caret.On;
+
+			Xlib.XDrawLine (display, Caret.Hwnd, Caret.gc, Caret.X, Caret.Y, Caret.X, Caret.Y + Caret.Height);
+		}
+
+		internal string WhereString()
+		{
+			StackTrace	stack;
+			StackFrame	frame;
+			string		newline;
+			string		unknown;
+			StringBuilder	sb;
+			MethodBase	method;
+
+			newline = String.Format("{0}\t {1} ", Environment.NewLine, Locale.GetText("at"));
+			unknown = Locale.GetText("<unknown method>");
+			sb = new StringBuilder();
+			stack = new StackTrace(true);
+
+			for (int i = 0; i < stack.FrameCount; i++) {
+				frame = stack.GetFrame(i);
+				sb.Append(newline);
+
+				method = frame.GetMethod();
+				if (method != null) {
+					#if not
+						sb.AppendFormat(frame.ToString());
+					#endif
+					if (frame.GetFileLineNumber() != 0) {
+						sb.AppendFormat("{0}.{1} () [{2}:{3}]", method.DeclaringType.FullName, method.Name, Path.GetFileName(frame.GetFileName()), frame.GetFileLineNumber());
+					} else {
+						sb.AppendFormat("{0}.{1} ()", method.DeclaringType.FullName, method.Name);
+					}
+				} else { 
+					sb.Append(unknown);
+				}
+			}
+			return sb.ToString();
+ 		}
+
+		private int HandleError(IntPtr display, ref XErrorEvent error_event) {
+			if (ErrorExceptions) {
+				throw new X11Exception(error_event.display, error_event.resourceid, error_event.serial, error_event.error_code, error_event.request_code, error_event.minor_code);
+			} else {
+				Console.WriteLine("X11 Error encountered: {0}{1}\n", X11Exception.GetMessage(error_event.display, error_event.resourceid, error_event.serial, error_event.error_code, error_event.request_code, error_event.minor_code), WhereString());
+			}
+			return 0;
+		}
+		#endregion	// Callbacks
+
+		private void ShowCaret()
+		{
+			if ((Caret.gc == IntPtr.Zero) || Caret.On) {
+				return;
+			}
+			Caret.On = true;
+
+			Xlib.XDrawLine (display, Caret.Window, Caret.gc, Caret.X, Caret.Y, Caret.X, Caret.Y + Caret.Height);
+		}
+
+		private void HideCaret()
+		{
+			if ((Caret.gc == IntPtr.Zero) || !Caret.On) {
+				return;
+			}
+			Caret.On = false;
+
+			Xlib.XDrawLine (display, Caret.Window, Caret.gc, Caret.X, Caret.Y, Caret.X, Caret.Y + Caret.Height);
+		}
+
+		public void CaretVisible (IntPtr handle, bool visible)
+		{
+			if (Caret.Hwnd == handle) {
+				if (visible) {
+					if (!Caret.Visible) {
+						Caret.Visible = true;
+						ShowCaret();
+						Caret.Timer.Start();
+					}
+				} else {
+					Caret.Visible = false;
+					Caret.Timer.Stop();
+					HideCaret();
+				}
+			}
+		}
+
+		public void AudibleAlert ()
+		{
+			Xlib.XBell (display, 0);
+		}
+
+		public void Flush ()
+		{
+			Xlib.XFlush (display);
+		}
+
+		public void Close ()
+		{
+			// XXX shut down the event_thread
+			Xlib.XCloseDisplay (display);
+		}
+
+		public IntPtr XGetParent(IntPtr handle)
+		{
+			IntPtr	Root;
+			IntPtr	Parent;
+			IntPtr	Children;
+			int	ChildCount;
+
+			Xlib.XQueryTree (display, handle, out Root, out Parent, out Children, out ChildCount);
+
+			if (Children!=IntPtr.Zero) {
+				Xlib.XFree(Children);
+			}
+
+			return Parent;
+		}
+
+		public bool SystrayAdd(IntPtr handle, string tip, Icon icon, out ToolTip tt)
+		{
+			IntPtr SystrayMgrWindow;
+
+			Xlib.XGrabServer (display);
+			SystrayMgrWindow = Xlib.XGetSelectionOwner (display, Atoms._NET_SYSTEM_TRAY_S);
+			Xlib.XUngrabServer (display);
+
+			if (SystrayMgrWindow != IntPtr.Zero) {
+				XSizeHints	size_hints;
+				Hwnd		hwnd;
+
+				hwnd = Hwnd.ObjectFromHandle(handle);
+#if DriverDebug
+				Console.WriteLine("Adding Systray Whole:{0:X}, Client:{1:X}", hwnd.WholeWindow.ToInt32(), hwnd.ClientWindow.ToInt32());
+#endif
+
+				// Oh boy.
+				if (hwnd.ClientWindow != hwnd.WholeWindow) {
+					Xlib.XDestroyWindow (display, hwnd.ClientWindow);
+					hwnd.ClientWindow = hwnd.WholeWindow;
+
+					/* by virtue of the way the tests are ordered when determining if it's PAINT
+					   or NCPAINT, ClientWindow == WholeWindow will always be PAINT.  So, if we're
+					   waiting on an nc_expose, drop it and remove the hwnd from the list (unless
+					   there's a pending expose). */
+					if (hwnd.nc_expose_pending) {
+						hwnd.nc_expose_pending = false;
+						if (!hwnd.expose_pending)
+							hwnd.Queue.Paint.Remove (hwnd);
+					}
+				}
+
+				size_hints = new XSizeHints();
+
+				size_hints.flags = (IntPtr)(XSizeHintsFlags.PMinSize | XSizeHintsFlags.PMaxSize | XSizeHintsFlags.PBaseSize);
+
+ 				size_hints.min_width = 24;
+ 				size_hints.min_height = 24;
+ 				size_hints.max_width = 24;
+ 				size_hints.max_height = 24;
+ 				size_hints.base_width = 24;
+ 				size_hints.base_height = 24;
+
+				Xlib.XSetWMNormalHints (display, hwnd.WholeWindow, ref size_hints);
+
+				int[] atoms = new int[2];
+				atoms [0] = 1;			// Version 1
+				atoms [1] = 1;			// we want to be mapped
+
+				// This line cost me 3 days...
+				Xlib.XChangeProperty (display, hwnd.WholeWindow, Atoms._XEMBED_INFO, Atoms._XEMBED_INFO, 32, PropertyMode.Replace, atoms, 2);
+
+				// Need to pick some reasonable defaults
+				tt = new ToolTip();
+				tt.AutomaticDelay = 100;
+				tt.InitialDelay = 250;
+				tt.ReshowDelay = 250;
+				tt.ShowAlways = true;
+
+				if ((tip != null) && (tip != string.Empty)) {
+					tt.SetToolTip(Control.FromHandle(handle), tip);
+					tt.Active = true;
+				} else {
+					tt.Active = false;
+				}
+
+				SendNetClientMessage (SystrayMgrWindow,
+						      Atoms._NET_SYSTEM_TRAY_OPCODE,
+						      IntPtr.Zero,
+						      (IntPtr)SystrayRequest.SYSTEM_TRAY_REQUEST_DOCK,
+						      hwnd.WholeWindow);
+
+				return true;
+			}
+
+			tt = null;
+			return false;
+		}
+
+		public bool SystrayChange (IntPtr handle, string tip, Icon icon, ref ToolTip tt)
+		{
+			Control	control;
+
+			control = Control.FromHandle(handle);
+			if (control != null && tt != null) {
+				tt.SetToolTip(control, tip);
+				tt.Active = true;
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		public void SystrayRemove(IntPtr handle, ref ToolTip tt)
+		{
+#if GTKSOCKET_SUPPORTS_REPARENTING
+			Hwnd	hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			/* in the XEMBED spec, it mentions 3 ways for a client window to break the protocol with the embedder.
+			 * 1. The embedder can unmap the window and reparent to the root window (we should probably handle this...)
+			 * 2. The client can reparent its window out of the embedder window.
+			 * 3. The client can destroy its window.
+			 *
+			 * this call to SetParent is case 2, but in
+			 * the spec it also mentions that gtk doesn't
+			 * support this at present.  Looking at HEAD
+			 * gtksocket-x11.c jives with this statement.
+			 *
+			 * so we can't reparent.  we have to destroy.
+			 */
+			SetParent(hwnd.WholeWindow, FosterParent);
+#else
+			Control	control = Control.FromHandle(handle);
+			if (control is NotifyIcon.NotifyIconWindow)
+				((NotifyIcon.NotifyIconWindow)control).InternalRecreateHandle ();
+#endif
+
+			// The caller can now re-dock it later...
+			if (tt != null) {
+				tt.Dispose();
+				tt = null;
+			}
+		}
+
+		public void ResetMouseHover (X11Hwnd hovering)
+		{
+			HoverState.Timer.Enabled = hovering != null;
+			HoverState.X = MousePosition.X;
+			HoverState.Y = MousePosition.Y;
+			HoverState.Window = hovering == null ? IntPtr.Zero : hovering.Handle;
+		}
+
+		public void ShowCursor (bool show)
+		{
+			;	// FIXME - X11 doesn't 'hide' the cursor. we could create an empty cursor
+		}
+
+		public void SetModal (X11Hwnd hwnd, bool Modal)
+		{
+			if (Modal) {
+				ModalWindows.Push(hwnd);
+			} else {
+				// XXX do we need to pop until the
+				// hwnd is off the stack?  or just the
+				// most recently pushed hwnd?
+				if (ModalWindows.Contains(hwnd)) {
+					ModalWindows.Pop();
+				}
+
+				if (ModalWindows.Count > 0) {
+					X11Hwnd top_hwnd = (X11Hwnd)ModalWindows.Peek();
+					top_hwnd.Activate();
+				}
+			}
+		}
+
+		public bool SupportsTransparency ()
+		{
+			// compiz adds _NET_WM_WINDOW_OPACITY to _NET_SUPPORTED on the root window, check for that
+			return ((IList)root_hwnd._NET_SUPPORTED).Contains (Atoms._NET_WM_WINDOW_OPACITY);
+		}
+
+		public void SendAsyncMethod (AsyncMethodData method)
+		{
+			Hwnd	hwnd;
+			XEvent	xevent = new XEvent ();
+
+			hwnd = Hwnd.ObjectFromHandle(method.Handle);
+
+			xevent.type = XEventName.ClientMessage;
+			xevent.ClientMessageEvent.display = display;
+			xevent.ClientMessageEvent.window = method.Handle;
+			xevent.ClientMessageEvent.message_type = Atoms.AsyncAtom;
+			xevent.ClientMessageEvent.format = 32;
+			xevent.ClientMessageEvent.ptr1 = (IntPtr) GCHandle.Alloc (method);
+
+			hwnd.Queue.EnqueueLocked (xevent);
+
+			//WakeupMain ();
+		}
+
+		delegate IntPtr WndProcDelegate (IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam);
+
+		public IntPtr SendMessage (IntPtr handle, Msg message, IntPtr wParam, IntPtr lParam)
+		{
+			X11Hwnd	hwnd = (X11Hwnd)Hwnd.ObjectFromHandle(handle);
+
+			if (hwnd != null && hwnd.queue != XplatUIX11_new.GetInstance().ThreadQueue (Thread.CurrentThread)) {
+				AsyncMethodResult	result;
+				AsyncMethodData		data;
+
+				result = new AsyncMethodResult ();
+				data = new AsyncMethodData ();
+
+				data.Handle = hwnd.Handle;
+				data.Method = new WndProcDelegate (NativeWindow.WndProc);
+				data.Args = new object[] { hwnd, message, wParam, lParam };
+				data.Result = result;
+				
+				SendAsyncMethod (data);
+				#if DriverDebug || DriverDebugThreads
+				Console.WriteLine ("Sending {0} message across.", message);
+				#endif
+
+				return IntPtr.Zero;
+			}
+			return NativeWindow.WndProc (hwnd.Handle, message, wParam, lParam);
+		}
+
+		public bool PostMessage (IntPtr handle, Msg message, IntPtr wparam, IntPtr lparam)
+		{
+			XEvent xevent = new XEvent ();
+			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
+
+			xevent.type = XEventName.ClientMessage;
+			xevent.ClientMessageEvent.display = display;
+
+			if (hwnd != null) {
+				xevent.ClientMessageEvent.window = hwnd.WholeWindow;
+			} else {
+				xevent.ClientMessageEvent.window = IntPtr.Zero;
+			}
+
+			xevent.ClientMessageEvent.message_type = Atoms.PostAtom;
+			xevent.ClientMessageEvent.format = 32;
+			xevent.ClientMessageEvent.ptr1 = handle;
+			xevent.ClientMessageEvent.ptr2 = (IntPtr) message;
+			xevent.ClientMessageEvent.ptr3 = wparam;
+			xevent.ClientMessageEvent.ptr4 = lparam;
+
+			hwnd.Queue.Enqueue (xevent);
+
+			return true;
+		}
+
+		public void SendNetWMMessage (IntPtr window, IntPtr message_type, IntPtr l0, IntPtr l1, IntPtr l2)
+		{
+			XEvent	xev;
+
+			xev = new XEvent();
+			xev.ClientMessageEvent.type = XEventName.ClientMessage;
+			xev.ClientMessageEvent.send_event = true;
+			xev.ClientMessageEvent.window = window;
+			xev.ClientMessageEvent.message_type = message_type;
+			xev.ClientMessageEvent.format = 32;
+			xev.ClientMessageEvent.ptr1 = l0;
+			xev.ClientMessageEvent.ptr2 = l1;
+			xev.ClientMessageEvent.ptr3 = l2;
+
+			Xlib.XSendEvent (display, root_hwnd.Handle, false,
+					 new IntPtr ((int) (EventMask.SubstructureRedirectMask | EventMask.SubstructureNotifyMask)), ref xev);
+		}
+
+		public void SendNetClientMessage (IntPtr window, IntPtr message_type, IntPtr l0, IntPtr l1, IntPtr l2)
+		{
+			XEvent	xev;
+
+			xev = new XEvent();
+			xev.ClientMessageEvent.type = XEventName.ClientMessage;
+			xev.ClientMessageEvent.send_event = true;
+			xev.ClientMessageEvent.window = window;
+			xev.ClientMessageEvent.message_type = message_type;
+			xev.ClientMessageEvent.format = 32;
+			xev.ClientMessageEvent.ptr1 = l0;
+			xev.ClientMessageEvent.ptr2 = l1;
+			xev.ClientMessageEvent.ptr3 = l2;
+
+			Xlib.XSendEvent (display, window, false, new IntPtr ((int)EventMask.NoEventMask), ref xev);
+		}
+
+		public bool TranslateMessage (ref MSG msg)
+		{
+			return Keyboard.TranslateMessage (ref msg);
+		}
+
+		private void QueryPointer (IntPtr w, out IntPtr root, out IntPtr child,
+					   out int root_x, out int root_y, out int child_x, out int child_y,
+					   out int mask)
+		{
+			/* this code was written with the help of
+			   glance at gdk.  I never would have realized we
+			   needed a loop in order to traverse down in the
+			   hierarchy.  I would have assumed you'd get the
+			   most deeply nested child and have to do
+			   XQueryTree to move back up the hierarchy..
+			   stupid me, of course. */
+			IntPtr c;
+
+			Xlib.XGrabServer (display);
+
+			Xlib.XQueryPointer (display, w, out root, out c,
+					    out root_x, out root_y, out child_x, out child_y,
+					    out mask);
+
+			if (root != w)
+				c = root;
+
+			IntPtr child_last = IntPtr.Zero;
+			while (c != IntPtr.Zero) {
+				child_last = c;
+				Xlib.XQueryPointer (display, c, out root, out c,
+						    out root_x, out root_y, out child_x, out child_y,
+						    out mask);
+			}
+
+			Xlib.XUngrabServer (display);
+
+			child = child_last;
+		}
+
+		public void SetCursorPos (int x, int y)
+		{
+			IntPtr root, child;
+			int root_x, root_y, child_x, child_y, mask;
+
+			/* we need to do a
+			 * QueryPointer before warping
+			 * because if the warp is on
+			 * the RootWindow, the x/y are
+			 * relative to the current
+			 * mouse position
+			 */
+			QueryPointer (RootWindow.Handle,
+				      out root,
+				      out child,
+				      out root_x, out root_y,
+				      out child_x, out child_y,
+				      out mask);
+
+			Xlib.XWarpPointer (display, IntPtr.Zero, IntPtr.Zero, 0, 0, 0, 0, x - root_x, y - root_y);
+
+			Xlib.XFlush (display);
+
+			/* then we need to a
+			 * QueryPointer after warping
+			 * to manually generate a
+			 * motion event for the window
+			 * we move into.
+			 */
+			QueryPointer (RootWindow.Handle,
+				      out root,
+				      out child,
+				      out root_x, out root_y,
+				      out child_x, out child_y,
+				      out mask);
+
+			Hwnd child_hwnd = Hwnd.ObjectFromHandle(child);
+			if (child_hwnd == null) {
+				return;
+			}
+
+			XEvent xevent = new XEvent ();
+
+			xevent.type = XEventName.MotionNotify;
+			xevent.MotionEvent.display = display;
+			xevent.MotionEvent.window = child_hwnd.Handle;
+			xevent.MotionEvent.root = RootWindow.Handle;
+			xevent.MotionEvent.x = child_x;
+			xevent.MotionEvent.y = child_y;
+			xevent.MotionEvent.x_root = root_x;
+			xevent.MotionEvent.y_root = root_y;
+			xevent.MotionEvent.state = mask;
+
+			child_hwnd.Queue.Enqueue (xevent);
+		}
+
+		public void SetFocus (X11Hwnd new_focus)
+		{
+			if (new_focus == FocusWindow)
+				return;
+
+			X11Hwnd prev_focus = FocusWindow;
+			FocusWindow = new_focus;
+
+			if (prev_focus != null)
+				SendMessage (prev_focus.Handle, Msg.WM_KILLFOCUS, FocusWindow == null ? IntPtr.Zero : FocusWindow.Handle, IntPtr.Zero);
+			if (FocusWindow != null)
+				SendMessage (FocusWindow.Handle, Msg.WM_SETFOCUS, prev_focus == null ? IntPtr.Zero : prev_focus.Handle, IntPtr.Zero);
+
+			//XSetInputFocus(DisplayHandle, Hwnd.ObjectFromHandle(handle).ClientWindow, RevertTo.None, IntPtr.Zero);
+		}
+
+		public IntPtr DefineCursor (Bitmap bitmap, Bitmap mask, Color cursor_pixel, Color mask_pixel, int xHotSpot, int yHotSpot)
+		{
+			IntPtr	cursor;
+			Bitmap	cursor_bitmap;
+			Bitmap	cursor_mask;
+			Byte[]	cursor_bits;
+			Byte[]	mask_bits;
+			Color	c_pixel;
+			Color	m_pixel;
+			int	width;
+			int	height;
+			IntPtr	cursor_pixmap;
+			IntPtr	mask_pixmap;
+			XColor	fg;
+			XColor	bg;
+			bool	and;
+			bool	xor;
+
+			if (Xlib.XQueryBestCursor (display, RootWindow.Handle, bitmap.Width, bitmap.Height, out width, out height) == 0) {
+				return IntPtr.Zero;
+			}
+
+			// Win32 only allows creation cursors of a certain size
+			if ((bitmap.Width != width) || (bitmap.Width != height)) {
+				cursor_bitmap = new Bitmap(bitmap, new Size(width, height));
+				cursor_mask = new Bitmap(mask, new Size(width, height));
+			} else {
+				cursor_bitmap = bitmap;
+				cursor_mask = mask;
+			}
+
+			width = cursor_bitmap.Width;
+			height = cursor_bitmap.Height;
+
+			cursor_bits = new Byte[(width / 8) * height];
+			mask_bits = new Byte[(width / 8) * height];
+
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					c_pixel = cursor_bitmap.GetPixel(x, y);
+					m_pixel = cursor_mask.GetPixel(x, y);
+
+					and = c_pixel == cursor_pixel;
+					xor = m_pixel == mask_pixel;
+
+					if (!and && !xor) {
+						// Black
+						// cursor_bits[y * width / 8 + x / 8] &= (byte)~((1 << (x % 8)));	// The bit already is 0
+						mask_bits[y * width / 8 + x / 8] |= (byte)(1 << (x % 8));
+					} else if (and && !xor) {
+						// White
+						cursor_bits[y * width / 8 + x / 8] |= (byte)(1 << (x % 8));
+						mask_bits[y * width / 8 + x / 8] |= (byte)(1 << (x % 8));
+#if notneeded
+					} else if (and && !xor) {
+						// Screen
+					} else if (and && xor) {
+						// Inverse Screen
+
+						// X11 doesn't know the 'reverse screen' concept, so we'll treat them the same
+						// we want both to be 0 so nothing to be done
+						//cursor_bits[y * width / 8 + x / 8] &= (byte)~((1 << (x % 8)));
+						//mask_bits[y * width / 8 + x / 8] |= (byte)(01 << (x % 8));
+#endif
+					}
+				}
+			}
+
+			cursor_pixmap = Xlib.XCreatePixmapFromBitmapData (display, RootWindow.Handle, cursor_bits, width, height, (IntPtr)1, (IntPtr)0, 1);
+			mask_pixmap = Xlib.XCreatePixmapFromBitmapData (display, RootWindow.Handle, mask_bits, width, height, (IntPtr)1, (IntPtr)0, 1);
+			fg = new XColor();
+			bg = new XColor();
+
+			fg.pixel = Xlib.XWhitePixel (display, DefaultScreen);
+			fg.red = (ushort)65535;
+			fg.green = (ushort)65535;
+			fg.blue = (ushort)65535;
+
+			bg.pixel = Xlib.XBlackPixel (display, DefaultScreen);
+
+			cursor = Xlib.XCreatePixmapCursor (display, cursor_pixmap, mask_pixmap, ref fg, ref bg, xHotSpot, yHotSpot);
+
+			Xlib.XFreePixmap (display, cursor_pixmap);
+			Xlib.XFreePixmap (display, mask_pixmap);
+
+			return cursor;
+		}
+
+		public IntPtr DefineStdCursor (StdCursor id)
+		{
+			CursorFontShape	shape;
+
+			// FIXME - define missing shapes
+
+			switch (id) {
+			case StdCursor.AppStarting:
+				shape = CursorFontShape.XC_watch;
+				break;
+
+			case StdCursor.Arrow:
+				shape = CursorFontShape.XC_top_left_arrow;
+				break;
+
+			case StdCursor.Cross:
+				shape = CursorFontShape.XC_crosshair;
+				break;
+
+			case StdCursor.Default:
+				shape = CursorFontShape.XC_top_left_arrow;
+				break;
+
+			case StdCursor.Hand:
+				shape = CursorFontShape.XC_hand1;
+				break;
+
+			case StdCursor.Help:
+				shape = CursorFontShape.XC_question_arrow;
+				break;
+			
+			case StdCursor.HSplit:
+				shape = CursorFontShape.XC_sb_v_double_arrow; 
+				break;
+
+			case StdCursor.IBeam:
+				shape = CursorFontShape.XC_xterm; 
+				break;
+
+			case StdCursor.No:
+				shape = CursorFontShape.XC_circle; 
+				break;
+
+			case StdCursor.NoMove2D:
+				shape = CursorFontShape.XC_fleur; 
+				break;
+
+			case StdCursor.NoMoveHoriz:
+				shape = CursorFontShape.XC_fleur; 
+				break;
+
+			case StdCursor.NoMoveVert:
+				shape = CursorFontShape.XC_fleur; 
+				break;
+
+			case StdCursor.PanEast:
+				shape = CursorFontShape.XC_fleur; 
+				break;
+
+			case StdCursor.PanNE:
+				shape = CursorFontShape.XC_fleur; 
+				break;
+
+			case StdCursor.PanNorth:
+				shape = CursorFontShape.XC_fleur; 
+				break;
+
+			case StdCursor.PanNW:
+				shape = CursorFontShape.XC_fleur; 
+				break;
+
+			case StdCursor.PanSE:
+				shape = CursorFontShape.XC_fleur; 
+				break;
+
+			case StdCursor.PanSouth:
+				shape = CursorFontShape.XC_fleur; 
+				break;
+
+			case StdCursor.PanSW:
+				shape = CursorFontShape.XC_fleur; 
+				break;
+
+			case StdCursor.PanWest:
+				shape = CursorFontShape.XC_sizing; 
+				break;
+
+			case StdCursor.SizeAll:
+				shape = CursorFontShape.XC_fleur; 
+				break;
+
+			case StdCursor.SizeNESW:
+				shape = CursorFontShape.XC_top_right_corner; 
+				break;
+
+			case StdCursor.SizeNS:
+				shape = CursorFontShape.XC_sb_v_double_arrow;
+				break;
+
+			case StdCursor.SizeNWSE:
+				shape = CursorFontShape.XC_top_left_corner; 
+				break;
+
+			case StdCursor.SizeWE:
+				shape = CursorFontShape.XC_sb_h_double_arrow; 
+				break;
+
+			case StdCursor.UpArrow:
+				shape = CursorFontShape.XC_center_ptr; 
+				break;
+
+			case StdCursor.VSplit:
+				shape = CursorFontShape.XC_sb_h_double_arrow;
+				break;
+
+			case StdCursor.WaitCursor:
+				shape = CursorFontShape.XC_watch; 
+				break;
+
+			default:
+				return IntPtr.Zero;
+			}
+
+			return Xlib.XCreateFontCursor (display, shape);
+		}
+
+		// XXX this should take an X11Hwnd.
+		public void CreateCaret (IntPtr handle, int width, int height)
+		{
+			XGCValues	gc_values;
+			Hwnd		hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			if (Caret.Hwnd != IntPtr.Zero) {
+				DestroyCaret(Caret.Hwnd);
+			}
+
+			Caret.Hwnd = handle;
+			Caret.Window = hwnd.ClientWindow;
+			Caret.Width = width;
+			Caret.Height = height;
+			Caret.Visible = false;
+			Caret.On = false;
+
+			gc_values = new XGCValues();
+			gc_values.line_width = width;
+
+			Caret.gc = Xlib.XCreateGC (display, Caret.Window, new IntPtr ((int)GCFunction.GCLineWidth), ref gc_values);
+			if (Caret.gc == IntPtr.Zero) {
+				Caret.Hwnd = IntPtr.Zero;
+				return;
+			}
+
+			Xlib.XSetFunction (display, Caret.gc, GXFunction.GXinvert);
+		}
+
+
+		// XXX this should take an X11Hwnd.
+		public void DestroyCaret (IntPtr handle)
+		{
+			if (Caret.Hwnd == handle) {
+				if (Caret.Visible == true) {
+					Caret.Timer.Stop ();
+				}
+				if (Caret.gc != IntPtr.Zero) {
+					Xlib.XFreeGC (display, Caret.gc);
+					Caret.gc = IntPtr.Zero;
+				}
+				Caret.Hwnd = IntPtr.Zero;
+				Caret.Visible = false;
+				Caret.On = false;
+			}
+		}
+
+		public void SetCaretPos (IntPtr handle, int x, int y)
+		{
+			if (Caret.Hwnd == handle) {
+				Caret.Timer.Stop();
+				HideCaret();
+
+				Caret.X = x;
+				Caret.Y = y;
+
+				if (Caret.Visible == true) {
+					ShowCaret();
+					Caret.Timer.Start();
+				}
+			}
+		}
+
+		public void DestroyCursor (IntPtr cursor)
+		{
+			Xlib.XFreeCursor (display, cursor);
+		}
+
+		private void AccumulateDestroyedHandles (Control c, ArrayList list)
+		{
+			if (c != null) {
+				Control[] controls = c.child_controls.GetAllControls ();
+
+				if (c.IsHandleCreated && !c.IsDisposed) {
+					Hwnd hwnd = Hwnd.ObjectFromHandle(c.Handle);
+
+#if DriverDebug || DriverDebugDestroy
+					Console.WriteLine (" + adding {0} to the list of zombie windows", XplatUI.Window (hwnd.Handle));
+					Console.WriteLine (" + parent X window is {0:X}", XGetParent (hwnd.WholeWindow).ToInt32());
+#endif
+
+					list.Add (hwnd);
+					CleanupCachedWindows (hwnd);
+					hwnd.zombie = true;
+				}
+
+				for (int  i = 0; i < controls.Length; i ++) {
+					AccumulateDestroyedHandles (controls[i], list);
+				}
+			}
+			
+		}
+
+		void CleanupCachedWindows (Hwnd hwnd)
+		{
+			if (ActiveWindow == hwnd) {
+				SendMessage (hwnd.ClientWindow, Msg.WM_ACTIVATE, (IntPtr)WindowActiveFlags.WA_INACTIVE, IntPtr.Zero);
+				ActiveWindow = null;
+			}
+
+			if (FocusWindow == hwnd) {
+				SendMessage (hwnd.ClientWindow, Msg.WM_KILLFOCUS, IntPtr.Zero, IntPtr.Zero);
+				FocusWindow = null;
+			}
+
+			if (Grab.Hwnd == hwnd.Handle) {
+				Grab.Hwnd = IntPtr.Zero;
+				Grab.Confined = false;
+			}
+
+			DestroyCaret (hwnd.Handle);
+		}
+
+
+		public void DestroyWindow (X11Hwnd hwnd)
+		{
+			CleanupCachedWindows (hwnd);
+
+			ArrayList windows = new ArrayList ();
+
+			AccumulateDestroyedHandles (Control.ControlNativeWindow.ControlFromHandle(hwnd.Handle), windows);
+
+			hwnd.DestroyWindow ();
+
+			foreach (Hwnd h in windows) {
+				SendMessage (h.Handle, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
+			}
+		}
+
+		public X11Hwnd GetActiveWindow ()
+		{
+			IntPtr	actual_atom;
+			int	actual_format;
+			IntPtr	nitems;
+			IntPtr	bytes_after;
+			IntPtr	prop = IntPtr.Zero;
+			IntPtr	active = IntPtr.Zero;
+
+			Xlib.XGetWindowProperty (display, RootWindow.Handle,
+						 Atoms._NET_ACTIVE_WINDOW, IntPtr.Zero, new IntPtr (1), false,
+						 Atoms.XA_WINDOW, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+
+			if (((long)nitems > 0) && (prop != IntPtr.Zero)) {
+				active = (IntPtr)Marshal.ReadInt32(prop);
+				Xlib.XFree(prop);
+			}
+
+			return (X11Hwnd)Hwnd.GetObjectFromWindow(active);
+		}
+
+		public void GetDisplaySize (out Size size)
+		{
+			XWindowAttributes attributes = new XWindowAttributes();
+
+			// FIXME - use _NET_WM messages instead?
+			Xlib.XGetWindowAttributes (display, RootWindow.Handle, ref attributes);
+
+			size = new Size(attributes.width, attributes.height);
+		}
+
+		// XXX this method doesn't really fit well anywhere in the backend
+		public SizeF GetAutoScaleSize (Font font)
+		{
+			Graphics	g;
+			float		width;
+			string		magic_string = "The quick brown fox jumped over the lazy dog.";
+			double		magic_number = 44.549996948242189; // XXX my god, where did this number come from?
+
+			g = Graphics.FromHwnd (FosterParent.Handle);
+
+			width = (float) (g.MeasureString (magic_string, font).Width / magic_number);
+			return new SizeF(width, font.Height);
+		}
+
+		public void GetCursorPos (X11Hwnd hwnd, out int x, out int y)
+		{
+			IntPtr	use_handle;
+			IntPtr	root;
+			IntPtr	child;
+			int	root_x;
+			int	root_y;
+			int	win_x;
+			int	win_y;
+			int	keys_buttons;
+
+			if (hwnd != null)
+				use_handle = hwnd.Handle;
+			else
+				use_handle = RootWindow.Handle;
+
+			QueryPointer (use_handle, out root, out child, out root_x, out root_y, out win_x, out win_y, out keys_buttons);
+
+			if (hwnd != null) {
+				x = win_x;
+				y = win_y;
+			} else {
+				x = root_x;
+				y = root_y;
+			}
+		}
+
+		public IntPtr GetFocus ()
+		{
+			return FocusWindow.Handle;
+		}
+
+		public IntPtr GetMousewParam (int Delta)
+		{
+			int	result = 0;
+
+			if ((MouseState & MouseButtons.Left) != 0) {
+				result |= (int)MsgButtons.MK_LBUTTON;
+			}
+
+			if ((MouseState & MouseButtons.Middle) != 0) {
+				result |= (int)MsgButtons.MK_MBUTTON;
+			}
+
+			if ((MouseState & MouseButtons.Right) != 0) {
+				result |= (int)MsgButtons.MK_RBUTTON;
+			}
+
+			Keys mods = ModifierKeys;
+			if ((mods & Keys.Control) != 0) {
+				result |= (int)MsgButtons.MK_CONTROL;
+			}
+
+			if ((mods & Keys.Shift) != 0) {
+				result |= (int)MsgButtons.MK_SHIFT;
+			}
+
+			result |= Delta << 16;
+
+			return (IntPtr)result;
+		}
+
+		public void GrabInfo (out IntPtr handle, out bool GrabConfined, out Rectangle GrabArea)
+		{
+			handle = Grab.Hwnd;
+			GrabConfined = Grab.Confined;
+			GrabArea = Grab.Area;
+		}
+
+		public void GrabWindow (X11Hwnd hwnd, X11Hwnd confine_to)
+		{
+			IntPtr	confine_to_window;
+
+			confine_to_window = IntPtr.Zero;
+
+			if (confine_to != null) {
+				XWindowAttributes attributes = new XWindowAttributes();
+
+				Xlib.XGetWindowAttributes (display, confine_to.ClientWindow, ref attributes);
+
+				Grab.Area.X = attributes.x;
+				Grab.Area.Y = attributes.y;
+				Grab.Area.Width = attributes.width;
+				Grab.Area.Height = attributes.height;
+				Grab.Confined = true;
+				confine_to_window = confine_to.ClientWindow;
+			}
+
+			Grab.Hwnd = hwnd.ClientWindow;
+
+			Xlib.XGrabPointer (display, hwnd.ClientWindow, false, 
+					   EventMask.ButtonPressMask | EventMask.ButtonMotionMask |
+					   EventMask.ButtonReleaseMask | EventMask.PointerMotionMask,
+					   GrabMode.GrabModeAsync, GrabMode.GrabModeAsync, confine_to_window, IntPtr.Zero, IntPtr.Zero);
+		}
+
+		public void UngrabWindow (X11Hwnd hwnd)
+		{
+			Xlib.XUngrabPointer (display, IntPtr.Zero);
+			Xlib.XFlush (display);
+
+			// XXX make sure hwnd is what should have the grab and throw if not
+			Grab.Hwnd = IntPtr.Zero;
+			Grab.Confined = false;
+		}
+
+		private void TranslatePropertyToClipboard (IntPtr property)
+		{
+			IntPtr actual_atom;
+			int actual_format;
+			IntPtr nitems;
+			IntPtr bytes_after;
+			IntPtr prop = IntPtr.Zero;
+
+			Clipboard.Item = null;
+
+			Xlib.XGetWindowProperty (display, FosterParent.Handle,
+						 property, IntPtr.Zero, new IntPtr (0x7fffffff), true,
+						 Atoms.AnyPropertyType, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+
+			if ((long)nitems > 0) {
+				if (property == Atoms.XA_STRING) {
+					Clipboard.Item = Marshal.PtrToStringAnsi(prop);
+				} else if (property == Atoms.XA_BITMAP) {
+					// FIXME - convert bitmap to image
+				} else if (property == Atoms.XA_PIXMAP) {
+					// FIXME - convert pixmap to image
+				} else if (property == Atoms.OEMTEXT) {
+					Clipboard.Item = Marshal.PtrToStringAnsi(prop);
+				} else if (property == Atoms.UNICODETEXT) {
+					Clipboard.Item = Marshal.PtrToStringAnsi(prop);
+				}
+
+				Xlib.XFree(prop);
+			}
+		}
+
+		// XXX should we be using @handle instead of Atoms.CLIPBOARD here?
+		public int[] ClipboardAvailableFormats (IntPtr handle)
+		{
+			// XXX deal with the updatemessagequeue stuff
+#if true
+			return new int[0];
+#else
+			DataFormats.Format f;
+			int[] result;
+
+			f = DataFormats.Format.List;
+
+			if (Xlib.XGetSelectionOwner (display, Atoms.CLIPBOARD) == IntPtr.Zero) {
+				return null;
+			}
+
+			Clipboard.Formats = new ArrayList();
+
+			while (f != null) {
+				Xlib.XConvertSelection (display, Atoms.CLIPBOARD, (IntPtr)f.Id, (IntPtr)f.Id, FosterParent.Handle, IntPtr.Zero);
+
+				Clipboard.Enumerating = true;
+				while (Clipboard.Enumerating) {
+					UpdateMessageQueue(null);
+				}
+				f = f.Next;
+			}
+
+			result = new int[Clipboard.Formats.Count];
+
+			for (int i = 0; i < Clipboard.Formats.Count; i++) {
+				result[i] = ((IntPtr)Clipboard.Formats[i]).ToInt32 ();
+			}
+
+			Clipboard.Formats = null;
+			return result;
+#endif
+		}
+
+		public void ClipboardClose (IntPtr handle)
+		{
+			if (handle != ClipMagic) {
+				throw new ArgumentException("handle is not a valid clipboard handle");
+			}
+			return;
+		}
+
+		public int ClipboardGetID (IntPtr handle, string format)
+		{
+			if (handle != ClipMagic) {
+				throw new ArgumentException("handle is not a valid clipboard handle");
+			}
+
+			if (format == "Text" ) return Atoms.XA_STRING.ToInt32();
+			else if (format == "Bitmap" ) return Atoms.XA_BITMAP.ToInt32();
+			//else if (format == "MetaFilePict" ) return 3;
+			//else if (format == "SymbolicLink" ) return 4;
+			//else if (format == "DataInterchangeFormat" ) return 5;
+			//else if (format == "Tiff" ) return 6;
+			else if (format == "OEMText" ) return Atoms.OEMTEXT.ToInt32();
+			else if (format == "DeviceIndependentBitmap" ) return Atoms.XA_PIXMAP.ToInt32();
+			else if (format == "Palette" ) return Atoms.XA_COLORMAP.ToInt32();	// Useless
+			//else if (format == "PenData" ) return 10;
+			//else if (format == "RiffAudio" ) return 11;
+			//else if (format == "WaveAudio" ) return 12;
+			else if (format == "UnicodeText" ) return Atoms.UNICODETEXT.ToInt32();
+			//else if (format == "EnhancedMetafile" ) return 14;
+			//else if (format == "FileDrop" ) return 15;
+			//else if (format == "Locale" ) return 16;
+
+			return Xlib.XInternAtom (display, format, false).ToInt32();
+		}
+
+		public IntPtr ClipboardOpen (bool primary_selection)
+		{
+			if (!primary_selection)
+				ClipMagic = Atoms.CLIPBOARD;
+			else
+				ClipMagic = Atoms.PRIMARY;
+
+			return ClipMagic;
+		}
+
+		// XXX @converter?
+		public object ClipboardRetrieve (IntPtr handle, int type, XplatUI.ClipboardToObject converter)
+		{
+			// XXX deal with the UpdateMessageQueue stuff
+#if true
+			return null;
+#else
+			Xlib.XConvertSelection (display, handle, (IntPtr)type, (IntPtr)type, FosterParent, IntPtr.Zero);
+
+			Clipboard.Retrieving = true;
+			while (Clipboard.Retrieving) {
+				UpdateMessageQueue(null);
+			}
+
+			return Clipboard.Item;
+#endif
+		}
+
+		public void ClipboardStore (IntPtr handle, object obj, int type, XplatUI.ObjectToClipboard converter)
+		{
+			Clipboard.Item = obj;
+			Clipboard.Type = type;
+			Clipboard.Converter = converter;
+
+			if (obj != null) {
+				Xlib.XSetSelectionOwner (display, Atoms.CLIPBOARD, FosterParent.Handle, IntPtr.Zero);
+			} else {
+				// Clearing the selection
+				Xlib.XSetSelectionOwner (display, Atoms.CLIPBOARD, IntPtr.Zero, IntPtr.Zero);
+			}
+		}
+
+
+		public PaintEventArgs PaintEventStart (IntPtr handle, bool client)
+		{
+			// This needs a little work - i'm thinking part (most) should be in X11Hwnd
+			PaintEventArgs	paint_event;
+			Hwnd		hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			if (Caret.Visible == true) {
+				Caret.Paused = true;
+				HideCaret();
+			}
+
+			Graphics dc;
+
+			if (client) {
+				dc = Graphics.FromHwnd (hwnd.ClientWindow);
+
+				Region clip_region = new Region ();
+				clip_region.MakeEmpty();
+
+				foreach (Rectangle r in hwnd.ClipRectangles) {
+					clip_region.Union (r);
+				}
+
+				if (hwnd.UserClip != null) {
+					clip_region.Intersect(hwnd.UserClip);
+				}
+
+				dc.Clip = clip_region;
+				paint_event = new PaintEventArgs(dc, hwnd.Invalid);
+				hwnd.expose_pending = false;
+
+				hwnd.ClearInvalidArea();
+
+				hwnd.drawing_stack.Push (paint_event);
+				hwnd.drawing_stack.Push (dc);
+
+				return paint_event;
+			} else {
+				dc = Graphics.FromHwnd (hwnd.WholeWindow);
+
+				if (!hwnd.nc_invalid.IsEmpty) {
+					dc.SetClip (hwnd.nc_invalid);
+					paint_event = new PaintEventArgs(dc, hwnd.nc_invalid);
+				} else {
+					paint_event = new PaintEventArgs(dc, new Rectangle(0, 0, hwnd.width, hwnd.height));
+				}
+				hwnd.nc_expose_pending = false;
+
+				hwnd.ClearNcInvalidArea ();
+
+				hwnd.drawing_stack.Push (paint_event);
+				hwnd.drawing_stack.Push (dc);
+
+				return paint_event;
+			}
+		}
+
+		public void PaintEventEnd (IntPtr handle, bool client)
+		{
+			// XXX like PaintEventStart, most of this should be in X11Hwnd
+			Hwnd	hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			Graphics dc = (Graphics)hwnd.drawing_stack.Pop ();
+			dc.Flush();
+			dc.Dispose();
+			
+			PaintEventArgs pe = (PaintEventArgs)hwnd.drawing_stack.Pop();
+			pe.SetGraphics (null);
+			pe.Dispose ();
+
+			if (Caret.Visible == true) {
+				ShowCaret();
+				Caret.Paused = false;
+			}
+		}
+
+		public DragDropEffects StartDrag (IntPtr handle, object data,
+						  DragDropEffects allowed_effects)
+		{
+			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
+
+			if (hwnd == null)
+				throw new ArgumentException ("Attempt to begin drag from invalid window handle (" + handle.ToInt32 () + ").");
+
+			return Dnd.StartDrag (hwnd.ClientWindow, data, allowed_effects);
+		}
+
+		public X11Atoms Atoms {
+			get { return atoms; }
+		}
+
+		public int CurrentTimestamp {
+			get {
+				TimeSpan t = (DateTime.UtcNow - new DateTime(1970, 1, 1));
+
+				return (int) t.TotalSeconds;
+			}
+		}
+
+		public Size CursorSize {
+			get {
+				int	x;
+				int	y;
+
+				if (Xlib.XQueryBestCursor (display, RootWindow.Handle, 32, 32, out x, out y) != 0) {
+					return new Size (x, y);
+				} else {
+					return new Size (16, 16);
+				}
+			}
+		} 
+
+		public IntPtr Handle {
+			get { return display; }
+		}
+
+		public Size IconSize {
+			get {
+				IntPtr		list;
+				XIconSize	size;
+				int		count;
+
+				if (Xlib.XGetIconSizes (display, RootWindow.Handle, out list, out count) != 0) {
+					long		current;
+					int		largest;
+
+					current = (long)list;
+					largest = 0;
+
+					size = new XIconSize();
+
+					for (int i = 0; i < count; i++) {
+						size = (XIconSize)Marshal.PtrToStructure((IntPtr)current, size.GetType());
+						current += Marshal.SizeOf(size);
+
+						// Look for our preferred size
+						if (size.min_width == 32) {
+							Xlib.XFree(list);
+							return new Size(32, 32);
+						}
+
+						if (size.max_width == 32) {
+							Xlib.XFree(list);
+							return new Size(32, 32);
+						}
+
+						if (size.min_width < 32 && size.max_width > 32) {
+							int	x;
+
+							// check if we can fit one
+							x = size.min_width;
+							while (x < size.max_width) {
+								x += size.width_inc;
+								if (x == 32) {
+									Xlib.XFree(list);
+									return new Size(32, 32);
+								}
+							}
+						}
+
+						if (largest < size.max_width) {
+							largest = size.max_width;
+						}
+					}
+
+					// We didn't find a match or we wouldn't be here
+					return new Size(largest, largest);
+
+				} else {
+					return new Size(32, 32);
+				}
+			}
+		} 
+
+		public int KeyboardSpeed {
+			get {
+				//
+				// A lot harder: need to do:
+				// XkbQueryExtension(0x08051008, 0xbfffdf4c, 0xbfffdf50, 0xbfffdf54, 0xbfffdf58)       = 1
+				// XkbAllocKeyboard(0x08051008, 0xbfffdf4c, 0xbfffdf50, 0xbfffdf54, 0xbfffdf58)        = 0x080517a8
+				// XkbGetControls(0x08051008, 1, 0x080517a8, 0xbfffdf54, 0xbfffdf58)                   = 0
+				//
+				// And from that we can tell the repetition rate
+				//
+				// Notice, the values must map to:
+				//   [0, 31] which maps to 2.5 to 30 repetitions per second.
+				//
+				return 0;
+			}
+		}
+
+		public int KeyboardDelay {
+			get {
+				//
+				// Return values must range from 0 to 4, 0 meaning 250ms,
+				// and 4 meaning 1000 ms.
+				//
+				return 1; // ie, 500 ms
+			}
+		} 
+
+		public int DefaultScreen {
+			get { return Xlib.XDefaultScreen (display); }
+		}
+
+		public IntPtr DefaultColormap {
+			// XXX multiscreen
+			get { return Xlib.XDefaultColormap (display, DefaultScreen); }
+		}
+
+		public Keys ModifierKeys {
+			get {
+				return Keyboard.ModifierKeys;
+			}
+		}
+
+		public X11RootHwnd RootWindow {
+			get { return root_hwnd; }
+		}
+
+		public Size SmallIconSize {
+			get {
+				IntPtr		list;
+				XIconSize	size;
+				int		count;
+
+				if (Xlib.XGetIconSizes (display, RootWindow.Handle, out list, out count) != 0) {
+					long		current;
+					int		smallest;
+
+					current = (long)list;
+					smallest = 0;
+
+					size = new XIconSize();
+
+					for (int i = 0; i < count; i++) {
+						size = (XIconSize)Marshal.PtrToStructure((IntPtr)current, size.GetType());
+						current += Marshal.SizeOf(size);
+
+						// Look for our preferred size
+						if (size.min_width == 16) {
+							Xlib.XFree(list);
+							return new Size(16, 16);
+						}
+
+						if (size.max_width == 16) {
+							Xlib.XFree(list);
+							return new Size(16, 16);
+						}
+
+						if (size.min_width < 16 && size.max_width > 16) {
+							int	x;
+
+							// check if we can fit one
+							x = size.min_width;
+							while (x < size.max_width) {
+								x += size.width_inc;
+								if (x == 16) {
+									Xlib.XFree(list);
+									return new Size(16, 16);
+								}
+							}
+						}
+
+						if (smallest == 0 || smallest > size.min_width) {
+							smallest = size.min_width;
+						}
+					}
+
+					// We didn't find a match or we wouldn't be here
+					return new Size(smallest, smallest);
+
+				} else {
+					return new Size(16, 16);
+				}
+			}
+		} 
+
+		public X11Hwnd FosterParent {
+			get { return foster_hwnd; }
+		}
+
+		public int MouseHoverTime {
+			get {
+				return HoverState.Interval;
+			}
+		}
+
+		public Rectangle WorkingArea {
+			get {
+				IntPtr			actual_atom;
+				int			actual_format;
+				IntPtr			nitems;
+				IntPtr			bytes_after;
+				IntPtr			prop = IntPtr.Zero;
+				int			width;
+				int			height;
+				int			current_desktop;
+				int			x;
+				int			y;
+
+				Xlib.XGetWindowProperty (display, RootWindow.Handle, 
+							 Atoms._NET_CURRENT_DESKTOP, IntPtr.Zero, new IntPtr(1), false,
+							 Atoms.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+
+				if ((long)nitems < 1) {
+					goto failsafe;
+				}
+
+				current_desktop = Marshal.ReadIntPtr(prop, 0).ToInt32();
+				Xlib.XFree(prop);
+
+				Xlib.XGetWindowProperty (display, RootWindow.Handle,
+							 Atoms._NET_WORKAREA, IntPtr.Zero, new IntPtr (256), false,
+							 Atoms.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+
+				if ((long)nitems < 4 * current_desktop) {
+					goto failsafe;
+				}
+
+				x = Marshal.ReadIntPtr(prop, IntPtr.Size * 4 * current_desktop).ToInt32();
+				y = Marshal.ReadIntPtr(prop, IntPtr.Size * 4 * current_desktop + IntPtr.Size).ToInt32();
+				width = Marshal.ReadIntPtr(prop, IntPtr.Size * 4 * current_desktop + IntPtr.Size * 2).ToInt32();
+				height = Marshal.ReadIntPtr(prop, IntPtr.Size * 4 * current_desktop + IntPtr.Size * 3).ToInt32();
+				Xlib.XFree(prop);
+
+				return new Rectangle(x, y, width, height);
+
+			failsafe:
+				XWindowAttributes attributes = new XWindowAttributes();
+
+				Xlib.XGetWindowAttributes (display, RootWindow.Handle, ref attributes);
+
+				return new Rectangle(0, 0, attributes.width, attributes.height);
+			}
+		}
+
+
+		private void XEventThread ()
+		{
+			while (true) {
+				XEvent xevent = new XEvent ();
+
+				Xlib.XNextEvent (display, ref xevent);
+
+				if (xevent.AnyEvent.type == XEventName.KeyPress) {
+					if (Xlib.XFilterEvent (ref xevent, FosterParent.Handle)) {
+						continue;
+					}
+				}
+
+				X11Hwnd hwnd = (X11Hwnd)Hwnd.GetObjectFromWindow(xevent.AnyEvent.window);
+				if (hwnd == null)
+					continue;
+
+				switch (xevent.type) {
+				case XEventName.Expose:
+					// XXX this shouldn't be handled here
+					hwnd.AddExpose (xevent.ExposeEvent.window == hwnd.ClientWindow, xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
+					break;
+
+				case XEventName.ConfigureNotify:
+					// XXX this shouldn't be handled here
+					hwnd.AddConfigureNotify (xevent);
+					break;
+
+				case XEventName.KeyRelease:
+					if (!detectable_key_auto_repeat && Xlib.XPending (display) != 0) {
+						XEvent nextevent = new XEvent ();
+
+						Xlib.XPeekEvent (display, ref nextevent);
+
+						if (nextevent.type == XEventName.KeyPress &&
+						    nextevent.KeyEvent.keycode == xevent.KeyEvent.keycode &&
+						    nextevent.KeyEvent.time == xevent.KeyEvent.time) {
+							continue;
+						}
+					}
+					goto default;
+					
+#if notyet
+					// XXX the hwnd.Queue.Peek can
+					// throw an exception since
+					// we're accessing it from two
+					// threads now.
+
+					// we need a better hwnd.queue
+					// locking scenario.
+				case XEventName.MotionNotify: {
+					XEvent peek;
+
+					if (hwnd.Queue.Count > 0) {
+						peek = hwnd.Queue.Peek();
+						if (peek.AnyEvent.type == XEventName.MotionNotify) {
+							continue;
+						}
+					}
+					goto default;
+				}
+#endif
+
+				case XEventName.PropertyNotify:
+					hwnd.PropertyChanged (xevent);
+					break;
+
+				default:
+					hwnd.Queue.EnqueueLocked (xevent);
+					break;
+
+				}
+			}
+		}
+
+
+		// This is called from the non-XEventThread threads.
+		[MonoTODO("Implement filtering")]
+		public bool GetMessage (object queue_id, ref MSG msg, IntPtr handle, int wFilterMin, int wFilterMax)
+		{
+			XEvent xevent;
+			bool client;
+			X11Hwnd hwnd;
+
+			ProcessNextMessage:
+
+			if (((XEventQueue)queue_id).Count > 0) {
+				xevent = (XEvent) ((XEventQueue)queue_id).Dequeue ();
+			} else if (((XEventQueue)queue_id).Paint.Count > 0) {
+				xevent = ((XEventQueue)queue_id).Paint.Dequeue();
+			} else {
+				if (!XplatUIX11_new.GetInstance().ThreadQueue(Thread.CurrentThread).PostQuitState) {
+					msg.hwnd= IntPtr.Zero;
+					msg.message = Msg.WM_ENTERIDLE;
+					return true;
+				}
+
+				// We reset ourselves so GetMessage can be called again
+				XplatUIX11_new.GetInstance().ThreadQueue(Thread.CurrentThread).PostQuitState = false;
+
+				return false;
+			}
+
+			hwnd = (X11Hwnd)Hwnd.GetObjectFromWindow(xevent.AnyEvent.window);
+
+			// Handle messages for windows that are already or are about to be destroyed.
+
+			// we need a special block for this because unless we remove the hwnd from the paint
+			// queue it will always stay there (since we don't handle the expose), and we'll
+			// effectively loop infinitely trying to repaint a non-existant window.
+			if (hwnd != null && hwnd.zombie && xevent.type == XEventName.Expose) {
+				hwnd.expose_pending = hwnd.nc_expose_pending = false;
+				hwnd.Queue.Paint.Remove (hwnd);
+				goto ProcessNextMessage;
+			}
+
+			// We need to make sure we only allow DestroyNotify events through for zombie
+			// hwnds, since much of the event handling code makes requests using the hwnd's
+			// ClientWindow, and that'll result in BadWindow errors if there's some lag
+			// between the XDestroyWindow call and the DestroyNotify event.
+			if (hwnd == null || hwnd.zombie) {
+				#if DriverDebug || DriverDebugDestroy
+					Console.WriteLine("GetMessage(): Got message {0} for non-existent or already destroyed window {1:X}", xevent.type, xevent.AnyEvent.window.ToInt32());
+				#endif
+				goto ProcessNextMessage;
+			}
+
+			if (hwnd.ClientWindow == xevent.AnyEvent.window) {
+				client = true;
+				//Console.WriteLine("Client message {1}, sending to window {0:X}", msg.hwnd.ToInt32(), xevent.type);
+			} else {
+				client = false;
+				//Console.WriteLine("Non-Client message, sending to window {0:X}", msg.hwnd.ToInt32());
+			}
+
+			msg.hwnd = hwnd.Handle;
+
+			//
+			// If you add a new event to this switch make sure to add it in
+			// UpdateMessage also unless it is not coming through the X event system.
+			//
+			switch (xevent.type) {
+				case XEventName.KeyPress:
+					Keyboard.KeyEvent (FocusWindow.Handle, xevent, ref msg);
+					break;
+
+				case XEventName.KeyRelease:
+					Keyboard.KeyEvent (FocusWindow.Handle, xevent, ref msg);
+					break;
+
+				case XEventName.ButtonPress: {
+					switch(xevent.ButtonEvent.button) {
+						case 1: {
+							MouseState |= MouseButtons.Left;
+							if (client) {
+								msg.message = Msg.WM_LBUTTONDOWN;
+							} else {
+								msg.message = Msg.WM_NCLBUTTONDOWN;
+								hwnd.MenuToScreen (ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+							}
+							// TODO: For WM_NCLBUTTONDOWN wParam specifies a hit-test value not the virtual keys down
+							msg.wParam=GetMousewParam(0);
+							break;
+						}
+
+						case 2: {
+							MouseState |= MouseButtons.Middle;
+							if (client) {
+								msg.message = Msg.WM_MBUTTONDOWN;
+							} else {
+								msg.message = Msg.WM_NCMBUTTONDOWN;
+								hwnd.MenuToScreen (ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+							}
+							msg.wParam=GetMousewParam(0);
+							break;
+						}
+
+						case 3: {
+							MouseState |= MouseButtons.Right;
+							if (client) {
+								msg.message = Msg.WM_RBUTTONDOWN;
+							} else {
+								msg.message = Msg.WM_NCRBUTTONDOWN;
+								hwnd.MenuToScreen (ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+							}
+							msg.wParam=GetMousewParam(0);
+							break;
+						}
+
+						case 4: {
+							msg.hwnd = FocusWindow.Handle;
+							msg.message=Msg.WM_MOUSEWHEEL;
+							msg.wParam=GetMousewParam(120);
+							break;
+						}
+
+						case 5: {
+							msg.hwnd = FocusWindow.Handle;
+							msg.message=Msg.WM_MOUSEWHEEL;
+							msg.wParam=GetMousewParam(-120);
+							break;
+						}
+
+					}
+
+					msg.lParam=(IntPtr) (xevent.ButtonEvent.y << 16 | xevent.ButtonEvent.x);
+					MousePosition.X = xevent.ButtonEvent.x;
+					MousePosition.Y = xevent.ButtonEvent.y;
+
+					if (!hwnd.Enabled) {
+						IntPtr dummy;
+
+						msg.hwnd = hwnd.EnabledHwnd;
+						Xlib.XTranslateCoordinates (display, xevent.AnyEvent.window, Hwnd.ObjectFromHandle(msg.hwnd).ClientWindow, xevent.ButtonEvent.x, xevent.ButtonEvent.y, out xevent.ButtonEvent.x, out xevent.ButtonEvent.y, out dummy);
+						msg.lParam = (IntPtr)(MousePosition.Y << 16 | MousePosition.X);
+					}
+
+					if (Grab.Hwnd != IntPtr.Zero) {
+						msg.hwnd = Grab.Hwnd;
+					}
+
+					if (ClickPending.Pending && ((((long)xevent.ButtonEvent.time - ClickPending.Time) < DoubleClickInterval) && (msg.wParam == ClickPending.wParam) && (msg.lParam == ClickPending.lParam) && (msg.message == ClickPending.Message))) {
+						// Looks like a genuine double click, clicked twice on the same spot with the same keys
+						switch(xevent.ButtonEvent.button) {
+							case 1: {
+								msg.message = client ? Msg.WM_LBUTTONDBLCLK : Msg.WM_NCLBUTTONDBLCLK;
+								break;
+							}
+
+							case 2: {
+								msg.message = client ? Msg.WM_MBUTTONDBLCLK : Msg.WM_NCMBUTTONDBLCLK;
+								break;
+							}
+
+							case 3: {
+								msg.message = client ? Msg.WM_RBUTTONDBLCLK : Msg.WM_NCRBUTTONDBLCLK;
+								break;
+							}
+						}
+						ClickPending.Pending = false;
+					} else {
+						ClickPending.Pending = true;
+						ClickPending.Hwnd = msg.hwnd;
+						ClickPending.Message = msg.message;
+						ClickPending.wParam = msg.wParam;
+						ClickPending.lParam = msg.lParam;
+						ClickPending.Time = (long)xevent.ButtonEvent.time;
+					}
+
+					break;
+				}
+
+				case XEventName.ButtonRelease: {
+					if (Dnd.InDrag()) {
+						Dnd.HandleButtonRelease (ref xevent);
+						break;
+					}
+
+					switch(xevent.ButtonEvent.button) {
+						case 1: {
+							if (client) {
+								msg.message = Msg.WM_LBUTTONUP;
+							} else {
+								msg.message = Msg.WM_NCLBUTTONUP;
+								hwnd.MenuToScreen (ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+							}
+							msg.wParam=GetMousewParam(0);
+							MouseState &= ~MouseButtons.Left;
+							break;
+						}
+
+						case 2: {
+							if (client) {
+								msg.message = Msg.WM_MBUTTONUP;
+							} else {
+								msg.message = Msg.WM_NCMBUTTONUP;
+								hwnd.MenuToScreen (ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+							}
+							msg.wParam=GetMousewParam(0);
+							MouseState &= ~MouseButtons.Middle;
+							break;
+						}
+
+						case 3: {
+							if (client) {
+								msg.message = Msg.WM_RBUTTONUP;
+							} else {
+								msg.message = Msg.WM_NCRBUTTONUP;
+								hwnd.MenuToScreen (ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+							}
+							msg.wParam=GetMousewParam(0);
+							MouseState &= ~MouseButtons.Right;
+							break;
+						}
+
+						case 4: {
+							goto ProcessNextMessage;
+						}
+
+						case 5: {
+							goto ProcessNextMessage;
+						}
+					}
+
+					if (!hwnd.Enabled) {
+						IntPtr dummy;
+
+						msg.hwnd = hwnd.EnabledHwnd;
+						Xlib.XTranslateCoordinates (display, xevent.AnyEvent.window, Hwnd.ObjectFromHandle(msg.hwnd).ClientWindow, xevent.ButtonEvent.x, xevent.ButtonEvent.y, out xevent.ButtonEvent.x, out xevent.ButtonEvent.y, out dummy);
+						msg.lParam = (IntPtr)(MousePosition.Y << 16 | MousePosition.X);
+					}
+
+					if (Grab.Hwnd != IntPtr.Zero) {
+						msg.hwnd = Grab.Hwnd;
+					}
+
+					msg.lParam=(IntPtr) (xevent.ButtonEvent.y << 16 | xevent.ButtonEvent.x);
+					MousePosition.X = xevent.ButtonEvent.x;
+					MousePosition.Y = xevent.ButtonEvent.y;
+					break;
+				}
+
+				case XEventName.MotionNotify: {
+					if (client) {
+						#if DriverDebugExtra
+							Console.WriteLine("GetMessage(): Window {0:X} MotionNotify x={1} y={2}", client ? hwnd.ClientWindow.ToInt32() : hwnd.WholeWindow.ToInt32(), xevent.MotionEvent.x, xevent.MotionEvent.y);
+						#endif
+
+						if (Dnd.HandleMotionNotify (ref xevent))
+							goto ProcessNextMessage;
+						if (Grab.Hwnd != IntPtr.Zero) {
+							msg.hwnd = Grab.Hwnd;
+						} else {
+							NativeWindow.WndProc(msg.hwnd, Msg.WM_SETCURSOR, msg.hwnd, (IntPtr)HitTest.HTCLIENT);
+						}
+
+						msg.message = Msg.WM_MOUSEMOVE;
+						msg.wParam = GetMousewParam(0);
+						msg.lParam = (IntPtr) (xevent.MotionEvent.y << 16 | xevent.MotionEvent.x & 0xFFFF);
+
+						if (!hwnd.Enabled) {
+							IntPtr dummy;
+
+							msg.hwnd = hwnd.EnabledHwnd;
+							Xlib.XTranslateCoordinates (display, xevent.AnyEvent.window, Hwnd.ObjectFromHandle(msg.hwnd).ClientWindow, xevent.MotionEvent.x, xevent.MotionEvent.y, out xevent.MotionEvent.x, out xevent.MotionEvent.y, out dummy);
+							msg.lParam = (IntPtr)(MousePosition.Y << 16 | MousePosition.X);
+						}
+
+						MousePosition.X = xevent.MotionEvent.x;
+						MousePosition.Y = xevent.MotionEvent.y;
+
+						if ((HoverState.Timer.Enabled) &&
+						    (((MousePosition.X + HoverState.Size.Width) < HoverState.X) ||
+						    ((MousePosition.X - HoverState.Size.Width) > HoverState.X) ||
+						    ((MousePosition.Y + HoverState.Size.Height) < HoverState.Y) ||
+						    ((MousePosition.Y - HoverState.Size.Height) > HoverState.Y))) {
+							HoverState.Timer.Stop();
+							HoverState.Timer.Start();
+							HoverState.X = MousePosition.X;
+							HoverState.Y = MousePosition.Y;
+						}
+
+						break;
+					} else {
+						HitTest	ht;
+						IntPtr dummy;
+						int screen_x;
+						int screen_y;
+
+						#if DriverDebugExtra
+							Console.WriteLine("GetMessage(): non-client area {0:X} MotionNotify x={1} y={2}", client ? hwnd.ClientWindow.ToInt32() : hwnd.WholeWindow.ToInt32(), xevent.MotionEvent.x, xevent.MotionEvent.y);
+						#endif
+						msg.message = Msg.WM_NCMOUSEMOVE;
+
+						if (!hwnd.Enabled) {
+							msg.hwnd = hwnd.EnabledHwnd;
+							Xlib.XTranslateCoordinates (display, xevent.AnyEvent.window, Hwnd.ObjectFromHandle(msg.hwnd).ClientWindow, xevent.MotionEvent.x, xevent.MotionEvent.y, out xevent.MotionEvent.x, out xevent.MotionEvent.y, out dummy);
+							msg.lParam = (IntPtr)(MousePosition.Y << 16 | MousePosition.X);
+						}
+
+						// The hit test is sent in screen coordinates
+						Xlib.XTranslateCoordinates (display, xevent.AnyEvent.window, RootWindow.Handle,
+									    xevent.MotionEvent.x, xevent.MotionEvent.y,
+									    out screen_x, out screen_y, out dummy);
+
+						msg.lParam = (IntPtr) (screen_y << 16 | screen_x & 0xFFFF);
+						ht = (HitTest)NativeWindow.WndProc (hwnd.ClientWindow, Msg.WM_NCHITTEST,
+								IntPtr.Zero, msg.lParam).ToInt32 ();
+						NativeWindow.WndProc(hwnd.ClientWindow, Msg.WM_SETCURSOR, msg.hwnd, (IntPtr)ht);
+
+						MousePosition.X = xevent.MotionEvent.x;
+						MousePosition.Y = xevent.MotionEvent.y;
+					}
+
+					break;
+				}
+
+				case XEventName.EnterNotify: {
+					if (!hwnd.Enabled) {
+						goto ProcessNextMessage;
+					}
+					if (xevent.CrossingEvent.mode != NotifyMode.NotifyNormal) {
+						goto ProcessNextMessage;
+					}
+					msg.message = Msg.WM_MOUSE_ENTER;
+					HoverState.X = xevent.CrossingEvent.x;
+					HoverState.Y = xevent.CrossingEvent.y;
+					HoverState.Timer.Enabled = true;
+					HoverState.Window = xevent.CrossingEvent.window;
+					break;
+				}
+
+				case XEventName.LeaveNotify: {
+					if (!hwnd.Enabled) {
+						goto ProcessNextMessage;
+					}
+					if ((xevent.CrossingEvent.mode != NotifyMode.NotifyNormal) || (xevent.CrossingEvent.window != hwnd.ClientWindow)) {
+						goto ProcessNextMessage;
+					}
+					msg.message=Msg.WM_MOUSE_LEAVE;
+					HoverState.Timer.Enabled = false;
+					HoverState.Window = IntPtr.Zero;
+					break;
+				}
+
+				#if later
+				case XEventName.CreateNotify: {
+					if (client && (xevent.ConfigureEvent.xevent == xevent.ConfigureEvent.window)) {
+						msg.message = WM_CREATE;
+						// Set up CreateStruct
+					} else {
+						goto ProcessNextMessage;
+					}
+					break;
+				}
+				#endif
+
+
+				case XEventName.ReparentNotify: {
+					if (hwnd.parent == null) {	// Toplevel
+						if ((xevent.ReparentEvent.parent != IntPtr.Zero) && (xevent.ReparentEvent.window == hwnd.WholeWindow)) {
+							// We need to adjust x/y
+							// This sucks ass, part 2
+							// Every WM does the reparenting of toplevel windows different, so there's
+							// no standard way of getting our adjustment considering frames/decorations
+							// The code below is needed for metacity. KDE doesn't works just fine without this
+							int	dummy_int;
+							IntPtr	dummy_ptr;
+							int	new_x;
+							int	new_y;
+							int	frame_left;
+							int	frame_top;
+
+							hwnd.Reparented = true;
+
+							Xlib.XGetGeometry(display, XGetParent(hwnd.WholeWindow), out dummy_ptr, out new_x, out new_y, out dummy_int, out dummy_int, out dummy_int, out dummy_int);
+							hwnd.FrameExtents(out frame_left, out frame_top);
+							if ((frame_left != 0) && (frame_top != 0) && (new_x != frame_left) && (new_y != frame_top)) {
+								hwnd.x = new_x;
+								hwnd.y = new_y;
+								hwnd.whacky_wm = true;
+							}
+
+							if (hwnd.opacity != 0xffffffff) {
+								IntPtr opacity;
+
+								opacity = (IntPtr)(Int32)hwnd.opacity;
+								Xlib.XChangeProperty (display, XGetParent(hwnd.WholeWindow),
+										      Atoms._NET_WM_WINDOW_OPACITY, Atoms.XA_CARDINAL, 32,
+										      PropertyMode.Replace, ref opacity, 1);
+							}
+							SendMessage(msg.hwnd, Msg.WM_WINDOWPOSCHANGED, msg.wParam, msg.lParam);
+							goto ProcessNextMessage;
+						} else {
+							hwnd.Reparented = false;
+							goto ProcessNextMessage;
+						}
+					}
+					goto ProcessNextMessage;
+				}
+
+				case XEventName.ConfigureNotify: {
+					if (XplatUIX11_new.GetInstance().ThreadQueue(Thread.CurrentThread).PostQuitState|| !client && (xevent.ConfigureEvent.xevent == xevent.ConfigureEvent.window)) {	// Ignore events for children (SubstructureNotify) and client areas
+						#if DriverDebugExtra
+							Console.WriteLine("GetMessage(): Window {0:X} ConfigureNotify x={1} y={2} width={3} height={4}", hwnd.ClientWindow.ToInt32(), xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
+						#endif
+//						if ((hwnd.x != xevent.ConfigureEvent.x) || (hwnd.y != xevent.ConfigureEvent.y) || (hwnd.width != xevent.ConfigureEvent.width) || (hwnd.height != xevent.ConfigureEvent.height)) {
+							SendMessage(msg.hwnd, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
+							hwnd.configure_pending = false;
+
+							// We need to adjust our client window to track the resize of WholeWindow
+							if (hwnd.WholeWindow != hwnd.ClientWindow)
+								hwnd.PerformNCCalc ();
+//						}
+					}
+					goto ProcessNextMessage;
+				}
+
+				case XEventName.FocusIn: {
+					// We received focus. We use X11 focus only to know if the app window does or does not have focus
+					// We do not track the actual focussed window via it. Instead, this is done via FocusWindow internally
+					// Receiving focus means we've gotten activated and therefore we need to let the actual FocusWindow know 
+					// about it having focus again
+					if (xevent.FocusChangeEvent.detail != NotifyDetail.NotifyNonlinear) {
+						goto ProcessNextMessage;
+					}
+
+					if (FocusWindow.Handle == IntPtr.Zero) {
+						Control c = Control.FromHandle (hwnd.ClientWindow);
+						if (c == null)
+							goto ProcessNextMessage;
+						Form form = c.FindForm ();
+						if (form == null)
+							goto ProcessNextMessage;
+						ActiveWindow = (X11Hwnd)Hwnd.ObjectFromHandle (form.Handle);
+						SendMessage (ActiveWindow.Handle, Msg.WM_ACTIVATE, (IntPtr) WindowActiveFlags.WA_ACTIVE, IntPtr.Zero);
+						goto ProcessNextMessage;
+					}
+					Keyboard.FocusIn(FocusWindow.Handle);
+					SendMessage(FocusWindow.Handle, Msg.WM_SETFOCUS, IntPtr.Zero, IntPtr.Zero);
+					goto ProcessNextMessage;
+				}
+
+				case XEventName.FocusOut: {
+					// Se the comment for our FocusIn handler
+					if (xevent.FocusChangeEvent.detail != NotifyDetail.NotifyNonlinear) {
+						goto ProcessNextMessage;
+					}
+					Keyboard.FocusOut(FocusWindow.Handle);
+
+					while (Keyboard.ResetKeyState(FocusWindow.Handle, ref msg)) {
+						SendMessage(FocusWindow.Handle, msg.message, msg.wParam, msg.lParam);
+					}
+
+					SendMessage(FocusWindow.Handle, Msg.WM_KILLFOCUS, IntPtr.Zero, IntPtr.Zero);
+					goto ProcessNextMessage;
+				}
+
+				case XEventName.Expose: {
+					if (XplatUIX11_new.GetInstance().ThreadQueue(Thread.CurrentThread).PostQuitState || !hwnd.Mapped) {
+						if (client) {
+							hwnd.expose_pending = false;
+						} else {
+							hwnd.nc_expose_pending = false;
+						}
+						goto ProcessNextMessage;
+					}
+
+					if (client) {
+						if (!hwnd.expose_pending) {
+							goto ProcessNextMessage;
+						}
+					}
+					else {
+						if (!hwnd.nc_expose_pending) {
+							goto ProcessNextMessage;
+						}
+
+						switch (hwnd.border_style) {
+							case FormBorderStyle.Fixed3D: {
+								Graphics g;
+
+								g = Graphics.FromHwnd(hwnd.WholeWindow);
+								ControlPaint.DrawBorder3D(g, new Rectangle(0, 0, hwnd.Width, hwnd.Height), Border3DStyle.Sunken);
+								g.Dispose();
+								break;
+							}
+
+							case FormBorderStyle.FixedSingle: {
+								Graphics g;
+
+								g = Graphics.FromHwnd(hwnd.WholeWindow);
+								ControlPaint.DrawBorder(g, new Rectangle(0, 0, hwnd.Width, hwnd.Height), Color.Black, ButtonBorderStyle.Solid);
+								g.Dispose();
+								break;
+							}
+						}
+#if DriverDebugExtra
+						Console.WriteLine("GetMessage(): Window {0:X} Exposed non-client area {1},{2} {3}x{4}", hwnd.ClientWindow.ToInt32(), xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
+#endif
+
+						Rectangle rect = new Rectangle (xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
+						Region region = new Region (rect);
+						IntPtr hrgn = region.GetHrgn (null); // Graphics object isn't needed
+						msg.message = Msg.WM_NCPAINT;
+						msg.wParam = hrgn == IntPtr.Zero ? (IntPtr)1 : hrgn;
+						msg.refobject = region;
+						break;
+					}
+#if DriverDebugExtra
+						Console.WriteLine("GetMessage(): Window {0:X} Exposed area {1},{2} {3}x{4}", hwnd.client_window.ToInt32(), xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
+#endif
+					if (Caret.Visible == true) {
+						Caret.Paused = true;
+						HideCaret();
+					}
+
+					if (Caret.Visible == true) {
+						ShowCaret();
+						Caret.Paused = false;
+					}
+					msg.message = Msg.WM_PAINT;
+					break;
+				}
+
+				case XEventName.DestroyNotify: {
+
+					// This is a bit tricky, we don't receive our own DestroyNotify, we only get those for our children
+					hwnd = (X11Hwnd)Hwnd.ObjectFromHandle(xevent.DestroyWindowEvent.window);
+
+					// We may get multiple for the same window, act only one the first (when Hwnd still knows about it)
+					if ((hwnd != null) && (hwnd.ClientWindow == xevent.DestroyWindowEvent.window)) {
+						CleanupCachedWindows (hwnd);
+
+						#if DriverDebugDestroy
+							Console.WriteLine("Received X11 Destroy Notification for {0}", XplatUI.Window(hwnd.ClientWindow));
+						#endif
+
+						msg.hwnd = hwnd.ClientWindow;
+						msg.message=Msg.WM_DESTROY;
+						hwnd.Dispose();
+					} else {
+						goto ProcessNextMessage;
+					}
+
+					break;
+				}
+
+				case XEventName.ClientMessage: {
+					if (Dnd.HandleClientMessage (ref xevent)) {
+						goto ProcessNextMessage;
+					}
+
+					if (xevent.ClientMessageEvent.message_type == Atoms.AsyncAtom) {
+						XplatUIDriverSupport.ExecuteClientMessage((GCHandle)xevent.ClientMessageEvent.ptr1);
+						goto ProcessNextMessage;
+					}
+
+					if (xevent.ClientMessageEvent.message_type == HoverState.Atom) {
+						msg.message = Msg.WM_MOUSEHOVER;
+						msg.wParam = GetMousewParam(0);
+						msg.lParam = (IntPtr) (xevent.ClientMessageEvent.ptr1);
+						return true;
+					}
+
+					if (xevent.ClientMessageEvent.message_type == Atoms.PostAtom) {
+						msg.hwnd = xevent.ClientMessageEvent.ptr1;
+						msg.message = (Msg) xevent.ClientMessageEvent.ptr2.ToInt32 ();
+						msg.wParam = xevent.ClientMessageEvent.ptr3;
+						msg.lParam = xevent.ClientMessageEvent.ptr4;
+						return true;
+					}
+
+					if  (xevent.ClientMessageEvent.message_type == Atoms._XEMBED) {
+#if DriverDebugXEmbed
+						Console.WriteLine("GOT EMBED MESSAGE {0:X}, detail {1:X}", xevent.ClientMessageEvent.ptr2.ToInt32(), xevent.ClientMessageEvent.ptr3.ToInt32());
+#endif
+
+						if (xevent.ClientMessageEvent.ptr2.ToInt32() == (int)XEmbedMessage.EmbeddedNotify) {
+							XSizeHints hints = new XSizeHints();
+							IntPtr dummy;
+
+							Xlib.XGetWMNormalHints (display, hwnd.WholeWindow, ref hints, out dummy);
+
+							hwnd.width = hints.max_width;
+							hwnd.height = hints.max_height;
+							hwnd.ClientRect = Rectangle.Empty;
+							SendMessage(msg.hwnd, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
+						}
+					}
+
+					if  (xevent.ClientMessageEvent.message_type == Atoms.WM_PROTOCOLS) {
+						if (xevent.ClientMessageEvent.ptr1 == Atoms.WM_DELETE_WINDOW) {
+							msg.message = Msg.WM_CLOSE;
+							return true;
+						}
+
+						// We should not get this, but I'll leave the code in case we need it in the future
+						if (xevent.ClientMessageEvent.ptr1 == Atoms.WM_TAKE_FOCUS) {
+							goto ProcessNextMessage;
+						}
+					}
+					goto ProcessNextMessage;
+				}
+
+				case XEventName.TimerNotify: {
+					xevent.TimerNotifyEvent.handler (this, EventArgs.Empty);
+					goto ProcessNextMessage;
+				}
+		                        
+				default: {
+					goto ProcessNextMessage;
+				}
+			}
+
+			return true;
+		}
+	}
+}
