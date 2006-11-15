@@ -1,3 +1,12 @@
+
+Wed Nov 15 16:34:03 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-mips.c, inssel-mips.brg, mini-mips.h,
+	cpu-mips.md, inssel-long32-mips.brg, mini-mips.c,
+	tramp-mips.c: added sources for the mips port, not
+	integrated in the build yet. Contributed by
+	Mark E Mason <mark.e.mason@broadcom.com>.
+
 2006-11-14  Neale Ferguson <neale@sinenomine.net>
 
 	* mini-s390[x].c (is_regsize_var): Support PTR/FNPTR too.
