@@ -45,7 +45,8 @@ plans for XplatUIX11.cs:
 	  the queue are handled.  So, if you're resizing quickly you
 	  get no redraws until you're done.  maybe look at the
 	  _NET_WM_SYNC_REQUEST protocol (for the resize/redraw case
-	  specifically)
+	  specifically).  Also, the current expose handling has us
+	  accessing the invalid list/rectangle from multiple threads.
 
 	- factor out ALL knowledge of the multiple windows
 	  (client/whole) into the X11Hwnd class, so we can try to
