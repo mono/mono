@@ -142,7 +142,7 @@ namespace MonoTests.System.Net.Sockets
 			Assertion.AssertEquals ("BlockingStatus02",
 						block, false);
 		}
-
+#if !TARGET_JVM
 		[Test]
 #if !NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
@@ -157,7 +157,7 @@ namespace MonoTests.System.Net.Sockets
 				sock.Close ();
 			}
 		}
-
+#endif
 		[Test]
 		public void TestSelect1 ()
 		{
