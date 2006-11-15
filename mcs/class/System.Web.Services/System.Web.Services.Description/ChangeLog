@@ -1,5 +1,10 @@
 2006-11-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* web-reference.genxs : fixed <reader> -> <writer>.
+	* WebReferenceOptionsSerializer.cs : regenerated.
+
+2006-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceDescriptionImporter.cs : API fix. Now we can use new
 	  WebReferenceOptions.
 

@@ -1,4 +1,3 @@
-#if NET_2_0
 using System;
 using System.Xml;
 using System.Xml.Schema;
@@ -188,7 +187,7 @@ namespace System.Web.Services.Description
 
 	}
 
-	internal class GeneratedWriter : XmlSerializationWriter
+	internal class WebReferenceOptionsWriter : XmlSerializationWriter
 	{
 		const string xmlNamespace = "http://www.w3.org/2000/xmlns/";
 		public void WriteRoot_WebReferenceOptions (object o)
@@ -317,7 +316,7 @@ namespace System.Web.Services.Description
 		}
 
 		protected override System.Xml.Serialization.XmlSerializationWriter CreateWriter () {
-			return new GeneratedWriter ();
+			return new WebReferenceOptionsWriter ();
 		}
 
 		public override bool CanDeserialize (System.Xml.XmlReader xmlReader) {
@@ -328,7 +327,7 @@ namespace System.Web.Services.Description
 	internal sealed class webReferenceOptionsSerializer : WebReferenceOptionsBaseSerializer
 	{
 		protected override void Serialize (object obj, System.Xml.Serialization.XmlSerializationWriter writer) {
-			((GeneratedWriter)writer).WriteRoot_WebReferenceOptions(obj);
+			((WebReferenceOptionsWriter)writer).WriteRoot_WebReferenceOptions(obj);
 		}
 
 		protected override object Deserialize (System.Xml.Serialization.XmlSerializationReader reader) {
@@ -350,7 +349,7 @@ namespace System.Web.Services.Description
 
 		public override System.Xml.Serialization.XmlSerializationWriter Writer {
 			get {
-				return new GeneratedWriter();
+				return new WebReferenceOptionsWriter();
 			}
 		}
 
@@ -408,4 +407,3 @@ namespace System.Web.Services.Description
 
 }
 
-#endif

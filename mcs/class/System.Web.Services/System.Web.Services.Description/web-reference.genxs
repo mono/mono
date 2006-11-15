@@ -6,7 +6,7 @@
 <configuration>
 	<serializer class="System.Web.Services.Description.WebReferenceOptions" assembly="System.Web.Services">
 		<reader>WebReferenceOptionsReader</reader>
-		<reader>WebReferenceOptionsWriter</reader>
+		<writer>WebReferenceOptionsWriter</writer>
 		<generateAsInternal>true</generateAsInternal>
 		<namespace>System.Web.Services.Description</namespace>
 		<outFileName>WebReferenceOptionsSerializer.cs</outFileName>
