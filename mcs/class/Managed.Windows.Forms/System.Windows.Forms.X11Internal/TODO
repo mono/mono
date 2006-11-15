@@ -58,10 +58,20 @@ plans for XplatUIX11.cs:
 	- hwnds should keep track of the width/height they report to
           SWF as well as the x window's width/height.  That is, we
           should allow hwnds with 0,0 width/height even though X
-          doesn't allow it.
+          doesn't allow it.  There's some "zero_size" stuff in Hwnd,
+	  but it still appears impossible to have 0,0 sized controls.
 
 	- window (subwindow, really) destruction should move to Hwnd
           if possible.
+
+	- remove 90% of "lock (XlibLock)" usage.  It's not really
+	  needed at all, except perhaps to synchronize the
+	  XEventThread and the PeekMessage/GetMessage methods.
+
+	- the big synchronization problem now is the XEventQueue
+	  class.  I think all queue operations need to be done while
+	  holding a lock, as the events are queued from the
+	  XEventThread and dequeued from GetMessage.
 
 possible classes:
 
