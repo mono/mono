@@ -10,6 +10,7 @@
 #if !NET_2_0
 
 using System;
+using System.Collections.Specialized;
 using System.Xml;
 using System.Xml.Schema;
 using System.Collections;
@@ -306,7 +307,7 @@ namespace Mono.WebServices
 		string password;
 		string domain;
 		
-		string url;
+		StringCollection urls = new StringCollection ();
 		string className;
 
 		///
@@ -340,7 +341,7 @@ namespace Mono.WebServices
 			else
 			{
 				hasURL = true;
-				url = argument;
+				urls.Add (argument);
 				return;
 			}
 			
@@ -448,7 +449,7 @@ namespace Mono.WebServices
 				default:
 					if (argument.StartsWith ("/") && argument.IndexOfAny (Path.InvalidPathChars) == -1) {
 						hasURL = true;
-						url = argument;
+						urls.Add (argument);
 						break;
 					}
 					else
@@ -529,9 +530,10 @@ namespace Mono.WebServices
 				
 				if (className == null)
 				{
+				foreach (string urlEntry in urls) {
+					string url = urlEntry;
 					DiscoveryClientProtocol dcc = CreateClient ();
 					dcc.AllowAutoRedirect = true;
-									
 					if (!url.StartsWith ("http://") && !url.StartsWith ("https://") && !url.StartsWith ("file://"))
 						url = new Uri (Path.GetFullPath (url)).ToString ();
 						
@@ -549,6 +551,7 @@ namespace Mono.WebServices
 					if (descriptions.Count == 0)
 						throw new Exception ("No WSDL document was found at the url " + url);
 				}
+				}
 				else
 				{
 					string[] names = className.Split (',');
@@ -560,7 +563,8 @@ namespace Mono.WebServices
 					Type t = asm.GetType (cls);
 					if (t == null) throw new Exception ("Type '" + cls + "' not found in assembly " + assembly);
 					ServiceDescriptionReflector reflector = new ServiceDescriptionReflector ();
-					reflector.Reflect (t, url);
+					foreach (string url in urls)
+						reflector.Reflect (t, url);
 					foreach (XmlSchema s in reflector.Schemas)
 						schemas.Add (s);
 						
