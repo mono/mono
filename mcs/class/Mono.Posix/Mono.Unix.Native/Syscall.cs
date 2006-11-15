@@ -177,21 +177,20 @@ namespace Mono.Unix.Native {
 
 		// Device types
 		// Why these are held in "mode_t" is beyond me...
-		[Map(SuppressFlags=true)]
 		S_IFMT      = 0xF000, // Bits which determine file type
-		[Map(SuppressFlags=true)]
+		[Map(SuppressFlags="S_IFMT")]
 		S_IFDIR     = 0x4000, // Directory
-		[Map(SuppressFlags=true)]
+		[Map(SuppressFlags="S_IFMT")]
 		S_IFCHR     = 0x2000, // Character device
-		[Map(SuppressFlags=true)]
+		[Map(SuppressFlags="S_IFMT")]
 		S_IFBLK     = 0x6000, // Block device
-		[Map(SuppressFlags=true)]
+		[Map(SuppressFlags="S_IFMT")]
 		S_IFREG     = 0x8000, // Regular file
-		[Map(SuppressFlags=true)]
+		[Map(SuppressFlags="S_IFMT")]
 		S_IFIFO     = 0x1000, // FIFO
-		[Map(SuppressFlags=true)]
+		[Map(SuppressFlags="S_IFMT")]
 		S_IFLNK     = 0xA000, // Symbolic link
-		[Map(SuppressFlags=true)]
+		[Map(SuppressFlags="S_IFMT")]
 		S_IFSOCK    = 0xC000, // Socket
 	}
 
