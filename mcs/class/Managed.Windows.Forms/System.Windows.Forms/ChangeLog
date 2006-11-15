@@ -1,5 +1,10 @@
 2006-11-15  Chris Toshok  <toshok@ximian.com>
 
+	* XplatUIX11.cs: use AddExpose instead of sending a message.
+	fixes textbox border drawing.
+
+2006-11-15  Chris Toshok  <toshok@ximian.com>
+
 	* PropertyGridView.cs: keep from crashing on mouse move/down when
 	the property grid is empty.
 

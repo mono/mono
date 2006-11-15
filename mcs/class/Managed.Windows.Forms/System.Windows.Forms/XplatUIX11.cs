@@ -1754,9 +1754,8 @@ namespace System.Windows.Forms {
 					XMoveResizeWindow(DisplayHandle, hwnd.client_window, rect.X, rect.Y, rect.Width, rect.Height);
 				}
 			}
-			
-			// Hack to get a paint
-			NativeWindow.WndProc (hwnd.client_window, Msg.WM_NCPAINT, IntPtr.Zero, IntPtr.Zero);
+
+			AddExpose (hwnd, false, 0, 0, hwnd.Width, hwnd.Height);
 		}
 		#endregion	// Private Methods
 
