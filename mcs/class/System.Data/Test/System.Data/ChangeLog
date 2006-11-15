@@ -1,3 +1,22 @@
+2006-11-15  Nagappan A  <anagappan@novell.com>
+
+	* DataTableTest.cs (NewRowAddedTest): Checks for the DataTable
+	TableNewRow added event raise.
+	(ClearTest): Checks for the table clearning event fired on
+	clearing a table.
+	(OnTableClearing, OnTableNewRowAdded): Implemented new event
+	handler functions.
+	(TestWriteXmlSchema1): Test WriteXmlSchema on a DataTable without
+	associating a DataSet.
+	(TestWriteXmlSchema2): Test WriteXmlSchema on a DataTable after
+	associating a DataSet, but without hierarchy.
+	(TestWriteXmlSchema3): Test WriteXmlSchema on a DataTable after
+	associating a DataSet, with hierarchy.
+	(TableInitializedEventTest[1234]): Tests different TableInitialized
+	event generation.
+	* BinarySerializationTest.cs: Added new file to test
+	BinarySerialization implementation.
+
 2006-11-24  Konstantin Triger <kostat@mainsoft.com>
 
 	* DataColumnTest.cs: Added test for DataColunm.AllowDBNull
@@ -21,7 +40,6 @@
 	* DataTableTest.cs : added tests for ReadXmlSchema() and WriteXmlSchema().
 (Some of the tests use following files: own_schema1.xsd, own_schema2.xsd, region.xml, store.xsd)
 
->>>>>>> .r66913
 2006-10-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataRelationTest2.cs: Enabled test for bug #79233.

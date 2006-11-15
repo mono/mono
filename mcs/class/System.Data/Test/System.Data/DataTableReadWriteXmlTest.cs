@@ -294,6 +294,7 @@ namespace MonoTests.System.Data
         }
         
         [Test]
+        [ExpectedException (typeof (NotImplementedException))]
         public void TestReadXml()
         {
             // For reading, DataTable.ReadXml only supports reading in xml with
