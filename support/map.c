@@ -2254,49 +2254,49 @@ int Mono_Posix_FromFilePermissions (unsigned int x, unsigned int *r)
 #else /* def DEFFILEMODE */
 		{/* Ignoring Mono_Posix_FilePermissions_DEFFILEMODE, as it is constructed from other values */}
 #endif /* ndef DEFFILEMODE */
-	if (x == Mono_Posix_FilePermissions_S_IFBLK)
+	if ((x & Mono_Posix_FilePermissions_S_IFMT) == Mono_Posix_FilePermissions_S_IFBLK)
 #ifdef S_IFBLK
 		{*r = S_IFBLK; return 0;}
 #else /* def S_IFBLK */
 		{errno = EINVAL; return -1;}
 #endif /* ndef S_IFBLK */
-	if (x == Mono_Posix_FilePermissions_S_IFCHR)
+	if ((x & Mono_Posix_FilePermissions_S_IFMT) == Mono_Posix_FilePermissions_S_IFCHR)
 #ifdef S_IFCHR
 		{*r = S_IFCHR; return 0;}
 #else /* def S_IFCHR */
 		{errno = EINVAL; return -1;}
 #endif /* ndef S_IFCHR */
-	if (x == Mono_Posix_FilePermissions_S_IFDIR)
+	if ((x & Mono_Posix_FilePermissions_S_IFMT) == Mono_Posix_FilePermissions_S_IFDIR)
 #ifdef S_IFDIR
 		{*r = S_IFDIR; return 0;}
 #else /* def S_IFDIR */
 		{errno = EINVAL; return -1;}
 #endif /* ndef S_IFDIR */
-	if (x == Mono_Posix_FilePermissions_S_IFIFO)
+	if ((x & Mono_Posix_FilePermissions_S_IFMT) == Mono_Posix_FilePermissions_S_IFIFO)
 #ifdef S_IFIFO
 		{*r = S_IFIFO; return 0;}
 #else /* def S_IFIFO */
 		{errno = EINVAL; return -1;}
 #endif /* ndef S_IFIFO */
-	if (x == Mono_Posix_FilePermissions_S_IFLNK)
+	if ((x & Mono_Posix_FilePermissions_S_IFMT) == Mono_Posix_FilePermissions_S_IFLNK)
 #ifdef S_IFLNK
 		{*r = S_IFLNK; return 0;}
 #else /* def S_IFLNK */
 		{errno = EINVAL; return -1;}
 #endif /* ndef S_IFLNK */
-	if (x == Mono_Posix_FilePermissions_S_IFMT)
+	if ((x & Mono_Posix_FilePermissions_S_IFMT) == Mono_Posix_FilePermissions_S_IFMT)
 #ifdef S_IFMT
-		{*r = S_IFMT; return 0;}
+		*r |= S_IFMT;
 #else /* def S_IFMT */
-		{errno = EINVAL; return -1;}
+		{/* Ignoring Mono_Posix_FilePermissions_S_IFMT, as it is constructed from other values */}
 #endif /* ndef S_IFMT */
-	if (x == Mono_Posix_FilePermissions_S_IFREG)
+	if ((x & Mono_Posix_FilePermissions_S_IFMT) == Mono_Posix_FilePermissions_S_IFREG)
 #ifdef S_IFREG
 		{*r = S_IFREG; return 0;}
 #else /* def S_IFREG */
 		{errno = EINVAL; return -1;}
 #endif /* ndef S_IFREG */
-	if (x == Mono_Posix_FilePermissions_S_IFSOCK)
+	if ((x & Mono_Posix_FilePermissions_S_IFMT) == Mono_Posix_FilePermissions_S_IFSOCK)
 #ifdef S_IFSOCK
 		{*r = S_IFSOCK; return 0;}
 #else /* def S_IFSOCK */
@@ -2415,36 +2415,36 @@ int Mono_Posix_ToFilePermissions (unsigned int x, unsigned int *r)
 		*r |= Mono_Posix_FilePermissions_DEFFILEMODE;
 #endif /* ndef DEFFILEMODE */
 #ifdef S_IFBLK
-	if (x == S_IFBLK)
-		{*r = Mono_Posix_FilePermissions_S_IFBLK; return 0;}
+	if ((x & S_IFMT) == S_IFBLK)
+		*r |= Mono_Posix_FilePermissions_S_IFBLK;
 #endif /* ndef S_IFBLK */
 #ifdef S_IFCHR
-	if (x == S_IFCHR)
-		{*r = Mono_Posix_FilePermissions_S_IFCHR; return 0;}
+	if ((x & S_IFMT) == S_IFCHR)
+		*r |= Mono_Posix_FilePermissions_S_IFCHR;
 #endif /* ndef S_IFCHR */
 #ifdef S_IFDIR
-	if (x == S_IFDIR)
-		{*r = Mono_Posix_FilePermissions_S_IFDIR; return 0;}
+	if ((x & S_IFMT) == S_IFDIR)
+		*r |= Mono_Posix_FilePermissions_S_IFDIR;
 #endif /* ndef S_IFDIR */
 #ifdef S_IFIFO
-	if (x == S_IFIFO)
-		{*r = Mono_Posix_FilePermissions_S_IFIFO; return 0;}
+	if ((x & S_IFMT) == S_IFIFO)
+		*r |= Mono_Posix_FilePermissions_S_IFIFO;
 #endif /* ndef S_IFIFO */
 #ifdef S_IFLNK
-	if (x == S_IFLNK)
-		{*r = Mono_Posix_FilePermissions_S_IFLNK; return 0;}
+	if ((x & S_IFMT) == S_IFLNK)
+		*r |= Mono_Posix_FilePermissions_S_IFLNK;
 #endif /* ndef S_IFLNK */
 #ifdef S_IFMT
-	if (x == S_IFMT)
-		{*r = Mono_Posix_FilePermissions_S_IFMT; return 0;}
+	if ((x & S_IFMT) == S_IFMT)
+		*r |= Mono_Posix_FilePermissions_S_IFMT;
 #endif /* ndef S_IFMT */
 #ifdef S_IFREG
-	if (x == S_IFREG)
-		{*r = Mono_Posix_FilePermissions_S_IFREG; return 0;}
+	if ((x & S_IFMT) == S_IFREG)
+		*r |= Mono_Posix_FilePermissions_S_IFREG;
 #endif /* ndef S_IFREG */
 #ifdef S_IFSOCK
-	if (x == S_IFSOCK)
-		{*r = Mono_Posix_FilePermissions_S_IFSOCK; return 0;}
+	if ((x & S_IFMT) == S_IFSOCK)
+		*r |= Mono_Posix_FilePermissions_S_IFSOCK;
 #endif /* ndef S_IFSOCK */
 #ifdef S_IRGRP
 	if ((x & S_IRGRP) == S_IRGRP)

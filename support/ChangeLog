@@ -1,3 +1,8 @@
+2006-11-14  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* map.c: Flush (fixes FilePermissions conversion, allowing Syscall.stat() to
+	  work as expected).
+
 2006-11-13  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* mph.h: Add macro for XATTR_AUTO, so that XattrFlags mapping works (as
