@@ -1585,7 +1585,7 @@ namespace System.Windows.Forms {
 						IntPtr	nitems;
 						IntPtr	bytes_after;
 						IntPtr	prop = IntPtr.Zero;
-						IntPtr	prev_active;;
+						IntPtr	prev_active;
 
 						prev_active = ActiveWindow;
 						XGetWindowProperty(DisplayHandle, RootWindow, _NET_ACTIVE_WINDOW, IntPtr.Zero, new IntPtr (1), false, (IntPtr)Atom.XA_WINDOW, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
@@ -3775,21 +3775,38 @@ namespace System.Windows.Forms {
 		}
 
 		internal override bool GetText(IntPtr handle, out string text) {
-			IntPtr	textptr;
-
-			textptr = IntPtr.Zero;
 
 			lock (XlibLock) {
-				// FIXME - use _NET properties
-				XFetchName(DisplayHandle, Hwnd.ObjectFromHandle(handle).whole_window, ref textptr);
-			}
-			if (textptr != IntPtr.Zero) {
-				text = Marshal.PtrToStringAnsi(textptr);
-				XFree(textptr);
-				return true;
-			} else {
-				text = "";
-				return false;
+				IntPtr actual_atom;
+				int actual_format;
+				IntPtr nitems;
+				IntPtr bytes_after;
+				IntPtr prop = IntPtr.Zero;
+
+				XGetWindowProperty(DisplayHandle, handle,
+						   _NET_WM_NAME, IntPtr.Zero, new IntPtr (1), false,
+						   UNICODETEXT, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+
+				if ((long)nitems > 0 && prop != IntPtr.Zero) {
+					text = Marshal.PtrToStringUni (prop, (int)nitems);
+					return true;
+				}
+				else {
+					// fallback on the non-_NET property
+					IntPtr	textptr;
+
+					textptr = IntPtr.Zero;
+
+					XFetchName(DisplayHandle, Hwnd.ObjectFromHandle(handle).whole_window, ref textptr);
+					if (textptr != IntPtr.Zero) {
+						text = Marshal.PtrToStringAnsi(textptr);
+						XFree(textptr);
+						return true;
+					} else {
+						text = "";
+						return false;
+					}
+				}
 			}
 		}
 

@@ -1,5 +1,14 @@
 2006-11-15  Chris Toshok  <toshok@ximian.com>
 
+	* XplatUIX11.cs: add (untested) a _NET_WM_NAME implementation of
+	GetText().  untested because it's unused in our implementation.
+	Control.Text always caches the text, even if
+	ControlStyles.CacheText is not set.
+
+	fixes bug #79939.
+
+2006-11-15  Chris Toshok  <toshok@ximian.com>
+
 	[ fixes #79933 ]
 	
 	* Form.cs: in Close() don't do anything after we send the WM_CLOSE
