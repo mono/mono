@@ -1,5 +1,10 @@
 2006-11-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* WebReferenceOptionsSerializer.cs :
+	  (#if NET_2_0) oops, I did it again :-(
+
+2006-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* web-reference.genxs : fixed <reader> -> <writer>.
 	* WebReferenceOptionsSerializer.cs : regenerated.
 
