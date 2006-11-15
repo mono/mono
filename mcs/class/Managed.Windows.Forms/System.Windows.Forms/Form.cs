@@ -1940,9 +1940,22 @@ namespace System.Windows.Forms {
 				case Msg.WM_RBUTTONUP: {
 					if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
 						MouseEventArgs args;
-
-						args = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-							mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 0);
+						MouseButtons mb = FromParamToMouseButtons ((int) m.WParam.ToInt32());
+						
+						// We add in the button that was released (not sent in WParam)
+						switch((Msg)m.Msg) {
+							case Msg.WM_LBUTTONUP:
+								mb |= MouseButtons.Left;
+								break;
+							case Msg.WM_MBUTTONUP:
+								mb |= MouseButtons.Middle;
+								break;
+							case Msg.WM_RBUTTONUP:
+								mb |= MouseButtons.Right;
+								break;
+						}
+						
+						args = new MouseEventArgs (mb, mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 0);
 						active_tracker.OnMouseUp(new MouseEventArgs (args.Button, args.Clicks, Control.MousePosition.X, Control.MousePosition.Y, args.Delta));
 						mouse_clicks = 1;
 						return;

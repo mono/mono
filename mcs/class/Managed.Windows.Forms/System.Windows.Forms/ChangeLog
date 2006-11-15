@@ -1,3 +1,9 @@
+2006-11-15  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Form.cs: Add the released button to MouseEventArgs.Button
+	for the OnMouseUp call to the MenuTracker.  Fixes menu clicking
+	on Win32.
+
 2006-11-15  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIX11.cs: add (untested) a _NET_WM_NAME implementation of
