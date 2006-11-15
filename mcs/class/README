@@ -25,6 +25,16 @@ testing.
 		throw new NotImplementedException ();
 	}
 
+	Ideally, write a human description of the reason why there is
+	a MonoTODO, this will be useful in the future for our
+	automated tools that can assist in developers porting their
+	code.
+
+	Do not use MonoTODO attributes for reminding yourself of
+	internal changes that must be done. Use FIXMEs or other kinds
+	of comments in the source code for that purpose, and if the
+	problem requires to be followed up on, file a bug.
+
 * Supporting .NET 1.2, .NET 1.1 and .NET 1.0 builds
 
 	The defines NET_1_1 and NET_2_0 are used to include
