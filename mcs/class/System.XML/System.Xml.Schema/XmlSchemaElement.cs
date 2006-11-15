@@ -554,7 +554,7 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 
-		[MonoTODO ("Return clone in case when it returns itself")]
+		// FIXME: Return clone in case when it returns itself
 		internal override XmlSchemaParticle GetOptimizedParticle (bool isTop)
 		{
 			if (OptimizedParticle != null)

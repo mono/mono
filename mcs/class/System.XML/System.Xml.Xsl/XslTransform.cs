@@ -45,7 +45,7 @@ namespace System.Xml.Xsl {
 		CompiledStylesheet s;
 		XmlResolver xmlResolver = new XmlUrlResolver ();
 
-		[MonoTODO ("Security check.")]
+		[MonoTODO] // FIXME: audit security check
 #if NET_2_0
 #elif NET_1_1
 		[Obsolete ("You should pass XmlResolver to Transform() method", false)]

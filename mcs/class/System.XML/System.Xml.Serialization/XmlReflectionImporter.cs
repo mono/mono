@@ -137,7 +137,7 @@ namespace System.Xml.Serialization {
 		}
 
 #if NET_2_0
-		[MonoTODO ("writeAccessors, validate, mapping access")]
+		[MonoTODO] // FIXME: handle writeAccessors, validate, and mapping access
 		public
 #endif
 		XmlMembersMapping ImportMembersMapping (string elementName, 

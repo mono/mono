@@ -400,7 +400,7 @@ namespace System.Xml
 		}
 
 #if NET_2_0
-		[MonoTODO ("test defattr handling")]
+		[MonoTODO] // FIXME: test defattr handling
 		public virtual void WriteNode (XPathNavigator navigator, bool defattr)
 		{
 			if (navigator == null)

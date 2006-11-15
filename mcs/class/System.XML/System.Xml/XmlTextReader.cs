@@ -685,7 +685,7 @@ namespace System.Xml
 		}
 
 #if NET_2_0
-		[MonoTODO ("Implement for performance reason")]
+		[MonoTODO] // FIXME: Implement, for performance improvement
 		public override void Skip ()
 		{
 			base.Skip ();

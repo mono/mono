@@ -620,7 +620,7 @@ namespace System.Xml
 			base.Skip ();
 		}
 
-		[MonoTODO ("Check how expanded entity is handled here.")]
+		[MonoTODO] // FIXME: Check how expanded entity is handled here.
 		public TextReader GetRemainder ()
 		{
 			if (entity != null) {
@@ -636,7 +636,7 @@ namespace System.Xml
 			return true;
 		}
 
-		[MonoTODO ("Check how expanded entity is handled here.")]
+		[MonoTODO] // FIXME: Check how expanded entity is handled here.
 		public int ReadBase64 (byte [] buffer, int offset, int length)
 		{
 			if (entity != null)
@@ -645,7 +645,7 @@ namespace System.Xml
 				return source.ReadBase64 (buffer, offset, length);
 		}
 
-		[MonoTODO ("Check how expanded entity is handled here.")]
+		[MonoTODO] // FIXME: Check how expanded entity is handled here.
 		public int ReadBinHex (byte [] buffer, int offset, int length)
 		{
 			if (entity != null)
@@ -654,7 +654,7 @@ namespace System.Xml
 				return source.ReadBinHex (buffer, offset, length);
 		}
 
-		[MonoTODO ("Check how expanded entity is handled here.")]
+		[MonoTODO] // FIXME: Check how expanded entity is handled here.
 		public int ReadChars (char [] buffer, int offset, int length)
 		{
 			if (entity != null)
@@ -664,7 +664,7 @@ namespace System.Xml
 		}
 
 
-		[MonoTODO ("Check how expanded entity is handled here.")]
+		[MonoTODO] // FIXME: Check how expanded entity is handled here.
 		public override int ReadContentAsBase64 (byte [] buffer, int offset, int length)
 		{
 			if (entity != null)
@@ -673,7 +673,7 @@ namespace System.Xml
 				return source.ReadContentAsBase64 (buffer, offset, length);
 		}
 
-		[MonoTODO ("Check how expanded entity is handled here.")]
+		[MonoTODO] // FIXME: Check how expanded entity is handled here.
 		public override int ReadContentAsBinHex (byte [] buffer, int offset, int length)
 		{
 			if (entity != null)
@@ -682,7 +682,7 @@ namespace System.Xml
 				return source.ReadContentAsBinHex (buffer, offset, length);
 		}
 
-		[MonoTODO ("Check how expanded entity is handled here.")]
+		[MonoTODO] // FIXME: Check how expanded entity is handled here.
 		public override int ReadElementContentAsBase64 (byte [] buffer, int offset, int length)
 		{
 			if (entity != null)
@@ -691,7 +691,7 @@ namespace System.Xml
 				return source.ReadElementContentAsBase64 (buffer, offset, length);
 		}
 
-		[MonoTODO ("Check how expanded entity is handled here.")]
+		[MonoTODO] // FIXME: Check how expanded entity is handled here.
 		public override int ReadElementContentAsBinHex (byte [] buffer, int offset, int length)
 		{
 			if (entity != null)

@@ -102,7 +102,8 @@ namespace System.Xml.Schema
 		}
 
 		[XmlIgnore]
-		[MonoTODO ("This property works as always returning a valid schema type.")]
+		// FIXME:This property works as always returning a valid schema type.
+		[MonoTODO]
 		// In .NET 2.0, all schema types used in schema documents must
 		// be XmlSchemaType, even if it is primitive type, in terms of
 		// non-obsolete System.Xml.Schema members.

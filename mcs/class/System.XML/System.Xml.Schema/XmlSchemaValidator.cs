@@ -238,7 +238,7 @@ namespace System.Xml.Schema
 				al.Add (p);
 		}
 
-		[MonoTODO ("Need some tests.")]
+		[MonoTODO] // Need some tests.
 		// Its behavior is not obvious. For example, it does not
 		// contain groups (xs:sequence/xs:choice/xs:all). Since it
 		// might contain xs:any, it could not be of type element[].
@@ -309,7 +309,7 @@ namespace System.Xml.Schema
 		}
 
 		// I guess it is for validation error recovery
-		[MonoTODO ("Find out how XmlSchemaInfo is used.")]
+		[MonoTODO] // FIXME: Find out how XmlSchemaInfo is used.
 		public void SkipToEndElement (XmlSchemaInfo info)
 		{
 			CheckState (Transition.Content);
@@ -435,7 +435,7 @@ namespace System.Xml.Schema
 		// represented by current simple content type. (try passing
 		// some kind of object to this method to check the behavior.)
 		// EndTagDeriv
-		[MonoTODO ("Handle 'var' parameter.")]
+		[MonoTODO] // FIXME: Handle 'var' parameter.
 		public object ValidateEndElement (XmlSchemaInfo info,
 			object var)
 		{

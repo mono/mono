@@ -438,7 +438,7 @@ namespace Mono.Xml.Xsl
 #endregion
 		
 #region Scope (version, {excluded, extension} namespaces)
-		[MonoTODO ("This will work, but is *very* slow")]
+		// FIXME: This will work, but is *very* slow
 		public bool IsExtensionNamespace (string nsUri)
 		{
 			if (nsUri == XsltNamespace) return true;

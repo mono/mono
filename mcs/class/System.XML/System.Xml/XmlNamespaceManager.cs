@@ -363,7 +363,7 @@ namespace System.Xml
 				return false;
 			string prefix = decls [idx + 1].Prefix;
 			for (int i = idx + 1; i <= declPos; i++)
-				if ((object) decls [idx].Prefix == prefix)
+				if ((object) decls [idx].Prefix == (object) prefix)
 					return true;
 			return false;
 		}

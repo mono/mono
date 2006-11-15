@@ -250,7 +250,7 @@ namespace Mono.Xml.Xsl {
 			return pos;
 		}
 
-		[MonoTODO ("Collect grouping digits")]
+		// FIXME: Collect grouping digits
 		private int ParseNumber (int start, string pattern, XslDecimalFormat format)
 		{
 			int pos = start;

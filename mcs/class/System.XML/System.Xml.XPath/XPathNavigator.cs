@@ -651,13 +651,11 @@ namespace System.Xml.XPath
 			return Clone ();
 		}
 
-		[MonoTODO]
 		public virtual object Evaluate (string xpath, IXmlNamespaceResolver nsResolver)
 		{
 			return Evaluate (Compile (xpath), null, nsResolver);
 		}
 
-		[MonoTODO]
 		public virtual IDictionary<string, string> GetNamespacesInScope (XmlNamespaceScope scope)
 		{
 			IDictionary<string, string> table = new Dictionary<string, string> ();
@@ -991,7 +989,6 @@ namespace System.Xml.XPath
 				}
 				return sb.ToString ();
 			}
-			[MonoTODO]
 			set {
 				switch (NodeType) {
 				case XPathNodeType.Root:
@@ -1006,14 +1003,12 @@ namespace System.Xml.XPath
 			}
 		}
 
-		[MonoTODO]
 		public virtual IXmlSchemaInfo SchemaInfo {
 			get {
 				return null;
 			}
 		}
 
-		[MonoTODO]
 		public override object TypedValue {
 			get {
 				switch (NodeType) {
@@ -1064,7 +1059,6 @@ namespace System.Xml.XPath
 			}
 		}
 
-		[MonoTODO]
 		public override XmlSchemaType XmlType {
 			get {
 				if (SchemaInfo != null)
@@ -1107,7 +1101,6 @@ namespace System.Xml.XPath
 			w.Close ();
 		}
 
-		[MonoTODO]
 		public virtual void AppendChild (
 			XPathNavigator nav)
 		{
@@ -1131,7 +1124,6 @@ namespace System.Xml.XPath
 		}
 
 		// must override it.
-		[MonoTODO ("needs tests")]
 		public virtual XmlWriter CreateAttributes ()
 		{
 			throw new NotSupportedException ();
@@ -1183,7 +1175,6 @@ namespace System.Xml.XPath
 			}
 		}
 
-		[MonoTODO]
 		public virtual void InsertAfter (XPathNavigator nav)
 		{
 			InsertAfter (new XPathNavigatorReader (nav));
@@ -1206,7 +1197,6 @@ namespace System.Xml.XPath
 			}
 		}
 
-		[MonoTODO]
 		public virtual void InsertBefore (XPathNavigator nav)
 		{
 			InsertBefore (new XPathNavigatorReader (nav));
@@ -1249,7 +1239,6 @@ namespace System.Xml.XPath
 			}
 		}
 
-		[MonoTODO]
 		public virtual void PrependChild (XPathNavigator nav)
 		{
 			PrependChild (new XPathNavigatorReader (nav));
@@ -1274,7 +1263,6 @@ namespace System.Xml.XPath
 			throw new NotSupportedException ();
 		}
 
-		[MonoTODO]
 		public virtual void ReplaceSelf (XPathNavigator navigator)
 		{
 			ReplaceSelf (new XPathNavigatorReader (navigator));
@@ -1292,7 +1280,6 @@ namespace System.Xml.XPath
 			throw new NotSupportedException ();
 		}
 
-		[MonoTODO]
 		private void DeleteChildren ()
 		{
 			switch (NodeType) {

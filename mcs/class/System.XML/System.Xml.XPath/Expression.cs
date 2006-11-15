@@ -739,7 +739,7 @@ namespace System.Xml.XPath
 			}
 		}
 
-		[MonoTODO ("Avoid extraneous evaluation")]
+		// FIXME: Avoid extraneous evaluation
 		public override bool EvaluateBoolean (BaseIterator iter)
 		{
 			XPathResultType typeL = _left.GetReturnType (iter);
@@ -840,7 +840,7 @@ namespace System.Xml.XPath
 			get { return HasStaticValue ? Compare (_left.StaticValueAsNumber, _right.StaticValueAsNumber) : false; }
 		}
 
-		[MonoTODO ("Avoid extraneous evaluation.")]
+		// FIXME: Avoid extraneous evaluation.
 		public override bool EvaluateBoolean (BaseIterator iter)
 		{
 			XPathResultType typeL = _left.GetReturnType (iter);
@@ -1496,7 +1496,7 @@ namespace System.Xml.XPath
 		{
 			this.type = type;
 		}
-		[MonoTODO ("Better description.")]
+		// FIXME: Better description
 		public NodeTypeTest (Axes axis, XPathNodeType type, String param) : base (axis)
 		{
 			this.type = type;

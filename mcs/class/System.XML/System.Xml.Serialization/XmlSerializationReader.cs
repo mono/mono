@@ -41,7 +41,8 @@ using System.Reflection;
 namespace System.Xml.Serialization 
 {
 #if NET_2_0
-	[MonoTODO ("provide expected elements/attributes on unknown elements/attributs")]
+	[MonoTODO]
+	// FIXME: provide expected elements/attributes on unknown elements/attributs
 #endif
 	public abstract class XmlSerializationReader 
 #if NET_2_0
@@ -287,13 +288,13 @@ namespace System.Xml.Serialization
 			return result;
 		}
 
-		[MonoTODO ("Implement")]
+		[MonoTODO]
 		protected void FixupArrayRefs (object fixup)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
+		[MonoTODO]
 		protected int GetArrayLength (string name, string ns)
 		{
 			throw new NotImplementedException ();
@@ -792,19 +793,19 @@ namespace System.Xml.Serialization
 			return Convert.FromBase64String (Reader.ReadString());
 		}
 
-		[MonoTODO ("Implement")]
+		[MonoTODO]
 		protected static byte[] ToByteArrayBase64 (string value)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
+		[MonoTODO]
 		protected byte[] ToByteArrayHex (bool isNull)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
+		[MonoTODO]
 		protected static byte[] ToByteArrayHex (string value)
 		{
 			throw new NotImplementedException ();

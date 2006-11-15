@@ -305,7 +305,8 @@ namespace System.Xml
 		}
 #endif
 
-		[MonoTODO ("We decided not to support XDR schema that spec is obsolete.")]
+		[MonoTODO]
+		// We decided not to support XDR schema; it is obsolete.
 		public ValidationType ValidationType {
 			get { return validationType; }
 			set {
@@ -468,7 +469,8 @@ namespace System.Xml
 			return validatingReader.MoveToNextAttribute ();
 		}
 
-		[MonoTODO ("We decided not to support XDR schema that spec is obsolete.")]
+		[MonoTODO]
+		// We decided not to support XDR schema; it is obsolete.
 		public override bool Read ()
 		{
 			if (validatingReader == null) {
@@ -571,7 +573,7 @@ namespace System.Xml
 		}
 
 #if NET_2_0
-		[MonoTODO ("Check how expanded entity is handled here.")]
+		[MonoTODO] // FIXME: Check how expanded entity is handled here.
 		public override int ReadContentAsBase64 (byte [] buffer, int offset, int length)
 		{
 			if (validatingReader != null)
@@ -580,7 +582,7 @@ namespace System.Xml
 				return sourceReader.ReadContentAsBase64 (buffer, offset, length);
 		}
 
-		[MonoTODO ("Check how expanded entity is handled here.")]
+		[MonoTODO] // FIXME: Check how expanded entity is handled here.
 		public override int ReadContentAsBinHex (byte [] buffer, int offset, int length)
 		{
 			if (validatingReader != null)
@@ -589,7 +591,7 @@ namespace System.Xml
 				return sourceReader.ReadContentAsBinHex (buffer, offset, length);
 		}
 
-		[MonoTODO ("Check how expanded entity is handled here.")]
+		[MonoTODO] // FIXME: Check how expanded entity is handled here.
 		public override int ReadElementContentAsBase64 (byte [] buffer, int offset, int length)
 		{
 			if (validatingReader != null)
@@ -598,7 +600,7 @@ namespace System.Xml
 				return sourceReader.ReadElementContentAsBase64 (buffer, offset, length);
 		}
 
-		[MonoTODO ("Check how expanded entity is handled here.")]
+		[MonoTODO] // FIXME: Check how expanded entity is handled here.
 		public override int ReadElementContentAsBinHex (byte [] buffer, int offset, int length)
 		{
 			if (validatingReader != null)

@@ -109,7 +109,8 @@ namespace System.Xml
 
 #region Methods
 
-		[MonoTODO ("CAS: imperative PermitOnly isn't supported")]
+		[MonoTODO]
+		// FIXME: imperative PermitOnly isn't supported
 		public override object GetEntity (
 			Uri absoluteUri, string role, Type ofObjectToReturn)
 		{

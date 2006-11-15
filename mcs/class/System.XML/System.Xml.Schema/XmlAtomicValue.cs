@@ -36,7 +36,7 @@ using System.Xml.XPath;
 
 namespace System.Xml.Schema
 {
-	[MonoTODO ("This class is unused and thus won't be finished.")]
+	[MonoTODO] // This class is unused and thus won't be finished.
 	public sealed class XmlAtomicValue : XPathItem, ICloneable
 	{
 		bool booleanValue;

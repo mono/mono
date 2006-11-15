@@ -43,7 +43,7 @@ using System.Xml.Xsl;
 
 namespace Mono.Xml.Xsl {
 
-	[MonoTODO ("Correct evidence handling; test other than simple string case")]
+	// FIXME: Correct evidence handling; test other than simple string case
 	internal class MSXslScriptManager {
 		Hashtable scripts = new Hashtable ();
 

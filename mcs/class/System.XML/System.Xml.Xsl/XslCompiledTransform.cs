@@ -42,7 +42,8 @@ using Mono.Xml.Xsl;
 
 namespace System.Xml.Xsl
 {
-	[MonoTODO ("Of cource this is just a stub")]
+	[MonoTODO]
+	// FIXME: Of cource this is just a stub for now.
 	public sealed class XslCompiledTransform
 	{
 		bool enable_debug;

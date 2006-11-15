@@ -170,7 +170,8 @@ namespace System.Xml.Schema
 			return schema;
 		}
 
-		[MonoTODO ("Check the exact behavior when namespaces are in conflict (but it would be preferable to wait for 2.0 RTM).")]
+		[MonoTODO]
+		// FIXME: Check the exact behavior when namespaces are in conflict (but it would be preferable to wait for 2.0 RTM)
 		public void Add (XmlSchemaSet schemaSet)
 		{
 			ArrayList al = new ArrayList ();
@@ -189,7 +190,7 @@ namespace System.Xml.Schema
 			return schema;
 		}
 
-		[MonoTODO ("It should be the actual compilation engine.")]
+		// FIXME: It should be the actual compilation engine.
 		public void Compile ()
 		{
 			ClearGlobalComponents ();
@@ -261,7 +262,8 @@ namespace System.Xml.Schema
 			return ns == null ? "" : ns;
 		}
 
-		[MonoTODO ("Check exact behavior")]
+		[MonoTODO]
+		// FIXME: Check exact behavior
 		public XmlSchema Remove (XmlSchema schema)
 		{
 			if (schema == null)
@@ -330,7 +332,6 @@ namespace System.Xml.Schema
 			return schemas;
 		}
 
-		[MonoTODO]
 		public ICollection Schemas (string targetNamespace)
 		{
 			targetNamespace = GetSafeNs (targetNamespace);

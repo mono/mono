@@ -66,7 +66,13 @@ using Choice = System.Xml.Schema.XmlSchemaChoice;
 
 namespace System.Xml.Schema
 {
-	[MonoTODO ("merge primitive types; infer gYearMonth too; in some cases sequence should contain element whose minOccurs=0 (no obvious rules right now); reject some non-supported schema components")]
+	[MonoTODO]
+	// FIXME:
+	// - merge primitive types
+	// - infer gYearMonth too
+	// - in some cases sequence should contain element whose minOccurs=0
+	//    (no obvious rules right now)
+	// - reject some non-supported schema components
 	public sealed class XmlSchemaInference
 	{
 		public enum InferenceOption {
