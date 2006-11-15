@@ -1173,10 +1173,6 @@ namespace System.Windows.Forms {
 				return;
 
 			XplatUI.SendMessage(this.Handle, Msg.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
-			if (is_modal)
-				Hide ();
-			else
-				Dispose ();
 		}
 
 		public void LayoutMdi(MdiLayout value) {
@@ -1794,6 +1790,7 @@ namespace System.Windows.Forms {
 							DialogResult = DialogResult.None;
 							closing = false;
 						}
+						Hide ();
 					}
 					return;
 				}

@@ -1,5 +1,14 @@
 2006-11-15  Chris Toshok  <toshok@ximian.com>
 
+	[ fixes #79933 ]
+	
+	* Form.cs: in Close() don't do anything after we send the WM_CLOSE
+	message.  no hiding, no disposing.
+
+	in the WM_CLOSE handler, hide the form if it's modal.
+
+2006-11-15  Chris Toshok  <toshok@ximian.com>
+
 	* XplatUIX11.cs: use AddExpose instead of sending a message.
 	fixes textbox border drawing.
 
