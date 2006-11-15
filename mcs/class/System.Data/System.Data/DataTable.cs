@@ -100,6 +100,9 @@ namespace System.Data {
 		private RecordCache _recordCache;
 		private int _defaultValuesRowIndex = -1;
 		protected internal bool fInitInProgress;
+#if NET_2_0
+		internal bool tableInitialized = true;
+#endif
 
 		// If CaseSensitive property is changed once it does not anymore follow owner DataSet's 
 		// CaseSensitive property. So when you lost you virginity it's gone for ever
@@ -337,9 +340,10 @@ namespace System.Data {
 				*/
 				Columns[i].ExtendedProperties = (PropertyCollection) info.GetValue (prefix + "ExtendedProperties",
 												    typeof (PropertyCollection));
-				if (Columns[i].DataType == typeof (DataSetDateTime))
+				if (Columns[i].DataType == typeof (DataSetDateTime)) {
 					Columns[i].DateTimeMode = (DataSetDateTime) info.GetValue (prefix + "DateTimeMode",
 												   typeof (DataSetDateTime));
+				}
 				Columns[i].ColumnMapping = (MappingType) info.GetValue (prefix + "ColumnMapping",
 											typeof (MappingType));
 				try {
@@ -374,7 +378,6 @@ namespace System.Data {
 		/// <summary>
 		/// Initializes a new instance of the DataTable class with the SerializationInfo and the StreamingContext.
 		/// </summary>
-		[MonoTODO]
 		protected DataTable (SerializationInfo info, StreamingContext context)
 			: this () 
 		{
@@ -449,7 +452,8 @@ namespace System.Data {
 		}
 		
 #if NET_2_0
-		SerializationFormat remotingFormat = SerializationFormat.Xml;
+		SerializationFormat remotingFormat;
+		[DefaultValue (SerializationFormat.Xml)]
 		public SerializationFormat RemotingFormat {
 			get {
 				if (dataSet != null)
@@ -503,6 +507,18 @@ namespace System.Data {
 			OnRowChanging (e);
 		}
 
+#if NET_2_0
+		internal void NewRowAdded (DataRow dr) 
+		{
+			DataTableNewRowEventArgs e = new DataTableNewRowEventArgs (dr);
+			OnTableNewRow (e);
+		}
+		internal void DataTableInitialized ()
+		{
+			EventArgs e = new EventArgs ();
+			OnTableInitialized (e);
+		}
+#endif
 		/// <summary>
 		/// Gets the collection of child relations for this DataTable.
 		/// </summary>
@@ -562,7 +578,6 @@ namespace System.Data {
 		/// Gets a customized view of the table which may 
 		/// include a filtered view, or a cursor position.
 		/// </summary>
-		[MonoTODO]	
 		[Browsable (false)]
 #if !NET_2_0
 		[DataSysDescription ("This is the default DataView for the table.")]
@@ -831,6 +846,12 @@ namespace System.Data {
 			set { _site = value; }
 		}
 
+#if NET_2_0
+		public bool IsInitialized {
+			get { return tableInitialized;}
+		}
+#endif
+
 		/// <summary>
 		/// Gets or sets the name of the the DataTable.
 		/// </summary>
@@ -1014,13 +1035,15 @@ namespace System.Data {
 		void BeginInit () 
 		{
 			InitInProgress = true;
+#if NET_2_0
+			tableInitialized = false;
+#endif
 		}
 
 		/// <summary>
 		/// Turns off notifications, index maintenance, and 
 		/// constraints while loading data.
 		/// </summary>
-		[MonoTODO]
 		public void BeginLoadData () 
 		{
 			if (!this._duringDataLoad)
@@ -1049,6 +1072,9 @@ namespace System.Data {
 		/// Clears the DataTable of all data.
 		/// </summary>
 		public void Clear () {
+#if NET_2_0
+                        OnTableClearing (new DataTableClearEventArgs (this));
+#endif // NET_2_0
                         // Foriegn key constraints are checked in _rows.Clear method
 			_rows.Clear ();
 			foreach(Index index in Indexes)
@@ -1075,7 +1101,6 @@ namespace System.Data {
 		/// Computes the given expression on the current_rows that 
 		/// pass the filter criteria.
 		/// </summary>
-		[MonoTODO]
 		public object Compute (string expression, string filter) 
 		{
 			// expression is an aggregate function
@@ -1207,7 +1232,6 @@ namespace System.Data {
 		/// on a form or used by another component. The 
 		/// initialization occurs at runtime.
 		/// </summary>
-		[MonoTODO]
 		public
 #if NET_2_0
 		virtual
@@ -1215,6 +1239,10 @@ namespace System.Data {
 		void EndInit () 
 		{
 			InitInProgress = false;
+#if NET_2_0
+			tableInitialized = true;
+			DataTableInitialized ();
+#endif
 			FinishInit ();
 		}
 
@@ -1293,7 +1321,6 @@ namespace System.Data {
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public DataTableReader CreateDataReader ()
 		{
 			return new DataTableReader (this);
@@ -1606,7 +1633,14 @@ namespace System.Data {
 		/// <summary>
 		/// This member is only meant to support Mono's infrastructure 		
 		/// </summary>
-		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context) 
+#if NET_2_0
+		public virtual
+#endif
+		void
+#if !NET_2_0
+		ISerializable.
+#endif
+		GetObjectData (SerializationInfo info, StreamingContext context) 
 		{
 #if NET_2_0
 			if (RemotingFormat == SerializationFormat.Xml) {
@@ -1681,7 +1715,27 @@ namespace System.Data {
                         }
 		}
 
-                
+		public virtual void Load (IDataReader reader, LoadOption loadOption, FillErrorEventHandler errorHandler)
+		{
+                        bool prevEnforceConstr = this.EnforceConstraints;
+                        try {
+                                this.EnforceConstraints = false;
+
+                                int [] mapping = DbDataAdapter.BuildSchema (reader, this, SchemaType.Mapped, 
+                                                                            MissingSchemaAction.AddWithKey,
+                                                                            MissingMappingAction.Passthrough, 
+                                                                            new DataTableMappingCollection ());
+                                DbDataAdapter.FillFromReader (this,
+                                                              reader,
+                                                              0, // start from
+                                                              0, // all records
+                                                              mapping,
+                                                              loadOption,
+							      errorHandler);
+                        } finally {
+                                this.EnforceConstraints = prevEnforceConstr;
+                        }
+		}
 #endif
 
 		/// <summary>
@@ -1807,19 +1861,16 @@ namespace System.Data {
                         return row;
 		}
 
-		[MonoTODO]
 		public void Merge (DataTable table)
 		{
 			Merge (table, false, MissingSchemaAction.Add);
 		}
 
-		[MonoTODO]
 		public void Merge (DataTable table, bool preserveChanges)
 		{
 			Merge (table, preserveChanges, MissingSchemaAction.Add);
 		}
 
-		[MonoTODO]
 		public void Merge (DataTable table, bool preserveChanges, MissingSchemaAction missingSchemaAction)
 		{
 			MergeManager.Merge (this, table, preserveChanges, missingSchemaAction);
@@ -1836,6 +1887,9 @@ namespace System.Data {
 			DataRow newRow = NewRowFromBuilder (RowBuilder);
 
 			newRow.Proposed = CreateRecord(null);
+#if NET_2_0
+			NewRowAdded (newRow);
+#endif
 			return newRow;
 		}
 
@@ -1916,6 +1970,18 @@ namespace System.Data {
 		}
 
 #if NET_2_0
+		[MonoTODO]
+		protected virtual XmlSchema GetSchema ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static XmlSchemaComplexType GetDataTableSchema (XmlSchemaSet schemaSet)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public XmlReadMode ReadXml (Stream stream)
 		{
 			return ReadXml (new XmlTextReader(stream, null));
@@ -1958,7 +2024,7 @@ namespace System.Data {
 			//     schema info to load into the appropriate
 			//     locations.
 
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		public void ReadXmlSchema (Stream stream)
@@ -2070,7 +2136,6 @@ namespace System.Data {
 		/// the filter in the order of the sort, that match 
 		/// the specified state.
 		/// </summary>
-		[MonoTODO]
 		public DataRow[] Select(string filterExpression, string sort, DataViewRowState recordStates) 
 		{
 			if (filterExpression == null)
@@ -2431,9 +2496,12 @@ namespace System.Data {
 					tmp = ds = new DataSet ();
 					ds.Tables.Add (this);
 				}
+				writer.WriteStartDocument ();
 				DataTableCollection col = new DataTableCollection (ds);
 				col.Add (this);
-				XmlSchemaWriter.WriteXmlSchema (ds, writer, col, null);
+				DataTable [] tables = new DataTable [col.Count];
+				for (int i = 0; i < col.Count; i++) tables[i] = col[i];
+				XmlSchemaWriter.WriteXmlSchema (writer, tables, null, TableName, ds.DataSetName);
 			} finally {
 				if (tmp != null)
 					ds.Tables.Remove (this);
@@ -2446,6 +2514,55 @@ namespace System.Data {
 			try {
 				xw = XmlWriter.Create (fileName, GetWriterSettings ());
 				WriteXmlSchema (xw);
+			} finally {
+				if (xw != null)
+					xw.Close ();
+			}
+		}
+
+		public void WriteXmlSchema (Stream stream, bool writeHierarchy)
+		{
+			WriteXmlSchema (XmlWriter.Create (stream, GetWriterSettings ()), writeHierarchy);
+		}
+
+		public void WriteXmlSchema (TextWriter writer, bool writeHierarchy)
+		{
+			WriteXmlSchema (XmlWriter.Create (writer, GetWriterSettings ()), writeHierarchy);
+		}
+
+		public void WriteXmlSchema (XmlWriter writer, bool writeHierarchy)
+		{
+			if (writeHierarchy == false) {
+				WriteXmlSchema (writer);
+			}
+			else {
+				DataSet ds = DataSet;
+				DataSet tmp = null;
+				try {
+					if (ds == null) {
+						tmp = ds = new DataSet ();
+						ds.Tables.Add (this);
+					}
+					writer.WriteStartDocument ();
+					//XmlSchemaWriter.WriteXmlSchema (ds, writer);
+					DataTable [] tables = new DataTable [ds.Tables.Count];
+					DataRelation [] relations = new DataRelation [ds.Relations.Count];
+					for (int i = 0; i < ds.Tables.Count; i++) tables[i] = ds.Tables[i];
+					for (int i = 0; i < ds.Relations.Count; i++) relations[i] = ds.Relations[i];
+					XmlSchemaWriter.WriteXmlSchema (writer, tables, relations, TableName, ds.DataSetName);
+				} finally {
+					if (tmp != null)
+						ds.Tables.Remove (this);
+				}
+			}
+		}
+
+		public void WriteXmlSchema (string fileName, bool writeHierarchy)
+		{
+			XmlWriter xw = null;
+			try {
+				xw = XmlWriter.Create (fileName, GetWriterSettings ());
+				WriteXmlSchema (xw, writeHierarchy);
 			} finally {
 				if (xw != null)
 					xw.Close ();
@@ -2476,6 +2593,11 @@ namespace System.Data {
 			if (TableCleared != null)
 				TableCleared (this, e);
 		}
+
+		protected virtual void OnTableClearing (DataTableClearEventArgs e) {
+			if (TableClearing != null)
+				TableClearing (this, e);
+		}
 #endif // NET_2_0
 
 		/// <summary>
@@ -2496,10 +2618,11 @@ namespace System.Data {
 		/// </summary>
 		[MonoTODO]
 		protected internal virtual void OnPropertyChanging (PropertyChangedEventArgs pcevent) {
-			//	if (null != PropertyChanging)
-			//	{
-			//		PropertyChanging (this, e);
-			//	}
+			//if (null != PropertyChanging)
+			//{
+			//	PropertyChanging (this, pcevent);
+			//}
+			throw new NotImplementedException ();
 		}
 
 		/// <summary>
@@ -2546,6 +2669,20 @@ namespace System.Data {
 				RowDeleting(this, e);
 			}
 		}
+
+#if NET_2_0
+		protected virtual void OnTableNewRow (DataTableNewRowEventArgs e) {
+			if (null != TableNewRow) {
+				TableNewRow (this, e);
+			}
+		}
+
+		internal void OnTableInitialized (EventArgs e) {
+			if (null != Initialized) {
+				Initialized (this, e);
+			}
+		}
+#endif
 
 		/// <summary>
 		/// Occurs when after a value has been changed for 
@@ -2612,7 +2749,18 @@ namespace System.Data {
 		[DataSysDescription ("Occurs when the rows in a table is cleared . Throw an exception to cancel the deletion.")]
 #endif
 		public event DataTableClearEventHandler TableCleared;
+
+		[DataCategory ("Data")]	
+#if !NET_2_0
+		[DataSysDescription ("Occurs when the rows in a table is clearing . Throw an exception to cancel the deletion.")]
+#endif
+		public event DataTableClearEventHandler TableClearing;
 #endif // NET_2_0
+
+#if NET_2_0
+		public event DataTableNewRowEventHandler TableNewRow;
+		public event EventHandler Initialized;
+#endif
 
 		#endregion // Events
 

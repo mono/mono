@@ -144,9 +144,8 @@ namespace System.Data {
 						DataContainer[index] = value;
 					}
 					catch(Exception e) {
-						throw new ArgumentException(e.Message +
-							String.Format("Couldn't store <{0}> in {1} Column.  Expected type is {2}.",
-							value, ColumnName, DataType.Name), e);
+						throw new ArgumentException(String.Format("{0}. Couldn't store <{1}> in Column named '{2}'. Expected type is {3}.",
+							e.Message, value, ColumnName, DataType.Name), e);
 					}
 				}
 

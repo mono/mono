@@ -60,6 +60,14 @@ namespace System.Data
 				tables, relations).WriteSchema ();
 		}
 
+		internal static void WriteXmlSchema (XmlWriter writer, DataTable[] tables,
+						     DataRelation[] relations,
+						     string mainDataTable,
+						     string dataSetName)
+		{
+			new XmlSchemaWriter (writer, tables, relations, mainDataTable, dataSetName).WriteSchema ();
+		}
+
 		public XmlSchemaWriter (DataSet dataset,
 			XmlWriter writer, DataTableCollection tables,
 			DataRelationCollection relations)

@@ -1,3 +1,20 @@
+2006-11-15  Nagappan A  <anagappan@novell.com>
+
+	* DataTable.cs (RemotingFormat): Set the default value attribute
+	as SerializationFormat.Xml.
+	(OnTableNewRow, NewRowAdded): Implemented new function to raise an
+	event when a new row is added to the table.
+	(DataTableInitialized, OnTableInitialized): Implemented new
+	function to raise an event when a table is initialized.
+	(IsInitialized): Implemented public function to check whether a
+	table is initialized or not.
+	(OnTableClearing): Raise an event before the table is cleared.
+	(GetObjectData): Modified to public for .NET 2.0 implementation.
+	(Load): Implemented missing API to call the registered delegate
+	function on load exception.
+	(WriteXmlSchema): Implemented overloaded function to write the
+	hierarchy with XML Schema.
+
 2006-11-15  Konstantin Triger <kostat@mainsoft.com>
 
 	* DataTable.cs: Fixed LoadDataRow scenarios.
