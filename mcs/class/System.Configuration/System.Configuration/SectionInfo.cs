@@ -38,7 +38,7 @@ namespace System.Configuration
 	internal class SectionInfo: ConfigInfo
 	{
 		bool allowLocation = true;
-		bool? requirePermission = true;
+		bool requirePermission = true;
 		ConfigurationAllowDefinition allowDefinition = ConfigurationAllowDefinition.Everywhere;
 		ConfigurationAllowExeDefinition allowExeDefinition = ConfigurationAllowExeDefinition.MachineToApplication;
 
@@ -64,8 +64,7 @@ namespace System.Configuration
 				sec.SectionInformation.AllowLocation = allowLocation;
 				sec.SectionInformation.AllowDefinition = allowDefinition;
 				sec.SectionInformation.AllowExeDefinition = allowExeDefinition;
-				if (requirePermission != null)
-					sec.SectionInformation.RequirePermission = requirePermission.Value;
+				sec.SectionInformation.RequirePermission = requirePermission;
 				sec.SectionInformation.SetName (Name);
 			}
 			return ob;
@@ -158,8 +157,8 @@ namespace System.Configuration
 				writer.WriteAttributeString ("allowDefinition", allowDefinition.ToString ());
 			if (allowExeDefinition != ConfigurationAllowExeDefinition.MachineToApplication)
 				writer.WriteAttributeString ("allowExeDefinition", allowExeDefinition.ToString ());
-			if (requirePermission != null)
-				writer.WriteAttributeString ("requirePermission", requirePermission.Value ? "true" : "false");
+			if (!requirePermission)
+				writer.WriteAttributeString ("requirePermission", "false");
 			writer.WriteEndElement ();
 		}
 		

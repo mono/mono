@@ -1,3 +1,7 @@
+2006-08-23  Konstantin Triger <kostat@mainsoft.com>
+
+	* SectionInfo.cs: refactoring - remove unneeded bool? usage.
+	
 2006-11-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* added: ConfigurationRemoveElement.cs, common element for <remove>
