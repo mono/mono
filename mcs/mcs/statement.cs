@@ -2400,15 +2400,15 @@ namespace Mono.CSharp {
 			return root_scope;
 		}
 
-		public void CreateIteratorHost (RootScopeInfo root_scope)
+		public void CreateIteratorHost (RootScopeInfo root)
 		{
-			Report.Debug (64, "CREATE ITERATOR HOST", this, root_scope,
+			Report.Debug (64, "CREATE ITERATOR HOST", this, root,
 				      container, root_scope);
 
 			if ((container != null) || (root_scope != null))
 				throw new InternalErrorException ();
 
-			ScopeInfo = root_scope = root_scope;
+			ScopeInfo = root_scope = root;
 		}
 
 		public RootScopeInfo RootScope {
