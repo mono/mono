@@ -3,6 +3,11 @@
 	* TreeView.cs: Allow more explicit setting of top node position
 	for scrollbars. Slower algo, but more accurate.
 	- CollapseAll should maintain the current top node.
+	* TextBoxBase.cs: When positioning the caret, use the line, pos
+	method, since the x, y method does not grab the correct tag, and
+	the caret height never gets set correctly. (Maybe I should just do
+	away with the caret having its own height, and always use the
+	carets current tag for height).
 
 2006-11-16  Jonathan Pobst  <monkey@jpobst.com
 

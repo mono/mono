@@ -545,7 +545,7 @@ namespace System.Windows.Forms {
 						}
 						this.Lines = lines;
 
-						document.PositionCaret (0, 0);
+						document.PositionCaret (document.GetLine (1), 0);
 						document.SetSelectionToCaret (true);
 
 						ScrollToCaret ();
@@ -554,7 +554,7 @@ namespace System.Windows.Forms {
 						document.Add(1, CaseAdjust(value), alignment, Font, ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor));
 						CalculateDocument();
 
-						document.PositionCaret (0, 0);
+						document.PositionCaret (document.GetLine (1), 0);
 						document.SetSelectionToCaret (true);
 
 						ScrollToCaret ();
