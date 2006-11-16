@@ -315,7 +315,7 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			string acceptable = hexadecimal ? "\b-.,0123456789ABCDEF" : "\b-.,0123456789";
+			string acceptable = hexadecimal ? "\b-.,0123456789abcdefABCDEF" : "\b-.,0123456789";
 
 			if (acceptable.IndexOf(e.KeyChar) < 0) {
 				// prevent the key from reaching the text box

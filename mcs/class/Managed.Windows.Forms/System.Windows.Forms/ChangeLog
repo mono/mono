@@ -1,3 +1,7 @@
+2006-11-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* NumericUpDown.cs: Allow lowercase letters when in hex-mode.
+
 2006-11-16  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Allow more explicit setting of top node position
