@@ -1,5 +1,11 @@
 2006-11-15  Chris Toshok  <toshok@ximian.com>
 
+	* Application.cs: null out the context's MainForm when we exit
+	RunLoop.  Fixes a newly checked in unit test as well as the last
+	ODE from bug #79933.
+
+2006-11-15  Chris Toshok  <toshok@ximian.com>
+
 	* Form.cs (set_Owner): allow a null value so we can clear the
 	form's owner.
 	(Dispose): set all our owned_form's Owner properties to null, and

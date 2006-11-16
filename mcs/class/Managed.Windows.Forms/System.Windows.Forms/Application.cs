@@ -625,6 +625,7 @@ namespace System.Windows.Forms {
 			#endif
 			if (context.MainForm != null) {
 				context.MainForm.context = null;
+				context.MainForm = null;
 			}
 
 			if (!Modal) {
