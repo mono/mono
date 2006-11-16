@@ -1,3 +1,67 @@
+2006-11-16  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11.cs: nasty, nasty, nasty changes required because of
+	the broken multithreaded event handling we have in here.  File
+	this entry under "Why we should move to the new X11 backend".
+
+	Any thread can make it into UpdateMessageQueue, which gets events
+	from the X socket - some of which could belong to hwnds being
+	managed by a different thread.  We can also have multiple threads
+	in UpdateMessageQueue at the same time, with each one reading from
+	the X socket.  This leads to many problems, with the following
+	solutions:
+
+	We can't use hwnd.Queue.Enqueue anywhere in here and must use
+	EnqueueLocked.
+
+	The MotionNotify compression we do can't work across threads
+	(without locking the entire queue, perhaps) since we call
+	hwnd.Queue.Peek, so we just punt and don't compress motion events
+	unless the owning thread is the one which got the X event.
+
+	ConfigureNotify is another fun one, since it modifies the hwnd's
+	bounds and then enqueues the event.  We add a lock to Hwnd which
+	is held when setting configure_pending to true (and enqueuing the
+	event).
+
+	There is a race wrt the wake socket.  we need to make sure that
+	only 1 thread is waiting on that socket, or else a thread could
+	sleep waiting for data that never comes.  It's difficult (but not
+	impossible) to make happen, because it seems to require something
+	like the following:
+
+	    1. Thread 1 polls on wake_receive
+	
+	    2. poll returns saying there's data to be read on
+	       wake_receive.
+	
+	    3. Thread 2 polls on wake_receive and immediately returns
+	       saying there's data to be read.
+
+	    4. Thread 2 reads the wakeup byte from wake_receive
+
+	    5. Thread 1 attempts to read the wakeup byte from
+	       wake_receive.
+
+	    6. Thread 2 exits (due to a form closing, perhaps).
+
+	    7. Thread 1 blocks forever.
+	
+	Fun, eh?
+
+	Fixing the Expose handling isn't done yet, and the races inherent
+	in that piece of code are responsible for the drawing mistakes you
+	see when generating expose events in a MT app (like NPlot).  This
+	one is the likely to be the hardest to bandaid, and it doesn't
+	appear to cause anything but drawing problems.  The other issues
+	caused apps to exit or hang.
+
+	* XEventQueue.cs: output some spew when Dequeue/Enqueue/Peek are
+	called from a different thread than the one that should be calling
+	these functions.
+
+	* Hwnd.cs: add some locks to be used by the XplatUIX11 code.
+
 2006-11-15  Chris Toshok  <toshok@ximian.com>
 
 	* Application.cs: null out the context's MainForm when we exit

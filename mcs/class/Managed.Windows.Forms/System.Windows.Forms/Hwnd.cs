@@ -79,6 +79,10 @@ namespace System.Windows.Forms {
 		internal bool		no_activate;	// For Win32, popup windows will not steal focus
 		#endregion	// Local Variables
 
+		// locks for some operations (used in XplatUIX11.cs)
+		internal object configure_lock = new object ();
+		internal object expose_lock = new object ();
+
 		#region Constructors and destructors
 		public Hwnd() {
 			x = 0;

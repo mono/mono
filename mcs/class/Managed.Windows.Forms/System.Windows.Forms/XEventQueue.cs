@@ -78,6 +78,11 @@ namespace System.Windows.Forms {
 
 		public void Enqueue (XEvent xevent)
 		{
+			if (Thread.CurrentThread != thread) {
+				Console.WriteLine ("Hwnd.Queue.Enqueue called from a different thread without locking.");
+				Console.WriteLine (Environment.StackTrace);
+			}
+
 			xqueue.Enqueue (xevent);
 		}
 
@@ -90,6 +95,11 @@ namespace System.Windows.Forms {
 
 		public XEvent Dequeue ()
 		{
+			if (Thread.CurrentThread != thread) {
+				Console.WriteLine ("Hwnd.Queue.Dequeue called from a different thread without locking.");
+				Console.WriteLine (Environment.StackTrace);
+			}
+
 			if (xqueue.Count == 0) {
 				lock (lqueue) {
 					return lqueue.Dequeue ();
@@ -100,6 +110,11 @@ namespace System.Windows.Forms {
 
 		public XEvent Peek()
 		{
+			if (Thread.CurrentThread != thread) {
+				Console.WriteLine ("Hwnd.Queue.Peek called from a different thread without locking.");
+				Console.WriteLine (Environment.StackTrace);
+			}
+
 			if (xqueue.Count == 0) {
 				lock (lqueue) {
 					return lqueue.Peek ();

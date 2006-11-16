@@ -100,6 +100,8 @@ namespace System.Windows.Forms {
 		private static Hashtable	MessageQueues;		// Holds our thread-specific XEventQueues
 		#if __MonoCS__						//
 		private static Pollfd[]		pollfds;		// For watching the X11 socket
+		private static bool wake_waiting;
+		private static object wake_waiting_lock = new object ();
 		#endif							//
 		private static X11Keyboard	Keyboard;		//
 		private static X11Dnd		Dnd;
@@ -1238,13 +1240,17 @@ namespace System.Windows.Forms {
 						}
 					}
 				}
+
+				// XXX this sucks.  this isn't thread safe
 				hwnd.width = xevent.ConfigureEvent.width;
 				hwnd.height = xevent.ConfigureEvent.height;
 				hwnd.ClientRect = Rectangle.Empty;
 
-				if (!hwnd.configure_pending) {
-					hwnd.Queue.Enqueue(xevent);
-					hwnd.configure_pending = true;
+				lock (hwnd.configure_lock) {
+					if (!hwnd.configure_pending) {
+						hwnd.Queue.EnqueueLocked (xevent);
+						hwnd.configure_pending = true;
+					}
 				}
 			}
 			// We drop configure events for Client windows
@@ -1367,10 +1373,19 @@ namespace System.Windows.Forms {
 
 				if (timeout > 0) {
 					#if __MonoCS__
-					Syscall.poll (pollfds, (uint) pollfds.Length, timeout);
+					int length = pollfds.Length - 1;
+					lock (wake_waiting_lock) {
+						if (wake_waiting == false) {
+							length ++;
+							wake_waiting = true;
+						}
+					}
+
+					Syscall.poll (pollfds, (uint)length, timeout);
 					// Clean out buffer, so we're not busy-looping on the same data
 					if (pollfds[1].revents != 0) {
 						wake_receive.Receive(network_buffer, 0, 1, SocketFlags.None);
+						wake_waiting = false;
 					}
 					#endif
 					lock (XlibLock) {
@@ -1551,7 +1566,8 @@ namespace System.Windows.Forms {
 				case XEventName.MotionNotify: {
 					XEvent peek;
 
-					if (hwnd.Queue.Count > 0) {
+					/* we can't do motion compression across threads, so just punt if we don't match up */
+					if (Thread.CurrentThread == hwnd.Queue.Thread && hwnd.Queue.Count > 0) {
 						peek = hwnd.Queue.Peek();
 						if (peek.AnyEvent.type == XEventName.MotionNotify) {
 							continue;
@@ -1571,7 +1587,7 @@ namespace System.Windows.Forms {
 				case XEventName.FocusOut:
 				case XEventName.ClientMessage:
 				case XEventName.ReparentNotify:
-					hwnd.Queue.Enqueue (xevent);
+					hwnd.Queue.EnqueueLocked (xevent);
 					break;
 
 				case XEventName.ConfigureNotify:
@@ -3564,8 +3580,10 @@ namespace System.Windows.Forms {
 							Console.WriteLine("GetMessage(): Window {0:X} ConfigureNotify x={1} y={2} width={3} height={4}", hwnd.client_window.ToInt32(), xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
 						#endif
 //						if ((hwnd.x != xevent.ConfigureEvent.x) || (hwnd.y != xevent.ConfigureEvent.y) || (hwnd.width != xevent.ConfigureEvent.width) || (hwnd.height != xevent.ConfigureEvent.height)) {
-							SendMessage(msg.hwnd, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
-							hwnd.configure_pending = false;
+							lock (hwnd.configure_lock) {
+								SendMessage(msg.hwnd, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
+								hwnd.configure_pending = false;
+							}
 
 							// We need to adjust our client window to track the resize of whole_window
 							if (hwnd.whole_window != hwnd.client_window)
@@ -4121,7 +4139,7 @@ namespace System.Windows.Forms {
 			xevent.ClientMessageEvent.ptr3 = wparam;
 			xevent.ClientMessageEvent.ptr4 = lparam;
 
-			hwnd.Queue.Enqueue (xevent);
+			hwnd.Queue.EnqueueLocked (xevent);
 
 			return true;
 		}
@@ -4510,7 +4528,7 @@ namespace System.Windows.Forms {
 					xevent.MotionEvent.y_root = root_y;
 					xevent.MotionEvent.state = mask;
 
-					child_hwnd.Queue.Enqueue (xevent);
+					child_hwnd.Queue.EnqueueLocked (xevent);
 				}
 			} else {
 				Hwnd	hwnd;
