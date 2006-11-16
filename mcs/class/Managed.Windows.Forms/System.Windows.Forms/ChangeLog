@@ -1,3 +1,9 @@
+2006-11-16  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Allow more explicit setting of top node position
+	for scrollbars. Slower algo, but more accurate.
+	- CollapseAll should maintain the current top node.
+
 2006-11-16  Jonathan Pobst  <monkey@jpobst.com
 
 	[Fixes 79778, 79923]

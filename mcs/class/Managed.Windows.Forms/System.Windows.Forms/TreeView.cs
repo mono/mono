@@ -516,19 +516,23 @@ namespace System.Windows.Forms {
 
 			for (int i = 0; i < VisibleCount - 1; i++)
 				walk.MovePrevious ();
-			SetVScrollPos (vbar.Maximum - VisibleCount + 1, walk.CurrentNode);
-			vbar.Value = vbar.Maximum - VisibleCount + 1;			
+
+			SetTop (walk.CurrentNode);
 		}
 
 		
 		public void CollapseAll ()
 		{
+			TreeNode walk = top_node;
+			
+			while (walk.parent != root_node)
+				walk = walk.parent;
+
 			BeginUpdate ();
 			root_node.CollapseAll ();
 			EndUpdate ();
 
-			SetVScrollPos (0, root_node);
-			vbar.Value = 0;
+			SetTop (walk);
 		}
 
 		public TreeNode GetNodeAt (Point pt) {
@@ -942,10 +946,11 @@ namespace System.Windows.Forms {
 
 			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (first);
 			int offset = -1;
-			while (walk.CurrentNode != node && walk.MoveNext ())
+			int vc = VisibleCount;
+			while (walk.CurrentNode != node && walk.MoveNext () && offset < vbar.Maximum - vc)
 				offset++;
 
-			vbar.Value = offset;
+			SetVScrollTop (walk.CurrentNode);
 		}
 
 		internal void SetBottom (TreeNode node)
@@ -1470,6 +1475,18 @@ namespace System.Windows.Forms {
 			top_node = new_top;
 			int y_move = diff * ActualItemHeight;
 			XplatUI.ScrollWindow (Handle, ViewportRectangle, 0, y_move, false);
+		}
+
+		private void SetVScrollTop (TreeNode new_top)
+		{
+			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (root_node);
+
+			skipped_nodes = -1;
+			while (walk.MoveNext () && walk.CurrentNode != new_top)
+				skipped_nodes++;
+
+			top_node = new_top;
+			vbar.Value = skipped_nodes;
 		}
 
 		private void HScrollBarValueChanged(object sender, EventArgs e)
