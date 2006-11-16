@@ -240,7 +240,6 @@
 			<SubType>Component</SubType>
 		</Compile>
 		<Compile Include="System.Web.Services.Protocols\HttpPostTypeStubInfo.cs"/>
-		<Compile Include="System.Web.Services.Protocols\HttpServerProtocol.cs"/>
 		<Compile Include="System.Web.Services.Protocols\HttpSimpleClientProtocol.cs">
 			<SubType>Component</SubType>
 		</Compile>
@@ -264,6 +263,8 @@
 		<Compile Include="System.Web.Services.Protocols\NopReturnReader.cs"/>
 		<Compile Include="System.Web.Services.Protocols\PatternMatcher.cs"/>
 		<Compile Include="System.Web.Services.Protocols\ServerProtocol.cs"/>
+		<Compile Include="System.Web.Services.Protocols\ServerProtocolFactory.cs"/>
+		<Compile Include="System.Web.Services.Protocols\ServerType.cs"/>
 		<Compile Include="System.Web.Services.Protocols\Soap12FaultCodes.cs"/>
 		<Compile Include="System.Web.Services.Protocols\SoapClientMessage.cs"/>
 		<Compile Include="System.Web.Services.Protocols\SoapClientMethod.cs"/>
@@ -279,6 +280,8 @@
 		<Compile Include="System.Web.Services.Protocols\SoapHeaderCollection.cs"/>
 		<Compile Include="System.Web.Services.Protocols\SoapHeaderDirection.cs"/>
 		<Compile Include="System.Web.Services.Protocols\SoapHeaderException.cs"/>
+		<Compile Include="System.Web.Services.Protocols\SoapHeaderHandling.cs"/>
+		<Compile Include="System.Web.Services.Protocols\SoapHeaderMapping.cs"/>
 		<Compile Include="System.Web.Services.Protocols\SoapHttpClientProtocol.cs">
 			<SubType>Component</SubType>
 		</Compile>
@@ -289,7 +292,10 @@
 		<Compile Include="System.Web.Services.Protocols\SoapRpcMethodAttribute.cs"/>
 		<Compile Include="System.Web.Services.Protocols\SoapRpcServiceAttribute.cs"/>
 		<Compile Include="System.Web.Services.Protocols\SoapServerMessage.cs"/>
+		<Compile Include="System.Web.Services.Protocols\SoapServerMethod.cs"/>
 		<Compile Include="System.Web.Services.Protocols\SoapServerProtocol.cs"/>
+		<Compile Include="System.Web.Services.Protocols\SoapServerProtocolFactory.cs"/>
+		<Compile Include="System.Web.Services.Protocols\SoapServerType.cs"/>
 		<Compile Include="System.Web.Services.Protocols\SoapServiceRoutingStyle.cs"/>
 		<Compile Include="System.Web.Services.Protocols\SoapUnknownHeader.cs"/>
 		<Compile Include="System.Web.Services.Protocols\TextReturnReader.cs"/>
@@ -333,7 +339,7 @@
 		<Folder Include="Properties\"/>
 	</ItemGroup>
 	<Import Project="$(MSBuildBinPath)\Microsoft.csharp.targets"/>
-	<Import Project="$(GHROOT)\bin\Mainsoft.Common.targets"/>
+	<Import Project="$(VMW_HOME)\bin\Mainsoft.Common.targets"/>
 	<!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
