@@ -1215,6 +1215,9 @@ namespace System.Web.UI.WebControls
 
 			if (CompleteStep == null)
 				WizardSteps.AddAt (WizardSteps.Count, new CompleteWizardStep ());
+
+			if (ActiveStepIndex < 0)
+				ActiveStepIndex = 0;
 		}
 
 		protected override bool OnBubbleEvent (object source, EventArgs e)

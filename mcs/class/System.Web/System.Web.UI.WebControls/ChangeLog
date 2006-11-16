@@ -1,3 +1,7 @@
+2006-11-16 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* CreateUserWizard.cs: fixed: ActiveStepIndex property.
+
 2006-11-15 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ListControl.cs: fixed: DataBinding for 2.0, for 1.x - refactoring only.

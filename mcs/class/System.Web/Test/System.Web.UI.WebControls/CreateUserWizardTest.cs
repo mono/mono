@@ -121,6 +121,14 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			return base.OnBubbleEvent (this, e);
 		}
+
+		public int ActiveStepIndex_Before_Init;
+		public int ActiveStepIndex_After_Init;
+		protected override void OnInit (EventArgs e) {
+			ActiveStepIndex_Before_Init = ActiveStepIndex;
+			base.OnInit (e);
+			ActiveStepIndex_After_Init = ActiveStepIndex;
+		}
 	}
 
 	[Serializable]
@@ -131,6 +139,27 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void TestSetup ()
 		{
 			Thread.Sleep (150);
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void ActiveStepIndex () {
+			new WebTest (PageInvoker.CreateOnLoad (ActiveStepIndex_Load)).Run ();
+		}
+
+		public static void ActiveStepIndex_Load (Page p) {
+			TestCreateUserWizard wizard = new TestCreateUserWizard ();
+			p.Controls.Add (wizard);
+			Assert.AreEqual (-1, wizard.ActiveStepIndex_Before_Init, "ActiveStepIndex_Before_Init #1");
+			Assert.AreEqual (0, wizard.ActiveStepIndex_After_Init, "ActiveStepIndex_After_Init #1");
+			Assert.AreEqual (2, wizard.WizardSteps.Count);
+
+			wizard = new TestCreateUserWizard ();
+			wizard.ActiveStepIndex = 1;
+			p.Controls.Add (wizard);
+			Assert.AreEqual (1, wizard.ActiveStepIndex_Before_Init, "ActiveStepIndex_Before_Init #2");
+			Assert.AreEqual (1, wizard.ActiveStepIndex_After_Init, "ActiveStepIndex_After_Init #2");
+			Assert.AreEqual (2, wizard.WizardSteps.Count);
 		}
 
 		[Test]
