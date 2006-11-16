@@ -1,5 +1,13 @@
 2006-11-16  Marek Habersack  <grendello@gmail.com>
 
+	* ForceCopyBuildProvider.cs: Added the build provider for
+	copy-only files.
+
+	* MasterPageBuildProvider.cs: Added the build provider for Master
+	Pages.
+
+	* IgnoreFileBuildProvider.cs: Make the class sealed.
+
 	* AppCodeCompiler.cs: Fixed BuildProvider creation for a path. Now
 	correctly uses the BuildProviderCollection to retrieve the
 	appropriate builder and maps the physical input file path into

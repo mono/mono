@@ -46,6 +46,7 @@ System.Web.Compilation/ExpressionBuilderContext.cs
 System.Web.Compilation/ExpressionBuilder.cs
 System.Web.Compilation/ExpressionEditorAttribute.cs
 System.Web.Compilation/ExpressionPrefixAttribute.cs
+System.Web.Compilation/ForceCopyBuildProvider.cs
 System.Web.Compilation/GlobalAsaxCompiler.cs
 System.Web.Compilation/IAssemblyPostProcessor.cs
 System.Web.Compilation/IgnoreFileBuildProvider.cs
@@ -55,6 +56,7 @@ System.Web.Compilation/ImplicitResourceKey.cs
 System.Web.Compilation/IResourceProvider.cs
 System.Web.Compilation/LinePragmaCodeInfo.cs
 System.Web.Compilation/Location.cs
+System.Web.Compilation/MasterPageBuildProvider.cs
 System.Web.Compilation/MasterPageCompiler.cs
 System.Web.Compilation/PageBuildProvider.cs
 System.Web.Compilation/PageCompiler.cs

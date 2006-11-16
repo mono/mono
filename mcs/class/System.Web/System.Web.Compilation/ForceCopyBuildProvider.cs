@@ -1,10 +1,10 @@
 //
-// System.Web.Compilation.IgnoreFileBuildProvider
+// System.Web.Compilation.ForceCopyBuildProvider
 //
 // Authors:
-//	Chris Toshok (toshok@ximian.com)
+//   Marek Habersack (grendello@gmail.com)
 //
-// (C) 2006 Novell, Inc (http://www.novell.com)
+// (C) 2006 Marek Habersack
 //
 
 //
@@ -27,19 +27,21 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 #if NET_2_0
+using System;
 
-namespace System.Web.Compilation {
+namespace System.Web.Compilation
+{
+	//
+	// This class is most probably a no-op one, used by the MS.NET
+	// aspnet compiler to mark files it should merely copy instead
+	// of compiling. See
+	//
+	//  http://forums.asp.net/thread/942690.aspx
+	//
 	[BuildProviderAppliesTo (BuildProviderAppliesTo.All)]
-	sealed class IgnoreFileBuildProvider : BuildProvider
-	{
-		public override void GenerateCode (AssemblyBuilder assemblyBuilder)
-		{
-			/* do nothing */
-		}
-	}
-
+        sealed class ForceCopyBuildProvider : BuildProvider
+        {
+        }
 }
-
 #endif
