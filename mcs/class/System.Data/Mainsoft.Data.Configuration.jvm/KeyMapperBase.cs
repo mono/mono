@@ -106,7 +106,7 @@ namespace Mainsoft.Data.Configuration
 						lastChar != Path.AltDirectorySeparatorChar)
 						dataDirectory += '/';
 				}
-				connectionString.Replace (DataDirectoryPlaceholder, dataDirectory);
+				connectionString = connectionString.Replace (DataDirectoryPlaceholder, dataDirectory);
 			}
 
 			bool inQuote = false;
