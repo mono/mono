@@ -1,5 +1,5 @@
 // 
-// ServerProtocol.cs
+// SoapServerMethod.cs
 //
 // Author:
 //   Atsushi Enomoto  <atsushi@ximian.com>
@@ -30,44 +30,88 @@
 
 #if NET_2_0
 
+using System.Web.Services;
+using System.Web.Services.Description;
+using System.Xml;
+using System.Xml.Serialization;
+
 namespace System.Web.Services.Protocols
 {
-	public abstract class ServerProtocol
+	public sealed class SoapServerMethod
 	{
-		protected ServerProtocol ()
+		public SoapServerMethod ()
 		{
 		}
 
 		[MonoTODO]
-		protected HttpContext Context {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		protected HttpRequest Request {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		protected HttpResponse Response {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		protected virtual object Target {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		protected void AddToCache (Type protocolType, Type serverType, object value)
+		public SoapServerMethod (Type serverType, LogicalMethodInfo methodInfo)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected object GetFromCache (Type protocolType, Type serverType)
-		{
-			throw new NotImplementedException ();
+		public string Action {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public SoapBindingUse BindingUse { 
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public SoapHeaderMapping [] InHeaderMappings {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public XmlSerializer InHeaderSerializer {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public LogicalMethodInfo MethodInfo {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public bool OneWay {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public SoapHeaderMapping [] OutHeaderMappings {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public XmlSerializer OutHeaderSerializer {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public XmlSerializer ParameterSerializer {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public SoapParameterStyle ParameterStyle {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public XmlSerializer ReturnSerializer {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public bool Rpc {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public WsiProfiles WsiClaims {
+			get { throw new NotImplementedException (); }
 		}
 	}
 }

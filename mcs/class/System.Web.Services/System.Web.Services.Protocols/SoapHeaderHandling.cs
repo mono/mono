@@ -1,5 +1,5 @@
 // 
-// SoapServerProtocol.cs
+// SoapHeaderHandling.cs
 //
 // Author:
 //   Atsushi Enomoto  <atsushi@ximian.com>
@@ -30,40 +30,84 @@
 
 #if NET_2_0
 
-using System.Web.Services.Configuration;
+using System.Reflection;
 using System.Xml;
+using System.Xml.Serialization;
 
 namespace System.Web.Services.Protocols
 {
-	public class SoapServerProtocol : ServerProtocol
+	public sealed class SoapHeaderHandling
 	{
-		protected SoapServerProtocol ()
-		{
-		}
+		// static members
 
 		[MonoTODO]
-		protected virtual XmlReader GetReaderForMessage (
-			SoapServerMessage message, int bufferSize)
+		public static void EnsureHeadersUnderstood (SoapHeaderCollection headers)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected virtual XmlWriter GetWriterForMessage (
-			SoapServerMessage message, int bufferSize)
+		public static void GetHeaderMembers (
+			SoapHeaderCollection headers,
+			object target,
+			SoapHeaderMapping [] mappings,
+			SoapHeaderDirection direction,
+			bool client)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected virtual SoapExtension [] ModifyInitializedExtensions (
-			PriorityGroup group, SoapExtension [] extensions)
+		public static void SetHeaderMembers (
+			SoapHeaderCollection headers,
+			object target,
+			SoapHeaderMapping [] mappings,
+			SoapHeaderDirection direction,
+			bool client)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected virtual SoapServerMethod RouteRequest (SoapServerMessage message)
+		public static void WriteHeaders (
+			XmlWriter writer,
+			XmlSerializer serializer,
+			SoapHeaderCollection headers,
+			SoapHeaderMapping [] mappings,
+			SoapHeaderDirection direction,
+			bool isEncoded,
+			string defaultNS,
+			bool serviceDefaultIsEncoded,
+			string envelopeNS)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void WriteUnknownHeaders (
+			XmlWriter writer,
+			SoapHeaderCollection headers,
+			string envelopeNS)
+		{
+			throw new NotImplementedException ();
+		}
+
+		// instance members
+
+		public SoapHeaderHandling ()
+		{
+		}
+
+		[MonoTODO]
+		public string ReadHeaders (
+			XmlReader reader,
+			XmlSerializer serializer,
+			SoapHeaderCollection headers,
+			SoapHeaderMapping [] mappings,
+			SoapHeaderDirection direction,
+			string envelopeNS,
+			string encodingStyle,
+			bool checkRequiredHeaders)
 		{
 			throw new NotImplementedException ();
 		}

@@ -1,5 +1,5 @@
 // 
-// ServerProtocol.cs
+// ServerProtocolFactory.cs
 //
 // Author:
 //   Atsushi Enomoto  <atsushi@ximian.com>
@@ -32,43 +32,13 @@
 
 namespace System.Web.Services.Protocols
 {
-	public abstract class ServerProtocol
+	public abstract class ServerProtocolFactory
 	{
-		protected ServerProtocol ()
+		protected ServerProtocolFactory ()
 		{
 		}
 
-		[MonoTODO]
-		protected HttpContext Context {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		protected HttpRequest Request {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		protected HttpResponse Response {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		protected virtual object Target {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		protected void AddToCache (Type protocolType, Type serverType, object value)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected object GetFromCache (Type protocolType, Type serverType)
-		{
-			throw new NotImplementedException ();
-		}
+		protected abstract ServerProtocol CreateIfRequestCompatible (HttpRequest request);
 	}
 }
 

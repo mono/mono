@@ -1,5 +1,5 @@
 // 
-// ServerProtocol.cs
+// SoapHeaderMapping.cs
 //
 // Author:
 //   Atsushi Enomoto  <atsushi@ximian.com>
@@ -30,44 +30,39 @@
 
 #if NET_2_0
 
+using System.Reflection;
+
 namespace System.Web.Services.Protocols
 {
-	public abstract class ServerProtocol
+	public sealed class SoapHeaderMapping
 	{
-		protected ServerProtocol ()
+		internal SoapHeaderMapping ()
 		{
 		}
 
 		[MonoTODO]
-		protected HttpContext Context {
+		public bool Custom {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		protected HttpRequest Request {
+		public SoapHeaderDirection Direction {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		protected HttpResponse Response {
+		public Type HeaderType {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		protected virtual object Target {
+		public MemberInfo MemberInfo {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		protected void AddToCache (Type protocolType, Type serverType, object value)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected object GetFromCache (Type protocolType, Type serverType)
-		{
-			throw new NotImplementedException ();
+		public bool Repeats {
+			get { throw new NotImplementedException (); }
 		}
 	}
 }

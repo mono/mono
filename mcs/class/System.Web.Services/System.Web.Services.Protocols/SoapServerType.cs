@@ -1,5 +1,5 @@
 // 
-// ServerProtocol.cs
+// SoapServerType.cs
 //
 // Author:
 //   Atsushi Enomoto  <atsushi@ximian.com>
@@ -30,44 +30,43 @@
 
 #if NET_2_0
 
+using System.Web.Services.Configuration;
+
 namespace System.Web.Services.Protocols
 {
-	public abstract class ServerProtocol
+	public sealed class SoapServerType : ServerType
 	{
-		protected ServerProtocol ()
+		[MonoTODO]
+		public SoapServerType (Type type, WebServiceProtocols protocolsSupported)
+			: base (type)
 		{
 		}
 
 		[MonoTODO]
-		protected HttpContext Context {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		protected HttpRequest Request {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		protected HttpResponse Response {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		protected virtual object Target {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		protected void AddToCache (Type protocolType, Type serverType, object value)
+		public SoapServerMethod GetDuplicateMethod (object key)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected object GetFromCache (Type protocolType, Type serverType)
+		public SoapServerMethod GetMethod (object key)
 		{
 			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public bool ServiceDefaultIsEncoded {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public string ServiceNamespace {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public bool ServiceRoutingOnSoapAction {
+			get { throw new NotImplementedException (); }
 		}
 	}
 }

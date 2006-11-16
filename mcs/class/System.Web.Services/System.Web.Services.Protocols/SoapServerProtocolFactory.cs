@@ -1,5 +1,5 @@
 // 
-// ServerProtocol.cs
+// SoapServerProtocolFactory.cs
 //
 // Author:
 //   Atsushi Enomoto  <atsushi@ximian.com>
@@ -30,42 +30,18 @@
 
 #if NET_2_0
 
+using System.Web.Services.Configuration;
+
 namespace System.Web.Services.Protocols
 {
-	public abstract class ServerProtocol
+	public class SoapServerProtocolFactory : ServerProtocolFactory
 	{
-		protected ServerProtocol ()
+		public SoapServerProtocolFactory ()
 		{
 		}
 
 		[MonoTODO]
-		protected HttpContext Context {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		protected HttpRequest Request {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		protected HttpResponse Response {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		protected virtual object Target {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		protected void AddToCache (Type protocolType, Type serverType, object value)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected object GetFromCache (Type protocolType, Type serverType)
+		protected override ServerProtocol CreateIfRequestCompatible (HttpRequest request)
 		{
 			throw new NotImplementedException ();
 		}

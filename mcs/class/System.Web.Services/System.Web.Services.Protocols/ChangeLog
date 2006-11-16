@@ -1,3 +1,17 @@
+2006-11-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpServerProtocol.cs : removed old code.
+	* SoapServerProtocol.cs, ServerProtocol.cs : removed as well, and
+	  added up-to-date ones.
+	* SoapHeaderHandling.cs, SoapHeaderMapping.cs,
+	  ServerProtocolFactory.cs, SoapServerType.cs,
+	  SoapServerProtocolFactory.cs, ServerType.cs,
+	  SoapServerProtocol.cs, ServerProtocol.cs,
+	  SoapServerMethod.cs :
+	  Added stubs for 2.0 server protocol model. For now I don't spend
+	  time on these ones but rather fill more important bits like
+	  SOAP 1.2 support.
+
 2006-11-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SoapHeaderException.cs, SoapException.cs, SoapFaultSubcode.cs,

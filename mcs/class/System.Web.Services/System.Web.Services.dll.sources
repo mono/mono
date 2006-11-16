@@ -132,7 +132,6 @@ System.Web.Services.Protocols/HttpGetTypeStubInfo.cs
 System.Web.Services.Protocols/HttpMethodAttribute.cs
 System.Web.Services.Protocols/HttpPostClientProtocol.cs
 System.Web.Services.Protocols/HttpPostTypeStubInfo.cs
-System.Web.Services.Protocols/HttpServerProtocol.cs
 System.Web.Services.Protocols/HttpSimpleClientProtocol.cs
 System.Web.Services.Protocols/HttpSimpleTypeStubInfo.cs
 System.Web.Services.Protocols/HttpSimpleWebServiceHandler.cs
@@ -152,6 +151,8 @@ System.Web.Services.Protocols/NopReturnReader.cs
 System.Web.Services.Protocols/PatternMatcher.cs
 System.Web.Services.Protocols/Soap12FaultCodes.cs
 System.Web.Services.Protocols/ServerProtocol.cs
+System.Web.Services.Protocols/ServerProtocolFactory.cs
+System.Web.Services.Protocols/ServerType.cs
 System.Web.Services.Protocols/SoapClientMessage.cs
 System.Web.Services.Protocols/SoapClientMethod.cs
 System.Web.Services.Protocols/SoapDocumentationHandler.cs
@@ -166,6 +167,8 @@ System.Web.Services.Protocols/SoapHeaderAttribute.cs
 System.Web.Services.Protocols/SoapHeaderCollection.cs
 System.Web.Services.Protocols/SoapHeaderDirection.cs
 System.Web.Services.Protocols/SoapHeaderException.cs
+System.Web.Services.Protocols/SoapHeaderHandling.cs
+System.Web.Services.Protocols/SoapHeaderMapping.cs
 System.Web.Services.Protocols/SoapHttpClientProtocol.cs
 System.Web.Services.Protocols/SoapMessage.cs
 System.Web.Services.Protocols/SoapMessageStage.cs
@@ -174,8 +177,11 @@ System.Web.Services.Protocols/SoapProtocolVersion.cs
 System.Web.Services.Protocols/SoapRpcMethodAttribute.cs
 System.Web.Services.Protocols/SoapRpcServiceAttribute.cs
 System.Web.Services.Protocols/SoapServerMessage.cs
+System.Web.Services.Protocols/SoapServerMethod.cs
 System.Web.Services.Protocols/SoapServerProtocol.cs
+System.Web.Services.Protocols/SoapServerProtocolFactory.cs
 System.Web.Services.Protocols/SoapServiceRoutingStyle.cs
+System.Web.Services.Protocols/SoapServerType.cs
 System.Web.Services.Protocols/SoapUnknownHeader.cs
 System.Web.Services.Protocols/TextReturnReader.cs
 System.Web.Services.Protocols/TypeStubManager.cs
