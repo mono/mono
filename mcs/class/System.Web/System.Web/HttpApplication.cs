@@ -889,6 +889,8 @@ namespace System.Web {
 				else
 					ProcessError (new HttpException (404, "File not found: " + Path.GetFileName (fnf.FileName)));
 			} catch (DirectoryNotFoundException dnf){
+				if (!context.Request.IsLocal)
+					dnf = null; // Do not "leak" real path information
 				ProcessError (new HttpException (404, "Directory not found", dnf));
 			} catch (Exception e) {
 				ProcessError (e);

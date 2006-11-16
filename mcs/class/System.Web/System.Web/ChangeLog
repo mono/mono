@@ -1,3 +1,8 @@
+2006-11-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: don't leak the directory name for non-local
+	connections.
+
 2006-11-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CapabilitiesLoader.cs: made the hasstable that contains the properties
