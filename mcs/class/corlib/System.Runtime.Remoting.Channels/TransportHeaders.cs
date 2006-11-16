@@ -35,7 +35,7 @@ using System.Collections;
 namespace System.Runtime.Remoting.Channels
 {
         [Serializable]
-	[MonoTODO ("Fix serialization compatibility with MS.NET")]
+	[MonoTODO ("Serialization format not compatible with .NET")]
 	public class TransportHeaders : ITransportHeaders
 	{
 		Hashtable hash_table;

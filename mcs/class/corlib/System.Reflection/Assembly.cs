@@ -353,7 +353,7 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void FillName (Assembly ass, AssemblyName aname);
 
-		[MonoTODO ("true == not supported")]
+		[MonoTODO ("copiedName == true is not supported")]
 		public virtual AssemblyName GetName (Boolean copiedName)
 		{
 			// CodeBase, which is restricted, will be copied into the AssemblyName object so...
@@ -446,6 +446,7 @@ namespace System.Reflection {
 #if NET_1_1
 
 		[MonoTODO]
+		// FIXME: What are we missing?
 		public static Assembly LoadFrom (String assemblyFile, Evidence securityEvidence, byte[] hashValue, AssemblyHashAlgorithm hashAlgorithm)
 		{
 			if (assemblyFile == null)
@@ -455,8 +456,8 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public static Assembly LoadFile (String path, Evidence securityEvidence) {
+		public static Assembly LoadFile (String path, Evidence securityEvidence)
+		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
 			if (path == String.Empty)
@@ -465,7 +466,8 @@ namespace System.Reflection {
 			return LoadFrom (path, securityEvidence);
 		}
 
-		public static Assembly LoadFile (String path) {
+		public static Assembly LoadFile (String path)
+		{
 			return LoadFile (path, null);
 		}
 #endif
@@ -534,13 +536,13 @@ namespace System.Reflection {
 			return LoadWithPartialName (partialName, null);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public Module LoadModule (string moduleName, byte [] rawModule)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public Module LoadModule (string moduleName, byte [] rawModule, byte [] rawSymbolStore)
 		{
 			throw new NotImplementedException ();
@@ -615,10 +617,9 @@ namespace System.Reflection {
 			return GetLoadedModules (false);
 		}
 
-		[MonoTODO]
+		// FIXME: Currently, the two sets of modules are equal
 		public Module[] GetLoadedModules (bool getResourceModules)
 		{
-			// Currently, the two sets of modules are equal
 			return GetModules (getResourceModules);
 		}
 
@@ -714,7 +715,7 @@ namespace System.Reflection {
 		internal static extern int MonoDebugger_GetMethodToken (MethodBase method);
 
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("Always returns zero")]
 		[ComVisible (false)]
 		public long HostContext {
 			get { return 0; }

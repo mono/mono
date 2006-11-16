@@ -425,7 +425,7 @@ namespace System.Reflection.Emit {
 			win32_resources [win32_resources.Length - 1] = new MonoWin32Resource (res.Type.Id, res.Name.Id, res.Language, ms.ToArray ());
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not currently implemenented")]
 		public void DefineUnmanagedResource (byte[] resource)
 		{
 			if (resource == null)

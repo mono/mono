@@ -100,7 +100,7 @@ namespace System.Globalization
 			get { return currencySymbol; }
 		}
 
-		[MonoTODO]
+		[MonoTODO ("DisplayName currently only returns the EnglishName")]
 		public virtual string DisplayName {
 			get { return englishName; }
 		}
@@ -132,7 +132,7 @@ namespace System.Globalization
 			get { return DisplayName; }
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public virtual string CurrencyNativeName {
 			get { throw new NotImplementedException (); }
 		}

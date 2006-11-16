@@ -126,7 +126,9 @@ namespace System.Reflection
 				return null;
 			}
 
-			[MonoTODO]
+			//
+			// FIXME: There was a MonoTODO, but it does not explain what the problem is
+			// 
 			public override MethodBase BindToMethod (BindingFlags bindingAttr, MethodBase[] match, ref object[] args, ParameterModifier[] modifiers, CultureInfo culture, string[] names, out object state)
 			{
 				Type[] types;
@@ -191,7 +193,7 @@ namespace System.Reflection
 				return null;
 			}
 
-			[MonoTODO]
+			[MonoTODO ("This method does not do anything in Mono")]
 			public override void ReorderArgumentArray (ref object[] args, object state)
 			{
 				//do nothing until we support named arguments

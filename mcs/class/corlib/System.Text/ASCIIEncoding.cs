@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 #if NET_2_0
 [ComVisible (true)]
 #endif
-[MonoTODO ("Fix serialization compatibility with MS.NET")]
+[MonoTODO ("Serialization format not compatible with .NET")]
 public class ASCIIEncoding : Encoding
 {
 	// Magic number used by Windows for "ASCII".

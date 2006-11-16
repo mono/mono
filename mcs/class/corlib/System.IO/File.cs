@@ -80,7 +80,6 @@ namespace System.IO
 			return new StreamWriter (path, true);
 		}
 
-		[MonoTODO("Security Permision Checks")]
 		public static void Copy (string sourceFilename, string destFilename)
 		{
 			Copy (sourceFilename, destFilename, false);

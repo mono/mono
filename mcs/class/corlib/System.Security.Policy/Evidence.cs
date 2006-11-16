@@ -44,7 +44,7 @@ using Mono.Security.Authenticode;
 namespace System.Security.Policy {
 
 	[Serializable]
-	[MonoTODO ("Fix serialization compatibility with MS.NET")]
+	[MonoTODO ("Serialization format not compatible with .NET")]
 #if NET_2_0
 	[ComVisible (true)]
 #endif

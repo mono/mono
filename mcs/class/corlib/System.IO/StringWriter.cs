@@ -37,7 +37,7 @@ using System.Text;
 namespace System.IO {
 
 	[Serializable]
-	[MonoTODO ("Fix serialization compatibility with MS.NET")]
+	[MonoTODO ("Serialization format not compatible with .NET")]
 	public class StringWriter : TextWriter {
                 
                 private StringBuilder internalString;

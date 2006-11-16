@@ -32,7 +32,7 @@ using System.Collections;
 namespace System.Runtime.Serialization
 {
 	[Serializable]
-	[MonoTODO ("Fix serialization compatibility with MS.NET")]
+	[MonoTODO ("Serialization format not compatible with.NET")]
 #if NET_2_0
 	[System.Runtime.InteropServices.ComVisibleAttribute (true)]
 #endif

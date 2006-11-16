@@ -134,7 +134,7 @@ namespace System.IO
 		/// <summary>
 		/// Generates and exception if path too long
 		/// </summary>
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public static void PathLength (string path, string desc)
 		{
 		 	//TODO: find out how long is too long

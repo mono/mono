@@ -45,7 +45,7 @@ using System;
 [System.Runtime.InteropServices.ComVisible(true)]
 #endif
 [Serializable]
-[MonoTODO ("Fix serialization compatibility with MS.NET")]
+[MonoTODO ("Serialization format not compatible with.NET")]
 public class TaiwanCalendar : Calendar {
 	/// <summary>
 	/// Static protected field storing the

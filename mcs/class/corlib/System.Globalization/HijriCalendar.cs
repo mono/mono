@@ -53,7 +53,7 @@ using System.IO;
 /// </para>
 /// </remarks>
 [Serializable]
-[MonoTODO ("Fix serialization compatibility with MS.NET")]
+[MonoTODO ("Serialization format not compatible with .NET")]
 public class HijriCalendar : Calendar {
 	/// <summary>
 	/// Constructor.
@@ -91,7 +91,7 @@ public class HijriCalendar : Calendar {
 	}
 
 #if NET_1_1
-	[MonoTODO]
+	[MonoTODO ("Not supported")]
 	public int HijriAdjustment {
 		get {
 			throw new NotImplementedException ();
@@ -104,7 +104,7 @@ public class HijriCalendar : Calendar {
 
 	int twoDigitYearMax = 1451;
 	
-	[MonoTODO ("Add call into operating system")]
+	// FIXME: [MonoTODO ("Add call into operating system")]
 	public override int TwoDigitYearMax 
 	{
 		get {
@@ -926,7 +926,7 @@ public class HijriCalendar : Calendar {
 			hour, minute, second, milliseconds);
 	}
 
-	[MonoTODO]
+	[MonoTODO ("Not supported")]
 	public override int ToFourDigitYear(int year)
 	{
 		throw new NotImplementedException();

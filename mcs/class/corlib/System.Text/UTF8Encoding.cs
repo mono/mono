@@ -30,7 +30,7 @@ using System;
 using System.Runtime.InteropServices;
 
 [Serializable]
-[MonoTODO ("Fix serialization compatibility with MS.NET")]
+[MonoTODO ("Serialization format not compatible with .NET")]
 #if NET_2_0
 [MonoTODO ("EncoderFallback is not handled")]
 [ComVisible (true)]

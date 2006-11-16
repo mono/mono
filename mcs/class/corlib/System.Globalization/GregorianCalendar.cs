@@ -42,7 +42,7 @@ using System;
 /// </para>
 /// </remarks>
 [Serializable]
-[MonoTODO ("Fix serialization compatibility with MS.NET")]
+[MonoTODO ("Serialization format not compatible with .NET")]
 public class GregorianCalendar : Calendar {
 	/// <summary>
 	/// The era number for the Common Era (C.E.) or Anno Domini (A.D.)
@@ -463,7 +463,7 @@ public class GregorianCalendar : Calendar {
 			hour, minute, second, milliseconds);
 	}
 
-	[MonoTODO]
+	[MonoTODO ("Not supported")]
 	public override int ToFourDigitYear(int year)
 	{
 		throw new NotImplementedException();

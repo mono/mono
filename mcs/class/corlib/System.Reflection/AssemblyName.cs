@@ -53,7 +53,7 @@ namespace System.Reflection {
 #endif
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
-	[MonoTODO ("Fix serialization compatibility with MS.NET")]
+	[MonoTODO ("Serialization format not compatible with .NET")]
 	public sealed class AssemblyName  : ICloneable, ISerializable, IDeserializationCallback, _AssemblyName {
 
 		#region Synch with object-internals.h
@@ -69,7 +69,7 @@ namespace System.Reflection {
 		AssemblyVersionCompatibility versioncompat;
 		Version version;
 #if NET_2_0
-		ProcessorArchitecture processor_architecture;
+		ProcessorArchitecture processor_architecture = ProcessorArchitecture.MSIL;
 #else
 		int processor_architecture;
 #endif
@@ -98,7 +98,7 @@ namespace System.Reflection {
 #endif
 		
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("Not used, as the values are too limited;  Mono supports more")]
 		public ProcessorArchitecture ProcessorArchitecture {
 			get {
 				return processor_architecture;

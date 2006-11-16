@@ -784,7 +784,7 @@ namespace System.Reflection.Emit {
 			emit_int (token_gen.GetToken (type));
 		}
 
-		[MonoTODO ("Do something about varargs method")]
+		[MonoTODO ("vararg methods are not supported")]
 		public void EmitCall (OpCode opcode, MethodInfo methodinfo, Type[] optionalParamTypes)
 		{
 			if (methodinfo == null)

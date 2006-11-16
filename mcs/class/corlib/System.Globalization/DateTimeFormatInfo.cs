@@ -148,7 +148,6 @@ namespace System.Globalization
 			monthNames = INVARIANT_MONTH_NAMES;
 		}
 				
-		// LAMESPEC: this is not in ECMA specs
 		public static DateTimeFormatInfo GetInstance(IFormatProvider provider)
 		{
 			if (provider != null) {
@@ -465,7 +464,6 @@ namespace System.Globalization
 			}
 		}
 
-		// LAMESPEC: this is not in ECMA specs
 		public DayOfWeek FirstDayOfWeek
 		{
 			get
@@ -480,7 +478,6 @@ namespace System.Globalization
 			}
 		}
 
-		// LAMESPEC: this is not in ECMA specs
 		public Calendar Calendar
 		{
 			get
@@ -508,7 +505,6 @@ namespace System.Globalization
 			}
 		}
 
-		// LAMESPEC: this is not in ECMA specs
 		public string RFC1123Pattern
 		{
 			get
@@ -517,7 +513,6 @@ namespace System.Globalization
 			}
 		}
 
-		// LAMESPEC: this is not in ECMA specs
 		public string SortableDateTimePattern
 		{
 			get
@@ -526,7 +521,6 @@ namespace System.Globalization
 			}
 		}
 
-		// LAMESPEC: this is not in ECMA specs
 		public string UniversalSortableDateTimePattern
 		{
 			get
@@ -535,8 +529,7 @@ namespace System.Globalization
 			}
 		}
 		
-		// LAMESPEC: this is not in ECMA specs
-		[MonoTODO ("Not complete depending on GetAllDateTimePatterns(char)")]
+		// FIXME: Not complete depending on GetAllDateTimePatterns(char)")]
 		public string[] GetAllDateTimePatterns() 
 		{
 			FillAllDateTimePatterns ();
@@ -606,8 +599,10 @@ namespace System.Globalization
 			all_date_time_patterns = (string []) al.ToArray (typeof (string)) as string [];
 		}
 
-		// LAMESPEC: this is not in ECMA specs
-		[MonoTODO ("We need more culture data in locale-builder")]
+		//
+		// FIXME: We need more culture data in locale-builder
+		//   Whoever put that comment, please expand.
+		//
 		public string[] GetAllDateTimePatterns (char format)
 		{
 			string [] list;
@@ -680,7 +675,6 @@ namespace System.Globalization
 			throw new ArgumentException ("Format specifier was invalid.");
 		}
 
-		// LAMESPEC: this is not in ECMA specs
 		public string GetDayName(DayOfWeek dayofweek)
 		{
 			int index = (int) dayofweek;
@@ -688,7 +682,6 @@ namespace System.Globalization
 			return dayNames[index];
 		}
 
-		// LAMESPEC: this is not in ECMA specs
 		public string GetAbbreviatedDayName(DayOfWeek dayofweek)
 		{
 			int index = (int) dayofweek;

@@ -40,7 +40,7 @@ using System;
 /// </para>
 /// </remarks>
 [Serializable]
-[MonoTODO ("Fix serialization compatibility with MS.NET")]
+[MonoTODO ("Serialization format not compatible with.NET")]
 public class ThaiBuddhistCalendar : Calendar {
 	/// <summary>
 	/// Static protected field storing the
@@ -480,7 +480,7 @@ public class ThaiBuddhistCalendar : Calendar {
 			hour, minute, second, milliseconds);
 	}
 
-	[MonoTODO]
+	[MonoTODO ("Not supported")]
 	public override int ToFourDigitYear(int year)
 	{
 		throw new NotImplementedException();

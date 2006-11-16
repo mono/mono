@@ -68,7 +68,7 @@ using System;
 /// </para>
 /// </remarks>
 [Serializable]
-[MonoTODO ("Fix serialization compatibility with MS.NET")]
+[MonoTODO ("Serialization format not compatible with .NET")]
 public class JapaneseCalendar : Calendar {
 	/// <summary>
 	/// Static protected field storing the

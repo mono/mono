@@ -228,14 +228,43 @@ namespace System.IO {
 			}
 		}	
 
-		[MonoTODO ("AllDirectories isn't implemented")]
+		internal int GetFilesSubdirs (ArrayList l, string pattern)
+		{
+			int count;
+			FileInfo [] thisdir = null;
+
+			try {
+				thisdir = GetFiles (pattern);
+			} catch (System.UnauthorizedAccessException){
+				return 0;
+			}
+			
+			count = thisdir.Length;
+			l.Add (thisdir);
+
+			foreach (DirectoryInfo subdir in GetDirectories ()){
+				count += subdir.GetFilesSubdirs (l, pattern);
+			}
+			return count;
+		}
+		
 		public FileInfo[] GetFiles (string pattern, SearchOption searchOption)
 		{
 			switch (searchOption) {
 			case SearchOption.TopDirectoryOnly:
 				return GetFiles (pattern);
-			case SearchOption.AllDirectories:
-				throw new NotImplementedException ();
+			case SearchOption.AllDirectories: {
+				ArrayList groups = new ArrayList ();
+				int count = GetFilesSubdirs (groups, pattern);
+				int current = 0;
+				
+				FileInfo [] all = new FileInfo [count];
+				foreach (FileInfo [] p in groups){
+					p.CopyTo (all, current);
+					current += p.Length;
+				}
+				return all;
+			}
 			default:
 				string msg = Locale.GetText ("Invalid enum value '{0}' for '{1}'.", searchOption, "SearchOption");
 				throw new ArgumentOutOfRangeException ("searchOption", msg);

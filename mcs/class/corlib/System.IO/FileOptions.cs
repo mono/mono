@@ -36,7 +36,6 @@ namespace System.IO
 	[Flags]
 	[Serializable]
 	[ComVisible(true)]
-	[MonoTODO]
 #if NET_2_0
 	public enum FileOptions
 #else
