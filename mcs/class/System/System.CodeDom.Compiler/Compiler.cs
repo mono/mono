@@ -29,6 +29,9 @@
 //
 
 #if NET_2_0 && CONFIGURATION_DEP
+extern alias PrebuiltSystem;
+using TypeDescriptor = PrebuiltSystem.System.ComponentModel.TypeDescriptor;
+
 using System;
 using System.ComponentModel;
 using System.Configuration;
@@ -52,7 +55,7 @@ namespace System.CodeDom.Compiler
 			languageProp = new ConfigurationProperty("language", typeof (string), "", ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 			typeProp = new ConfigurationProperty("type", typeof (string), "", ConfigurationPropertyOptions.IsRequired);
 			warningLevelProp = new ConfigurationProperty("warningLevel", typeof (int), 0,
-								     null, //TypeDescriptor.GetConverter (typeof (int)),
+								     TypeDescriptor.GetConverter (typeof (int)),
 								     new IntegerValidator (0, 4),
 								     ConfigurationPropertyOptions.None);
 
