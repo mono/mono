@@ -160,16 +160,16 @@ namespace Mono.CSharp {
 
 	public class ScopeInfo : CompilerGeneratedClass
 	{
-		public readonly AnonymousMethodHost RootScope;
+		protected readonly AnonymousMethodHost RootScope;
 		public readonly int ID = ++next_id;
 		public Block ScopeBlock;
 
 		static int next_id;
 
-		public ScopeInfo (AnonymousMethodHost root, Block block)
-			: base (root, null, Modifiers.PUBLIC, block.StartLocation)
+		public ScopeInfo (IAnonymousMethodHost root, Block block)
+			: base ((AnonymousMethodHost) root, null, 0, block.StartLocation)
 		{
-			this.RootScope = root;
+			this.RootScope = (AnonymousMethodHost) root;
 			ScopeBlock = block;
 
 			Report.Debug (64, "NEW SCOPE", this, root, block);
@@ -192,7 +192,7 @@ namespace Mono.CSharp {
 
 		Hashtable locals = new Hashtable ();
 
-		public virtual AnonymousMethodHost Host {
+		protected virtual AnonymousMethodHost Host {
 			get { return RootScope; }
 		}
 
@@ -252,13 +252,54 @@ namespace Mono.CSharp {
 			return te.Type;
 		}
 
+		public static void EmitScopeInstance (EmitContext ec, ScopeInfo scope,
+						      ToplevelBlock toplevel)
+		{
+			AnonymousMethodHost root_scope = (AnonymousMethodHost) toplevel.AnonymousMethodHost;
+
+			root_scope.EmitScopeInstance (ec);
+			while (root_scope != scope.Host) {
+				ec.ig.Emit (OpCodes.Ldfld, root_scope.ParentLink.FieldBuilder);
+				root_scope = root_scope.ParentHost;
+
+				if (root_scope == null)
+					throw new InternalErrorException (
+						"Never found scope {0} starting at block {1}",
+						scope, ec.CurrentBlock.ID);
+			}
+
+			if (scope != (ScopeInfo) scope.Host)
+				scope.ScopeInstance.Emit (ec);
+		}
+
+		public static bool CompleteContexts (IAnonymousMethodHost amh, Block container)
+		{
+			AnonymousMethodHost host = (AnonymousMethodHost) amh;
+
+			if (host != null)
+				host.LinkScopes ();
+
+			if ((container == null) && (host != null)) {
+				if (host.DefineType () == null)
+					return false;
+				if (!host.ResolveType ())
+					return false;
+				if (!host.ResolveMembers ())
+					return false;
+				if (!host.DefineMembers ())
+					return false;
+			}
+
+			return true;
+		}
+
 		protected override bool DoResolveMembers ()
 		{
 			Report.Debug (64, "SCOPE INFO RESOLVE MEMBERS", this, GetType (), IsGeneric,
 				      Parent.IsGeneric, GenericMethod);
 
-			if (Host != this)
-				scope_instance = new CapturedScope (Host, this);
+			if ((ScopeInfo) Host != this)
+				scope_instance = new CapturedScope ((ScopeInfo) Host, this);
 
 			return base.DoResolveMembers ();
 		}
@@ -556,7 +597,26 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class AnonymousMethodHost : ScopeInfo
+	public interface IAnonymousMethodHost
+	{
+		bool IsIterator {
+			get;
+		}
+
+		void AddScope (ScopeInfo scope);
+
+		Variable CaptureThis ();
+
+		Variable AddParameter (Parameter par, int idx);
+
+		Variable GetCapturedParameter (Parameter par);
+
+		bool IsParameterCaptured (string name);
+
+		void EmitScopeInstance (EmitContext ec);
+	}
+
+	public class AnonymousMethodHost : ScopeInfo, IAnonymousMethodHost
 	{
 		public AnonymousMethodHost (ToplevelBlock toplevel, TypeContainer parent,
 					    GenericMethod generic, Location loc)
@@ -571,7 +631,7 @@ namespace Mono.CSharp {
 		CapturedThis this_variable;
 		Hashtable captured_params;
 
-		public override AnonymousMethodHost Host {
+		protected override AnonymousMethodHost Host {
 			get { return this; }
 		}
 

@@ -1,5 +1,11 @@
 2006-11-16  Martin Baulig  <martin@ximian.com>
 
+	* anonymous.cs (IAnonymousMethodHost): New public interface; use
+	this outside anonymous.cs instead of accessing AnonymousMethodHost
+	directly.	
+
+2006-11-16  Martin Baulig  <martin@ximian.com>
+
 	**** The anonymous methods branch starts here ****
 
 2006-11-09  Raja R Harinath  <rharinath@novell.com>
