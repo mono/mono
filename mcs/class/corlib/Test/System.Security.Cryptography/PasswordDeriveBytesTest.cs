@@ -716,6 +716,21 @@ public class PasswordDeriveBytesTest {
 		PasswordDeriveBytes pd = new PasswordDeriveBytes ("password", null, "MD5", 1000);
 		pd.CryptDeriveKey ("AlgName", "MD5", 256, new byte [8]);
 	}
+
+	[Test]
+	[Category ("NotWorking")] // bug #79499
+	public void LongMultipleGetBytes ()
+	{
+		// based on http://bugzilla.ximian.com/show_bug.cgi?id=79499
+		PasswordDeriveBytes pd = new PasswordDeriveBytes ("mono", new byte[20]);
+		string key = BitConverter.ToString (pd.GetBytes (32));
+		Assert.AreEqual ("88-0A-AE-0A-41-61-02-78-FD-E2-70-9F-25-13-14-28-1F-C7-D9-72-9A-AE-CA-3F-BD-31-B4-F0-BD-8E-5B-98", key, "key");
+		string iv = BitConverter.ToString (pd.GetBytes (16));
+		Assert.AreEqual ("FD-E2-70-9F-25-13-14-28-4D-3F-9B-F8-EE-AA-95-ED", iv, "iv");
+		pd.Reset ();
+		// bytes from 32-40 are different from calling GetBytes separately
+		Assert.AreEqual (key + "-F6-55-6C-3E-54-8B-F3-73-4D-3F-9B-F8-EE-AA-95-ED", BitConverter.ToString (pd.GetBytes (48)), "same");
+	}
 }
 
 }

@@ -1,3 +1,7 @@
+2006-11-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PasswordDeriveBytesTest.cs: Added test case for bug #79499
+
 2006-10-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConfigTest.cs: Added test cases to ensure lower/mixed-case of 
