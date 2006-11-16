@@ -89,7 +89,8 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual void OnMainFormClosed(object sender, EventArgs e) {
-			ExitThreadCore();
+			if (!MainForm.RecreatingHandle)
+				ExitThreadCore();
 		}
 		#endregion	// Public Instance Methods
 

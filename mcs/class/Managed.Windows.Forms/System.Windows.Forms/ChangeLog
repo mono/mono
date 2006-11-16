@@ -1,3 +1,15 @@
+2006-11-15  Chris Toshok  <toshok@ximian.com>
+
+	* Form.cs (set_Owner): allow a null value so we can clear the
+	form's owner.
+	(Dispose): set all our owned_form's Owner properties to null, and
+	clear the owned_forms collection.
+	(WM_CLOSE): clean up this a little bit.. still not right though.
+
+	* ApplicationContext.cs: OnMainFormClosed should only call
+	ExitThreadCore if the main form isn't recreating.  Fixes unit
+	test.
+
 2006-11-15  Jonathan Pobst  <monkey@jpobst.com>
 
 	[Fixes 78346]

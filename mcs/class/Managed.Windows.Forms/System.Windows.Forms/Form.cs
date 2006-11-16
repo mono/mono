@@ -764,7 +764,8 @@ namespace System.Windows.Forms {
 						owner.RemoveOwnedForm(this);
 					}
 					owner = value;
-					owner.AddOwnedForm(this);
+					if (owner != null)
+						owner.AddOwnedForm(this);
 					if (IsHandleCreated) {
 						if (owner != null && owner.IsHandleCreated) {
 							XplatUI.SetTopmost(this.window.Handle, owner.window.Handle, true);
@@ -1397,12 +1398,9 @@ namespace System.Windows.Forms {
 				XplatUI.SetTopmost(window.Handle, owner.window.Handle, true);
 			}
 
-			if (owned_forms.Count > 0) {
-				for (int i = 0; i < owned_forms.Count; i++) {
-					if (owned_forms[i].IsHandleCreated) {
-						XplatUI.SetTopmost(owned_forms[i].window.Handle, window.Handle, true);
-					}
-				}
+			for (int i = 0; i < owned_forms.Count; i++) {
+				if (owned_forms[i].IsHandleCreated)
+					XplatUI.SetTopmost(owned_forms[i].window.Handle, window.Handle, true);
 			}
 			
 			if (window_manager != null && window_state != FormWindowState.Normal) {
@@ -1416,7 +1414,13 @@ namespace System.Windows.Forms {
 			base.DefWndProc (ref m);
 		}
 
-		protected override void Dispose(bool disposing) {
+		protected override void Dispose(bool disposing)
+		{
+			for (int i = 0; i < owned_forms.Count; i++)
+				((Form)owned_forms[i]).Owner = null;
+
+			owned_forms.Clear ();
+			
 			base.Dispose (disposing);
 		}
 
@@ -1778,20 +1782,21 @@ namespace System.Windows.Forms {
 						OnClosing (args);
 						if (!args.Cancel) {
 							OnClosed (EventArgs.Empty);
+							closing = true;
 						}
 						Dispose ();
-						return;
 					} else {
 						OnClosing (args);
-						if (!args.Cancel) {
-							OnClosed (EventArgs.Empty);
-							closing = true;
-						} else {
+						if (args.Cancel) {
 							DialogResult = DialogResult.None;
 							closing = false;
+						} else {
+							OnClosed (EventArgs.Empty);
+							closing = true;
+							Hide ();
 						}
-						Hide ();
 					}
+
 					return;
 				}
 
