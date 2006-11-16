@@ -1,3 +1,11 @@
+2006-11-16  Marek Habersack  <grendello@gmail.com>
+
+	* AppCodeCompiler.cs: Fixed BuildProvider creation for a path. Now
+	correctly uses the BuildProviderCollection to retrieve the
+	appropriate builder and maps the physical input file path into
+	application relative path when setting the virtual path of the
+	build provider.
+
 2006-11-13  Marek Habersack  <grendello@gmail.com>
 
 	* AssemblyBuilder.cs: Added referenced assemblies support. Added a

@@ -35,6 +35,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Web;
 using System.Web.Configuration;
 using System.Web.Util;
 
@@ -190,10 +191,12 @@ namespace System.Web.Compilation
 			if (file == null || file.Length == 0 || buildProviders == null || buildProviders.Count == 0)
 				return null;
 
-			foreach (BuildProvider bp in buildProviders)
-				if (IsCorrectBuilderType (bp))
-					return bp;
-
+			BuildProvider ret = buildProviders.GetProviderForExtension (Path.GetExtension (file));
+			if (ret != null && IsCorrectBuilderType (ret)) {
+				ret.SetVirtualPath (VirtualPathUtility.ToAppRelative (file));
+				return ret;
+			}
+				
 			return null;
 		}
 
