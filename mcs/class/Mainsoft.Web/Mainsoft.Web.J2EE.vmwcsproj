@@ -99,7 +99,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-rt="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jre5\lib\rt.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\mscorlib.jar" REFS-JarPath-system="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.jar" REFS-JarPath-system-data="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Data.jar" REFS-JarPath-system-xml="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Xml.jar" REFS-JarPath-derby="..\..\derby_10\lib\derby.jar" REFS-JarPath-system-configuration="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Configuration.jar" REFS-JarPath-system-web="..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Web.jar" />
+      <UserProperties REFS-JarPath-rt="..\lib\rt.jar" REFS-JarPath-mscorlib="..\lib\mscorlib.jar" REFS-JarPath-system="..\lib\System.jar" REFS-JarPath-system-data="..\lib\System.Data.jar" REFS-JarPath-system-xml="..\lib\System.Xml.jar" REFS-JarPath-derby="..\lib\derby.jar" REFS-JarPath-system-configuration="..\lib\System.Configuration.jar" REFS-JarPath-system-web="..\lib\System.Web.jar" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
