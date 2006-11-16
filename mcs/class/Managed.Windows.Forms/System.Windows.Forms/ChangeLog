@@ -1,3 +1,13 @@
+2006-11-16  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Need to recalc the topnode when we expand or
+	collapse. The scrolling methods can't handle this on their own,
+	since they use differences between the last scroll position, and
+	those difference get completely messed up since we are expanding
+	nodes.  This problem should probably be fixed in the scrolling
+	methods, so they can figure out exactly where they are, but this
+	will slow things down a little.
+
 2006-11-16  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIX11.cs: nasty, nasty, nasty changes required because of

@@ -505,7 +505,19 @@ namespace System.Windows.Forms {
 		{
 			BeginUpdate ();
 			root_node.ExpandAll ();
+
 			EndUpdate ();
+
+			// Walk all the way to the end, then walk back visible count
+			//to find the new top node
+			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (root_node);
+			while (walk.MoveNext ())
+			{ }
+
+			for (int i = 0; i < VisibleCount - 1; i++)
+				walk.MovePrevious ();
+			SetVScrollPos (vbar.Maximum - VisibleCount + 1, walk.CurrentNode);
+			vbar.Value = vbar.Maximum - VisibleCount + 1;			
 		}
 
 		
@@ -514,6 +526,9 @@ namespace System.Windows.Forms {
 			BeginUpdate ();
 			root_node.CollapseAll ();
 			EndUpdate ();
+
+			SetVScrollPos (0, root_node);
+			vbar.Value = 0;
 		}
 
 		public TreeNode GetNodeAt (Point pt) {
