@@ -216,6 +216,19 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void DisposeOwnerTest ()
+		{
+			Form f1 = new Form ();
+			Form f2 = new Form ();
+
+			f2.Owner = f1;
+
+			f1.Dispose ();
+
+			Assert.IsNull (f2.Owner, "1");
+		}
+
+		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]
 		public void AccessDisposedForm ()
 		{
