@@ -3720,11 +3720,11 @@ namespace Mono.CSharp {
 			if (!am.IsIterator && block.Toplevel.IsLocalParameter (name))
 				return true;
 
-			IAnonymousMethodHost host = null;
+			RootScopeInfo host = null;
 			ToplevelBlock toplevel = block.Toplevel;
 			while (toplevel != null) {
 				if (toplevel.IsLocalParameter (name)) {
-					host = toplevel.AnonymousMethodHost;
+					host = toplevel.RootScope;
 					break;
 				}
 
@@ -6668,7 +6668,7 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				IAnonymousMethodHost host = block.Toplevel.AnonymousMethodHost;
+				RootScopeInfo host = block.Toplevel.RootScope;
 				if ((host != null) && (!is_struct || host.IsIterator)) {
 					variable = host.CaptureThis ();
 					type = variable.Type;

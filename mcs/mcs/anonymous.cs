@@ -166,10 +166,10 @@ namespace Mono.CSharp {
 
 		static int next_id;
 
-		public ScopeInfo (IAnonymousMethodHost root, Block block)
-			: base ((RootScopeInfo) root, null, 0, block.StartLocation)
+		public ScopeInfo (RootScopeInfo root, Block block)
+			: base (root, null, 0, block.StartLocation)
 		{
-			this.RootScope = (RootScopeInfo) root;
+			this.RootScope = root;
 			ScopeBlock = block;
 
 			Report.Debug (64, "NEW SCOPE", this, root, block);
@@ -251,7 +251,7 @@ namespace Mono.CSharp {
 		public static void EmitScopeInstance (EmitContext ec, ScopeInfo scope,
 						      ToplevelBlock toplevel)
 		{
-			RootScopeInfo root_scope = (RootScopeInfo) toplevel.AnonymousMethodHost;
+			RootScopeInfo root_scope = toplevel.RootScope;
 
 			root_scope.EmitScopeInstance (ec);
 			while (root_scope != scope.RootScope) {
@@ -268,10 +268,8 @@ namespace Mono.CSharp {
 				scope.ScopeInstance.Emit (ec);
 		}
 
-		public static bool CompleteContexts (IAnonymousMethodHost amh, Block container)
+		public static bool CompleteContexts (RootScopeInfo host, Block container)
 		{
-			RootScopeInfo host = (RootScopeInfo) amh;
-
 			if (host != null)
 				host.LinkScopes ();
 
@@ -593,26 +591,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public interface IAnonymousMethodHost
-	{
-		bool IsIterator {
-			get;
-		}
-
-		void AddScope (ScopeInfo scope);
-
-		Variable CaptureThis ();
-
-		Variable AddParameter (Parameter par, int idx);
-
-		Variable GetCapturedParameter (Parameter par);
-
-		bool IsParameterCaptured (string name);
-
-		void EmitScopeInstance (EmitContext ec);
-	}
-
-	public class RootScopeInfo : ScopeInfo, IAnonymousMethodHost
+	public class RootScopeInfo : ScopeInfo
 	{
 		public RootScopeInfo (ToplevelBlock toplevel, TypeContainer parent,
 				      GenericMethod generic, Location loc)
@@ -1002,7 +981,7 @@ namespace Mono.CSharp {
 				      this, Host, container, loc);
 
 			if (container != null)
-				root_scope = container.Toplevel.CreateAnonymousMethodHost (Host);
+				root_scope = container.Toplevel.CreateRootScope (Host);
 
 			if (children != null) {
 				foreach (AnonymousMethodExpression child in children) {

@@ -1,5 +1,9 @@
 2006-11-16  Martin Baulig  <martin@ximian.com>
 
+	* anonymous.cs: Kill `IAnonymousMethodHost'.
+
+2006-11-16  Martin Baulig  <martin@ximian.com>
+
 	* anonymous.cs: Rename `AnonymousMethodHost' -> `RootScopeInfo'.
 
 2006-11-16  Martin Baulig  <martin@ximian.com>
