@@ -1,3 +1,9 @@
+2006-11-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* NtlmClient.cs: fixes authentication if the first try fails and the
+	* second is supposed to work. Patch by egonia@acxiom.com that fixes bug
+	#79590.
+
 2005-06-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* NtlmClient.cs: return null if we have no credentials for NTLM.

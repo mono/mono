@@ -85,7 +85,13 @@ namespace Mono.Http
 			} else {
 				// Should I check the credentials?
 				// type must be 3 here
-				completed = true;
+				if (challenge == null || challenge == String.Empty) {
+					Type1Message type1 = new Type1Message ();
+					type1.Domain = domain;
+					message = type1;
+				} else {
+					completed = true;
+				}
 			}
 			
 			string token = "NTLM " + Convert.ToBase64String (message.GetBytes ());
