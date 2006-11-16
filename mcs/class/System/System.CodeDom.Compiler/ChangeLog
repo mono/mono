@@ -7,7 +7,8 @@
 	ConfigurationSection. Made the class internal.
 
 	* CompilerCollection.cs: Collection of Compiler and CompilerInfo
-	objects.
+	objects. Uses List<CompilerInfo> as we need to be able to store
+	multiple entries for the same language, as .NET does.
 
 	* CodeDomProvider.cs: Changes to use the new
 	CodeDomConfigurationHandler class.

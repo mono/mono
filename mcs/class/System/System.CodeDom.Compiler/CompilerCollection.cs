@@ -40,14 +40,12 @@ namespace System.CodeDom.Compiler
 	internal sealed class CompilerCollection : ConfigurationElementCollection
 	{
 		static ConfigurationPropertyCollection properties;
-		static SortedDictionary<string, CompilerInfo> compiler_infos_by_language;
-		static SortedDictionary<string, CompilerInfo> compiler_infos_by_extension;
+		static List<CompilerInfo> compiler_infos;
 		
 		static CompilerCollection ()
 		{
 			properties = new ConfigurationPropertyCollection ();
-			compiler_infos_by_language = new SortedDictionary <string, CompilerInfo> ();
-			compiler_infos_by_extension = new SortedDictionary <string, CompilerInfo> ();
+			compiler_infos = new List <CompilerInfo> ();
 			
 			CompilerInfo compiler = new CompilerInfo ();
                         compiler.Languages = "c#;cs;csharp";
@@ -87,10 +85,7 @@ namespace System.CodeDom.Compiler
 		static void AddCompilerInfo (CompilerInfo ci)
 		{
 			ci.Init ();
-			foreach (string l in ci.Languages.Split (';'))
-				compiler_infos_by_language.Add (l, ci);
-			foreach (string e in ci.Extensions.Split (';'))
-				compiler_infos_by_extension.Add (e, ci);
+			compiler_infos.Add (ci);
 		}
 
 		static void AddCompilerInfo (Compiler compiler)
@@ -121,12 +116,18 @@ namespace System.CodeDom.Compiler
 
 		public CompilerInfo GetCompilerInfoForLanguage (string language)
 		{
-			return compiler_infos_by_language [language];
+			foreach (CompilerInfo ci in compiler_infos)
+				if (ci.Languages.IndexOf (language) != -1)
+					return ci;
+			return null;
 		}
 
 		public CompilerInfo GetCompilerInfoForExtension (string extension)
 		{
-			return compiler_infos_by_extension [extension];
+			foreach (CompilerInfo ci in compiler_infos)
+				if (ci.Extensions.IndexOf (extension) != -1)
+					return ci;
+			return null;
 		}
 
 		public string GetLanguageFromExtension (string extension)
@@ -134,9 +135,9 @@ namespace System.CodeDom.Compiler
 			CompilerInfo ci = GetCompilerInfoForExtension (extension);
 			if (ci == null)
 				return null;
-			foreach (KeyValuePair <string, CompilerInfo> kvp in compiler_infos_by_language)
-				if (ci.Equals (kvp.Value))
-					return kvp.Key;
+			string[] languages = ci.Languages.Split (';');
+			if (languages != null && languages.Length > 0)
+				return languages[0];
 			return null;
 		}
 		
@@ -162,9 +163,10 @@ namespace System.CodeDom.Compiler
 
 		public string[ ] AllKeys {
 			get {
-				string[] ret = new string [compiler_infos_by_language.Keys.Count];
-				compiler_infos_by_language.Keys.CopyTo (ret, 0);
-				return ret;
+				string[] keys = new string[compiler_infos.Count];
+				for (int i = 0; i < Count; i++)
+					keys[i] = compiler_infos[i].Languages;
+				return keys;
 			}
 		}
 		
@@ -186,15 +188,13 @@ namespace System.CodeDom.Compiler
 
 		public new CompilerInfo this[string language] {
 			get {
-				return compiler_infos_by_language [language];
+				return GetCompilerInfoForLanguage (language);
 			}
 		}
 
 		public CompilerInfo[] CompilerInfos {
 			get {
-				CompilerInfo[] ret = new CompilerInfo [compiler_infos_by_language.Values.Count];
-				compiler_infos_by_language.Values.CopyTo (ret, 0);
-				return ret;
+				return compiler_infos.ToArray ();
 			}
 		}
 	}
