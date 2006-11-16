@@ -116,11 +116,12 @@ namespace System.Web.UI {
 			if (input == null)
 				return null;
 
+			if (!enable_mac)
+				return osf.Deserialize (input);
+
 			byte [] buffer = Convert.FromBase64String (input);
 			int length = buffer.Length;
-			if (enable_mac) {
-				length = ValidateInput (buffer, 0, length);
-			}
+			length = ValidateInput (buffer, 0, length);
 			return osf.Deserialize (new MemoryStream (buffer, 0, length, false, false));
 		}
 

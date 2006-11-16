@@ -68,11 +68,15 @@ namespace System.Web.UI {
 		{
 			if (inputString == null)
 				throw new ArgumentNullException ("inputString");
-
+#if !NET_2_0
 			if (inputString == "")
-				return null;
+				return "";
+#endif
+			byte [] buffer = Convert.FromBase64String (inputString);
+			if (buffer == null || buffer.Length == 0)
+				throw new ArgumentNullException ("inputString");
 
-			return Deserialize (new MemoryStream (Convert.FromBase64String (inputString)));
+			return Deserialize (new MemoryStream (buffer));
 		}
 		
 		public string Serialize (object stateGraph)

@@ -1,5 +1,11 @@
 2006-11-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* LosFormatter.cs:
+	* ObjectStateFormatter.cs: match MS 1.x and 2.0 behaviour for null and
+	empty strings.
+
+2006-11-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* SimpleWebHandlerParser.cs: 'using' for file reading.
 
 2006-11-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
