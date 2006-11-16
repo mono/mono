@@ -191,7 +191,7 @@ namespace System.Web.J2EE
 				if (realPath == null)
 					realPath = String.Empty;
 				string dataDirectory = Path.Combine (realPath, "App_Data");
-				dataDirectory.Replace ('\\', '/');
+				dataDirectory = dataDirectory.Replace ('\\', '/');
 
 				if (dataDirectory [dataDirectory.Length - 1] != '/')
 					dataDirectory += "/";
