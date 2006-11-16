@@ -55,7 +55,7 @@ namespace System.Drawing.Printing
 			printersettings = new PrinterSettings(); // use default values
 			printcontroller = new StandardPrintController();
 		}
-		
+
 		// properties
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
@@ -139,9 +139,11 @@ namespace System.Drawing.Printing
 			PrintPageEventArgs printPageArgs;
 			do
 			{
-				PageSettings pageSettings = DefaultPageSettings.Clone() as PageSettings;
-				this.OnQueryPageSettings(new QueryPageSettingsEventArgs(pageSettings));
+				QueryPageSettingsEventArgs queryPageSettingsArgs = new QueryPageSettingsEventArgs (
+						DefaultPageSettings.Clone () as PageSettings);
+				OnQueryPageSettings (queryPageSettingsArgs);
 				
+				PageSettings pageSettings = queryPageSettingsArgs.PageSettings;
 				printPageArgs = new PrintPageEventArgs(
 						g,
 						pageSettings.Bounds,

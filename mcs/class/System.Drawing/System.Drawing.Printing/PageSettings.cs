@@ -197,8 +197,18 @@ namespace System.Drawing.Printing
 #endif
 
 
-		public object Clone(){
-			return new PageSettings(this.PrinterSettings);
+		public object Clone ()
+		{
+			// We do a deep copy
+			PrinterResolution pres = new PrinterResolution (_PrinterResolution.X, _PrinterResolution.Y, _PrinterResolution.Kind);
+			PaperSource psource = new PaperSource (_PaperSource.SourceName, _PaperSource.Kind);
+			PaperSize psize = new PaperSize (_PaperSize.PaperName, _PaperSize.Width, _PaperSize.Height);
+			psize.SetKind (_PaperSize.Kind);
+
+			PageSettings ps = new PageSettings (PrinterSettings, Color, Landscape,
+					psize, psource, pres);
+			ps.Margins = (Margins) _Margins.Clone ();
+			return ps;
 		}
 
 
