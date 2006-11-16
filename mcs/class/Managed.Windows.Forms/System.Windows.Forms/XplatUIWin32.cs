@@ -1592,9 +1592,13 @@ namespace System.Windows.Forms {
 			else
 				SetVisible (handle, c.is_visible, true);
 				
-			return Win32SetParent(handle, parent);
+			if (parent == IntPtr.Zero)
+				return Win32SetParent (handle, FosterParent);
+			else
+				return Win32SetParent(handle, parent);
 		}
 
+		// If we ever start using this, we should probably replace FosterParent with IntPtr.Zero
 		internal override IntPtr GetParent(IntPtr handle) {
 			return Win32GetParent(handle);
 		}

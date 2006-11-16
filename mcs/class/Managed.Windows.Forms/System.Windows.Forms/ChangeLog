@@ -1,3 +1,10 @@
+2006-11-16  Jonathan Pobst  <monkey@jpobst.com
+
+	[Fixes 79778, 79923]
+
+	* XplatUIWin32.cs: Don't allow a parent to be set to IntPtr.Zero.
+	Parent to the FosterParent instead.
+
 2006-11-16  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Need to recalc the topnode when we expand or
