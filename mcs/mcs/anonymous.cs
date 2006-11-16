@@ -192,10 +192,6 @@ namespace Mono.CSharp {
 
 		Hashtable locals = new Hashtable ();
 
-		protected virtual AnonymousMethodHost Host {
-			get { return RootScope; }
-		}
-
 		public Variable ScopeInstance {
 			get { return scope_instance; }
 		}
@@ -258,7 +254,7 @@ namespace Mono.CSharp {
 			AnonymousMethodHost root_scope = (AnonymousMethodHost) toplevel.AnonymousMethodHost;
 
 			root_scope.EmitScopeInstance (ec);
-			while (root_scope != scope.Host) {
+			while (root_scope != scope.RootScope) {
 				ec.ig.Emit (OpCodes.Ldfld, root_scope.ParentLink.FieldBuilder);
 				root_scope = root_scope.ParentHost;
 
@@ -268,7 +264,7 @@ namespace Mono.CSharp {
 						scope, ec.CurrentBlock.ID);
 			}
 
-			if (scope != (ScopeInfo) scope.Host)
+			if (scope != (ScopeInfo) scope.RootScope)
 				scope.ScopeInstance.Emit (ec);
 		}
 
@@ -298,8 +294,8 @@ namespace Mono.CSharp {
 			Report.Debug (64, "SCOPE INFO RESOLVE MEMBERS", this, GetType (), IsGeneric,
 				      Parent.IsGeneric, GenericMethod);
 
-			if ((ScopeInfo) Host != this)
-				scope_instance = new CapturedScope ((ScopeInfo) Host, this);
+			if (RootScope != this)
+				scope_instance = new CapturedScope (RootScope, this);
 
 			return base.DoResolveMembers ();
 		}
@@ -502,7 +498,7 @@ namespace Mono.CSharp {
 				if (Scope.ScopeInstance == null)
 					scope_instance = ec.ig.DeclareLocal (type);
 				else {
-					Type root = Scope.Host.GetScopeType (ec);
+					Type root = Scope.RootScope.GetScopeType (ec);
 					FieldExpr fe = (FieldExpr) Expression.MemberLookup (
 						type, root, Scope.scope_instance.Field.Name, loc);
 					if (fe == null)
@@ -584,8 +580,8 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Pop);
 				ec.ig.Emit (OpCodes.Nop);
 
-				if (Scope != Scope.Host)
-					Scope.Host.EmitScopeInstance (ec);
+				if (Scope != Scope.RootScope)
+					Scope.RootScope.EmitScopeInstance (ec);
 				else if (Scope.ScopeInstance != null)
 					ec.ig.Emit (OpCodes.Ldarg_0);
 				EmitScopeConstructor (ec);
@@ -630,10 +626,6 @@ namespace Mono.CSharp {
 		CapturedVariableField parent_link;
 		CapturedThis this_variable;
 		Hashtable captured_params;
-
-		protected override AnonymousMethodHost Host {
-			get { return this; }
-		}
 
 		public virtual bool IsIterator {
 			get { return false; }
