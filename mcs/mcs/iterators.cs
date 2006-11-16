@@ -124,7 +124,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class IteratorHost : AnonymousMethodHost
+	public class IteratorHost : RootScopeInfo
 	{
 		public readonly Iterator Iterator;
 
@@ -320,7 +320,7 @@ namespace Mono.CSharp {
 			return new IteratorHostInitializer (this);
 		}
 
-		protected class IteratorHostInitializer : AnonymousMethodHostInitializer
+		protected class IteratorHostInitializer : RootScopeInitializer
 		{
 			new public readonly IteratorHost Host;
 			protected Iterator.State state;
@@ -781,7 +781,7 @@ namespace Mono.CSharp {
 			get { return true; }
 		}
 
-		public override AnonymousMethodHost RootScope {
+		public override RootScopeInfo RootScope {
 			get { return IteratorHost; }
 		}
 

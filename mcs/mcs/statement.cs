@@ -2280,7 +2280,7 @@ namespace Mono.CSharp {
 		ToplevelBlock child;	
 		GenericMethod generic;
 		FlowBranchingToplevel top_level_branching;
-		AnonymousMethodHost anonymous_method_host;
+		RootScopeInfo anonymous_method_host;
 
 		public bool HasVarargs {
 			get { return (flags & Flags.HasVarargs) != 0; }
@@ -2384,23 +2384,23 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public AnonymousMethodHost CreateAnonymousMethodHost (TypeContainer host)
+		public RootScopeInfo CreateAnonymousMethodHost (TypeContainer host)
 		{
 			if (anonymous_method_host != null)
 				return anonymous_method_host;
 
 			if (Container != null)
-				anonymous_method_host = new AnonymousMethodHost (
+				anonymous_method_host = new RootScopeInfo (
 					this, Container.anonymous_method_host, null, StartLocation);
 			else
-				anonymous_method_host = new AnonymousMethodHost (
+				anonymous_method_host = new RootScopeInfo (
 					this, host, generic, StartLocation);
 
 			ScopeInfo = anonymous_method_host;
 			return anonymous_method_host;
 		}
 
-		public void CreateIteratorHost (AnonymousMethodHost root_scope)
+		public void CreateIteratorHost (RootScopeInfo root_scope)
 		{
 			Report.Debug (64, "CREATE ITERATOR HOST", this, root_scope,
 				      container, anonymous_method_host);

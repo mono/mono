@@ -160,16 +160,16 @@ namespace Mono.CSharp {
 
 	public class ScopeInfo : CompilerGeneratedClass
 	{
-		protected readonly AnonymousMethodHost RootScope;
+		protected readonly RootScopeInfo RootScope;
 		public readonly int ID = ++next_id;
 		public Block ScopeBlock;
 
 		static int next_id;
 
 		public ScopeInfo (IAnonymousMethodHost root, Block block)
-			: base ((AnonymousMethodHost) root, null, 0, block.StartLocation)
+			: base ((RootScopeInfo) root, null, 0, block.StartLocation)
 		{
-			this.RootScope = (AnonymousMethodHost) root;
+			this.RootScope = (RootScopeInfo) root;
 			ScopeBlock = block;
 
 			Report.Debug (64, "NEW SCOPE", this, root, block);
@@ -181,7 +181,7 @@ namespace Mono.CSharp {
 				  GenericMethod generic, Location loc)
 			: base (parent, generic, 0, loc)
 		{
-			RootScope = (AnonymousMethodHost) this;
+			RootScope = (RootScopeInfo) this;
 			ScopeBlock = toplevel;
 
 			Report.Debug (64, "NEW ROOT SCOPE", this);
@@ -251,7 +251,7 @@ namespace Mono.CSharp {
 		public static void EmitScopeInstance (EmitContext ec, ScopeInfo scope,
 						      ToplevelBlock toplevel)
 		{
-			AnonymousMethodHost root_scope = (AnonymousMethodHost) toplevel.AnonymousMethodHost;
+			RootScopeInfo root_scope = (RootScopeInfo) toplevel.AnonymousMethodHost;
 
 			root_scope.EmitScopeInstance (ec);
 			while (root_scope != scope.RootScope) {
@@ -270,7 +270,7 @@ namespace Mono.CSharp {
 
 		public static bool CompleteContexts (IAnonymousMethodHost amh, Block container)
 		{
-			AnonymousMethodHost host = (AnonymousMethodHost) amh;
+			RootScopeInfo host = (RootScopeInfo) amh;
 
 			if (host != null)
 				host.LinkScopes ();
@@ -416,7 +416,7 @@ namespace Mono.CSharp {
 		}
 
 		protected class CapturedThis : CapturedVariable {
-			public CapturedThis (AnonymousMethodHost host)
+			public CapturedThis (RootScopeInfo host)
 				: base (host, "<>THIS", host.ParentType)
 			{ }
 		}
@@ -612,10 +612,10 @@ namespace Mono.CSharp {
 		void EmitScopeInstance (EmitContext ec);
 	}
 
-	public class AnonymousMethodHost : ScopeInfo, IAnonymousMethodHost
+	public class RootScopeInfo : ScopeInfo, IAnonymousMethodHost
 	{
-		public AnonymousMethodHost (ToplevelBlock toplevel, TypeContainer parent,
-					    GenericMethod generic, Location loc)
+		public RootScopeInfo (ToplevelBlock toplevel, TypeContainer parent,
+				      GenericMethod generic, Location loc)
 			: base (toplevel, parent, generic, loc)
 		{
 			scopes = new ArrayList ();
@@ -631,8 +631,8 @@ namespace Mono.CSharp {
 			get { return false; }
 		}
 
-		public AnonymousMethodHost ParentHost {
-			get { return Parent as AnonymousMethodHost; }
+		public RootScopeInfo ParentHost {
+			get { return Parent as RootScopeInfo; }
 		}
 
 		public Type ParentType {
@@ -717,7 +717,7 @@ namespace Mono.CSharp {
 
 		protected override ScopeInitializer CreateScopeInitializer ()
 		{
-			return new AnonymousMethodHostInitializer (this);
+			return new RootScopeInitializer (this);
 		}
 
 		protected override bool DefineNestedTypes ()
@@ -808,9 +808,9 @@ namespace Mono.CSharp {
 
 		protected class TheCtor : Statement
 		{
-			AnonymousMethodHost host;
+			RootScopeInfo host;
 
-			public TheCtor (AnonymousMethodHost host)
+			public TheCtor (RootScopeInfo host)
 			{
 				this.host = host;
 			}
@@ -826,17 +826,17 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected class AnonymousMethodHostInitializer : ScopeInitializer
+		protected class RootScopeInitializer : ScopeInitializer
 		{
-			AnonymousMethodHost host;
+			RootScopeInfo host;
 
-			public AnonymousMethodHostInitializer (AnonymousMethodHost host)
+			public RootScopeInitializer (RootScopeInfo host)
 				: base (host)
 			{
 				this.host = host;
 			}
 
-			public AnonymousMethodHost Host {
+			public RootScopeInfo Host {
 				get { return host; }
 			}
 
@@ -910,7 +910,7 @@ namespace Mono.CSharp {
 			get;
 		}
 
-		AnonymousMethodHost RootScope {
+		RootScopeInfo RootScope {
 			get;
 		}
 
@@ -956,7 +956,7 @@ namespace Mono.CSharp {
 			get { return anonymous; }
 		}
 
-		public AnonymousMethodHost RootScope {
+		public RootScopeInfo RootScope {
 			get { return root_scope; }
 		}
 
@@ -980,7 +980,7 @@ namespace Mono.CSharp {
 		}
 
 		ArrayList children;
-		AnonymousMethodHost root_scope;
+		RootScopeInfo root_scope;
 
 		static int next_index;
 
@@ -1253,7 +1253,7 @@ namespace Mono.CSharp {
 			get { return method; }
 		}
 
-		public abstract AnonymousMethodHost RootScope {
+		public abstract RootScopeInfo RootScope {
 			get;
 		}
 
@@ -1360,9 +1360,9 @@ namespace Mono.CSharp {
 		// more than once, due to the way Convert.ImplicitConversion works
 		//
 		Expression anonymous_delegate;
-		AnonymousMethodHost root_scope;
+		RootScopeInfo root_scope;
 
-		public AnonymousMethod (AnonymousMethod parent, AnonymousMethodHost root_scope,
+		public AnonymousMethod (AnonymousMethod parent, RootScopeInfo root_scope,
 					TypeContainer host, GenericMethod generic,
 					Parameters parameters, Block container,
 					ToplevelBlock block, Type return_type, Type delegate_type,
@@ -1374,7 +1374,7 @@ namespace Mono.CSharp {
 			this.root_scope = root_scope;
 		}
 
-		public override AnonymousMethodHost RootScope {
+		public override RootScopeInfo RootScope {
 			get { return root_scope; }
 		}
 
