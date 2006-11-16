@@ -1,4 +1,22 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{77DE6DDE-B8D4-4710-ADB3-4D5C3F4058C8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <AssemblyName>Mainsoft.Web</AssemblyName>
+    <JDKName>1.5.0_05</JDKName>
+    <GHProjectType>1</GHProjectType>
+    <GHProjectKind>framework</GHProjectKind>
+    <Version>2.0</Version>
+    <RootNamespace>Mainsoft.Web</RootNamespace>
+    <jarserver>iap2</jarserver>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
     <OutputPath>bin\Release_Java20\</OutputPath>
     <DefineConstants>TRACE;JAVA;NET_2_0</DefineConstants>
@@ -40,23 +58,6 @@
     <JDKName>1.5.0_05</JDKName>
     <jarserver>iap2</jarserver>
     <TargetPlatform>0</TargetPlatform>
-  </PropertyGroup>
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{77DE6DDE-B8D4-4710-ADB3-4D5C3F4058C8}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>Mainsoft.Web</AssemblyName>
-    <JDKName>1.5.0_05</JDKName>
-    <GHProjectType>1</GHProjectType>
-    <Version>2.0</Version>
-    <RootNamespace>Mainsoft.Web</RootNamespace>
-    <jarserver>iap2</jarserver>
-    <StartupObject>
-    </StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
