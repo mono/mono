@@ -1,4 +1,9 @@
 
+Thu Nov 16 12:42:13 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* jit-icalls.c, jit-icalls.h, mini-arm.c, mini.c:
+	more soft-float support fixes.
+
 Wed Nov 15 18:45:47 GMT 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini-arm.c, inssel-arm.brg: ABI fix for longs and doubles
