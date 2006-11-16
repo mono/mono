@@ -525,11 +525,6 @@ namespace Mono.Security {
 			return true;
 		}
 
-/*		[MonoTODO ("Find out what this should do")]
-		protected virtual void Canonicalize ()
-		{
-		}*/
-
 		public static bool CheckSchemeName (string schemeName) 
 		{
 			if (schemeName == null || schemeName.Length == 0)
@@ -547,11 +542,6 @@ namespace Mono.Security {
 			
 			return true;
 		}
-
-/*		[MonoTODO ("Find out what this should do")]
-		protected virtual void CheckSecurity ()
-		{
-		}*/
 
 		public override bool Equals (object comparant) 
 		{

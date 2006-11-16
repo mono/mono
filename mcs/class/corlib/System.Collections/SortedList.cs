@@ -913,17 +913,12 @@ namespace System.Collections {
 			}
 
 
-			[MonoTODO]
 			public virtual object this [int index] {
 				get {
 					return host.GetByIndex (index);
 				}
 				set {
-					// FIXME: It seems (according to tests)
-					// that modifications are allowed
-					// in Beta2.
-					// ? host.SetByIndex (index, value);
-					throw new NotSupportedException("attempt to modify a value");
+					throw new NotSupportedException("This operation is not supported on GetValueList return");
 				}
 			}
 

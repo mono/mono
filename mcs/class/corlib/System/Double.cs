@@ -210,7 +210,7 @@ namespace System {
 			return result;
 		}
 		
-		[MonoTODO("check if digits are group in correct numbers between the group separators")]
+		// FIXME: check if digits are group in correct numbers between the group separators
 		internal static bool Parse (string s, NumberStyles style, IFormatProvider provider, bool tryParse, out double result, out Exception exc)
 		{
 			result = 0;

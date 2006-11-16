@@ -105,19 +105,18 @@ namespace System
 
 #if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-		[MonoTODO]
+		[MonoTODO ("Not implemented, always returns 0")]
 		public static int CollectionCount (int generation) {
-			throw new NotImplementedException ();
+			return 1;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public static void AddMemoryPressure (long bytesAllocated) {
-			throw new NotImplementedException ();
+			
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public static void RemoveMemoryPressure (long bytesAllocated) {
-			throw new NotImplementedException ();
 		}
 #endif
 	}

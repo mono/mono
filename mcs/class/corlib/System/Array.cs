@@ -1039,7 +1039,6 @@ namespace System
 			return array.GetLowerBound (0) - 1;
 		}
 
-		[MonoTODO]
 		public void Initialize()
 		{
 			//FIXME: We would like to find a compiler that uses

@@ -269,25 +269,24 @@ namespace System
 #endif
 		}
 
-		[MonoTODO ("Calendar is unused")]
+		[MonoTODO ("The Calendar is not taken into consideration")]
 		public DateTime (int year, int month, int day, Calendar calendar)
 			: this (year, month, day, 0, 0, 0, 0, calendar)
 		{
 		}
 		
-		[MonoTODO ("Calendar is unused")]
+		[MonoTODO ("The Calendar is not taken into consideration")]
 		public DateTime (int year, int month, int day, int hour, int minute, int second, Calendar calendar)
 			: this (year, month, day, hour, minute, second, 0, calendar)
 		{
 		}
 
-		[MonoTODO ("Calendar is unused")]
+		[MonoTODO ("The Calendar is not taken into consideration")]
 		public DateTime (int year, int month, int day, int hour, int minute, int second, int millisecond, Calendar calendar)
 			: this (year, month, day, hour, minute, second, millisecond) 
 		{
 			if (calendar == null)
 				throw new ArgumentNullException ("calendar");
-			// FIXME: we're not using the calendar anywhere???
 		}
 
 		internal DateTime (bool check, TimeSpan value)
@@ -764,7 +763,6 @@ namespace System
 			return Parse (s, fp, DateTimeStyles.AllowWhiteSpaces);
 		}
 
-		[MonoTODO ("see the comments inline")]
 		public static DateTime Parse (string s, IFormatProvider fp, DateTimeStyles styles)
 		{
 			// This method should try only expected patterns. 

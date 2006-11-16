@@ -56,7 +56,6 @@ namespace System {
 			Dispose (false);
 		}
 
-		[MonoTODO ("default ?")]
 		public ContextForm Form {
 			get { return _form; }
 		}
@@ -65,7 +64,7 @@ namespace System {
 			get { return _appid; }
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Missing validation")]
 		static public ActivationContext CreatePartialActivationContext (ApplicationIdentity identity)
 		{
 			if (identity == null)
@@ -77,7 +76,7 @@ namespace System {
 			return new ActivationContext (identity);
 		}
 
-		[MonoTODO]
+		[MonoTODO("Missing validation")]
 		static public ActivationContext CreatePartialActivationContext (ApplicationIdentity identity, string[] manifestPaths)
 		{
 			if (identity == null)
@@ -108,7 +107,7 @@ namespace System {
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("Missing serialization support")]
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)

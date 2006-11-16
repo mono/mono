@@ -278,7 +278,7 @@ namespace System.Security.Principal {
 #if !NET_1_0
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context) 
 		{
-			info.AddValue ("m_userToken", _token);
+			info.AddValue ("m_userToken", (long) _token);
 			// can be null when not resolved
 			info.AddValue ("m_name", _name);
 			info.AddValue ("m_type", _type);

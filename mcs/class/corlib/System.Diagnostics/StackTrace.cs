@@ -41,7 +41,7 @@ using System.Threading;
 namespace System.Diagnostics {
 
 	[Serializable]
-	[MonoTODO ("Fix serialization compatibility with MS.NET")]
+	[MonoTODO ("Serialized objects are not compatible with .NET")]
 	public class StackTrace {
 
 		public const int METHODS_TO_SKIP = 0;
@@ -152,7 +152,7 @@ namespace System.Diagnostics {
 #if ONLY_1_1
 		[ReflectionPermission (SecurityAction.Demand, TypeInformation = true)]
 #endif
-		[MonoTODO]
+		[MonoTODO ("Not possible to create StackTraces from other threads")]
 		public StackTrace (Thread targetThread, bool needFileInfo)
 		{
 			throw new NotImplementedException ();

@@ -532,9 +532,6 @@ namespace System.Collections {
 			return ht;
 		}
 
-#if NET_2_0
-		[MonoTODO ("Serialize equalityComparer")]
-#endif
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
@@ -542,7 +539,14 @@ namespace System.Collections {
 
 			info.AddValue ("LoadFactor", loadFactor);
 			info.AddValue ("Version", modificationCount);
-			info.AddValue ("Comparer", comparerRef);
+#if NET_2_0
+			if (equalityComparer != null)
+				info.AddValue ("KeyComparer", equalityComparer);
+			else
+				info.AddValue ("Comparer", comparerRef);
+#else
+				info.AddValue ("Comparer", comparerRef);
+#endif
 			info.AddValue ("HashCodeProvider", hcpRef);
 			info.AddValue ("HashSize", this.table.Length);
 // Create Keys
@@ -556,6 +560,9 @@ namespace System.Collections {
 			info.AddValue ("Keys", keys);
 			info.AddValue ("Values", values);
 
+#if NET_2_0
+			info.AddValue ("equalityComparer", equalityComparer);
+#endif
 		}
 
 #if NET_2_0
@@ -567,7 +574,14 @@ namespace System.Collections {
 
 			loadFactor = (float) serializationInfo.GetValue ("LoadFactor", typeof(float));
 			modificationCount = (int) serializationInfo.GetValue ("Version", typeof(int));
+#if NET_2_0
+			equalityComparer = (IEqualityComparer) serializationInfo.GetValue ("KeyComparer", typeof (object));
+			if (equalityComparer == null)
+				comparerRef = (IComparer) serializationInfo.GetValue ("Comparer", typeof (object));
+#else
 			comparerRef = (IComparer) serializationInfo.GetValue ("Comparer", typeof (object));
+#endif
+			
 			hcpRef = (IHashCodeProvider) serializationInfo.GetValue ("HashCodeProvider", typeof (object));
 			int size = (int) serializationInfo.GetValue ("HashSize", typeof(int));
 			

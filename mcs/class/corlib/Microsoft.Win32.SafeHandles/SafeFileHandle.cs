@@ -32,7 +32,7 @@ using System;
 
 namespace Microsoft.Win32.SafeHandles {
 
-	[MonoTODO]
+	[MonoTODO("Not implemented on Mono")]
 	public sealed class SafeFileHandle : SafeHandleZeroOrMinusOneIsInvalid {
 
 		public SafeFileHandle (IntPtr preexistingHandle, bool ownsHandle) : base (ownsHandle)

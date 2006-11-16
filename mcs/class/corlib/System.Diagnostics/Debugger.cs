@@ -36,7 +36,7 @@ namespace System.Diagnostics
 	/// <summary>
 	/// Enables communication with a debugger.
 	/// </summary>
-	[MonoTODO]
+	[MonoTODO ("The Debugger class is not functional")]
 	public sealed class Debugger
 	{
 		private static bool isAttached;
@@ -72,19 +72,18 @@ namespace System.Diagnostics
 		/// <summary>
 		/// Checks to see if logging is enabled by an attached debugger.
 		/// </summary>
-		[MonoTODO]
 		public static bool IsLogging()
 		{
 			// Return false. DefaultTraceListener invokes this method, so throwing
 			// a NotImplementedException wouldn't be appropriate.
-      return false;
+			return false;
 
 		}
 		
 		/// <summary>
 		/// Launches and attaches a debugger to the process.
 		/// </summary>
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public static bool Launch()
 		{
 			throw new NotImplementedException();
@@ -102,7 +101,6 @@ namespace System.Diagnostics
 		/// <param name="message">
 		/// A string representing the message to show.
 		/// </param>
-		[MonoTODO]
 		public static void Log(int level, string category, string message)
 		{
 			// Do nothing. DefaultTraceListener invokes this method, so throwing

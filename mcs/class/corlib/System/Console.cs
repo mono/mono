@@ -596,14 +596,14 @@ namespace System
 			ConsoleDriver.Clear ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public static void MoveBufferArea (int sourceLeft, int sourceTop, int sourceWidth, int sourceHeight,
 						int targetLeft, int targetTop)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public static void MoveBufferArea (int sourceLeft, int sourceTop, int sourceWidth, int sourceHeight,
 						int targetLeft, int targetTop, Char sourceChar,
 						ConsoleColor sourceForeColor, ConsoleColor sourceBackColor)

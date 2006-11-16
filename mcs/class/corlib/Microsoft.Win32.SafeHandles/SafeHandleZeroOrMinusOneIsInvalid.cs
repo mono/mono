@@ -33,7 +33,7 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.Win32.SafeHandles {
 
-	[MonoTODO]
+	[MonoTODO ("Not implemented on Mono")]
 	public abstract class SafeHandleZeroOrMinusOneIsInvalid : SafeHandle, IDisposable {
 		protected SafeHandleZeroOrMinusOneIsInvalid (bool ownsHandle) : base ((IntPtr) 0, ownsHandle) {
 		}

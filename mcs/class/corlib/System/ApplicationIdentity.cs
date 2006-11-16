@@ -51,7 +51,9 @@ namespace System {
 				_fullName = applicationIdentityFullName;
 		}
 
-		[MonoTODO ("URL for deployment manifest")]
+		//
+		// FIXME: "URL for deployment manifest", this message should be clearer!
+		// 
 		public string CodeBase {
 			get { return _codeBase; }
 		}
@@ -65,7 +67,7 @@ namespace System {
 			return _fullName;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Missing serialization")]
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)

@@ -428,7 +428,7 @@ namespace System.Collections.Generic {
 			return loc != -1;
 		}
 		
-		[MonoTODO ("I can make it faster than this...")]
+		// FIXME: this could probably be made faster.
 		public int RemoveAll (Predicate <T> match)
 		{
 			CheckMatch (match);

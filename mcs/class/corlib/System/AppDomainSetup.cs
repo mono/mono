@@ -8,6 +8,9 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
+// Known Problems:
+//    	Fix serialization compatibility with MS.NET.
+//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -40,7 +43,6 @@ namespace System
 {
 	[Serializable]
 	[ClassInterface (ClassInterfaceType.None)]
-	[MonoTODO ("Fix serialization compatibility with MS.NET")]
 #if NET_2_0
 	[ComVisible (true)]
 #endif
@@ -197,7 +199,7 @@ namespace System
 			}
 		}
 
-		[MonoTODO ("--share-code")]
+		[MonoTODO ("In Mono this is controlled by the --share-code flag")]
 		public LoaderOptimization LoaderOptimization {
 			get {
 				return loader_optimization;

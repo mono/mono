@@ -241,7 +241,7 @@ namespace System.Globalization
 						 CompareOptions.None));
 		}
 
-		[MonoTODO("Add support for CompareOptions.OrdinalIgnoreCase")]
+		[MonoTODO("Does not support CompareOptions.OrdinalIgnoreCase")]
 		public virtual int Compare (string string1, int offset1,
 					    int length1, string string2,
 					    int offset2, int length2,
@@ -476,7 +476,7 @@ namespace System.Globalization
 				internal_index (s, sindex, count, c, opt, first);
 		}
 
-		[MonoTODO("Add support for CompareOptions.OrdinalIgnoreCase")]
+		[MonoTODO("Does not support CompareOptions.OrdinalIgnoreCase")]
 		public virtual int IndexOf (string source, char value,
 					    int startIndex, int count,
 					    CompareOptions options)
@@ -544,7 +544,7 @@ namespace System.Globalization
 				internal_index (s1, sindex, count, s2, opt, first);
 		}
 
-		[MonoTODO("Add support for CompareOptions.OrdinalIgnoreCase")]
+		[MonoTODO("Does not support CompareOptions.OrdinalIgnoreCase")]
 		public virtual int IndexOf (string source, string value,
 					    int startIndex, int count,
 					    CompareOptions options)
@@ -698,7 +698,7 @@ namespace System.Globalization
 					    CompareOptions.None));
 		}
 
-		[MonoTODO("Add support for CompareOptions.OrdinalIgnoreCase")]
+		[MonoTODO("Does not support CompareOptions.OrdinalIgnoreCase")]
 		public virtual int LastIndexOf(string source, char value,
 					       int startIndex, int count,
 					       CompareOptions options)

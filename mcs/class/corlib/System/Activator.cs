@@ -57,7 +57,7 @@ namespace System
 		{
 		}
 
-		[MonoTODO]
+		[MonoTODO ("No COM support")]
 		public static ObjectHandle CreateComInstanceFrom (string assemblyName, string typeName)
 		{
 			if (assemblyName == null)

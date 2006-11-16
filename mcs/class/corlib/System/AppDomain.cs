@@ -419,7 +419,6 @@ namespace System {
 				refusedPermissions, false);
 		}
 
-		[MonoTODO ("FIXME: examine all other parameters")]
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir,
 		                                              Evidence evidence,
 		                                              PermissionSet requiredPermissions,
@@ -457,7 +456,7 @@ namespace System {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern int ExecuteAssembly (string assemblyFile, Evidence assemblySecurity, string[] args);
 
-		[MonoTODO]
+		[MonoTODO ("No support for ExecuteAssembly")]
 		public int ExecuteAssembly (string assemblyFile, Evidence assemblySecurity, string[] args, byte[] hashValue, AssemblyHashAlgorithm hashAlgorithm)
 		{
 			throw new NotImplementedException ();
@@ -1071,7 +1070,6 @@ namespace System {
 			return Object.ReferenceEquals (this, DefaultDomain);
 		}
 
-		[MonoTODO ("see Assembly.ReflectionOnlyLoad")]
 		public Assembly[] ReflectionOnlyGetAssemblies ()
 		{
 			return GetAssemblies (true);

@@ -100,7 +100,7 @@ namespace System {
 
 		// static
 
-		[MonoTODO ("maybe AppDomain.CreateDomain should be calling this ?")]
+		// FIXME: maybe AppDomain.CreateDomain should be calling this?
 		protected static AppDomain CreateDomainHelper (string friendlyName, Evidence securityInfo, AppDomainSetup appDomainInfo)
 		{
 			return AppDomain.CreateDomain (friendlyName, securityInfo, appDomainInfo);

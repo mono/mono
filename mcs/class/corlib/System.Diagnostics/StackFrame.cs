@@ -38,7 +38,7 @@ using System.Text;
 namespace System.Diagnostics {
 
 	[Serializable]
-	[MonoTODO ("Fix serialization compatibility with MS.NET")]
+	[MonoTODO ("Serialized objects are not compatible with MS.NET")]
         public class StackFrame {
 
                 public const int OFFSET_UNKNOWN = -1;

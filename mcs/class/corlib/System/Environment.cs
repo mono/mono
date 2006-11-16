@@ -61,7 +61,6 @@ namespace System {
 		 */
 		private const int mono_corlib_version = 54;
 		
-		[MonoTODO]
 		public enum SpecialFolder
 		{	// TODO: Determine if these windoze style folder identifiers 
 			//       have unix/linux counterparts
@@ -233,7 +232,7 @@ namespace System {
 		/// <summary>
 		/// Gets a flag indicating whether the process is in interactive mode
 		/// </summary>
-		[MonoTODO]
+		[MonoTODO ("Currently always returns false, regardless of interactive state")]
 		public static bool UserInteractive {
 			get {
 				return false;
@@ -261,7 +260,7 @@ namespace System {
 		/// <summary>
 		/// Get the amount of physical memory mapped to process
 		/// </summary>
-		[MonoTODO]
+		[MonoTODO ("Currently always returns zero")]
 		public static long WorkingSet {
 			[EnvironmentPermission (SecurityAction.Demand, Unrestricted=true)]
 			get { return 0; }
@@ -629,7 +628,7 @@ namespace System {
 			get;			
 		}
 
-		[MonoTODO ("not much documented")]
+		[MonoTODO ("Not implemented")]
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode=true)]
 		public static void FailFast (string message)
 		{

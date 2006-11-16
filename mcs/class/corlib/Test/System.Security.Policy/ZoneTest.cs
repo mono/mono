@@ -214,6 +214,7 @@ namespace MonoTests.System.Security.Policy {
 		public void CreateFromUrl_Intranet ()
 		{
 			foreach (string url in intranetUrls) {
+				Console.WriteLine ("url: " + url) ;
 				Zone z = Zone.CreateFromUrl (url);
 				AssertEquals (url, SecurityZone.Intranet, z.SecurityZone);
 			}

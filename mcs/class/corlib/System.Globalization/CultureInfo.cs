@@ -457,7 +457,7 @@ namespace System.Globalization
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Always returns null")]
 		public static CultureInfo InstalledUICulture
 		{
 			get {
@@ -682,9 +682,14 @@ namespace System.Globalization
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Currently it ignores the altName parameter")]
 		public static CultureInfo GetCultureInfo (string name, string altName) {
-			throw new NotImplementedException ();
+			if (name == null)
+				throw new ArgumentNullException ("null");
+			if (altName == null)
+				throw new ArgumentNullException ("null");
+
+			return GetCultureInfo (name);
 		}
 #endif
 
