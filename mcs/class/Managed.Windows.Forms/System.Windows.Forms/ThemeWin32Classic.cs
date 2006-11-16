@@ -1540,10 +1540,14 @@ namespace System.Windows.Forms
 			text_format.HotkeyPrefix = HotkeyPrefix.Show;
 
 			size = dc.MeasureString (box.Text, box.Font);
-			width = ((int) size.Width) + 7;
+			width = 0;
+
+			if (size.Width > 0) {
+				width = ((int) size.Width) + 7;
 			
-			if (width > box.Width - 16)
-				width = box.Width - 16;
+				if (width > box.Width - 16)
+					width = box.Width - 16;
+			}
 			
 			y = box.Font.Height / 2;
 

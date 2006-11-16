@@ -7,6 +7,8 @@
 	nodes.  This problem should probably be fixed in the scrolling
 	methods, so they can figure out exactly where they are, but this
 	will slow things down a little.
+	* ThemeWin32Classic.cs: Special case for groupboxes with empty
+	strings, makes nunit-gui look a lot nicer.
 
 2006-11-16  Chris Toshok  <toshok@ximian.com>
 
