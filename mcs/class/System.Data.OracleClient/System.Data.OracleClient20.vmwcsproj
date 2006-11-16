@@ -86,7 +86,7 @@
 		</AdditionalClassPath>
 	</PropertyGroup>
 	<Import Project="$(MSBuildBinPath)\Microsoft.csharp.targets"/>
-	<Import Project="$(GHROOT)\bin\Mainsoft.Common.targets"/>
+	<Import Project="$(VMW_HOME)\bin\Mainsoft.Common.targets"/>
 	<!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
