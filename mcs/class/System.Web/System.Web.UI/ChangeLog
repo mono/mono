@@ -1,5 +1,9 @@
 2006-11-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* SimpleWebHandlerParser.cs: 'using' for file reading.
+
+2006-11-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Page.cs: revert r67514 until after tagging for the next release. 
 
 2006-11-12 Igor Zelmanovich <igorz@mainsoft.com>

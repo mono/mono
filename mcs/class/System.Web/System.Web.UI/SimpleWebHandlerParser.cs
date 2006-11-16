@@ -117,32 +117,31 @@ namespace System.Web.UI
 
 		void GetDirectivesAndContent ()
 		{
-			StreamReader reader = new StreamReader (File.OpenRead (physPath));
 			string line;
 			bool directiveFound = false;
 			StringBuilder content = new StringBuilder ();
+			using (StreamReader reader = new StreamReader (File.OpenRead (physPath))) {
+				while ((line = reader.ReadLine ()) != null && cachedType == null) {
+					string trimmed = line.Trim ();
+					if (!directiveFound && trimmed == String.Empty)
+						continue;
+					
+					if (trimmed.StartsWith ("<")) {
+						ParseDirective (trimmed);
+						directiveFound = true;
+						if (gotDefault) {
+							cachedType = CachingCompiler.GetTypeFromCache (physPath);
+							if (cachedType != null)
+								break;
+						}
 
-			while ((line = reader.ReadLine ()) != null && cachedType == null) {
-				string trimmed = line.Trim ();
-				if (!directiveFound && trimmed == String.Empty)
-					continue;
-				
-				if (trimmed.StartsWith ("<")) {
-					ParseDirective (trimmed);
-					directiveFound = true;
-					if (gotDefault) {
-						cachedType = CachingCompiler.GetTypeFromCache (physPath);
-						if (cachedType != null)
-							break;
+						continue;
 					}
 
-					continue;
+					content.Append (line + "\n");
+					content.Append (reader.ReadToEnd ());
 				}
-
-				content.Append (line + "\n");
-				content.Append (reader.ReadToEnd ());
 			}
-			reader.Close ();
 
 			if (!gotDefault)
 				throw new ParseException (null, "No @" + DefaultDirectiveName +
