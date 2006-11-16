@@ -135,6 +135,7 @@ namespace System.CodeDom.Compiler {
 			return cg.CreateEscapedIdentifier (value);
 		}
 
+#if CONFIGURATION_DEP
 		[ComVisible (false)]
 		[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 		public static CodeDomProvider CreateProvider (string language)
@@ -142,6 +143,7 @@ namespace System.CodeDom.Compiler {
 			CompilerInfo ci = GetCompilerInfo (language);
 			return (ci == null) ? null : ci.CreateProvider ();
 		}
+#endif
 
 		public virtual string CreateValidIdentifier (string value)
 		{
@@ -200,18 +202,15 @@ namespace System.CodeDom.Compiler {
 			cg.GenerateCodeFromType (codeType, writer, options);
 		}
 
+#if CONFIGURATION_DEP
 		[ComVisible (false)]
 		[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 		public static CompilerInfo[] GetAllCompilerInfo ()
 		{
-			int n = 0;
-			if ((Config != null) && (Config.Compilers != null)) 
-				n = Config.Compilers.Hash.Count;
-			CompilerInfo[] ci = new CompilerInfo [n];
-			if (n > 0)
-				Config.Compilers.Hash.Values.CopyTo (ci, 0);
-			return ci;
+
+			return (Config == null) ? null : Config.CompilerInfos;
 		}
+
 
 		[ComVisible (false)]
 		[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
@@ -219,8 +218,10 @@ namespace System.CodeDom.Compiler {
 		{
 			if (language == null)
 				throw new ArgumentNullException ("language");
-
-			return (Config == null) ? null : Config.GetCompilerInfo (language);
+			if (Config == null)
+				return null;
+			CompilerCollection cc = Config.Compilers;
+			return cc[language];
 		}
 
 		[ComVisible (false)]
@@ -230,15 +231,11 @@ namespace System.CodeDom.Compiler {
 			if (extension == null)
 				throw new ArgumentNullException ("extension");
 
-			if (Config != null) {
-				foreach (DictionaryEntry de in Config.Compilers.Hash) {
-					CompilerInfo c = (CompilerInfo) de.Value;
-					if (Array.IndexOf (c.GetExtensions (), extension) != -1)
-						return (string) de.Key;
-				}
-			}
+			if (Config != null) 
+				return Config.Compilers.GetLanguageFromExtension (extension);
 			return null;
 		}
+#endif
 
 		public virtual string GetTypeOutput (CodeTypeReference type)
 		{
@@ -248,6 +245,7 @@ namespace System.CodeDom.Compiler {
 			return cg.GetTypeOutput (type);
 		}
 
+#if CONFIGURATION_DEP
 		[ComVisible (false)]
 		[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 		public static bool IsDefinedExtension (string extension)
@@ -255,12 +253,9 @@ namespace System.CodeDom.Compiler {
 			if (extension == null)
 				throw new ArgumentNullException ("extension");
 
-			if (Config != null) {
-				foreach (CompilerInfo c in Config.Compilers.Hash.Values) {
-					if (Array.IndexOf (c.GetExtensions (), extension) != -1)
-						return true;
-				}
-			}
+			if (Config != null)
+				return (Config.Compilers.GetCompilerInfoForExtension (extension) != null);
+			
 			return false;
 		}
 
@@ -271,10 +266,12 @@ namespace System.CodeDom.Compiler {
 			if (language == null)
 				throw new ArgumentNullException ("language");
 
-			if (Config == null)
-				return false;
-			return (Config.GetCompilerInfo (language) != null);
+			if (Config != null)
+				return (Config.Compilers.GetCompilerInfoForLanguage (language) != null);
+
+			return false;
 		}
+#endif
 
 		public virtual bool IsValidIdentifier (string value)
 		{
@@ -300,9 +297,12 @@ namespace System.CodeDom.Compiler {
 			return cg.Supports (supports);
 		}
 
-		static CompilationConfiguration Config {
-			get { return ConfigurationSettings.GetConfig ("system.codedom") as CompilationConfiguration; }
+#if CONFIGURATION_DEP
+		static CodeDomConfigurationHandler Config {
+			get { return ConfigurationManager.GetSection ("system.codedom") as CodeDomConfigurationHandler; }
 		}
+#endif
+		
 #endif
 	}
 }

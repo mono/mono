@@ -118,6 +118,8 @@ System.CodeDom.Compiler/CodeDomProvider.cs
 System.CodeDom.Compiler/CodeGenerator.cs
 System.CodeDom.Compiler/CodeGeneratorOptions.cs
 System.CodeDom.Compiler/CodeParser.cs
+System.CodeDom.Compiler/Compiler.cs
+System.CodeDom.Compiler/CompilerCollection.cs
 System.CodeDom.Compiler/CompilerErrorCollection.cs
 System.CodeDom.Compiler/CompilerError.cs
 System.CodeDom.Compiler/CompilerInfo.cs

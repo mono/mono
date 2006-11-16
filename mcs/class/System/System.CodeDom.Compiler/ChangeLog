@@ -1,3 +1,17 @@
+2006-11-16  Marek Habersack  <grendello@gmail.com>
+
+	* Compiler.cs: ConfigurationElement to handle the <compiler>
+	sub-element of the <system.codedom> section
+
+	* CodeDomConfigurationHandler.cs: Reimplemented as a
+	ConfigurationSection. Made the class internal.
+
+	* CompilerCollection.cs: Collection of Compiler and CompilerInfo
+	objects.
+
+	* CodeDomProvider.cs: Changes to use the new
+	CodeDomConfigurationHandler class.
+
 2006-11-07  Marek Habersack  <grendello@gmail.com>
 
 	* CompilerInfo.cs: Implement the CreateDefaultCompilerParameters API.
