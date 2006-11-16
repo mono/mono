@@ -226,6 +226,7 @@ namespace MonoTests.System.Windows.Forms
 			f1.Dispose ();
 
 			Assert.IsNull (f2.Owner, "1");
+			Assert.AreEqual (0, f1.OwnedForms.Length, "2");
 		}
 
 		[Test]
@@ -238,6 +239,42 @@ namespace MonoTests.System.Windows.Forms
 			myform.Show ();
 			myform.Close (); // this should result in the form being disposed
 			myform.Show (); // and this line should result in the ODE being thrown
+		}
+
+		class MyForm : Form
+		{
+			public void DoDestroyHandle ()
+			{
+				DestroyHandle();
+			}
+			public void DoRecreateHandle ()
+			{
+				RecreateHandle();
+			}
+		}
+
+		int handle_destroyed_count;
+		void handle_destroyed (object sender, EventArgs e)
+		{
+			handle_destroyed_count++;
+		}
+
+		[Test]
+		public void DestroyHandleTest ()
+		{
+			handle_destroyed_count = 0;
+
+			MyForm f1 = new MyForm ();
+			f1.HandleDestroyed += new EventHandler (handle_destroyed);
+			f1.Show ();
+			f1.DoDestroyHandle ();
+			Assert.AreEqual (1, handle_destroyed_count, "1");
+
+			f1 = new MyForm ();
+			f1.HandleDestroyed += new EventHandler (handle_destroyed);
+			f1.Show ();
+			f1.DoRecreateHandle ();
+			Assert.AreEqual (2, handle_destroyed_count, "2");
 		}
 
 		[Test]
