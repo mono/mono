@@ -1,3 +1,8 @@
+2006-11-17  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs: Trim all filters, otherwise DirInfo.GetFiles
+	  can't handle those filters. (Fixes bug #79961)
+
 2006-11-17  Chris Toshok  <toshok@ximian.com>
 
 	[ fixes the exit/crashes associated with #79835.  it's clearly

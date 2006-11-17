@@ -1808,8 +1808,9 @@ namespace System.Windows.Forms {
 		private void SplitFilters (string filter)
 		{
 			string[] split = filter.Split (new char [] {';'});
-			
-			filters.AddRange (split);
+			foreach (string s in split) {
+				filters.Add (s.Trim ());
+			}
 		}
 	}
 	#endregion
@@ -2900,6 +2901,7 @@ namespace System.Windows.Forms {
 		protected string currentTopFolder = String.Empty;
 		protected FSEntry currentFolderFSEntry = null;
 		protected FSEntry currentTopFolderFSEntry = null;
+		private FileInfoComparer fileInfoComparer = new FileInfoComparer ();
 		
 		public FSEntry ChangeDirectory (string folder)
 		{
@@ -3064,6 +3066,8 @@ namespace System.Windows.Forms {
 				} else {
 					foreach (string s in filters)
 						files.AddRange (dirinfo.GetFiles (s));
+					
+					files.Sort (fileInfoComparer);
 				}
 			} catch (Exception) {}
 			
@@ -3129,6 +3133,13 @@ namespace System.Windows.Forms {
 			return fs;
 		}
 		
+		internal class FileInfoComparer : IComparer
+		{
+			public int Compare (object fileInfo1, object fileInfo2)
+			{
+				return String.Compare (((FileInfo)fileInfo1).Name, ((FileInfo)fileInfo2).Name);
+			}
+		}
 		
 		protected abstract FSEntry GetDesktopFSEntry ();
 		
