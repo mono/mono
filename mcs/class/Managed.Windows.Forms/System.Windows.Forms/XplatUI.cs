@@ -38,6 +38,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows.Forms.X11Internal;
 
 namespace System.Windows.Forms {
 	internal class XplatUI {
@@ -87,9 +88,11 @@ namespace System.Windows.Forms {
 			int platform = (int) Environment.OSVersion.Platform;
 			if ((platform == 4) || (platform == 128)) {
 				if (Environment.GetEnvironmentVariable ("not_supported_MONO_MWF_USE_QUARTZ_BACKEND") != null)
-					driver=XplatUIOSX.GetInstance();
+					driver=XplatUIOSX.GetInstance ();
+				else if (Environment.GetEnvironmentVariable ("not_supported_MONO_MWF_USE_NEW_X11_BACKEND") != null)
+					driver=XplatUIX11_new.GetInstance ();
 				else
-					driver=XplatUIX11.GetInstance();
+					driver=XplatUIX11.GetInstance ();
 			} else {
 				driver=XplatUIWin32.GetInstance();
 			}
