@@ -1,7 +1,8 @@
 2006-11-17  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: When soft splitting a line, mark it as a soft
-	split line.
+	split line. Also carry over the current line break to the next
+	line.
 
 2006-11-17  Chris Toshok  <toshok@ximian.com>
 
