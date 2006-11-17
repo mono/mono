@@ -1,3 +1,7 @@
+2006-11-16  Miguel de Icaza  <miguel@novell.com>
+
+	* MacPack.cs: Do not crash, and provide a warning message.
+
 2006-04-30  Aaron Flynt  <aaron@aaronflynt.com>
 
 	* MacPack.cs: Fixed typo in main method causing -i argument to be 

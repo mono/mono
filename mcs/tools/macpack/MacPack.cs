@@ -132,7 +132,14 @@ namespace Mac {
 			data = Encoding.ASCII.GetBytes (script);
 			writer.Write (data, 0, data.Length);
 			writer.Close ();
-			chmod (Path.Combine (opts.output, String.Format ("{0}.app/Contents/MacOS/{0}", opts.appname)), Convert.ToUInt32 ("755", 8));
+			try {
+				chmod (Path.Combine (opts.output,
+						     String.Format ("{0}.app/Contents/MacOS/{0}", opts.appname)),
+				       Convert.ToUInt32 ("755", 8));
+			} catch {
+				Console.WriteLine ("WARNING: It was not possible to set the executable permissions on\n" +
+						   "the file {0}.app/Contents/MacOS/{0}, the bundle might not work", opts.appname);
+			}
 
 			s = Assembly.GetEntryAssembly ().GetManifestResourceStream ("PLIST");
 			reader = new BinaryReader (s);
