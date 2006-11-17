@@ -31,6 +31,9 @@ using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 
 using NUnit.Framework;
 
@@ -2119,6 +2122,18 @@ namespace MonoTests.System.XmlSerialization
 </CDataTextNodesType>";
 			ser.Deserialize (new XmlTextReader (xml, XmlNodeType.Document, null));
 		}
+
+#if NET_2_0
+		[Test]
+		public void GenerateSerializerGenerics ()
+		{
+			XmlReflectionImporter imp = new XmlReflectionImporter ();
+			Type type = typeof (List<int>);
+			XmlSerializer.GenerateSerializer (
+				new Type [] {type},
+				new XmlTypeMapping [] {imp.ImportTypeMapping (type)});
+		}
+#endif
 
 		public class CDataTextNodesType
 		{

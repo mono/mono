@@ -1,5 +1,12 @@
 2006-11-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SerializationCodeGenerator.cs, TypeData.cs :
+	  Now we differentiate TypeName, FullTypeName C# type names. It is
+	  to create valid C# sources especially for generic types.
+	  Fixed bug #79657.
+
+2006-11-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSerializationReader.cs : (ReadReferencedElement)
 	  Sometimes there are array types in WSDL, which are not reflected
 	  in client proxies. In SOAP messages, they are marked

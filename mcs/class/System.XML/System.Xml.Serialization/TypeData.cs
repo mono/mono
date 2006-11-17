@@ -4,6 +4,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //  Lluis Sanchez Gual (lluis@ximian.com)
+//  Atsushi Enomoto (atsushi@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
 //
@@ -33,6 +34,7 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.Reflection;
+using System.Text;
 using System.Xml.Schema;
 
 namespace System.Xml.Serialization
@@ -45,6 +47,8 @@ namespace System.Xml.Serialization
 		Type listItemType;
 		string typeName;
 		string fullTypeName;
+		string csharpName;
+		string csharpFullName;
 		TypeData listItemTypeData;
 		TypeData listTypeData;
 		TypeData mappedType;
@@ -124,6 +128,58 @@ namespace System.Xml.Serialization
 			get {
 				return fullTypeName;
 			}
+		}
+
+		public string CSharpName
+		{
+			get {
+				if (csharpName == null)
+					csharpName = (Type == null) ? TypeName : ToCSharpName (Type, false);
+				return csharpName;
+			}
+		}
+
+		public string CSharpFullName
+		{
+			get {
+				if (csharpFullName == null)
+					csharpFullName = (Type == null) ? TypeName : ToCSharpName (Type, true);
+				return csharpFullName;
+			}
+		}
+
+		// static Microsoft.CSharp.CSharpCodeProvider csprovider =
+		//	new Microsoft.CSharp.CSharpCodeProvider ();
+
+		public static string ToCSharpName (Type type, bool full)
+		{
+			// return csprovider.GetTypeOutput (new System.CodeDom.CodeTypeReference (type));
+			if (type.IsArray) {
+				StringBuilder sb = new StringBuilder ();
+				sb.Append (ToCSharpName (type.GetElementType (), full));
+				sb.Append ('[');
+				int rank = type.GetArrayRank ();
+				for (int i = 1; i < rank; i++)
+					sb.Append (',');
+				sb.Append (']');
+				return sb.ToString ();
+			}
+#if NET_2_0
+			if (type.IsGenericType && !type.IsGenericTypeDefinition) {
+				StringBuilder sb = new StringBuilder ();
+				sb.Append (ToCSharpName (type.GetGenericTypeDefinition (), full));
+				sb.Append ('<');
+				foreach (Type arg in type.GetGenericArguments ())
+					sb.Append (ToCSharpName (arg, full)).Append (',');
+				sb.Length--;
+				sb.Append ('>');
+				return sb.ToString ();
+			}
+#endif
+			string name = full ? type.FullName : type.Name;
+			name = name.Replace ('+', '.');
+			int idx = name.IndexOf ('`'); // generic definition has extra `n.
+			return idx > 0 ? name.Substring (0, idx) : name;
 		}
 
 		public SchemaTypes SchemaType
