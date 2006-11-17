@@ -3779,11 +3779,6 @@ namespace System.Windows.Forms {
 					goto ProcessNextMessage;
 				}
 
-				case XEventName.TimerNotify: {
-					xevent.TimerNotifyEvent.handler (this, EventArgs.Empty);
-					goto ProcessNextMessage;
-				}
-		                        
 				default: {
 					goto ProcessNextMessage;
 				}
@@ -3807,6 +3802,7 @@ namespace System.Windows.Forms {
 
 				if ((long)nitems > 0 && prop != IntPtr.Zero) {
 					text = Marshal.PtrToStringUni (prop, (int)nitems);
+					XFree (prop);
 					return true;
 				}
 				else {

@@ -1,5 +1,13 @@
 2006-11-16  Chris Toshok  <toshok@ximian.com>
 
+	* XplatUIX11.cs: remove the handling of the TimerEvent stuff, and
+	also make sure to free the memory returned by XGetWindowProperty
+	in GetText().
+
+	* X11Structs.cs: remove the TimerEvent stuff, it's unused.
+
+2006-11-16  Chris Toshok  <toshok@ximian.com>
+
 	* XplatUI.cs: add a new super secret way to get at the totally
 	unsupported X11 backend.
 

@@ -485,12 +485,6 @@ namespace System.Windows.Forms {
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	internal struct XTimerNotifyEvent {
-		internal XEventName	type;
-		internal EventHandler	handler;
-	}
-
-	[StructLayout(LayoutKind.Sequential)]
 	internal struct XEventPad {
 		internal IntPtr pad0;
 		internal IntPtr pad1;
@@ -552,7 +546,6 @@ namespace System.Windows.Forms {
 		[ FieldOffset(0) ] internal XMappingEvent MappingEvent;
 		[ FieldOffset(0) ] internal XErrorEvent ErrorEvent;
 		[ FieldOffset(0) ] internal XKeymapEvent KeymapEvent;
-		[ FieldOffset(0) ] internal XTimerNotifyEvent TimerNotifyEvent;
 
 		//[MarshalAs(System.Runtime.InteropServices.UnmanagedType.ByValArray, SizeConst=24)]
 		//[ FieldOffset(0) ] internal int[] pad;
@@ -655,7 +648,6 @@ namespace System.Windows.Forms {
 		ColormapNotify          = 32,
 		ClientMessage		= 33,
 		MappingNotify		= 34,
-		TimerNotify		= 100,
 
 		LASTEvent
 	}
