@@ -29,8 +29,6 @@ namespace MonoTests.System.Windows.Forms
 		{
 			Label l = new Label();
 
-			Assert.AreEqual (16, l.PreferredHeight, "1");
-
 			// preferred width is 0 by default
 			Assert.AreEqual (0, l.PreferredWidth, "2");
 
