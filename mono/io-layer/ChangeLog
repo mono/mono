@@ -1,3 +1,13 @@
+2006-11-16  Miguel de Icaza  <miguel@novell.com>
+
+	* processes.c (ShellExecuteEx): If we fail to create a process in
+	ShellExecute, then try to use the xdg-open command, and if that
+	fails, try to use the gnome-open command, 
+
+	Refactor the code so that we do not have to duplicate all this
+	code, but instead use a ucs2-aware version of the code to do
+	concatenations.
+
 2006-11-13  Dick Porter  <dick@ximian.com>
 
 	* io.c (_wapi_stat_to_file_attributes): If the file is a symlink
