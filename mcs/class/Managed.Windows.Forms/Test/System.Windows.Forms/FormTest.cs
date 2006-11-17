@@ -29,8 +29,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsNull (myform.AcceptButton, "#1");
 			Assert.IsNull (myform.ActiveMdiChild, "#2"); 
 			Assert.IsFalse (myform.AutoScale, "#3");
-			Assert.AreEqual (13, myform.AutoScaleBaseSize.Height, "#4");
-			Assert.AreEqual (5, myform.AutoScaleBaseSize.Width, "#5");
 			Assert.IsNull (myform.CancelButton, "#6");
 			Assert.IsTrue (myform.ControlBox, "#9");
 			Assert.IsTrue (myform.DesktopBounds.X > 0, "#10a");
