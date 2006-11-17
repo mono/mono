@@ -200,10 +200,16 @@ namespace Mono.CSharp {
 			Report.Debug (128, "NEW ROOT SCOPE", this);
 		}
 
+		protected ScopeInfo host_scope;
 		protected CapturedScope scope_instance;
 		protected ScopeInitializer scope_initializer;
 
 		Hashtable locals = new Hashtable ();
+		Hashtable scopes = new Hashtable ();
+
+		public ScopeInfo HostScope {
+			get { return host_scope; }
+		}
 
 		public Variable ScopeInstance {
 			get { return scope_instance; }
@@ -271,8 +277,18 @@ namespace Mono.CSharp {
 		{
 			RootScopeInfo root_scope = toplevel.RootScope;
 
-			Report.Debug (128, "EMIT SCOPE INSTANCE", toplevel, root_scope, scope);
+			Report.Debug (128, "EMIT SCOPE INSTANCE", toplevel,
+				      toplevel.AnonymousContainer, scope.ScopeInstance,
+				      root_scope, scope, scope.RootScope, scope.HostScope);
 
+			scope.EmitScopeInstance (ec);
+
+			if (toplevel.AnonymousContainer != null) {
+				if (scope.ScopeInstance != null)
+					scope.ScopeInstance.Emit (ec);
+			}
+
+#if FIXME
 			root_scope.EmitScopeInstance (ec);
 			while (root_scope != scope.RootScope) {
 				ec.ig.Emit (OpCodes.Ldfld, root_scope.ParentLink.FieldBuilder);
@@ -283,6 +299,7 @@ namespace Mono.CSharp {
 						"Never found scope {0} starting at block {1}",
 						scope, ec.CurrentBlock.ID);
 			}
+#endif
 
 #if FIXME
 			if (scope != (ScopeInfo) scope.RootScope)
@@ -307,7 +324,12 @@ namespace Mono.CSharp {
 		{
 			CheckMembersDefined ();
 			Report.Debug (128, "CAPTURE SCOPE", this, child, child.TypeBuilder);
-			return new CapturedScope (this, child);
+			if (child.host_scope != null)
+				throw new InternalErrorException ();
+			child.host_scope = this;
+			child.scope_instance = new CapturedScope (this, child);
+			scopes.Add (child, child.scope_instance);
+			return child.scope_instance;
 		}
 
 		public Variable AddLocal (LocalInfo local)
@@ -505,6 +527,7 @@ namespace Mono.CSharp {
 
 				scope_ctor = (ConstructorInfo) mg.Methods [0];
 
+#if FIXME
 				if (Scope.ScopeInstance != null) {
 					Type root = Scope.RootScope.GetScopeType (ec);
 					FieldExpr fe = (FieldExpr) Expression.MemberLookup (
@@ -515,6 +538,7 @@ namespace Mono.CSharp {
 					fe.InstanceExpression = this;
 					Scope.scope_instance.FieldInstance = fe;
 				}
+#endif
 
 				scope_instance = ec.ig.DeclareLocal (type);
 
@@ -529,6 +553,19 @@ namespace Mono.CSharp {
 
 					fe.InstanceExpression = this;
 					local.FieldInstance = fe;
+				}
+
+				foreach (CapturedScope scope in Scope.scopes.Values) {
+					FieldExpr fe = (FieldExpr) Expression.MemberLookup (
+						ec.ContainerType, type, scope.Field.Name, loc);
+					Report.Debug (64, "RESOLVE SCOPE INITIALIZER #3", this, Scope,
+						      Scope, ec, ec.ContainerType, type,
+						      scope.Field, scope.Field.Name, loc, fe);
+					if (fe == null)
+						throw new InternalErrorException ();
+
+					fe.InstanceExpression = this;
+					scope.FieldInstance = fe;
 				}
 
 				return true;
@@ -590,15 +627,27 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Pop);
 				ec.ig.Emit (OpCodes.Nop);
 
+#if FIXME
 				if (Scope != Scope.RootScope)
 					Scope.RootScope.EmitScopeInstance (ec);
 				else if (Scope.ScopeInstance != null)
 					ec.ig.Emit (OpCodes.Ldarg_0);
+#endif
 				EmitScopeConstructor (ec);
+#if FIXME
 				if (Scope.ScopeInstance != null)
 					Scope.ScopeInstance.EmitAssign (ec);
 				else
+#endif
 					ec.ig.Emit (OpCodes.Stloc, scope_instance);
+
+				foreach (CapturedScope scope in Scope.scopes.Values) {
+					Report.Debug (128, "EMIT SCOPE INIT #5", this, Scope,
+						      scope.Scope, scope.ChildScope);
+					DoEmitInstance (ec);
+					scope.ChildScope.EmitScopeInstance (ec);
+					scope.EmitAssign (ec);
+				}
 			}
 		}
 	}
