@@ -3052,7 +3052,7 @@ namespace Mono.CSharp {
 			MethodInfo method;
 			Expression operator_group;
 
-			operator_group = MethodLookup (ec, type, is_and ? "op_BitwiseAnd" : "op_BitwiseOr", loc);
+			operator_group = MethodLookup (ec.ContainerType, type, is_and ? "op_BitwiseAnd" : "op_BitwiseOr", loc);
 			if (operator_group == null) {
 				Error19 ();
 				return null;

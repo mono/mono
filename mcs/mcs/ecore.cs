@@ -332,7 +332,8 @@ namespace Mono.CSharp {
 			Expression e = (this is EnumConstant) ? ((EnumConstant)this).Child : this;
 			bool b = Convert.ExplicitNumericConversion (e, target) != null;
 
-			if (b || Convert.ExplicitReferenceConversionExists (Type, target) || Convert.ExplicitUnsafe (e, target) != null) {
+			if (b || Convert.ExplicitReferenceConversionExists (Type, target) ||
+				Convert.ExplicitUnsafe (e, target) != null || Convert.UserDefinedConversion (null, this, target, Location.Null, true) != null) {
 				Report.Error (266, loc, "Cannot implicitly convert type `{0}' to `{1}'. An explicit conversion exists (are you missing a cast?)",
 					TypeManager.CSharpName (Type), TypeManager.CSharpName (target));
 				return;
@@ -751,10 +752,10 @@ namespace Mono.CSharp {
 					     name, AllMemberTypes, AllBindingFlags, loc);
 		}
 
-		public static Expression MethodLookup (EmitContext ec, Type queried_type,
+		public static Expression MethodLookup (Type container_type, Type queried_type,
 						       string name, Location loc)
 		{
-			return MemberLookup (ec.ContainerType, null, queried_type, name,
+			return MemberLookup (container_type, null, queried_type, name,
 					     MemberTypes.Method, AllBindingFlags, loc);
 		}
 
@@ -906,7 +907,7 @@ namespace Mono.CSharp {
 				return new Nullable.OperatorTrueOrFalse (e, is_true, loc).Resolve (ec);
 #endif
 
-			operator_group = MethodLookup (ec, e.Type, is_true ? "op_True" : "op_False", loc);
+			operator_group = MethodLookup (ec.ContainerType, e.Type, is_true ? "op_True" : "op_False", loc);
 			if (operator_group == null)
 				return null;
 

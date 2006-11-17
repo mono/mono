@@ -1,3 +1,17 @@
+2006-11-17  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #79941
+	* class.cs (MemberCore.IsDuplicateImplementation): Add more tricks for
+	operators.
+	(Operator.Define): Implicit/Explicit operator of same type is duplicate
+	even if internal name is different.
+	* convert.cs (GetConversionOperator): Replaced EmitContext with parentType.
+	(UserDefinedConversion): Simplified as the operators cannot be internal.
+	* ecore.cs (Error_ValueCannotBeConverted): Take account of user
+	conversions.
+	(MethodLookup): Replaced EmitContext with parentType.
+	* expression.cs: Updated.
+
 2006-11-09  Raja R Harinath  <rharinath@novell.com>
 
 	* driver.cs (BadAssembly): Handle all the ugliness of

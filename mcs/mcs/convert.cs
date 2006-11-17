@@ -1109,7 +1109,7 @@ namespace Mono.CSharp {
 		///   Compute the user-defined conversion operator from source_type to target_type.
 		///   `look_for_explicit' controls whether we should also include the list of explicit operators
 		/// </summary>
-		static MethodInfo GetConversionOperator (EmitContext ec, Expression source, Type target_type, bool look_for_explicit)
+		static MethodInfo GetConversionOperator (Type container_type, Expression source, Type target_type, bool look_for_explicit)
 		{
 			ArrayList ops = new ArrayList (4);
 
@@ -1117,21 +1117,21 @@ namespace Mono.CSharp {
 
 			if (source_type != TypeManager.decimal_type) {
 				AddConversionOperators (ops, source, target_type, look_for_explicit,
-					Expression.MethodLookup (ec, source_type, "op_Implicit", Location.Null) as MethodGroupExpr);
+					Expression.MethodLookup (container_type, source_type, "op_Implicit", Location.Null) as MethodGroupExpr);
 				if (look_for_explicit) {
 					AddConversionOperators (ops, source, target_type, look_for_explicit,
 						Expression.MethodLookup (
-							ec, source_type, "op_Explicit", Location.Null) as MethodGroupExpr);
+							container_type, source_type, "op_Explicit", Location.Null) as MethodGroupExpr);
 				}
 			}
 
 			if (target_type != TypeManager.decimal_type) {
 				AddConversionOperators (ops, source, target_type, look_for_explicit,
-					Expression.MethodLookup (ec, target_type, "op_Implicit", Location.Null) as MethodGroupExpr);
+					Expression.MethodLookup (container_type, target_type, "op_Implicit", Location.Null) as MethodGroupExpr);
 				if (look_for_explicit) {
 					AddConversionOperators (ops, source, target_type, look_for_explicit,
 						Expression.MethodLookup (
-							ec, target_type, "op_Explicit", Location.Null) as MethodGroupExpr);
+							container_type, target_type, "op_Explicit", Location.Null) as MethodGroupExpr);
 				}
 			}
 
@@ -1181,7 +1181,7 @@ namespace Mono.CSharp {
 			if (!(source is Constant) && hash.Lookup (source_type, target, out o)) {
 				method = (MethodInfo) o;
 			} else {
-				method = GetConversionOperator (ec, source, target, look_for_explicit);
+				method = GetConversionOperator (null, source, target, look_for_explicit);
 				if (!(source is Constant))
 					hash.Insert (source_type, target, method);
 			}
