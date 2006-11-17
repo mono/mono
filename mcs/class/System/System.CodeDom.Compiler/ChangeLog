@@ -1,3 +1,7 @@
+2006-11-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TempFileCollection.cs : make it work under non-libc environment.
+
 2006-11-16  Marek Habersack  <grendello@gmail.com>
 
 	* Compiler.cs: ConfigurationElement to handle the <compiler>

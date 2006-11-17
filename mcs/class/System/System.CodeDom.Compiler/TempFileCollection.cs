@@ -123,13 +123,27 @@ namespace System.CodeDom.Compiler {
 			
 			// Create a subdirectory with the correct user permissions
 			int res = -1;
+			bool win32 = false;
+			switch (Environment.OSVersion.Platform) {
+			case PlatformID.Win32S:
+			case PlatformID.Win32Windows:
+			case PlatformID.Win32NT:
+			case PlatformID.WinCE:
+				win32 = true;
+				res = 0;
+				break;
+			}
+
 			do {
 				int num = rnd.Next ();
 				num++;
 				ownTempDir = Path.Combine (basedir, num.ToString("x"));
 				if (Directory.Exists (ownTempDir))
 					continue;
-				res = mkdir (ownTempDir, 0x1c0);
+				if (win32)
+					Directory.CreateDirectory (ownTempDir);
+				else
+					res = mkdir (ownTempDir, 0x1c0);
 				if (res != 0) {
 					if (!Directory.Exists (ownTempDir))
 						throw new IOException ();
