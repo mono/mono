@@ -753,25 +753,27 @@ namespace System.Diagnostics {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static int GetPid_internal();
 
-		public static Process GetCurrentProcess() {
-			int pid=GetPid_internal();
-			IntPtr proc=GetProcess_internal(pid);
+		public static Process GetCurrentProcess()
+		{
+			int pid = GetPid_internal();
+			IntPtr proc = GetProcess_internal(pid);
 			
-			if(proc==IntPtr.Zero) {
+			if (proc == IntPtr.Zero) {
 				throw new SystemException("Can't find current process");
 			}
 
-			return(new Process(proc, pid));
+			return (new Process (proc, pid));
 		}
 
-		public static Process GetProcessById(int processId) {
-			IntPtr proc=GetProcess_internal(processId);
+		public static Process GetProcessById(int processId)
+		{
+			IntPtr proc = GetProcess_internal(processId);
 			
-			if(proc==IntPtr.Zero) {
-				throw new ArgumentException("Can't find process with ID " + processId.ToString());
+			if (proc == IntPtr.Zero) {
+				throw new ArgumentException ("Can't find process with ID " + processId.ToString ());
 			}
 
-			return(new Process(proc, processId));
+			return (new Process (proc, processId));
 		}
 
 		[MonoTODO]
@@ -782,13 +784,14 @@ namespace System.Diagnostics {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static int[] GetProcesses_internal();
 
-		public static Process[] GetProcesses() {
-			int[] pids=GetProcesses_internal();
-			ArrayList proclist=new ArrayList();
+		public static Process[] GetProcesses()
+		{
+			int [] pids = GetProcesses_internal ();
+			ArrayList proclist = new ArrayList ();
 			
-			for(int i=0; i<pids.Length; i++) {
+			for (int i = 0; i < pids.Length; i++) {
 				try {
-					proclist.Add(GetProcessById(pids[i]));
+					proclist.Add (GetProcessById (pids [i]));
 				} catch (SystemException) {
 					/* The process might exit
 					 * between
@@ -798,28 +801,29 @@ namespace System.Diagnostics {
 				}
 			}
 
-			return((Process[])proclist.ToArray(typeof(Process)));
+			return ((Process []) proclist.ToArray (typeof (Process)));
 		}
 
-		[MonoTODO]
+		[MonoTODO ("There is no support for retrieving process information from a remote machine")]
 		public static Process[] GetProcesses(string machineName) {
 			throw new NotImplementedException();
 		}
 
-		public static Process[] GetProcessesByName(string processName) {
-			Process[] procs=GetProcesses();
-			ArrayList proclist=new ArrayList();
+		public static Process[] GetProcessesByName(string processName)
+		{
+			Process [] procs = GetProcesses();
+			ArrayList proclist = new ArrayList();
 			
-			for(int i=0; i<procs.Length; i++) {
+			for (int i = 0; i < procs.Length; i++) {
 				/* Ignore case */
-				if(String.Compare(processName,
-						  procs[i].ProcessName,
-						  true)==0) {
-					proclist.Add(procs[i]);
+				if (String.Compare (processName,
+						    procs [i].ProcessName,
+						    true) == 0) {
+					proclist.Add (procs [i]);
 				}
 			}
 
-			return((Process[])proclist.ToArray(typeof(Process)));
+			return ((Process[]) proclist.ToArray (typeof(Process)));
 		}
 
 		[MonoTODO]
@@ -836,8 +840,10 @@ namespace System.Diagnostics {
 		public static void LeaveDebugMode() {
 		}
 
-		[MonoTODO]
-		public void Refresh() {
+		public void Refresh ()
+	    	{
+			// FIXME: should refresh any cached data we might have about
+			// the process (currently we have none).
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
