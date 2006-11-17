@@ -476,6 +476,7 @@ namespace System.Windows.Forms {
 						pos = wrap_pos;
 						tag.width = wrap_width;
 						doc.Split(this, tag, pos, true);
+						this.soft_break = true;
 						len = this.text.Length;
 						retval = true;
 						wrapped = true;
@@ -483,6 +484,7 @@ namespace System.Windows.Forms {
 						// No suitable wrap position was found so break right in the middle of a word
 						tag.width = tag.width + w;
 						doc.Split(this, tag, pos, true);
+						this.soft_break = true;
 						len = this.text.Length;
 						retval = true;
 						wrapped = true;
