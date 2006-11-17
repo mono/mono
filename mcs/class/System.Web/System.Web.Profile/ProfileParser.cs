@@ -1,5 +1,5 @@
 //
-// System.Web.UI.MasterPageParser
+// System.Web.UI.ProfileParser
 //
 // Authors:
 //	Vladimir Krasnov (vladimirk@mainsoft.com)
