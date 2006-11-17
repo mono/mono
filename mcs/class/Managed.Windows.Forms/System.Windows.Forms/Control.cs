@@ -61,6 +61,7 @@ namespace System.Windows.Forms
 
 		// Basic
 		internal Rectangle		bounds;			// bounding rectangle for control (client area + decorations)
+		private Rectangle		explicit_bounds;	// explicitly set bounds
 		internal object			creator_thread;		// thread that created the control
 		internal ControlNativeWindow	window;			// object for native window handle
 		internal string			name;			// for object naming
@@ -1960,6 +1961,13 @@ namespace System.Windows.Forms
 
 				dock_style = value;
 
+				if (dock_style == DockStyle.None) {
+					if (explicit_bounds == Rectangle.Empty)
+						Bounds = new Rectangle (new Point (0, 0), DefaultSize);
+					else
+						Bounds = explicit_bounds;
+				}
+
 				if (parent != null) {
 					parent.PerformLayout(this, "Parent");
 				}
@@ -2942,6 +2950,13 @@ namespace System.Windows.Forms
 			PerformLayout(null, null);
 		}
 
+		private void SetImplicitBounds (int x, int y, int width, int height)
+		{
+			Rectangle saved_bounds = explicit_bounds;
+			SetBounds (x, y, width, height);
+			explicit_bounds = saved_bounds;
+		}
+
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public void PerformLayout(Control affectedControl, string affectedProperty) {
 			LayoutEventArgs levent = new LayoutEventArgs(affectedControl, affectedProperty);
@@ -2985,27 +3000,27 @@ namespace System.Windows.Forms
 						}
 
 						case DockStyle.Left: {
-							child.SetBounds(space.Left, space.Y, child.Width, space.Height);
+							child.SetImplicitBounds(space.Left, space.Y, child.Width, space.Height);
 							space.X+=child.Width;
 							space.Width-=child.Width;
 							break;
 						}
 
 						case DockStyle.Top: {
-							child.SetBounds(space.Left, space.Y, space.Width, child.Height);
+							child.SetImplicitBounds(space.Left, space.Y, space.Width, child.Height);
 							space.Y+=child.Height;
 							space.Height-=child.Height;
 							break;
 						}
 					
 						case DockStyle.Right: {
-							child.SetBounds(space.Right-child.Width, space.Y, child.Width, space.Height);
+							child.SetImplicitBounds(space.Right-child.Width, space.Y, child.Width, space.Height);
 							space.Width-=child.Width;
 							break;
 						}
 
 						case DockStyle.Bottom: {
-							child.SetBounds(space.Left, space.Bottom-child.Height, space.Width, child.Height);
+							child.SetImplicitBounds(space.Left, space.Bottom-child.Height, space.Width, child.Height);
 							space.Height-=child.Height;
 							break;
 						}
@@ -3017,7 +3032,7 @@ namespace System.Windows.Forms
 
 					//if (child.Visible && (child.Dock == DockStyle.Fill)) {
 					if (child.Dock == DockStyle.Fill) {
-						child.SetBounds(space.Left, space.Top, space.Width, space.Height);
+						child.SetImplicitBounds(space.Left, space.Top, space.Width, space.Height);
 					}
 				}
 
@@ -3080,7 +3095,7 @@ namespace System.Windows.Forms
 						height=0;
 					}
 
-					child.SetBounds(left, top, width, height);
+					child.SetImplicitBounds(left, top, width, height);
 				}
 #endif
 
@@ -3887,6 +3902,9 @@ namespace System.Windows.Forms
 			bounds.Width=width;
 			bounds.Height=height;
 
+			// Assume explicit bounds set. SetImplicitBounds will restore old bounds
+			explicit_bounds = bounds;
+
 			client_size.Width=clientWidth;
 			client_size.Height=clientHeight;
 
@@ -3974,7 +3992,9 @@ namespace System.Windows.Forms
 
 				case Msg.WM_WINDOWPOSCHANGED: {
 					if (Visible) {
+						Rectangle save_bounds = explicit_bounds;
 						UpdateBounds();
+						explicit_bounds = save_bounds;
 						if (GetStyle(ControlStyles.ResizeRedraw)) {
 							Invalidate();
 						}
