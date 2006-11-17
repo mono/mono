@@ -1,3 +1,11 @@
+2006-11-17  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIX11.cs: when scrolling a window with an invalid area, we
+	only want to shift the part of the invalid area that overlaps the
+	area we're scrolling.  we also don't want to clear the invalid
+	area unless the invalid area was entirely contained within the
+	scrolling area.
+
 2006-11-16  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIX11.cs: remove the handling of the TimerEvent stuff, and

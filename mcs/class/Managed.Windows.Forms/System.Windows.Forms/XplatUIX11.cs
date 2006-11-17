@@ -4211,12 +4211,11 @@ namespace System.Windows.Forms {
 			Hwnd		hwnd;
 			IntPtr		gc;
 			XGCValues	gc_values;
-			Rectangle	r;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-			r = hwnd.Invalid;
-			if (r != Rectangle.Empty) {
+			Rectangle r = Rectangle.Intersect (hwnd.Invalid, area);
+			if (!r.IsEmpty) {
 				/* We have an invalid area in the window we're scrolling. 
 				   Adjust our stored invalid rectangle to to match the scrolled amount */
 
@@ -4233,7 +4232,8 @@ namespace System.Windows.Forms {
 					r.Y =0;
 				}
 
-				hwnd.ClearInvalidArea();
+				if (area.Contains (hwnd.Invalid))
+					hwnd.ClearInvalidArea ();
 				hwnd.AddInvalidArea(r);
 			}
 
