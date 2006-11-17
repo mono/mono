@@ -591,8 +591,10 @@ namespace System.Windows.Forms
 				label_where.Text = port;
 				label_comment.Text = comment;
 
+				accept_button.Enabled = true;
 			}
 			catch  {
+				accept_button.Enabled = false;
 			}
 		}
 	}

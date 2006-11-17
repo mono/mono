@@ -191,8 +191,14 @@ namespace System.Windows.Forms {
 		#region Protected Instance Methods
 		protected override bool RunDialog (IntPtr hwnd) 
 		{
-			SetPrinterDetails ();
-			return true;
+			try {
+				SetPrinterDetails ();
+				return true;
+			}
+			catch (Exception e) {
+				MessageBox.Show (e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return false;
+			}
 		}
 		#endregion // Protected Instance Methods
 

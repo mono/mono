@@ -179,33 +179,39 @@ namespace System.Windows.Forms {
 		#region Public Instance Methods
 		internal void GeneratePreview ()
 		{
-			if (document == null)
-				return;
+			try {
+				if (document == null)
+					return;
 
-			if (page_infos == null) {
-				document.Print ();
-				page_infos = controller.GetPreviewPageInfo ();
-			}
+				if (page_infos == null) {
+					document.Print ();
+					page_infos = controller.GetPreviewPageInfo ();
+				}
+				
+				if (image_cache == null) {
+					image_cache = new Image[page_infos.Length];
 
-			if (image_cache == null) {
-				image_cache = new Image[page_infos.Length];
+					if (page_infos.Length > 0) {
+						image_size = ThemeEngine.Current.PrintPreviewControlGetPageSize (this);
+						if (image_size.Width >= 0 && image_size.Width < page_infos[0].Image.Width
+						    && image_size.Height >= 0 && image_size.Height < page_infos[0].Image.Height) {
 
-				if (page_infos.Length > 0) {
-					image_size = ThemeEngine.Current.PrintPreviewControlGetPageSize (this);
-					if (image_size.Width >= 0 && image_size.Width < page_infos[0].Image.Width
-					    && image_size.Height >= 0 && image_size.Height < page_infos[0].Image.Height) {
-
-						for (int i = 0; i < page_infos.Length; i ++) {
-							image_cache[i] = new Bitmap (image_size.Width, image_size.Height);
-							Graphics g = Graphics.FromImage (image_cache[i]);
-							g.DrawImage (page_infos[i].Image, new Rectangle (new Point (0, 0), image_size), 0, 0, page_infos[i].Image.Width, page_infos[i].Image.Height, GraphicsUnit.Pixel);
-							g.Dispose ();
+							for (int i = 0; i < page_infos.Length; i ++) {
+								image_cache[i] = new Bitmap (image_size.Width, image_size.Height);
+								Graphics g = Graphics.FromImage (image_cache[i]);
+								g.DrawImage (page_infos[i].Image, new Rectangle (new Point (0, 0), image_size), 0, 0, page_infos[i].Image.Width, page_infos[i].Image.Height, GraphicsUnit.Pixel);
+								g.Dispose ();
+							}
 						}
 					}
 				}
+				UpdateScrollBars();
 			}
-
-			UpdateScrollBars();
+			catch (Exception e) {
+				page_infos = new PreviewPageInfo[0];
+				image_cache = new Image[0];
+				MessageBox.Show (e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
 		}
 
 		public void InvalidatePreview()
@@ -249,7 +255,7 @@ namespace System.Windows.Forms {
 		{
 			base.OnResize (e);
 			if (AutoZoom) {
-				if (page_infos != null) {
+				if (page_infos != null && page_infos.Length > 0) {
 					Size new_size = ThemeEngine.Current.PrintPreviewControlGetPageSize (this);
 					if (new_size.Width != image_size.Width && new_size.Height != image_size.Height)
 						image_cache = null;

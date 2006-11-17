@@ -1,3 +1,22 @@
+2006-11-17  Chris Toshok  <toshok@ximian.com>
+
+	[ fixes the exit/crashes associated with #79835.  it's clearly
+	suboptimal though, we need to figure out a better way to solve
+	this. ]
+	
+	* PrintPreviewControl.cs: deal with the new invalid printer
+	exceptions.
+
+	* PageSetupDialog.cs: if the printer is invalid, pop up a dialog
+	and return false (so CommonDialog.ShowDialog doesn't actually show
+	the form.)
+
+	* PrintDialog.cs: enable/disable the Ok button depending on
+	whether or not the printer is valid.
+
+	* CommonDialog.cs (ShowDialog): only actually show the form if
+	RunDialog returns true.
+
 2006-11-17  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: When soft splitting a line, mark it as a soft
