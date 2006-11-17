@@ -183,7 +183,14 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void RenderContents (HtmlTextWriter writer)
 		{
+#if NET_2_0
+			bool havePage = Page != null;
+#endif
 			foreach (ListItem item in Items) {
+#if NET_2_0
+				if (havePage)
+					Page.ClientScript.RegisterForEventValidation (this.UniqueID, item.Value.ToString ());
+#endif
 				writer.WriteBeginTag ("option");
 				if (item.Selected) {
 					writer.WriteAttribute ("selected", "selected", false);

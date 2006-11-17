@@ -180,7 +180,9 @@ namespace System.Web.UI.WebControls {
 
 			for (int i = 0; i < count; i++) {
 				item = Items[i];
-
+#if NET_2_0
+				Page.ClientScript.RegisterForEventValidation (this.UniqueID, item.Value.ToString ());
+#endif
 				writer.WriteBeginTag("option");
 				if (item.Selected) {
 					if (selected) {

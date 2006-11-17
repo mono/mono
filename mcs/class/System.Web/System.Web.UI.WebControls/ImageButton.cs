@@ -209,9 +209,13 @@ namespace System.Web.UI.WebControls {
 
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
-			if (Page != null)
+			if (Page != null) {
+#if NET_2_0
+				Page.ClientScript.RegisterForEventValidation (GetPostBackOptions ());
+#endif
 				Page.VerifyRenderingInServerForm (this);
-
+			}
+			
 			writer.AddAttribute (HtmlTextWriterAttribute.Type, "image");
 			writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
 #if NET_2_0

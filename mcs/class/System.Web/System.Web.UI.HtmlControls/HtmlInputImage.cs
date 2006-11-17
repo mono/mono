@@ -246,6 +246,9 @@ namespace System.Web.UI.HtmlControls {
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
 #if NET_2_0
+			if (Page != null)
+				Page.ClientScript.RegisterForEventValidation (this.UniqueID);
+			
 			if (CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup)) {
 				ClientScriptManager csm = Page.ClientScript;
 				Attributes ["onclick"] += csm.GetClientValidationEvent (ValidationGroup);

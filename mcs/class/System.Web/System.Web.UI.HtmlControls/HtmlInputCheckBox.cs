@@ -88,6 +88,15 @@ namespace System.Web.UI.HtmlControls
 		}
 
 #if NET_2_0
+		protected override void RenderAttributes (HtmlTextWriter writer)
+		{
+			if (Page != null)
+				Page.ClientScript.RegisterForEventValidation (this.UniqueID);
+			base.RenderAttributes (writer);
+		}
+#endif
+
+#if NET_2_0
 		protected internal
 #else
 		protected

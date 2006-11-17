@@ -172,7 +172,14 @@ namespace System.Web.UI.WebControls {
 		protected internal override void RenderContents (HtmlTextWriter writer)
 		{
 			int idx = 0;
+#if NET_2_0
+			bool havePage = Page != null;
+#endif
 			foreach (ListItem i in Items) {
+#if NET_2_0
+				if (havePage)
+					Page.ClientScript.RegisterForEventValidation (this.UniqueID, i.Value.ToString ());
+#endif
 				writer.RenderBeginTag (HtmlTextWriterTag.Li);
 				this.RenderBulletText (i, idx ++, writer);
 				writer.RenderEndTag ();

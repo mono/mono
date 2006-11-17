@@ -2,7 +2,8 @@
 
 	* System.Web.dll.sources: Added
 	System.Web.Compilation/ForceCopyBuildProvider.cs and
-	System.Web.Compilation/MasterPageBuildProvider.cs
+	System.Web.Compilation/MasterPageBuildProvider.cs and
+	System.Web.UI/PageLifeCycle.cs
 
 2006-11-09 Vladimir Krasnov <vladimirk@mainsoft.com>
 

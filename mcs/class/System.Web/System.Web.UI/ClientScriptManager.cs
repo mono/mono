@@ -34,6 +34,9 @@
 
 using System;
 using System.Collections;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 using System.Text;
 
 namespace System.Web.UI
@@ -52,7 +55,10 @@ namespace System.Web.UI
 		ScriptEntry submitStatements;
 		ScriptEntry scriptIncludes;
 		Page page;
-	
+#if NET_2_0
+		List <int> eventValidationValues;
+#endif
+		
 		internal ClientScriptManager (Page page)
 		{
 			this.page = page;
@@ -70,6 +76,15 @@ namespace System.Web.UI
 			return "javascript:" + GetPostBackEventReference (control, argument);
 		}
 	
+#if NET_2_0
+		public string GetPostBackClientHyperlink (Control control, string argument, bool registerForEventValidation)
+		{
+			if (registerForEventValidation)
+				RegisterForEventValidation (control.UniqueID, argument);
+			return "javascript:" + GetPostBackEventReference (control, argument);
+		}
+#endif
+		
 		public string GetPostBackEventReference (Control control, string argument)
 		{
 			page.RequiresPostBackScript ();
@@ -339,35 +354,64 @@ namespace System.Web.UI
 		{
 			throw new NotImplementedException ();
 		}
-
-		[MonoTODO]
-		public void RegisterForEventValidation (PostBackOptions options)
+		
+		// Implemented following the description in http://odetocode.com/Blogs/scott/archive/2006/03/20/3145.aspx
+		private int CalculateEventHash (string uniqueId, string argument)
 		{
-			throw new NotImplementedException ();
+			int uniqueIdHash = uniqueId.GetHashCode ();
+			int argumentHash = (argument == null) ? 0 : argument.GetHashCode ();
+			return (uniqueIdHash ^ argumentHash);
 		}
 		
-		[MonoTODO]
+		public void RegisterForEventValidation (PostBackOptions options)
+		{
+			// MS.NET does not check for options == null, so we won't too...
+			RegisterForEventValidation (options.TargetControl.UniqueID, options.Argument);
+		}
+		
 		public void RegisterForEventValidation (string uniqueId)
 		{
-			throw new NotImplementedException ();
+			RegisterForEventValidation (uniqueId, null);
 		}
-
-		[MonoTODO]
+		
 		public void RegisterForEventValidation (string uniqueId, string argument)
 		{
-			throw new NotImplementedException ();
+			if (!page.EnableEventValidation)
+				return;
+			if (uniqueId == null || uniqueId.Length == 0)
+				return;
+			if (page.LifeCycle < PageLifeCycle.Render)
+				throw new InvalidOperationException ("RegisterForEventValidation may only be called from the Render method");
+			if (eventValidationValues == null)
+				eventValidationValues = new List <int> ();
+
+			
+			int hash = CalculateEventHash (uniqueId, argument);
+			if (eventValidationValues.BinarySearch (hash) < 0)
+				eventValidationValues.Add (hash);
 		}
 
-		[MonoTODO]
 		public void ValidateEvent (string uniqueId)
 		{
-			throw new NotImplementedException ();
+			ValidateEvent (uniqueId, null);
 		}
 
-		[MonoTODO]
 		public void ValidateEvent (string uniqueId, string argument)
 		{
-			throw new NotImplementedException ();
+			if (uniqueId == null || uniqueId.Length == 0)
+				throw new ArgumentException ("must not be null or empty", "uniqueId");
+			if (!page.EnableEventValidation)
+				return;
+			if (eventValidationValues == null)
+				goto bad;
+			
+			int hash = CalculateEventHash (uniqueId, argument);
+			if (eventValidationValues.BinarySearch (hash) < 0)
+				goto bad;
+			return;
+			
+			bad:
+			throw new ArgumentException ("Invalid postback or callback argument. Event validation is enabled using <pages enableEventValidation=\"true\"/> in configuration or <%@ Page EnableEventValidation=\"true\" %> in a page. For security purposes, this feature verifies that arguments to postback or callback events originate from the server control that originally rendered them. If the data is valid and expected, use the ClientScriptManager.RegisterForEventValidation method in order to register the postback or callback data for validation.");
 		}
 #endif
 		void WriteScripts (HtmlTextWriter writer, ScriptEntry scriptList)
@@ -377,6 +421,30 @@ namespace System.Web.UI
 				scriptList = scriptList.Next;
 			}
 		}
+
+#if NET_2_0
+		internal void RestoreEventValidationState (string fieldValue)
+		{
+			if (!page.EnableEventValidation || fieldValue == null || fieldValue.Length == 0)
+				return;
+			LosFormatter fmt = page.GetFormatter ();
+			eventValidationValues = (List <int>)fmt.Deserialize (fieldValue);
+		}
+		
+		internal void SaveEventValidationState ()
+		{
+			if (!page.EnableEventValidation || eventValidationValues == null || eventValidationValues.Count == 0)
+				return;
+			eventValidationValues.Sort ();
+			LosFormatter fmt = page.GetFormatter ();
+			RegisterHiddenField (EventStateFieldName, fmt.SerializeToBase64 (eventValidationValues));
+		}
+
+		internal string EventStateFieldName
+		{
+			get { return "__EVENTVALIDATION"; }
+		}
+#endif
 		
 		internal void WriteHiddenFields (HtmlTextWriter writer)
 		{

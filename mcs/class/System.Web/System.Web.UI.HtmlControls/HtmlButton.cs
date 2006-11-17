@@ -97,7 +97,7 @@ namespace System.Web.UI.HtmlControls {
 #endif
 			OnServerClick (EventArgs.Empty);
 		}
-
+		
 #if NET_2_0
 		protected internal
 #else		
@@ -121,6 +121,7 @@ namespace System.Web.UI.HtmlControls {
 #if NET_2_0
 			if (Page != null && Events [ServerClickEvent] != null) {
 				PostBackOptions options = GetPostBackOptions ();
+				Page.ClientScript.RegisterForEventValidation (options);
 				Attributes ["onclick"] += Page.ClientScript.GetPostBackEventReference (options);
 				writer.WriteAttribute ("language", "javascript");
 			}

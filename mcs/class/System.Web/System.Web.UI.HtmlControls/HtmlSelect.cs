@@ -611,6 +611,10 @@ namespace System.Web.UI.HtmlControls
 		
 		protected override void RenderAttributes (HtmlTextWriter w)
 		{
+#if NET_2_0
+			if (Page != null)
+				Page.ClientScript.RegisterForEventValidation (this.UniqueID);
+#endif
 			/* If there is no "name" attribute,
 			 * LoadPostData doesn't work...
 			 */
@@ -645,7 +649,6 @@ namespace System.Web.UI.HtmlControls
 			int count = items.Count;
 			for (int i = 0; i < count; i++) {
 				ListItem item = items[i];
-
 				w.Indent++;
 				
 				/* Write the <option> elements this

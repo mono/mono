@@ -1,3 +1,25 @@
+2006-11-17  Marek Habersack  <grendello@gmail.com>
+
+	* ImageButton.cs: Added support for event validation.
+
+	* ListBox.cs: Added support for event validation.
+
+	* Calendar.cs: Added support for event validation.
+
+	* DropDownList.cs: Added support for event validation.
+
+	* FormView.cs: Added support for event validation.
+
+	* RadioButtonList.cs: Added support for event validation.
+
+	* TextBox.cs: Added support for event validation.
+
+	* BulletedList.cs: Added support for event validation.
+
+	* CheckBox.cs: Added support for event validation.
+
+	* Button.cs: Added support for event validation.
+
 2006-11-16 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* CreateUserWizard.cs: fixed: ActiveStepIndex property.

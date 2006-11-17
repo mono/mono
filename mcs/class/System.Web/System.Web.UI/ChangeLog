@@ -1,3 +1,31 @@
+2006-11-17  Marek Habersack  <grendello@gmail.com>
+
+	* PostBackOptions.cs: Renamed the constructors parameters to match
+	those Microsoft .NET uses.
+	targetControl must not be passed null to the constructor.
+
+	* ClientScriptManager.cs: Support for event validation.
+	Implemented a GetPostBackHyperlink overload.
+	Implemented the RegisterForEventValidation methods.
+	Implemented the ValidateEvent method.
+	Added support for saving/restoring event validation state.
+
+	* Page.cs: EnableEventValidation can be set only from the config
+	files (the <pages> element), the Page directive or from
+	Page_Init. After Page_Init returns, an exception is thrown.
+	Made GetFormatter internal, so that ClientScriptManager can use
+	it.
+	Added the internal LifeCycle property which contains the current
+	life cycle stage of the page request processing.
+	Added calls to save/restore event validation state.
+	Added checks for whether child controls of the page support event
+	validation or not.
+	Added calls to ClientScriptManager.ValidateEvent in appropriate
+	places.
+
+	* PageLifeCycle.cs: Added the PageLifeCycle enum, used in event
+	validation.
+
 2006-11-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* LosFormatter.cs:

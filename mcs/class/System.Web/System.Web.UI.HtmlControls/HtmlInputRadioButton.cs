@@ -96,7 +96,6 @@ namespace System.Web.UI.HtmlControls {
 			}
 		}
 
-
 #if NET_2_0
 		protected internal
 #else
@@ -120,6 +119,10 @@ namespace System.Web.UI.HtmlControls {
 
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
+#if NET_2_0
+			if (Page != null)
+				Page.ClientScript.RegisterForEventValidation (this.UniqueID, Value);
+#endif
 			writer.WriteAttribute ("value", Value);
 			Attributes.Remove ("value");
 			base.RenderAttributes (writer);

@@ -111,6 +111,14 @@ namespace System.Web.UI.HtmlControls {
 
 
 #if NET_2_0
+		protected internal override void Render (HtmlTextWriter writer)
+		{
+			Page.ClientScript.RegisterForEventValidation (this.UniqueID);
+			base.Render (writer);
+		}
+#endif
+
+#if NET_2_0
 		protected internal
 #else		
 		protected

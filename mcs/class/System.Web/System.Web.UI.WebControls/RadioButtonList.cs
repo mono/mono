@@ -339,6 +339,9 @@ namespace System.Web.UI.WebControls {
 		override void Render (HtmlTextWriter writer)
 		{
 #if NET_2_0
+			if (Page != null)
+				Page.ClientScript.RegisterForEventValidation (this.UniqueID);
+
 			if (Items.Count == 0)
 				return;
 #endif

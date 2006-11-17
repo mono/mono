@@ -71,6 +71,7 @@ namespace System.Web.UI
 public class Page : TemplateControl, IHttpHandler
 {
 #if NET_2_0
+	private PageLifeCycle _lifeCycle = PageLifeCycle.Unknown;
 	private bool _eventValidation = true;
 #endif
 	private bool _viewState = true;
@@ -281,7 +282,15 @@ public class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 	public virtual bool EnableEventValidation {
 		get { return _eventValidation; }
-		set { _eventValidation = value;}
+		set {
+			if (_lifeCycle > PageLifeCycle.Init)
+				throw new InvalidOperationException ("The 'EnableEventValidation' property can be set only in the Page_init, the Page directive or in the <pages> configuration section.");
+			_eventValidation = value;
+		}
+	}
+
+	internal PageLifeCycle LifeCycle {
+		get { return _lifeCycle; }
 	}
 #endif
 
@@ -942,7 +951,7 @@ public class Page : TemplateControl, IHttpHandler
 		scriptManager.WriteClientScriptBlocks (writer);
 	}
 
-	LosFormatter GetFormatter ()
+	internal LosFormatter GetFormatter ()
 	{
 #if NET_2_0
 		PagesSection config = (PagesSection) WebConfigurationManager.GetSection ("system.web/pages");
@@ -983,7 +992,10 @@ public class Page : TemplateControl, IHttpHandler
 
 		if (!postBackScriptRendered && requiresPostBackScript)
 			RenderPostBackScript (writer, formUniqueID);
-
+		
+#if NET_2_0
+		scriptManager.SaveEventValidationState ();
+#endif
 		scriptManager.WriteHiddenFields (writer);
 		scriptManager.WriteClientScriptIncludes (writer);
 		scriptManager.WriteStartupScriptBlocks (writer);
@@ -1069,6 +1081,9 @@ public class Page : TemplateControl, IHttpHandler
 	public void ProcessRequest (HttpContext context)
 #endif
 	{
+#if NET_2_0
+		_lifeCycle = PageLifeCycle.Unknown;
+#endif
 		_context = context;
 		if (clientTarget != null)
 			Request.ClientTarget = clientTarget;
@@ -1096,8 +1111,14 @@ public class Page : TemplateControl, IHttpHandler
 			throw;
 		} finally {
 			try {
+#if NET_2_0
+				_lifeCycle = PageLifeCycle.Unload;
+#endif
 				RenderTrace ();
 				UnloadRecursive (true);
+#if NET_2_0
+				_lifeCycle = PageLifeCycle.End;
+#endif
 			} catch {}
 			if (Thread.CurrentThread.CurrentCulture.Equals (culture) == false)
 				Thread.CurrentThread.CurrentCulture = culture;
@@ -1120,6 +1141,7 @@ public class Page : TemplateControl, IHttpHandler
 		_requestValueCollection = this.DeterminePostBackMode();
 
 #if NET_2_0
+		_lifeCycle = PageLifeCycle.Start;
 		// http://msdn2.microsoft.com/en-us/library/ms178141.aspx
 		if (_requestValueCollection != null) {
 			if (!isCrossPagePostBack && _requestValueCollection [PreviousPageID] != null && _requestValueCollection [PreviousPageID] != Request.FilePath) {
@@ -1131,22 +1153,28 @@ public class Page : TemplateControl, IHttpHandler
 			}
 		}
 
+		_lifeCycle = PageLifeCycle.PreInit;
 		OnPreInit (EventArgs.Empty);
 
 		InitializeTheme ();
 		ApplyMasterPage ();
+		_lifeCycle = PageLifeCycle.Init;
 #endif
 		Trace.Write ("aspx.page", "Begin Init");
 		InitRecursive (null);
 		Trace.Write ("aspx.page", "End Init");
 
 #if NET_2_0
+		_lifeCycle = PageLifeCycle.InitComplete;
 		OnInitComplete (EventArgs.Empty);
 #endif
 			
 		renderingForm = false;	
 #if NET_2_0
 		if (IsPostBack || IsCallback) {
+			_lifeCycle = PageLifeCycle.PreLoad;
+			if (_requestValueCollection != null)
+				scriptManager.RestoreEventValidationState (_requestValueCollection [scriptManager.EventStateFieldName]);
 #else
 		if (IsPostBack) {
 #endif
@@ -1160,11 +1188,13 @@ public class Page : TemplateControl, IHttpHandler
 
 #if NET_2_0
 		OnPreLoad (EventArgs.Empty);
+		_lifeCycle = PageLifeCycle.Load;
 #endif
 
 		LoadRecursive ();
 #if NET_2_0
 		if (IsPostBack || IsCallback) {
+			_lifeCycle = PageLifeCycle.ControlEvents;
 #else
 		if (IsPostBack) {
 #endif
@@ -1180,6 +1210,7 @@ public class Page : TemplateControl, IHttpHandler
 		}
 		
 #if NET_2_0
+		_lifeCycle = PageLifeCycle.LoadComplete;
 		OnLoadComplete (EventArgs.Empty);
 
 		if (IsCrossPagePostBack)
@@ -1192,6 +1223,8 @@ public class Page : TemplateControl, IHttpHandler
 			callbackOutput.Flush ();
 			return;
 		}
+
+		_lifeCycle = PageLifeCycle.PreRender;
 #endif
 		
 		Trace.Write ("aspx.page", "Begin PreRender");
@@ -1207,7 +1240,9 @@ public class Page : TemplateControl, IHttpHandler
 		Trace.Write ("aspx.page", "End SaveViewState");
 		
 #if NET_2_0
+		_lifeCycle = PageLifeCycle.SaveStateComplete;
 		OnSaveStateComplete (EventArgs.Empty);
+		_lifeCycle = PageLifeCycle.Render;
 #endif
 		
 		//--
@@ -1235,9 +1270,31 @@ public class Page : TemplateControl, IHttpHandler
 		}
 	}
 	
+#if NET_2_0
+	bool CheckForValidationSupport (Control targetControl)
+	{
+		if (targetControl == null)
+			return false;
+		Type type = targetControl.GetType ();
+		object[] attributes = type.GetCustomAttributes (true);
+		foreach (object attr in attributes)
+			if (attr is SupportsEventValidationAttribute)
+				return true;
+		return false;
+	}
+#endif
+	
 	void RaisePostBackEvents ()
 	{
+#if NET_2_0
+		Control targetControl;
+#endif
 		if (requiresRaiseEvent != null) {
+#if NET_2_0
+			targetControl = requiresRaiseEvent as Control;
+			if (targetControl != null && CheckForValidationSupport (targetControl))
+				scriptManager.ValidateEvent (targetControl.UniqueID, null);
+#endif
 			RaisePostBackEvent (requiresRaiseEvent, null);
 			return;
 		}
@@ -1252,11 +1309,21 @@ public class Page : TemplateControl, IHttpHandler
 			return;
                 }
 
+#if NET_2_0
+		targetControl = FindControl (eventTarget);
+		IPostBackEventHandler target = targetControl as IPostBackEventHandler;
+#else
 		IPostBackEventHandler target = FindControl (eventTarget) as IPostBackEventHandler;
+#endif
+			
 		if (target == null)
 			return;
 
 		string eventArgument = postdata [postEventArgumentID];
+#if NET_2_0
+		if (CheckForValidationSupport (targetControl))
+			scriptManager.ValidateEvent (targetControl.UniqueID, eventArgument);
+#endif
 		RaisePostBackEvent (target, eventArgument);
 	}
 
@@ -1675,11 +1742,14 @@ public class Page : TemplateControl, IHttpHandler
 		if (callbackTarget == null || callbackTarget.Length == 0)
 			throw new HttpException ("Callback target not provided.");
 
-		ICallbackEventHandler target = FindControl (callbackTarget) as ICallbackEventHandler;
+		Control targetControl = FindControl (callbackTarget);
+		ICallbackEventHandler target = targetControl as ICallbackEventHandler;
 		if (target == null)
 			throw new HttpException (string.Format ("Invalid callback target '{0}'.", callbackTarget));
 
 		string callbackArgument = _requestValueCollection [CallbackArgumentID];
+		if (CheckForValidationSupport (targetControl))
+			scriptManager.ValidateEvent (targetControl.UniqueID, callbackArgument);
 		target.RaiseCallbackEvent (callbackArgument);
 		return target.GetCallbackResult ();
 	}

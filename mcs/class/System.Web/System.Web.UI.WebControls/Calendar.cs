@@ -786,6 +786,10 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void Render (HtmlTextWriter writer)
 		{
+#if NET_2_0
+			if (Page != null)
+				Page.ClientScript.RegisterForEventValidation (this.UniqueID);
+#endif
 			Table table = new Table ();
 			table.CellSpacing = CellSpacing;
 			table.CellPadding = CellPadding;

@@ -1,10 +1,12 @@
 //
-// System.Web.UI.HtmlControls.HtmlInputSubmit.cs
+// System.Web.Compilation.PageLifeCycle
 //
-// Author:
-//	Chris Toshok  <toshok@ximian.com>
+// Authors:
+//   Marek Habersack (grendello@gmail.com)
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2006 Marek Habersack
+//
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,37 +27,22 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 #if NET_2_0
-
-using System.ComponentModel;
-using System.Security.Permissions;
-
-namespace System.Web.UI.HtmlControls {
-
-	// CAS
-	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	// attributes
-	[DefaultEventAttribute ("ServerClick")]
-	[SupportsEventValidation]
-	public class HtmlInputSubmit : HtmlInputButton, IPostBackEventHandler
-	{
-		public HtmlInputSubmit ()
-			: base ("submit")
-		{
-		}
-
-		public HtmlInputSubmit (string type)
-			: base (type)
-		{
-		}
-		
-		[MonoTODO ("why our own version?")]
-		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
-		{
-			base.RaisePostBackEvent (eventArgument);
-		}
-	}
+internal enum PageLifeCycle
+{
+	Unknown = 1,
+	Start,
+	PreInit,
+	Init,
+	InitComplete,
+	PreLoad,
+	Load,
+	ControlEvents,
+	LoadComplete,
+	PreRender,
+	SaveStateComplete,
+	Render,
+	Unload,
+	End
 }
 #endif

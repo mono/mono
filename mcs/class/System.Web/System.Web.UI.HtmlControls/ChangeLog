@@ -1,3 +1,23 @@
+2006-11-17  Marek Habersack  <grendello@gmail.com>
+
+	* HtmlInputHidden.cs: Added support for event validation.
+
+	* HtmlInputCheckBox.cs: Added support for event validation.
+
+	* HtmlInputImage.cs: Added support for event validation.
+
+	* HtmlInputButton.cs: Added support for event validation.
+
+	* HtmlSelect.cs: Added support for event validation.
+
+	* HtmlTextArea.cs: Added support for event validation.
+
+	* HtmlButton.cs: Added support for event validation.
+
+	* HtmlInputRadioButton.cs: Added support for event validation.
+
+	* HtmlInputText.cs: Added support for event validation.
+
 2006-11-13  Igor Zelmanovich  <igorz@mainsoft.com>
 
 	* HtmlContainerControl.cs: fixed: InnerHtml property  

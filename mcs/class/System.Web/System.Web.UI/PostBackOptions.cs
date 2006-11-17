@@ -45,29 +45,31 @@ namespace System.Web.UI
 		private bool performValidation;
 		private string validationGroup;
 
-		public PostBackOptions (Control control)
-			: this (control, null, null, false, false, false, true, false, null)
+		public PostBackOptions (Control targetControl)
+			: this (targetControl, null, null, false, false, false, true, false, null)
 		{
 		}
 
-		public PostBackOptions (Control control, string argument)
-			: this (control, argument, null, false, false, false, true, false, null)
+		public PostBackOptions (Control targetControl, string argument)
+			: this (targetControl, argument, null, false, false, false, true, false, null)
 		{
 		}
 
-		public PostBackOptions (Control control, string argument, string actionUrl, bool isAutoPostBack,
-					bool isJavaScriptProtocolRequired, bool isTrackFocus, bool isClientSubmit,
-					bool isValidationPerformed, string validatingGroup)
+		public PostBackOptions (Control targetControl, string argument, string actionUrl, bool autoPostBack,
+					bool requiresJavaScriptProtocol, bool trackFocus, bool clientSubmit,
+					bool performValidation, string validationGroup)
 		{
-			this.control = control;
+			if (targetControl == null)
+				throw new ArgumentNullException ("targetControl");
+			this.control = targetControl;
 			this.argument = argument;
 			this.actionUrl = actionUrl;
-			this.autoPostBack = isAutoPostBack;
-			this.requiresJavaScriptProtocol = isJavaScriptProtocolRequired;
-			this.trackFocus = isTrackFocus;
-			this.clientSubmit = isClientSubmit;
-			this.performValidation = isValidationPerformed;
-			this.validationGroup = validatingGroup;
+			this.autoPostBack = autoPostBack;
+			this.requiresJavaScriptProtocol = requiresJavaScriptProtocol;
+			this.trackFocus = trackFocus;
+			this.clientSubmit = clientSubmit;
+			this.performValidation = performValidation;
+			this.validationGroup = validationGroup;
 		}
 
 		[DefaultValue ("")]

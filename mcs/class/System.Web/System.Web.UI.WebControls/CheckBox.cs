@@ -362,9 +362,13 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void Render (HtmlTextWriter w)
 		{
-			if (Page != null)
+			if (Page != null) {
+#if NET_2_0
+				Page.ClientScript.RegisterForEventValidation (this.UniqueID);
+#endif
 				Page.VerifyRenderingInServerForm (this);
-
+			}
+			
 			bool need_span = ControlStyleCreated && !ControlStyle.IsEmpty;
 			if (need_span)
 				ControlStyle.AddAttributesToRender (w, this);

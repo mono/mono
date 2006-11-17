@@ -164,9 +164,13 @@ namespace System.Web.UI.WebControls {
 #endif		
 
 		protected override void AddAttributesToRender (HtmlTextWriter writer) {
-			if (Page != null)
+			if (Page != null) {
+#if NET_2_0
+				Page.ClientScript.RegisterForEventValidation (GetPostBackOptions ());
+#endif
 				Page.VerifyRenderingInServerForm (this);
-
+			}
+			
 #if NET_2_0
 			writer.AddAttribute (HtmlTextWriterAttribute.Type, UseSubmitBehavior ? "submit" : "button");
 			writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
@@ -270,14 +274,14 @@ namespace System.Web.UI.WebControls {
 		protected internal
 #else		
 		protected
-#endif		
+#endif
 		override void RenderContents (HtmlTextWriter writer)
-		{
-		}
-
+                {
+                }
+		
 		[WebSysDescription ("")]
 		[WebCategory ("Action")]
-		public event EventHandler Click
+			public event EventHandler Click
 		{
 			add {
 				Events.AddHandler (ClickEvent, value);

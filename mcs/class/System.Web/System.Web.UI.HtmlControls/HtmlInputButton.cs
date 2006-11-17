@@ -177,6 +177,7 @@ namespace System.Web.UI.HtmlControls {
 				}
 				if (Page != null) {
 					PostBackOptions options = GetPostBackOptions ();
+					Page.ClientScript.RegisterForEventValidation (options);
 					onclick += Page.ClientScript.GetPostBackEventReference (options);
 				}
 

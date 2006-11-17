@@ -137,6 +137,10 @@ namespace System.Web.UI.HtmlControls {
 
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
+#if NET_2_0
+			if (Page != null)
+				Page.ClientScript.RegisterForEventValidation (this.UniqueID);
+#endif
 			if (Attributes ["name"] == null) {
 				writer.WriteAttribute ("name", Name);
 			}
