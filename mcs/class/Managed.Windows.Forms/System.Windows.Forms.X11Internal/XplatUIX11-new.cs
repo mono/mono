@@ -62,10 +62,10 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.Windows.Forms.X11Internal;
+using System.Windows.Forms;
 
 /// X11 Version
-namespace System.Windows.Forms {
+namespace System.Windows.Forms.X11Internal {
 	internal class XplatUIX11_new : XplatUIDriver {
 		#region Local Variables
 		// General
@@ -74,7 +74,7 @@ namespace System.Windows.Forms {
 		static bool		themes_enabled;
 
 		// Message Loop
-		static Hashtable	MessageQueues;		// Holds our thread-specific XEventQueues
+		static Hashtable	MessageQueues;		// Holds our thread-specific X11ThreadQueues
 
 		// Cursors
 		static IntPtr		LastCursorWindow;	// The last window we set the cursor on
@@ -139,514 +139,112 @@ namespace System.Windows.Forms {
 
 		#region Private Methods
 
-#if false
-		private void WakeupMain ()
+		internal X11ThreadQueue ThreadQueue (Thread thread)
 		{
-			wake.Send (new byte [] { 0xFF });
-		}
-#endif
+			X11ThreadQueue	queue;
 
-		internal XEventQueue ThreadQueue (Thread thread)
-		{
-			XEventQueue	queue;
-
-			queue = (XEventQueue)MessageQueues[thread];
+			queue = (X11ThreadQueue)MessageQueues[thread];
 			if (queue == null) {
-				queue = new XEventQueue(thread);
+				queue = new X11ThreadQueue(thread);
 				MessageQueues[thread] = queue;
 			}
 
 			return queue;
 		}
-
-		private void FrameExtents (IntPtr window, out int left, out int top)
-		{
-			X11Hwnd hwnd = (X11Hwnd)Hwnd.ObjectFromHandle(window);
-
-			if (hwnd != null)
-				hwnd.FrameExtents (out left, out top);
-			else {
-				left = top = 0;
-			}
-		}
-
-		private int NextTimeout (ArrayList timers, DateTime now) {
-			int timeout = Int32.MaxValue; 
-
-			foreach (Timer timer in timers) {
-				int next = (int) (timer.Expires - now).TotalMilliseconds;
-				if (next < 0) {
-					return 0; // Have a timer that has already expired
-				}
-
-				if (next < timeout) {
-					timeout = next;
-				}
-			}
-			if (timeout < Timer.Minimum) {
-				timeout = Timer.Minimum;
-			}
-
-			if (timeout > 1000)
-				timeout = 1000;
-			return timeout;
-		}
-
-		private void CheckTimers (ArrayList timers, DateTime now) {
-			int count;
-
-			count = timers.Count;
-
-			if (count == 0)
-				return;
-
-			for (int i = 0; i < timers.Count; i++) {
-				Timer timer;
-
-				timer = (Timer) timers [i];
-
-				if (timer.Enabled && timer.Expires <= now) {
-					timer.Update (now);
-					timer.FireTick ();
-				}
-			}
-		}
-
-#if false
-		private void UpdateMessageQueue (XEventQueue queue) {
-			DateTime	now;
-			int		pending;
-			Hwnd		hwnd;
-
-			now = DateTime.UtcNow;
-
-			lock (XlibLock) {
-				pending = XPending (DisplayHandle);
-			}
-
-			if (pending == 0) {
-				if ((queue == null || queue.DispatchIdle) && Idle != null) {
-					Idle (this, EventArgs.Empty);
-				}
-
-				lock (XlibLock) {
-					pending = XPending (DisplayHandle);
-				}
-			}
-
-			if (pending == 0) {
-				int	timeout = 0;
-
-				if (queue != null) {
-					if (queue.Paint.Count > 0)
-						return;
-
-					timeout = NextTimeout (queue.timer_list, now);
-				}
-
-				if (timeout > 0) {
-					#if __MonoCS__
-					Syscall.poll (pollfds, (uint) pollfds.Length, timeout);
-					// Clean out buffer, so we're not busy-looping on the same data
-					if (pollfds[1].revents != 0) {
-						wake_receive.Receive(network_buffer, 0, 1, SocketFlags.None);
-					}
-					#endif
-					lock (XlibLock) {
-						pending = XPending (DisplayHandle);
-					}
-				}
-			}
-
-			if (queue != null)
-				CheckTimers (queue.timer_list, now);
-
-			while (true) {
-				XEvent xevent = new XEvent ();
-
-				lock (XlibLock) {
-					if (XPending (DisplayHandle) == 0)
-						break;
-
-					XNextEvent (DisplayHandle, ref xevent);
-
-					if (xevent.AnyEvent.type == XEventName.KeyPress) {
-						if (XFilterEvent(ref xevent, FosterParent)) {
-							continue;
-						}
-					}
-				}
-
-				hwnd = Hwnd.GetObjectFromWindow(xevent.AnyEvent.window);
-				if (hwnd == null)
-					continue;
-
-				switch (xevent.type) {
-				case XEventName.Expose:
-					hwnd.AddExpose (xevent.ExposeEvent.window == hwnd.ClientWindow, xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
-					break;
-
-				case XEventName.SelectionClear: {
-					// Should we do something?
-					break;
-				}
-
-				case XEventName.SelectionRequest: {
-					if (Dnd.HandleSelectionRequestEvent (ref xevent))
-						break;
-					XEvent sel_event;
-
-					sel_event = new XEvent();
-					sel_event.SelectionEvent.type = XEventName.SelectionNotify;
-					sel_event.SelectionEvent.send_event = true;
-					sel_event.SelectionEvent.display = DisplayHandle;
-					sel_event.SelectionEvent.selection = xevent.SelectionRequestEvent.selection;
-					sel_event.SelectionEvent.target = xevent.SelectionRequestEvent.target;
-					sel_event.SelectionEvent.requestor = xevent.SelectionRequestEvent.requestor;
-					sel_event.SelectionEvent.time = xevent.SelectionRequestEvent.time;
-					sel_event.SelectionEvent.property = IntPtr.Zero;
-
-					// Seems that some apps support asking for supported types
-					if (xevent.SelectionEvent.target == TARGETS) {
-						int[]	atoms;
-						int	atom_count;
-
-						atoms = new int[5];
-						atom_count = 0;
-
-						if (Clipboard.Item is String) {
-							atoms[atom_count++] = (int)Atom.XA_STRING;
-							atoms[atom_count++] = (int)OEMTEXT;
-							atoms[atom_count++] = (int)UNICODETEXT;
-						} else if (Clipboard.Item is Image) {
-							atoms[atom_count++] = (int)Atom.XA_PIXMAP;
-							atoms[atom_count++] = (int)Atom.XA_BITMAP;
-						} else {
-							// FIXME - handle other types
-						}
-
-						XChangeProperty(DisplayHandle, xevent.SelectionEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property, (IntPtr)xevent.SelectionRequestEvent.target, 32, PropertyMode.Replace, atoms, atom_count);
-					} else if (Clipboard.Item is string) {
-						IntPtr	buffer;
-						int	buflen;
-
-						buflen = 0;
-
-						if (xevent.SelectionRequestEvent.target == (IntPtr)Atom.XA_STRING) {
-							Byte[] bytes;
-
-							bytes = new ASCIIEncoding().GetBytes((string)Clipboard.Item);
-							buffer = Marshal.AllocHGlobal(bytes.Length);
-							buflen = bytes.Length;
-
-							for (int i = 0; i < buflen; i++) {
-								Marshal.WriteByte(buffer, i, bytes[i]);
-							}
-						} else if (xevent.SelectionRequestEvent.target == OEMTEXT) {
-							// FIXME - this should encode into ISO2022
-							buffer = Marshal.StringToHGlobalAnsi((string)Clipboard.Item);
-							while (Marshal.ReadByte(buffer, buflen) != 0) {
-								buflen++;
-							}
-						} else if (xevent.SelectionRequestEvent.target == UNICODETEXT) {
-							buffer = Marshal.StringToHGlobalAnsi((string)Clipboard.Item);
-							while (Marshal.ReadByte(buffer, buflen) != 0) {
-								buflen++;
-							}
-						} else {
-							buffer = IntPtr.Zero;
-						}
-
-						if (buffer != IntPtr.Zero) {
-							XChangeProperty(DisplayHandle, xevent.SelectionRequestEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property, (IntPtr)xevent.SelectionRequestEvent.target, 8, PropertyMode.Replace, buffer, buflen);
-							sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
-							Marshal.FreeHGlobal(buffer);
-						}
-					} else if (Clipboard.Item is Image) {
-						if (xevent.SelectionEvent.target == (IntPtr)Atom.XA_PIXMAP) {
-							// FIXME - convert image and store as property
-						} else if (xevent.SelectionEvent.target == (IntPtr)Atom.XA_PIXMAP) {
-							// FIXME - convert image and store as property
-						}
-					}
-
-					XSendEvent(DisplayHandle, xevent.SelectionRequestEvent.requestor, false, new IntPtr ((int)EventMask.NoEventMask), ref sel_event);
-					break;
-				}
-
-				case XEventName.SelectionNotify: {
-					if (Clipboard.Enumerating) {
-						Clipboard.Enumerating = false;
-						if (xevent.SelectionEvent.property != IntPtr.Zero) {
-							XDeleteProperty(DisplayHandle, FosterParent, (IntPtr)xevent.SelectionEvent.property);
-							if (!Clipboard.Formats.Contains(xevent.SelectionEvent.property)) {
-								Clipboard.Formats.Add(xevent.SelectionEvent.property);
-								#if DriverDebugExtra
-								Console.WriteLine("Got supported clipboard atom format: {0}", xevent.SelectionEvent.property);
-								#endif
-							}
-						}
-					} else if (Clipboard.Retrieving) {
-						Clipboard.Retrieving = false;
-						if (xevent.SelectionEvent.property != IntPtr.Zero) {
-							TranslatePropertyToClipboard(xevent.SelectionEvent.property);
-						} else {
-							Clipboard.Item = null;
-						}
-					} else {
-						Dnd.HandleSelectionNotifyEvent (ref xevent);
-					}
-					break;
-				}
-
-				case XEventName.MapNotify: {
-					if (hwnd.client_window == xevent.MapEvent.window) {
-						hwnd.mapped = true;
-					}
-					break;
-				}
-
-				case XEventName.UnmapNotify: {
-					if (hwnd.client_window == xevent.MapEvent.window) {
-						hwnd.mapped = false;
-					}
-					break;
-				}
-
-				case XEventName.KeyRelease:
-					if (!detectable_key_auto_repeat && XPending (DisplayHandle) != 0) {
-						XEvent nextevent = new XEvent ();
-
-						XPeekEvent (DisplayHandle, ref nextevent);
-
-						if (nextevent.type == XEventName.KeyPress &&
-						    nextevent.KeyEvent.keycode == xevent.KeyEvent.keycode &&
-						    nextevent.KeyEvent.time == xevent.KeyEvent.time) {
-							continue;
-						}
-					}
-					goto case XEventName.KeyPress;
-					
-				case XEventName.MotionNotify: {
-					XEvent peek;
-
-					if (hwnd.Queue.Count > 0) {
-						peek = hwnd.Queue.Peek();
-						if (peek.AnyEvent.type == XEventName.MotionNotify) {
-							continue;
-						}
-					}
-					goto case XEventName.KeyPress;
-				}
-
-				case XEventName.KeyPress:
-				case XEventName.ButtonPress:
-				case XEventName.ButtonRelease:
-				case XEventName.EnterNotify:
-				case XEventName.LeaveNotify:
-				case XEventName.CreateNotify:
-				case XEventName.DestroyNotify:
-				case XEventName.FocusIn:
-				case XEventName.FocusOut:
-				case XEventName.ClientMessage:
-				case XEventName.ReparentNotify:
-					hwnd.Queue.Enqueue (xevent);
-					break;
-
-				case XEventName.ConfigureNotify:
-					hwnd.AddConfigureNotify(xevent);
-					break;
-
-				case XEventName.PropertyNotify:
-					if (xevent.PropertyEvent.atom == _NET_ACTIVE_WINDOW) {
-						IntPtr	actual_atom;
-						int	actual_format;
-						IntPtr	nitems;
-						IntPtr	bytes_after;
-						IntPtr	prop = IntPtr.Zero;
-						IntPtr	prev_active;;
-
-						prev_active = ActiveWindow;
-						XGetWindowProperty(DisplayHandle, RootWindow, _NET_ACTIVE_WINDOW, IntPtr.Zero, new IntPtr (1), false, (IntPtr)Atom.XA_WINDOW, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
-						if (((long)nitems > 0) && (prop != IntPtr.Zero)) {
-							ActiveWindow = Hwnd.GetHandleFromWindow((IntPtr)Marshal.ReadInt32(prop));
-							XFree(prop);
-
-							if (prev_active != ActiveWindow) {
-								if (prev_active != IntPtr.Zero) {
-									PostMessage(prev_active, Msg.WM_ACTIVATE, (IntPtr)WindowActiveFlags.WA_INACTIVE, IntPtr.Zero);
-								}
-								if (ActiveWindow != IntPtr.Zero) {
-									PostMessage(ActiveWindow, Msg.WM_ACTIVATE, (IntPtr)WindowActiveFlags.WA_ACTIVE, IntPtr.Zero);
-								}
-							}
-							if (ModalWindows.Count == 0) {
-								break;
-							} else {
-								// Modality handling, if we are modal and the new active window is one
-								// of ours but not the modal one, switch back to the modal window
-
-								if (NativeWindow.FindWindow(ActiveWindow) != null) {
-									if (ActiveWindow != (IntPtr)ModalWindows.Peek()) {
-										Activate((IntPtr)ModalWindows.Peek());
-									}
-								}
-								break;
-							}
-						}
-					}
-					break;
-
-				}
-			}
-		}
-#endif
-
-		private IntPtr GetMousewParam (int Delta)
-		{
-			return display.GetMousewParam (Delta);
-		}
-
 		#endregion	// Private Methods
 
 
 		#region Public Properties
 		internal override int Caption {
-			get {
-				return 19;
-			}
+			get { return 19; }
 		}
 
 		internal override Size CursorSize {
-			get {
-				return display.CursorSize;
-			}
+			get { return display.CursorSize; }
 		}
 
-		internal override  bool DragFullWindows {
-			get {
-				return true;
-			}
+		internal override bool DragFullWindows {
+			get { return true; }
 		} 
 
 		internal override Size DragSize {
-			get {
-				return new Size(4, 4);
-			}
+			get { return new Size(4, 4); }
 		} 
 
 		internal override Size FrameBorderSize { 
-			get {
-				throw new NotImplementedException(); 
-			}
+			get { throw new NotImplementedException(); }
 		}
 
 		internal override Size IconSize {
-			get {
-				return display.IconSize;
-			}
+			get { return display.IconSize; }
 		}
 
 		internal override int KeyboardSpeed {
-			get {
-				return display.KeyboardSpeed;
-			}
+			get { return display.KeyboardSpeed; }
 		}
 
 		internal override int KeyboardDelay {
-			get {
-				return display.KeyboardSpeed;
-			}
+			get { return display.KeyboardSpeed; }
 		}
 
 		internal override Size MaxWindowTrackSize {
-			get {
-				return new Size (WorkingArea.Width, WorkingArea.Height);
-			}
+			get { return new Size (WorkingArea.Width, WorkingArea.Height); }
 		} 
 
 		internal override Size MinimizedWindowSize {
-			get {
-				return new Size(1, 1);
-			}
+			get { return new Size(1, 1); }
 		} 
 
 		internal override Size MinimizedWindowSpacingSize {
-			get {
-				return new Size(1, 1);
-			}
+			get { return new Size(1, 1); }
 		} 
 
 		internal override Size MinimumWindowSize {
-			get {
-				return new Size(1, 1);
-			}
+			get { return new Size(1, 1); }
 		} 
 
 		internal override Size MinWindowTrackSize {
-			get {
-				return new Size(1, 1);
-			}
+			get { return new Size(1, 1); }
 		}
 
 		internal override Keys ModifierKeys {
-			get {
-				return display.ModifierKeys;
-			}
+			get { return display.ModifierKeys; }
 		}
 
 		internal override Size SmallIconSize {
-			get {
-				return display.SmallIconSize;
-			}
+			get { return display.SmallIconSize; }
 		}
 
 		internal override int MouseButtonCount {
-			get {
-				return 3;
-			}
+			get { return 3; /* FIXME - should detect this somehow.. */}
 		} 
 
 		internal override bool MouseButtonsSwapped {
-			get {
-				return false;	// FIXME - how to detect?
-			}
+			get { return false; /*FIXME - how to detect? */}
 		} 
 
 		internal override Size MouseHoverSize {
-			get {
-				return new Size (1, 1);
-			}
+			get { return new Size (1, 1); }
 		}
 
 		internal override int MouseHoverTime {
-			get {
-				return display.MouseHoverTime;
-			}
+			get { return display.MouseHoverTime; }
 		}
 
-		internal override  bool MouseWheelPresent {
-			get {
-				return true;	// FIXME - how to detect?
-			}
+		internal override bool MouseWheelPresent {
+			get { return true; /* FIXME - how to detect? */	}
 		} 
 
 		internal override Rectangle VirtualScreen {
-			get {
-				return WorkingArea;
-			}
+			get { return WorkingArea; }
 		} 
 
 		internal override Rectangle WorkingArea {
-			get {
-				return display.WorkingArea;
-			}
+			get { return display.WorkingArea; }
 		}
 
 		internal override bool ThemesEnabled {
-			get {
-				return XplatUIX11_new.themes_enabled;
-			}
+			get { return XplatUIX11_new.themes_enabled; }
 		}
  
 
@@ -861,41 +459,42 @@ namespace System.Windows.Forms {
 						IntPtr handle;
 
 						switch((HitTest)(msg.LParam.ToInt32() & 0xffff)) {
-							case HitTest.HTBOTTOM:		handle = Cursors.SizeNS.handle; break;
-							case HitTest.HTBORDER:		handle = Cursors.SizeNS.handle; break;
-							case HitTest.HTBOTTOMLEFT:	handle = Cursors.SizeNESW.handle; break;
-							case HitTest.HTBOTTOMRIGHT:	handle = Cursors.SizeNWSE.handle; break;
-							case HitTest.HTERROR:		if ((msg.LParam.ToInt32() >> 16) == (int)Msg.WM_LBUTTONDOWN) {
-												AudibleAlert();
-											}
-											handle = Cursors.Default.handle;
-											break;
+						case HitTest.HTBOTTOM:		handle = Cursors.SizeNS.handle; break;
+						case HitTest.HTBORDER:		handle = Cursors.SizeNS.handle; break;
+						case HitTest.HTBOTTOMLEFT:	handle = Cursors.SizeNESW.handle; break;
+						case HitTest.HTBOTTOMRIGHT:	handle = Cursors.SizeNWSE.handle; break;
+						case HitTest.HTERROR:
+							if ((msg.LParam.ToInt32() >> 16) == (int)Msg.WM_LBUTTONDOWN) {
+								AudibleAlert();
+							}
+							handle = Cursors.Default.handle;
+							break;
 
-							case HitTest.HTHELP:		handle = Cursors.Help.handle; break;
-							case HitTest.HTLEFT:		handle = Cursors.SizeWE.handle; break;
-							case HitTest.HTRIGHT:		handle = Cursors.SizeWE.handle; break;
-							case HitTest.HTTOP:		handle = Cursors.SizeNS.handle; break;
-							case HitTest.HTTOPLEFT:		handle = Cursors.SizeNWSE.handle; break;
-							case HitTest.HTTOPRIGHT:	handle = Cursors.SizeNESW.handle; break;
+						case HitTest.HTHELP:		handle = Cursors.Help.handle; break;
+						case HitTest.HTLEFT:		handle = Cursors.SizeWE.handle; break;
+						case HitTest.HTRIGHT:		handle = Cursors.SizeWE.handle; break;
+						case HitTest.HTTOP:		handle = Cursors.SizeNS.handle; break;
+						case HitTest.HTTOPLEFT:		handle = Cursors.SizeNWSE.handle; break;
+						case HitTest.HTTOPRIGHT:	handle = Cursors.SizeNESW.handle; break;
 
-							#if SameAsDefault
-							case HitTest.HTGROWBOX:
-							case HitTest.HTSIZE:
-							case HitTest.HTZOOM:
-							case HitTest.HTVSCROLL:
-							case HitTest.HTSYSMENU:
-							case HitTest.HTREDUCE:
-							case HitTest.HTNOWHERE:
-							case HitTest.HTMAXBUTTON:
-							case HitTest.HTMINBUTTON:
-							case HitTest.HTMENU:
-							case HitTest.HSCROLL:
-							case HitTest.HTBOTTOM:
-							case HitTest.HTCAPTION:
-							case HitTest.HTCLIENT:
-							case HitTest.HTCLOSE:
-							#endif
-							default: handle = Cursors.Default.handle; break;
+#if SameAsDefault
+						case HitTest.HTGROWBOX:
+						case HitTest.HTSIZE:
+						case HitTest.HTZOOM:
+						case HitTest.HTVSCROLL:
+						case HitTest.HTSYSMENU:
+						case HitTest.HTREDUCE:
+						case HitTest.HTNOWHERE:
+						case HitTest.HTMAXBUTTON:
+						case HitTest.HTMINBUTTON:
+						case HitTest.HTMENU:
+						case HitTest.HSCROLL:
+						case HitTest.HTBOTTOM:
+						case HitTest.HTCAPTION:
+						case HitTest.HTCLIENT:
+						case HitTest.HTCLOSE:
+#endif
+						default: handle = Cursors.Default.handle; break;
 						}
 						SetCursor(msg.HWnd, handle);
 					}
@@ -952,7 +551,7 @@ namespace System.Windows.Forms {
 		internal override void DoEvents ()
 		{
 			MSG	msg = new MSG ();
-			XEventQueue queue;
+			X11ThreadQueue queue;
 
 			if (OverrideCursorHandle != IntPtr.Zero) {
 				OverrideCursorHandle = IntPtr.Zero;
@@ -970,17 +569,17 @@ namespace System.Windows.Forms {
 			queue.DispatchIdle = true;
 		}
 
-		internal override void EnableWindow(IntPtr handle, bool Enable)
+		internal override void EnableWindow (IntPtr handle, bool Enable)
 		{
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
-			if (hwnd != null) {
+			if (hwnd != null)
 				hwnd.Enabled = Enable;
-			}
 		}
 
-		internal override void EndLoop(Thread thread) {
+		internal override void EndLoop (Thread thread)
+		{
 			// This is where we one day will shut down the loop for the thread
 		}
 
@@ -1019,7 +618,8 @@ namespace System.Windows.Forms {
 
 		// XXX this should be someplace shareable by all non-win32 backends..  like in Hwnd itself.
 		// maybe a Hwnd.ParentHandle property
-		internal override IntPtr GetParent (IntPtr handle) {
+		internal override IntPtr GetParent (IntPtr handle)
+		{
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
@@ -1054,9 +654,9 @@ namespace System.Windows.Forms {
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-			if (hwnd != null) {
+			if (hwnd != null)
 				return hwnd.MenuOrigin;
-			}
+
 			return Point.Empty;
 		}
 
@@ -1065,32 +665,18 @@ namespace System.Windows.Forms {
 			return display.GetMessage (queue_id, ref msg, handle, wFilterMin, wFilterMax);
 		}
 
-		internal override bool GetText(IntPtr handle, out string text)
+		internal override bool GetText (IntPtr handle, out string text)
 		{
-#if true
+			X11Hwnd	hwnd = (X11Hwnd) Hwnd.ObjectFromHandle(handle);
+
 			text = "";
-			return false;
-#else
-			IntPtr	textptr;
-
-			textptr = IntPtr.Zero;
-
-			lock (XlibLock) {
-				// FIXME - use _NET properties
-				XFetchName(DisplayHandle, Hwnd.ObjectFromHandle(handle).whole_window, ref textptr);
-			}
-			if (textptr != IntPtr.Zero) {
-				text = Marshal.PtrToStringAnsi(textptr);
-				XFree(textptr);
-				return true;
-			} else {
-				text = "";
-				return false;
-			}
-#endif
+			return hwnd != null && hwnd.GetText (out text);
 		}
 
-		internal override void GetWindowPos (IntPtr handle, bool is_toplevel, out int x, out int y, out int width, out int height, out int client_width, out int client_height)
+		internal override void GetWindowPos (IntPtr handle, bool is_toplevel,
+						     out int x, out int y,
+						     out int width, out int height,
+						     out int client_width, out int client_height)
 		{
 			X11Hwnd hwnd = (X11Hwnd)Hwnd.ObjectFromHandle(handle);
 
@@ -1169,14 +755,14 @@ namespace System.Windows.Forms {
 
 		internal override void KillTimer (Timer timer)
 		{
-			XEventQueue queue = (XEventQueue) MessageQueues [timer.thread];
+			X11ThreadQueue queue = (X11ThreadQueue) MessageQueues [timer.thread];
 
 			if (queue == null) {
 				// This isn't really an error, MS doesn't start the timer if
 				// it has no assosciated queue
 				return;
 			}
-			queue.timer_list.Remove (timer);
+			queue.KillTimer (timer);
 		}
 
 		internal override void MenuToScreen (IntPtr handle, ref int x, ref int y)
@@ -1202,33 +788,11 @@ namespace System.Windows.Forms {
 		}
 
 
-		// XXX this can probably be shared between all non-win32 backends
-		[MonoTODO("Implement filtering and PM_NOREMOVE")]
-		internal override bool PeekMessage(Object queue_id, ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags)
+		internal override bool PeekMessage (object queue_id, ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags)
 		{
-			XEventQueue queue = (XEventQueue) queue_id;
-			bool	pending;
-
-			if ((flags & (uint)PeekMessageFlags.PM_REMOVE) == 0) {
-				throw new NotImplementedException("PeekMessage PM_NOREMOVE is not implemented yet");	// FIXME - Implement PM_NOREMOVE flag
-			}
-
-			pending = false;
-			if (queue.Count > 0) {
-				pending = true;
-			} else if (((XEventQueue)queue_id).Paint.Count > 0) {
-				pending = true;
-			}
-
-			CheckTimers(queue.timer_list, DateTime.UtcNow);
-
-			if (!pending) {
-				return false;
-			}
-			return GetMessage(queue_id, ref msg, hWnd, wFilterMin, wFilterMax);
+			return display.PeekMessage (queue_id, ref msg, hWnd, wFilterMin, wFilterMax, flags);
 		}
 
-		// FIXME - I think this should just enqueue directly
 		internal override bool PostMessage (IntPtr handle, Msg message, IntPtr wparam, IntPtr lparam)
 		{
 			return display.PostMessage (handle, message, wparam, lparam);
@@ -1424,15 +988,14 @@ namespace System.Windows.Forms {
 
 		internal override void SetTimer (Timer timer)
 		{
-			XEventQueue queue = (XEventQueue) MessageQueues [timer.thread];
+			X11ThreadQueue queue = (X11ThreadQueue) MessageQueues [timer.thread];
 
 			if (queue == null) {
 				// This isn't really an error, MS doesn't start the timer if
 				// it has no assosciated queue
 				return;
 			}
-			queue.timer_list.Add (timer);
-			//WakeupMain ();
+			queue.SetTimer (timer);
 		}
 
 		internal override bool SetTopmost(IntPtr handle, IntPtr handle_owner, bool enabled)
@@ -1563,6 +1126,11 @@ namespace System.Windows.Forms {
 
 			if (hwnd != null)
 				hwnd.Update ();
+		}
+
+		public void OnIdle (EventArgs e) {
+			if (Idle != null)
+				Idle (this, e);
 		}
 
 		#endregion	// Public Static Methods

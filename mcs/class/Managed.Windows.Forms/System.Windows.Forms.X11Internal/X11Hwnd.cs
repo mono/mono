@@ -32,6 +32,22 @@ namespace System.Windows.Forms.X11Internal {
 
 	internal class X11Hwnd : Hwnd
 	{
+		X11Display display;
+		int[] wm_state = new int[0];
+		int[] window_type = new int[0];
+		string text;
+		X11ThreadQueue queue;
+
+		const EventMask SelectInputMask = (EventMask.ButtonPressMask | 
+						   EventMask.ButtonReleaseMask | 
+						   EventMask.KeyPressMask | 
+						   EventMask.KeyReleaseMask | 
+						   EventMask.EnterWindowMask | 
+						   EventMask.LeaveWindowMask |
+						   EventMask.ExposureMask |
+						   EventMask.FocusChangeMask |
+						   EventMask.PointerMotionMask | 
+						   EventMask.SubstructureNotifyMask);
 
 		public X11Hwnd (X11Display display)
 		{
@@ -45,6 +61,12 @@ namespace System.Windows.Forms.X11Internal {
 			if (handle == IntPtr.Zero) {
 				Console.WriteLine("X11Hwnd crated with null handle");
 			}
+		}
+
+		// XXX this needs to be here so we don't have to change Hwnd.
+		public new X11ThreadQueue Queue {
+			get { return queue; }
+			set { queue = value; }
 		}
 
 		public virtual void CreateWindow (CreateParams cp)
@@ -236,7 +258,7 @@ namespace System.Windows.Forms.X11Internal {
 				return;
 
 			display.SendMessage (ClientWindow, Msg.WM_PAINT, IntPtr.Zero, IntPtr.Zero);
-			Queue.Paint.Remove (this);
+			Queue.RemovePaint (this);
 		}
 
 		public void MenuToScreen (ref int x, ref int y)
@@ -331,7 +353,7 @@ namespace System.Windows.Forms.X11Internal {
 				AddInvalidArea(x, y, width, height);
 				if (!expose_pending) {
 					if (!nc_expose_pending) {
-						Queue.Paint.Enqueue(this);
+						Queue.AddPaint (this);
 					}
 					expose_pending = true;
 				}
@@ -341,7 +363,7 @@ namespace System.Windows.Forms.X11Internal {
 				
 				if (!nc_expose_pending) {
 					if (!expose_pending) {
-						Queue.Paint.Enqueue(this);
+						Queue.AddPaint (this);
 					}
 					nc_expose_pending = true;
 				}
@@ -1317,6 +1339,42 @@ namespace System.Windows.Forms.X11Internal {
 			}
 		}
 
+		public bool GetText (out string text)
+		{
+			IntPtr actual_atom;
+			int actual_format;
+			IntPtr nitems;
+			IntPtr bytes_after;
+			IntPtr prop = IntPtr.Zero;
+
+			Xlib.XGetWindowProperty (display.Handle, WholeWindow,
+						 display.Atoms._NET_WM_NAME, IntPtr.Zero, new IntPtr (1), false,
+						 display.Atoms.UNICODETEXT, out actual_atom, out actual_format,
+						 out nitems, out bytes_after, ref prop);
+
+			if ((long)nitems > 0 && prop != IntPtr.Zero) {
+				text = Marshal.PtrToStringUni (prop, (int)nitems);
+				Xlib.XFree (prop);
+				return true;
+			}
+			else {
+				// fallback on the non-_NET property
+				IntPtr	textptr;
+
+				textptr = IntPtr.Zero;
+
+				Xlib.XFetchName (display.Handle, WholeWindow, ref textptr);
+				if (textptr != IntPtr.Zero) {
+					text = Marshal.PtrToStringAnsi(textptr);
+					Xlib.XFree(textptr);
+					return true;
+				} else {
+					text = "";
+					return false;
+				}
+			}
+		}
+
 		public int WINDOW_TYPE {
 			get { return window_type.Length > 0 ? window_type[0] : 0; }
 			set {
@@ -1382,11 +1440,6 @@ namespace System.Windows.Forms.X11Internal {
 			return values;
 		}
 
-		X11Display display;
-		int[] wm_state = new int[0];
-		int[] window_type = new int[0];
-		string text;
-
 		bool ArrayDifferent (int[] a, int[] b)
 		{
 			if (a.Length != b.Length)
@@ -1399,16 +1452,5 @@ namespace System.Windows.Forms.X11Internal {
 
 			return false;
 		}
-
-		const EventMask SelectInputMask = (EventMask.ButtonPressMask | 
-						   EventMask.ButtonReleaseMask | 
-						   EventMask.KeyPressMask | 
-						   EventMask.KeyReleaseMask | 
-						   EventMask.EnterWindowMask | 
-						   EventMask.LeaveWindowMask |
-						   EventMask.ExposureMask |
-						   EventMask.FocusChangeMask |
-						   EventMask.PointerMotionMask | 
-						   EventMask.SubstructureNotifyMask);
 	}
 }

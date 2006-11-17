@@ -78,7 +78,8 @@ namespace System.Windows.Forms.X11Internal {
 						// Modality handling, if we are modal and the new active window is one
 						// of ours but not the modal one, switch back to the modal window
 
-						if (NativeWindow.FindWindow (Display.ActiveWindow.Handle) != null) {
+						if (Display.ActiveWindow != null &&
+						    NativeWindow.FindWindow (Display.ActiveWindow.Handle) != null) {
 							if (Display.ActiveWindow != (X11Hwnd)Display.ModalWindows.Peek()) {
 								((X11Hwnd)Display.ModalWindows.Peek()).Activate ();
 							}
