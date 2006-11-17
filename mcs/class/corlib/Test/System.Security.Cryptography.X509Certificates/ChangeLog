@@ -1,3 +1,7 @@
+2006-11-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Cert20Test.cs: Add test cases for Equals and Export.
+
 2006-11-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Cert20Test.cs: Added test cases for importing PEM encoded

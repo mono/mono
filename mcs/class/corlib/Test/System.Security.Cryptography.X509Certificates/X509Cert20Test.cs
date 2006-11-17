@@ -33,6 +33,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -200,6 +201,106 @@ mgk3bWUV6ChegutbguiKrI/DbO7wPiDLxw==
 			Assert.IsTrue (x1.Equals ((object)x2), "Equals-12-O");
 			Assert.IsTrue (x2.Equals (x1), "Equals-12-X");
 			Assert.IsTrue (x2.Equals ((object)x1), "Equals-12-O");
+		}
+
+		[Test]
+		public void Equals_Empty_Source ()
+		{
+			X509Certificate empty = new X509Certificate ();
+			Assert.IsFalse (empty.Equals (null), "null");
+			X509Certificate x = new X509Certificate (cert1);
+			Assert.IsFalse (empty.Equals (x), "X509Certificate");
+			Assert.IsFalse (empty.Equals ((object) x), "object");
+			Assert.IsTrue (empty.Equals (empty), "empty");
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Equals_Empty_Destination ()
+		{
+			new X509Certificate (cert1).Equals (new X509Certificate ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Export_Authenticode ()
+		{
+			new X509Certificate (cert1).Export (X509ContentType.Authenticode);
+		}
+
+		[Test]
+		public void Export_Cert ()
+		{
+			X509Certificate cert = new X509Certificate (cert1);
+			byte[] data = cert.Export (X509ContentType.Cert);
+			Assert.AreEqual (data, cert1, "original");
+
+			data = cert.Export (X509ContentType.Cert, (string)null);
+			Assert.AreEqual (data, cert1, "original/string/null");
+
+			data = cert.Export (X509ContentType.Cert, (SecureString) null);
+			Assert.AreEqual (data, cert1, "original/SecureString/null");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Export_Pfx ()
+		{
+			X509Certificate cert = new X509Certificate (cert1);
+			byte[] data = cert.Export (X509ContentType.Pfx);
+			// usable
+			X509Certificate2 c = new X509Certificate2 (data);
+			Assert.AreEqual (cert1, c.GetRawCertData (), "Equals");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Export_Pkcs12 ()
+		{
+			X509Certificate cert = new X509Certificate (cert1);
+			byte[] data = cert.Export (X509ContentType.Pkcs12);
+			// usable
+			X509Certificate2 c = new X509Certificate2 (data);
+			Assert.AreEqual (cert1, c.GetRawCertData (), "Equals");
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Export_Pkcs7 ()
+		{
+			new X509Certificate (cert1).Export (X509ContentType.Pkcs7);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Export_SerializedCert ()
+		{
+			X509Certificate cert = new X509Certificate (cert1);
+			byte[] data = cert.Export (X509ContentType.SerializedCert);
+			// usable
+			X509Certificate2 c = new X509Certificate2 (data);
+			Assert.AreEqual (cert1, c.GetRawCertData (), "Equals");
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Export_SerializedStore ()
+		{
+			new X509Certificate (cert1).Export (X509ContentType.SerializedStore);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Export_Unknown ()
+		{
+			new X509Certificate (cert1).Export (X509ContentType.Unknown);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void Export_Bad ()
+		{
+			new X509Certificate (cert1).Export ((X509ContentType) Int32.MinValue);
 		}
 
 		[Test]
@@ -641,9 +742,6 @@ mgk3bWUV6ChegutbguiKrI/DbO7wPiDLxw==
 		{
 			X509Certificate x = new X509Certificate ();
 			x.Import (farscape_pkcs7);
-			// note: the certificate inside the PKCS7 structure is the same
-			// as used in the base64 tests
-			CheckBase64 (x);
 		}
 	}
 }
