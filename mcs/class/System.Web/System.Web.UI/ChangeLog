@@ -1,3 +1,9 @@
+2006-11-18  Marek Habersack  <grendello@gmail.com>
+
+	* ClientScriptManager.cs: Implemented two missing
+	GetPostBackEventReference overloads. Made one of the overloads
+	internal for .NET < 2.0.
+
 2006-11-17  Marek Habersack  <grendello@gmail.com>
 
 	* PostBackOptions.cs: Renamed the constructors parameters to match

@@ -83,17 +83,47 @@ namespace System.Web.UI
 				RegisterForEventValidation (control.UniqueID, argument);
 			return "javascript:" + GetPostBackEventReference (control, argument);
 		}
+#endif		
+
+#if !NET_2_0
+		internal
+#else
+		public
 #endif
-		
-		public string GetPostBackEventReference (Control control, string argument)
+		string GetPostBackEventReference (Control control, string argument)
 		{
+			if (control == null)
+				throw new ArgumentNullException ("control");
+			
 			page.RequiresPostBackScript ();
 			return String.Format ("__doPostBack('{0}','{1}')", control.UniqueID, argument);
 		}
-		
+
 #if NET_2_0
+		public string GetPostBackEventReference (Control control, string argument, bool registerForEventValidation)
+		{
+			if (control == null)
+				throw new ArgumentNullException ("control");
+			
+			if (registerForEventValidation)
+				RegisterForEventValidation (control.UniqueID, argument);
+			return GetPostBackEventReference (control, argument);
+		}
+		
+		public string GetPostBackEventReference (PostBackOptions options, bool registerForEventValidation)
+		{
+			if (options == null)
+				throw new ArgumentNullException ("options");
+			if (registerForEventValidation)
+				RegisterForEventValidation (options);
+			return GetPostBackEventReference (options);
+		}
+		
 		public string GetPostBackEventReference (PostBackOptions options)
 		{
+			if (options == null)
+				throw new ArgumentNullException ("options");
+			
 			if (options.ActionUrl == null && options.ValidationGroup == null && !options.TrackFocus && 
 				!options.AutoPostBack && !options.PerformValidation)
 			{
