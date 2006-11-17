@@ -200,8 +200,15 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (cert == null) {
 				return false;
 			} else {
-				if (cert.x509 == null)
+				if (cert.x509 == null) {
+#if NET_2_0
+					if (x509 == null)
+						return true;
+					throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
+#else
 					return (x509 == null);
+#endif
+				}
 
 				byte[] raw = cert.x509.RawData;
 				if (raw != null) {

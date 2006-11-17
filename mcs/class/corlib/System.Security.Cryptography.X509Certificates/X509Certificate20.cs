@@ -41,7 +41,7 @@ using System.Runtime.Serialization;
 namespace System.Security.Cryptography.X509Certificates {
 
 	[ComVisible (true)]
-	[MonoTODO ("only support DER encoded certficates and PKCS#12 formats")]
+	[MonoTODO ("X509ContentType.SerializedCert isn't supported (anywhere in the class)")]
 	public partial class X509Certificate : IDeserializationCallback, ISerializable {
 
 		private string issuer_name;
@@ -132,7 +132,6 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 		[ComVisible (false)]
-		[MonoTODO ("Always returns 0 as X509Certificate is completely managed with Mono.")]
 		public IntPtr Handle {
 			get { return IntPtr.Zero; }
 		}
@@ -147,24 +146,26 @@ namespace System.Security.Cryptography.X509Certificates {
 			return false;
 		}
 
-		[MonoTODO ("only export for X509ContentType.Cert")]
+		[MonoTODO ("X509ContentType.Pfx/Pkcs12 and SerializedCert are not supported")]
 		[ComVisible (false)]
 		public virtual byte[] Export (X509ContentType contentType)
 		{
 			return Export (contentType, (byte[])null);
 		}
 
-		[MonoTODO ("only export for X509ContentType.Cert")]
+		[MonoTODO ("X509ContentType.Pfx/Pkcs12 and SerializedCert are not supported")]
 		[ComVisible (false)]
 		public virtual byte[] Export (X509ContentType contentType, string password)
 		{
-			return Export (contentType, Encoding.UTF8.GetBytes (password));
+			byte[] pwd = (password == null) ? null : Encoding.UTF8.GetBytes (password);
+			return Export (contentType, pwd);
 		}
 
-		[MonoTODO ("SecureString support is incomplete, only export for X509ContentType.Cert")]
+		[MonoTODO ("X509ContentType.Pfx/Pkcs12 and SerializedCert are not supported. SecureString support is incomplete.")]
 		public virtual byte[] Export (X509ContentType contentType, SecureString password)
 		{
-			return Export (contentType, password.GetBuffer ());
+			byte[] pwd = (password == null) ? null : password.GetBuffer ();
+			return Export (contentType, pwd);
 		}
 
 		internal byte[] Export (X509ContentType contentType, byte[] password)
@@ -176,8 +177,15 @@ namespace System.Security.Cryptography.X509Certificates {
 				switch (contentType) {
 				case X509ContentType.Cert:
 					return x509.RawData;
-				default:
+				case X509ContentType.Pfx: // this includes Pkcs12
+					// TODO
 					throw new NotSupportedException ();
+				case X509ContentType.SerializedCert:
+					// TODO
+					throw new NotSupportedException ();
+				default:
+					string msg = Locale.GetText ("This certificate format '{0}' cannot be exported.", contentType);
+					throw new CryptographicException (msg);
 				}
 			}
 			finally {
@@ -201,6 +209,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		[ComVisible (false)]
 		public virtual void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
+			Reset ();
 			if (password == null) {
 				try {
 					x509 = new Mono.Security.X509.X509Certificate (rawData);
@@ -275,6 +284,10 @@ namespace System.Security.Cryptography.X509Certificates {
 		public virtual void Reset ()
 		{
 			x509 = null;
+			issuer_name = null;
+			subject_name = null;
+			hideDates = false;
+			cachedCertificateHash = null;
 		}
 	}
 }
