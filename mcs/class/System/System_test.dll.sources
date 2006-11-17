@@ -203,9 +203,11 @@ System.Security.Cryptography.X509Certificates/X500DistinguishedNameTest.cs
 System.Security.Cryptography.X509Certificates/X509BasicConstraintsExtensionTest.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2Test.cs
 System.Security.Cryptography.X509Certificates/X509CertificateCollectionTest.cs
+System.Security.Cryptography.X509Certificates/X509Certificate2CollectionTest.cs
 System.Security.Cryptography.X509Certificates/X509ChainPolicyTest.cs
 System.Security.Cryptography.X509Certificates/X509ChainTest.cs
 System.Security.Cryptography.X509Certificates/X509EnhancedKeyUsageExtensionTest.cs
+System.Security.Cryptography.X509Certificates/X509ExtensionCollectionTest.cs
 System.Security.Cryptography.X509Certificates/X509ExtensionTest.cs
 System.Security.Cryptography.X509Certificates/X509KeyUsageExtensionTest.cs
 System.Security.Cryptography.X509Certificates/X509StoreTest.cs
