@@ -1010,10 +1010,9 @@ namespace System.Windows.Forms.X11Internal {
 		{
 			IntPtr		gc;
 			XGCValues	gc_values;
-			Rectangle	r;
 
-			r = Invalid;
-			if (r != Rectangle.Empty) {
+			Rectangle r = Rectangle.Intersect (Invalid, area);
+			if (!r.IsEmpty) {
 				/* We have an invalid area in the window we're scrolling. 
 				   Adjust our stored invalid rectangle to to match the scrolled amount */
 
@@ -1030,7 +1029,8 @@ namespace System.Windows.Forms.X11Internal {
 					r.Y =0;
 				}
 
-				ClearInvalidArea();
+				if (area.Contains (Invalid))
+					ClearInvalidArea();
 				AddInvalidArea(r);
 			}
 

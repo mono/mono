@@ -1,3 +1,7 @@
+2006-11-17  Chris Toshok  <toshok@ximian.com>
+
+	* X11Hwnd.cs: port the XplatUIX11.ScrollWindow fix from 68061.
+
 2006-11-14  Chris Toshok  <toshok@ximian.com>
 
 	* X11Hwnd.cs, X11RootHwnd.cs, X11Atoms.cs, X11Display.cs,
