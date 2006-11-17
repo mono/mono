@@ -1,3 +1,11 @@
+2006-11-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializationReader.cs : (ReadReferencedElement)
+	  Sometimes there are array types in WSDL, which are not reflected
+	  in client proxies. In SOAP messages, they are marked
+	  soap-env:arrayType, so use it (this could coexist with xsi:type,
+	  which indicates the type in WSDL). Fixed bug #79057.
+
 2006-11-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializationReader.cs : implement ToByteArray[Base64|Hex]().

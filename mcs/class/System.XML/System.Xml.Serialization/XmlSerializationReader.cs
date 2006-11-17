@@ -483,7 +483,16 @@ namespace System.Xml.Serialization
 			string id = Reader.GetAttribute ("id");
 			object ob;
 
-			if (qname == arrayQName)
+			// it takes precedence over xsi:type.
+			// Sometimes there are array types in WSDL,
+			// which are not reflected in client proxies.
+			// In SOAP messages, they are marked
+			// soap-env:arrayType, so use it (this could coexist
+			// with xsi:type, which indicates the type in WSDL).
+			// See bug #79057.
+			string arrayTypeVal = Reader.GetAttribute (arrayType, soapNS);
+
+			if (qname == arrayQName || arrayTypeVal != null && arrayTypeVal.Length > 0)
 			{
 				CollectionFixup fixup = (collFixups != null) ? (CollectionFixup) collFixups[id] : null;
 				if (ReadList (out ob))
