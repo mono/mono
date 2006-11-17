@@ -1,3 +1,8 @@
+2006-11-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReaderSettingsTests.cs : added test for bug #79224; it does not
+	  load external schemas when validation mode is none.
+
 2006-11-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReaderSettingsTests.cs : added validation event handler test

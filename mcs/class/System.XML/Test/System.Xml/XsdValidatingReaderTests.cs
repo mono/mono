@@ -9,6 +9,7 @@
 //
 using System;
 using System.IO;
+using System.Net;
 using System.Xml;
 using System.Xml.Schema;
 using NUnit.Framework;
@@ -336,6 +337,30 @@ namespace MonoTests.System.Xml
 			xvr.Schemas.Add (schema);
 			while (!xvr.EOF)
 				xvr.Read ();
+		}
+
+		class XmlErrorResolver : XmlResolver
+		{
+			public override ICredentials Credentials {
+				set { }
+			}
+
+			public override object GetEntity (Uri uri, string role, Type type)
+			{
+				throw new Exception ();
+			}
+		}
+
+		[Test] // bug #79924
+		public void ValidationTypeNoneIgnoreSchemaLocations ()
+		{
+			string xml = "<project xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='nosuchschema.xsd'/>";
+			XmlValidatingReader vr = new XmlValidatingReader (
+				new XmlTextReader (new StringReader (xml)));
+			vr.ValidationType = ValidationType.None;
+			vr.XmlResolver = new XmlErrorResolver ();
+			while (!vr.EOF)
+				vr.Read ();
 		}
 	}
 }

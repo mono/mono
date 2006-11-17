@@ -1484,6 +1484,7 @@ namespace Mono.Xml.Schema
 
 		private void ExamineAdditionalSchema ()
 		{
+//			if (resolver == null || ValidationType == ValidationType.None)
 			if (resolver == null)
 				return;
 			XmlSchema schema = null;
