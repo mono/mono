@@ -575,7 +575,12 @@ namespace System.Collections {
 			loadFactor = (float) serializationInfo.GetValue ("LoadFactor", typeof(float));
 			modificationCount = (int) serializationInfo.GetValue ("Version", typeof(int));
 #if NET_2_0
-			equalityComparer = (IEqualityComparer) serializationInfo.GetValue ("KeyComparer", typeof (object));
+			try {
+				equalityComparer = (IEqualityComparer) serializationInfo.GetValue ("KeyComparer", typeof (object));
+			} catch {
+				// If not found, try to get "Comparer"
+			}
+			
 			if (equalityComparer == null)
 				comparerRef = (IComparer) serializationInfo.GetValue ("Comparer", typeof (object));
 #else
