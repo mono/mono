@@ -57,7 +57,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (true, dg.ColumnHeadersVisible, "ColumnHeadersVisible property");
 			Assert.AreEqual (DataGridLineStyle.Solid, dg.GridLineStyle, "GridLineStyle property");
 			Assert.AreEqual (75, dg.PreferredColumnWidth, "PreferredColumnWidth property");
-			Assert.AreEqual (16, dg.PreferredRowHeight, "PreferredRowHeight property");
 			Assert.AreEqual (false, dg.ReadOnly, "ReadOnly property");
 			Assert.AreEqual (true, dg.RowHeadersVisible, "RowHeadersVisible property");
 			Assert.AreEqual (35, dg.RowHeaderWidth, "RowHeaderWidth property");
