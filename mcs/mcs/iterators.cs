@@ -785,6 +785,10 @@ namespace Mono.CSharp {
 			get { return IteratorHost; }
 		}
 
+		public override ScopeInfo Scope {
+			get { return IteratorHost; }
+		}
+
 		//
 		// Our constructor
 		//

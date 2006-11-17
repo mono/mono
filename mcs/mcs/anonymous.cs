@@ -161,30 +161,43 @@ namespace Mono.CSharp {
 	public class ScopeInfo : CompilerGeneratedClass
 	{
 		protected readonly RootScopeInfo RootScope;
+		new public readonly TypeContainer Parent;
 		public readonly int ID = ++next_id;
 		public Block ScopeBlock;
 
 		static int next_id;
 
-		public ScopeInfo (RootScopeInfo root, Block block)
-			: base (root, null, 0, block.StartLocation)
+		public static ScopeInfo CreateScope (Block block)
 		{
-			this.RootScope = root;
-			ScopeBlock = block;
+			ToplevelBlock toplevel = block.Toplevel;
+			AnonymousContainer ac = toplevel.AnonymousContainer;
 
-			Report.Debug (64, "NEW SCOPE", this, root, block);
-
-			root.AddScope (this);
+			if (ac != null)
+				return new ScopeInfo (block, ac.Host);
+			else
+				return new ScopeInfo (block, toplevel.RootScope.Parent);
 		}
 
-		public ScopeInfo (ToplevelBlock toplevel, TypeContainer parent,
-				  GenericMethod generic, Location loc)
+		protected ScopeInfo (Block block, TypeContainer parent)
+			: base (parent, block.Toplevel.RootScope.GenericMethod,
+				0, block.StartLocation)
+		{
+			Parent = parent;
+			RootScope = block.Toplevel.RootScope;
+			ScopeBlock = block;
+
+			Report.Debug (128, "NEW SCOPE", this);
+		}
+
+		protected ScopeInfo (ToplevelBlock toplevel, TypeContainer parent,
+				     GenericMethod generic, Location loc)
 			: base (parent, generic, 0, loc)
 		{
+			Parent = parent;
 			RootScope = (RootScopeInfo) this;
 			ScopeBlock = toplevel;
 
-			Report.Debug (64, "NEW ROOT SCOPE", this);
+			Report.Debug (128, "NEW ROOT SCOPE", this);
 		}
 
 		protected CapturedScope scope_instance;
@@ -219,6 +232,11 @@ namespace Mono.CSharp {
 				      this, GetType (), scope_initializer, ScopeBlock);
 
 			if (scope_initializer == null) {
+				if (!ResolveMembers ())
+					throw new InternalErrorException ();
+				if (!DefineMembers ())
+					throw new InternalErrorException ();
+
 				scope_initializer = CreateScopeInitializer ();
 				if (scope_initializer.Resolve (ec) == null)
 					throw new InternalErrorException ();
@@ -253,6 +271,8 @@ namespace Mono.CSharp {
 		{
 			RootScopeInfo root_scope = toplevel.RootScope;
 
+			Report.Debug (128, "EMIT SCOPE INSTANCE", toplevel, root_scope, scope);
+
 			root_scope.EmitScopeInstance (ec);
 			while (root_scope != scope.RootScope) {
 				ec.ig.Emit (OpCodes.Ldfld, root_scope.ParentLink.FieldBuilder);
@@ -264,27 +284,10 @@ namespace Mono.CSharp {
 						scope, ec.CurrentBlock.ID);
 			}
 
+#if FIXME
 			if (scope != (ScopeInfo) scope.RootScope)
 				scope.ScopeInstance.Emit (ec);
-		}
-
-		public static bool CompleteContexts (RootScopeInfo host, Block container)
-		{
-			if (host != null)
-				host.LinkScopes ();
-
-			if ((container == null) && (host != null)) {
-				if (host.DefineType () == null)
-					return false;
-				if (!host.ResolveType ())
-					return false;
-				if (!host.ResolveMembers ())
-					return false;
-				if (!host.DefineMembers ())
-					return false;
-			}
-
-			return true;
+#endif
 		}
 
 		protected override bool DoResolveMembers ()
@@ -292,10 +295,19 @@ namespace Mono.CSharp {
 			Report.Debug (64, "SCOPE INFO RESOLVE MEMBERS", this, GetType (), IsGeneric,
 				      Parent.IsGeneric, GenericMethod);
 
+#if FIXME
 			if (RootScope != this)
 				scope_instance = new CapturedScope (RootScope, this);
+#endif
 
 			return base.DoResolveMembers ();
+		}
+
+		public Variable CaptureScope (ScopeInfo child)
+		{
+			CheckMembersDefined ();
+			Report.Debug (128, "CAPTURE SCOPE", this, child, child.TypeBuilder);
+			return new CapturedScope (this, child);
 		}
 
 		public Variable AddLocal (LocalInfo local)
@@ -493,9 +505,7 @@ namespace Mono.CSharp {
 
 				scope_ctor = (ConstructorInfo) mg.Methods [0];
 
-				if (Scope.ScopeInstance == null)
-					scope_instance = ec.ig.DeclareLocal (type);
-				else {
+				if (Scope.ScopeInstance != null) {
 					Type root = Scope.RootScope.GetScopeType (ec);
 					FieldExpr fe = (FieldExpr) Expression.MemberLookup (
 						type, root, Scope.scope_instance.Field.Name, loc);
@@ -505,6 +515,8 @@ namespace Mono.CSharp {
 					fe.InstanceExpression = this;
 					Scope.scope_instance.FieldInstance = fe;
 				}
+
+				scope_instance = ec.ig.DeclareLocal (type);
 
 				foreach (CapturedLocal local in Scope.locals.Values) {
 					FieldExpr fe = (FieldExpr) Expression.MemberLookup (
@@ -596,11 +608,8 @@ namespace Mono.CSharp {
 		public RootScopeInfo (ToplevelBlock toplevel, TypeContainer parent,
 				      GenericMethod generic, Location loc)
 			: base (toplevel, parent, generic, loc)
-		{
-			scopes = new ArrayList ();
-		}
+		{ }
 
-		ArrayList scopes;
 		TypeExpr parent_type;
 		CapturedVariableField parent_link;
 		CapturedThis this_variable;
@@ -669,29 +678,6 @@ namespace Mono.CSharp {
 			}
 
 			return var;
-		}
-
-		public void AddScope (ScopeInfo scope)
-		{
-			scopes.Add (scope);
-		}
-
-		bool linked;
-		public void LinkScopes ()
-		{
-			if (linked)
-				return;
-
-			linked = true;
-			if (ParentHost != null)
-				ParentHost.LinkScopes ();
-
-			foreach (ScopeInfo si in scopes) {
-				if (!si.Define ())
-					throw new InternalErrorException ();
-				if (si.DefineType () == null)
-					throw new InternalErrorException ();
-			}
 		}
 
 		protected override ScopeInitializer CreateScopeInitializer ()
@@ -1226,6 +1212,8 @@ namespace Mono.CSharp {
 			this.Parameters = parameters;
 			this.Block = block;
 			this.Location = loc;
+
+			block.AnonymousContainer = this;
 		}
 
 		public Method Method {
@@ -1233,6 +1221,10 @@ namespace Mono.CSharp {
 		}
 
 		public abstract RootScopeInfo RootScope {
+			get;
+		}
+
+		public abstract ScopeInfo Scope {
 			get;
 		}
 
@@ -1340,6 +1332,7 @@ namespace Mono.CSharp {
 		//
 		Expression anonymous_delegate;
 		RootScopeInfo root_scope;
+		ScopeInfo scope;
 
 		public AnonymousMethod (AnonymousMethod parent, RootScopeInfo root_scope,
 					TypeContainer host, GenericMethod generic,
@@ -1355,6 +1348,10 @@ namespace Mono.CSharp {
 
 		public override RootScopeInfo RootScope {
 			get { return root_scope; }
+		}
+
+		public override ScopeInfo Scope {
+			get { return scope; }
 		}
 
 		public override bool IsIterator {
@@ -1400,9 +1397,8 @@ namespace Mono.CSharp {
 #endif
 				member_name = new MemberName (name, Location);
 
-#if FIXME
 			Block b;
-			ScopeInfo scope = RootScope;
+			scope = RootScope;
 			for (b = Block; b != null; b = b.Parent) {
 				if (b.ScopeInfo != null) {
 					scope = b.ScopeInfo;
@@ -1410,21 +1406,35 @@ namespace Mono.CSharp {
 				}
 			}
 
+			Report.Debug (128, "CREATE METHOD HOST", this, RootScope, scope);
+
 			scope.CheckMembersDefined ();
 
 			ArrayList scopes = new ArrayList ();
 			for (b = b.Parent; b != null; b = b.Parent) {
-				if (b.ScopeInfo != null) {
-					// b.ScopeInfo.CaptureScope (scope);
+				if (b.ScopeInfo != null)
 					scopes.Add (b.ScopeInfo);
-				}
 				if (b == container)
 					break;
 			}
-#endif
+
+			foreach (ScopeInfo si in scopes) {
+				if (!si.Define ())
+					throw new InternalErrorException ();
+				if (si.DefineType () == null)
+					throw new InternalErrorException ();
+				scope.CaptureScope (si);
+			}
+
+			if (!scope.Define ())
+				throw new InternalErrorException ();
+			if (scope.DefineType () == null)
+				throw new InternalErrorException ();
+
+			Report.Debug (128, "CREATE METHOD HOST #1", this, RootScope, scope, scopes);
 
 			return new AnonymousMethodMethod (
-				this, RootScope, generic_method, new TypeExpression (ReturnType, Location),
+				this, scope, generic_method, new TypeExpression (ReturnType, Location),
 				Modifiers.INTERNAL, member_name, Parameters);
 		}
 
@@ -1503,7 +1513,7 @@ namespace Mono.CSharp {
 			// Now emit the delegate creation.
 			//
 			if ((am.Method.ModFlags & Modifiers.STATIC) == 0) {
-				delegate_instance_expression = am.RootScope.GetScopeInitializer (ec);
+				delegate_instance_expression = am.Scope.GetScopeInitializer (ec);
 
 				if (delegate_instance_expression == null)
 					throw new InternalErrorException ();

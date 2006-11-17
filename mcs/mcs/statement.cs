@@ -1864,7 +1864,7 @@ namespace Mono.CSharp {
 				return Parent.CreateScopeInfo ();
 
 			if (ScopeInfo == null)
-				ScopeInfo = new ScopeInfo (Toplevel.RootScope, this);
+				ScopeInfo = ScopeInfo.CreateScope (this);
 
 			return ScopeInfo;
 		}
@@ -2280,6 +2280,7 @@ namespace Mono.CSharp {
 		ToplevelBlock child;	
 		GenericMethod generic;
 		FlowBranchingToplevel top_level_branching;
+		AnonymousContainer anonymous_container;
 		RootScopeInfo root_scope;
 
 		public bool HasVarargs {
@@ -2299,14 +2300,6 @@ namespace Mono.CSharp {
 			get { return parameters; }
 		}
 
-		public bool CompleteContexts (EmitContext ec)
-		{
-			Report.Debug (64, "TOPLEVEL COMPLETE CONTEXTS", this,
-				      container, root_scope);
-
-			return ScopeInfo.CompleteContexts (root_scope, container);
-		}
-
 		public GenericMethod GenericMethod {
 			get { return generic; }
 		}
@@ -2317,6 +2310,11 @@ namespace Mono.CSharp {
 
 		public Block ContainerBlock {
 			get { return container; }
+		}
+
+		public AnonymousContainer AnonymousContainer {
+			get { return anonymous_container; }
+			set { anonymous_container = value; }
 		}
 
 		//
@@ -2595,8 +2593,9 @@ namespace Mono.CSharp {
 
 		public override string ToString ()
 		{
-			return String.Format ("{0} ({1}:{2}{3})", GetType (), ID, StartLocation,
-					      root_scope);
+			return String.Format ("{0} ({1}:{2}{3}:{4})", GetType (), ID, StartLocation,
+					      root_scope, anonymous_container != null ?
+					      anonymous_container.Scope : null);
 		}
 	}
 	
