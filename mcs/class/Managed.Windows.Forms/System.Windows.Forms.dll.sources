@@ -779,3 +779,11 @@ System.Windows.Forms.VisualStyles/VisualStyleElement.cs
 System.Windows.Forms.VisualStyles/VisualStyleInformation.cs
 System.Windows.Forms.VisualStyles/VisualStyleRenderer.cs
 System.Windows.Forms.VisualStyles/VisualStyleState.cs
+System.Windows.Forms.X11Internal/X11Atoms.cs
+System.Windows.Forms.X11Internal/X11Display.cs
+System.Windows.Forms.X11Internal/X11Exception.cs
+System.Windows.Forms.X11Internal/X11Hwnd.cs
+System.Windows.Forms.X11Internal/X11RootHwnd.cs
+System.Windows.Forms.X11Internal/X11ThreadQueue.cs
+System.Windows.Forms.X11Internal/Xlib.cs
+System.Windows.Forms.X11Internal/XplatUIX11-new.cs
