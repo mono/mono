@@ -4853,9 +4853,23 @@ namespace Mono.CSharp {
 					Report.Error (1620, loc, "Argument `{0}' must be passed with the `{1}' keyword",
 						index, Parameter.GetModifierSignature (mod));
 			} else {
-				Report.Error (1503, loc, "Argument {0}: Cannot convert from `{1}' to `{2}'",
-					index, Argument.FullDesc (a), expected_par.ParameterDesc (idx));
-			}
+				string p1 = Argument.FullDesc (a);
+				string p2 = expected_par.ParameterDesc (idx);
+
+				//
+				// The parameter names are the same, most likely they come from different
+				// assemblies.
+				//
+				if (p1 == p2){
+					Report.Error (1503, loc,
+						      "Argument {0}: Cannot conver from equally named types from different " +
+						      "assemblies {0} (from {1}) and {2} (from {3})",
+						      p1, a.Expr.Type.Assembly.FullName, p2,
+						      expected_par.ParameterType (idx).Assembly.FullName);
+				} else
+					Report.Error (1503, loc, "Argument {0}: Cannot convert from `{1}' to `{2}'",
+						      index, p1, p2);
+				}
 		}
 		
 		public static bool VerifyArgumentsCompat (EmitContext ec, ArrayList Arguments,
