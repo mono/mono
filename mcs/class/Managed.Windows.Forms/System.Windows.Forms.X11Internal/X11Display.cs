@@ -1353,75 +1353,21 @@ namespace System.Windows.Forms.X11Internal {
 
 		public PaintEventArgs PaintEventStart (IntPtr handle, bool client)
 		{
-			// This needs a little work - i'm thinking part (most) should be in X11Hwnd
-			PaintEventArgs paint_event;
-			X11Hwnd hwnd;
-
-			hwnd = (X11Hwnd)Hwnd.ObjectFromHandle(handle);
+			X11Hwnd hwnd = (X11Hwnd)Hwnd.ObjectFromHandle(handle);
 
 			if (Caret.Visible == true) {
 				Caret.Paused = true;
 				HideCaret();
 			}
 
-			Graphics dc;
-
-			if (client) {
-				dc = Graphics.FromHwnd (hwnd.ClientWindow);
-
-				Region clip_region = new Region ();
-				clip_region.MakeEmpty();
-
-				foreach (Rectangle r in hwnd.ClipRectangles) {
-					clip_region.Union (r);
-				}
-
-				if (hwnd.UserClip != null) {
-					clip_region.Intersect(hwnd.UserClip);
-				}
-
-				dc.Clip = clip_region;
-				paint_event = new PaintEventArgs(dc, hwnd.Invalid);
-				hwnd.expose_pending = false;
-
-				hwnd.ClearInvalidArea();
-
-				hwnd.drawing_stack.Push (paint_event);
-				hwnd.drawing_stack.Push (dc);
-
-				return paint_event;
-			} else {
-				dc = Graphics.FromHwnd (hwnd.WholeWindow);
-
-				if (!hwnd.nc_invalid.IsEmpty) {
-					dc.SetClip (hwnd.nc_invalid);
-					paint_event = new PaintEventArgs(dc, hwnd.nc_invalid);
-				} else {
-					paint_event = new PaintEventArgs(dc, new Rectangle(0, 0, hwnd.width, hwnd.height));
-				}
-				hwnd.nc_expose_pending = false;
-
-				hwnd.ClearNcInvalidArea ();
-
-				hwnd.drawing_stack.Push (paint_event);
-				hwnd.drawing_stack.Push (dc);
-
-				return paint_event;
-			}
+			return hwnd.PaintEventStart (client);
 		}
 
 		public void PaintEventEnd (IntPtr handle, bool client)
 		{
-			// XXX like PaintEventStart, most of this should be in X11Hwnd
 			X11Hwnd hwnd = (X11Hwnd)Hwnd.ObjectFromHandle(handle);
 
-			Graphics dc = (Graphics)hwnd.drawing_stack.Pop ();
-			dc.Flush();
-			dc.Dispose();
-			
-			PaintEventArgs pe = (PaintEventArgs)hwnd.drawing_stack.Pop();
-			pe.SetGraphics (null);
-			pe.Dispose ();
+			hwnd.PaintEventEnd (client);
 
 			if (Caret.Visible == true) {
 				ShowCaret();
@@ -1636,9 +1582,7 @@ namespace System.Windows.Forms.X11Internal {
 		}
 
 		public int MouseHoverTime {
-			get {
-				return HoverState.Interval;
-			}
+			get { return HoverState.Interval; }
 		}
 
 		public Rectangle WorkingArea {
@@ -1721,19 +1665,9 @@ namespace System.Windows.Forms.X11Internal {
 					case XEventName.ButtonRelease:
 						need_idle_dispatch = true;
 						break;
-					case XEventName.ConfigureNotify:
-						// XXX um, yuck.
-						try {
-							hwnd.Queue.Lock ();
-							hwnd.AddConfigureNotify (xevent);
-						}
-						finally {
-							hwnd.Queue.Unlock ();
-						}
-						continue;
 					}
 
-					hwnd.Queue.Enqueue (xevent);
+					hwnd.EnqueueEvent (xevent);
 				}
 			}
 		}
@@ -1745,13 +1679,12 @@ namespace System.Windows.Forms.X11Internal {
 			X11ThreadQueue queue = (X11ThreadQueue)queue_id;
 			XEvent xevent;
 			bool client;
-			bool paint; // true if the event came from the Paint queue.
 			bool got_event;
 			X11Hwnd hwnd;
 
 			ProcessNextMessage:
 
-			got_event = queue.Dequeue (out paint, out xevent);
+			got_event = queue.Dequeue (out xevent);
 
 			queue.CheckTimers ();
 
@@ -2134,21 +2067,14 @@ namespace System.Windows.Forms.X11Internal {
 				goto ProcessNextMessage;
 
 			case XEventName.ConfigureNotify:
-				// Ignore events for children (SubstructureNotify) and client areas
-				if (queue.PostQuitState || !client && (xevent.ConfigureEvent.xevent == xevent.ConfigureEvent.window)) {
 #if DriverDebugExtra
-					Console.WriteLine("GetMessage(): Window {0:X} ConfigureNotify x={1} y={2} width={3} height={4}",
-							  hwnd.ClientWindow.ToInt32(),
-							  xevent.ConfigureEvent.x, xevent.ConfigureEvent.y,
-							  xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
+				Console.WriteLine("GetMessage(): Window {0:X} ConfigureNotify x={1} y={2} width={3} height={4}",
+						  hwnd.ClientWindow.ToInt32(),
+						  xevent.ConfigureEvent.x, xevent.ConfigureEvent.y,
+						  xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
 #endif
-					SendMessage(msg.hwnd, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
-					hwnd.configure_pending = false;
+				hwnd.HandleConfigureNotify (xevent);
 
-					// We need to adjust our client window to track the resize of WholeWindow
-					if (hwnd.WholeWindow != hwnd.ClientWindow)
-						hwnd.PerformNCCalc ();
-				}
 				goto ProcessNextMessage;
 
 			case XEventName.FocusIn:
@@ -2188,84 +2114,69 @@ namespace System.Windows.Forms.X11Internal {
 				goto ProcessNextMessage;
 
 			case XEventName.Expose:
-				if (!paint) {
-					// this means we're handling the expose event on its initial pass through.
-					// we want to call AddExpose here so that it can be compressed with any additional
-					// waiting expose events.  We'll catch the event at some later time through the loop,
-					// when it's returned with paint == false.
-					hwnd.AddExpose (client, xevent.ExposeEvent.x, xevent.ExposeEvent.y,
-							xevent.ExposeEvent.width, xevent.ExposeEvent.height);
-
+				if (queue.PostQuitState || !hwnd.Mapped) {
+					if (client)
+						hwnd.expose_pending = false;
+					else
+						hwnd.nc_expose_pending = false;
 					goto ProcessNextMessage;
 				}
-				else {
-					if (queue.PostQuitState || !hwnd.Mapped) {
-						if (client)
-							hwnd.expose_pending = false;
-						else
-							hwnd.nc_expose_pending = false;
-						goto ProcessNextMessage;
-					}
 
-					if (client) {
-						if (!hwnd.expose_pending)
-							goto ProcessNextMessage;
-					}
-					else {
-						if (!hwnd.nc_expose_pending)
-							goto ProcessNextMessage;
+				// XXX these should really be error conditions.  if we
+				// have an expose event in the queue, there should be
+				// one pending.
+				if (client && !hwnd.expose_pending) {
+					Console.WriteLine ("client expose but no expose pending");
+					goto ProcessNextMessage;
+				}
+				else if (!client && !hwnd.nc_expose_pending) {
+					Console.WriteLine ("non-client expose but no expose pending");
+					goto ProcessNextMessage;
+				}
 
-						Graphics g;
-
-						switch (hwnd.border_style) {
-						case FormBorderStyle.Fixed3D:
-							g = Graphics.FromHwnd(hwnd.WholeWindow);
-							ControlPaint.DrawBorder3D(g, new Rectangle(0, 0, hwnd.Width, hwnd.Height),
-										  Border3DStyle.Sunken);
-							g.Dispose();
-							break;
-
-						case FormBorderStyle.FixedSingle:
-							g = Graphics.FromHwnd(hwnd.WholeWindow);
-							ControlPaint.DrawBorder(g, new Rectangle(0, 0, hwnd.Width, hwnd.Height),
-										Color.Black, ButtonBorderStyle.Solid);
-							g.Dispose();
-							break;
-						}
-#if DriverDebugExtra
-						Console.WriteLine("GetMessage(): Window {0:X} Exposed non-client area {1},{2} {3}x{4}",
-								  hwnd.ClientWindow.ToInt32(),
-								  xevent.ExposeEvent.x, xevent.ExposeEvent.y,
-								  xevent.ExposeEvent.width, xevent.ExposeEvent.height);
-#endif
-
-						Rectangle rect = new Rectangle (xevent.ExposeEvent.x, xevent.ExposeEvent.y,
-										xevent.ExposeEvent.width, xevent.ExposeEvent.height);
-						Region region = new Region (rect);
-						IntPtr hrgn = region.GetHrgn (null); // Graphics object isn't needed
-						msg.message = Msg.WM_NCPAINT;
-						msg.wParam = hrgn == IntPtr.Zero ? (IntPtr)1 : hrgn;
-						msg.refobject = region;
-						break;
-					}
-#if DriverDebugExtra
+				if (client) {
+					//#if DriverDebugExtra
 					Console.WriteLine("GetMessage(): Window {0:X} Exposed area {1},{2} {3}x{4}",
 							  hwnd.client_window.ToInt32(),
 							  xevent.ExposeEvent.x, xevent.ExposeEvent.y,
 							  xevent.ExposeEvent.width, xevent.ExposeEvent.height);
-#endif
-					if (Caret.Visible == true) {
-						Caret.Paused = true;
-						HideCaret();
-					}
-
-					if (Caret.Visible == true) {
-						ShowCaret();
-						Caret.Paused = false;
-					}
+					//#endif
 					msg.message = Msg.WM_PAINT;
-					break;
 				}
+				else {
+					Graphics g;
+
+					switch (hwnd.border_style) {
+					case FormBorderStyle.Fixed3D:
+						g = Graphics.FromHwnd(hwnd.WholeWindow);
+						ControlPaint.DrawBorder3D(g, new Rectangle(0, 0, hwnd.Width, hwnd.Height),
+									  Border3DStyle.Sunken);
+						g.Dispose();
+						break;
+
+					case FormBorderStyle.FixedSingle:
+						g = Graphics.FromHwnd(hwnd.WholeWindow);
+						ControlPaint.DrawBorder(g, new Rectangle(0, 0, hwnd.Width, hwnd.Height),
+									Color.Black, ButtonBorderStyle.Solid);
+						g.Dispose();
+						break;
+					}
+					//#if DriverDebugExtra
+					Console.WriteLine("GetMessage(): Window {0:X} Exposed non-client area {1},{2} {3}x{4}",
+							  hwnd.ClientWindow.ToInt32(),
+							  xevent.ExposeEvent.x, xevent.ExposeEvent.y,
+							  xevent.ExposeEvent.width, xevent.ExposeEvent.height);
+					//#endif
+
+					Rectangle rect = new Rectangle (xevent.ExposeEvent.x, xevent.ExposeEvent.y,
+									xevent.ExposeEvent.width, xevent.ExposeEvent.height);
+					Region region = new Region (rect);
+					IntPtr hrgn = region.GetHrgn (null); // Graphics object isn't needed
+					msg.message = Msg.WM_NCPAINT;
+					msg.wParam = hrgn == IntPtr.Zero ? (IntPtr)1 : hrgn;
+					msg.refobject = region;
+				}
+				break;
 
 			case XEventName.DestroyNotify:
 

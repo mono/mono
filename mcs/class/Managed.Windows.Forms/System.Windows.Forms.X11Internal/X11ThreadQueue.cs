@@ -76,10 +76,8 @@ namespace System.Windows.Forms.X11Internal {
 			}
 		}
 
-		public bool DequeueUnlocked (out bool paint, out XEvent xevent)
+		public bool DequeueUnlocked (out XEvent xevent)
 		{
-			paint = false;
-
 		try_again:
 			if (xqueue.Count > 0) {
 				xevent = xqueue.Dequeue ();
@@ -88,7 +86,6 @@ namespace System.Windows.Forms.X11Internal {
 
 			if (paint_queue.Count > 0) {
 				xevent = paint_queue.Dequeue ();
-				paint = true;
 				return true;
 			}
 
@@ -102,15 +99,14 @@ namespace System.Windows.Forms.X11Internal {
 			}
 			else {
 				xevent = new XEvent ();
-				paint = false;
 				return false;
 			}
 		}
 
-		public bool Dequeue (out bool paint, out XEvent xevent)
+		public bool Dequeue (out XEvent xevent)
 		{
 			lock (lockobj) {
-				return DequeueUnlocked (out paint, out xevent);
+				return DequeueUnlocked (out xevent);
 			}
 		}
 
@@ -124,6 +120,7 @@ namespace System.Windows.Forms.X11Internal {
 		public void AddPaint (Hwnd hwnd)
 		{
 			lock (lockobj) {
+				Console.WriteLine ("adding paint event");
 				paint_queue.Enqueue (hwnd);
 				// wake up any thread blocking in DequeueUnlocked
 				Monitor.PulseAll (lockobj);
@@ -132,12 +129,12 @@ namespace System.Windows.Forms.X11Internal {
 
 		public void Lock ()
 		{
-			Monitor.Enter (xqueue);
+			Monitor.Enter (lockobj);
 		}
 
 		public void Unlock ()
 		{
-			Monitor.Exit (xqueue);
+			Monitor.Exit (lockobj);
 		}
 
 		private int NextTimeout ()
@@ -159,8 +156,10 @@ namespace System.Windows.Forms.X11Internal {
 				timeout = Timer.Minimum;
 			}
 
+#if false
 			if (timeout > 1000)
 				timeout = 1000;
+#endif
 			return timeout;
 		}
 

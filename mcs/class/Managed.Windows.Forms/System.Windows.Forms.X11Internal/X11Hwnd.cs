@@ -333,7 +333,7 @@ namespace System.Windows.Forms.X11Internal {
 					      PropertyMode.Replace, ref x11_opacity, 1);
 		}
 
-		public void AddExpose (bool client, int x, int y, int width, int height)
+		private void AddExpose (bool client, int x, int y, int width, int height)
 		{
 			// Don't waste time
 			if ((x > Width) || (y > Height) || ((x + width) < 0) || ((y + height) < 0)) {
@@ -370,58 +370,101 @@ namespace System.Windows.Forms.X11Internal {
 			}
 		}
 
-		public void AddConfigureNotify (XEvent xevent)
+		private void AddConfigureNotify (XEvent xevent)
 		{
-			if ((xevent.ConfigureEvent.window == WholeWindow) && (xevent.ConfigureEvent.window == xevent.ConfigureEvent.xevent)) {
-				if (!reparented) {
+			// We drop configure events for Client windows
+			if ((xevent.ConfigureEvent.window != WholeWindow) || (xevent.ConfigureEvent.window != xevent.ConfigureEvent.xevent))
+				return;
+
+			if (!reparented) {
+				X = xevent.ConfigureEvent.x;
+				Y = xevent.ConfigureEvent.y;
+			} else {
+				// This sucks ass, part 1
+				// Every WM does the ConfigureEvents of toplevel windows different, so there's
+				// no standard way of getting our adjustment. 
+				// The code below is needed for KDE and FVWM, the 'whacky_wm' part is for metacity
+				// Several other WMs do their decorations different yet again and we fail to deal 
+				// with that, since I couldn't find any frigging commonality between them.
+				// The only sane WM seems to be KDE
+
+				if (!xevent.ConfigureEvent.send_event) {
+					IntPtr	dummy_ptr;
+
+					int trans_x;
+					int trans_y;
+
+					Xlib.XTranslateCoordinates (display.Handle, WholeWindow, display.RootWindow.Handle,
+								    -xevent.ConfigureEvent.x, -xevent.ConfigureEvent.y,
+								    out trans_x, out trans_y, out dummy_ptr);
+
+					X = trans_x;
+					Y = trans_y;
+				} else {
+					// This is a synthetic event, coordinates are in root space
 					X = xevent.ConfigureEvent.x;
 					Y = xevent.ConfigureEvent.y;
-				} else {
-					// This sucks ass, part 1
-					// Every WM does the ConfigureEvents of toplevel windows different, so there's
-					// no standard way of getting our adjustment. 
-					// The code below is needed for KDE and FVWM, the 'whacky_wm' part is for metacity
-					// Several other WMs do their decorations different yet again and we fail to deal 
-					// with that, since I couldn't find any frigging commonality between them.
-					// The only sane WM seems to be KDE
+					if (whacky_wm) {
+						int frame_left;
+						int frame_top;
 
-					if (!xevent.ConfigureEvent.send_event) {
-						IntPtr	dummy_ptr;
-
-						int trans_x;
-						int trans_y;
-
-						Xlib.XTranslateCoordinates (display.Handle, WholeWindow, display.RootWindow.Handle,
-									    -xevent.ConfigureEvent.x, -xevent.ConfigureEvent.y,
-									    out trans_x, out trans_y, out dummy_ptr);
-
-						X = trans_x;
-						Y = trans_y;
-					} else {
-						// This is a synthetic event, coordinates are in root space
-						X = xevent.ConfigureEvent.x;
-						Y = xevent.ConfigureEvent.y;
-						if (whacky_wm) {
-							int frame_left;
-							int frame_top;
-
-							FrameExtents (out frame_left, out frame_top);
-							X -= frame_left;
-							Y -= frame_top;
-						}
+						FrameExtents (out frame_left, out frame_top);
+						X -= frame_left;
+						Y -= frame_top;
 					}
 				}
+			}
 
-				Width = xevent.ConfigureEvent.width;
-				Height = xevent.ConfigureEvent.height;
-				ClientRect = Rectangle.Empty;
+			Width = xevent.ConfigureEvent.width;
+			Height = xevent.ConfigureEvent.height;
+			ClientRect = Rectangle.Empty;
 
+			lock (configure_lock) {
 				if (!configure_pending) {
-					Queue.Enqueue(xevent);
+					Queue.EnqueueUnlocked (xevent);
 					configure_pending = true;
 				}
 			}
-			// We drop configure events for Client windows
+		}
+
+		public void HandleConfigureNotify (XEvent xevent)
+		{
+			try {
+				Queue.Lock ();
+				lock (configure_lock) {
+					display.SendMessage (Handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
+					configure_pending = false;
+				}
+
+				// We need to adjust our client window to track the resize of whole_window
+				if (WholeWindow != ClientWindow)
+					PerformNCCalc ();
+			}
+			finally {
+				Queue.Unlock ();
+			}
+		}
+
+		// Handle any event compression here
+		public void EnqueueEvent (XEvent xevent)
+		{
+			switch (xevent.type) {
+			case XEventName.Expose:
+				Queue.Lock ();
+				AddExpose (xevent.ExposeEvent.window == ClientWindow,
+					   xevent.ExposeEvent.x, xevent.ExposeEvent.y,
+					   xevent.ExposeEvent.width, xevent.ExposeEvent.height);
+				Queue.Unlock ();
+				break;
+			case XEventName.ConfigureNotify:
+				Queue.Lock ();
+				AddConfigureNotify (xevent);
+				Queue.Unlock ();
+				break;
+			default:
+				Queue.Enqueue (xevent);
+				break;
+			}
 		}
 
 		public void Invalidate (Rectangle rc, bool clear)
@@ -441,6 +484,74 @@ namespace System.Windows.Forms.X11Internal {
 		private void InvalidateWholeWindow (Rectangle rectangle)
 		{
 			AddExpose (false, rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
+		}
+
+		public PaintEventArgs PaintEventStart (bool client)
+		{
+			PaintEventArgs paint_event;
+			Graphics dc;
+
+			/* make sure the XEventThread doesn't try to call hwnd.EnqueueEvent
+			   (which calls AddExpose) while we're in here. */
+			try {
+				Queue.Lock ();
+				if (client) {
+					dc = Graphics.FromHwnd (ClientWindow);
+
+					Region clip_region = new Region ();
+					clip_region.MakeEmpty();
+
+					foreach (Rectangle r in ClipRectangles)
+						clip_region.Union (r);
+
+					if (UserClip != null)
+						clip_region.Intersect(UserClip);
+
+					dc.Clip = clip_region;
+					paint_event = new PaintEventArgs(dc, Invalid);
+					expose_pending = false;
+
+					ClearInvalidArea();
+
+					drawing_stack.Push (paint_event);
+					drawing_stack.Push (dc);
+
+					return paint_event;
+				}
+				else {
+					dc = Graphics.FromHwnd (WholeWindow);
+
+					if (!nc_invalid.IsEmpty) {
+						dc.SetClip (nc_invalid);
+						paint_event = new PaintEventArgs(dc, nc_invalid);
+					}
+					else {
+						paint_event = new PaintEventArgs(dc, new Rectangle(0, 0, width, height));
+					}
+					nc_expose_pending = false;
+
+					ClearNcInvalidArea ();
+
+					drawing_stack.Push (paint_event);
+					drawing_stack.Push (dc);
+
+					return paint_event;
+				}
+			}
+			finally {
+				Queue.Unlock ();
+			}
+		}
+
+		public void PaintEventEnd (bool client)
+		{
+			Graphics dc = (Graphics)drawing_stack.Pop ();
+			dc.Flush();
+			dc.Dispose();
+			
+			PaintEventArgs pe = (PaintEventArgs)drawing_stack.Pop();
+			pe.SetGraphics (null);
+			pe.Dispose ();
 		}
 
 		public void DrawReversibleRectangle (Rectangle rect, int line_width)
