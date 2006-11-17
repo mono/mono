@@ -7,7 +7,7 @@
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) Tim Coleman, 2004
-// Copyright (C) 2005 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2005, 2006 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,6 +32,7 @@
 #if NET_2_0 && SECURITY_DEP
 
 using System.Collections;
+using System.Globalization;
 
 namespace System.Security.Cryptography.X509Certificates {
 
@@ -81,7 +82,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			return InnerList.Add (certificate);
 		}
 
-		// note: transactional
+		[MonoTODO ("Method isn't transactional (like documented)")]
 		public void AddRange (X509Certificate2[] certificates) 
 		{
 			if (certificates == null)
@@ -91,7 +92,7 @@ namespace System.Security.Cryptography.X509Certificates {
 				InnerList.Add (certificates [i]);
 		}
 
-		// note: transactional
+		[MonoTODO ("Method isn't transactional (like documented)")]
 		public void AddRange (X509Certificate2Collection certificates) 
 		{
 			if (certificates == null)
@@ -106,46 +107,244 @@ namespace System.Security.Cryptography.X509Certificates {
 				throw new ArgumentNullException ("certificate");
 
 			foreach (X509Certificate2 c in InnerList) {
-				if (certificate.Equals (c))
+				if (c.Equals (certificate))
 					return true;
 			}
 			return false;
 		}
 
+		[MonoTODO ("only support X509ContentType.Cert")]
 		public byte[] Export (X509ContentType contentType) 
 		{
-			return null;
+			return Export (contentType, null);
 		}
 
+		[MonoTODO ("only support X509ContentType.Cert")]
 		public byte[] Export (X509ContentType contentType, string password) 
 		{
+			switch (contentType) {
+			case X509ContentType.Cert:
+			case X509ContentType.Pfx: // this includes Pkcs12
+			case X509ContentType.SerializedCert:
+				// if multiple certificates are present we only export the last one
+				if (Count > 0)
+					return this [Count - 1].Export (contentType, password);
+				break;
+			case X509ContentType.Pkcs7:
+				// TODO
+				break;
+			case X509ContentType.SerializedStore:
+				// TODO
+				break;
+			default:
+				// this includes Authenticode, Unknown and bad values
+				string msg = Locale.GetText ("Cannot export certificate(s) to the '{0}' format", contentType);
+				throw new CryptographicException (msg);
+			}
 			return null;
 		}
 
+		[MonoTODO ("Does not support X509FindType.FindByTemplateName, FindByApplicationPolicy and FindByCertificatePolicy")]
 		public X509Certificate2Collection Find (X509FindType findType, object findValue, bool validOnly) 
 		{
-			return null;
+			if (findValue == null)
+				throw new ArgumentNullException ("findValue");
+
+			string str = String.Empty;
+			string oid = String.Empty;
+			X509KeyUsageFlags ku = X509KeyUsageFlags.None;
+			DateTime dt = DateTime.MinValue;
+
+			switch (findType) {
+			case X509FindType.FindByThumbprint:
+			case X509FindType.FindBySubjectName:
+			case X509FindType.FindBySubjectDistinguishedName:
+			case X509FindType.FindByIssuerName:
+			case X509FindType.FindByIssuerDistinguishedName:
+			case X509FindType.FindBySerialNumber:
+			case X509FindType.FindByTemplateName:
+			case X509FindType.FindBySubjectKeyIdentifier:
+				try {
+					str = (string) findValue;
+				}
+				catch (Exception e) {
+					string msg = Locale.GetText ("Invalid find value type '{0}', expected '{1}'.", 
+						findValue.GetType (), "string");
+					throw new CryptographicException (msg, e);
+				}
+				break;
+			case X509FindType.FindByApplicationPolicy:
+			case X509FindType.FindByCertificatePolicy:
+			case X509FindType.FindByExtension:
+				try {
+					oid = (string) findValue;
+				}
+				catch (Exception e) {
+					string msg = Locale.GetText ("Invalid find value type '{0}', expected '{1}'.", 
+						findValue.GetType (), "X509KeyUsageFlags");
+					throw new CryptographicException (msg, e);
+				}
+				// OID validation
+				try {
+					CryptoConfig.EncodeOID (oid);
+				}
+				catch (CryptographicUnexpectedOperationException) {
+					string msg = Locale.GetText ("Invalid OID value '{0}'.", oid);
+					throw new ArgumentException ("findValue", msg);
+				}
+				break;
+			case X509FindType.FindByKeyUsage:
+				try {
+					ku = (X509KeyUsageFlags) findValue;
+				}
+				catch (Exception e) {
+					string msg = Locale.GetText ("Invalid find value type '{0}', expected '{1}'.", 
+						findValue.GetType (), "X509KeyUsageFlags");
+					throw new CryptographicException (msg, e);
+				}
+				break;
+			case X509FindType.FindByTimeValid:
+			case X509FindType.FindByTimeNotYetValid:
+			case X509FindType.FindByTimeExpired:
+				try {
+					dt = (DateTime) findValue;
+				}
+				catch (Exception e) {
+					string msg = Locale.GetText ("Invalid find value type '{0}', expected '{1}'.", 
+						findValue.GetType (), "X509DateTime");
+					throw new CryptographicException (msg,e );
+				}
+				break;
+			default:
+				string msg = Locale.GetText ("Invalid find type '{0}'.", findType);
+				throw new CryptographicException (msg);
+			}
+
+			CultureInfo cinv = CultureInfo.InvariantCulture;
+			X509Certificate2Collection results = new  X509Certificate2Collection ();
+			foreach (X509Certificate2 x in InnerList) {
+				bool value_match = false;
+
+				switch (findType) {
+				case X509FindType.FindByThumbprint:
+					// works with Thumbprint, GetCertHashString in both normal (upper) and lower case
+					value_match = ((String.Compare (str, x.Thumbprint, true, cinv) == 0) ||
+						(String.Compare (str, x.GetCertHashString (), true, cinv) == 0));
+					break;
+				case X509FindType.FindBySubjectName:
+					string sname = x.GetNameInfo (X509NameType.SimpleName, false);
+					value_match = (sname.IndexOf (str, StringComparison.InvariantCultureIgnoreCase) >= 0);
+					break;
+				case X509FindType.FindBySubjectDistinguishedName:
+					value_match = (String.Compare (str, x.Subject, true, cinv) == 0);
+					break;
+				case X509FindType.FindByIssuerName:
+					string iname = x.GetNameInfo (X509NameType.SimpleName, true);
+					value_match = (iname.IndexOf (str, StringComparison.InvariantCultureIgnoreCase) >= 0);
+					break;
+				case X509FindType.FindByIssuerDistinguishedName:
+					value_match = (String.Compare (str, x.Issuer, true, cinv) == 0);
+					break;
+				case X509FindType.FindBySerialNumber:
+					value_match = (String.Compare (str, x.SerialNumber, true, cinv) == 0);
+					break;
+				case X509FindType.FindByTemplateName:
+					// TODO - find a valid test case
+					break;
+				case X509FindType.FindBySubjectKeyIdentifier:
+					X509SubjectKeyIdentifierExtension ski = (x.Extensions ["2.5.29.14"] as X509SubjectKeyIdentifierExtension);
+					if (ski != null) {
+						value_match = (String.Compare (str, ski.SubjectKeyIdentifier, true, cinv) == 0);
+					}
+					break;
+				case X509FindType.FindByApplicationPolicy:
+					// note: include when no extensions are present (even if v3)
+					value_match = (x.Extensions.Count == 0);
+					// TODO - find test case with extension
+					break;
+				case X509FindType.FindByCertificatePolicy:
+					// TODO - find test case with extension
+					break;
+				case X509FindType.FindByExtension:
+					value_match = (x.Extensions [oid] != null);
+					break;
+				case X509FindType.FindByKeyUsage:
+					X509KeyUsageExtension kue = (x.Extensions ["2.5.29.15"] as X509KeyUsageExtension);
+					if (kue == null) {
+						// key doesn't have any hard coded limitations
+						// note: MS doesn't check for ExtendedKeyUsage
+						value_match = true; 
+					} else {
+						value_match = ((kue.KeyUsages & ku) == ku);
+					}
+					break;
+				case X509FindType.FindByTimeValid:
+					value_match = ((dt >= x.NotBefore) && (dt <= x.NotAfter));
+					break;
+				case X509FindType.FindByTimeNotYetValid:
+					value_match = (dt < x.NotBefore);
+					break;
+				case X509FindType.FindByTimeExpired:
+					value_match = (dt > x.NotAfter);
+					break;
+				}
+
+				if (!value_match)
+					continue;
+
+				if (validOnly) {
+					try {
+						if (x.Verify ())
+							results.Add (x);
+					}
+					catch {
+					}
+				} else {
+					results.Add (x);
+				}
+			}
+			return results;
 		}
 
 		public new X509Certificate2Enumerator GetEnumerator () 
 		{
-			return null;
+			return new X509Certificate2Enumerator (this);
 		}
 
+		[MonoTODO ("same limitations as X509Certificate2.Import")]
 		public void Import (byte[] rawData) 
 		{
+			// FIXME: can it import multiple certificates, e.g. a pkcs7 file ?
+			X509Certificate2 cert = new X509Certificate2 ();
+			cert.Import (rawData);
+			Add (cert);
 		}
 
+		[MonoTODO ("same limitations as X509Certificate2.Import")]
 		public void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
+			// FIXME: can it import multiple certificates, e.g. a pkcs7 file ?
+			X509Certificate2 cert = new X509Certificate2 ();
+			cert.Import (rawData, password, keyStorageFlags);
+			Add (cert);
 		}
 
+		[MonoTODO ("same limitations as X509Certificate2.Import")]
 		public void Import (string fileName) 
 		{
+			// FIXME: can it import multiple certificates, e.g. a pkcs7 file ?
+			X509Certificate2 cert = new X509Certificate2 ();
+			cert.Import (fileName);
+			Add (cert);
 		}
 
+		[MonoTODO ("same limitations as X509Certificate2.Import")]
 		public void Import (string fileName, string password, X509KeyStorageFlags keyStorageFlags) 
 		{
+			// FIXME: can it import multiple certificates, e.g. a pkcs7 file ?
+			X509Certificate2 cert = new X509Certificate2 ();
+			cert.Import (fileName, password, keyStorageFlags);
+			Add (cert);
 		}
 
 		public void Insert (int index, X509Certificate2 certificate) 
@@ -166,8 +365,8 @@ namespace System.Security.Cryptography.X509Certificates {
 				throw new ArgumentNullException ("certificate");
 
 			for (int i=0; i < InnerList.Count; i++) {
-				X509Certificate2 c = (X509Certificate2) InnerList [i];
-				if (certificate.Equals (c)) {
+				X509Certificate c = (X509Certificate) InnerList [i];
+				if (c.Equals (certificate)) {
 					InnerList.RemoveAt (i);
 					// only first instance is removed
 					return;
@@ -175,18 +374,25 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 		}
 
-		// note: transactional
+		[MonoTODO ("Method isn't transactional (like documented)")]
 		public void RemoveRange (X509Certificate2[] certificates)
 		{
 			if (certificates == null)
 				throw new ArgumentNullException ("certificate");
+
+			foreach (X509Certificate2 x in certificates)
+				Remove (x);
 		}
 
-		// note: transactional
+		[MonoTODO ("Method isn't transactional (like documented)")]
 		public void RemoveRange (X509Certificate2Collection certificates) 
 		{
 			if (certificates == null)
 				throw new ArgumentNullException ("certificate");
+
+			// note: X509Certificate2Collection can contain both X509Certificate2 and X509Certificate instances
+			foreach (X509Certificate2 x in certificates)
+				Remove (x);
 		}
 	}
 }

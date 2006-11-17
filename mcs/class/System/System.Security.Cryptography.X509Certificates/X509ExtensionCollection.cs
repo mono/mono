@@ -7,7 +7,7 @@
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) Tim Coleman, 2004
-// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -86,16 +86,25 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 		public object SyncRoot {
-			get { return _list.SyncRoot; }
+			get { return this; }
 		}
 
 		public X509Extension this [int index] {
-			get { return (X509Extension) _list [index]; }
+			get {
+				if (index < 0)
+					throw new InvalidOperationException ("index");
+				return (X509Extension) _list [index];
+			}
 		}
 
 		public X509Extension this [string oid] {
-			get { 
-				foreach (X509Extension extension in this) {
+			get {
+				if (oid == null)
+					throw new ArgumentNullException ("oid");
+				if ((_list.Count == 0) || (oid.Length == 0))
+					return null;
+
+				foreach (X509Extension extension in _list) {
 					if (extension.Oid.Value.Equals (oid))
 						return extension;
 				}
@@ -107,33 +116,44 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public int Add (X509Extension extension) 
 		{
+			if (extension == null)
+				throw new ArgumentNullException ("extension");
+
 			return _list.Add (extension);
 		}
 
-		[MonoTODO]
 		public void CopyTo (X509Extension[] array, int index) 
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
 			if (index < 0)
-				throw new ArgumentException ("negative index");
-			if (index > array.Length)
-				throw new ArgumentOutOfRangeException ("index > array.Length");
+				throw new ArgumentOutOfRangeException ("negative index");
+			if (index >= array.Length)
+				throw new ArgumentOutOfRangeException ("index >= array.Length");
+
+			_list.CopyTo (array, index);
 		}
 
 		void ICollection.CopyTo (Array array, int index)
 		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("negative index");
+			if (index >= array.Length)
+				throw new ArgumentOutOfRangeException ("index >= array.Length");
+
 			_list.CopyTo (array, index);
 		}
 
 		public X509ExtensionEnumerator GetEnumerator () 
 		{
-			return new X509ExtensionEnumerator (this);
+			return new X509ExtensionEnumerator (_list);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator () 
 		{
-			return new X509ExtensionEnumerator (this);
+			return new X509ExtensionEnumerator (_list);
 		}
 	}
 }

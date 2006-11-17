@@ -1,3 +1,15 @@
+2006-11-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate2Collection.cs: Implement Export (to DER encoded 
+	format), Find (for most X509FindType), Import (for single 
+	certificates), RemoveRange (but it's not transactional).
+	* X509Certificate2.cs: Fix Reset method to reset every field.
+	* X509ExtensionCollection.cs: Implement missing CopyTo. Fix exception
+	handling to match new unit tests.
+	* X509ExtensionEnumerator.cs: Fix recursion.
+	* X509SubjectKeyIdentifierExtension.cs: Add support for ctors
+	accepting a PublicKey instance.
+
 2006-11-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate2.cs: Throw a CryptographicException for (most) 

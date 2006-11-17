@@ -2,11 +2,10 @@
 // X509ExtensionEnumerator.cs - System.Security.Cryptography.X509ExtensionEnumerator
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
+// Copyright (C) 2006 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,15 +33,13 @@ using System.Collections;
 
 namespace System.Security.Cryptography.X509Certificates {
 
-	// Note: Match the definition of framework version 1.2.3400.0 on http://longhorn.msdn.microsoft.com
-
 	public sealed class X509ExtensionEnumerator : IEnumerator {
 
 		private IEnumerator enumerator;
 
-		internal X509ExtensionEnumerator (X509ExtensionCollection collection)
+		internal X509ExtensionEnumerator (ArrayList list)
 		{
-			enumerator = ((IEnumerable) collection).GetEnumerator ();
+			enumerator = list.GetEnumerator ();
 		}
 
 		// properties

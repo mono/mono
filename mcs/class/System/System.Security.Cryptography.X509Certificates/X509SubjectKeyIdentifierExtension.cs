@@ -88,17 +88,51 @@ namespace System.Security.Cryptography.X509Certificates {
 			RawData = Encode ();
 		}
 
-		[MonoTODO]
 		public X509SubjectKeyIdentifierExtension (PublicKey key, bool critical)
 			: this (key, X509SubjectKeyIdentifierHashAlgorithm.Sha1, critical)
 		{
 		}
 
-		[MonoTODO]
 		public X509SubjectKeyIdentifierExtension (PublicKey key, X509SubjectKeyIdentifierHashAlgorithm algorithm, bool critical)
 		{
 			if (key == null)
 				throw new ArgumentNullException ("key");
+
+			byte[] pkraw = key.EncodedKeyValue.RawData;
+			// compute SKI
+			switch (algorithm) {
+			// hash of the public key, excluding Tag, Length and unused bits values
+			case X509SubjectKeyIdentifierHashAlgorithm.Sha1:
+				_subjectKeyIdentifier = SHA1.Create ().ComputeHash (pkraw);
+				break;
+			// 0100 bit pattern followed by the 60 last bit of the hash
+			case X509SubjectKeyIdentifierHashAlgorithm.ShortSha1:
+				byte[] hash = SHA1.Create ().ComputeHash (pkraw);
+				_subjectKeyIdentifier = new byte [8];
+				Buffer.BlockCopy (hash, 12, _subjectKeyIdentifier, 0, 8);
+				_subjectKeyIdentifier [0] = (byte) (0x40 | (_subjectKeyIdentifier [0] & 0x0F));
+				break;
+			// hash of the public key, including Tag, Length and unused bits values
+			case X509SubjectKeyIdentifierHashAlgorithm.CapiSha1:
+				// CryptoAPI does that hash on the complete subjectPublicKeyInfo (unlike PKIX)
+				// http://groups.google.ca/groups?selm=e7RqM%24plCHA.1488%40tkmsftngp02&oe=UTF-8&output=gplain
+				ASN1 subjectPublicKeyInfo = new ASN1 (0x30);
+				ASN1 algo = subjectPublicKeyInfo.Add (new ASN1 (0x30));
+				algo.Add (new ASN1 (CryptoConfig.EncodeOID (key.Oid.Value)));
+				algo.Add (new ASN1 (key.EncodedParameters.RawData)); 
+				// add an extra byte for the unused bits (none)
+				byte[] full = new byte [pkraw.Length + 1];
+				Buffer.BlockCopy (pkraw, 0, full, 1, pkraw.Length);
+				subjectPublicKeyInfo.Add (new ASN1 (0x03, full));
+				_subjectKeyIdentifier = SHA1.Create ().ComputeHash (subjectPublicKeyInfo.GetBytes ());
+				break;
+			default:
+				throw new ArgumentException ("algorithm");
+			}
+
+			_oid = new Oid (oid, friendlyName);
+			base.Critical = critical;
+			RawData = Encode ();
 		}
 
 		// properties

@@ -314,6 +314,8 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 			switch (nameType) {
 			case X509NameType.SimpleName:
+				if (_cert == null)
+					throw new CryptographicException (empty_error);
 				// return CN= or, if missing, the first part of the DN
 				ASN1 sn = forIssuer ? _cert.GetIssuerName () : _cert.GetSubjectName ();
 				ASN1 dn = Find (commonName, sn);
@@ -487,8 +489,15 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public override void Reset () 
 		{
+			_cert = null;
+			_archived = false;
+			_extensions = null;
+			_name = String.Empty;
 			_serial = null;
 			_publicKey = null;
+			issuer_name = null;
+			subject_name = null;
+			signature_algorithm = null;
 			base.Reset ();
 		}
 
