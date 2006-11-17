@@ -1,3 +1,14 @@
+2006-11-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate2CollectionTest.cs: New. Unit tests for 
+	X509Certificate2Collection.
+	* X509Certificate2Test.cs: Changed cert_8 to public so it can be 
+	reused in other tests. Added test case for GetNameInfo with SimpleName
+	* X509ExtensionCollectionTest.cs: New. Unit tests for 
+	X509ExtensionCollection.
+	* X509SubjectKeyIdentifierExtensionTest.cs: Added test cases for ctors
+	accepting PublicKey instances.
+
 2006-11-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate2Test.cs: Add property tests when using an "empty"

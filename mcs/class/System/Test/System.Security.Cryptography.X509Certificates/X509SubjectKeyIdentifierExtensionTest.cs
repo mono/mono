@@ -34,6 +34,7 @@ using NUnit.Framework;
 using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 
 namespace MonoTests.System.Security.Cryptography.X509Certificates {
 
@@ -42,6 +43,14 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 
 		private const string oid = "2.5.29.14";
 		private const string fname = "Subject Key Identifier";
+
+		private PublicKey pk1;
+
+		[TestFixtureSetUp]
+		public void FixtureSetUp ()
+		{
+			pk1 = new X509Certificate2 (Encoding.ASCII.GetBytes (X509Certificate2Test.base64_cert)).PublicKey;
+		}
 
 		[Test]
 		public void ConstructorEmpty ()
@@ -211,14 +220,101 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ConstructorPublicKey_Null ()
 		{
-			X509SubjectKeyIdentifierExtension ski = new X509SubjectKeyIdentifierExtension ((PublicKey)null, true);
+			new X509SubjectKeyIdentifierExtension ((PublicKey)null, true);
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ConstructorPublicKeyHash_Null ()
 		{
-			X509SubjectKeyIdentifierExtension ski = new X509SubjectKeyIdentifierExtension (null, X509SubjectKeyIdentifierHashAlgorithm.Sha1, true);
+			new X509SubjectKeyIdentifierExtension (null, X509SubjectKeyIdentifierHashAlgorithm.Sha1, true);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConstructorPublicKeyHash_BadX509SubjectKeyIdentifierHashAlgorithm ()
+		{
+			new X509SubjectKeyIdentifierExtension (pk1, (X509SubjectKeyIdentifierHashAlgorithm)Int32.MinValue, true);
+		}
+
+		[Test]
+		public void ConstructorPublicKeyHash_Critical ()
+		{
+			X509SubjectKeyIdentifierExtension ski = new X509SubjectKeyIdentifierExtension (pk1, true);
+			Assert.IsTrue (ski.Critical, "Critical");
+			Assert.AreEqual ("2.5.29.14", ski.Oid.Value, "Oid");
+			Assert.AreEqual ("4A0200E2E8D33DBA05FC37BDC36DCF47212D77D1", ski.SubjectKeyIdentifier, "SubjectKeyIdentifier");
+			Assert.AreEqual ("04-14-4A-02-00-E2-E8-D3-3D-BA-05-FC-37-BD-C3-6D-CF-47-21-2D-77-D1", BitConverter.ToString (ski.RawData), "RawData");
+		}
+
+		[Test]
+		public void ConstructorPublicKeyHash_Sha1_Critical ()
+		{
+			X509SubjectKeyIdentifierExtension ski = new X509SubjectKeyIdentifierExtension (pk1, X509SubjectKeyIdentifierHashAlgorithm.Sha1, true);
+			Assert.IsTrue (ski.Critical, "Critical");
+			Assert.AreEqual ("2.5.29.14", ski.Oid.Value, "Oid");
+			Assert.AreEqual ("4A0200E2E8D33DBA05FC37BDC36DCF47212D77D1", ski.SubjectKeyIdentifier, "SubjectKeyIdentifier");
+			Assert.AreEqual ("04-14-4A-02-00-E2-E8-D3-3D-BA-05-FC-37-BD-C3-6D-CF-47-21-2D-77-D1", BitConverter.ToString (ski.RawData), "RawData");
+		}
+
+		[Test]
+		public void ConstructorPublicKeyHash_ShortSha1_Critical ()
+		{
+			X509SubjectKeyIdentifierExtension ski = new X509SubjectKeyIdentifierExtension (pk1, X509SubjectKeyIdentifierHashAlgorithm.ShortSha1, true);
+			Assert.IsTrue (ski.Critical, "Critical");
+			Assert.AreEqual ("2.5.29.14", ski.Oid.Value, "Oid");
+			Assert.AreEqual ("436DCF47212D77D1", ski.SubjectKeyIdentifier, "SubjectKeyIdentifier");
+			Assert.AreEqual ("04-08-43-6D-CF-47-21-2D-77-D1", BitConverter.ToString (ski.RawData), "RawData");
+		}
+
+		[Test]
+		public void ConstructorPublicKeyHash_CapiSha1_Critical ()
+		{
+			X509SubjectKeyIdentifierExtension ski = new X509SubjectKeyIdentifierExtension (pk1, X509SubjectKeyIdentifierHashAlgorithm.CapiSha1, true);
+			Assert.IsTrue (ski.Critical, "Critical");
+			Assert.AreEqual ("2.5.29.14", ski.Oid.Value, "Oid");
+			Assert.AreEqual ("0E73CE0E2E059378FC782707EBF0B4E7AEA652E1", ski.SubjectKeyIdentifier, "SubjectKeyIdentifier");
+			Assert.AreEqual ("04-14-0E-73-CE-0E-2E-05-93-78-FC-78-27-07-EB-F0-B4-E7-AE-A6-52-E1", BitConverter.ToString (ski.RawData), "RawData");
+		}
+
+		[Test]
+		public void ConstructorPublicKeyHash ()
+		{
+			X509SubjectKeyIdentifierExtension ski = new X509SubjectKeyIdentifierExtension (pk1, false);
+			Assert.IsFalse (ski.Critical, "Critical");
+			Assert.AreEqual ("2.5.29.14", ski.Oid.Value, "Oid");
+			Assert.AreEqual ("4A0200E2E8D33DBA05FC37BDC36DCF47212D77D1", ski.SubjectKeyIdentifier, "SubjectKeyIdentifier");
+			Assert.AreEqual ("04-14-4A-02-00-E2-E8-D3-3D-BA-05-FC-37-BD-C3-6D-CF-47-21-2D-77-D1", BitConverter.ToString (ski.RawData), "RawData");
+		}
+
+		[Test]
+		public void ConstructorPublicKeyHash_Sha1 ()
+		{
+			X509SubjectKeyIdentifierExtension ski = new X509SubjectKeyIdentifierExtension (pk1, X509SubjectKeyIdentifierHashAlgorithm.Sha1, false);
+			Assert.IsFalse (ski.Critical, "Critical");
+			Assert.AreEqual ("2.5.29.14", ski.Oid.Value, "Oid");
+			Assert.AreEqual ("4A0200E2E8D33DBA05FC37BDC36DCF47212D77D1", ski.SubjectKeyIdentifier, "SubjectKeyIdentifier");
+			Assert.AreEqual ("04-14-4A-02-00-E2-E8-D3-3D-BA-05-FC-37-BD-C3-6D-CF-47-21-2D-77-D1", BitConverter.ToString (ski.RawData), "RawData");
+		}
+
+		[Test]
+		public void ConstructorPublicKeyHash_ShortSha1 ()
+		{
+			X509SubjectKeyIdentifierExtension ski = new X509SubjectKeyIdentifierExtension (pk1, X509SubjectKeyIdentifierHashAlgorithm.ShortSha1, false);
+			Assert.IsFalse (ski.Critical, "Critical");
+			Assert.AreEqual ("2.5.29.14", ski.Oid.Value, "Oid");
+			Assert.AreEqual ("436DCF47212D77D1", ski.SubjectKeyIdentifier, "SubjectKeyIdentifier");
+			Assert.AreEqual ("04-08-43-6D-CF-47-21-2D-77-D1", BitConverter.ToString (ski.RawData), "RawData");
+		}
+
+		[Test]
+		public void ConstructorPublicKeyHash_CapiSha1 ()
+		{
+			X509SubjectKeyIdentifierExtension ski = new X509SubjectKeyIdentifierExtension (pk1, X509SubjectKeyIdentifierHashAlgorithm.CapiSha1, false);
+			Assert.IsFalse (ski.Critical, "Critical");
+			Assert.AreEqual ("2.5.29.14", ski.Oid.Value, "Oid");
+			Assert.AreEqual ("0E73CE0E2E059378FC782707EBF0B4E7AEA652E1", ski.SubjectKeyIdentifier, "SubjectKeyIdentifier");
+			Assert.AreEqual ("04-14-0E-73-CE-0E-2E-05-93-78-FC-78-27-07-EB-F0-B4-E7-AE-A6-52-E1", BitConverter.ToString (ski.RawData), "RawData");
 		}
 
 		[Test]
