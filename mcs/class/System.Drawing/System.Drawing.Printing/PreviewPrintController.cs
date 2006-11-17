@@ -60,7 +60,7 @@ namespace System.Drawing.Printing
 		[MonoTODO]
 		public override void OnStartPrint(PrintDocument document, PrintEventArgs e)
 		{
-			if (document.PrinterSettings.IsValid)
+			if (!document.PrinterSettings.IsValid)
 				throw new InvalidPrinterException(document.PrinterSettings);
 		
 			/* maybe we should reuse the images, and clear them? */
