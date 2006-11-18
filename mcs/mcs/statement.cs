@@ -1860,8 +1860,10 @@ namespace Mono.CSharp {
 
 		public ScopeInfo CreateScopeInfo ()
 		{
+#if FIXME
 			if (Implicit)
 				return Parent.CreateScopeInfo ();
+#endif
 
 			if (ScopeInfo == null)
 				ScopeInfo = ScopeInfo.CreateScope (this);
@@ -2391,8 +2393,10 @@ namespace Mono.CSharp {
 				Report.Debug (128, "TOPLEVEL CREATE ROOT SCOPE", this, Container,
 					      Container.root_scope, AnonymousContainer,
 					      Container.AnonymousContainer);
+#if FIXME
 				root_scope = new RootScopeInfo (
 					this, Container.root_scope, null, StartLocation);
+#endif
 			} else
 				root_scope = new RootScopeInfo (
 					this, host, generic, StartLocation);

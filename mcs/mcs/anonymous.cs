@@ -27,7 +27,7 @@ namespace Mono.CSharp {
 
 		private static MemberName MakeProxyName (GenericMethod generic, Location loc)
 		{
-			string name = String.Format ("<>c__CompilerGenerated{0}", ++next_index);
+			string name = MakeName ("CompilerGenerated");
 			if (generic != null) {
 				TypeArguments args = new TypeArguments (loc);
 				foreach (TypeParameter tparam in generic.CurrentTypeParameters)
@@ -37,7 +37,7 @@ namespace Mono.CSharp {
 				return new MemberName (name, loc);
 		}
 
-		protected string MakeName (string prefix)
+		public static string MakeName (string prefix)
 		{
 			return String.Format ("<>c__{0}{1}", prefix, ++next_index);
 		}
@@ -186,7 +186,9 @@ namespace Mono.CSharp {
 			RootScope = block.Toplevel.RootScope;
 			ScopeBlock = block;
 
-			Report.Debug (128, "NEW SCOPE", this);
+			Report.Debug (128, "NEW SCOPE", this, block);
+
+			RootScope.AddScope (this);
 		}
 
 		protected ScopeInfo (ToplevelBlock toplevel, TypeContainer parent,
@@ -208,7 +210,7 @@ namespace Mono.CSharp {
 		Hashtable scopes = new Hashtable ();
 
 		public ScopeInfo HostScope {
-			get { return host_scope; }
+			get { return host_scope != null ? host_scope : this; }
 		}
 
 		public Variable ScopeInstance {
@@ -234,15 +236,10 @@ namespace Mono.CSharp {
 
 		public ExpressionStatement GetScopeInitializer (EmitContext ec)
 		{
-			Report.Debug (64, "GET SCOPE INITIALIZER",
+			Report.Debug (128, "GET SCOPE INITIALIZER",
 				      this, GetType (), scope_initializer, ScopeBlock);
 
 			if (scope_initializer == null) {
-				if (!ResolveMembers ())
-					throw new InternalErrorException ();
-				if (!DefineMembers ())
-					throw new InternalErrorException ();
-
 				scope_initializer = CreateScopeInitializer ();
 				if (scope_initializer.Resolve (ec) == null)
 					throw new InternalErrorException ();
@@ -284,6 +281,18 @@ namespace Mono.CSharp {
 			scope.EmitScopeInstance (ec);
 
 			if (toplevel.AnonymousContainer != null) {
+				if (toplevel.AnonymousContainer.Scope != scope.HostScope) {
+				Report.Debug (128, "EMIT SCOPE INSTANCE #1",
+					      scope, toplevel.AnonymousContainer.Scope,
+					      scope.HostScope);
+
+					ec.ig.Emit (OpCodes.Neg);
+					ec.ig.Emit (OpCodes.Neg);
+					ec.ig.Emit (OpCodes.Neg);
+					ec.ig.Emit (OpCodes.Neg);
+					ec.ig.Emit (OpCodes.Neg);
+				}
+
 				if (scope.ScopeInstance != null)
 					scope.ScopeInstance.Emit (ec);
 			}
@@ -659,12 +668,15 @@ namespace Mono.CSharp {
 		public RootScopeInfo (ToplevelBlock toplevel, TypeContainer parent,
 				      GenericMethod generic, Location loc)
 			: base (toplevel, parent, generic, loc)
-		{ }
+		{
+			scopes = new ArrayList ();
+		}
 
 		TypeExpr parent_type;
 		CapturedVariableField parent_link;
 		CapturedThis this_variable;
 		Hashtable captured_params;
+		ArrayList scopes;
 
 		public virtual bool IsIterator {
 			get { return false; }
@@ -731,8 +743,25 @@ namespace Mono.CSharp {
 			return var;
 		}
 
+		public void AddScope (ScopeInfo scope)
+		{
+			scopes.Add (scope);
+		}
+
 		protected override ScopeInitializer CreateScopeInitializer ()
 		{
+			foreach (ScopeInfo si in scopes) {
+				if (!si.ResolveMembers ())
+					throw new InternalErrorException ();
+				if (!si.DefineMembers ())
+					throw new InternalErrorException ();
+			}
+
+			if (!ResolveMembers ())
+				throw new InternalErrorException ();
+			if (!DefineMembers ())
+				throw new InternalErrorException ();
+
 			return new RootScopeInitializer (this);
 		}
 
@@ -1215,9 +1244,6 @@ namespace Mono.CSharp {
 
 	public abstract class AnonymousContainer : IAnonymousContainer
 	{
-		// Used to generate unique method names.
-		protected static int anonymous_method_count;
-
 		public readonly Location Location;
 
 		// An array list of AnonymousMethodParameter or null
@@ -1324,6 +1350,7 @@ namespace Mono.CSharp {
 
 			if (!method.ResolveMembers ())
 				return false;
+			return true;
 			return method.Define ();
 		}
 
@@ -1423,7 +1450,7 @@ namespace Mono.CSharp {
 		//
 		protected override Method DoCreateMethodHost (EmitContext ec)
 		{
-			string name = "<>c__AnonymousMethod" + anonymous_method_count++;
+			string name = CompilerGeneratedClass.MakeName ("AnonymousMethod");
 			MemberName member_name;
 
 			GenericMethod generic_method = null;
@@ -1450,26 +1477,19 @@ namespace Mono.CSharp {
 
 			Block b;
 			scope = RootScope;
-			Report.Debug (128, "CREATE METHOD HOST #0", this, RootScope, Block, container);
+
 			for (b = Block; b != null; b = b.Parent) {
-				Report.Debug (128, "CREATE METHOD HOST #1",
-					      this, RootScope, Block, b, b.ScopeInfo);
 				if (b.ScopeInfo != null) {
 					scope = b.ScopeInfo;
 					break;
 				}
 			}
 
-			Report.Debug (128, "CREATE METHOD HOST", this, RootScope, scope,
-				      Block, Location);
-
 			scope.CheckMembersDefined ();
 
 			ArrayList scopes = new ArrayList ();
 			if (b != container) {
 				for (b = b.Parent; b != null; b = b.Parent) {
-					Report.Debug (128, "CREATE METHOD HOST #2",
-						      this, b, b.ScopeInfo, container);
 					if (b.ScopeInfo != null)
 						scopes.Add (b.ScopeInfo);
 					if (b == container)
@@ -1490,7 +1510,7 @@ namespace Mono.CSharp {
 			if (scope.DefineType () == null)
 				throw new InternalErrorException ();
 
-			Report.Debug (128, "CREATE METHOD HOST #3", this, RootScope, scope, scopes);
+			Report.Debug (128, "CREATE METHOD HOST", this, RootScope, scope, scopes);
 
 			return new AnonymousMethodMethod (
 				this, scope, generic_method, new TypeExpression (ReturnType, Location),
@@ -1572,6 +1592,7 @@ namespace Mono.CSharp {
 			// Now emit the delegate creation.
 			//
 			if ((am.Method.ModFlags & Modifiers.STATIC) == 0) {
+				Report.Debug (128, "EMIT ANONYMOUS DELEGATE", this, am, am.Scope, loc);
 				delegate_instance_expression = am.Scope.GetScopeInitializer (ec);
 
 				if (delegate_instance_expression == null)
