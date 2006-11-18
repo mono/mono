@@ -1,4 +1,4 @@
-// cs0123.cs: Method `int MainClass.Delegate()' does not match delegate `int TestDelegate(bool)'
+// CS0123: The method `MainClass.Delegate()' parameters do not match delegate `int TestDelegate(bool)' parameters
 // Line: 12
 
 delegate int TestDelegate(bool b);
