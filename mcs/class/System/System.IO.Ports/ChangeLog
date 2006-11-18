@@ -1,3 +1,8 @@
+2006-11-18  Jelle Hissink <Jelle.Hissink@C-it.nl>
+
+	* SerialPortStream.cs: Fix the parameters in Read, and also poll
+	before the read, so we can thorw the TimeoutException.
+
 2006-09-28  Andrew Skiba  <andrews@mainsoft.com>
 
 	* SerialPort.cs,WinSerialStream.cs: TARGET_JVM

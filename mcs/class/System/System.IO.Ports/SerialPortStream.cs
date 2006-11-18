@@ -118,7 +118,11 @@ namespace System.IO.Ports
 		}
 
 		[DllImport ("MonoPosixHelper")]
-		static extern int read_serial (int fd, byte [] buffer, int offset, int count, int timeout);
+		static extern int read_serial (int fd, byte [] buffer, int offset, int count);
+		
+
+		[DllImport ("MonoPosixHelper")]
+		static extern bool poll_serial (int fd, out int error, int timeout);
 
 		public override int Read ([In,Out] byte[] buffer, int offset, int count)
 		{
@@ -132,7 +136,18 @@ namespace System.IO.Ports
 				throw new ArgumentException ("offset+count",
 							      "The size of the buffer is less than offset + count.");
 			
-			return read_serial (fd, buffer, offset, count, read_timeout);
+			int error;
+			bool poll_result = poll_serial (fd, out error, read_timeout);
+			if (error == -1)
+				throw new IOException ();
+
+			if (!poll_result) {
+				// see bug 79735   http://bugzilla.ximian.com/show_bug.cgi?id=79735
+				// should the next line read: return -1; 
+				throw new TimeoutException();
+			}
+
+			return read_serial (fd, buffer, offset, count);
 		}
 
 		public override long Seek (long offset, SeekOrigin origin)
