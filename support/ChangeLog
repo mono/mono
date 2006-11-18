@@ -1,3 +1,9 @@
+2006-11-18  Jelle Hissink  <Jelle.Hissink@C-it.nl>
+
+	* serial.c (poll_serial): Add timeout parameter to poll.
+
+	Fixes #79722 and #79735
+
 2006-11-17  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* map.c: Flush (fix FromFilePermissions for SuppressFlags-marked values).

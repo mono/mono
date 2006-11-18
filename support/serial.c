@@ -322,7 +322,7 @@ set_signal (int fd, MonoSerialSignal signal, gboolean value)
 }
 
 gboolean
-poll_serial (int fd, gint32 *error)
+poll_serial (int fd, gint32 *error, int timeout)
 {
 	struct pollfd pinfo;
 	
@@ -332,7 +332,7 @@ poll_serial (int fd, gint32 *error)
 	pinfo.events = POLLIN;
 	pinfo.revents = 0;
 
-	if (poll (&pinfo, 1, 0) == -1) {
+	if (poll (&pinfo, 1, timeout) == -1) {
 		*error = -1;
 		return FALSE;
 	}
