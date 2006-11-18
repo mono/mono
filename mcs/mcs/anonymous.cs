@@ -324,6 +324,8 @@ namespace Mono.CSharp {
 		{
 			CheckMembersDefined ();
 			Report.Debug (128, "CAPTURE SCOPE", this, child, child.TypeBuilder);
+			if (child == this)
+				throw new InternalErrorException ();
 			if (child.host_scope != null)
 				throw new InternalErrorException ();
 			child.host_scope = this;
@@ -1448,23 +1450,31 @@ namespace Mono.CSharp {
 
 			Block b;
 			scope = RootScope;
+			Report.Debug (128, "CREATE METHOD HOST #0", this, RootScope, Block, container);
 			for (b = Block; b != null; b = b.Parent) {
+				Report.Debug (128, "CREATE METHOD HOST #1",
+					      this, RootScope, Block, b, b.ScopeInfo);
 				if (b.ScopeInfo != null) {
 					scope = b.ScopeInfo;
 					break;
 				}
 			}
 
-			Report.Debug (128, "CREATE METHOD HOST", this, RootScope, scope);
+			Report.Debug (128, "CREATE METHOD HOST", this, RootScope, scope,
+				      Block, Location);
 
 			scope.CheckMembersDefined ();
 
 			ArrayList scopes = new ArrayList ();
-			for (b = b.Parent; b != null; b = b.Parent) {
-				if (b.ScopeInfo != null)
-					scopes.Add (b.ScopeInfo);
-				if (b == container)
-					break;
+			if (b != container) {
+				for (b = b.Parent; b != null; b = b.Parent) {
+					Report.Debug (128, "CREATE METHOD HOST #2",
+						      this, b, b.ScopeInfo, container);
+					if (b.ScopeInfo != null)
+						scopes.Add (b.ScopeInfo);
+					if (b == container)
+						break;
+				}
 			}
 
 			foreach (ScopeInfo si in scopes) {
@@ -1480,7 +1490,7 @@ namespace Mono.CSharp {
 			if (scope.DefineType () == null)
 				throw new InternalErrorException ();
 
-			Report.Debug (128, "CREATE METHOD HOST #1", this, RootScope, scope, scopes);
+			Report.Debug (128, "CREATE METHOD HOST #3", this, RootScope, scope, scopes);
 
 			return new AnonymousMethodMethod (
 				this, scope, generic_method, new TypeExpression (ReturnType, Location),

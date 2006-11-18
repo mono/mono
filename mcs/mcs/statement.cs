@@ -2387,10 +2387,13 @@ namespace Mono.CSharp {
 			if (root_scope != null)
 				return root_scope;
 
-			if (Container != null)
+			if (Container != null) {
+				Report.Debug (128, "TOPLEVEL CREATE ROOT SCOPE", this, Container,
+					      Container.root_scope, AnonymousContainer,
+					      Container.AnonymousContainer);
 				root_scope = new RootScopeInfo (
 					this, Container.root_scope, null, StartLocation);
-			else
+			} else
 				root_scope = new RootScopeInfo (
 					this, host, generic, StartLocation);
 
