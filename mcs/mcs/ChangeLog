@@ -1,3 +1,8 @@
+2006-11-18  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #79941
+	* driver.cs, namespace.cs: Uses faster IndexOf version.
+
 2006-11-17  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #79941

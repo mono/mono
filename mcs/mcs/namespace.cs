@@ -306,7 +306,7 @@ namespace Mono.CSharp {
 
 		public virtual void Error_NamespaceDoesNotExist (DeclSpace ds, Location loc, string name)
 		{
-			if (name.IndexOf ("`") > 0) {
+			if (name.IndexOf ('`') > 0) {
 				FullNamedExpression retval = Lookup (ds, SimpleName.RemoveGenericArity (name), loc);
 				if (retval != null) {
 					Error_TypeArgumentsCannotBeUsed (retval.Type, loc, "type");

@@ -1160,7 +1160,7 @@ namespace Mono.CSharp
 				string [] refs = value.Split (new char [] { ';', ',' });
 				foreach (string r in refs){
 					string val = r;
-					int index = val.IndexOf ("=");
+					int index = val.IndexOf ('=');
 					if (index > -1) {
 						string alias = r.Substring (0, index);
 						string assembly = r.Substring (index + 1);
