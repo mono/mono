@@ -1,6 +1,12 @@
 2006-11-18  Marek Safar  <marek.safar@gmail.com>
 
-	A fix for bug #79941
+	A fix for bug #79843
+	* delegate.cs (Delegate.VerifyMethod): Fixed covariance and contravariance
+	implementation.
+	(DelegateCreation.Error_NoMatchingMethodForDelegate): Ditto.
+
+2006-11-18  Marek Safar  <marek.safar@gmail.com>
+
 	* driver.cs, namespace.cs: Uses faster IndexOf version.
 
 2006-11-17  Marek Safar  <marek.safar@gmail.com>

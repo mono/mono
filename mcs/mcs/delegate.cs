@@ -417,35 +417,31 @@ namespace Mono.CSharp {
 				invoke_pd_type_mod &= ~Parameter.Modifier.PARAMS;
 				pd_type_mod &= ~Parameter.Modifier.PARAMS;
 
-				if (invoke_pd_type == pd_type &&
-				    invoke_pd_type_mod == pd_type_mod)
-					continue;
-				
-				if (invoke_pd_type.IsSubclassOf (pd_type) && 
-				    invoke_pd_type_mod == pd_type_mod)
-					if (RootContext.Version == LanguageVersion.ISO_1) {
-						Report.FeatureIsNotStandardized (loc, "contravariance");
-						return null;
-					} else
-						continue;
+				if (invoke_pd_type_mod != pd_type_mod)
+					return null;
 
-				return null;
+				if (invoke_pd_type == pd_type)
+					continue;
+
+				if (!Convert.ImplicitReferenceConversionExists (new EmptyExpression (invoke_pd_type), pd_type))
+					return null;
+
+				if (RootContext.Version == LanguageVersion.ISO_1)
+					return null;
 			}
 
 			Type invoke_mb_retval = ((MethodInfo) invoke_mb).ReturnType;
 			Type mb_retval = ((MethodInfo) mb).ReturnType;
 			if (invoke_mb_retval == mb_retval)
 				return mb;
-			
-			if (mb_retval.IsSubclassOf (invoke_mb_retval))
-				if (RootContext.Version == LanguageVersion.ISO_1) {
-					Report.FeatureIsNotStandardized (loc, "covariance");
-					return null;
-				}
-				else
-					return mb;
-			
-			return null;
+
+			if (!Convert.ImplicitReferenceConversionExists (new EmptyExpression (mb_retval), invoke_mb_retval))
+				return null;
+
+			if (RootContext.Version == LanguageVersion.ISO_1) 
+				return null;
+
+			return mb;
 		}
 
 		// <summary>
@@ -663,10 +659,22 @@ namespace Mono.CSharp {
 				return;
 			}
 #endif
-			if (method.ReturnType != ((MethodInfo) found_method).ReturnType) {
+			Report.SymbolRelatedToPreviousError (found_method);
+
+			if (RootContext.Version == LanguageVersion.ISO_1) {
+				Report.Error (410, loc, "The method `{0}' parameters and return type must be same as delegate `{1}' parameters and return type",
+					method_desc, delegate_desc);
+				return;
+			}
+
+			Type delegateType = method.ReturnType;
+			Type methodType = ((MethodInfo) found_method).ReturnType;
+			if (delegateType != methodType &&
+				!Convert.ImplicitReferenceConversionExists (new EmptyExpression (methodType), delegateType)) {
 				Report.Error (407, loc, "`{0}' has the wrong return type to match the delegate `{1}'", method_desc, delegate_desc);
 			} else {
-				Report.Error (123, loc, "Method `{0}' does not match delegate `{1}'", method_desc, delegate_desc);
+				Report.Error (123, loc, "The method `{0}' parameters do not match delegate `{1}' parameters",
+					TypeManager.CSharpSignature (found_method), delegate_desc);
 			}
 		}
 		
