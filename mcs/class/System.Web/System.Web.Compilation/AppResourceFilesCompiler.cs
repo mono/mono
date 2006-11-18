@@ -249,7 +249,7 @@ namespace System.Web.Compilation
 			fname = Path.GetFileNameWithoutExtension (resfile);
 			nsname = Path.GetFileNameWithoutExtension (fname);
 			classname = Path.GetExtension (fname);
-			if (classname == null) {
+			if (classname == null || classname.Length == 0) {
 				classname = nsname;
 				nsname = "Resources";
 			} else {
@@ -501,7 +501,7 @@ namespace System.Web.Compilation
 				
 				tmp = Path.GetFileNameWithoutExtension (s);
 				tmp = Path.GetExtension (tmp);
-				if (tmp == null)
+				if (tmp == null || tmp.Length == 0)
 					continue;
 				tmp = tmp.Substring (1);
 				try {
