@@ -52,7 +52,7 @@ namespace System.Drawing.Printing
 				return is_printer_valid;
 
 			int ret = Win32DocumentProperties (IntPtr.Zero, IntPtr.Zero, printer, IntPtr.Zero, IntPtr.Zero, 0);
-			is_printer_valid = (ret < 1);
+			is_printer_valid = (ret > 0);
 			this.printer_name = printer; 
 			return is_printer_valid;
 		}
