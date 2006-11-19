@@ -32,6 +32,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -315,11 +316,17 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			string acceptable = hexadecimal ? "\b-.,0123456789abcdefABCDEF" : "\b-.,0123456789";
+			NumberFormatInfo nfi = CultureInfo.CurrentCulture.NumberFormat;
+			string pressedKey = e.KeyChar.ToString ();
 
-			if (acceptable.IndexOf(e.KeyChar) < 0) {
-				// prevent the key from reaching the text box
-				e.Handled = true;
+			if ((pressedKey != nfi.NegativeSign) && (pressedKey != nfi.NumberDecimalSeparator) && 
+				(pressedKey != nfi.NumberGroupSeparator)) {
+				string acceptable = hexadecimal ? "\b0123456789abcdefABCDEF" : "\b0123456789";
+				if (acceptable.IndexOf (e.KeyChar) == -1) {
+					// FIXME: produce beep to signal that "invalid" key was pressed
+					// prevent the key from reaching the text box
+					e.Handled = true;
+				}
 			}
 
 			base.OnTextBoxKeyPress(source, e);
@@ -335,10 +342,10 @@ namespace System.Windows.Forms {
 			UserEdit = false;
 
 			try {
-				string user_edit_text = Text.Replace(",", "").Trim();
+				string user_edit_text = Text;
 
 				if (!hexadecimal) {
-					dvalue = decimal.Parse(user_edit_text);
+					dvalue = decimal.Parse(user_edit_text, CultureInfo.CurrentCulture);
 				} else {
 					dvalue = 0M;
 
@@ -385,7 +392,7 @@ namespace System.Windows.Forms {
 				format_string += decimal_places;
 
 				ChangingText = true;
-				Text = dvalue.ToString(format_string);
+				Text = dvalue.ToString(format_string, CultureInfo.CurrentCulture);
 			}
 			else {
 				// Decimal.ToString doesn't know the "X" formatter, and

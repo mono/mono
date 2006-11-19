@@ -1,3 +1,9 @@
+2006-11-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* NumericUpDown.cs: Use NegativeSign, NumberDecimalSeparator and
+	NumberGroupSeparator of current culture instead of assuming en-US.
+	Fixed bug #79967.
+
 2006-11-17  Mike Kestner  <mkestner@novell.com>
 
 	* Control.cs: Add the concept of implicit bounds setting so that
