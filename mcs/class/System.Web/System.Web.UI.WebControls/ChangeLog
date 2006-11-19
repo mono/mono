@@ -1,3 +1,7 @@
+2006-11-19 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* LinkButton.cs: Added support for event validation.
+
 2006-11-17  Marek Habersack  <grendello@gmail.com>
 
 	* ImageButton.cs: Added support for event validation.

@@ -60,8 +60,12 @@ namespace System.Web.UI.WebControls {
 	
 		protected override void AddAttributesToRender (HtmlTextWriter w)
 		{
-			if (Page != null)
+			if (Page != null) {
+#if NET_2_0
+				Page.ClientScript.RegisterForEventValidation (GetPostBackOptions ());
+#endif
 				Page.VerifyRenderingInServerForm (this);
+			}
 
 #if NET_2_0
 			string onclick = OnClientClick;
