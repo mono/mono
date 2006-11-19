@@ -366,6 +366,16 @@ void GC_print_callers GC_PROTO((struct callinfo info[NFRAMES]));
 #   define BZERO(x,n) bzero((char *)(x),(int)(n))
 # endif
 
+#if defined(DARWIN)
+#	if defined(POWERPC)
+#		define GC_MACH_THREAD_STATE_FLAVOR PPC_THREAD_STATE
+#	elif defined(I386)
+#		define GC_MACH_THREAD_STATE_FLAVOR i386_THREAD_STATE
+#	else
+#		define GC_MACH_THREAD_STATE_FLAVOR MACHINE_THREAD_STATE
+#	endif
+#endif
+
 /* Delay any interrupts or signals that may abort this thread.  Data	*/
 /* structures are in a consistent state outside this pair of calls.	*/
 /* ANSI C allows both to be empty (though the standard isn't very	*/

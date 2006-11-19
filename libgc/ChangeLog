@@ -1,3 +1,10 @@
+2006-11-19  Allan Hsu <allan@counterpop.net>
+
+	* libgc/darwin_stop_world.c, libgc/include/private/gc_priv.h,
+	libgc/os_dep.c: Fixes to make the GC work on OSX/Intel with XCode
+	2.4 (10.4u SDK and newer).
+
+	This code should work with older versions of the SDK as well. 
 
 Tue Oct 10 16:58:37 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
