@@ -203,7 +203,7 @@ namespace Mono.CSharp {
 		}
 
 		protected ScopeInfo host_scope;
-		protected CapturedScope scope_instance;
+		// protected CapturedScope scope_instance;
 		protected ScopeInitializer scope_initializer;
 
 		Hashtable locals = new Hashtable ();
@@ -213,9 +213,11 @@ namespace Mono.CSharp {
 			get { return host_scope != null ? host_scope : this; }
 		}
 
+#if FIXME
 		public Variable ScopeInstance {
 			get { return scope_instance; }
 		}
+#endif
 
 		public void EmitScopeInstance (EmitContext ec)
 		{
@@ -275,26 +277,35 @@ namespace Mono.CSharp {
 			RootScopeInfo root_scope = toplevel.RootScope;
 
 			Report.Debug (128, "EMIT SCOPE INSTANCE", toplevel,
-				      toplevel.AnonymousContainer, scope.ScopeInstance,
-				      root_scope, scope, scope.RootScope, scope.HostScope);
+				      toplevel.AnonymousContainer, root_scope,
+				      scope, scope.RootScope, scope.HostScope);
 
 			scope.EmitScopeInstance (ec);
 
 			if (toplevel.AnonymousContainer != null) {
 				if (toplevel.AnonymousContainer.Scope != scope.HostScope) {
-				Report.Debug (128, "EMIT SCOPE INSTANCE #1",
-					      scope, toplevel.AnonymousContainer.Scope,
-					      scope.HostScope);
+					Report.Debug (128, "EMIT SCOPE INSTANCE #1",
+						      scope, toplevel.AnonymousContainer.Scope,
+						      scope.HostScope);
 
+#if FIXME
 					ec.ig.Emit (OpCodes.Neg);
 					ec.ig.Emit (OpCodes.Neg);
 					ec.ig.Emit (OpCodes.Neg);
 					ec.ig.Emit (OpCodes.Neg);
 					ec.ig.Emit (OpCodes.Neg);
+#endif
 				}
 
+				ScopeInfo host = toplevel.AnonymousContainer.Scope;
+				Variable the_scope = (Variable) host.scopes [scope];
+				if (the_scope != null)
+					the_scope.Emit (ec);
+
+#if FIXME
 				if (scope.ScopeInstance != null)
 					scope.ScopeInstance.Emit (ec);
+#endif
 			}
 
 #if FIXME
@@ -335,12 +346,14 @@ namespace Mono.CSharp {
 			Report.Debug (128, "CAPTURE SCOPE", this, child, child.TypeBuilder);
 			if (child == this)
 				throw new InternalErrorException ();
+#if FIXME
 			if (child.host_scope != null)
 				throw new InternalErrorException ();
 			child.host_scope = this;
-			child.scope_instance = new CapturedScope (this, child);
-			scopes.Add (child, child.scope_instance);
-			return child.scope_instance;
+#endif
+			CapturedScope captured = new CapturedScope (this, child);
+			scopes.Add (child, captured);
+			return captured;
 		}
 
 		public Variable AddLocal (LocalInfo local)
@@ -468,7 +481,7 @@ namespace Mono.CSharp {
 			public readonly ScopeInfo ChildScope;
 
 			public CapturedScope (ScopeInfo root, ScopeInfo child)
-				: base (root, child.ID + "_scope",
+				: base (root, "scope" + child.ID,
 					child.IsGeneric ? child.CurrentType : child.TypeBuilder)
 			{
 				this.ChildScope = child;
@@ -655,7 +668,7 @@ namespace Mono.CSharp {
 				foreach (CapturedScope scope in Scope.scopes.Values) {
 					Report.Debug (128, "EMIT SCOPE INIT #5", this, Scope,
 						      scope.Scope, scope.ChildScope);
-					DoEmitInstance (ec);
+					DoEmit (ec);
 					scope.ChildScope.EmitScopeInstance (ec);
 					scope.EmitAssign (ec);
 				}
@@ -1345,6 +1358,11 @@ namespace Mono.CSharp {
 
 			method = DoCreateMethodHost (ec);
 
+			if (!Scope.Define ())
+				throw new InternalErrorException ();
+			if (Scope.DefineType () == null)
+				throw new InternalErrorException ();
+
 			if (RootScope != null)
 				return true;
 
@@ -1492,8 +1510,10 @@ namespace Mono.CSharp {
 				for (b = b.Parent; b != null; b = b.Parent) {
 					if (b.ScopeInfo != null)
 						scopes.Add (b.ScopeInfo);
+#if FIXME
 					if (b == container)
 						break;
+#endif
 				}
 			}
 
@@ -1505,12 +1525,20 @@ namespace Mono.CSharp {
 				scope.CaptureScope (si);
 			}
 
+			Report.Debug (128, "CREATE METHOD HOST", this, Block, container,
+				      RootScope, scope, scopes, Location,
+				      ContainerAnonymousMethod);
+
+#if FIXME
+			if (ContainerAnonymousMethod != null) {
+				ContainerAnonymousMethod.Scope.CaptureScope (scope);
+			}
+
 			if (!scope.Define ())
 				throw new InternalErrorException ();
 			if (scope.DefineType () == null)
 				throw new InternalErrorException ();
-
-			Report.Debug (128, "CREATE METHOD HOST", this, RootScope, scope, scopes);
+#endif
 
 			return new AnonymousMethodMethod (
 				this, scope, generic_method, new TypeExpression (ReturnType, Location),
