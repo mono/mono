@@ -132,7 +132,7 @@ namespace System.Web.UI.WebControls {
 #endif
 			if (AutoPostBack) {
 #if NET_2_0
-				writer.AddAttribute (HtmlTextWriterAttribute.Onchange, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions ()));
+				writer.AddAttribute (HtmlTextWriterAttribute.Onchange, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true));
 #else
 				writer.AddAttribute (HtmlTextWriterAttribute.Onchange, Page.ClientScript.GetPostBackClientHyperlink (this, ""));
 #endif
@@ -181,7 +181,8 @@ namespace System.Web.UI.WebControls {
 			for (int i = 0; i < count; i++) {
 				item = Items[i];
 #if NET_2_0
-				Page.ClientScript.RegisterForEventValidation (this.UniqueID, item.Value.ToString ());
+				if (Page != null)
+					Page.ClientScript.RegisterForEventValidation (this.UniqueID, item.Value.ToString ());
 #endif
 				writer.WriteBeginTag("option");
 				if (item.Selected) {

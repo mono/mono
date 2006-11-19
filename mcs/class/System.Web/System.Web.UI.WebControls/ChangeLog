@@ -1,5 +1,9 @@
 2006-11-19 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* DropDownList.cs: fixed: support for event validation.
+
+2006-11-19 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* LinkButton.cs: optimized: support for event validation.
 	* DataControlButton.cs: Added support for event validation.
 	* DetailsView.cs: fixed: RowIndex for DetailsViewRow.	
