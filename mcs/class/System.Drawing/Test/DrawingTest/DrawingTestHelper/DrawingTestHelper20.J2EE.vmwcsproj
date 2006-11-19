@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
 		<OutputPath>bin\Release_Java20\</OutputPath>
 		<DefineConstants>TRACE;TARGET_JVM;NET_1_1;NET_2_0</DefineConstants>
@@ -87,17 +87,17 @@
 	<ItemGroup>
 		<Reference Include="J2SE.Helpers, Version=0.0.0.0, Culture=neutral">
 			<Private>False</Private>
-      <HintPath>C:\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\J2SE.Helpers.dll</HintPath>
+		      <HintPath>..\..\..\..\lib\J2SE.Helpers.dll</HintPath>
 		</Reference>
 		<Reference Include="nunit.framework, Version=0.0.0.0, Culture=neutral">
 			<SpecificVersion>False</SpecificVersion>
 			<HintPath>..\..\..\..\..\nunit20\nunit-console\bin\Debug_Java20\nunit.framework.dll</HintPath>
 			<Private>True</Private>
 		</Reference>
-		<Reference Include="rt, Version=0.0.0.0, Culture=neutral">
-      <HintPath>C:\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\j2sdk1.4\rt.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
+		    <Reference Include="rt, Version=0.0.0.0, Culture=neutral">
+		      <HintPath>..\..\..\..\lib\rt.dll</HintPath>
+		      <Private>False</Private>
+		    </Reference>
 		<Reference Include="System"/>
 		<Reference Include="System.Drawing"/>
 		<Reference Include="System.Xml"/>

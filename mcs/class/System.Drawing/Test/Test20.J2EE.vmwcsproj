@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
     <OutputPath>DrawingTest\Test\bin\Debug_Java20\</OutputPath>
     <DefineConstants>TRACE;TARGET_JVM;NET_1_1;NET_2_0</DefineConstants>
@@ -86,6 +86,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="J2SE.Helpers, Version=0.0.0.0, Culture=neutral">
+      <HintPath>..\..\lib\J2SE.Helpers.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="nunit.framework, Version=0.0.0.0, Culture=neutral">
@@ -94,6 +95,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="rt, Version=0.0.0.0, Culture=neutral">
+      <HintPath>..\..\lib\rt.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
