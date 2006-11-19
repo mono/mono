@@ -1,3 +1,8 @@
+2006-11-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* cs1058.cs: Removed as CS1058 does not apply to 1.0 profile.
+	* gcs1058-1.cs, gcs1058-2.cs: Added tests for bug #79810.
+
 2006-10-26  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0165-13.cs: New test from #78820.
