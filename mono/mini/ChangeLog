@@ -1,5 +1,9 @@
 2006-11-19  Miguel de Icaza  <miguel@novell.com>
 
+	* mini.c (type_from_op): Separate the conditions for OP_EQ as the
+	verifier has different rules for it.   Fixes a few verifier issues
+	in the test suite.
+
 	* mini-exceptions.c (mono_handle_native_sigsegv): Put the message
 	at the end, so people know what happened.
 
