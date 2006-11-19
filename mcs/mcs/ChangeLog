@@ -1,3 +1,10 @@
+2006-11-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	A fix for bug #79810
+	report.cs: CS1058 only applies to 2.0 profile (gmcs).
+	codegen.cs: on 2.0 profile, non-exception throwables are wrapped in
+	a RuntimeWrappedException by default.
+
 2006-11-18  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #79843

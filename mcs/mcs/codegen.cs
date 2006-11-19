@@ -1005,7 +1005,9 @@ namespace Mono.CSharp {
 
 		public AssemblyClass (): base ()
 		{
+#if GMCS_SOURCE
 			wrap_non_exception_throws = true;
+#endif
 		}
 
 		public bool IsClsCompliant {
