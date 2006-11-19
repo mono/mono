@@ -1034,27 +1034,40 @@ namespace System.Web.Compilation
 			CodeVariableReferenceExpression tableExp = new CodeVariableReferenceExpression ("__table");
 			
 			if (builder.Bindings != null) {
+				Hashtable hash = new Hashtable ();
 				foreach (TemplateBinding binding in builder.Bindings) {
-					CodeVariableDeclarationStatement dec = new CodeVariableDeclarationStatement (binding.ControlType, binding.ControlId);
-					method.Statements.Add (dec);
-					CodeVariableReferenceExpression cter = new CodeVariableReferenceExpression ("__container");
-					CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (cter, "FindControl");
-					invoke.Parameters.Add (new CodePrimitiveExpression (binding.ControlId));
-					
-					CodeAssignStatement assign = new CodeAssignStatement ();
-					CodeVariableReferenceExpression control = new CodeVariableReferenceExpression (binding.ControlId); 
-					assign.Left = control;
-					assign.Right = new CodeCastExpression (binding.ControlType, invoke);
-					method.Statements.Add (assign);
-					
-					CodeConditionStatement sif = new CodeConditionStatement ();
-					sif.Condition = new CodeBinaryOperatorExpression (control, CodeBinaryOperatorType.IdentityInequality, new CodePrimitiveExpression (null));
-					
+					CodeConditionStatement sif;
+					CodeVariableReferenceExpression control;
+					CodeAssignStatement assign;
+
+					if (hash [binding.ControlId] == null) {
+
+						CodeVariableDeclarationStatement dec = new CodeVariableDeclarationStatement (binding.ControlType, binding.ControlId);
+						method.Statements.Add (dec);
+						CodeVariableReferenceExpression cter = new CodeVariableReferenceExpression ("__container");
+						CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (cter, "FindControl");
+						invoke.Parameters.Add (new CodePrimitiveExpression (binding.ControlId));
+
+						assign = new CodeAssignStatement ();
+						control = new CodeVariableReferenceExpression (binding.ControlId);
+						assign.Left = control;
+						assign.Right = new CodeCastExpression (binding.ControlType, invoke);
+						method.Statements.Add (assign);
+
+						sif = new CodeConditionStatement ();
+						sif.Condition = new CodeBinaryOperatorExpression (control, CodeBinaryOperatorType.IdentityInequality, new CodePrimitiveExpression (null));
+
+						method.Statements.Add (sif);
+
+						hash [binding.ControlId] = sif;
+					}
+
+					sif = (CodeConditionStatement) hash [binding.ControlId];
+					control = new CodeVariableReferenceExpression (binding.ControlId);
 					assign = new CodeAssignStatement ();
 					assign.Left = new CodeIndexerExpression (tableExp, new CodePrimitiveExpression (binding.FieldName));
 					assign.Right = new CodePropertyReferenceExpression (control, binding.ControlProperty);
 					sif.TrueStatements.Add (assign);
-					method.Statements.Add (sif);
 				}
 			}
 
@@ -1704,5 +1717,6 @@ namespace System.Web.Compilation
 		}
 	}
 }
+
 
 

@@ -1,3 +1,9 @@
+2006-11-19 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* TemplateControlCompiler.cs: fixed:
+	When <%# Bind(...) %>-expression is used more then once for same control
+	The variable associated with this control is declared only once.
+
 2006-11-18  Marek Habersack  <grendello@gmail.com>
 
 	* AppResourceFilesCompiler.cs: Fixed an exception thrown when
