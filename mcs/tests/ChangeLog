@@ -1,3 +1,8 @@
+2006-11-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* test-539.cs, gtest-297.cs: Added tests for bug #79810.
+	* known-issues-gmcs: Ignore test-539.cs for gmcs.
+
 2006-10-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* test-xml-052.cs, test-xml-052-ref.xml : new test for bug #79754.
