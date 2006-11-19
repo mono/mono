@@ -1,9 +1,7 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.DirectoryServices.Test20", "System.DirectoryServices.Test20.vmwcsproj", "{4CBF37B7-AFCF-4805-81A4-610282C6D9A5}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nunit.framework.dll20.J2EE", "..\..\..\nunit20\framework\nunit.framework.dll20.J2EE.vmwcsproj", "{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
