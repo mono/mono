@@ -1106,7 +1106,7 @@ namespace System.Web.UI.WebControls
 			if (dataSource.Count > 0) {
 				foreach (DataControlField field in fields) {
 					DataControlRowState rstate = GetRowState (list.Count);
-					DetailsViewRow row = CreateRow (list.Count, DataControlRowType.DataRow, rstate);
+					DetailsViewRow row = CreateRow (PageIndex, DataControlRowType.DataRow, rstate);
 					InitializeRow (row, field);
 					table.Rows.Add (row);
 					list.Add (row);

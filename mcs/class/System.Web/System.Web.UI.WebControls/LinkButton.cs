@@ -60,12 +60,8 @@ namespace System.Web.UI.WebControls {
 	
 		protected override void AddAttributesToRender (HtmlTextWriter w)
 		{
-			if (Page != null) {
-#if NET_2_0
-				Page.ClientScript.RegisterForEventValidation (GetPostBackOptions ());
-#endif
+			if (Page != null)
 				Page.VerifyRenderingInServerForm (this);
-			}
 
 #if NET_2_0
 			string onclick = OnClientClick;
@@ -80,7 +76,7 @@ namespace System.Web.UI.WebControls {
 
 			if (Enabled && Page != null) {
 				PostBackOptions options = GetPostBackOptions ();
-				string href = Page.ClientScript.GetPostBackEventReference (options);
+				string href = Page.ClientScript.GetPostBackEventReference (options, true);
 				w.AddAttribute (HtmlTextWriterAttribute.Href, href);
 			}
 			base.AddAttributesToRender (w);
@@ -344,4 +340,5 @@ namespace System.Web.UI.WebControls {
 #endif
 	}
 }
+
 
