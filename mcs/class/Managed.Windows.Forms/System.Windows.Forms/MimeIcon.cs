@@ -384,31 +384,38 @@ namespace System.Windows.Forms
 	
 	internal class GnomeUtil
 	{
-		[DllImport("librsvg-2.so")]
+		const string libgdk = "libgdk-x11-2.0.so.0";
+		const string libgtk = "libgtk-x11-2.0.so.0";
+		const string libglib = "libglib-2.0.so.0";
+		const string libgobject = "libgobject-2.0.so.0";
+		const string libgnomeui = "libgnomeui-2.so.0";
+		const string librsvg = "librsvg-2.so.2";
+		
+		[DllImport(librsvg)]
 		static extern IntPtr rsvg_pixbuf_from_file_at_size (string file_name, int  width, int  height, out IntPtr error);
 		
-		[DllImport("libgdk-x11-2.0.so.0")]
+		[DllImport(libgdk)]
 		static extern bool gdk_pixbuf_save_to_buffer (IntPtr pixbuf, out IntPtr buffer, out UIntPtr buffer_size, string type, out IntPtr error, IntPtr option_dummy);
 		
-		[DllImport("libglib-2.0.so")]
+		[DllImport(libglib)]
 		static extern void g_free (IntPtr mem);
 		
-		[DllImport("libgdk-x11-2.0.so.0")]
+		[DllImport(libgdk)]
 		static extern bool gdk_init_check (IntPtr argc, IntPtr argv);
 		
-		[DllImport("libgobject-2.0.so")]
+		[DllImport(libgobject)]
 		static extern void g_object_unref (IntPtr nativeObject);
 		
-		[DllImport("libgnomeui-2.so.0")]
+		[DllImport(libgnomeui)]
 		static extern string gnome_icon_lookup (IntPtr icon_theme, IntPtr thumbnail_factory, string file_uri, string custom_icon, IntPtr file_info, string mime_type, GnomeIconLookupFlags flags, IntPtr result);
 		
-		[DllImport("libgtk-x11-2.0.so")]
+		[DllImport(libgtk)]
 		static extern IntPtr gtk_icon_theme_get_default ();
 		
-		[DllImport("libgtk-x11-2.0.so")]
+		[DllImport(libgtk)]
 		static extern IntPtr gtk_icon_theme_load_icon (IntPtr icon_theme, string icon_name, int size, GtkIconLookupFlags flags, out IntPtr error);
 		
-		[DllImport("libgtk-x11-2.0.so")]
+		[DllImport(libgtk)]
 		static extern bool gtk_icon_theme_has_icon (IntPtr icon_theme, string icon_name);
 		
 		enum GnomeIconLookupFlags

@@ -1,3 +1,8 @@
+2006-11-17  Alexander Olk  <alex.olk@googlemail.com>
+
+	* MimeIcon.cs: Seems that DllImports that were fine in 1.2 are not
+	  working in 1.2.x anymore. So, updated.
+
 2006-11-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* NumericUpDown.cs: Use NegativeSign, NumberDecimalSeparator and
