@@ -101,7 +101,7 @@ namespace System.Web.UI
 			IHttpHandler h = (IHttpHandler) pp.GetCompiledInstance ();
 			return h;
 		}
-
+		
 		internal override void ProcessMainAttributes (Hashtable atts)
 		{
 			string enabless = GetString (atts, "EnableSessionState",
@@ -191,12 +191,15 @@ namespace System.Web.UI
 				
 				CultureInfo ci = null;
 				try {
-					ci = new CultureInfo (culture);					
+#if NET_2_0
+					if (!culture.StartsWith ("auto"))
+#endif
+						ci = new CultureInfo (culture);
 				} catch {
 					ThrowParseException ("Unsupported Culture: " + culture);
 				}
 
-				if (ci.IsNeutralCulture) {
+				if (ci != null && ci.IsNeutralCulture) {
 					string suggestedCulture = SuggestCulture (culture);
 					string fmt = "Culture attribute must be set to a non-neutral Culture.";
 					if (suggestedCulture != null)
@@ -211,12 +214,15 @@ namespace System.Web.UI
 			if (uiculture != null) {
 				CultureInfo ci = null;
 				try {
-					ci = new CultureInfo (uiculture);					
+#if NET_2_0
+					if (!uiculture.StartsWith ("auto"))
+#endif
+						ci = new CultureInfo (uiculture);
 				} catch {
 					ThrowParseException ("Unsupported Culture: " + uiculture);
 				}
 
-				if (ci.IsNeutralCulture) {
+				if (ci != null && ci.IsNeutralCulture) {
 					string suggestedCulture = SuggestCulture (uiculture);
 					string fmt = "UICulture attribute must be set to a non-neutral Culture.";
 					if (suggestedCulture != null)

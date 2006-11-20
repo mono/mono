@@ -269,7 +269,7 @@ public class Page : TemplateControl, IHttpHandler
 	public string Culture
 	{
 		get { return Thread.CurrentThread.CurrentCulture.Name; }
-		set { Thread.CurrentThread.CurrentCulture = new CultureInfo (value); }
+		set { Thread.CurrentThread.CurrentCulture = GetPageCulture (value, Thread.CurrentThread.CurrentCulture); }
 	}
 #else
 	[EditorBrowsable (EditorBrowsableState.Never)]
@@ -623,7 +623,7 @@ public class Page : TemplateControl, IHttpHandler
 	public string UICulture
 	{
 		get { return Thread.CurrentThread.CurrentUICulture.Name; }
-		set { Thread.CurrentThread.CurrentUICulture = new CultureInfo (value); }
+		set { Thread.CurrentThread.CurrentUICulture = GetPageCulture (value, Thread.CurrentThread.CurrentUICulture); }
 	}
 #else
 	[EditorBrowsable (EditorBrowsableState.Never)]
@@ -668,6 +668,29 @@ public class Page : TemplateControl, IHttpHandler
 	#endregion
 
 	#region Methods
+
+#if NET_2_0
+	CultureInfo GetPageCulture (string culture, CultureInfo deflt)
+	{
+		if (culture == null)
+			return deflt;
+		CultureInfo ret = null;
+		if (culture.StartsWith ("auto")) {
+			string[] languages = Request.UserLanguages;
+			try {
+				if (languages != null && languages.Length > 0)
+					ret = new CultureInfo (languages[0]);
+			} catch {
+			}
+			
+			if (ret == null)
+				ret = deflt;
+		} else
+			ret = new CultureInfo (culture);
+
+		return ret;
+	}
+#endif
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected IAsyncResult AspCompatBeginProcessRequest (HttpContext context,

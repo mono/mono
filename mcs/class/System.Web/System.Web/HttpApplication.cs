@@ -95,6 +95,13 @@ namespace System.Web {
 		// The factory for the handler currently running.
 		//
 		IHttpHandlerFactory factory;
+
+		//
+		// Whether the thread culture is to be auto-set.
+		// Used only in the 2.0 profile, always false for 1.x
+		//
+		bool autoCulture;
+		bool autoUICulture;
 		
 		//
 		// Whether the pipeline should be stopped
@@ -140,7 +147,7 @@ namespace System.Web {
 		{
 			done = new ManualResetEvent (false);
 		}
-
+		
 		internal void InitOnce (bool full_init)
 		{
 			lock (this) {
@@ -165,7 +172,9 @@ namespace System.Web {
 				GlobalizationSection cfg;
 				cfg = (GlobalizationSection) WebConfigurationManager.GetSection ("system.web/globalization");
 				app_culture = cfg.GetCulture();
+				autoCulture = cfg.IsAutoCulture;
 				appui_culture = cfg.GetUICulture();
+				autoUICulture = cfg.IsAutoUICulture;
 #else
 				GlobalizationConfiguration cfg;
 				cfg = GlobalizationConfiguration.GetInstance (null);
@@ -1001,6 +1010,30 @@ namespace System.Web {
 			PipelineDone ();
 		}
 
+
+		internal CultureInfo GetThreadCulture (HttpRequest request, CultureInfo culture, bool isAuto)
+		{
+#if NET_2_0
+			if (!isAuto)
+				return culture;
+			CultureInfo ret = null;
+			string[] languages = request.UserLanguages;
+			try {
+				if (languages != null && languages.Length > 0)
+					ret = new CultureInfo (languages[0]);
+			} catch {
+			}
+			
+			if (ret == null)
+				ret = culture;
+			
+			return ret;
+#else
+			return culture;
+#endif
+		}
+
+
 		void PreStart ()
 		{
 #if !TARGET_J2EE
@@ -1009,12 +1042,12 @@ namespace System.Web {
 			Thread th = Thread.CurrentThread;
 			if (app_culture != null) {
 				prev_app_culture = th.CurrentCulture;
-				th.CurrentCulture = app_culture;
+				th.CurrentCulture = GetThreadCulture (Request, app_culture, autoCulture);
 			}
 
 			if (appui_culture != null) {
 				prev_appui_culture = th.CurrentUICulture;
-				th.CurrentUICulture = appui_culture;
+				th.CurrentUICulture = GetThreadCulture (Request, appui_culture, autoUICulture);
 			}
 
 #if !TARGET_JVM

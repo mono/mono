@@ -83,15 +83,16 @@ namespace System.Web.Configuration {
 
 		void VerifyData ()
 		{
+			bool fake = false;
 			try {
-				new CultureInfo (Culture);
+				GetSanitizedCulture (Culture, ref fake);
 			}
 			catch {
 				throw new ConfigurationErrorsException ("the <globalization> tag contains an invalid value for the 'culture' attribute");
 			}
 
 			try {
-				new CultureInfo (UICulture);
+				GetSanitizedCulture (UICulture, ref fake);
 			}
 			catch {
 				throw new ConfigurationErrorsException ("the <globalization> tag contains an invalid value for the 'uiCulture' attribute");
@@ -186,11 +187,39 @@ namespace System.Web.Configuration {
 		static bool encoding_warning;
 		static bool culture_warning;
 
+		bool autoCulture;
+		bool autoUICulture;
+
+		internal bool IsAutoCulture {
+			get { return autoCulture; }
+		}
+
+		internal bool IsAutoUICulture {
+			get { return autoUICulture; }
+		}
+		
+		CultureInfo GetSanitizedCulture (string culture, ref bool auto)
+		{
+			auto = false;
+			if (culture == null)
+				throw new ArgumentNullException ("culture");
+			if (culture.Length <= 3)
+				return new CultureInfo (culture);
+			if (culture.StartsWith ("auto")) {
+				auto = true;
+				if (culture.Length > 5 && culture[4] == ':')
+					return new CultureInfo (culture.Substring (5));
+				return new CultureInfo (0x007f);
+			}
+
+			return new CultureInfo (culture);
+		}
+				
 		internal CultureInfo GetUICulture ()
 		{
 			if (cached_uiculture != UICulture) {
 				try {
-					cached_uicultureinfo = new CultureInfo (UICulture);
+					cached_uicultureinfo = GetSanitizedCulture (UICulture, ref autoUICulture);
 				} catch {
 					CultureFailed ("UICulture", UICulture);
 					cached_uicultureinfo = new CultureInfo (0x007f); // Invariant
@@ -204,7 +233,7 @@ namespace System.Web.Configuration {
 		{
 			if (cached_culture != Culture) {
 				try {
-					cached_cultureinfo = new CultureInfo (Culture);
+					cached_cultureinfo = GetSanitizedCulture (Culture, ref autoCulture);
 				} catch {
 					CultureFailed ("Culture", Culture);
 					cached_cultureinfo = new CultureInfo (0x007f); // Invariant
