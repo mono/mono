@@ -140,8 +140,17 @@ namespace System.Xml.Serialization
 			return GetTypeData (type, null);
 		}
 
+		static Type nullable = typeof (int?).GetGenericTypeDefinition ();
+
 		public static TypeData GetTypeData (Type type, string xmlDataType)
 		{
+#if NET_2_0
+			// Nullable<T> is serialized as T
+			if (type.IsGenericType && type.GetGenericTypeDefinition () == nullable) {
+				type = type.GetGenericArguments () [0];
+			}
+#endif
+
 			if ((xmlDataType != null) && (xmlDataType.Length != 0)) {
 				// If the type is an array, xmlDataType specifies the type for the array elements,
 				// not for the whole array. The exception is base64Binary, since it is a byte[],

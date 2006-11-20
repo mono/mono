@@ -1,3 +1,7 @@
+2006-11-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializerTests.cs : added test for nullable type.
+
 2006-11-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializerTests.cs : test for basic generic type support with

@@ -2133,6 +2133,20 @@ namespace MonoTests.System.XmlSerialization
 				new Type [] {type},
 				new XmlTypeMapping [] {imp.ImportTypeMapping (type)});
 		}
+
+		[Test]
+		public void Nullable ()
+		{
+			XmlSerializer ser = new XmlSerializer (typeof (int?));
+			int? nullableType = 5;
+			sw = new StringWriter ();
+			xtw = new XmlTextWriter (sw);
+			ser.Serialize (xtw, nullableType);
+			xtw.Close ();
+			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?><int>5</int>", sw.ToString ());
+			int? i = (int?) ser.Deserialize (new StringReader (sw.ToString ()));
+			Assert.AreEqual (5, i);
+		}
 #endif
 
 		public class CDataTextNodesType
