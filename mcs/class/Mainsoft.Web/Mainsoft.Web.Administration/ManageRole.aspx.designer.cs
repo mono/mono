@@ -12,7 +12,6 @@ namespace Mainsoft.Web.Administration {
     
     public partial class MenageRole {
         protected System.Web.UI.WebControls.Label role_lbl;
-        protected System.Web.UI.WebControls.Literal searchUserlbl;
         protected System.Web.UI.WebControls.DropDownList searchBy_dl;
         protected System.Web.UI.WebControls.TextBox user_txt;
         protected System.Web.UI.WebControls.Button searchUser_bt;
