@@ -98,6 +98,7 @@ namespace System.Windows.Forms {
 			this.form = form;
 
 			form.SizeChanged += new EventHandler (FormSizeChangedHandler);
+            form.LocationChanged += new EventHandler(FormLocationChangedHandler);
 
 			CreateButtons ();
 		}
@@ -239,13 +240,14 @@ namespace System.Windows.Forms {
 				PaintEventArgs pe = XplatUI.PaintEventStart (form.Handle, false);
 
 				Rectangle clip;
-				if (m.WParam.ToInt32 () > 1) {
-					Region r = Region.FromHrgn (m.WParam);
-					RectangleF rf = r.GetBounds (pe.Graphics);
-					clip = new Rectangle ((int) rf.X, (int) rf.Y, (int) rf.Width, (int) rf.Height);
-				} else {	
-					clip = new Rectangle (0, 0, form.Width, form.Height);
-				}
+ 				// clip region is not correct on win32.
+				// if (m.WParam.ToInt32 () > 1) {
+				//	Region r = Region.FromHrgn (m.WParam);
+				//	RectangleF rf = r.GetBounds (pe.Graphics);
+				//	clip = new Rectangle ((int) rf.X, (int) rf.Y, (int) rf.Width, (int) rf.Height);
+				//} else {	
+				clip = new Rectangle (0, 0, form.Width, form.Height);
+				//}
 
 				ThemeEngine.Current.DrawManagedWindowDecorations (pe.Graphics, clip, this);
 				XplatUI.PaintEventEnd (form.Handle, false);
@@ -319,7 +321,7 @@ namespace System.Windows.Forms {
 		protected virtual void Activate ()
 		{
 			// Hack to get a paint
-			NativeWindow.WndProc (form.Handle, Msg.WM_NCPAINT, IntPtr.Zero, IntPtr.Zero);
+			//NativeWindow.WndProc (form.Handle, Msg.WM_NCPAINT, IntPtr.Zero, IntPtr.Zero);
 			form.Refresh ();
 		}
 
@@ -327,6 +329,11 @@ namespace System.Windows.Forms {
 		{
 			return true;
 		}
+
+        private void FormLocationChangedHandler(object sender, EventArgs e)
+        {
+            form.MdiParent.MdiContainer.SizeScrollBars();
+        }
 
 		private void FormSizeChangedHandler (object sender, EventArgs e)
 		{
@@ -337,6 +344,7 @@ namespace System.Windows.Forms {
 			m.LParam = IntPtr.Zero;
 			m.WParam = new IntPtr (1);
 			XplatUI.SendMessage (ref m);
+            form.MdiParent.MdiContainer.SizeScrollBars();
 		}
 
 		protected void CreateButtons ()
@@ -391,7 +399,6 @@ namespace System.Windows.Forms {
 			// Need to adjust because we are in NC land
 			NCPointToClient (ref x, ref y);
 			FormPos pos = FormPosForCoords (x, y);
-			Console.WriteLine ("NC POS:   {0} for coords:  {1}, {2}", pos, x, y);
 			
 			if (pos == FormPos.TitleBar) {
 				HandleTitleBarDown (x, y);
@@ -592,6 +599,8 @@ namespace System.Windows.Forms {
 
 				form.Capture = false;
 				state = State.Idle;
+				if (form.MdiContainer != null)
+                	form.MdiContainer.SizeScrollBars();
 			}
 				
 			int x = Control.LowOrder ((int) m.LParam.ToInt32 ());

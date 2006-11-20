@@ -59,9 +59,15 @@ namespace System.Windows.Forms {
 			form.GotFocus += new EventHandler (FormGotFocus);
 			form_closed_handler = new EventHandler (FormClosed);
 			form.Closed += form_closed_handler;
+            form.TextChanged += new EventHandler(FormTextChangedHandler);
 			draw_maximized_buttons = new PaintEventHandler (DrawMaximizedButtons);
 			CreateIconMenus ();
 		}
+
+        void FormTextChangedHandler(object sender, EventArgs e)
+        {
+            mdi_container.SetParentText(false);
+        }
 
 		public MainMenu MergedMenu {
 			get {
@@ -213,13 +219,20 @@ namespace System.Windows.Forms {
 
 		public override void SetWindowState (FormWindowState old_state, FormWindowState window_state)
 		{
+
+			if (this.mdi_container.SetWindowStates (this, window_state))
+				return;
+			if (old_state == window_state)
+				return;
+				
 			switch (window_state) {
 			case FormWindowState.Minimized:
 				CreateButtons ();
 				maximize_button.Caption = CaptionButton.Maximize;
 				minimize_button.Caption = CaptionButton.Restore;
-				prev_window_state = old_state;
-				prev_bounds = form.Bounds;
+                prev_window_state = old_state;
+                if (prev_window_state == FormWindowState.Normal)
+				    prev_bounds = form.Bounds;
 				mdi_container.ArrangeIconicWindows ();
 
 				MaximizedMenu.Paint -= draw_maximized_buttons;
@@ -228,8 +241,9 @@ namespace System.Windows.Forms {
 				CreateButtons ();
 				maximize_button.Caption = CaptionButton.Restore;
 				minimize_button.Caption = CaptionButton.Minimize;
-				prev_window_state = old_state;
-				prev_bounds = form.Bounds;
+                if (old_state == FormWindowState.Normal)
+                    prev_bounds = form.Bounds;
+                prev_window_state = old_state;
 				SizeMaximized ();
 
 				MaximizedMenu.Paint += draw_maximized_buttons;
@@ -237,16 +251,16 @@ namespace System.Windows.Forms {
 			case FormWindowState.Normal:
 				CreateButtons ();
 				if (prev_window_state == FormWindowState.Maximized) {
-					form.WindowState = FormWindowState.Maximized;
+					//form.WindowState = FormWindowState.Maximized;
 					break;
 				} else if (prev_window_state == FormWindowState.Minimized) {
 					form.WindowState = FormWindowState.Minimized;
 					break;
 				}
 				maximize_button.Caption = CaptionButton.Maximize;
-				minimize_button.Caption = CaptionButton.Minimize;
+                minimize_button.Caption = CaptionButton.Minimize;
+                form.Bounds = prev_bounds;
 				prev_window_state = form.WindowState;
-				form.Bounds = prev_bounds;
 
 				MaximizedMenu.Paint -= draw_maximized_buttons;
 				break;
@@ -254,6 +268,7 @@ namespace System.Windows.Forms {
 
 			form.ResetCursor ();
 			XplatUI.RequestNCRecalc (mdi_container.Parent.Handle);
+            mdi_container.SizeScrollBars();
 		}
 
 		internal void SizeMaximized ()
@@ -276,7 +291,6 @@ namespace System.Windows.Forms {
 			y += TitleBarHeight;
 			FormPos pos = FormPosForCoords (x, y);
 
-			Console.WriteLine ("POS:  {0}", pos);
 			if (pos != FormPos.TitleBar)
 				return;
 
@@ -286,8 +300,12 @@ namespace System.Windows.Forms {
 		private void FormClosed (object sender, EventArgs e)
 		{
 			mdi_container.CloseChildForm (form);
-			if (form.WindowState == FormWindowState.Maximized)
+			if (form.WindowState == FormWindowState.Maximized) {
 				XplatUI.RequestNCRecalc (mdi_container.Parent.Handle);
+				mdi_container.ParentForm.PerformLayout();
+				XplatUI.SendMessage(mdi_container.ParentForm.Handle, Msg.WM_NCPAINT, IntPtr.Zero, new IntPtr(1)); 
+			}
+            mdi_container.SizeScrollBars();
 		}
 
 		/*
@@ -390,6 +408,7 @@ namespace System.Windows.Forms {
 		protected override void Activate ()
 		{
 			mdi_container.ActivateChild (form);
+			this.mdi_container.SetWindowStates (this, form.WindowState);
 			base.Activate ();
 		}
 

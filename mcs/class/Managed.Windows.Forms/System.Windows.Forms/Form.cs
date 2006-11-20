@@ -98,6 +98,9 @@ namespace System.Windows.Forms {
 
 		private void SelectActiveControl ()
 		{
+			if (this.IsMdiContainer)
+				return;
+				
 			if (this.ActiveControl == null) {
 				bool visible;
 
@@ -1152,9 +1155,13 @@ namespace System.Windows.Forms {
 
 			// The docs say activate only activates if our app is already active
 			if (IsHandleCreated) {
-				active = ActiveForm;
-				if ((active != null) && (this != active)) {
-					XplatUI.Activate(window.Handle);
+				if (IsMdiChild) {
+					MdiParent.ActivateMdiChild (this);
+				} else {
+					active = ActiveForm;
+					if ((active != null) && (this != active)) {
+						XplatUI.Activate(window.Handle);
+					}
 				}
 			}
 		}
@@ -1584,6 +1591,12 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnResize(EventArgs e) {
 			base.OnResize(e);
+
+            if (this.IsMdiChild)
+            {
+                ParentForm.PerformLayout();
+                ParentForm.Size = ParentForm.Size;
+            }
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -1594,11 +1607,19 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnTextChanged(EventArgs e) {
 			base.OnTextChanged (e);
+
+            if (mdi_container != null)
+                mdi_container.SetParentText(true);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnVisibleChanged(EventArgs e) {
 			base.OnVisibleChanged (e);
+			
+			if (Visible) {
+				if (window_manager != null)
+					window_manager.SetWindowState (WindowState, WindowState);
+			}
 		}
 
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {

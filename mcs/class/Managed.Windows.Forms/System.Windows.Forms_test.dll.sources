@@ -48,6 +48,7 @@ System.Windows.Forms/ListViewCollectionsTest.cs
 System.Windows.Forms/ListViewEventTest.cs
 System.Windows.Forms/ListViewTest.cs
 System.Windows.Forms/ListViewItemTest.cs
+System.Windows.Forms/MdiFormTest.cs
 System.Windows.Forms/MenuTest.cs
 System.Windows.Forms/MenuItemTest.cs
 System.Windows.Forms/MonthCalendarTest.cs

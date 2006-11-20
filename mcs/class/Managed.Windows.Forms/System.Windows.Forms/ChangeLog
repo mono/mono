@@ -1,3 +1,24 @@
+2006-11-20  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* InternalWindowManager.cs:
+	* Form.cs:
+	* MdiClient.cs:
+	* MdiWindowManager.cs: 
+	- If mdi child is maximized, set mdi parent's
+	  text to "Parent - [Child]". Fixes #79770.
+	- If there is any maximized mdi child windows, only the active 
+	  window (and any new windows) is maximized, the rest are normal.
+	- On a WindowState change only save mdi child's window bounds 
+	  if the old window state was normal. Fixes #79774.
+	- The scroll bars are now calculated on hopefully all
+	  necessary events. Fixed #79771 / #79844->6 / #79906.
+	- MdiClient.SizeScrollBars() now takes into account docked 
+	  controls in the parent when calculating available space.
+	- InternalWindowManager now always repaints the entire title
+	  area. Fixes #79844->1/4/5.
+	- Added RequestNCRecalc on mdi child windowstate changes.
+	  Fixes #79772.
+
 2006-11-20  Mike Kestner  <mkestner@novell.com>
 
 	* ComboBox.cs: setup LargeChange on the scrollbar. Invoke FireMouseUp

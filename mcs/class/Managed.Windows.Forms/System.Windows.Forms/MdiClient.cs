@@ -44,7 +44,10 @@ namespace System.Windows.Forms {
 		private bool lock_sizing;
 		private int prev_bottom;
 		private LayoutEventHandler initial_layout_handler;
+		private bool setting_windowstates = false;
 		internal ArrayList mdi_child_list;
+        private string form_text;
+        private bool setting_form_text;
 
 		#endregion	// Local Variables
 
@@ -94,6 +97,29 @@ namespace System.Windows.Forms {
 			SetStyle (ControlStyles.Selectable, false);
 		}
 		#endregion	// Public Constructors
+
+
+        internal void SetParentText(bool text_changed)
+        {
+            if (setting_form_text)
+                return;
+
+            setting_form_text = true;
+
+            if (text_changed)
+                form_text = ParentForm.Text;
+
+            if (ParentForm.ActiveMaximizedMdiChild == null)
+            {
+                ParentForm.Text = form_text;
+            }
+            else
+            {
+                ParentForm.Text = form_text + " - [" + ParentForm.ActiveMaximizedMdiChild.form.Text + "]";
+            }
+
+            setting_form_text = false;
+        }
 
 		internal override void OnPaintBackgroundInternal (PaintEventArgs pe)
 		{
@@ -214,7 +240,7 @@ namespace System.Windows.Forms {
 		#region Protected Instance Methods
 		#endregion	// Protected Instance Methods
 
-		private void SizeScrollBars ()
+		internal void SizeScrollBars ()
 		{
 			if (lock_sizing)
 				return;
@@ -231,7 +257,10 @@ namespace System.Windows.Forms {
 			bool vbar_required = false;
 
 			int right = 0;
-			int left = 0;
+            int left = 0;
+            int top = 0;
+            int bottom = 0;
+
 			foreach (Form child in Controls) {
 				if (!child.Visible)
 					continue;
@@ -240,24 +269,21 @@ namespace System.Windows.Forms {
 				if (child.Left < left) {
 					hbar_required = true;
 					left = child.Left;
-				}
+                }
+
+                if (child.Bottom > bottom)
+                    bottom = child.Bottom;
+                if (child.Top < 0) {
+                    vbar_required = true;
+                    top = child.Top;
+                }
 			}
 
-			int top = 0;
-			int bottom = 0;
-			foreach (Form child in Controls) {
-				if (!child.Visible)
-					continue;
-				if (child.Bottom > bottom)
-					bottom = child.Bottom;
-				if (child.Top < 0) {
-					vbar_required = true;
-					top = child.Top;
-				}
-			}
 
-			int right_edge = Right;
-			int bottom_edge = Bottom;
+            int first_right = Width;
+            int first_bottom = Height;
+            int right_edge = first_right;
+            int bottom_edge = first_bottom;
 			int prev_right_edge;
 			int prev_bottom_edge;
 
@@ -270,18 +296,18 @@ namespace System.Windows.Forms {
 
 				if (hbar_required || right > right_edge) {
 					need_hbar = true;
-					bottom_edge = Bottom - SystemInformation.HorizontalScrollBarHeight;
+                    bottom_edge = first_bottom - SystemInformation.HorizontalScrollBarHeight;
 				} else {
 					need_hbar = false;
-					bottom_edge = Bottom;
+                    bottom_edge = first_bottom;
 				}
 
 				if (vbar_required || bottom > bottom_edge) {
 					need_vbar = true;
-					right_edge = Right - SystemInformation.VerticalScrollBarWidth;
+                    right_edge = first_right - SystemInformation.VerticalScrollBarWidth;
 				} else {
 					need_vbar = false;
-					right_edge = Right;
+                    right_edge = first_right;
 				}
 
 			} while (right_edge != prev_right_edge || bottom_edge != prev_bottom_edge);
@@ -448,7 +474,8 @@ namespace System.Windows.Forms {
 				// The extra one pixel is a cheap hack for now until we
 				// handle 0 client sizes properly in the driver
 				int height = wm.TitleBarHeight + (bw * 2) + 1; 
-				Rectangle rect = new Rectangle (iconic_x, iconic_y, xspacing, height);
+				// The extra one pixel here is to avoid scrollbars
+				Rectangle rect = new Rectangle (iconic_x, iconic_y - 1, xspacing, height);
 				form.Bounds = wm.IconicBounds = rect;
 
 				iconic_x += xspacing;
@@ -504,7 +531,60 @@ namespace System.Windows.Forms {
 
 				m.HWnd = form.Handle;
 				XplatUI.SendMessage (ref m);
+				this.SetWindowStates ((MdiWindowManager) form.window_manager, form.WindowState);
 			}
+		}
+		
+		internal bool SetWindowStates (MdiWindowManager wm, FormWindowState window_state)
+		{
+		/*
+			MDI WindowState behaviour:
+			- If the active window is maximized, all other maximized windows are normalized.
+			- If a normal window gets focus and the original active window was maximized, 
+			  the normal window gets maximized and the original window gets normalized.
+			- If a minimized window gets focus and the original window was maximized, 
+			  the minimzed window gets maximized and the original window gets normalized. 
+			  If the ex-minimized window gets deactivated, it will be normalized.
+		*/
+			Form form = wm.form;
+
+			if (setting_windowstates) {
+				return false;
+			}
+			
+			if (!form.Visible)
+				return false;
+			
+			bool is_active = wm.IsActive();
+			bool maximize_this = false;
+			
+			if (!is_active){
+				return false;
+			}
+
+			setting_windowstates = true;
+			foreach (Form frm in mdi_child_list) {
+				if (frm == form) {
+					continue;
+				} else if (!frm.Visible){
+					continue;
+				}
+				if (frm.WindowState == FormWindowState.Maximized && is_active) {
+					if (!maximize_this && is_active)
+						maximize_this = true;	
+					frm.WindowState = FormWindowState.Normal;
+				}
+			}
+			if (maximize_this) {
+			    form.WindowState = FormWindowState.Maximized;
+            }
+            SetParentText(false);
+            SizeScrollBars();
+            XplatUI.RequestNCRecalc(ParentForm.Handle);
+
+			setting_windowstates = false;
+
+            return maximize_this;
 		}
 
 		internal int ChildrenCreated {
