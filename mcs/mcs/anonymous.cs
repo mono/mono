@@ -697,17 +697,8 @@ namespace Mono.CSharp {
 					Report.Debug (128, "EMIT SCOPE INIT #5", this, Scope,
 						      scope.Scope, scope.ChildScope);
 					DoEmit (ec);
-#if FIXME
-					if (Scope.ID == 5)
-						ec.ig.Emit (OpCodes.Not);
-#endif
-					ScopeInfo.EmitScopeInstance (ec, scope.ChildScope,
-								     ec.CurrentBlock.Toplevel);
-#if FIXME
-					scope.ChildScope.EmitScopeInstance (ec);
-					if (Scope.ID == 5)
-						ec.ig.Emit (OpCodes.Pop);
-#endif
+					ScopeInfo.EmitScopeInstance (
+						ec, scope.ChildScope, ec.CurrentBlock.Toplevel);
 					scope.EmitAssign (ec);
 				}
 			}
