@@ -584,9 +584,9 @@ public class CP28596 : ByteEncoding
 #if NET_2_0
 					HandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);
 #else
-					ch = 0x3F;
+						ch = 0x3F;
 #endif
-				break;
+					break;
 			}
 			bytes[byteIndex++] = (byte)ch;
 			--charCount;

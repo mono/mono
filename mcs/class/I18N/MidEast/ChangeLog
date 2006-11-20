@@ -1,3 +1,9 @@
+2006-11-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CP1254.cs, CP1255.cs, CP1256.cs, CP28596.cs, CP28598.cs,
+	  CP28599.cs, CP38598.cs:
+	  cosmetic indent fix (now they are correctly auto-generated).
+
 2006-01-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	Fixed bug #77325.

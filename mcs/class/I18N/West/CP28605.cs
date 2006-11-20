@@ -85,6 +85,7 @@ public class CP28605 : ByteEncoding
 		'\u00F6', '\u00F7', '\u00F8', '\u00F9', '\u00FA', '\u00FB', 
 		'\u00FC', '\u00FD', '\u00FE', '\u00FF', 
 	};
+
 	protected unsafe override void ToBytes(char* chars, int charCount,
 	                                byte* bytes, int byteCount)
 	{

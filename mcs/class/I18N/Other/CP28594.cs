@@ -202,7 +202,7 @@ public class CP28594 : ByteEncoding
 						ch -= 0xFEE0;
 					else
 #if NET_2_0
-					HandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);
+						HandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);
 #else
 						ch = 0x3F;
 #endif
