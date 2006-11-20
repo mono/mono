@@ -1043,8 +1043,6 @@ namespace Mono.CSharp {
 		public void ResolveVariable (EmitContext ec)
 		{
 			Block theblock = Block;
-			while (theblock.Implicit)
-				theblock = theblock.Parent;
 			if (theblock.ScopeInfo != null)
 				var = theblock.ScopeInfo.GetCapturedVariable (this);
 
