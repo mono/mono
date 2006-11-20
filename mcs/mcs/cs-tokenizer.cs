@@ -1866,8 +1866,7 @@ namespace Mono.CSharp
 				int next_token = token ();
 				bool ok = (next_token == Token.CLASS) ||
 					(next_token == Token.STRUCT) ||
-					(next_token == Token.INTERFACE) ||
-					(next_token == Token.ENUM); // "partial" is a keyword in 'partial enum', even though it's not valid
+					(next_token == Token.INTERFACE);
 
 				reader.Position = old;
 				ref_line = old_ref_line;
@@ -1876,10 +1875,10 @@ namespace Mono.CSharp
 
 				if (ok)
 					return res;
-				else {
-					val = new LocatedToken (Location, "partial");
-					return Token.IDENTIFIER;
-				}
+
+				Report.Error (267, Location, "The `partial' modifier can be used only immediately before keyword `class', `struct', or `interface'");
+				val = new LocatedToken (Location, "partial");
+				return Token.IDENTIFIER;
 			}
 
 			return res;

@@ -2367,7 +2367,6 @@ indexer_declarator
 enum_declaration
 	: opt_attributes
 	  opt_modifiers
-	  opt_partial
 	  ENUM IDENTIFIER 
 	  opt_enum_base {
 		if (RootContext.Documentation != null)
@@ -2376,16 +2375,11 @@ enum_declaration
 	  enum_body
 	  opt_semicolon
 	  {
-		LocatedToken lt = (LocatedToken) $5;
+		LocatedToken lt = (LocatedToken) $4;
 		Location enum_location = lt.Location;
 
-		if ($3 != null) {
-			Report.Error (267, lt.Location, "The partial modifier can only appear immediately before `class', `struct' or `interface'");
-			break;	// assumes that the parser put us in a switch
-		}
-
 		MemberName name = MakeName (new MemberName (lt.Value, enum_location));
-		Enum e = new Enum (current_namespace, current_class, (Expression) $6, (int) $2,
+		Enum e = new Enum (current_namespace, current_class, (Expression) $5, (int) $2,
 				   name, (Attributes) $1);
 		
 		if (RootContext.Documentation != null)
@@ -2393,7 +2387,7 @@ enum_declaration
 
 
 		EnumMember em = null;
-		foreach (VariableDeclaration ev in (ArrayList) $8) {
+		foreach (VariableDeclaration ev in (ArrayList) $7) {
 			em = new EnumMember (e, em, (Expression) ev.expression_or_array_initializer,
 				new MemberName (ev.identifier, ev.Location), ev.OptAttributes);
 
@@ -3571,7 +3565,7 @@ opt_modifiers
 	: /* empty */		{ $$ = (int) 0; }
 	| modifiers
 	;
-
+	
 modifiers
 	: modifier
 	| modifiers modifier
@@ -3585,7 +3579,7 @@ modifiers
 		}
 		$$ = (int) (m1 | m2);
 	  }
-        ;
+      ;
 
 modifier
 	: NEW			{ $$ = Modifiers.NEW; }

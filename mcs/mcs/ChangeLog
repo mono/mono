@@ -1,3 +1,8 @@
+2006-11-20  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-tokenizer.cs,
+	* cs-parser.jay: Better error message when partial keyword is misplaced.
+
 2006-11-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	A fix for bug #79810
