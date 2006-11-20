@@ -287,17 +287,23 @@ namespace System.Web.Compilation
 			}
 			AppCodeAssembly defasm = new AppCodeAssembly ("App_Code", appCode);
 			assemblies.Add (defasm);
-			CollectFiles (appCode, defasm);
+			if (!CollectFiles (appCode, defasm))
+				return;
 
 			foreach (AppCodeAssembly aca in assemblies)
 				aca.Build ();
 		}
 
-		private void CollectFiles (string dir, AppCodeAssembly aca)
+		private bool CollectFiles (string dir, AppCodeAssembly aca)
 		{
+			bool haveFiles = false;
+			
 			AppCodeAssembly curaca = aca;
-			foreach (string f in Directory.GetFiles (dir))
+			foreach (string f in Directory.GetFiles (dir)) {
 				aca.AddFile (f);
+				haveFiles = true;
+			}
+			
 			foreach (string d in Directory.GetDirectories (dir)) {
 				foreach (AppCodeAssembly a in assemblies)
 					if (a.SourcePath == d) {
@@ -307,6 +313,7 @@ namespace System.Web.Compilation
 				CollectFiles (d, curaca);
 				curaca = aca;
 			}
+			return haveFiles;
 		}
 	}
 }

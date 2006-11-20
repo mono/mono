@@ -2,6 +2,7 @@
 
 	* AppCodeCompiler.cs: Reference assemblies listed in
 	system.web/compilation/assemblies.
+	Don't create empty assemblies.
 
 2006-11-19 Igor Zelmanovich <igorz@mainsoft.com>
 
