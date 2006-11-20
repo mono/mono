@@ -121,14 +121,24 @@ REM @echo on
 "%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi %TEST_ASSEMBLY% %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUN_LOG% 2<&1
 REM @echo off
 
-
-
 REM ********************************************************
 @echo Build XmlTool
 REM ********************************************************
 set XML_TOOL_PATH=..\..\tools\mono-xmltool
+
+if "%XMLTOOL_BUILD%" == "DONE" goto XMLTOOLSKIP
+
 msbuild %XML_TOOL_PATH%\XmlTool20.vmwcsproj /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%BUILD_LOG% 2<&1
+
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
+
+goto XMLTOOLREADY
+
+:XMLTOOLSKIP
+echo Skipping XmlToll build...
+
+:XMLTOOLREADY
+set XMLTOOL_BUILD=DONE
 
 copy %XML_TOOL_PATH%\bin\%PROJECT_CONFIGURATION%\xmltool.exe .
 copy %XML_TOOL_PATH%\nunit_transform.xslt .

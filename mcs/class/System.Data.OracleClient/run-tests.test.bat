@@ -133,10 +133,21 @@ REM ********************************************************
 @echo Build XmlTool
 REM ********************************************************
 set XML_TOOL_PATH=..\..\tools\mono-xmltool
+
+if "%XMLTOOL_BUILD%" == "DONE" goto XMLTOOLSKIP
+
 REM devenv %XML_TOOL_PATH%\XmlTool.sln /%BUILD_OPTION% Debug_Java >>%RUNNING_FIXTURE%_build.log.txt 2<&1
 msbuild %XML_TOOL_PATH%\XmlTool20.vmwcsproj /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%BUILD_LOG% 2<&1
 
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
+
+goto XMLTOOLREADY
+
+:XMLTOOLSKIP
+echo Skipping XmlToll build...
+
+:XMLTOOLREADY
+set XMLTOOL_BUILD=DONE
 
 copy %XML_TOOL_PATH%\bin\%PROJECT_CONFIGURATION%\xmltool.exe .
 copy %XML_TOOL_PATH%\nunit_transform.xslt .
