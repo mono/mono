@@ -4043,8 +4043,12 @@ namespace System.Windows.Forms
 				else 
 					style = Border3DStyle.Raised;
 			}
+			
+			Rectangle rect = button.Rectangle;
+			if ((button.Style == ToolBarButtonStyle.DropDownButton) && (button.Parent.DropDownArrows))
+				rect.Width -= ToolBarDropDownWidth;
 
-			CPDrawBorder3D (dc, button.Rectangle, style, all_sides);
+			CPDrawBorder3D (dc, rect, style, all_sides);
 		}
 
 		protected virtual void DrawToolBarSeparator (Graphics dc, ToolBarButton button)
@@ -4076,20 +4080,19 @@ namespace System.Windows.Forms
 			Rectangle rect = button.Rectangle;
 			rect.X = button.Rectangle.Right - ToolBarDropDownWidth;
 			rect.Width = ToolBarDropDownWidth;
-
-			if (button.dd_pressed) {
+			
+			if (button.dd_pressed || button.Pushed || button.Pressed) {
 				CPDrawBorder3D (dc, rect, Border3DStyle.SunkenOuter, all_sides);
-				CPDrawBorder3D (dc, rect, Border3DStyle.SunkenInner, Border3DSide.Bottom | Border3DSide.Right);
-			} else if (button.Pushed || button.Pressed)
-				CPDrawBorder3D (dc, rect, Border3DStyle.Sunken, all_sides);
-			else if (is_flat) {
+				if (!is_flat)
+					CPDrawBorder3D (dc, rect, Border3DStyle.SunkenInner, Border3DSide.Bottom | Border3DSide.Right);
+			}else if (is_flat) {
 				if (button.Hilight)
 					CPDrawBorder3D (dc, rect, Border3DStyle.RaisedInner, all_sides);
 			} else
 				CPDrawBorder3D (dc, rect, Border3DStyle.Raised, all_sides);
 
 			PointF [] vertices = new PointF [3];
-			PointF ddCenter = new PointF (rect.X + (rect.Width/2.0f), rect.Y + (rect.Height/2.0f));
+			PointF ddCenter = new PointF (rect.X + (rect.Width/2.0f), rect.Y + (rect.Height/2.0f)-2);
 			vertices [0].X = ddCenter.X - ToolBarDropDownArrowWidth / 2.0f + 0.5f;
 			vertices [0].Y = ddCenter.Y;
 			vertices [1].X = ddCenter.X + ToolBarDropDownArrowWidth / 2.0f + 0.5f;

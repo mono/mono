@@ -407,6 +407,10 @@ namespace System.Windows.Forms
 								  Rectangle.Width + 4, 4));
 				Parent.Invalidate (new Rectangle (Rectangle.X + Rectangle.Width - 2, Rectangle.Y - 2,
 								  4, Rectangle.Height + 4));
+								  
+				if ((Style == ToolBarButtonStyle.DropDownButton) && Parent.DropDownArrows)			  
+					Parent.Invalidate (new Rectangle (Rectangle.Width - ThemeEngine.Current.ToolBarDropDownWidth - 2, 
+										Rectangle.Y - 2, 6, Rectangle.Height + 4));
 			}
 		}
 

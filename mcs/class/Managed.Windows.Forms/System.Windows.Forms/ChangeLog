@@ -1,3 +1,10 @@
+2006-11-20  Everaldo Canuto  <everaldo@simios.org>
+
+	* ToolButton.cs: Invalidate middle of DropDown button when
+	ToolBar theres DropDownArrows.
+	* ThemeWin32Classic.cs: Change position of DropDown arrow and
+	fix DropDown drawing operations.
+
 2006-11-20  Chris Toshok  <toshok@ximian.com>
 
 	* NativeWindow.cs: fix the formatting of functions ('{' on the
