@@ -38,7 +38,7 @@ namespace Mainsoft.Web.Administration
 		{
 			user_name = Request.QueryString["User"];
 			srch.User = user_name;
-			if (MultiView1.ActiveViewIndex == 0) {
+			if (!IsPostBack) {
 				FillUserData (user_name);
 				name_lbl.Text = user_name;
 			}
@@ -46,15 +46,11 @@ namespace Mainsoft.Web.Administration
 
 		void FillUserData (string user_name)
 		{
-			if (MultiView1.ActiveViewIndex == 0) {
-				MembershipUser user = Membership.GetUser (user_name);
-				userid_txb.Text = user.UserName;
-				email_txb.Text = user.Email;
-				active_chb.Checked = user.IsApproved;
-				if (user.Comment == string.Empty) {
-					desc_txb.Text = user.Comment;
-				}
-			}
+			MembershipUser user = Membership.GetUser (user_name);
+			userid_txb.Text = user.UserName;
+			email_txb.Text = user.Email;
+			active_chb.Checked = user.IsApproved;
+			desc_txb.Text = user.Comment;
 		}
 
 		protected void roles_lst_DataBound (object sender, EventArgs e)

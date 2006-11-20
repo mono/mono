@@ -57,12 +57,8 @@ namespace Mainsoft.Web.Administration
 		public void CreateUserWizard1_CreatedUser (object sender, EventArgs e)
 		{
 			MembershipUser user = Membership.GetUser (((CreateUserWizard) sender).UserName);
-			user.IsApproved = active_chb.Checked;
 			roles_lst.Enabled = false;
-		}
-
-		public void CreateUserWizard1_CreatingUser (object sender, LoginCancelEventArgs e)
-		{
+			
 			int i = 0;
 			while (i < roles_lst.Items.Count) {
 				if (roles_lst.Items[i].Selected) {
@@ -75,6 +71,11 @@ namespace Mainsoft.Web.Administration
 				}
 				i++;
 			}
+		}
+
+		public void CreateUserWizard1_CreatingUser (object sender, LoginCancelEventArgs e)
+		{
+			((CreateUserWizard) sender).DisableCreatedUser = !active_chb.Checked;
 		}
 	}
 }
