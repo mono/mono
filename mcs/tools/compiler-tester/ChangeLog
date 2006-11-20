@@ -1,3 +1,9 @@
+2006-11-20  Martin Baulig  <martin@ximian.com>
+
+	* compiler-tester.cs
+	(PositiveChecker.HandleFailure): Use `LogLine ("{0}", extra)'
+	since the error message from the compiler might contain {}.
+
 2006-10-06  Marek Safar  <marek.safar@seznam.cz>
 
 	* compiler-tester.cs: Positive test file can be now DLL.

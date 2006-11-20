@@ -560,7 +560,7 @@ namespace TestRunner {
 			}
 
 			if (extra != null)
-				LogLine (extra);
+				LogLine ("{0}", extra);
 
 			regression.Add (file);
 		}
