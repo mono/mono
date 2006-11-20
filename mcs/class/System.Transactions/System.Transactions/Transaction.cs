@@ -186,26 +186,33 @@ namespace System.Transactions
 			/* FIXME: Enlistment.. ? */
 			return new Enlistment ();
 		}
-				
-		[MonoTODO]
+
 		public override bool Equals (object obj)
 		{
-			Transaction t = obj as Transaction;
-			if (t == null)
+			return Equals (obj as Transaction);
+		}
+
+		// FIXME: Check whether this is correct (currently, GetHashCode() uses 'dependents' but this doesn't)
+		private bool Equals (Transaction t)
+		{
+			if (ReferenceEquals (t, this))
+				return true;
+			if (ReferenceEquals (t, null))
 				return false;
 			return this.level == t.level &&
 				this.info == t.info;
 		}
 
-		[MonoTODO]
-		public static bool op_Inequality (Transaction x, Transaction y)
+		public static bool operator == (Transaction x, Transaction y)
 		{
-			if (x == null && y == null)
-				return false;
-			if (x == null || y == null)
-				return true;
+			if (ReferenceEquals (x, null))
+				return ReferenceEquals (y, null);
+			return x.Equals (y);
+		}
 
-			return ! x.Equals (y);
+		public static bool operator != (Transaction x, Transaction y)
+		{
+			return !(x == y);
 		}
 
 		public override int GetHashCode ()
