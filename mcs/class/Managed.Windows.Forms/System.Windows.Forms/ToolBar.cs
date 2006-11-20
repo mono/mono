@@ -591,7 +591,7 @@ namespace System.Windows.Forms
 
 		private void ToolBar_MouseDown (object sender, MouseEventArgs me)
 		{
-			if (!Enabled) 
+			if ((!Enabled) || ((me.Button & MouseButtons.Left) == 0))
 				return;
 
 			Point loc = new Point (me.X, me.Y);
@@ -633,7 +633,7 @@ namespace System.Windows.Forms
 
 		private void ToolBar_MouseUp (object sender, MouseEventArgs me)
 		{
-			if (!Enabled) 
+			if ((!Enabled) || ((me.Button & MouseButtons.Left) == 0))
 				return;
 
 			Point loc = new Point (me.X, me.Y);
