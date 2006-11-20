@@ -22,7 +22,7 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-// Generated from "mac-is.ucm".
+// Generated from "windows-10079-2000.ucm".
 
 namespace I18N.West
 {
@@ -67,22 +67,22 @@ public class CP10079 : ByteEncoding
 		'\u00E4', '\u00E3', '\u00E5', '\u00E7', '\u00E9', '\u00E8', 
 		'\u00EA', '\u00EB', '\u00ED', '\u00EC', '\u00EE', '\u00EF', 
 		'\u00F1', '\u00F3', '\u00F2', '\u00F4', '\u00F6', '\u00F5', 
-		'\u00FA', '\u00F9', '\u00FB', '\u00FC', /*'\u2020'*/'\u00DD', '\u00B0', 
+		'\u00FA', '\u00F9', '\u00FB', '\u00FC', '\u00DD', '\u00B0', 
 		'\u00A2', '\u00A3', '\u00A7', '\u2022', '\u00B6', '\u00DF', 
 		'\u00AE', '\u00A9', '\u2122', '\u00B4', '\u00A8', '\u2260', 
 		'\u00C6', '\u00D8', '\u221E', '\u00B1', '\u2264', '\u2265', 
 		'\u00A5', '\u00B5', '\u2202', '\u2211', '\u220F', '\u03C0', 
-		'\u222B', '\u00AA', '\u00BA', '\u03A9', '\u00E6', '\u00F8', 
+		'\u222B', '\u00AA', '\u00BA', '\u2126', '\u00E6', '\u00F8', 
 		'\u00BF', '\u00A1', '\u00AC', '\u221A', '\u0192', '\u2248', 
-		'\u0394', '\u00AB', '\u00BB', '\u2026', '\u00A0', '\u00C0', 
-		'\u00C3', '\u00D5', '\u0152', '\u0153', /*'\u2014'*/'\u2013', '\u2013', 
-		'\u201C', '\u201D', '\u2018', '\u2019', '\u00F7', '\u25C6', 
-		'\u00FF', '\u0178', '\u2044', '\u00A4', '\u0110', /*\u0111*/'\u00F0', 
-		'\u00DE', '\u00FE', /*'\u2021'*/'\u00FD', '\u00B7', '\u201A', '\u201E', 
+		'\u2206', '\u00AB', '\u00BB', '\u2026', '\u00A0', '\u00C0', 
+		'\u00C3', '\u00D5', '\u0152', '\u0153', '\u2013', '\u2014', 
+		'\u201C', '\u201D', '\u2018', '\u2019', '\u00F7', '\u25CA', 
+		'\u00FF', '\u0178', '\u2044', '\u00A4', '\u00D0', '\u00F0', 
+		'\u00DE', '\u00FE', '\u00FD', '\u00B7', '\u201A', '\u201E', 
 		'\u2030', '\u00C2', '\u00CA', '\u00C1', '\u00CB', '\u00C8', 
 		'\u00CD', '\u00CE', '\u00CF', '\u00CC', '\u00D3', '\u00D4', 
-		'\uE01E', '\u00D2', '\u00DA', '\u00DB', '\u00D9', '\u0131', 
-		'\u003F', '\u003F', '\u00AF', '\u02D8', '\u02D9', '\u02DA', 
+		'\uF8FF', '\u00D2', '\u00DA', '\u00DB', '\u00D9', '\u0131', 
+		'\u02C6', '\u02DC', '\u00AF', '\u02D8', '\u02D9', '\u02DA', 
 		'\u00B8', '\u02DD', '\u02DB', '\u02C7', 
 	};
 
@@ -142,6 +142,7 @@ public class CP10079 : ByteEncoding
 				case 0x00CD: ch = 0xEA; break;
 				case 0x00CE: ch = 0xEB; break;
 				case 0x00CF: ch = 0xEC; break;
+				case 0x00D0: ch = 0xDC; break;
 				case 0x00D1: ch = 0x84; break;
 				case 0x00D2: ch = 0xF1; break;
 				case 0x00D3: ch = 0xEE; break;
@@ -153,7 +154,7 @@ public class CP10079 : ByteEncoding
 				case 0x00DA: ch = 0xF2; break;
 				case 0x00DB: ch = 0xF3; break;
 				case 0x00DC: ch = 0x86; break;
-				case 0x00DD: ch = 0xA0; break; /*mono*/
+				case 0x00DD: ch = 0xA0; break;
 				case 0x00DF: ch = 0xA7; break;
 				case 0x00E0: ch = 0x88; break;
 				case 0x00E1: ch = 0x87; break;
@@ -171,7 +172,7 @@ public class CP10079 : ByteEncoding
 				case 0x00ED: ch = 0x92; break;
 				case 0x00EE: ch = 0x94; break;
 				case 0x00EF: ch = 0x95; break;
-				case 0x00F0: ch = 0xDD; break; /*mono*/
+				case 0x00F0: ch = 0xDD; break;
 				case 0x00F1: ch = 0x96; break;
 				case 0x00F2: ch = 0x98; break;
 				case 0x00F3: ch = 0x97; break;
@@ -184,41 +185,39 @@ public class CP10079 : ByteEncoding
 				case 0x00FA: ch = 0x9C; break;
 				case 0x00FB: ch = 0x9E; break;
 				case 0x00FC: ch = 0x9F; break;
-				case 0x00FD: ch = 0xE0; break; /*mono*/
+				case 0x00FD: ch = 0xE0; break;
 				case 0x00FE: ch = 0xDF; break;
 				case 0x00FF: ch = 0xD8; break;
-				case 0x0110: ch = 0xDC; break;
-				case 0x0111: ch = 0xDD; break;
 				case 0x0131: ch = 0xF5; break;
 				case 0x0152: ch = 0xCE; break;
 				case 0x0153: ch = 0xCF; break;
 				case 0x0178: ch = 0xD9; break;
 				case 0x0192: ch = 0xC4; break;
+				case 0x02C6: ch = 0xF6; break;
 				case 0x02C7: ch = 0xFF; break;
 				case 0x02D8: ch = 0xF9; break;
 				case 0x02D9: ch = 0xFA; break;
 				case 0x02DA: ch = 0xFB; break;
 				case 0x02DB: ch = 0xFE; break;
+				case 0x02DC: ch = 0xF7; break;
 				case 0x02DD: ch = 0xFD; break;
-				case 0x0394: ch = 0xC6; break;
-				case 0x03A9: ch = 0xBD; break;
 				case 0x03C0: ch = 0xB9; break;
-				case 0x2013: ch = /*0xD1*/0xD0; break;
-				case 0x2014: ch = 0xD0; break;
+				case 0x2013: ch = 0xD0; break;
+				case 0x2014: ch = 0xD1; break;
 				case 0x2018: ch = 0xD4; break;
 				case 0x2019: ch = 0xD5; break;
 				case 0x201A: ch = 0xE2; break;
 				case 0x201C: ch = 0xD2; break;
 				case 0x201D: ch = 0xD3; break;
 				case 0x201E: ch = 0xE3; break;
-				case 0x2020: ch = 0xA0; break;
-				case 0x2021: ch = 0xE0; break;
 				case 0x2022: ch = 0xA5; break;
 				case 0x2026: ch = 0xC9; break;
 				case 0x2030: ch = 0xE4; break;
 				case 0x2044: ch = 0xDA; break;
 				case 0x2122: ch = 0xAA; break;
+				case 0x2126: ch = 0xBD; break;
 				case 0x2202: ch = 0xB6; break;
+				case 0x2206: ch = 0xC6; break;
 				case 0x220F: ch = 0xB8; break;
 				case 0x2211: ch = 0xB7; break;
 				case 0x221A: ch = 0xC3; break;
@@ -228,13 +227,13 @@ public class CP10079 : ByteEncoding
 				case 0x2260: ch = 0xAD; break;
 				case 0x2264: ch = 0xB2; break;
 				case 0x2265: ch = 0xB3; break;
-				case 0x25C6: ch = 0xD7; break;
-				case 0xE01E: ch = 0xF0; break;
+				case 0x25CA: ch = 0xD7; break;
+				case 0xF8FF: ch = 0xF0; break;
 				default:
 #if NET_2_0
 					HandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);
 #else
-					ch = 0x3F;
+						ch = 0x3F;
 #endif
 					break;
 			}
@@ -296,6 +295,7 @@ public class CP10079 : ByteEncoding
 				case 0x00CD: ch = 0xEA; break;
 				case 0x00CE: ch = 0xEB; break;
 				case 0x00CF: ch = 0xEC; break;
+				case 0x00D0: ch = 0xDC; break;
 				case 0x00D1: ch = 0x84; break;
 				case 0x00D2: ch = 0xF1; break;
 				case 0x00D3: ch = 0xEE; break;
@@ -307,6 +307,7 @@ public class CP10079 : ByteEncoding
 				case 0x00DA: ch = 0xF2; break;
 				case 0x00DB: ch = 0xF3; break;
 				case 0x00DC: ch = 0x86; break;
+				case 0x00DD: ch = 0xA0; break;
 				case 0x00DF: ch = 0xA7; break;
 				case 0x00E0: ch = 0x88; break;
 				case 0x00E1: ch = 0x87; break;
@@ -324,6 +325,7 @@ public class CP10079 : ByteEncoding
 				case 0x00ED: ch = 0x92; break;
 				case 0x00EE: ch = 0x94; break;
 				case 0x00EF: ch = 0x95; break;
+				case 0x00F0: ch = 0xDD; break;
 				case 0x00F1: ch = 0x96; break;
 				case 0x00F2: ch = 0x98; break;
 				case 0x00F3: ch = 0x97; break;
@@ -336,40 +338,39 @@ public class CP10079 : ByteEncoding
 				case 0x00FA: ch = 0x9C; break;
 				case 0x00FB: ch = 0x9E; break;
 				case 0x00FC: ch = 0x9F; break;
+				case 0x00FD: ch = 0xE0; break;
 				case 0x00FE: ch = 0xDF; break;
 				case 0x00FF: ch = 0xD8; break;
-				case 0x0110: ch = 0xDC; break;
-				case 0x0111: ch = 0xDD; break;
 				case 0x0131: ch = 0xF5; break;
 				case 0x0152: ch = 0xCE; break;
 				case 0x0153: ch = 0xCF; break;
 				case 0x0178: ch = 0xD9; break;
 				case 0x0192: ch = 0xC4; break;
+				case 0x02C6: ch = 0xF6; break;
 				case 0x02C7: ch = 0xFF; break;
 				case 0x02D8: ch = 0xF9; break;
 				case 0x02D9: ch = 0xFA; break;
 				case 0x02DA: ch = 0xFB; break;
 				case 0x02DB: ch = 0xFE; break;
+				case 0x02DC: ch = 0xF7; break;
 				case 0x02DD: ch = 0xFD; break;
-				case 0x0394: ch = 0xC6; break;
-				case 0x03A9: ch = 0xBD; break;
 				case 0x03C0: ch = 0xB9; break;
-				case 0x2013: ch = 0xD1; break;
-				case 0x2014: ch = 0xD0; break;
+				case 0x2013: ch = 0xD0; break;
+				case 0x2014: ch = 0xD1; break;
 				case 0x2018: ch = 0xD4; break;
 				case 0x2019: ch = 0xD5; break;
 				case 0x201A: ch = 0xE2; break;
 				case 0x201C: ch = 0xD2; break;
 				case 0x201D: ch = 0xD3; break;
 				case 0x201E: ch = 0xE3; break;
-				case 0x2020: ch = 0xA0; break;
-				case 0x2021: ch = 0xE0; break;
 				case 0x2022: ch = 0xA5; break;
 				case 0x2026: ch = 0xC9; break;
 				case 0x2030: ch = 0xE4; break;
 				case 0x2044: ch = 0xDA; break;
 				case 0x2122: ch = 0xAA; break;
+				case 0x2126: ch = 0xBD; break;
 				case 0x2202: ch = 0xB6; break;
+				case 0x2206: ch = 0xC6; break;
 				case 0x220F: ch = 0xB8; break;
 				case 0x2211: ch = 0xB7; break;
 				case 0x221A: ch = 0xC3; break;
@@ -379,8 +380,8 @@ public class CP10079 : ByteEncoding
 				case 0x2260: ch = 0xAD; break;
 				case 0x2264: ch = 0xB2; break;
 				case 0x2265: ch = 0xB3; break;
-				case 0x25C6: ch = 0xD7; break;
-				case 0xE01E: ch = 0xF0; break;
+				case 0x25CA: ch = 0xD7; break;
+				case 0xF8FF: ch = 0xF0; break;
 				default: ch = 0x3F; break;
 			}
 			bytes[byteIndex++] = (byte)ch;
