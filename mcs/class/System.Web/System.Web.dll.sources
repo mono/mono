@@ -1041,6 +1041,7 @@ System.Web.UI.WebControls.WebParts/IWebPartTable.cs
 System.Web.UI.WebControls.WebParts/Part.cs
 System.Web.UI.WebControls.WebParts/PartChromeState.cs
 System.Web.UI.WebControls.WebParts/PartChromeType.cs
+System.Web.UI.WebControls.WebParts/PersonalizableAttribute.cs
 System.Web.UI.WebControls.WebParts/PersonalizationScope.cs
 System.Web.UI.WebControls.WebParts/ProviderConnectionPoint.cs
 System.Web.UI.WebControls.WebParts/TypeCollection.cs
