@@ -1516,25 +1516,25 @@ namespace System.Windows.Forms
 					set { }
 				}
 
-				public bool FireMouseDown (MouseEventArgs e) 
-				{
-					if (Visible) {
-						e = TranslateEvent (e);
-						if (ClientRectangle.Contains (e.X, e.Y)) {
-							OnMouseDown (e);
-							return true;
-						}
-					}
-					return false;
-				}	
-				
-				public void FireMouseUp (MouseEventArgs e) 
+				public void FireMouseDown (MouseEventArgs e) 
 				{
 					if (Visible) {
 						e = TranslateEvent (e);
 						if (ClientRectangle.Contains (e.X, e.Y))
-							OnMouseUp (e);
+							OnMouseDown (e);
 					}
+				}	
+				
+				public bool FireMouseUp (MouseEventArgs e) 
+				{
+					if (Visible) {
+						e = TranslateEvent (e);
+						if (ClientRectangle.Contains (e.X, e.Y)) {
+							OnMouseUp (e);
+							return true;
+						}
+					}
+					return false;
 				}
 				
 				public void FireMouseMove (MouseEventArgs e) 
@@ -1661,6 +1661,7 @@ namespace System.Windows.Forms
 					vscrollbar_ctrl.Location = new Point (width - vscrollbar_ctrl.Width - BorderWidth - 1, 0);
 
 					vscrollbar_ctrl.Maximum = owner.Items.Count - (owner.DropDownStyle == ComboBoxStyle.Simple ? page_size : owner.maxdrop_items);
+					vscrollbar_ctrl.LargeChange = owner.MaxDropDownItems - 1;
 					show_scrollbar = vscrollbar_ctrl.Visible = true;
 
 					int hli = HighlightedIndex;
@@ -1825,7 +1826,7 @@ namespace System.Windows.Forms
 	    			int index = IndexFromPointDisplayRectangle (e.X, e.Y);
 
     				if (index == -1) {    					
-					if (vscrollbar_ctrl == null || !vscrollbar_ctrl.FireMouseDown (e))
+					if (vscrollbar_ctrl == null || !vscrollbar_ctrl.FireMouseUp (e))
 		    				HideWindow ();
 				} else {
 					owner.SelectedIndex = index;

@@ -1,3 +1,9 @@
+2006-11-20  Mike Kestner  <mkestner@novell.com>
+
+	* ComboBox.cs: setup LargeChange on the scrollbar. Invoke FireMouseUp
+	in the MouseUp handler of the listbox and move the return handling
+	code to FireMouseUp to avoid scrolling on ups.  Fixes #79952.
+
 2006-11-20  Everaldo Canuto  <everaldo@simios.org>
 
 	* Toolbar.cs: Ignore right mouse clicks in toolbar. Fixes #79855. 
