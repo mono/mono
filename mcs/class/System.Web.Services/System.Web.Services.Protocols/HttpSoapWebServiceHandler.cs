@@ -116,8 +116,8 @@ namespace System.Web.Services.Protocols
 		{
 			Stream stream = request.InputStream;
 
-			using (stream)
-			{
+			//using (stream)
+			//{
 				string soapAction = null;
 				string ctype;
 				Encoding encoding = WebServiceHelper.GetContentEncoding (request.ContentType, out ctype);
@@ -222,10 +222,8 @@ namespace System.Web.Services.Protocols
 				SoapExtension.ExecuteProcessMessage (_extensionChainMedPrio, message, stream, false);
 				SoapExtension.ExecuteProcessMessage (_extensionChainLowPrio, message, stream, false);
 
-				xmlReader.Close ();
-
 				return message;
-			}
+			//}
 		}
 
 		string ReadActionFromRequestElement (Stream stream, Encoding encoding)
