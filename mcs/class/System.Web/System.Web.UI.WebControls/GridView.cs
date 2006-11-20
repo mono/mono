@@ -1233,6 +1233,10 @@ namespace System.Web.UI.WebControls
 			table.Rows.Add (headerRow);
 			InitializeRow (headerRow, fields);
 			OnRowCreated (new GridViewRowEventArgs (headerRow));
+			if (dataBinding) {
+				headerRow.DataBind ();
+				OnRowDataBound (new GridViewRowEventArgs (headerRow));
+			}
 			
 			foreach (object obj in dataSource) {
 				DataControlRowState rstate = GetRowState (list.Count);
@@ -1258,12 +1262,20 @@ namespace System.Web.UI.WebControls
 				GridViewRow emptyRow = CreateEmptyrRow (fields.Length);
 				table.Rows.Add (emptyRow);
 				OnRowCreated (new GridViewRowEventArgs (emptyRow));
+				if (dataBinding) {
+					emptyRow.DataBind ();
+					OnRowDataBound (new GridViewRowEventArgs (emptyRow));
+				}
 			}
 
 			GridViewRow footerRow = CreateRow (0, 0, DataControlRowType.Footer, DataControlRowState.Normal);
 			table.Rows.Add (footerRow);
 			InitializeRow (footerRow, fields);
 			OnRowCreated (new GridViewRowEventArgs (footerRow));
+			if (dataBinding) {
+				footerRow.DataBind ();
+				OnRowDataBound (new GridViewRowEventArgs (footerRow));
+			}
 
 			if (showPager && PagerSettings.Position == PagerPosition.Bottom || PagerSettings.Position == PagerPosition.TopAndBottom) {
 				bottomPagerRow = CreatePagerRow (fields.Length, dataSource);

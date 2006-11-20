@@ -1,5 +1,9 @@
 2006-11-20 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* GridView.cs: fixed: header, footer and empty rows are databound.
+
+2006-11-20 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Style.cs: added internal helper method RemoveTextStyles.
 
 2006-11-20  Igor Zelmanovich <igorz@mainsoft.com>
