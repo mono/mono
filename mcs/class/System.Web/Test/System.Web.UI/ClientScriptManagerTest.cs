@@ -369,7 +369,7 @@ namespace MonoTests.System.Web.UI
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
+		[Category ("NotDotNet")] // for dot-net use __CALLBACKID insted __CALLBACKTARGET and __CALLBACKARGUMENT insted __CALLBACKPARAM
 		public void ClientScriptManager_RegisterForEventValidation_1 ()
 		{
 			WebTest t = new WebTest ("EventValidationTest1.aspx");
@@ -378,11 +378,11 @@ namespace MonoTests.System.Web.UI
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("__CALLBACKID");
-			fr.Controls.Add ("__CALLBACKPARAM");
+			fr.Controls.Add ("__CALLBACKTARGET");
+			fr.Controls.Add ("__CALLBACKARGUMENT");
 			fr.Controls["__EVENTTARGET"].Value = "";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
-			fr.Controls["__CALLBACKID"].Value = "__Page";
+			fr.Controls ["__CALLBACKTARGET"].Value = "__Page";
 			t.Request = fr;
 			html = t.Run ();
 
@@ -392,7 +392,7 @@ namespace MonoTests.System.Web.UI
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
+		[Category ("NotDotNet")] // for dot-net use __CALLBACKID insted __CALLBACKTARGET and __CALLBACKPARAM insted __CALLBACKARGUMENT
 		public void ClientScriptManager_RegisterForEventValidation_2 ()
 		{
 			WebTest t = new WebTest ("EventValidationTest2.aspx");
@@ -401,11 +401,11 @@ namespace MonoTests.System.Web.UI
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("__CALLBACKID");
-			fr.Controls.Add ("__CALLBACKPARAM");
+			fr.Controls.Add ("__CALLBACKTARGET");
+			fr.Controls.Add ("__CALLBACKARGUMENT");
 			fr.Controls["__EVENTTARGET"].Value = "";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
-			fr.Controls["__CALLBACKID"].Value = "__Page";
+			fr.Controls ["__CALLBACKTARGET"].Value = "__Page";
 			t.Request = fr;
 			html = t.Run ();
 
@@ -414,40 +414,34 @@ namespace MonoTests.System.Web.UI
 		}
 
 		// Expected Exceptions
-				
+
 		[Test]
-		[Category ("NotWorking")]
-		//[ExpectedException (typeof (InvalidOperationException))]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void ClientScriptManager_RegisterForEventValidationException ()
 		{
-		// TODO --> No RegisterForEventValidation Method	
-		//        Page p = new Page ();
-		//        ClientScriptManager cs = p.ClientScript;
-		//        cs.RegisterForEventValidation ("ID", "args");
+			Page p = new Page ();
+			ClientScriptManager cs = p.ClientScript;
+			cs.RegisterForEventValidation ("ID", "args");
 		}
 
 		
 		[Test]
-		[Category ("NotWorking")]
-		//[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (ArgumentException))]
 		public void ClientScriptManager_ValidateEventException_1 ()
 		{
-		// TODO --> No ValidateEvent Method
-		//        Page p = new Page ();
-		//        ClientScriptManager cs = p.ClientScript;
-		//        cs.ValidateEvent ("Exception");
+			Page p = new Page ();
+			ClientScriptManager cs = p.ClientScript;
+			cs.ValidateEvent ("Exception");
 		}
 
 		
 		[Test]
-		[Category ("NotWorking")]
-		//[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (ArgumentException))]
 		public void ClientScriptManager_ValidateEventException_2 ()
 		{
-		// TODO --> No ValidateEvent Method		
-		//        Page p = new Page ();
-		//        ClientScriptManager cs = p.ClientScript;
-		//        cs.ValidateEvent ("Exception", "args");
+			Page p = new Page ();
+			ClientScriptManager cs = p.ClientScript;
+			cs.ValidateEvent ("Exception", "args");
 		}
 
 
