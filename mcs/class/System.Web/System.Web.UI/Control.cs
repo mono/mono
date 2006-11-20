@@ -192,20 +192,23 @@ namespace System.Web.UI
 				string client = UniqueID;
 
 				if (client != null)
-					client = client.Replace (':', '_');
-
+					client = client.Replace (':', ClientIDSeparator);
+				
 				return client;
 			}
 		}
 
 #if NET_2_0
-		protected char ClientIDSeparator 
+		protected char ClientIDSeparator
+#else
+		internal protected char ClientIDSeparator
+#endif		
 		{
 			get {
-				throw new NotImplementedException ();
+				return '_';
 			}
 		}
-#endif		
+
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
@@ -262,7 +265,7 @@ namespace System.Web.UI
 		protected char IdSeparator 
 		{
 			get {
-				throw new NotImplementedException ();
+				return '$';
 			}
 		}
 
@@ -290,7 +293,7 @@ namespace System.Web.UI
 		protected bool LoadViewStateByID 
 		{
 			get {
-				throw new NotImplementedException ();
+				return false;
 			}
 		}
 #endif		

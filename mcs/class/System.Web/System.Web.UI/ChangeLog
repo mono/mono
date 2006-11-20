@@ -1,5 +1,7 @@
 2006-11-20  Marek Habersack  <grendello@gmail.com>
 
+	* Control.cs: Implementations of a few missing properties.
+
 	* Page.cs: Added support for automatic culture detection from the
 	user's browser.
 
