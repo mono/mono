@@ -843,6 +843,11 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+		internal void RemoveTextStyles () {
+			ForeColor = Color.Empty;
+			fontinfo = null;
+		}
+
 		internal void AddCssClass (string cssClass) {
 			if (String.IsNullOrEmpty (cssClass))
 				return;
