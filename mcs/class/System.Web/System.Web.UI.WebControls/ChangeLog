@@ -1,3 +1,12 @@
+2006-11-20  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Button.cs: fixed: support for event validation.
+	* CheckBox.cs: fixed: support for event validation.
+	* FormView.cs: fixed: support for event validation.
+	* ImageButton.cs: fixed: support for event validation.
+	* ListBox.cs: fixed: support for event validation.
+	* TextBox.cs: fixed: support for event validation.
+
 2006-11-19 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DropDownList.cs: fixed: support for event validation.

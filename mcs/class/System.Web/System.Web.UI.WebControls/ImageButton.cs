@@ -209,12 +209,8 @@ namespace System.Web.UI.WebControls {
 
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
-			if (Page != null) {
-#if NET_2_0
-				Page.ClientScript.RegisterForEventValidation (GetPostBackOptions ());
-#endif
+			if (Page != null)
 				Page.VerifyRenderingInServerForm (this);
-			}
 			
 			writer.AddAttribute (HtmlTextWriterAttribute.Type, "image");
 			writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
@@ -228,7 +224,7 @@ namespace System.Web.UI.WebControls {
 
 			if (Page != null) {
 				PostBackOptions options = GetPostBackOptions ();
-				onclick += Page.ClientScript.GetPostBackEventReference (options);
+				onclick += Page.ClientScript.GetPostBackEventReference (options, true);
 			}
 
 			if (onclick.Length > 0)
@@ -405,4 +401,5 @@ namespace System.Web.UI.WebControls {
 #endif
 	}
 }
+
 

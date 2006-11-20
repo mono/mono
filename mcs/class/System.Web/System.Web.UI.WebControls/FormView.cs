@@ -1464,10 +1464,6 @@ namespace System.Web.UI.WebControls
 		
 		protected internal override void Render (HtmlTextWriter writer)
 		{
-#if NET_2_0
-			if (Page != null)
-				Page.ClientScript.RegisterForEventValidation (this.UniqueID);
-#endif
 			PrepareControlHierarchy ();
 			
 			if (table == null)

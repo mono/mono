@@ -95,7 +95,7 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 			if (AutoPostBack) {
 				w.AddAttribute ("onkeypress", "if (WebForm_TextBoxKeyHandler(event) == false) return false;");
-				w.AddAttribute (HtmlTextWriterAttribute.Onchange, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions ()));
+				w.AddAttribute (HtmlTextWriterAttribute.Onchange, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true));
 			}
 #else		
 			if (AutoPostBack)
@@ -140,10 +140,6 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void Render (HtmlTextWriter w)
 		{
-#if NET_2_0
-			if (Page != null)
-				Page.ClientScript.RegisterForEventValidation (this.UniqueID);
-#endif
 			// Why didn't msft just override RenderContents!?
 			RenderBeginTag (w);
 			if (TextMode == TextBoxMode.MultiLine)

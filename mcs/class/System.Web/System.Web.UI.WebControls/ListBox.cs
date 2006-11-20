@@ -147,7 +147,7 @@ namespace System.Web.UI.WebControls {
 
 			if (AutoPostBack)
 #if NET_2_0
-				writer.AddAttribute (HtmlTextWriterAttribute.Onchange, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions ()));
+				writer.AddAttribute (HtmlTextWriterAttribute.Onchange, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true));
 #else
 				writer.AddAttribute (HtmlTextWriterAttribute.Onchange,
 						Page.ClientScript.GetPostBackClientHyperlink (this, ""));
@@ -294,4 +294,5 @@ namespace System.Web.UI.WebControls {
 		}
 	}
 }
+
 

@@ -362,12 +362,8 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void Render (HtmlTextWriter w)
 		{
-			if (Page != null) {
-#if NET_2_0
-				Page.ClientScript.RegisterForEventValidation (this.UniqueID);
-#endif
+			if (Page != null)
 				Page.VerifyRenderingInServerForm (this);
-			}
 			
 			bool need_span = ControlStyleCreated && !ControlStyle.IsEmpty;
 			if (need_span)
@@ -404,7 +400,7 @@ namespace System.Web.UI.WebControls {
 
 				if (AutoPostBack){
 #if NET_2_0
-					w.AddAttribute (HtmlTextWriterAttribute.Onclick, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions ()));
+					w.AddAttribute (HtmlTextWriterAttribute.Onclick, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true));
 #else
 					w.AddAttribute (HtmlTextWriterAttribute.Onclick,
 							Page.ClientScript.GetPostBackEventReference (this, String.Empty));
@@ -456,7 +452,7 @@ namespace System.Web.UI.WebControls {
 
 				if (AutoPostBack){
 #if NET_2_0
-					w.AddAttribute (HtmlTextWriterAttribute.Onclick, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions ()));
+					w.AddAttribute (HtmlTextWriterAttribute.Onclick, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true));
 #else
 					w.AddAttribute (HtmlTextWriterAttribute.Onclick,
 							Page.ClientScript.GetPostBackEventReference (this, String.Empty));

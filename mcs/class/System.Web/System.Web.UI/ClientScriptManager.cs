@@ -389,7 +389,7 @@ namespace System.Web.UI
 		private int CalculateEventHash (string uniqueId, string argument)
 		{
 			int uniqueIdHash = uniqueId.GetHashCode ();
-			int argumentHash = (argument == null) ? 0 : argument.GetHashCode ();
+			int argumentHash = String.IsNullOrEmpty (argument) ? 0 : argument.GetHashCode ();
 			return (uniqueIdHash ^ argumentHash);
 		}
 		

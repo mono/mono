@@ -1,3 +1,9 @@
+2006-11-20 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ClientScriptManager.cs: fixed: ValidateEvent feature:
+	client side return eventArgument as empty string 
+	for controls that set it as null	
+
 2006-11-18  Marek Habersack  <grendello@gmail.com>
 
 	* ClientScriptManager.cs: Implemented two missing

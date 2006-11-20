@@ -164,12 +164,8 @@ namespace System.Web.UI.WebControls {
 #endif		
 
 		protected override void AddAttributesToRender (HtmlTextWriter writer) {
-			if (Page != null) {
-#if NET_2_0
-				Page.ClientScript.RegisterForEventValidation (GetPostBackOptions ());
-#endif
+			if (Page != null)
 				Page.VerifyRenderingInServerForm (this);
-			}
 			
 #if NET_2_0
 			writer.AddAttribute (HtmlTextWriterAttribute.Type, UseSubmitBehavior ? "submit" : "button");
@@ -185,7 +181,7 @@ namespace System.Web.UI.WebControls {
 
 			if (Page != null) {
 				PostBackOptions options = GetPostBackOptions ();
-				onclick += Page.ClientScript.GetPostBackEventReference (options);
+				onclick += Page.ClientScript.GetPostBackEventReference (options, true);
 			}
 
 			if (onclick.Length > 0)
@@ -333,4 +329,5 @@ namespace System.Web.UI.WebControls {
 
 	}
 }
+
 
