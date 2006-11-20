@@ -1,7 +1,4 @@
-<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Util.Master" CodeBehind="ManageRole.aspx.cs" Inherits="Mainsoft.Web.Administration.MenageRole" %>
-<%@ Register tagprefix="custom" namespace="Mainsoft.Web.Administration" Assembly="Mainsoft.Web.Administration"  %>
-<asp:Content runat="server" ID="main" ContentPlaceHolderID="Main">
-<!--
+<%--
 // Mainsoft.Web.Administration - Site administration utility
 // (C) 2006 Mainsoft Corporation (http://www.mainsoft.com)
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -21,7 +18,10 @@
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. --%>
+<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Util.Master" CodeBehind="ManageRole.aspx.cs" Inherits="Mainsoft.Web.Administration.MenageRole" %>
+<%@ Register tagprefix="custom" namespace="Mainsoft.Web.Administration" Assembly="Mainsoft.Web.Administration"  %>
+<asp:Content runat="server" ID="main" ContentPlaceHolderID="Main">
     <table class="maintable">
         <tr>
             <td colspan="2" width="100%" style="height: 21px">
@@ -36,7 +36,7 @@
                 <table width="100%" class="innertable" >
                     <tr>
                         <td width="100%" class="controlheader">
-                            <asp:Literal ID="searchUserlbl" runat="server" Text="<%$ Resources:searchUserlbl %>"/>
+                            Search for Users
                         </td>
                     </tr>
                     <tr>
