@@ -107,10 +107,73 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Ignore ("Write Test!")]
-		public void ConformanceLevelTest ()
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ConformanceLevelFragmentAndWriteStartDocument ()
 		{
-			throw new NotImplementedException ();
+			XmlWriterSettings s = new XmlWriterSettings ();
+			s.ConformanceLevel = ConformanceLevel.Fragment;
+			s.OmitXmlDeclaration = true;
+			XmlWriter w = XmlWriter.Create (Console.Out, s);
+			w.WriteStartDocument ();
+		}
+
+		[Test]
+		public void ConformanceLevelAuto ()
+		{
+			XmlWriterSettings s = new XmlWriterSettings ();
+			s.ConformanceLevel = ConformanceLevel.Auto;
+			StringWriter sw = new StringWriter ();
+			XmlWriter w = XmlWriter.Create (sw, s);
+			w.WriteElementString ("foo", "");
+			w.Close ();
+			AssertEquals ("<foo />", sw.ToString ());
+		}
+
+		[Test]
+		public void ConformanceLevelAuto_WriteStartDocument ()
+		{
+			XmlWriterSettings s = new XmlWriterSettings ();
+			s.ConformanceLevel = ConformanceLevel.Auto;
+			StringWriter sw = new StringWriter ();
+			XmlWriter w = XmlWriter.Create (sw, s);
+			w.WriteStartDocument ();
+			w.WriteElementString ("foo", "");
+			w.Close ();
+			AssertEquals ("<?xml version=\"1.0\" encoding=\"utf-16\"?><foo />", sw.ToString ());
+		}
+
+		[Test]
+		public void ConformanceLevelAuto_OmitXmlDecl_WriteStartDocument ()
+		{
+			XmlWriterSettings s = new XmlWriterSettings ();
+			s.ConformanceLevel = ConformanceLevel.Auto;
+			s.OmitXmlDeclaration = true;
+			StringWriter sw = new StringWriter ();
+			XmlWriter w = XmlWriter.Create (sw, s);
+			w.WriteStartDocument ();
+			w.WriteElementString ("foo", "");
+			w.Close ();
+			AssertEquals ("<foo />", sw.ToString ());
+		}
+
+		[Test]
+		public void ConformanceLevelDocument_OmitXmlDeclDeclaration ()
+		{
+			XmlWriterSettings s = new XmlWriterSettings ();
+			s.ConformanceLevel = ConformanceLevel.Document;
+			// LAMESPEC:
+			// On MSDN, XmlWriterSettings.OmitXmlDeclaration is documented as:
+			// "The XML declaration is always written if
+			//  ConformanceLevel is set to Document, even 
+			//  if OmitXmlDeclaration is set to true. "
+			// but it is incorrect. It does consider 
+			// OmitXmlDeclaration property.
+			s.OmitXmlDeclaration = true;
+			StringWriter sw = new StringWriter ();
+			XmlWriter w = XmlWriter.Create (sw, s);
+			w.WriteElementString ("foo", "");
+			w.Close ();
+			AssertEquals ("<foo />", sw.ToString ());
 		}
 
 		[Test]

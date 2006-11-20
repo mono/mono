@@ -195,6 +195,13 @@ namespace Mono.Xml
 			}
 		}
 
+		enum XmlDeclState {
+			Allow,
+			Ignore,
+			Auto,
+			Prohibit,
+		}
+
 		// Instance fields
 
 		Stream base_stream;
@@ -209,7 +216,7 @@ namespace Mono.Xml
 		bool close_output_stream = true;
 		bool ignore_encoding;
 		bool namespaces = true;
-		bool output_xmldecl = false;
+		XmlDeclState xmldecl_state = XmlDeclState.Allow;
 
 		bool check_character_validity;
 		NewLineHandling newline_handling = NewLineHandling.None;
@@ -255,7 +262,7 @@ namespace Mono.Xml
 		}
 
 #if NET_2_0
-		XmlTextWriter (
+		internal XmlTextWriter (
 			TextWriter writer, XmlWriterSettings settings)
 		{
 			if (settings == null)
@@ -265,7 +272,27 @@ namespace Mono.Xml
 
 			close_output_stream = settings.CloseOutput;
 			allow_doc_fragment =
-				settings.ConformanceLevel != System.Xml.ConformanceLevel.Document;
+				settings.ConformanceLevel != ConformanceLevel.Document;
+			switch (settings.ConformanceLevel) {
+			case ConformanceLevel.Auto:
+				xmldecl_state = settings.OmitXmlDeclaration ? XmlDeclState.Ignore : XmlDeclState.Allow;
+				break;
+			case ConformanceLevel.Document:
+				// LAMESPEC:
+				// On MSDN, XmlWriterSettings.OmitXmlDeclaration is documented as:
+				// "The XML declaration is always written if
+				//  ConformanceLevel is set to Document, even 
+				//  if OmitXmlDeclaration is set to true. "
+				// but it is incorrect. It does consider 
+				// OmitXmlDeclaration property.
+				xmldecl_state = settings.OmitXmlDeclaration ? XmlDeclState.Ignore : XmlDeclState.Auto;
+				break;
+			case ConformanceLevel.Fragment:
+				xmldecl_state = XmlDeclState.Prohibit;
+				break;
+			}
+			if (settings.Indent)
+				Formatting = Formatting.Indented;
 			indent_string = settings.IndentChars == null ?
 				String.Empty : settings.IndentChars;
 			if (settings.NewLineChars != null)
@@ -274,8 +301,6 @@ namespace Mono.Xml
 
 			check_character_validity = settings.CheckCharacters;
 			newline_handling = settings.NewLineHandling;
-			if (settings.OmitXmlDeclaration)
-				output_xmldecl = false;
 		}
 #endif
 
@@ -302,41 +327,12 @@ namespace Mono.Xml
 #if NET_2_0
 		// 2.0 XmlWriterSettings support
 
-		internal bool CheckCharacters {
-			set { check_character_validity = value; }
-		}
-
-		internal bool CloseOutput {
-			set { close_output_stream = value; }
-		}
-
 		// As for ConformanceLevel, MS.NET is inconsistent with
 		// MSDN documentation. For example, even if ConformanceLevel
 		// is set as .Auto, multiple WriteStartDocument() calls
 		// result in an error.
 		// ms-help://MS.NETFramework.v20.en/wd_xml/html/7db8802b-53d8-4735-a637-4d2d2158d643.htm
-		[MonoTODO]
-		internal ConformanceLevel ConformanceLevel {
-			set {
-				allow_doc_fragment = (value == System.Xml.ConformanceLevel.Fragment);
-			}
-		}
 
-		internal string IndentChars {
-			set { indent_string = (value == null) ? String.Empty : value; }
-		}
-
-		internal string NewLineChars {
-			set { newline = (value == null) ? String.Empty : value; }
-		}
-
-		internal bool NewLineOnAttributes {
-			set { indent_attributes = value; }
-		}
-
-		internal bool OmitXmlDeclaration {
-			set { output_xmldecl = !value; }
-		}
 #endif
 
 		// Literal Output Control
@@ -470,6 +466,15 @@ namespace Mono.Xml
 			if (state != WriteState.Start)
 				throw StateError ("XmlDeclaration");
 
+			state = WriteState.Prolog;
+
+			switch (xmldecl_state) {
+			case XmlDeclState.Ignore:
+				return;
+			case XmlDeclState.Prohibit:
+				throw InvalidOperation ("WriteStartDocument cannot be called when ConformanceLevel is Fragment.");
+			}
+
 			writer.Write ("<?xml version=");
 			writer.Write (quote_char);
 			writer.Write ("1.0");
@@ -488,8 +493,7 @@ namespace Mono.Xml
 			}
 			writer.Write ("?>");
 
-			output_xmldecl = false;
-			state = WriteState.Prolog;
+			xmldecl_state = XmlDeclState.Ignore;
 		}
 
 		public override void WriteEndDocument ()
@@ -526,7 +530,7 @@ namespace Mono.Xml
 				throw StateError ("DocType");
 			node_state = XmlNodeType.DocumentType;
 
-			if (output_xmldecl)
+			if (xmldecl_state == XmlDeclState.Auto)
 				OutputAutoStartDocument ();
 
 			WriteIndent ();
@@ -609,7 +613,7 @@ namespace Mono.Xml
 				throw new ArgumentException ("A prefix cannot be equivalent to \"xml\" in case-insensitive match.");
 
 
-			if (output_xmldecl)
+			if (xmldecl_state == XmlDeclState.Auto)
 				OutputAutoStartDocument ();
 			if (state == WriteState.Element)
 				CloseStartElement ();
@@ -1259,7 +1263,7 @@ namespace Mono.Xml
 			case WriteState.Start:
 				if (isCharacter)
 					CheckMixedContentState ();
-				if (output_xmldecl && !dontCheckXmlDecl)
+				if (xmldecl_state == XmlDeclState.Auto && !dontCheckXmlDecl)
 					OutputAutoStartDocument ();
 				state = WriteState.Prolog;
 				break;
@@ -1301,7 +1305,7 @@ namespace Mono.Xml
 			case WriteState.Start:
 				if (!allow_doc_fragment || is_document_entity)
 					goto case WriteState.Closed;
-				if (output_xmldecl)
+				if (xmldecl_state == XmlDeclState.Auto)
 					OutputAutoStartDocument ();
 				CheckMixedContentState ();
 				state = WriteState.Content;

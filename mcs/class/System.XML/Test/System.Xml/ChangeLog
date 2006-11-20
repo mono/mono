@@ -1,3 +1,8 @@
+2006-11-20  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlWriterSettingsTests.cs : added tests for relationship between
+	  ConformanceLevel, OmitXmlDeclaration and WriteStartDocument().
+
 2006-11-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReaderSettingsTests.cs : added test for bug #79224; it does not

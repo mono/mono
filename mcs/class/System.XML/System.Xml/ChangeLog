@@ -1,3 +1,12 @@
+2006-11-20  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriter2.cs : fixed some relationship between
+	  ConformanceLevel, OmitXmlDeclaration and WriteStartDocument().
+	  See new tests more details.
+	* XmlWriter.cs : it could reuse XmlTextWriter.ctor(TextWriter,
+	  XmlWriterSettings). It also resulted in dropping several internal
+	  members in XmlTextWriter.
+
 2006-11-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReaderSettings.cs : in copy constructor, copy (dispatch)

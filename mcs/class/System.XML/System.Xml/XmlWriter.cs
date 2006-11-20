@@ -150,23 +150,7 @@ namespace System.Xml
 		{
 			if (settings == null)
 				settings = new XmlWriterSettings ();
-			XmlTextWriter xtw = new XmlTextWriter (writer);
-			// Indent, IndentChars
-			if (settings.Indent) {
-				xtw.Formatting = Formatting.Indented;
-				xtw.IndentChars = settings.IndentChars;
-				xtw.NewLineOnAttributes = settings.NewLineOnAttributes;
-			}
-			// NewLineChars
-			xtw.NewLineChars = settings.NewLineChars;
-			// CloseOutput
-			xtw.CloseOutput = settings.CloseOutput;
-			// ConformanceLevel
-			xtw.ConformanceLevel = settings.ConformanceLevel;
-			// OmitXmlDeclaration
-			xtw.OmitXmlDeclaration = settings.OmitXmlDeclaration;
-			// CheckCharacters
-			xtw.CheckCharacters = settings.CheckCharacters;
+			XmlTextWriter xtw = new XmlTextWriter (writer, settings);
 			return Create (xtw, settings);
 		}
 
