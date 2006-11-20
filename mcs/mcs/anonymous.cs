@@ -172,10 +172,28 @@ namespace Mono.CSharp {
 			ToplevelBlock toplevel = block.Toplevel;
 			AnonymousContainer ac = toplevel.AnonymousContainer;
 
-			if (ac != null)
-				return new ScopeInfo (block, ac.Host);
-			else
+			Report.Debug (128, "CREATE SCOPE", block, toplevel, ac);
+
+			if (ac == null)
 				return new ScopeInfo (block, toplevel.RootScope.Parent);
+
+			Report.Debug (128, "CREATE SCOPE #1", ac, ac.Host, ac.Scope, ac.Block,
+				      ac.Container, ac.ContainerAnonymousMethod,
+				      ac.Location);
+
+			Block b;
+			ScopeInfo parent = null;
+
+			for (b = ac.Block; b != null; b = b.Parent) {
+				if (b.ScopeInfo != null) {
+					parent = b.ScopeInfo;
+					break;
+				}
+			}
+
+			Report.Debug (128, "CREATRE SCOPE #1", parent);
+
+			return new ScopeInfo (block, parent);
 		}
 
 		protected ScopeInfo (Block block, TypeContainer parent)
@@ -665,11 +683,31 @@ namespace Mono.CSharp {
 #endif
 					ec.ig.Emit (OpCodes.Stloc, scope_instance);
 
+#if FIXME
+				if (Scope.ID == 5) {
+					ec.ig.Emit (OpCodes.Neg);
+					ec.ig.Emit (OpCodes.Neg);
+					ec.ig.Emit (OpCodes.Neg);
+					ec.ig.Emit (OpCodes.Neg);
+					ec.ig.Emit (OpCodes.Neg);
+				}
+#endif
+
 				foreach (CapturedScope scope in Scope.scopes.Values) {
 					Report.Debug (128, "EMIT SCOPE INIT #5", this, Scope,
 						      scope.Scope, scope.ChildScope);
 					DoEmit (ec);
+#if FIXME
+					if (Scope.ID == 5)
+						ec.ig.Emit (OpCodes.Not);
+#endif
+					ScopeInfo.EmitScopeInstance (ec, scope.ChildScope,
+								     ec.CurrentBlock.Toplevel);
+#if FIXME
 					scope.ChildScope.EmitScopeInstance (ec);
+					if (Scope.ID == 5)
+						ec.ig.Emit (OpCodes.Pop);
+#endif
 					scope.EmitAssign (ec);
 				}
 			}
