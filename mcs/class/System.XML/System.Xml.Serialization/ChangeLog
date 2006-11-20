@@ -1,5 +1,9 @@
 2006-11-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TypeTranslator.cs : #if NET_2_0 for generic thingy.
+
+2006-11-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TypeTranslator.cs : (GetTypeData) when the argument type is
 	  Nullable<T>, use T instead. At run time (on both interpreter and
 	  generated code) it is converted to T. Fixed bug #79803.
