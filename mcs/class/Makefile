@@ -83,7 +83,8 @@ common_dirs := \
 	Mono.Cairo                      \
 	IBM.Data.DB2			\
 	Microsoft.JScript		\
-	CustomMarshalers
+	CustomMarshalers		\
+	OpenSystem.C
 
 default_dirs := FirebirdSql.Data.Firebird
 
