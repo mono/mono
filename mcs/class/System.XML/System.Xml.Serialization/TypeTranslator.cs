@@ -140,15 +140,11 @@ namespace System.Xml.Serialization
 			return GetTypeData (type, null);
 		}
 
-#if NET_2_0
-		static Type nullable = typeof (int?).GetGenericTypeDefinition ();
-#endif
-
 		public static TypeData GetTypeData (Type type, string xmlDataType)
 		{
 #if NET_2_0
 			// Nullable<T> is serialized as T
-			if (type.IsGenericType && type.GetGenericTypeDefinition () == nullable) {
+			if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>)) {
 				type = type.GetGenericArguments () [0];
 			}
 #endif

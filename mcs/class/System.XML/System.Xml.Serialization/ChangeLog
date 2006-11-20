@@ -1,5 +1,9 @@
 2006-11-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TypeTranslator.cs : Hari knew better way to do it.
+
+2006-11-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TypeTranslator.cs : #if NET_2_0 for generic thingy.
 
 2006-11-20  Atsushi Enomoto  <atsushi@ximian.com>
