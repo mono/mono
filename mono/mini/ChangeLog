@@ -1,3 +1,9 @@
+
+Mon Nov 20 17:37:58 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.c: added support for interworking with thumb code
+	(mono must be still be built using the ARM instruction encoding).
+
 2006-11-19  Miguel de Icaza  <miguel@novell.com>
 
 	* mini.c (type_from_op): Separate the conditions for OP_EQ as the
