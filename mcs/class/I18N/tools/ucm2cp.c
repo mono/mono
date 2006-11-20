@@ -1,7 +1,9 @@
 /*
- * ucm2cp.c - Convert IBM ".ucm" files into code page handling classes.
+ * ucm2cp.c - Convert IBM ".ucm" files or hexadecimal mapping ".TXT" files
+ * into code page handling classes.
  *
  * Copyright (c) 2002  Southern Storm Software, Pty Ltd
+ * Copyright (c) 2006  Bruno Haible
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the "Software"),
@@ -162,7 +164,7 @@ int main(int argc, char *argv[])
 		windowsCodePage = codePage;
 	}
 
-	/* Open the UCM file */
+	/* Open the UCM or TXT file */
 	file = fopen(argv[1], "r");
 	if(!file)
 	{
@@ -258,10 +260,11 @@ static int parseHex(const char *buf, unsigned long *value)
 }
 
 /*
- * Load the character mapping information from a UCM file.
+ * Load the character mapping information from a UCM or TXT file.
  */
 static void loadCharMaps(FILE *file)
 {
+	enum { unknown, ucm, txt } syntax;
 	unsigned long posn;
 	unsigned long byteValue;
 	int level;
@@ -279,45 +282,86 @@ static void loadCharMaps(FILE *file)
 		charToByte[posn] = -1;
 	}
 
+	syntax = unknown;
+
 	/* Read the contents of the file */
 	while(fgets(buffer, BUFSIZ, file))
 	{
-		/* Lines of interest begin with "<U" */
-		if(buffer[0] != '<' || buffer[1] != 'U')
+		/* Syntax recognition */
+		if (syntax == unknown)
 		{
-			continue;
+			if (memcmp(buffer, "CHARMAP", 7) == 0)
+				syntax = ucm;
+			else if (memcmp(buffer, "0x", 2) == 0)
+				syntax = txt;
 		}
 
-		/* Parse the fields on the line */
-		buf = buffer + 2;
-		buf += parseHex(buf, &posn);
-		if(posn >= 65536)
+		if (syntax == ucm)
 		{
+			/* Lines of interest begin with "<U" */
+			if(buffer[0] != '<' || buffer[1] != 'U')
+			{
+				continue;
+			}
+
+			/* Parse the fields on the line */
+			buf = buffer + 2;
+			buf += parseHex(buf, &posn);
+			if(posn >= 65536)
+			{
+				continue;
+			}
+			while(*buf != '\0' && *buf != '\\')
+			{
+				++buf;
+			}
+			if(*buf != '\\' || buf[1] != 'x')
+			{
+				continue;
+			}
+			buf += 2;
+			buf += parseHex(buf, &byteValue);
+			if(byteValue >= 256)
+			{
+				continue;
+			}
+			while(*buf != '\0' && *buf != '|')
+			{
+				++buf;
+			}
+			if(*buf != '|')
+			{
+				continue;
+			}
+			level = (int)(buf[1] - '0');
+		}
+		else
+		if (syntax == txt)
+		{
+			unsigned int x;
+			int cnt;
+
+			/* Lines of interest begin with "0x" */
+			if(buffer[0] != '0' || buffer[1] != 'x')
+				continue;
+
+			/* Parse the fields on the line */
+			if(sscanf(buffer, "0x%x%n", &x, &cnt) <= 0)
+				exit(1);
+			if(!(x < 0x100))
+				exit(1);
+			byteValue = x;
+			while (buffer[cnt] == ' ' || buffer[cnt] == '\t')
+				cnt++;
+			if(sscanf(buffer+cnt, "0x%x", &x) != 1)
+				continue;
+			if(!(x < 0x10000))
+				exit(1);
+			posn = x;
+			level = 0;
+		}
+		else
 			continue;
-		}
-		while(*buf != '\0' && *buf != '\\')
-		{
-			++buf;
-		}
-		if(*buf != '\\' || buf[1] != 'x')
-		{
-			continue;
-		}
-		buf += 2;
-		buf += parseHex(buf, &byteValue);
-		if(byteValue >= 256)
-		{
-			continue;
-		}
-		while(*buf != '\0' && *buf != '|')
-		{
-			++buf;
-		}
-		if(*buf != '|')
-		{
-			continue;
-		}
-		level = (int)(buf[1] - '0');
 
 		/* Update the byte->char mapping table */
 		if(level < byteToCharLevel[byteValue])
@@ -364,7 +408,9 @@ static void printHeader(void)
 	printf("// Generated from \"%s\".\n\n", filename);
 	printf("namespace I18N.%s\n{\n\n", region);
 	printf("using System;\n");
+	printf("using System.Text;\n");
 	printf("using I18N.Common;\n\n");
+	printf("[Serializable]\n");
 	printf("public class CP%d : ByteEncoding\n{\n", codePage);
 	printf("\tpublic CP%d()\n", codePage);
 	printf("\t\t: base(%d, ToChars, \"%s\",\n", codePage, name);
@@ -408,6 +454,7 @@ static void printEncodingName(const char *name)
 static void printFooter(void)
 {
 	printf("}; // class CP%d\n\n", codePage);
+	printf("[Serializable]\n");
 	printf("public class ENC");
 	printEncodingName(webName);
 	printf(" : CP%d\n{\n", codePage);
@@ -441,7 +488,7 @@ static void printByteToChar(void)
  * Print a "switch" statement that converts "ch" from
  * a character value into a byte value.
  */
-static void printConvertSwitch(void)
+static void printConvertSwitch(int forString)
 {
 	unsigned long directLimit;
 	unsigned long posn;
@@ -548,7 +595,17 @@ static void printConvertSwitch(void)
 	/* Print the switch footer */
 	if(!haveFullWidth)
 	{
-		printf("\t\t\t\tdefault: ch = 0x3F; break;\n");
+		if(forString)
+			printf("\t\t\t\tdefault: ch = 0x3F; break;\n");
+		else {
+			printf("\t\t\t\tdefault:\n");
+			printf("#if NET_2_0\n");
+			printf("\t\t\t\t\tHandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);\n");
+			printf("#else\n");
+			printf("\t\t\t\t\t\tch = 0x3F;\n");
+			printf("#endif\n");
+			printf("\t\t\t\t\tbreak;\n");
+		}
 	}
 	else
 	{
@@ -557,7 +614,15 @@ static void printConvertSwitch(void)
 		printf("\t\t\t\t\tif(ch >= 0xFF01 && ch <= 0xFF5E)\n");
 		printf("\t\t\t\t\t\tch -= 0xFEE0;\n");
 		printf("\t\t\t\t\telse\n");
-		printf("\t\t\t\t\t\tch = 0x3F;\n");
+		if(forString) /* this is basically meaningless, just to make diff for unused code minimum */
+			printf("\t\t\t\t\t\tch = 0x3F;\n");
+		else {
+			printf("#if NET_2_0\n");
+			printf("\t\t\t\t\t\tHandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);\n");
+			printf("#else\n");
+			printf("\t\t\t\t\t\tch = 0x3F;\n");
+			printf("#endif\n");
+		}
 		printf("\t\t\t\t}\n");
 		printf("\t\t\t\tbreak;\n");
 	}
@@ -570,20 +635,27 @@ static void printConvertSwitch(void)
 static void printCharToByte(void)
 {
 	/* Print the conversion method for character buffers */
-	printf("\tprotected override void ToBytes(char[] chars, int charIndex, int charCount,\n");
-	printf("\t                                byte[] bytes, int byteIndex)\n");
+	printf("\tprotected unsafe override void ToBytes(char* chars, int charCount,\n");
+	printf("\t                                byte* bytes, int byteCount)\n");
 	printf("\t{\n");
 	printf("\t\tint ch;\n");
+	printf("\t\tint charIndex = 0;\n");
+	printf("\t\tint byteIndex = 0;\n");
+	printf("#if NET_2_0\n");
+	printf("\t\tEncoderFallbackBuffer buffer = null;\n");
+	printf("#endif\n");
 	printf("\t\twhile(charCount > 0)\n");
 	printf("\t\t{\n");
 	printf("\t\t\tch = (int)(chars[charIndex++]);\n");
-	printConvertSwitch();
+	printConvertSwitch(0);
 	printf("\t\t\tbytes[byteIndex++] = (byte)ch;\n");
 	printf("\t\t\t--charCount;\n");
+	printf("\t\t\t--byteCount;\n");
 	printf("\t\t}\n");
 	printf("\t}\n\n");
 
 	/* Print the conversion method for string buffers */
+	printf("\t/*\n");
 	printf("\tprotected override void ToBytes(String s, int charIndex, int charCount,\n");
 	printf("\t                                byte[] bytes, int byteIndex)\n");
 	printf("\t{\n");
@@ -591,9 +663,10 @@ static void printCharToByte(void)
 	printf("\t\twhile(charCount > 0)\n");
 	printf("\t\t{\n");
 	printf("\t\t\tch = (int)(s[charIndex++]);\n");
-	printConvertSwitch();
+	printConvertSwitch(1);
 	printf("\t\t\tbytes[byteIndex++] = (byte)ch;\n");
 	printf("\t\t\t--charCount;\n");
 	printf("\t\t}\n");
-	printf("\t}\n\n");
+	printf("\t}\n");
+	printf("\t*/\n\n");
 }

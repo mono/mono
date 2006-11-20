@@ -51,7 +51,7 @@ ${UCM2CP} --region West --page 437 --wpage 1252 \
 	--webname IBM437 --bodyname IBM437 \
 	--headername IBM437 --no-browser-display \
 	--no-browser-save --no-mailnews-display \
-	--no-mailnews-save West/ibm-437.ucm >West/CP437.cs
+	--no-mailnews-save West/windows-437-2000.ucm >West/CP437.cs
 
 ${UCM2CP} --region Rare --page 500 --wpage 1252 \
 	--name 'IBM EBCDIC (International)' \
@@ -318,7 +318,7 @@ ${UCM2CP} --region West --page 10079 --wpage 1252 \
 	--webname x-mac-icelandic --bodyname x-mac-icelandic \
 	--headername x-mac-icelandic --no-browser-display \
 	--no-browser-save --no-mailnews-display \
-	--no-mailnews-save West/mac-is.ucm >West/CP10079.cs
+	--no-mailnews-save West/windows-10079-2000.ucm >West/CP10079.cs
 
 ${UCM2CP} --region Rare --page 20273 --wpage 1252 \
 	--name 'IBM EBCDIC (Germany)' \
@@ -437,7 +437,7 @@ ${UCM2CP} --region Other --page 28595 --wpage 1251 \
 ${UCM2CP} --region MidEast --page 28596 --wpage 1256 \
 	--name 'Arabic (ISO)' \
 	--webname iso-8859-6 --bodyname iso-8859-6 \
-	--headername iso-8859-6 MidEast/ibm-1089.ucm >MidEast/CP28596.cs
+	--headername iso-8859-6 MidEast/windows-28596-2000.ucm >MidEast/CP28596.cs
 
 ${UCM2CP} --region West --page 28597 --wpage 1253 \
 	--name 'Greek (ISO)' \
