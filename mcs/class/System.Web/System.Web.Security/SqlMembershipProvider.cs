@@ -851,10 +851,8 @@ namespace System.Web.Security {
 
 				AddParameter (command, "ApplicationName", ApplicationName);
 				AddParameter (command, "UserName", user.UserName);
-				if (user.Email != null)
-					AddParameter (command, "Email", user.Email);
-				if (user.Comment != null)
-					AddParameter (command, "Comment", user.Comment);
+				AddParameter (command, "Email", user.Email == null ? (object) DBNull.Value : (object) user.Email);
+				AddParameter (command, "Comment", user.Comment == null ? (object) DBNull.Value : (object) user.Comment);
 				AddParameter (command, "IsApproved", user.IsApproved);
 				AddParameter (command, "LastLoginDate", DateTime.UtcNow);
 				AddParameter (command, "LastActivityDate", DateTime.UtcNow);

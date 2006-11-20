@@ -1,3 +1,7 @@
+2006-11-20 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* SqlMembershipProvider.cs: fixed: UpdateUser works properly.
+
 2006-11-15 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* SqlMembershipProvider.cs: fixed: name is used for ReturnValue parameter.
