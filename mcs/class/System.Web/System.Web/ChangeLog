@@ -1,3 +1,8 @@
+2006-11-20  Marek Habersack  <grendello@gmail.com>
+
+	* HttpApplication.cs: Added support for automatic detection of
+	user's preferred language.
+
 2006-11-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: don't leak the directory name for non-local
