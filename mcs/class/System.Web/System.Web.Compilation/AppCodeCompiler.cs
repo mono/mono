@@ -159,7 +159,13 @@ namespace System.Web.Compilation
 			
 			BuildProvider bprovider;
 			CompilationSection compilationSection = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
+			CompilerParameters parameters = compilerInfo.CreateDefaultCompilerParameters ();
+			
 			if (compilationSection != null) {
+				foreach (AssemblyInfo ai in compilationSection.Assemblies)
+					if (ai.Assembly != "*")
+						parameters.ReferencedAssemblies.Add (ai.Assembly);
+				
 				BuildProviderCollection buildProviders = compilationSection.BuildProviders;
 				
 				foreach (string file in unknownfiles) {
@@ -173,7 +179,6 @@ namespace System.Web.Compilation
 			string assemblyName = (string)FileUtils.CreateTemporaryFile (
 				AppDomain.CurrentDomain.SetupInformation.DynamicBase,
 				name, "dll", OnCreateTemporaryAssemblyFile);
-			CompilerParameters parameters = compilerInfo.CreateDefaultCompilerParameters ();
 			parameters.OutputAssembly = assemblyName;
 			CompilerResults results = abuilder.BuildAssembly (parameters);
 			if (results.Errors.Count == 0) {

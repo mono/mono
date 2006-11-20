@@ -1,3 +1,8 @@
+2006-11-20  Marek Habersack  <grendello@gmail.com>
+
+	* AppCodeCompiler.cs: Reference assemblies listed in
+	system.web/compilation/assemblies.
+
 2006-11-19 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* TemplateControlCompiler.cs: fixed:
