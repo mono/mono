@@ -1,3 +1,11 @@
+2006-11-20  Marek Habersack  <grendello@gmail.com>
+
+	* Page.cs: Added support for automatic culture detection from the
+	user's browser.
+
+	* PageParser.cs: Added support for "auto" cultures in the Page
+	directive.
+
 2006-11-20 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ClientScriptManager.cs: fixed: ValidateEvent feature:
