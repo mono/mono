@@ -190,6 +190,7 @@ namespace System.Windows.Forms
 	{		
 		protected Array syscolors;
 		protected Font default_font;
+        protected Font window_border_font;
 		protected Color defaultWindowBackColor;
 		protected Color defaultWindowForeColor;		
 		protected bool always_draw_hotkeys = true;
@@ -527,6 +528,12 @@ namespace System.Windows.Forms
 				return 16;
 			}
 		}
+
+        public virtual Font WindowBorderFont {
+            get {
+                return window_border_font;
+            }
+        }
 
 		public int Clamp (int value, int lower, int upper)
 		{

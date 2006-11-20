@@ -1,5 +1,12 @@
 2006-11-20  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Theme.cs:
+	* ThemeWin32Classic.cs:
+	- Added a property WindowBorderFont to enable themeing
+	  of mdi child windows' Text.
+	  
+2006-11-20  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* InternalWindowManager.cs:
 	* Form.cs:
 	* MdiClient.cs:

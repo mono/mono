@@ -67,6 +67,7 @@ namespace System.Windows.Forms
 			defaultWindowBackColor = this.ColorWindow;
 			defaultWindowForeColor = this.ColorControlText;
 			default_font =	new Font (FontFamily.GenericSansSerif, 8f);
+            window_border_font = new Font(FontFamily.GenericSansSerif, 8.25f, FontStyle.Bold);
 			
 			/* Menu string formats */
 			string_format_menu_text = new StringFormat ();
@@ -4751,7 +4752,7 @@ namespace System.Windows.Forms
 				format.LineAlignment = StringAlignment.Center;
 
 				if (tb.IntersectsWith (clip))
-					dc.DrawString (form.Text, form.Font,
+                    dc.DrawString(form.Text, WindowBorderFont,
 						ThemeEngine.Current.ResPool.GetSolidBrush (Color.White),
 						tb, format);
 			}
