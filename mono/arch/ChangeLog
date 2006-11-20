@@ -1,4 +1,8 @@
 
+Mon Nov 20 17:36:45 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* arm/arm-codegen.h: added suppot for thumb interworking instructions.
+
 Wed Nov 15 16:56:53 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mips/*: fixes by Mark E Mason <mark.e.mason@broadcom.com>.
