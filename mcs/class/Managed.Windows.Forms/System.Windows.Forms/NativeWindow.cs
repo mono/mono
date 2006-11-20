@@ -26,7 +26,7 @@
 
 // COMPLETE
 
-#define ExternalExceptionHandler
+//#define ExternalExceptionHandler
 
 using System.Runtime.Remoting;
 using System.Runtime.InteropServices;
@@ -41,7 +41,8 @@ namespace System.Windows.Forms
 		static internal Hashtable	window_collection = new Hashtable();
 
 		#region Public Constructors
-		public NativeWindow() {
+		public NativeWindow()
+		{
 			window_handle=IntPtr.Zero;
 		}
 		#endregion	// Public Constructors
@@ -55,7 +56,8 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Properties
 
 		#region Public Static Methods
-		public static NativeWindow FromHandle(IntPtr handle) {
+		public static NativeWindow FromHandle(IntPtr handle)
+		{
 			NativeWindow window=new NativeWindow();
 
 			window.AssignHandle(handle);
@@ -64,7 +66,8 @@ namespace System.Windows.Forms
 		#endregion	// Public Static Methods
 
 		#region Private and Internal Methods
-		internal static NativeWindow FindWindow(IntPtr handle) {
+		internal static NativeWindow FindWindow(IntPtr handle)
+		{
 			NativeWindow rv;
 			lock (window_collection) {
 				rv = (NativeWindow)window_collection[handle];
@@ -72,7 +75,8 @@ namespace System.Windows.Forms
 			return rv;
 		}
 
-		internal void InvalidateHandle() {
+		internal void InvalidateHandle()
+		{
 			lock (window_collection) {
 				window_collection.Remove(window_handle);
 			}
@@ -81,7 +85,8 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Instance Methods
-		public void AssignHandle(IntPtr handle) {
+		public void AssignHandle(IntPtr handle)
+		{
 			lock (window_collection) {
 				if (window_handle != IntPtr.Zero) {
 					window_collection.Remove(window_handle);
@@ -92,7 +97,8 @@ namespace System.Windows.Forms
 			OnHandleChange();
 		}
 
-		public virtual void CreateHandle(CreateParams create_params) {
+		public virtual void CreateHandle(CreateParams create_params)
+		{
 			if (create_params != null) {
 				window_handle=XplatUI.CreateWindow(create_params);
 
@@ -104,17 +110,20 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public void DefWndProc(ref Message m) {
+		public void DefWndProc(ref Message m)
+		{
 			m.Result=XplatUI.DefWndProc(ref m);
 		}
 
-		public virtual void DestroyHandle() {
+		public virtual void DestroyHandle()
+		{
 			if (window_handle != IntPtr.Zero) {
 				XplatUI.DestroyWindow(window_handle);
 			}
 		}
 
-		public virtual void ReleaseHandle() {
+		public virtual void ReleaseHandle()
+		{
 			lock (window_collection) {
 				window_collection.Remove(window_handle);
 			}
@@ -125,27 +134,30 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
-		~NativeWindow() {
+		~NativeWindow()
+		{
 		}
 
-		protected virtual void OnHandleChange() {
+		protected virtual void OnHandleChange()
+		{
 		}
 
-		protected virtual void OnThreadException(Exception e) {
+		protected virtual void OnThreadException(Exception e)
+		{
 			Application.OnThreadException(e);
 		}
 
-		protected virtual void WndProc(ref Message m) {
+		protected virtual void WndProc(ref Message m)
+		{
 			DefWndProc(ref m);
 		}
 
-		internal static IntPtr WndProc(IntPtr hWnd, Msg msg, IntPtr wParam, IntPtr lParam) {
+		internal static IntPtr WndProc(IntPtr hWnd, Msg msg, IntPtr wParam, IntPtr lParam)
+		{
 			Message		m = new Message();
 			NativeWindow	window = null;
 
-			#if !ExternalExceptionHandler
 			try {
-			#endif
 				lock (window_collection) {
 					window = (NativeWindow)window_collection[hWnd];
 				}
@@ -155,20 +167,19 @@ namespace System.Windows.Forms
 				m.LParam=lParam;
 				m.Result=IntPtr.Zero;
 
-				if (window != null) {
+				if (window != null)
 					window.WndProc(ref m);
-				} else {
+				else
 					m.Result=XplatUI.DefWndProc(ref m);
-				}
-			#if !ExternalExceptionHandler
 			}
-
-			catch(System.Exception ex) {
-				if (window != null) {
+			catch (Exception ex) {
+#if !ExternalExceptionHandler				
+				if (window != null)
 					window.OnThreadException(ex);
-				}
+#else
+				throw;
+#endif
 			}
-			#endif
 
 			#if debug
 				Console.WriteLine("NativeWindow.cs: Message {0}, result {1}", msg, m.Result);

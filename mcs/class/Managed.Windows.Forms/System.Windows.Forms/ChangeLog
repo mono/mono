@@ -1,3 +1,11 @@
+2006-11-20  Chris Toshok  <toshok@ximian.com>
+
+	* NativeWindow.cs: fix the formatting of functions ('{' on the
+	following line), and enable the thread exception dialog.
+
+	* Application.cs: remove the duplicate exception catching from
+	here.
+
 2006-11-20  Everaldo Canuto  <everaldo@simios.org>
 
 	* Toolbar.cs: Triggers button click event when click on icon
