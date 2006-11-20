@@ -612,8 +612,11 @@ namespace System.Windows.Forms
 					// We don't redraw the dropdown rect.
 					if (button.Style == ToolBarButtonStyle.DropDownButton) {
 						Rectangle rect = button.Rectangle;
-						rect.Width = ThemeEngine.Current.ToolBarDropDownWidth;
-						rect.X = button.Rectangle.Right - rect.Width;
+						if (DropDownArrows) {
+							rect.Width = ThemeEngine.Current.ToolBarDropDownWidth;
+							rect.X = button.Rectangle.Right - rect.Width;
+						}
+						
 						if (rect.Contains (loc)) {
 							if (button.DropDownMenu != null) {
 								button.dd_pressed = true;
@@ -621,12 +624,11 @@ namespace System.Windows.Forms
 							}
 							break;
 						}
-					} else if ((me.Button & MouseButtons.Left) == MouseButtons.Left) {
-						button.pressed = true;
-						button.inside = true;
-						button.InvalidateBorder ();
-						break;
 					}
+					button.pressed = true;
+					button.inside = true;
+					button.InvalidateBorder ();
+					break;
 				}
 			}
 		}
