@@ -12,6 +12,7 @@ using NUnit.Framework;
 using System;
 using System.Net;
 using System.Collections;
+using System.Collections.Specialized;
 
 namespace MonoTests.System.Net
 {
@@ -151,15 +152,19 @@ public class WebHeaderCollectionTest
 		Assertion.AssertEquals ("#14", null, w.GetValues (""));
 		Assertion.AssertEquals ("#15", null, w.GetValues ("NotExistent"));
 	}
-#if NET_1_0
+
         [Test]
 	public void Indexers ()
 	{
+#if NET_2_0
+		Assertion.AssertEquals ("#1.1", "Value1", ((NameValueCollection)col)[0]);
+		//FIXME: test also HttpRequestHeader and HttpResponseHeader
+#else
 		Assertion.AssertEquals ("#1", "Value1", col [0]);
+#endif
 		Assertion.AssertEquals ("#2", "Value1", col ["Name1"]);
 		Assertion.AssertEquals ("#3", "Value1", col ["NAME1"]);
 	}
-#endif
 
 	[Test]
 	public void Remove ()

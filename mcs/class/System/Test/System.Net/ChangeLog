@@ -1,3 +1,7 @@
+2006-11-20 Andrew Skiba <andrews@mainsoft.com>
+
+	* WebHeaderCollectionTest.cs: fix Indexers test to compile on 2.0
+
 2006-11-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebHeaderCollectionTest.cs: the Indexers test only compiles on 1.x
