@@ -586,6 +586,15 @@ namespace System.Windows.Forms {
 			driver.Invalidate(handle, rc, clear);
 		}
 
+		internal static void InvalidateNC (IntPtr handle)
+		{
+			#if DriverDebug
+				Console.WriteLine("InvalidateNC({0}): Called", Window(handle));
+			#endif
+			driver.InvalidateNC(handle);
+		}
+
+
 		internal static bool IsEnabled(IntPtr handle) {
 			#if DriverDebug || DriverDebugState
 				Console.WriteLine("IsEnabled({0}): Called, Result={1}", Window(handle), driver.IsEnabled(handle));

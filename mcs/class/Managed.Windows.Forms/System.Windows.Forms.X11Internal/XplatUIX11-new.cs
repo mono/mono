@@ -69,21 +69,19 @@ namespace System.Windows.Forms.X11Internal {
 	internal class XplatUIX11_new : XplatUIDriver {
 		#region Local Variables
 		// General
-		static volatile XplatUIX11_new	Instance;
-		static int		RefCount;
-		static bool		themes_enabled;
+		static volatile XplatUIX11_new Instance;
+		static readonly object lockobj = new object ();
+		static int RefCount;
+		static bool themes_enabled;
 
-		// Message Loop
-		static Hashtable	MessageQueues;		// Holds our thread-specific X11ThreadQueues
+		static Hashtable MessageQueues; // Holds our thread-specific X11ThreadQueues
 
 		// Cursors
-		static IntPtr		LastCursorWindow;	// The last window we set the cursor on
-		static IntPtr		LastCursorHandle;	// The handle that was last set on LastCursorWindow
-		static IntPtr		OverrideCursorHandle;	// The cursor that is set to override any other cursors
+		static IntPtr LastCursorWindow; // The last window we set the cursor on
+		static IntPtr LastCursorHandle; // The handle that was last set on LastCursorWindow
+		static IntPtr OverrideCursorHandle; // The cursor that is set to override any other cursors
 
 		X11Display display;
-
-		static readonly object lockobj = new object ();
 
 		#endregion	// Local Variables
 		#region Constructors
@@ -739,6 +737,13 @@ namespace System.Windows.Forms.X11Internal {
 			hwnd.Invalidate (rc, clear);
 		}
 
+		internal override void InvalidateNC (IntPtr handle)
+		{
+			X11Hwnd hwnd = (X11Hwnd)Hwnd.ObjectFromHandle(handle);
+
+			hwnd.InvalidateNC ();
+		}
+
 		internal override bool IsEnabled(IntPtr handle)
 		{
 			X11Hwnd hwnd = (X11Hwnd)Hwnd.ObjectFromHandle (handle);
@@ -1128,15 +1133,20 @@ namespace System.Windows.Forms.X11Internal {
 				hwnd.Update ();
 		}
 
-		public void OnIdle (EventArgs e) {
-			if (Idle != null)
-				Idle (this, e);
-		}
-
 		#endregion	// Public Static Methods
 
 		#region Events
-		internal override event EventHandler Idle;
+		internal override event EventHandler Idle {
+			add {
+				Console.WriteLine ("adding idle handler for thread {0}", Thread.CurrentThread.GetHashCode());
+				X11ThreadQueue queue = ThreadQueue(Thread.CurrentThread);
+				queue.Idle += value;
+			}
+			remove {
+				X11ThreadQueue queue = ThreadQueue(Thread.CurrentThread);
+				queue.Idle += value;
+			}
+		}
 		#endregion	// Events
 	}
 }

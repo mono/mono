@@ -1303,6 +1303,11 @@ namespace System.Windows.Forms {
 				hwnd.expose_pending = true;
 			}
 		}
+
+		internal override void InvalidateNC (IntPtr handle)
+		{
+			// XXX FIXME
+		}
 		
 		internal override bool IsEnabled(IntPtr handle) {
 			return Hwnd.ObjectFromHandle(handle).Enabled;

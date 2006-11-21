@@ -39,6 +39,7 @@ namespace System.Windows.Forms.X11Internal {
 		Thread thread;
 		bool quit_posted;
 		bool dispatch_idle;
+		bool need_dispatch_idle = true;
 		object lockobj = new object ();
 
 		static readonly int InitialXEventSize = 100;
@@ -91,6 +92,11 @@ namespace System.Windows.Forms.X11Internal {
 
 			// both queues are empty.  go to sleep until NextTimeout
 			// (or until there's an event to handle).
+
+			if (dispatch_idle && need_dispatch_idle) {
+				OnIdle (EventArgs.Empty);
+				need_dispatch_idle = false;
+			}
 
 			if (Monitor.Wait (lockobj, NextTimeout (), true)) {
 				/* the lock was reaquired before timeout.
@@ -206,6 +212,18 @@ namespace System.Windows.Forms.X11Internal {
 				// since it might need to wait for a different amount of time.
 				Monitor.PulseAll (lockobj);
 			}
+		}
+
+		public event EventHandler Idle;
+		public void OnIdle (EventArgs e)
+		{
+			if (Idle != null)
+				Idle (thread, e);
+		}
+
+		public bool NeedDispatchIdle {
+			get { return need_dispatch_idle; }
+			set { need_dispatch_idle = value; }
 		}
 
 		public bool DispatchIdle {

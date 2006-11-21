@@ -1634,21 +1634,10 @@ namespace System.Windows.Forms.X11Internal {
 			}
 		}
 
-
 		private void XEventThread ()
 		{
-			bool need_idle_dispatch = true;
 			while (true) {
 				XEvent xevent = new XEvent ();
-
-				if (need_idle_dispatch
-				    && Xlib.XPending (display) == 0)
-				{
-					// XXX can we do the event thing here?  or do we need
-					// to manufacture an XEvent and do it in GetMessage?
-					need_idle_dispatch = false;
-					XplatUIX11_new.GetInstance().OnIdle (EventArgs.Empty);
-				}
 
 				Xlib.XNextEvent (display, ref xevent);
 
@@ -1658,19 +1647,23 @@ namespace System.Windows.Forms.X11Internal {
 
 				X11Hwnd hwnd = (X11Hwnd)Hwnd.GetObjectFromWindow(xevent.AnyEvent.window);
 				if (hwnd != null) {
-					switch (xevent.type) {
-					case XEventName.KeyPress:
-					case XEventName.KeyRelease:
-					case XEventName.ButtonPress:
-					case XEventName.ButtonRelease:
-						need_idle_dispatch = true;
-						break;
-					}
-
 					hwnd.EnqueueEvent (xevent);
 				}
 			}
 		}
+
+		private void RedirectMsgToEnabledAncestor (X11Hwnd hwnd, MSG msg, XEvent xevent)
+		{
+			IntPtr dummy;
+
+			msg.hwnd = hwnd.EnabledHwnd;
+			Xlib.XTranslateCoordinates (display, xevent.AnyEvent.window,
+						    Hwnd.ObjectFromHandle(msg.hwnd).ClientWindow,
+						    xevent.ButtonEvent.x, xevent.ButtonEvent.y,
+						    out xevent.ButtonEvent.x, out xevent.ButtonEvent.y, out dummy);
+			msg.lParam = (IntPtr)(MousePosition.Y << 16 | MousePosition.X);
+		}
+
 
 		// This is called from the non-XEventThread threads.
 		[MonoTODO("Implement filtering")]
@@ -1792,16 +1785,8 @@ namespace System.Windows.Forms.X11Internal {
 				MousePosition.X = xevent.ButtonEvent.x;
 				MousePosition.Y = xevent.ButtonEvent.y;
 
-				if (!hwnd.Enabled) {
-					IntPtr dummy;
-
-					msg.hwnd = hwnd.EnabledHwnd;
-					Xlib.XTranslateCoordinates (display, xevent.AnyEvent.window,
-								    Hwnd.ObjectFromHandle(msg.hwnd).ClientWindow,
-								    xevent.ButtonEvent.x, xevent.ButtonEvent.y,
-								    out xevent.ButtonEvent.x, out xevent.ButtonEvent.y, out dummy);
-					msg.lParam = (IntPtr)(MousePosition.Y << 16 | MousePosition.X);
-				}
+				if (!hwnd.Enabled)
+					RedirectMsgToEnabledAncestor (hwnd, msg, xevent);
 
 				if (Grab.Hwnd != IntPtr.Zero)
 					msg.hwnd = Grab.Hwnd;
@@ -1888,16 +1873,8 @@ namespace System.Windows.Forms.X11Internal {
 					goto ProcessNextMessage;
 				}
 
-				if (!hwnd.Enabled) {
-					IntPtr dummy;
-
-					msg.hwnd = hwnd.EnabledHwnd;
-					Xlib.XTranslateCoordinates (display, xevent.AnyEvent.window,
-								    Hwnd.ObjectFromHandle(msg.hwnd).ClientWindow,
-								    xevent.ButtonEvent.x, xevent.ButtonEvent.y,
-								    out xevent.ButtonEvent.x, out xevent.ButtonEvent.y, out dummy);
-					msg.lParam = (IntPtr)(MousePosition.Y << 16 | MousePosition.X);
-				}
+				if (!hwnd.Enabled)
+					RedirectMsgToEnabledAncestor (hwnd, msg, xevent);
 
 				if (Grab.Hwnd != IntPtr.Zero)
 					msg.hwnd = Grab.Hwnd;
@@ -1929,16 +1906,8 @@ namespace System.Windows.Forms.X11Internal {
 					msg.wParam = GetMousewParam(0);
 					msg.lParam = (IntPtr) (xevent.MotionEvent.y << 16 | xevent.MotionEvent.x & 0xFFFF);
 
-					if (!hwnd.Enabled) {
-						IntPtr dummy;
-
-						msg.hwnd = hwnd.EnabledHwnd;
-						Xlib.XTranslateCoordinates (display, xevent.AnyEvent.window,
-									    Hwnd.ObjectFromHandle(msg.hwnd).ClientWindow,
-									    xevent.MotionEvent.x, xevent.MotionEvent.y,
-									    out xevent.MotionEvent.x, out xevent.MotionEvent.y, out dummy);
-						msg.lParam = (IntPtr)(MousePosition.Y << 16 | MousePosition.X);
-					}
+					if (!hwnd.Enabled)
+						RedirectMsgToEnabledAncestor (hwnd, msg, xevent);
 
 					MousePosition.X = xevent.MotionEvent.x;
 					MousePosition.Y = xevent.MotionEvent.y;
@@ -1970,14 +1939,8 @@ namespace System.Windows.Forms.X11Internal {
 #endif
 					msg.message = Msg.WM_NCMOUSEMOVE;
 
-					if (!hwnd.Enabled) {
-						msg.hwnd = hwnd.EnabledHwnd;
-						Xlib.XTranslateCoordinates (display, xevent.AnyEvent.window,
-									    Hwnd.ObjectFromHandle(msg.hwnd).ClientWindow,
-									    xevent.MotionEvent.x, xevent.MotionEvent.y,
-									    out xevent.MotionEvent.x, out xevent.MotionEvent.y, out dummy);
-						msg.lParam = (IntPtr)(MousePosition.Y << 16 | MousePosition.X);
-					}
+					if (!hwnd.Enabled)
+						RedirectMsgToEnabledAncestor (hwnd, msg, xevent);
 
 					// The hit test is sent in screen coordinates
 					Xlib.XTranslateCoordinates (display, xevent.AnyEvent.window, RootWindow.Handle,
@@ -2085,7 +2048,7 @@ namespace System.Windows.Forms.X11Internal {
 				if (xevent.FocusChangeEvent.detail != NotifyDetail.NotifyNonlinear)
 					goto ProcessNextMessage;
 
-				if (FocusWindow.Handle == IntPtr.Zero) {
+				if (FocusWindow == null) {
 					Control c = Control.FromHandle (hwnd.ClientWindow);
 					if (c == null)
 						goto ProcessNextMessage;
@@ -2103,6 +2066,9 @@ namespace System.Windows.Forms.X11Internal {
 			case XEventName.FocusOut:
 				// Se the comment for our FocusIn handler
 				if (xevent.FocusChangeEvent.detail != NotifyDetail.NotifyNonlinear)
+					goto ProcessNextMessage;
+
+				if (FocusWindow == null)
 					goto ProcessNextMessage;
 
 				Keyboard.FocusOut(FocusWindow.Handle);

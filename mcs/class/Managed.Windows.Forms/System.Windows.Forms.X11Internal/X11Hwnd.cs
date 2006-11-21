@@ -22,6 +22,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -33,8 +34,11 @@ namespace System.Windows.Forms.X11Internal {
 	internal class X11Hwnd : Hwnd
 	{
 		X11Display display;
-		int[] wm_state = new int[0];
-		int[] window_type = new int[0];
+
+		bool refetch_wm_state = true;
+		IntPtr[] wm_state = new IntPtr[0];
+		IntPtr[] window_type = new IntPtr[0];
+
 		string text;
 		X11ThreadQueue queue;
 
@@ -57,13 +61,14 @@ namespace System.Windows.Forms.X11Internal {
 
 		public X11Hwnd (X11Display display, IntPtr handle) : this (display)
 		{
+			if (handle == IntPtr.Zero)
+				throw new ArgumentNullException ("handle");
 			WholeWindow = ClientWindow = handle;
-			if (handle == IntPtr.Zero) {
-				Console.WriteLine("X11Hwnd crated with null handle");
-			}
 		}
 
-		// XXX this needs to be here so we don't have to change Hwnd.
+		// XXX this needs to be here so we don't have to
+		// change Hwnd.  once we land, remove this and make
+		// Hwnd.Queue virtual or abstract
 		public new X11ThreadQueue Queue {
 			get { return queue; }
 			set { queue = value; }
@@ -81,7 +86,6 @@ namespace System.Windows.Forms.X11Internal {
 			int			height;
 			IntPtr			ParentHandle;
 			SetWindowValuemask	ValueMask;
-			int[]			atoms;
 
 			Attributes = new XSetWindowAttributes();
 			x = cp.X;
@@ -89,24 +93,16 @@ namespace System.Windows.Forms.X11Internal {
 			width = cp.Width;
 			height = cp.Height;
 
-			if (width<1) width=1;
-			if (height<1) height=1;
-
-			if (cp.Parent != IntPtr.Zero) {
+			/* Figure out our parent handle */
+			if (cp.Parent != IntPtr.Zero)
+				// the parent handle is specified in the CreateParams
 				ParentHandle = Hwnd.ObjectFromHandle(cp.Parent).ClientWindow;
-			} else {
-				if (StyleSet (cp.Style, WindowStyles.WS_CHILD)) {
-					// We need to use our foster parent window until this poor child gets it's parent assigned
-					ParentHandle = display.FosterParent.Handle;
-				} else if (StyleSet (cp.Style, WindowStyles.WS_POPUP)) {
-					ParentHandle = display.RootWindow.Handle;
-				} else {
-					// Default position on screen, if window manager doesn't place us somewhere else
-					if (x<0) x = 50;
-					if (y<0) y = 50;
-					ParentHandle = display.RootWindow.Handle;
-				}
-			}
+			else if (StyleSet (cp.Style, WindowStyles.WS_CHILD))
+				// a child control with an unassigned parent gets created under the FosterParent
+				ParentHandle = display.FosterParent.Handle;
+			else
+				// for all other cases, the parent is the root window
+				ParentHandle = display.RootWindow.Handle;
 
 			ValueMask = SetWindowValuemask.BitGravity | SetWindowValuemask.WinGravity;
 
@@ -119,12 +115,21 @@ namespace System.Windows.Forms.X11Internal {
 				ValueMask |= SetWindowValuemask.SaveUnder;
 			}
 
-
 			// If we're a popup without caption we override the WM
 			if (StyleSet (cp.Style, WindowStyles.WS_POPUP) && !StyleSet (cp.Style, WindowStyles.WS_CAPTION)) {
 				Attributes.override_redirect = true;
 				ValueMask |= SetWindowValuemask.OverrideRedirect;
 			}
+
+			// Default position on screen, if window manager doesn't place us somewhere else
+			if (!StyleSet (cp.Style, WindowStyles.WS_CHILD)
+			    && !StyleSet (cp.Style, WindowStyles.WS_POPUP)) {
+				if (x<0) x = 50;
+				if (y<0) y = 50;
+			}
+			// minimum width/height
+			if (width<1) width=1;
+			if (height<1) height=1;
 
 			X = x;
 			Y = y;
@@ -132,9 +137,7 @@ namespace System.Windows.Forms.X11Internal {
 			Height = height;
 			Parent = Hwnd.ObjectFromHandle (cp.Parent);
 
-			if (StyleSet (cp.Style, WindowStyles.WS_DISABLED)) {
-				Enabled = false;
-			}
+			Enabled = !StyleSet (cp.Style, WindowStyles.WS_DISABLED);
 
 			ClientWindow = IntPtr.Zero;
 
@@ -142,24 +145,23 @@ namespace System.Windows.Forms.X11Internal {
 							  X, Y, Width, Height, 0,
 							  (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput,
 							  IntPtr.Zero, new UIntPtr ((uint)ValueMask), ref Attributes);
+			if (WholeWindow == IntPtr.Zero)
+				throw new Exception ("Coult not create X11 nc window");
 
-			if (WholeWindow != IntPtr.Zero) {
-				ValueMask &= ~(SetWindowValuemask.OverrideRedirect | SetWindowValuemask.SaveUnder);
+			ValueMask &= ~(SetWindowValuemask.OverrideRedirect | SetWindowValuemask.SaveUnder);
 
-				if (display.CustomVisual != IntPtr.Zero && display.CustomColormap != IntPtr.Zero) {
-					ValueMask = SetWindowValuemask.ColorMap;
-					Attributes.colormap = display.CustomColormap;
-				}
-
-				ClientWindow = Xlib.XCreateWindow (display.Handle, WholeWindow,
-								   ClientRect.X, ClientRect.Y, ClientRect.Width, ClientRect.Height, 0,
-								   (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput,
-								   display.CustomVisual, new UIntPtr ((uint)ValueMask), ref Attributes);
+			if (display.CustomVisual != IntPtr.Zero && display.CustomColormap != IntPtr.Zero) {
+				ValueMask |= SetWindowValuemask.ColorMap;
+				Attributes.colormap = display.CustomColormap;
 			}
 
-			if ((WholeWindow == IntPtr.Zero) || (ClientWindow == IntPtr.Zero)) {
-				throw new Exception("Could not create X11 windows");
-			}
+			ClientWindow = Xlib.XCreateWindow (display.Handle, WholeWindow,
+							   ClientRect.X, ClientRect.Y, ClientRect.Width, ClientRect.Height, 0,
+							   (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput,
+							   display.CustomVisual, new UIntPtr ((uint)ValueMask), ref Attributes);
+
+			if (ClientWindow == IntPtr.Zero)
+				throw new Exception("Could not create X11 client window");
 
 #if DriverDebug || DriverDebugCreate
 			Console.WriteLine("Created window {0:X} / {1:X} parent {2:X}, Style {3}, ExStyle {4}", ClientWindow.ToInt32(), WholeWindow.ToInt32(), Parent != null ? Parent.Handle.ToInt32() : 0, (WindowStyles)cp.Style, (WindowExStyles)cp.ExStyle);
@@ -187,12 +189,7 @@ namespace System.Windows.Forms.X11Internal {
 			}
 
 			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOPMOST)) {
-				atoms = new int[2];
-				atoms[0] = display.Atoms._NET_WM_WINDOW_TYPE_NORMAL.ToInt32();
-				Xlib.XChangeProperty (display.Handle, WholeWindow,
-						      display.Atoms._NET_WM_WINDOW_TYPE, display.Atoms.XA_ATOM, 32,
-						      PropertyMode.Replace, atoms, 1);
-
+				WINDOW_TYPE = display.Atoms._NET_WM_WINDOW_TYPE_NORMAL;
 				Xlib.XSetTransientForHint (display.Handle, WholeWindow, display.RootWindow.Handle);
 			}
 
@@ -204,20 +201,14 @@ namespace System.Windows.Forms.X11Internal {
 			wm_hints.flags = (IntPtr)(XWMHintsFlags.InputHint | XWMHintsFlags.StateHint | XWMHintsFlags.WindowGroupHint);
 			wm_hints.input = !StyleSet (cp.Style, WindowStyles.WS_DISABLED);
 			wm_hints.initial_state = StyleSet (cp.Style, WindowStyles.WS_MINIMIZE) ? XInitialState.IconicState : XInitialState.NormalState;
-			
-			if (ParentHandle != display.RootWindow.Handle) {
-				wm_hints.window_group = WholeWindow;
-			} else {
-				wm_hints.window_group = ParentHandle;
-			}
+			wm_hints.window_group = ParentHandle == display.RootWindow.Handle ? ParentHandle : WholeWindow;
 			
 			Xlib.XSetWMHints (display.Handle, WholeWindow, ref wm_hints );
 
-			if (StyleSet (cp.Style, WindowStyles.WS_MINIMIZE)) {
+			if (StyleSet (cp.Style, WindowStyles.WS_MINIMIZE))
 				SetWindowState (FormWindowState.Minimized);
-			} else if (StyleSet (cp.Style, WindowStyles.WS_MAXIMIZE)) {
+			else if (StyleSet (cp.Style, WindowStyles.WS_MAXIMIZE))
 				SetWindowState (FormWindowState.Maximized);
-			}
 
 			// for now make all windows dnd enabled
 			display.Dnd.SetAllowDrop (this, true);
@@ -244,12 +235,12 @@ namespace System.Windows.Forms.X11Internal {
 
 		public void Activate ()
 		{
-			if (true /* the window manager supports NET_ACTIVE_WINDOW */) {
+			if (((IList)display.RootWindow._NET_SUPPORTED).Contains (display.Atoms._NET_ACTIVE_WINDOW)) {
 				display.SendNetWMMessage (WholeWindow, display.Atoms._NET_ACTIVE_WINDOW, (IntPtr)1, IntPtr.Zero, IntPtr.Zero);
 			}
-// 			else {
-// 				XRaiseWindow(DisplayHandle, handle);
-// 			}
+ 			else {
+				Xlib.XRaiseWindow (display.Handle, WholeWindow);
+ 			}
 		}
 
 		public void Update ()
@@ -352,19 +343,19 @@ namespace System.Windows.Forms.X11Internal {
 			if (client) {
 				AddInvalidArea(x, y, width, height);
 				if (!expose_pending) {
-					if (!nc_expose_pending) {
+					if (!nc_expose_pending)
 						Queue.AddPaint (this);
-					}
 					expose_pending = true;
 				}
 			}
 			else {
+				Console.WriteLine ("nc area needs repainting from {0}", Environment.StackTrace);
+
 				AddNcInvalidArea (x, y, width, height);
 				
 				if (!nc_expose_pending) {
-					if (!expose_pending) {
+					if (!expose_pending)
 						Queue.AddPaint (this);
-					}
 					nc_expose_pending = true;
 				}
 			}
@@ -429,20 +420,15 @@ namespace System.Windows.Forms.X11Internal {
 
 		public void HandleConfigureNotify (XEvent xevent)
 		{
-			try {
-				Queue.Lock ();
-				lock (configure_lock) {
-					display.SendMessage (Handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
-					configure_pending = false;
-				}
+			lock (configure_lock) {
+				configure_pending = false;
+			}
 
-				// We need to adjust our client window to track the resize of whole_window
-				if (WholeWindow != ClientWindow)
-					PerformNCCalc ();
-			}
-			finally {
-				Queue.Unlock ();
-			}
+			display.SendMessage (Handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
+
+			// We need to adjust our client window to track the resize of whole_window
+			if (WholeWindow != ClientWindow)
+				PerformNCCalc ();
 		}
 
 		// Handle any event compression here
@@ -461,6 +447,14 @@ namespace System.Windows.Forms.X11Internal {
 				AddConfigureNotify (xevent);
 				Queue.Unlock ();
 				break;
+			case XEventName.KeyPress:
+			case XEventName.KeyRelease:
+			case XEventName.ButtonPress:
+			case XEventName.ButtonRelease:
+				Queue.Lock ();
+				Queue.NeedDispatchIdle = true;
+				Queue.Unlock ();
+				goto default;
 			default:
 				Queue.Enqueue (xevent);
 				break;
@@ -476,14 +470,9 @@ namespace System.Windows.Forms.X11Internal {
 			}
 		}
 
-		private void InvalidateWholeWindow ()
+		public void InvalidateNC ()
 		{
-			InvalidateWholeWindow (new Rectangle(0, 0, Width, Height));
-		}
-
-		private void InvalidateWholeWindow (Rectangle rectangle)
-		{
-			AddExpose (false, rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
+			AddExpose (false, 0, 0, Width, Height);
 		}
 
 		public PaintEventArgs PaintEventStart (bool client)
@@ -604,15 +593,12 @@ namespace System.Windows.Forms.X11Internal {
 			Xlib.XSetFunction (display.Handle,   gc, GXFunction.GXxor);
 			Xlib.XSetPlaneMask (display.Handle,  gc, (IntPtr)mask);
 
-			if ((rect.Width > 0) && (rect.Height > 0)) {
+			if ((rect.Width > 0) && (rect.Height > 0))
 				Xlib.XDrawRectangle (display.Handle, ClientWindow, gc, rect.Left, rect.Top, rect.Width, rect.Height);
-			} else {
-				if (rect.Width > 0) {
-					Xlib.XDrawLine (display.Handle, ClientWindow, gc, rect.X, rect.Y, rect.Right, rect.Y);
-				} else {
-					Xlib.XDrawLine (display.Handle, ClientWindow, gc, rect.X, rect.Y, rect.X, rect.Bottom);
-				}
-			}
+			else if (rect.Width > 0)
+				Xlib.XDrawLine (display.Handle, ClientWindow, gc, rect.X, rect.Y, rect.Right, rect.Y);
+			else
+				Xlib.XDrawLine (display.Handle, ClientWindow, gc, rect.X, rect.Y, rect.X, rect.Bottom);
 
 			Xlib.XFreeGC (display.Handle, gc);
 		}
@@ -657,24 +643,25 @@ namespace System.Windows.Forms.X11Internal {
 			// FIXME - debug this with Menus
 
 			rect = new Rectangle(ncp.rgrc1.left, ncp.rgrc1.top, ncp.rgrc1.right - ncp.rgrc1.left, ncp.rgrc1.bottom - ncp.rgrc1.top);
-			ClientRect = rect;
+			if (ClientRect != rect) {
+				ClientRect = rect;
 
-			if (Visible) {
-				if ((rect.Width < 1) || (rect.Height < 1)) {
-					Xlib.XMoveResizeWindow (display.Handle, ClientWindow, -5, -5, 1, 1);
-				} else {
-					Xlib.XMoveResizeWindow (display.Handle, ClientWindow, rect.X, rect.Y, rect.Width, rect.Height);
+				if (Visible) {
+					if ((rect.Width < 1) || (rect.Height < 1))
+						Xlib.XMoveResizeWindow (display.Handle, ClientWindow, -5, -5, 1, 1);
+					else
+						Xlib.XMoveResizeWindow (display.Handle, ClientWindow, rect.X, rect.Y, rect.Width, rect.Height);
+
+					InvalidateNC ();
 				}
 			}
-
-			InvalidateWholeWindow ();
 		}
 
 		public void RequestNCRecalc ()
 		{
 			PerformNCCalc ();
 			display.SendMessage (Handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
-			InvalidateWholeWindow ();
+			InvalidateNC ();
 		}
 
 		public void FrameExtents (out int left, out int top)
@@ -736,55 +723,47 @@ namespace System.Windows.Forms.X11Internal {
 					caption_height = 26;
 
 					if (StyleSet (Style, WindowStyles.WS_CAPTION)) {
-						if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
+						if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW))
 							title_style = TitleStyle.Tool;
-						} else {
+						else
 							title_style = TitleStyle.Normal;
-						}
 					}
 
 					if (StyleSet (Style, WindowStyles.WS_OVERLAPPEDWINDOW) ||
-					    ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
+					    ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW))
 						border_style = (FormBorderStyle) 0xFFFF;
-					} else {
+					else
 						border_style = FormBorderStyle.None;
-					}
 				}
 			}
 			else {
 				title_style = TitleStyle.None;
 				if (StyleSet (Style, WindowStyles.WS_CAPTION)) {
-					if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
+					if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW))
 						title_style = TitleStyle.Tool;
-					} else {
+					else
 						title_style = TitleStyle.Normal;
-					}
 				}
 
 				border_style = FormBorderStyle.None;
 
 				if (StyleSet (Style, WindowStyles.WS_THICKFRAME)) {
-					if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
+					if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW))
 						border_style = FormBorderStyle.SizableToolWindow;
-					} else {
+					else
 						border_style = FormBorderStyle.Sizable;
-					}
 				} else {
 					if (StyleSet (Style, WindowStyles.WS_CAPTION)) {
-						if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_CLIENTEDGE)) {
+						if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_CLIENTEDGE))
 							border_style = FormBorderStyle.Fixed3D;
-						} else if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_DLGMODALFRAME)) {
+						else if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_DLGMODALFRAME))
 							border_style = FormBorderStyle.FixedDialog;
-						} else if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
+						else if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW))
 							border_style = FormBorderStyle.FixedToolWindow;
-						} else if (StyleSet (Style, WindowStyles.WS_BORDER)) {
+						else if (StyleSet (Style, WindowStyles.WS_BORDER))
 							border_style = FormBorderStyle.FixedSingle;
-						}
-					} else {
-						if (StyleSet (Style, WindowStyles.WS_BORDER)) {
-							border_style = FormBorderStyle.FixedSingle;
-						}
-					}
+					} else if (StyleSet (Style, WindowStyles.WS_BORDER))
+						border_style = FormBorderStyle.FixedSingle;
 				}
 			}
 		}
@@ -796,19 +775,18 @@ namespace System.Windows.Forms.X11Internal {
 
 		public void SetWMStyles (CreateParams cp)
 		{
-			MotifWmHints		mwmHints;
-			MotifFunctions		functions;
-			MotifDecorations	decorations;
-			int[]			atoms;
-			int			atom_count;
-			Rectangle		client_rect;
+			MotifWmHints mwmHints;
+			MotifFunctions functions;
+			MotifDecorations decorations;
+			IntPtr[] atoms;
+			int atom_count;
+			Rectangle client_rect;
 
 			// Child windows don't need WM window styles
-			if (StyleSet (cp.Style, WindowStyles.WS_CHILDWINDOW)) {
+			if (StyleSet (cp.Style, WindowStyles.WS_CHILDWINDOW))
 				return;
-			}
 
-			atoms = new int[8];
+			atoms = new IntPtr[8];
 			mwmHints = new MotifWmHints();
 			functions = 0;
 			decorations = 0;
@@ -903,10 +881,7 @@ namespace System.Windows.Forms.X11Internal {
 			// needed! map toolwindows to _NET_WM_WINDOW_TYPE_UTILITY to make newer metacity versions happy
 			// and get those windows in front of their parents
 			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
-				atoms [0] = display.Atoms._NET_WM_WINDOW_TYPE_UTILITY.ToInt32 ();
-				Xlib.XChangeProperty (display.Handle, WholeWindow,
-						      display.Atoms._NET_WM_WINDOW_TYPE, display.Atoms.XA_ATOM, 32,
-						      PropertyMode.Replace, atoms, 1);
+				WINDOW_TYPE = display.Atoms._NET_WM_WINDOW_TYPE_UTILITY;
 
 				Form f = Control.FromHandle(Handle) as Form;
 				if (f != null && !reparented) {
@@ -924,15 +899,11 @@ namespace System.Windows.Forms.X11Internal {
 					      PropertyMode.Replace, ref mwmHints, 5);
 
 			if (StyleSet (cp.Style, WindowStyles.WS_POPUP) && (parent != null) && (parent.WholeWindow != IntPtr.Zero)) {
-				atoms[0] = display.Atoms._NET_WM_WINDOW_TYPE_NORMAL.ToInt32();
-				Xlib.XChangeProperty (display.Handle, WholeWindow,
-						      display.Atoms._NET_WM_WINDOW_TYPE, display.Atoms.XA_ATOM, 32,
-						      PropertyMode.Replace, atoms, 1);
-
+				WINDOW_TYPE = display.Atoms._NET_WM_WINDOW_TYPE_NORMAL;
 				Xlib.XSetTransientForHint(display.Handle, WholeWindow, parent.WholeWindow);
 			} else if (!ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_APPWINDOW)) {
 				/* this line keeps the window from showing up in gnome's taskbar */
-				atoms[atom_count++] = display.Atoms._NET_WM_STATE_SKIP_TASKBAR.ToInt32();
+				atoms[atom_count++] = display.Atoms._NET_WM_STATE_SKIP_TASKBAR;
 			}
 			if ((client_rect.Width < 1) || (client_rect.Height < 1)) {
 				Xlib.XMoveResizeWindow (display.Handle, ClientWindow, -5, -5, 1, 1);
@@ -940,9 +911,9 @@ namespace System.Windows.Forms.X11Internal {
 				Xlib.XMoveResizeWindow (display.Handle, ClientWindow, client_rect.X, client_rect.Y, client_rect.Width, client_rect.Height);
 			}
 
-			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
-				atoms[atom_count++] = display.Atoms._NET_WM_STATE_SKIP_TASKBAR.ToInt32();
-			}
+			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW))
+				atoms[atom_count++] = display.Atoms._NET_WM_STATE_SKIP_TASKBAR;
+
 			/* we need to add these atoms in the
 			 * event we're maximized, since we're
 			 * replacing the existing
@@ -951,22 +922,18 @@ namespace System.Windows.Forms.X11Internal {
 			 * GetWindowState will return Normal
 			 * for a window which is maximized. */
 			if (current_state == FormWindowState.Maximized) {
-				atoms[atom_count++] = display.Atoms._NET_WM_STATE_MAXIMIZED_HORZ.ToInt32();
-				atoms[atom_count++] = display.Atoms._NET_WM_STATE_MAXIMIZED_VERT.ToInt32();
+				atoms[atom_count++] = display.Atoms._NET_WM_STATE_MAXIMIZED_HORZ;
+				atoms[atom_count++] = display.Atoms._NET_WM_STATE_MAXIMIZED_VERT;
 			}
 
-			Xlib.XChangeProperty (display.Handle, WholeWindow,
-					      display.Atoms._NET_WM_STATE, display.Atoms.XA_ATOM, 32,
-					      PropertyMode.Replace, atoms, atom_count);
+			Set_WM_STATE (atoms, atom_count);
 
 			atom_count = 0;
-			IntPtr[] atom_ptrs = new IntPtr[2];
-			atom_ptrs[atom_count++] = display.Atoms.WM_DELETE_WINDOW;
-			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_CONTEXTHELP)) {
-				atom_ptrs[atom_count++] = display.Atoms._NET_WM_CONTEXT_HELP;
-			}
+			atoms[atom_count++] = display.Atoms.WM_DELETE_WINDOW;
+			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_CONTEXTHELP))
+				atoms[atom_count++] = display.Atoms._NET_WM_CONTEXT_HELP;
 
-			Xlib.XSetWMProtocols (display.Handle, WholeWindow, atom_ptrs, atom_count);
+			Xlib.XSetWMProtocols (display.Handle, WholeWindow, atoms, atom_count);
 		}
 
 		public void ClientToScreen (ref int x, ref int y)
@@ -987,7 +954,9 @@ namespace System.Windows.Forms.X11Internal {
 			int	dest_y_return;
 			IntPtr	child;
 
-			Xlib.XTranslateCoordinates (display.Handle, display.RootWindow.Handle, ClientWindow, x, y, out dest_x_return, out dest_y_return, out child);
+			Xlib.XTranslateCoordinates (display.Handle,
+						    display.RootWindow.Handle, ClientWindow,
+						    x, y, out dest_x_return, out dest_y_return, out child);
 
 			x = dest_x_return;
 			y = dest_y_return;
@@ -1000,7 +969,9 @@ namespace System.Windows.Forms.X11Internal {
 			int	dest_y_return;
 			IntPtr	child;
 
-			Xlib.XTranslateCoordinates (display.Handle, display.RootWindow.Handle, WholeWindow, x, y, out dest_x_return, out dest_y_return, out child);
+			Xlib.XTranslateCoordinates (display.Handle,
+						    display.RootWindow.Handle, WholeWindow,
+						    x, y, out dest_x_return, out dest_y_return, out child);
 
 			x = dest_x_return;
 			y = dest_y_return;
@@ -1141,9 +1112,8 @@ namespace System.Windows.Forms.X11Internal {
 				hints.max_height = max.Height;
 			}
 
-			if (hints.flags != IntPtr.Zero) {
+			if (hints.flags != IntPtr.Zero)
 				Xlib.XSetWMNormalHints (display.Handle, WholeWindow, ref hints);
-			}
 
 			if ((maximized != Rectangle.Empty) && (maximized.Width > 0) && (maximized.Height > 0)) {
 				hints.flags = (IntPtr)XSizeHintsFlags.PPosition;
@@ -1238,21 +1208,13 @@ namespace System.Windows.Forms.X11Internal {
 		public bool SetTopmost (X11Hwnd owner, bool enabled)
 		{
 			if (enabled) {
-				int[]	atoms;
-
-				atoms = new int[8];
-
-				atoms[0] = display.Atoms._NET_WM_WINDOW_TYPE_NORMAL.ToInt32();
-				Xlib.XChangeProperty (display.Handle, WholeWindow,
-						      display.Atoms._NET_WM_WINDOW_TYPE, display.Atoms.XA_ATOM, 32,
-						      PropertyMode.Replace, atoms, 1);
-
-				if (owner != null) {
+				WINDOW_TYPE = display.Atoms._NET_WM_WINDOW_TYPE_NORMAL;
+				if (owner != null)
 					Xlib.XSetTransientForHint (display.Handle, WholeWindow, owner.WholeWindow);
-				} else {
+				else
 					Xlib.XSetTransientForHint (display.Handle, WholeWindow, display.RootWindow.WholeWindow);
-				}
-			} else {
+			}
+			else {
 				Xlib.XDeleteProperty (display.Handle, WholeWindow, display.Atoms.XA_WM_TRANSIENT_FOR);
 			}
 
@@ -1310,27 +1272,23 @@ namespace System.Windows.Forms.X11Internal {
 				for (int i = 0; i < (long)nitems; i++) {
 					// XXX 64 bit clean?
 					atom = (IntPtr)Marshal.ReadInt32(prop, i * 4);
-					if ((atom == display.Atoms._NET_WM_STATE_MAXIMIZED_HORZ) || (atom == display.Atoms._NET_WM_STATE_MAXIMIZED_VERT)) {
+					if ((atom == display.Atoms._NET_WM_STATE_MAXIMIZED_HORZ) || (atom == display.Atoms._NET_WM_STATE_MAXIMIZED_VERT))
 						maximized++;
-					} else if (atom == display.Atoms._NET_WM_STATE_HIDDEN) {
+					else if (atom == display.Atoms._NET_WM_STATE_HIDDEN)
 						minimized = true;
-					}
 				}
 				Xlib.XFree(prop);
 			}
 
-			if (minimized) {
+			if (minimized)
 				return FormWindowState.Minimized;
-			} else if (maximized == 2) {
+			else if (maximized == 2)
 				return FormWindowState.Maximized;
-			}
 
 			attributes = new XWindowAttributes();
 			Xlib.XGetWindowAttributes (display.Handle, ClientWindow, ref attributes);
-			if (attributes.map_state == MapState.IsUnmapped) {
+			if (attributes.map_state == MapState.IsUnmapped)
 				return (FormWindowState)(-1);
-			}
-
 
 			return FormWindowState.Normal;
 		}
@@ -1346,44 +1304,38 @@ namespace System.Windows.Forms.X11Internal {
 				return;
 
 			switch (state) {
-				case FormWindowState.Normal: {
-					if (current_state == FormWindowState.Minimized) {
-						Map ();
-					} else if (current_state == FormWindowState.Maximized) {
-						display.SendNetWMMessage (WholeWindow,
-									  display.Atoms._NET_WM_STATE, (IntPtr)2 /* toggle */,
-									  display.Atoms._NET_WM_STATE_MAXIMIZED_HORZ,
-									  display.Atoms._NET_WM_STATE_MAXIMIZED_VERT);
-					}
-					Activate ();
-					break;
-				}
-
-				case FormWindowState.Minimized: {
-					if (current_state == FormWindowState.Maximized) {
-						display.SendNetWMMessage (WholeWindow,
-									  display.Atoms._NET_WM_STATE, (IntPtr)2 /* toggle */,
-									  display.Atoms._NET_WM_STATE_MAXIMIZED_HORZ,
-									  display.Atoms._NET_WM_STATE_MAXIMIZED_VERT);
-					}
-
-					// FIXME multiscreen support
-					Xlib.XIconifyWindow (display.Handle, WholeWindow, display.DefaultScreen);
-					break;
-				}
-
-				case FormWindowState.Maximized: {
-					if (current_state == FormWindowState.Minimized) {
-						Map ();
-					}
-
+			case FormWindowState.Normal:
+				if (current_state == FormWindowState.Minimized)
+					Map ();
+				else if (current_state == FormWindowState.Maximized)
 					display.SendNetWMMessage (WholeWindow,
-								  display.Atoms._NET_WM_STATE, (IntPtr)1 /* Add */,
+								  display.Atoms._NET_WM_STATE, (IntPtr)2 /* toggle */,
 								  display.Atoms._NET_WM_STATE_MAXIMIZED_HORZ,
 								  display.Atoms._NET_WM_STATE_MAXIMIZED_VERT);
-					Activate ();
-					break;
-				}
+				Activate ();
+				break;
+
+			case FormWindowState.Minimized:
+				if (current_state == FormWindowState.Maximized)
+					display.SendNetWMMessage (WholeWindow,
+								  display.Atoms._NET_WM_STATE, (IntPtr)2 /* toggle */,
+								  display.Atoms._NET_WM_STATE_MAXIMIZED_HORZ,
+								  display.Atoms._NET_WM_STATE_MAXIMIZED_VERT);
+
+				// FIXME multiscreen support
+				Xlib.XIconifyWindow (display.Handle, WholeWindow, display.DefaultScreen);
+				break;
+
+			case FormWindowState.Maximized:
+				if (current_state == FormWindowState.Minimized)
+					Map ();
+
+				display.SendNetWMMessage (WholeWindow,
+							  display.Atoms._NET_WM_STATE, (IntPtr)1 /* Add */,
+							  display.Atoms._NET_WM_STATE_MAXIMIZED_HORZ,
+							  display.Atoms._NET_WM_STATE_MAXIMIZED_VERT);
+				Activate ();
+				break;
 			}
 		}
 
@@ -1392,32 +1344,24 @@ namespace System.Windows.Forms.X11Internal {
 			if (top) {
 				Xlib.XRaiseWindow (display.Handle, WholeWindow);
 				return true;
-			} else if (!bottom) {
-				XWindowChanges	values = new XWindowChanges();
-
+			}
+			else if (bottom) {
+				Xlib.XLowerWindow (display.Handle, WholeWindow);
+				return true;
+			}
+			else {
 				if (after_hwnd == null) {
-					// Work around metacity 'issues'
-					int[]	atoms;
-
-					atoms = new int[2];
-					atoms[0] = display.CurrentTimestamp;
-					Xlib.XChangeProperty (display.Handle, WholeWindow,
-							      display.Atoms._NET_WM_USER_TIME, display.Atoms.XA_CARDINAL, 32,
-							      PropertyMode.Replace, atoms, 1);
-
+					Update_USER_TIME ();
 					Xlib.XRaiseWindow (display.Handle, WholeWindow);
 					display.SendNetWMMessage (WholeWindow, display.Atoms._NET_ACTIVE_WINDOW, (IntPtr)1, IntPtr.Zero, IntPtr.Zero);
 					return true;
 				}
 
+				XWindowChanges values = new XWindowChanges();
 				values.sibling = after_hwnd.WholeWindow;
 				values.stack_mode = StackMode.Below;
 
 				Xlib.XConfigureWindow (display.Handle, WholeWindow, ChangeWindowFlags.CWStackMode | ChangeWindowFlags.CWSibling, ref values);
-			} else {
-				// Bottom
-				Xlib.XLowerWindow (display.Handle, WholeWindow);
-				return true;
 			}
 			return false;
 		}
@@ -1486,16 +1430,16 @@ namespace System.Windows.Forms.X11Internal {
 			}
 		}
 
-		public int WINDOW_TYPE {
-			get { return window_type.Length > 0 ? window_type[0] : 0; }
+		public IntPtr WINDOW_TYPE {
+			get { return window_type.Length > 0 ? window_type[0] : IntPtr.Zero; }
 			set {
-				Set_WINDOW_TYPE (new int[] {value}, 1);
+				Set_WINDOW_TYPE (new IntPtr[] {value}, 1);
 			}
 		}
 
-		public void Set_WINDOW_TYPE (int[] value, int count)
+		public void Set_WINDOW_TYPE (IntPtr[] value, int count)
 		{
-			int[] foo = new int[count];
+			IntPtr[] foo = new IntPtr[count];
 			Array.Copy (value, foo, count);
 			Array.Sort (foo);
 
@@ -1507,9 +1451,9 @@ namespace System.Windows.Forms.X11Internal {
 			}
 		}
 
-		public void Set_WM_STATE (int[] value, int count)
+		public void Set_WM_STATE (IntPtr[] value, int count)
 		{
-			int[] foo = new int[count];
+			IntPtr[] foo = new IntPtr[count];
 			Array.Copy (value, foo, count);
 			Array.Sort (foo);
 
@@ -1519,6 +1463,17 @@ namespace System.Windows.Forms.X11Internal {
 						      display.Atoms._NET_WM_STATE, display.Atoms.XA_ATOM, 32,
 						      PropertyMode.Replace, wm_state, wm_state.Length);
 			}
+		}
+
+		public void Update_USER_TIME ()
+		{
+			int[]	atoms;
+
+			atoms = new int[2];
+			atoms[0] = display.CurrentTimestamp;
+			Xlib.XChangeProperty (display.Handle, WholeWindow,
+					      display.Atoms._NET_WM_USER_TIME, display.Atoms.XA_CARDINAL, 32,
+					      PropertyMode.Replace, atoms, 1);
 		}
 
 		public IntPtr[] GetAtomListProperty (IntPtr atom)
@@ -1551,7 +1506,7 @@ namespace System.Windows.Forms.X11Internal {
 			return values;
 		}
 
-		bool ArrayDifferent (int[] a, int[] b)
+		bool ArrayDifferent (IntPtr[] a, IntPtr[] b)
 		{
 			if (a.Length != b.Length)
 				return true;

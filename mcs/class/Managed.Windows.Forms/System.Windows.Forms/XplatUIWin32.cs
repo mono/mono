@@ -1348,6 +1348,20 @@ namespace System.Windows.Forms {
 			Win32InvalidateRect(handle, ref rect, clear);
 		}
 
+
+		internal override void InvalidateNC (IntPtr handle)
+		{
+			// found this gem at
+			// http://www.dotnet247.com/247reference/msgs/58/292037.aspx
+			Win32SetWindowPos(handle, IntPtr.Zero,
+					  0, 0, 0, 0,
+					  SetWindowPosFlags.SWP_NOMOVE |
+					  SetWindowPosFlags.SWP_NOSIZE |
+					  SetWindowPosFlags.SWP_NOZORDER |
+					  SetWindowPosFlags.SWP_NOACTIVATE |
+					  SetWindowPosFlags.SWP_DRAWFRAME);
+		}
+
 		internal override IntPtr DefWndProc(ref Message msg) {
 			msg.Result=Win32DefWindowProc(msg.HWnd, (Msg)msg.Msg, msg.WParam, msg.LParam);
 			return msg.Result;

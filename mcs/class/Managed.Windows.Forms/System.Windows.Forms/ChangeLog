@@ -1,3 +1,16 @@
+2006-11-21  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUIOSX.cs: stub out InvalidateNC.
+
+	* XplatUIWin32.cs: implement InvalidateNC using the call I found
+	at http://www.dotnet247.com/247reference/msgs/58/292037.aspx.
+
+	* XplatUIX11.cs: rename InvalidateWholeWindow to InvalidateNC.
+
+	* XplatUIDriver.cs: add InvalidateNC abstract method.
+
+	* XplatUI.cs: add InvalidateNC.
+
 2006-11-21  Everaldo Canuto  <everaldo@simios.org>
 
 	* ToolBar.cs: Invalidate complete button area when pressed status 

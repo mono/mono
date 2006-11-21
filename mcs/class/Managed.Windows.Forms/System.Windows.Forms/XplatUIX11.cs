@@ -1099,22 +1099,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void InvalidateWholeWindow(IntPtr handle) {
-			Hwnd	hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle(handle);
-
-			InvalidateWholeWindow(handle, new Rectangle(0, 0, hwnd.Width, hwnd.Height));
-		}
-
-		private void InvalidateWholeWindow(IntPtr handle, Rectangle rectangle) {
-			Hwnd	hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle(handle);
-
-			AddExpose (hwnd, false, rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
-		}
-
 		private void WholeToScreen(IntPtr handle, ref int x, ref int y) {
 			int	dest_x_return;
 			int	dest_y_return;
@@ -3966,6 +3950,14 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override void InvalidateNC (IntPtr handle) {
+			Hwnd	hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			AddExpose (hwnd, false, 0, 0, hwnd.Width, hwnd.Height);
+		}
+
 		internal override bool IsEnabled(IntPtr handle) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
 			return (hwnd != null && hwnd.Enabled);
@@ -4157,7 +4149,7 @@ namespace System.Windows.Forms {
 
 			PerformNCCalc(hwnd);
 			SendMessage(handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
-			InvalidateWholeWindow(handle);
+			InvalidateNC(handle);
 		}
 
 		internal override void ResetMouseHover(IntPtr handle) {

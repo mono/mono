@@ -195,6 +195,7 @@ namespace System.Windows.Forms {
 		internal abstract void EnableWindow(IntPtr handle, bool Enable);
 		internal abstract void SetModal(IntPtr handle, bool Modal);
 		internal abstract void Invalidate(IntPtr handle, Rectangle rc, bool clear);
+		internal abstract void InvalidateNC(IntPtr handle);
 		internal abstract IntPtr DefWndProc(ref Message msg);
 		internal abstract void HandleException(Exception e);
 		internal abstract void DoEvents();
