@@ -106,7 +106,7 @@ namespace System.Data {
 		private int _defaultValuesRowIndex = -1;
 		protected internal bool fInitInProgress;
 #if NET_2_0
-		internal bool tableInitialized = true;
+		private bool tableInitialized = true;
 #endif
 
 		// If CaseSensitive property is changed once it does not anymore follow owner DataSet's 
@@ -457,7 +457,7 @@ namespace System.Data {
 		}
 		
 #if NET_2_0
-		SerializationFormat remotingFormat;
+		SerializationFormat remotingFormat = SerializationFormat.Xml;
 		[DefaultValue (SerializationFormat.Xml)]
 		public SerializationFormat RemotingFormat {
 			get {
@@ -513,12 +513,12 @@ namespace System.Data {
 		}
 
 #if NET_2_0
-		internal void NewRowAdded (DataRow dr) 
+		private void NewRowAdded (DataRow dr) 
 		{
 			DataTableNewRowEventArgs e = new DataTableNewRowEventArgs (dr);
 			OnTableNewRow (e);
 		}
-		internal void DataTableInitialized ()
+		private void DataTableInitialized ()
 		{
 			EventArgs e = new EventArgs ();
 			OnTableInitialized (e);
@@ -1692,6 +1692,8 @@ namespace System.Data {
                 /// </summary>
 		public void Load (IDataReader reader)
 		{
+			if (reader == null)
+				return;
                         Load (reader, LoadOption.PreserveChanges);
 		}
 
@@ -1702,6 +1704,8 @@ namespace System.Data {
                 /// </summary>
 		public void Load (IDataReader reader, LoadOption loadOption)
 		{
+			if (reader == null)
+				return;
                         bool prevEnforceConstr = this.EnforceConstraints;
                         try {
                                 this.EnforceConstraints = false;
@@ -1722,6 +1726,8 @@ namespace System.Data {
 
 		public virtual void Load (IDataReader reader, LoadOption loadOption, FillErrorEventHandler errorHandler)
 		{
+			if (reader == null)
+				return;
                         bool prevEnforceConstr = this.EnforceConstraints;
                         try {
                                 this.EnforceConstraints = false;
@@ -2484,12 +2490,16 @@ namespace System.Data {
 
 		public void WriteXmlSchema (Stream stream)
 		{
-			WriteXmlSchema (XmlWriter.Create (stream, GetWriterSettings ()));
+			XmlWriterSettings s = GetWriterSettings ();
+			s.OmitXmlDeclaration = false;
+			WriteXmlSchema (XmlWriter.Create (stream, s));
 		}
 
 		public void WriteXmlSchema (TextWriter writer)
 		{
-			WriteXmlSchema (XmlWriter.Create (writer, GetWriterSettings ()));
+			XmlWriterSettings s = GetWriterSettings ();
+			s.OmitXmlDeclaration = false;
+			WriteXmlSchema (XmlWriter.Create (writer, s));
 		}
 
 		public void WriteXmlSchema (XmlWriter writer)
@@ -2517,7 +2527,9 @@ namespace System.Data {
 		{
 			XmlWriter xw = null;
 			try {
-				xw = XmlWriter.Create (fileName, GetWriterSettings ());
+				XmlWriterSettings s = GetWriterSettings ();
+				s.OmitXmlDeclaration = false;
+				xw = XmlWriter.Create (fileName, s);
 				WriteXmlSchema (xw);
 			} finally {
 				if (xw != null)
@@ -2527,12 +2539,16 @@ namespace System.Data {
 
 		public void WriteXmlSchema (Stream stream, bool writeHierarchy)
 		{
-			WriteXmlSchema (XmlWriter.Create (stream, GetWriterSettings ()), writeHierarchy);
+			XmlWriterSettings s = GetWriterSettings ();
+			s.OmitXmlDeclaration = false;
+			WriteXmlSchema (XmlWriter.Create (stream, s), writeHierarchy);
 		}
 
 		public void WriteXmlSchema (TextWriter writer, bool writeHierarchy)
 		{
-			WriteXmlSchema (XmlWriter.Create (writer, GetWriterSettings ()), writeHierarchy);
+			XmlWriterSettings s = GetWriterSettings ();
+			s.OmitXmlDeclaration = false;
+			WriteXmlSchema (XmlWriter.Create (writer, s), writeHierarchy);
 		}
 
 		public void WriteXmlSchema (XmlWriter writer, bool writeHierarchy)
@@ -2566,7 +2582,9 @@ namespace System.Data {
 		{
 			XmlWriter xw = null;
 			try {
-				xw = XmlWriter.Create (fileName, GetWriterSettings ());
+				XmlWriterSettings s = GetWriterSettings ();
+				s.OmitXmlDeclaration = false;
+				xw = XmlWriter.Create (fileName, s);
 				WriteXmlSchema (xw, writeHierarchy);
 			} finally {
 				if (xw != null)
@@ -2682,7 +2700,7 @@ namespace System.Data {
 			}
 		}
 
-		internal void OnTableInitialized (EventArgs e) {
+		private void OnTableInitialized (EventArgs e) {
 			if (null != Initialized) {
 				Initialized (this, e);
 			}

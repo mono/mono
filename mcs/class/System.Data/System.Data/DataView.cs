@@ -50,6 +50,9 @@ namespace System.Data
 		DataColumn [] sortColumns = null;
 		internal DataViewRowState rowState;
 		internal DataRowView[] rowCache = new DataRowView [0];
+#if NET_2_0
+		private bool dataViewInitialized = true;
+#endif
 
 		// BeginInit() support
 		bool isInitPhase = false;
@@ -195,7 +198,6 @@ namespace System.Data
 		[DataSysDescription ("Returns the number of items currently in this view.")]
 #endif
 		public int Count {
-			[MonoTODO]
 			get {
 				return rowCache.Length;
 			}
@@ -206,7 +208,6 @@ namespace System.Data
 		[DataSysDescription ("This returns a pointer to back to the DataViewManager that owns this DataSet (if any).")]
 #endif
 		public DataViewManager DataViewManager {
-			[MonoTODO]
 			get {
 				return dataViewManager;
 			}
@@ -217,7 +218,6 @@ namespace System.Data
 		// this IndexerNameAttribute
 		[System.Runtime.CompilerServices.IndexerName("Item")]
 		public DataRowView this[int recordIndex] {
-			[MonoTODO]
 			get {
 				if (recordIndex > rowCache.Length)
 					throw new IndexOutOfRangeException ("There is no row at " +
@@ -233,7 +233,6 @@ namespace System.Data
 		[DefaultValue ("")]
 		public virtual string RowFilter {
 			get { return rowFilter; }
-			[MonoTODO]
 			set {
 				if (value == null)
 					value = String.Empty;
@@ -366,6 +365,11 @@ namespace System.Data
 			}
 		}
 
+#if NET_2_0
+		public bool IsInitialized {
+			get { return dataViewInitialized;}
+		}
+#endif
 		#endregion // PublicProperties
 		
 		#region	PublicMethods
@@ -386,7 +390,7 @@ namespace System.Data
 			_lastAdded = dataTable.NewRow ();
 			UpdateIndex(true);
 			OnListChanged(new ListChangedEventArgs(ListChangedType.ItemAdded, Count - 1, -1));
-			 
+
 			return this[Count - 1];
 		}
 
@@ -414,7 +418,6 @@ namespace System.Data
 			}
 		}
 
-		[MonoTODO]
 		public void BeginInit() 
 		{
 			initTable = Table;
@@ -424,9 +427,11 @@ namespace System.Data
 			initRowState = RowStateFilter;
 
 			isInitPhase = true;
+#if NET_2_0
+			dataViewInitialized = false;
+#endif
 		}
 
-		[MonoTODO]
 		public void CopyTo (Array array, int index) 
 		{
 			if (index + rowCache.Length > array.Length) {
@@ -480,7 +485,6 @@ namespace System.Data
 		}
 #endif
 
-		[MonoTODO]
 		public void EndInit() 
 		{
 			isInitPhase = false;
@@ -496,16 +500,19 @@ namespace System.Data
 			inEndInit = false;
 
 			UpdateIndex (true);
+
+#if NET_2_0
+			dataViewInitialized = true;
+			DataViewInitialized ();
+#endif
 		}
 
-		[MonoTODO]
 		public int Find(object key) 
 		{
 			object [] keys = new object[] { key };
 			return Find(keys);
 		}
 		
-		[MonoTODO]
 		public int Find(object[] keys) 
 		{
 			if (sort == null || sort == string.Empty) {
@@ -529,13 +536,11 @@ namespace System.Data
 			return index;
 		}
 		
-		[MonoTODO]
 		public DataRowView[] FindRows(object key) 
 		{
 			return FindRows(new object[] {key});
 		}
 
-		[MonoTODO]
 		public DataRowView[] FindRows(object[] keys) 
 		{
 			if (sort == null || sort == string.Empty) {
@@ -569,6 +574,10 @@ namespace System.Data
 		[DataSysDescription ("Indicates that the data returned by this DataView has somehow changed.")]
 #endif
 		public event ListChangedEventHandler ListChanged;
+
+#if NET_2_0
+		public event EventHandler Initialized;
+#endif
 
 		[Browsable (false)]
 #if !NET_2_0
@@ -620,7 +629,6 @@ namespace System.Data
 		{
 		}
 
-		[MonoTODO]
 		protected virtual void OnListChanged(ListChangedEventArgs e) 
 		{
 			// Yes, under MS.NET, when it is overriden, the 
@@ -639,7 +647,6 @@ namespace System.Data
 			OnListChanged(e);
 		}
 
-		[MonoTODO]
 		protected void Open() 
 		{
 			// I wonder if this comment is still valid, but keep
@@ -748,6 +755,19 @@ namespace System.Data
 			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, newIndex, -1));
 		}
 		
+#if NET_2_0
+		private void DataViewInitialized ()
+		{
+			EventArgs e = new EventArgs ();
+			OnDataViewInitialized (e);
+		}
+
+		private void OnDataViewInitialized (EventArgs e) {
+			if (null != Initialized) {
+				Initialized (this, e);
+			}
+		}
+#endif
 		protected virtual void ColumnCollectionChanged (object sender, CollectionChangeEventArgs args)
 		{
 			// UpdateIndex() is not invoked here (even if the sort
@@ -1003,7 +1023,6 @@ namespace System.Data
 		}
 
 		object IList.this[int recordIndex] {
-			[MonoTODO]
 			get {
 				return this[recordIndex];
 			}

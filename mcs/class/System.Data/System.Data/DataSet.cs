@@ -81,7 +81,7 @@ namespace System.Data {
 		private CultureInfo locale = System.Threading.Thread.CurrentThread.CurrentCulture;
 		internal XmlDataDocument _xmlDataDocument = null;
 #if NET_2_0
-		internal bool dataSetInitialized = true;
+		private bool dataSetInitialized = true;
 #endif
 		
 		bool initInProgress = false;
@@ -145,7 +145,7 @@ namespace System.Data {
 		}
 
 #if NET_2_0
-		SerializationFormat remotingFormat;
+		SerializationFormat remotingFormat = SerializationFormat.Xml;
 		[DefaultValue (SerializationFormat.Xml)]
 		public SerializationFormat RemotingFormat {
 			get {
@@ -721,33 +721,37 @@ namespace System.Data {
 #if NET_2_0
 		public void Load (IDataReader reader, LoadOption loadOption, params DataTable[] tables)
 		{
+			if (reader == null)
+				return;
 			foreach (DataTable dt in tables) {
 				if (dt.DataSet == null || dt.DataSet != this) {
 					throw new ArgumentException ("Table " +  dt.TableName + " does not belong to this DataSet.");
 				}
 				dt.Load (reader, loadOption);
-				dt.dataSet = this;
 				reader.NextResult ();
 			}
 		}
 
 		public void Load (IDataReader reader, LoadOption loadOption, params string[] tables)
 		{
+			if (reader == null)
+				return;
 			foreach (string tableName in tables) {
-				DataTable dt = Tables[tableName];
+				DataTable dt = Tables [tableName];
 
 				if (dt == null) {
 					dt = new DataTable (tableName);
 					Tables.Add (dt);
 				}
 				dt.Load (reader, loadOption);
-				dt.dataSet = this;
 				reader.NextResult ();
 			}
 		}
 
 		public void Load (IDataReader reader, LoadOption loadOption, FillErrorEventHandler errorHandler, params DataTable[] tables)
 		{
+			if (reader == null)
+				return;
 			foreach (DataTable dt in tables) {
 				if (dt.DataSet == null || dt.DataSet != this) {
 					throw new ArgumentException ("Table " +  dt.TableName + " does not belong to this DataSet.");
@@ -1425,28 +1429,20 @@ namespace System.Data {
 		protected void GetSerializationData (SerializationInfo info, StreamingContext context)
 		{
 #if NET_2_0
-			SerializationFormat serializationFormat = SerializationFormat.Xml;
-
-			if (IsBinarySerialized (info, context) == true) {
-				serializationFormat = SerializationFormat.Binary;
-			}
-			if (serializationFormat == SerializationFormat.Xml) {
-#endif
-				string s = info.GetValue ("XmlSchema", typeof (String)) as String;
-				XmlTextReader reader = new XmlTextReader (new StringReader (s));
-				ReadXmlSchema (reader);
-				reader.Close ();
-			
-				s = info.GetValue ("XmlDiffGram", typeof (String)) as String;
-				reader = new XmlTextReader (new StringReader (s));
-				ReadXml (reader, XmlReadMode.DiffGram);
-				reader.Close ();
-#if NET_2_0
-			}
-			else /*if (DataSet.RemotingFormat == SerializationFormat.Binary)*/ {
+			if (IsBinarySerialized (info, context)) {
 				BinaryDeserialize (info);
+				return;
 			}
 #endif
+			string s = info.GetValue ("XmlSchema", typeof (String)) as String;
+			XmlTextReader reader = new XmlTextReader (new StringReader (s));
+			ReadXmlSchema (reader);
+			reader.Close ();
+
+			s = info.GetValue ("XmlDiffGram", typeof (String)) as String;
+			reader = new XmlTextReader (new StringReader (s));
+			ReadXml (reader, XmlReadMode.DiffGram);
+			reader.Close ();
 		}
 		
 		
@@ -1483,7 +1479,7 @@ namespace System.Data {
 		}
 
 #if NET_2_0
-		internal void OnDataSetInitialized (EventArgs e) {
+		private void OnDataSetInitialized (EventArgs e) {
 			if (null != Initialized) {
 				Initialized (this, e);
 			}
@@ -1501,7 +1497,7 @@ namespace System.Data {
 		}
 
 #if NET_2_0
-		internal void DataSetInitialized ()
+		private void DataSetInitialized ()
 		{
 			EventArgs e = new EventArgs ();
 			OnDataSetInitialized (e);

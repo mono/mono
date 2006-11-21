@@ -1,5 +1,9 @@
 2006-11-21  Nagappan A  <anagappan@novell.com>
 
+	* DataView.cs: Added public event Initialized.
+	(IsInitialized): Implemented public function to check whether a
+	dataview is initialized or not.
+
 	* DataSet.cs: Added ISupportInitializeNotification for .NET 2.0
 	profile.
 	(RemotingFormat): Set the default value attribute as
