@@ -323,6 +323,7 @@ namespace Mono.CSharp {
 
 				ScopeInfo host = toplevel.AnonymousContainer.Scope;
 				Variable the_scope = (Variable) host.scopes [scope];
+				Report.Debug (128, "EMIT SCOPE INSTANCE #2", host, scope, the_scope);
 				if (the_scope != null)
 					the_scope.Emit (ec);
 
@@ -1548,7 +1549,7 @@ namespace Mono.CSharp {
 			scope.CheckMembersDefined ();
 
 			ArrayList scopes = new ArrayList ();
-			if (b != container) {
+			//if (b != container) {
 				for (b = b.Parent; b != null; b = b.Parent) {
 					if (b.ScopeInfo != null)
 						scopes.Add (b.ScopeInfo);
@@ -1557,7 +1558,7 @@ namespace Mono.CSharp {
 						break;
 #endif
 				}
-			}
+				//}
 
 			foreach (ScopeInfo si in scopes) {
 				if (!si.Define ())
