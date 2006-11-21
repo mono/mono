@@ -1,3 +1,11 @@
+2006-11-21  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* MdiWindowManager.cs:
+	* InternalWindowManager.cs:
+	- Moved a few methods specific to Mdi from 
+	InternalWindowManager to MdiWindowManager.
+	Fixes #79996.
+	
 2006-11-21  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIOSX.cs: stub out InvalidateNC.

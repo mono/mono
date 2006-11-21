@@ -98,7 +98,6 @@ namespace System.Windows.Forms {
 			this.form = form;
 
 			form.SizeChanged += new EventHandler (FormSizeChangedHandler);
-            form.LocationChanged += new EventHandler(FormLocationChangedHandler);
 
 			CreateButtons ();
 		}
@@ -330,10 +329,6 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-        private void FormLocationChangedHandler(object sender, EventArgs e)
-        {
-            form.MdiParent.MdiContainer.SizeScrollBars();
-        }
 
 		private void FormSizeChangedHandler (object sender, EventArgs e)
 		{
@@ -344,7 +339,6 @@ namespace System.Windows.Forms {
 			m.LParam = IntPtr.Zero;
 			m.WParam = new IntPtr (1);
 			XplatUI.SendMessage (ref m);
-            form.MdiParent.MdiContainer.SizeScrollBars();
 		}
 
 		protected void CreateButtons ()

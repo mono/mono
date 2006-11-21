@@ -60,6 +60,8 @@ namespace System.Windows.Forms {
 			form_closed_handler = new EventHandler (FormClosed);
 			form.Closed += form_closed_handler;
             form.TextChanged += new EventHandler(FormTextChangedHandler);
+            form.SizeChanged += new EventHandler(FormSizeChangedHandler);
+            form.LocationChanged += new EventHandler(FormLocationChangedHandler);
 			draw_maximized_buttons = new PaintEventHandler (DrawMaximizedButtons);
 			CreateIconMenus ();
 		}
@@ -69,6 +71,16 @@ namespace System.Windows.Forms {
             mdi_container.SetParentText(false);
         }
 
+
+        private void FormLocationChangedHandler(object sender, EventArgs e)
+        {
+            form.MdiParent.MdiContainer.SizeScrollBars();
+        }
+
+        private void FormSizeChangedHandler(object sender, EventArgs e)
+        {
+            form.MdiParent.MdiContainer.SizeScrollBars();
+        }
 		public MainMenu MergedMenu {
 			get {
 				if (merged_menu == null)
