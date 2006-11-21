@@ -543,7 +543,9 @@ namespace System.Web.Security {
 
 				int returnValue = GetReturnValue (retValue);
 				if (returnValue == 3)
-					throw new ProviderException ("Password Answer is invalid");
+					throw new MembershipPasswordException ("Password Answer is invalid");
+				if (returnValue == 99)
+					throw new MembershipPasswordException ("The user account is currently locked out");
 
 				if (reader.Read ()) {
 					password = reader.GetString (0);
