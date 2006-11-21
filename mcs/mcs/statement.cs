@@ -2002,7 +2002,7 @@ namespace Mono.CSharp {
 		//
 		public virtual void EmitMeta (EmitContext ec)
 		{
-			Report.Debug (64, "BLOCK EMIT META", this, Toplevel, ScopeInfo, ec);
+			Report.Debug (64, "BLOCK EMIT META", this, Parent, Toplevel, ScopeInfo, ec);
 			if (ScopeInfo != null) {
 				scope_init = ScopeInfo.GetScopeInitializer (ec);
 				Report.Debug (64, "BLOCK EMIT META #1", this, Toplevel, ScopeInfo,

@@ -3512,6 +3512,9 @@ namespace Mono.CSharp {
 			if (!VerifyAssigned (ec))
 				return null;
 
+			Report.Debug (128, "RESOLVE LOCAL INFO", this, Name, loc, local_info,
+				      ec.MustCaptureVariable (local_info));
+
 			//
 			// If we are referencing a variable from the external block
 			// flag it for capturing
@@ -3525,6 +3528,10 @@ namespace Mono.CSharp {
 				ScopeInfo scope = local_info.Block.CreateScopeInfo ();
 				variable = scope.AddLocal (local_info);
 				type = variable.Type;
+
+				Report.Debug (128, "RESOLVE LOCAL INFO #1", this, Name, loc, local_info,
+					      ec.MustCaptureVariable (local_info), scope, variable);
+
 			}
 
 			return this;

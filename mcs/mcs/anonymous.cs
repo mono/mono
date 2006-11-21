@@ -172,7 +172,7 @@ namespace Mono.CSharp {
 			ToplevelBlock toplevel = block.Toplevel;
 			AnonymousContainer ac = toplevel.AnonymousContainer;
 
-			Report.Debug (128, "CREATE SCOPE", block, toplevel, ac);
+			Report.Debug (128, "CREATE SCOPE", block, block.ScopeInfo, toplevel, ac);
 
 			if (ac == null)
 				return new ScopeInfo (block, toplevel.RootScope.Parent);
@@ -191,9 +191,14 @@ namespace Mono.CSharp {
 				}
 			}
 
-			Report.Debug (128, "CREATRE SCOPE #1", parent);
+			Report.Debug (128, "CREATE SCOPE #2", parent);
 
-			return new ScopeInfo (block, parent);
+			ScopeInfo new_scope = new ScopeInfo (block, parent);
+
+			Report.Debug (128, "CREATE SCOPE #3", new_scope);
+			// Report.StackTrace ();
+
+			return new_scope;
 		}
 
 		protected ScopeInfo (Block block, TypeContainer parent)
@@ -204,7 +209,8 @@ namespace Mono.CSharp {
 			RootScope = block.Toplevel.RootScope;
 			ScopeBlock = block;
 
-			Report.Debug (128, "NEW SCOPE", this, block);
+			Report.Debug (128, "NEW SCOPE", this, block,
+				      block.Parent, block.Toplevel);
 
 			RootScope.AddScope (this);
 		}
@@ -217,7 +223,7 @@ namespace Mono.CSharp {
 			RootScope = (RootScopeInfo) this;
 			ScopeBlock = toplevel;
 
-			Report.Debug (128, "NEW ROOT SCOPE", this);
+			Report.Debug (128, "NEW ROOT SCOPE", this, toplevel, loc);
 		}
 
 		protected ScopeInfo host_scope;
@@ -376,6 +382,7 @@ namespace Mono.CSharp {
 
 		public Variable AddLocal (LocalInfo local)
 		{
+			Report.Debug (128, "CAPTURE LOCAL", this, local);
 			Variable var = (Variable) locals [local];
 			if (var == null) {
 				var = new CapturedLocal (this, local);
@@ -661,8 +668,9 @@ namespace Mono.CSharp {
 
 			protected virtual void DoEmitStatement (EmitContext ec)
 			{
-				Report.Debug (64, "EMIT SCOPE INIT", this, id,
+				Report.Debug (128, "EMIT SCOPE INITIALIZER STATEMENT", this, id,
 					      Scope, scope_instance, ec);
+				// Report.StackTrace ();
 
 				ec.ig.Emit (OpCodes.Nop);
 				ec.ig.Emit (OpCodes.Ldc_I4, id);
@@ -1525,7 +1533,12 @@ namespace Mono.CSharp {
 			Block b;
 			scope = RootScope;
 
-			for (b = Block; b != null; b = b.Parent) {
+			Report.Debug (128, "CREATE METHOD HOST #1", this, Block, Block.ScopeInfo,
+				      RootScope, Location);
+
+			for (b = Block.Parent; b != null; b = b.Parent) {
+				Report.Debug (128, "CREATE METHOD HOST #2", this, Block,
+					      b, b.ScopeInfo);
 				if (b.ScopeInfo != null) {
 					scope = b.ScopeInfo;
 					break;
