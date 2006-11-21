@@ -52,6 +52,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Schema;
+using System.Xml.Serialization;
 using System.Text.RegularExpressions;
 using Mono.Data.SqlExpressions;
 
@@ -63,7 +64,11 @@ namespace System.Data {
 	[DesignTimeVisible (false)]
 	[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DataTableEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 	[Serializable]
-	public class DataTable : MarshalByValueComponent, IListSource, ISupportInitialize, ISerializable 
+	public class DataTable : MarshalByValueComponent, IListSource, ISupportInitialize,
+				 ISerializable
+#if NET_2_0
+				 , ISupportInitializeNotification
+#endif
 	{
 		#region Fields
 
@@ -2598,6 +2603,7 @@ namespace System.Data {
 			if (TableClearing != null)
 				TableClearing (this, e);
 		}
+
 #endif // NET_2_0
 
 		/// <summary>
@@ -2631,7 +2637,6 @@ namespace System.Data {
 		protected internal virtual void OnRemoveColumn (DataColumn column) {
 			DropReferencedIndexes (column);
 		}
-
 
 		/// <summary>
 		/// Raises the RowChanged event.

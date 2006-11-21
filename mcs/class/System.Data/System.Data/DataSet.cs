@@ -63,8 +63,11 @@ namespace System.Data {
 	[XmlRootAttribute ("DataSet")]
 #endif
 	[Serializable]
-	public class DataSet : MarshalByValueComponent, IListSource, 
-		ISupportInitialize, ISerializable, IXmlSerializable 
+	public class DataSet : MarshalByValueComponent, IListSource, ISupportInitialize,
+			       ISerializable, IXmlSerializable
+#if NET_2_0
+			       , ISupportInitializeNotification
+#endif
 	{
 		private string dataSetName;
 		private string _namespace = "";
@@ -77,6 +80,9 @@ namespace System.Data {
 		private DataViewManager defaultView;
 		private CultureInfo locale = System.Threading.Thread.CurrentThread.CurrentCulture;
 		internal XmlDataDocument _xmlDataDocument = null;
+#if NET_2_0
+		internal bool dataSetInitialized = true;
+#endif
 		
 		bool initInProgress = false;
 		#region Constructors
@@ -139,7 +145,8 @@ namespace System.Data {
 		}
 
 #if NET_2_0
-		static SerializationFormat remotingFormat = SerializationFormat.Xml;
+		SerializationFormat remotingFormat;
+		[DefaultValue (SerializationFormat.Xml)]
 		public SerializationFormat RemotingFormat {
 			get {
 				return remotingFormat;
@@ -206,6 +213,11 @@ namespace System.Data {
 			}
 		}
 
+#if NET_2_0
+		public bool IsInitialized {
+			get { return dataSetInitialized;}
+		}
+#endif
 		[DataCategory ("Data")]
 #if !NET_2_0
 		[DataSysDescription ("Indicates a locale under which to compare strings within the DataSet.")]
@@ -274,7 +286,6 @@ namespace System.Data {
 			Merge (dataSet, preserveChanges, MissingSchemaAction.Add);
 		}
 		
-		[MonoTODO]
 		public void Merge (DataRow[] rows, bool preserveChanges, MissingSchemaAction missingSchemaAction)
 		{
 			if (rows == null)
@@ -285,7 +296,6 @@ namespace System.Data {
 			MergeManager.Merge (this, rows, preserveChanges, missingSchemaAction);
 		}
 		
-		[MonoTODO]
 		public void Merge (DataSet dataSet, bool preserveChanges, MissingSchemaAction missingSchemaAction)
 		{
 			if (dataSet == null)
@@ -296,7 +306,6 @@ namespace System.Data {
 			MergeManager.Merge (this, dataSet, preserveChanges, missingSchemaAction);
 		}
 		
-		[MonoTODO]
 		public void Merge (DataTable table, bool preserveChanges, MissingSchemaAction missingSchemaAction)
 		{
 			if (table == null)
@@ -372,12 +381,10 @@ namespace System.Data {
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override ISite Site {
-			[MonoTODO]
 			get {
 				return base.Site;
 			} 
 			
-			[MonoTODO]
 			set {
 				base.Site = value;
 			}
@@ -413,7 +420,6 @@ namespace System.Data {
 
 		#region Public Methods
 
-		[MonoTODO]
 		public void AcceptChanges ()
 		{
 			foreach (DataTable tempTable in tableCollection)
@@ -618,13 +624,11 @@ namespace System.Data {
 		}
 
 #if NET_2_0
-		[MonoTODO]
-		public DataTableReader CreateDataReader (DataTable[] dataTables)
+		public DataTableReader CreateDataReader (params DataTable[] dataTables)
 		{
 			return new DataTableReader (dataTables);
 		}
 
-		[MonoTODO]
 		public DataTableReader CreateDataReader ()
 		{
 			return new DataTableReader ((DataTable[])Tables.ToArray (typeof (DataTable)));
@@ -645,13 +649,18 @@ namespace System.Data {
 			return Writer.ToString ();
 		}
 
+#if NET_2_0
 		[MonoTODO]
+		public static XmlSchemaComplexType GetDataSetSchema (XmlSchemaSet schemaSet)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		public bool HasChanges ()
 		{
 			return HasChanges (DataRowState.Added | DataRowState.Deleted | DataRowState.Modified);
 		}
 
-		[MonoTODO]
 		public bool HasChanges (DataRowState rowState)
 		{
 			if (((int)rowState & 0xffffffe0) != 0)
@@ -710,16 +719,42 @@ namespace System.Data {
 		}
 
 #if NET_2_0
-		[MonoTODO]
-		public void Load (IDataReader reader, LoadOption loadOption, DataTable[] tables)
+		public void Load (IDataReader reader, LoadOption loadOption, params DataTable[] tables)
 		{
-			throw new NotImplementedException ();
+			foreach (DataTable dt in tables) {
+				if (dt.DataSet == null || dt.DataSet != this) {
+					throw new ArgumentException ("Table " +  dt.TableName + " does not belong to this DataSet.");
+				}
+				dt.Load (reader, loadOption);
+				dt.dataSet = this;
+				reader.NextResult ();
+			}
 		}
 
-		[MonoTODO]
-		public void Load (IDataReader reader, LoadOption loadOption, string[] tables)
+		public void Load (IDataReader reader, LoadOption loadOption, params string[] tables)
 		{
-			throw new NotImplementedException ();
+			foreach (string tableName in tables) {
+				DataTable dt = Tables[tableName];
+
+				if (dt == null) {
+					dt = new DataTable (tableName);
+					Tables.Add (dt);
+				}
+				dt.Load (reader, loadOption);
+				dt.dataSet = this;
+				reader.NextResult ();
+			}
+		}
+
+		public void Load (IDataReader reader, LoadOption loadOption, FillErrorEventHandler errorHandler, params DataTable[] tables)
+		{
+			foreach (DataTable dt in tables) {
+				if (dt.DataSet == null || dt.DataSet != this) {
+					throw new ArgumentException ("Table " +  dt.TableName + " does not belong to this DataSet.");
+				}
+				dt.Load (reader, loadOption, errorHandler);
+				reader.NextResult ();
+			}
 		}
 #endif
 
@@ -1160,6 +1195,10 @@ namespace System.Data {
 #endif
 		public event MergeFailedEventHandler MergeFailed;
 
+#if NET_2_0
+		public event EventHandler Initialized;
+#endif
+
 		#endregion // Public Events
 
 		#region IListSource methods
@@ -1185,6 +1224,9 @@ namespace System.Data {
 		public void BeginInit ()
 		{
 			InitInProgress = true;
+#if NET_2_0
+			dataSetInitialized = false;
+#endif
 		}
 		
 		public void EndInit ()
@@ -1200,6 +1242,10 @@ namespace System.Data {
 
 			Relations.PostAddRange ();
 			InitInProgress = false;
+#if NET_2_0
+			dataSetInitialized = true;
+			DataSetInitialized ();
+#endif
 		}
 		#endregion
 
@@ -1257,7 +1303,14 @@ namespace System.Data {
 #endif
 
 		#region ISerializable
-		void ISerializable.GetObjectData (SerializationInfo si, StreamingContext sc)
+#if NET_2_0
+		public virtual
+#endif
+		void
+#if !NET_2_0
+		ISerializable.
+#endif
+		GetObjectData (SerializationInfo si, StreamingContext sc)
 		{
 #if NET_2_0
 			if (RemotingFormat == SerializationFormat.Xml) {
@@ -1372,14 +1425,10 @@ namespace System.Data {
 		protected void GetSerializationData (SerializationInfo info, StreamingContext context)
 		{
 #if NET_2_0
-			SerializationInfoEnumerator e = info.GetEnumerator ();
 			SerializationFormat serializationFormat = SerializationFormat.Xml;
 
-			while (e.MoveNext()) {
-				if (e.ObjectType == typeof(System.Data.SerializationFormat)) {
-					serializationFormat = (SerializationFormat) e.Value;
-					break;
-				}
+			if (IsBinarySerialized (info, context) == true) {
+				serializationFormat = SerializationFormat.Binary;
 			}
 			if (serializationFormat == SerializationFormat.Xml) {
 #endif
@@ -1433,6 +1482,14 @@ namespace System.Data {
 			return XmlSchema.Read(new XmlTextReader(stream), (ValidationEventHandler)null);
 		}
 
+#if NET_2_0
+		internal void OnDataSetInitialized (EventArgs e) {
+			if (null != Initialized) {
+				Initialized (this, e);
+			}
+		}
+#endif
+
 		protected virtual bool ShouldSerializeRelations ()
 		{
 			return true;
@@ -1443,19 +1500,37 @@ namespace System.Data {
 			return true;
 		}
 
+#if NET_2_0
+		internal void DataSetInitialized ()
+		{
+			EventArgs e = new EventArgs ();
+			OnDataSetInitialized (e);
+		}
+
+		[MonoTODO]
+		protected virtual void InitializeDerivedDataSet ()
+		{
+			throw new NotImplementedException ();
+		}
+
+#endif
+
 		[MonoTODO]
 		protected internal virtual void OnPropertyChanging (PropertyChangedEventArgs pcevent)
 		{
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		protected virtual void OnRemoveRelation (DataRelation relation)
 		{
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		protected virtual void OnRemoveTable (DataTable table)
 		{
+			throw new NotImplementedException ();
 		}
 
 		internal virtual void OnMergeFailed (MergeFailedEventArgs e)
@@ -1472,21 +1547,24 @@ namespace System.Data {
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		protected SchemaSerializationMode DetermineSchemaSerializationMode (XmlReader reader)
 		{
 			return SchemaSerializationMode.IncludeSchema;
 		}
 
-		[MonoTODO]
 		protected SchemaSerializationMode DetermineSchemaSerializationMode (SerializationInfo info, StreamingContext context)
 		{
 			return SchemaSerializationMode.IncludeSchema;
 		}
 
-		[MonoTODO]
 		protected bool IsBinarySerialized (SerializationInfo info, StreamingContext context)
 		{
+			SerializationInfoEnumerator e = info.GetEnumerator ();
+			while (e.MoveNext()) {
+				if (e.ObjectType == typeof(System.Data.SerializationFormat)) {
+					return true;
+				}
+			}
 			return false;
 		}
 #endif
