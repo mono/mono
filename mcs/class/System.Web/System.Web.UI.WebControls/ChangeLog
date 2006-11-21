@@ -1,5 +1,10 @@
 2006-11-21 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* ControlParameter.cs: fixed: Evaluate method 
+	throws exceptions correctly.
+
+2006-11-21 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* CheckBox.cs: fixed: new 2.0 features such 
 	LabelAttributes and InputAttributes.
 

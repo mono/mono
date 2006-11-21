@@ -77,7 +77,10 @@ namespace System.Web.UI.WebControls {
 			if (control == null) return null;
 			if (control.Page == null) return null;
 			
-			Control c = null, namingContainer = control.NamingContainer; 
+			if(String.IsNullOrEmpty(ControlID))
+				throw new ArgumentException ("The ControlID property is not set.");
+
+			Control c = null, namingContainer = control.NamingContainer;
 			
 			while (namingContainer != null) {
 				c = namingContainer.FindControl(ControlID);
@@ -85,10 +88,20 @@ namespace System.Web.UI.WebControls {
 					break;
 				namingContainer = namingContainer.NamingContainer;
 			}
-			if (c == null) throw new HttpException ("Control '" + ControlID + "' not found.");
-			
-			PropertyInfo prop = c.GetType().GetProperty (PropertyName);
-			if (prop == null) throw new HttpException ("Property '" + PropertyName + "' not found in type '" + c.GetType() + "'.");
+			if (c == null)
+				throw new InvalidOperationException ("Control '" + ControlID + "' not found.");
+
+			string propName = PropertyName;
+			if (String.IsNullOrEmpty (propName)) {
+				object [] attrs = c.GetType ().GetCustomAttributes (typeof (ControlValuePropertyAttribute), true);
+				if(attrs.Length==0)
+					throw new ArgumentException ("The PropertyName property is not set and the Control identified by the ControlID property is not decorated with a ControlValuePropertyAttribute attribute.");
+				ControlValuePropertyAttribute attr = (ControlValuePropertyAttribute) attrs [0];
+				propName = attr.Name;
+			}
+			PropertyInfo prop = c.GetType ().GetProperty (propName);
+			if (prop == null)
+				throw new InvalidOperationException ("Property '" + propName + "' not found in type '" + c.GetType () + "'.");
 			
 			return prop.GetValue (c, null);
 		}

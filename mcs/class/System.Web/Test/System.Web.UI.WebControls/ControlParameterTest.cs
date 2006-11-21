@@ -164,7 +164,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void EvaluateArgumemtException ()
 		{
@@ -176,7 +175,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			ctrlParam.DoEvaluate (HttpContext.Current, textBox1); 
 		}
 		[Test]
-		[Category("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void EvaluateInvalidOperationException ()
 		{
