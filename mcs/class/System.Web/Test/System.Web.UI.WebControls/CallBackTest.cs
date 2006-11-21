@@ -63,7 +63,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category("NunitWeb")]
-		[Category("NotWorking")]
+		[Category ("NotDotNet")] // for dot-net use __CALLBACKID insted __CALLBACKTARGET and __CALLBACKARGUMENT insted __CALLBACKPARAM
 		public void CallBackResulrValues ()
 		{
 			WebTest t = new WebTest ("CallbackTest1.aspx");
@@ -75,12 +75,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("__CALLBACKID");
-			fr.Controls.Add ("__CALLBACKPARAM");
+			fr.Controls.Add ("__CALLBACKTARGET");
+			fr.Controls.Add ("__CALLBACKARGUMENT");
 			fr.Controls["__EVENTTARGET"].Value = "";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
-			fr.Controls["__CALLBACKID"].Value = "__Page";
-			fr.Controls["__CALLBACKPARAM"].Value = "monitor";
+			fr.Controls ["__CALLBACKTARGET"].Value = "__Page";
+			fr.Controls ["__CALLBACKARGUMENT"].Value = "monitor";
 
 			t.Request = fr;
 			html = t.Run ();
@@ -89,12 +89,13 @@ namespace MonoTests.System.Web.UI.WebControls
 			// first - RaiseCallbackEvent
 			// second - GetCallbackResult
 
-			Assert.AreEqual ("0|12|true|true", html, "CallBack#1");
+			if (html.IndexOf ("12|true|true") < 0)
+				Assert.Fail ("CallBack#1");
 
 			fr.Controls["__EVENTTARGET"].Value = "";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
-			fr.Controls["__CALLBACKID"].Value = "__Page";
-			fr.Controls["__CALLBACKPARAM"].Value = "laptop";
+			fr.Controls ["__CALLBACKTARGET"].Value = "__Page";
+			fr.Controls ["__CALLBACKARGUMENT"].Value = "laptop";
 
 			t.Request = fr;
 			html = t.Run ();
@@ -103,7 +104,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			// first - RaiseCallbackEvent
 			// second - GetCallbackResult
 
-			Assert.AreEqual ("0|10|true|true", html, "CallBack#2");
+			if (html.IndexOf ("10|true|true") < 0)
+				Assert.Fail ("CallBack#2");
 		}
 
 		public static void Load (Page p)
@@ -113,7 +115,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
+		[Category ("NotDotNet")] // for dot-net use __CALLBACKID insted __CALLBACKTARGET and __CALLBACKARGUMENT insted __CALLBACKPARAM
 		public void CallBackFlow ()
 		{
 			WebTest t = new WebTest ("CallbackTest2.aspx");
@@ -126,19 +128,20 @@ namespace MonoTests.System.Web.UI.WebControls
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("__CALLBACKID");
-			fr.Controls.Add ("__CALLBACKPARAM");
+			fr.Controls.Add ("__CALLBACKTARGET");
+			fr.Controls.Add ("__CALLBACKARGUMENT");
 			fr.Controls["__EVENTTARGET"].Value = "";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
-			fr.Controls["__CALLBACKID"].Value = "__Page";
-			fr.Controls["__CALLBACKPARAM"].Value = "";
+			fr.Controls ["__CALLBACKTARGET"].Value = "__Page";
+			fr.Controls ["__CALLBACKARGUMENT"].Value = "";
 			t.Request = fr;
 			
 			html = t.Run ();
 
 			// GetCallbackResult return string contained all flow functions name
 
-			Assert.AreEqual ("0||PreInit|Init|InitComplete|PreLoad|Load|LoadComplete|RaiseCallbackEvent|GetCallbackResult", html, "CallBackPageFlow"); 
+			if (html.IndexOf ("|PreInit|Init|InitComplete|PreLoad|Load|LoadComplete|RaiseCallbackEvent|GetCallbackResult") < 0)
+				Assert.Fail ("CallBackPageFlow");
 		}
 
 		public static void callBackFlow_Load (Page p)

@@ -1,5 +1,9 @@
 2006-11-21  Igor Zelmanovich   <igorz@mainsoft.com>
 
+	* CallBackTest.cs: fixed tests, removed NotWorking attributes.
+
+2006-11-21  Igor Zelmanovich   <igorz@mainsoft.com>
+
 	* DataSourceViewTest.cs: removed NotWorking attributes.
 
 2006-11-21  Igor Zelmanovich   <igorz@mainsoft.com>
