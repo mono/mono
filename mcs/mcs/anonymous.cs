@@ -196,7 +196,6 @@ namespace Mono.CSharp {
 			ScopeInfo new_scope = new ScopeInfo (block, parent);
 
 			Report.Debug (128, "CREATE SCOPE #3", new_scope);
-			// Report.StackTrace ();
 
 			return new_scope;
 		}
@@ -227,7 +226,6 @@ namespace Mono.CSharp {
 		}
 
 		protected ScopeInfo host_scope;
-		// protected CapturedScope scope_instance;
 		protected ScopeInitializer scope_initializer;
 
 		Hashtable locals = new Hashtable ();
@@ -236,12 +234,6 @@ namespace Mono.CSharp {
 		public ScopeInfo HostScope {
 			get { return host_scope != null ? host_scope : this; }
 		}
-
-#if FIXME
-		public Variable ScopeInstance {
-			get { return scope_instance; }
-		}
-#endif
 
 		public void EmitScopeInstance (EmitContext ec)
 		{
@@ -307,60 +299,18 @@ namespace Mono.CSharp {
 			scope.EmitScopeInstance (ec);
 
 			if (toplevel.AnonymousContainer != null) {
-				if (toplevel.AnonymousContainer.Scope != scope.HostScope) {
-					Report.Debug (128, "EMIT SCOPE INSTANCE #1",
-						      scope, toplevel.AnonymousContainer.Scope,
-						      scope.HostScope);
-
-#if FIXME
-					ec.ig.Emit (OpCodes.Neg);
-					ec.ig.Emit (OpCodes.Neg);
-					ec.ig.Emit (OpCodes.Neg);
-					ec.ig.Emit (OpCodes.Neg);
-					ec.ig.Emit (OpCodes.Neg);
-#endif
-				}
-
 				ScopeInfo host = toplevel.AnonymousContainer.Scope;
 				Variable the_scope = (Variable) host.scopes [scope];
 				Report.Debug (128, "EMIT SCOPE INSTANCE #2", host, scope, the_scope);
 				if (the_scope != null)
 					the_scope.Emit (ec);
-
-#if FIXME
-				if (scope.ScopeInstance != null)
-					scope.ScopeInstance.Emit (ec);
-#endif
 			}
-
-#if FIXME
-			root_scope.EmitScopeInstance (ec);
-			while (root_scope != scope.RootScope) {
-				ec.ig.Emit (OpCodes.Ldfld, root_scope.ParentLink.FieldBuilder);
-				root_scope = root_scope.ParentHost;
-
-				if (root_scope == null)
-					throw new InternalErrorException (
-						"Never found scope {0} starting at block {1}",
-						scope, ec.CurrentBlock.ID);
-			}
-#endif
-
-#if FIXME
-			if (scope != (ScopeInfo) scope.RootScope)
-				scope.ScopeInstance.Emit (ec);
-#endif
 		}
 
 		protected override bool DoResolveMembers ()
 		{
 			Report.Debug (64, "SCOPE INFO RESOLVE MEMBERS", this, GetType (), IsGeneric,
 				      Parent.IsGeneric, GenericMethod);
-
-#if FIXME
-			if (RootScope != this)
-				scope_instance = new CapturedScope (RootScope, this);
-#endif
 
 			return base.DoResolveMembers ();
 		}
@@ -371,11 +321,6 @@ namespace Mono.CSharp {
 			Report.Debug (128, "CAPTURE SCOPE", this, child, child.TypeBuilder);
 			if (child == this)
 				throw new InternalErrorException ();
-#if FIXME
-			if (child.host_scope != null)
-				throw new InternalErrorException ();
-			child.host_scope = this;
-#endif
 			CapturedScope captured = new CapturedScope (this, child);
 			scopes.Add (child, captured);
 			return captured;
@@ -671,36 +616,14 @@ namespace Mono.CSharp {
 			{
 				Report.Debug (128, "EMIT SCOPE INITIALIZER STATEMENT", this, id,
 					      Scope, scope_instance, ec);
-				// Report.StackTrace ();
 
 				ec.ig.Emit (OpCodes.Nop);
 				ec.ig.Emit (OpCodes.Ldc_I4, id);
 				ec.ig.Emit (OpCodes.Pop);
 				ec.ig.Emit (OpCodes.Nop);
 
-#if FIXME
-				if (Scope != Scope.RootScope)
-					Scope.RootScope.EmitScopeInstance (ec);
-				else if (Scope.ScopeInstance != null)
-					ec.ig.Emit (OpCodes.Ldarg_0);
-#endif
 				EmitScopeConstructor (ec);
-#if FIXME
-				if (Scope.ScopeInstance != null)
-					Scope.ScopeInstance.EmitAssign (ec);
-				else
-#endif
-					ec.ig.Emit (OpCodes.Stloc, scope_instance);
-
-#if FIXME
-				if (Scope.ID == 5) {
-					ec.ig.Emit (OpCodes.Neg);
-					ec.ig.Emit (OpCodes.Neg);
-					ec.ig.Emit (OpCodes.Neg);
-					ec.ig.Emit (OpCodes.Neg);
-					ec.ig.Emit (OpCodes.Neg);
-				}
-#endif
+				ec.ig.Emit (OpCodes.Stloc, scope_instance);
 
 				foreach (CapturedScope scope in Scope.scopes.Values) {
 					Report.Debug (128, "EMIT SCOPE INIT #5", this, Scope,
@@ -1549,16 +1472,10 @@ namespace Mono.CSharp {
 			scope.CheckMembersDefined ();
 
 			ArrayList scopes = new ArrayList ();
-			//if (b != container) {
-				for (b = b.Parent; b != null; b = b.Parent) {
-					if (b.ScopeInfo != null)
-						scopes.Add (b.ScopeInfo);
-#if FIXME
-					if (b == container)
-						break;
-#endif
-				}
-				//}
+			for (b = b.Parent; b != null; b = b.Parent) {
+				if (b.ScopeInfo != null)
+					scopes.Add (b.ScopeInfo);
+			}
 
 			foreach (ScopeInfo si in scopes) {
 				if (!si.Define ())
@@ -1571,17 +1488,6 @@ namespace Mono.CSharp {
 			Report.Debug (128, "CREATE METHOD HOST", this, Block, container,
 				      RootScope, scope, scopes, Location,
 				      ContainerAnonymousMethod);
-
-#if FIXME
-			if (ContainerAnonymousMethod != null) {
-				ContainerAnonymousMethod.Scope.CaptureScope (scope);
-			}
-
-			if (!scope.Define ())
-				throw new InternalErrorException ();
-			if (scope.DefineType () == null)
-				throw new InternalErrorException ();
-#endif
 
 			return new AnonymousMethodMethod (
 				this, scope, generic_method, new TypeExpression (ReturnType, Location),
