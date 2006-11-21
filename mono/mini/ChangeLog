@@ -1,5 +1,18 @@
 2006-11-20  Mark Mason  <mason@broadcom.com>
 
+	* Makefile.am: remove mini-codegen.c from list of MIPS sources
+	* mini.c: Allow GET_CONTEXT to be specified by the arch port
+	* mini.h: Added declaration for mono_print_ins()
+	* mini-codegen.c: added ins_spec initializer for MIPS
+	* mini-codegen.c (mono_call_inst_add_outarg_reg): added asserts for
+	vreg to be virtual and hreg to be non-virtual.
+	* mini-codegen.c (mono_spillvar_offset): assert if MIPS - spilling
+	is not yet working/implemented correctly.
+	* mini-codegen.c (print_ins): rename to mono_print_ins(), make
+	non-static, fixup calls to print_ins() from other parts in the file.
+
+2006-11-20  Mark Mason  <mason@broadcom.com>
+
 	* basic-calls.cs: added tests for passing structures as arguments
 	to calls.
 
