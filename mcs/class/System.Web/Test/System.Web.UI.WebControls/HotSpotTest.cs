@@ -171,7 +171,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
         [Test]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        [Category ("NotWorking")]
         public void HotSpot_ExpAccessKey()
         {
             // The specified access key is neither a a null reference, 
@@ -182,7 +181,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
         [Test]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        [Category ("NotWorking")]
         public void HotSpot_ExpHotSpotMode()
         {
             // The specified type is not one of the HotSpotMode enumeration values.

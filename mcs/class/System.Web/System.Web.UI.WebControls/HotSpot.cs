@@ -50,7 +50,10 @@ namespace System.Web.UI.WebControls
 				return o != null ? (string) o : "";
 			}
 			set {
-				viewState ["AccessKey"] = value;
+				if (value == null || value.Length < 2)
+					viewState ["AccessKey"] = value;
+				else
+					throw new ArgumentOutOfRangeException ("value", "AccessKey can only be null, empty or a single character");
 			}
 		}
 		
@@ -78,6 +81,8 @@ namespace System.Web.UI.WebControls
 				return o != null ? (HotSpotMode) o : HotSpotMode.NotSet;
 			}
 			set {
+				if ((int) value < 0 || (int) value > 3)
+					throw new ArgumentOutOfRangeException ("value");
 				viewState ["HotSpotMode"] = value;
 			}
 		}

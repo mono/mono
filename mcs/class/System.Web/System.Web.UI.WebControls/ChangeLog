@@ -1,5 +1,10 @@
 2006-11-21 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* HotSpot.cs: fixed: AccessKey and HotSpotMode 
+	throw ArgumentOutOfRangeException.
+
+2006-11-21 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* ControlParameter.cs: fixed: Evaluate method 
 	throws exceptions correctly.
 
