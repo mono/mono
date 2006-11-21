@@ -121,6 +121,8 @@ namespace System.Windows.Forms
 			MouseMove += new MouseEventHandler (ToolBar_MouseMove);
 			MouseUp += new MouseEventHandler (ToolBar_MouseUp);
 
+			TabStop = false;
+			
 			SetStyle (ControlStyles.UserPaint, false);
 			SetStyle (ControlStyles.FixedHeight, true);
 		}

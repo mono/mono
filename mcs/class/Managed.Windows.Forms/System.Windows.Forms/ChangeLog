@@ -1,3 +1,8 @@
+2006-11-21  Everaldo Canuto  <everaldo@simios.org>
+
+	* ToolBar.cs: Set default value for TabStop to false in
+	constructor, it fixes remaining behavior of bug #79863.
+
 2006-11-21  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* MdiWindowManager.cs:
