@@ -1319,17 +1319,18 @@ namespace Mono.CSharp {
 
 			method = DoCreateMethodHost (ec);
 
-			if (!Scope.Define ())
-				throw new InternalErrorException ();
-			if (Scope.DefineType () == null)
-				throw new InternalErrorException ();
+			if (Scope != null) {
+				if (!Scope.Define ())
+					throw new InternalErrorException ();
+				if (Scope.DefineType () == null)
+					throw new InternalErrorException ();
+			}
 
-			if (RootScope != null)
+			if (Scope != null)
 				return true;
 
 			if (!method.ResolveMembers ())
 				return false;
-			return true;
 			return method.Define ();
 		}
 
@@ -1469,12 +1470,15 @@ namespace Mono.CSharp {
 				}
 			}
 
-			scope.CheckMembersDefined ();
+			if (scope != null)
+				scope.CheckMembersDefined ();
 
 			ArrayList scopes = new ArrayList ();
-			for (b = b.Parent; b != null; b = b.Parent) {
-				if (b.ScopeInfo != null)
-					scopes.Add (b.ScopeInfo);
+			if (b != null) {
+				for (b = b.Parent; b != null; b = b.Parent) {
+					if (b.ScopeInfo != null)
+						scopes.Add (b.ScopeInfo);
+				}
 			}
 
 			foreach (ScopeInfo si in scopes) {
