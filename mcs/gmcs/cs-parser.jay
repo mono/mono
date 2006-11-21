@@ -279,6 +279,7 @@ namespace Mono.CSharp
 %token CLOSE_PARENS_MINUS
 %token DEFAULT_OPEN_PARENS
 %token GENERIC_DIMENSION
+%token DEFAULT_COLON
 
 /* Add precedence rules to solve dangling else s/r conflict */
 %nonassoc LOWPREC
@@ -4391,7 +4392,7 @@ switch_labels
 
 switch_label
 	: CASE constant_expression COLON 	{ $$ = new SwitchLabel ((Expression) $2, (Location) $1); }
-	| DEFAULT COLON				{ $$ = new SwitchLabel (null, (Location) $2); }
+	| DEFAULT_COLON				{ $$ = new SwitchLabel (null, (Location) $1); }
 	| error {
 		Report.Error (
 			1523, GetLocation ($1), 

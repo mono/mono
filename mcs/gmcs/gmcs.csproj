@@ -82,7 +82,9 @@
       <Link>convert.cs</Link>
     </Compile>
     <Compile Include="cs-parser.cs" />
-    <Compile Include="cs-tokenizer.cs" />
+    <Compile Include="..\mcs\cs-tokenizer.cs">
+      <Link>cs-tokenizer.cs</Link>
+    </Compile>
     <Compile Include="..\mcs\decl.cs">
       <Link>decl.cs</Link>
     </Compile>

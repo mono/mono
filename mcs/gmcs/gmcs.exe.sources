@@ -3,7 +3,7 @@
 ../mcs/assign.cs
 ../mcs/attribute.cs
 ../mcs/driver.cs
-cs-tokenizer.cs
+../mcs/cs-tokenizer.cs
 ../mcs/cfold.cs
 ../mcs/class.cs
 ../mcs/codegen.cs

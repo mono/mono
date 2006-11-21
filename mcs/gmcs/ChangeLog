@@ -1,3 +1,9 @@
+2006-11-21  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-parser.jay: Tiny change to work with mcs tokenizer.
+
+	* cs-tokenizer.cs: Remove after unification with mcs.
+
 2006-10-28  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #78998
