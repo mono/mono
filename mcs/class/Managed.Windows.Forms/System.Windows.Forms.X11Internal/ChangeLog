@@ -1,5 +1,9 @@
 2006-11-21  Chris Toshok  <toshok@ximian.com>
 
+	* Xlib.cs: remove the static keyword from the class
+
+2006-11-21  Chris Toshok  <toshok@ximian.com>
+
 	* XplatUIX11-new.cs: implement the Idle event by adding/removing
 	it from the applicable X11ThreadQueue and remove the OnIdle
 	method.  Also, implement the new InvalidateNC method.

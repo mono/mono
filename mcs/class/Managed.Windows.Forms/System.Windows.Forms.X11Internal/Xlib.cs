@@ -27,7 +27,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms.X11Internal {
 
-	internal static class Xlib {
+	internal class Xlib {
 		const string libX11 = "X11";
 		const string gdiplus = "gdiplus";
 
