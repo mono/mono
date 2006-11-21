@@ -61,33 +61,18 @@ namespace System.Windows.Forms {
 
 			#region Properties
 			public ApplicationContext Context {
-				get {
-					return context;
-				}
-
-				set {
-					context = value;
-				}
+				get { return context; }
+				set { context = value; }
 			}
 
 			public bool MessageLoop {
-				get {
-					return messageloop_started;
-				}
-
-				set {
-					messageloop_started = value;
-				}
+				get { return messageloop_started; }
+				set { messageloop_started = value; }
 			}
 
 			public bool HandlingException {
-				get {
-					return handling_exception;
-				}
-
-				set {
-					handling_exception = value;
-				}
+				get { return handling_exception; }
+				set { handling_exception = value; }
 
 			}
 
@@ -405,6 +390,14 @@ namespace System.Windows.Forms {
 		}
 
 		public static void OnThreadException(Exception t) {
+			if (MWFThread.Current.HandlingException) {
+				/* we're already handling an exception and we got
+				   another one?  print it out and exit, this means
+				   we've got a runtime/SWF bug. */
+				Console.WriteLine (t);
+				Application.Exit();
+			}
+
 			MWFThread.Current.HandlingException = true;
 
 			if (Application.ThreadException != null) {
@@ -439,30 +432,6 @@ namespace System.Windows.Forms {
 
 		public static void Run(ApplicationContext context) {
 			RunLoop(false, context);
-		}
-
-		static void DispatchMessage (ref MSG msg)
-		{
-			try {
-				XplatUI.DispatchMessage(ref msg);
-			}
-#if USE_EXCEPTION_DIALOG
-			catch (Exception e) {
-				if (MWFThread.Current.HandlingException) {
-					/* we're already handling an exception and we got
-					   another one?  print it out and exit, this means
-					   we've got a runtime/SWF bug. */
-					Console.WriteLine (e);
-					Application.Exit();
-				}
-
-				Application.OnThreadException (e);
-			}
-#else
-			catch {
-				throw;
-			}
-#endif
 		}
 
 		internal static void RunLoop(bool Modal, ApplicationContext context) {
@@ -551,27 +520,25 @@ namespace System.Windows.Forms {
 				}
 
 				switch((Msg)msg.message) {
-					case Msg.WM_KEYDOWN:
-					case Msg.WM_SYSKEYDOWN:
-					case Msg.WM_CHAR:
-					case Msg.WM_SYSCHAR:
-					case Msg.WM_KEYUP:
-					case Msg.WM_SYSKEYUP: {
-						Message m;
-						Control c;
+				case Msg.WM_KEYDOWN:
+				case Msg.WM_SYSKEYDOWN:
+				case Msg.WM_CHAR:
+				case Msg.WM_SYSCHAR:
+				case Msg.WM_KEYUP:
+				case Msg.WM_SYSKEYUP:
+					Message m;
+					Control c;
 
-						m = Message.Create(msg.hwnd, (int)msg.message, msg.wParam, msg.lParam);
-						c = Control.FromHandle(msg.hwnd);
-						if ((c != null) && !c.PreProcessMessage(ref m)) {
-							goto default;
-						}
-						break;
+					m = Message.Create(msg.hwnd, (int)msg.message, msg.wParam, msg.lParam);
+					c = Control.FromHandle(msg.hwnd);
+					if ((c != null) && !c.PreProcessMessage(ref m)) {
+						goto default;
 					}
-					default: {
-						XplatUI.TranslateMessage(ref msg);
-						DispatchMessage (ref msg);
-						break;
-					}
+					break;
+				default:
+					XplatUI.TranslateMessage(ref msg);
+					XplatUI.DispatchMessage(ref msg);
+					break;
 				}
 
 				// Handle exit, Form might have received WM_CLOSE and set 'closing' in response
