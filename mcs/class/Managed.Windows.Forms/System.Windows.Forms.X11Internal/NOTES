@@ -1,0 +1,5 @@
+Application.Idle is invoked on the same thread used to add the event
+
+our hacky double buffering only works on the client area, not the nc
+area.  need to move to a more XplatUI solution involving server-side drawing surfaces
+(pixmaps in the X case).
