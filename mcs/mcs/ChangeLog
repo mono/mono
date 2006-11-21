@@ -1,3 +1,7 @@
+2006-11-21  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-tokenizer.cs: Merged with gmcs version.
+
 2006-11-20  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-tokenizer.cs,

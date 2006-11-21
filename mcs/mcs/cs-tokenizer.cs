@@ -43,6 +43,8 @@ namespace Mono.CSharp
 		bool handle_get_set = false;
 		bool handle_remove_add = false;
 		bool handle_assembly = false;
+		bool handle_constraints = false;
+		bool handle_typeof = false;
 		Location current_location;
 		Location current_comment_location = Location.Null;
 		ArrayList escapedIdentifiers = new ArrayList ();
@@ -151,6 +153,26 @@ namespace Mono.CSharp
 			}
 		}
 
+		public bool ConstraintsParsing {
+			get {
+				return handle_constraints;
+			}
+
+			set {
+				handle_constraints = value;
+			}
+		}
+
+		public bool TypeOfParsing {
+			get {
+				return handle_typeof;
+			}
+
+			set {
+				handle_typeof = value;
+			}
+		}
+
 		public XmlCommentState doc_state {
 			get { return xmlDocState; }
 			set {
@@ -170,7 +192,6 @@ namespace Mono.CSharp
 			return false;
 		}
 
-		
 		//
 		// Class variables
 		// 
@@ -235,6 +256,58 @@ namespace Mono.CSharp
 			}
 		}
 
+		//
+		// This is used when the tokenizer needs to save
+		// the current position as it needs to do some parsing
+		// on its own to deamiguate a token in behalf of the
+		// parser.
+		//
+		Stack position_stack = new Stack (2);
+		class Position {
+			public int position;
+			public int ref_line;
+			public int col;
+			public int putback_char;
+			public int previous_col;
+#if GMCS_SOURCES
+			public int parsing_generic_less_than;
+#endif			
+			public Position (Tokenizer t)
+			{
+				position = t.reader.Position;
+				ref_line = t.ref_line;
+				col = t.col;
+				putback_char = t.putback_char;
+				previous_col = t.previous_col;
+#if GMCS_SOURCES
+				parsing_generic_less_than = t.parsing_generic_less_than;
+#endif
+			}
+		}
+		
+		public void PushPosition ()
+		{
+			position_stack.Push (new Position (this));
+		}
+
+		public void PopPosition ()
+		{
+			Position p = (Position) position_stack.Pop ();
+
+			reader.Position = p.position;
+			ref_line = p.ref_line;
+			col = p.col;
+			putback_char = p.putback_char;
+			previous_col = p.previous_col;
+
+		}
+
+		// Do not reset the position, ignore it.
+		public void DiscardPosition ()
+		{
+			position_stack.Pop ();
+		}
+		
 		static void AddKeyword (string kw, int token) {
 			keywordStrings.Add (kw, kw);
 			if (keywords [kw.Length] == null) {
@@ -331,6 +404,9 @@ namespace Mono.CSharp
 			AddKeyword ("volatile", Token.VOLATILE);
 			AddKeyword ("while", Token.WHILE);
 			AddKeyword ("partial", Token.PARTIAL);
+#if GMCS_SOURCE
+			AddKeyword ("where", Token.WHERE);
+#endif
 		}
 
 		//
@@ -367,7 +443,10 @@ namespace Mono.CSharp
 				return -1;
 			if (handle_assembly == false && res == Token.ASSEMBLY)
 				return -1;
-
+#if GMCS_SOURCE
+			if (handle_constraints == false && res == Token.WHERE)
+				return -1;
+#endif
 			return res;
 			
 		}
@@ -411,7 +490,7 @@ namespace Mono.CSharp
 
 		static bool is_identifier_start_character (char c)
 		{
-			return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_' || Char.IsLetter (c);
+			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || Char.IsLetter (c);
 		}
 
 		static bool is_identifier_part_character (char c)
@@ -439,6 +518,112 @@ namespace Mono.CSharp
 			return true;
 		}
 
+#if GMCS_SOURCE
+		bool parse_generic_dimension (out int dimension)
+		{
+			dimension = 1;
+
+		again:
+			int the_token = token ();
+			if (the_token == Token.OP_GENERICS_GT)
+				return true;
+			else if (the_token == Token.COMMA) {
+				dimension++;
+				goto again;
+			}
+
+			return false;
+		}
+
+		bool parse_less_than ()
+		{
+		start:
+			int the_token = token ();
+			if (the_token == Token.OPEN_BRACKET) {
+				do {
+					the_token = token ();
+				} while (the_token != Token.CLOSE_BRACKET);
+				the_token = token ();
+			}
+			switch (the_token) {
+			case Token.IDENTIFIER:
+			case Token.OBJECT:
+			case Token.STRING:
+			case Token.BOOL:
+			case Token.DECIMAL:
+			case Token.FLOAT:
+			case Token.DOUBLE:
+			case Token.SBYTE:
+			case Token.BYTE:
+			case Token.SHORT:
+			case Token.USHORT:
+			case Token.INT:
+			case Token.UINT:
+			case Token.LONG:
+			case Token.ULONG:
+			case Token.CHAR:
+			case Token.VOID:
+				break;
+
+			default:
+				return false;
+			}
+		again:
+			the_token = token ();
+
+			if (the_token == Token.OP_GENERICS_GT)
+				return true;
+			else if ((the_token == Token.COMMA) || (the_token == Token.DOT))
+				goto start;
+			else if (the_token == Token.INTERR || the_token == Token.STAR)
+				goto again;
+			else if (the_token == Token.OP_GENERICS_LT) {
+				if (!parse_less_than ())
+					return false;
+				goto again;
+			} else if (the_token == Token.OPEN_BRACKET) {
+			rank_specifiers:
+				the_token = token ();
+				if (the_token == Token.CLOSE_BRACKET)
+					goto again;
+				else if (the_token == Token.COMMA)
+					goto rank_specifiers;
+				return false;
+			}
+
+			return false;
+		}
+
+		int parsing_generic_less_than = 0;
+
+		public void PutbackNullable ()
+		{
+			if (nullable_pos < 0)
+				throw new Exception ();
+
+			current_token = -1;
+			val = null;
+			reader.Position = nullable_pos;
+
+			putback_char = '?';
+		}
+
+		public void PutbackCloseParens ()
+		{
+			putback_char = ')';
+		}
+
+
+		int nullable_pos = -1;
+
+		public void CheckNullable (bool is_nullable)
+		{
+			if (is_nullable)
+				nullable_pos = reader.Position;
+			else
+				nullable_pos = -1;
+		}
+#endif
 		int is_punct (char c, ref bool doread)
 		{
 			int d;
@@ -468,19 +653,14 @@ namespace Mono.CSharp
 
 				--deambiguate_close_parens;
 
-				// Save current position and parse next token.
-				int old = reader.Position;
-				int old_ref_line = ref_line;
-				int old_col = col;
+				PushPosition ();
 
 				// disable preprocessing directives when peeking
 				process_directives = false;
-				int new_token = token ();
+				int new_token = xtoken ();
 				process_directives = true;
-				reader.Position = old;
-				ref_line = old_ref_line;
-				col = old_col;
-				putback_char = -1;
+
+				PopPosition ();
 
 				if (new_token == Token.OPEN_PARENS)
 					return Token.CLOSE_PARENS_OPEN_PARENS;
@@ -503,7 +683,71 @@ namespace Mono.CSharp
 			case '?':
 				return Token.INTERR;
 			}
+#if GMCS_SOURCE
+			if (c == '<') {
+				if (parsing_generic_less_than++ > 0)
+					return Token.OP_GENERICS_LT;
 
+				if (handle_typeof) {
+					int dimension;
+					PushPosition ();
+					if (parse_generic_dimension (out dimension)) {
+						val = dimension;
+						DiscardPosition ();
+						return Token.GENERIC_DIMENSION;
+					}
+					PopPosition ();
+				}
+
+				// Save current position and parse next token.
+				PushPosition ();
+				bool is_generic_lt = parse_less_than ();
+				PopPosition ();
+
+				if (is_generic_lt) {
+					parsing_generic_less_than++;
+					return Token.OP_GENERICS_LT;
+				} else
+					parsing_generic_less_than = 0;
+
+				d = peekChar ();
+				if (d == '<'){
+					getChar ();
+					d = peekChar ();
+
+					if (d == '='){
+						doread = true;
+						return Token.OP_SHIFT_LEFT_ASSIGN;
+					}
+					return Token.OP_SHIFT_LEFT;
+				} else if (d == '='){
+					doread = true;
+					return Token.OP_LE;
+				}
+				return Token.OP_LT;
+			} else if (c == '>') {
+				if (parsing_generic_less_than > 0) {
+					parsing_generic_less_than--;
+					return Token.OP_GENERICS_GT;
+				}
+
+				d = peekChar ();
+				if (d == '>'){
+					getChar ();
+					d = peekChar ();
+
+					if (d == '='){
+						doread = true;
+						return Token.OP_SHIFT_RIGHT_ASSIGN;
+					}
+					return Token.OP_SHIFT_RIGHT;
+				} else if (d == '='){
+					doread = true;
+					return Token.OP_GE;
+				}
+				return Token.OP_GT;
+			}
+#endif
 			d = peekChar ();
 			if (c == '+'){
 				
@@ -610,6 +854,7 @@ namespace Mono.CSharp
 				return Token.CARRET;
 			}
 
+#if !GMCS_SOURCE
 			if (c == '<'){
 				if (d == '<'){
 					getChar ();
@@ -643,6 +888,7 @@ namespace Mono.CSharp
 				}
 				return Token.OP_GT;
 			}
+#endif
 			if (c == ':'){
 				if (d == ':'){
 					doread = true;
@@ -668,11 +914,6 @@ namespace Mono.CSharp
 			deambiguate_close_parens++;
 		}
 
-		void Error_NumericConstantTooLong ()
-		{
-			Report.Error (1021, Location, "Numeric constant too long");			
-		}
-		
 		bool decimal_digits (int c)
 		{
 			int d;
@@ -1101,8 +1342,7 @@ namespace Mono.CSharp
 			if (putback_char != -1) {
 				x = putback_char;
 				putback_char = -1;
-			}
-			else
+			} else
 				x = reader.Read ();
 			if (x == '\n') {
 				line++;
@@ -1192,6 +1432,9 @@ namespace Mono.CSharp
 			case Token.TYPEOF:
 			case Token.UNCHECKED:
 			case Token.UNSAFE:
+#if GMCS_SOURCE
+			case Token.DEFAULT:
+#endif
 
 				//
 				// These can be part of a member access
@@ -1213,10 +1456,26 @@ namespace Mono.CSharp
 		}
 
 		public int token ()
-                {
+		{
 			current_token = xtoken ();
-                        return current_token;
-                }
+
+#if GMCS_SOURCE
+			if (current_token != Token.DEFAULT)
+				return current_token;
+
+			PushPosition();
+			int c = xtoken();
+			if (c == -1)
+				current_token = Token.ERROR;
+			else if (c == Token.OPEN_PARENS)
+				current_token = Token.DEFAULT_OPEN_PARENS;
+			else if (c == Token.COLON)
+				current_token = Token.DEFAULT_COLON;
+			else
+				PopPosition();
+#endif
+			return current_token;
+		}
 
 		static StringBuilder static_cmd_arg = new System.Text.StringBuilder ();
 		
@@ -1231,8 +1490,7 @@ namespace Mono.CSharp
 			// skip over white space
 			while ((c = getChar ()) != -1 && (c != '\n') && ((c == '\r') || (c == ' ') || (c == '\t')))
 				;
-
-
+				
 			while ((c != -1) && (c != '\n') && (c != ' ') && (c != '\t') && (c != '\r')){
 				if (is_identifier_part_character ((char) c)){
 					static_cmd_arg.Append ((char) c);
@@ -1291,7 +1549,7 @@ namespace Mono.CSharp
 				//
 				return true;
 			}
-
+			
 			try {
 				int pos;
 
@@ -1577,6 +1835,11 @@ namespace Mono.CSharp
 
 			return v;
 		}
+
+		void Error_NumericConstantTooLong ()
+		{
+			Report.Error (1021, Location, "Numeric constant too long");			
+		}
 		
 		void Error_InvalidDirective ()
 		{
@@ -1856,22 +2119,14 @@ namespace Mono.CSharp
 
 			if (res == Token.PARTIAL) {
 				// Save current position and parse next token.
-				int old = reader.Position;
-				int old_putback = putback_char;
-				int old_ref_line = ref_line;
-				int old_col = col;
-
-				putback_char = -1;
+				PushPosition ();
 
 				int next_token = token ();
 				bool ok = (next_token == Token.CLASS) ||
 					(next_token == Token.STRUCT) ||
 					(next_token == Token.INTERFACE);
 
-				reader.Position = old;
-				ref_line = old_ref_line;
-				col = old_col;
-				putback_char = old_putback;
+				PopPosition ();
 
 				if (ok)
 					return res;
@@ -2343,3 +2598,4 @@ namespace Mono.CSharp
 		Error
 	}
 }
+
