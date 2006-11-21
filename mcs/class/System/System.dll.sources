@@ -303,6 +303,7 @@ System.ComponentModel/IRevertibleChangeTracking.cs
 System.ComponentModel/IRaiseItemChangedEvents.cs
 System.ComponentModel/ISite.cs
 System.ComponentModel/ISupportInitialize.cs
+System.ComponentModel/ISupportInitializeNotification.cs
 System.ComponentModel/ISynchronizeInvoke.cs
 System.ComponentModel/ITypeDescriptorContext.cs
 System.ComponentModel/ITypedList.cs
