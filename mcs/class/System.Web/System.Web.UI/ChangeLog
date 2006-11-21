@@ -1,3 +1,7 @@
+2006-11-21 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DataSourceControl.cs: fixed: Focus(), EnableTheming 
+
 2006-11-21  Marek Habersack  <grendello@gmail.com>
 
 	* Control.cs: Make ClientIDSeparator private for !NET_2_0

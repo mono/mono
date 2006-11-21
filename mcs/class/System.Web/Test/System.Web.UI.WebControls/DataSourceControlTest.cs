@@ -84,7 +84,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void DataSourceControl_DefaultPropertyNotWorking ()
 		{
 			PokerDataSource ds = new PokerDataSource ();
@@ -106,7 +105,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void DataSourceControl_Focus ()
 		{
@@ -152,7 +150,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void DataSourceControl_EnableThemingException ()
 		{

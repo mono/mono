@@ -67,11 +67,10 @@ namespace System.Web.UI {
 			return base.FindControl (id);
 		}
 
-		[MonoTODO ("why override?")]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override void Focus ()
 		{
-			base.Focus();
+			throw new NotSupportedException ();
 		}
 
 		protected abstract DataSourceView GetView (string viewName);
@@ -129,13 +128,12 @@ namespace System.Web.UI {
 			get { return base.Controls; }
 		}
 
-		[MonoTODO ("why override?")]
 		[DefaultValue (false)]
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override bool EnableTheming {
-			get { return base.EnableTheming; }
-			set { base.EnableTheming = value; }
+			get { return false; }
+			set { throw new NotSupportedException (); }
 		}
 
 		[MonoTODO ("why override?")]

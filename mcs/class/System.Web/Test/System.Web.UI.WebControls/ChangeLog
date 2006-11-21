@@ -1,5 +1,9 @@
 2006-11-21  Igor Zelmanovich   <igorz@mainsoft.com>
 
+	* DataSourceControlTest.cs: removed NotWorking attributes.
+
+2006-11-21  Igor Zelmanovich   <igorz@mainsoft.com>
+
 	* ControlParameterTest.cs: removed NotWorking attributes.
 
 2006-11-21  Igor Zelmanovich   <igorz@mainsoft.com>
