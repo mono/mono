@@ -201,7 +201,7 @@ namespace System.Web.UI
 #if NET_2_0
 		protected char ClientIDSeparator
 #else
-		internal protected char ClientIDSeparator
+		char ClientIDSeparator
 #endif		
 		{
 			get {
