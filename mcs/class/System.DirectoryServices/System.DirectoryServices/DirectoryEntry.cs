@@ -574,7 +574,7 @@ namespace System.DirectoryServices
 				string defaultHost = (string) AppDomain.CurrentDomain.GetData (DEFAULT_LDAP_HOST);
 
 				if (defaultHost == null) {
-					NameValueCollection config = (NameValueCollection) ConfigurationSettings.GetConfig ("System.DirectoryServices/Settings");
+					NameValueCollection config = (NameValueCollection) ConfigurationSettings.GetConfig ("mainsoft.directoryservices/settings");
 					if (config != null) 
 						defaultHost = config ["servername"];
 
@@ -593,7 +593,7 @@ namespace System.DirectoryServices
 				string defaultPortStr = (string) AppDomain.CurrentDomain.GetData (DEFAULT_LDAP_PORT);
 
 				if (defaultPortStr == null) {
-					NameValueCollection config = (NameValueCollection) ConfigurationSettings.GetConfig ("System.DirectoryServices/Settings");
+					NameValueCollection config = (NameValueCollection) ConfigurationSettings.GetConfig ("mainsoft.directoryservices/settings");
 					if (config != null)
 						defaultPortStr = config ["port"];
 
