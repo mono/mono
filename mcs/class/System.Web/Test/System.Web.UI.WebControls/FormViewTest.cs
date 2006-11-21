@@ -694,6 +694,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+#if TARGET_JVM //BUG #6484
+		[Category ("NotWorking")]
+#endif
 		public void FormView_PrepareControlHierarcy ()
 		{
 			Poker fv = new Poker ();
@@ -1409,6 +1412,10 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 
 		[Test]
+		[Category ("NunitWeb")]
+#if TARGET_JVM //BUG #6518
+		[Category ("NotWorking")]
+#endif
 		public void FormView_RenderSimpleTemplate()
 		{
 			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();			
@@ -1432,6 +1439,10 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		}
 
 		[Test]
+		[Category ("NunitWeb")]
+#if TARGET_JVM //BUG #6518
+		[Category ("NotWorking")]
+#endif
 		public void FormView_RenderFooterAndPager()
 		{
 			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();			
@@ -1460,6 +1471,9 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 		[Test]
 		[Category ("NunitWeb")]
+#if TARGET_JVM //BUG #6518
+		[Category ("NotWorking")]
+#endif
 		public void FormView_RenderWithHeader()
 		{
 			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();
@@ -1483,6 +1497,9 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 		[Test]
 		[Category ("NunitWeb")]
+#if TARGET_JVM //BUG #6518
+		[Category ("NotWorking")]
+#endif
 		public void FormView_Render ()
 		{
 			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();
@@ -1800,6 +1817,9 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		}
 
 		[Test]
+#if TARGET_JVM //BUG #6484
+		[Category("NotWorking")]
+#endif
 		public void FormView_CreateDataSourceSelectArguments2 () {
 			DataSourceView view;
 			Page p = new Page ();
@@ -1924,7 +1944,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			PostBackOptions options = ((IPostBackContainer) fv).GetPostBackOptions (null);
 		}
 	}
-
+	
 	public class TestMyData
 	{
 		static IList<int> str = new List<int> (new int[] { 1, 2, 3, 4, 5, 6 });
@@ -1953,7 +1973,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		}
 
 	}
-
+	
 	public class MyTemplate : ITemplate
 	{
 
