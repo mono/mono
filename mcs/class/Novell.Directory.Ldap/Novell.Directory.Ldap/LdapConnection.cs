@@ -1645,7 +1645,7 @@ namespace Novell.Directory.Ldap
 		{
 			get {
 				string securityMech = null;
-					NameValueCollection config = (NameValueCollection) ConfigurationSettings.GetConfig ("System.DirectoryServices/Settings");
+					NameValueCollection config = (NameValueCollection) ConfigurationSettings.GetConfig ("mainsoft.directoryservices/settings");
 					if (config != null) 
 						securityMech = config ["securitymech"];
 
@@ -1660,7 +1660,7 @@ namespace Novell.Directory.Ldap
 		{
 			get {
 				string securityAppName = null; 
-					NameValueCollection config = (NameValueCollection) ConfigurationSettings.GetConfig ("System.DirectoryServices/Settings");
+					NameValueCollection config = (NameValueCollection) ConfigurationSettings.GetConfig ("mainsoft.directoryservices/settings");
 					if (config != null) 
 						securityAppName = config ["securityappname"];
 
@@ -1675,7 +1675,7 @@ namespace Novell.Directory.Ldap
 		{
 			get {
 				string authenticationMech = null;
-				NameValueCollection config = (NameValueCollection) ConfigurationSettings.GetConfig ("System.DirectoryServices/Settings");
+				NameValueCollection config = (NameValueCollection) ConfigurationSettings.GetConfig ("mainsoft.directoryservices/settings");
 				if (config != null) 
 					authenticationMech = config ["authenticationmech"];
 
