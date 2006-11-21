@@ -382,7 +382,6 @@ namespace System.Web.UI.WebControls {
 
 			if (Attributes.Count > 0){
 				AddAttributesForSpan (w);
-				Attributes.AddAttributes (w);
 				need_span = true;
 			}
 
@@ -391,90 +390,69 @@ namespace System.Web.UI.WebControls {
 
 			TextAlign align = TextAlign;
 			if (align == TextAlign.Right) {
-				w.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
-				w.AddAttribute (HtmlTextWriterAttribute.Type, render_type);
-				w.AddAttribute (HtmlTextWriterAttribute.Name, NameAttribute);
-				InternalAddAttributesToRender (w);
-				if (Checked)
-					w.AddAttribute (HtmlTextWriterAttribute.Checked, "checked");
-
-				if (AutoPostBack){
-#if NET_2_0
-					w.AddAttribute (HtmlTextWriterAttribute.Onclick, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true));
-#else
-					w.AddAttribute (HtmlTextWriterAttribute.Onclick,
-							Page.ClientScript.GetPostBackEventReference (this, String.Empty));
-#endif
-					w.AddAttribute ("language", "javascript");
-				}
-
-				if (AccessKey.Length > 0)
-					w.AddAttribute (HtmlTextWriterAttribute.Accesskey, AccessKey);
-
-				if (TabIndex != 0)
-					w.AddAttribute (HtmlTextWriterAttribute.Tabindex,
-							     TabIndex.ToString (CultureInfo.InvariantCulture));
-
-				if (common_attrs != null)
-					common_attrs.AddAttributes (w);
-				w.RenderBeginTag (HtmlTextWriterTag.Input);
-				w.RenderEndTag ();
-				string text = Text;
-				if (text != "") {
-#if NET_2_0
-					if (labelAttributes != null)
-						labelAttributes.AddAttributes (w);
-#endif
-					w.AddAttribute (HtmlTextWriterAttribute.For, ClientID);
-					w.RenderBeginTag (HtmlTextWriterTag.Label);
-					w.Write (text);
-					w.RenderEndTag ();
-				}
+				RenderInput (w);
+				RenderLabel (w);
 			} else {
-				string text = Text;
-				if (text != "") {
-#if NET_2_0
-					if (labelAttributes != null)
-						labelAttributes.AddAttributes (w);
-#endif
-					w.AddAttribute (HtmlTextWriterAttribute.For, ClientID);
-					w.RenderBeginTag (HtmlTextWriterTag.Label);
-					w.Write (text);
-					w.RenderEndTag ();
-				}
-
-				w.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
-				w.AddAttribute (HtmlTextWriterAttribute.Type, render_type);
-				w.AddAttribute (HtmlTextWriterAttribute.Name, NameAttribute);
-				InternalAddAttributesToRender (w);
-				if (Checked)
-					w.AddAttribute (HtmlTextWriterAttribute.Checked, "checked");
-
-				if (AutoPostBack){
-#if NET_2_0
-					w.AddAttribute (HtmlTextWriterAttribute.Onclick, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true));
-#else
-					w.AddAttribute (HtmlTextWriterAttribute.Onclick,
-							Page.ClientScript.GetPostBackEventReference (this, String.Empty));
-#endif
-					w.AddAttribute ("language", "javascript");
-				}
-
-				if (AccessKey.Length > 0)
-					w.AddAttribute (HtmlTextWriterAttribute.Accesskey, AccessKey);
-
-				if (TabIndex != 0)
-					w.AddAttribute (HtmlTextWriterAttribute.Tabindex,
-							     TabIndex.ToString (NumberFormatInfo.InvariantInfo));
-
-				if (common_attrs != null)
-					common_attrs.AddAttributes (w);
-				w.RenderBeginTag (HtmlTextWriterTag.Input);
-				w.RenderEndTag ();
+				RenderLabel (w);
+				RenderInput (w);
 			}
 
 			if (need_span)
 				w.RenderEndTag ();
+		}
+
+		private void RenderInput (HtmlTextWriter w) {
+
+			if (ClientID != null && ClientID.Length > 0)
+				w.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
+			w.AddAttribute (HtmlTextWriterAttribute.Type, render_type);
+			string nameAttr = NameAttribute;
+			if (nameAttr != null && nameAttr.Length > 0)
+				w.AddAttribute (HtmlTextWriterAttribute.Name, nameAttr);
+			InternalAddAttributesToRender (w);
+#if NET_2_0
+			AddAttributesToRender (w);
+			if (inputAttributes != null)
+				inputAttributes.AddAttributes (w);
+#endif
+			if (Checked)
+				w.AddAttribute (HtmlTextWriterAttribute.Checked, "checked");
+
+			if (AutoPostBack) {
+#if NET_2_0
+				w.AddAttribute (HtmlTextWriterAttribute.Onclick, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true));
+#else
+					w.AddAttribute (HtmlTextWriterAttribute.Onclick,
+							Page.ClientScript.GetPostBackEventReference (this, String.Empty));
+#endif
+				w.AddAttribute ("language", "javascript");
+			}
+
+			if (AccessKey.Length > 0)
+				w.AddAttribute (HtmlTextWriterAttribute.Accesskey, AccessKey);
+
+			if (TabIndex != 0)
+				w.AddAttribute (HtmlTextWriterAttribute.Tabindex,
+							 TabIndex.ToString (NumberFormatInfo.InvariantInfo));
+
+			if (common_attrs != null)
+				common_attrs.AddAttributes (w);
+			w.RenderBeginTag (HtmlTextWriterTag.Input);
+			w.RenderEndTag ();
+		}
+
+		private void RenderLabel (HtmlTextWriter w) {
+			string text = Text;
+			if (text.Length > 0) {
+#if NET_2_0
+				if (labelAttributes != null)
+					labelAttributes.AddAttributes (w);
+#endif
+				w.AddAttribute (HtmlTextWriterAttribute.For, ClientID);
+				w.RenderBeginTag (HtmlTextWriterTag.Label);
+				w.Write (text);
+				w.RenderEndTag ();
+			}
 		}
 
 #if NET_2_0
@@ -536,7 +514,6 @@ namespace System.Web.UI.WebControls {
 
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
-			base.AddAttributesToRender (writer);
 		}
 #endif
 

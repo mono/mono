@@ -1,3 +1,7 @@
+2006-11-21  Igor Zelmanovich   <igorz@mainsoft.com>
+
+	* CheckBoxTest.cs: removed NotWorking attributes.
+
 2006-11-16  Igor Zelmanovich   <igorz@mainsoft.com>
 
 	* CreateUserWizardTest.cs: added test.
