@@ -124,7 +124,6 @@ namespace MonoTests.System.Web.UI.WebControls
         }
 
         [Test]
-        [Category ("NotWorking")]
         public void ImageMap_Defaults_Render()
         {
             PokerImageMap imageMap = new PokerImageMap();
@@ -149,7 +148,6 @@ namespace MonoTests.System.Web.UI.WebControls
         }
 
         [Test]
-        [Category ("NotWorking")]
         public void ImageMap_AssignedValues_RenderNavigateCircle()
         {
             // Circle.HotSpotMode = Navigate
@@ -171,7 +169,6 @@ namespace MonoTests.System.Web.UI.WebControls
         }
 
         [Test]
-        [Category ("NotWorking")]
         public void ImageMap_AssignedValues_RenderNavigateShapes()
         {
             // Rectangle/Polygon.HotSpotMode = Navigate 
@@ -345,7 +342,6 @@ namespace MonoTests.System.Web.UI.WebControls
         }
 
         [Test]
-        [Category ("NotWorking")]
         [Category("NunitWeb")]
         public void ImageMap_PostBackRectangle()
         {
@@ -362,7 +358,6 @@ namespace MonoTests.System.Web.UI.WebControls
         }
 
         [Test]
-        [Category ("NotWorking")]
         [Category("NunitWeb")]
         public void ImageMap_PostBackCircle()
         {
@@ -379,7 +374,6 @@ namespace MonoTests.System.Web.UI.WebControls
         }
 
         [Test]
-        [Category ("NotWorking")]
         [Category("NunitWeb")]
         public void ImageMap_PostBackPolygon()
         {

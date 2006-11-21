@@ -135,16 +135,17 @@ namespace System.Web.UI.WebControls
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
 			base.AddAttributesToRender (writer);
-			writer.AddAttribute (HtmlTextWriterAttribute.Usemap, "#ImageMap" + ClientID);
+			if (spots != null && spots.Count > 0)
+				writer.AddAttribute (HtmlTextWriterAttribute.Usemap, "#ImageMap" + ClientID);
 		}
 		
 		protected internal override void Render (HtmlTextWriter writer)
 		{
 			base.Render (writer);
-			writer.AddAttribute (HtmlTextWriterAttribute.Name, "ImageMap" + ClientID);
-			writer.RenderBeginTag (HtmlTextWriterTag.Map);
-			
-			if (spots != null) {
+
+			if (spots != null && spots.Count > 0) {
+				writer.AddAttribute (HtmlTextWriterAttribute.Name, "ImageMap" + ClientID);
+				writer.RenderBeginTag (HtmlTextWriterTag.Map);
 				for (int n=0; n<spots.Count; n++) {
 					HotSpot spot = spots [n];
 					writer.AddAttribute (HtmlTextWriterAttribute.Shape, spot.MarkupName);
@@ -162,9 +163,10 @@ namespace System.Web.UI.WebControls
 							writer.AddAttribute ("nohref", "true");
 							break;
 						case HotSpotMode.Navigate:
-							string target = spot.Target.Length > 0 ? spot.Target : Target; 
+							string target = spot.Target.Length > 0 ? spot.Target : Target;
+							if (!String.IsNullOrEmpty (target))
+								writer.AddAttribute (HtmlTextWriterAttribute.Target, target);
 							writer.AddAttribute (HtmlTextWriterAttribute.Href, spot.NavigateUrl);
-							writer.AddAttribute (HtmlTextWriterAttribute.Target, target);
 							break;
 						case HotSpotMode.PostBack:
 							writer.AddAttribute (HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackClientHyperlink (this, n.ToString()));
@@ -174,9 +176,8 @@ namespace System.Web.UI.WebControls
 					writer.RenderBeginTag (HtmlTextWriterTag.Area);
 					writer.RenderEndTag ();
 				}
+				writer.RenderEndTag ();
 			} 
-			
-			writer.RenderEndTag ();
 		}
 	}
 }

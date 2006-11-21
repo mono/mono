@@ -1,5 +1,9 @@
 2006-11-21  Igor Zelmanovich   <igorz@mainsoft.com>
 
+	* ImageMapTest.cs: removed NotWorking attributes.
+
+2006-11-21  Igor Zelmanovich   <igorz@mainsoft.com>
+
 	* HotSpotTest.cs: removed NotWorking attributes.
 
 2006-11-21  Igor Zelmanovich   <igorz@mainsoft.com>

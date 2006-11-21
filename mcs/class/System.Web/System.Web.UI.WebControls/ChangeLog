@@ -1,5 +1,9 @@
 2006-11-21 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* ImageMap.cs: fixed rendering.
+
+2006-11-21 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* HotSpot.cs: fixed: AccessKey and HotSpotMode 
 	throw ArgumentOutOfRangeException.
 
