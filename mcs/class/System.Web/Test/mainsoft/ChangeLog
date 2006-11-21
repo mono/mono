@@ -1,3 +1,6 @@
+2006-11-21 Yoni Klain <yonik@mainsoft.com>
+	* add new resources : adapters.browser; Theme2.skin for ControlTest.cs
+	
 2006-11-09 Yoni Klain <yonik@mainsoft.com>
 	* add new application for Web site administration
 	* new dir Mainsoft.Web.Administration 

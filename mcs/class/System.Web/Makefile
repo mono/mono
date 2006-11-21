@@ -82,6 +82,7 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/ReadOnlyPropertyBind.aspx \
 	Test/mainsoft/NunitWebResources/ReadOnlyPropertyControl.ascx \
 	Test/mainsoft/NunitWebResources/Theme1.skin \
+	Test/mainsoft/NunitWebResources/Theme2.skin \
 	Test/mainsoft/NunitWebResources/UrlProperty.aspx \
 	Test/mainsoft/NunitWebResources/UrlProperty.ascx \
 	Test/mainsoft/NunitWebResources/UrlProperty.ascx.cs \
@@ -120,6 +121,7 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/MasterTypeTest2.aspx \
 	Test/mainsoft/NunitWebResources/PageLifecycleTest.aspx \
 	Test/mainsoft/NunitWebResources/PageValidationTest.aspx \
+	Test/mainsoft/NunitWebResources/adapters.browser \
 	Test/mainsoft/MainsoftWebTest/nunitweb_config.xml 
 
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
