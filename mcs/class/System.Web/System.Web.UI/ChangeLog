@@ -1,5 +1,9 @@
 2006-11-21 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* DataSourceView.cs: fixed: constructor throws ArgumentNullException 
+
+2006-11-21 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Page.cs: fixed: PreviousPage property
 	when CrossPostBack is processed PreviousPage is initialized 
 	only if PreviousPage property is called.	 

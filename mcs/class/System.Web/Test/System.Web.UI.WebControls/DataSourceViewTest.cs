@@ -208,7 +208,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void DataSourceView_ConstractorException ()
 		{

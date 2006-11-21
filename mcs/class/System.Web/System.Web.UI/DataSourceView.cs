@@ -44,6 +44,9 @@ namespace System.Web.UI {
 
 		protected DataSourceView (IDataSource owner, string viewName)
 		{
+			if (owner == null)
+				throw new ArgumentNullException ("owner");
+
 			this.dataSourceOwner = owner;
 			this.viewName = viewName;
 		}
