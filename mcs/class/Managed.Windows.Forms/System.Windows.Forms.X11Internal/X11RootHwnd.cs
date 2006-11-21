@@ -44,47 +44,20 @@ namespace System.Windows.Forms.X11Internal {
 		public override void PropertyChanged (XEvent xevent)
 		{
 			if (xevent.PropertyEvent.atom == Display.Atoms._NET_ACTIVE_WINDOW) {
-				IntPtr	actual_atom;
-				int	actual_format;
-				IntPtr	nitems;
-				IntPtr	bytes_after;
-				IntPtr	prop = IntPtr.Zero;
-				X11Hwnd prev_active;
+				IntPtr actual_atom;
+				int actual_format;
+				IntPtr nitems;
+				IntPtr bytes_after;
+				IntPtr prop = IntPtr.Zero;
 
-				prev_active = Display.ActiveWindow;
 				Xlib.XGetWindowProperty (Display.Handle, WholeWindow,
 							 Display.Atoms._NET_ACTIVE_WINDOW, IntPtr.Zero, new IntPtr (1), false,
 							 Display.Atoms.XA_WINDOW, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 
 				if (((long)nitems > 0) && (prop != IntPtr.Zero)) {
 					// FIXME - is this 64 bit clean?
-					Display.ActiveWindow = (X11Hwnd)Hwnd.ObjectFromHandle((IntPtr)Marshal.ReadInt32(prop));
+					Display.SetActiveWindow ((X11Hwnd)Hwnd.ObjectFromHandle((IntPtr)Marshal.ReadInt32(prop)));
 					Xlib.XFree(prop);
-
-					if (prev_active != Display.ActiveWindow) {
-						if (prev_active != null) {
-							Display.PostMessage (prev_active.Handle, Msg.WM_ACTIVATE,
-									     (IntPtr)WindowActiveFlags.WA_INACTIVE, IntPtr.Zero);
-						}
-						if (Display.ActiveWindow != null) {
-							Display.PostMessage (Display.ActiveWindow.Handle, Msg.WM_ACTIVATE,
-									     (IntPtr)WindowActiveFlags.WA_ACTIVE, IntPtr.Zero);
-						}
-					}
-
-					// XXX this next bit should be in the X11Display.ActiveWindow setter
-
-					if (Display.ModalWindows.Count > 0) {
-						// Modality handling, if we are modal and the new active window is one
-						// of ours but not the modal one, switch back to the modal window
-
-						if (Display.ActiveWindow != null &&
-						    NativeWindow.FindWindow (Display.ActiveWindow.Handle) != null) {
-							if (Display.ActiveWindow != (X11Hwnd)Display.ModalWindows.Peek()) {
-								((X11Hwnd)Display.ModalWindows.Peek()).Activate ();
-							}
-						}
-					}
 				}
 			}
 			else if (xevent.PropertyEvent.atom == Display.Atoms._NET_SUPPORTED) {

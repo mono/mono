@@ -62,7 +62,7 @@ namespace System.Windows.Forms.X11Internal {
 		X11Hwnd FocusWindow;
 
 		// Modality support
-		internal Stack ModalWindows; // Stack of our modal windows
+		Stack ModalWindows; // Stack of our modal windows
 
 		// Caret
 		CaretStruct Caret;
@@ -1073,6 +1073,32 @@ namespace System.Windows.Forms.X11Internal {
 
 			return (X11Hwnd)Hwnd.GetObjectFromWindow(active);
 		}
+
+		public void SetActiveWindow (X11Hwnd new_active_window)
+		{
+			if (new_active_window != ActiveWindow) {
+				if (ActiveWindow != null)
+					PostMessage (ActiveWindow.Handle, Msg.WM_ACTIVATE,
+						     (IntPtr)WindowActiveFlags.WA_INACTIVE, IntPtr.Zero);
+
+				ActiveWindow = new_active_window;
+
+				if (ActiveWindow != null)
+					PostMessage (ActiveWindow.Handle, Msg.WM_ACTIVATE,
+						     (IntPtr)WindowActiveFlags.WA_ACTIVE, IntPtr.Zero);
+                        }
+
+			if (ModalWindows.Count > 0) {
+				// Modality handling, if we are modal and the new active window is one
+				// of ours but not the modal one, switch back to the modal window
+
+				if (ActiveWindow != null &&
+				    NativeWindow.FindWindow (ActiveWindow.Handle) != null) {
+					if (ActiveWindow != (X11Hwnd)ModalWindows.Peek())
+						((X11Hwnd)ModalWindows.Peek()).Activate ();
+				}
+			}
+                }
 
 		public void GetDisplaySize (out Size size)
 		{

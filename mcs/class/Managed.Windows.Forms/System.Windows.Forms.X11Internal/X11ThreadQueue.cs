@@ -146,7 +146,7 @@ namespace System.Windows.Forms.X11Internal {
 		private int NextTimeout ()
 		{
 			int timeout = Int32.MaxValue; 
-			DateTime now = DateTime.Now;
+			DateTime now = DateTime.UtcNow;
 
 			foreach (Timer timer in timer_list) {
 				int next = (int) (timer.Expires - now).TotalMilliseconds;

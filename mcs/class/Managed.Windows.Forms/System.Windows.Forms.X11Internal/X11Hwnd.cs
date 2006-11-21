@@ -1439,11 +1439,7 @@ namespace System.Windows.Forms.X11Internal {
 
 		public void Set_WINDOW_TYPE (IntPtr[] value, int count)
 		{
-			IntPtr[] foo = new IntPtr[count];
-			Array.Copy (value, foo, count);
-			Array.Sort (foo);
-
-			if (ArrayDifferent (window_type, foo)) {
+			if (ArrayDifferent (window_type, value)) {
 				window_type = value;
 				Xlib.XChangeProperty (display.Handle, WholeWindow,
 						      display.Atoms._NET_WM_WINDOW_TYPE, display.Atoms.XA_ATOM, 32,
@@ -1453,11 +1449,7 @@ namespace System.Windows.Forms.X11Internal {
 
 		public void Set_WM_STATE (IntPtr[] value, int count)
 		{
-			IntPtr[] foo = new IntPtr[count];
-			Array.Copy (value, foo, count);
-			Array.Sort (foo);
-
-			if (ArrayDifferent (wm_state, foo)) {
+			if (ArrayDifferent (wm_state, value)) {
 				wm_state = value;
 				Xlib.XChangeProperty (display.Handle, WholeWindow,
 						      display.Atoms._NET_WM_STATE, display.Atoms.XA_ATOM, 32,
@@ -1467,13 +1459,13 @@ namespace System.Windows.Forms.X11Internal {
 
 		public void Update_USER_TIME ()
 		{
-			int[]	atoms;
+			int[] args;
 
-			atoms = new int[2];
-			atoms[0] = display.CurrentTimestamp;
+			args = new int[2];
+			args[0] = display.CurrentTimestamp;
 			Xlib.XChangeProperty (display.Handle, WholeWindow,
 					      display.Atoms._NET_WM_USER_TIME, display.Atoms.XA_CARDINAL, 32,
-					      PropertyMode.Replace, atoms, 1);
+					      PropertyMode.Replace, args, 1);
 		}
 
 		public IntPtr[] GetAtomListProperty (IntPtr atom)

@@ -91,7 +91,9 @@ namespace System.Windows.Forms.X11Internal {
 
 			// Now regular initialization
 			MessageQueues = Hashtable.Synchronized (new Hashtable(7));
-			Xlib.XInitThreads();
+			if (Xlib.XInitThreads() == 0) {
+				Console.WriteLine ("Failed XInitThreads.  The X11 event loop will not function properly");
+			}
 		}
 
 		private void InitializeDisplay ()

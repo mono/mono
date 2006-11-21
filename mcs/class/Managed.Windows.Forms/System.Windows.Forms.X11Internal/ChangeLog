@@ -1,5 +1,20 @@
 2006-11-21  Chris Toshok  <toshok@ximian.com>
 
+	* X11Hwnd.cs: the IntPtr atom change broke the Array.Sort stuff I
+	was doing.  Just remove it.
+
+	* XplatUIX11-new.cs: add a message if Xlib.XInitThreads fails.
+
+	* X11ThreadQueue.cs: another Date.Now -> Date.UtcNow fix.
+
+	* X11RootHwnd.cs: remove the setting of Display.ActiveWindow from
+	here.  move all the logic into X11Display.SetActiveWindow.
+
+	* X11Display.cs: move the logic for setting ActiveWindow here, and
+	make ModalWindows private.
+	
+2006-11-21  Chris Toshok  <toshok@ximian.com>
+
 	* Xlib.cs: remove the static keyword from the class
 
 2006-11-21  Chris Toshok  <toshok@ximian.com>
