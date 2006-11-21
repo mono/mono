@@ -12,6 +12,8 @@
 #			  as NO ERROR and CS5001 is automatically ignored.
 
 cs0162-7.cs NO ERROR
+cs0267.cs
+cs0267-2.cs
 cs0525.cs
 cs0526.cs
 cs0547.cs
