@@ -4093,6 +4093,13 @@ namespace System.Windows.Forms
 
 			PointF [] vertices = new PointF [3];
 			PointF ddCenter = new PointF (rect.X + (rect.Width/2.0f), rect.Y + (rect.Height/2.0f)-2);
+			
+			// Increase vertical and horizontal position by 1 when button is pressed
+			if (button.Pressed || button.Pushed) {
+			    ddCenter.X += 1;
+			    ddCenter.Y += 1;
+			}
+			
 			vertices [0].X = ddCenter.X - ToolBarDropDownArrowWidth / 2.0f + 0.5f;
 			vertices [0].Y = ddCenter.Y;
 			vertices [1].X = ddCenter.X + ToolBarDropDownArrowWidth / 2.0f + 0.5f;
@@ -4107,6 +4114,13 @@ namespace System.Windows.Forms
 			if (button.Image != null) {
 				int x = button.ImageRectangle.X + ToolBarImageGripWidth;
 				int y = button.ImageRectangle.Y + ToolBarImageGripWidth;
+				
+				// Increase vertical and horizontal position by 1 when button is pressed
+				if (button.Pressed || button.Pushed) {
+				    x += 1;
+				    y += 1;
+				}
+				
 				if (button.Enabled)
 					dc.DrawImage (button.Image, x, y);
 				else 

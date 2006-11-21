@@ -1,3 +1,11 @@
+2006-11-21  Everaldo Canuto  <everaldo@simios.org>
+
+	* ToolBar.cs: Invalidate complete button area when pressed status 
+	was changed.
+	* ToolButton.cs: Fix InvalidateBorder for DropDown buttons.
+	* ThemeWin32Classic.cs: Increase vertical and horizontal position 
+	by 1 when button is pressed.
+
 2006-11-20  Everaldo Canuto  <everaldo@simios.org>
 
 	* ToolButton.cs: Invalidate middle of DropDown button when

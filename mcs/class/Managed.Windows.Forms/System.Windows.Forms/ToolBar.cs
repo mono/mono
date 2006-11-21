@@ -445,7 +445,7 @@ namespace System.Windows.Forms
 			}
 			e.Button.pressed = false;
 
-			e.Button.InvalidateBorder ();
+			e.Button.Invalidate ();
 
 			if (ButtonClick != null)
 				ButtonClick (this, e);
@@ -627,7 +627,7 @@ namespace System.Windows.Forms
 					}
 					button.pressed = true;
 					button.inside = true;
-					button.InvalidateBorder ();
+					button.Invalidate ();
 					break;
 				}
 			}
@@ -660,7 +660,7 @@ namespace System.Windows.Forms
 						OnButtonClick (new ToolBarButtonClickEventArgs (button));
 				} else if (button.pressed) {
 					button.pressed = false;
-					button.InvalidateBorder ();
+					button.Invalidate ();
 				}
 			}
 		}
