@@ -170,7 +170,8 @@ namespace System.Net
 		
 		internal bool InternalAllowBuffering {
 			get {
-				return (allowBuffering && (method != "HEAD" && method != "GET"));
+				return (allowBuffering && (method != "HEAD" && method != "GET" &&
+							method != "MKCOL" && method != "CONNECT"));
 			}
 		}
 		
