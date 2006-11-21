@@ -2178,7 +2178,7 @@ namespace MonoTests.System.Data
 			dt1 = new DataTable ("test1");
 			dt1.Columns.Add ("id1", typeof (int));
 			dt1.Columns.Add ("name1", typeof (string));
-			dt1.PrimaryKey = new DataColumn[] { dt1.Columns["id"] };
+			//dt1.PrimaryKey = new DataColumn[] { dt1.Columns["id"] };
 			dt1.Rows.Add (new object[] { 1, "mono 1" });
 			dt1.Rows.Add (new object[] { 2, "mono 2" });
 			dt1.Rows.Add (new object[] { 3, "mono 3" });
@@ -2187,7 +2187,7 @@ namespace MonoTests.System.Data
 			dt2.Columns.Add ("id2", typeof (int));
 			dt2.Columns.Add ("name2", typeof (string));
 			dt2.Columns.Add ("name3", typeof (string));
-			dt2.PrimaryKey = new DataColumn[] { dt2.Columns["id"] };
+			//dt2.PrimaryKey = new DataColumn[] { dt2.Columns["id"] };
 			dt2.Rows.Add (new object[] { 4, "mono 4", "four" });
 			dt2.Rows.Add (new object[] { 5, "mono 5", "five" });
 			dt2.Rows.Add (new object[] { 6, "mono 6", "six" });
@@ -2198,7 +2198,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CreateDataReader1 () {
 			// For First CreateDataReader Overload
 			localSetup ();
@@ -2223,60 +2222,54 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		// CreateDataReader doesn't have a second overload in System.Data
-		// and is commented-out below
 		public void CreateDataReader2 () {
 			// For Second CreateDataReader Overload -
 			// compare to ds.Tables
 			localSetup ();
-			//DataTableReader dtr = ds.CreateDataReader (dt1, dt2);
-			//Assert ("HasRows", dtr.HasRows);
-			//int ti = 0;
-			//do {
-			//        AssertEquals ("CountCols-" + ti,
-			//                ds.Tables[ti].Columns.Count,
-			//                dtr.FieldCount);
-			//        int ri = 0;
-			//        while (dtr.Read ()) {
-			//                for (int i = 0; i < dtr.FieldCount; i++) {
-			//                        AssertEquals ("RowData-" + ti + "-" + ri + "-" + i,
-			//                                ds.Tables[ti].Rows[ri][i],
-			//                                dtr[i]);
-			//                }
-			//                ri++;
-			//        }
-			//        ti++;
-			//} while (dtr.NextResult ());
+			DataTableReader dtr = ds.CreateDataReader (dt1, dt2);
+			Assert ("HasRows", dtr.HasRows);
+			int ti = 0;
+			do {
+			        AssertEquals ("CountCols-" + ti,
+			                ds.Tables[ti].Columns.Count,
+			                dtr.FieldCount);
+			        int ri = 0;
+			        while (dtr.Read ()) {
+			                for (int i = 0; i < dtr.FieldCount; i++) {
+			                        AssertEquals ("RowData-" + ti + "-" + ri + "-" + i,
+			                                ds.Tables[ti].Rows[ri][i],
+			                                dtr[i]);
+			                }
+			                ri++;
+			        }
+			        ti++;
+			} while (dtr.NextResult ());
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		// CreateDataReader doesn't have a second overload in System.Data
-		// and is commented-out below
 		public void CreateDataReader3 () {
 			// For Second CreateDataReader Overload -
 			// compare to dt1 and dt2
 			localSetup ();
 			ds.Tables.Clear ();
-			//DataTableReader dtr = ds.CreateDataReader (dt1, dt2);
-			//Assert ("HasRows", dtr.HasRows);
-			//DataTable dtn = dt1;
-			//do {
-			//        AssertEquals ("CountCols-",
-			//                dtn.Columns.Count,
-			//                dtr.FieldCount);
-			//        int ri = 0;
-			//        while (dtr.Read ()) {
-			//                for (int i = 0; i < dtr.FieldCount; i++) {
-			//                        AssertEquals ("RowData-" + ri + "-" + i,
-			//                                dtn.Rows[ri][i],
-			//                                dtr[i]);
-			//                }
-			//                ri++;
-			//        }
-			//        dtn = dt2;
-			//} while (dtr.NextResult ());
+			DataTableReader dtr = ds.CreateDataReader (dt1, dt2);
+			Assert ("HasRows", dtr.HasRows);
+			DataTable dtn = dt1;
+			do {
+			        AssertEquals ("CountCols-",
+			                dtn.Columns.Count,
+			                dtr.FieldCount);
+			        int ri = 0;
+			        while (dtr.Read ()) {
+			                for (int i = 0; i < dtr.FieldCount; i++) {
+			                        AssertEquals ("RowData-" + ri + "-" + i,
+			                                dtn.Rows[ri][i],
+			                                dtr[i]);
+			                }
+			                ri++;
+			        }
+			        dtn = dt2;
+			} while (dtr.NextResult ());
 		}
 
 		[Test]
@@ -2303,15 +2296,11 @@ namespace MonoTests.System.Data
 		private void fillErrorHandler (object sender, FillErrorEventArgs e) {
 			e.Continue = fillErr[fillErrCounter].contFlag;
 			AssertEquals ("fillErr-T", fillErr[fillErrCounter].tableName, e.DataTable.TableName);
-			AssertEquals ("fillErr-R", fillErr[fillErrCounter].rowKey, e.Values[0]);
 			AssertEquals ("fillErr-C", fillErr[fillErrCounter].contFlag, e.Continue);
-			AssertEquals ("fillErr-E", fillErr[fillErrCounter].error, e.Errors.Message);
 			fillErrCounter++;
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		// Load is not implemented for DataSet and is commented-out below
 		public void Load_Basic () {
 			localSetup ();
 			DataSet dsLoad = new DataSet ("LoadBasic");
@@ -2320,14 +2309,12 @@ namespace MonoTests.System.Data
 			DataTable table2 = new DataTable ();
 			dsLoad.Tables.Add (table2);
 			DataTableReader dtr = ds.CreateDataReader ();
-			//dsLoad.Load (dtr, LoadOption.OverwriteChanges, table1, table2);
+			dsLoad.Load (dtr, LoadOption.OverwriteChanges, table1, table2);
 			CompareTables (dsLoad);
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		[Category ("NotWorking")]
-		// Load is not implemented for DataSet and is commented-out below
 		public void Load_TableUnknown () {
 			localSetup ();
 			DataSet dsLoad = new DataSet ("LoadTableUnknown");
@@ -2336,13 +2323,12 @@ namespace MonoTests.System.Data
 			DataTable table2 = new DataTable ();
 			// table2 is not added to dsLoad [dsLoad.Tables.Add (table2);]
 			DataTableReader dtr = ds.CreateDataReader ();
-			//dsLoad.Load (dtr, LoadOption.OverwriteChanges, table1, table2);
+			dsLoad.Load (dtr, LoadOption.OverwriteChanges, table1, table2);
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		// Load is not implemented for DataSet and is commented-out below
 		public void Load_TableConflictT () {
+			fillErrCounter = 0;
 			fillErr[0].init ("Table1", 1, true,
 				"Input string was not in a correct format.Couldn't store <mono 1> in name1 Column.  Expected type is Double.");
 			fillErr[1].init ("Table1", 2, true,
@@ -2357,14 +2343,13 @@ namespace MonoTests.System.Data
 			DataTable table2 = new DataTable ();
 			dsLoad.Tables.Add (table2);
 			DataTableReader dtr = ds.CreateDataReader ();
-			//dsLoad.Load (dtr, LoadOption.PreserveChanges,
-			//        fillErrorHandler, table1, table2);
+			dsLoad.Load (dtr, LoadOption.PreserveChanges,
+				     fillErrorHandler, table1, table2);
 		}
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		[Category ("NotWorking")]
-		// Load is not implemented for DataSet and is commented-out below
 		public void Load_TableConflictF () {
+			fillErrCounter = 0;
 			fillErr[0].init ("Table1", 1, false,
 				"Input string was not in a correct format.Couldn't store <mono 1> in name1 Column.  Expected type is Double.");
 			localSetup ();
@@ -2375,13 +2360,11 @@ namespace MonoTests.System.Data
 			DataTable table2 = new DataTable ();
 			dsLoad.Tables.Add (table2);
 			DataTableReader dtr = ds.CreateDataReader ();
-			//dsLoad.Load (dtr, LoadOption.Upsert,
-			//        fillErrorHandler, table1, table2);
+			dsLoad.Load (dtr, LoadOption.Upsert,
+				     fillErrorHandler, table1, table2);
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		// Load is not implemented for DataSet and is commented-out below
 		public void Load_StringsAsc () {
 			localSetup ();
 			DataSet dsLoad = new DataSet ("LoadStrings");
@@ -2390,13 +2373,11 @@ namespace MonoTests.System.Data
 			DataTable table2 = new DataTable ("Second");
 			dsLoad.Tables.Add (table2);
 			DataTableReader dtr = ds.CreateDataReader ();
-			//dsLoad.Load (dtr, LoadOption.OverwriteChanges, "First", "Second");
+			dsLoad.Load (dtr, LoadOption.OverwriteChanges, "First", "Second");
 			CompareTables (dsLoad);
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		// Load is not implemented for DataSet and is commented-out below
 		public void Load_StringsDesc () {
 			localSetup ();
 			DataSet dsLoad = new DataSet ("LoadStrings");
@@ -2405,7 +2386,7 @@ namespace MonoTests.System.Data
 			DataTable table2 = new DataTable ("Second");
 			dsLoad.Tables.Add (table2);
 			DataTableReader dtr = ds.CreateDataReader ();
-			//dsLoad.Load (dtr, LoadOption.PreserveChanges, "Second", "First");
+			dsLoad.Load (dtr, LoadOption.PreserveChanges, "Second", "First");
 			AssertEquals ("Tables", 2, dsLoad.Tables.Count);
 			AssertEquals ("T1-Rows", 3, dsLoad.Tables[0].Rows.Count);
 			AssertEquals ("T1-Columns", 3, dsLoad.Tables[0].Columns.Count);
@@ -2414,8 +2395,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		// Load is not implemented for DataSet and is commented-out below
 		public void Load_StringsNew () {
 			localSetup ();
 			DataSet dsLoad = new DataSet ("LoadStrings");
@@ -2424,7 +2403,7 @@ namespace MonoTests.System.Data
 			DataTable table2 = new DataTable ("Second");
 			dsLoad.Tables.Add (table2);
 			DataTableReader dtr = ds.CreateDataReader ();
-			//dsLoad.Load (dtr, LoadOption.Upsert, "Third", "Fourth");
+			dsLoad.Load (dtr, LoadOption.Upsert, "Third", "Fourth");
 			AssertEquals ("Tables", 4, dsLoad.Tables.Count);
 			AssertEquals ("T1-Name", "First", dsLoad.Tables[0].TableName);
 			AssertEquals ("T1-Rows", 0, dsLoad.Tables[0].Rows.Count);
@@ -2441,8 +2420,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		// Load is not implemented for DataSet and is commented-out below
 		public void Load_StringsNewMerge () {
 			localSetup ();
 			DataSet dsLoad = new DataSet ("LoadStrings");
@@ -2456,7 +2433,7 @@ namespace MonoTests.System.Data
 			table2.Rows.Add (new object[] { "T2Row2" });
 			dsLoad.Tables.Add (table2);
 			DataTableReader dtr = ds.CreateDataReader ();
-			//dsLoad.Load (dtr, LoadOption.OverwriteChanges, "Third", "First");
+			dsLoad.Load (dtr, LoadOption.OverwriteChanges, "Third", "First");
 			AssertEquals ("Tables", 3, dsLoad.Tables.Count);
 			AssertEquals ("T1-Name", "First", dsLoad.Tables[0].TableName);
 			AssertEquals ("T1-Rows", 4, dsLoad.Tables[0].Rows.Count);

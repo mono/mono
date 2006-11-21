@@ -34,6 +34,8 @@ using System.Data;
 using MonoTests.System.Data.Utils;
 using System.Xml;
 
+using AssertType = NUnit.Framework.Assert;
+
 namespace MonoTests_System.Data
 {
 	[TestFixture] public class DataSetTest2
@@ -3442,5 +3444,103 @@ namespace MonoTests_System.Data
 			Assert.AreEqual (1, ds.Tables [0].Columns.Count, "#4"); 	
 			Assert.AreEqual (typeof (string), ds.Tables [0].Columns [0].DataType, "#5");
         	}
+#if NET_2_0
+		[Test]	
+        	public void LoadTest1 ()
+        	{
+			DataSet ds1 = new DataSet ();
+			DataSet ds2 = new DataSet ();
+			DataTable dt1 = new DataTable ("T1");
+			DataTable dt2 = new DataTable ("T2");
+			DataTable dt3 = new DataTable ("T1");
+			DataTable dt4 = new DataTable ("T2");
+			dt1.Columns.Add ("ID", typeof (int));
+			dt1.Columns.Add ("Name", typeof (string));
+			dt2.Columns.Add ("EmpNO", typeof (int));
+			dt2.Columns.Add ("EmpName", typeof (string));
+
+			dt1.Rows.Add (new object[] {1, "Andrews"});
+			dt1.Rows.Add (new object[] {2, "Mathew"});
+			dt1.Rows.Add (new object[] {3, "Jaccob"});
+
+			dt2.Rows.Add (new object[] {1, "Arul"});
+			dt2.Rows.Add (new object[] {2, "Jothi"});
+			dt2.Rows.Add (new object[] {3, "Murugan"});
+
+			ds2.Tables.Add (dt1);
+			ds2.Tables.Add (dt2);
+			ds1.Tables.Add (dt3);
+			ds1.Tables.Add (dt4);
+
+			DataTableReader reader = ds2.CreateDataReader ();
+			//ds1.Load (reader, LoadOption.PreserveChanges, dt3, dt4);
+			ds1.Load (reader, LoadOption.OverwriteChanges, dt3, dt4);
+
+			Assertion.AssertEquals ("DataSet Tables count mistmatch", ds2.Tables.Count, ds1.Tables.Count);
+			int i = 0;
+			foreach (DataTable dt in ds1.Tables) {
+				DataTable dt5 = ds2.Tables[i];
+				Assertion.AssertEquals ("Table " + dt.TableName + " row count mistmatch", dt5.Rows.Count, dt.Rows.Count);
+				int j = 0;
+				DataRow row1;
+				foreach (DataRow row in dt.Rows) {
+					row1 = dt5.Rows[j];
+					for (int k = 0; k < dt.Columns.Count; k++) {
+						Assertion.AssertEquals ("DataRow " + k + " mismatch", row1[k], row[k]);
+					}
+					j++;
+				}
+				i++;
+			}
+		}
+		[Test]	
+        	public void LoadTest2 ()
+        	{
+			DataSet ds1 = new DataSet ();
+			DataSet ds2 = new DataSet ();
+			DataTable dt1 = new DataTable ("T1");
+			DataTable dt2 = new DataTable ("T2");
+			DataTable dt3 = new DataTable ("T1");
+			DataTable dt4 = new DataTable ("T2");
+			dt1.Columns.Add ("ID", typeof (int));
+			dt1.Columns.Add ("Name", typeof (string));
+			dt2.Columns.Add ("EmpNO", typeof (int));
+			dt2.Columns.Add ("EmpName", typeof (string));
+
+			dt1.Rows.Add (new object[] {1, "Andrews"});
+			dt1.Rows.Add (new object[] {2, "Mathew"});
+			dt1.Rows.Add (new object[] {3, "Jaccob"});
+
+			dt2.Rows.Add (new object[] {1, "Arul"});
+			dt2.Rows.Add (new object[] {2, "Jothi"});
+			dt2.Rows.Add (new object[] {3, "Murugan"});
+
+			ds2.Tables.Add (dt1);
+			ds2.Tables.Add (dt2);
+			ds1.Tables.Add (dt3);
+			ds1.Tables.Add (dt4);
+
+			DataTableReader reader = ds2.CreateDataReader ();
+			//ds1.Load (reader, LoadOption.PreserveChanges, dt3, dt4);
+			ds1.Load (reader, LoadOption.OverwriteChanges, dt3, dt4);
+
+			Assertion.AssertEquals ("DataSet Tables count mistmatch", ds2.Tables.Count, ds1.Tables.Count);
+			int i = 0;
+			foreach (DataTable dt in ds1.Tables) {
+				DataTable dt5 = ds2.Tables[i];
+				Assertion.AssertEquals ("Table " + dt.TableName + " row count mistmatch", dt5.Rows.Count, dt.Rows.Count);
+				int j = 0;
+				DataRow row1;
+				foreach (DataRow row in dt.Rows) {
+					row1 = dt5.Rows[j];
+					for (int k = 0; k < dt.Columns.Count; k++) {
+						Assertion.AssertEquals ("DataRow " + k + " mismatch", row1[k], row[k]);
+					}
+					j++;
+				}
+				i++;
+			}
+		}
+#endif
 	}
 }

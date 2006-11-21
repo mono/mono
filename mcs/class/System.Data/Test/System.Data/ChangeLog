@@ -1,3 +1,15 @@
+2006-11-21  Nagappan A  <anagappan@novell.com>
+
+	* DataSetTest.cs (CreateDataReader1, CreateDataReader2,
+	CreateDataReader3, Load_Basic, Load_TableConflictT,
+	Load_TableConflictT, Load_TableConflictF, Load_TableUnknown,
+	Load_StringsAsc, Load_StringsDesc, Load_StringsNew,
+	Load_StringsNewMerge): Removed 'NotWorking' attribute and made the
+	testcase to work.
+
+	* DataSetTest2.cs (LoadTest1, LoadTest2): Implemented functions to
+	test DataSet.Load
+
 2006-11-15  Nagappan A  <anagappan@novell.com>
 
 	* DataTableTest.cs (NewRowAddedTest): Checks for the DataTable
