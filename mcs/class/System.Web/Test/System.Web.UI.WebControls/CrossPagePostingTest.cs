@@ -64,7 +64,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void CrossPagePosting_BaseFixture ()
 		{
 			WebTest t = new WebTest ("CrossPagePosting1.aspx");
@@ -100,7 +99,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void CrossPagePosting_BaseFlow ()
 		{
 			// NOTE!!! Test user data assigned stright on aspx pages

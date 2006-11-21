@@ -74,6 +74,7 @@ public class Page : TemplateControl, IHttpHandler
 	private PageLifeCycle _lifeCycle = PageLifeCycle.Unknown;
 	private bool _eventValidation = true;
 	private object [] _savedControlState;
+	private bool _doLoadPreviousPage;
 #endif
 	private bool _viewState = true;
 	private bool _viewStateMac;
@@ -1169,13 +1170,17 @@ public class Page : TemplateControl, IHttpHandler
 		// http://msdn2.microsoft.com/en-us/library/ms178141.aspx
 		if (_requestValueCollection != null) {
 			if (!isCrossPagePostBack && _requestValueCollection [PreviousPageID] != null && _requestValueCollection [PreviousPageID] != Request.FilePath) {
-				LoadPreviousPageReference ();
+				_doLoadPreviousPage = true;
 			}
 			else {
 				isCallback = _requestValueCollection [CallbackArgumentID] != null;
 				isPostBack = !isCallback;
 			}
 		}
+		
+		// if request was transfered from other page - track Prev. Page
+		previousPage = _context.LastPage;
+		_context.LastPage = this;
 
 		_lifeCycle = PageLifeCycle.PreInit;
 		OnPreInit (EventArgs.Empty);
@@ -1742,7 +1747,13 @@ public class Page : TemplateControl, IHttpHandler
 	[BrowsableAttribute (false)]
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	public Page PreviousPage {
-		get { return previousPage; }
+		get {
+			if (_doLoadPreviousPage) {
+				_doLoadPreviousPage = false;
+				LoadPreviousPageReference ();
+			}
+			return previousPage;
+		}
 	}
 
 	
@@ -1918,11 +1929,8 @@ public class Page : TemplateControl, IHttpHandler
 			if (prevPage != null) {
 				previousPage = (Page) PageParser.GetCompiledPageInstance (prevPage, Server.MapPath (prevPage), Context);
 				previousPage.ProcessCrossPagePostBack (_context);
-			} else {
-				previousPage = _context.LastPage;
-			}
+			} 
 		}
-		_context.LastPage = this;
 	}
 
 
