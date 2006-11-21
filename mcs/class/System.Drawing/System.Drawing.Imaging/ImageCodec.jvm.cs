@@ -250,7 +250,7 @@ namespace Mainsoft.Drawing.Imaging {
 			internal Hashtable Iterate () {
 				// TBD: Insert Exception handling here
 				NameValueCollection nvc = (NameValueCollection) System.Configuration.ConfigurationSettings
-					.GetConfig ("system.drawing/codecs");
+					.GetConfig ("mainsoft.drawing/codecs");
 				Hashtable codecs = new Hashtable (10);
 			
 				for (int i=0; i<nvc.Count; i++) {
@@ -546,7 +546,7 @@ namespace Mainsoft.Drawing.Imaging {
 
 			ResolutionConfigurationCollection rcc = 
 				(ResolutionConfigurationCollection)
-				ConfigurationSettings.GetConfig("system.drawing/codecsmetadata");
+				ConfigurationSettings.GetConfig ("mainsoft.drawing/codecsmetadata");
 
 			if (rcc == null)
 				throw new ConfigurationException("Configuration section codecsmetadata not found");
