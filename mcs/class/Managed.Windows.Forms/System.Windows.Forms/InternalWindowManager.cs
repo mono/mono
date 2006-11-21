@@ -594,7 +594,7 @@ namespace System.Windows.Forms {
 				form.Capture = false;
 				state = State.Idle;
 				if (form.MdiContainer != null)
-                	form.MdiContainer.SizeScrollBars();
+					form.MdiContainer.SizeScrollBars();
 			}
 				
 			int x = Control.LowOrder ((int) m.LParam.ToInt32 ());

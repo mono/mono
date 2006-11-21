@@ -59,28 +59,28 @@ namespace System.Windows.Forms {
 			form.GotFocus += new EventHandler (FormGotFocus);
 			form_closed_handler = new EventHandler (FormClosed);
 			form.Closed += form_closed_handler;
-            form.TextChanged += new EventHandler(FormTextChangedHandler);
-            form.SizeChanged += new EventHandler(FormSizeChangedHandler);
-            form.LocationChanged += new EventHandler(FormLocationChangedHandler);
+			form.TextChanged += new EventHandler (FormTextChangedHandler);
+			form.SizeChanged += new EventHandler (FormSizeChangedHandler);
+			form.LocationChanged += new EventHandler (FormLocationChangedHandler);
 			draw_maximized_buttons = new PaintEventHandler (DrawMaximizedButtons);
 			CreateIconMenus ();
 		}
 
-        void FormTextChangedHandler(object sender, EventArgs e)
-        {
-            mdi_container.SetParentText(false);
-        }
+		private void FormTextChangedHandler (object sender, EventArgs e)
+		{
+			mdi_container.SetParentText (false);
+		}
 
+		private void FormLocationChangedHandler (object sender, EventArgs e)
+		{
+			form.MdiParent.MdiContainer.SizeScrollBars ();
+		}
 
-        private void FormLocationChangedHandler(object sender, EventArgs e)
-        {
-            form.MdiParent.MdiContainer.SizeScrollBars();
-        }
-
-        private void FormSizeChangedHandler(object sender, EventArgs e)
-        {
-            form.MdiParent.MdiContainer.SizeScrollBars();
-        }
+		private void FormSizeChangedHandler (object sender, EventArgs e)
+		{
+			form.MdiParent.MdiContainer.SizeScrollBars ();
+		}
+	        
 		public MainMenu MergedMenu {
 			get {
 				if (merged_menu == null)
@@ -242,9 +242,9 @@ namespace System.Windows.Forms {
 				CreateButtons ();
 				maximize_button.Caption = CaptionButton.Maximize;
 				minimize_button.Caption = CaptionButton.Restore;
-                prev_window_state = old_state;
-                if (prev_window_state == FormWindowState.Normal)
-				    prev_bounds = form.Bounds;
+				prev_window_state = old_state;
+				if (prev_window_state == FormWindowState.Normal)
+					prev_bounds = form.Bounds;
 				mdi_container.ArrangeIconicWindows ();
 
 				MaximizedMenu.Paint -= draw_maximized_buttons;
@@ -253,9 +253,9 @@ namespace System.Windows.Forms {
 				CreateButtons ();
 				maximize_button.Caption = CaptionButton.Restore;
 				minimize_button.Caption = CaptionButton.Minimize;
-                if (old_state == FormWindowState.Normal)
-                    prev_bounds = form.Bounds;
-                prev_window_state = old_state;
+				if (old_state == FormWindowState.Normal)
+					prev_bounds = form.Bounds;
+				prev_window_state = old_state;
 				SizeMaximized ();
 
 				MaximizedMenu.Paint += draw_maximized_buttons;
@@ -270,8 +270,8 @@ namespace System.Windows.Forms {
 					break;
 				}
 				maximize_button.Caption = CaptionButton.Maximize;
-                minimize_button.Caption = CaptionButton.Minimize;
-                form.Bounds = prev_bounds;
+				minimize_button.Caption = CaptionButton.Minimize;
+				form.Bounds = prev_bounds;
 				prev_window_state = form.WindowState;
 
 				MaximizedMenu.Paint -= draw_maximized_buttons;
@@ -280,7 +280,7 @@ namespace System.Windows.Forms {
 
 			form.ResetCursor ();
 			XplatUI.RequestNCRecalc (mdi_container.Parent.Handle);
-            mdi_container.SizeScrollBars();
+			mdi_container.SizeScrollBars ();
 		}
 
 		internal void SizeMaximized ()
@@ -317,7 +317,7 @@ namespace System.Windows.Forms {
 				mdi_container.ParentForm.PerformLayout();
 				XplatUI.SendMessage(mdi_container.ParentForm.Handle, Msg.WM_NCPAINT, IntPtr.Zero, new IntPtr(1)); 
 			}
-            mdi_container.SizeScrollBars();
+			mdi_container.SizeScrollBars ();
 		}
 
 		/*
