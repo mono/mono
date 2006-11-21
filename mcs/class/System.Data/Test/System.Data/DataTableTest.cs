@@ -1954,21 +1954,20 @@ namespace MonoTests.System.Data
 		[Test]
 		public void TableInitializedEventTest4 () {
 			DataTable dt = new DataTable();
-			tableInitialized = true;
-			AssertEquals("TableInitialized #04", tableInitialized, dt.IsInitialized);
+			AssertEquals("TableInitialized #04", true, dt.IsInitialized);
 			dt.BeginInit ();
 			tableInitialized = false;
 			dt.Initialized += new EventHandler (OnTableInitialized);
 			dt.Columns.Add("Series Label", typeof(SqlInt32));
 			dt.Rows.Add(new object[] {"sss"});
-			AssertEquals("TableInitialized #05", tableInitialized, dt.IsInitialized);
+			AssertEquals("TableInitialized #05", false, dt.IsInitialized);
 			dt.EndInit ();
-			tableInitialized = true;
-			AssertEquals("TableInitialized #06", tableInitialized, dt.IsInitialized);
+			NUnit.Framework.Assert.IsTrue (dt.IsInitialized, "TableInitialized #06");
+			NUnit.Framework.Assert.IsTrue (tableInitialized, "TableInitialized #07");
 			dt.Initialized -= new EventHandler (OnTableInitialized);
 		}
 
-                public void OnTableInitialized (object src, EventArgs args)
+                private void OnTableInitialized (object src, EventArgs args)
                 {
 			tableInitialized = true;
 		}

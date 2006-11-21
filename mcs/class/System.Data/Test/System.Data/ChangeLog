@@ -1,5 +1,8 @@
 2006-11-21  Nagappan A  <anagappan@novell.com>
 
+	* DataViewTest.cs (BeginInit2): Checks for the data view public
+	event Initialized.
+
 	* DataSetTest.cs (CreateDataReader1, CreateDataReader2,
 	CreateDataReader3, Load_Basic, Load_TableConflictT,
 	Load_TableConflictT, Load_TableConflictF, Load_TableUnknown,
