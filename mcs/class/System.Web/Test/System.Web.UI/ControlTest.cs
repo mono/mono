@@ -38,6 +38,7 @@ using System.Globalization;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using MonoTests.SystemWeb.Framework;
 
 namespace MonoTests.System.Web.UI
 {
@@ -176,6 +177,61 @@ namespace MonoTests.System.Web.UI
 			p.EnableViewState = false;
 			Assert.IsFalse (c.DoIsViewStateEnabled);
 		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void ControlState () {
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (ControlState_Load));
+			t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls ["__EVENTTARGET"].Value = "";
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			t.Run ();
+		}
+
+		public static void ControlState_Load (Page p) {
+			ControlWithState c1 = new ControlWithState ();
+			ControlWithState c2 = new ControlWithState ();
+			c1.Controls.Add (c2);
+			p.Form.Controls.Add (c1);
+			if (!p.IsPostBack) {
+				c1.State = "State";
+				c2.State = "Cool";
+			}
+			else {
+				ControlWithState c3 = new ControlWithState ();
+				p.Form.Controls.Add (c3);
+				Assert.AreEqual ("State", c1.State, "ControlState");
+				Assert.AreEqual ("Cool", c2.State, "ControlState");
+			}
+		}
+
+		class ControlWithState : Control
+		{
+			string _state;
+
+			public string State {
+				get { return _state; }
+				set { _state = value; }
+			}
+
+			protected override void OnInit (EventArgs e) {
+				base.OnInit (e);
+				Page.RegisterRequiresControlState (this);
+				Page.RegisterRequiresControlState (this);
+			}
+
+			protected override object SaveControlState () {
+				return State;
+			}
+
+			protected override void LoadControlState (object savedState) {
+				State = (string) savedState;
+			}
+		}
 #endif
 
 		[Test]
@@ -248,4 +304,5 @@ namespace MonoTests.System.Web.UI
 		}
 	}
 }
+
 

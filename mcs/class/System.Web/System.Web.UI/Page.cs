@@ -73,6 +73,7 @@ public class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 	private PageLifeCycle _lifeCycle = PageLifeCycle.Unknown;
 	private bool _eventValidation = true;
+	private object [] _savedControlState;
 #endif
 	private bool _viewState = true;
 	private bool _viewStateMac;
@@ -1458,17 +1459,15 @@ public class Page : TemplateControl, IHttpHandler
 		if (postdata == null || (view_state = postdata ["__VIEWSTATE"]) == null)
 			return null;
 
-		_savedViewState = null;
 		if (view_state == "")
 			return null;
 
 		LosFormatter fmt = GetFormatter ();
 		try {
-			_savedViewState = fmt.Deserialize (view_state);
+			return fmt.Deserialize (view_state);
 		} catch (Exception e) {
 			throw new HttpException ("Error restoring page viewstate.", e);
 		}
-		return _savedViewState;
 	}
 
 	internal void LoadPageViewState()
@@ -1830,8 +1829,21 @@ public class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public void RegisterRequiresControlState (Control control)
 	{
-		if (requireStateControls == null) requireStateControls = new ArrayList ();
-		requireStateControls.Add (control);
+		if (control == null)
+			throw new ArgumentNullException ("control");
+
+		if (RequiresControlState (control))
+			return;
+
+		if (requireStateControls == null)
+			requireStateControls = new ArrayList ();
+		int n = requireStateControls.Add (control);
+
+		if (_savedControlState != null && n < _savedControlState.Length) {
+			object state = _savedControlState [n];
+			if (state != null)
+				control.LoadControlState (state);
+		}
 	}
 	
 	public bool RequiresControlState (Control control)
@@ -1888,13 +1900,14 @@ public class Page : TemplateControl, IHttpHandler
 	
 	void LoadPageControlState (object data)
 	{
+		_savedControlState = (object []) data;
+		
 		if (requireStateControls == null) return;
 
-		object[] state = (object[]) data;
-		int max = Math.Min (requireStateControls.Count, state != null ? state.Length : requireStateControls.Count);
+		int max = Math.Min (requireStateControls.Count, _savedControlState != null ? _savedControlState.Length : requireStateControls.Count);
 		for (int n=0; n < max; n++) {
 			Control ctl = (Control) requireStateControls [n];
-			ctl.LoadControlState (state != null ? state [n] : null);
+			ctl.LoadControlState (_savedControlState != null ? _savedControlState [n] : null);
 		}
 	}
 
