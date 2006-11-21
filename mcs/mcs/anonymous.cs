@@ -1433,27 +1433,7 @@ namespace Mono.CSharp {
 			string name = CompilerGeneratedClass.MakeName ("AnonymousMethod");
 			MemberName member_name;
 
-			GenericMethod generic_method = null;
-#if GMCS_SOURCE
-			if (TypeManager.IsGenericType (DelegateType)) {
-				TypeArguments args = new TypeArguments (Location);
-
-				Type dt = DelegateType.GetGenericTypeDefinition ();
-
-				Type[] tparam = TypeManager.GetTypeArguments (dt);
-				for (int i = 0; i < tparam.Length; i++)
-					args.Add (new SimpleName (tparam [i].Name, Location));
-
-				member_name = new MemberName (name, args, Location);
-
-				generic_method = new GenericMethod (
-					RootScope.NamespaceEntry, RootScope, member_name,
-					new TypeExpression (ReturnType, Location), Parameters);
-
-				generic_method.SetParameterInfo (null);
-			} else
-#endif
-				member_name = new MemberName (name, Location);
+			Report.Debug (128, "CREATE METHOD HOST #0", RootScope);
 
 			Block b;
 			scope = RootScope;
@@ -1492,6 +1472,28 @@ namespace Mono.CSharp {
 			Report.Debug (128, "CREATE METHOD HOST", this, Block, container,
 				      RootScope, scope, scopes, Location,
 				      ContainerAnonymousMethod);
+
+			GenericMethod generic_method = null;
+#if GMCS_SOURCE
+			if (TypeManager.IsGenericType (DelegateType)) {
+				TypeArguments args = new TypeArguments (Location);
+
+				Type dt = DelegateType.GetGenericTypeDefinition ();
+
+				Type[] tparam = TypeManager.GetTypeArguments (dt);
+				for (int i = 0; i < tparam.Length; i++)
+					args.Add (new SimpleName (tparam [i].Name, Location));
+
+				member_name = new MemberName (name, args, Location);
+
+				generic_method = new GenericMethod (
+					scope.NamespaceEntry, scope, member_name,
+					new TypeExpression (ReturnType, Location), Parameters);
+
+				generic_method.SetParameterInfo (null);
+			} else
+#endif
+				member_name = new MemberName (name, Location);
 
 			return new AnonymousMethodMethod (
 				this, scope, generic_method, new TypeExpression (ReturnType, Location),
