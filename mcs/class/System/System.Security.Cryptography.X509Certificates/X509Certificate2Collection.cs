@@ -390,7 +390,6 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (certificates == null)
 				throw new ArgumentNullException ("certificate");
 
-			// note: X509Certificate2Collection can contain both X509Certificate2 and X509Certificate instances
 			foreach (X509Certificate2 x in certificates)
 				Remove (x);
 		}

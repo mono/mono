@@ -1,3 +1,10 @@
+2006-11-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate2Collection.cs: Remove comment that proved to be 
+	false (unit tests prove otherwise).
+	* X509Store.cs: Integrate the new 2.0 stores with the existing stores
+	that Mono used since 1.0.
+
 2006-11-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate2Collection.cs: Implement Export (to DER encoded 
