@@ -86,10 +86,9 @@ namespace System.Web.Services.Protocols {
 		}
 		
 #if NET_2_0
-		[MonoTODO]
 		[System.Runtime.InteropServices.ComVisible(false)]
 		public override SoapProtocolVersion SoapVersion {
-			get { throw new NotImplementedException (); }
+			get { return client.SoapVersion; }
 		}
 #endif
 

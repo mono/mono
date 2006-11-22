@@ -287,13 +287,19 @@ namespace System.Web.Services.Protocols
 				}
 				
 				XmlTextWriter xtw = WebServiceHelper.CreateXmlWriter (outStream);
-				
+
+#if NET_2_0
+				bool soap12 = message.SoapVersion == SoapProtocolVersion.Soap12;
+#else
+				bool soap12 = false;
+#endif
+
 				if (message.Exception == null)
-					WebServiceHelper.WriteSoapMessage (xtw, methodInfo, SoapHeaderDirection.Out, message.OutParameters, message.Headers);
+					WebServiceHelper.WriteSoapMessage (xtw, methodInfo, SoapHeaderDirection.Out, message.OutParameters, message.Headers, soap12);
 				else if (methodInfo != null)
-					WebServiceHelper.WriteSoapMessage (xtw, methodInfo, SoapHeaderDirection.Fault, new Fault (message.Exception), message.Headers);
+					WebServiceHelper.WriteSoapMessage (xtw, methodInfo, SoapHeaderDirection.Fault, new Fault (message.Exception), message.Headers, soap12);
 				else
-					WebServiceHelper.WriteSoapMessage (xtw, SoapBindingUse.Literal, Fault.Serializer, null, new Fault (message.Exception), null);
+					WebServiceHelper.WriteSoapMessage (xtw, SoapBindingUse.Literal, Fault.Serializer, null, new Fault (message.Exception), null, soap12);
 
 				if (bufferResponse)
 				{

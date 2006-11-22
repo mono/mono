@@ -218,8 +218,12 @@ namespace System.Web.Services.Protocols
 				}
 
 				XmlTextWriter xtw = WebServiceHelper.CreateXmlWriter (s);
-				
-				WebServiceHelper.WriteSoapMessage (xtw, message.MethodStubInfo, SoapHeaderDirection.In, message.Parameters, message.Headers);
+#if NET_2_0
+				bool soap12 = message.SoapVersion == SoapProtocolVersion.Soap12;
+#else
+				bool soap12 = false;
+#endif
+				WebServiceHelper.WriteSoapMessage (xtw, message.MethodStubInfo, SoapHeaderDirection.In, message.Parameters, message.Headers, soap12);
 
 				if (extensions != null) {
 					message.SetStage (SoapMessageStage.AfterSerialize);

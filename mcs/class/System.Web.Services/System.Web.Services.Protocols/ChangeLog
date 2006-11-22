@@ -1,3 +1,10 @@
+2006-11-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SoapHeader.cs WebServiceHelper.cs SoapClientMessage.cs
+	  HttpSoapWebServiceHandler.cs SoapHttpClientProtocol.cs:
+	  SOAP 1.2 Envelope support has started. Though I will have to
+	  change its internals significantly, so it is in my branch.
+
 2006-11-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebClientProtocol.cs HttpWebClientProtocol.cs SoapException.cs
