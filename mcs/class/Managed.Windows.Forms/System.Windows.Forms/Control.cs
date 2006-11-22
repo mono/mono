@@ -3769,7 +3769,7 @@ namespace System.Windows.Forms
 				// size.
 				if (width < 0 || height < 0) {
 					int cw, ch, ix, iy;
-					//XplatUI.GetWindowPos(Handle, this is Form, out ix, out iy, out width, out height, out cw, out ch);
+					XplatUI.GetWindowPos(Handle, this is Form, out ix, out iy, out width, out height, out cw, out ch);
 				}
 			}
 

@@ -4726,11 +4726,11 @@ namespace System.Windows.Forms {
 			}
 
 			// Win32 automatically changes negative width/height to 0.
-			/*if (width < 0)
+			if (width < 0)
 				width = 0;
 			if (height < 0)
 				height = 0;
-				*/
+				
 			// X requires a sanity check for width & height; otherwise it dies
 			if (hwnd.zero_sized && width > 0 && height > 0) {
 				if (hwnd.visible) {
