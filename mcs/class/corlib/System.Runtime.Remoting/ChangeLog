@@ -1,3 +1,9 @@
+2006-11-22  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* RemotingServices.cs: Avoid generating urls with negative numbers.
+	  When building the url for the RemoteActivationService service,
+	  avoid duplicate path separator.
+
 2006-10-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* RemotingServices.cs: Explicitly set FormatterAssemblyStyle to Full

@@ -326,7 +326,7 @@ namespace System.Runtime.Remoting
 		static string NewUri ()
 		{
 			int n = Interlocked.Increment (ref next_id);
-			return app_id + Environment.TickCount + "_" + n + ".rem";
+			return app_id + Environment.TickCount.ToString("x") + "_" + n + ".rem";
 		}
 
 #if NET_2_0
@@ -508,7 +508,10 @@ namespace System.Runtime.Remoting
 	
 		internal static object CreateClientProxy (Type objectType, string url, object[] activationAttributes)
 		{
-			string activationUrl = url + "/RemoteActivationService.rem";
+			string activationUrl = url;
+			if (!activationUrl.EndsWith ("/"))
+				activationUrl += "/";
+			activationUrl += "RemoteActivationService.rem";
 
 			string objectUri;
 			GetClientChannelSinkChain (activationUrl, null, out objectUri);
