@@ -604,7 +604,7 @@ namespace System.Drawing.Drawing2D
                         GDIPlus.CheckStatus (status);                      	
                 }
                 
-		[MonoTODO ("StringFormat isn't supported inside libgdiplus")]
+		[MonoTODO ("The StringFormat parameter is ignored when using libgdiplus.")]
 		public void AddString (string s, FontFamily family, int style, float emSize, Point origin, StringFormat format)
 		{
 			Rectangle layout = new Rectangle ();
@@ -613,7 +613,7 @@ namespace System.Drawing.Drawing2D
 			AddString (s, family, style, emSize, layout, format);
 		}
 
-		[MonoTODO ("StringFormat isn't supported inside libgdiplus")]
+		[MonoTODO ("The StringFormat parameter is ignored when using libgdiplus.")]
 		public void AddString (string s, FontFamily family, int style, float emSize, PointF origin, StringFormat format)
   		{
 			RectangleF layout = new RectangleF ();
@@ -622,7 +622,7 @@ namespace System.Drawing.Drawing2D
 			AddString (s, family, style, emSize, layout, format);
                 }
 
-		[MonoTODO ("layoutRect and StringFormat aren't supported inside libgdiplus")]
+		[MonoTODO ("The layoutRect and StringFormat parameters are ignored when using libgdiplus.")]
 		public void AddString (string s, FontFamily family, int style, float emSize, Rectangle layoutRect, StringFormat format)
 		{
 			if (family == null)
@@ -634,7 +634,7 @@ namespace System.Drawing.Drawing2D
 			GDIPlus.CheckStatus (status);
 		}
 
-		[MonoTODO ("layoutRect and StringFormat aren't supported inside libgdiplus")]
+		[MonoTODO ("The layoutRect and StringFormat parameters are ignored when using libgdiplus.")]
   		public void AddString (string s, FontFamily family, int style, float emSize, RectangleF layoutRect, StringFormat format)
 		{
 			if (family == null)
@@ -728,19 +728,19 @@ namespace System.Drawing.Drawing2D
                 	return IsOutlineVisible (x, y, pen, null);
                 }  		
 		
-                [MonoTODO ("Graphics parameter is currently ignored in libgdiplus")]
+                [MonoTODO ("The Graphics parameter is ignored when using libgdiplus.")]
 		public bool IsOutlineVisible (Point pt, Pen pen, Graphics graphics)
 		{
                 	return IsOutlineVisible (pt.X, pt.Y, pen, graphics);
                 }  		
 		
-                [MonoTODO ("Graphics parameter is currently ignored in libgdiplus")]
+                [MonoTODO ("The Graphics parameter is ignored when using libgdiplus.")]
 		public bool IsOutlineVisible (PointF pt, Pen pen, Graphics graphics)
 		{
                 	return IsOutlineVisible (pt.X, pt.Y, pen, graphics);
                 }  		
 				
-                [MonoTODO ("Graphics parameter is currently ignored in libgdiplus")]
+                [MonoTODO ("The Graphics parameter is ignored when using libgdiplus.")]
 		public bool IsOutlineVisible (int x, int y, Pen pen, Graphics graphics)
 		{
 			if (pen == null)
@@ -755,7 +755,7 @@ namespace System.Drawing.Drawing2D
                         return result;
                 }  		
 
-                [MonoTODO ("Graphics parameter is currently ignored in libgdiplus")]
+                [MonoTODO ("The Graphics parameter is ignored when using libgdiplus.")]
 		public bool IsOutlineVisible (float x, float y, Pen pen, Graphics graphics)
 		{
 			if (pen == null)
@@ -790,19 +790,19 @@ namespace System.Drawing.Drawing2D
                 	return IsVisible (x, y, null);
                 }  		                
                 
-                [MonoTODO ("Graphics parameter is currently ignored in libgdiplus")]
+                [MonoTODO ("The Graphics parameter is ignored when using libgdiplus.")]
                 public bool IsVisible (Point pt, Graphics graphics)
                 {
                 	return IsVisible (pt.X, pt.Y, graphics);
                 }  		
                 
-                [MonoTODO ("Graphics parameter is currently ignored in libgdiplus")]
+                [MonoTODO ("The Graphics parameter is ignored when using libgdiplus.")]
                 public bool IsVisible (PointF pt, Graphics graphics)
                 {
                 	return IsVisible (pt.X, pt.Y, graphics);
                 }  		
                                 
-                [MonoTODO ("Graphics parameter is currently ignored in libgdiplus")]
+                [MonoTODO ("The Graphics parameter is ignored when using libgdiplus.")]
                 public bool IsVisible (int x, int y, Graphics graphics)
                 {
                         bool retval;
@@ -816,7 +816,7 @@ namespace System.Drawing.Drawing2D
                         return retval;
                 }  		
                 
-                [MonoTODO ("Graphics parameter is currently ignored in libgdiplus")]
+                [MonoTODO ("The Graphics parameter is ignored when using libgdiplus.")]
                 public bool IsVisible (float x, float y, Graphics graphics)
                 {
                         bool retval;
