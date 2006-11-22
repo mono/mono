@@ -1,3 +1,14 @@
+2006-11-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ImageAttributes.cs: Better MonoTODO description.
+	* ImageCodecInfo.cs: Add MonoTODO description.
+	* Metafile.cs: Use a single MonoTODO on the class itself. MoMA will 
+	detect and report that every ctors/methods/properties are throwing  
+	NotImplementedException.
+	* MetafileHeader.cs: Use a single MonoTODO on the class itself. MoMA 
+	will detect and report that every ctors/methods/properties are 
+	throwing NotImplementedException.
+
 2006-10-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MetaHeader.cs: Fix layout (order is important in sequential structs)

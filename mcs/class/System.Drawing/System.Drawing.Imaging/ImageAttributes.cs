@@ -186,7 +186,7 @@ namespace System.Drawing.Imaging {
 			}
 		}
 
-		[MonoTODO ("colorMatrixFlag is ignored in libgdiplus")]
+		[MonoTODO ("colorMatrixFlag parameter is ignored in libgdiplus")]
 		public void SetColorMatrix (ColorMatrix colorMatrix, ColorMatrixFlag colorMatrixFlag) 
 		{
 			IntPtr cm = ColorMatrix.Alloc (colorMatrix);
@@ -200,7 +200,7 @@ namespace System.Drawing.Imaging {
 			}
 		}
 
-		[MonoTODO ("colorMatrixFlag is ignored in libgdiplus")]
+		[MonoTODO ("colorMatrixFlag parameter is ignored in libgdiplus")]
 		public void SetColorMatrix (ColorMatrix colorMatrix, ColorMatrixFlag colorMatrixFlag, ColorAdjustType colorAdjustType)
 		{
 			IntPtr cm = ColorMatrix.Alloc (colorMatrix);
@@ -287,7 +287,7 @@ namespace System.Drawing.Imaging {
 		}
 		
 		
-		[MonoTODO ("grayMatrix is ignored in libgdiplus")]
+		[MonoTODO ("grayMatrix parameter is ignored in libgdiplus")]
 		public void SetColorMatrices (ColorMatrix newColorMatrix, ColorMatrix grayMatrix)
 		{
 			IntPtr cm = ColorMatrix.Alloc (newColorMatrix);
@@ -307,7 +307,7 @@ namespace System.Drawing.Imaging {
 			}
 		}		
 		
-		[MonoTODO ("grayMatrix and colorMatrixFlag are ignored in libgdiplus")]
+		[MonoTODO ("grayMatrix and colorMatrixFlag parameters are ignored in libgdiplus")]
 		public void SetColorMatrices (ColorMatrix newColorMatrix, ColorMatrix grayMatrix, ColorMatrixFlag flags)
 		{
 			IntPtr cm = ColorMatrix.Alloc (newColorMatrix);
@@ -327,8 +327,8 @@ namespace System.Drawing.Imaging {
 			}
 		}
 		
-		[MonoTODO ("grayMatrix and colorMatrixFlag are ignored in libgdiplus")]
-		public void SetColorMatrices(ColorMatrix newColorMatrix, ColorMatrix grayMatrix, ColorMatrixFlag mode, ColorAdjustType type)
+		[MonoTODO ("grayMatrix and colorMatrixFlag parameters are ignored in libgdiplus")]
+		public void SetColorMatrices (ColorMatrix newColorMatrix, ColorMatrix grayMatrix, ColorMatrixFlag mode, ColorAdjustType type)
 		{
 			IntPtr cm = ColorMatrix.Alloc (newColorMatrix);
 			try {

@@ -1,14 +1,12 @@
 //
 // System.Drawing.Imaging.MetafileHeader.cs
 //
-// (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Author: Everaldo Canuto
 // eMail: everaldo.canuto@bol.com.br
 // Dennis Hayes (dennish@raytek.com)
 //
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,17 +27,16 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
+
 using System.Runtime.InteropServices;
 
 namespace System.Drawing.Imaging {
 
-	[MonoTODO]
+	[MonoTODO ("Metafiles, both WMF and EMF formats, aren't supported.")]
 #if !TARGET_JVM
 	[StructLayout(LayoutKind.Sequential)]
 #endif
-	public sealed class MetafileHeader 
-	{
+	public sealed class MetafileHeader {
 		
 		//constructor
 		internal MetafileHeader()
@@ -48,97 +45,87 @@ namespace System.Drawing.Imaging {
 		}
 
 		// methods
-		[MonoTODO]
-		public bool IsDisplay() {
+
+		public bool IsDisplay ()
+		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public bool IsEmf() {
+		public bool IsEmf ()
+		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public bool IsEmfOrEmfPlus() {
+		public bool IsEmfOrEmfPlus ()
+		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public bool IsEmfPlus() {
+		public bool IsEmfPlus ()
+		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public bool IsEmfPlusDual() {
+		public bool IsEmfPlusDual ()
+		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public bool IsEmfPlusOnly() {
+		public bool IsEmfPlusOnly ()
+		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public bool IsWmf() {
+		public bool IsWmf ()
+		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public bool IsWmfPlaceable() {
+		public bool IsWmfPlaceable ()
+		{
 			throw new NotImplementedException ();
 		}
 
 		// properties
-		[MonoTODO]
+
 		public Rectangle Bounds {
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public float DpiX {
 			get { throw new NotImplementedException (); }
 		}
 		
-		[MonoTODO]
 		public float DpiY {
 			get { throw new NotImplementedException (); }
 		}
 		
-		[MonoTODO]
 		public int EmfPlusHeaderSize {
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public int LogicalDpiX {
 			get { throw new NotImplementedException (); }
 		}
 		
-		[MonoTODO]
 		public int LogicalDpiY {
 			get { throw new NotImplementedException (); }
 		}
 		
-		[MonoTODO]
 		public int MetafileSize {
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public MetafileType Type {
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public int Version {
 			get { throw new NotImplementedException (); }
 		}
 		
-		[MonoTODO]
 		public MetaHeader WmfHeader {
 			get { throw new NotImplementedException (); }
 		}
-
 	}
-
 }

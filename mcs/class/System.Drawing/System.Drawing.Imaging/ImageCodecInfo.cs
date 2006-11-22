@@ -198,7 +198,7 @@ namespace System.Drawing.Imaging {
 			set { signatureMasks = value; }
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Property value is ignored.")]
 		[CLSCompliant(false)]
 		public byte[][] SignaturePatterns 
 		{
