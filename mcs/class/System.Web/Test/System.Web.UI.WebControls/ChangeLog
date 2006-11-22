@@ -1,5 +1,9 @@
 2006-11-22  Igor Zelmanovich   <igorz@mainsoft.com>
 
+	* CircleHotSpotTest.cs: removed NotWorking attributes.
+
+2006-11-22  Igor Zelmanovich   <igorz@mainsoft.com>
+
 	* CookieParameterTest.cs: removed NotWorking attributes.
 
 2006-11-22  Igor Zelmanovich   <igorz@mainsoft.com>

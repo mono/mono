@@ -65,8 +65,7 @@ namespace MonoTests.System.Web.UI.WebControls
         }
 
         [Test]
-        [Category ("NotWorking")]
-	[ExpectedException(typeof(ArgumentOutOfRangeException))]	
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]	
         public void CircleHotSpot_ExpRadius()
         {
             // The specified value is less than 0

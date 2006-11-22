@@ -1,5 +1,10 @@
 2006-11-22 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* CircleHotSpot.cs: fixed: 
+	setting Radius with value <0 throws ArgumentOutOfRangeException.
+
+2006-11-22 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* CookieParameter.cs: fixed Evaluate method.
 
 2006-11-22 Igor Zelmanovich <igorz@mainsoft.com>

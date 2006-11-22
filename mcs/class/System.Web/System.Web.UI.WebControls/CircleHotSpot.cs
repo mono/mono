@@ -48,7 +48,11 @@ namespace System.Web.UI.WebControls
 		[DefaultValueAttribute (0)]
 		public int Radius {
 			get { return ViewState.GetInt ("Radius", 0); }
-			set { ViewState ["Radius"] = value; }
+			set {
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ();
+				ViewState ["Radius"] = value;
+			}
 		}
 
 		[DefaultValueAttribute (0)]
