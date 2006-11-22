@@ -369,7 +369,6 @@ namespace MonoTests.System.Web.UI
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void ControlState ()
 		{
@@ -402,7 +401,6 @@ namespace MonoTests.System.Web.UI
 		}
 
 		[Test]
-		[Category ("NotWorking")] // Not implemented exception
 		public void ClientIDSeparator ()
 		{
 			DerivedControl ctrl = new DerivedControl ();
@@ -410,7 +408,6 @@ namespace MonoTests.System.Web.UI
 		}
 
 		[Test]
-		[Category ("NotWorking")] // Not implemented exception
 		public void IDSeparator ()
 		{
 			DerivedControl ctrl = new DerivedControl ();
@@ -451,7 +448,6 @@ namespace MonoTests.System.Web.UI
 		}
 
 		[Test]
-		[Category ("NotWorking")] // Not implemented exception
 		[Category ("NunitWeb")]
 		public void LoadViewStateByID ()
 		{
