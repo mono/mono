@@ -72,7 +72,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			finally {
 				connection.Close ();
 			}
-			RestoreData ();
 		}
 
 		[Test]
@@ -146,7 +145,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (1, dataView.Count);
 			Assert.AreEqual (1, records);
 
-			RestoreData ();
 		}
 
 		[Test]
@@ -177,7 +175,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (1, dataView.Count);
 			Assert.AreEqual (1, records);
 
-			RestoreData ();
 		}
 
 		[Test]
@@ -197,7 +194,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (1, dataView.Count);
 			Assert.AreEqual (1, records);
 
-			RestoreData ();
 		}
 
 		[Test]
@@ -224,7 +220,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (1, dataView.Count);
 			Assert.AreEqual (1, records);
 
-			RestoreData ();
 		}
 
 
@@ -239,7 +234,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			return ds;
 		}
 
-		private void RestoreData ()
+		[SetUp]
+		public void RestoreData ()
 		{
 			string insertSql = @"INSERT INTO Table1 VALUES ({0}, '{1}', '{2}')";
 			string deleteSql = @"DELETE FROM Table1";

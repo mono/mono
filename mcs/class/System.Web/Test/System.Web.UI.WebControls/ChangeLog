@@ -1,3 +1,8 @@
+2006-11-22  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* SqlDataSourceDerbyTest.cs: fixed db init
+
+
 2006-11-22  Igor Zelmanovich   <igorz@mainsoft.com>
 
 	* CircleHotSpotTest.cs: removed NotWorking attributes.
