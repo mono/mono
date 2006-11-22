@@ -1,6 +1,6 @@
 2006-11-22  Lluis Sanchez Gual  <lluis@novell.com>
 
-	* ChannelServices.cs: Then creating a client sink chain by calling
+	* ChannelServices.cs: When creating a client sink chain by calling
 	  CreateMessageSink, provide a null URL if there is channel data.
 	  Needed because some third party channels check for a null URL before
 	  looking into the channel data.
