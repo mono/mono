@@ -1,3 +1,9 @@
+2006-11-21  Mark Mason  <mason@broadcom.com>
+
+	* inssel.brg: Add and use compare-and-branch macros to support
+	architectures that do not have condition code registers (ie. MIPS).
+	* *-mips.{c,brg,md}: Fix copyright statements
+
 2006-11-20  Mark Mason  <mason@broadcom.com>
 
 	* Makefile.am: remove mini-codegen.c from list of MIPS sources
