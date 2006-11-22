@@ -1,3 +1,12 @@
+2006-11-22  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #79987
+	* class.cs (VerifyClsCompliance): Move redundant CLS compliance attribute
+	check to a base class.
+	* decl.cs (VerifyClsCompliance): Warn that CLS compliance cannot be tested
+	only when assembly has missing attribute.
+	* report.cs: Update.
+
 2006-11-21  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-tokenizer.cs: Merged with gmcs version.

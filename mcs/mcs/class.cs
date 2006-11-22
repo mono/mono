@@ -2549,11 +2549,6 @@ namespace Mono.CSharp {
 			if (base_type != null && !AttributeTester.IsClsCompliant (base_type)) {
 				Report.Error (3009, Location, "`{0}': base type `{1}' is not CLS-compliant", GetSignatureForError (), TypeManager.CSharpName (base_type));
 			}
-
-			if (!Parent.IsClsComplianceRequired ()) {
-				Report.Error (3018, Location, "`{0}' cannot be marked as CLS-compliant because it is a member of non CLS-compliant type `{1}'", 
-					GetSignatureForError (), Parent.GetSignatureForError ());
-			}
 			return true;
 		}
 
@@ -7674,7 +7669,7 @@ namespace Mono.CSharp {
 				 int mod_flags, Parameters parameters,
 				 ToplevelBlock block, Attributes attrs, Location loc)
 			: base (parent, null, ret_type, mod_flags, AllowedModifiers, false,
-				new MemberName ("op_" + type, loc), attrs, parameters)
+				new MemberName ("op_" + type.ToString(), loc), attrs, parameters)
 		{
 			OperatorType = type;
 			Block = block;

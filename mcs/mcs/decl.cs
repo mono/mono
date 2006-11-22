@@ -559,13 +559,19 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (!CodeGen.Assembly.IsClsCompliant) {
-				if (HasClsCompliantAttribute) {
+			if (HasClsCompliantAttribute) {
+				if (CodeGen.Assembly.ClsCompliantAttribute == null && !CodeGen.Assembly.IsClsCompliant) {
 					Report.Error (3014, Location,
 						"`{0}' cannot be marked as CLS-compliant because the assembly is not marked as CLS-compliant",
 						GetSignatureForError ());
+					return false;
 				}
-				return false;
+
+				if (!Parent.IsClsComplianceRequired ()) {
+					Report.Warning (3018, 1, Location, "`{0}' cannot be marked as CLS-compliant because it is a member of non CLS-compliant type `{1}'", 
+						GetSignatureForError (), Parent.GetSignatureForError ());
+					return false;
+				}
 			}
 
 			if (member_name.Name [0] == '_') {
