@@ -4131,6 +4131,11 @@ namespace System.Windows.Forms
 			if (text_rect.Width <= 0 || text_rect.Height <= 0)
 				return;
 
+			if (button.Pressed || button.Pushed) {
+				text_rect.X += 1;
+				text_rect.Y += 1;
+			}
+			
 			if (button.Enabled)
 				dc.DrawString (button.Text, control.Font, SystemBrushes.ControlText, text_rect, format);
 			else

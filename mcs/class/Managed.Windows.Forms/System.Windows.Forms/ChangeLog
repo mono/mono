@@ -1,5 +1,10 @@
 2006-11-22  Everaldo Canuto  <everaldo@simios.org>
 
+	* ThemeWin32Classic.cs: Fix text redenring when button is
+	pressed.
+
+2006-11-22  Everaldo Canuto  <everaldo@simios.org>
+
 	* MenuAPI.cs: Fixes behavior when menu is opened by kerboard
 	and later navigate by mouse. Fixes #79528.
 
