@@ -195,7 +195,7 @@ namespace System.Windows.Forms {
 		void MoveSelection (MenuItem item)
 		{
 			if (item == null) {
-				if (CurrentMenu.SelectedItem.IsPopup)
+				if (CurrentMenu.SelectedItem.IsPopup || (keynav_state == KeyNavState.Navigating))
 					return;
 				MenuItem old_item = CurrentMenu.SelectedItem;
 				if (CurrentMenu != TopMenu)
@@ -206,6 +206,7 @@ namespace System.Windows.Forms {
 					DeselectItem (CurrentMenu.SelectedItem);
 				CurrentMenu = item.Parent;
 				SelectItem (CurrentMenu, item, active && item.IsPopup);
+				keynav_state = KeyNavState.Idle;
 			}
 		}
 
@@ -521,10 +522,13 @@ namespace System.Windows.Forms {
 			if (item == null)
 				return false;
 
+			active = true;
+			grab_control.ActiveTracker = this;
+			
 			SelectItem (CurrentMenu, item, true);
 			if (item.IsPopup) {
-				SelectItem (item, item.MenuItems [0], false);
 				CurrentMenu = item;
+				SelectItem (item, item.MenuItems [0], false);
 			}
 			return true;
 		}
