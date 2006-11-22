@@ -129,6 +129,18 @@ namespace Mono.Security.X509 {
 			_untrusted = null;
 		}
 
+		public X509Store Open (string storeName, bool create)
+		{
+			if (storeName == null)
+				throw new ArgumentNullException ("storeName");
+
+			string path = Path.Combine (_storePath, storeName);
+			if (!create && !Directory.Exists (path))
+				return null;
+
+			return new X509Store (path, false);
+		}
+
 		// names
 
 		public class Names {
