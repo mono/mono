@@ -135,7 +135,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void CookieParameter_Evaluate ()
 		{
 			CookieParameterPoker cookieParam = new CookieParameterPoker ("Salary", TypeCode.Int64, "SalaryCookie");

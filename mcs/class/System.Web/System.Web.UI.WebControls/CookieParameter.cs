@@ -65,7 +65,7 @@ namespace System.Web.UI.WebControls {
 		
 		protected override object Evaluate (HttpContext ctx, Control control)
 		{
-			if (control == null || ctx.Request == null)
+			if (ctx == null || ctx.Request == null)
 				return null;
 			
 			HttpCookie c = ctx.Request.Cookies [CookieName];
@@ -90,4 +90,5 @@ namespace System.Web.UI.WebControls {
 	}
 }
 #endif
+
 
