@@ -3762,6 +3762,15 @@ namespace System.Windows.Forms
 			// SetBoundsCore updates the Win32 control itself. UpdateBounds updates the controls variables and fires events, I'm guessing - pdb
 			if (IsHandleCreated) {
 				XplatUI.SetWindowPos(Handle, x, y, width, height);
+
+				// Win32 automatically changes negative width/height to 0.
+				// The control has already been sent a WM_WINDOWPOSCHANGED message and it has the correct
+				// data, but it'll be overwritten when we call UpdateBounds unless we get the updated
+				// size.
+				if (width < 0 || height < 0) {
+					int cw, ch, ix, iy;
+					//XplatUI.GetWindowPos(Handle, this is Form, out ix, out iy, out width, out height, out cw, out ch);
+				}
 			}
 
 			UpdateBounds(x, y, width, height);

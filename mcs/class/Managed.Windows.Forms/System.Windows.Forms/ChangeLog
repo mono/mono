@@ -1,3 +1,13 @@
+2006-11-22  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Control.cs: After calling SetWindowsPos in SetBoundsCore 
+	the actual size has to be queried, since if height /
+	width is negative Win32 changes it to 0. 
+	Fixes #79999 on Windows.
+	
+	* XplatUIX11.cs: Set height / width to 0 if negative
+	in SetWindowPos. Fixes #79999 on Linux.
+	
 2006-11-22  Everaldo Canuto  <everaldo@simios.org>
 
 	* ThemeWin32Classic.cs: Fix text redenring when button is
