@@ -72,7 +72,7 @@ namespace Mainsoft.Web.Administration
 
 		protected void success_btn_Click (object sender, EventArgs e)
 		{
-			Server.Transfer ("~/ManageUser.aspx");
+			Server.Transfer ("ManageUser.aspx");
 		}
 
 	}

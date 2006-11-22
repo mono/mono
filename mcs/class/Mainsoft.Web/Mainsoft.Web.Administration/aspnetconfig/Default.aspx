@@ -23,7 +23,7 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. --%>
-<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Util.Master" CodeBehind="Default.aspx.cs" Inherits="Mainsoft.Web.Administration.Default" %>
+<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/aspnetconfig/Util.Master" CodeBehind="Default.aspx.cs" Inherits="Mainsoft.Web.Administration.Default" %>
 <asp:Content runat="server" ContentPlaceHolderID="Main">
     <table>
         <tr>
@@ -47,12 +47,12 @@
                     </tr>
                     <tr>
                         <td>
-                            <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl="~/CreateUser.aspx">Create user</asp:HyperLink>
+                            <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl="CreateUser.aspx">Create user</asp:HyperLink>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <asp:HyperLink ID="HyperLink2" runat="server" NavigateUrl="~/ManageUser.aspx">Manage users</asp:HyperLink>
+                            <asp:HyperLink ID="HyperLink2" runat="server" NavigateUrl="ManageUser.aspx">Manage users</asp:HyperLink>
                         </td>
                     </tr>
                 </table> 
@@ -74,7 +74,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <asp:HyperLink ID="HyperLink3" runat="server" NavigateUrl="~/CreateRole.aspx">Create or manage roles</asp:HyperLink>
+                            <asp:HyperLink ID="HyperLink3" runat="server" NavigateUrl="CreateRole.aspx">Create or manage roles</asp:HyperLink>
                         </td>
                     </tr>
                 </table>

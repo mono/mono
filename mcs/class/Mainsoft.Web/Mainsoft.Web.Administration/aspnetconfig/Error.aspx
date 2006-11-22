@@ -37,7 +37,7 @@
         Error occured on this request ! Please try again !
     </div>
     <div>
-        <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl="~/Default.aspx">Administration utility home page</asp:HyperLink>
+        <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl="Default.aspx">Administration utility home page</asp:HyperLink>
     </div>
     </form>
 </body>

@@ -51,7 +51,7 @@
             <tr style="background-color:">
                 <td style="background-color: lightblue">
                 Current page : &nbsp;
-                <asp:SiteMapPath ID="SiteMapPath1" runat="server" Font-Names="Verdana" Font-Size="0.8em"  PathSeparator=" >> ">
+                <asp:SiteMapPath SiteMapProvider="AspNetConfigXmlSiteMapProvider" ID="SiteMapPath1" runat="server" Font-Names="Verdana" Font-Size="0.8em"  PathSeparator=" >> ">
                     <PathSeparatorStyle Font-Bold="True" ForeColor="#507CD1" />
                     <CurrentNodeStyle ForeColor="#333333" />
                     <NodeStyle Font-Bold="True" ForeColor="#284E98" />

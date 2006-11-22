@@ -35,7 +35,7 @@ namespace Mainsoft.Web.Administration
 		protected override void OnInit (EventArgs e)
 		{
 			if (!(allowRemoteConfiguration || Request.IsLocal)) {
-				Server.Transfer ("~/SecurError.aspx");
+				Server.Transfer ("SecurError.aspx");
 			}
 			base.OnInit (e);
 		}

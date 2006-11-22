@@ -23,7 +23,7 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. --%>
-<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Util.Master" CodeBehind="CreateUser.aspx.cs" Inherits="Mainsoft.Web.Administration.CreateUser" %>
+<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/aspnetconfig/Util.Master" CodeBehind="CreateUser.aspx.cs" Inherits="Mainsoft.Web.Administration.CreateUser" %>
 <asp:Content runat="server" ID="main" ContentPlaceHolderID="Main">
     <table style="border-right: thin solid; padding-right: 2px; border-top: thin solid; padding-left: 2px; padding-bottom: 2px; border-left: thin solid; padding-top: 2px; border-bottom: thin solid">
         <tr>
@@ -35,7 +35,7 @@
             <td width= "60%" valign="top">
                     <asp:CreateUserWizard ID="CreateUserWizard1" runat="server" BackColor="#F7F6F3"
                     BorderColor="#E6E2D8" BorderStyle="Solid" BorderWidth="1px" Font-Names="Verdana"
-                    Font-Size="0.8em" Width="353px" ContinueDestinationPageUrl="~/CreateUser.aspx" FinishDestinationPageUrl="~/CreateUser.aspx">
+                    Font-Size="0.8em" Width="353px" ContinueDestinationPageUrl="CreateUser.aspx" FinishDestinationPageUrl="CreateUser.aspx">
                     <WizardSteps>
                         <asp:CreateUserWizardStep ID="CreateUserWizardStep1" runat="server">
                         </asp:CreateUserWizardStep>

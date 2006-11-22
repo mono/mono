@@ -23,9 +23,9 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. --%>
-<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Util.Master" CodeBehind="ManageUser.aspx.cs" Inherits="Mainsoft.Web.Administration.ManageUser" %>
+<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/aspnetconfig/Util.Master" CodeBehind="ManageUser.aspx.cs" Inherits="Mainsoft.Web.Administration.ManageUser" %>
 <%@ Register tagprefix="custom" namespace="Mainsoft.Web.Administration" Assembly="Mainsoft.Web.Administration"  %>
-<%@ Register TagPrefix="custom" TagName="searcher" Src="~/Controls/Searcher.ascx" %>
+<%@ Register TagPrefix="custom" TagName="searcher" Src="Controls/Searcher.ascx" %>
 
 <asp:Content runat="server" ID="main" ContentPlaceHolderID="Main">
 <asp:MultiView ID="mv" ActiveViewIndex="0" runat="server">
@@ -72,7 +72,7 @@
                                     <asp:BoundField DataField="User" HeaderText="User Name" >
                                         <HeaderStyle HorizontalAlign="Left" />
                                     </asp:BoundField>
-                                    <asp:HyperLinkField DataNavigateUrlFields="User" DataNavigateUrlFormatString="~\EditUser.aspx?User={0}"
+                                    <asp:HyperLinkField DataNavigateUrlFields="User" DataNavigateUrlFormatString="EditUser.aspx?User={0}"
                                         Text="Edit User" />
                                     <asp:TemplateField ShowHeader="False">
                                     <ItemTemplate>
@@ -116,7 +116,7 @@
         </tr>
         <tr>
             <td colspan="2">
-                <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl="~/CreateUser.aspx">Create new user</asp:HyperLink>
+                <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl="CreateUser.aspx">Create new user</asp:HyperLink>
             </td>
         </tr>
     </table>
