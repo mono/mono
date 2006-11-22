@@ -121,6 +121,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/MasterTypeTest2.aspx \
 	Test/mainsoft/NunitWebResources/PageLifecycleTest.aspx \
 	Test/mainsoft/NunitWebResources/PageValidationTest.aspx \
+	Test/mainsoft/NunitWebResources/AsyncPage.aspx \
+	Test/mainsoft/NunitWebResources/PageCultureTest.aspx \
 	Test/mainsoft/NunitWebResources/adapters.browser \
 	Test/mainsoft/MainsoftWebTest/nunitweb_config.xml 
 

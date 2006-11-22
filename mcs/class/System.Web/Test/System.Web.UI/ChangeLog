@@ -1,5 +1,9 @@
 2006-11-22  Yoni Klain   <yonik@mainsoft.com>
 
+	* PageTest.cs: added new tests
+
+2006-11-22  Yoni Klain   <yonik@mainsoft.com>
+
 	* ControlTest.cs: add directive for 1.1
 
 2006-11-21  Yoni Klain   <yonik@mainsoft.com>

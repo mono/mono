@@ -40,6 +40,7 @@ using MonoTests.stand_alone.WebHarness;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using System.Collections;
+using System.Net;
 
 namespace MonoTests.System.Web.UI {
 
@@ -57,6 +58,31 @@ namespace MonoTests.System.Web.UI {
 				return ctx;
 			}
 		}
+
+		#if NET_2_0 
+		// MONO BUG - have no difinition for AsyncMode
+		//public new bool AsyncMode
+		//{
+		//        get { return base.AsyncMode; }
+		//        set { base.AsyncMode = value; }
+		//}
+
+		public new object GetWrappedFileDependencies(string[] virtualFileDependencies)
+		{
+			return base.GetWrappedFileDependencies(virtualFileDependencies);
+		}
+
+		public new void InitOutputCache (OutputCacheParameters cacheSettings)
+		{
+			base.InitOutputCache (cacheSettings);
+		}
+
+		// MONO BUG - have no difinition for UniqueFilePathSuffix
+		//public new string UniqueFilePathSuffix
+		//{
+		//        get { return base.UniqueFilePathSuffix; }
+		//}
+		#endif
 	}
 
 	class TestPage2 : Page {
@@ -104,7 +130,6 @@ namespace MonoTests.System.Web.UI {
 		[Test]
 #if NET_2_0
 		[Category ("NotDotNet")] // page.User throw NRE in 2.0 RC
-		
 #endif
 		public void User_OverridenContext ()
 		{
@@ -699,13 +724,382 @@ namespace MonoTests.System.Web.UI {
 			Assert.AreEqual ("OnUnload", eventlist[9], "Live Cycle Flow #10");
 		}
 
+/*              // MONO BUG - No difinition to AddOnPreRenderCompleteAsync
+		[Test]
+		[Category ("NunitWeb")]
+		public void AddOnPreRenderCompleteAsync ()
+		{
+			WebTest.CopyResource (GetType (), "AsyncPage.aspx", "AsyncPage.aspx");
+			WebTest t = new WebTest ("AsyncPage.aspx");
+			t.Invoker = PageInvoker.CreateOnLoad (AddOnPreRenderCompleteAsync_Load);
+			string str = t.Run ();
+			ArrayList eventlist = t.UserData as ArrayList;
+			if (eventlist == null)
+				Assert.Fail ("User data does not been created fail");
+
+			Assert.AreEqual ("BeginGetAsyncData", eventlist[0], "BeginGetAsyncData Failed");
+			Assert.AreEqual ("EndGetAsyncData", eventlist[1], "EndGetAsyncData Failed");
+		}
+
+
+		
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void ExecuteRegisteredAsyncTasks ()
+		{
+			WebTest.CopyResource (GetType (), "AsyncPage.aspx", "AsyncPage.aspx");
+			WebTest t = new WebTest ("AsyncPage.aspx");
+			t.Invoker = PageInvoker.CreateOnLoad (ExecuteRegisteredAsyncTasks_Load);
+			string str = t.Run ();
+			ArrayList eventlist = t.UserData as ArrayList;
+			if (eventlist == null)
+				Assert.Fail ("User data does not been created fail");
+
+			Assert.AreEqual ("BeginGetAsyncData", eventlist[0], "BeginGetAsyncData Failed");
+			Assert.AreEqual ("EndGetAsyncData", eventlist[1], "EndGetAsyncData Failed");
+		}
+
+		public static void ExecuteRegisteredAsyncTasks_Load (Page p)
+		{
+			BeginEventHandler bh = new BeginEventHandler (BeginGetAsyncData);
+			EndEventHandler eh = new EndEventHandler (EndGetAsyncData);
+			p.AddOnPreRenderCompleteAsync (bh, eh);
+			p.ExecuteRegisteredAsyncTasks ();
+		}
+
+		static WebRequest myRequest;
+		public static void AddOnPreRenderCompleteAsync_Load (Page p)
+		{
+			BeginEventHandler bh = new BeginEventHandler(BeginGetAsyncData);
+			EndEventHandler eh = new EndEventHandler(EndGetAsyncData);
+			p.AddOnPreRenderCompleteAsync(bh, eh);
+
+			// Initialize the WebRequest.
+			string address = "http://MyPage.aspx";
+			myRequest = WebRequest.Create(address);
+		}
+
+		static IAsyncResult BeginGetAsyncData(Object src, EventArgs args, AsyncCallback cb, Object state)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("BeginGetAsyncData");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("BeginGetAsyncData");
+				WebTest.CurrentTest.UserData = list;
+			}
+			return new Customresult(); // myRequest.BeginGetResponse (cb, state);
+		}
+
+		static void EndGetAsyncData(IAsyncResult ar)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("EndGetAsyncData");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("EndGetAsyncData");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+*/
+
+		// MONO BUG - have no difinition for AsyncMode
+		//[Test]
+		//public void AsyncMode ()
+		//{
+		//        TestPage p = new TestPage ();
+		//        Assert.AreEqual (false, p.AsyncMode, "AsyncMode#1");
+		//        p.AsyncMode = true;
+		//        Assert.AreEqual (true, p.AsyncMode, "AsyncMode#2");
+		//}
+
+		// MONO BUG - have no difinition for AsyncTimeout
+		//[Test]
+		//public void AsyncTimeout ()
+		//{
+		//        Page p = new Page ();
+		//        Assert.AreEqual (45, ((TimeSpan) p.AsyncTimeout).Seconds , "AsyncTimeout#1");
+		//        p.AsyncTimeout = new TimeSpan (0, 0, 50);
+		//        Assert.AreEqual (50, ((TimeSpan) p.AsyncTimeout).Seconds, "AsyncTimeout#2");
+		//}
+
+		[Test]
+		public void ClientQueryString ()
+		{
+			// httpContext URL cannot be set.
+		}
+
+		[Test]
+		public void ClientScript ()
+		{
+			Page p = new Page ();
+			Assert.AreEqual (typeof(ClientScriptManager), p.ClientScript.GetType(), "ClientScriptManager");
+		}
+
+		// MONO BUG - have no difinition for CreateHtmlTextWriterFromType
+		//[Test]
+		//public void CreateHtmlTextWriterFromType ()
+		//{
+		//        HtmlTextWriter writer = Page.CreateHtmlTextWriterFromType (null, typeof (HtmlTextWriter));
+		//        Assert.IsNotNull (writer, "CreateHtmlTextWriterFromType Failed");
+		//}
+
+		[Test]
+		public void EnableEventValidation ()
+		{
+			Page p = new Page ();
+			Assert.AreEqual (true, p.EnableEventValidation, "EnableEventValidation#1");
+			p.EnableEventValidation = false;
+			Assert.AreEqual (false, p.EnableEventValidation, "EnableEventValidation#2");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void Form ()
+		{
+			Page p = new Page ();
+			Assert.AreEqual (null, p.Form, "Form#1");
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (Form_Load));
+			t.Run ();
+		}
+
+		public static void Form_Load (Page p)
+		{
+			Assert.IsNotNull (p.Form, "Form#2");
+			Assert.AreEqual ("form1", p.Form.ID, "Form#3");
+			Assert.AreEqual (typeof (HtmlForm), p.Form.GetType (), "Form#4");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void GetWrappedFileDependencies ()
+		{
+			TestPage p = new TestPage ();
+			string []s = { "test.aspx","fake.aspx" };
+			object list = p.GetWrappedFileDependencies (s);
+			Assert.AreEqual (typeof(String[]), list.GetType (), "GetWrappedFileDependencie#1");
+			Assert.AreEqual (2, ((String[]) list).Length, "GetWrappedFileDependencie#2");
+			Assert.AreEqual ("test.aspx", ((String[]) list)[0], "GetWrappedFileDependencie#3");
+			Assert.AreEqual ("fake.aspx", ((String[]) list)[1], "GetWrappedFileDependencie#4");
+		}
+
+		// MONO BUG - have no difinition for IdSeparator
+		//[Test]
+		//public void IdSeparator ()
+		//{
+		//        Page p = new Page ();
+		//        Assert.AreEqual ('$', p.IdSeparator, "IdSeparator");
+		//}
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void InitializeCulture ()
+		{
+			WebTest.CopyResource (GetType (), "PageCultureTest.aspx", "PageCultureTest.aspx");
+			WebTest t = new WebTest ("PageCultureTest.aspx");
+			string PageRenderHtml = t.Run ();
+			ArrayList eventlist = t.UserData as ArrayList;
+			if (eventlist == null)
+				Assert.Fail ("User data does not been created fail");
+
+			Assert.AreEqual ("InitializeCulture", eventlist[0], "Live Cycle Flow #0");
+			Assert.AreEqual ("OnPreInit", eventlist[1], "Live Cycle Flow #1");
+			Assert.AreEqual ("OnInit", eventlist[2], "Live Cycle Flow #2");
+			Assert.AreEqual ("OnInitComplete", eventlist[3], "Live Cycle Flow #3");
+			Assert.AreEqual ("OnPreLoad", eventlist[4], "Live Cycle Flow #4");
+			Assert.AreEqual ("OnLoad", eventlist[5], "Live Cycle Flow #5");
+			Assert.AreEqual ("OnLoadComplete", eventlist[6], "Live Cycle Flow #6");
+			Assert.AreEqual ("OnPreRender", eventlist[7], "Live Cycle Flow #7");
+			Assert.AreEqual ("OnPreRenderComplete", eventlist[8], "Live Cycle Flow #8");
+			Assert.AreEqual ("OnSaveStateComplete", eventlist[9], "Live Cycle Flow #9");
+			Assert.AreEqual ("OnUnload", eventlist[10], "Live Cycle Flow #10");
+		}
+
+		// MONO BUG - have no difinition for IsAsync
+		//[Test]
+		//public void IsAsync ()
+		//{
+		//        Page p = new Page ();
+		//        Assert.AreEqual (false, p.IsAsync, "IsAsync");
+		//}
+
+		[Test]
+		public void IsCallback ()
+		{
+			Page p = new Page ();
+			Assert.AreEqual (false, p.IsCallback, "IsCallback");
+		}
+
+		[Test]
+		public void IsCrossPagePostBack ()
+		{
+			Page p = new Page ();
+			Assert.AreEqual (false, p.IsCrossPagePostBack, "IsCrossPagePostBack");
+		}
+
+		[Test]
+		public void Items ()
+		{
+			Page p = new Page ();
+			IDictionary d = p.Items;
+			d.Add ("key", "test");
+			Assert.AreEqual (1, p.Items.Count, "Items#1");
+			Assert.AreEqual ("test", p.Items["key"].ToString(), "Items#2");
+		}
+
+		[Test]
+		public void MaintainScrollPositionOnPostBack ()
+		{
+			Page p = new Page ();
+			Assert.AreEqual (false, p.MaintainScrollPositionOnPostBack, "MaintainScrollPositionOnPostBack#1");
+			p.MaintainScrollPositionOnPostBack = true;
+			Assert.AreEqual (true, p.MaintainScrollPositionOnPostBack, "MaintainScrollPositionOnPostBack#2");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category("NunitWeb")]
+		public void Master ()
+		{
+			Page p = new Page ();
+			Assert.AreEqual (null, p.Master, "Master#1");
+			WebTest t = new WebTest ("MyPageWithMaster.aspx");
+			t.Invoker = PageInvoker.CreateOnLoad (Master_Load);
+			t.Run ();
+			Assert.AreEqual ("ASP.my_master", t.UserData.ToString (), "Master#2");
+		}
+
+		public static void Master_Load (Page p)
+		{
+			WebTest.CurrentTest.UserData = p.Master.GetType().ToString();
+		}
+
+		[Test]
+		public void MasterPageFile ()
+		{
+			Page p = new Page ();
+			Assert.AreEqual (null, p.MasterPageFile, "MasterPageFile#1");
+			p.MasterPageFile = "test";
+			Assert.AreEqual ("test", p.MasterPageFile, "MasterPageFile#2");
+		}
+
+		// MONO BUG - have no difinition for MaxPageStateFieldLength
+		//[Test]
+		//public void MaxPageStateFieldLength ()
+		//{
+		//        Page p = new Page ();
+		//        Assert.AreEqual (-1, p.MaxPageStateFieldLength, "MaxPageStateFieldLength#1");
+		//        p.MaxPageStateFieldLength = 10;
+		//        Assert.AreEqual (10, p.MaxPageStateFieldLength, "MaxPageStateFieldLength#2");
+		//}
+
+		[Test]
+		public void PageAdapter ()
+		{
+			Page p = new Page ();
+			Assert.AreEqual (null, p.PageAdapter, "PageAdapter");
+		}
+
+		[Test]
+		public void PreviousPage ()
+		{
+			// NUnit.Framework limitation for server.transfer	
+		}
+
+		// MONO BUG - have no difinition for RegisterRequiresViewStateEncryption
+		//[Test]
+		//public void RegisterRequiresViewStateEncryption ()
+		//{
+		//        Page p = new Page ();
+		//        p.ViewStateEncryptionMode = ViewStateEncryptionMode.Always;
+		//        p.RegisterRequiresViewStateEncryption();
+		//        // No changes after the Encryption 
+		//}
+
+		[Test]
+		public void Theme ()
+		{
+			Page p = new Page ();
+			Assert.AreEqual (null, p.Theme, "Theme#1");
+			p.Theme = "Theme.skin";
+			Assert.AreEqual ("Theme.skin",p.Theme, "Theme#2");
+		}
+
+		// MONO BUG - have no difinition for UniqueFilePathSuffix
+		//[Test]
+		//public void UniqueFilePathSuffix ()
+		//{
+		//        TestPage p = new TestPage ();
+		//        if (!p.UniqueFilePathSuffix.StartsWith ("__ufps=")) {
+		//                Assert.Fail ("UniqueFilePathSuffix");
+		//        }
+		//}
+
+		// MONO BUG - have no difinition for RegisterRequiresViewStateEncryption
+		//[Test]
+		//public void ViewStateEncryptionModeTest ()
+		//{
+		//        Page p = new Page ();
+		//        Assert.AreEqual (ViewStateEncryptionMode.Auto, p.ViewStateEncryptionMode, "ViewStateEncryptionMode#1");
+		//        p.ViewStateEncryptionMode = ViewStateEncryptionMode.Never;
+		//        Assert.AreEqual (ViewStateEncryptionMode.Never, p.ViewStateEncryptionMode, "ViewStateEncryptionMode#2");
+		//}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void GetDataItem_Exception ()
+		{
+			Page p = new Page ();
+			p.GetDataItem ();
+		}
+
 		[TestFixtureTearDown]
 		public void TearDown ()
 		{
 			WebTest.Unload ();
 		}
-#endif
 
-		
+		#region help_classes
+		class Customresult : IAsyncResult
+		{
+
+			#region IAsyncResult Members
+
+			public object AsyncState
+			{
+				get { throw new Exception ("The method or operation is not implemented."); }
+			}
+
+			public WaitHandle AsyncWaitHandle
+			{
+				get { throw new Exception ("The method or operation is not implemented."); }
+			}
+
+			public bool CompletedSynchronously
+			{
+				get { return true; }
+			}
+
+			public bool IsCompleted
+			{
+				get { throw new Exception ("The method or operation is not implemented."); }
+			}
+
+			#endregion
+		}
+		#endregion
+#endif
 	}
 }
