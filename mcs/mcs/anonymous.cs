@@ -175,7 +175,8 @@ namespace Mono.CSharp {
 			Report.Debug (128, "CREATE SCOPE", block, block.ScopeInfo, toplevel, ac);
 
 			if (ac == null)
-				return new ScopeInfo (block, toplevel.RootScope.Parent);
+				return new ScopeInfo (block, toplevel.RootScope.Parent,
+						      toplevel.RootScope.GenericMethod);
 
 			Report.Debug (128, "CREATE SCOPE #1", ac, ac.Host, ac.Scope, ac.Block,
 				      ac.Container, ac.ContainerAnonymousMethod,
@@ -193,16 +194,15 @@ namespace Mono.CSharp {
 
 			Report.Debug (128, "CREATE SCOPE #2", parent);
 
-			ScopeInfo new_scope = new ScopeInfo (block, parent);
+			ScopeInfo new_scope = new ScopeInfo (block, parent, null);
 
 			Report.Debug (128, "CREATE SCOPE #3", new_scope);
 
 			return new_scope;
 		}
 
-		protected ScopeInfo (Block block, TypeContainer parent)
-			: base (parent, block.Toplevel.RootScope.GenericMethod,
-				0, block.StartLocation)
+		protected ScopeInfo (Block block, TypeContainer parent, GenericMethod generic)
+			: base (parent, generic, 0, block.StartLocation)
 		{
 			Parent = parent;
 			RootScope = block.Toplevel.RootScope;
@@ -280,6 +280,10 @@ namespace Mono.CSharp {
 				foreach (TypeParameter t in ec.DeclContainer.CurrentTypeParameters)
 					targs.Add (new TypeParameterExpr (t, Location));
 
+			Report.Debug (128, "GET SCOPE TYPE", this, TypeBuilder, targs,
+				      ec.DeclContainer, ec.DeclContainer.GetType (),
+				      ec.DeclContainer.Parent.Name);
+
 			TypeExpr te = new ConstructedType (TypeBuilder, targs, Location);
 			te = te.ResolveAsTypeTerminal (ec, false);
 			if ((te == null) || (te.Type == null))
@@ -318,7 +322,8 @@ namespace Mono.CSharp {
 		public Variable CaptureScope (ScopeInfo child)
 		{
 			CheckMembersDefined ();
-			Report.Debug (128, "CAPTURE SCOPE", this, child, child.TypeBuilder);
+			Report.Debug (128, "CAPTURE SCOPE", this, TypeBuilder, CurrentType,
+				      child, child.TypeBuilder, child.CurrentType);
 			if (child == this)
 				throw new InternalErrorException ();
 			CapturedScope captured = new CapturedScope (this, child);
@@ -1324,6 +1329,8 @@ namespace Mono.CSharp {
 					throw new InternalErrorException ();
 				if (Scope.DefineType () == null)
 					throw new InternalErrorException ();
+				if (!Scope.ResolveType ())
+					throw new InternalErrorException ();
 			}
 
 			if (Scope != null)
@@ -1461,10 +1468,17 @@ namespace Mono.CSharp {
 				}
 			}
 
+			Report.Debug (128, "CREATE METHOD HOST #1", this, scope, scopes);
+
 			foreach (ScopeInfo si in scopes) {
+				Report.Debug (128, "CREATE METHOD HOST #2", this, scope, si);
 				if (!si.Define ())
 					throw new InternalErrorException ();
 				if (si.DefineType () == null)
+					throw new InternalErrorException ();
+				Report.Debug (128, "CREATE METHOD HOST #3", this, scope, si,
+					      si.TypeBuilder);
+				if (!si.ResolveCurrentType ())
 					throw new InternalErrorException ();
 				scope.CaptureScope (si);
 			}
@@ -1516,8 +1530,8 @@ namespace Mono.CSharp {
 		public MethodInfo GetMethodBuilder (EmitContext ec)
 		{
 			MethodInfo builder = method.MethodBuilder;
-			if ((RootScope != null) && RootScope.IsGeneric) {
-				Type scope_type = RootScope.GetScopeType (ec);
+			if ((Scope != null) && Scope.IsGeneric) {
+				Type scope_type = Scope.GetScopeType (ec);
 				if (scope_type == null)
 					throw new InternalErrorException ();
 
