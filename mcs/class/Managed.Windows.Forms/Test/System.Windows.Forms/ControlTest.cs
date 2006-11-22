@@ -168,6 +168,45 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void SizeChangeTest ()
+		{
+			Form f = new Form ();
+			Control c = new Control ();
+			f.Controls.Add(c);
+			f.Show();
+			c.Resize += new EventHandler(SizeChangedTest_ResizeHandler);
+			c.Tag = true;
+			c.Size = c.Size;
+			Assert.AreEqual (true, (bool) c.Tag, "#1");
+			f.Close ();
+		}
+
+		private void SizeChangedTest_ResizeHandler (object sender, EventArgs e)
+		{
+			Console.WriteLine("Resized");
+			((Control) sender).Tag = false;
+		}
+
+		[Test]
+		public void NegativeHeightTest ()
+		{
+			Control c = new Control ();
+			IntPtr handle = c.Handle;
+			c.Resize += new EventHandler(NegativeHeightTest_ResizeHandler);
+			c.Tag = -2;
+			c.Height = 2;
+			c.Height = -2;
+			Assert.AreEqual (0, (int) c.Tag, "#1");
+			c.Dispose ();
+		}
+		
+		private void NegativeHeightTest_ResizeHandler (object sender, EventArgs e)
+		{
+			Control c = (Control) sender;
+			c.Tag = c.Height;
+		}
+		
+		[Test]
 		public void TopLevelControlTest () {
 			Control c = new Control ();
 
@@ -937,5 +976,6 @@ namespace MonoTests.System.Windows.Forms
 			f.Dispose ();
 			Application.Exit ();
 		}
+		
 	}
 }

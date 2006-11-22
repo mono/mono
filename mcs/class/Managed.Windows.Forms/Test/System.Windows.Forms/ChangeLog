@@ -1,5 +1,9 @@
 2006-11-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 	
+	* ControlTest.cs: Added tests for #79999.
+
+2006-11-20  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+	
 	* MdiFormTest.cs: Added tests for WindowState (mdi 
 	children) and Text (mdi parent with maximized mdi
 	children).
