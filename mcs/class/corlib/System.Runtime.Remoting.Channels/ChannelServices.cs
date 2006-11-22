@@ -132,7 +132,9 @@ namespace System.Runtime.Remoting.Channels
 			}
 			else {
 				foreach (object data in channelDataArray) {
-					IMessageSink sink = sender.CreateMessageSink (url, data, out objectUri);
+					// Don't provide the url in this case, since some channels won't
+					// check the channelData parameter if the url is not null.
+					IMessageSink sink = sender.CreateMessageSink (null, data, out objectUri);
 					if (sink != null) return sink;		
 				}
 			}
