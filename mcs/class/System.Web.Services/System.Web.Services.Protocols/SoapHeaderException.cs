@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.Serialization;
 using System.Xml;
 
 namespace System.Web.Services.Protocols 
@@ -38,6 +39,13 @@ namespace System.Web.Services.Protocols
 	public class SoapHeaderException : SoapException {
 
 		#region Constructors
+
+#if NET_2_0
+		public SoapHeaderException ()
+			: this ("SOAP header error", XmlQualifiedName.Empty)
+		{
+		}
+#endif
 
 		public SoapHeaderException (string message, XmlQualifiedName code)
 			: base (message, code)
@@ -88,6 +96,10 @@ namespace System.Web.Services.Protocols
 			
 		}
 
+		protected SoapHeaderException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
+		}
 #endif
 
 		#endregion // Constructors

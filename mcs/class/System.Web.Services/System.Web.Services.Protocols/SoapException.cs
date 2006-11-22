@@ -29,6 +29,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.IO;
+using System.Runtime.Serialization;
 using System.Xml;
 
 namespace System.Web.Services.Protocols 
@@ -58,6 +60,13 @@ namespace System.Web.Services.Protocols
 		#endregion
 
 		#region Constructors
+
+#if NET_2_0
+		public SoapException ()
+			: this ("SOAP error", XmlQualifiedName.Empty)
+		{
+		}
+#endif
 
 		public SoapException (string message, XmlQualifiedName code)
 			: base (message)
@@ -128,6 +137,30 @@ namespace System.Web.Services.Protocols
 			this.role = role;
 			this.lang = lang;
 		}
+
+#if NET_2_0
+		protected SoapException (SerializationInfo info, StreamingContext context)
+		{
+			actor = info.GetString ("actor");
+			code = (XmlQualifiedName) info.GetValue ("code", typeof (XmlQualifiedName));
+			detail = new XmlDocument ().ReadNode (
+				XmlReader.Create (new StringReader (info.GetString ("detailString"))));
+			lang = info.GetString ("lang");
+			role = info.GetString ("role");
+			subcode = (SoapFaultSubCode) info.GetValue ("subcode", typeof (SoapFaultSubCode));
+		}
+
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData (info, context);
+			info.AddValue ("actor", actor);
+			info.AddValue ("code", code);
+			info.AddValue ("detailString", detail.OuterXml);
+			info.AddValue ("lang", lang);
+			info.AddValue ("role", role);
+			info.AddValue ("subcode", subcode);
+		}
+#endif
 
 		public static bool IsClientFaultCode (XmlQualifiedName code)
 		{

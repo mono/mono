@@ -36,6 +36,9 @@ using System.Threading;
 using System.Web.Services;
 
 namespace System.Web.Services.Protocols {
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public abstract class WebClientProtocol : Component {
 
 		#region Fields

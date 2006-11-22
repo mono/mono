@@ -37,6 +37,9 @@ using System.Web.Services;
 using System.Collections;
 
 namespace System.Web.Services.Protocols {
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public abstract class HttpWebClientProtocol : WebClientProtocol {
 
 		#region Fields
@@ -100,12 +103,20 @@ namespace System.Web.Services.Protocols {
 		}
 
 		[WebServicesDescription ("Sets the user agent http header for the request.")]
+#if NET_2_0
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 		public string UserAgent {
 			get { return userAgent; }
 			set { userAgent = value; }
 		}
 		
 #if NET_1_1
+#if NET_2_0
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 		public bool UnsafeAuthenticatedConnectionSharing
 		{
 			get { return _unsafeAuthenticated; }

@@ -1,3 +1,10 @@
+2006-11-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebClientProtocol.cs HttpWebClientProtocol.cs SoapException.cs
+	  SoapHeaderException.cs HttpSimpleClientProtocol.cs
+	  SoapHttpClientProtocol.cs SoapMessage.cs:
+	  assorted cosmetic API fixes.
+
 2006-11-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpSoapWebServiceHandler.cs: on deserializing the request, do not 

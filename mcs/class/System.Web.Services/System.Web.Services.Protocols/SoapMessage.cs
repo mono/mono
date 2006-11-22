@@ -29,6 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.ComponentModel;
 using System.IO;
 using System.Web.Services;
 
@@ -146,6 +147,7 @@ namespace System.Web.Services.Protocols {
 
 #if NET_2_0
 		[System.Runtime.InteropServices.ComVisible(false)]
+		[DefaultValue (SoapProtocolVersion.Default)]
 		public virtual SoapProtocolVersion SoapVersion {
 			get { return soapVersion; }
 		}

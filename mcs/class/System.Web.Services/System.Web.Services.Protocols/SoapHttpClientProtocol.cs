@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Web;
@@ -49,6 +50,9 @@ using System.Threading;
 
 namespace System.Web.Services.Protocols 
 {
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	public class SoapHttpClientProtocol : HttpWebClientProtocol 
 	{
 		SoapTypeStubInfo type_info;
@@ -343,6 +347,7 @@ namespace System.Web.Services.Protocols
 
 		[MonoTODO ("Do something with this")]
 		[System.Runtime.InteropServices.ComVisible(false)]
+		[DefaultValue (SoapProtocolVersion.Default)]
 		public SoapProtocolVersion SoapVersion {
 			get { return soapVersion; }
 			set { soapVersion = value; }
