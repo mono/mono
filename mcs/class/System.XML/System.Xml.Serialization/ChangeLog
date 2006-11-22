@@ -1,3 +1,13 @@
+2006-11-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	Fixed bug #78611.
+	* TypeData.cs, TypeTranslator.cs: improved TypeData to actually store
+	  "nullable" information. Introduced new primitiveNullableTypes pool
+	  whose TypeData has 'true' for new IsNullable property. This
+	  property is also used for non-primitive types.
+	* XmlReflectionImporter.cs : there, use TypeData.IsNullable instead
+	  of IsValueType, to handle nullable types.
+
 2006-11-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TypeTranslator.cs : Hari knew better way to do it.

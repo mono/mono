@@ -954,8 +954,8 @@ namespace System.Xml.Serialization {
 				if (elem.Form != XmlSchemaForm.Unqualified)
 					elem.Namespace = (att.Namespace != null) ? att.Namespace : defaultNamespace;
 				elem.IsNullable = att.IsNullable;
-				
-				if (elem.IsNullable && elem.TypeData.IsValueType)
+
+				if (elem.IsNullable && !elem.TypeData.IsNullable)
 					throw new InvalidOperationException ("IsNullable may not be 'true' for value type " + elem.TypeData.FullTypeName + " in member '" + defaultName + "'");
 					
 				if (elem.TypeData.IsComplexType)

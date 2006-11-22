@@ -43,6 +43,7 @@ namespace System.Xml.Serialization
 		static Hashtable nameCache;
 		static Hashtable primitiveTypes;
 		static Hashtable primitiveArrayTypes;
+		static Hashtable primitiveNullableTypes;
 
 #if TARGET_JVM
 		const string AppDomainCacheName = "System.Xml.Serialization.TypeTranslator.AppDomainCache";
@@ -133,6 +134,16 @@ namespace System.Xml.Serialization
 			primitiveTypes.Add ("normalizedString", new TypeData (typeof (string), "normalizedString", true));
 			primitiveTypes.Add ("anyURI", new TypeData (typeof (string), "anyURI", true));
 			primitiveTypes.Add ("base64", new TypeData (typeof (byte[]), "base64", true));
+
+#if NET_2_0
+			primitiveNullableTypes = new Hashtable ();
+			foreach (DictionaryEntry de in primitiveTypes) {
+				TypeData td = (TypeData) de.Value;
+				TypeData ntd = new TypeData (td.Type, td.XmlType, true);
+				td.IsGenericNullable = true;
+				primitiveNullableTypes.Add (de.Key, td);
+			}
+#endif
 		}
 
 		public static TypeData GetTypeData (Type type)
@@ -140,12 +151,28 @@ namespace System.Xml.Serialization
 			return GetTypeData (type, null);
 		}
 
-		public static TypeData GetTypeData (Type type, string xmlDataType)
+		public static TypeData GetTypeData (Type runtimeType, string xmlDataType)
 		{
+			Type type = runtimeType;
+			bool isNullableRuntimeType = false;
+
 #if NET_2_0
 			// Nullable<T> is serialized as T
 			if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>)) {
+				isNullableRuntimeType = true;
 				type = type.GetGenericArguments () [0];
+
+				TypeData pt = GetTypeData (type); // beware this recursive call btw ...
+				if (pt != null) {
+					lock (primitiveNullableTypes) {
+						TypeData tt = (TypeData) primitiveNullableTypes [pt.XmlType];
+						if (tt == null) {
+							tt = new TypeData (type, pt.XmlType, true);
+							primitiveNullableTypes [pt.XmlType] = tt;
+						}
+						return tt;
+					}
+				}
 			}
 #endif
 
@@ -172,12 +199,12 @@ namespace System.Xml.Serialization
 			}
 
 			lock (nameCache) {
-				TypeData typeData = nameCache[type] as TypeData;
+				TypeData typeData = nameCache[runtimeType] as TypeData;
 				if (typeData != null) return typeData;
 
 #if TARGET_JVM
 				Hashtable dynamicCache = AppDomainCache;
-				typeData = dynamicCache[type] as TypeData;
+				typeData = dynamicCache[runtimeType] as TypeData;
 				if (typeData != null) return typeData;
 #endif
 				
@@ -190,10 +217,12 @@ namespace System.Xml.Serialization
 					name = XmlConvert.EncodeLocalName (type.Name);
 
 				typeData = new TypeData (type, name, false);
+				if (isNullableRuntimeType)
+					typeData.IsGenericNullable = true;
 #if TARGET_JVM
-				dynamicCache[type] = typeData;
+				dynamicCache[runtimeType] = typeData;
 #else
-				nameCache[type] = typeData;
+				nameCache[runtimeType] = typeData;
 #endif
 				return typeData;
 			}

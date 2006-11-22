@@ -1535,6 +1535,14 @@ namespace MonoTests.System.XmlSerialization
 			new XmlSerializer (typeof(WrongChoices));
 		}
 
+#if NET_2_0
+		[Test]
+		public void ImportNullableContainer ()
+		{
+			new XmlSerializer (typeof (NullableContainer));
+		}
+#endif
+
 		public class Employee : IXmlSerializable
 		{
 			private string _firstName;
@@ -2000,6 +2008,14 @@ namespace MonoTests.System.XmlSerialization
 
 			private IEnumerator _baseEnumerator;
 		}
+
+#if NET_2_0
+		public class NullableContainer
+		{
+			[XmlElement (IsNullable = true)]
+			public int? NilInt;
+		}
+#endif
 	}
 }
 
