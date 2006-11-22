@@ -268,7 +268,11 @@ namespace Microsoft.Build.BuildEngine {
 		public void Load (string projectFileName)
 		{
 			this.fullFileName = Path.GetFullPath (projectFileName);
-			DoLoad (new StreamReader (projectFileName));
+			try {
+				DoLoad (new StreamReader (projectFileName));
+			} catch {
+				Console.WriteLine ("Failure to load: {0}", projectFileName);
+			}
 		}
 		
 		[MonoTODO]
