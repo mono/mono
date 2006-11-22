@@ -84,7 +84,7 @@ namespace System.Threading {
 		{
 		}
 
-		[MonoTODO ("Implement access control")]
+		[MonoTODO ("Does not support access control, semaphoreSecurity is ignored")]
 		public Semaphore (int initialCount, int maximumCount, string name, out bool createdNew, 
 			SemaphoreSecurity semaphoreSecurity)
 		{
