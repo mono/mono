@@ -738,9 +738,10 @@ namespace MonoTests.System.Web.UI
 				base.ClearChildControlState ();
 			}
 		}
-
+#endif
 		class MyNC : Control, INamingContainer
 		{
+			#if NET_2_0
 			public ControlAdapter Adapter ()
 			{
 				return base.Adapter;
@@ -765,8 +766,9 @@ namespace MonoTests.System.Web.UI
 			{
 				return base.HasEvents ();
 			}
+			#endif
 		}
-#endif
+
 		class DerivedControl : Control
 		{
 			ControlCollection coll;
