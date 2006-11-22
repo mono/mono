@@ -101,7 +101,7 @@ namespace System.Drawing
 		{
 		}
 #if INTPTR_SUPPORTED
-		[MonoTODO ("Implement fully")]
+		// FIXME - Implement fully (well implement inside libgdiplus as unmanaged code)
 		private Icon (IntPtr handle)
 		{
 			this.winHandle = handle;
@@ -210,20 +210,26 @@ namespace System.Drawing
 		}
 
 #if NET_2_0
-		public Icon (Stream stream, Size size) : this (stream, size.Width, size.Height) {}
+		public Icon (Stream stream, Size size) : 
+			this (stream, size.Width, size.Height)
+		{
+		}
 		
-		public Icon (string fileName, int width, int height): 
-			this (new FileStream (fileName, FileMode.Open), width, height) {}
+		public Icon (string fileName, int width, int height) : 
+			this (new FileStream (fileName, FileMode.Open), width, height)
+		{
+		}
 	
 		public Icon (string fileName, Size size) : 
-			this (new FileStream (fileName, FileMode.Open), size) {}
+			this (new FileStream (fileName, FileMode.Open), size)
+		{
+		}
 
-		[MonoTODO]
+		[MonoTODO ("Method isn't implemented.")]
 		public static Icon ExtractAssociatedIcon (string filePath)
 		{
 			throw new NotImplementedException ();
 		}	
-	
 #endif
 
 		public void Dispose ()

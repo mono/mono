@@ -28,10 +28,10 @@
 
 #if NET_2_0
 
-using System;
-using System.Runtime.Serialization;
-using System.Runtime.InteropServices;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace System.Drawing
 {
@@ -46,7 +46,6 @@ namespace System.Drawing
 
 		~BufferedGraphicsContext ()
 		{
-			
 		}
 
 		public BufferedGraphics Allocate (Graphics targetGraphics, Rectangle targetRectangle)
@@ -55,7 +54,8 @@ namespace System.Drawing
 			return graphics;			
 		}
 
-		[MonoTODO]
+		[MonoTODO ("The targetDC parameter has no equivalent in libgdiplus.")]
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public BufferedGraphics Allocate (IntPtr targetDC, Rectangle targetRectangle)
 		{
 			throw new NotImplementedException ();
@@ -68,7 +68,6 @@ namespace System.Drawing
 
 		public void Invalidate ()
 		{
-			
 		}
 
 		public Size MaximumBuffer {
@@ -86,4 +85,3 @@ namespace System.Drawing
 }
 
 #endif
-

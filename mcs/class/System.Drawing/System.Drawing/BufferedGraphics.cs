@@ -28,10 +28,10 @@
 
 #if NET_2_0
 
-using System;
-using System.Runtime.Serialization;
-using System.Runtime.InteropServices;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace System.Drawing
 {
@@ -106,7 +106,8 @@ namespace System.Drawing
 			target.DrawImage (membmp, size);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("The targetDC parameter has no equivalent in libgdiplus.")]
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 	      	public void Render (IntPtr targetDC)
 		{
 			throw new NotImplementedException ();
@@ -115,4 +116,3 @@ namespace System.Drawing
 }
 
 #endif
-

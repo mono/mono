@@ -642,12 +642,14 @@ namespace System.Drawing
 			}
 		}
 #if NET_2_0
-		[MonoTODO]
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public void ReleaseHrgn (IntPtr regionHandle)		
 		{
 			if (regionHandle == IntPtr.Zero) 
 				throw new ArgumentNullException ("regionHandle");
+
+			Status status = GDIPlus.GdipDeleteRegion (regionHandle);
+			GDIPlus.CheckStatus (status);
 		}
 #endif
 	}

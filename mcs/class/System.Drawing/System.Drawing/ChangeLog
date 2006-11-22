@@ -1,3 +1,19 @@
+2006-11-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BufferedGraphicsContext.cs: Better MonoTODO.
+	* BufferedGraphics.cs: Better MonoTODO.
+	* Font.cs: Better MonoTODO.
+	* FontFamily.cs: Better MonoTODO.
+	* Graphics.cs: Better MonoTODO.
+	* Icon.cs: Better MonoTODO.
+	* Image.cs: Second chance while saving using the current RawFormat.
+	This allows icons to be saved as PNG (strange but look at unit tests).
+	* ImageFormatConverter.cs: Implement GetStandardValues (and remove
+	it's MonoTODO) and fix GetStandardValuesSupported (to return true).
+	* Region.cs: Implement ReleaseHrgn (2.0) - not really useful (as the
+	handle is never exposed) but it's easier than to document the TODO ;-)
+	* SystemIcons.cs: Better MonoTODO.
+
 2006-11-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RectangleF.cs: Fix operator !=. Patch by Manuel Alejandro Cerón 

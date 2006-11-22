@@ -167,15 +167,25 @@ namespace System.Drawing
 			return base.ConvertTo (context, culture, val, destType);
 		}
 
-		[MonoTODO ("Implement")]
-		public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context )
+		public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException (); 
+			ImageFormat[] list = new ImageFormat [10];
+			list [0] = ImageFormat.MemoryBmp;
+			list [1] = ImageFormat.Bmp;
+			list [2] = ImageFormat.Emf;
+			list [3] = ImageFormat.Wmf;
+			list [4] = ImageFormat.Gif;
+			list [5] = ImageFormat.Jpeg;
+			list [6] = ImageFormat.Png;
+			list [7] = ImageFormat.Tiff;
+			list [8] = ImageFormat.Exif;
+			list [9] = ImageFormat.Icon;
+			return new TypeConverter.StandardValuesCollection (list);
 		}
 
-		public override bool GetStandardValuesSupported (ITypeDescriptorContext context )
+		public override bool GetStandardValuesSupported (ITypeDescriptorContext context)
 		{
-			return false;
+			return true;
 		}
 	}
 }

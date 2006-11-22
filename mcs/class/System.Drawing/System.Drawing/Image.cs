@@ -398,10 +398,14 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	public void Save(string filename, ImageFormat format) 
 	{
 		ImageCodecInfo encoder = findEncoderForFormat (format);
-
-		if (encoder == null)
-			throw new ArgumentException ("No codec available for format:" + format.Guid);
-
+		if (encoder == null) {
+			// second chance
+			encoder = findEncoderForFormat (RawFormat);
+			if (encoder == null) {
+				string msg = Locale.GetText ("No codec available for saving format '{0}'.", format.Guid);
+				throw new ArgumentException (msg, "format");
+			}
+		}
 		Save (filename, encoder, null);
 	}
 

@@ -6,9 +6,6 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -31,14 +28,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+namespace System.Drawing {
 
-namespace System.Drawing
-{
-	[MonoTODO ("not implemented")]
-	public sealed class SystemIcons
-	{
-		private SystemIcons()
+	[MonoTODO ("Not implemented. All properties return null.")]
+	public sealed class SystemIcons {
+
+		private SystemIcons ()
 		{
 		}
 
@@ -52,7 +47,6 @@ namespace System.Drawing
 		public static Icon Warning { get { return LoadIcon();} }
 		public static Icon WinLogo { get { return LoadIcon();} }
 
-		[MonoTODO]
 		private static Icon LoadIcon ()
 		{
 			return null;

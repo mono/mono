@@ -536,14 +536,14 @@ namespace System.Drawing
 			return _name.GetHashCode ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("The hdc parameter has no direct equivalent in libgdiplus.")]
 		public static Font FromHdc (IntPtr hdc)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO("This is temporary implementation")]
-		public static Font FromLogFont (object lf,  IntPtr hdc)
+		[MonoTODO ("The returned font may not have all it's properties initialized correctly.")]
+		public static Font FromLogFont (object lf, IntPtr hdc)
 		{
 			IntPtr newObject;
 			LOGFONT o = (LOGFONT)lf;
