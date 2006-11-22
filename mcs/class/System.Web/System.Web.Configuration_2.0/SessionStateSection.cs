@@ -223,8 +223,10 @@ namespace System.Web.Configuration {
 
 		HttpCookieMode ParseCookieMode (string s)
 		{
-			if (s == "true") return HttpCookieMode.UseUri;
-			else if (s == "false") return HttpCookieMode.UseCookies;
+			if (s == "true")
+				return HttpCookieMode.UseUri;
+			else if (s == "false" || s == null)
+				return HttpCookieMode.UseCookies;
 			else {
 				try {
 					return (HttpCookieMode)Enum.Parse (typeof(HttpCookieMode), s);
