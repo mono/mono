@@ -175,9 +175,13 @@ traced.
 The trace can be customized to include or exclude methods, classes or
 assemblies.  A trace expression is a comma separated list of targets,
 each target can be prefixed with a minus sign to turn off a particular
-target.  The words `program' and `all' have special meaning.
-`program' refers to the main program being executed, and `all' means
-all the method calls. 
+target.  The words `program', `all' and `disabled' have special
+meaning.  `program' refers to the main program being executed, and
+`all' means all the method calls.
+.Sp
+The `disabled' option is used to start up with tracing disabled.  It
+can be enabled at a later point in time in the program by sending the
+SIGUSR2 signal to the runtime.
 .Sp
 Assemblies are specified by their name, for example, to trace all
 calls in the System assembly, use:
