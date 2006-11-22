@@ -31,7 +31,6 @@
 
 using NUnit.Framework;
 using System;
-
 using System.Collections;
 using System.Drawing;
 using System.IO;
@@ -40,7 +39,10 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using MonoTests.SystemWeb.Framework;
+
+#if NET_2_0
 using System.Web.UI.Adapters;
+#endif
 
 namespace MonoTests.System.Web.UI
 {
@@ -840,6 +842,7 @@ namespace MonoTests.System.Web.UI
 		#endregion
 	}
 
+#if NET_2_0
 	public class Customadaptercontrol : Control
 	{
 		public new ControlAdapter ResolveAdapter ()
@@ -851,6 +854,7 @@ namespace MonoTests.System.Web.UI
 	public class Customadapter : ControlAdapter
 	{
 	}
+#endif
 }
 
 
