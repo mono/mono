@@ -1,3 +1,7 @@
+2006-11-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509StoreTest.cs: Add test cases for every method/properties.
+
 2006-11-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate2CollectionTest.cs: New. Unit tests for 
