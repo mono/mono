@@ -133,7 +133,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void QueryStringParameter_Evaluate()
 		{
 			QueryStringParameterPoker queryParam = new QueryStringParameterPoker("Employee", TypeCode.Int32, "id");
@@ -146,7 +145,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			HttpContext context = new HttpContext(request, response);
 			value = (string)queryParam.DoEvaluate(context, tb);
 			Assert.AreEqual("332", value, "EvaluateQueryString1");
-			request = new HttpRequest(String.Empty, "http://www.mono-project.com", "id=500");
+			value = (string) queryParam.DoEvaluate (context, null);
+			Assert.AreEqual ("332", value, "EvaluateQueryString1");
+			request = new HttpRequest (String.Empty, "http://www.mono-project.com", "id=500");
 			context = new HttpContext(request, response);
 			value = (string)queryParam.DoEvaluate(context, tb);
 			Assert.AreEqual("500", value, "EvaluateQueryString2");

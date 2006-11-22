@@ -65,7 +65,7 @@ namespace System.Web.UI.WebControls {
 		
 		protected override object Evaluate (HttpContext ctx, Control control)
 		{
-			if (control == null || ctx.Session == null)
+			if (ctx == null || ctx.Session == null)
 				return null;
 			
 			return ctx.Session [SessionField];
@@ -91,4 +91,5 @@ namespace System.Web.UI.WebControls {
 	}
 }
 #endif
+
 

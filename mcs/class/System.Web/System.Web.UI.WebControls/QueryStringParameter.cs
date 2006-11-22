@@ -66,7 +66,7 @@ namespace System.Web.UI.WebControls {
 		
 		protected override object Evaluate (HttpContext ctx, Control control)
 		{
-			if (control == null || ctx.Request == null)
+			if (ctx == null || ctx.Request == null)
 				return null;
 			
 			return ctx.Request.QueryString [QueryStringField];
@@ -91,4 +91,5 @@ namespace System.Web.UI.WebControls {
 	}
 }
 #endif
+
 

@@ -135,7 +135,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category("NunitWeb")]
-		[Category("NotWorking")]		
 		public void SessionParameter_Evaluate()
 		{
 			SessionParameterPoker sessionParam = new SessionParameterPoker("employee",TypeCode.String ,"id") ;

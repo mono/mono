@@ -121,11 +121,10 @@ namespace System.Web.UI.WebControls {
 			get { return this.IsTrackingViewState; }
 		}
 		
+		// MSDN: The ToString method returns the Name property of the Parameter object. If the Parameter object has no name, ToString returns String.Empty.
 		public override string ToString ()
 		{
-			object o = GetValue (HttpContext.Current, null);
-			if (o != null) return o.ToString();
-			return "";
+			return Name;
 		}
 		
 		[WebCategoryAttribute ("Parameter")]
@@ -237,9 +236,16 @@ namespace System.Web.UI.WebControls {
 			get { return isTrackingViewState; }
 		}
 
+		// MSDN: The default implementation of the Evaluate method is to return 
+		// a null reference (Nothing in Visual Basic) in all cases. 
+		// Classes that derive from the Parameter class override the Evaluate method 
+		// to return an updated parameter value. For example, the ControlParameter object 
+		// returns the value of the control that it is bound to, while 
+		// the QueryStringParameter object retrieves the current name/value pair from 
+		// the HttpRequest object.
 		protected virtual object Evaluate (HttpContext context, Control control)
 		{
-			return this.DefaultValue;
+			return null;
 		}
 		
 		internal object GetValue (HttpContext context, Control control)

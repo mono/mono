@@ -1,3 +1,9 @@
+2006-11-22 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Parameter.cs: fixed Evaluate, ToString methods.
+	* QueryStringParameter.cs: fixed Evaluate method.
+	* SessionParameter.cs: fixed Evaluate method.
+
 2006-11-21 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ImageMap.cs: fixed rendering.
