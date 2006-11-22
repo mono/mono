@@ -1,6 +1,8 @@
-<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Util.Master" CodeBehind="Error.aspx.cs" Inherits="Mainsoft.Web.Administration.Error" %>
-<asp:Content runat="server" ID="main" ContentPlaceHolderID="Main">
-<!--
+<%--
+// Mainsoft.Web.Administration - Site administration utility
+// Authors:
+//  Klain Yoni <yonik@mainsoft.com>
+//
 // Mainsoft.Web.Administration - Site administration utility
 // (C) 2006 Mainsoft Corporation (http://www.mainsoft.com)
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -20,12 +22,23 @@
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. --%>
 
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Error.aspx.cs" Inherits="Mainsoft.Web.Administration.Error" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head runat="server">
+    <title>Untitled Page</title>
+</head>
+<body>
+    <form id="form1" runat="server">
     <div style="font-weight: bold; font-size: 20pt; color: red">
         Error occured on this request ! Please try again !
     </div>
     <div>
         <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl="~/Default.aspx">Administration utility home page</asp:HyperLink>
     </div>
-</asp:Content>
+    </form>
+</body>
+</html>

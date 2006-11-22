@@ -1,6 +1,8 @@
-<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Util.Master" CodeBehind="CreateUser.aspx.cs" Inherits="Mainsoft.Web.Administration.CreateUser" %>
-<asp:Content runat="server" ID="main" ContentPlaceHolderID="Main">
-<!--
+<%--
+// Mainsoft.Web.Administration - Site administration utility
+// Authors:
+//  Klain Yoni <yonik@mainsoft.com>
+//
 // Mainsoft.Web.Administration - Site administration utility
 // (C) 2006 Mainsoft Corporation (http://www.mainsoft.com)
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -20,8 +22,9 @@
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
-    
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. --%>
+<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Util.Master" CodeBehind="CreateUser.aspx.cs" Inherits="Mainsoft.Web.Administration.CreateUser" %>
+<asp:Content runat="server" ID="main" ContentPlaceHolderID="Main">
     <table style="border-right: thin solid; padding-right: 2px; border-top: thin solid; padding-left: 2px; padding-bottom: 2px; border-left: thin solid; padding-top: 2px; border-bottom: thin solid">
         <tr>
             <td colspan="2" width="100%" style="height: 21px">

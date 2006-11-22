@@ -1,8 +1,4 @@
-<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Util.Master" CodeBehind="CreateRole.aspx.cs" Inherits="Mainsoft.Web.Administration.CreateRole" %>
-<%@ Register TagPrefix="custom" Assembly="Mainsoft.Web.Administration" Namespace="Mainsoft.Web.Administration" %>
-
-<asp:Content ID="Main" ContentPlaceHolderID="Main" runat="server">
-<!--
+<%--
 // Mainsoft.Web.Administration - Site administration utility
 // Authors:
 //  Klain Yoni <yonik@mainsoft.com>
@@ -26,8 +22,11 @@
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. --%>
+<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Util.Master" CodeBehind="CreateRole.aspx.cs" Inherits="Mainsoft.Web.Administration.CreateRole" %>
+<%@ Register TagPrefix="custom" Assembly="Mainsoft.Web.Administration" Namespace="Mainsoft.Web.Administration" %>
 
+<asp:Content ID="Main" ContentPlaceHolderID="Main" runat="server">
     <asp:MultiView runat="server" ID="mv" ActiveViewIndex="0">
     <asp:View runat="server" id="grid">
     <table class="maintable">

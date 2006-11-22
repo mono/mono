@@ -103,6 +103,13 @@
     <Compile Include="Controls\Searcher.ascx.designer.cs">
       <DependentUpon>Searcher.ascx</DependentUpon>
     </Compile>
+    <Compile Include="SecurError.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>SecurError.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="SecurError.aspx.designer.cs">
+      <DependentUpon>SecurError.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Util.Master.cs">
       <DependentUpon>Util.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -119,7 +126,6 @@
     <Content Include="CreateRole.aspx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Error.aspx" />
     <Content Include="ManageRole.aspx" />
   </ItemGroup>
   <ItemGroup>
@@ -137,7 +143,9 @@
     <Content Include="Util.Master" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Error.aspx" />
     <Content Include="Images\untitled.bmp" />
+    <Content Include="SecurError.aspx" />
     <Content Include="Web.sitemap" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

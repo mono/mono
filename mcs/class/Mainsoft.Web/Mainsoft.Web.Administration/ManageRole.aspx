@@ -1,5 +1,9 @@
 <%--
 // Mainsoft.Web.Administration - Site administration utility
+// Authors:
+//  Klain Yoni <yonik@mainsoft.com>
+//
+// Mainsoft.Web.Administration - Site administration utility
 // (C) 2006 Mainsoft Corporation (http://www.mainsoft.com)
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the

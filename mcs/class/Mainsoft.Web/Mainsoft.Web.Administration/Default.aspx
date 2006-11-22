@@ -1,6 +1,4 @@
-<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Util.Master" CodeBehind="Default.aspx.cs" Inherits="Mainsoft.Web.Administration.Default" %>
-<asp:Content runat="server" ContentPlaceHolderID="Main">
-<!--
+<%--
 // Mainsoft.Web.Administration - Site administration utility
 // Authors:
 //  Klain Yoni <yonik@mainsoft.com>
@@ -24,7 +22,9 @@
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->    
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. --%>
+<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Util.Master" CodeBehind="Default.aspx.cs" Inherits="Mainsoft.Web.Administration.Default" %>
+<asp:Content runat="server" ContentPlaceHolderID="Main">
     <table>
         <tr>
             <td>

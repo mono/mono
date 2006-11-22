@@ -11,6 +11,7 @@
 namespace Mainsoft.Web.Administration {
     
     public partial class Error {
+        protected System.Web.UI.HtmlControls.HtmlForm form1;
         protected System.Web.UI.WebControls.HyperLink HyperLink1;
     }
 }

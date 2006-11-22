@@ -1,7 +1,8 @@
-<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Util.Master" CodeBehind="EditUser.aspx.cs" Inherits="Mainsoft.Web.Administration.EditUser" %>
-<%@ Register TagPrefix="custom" TagName="searcher" Src="~/Controls/Searcher.ascx" %>
-<asp:Content runat="server" ID="main" ContentPlaceHolderID="Main">
-<!--
+<%--
+// Mainsoft.Web.Administration - Site administration utility
+// Authors:
+//  Klain Yoni <yonik@mainsoft.com>
+//
 // Mainsoft.Web.Administration - Site administration utility
 // (C) 2006 Mainsoft Corporation (http://www.mainsoft.com)
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -21,7 +22,10 @@
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. --%>
+<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Util.Master" CodeBehind="EditUser.aspx.cs" Inherits="Mainsoft.Web.Administration.EditUser" %>
+<%@ Register TagPrefix="custom" TagName="searcher" Src="~/Controls/Searcher.ascx" %>
+<asp:Content runat="server" ID="main" ContentPlaceHolderID="Main">
     <asp:MultiView ID="MultiView1" runat="server" ActiveViewIndex="0">
         <asp:View ID="updateUser" runat="server" >
         <div>
