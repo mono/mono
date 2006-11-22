@@ -1,5 +1,10 @@
 2006-11-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlCustomFormatter.cs : handle hexBinary type. Fixed bug #79989
+	  and #79990.
+
+2006-11-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	Fixed bug #78611.
 	* TypeData.cs, TypeTranslator.cs: improved TypeData to actually store
 	  "nullable" information. Introduced new primitiveNullableTypes pool

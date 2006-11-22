@@ -1,5 +1,9 @@
 2006-11-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSerializerTests.cs : added test for hexBinary.
+
+2006-11-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlReflectionImporterTests.cs : added test for class that contains
 	  nullable value type field whose XmlElementAttribute IsNullable.
 

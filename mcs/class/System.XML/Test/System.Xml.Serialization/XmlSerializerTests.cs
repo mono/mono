@@ -2149,6 +2149,27 @@ namespace MonoTests.System.XmlSerialization
 		}
 #endif
 
+		[Test] // bug #79989, #79990
+		public void SerializeHexBinary()
+		{
+			XmlSerializer ser = new XmlSerializer (typeof (HexBinary));
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter xtw = new XmlTextWriter (sw);
+			ser.Serialize (xtw, new HexBinary ());
+			xtw.Close ();
+			string expected = @"<?xml version=""1.0"" encoding=""utf-16""?><HexBinary xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" Data=""010203"" />";
+			Assert.AreEqual (expected, sw.ToString ());
+			HexBinary h = (HexBinary) ser.Deserialize (new StringReader (sw.ToString ()));
+			Assert.AreEqual (new byte [] {1, 2, 3}, h.Data);
+		}
+
+		[XmlRoot ("HexBinary")]
+		public class HexBinary
+		{
+			[XmlAttribute (DataType = "hexBinary")]
+			public byte [] Data = new byte [] {1, 2, 3};
+		}
+
 		public class CDataTextNodesType
 		{
 			public CDataTextNodesInternal foo;
