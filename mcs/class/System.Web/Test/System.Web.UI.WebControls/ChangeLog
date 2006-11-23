@@ -8,6 +8,10 @@
 
 2006-11-23  Yoni Klain         <yonik@mainsoft.com>
 
+	* EditCommandColumnTest.cs: added new test for 2.0
+
+2006-11-23  Yoni Klain         <yonik@mainsoft.com>
+
 	* CheckBoxTest.cs: added new test for 2.0
 
 2006-11-23  Yoni Klain         <yonik@mainsoft.com>

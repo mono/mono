@@ -58,6 +58,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 		
 		[Test]
+		[Category("NotWorking")]
 		public void Defaults ()
 		{
 			EditCommandColumn	e;
@@ -68,9 +69,16 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual(string.Empty, e.CancelText, "D2");
 			Assert.AreEqual(string.Empty, e.EditText, "D3");
 			Assert.AreEqual(string.Empty, e.UpdateText, "D4");
+#if NET_2_0
+			// MONO BUG: CausesValidation and ValidationGroup have no definition
+			//Assert.AreEqual (true, e.CausesValidation, "CausesValidation");
+			//Assert.AreEqual (string.Empty, e.ValidationGroup, "ValidationGroup");
+			Assert.Fail("CausesValidation and ValidationGroup have no definition");
+#endif
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Properties () {
 			EditCommandColumn	e;
 
@@ -87,6 +95,15 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			e.UpdateText = "Update? What update?";
 			Assert.AreEqual("Update? What update?", e.UpdateText, "D4");
+#if NET_2_0
+			// MONO BUG: CausesValidation and ValidationGroup have no definition
+			//e.CausesValidation = false;
+			//Assert.AreEqual (false, e.CausesValidation, "CausesValidation");
+			//e.ValidationGroup = "test";
+			//Assert.AreEqual ("test", e.ValidationGroup, "ValidationGroup");
+			Assert.Fail ("CausesValidation and ValidationGroup have no definition");
+#endif
+
 		}
 
 		private string ControlMarkup(Control c) {
@@ -112,7 +129,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NotDotNet")]
-        [Category ("NotWorking")]
+		[Category ("NotWorking")]
 		public void InitializeCell () {
 			DataGridTest	p = new DataGridTest ();
 			DataTable	table = new DataTable ();
@@ -168,7 +185,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NotDotNet")]
-        [Category("NotWorking")]
+		[Category("NotWorking")]
 		public void ThisIsADGTest () {
 			DataGridTest	p = new DataGridTest ();
 			DataTable	table = new DataTable ();
@@ -234,7 +251,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NotDotNet")]
-        [Category("NotWorking")]
+		[Category("NotWorking")]
 		public void InitializeEditCell () {
 			DataGridTest	p = new DataGridTest ();
 			DataTable	table = new DataTable ();
