@@ -311,6 +311,19 @@ namespace Mono.CSharp {
 			}
 		}
 
+		protected override bool DoDefineMembers ()
+		{
+			Report.Debug (64, "SCOPE INFO DEFINE MEMBERS", this, GetType (), IsGeneric,
+				      Parent.IsGeneric, GenericMethod);
+
+			foreach (CapturedScope child in scopes.Values) {
+				if (!child.DefineMembers ())
+					return false;
+			}
+
+			return base.DoDefineMembers ();
+		}
+
 		protected override bool DoResolveMembers ()
 		{
 			Report.Debug (64, "SCOPE INFO RESOLVE MEMBERS", this, GetType (), IsGeneric,
@@ -361,15 +374,26 @@ namespace Mono.CSharp {
 		protected abstract class CapturedVariable : Variable
 		{
 			public readonly ScopeInfo Scope;
-			public readonly Field Field;
+			public readonly string Name;
 
 			public FieldExpr FieldInstance;
+			protected Field field;
 
-			protected CapturedVariable (ScopeInfo scope, string name, Type type)
+			protected CapturedVariable (ScopeInfo scope, string name)
 			{
 				this.Scope = scope;
-				this.Field = scope.CaptureVariable (
+				this.Name = name;
+			}
+
+			protected CapturedVariable (ScopeInfo scope, string name, Type type)
+				: this (scope, name)
+			{
+				this.field = scope.CaptureVariable (
 					scope.MakeFieldName (name), scope.RootScope.InflateType (type));
+			}
+
+			public Field Field {
+				get { return field; }
 			}
 
 			public override Type Type {
@@ -457,10 +481,18 @@ namespace Mono.CSharp {
 			public readonly ScopeInfo ChildScope;
 
 			public CapturedScope (ScopeInfo root, ScopeInfo child)
-				: base (root, "scope" + child.ID,
-					child.IsGeneric ? child.CurrentType : child.TypeBuilder)
+				: base (root, "scope" + child.ID)
 			{
 				this.ChildScope = child;
+			}
+
+			public bool DefineMembers ()
+			{
+				Type type = ChildScope.IsGeneric ?
+					ChildScope.CurrentType : ChildScope.TypeBuilder;
+				field = Scope.CaptureVariable (
+					Scope.MakeFieldName (Name), Scope.InflateType (type));
+				return true;
 			}
 		}
 
@@ -725,6 +757,28 @@ namespace Mono.CSharp {
 		public void AddScope (ScopeInfo scope)
 		{
 			scopes.Add (scope);
+		}
+
+		bool linked;
+		public void LinkScopes ()
+		{
+			Report.Debug (128, "LINK SCOPES", this, linked, scopes);
+
+			if (linked)
+				return;
+
+			linked = true;
+			if (ParentHost != null)
+				ParentHost.LinkScopes ();
+
+			foreach (ScopeInfo si in scopes) {
+				if (!si.Define ())
+					throw new InternalErrorException ();
+				if (si.DefineType () == null)
+					throw new InternalErrorException ();
+				if (!si.ResolveType ())
+					throw new InternalErrorException ();
+			}
 		}
 
 		protected override ScopeInitializer CreateScopeInitializer ()
@@ -1324,6 +1378,7 @@ namespace Mono.CSharp {
 
 			method = DoCreateMethodHost (ec);
 
+#if FIXME
 			if (Scope != null) {
 				if (!Scope.Define ())
 					throw new InternalErrorException ();
@@ -1332,6 +1387,7 @@ namespace Mono.CSharp {
 				if (!Scope.ResolveType ())
 					throw new InternalErrorException ();
 			}
+#endif
 
 			if (Scope != null)
 				return true;
@@ -1471,6 +1527,7 @@ namespace Mono.CSharp {
 			Report.Debug (128, "CREATE METHOD HOST #1", this, scope, scopes);
 
 			foreach (ScopeInfo si in scopes) {
+#if FIXME
 				Report.Debug (128, "CREATE METHOD HOST #2", this, scope, si);
 				if (!si.Define ())
 					throw new InternalErrorException ();
@@ -1480,6 +1537,7 @@ namespace Mono.CSharp {
 					      si.TypeBuilder);
 				if (!si.ResolveCurrentType ())
 					throw new InternalErrorException ();
+#endif
 				scope.CaptureScope (si);
 			}
 

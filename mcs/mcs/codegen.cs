@@ -718,6 +718,9 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (!block.CompleteContexts (this))
+				return false;
+
 			resolved = true;
 			return true;
 		}

@@ -2300,6 +2300,31 @@ namespace Mono.CSharp {
 			get { return parameters; }
 		}
 
+		public bool CompleteContexts (EmitContext ec)
+		{
+			Report.Debug (64, "TOPLEVEL COMPLETE CONTEXTS", this,
+				      container, root_scope);
+
+			if (root_scope != null)
+				root_scope.LinkScopes ();
+
+			if ((container == null) && (root_scope != null)) {
+				Report.Debug (64, "TOPLEVEL COMPLETE CONTEXTS #1", this,
+					      root_scope);
+
+				if (root_scope.DefineType () == null)
+					return false;
+				if (!root_scope.ResolveType ())
+					return false;
+				if (!root_scope.ResolveMembers ())
+					return false;
+				if (!root_scope.DefineMembers ())
+					return false;
+			}
+
+			return true;
+		}
+
 		public GenericMethod GenericMethod {
 			get { return generic; }
 		}
