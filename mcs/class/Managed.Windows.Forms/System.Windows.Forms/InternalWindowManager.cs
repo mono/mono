@@ -149,7 +149,11 @@ namespace System.Windows.Forms {
 			case Msg.WM_RBUTTONDOWN:
 			case Msg.WM_LBUTTONDOWN:
 				return HandleButtonDown (ref m);
-
+			case Msg.WM_PARENTNOTIFY:
+				if (Control.LowOrder(m.WParam.ToInt32()) == (int) Msg.WM_LBUTTONDOWN) 
+					Activate ();
+				break;
+				
 			case Msg.WM_NCHITTEST:
 				int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
 				int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
@@ -528,7 +532,7 @@ namespace System.Windows.Forms {
 				switch (form.FormBorderStyle) {
 				case FormBorderStyle.Sizable:
 				case FormBorderStyle.SizableToolWindow:
-					return true;
+					return (form.window_state != FormWindowState.Minimized);
 				default:
 					return false;
 				}

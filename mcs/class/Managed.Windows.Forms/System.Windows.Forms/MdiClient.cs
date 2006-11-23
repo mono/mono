@@ -36,12 +36,13 @@ namespace System.Windows.Forms {
 	public sealed class MdiClient : Control {
 		#region Local Variables
 		private int mdi_created;
-		private HScrollBar hbar;
-		private VScrollBar vbar;
+		private ImplicitHScrollBar hbar;
+		private ImplicitVScrollBar vbar;
 		private SizeGrip sizegrip;
 		private int hbar_value;
 		private int vbar_value;
 		private bool lock_sizing;
+		private bool initializing_scrollbars;
 		private int prev_bottom;
 		private LayoutEventHandler initial_layout_handler;
 		private bool setting_windowstates = false;
@@ -271,16 +272,15 @@ namespace System.Windows.Forms {
 				if (child.Left < left) {
 					hbar_required = true;
 					left = child.Left;
+				}
+				
+				if (child.Bottom > bottom)
+					bottom = child.Bottom;
+				if (child.Top < 0) {
+					vbar_required = true;
+					top = child.Top;
+				}
 			}
-
-			if (child.Bottom > bottom)
-				bottom = child.Bottom;
-			if (child.Top < 0) {
-				vbar_required = true;
-				top = child.Top;
-			}
-		}
-
 
 			int first_right = Width;
 			int first_bottom = Height;
@@ -316,7 +316,7 @@ namespace System.Windows.Forms {
 
 			if (need_hbar) {
 				if (hbar == null) {
-					hbar = new HScrollBar ();
+					hbar = new ImplicitHScrollBar ();
 					Controls.AddImplicit (hbar);
 				}
 				hbar.Visible = true;
@@ -326,7 +326,7 @@ namespace System.Windows.Forms {
 
 			if (need_vbar) {
 				if (vbar == null) {
-					vbar = new VScrollBar ();
+					vbar = new ImplicitVScrollBar ();
 					Controls.AddImplicit (vbar);
 				}
 				vbar.Visible = true;
@@ -350,6 +350,7 @@ namespace System.Windows.Forms {
 
 		private void CalcHBar (int left, int right, int right_edge, bool vert_vis)
 		{
+			initializing_scrollbars = true;
 			int virtual_left = Math.Min (left, 0);
 			int virtual_right = Math.Max (right, right_edge);
 			int diff = (virtual_right - virtual_left) - right_edge;
@@ -359,12 +360,13 @@ namespace System.Windows.Forms {
 			hbar.LargeChange = 50;
 			hbar.Maximum = diff + 51;
 			hbar.Value = -virtual_left;
-
 			hbar.ValueChanged += new EventHandler (HBarValueChanged);
+			initializing_scrollbars = false;
 		}
 
 		private void CalcVBar (int top, int bottom, int bottom_edge, bool horz_vis)
 		{
+			initializing_scrollbars = true;
 			int virtual_top = Math.Min (top, 0);
 			int virtual_bottom = Math.Max (bottom, bottom_edge);
 			int diff = (virtual_bottom - virtual_top) - bottom_edge;
@@ -375,11 +377,14 @@ namespace System.Windows.Forms {
 			vbar.Maximum = diff + 51;
 			vbar.Value = -virtual_top;
 			vbar.ValueChanged += new EventHandler (VBarValueChanged);
-			
+			initializing_scrollbars = false;
 		}
 
 		private void HBarValueChanged (object sender, EventArgs e)
 		{
+			if (initializing_scrollbars)
+				return;
+			
 			if (hbar.Value == hbar_value)
 				return;
 
@@ -399,6 +404,9 @@ namespace System.Windows.Forms {
 
 		private void VBarValueChanged (object sender, EventArgs e)
 		{
+			if (initializing_scrollbars)
+				return;
+				
 			if (vbar.Value == vbar_value)
 				return;
 
@@ -446,17 +454,12 @@ namespace System.Windows.Forms {
 			SizeScrollBars ();
 		}
 
-		private int iconic_x = -1;
-		private int iconic_y = -1;
 		internal void ArrangeIconicWindows ()
 		{
 			int xspacing = 160;
 			int yspacing = 25;
 
-			if (iconic_x == -1 && iconic_y == -1) {
-				iconic_x = Left;
-				iconic_y = Bottom - yspacing;
-			}
+			Rectangle rect = new Rectangle (0, 0, xspacing, yspacing);
 
 			lock_sizing = true;
 			foreach (Form form in Controls) {
@@ -464,27 +467,56 @@ namespace System.Windows.Forms {
 					continue;
 
 				MdiWindowManager wm = (MdiWindowManager) form.WindowManager;
+				
+				if (wm.IconicBounds != Rectangle.Empty) {
+					if (form.Bounds != wm.IconicBounds)
+						form.Bounds = wm.IconicBounds;
+					continue;
+				}
+				
 				// Need to get the width in the loop cause some themes might have
 				// different widths for different styles
 				int bw = ThemeEngine.Current.ManagedWindowBorderWidth (wm);
 				
-				if (wm.IconicBounds != Rectangle.Empty) {
-					form.Bounds = wm.IconicBounds;
-					continue;
-				}
-					
 				// The extra one pixel is a cheap hack for now until we
 				// handle 0 client sizes properly in the driver
-				int height = wm.TitleBarHeight + (bw * 2) + 1; 
-				// The extra one pixel here is to avoid scrollbars
-				Rectangle rect = new Rectangle (iconic_x, iconic_y - 1, xspacing, height);
-				form.Bounds = wm.IconicBounds = rect;
-
-				iconic_x += xspacing;
-				if (iconic_x >= Right) {
-					iconic_x = Left;
-					iconic_y -= height;
-				}
+				int height = wm.TitleBarHeight + (bw * 2) + 1;
+				
+				bool success = true;
+				int startx, starty, currentx, currenty;
+				
+				startx = 0;
+				starty = Bottom - yspacing - 1;
+				if (this.hbar != null && this.hbar.Visible)
+					starty -= this.hbar.Height;
+				currentx = startx;
+				currenty = starty;
+				
+				do {
+					rect.X = currentx;
+					rect.Y = currenty;
+					rect.Height = height;
+					success = true;
+					foreach (Form form2 in Controls) {
+						if (form2 == form || form2.window_state != FormWindowState.Minimized)
+							continue;
+						
+						if (form2.Bounds.IntersectsWith(rect)) {
+							success = false;
+							break;
+						}
+					}
+					if (!success) {	
+						currentx += xspacing;
+						if (currentx + xspacing > Right) {
+							currentx = startx;
+							currenty -= Math.Max(yspacing, height);
+						} 
+					}
+				} while (!success);
+				Console.WriteLine("IconicBounds = {0}", rect);
+				wm.IconicBounds = rect;
+				form.Bounds = wm.IconicBounds;
 			}
 			lock_sizing = false;
 		}
@@ -574,12 +606,15 @@ namespace System.Windows.Forms {
 					continue;
 				}
 				if (frm.WindowState == FormWindowState.Maximized && is_active) {
-					if (!maximize_this && is_active)
-						maximize_this = true;	
-					frm.WindowState = FormWindowState.Normal;
+					maximize_this = true;	
+					if (((MdiWindowManager) frm.window_manager).was_minimized)
+						frm.WindowState = FormWindowState.Minimized;
+					else
+						frm.WindowState = FormWindowState.Normal;//
 				}
 			}
 			if (maximize_this) {
+				wm.was_minimized = form.window_state == FormWindowState.Minimized;
 				form.WindowState = FormWindowState.Maximized;
 			}
 			SetParentText(false);

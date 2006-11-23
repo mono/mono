@@ -1,5 +1,30 @@
 2006-11-23  Rolf Bjarne Kvinge  <RKvinge@novell.com> 
 
+	* InternalWindowManager.cs: 
+	- Handle WM_PARENTNOTIFY to activate the form
+	if any child control is clicked.
+	- The form is only sizable if not minimized.
+
+	* MdiWindowManager.cs:
+	- Save the IconicBounds if the form is moved.
+	- Rework SetWindowState, now the window bounds 
+	are stored only if the old window state is Normal.
+	
+	* MdiClient.cs:
+	- In SetWindowStates store the old window state if 
+	the window is maximized and restore window state if
+	the window looses focus.
+	- Don't handle any scrollbar value changes if 
+	initializing the scroll bars. Fixes #79771.
+	- Reworked ArrangeIconicWindows. Current algorithm
+	tests bounds agains all other minimized windows, if
+	any intersections create new bounds (going left to 
+	right, bottom to top) and then test again. When 
+	successful the bounds are saved and never computed
+	again. Fixes #79774.
+
+2006-11-23  Rolf Bjarne Kvinge  <RKvinge@novell.com> 
+
 	* InternalWindowManager.cs: Added HandleTitleBarUp.
 
 2006-11-23  Gert Driesen  <drieseng@users.sourceforge.net>
