@@ -1,3 +1,9 @@
+2006-11-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* PageSettingsTest.cs: Check for installed printers,
+	since we need to have at least one. Don't run the tests
+	otherwise.
+
 2006-11-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* PageSettingsTest.cs: New file.

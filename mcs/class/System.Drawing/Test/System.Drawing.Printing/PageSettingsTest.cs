@@ -37,6 +37,11 @@ namespace MonoTests.System.Drawing.Printing
 		[Test]
 		public void CloneTest ()
 		{
+			// Check for installed printers, because we need
+			// to have at least one to test
+			if (PrinterSettings.InstalledPrinters.Count == 0)
+				return;
+
 			PageSettings ps = new PageSettings ();
 			ps.Color = false;
 			ps.Landscape = true;
