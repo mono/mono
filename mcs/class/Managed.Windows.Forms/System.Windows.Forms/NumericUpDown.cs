@@ -337,12 +337,15 @@ namespace System.Windows.Forms {
 			try {
 				string user_edit_text = Text;
 
-                if (!hexadecimal) {
-                    dvalue = decimal.Parse(user_edit_text, CultureInfo.CurrentCulture);
-                }
-                else {
-                    dvalue = Convert.ToDecimal(Convert.ToInt32(user_edit_text, 10));
-                }
+				if (!hexadecimal) {
+					dvalue = decimal.Parse(user_edit_text, CultureInfo.CurrentCulture);
+				} else {
+#if NET_1_1
+					dvalue = Convert.ToDecimal (Convert.ToInt32 (user_edit_text, 16));
+#else
+					dvalue = Convert.ToDecimal (Convert.ToInt32 (user_edit_text, 10));
+#endif
+				}
 
 				if (dvalue < minimum) {
 					dvalue = minimum;

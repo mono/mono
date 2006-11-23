@@ -1,3 +1,8 @@
+2006-11-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* NumericUpDown.cs: In .NET 1.1, user entered text is still
+        hexadecimal in ParseUserEdit.
+
 2006-11-23  Rolf Bjarne Kvinge  <RKvinge@novell.com> 
 
 	* MdiWindowManager.cs: 
