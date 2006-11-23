@@ -164,13 +164,13 @@ namespace MonoTests.SystemWeb.Framework
 
 		public override MembershipUser GetUser (string username, bool userIsOnline)
 		{
-			MembershipUser u = new MembershipUser ("", username, "", "", "", "", true, false, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now);
+			MembershipUser u = new MembershipUser ("", username, "", "name@email.com", "", "", true, false, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now);
 			return u;
 		}
 
 		public override MembershipUser GetUser (object providerUserKey, bool userIsOnline)
 		{
-			MembershipUser u = new MembershipUser ("", "", providerUserKey, "", "", "", true, false, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now);
+			MembershipUser u = new MembershipUser ("", "", providerUserKey, "name@email.com", "", "", true, false, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now);
 			return u;
 		}
 

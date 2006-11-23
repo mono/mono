@@ -1,5 +1,11 @@
 2006-11-09 Vladimir Krasnov <vladimirk@mainsoft.com>
 
+	* System.Web_test.dll.sources: added PasswordRecoveryTest.cs, 
+	PasswordRecoveryTest.cs
+	* Makefile: added WebControl.config resource
+
+2006-11-09 Vladimir Krasnov <vladimirk@mainsoft.com>
+
 	* System.Web.dll.sources: added PasswordRecovery.cs
 	* System.Web20.vmwcsproj: added PasswordRecovery.cs
 

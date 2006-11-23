@@ -1,7 +1,10 @@
+2006-11-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* added: ChangePasswordTest.cs, PasswordRecoveryTest.cs
+
 2006-11-22  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* SqlDataSourceDerbyTest.cs: fixed db init
-
 
 2006-11-22  Igor Zelmanovich   <igorz@mainsoft.com>
 

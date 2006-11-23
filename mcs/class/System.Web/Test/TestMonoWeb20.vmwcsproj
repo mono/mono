@@ -217,6 +217,7 @@
     <Compile Include="System.Web.UI.WebControls\CalendarDayTest.cs" />
     <Compile Include="System.Web.UI.WebControls\CalendarTest.cs" />
     <Compile Include="System.Web.UI.WebControls\CallBackTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\ChangePasswordTest.cs" />
     <Compile Include="System.Web.UI.WebControls\CheckBoxFieldTest.cs" />
     <Compile Include="System.Web.UI.WebControls\CheckBoxListTest.cs" />
     <Compile Include="System.Web.UI.WebControls\CheckBoxTest.cs" />
@@ -295,6 +296,7 @@
     <Compile Include="System.Web.UI.WebControls\PagedDataSourceTest.cs" />
     <Compile Include="System.Web.UI.WebControls\PagerSettingsTest.cs" />
     <Compile Include="System.Web.UI.WebControls\PanelTest.cs" />
+    <Compile Include="System.Web.UI.WebControls\PasswordRecoveryTest.cs" />
     <Compile Include="System.Web.UI.WebControls\PolygonHotSpotTest.cs" />
     <Compile Include="System.Web.UI.WebControls\RadioButtonListTest.cs" />
     <Compile Include="System.Web.UI.WebControls\RadioButtonTest.cs" />

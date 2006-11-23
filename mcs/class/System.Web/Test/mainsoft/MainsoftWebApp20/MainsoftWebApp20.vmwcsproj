@@ -140,6 +140,9 @@
   <ItemGroup>
     <Content Include="Web.config" />
     <Content Include="Web.sitemap" />
+    <Content Include="WebControl.config" >
+	<LogicalName>WebControl.config</LogicalName>
+    </Content>
     <Content Include="WebLogin.config" />
   </ItemGroup>
   <ItemGroup>
