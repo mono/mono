@@ -29,6 +29,9 @@
 #if NET_2_0
 
 using System;
+using System.IO;
+using System.Web.Configuration;
+using System.Net.Configuration;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
@@ -92,18 +95,71 @@ namespace System.Web.UI.WebControls
 		}
 
 		[MonoTODO]
-		public MailMessage CreateMailMessage (string recipients, IDictionary replacements, Control owner) {
-			throw new NotImplementedException ();
+		public MailMessage CreateMailMessage (string recipients, IDictionary replacements, Control owner)
+		{
+			if (owner == null)
+				throw new ArgumentNullException ("owner");
+
+			string bodyText = null;
+
+			if (BodyFileName.Length > 0) {
+				string filePath = null;
+				if (Path.IsPathRooted (BodyFileName))
+					filePath = BodyFileName;
+				else
+					filePath = Path.Combine (owner.TemplateSourceDirectory, BodyFileName);
+
+				StreamReader sr = new StreamReader (filePath);
+				bodyText = sr.ReadToEnd ();
+				sr.Close ();
+			}
+			else
+				bodyText = "";
+
+			return CreateMailMessage (recipients, replacements, bodyText, owner);
 		}
 
 		[MonoTODO]
 		public MailMessage CreateMailMessage (string recipients, IDictionary replacements, string body, Control owner) {
-			throw new NotImplementedException ();
+			if (owner == null)
+				throw new ArgumentNullException ("owner");
+
+			MailMessage msg = new MailMessage ();
+
+			if (CC.Length > 0)
+				msg.CC.Add(CC);
+
+			msg.IsBodyHtml = IsBodyHtml;
+			msg.Priority = Priority;
+			msg.Subject = Subject;
+			msg.Body = body;
+
+			if (From.Length > 0)
+				msg.From = new MailAddress (From);
+			else {
+				SmtpSection smtpSection = (SmtpSection) WebConfigurationManager.GetSection ("system.net/mailSettings/smtp");
+				if (smtpSection != null) {
+					if (string.IsNullOrEmpty (smtpSection.From))
+						throw new HttpException ("A from e-mail address must be specified in the From property or the system.net/mailSettings/smtp config section");
+
+					msg.From = new MailAddress (smtpSection.From);
+				}
+			}
+
+			string [] recipientsArr = recipients.Split (',');
+			for (int i = 0; i < recipientsArr.Length; i++)
+				msg.To.Add (recipientsArr [i]);
+
+			foreach (DictionaryEntry d in replacements)
+				msg.Body = msg.Body.Replace ((string) d.Key, (string) d.Value);
+
+			return msg;
 		}
 
-#region IStateManager Members
+		#region IStateManager Members
 
-		void IStateManager.LoadViewState (object state) {
+		void IStateManager.LoadViewState (object state)
+		{
 			_bag.LoadViewState (state);
 		}
 

@@ -913,6 +913,7 @@ System.Web.UI.WebControls/PagerSettings.cs
 System.Web.UI.WebControls/Panel.cs
 System.Web.UI.WebControls/ParameterCollection.cs
 System.Web.UI.WebControls/Parameter.cs
+System.Web.UI.WebControls/PasswordRecovery.cs
 System.Web.UI.WebControls/PathDirection.cs
 System.Web.UI.WebControls/PlaceHolderControlBuilder.cs
 System.Web.UI.WebControls/PlaceHolder.cs

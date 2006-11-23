@@ -1,3 +1,9 @@
+2006-11-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ChangePassword.cs: implemented functionality
+	* MailDefinition.cs: implemented CreateMailMessage method
+	* PasswordRecovery.cs: implemented functionality
+
 2006-11-22 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* CircleHotSpot.cs: fixed: 

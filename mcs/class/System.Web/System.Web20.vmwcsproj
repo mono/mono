@@ -694,6 +694,7 @@
 		<Compile Include="System.Web.UI.WebControls\Panel.cs"/>
 		<Compile Include="System.Web.UI.WebControls\Parameter.cs"/>
 		<Compile Include="System.Web.UI.WebControls\ParameterCollection.cs"/>
+		<Compile Include="System.Web.UI.WebControls\PasswordRecovery.cs"/>
 		<Compile Include="System.Web.UI.WebControls\PathDirection.cs"/>
 		<Compile Include="System.Web.UI.WebControls\PlaceHolder.cs"/>
 		<Compile Include="System.Web.UI.WebControls\PolygonHotSpot.cs"/>

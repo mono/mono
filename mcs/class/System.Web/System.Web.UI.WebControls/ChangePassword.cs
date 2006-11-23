@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Igor Zelmanovich (igorz@mainsoft.com)
+//	Vladimir Krasnov (vladimirk@mainsoft.com)
 //
 // (C) 2006 Mainsoft, Inc (http://www.mainsoft.com)
 //
@@ -29,10 +30,13 @@
 #if NET_2_0
 
 using System;
+using System.Web.Security;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Text;
 using System.ComponentModel;
 using System.Collections;
+using System.Net.Mail;
 
 namespace System.Web.UI.WebControls
 {
@@ -42,36 +46,52 @@ namespace System.Web.UI.WebControls
 		public static readonly string ChangePasswordButtonCommandName = "ChangePassword";
 		public static readonly string ContinueButtonCommandName = "Continue";
 
-		Style _cancelButtonStyle;
-		Style _changePasswordButtonStyle;
-		Style _continueButtonStyle;
-		TableItemStyle _failureTextStyle;
-		TableItemStyle _hyperLinkStyle;
-		TableItemStyle _instructionTextStyle;
-		TableItemStyle _labelStyle;
-		TableItemStyle _passwordHintStyle;
-		TableItemStyle _successTextStyle;
-		Style _textBoxStyle;
-		TableItemStyle _titleTextStyle;
-		Style _validatorTextStyle;
+		Style _cancelButtonStyle = null;
+		Style _changePasswordButtonStyle = null;
+		Style _continueButtonStyle = null;
+		TableItemStyle _failureTextStyle = null;
+		TableItemStyle _hyperLinkStyle = null;
+		TableItemStyle _instructionTextStyle = null;
+		TableItemStyle _labelStyle = null;
+		TableItemStyle _passwordHintStyle = null;
+		TableItemStyle _successTextStyle = null;
+		Style _textBoxStyle = null;
+		TableItemStyle _titleTextStyle = null;
+		Style _validatorTextStyle = null;
 
-		MailDefinition _mailDefinition;
+		MailDefinition _mailDefinition = null;
+		MembershipProvider _provider = null;
 
-		ITemplate _changePasswordTemplate;
-		ITemplate _successTemplate;
+		ITemplate _changePasswordTemplate = null;
+		ITemplate _successTemplate = null;
+
+		Control _changePasswordTemplateContainer = null;
+		Control _successTemplateContainer = null;
+
+		string _username = null;
+		string _currentPassword = null;
+		string _newPassword = null;
+		string _newPasswordConfirm = null;
+
+		bool _showContinue = false;
+
+		#region Public Properties
 
 		[DefaultValue (1)]
-		public virtual int BorderPadding {
+		public virtual int BorderPadding
+		{
 			get { return ViewState.GetInt ("BorderPadding", 1); }
-			set {
+			set
+			{
 				if (value < -1)
 					throw new ArgumentOutOfRangeException ();
 				ViewState ["BorderPadding"] = value;
 			}
 		}
-		
+
 		[DefaultValue ("")]
-		public virtual string CancelButtonImageUrl {
+		public virtual string CancelButtonImageUrl
+		{
 			get { return ViewState.GetString ("CancelButtonImageUrl", String.Empty); }
 			set { ViewState ["CancelButtonImageUrl"] = value; }
 		}
@@ -79,8 +99,10 @@ namespace System.Web.UI.WebControls
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
-		public Style CancelButtonStyle {
-			get {
+		public Style CancelButtonStyle
+		{
+			get
+			{
 				if (_cancelButtonStyle == null) {
 					_cancelButtonStyle = new Style ();
 					if (IsTrackingViewState)
@@ -89,25 +111,29 @@ namespace System.Web.UI.WebControls
 				return _cancelButtonStyle;
 			}
 		}
-		
+
 		[Localizable (true)]
-		public virtual string CancelButtonText {
+		public virtual string CancelButtonText
+		{
 			get { return ViewState.GetString ("CancelButtonText", "Cancel"); }
 			set { ViewState ["CancelButtonText"] = value; }
 		}
-		
-		public virtual ButtonType CancelButtonType {
+
+		public virtual ButtonType CancelButtonType
+		{
 			get { return ViewState ["CancelButtonType"] == null ? ButtonType.Button : (ButtonType) ViewState ["CancelButtonType"]; }
 			set { ViewState ["CancelButtonType"] = value; }
 		}
-		
+
 		[Themeable (false)]
-		public virtual string CancelDestinationPageUrl {
+		public virtual string CancelDestinationPageUrl
+		{
 			get { return ViewState.GetString ("CancelDestinationPageUrl", String.Empty); }
 			set { ViewState ["CancelDestinationPageUrl"] = value; }
 		}
 
-		public virtual string ChangePasswordButtonImageUrl {
+		public virtual string ChangePasswordButtonImageUrl
+		{
 			get { return ViewState.GetString ("ChangePasswordButtonImageUrl", String.Empty); }
 			set { ViewState ["ChangePasswordButtonImageUrl"] = value; }
 		}
@@ -116,8 +142,10 @@ namespace System.Web.UI.WebControls
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
-		public Style ChangePasswordButtonStyle {
-			get {
+		public Style ChangePasswordButtonStyle
+		{
+			get
+			{
 				if (_changePasswordButtonStyle == null) {
 					_changePasswordButtonStyle = new Style ();
 					if (IsTrackingViewState)
@@ -128,18 +156,21 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Localizable (true)]
-		public virtual string ChangePasswordButtonText {
+		public virtual string ChangePasswordButtonText
+		{
 			get { return ViewState.GetString ("ChangePasswordButtonText", "Change Password"); }
 			set { ViewState ["ChangePasswordButtonText"] = value; }
 		}
 
-		public virtual ButtonType ChangePasswordButtonType {
+		public virtual ButtonType ChangePasswordButtonType
+		{
 			get { return ViewState ["ChangePasswordButtonType"] == null ? ButtonType.Button : (ButtonType) ViewState ["ChangePasswordButtonType"]; }
 			set { ViewState ["ChangePasswordButtonType"] = value; }
 		}
 
 		[Localizable (true)]
-		public virtual string ChangePasswordFailureText {
+		public virtual string ChangePasswordFailureText
+		{
 			get { return ViewState.GetString ("ChangePasswordFailureText", "Your attempt to change passwords was unsuccessful. Please try again."); }
 			set { ViewState ["ChangePasswordFailureText"] = value; }
 		}
@@ -147,52 +178,63 @@ namespace System.Web.UI.WebControls
 		[Browsable (false)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[TemplateContainer (typeof (ChangePassword))]
-		public virtual ITemplate ChangePasswordTemplate {
+		public virtual ITemplate ChangePasswordTemplate
+		{
 			get { return _changePasswordTemplate; }
 			set { _changePasswordTemplate = value; }
 		}
 
-		[MonoTODO]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public Control ChangePasswordTemplateContainer {
-			get { throw new NotImplementedException (); }
+		public Control ChangePasswordTemplateContainer
+		{
+			get
+			{
+				if (_changePasswordTemplateContainer == null)
+					_changePasswordTemplateContainer = new ChangePasswordContainer (this);
+				return _changePasswordTemplateContainer;
+			}
 		}
 
 		[Localizable (true)]
-		public virtual string ChangePasswordTitleText {
+		public virtual string ChangePasswordTitleText
+		{
 			get { return ViewState.GetString ("ChangePasswordTitleText", "Change Your Password"); }
 			set { ViewState ["ChangePasswordTitleText"] = value; }
 		}
 
-		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		[Themeable (false)]
 		[Filterable (false)]
-		public virtual string ConfirmNewPassword {
-			get { throw new NotImplementedException (); }
+		public virtual string ConfirmNewPassword
+		{
+			get { return _newPasswordConfirm != null ? _newPasswordConfirm : ""; }
 		}
 
 		[Localizable (true)]
-		public virtual string ConfirmNewPasswordLabelText {
+		public virtual string ConfirmNewPasswordLabelText
+		{
 			get { return ViewState.GetString ("ConfirmNewPasswordLabelText", "Confirm New Password:"); }
 			set { ViewState ["ConfirmNewPasswordLabelText"] = value; }
 		}
 
 		[Localizable (true)]
-		public virtual string ConfirmPasswordCompareErrorMessage {
-			get { return ViewState.GetString ("ConfirmPasswordCompareErrorMessage", "The confirm New Password entry must match the New Password entry."); }
+		public virtual string ConfirmPasswordCompareErrorMessage
+		{
+			get { return ViewState.GetString ("ConfirmPasswordCompareErrorMessage", "The Confirm New Password must match the New Password entry."); }
 			set { ViewState ["ConfirmPasswordCompareErrorMessage"] = value; }
 		}
 
 		[Localizable (true)]
-		public virtual string ConfirmPasswordRequiredErrorMessage {
+		public virtual string ConfirmPasswordRequiredErrorMessage
+		{
 			get { return ViewState.GetString ("ConfirmPasswordRequiredErrorMessage", String.Empty); }
 			set { ViewState ["ConfirmPasswordRequiredErrorMessage"] = value; }
 		}
 
-		public virtual string ContinueButtonImageUrl {
+		public virtual string ContinueButtonImageUrl
+		{
 			get { return ViewState.GetString ("ContinueButtonImageUrl", String.Empty); }
 			set { ViewState ["ContinueButtonImageUrl"] = value; }
 		}
@@ -200,8 +242,10 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public Style ContinueButtonStyle {
-			get {
+		public Style ContinueButtonStyle
+		{
+			get
+			{
 				if (_continueButtonStyle == null) {
 					_continueButtonStyle = new Style ();
 					if (IsTrackingViewState)
@@ -212,64 +256,74 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Localizable (true)]
-		public virtual string ContinueButtonText {
+		public virtual string ContinueButtonText
+		{
 			get { return ViewState.GetString ("ContinueButtonText", "Continue"); }
 			set { ViewState ["ContinueButtonText"] = value; }
 		}
 
-		public virtual ButtonType ContinueButtonType {
+		public virtual ButtonType ContinueButtonType
+		{
 			get { return ViewState ["ContinueButtonType"] == null ? ButtonType.Button : (ButtonType) ViewState ["ContinueButtonType"]; }
 			set { ViewState ["ContinueButtonType"] = value; }
 		}
 
 		[Themeable (false)]
-		public virtual string ContinueDestinationPageUrl {
+		public virtual string ContinueDestinationPageUrl
+		{
 			get { return ViewState.GetString ("ContinueDestinationPageUrl", String.Empty); }
 			set { ViewState ["ContinueDestinationPageUrl"] = value; }
 		}
 
-		public virtual string CreateUserIconUrl {
+		public virtual string CreateUserIconUrl
+		{
 			get { return ViewState.GetString ("CreateUserIconUrl", String.Empty); }
 			set { ViewState ["CreateUserIconUrl"] = value; }
 		}
 
 		[Localizable (true)]
-		public virtual string CreateUserText {
+		public virtual string CreateUserText
+		{
 			get { return ViewState.GetString ("CreateUserText", String.Empty); }
 			set { ViewState ["CreateUserText"] = value; }
 		}
 
-		public virtual string CreateUserUrl {
+		public virtual string CreateUserUrl
+		{
 			get { return ViewState.GetString ("CreateUserUrl", String.Empty); }
 			set { ViewState ["CreateUserUrl"] = value; }
 		}
 
-		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		[Themeable (false)]
-		public virtual string CurrentPassword {
-			get { throw new NotImplementedException (); }
+		public virtual string CurrentPassword
+		{
+			get { return _currentPassword != null ? _currentPassword : ""; }
 		}
 
 		[DefaultValue (false)]
-		public virtual bool DisplayUserName {
+		public virtual bool DisplayUserName
+		{
 			get { return ViewState.GetBool ("DisplayUserName", false); }
 			set { ViewState ["DisplayUserName"] = value; }
 		}
 
-		public virtual string EditProfileIconUrl {
+		public virtual string EditProfileIconUrl
+		{
 			get { return ViewState.GetString ("EditProfileIconUrl", String.Empty); }
 			set { ViewState ["EditProfileIconUrl"] = value; }
 		}
 
 		[Localizable (true)]
-		public virtual string EditProfileText {
+		public virtual string EditProfileText
+		{
 			get { return ViewState.GetString ("EditProfileText", String.Empty); }
 			set { ViewState ["EditProfileText"] = value; }
 		}
 
-		public virtual string EditProfileUrl {
+		public virtual string EditProfileUrl
+		{
 			get { return ViewState.GetString ("EditProfileUrl", String.Empty); }
 			set { ViewState ["EditProfileUrl"] = value; }
 		}
@@ -277,8 +331,10 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public TableItemStyle FailureTextStyle {
-			get {
+		public TableItemStyle FailureTextStyle
+		{
+			get
+			{
 				if (_failureTextStyle == null) {
 					_failureTextStyle = new TableItemStyle ();
 					if (IsTrackingViewState)
@@ -288,18 +344,21 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		public virtual string HelpPageIconUrl {
+		public virtual string HelpPageIconUrl
+		{
 			get { return ViewState.GetString ("HelpPageIconUrl", String.Empty); }
 			set { ViewState ["HelpPageIconUrl"] = value; }
 		}
 
 		[Localizable (true)]
-		public virtual string HelpPageText {
+		public virtual string HelpPageText
+		{
 			get { return ViewState.GetString ("HelpPageText", String.Empty); }
 			set { ViewState ["HelpPageText"] = value; }
 		}
 
-		public virtual string HelpPageUrl {
+		public virtual string HelpPageUrl
+		{
 			get { return ViewState.GetString ("HelpPageUrl", String.Empty); }
 			set { ViewState ["HelpPageUrl"] = value; }
 		}
@@ -307,8 +366,10 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public TableItemStyle HyperLinkStyle {
-			get {
+		public TableItemStyle HyperLinkStyle
+		{
+			get
+			{
 				if (_hyperLinkStyle == null) {
 					_hyperLinkStyle = new TableItemStyle ();
 					if (IsTrackingViewState)
@@ -319,7 +380,8 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Localizable (true)]
-		public virtual string InstructionText {
+		public virtual string InstructionText
+		{
 			get { return ViewState.GetString ("InstructionText", String.Empty); }
 			set { ViewState ["InstructionText"] = value; }
 		}
@@ -327,8 +389,10 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public TableItemStyle InstructionTextStyle {
-			get {
+		public TableItemStyle InstructionTextStyle
+		{
+			get
+			{
 				if (_instructionTextStyle == null) {
 					_instructionTextStyle = new TableItemStyle ();
 					if (IsTrackingViewState)
@@ -341,8 +405,10 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public TableItemStyle LabelStyle {
-			get {
+		public TableItemStyle LabelStyle
+		{
+			get
+			{
 				if (_labelStyle == null) {
 					_labelStyle = new TableItemStyle ();
 					if (IsTrackingViewState)
@@ -352,17 +418,18 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[MonoTODO]
 		[Themeable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public MailDefinition MailDefinition {
-			get {
+		public MailDefinition MailDefinition
+		{
+			get
+			{
 				if (_mailDefinition == null) {
 					_mailDefinition = new MailDefinition ();
 					if (IsTrackingViewState)
-						((IStateManager)_mailDefinition).TrackViewState ();
+						((IStateManager) _mailDefinition).TrackViewState ();
 				}
 				return _mailDefinition;
 			}
@@ -370,35 +437,53 @@ namespace System.Web.UI.WebControls
 
 		[Themeable (false)]
 		[DefaultValue ("")]
-		public virtual string MembershipProvider {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+		public virtual string MembershipProvider
+		{
+			get
+			{
+				object o = ViewState ["MembershipProvider"];
+				return (o == null) ? "" : (string) o;
+			}
+			set
+			{
+				if (value == null)
+					ViewState.Remove ("MembershipProvider");
+				else
+					ViewState ["MembershipProvider"] = value;
+
+				_provider = null;
+			}
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Themeable (false)]
-		public virtual string NewPassword {
-			get { throw new NotImplementedException (); }
+		public virtual string NewPassword
+		{
+			get { return _newPassword != null ? _newPassword : ""; }
 		}
 
 		[Localizable (true)]
-		public virtual string NewPasswordLabelText {
+		public virtual string NewPasswordLabelText
+		{
 			get { return ViewState.GetString ("NewPasswordLabelText", "New Password:"); }
 			set { ViewState ["NewPasswordLabelText"] = value; }
 		}
 
-		public virtual string NewPasswordRegularExpression {
+		public virtual string NewPasswordRegularExpression
+		{
 			get { return ViewState.GetString ("NewPasswordRegularExpression", String.Empty); }
 			set { ViewState ["NewPasswordRegularExpression"] = value; }
 		}
 
-		public virtual string NewPasswordRegularExpressionErrorMessage {
+		public virtual string NewPasswordRegularExpressionErrorMessage
+		{
 			get { return ViewState.GetString ("NewPasswordRegularExpressionErrorMessage", String.Empty); }
 			set { ViewState ["NewPasswordRegularExpressionErrorMessage"] = value; }
 		}
 
 		[Localizable (true)]
-		public virtual string NewPasswordRequiredErrorMessage {
+		public virtual string NewPasswordRequiredErrorMessage
+		{
 			get { return ViewState.GetString ("NewPasswordRequiredErrorMessage", "New Password is required."); }
 			set { ViewState ["NewPasswordRequiredErrorMessage"] = value; }
 		}
@@ -406,8 +491,10 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public TableItemStyle PasswordHintStyle {
-			get {
+		public TableItemStyle PasswordHintStyle
+		{
+			get
+			{
 				if (_passwordHintStyle == null) {
 					_passwordHintStyle = new TableItemStyle ();
 					if (IsTrackingViewState)
@@ -418,41 +505,48 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Localizable (true)]
-		public virtual string PasswordHintText {
+		public virtual string PasswordHintText
+		{
 			get { return ViewState.GetString ("PasswordHintText", String.Empty); }
 			set { ViewState ["PasswordHintText"] = value; }
 		}
 
 		[Localizable (true)]
-		public virtual string PasswordLabelText {
+		public virtual string PasswordLabelText
+		{
 			get { return ViewState.GetString ("PasswordLabelText", "Password:"); }
 			set { ViewState ["PasswordLabelText"] = value; }
 		}
 
-		public virtual string PasswordRecoveryIconUrl {
+		public virtual string PasswordRecoveryIconUrl
+		{
 			get { return ViewState.GetString ("PasswordRecoveryIconUrl", String.Empty); }
 			set { ViewState ["PasswordRecoveryIconUrl"] = value; }
 		}
 
 		[Localizable (true)]
-		public virtual string PasswordRecoveryText {
+		public virtual string PasswordRecoveryText
+		{
 			get { return ViewState.GetString ("PasswordRecoveryText", String.Empty); }
 			set { ViewState ["PasswordRecoveryText"] = value; }
 		}
 
-		public virtual string PasswordRecoveryUrl {
+		public virtual string PasswordRecoveryUrl
+		{
 			get { return ViewState.GetString ("PasswordRecoveryUrl", String.Empty); }
 			set { ViewState ["PasswordRecoveryUrl"] = value; }
 		}
 
 		[Localizable (true)]
-		public virtual string PasswordRequiredErrorMessage {
+		public virtual string PasswordRequiredErrorMessage
+		{
 			get { return ViewState.GetString ("PasswordRequiredErrorMessage", String.Empty); }
 			set { ViewState ["PasswordRequiredErrorMessage"] = value; }
 		}
 
 		[Themeable (false)]
-		public virtual string SuccessPageUrl {
+		public virtual string SuccessPageUrl
+		{
 			get { return ViewState.GetString ("SuccessPageUrl", String.Empty); }
 			set { ViewState ["SuccessPageUrl"] = value; }
 		}
@@ -460,29 +554,39 @@ namespace System.Web.UI.WebControls
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[TemplateContainer (typeof (ChangePassword))]
 		[Browsable (false)]
-		public virtual ITemplate SuccessTemplate {
+		public virtual ITemplate SuccessTemplate
+		{
 			get { return _successTemplate; }
 			set { _successTemplate = value; }
 		}
 
-		[MonoTODO]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public Control SuccessTemplateContainer {
-			get { throw new NotImplementedException (); }
+		public Control SuccessTemplateContainer
+		{
+			get
+			{
+				if (_successTemplateContainer == null)
+					_successTemplateContainer = new SuccessContainer (this);
+				return _successTemplateContainer;
+			}
+
 		}
 
 		[Localizable (true)]
-		public virtual string SuccessText {
-			get { return ViewState.GetString ("SuccessText", String.Empty); }
+		public virtual string SuccessText
+		{
+			get { return ViewState.GetString ("SuccessText", "Your password has been changed!"); }
 			set { ViewState ["SuccessText"] = value; }
 		}
 
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public TableItemStyle SuccessTextStyle {
-			get {
+		public TableItemStyle SuccessTextStyle
+		{
+			get
+			{
 				if (_successTextStyle == null) {
 					_successTextStyle = new TableItemStyle ();
 					if (IsTrackingViewState)
@@ -493,20 +597,19 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Localizable (true)]
-		public virtual string SuccessTitleText {
+		public virtual string SuccessTitleText
+		{
 			get { return ViewState.GetString ("SuccessTitleText", "Change Password Complete"); }
 			set { ViewState ["SuccessTitleText"] = value; }
 		}
 
-		protected override HtmlTextWriterTag TagKey {
-			get { return HtmlTextWriterTag.Table; }
-		}
-		
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public Style TextBoxStyle {
-			get {
+		public Style TextBoxStyle
+		{
+			get
+			{
 				if (_textBoxStyle == null) {
 					_textBoxStyle = new Style ();
 					if (IsTrackingViewState)
@@ -519,8 +622,10 @@ namespace System.Web.UI.WebControls
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public TableItemStyle TitleTextStyle {
-			get {
+		public TableItemStyle TitleTextStyle
+		{
+			get
+			{
 				if (_titleTextStyle == null) {
 					_titleTextStyle = new TableItemStyle ();
 					if (IsTrackingViewState)
@@ -531,19 +636,28 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue ("")]
-		public virtual string UserName {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+		public virtual string UserName
+		{
+			get
+			{
+				if (_username == null && HttpContext.Current.Request.IsAuthenticated)
+					_username = HttpContext.Current.User.Identity.Name;
+
+				return _username != null ? _username : "";
+			}
+			set { _username = value; }
 		}
 
 		[Localizable (true)]
-		public virtual string UserNameLabelText {
+		public virtual string UserNameLabelText
+		{
 			get { return ViewState.GetString ("UserNameLabelText", "User Name:"); }
 			set { ViewState ["UserNameLabelText"] = value; }
 		}
 
 		[Localizable (true)]
-		public virtual string UserNameRequiredErrorMessage {
+		public virtual string UserNameRequiredErrorMessage
+		{
 			get { return ViewState.GetString ("UserNameRequiredErrorMessage", "User Name is required."); }
 			set { ViewState ["UserNameRequiredErrorMessage"] = value; }
 		}
@@ -551,8 +665,10 @@ namespace System.Web.UI.WebControls
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public Style ValidatorTextStyle {
-			get {
+		public Style ValidatorTextStyle
+		{
+			get
+			{
 				if (_validatorTextStyle == null) {
 					_validatorTextStyle = new Style ();
 					if (IsTrackingViewState)
@@ -562,129 +678,241 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		public event EventHandler CancelButtonClick;
-		public event EventHandler ChangedPassword;
-		public event EventHandler ChangePasswordError;
-		public event LoginCancelEventHandler ChangingPassword;
-		public event EventHandler ContinueButtonClick;
-		public event MailMessageEventHandler SendingMail;
-		public event SendMailErrorEventHandler SendMailError;
+		#endregion
+
+		#region Protected Methods
+
+		protected internal override void CreateChildControls ()
+		{
+			Controls.Clear ();
+
+			ITemplate cpTemplate = ChangePasswordTemplate;
+			if (cpTemplate == null)
+				cpTemplate = new ChangePasswordDeafultTemplate (this);
+			((ChangePasswordContainer) ChangePasswordTemplateContainer).InstantiateTemplate (cpTemplate);
+
+			ITemplate sTemplate = SuccessTemplate;
+			if (sTemplate == null)
+				sTemplate = new SuccessDefaultTemplate (this);
+			((SuccessContainer) SuccessTemplateContainer).InstantiateTemplate (sTemplate);
+
+			Controls.AddAt (0, ChangePasswordTemplateContainer);
+			Controls.AddAt (1, SuccessTemplateContainer);
+
+			IEditableTextControl editable;
+
+			ChangePasswordContainer container = (ChangePasswordContainer) ChangePasswordTemplateContainer;
+			if (DisplayUserName) {
+				editable = container.UserNameTextBox;
+				if (editable != null)
+					editable.TextChanged += new EventHandler (UserName_TextChanged);
+			}
+
+			editable = container.CurrentPasswordTextBox;
+			if (editable != null)
+				editable.TextChanged += new EventHandler (CurrentPassword_TextChanged);
+
+			editable = container.NewPasswordTextBox;
+			if (editable != null)
+				editable.TextChanged += new EventHandler (NewPassword_TextChanged);
+
+			editable = container.ConfirmNewPasswordTextBox;
+			if (editable != null)
+				editable.TextChanged += new EventHandler (NewPasswordConfirm_TextChanged);
+		}
+
+		protected internal override void Render (HtmlTextWriter writer)
+		{
+			for (int i = 0; i < Controls.Count; i++)
+				if (Controls [i].Visible)
+					Controls [i].Render (writer);
+		}
+
+		#endregion
+
+		#region Private Methods
 
 		[MonoTODO]
-		protected internal override void CreateChildControls () {
+		protected override void SetDesignModeState (IDictionary data)
+		{
 			throw new NotImplementedException ();
+		}
+
+		private void InitMemberShipProvider ()
+		{
+			string mp = MembershipProvider;
+			_provider = (mp.Length == 0) ? _provider = Membership.Provider : Membership.Providers [mp];
+			if (_provider == null)
+				throw new HttpException (Locale.GetText ("No provider named '{0}' could be found.", mp));
+		}
+
+		private void ProcessChangePasswordEvent (CommandEventArgs args)
+		{
+			if (!Page.IsValid)
+				return;
+
+			LoginCancelEventArgs loginCancelEventArgs = new LoginCancelEventArgs ();
+			OnChangingPassword (loginCancelEventArgs);
+			if (loginCancelEventArgs.Cancel)
+				return;
+
+			if (UserName != null && UserName.Length > 0 
+				&& MembershipProviderInternal.ChangePassword (UserName, CurrentPassword, NewPassword)) {
+
+				OnChangedPassword (args);
+				_showContinue = true;
+
+				if (_mailDefinition != null)
+					SendMail (UserName, NewPassword);
+			}
+			else {
+				OnChangePasswordError (EventArgs.Empty);
+				string lastError = string.Format (
+					"Password incorrect or New Password invalid. New Password length minimum: {0}. Non-alphanumeric characters required: {1}.",
+					MembershipProviderInternal.MinRequiredPasswordLength,
+					MembershipProviderInternal.MinRequiredNonAlphanumericCharacters);
+
+				ChangePasswordContainer container = (ChangePasswordContainer) ChangePasswordTemplateContainer;
+				container.FailureTextLiteral.Text = lastError;
+				_showContinue = false;
+			}
+
+			return;
 		}
 		
-		[MonoTODO]
-		protected internal override void LoadControlState (object savedState) {
-			throw new NotImplementedException ();
+		private void ProcessCancelEvent (CommandEventArgs args)
+		{
+			OnCancelButtonClick (args);
+
+			if (ContinueDestinationPageUrl.Length > 0)
+				Context.Response.Redirect (ContinueDestinationPageUrl);
+
+			return;
 		}
 
-		protected override void LoadViewState (object savedState) {
-			
+		private void ProcessContinueEvent (CommandEventArgs args)
+		{
+			OnContinueButtonClick (args);
+
+			if (ContinueDestinationPageUrl.Length > 0)
+				Context.Response.Redirect (ContinueDestinationPageUrl);
+
+			return;
+		}
+
+		private void SendMail (string username, string password)
+		{
+			MembershipUser user = MembershipProviderInternal.GetUser (UserName, false);
+			if (user == null)
+				return;
+
+			ListDictionary dictionary = new ListDictionary ();
+			dictionary.Add ("<%USERNAME%>", username);
+			dictionary.Add ("<%PASSWORD%>", password);
+
+			MailMessage message = MailDefinition.CreateMailMessage (user.Email, dictionary, this);
+
+			MailMessageEventArgs args = new MailMessageEventArgs (message);
+			OnSendingMail (args);
+
+			SmtpClient smtpClient = new SmtpClient ();
+			try {
+				smtpClient.Send (message);
+			}
+			catch (Exception e) {
+				SendMailErrorEventArgs mailArgs = new SendMailErrorEventArgs (e);
+				OnSendMailError (mailArgs);
+				if (!mailArgs.Handled)
+					throw e;
+			}
+		}
+
+		#endregion
+
+		#region Properties
+
+		protected override HtmlTextWriterTag TagKey
+		{
+			get { return HtmlTextWriterTag.Table; }
+		}
+
+		internal virtual MembershipProvider MembershipProviderInternal
+		{
+			get
+			{
+				if (_provider == null)
+					InitMemberShipProvider ();
+
+				return _provider;
+			}
+		}
+
+		#endregion
+
+		#region View and Control State
+
+		protected internal override void LoadControlState (object savedState)
+		{
+			if (savedState == null) return;
+			object [] state = (object []) savedState;
+			base.LoadControlState (state [0]);
+
+			_showContinue = (bool) state [1];
+			_username = (string) state [2];
+		}
+
+		protected internal override object SaveControlState ()
+		{
+			object state = base.SaveControlState ();
+			return new object [] { state, _showContinue, _username };
+		}
+
+		protected override void LoadViewState (object savedState)
+		{
+
 			if (savedState == null)
 				return;
 
 			object [] states = (object []) savedState;
 			base.LoadViewState (states [0]);
-			
+
 			if (states [1] != null)
-				_cancelButtonStyle.LoadViewState (states [1]);
+				CancelButtonStyle.LoadViewState (states [1]);
 			if (states [2] != null)
-				_changePasswordButtonStyle.LoadViewState (states [2]);
+				ChangePasswordButtonStyle.LoadViewState (states [2]);
 			if (states [3] != null)
-				_continueButtonStyle.LoadViewState (states [3]);
+				ContinueButtonStyle.LoadViewState (states [3]);
 
 			if (states [4] != null)
-				_failureTextStyle.LoadViewState (states [4]);
+				FailureTextStyle.LoadViewState (states [4]);
 			if (states [5] != null)
-				_hyperLinkStyle.LoadViewState (states [5]);
+				HyperLinkStyle.LoadViewState (states [5]);
 			if (states [6] != null)
-				_instructionTextStyle.LoadViewState (states [6]);
+				InstructionTextStyle.LoadViewState (states [6]);
 
 			if (states [7] != null)
-				_labelStyle.LoadViewState (states [7]);
+				LabelStyle.LoadViewState (states [7]);
 			if (states [8] != null)
-				_passwordHintStyle.LoadViewState (states [8]);
+				PasswordHintStyle.LoadViewState (states [8]);
 			if (states [9] != null)
-				_successTextStyle.LoadViewState (states [9]);
+				SuccessTextStyle.LoadViewState (states [9]);
 
 			if (states [10] != null)
-				_textBoxStyle.LoadViewState (states [10]);
+				TextBoxStyle.LoadViewState (states [10]);
 			if (states [11] != null)
-				_titleTextStyle.LoadViewState (states [11]);
+				TitleTextStyle.LoadViewState (states [11]);
 			if (states [12] != null)
-				_validatorTextStyle.LoadViewState (states [12]);
-			
+				ValidatorTextStyle.LoadViewState (states [12]);
+
 			if (states [13] != null)
-				((IStateManager) _mailDefinition).LoadViewState (states [13]);
+				((IStateManager) MailDefinition).LoadViewState (states [13]);
 		}
 
-		[MonoTODO]
-		protected override bool OnBubbleEvent (object source, EventArgs e) {
-			throw new NotImplementedException ();
-		}
-
-		protected virtual void OnCancelButtonClick (EventArgs e) {
-			if (CancelButtonClick != null)
-				CancelButtonClick (this, e);
-		}
-
-		protected virtual void OnChangedPassword (EventArgs e) {
-			if (ChangedPassword != null)
-				ChangedPassword (this, e);
-		}
-
-		protected virtual void OnChangePasswordError (EventArgs e) {
-			if (ChangePasswordError != null)
-				ChangePasswordError (this, e);
-		}
-
-		protected virtual void OnChangingPassword (LoginCancelEventArgs e) {
-			if (ChangingPassword != null)
-				ChangingPassword (this, e);
-		}
-
-		protected virtual void OnContinueButtonClick (EventArgs e) {
-			if (ContinueButtonClick != null)
-				ContinueButtonClick (this, e);
-		}
-
-		[MonoTODO]
-		protected internal override void OnInit (EventArgs e) {
-			base.OnInit (e);
-		}
-
-		[MonoTODO]
-		protected internal override void OnPreRender (EventArgs e) {
-			base.OnPreRender (e);
-		}
-
-		protected virtual void OnSendingMail (MailMessageEventArgs e) {
-			if (SendingMail != null)
-				SendingMail (this, e);
-		}
-
-		protected virtual void OnSendMailError (SendMailErrorEventArgs e) {
-			if (SendMailError != null)
-				SendMailError (this, e);
-		}
-
-		[MonoTODO]
-		protected internal override void Render (HtmlTextWriter writer) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected internal override object SaveControlState () {
-			throw new NotImplementedException ();
-		}
-
-		protected override object SaveViewState () {
-			
+		protected override object SaveViewState ()
+		{
 			object [] states = new object [14];
 			states [0] = base.SaveViewState ();
-			
+
 			if (_cancelButtonStyle != null)
 				states [1] = _cancelButtonStyle.SaveViewState ();
 			if (_changePasswordButtonStyle != null)
@@ -714,7 +942,7 @@ namespace System.Web.UI.WebControls
 				states [12] = _validatorTextStyle.SaveViewState ();
 
 			if (_mailDefinition != null)
-				states [13] = ((IStateManager)_mailDefinition).SaveViewState ();
+				states [13] = ((IStateManager) _mailDefinition).SaveViewState ();
 
 			for (int i = 0; i < states.Length; i++) {
 				if (states [i] != null)
@@ -723,13 +951,9 @@ namespace System.Web.UI.WebControls
 			return null;
 		}
 
-		[MonoTODO]
-		protected override void SetDesignModeState (IDictionary data) {
-			throw new NotImplementedException ();
-		}
+		protected override void TrackViewState ()
+		{
 
-		protected override void TrackViewState () {
-			
 			base.TrackViewState ();
 
 			if (_cancelButtonStyle != null)
@@ -738,14 +962,14 @@ namespace System.Web.UI.WebControls
 				_changePasswordButtonStyle.TrackViewState ();
 			if (_continueButtonStyle != null)
 				_continueButtonStyle.TrackViewState ();
-			
+
 			if (_failureTextStyle != null)
 				_failureTextStyle.TrackViewState ();
 			if (_hyperLinkStyle != null)
 				_hyperLinkStyle.TrackViewState ();
 			if (_instructionTextStyle != null)
 				_instructionTextStyle.TrackViewState ();
-			
+
 			if (_labelStyle != null)
 				_labelStyle.TrackViewState ();
 			if (_passwordHintStyle != null)
@@ -759,9 +983,554 @@ namespace System.Web.UI.WebControls
 				_titleTextStyle.TrackViewState ();
 			if (_validatorTextStyle != null)
 				_validatorTextStyle.TrackViewState ();
-			
+
 			if (_mailDefinition != null)
-				((IStateManager)_mailDefinition).TrackViewState ();
+				((IStateManager) _mailDefinition).TrackViewState ();
+		}
+
+		#endregion
+
+		#region Public Events
+
+		public event EventHandler CancelButtonClick;
+		public event EventHandler ChangedPassword;
+		public event EventHandler ChangePasswordError;
+		public event LoginCancelEventHandler ChangingPassword;
+		public event EventHandler ContinueButtonClick;
+		public event MailMessageEventHandler SendingMail;
+		public event SendMailErrorEventHandler SendMailError;
+
+		#endregion
+
+		#region Event Handlers
+
+		protected override bool OnBubbleEvent (object source, EventArgs e)
+		{
+			CommandEventArgs args = e as CommandEventArgs;
+			if (e != null) {
+				if (args.CommandName == ChangePasswordButtonCommandName) {
+					ProcessChangePasswordEvent (args);
+					return true;
+				}
+				if (args.CommandName == CancelButtonCommandName) {
+					ProcessCancelEvent (args);
+					return true;
+				}
+				if (args.CommandName == ContinueButtonCommandName) {
+					ProcessContinueEvent (args);
+					return true;
+				}
+			}
+			return base.OnBubbleEvent (source, e);
+		}
+
+		protected virtual void OnCancelButtonClick (EventArgs e)
+		{
+			if (CancelButtonClick != null)
+				CancelButtonClick (this, e);
+		}
+
+		protected virtual void OnChangedPassword (EventArgs e)
+		{
+			if (ChangedPassword != null)
+				ChangedPassword (this, e);
+		}
+
+		protected virtual void OnChangePasswordError (EventArgs e)
+		{
+			if (ChangePasswordError != null)
+				ChangePasswordError (this, e);
+		}
+
+		protected virtual void OnChangingPassword (LoginCancelEventArgs e)
+		{
+			if (ChangingPassword != null)
+				ChangingPassword (this, e);
+		}
+
+		protected virtual void OnContinueButtonClick (EventArgs e)
+		{
+			if (ContinueButtonClick != null)
+				ContinueButtonClick (this, e);
+		}
+
+		protected internal override void OnInit (EventArgs e)
+		{
+			Page.RegisterRequiresControlState (this);
+			base.OnInit (e);
+		}
+
+		protected internal override void OnPreRender (EventArgs e)
+		{
+			ChangePasswordTemplateContainer.Visible = !_showContinue;
+			SuccessTemplateContainer.Visible = _showContinue;
+			base.OnPreRender (e);
+		}
+
+		protected virtual void OnSendingMail (MailMessageEventArgs e)
+		{
+			if (SendingMail != null)
+				SendingMail (this, e);
+		}
+
+		protected virtual void OnSendMailError (SendMailErrorEventArgs e)
+		{
+			if (SendMailError != null)
+				SendMailError (this, e);
+		}
+
+		private void UserName_TextChanged (object sender, EventArgs e)
+		{
+			UserName = ((ITextControl) sender).Text;
+		}
+
+		private void CurrentPassword_TextChanged (object sender, EventArgs e)
+		{
+			_currentPassword = ((ITextControl) sender).Text;
+		}
+
+		private void NewPassword_TextChanged (object sender, EventArgs e)
+		{
+			_newPassword = ((ITextControl) sender).Text;
+		}
+
+		private void NewPasswordConfirm_TextChanged (object sender, EventArgs e)
+		{
+			_newPasswordConfirm = ((ITextControl) sender).Text;
+		}
+
+		#endregion
+
+		class BaseChangePasswordContainer : Table, INamingContainer
+		{
+			protected readonly ChangePassword _owner = null;
+			TableCell _containerCell = null;
+
+			public BaseChangePasswordContainer (ChangePassword owner)
+			{
+				_owner = owner;
+				InitTable ();
+			}
+
+			public void InstantiateTemplate (ITemplate template)
+			{
+				template.InstantiateIn (_containerCell);
+			}
+
+			private void InitTable ()
+			{
+				Attributes.Add ("ID", _owner.ID);
+
+				CellSpacing = 0;
+				CellPadding = _owner.BorderPadding;
+
+				_containerCell = new TableCell ();
+
+				TableRow row = new TableRow ();
+				row.Cells.Add (_containerCell);
+				Rows.Add (row);
+			}
+
+			protected internal override void OnPreRender (EventArgs e)
+			{
+				ApplyStyle (_owner.ControlStyle);
+				base.OnPreRender (e);
+			}
+		}
+
+		sealed class ChangePasswordContainer : BaseChangePasswordContainer
+		{
+			public ChangePasswordContainer (ChangePassword owner) : base (owner)
+			{
+			}
+
+			// Requried controls
+			public IEditableTextControl UserNameTextBox
+			{
+				get
+				{
+					Control c = FindControl ("UserName");
+					if (c == null)
+						throw new HttpException ("ChangePasswordTemplate does not contain an IEditableTextControl with ID UserName for the username, this is required if DisplayUserName=true.");
+					return c as IEditableTextControl;
+				}
+			}
+			public IEditableTextControl CurrentPasswordTextBox
+			{
+				get
+				{
+					Control c = FindControl ("CurrentPassword");
+					if (c == null)
+						throw new HttpException ("ChangePasswordTemplate does not contain an IEditableTextControl with ID CurrentPassword for the current password.");
+					return c as IEditableTextControl;
+				}
+			}
+			public IEditableTextControl NewPasswordTextBox
+			{
+				get
+				{
+					Control c = FindControl ("NewPassword");
+					if (c == null)
+						throw new HttpException ("ChangePasswordTemplate does not contain an IEditableTextControl with ID NewPassword for the new password.");
+					return c as IEditableTextControl;
+				}
+			}
+
+			// Optional controls
+			public IEditableTextControl ConfirmNewPasswordTextBox
+			{
+				get { return FindControl ("ConfirmNewPassword") as IEditableTextControl; }
+			}
+			public Control CancelButton
+			{
+				get { return FindControl ("Cancel"); }
+			}
+			public Control ChangePasswordButton
+			{
+				get { return FindControl ("ChangePassword"); }
+			}
+			public ITextControl FailureTextLiteral
+			{
+				get { return FindControl ("FailureText") as ITextControl; }
+			}
+		}
+
+		sealed class ChangePasswordDeafultTemplate : ITemplate
+		{
+			readonly ChangePassword _owner = null;
+
+			internal ChangePasswordDeafultTemplate (ChangePassword cPassword)
+			{
+				_owner = cPassword;
+			}
+
+			TableRow CreateRow (Control c0, Control c1, Control c2, Style s0, Style s1)
+			{
+				TableRow row = new TableRow ();
+				TableCell cell0 = new TableCell ();
+				TableCell cell1 = new TableCell ();
+
+				cell0.Controls.Add (c0);
+				row.Controls.Add (cell0);
+
+				if ((c1 != null) && (c2 != null)) {
+					cell1.Controls.Add (c1);
+					cell1.Controls.Add (c2);
+					cell0.HorizontalAlign = HorizontalAlign.Right;
+
+					if (s0 != null)
+						cell0.ApplyStyle (s0);
+					if (s1 != null)
+						cell1.ApplyStyle (s1);
+
+					row.Controls.Add (cell1);
+				}
+				else {
+					cell0.ColumnSpan = 2;
+					cell0.HorizontalAlign = HorizontalAlign.Center;
+					if (s0 != null)
+						cell0.ApplyStyle (s0);
+				}
+				return row;
+			}
+
+			bool AddLink (string pageUrl, string linkText, string linkIcon, WebControl container)
+			{
+				bool added = false;
+				if (linkIcon.Length > 0) {
+					Image img = new Image ();
+					img.ImageUrl = linkIcon;
+					container.Controls.Add (img);
+					added = true;
+				}
+				if (linkText.Length > 0) {
+					HyperLink link = new HyperLink ();
+					link.NavigateUrl = pageUrl;
+					link.Text = linkText;
+					link.ControlStyle.CopyTextStylesFrom (container.ControlStyle);
+					container.Controls.Add (link);
+					added = true;
+				}
+				return added;
+			}
+
+			public void InstantiateIn (Control container)
+			{
+				Table table = new Table ();
+				table.CellPadding = 0;
+
+				// Row #0
+				table.Controls.Add (
+					CreateRow (new LiteralControl (_owner.ChangePasswordTitleText),
+					null, null, _owner.TitleTextStyle, null));
+
+				// Row #1
+				if (_owner.InstructionText.Length > 0) {
+					table.Controls.Add (
+						CreateRow (new LiteralControl (_owner.InstructionText),
+						null, null, _owner.InstructionTextStyle, null));
+				}
+
+				// Row #2
+				if (_owner.DisplayUserName) {
+					TextBox UserName = new TextBox ();
+					UserName.ID = "UserName";
+					UserName.Text = _owner.UserName;
+					UserName.ApplyStyle (_owner.TextBoxStyle);
+
+					Label UserNameLabel = new Label ();
+					UserNameLabel.ID = "UserNameLabel";
+					UserNameLabel.AssociatedControlID = "UserName";
+					UserNameLabel.Text = _owner.UserNameLabelText;
+
+					RequiredFieldValidator UserNameRequired = new RequiredFieldValidator ();
+					UserNameRequired.ID = "UserNameRequired";
+					UserNameRequired.ControlToValidate = "UserName";
+					UserNameRequired.ErrorMessage = _owner.UserNameRequiredErrorMessage;
+					UserNameRequired.ToolTip = _owner.UserNameRequiredErrorMessage;
+					UserNameRequired.Text = "*";
+					UserNameRequired.ValidationGroup = _owner.ID;
+					UserNameRequired.ApplyStyle (_owner.ValidatorTextStyle);
+
+					table.Controls.Add (CreateRow (UserNameLabel, UserName, UserNameRequired, _owner.LabelStyle, null));
+				}
+
+				// Row #3
+				TextBox CurrentPassword = new TextBox ();
+				CurrentPassword.ID = "CurrentPassword";
+				CurrentPassword.TextMode = TextBoxMode.Password;
+				CurrentPassword.ApplyStyle (_owner.TextBoxStyle);
+
+				Label CurrentPasswordLabel = new Label ();
+				CurrentPasswordLabel.ID = "CurrentPasswordLabel";
+				CurrentPasswordLabel.AssociatedControlID = "CurrentPasswordLabel";
+				CurrentPasswordLabel.Text = _owner.PasswordLabelText;
+
+				RequiredFieldValidator CurrentPasswordRequired = new RequiredFieldValidator ();
+				CurrentPasswordRequired.ID = "CurrentPasswordRequired";
+				CurrentPasswordRequired.ControlToValidate = "CurrentPassword";
+				CurrentPasswordRequired.ErrorMessage = _owner.PasswordRequiredErrorMessage;
+				CurrentPasswordRequired.ToolTip = _owner.PasswordRequiredErrorMessage;
+				CurrentPasswordRequired.Text = "*";
+				CurrentPasswordRequired.ValidationGroup = _owner.ID;
+				CurrentPasswordRequired.ApplyStyle (_owner.ValidatorTextStyle);
+
+				table.Controls.Add (CreateRow (CurrentPasswordLabel, CurrentPassword, CurrentPasswordRequired, _owner.LabelStyle, null));
+
+				// Row #4
+				TextBox NewPassword = new TextBox ();
+				NewPassword.ID = "NewPassword";
+				NewPassword.TextMode = TextBoxMode.Password;
+				NewPassword.ApplyStyle (_owner.TextBoxStyle);
+
+				Label NewPasswordLabel = new Label ();
+				NewPasswordLabel.ID = "NewPasswordLabel";
+				NewPasswordLabel.AssociatedControlID = "NewPassword";
+				NewPasswordLabel.Text = _owner.NewPasswordLabelText;
+
+				RequiredFieldValidator NewPasswordRequired = new RequiredFieldValidator ();
+				NewPasswordRequired.ID = "NewPasswordRequired";
+				NewPasswordRequired.ControlToValidate = "NewPassword";
+				NewPasswordRequired.ErrorMessage = _owner.PasswordRequiredErrorMessage;
+				NewPasswordRequired.ToolTip = _owner.PasswordRequiredErrorMessage;
+				NewPasswordRequired.Text = "*";
+				NewPasswordRequired.ValidationGroup = _owner.ID;
+				NewPasswordRequired.ApplyStyle (_owner.ValidatorTextStyle);
+
+				table.Controls.Add (CreateRow (NewPasswordLabel, NewPassword, NewPasswordRequired, _owner.LabelStyle, null));
+
+				// Row #5
+				if (_owner.PasswordHintText.Length > 0) {
+					table.Controls.Add (
+						CreateRow (new LiteralControl (""),
+							new LiteralControl (_owner.PasswordHintText),
+							new LiteralControl (""),
+							null, _owner.PasswordHintStyle));
+				}
+
+				// Row #6
+				TextBox ConfirmNewPassword = new TextBox ();
+				ConfirmNewPassword.ID = "ConfirmNewPassword";
+				ConfirmNewPassword.TextMode = TextBoxMode.Password;
+				ConfirmNewPassword.ApplyStyle (_owner.TextBoxStyle);
+
+				Label ConfirmNewPasswordLabel = new Label ();
+				ConfirmNewPasswordLabel.ID = "ConfirmNewPasswordLabel";
+				ConfirmNewPasswordLabel.AssociatedControlID = "ConfirmNewPasswordLabel";
+				ConfirmNewPasswordLabel.Text = _owner.ConfirmNewPasswordLabelText;
+
+				RequiredFieldValidator ConfirmNewPasswordRequired = new RequiredFieldValidator ();
+				ConfirmNewPasswordRequired.ID = "ConfirmNewPasswordRequired";
+				ConfirmNewPasswordRequired.ControlToValidate = "ConfirmNewPassword";
+				ConfirmNewPasswordRequired.ErrorMessage = _owner.PasswordRequiredErrorMessage;
+				ConfirmNewPasswordRequired.ToolTip = _owner.PasswordRequiredErrorMessage;
+				ConfirmNewPasswordRequired.Text = "*";
+				ConfirmNewPasswordRequired.ValidationGroup = _owner.ID;
+				ConfirmNewPasswordRequired.ApplyStyle (_owner.ValidatorTextStyle);
+
+				table.Controls.Add (CreateRow (ConfirmNewPasswordLabel, ConfirmNewPassword, ConfirmNewPasswordRequired, _owner.LabelStyle, null));
+
+				// Row #7
+				CompareValidator NewPasswordCompare = new CompareValidator ();
+				NewPasswordCompare.ID = "NewPasswordCompare";
+				NewPasswordCompare.ControlToCompare = "NewPassword";
+				NewPasswordCompare.ControlToValidate = "ConfirmNewPassword";
+				NewPasswordCompare.Display = ValidatorDisplay.Dynamic;
+				NewPasswordCompare.ErrorMessage = _owner.ConfirmPasswordCompareErrorMessage;
+				NewPasswordCompare.ValidationGroup = _owner.ID;
+
+				table.Controls.Add (CreateRow (NewPasswordCompare, null, null, null, null));
+
+				// Row #8
+				Literal FailureTextLiteral = new Literal ();
+				FailureTextLiteral.ID = "FailureText";
+				FailureTextLiteral.EnableViewState = false;
+
+				Style FailureTextStyle = new Style ();
+				if (_owner.FailureTextStyle.ForeColor.IsEmpty)
+					_owner.FailureTextStyle.ForeColor = System.Drawing.Color.Red;
+
+				table.Controls.Add (CreateRow (FailureTextLiteral, null, null, _owner.FailureTextStyle, null));
+
+				// Row #9
+				WebControl ChangePasswordButton = null;
+				switch (_owner.ChangePasswordButtonType) {
+					case ButtonType.Button:
+						ChangePasswordButton = new Button ();
+						break;
+					case ButtonType.Image:
+						ChangePasswordButton = new ImageButton ();
+						break;
+					case ButtonType.Link:
+						ChangePasswordButton = new LinkButton ();
+						break;
+				}
+
+				ChangePasswordButton.ID = "ChangePasswordButton";
+				ChangePasswordButton.ApplyStyle (_owner.ChangePasswordButtonStyle);
+				((IButtonControl) ChangePasswordButton).CommandName = ChangePassword.ChangePasswordButtonCommandName;
+				((IButtonControl) ChangePasswordButton).Text = _owner.ChangePasswordButtonText;
+				((IButtonControl) ChangePasswordButton).ValidationGroup = _owner.ID;
+
+				WebControl CancelButton = null;
+				switch (_owner.CancelButtonType) {
+					case ButtonType.Button:
+						CancelButton = new Button ();
+						break;
+					case ButtonType.Image:
+						CancelButton = new ImageButton ();
+						break;
+					case ButtonType.Link:
+						CancelButton = new LinkButton ();
+						break;
+				}
+
+				CancelButton.ID = "CancelButton";
+				CancelButton.ApplyStyle (_owner.CancelButtonStyle);
+				((IButtonControl) CancelButton).CommandName = ChangePassword.CancelButtonCommandName;
+				((IButtonControl) CancelButton).Text = _owner.CancelButtonText;
+				((IButtonControl) CancelButton).CausesValidation = false;
+
+				table.Controls.Add (CreateRow (ChangePasswordButton, CancelButton, new LiteralControl (""), null, null));
+
+				// Row #10
+				TableRow linksRow = new TableRow ();
+				TableCell linksCell = new TableCell ();
+				linksCell.ColumnSpan = 2;
+				linksCell.ControlStyle.CopyFrom (_owner.HyperLinkStyle);
+
+				linksRow.Cells.Add (linksCell);
+
+				if (AddLink (_owner.HelpPageUrl, _owner.HelpPageText, _owner.HelpPageIconUrl, linksCell))
+					linksCell.Controls.Add (new LiteralControl ("<br/>"));
+
+				if (AddLink (_owner.CreateUserUrl, _owner.CreateUserText, _owner.CreateUserIconUrl, linksCell))
+					linksCell.Controls.Add (new LiteralControl ("<br/>"));
+
+				if (AddLink (_owner.PasswordRecoveryUrl, _owner.PasswordRecoveryText, _owner.PasswordRecoveryIconUrl, linksCell))
+					linksCell.Controls.Add (new LiteralControl ("<br/>"));
+
+				AddLink (_owner.EditProfileUrl, _owner.EditProfileText, _owner.EditProfileIconUrl, linksCell);
+
+				table.Controls.Add (linksRow);
+
+				container.Controls.Add (table);
+			}
+		}
+
+		sealed class SuccessDefaultTemplate : ITemplate
+		{
+			readonly ChangePassword _cPassword = null;
+
+			internal SuccessDefaultTemplate (ChangePassword cPassword)
+			{
+				_cPassword = cPassword;
+			}
+
+			TableRow CreateRow (Control c0, Style s0, HorizontalAlign align)
+			{
+				TableRow row = new TableRow ();
+				TableCell cell0 = new TableCell ();
+
+				cell0.Controls.Add (c0);
+				cell0.HorizontalAlign = align;
+				if (s0 != null)
+					cell0.ApplyStyle (s0);
+
+				row.Controls.Add (cell0);
+				return row;
+			}
+
+			public void InstantiateIn (Control container)
+			{
+				Table table = new Table ();
+				table.ControlStyle.Width = Unit.Percentage (100);
+				table.ControlStyle.Height = Unit.Percentage (100);
+
+				// Row #0
+				table.Controls.Add (
+					CreateRow (new LiteralControl (_cPassword.SuccessTitleText), _cPassword.TitleTextStyle, HorizontalAlign.Center));
+
+				// Row #1
+				table.Controls.Add (
+					CreateRow (new LiteralControl (_cPassword.SuccessText), _cPassword.SuccessTextStyle, HorizontalAlign.Center));
+
+				// Row #3
+				WebControl ContinueButton = null;
+				switch (_cPassword.ChangePasswordButtonType) {
+					case ButtonType.Button:
+						ContinueButton = new Button ();
+						break;
+					case ButtonType.Image:
+						ContinueButton = new ImageButton ();
+						break;
+					case ButtonType.Link:
+						ContinueButton = new LinkButton ();
+						break;
+				}
+
+				ContinueButton.ID = "ContinueButton";
+				ContinueButton.ApplyStyle (_cPassword.ContinueButtonStyle);
+				((IButtonControl) ContinueButton).CommandName = ChangePassword.ContinueButtonCommandName;
+				((IButtonControl) ContinueButton).Text = _cPassword.ContinueButtonText;
+				((IButtonControl) ContinueButton).CausesValidation = false;
+
+				table.Controls.Add (
+					CreateRow (ContinueButton, null, HorizontalAlign.Right));
+
+				container.Controls.Add (table);
+			}
+		}
+
+		sealed class SuccessContainer : BaseChangePasswordContainer
+		{
+			public SuccessContainer (ChangePassword owner) : base (owner)
+			{
+			}
+			public Control ChangePasswordButton
+			{
+				get { return FindControl ("Continue"); }
+			}
 		}
 	}
 }
