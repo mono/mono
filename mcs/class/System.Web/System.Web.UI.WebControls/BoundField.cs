@@ -212,7 +212,7 @@ namespace System.Web.UI.WebControls {
 		
 		protected virtual object GetDesignTimeValue ()
 		{
-			return GetBoundValue (Control);
+			return "Databound";
 		}
 
 		object GetBoundValue (Control controlContainer)

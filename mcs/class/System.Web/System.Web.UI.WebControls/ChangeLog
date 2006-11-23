@@ -1,5 +1,9 @@
 2006-11-23 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* BoundField.cs: fixed: GetDesignTimeValue()
+
+2006-11-23 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* SiteMapDataSource.cs: fixed: GetViewNames()
 
 2006-11-23  Vladimir Krasnov  <vladimirk@mainsoft.com>

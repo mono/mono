@@ -1,5 +1,9 @@
 2006-11-23  Igor Zelmanovich   <igorz@mainsoft.com>
 
+	* BoundFieldTest.cs: removed NotWorking attributes.
+
+2006-11-23  Igor Zelmanovich   <igorz@mainsoft.com>
+
 	* SiteMapDataSourceTest.cs: removed NotWorking attributes.
 
 2006-11-23  Yoni Klain         <yonik@mainsoft.com>

@@ -302,7 +302,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void BoundField_GetDesignTimeValue () {
 			string result;
 			PokerBoundField bf = new PokerBoundField ();
