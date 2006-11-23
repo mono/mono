@@ -752,7 +752,10 @@ namespace MonoTests.System.Web.UI.WebControls
 
 
 		[Test]
-		public void GridView_DeleteItem()
+#if TARGET_JVM //BUG 6484
+		[Category ("NotWorking")]
+#endif
+		public void GridView_DeleteItem ()
 		{
 			PokerGridView g = new PokerGridView ();
 			ArrayList myds = new ArrayList ();
@@ -775,6 +778,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+#if TARGET_JVM //BUG 6484
+		[Category ("NotWorking")]
+#endif
 		public void GridView_RowCreated ()
 		{
 			GridView g = new GridView ();
@@ -983,6 +989,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		private int newPageIndex;
 
 		[Test]
+#if TARGET_JVM //BUG 6484
+		[Category ("NotWorking")]
+#endif
 		public void GridView_BubbleEvent ()
 		{
 			PokerGridView gv = new PokerGridView ();
@@ -2098,8 +2107,8 @@ namespace MonoTests.System.Web.UI.WebControls
 				Assert.Fail ("DeleteFail");
 			}
 
-            Unload();
-        }
+			Unload();
+		}
 
 		[Test]
 		[Category ("NunitWeb")]
@@ -2124,8 +2133,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			pageHTML = t.Run ();
 			Assert.AreEqual (0, t.UserData , "ObjectDataSource after delete from grid");
 
-            Unload();
-        }
+			Unload();
+		}
 
 		public static void GridView_checkrows (Page p)
 		{
@@ -2222,8 +2231,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("1001", merged_data[1], "Row before update#1");
 			Assert.AreEqual ("TestEname", merged_data[2], "Row before update#2");
 			Assert.AreEqual ("TestLname", merged_data[3], "Row before update#3");
-            Unload();
-        }
+			Unload();
+		}
 
 		public static void GridView_postbackupdateitem (Page p)
 		{
@@ -2297,6 +2306,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+#if TARGET_JVM //BUG 6484
+		[Category("NotWorking")]
+#endif
 		[Category ("NunitWeb")]
 		public void GridView_PostBackEdit ()
 		{
@@ -2314,8 +2326,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			if (pageHTML.IndexOf ("EditSuccess") < 0) {
 				Assert.Fail ("EditFail");
 			}
-            Unload();
-        }
+			Unload();
+		}
 
 		[Test]
 		[Category ("NunitWeb")]
