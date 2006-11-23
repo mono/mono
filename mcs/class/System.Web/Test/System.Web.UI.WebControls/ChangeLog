@@ -1,3 +1,7 @@
+2006-11-23  Yoni Klain         <yonik@mainsoft.com>
+
+	* ButtonTest.cs: added new test for 2.0
+
 2006-11-23  Igor Zelmanovich   <igorz@mainsoft.com>
 
 	* SiteMapPathTest.cs: two tests were removed as not relevant.

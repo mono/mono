@@ -56,6 +56,31 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			LoadViewState (o);
 		}
+
+		public string Render ()
+		{
+			StringWriter sw = new StringWriter ();
+			sw.NewLine = "\n";
+			HtmlTextWriter writer = new HtmlTextWriter (sw);
+			base.Render (writer);
+			return writer.InnerWriter.ToString ();
+		}		
+#if NET_2_0
+		public new PostBackOptions GetPostBackOptions ()
+		{
+			return base.GetPostBackOptions ();
+		}
+
+		public new void OnPreRender (EventArgs e)
+		{
+			base.OnPreRender (e);
+		}
+
+		public new void RaisePostBackEvent (string eventArgument)
+		{
+			base.RaisePostBackEvent (eventArgument);
+		}
+#endif
 	}
 
 
@@ -70,7 +95,30 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (string.Empty, b.CommandArgument, "CommandArgument");
 			Assert.AreEqual (string.Empty, b.CommandName, "CommandName");			
 #if NET_2_0
-			Assert.AreEqual (string.Empty, b.ValidationGroup, "ValidationGroup");			
+			Assert.AreEqual (string.Empty, b.ValidationGroup, "ValidationGroup");
+			Assert.AreEqual (string.Empty, b.OnClientClick, "OnClientClick");
+			Assert.AreEqual (string.Empty, b.PostBackUrl, "PostBackUrl");
+			Assert.AreEqual (true, b.UseSubmitBehavior, "UseSubmitBehavior");
+#endif
+		}
+
+		[Test]
+		public void AssignProperties ()
+		{
+			Button b = new Button ();
+#if NET_2_0
+			Assert.AreEqual (string.Empty, b.OnClientClick, "OnClientClick#1");
+			b.OnClientClick = "Test()";
+			Assert.AreEqual ("Test()", b.OnClientClick, "OnClientClick#2");
+			Assert.AreEqual (string.Empty, b.PostBackUrl, "PostBackUrl");
+			b.PostBackUrl = "Test";
+			Assert.AreEqual ("Test", b.PostBackUrl, "PostBackUrl");
+			Assert.AreEqual (true, b.UseSubmitBehavior, "UseSubmitBehavior#1");
+			b.UseSubmitBehavior = false;
+			Assert.AreEqual (false, b.UseSubmitBehavior, "UseSubmitBehavior#2");
+			Assert.AreEqual (string.Empty, b.ValidationGroup, "ValidationGroup#1");
+			b.ValidationGroup = "test";
+			Assert.AreEqual ("test", b.ValidationGroup, "ValidationGroup#2");
 #endif
 		}
 
@@ -153,6 +201,98 @@ namespace MonoTests.System.Web.UI.WebControls
 			string strTarget = "<input type=\"button\" name=\"MyButton\" value=\"Hello\" disabled=\"disabled\" title=\"Hello_ToolTip\" />";
 			string str = sw.ToString();
 			HtmlDiff.AssertAreEqual (strTarget, str, "Button_Render2");
+		}
+
+		[Test]
+		public void GetPostBackOptions ()
+		{
+			PokerButton b = new PokerButton ();
+			PostBackOptions opt = b.GetPostBackOptions ();
+			Assert.AreEqual (typeof (PokerButton), opt.TargetControl.GetType (), "GetPostBackOptions#1");
+		}
+
+		[Test]
+		public void OnPreRender ()
+		{
+			PokerButton b = new PokerButton ();
+			b.PreRender += new EventHandler (b_PreRender);
+			Assert.AreEqual (false, eventPreRender, "Before PreRender");
+			b.OnPreRender (new EventArgs ());
+			Assert.AreEqual (true, eventPreRender, "After PreRender");
+		}
+
+		bool eventPreRender;
+		void b_PreRender (object sender, EventArgs e)
+		{
+			eventPreRender = true;
+		}
+
+		[Test]
+		[Category("NunitWeb")]
+		public void PostBackUrl ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (PostBackUrl_Load));
+			string html = t.Run ();
+			if (html.IndexOf ("onclick") == -1)
+				Assert.Fail ("Button Postback script not created fail");
+			if (html.IndexOf ("MyPageWithMaster.aspx") == -1)
+				Assert.Fail ("Link to postback page not created fail");
+			if (html.IndexOf ("__PREVIOUSPAGE") == -1)
+				Assert.Fail ("Previos page hidden control not created fail");
+		}
+
+		public static void PostBackUrl_Load (Page p)
+		{
+			PokerButton b = new PokerButton ();
+			b.PostBackUrl = "~/MyPageWithMaster.aspx";
+			p.Form.Controls.Add (b);
+		}
+
+		[Test]
+		public void RaisePostBackEvent ()
+		{
+			Page p = new Page ();
+			PokerButton b = new PokerButton ();
+			b.Click += new EventHandler (b_Click);
+			p.Controls.Add (b);
+			Assert.AreEqual (false, eventRaisePostBackEvent, "RaisePostBackEvent#1");
+			b.RaisePostBackEvent ("Click");
+			Assert.AreEqual (true, eventRaisePostBackEvent, "RaisePostBackEvent#2");
+		}
+
+		bool eventRaisePostBackEvent;
+		void b_Click (object sender, EventArgs e)
+		{
+			eventRaisePostBackEvent = true;
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void UseSubmitBehavior ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (UseSubmitBehavior_Load));
+			string html = t.Run ();
+			if (html.IndexOf ("onclick") == -1)
+				Assert.Fail ("Button Postback script not created fail");
+		}
+
+		public static void UseSubmitBehavior_Load (Page p)
+		{
+			PokerButton b = new PokerButton ();
+			b.UseSubmitBehavior = false;
+			p.Controls.Add (b);
+		}
+
+		[Test]
+		public void ValidationGroup ()
+		{
+			// Client side. 
+		}
+
+		[TestFixtureTearDown]
+		public void TearDown ()
+		{
+			WebTest.Unload ();
 		}
 #endif
 
