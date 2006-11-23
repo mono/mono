@@ -778,11 +778,16 @@ namespace Mono.CSharp {
 					throw new InternalErrorException ();
 				if (!si.ResolveType ())
 					throw new InternalErrorException ();
+				if (!si.ResolveMembers ())
+					throw new InternalErrorException ();
+				if (!si.DefineMembers ())
+					throw new InternalErrorException ();
 			}
 		}
 
 		protected override ScopeInitializer CreateScopeInitializer ()
 		{
+#if FIXME
 			foreach (ScopeInfo si in scopes) {
 				if (!si.ResolveMembers ())
 					throw new InternalErrorException ();
@@ -794,6 +799,7 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ();
 			if (!DefineMembers ())
 				throw new InternalErrorException ();
+#endif
 
 			return new RootScopeInitializer (this);
 		}
