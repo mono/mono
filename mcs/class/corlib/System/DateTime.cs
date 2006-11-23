@@ -417,11 +417,28 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern long GetNow ();
 
+		//
+		// To reduce the time consumed by DateTime.Now, we keep
+		// the difference to map the system time into a local
+		// time into `to_local_time_span', we record the timestamp
+		// for this in `last_now'
+		//
+		static TimeSpan to_local_time_span;
+		static long last_now;
+		
 		public static DateTime Now 
 		{
 			get	
 			{
-				return new DateTime (GetNow ()).ToLocalTime ();
+				long now = GetNow ();
+				DateTime dt = new DateTime (now);
+				
+				if ((now - last_now) > TimeSpan.TicksPerMinute){
+					to_local_time_span = TimeZone.CurrentTimeZone.GetLocalTimeDiff (dt);
+					last_now = now;
+
+				}
+				return dt + to_local_time_span;
 			}
 		}
 

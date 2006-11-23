@@ -1,3 +1,14 @@
+2006-11-21  Miguel de Icaza  <miguel@novell.com>
+
+	* TimeZone.cs (CurrentSystemTimeZone): Cache the current year
+	daylight savings time in static variables.
+
+	(CurrentSystemTimeZone.OnDeserialization): Initialize
+	this_year_dlt and this_year on this method.
+
+	(TimeZone): init statically the currentTimeZone instead of
+	delaying that to the static property, avoiding a compare. 
+
 2006-11-22  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* Array.cs: (compare<T>) if a comparer is provided, it has

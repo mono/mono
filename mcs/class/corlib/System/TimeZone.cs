@@ -7,7 +7,7 @@
 //   Martin Baulig (martin@gnome.org)
 //
 // (C) Ximian, Inc.
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,7 +28,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+//
+// TODO:
+//
+//    Rewrite ToLocalTime to use GetLocalTimeDiff(DateTime,TimeSpan),
+//    this should only leave the validation at the beginning (for MaxValue)
+//    and then call the helper function.  This would remove all the
+//    ifdefs in that code, and replace it with only one, for the construction
+//    of the object.
+//
+//    Rewrite ToUniversalTime to use a similar setup to that
+//
 using System.Collections;
 using System.Globalization;
 using System.Runtime.CompilerServices;
@@ -40,7 +50,7 @@ namespace System
 	public abstract class TimeZone
 	{
 		// Fields
-		private static TimeZone currentTimeZone;
+		private static TimeZone currentTimeZone = new CurrentSystemTimeZone (DateTime.GetNow ());
 
 		// Constructor
 		protected TimeZone ()
@@ -50,17 +60,8 @@ namespace System
 		// Properties
 		public static TimeZone CurrentTimeZone {
 			get {
-				if (currentTimeZone == null) {
-					DateTime now = new DateTime (DateTime.GetNow ());
-					currentTimeZone = new CurrentSystemTimeZone (now);
-				}
 				return currentTimeZone;
 			}
-		}
-
-		internal static void ClearCurrentTimeZone ()
-		{
-			currentTimeZone = null;
 		}
 
 		public abstract string DaylightName {
@@ -112,7 +113,6 @@ namespace System
 				return time;
 #endif
 
-			DaylightTime dlt = GetDaylightChanges (time.Year);
 			TimeSpan utcOffset = GetUtcOffset (time);
 			if (utcOffset.Ticks > 0) {
 				if (DateTime.MaxValue - utcOffset < time)
@@ -127,6 +127,7 @@ namespace System
 			}
 
 			DateTime local = time.Add (utcOffset);
+			DaylightTime dlt = GetDaylightChanges (time.Year);
 			if (dlt.Delta.Ticks == 0)
 #if NET_2_0
 				return DateTime.SpecifyKind (local, DateTimeKind.Local);
@@ -192,6 +193,62 @@ namespace System
 			return new DateTime (time.Ticks - offset.Ticks);
 #endif		
 		}
+
+		//
+		// This routine returns the TimeDiff that would have to be
+		// added to "time" to turn it into a local time.   This would
+		// be equivalent to call ToLocalTime.
+		//
+		// There is one important consideration:
+		//
+		//    This information is only valid during the minute it
+		//    was called.
+		//
+		//    This only works with a real time, not one of the boundary
+		//    cases like DateTime.MaxValue, so validation must be done
+		//    before.
+		// 
+		//    This is intended to be used by DateTime.Now
+		//
+		// We use a minute, just to be conservative and cope with
+		// any potential time zones that might be defined in the future
+		// that might not nicely fit in hour or half-hour steps. 
+		//    
+		internal TimeSpan GetLocalTimeDiff (DateTime time)
+		{
+			return GetLocalTimeDiff (time, GetUtcOffset (time));
+		}
+
+		//
+		// This routine is intended to be called by GetLocalTimeDiff(DatetTime)
+		// or by ToLocalTime after validation has been performed
+		//
+		// time is the time to map, utc_offset is the utc_offset that
+		// has been computed for calling GetUtcOffset on time.
+		//
+		// When called by GetLocalTime, utc_offset is assumed to come
+		// from a time constructed by new DateTime (DateTime.GetNow ()), that
+		// is a valid time.
+		//
+		// When called by ToLocalTime ranges are checked before this is
+		// called.
+		//
+		internal TimeSpan GetLocalTimeDiff (DateTime time, TimeSpan utc_offset)
+		{
+			DaylightTime dlt = GetDaylightChanges (time.Year);
+
+			if (dlt.Delta.Ticks == 0)
+				return utc_offset;
+
+			DateTime local = time.Add (utc_offset);
+			if (local < dlt.End && dlt.End.Subtract (dlt.Delta) <= local)
+				return utc_offset;
+
+			if (local >= dlt.Start && dlt.Start.Add (dlt.Delta) > local)
+				return utc_offset - dlt.Delta;
+
+			return GetUtcOffset (local);
+		}
 	}
 
 	[Serializable]
@@ -244,11 +301,23 @@ namespace System
 		{
 		}
 
-		internal CurrentSystemTimeZone (DateTime now)
+		//
+		// Initialized by the constructor
+		//
+		static int this_year;
+		static DaylightTime this_year_dlt;
+		
+		//
+		// The "lnow" parameter must be the current time, I could have moved
+		// the code here, but I do not want to interfere with serialization
+		// which is why I kept the other constructor around
+		//
+		internal CurrentSystemTimeZone (long lnow)
 		{
 			Int64[] data;
 			string[] names;
 
+			DateTime now = new DateTime (lnow);
 			if (!GetTimeZoneData (now.Year, out data, out names))
 				throw new NotSupportedException (Locale.GetText ("Can't get timezone name."));
 
@@ -279,6 +348,13 @@ namespace System
 				throw new ArgumentOutOfRangeException ("year", year +
 					Locale.GetText (" is not in a range between 1 and 9999."));
 
+			//
+			// First we try the case for this year, very common, and is used
+			// by DateTime.Now (a popular call) indirectly.
+			//
+			if (year == this_year)
+				return this_year_dlt;
+			
 			lock (m_CachedDaylightChanges) {
 				DaylightTime dlt = (DaylightTime) m_CachedDaylightChanges [year];
 				if (dlt == null) {
@@ -314,13 +390,16 @@ namespace System
 				Int64[] data;
 				string[] names;
 
-				int year = DateTime.Now.Year;
-				if (!GetTimeZoneData (year, out data, out names))
-					throw new ArgumentException (Locale.GetText ("Can't get timezone data for " + year));
+				this_year = DateTime.Now.Year;
+				if (!GetTimeZoneData (this_year, out data, out names))
+					throw new ArgumentException (Locale.GetText ("Can't get timezone data for " + this_year));
 				dlt = GetDaylightTimeFromData (data);
-			}
+			} else
+				this_year = dlt.Start.Year;
+			
 			utcOffsetWithOutDLS = new TimeSpan (m_ticksOffset);
 			utcOffsetWithDLS = new TimeSpan (m_ticksOffset + dlt.Delta.Ticks);
+			this_year_dlt = dlt;
 		}
 
 		private DaylightTime GetDaylightTimeFromData (long[] data)
@@ -329,5 +408,6 @@ namespace System
 				new DateTime (data[(int)TimeZoneData.DaylightSavingEndIdx]),
 				new TimeSpan (data[(int)TimeZoneData.AdditionalDaylightOffsetIdx]));
 		}
+
 	}
 }
