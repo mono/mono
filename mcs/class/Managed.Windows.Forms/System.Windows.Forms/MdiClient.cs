@@ -115,7 +115,12 @@ namespace System.Windows.Forms {
             }
             else
             {
-                ParentForm.Text = form_text + " - [" + ParentForm.ActiveMaximizedMdiChild.form.Text + "]";
+				string childText = ParentForm.ActiveMaximizedMdiChild.form.Text;
+				if (childText.Length > 0) {
+					ParentForm.Text = form_text + " - [" + ParentForm.ActiveMaximizedMdiChild.form.Text + "]";
+				} else {
+					ParentForm.Text = form_text;
+				}
             }
 
             setting_form_text = false;

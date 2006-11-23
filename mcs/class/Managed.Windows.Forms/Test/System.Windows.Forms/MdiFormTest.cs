@@ -22,7 +22,7 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void Text ()
 		{
-			Form main = null, child1 = null, child2 = null;
+			Form main = null, child1 = null, child2 = null, child3 = null;
 
 			main = new Form ();
 			main.IsMdiContainer = true;
@@ -43,7 +43,8 @@ namespace MonoTests.System.Windows.Forms
 			
 			child2 = new Form ();
 			child2.Name = "child2";
-			child2.Text = child2.Text;
+			child1.MdiParent = main;
+			child2.Text = string.Empty;
 			child2.WindowState = FormWindowState.Maximized;
 			child2.Show();
 			
@@ -61,11 +62,68 @@ namespace MonoTests.System.Windows.Forms
 			child2.WindowState = FormWindowState.Maximized;
 			Assert.AreEqual ("main", main.Text, "#7");
 
+			child3 = new Form ();
+			child3.Name = "child3";
+			child3.MdiParent = main;
+			child3.Text = child3.Name;
+			child3.WindowState = FormWindowState.Maximized;
+			child3.Show ();
+
+			Assert.AreEqual ("main - [child3]", main.Text, "#8");
+			child3.WindowState = FormWindowState.Normal;
+			Assert.AreEqual ("main", main.Text, "#9");
+
+			main.Text = string.Empty;
+			child3.WindowState = FormWindowState.Maximized;
+			Assert.AreEqual (" - [child3]", main.Text, "#10");
+
+			child3.Text = string.Empty;
+			Assert.AreEqual (string.Empty, main.Text, "#11");
+
+			child3.Dispose ();
 			child2.Dispose ();
 			child1.Dispose ();
 			main.Dispose ();
 		}
-				
+
+		// Setting WindowState to Maximized of a form, of which the handle is 
+		// already created, does not make it ActiveMdiChild
+		[Test]
+		[Category ("NotWorking")]
+		public void Text_Maximized ()
+		{
+			Form main = new Form ();
+			main.IsMdiContainer = true;
+			main.Name = "main";
+			main.Text = main.Name;
+			main.Show ();
+
+			Assert.AreEqual ("main", main.Text, "#1");
+
+			Form child1 = new Form ();
+			child1.Name = "child1";
+			child1.MdiParent = main;
+			child1.Text = child1.Name;
+			child1.WindowState = FormWindowState.Maximized;
+			child1.Show ();
+
+			Assert.AreEqual ("main - [child1]", main.Text, "#2");
+
+			Form child2 = new Form ();
+			child2.Name = "child2";
+			child2.MdiParent = main;
+			child2.Text = child2.Name;
+			child2.WindowState = FormWindowState.Maximized;
+			child2.Show ();
+
+			Assert.AreEqual ("main - [child2]", main.Text, "#3");
+
+			child1.WindowState = FormWindowState.Maximized;
+
+			Assert.AreEqual ("main - [child1]", main.Text, "#4");
+		}
+
+		// Form.ActiveMdiChild should return null if handle is not yet created
 		[Test]
 		[Category("NotWorking")]
 		public void ActiveMdiChild ()
@@ -87,15 +145,19 @@ namespace MonoTests.System.Windows.Forms
 			child2.MdiParent = main;
 			child2.Show();
 			
-			Assert.AreSame (null, main.ActiveMdiChild, "#1");
+			Assert.IsNull (main.ActiveMdiChild, "#1");
 
 			main.Show ();
-			if (child1 == main.ActiveMdiChild)
-				Assert.Fail ("#2");
-			Assert.AreSame (child2, main.ActiveMdiChild, "#3");
+			Assert.AreSame (child2, main.ActiveMdiChild, "#2");
+
+			child1.WindowState = FormWindowState.Maximized;
+			Assert.AreSame (child1, main.ActiveMdiChild, "#3");
+
+			child1.WindowState = FormWindowState.Maximized;
+			Assert.AreSame (child2, main.ActiveMdiChild, "#4");
 
 			main.Visible = false;
-			Assert.AreSame (child2, main.ActiveMdiChild, "#4");
+			Assert.AreSame (child2, main.ActiveMdiChild, "#5");
 
 			child2.Dispose ();
 			child1.Dispose ();
@@ -136,7 +198,7 @@ namespace MonoTests.System.Windows.Forms
 				main.Close();
 			}
 		}
-		
+
 		[Test]
 		public void MdiChild_WindowState2 ()
 		{
@@ -170,7 +232,7 @@ namespace MonoTests.System.Windows.Forms
 				main.Close();
 			}
 		}
-		
+
 		[Test]
 		public void MdiChild_WindowState3 ()
 		{
@@ -238,7 +300,6 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
-
 		[Test]
 		public void MdiChild_WindowState5 ()
 		{
@@ -279,7 +340,6 @@ namespace MonoTests.System.Windows.Forms
 				main.Close();
 			}
 		}
-
 
 		[Test]
 		public void MdiChild_WindowState6 ()

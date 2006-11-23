@@ -1,5 +1,10 @@
 2006-11-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* MdiClient.cs: Ignore active MDI client for text of parent, if
+	child has no text set.
+
+2006-11-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* ToolBar.cs: Fixed ToString to match MS.
 
 2006-11-22  Andreia Gaita  <avidigal@novell.com>
