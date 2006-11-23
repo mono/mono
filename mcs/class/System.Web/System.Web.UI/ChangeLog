@@ -1,5 +1,9 @@
 2006-11-23 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* ListSourceHelper.cs: optimization of implementation 
+
+2006-11-23 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* ListSourceHelper.cs: implemented 
 
 2006-11-21 Igor Zelmanovich <igorz@mainsoft.com>

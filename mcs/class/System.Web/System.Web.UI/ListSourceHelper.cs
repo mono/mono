@@ -53,27 +53,28 @@ namespace System.Web.UI {
 			return list;
 		}
 
-		class ListSourceList : List<IDataSource>, ITypedList
+		sealed class ListSourceList : List<IDataSource>, ITypedList
 		{
 			#region ITypedList Members
 
-			public PropertyDescriptorCollection GetItemProperties (PropertyDescriptor [] listAccessors) {
+			PropertyDescriptorCollection ITypedList.GetItemProperties (PropertyDescriptor [] listAccessors) {
 				ICollection viewNames = this [0].GetViewNames ();
-				List<PropertyDescriptor> properties = new List<PropertyDescriptor> ();
+				PropertyDescriptor [] a = new PropertyDescriptor [viewNames.Count];
+				int i = 0;
 				foreach (string viewName in viewNames) {
-					properties.Add (new ListSourcePropertyDescriptor (viewName, null));
+					a[i++] = new ListSourcePropertyDescriptor (viewName, null);
 				}
-				return new PropertyDescriptorCollection (properties.ToArray ());
+				return new PropertyDescriptorCollection (a);
 			}
 
-			public string GetListName (PropertyDescriptor [] listAccessors) {
+			string ITypedList.GetListName (PropertyDescriptor [] listAccessors) {
 				return String.Empty;
 			}
 
 			#endregion
 		}
 
-		class ListSourcePropertyDescriptor : PropertyDescriptor
+		sealed class ListSourcePropertyDescriptor : PropertyDescriptor
 		{
 			public ListSourcePropertyDescriptor (MemberDescriptor descr)
 				: base (descr) {
@@ -88,11 +89,11 @@ namespace System.Web.UI {
 			}
 
 			public override bool CanResetValue (object component) {
-				throw new Exception ("The method or operation is not implemented.");
+				throw new NotImplementedException ();
 			}
 
 			public override Type ComponentType {
-				get { throw new Exception ("The method or operation is not implemented."); }
+				get { throw new NotImplementedException (); }
 			}
 
 			public override object GetValue (object component) {
@@ -113,15 +114,15 @@ namespace System.Web.UI {
 			}
 
 			public override void ResetValue (object component) {
-				throw new Exception ("The method or operation is not implemented.");
+				throw new NotImplementedException ();
 			}
 
 			public override void SetValue (object component, object value) {
-				throw new Exception ("The method or operation is not implemented.");
+				throw new NotImplementedException ();
 			}
 
 			public override bool ShouldSerializeValue (object component) {
-				throw new Exception ("The method or operation is not implemented.");
+				throw new NotImplementedException ();
 			}
 		}
 	}
