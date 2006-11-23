@@ -11,6 +11,8 @@ using System.Collections;
 using System.Runtime.Remoting.Messaging;
 using System.Reflection;
 using System.Threading;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace MonoTests.SystemWeb.Framework
 {
@@ -45,6 +47,11 @@ namespace MonoTests.SystemWeb.Framework
 
 		private static void RethrowException (Exception inner)
 		{
+			Exception serializableInner = FindSerializableInner (inner);
+			if (serializableInner != inner) {
+				throw new Exception ("Cannot serialize exception of type " + inner.GetType ().Name,
+					serializableInner);
+			}
 			Exception outer;
 			try { //Try create a similar exception and keep the inner intact
 				outer = (Exception) Activator.CreateInstance (inner.GetType (),
@@ -54,6 +61,29 @@ namespace MonoTests.SystemWeb.Framework
 				throw inner;
 			}
 			throw outer;
+		}
+
+		private static Exception FindSerializableInner (Exception inner)
+		{
+			//FIXME: what can be a less expansive, but equally reliable
+			//check that exception can pass remoting?
+			Exception ex = inner;
+			Exception mostInner = null;
+			while (ex != null) {
+				try {
+					BinaryFormatter f = new BinaryFormatter ();
+					f.Serialize (new MemoryStream (), ex);
+					//serialization succeeded, return it
+					return ex;
+				}
+				catch (SerializationException) {
+					mostInner = ex;
+					ex = ex.InnerException;
+				}
+			}
+			//no inner exceptions remain, create one with message and stack of the most inner
+			ex = new Exception (mostInner.Message + " Call stack: " + mostInner.StackTrace);
+			return ex;
 		}
 
 		private static HttpWorkerRequest GetMyWorkerRequest ()
