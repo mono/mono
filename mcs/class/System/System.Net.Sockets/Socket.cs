@@ -289,8 +289,8 @@ namespace System.Net.Sockets
 			{
 				try {
 					if (!result.Sock.Blocking) {
-						result.Sock.Poll (-1, SelectMode.SelectWrite);
-						int success = (int)result.Sock.GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error);
+						int success;
+						result.Sock.Poll (-1, SelectMode.SelectWrite, out success);
 						if (success == 0) {
 							result.Sock.connected = true;
 						} else {
@@ -487,7 +487,12 @@ namespace System.Net.Sockets
 				}
 
 				if (currentList != null) {
-					sock.connected = true;
+					if (currentList == checkWrite) {
+						if ((int)sock.GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error) == 0) {
+							sock.connected = true;
+						}
+					}
+					
 					currentList.Add (sock);
 				}
 			}
@@ -1346,13 +1351,51 @@ namespace System.Net.Sockets
 			if (error != 0)
 				throw new SocketException (error);
 
-			if (result == true) {
+			if (mode == SelectMode.SelectWrite && result == true) {
 				/* Update the connected state; for
 				 * non-blocking Connect()s this is
 				 * when we can find out that the
 				 * connect succeeded.
 				 */
-				connected = true;
+				if ((int)GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error) == 0) {
+					connected = true;
+				}
+			}
+			
+			return result;
+		}
+
+		/* This overload is needed as the async Connect method
+		 * also needs to check the socket error status, but
+		 * getsockopt(..., SO_ERROR) clears the error.
+		 */
+		private bool Poll (int time_us, SelectMode mode,
+				   out int socket_error)
+		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			if (mode != SelectMode.SelectRead &&
+			    mode != SelectMode.SelectWrite &&
+			    mode != SelectMode.SelectError)
+				throw new NotSupportedException ("'mode' parameter is not valid.");
+
+			int error;
+			bool result = Poll_internal (socket, mode, time_us, out error);
+			if (error != 0)
+				throw new SocketException (error);
+
+			socket_error = (int)GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error);
+			
+			if (mode == SelectMode.SelectWrite && result == true) {
+				/* Update the connected state; for
+				 * non-blocking Connect()s this is
+				 * when we can find out that the
+				 * connect succeeded.
+				 */
+				if (socket_error == 0) {
+					connected = true;
+				}
 			}
 			
 			return result;
