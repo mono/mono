@@ -1,3 +1,9 @@
+2006-11-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestImageFormatConverter.cs: Add test cases for ConvertFrom (long 
+	names, currently not working), GetStandardValuesSupported and 
+	GetStandardValues methods.
+
 2006-11-06  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* TestGraphics.cs: Add new MeasureString test cases.

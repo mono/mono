@@ -1,8 +1,9 @@
 //
 // Tests for System.Drawing.ImageFormatConverter.cs 
 //
-// Author:
+// Authors:
 //	Sanjay Gupta (gsanjay@novell.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
 //
@@ -28,9 +29,10 @@
 
 using NUnit.Framework;
 using System;
+using System.Collections;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.ComponentModel;
 using System.Globalization;
 using System.Security.Permissions;
 
@@ -217,12 +219,26 @@ namespace MonoTests.System.Drawing
 			Assert.AreEqual (ImageFormat.Wmf, ShortName ("Wmf"), "Wmf");
 		}
 
+		private void LongName (ImageFormat f, string s)
+		{
+			Assert.AreEqual (f, (ImageFormat) imgFmtConvFrmTD.ConvertFrom (null,
+				CultureInfo.InvariantCulture, f.ToString ()), s);
+		}
+
 		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
 		public void ConvertFrom_LongName ()
 		{
-			Assert.AreEqual (ImageFormat.Bmp, (ImageFormat) imgFmtConvFrmTD.ConvertFrom (null,
-								CultureInfo.InvariantCulture,
-								ImageFormat.Bmp.ToString ()), "CF#1A");
+			LongName (ImageFormat.Bmp, "Bmp");
+			LongName (ImageFormat.Emf, "Emf");
+			LongName (ImageFormat.Exif, "Exif");
+			LongName (ImageFormat.Gif, "Gif");
+			LongName (ImageFormat.Tiff, "Tiff");
+			LongName (ImageFormat.Png, "Png");
+			LongName (ImageFormat.MemoryBmp, "MemoryBmp");
+			LongName (ImageFormat.Icon, "Icon");
+			LongName (ImageFormat.Jpeg, "Jpeg");
+			LongName (ImageFormat.Wmf, "Wmf");
 		}
 
 		[Test]
@@ -308,18 +324,80 @@ namespace MonoTests.System.Drawing
 			}
 		}
 
-		
-		/*[Test]
-		public void TestGetStandardValuesSupported ()
+		[Test]
+		public void GetStandardValuesSupported ()
 		{
-			Assert.IsTrue (imgFmtConv.GetPropertiesSupported (), "GSVS#1");
-			Assert.IsTrue (imgFmtConv.GetPropertiesSupported (null), "GSVS#2");
+			Assert.IsTrue (imgFmtConv.GetStandardValuesSupported (), "GetStandardValuesSupported()");
+			Assert.IsTrue (imgFmtConv.GetStandardValuesSupported (null), "GetStandardValuesSupported(null)");
+		}
+
+		private void CheckStandardValues (string msg, ICollection c)
+		{
+			bool memorybmp = false;
+			bool bmp = false;
+			bool emf = false;
+			bool wmf = false;
+			bool gif = false;
+			bool jpeg = false;
+			bool png = false;
+			bool tiff = false;
+			bool exif = false;
+			bool icon = false;
+
+			foreach (ImageFormat iformat in c) {
+				switch (iformat.Guid.ToString ()) {
+				case "b96b3caa-0728-11d3-9d7b-0000f81ef32e":
+					memorybmp = true;
+					break;
+				case "b96b3cab-0728-11d3-9d7b-0000f81ef32e":
+					bmp = true;
+					break;
+				case "b96b3cac-0728-11d3-9d7b-0000f81ef32e":
+					emf = true;
+					break;
+				case "b96b3cad-0728-11d3-9d7b-0000f81ef32e":
+					wmf = true;
+					break;
+				case "b96b3cb0-0728-11d3-9d7b-0000f81ef32e":
+					gif = true;
+					break;
+				case "b96b3cae-0728-11d3-9d7b-0000f81ef32e":
+					jpeg = true;
+					break;
+				case "b96b3caf-0728-11d3-9d7b-0000f81ef32e":
+					png = true;
+					break;
+				case "b96b3cb1-0728-11d3-9d7b-0000f81ef32e":
+					tiff = true;
+					break;
+				case "b96b3cb2-0728-11d3-9d7b-0000f81ef32e":
+					exif = true;
+					break;
+				case "b96b3cb5-0728-11d3-9d7b-0000f81ef32e":
+					icon = true;
+					break;
+				default:
+					Assert.Fail ("Unknown GUID {0}", iformat.Guid.ToString ());
+					break;
+				}
+			}
+			Assert.IsTrue (memorybmp, "MemoryBMP");
+			Assert.IsTrue (bmp, "Bmp");
+			Assert.IsTrue (emf, "Emf");
+			Assert.IsTrue (wmf, "Wmf");
+			Assert.IsTrue (gif, "Gif");
+			Assert.IsTrue (jpeg, "Jpeg");
+			Assert.IsTrue (png, "Png");
+			Assert.IsTrue (tiff, "Tiff");
+			Assert.IsTrue (exif, "Exif");
+			Assert.IsTrue (icon, "Icon");
 		}
 
 		[Test]
-		public void TestGetStandardValues ()
-		{			
-			//MONO TODO			
-		}*/
+		public void GetStandardValues ()
+		{
+			CheckStandardValues ("(empty)", imgFmtConv.GetStandardValues ());
+			CheckStandardValues ("(null)", imgFmtConv.GetStandardValues (null));
+		}
 	}
 }
