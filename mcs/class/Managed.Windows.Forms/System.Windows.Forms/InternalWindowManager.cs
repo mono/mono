@@ -416,7 +416,11 @@ namespace System.Windows.Forms {
 		protected virtual void HandleNCLButtonDblClick (ref Message m)
 		{
 		}
-
+		
+		protected virtual void HandleTitleBarUp (int x, int y)
+		{
+		}
+		
 		protected virtual void HandleTitleBarDown (int x, int y)
 		{
 			foreach (TitleButton button in title_buttons) {
@@ -601,6 +605,7 @@ namespace System.Windows.Forms {
 			int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
 
 			NCPointToClient (ref x, ref y);
+			FormPos pos = FormPosForCoords (x, y);
 
 			foreach (TitleButton button in title_buttons) {
 				if (button != null && button.Rectangle.Contains (x, y)) {
@@ -609,6 +614,11 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			if (pos == FormPos.TitleBar) {
+				HandleTitleBarUp (x, y);
+				return true;
+			}
+			
 			return true;
 		}
 		

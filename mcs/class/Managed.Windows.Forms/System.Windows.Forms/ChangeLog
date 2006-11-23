@@ -1,8 +1,13 @@
+2006-11-23  Rolf Bjarne Kvinge  <RKvinge@novell.com> 
+
+	* InternalWindowManager.cs: Added HandleTitleBarUp.
+
 2006-11-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* NumericUpDown.cs: In .NET 1.1, user entered text is still
         hexadecimal in ParseUserEdit.
 
+	
 2006-11-23  Rolf Bjarne Kvinge  <RKvinge@novell.com> 
 
 	* MdiWindowManager.cs: 
@@ -15,6 +20,7 @@
 	* Form.cs: In OnResize only layout the mdi child's
 	parent if it actually has a parent. Might not if
 	the window is closing.
+
 
 2006-11-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
