@@ -1,5 +1,10 @@
 2006-11-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* FormTest.cs: Added test for bug #80020.
+	* MdiFormTest.cs: Fixed typo, added additonal info.
+
+2006-11-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* MdiFormTest.cs: Improved Text test to also verify behavior when
 	Text of MDI child or container is empty. Added NotWorking test for
 	Text after MDI is maximized. Added comment with existing NotWorking

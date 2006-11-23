@@ -9,9 +9,10 @@
 
 using System;
 using System.ComponentModel;
-using System.Windows.Forms;
 using System.Drawing;
 using System.Reflection;
+using System.Windows.Forms;
+
 using NUnit.Framework;
 
 namespace MonoTests.System.Windows.Forms
@@ -101,6 +102,33 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("NewParent", ownedForm.Owner.Text, "#41");
 			ownedForm.Dispose ();
 			parent.Dispose ();
+		}
+
+		[Test] // bug #80020
+		[NUnit.Framework.Category ("NotWorking")]
+		public void IsHandleCreated ()
+		{
+			Form main = new Form ();
+			main.Name = "main";
+			main.IsMdiContainer = true;
+			main.ShowInTaskbar = false;
+			Assert.IsFalse (main.IsHandleCreated, "#1");
+
+			Form child = new Form ();
+			child.MdiParent = main;
+			child.WindowState = FormWindowState.Maximized;
+			Assert.IsFalse (main.IsHandleCreated, "#2");
+
+			child.Show ();
+			Assert.IsFalse (child.IsHandleCreated, "#3");
+			Assert.IsFalse (main.IsHandleCreated, "#4");
+
+			main.Show ();
+			Assert.IsTrue (child.IsHandleCreated, "#5");
+			Assert.IsTrue (main.IsHandleCreated, "#6");
+
+			child.Dispose ();
+			main.Dispose ();
 		}
 
 		[Test]

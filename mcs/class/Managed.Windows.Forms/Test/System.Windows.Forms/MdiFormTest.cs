@@ -8,11 +8,11 @@
 //
 
 using System;
-using System.Windows.Forms;
 using System.Drawing;
 using System.Reflection;
-using NUnit.Framework;
+using System.Windows.Forms;
 
+using NUnit.Framework;
 
 namespace MonoTests.System.Windows.Forms
 {
@@ -124,6 +124,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		// Form.ActiveMdiChild should return null if handle is not yet created
+		// Depends on fix for bug #80020
 		[Test]
 		[Category("NotWorking")]
 		public void ActiveMdiChild ()
@@ -153,7 +154,7 @@ namespace MonoTests.System.Windows.Forms
 			child1.WindowState = FormWindowState.Maximized;
 			Assert.AreSame (child1, main.ActiveMdiChild, "#3");
 
-			child1.WindowState = FormWindowState.Maximized;
+			child2.WindowState = FormWindowState.Maximized;
 			Assert.AreSame (child2, main.ActiveMdiChild, "#4");
 
 			main.Visible = false;
