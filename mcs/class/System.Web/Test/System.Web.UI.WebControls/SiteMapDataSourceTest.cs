@@ -86,8 +86,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]  // not implemented in mono
-		public void SiteMapDataSource_NotWorkingDefaultProperties ()
+		public void SiteMapDataSource_ContainsListCollection ()
 		{	
 			PokerSiteMapDataSource p = new PokerSiteMapDataSource ();
 			Assert.AreEqual (true, p.ContainsListCollection, "ContainsListCollection");
@@ -125,12 +124,18 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]  // Throws NotImplementedException in mono
 		public void SiteMapDataSource_GetList ()
 		{
 			PokerSiteMapDataSource p = new PokerSiteMapDataSource ();
 			Assert.IsNotNull (p.GetList (), "GetList");
 			Assert.IsTrue (p.ContainsListCollection, "ContainsListCollection");
+		}
+
+		[Test]
+		public void SiteMapDataSource_GetViewNames () {
+			PokerSiteMapDataSource p = new PokerSiteMapDataSource ();
+			Assert.AreEqual (1, p.GetViewNames ().Count, "GetViewNames().Count");
+			Assert.AreEqual ("DefaultView", ((string []) p.GetViewNames ()) [0], "GetViewNames () [0]");
 		}
 		
 		[Test]
@@ -166,7 +171,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]  //throws System.IndexOutOfRangeException : Array index is out of range
 		public void SiteMapDataSource_HierarchicalDataSourceView ()
 		{
 			PokerSiteMapDataSource p = new PokerSiteMapDataSource ();
@@ -175,14 +179,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.IsNotNull (h, "HierarchicalDataSourceView");
 		}
 
-		[Test]
-		[Category ("NotWorking")] //must be throw ConfigurationErrorsException but was IndexOutOfRangeException 
-		[ExpectedException (typeof (ConfigurationErrorsException))]
-		public void SiteMapDataSource_GetViewExeption1 ()
-		{
-			PokerSiteMapDataSource p = new PokerSiteMapDataSource ();
-			p.GetView ("1");
-		}
 	}
 
    

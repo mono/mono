@@ -32,23 +32,102 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
+using System.ComponentModel;
+using System.Collections.Generic;
 
 namespace System.Web.UI {
 	public static class ListSourceHelper {
-		[MonoTODO]
+		
 		public static bool ContainsListCollection (IDataSource dataSource)
 		{
-			throw new NotImplementedException ();
+			return dataSource.GetViewNames ().Count > 0;
 		}
 		
-		[MonoTODO]
 		public static IList GetList (IDataSource dataSource)
 		{
-			throw new NotImplementedException ();
+			if (dataSource.GetViewNames ().Count == 0)
+				return null;
+
+			ListSourceList list = new ListSourceList ();
+			list.Add (dataSource);
+			return list;
+		}
+
+		class ListSourceList : List<IDataSource>, ITypedList
+		{
+			#region ITypedList Members
+
+			public PropertyDescriptorCollection GetItemProperties (PropertyDescriptor [] listAccessors) {
+				ICollection viewNames = this [0].GetViewNames ();
+				List<PropertyDescriptor> properties = new List<PropertyDescriptor> ();
+				foreach (string viewName in viewNames) {
+					properties.Add (new ListSourcePropertyDescriptor (viewName, null));
+				}
+				return new PropertyDescriptorCollection (properties.ToArray ());
+			}
+
+			public string GetListName (PropertyDescriptor [] listAccessors) {
+				return String.Empty;
+			}
+
+			#endregion
+		}
+
+		class ListSourcePropertyDescriptor : PropertyDescriptor
+		{
+			public ListSourcePropertyDescriptor (MemberDescriptor descr)
+				: base (descr) {
+			}
+
+			public ListSourcePropertyDescriptor (string name, Attribute [] attrs)
+				: base (name, attrs) {
+			}
+
+			public ListSourcePropertyDescriptor (MemberDescriptor descr, Attribute [] attrs)
+				: base (descr, attrs) {
+			}
+
+			public override bool CanResetValue (object component) {
+				throw new Exception ("The method or operation is not implemented.");
+			}
+
+			public override Type ComponentType {
+				get { throw new Exception ("The method or operation is not implemented."); }
+			}
+
+			public override object GetValue (object component) {
+				IDataSource dataSource = component as IDataSource;
+				if (dataSource == null)
+					return null;
+
+				DataSourceView view = dataSource.GetView (Name);
+				return view.ExecuteSelect (DataSourceSelectArguments.Empty);
+			}
+
+			public override bool IsReadOnly {
+				get { return true; }
+			}
+
+			public override Type PropertyType {
+				get { return typeof(IEnumerable); }
+			}
+
+			public override void ResetValue (object component) {
+				throw new Exception ("The method or operation is not implemented.");
+			}
+
+			public override void SetValue (object component, object value) {
+				throw new Exception ("The method or operation is not implemented.");
+			}
+
+			public override bool ShouldSerializeValue (object component) {
+				throw new Exception ("The method or operation is not implemented.");
+			}
 		}
 	}
 	
 
 }
 #endif
+
 

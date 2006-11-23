@@ -43,7 +43,7 @@ namespace System.Web.UI.WebControls
 	[ParseChildrenAttribute (true)]
 	public class SiteMapDataSource : HierarchicalDataSourceControl, IDataSource, IListSource
 	{
-		static string[] emptyNames = new string[] { string.Empty };
+		static string[] emptyNames = new string[] { "DefaultView" };
 		
 		SiteMapProvider provider;
 		
@@ -197,6 +197,8 @@ namespace System.Web.UI.WebControls
 		
 		string MapUrl (string url)
 		{
+			if (String.IsNullOrEmpty (url))
+				return String.Empty;
 			if (UrlUtils.IsRelativeUrl (url))
 				return UrlUtils.Combine (HttpRuntime.AppDomainAppVirtualPath, url);
 			else
