@@ -1,4 +1,9 @@
 
+Thu Nov 23 20:01:12 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* loader.c: ensure the class in catch clauses is handled
+	correctly for generics methods (fixes bug#79980).
+
 Thu Nov 23 17:31:58 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* monitor.h, monitor.c: added mono_locks_dump () function
