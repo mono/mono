@@ -8,16 +8,23 @@
 //
 
 using System;
-using NUnit.Framework;
-using System.Windows.Forms;
 using System.Drawing;
-using System.Runtime.Remoting;
+using System.Globalization;
+using System.Windows.Forms;
+
+using NUnit.Framework;
 
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
 	public class ToolBarTest 
 	{
+		[Test] // bug #79863
+		public void TabStop ()
+		{
+			ToolBar tb = new ToolBar ();
+			Assert.IsFalse (tb.TabStop);
+		}
 
 		[Test]
 		[Category ("NotWorking")]
@@ -86,12 +93,20 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void ToStringMethodTest () 
 		{
-			ToolBar myToolBar = new ToolBar ();
-			myToolBar.Text = "New ToolBar";
-			Assert.AreEqual ("System.Windows.Forms.ToolBar, Buttons.Count: 0", myToolBar.ToString (), "#T3");
+			ToolBar tb = new ToolBar ();
+			tb.Text = "New ToolBar";
+			Assert.AreEqual ("System.Windows.Forms.ToolBar, Buttons.Count: 0",
+				tb.ToString (), "#1");
+
+			ToolBarButton buttonA = new ToolBarButton ("A");
+			ToolBarButton buttonB = new ToolBarButton ("B");
+			tb.Buttons.Add (buttonA);
+			tb.Buttons.Add (buttonB);
+			Assert.AreEqual ("System.Windows.Forms.ToolBar, Buttons.Count: 2, " +
+				"Buttons[0]: ToolBarButton: A, Style: PushButton", 
+				tb.ToString (), "#2");
 		}
 
 		[Test]

@@ -416,9 +416,9 @@ namespace System.Windows.Forms
 			int count = this.Buttons.Count;
 
 			if (count == 0)
-				return string.Format ("System.Windows.Forms.ToolBar, Button.Count: 0");
+				return string.Format ("System.Windows.Forms.ToolBar, Buttons.Count: 0");
 			else
-				return string.Format ("System.Windows.Forms.ToolBar, Button.Count: {0}, Buttons[0]: {1}",
+				return string.Format ("System.Windows.Forms.ToolBar, Buttons.Count: {0}, Buttons[0]: {1}",
 						      count, this.Buttons [0].ToString ());
 		}
 		#endregion Public Methods

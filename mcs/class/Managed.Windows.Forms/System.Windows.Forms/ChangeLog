@@ -1,3 +1,7 @@
+2006-11-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ToolBar.cs: Fixed ToString to match MS.
+
 2006-11-22  Andreia Gaita  <avidigal@novell.com>
 
 	* NumericUpDown: 
