@@ -225,14 +225,22 @@ namespace Mono.CSharp {
 			Report.Debug (128, "NEW ROOT SCOPE", this, toplevel, loc);
 		}
 
-		protected ScopeInfo host_scope;
 		protected ScopeInitializer scope_initializer;
 
 		Hashtable locals = new Hashtable ();
-		Hashtable scopes = new Hashtable ();
+		Hashtable captured_scopes = new Hashtable ();
 
-		public ScopeInfo HostScope {
-			get { return host_scope != null ? host_scope : this; }
+		protected CapturedScope[] CapturedScopes {
+			get {
+				CapturedScope[] list = new CapturedScope [captured_scopes.Count];
+				captured_scopes.Values.CopyTo (list, 0);
+				return list;
+			}
+		}
+
+		protected CapturedVariable GetCapturedScope (ScopeInfo scope)
+		{
+			return (CapturedVariable) captured_scopes [scope];
 		}
 
 		public void EmitScopeInstance (EmitContext ec)
@@ -298,16 +306,16 @@ namespace Mono.CSharp {
 
 			Report.Debug (128, "EMIT SCOPE INSTANCE", toplevel,
 				      toplevel.AnonymousContainer, root_scope,
-				      scope, scope.RootScope, scope.HostScope);
+				      scope, scope.RootScope);
 
 			scope.EmitScopeInstance (ec);
 
 			if (toplevel.AnonymousContainer != null) {
 				ScopeInfo host = toplevel.AnonymousContainer.Scope;
-				Variable the_scope = (Variable) host.scopes [scope];
-				Report.Debug (128, "EMIT SCOPE INSTANCE #2", host, scope, the_scope);
-				if (the_scope != null)
-					the_scope.Emit (ec);
+				Variable captured = host.GetCapturedScope (scope);
+				Report.Debug (128, "EMIT SCOPE INSTANCE #2", host, scope, captured);
+				if (captured != null)
+					captured.Emit (ec);
 			}
 		}
 
@@ -316,7 +324,7 @@ namespace Mono.CSharp {
 			Report.Debug (64, "SCOPE INFO DEFINE MEMBERS", this, GetType (), IsGeneric,
 				      Parent.IsGeneric, GenericMethod);
 
-			foreach (CapturedScope child in scopes.Values) {
+			foreach (CapturedScope child in CapturedScopes) {
 				if (!child.DefineMembers ())
 					return false;
 			}
@@ -335,12 +343,11 @@ namespace Mono.CSharp {
 		public Variable CaptureScope (ScopeInfo child)
 		{
 			CheckMembersDefined ();
-			Report.Debug (128, "CAPTURE SCOPE", this, TypeBuilder, CurrentType,
-				      child, child.TypeBuilder, child.CurrentType);
+			Report.Debug (128, "CAPTURE SCOPE", this, child);
 			if (child == this)
 				throw new InternalErrorException ();
 			CapturedScope captured = new CapturedScope (this, child);
-			scopes.Add (child, captured);
+			captured_scopes.Add (child, captured);
 			return captured;
 		}
 
@@ -515,6 +522,7 @@ namespace Mono.CSharp {
 		protected class ScopeInitializer : ExpressionStatement
 		{
 			ScopeInfo scope;
+			CapturedVariable captured_scope;
 			LocalBuilder scope_instance;
 			ConstructorInfo scope_ctor;
 
@@ -559,20 +567,24 @@ namespace Mono.CSharp {
 
 				scope_ctor = (ConstructorInfo) mg.Methods [0];
 
-#if FIXME
-				if (Scope.ScopeInstance != null) {
-					Type root = Scope.RootScope.GetScopeType (ec);
+				Report.Debug (128, "RESOLVE THE INIT", this, Scope, Scope.RootScope);
+
+				ScopeInfo host = Scope.RootScope;
+				if ((Scope != host) && (Scope.RootScope is IteratorHost)) {
+					captured_scope = host.GetCapturedScope (Scope);
+					Type root = host.GetScopeType (ec);
 					FieldExpr fe = (FieldExpr) Expression.MemberLookup (
-						type, root, Scope.scope_instance.Field.Name, loc);
+						type, root, captured_scope.Field.Name, loc);
 					if (fe == null)
 						throw new InternalErrorException ();
 
 					fe.InstanceExpression = this;
-					Scope.scope_instance.FieldInstance = fe;
-				}
-#endif
+					captured_scope.FieldInstance = fe;
 
-				scope_instance = ec.ig.DeclareLocal (type);
+					Report.Debug (128, "RESOLVE THE INIT #1", this,
+						      captured_scope, fe);
+				} else
+					scope_instance = ec.ig.DeclareLocal (type);
 
 				foreach (CapturedLocal local in Scope.locals.Values) {
 					FieldExpr fe = (FieldExpr) Expression.MemberLookup (
@@ -587,7 +599,7 @@ namespace Mono.CSharp {
 					local.FieldInstance = fe;
 				}
 
-				foreach (CapturedScope scope in Scope.scopes.Values) {
+				foreach (CapturedScope scope in Scope.CapturedScopes) {
 					FieldExpr fe = (FieldExpr) Expression.MemberLookup (
 						ec.ContainerType, type, scope.Field.Name, loc);
 					Report.Debug (64, "RESOLVE SCOPE INITIALIZER #3", this, Scope,
@@ -623,7 +635,14 @@ namespace Mono.CSharp {
 
 			protected void DoEmitInstance (EmitContext ec)
 			{
-				ec.ig.Emit (OpCodes.Ldloc, scope_instance);
+				if (scope_instance != null)
+					ec.ig.Emit (OpCodes.Ldloc, scope_instance);
+				else {
+					Report.Debug (128, "DO EMIT INSTANCE CRASH", this, Scope,
+						      ec.CurrentBlock, ec.CurrentBlock.Toplevel,
+						      Scope.ScopeBlock, Scope.ScopeBlock.Toplevel);
+					captured_scope.EmitInstance (ec);
+				}
 			}
 
 			protected virtual void EmitScopeConstructor (EmitContext ec)
@@ -659,12 +678,33 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Pop);
 				ec.ig.Emit (OpCodes.Nop);
 
+				if (scope_instance == null)
+					ec.ig.Emit (OpCodes.Ldarg_0);
 				EmitScopeConstructor (ec);
-				ec.ig.Emit (OpCodes.Stloc, scope_instance);
+				if (scope_instance != null)
+					ec.ig.Emit (OpCodes.Stloc, scope_instance);
+				else {
+					// ec.ig.Emit (OpCodes.Neg);
+					// ec.ig.Emit (OpCodes.Neg);
+					// ec.ig.Emit (OpCodes.Neg);
+					captured_scope.EmitAssign (ec);
+					// ec.ig.Emit (OpCodes.Not);
+					// ec.ig.Emit (OpCodes.Not);
+					// ec.ig.Emit (OpCodes.Not);
+				}
 
-				foreach (CapturedScope scope in Scope.scopes.Values) {
+				if (Scope.RootScope.IsIterator)
+					return;
+
+				foreach (CapturedScope scope in Scope.CapturedScopes) {
+					ScopeInfo child = scope.ChildScope;
+
 					Report.Debug (128, "EMIT SCOPE INIT #5", this, Scope,
 						      scope.Scope, scope.ChildScope);
+
+					ExpressionStatement init = child.GetScopeInitializer (ec);
+					init.EmitStatement (ec);
+
 					DoEmit (ec);
 					ScopeInfo.EmitScopeInstance (
 						ec, scope.ChildScope, ec.CurrentBlock.Toplevel);
@@ -687,7 +727,7 @@ namespace Mono.CSharp {
 		CapturedVariableField parent_link;
 		CapturedThis this_variable;
 		Hashtable captured_params;
-		ArrayList scopes;
+		protected ArrayList scopes;
 
 		public virtual bool IsIterator {
 			get { return false; }

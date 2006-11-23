@@ -229,6 +229,27 @@ namespace Mono.CSharp {
 			return base.DoResolveMembers ();
 		}
 
+		public void CaptureScopes ()
+		{
+			Report.Debug (128, "DEFINE ITERATOR HOST", this, scopes);
+
+			foreach (ScopeInfo si in scopes)
+				CaptureScope (si);
+
+			foreach (ScopeInfo si in scopes) {
+				if (!si.Define ())
+					throw new InternalErrorException ();
+				if (si.DefineType () == null)
+					throw new InternalErrorException ();
+				if (!si.ResolveType ())
+					throw new InternalErrorException ();
+				if (!si.ResolveMembers ())
+					throw new InternalErrorException ();
+				if (!si.DefineMembers ())
+					throw new InternalErrorException ();
+			}
+		}
+
 		protected override bool DoDefineMembers ()
 		{
 			if (!base.DoDefineMembers ())
@@ -894,6 +915,10 @@ namespace Mono.CSharp {
 
 		protected override Method DoCreateMethodHost (EmitContext ec)
 		{
+			Report.Debug (128, "CREATE METHOD HOST", this, IteratorHost);
+
+			IteratorHost.CaptureScopes ();
+
 			return new AnonymousMethodMethod (
 				this, RootScope, null, TypeManager.system_boolean_expr,
 				Modifiers.PUBLIC, new MemberName ("MoveNext", Location),
