@@ -136,6 +136,7 @@ namespace System.Windows.Forms {
 			icon_menu.OwnerDraw = true;
 			icon_menu.MeasureItem += new MeasureItemEventHandler (MeasureIconMenuItem);
 			icon_menu.DrawItem += new DrawItemEventHandler (DrawIconMenuItem);
+			icon_menu.Click += new EventHandler (ClickIconMenuItem);
 
 			MenuItem restore = new MenuItem ("Restore", new EventHandler (RestoreItemHandler));
 			MenuItem move = new MenuItem ("Move", new EventHandler (MoveItemHandler));
@@ -151,6 +152,24 @@ namespace System.Windows.Forms {
 									maximize, close, next });
 		}
 
+		private void ClickIconMenuItem(object sender, EventArgs e)
+		{
+			ShowPopup ();
+		}
+		
+		private void ShowPopup ()
+		{
+			icon_popup_menu.MenuItems[0].Enabled = form.window_state != FormWindowState.Normal;    // restore
+			icon_popup_menu.MenuItems[1].Enabled = form.window_state != FormWindowState.Maximized; // move
+			icon_popup_menu.MenuItems[2].Enabled = form.window_state != FormWindowState.Maximized; // size
+			icon_popup_menu.MenuItems[3].Enabled = form.window_state != FormWindowState.Minimized; // minimize
+			icon_popup_menu.MenuItems[4].Enabled = form.window_state != FormWindowState.Maximized; // maximize
+			icon_popup_menu.MenuItems[5].Enabled = true;  // close
+			icon_popup_menu.MenuItems[6].Enabled = true;  // next
+			
+			icon_popup_menu.Show(form, Point.Empty);
+		}
+		
 		private void RestoreItemHandler (object sender, EventArgs e)
 		{
 			form.WindowState = FormWindowState.Normal;
@@ -357,6 +376,21 @@ namespace System.Windows.Forms {
 			close_button.Rectangle.Y -= pnt.Y;
 		}
 
+		protected override void HandleTitleBarUp (int x, int y)
+		{
+			if (form.Icon != null) {
+				int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
+				Rectangle icon = new Rectangle (bw + 3,
+						bw + 2, IconWidth, IconWidth);
+				if (icon.Contains (x, y)) {
+					ShowPopup ();
+					return;
+				}
+			}
+
+			base.HandleTitleBarUp (x, y);
+		}
+
 		protected override void HandleTitleBarDown (int x, int y)
 		{
 			if (form.Icon != null) {
@@ -364,14 +398,12 @@ namespace System.Windows.Forms {
 				Rectangle icon = new Rectangle (bw + 3,
 						bw + 2, IconWidth, IconWidth);
 				if (icon.Contains (x, y)) {
-					icon_popup_menu.Show (form, Point.Empty);
 					return;
 				}
 			}
 
 			base.HandleTitleBarDown (x, y);
 		}
-
 		protected override bool ShouldRemoveWindowManager (FormBorderStyle style)
 		{
 			return false;

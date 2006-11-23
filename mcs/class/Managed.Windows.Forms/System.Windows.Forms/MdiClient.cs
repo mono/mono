@@ -99,32 +99,29 @@ namespace System.Windows.Forms {
 		#endregion	// Public Constructors
 
 
-        internal void SetParentText(bool text_changed)
-        {
-            if (setting_form_text)
-                return;
+		internal void SetParentText(bool text_changed)
+		{
+			if (setting_form_text)
+				return;
 
-            setting_form_text = true;
+			setting_form_text = true;
 
-            if (text_changed)
-                form_text = ParentForm.Text;
+			if (text_changed)
+				form_text = ParentForm.Text;
 
-            if (ParentForm.ActiveMaximizedMdiChild == null)
-            {
-                ParentForm.Text = form_text;
-            }
-            else
-            {
+			if (ParentForm.ActiveMaximizedMdiChild == null) {
+				ParentForm.Text = form_text;
+			} else {
 				string childText = ParentForm.ActiveMaximizedMdiChild.form.Text;
 				if (childText.Length > 0) {
 					ParentForm.Text = form_text + " - [" + ParentForm.ActiveMaximizedMdiChild.form.Text + "]";
 				} else {
 					ParentForm.Text = form_text;
 				}
-            }
+			}
 
-            setting_form_text = false;
-        }
+			setting_form_text = false;
+		}
 
 		internal override void OnPaintBackgroundInternal (PaintEventArgs pe)
 		{
@@ -262,9 +259,9 @@ namespace System.Windows.Forms {
 			bool vbar_required = false;
 
 			int right = 0;
-            int left = 0;
-            int top = 0;
-            int bottom = 0;
+			int left = 0;
+			int top = 0;
+			int bottom = 0;
 
 			foreach (Form child in Controls) {
 				if (!child.Visible)
@@ -274,21 +271,21 @@ namespace System.Windows.Forms {
 				if (child.Left < left) {
 					hbar_required = true;
 					left = child.Left;
-                }
-
-                if (child.Bottom > bottom)
-                    bottom = child.Bottom;
-                if (child.Top < 0) {
-                    vbar_required = true;
-                    top = child.Top;
-                }
 			}
 
+			if (child.Bottom > bottom)
+				bottom = child.Bottom;
+			if (child.Top < 0) {
+				vbar_required = true;
+				top = child.Top;
+			}
+		}
 
-            int first_right = Width;
-            int first_bottom = Height;
-            int right_edge = first_right;
-            int bottom_edge = first_bottom;
+
+			int first_right = Width;
+			int first_bottom = Height;
+			int right_edge = first_right;
+			int bottom_edge = first_bottom;
 			int prev_right_edge;
 			int prev_bottom_edge;
 
@@ -301,18 +298,18 @@ namespace System.Windows.Forms {
 
 				if (hbar_required || right > right_edge) {
 					need_hbar = true;
-                    bottom_edge = first_bottom - SystemInformation.HorizontalScrollBarHeight;
+					bottom_edge = first_bottom - SystemInformation.HorizontalScrollBarHeight;
 				} else {
 					need_hbar = false;
-                    bottom_edge = first_bottom;
+					bottom_edge = first_bottom;
 				}
 
 				if (vbar_required || bottom > bottom_edge) {
 					need_vbar = true;
-                    right_edge = first_right - SystemInformation.VerticalScrollBarWidth;
+					right_edge = first_right - SystemInformation.VerticalScrollBarWidth;
 				} else {
 					need_vbar = false;
-                    right_edge = first_right;
+					right_edge = first_right;
 				}
 
 			} while (right_edge != prev_right_edge || bottom_edge != prev_bottom_edge);
@@ -509,7 +506,9 @@ namespace System.Windows.Forms {
 		{
 			if (Controls.Count < 1)
 				return;
-
+			if (Controls.Count == 1 && Controls[0] == ActiveMdiChild)
+				return;
+				
 			Form front = (Form) Controls [0];
 			Form form = (Form) Controls [1];
 
@@ -581,15 +580,15 @@ namespace System.Windows.Forms {
 				}
 			}
 			if (maximize_this) {
-			    form.WindowState = FormWindowState.Maximized;
-            }
-            SetParentText(false);
-            SizeScrollBars();
-            XplatUI.RequestNCRecalc(ParentForm.Handle);
+				form.WindowState = FormWindowState.Maximized;
+			}
+			SetParentText(false);
+			SizeScrollBars();
+			XplatUI.RequestNCRecalc(ParentForm.Handle);
 
 			setting_windowstates = false;
 
-            return maximize_this;
+			return maximize_this;
 		}
 
 		internal int ChildrenCreated {

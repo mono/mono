@@ -1,3 +1,16 @@
+2006-11-23  Rolf Bjarne Kvinge  <RKvinge@novell.com> 
+
+	* MdiWindowManager.cs: 
+	- Handle a click on the form's icon to show the 
+	system menu (when maximized). Fixes #79775.
+	- Change the existing click handler for the form's
+	icon when not maximized to show on MouseUp.
+	Fixes #79776.
+
+	* Form.cs: In OnResize only layout the mdi child's
+	parent if it actually has a parent. Might not if
+	the window is closing.
+
 2006-11-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MdiClient.cs: Ignore active MDI client for text of parent, if

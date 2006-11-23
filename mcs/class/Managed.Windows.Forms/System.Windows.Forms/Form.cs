@@ -1592,11 +1592,10 @@ namespace System.Windows.Forms {
 		protected override void OnResize(EventArgs e) {
 			base.OnResize(e);
 
-            if (this.IsMdiChild)
-            {
-                ParentForm.PerformLayout();
-                ParentForm.Size = ParentForm.Size;
-            }
+			if (this.IsMdiChild && ParentForm != null) {
+				ParentForm.PerformLayout();
+				ParentForm.Size = ParentForm.Size;
+			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
