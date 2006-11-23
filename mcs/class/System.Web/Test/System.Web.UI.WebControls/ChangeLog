@@ -1,3 +1,7 @@
+2006-11-23  Igor Zelmanovich   <igorz@mainsoft.com>
+
+	* SiteMapPathTest.cs: two tests were removed as not relevant.
+
 2006-11-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* added: ChangePasswordTest.cs, PasswordRecoveryTest.cs
