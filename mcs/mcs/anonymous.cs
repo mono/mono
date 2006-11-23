@@ -497,6 +497,10 @@ namespace Mono.CSharp {
 			{
 				Type type = ChildScope.IsGeneric ?
 					ChildScope.CurrentType : ChildScope.TypeBuilder;
+				Report.Debug (128, "CAPTURED SCOPE DEFINE MEMBERS", this, Scope,
+					      ChildScope, Name, type);
+				if (type == null)
+					throw new InternalErrorException ();
 				field = Scope.CaptureVariable (
 					Scope.MakeFieldName (Name), Scope.InflateType (type));
 				return true;
@@ -603,7 +607,7 @@ namespace Mono.CSharp {
 					FieldExpr fe = (FieldExpr) Expression.MemberLookup (
 						ec.ContainerType, type, scope.Field.Name, loc);
 					Report.Debug (64, "RESOLVE SCOPE INITIALIZER #3", this, Scope,
-						      Scope, ec, ec.ContainerType, type,
+						      scope, ec, ec.ContainerType, type,
 						      scope.Field, scope.Field.Name, loc, fe);
 					if (fe == null)
 						throw new InternalErrorException ();
@@ -818,6 +822,9 @@ namespace Mono.CSharp {
 					throw new InternalErrorException ();
 				if (!si.ResolveType ())
 					throw new InternalErrorException ();
+			}
+
+			foreach (ScopeInfo si in scopes) {
 				if (!si.ResolveMembers ())
 					throw new InternalErrorException ();
 				if (!si.DefineMembers ())
