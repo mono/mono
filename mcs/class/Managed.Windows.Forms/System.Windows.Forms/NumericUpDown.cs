@@ -151,9 +151,7 @@ namespace System.Windows.Forms {
 
 			set {
 				decimal_places = value;
-				if (!UserEdit) {
-					UpdateEditText();
-				}
+				UpdateEditText();
 			}
 		}
 
@@ -165,9 +163,7 @@ namespace System.Windows.Forms {
 
 			set {
 				hexadecimal = value;
-				if (!UserEdit) {
-					UpdateEditText();
-				}
+				UpdateEditText();
 			}
 		}
 
@@ -242,10 +238,7 @@ namespace System.Windows.Forms {
 
 			set {
 				thousands_separator = value;
-
-				if (!UserEdit) {
-					UpdateEditText();
-				}
+				UpdateEditText();
 			}
 		}
 
@@ -344,17 +337,12 @@ namespace System.Windows.Forms {
 			try {
 				string user_edit_text = Text;
 
-				if (!hexadecimal) {
-					dvalue = decimal.Parse(user_edit_text, CultureInfo.CurrentCulture);
-				} else {
-					dvalue = 0M;
-
-					for (int i=0; i < user_edit_text.Length; i++) {
-						int hex_digit = Convert.ToInt32(user_edit_text.Substring(i, 1), 16);
-
-						dvalue = unchecked(dvalue * 16M + (decimal)hex_digit);
-					}
-				}
+                if (!hexadecimal) {
+                    dvalue = decimal.Parse(user_edit_text, CultureInfo.CurrentCulture);
+                }
+                else {
+                    dvalue = Convert.ToDecimal(Convert.ToInt32(user_edit_text, 10));
+                }
 
 				if (dvalue < minimum) {
 					dvalue = minimum;
@@ -458,6 +446,14 @@ namespace System.Windows.Forms {
 			ParseEditText();
 			UpdateEditText();
 		}
+
+#if NET_2_0
+        protected override void OnLostFocus(EventArgs e) {
+            base.OnLostFocus(e);
+            if (this.UserEdit)
+                this.UpdateEditText();
+        }
+#endif
 		#endregion	// Protected Instance Methods
 
 		#region Events

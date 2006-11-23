@@ -252,6 +252,13 @@ namespace System.Windows.Forms
 				else
 					document.CaretLostFocus ();
 			}
+            protected override void OnGotFocus(EventArgs e) {
+                this.parent.OnGotFocusInternal(e);
+            }
+
+            protected override void OnLostFocus(EventArgs e) {
+                this.parent.OnLostFocusInternal(e);
+            }
 		}
 
 		#region Local Variables

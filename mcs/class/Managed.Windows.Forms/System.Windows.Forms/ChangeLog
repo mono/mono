@@ -1,3 +1,14 @@
+2006-11-22  Andreia Gaita  <avidigal@novell.com>
+
+	* NumericUpDown: 
+	- Fix DecimalPlaces, Hexadecimal and ThousandsSeparator to 
+	update inner values on set. Fixes #79966.
+	- Override OnLostFocus to update value on NET 2. Fixes #79950.
+	- Fix hexadecimal parsing.
+	
+	* UpDownBase: Override OnGotFocus and OnLostFocus to notify 
+	parent. Fixes #79957
+
 2006-11-22  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Control.cs: After calling SetWindowsPos in SetBoundsCore 
