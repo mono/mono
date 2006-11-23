@@ -1,3 +1,18 @@
+2006-11-23  Dick Porter  <dick@ximian.com>
+
+	* process-private.h (struct _WapiHandle_process): Add 'waited'
+	parameter
+
+	* processes.c (process_wait): Check the 'waited' parameter not the
+	signalled state when testing if a process has already been waited
+	for, as the child process itself may set signalled when exiting.
+	Fixes bug 79885.
+
+	* wapi-private.h (_WAPI_HANDLE_VERSION): Bump shared data version
+
+	* shared.c: Now the shared data version has been incremented we
+	can set the counter semaphore initial value correctly
+
 2006-11-22  Dick Porter  <dick@ximian.com>
 
 	* processes.c (process_wait): Cope when the background process
