@@ -423,7 +423,7 @@ namespace System
 		// time into `to_local_time_span', we record the timestamp
 		// for this in `last_now'
 		//
-		static TimeSpan to_local_time_span;
+		static object to_local_time_span_object;
 		static long last_now;
 		
 		public static DateTime Now 
@@ -434,11 +434,13 @@ namespace System
 				DateTime dt = new DateTime (now);
 				
 				if ((now - last_now) > TimeSpan.TicksPerMinute){
-					to_local_time_span = TimeZone.CurrentTimeZone.GetLocalTimeDiff (dt);
+					to_local_time_span_object = TimeZone.CurrentTimeZone.GetLocalTimeDiff (dt);
 					last_now = now;
 
 				}
-				return dt + to_local_time_span;
+
+				// This is boxed, so we avoid locking.
+				return dt + (TimeSpan) to_local_time_span_object;
 			}
 		}
 

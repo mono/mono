@@ -1,3 +1,12 @@
+2006-11-22  Miguel de Icaza  <miguel@novell.com>
+
+	* DateTime.cs: A small performance hit, we store the actual time
+	span in a boxed object.   This way, it can be updated from other
+	threads if necessary.   We always unbox to get the value before
+	any potential updates. 
+
+	Thanks to Gonzalo for catching this.
+
 2006-11-21  Miguel de Icaza  <miguel@novell.com>
 
 	* TimeZone.cs (CurrentSystemTimeZone): Cache the current year
