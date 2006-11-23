@@ -35,9 +35,10 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Drawing;
 using System.Collections.Specialized;
-
 using NUnit.Framework;
 using MonoTests.stand_alone.WebHarness;
+using MonoTests.SystemWeb.Framework;
+using System.Collections;
 
 namespace MonoTests.System.Web.UI.WebControls {
 
@@ -107,6 +108,48 @@ namespace MonoTests.System.Web.UI.WebControls {
 			writer.AddStyleAttribute ("StyleAttribute", "StyleAttValue");
 			checker = true;
 		}
+#if NET_2_0
+		public new void RaisePostDataChangedEvent ()
+		{
+			base.RaisePostDataChangedEvent ();
+		}
+
+		protected override bool LoadPostData (string postDataKey, NameValueCollection postCollection)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("LoadPostData");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("LoadPostData");
+				WebTest.CurrentTest.UserData = list;
+			}
+			return base.LoadPostData (postDataKey, postCollection);
+		}
+
+		protected override void OnLoad (EventArgs e)
+		{
+			if (this.Page.IsPostBack) {
+				if (WebTest.CurrentTest.UserData == null) {
+					ArrayList list = new ArrayList ();
+					list.Add ("ControlLoad");
+					WebTest.CurrentTest.UserData = list;
+				}
+				else {
+					ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+					if (list == null)
+						throw new NullReferenceException ();
+					list.Add ("ControlLoad");
+					WebTest.CurrentTest.UserData = list;
+				}
+			}
+			base.OnLoad (e);
+		}
+#endif
 	}
 
 	[TestFixture]
@@ -323,6 +366,73 @@ namespace MonoTests.System.Web.UI.WebControls {
 			copy.LoadState (state);
 			Assert.AreEqual ("", copy.ValidationGroup, "V3");
 			Assert.IsFalse (copy.CausesValidation, "V4");
+		}
+
+		[Test]
+		public void RaisePostDataChangedEvent ()
+		{
+			PokerCheckBox o = new PokerCheckBox ();
+			o.CheckedChanged += new EventHandler (o_CheckedChanged);
+			Assert.AreEqual (false, eventCheckedChanged, "RaisePostDataChangedEven#1");
+			o.RaisePostDataChangedEvent ();
+			Assert.AreEqual (true, eventCheckedChanged, "RaisePostDataChangedEven#2");
+		}
+
+		bool eventCheckedChanged; 
+		void o_CheckedChanged (object sender, EventArgs e)
+		{
+			eventCheckedChanged = true;
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void LoadPostData ()  //Just flow and not implementation detail
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (LoadPostData_Load));
+			string html = t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "pb";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			t.Run ();
+
+			ArrayList eventlist = t.UserData as ArrayList;
+			if (eventlist == null)
+				Assert.Fail ("User data does not been created fail");
+			Assert.AreEqual ("PageLoad", eventlist[0], "Live Cycle Flow #1");
+			Assert.AreEqual ("ControlLoad", eventlist[1], "Live Cycle Flow #2");
+			Assert.AreEqual ("LoadPostData", eventlist[2], "Live Cycle Flow #3");
+			
+		}
+
+		public static void LoadPostData_Load (Page p)
+		{
+			PokerCheckBox b = new PokerCheckBox ();
+			b.AutoPostBack = true;
+			b.ID = "pb";
+			p.Form.Controls.Add (b);
+			if (p.IsPostBack) {
+				if (WebTest.CurrentTest.UserData == null) {
+					ArrayList list = new ArrayList ();
+					list.Add ("PageLoad");
+					WebTest.CurrentTest.UserData = list;
+				}
+				else {
+					ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+					if (list == null)
+						throw new NullReferenceException ();
+					list.Add ("PageLoad");
+					WebTest.CurrentTest.UserData = list;
+				}
+			}
+		}
+
+		[TestFixtureTearDown]
+		public void TearDown ()
+		{
+			WebTest.Unload ();
 		}
 #endif
 	}
