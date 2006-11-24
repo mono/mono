@@ -1,3 +1,13 @@
+2006-11-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509ChainPolicyTest.cs: Added test cases for setting invalid enum
+	values to property. Added test case for VerificationTime. Added Reset
+	test cases on collection classes (new one are created, we can't reuse 
+	them).
+	* X509ChainTest.cs: Added test cases for an untrusted root certificate
+	and a certificate that doesn't chain back to a known CA. Added test 
+	case for CryptoConfig.
+
 2006-11-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509StoreTest.cs: Add test cases for every method/properties.

@@ -2,9 +2,29 @@
 // X509ChainPolicyTest.cs - NUnit tests for X509ChainPolicy
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 #if NET_2_0
@@ -54,6 +74,18 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
+		public void ApplicationPolicy_Reset ()
+		{
+			X509ChainPolicy cp = GetPolicy ();
+			cp.ApplicationPolicy.Add (new Oid (signingTimeOid));
+			OidCollection oc = cp.ApplicationPolicy;
+			AssertEquals ("ApplicationPolicy-1", 1, oc.Count);
+			cp.Reset ();
+			AssertEquals ("ApplicationPolicy-2", 1, oc.Count);
+			AssertEquals ("ApplicationPolicy-3", 0, cp.ApplicationPolicy.Count);
+		}
+
+		[Test]
 		public void CertificatePolicy () 
 		{
 			X509ChainPolicy cp = GetPolicy ();
@@ -62,11 +94,35 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
+		public void CertificatePolicy_Reset ()
+		{
+			X509ChainPolicy cp = GetPolicy ();
+			cp.CertificatePolicy.Add (new Oid (signingTimeOid));
+			OidCollection oc = cp.CertificatePolicy;
+			AssertEquals ("CertificatePolicy-1", 1, oc.Count);
+			cp.Reset ();
+			AssertEquals ("CertificatePolicy-2", 1, oc.Count);
+			AssertEquals ("CertificatePolicy-3", 0, cp.CertificatePolicy.Count);
+		}
+
+		[Test]
 		public void ExtraStore () 
 		{
 			X509ChainPolicy cp = GetPolicy ();
 			cp.ExtraStore.Add (new X509Certificate2 ());
 			AssertEquals ("ExtraStore", 1, cp.ExtraStore.Count);
+		}
+
+		[Test]
+		public void ExtraStore_Reset ()
+		{
+			X509ChainPolicy cp = GetPolicy ();
+			cp.ExtraStore.Add (new X509Certificate2 ());
+			X509Certificate2Collection cc = cp.ExtraStore;
+			AssertEquals ("ExtraStore-1", 1, cc.Count);
+			cp.Reset ();
+			AssertEquals ("ExtraStore-2", 1, cc.Count);
+			AssertEquals ("ExtraStore-3", 0, cp.ExtraStore.Count);
 		}
 
 		[Test]
@@ -82,6 +138,14 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void RevocationFlag_Invalid ()
+		{
+			X509ChainPolicy cp = GetPolicy ();
+			cp.RevocationFlag = (X509RevocationFlag) Int32.MinValue;
+		}
+
+		[Test]
 		public void RevocationMode () 
 		{
 			X509ChainPolicy cp = GetPolicy ();
@@ -94,6 +158,14 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void RevocationMode_Invalid ()
+		{
+			X509ChainPolicy cp = GetPolicy ();
+			cp.RevocationMode = (X509RevocationMode) Int32.MinValue;
+		}
+
+		[Test]
 		public void UrlRetrievalTimeout ()
 		{
 			X509ChainPolicy cp = GetPolicy ();
@@ -101,6 +173,10 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			AssertEquals ("TimeSpan=100", 100, cp.UrlRetrievalTimeout.Ticks);
 			cp.UrlRetrievalTimeout = new TimeSpan (0);
 			AssertEquals ("TimeSpan=0", 0, cp.UrlRetrievalTimeout.Ticks);
+			cp.UrlRetrievalTimeout = TimeSpan.MinValue;
+			AssertEquals ("TimeSpan=MinValue", TimeSpan.MinValue, cp.UrlRetrievalTimeout);
+			cp.UrlRetrievalTimeout = TimeSpan.MaxValue;
+			AssertEquals ("TimeSpan=MaxValue", TimeSpan.MaxValue, cp.UrlRetrievalTimeout);
 		}
 
 		[Test]
@@ -135,6 +211,28 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			AssertEquals ("IgnoreWrongUsage", X509VerificationFlags.IgnoreWrongUsage, cp.VerificationFlags);
 			cp.VerificationFlags = X509VerificationFlags.NoFlag;
 			AssertEquals ("NoFlag", X509VerificationFlags.NoFlag, cp.VerificationFlags);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void VerificationFlags_Invalid ()
+		{
+			X509ChainPolicy cp = GetPolicy ();
+			cp.VerificationFlags = (X509VerificationFlags)Int32.MinValue;
+		}
+
+		[Test]
+		public void VerificationTime ()
+		{
+			X509ChainPolicy cp = GetPolicy ();
+			cp.VerificationTime = DateTime.Today;
+			AssertEquals ("DateTime=Today", DateTime.Today, cp.VerificationTime);
+			cp.VerificationTime = new DateTime (0);
+			AssertEquals ("DateTime=0", 0, cp.VerificationTime.Ticks);
+			cp.VerificationTime = DateTime.MinValue;
+			AssertEquals ("DateTime=MinValue", DateTime.MinValue, cp.VerificationTime);
+			cp.VerificationTime = DateTime.MaxValue;
+			AssertEquals ("DateTime=MaxValue", DateTime.MaxValue, cp.VerificationTime);
 		}
 
 		[Test]
