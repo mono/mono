@@ -1,3 +1,9 @@
+2006-11-24  Dick Porter  <dick@ximian.com>
+
+	* SocketTest.cs: Add a test for async non blocking connects that
+	should fail, leaving Socket.Connected == false.  Based on test
+	case in bug 79878.
+
 2005-09-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SocketTest.cs: added a bunch of tests expecting

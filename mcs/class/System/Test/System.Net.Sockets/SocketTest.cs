@@ -142,6 +142,45 @@ namespace MonoTests.System.Net.Sockets
 			Assertion.AssertEquals ("BlockingStatus02",
 						block, false);
 		}
+
+		static bool CFAConnected = false;
+		static ManualResetEvent CFACalledBack;
+		
+		private static void CFACallback (IAsyncResult asyncResult)
+		{
+			Socket sock = (Socket)asyncResult.AsyncState;
+			CFAConnected = sock.Connected;
+			
+			if (sock.Connected) {
+				sock.EndConnect (asyncResult);
+			}
+
+			CFACalledBack.Set ();
+		}
+
+		[Test]
+		public void ConnectFailAsync ()
+		{
+			Socket sock = new Socket (AddressFamily.InterNetwork,
+						  SocketType.Stream,
+						  ProtocolType.Tcp);
+			sock.Blocking = false;
+			CFACalledBack = new ManualResetEvent (false);
+			CFACalledBack.Reset ();
+
+			/* Need a port that is not being used for
+			 * anything...
+			 */
+			sock.BeginConnect (new IPEndPoint (IPAddress.Loopback,
+							   114),
+					   new AsyncCallback (CFACallback),
+					   sock);
+			CFACalledBack.WaitOne ();
+
+			Assertion.AssertEquals ("ConnectFail", CFAConnected,
+						false);
+		}
+		
 #if !TARGET_JVM
 		[Test]
 #if !NET_2_0
