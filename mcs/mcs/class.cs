@@ -1422,11 +1422,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public bool ResolveCurrentType ()
-		{
-			return DoResolveType ();
-		}
-
 		protected virtual bool DoResolveType ()
 		{
 			if ((base_type != null) &&
@@ -1465,9 +1460,6 @@ namespace Mono.CSharp {
 					return false;
 				}
 			}
-
-			Report.Debug (128, "CLASS RESOLVE TYPE", this, Name, TypeBuilder,
-				      TypeParameters, Location);
 
 			current_type = new ConstructedType (TypeBuilder, TypeParameters, Location);
 
