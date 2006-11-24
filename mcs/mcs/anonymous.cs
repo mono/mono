@@ -410,7 +410,8 @@ namespace Mono.CSharp {
 
 			protected FieldInfo GetField (EmitContext ec)
 			{
-				if (ec.CurrentBlock.Toplevel != Scope.ScopeBlock.Toplevel)
+				if ((ec.CurrentBlock != null) &&
+				    (ec.CurrentBlock.Toplevel != Scope.ScopeBlock.Toplevel))
 					return Field.FieldBuilder;
 				else
 					return FieldInstance.FieldInfo;
@@ -626,10 +627,11 @@ namespace Mono.CSharp {
 
 			protected virtual void DoEmit (EmitContext ec)
 			{
-				if (ec.CurrentBlock.Toplevel == Scope.ScopeBlock.Toplevel)
-					DoEmitInstance (ec);
-				else
+				if ((ec.CurrentBlock != null) &&
+				    (ec.CurrentBlock.Toplevel != Scope.ScopeBlock.Toplevel))
 					ec.ig.Emit (OpCodes.Ldarg_0);
+				else
+					DoEmitInstance (ec);
 			}
 
 			protected void DoEmitInstance (EmitContext ec)

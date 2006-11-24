@@ -4747,6 +4747,11 @@ namespace Mono.CSharp {
 			if (block != null) {
 				ec.ResolveTopBlock (null, block, ParameterInfo, this, out unreachable);
 				ec.EmitMeta (block);
+
+				if (block.ScopeInfo != null) {
+					ExpressionStatement init = block.ScopeInfo.GetScopeInitializer (ec);
+					init.EmitStatement (ec);
+				}
 			}
 
 			if (Initializer != null) {

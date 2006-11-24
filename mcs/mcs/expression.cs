@@ -6669,7 +6669,8 @@ namespace Mono.CSharp {
 				}
 
 				RootScopeInfo host = block.Toplevel.RootScope;
-				if ((host != null) && (!is_struct || host.IsIterator)) {
+				if ((host != null) && !ec.IsConstructor &&
+				    (!is_struct || host.IsIterator)) {
 					variable = host.CaptureThis ();
 					type = variable.Type;
 					is_struct = false;
