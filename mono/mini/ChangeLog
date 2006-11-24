@@ -1,3 +1,7 @@
+2006-11-23  Dick Porter  <dick@ximian.com>
+  
+	* wapihandles.c (mini_wapi_seminfo): No need to adjust the counter
+	semaphore display now we've fixed the initial value
 
 Thu Nov 16 14:07:18 CET 2006 Paolo Molaro <lupus@ximian.com>
 

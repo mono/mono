@@ -80,6 +80,10 @@ static gboolean process_set_termination_details (gpointer handle, int status)
 		process_handle->exitstatus = WEXITSTATUS(status);
 	}
 	_wapi_time_t_to_filetime (time(NULL), &process_handle->exit_time);
+
+	/* Don't set process_handle->waited here, it needs to only
+	 * happen in the parent when wait() has been called.
+	 */
 	
 #ifdef DEBUG
 	g_message ("%s: Setting handle %p signalled", __func__, handle);
@@ -108,16 +112,16 @@ static gboolean waitfor_pid (gpointer test, gpointer user_data)
 	int status;
 	pid_t ret;
 	
-	if (_wapi_handle_issignalled (test)) {
-		/* We've already done this one */
-		return (FALSE);
-	}
-	
 	ok = _wapi_lookup_handle (test, WAPI_HANDLE_PROCESS,
 				  (gpointer *)&process);
 	if (ok == FALSE) {
 		/* The handle must have been too old and was reaped */
 		return (FALSE);
+	}
+
+	if (process->waited) {
+		/* We've already done this one */
+		return(FALSE);
 	}
 	
 	do {
@@ -138,6 +142,8 @@ static gboolean waitfor_pid (gpointer test, gpointer user_data)
 	g_message ("%s: Process %d finished", __func__, ret);
 #endif
 
+	process->waited = TRUE;
+	
 	*(int *)user_data = status;
 	
 	return (TRUE);
@@ -185,16 +191,6 @@ static guint32 process_wait (gpointer handle, guint32 timeout)
 #ifdef DEBUG
 	g_message ("%s: Waiting for process %p", __func__, handle);
 #endif
-	
-	if (_wapi_handle_issignalled (handle)) {
-		/* We've already done this one */
-#ifdef DEBUG
-		g_message ("%s: Process %p already signalled", __func__,
-			   handle);
-#endif
-
-		return (WAIT_OBJECT_0);
-	}
 
 	ok = _wapi_lookup_handle (handle, WAPI_HANDLE_PROCESS,
 				  (gpointer *)&process_handle);
@@ -204,6 +200,16 @@ static guint32 process_wait (gpointer handle, guint32 timeout)
 		return(WAIT_FAILED);
 	}
 	
+	if (process_handle->waited) {
+		/* We've already done this one */
+#ifdef DEBUG
+		g_message ("%s: Process %p already signalled", __func__,
+			   handle);
+#endif
+
+		return (WAIT_OBJECT_0);
+	}
+	
 	pid = process_handle->id;
 	
 #ifdef DEBUG
@@ -211,9 +217,15 @@ static guint32 process_wait (gpointer handle, guint32 timeout)
 #endif
 
 	if (timeout == INFINITE) {
-		while ((ret = waitpid (pid, &status, 0)) != pid) {
-			if (ret == (pid_t)-1 && errno != EINTR) {
-				return(WAIT_FAILED);
+		if (pid == _wapi_getpid ()) {
+			do {
+				Sleep (10000);
+			} while(1);
+		} else {
+			while ((ret = waitpid (pid, &status, 0)) != pid) {
+				if (ret == (pid_t)-1 && errno != EINTR) {
+					return(WAIT_FAILED);
+				}
 			}
 		}
 	} else if (timeout == 0) {
@@ -224,18 +236,47 @@ static guint32 process_wait (gpointer handle, guint32 timeout)
 		}
 	} else {
 		/* Poll in a loop */
-		do {
-			ret = waitpid (pid, &status, WNOHANG);
-			if (ret == pid) {
-				break;
-			} else if (ret == (pid_t)-1 && errno != EINTR) {
-				return(WAIT_FAILED);
-			}
+		if (pid == _wapi_getpid ()) {
+			Sleep (timeout);
+			return(WAIT_TIMEOUT);
+		} else {
+			do {
+				ret = waitpid (pid, &status, WNOHANG);
+#ifdef DEBUG
+				g_message ("%s: waitpid returns: %d, timeout is %d", __func__, ret, timeout);
+#endif
+				
+				if (ret == pid) {
+					break;
+				} else if (ret == (pid_t)-1 &&
+					   errno != EINTR) {
+#ifdef DEBUG
+					g_message ("%s: waitpid failure: %s",
+						   __func__,
+						   g_strerror (errno));
+#endif
 
-			_wapi_handle_spin (100);
-			timeout -= 100;
-		} while (timeout > 0);
+					if (errno == ECHILD &&
+					    process_handle->waited) {
+						/* The background
+						 * process reaper must
+						 * have got this one
+						 */
+#ifdef DEBUG
+						g_message ("%s: Process %p already reaped", __func__, handle);
+#endif
 
+						return(WAIT_OBJECT_0);
+					} else {
+						return(WAIT_FAILED);
+					}
+				}
+
+				_wapi_handle_spin (100);
+				timeout -= 100;
+			} while (timeout > 0);
+		}
+		
 		if (timeout <= 0) {
 			return(WAIT_TIMEOUT);
 		}
@@ -251,7 +292,8 @@ static guint32 process_wait (gpointer handle, guint32 timeout)
 		SetLastError (ERROR_OUTOFMEMORY);
 		return (WAIT_FAILED);
 	}
-
+	process_handle->waited = TRUE;
+	
 	return(WAIT_OBJECT_0);
 }
 
@@ -268,6 +310,8 @@ static void process_set_defaults (struct _WapiHandle_process *process_handle)
 	process_handle->min_working_set = 204800;
 	process_handle->max_working_set = 1413120;
 
+	process_handle->waited = FALSE;
+	
 	_wapi_time_t_to_filetime (time (NULL), &process_handle->create_time);
 }
 
@@ -914,6 +958,11 @@ cleanup:
 		g_strfreev (env_strings);
 	}
 	
+#ifdef DEBUG
+	g_message ("%s: returning handle %p for pid %d", __func__, handle,
+		   pid);
+#endif
+
 	return(ret);
 }
 		
@@ -954,6 +1003,8 @@ static void process_set_current (void)
 	pid_t pid = _wapi_getpid ();
 	const char *handle_env;
 	struct _WapiHandle_process process_handle = {0};
+	
+	mono_once (&process_ops_once, process_ops_init);
 	
 	handle_env = g_getenv ("_WAPI_PROCESS_HANDLE_OFFSET");
 	g_unsetenv ("_WAPI_PROCESS_HANDLE_OFFSET");
