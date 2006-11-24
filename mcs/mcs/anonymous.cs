@@ -1568,7 +1568,7 @@ namespace Mono.CSharp {
 				member_name = new MemberName (name, args, Location);
 
 				generic_method = new GenericMethod (
-					scope.NamespaceEntry, scope, member_name,
+					Host.NamespaceEntry, scope, member_name,
 					new TypeExpression (ReturnType, Location), Parameters);
 
 				generic_method.SetParameterInfo (null);
