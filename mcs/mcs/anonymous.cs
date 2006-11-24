@@ -299,19 +299,12 @@ namespace Mono.CSharp {
 			return te.Type;
 		}
 
-		public static void EmitScopeInstance (EmitContext ec, ScopeInfo scope,
-						      ToplevelBlock toplevel)
+		public static void EmitScopeInstance (EmitContext ec, ScopeInfo scope)
 		{
-			RootScopeInfo root_scope = toplevel.RootScope;
-
-			Report.Debug (128, "EMIT SCOPE INSTANCE", toplevel,
-				      toplevel.AnonymousContainer, root_scope,
-				      scope, scope.RootScope);
-
 			scope.EmitScopeInstance (ec);
 
-			if (toplevel.AnonymousContainer != null) {
-				ScopeInfo host = toplevel.AnonymousContainer.Scope;
+			if (ec.CurrentAnonymousMethod != null) {
+				ScopeInfo host = ec.CurrentAnonymousMethod.Scope;
 				Variable captured = host.GetCapturedScope (scope);
 				Report.Debug (128, "EMIT SCOPE INSTANCE #2", host, scope, captured);
 				if (captured != null)
@@ -425,7 +418,9 @@ namespace Mono.CSharp {
 
 			public override void EmitInstance (EmitContext ec)
 			{
-				ec.CurrentBlock.Toplevel.EmitScopeInstance (ec, Scope);
+				Report.Debug (128, "CAPTURED VARIABLE EMIT INSTANCE",
+					      this, Name, Scope, ec.CurrentBlock);
+				ScopeInfo.EmitScopeInstance (ec, Scope);
 			}
 
 			public override void Emit (EmitContext ec)
@@ -703,8 +698,7 @@ namespace Mono.CSharp {
 					init.EmitStatement (ec);
 
 					DoEmit (ec);
-					ScopeInfo.EmitScopeInstance (
-						ec, scope.ChildScope, ec.CurrentBlock.Toplevel);
+					ScopeInfo.EmitScopeInstance (ec, scope.ChildScope);
 					scope.EmitAssign (ec);
 				}
 			}

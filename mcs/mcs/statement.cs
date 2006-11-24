@@ -2437,11 +2437,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void EmitScopeInstance (EmitContext ec, ScopeInfo scope)
-		{
-			ScopeInfo.EmitScopeInstance (ec, scope, this);
-		}
-
 		public FlowBranchingToplevel TopLevelBranching {
 			get { return top_level_branching; }
 		}
