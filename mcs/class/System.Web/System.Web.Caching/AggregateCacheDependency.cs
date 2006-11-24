@@ -36,48 +36,50 @@ namespace System.Web.Caching
 {
 	public sealed class AggregateCacheDependency : CacheDependency
 	{
+		private object dependenciesLock = new object();
 		private List <CacheDependency> dependencies;
 		
 		public AggregateCacheDependency ()
-		{
-			dependencies = new List <CacheDependency> ();
-		}
+		{}
 
 		public void Add (params CacheDependency [] dependencies)
 		{
 			if (dependencies == null)
 				throw new ArgumentNullException ("dependencies");
+			if (dependencies.Length == 0)
+				return;
+			
+			bool somethingChanged = false;
 			foreach (CacheDependency dep in dependencies)
 				if (dep == null || dep.IsUsed)
 					throw new InvalidOperationException ("Cache dependency already in use");
+				else if (!somethingChanged && dep != null && dep.HasChanged)
+					somethingChanged = true;
 
-			bool somethingChanged = false;
-			lock (dependencies) {
+			lock (dependenciesLock) {
+				if (this.dependencies == null)
+					this.dependencies = new List <CacheDependency> (dependencies.Length);
 				this.dependencies.AddRange (dependencies);
-				foreach (CacheDependency dep in dependencies)
-					if (dep.HasChanged) {
-						somethingChanged = true;
-						break;
-					}
+				base.Start = DateTime.UtcNow;
 			}
-			base.Start = DateTime.UtcNow;
 			if (somethingChanged)
 				base.SignalDependencyChanged ();
 		}
 
 		public override string GetUniqueID ()
 		{
-			if (dependencies == null)
+			if (dependencies == null || dependencies.Count == 0)
 				return null;
 			
 			StringBuilder sb = new StringBuilder ();
-			lock (dependencies) {
+			lock (dependenciesLock) {
 				string depid = null;
 				foreach (CacheDependency dep in dependencies) {
 					depid = dep.GetUniqueID ();
-					if (depid == null || depid.Length == 0)
+					if (String.IsNullOrEmpty (depid))
 						return null;
-					sb.AppendFormat ("{0};", depid);
+					sb.Append (depid);
+					sb.Append (';');
 				}
 			}
 			return sb.ToString ();
