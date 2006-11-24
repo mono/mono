@@ -687,15 +687,8 @@ namespace Mono.CSharp {
 				EmitScopeConstructor (ec);
 				if (scope_instance != null)
 					ec.ig.Emit (OpCodes.Stloc, scope_instance);
-				else {
-					// ec.ig.Emit (OpCodes.Neg);
-					// ec.ig.Emit (OpCodes.Neg);
-					// ec.ig.Emit (OpCodes.Neg);
+				else
 					captured_scope.EmitAssign (ec);
-					// ec.ig.Emit (OpCodes.Not);
-					// ec.ig.Emit (OpCodes.Not);
-					// ec.ig.Emit (OpCodes.Not);
-				}
 
 				if (Scope.RootScope.IsIterator)
 					return;
@@ -834,20 +827,6 @@ namespace Mono.CSharp {
 
 		protected override ScopeInitializer CreateScopeInitializer ()
 		{
-#if FIXME
-			foreach (ScopeInfo si in scopes) {
-				if (!si.ResolveMembers ())
-					throw new InternalErrorException ();
-				if (!si.DefineMembers ())
-					throw new InternalErrorException ();
-			}
-
-			if (!ResolveMembers ())
-				throw new InternalErrorException ();
-			if (!DefineMembers ())
-				throw new InternalErrorException ();
-#endif
-
 			return new RootScopeInitializer (this);
 		}
 
@@ -1431,17 +1410,6 @@ namespace Mono.CSharp {
 
 			method = DoCreateMethodHost (ec);
 
-#if FIXME
-			if (Scope != null) {
-				if (!Scope.Define ())
-					throw new InternalErrorException ();
-				if (Scope.DefineType () == null)
-					throw new InternalErrorException ();
-				if (!Scope.ResolveType ())
-					throw new InternalErrorException ();
-			}
-#endif
-
 			if (Scope != null)
 				return true;
 
@@ -1579,20 +1547,8 @@ namespace Mono.CSharp {
 
 			Report.Debug (128, "CREATE METHOD HOST #1", this, scope, scopes);
 
-			foreach (ScopeInfo si in scopes) {
-#if FIXME
-				Report.Debug (128, "CREATE METHOD HOST #2", this, scope, si);
-				if (!si.Define ())
-					throw new InternalErrorException ();
-				if (si.DefineType () == null)
-					throw new InternalErrorException ();
-				Report.Debug (128, "CREATE METHOD HOST #3", this, scope, si,
-					      si.TypeBuilder);
-				if (!si.ResolveCurrentType ())
-					throw new InternalErrorException ();
-#endif
+			foreach (ScopeInfo si in scopes)
 				scope.CaptureScope (si);
-			}
 
 			Report.Debug (128, "CREATE METHOD HOST", this, Block, container,
 				      RootScope, scope, scopes, Location,
