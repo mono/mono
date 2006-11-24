@@ -217,6 +217,10 @@ public class CryptoConfig {
 	private const string nameX509KeyUsage = defaultNamespace + "X509Certificates.X509KeyUsageExtension, " + Consts.AssemblySystem;
 	private const string nameX509BasicConstraints = defaultNamespace + "X509Certificates.X509BasicConstraintsExtension, " + Consts.AssemblySystem;
 	private const string nameX509EnhancedKeyUsage = defaultNamespace + "X509Certificates.X509EnhancedKeyUsageExtension, " + Consts.AssemblySystem;
+
+	// new (2.0) X509 Chain
+	private const string nameX509Chain = "X509Chain";
+	private const string defaultX509Chain = defaultNamespace + "X509Certificates.X509Chain, " + Consts.AssemblySystem;
 #endif
 
 	static CryptoConfig () 
@@ -330,6 +334,8 @@ public class CryptoConfig {
 		algorithms.Add (oidX509KeyUsage, nameX509KeyUsage);
 		algorithms.Add (oidX509BasicConstraints, nameX509BasicConstraints);
 		algorithms.Add (oidX509EnhancedKeyUsage, nameX509EnhancedKeyUsage);
+		// note: the default X.509Chain can also be created this way
+		algorithms.Add (nameX509Chain, defaultX509Chain);
 #endif
 
 		Hashtable oid = new Hashtable (new CaseInsensitiveHashCodeProvider (), new CaseInsensitiveComparer ());
