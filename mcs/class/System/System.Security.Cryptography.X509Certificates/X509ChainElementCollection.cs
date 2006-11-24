@@ -34,8 +34,6 @@ using System.Collections;
 
 namespace System.Security.Cryptography.X509Certificates {
 
-	// Note: Match the definition of framework version 1.2.3400.0 on http://longhorn.msdn.microsoft.com
-
 	public sealed class X509ChainElementCollection : ICollection, IEnumerable {
 
 		private ArrayList _list;
@@ -86,6 +84,18 @@ namespace System.Security.Cryptography.X509Certificates {
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return new X509ChainElementEnumerator (_list);
+		}
+
+		// private stuff
+
+		internal void Add (X509Certificate2 certificate, X509ChainStatusFlags flags)
+		{
+			_list.Add (new X509ChainElement (certificate, flags));
+		}
+
+		internal void Clear ()
+		{
+			_list.Clear ();
 		}
 	}
 }

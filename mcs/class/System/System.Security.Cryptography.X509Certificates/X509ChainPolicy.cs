@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2005 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2005-2006 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,14 +33,14 @@ namespace System.Security.Cryptography.X509Certificates {
 
 	public sealed class X509ChainPolicy {
 
-		private OidCollection _apps;
-		private OidCollection _cert;
-		private X509Certificate2Collection _store;
-		private X509RevocationFlag _rflag;
-		private X509RevocationMode _mode;
-		private TimeSpan _timeout;
-		private X509VerificationFlags _vflags;
-		private DateTime _vtime;
+		private OidCollection apps;
+		private OidCollection cert;
+		private X509Certificate2Collection store;
+		private X509RevocationFlag rflag;
+		private X509RevocationMode mode;
+		private TimeSpan timeout;
+		private X509VerificationFlags vflags;
+		private DateTime vtime;
 
 		// constructors
 
@@ -52,54 +52,66 @@ namespace System.Security.Cryptography.X509Certificates {
 		// properties
 
 		public OidCollection ApplicationPolicy {
-			get { return _apps; }
+			get { return apps; }
 		}
 
 		public OidCollection CertificatePolicy {
-			get { return _cert; }
+			get { return cert; }
 		}
 
 		public X509Certificate2Collection ExtraStore {
-			get { return _store; }
+			get { return store; }
 		}
 
 		public X509RevocationFlag RevocationFlag {
-			get { return _rflag; }
-			set { _rflag = value; }
+			get { return rflag; }
+			set {
+				if ((value < X509RevocationFlag.EndCertificateOnly) || (value > X509RevocationFlag.ExcludeRoot))
+					throw new ArgumentException ("RevocationFlag");
+				rflag = value;
+			}
 		}
 
 		public X509RevocationMode RevocationMode {
-			get { return _mode; }
-			set { _mode = value; }
+			get { return mode; }
+			set {
+				if ((value < X509RevocationMode.NoCheck) || (value > X509RevocationMode.Offline))
+					throw new ArgumentException ("RevocationMode");
+				mode = value;
+			}
 		}
 
 		public TimeSpan UrlRetrievalTimeout {
-			get { return _timeout; }
-			set { _timeout = value; }
+			get { return timeout; }
+			set { timeout = value; }
 		}
 
 		public X509VerificationFlags VerificationFlags {
-			get { return _vflags; }
-			set { _vflags = value; }
+			get { return vflags; }
+			set {
+				if ((value | X509VerificationFlags.AllFlags) != X509VerificationFlags.AllFlags)
+					throw new ArgumentException ("VerificationFlags");
+				vflags = value;
+			}
 		}
 
 		public DateTime VerificationTime {
-			get { return _vtime; }
-			set { _vtime = value; }
+			get { return vtime; }
+			set { vtime = value; }
 		}
 
 		// methods
 
 		public void Reset ()
 		{
-			_apps = new OidCollection ();
-			_cert = new OidCollection ();
-			_store = new X509Certificate2Collection ();
-			_rflag = X509RevocationFlag.ExcludeRoot;
-			_mode = X509RevocationMode.Online;
-			_timeout = new TimeSpan (0);
-			_vflags = X509VerificationFlags.NoFlag;
-			_vtime = DateTime.Now;
+			apps = new OidCollection ();
+			cert = new OidCollection ();
+			store = new X509Certificate2Collection ();
+			rflag = X509RevocationFlag.ExcludeRoot;
+			mode = X509RevocationMode.Online;
+			timeout = TimeSpan.Zero;
+			vflags = X509VerificationFlags.NoFlag;
+			vtime = DateTime.Now;
 		}
 	}
 }

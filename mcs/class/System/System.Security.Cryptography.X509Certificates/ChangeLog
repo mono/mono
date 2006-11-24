@@ -1,3 +1,20 @@
+2006-11-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate2.cs: Modified Verify to use CryptoConfig to create
+	the X509Chain used to verify the certificate. This makes it possible
+	to change the default chaining (certificate path creation and 
+	validation) algorithm.
+	* X509Chain.cs: Started implementation based on the options and error 
+	codes defined. Work in progress (incomplete and needs a lot more test
+	cases).
+	* X509ChainElementCollection.cs: Added internal methods to Add and
+	Clear the collection.
+	* X509ChainElement.cs: Implemented, MonoTODO removed.
+	* X509ChainPolicy.cs: Add missing checks on enum-based properties. 
+	Renamed fields to match guidelines.
+	* X509ChainStatus.cs: Provide a default StatusInformation value based 
+	on the Status.
+
 2006-11-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate2Collection.cs: Remove comment that proved to be 

@@ -558,13 +558,13 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 		}
 
-		[MonoTODO ("depends on incomplete X509Chain")]
+		[MonoTODO ("by default this depends on the incomplete X509Chain")]
 		public bool Verify ()
 		{
 			if (_cert == null)
 				throw new CryptographicException (empty_error);
 
-			X509Chain chain = new X509Chain ();
+			X509Chain chain = (X509Chain) CryptoConfig.CreateFromName ("X509Chain");
 			if (!chain.Build (this))
 				return false;
 			// TODO - check chain and other stuff ???
