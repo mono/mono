@@ -1,4 +1,0 @@
-2004-03-30  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* XmlCanonicalizer.cs: New. Copy of System.Security assembly.
-	Original by Aleksey Sanin. Modified by Atsushi Enomoto.

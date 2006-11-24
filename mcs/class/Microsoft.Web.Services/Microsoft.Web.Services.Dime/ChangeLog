@@ -1,4 +1,0 @@
-2003-09-04  Sebastien Pouliot  <spouliot@videotron.ca>
-
-	* DimeAttachmentCollection.cs: Fixed compilation issues
-	* DimeReader.cs: Fixed compilation issues
