@@ -86,6 +86,30 @@ namespace MonoTests.System.Windows.Forms
 			main.Dispose ();
 		}
 
+		// Setting Text of the MDI containiner before setting IsMdiContainer to
+		// true causes #2 to fail on Mono
+		[Test]
+		[Category ("NotWorking")]
+		public void Text_MdiContainer ()
+		{
+			Form main = new Form ();
+			main.ShowInTaskbar = false;
+			main.Text = "main";
+			main.IsMdiContainer = true;
+			main.Show ();
+
+			Assert.AreEqual ("main", main.Text, "#1");
+
+			Form child = new Form ();
+			child.Name = "child";
+			child.MdiParent = main;
+			child.Text = child.Name;
+			child.WindowState = FormWindowState.Maximized;
+			child.Show ();
+
+			Assert.AreEqual ("main- [child]", main.Text, "#2");
+		}
+
 		// Setting WindowState to Maximized of a form, of which the handle is 
 		// already created, does not make it ActiveMdiChild
 		[Test]
