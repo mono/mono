@@ -121,6 +121,8 @@ public class CryptoConfigTest {
 		CreateFromName ("RIPEMD160", "System.Security.Cryptography.RIPEMD160Managed");
 		CreateFromName ("RIPEMD-160", "System.Security.Cryptography.RIPEMD160Managed");
 		CreateFromName ("System.Security.Cryptography.RIPEMD160", "System.Security.Cryptography.RIPEMD160Managed");
+		// x.509 stuff
+		CreateFromName ("X509Chain", "System.Security.Cryptography.X509Certificates.X509Chain");
 #endif
 		// note: CryptoConfig can create any object !
 		CreateFromName ("System.Security.Cryptography.CryptoConfig", "System.Security.Cryptography.CryptoConfig");

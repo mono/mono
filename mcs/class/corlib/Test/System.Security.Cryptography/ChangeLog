@@ -1,3 +1,7 @@
+2006-11-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConfigTest.cs: Added test case for X509Chain.
+
 2006-11-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PasswordDeriveBytesTest.cs: Added test case for bug #79499
