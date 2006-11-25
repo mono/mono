@@ -430,6 +430,11 @@ namespace System.Windows.Forms
 			label.AutoSize = true;
 			label.Location = new Point (20, 100);
 			group_box_prn.Controls.Add (label);
+			
+			label_where = new Label ();
+			label_where.AutoSize = true;
+			label_where.Location = new Point (80, 100);
+			group_box_prn.Controls.Add (label_where);
 
 			label = new Label ();
 			label.Text = "Comment:";
@@ -440,6 +445,7 @@ namespace System.Windows.Forms
 			label_comment = new Label ();
 			label_comment.AutoSize = true;
 			label_comment.Location = new Point (80, 120);
+			group_box_prn.Controls.Add (label_comment);
 
 			radio_all = new RadioButton ();
 			radio_all.TabIndex = 21;

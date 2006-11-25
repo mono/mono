@@ -1,3 +1,9 @@
+2006-11-25  Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* PrintDialog.cs:
+	- Text label for where 
+	- Text label comment was not shown
+
 2006-11-23  Everaldo Canuto  <everaldo@simios.org>
 
 	* ThemeWin32Classic.cs: Fix toolbar drop down arrow size.
