@@ -51,8 +51,8 @@ namespace System.Drawing.Printing
 
 		public PrintDocument() {
 			documentname = "document"; //offical default.
-			defaultpagesettings = new PageSettings(); // use default values of default printer
 			printersettings = new PrinterSettings(); // use default values
+			defaultpagesettings = (PageSettings) printersettings.DefaultPageSettings.Clone ();
 			printcontroller = new StandardPrintController();
 		}
 

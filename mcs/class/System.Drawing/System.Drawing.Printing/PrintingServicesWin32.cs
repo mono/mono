@@ -286,7 +286,7 @@ namespace System.Drawing.Printing
 			return (ret > 0) ? true : false;
 		}
 
-		internal override IntPtr CreateGraphicsContext (PrinterSettings settings)
+		internal override IntPtr CreateGraphicsContext (PrinterSettings settings, PageSettings default_page_settings)
 		{
 			IntPtr dc = IntPtr.Zero;
 			dc = Win32CreateDC (null, settings.PrinterName, null, IntPtr.Zero /* DEVMODE */);

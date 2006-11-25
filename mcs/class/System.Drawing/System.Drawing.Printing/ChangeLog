@@ -1,3 +1,27 @@
+2006-11-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+	
+	Initial support for PageSettings (color, copies, collate,
+	and media size).
+
+	* StandardPrintController.cs: Pass PrintDocument.PageSettings to
+	create the Graphics object (althought PageSettings
+	contains a PrinterSettings and vice versa, PrintDocument
+	can contain non-related PrinterSettings and PageSettings objects).
+
+	* PrintingServices.cs: Likewise.
+	* PrintingServicesWin32.cs: Likewise.
+	* PrintingServicesUnix.cs: Likewise. Also use cupsParseOptions
+	to pass printing options when calling cupsPrintFile. Use "Custom"
+	as name for custom pages without associated name (Laxmark printers
+	have this problem, causing a nullref exc). Add GetPaperKind () method
+	to retrieve and set the right PaperKind value for PaperSize, instead
+	of using PaperKind.Custom for all page sizes. Finally save
+	PageSettings in DOCINFO to use it later.
+
+	* PrintDocument.cs: Clone PrinterSettings.PageSettings
+	instead of creating a new one (this avoid creating an additional
+	PrinterSettings instance).
+
 2006-11-17  Andreia Gaita <avidigal@novell.com>
 
 	* PrintingServicesWin32.cs: fix another dumb typo - 

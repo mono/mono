@@ -49,7 +49,7 @@ namespace System.Drawing.Printing
 		
 		public override void OnStartPrint (PrintDocument document, PrintEventArgs e)
 		{			
-			IntPtr dc = SysPrn.Service.CreateGraphicsContext (document.PrinterSettings);
+			IntPtr dc = SysPrn.Service.CreateGraphicsContext (document.PrinterSettings, document.DefaultPageSettings);
 			e.GraphicsContext = new GraphicsPrinter (null, dc);
 			SysPrn.Service.StartDoc (e.GraphicsContext, document.DocumentName, string.Empty);			
 		}
