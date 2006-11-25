@@ -211,13 +211,13 @@ namespace System.Web.Compilation
 		protected CodeCompileUnit FilesToDom ()
 		{
 			CollectFiles ();
-			if (resxFiles.Length == 0)
+			if (resxFiles == null || resxFiles.Length == 0)
 				return null;
 			
 			string destdir = TempDir;
 
 			string s, resfile;
-			resourceFiles = new List<string> ();
+			resourceFiles = new List<string> (resxFiles.Length);
 			CodeCompileUnit ret = new CodeCompileUnit ();
 			foreach (List<string> al in resxFiles) {
 				if (al == null)

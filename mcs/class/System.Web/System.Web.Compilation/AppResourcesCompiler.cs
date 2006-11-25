@@ -88,10 +88,15 @@ namespace System.Web.Compilation
 			if (di == null)
 				return null;
 
-			List<string> al = new List<string> ();
-			foreach (FileInfo fi in di.GetFiles ("*.resx"))
-				al.Add (fi.FullName);
-			filePaths = al.ToArray ();
+			FileInfo[] fileinfos = di.GetFiles ("*.resx");
+			if (fileinfos != null && fileinfos.Length > 0) {
+				List<string> al = new List<string> (fileinfos.Length);
+				foreach (FileInfo fi in fileinfos)
+					al.Add (fi.FullName);
+				filePaths = al.ToArray ();
+			} else
+				return null;
+			
 			CodeCompileUnit unit = FilesToDom ();
 			if (unit == null || resourceFiles == null)
 				return null;
