@@ -37,7 +37,7 @@ namespace System.Web.Hosting {
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class ApplicationHost {
 
-		static string [] types = { "Web.config", "web.config" };
+		static string [] types = { "Web.config", "Web.Config", "web.config" };
 
 		private ApplicationHost ()
 		{

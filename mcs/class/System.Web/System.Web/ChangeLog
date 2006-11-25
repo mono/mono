@@ -1,3 +1,8 @@
+2006-11-24  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpApplicationFactory.cs (InitType): Also look for "Web.Config"
+	casing here.
+
 2006-11-20  Marek Habersack  <grendello@gmail.com>
 
 	* HttpApplication.cs: Added support for automatic detection of

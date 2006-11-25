@@ -420,6 +420,8 @@ namespace System.Web {
 				string config_file = Path.Combine (physical_app_path, "Web.config");
 				if (!File.Exists (config_file))
 					config_file = Path.Combine (physical_app_path, "web.config");
+				if (!File.Exists (config_file))
+					config_file = Path.Combine (physical_app_path, "Web.Config");
 
 				config_watcher = CreateWatcher (config_file, fseh, reh);
 #endif

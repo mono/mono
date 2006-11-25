@@ -1,3 +1,8 @@
+2006-11-24  Miguel de Icaza  <miguel@novell.com>
+
+	* ApplicationHost.cs: In 2.0, as Todd reports the default is
+	"Web.Config", try that before we tell people to use MONO_IOMAP=all ;-)
+
 2006-11-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ApplicationHost.cs: the new Directory code throws if the directory
