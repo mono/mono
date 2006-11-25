@@ -447,10 +447,55 @@ namespace System.Drawing.Printing
 			return PaperKind.Custom;
 		}
 
-		// TODO
 		internal override void GetPrintDialogInfo (string printer, ref string port, ref string type, ref string status, ref string comment)
 		{			
-			status = "Ready";			
+			int printers, state = -1;
+			CUPS_DESTS cups_dests;
+			CUPS_OPTIONS options;
+			string str;
+			IntPtr dests = IntPtr.Zero, ptr_printers, ptr_printer, ptr_options;
+			
+			if (cups_installed == false)
+				return;
+
+			printers = cupsGetDests (ref dests);
+
+			ptr_printers = dests;
+			for (int i = 0; i < printers; i++) {
+				cups_dests = (CUPS_DESTS) Marshal.PtrToStructure (ptr_printers, typeof (CUPS_DESTS));
+				str = Marshal.PtrToStringAnsi (cups_dests.name);
+				ptr_printers = new IntPtr (ptr_printers.ToInt64 () + 20 /*size of CUPS_DEST*/);
+				if (str != printer)
+					continue;
+
+				ptr_options = cups_dests.options;
+				for (int o = 0; o < cups_dests.num_options; o ++) {
+					options = (CUPS_OPTIONS) Marshal.PtrToStructure (ptr_options, typeof (CUPS_OPTIONS));
+					str = Marshal.PtrToStringAnsi (options.name);					
+					if (str == "printer-state") {
+						state = Int32.Parse (Marshal.PtrToStringAnsi (options.val));
+					} else {
+						if (str == "printer-info")
+							comment = Marshal.PtrToStringAnsi (options.val);
+					}
+					ptr_options = new IntPtr (ptr_options.ToInt64 () + 8 /*size of CUPS_DEST*/);
+				}
+				
+			}
+
+			Marshal.FreeHGlobal (dests);
+
+			if (state == 4) {
+				status = "Printing";
+			}
+			else {
+				if (state == 5) {
+					status = "Stopped";
+				}
+				else {
+					status =  "Ready";
+				}
+			}			
 		}
 
 		//
@@ -587,6 +632,22 @@ namespace System.Drawing.Printing
   			public IntPtr	sizes;
 
 			/* There is more data after this that we are not using*/
+		}
+
+
+		public struct CUPS_OPTIONS
+		{
+		  	public IntPtr name;
+		  	public IntPtr val;
+		}
+		
+		public struct CUPS_DESTS
+		{
+			public IntPtr	name;
+			public IntPtr	instance;
+			public int 	is_default;
+			public int	num_options;
+			public IntPtr	options;
 		}
 	}
 }

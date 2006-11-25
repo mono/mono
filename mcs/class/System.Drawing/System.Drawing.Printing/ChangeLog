@@ -1,3 +1,7 @@
+2006-11-25 Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* PrintingServicesUnix.cs: Implements GetPrintDialogInfo
+
 2006-11-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 	
 	Initial support for PageSettings (color, copies, collate,
