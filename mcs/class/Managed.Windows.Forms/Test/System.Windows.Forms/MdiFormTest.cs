@@ -107,7 +107,32 @@ namespace MonoTests.System.Windows.Forms
 			child.WindowState = FormWindowState.Maximized;
 			child.Show ();
 
-			Assert.AreEqual ("main- [child]", main.Text, "#2");
+			Assert.AreEqual ("main - [child]", main.Text, "#2");
+		}
+
+		[Test] // bug 80038
+		[Category ("NotWorking")]
+		public void Text_ChildClose ()
+		{
+			Form main = new Form ();
+			main.ShowInTaskbar = false;
+			main.IsMdiContainer = true;
+			main.Text = "main";
+			main.Show ();
+
+			Assert.AreEqual ("main", main.Text, "#1");
+
+			Form child = new Form ();
+			child.Name = "child";
+			child.MdiParent = main;
+			child.Text = child.Name;
+			child.WindowState = FormWindowState.Maximized;
+			child.Show ();
+
+			Assert.AreEqual ("main - [child]", main.Text, "#2");
+
+			child.Close ();
+			Assert.AreEqual ("main", main.Text, "#3");
 		}
 
 		// Setting WindowState to Maximized of a form, of which the handle is 
