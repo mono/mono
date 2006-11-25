@@ -944,11 +944,11 @@ namespace System.Web.UI.WebControls
 				dynamicMenuItemStyle.TrackViewState ();
 			if (dynamicMenuStyle != null)
 				dynamicMenuStyle.TrackViewState ();
-			if (levelMenuItemStyles != null)
+			if (levelMenuItemStyles != null && levelMenuItemStyles.Count > 0)
 				((IStateManager)levelMenuItemStyles).TrackViewState();
-			if (levelSelectedStyles != null)
+			if (levelSelectedStyles != null && levelMenuItemStyles.Count > 0)
 				((IStateManager)levelSelectedStyles).TrackViewState();
-			if (levelSubMenuStyles != null)
+			if (levelSubMenuStyles != null && levelSubMenuStyles.Count > 0)
 				((IStateManager)levelSubMenuStyles).TrackViewState();
 			if (dynamicSelectedStyle != null)
 				dynamicSelectedStyle.TrackViewState();
@@ -1178,8 +1178,8 @@ namespace System.Web.UI.WebControls
 			if (dynamicMenuStyle != null)
 				RegisterStyle (DynamicMenuStyle);
 
-			if (levelMenuItemStyles != null) {
-				levelMenuItemLinkStyles = new List<Style> ();
+			if (levelMenuItemStyles != null && levelMenuItemStyles.Count > 0) {
+				levelMenuItemLinkStyles = new List<Style> (levelMenuItemStyles.Count);
 				foreach (Style style in levelMenuItemStyles) {
 					Style linkStyle = new Style ();
 					levelMenuItemLinkStyles.Add (linkStyle);
@@ -1197,8 +1197,8 @@ namespace System.Web.UI.WebControls
 			if (dynamicSelectedStyle != null)
 				RegisterStyle (dynamicSelectedStyle, DynamicSelectedLinkStyle);
 
-			if (levelSelectedStyles != null) {
-				levelSelectedLinkStyles = new List<Style> ();
+			if (levelSelectedStyles != null && levelSelectedStyles.Count > 0) {
+				levelSelectedLinkStyles = new List<Style> (levelSelectedStyles.Count);
 				foreach (Style style in levelSelectedStyles) {
 					Style linkStyle = new Style ();
 					levelSelectedLinkStyles.Add (linkStyle);

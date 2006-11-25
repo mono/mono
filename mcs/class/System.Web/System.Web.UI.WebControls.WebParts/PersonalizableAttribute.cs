@@ -125,15 +125,18 @@ namespace System.Web.UI.WebControls.WebParts
 		{
 			if (type == null)
 				throw new ArgumentNullException ("type");
-
-			List <PropertyInfo> ret = new List <PropertyInfo> ();
+			
 			PropertyInfo[] properties = type.GetProperties ();
 			if (properties == null || properties.Length == 0)
-				return ret;
+				return new PropertyInfo [0];
+			List <PropertyInfo> ret = null;
 			
 			foreach (PropertyInfo pi in properties)
-				if (PropertyQualifies (pi))
+				if (PropertyQualifies (pi)) {
+					if (ret == null)
+						ret = new List <PropertyInfo> ();
 					ret.Add (pi);
+				}
 			return ret;
 		}
 

@@ -795,7 +795,7 @@ namespace System.Web.UI.WebControls
 			if (leafNodeStyle != null) {
 				leafNodeStyle.TrackViewState();
 			}
-			if (levelStyles != null) {
+			if (levelStyles != null && levelStyles.Count > 0) {
 				((IStateManager)levelStyles).TrackViewState();
 			}
 			if (nodeStyle != null) {
@@ -1128,8 +1128,8 @@ namespace System.Web.UI.WebControls
 				RegisterStyle (LeafNodeStyle, LeafNodeLinkStyle);
 
 
-			if (levelStyles != null) {
-				levelLinkStyles = new List<Style> ();
+			if (levelStyles != null && levelStyles.Count > 0) {
+				levelLinkStyles = new List<Style> (levelStyles.Count);
 				foreach (Style style in levelStyles) {
 					Style linkStyle = new Style ();
 					levelLinkStyles.Add (linkStyle);

@@ -1,3 +1,9 @@
+2006-11-25  Marek Habersack  <grendello@gmail.com>
+
+	* TreeView.cs: A few optimizations for empty style collections.
+
+	* Menu.cs: A few optimizations for empty style collections. 
+
 2006-11-23 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* BoundField.cs: fixed: GetDesignTimeValue()
