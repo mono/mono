@@ -51,10 +51,8 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[Bindable (true, BindingDirection.OneWay)]
 		[Browsable (false)]
-		public byte[] FileBytes
-		{
-			get
-			{
+		public byte[] FileBytes {
+			get {
 				if (cachedBytes == null) {
 					cachedBytes = new byte[FileContent.Length];
 					FileContent.Read (cachedBytes, 0, cachedBytes.Length);
@@ -65,10 +63,8 @@ namespace System.Web.UI.WebControls
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public Stream FileContent
-		{
-			get
-			{
+		public Stream FileContent {
+			get {
 				if (PostedFile == null)
 					return Stream.Null;
 				else
@@ -78,10 +74,8 @@ namespace System.Web.UI.WebControls
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public string FileName
-		{
-			get
-			{
+		public string FileName {
+			get {
 				if (PostedFile == null)
 					return string.Empty;
 				else
@@ -91,17 +85,14 @@ namespace System.Web.UI.WebControls
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public bool HasFile
-		{
+		public bool HasFile {
 			get { return PostedFile != null; }
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public HttpPostedFile PostedFile
-		{
-			get
-			{
+		public HttpPostedFile PostedFile {
+			get {
 				if (Page == null || !Page.IsPostBack)
 					return null;
 				if (Context == null || Context.Request == null)
@@ -131,10 +122,11 @@ namespace System.Web.UI.WebControls
 			base.Render (writer);
 		}
 
-		[MonoTODO]
 		public void SaveAs (string filename)
 		{
-			throw new NotImplementedException ();
+			HttpPostedFile file = PostedFile;
+			if (file != null)
+				file.SaveAs (filename);
 		}
 	}
 }
