@@ -135,7 +135,10 @@ namespace System.Web {
 				}
 			} finally {
 				request.SetCurrentExePath (oldFilePath);
-				request.QueryStringRaw = oldQuery;
+				if (oldQuery != null && oldQuery != "" && oldQuery != request.QueryStringRaw) {
+					oldQuery = oldQuery.Substring (1); // Ignore initial '?'
+					request.QueryStringRaw = oldQuery; // which is added here.
+				}
 				response.SetTextWriter (previous);
 				if (!preserveQuery)
 					request.SetForm (oldForm);
