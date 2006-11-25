@@ -1,3 +1,7 @@
+2006-11-23  Everaldo Canuto  <everaldo@simios.org>
+
+	* ThemeWin32Classic.cs: Fix toolbar drop down arrow size.
+
 2006-11-23  Rolf Bjarne Kvinge  <RKvinge@novell.com> 
 
 	* InternalWindowManager.cs: 

@@ -4092,7 +4092,7 @@ namespace System.Windows.Forms
 				CPDrawBorder3D (dc, rect, Border3DStyle.Raised, all_sides);
 
 			PointF [] vertices = new PointF [3];
-			PointF ddCenter = new PointF (rect.X + (rect.Width/2.0f), rect.Y + (rect.Height/2.0f)-2);
+			PointF ddCenter = new PointF (rect.X + (rect.Width/2.0f), rect.Y + (rect.Height / 2));
 			
 			// Increase vertical and horizontal position by 1 when button is pressed
 			if (button.Pressed || button.Pushed) {
