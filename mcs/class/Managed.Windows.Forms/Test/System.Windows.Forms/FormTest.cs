@@ -86,7 +86,7 @@ namespace MonoTests.System.Windows.Forms
 			myform.Activate ();
 			Assert.AreEqual (true, myform.Focus (), "#40");
 			myform.Dispose ();
-		}		
+		}
 
 		[Test]
 		public void AddOwnedFormTest ()
@@ -239,6 +239,120 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (result, DialogResult.Cancel, "A8");
 			Assert.IsFalse (myform.Visible, "A9");
 			Assert.IsFalse (myform.IsDisposed, "A10");
+		}
+
+		[Test] // bug #80052
+		[NUnit.Framework.Category ("NotWorking")]
+		public void Location ()
+		{
+			// 
+			// CenterParent
+			// 
+
+			Form formA = new Form ();
+			formA.ShowInTaskbar = false;
+			formA.StartPosition = FormStartPosition.CenterParent;
+			formA.Location = new Point (151, 251);
+			formA.Show ();
+
+			Assert.AreEqual (FormStartPosition.CenterParent, formA.StartPosition, "#A1");
+			Assert.IsFalse (formA.Location.X == 151, "#A2");
+			Assert.IsFalse (formA.Location.Y == 251, "#A3");
+
+			formA.Location = new Point (311, 221);
+
+			Assert.AreEqual (FormStartPosition.CenterParent, formA.StartPosition, "#A4");
+			Assert.AreEqual (311, formA.Location.X, "#A5");
+			Assert.AreEqual (221, formA.Location.Y, "#A6");
+
+			formA.Dispose ();
+
+			// 
+			// CenterScreen
+			// 
+
+			Form formB = new Form ();
+			formB.ShowInTaskbar = false;
+			formB.StartPosition = FormStartPosition.CenterScreen;
+			formB.Location = new Point (151, 251);
+			formB.Show ();
+
+			Assert.AreEqual (FormStartPosition.CenterScreen, formB.StartPosition, "#B1");
+			Assert.IsFalse (formB.Location.X == 151, "#B2");
+			Assert.IsFalse (formB.Location.Y == 251, "#B3");
+
+			formB.Location = new Point (311, 221);
+
+			Assert.AreEqual (FormStartPosition.CenterScreen, formB.StartPosition, "#B4");
+			Assert.AreEqual (311, formB.Location.X, "#B5");
+			Assert.AreEqual (221, formB.Location.Y, "#B6");
+
+			formB.Dispose ();
+
+			// 
+			// Manual
+			// 
+
+			Form formC = new Form ();
+			formC.ShowInTaskbar = false;
+			formC.StartPosition = FormStartPosition.Manual;
+			formC.Location = new Point (151, 251);
+			formC.Show ();
+
+			Assert.AreEqual (FormStartPosition.Manual, formC.StartPosition, "#C1");
+			Assert.AreEqual (151, formC.Location.X, "#C2");
+			Assert.AreEqual (251, formC.Location.Y, "#C3");
+
+			formC.Location = new Point (311, 221);
+
+			Assert.AreEqual (FormStartPosition.Manual, formC.StartPosition, "#C4");
+			Assert.AreEqual (311, formC.Location.X, "#C5");
+			Assert.AreEqual (221, formC.Location.Y, "#C6");
+
+			formC.Dispose ();
+
+			// 
+			// WindowsDefaultBounds
+			// 
+
+			Form formD = new Form ();
+			formD.ShowInTaskbar = false;
+			formD.StartPosition = FormStartPosition.WindowsDefaultBounds;
+			formD.Location = new Point (151, 251);
+			formD.Show ();
+
+			Assert.AreEqual (FormStartPosition.WindowsDefaultBounds, formD.StartPosition, "#D1");
+			Assert.IsFalse (formD.Location.X == 151, "#D2");
+			Assert.IsFalse (formD.Location.Y == 251, "#D3");
+
+			formD.Location = new Point (311, 221);
+
+			Assert.AreEqual (FormStartPosition.WindowsDefaultBounds, formD.StartPosition, "#D4");
+			Assert.AreEqual (311, formD.Location.X, "#D5");
+			Assert.AreEqual (221, formD.Location.Y, "#D6");
+
+			formD.Dispose ();
+
+			// 
+			// WindowsDefaultLocation
+			// 
+
+			Form formE = new Form ();
+			formE.ShowInTaskbar = false;
+			formE.Location = new Point (151, 251);
+			formE.Show ();
+
+			Assert.AreEqual (FormStartPosition.WindowsDefaultLocation, formE.StartPosition, "#E1");
+			Assert.IsFalse (formE.Location.X == 151, "#E2");
+			Assert.IsFalse (formE.Location.Y == 251, "#E3");
+
+			formE.Location = new Point (311, 221);
+
+			Assert.AreEqual (FormStartPosition.WindowsDefaultLocation, formE.StartPosition, "#E4");
+			Assert.AreEqual (311, formE.Location.X, "#E5");
+			Assert.AreEqual (221, formE.Location.Y, "#E6");
+
+			formE.Dispose ();
 		}
 
 		[Test]
