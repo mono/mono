@@ -150,7 +150,11 @@ namespace System.Windows.Forms
 			GotFocus += new EventHandler (OnGotFocusTB);
 			holdclick_timer.Elapsed += new ElapsedEventHandler (OnFirstClickTimer);
 
-			SetStyle (ControlStyles.UserPaint | ControlStyles.Opaque, false);
+			SetStyle (ControlStyles.UserPaint | ControlStyles.Opaque
+#if NET_2_0
+				| ControlStyles.UseTextForAccessibility
+#endif
+				, false);
 		}
 
 		#region Private & Internal Properties

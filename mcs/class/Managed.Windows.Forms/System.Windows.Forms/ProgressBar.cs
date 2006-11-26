@@ -174,7 +174,11 @@ namespace System.Windows.Forms
 			SetStyle (ControlStyles.UserPaint | 
 				ControlStyles.Selectable | 
 				ControlStyles.ResizeRedraw | 
-				ControlStyles.Opaque, false);
+				ControlStyles.Opaque
+#if NET_2_0
+				| ControlStyles.UseTextForAccessibility
+#endif
+				, false);
 		}
 		#endregion	// Public Constructors
 

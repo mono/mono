@@ -309,8 +309,12 @@ namespace System.Windows.Forms
 			// So the child controls don't get auto selected when the updown is selected
 			auto_select_child = false;
 			SetStyle(ControlStyles.FixedHeight, true);
+#if NET_2_0
+			SetStyle (ControlStyles.Opaque | ControlStyles.ResizeRedraw, true);
+			SetStyle (ControlStyles.StandardClick | ControlStyles.UseTextForAccessibility, false);
+#endif
 
-			UpdateEditText();
+			UpdateEditText ();
 		}
 		#endregion
 

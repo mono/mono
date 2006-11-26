@@ -729,6 +729,9 @@ namespace System.Windows.Forms
 			control_style = ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | 
 					ControlStyles.Selectable | ControlStyles.StandardClick | 
 					ControlStyles.StandardDoubleClick;
+#if NET_2_0
+			control_style |= ControlStyles.UseTextForAccessibility;
+#endif
 
 			parent = null;
 			background_image = null;

@@ -155,7 +155,11 @@ namespace System.Windows.Forms {
 				ControlStyles.UserMouse | 
 				ControlStyles.SupportsTransparentBackColor | 
 				ControlStyles.CacheText |
+#if NET_2_0
+				ControlStyles.OptimizedDoubleBuffer, true);
+#else
 				ControlStyles.DoubleBuffer, true);
+#endif
 			SetStyle(ControlStyles.StandardClick, false);
 		}
 		#endregion	// Public Constructors

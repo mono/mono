@@ -1,3 +1,20 @@
+2006-11-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ProgressBar.cs: GetStyle fixes for 2.0 profile.
+	* Control.cs: Same.
+	* UpDownBase.cs: Same.
+	* ButtonBase.cs: Same.
+	* ScrollBar.cs: Same.
+	* TrackBar.cs: Same.
+	* PictureBox.cs: Same.
+	* UserControl.cs: Same.
+	* Label.cs: Same.
+	* ListControl.cs: Same.
+	* TextBoxBase.cs: Same.
+	* ListView.cs: Same.
+	* RichTextBox.cs: Same.
+	* TreeView.cs: Same.
+
 2006-11-25  Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* PrintDialog.cs:

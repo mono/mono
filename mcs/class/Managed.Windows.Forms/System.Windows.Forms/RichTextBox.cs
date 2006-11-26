@@ -83,6 +83,10 @@ namespace System.Windows.Forms {
 			ForeColor = ThemeEngine.Current.ColorWindowText;
 			base.HScrolled += new EventHandler(RichTextBox_HScrolled);
 			base.VScrolled += new EventHandler(RichTextBox_VScrolled);
+
+#if NET_2_0
+			SetStyle (ControlStyles.StandardDoubleClick, false);
+#endif
 		}
 		#endregion	// Public Constructors
 

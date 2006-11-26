@@ -124,7 +124,11 @@ namespace System.Windows.Forms {
 			GotFocus += new EventHandler (GotFocusHandler);
 			MouseWheel += new MouseEventHandler(MouseWheelHandler);
 
-			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick, false);
+			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick
+#if NET_2_0
+				| ControlStyles.UseTextForAccessibility
+#endif
+				, false);
 
 			string_format = new StringFormat ();
 			string_format.LineAlignment = StringAlignment.Center;

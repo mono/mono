@@ -40,6 +40,9 @@ namespace System.Windows.Forms {
 	public class UserControl : ContainerControl {
 		#region Public Constructors
 		public UserControl() {
+#if NET_2_0
+			SetStyle (ControlStyles.SupportsTransparentBackColor, true);
+#endif
 		}
 		#endregion	// Public Constructors
 

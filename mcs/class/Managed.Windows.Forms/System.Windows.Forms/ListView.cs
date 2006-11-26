@@ -169,7 +169,11 @@ namespace System.Windows.Forms
 			LostFocus += new EventHandler (FocusChanged);
 			MouseWheel += new MouseEventHandler(ListView_MouseWheel);
 
-			this.SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick, false);
+			this.SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick
+#if NET_2_0
+				| ControlStyles.UseTextForAccessibility
+#endif
+				, false);
 		}
 		#endregion	// Public Constructors
 

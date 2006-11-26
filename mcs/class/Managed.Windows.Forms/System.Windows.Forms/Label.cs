@@ -153,8 +153,13 @@ namespace System.Windows.Forms
 			SetStyle (ControlStyles.ResizeRedraw | 
 				ControlStyles.UserPaint | 
 				ControlStyles.AllPaintingInWmPaint |
-				ControlStyles.SupportsTransparentBackColor |
-				ControlStyles.DoubleBuffer, true);
+				ControlStyles.SupportsTransparentBackColor
+#if NET_2_0
+				| ControlStyles.OptimizedDoubleBuffer
+#else
+				| ControlStyles.DoubleBuffer
+#endif
+				, true);
 			
 			HandleCreated += new EventHandler (OnHandleCreatedLB);
 		}

@@ -198,7 +198,11 @@ namespace System.Windows.Forms
 			base.TabStop = false;
 			base.cursor = Cursors.Default;
 
-			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick, false);
+			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick
+#if NET_2_0
+				| ControlStyles.UseTextForAccessibility
+#endif
+				, false);
 		}
 
 		#region Internal & Private Properties

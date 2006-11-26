@@ -136,8 +136,10 @@ namespace System.Windows.Forms {
 			this.Controls.AddImplicit (vscroll);
 			ResumeLayout ();
 			
-			//SetStyle(ControlStyles.ResizeRedraw, true);
 			SetStyle(ControlStyles.UserPaint | ControlStyles.StandardClick, false);
+#if NET_2_0
+			SetStyle(ControlStyles.UseTextForAccessibility, false);
+#endif
 
 			canvas_width = ClientSize.Width;
 			canvas_height = ClientSize.Height;

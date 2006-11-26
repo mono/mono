@@ -58,7 +58,11 @@ namespace System.Windows.Forms {
 			redraw = true;
 			recalc = true;
 			allow_drop = false;
+#if NET_2_0
+			SetStyle (ControlStyles.OptimizedDoubleBuffer, true);
+#else
 			SetStyle (ControlStyles.DoubleBuffer, true);
+#endif
 			SetStyle (ControlStyles.Opaque, false);
 			SetStyle (ControlStyles.Selectable, false);
 			SetStyle (ControlStyles.SupportsTransparentBackColor, true);
