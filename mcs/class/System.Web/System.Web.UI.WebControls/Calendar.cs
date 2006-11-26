@@ -786,10 +786,6 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void Render (HtmlTextWriter writer)
 		{
-#if NET_2_0
-			if (Page != null)
-				Page.ClientScript.RegisterForEventValidation (this.UniqueID);
-#endif
 			Table table = new Table ();
 			table.CellSpacing = CellSpacing;
 			table.CellPadding = CellPadding;
@@ -1089,6 +1085,9 @@ namespace System.Web.UI.WebControls {
 			hasLink = (Page != null && hasLink == true) ? true : false;
 
 			if (hasLink) {
+#if NET_2_0
+				Page.ClientScript.RegisterForEventValidation(this.UniqueID, arg);
+#endif			
 				str = "<a href=\"";
 				str += Page.ClientScript.GetPostBackClientHyperlink (this, arg);
 				str += "\"";
