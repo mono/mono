@@ -1,0 +1,5 @@
+2006-11-26  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* DerbyMembershipHelper.cs:
+	* DerbyMembershipProvider.cs: fixed CreateUser method, when user
+	already exists in Users table and adding Membership info

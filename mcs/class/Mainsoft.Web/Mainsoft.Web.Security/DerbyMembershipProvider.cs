@@ -184,9 +184,6 @@ namespace Mainsoft.Web.Security {
 				return null;
 			}
 
-			if (providerUserKey == null)
-				providerUserKey = Guid.NewGuid ().ToString ();
-
 			/* encode our password/answer using the
 			 * "passwordFormat" configuration option */
 			string passwordSalt = "";
@@ -238,7 +235,7 @@ namespace Mainsoft.Web.Security {
 
 					return null;
 				}
-				catch (Exception e) {
+				catch (Exception) {
 					status = MembershipCreateStatus.ProviderError;
 					return null;
 				}

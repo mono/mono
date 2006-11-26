@@ -78,7 +78,7 @@ namespace Mainsoft.Web.Security
 					// the user exists in users table, this can occure when user
 					// does not have membership information, but has other information
 					// like roles, etc.
-					if (userId != null && newUserId != (string) userId) {
+					if (userId != null && newUserId != null && newUserId != (string) userId) {
 						trans.Rollback ();
 						return 9; // wrong userid provided
 					}
@@ -88,6 +88,7 @@ namespace Mainsoft.Web.Security
 					trans.Rollback ();
 					return 10; // wrong userid provided
 				}
+				newUserId = (string) userId;
 
 				string selectQueryMbrUserId = "SELECT UserId FROM aspnet_Membership WHERE UserId = ?";
 				OleDbCommand selectCmdMbrUserId = new OleDbCommand (selectQueryMbrUserId, (OleDbConnection) connection);
@@ -138,7 +139,7 @@ namespace Mainsoft.Web.Security
 				AddParameter (cmdInsertMbr, "PasswordFormat", passwordFormat);
 				AddParameter (cmdInsertMbr, "PasswordSalt", passwordSalt);
 				AddParameter (cmdInsertMbr, "Email", email);
-				AddParameter (cmdInsertMbr, "LoweredEmail", email.ToLower ());
+				AddParameter (cmdInsertMbr, "LoweredEmail", email != null ? email.ToLower () : null);
 				AddParameter (cmdInsertMbr, "PasswordQuestion", pwdQuestion);
 				AddParameter (cmdInsertMbr, "PasswordAnswer", pwdAnswer);
 				AddParameter (cmdInsertMbr, "IsApproved", isApproved);
