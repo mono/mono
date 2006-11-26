@@ -28,13 +28,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
-using System.IO;
 using System.Data;
+using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+
 using NUnit.Framework;
 
 namespace MonoTests.System.Data
@@ -667,6 +667,47 @@ namespace MonoTests.System.Data
 			DataSet ds = new DataSet ();
 			ds.ReadXml (new StringReader (xml));
 			AssertNotNull (ds.Tables ["PriceListDetails"]);
+		}
+
+		[Test] // bug #80045
+		[Category ("NotWorking")]
+		public void ColumnOrder ()
+		{
+			string xml = "<?xml version=\"1.0\" standalone=\"yes\"?>" +
+				"<NewDataSet>" +
+				"  <Table>" +
+				"    <Name>Miguel</Name>" +
+				"    <FirstName>de Icaza</FirstName>" +
+				"    <Income>4000</Income>" +
+				"  </Table>" +
+				"  <Table>" +
+				"    <Name>25</Name>" +
+				"    <FirstName>250</FirstName>" +
+				"    <Address>Belgium</Address>" +
+				"    <Income>5000</Income>" +
+				"</Table>" +
+				"</NewDataSet>";
+
+			DataSet ds = new DataSet ();
+			ds.ReadXml (new StringReader (xml));
+			AssertEquals ("#1", 1, ds.Tables.Count);
+			AssertNotNull ("#2", ds.Tables ["Table"]);
+			AssertEquals ("#3", 4, ds.Tables [0].Columns.Count);
+			AssertEquals ("#4a", "Name", ds.Tables [0].Columns [0].ColumnName);
+			AssertEquals ("#4b", 0, ds.Tables [0].Columns [0].Ordinal);
+			AssertEquals ("#5a", "FirstName", ds.Tables [0].Columns [1].ColumnName);
+			AssertEquals ("#5b", 1, ds.Tables [0].Columns [1].Ordinal);
+#if NET_2_0
+			AssertEquals ("#6a", "Address", ds.Tables [0].Columns [2].ColumnName);
+			AssertEquals ("#6b", 2, ds.Tables [0].Columns [2].Ordinal);
+			AssertEquals ("#7a", "Income", ds.Tables [0].Columns [3].ColumnName);
+			AssertEquals ("#7b", 3, ds.Tables [0].Columns [3].Ordinal);
+#else
+			AssertEquals ("#6a", "Income", ds.Tables [0].Columns [2].ColumnName);
+			AssertEquals ("#6b", 2, ds.Tables [0].Columns [2].Ordinal);
+			AssertEquals ("#7a", "Address", ds.Tables [0].Columns [3].ColumnName);
+			AssertEquals ("#7b", 3, ds.Tables [0].Columns [3].Ordinal);
+#endif
 		}
 	}
 }
