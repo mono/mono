@@ -35,6 +35,11 @@ using System.Globalization;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Drawing;
+using System.Collections;
+using MonoTests.SystemWeb.Framework;
+using MonoTests.stand_alone.WebHarness;
+using System.Collections.Specialized;
 
 namespace MonoTests.System.Web.UI.WebControls {
 
@@ -49,6 +54,74 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			return FindControl (name, offset);
 		}
+
+		public string Render ()
+		{
+			HtmlTextWriter writer = new HtmlTextWriter (new StringWriter ());
+			base.Render (writer);
+			return writer.InnerWriter.ToString ();
+		}
+
+		
+#if NET_2_0
+		public new bool HasFooter
+		{
+			get
+			{
+				return base.HasFooter;
+			}
+		}
+
+		public new bool HasHeader
+		{
+			get
+			{
+				return base.HasHeader;
+			}
+		}
+
+		public new bool HasSeparators
+		{
+			get
+			{
+				return base.HasSeparators;
+			}
+		}
+
+		public new int RepeatedItemCount
+		{
+			get
+			{
+				return base.RepeatedItemCount;
+			}
+		}
+
+		public new void RaisePostDataChangedEvent ()
+		{
+			base.RaisePostDataChangedEvent ();
+		}
+
+		protected override Style GetItemStyle (ListItemType itemType, int repeatIndex)
+		{
+			Style s = new Style();
+			s.BackColor = Color.Red;
+			s.BorderStyle = BorderStyle.Solid;
+			WebTest.CurrentTest.UserData = "GetItemStyle";
+			return s;
+		}
+
+		public Style DoGetItemStyle (ListItemType itemType, int repeatIndex)
+		{
+			return base.GetItemStyle (itemType, repeatIndex);
+		}
+
+		public new string RenderItem (ListItemType itemType, int repeatIndex, RepeatInfo repeatInfo)
+		{
+			HtmlTextWriter writer = new HtmlTextWriter (new StringWriter ());
+			base.RenderItem(itemType,repeatIndex,repeatInfo,writer);
+			return writer.InnerWriter.ToString ();
+		}
+#endif
 	}
 
 	[TestFixture]
@@ -57,7 +130,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		[Test]
 		public void Defaults ()
 		{
-			CheckBoxList c = new CheckBoxList ();
+			CheckBoxListPoker c = new CheckBoxListPoker ();
 
 			Assert.AreEqual (c.CellPadding, -1, "A1");
 			Assert.AreEqual (c.CellSpacing, -1, "A2");
@@ -67,7 +140,88 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (c.RepeatLayout,
 					RepeatLayout.Table, "A5");
 			Assert.AreEqual (c.TextAlign, TextAlign.Right, "A6");
+#if NET_2_0
+			Assert.AreEqual (false, c.HasFooter, "HasFooter");
+			Assert.AreEqual (false, c.HasHeader, "HasHeader");
+			Assert.AreEqual (false, c.HasSeparators, "HasSeparators");
+			Assert.AreEqual (0, c.RepeatedItemCount, "RepeatedItemCount");
+			Assert.AreEqual (null, c.DoGetItemStyle (ListItemType.Item, 0), "GetItemStyle");
+#endif
 		}
+
+#if NET_2_0
+		[Test]
+		public void RaisePostDataChangedEvent ()
+		{
+			CheckBoxListPoker c = new CheckBoxListPoker ();
+			c.SelectedIndexChanged += new EventHandler (c_SelectedIndexChanged);
+			Assert.AreEqual (false, eventSelectedIndexChanged, "RaisePostDataChangedEvent#1");
+			c.RaisePostDataChangedEvent ();
+			Assert.AreEqual (true, eventSelectedIndexChanged, "RaisePostDataChangedEvent#2");
+		}
+
+		bool eventSelectedIndexChanged;
+		void c_SelectedIndexChanged (object sender, EventArgs e)
+		{
+			eventSelectedIndexChanged = true;
+		}
+
+		[Test]
+		[Category("NunitWeb")]
+		public void GetItemStyle ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (GetItemStyle_Load));
+			string html = t.Run ();
+			string ctrl = HtmlDiff.GetControlFromPageHtml (html);
+			if (ctrl == string.Empty)
+				Assert.Fail ("CheckBoxList not created fail");
+			Assert.AreEqual ("GetItemStyle", (string) t.UserData, "GetItemStyle not done");
+			if ( ctrl.IndexOf("<td style=\"background-color:Red;border-style:Solid;\">") == -1)
+				Assert.Fail ("CheckBoxList style not rendered");
+		}
+
+		public static void GetItemStyle_Load (Page p)
+		{
+			CheckBoxListPoker c = new CheckBoxListPoker ();
+			ListItem l1 = new ListItem ("item1", "value1");
+			ListItem l2 = new ListItem ("item2", "value2");
+
+			c.Items.Add (l1);
+			c.Items.Add (l2);
+			p.Form.Controls.Add(new LiteralControl(HtmlDiff.BEGIN_TAG));
+			p.Form.Controls.Add (c);
+			p.Form.Controls.Add(new LiteralControl(HtmlDiff.END_TAG));
+		}
+
+		[Test]
+		public void RenderItem ()
+		{
+			CheckBoxListPoker c = new CheckBoxListPoker ();
+			ListItem l1 = new ListItem ("item1", "value1");
+			ListItem l2 = new ListItem ("item2", "value2");
+
+			c.Items.Add (l1);
+			c.Items.Add (l2);
+			string html = c.RenderItem (ListItemType.Item, 0, null);
+			HtmlDiff.AssertAreEqual ("<input id=\"0\" type=\"checkbox\" name=\"0\" /><label for=\"0\">item1</label>", html, "RenderItem#1");
+			html = c.RenderItem (ListItemType.Item, 1, null);
+			HtmlDiff.AssertAreEqual ("<input id=\"1\" type=\"checkbox\" name=\"1\" /><label for=\"1\">item2</label>", html, "RenderItem#2");
+		}
+
+		[Test]
+		public void RepeatedItemCount ()
+		{
+			CheckBoxListPoker c = new CheckBoxListPoker ();
+			ListItem l1 = new ListItem ("item1", "value1");
+			ListItem l2 = new ListItem ("item2", "value2");
+			Assert.AreEqual (0, c.RepeatedItemCount, "RepeatedItemCount#1");
+			c.Items.Add (l1);
+			c.Items.Add (l2);
+			Assert.AreEqual (2, c.RepeatedItemCount, "RepeatedItemCount#2");
+		}
+
+#endif
+
 
 		[Test]
 		public void CleanProperties ()
@@ -260,7 +414,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			sw.NewLine = "\n";
 
 			list.RenderControl (tw);
-			Assert.AreEqual (expected, sw.ToString (), test);
+			HtmlDiff.AssertAreEqual (expected, sw.ToString (), test);
 		}
 
 		[Test]
@@ -353,7 +507,15 @@ namespace MonoTests.System.Web.UI.WebControls {
 	</tr>
 </table>";
 			Render (c, exp, "C1");
-		}		
+		}	
+#if NET_2_0
+		[TestFixtureTearDown]
+		public void teardown ()
+		{
+			WebTest.Unload ();
+		}
+#endif
+
 		
 	}
 }

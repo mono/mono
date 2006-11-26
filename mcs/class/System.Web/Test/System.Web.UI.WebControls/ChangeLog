@@ -1,3 +1,7 @@
+2006-11-26  Yoni Klain         <yonik@mainsoft.com>
+
+	* CheckBoxListTest.cs: added new test for 2.0 
+
 2006-11-23  Igor Zelmanovich   <igorz@mainsoft.com>
 
 	* BoundFieldTest.cs: removed NotWorking attributes.
