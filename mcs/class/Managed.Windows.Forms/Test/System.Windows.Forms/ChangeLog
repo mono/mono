@@ -1,5 +1,9 @@
 2006-11-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* MdiFormTest.cs: Fixed test on (MS) 2.0 profile.
+
+2006-11-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* ControlStylesTest.cs: Fixed GetStyle for 2.0 profile.
 
 2006-11-26  Gert Driesen  <drieseng@users.sourceforge.net>

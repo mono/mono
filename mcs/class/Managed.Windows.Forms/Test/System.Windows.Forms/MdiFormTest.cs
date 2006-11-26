@@ -207,7 +207,11 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreSame (child2, main.ActiveMdiChild, "#4");
 
 			main.Visible = false;
+#if NET_2_0
+			Assert.IsNull (main.ActiveMdiChild, "#5");
+#else
 			Assert.AreSame (child2, main.ActiveMdiChild, "#5");
+#endif
 
 			child2.Dispose ();
 			child1.Dispose ();
