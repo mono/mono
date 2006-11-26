@@ -1,6 +1,13 @@
 2006-11-26 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Page.cs:
+	* Control.cs:
+	implemented ClearChildState(), ClearChildControlState() and 
+	IsChildControlStateCleared	
+
+2006-11-26 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Page.cs:
 	* ClientScriptManager.cs:
 	implemented RegisterExpandoAttribute feature	
 

@@ -1851,11 +1851,16 @@ public class Page : TemplateControl, IHttpHandler
 			requireStateControls = new ArrayList ();
 		int n = requireStateControls.Add (control);
 
-		if (_savedControlState != null && n < _savedControlState.Length) {
-			object state = _savedControlState [n];
-			if (state != null)
-				control.LoadControlState (state);
-		}
+		if (_savedControlState == null || n >= _savedControlState.Length) 
+			return;
+
+		for (Control parent = control.Parent; parent != null; parent = parent.Parent)
+			if (parent.IsChildControlStateCleared)
+				return;
+
+		object state = _savedControlState [n];
+		if (state != null)
+			control.LoadControlState (state);
 	}
 	
 	public bool RequiresControlState (Control control)

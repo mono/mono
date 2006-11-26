@@ -106,6 +106,9 @@ namespace System.Web.UI
 		Hashtable pendingVS; // may hold unused viewstate data from child controls
 		
 
+#if NET_2_0
+			bool _isChildControlStateCleared;
+#endif
 		/*************/
 		int stateMask;
 		const int ENABLE_VIEWSTATE 	= 1;
@@ -269,11 +272,8 @@ namespace System.Web.UI
 			}
 		}
 
-		protected internal bool IsChildControlStateCleared 
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		protected internal bool IsChildControlStateCleared {
+			get { return _isChildControlStateCleared; }
 		}
 
 		protected internal bool IsViewStateEnabled 
@@ -622,12 +622,13 @@ namespace System.Web.UI
 #if NET_2_0
 		protected void ClearChildControlState ()
 		{
-			throw new NotImplementedException ();
+			_isChildControlStateCleared = true;
 		}
 
 		protected void ClearChildState ()
 		{
-			throw new NotImplementedException ();
+			ClearChildViewState ();
+			ClearChildControlState ();
 		}
 #endif		
 

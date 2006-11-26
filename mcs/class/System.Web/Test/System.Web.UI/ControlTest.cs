@@ -185,7 +185,6 @@ namespace MonoTests.System.Web.UI
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void ClearChildControlState ()
 		{
@@ -201,23 +200,28 @@ namespace MonoTests.System.Web.UI
 		}
 		public static void ClearChildControlState_Load (Page p)
 		{
-			ParentControlWithState c1 = new ParentControlWithState ();
+			ControlWithState c1 = new ControlWithState ();
+			p.Form.Controls.Add (c1);
+			if (p.IsPostBack) {
+				c1.ClearChildControlState ();
+			}
 			ControlWithState c2 = new ControlWithState ();
 			c1.Controls.Add (c2);
-			p.Form.Controls.Add (c1);
+			ControlWithState c3 = new ControlWithState ();
+			c2.Controls.Add (c3);
 			if (!p.IsPostBack) {
 				c1.State = "State";
 				c2.State = "Cool";
+				c3.State = "SubCool";
 			}
 			else {
-				c1.ClearChildControlState ();
 				Assert.AreEqual ("State", c1.State, "ControlState#1");
 				Assert.AreEqual (null, c2.State, "ControlState#2");
+				Assert.AreEqual (null, c3.State, "ControlState#2");
 			}
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void ClearChildState ()
 		{
@@ -233,21 +237,28 @@ namespace MonoTests.System.Web.UI
 		}
 		public static void ClearChildState_Load (Page p)
 		{
-			ParentControlWithViewState c1 = new ParentControlWithViewState ();
-			ParentControlWithViewState c2 = new ParentControlWithViewState ();
-			c1.Controls.Add (c2);
+			ControlWithState c1 = new ControlWithState ();
 			p.Form.Controls.Add (c1);
+			if (p.IsPostBack) {
+				c1.ClearChildState ();
+			}
+			ControlWithState c2 = new ControlWithState ();
+			c1.Controls.Add (c2);
+			ControlWithState c3 = new ControlWithState ();
+			c2.Controls.Add (c3);
 			if (!p.IsPostBack) {
 				c1.State = "State";
 				c2.State = "Cool";
-				c1.Viewstate = "VState";
-				c2.Viewstate = "VCool";
+				c2.Viewstate = "Very Cool";
+				c3.State = "SubCool";
+				c3.Viewstate = "Super Cool";
 			}
 			else {
-				Assert.AreEqual ("State", c1.State, "ControlState#1");
-				Assert.AreEqual ("VState", c1.Viewstate, "ControlViewState#1");
-				Assert.AreEqual (null, c2.State, "ControlState#2");
-				Assert.AreEqual (null, c2.Viewstate, "ControlViewState#2");
+				Assert.AreEqual ("State", c1.State, "ClearChildState#1");
+				Assert.AreEqual (null, c2.State, "ClearChildState#2");
+				Assert.AreEqual (null, c3.State, "ClearChildState#3");
+				Assert.AreEqual (null, c2.Viewstate, "ClearChildState#4");
+				Assert.AreEqual (null, c3.Viewstate, "ClearChildState#5");
 			}
 		}
 
@@ -401,6 +412,67 @@ namespace MonoTests.System.Web.UI
 		}
 
 		[Test]
+		[Category ("NunitWeb")]
+		public void ControlState2 () {
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (ControlState2_Load));
+			t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls ["__EVENTTARGET"].Value = "";
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			t.Run ();
+			
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls ["__EVENTTARGET"].Value = "";
+			fr.Controls ["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			t.Run ();
+		}
+		public static void ControlState2_Load (Page p) {
+			ControlWithState parent = new ControlWithState ();
+			p.Form.Controls.Add (parent);
+			if (!p.IsPostBack) {
+				// emulate DataBind
+				parent.Controls.Clear ();
+				parent.ClearChildControlState ();
+				ControlWithState c1 = new ControlWithState ();
+				ControlWithState c2 = new ControlWithState ();
+				parent.Controls.Add (c1);
+				parent.Controls.Add (c2);
+				c1.State = "State1_1";
+				c2.State = "State1_2";
+				parent.State = "First";
+			}
+			else if (parent.State == "First") {
+				// emulate DataBind
+				parent.Controls.Clear ();
+				parent.ClearChildControlState ();
+				ControlWithState c1 = new ControlWithState ();
+				ControlWithState c2 = new ControlWithState ();
+				parent.Controls.Add (c1);
+				parent.Controls.Add (c2);
+				c1.State = "State2_1";
+				c2.State = "State2_2";
+				parent.State = "Second";
+			}
+			else {
+				// emulate CrerateChildControl only
+				parent.Controls.Clear ();
+				ControlWithState c1 = new ControlWithState ();
+				ControlWithState c2 = new ControlWithState ();
+				parent.Controls.Add (c1);
+				parent.Controls.Add (c2);
+
+				Assert.AreEqual ("State2_1", c1.State, "ControlState#1");
+				Assert.AreEqual ("State2_2", c2.State, "ControlState#2");
+			}
+		}
+
+		[Test]
 		public void ClientIDSeparator ()
 		{
 			DerivedControl ctrl = new DerivedControl ();
@@ -416,7 +488,6 @@ namespace MonoTests.System.Web.UI
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void IsChildControlStateCleared ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (IsChildControlStateCleared_Load));
@@ -431,19 +502,25 @@ namespace MonoTests.System.Web.UI
 		}
 		public static void IsChildControlStateCleared_Load (Page p)
 		{
-			ParentControlWithState c1 = new ParentControlWithState ();
+			ControlWithState c1 = new ControlWithState ();
+			p.Form.Controls.Add (c1);
+			if (p.IsPostBack) {
+				Assert.IsFalse (c1.IsChildControlStateCleared, "ControlState#1");
+				c1.ClearChildControlState ();
+				Assert.IsTrue (c1.IsChildControlStateCleared, "ControlState#1");
+			}
 			ControlWithState c2 = new ControlWithState ();
 			c1.Controls.Add (c2);
-			p.Form.Controls.Add (c1);
+			ControlWithState c3 = new ControlWithState ();
+			c2.Controls.Add (c3);
+			if (p.IsPostBack) {
+				Assert.IsFalse (c2.IsChildControlStateCleared, "ControlState#1");
+				Assert.IsFalse (c3.IsChildControlStateCleared, "ControlState#1");
+			}
 			if (!p.IsPostBack) {
 				c1.State = "State";
 				c2.State = "Cool";
-			}
-			else {
-				c1.ClearChildControlState ();
-				Assert.AreEqual ("State", c1.State, "ControlState#1");
-				Assert.AreEqual (null, c2.State, "ControlState#2");
-				Assert.AreEqual (true, c1.IsChildControlStateCleared, "IsChildControlStateCleared");
+				c3.State = "SubCool";
 			}
 		}
 
@@ -451,7 +528,7 @@ namespace MonoTests.System.Web.UI
 		[Category ("NunitWeb")]
 		public void LoadViewStateByID ()
 		{
-			ParentControlWithState c1 = new ParentControlWithState ();
+			ControlWithState c1 = new ControlWithState ();
 			ControlWithState c2 = new ControlWithState ();
 			c1.Controls.Add (c2);
 			Assert.AreEqual (false, c1.LoadViewStateByID, "LoadViewStateByID#1");
@@ -607,10 +684,14 @@ namespace MonoTests.System.Web.UI
 				set { _state = value; }
 			}
 
+			public string Viewstate {
+				get { return (string) ViewState ["Viewstate"]; }
+				set { ViewState ["Viewstate"] = value; }
+			}
+
 			protected override void OnInit (EventArgs e)
 			{
 				base.OnInit (e);
-				Page.RegisterRequiresControlState (this);
 				Page.RegisterRequiresControlState (this);
 			}
 
@@ -624,43 +705,9 @@ namespace MonoTests.System.Web.UI
 				State = (string) savedState;
 			}
 
-			public new void ClearChildControlState ()
+			public new void ClearChildState ()
 			{
-				base.ClearChildControlState ();
-			}
-		}
-
-		class ParentControlWithState : Control
-		{
-			string _state;
-			public string State
-			{
-				get { return _state; }
-				set { _state = value; }
-			}
-
-			protected override void OnInit (EventArgs e)
-			{
-				base.OnInit (e);
-				Page.RegisterRequiresControlState (this);
-				Page.RegisterRequiresControlState (this);
-			}
-
-			protected override void CreateChildControls ()
-			{
-				Controls.Clear ();
-				base.CreateChildControls ();
-				ClearChildControlState ();
-			}
-
-			protected override object SaveControlState ()
-			{
-				return State;
-			}
-
-			protected override void LoadControlState (object savedState)
-			{
-				State = (string) savedState;
+				base.ClearChildState ();
 			}
 
 			public new void ClearChildControlState ()
@@ -679,61 +726,6 @@ namespace MonoTests.System.Web.UI
 			}
 		}
 
-		class ParentControlWithViewState : Control
-		{
-
-			string _viewstate;
-			public string Viewstate
-			{
-				get { return _viewstate; }
-				set { _viewstate = value; }
-			}
-			string _state;
-			public string State
-			{
-				get { return _state; }
-				set { _state = value; }
-			}
-
-			protected override void OnInit (EventArgs e)
-			{
-				base.OnInit (e);
-				Page.RegisterRequiresControlState (this);
-				Page.RegisterRequiresControlState (this);
-			}
-
-			protected override void CreateChildControls ()
-			{
-				Controls.Clear ();
-				base.CreateChildControls ();
-				ClearChildControlState ();
-			}
-
-			protected override object SaveViewState ()
-			{
-				return Viewstate;
-			}
-
-			protected override void LoadViewState (object savedState)
-			{
-				Viewstate = (string) savedState;
-			}
-
-			protected override object SaveControlState ()
-			{
-				return State;
-			}
-
-			protected override void LoadControlState (object savedState)
-			{
-				State = (string) savedState;
-			}
-
-			public new void ClearChildControlState ()
-			{
-				base.ClearChildControlState ();
-			}
-		}
 #endif
 		class MyNC : Control, INamingContainer
 		{
@@ -854,5 +846,6 @@ namespace MonoTests.System.Web.UI
 	}
 #endif
 }
+
 
 
