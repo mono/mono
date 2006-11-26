@@ -42,7 +42,6 @@ namespace MonoTests.System.Data
 	[TestFixture]
 	public class DataSetReadXmlTest : DataSetAssertion
 	{
-
 		const string xml1 = "";
 		const string xml2 = "<root/>";
 		const string xml3 = "<root></root>";
@@ -670,7 +669,9 @@ namespace MonoTests.System.Data
 		}
 
 		[Test] // bug #80045
+#if NET_2_0
 		[Category ("NotWorking")]
+#endif
 		public void ColumnOrder ()
 		{
 			string xml = "<?xml version=\"1.0\" standalone=\"yes\"?>" +
@@ -691,7 +692,7 @@ namespace MonoTests.System.Data
 			DataSet ds = new DataSet ();
 			ds.ReadXml (new StringReader (xml));
 			AssertEquals ("#1", 1, ds.Tables.Count);
-			AssertNotNull ("#2", ds.Tables ["Table"]);
+			AssertEquals ("#2", "Table", ds.Tables [0].TableName);
 			AssertEquals ("#3", 4, ds.Tables [0].Columns.Count);
 			AssertEquals ("#4a", "Name", ds.Tables [0].Columns [0].ColumnName);
 			AssertEquals ("#4b", 0, ds.Tables [0].Columns [0].Ordinal);
@@ -707,6 +708,57 @@ namespace MonoTests.System.Data
 			AssertEquals ("#6b", 2, ds.Tables [0].Columns [2].Ordinal);
 			AssertEquals ("#7a", "Address", ds.Tables [0].Columns [3].ColumnName);
 			AssertEquals ("#7b", 3, ds.Tables [0].Columns [3].Ordinal);
+#endif
+		}
+
+		[Test] // bug #80048
+		[Category ("NotWorking")]
+		public void XmlSpace ()
+		{
+			string xml = "<?xml version=\"1.0\" standalone=\"yes\"?>" +
+				"<NewDataSet>" +
+				"  <Table>" +
+				"    <Name>Miguel</Name>" +
+				"    <FirstName xml:space=\"preserve\"> de Icaza</FirstName>" +
+				"    <Income>4000</Income>" +
+				"  </Table>" +
+				"  <Table>" +
+				"    <Name>Chris</Name>" +
+				"    <FirstName xml:space=\"preserve\">Toshok </FirstName>" +
+				"    <Income>3000</Income>" +
+				"  </Table>" +
+				"</NewDataSet>";
+
+			DataSet ds = new DataSet ();
+			ds.ReadXml (new StringReader (xml));
+#if NET_2_0
+			AssertEquals ("#1", 1, ds.Tables.Count);
+			AssertEquals ("#2", "Table", ds.Tables [0].TableName);
+			AssertEquals ("#3", 3, ds.Tables [0].Columns.Count);
+			AssertEquals ("#4a", "Name", ds.Tables [0].Columns [0].ColumnName);
+			AssertEquals ("#4b", 0, ds.Tables [0].Columns [0].Ordinal);
+			AssertEquals ("#5a", "FirstName", ds.Tables [0].Columns [1].ColumnName);
+			AssertEquals ("#5b", 1, ds.Tables [0].Columns [1].Ordinal);
+			AssertEquals ("#6a", "Income", ds.Tables [0].Columns [2].ColumnName);
+			AssertEquals ("#6b", 2, ds.Tables [0].Columns [2].Ordinal);
+#else
+			AssertEquals ("#1", 2, ds.Tables.Count);
+			AssertEquals ("#2", "Table", ds.Tables [0].TableName);
+			AssertEquals ("#3", 3, ds.Tables [0].Columns.Count);
+			AssertEquals ("#4a", "Name", ds.Tables [0].Columns [0].ColumnName);
+			AssertEquals ("#4b", 0, ds.Tables [0].Columns [0].Ordinal);
+			AssertEquals ("#5a", "Table_Id", ds.Tables [0].Columns [1].ColumnName);
+			AssertEquals ("#5b", 1, ds.Tables [0].Columns [1].Ordinal);
+			AssertEquals ("#6a", "Income", ds.Tables [0].Columns [2].ColumnName);
+			AssertEquals ("#6b", 2, ds.Tables [0].Columns [2].Ordinal);
+			AssertEquals ("#7", "FirstName", ds.Tables [1].TableName);
+			AssertEquals ("#8", 3, ds.Tables [1].Columns.Count);
+			AssertEquals ("#9a", "space", ds.Tables [1].Columns [0].ColumnName);
+			AssertEquals ("#9b", 0, ds.Tables [1].Columns [0].Ordinal);
+			AssertEquals ("#10a", "FirstName_Text", ds.Tables [1].Columns [1].ColumnName);
+			AssertEquals ("#10b", 1, ds.Tables [1].Columns [1].Ordinal);
+			AssertEquals ("#11a", "Table_Id", ds.Tables [1].Columns [2].ColumnName);
+			AssertEquals ("#11b", 2, ds.Tables [1].Columns [2].Ordinal);
 #endif
 		}
 	}

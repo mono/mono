@@ -1,5 +1,9 @@
 2006-11-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* DataSetReadXmlTest.cs: Added NotWorking test for bug #80048.
+
+2006-11-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* DataSetReadXmlTest.cs: Added NotWorking test for bug #80045.
 
 2006-11-21  Nagappan A  <anagappan@novell.com>
