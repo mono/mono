@@ -1,3 +1,7 @@
+2006-11-26  Igor Zelmanovich   <igorz@mainsoft.com>
+
+	* ClientScriptManagerTest.cs: removed NotWorking attributes.
+
 2006-11-22  Igor Zelmanovich   <igorz@mainsoft.com>
 
 	* ControlTest.cs: removed NotWorking attributes.

@@ -30,6 +30,7 @@
 
 using System;
 using System.Globalization;
+using System.Text;
 
 namespace System.Web.Util {
 	internal sealed class StrUtils {
@@ -70,6 +71,29 @@ namespace System.Web.Util {
 				return false;
 
 			return (0 == String.Compare (str1, l1 - l2, str2, 0, l2, ignore_case, invariant));
+		}
+
+		public static string EscapeQuotesAndBackslashes (string attributeValue)
+		{
+			StringBuilder sb = null;
+			for (int i = 0; i < attributeValue.Length; i++) {
+				char ch = attributeValue [i];
+				if (ch == '\'' || ch == '"' || ch == '\\') {
+					if (sb == null) {
+						sb = new StringBuilder ();
+						sb.Append (attributeValue.Substring (0, i));
+					}
+					sb.Append ('\\');
+					sb.Append (ch);
+				}
+				else {
+					if (sb != null)
+						sb.Append (ch);
+				}
+			}
+			if (sb != null)
+				return sb.ToString ();
+			return attributeValue;
 		}
 	}
 }

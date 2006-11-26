@@ -332,7 +332,6 @@ namespace MonoTests.System.Web.UI
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")] // Not Implemented
 		public void ClientScriptManager_RegisterExpandAttribute ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (RegisterExpandAttribute));

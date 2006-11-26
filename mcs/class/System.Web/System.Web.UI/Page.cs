@@ -1020,6 +1020,7 @@ public class Page : TemplateControl, IHttpHandler
 		
 #if NET_2_0
 		scriptManager.SaveEventValidationState ();
+		scriptManager.WriteExpandoAttributes (writer);
 #endif
 		scriptManager.WriteHiddenFields (writer);
 		scriptManager.WriteClientScriptIncludes (writer);

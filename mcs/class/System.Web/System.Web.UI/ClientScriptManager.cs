@@ -38,6 +38,8 @@ using System.Collections;
 using System.Collections.Generic;
 #endif
 using System.Text;
+using System.Collections.Specialized;
+using System.Web.Util;
 
 namespace System.Web.UI
 {
@@ -54,6 +56,7 @@ namespace System.Web.UI
 		Hashtable hiddenFields;
 		ScriptEntry submitStatements;
 		ScriptEntry scriptIncludes;
+		Hashtable expandoAttributes;
 		Page page;
 #if NET_2_0
 		List <int> eventValidationValues;
@@ -368,21 +371,29 @@ namespace System.Web.UI
 			RegisterScript (ref scriptIncludes, type, "resource-" + resourceName, GetWebResourceUrl (type, resourceName), false);
 		}
 
-		[MonoTODO]
-		public void RegisterExpandoAttribute (string controlId, 
-						      string name, 
-						      string value)
+		public void RegisterExpandoAttribute (string controlId, string attributeName, string attributeValue)
 		{
-			throw new NotImplementedException ();
+			RegisterExpandoAttribute (controlId, attributeName, attributeValue, true);
 		}
 
-		[MonoTODO]
-		public void RegisterExpandoAttribute(string controlId, 
-						     string attributeName, 
-						     string attributeValue, 
-						     bool encode)
+		public void RegisterExpandoAttribute (string controlId, string attributeName, string attributeValue, bool encode)
 		{
-			throw new NotImplementedException ();
+			if (controlId == null)
+				throw new ArgumentNullException ("controlId");
+
+			if (attributeName == null)
+				throw new ArgumentNullException ("attributeName");
+			
+			if (expandoAttributes == null)
+				expandoAttributes = new Hashtable ();
+
+			ListDictionary list = (ListDictionary)expandoAttributes [controlId];
+			if (list == null) {
+				list = new ListDictionary ();
+				expandoAttributes [controlId] = list;
+			}
+
+			list.Add (attributeName, encode ? StrUtils.EscapeQuotesAndBackslashes (attributeValue) : attributeValue);
 		}
 		
 		// Implemented following the description in http://odetocode.com/Blogs/scott/archive/2006/03/20/3145.aspx
@@ -473,6 +484,27 @@ namespace System.Web.UI
 		internal string EventStateFieldName
 		{
 			get { return "__EVENTVALIDATION"; }
+		}
+
+		internal void WriteExpandoAttributes (HtmlTextWriter writer)
+		{
+			if (expandoAttributes == null)
+				return;
+
+			writer.WriteLine ();
+			writer.WriteLine ("<script type=\"text/javascript\">");
+			writer.WriteLine ("<!--");
+
+			foreach (string controlId in expandoAttributes.Keys) {
+				writer.WriteLine ("var {0} = document.all ? document.all [\"{0}\"] : document.getElementById (\"{0}\");", controlId);
+				ListDictionary attrs = (ListDictionary) expandoAttributes [controlId];
+				foreach (string attributeName in attrs.Keys) {
+					writer.WriteLine ("{0}.{1} = \"{2}\";", controlId, attributeName, attrs [attributeName]);
+				}
+			}
+			writer.WriteLine ("// -->");
+			writer.WriteLine ("</script>");
+			writer.WriteLine ();
 		}
 #endif
 		
