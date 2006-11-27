@@ -138,10 +138,8 @@ namespace System.Web.UI
 				else
 					return GetPostBackEventReference (options.TargetControl, options.Argument);
 			}
-			
-			if (!IsClientScriptIncludeRegistered (typeof(Page), "webform")) {
-				RegisterClientScriptInclude (typeof(Page), "webform", GetWebResourceUrl (typeof(Page), "webform.js"));
-			}
+
+			RegisterWebFormClientScript ();
 			
 			if (options.ActionUrl != null)
 				RegisterHiddenField (Page.PreviousPageID, page.Request.FilePath);
@@ -160,6 +158,13 @@ namespace System.Web.UI
 					ClientScriptManager.GetScriptLiteral (options.ClientSubmit),
 					ClientScriptManager.GetScriptLiteral (options.ValidationGroup)
 				);
+		}
+
+		internal void RegisterWebFormClientScript ()
+		{
+			if (!IsClientScriptIncludeRegistered (typeof (Page), "webform")) {
+				RegisterClientScriptInclude (typeof (Page), "webform", GetWebResourceUrl (typeof (Page), "webform.js"));
+			}
 		}
 		
 		public string GetCallbackEventReference (Control control, string argument, string clientCallback, string context)

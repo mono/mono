@@ -1,5 +1,10 @@
 2006-11-27 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* ClientScriptManager.cs: refactoring:
+	extracted method RegisterWebFormClientScript	
+
+2006-11-27 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Control.cs: implemented OpenFile()
 
 2006-11-26 Igor Zelmanovich <igorz@mainsoft.com>
