@@ -1,3 +1,6 @@
+2006-11-27 Yoni Klain <yonik@mainsoft.com>
+	* add new resources : NoEventValidation.aspx for ImageButtonTest.cs
+
 2006-11-22 Yoni Klain <yonik@mainsoft.com>
 	* add new resources : AsyncPage.aspx,PageCultureTest.aspx for PageTest.cs
 

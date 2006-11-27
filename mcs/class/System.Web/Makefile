@@ -127,6 +127,7 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/AsyncPage.aspx \
 	Test/mainsoft/NunitWebResources/PageCultureTest.aspx \
 	Test/mainsoft/NunitWebResources/adapters.browser \
+	Test/mainsoft/NunitWebResources/NoEventValidation.aspx \
 	Test/mainsoft/MainsoftWebTest/nunitweb_config.xml 
 
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
