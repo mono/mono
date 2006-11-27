@@ -1057,8 +1057,6 @@ namespace System.Windows.Forms
     			button_state = ButtonState.Pushed;				
     			if (dropdown_style == ComboBoxStyle.DropDownList)
     				Invalidate (text_area);
-
-			OnDropDown (EventArgs.Empty);
 		}
 		
 		internal void DropDownListBoxFinished ()

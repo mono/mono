@@ -1,3 +1,8 @@
+2006-11-27  Mike Kestner  <mkestner@novell.com>
+
+	* ComboBox.cs: remove redundant OnDropDown call.  It is called
+	from the ComboListBox.ShowWindow code. Fixes #79969.
+
 2006-11-27  Chris Toshok  <toshok@ximian.com>
 
 	* Hwnd.cs: remove the setters for ExposePending and
