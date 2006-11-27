@@ -36,6 +36,9 @@ using System.Globalization;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using MonoTests.SystemWeb.Framework;
+using System.Collections;
+using MonoTests.stand_alone.WebHarness;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -70,9 +73,174 @@ namespace MonoTests.System.Web.UI.WebControls
 				HtmlTextWriter writer = new HtmlTextWriter (sw);
 				base.Render (writer);
 				return writer.InnerWriter.ToString ();
-			}			
+			}		
+#if NET_2_0
+			public new void RaisePostBackEvent (string eventArgument)
+			{
+				base.RaisePostBackEvent (eventArgument);
+			}
+
+			public new PostBackOptions GetPostBackOptions ()
+			{
+				return base.GetPostBackOptions ();
+			}
+#endif
+
+		}
+
+		[TestFixtureSetUp]
+		public void SetUp ()
+		{
+			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
+		}
+
+		[Test]
+		public void Defaults ()
+		{
+			Poker b = new Poker ();
+#if NET_2_0
+			Assert.AreEqual (string.Empty, b.OnClientClick, "OnClientClick");
+			Assert.AreEqual (string.Empty, b.PostBackUrl, "PostBackUrl");
+			Assert.AreEqual (string.Empty, b.ValidationGroup, "ValidationGroup");
+#endif
 		}
 		
+#if NET_2_0
+		[Test]
+		public void OnClientClick ()
+		{
+			Poker b = new Poker ();
+			b.OnClientClick = "MyClickMethod";
+			string html = b.Render ();
+			HtmlDiff.AssertAreEqual ("<a onclick=\"MyClickMethod;\"></a>", html, "OnClientClick Failed");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void GetPostBackOptions ()
+		{
+			WebTest t = new WebTest ("NoEventValidation.aspx");
+			t.Invoker = PageInvoker.CreateOnLoad (GetPostBackOptions_Load);
+			t.Run ();
+		}
+
+		public static void GetPostBackOptions_Load (Page p)
+		{
+			Poker b = new Poker ();
+			p.Controls.Add (b);
+			b.PostBackUrl = "~/MyPostBackUrl.aspx";
+			b.Text = "MyText";
+			PostBackOptions opt = b.GetPostBackOptions ();
+			Assert.IsNotNull (opt, "PostBackOptions not created");
+			Assert.AreEqual ("MyPostBackUrl.aspx", opt.ActionUrl, "ActionUrl");
+			Assert.AreEqual (b, opt.TargetControl, "TargetControl");
+		}
+ 		
+
+		[Test]
+		[Category("NunitWeb")]
+		public void PostBackUrl ()
+		{
+			WebTest t = new WebTest ("NoEventValidation.aspx");
+			t.Invoker = PageInvoker.CreateOnLoad (PostBackUrl_Load);
+			t.Run ();
+		}
+
+		public static void PostBackUrl_Load (Page p)
+		{
+			Poker b = new Poker ();
+			p.Controls.Add (b);
+			b.PostBackUrl = "~/MyPostBackUrl.aspx";
+			string html = b.Render ();
+			if (html.IndexOf ("MyPostBackUrl.aspx") == -1)
+				Assert.Fail ("PostBackUrl not created");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void ValidationGroup ()
+		{
+			WebTest t = new WebTest ("NoEventValidation.aspx");
+			t.Invoker = PageInvoker.CreateOnLoad (ValidationGroup_Load);
+			t.Run ();
+		}
+
+		public static void ValidationGroup_Load (Page p)
+		{
+			Poker b = new Poker ();
+			b.ValidationGroup = "MyValidationGroup";
+			TextBox tb = new TextBox ();
+			tb.ID = "tb";
+			tb.ValidationGroup = "MyValidationGroup";
+			RequiredFieldValidator v = new RequiredFieldValidator ();
+			v.ControlToValidate = "tb";
+			v.ValidationGroup = "MyValidationGroup";
+			p.Controls.Add (tb);
+			p.Controls.Add (v);
+			p.Controls.Add (b);
+			string html = b.Render ();
+			if (html.IndexOf ("href") == -1)
+				Assert.Fail ("Link button not created");
+			if (html.IndexOf ("MyValidationGroup") == -1)
+				Assert.Fail ("Validation group not set");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void RaisePostBackEvent ()
+		{
+			WebTest t = new WebTest ("NoEventValidation.aspx");
+			t.Invoker = PageInvoker.CreateOnLoad (RaisePostBackEvent_Load);
+			t.Run ();
+			ArrayList eventlist = t.UserData as ArrayList;
+			if (eventlist == null)
+				Assert.Fail ("User data does not been created fail");
+
+			Assert.AreEqual ("Click", eventlist[0], "Event Flow #0");
+			Assert.AreEqual ("Command", eventlist[1], "Event Flow #1");
+		}
+
+		public static void RaisePostBackEvent_Load (Page p)
+		{
+			Poker b = new Poker ();
+			p.Form.Controls.Add (b);
+			b.Click += new EventHandler (b_Click);
+			b.Command += new CommandEventHandler (b_Command);
+			b.RaisePostBackEvent ("Click");
+		}
+
+		static void b_Command (object sender, CommandEventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("Command");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("Command");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+
+		static void b_Click (object sender, EventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("Click");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("Click");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+#endif
 		[Test]
 		public void ViewState ()
 		{
@@ -204,6 +372,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.IsTrue (got_bubble, "#16");
 		}
 
+
+
 #if NET_2_0
 		[Test]
 		public void TestValidationGroup ()
@@ -222,8 +392,13 @@ namespace MonoTests.System.Web.UI.WebControls
 			copy.LoadState (state);
 			Assert.AreEqual (copy.ValidationGroup, "VG1", "A3");
 		}
+
+		[TestFixtureTearDown]
+		public void TearDown ()
+		{
+			WebTest.Unload ();
+		}
 #endif
-		
 	}
 }
 

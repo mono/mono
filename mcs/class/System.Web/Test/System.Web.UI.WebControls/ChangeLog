@@ -1,3 +1,7 @@
+2006-11-27  Yoni Klain         <yonik@mainsoft.com>
+
+	* LinkButtonTest.cs: added new test for 2.0 
+
 2006-11-26  Yoni Klain         <yonik@mainsoft.com>
 
 	* ImageButtonTest.cs: added new test for 2.0 
