@@ -351,11 +351,27 @@ namespace System.Web.UI
 		
 		internal Type GetTypeFromBin (string typeName)
 		{
-			if (!Directory.Exists (PrivateBinPath))
-				throw new HttpException (String.Format ("Type {0} not found.", typeName));
-
-			string [] binDlls = Directory.GetFiles (PrivateBinPath, "*.dll");
 			Type result = null;
+#if NET_2_0
+			IList toplevelAssemblies = BuildManager.TopLevelAssemblies;
+			if (toplevelAssemblies != null && toplevelAssemblies.Count > 0) {
+				foreach (Assembly asm in toplevelAssemblies) {
+					Type type = asm.GetType (typeName, false);
+					if (type != null) {
+						if (result != null)
+							throw new HttpException (String.Format ("Type {0} is not unique.", typeName));
+					}
+					result = type;
+				}
+			}
+#endif
+			if (!Directory.Exists (PrivateBinPath))
+				if (result == null)
+					throw new HttpException (String.Format ("Type {0} not found.", typeName));
+				else
+					return result;
+			
+			string [] binDlls = Directory.GetFiles (PrivateBinPath, "*.dll");
 			foreach (string dll in binDlls) {
 				Assembly assembly = Assembly.LoadFrom (dll);
 				Type type = assembly.GetType (typeName, false);

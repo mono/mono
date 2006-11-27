@@ -1,5 +1,8 @@
 2006-11-27  Marek Habersack  <grendello@gmail.com>
 
+	* CachingCompiler.cs: Automatically reference App_Code
+	assemblies.
+
 	* AppCodeCompiler.cs: Add ~/bin/*.dll to the referenced assemblies
 	when compiling.
 

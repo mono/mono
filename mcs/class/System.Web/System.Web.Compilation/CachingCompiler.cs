@@ -123,6 +123,9 @@ namespace System.Web.Compilation
 				SimpleWebHandlerParser parser = compiler.Parser;
 				CompilerParameters options = compiler.CompilerOptions;
 				options.IncludeDebugInformation = parser.Debug;
+#if NET_2_0
+				GetExtraAssemblies (options);
+#endif
 				results = compiler.Compiler.CompileAssemblyFromFile (options, compiler.InputFile);
 				string [] deps = (string []) parser.Dependencies.ToArray (typeof (string));
 				cache.InsertPrivate (key, results, new CacheDependency (deps));
@@ -143,7 +146,9 @@ namespace System.Web.Compilation
 				foreach (string str in assemblies)
 					coll.Add (str);
 			}
-
+#if NET_2_0
+			GetExtraAssemblies (options);
+#endif
 			return options;
 		}
 
@@ -224,6 +229,25 @@ namespace System.Web.Compilation
 			InsertType (type, file);
 			return type;
 		}
+
+#if NET_2_0
+		static void GetExtraAssemblies (CompilerParameters options)
+		{
+			ArrayList al = WebConfigurationManager.ExtraAssemblies;
+			if (al != null && al.Count > 0) {
+				foreach (object o in al)
+					if (o is string)
+						options.ReferencedAssemblies.Add ((string) o);
+			}
+
+			IList list = BuildManager.CodeAssemblies;
+			if (list != null && list.Count > 0) {
+				foreach (object o in list)
+					if (o is string)
+						options.ReferencedAssemblies.Add ((string) o);
+			}
+		}
+#endif
 
 		static bool AcquireCompilationTicket (string key, out object ticket)
 		{
