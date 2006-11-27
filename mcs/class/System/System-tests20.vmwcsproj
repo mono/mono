@@ -1,0 +1,301 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{25EA16E1-E3B8-4433-8533-23B0FB0F93BA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <AssemblyName>System_tests</AssemblyName>
+    <JDKName>1.5.0_05</JDKName>
+    <GHProjectType>1</GHProjectType>
+    <GHProjectKind>framework</GHProjectKind>
+    <MergeExternal>..\lib\apache_http_client.jar</MergeExternal>
+    <Version>2.0</Version>
+    <RootNamespace>MonoTest</RootNamespace>
+    <jarserver>iap2</jarserver>
+    <StartupObject>
+    </StartupObject>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20_bootstrap|AnyCPU' ">
+    <OutputPath>bin\Release_Java20_bootstrap\</OutputPath>
+    <DefineConstants>TRACE;TARGET_JVM;NET_1_1;NET_2_0</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <SkipValidation>True</SkipValidation>
+    <KeepIntermediate>False</KeepIntermediate>
+    <GHProjectType>1</GHProjectType>
+    <PreCompile>false</PreCompile>
+    <AdditionalClassPath>
+    </AdditionalClassPath>
+    <ApplicationServerType>
+    </ApplicationServerType>
+    <Version>2.0</Version>
+    <JDKName>1.5.0_05</JDKName>
+    <jarserver>iap2</jarserver>
+    <TargetPlatform>0</TargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
+    <OutputPath>bin\Release_Java20\</OutputPath>
+    <DefineConstants>TRACE;TARGET_JVM;NET_1_1;NET_2_0;XML_DEP;CONFIGURATION_DEP;CONFIGURATION_2_0</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <SkipValidation>False</SkipValidation>
+    <KeepIntermediate>False</KeepIntermediate>
+    <GHProjectType>1</GHProjectType>
+    <PreCompile>false</PreCompile>
+    <AdditionalClassPath>
+    </AdditionalClassPath>
+    <ApplicationServerType>
+    </ApplicationServerType>
+    <Version>2.0</Version>
+    <JDKName>1.5.0_05</JDKName>
+    <jarserver>iap2</jarserver>
+    <TargetPlatform>0</TargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug_Java\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;TARGET_JVM;NET_1_1;ONLY_1_1;XML_DEP;CONFIGURATION_DEP</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <BaseAddress>285212672</BaseAddress>
+    <SkipValidation>True</SkipValidation>
+    <KeepIntermediate>False</KeepIntermediate>
+    <TargetPlatform>0</TargetPlatform>
+    <AdditionalClassPath>
+    </AdditionalClassPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release_Java\</OutputPath>
+    <DefineConstants>TRACE;TARGET_JVM;NET_1_1;ONLY_1_1;XML_DEP;CONFIGURATION_DEP</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <BaseAddress>285212672</BaseAddress>
+    <SkipValidation>false</SkipValidation>
+    <KeepIntermediate>false</KeepIntermediate>
+    <TargetPlatform>0</TargetPlatform>
+    <AdditionalClassPath>
+    </AdditionalClassPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug_Java20\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;TARGET_JVM;NET_1_1;NET_2_0;XML_DEP;CONFIGURATION_DEP;CONFIGURATION_2_0</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <SkipValidation>True</SkipValidation>
+    <KeepIntermediate>False</KeepIntermediate>
+    <GHProjectType>1</GHProjectType>
+    <PreCompile>false</PreCompile>
+    <AdditionalClassPath>
+    </AdditionalClassPath>
+    <ApplicationServerType>
+    </ApplicationServerType>
+    <Version>2.0</Version>
+    <JDKName>1.5.0_05</JDKName>
+    <jarserver>iap2</jarserver>
+    <GHProjectKind>framework</GHProjectKind>
+    <TargetPlatform>0</TargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20_bootstrap|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug_Java20_bootstrap\</OutputPath>
+    <DefineConstants>TRACE;TARGET_JVM;NET_1_1;NET_2_0;DEBUG</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <SkipValidation>false</SkipValidation>
+    <KeepIntermediate>false</KeepIntermediate>
+    <GHProjectType>1</GHProjectType>
+    <PreCompile>false</PreCompile>
+    <AdditionalClassPath>
+    </AdditionalClassPath>
+    <ApplicationServerType>
+    </ApplicationServerType>
+    <Version>2.0</Version>
+    <JDKName>1.5.0_05</JDKName>
+    <jarserver>iap2</jarserver>
+    <TargetPlatform>0</TargetPlatform>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.csharp.targets" />
+  <Import Project="$(VMW_HOME)\bin\Mainsoft.Common.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties REFS-JarPath-nunit-framework="..\..\nunit20\core\bin\Debug_Java20\nunit.framework.jar" REFS-JarPath-system-xml="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Xml.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\mscorlib.jar" REFS-JarPath-rt="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jre5\lib\rt.jar" REFS-JarPath-system-configuration="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Configuration.jar" REFS-JarPath-system="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.jar" REFS-JarPath-system-drawing="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Drawing.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\jai_imageio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\jai_core.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\jai_codec.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\clibwrapper_jiio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\mlibwrapper_jai.jar" />
+    </VisualStudio>
+  </ProjectExtensions>
+  <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Configuration">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.XML" />
+  </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Test\System.Collections.Generic\LinkedListTest.cs" />
+    <Compile Include="Test\System.Collections.Generic\QueueTest.cs" />
+    <Compile Include="Test\System.Collections.Generic\SortedDictionaryTest.cs" />
+    <Compile Include="Test\System.Collections.Generic\SortedListTest.cs" />
+    <Compile Include="Test\System.Collections.Generic\StackTest.cs" />
+    <Compile Include="Test\System.Collections.Specialized\BasicOperationsTest.cs" />
+    <Compile Include="Test\System.Collections.Specialized\BitVector32Test.cs" />
+    <Compile Include="Test\System.Collections.Specialized\HybridDictionaryTest.cs" />
+    <Compile Include="Test\System.Collections.Specialized\ListDictionaryTest.cs" />
+    <Compile Include="Test\System.Collections.Specialized\NameObjectCollectionBaseTest.cs" />
+    <Compile Include="Test\System.Collections.Specialized\NameValueCollectionTest.cs" />
+    <Compile Include="Test\System.Collections.Specialized\OrderedDictionaryTest.cs" />
+    <Compile Include="Test\System.Collections.Specialized\StringCollectionTest.cs" />
+    <Compile Include="Test\System.Collections.Specialized\StringDictionaryTest.cs" />
+    <Compile Include="Test\System.ComponentModel.Design.Serialization\InstanceDescriptorTest.cs" />
+    <Compile Include="Test\System.ComponentModel.Design\ServiceContainerTest.cs" />
+    <Compile Include="Test\System.ComponentModel\ArrayConverterTests.cs" />
+    <Compile Include="Test\System.ComponentModel\ByteConverterTests.cs" />
+    <Compile Include="Test\System.ComponentModel\CollectionConverterTest.cs" />
+    <Compile Include="Test\System.ComponentModel\ContainerTest.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Test\System.ComponentModel\DateTimeConverterTests.cs" />
+    <Compile Include="Test\System.ComponentModel\DecimalConverterTests.cs" />
+    <Compile Include="Test\System.ComponentModel\DoubleConverterTests.cs" />
+    <Compile Include="Test\System.ComponentModel\EventHandlerListTests.cs" />
+    <Compile Include="Test\System.ComponentModel\Int16ConverterTests.cs" />
+    <Compile Include="Test\System.ComponentModel\Int32ConverterTests.cs" />
+    <Compile Include="Test\System.ComponentModel\Int64ConverterTests.cs" />
+    <Compile Include="Test\System.ComponentModel\LicenseManagerTests.cs" />
+    <Compile Include="Test\System.ComponentModel\PropertyDescriptorCollectionTests.cs" />
+    <Compile Include="Test\System.ComponentModel\PropertyDescriptorTests.cs" />
+    <Compile Include="Test\System.ComponentModel\SByteConverterTests.cs" />
+    <Compile Include="Test\System.ComponentModel\SingleConverterTests.cs" />
+    <Compile Include="Test\System.ComponentModel\ToolboxItemAttributeTests.cs" />
+    <Compile Include="Test\System.ComponentModel\TypeConverterTests.cs" />
+    <Compile Include="Test\System.ComponentModel\TypeDescriptorTests.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Test\System.ComponentModel\UInt16ConverterTests.cs" />
+    <Compile Include="Test\System.ComponentModel\UInt32ConverterTests.cs" />
+    <Compile Include="Test\System.ComponentModel\UInt64ConverterTests.cs" />
+    <Compile Include="Test\System.Configuration.Provider\ProviderBaseTest.cs" />
+    <Compile Include="Test\System.Configuration\ApplicationSettingsBaseTest.cs" />
+    <Compile Include="Test\System.Configuration\LocalFileSettingsProviderTest.cs" />
+    <Compile Include="Test\System.Configuration\ProviderCollectionTest.cs" />
+    <Compile Include="Test\System.Configuration\SettingsPropertyCollectionTest.cs" />
+    <Compile Include="Test\System.Configuration\SettingsPropertyTest.cs" />
+    <Compile Include="Test\System.Configuration\SettingsPropertyValueCollectionTest.cs" />
+    <Compile Include="Test\System.Configuration\SettingsPropertyValueTest.cs" />
+    <Compile Include="Test\System.Net.Configuration\ConnectionManagementSectionTest.cs" />
+    <Compile Include="Test\System.Net.Configuration\HttpWebRequestElementTest.cs" />
+    <Compile Include="Test\System.Net.Configuration\WebRequestModulesSectionTest.cs" />
+    <Compile Include="Test\System.Net.Mail\AlternateViewCollectionTest.cs" />
+    <Compile Include="Test\System.Net.Mail\AlternateViewTest.cs" />
+    <Compile Include="Test\System.Net.Mail\AttachmentCollectionTest.cs" />
+    <Compile Include="Test\System.Net.Mail\AttachmentTest.cs" />
+    <Compile Include="Test\System.Net.Mail\LinkedResourceCollectionTest.cs" />
+    <Compile Include="Test\System.Net.Mail\LinkedResourceTest.cs" />
+    <Compile Include="Test\System.Net.Mail\MailAddressCollectionTest.cs" />
+    <Compile Include="Test\System.Net.Mail\MailAddressTest.cs" />
+    <Compile Include="Test\System.Net.Mail\MailMessageTest.cs" />
+    <Compile Include="Test\System.Net.Mail\SmtpClientTest.cs" />
+    <Compile Include="Test\System.Net.Mime\ContentDispositionTest.cs" />
+    <Compile Include="Test\System.Net.Mime\ContentTypeTest.cs" />
+    <Compile Include="Test\System.Net.Sockets\SocketTest.cs" />
+    <Compile Include="Test\System.Net.Sockets\TcpClientTest.cs" />
+    <Compile Include="Test\System.Net.Sockets\TcpListenerTest.cs" />
+    <Compile Include="Test\System.Net.Sockets\UdpClientTest.cs" />
+    <Compile Include="Test\System.Net\CookieCollectionTest.cs" />
+    <Compile Include="Test\System.Net\CookieContainerTest.cs" />
+    <Compile Include="Test\System.Net\CookieTest.cs" />
+    <Compile Include="Test\System.Net\CredentialCacheTest.cs" />
+    <Compile Include="Test\System.Net\DnsPermissionAttributeTest.cs" />
+    <Compile Include="Test\System.Net\DnsPermissionTest.cs" />
+    <Compile Include="Test\System.Net\DnsTest.cs" />
+    <Compile Include="Test\System.Net\FileWebRequestTest.cs" />
+    <Compile Include="Test\System.Net\FtpWebRequestTest.cs" />
+    <Compile Include="Test\System.Net\HttpListener2Test.cs" />
+    <Compile Include="Test\System.Net\HttpListenerBasicIdentityTest.cs" />
+    <Compile Include="Test\System.Net\HttpListenerPrefixCollectionTest.cs" />
+    <Compile Include="Test\System.Net\HttpListenerTest.cs" />
+    <Compile Include="Test\System.Net\HttpWebRequestTest.cs" />
+    <Compile Include="Test\System.Net\IPAddressTest.cs" />
+    <Compile Include="Test\System.Net\IPEndPointTest.cs" />
+    <Compile Include="Test\System.Net\ServicePointManagerTest.cs" />
+    <Compile Include="Test\System.Net\ServicePointTest.cs" />
+    <Compile Include="Test\System.Net\SocketPermissionAttributeTest.cs" />
+    <Compile Include="Test\System.Net\SocketPermissionTest.cs" />
+    <Compile Include="Test\System.Net\WebHeaderCollectionTest.cs" />
+    <Compile Include="Test\System.Net\WebPermissionAttributeTest.cs" />
+    <Compile Include="Test\System.Net\WebProxyTest.cs" />
+    <Compile Include="Test\System.Net\WebRequestTest.cs" />
+    <Compile Include="Test\System.Security.Permissions\ResourcePermissionBaseEntryTest.cs" />
+    <Compile Include="Test\System.Security.Permissions\ResourcePermissionBaseTest.cs" />
+    <Compile Include="Test\System.Security.Permissions\StorePermissionAttributeTest.cs" />
+    <Compile Include="Test\System.Security.Permissions\StorePermissionTest.cs" />
+    <Compile Include="Test\System.Text.RegularExpressions\GroupTest.cs" />
+    <Compile Include="Test\System.Text.RegularExpressions\MatchTest.cs" />
+    <Compile Include="Test\System.Text.RegularExpressions\PerlTest.cs" />
+    <Compile Include="Test\System.Text.RegularExpressions\PerlTrials.cs" />
+    <Compile Include="Test\System.Text.RegularExpressions\RegexBugs.cs" />
+    <Compile Include="Test\System.Text.RegularExpressions\RegexCompilationInfoTest.cs" />
+    <Compile Include="Test\System.Text.RegularExpressions\RegexReplace.cs" />
+    <Compile Include="Test\System.Text.RegularExpressions\RegexTest.cs" />
+    <Compile Include="Test\System.Text.RegularExpressions\RegexTrial.cs" />
+    <Compile Include="Test\System.Timers\TimersDescriptionAttributeTest.cs" />
+    <Compile Include="Test\System.Timers\TimerTest.cs" />
+    <Compile Include="Test\System\FileStyleUriParserTest.cs" />
+    <Compile Include="Test\System\FtpStyleUriParserTest.cs" />
+    <Compile Include="Test\System\GenericUriParserTest.cs" />
+    <Compile Include="Test\System\GopherStyleUriParserTest.cs" />
+    <Compile Include="Test\System\HttpStyleUriParserTest.cs" />
+    <Compile Include="Test\System\LdapStyleUriParserTest.cs" />
+    <Compile Include="Test\System\NetPipeStyleUriParserTest.cs" />
+    <Compile Include="Test\System\NetTcpStyleUriParserTest.cs" />
+    <Compile Include="Test\System\NewsStyleUriParserTest.cs" />
+    <Compile Include="Test\System\uri-test-generator.cs" />
+    <Compile Include="Test\System\UriBuilderTest.cs" />
+    <Compile Include="Test\System\UriParserTest.cs" />
+    <Compile Include="Test\System\UriTest.cs" />
+    <Compile Include="Test\System\UriTest2.cs" />
+    <Compile Include="Test\System\UriTest3.cs" />
+    <Compile Include="Test\System\UriTypeConverterTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Test\System.Diagnostics\" />
+    <Folder Include="Test\System.IO.Compression\" />
+    <Folder Include="Test\System.IO\" />
+    <Folder Include="Test\System.Threading\" />
+  </ItemGroup>
+</Project>
