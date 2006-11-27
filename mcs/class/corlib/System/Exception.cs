@@ -328,6 +328,19 @@ namespace System
 			}
 #endif
 			return mi.DeclaringType.ToString () + "." + mi.Name + generic + " (" + parms + ")";
-		}				
+		}
+
+#if NET_2_0
+		//
+		// The documentation states that this is available in 1.x,
+		// but it was not available (MemberRefing this would fail)
+		// and it states the signature is `override sealed', but the
+		// correct value is `newslot' 
+		//
+		public new Type GetType ()
+		{
+			return base.GetType ();
+		}
+#endif
 	}
 }

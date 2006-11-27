@@ -1,3 +1,6 @@
+2006-11-27  Miguel de Icaza  <miguel@novell.com>
+
+	* Exception.cs (GetType): New method in 2.x, Another Moma catch. 
 
 Mon Nov 27 19:34:16 CET 2006 Paolo Molaro <lupus@ximian.com>
 
