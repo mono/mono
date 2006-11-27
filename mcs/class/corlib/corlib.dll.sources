@@ -152,7 +152,6 @@ System/ICustomFormatter.cs
 System/IDisposable.cs
 System/IFormatProvider.cs
 System/IFormattable.cs
-System/INullableValue.cs
 System/IndexOutOfRangeException.cs
 System/Int16.cs
 System/Int32.cs
@@ -343,7 +342,9 @@ System.IO/CheckPermission.cs
 System.IO/Directory.cs
 System.IO/DirectoryInfo.cs
 System.IO/DirectoryNotFoundException.cs
+System.IO/DriveInfo.cs
 System.IO/DriveNotFoundException.cs
+System.IO/DriveType.cs
 System.IO/EndOfStreamException.cs
 System.IO/File.cs
 System.IO/FileAccess.cs
