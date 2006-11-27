@@ -1,3 +1,10 @@
+2006-11-26  Everaldo Canuto  <everaldo@simios.org>
+
+	* ThemeWin32Classic.cs: 
+	- Fix toolbar drop down arrow position.
+	- Fix drop down appearance when ToolBar.Appearance is normal,
+	it fixes #80018.
+	
 2006-11-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ProgressBar.cs: GetStyle fixes for 2.0 profile.

@@ -4045,7 +4045,7 @@ namespace System.Windows.Forms
 			}
 			
 			Rectangle rect = button.Rectangle;
-			if ((button.Style == ToolBarButtonStyle.DropDownButton) && (button.Parent.DropDownArrows))
+			if ((button.Style == ToolBarButtonStyle.DropDownButton) && (button.Parent.DropDownArrows) && is_flat)
 				rect.Width -= ToolBarDropDownWidth;
 
 			CPDrawBorder3D (dc, rect, style, all_sides);
@@ -4081,21 +4081,27 @@ namespace System.Windows.Forms
 			rect.X = button.Rectangle.Right - ToolBarDropDownWidth;
 			rect.Width = ToolBarDropDownWidth;
 			
-			if (button.dd_pressed || button.Pushed || button.Pressed) {
-				CPDrawBorder3D (dc, rect, Border3DStyle.SunkenOuter, all_sides);
-				if (!is_flat)
-					CPDrawBorder3D (dc, rect, Border3DStyle.SunkenInner, Border3DSide.Bottom | Border3DSide.Right);
-			}else if (is_flat) {
-				if (button.Hilight)
+			if (is_flat) {
+				if (button.dd_pressed)
+					CPDrawBorder3D (dc, rect, Border3DStyle.SunkenOuter, all_sides);
+				else if (button.Pushed || button.Pressed)
+					CPDrawBorder3D (dc, rect, Border3DStyle.SunkenOuter, all_sides);
+				else if (button.Hilight)
 					CPDrawBorder3D (dc, rect, Border3DStyle.RaisedInner, all_sides);
-			} else
-				CPDrawBorder3D (dc, rect, Border3DStyle.Raised, all_sides);
-
+			} else {
+				if (button.dd_pressed)
+					CPDrawBorder3D (dc, rect, Border3DStyle.Flat, all_sides);
+				else if (button.Pushed || button.Pressed)
+					CPDrawBorder3D (dc, Rectangle.Inflate(rect, -1, -1), Border3DStyle.SunkenOuter, all_sides);
+				else
+					CPDrawBorder3D (dc, rect, Border3DStyle.Raised, all_sides);
+			}
+			
 			PointF [] vertices = new PointF [3];
 			PointF ddCenter = new PointF (rect.X + (rect.Width/2.0f), rect.Y + (rect.Height / 2));
 			
 			// Increase vertical and horizontal position by 1 when button is pressed
-			if (button.Pressed || button.Pushed) {
+			if (button.Pressed || button.Pushed || button.dd_pressed) {
 			    ddCenter.X += 1;
 			    ddCenter.Y += 1;
 			}
