@@ -667,7 +667,9 @@ namespace System.Web.UI
 #if NET_2_0
 		protected void EnsureID ()
 		{
-			throw new NotImplementedException ();
+			if (Page == null)
+				return;
+			ID = NamingContainer.GetDefaultName ();
 		}
 
 		protected bool HasEvents ()

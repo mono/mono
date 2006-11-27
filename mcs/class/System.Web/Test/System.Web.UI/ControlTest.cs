@@ -311,7 +311,6 @@ namespace MonoTests.System.Web.UI
 		}
 
 		[Test]
-		[Category ("NotWorking")] // Not implemented exception
 		public void EnsureID ()
 		{
 			MyNC ctrl = new MyNC ();
@@ -320,9 +319,10 @@ namespace MonoTests.System.Web.UI
 			Page p = new Page ();
 			p.Controls.Add (ctrl);
 			ctrl.EnsureID ();
-			if (ctrl.ID == string.Empty)
+			if (String.IsNullOrEmpty (ctrl.ID))
 				Assert.Fail ("EnsureID#1");
-			if (ctrl1.ID == string.Empty)
+			ctrl1.EnsureID ();
+			if (String.IsNullOrEmpty (ctrl1.ID))
 				Assert.Fail ("EnsureID#2");
 		}
 
