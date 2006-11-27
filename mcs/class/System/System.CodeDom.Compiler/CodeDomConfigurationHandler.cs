@@ -66,7 +66,6 @@ namespace System.CodeDom.Compiler
                         base.PostDeserialize ();
                 }
 
-                [MonoTODO ("why override this?")]
                 protected override object GetRuntimeObject ()
                 {
                         return this;

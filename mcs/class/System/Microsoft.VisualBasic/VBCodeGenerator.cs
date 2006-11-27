@@ -890,7 +890,7 @@ namespace Microsoft.VisualBasic
 			Output.WriteLine ("End Sub");
 		}
 
-		[MonoTODO ("not implemented")]
+		[MonoTODO ("partially implemented")]
 		protected override void GenerateTypeStart (CodeTypeDeclaration declaration)
 		{
 			TextWriter output = Output;

@@ -568,7 +568,6 @@ namespace System.Collections.Specialized
 		/// It's ok only then the key is uniquely assosiated with the value
 		/// To fix it a comparsion of objects stored under the same key in the hashtable and in the arraylist should be added 
 		/// </LAME>>
-		[MonoTODO]
 		protected void BaseRemoveAt( int index )
 		{
 			if (this.IsReadOnly)

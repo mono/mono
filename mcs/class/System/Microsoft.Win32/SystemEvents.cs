@@ -89,27 +89,27 @@ namespace Microsoft.Win32 {
 			remove 	{ }
 		}
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO("Currently does nothing on Mono")]
 		public static event EventHandler DisplaySettingsChanging {
 			add {  }
 			remove { }
 		}
 #endif
-		[MonoTODO]
+		[MonoTODO("Currently does nothing on Mono")]
 		public static event System.EventHandler EventsThreadShutdown 
 		{
 			add 	{ }
 			remove 	{ }
 		}
 
-		[MonoTODO]
+		[MonoTODO("Currently does nothing on Mono")]
 		public static event System.EventHandler InstalledFontsChanged 
 		{
 			add 	{ }
 			remove 	{ }
 		}
 
-		[MonoTODO]
+		[MonoTODO("Currently does nothing on Mono")]
 #if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -121,41 +121,41 @@ namespace Microsoft.Win32 {
 			remove 	{ }
 		}
 
-		[MonoTODO]
+		[MonoTODO("Currently does nothing on Mono")]
 		public static event System.EventHandler PaletteChanged 
 		{
 			add 	{ }
 			remove 	{ }
 		}
 
-		[MonoTODO]
+		[MonoTODO("Currently does nothing on Mono")]
 		public static event PowerModeChangedEventHandler PowerModeChanged 
 		{
 			add 	{ }
 			remove 	{ }
 		}
 
-		[MonoTODO]
+		[MonoTODO("Currently does nothing on Mono")]
 		public static event SessionEndedEventHandler SessionEnded 
 		{
 			add 	{ }
 			remove 	{ }
 		}
 
-		[MonoTODO]
+		[MonoTODO("Currently does nothing on Mono")]
 		public static event SessionEndingEventHandler SessionEnding 
 		{
 			add 	{ }
 			remove 	{ }
 		}
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO("Currently does nothing on Mono")]
 		public static event SessionSwitchEventHandler SessionSwitch {
 			add    { }
 			remove { }
 		}
 #endif
-		[MonoTODO]
+		[MonoTODO("Currently does nothing on Mono")]
 		public static event System.EventHandler TimeChanged 
 		{
 			add 	{ }
@@ -164,14 +164,14 @@ namespace Microsoft.Win32 {
 
 		public static event TimerElapsedEventHandler TimerElapsed;
 
-		[MonoTODO]
+		[MonoTODO("Currently does nothing on Mono")]
 		public static event UserPreferenceChangedEventHandler UserPreferenceChanged 
 		{
 			add 	{ }
 			remove 	{ }
 		}
 
-		[MonoTODO]
+		[MonoTODO("Currently does nothing on Mono")]
 		public static event UserPreferenceChangingEventHandler UserPreferenceChanging 
 		{
 			add 	{ }
