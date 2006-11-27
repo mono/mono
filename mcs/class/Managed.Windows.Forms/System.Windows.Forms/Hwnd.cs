@@ -306,10 +306,6 @@ namespace System.Windows.Forms {
 			get {
 				return expose_pending;
 			}
-
-			set {
-				expose_pending = value;
-			}
 		}
 
 		public IntPtr Handle {
@@ -452,10 +448,6 @@ namespace System.Windows.Forms {
 		public bool NCExposePending {
 			get {
 				return nc_expose_pending;
-			}
-
-			set {
-				nc_expose_pending = value;
 			}
 		}
 
