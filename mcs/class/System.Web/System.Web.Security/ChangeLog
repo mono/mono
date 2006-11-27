@@ -1,3 +1,7 @@
+2006-11-27 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* SqlMembershipProvider.cs: typo bug
+
 2006-11-21 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* SqlMembershipProvider.cs: fixed fixed exception type in GetPassword

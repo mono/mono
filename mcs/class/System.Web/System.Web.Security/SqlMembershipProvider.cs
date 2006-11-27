@@ -749,7 +749,7 @@ namespace System.Web.Security {
 											   (int) MembershipPasswordFormat.Hashed);
 			maxInvalidPasswordAttempts = GetIntConfigValue (config, "maxInvalidPasswordAttempts", 5);
 			minRequiredPasswordLength = GetIntConfigValue (config, "minRequiredPasswordLength", 7);
-			minRequiredNonAlphanumericCharacters = GetIntConfigValue (config, "minRequiredNonAlphanumericCharacters", 1);
+			minRequiredNonAlphanumericCharacters = GetIntConfigValue (config, "minRequiredNonalphanumericCharacters", 1);
 			passwordAttemptWindow = GetIntConfigValue (config, "passwordAttemptWindow", 10);
 			passwordStrengthRegularExpression = GetStringConfigValue (config, "passwordStrengthRegularExpression", "");
 
