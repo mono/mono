@@ -2082,5 +2082,18 @@ namespace System.Windows.Forms {
 			remove { base.TabIndexChanged -= value; }
 		}
 		#endregion	// Events
+
+#if NET_2_0
+		public override string Text {
+			get {
+				return base.Text;
+			}
+
+			set {
+				base.Text = value;
+			}
+		}
+
+#endif
 	}
 }

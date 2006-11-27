@@ -316,5 +316,17 @@ namespace System.Windows.Forms {
 			SelectAll();
 		}
 		#endregion	// Private Methods
+
+#if NET_2_0
+		public override bool Multiline {
+			get {
+				return base.Multiline;
+			}
+
+			set {
+				base.Multiline = value;
+			}
+		}
+#endif
 	}
 }

@@ -562,6 +562,16 @@ namespace System.Windows.Forms {
 				use_compatible_text_rendering = value;
 			}
 		}
+
+		public override string Text {
+			get {
+				return base.Text;
+			}
+
+			set {
+				base.Text = value;
+			}
+		}
 #endif
 		#endregion
 	}

@@ -661,6 +661,31 @@ namespace System.Windows.Forms
 				use_compatible_text_rendering = value;
 			}
 		}
+
+		public override string Text {
+			get {
+				return base.Text;
+			}
+
+			set {
+				base.Text = value;
+			}
+		}
+
+		protected override void OnMouseEnter (EventArgs e)
+		{
+			base.OnMouseEnter (e);
+		}
+
+		protected override void OnMouseLeave (EventArgs e)
+		{
+			base.OnMouseLeave (e);
+		}
+
+		protected override void OnHandleDestroyed (EventArgs e)
+		{
+			base.OnHandleDestroyed (e);
+		}
 #endif
 
 	}
