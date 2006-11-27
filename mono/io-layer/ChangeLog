@@ -1,3 +1,7 @@
+Mon Nov 27 13:12:17 GMT 2006 Paolo Molaro <lupus@ximian.com>
+
+	* atomic.h: fix arm compare and exchange (bug #78500).
+
 2006-11-23  Dick Porter  <dick@ximian.com>
 
 	* process-private.h (struct _WapiHandle_process): Add 'waited'
