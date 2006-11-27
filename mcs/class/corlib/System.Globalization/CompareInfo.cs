@@ -467,7 +467,7 @@ namespace System.Globalization
 		{
 			return UseManagedCollation &&
 #if NET_2_0
-				((CompareOptions.Ordinal & opt) == 0 ||
+				((CompareOptions.Ordinal & opt) == 0 &&
 				(CompareOptions.OrdinalIgnoreCase & opt) == 0) ?
 #else
 				(CompareOptions.Ordinal & opt) == 0 ?
@@ -535,7 +535,7 @@ namespace System.Globalization
 		{
 			return UseManagedCollation &&
 #if NET_2_0
-				((CompareOptions.Ordinal & opt) == 0 ||
+				((CompareOptions.Ordinal & opt) == 0 &&
 				(CompareOptions.OrdinalIgnoreCase & opt) == 0) ?
 #else
 				(CompareOptions.Ordinal & opt) == 0 ?
