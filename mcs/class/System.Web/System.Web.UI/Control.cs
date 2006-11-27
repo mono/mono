@@ -894,7 +894,13 @@ namespace System.Web.UI
 #if NET_2_0
 		protected internal Stream OpenFile (string path)
 		{
-			throw new NotImplementedException ();
+			try {
+				string filePath = Context.Server.MapPath (path);
+				return File.OpenRead (filePath);
+			}
+			catch (UnauthorizedAccessException) {
+				throw new HttpException ("Access to the specified file was denied.");
+			}
 		}
 #endif		
 

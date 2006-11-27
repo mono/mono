@@ -535,7 +535,6 @@ namespace MonoTests.System.Web.UI
 		}
 
 		[Test]
-		[Category ("NotWorking")] // Not implemented exception
 		[Category ("NunitWeb")]
 		public void OpenFile ()
 		{
@@ -550,7 +549,6 @@ namespace MonoTests.System.Web.UI
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		[ExpectedException (typeof (FileNotFoundException))]
 		public void OpenFile_Exception ()
