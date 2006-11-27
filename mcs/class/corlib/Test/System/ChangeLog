@@ -1,3 +1,7 @@
+2006-11-26  Miguel de Icaza  <miguel@novell.com>
+
+	* DecimalTest.cs: Add new tests for TryParse.
+
 2006-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* StringTest.cs : added test for IndexOf(string,StringComparison).

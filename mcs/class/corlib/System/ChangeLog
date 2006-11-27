@@ -1,3 +1,7 @@
+2006-11-26  Miguel de Icaza  <miguel@novell.com>
+
+	* Decimal.cs: Refactor code to implement TryParse.
+
 2006-11-22  Miguel de Icaza  <miguel@novell.com>
 
 	* DateTime.cs: A small performance hit, we store the actual time

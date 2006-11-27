@@ -699,11 +699,19 @@ namespace System
             return Parse(s, NumberStyles.Number, provider);
         }
 
+	static void ThrowAtPos (int pos)
+	{
+		throw new FormatException (String.Format (Locale.GetText ("Invalid character at position {0}"), pos));
+	}
+	
+	static void ThrowInvalidExp ()
+	{
+		throw new FormatException (Locale.GetText ("Invalid exponent"));
+	}
+	
         private static string stripStyles(string s, NumberStyles style, NumberFormatInfo nfi, 
-            out int decPos, out bool isNegative, out bool expFlag, out int exp)
+            out int decPos, out bool isNegative, out bool expFlag, out int exp, bool throwex)
         {
-            string invalidChar = Locale.GetText ("Invalid character at position ");
-            string invalidExponent = Locale.GetText ("Invalid exponent");
             isNegative = false;
             expFlag = false;
             exp = 0;
@@ -784,18 +792,28 @@ namespace System
                     int slen = decimalSep.Length;
                     if (slen != 1 && s.IndexOf(decimalSep, pos, slen) != pos) 
                     {
-                        throw new FormatException(invalidChar + pos);
+			    if (throwex)
+				    ThrowAtPos (pos);
+			    else
+				    return null;
                     }
                     break;
                 }
                 else
                 {
-                    throw new FormatException(invalidChar + pos);
+			if (throwex)
+				ThrowAtPos (pos);
+			else
+				return null;
                 }
             }
 
-            if (pos == len)
-		throw new FormatException(Locale.GetText ("No digits found"));
+            if (pos == len){
+		    if (throwex)
+			    throw new FormatException(Locale.GetText ("No digits found"));
+		    else
+			    return null;
+	    }
 
             // digits 
             while (pos < len)
@@ -811,7 +829,10 @@ namespace System
                     int slen = groupSep.Length;
                     if (slen != 1 && s.IndexOf(groupSep, pos, slen) != pos) 
                     {
-                        throw new FormatException(invalidChar + pos);
+			    if (throwex)
+				    ThrowAtPos (pos);
+			    else
+				    return null;
                     }
                     pos += slen;
                 }
@@ -838,7 +859,13 @@ namespace System
                 if (allowedExponent && Char.ToUpperInvariant (ch) == 'E')
                 {
                     expFlag = true;
-                    pos++; if (pos >= len) throw new FormatException(invalidExponent);
+                    pos++;
+		    if (pos >= len){
+			    if (throwex)
+				    ThrowInvalidExp ();
+			    else
+				    return null;
+		    }
                     ch = s[pos];
                     bool isNegativeExp = false;
                     if (ch == nfi.PositiveSign[0])
@@ -846,7 +873,13 @@ namespace System
                         int slen = nfi.PositiveSign.Length;
                         if (slen == 1 || s.IndexOf(nfi.PositiveSign, pos, slen) == pos) 
                         {
-                            pos += slen;  if (pos >= len) throw new FormatException(invalidExponent);
+                            pos += slen;
+			    if (pos >= len){
+				    if (throwex)
+					    ThrowInvalidExp ();
+				    else
+					    return null;
+			    }
                         }
                     }
                     else if (ch == nfi.NegativeSign[0])
@@ -854,12 +887,24 @@ namespace System
                         int slen = nfi.NegativeSign.Length;
                         if (slen == 1 || s.IndexOf(nfi.NegativeSign, pos, slen) == pos) 
                         {
-                            pos += slen; if (pos >= len) throw new FormatException(invalidExponent);
+                            pos += slen;
+			    if (pos >= len){
+				    if (throwex)
+					    ThrowInvalidExp ();
+				    else
+					    return null;
+			    }
                             isNegativeExp = true;
                         }
                     }
                     ch = s[pos];
-                    if (!Char.IsDigit(ch)) throw new FormatException(invalidExponent);
+                    if (!Char.IsDigit(ch)){
+			    if (throwex)
+				    ThrowInvalidExp ();
+			    else
+				    return null;
+		    }
+
                     exp = ch - '0';
                     pos++;
                     while (pos < len && Char.IsDigit(s[pos])) 
@@ -906,14 +951,22 @@ namespace System
                 }
                 else
                 {
-                    throw new FormatException(invalidChar + pos);
+			if (throwex)
+				ThrowAtPos (pos);
+			else
+				return null;
                 }
             }
 
-            if (hasOpeningParentheses) throw new FormatException (
-		    Locale.GetText ("Closing Parentheses not found"));
+            if (hasOpeningParentheses){
+		    if (throwex)
+			    throw new FormatException (Locale.GetText ("Closing Parentheses not found"));
+		    else
+			    return null;
+	    }
 	    
-            if (!hasDecimalPoint) decPos = sb.Length;
+            if (!hasDecimalPoint)
+		    decPos = sb.Length;
 
             return sb.ToString();
         }
@@ -923,14 +976,53 @@ namespace System
 		if (s == null)
 			throw new ArgumentNullException ("s");
 
+		if ((style & NumberStyles.AllowHexSpecifier) != 0)
+			throw new ArgumentException ("Decimal.TryParse does not accept AllowHexSpecifier", "style");
+
+		Decimal result;
+		PerformParse (s, style, provider, out result, true);
+		return result;
+	}
+	
+#if NET_2_0
+	public static bool TryParse (string s, out Decimal result)
+	{
+		if (s == null){
+			result = 0;
+			return false;
+		}
+		return PerformParse (s, NumberStyles.Number, null, out result, false);
+	}
+
+	public static bool TryParse (string s, NumberStyles style, IFormatProvider provider, out decimal result)
+	{
+		if (s == null || (style & NumberStyles.AllowHexSpecifier) != 0){
+			result = 0;
+			return false;
+		}
+		
+		return PerformParse (s, style, provider, out result, false);
+	}
+#endif
+
+	static bool PerformParse (string s, NumberStyles style, IFormatProvider provider, out Decimal res, bool throwex) 
+	{
 		NumberFormatInfo nfi = NumberFormatInfo.GetInstance (provider);
 
 		int iDecPos, exp;
 		bool isNegative, expFlag;
-		s = stripStyles(s, style, nfi, out iDecPos, out isNegative, out expFlag, out exp);
+		s = stripStyles(s, style, nfi, out iDecPos, out isNegative, out expFlag, out exp, throwex);
+		if (s == null){
+			res = 0;
+			return false;
+		}
 
-		if (iDecPos < 0)
-			throw new Exception (Locale.GetText ("Error in System.Decimal.Parse"));
+		if (iDecPos < 0){
+			if (throwex)
+				throw new Exception (Locale.GetText ("Error in System.Decimal.Parse"));
+			res = 0;
+			return false;
+		}
 
 		// first we remove leading 0
 		int len = s.Length;
@@ -996,17 +1088,27 @@ namespace System
 
 		Decimal result;
 		// always work in positive (rounding issues)
-		if (string2decimal (out result, s, (uint)iDecPos, 0) != 0)
-			throw new OverflowException ();
+		if (string2decimal (out result, s, (uint)iDecPos, 0) != 0){
+			if (throwex)
+				throw new OverflowException ();
+			res = 0;
+			return false;
+		}
 
 		if (expFlag) {
-			if (decimalSetExponent (ref result, exp) != 0)
-				throw new OverflowException ();
+			if (decimalSetExponent (ref result, exp) != 0){
+				if (throwex)
+					throw new OverflowException ();
+				res = 0;
+				return false;
+			}
 		}
 
 		if (isNegative)
 			result.flags ^= SIGN_FLAG;
-		return result;
+
+		res = result;
+		return true;
         }
 
 	public TypeCode GetTypeCode ()

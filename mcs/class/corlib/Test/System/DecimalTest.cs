@@ -312,9 +312,7 @@ namespace MonoTests.System {
             }
         }
 
-        public void TestParse()
-        {
-            ParseTest[] tab = {
+        ParseTest[] tab = {
                 new ParseTest("1.2345", 1.2345m),
                 new ParseTest("-9876543210", -9876543210m),
                 new ParseTest(NumberFormatInfo.InvariantInfo.CurrencySymbol 
@@ -328,7 +326,10 @@ namespace MonoTests.System {
                 new ParseTest("-7922816251426433759354395033.150000000000", -7922816251426433759354395033.2m),
                 new ParseTest("-7922816251426433759354395033.2400000000000", -7922816251426433759354395033.2m),
                 new ParseTest("-7922816251426433759354395033.2600000000000", -7922816251426433759354395033.3m)
-            };
+        };
+
+        public void TestParse()
+        {
 
             Decimal d;
             for (int i = 0; i < tab.Length; i++) 
@@ -1120,6 +1121,26 @@ namespace MonoTests.System {
 		decimal d = Decimal.Parse ("9223372036854775808.0000000009", CultureInfo.InvariantCulture);
 		long l = (long) d;
 	}
+
+#if NET_2_0
+        [Test]
+	public void TryParse ()
+	{
+		Decimal r;
+		
+		// These should return false
+		AssertEquals (false, Decimal.TryParse ("79228162514264337593543950336", out r));
+		AssertEquals (false, Decimal.TryParse ("123nx", NumberStyles.Number, CultureInfo.InvariantCulture, out r));
+		AssertEquals (false, Decimal.TryParse (null, NumberStyles.Number, CultureInfo.InvariantCulture, out r));
+
+		// These should pass
+		for (int i = 0; i < tab.Length; i++){
+			AssertEquals (!tab [i].exceptionFlag,
+				      Decimal.TryParse (tab [i].str, tab [i].style,
+							NumberFormatInfo.InvariantInfo, out r));
+		}
+	}
+#endif
 
 	[Test]
 	[ExpectedException (typeof (DivideByZeroException))]
