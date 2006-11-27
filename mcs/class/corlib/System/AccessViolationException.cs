@@ -26,11 +26,15 @@
 //
 
 using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
 
 #if NET_2_0
 
 namespace System
 {
+#if NET_2_0
+        [ComVisible(true)]
+#endif
 	[Serializable]
 	public class AccessViolationException : SystemException
 	{

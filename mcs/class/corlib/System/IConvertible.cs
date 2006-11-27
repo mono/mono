@@ -50,9 +50,13 @@
 // See http://lists.ximian.com/archives/public/mono-list/2001-July/000525.html
 // for more discussion on the topic
 //
+using System.Runtime.InteropServices;
 
 namespace System {
 
+#if NET_2_0
+    [ComVisible(true)]
+#endif
     [CLSCompliant(false)]
     public interface IConvertible {
 	

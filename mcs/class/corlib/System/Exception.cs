@@ -41,6 +41,9 @@ namespace System
 {
 	[Serializable]
 	[ClassInterface (ClassInterfaceType.AutoDual)]
+#if NET_2_0
+	[ComVisible(true)]
+#endif
 	public class Exception : ISerializable 
 #if NET_2_0
 	, _Exception
