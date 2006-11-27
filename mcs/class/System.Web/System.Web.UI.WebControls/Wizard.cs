@@ -828,7 +828,10 @@ namespace System.Web.UI.WebControls
 		public WizardStepType GetStepType (WizardStepBase wizardStep, int index)
 		{
 			if (wizardStep.StepType == WizardStepType.Auto) {
-				if (index == WizardSteps.Count - 1)
+				if ((index == WizardSteps.Count - 1) || 
+						(WizardSteps.Count > 2 && 
+						WizardSteps[WizardSteps.Count - 1].StepType == WizardStepType.Complete && 
+						index == WizardSteps.Count - 2))
 					return WizardStepType.Finish;
 				else if (index == 0)
 					return WizardStepType.Start;
@@ -1300,11 +1303,6 @@ namespace System.Web.UI.WebControls
 					break;
 
 				case "MoveComplete":
-					if (FinishDestinationPageUrl.Length > 0) {
-						Context.Response.Redirect (FinishDestinationPageUrl);
-						return;
-					}
-				
 					int next = -1;
 					for (int n=0; n<WizardSteps.Count; n++) {
 						if (WizardSteps [n].StepType == WizardStepType.Complete) {
@@ -1312,12 +1310,21 @@ namespace System.Web.UI.WebControls
 							break;
 						}
 					}
-					if (next != -1) {
-						WizardNavigationEventArgs args = new WizardNavigationEventArgs (ActiveStepIndex, next);
-						OnFinishButtonClick (args);
-						if (!args.Cancel)
-							ActiveStepIndex = next;
+
+					if (next == -1 && ActiveStepIndex == WizardSteps.Count - 1)
+						next = ActiveStepIndex;
+
+					WizardNavigationEventArgs navArgs = new WizardNavigationEventArgs (ActiveStepIndex, next);
+					OnFinishButtonClick (navArgs);
+
+					if (FinishDestinationPageUrl.Length > 0) {
+						Context.Response.Redirect (FinishDestinationPageUrl);
+						return;
 					}
+
+					if (next != -1 && !navArgs.Cancel)
+						ActiveStepIndex = next;
+
 					break;
 					
 				case "MoveNext":

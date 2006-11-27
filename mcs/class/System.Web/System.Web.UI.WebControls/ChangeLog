@@ -1,3 +1,9 @@
+2006-11-27  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Wizard.cs: fixed GetStepType method that returned wrong type if the
+	last step type is Complete.
+	fixed ProcessEvent method, corrected FinishButtonClick behavior
+
 2006-11-26  Marek Habersack  <grendello@gmail.com>
 
 	* Calendar.cs: Fixed event validation registration. Now it
