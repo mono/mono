@@ -316,7 +316,7 @@ namespace System.Windows.Forms {
 				LineTag		tag;
 
 				if (document.selection_visible) {
-					document.ReplaceSelection("");
+					document.ReplaceSelection("", false);
 				}
 
 				sel_start = document.LineTagToCharIndex(document.selection_start.line, document.selection_start.pos);

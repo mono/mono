@@ -3295,7 +3295,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			}
 		}
 
-		internal void ReplaceSelection(string s) {
+		internal void ReplaceSelection(string s, bool select_new) {
 			int		i;
 
 			int selection_start_pos = LineTagToCharIndex (selection_start.line, selection_start.pos);
@@ -3338,20 +3338,33 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 				}
 			}
 
-			
 			Insert(selection_start.line, null, selection_start.pos, true, s);
 
-			CharIndexToLineTag(selection_start_pos + s.Length + 1, out selection_start.line,
-					out selection_start.tag, out selection_start.pos);
-			
-			selection_end.line = selection_start.line;
-			selection_end.pos = selection_start.pos;
-			selection_end.tag = selection_start.tag;
-			selection_anchor.line = selection_start.line;
-			selection_anchor.pos = selection_start.pos;
-			selection_anchor.tag = selection_start.tag;
-			
-			SetSelectionVisible (false);
+			if (!select_new) {
+				CharIndexToLineTag(selection_start_pos + s.Length, out selection_start.line,
+						out selection_start.tag, out selection_start.pos);
+
+				selection_end.line = selection_start.line;
+				selection_end.pos = selection_start.pos;
+				selection_end.tag = selection_start.tag;
+				selection_anchor.line = selection_start.line;
+				selection_anchor.pos = selection_start.pos;
+				selection_anchor.tag = selection_start.tag;
+
+				SetSelectionVisible (false);
+			} else {
+				CharIndexToLineTag(selection_start_pos, out selection_start.line,
+						out selection_start.tag, out selection_start.pos);
+
+				CharIndexToLineTag(selection_start_pos + s.Length, out selection_end.line,
+						out selection_end.tag, out selection_end.pos);
+
+				selection_anchor.line = selection_start.line;
+				selection_anchor.pos = selection_start.pos;
+				selection_anchor.tag = selection_start.tag;
+
+				SetSelectionVisible (true);
+			}
 		}
 
 		internal void CharIndexToLineTag(int index, out Line line_out, out LineTag tag_out, out int pos) {

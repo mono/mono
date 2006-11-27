@@ -436,8 +436,8 @@ namespace System.Windows.Forms {
 
 			set {
 				if (!read_only) {
-					document.ReplaceSelection(CaseAdjust(value));
-					document.PositionCaret (document.selection_end.line, document.selection_end.pos);
+					document.ReplaceSelection(CaseAdjust(value), true);
+					// document.PositionCaret (document.selection_end.line, document.selection_end.pos);
 					ScrollToCaret();
 					OnTextChanged(EventArgs.Empty);
 				}
@@ -680,7 +680,7 @@ namespace System.Windows.Forms {
 				o.SetData(DataFormats.Rtf, ((RichTextBox)this).SelectedRtf);
 			}
 			Clipboard.SetDataObject(o);
-			document.ReplaceSelection("");
+			document.ReplaceSelection("", false);
 		}
 
 		public void Paste() {
@@ -995,7 +995,7 @@ namespace System.Windows.Forms {
 						Line	line;
 
 						if (document.selection_visible) {
-							document.ReplaceSelection("");
+							document.ReplaceSelection("", false);
 						}
 
 						line = document.CaretLine;
@@ -1015,7 +1015,7 @@ namespace System.Windows.Forms {
 					if (!read_only && accepts_tab && multiline) {
 						document.InsertChar(document.CaretLine, document.CaretPosition, '\t');
 						if (document.selection_visible) {
-							document.ReplaceSelection("");
+							document.ReplaceSelection("", false);
 						}
 						document.SetSelectionToCaret(true);
 
@@ -1070,7 +1070,7 @@ namespace System.Windows.Forms {
 					}
 
 					if (document.selection_visible) {
-						document.ReplaceSelection("");
+						document.ReplaceSelection("", false);
 					} else {
 						// DeleteChar only deletes on the line, doesn't do the combine
 						if (document.CaretPosition == document.CaretLine.Text.Length) {
@@ -1130,7 +1130,7 @@ namespace System.Windows.Forms {
 
 			// delete only deletes on the line, doesn't do the combine
 			if (document.selection_visible) {
-				document.ReplaceSelection("");
+				document.ReplaceSelection("", false);
 				fire_changed = true;
 			}
 			document.SetSelectionToCaret(true);
@@ -1220,7 +1220,7 @@ namespace System.Windows.Forms {
 						HandleBackspace(true);
 					} else if (ch >= 32) {
 						if (document.selection_visible) {
-							document.ReplaceSelection("");
+							document.ReplaceSelection("", false);
 						}
 
 						char c = (char)m.WParam;
