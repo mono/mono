@@ -436,6 +436,11 @@ namespace System
 		{
 			return Decimal.Truncate (d);
 		}
+
+		public static decimal Floor (Decimal d)
+		{
+			return Decimal.Floor (d);
+		}
 #endif
 
 		public static int Sign (decimal value)

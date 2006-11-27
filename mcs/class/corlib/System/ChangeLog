@@ -1,6 +1,12 @@
 2006-11-26  Miguel de Icaza  <miguel@novell.com>
 
+	* Math.cs: Add Floor(Decimal d), for CreativeDocs.NET.
+
+	Go Moma!  http://www.mono-project.com/Moma
+
 	* Decimal.cs: Refactor code to implement TryParse.
+
+	Also, avoid initializing messages on every call to stripStyles
 
 2006-11-22  Miguel de Icaza  <miguel@novell.com>
 
