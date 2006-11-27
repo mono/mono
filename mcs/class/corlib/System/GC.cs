@@ -53,9 +53,9 @@ namespace System
 		}
 #endif
 
-		// TODO: as long as we use Boehm leave 0...
-		public static int MaxGeneration {
-			get {return 0;}
+		public extern static int MaxGeneration {
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -74,14 +74,14 @@ namespace System
 			InternalCollect (generation);
 		}
 
-		public static int GetGeneration (object obj) {
-			return 0;
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static int GetGeneration (object obj);
 
 		public static int GetGeneration (WeakReference wo) {
-			if (!wo.IsAlive)
+			object obj = wo.Target;
+			if (obj == null)
 				throw new ArgumentException ();
-			return 0;
+			return GetGeneration (obj);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -105,18 +105,18 @@ namespace System
 
 #if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-		[MonoTODO ("Not implemented, always returns 0")]
-		public static int CollectionCount (int generation) {
-			return 1;
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static int CollectionCount (int generation);
 
-		[MonoTODO ("Not implemented")]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static void RecordPressure (long diff);
+
 		public static void AddMemoryPressure (long bytesAllocated) {
-			
+			RecordPressure (bytesAllocated);
 		}
 
-		[MonoTODO ("Not implemented")]
 		public static void RemoveMemoryPressure (long bytesAllocated) {
+			RecordPressure (-bytesAllocated);
 		}
 #endif
 	}
