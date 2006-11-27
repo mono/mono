@@ -1547,10 +1547,9 @@ namespace System.Web.UI
 			}
 		}
 
-		[MonoTODO]
 		public virtual void Focus()
 		{
-			throw new NotImplementedException();
+			Page.SetFocus (this);
 		}
 		
 		protected internal virtual void LoadControlState (object state)

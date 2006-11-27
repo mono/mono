@@ -1,5 +1,9 @@
 2006-11-27 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Control.cs: implemented Focus methods.
+
+2006-11-27 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Page.cs: implemented SetFocus methods.
 	* PageLifeCycle.cs: 	
 
