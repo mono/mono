@@ -1,3 +1,8 @@
+2006-11-27  Marek Habersack  <grendello@gmail.com>
+
+	* AppCodeCompiler.cs: Add ~/bin/*.dll to the referenced assemblies
+	when compiling.
+
 2006-11-25  Marek Habersack  <grendello@gmail.com>
 
 	* AppResourcesCompiler.cs: small optimizations.

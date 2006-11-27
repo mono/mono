@@ -44,6 +44,7 @@ namespace System.Web.Compilation
 	internal class AppCodeAssembly
 	{
 		private List<string> files;
+
 		private string name;
 		private string path;
 		private bool validAssembly;
@@ -92,7 +93,7 @@ namespace System.Web.Compilation
 		
 		// Build and add the assembly to the BuildManager's
 		// CodeAssemblies collection
-		public void Build ()
+		public void Build (string[] binAssemblies)
 		{
 			Type compilerProvider = null;
 			CompilerInfo compilerInfo = null, cit;
@@ -160,6 +161,8 @@ namespace System.Web.Compilation
 			BuildProvider bprovider;
 			CompilationSection compilationSection = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
 			CompilerParameters parameters = compilerInfo.CreateDefaultCompilerParameters ();
+			if (binAssemblies != null && binAssemblies.Length > 0)
+				parameters.ReferencedAssemblies.AddRange (binAssemblies);
 			
 			if (compilationSection != null) {
 				foreach (AssemblyInfo ai in compilationSection.Assemblies)
@@ -290,8 +293,13 @@ namespace System.Web.Compilation
 			if (!CollectFiles (appCode, defasm))
 				return;
 
+			AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
+			string bindir = Path.Combine (setup.ApplicationBase, setup.PrivateBinPath);
+			string[] binAssemblies = null;
+			if (Directory.Exists (bindir))
+				binAssemblies = Directory.GetFiles (bindir, "*.dll");
 			foreach (AppCodeAssembly aca in assemblies)
-				aca.Build ();
+				aca.Build (binAssemblies);
 		}
 
 		private bool CollectFiles (string dir, AppCodeAssembly aca)
