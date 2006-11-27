@@ -625,7 +625,7 @@ namespace System.Net.Sockets
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static SocketAddress LocalEndPoint_internal(IntPtr socket, out int error);
 #endif
-		[MonoTODO("Support non-IP endpoints")]
+		// Wish:  support non-IP endpoints.
 		public EndPoint LocalEndPoint {
 			get {
 				if (disposed && closed)
@@ -663,7 +663,9 @@ namespace System.Net.Sockets
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static SocketAddress RemoteEndPoint_internal(IntPtr socket, out int error);
 
-		[MonoTODO("Support non-IP endpoints")]
+		//
+		// Wish: Support non-IP endpoints
+		//
 		public EndPoint RemoteEndPoint {
 			get {
 				if (disposed && closed)
