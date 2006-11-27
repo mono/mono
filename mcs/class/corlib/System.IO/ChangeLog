@@ -1,3 +1,10 @@
+2006-11-26  Miguel de Icaza  <miguel@novell.com>
+
+	* DriveInfo.cs, DriveType.cs: Add a couple of classes for
+	CreativeDocs.Net.  
+
+	Thanks MoMA!  http://www.mono-project.com/Moma
+
 2006-11-16  Miguel de Icaza  <miguel@novell.com>
 
 	* DirectoryInfo.cs (GetFiles): Implement option with SearchOptions
