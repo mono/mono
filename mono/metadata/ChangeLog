@@ -1,4 +1,9 @@
 
+Mon Nov 27 19:29:13 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* boehm-gc.c, null-gc.c, sgen-gc.c, mono-gc.h, icall.c,
+	icall-def.h: added icalls needed by System.GC.
+
 Thu Nov 23 20:01:12 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* loader.c: ensure the class in catch clauses is handled
