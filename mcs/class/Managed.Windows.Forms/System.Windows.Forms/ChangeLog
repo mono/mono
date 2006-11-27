@@ -1,3 +1,8 @@
+2006-11-27  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: Set the selection to the caret after the caret
+	is moved, otherwise they get out of sync.
+
 2006-11-26  Everaldo Canuto  <everaldo@simios.org>
 
 	* ToolBar.cs: Fixe size of ToolBar when AutoSize is false,

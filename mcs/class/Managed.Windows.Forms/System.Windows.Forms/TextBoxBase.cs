@@ -997,7 +997,6 @@ namespace System.Windows.Forms {
 						if (document.selection_visible) {
 							document.ReplaceSelection("");
 						}
-						document.SetSelectionToCaret(true);
 
 						line = document.CaretLine;
 
@@ -1005,6 +1004,7 @@ namespace System.Windows.Forms {
 						OnTextChanged(EventArgs.Empty);
 						document.UpdateView(line, 2, 0);
 						document.MoveCaret(CaretDirection.CharForward);
+						document.SetSelectionToCaret(true);
 						CaretMoved(this, null);
 						return true;
 					}
