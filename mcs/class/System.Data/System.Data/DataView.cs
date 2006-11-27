@@ -374,7 +374,6 @@ namespace System.Data
 		
 		#region	PublicMethods
 
-		[MonoTODO]
 		public virtual DataRowView AddNew() 
 		{
 			if (!IsOpen)
@@ -954,7 +953,6 @@ namespace System.Data
 			}
 		}
 
-		[MonoTODO]
 		PropertyDescriptorCollection ITypedList.GetItemProperties (PropertyDescriptor[] listAccessors) 
 		{
 			// FIXME: use listAccessors somehow
@@ -994,29 +992,24 @@ namespace System.Data
 		}
 
 		bool ICollection.IsSynchronized { 
-			[MonoTODO]
 			get {
 				return false;
 			} 
 		}
 
 		object ICollection.SyncRoot { 
-			[MonoTODO]
 			get {
-				// FIXME:
 				return this;
 			}
 		}
 
 		bool IList.IsFixedSize {
-			[MonoTODO]
 			get {
 				return false;
 			}
 		}
 		
 		bool IList.IsReadOnly {
-			[MonoTODO]
 			get {
 				return false;
 			}
