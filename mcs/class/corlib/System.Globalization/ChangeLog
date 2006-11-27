@@ -1,3 +1,8 @@
+2006-11-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CompareInfo.cs : fixed wrong || with && for OrdinalIgnoreCase.
+	  Fixed bug #80056.
+
 2006-11-10  Marek Safar  <marek.safar@gmail.com>
 
 	* CultureInfo.cs (TextInfo): Construct a culture when is

@@ -1110,7 +1110,6 @@ public class CompareInfoTest : Assertion
 // BUG in .NET 2.0 : It raises inappropriate ArgumentException.
 		// should not match since it is Ordinal
 		AssertCompare ("#2", -133, "AE", "\u00C6", CompareOptions.OrdinalIgnoreCase);
-return;
 
 		AssertCompare ("#3", 1, "AE", "\u00E6", CompareOptions.None);
 		// matches
@@ -1126,6 +1125,7 @@ return;
 		AssertCompare ("#11", 0, "aE", "AE", CompareOptions.OrdinalIgnoreCase);
 		AssertCompare ("#12", 0, "aE", "AE", CompareOptions.OrdinalIgnoreCase);
 		AssertCompare ("#13", 0, "ae", "AE", CompareOptions.OrdinalIgnoreCase);
+		AssertCompare ("#14", 0, "ola", "OLA", CompareOptions.OrdinalIgnoreCase);
 	}
 #endif
 }
