@@ -489,15 +489,13 @@ namespace System.Windows.Forms
 			Redraw (true, background_image != null);
 		}
 
-		bool height_specified = false;
 		int requested_height = -1;
 
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
 		{
-			if ((specified & BoundsSpecified.Height) != 0) {
+			if ((specified & BoundsSpecified.Height) != 0)
 				requested_height = height;
-				height_specified = true;
-			}
+			
 			base.SetBoundsCore (x, y, width, height, specified);
 		}
 
@@ -932,7 +930,7 @@ namespace System.Windows.Forms
 			} else {
 				if (AutoSize)
 					Height = ht;
-				else if (!height_specified)
+				else
 					Height = DefaultSize.Height;
 				foreach (ToolBarButton button in buttons) {
 					if (size_specified) {

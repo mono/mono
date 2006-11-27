@@ -1,5 +1,10 @@
 2006-11-26  Everaldo Canuto  <everaldo@simios.org>
 
+	* ToolBar.cs: Fixe size of ToolBar when AutoSize is false,
+	it fixes #80015
+
+2006-11-26  Everaldo Canuto  <everaldo@simios.org>
+
 	* ThemeWin32Classic.cs: 
 	- Fix toolbar drop down arrow position.
 	- Fix drop down appearance when ToolBar.Appearance is normal,
