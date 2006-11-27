@@ -1,5 +1,10 @@
 2006-11-27 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Page.cs: implemented SetFocus methods.
+	* PageLifeCycle.cs: 	
+
+2006-11-27 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* ClientScriptManager.cs: refactoring:
 	extracted method RegisterWebFormClientScript	
 

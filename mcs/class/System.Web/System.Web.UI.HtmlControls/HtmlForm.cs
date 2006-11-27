@@ -225,55 +225,7 @@ namespace System.Web.UI.HtmlControls
 
 		protected internal override void OnPreRender (EventArgs e)
 		{
-			string focus_id = null;
-			bool need_script_block = false;
-			bool render_uplevel;
-
 			base.OnPreRender(e);
-
-			render_uplevel = DetermineRenderUplevel ();
-
-			/* figure out if we have some control we're going to focus */
-			if (DefaultFocus != null && DefaultFocus != "")
-				focus_id = DefaultFocus;
-			else if (DefaultButton != null && DefaultButton != "")
-				focus_id = DefaultButton;
-
-			/* decide if we need to include the script block */
-			need_script_block = (focus_id != null || submitdisabledcontrols);
-
-			if (render_uplevel) {
-				Page.RequiresPostBackScript();
-
-				if (need_script_block && !Page.ClientScript.IsClientScriptBlockRegistered ("Mono-System.Web-HtmlScriptBlock")) {
-					Page.ClientScript.RegisterClientScriptBlock ("Mono-System.Web-HtmlScriptBlock",
-										     String.Format ("<script language=\"JavaScript\" src=\"{0}\"></script>",
-												    Page.ClientScript.GetWebResourceUrl (GetType(),
-																	 "webform.js")));
-				}
-
-
-				if (focus_id != null) {
-					Page.ClientScript.RegisterStartupScript ("HtmlForm-DefaultButton-StartupScript",
-										 String.Format ("<script language=\"JavaScript\">\n" + 
-												"<!--\n" + 
-												"WebForm_AutoFocus('{0}');// -->\n" + 
-												"</script>\n", focus_id));
-				}
-
-				if (submitdisabledcontrols) {
-					Page.ClientScript.RegisterOnSubmitStatement ("HtmlForm-SubmitDisabledControls-SubmitStatement",
-										     "javascript: return WebForm_OnSubmit();");
-					Page.ClientScript.RegisterStartupScript ("HtmlForm-SubmitDisabledControls-StartupScript",
-@"<script language=""JavaScript"">
-<!--
-function WebForm_OnSubmit() {
-WebForm_ReEnableControls();
-return true;
-} // -->
-</script>");
-				}
-			}
 		}
 #endif		
 

@@ -40,6 +40,7 @@ internal enum PageLifeCycle
 	ControlEvents,
 	LoadComplete,
 	PreRender,
+	PreRenderComplete,
 	SaveStateComplete,
 	Render,
 	Unload,

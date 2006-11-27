@@ -75,6 +75,7 @@ public class Page : TemplateControl, IHttpHandler
 	private bool _eventValidation = true;
 	private object [] _savedControlState;
 	private bool _doLoadPreviousPage;
+	string _focusedControlID;
 #endif
 	private bool _viewState = true;
 	private bool _viewStateMac;
@@ -1262,6 +1263,7 @@ public class Page : TemplateControl, IHttpHandler
 		Trace.Write ("aspx.page", "End PreRender");
 		
 #if NET_2_0
+		_lifeCycle = PageLifeCycle.PreRenderComplete;
 		OnPreRenderComplete (EventArgs.Empty);
 #endif
 
@@ -1726,6 +1728,45 @@ public class Page : TemplateControl, IHttpHandler
 			EventHandler eh = (EventHandler) (Events [PreRenderCompleteEvent]);
 			if (eh != null) eh (this, e);
 		}
+
+		if (Form == null)
+			return;
+		if (!Form.DetermineRenderUplevel ())
+			return;
+
+		/* figure out if we have some control we're going to focus */
+		if (String.IsNullOrEmpty (_focusedControlID)) {
+			_focusedControlID = Form.DefaultFocus;
+			if (String.IsNullOrEmpty (_focusedControlID))
+				_focusedControlID = Form.DefaultButton;
+		}
+
+		if (!String.IsNullOrEmpty (_focusedControlID) || Form.SubmitDisabledControls) {
+
+			RequiresPostBackScript ();
+			ClientScript.RegisterWebFormClientScript ();
+
+			if (!String.IsNullOrEmpty (_focusedControlID)) {
+				ClientScript.RegisterStartupScript ("HtmlForm-DefaultButton-StartupScript",
+									 String.Format ("<script type=\"text/javascript\">\n" +
+											"<!--\n" +
+											"WebForm_AutoFocus('{0}');// -->\n" +
+											"</script>\n", _focusedControlID));
+			}
+
+			if (Form.SubmitDisabledControls) {
+				ClientScript.RegisterOnSubmitStatement ("HtmlForm-SubmitDisabledControls-SubmitStatement",
+										 "javascript: return WebForm_OnSubmit();");
+				ClientScript.RegisterStartupScript ("HtmlForm-SubmitDisabledControls-StartupScript",
+@"<script language=""JavaScript"">
+<!--
+function WebForm_OnSubmit() {
+WebForm_ReEnableControls();
+return true;
+} // -->
+</script>");
+			}
+		}
 	}
 	
 	protected virtual void OnSaveStateComplete (EventArgs e)
@@ -1836,6 +1877,28 @@ public class Page : TemplateControl, IHttpHandler
 
 			return masterPage;
 		}
+	}
+	
+	public void SetFocus (string clientID)
+	{
+		if (String.IsNullOrEmpty (clientID))
+			throw new ArgumentNullException ("control");
+
+		if (_lifeCycle > PageLifeCycle.PreRender)
+			throw new InvalidOperationException ("SetFocus can only be called before and during PreRender.");
+
+		if(Form==null)
+			throw new InvalidOperationException ("A form tag with runat=server must exist on the Page to use SetFocus() or the Focus property.");
+
+		_focusedControlID = clientID;
+	}
+
+	public void SetFocus (Control control)
+	{
+		if (control == null)
+			throw new ArgumentNullException ("control");
+
+		SetFocus (control.ClientID);
 	}
 	
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
