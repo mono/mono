@@ -83,7 +83,16 @@ namespace MonoTests.SystemWeb.Framework
 				wr, UserAgent, EntityBody, ContentType);
 		}
 
-		public override WebRequest CreateWebRequest(Uri baseUri, NameValueCollection headers) {
+		/// <summary>
+		/// Override the base <see cref="CreateWebRequest"/> and add POST method functionality
+		/// when necessary.
+		/// </summary>
+		/// <param name="baseUri">URI to send request to.</param>
+		/// <param name="headers">Headers added to the request.</param>
+		/// <returns>A new <see cref="WebRequest"/></returns>
+		public override WebRequest CreateWebRequest(Uri baseUri, NameValueCollection headers)
+		{
+			//FIXME: may be it's better to override CreateHttpWebRequest?
 			HttpWebRequest hwr = base.CreateHttpWebRequest (baseUri, headers);
 			if (EntityBody == null || !IsPost)
 				return hwr;

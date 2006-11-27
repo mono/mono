@@ -79,11 +79,28 @@ namespace MonoTests.SystemWeb.Framework
 			return br;
 		}
 
+		/// <summary>
+		/// Create a new <see cref="WebRequest"/>.
+		/// </summary>
+		/// <remarks>
+		/// This method is used when the test web application is not hosted, but deployed. Possible
+		/// uses: test web application is remoted, Grasshopper setup with web application running
+		/// on Tomcat.
+		/// </remarks>
+		/// <param name="baseUri">URI to send request to.</param>
+		/// <param name="headers">Collection of headers to add to request</param>
+		/// <returns>A new <see cref="HttpWebRequest"/>.</returns>
 		public virtual WebRequest CreateWebRequest (Uri baseUri, NameValueCollection headers)
 		{
 			return CreateHttpWebRequest (baseUri, headers);
 		}
 
+		/// <summary>
+		/// Create a new <see cref="HttpWorkerRequest"/> by using <see cref="WebRequest.Create"/>.
+		/// </summary>
+		/// <param name="baseUri">URI to pass to <see cref="WebRequest.Create"/></param>
+		/// <param name="headers">Headers to add to the created <see cref="HttpWorkerRequest"/></param>
+		/// <returns>A new <see cref="HttpWorkerRequest"/></returns>
 		protected virtual HttpWebRequest CreateHttpWebRequest (Uri baseUri, NameValueCollection headers)
 		{
 			string reqUrl = Url;
@@ -122,7 +139,8 @@ namespace MonoTests.SystemWeb.Framework
 
 		/// <summary>
 		/// Extracts the response from the completed <see cref="System.Web.HttpWorkerRequest"/>
-		/// and returns a new <see cref="Response"/> instance.
+		/// and returns a new <see cref="Response"/> instance. This method works with HttpWorkerRequest
+		/// created with <see cref="CreateWorkerRequest"/>.
 		/// </summary>
 		/// <param name="request">this must be the same request that was returned by
 		/// CreateWorkerRequest</param>
@@ -142,6 +160,13 @@ namespace MonoTests.SystemWeb.Framework
 			return r;
 		}
 
+		/// <summary>
+		/// This method is used to extract response of the request created by <see cref="CreateWebRequest"/>.
+		/// </summary>
+		/// <remarks>
+		/// </remarks>
+		/// <param name="response"></param>
+		/// <returns></returns>
 		public virtual Response ExtractResponse (WebResponse response)
 		{
 			Response r = new Response ();

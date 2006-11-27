@@ -5,9 +5,11 @@ namespace MonoTests.SystemWeb.Framework {
 	/// <summary>
 	/// This interface is used to add foreign data to the implementing class
 	/// instances (similar to Python common practice) or AOP field injection.
+	/// </summary>
+	/// <remarks>
 	/// This is achieved by convention that every class <b>using</b> this interface
 	/// passes it's own type to the indexer property.
-	/// </summary>
+	/// </remarks>
 	/// <example>
 	/// class IForeignDataUsingClass
 	/// {
