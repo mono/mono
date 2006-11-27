@@ -156,11 +156,14 @@ namespace MonoTests.System.Web.UI
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void ApplyStyleSheetSkin_1 ()
 		{
+#if DOT_NET
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.Theme2.skin", "App_Themes/Theme2/Theme2.skin");
+#else
 			WebTest.CopyResource (GetType (), "Theme2.skin", "App_Themes/Theme2/Theme2.skin");
+#endif
 			WebTest t = new WebTest ();
 			PageDelegates pd = new PageDelegates ();
 			pd.PreInit = ApplyStyleSheetSkin_PreInit;
