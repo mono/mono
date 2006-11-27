@@ -1,3 +1,8 @@
+2006-11-27  Andrew Skiba  <andrews@mainsoft.com>
+
+	* System-tests20.sln, System-tests20.vmcsproj, run-tests.bat: added
+	Grasshopper test project and bat file.
+
 2006-11-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System_test.dll.sources: Add unit tests for System.Security.
