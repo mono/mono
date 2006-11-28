@@ -66,7 +66,6 @@ namespace System.Data.Common {
 		{
 		}
 
-		[MonoTODO]
 		protected DbDataAdapter(DbDataAdapter adapter) : base(adapter)
 		{
 		}
@@ -534,7 +533,6 @@ namespace System.Data.Common {
 			return FillSchema (dataSet, schemaType, ((IDbDataAdapter) this).SelectCommand, srcTable, CommandBehavior.Default);
 		}
 
-		[MonoTODO ("Verify")]
 		protected virtual DataTable FillSchema (DataTable dataTable, SchemaType schemaType, IDbCommand command, CommandBehavior behavior) 
 		{
 			if (dataTable == null)
@@ -570,7 +568,6 @@ namespace System.Data.Common {
 			return dataTable;
 		}
 
-		[MonoTODO ("Verify")]
 		protected virtual DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType, IDbCommand command, string srcTable, CommandBehavior behavior) 
 		{
 			if (dataSet == null)
@@ -651,7 +648,6 @@ namespace System.Data.Common {
 		// "array[ordinal of datatable column] == index of source column in data reader".
 		// each column in the datatable has a mapping to a specific column in the datareader,
 		// the int array represents this match.
-		[MonoTODO ("Test")]
 		private int[] BuildSchema (IDataReader reader, DataTable table, SchemaType schemaType)
 		{
 			return BuildSchema (reader, table, schemaType, MissingSchemaAction,
@@ -833,7 +829,6 @@ namespace System.Data.Common {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public int Update (DataRow[] dataRows) 
 		{
 			if (dataRows == null)
@@ -947,7 +942,6 @@ namespace System.Data.Common {
 			return Update (rows, tableMapping);
 		}
 
-		[MonoTODO]
 		protected virtual int Update (DataRow[] dataRows, DataTableMapping tableMapping) 
 		{
 			int updateCount = 0;

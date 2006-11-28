@@ -1,3 +1,9 @@
+2006-11-28  Nagappan A  <anagappan@novell.com>
+
+	* DbDataAdapter.cs: Removed bogus MonoTODOs
+
+	* DataAdapter.cs: Removed bogus MonoTODOs
+	
 2006-11-15  Nagappan A  <anagappan@novell.com>
 
 	* DbDataAdapter.cs (FillFromReader): Implemented missing API to
