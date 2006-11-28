@@ -311,7 +311,9 @@ namespace MonoTests.System.Web.UI.WebControls
 				ods.Delete ();
 			}
 			catch (Exception ex) {
-				Assert.AreEqual (true,ex.Message.Contains ("type 'System.DBNull' cannot be converted to type 'System.String'"), "ConvertNullToDBNull");
+				Assert.AreEqual (true,
+					ex.Message.Contains ("type 'System.DBNull' cannot be converted to type 'System.String'") || // dotnet
+					ex.Message.Contains ("Value cannot be null."), "ConvertNullToDBNull"); // mono
 				dbnull = true;
 			}
 			Assert.AreEqual (true, dbnull, "ConvertNullToDBNull2");

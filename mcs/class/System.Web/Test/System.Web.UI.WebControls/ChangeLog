@@ -1,3 +1,9 @@
+2006-11-28  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ObjectDataSourceTest.cs: fixed exception message checking
+	* ObjectDataSourceViewTest.cs: fixed tests that failed because of
+	execution order
+
 2006-11-27  Yoni Klain         <yonik@mainsoft.com>
 
 	* LinkButtonTest.cs: added new test for 2.0 

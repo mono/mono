@@ -427,6 +427,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			view = (ObjectDataSourceView) ds.DoGetView ("DefaultView");
 			view.Deleting += new ObjectDataSourceMethodEventHandler (Event);
 
+			DataSourceObject.InitDS ();
+
 			Hashtable table = new Hashtable ();
 			table.Add ("ID", "1001");
 			table.Add ("FName", "Yonik");
@@ -481,6 +483,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.Form.Controls.Add (lce);
 			view = (ObjectDataSourceView) ds.DoGetView ("DefaultView");
 			view.Selecting += new ObjectDataSourceSelectingEventHandler (view_Selecting);
+
+			DataSourceObject.InitDS ();
 
 			DataView view1 = (DataView) view.Select (new DataSourceSelectArguments ());
 			Assert.AreEqual (1, view1.Count, "SelectedRowsCount");
@@ -664,6 +668,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			view = (ObjectDataSourceView) ds.DoGetView ("defaultView");
 			view.Updating += new ObjectDataSourceMethodEventHandler (Event);
 
+			DataSourceObject.InitDS ();
+
 			Hashtable table = new Hashtable ();
 			table.Add ("ID", "1001");
 			table.Add ("FName", "Yonik");
@@ -820,6 +826,10 @@ namespace MonoTests.System.Web.UI.WebControls
 	{
 		private static int maximumRows;
 		public static DataTable ds = CreateDataTable ();
+		public static void InitDS ()
+		{
+			ds = CreateDataTable ();
+		}
 		public static DataTable Select ()
 		{
 			return ds;
