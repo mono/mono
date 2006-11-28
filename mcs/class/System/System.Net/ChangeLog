@@ -1,3 +1,9 @@
+2006-11-27  Miguel de Icaza  <miguel@novell.com>
+
+	* WebRequest.cs: Instead of throwing NotImplemented exceptions,
+	call GetMustImplement, that way we do not need the whitelist, and
+	we save a handful of opcodes.
+
 2006-11-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: add 2 more methods that are not supposed to have

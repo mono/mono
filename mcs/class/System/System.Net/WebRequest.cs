@@ -67,56 +67,61 @@ namespace System.Net
 		protected WebRequest (SerializationInfo serializationInfo, StreamingContext streamingContext) 
 		{
 		}
+
+		static Exception GetMustImplement ()
+		{
+			return new NotImplementedException ("This method must be implemented in derived classes");
+		}
 		
 		// Properties
 		
 		public virtual string ConnectionGroupName { 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { throw GetMustImplement (); }
+			set { throw GetMustImplement (); }
 		}
 		
 		public virtual long ContentLength { 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { throw GetMustImplement (); }
+			set { throw GetMustImplement (); }
 		}
 		
 		public virtual string ContentType { 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { throw GetMustImplement (); }
+			set { throw GetMustImplement (); }
 		}
 		
 		public virtual ICredentials Credentials { 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { throw GetMustImplement (); }
+			set { throw GetMustImplement (); }
 		}
 		
 		public virtual WebHeaderCollection Headers { 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { throw GetMustImplement (); }
+			set { throw GetMustImplement (); }
 		}
 		
 		public virtual string Method { 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { throw GetMustImplement (); }
+			set { throw GetMustImplement (); }
 		}
 		
 		public virtual bool PreAuthenticate { 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { throw GetMustImplement (); }
+			set { throw GetMustImplement (); }
 		}
 		
 		public virtual IWebProxy Proxy { 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { throw GetMustImplement (); }
+			set { throw GetMustImplement (); }
 		}
 		
 		public virtual Uri RequestUri { 
-			get { throw new NotImplementedException (); }
+			get { throw GetMustImplement (); }
 		}
 		
 		public virtual int Timeout { 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { throw GetMustImplement (); }
+			set { throw GetMustImplement (); }
 		}
 		
 #if NET_2_0
@@ -170,17 +175,17 @@ namespace System.Net
 		
 		public virtual void Abort()
 		{
-			throw new NotImplementedException ();
+			throw GetMustImplement ();
 		}
 		
 		public virtual IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state) 
 		{
-			throw new NotImplementedException ();
+			throw GetMustImplement ();
 		}
 		
 		public virtual IAsyncResult BeginGetResponse (AsyncCallback callback, object state)
 		{
-			throw new NotImplementedException ();
+			throw GetMustImplement ();
 		}
 
 		public static WebRequest Create (string requestUriString) 
@@ -206,22 +211,22 @@ namespace System.Net
 
 		public virtual Stream EndGetRequestStream (IAsyncResult asyncResult)
 		{
-			throw new NotImplementedException ();
+			throw GetMustImplement ();
 		}
 		
 		public virtual WebResponse EndGetResponse (IAsyncResult asyncResult)
 		{
-			throw new NotImplementedException ();
+			throw GetMustImplement ();
 		}
 		
 		public virtual Stream GetRequestStream()
 		{
-			throw new NotImplementedException ();
+			throw GetMustImplement ();
 		}
 		
 		public virtual WebResponse GetResponse()
 		{
-			throw new NotImplementedException ();
+			throw GetMustImplement ();
 		}
 		
 #if NET_2_0
