@@ -1,6 +1,9 @@
 using System;
 
-public delegate void Foo<R> (R r);
+public delegate void Foo<V> (V v);
+
+public delegate void Bar<W> (W w);
+
 
 class Test<T>
 {
@@ -8,7 +11,7 @@ class Test<T>
 	{
 		Foo<long> foo = delegate (long r) {
 			Console.WriteLine (r);
-			Foo<T> bar = delegate (T x) {
+			Bar<T> bar = delegate (T x) {
 				Console.WriteLine (r);
 				Console.WriteLine (t);
 				Console.WriteLine (s);
@@ -24,5 +27,6 @@ class X
 {
 	static void Main ()
 	{
+		Test<string>.Hello ("World", 3.1415F);
 	}
 }

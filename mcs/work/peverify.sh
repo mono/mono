@@ -1,3 +1,3 @@
 #!/bin/bash
 
-for file in $*; do PEVerify $file ; done
+for file in $*; do PEVerify /NOLOGO $file ; done
