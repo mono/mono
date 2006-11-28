@@ -9,15 +9,17 @@
 // TODO: Find out why ArgumentOutOfRange tests does not release directories properly
 //
 
-using NUnit.Framework;
+using System;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text;
-using System;
-using System.Globalization;
 using System.Threading;
-using System.Diagnostics;
 
-namespace MonoTests.System.IO {
+using NUnit.Framework;
+
+namespace MonoTests.System.IO
+{
 
 [TestFixture]
 public class DirectoryTest
@@ -720,9 +722,7 @@ public class DirectoryTest
 		// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
 		int platform = (int) Environment.OSVersion.Platform;
 		if ((platform == 4) || (platform == 128))
-			// Unix doesnt support CreationTime
-			// FIXME: use Assert.Ignore
-			return;
+			Assert.Ignore ("Unix doesn't support CreationTime");
 
 		string path = TempFolder + DSC + "DirectoryTest.CreationTime.1";
 		DeleteDirectory (path);
@@ -1328,7 +1328,6 @@ public class DirectoryTest
 		DirectoryInfo dir = new DirectoryInfo (".");
 		dir.GetFiles ("*.nonext");
 	}
-
 
 	[Test]
 	public void FilenameOnly () // bug 78209
