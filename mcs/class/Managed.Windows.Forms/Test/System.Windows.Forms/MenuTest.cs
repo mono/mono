@@ -59,6 +59,15 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void CloneWindowMenuTest ()
+		{
+				MenuItem menuitem1 = new MenuItem ();
+				menuitem1.MdiList = true;
+				MenuItem menuitem2 = menuitem1.CloneMenu ();
+				Assert.IsTrue (menuitem2.MdiList, "#1");
+		}
+
+		[Test]
 		public void GetFormTest ()
 		{
 			Form myform = new Form ();

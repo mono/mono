@@ -97,6 +97,9 @@ namespace MonoTests.System.Windows.Forms
 			IntPtr handle;
 			int width;
 			int height ;
+			int default_height = 45;
+			int default_height2 = 42;
+
 			using (TrackBar myTrackBar = new TrackBar()) {
 				width = myTrackBar.Width;
 				height = myTrackBar.Height;
@@ -112,7 +115,7 @@ namespace MonoTests.System.Windows.Forms
 					myForm.Controls.Add(myTrackBar);
 					handle = myTrackBar.Handle; // causes the handle to be created.
 					myTrackBar.Orientation = Orientation.Vertical;
-					Assert.AreEqual(45, myTrackBar.Width,  "#OS3");
+					AreEqual(default_height, default_height2, myTrackBar.Width,  "#OS3");
 					Assert.AreEqual(width, myTrackBar.Height, "#OS4");
 				}
 			}
@@ -128,17 +131,27 @@ namespace MonoTests.System.Windows.Forms
 			}
 			Assert.AreEqual(handle, handle, "Removes warning");
 		}
-			
+	
+		private void AreEqual(int expected1, int expected2, int real, string name)
+		{
+			// This is needed since the default size vary between XP theme and W2K theme.
+			if (real != expected1 && real != expected2) {
+				Assert.Fail("{3}: Expected <{0}> or <{1}>, but was <{2}>", expected1, expected2, real, name);
+			}
+		}
+
 		[Test]
 		public void SizeTest ()
 		{
 			IntPtr handle;
+			int default_height = 45;
+			int default_height2 = 42;
 			
 			using (TrackBar myTrackBar = new TrackBar()) {
 				myTrackBar.Width = 200;
 				myTrackBar.Height = 250;
 				Assert.AreEqual(200, myTrackBar.Width, "#SIZE01");
-				Assert.AreEqual(45, myTrackBar.Height, "#SIZE02");
+				AreEqual(default_height, default_height2, myTrackBar.Height, "#SIZE02");
 			}
 			
 			using (TrackBar myTrackBar = new TrackBar()) {
@@ -146,7 +159,7 @@ namespace MonoTests.System.Windows.Forms
 				myTrackBar.Height = 250;
 				myTrackBar.Orientation = Orientation.Vertical;
 				Assert.AreEqual(200, myTrackBar.Width, "#SIZE03");
-				Assert.AreEqual(45, myTrackBar.Height, "#SIZE04");
+				AreEqual(default_height, default_height2, myTrackBar.Height, "#SIZE04");
 			}
 
 			using (TrackBar myTrackBar = new TrackBar()) {
@@ -171,7 +184,7 @@ namespace MonoTests.System.Windows.Forms
 				myTrackBar.Height = 250;
 				myTrackBar.AutoSize = false;
 				Assert.AreEqual(200, myTrackBar.Width, "#SIZE09");
-				Assert.AreEqual(45, myTrackBar.Height, "#SIZE10");
+				AreEqual(default_height, default_height2, myTrackBar.Height, "#SIZE10");
 			}
 
 			using (TrackBar myTrackBar = new TrackBar()) {
@@ -180,7 +193,7 @@ namespace MonoTests.System.Windows.Forms
 				myTrackBar.AutoSize = false;
 				myTrackBar.Orientation = Orientation.Vertical;
 				Assert.AreEqual(200, myTrackBar.Width, "#SIZE11");
-				Assert.AreEqual(45, myTrackBar.Height, "#SIZE12");
+				AreEqual(default_height, default_height2, myTrackBar.Height, "#SIZE12");
 			}
 	
 			using (TrackBar myTrackBar = new TrackBar()) {
@@ -191,8 +204,8 @@ namespace MonoTests.System.Windows.Forms
 					myTrackBar.Orientation = Orientation.Vertical;
 					handle = myTrackBar.Handle;
 					
-					Assert.AreEqual(45, myTrackBar.Width, "#SIZE17");
-					Assert.AreEqual(45, myTrackBar.Height, "#SIZE18");
+					AreEqual(default_height, default_height2, myTrackBar.Width, "#SIZE17");
+					AreEqual(default_height, default_height2, myTrackBar.Height, "#SIZE18");
 				}
 			}
 
@@ -204,8 +217,8 @@ namespace MonoTests.System.Windows.Forms
 					myTrackBar.Orientation = Orientation.Vertical;
 					handle = myTrackBar.Handle;
 					
-					Assert.AreEqual(45, myTrackBar.Width, "#SIZE19");
-					Assert.AreEqual(45, myTrackBar.Height, "#SIZE20");
+					AreEqual(default_height, default_height2, myTrackBar.Width, "#SIZE19");
+					AreEqual(default_height, default_height2, myTrackBar.Height, "#SIZE20");
 				}
 			}
 
@@ -219,7 +232,7 @@ namespace MonoTests.System.Windows.Forms
 					handle = myTrackBar.Handle;
 					
 					Assert.AreEqual(200, myTrackBar.Width, "#SIZE21");
-					Assert.AreEqual(45, myTrackBar.Height, "#SIZE22");
+					AreEqual(default_height, default_height2, myTrackBar.Height, "#SIZE22");
 				}
 			}
 
@@ -233,8 +246,8 @@ namespace MonoTests.System.Windows.Forms
 					
 					myTrackBar.Orientation = Orientation.Horizontal;
 					
-					Assert.AreEqual(45, myTrackBar.Width, "#SIZE23");
-					Assert.AreEqual(45, myTrackBar.Height, "#SIZE24");
+					AreEqual(default_height, default_height2, myTrackBar.Width, "#SIZE23");
+					AreEqual(default_height, default_height2, myTrackBar.Height, "#SIZE24");
 				}
 			}
 			
