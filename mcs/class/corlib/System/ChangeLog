@@ -1,3 +1,9 @@
+2006-11-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TermInfoDriver.cs:
+	* Console.cs: lazy initialization of Console 2.0 (also when
+	CancelKeyPress is used).
+
 2006-11-27  Miguel de Icaza  <miguel@novell.com>
 
 	* Exception.cs (GetType): New method in 2.x, Another Moma catch. 

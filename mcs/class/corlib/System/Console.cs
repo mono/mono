@@ -114,7 +114,6 @@ namespace System
 				w.AutoFlush = true;
 				stdout = w;
 				stdin = new CStreamReader (OpenStandardInput (0), inputEncoding);
-				ConsoleDriver.Init ();
 			} else {
 #endif
 				stdout = new UnexceptionalStreamWriter (OpenStandardOutput (0), outputEncoding);
@@ -646,7 +645,21 @@ namespace System
 			ConsoleDriver.SetWindowSize (width, height);
 		}
 
-		public static event ConsoleCancelEventHandler CancelKeyPress;
+		static ConsoleCancelEventHandler cancel_event;
+		public static event ConsoleCancelEventHandler CancelKeyPress {
+			add {
+				if (ConsoleDriver.Initialized == false)
+					ConsoleDriver.Init ();
+
+				cancel_event += value;
+			}
+			remove {
+				if (ConsoleDriver.Initialized == false)
+					ConsoleDriver.Init ();
+
+				cancel_event -= value;
+			}
+		}
 
 		delegate void InternalCancelHandler ();
 		static InternalCancelHandler cancel_handler = new InternalCancelHandler (DoConsoleCancelEvent);
@@ -654,9 +667,9 @@ namespace System
 		internal static void DoConsoleCancelEvent ()
 		{
 			bool exit = true;
-			if (CancelKeyPress != null) {
+			if (cancel_event != null) {
 				ConsoleCancelEventArgs args = new ConsoleCancelEventArgs (ConsoleSpecialKey.ControlC);
-				Delegate [] delegates = CancelKeyPress.GetInvocationList ();
+				Delegate [] delegates = cancel_event.GetInvocationList ();
 				foreach (ConsoleCancelEventHandler d in delegates){
 					try {
 						// Sender is always null here.

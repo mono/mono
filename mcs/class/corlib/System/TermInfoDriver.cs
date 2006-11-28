@@ -149,7 +149,7 @@ namespace System {
 		public bool Initialized {
 			get { return inited; }
 		}
-		
+
 		public void Init ()
 		{
 			if (inited)
@@ -281,6 +281,9 @@ namespace System {
 
 		public bool NotifyWrite (ConsoleKeyInfo key)
 		{
+			if (!inited)
+				return true;
+
 			switch (key.Key) {
 			case ConsoleKey.Backspace:
 				if (cursorLeft > 0) {
@@ -329,16 +332,36 @@ namespace System {
 		}
 
 		public ConsoleColor BackgroundColor {
-			get { return bgcolor; }
+			get {
+				if (!inited) {
+					Init ();
+				}
+
+				return bgcolor;
+			}
 			set {
+				if (!inited) {
+					Init ();
+				}
+
 				bgcolor = value;
 				WriteConsole (String.Format (setabcolor, TranslateColor (value)));
 			}
 		}
 
 		public ConsoleColor ForegroundColor {
-			get { return fgcolor; }
+			get {
+				if (!inited) {
+					Init ();
+				}
+
+				return fgcolor;
+			}
 			set {
+				if (!inited) {
+					Init ();
+				}
+
 				fgcolor = value;
 				WriteConsole (String.Format (setafcolor, TranslateColor (value)));
 			}
@@ -405,31 +428,61 @@ namespace System {
 
 		public int BufferHeight {
 			get {
+				if (!inited) {
+					Init ();
+				}
+
 				return bufferHeight;
 			}
 			set {
+				if (!inited) {
+					Init ();
+				}
+
 				throw new NotSupportedException ();
 			}
 		}
 
 		public int BufferWidth {
 			get {
+				if (!inited) {
+					Init ();
+				}
+
 				return bufferWidth;
 			}
 			set {
+				if (!inited) {
+					Init ();
+				}
+
 				throw new NotSupportedException ();
 			}
 		}
 
 		public bool CapsLock {
-			get { throw new NotSupportedException (); }
+			get {
+				if (!inited) {
+					Init ();
+				}
+
+				throw new NotSupportedException ();
+			}
 		}
 
 		public int CursorLeft {
 			get {
+				if (!inited) {
+					Init ();
+				}
+
 				return cursorLeft;
 			}
 			set {
+				if (!inited) {
+					Init ();
+				}
+
 				SetCursorPosition (value, CursorTop);
 				cursorLeft = value;
 			}
@@ -437,9 +490,17 @@ namespace System {
 
 		public int CursorTop {
 			get {
+				if (!inited) {
+					Init ();
+				}
+
 				return cursorTop;
 			}
 			set {
+				if (!inited) {
+					Init ();
+				}
+
 				SetCursorPosition (CursorLeft, value);
 				cursorTop = value;
 			}
@@ -447,9 +508,17 @@ namespace System {
 
 		public bool CursorVisible {
 			get {
+				if (!inited) {
+					Init ();
+				}
+
 				return cursorVisible;
 			}
 			set {
+				if (!inited) {
+					Init ();
+				}
+
 				cursorVisible = value;
 				WriteConsole ((value ? csrVisible : csrInvisible));
 			}
@@ -458,13 +527,33 @@ namespace System {
 		// we have CursorNormal vs. CursorVisible...
 		[MonoTODO]
 		public int CursorSize {
-			get { return 1; }
-			set {}
+			get {
+				if (!inited) {
+					Init ();
+				}
+				return 1;
+			}
+			set {
+				if (!inited) {
+					Init ();
+				}
+			}
+
 		}
 
 		public bool Echo {
-			get { return !noEcho; }
+			get {
+				if (!inited) {
+					Init ();
+				}
+
+				return !noEcho;
+			}
 			set {
+				if (!inited) {
+					Init ();
+				}
+
 				if (value != noEcho)
 					return;
 
@@ -474,6 +563,10 @@ namespace System {
 
 		public bool KeyAvailable {
 			get {
+				if (!inited) {
+					Init ();
+				}
+
 				return (writepos > readpos || ConsoleDriver.InternalKeyAvailable (0) > 0);
 			}
 		}
@@ -488,21 +581,45 @@ namespace System {
 		}
 
 		public bool NumberLock {
-			get { throw new NotSupportedException (); }
+			get {
+				if (!inited) {
+					Init ();
+				}
+
+				throw new NotSupportedException ();
+			}
 		}
 
 		public string Title {
-			get { return title; }
+			get {
+				if (!inited) {
+					Init ();
+				}
+				return title;
+			}
 			
 			set {
+				if (!inited) {
+					Init ();
+				}
+
 				title = value;
 				WriteConsole (String.Format (titleFormat, value));
 			}
 		}
 
 		public bool TreatControlCAsInput {
-			get { return controlCAsInput; }
+			get {
+				if (!inited) {
+					Init ();
+				}
+				return controlCAsInput;
+			}
 			set {
+				if (!inited) {
+					Init ();
+				}
+
 				if (controlCAsInput == value)
 					return;
 
@@ -541,51 +658,91 @@ namespace System {
 
 		public int WindowHeight {
 			get {
+				if (!inited) {
+					Init ();
+				}
+
 				GetWindowDimensions ();
 				return windowHeight;
 			}
 			set {
+				if (!inited) {
+					Init ();
+				}
+
 				throw new NotSupportedException ();
 			}
 		}
 
 		public int WindowLeft {
 			get {
+				if (!inited) {
+					Init ();
+				}
+
 				//GetWindowDimensions ();
 				return 0;
 			}
 			set {
+				if (!inited) {
+					Init ();
+				}
+
 				throw new NotSupportedException ();
 			}
 		}
 
 		public int WindowTop {
 			get {
+				if (!inited) {
+					Init ();
+				}
+
 				//GetWindowDimensions ();
 				return 0;
 			}
 			set {
+				if (!inited) {
+					Init ();
+				}
+
 				throw new NotSupportedException ();
 			}
 		}
 
 		public int WindowWidth {
 			get {
+				if (!inited) {
+					Init ();
+				}
+
 				GetWindowDimensions ();
 				return windowWidth;
 			}
 			set {
+				if (!inited) {
+					Init ();
+				}
+
 				throw new NotSupportedException ();
 			}
 		}
 
 		public void Clear ()
 		{
+			if (!inited) {
+				Init ();
+			}
+
 			WriteConsole (clear);
 		}
 
 		public void Beep (int frequency, int duration)
 		{
+			if (!inited) {
+				Init ();
+			}
+
 			WriteConsole (bell);
 		}
 
@@ -593,6 +750,10 @@ namespace System {
 					int targetLeft, int targetTop, Char sourceChar,
 					ConsoleColor sourceForeColor, ConsoleColor sourceBackColor)
 		{
+			if (!inited) {
+				Init ();
+			}
+
 			throw new NotImplementedException ();
 		}
 
@@ -667,6 +828,10 @@ namespace System {
 
 		ConsoleKeyInfo ReadKeyInternal ()
 		{
+			if (!inited) {
+				Init ();
+			}
+
 			InitKeys ();
 			object o = null;
 			while (o == null) {
@@ -689,6 +854,9 @@ namespace System {
 
 		public ConsoleKeyInfo ReadKey (bool intercept)
 		{
+			if (!inited)
+				Init ();
+
 			bool prevEcho = Echo;
 			if (prevEcho == intercept)
 				Echo  = !intercept;
@@ -702,6 +870,9 @@ namespace System {
 
 		public string ReadLine ()
  		{
+			if (!inited)
+				Init ();
+
 			bool prevEcho = Echo;
 			if (prevEcho == false)
 				Echo  = true;
@@ -730,17 +901,29 @@ namespace System {
 
 		public void ResetColor ()
 		{
+			if (!inited) {
+				Init ();
+			}
+
 			string str = (origPair != null) ? origPair : origColors;
 			WriteConsole (str);
 		}
 
 		public void SetBufferSize (int width, int height)
 		{
+			if (!inited) {
+				Init ();
+			}
+
 			throw new NotImplementedException (String.Empty);
 		}
 
 		public void SetCursorPosition (int left, int top)
 		{
+			if (!inited) {
+				Init ();
+			}
+
 			if (bufferWidth == 0)
 				GetWindowDimensions ();
 
@@ -763,12 +946,20 @@ namespace System {
 
 		public void SetWindowPosition (int left, int top)
 		{
+			if (!inited) {
+				Init ();
+			}
+
 			// No need to throw exceptions here.
 			//throw new NotSupportedException ();
 		}
 
 		public void SetWindowSize (int width, int height)
 		{
+			if (!inited) {
+				Init ();
+			}
+
 			// No need to throw exceptions here.
 			//throw new NotSupportedException ();
 		}
