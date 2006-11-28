@@ -885,16 +885,6 @@ namespace Mono.CSharp {
 					pfield.MemberType, "parent", Parameter.Modifier.NONE,
 					null, Location));
 
-#if FIXME
-			if (HostsParameters) {
-				foreach (CapturedParameter cp in captured_params.Values) {
-					args.Add (new Parameter (
-							  cp.Field.MemberType, cp.Field.Name,
-							  Parameter.Modifier.NONE, null, Location));
-				}
-			}
-#endif
-
 			Parameter[] ctor_params = new Parameter [args.Count];
 			args.CopyTo (ctor_params, 0);
 			Constructor ctor = new Constructor (
@@ -926,16 +916,6 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Stfld, pfield.FieldBuilder);
 				pos++;
 			}
-
-#if FIXME
-			if (HostsParameters) {
-				foreach (CapturedParameter cp in captured_params.Values) {
-					ec.ig.Emit (OpCodes.Ldarg_0);
-					ParameterReference.EmitLdArg (ec.ig, pos++);
-					ec.ig.Emit (OpCodes.Stfld, cp.Field.FieldBuilder);
-				}
-			}
-#endif
 		}
 
 		protected class TheCtor : Statement
@@ -987,23 +967,6 @@ namespace Mono.CSharp {
 					Host.THIS.FieldInstance = fe;
 				}
 
-#if FIXME
-				//
-				// Copy the parameter values, if any
-				//
-				if (Host.HostsParameters) {
-					foreach (CapturedParameter cp in Host.captured_params.Values) {
-						FieldExpr fe = (FieldExpr) Expression.MemberLookup (
-							ec.ContainerType, type, cp.Field.Name, loc);
-						if (fe == null)
-							throw new InternalErrorException ();
-
-						fe.InstanceExpression = this;
-						cp.FieldInstance = fe;
-					}
-				}
-#endif
-
 				return base.DoResolveInternal (ec);
 			}
 
@@ -1021,14 +984,6 @@ namespace Mono.CSharp {
 						Expression.LoadFromPtr (ec.ig, host.THIS.Type);
 				} else if (host.ParentLink != null)
 					ec.ig.Emit (OpCodes.Ldarg_0);
-
-#if FIXME
-				if (Host.HostsParameters) {
-					foreach (CapturedParameter cp in Host.captured_params.Values) {
-						EmitParameterReference (ec, cp);
-					}
-				}
-#endif
 
 				base.EmitScopeConstructor (ec);
 			}
