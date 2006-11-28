@@ -796,6 +796,13 @@ namespace System.Windows.Forms.X11Internal {
 			InvalidateNC ();
 		}
 
+		[MonoTODO]
+		public void RequestAdditionalWM_NCMessages (bool hover, bool leave)
+		{
+			// Missing messages won't crash anything so just don't generate them for the moment.
+			// throw new NotImplementedException( );
+		}
+		
 		public void FrameExtents (out int left, out int top)
 		{
 			IntPtr			actual_atom;

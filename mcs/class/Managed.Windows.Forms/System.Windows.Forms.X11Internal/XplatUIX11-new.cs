@@ -689,6 +689,15 @@ namespace System.Windows.Forms.X11Internal {
 			ThreadQueue(Thread.CurrentThread).PostQuitState = true;
 		}
 
+		[MonoTODO]
+		internal override void RequestAdditionalWM_NCMessages (IntPtr handle, bool hover, bool leave)
+		{
+			X11Hwnd hwnd = (X11Hwnd)Hwnd.ObjectFromHandle(handle);
+
+			if (hwnd != null)
+				hwnd.RequestAdditionalWM_NCMessages (hover, leave);
+		}
+		
 		internal override void RequestNCRecalc (IntPtr handle)
 		{
 			X11Hwnd hwnd = (X11Hwnd)Hwnd.ObjectFromHandle(handle);

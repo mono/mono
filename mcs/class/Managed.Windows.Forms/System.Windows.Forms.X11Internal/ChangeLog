@@ -1,3 +1,10 @@
+2006-11-28  Rolf Bjarne Kvinge <RKvinge@novell.com>
+	
+	* XplatUIX11-new.cs:
+	* X11Hwnd.cs:
+	- Added RequestAdditionalWM_NCMessages for windows to 
+	  opt in for WM_NCMOUSELEAVE and WM_NCMOUSEHOVER.
+
 2006-11-28  Chris Toshok  <toshok@ximian.com>
 
 	* X11Display.cs (XEventThread): move to a polling strategy again,
