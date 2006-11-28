@@ -4138,6 +4138,11 @@ namespace System.Windows.Forms {
 			ThreadQueue(Thread.CurrentThread).PostQuitState = true;
 		}
 
+		internal override void RequestAdditionalWM_NCMessages(IntPtr hwnd, bool hover, bool leave)
+		{
+			// TODO
+		}
+
 		internal override void RequestNCRecalc(IntPtr handle) {
 			Hwnd				hwnd;
 

@@ -1,3 +1,14 @@
+2006-11-27  Rolf Bjarne Kvinge  
+	
+	* XplatUI.cs:
+	* XplatUIDriver.cs:
+	* XplatUIX11.cs:
+	* XplatUIWin32.cs:
+	* XplatUIOSX.cs:
+	- Added RequestAdditionalWM_NCMessages for windows to 
+	  opt in for WM_NCMOUSELEAVE and WM_NCMOUSEHOVER.
+	  Currently only implemented in XplatUIWin32.
+
 2006-11-27  Chris Toshok  <toshok@ximian.com>
 
 	* Hwnd.cs: only add the hwnd to the windows hash in

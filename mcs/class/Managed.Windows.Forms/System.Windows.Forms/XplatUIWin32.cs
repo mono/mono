@@ -61,6 +61,7 @@ namespace System.Windows.Forms {
 		private static IntPtr 		clip_magic = new IntPtr(27051977);
 		private static int		scroll_width;
 		private static int		scroll_height;
+		private static Hashtable	wm_nc_registered;
 
 		private static Win32DnD		DnD;
 		#endregion	// Local Variables
@@ -147,6 +148,7 @@ namespace System.Windows.Forms {
 		private enum TMEFlags {
 			TME_HOVER		= 0x00000001,
 			TME_LEAVE		= 0x00000002,
+			TME_NONCLIENT		= 0x00000010,
 			TME_QUERY		= unchecked((int)0x40000000),
 			TME_CANCEL		= unchecked((int)0x80000000)
 		}
@@ -1394,6 +1396,30 @@ namespace System.Windows.Forms {
 			Win32PostQuitMessage(exitCode);
 		}
 
+		internal override void RequestAdditionalWM_NCMessages(IntPtr hwnd, bool hover, bool leave)
+		{
+			if (wm_nc_registered == null)
+				wm_nc_registered = new Hashtable ();
+				
+			TMEFlags flags = TMEFlags.TME_NONCLIENT;
+			if (hover)
+				flags |= TMEFlags.TME_HOVER;
+			if (leave)
+				flags |= TMEFlags.TME_LEAVE;
+
+			if (flags == TMEFlags.TME_NONCLIENT) {
+				if (wm_nc_registered.Contains (hwnd)) {
+					wm_nc_registered.Remove (hwnd);
+				}
+			} else {
+				if (!wm_nc_registered.Contains (hwnd)) {
+					wm_nc_registered.Add (hwnd, flags);
+				} else {
+					wm_nc_registered [hwnd] = flags;
+				}
+			}
+		}
+
 		internal override void RequestNCRecalc(IntPtr handle) {
 			Win32SetWindowPos(handle, IntPtr.Zero, 0, 0, 0, 0, SetWindowPosFlags.SWP_FRAMECHANGED | SetWindowPosFlags.SWP_NOOWNERZORDER | SetWindowPosFlags.SWP_NOSIZE | SetWindowPosFlags.SWP_NOMOVE);
 		}
@@ -1486,6 +1512,20 @@ namespace System.Windows.Forms {
 						return result;
 					}
 					break;
+				}
+
+				case Msg.WM_NCMOUSEMOVE: {
+					if (wm_nc_registered == null || !wm_nc_registered.Contains (msg.hwnd))
+						break;
+						
+					TRACKMOUSEEVENT tme;
+
+					tme = new TRACKMOUSEEVENT ();
+					tme.size = Marshal.SizeOf(tme);
+					tme.hWnd = msg.hwnd;
+					tme.dwFlags = (TMEFlags)wm_nc_registered[msg.hwnd];
+					Win32TrackMouseEvent (ref tme);
+					return result;
 				}
 
 				case Msg.WM_DROPFILES: {

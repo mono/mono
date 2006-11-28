@@ -670,6 +670,13 @@ namespace System.Windows.Forms {
 			driver.PostQuitMessage(exitCode);
 		}
 
+		internal static void RequestAdditionalWM_NCMessages(IntPtr handle, bool hover, bool leave) {
+			#if DriverDebug
+				Console.WriteLine("RequestAdditionalWM_NCMessages({0}, {1}, {2}): Called", Window(handle), hover, leave);
+			#endif
+			driver.RequestAdditionalWM_NCMessages (handle, hover, leave);
+		}
+
 		internal static void RequestNCRecalc(IntPtr handle) {
 			#if DriverDebug
 				Console.WriteLine("RequestNCRecalc({0}): Called", Window(handle));

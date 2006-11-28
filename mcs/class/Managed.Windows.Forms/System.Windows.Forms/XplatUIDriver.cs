@@ -278,6 +278,7 @@ namespace System.Windows.Forms {
 
 		internal abstract void RequestNCRecalc(IntPtr hwnd);
 		internal abstract void ResetMouseHover(IntPtr hwnd);
+		internal abstract void RequestAdditionalWM_NCMessages(IntPtr hwnd, bool hover, bool leave);
 
 		// System information
 		internal abstract int KeyboardSpeed { get; } 

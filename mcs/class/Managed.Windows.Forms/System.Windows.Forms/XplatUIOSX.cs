@@ -1402,6 +1402,11 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
+		internal override void RequestAdditionalWM_NCMessages(IntPtr hwnd, bool hover, bool leave) {
+			throw new NotImplementedException();
+		}
+
 		[MonoTODO]		
 		internal override void RequestNCRecalc(IntPtr handle) {
 			throw new NotImplementedException();
