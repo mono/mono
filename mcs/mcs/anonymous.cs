@@ -302,15 +302,23 @@ namespace Mono.CSharp {
 
 		public static void EmitScopeInstance (EmitContext ec, ScopeInfo scope)
 		{
+			Report.Debug (128, "EMIT SCOPE INSTANCE", ec, ec.CurrentAnonymousMethod,
+				      scope);
+
 			scope.EmitScopeInstance (ec);
 
+#if FIXME
 			if (ec.CurrentAnonymousMethod != null) {
+				if (ec.CurrentAnonymousMethod.IsIterator)
+					Report.StackTrace ();
 				ScopeInfo host = ec.CurrentAnonymousMethod.Scope;
 				Variable captured = host.GetCapturedScope (scope);
-				Report.Debug (128, "EMIT SCOPE INSTANCE #2", host, scope, captured);
+				Report.Debug (128, "EMIT SCOPE INSTANCE #2",
+					      ec.CurrentAnonymousMethod, host, scope, captured);
 				if (captured != null)
 					captured.Emit (ec);
 			}
+#endif
 		}
 
 		protected override bool DoDefineMembers ()
@@ -337,7 +345,7 @@ namespace Mono.CSharp {
 		public Variable CaptureScope (ScopeInfo child)
 		{
 			CheckMembersDefined ();
-			Report.Debug (128, "CAPTURE SCOPE", this, child);
+			Report.Debug (128, "CAPTURE SCOPE", this, GetType (), child, child.GetType ());
 			if (child == this)
 				throw new InternalErrorException ();
 			CapturedScope captured = new CapturedScope (this, child);
@@ -536,6 +544,12 @@ namespace Mono.CSharp {
 					Scope.MakeFieldName (Name), Scope.InflateType (type));
 				return true;
 			}
+
+			public override string ToString ()
+			{
+				return String.Format ("CapturedScope ({1} captured in {0})",
+						      Scope, ChildScope);
+			}
 		}
 
 		static void DoPath (StringBuilder sb, ScopeInfo start)
@@ -602,7 +616,8 @@ namespace Mono.CSharp {
 
 				scope_ctor = (ConstructorInfo) mg.Methods [0];
 
-				Report.Debug (128, "RESOLVE THE INIT", this, Scope, Scope.RootScope);
+				Report.Debug (128, "RESOLVE THE INIT", this, Scope, Scope.RootScope,
+					      Scope.RootScope.GetType ());
 
 				ScopeInfo host = Scope.RootScope;
 				if ((Scope != host) && (Scope.RootScope is IteratorHost)) {
@@ -675,22 +690,37 @@ namespace Mono.CSharp {
 			protected virtual void DoEmit (EmitContext ec)
 			{
 				if ((ec.CurrentBlock != null) &&
-				    (ec.CurrentBlock.Toplevel != Scope.ScopeBlock.Toplevel))
+				    (ec.CurrentBlock.Toplevel != Scope.ScopeBlock.Toplevel)) {
 					ec.ig.Emit (OpCodes.Ldarg_0);
-				else
-					DoEmitInstance (ec);
+
+					if (ec.CurrentAnonymousMethod != null) {
+						ScopeInfo host = ec.CurrentAnonymousMethod.Scope;
+						Variable captured = host.GetCapturedScope (scope);
+						Report.Debug (128, "EMIT SCOPE INSTANCE #2",
+							      ec.CurrentAnonymousMethod, host,
+							      scope, captured);
+						if (captured != null)
+							captured.Emit (ec);
+					}
+				} else if (scope_instance != null)
+					ec.ig.Emit (OpCodes.Ldloc, scope_instance);
+				else {
+					Report.Debug (128, "DO EMIT", this, Scope, ec,
+						      scope_instance, captured_scope);
+					captured_scope.EmitInstance (ec);
+					captured_scope.Emit (ec);
+				}
 			}
 
 			protected void DoEmitInstance (EmitContext ec)
 			{
+				Report.Debug (128, "DO EMIT INSTANCE", this, Scope, ec,
+					      scope_instance, captured_scope);
+
 				if (scope_instance != null)
 					ec.ig.Emit (OpCodes.Ldloc, scope_instance);
-				else {
-					Report.Debug (128, "DO EMIT INSTANCE CRASH", this, Scope,
-						      ec.CurrentBlock, ec.CurrentBlock.Toplevel,
-						      Scope.ScopeBlock, Scope.ScopeBlock.Toplevel);
+				else
 					captured_scope.EmitInstance (ec);
-				}
 			}
 
 			protected virtual void EmitScopeConstructor (EmitContext ec)
@@ -744,7 +774,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (Scope.RootScope.IsIterator)
+				if (Scope is IteratorHost)
 					return;
 
 				foreach (CapturedScope scope in Scope.CapturedScopes) {
@@ -1640,6 +1670,9 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
+			ec.ig.Emit (OpCodes.Ldstr, "EMIT ANONYMOUS DELEGATE");
+			ec.ig.Emit (OpCodes.Pop);
+
 			//
 			// Now emit the delegate creation.
 			//
@@ -1659,6 +1692,11 @@ namespace Mono.CSharp {
 			constructor_method = ((MethodGroupExpr) ml).Methods [0];
 			delegate_method = am.GetMethodBuilder (ec);
 			base.Emit (ec);
+
+			ec.ig.Emit (OpCodes.Ldstr, "EMIT ANONYMOUS DELEGATE DONE");
+			ec.ig.Emit (OpCodes.Pop);
+
+			Report.Debug (128, "EMIT ANONYMOUS DELEGATE DONE", this, am, am.Scope, loc);
 		}
 	}
 }
