@@ -1035,7 +1035,7 @@ namespace Mono.CSharp {
 
 		public LocalInfo (DeclSpace ds, Block block, Location l)
 		{
-			VariableType = ds.TypeBuilder;
+			VariableType = ds.IsGeneric ? ds.CurrentType : ds.TypeBuilder;
 			Block = block;
 			Location = l;
 		}
