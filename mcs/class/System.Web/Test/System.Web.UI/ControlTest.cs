@@ -311,6 +311,7 @@ namespace MonoTests.System.Web.UI
 		}
 
 		[Test]
+			[Category("NotWorking")]  //EnsureID is not implemented.
 		public void EnsureID ()
 		{
 			MyNC ctrl = new MyNC ();
