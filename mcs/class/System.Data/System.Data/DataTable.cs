@@ -852,6 +852,7 @@ namespace System.Data {
 		}
 
 #if NET_2_0
+		[Browsable (false)]
 		public bool IsInitialized {
 			get { return tableInitialized;}
 		}

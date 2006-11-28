@@ -56,6 +56,9 @@ namespace System.Data {
 		private Rule _updateRule = Rule.Cascade;
 		private AcceptRejectRule _acceptRejectRule = AcceptRejectRule.None;
 		private string _parentTableName;
+#if NET_2_0
+		private string _parentTableNamespace;
+#endif
 		private string _childTableName;
 
 		//FIXME: remove those; and use only DataColumns[]
@@ -157,15 +160,36 @@ namespace System.Data {
 			_validateColumns (parentColumns, childColumns);
 			_parentColumns = parentColumns;
 			_childColumns = childColumns;
+#if NET_2_0
+			parentTable.Namespace = _parentTableNamespace;
+#endif
 			InitInProgress = false;
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		[Browsable (false)]
 		public ForeignKeyConstraint (string constraintName, string parentTableName, string parentTableNamespace, string[] parentColumnNames, string[] childColumnNames, AcceptRejectRule acceptRejectRule, Rule deleteRule, Rule updateRule)
 		{
-			throw new NotImplementedException ();
+			InitInProgress = true;
+			base.ConstraintName = constraintName;
+
+			// "parentTableName" is searched in the "DataSet" to which the "DataTable"
+			// from which AddRange() is called
+			// childTable is the "DataTable" which calls AddRange()
+
+			// Keep reference to parentTableName to resolve later
+			_parentTableName = parentTableName;
+			_parentTableNamespace = parentTableNamespace;
+
+			// Keep reference to parentColumnNames to resolve later
+			_parentColumnNames = parentColumnNames;
+
+			// Keep reference to childColumnNames to resolve later
+			_childColumnNames = childColumnNames;
+
+			_acceptRejectRule = acceptRejectRule;
+			_deleteRule = deleteRule;
+			_updateRule = updateRule;
 		}
 #endif
 

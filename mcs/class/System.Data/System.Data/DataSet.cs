@@ -203,7 +203,6 @@ namespace System.Data {
 		[DataSysDescription ("Indicates that the DataSet has errors.")]
 #endif
 		public bool HasErrors {
-			[MonoTODO]
 			get {
 				for (int i = 0; i < Tables.Count; i++) {
 					if (Tables[i].HasErrors)
@@ -214,6 +213,7 @@ namespace System.Data {
 		}
 
 #if NET_2_0
+		[Browsable (false)]
 		public bool IsInitialized {
 			get { return dataSetInitialized;}
 		}
@@ -750,7 +750,8 @@ namespace System.Data {
 			}
 		}
 
-		public void Load (IDataReader reader, LoadOption loadOption, FillErrorEventHandler errorHandler, params DataTable[] tables)
+		public virtual void Load (IDataReader reader, LoadOption loadOption,
+					  FillErrorEventHandler errorHandler, params DataTable[] tables)
 		{
 			if (reader == null) {
 				throw new ArgumentNullException ("Value cannot be null. Parameter name: reader");
@@ -1581,7 +1582,11 @@ namespace System.Data {
 				case TypeCode.Char:
 					return XmlConvert.ToString ((Char) o);
 				case TypeCode.DateTime:
+#if NET_2_0
+					return XmlConvert.ToString ((DateTime) o, XmlDateTimeSerializationMode.Unspecified);
+#else
 					return XmlConvert.ToString ((DateTime) o);
+#endif
 				case TypeCode.Decimal:
 					return XmlConvert.ToString ((Decimal) o);
 				case TypeCode.Double:

@@ -137,6 +137,25 @@ namespace System.Data {
 					return base.List;
 				}
 			}
+
+			public override DataRelation this [string name] {
+				get {
+					int index = IndexOf (name, true);
+					return index < 0 ? null : (DataRelation) List[index];
+				}
+			}
+
+			/// <summary>
+			/// Gets the DataRelation object at the specified index.
+			/// </summary>
+			public override DataRelation this [int index] {
+				get {
+					if (index < 0 || index >= List.Count)
+						throw new IndexOutOfRangeException (String.Format ("Cannot find relation {0}.", index));
+
+					return (DataRelation)List [index];
+				}
+			}
 		}
 
 		/// <summary>
@@ -159,25 +178,43 @@ namespace System.Data {
 				return dataTable.DataSet;
 			}
 
+			public override DataRelation this [string name] {
+				get {
+					int index = IndexOf (name, true);
+					return index < 0 ? null : (DataRelation) List[index];
+				}
+			}
+
+			/// <summary>
+			/// Gets the DataRelation object at the specified index.
+			/// </summary>
+			public override DataRelation this [int index] {
+				get {
+					if (index < 0 || index >= List.Count)
+						throw new IndexOutOfRangeException (String.Format ("Cannot find relation {0}.", index));
+
+					return (DataRelation)List [index];
+				}
+			}
+
 			/// <summary>
 			/// Performs verification on the table.
 			/// </summary>
 			/// <param name="relation">The relation to check.</param>
 			protected override void AddCore (DataRelation relation)
 			{
-                if (dataTable.ParentRelations == this && relation.ChildTable != dataTable)
-                    throw new ArgumentException ("Cannot add a relation to this table's " +
-													"ParentRelations where this table is not" +
-													" the Child table.");
+				if (dataTable.ParentRelations == this && relation.ChildTable != dataTable)
+					throw new ArgumentException ("Cannot add a relation to this table's " +
+								     "ParentRelations where this table is not" +
+								     " the Child table.");
 
-                if (dataTable.ChildRelations == this && relation.ParentTable != dataTable)   
-                    throw new ArgumentException("Cannot add a relation to this table's " +
-                                                "ChildRelations where this table is not" +
-                                                " the Parent table.");
+				if (dataTable.ChildRelations == this && relation.ParentTable != dataTable)   
+					throw new ArgumentException("Cannot add a relation to this table's " +
+								    "ChildRelations where this table is not" +
+								    " the Parent table.");
                 
 				dataTable.DataSet.Relations.Add(relation);
-                base.AddCore (relation);
-
+				base.AddCore (relation);
 			}
                         
 			protected override void RemoveCore (DataRelation relation)
@@ -211,23 +248,15 @@ namespace System.Data {
 		/// <summary>
 		/// Gets the DataRelation object specified by name.
 		/// </summary>
-		public DataRelation this [string name] {
-			get {
-				int index = IndexOf (name, true);
-				return index < 0 ? null : (DataRelation) List[index];
-			}
+		public abstract DataRelation this [string name] {
+			get;
 		}
 
 		/// <summary>
 		/// Gets the DataRelation object at the specified index.
 		/// </summary>
-		public DataRelation this [int index] {
-			get {
-				if (index < 0 || index >= List.Count)
-					throw new IndexOutOfRangeException (String.Format ("Cannot find relation {0}.", index));
-
-				return (DataRelation)List [index];
-			}
+		public abstract DataRelation this [int index] {
+			get;
 		}
 
 		

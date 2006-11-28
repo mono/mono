@@ -130,6 +130,13 @@ namespace System.Data {
 			settingList.CopyTo (ar, index);
 		}
 
+#if NET_2_0
+		public void CopyTo (DataViewSetting [] ar, int index) 
+		{
+			settingList.CopyTo (ar, index);
+		}
+#endif
+
 		public IEnumerator GetEnumerator () 
 		{
 			return settingList.GetEnumerator ();

@@ -290,9 +290,15 @@ namespace System.Data
 			e.Name = "bar";
 			s.Items.Add (e);
 			s.Compile (null);
+#if NET_2_0
+			schemaIntegerType = ((XmlSchemaSimpleType) a.AttributeSchemaType).Datatype;
+			schemaDecimalType = ((XmlSchemaSimpleType) b.AttributeSchemaType).Datatype;
+			schemaAnyType = e.ElementSchemaType as XmlSchemaComplexType;
+#else
 			schemaIntegerType = a.AttributeType as XmlSchemaDatatype;
 			schemaDecimalType = b.AttributeType as XmlSchemaDatatype;
 			schemaAnyType = e.ElementType as XmlSchemaComplexType;
+#endif
 		}
 
 		#region Fields
@@ -343,8 +349,13 @@ namespace System.Data
 					if (datasetElement == null &&
 						IsDataSetElement (el))
 						datasetElement = el;
+#if NET_2_0
+					if (el.ElementSchemaType is XmlSchemaComplexType &&
+					    el.ElementSchemaType != schemaAnyType)
+#else
 					if (el.ElementType is XmlSchemaComplexType &&
-el.ElementType != schemaAnyType)
+					    el.ElementType != schemaAnyType)
+#endif
 						targetElements.Add (obj);
 				}
 			}
@@ -364,8 +375,13 @@ el.ElementType != schemaAnyType)
 			foreach (XmlSchemaObject obj in schema.Items) {
 				if (obj is XmlSchemaElement) {
 					XmlSchemaElement el = obj as XmlSchemaElement;
+#if NET_2_0
+					if (el.ElementSchemaType is XmlSchemaComplexType &&
+					    el.ElementSchemaType != schemaAnyType)
+#else
 					if (el.ElementType is XmlSchemaComplexType &&
-el.ElementType != schemaAnyType)
+					    el.ElementType != schemaAnyType)
+#endif
 						targetElements.Add (obj);
 				}
 			}
@@ -440,7 +456,12 @@ el.ElementType != schemaAnyType)
 		{
 			XmlSchemaElement el = p as XmlSchemaElement;
 			if (el != null) {
-				XmlSchemaComplexType ct = el.ElementType as XmlSchemaComplexType;
+				XmlSchemaComplexType ct = null;
+#if NET_2_0
+				ct = el.ElementSchemaType as XmlSchemaComplexType;
+#else
+				ct = el.ElementType as XmlSchemaComplexType;
+#endif
 				if (ct == null || ct == schemaAnyType)
 					return true; // column element
 				if (ct.AttributeUses.Count > 0)
@@ -466,7 +487,11 @@ el.ElementType != schemaAnyType)
 				return;
 
 			// If type is not complex, just skip this element
+#if NET_2_0
+			if (! (el.ElementSchemaType is XmlSchemaComplexType && el.ElementSchemaType != schemaAnyType))
+#else
 			if (! (el.ElementType is XmlSchemaComplexType && el.ElementType != schemaAnyType))
+#endif
 				return;
 
 			if (IsDataSetElement (el)) {
@@ -497,7 +522,12 @@ el.ElementType != schemaAnyType)
 			}
 
 			// Process content type particle (and create DataTable)
-			XmlSchemaComplexType ct = el.ElementType as XmlSchemaComplexType;
+			XmlSchemaComplexType ct = null;
+#if NET_2_0
+			ct = el.ElementSchemaType as XmlSchemaComplexType;
+#else
+			ct = el.ElementType as XmlSchemaComplexType;
+#endif
 			XmlSchemaParticle p = ct != null ? ct.ContentTypeParticle : null;
 			if (p != null)
 				HandleDataSetContentTypeParticle (p);
@@ -507,7 +537,11 @@ el.ElementType != schemaAnyType)
 		{
 			XmlSchemaElement el = p as XmlSchemaElement;
 			if (el != null) {
+#if NET_2_0
+				if (el.ElementSchemaType is XmlSchemaComplexType && el.RefName != el.QualifiedName)
+#else
 				if (el.ElementType is XmlSchemaComplexType && el.RefName != el.QualifiedName)
+#endif
 					ProcessDataTableElement (el);
 			}
 			else if (p is XmlSchemaGroupBase) {
@@ -540,7 +574,12 @@ el.ElementType != schemaAnyType)
 
 			// Handle complex type (NOTE: It is (or should be)
 			// impossible the type is other than complex type).
-			XmlSchemaComplexType ct = (XmlSchemaComplexType) el.ElementType;
+			XmlSchemaComplexType ct = null;
+#if NET_2_0
+			ct = (XmlSchemaComplexType) el.ElementSchemaType;
+#else
+			ct = (XmlSchemaComplexType) el.ElementType;
+#endif
 
 			// Handle attributes
 			foreach (DictionaryEntry de in ct.AttributeUses)
@@ -654,7 +693,12 @@ el.ElementType != schemaAnyType)
 			DataColumn col = new DataColumn ();
 			col.ColumnName = attr.QualifiedName.Name;
 			col.Namespace = attr.QualifiedName.Namespace;
-			XmlSchemaDatatype dt = GetSchemaPrimitiveType (attr.AttributeType);
+			XmlSchemaDatatype dt = null;
+#if NET_2_0
+			dt = GetSchemaPrimitiveType (((XmlSchemaSimpleType) attr.AttributeSchemaType).Datatype);
+#else
+			dt = GetSchemaPrimitiveType (attr.AttributeType);
+#endif
 			// This complicated check comes from the fact that
 			// MS.NET fails to map System.Object to anyType (that
 			// will cause ReadTypedObject() fail on XmlValidatingReader).
@@ -674,7 +718,11 @@ el.ElementType != schemaAnyType)
 			if (attr.Use == XmlSchemaUse.Required)
 				col.AllowDBNull = false;
 
+#if NET_2_0
+			FillFacet (col, attr.AttributeSchemaType as XmlSchemaSimpleType);
+#else
 			FillFacet (col, attr.AttributeType as XmlSchemaSimpleType);
+#endif
 
 			// Call this method after filling the name
 			ImportColumnMetaInfo (attr, attr.QualifiedName, col);
@@ -689,7 +737,11 @@ el.ElementType != schemaAnyType)
 			col.DefaultValue = GetElementDefaultValue (el);
 			col.AllowDBNull = (el.MinOccurs == 0);
 
+#if NET_2_0
+			if (el.ElementSchemaType is XmlSchemaComplexType && el.ElementSchemaType != schemaAnyType)
+#else
 			if (el.ElementType is XmlSchemaComplexType && el.ElementType != schemaAnyType)
+#endif
 				FillDataColumnComplexElement (parent, el, col);
 			else if (el.MaxOccurs != 1)
 				FillDataColumnRepeatedSimpleElement (parent, el, col);
@@ -826,7 +878,11 @@ el.ElementType != schemaAnyType)
 			cc2.Namespace = el.QualifiedName.Namespace;
 			cc2.ColumnMapping = MappingType.SimpleContent;
 			cc2.AllowDBNull = false;
+#if NET_2_0
+			cc2.DataType = ConvertDatatype (GetSchemaPrimitiveType (el.ElementSchemaType));
+#else
 			cc2.DataType = ConvertDatatype (GetSchemaPrimitiveType (el.ElementType));
+#endif
 
 			dt.Columns.Add (cc2);
 			dt.Columns.Add (cc);
@@ -847,8 +903,13 @@ el.ElementType != schemaAnyType)
 			col.ColumnName = XmlHelper.Decode (el.QualifiedName.Name);
 			col.Namespace = el.QualifiedName.Namespace;
 			col.ColumnMapping = MappingType.Element;
+#if NET_2_0
+			col.DataType = ConvertDatatype (GetSchemaPrimitiveType (el.ElementSchemaType));
+			FillFacet (col, el.ElementSchemaType as XmlSchemaSimpleType);
+#else
 			col.DataType = ConvertDatatype (GetSchemaPrimitiveType (el.ElementType));
 			FillFacet (col, el.ElementType as XmlSchemaSimpleType);
+#endif
 
 			ImportColumnMetaInfo (el, el.QualifiedName, col);
 

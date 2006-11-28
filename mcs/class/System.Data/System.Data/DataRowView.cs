@@ -144,7 +144,6 @@ namespace System.Data
 		// "Detached", and when this.EndEdit() is invoked, the row
 		// will be added to the table.
 		public bool IsNew {
-			[MonoTODO]
 			get {
 				return Row == DataView._lastAdded;
 			}
@@ -215,14 +214,12 @@ namespace System.Data
 		}
 
 		public DataRow Row {
-			[MonoTODO]
 			get {
 				return _dataRow;
 			}
 		}
 
 		public DataRowVersion RowVersion {
-			[MonoTODO]
 			get {
 				DataRowVersion version = DataView.GetRowVersion(_index);
 				if (version != DataRowVersion.Original)
@@ -232,7 +229,6 @@ namespace System.Data
 			}
 		}
 
-		[MonoTODO]
 		public override int GetHashCode() {
 			return _dataRow.GetHashCode();
 		}	
@@ -245,7 +241,6 @@ namespace System.Data
 		
 		#region ICustomTypeDescriptor implementations
 		
-		[MonoTODO]
 		AttributeCollection ICustomTypeDescriptor.GetAttributes  ()
 		{
 			System.ComponentModel.AttributeCollection attributes;

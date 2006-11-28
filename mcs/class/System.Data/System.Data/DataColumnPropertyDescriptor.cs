@@ -42,7 +42,7 @@ namespace System.Data
 		private bool readOnly = true;
 		private Type componentType = null;
 		private Type propertyType = null;
-		private PropertyInfo prop = null;
+		//private PropertyInfo prop = null;
 		private int columnIndex = 0;
 
 		public DataColumnPropertyDescriptor (string name, int columnIndex, Attribute [] attrs)

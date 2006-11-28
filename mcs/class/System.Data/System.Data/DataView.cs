@@ -36,7 +36,7 @@ namespace System.Data
 	[DefaultProperty ("Table")]
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataViewDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 #if NET_2_0
-	public class DataView : MarshalByValueComponent, IBindingList, IList, ICollection, IEnumerable, ITypedList, ISupportInitialize, IBindingListView
+	public class DataView : MarshalByValueComponent, IBindingList, IList, ICollection, IEnumerable, ITypedList, ISupportInitialize, IBindingListView, ISupportInitializeNotification
 #else
 	public class DataView : MarshalByValueComponent, IBindingList, IList, ICollection, IEnumerable, ITypedList, ISupportInitialize
 #endif
@@ -68,7 +68,7 @@ namespace System.Data
 		bool allowEdit = true;
 		bool allowDelete = true;
 		bool applyDefaultSort = false;
-		bool isSorted = false;
+		//bool isSorted = false;
 
 		bool isOpen = false;
 
@@ -366,6 +366,7 @@ namespace System.Data
 		}
 
 #if NET_2_0
+		[Browsable (false)]
 		public bool IsInitialized {
 			get { return dataViewInitialized;}
 		}

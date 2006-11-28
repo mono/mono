@@ -1,5 +1,34 @@
 2006-11-28  Nagappan A  <anagappan@novell.com>
 
+	* XmlSchemaDataImporter.cs: Fixed 2.0 profile compilation
+	warnings. Using AttributeSchemaType instead of AttributeType and
+	ElementSchemaType instead of ElementType.
+
+	* TypedDataSetGenerator.cs: Modified the profile check from
+	!NET_1_1 to !NET_1_0, as this class is obsolete from 1.1 profile.
+
+	* DataRelationCollection.cs (Item): Modified the property Item as
+	abstract and implemented it in DataSetRelationCollection and
+	DataTableRelationCollection classes.
+
+	* DataRowView.cs: Remove bogus MonoTODOs.
+
+	* ForeignKeyConstraint.cs (ForeignKeyConstraint): Implemented
+	2.0 profile's missing constructor.
+
+	* XmlDataLoader.cs (StringToObject): Modify XmlConvert.ToDateTime
+	to use XmlDateTimeSerializationMode, as the default ToDataTime
+	method id obsolete.
+
+	* XmlDataReader.cs (StringToObject): Modify XmlConvert.ToDateTime
+	to use XmlDateTimeSerializationMode, as the default ToDataTime
+	method id obsolete.
+
+	* DataView.cs (IsInitialized): Added browsable attribute. 
+
+	* DataViewSettingCollection.cs (CopyTo): Implemented missing 2.0
+	API.
+
 	* DataRelation.cs (DataRelation): Added 2.0 profile constructor to
 	take parentTableNameSpace and childTableNameSpace as argument.
 	(FinishInit): Update parentTableNameSpace and childTableNameSpace,
@@ -17,9 +46,14 @@
 	(WriteXmlSchema): Throw InvalidOperationException, when table name
 	is empty. When DataSet Namespace is set, append that with '_x003A_'
 	and table name.
+	(IsInitialized): Added browsable attribute.
 
 	* DataSet.cs (Load): Throw ArgumentNullException, when reader
 	argument is null.
+	(IsInitialized): Added browsable attribute.
+	(WriteObjectXml): Modify XmlConvert.ToDateTime to use
+	XmlDateTimeSerializationMode, as the default ToDataTime method id
+	obsolete.
 
 	* XmlSchemaWriter.cs (WriteSchema): Modified UseCurrentCulture to
 	UseCurrentLocale.
