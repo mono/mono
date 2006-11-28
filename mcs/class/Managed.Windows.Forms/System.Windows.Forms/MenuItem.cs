@@ -53,7 +53,9 @@ namespace System.Windows.Forms
 		private int index;
 		private bool mdilist;
 		private Hashtable mdilist_items;
+		private Hashtable mdilist_forms;
 		private MdiClient mdicontainer;
+		private bool is_window_menu_item;
 		private bool defaut_item;
 		private bool visible;
 		private bool ownerdraw;
@@ -408,6 +410,22 @@ namespace System.Windows.Forms
 		{
 			base.CloneMenu (menuitem); // Copy subitems
 
+			// Window list
+			MdiList = menuitem.MdiList;
+			is_window_menu_item = menuitem.is_window_menu_item;
+			// Remove items corresponding to window menu items, and add new items
+			// (Otherwise window menu items would show up twice, since the PopulateWindowMenu doesn't
+			// now them)
+			bool populated = false;
+			for (int i = MenuItems.Count - 1; i >= 0; i--) {
+				if (MenuItems [i].is_window_menu_item) {
+					MenuItems.RemoveAt (i);
+					populated = true;
+				}
+			}
+			if (populated)
+				PopulateWindowMenu ();
+
 			// Properties
 			BarBreak = menuitem.BarBreak;
 			Break = menuitem.Break;
@@ -517,11 +535,19 @@ namespace System.Windows.Forms
 
 		internal void PerformDrawItem (DrawItemEventArgs e)
 		{
-			if (mdilist && mdilist_items == null) {
-				do {
-					// Add the mdilist for the first time
+			PopulateWindowMenu ();
+			OnDrawItem (e);
+		}
+		
+		private void PopulateWindowMenu ()
+		{
+			if (mdilist) {
+				if (mdilist_items == null) {
 					mdilist_items = new Hashtable ();
-
+					mdilist_forms = new Hashtable ();
+				}
+				
+				do {
 					MainMenu main = GetMainMenu ();
 					if (main == null || main.GetForm () == null)
 						break;
@@ -531,17 +557,48 @@ namespace System.Windows.Forms
 					if (mdicontainer == null)
 						break;
 
-					foreach (Form mdichild in mdicontainer.Controls) {
-						MenuItem item = new MenuItem (mdichild.Text);
-						item.Click += new EventHandler (MdiWindowClickHandler);
-						MenuItems.AddNoEvents (item);
-						mdilist_items [item] = mdichild;
+					// Remove closed forms
+					foreach (MenuItem item in mdilist_items.Keys) {
+						Form mdichild = (Form) mdilist_items [item];
+						if (!mdicontainer.original_order.Contains (mdichild)) {
+							mdilist_items.Remove (item);
+							mdilist_forms.Remove (mdichild);
+							MenuItems.Remove (item);
+						}
 					}
-
+					
+					// Add new forms and update state for existing forms.
+					MenuItem previous = null;
+					for ( int i = 0; i < mdicontainer.original_order.Count; i++) {
+						Form mdichild = (Form) mdicontainer.original_order [i];
+						MenuItem item;
+						if (mdilist_forms.Contains (mdichild)) {
+							item = (MenuItem) mdilist_forms [mdichild];
+						} else {
+							item = new MenuItem ();
+							item.is_window_menu_item = true;
+							item.Click += new EventHandler (MdiWindowClickHandler);
+							mdilist_items [item] = mdichild;
+							mdilist_forms [mdichild] = item;
+							MenuItems.AddNoEvents (item);
+						}
+						item.Visible = mdichild.Visible;
+						item.Text = "&" + (i + 1).ToString () + " " + mdichild.Text;
+						item.Checked = form.ActiveMdiChild == mdichild;
+						previous = item;
+					}
 				} while (false);
+			} else {
+				// Remove all forms
+				if (mdilist_items != null) {
+					foreach (MenuItem item in mdilist_items.Values) {
+						MenuItems.Remove (item);
+					}
+					
+					mdilist_forms.Clear ();
+					mdilist_items.Clear ();
+				}
 			}
-
-			OnDrawItem (e);
 		}
 		
 		internal void PerformMeasureItem (MeasureItemEventArgs e)

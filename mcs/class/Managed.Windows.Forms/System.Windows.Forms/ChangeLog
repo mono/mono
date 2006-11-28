@@ -1,5 +1,19 @@
 2006-11-28  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* MenuItem.cs:
+	- When cloning a menu also clone MdiList and clone the 
+	  window menu items properly (as the forms and menuitems
+	  are kept in an internal hashtable, these need updating 
+	  as well)
+	- Rewrote the window menu code, menu items are added in the
+	  order the forms were added to their parent, and they are
+	  updated every time the window menu is shown (before the
+	  list was only generated once, in the current order of the
+	  forms, and would never be updated). A checkmark is shown
+	  next to the item corresponding to the active mdi child.
+
+2006-11-28  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* XplatUIStructs.cs: 
 	- Added WM_NCMOUSEHOVER and WM_NCMOUSELEAVE.
 	
