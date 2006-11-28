@@ -324,6 +324,7 @@ namespace MonoTests.SystemWeb.Framework
 		public static void CopyResource (Type type, string resourceName, string targetUrl)
 		{
 #if !TARGET_JVM
+			Console.WriteLine ("URL: {0} at {1}", targetUrl, Environment.StackTrace);
 			EnsureHosting ();
 			EnsureDirectoryExists (Path.Combine (baseDir,
 				Path.GetDirectoryName (targetUrl)));

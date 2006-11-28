@@ -148,11 +148,15 @@ namespace MonoTests.System.Web {
 
 		[Test]
 #if TARGET_JVM //BUG #6500
-		[Category ("NotWorking")]
 #endif
+		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void Test_PhysicalApplicationPath ()
 		{
+			//
+			// This does not work because of the WebTest.Run creates a new Web.config
+			// WebTest must be fixed.
+			//
 			WebTest t = new WebTest (new HandlerInvoker (new HandlerDelegate (
 				PhysicalApplicationPathDelegate)));
 			t.Run ();

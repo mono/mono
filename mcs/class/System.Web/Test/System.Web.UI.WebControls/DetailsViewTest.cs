@@ -1346,6 +1346,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls["__EVENTARGUMENT"].Value = "Delete$0";
 			t.Request = fr;
 			pageHTML = t.Run ();
+			Console.WriteLine ("XXXXFAIL {0}", pageHTML);
 			pageHTML = pageHTML.Substring (pageHTML.IndexOf ("starttest") + 9, pageHTML.IndexOf ("endtest") - pageHTML.IndexOf ("starttest") - 9);
 			string origHtmlValue = @"   <div>
 						   &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;

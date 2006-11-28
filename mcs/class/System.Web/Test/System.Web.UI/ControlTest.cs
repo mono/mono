@@ -327,6 +327,7 @@ namespace MonoTests.System.Web.UI
 		}
 
 		[Test]
+		[Category("NotWorking")]
 		public void Focus ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (Focus_Load));

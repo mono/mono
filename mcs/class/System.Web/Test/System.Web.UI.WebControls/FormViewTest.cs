@@ -1761,7 +1761,20 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		{
 			WebTest t = new WebTest ("FormViewInsertEditDelete.aspx");
 			string pageHTML = t.Run ();
+			
 			//Before Delete
+			//
+			// The following line fails, it returns "false" instead of true, because
+			// the page actually contains the value "1002", not 1001.
+			//
+//Failures: 1) MonoTests.System.Web.UI.WebControls.FormViewTest.FormView_DeleteAndEmptyTemplatePostback : BeforeDelete1 ^M
+//        expected:<True>^M
+//         but was:<False>^M
+//  at MonoTests.System.Web.UI.WebControls.FormViewTest.FormView_DeleteAndEmptyTemplatePostback () [0x00018] in /home/cvs/mcs/class/System.Web/Test/System.Web.UI.WebControls/FormViewTest.cs:1769
+//  at <0x00000> <unknown method>
+//  at (wrapper managed-to-native) System.Reflection.MonoMethod:InternalInvoke (object,object[])
+//  at System.Reflection.MonoMethod.Invoke (System.Object obj, BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00056] in /home/cvs/mcs/class/corlib/System.Reflection/MonoMethod.cs:143
+//			
 			Assert.AreEqual (true, pageHTML.Contains ("1001"), "BeforeDelete1");
 			Assert.AreEqual (true, pageHTML.Contains ("Mahesh"), "BeforeDelete2");
 			Assert.AreEqual (true, pageHTML.Contains ("Chand"), "BeforeDelete3");

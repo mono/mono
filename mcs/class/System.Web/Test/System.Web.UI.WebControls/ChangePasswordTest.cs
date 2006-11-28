@@ -543,6 +543,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		[Category ("NotDotNet")]
 		[Category ("NunitWeb")]
+		[Category("NotWorking")]
 		public void ChngPasswordTest ()
 		{
 			PageInvoker pi = PageInvoker.CreateOnLoad (new PageDelegate (StylesRenderTestInit));
@@ -566,6 +567,27 @@ namespace MonoTests.System.Web.UI.WebControls
 			test.Request = fr;
 			html = test.Run ();
 
+			//
+			// The following fails with the following exception:
+//System.TypeInitializationException: An exception was thrown by the type initializer for System.Web.Security.Membership ---&gt; System.Configuration.ConfigurationErrorsException: Could not find type: MonoTests.SystemWeb.Framework.FakeMembershipProvider () ()
+//  at System.Web.Configuration.ProvidersHelper.InstantiateProvider (System.Configuration.ProviderSettings providerSettings, System.Type providerType) [0x00000]
+//  at System.Web.Configuration.ProvidersHelper.InstantiateProviders (System.Configuration.ProviderSettingsCollection configProviders, System.Configuration.Provider.ProviderCollection providers, System.Type providerType) [0x00000]
+//  at System.Web.Security.Membership..cctor () [0x00000] --- End of inner exception stack trace ---
+//
+//  at &lt;0x00000&gt; &lt;unknown method&gt;
+//  at System.Web.UI.WebControls.ChangePassword.InitMemberShipProvider () [0x00000]
+//  at System.Web.UI.WebControls.ChangePassword.get_MembershipProviderInternal () [0x00000]
+//  at System.Web.UI.WebControls.ChangePassword.ProcessChangePasswordEvent (System.Web.UI.WebControls.CommandEventArgs args) [0x00000]
+//  at System.Web.UI.WebControls.ChangePassword.OnBubbleEvent (System.Object source, System.EventArgs e) [0x00000]
+//  at System.Web.UI.Control.RaiseBubbleEvent (System.Object source, System.EventArgs args) [0x00000]
+//  at System.Web.UI.WebControls.Button.OnCommand (System.Web.UI.WebControls.CommandEventArgs e) [0x00000]
+//  at System.Web.UI.WebControls.Button.RaisePostBackEvent (System.String eventArgument) [0x00000]
+//  at System.Web.UI.WebControls.Button.System.Web.UI.IPostBackEventHandler.RaisePostBackEvent (System.String eventArgument) [0x00000]
+//  at System.Web.UI.Page.RaisePostBackEvent (IPostBackEventHandler sourceControl, System.String eventArgument) [0x00000]
+//  at System.Web.UI.Page.RaisePostBackEvents () [0x00000]
+//  at System.Web.UI.Page.InternalProcessRequest () [0x00000]
+//  at System.Web.UI.Page.ProcessRequest (System.Web.HttpContext context) [0x00000] </pre></code>^M
+//
 			Assert.IsTrue (html.IndexOf ("has been changed") > 0, "GetPassword");
 		}
 
