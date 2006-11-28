@@ -1,4 +1,8 @@
 
+Tue Nov 28 11:44:52 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: GetFields () fix for bug #80064.
+
 Tue Nov 28 10:56:01 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* filewatcher.c, filewatcher.h, icall-def.h, icall.c, locales.c:
