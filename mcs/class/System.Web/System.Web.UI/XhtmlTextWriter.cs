@@ -263,7 +263,6 @@ namespace System.Web.UI {
 			Write (TagRightChar);
 		}
 
-		[MonoTODO]
 		protected override bool OnAttributeRender (string name, string value, HtmlTextWriterAttribute key)
 		{
 			// I tested every possible value of HtmlTextWriterAttribute
@@ -271,7 +270,6 @@ namespace System.Web.UI {
 			return (bool) attr_render [null];
 		}
 
-		[MonoTODO]
 		protected override bool OnStyleAttributeRender (string name, string value, HtmlTextWriterStyle key)
 		{
 			// I tested every possible value of HtmlTextWriterStyle

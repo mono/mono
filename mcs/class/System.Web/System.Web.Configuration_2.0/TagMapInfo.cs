@@ -81,7 +81,6 @@ namespace System.Web.Configuration
 			return MappedTagType.GetHashCode() + TagType.GetHashCode();
 		}
 
-		[MonoTODO]
 		protected override bool SerializeElement (XmlWriter writer, bool serializeCollectionKey)
 		{
 			bool ret = base.SerializeElement (writer, serializeCollectionKey);

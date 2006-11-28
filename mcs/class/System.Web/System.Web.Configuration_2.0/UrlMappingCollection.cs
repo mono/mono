@@ -99,7 +99,7 @@ namespace System.Web.Configuration {
 			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public new UrlMapping this [string name] {
 			get { throw new NotImplementedException (); }
 		}

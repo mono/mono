@@ -1483,9 +1483,11 @@ namespace System.Web.UI.WebControls
 				_errorMessageLabel.Text = errorMessage;
 		}
 
-		[MonoTODO]
 		private string GeneratePassword ()
 		{
+			// FIXME:
+			// Generate an actual password!
+			
 			return "password";
 		}
 

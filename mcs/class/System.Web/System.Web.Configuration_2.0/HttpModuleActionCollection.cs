@@ -89,7 +89,6 @@ namespace System.Web.Configuration
 			BaseRemoveAt (index);
 		}
 
-		[MonoTODO]
 		protected override bool IsElementRemovable (ConfigurationElement element)
 		{
 			return base.IsElementRemovable (element);

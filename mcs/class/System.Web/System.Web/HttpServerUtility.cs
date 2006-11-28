@@ -196,7 +196,7 @@ namespace System.Web {
 			context.Response.End ();
 		}
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public void Transfer (IHttpHandler handler, bool preserveForm)
 		{
 			throw new NotImplementedException ();

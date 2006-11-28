@@ -56,25 +56,25 @@ namespace System.Web.UI {
 			this.themePath = themePath;
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public SkinBuilder GetSkinBuilder (Control control)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public IDictionary GetSkinControlBuildersForControlType (Type type)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public ICollection GetSkinsForControl (Type type)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public int ContentHashCode {
 			get { throw new NotImplementedException (); }
 		}

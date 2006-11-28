@@ -60,12 +60,10 @@ namespace System.Web.Configuration {
 			return this;
 		}
 
-		[MonoTODO]
 		protected override void Reset (ConfigurationElement parentElement)
 		{
 		}
 
-		[MonoTODO]
 		protected override void Unmerge (ConfigurationElement sourceElement, ConfigurationElement parentElement, ConfigurationSaveMode saveMode)
 		{
 		}

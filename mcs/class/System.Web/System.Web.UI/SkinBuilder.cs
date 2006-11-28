@@ -48,7 +48,6 @@ namespace System.Web.UI {
 			this.themePath = themePath;
 		}
 
-		[MonoTODO]
 		public Control ApplyTheme ()
 		{
 			return control;

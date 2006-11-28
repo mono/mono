@@ -279,12 +279,12 @@ namespace System.Web {
 		}
 
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public IHttpHandler CurrentHandler {
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public IHttpHandler PreviousHandler {
 			get { throw new NotImplementedException (); }
 		}
@@ -416,19 +416,19 @@ namespace System.Web {
 			return GetGLResourceObject (type, resourceKey);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public static object GetLocalResourceObject (string virtualPath, string resourceKey)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public static object GetLocalResourceObject (string virtualPath, string resourceKey, CultureInfo culture)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Only implemented for ASP.NET 2.x applications")]
 		public object GetSection (string name)
 		{
 #if NET_2_0

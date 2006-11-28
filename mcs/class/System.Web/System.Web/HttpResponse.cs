@@ -245,7 +245,7 @@ namespace System.Web {
 			}
 		}
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public Encoding HeaderEncoding {
 			get { throw new NotImplementedException (); }
 			set {
@@ -264,7 +264,7 @@ namespace System.Web {
 			}
 		}
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public bool IsRequestBeingRedirected {
 			get { throw new NotImplementedException (); }
 		}
@@ -362,43 +362,43 @@ namespace System.Web {
 			}
 		}
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public void AddCacheDependency (CacheDependency[] dependencies)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public void AddCacheItemDependencies (string[] cacheKeys)
 		{
 			throw new NotImplementedException ();
 		}
 #endif
-		[MonoTODO]
+		[MonoTODO("Currently does nothing")]
 		public void AddCacheItemDependencies (ArrayList cacheKeys)
 		{
 			// TODO: talk to jackson about the cache
 		}
 
-		[MonoTODO]
+		[MonoTODO("Currently does nothing")]
 		public void AddCacheItemDependency (string cacheKey)
 		{
 			// TODO: talk to jackson about the cache
 		}
 
-		[MonoTODO]
+		[MonoTODO("Currently does nothing")]
 		public void AddFileDependencies (ArrayList filenames)
 		{
 			// TODO: talk to jackson about the cache
 		}
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public void AddFileDependencies (string[] filenames)
 		{
 			throw new NotImplementedException ();
 		}
 #endif
-		[MonoTODO]
+		[MonoTODO ("Currently does nothing")]
 		public void AddFileDependency (string filename)
 		{
 			// TODO: talk to jackson about the cache
@@ -884,7 +884,7 @@ namespace System.Web {
 			Flush ();
 		}
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public void WriteSubstitution (HttpResponseSubstitutionCallback callback)
 		{
 			throw new NotImplementedException ();

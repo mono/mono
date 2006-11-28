@@ -166,7 +166,6 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue ("")]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
-		[MonoTODO]
 		public override string SkinID
 		{
 			get {
@@ -233,7 +232,7 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public XPathNavigator XPathNavigator 
 		{
 			get {
@@ -321,7 +320,7 @@ namespace System.Web.UI.WebControls {
 			return new EmptyControlCollection (this);
 		}
 
-		[MonoTODO]
+		[MonoTODO("Always returns null")]
 		protected override IDictionary GetDesignModeState ()
 		{
 			return null;

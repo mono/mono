@@ -94,7 +94,6 @@ namespace System.Web.UI.WebControls
 			set { _bag ["Subject"] = value; }
 		}
 
-		[MonoTODO]
 		public MailMessage CreateMailMessage (string recipients, IDictionary replacements, Control owner)
 		{
 			if (owner == null)
@@ -119,8 +118,8 @@ namespace System.Web.UI.WebControls
 			return CreateMailMessage (recipients, replacements, bodyText, owner);
 		}
 
-		[MonoTODO]
-		public MailMessage CreateMailMessage (string recipients, IDictionary replacements, string body, Control owner) {
+		public MailMessage CreateMailMessage (string recipients, IDictionary replacements, string body, Control owner)
+		{
 			if (owner == null)
 				throw new ArgumentNullException ("owner");
 

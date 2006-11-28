@@ -162,7 +162,7 @@ namespace System.Web.Compilation {
 			return stream;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented, does nothing")]
 		public void GenerateTypeFactory (string typeName)
 		{
 			// Do nothing by now.

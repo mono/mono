@@ -240,7 +240,6 @@ namespace System.Web.UI.WebControls {
 		
 		[DefaultValue (0)]
 		//[TypeConverter (typeof(DataSourceCacheDurationConverter))]
-		[MonoTODO]
 		public virtual int CacheDuration {
 			get {
 				return _cacheDuration;
@@ -251,7 +250,6 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValue (DataSourceCacheExpiry.Absolute)]
-		[MonoTODO]
 		public virtual DataSourceCacheExpiry CacheExpirationPolicy {
 			get {
 				return _cacheExpirationPolicy;
@@ -262,7 +260,6 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValue ("")]
-		[MonoTODO]
 		public virtual string CacheKeyDependency {
 			get {
 				return _cacheKeyDependency;
@@ -273,7 +270,6 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValue (true)]
-		[MonoTODO]
 		public virtual bool EnableCaching {
 			get {
 				return _enableCaching;

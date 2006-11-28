@@ -102,7 +102,7 @@ namespace System.Web.UI {
 		{
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		protected LiteralControl CreateResourceBasedLiteralControl (int offset,
 										    int size,
 										    bool fAsciiOnly)
@@ -232,7 +232,7 @@ namespace System.Web.UI {
 				eh (this, e);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented, always returns null")]
 		public Control ParseControl (string content)
 		{
 			if (content == null)
@@ -257,7 +257,7 @@ namespace System.Web.UI {
 			return HttpContext.GetGlobalResourceObject (className, resourceKey);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		protected object GetGlobalResourceObject (string className, string resourceKey, Type objType, string propName)
 		{
 			// FIXME: not sure how to implement that one yet
@@ -282,14 +282,14 @@ namespace System.Web.UI {
 			throw new NotSupportedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented, does nothing")]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected void SetStringResourcePointer (object stringResourcePointer,
 							 int maxResourceOffset)
 		{
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented, does nothing")]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected void WriteUTF8ResourceString (HtmlTextWriter output, int offset,
 							int size, bool fAsciiOnly)
@@ -365,13 +365,13 @@ namespace System.Web.UI {
 
 		// IFilterResolutionService
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		int IFilterResolutionService.CompareFilters (string filter1, string filter2)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		bool IFilterResolutionService.EvaluateFilter (string filterName)
 		{
 			throw new NotImplementedException ();

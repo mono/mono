@@ -173,7 +173,7 @@ namespace System.Web.UI.WebControls {
 		// Interface properties
 
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		protected virtual bool HasFooter
 		{
 			get {
@@ -181,7 +181,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		protected virtual bool HasHeader 
 		{
 			get {
@@ -197,7 +197,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		protected virtual int RepeatedItemCount
 		{
 			get {
@@ -228,7 +228,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		protected override Control FindControl (string id, int pathOffset)
 		{
 			throw new NotImplementedException ();

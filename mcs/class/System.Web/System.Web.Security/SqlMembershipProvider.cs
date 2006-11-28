@@ -334,7 +334,6 @@ namespace System.Web.Security {
 			return true;
 		}
 
-		[MonoTODO]
 		public override bool DeleteUser (string username, bool deleteAllRelatedData)
 		{
 			CheckParam ("username", username, 256);
@@ -606,7 +605,6 @@ namespace System.Web.Security {
 			}
 		}
 
-		[MonoTODO]
 		public override MembershipUser GetUser (string username, bool userIsOnline)
 		{
 			if (username == null)
@@ -632,7 +630,6 @@ namespace System.Web.Security {
 			return u;
 		}
 
-		[MonoTODO]
 		public override MembershipUser GetUser (object providerUserKey, bool userIsOnline)
 		{
 			DbCommand command = factory.CreateCommand ();
@@ -647,7 +644,6 @@ namespace System.Web.Security {
 			return u;
 		}
 
-		[MonoTODO]
 		public override string GetUserNameByEmail (string email)
 		{
 			CheckParam ("email", email, 256);
@@ -1069,7 +1065,6 @@ namespace System.Web.Security {
 			}
 		}
 
-		[MonoTODO]
 		public override string ApplicationName
 		{
 			get { return applicationName; }

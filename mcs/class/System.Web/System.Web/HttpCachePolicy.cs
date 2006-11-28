@@ -225,7 +225,7 @@ namespace System.Web {
 			last_modified = date;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public void SetLastModifiedFromFileDependencies ()
 		{
 			throw new NotImplementedException (); 
@@ -243,19 +243,19 @@ namespace System.Web {
 			HaveMaxAge = true;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public void SetNoServerCaching ()
 		{
 			throw new NotImplementedException (); 
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public void SetNoStore ()
 		{
 			throw new NotImplementedException (); 
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public void SetNoTransforms ()
 		{
 			throw new NotImplementedException (); 
@@ -287,7 +287,7 @@ namespace System.Web {
 			sliding_expiration = slide;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public void SetValidUntilExpires (bool validUntilExpires)
 		{
 			throw new NotImplementedException (); 
@@ -369,7 +369,7 @@ namespace System.Web {
 
 		}
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public void SetOmitVaryStar (bool omit)
 		{
 			throw new NotImplementedException (); 

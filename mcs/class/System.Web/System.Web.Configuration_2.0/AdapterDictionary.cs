@@ -43,7 +43,7 @@ namespace System.Web.Configuration
 			set { base [key] = value; }
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		void IDeserializationCallback.OnDeserialization (object sender)
 		{
 			throw new NotImplementedException ();

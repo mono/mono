@@ -34,7 +34,7 @@ namespace System.Web.Profile
 {
 	public class DefaultProfile : ProfileBase
 	{
-		[MonoTODO]
+		[MonoTODO("Currently does nothing")]
 		public DefaultProfile ()
 		{
 		}

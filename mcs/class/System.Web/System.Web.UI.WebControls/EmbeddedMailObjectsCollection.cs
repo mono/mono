@@ -37,43 +37,43 @@ namespace System.Web.UI.WebControls
 {
 	public sealed class EmbeddedMailObjectsCollection : CollectionBase
 	{
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public EmbeddedMailObject this [int index] {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public int Add (EmbeddedMailObject value) {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public bool Contains (EmbeddedMailObject value) {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public void CopyTo (EmbeddedMailObject [] array, int index) {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public int IndexOf (EmbeddedMailObject value) {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public void Insert (int index, EmbeddedMailObject value) {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		protected override void OnValidate (object value) {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public void Remove (EmbeddedMailObject value) {
 			throw new NotImplementedException ();
 		}

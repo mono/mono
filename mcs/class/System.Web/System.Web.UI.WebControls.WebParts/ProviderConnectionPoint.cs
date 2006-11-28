@@ -40,13 +40,13 @@ namespace System.Web.UI.WebControls.WebParts
 		{
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public virtual object GetObject (Control control)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public virtual ConnectionInterfaceCollection GetSecondaryInterfaces (Control control)
 		{
 			throw new NotImplementedException ();

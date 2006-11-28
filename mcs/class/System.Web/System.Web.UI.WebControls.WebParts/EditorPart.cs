@@ -67,7 +67,6 @@ namespace System.Web.UI.WebControls.WebParts
 				Visible = false;
 		}
 #if false
-		[MonoTODO]
 		protected override void SetDesignModeState (IDictionary data)
 		{
 			EditorZoneBase stateZone = data["Zone"] as EditorZoneBase;

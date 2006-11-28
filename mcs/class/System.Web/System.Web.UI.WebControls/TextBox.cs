@@ -115,7 +115,6 @@ namespace System.Web.UI.WebControls {
 				Text = l.Text;
 		}
 
-		[MonoTODO]
 #if NET_2_0
 		protected internal
 #else		
@@ -183,7 +182,6 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		protected override object SaveViewState ()
 		{
 			return base.SaveViewState ();
@@ -232,7 +230,7 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[DefaultValue (AutoCompleteType.None)]
 		[Themeable (false)]
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public virtual AutoCompleteType AutoCompleteType 
 		{
 			get {

@@ -32,7 +32,6 @@ using System.Web.Caching;
 
 namespace System.Web.UI
 {
-	[MonoTODO ("only stubbed")]
 	public sealed class ControlCachePolicy
 	{
 		internal ControlCachePolicy ()

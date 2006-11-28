@@ -32,7 +32,6 @@ using System.Security.Permissions;
 
 namespace System.Web.SessionState {
 
-	[MonoTODO]
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class StateRuntime : IStateRuntime {
@@ -45,7 +44,7 @@ namespace System.Web.SessionState {
 		{
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Medium)]
 		public void ProcessRequest (IntPtr tracker, int verb,
 			string uri, int exclusive, int timeout,
@@ -55,7 +54,7 @@ namespace System.Web.SessionState {
 			throw new NotImplementedException ();
 		}
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Medium)]
 		public void ProcessRequest (IntPtr tracker, int verb, string uri, int exclusive,
 			int extraFlags, int timeout, int lockCookieExists, int lockCookie,
@@ -64,7 +63,7 @@ namespace System.Web.SessionState {
 			throw new NotImplementedException ();
 		}
 #endif
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public void StopProcessing ()
 		{

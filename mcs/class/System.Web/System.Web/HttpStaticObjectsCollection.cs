@@ -116,7 +116,7 @@ namespace System.Web {
 		}
 
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public bool NeverAccessed {
 			get { throw new NotImplementedException (); }
 		}

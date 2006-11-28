@@ -40,13 +40,13 @@ namespace System.Web.UI.WebControls.WebParts
 		{			
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public virtual void SetObject (Control control, object data)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public virtual bool SupportsConnection (Control control, 
 							TypeCollection interfaces)
 		{

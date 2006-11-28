@@ -103,7 +103,7 @@ namespace System.Web.Configuration {
 			this.MaxBufferThreads = maxBufferThreads;
 		}
 
-		[MonoTODO]
+		[MonoTODO("Should do some validation here")]
 		static void ValidateElement (object o)
 		{
 			/* XXX do some sort of element validation here? */

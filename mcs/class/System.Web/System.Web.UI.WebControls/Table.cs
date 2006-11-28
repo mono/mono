@@ -255,7 +255,6 @@ namespace System.Web.UI.WebControls {
 			RaisePostBackEvent (argument);
 		}
 
-		[MonoTODO]
 		protected virtual void RaisePostBackEvent (string argument)
 		{
 		}

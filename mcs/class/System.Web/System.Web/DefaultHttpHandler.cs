@@ -44,23 +44,23 @@ namespace System.Web {
 			get { return false; }
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented, always returns null")]
 		protected NameValueCollection ExecuteUrlHeaders {
 			get { return null; }
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented, always returns null")]
 		public virtual IAsyncResult BeginProcessRequest (HttpContext context, AsyncCallback callback, object state)
 		{
 			return null;
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented, does nothing")]
 		public virtual void EndProcessRequest (IAsyncResult result)
 		{
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented, does nothing")]
 		public virtual void ProcessRequest (HttpContext context)
 		{
 		}

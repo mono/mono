@@ -70,7 +70,6 @@ namespace System.Web.Configuration {
 			return ((EventMappingSettings)element).Name;
 		}
 
-		[MonoTODO]
 		public int IndexOf (string name)
 		{
 			EventMappingSettings settings = (EventMappingSettings)BaseGet (name);

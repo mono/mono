@@ -83,7 +83,6 @@ namespace System.Web.UI {
 			get { return bindings; }
 		}
 
-		[MonoTODO ("why override?")]
 		public override object BuildObject ()
 		{
 			return base.BuildObject ();

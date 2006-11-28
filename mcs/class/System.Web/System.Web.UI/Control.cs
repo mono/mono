@@ -147,7 +147,7 @@ namespace System.Web.UI
                 }
 
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO("Not implemented, always returns null")]
 		protected ControlAdapter Adapter 
 		{
 			get {
@@ -598,7 +598,6 @@ namespace System.Web.UI
                 }
 
 #if NET_2_0
-		[MonoTODO]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual void ApplyStyleSheetSkin (Page page)
 		{

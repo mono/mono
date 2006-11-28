@@ -92,7 +92,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[MonoTODO]
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public override string HeaderText {
@@ -150,7 +149,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[MonoTODO]
 		public override bool Initialize (bool enableSorting, 
 						 Control control)
 		{

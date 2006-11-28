@@ -356,7 +356,7 @@ namespace System.Web.Configuration
 			return new FileStream (streamName, FileMode.Open, FileAccess.Read);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public virtual Stream OpenStreamForRead (string streamName, bool assertPermissions)
 		{
 			throw new NotImplementedException ();
@@ -367,7 +367,7 @@ namespace System.Web.Configuration
 			return new FileStream (streamName, FileMode.Create, FileAccess.Write);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public virtual Stream OpenStreamForWrite (string streamName, string templateStreamName, ref object writeContext, bool assertPermissions)
 		{
 			throw new NotImplementedException ();
@@ -383,7 +383,7 @@ namespace System.Web.Configuration
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public virtual void RequireCompleteInit (IInternalConfigRecord configRecord)
 		{
 			throw new NotImplementedException ();
@@ -405,11 +405,12 @@ namespace System.Web.Configuration
 				throw new ConfigurationErrorsException ("The section can't be defined in this file (the allowed definition context is '" + allowDefinition + "').", errorInfo.Filename, errorInfo.LineNumber);
 		}
 		
+		[MonoTODO("Does nothing")]
 		public virtual void WriteCompleted (string streamName, bool success, object writeContext)
 		{
 		}
 		
-		[MonoTODO]
+		[MonoTODO("Does nothing")]
 		public virtual void WriteCompleted (string streamName, bool success, object writeContext, bool assertPermissions)
 		{
 		}
@@ -430,30 +431,30 @@ namespace System.Web.Configuration
 			get { return false; }
 		}
 
-		[MonoTODO]
+		[MonoTODO("Always returns false")]
 		public virtual bool IsRemote {
 			get { return false; }
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public virtual bool IsFullTrustSectionWithoutAptcaAllowed (IInternalConfigRecord configRecord)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public virtual bool IsInitDelayed (IInternalConfigRecord configRecord)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public virtual bool IsSecondaryRoot (string configPath)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public virtual bool IsTrustedConfigPath (string configPath)
 		{
 			throw new NotImplementedException ();

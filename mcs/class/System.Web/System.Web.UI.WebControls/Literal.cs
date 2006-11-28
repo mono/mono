@@ -53,7 +53,7 @@ namespace System.Web.UI.WebControls {
 
 #if NET_2_0
 		[DefaultValue (LiteralMode.Transform)]
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
 		public LiteralMode Mode 
@@ -85,7 +85,7 @@ namespace System.Web.UI.WebControls {
 
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public override void Focus ()
 		{
 			throw new NotImplementedException ();

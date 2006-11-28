@@ -578,7 +578,6 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Localizable (true)]
-		[MonoTODO]
 		public virtual string SkipLinkText 
 		{
 			get
@@ -796,7 +795,6 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[MonoTODO]
 		protected virtual new HtmlTextWriterTag TagKey
 		{
 			get {
@@ -1163,7 +1161,6 @@ namespace System.Web.UI.WebControls
 			return style;
 		}
 
-		[MonoTODO]
 		protected override IDictionary GetDesignModeState ()
 		{
 			throw new NotImplementedException ();

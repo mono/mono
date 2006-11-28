@@ -33,7 +33,7 @@ using System.Security.Principal;
 
 namespace System.Web.Security {
 
-	[MonoTODO]
+	[MonoTODO("Not implemented")]
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 #if NET_2_0
@@ -74,7 +74,7 @@ namespace System.Web.Security {
 			return AuthUrl (strReturnUrl, iTimeWindow, (fForceLogin ? 1 : 0), strCoBrandedArgs, iLangID, strNameSpace, iKPP, (bUseSecureAuth ? 1 : 0));
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public string AuthUrl (string strReturnUrl,
 				       int iTimeWindow,
 				       int iForceLogin,
@@ -111,7 +111,7 @@ namespace System.Web.Security {
 			return AuthUrl2 (strReturnUrl, iTimeWindow, (fForceLogin ? 1 : 0), strCoBrandedArgs, iLangID, strNameSpace, iKPP, (bUseSecureAuth ? 1 : 0));
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public string AuthUrl2 (string strReturnUrl,
 					int iTimeWindow,
 					int iForceLogin,
@@ -124,61 +124,61 @@ namespace System.Web.Security {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public static string Compress (string strData)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public static bool CryptIsValid ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public static int CryptPutHost (string strHost)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public static int CryptPutSite (string strSite)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public static string Decompress (string strData)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public static string Decrypt (string strData)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public static string Encrypt (string strData)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public object GetCurrentConfig (string strAttribute)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public string GetDomainAttribute (string strAttribute, int iLCID, string strDomain)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public string GetDomainFromMemberName (string strMemberName)
 		{
 			throw new NotImplementedException ();
@@ -189,7 +189,7 @@ namespace System.Web.Security {
 			return this.GetIsAuthenticated (iTimeWindow, (bForceLogin ? 1 : 0), (bCheckSecure ? 1 : 0));
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public bool GetIsAuthenticated (int iTimeWindow, int iForceLogin, int iCheckSecure)
 		{
 			throw new NotImplementedException ();
@@ -207,7 +207,7 @@ namespace System.Web.Security {
 		}
 #endif
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public string GetLoginChallenge (string szRetURL,
 						 int iTimeWindow,
 						 int fForceLogin,
@@ -221,31 +221,31 @@ namespace System.Web.Security {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public object GetOption (string strOpt)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public object GetProfileObject (string strProfileName)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public bool HasFlag (int iFlagMask)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public bool HasProfile (string strProfile)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public bool HaveConsent (bool bNeedFullConsent, bool bNeedBirthdate)
 		{
 			throw new NotImplementedException ();
@@ -276,7 +276,7 @@ namespace System.Web.Security {
 			return LoginUser (szRetURL, iTimeWindow, (fForceLogin ? 1 : 0), szCOBrandArgs, iLangID, strNameSpace, iKPP, (fUseSecureAuth ? 1 : 0), null);
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public int LoginUser (string szRetURL,
 				      int iTimeWindow,
 				      int fForceLogin,
@@ -315,7 +315,7 @@ namespace System.Web.Security {
 			return LogoTag (strReturnUrl, iTimeWindow, (fForceLogin ? 1 : 0), strCoBrandedArgs, iLangID, (fSecure ? 1 : 0), strNameSpace, iKPP, (bUseSecureAuth ? 1 : 0));
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public string LogoTag (string strReturnUrl,
 				       int iTimeWindow,
 				       int iForceLogin,
@@ -354,7 +354,7 @@ namespace System.Web.Security {
 			return LogoTag2 (strReturnUrl, iTimeWindow, (fForceLogin ? 1 : 0), strCoBrandedArgs, iLangID, (fSecure ? 1 : 0), strNameSpace, iKPP, (bUseSecureAuth ? 1 : 0));
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public string LogoTag2 (string strReturnUrl,
 				        int iTimeWindow,
 				        int iForceLogin,
@@ -373,7 +373,7 @@ namespace System.Web.Security {
 			return LogoutURL (null, null, -1, null, -1);
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public string LogoutURL (string szReturnURL,
 					 string szCOBrandArgs,
 					 int iLangID,
@@ -383,25 +383,25 @@ namespace System.Web.Security {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public void SetOption (string strOpt, object vOpt)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public static void SignOut (string strSignOutDotGifFileName)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public object Ticket (string strAttribute)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public string AuthenticationType
 		{
 			get {
@@ -409,7 +409,7 @@ namespace System.Web.Security {
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public int Error
 		{
 			get {
@@ -417,7 +417,7 @@ namespace System.Web.Security {
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public bool GetFromNetworkServer
 		{
 			get {
@@ -425,7 +425,7 @@ namespace System.Web.Security {
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public bool HasSavedPassword
 		{
 			get {
@@ -433,7 +433,7 @@ namespace System.Web.Security {
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public bool HasTicket
 		{
 			get {
@@ -441,7 +441,7 @@ namespace System.Web.Security {
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public string HexPUID
 		{
 			get {
@@ -449,7 +449,7 @@ namespace System.Web.Security {
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public bool IsAuthenticated
 		{
 			get {
@@ -457,7 +457,7 @@ namespace System.Web.Security {
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public string this [string strProfileName]
 		{
 			get {
@@ -465,7 +465,7 @@ namespace System.Web.Security {
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public string Name
 		{
 			get {
@@ -473,7 +473,7 @@ namespace System.Web.Security {
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public int TicketAge
 		{
 			get {
@@ -481,7 +481,7 @@ namespace System.Web.Security {
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public int TimeSinceSignIn
 		{
 			get {

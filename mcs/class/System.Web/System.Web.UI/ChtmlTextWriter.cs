@@ -161,9 +161,9 @@ namespace System.Web.UI {
 
 		Hashtable attr_render = new Hashtable ();
 
-		[MonoTODO]
 		protected override bool OnAttributeRender (string name, string value, HtmlTextWriterAttribute key)
 		{
+			// FIXME:
 			// I checked every possible HtmlTextWriterAttribute key
 			// and always throws ArgumentNullException.
 			return (bool) attr_render [null];

@@ -291,13 +291,13 @@ namespace System.Web.UI {
 			set { ViewState["!DesignTimeTagName"] = value; }
 		}
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		int IFilterResolutionService.CompareFilters (string filter1, string filter2)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		bool IFilterResolutionService.EvaluateFilter (string filterName)
 		{
 			throw new NotImplementedException ();

@@ -30,7 +30,6 @@ using System.Security.Permissions;
 
 namespace System.Web.Util
 {
-	[MonoTODO]
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
@@ -41,6 +40,7 @@ namespace System.Web.Util
 		}
 
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+		[MonoTODO ("Not implemented, not currently supported by Mono")]
 		public static void Post (WorkItemCallback callback)
 		{
 			// note: this is the documented exception for (Windows) OS prior to NT

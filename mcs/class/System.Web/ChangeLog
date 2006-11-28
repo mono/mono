@@ -1,3 +1,19 @@
+2006-11-28  Miguel de Icaza  <miguel@novell.com>
+
+	* Rationalize the user of MonoTODOs.  
+
+		- Removed all the TODOs that were only overwritten methods
+		and had no further information.
+
+		- Methods that threw exceptions now have the message "Not
+		implemnted".
+
+		- Methods that return some constant are declared like
+		that.
+
+		- Removed a bunch of stale MonoTODOs that had not been
+		removed. 
+
 2006-11-27  Yoni Klain   <yonik@mainsoft.com>
 
 	* MakeFile added new resources NoEventValidation.aspx for ImageButtonTest.cs

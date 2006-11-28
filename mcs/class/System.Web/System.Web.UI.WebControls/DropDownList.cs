@@ -205,7 +205,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		protected internal override void VerifyMultiSelect ()
 		{
 			throw new NotImplementedException ();

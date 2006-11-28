@@ -821,7 +821,6 @@ namespace System.Web.UI.WebControls {
 			return col;
 		}
 
-		[MonoTODO]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[Browsable(false)]

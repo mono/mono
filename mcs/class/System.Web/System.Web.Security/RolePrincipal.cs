@@ -53,7 +53,7 @@ namespace System.Web.Security {
 			this.identity = identity;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public RolePrincipal (IIdentity identity, string encryptedTicket)
 			: this (identity)
 		{
@@ -69,7 +69,7 @@ namespace System.Web.Security {
 			this.providerName = providerName;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public RolePrincipal (string providerName, IIdentity identity, string encryptedTicket)
 			: this (identity)
 		{
@@ -107,7 +107,7 @@ namespace System.Web.Security {
 			return cachedRoles[role] != null;
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public string ToEncryptedTicket ()
 		{
 			throw new NotImplementedException ();
@@ -117,17 +117,17 @@ namespace System.Web.Security {
 			get { return listChanged; }
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public string CookiePath {
 			get { throw new NotImplementedException (); }
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public bool Expired {
 			get { throw new NotImplementedException (); }
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public DateTime ExpireDate {
 			get { throw new NotImplementedException (); }
 		}
@@ -140,7 +140,7 @@ namespace System.Web.Security {
 			get { return cachedRoles != null; }
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public DateTime IssueDate {
 			get { throw new NotImplementedException (); }
 		}

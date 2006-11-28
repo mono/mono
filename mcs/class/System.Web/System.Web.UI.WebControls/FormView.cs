@@ -831,7 +831,6 @@ namespace System.Web.UI.WebControls
 			return new ContainedTable (this);
 		}
 
-		[MonoTODO]
 		protected override void EnsureDataBound ()
 		{
 			base.EnsureDataBound ();

@@ -51,13 +51,13 @@ namespace System.Web.Compilation {
 			get { return typeName; }
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public override bool Equals (object obj)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public override int GetHashCode ()
 		{
 			throw new NotImplementedException ();

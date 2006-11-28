@@ -234,7 +234,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public static bool CanConvert (string text, 
 					       ValidationDataType type, 
 					       bool cultureInvariant)
@@ -242,7 +242,7 @@ namespace System.Web.UI.WebControls {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		protected static bool Compare (string leftText, 
 					       bool cultureInvariantLeftText, 
 					       string rightText, 
@@ -253,7 +253,7 @@ namespace System.Web.UI.WebControls {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		protected static bool Convert (string text,
 					       ValidationDataType type,
 					       bool cultureInvariant,

@@ -70,7 +70,6 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[DefaultValue (false)]
 		[Themeable (false)]
-		[MonoTODO]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
 		public virtual bool AppendDataBoundItems
@@ -287,7 +286,6 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
-		[MonoTODO]
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual string Text {
@@ -428,7 +426,6 @@ namespace System.Web.UI.WebControls {
 			base.PerformSelect ();
 		}
 
-		[MonoTODO]
 		protected internal override void RenderContents (HtmlTextWriter w)
 		{
 			base.RenderContents (w);
@@ -496,7 +493,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		protected void SetPostDataSelection (int selectedIndex)
 		{
 			throw new NotImplementedException ();

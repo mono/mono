@@ -125,7 +125,7 @@ namespace System.Web.Configuration {
 			return hashCode;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		protected override bool IsModified ()
 		{
 			throw new NotImplementedException ();
@@ -159,7 +159,6 @@ namespace System.Web.Configuration {
 			base.Reset (parentElement);
 		}
 
-		[MonoTODO]
 		protected override void ResetModified ()
 		{
 			base.ResetModified ();
@@ -182,13 +181,11 @@ namespace System.Web.Configuration {
 			return true;
 		}
 
-		[MonoTODO]
 		protected override void SetReadOnly ()
 		{
 			base.SetReadOnly();
 		}
 
-		[MonoTODO]
 		protected override void Unmerge (ConfigurationElement sourceElement, ConfigurationElement parentElement, ConfigurationSaveMode saveMode)
 		{
 			base.Unmerge (sourceElement, parentElement, saveMode);

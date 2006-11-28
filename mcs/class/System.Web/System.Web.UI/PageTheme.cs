@@ -42,61 +42,60 @@ namespace System.Web.UI {
 		{
 		}
 
-		[MonoTODO]
 		public static object CreateSkinKey (Type controlType, string skinID)
 		{
 			return String.Format ("{0}:{1}", skinID, controlType);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		protected object Eval (string expression)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		protected string Eval (string expression, string format)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public bool TestDeviceFilter (string deviceFilterName)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		protected object XPath (string xPathExpression)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		protected object XPath (string xPathExpression, IXmlNamespaceResolver resolver)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		protected string XPath (string xPathExpression, string format)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		protected string XPath (string xPathExpression, string format, IXmlNamespaceResolver resolver)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		protected IEnumerable XPathSelect (string xPathExpression)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		protected IEnumerable XPathSelect (string xPathExpression, IXmlNamespaceResolver resolver)
 		{
 			throw new NotImplementedException ();
@@ -106,7 +105,7 @@ namespace System.Web.UI {
 		protected abstract IDictionary ControlSkins { get; }
 		protected abstract string[] LinkedStyleSheets { get; }
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		protected Page Page {
 			get { throw new NotImplementedException (); }
 		}

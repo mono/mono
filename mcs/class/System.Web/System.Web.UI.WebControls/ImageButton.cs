@@ -113,7 +113,7 @@ namespace System.Web.UI.WebControls {
 		[Browsable (true)]
 		[DefaultValue (true)]
 		[Bindable (true)]
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public virtual new bool Enabled
 		{
 			get {
@@ -128,7 +128,7 @@ namespace System.Web.UI.WebControls {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Themeable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public virtual new bool GenerateEmptyAlternateText
 		{
 			get {

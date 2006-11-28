@@ -39,7 +39,7 @@ namespace System.Web.Profile
 			this.customProviderData = customProviderData;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public override bool IsDefaultAttribute ()
 		{
 			throw new NotImplementedException ();

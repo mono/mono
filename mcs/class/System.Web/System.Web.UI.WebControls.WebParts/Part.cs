@@ -47,7 +47,7 @@ namespace System.Web.UI.WebControls.WebParts
 			chrome_type = PartChromeType.Default;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public override void DataBind()
 		{
 			throw new NotImplementedException ();
@@ -81,7 +81,6 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
-		[MonoTODO]
 		public virtual new ControlCollection Controls
 		{
 			get {

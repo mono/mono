@@ -113,7 +113,6 @@ namespace System.Web.Configuration
 		{
 		}
 
-		[MonoTODO]
 		protected override void PostDeserialize ()
 		{
 			base.PostDeserialize ();

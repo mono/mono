@@ -48,7 +48,7 @@ namespace System.Web.Security
 				Authenticate = null;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public void Init (HttpApplication app)
 		{
 			throw new NotImplementedException ();

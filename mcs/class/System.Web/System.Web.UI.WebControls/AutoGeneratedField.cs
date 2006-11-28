@@ -62,7 +62,6 @@ namespace System.Web.UI.WebControls {
 			ReadOnly = fieldProperties.IsReadOnly;
 		}
 		
-		[MonoTODO]
 		public Type DataType {
 			get { return dataType; }
 			set { dataType = value; }
@@ -143,7 +142,6 @@ namespace System.Web.UI.WebControls {
 			field.DataType = DataType;
 		}
 
-		[MonoTODO]
 		protected override object GetDesignTimeValue()
 		{
 			return base.GetDesignTimeValue ();

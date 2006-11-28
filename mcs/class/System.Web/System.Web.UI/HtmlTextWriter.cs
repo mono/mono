@@ -61,17 +61,17 @@ namespace System.Web.UI {
 			return null;
 		}
 		
-		[MonoTODO]
+		[MonoTODO("Does nothing")]
 		protected static void RegisterAttribute (string name, HtmlTextWriterAttribute key)
 		{
 		}
 		
-		[MonoTODO]
+		[MonoTODO("Does nothing")]
 		protected static void RegisterStyle (string name, HtmlTextWriterStyle key)
 		{
 		}
 		
-		[MonoTODO]
+		[MonoTODO("Does nothing")]
 		protected static void RegisterTag (string name, HtmlTextWriterTag key)
 		{
 		}
@@ -195,7 +195,6 @@ namespace System.Web.UI {
 			b.Flush ();
 		}
 
-		[MonoTODO]
 		protected HtmlTextWriterAttribute GetAttributeKey (string attrName)
 		{
 			// I don't think we want to binary search
@@ -211,7 +210,6 @@ namespace System.Web.UI {
 			return (HtmlTextWriterAttribute)(-1);		
 		}
 
-		[MonoTODO]
 		protected string GetAttributeName (HtmlTextWriterAttribute attrKey)
 		{
 			if ((int) attrKey < htmlattrs.Length)
@@ -220,7 +218,6 @@ namespace System.Web.UI {
 			return null;
 		}
 		
-		[MonoTODO]
 		protected HtmlTextWriterStyle GetStyleKey (string styleName)
 		{
 			// I don't think we want to binary search
@@ -236,13 +233,11 @@ namespace System.Web.UI {
 			return (HtmlTextWriterStyle)(-1);			
 		}
 		
-		[MonoTODO]
 		protected string GetStyleName (HtmlTextWriterStyle styleKey)
 		{
 			return StaticGetStyleName (styleKey);
 		}
 		
-		[MonoTODO]
 		protected virtual HtmlTextWriterTag GetTagKey (string tagName) 
 		{
 			// I don't think we want to binary search
@@ -267,7 +262,6 @@ namespace System.Web.UI {
 		}
 		
 		
-		[MonoTODO]
 		protected virtual string GetTagName (HtmlTextWriterTag tagKey)
 		{
 			if ((int) tagKey < tags.Length)

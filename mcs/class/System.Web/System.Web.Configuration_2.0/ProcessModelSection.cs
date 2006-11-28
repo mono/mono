@@ -188,7 +188,6 @@ namespace System.Web.Configuration {
 			elementProperty = new ConfigurationElementProperty (new CallbackValidator (typeof (ProcessModelSection), ValidateElement));
 		}
 
-		[MonoTODO]
 		static void ValidateElement (object o)
 		{
 			/* XXX do some sort of element validation here? */

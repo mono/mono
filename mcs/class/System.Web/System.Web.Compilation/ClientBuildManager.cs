@@ -133,7 +133,7 @@ namespace System.Web.Compilation {
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public void CompileApplicationDependencies ()
 		{
 			throw new NotImplementedException ();
@@ -144,7 +144,7 @@ namespace System.Web.Compilation {
 			CompileFile (virtualPath, null);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public void CompileFile (string virtualPath, ClientBuildManagerCallback callback)
 		{
 			// 1. Creates the Host
@@ -179,7 +179,7 @@ namespace System.Web.Compilation {
 			return null;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public CodeCompileUnit GenerateCodeCompileUnit (string virtualPath,
 								string virtualFileString,
 								out Type codeDomProviderType,
@@ -207,13 +207,13 @@ namespace System.Web.Compilation {
 			return shutdown_directories;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public IDictionary GetBrowserDefinitions ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public void GetCodeDirectoryInformation (string virtualCodeDir,
 							out Type codeDomProviderType,
 							out CompilerParameters compilerParameters,
@@ -222,7 +222,7 @@ namespace System.Web.Compilation {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public Type GetCompiledType (string virtualPath)
 		{
 			// CompileFile + get the type based on .compiled file information
@@ -230,7 +230,7 @@ namespace System.Web.Compilation {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public void GetCompilerParameters (string virtualPath,
 						out Type codeDomProviderType,
 						out CompilerParameters compilerParameters)
@@ -238,14 +238,14 @@ namespace System.Web.Compilation {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public string GetGeneratedFileVirtualPath (string filePath)
 		{
 			// returns empty string for any vpath. Test with real paths.
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public string GetGeneratedSourceFile (string virtualPath)
 		{
 			// This one takes a directory name /xxx and /xxx/App_Code throw either
@@ -253,7 +253,7 @@ namespace System.Web.Compilation {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public string [] GetTopLevelAssemblyReferences (string virtualPath)
 		{
 			throw new NotImplementedException ();
@@ -271,26 +271,26 @@ namespace System.Web.Compilation {
 			return null;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public bool IsCodeAssembly (string assemblyName)
 		{
 			// Trying all the assemblies loaded by FullName and GetName().Name yield false here :-?
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public void PrecompileApplication ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public void PrecompileApplication (ClientBuildManagerCallback callback)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public void PrecompileApplication (ClientBuildManagerCallback callback, bool forceCleanBuild)
 		{
 			throw new NotImplementedException ();

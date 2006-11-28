@@ -116,7 +116,7 @@ namespace System.Web.Security {
 			Provider.CreateRole (rolename);
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public static void DeleteCookie ()
 		{
 			throw new NotImplementedException ();

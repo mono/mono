@@ -62,14 +62,12 @@ namespace System.Web.Configuration
 		{
 		}
 
-		[MonoTODO]
 		public HttpModuleAction (string name, string type)
 		{
 			this.Name = name;
 			this.Type = type;
 		}
 
-		[MonoTODO]
 		static void ValidateElement (object o)
 		{
 			/* XXX do some sort of element validation here? */

@@ -51,7 +51,6 @@ namespace System.Web.Configuration {
 			properties.Add (rulesProp);
 		}
 
-		[MonoTODO]
 		protected override void PostDeserialize()
 		{
 			base.PostDeserialize ();

@@ -49,25 +49,24 @@ namespace System.Web.Hosting {
 		{
 		}
 		
-		[MonoTODO]
                 public void DoGCCollect ()
 		{
-			throw new NotImplementedException ();
+			// Do nothing.
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
                 public int ProcessRequest (IntPtr ecb, int iWRType)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
                 public void StartProcessing ()
 		{
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 #if NET_2_0
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 #endif
@@ -77,13 +76,13 @@ namespace System.Web.Hosting {
 		}
 
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public override object InitializeLifetimeService ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		void IRegisteredObject.Stop (bool immediate)
 		{
 			throw new NotImplementedException ();

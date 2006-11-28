@@ -288,7 +288,6 @@ namespace System.Web.Security
 			return rv;
 		}
 
-		[MonoTODO]
 		public override void Initialize (string name, NameValueCollection config)
 		{
 			if (config == null)
@@ -412,7 +411,6 @@ namespace System.Web.Security
 			}
 		}
 
-		[MonoTODO]
 		public override string ApplicationName
 		{
 			get { return applicationName; }

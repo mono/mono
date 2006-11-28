@@ -53,7 +53,6 @@ namespace System.Web.UI.WebControls {
 #endif	
 	{
 #if NET_2_0
-		[MonoTODO]
 		protected internal override void OnInit (EventArgs e)
 		{
 			base.OnInit(e);
@@ -81,13 +80,13 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		protected internal override void PerformDataBinding (IEnumerable data)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		protected override void PerformSelect ()
 		{
 			throw new NotImplementedException ();
@@ -209,7 +208,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue ("AlternateText")]
 		[WebSysDescriptionAttribute ("")]
 		[WebCategoryAttribute ("Behavior")]
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public string AlternateTextField 
 		{
 			get {
@@ -232,7 +231,7 @@ namespace System.Web.UI.WebControls {
 
 #if NET_2_0
 		[DefaultValue ("ImageUrl")]
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		[WebSysDescriptionAttribute ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public string ImageUrlField 
@@ -263,7 +262,7 @@ namespace System.Web.UI.WebControls {
 
 #if NET_2_0
 		[DefaultValue ("NavigateUrl")]
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		[WebSysDescriptionAttribute ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public string NavigateUrlField 
@@ -294,7 +293,6 @@ namespace System.Web.UI.WebControls {
 
 #if NET_2_0
 		/* all these are listed in corcompare */
-		[MonoTODO]
 		public override string UniqueID
 		{
 			get {
@@ -302,7 +300,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[MonoTODO]
 		protected override HtmlTextWriterTag TagKey 
 		{
 			get {

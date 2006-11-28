@@ -75,20 +75,20 @@ namespace System.Web.UI.WebControls.WebParts
 		}
 
 #if IWebEditableInterface
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual EditorPartCollection CreateEditorParts ()
 		{
 			throw new NotImplementedException ();
 		}
 #endif
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		protected void SetPersonalizationDirty ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public static void SetPersonalizationDirty (Control control)
 		{
 			throw new NotImplementedException ();
@@ -205,7 +205,6 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
-		[MonoTODO]
 		public virtual string AuthorizationFilter 
 		{
 			get {
@@ -216,7 +215,6 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
-		[MonoTODO]
 		public virtual string CatalogIconImageUrl 
 		{
 			get {
@@ -227,7 +225,6 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
-		[MonoTODO ("why override?")]
 		public override PartChromeState ChromeState 
 		{
 			get {
@@ -238,7 +235,6 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
-		[MonoTODO ("why override?")]
 		public override PartChromeType ChromeType 
 		{
 			get {
@@ -249,7 +245,7 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public string ConnectErrorMessage 
 		{
 			get {
@@ -257,7 +253,6 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
-		[MonoTODO ("why override?")]
 		public override string Description 
 		{
 			get {
@@ -268,15 +263,15 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		/* msdn2 lists this as an override, but it doesn't appear to work with our implementation */
 		public /*override*/ ContentDirection Direction 
 		{
 			get {
-			throw new NotImplementedException ();
+				throw new NotImplementedException ();
 			}
 			set {
-			throw new NotImplementedException ();
+				throw new NotImplementedException ();
 			}
 		}
 
@@ -287,7 +282,6 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
-		[MonoTODO]
 		public virtual WebPartExportMode ExportMode 
 		{
 			get {
@@ -298,7 +292,6 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
-		[MonoTODO]
 		public bool HasSharedData 
 		{
 			get {
@@ -306,7 +299,6 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
-		[MonoTODO]
 		public bool HasUserData 
 		{
 			get {
@@ -314,7 +306,6 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
-		[MonoTODO("why override?")]
 		public override Unit Height 
 		{
 			get {
@@ -325,7 +316,6 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
-		[MonoTODO]
 		public virtual WebPartHelpMode HelpMode 
 		{
 			get {
@@ -336,7 +326,6 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
-		[MonoTODO]
 		public virtual string HelpUrl 
 		{
 			get {
@@ -347,7 +336,6 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
-		[MonoTODO]
 		public virtual bool Hidden 
 		{
 			get {
@@ -368,7 +356,6 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
-		[MonoTODO]
 		public bool IsClosed 
 		{
 			get {
@@ -376,7 +363,6 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
-		[MonoTODO("not virtual and no setter..")]
 		public bool IsShared 
 		{
 			get {
@@ -384,7 +370,6 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
-		[MonoTODO("not virtual and no setter..")]
 		public bool IsStandalone 
 		{
 			get {
@@ -392,7 +377,6 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
-		[MonoTODO]
 		public bool IsStatic 
 		{
 			get {
@@ -400,7 +384,6 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
-		[MonoTODO]
 		public virtual string Subtitle 
 		{
 			get {
@@ -408,7 +391,6 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
-		[MonoTODO ("why override?")]
 		public override string Title 
 		{
 			get {
@@ -419,7 +401,6 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
-		[MonoTODO]
 		public virtual string TitleIconImageUrl 
 		{
 			get {
@@ -430,7 +411,6 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
-		[MonoTODO]
 		public virtual string TitleUrl 
 		{
 			get {
@@ -449,26 +429,25 @@ namespace System.Web.UI.WebControls.WebParts
 		}
 
 #if IWebEditableInterface
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual object WebBrowsableObject 
 		{
 			get {
-			throw new NotImplementedException ();
+				throw new NotImplementedException ();
 			}
 		}
 #endif
 
 #if notyet
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		protected WebPartManager WebPartManager 
 		{
 			get {
-			throw new NotImplementedException ();
+				throw new NotImplementedException ();
 			}
 		}
 #endif
 
-		[MonoTODO ("why override?")]
 		public override Unit Width 
 		{
 			get {
@@ -480,16 +459,15 @@ namespace System.Web.UI.WebControls.WebParts
 		}
 
 #if notyet
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public WebPartZoneBase Zone 
 		{
 			get {
-			throw new NotImplementedException ();
+				throw new NotImplementedException ();
 			}
 		}
 #endif
 
-		[MonoTODO]
 		public int ZoneIndex 
 		{
 			get {

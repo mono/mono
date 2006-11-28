@@ -187,19 +187,18 @@ namespace System.Web {
 			}
 		}
 		
-		[MonoTODO]
+		[MonoTODO("Not implemented, always returns null")]
 		protected string GetExplicitResourceString (string attributeName, string defaultValue, bool throwIfNotFound)
 		{
 			return null;
 		}
 		
-		[MonoTODO]
+		[MonoTODO("Not implemented, always returns null")]
 		protected string GetImplicitResourceString (string attributeName)
 		{
 			return null;
 		}
 		
-		[MonoTODO ("resource string?")]
 		public virtual string this [string key]
 		{
 			get {

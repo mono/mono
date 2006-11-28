@@ -76,14 +76,14 @@ namespace System.Web.UI {
 			return NewParser;
 		}
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		[SecurityPermission (SecurityAction.Demand, ControlThread = true, UnmanagedCode = true)]
 		public static Control[] ParseControls (DesignTimeParseData data)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		[SecurityPermission (SecurityAction.Demand, ControlThread = true)]
 		public static ControlBuilder ParseTheme (IDesignerHost host, string theme, string themePath)
 		{

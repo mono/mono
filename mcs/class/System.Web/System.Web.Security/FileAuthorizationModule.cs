@@ -45,14 +45,14 @@ namespace System.Web.Security
 		{
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public void Init (HttpApplication app)
 		{
 			throw new NotImplementedException ();
 		}
 
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public static bool CheckFileAccessForUser (string virtualPath, IntPtr token, string verb)
 		{
 			throw new NotImplementedException ();

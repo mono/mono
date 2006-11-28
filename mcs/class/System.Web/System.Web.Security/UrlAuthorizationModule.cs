@@ -75,7 +75,7 @@ namespace System.Web.Security
 		}
 
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public static bool CheckUrlAccessForPrincipal (string virtualPath, IPrincipal user, string verb)
 		{
 			throw new NotImplementedException ();

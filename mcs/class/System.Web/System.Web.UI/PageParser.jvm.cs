@@ -42,7 +42,6 @@ namespace System.Web.UI
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class PageParser
 	{
-		[MonoTODO]
 		public static IHttpHandler GetCompiledPageInstance (string virtualPath,
 								    string inputFile, 
 								    HttpContext context)

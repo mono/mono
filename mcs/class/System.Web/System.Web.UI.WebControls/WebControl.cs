@@ -245,7 +245,6 @@ namespace System.Web.UI.WebControls {
 
 #if NET_2_0
 		[Browsable (true)]
-		[MonoTODO]
 		public virtual new bool EnableTheming
 		{
 			get { return base.EnableTheming; }
@@ -290,7 +289,7 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public bool HasAttributes 
 		{
 			get {
@@ -319,7 +318,6 @@ namespace System.Web.UI.WebControls {
 
 #if NET_2_0
 		[Browsable (true)]
-		[MonoTODO]
 		public virtual new string SkinID
 		{
 			get { return base.SkinID; }
@@ -406,7 +404,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		protected internal bool IsEnabled 
 		{
 			get {

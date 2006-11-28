@@ -656,7 +656,6 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[MonoTODO]
 		public string DynamicPopOutImageTextFormatString 
 		{
 			get
@@ -686,7 +685,6 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[MonoTODO]
 		public string StaticPopOutImageTextFormatString
 		{
 			get
@@ -765,7 +763,6 @@ namespace System.Web.UI.WebControls
 			get { return selectedItem != null ? selectedItem.Value : ""; }
 		}
 
-		[MonoTODO]
 		[Localizable (true)]
 		public string SkipLinkText 
 		{
@@ -1105,13 +1102,13 @@ namespace System.Web.UI.WebControls
 			_requiresChildControlsDataBinding = false;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		protected override IDictionary GetDesignModeState ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		protected override void SetDesignModeState (IDictionary data)
 		{
 			throw new NotImplementedException ();

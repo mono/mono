@@ -530,20 +530,17 @@ namespace System.Web.UI.HtmlControls
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		protected virtual void OnDataPropertyChanged ()
 		{
 			RequiresDataBinding = true;
 		}
 
-		[MonoTODO]
 		protected virtual void OnDataSourceViewChanged (object sender,
 								EventArgs e)
 		{
 			RequiresDataBinding = true;
 		}
 
-		[MonoTODO]
 		protected internal override void OnInit (EventArgs e)
 		{
 			base.OnInit (e);

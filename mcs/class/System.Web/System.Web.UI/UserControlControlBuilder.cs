@@ -41,13 +41,12 @@ namespace System.Web.UI {
 			return false;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented, does nothing")]
 		public override void SetTagInnerText (string text)
 		{
 			// Do something with the text
 		}
 #if NET_2_0
-		[MonoTODO ("why override?")]
 		public override object BuildObject ()
 		{
 			return base.BuildObject ();

@@ -58,7 +58,6 @@ namespace System.Web.UI.WebControls
 			return true;
 		}
 		
-		[MonoTODO]
 		protected internal override void Render (HtmlTextWriter writer)
 		{
 			base.Render (writer);

@@ -42,7 +42,6 @@ namespace System.Web.Configuration {
 		static ConfigurationProperty urlProp;
 		static ConfigurationPropertyCollection properties;
 
-		[MonoTODO]
 		static void ValidateUrl (object value)
 		{
 			/* XXX validate the url */

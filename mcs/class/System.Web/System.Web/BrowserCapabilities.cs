@@ -162,7 +162,7 @@ namespace System.Web {
 			}
 		}
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public ArrayList Browsers {
 			get { throw new NotImplementedException (); }
 		}

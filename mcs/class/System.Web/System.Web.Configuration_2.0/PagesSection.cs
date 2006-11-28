@@ -264,7 +264,6 @@ namespace System.Web.Configuration
 			get { return properties; }
 		}
 
-		[MonoTODO]
 		protected override void DeserializeSection (XmlReader reader)
 		{
 			base.DeserializeSection (reader);

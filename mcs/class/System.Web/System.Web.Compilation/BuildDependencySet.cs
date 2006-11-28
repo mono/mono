@@ -41,14 +41,14 @@ namespace System.Web.Compilation {
 		{
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public string HashCode {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public IEnumerable VirtualPaths {
 			get {
 				throw new NotImplementedException ();

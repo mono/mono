@@ -40,7 +40,7 @@ namespace System.Web.UI.Adapters
 		{
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual StringCollection CacheVaryByHeaders 
 		{
 			get {
@@ -48,7 +48,7 @@ namespace System.Web.UI.Adapters
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual StringCollection CacheVaryByParams 
 		{
 			get {
@@ -56,7 +56,7 @@ namespace System.Web.UI.Adapters
 			}
 		}
 		
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		protected string ClientState 
 		{
 			get {
@@ -64,31 +64,31 @@ namespace System.Web.UI.Adapters
 			}
 		}
 		
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual NameValueCollection DeterminePostBackMode ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual ICollection GetRadioButtonsByGroup (string groupName)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual PageStatePersister GetStatePersister ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual void RegisterRadioButton (RadioButton radioButton)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual void RenderBeginHyperlink (HtmlTextWriter w,
 							  string targetUrl,
 							  bool encodeUrl,
@@ -97,7 +97,7 @@ namespace System.Web.UI.Adapters
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual void RenderBeginHyperlink (HtmlTextWriter w,
 							  string targetUrl,
 							  bool encodeUrl,
@@ -107,13 +107,13 @@ namespace System.Web.UI.Adapters
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual void RenderEndHyperlink (HtmlTextWriter w)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual void RenderPostBackEvent (HtmlTextWriter w,
 							 string target,
 							 string argument,
@@ -123,7 +123,7 @@ namespace System.Web.UI.Adapters
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual void RenderPostBackEvent (HtmlTextWriter w,
 							 string target,
 							 string argument,
@@ -135,7 +135,7 @@ namespace System.Web.UI.Adapters
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		protected void RenderPostBackEvent (HtmlTextWriter w,
 						    string target,
 						    string argument,
@@ -148,13 +148,13 @@ namespace System.Web.UI.Adapters
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual string TransformText (string text) 
 		{
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		protected internal virtual string GetPostBackFormReference (string formID)
 		{
 			throw new NotImplementedException ();

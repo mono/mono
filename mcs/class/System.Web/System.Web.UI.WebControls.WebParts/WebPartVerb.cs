@@ -78,43 +78,43 @@ namespace System.Web.UI.WebControls.WebParts
 			stateBag.Add ("clientClickHandler", clientClickHandler);
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		protected virtual void LoadViewState (object savedState)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		protected virtual object SaveViewState()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		protected virtual void TrackViewState()
 		{
 			throw new NotImplementedException();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		void IStateManager.LoadViewState (object savedState)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		object IStateManager.SaveViewState ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		void IStateManager.TrackViewState ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		bool IStateManager.IsTrackingViewState {
 			get {
 				throw new NotImplementedException ();

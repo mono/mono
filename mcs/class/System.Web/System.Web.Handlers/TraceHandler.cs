@@ -200,22 +200,22 @@ namespace System.Web.Handlers
 			manager.TraceData [item - 1].Render (output);
 		}
 
-		[MonoTODO ("Appears in class status, but...")]
+		[MonoTODO ("Not implemented, does nothing")]
 		protected void ShowDetails (DataSet data)
 		{
 		}
 #if NET_2_0
-		[MonoTODO ("Appears in class status, but...")]
+		[MonoTODO ("Not implemented, does nothing")]
 		protected void ShowRequests (IList data)
 		{
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented, does nothing")]
 		protected void ShowVersionDetails ()
 		{
 		}
 #else
-		[MonoTODO ("Appears in class status, but...")]
+		[MonoTODO ("Not implemented, does nothing")]
 		protected void ShowRequests (ArrayList list)
 		{
 		}

@@ -57,7 +57,6 @@ namespace System.Web.Configuration
 			}
 		}
 
-		[MonoTODO]
 		protected override ConfigurationPropertyCollection Properties {
 			get {
 				return properties;
@@ -65,7 +64,6 @@ namespace System.Web.Configuration
 		}
 
 		/* stolen from the 1.0 S.W.Config ModulesConfiguration.cs */
-		[MonoTODO]
 		internal HttpModuleCollection LoadModules (HttpApplication app)
 		{
 			HttpModuleCollection coll = new HttpModuleCollection ();

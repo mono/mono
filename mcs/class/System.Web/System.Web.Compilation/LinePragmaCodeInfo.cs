@@ -39,35 +39,35 @@ namespace System.Web.Compilation {
 		{
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public int CodeLength {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public bool IsCodeNugget {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public int StartColumn {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public int StartGeneratedColumn {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public int StartLine {
 			get {
 				throw new NotImplementedException ();

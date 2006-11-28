@@ -31,7 +31,6 @@ using System.Security.Permissions;
 
 namespace System.Web.Util
 {
-	[MonoTODO]
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
@@ -47,6 +46,7 @@ namespace System.Web.Util
 			InvokeTransacted (callback, mode, ref abortedTransaction);
 		}
 
+		[MonoTODO ("Not implemented, not supported by Mono")]
 		public static void InvokeTransacted (TransactedCallback callback, 
 							TransactionOption mode, 
 							ref bool transactionAborted)

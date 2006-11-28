@@ -57,7 +57,6 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		[Themeable (false)]
 		[DefaultValue (false)]
 		public bool ValidateEmptyText {

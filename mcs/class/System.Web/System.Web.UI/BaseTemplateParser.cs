@@ -36,13 +36,11 @@ namespace System.Web.UI {
 		{
 		}
 
-		[MonoTODO]
 		protected Type GetReferenceType ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected internal Type GetUserControlType (string virtualPath)
 		{
 			throw new NotImplementedException ();

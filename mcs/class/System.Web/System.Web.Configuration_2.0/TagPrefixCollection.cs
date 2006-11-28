@@ -65,7 +65,6 @@ namespace System.Web.Configuration
 			return new TagPrefixInfo ();
 		}
 
-		[MonoTODO]
 		protected override object GetElementKey (ConfigurationElement element)
 		{
 			return ((TagPrefixInfo)element).TagPrefix;

@@ -67,7 +67,6 @@ namespace System.Web.Configuration
 		{
 		}
 
-		[MonoTODO]
 		protected override void Reset (ConfigurationElement parentElement)
 		{
 			base.Reset (parentElement);

@@ -107,7 +107,6 @@ namespace System.Web.Configuration {
 			elementProperty = new ConfigurationElementProperty (new CallbackValidator (typeof (SessionStateSection), ValidateElement));
 		}
 
-		[MonoTODO]
 		protected override void PostDeserialize ()
 		{
 			base.PostDeserialize ();
@@ -207,7 +206,6 @@ namespace System.Web.Configuration {
 			set { base[useHostingIdentityProp] = value; }
 		}
 
-		[MonoTODO]
 		static void ValidateElement (object o)
 		{
 			/* XXX do some sort of element validation here? */

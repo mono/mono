@@ -86,7 +86,6 @@ namespace System.Web.Hosting {
 			get { return shutdown_reason; }
 		}
 
-		[MonoTODO]
 		public static string SiteName {
 			get { return site_name; }
 		}
@@ -100,19 +99,19 @@ namespace System.Web.Hosting {
 			Interlocked.Decrement (ref busy_count);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public static IDisposable Impersonate ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public static IDisposable Impersonate (IntPtr token)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public static IDisposable Impersonate (IntPtr userToken, string virtualPath)
 		{
 			throw new NotImplementedException ();
@@ -169,13 +168,13 @@ namespace System.Web.Hosting {
 			vpath_provider = virtualPathProvider;
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public static IDisposable SetCultures (string virtualPath)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public static IDisposable SetCultures ()
 		{
 			throw new NotImplementedException ();

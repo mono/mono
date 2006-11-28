@@ -113,7 +113,6 @@ namespace System.Web.Configuration
 		{
 		}
 
-		[MonoTODO]
 		static void ValidateElement (object o)
 		{
 			/* XXX do some sort of element validation here? */

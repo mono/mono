@@ -1139,7 +1139,6 @@ namespace System.Web.UI.WebControls
 			return dataSource.DataSourceCount;
 		}
 
-		[MonoTODO]
 		protected override void EnsureDataBound ()
 		{
 			base.EnsureDataBound ();

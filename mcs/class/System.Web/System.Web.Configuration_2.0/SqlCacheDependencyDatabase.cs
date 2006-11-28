@@ -82,7 +82,6 @@ namespace System.Web.Configuration {
 			this.PollTime = pollTime;
 		}
 
-		[MonoTODO]
 		static void ValidateElement (object o)
 		{
 			/* XXX do some sort of element validation here? */

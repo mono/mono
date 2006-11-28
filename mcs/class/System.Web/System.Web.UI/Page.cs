@@ -1403,7 +1403,7 @@ public class Page : TemplateControl, IHttpHandler
 		scriptManager.RegisterHiddenField (hiddenFieldName, hiddenFieldInitialValue);
 	}
 
-	[MonoTODO("Used in HtmlForm")]
+	[MonoTODO("Not implemented, Used in HtmlForm")]
 	internal void RegisterClientScriptFile (string a, string b, string c)
 	{
 		throw new NotImplementedException ();
@@ -2070,18 +2070,18 @@ return true;
 	#endif
 
 #if NET_2_0
-	[MonoTODO ("Used by .net aspx parser")]
+	[MonoTODO ("Not implemented.  Only used by .net aspx parser")]
 	protected object GetWrappedFileDependencies (string [] list)
 	{
 		return null;
 	}
 
-	[MonoTODO ("Used by .net aspx parser")]
+	[MonoTODO ("Does nothing.  Used by .net aspx parser")]
 	protected virtual void InitializeCulture ()
 	{
 	}
 
-	[MonoTODO ("Used by .net aspx parser")]
+	[MonoTODO ("Does nothing. Used by .net aspx parser")]
 	protected internal void AddWrappedFileDependencies (object virtualFileDependencies)
 	{
 	}

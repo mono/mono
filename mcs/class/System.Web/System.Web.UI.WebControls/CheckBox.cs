@@ -90,7 +90,6 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[DefaultValue (false)]
 		[Themeable (false)]
-		[MonoTODO]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
 		public virtual bool CausesValidation 

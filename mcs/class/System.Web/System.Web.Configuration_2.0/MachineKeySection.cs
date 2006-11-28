@@ -74,7 +74,6 @@ namespace System.Web.Configuration {
 			AutoGenKeys ();
 		}
 
-		[MonoTODO]
 		protected override void Reset (ConfigurationElement parentElement)
 		{
 			base.Reset (parentElement);

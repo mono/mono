@@ -121,7 +121,6 @@ namespace System.Web {
 			data.Write (category, msg, error, Warning);
 		}
 #if NET_2_0
-		[MonoTODO]
 		public event TraceContextEventHandler TraceFinished;
 #endif
 		internal void SaveData ()

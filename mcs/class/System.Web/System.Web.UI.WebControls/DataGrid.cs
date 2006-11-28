@@ -441,7 +441,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[MonoTODO]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription ("")]

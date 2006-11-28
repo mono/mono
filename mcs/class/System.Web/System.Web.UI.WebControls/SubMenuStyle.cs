@@ -141,73 +141,73 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		System.ComponentModel.AttributeCollection ICustomTypeDescriptor.GetAttributes ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		string ICustomTypeDescriptor.GetClassName ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		string ICustomTypeDescriptor.GetComponentName ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		TypeConverter ICustomTypeDescriptor.GetConverter ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		EventDescriptor ICustomTypeDescriptor.GetDefaultEvent ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		PropertyDescriptor ICustomTypeDescriptor.GetDefaultProperty ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		object ICustomTypeDescriptor.GetEditor (Type editorBaseType)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		EventDescriptorCollection ICustomTypeDescriptor.GetEvents ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		EventDescriptorCollection ICustomTypeDescriptor.GetEvents (Attribute [] arr)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties (Attribute [] arr)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		object ICustomTypeDescriptor.GetPropertyOwner (PropertyDescriptor pd)
 		{
 			throw new NotImplementedException ();

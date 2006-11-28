@@ -38,7 +38,6 @@ namespace System.Web.Configuration
 		{
 		}
 
-		[MonoTODO]
 		public override void Validate (object value)
 		{
 			base.Validate (value);

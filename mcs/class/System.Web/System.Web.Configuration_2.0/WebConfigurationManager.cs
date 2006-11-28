@@ -121,7 +121,7 @@ namespace System.Web.Configuration {
 			return OpenMachineConfiguration ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Mono does not support remote configuration")]
 		public static _Configuration OpenMachineConfiguration (string locationSubPath,
 								       string server)
 		{
@@ -131,7 +131,7 @@ namespace System.Web.Configuration {
 			throw new NotSupportedException ("Mono doesn't support remote configuration");
 		}
 
-		[MonoTODO]
+		[MonoTODO("Mono does not support remote configuration")]
 		public static _Configuration OpenMachineConfiguration (string locationSubPath,
 								       string server,
 								       IntPtr userToken)
@@ -141,7 +141,7 @@ namespace System.Web.Configuration {
 			throw new NotSupportedException ("Mono doesn't support remote configuration");
 		}
 
-		[MonoTODO]
+		[MonoTODO("Mono does not support remote configuration")]
 		public static _Configuration OpenMachineConfiguration (string locationSubPath,
 								       string server,
 								       string userName,
@@ -167,10 +167,9 @@ namespace System.Web.Configuration {
 			return OpenWebConfiguration (path, site, locationSubPath, null, null, null);
 		}
 
-		[MonoTODO]
 		public static _Configuration OpenWebConfiguration (string path, string site, string locationSubPath, string server)
 		{
-			throw new NotImplementedException ();
+			return OpenWebConfiguration (path, site, locationSubPath, server, null, null);
 		}
 
 		public static _Configuration OpenWebConfiguration (string path, string site, string locationSubPath, string server, IntPtr userToken)
@@ -178,7 +177,6 @@ namespace System.Web.Configuration {
 			return OpenWebConfiguration (path, site, locationSubPath, server, null, null);
 		}
 		
-		[MonoTODO]
 		public static _Configuration OpenWebConfiguration (string path, string site, string locationSubPath, string server, string userName, string password)
 		{
 			if (path == null)
@@ -222,13 +220,11 @@ namespace System.Web.Configuration {
 			return ConfigurationFactory.Create (typeof(WebConfigurationHost), fileMap, path);
 		}
 		
-		[MonoTODO ("Do something with the extra parameters")]
 		public static _Configuration OpenMappedWebConfiguration (WebConfigurationFileMap fileMap, string path, string site)
 		{
 			return ConfigurationFactory.Create (typeof(WebConfigurationHost), fileMap, path, site);
 		}
 		
-		[MonoTODO ("Do something with the extra parameters")]
 		public static _Configuration OpenMappedWebConfiguration (WebConfigurationFileMap fileMap, string path, string site, string locationSubPath)
 		{
 			return ConfigurationFactory.Create (typeof(WebConfigurationHost), fileMap, path, site, locationSubPath);
@@ -239,7 +235,6 @@ namespace System.Web.Configuration {
 			return ConfigurationFactory.Create (typeof(WebConfigurationHost), fileMap);
 		}
 
-		[MonoTODO ("need to handle locationSubPath")]
 		public static _Configuration OpenMappedMachineConfiguration (ConfigurationFileMap fileMap,
 									     string locationSubPath)
 		{
@@ -261,7 +256,6 @@ namespace System.Web.Configuration {
 				return c.GetSection (sectionName);
 		}
 
-		[MonoTODO]
 		public static object GetSection (string sectionName, string path)
 		{
 			try {
@@ -292,7 +286,6 @@ namespace System.Web.Configuration {
 
 		static MethodInfo get_runtime_object = typeof (ConfigurationSection).GetMethod ("GetRuntimeObject", BindingFlags.NonPublic | BindingFlags.Instance);
 
-		[MonoTODO]
 		public static object GetWebApplicationSection (string sectionName)
 		{
 			_Configuration config = GetWebApplicationConfiguration ();
