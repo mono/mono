@@ -584,7 +584,6 @@ namespace System.Windows.Forms
 						item.Visible = mdichild.Visible;
 						item.Text = "&" + (i + 1).ToString () + " " + mdichild.Text;
 						item.Checked = form.ActiveMdiChild == mdichild;
-						previous = item;
 					}
 				} while (false);
 			} else {
