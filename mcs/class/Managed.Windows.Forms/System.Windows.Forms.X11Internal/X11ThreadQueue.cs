@@ -33,7 +33,7 @@ namespace System.Windows.Forms.X11Internal {
 
 	internal class X11ThreadQueue {
 
-		XQueue xqueue;
+		XEventQueue xqueue;
 		PaintQueue paint_queue;
 		ConfigureQueue configure_queue;
 		ArrayList timer_list;
@@ -43,14 +43,14 @@ namespace System.Windows.Forms.X11Internal {
 		bool need_dispatch_idle = true;
 		object lockobj = new object ();
 
-		static readonly int InitialXEventSize = 100;
-		static readonly int InitialQueueSize = 50;
+		static readonly int InitialXEventQueueSize = 128;
+		static readonly int InitialHwndQueueSize = 50;
 
 		public X11ThreadQueue (Thread thread)
 		{
-			xqueue = new XQueue (InitialXEventSize);
-			paint_queue = new PaintQueue (InitialQueueSize);
-			configure_queue = new ConfigureQueue (InitialQueueSize);
+			xqueue = new XEventQueue (InitialXEventQueueSize);
+			paint_queue = new PaintQueue (InitialHwndQueueSize);
+			configure_queue = new ConfigureQueue (InitialHwndQueueSize);
 			timer_list = new ArrayList ();
 			this.thread = thread;
 			this.quit_posted = false;
@@ -256,10 +256,11 @@ namespace System.Windows.Forms.X11Internal {
 			set { quit_posted = value; }
 		}
 
-		public class ConfigureQueue {
-			private ArrayList	hwnds;
+		public abstract class HwndEventQueue {
+			protected ArrayList hwnds;
 			
-			public ConfigureQueue (int size) {
+			public HwndEventQueue (int size)
+			{
 				hwnds = new ArrayList(size);
 			}
 
@@ -270,7 +271,7 @@ namespace System.Windows.Forms.X11Internal {
 			public void Enqueue (Hwnd hwnd)
 			{
 				if (hwnds.Contains (hwnd)) {
-					Console.WriteLine ("hwnds can only appear in the configure queue once.");
+					Console.WriteLine ("hwnds can only appear in the queue once.");
 					Console.WriteLine (Environment.StackTrace);
 					return;
 				}
@@ -282,24 +283,7 @@ namespace System.Windows.Forms.X11Internal {
 				hwnds.Remove(hwnd);
 			}
 
-			public XEvent Peek ()
-			{
-				if (hwnds.Count == 0)
-					throw new Exception ("Attempt to dequeue empty queue.");
-
-				X11Hwnd hwnd = (X11Hwnd)hwnds[0];
-
-				XEvent xevent = new XEvent ();
-				xevent.AnyEvent.type = XEventName.ConfigureNotify;
-
-				xevent.ConfigureEvent.window = hwnd.ClientWindow;
-				xevent.ConfigureEvent.x = hwnd.X;
-				xevent.ConfigureEvent.y = hwnd.Y;
-				xevent.ConfigureEvent.width = hwnd.Width;
-				xevent.ConfigureEvent.height = hwnd.Height;
-				
-				return xevent;
-			}
+			protected abstract XEvent Peek ();
 
 			public XEvent Dequeue ()
 			{
@@ -315,38 +299,38 @@ namespace System.Windows.Forms.X11Internal {
 			}
 		}
 
-		public class PaintQueue {
 
-			private ArrayList	hwnds;
-			
-			public PaintQueue (int size) {
-				hwnds = new ArrayList(size);
-			}
-
-			public int Count {
-				get { return hwnds.Count; }
-			}
-
-			public void Enqueue (Hwnd hwnd)
+		public class ConfigureQueue : HwndEventQueue
+		{
+			public ConfigureQueue (int size) : base (size)
 			{
-				if (hwnds.Contains (hwnd)) {
-					Console.WriteLine ("hwnds can only appear in the paint queue once.");
-					Console.WriteLine (Environment.StackTrace);
-					return;
-				}
-				hwnds.Add(hwnd);
 			}
 
-			public void Remove(Hwnd hwnd)
+			protected override XEvent Peek ()
 			{
-				hwnds.Remove(hwnd);
+				X11Hwnd hwnd = (X11Hwnd)hwnds[0];
+
+				XEvent xevent = new XEvent ();
+				xevent.AnyEvent.type = XEventName.ConfigureNotify;
+
+				xevent.ConfigureEvent.window = hwnd.ClientWindow;
+				xevent.ConfigureEvent.x = hwnd.X;
+				xevent.ConfigureEvent.y = hwnd.Y;
+				xevent.ConfigureEvent.width = hwnd.Width;
+				xevent.ConfigureEvent.height = hwnd.Height;
+				
+				return xevent;
+			}
+		}
+
+		public class PaintQueue : HwndEventQueue
+		{
+			public PaintQueue (int size) : base (size)
+			{
 			}
 
-			public XEvent Peek ()
+			protected override XEvent Peek ()
 			{
-				if (hwnds.Count == 0)
-					throw new Exception ("Attempt to dequeue empty queue.");
-
 				X11Hwnd hwnd = (X11Hwnd)hwnds[0];
 
 				XEvent xevent = new XEvent ();
@@ -365,35 +349,21 @@ namespace System.Windows.Forms.X11Internal {
 
 				return xevent;
 			}
-
-			public XEvent Dequeue ()
-			{
-				if (hwnds.Count == 0)
-					throw new Exception ("Attempt to dequeue empty queue.");
-
-				// populate the xevent
-				XEvent xevent = Peek ();
-
-				X11Hwnd hwnd = (X11Hwnd)hwnds[0];
-
-				// We only remove the event from the queue if we have one expose left since
-				// a single entry in our queue may be for both NC and Client exposed
-				if ( !(hwnd.PendingNCExpose && hwnd.PendingExpose))
-					hwnds.RemoveAt(0);
-
-				return xevent;
-			}
 		}
 
-		private class XQueue {
+		/* a circular queue for holding X events for processing by GetMessage */
+		private class XEventQueue {
 
-			private XEvent [] xevents;
-			private int head;
-			private int tail;
-			private int size;
+			XEvent[] xevents;
+			int head;
+			int tail;
+			int size;
 			
-			public XQueue (int initial_size)
+			public XEventQueue (int initial_size)
 			{
+				if (initial_size % 2 != 0)
+					throw new Exception ("XEventQueue must be a power of 2 size");
+
 				xevents = new XEvent [initial_size];
 			}
 
@@ -405,9 +375,9 @@ namespace System.Windows.Forms.X11Internal {
 			{
 				if (size == xevents.Length)
 					Grow ();
-				
+
 				xevents [tail] = xevent;
-				tail = (tail + 1) % xevents.Length;
+				tail = (tail + 1) & (xevents.Length - 1);
 				size++;
 			}
 
@@ -417,7 +387,7 @@ namespace System.Windows.Forms.X11Internal {
 					throw new Exception ("Attempt to dequeue empty queue.");
 
 				XEvent res = xevents [head];
-				head = (head + 1) % xevents.Length;
+				head = (head + 1) & (xevents.Length - 1);
 				size--;
 				return res;
 			}
@@ -434,7 +404,15 @@ namespace System.Windows.Forms.X11Internal {
 			{
 				int newcap = (xevents.Length * 2);
 				XEvent [] na = new XEvent [newcap];
-				xevents.CopyTo (na, 0);
+
+				if (head + size > xevents.Length) {
+					Array.Copy (xevents, head, na, 0, xevents.Length - head);
+					Array.Copy (xevents, 0, na, xevents.Length - head, head + size - xevents.Length);
+				}
+				else {
+					Array.Copy (xevents, head, na, 0, size);
+				}
+
 				xevents = na;
 				head = 0;
 				tail = head + size;

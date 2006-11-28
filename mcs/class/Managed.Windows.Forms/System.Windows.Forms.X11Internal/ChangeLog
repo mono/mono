@@ -1,5 +1,12 @@
 2006-11-28  Chris Toshok  <toshok@ximian.com>
 
+	* X11ThreadQueue.cs: factor out all the commonality from
+	PaintQueue/ConfigureQueue.  Add a comment about XEventQueue.  stop
+	using % from the XEventQueue.  if we're going for performance,
+	it's much quicker to use a multiple of 2 size for the array and
+	use & for wrapping.  Also, fix XEventQueue.Grow().  it was
+	reordering the queue before.
+
 	* X11Hwnd.cs, XplatUIX11-new.cs: remove spew, and ^M's.
 
 2006-11-28  Rolf Bjarne Kvinge <RKvinge@novell.com>
