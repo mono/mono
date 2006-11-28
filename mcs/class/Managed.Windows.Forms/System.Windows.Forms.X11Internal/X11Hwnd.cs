@@ -266,16 +266,12 @@ namespace System.Windows.Forms.X11Internal {
 			int	dest_y_return;
 			IntPtr	child;
 
-			Console.Write ("MenuToScreen ({0}, {1}) =>", x, y);
-
 			Xlib.XTranslateCoordinates (display.Handle,
 						    WholeWindow, display.RootWindow.Handle,
 						    x, y, out dest_x_return, out dest_y_return, out child);
 
 			x = dest_x_return;
 			y = dest_y_return;
-
-			Console.WriteLine ("({0}, {1})", x, y);
 		}
 
 		public virtual void PropertyChanged (XEvent xevent)
@@ -1081,15 +1077,12 @@ namespace System.Windows.Forms.X11Internal {
 			int	dest_y_return;
 			IntPtr	child;
 
-			Console.Write ("ClientToScreen ({0}, {1}) =>", x, y);
 			Xlib.XTranslateCoordinates (display.Handle,
 						    ClientWindow, display.RootWindow.Handle,
 						    x, y, out dest_x_return, out dest_y_return, out child);
 
 			x = dest_x_return;
 			y = dest_y_return;
-
-			Console.WriteLine ("({0}, {1})", x, y);
 		}
 
 		public void ScreenToClient (ref int x, ref int y)
@@ -1098,15 +1091,12 @@ namespace System.Windows.Forms.X11Internal {
 			int	dest_y_return;
 			IntPtr	child;
 
-			Console.Write ("ScreenToClient ({0}, {1}) =>", x, y);
 			Xlib.XTranslateCoordinates (display.Handle,
 						    display.RootWindow.Handle, ClientWindow,
 						    x, y, out dest_x_return, out dest_y_return, out child);
 
 			x = dest_x_return;
 			y = dest_y_return;
-
-			Console.WriteLine ("({0}, {1})", x, y);
 		}
 
 
@@ -1116,22 +1106,19 @@ namespace System.Windows.Forms.X11Internal {
 			int	dest_y_return;
 			IntPtr	child;
 
-			Console.Write ("ScreenToMenu ({0}, {1}) =>", x, y);
-
-			Console.WriteLine ("x,y = {0},{1}", X, Y);
-
 			Xlib.XTranslateCoordinates (display.Handle,
 						    display.RootWindow.Handle, WholeWindow,
 						    x, y, out dest_x_return, out dest_y_return, out child);
 
 			x = dest_x_return;
 			y = dest_y_return;
-
-			Console.WriteLine ("({0}, {1})", x, y);
 		}
 
 		public void ScrollWindow (Rectangle area, int XAmount, int YAmount, bool with_children)
 		{
+			try {
+			Queue.Lock ();
+
 			IntPtr		gc;
 			XGCValues	gc_values;
 
@@ -1210,6 +1197,10 @@ namespace System.Windows.Forms.X11Internal {
 			}
 
 			Xlib.XFreeGC (display.Handle, gc);
+			}
+			finally {
+				Queue.Unlock ();
+			}
 		}
 
 
