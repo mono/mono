@@ -721,8 +721,9 @@ namespace System.Data {
 #if NET_2_0
 		public void Load (IDataReader reader, LoadOption loadOption, params DataTable[] tables)
 		{
-			if (reader == null)
-				return;
+			if (reader == null) {
+				throw new ArgumentNullException ("Value cannot be null. Parameter name: reader");
+			}
 			foreach (DataTable dt in tables) {
 				if (dt.DataSet == null || dt.DataSet != this) {
 					throw new ArgumentException ("Table " +  dt.TableName + " does not belong to this DataSet.");
@@ -734,8 +735,9 @@ namespace System.Data {
 
 		public void Load (IDataReader reader, LoadOption loadOption, params string[] tables)
 		{
-			if (reader == null)
-				return;
+			if (reader == null) {
+				throw new ArgumentNullException ("Value cannot be null. Parameter name: reader");
+			}
 			foreach (string tableName in tables) {
 				DataTable dt = Tables [tableName];
 
@@ -750,8 +752,9 @@ namespace System.Data {
 
 		public void Load (IDataReader reader, LoadOption loadOption, FillErrorEventHandler errorHandler, params DataTable[] tables)
 		{
-			if (reader == null)
-				return;
+			if (reader == null) {
+				throw new ArgumentNullException ("Value cannot be null. Parameter name: reader");
+			}
 			foreach (DataTable dt in tables) {
 				if (dt.DataSet == null || dt.DataSet != this) {
 					throw new ArgumentException ("Table " +  dt.TableName + " does not belong to this DataSet.");

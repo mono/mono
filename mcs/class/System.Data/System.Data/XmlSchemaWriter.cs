@@ -213,7 +213,7 @@ namespace System.Data
 			if (dataSetLocale == CultureInfo.CurrentCulture) {
 				w.WriteAttributeString (
 					XmlConstants.MsdataPrefix,
-					"UseCurrentCulture",
+					"UseCurrentLocale",
 					XmlConstants.MsdataNamespace,
 					"true");
 			}
@@ -231,6 +231,7 @@ namespace System.Data
 
 			w.WriteStartElement ("xs", "complexType", xmlnsxs);
 			w.WriteStartElement ("xs", "choice", xmlnsxs);
+			w.WriteAttributeString ("minOccurs", "0");
 			w.WriteAttributeString ("maxOccurs", "unbounded");
 
 			foreach (DataTable table in tables) {
@@ -336,11 +337,12 @@ namespace System.Data
 
 					ForeignKeyConstraint fk = c as ForeignKeyConstraint;
 					bool haveConstraint = false;
-					if (relations != null)
+					if (relations != null) {
 						foreach (DataRelation r in relations)
-							if(r.RelationName == fk.ConstraintName)
+							if (r.RelationName == fk.ConstraintName)
 								haveConstraint = true;
-					if (fk != null && !haveConstraint) {
+					}
+					if (tables.Length > 1 && fk != null && !haveConstraint) {
 						DataRelation rel = new DataRelation (fk.ConstraintName,
 										fk.RelatedColumns, fk.Columns);
 						AddForeignKeys (rel, names, true);

@@ -246,7 +246,6 @@ namespace System.Data {
 		/// Adds a DataRelation to the DataRelationCollection.
 		/// </summary>
 		/// <param name="relation">The DataRelation to add to the collection.</param>
-		[MonoTODO]
 		public void Add(DataRelation relation)
 		{
             // To prevent endless recursion
@@ -259,6 +258,9 @@ namespace System.Data {
 
 			try
 			{
+				CollectionChangeEventArgs e = new CollectionChangeEventArgs (CollectionChangeAction.Add, this);
+				OnCollectionChanging (e);
+
 				this.AddCore (relation);
 				if(relation.RelationName == string.Empty)
 					relation.RelationName = GenerateRelationName();
@@ -266,8 +268,8 @@ namespace System.Data {
 				relation.ParentTable.ResetPropertyDescriptorsCache();
 				relation.ChildTable.ResetPropertyDescriptorsCache();
 			
-				CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
-				OnCollectionChanged(e);
+				e = new CollectionChangeEventArgs (CollectionChangeAction.Add, this);
+				OnCollectionChanged (e);
 			}
 			finally
 			{
@@ -397,7 +399,6 @@ namespace System.Data {
 		/// Adds to the list
 		/// </summary>
 		/// <param name="relation">The relation to check.</param>
-		[MonoTODO]
 		protected virtual void AddCore(DataRelation relation)
 		{
 			if (relation == null) {
@@ -570,9 +571,9 @@ namespace System.Data {
 		}
 
 		[MonoTODO]
-		protected internal virtual void OnCollectionChanging (CollectionChangeEventArgs ccevent)
+		protected virtual void OnCollectionChanging (CollectionChangeEventArgs ccevent)
 		{
-			throw new NotImplementedException ();
+			//throw new NotImplementedException ();
 		}
 
 		public void Remove (DataRelation relation)
@@ -593,6 +594,8 @@ namespace System.Data {
 				// check if the list doesnot contains this relation.
 				if (!(List.Contains(relation)))
 					throw new ArgumentException("Relation doesnot belong to this Collection.");
+
+				OnCollectionChanging (CreateCollectionChangeEvent (CollectionChangeAction.Remove));
 
 				RemoveCore (relation);
 				string name = "Relation" + index;
@@ -623,7 +626,6 @@ namespace System.Data {
 			Remove(relation);
 		}
 
-		[MonoTODO]
 		protected virtual void RemoveCore(DataRelation relation)
 		{
 			// Remove from collection

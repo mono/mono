@@ -71,6 +71,10 @@ namespace System.Data
 		string[] _childColumnNames;
 		bool _nested;
 		bool initInProgress = false;
+#if NET_2_0
+		string _parentTableNameSpace = String.Empty;
+		string _childTableNameSpace = String.Empty;
+#endif
 	
 		#region Constructors
 
@@ -118,7 +122,6 @@ namespace System.Data
 							"matching column types");
 		}
 
-		[MonoTODO]
 		[Browsable (false)]
 		public DataRelation (string relationName, string parentTableName, string childTableName, string[] parentColumnNames, string[] childColumnNames, bool nested) 
 		{
@@ -130,6 +133,25 @@ namespace System.Data
 			_nested = nested;
 			InitInProgress = true;
 		}
+
+#if NET_2_0
+		[Browsable (false)]
+		public DataRelation (string relationName, string parentTableName,
+				     string parentTableNameSpace, string childTableName,
+				     string childTableNameSpace, string[] parentColumnNames,
+				     string[] childColumnNames, bool nested) 
+		{
+			_relationName = relationName;
+			_parentTableName = parentTableName;
+			_parentTableNameSpace = parentTableNameSpace;
+			_childTableName = childTableName;
+			_childTableNameSpace = childTableNameSpace;
+			_parentColumnNames = parentColumnNames;
+			_childColumnNames = childColumnNames;
+			_nested = nested;
+			InitInProgress = true;
+		}
+#endif
 	
 		internal bool InitInProgress {
 			get { return initInProgress; }
@@ -165,14 +187,15 @@ namespace System.Data
 			this.createConstraints = false;
 			this.extendedProperties = new PropertyCollection ();
 			InitInProgress = false;
-		}
 #if NET_2_0
-		[MonoTODO]
-		public DataRelation (string relationName, string parentTableName, string parentTableNamespace, string childTableName, string childTableNamespace, string[] parentColumnNames, string[] childColumnNames, bool nested)
-		{
-			throw new NotImplementedException ();
-		}
+			if (_parentTableNameSpace != String.Empty) {
+				parent.Namespace = _parentTableNameSpace;
+			}
+			if (_childTableNameSpace != String.Empty) {
+				child.Namespace = _childTableNameSpace;
+			}
 #endif
+		}
 
 		#endregion // Constructors
 

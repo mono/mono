@@ -78,13 +78,22 @@ namespace System.Data
 			}
 		}
 
+		public override int Count
+		{
+			get {
+				return List.Count;
+			}
+		}
+
+#if !NET_2_0
 		/// <summary>
 		/// This member overrides InternalDataCollectionBase.List
 		/// </summary>
 		protected override ArrayList List 
 		{
 			get { return base.List; }
-		}		
+		}
+#endif
 
 		/// <summary>
 		/// Adds the specified DataRow to the DataRowCollection object.
@@ -109,6 +118,23 @@ namespace System.Data
 			AddInternal(row);
 		}
 
+#if NET_2_0
+		public int IndexOf (DataRow row) 
+		{
+			if (row == null)
+				return -1;
+
+			int i = 0;
+			foreach (DataRow dr in this) {
+				if (dr == row) {
+					return i;
+				}
+				i++;
+			}
+
+			return -1;
+		}
+#endif
 		internal void AddInternal (DataRow row) {
 			AddInternal (row, DataRowAction.Add);
 		}
@@ -199,10 +225,22 @@ namespace System.Data
 			return Find (keys) != null;
 		}
 
+#if NET_2_0
 		public void CopyTo (DataRow [] array, int index)
 		{
 			CopyTo ((Array) array, index);
 		}
+
+		public override void CopyTo (Array array, int index)
+		{
+			base.CopyTo (array, index);
+		}
+
+		public override IEnumerator GetEnumerator ()
+  		{
+  			return base.GetEnumerator ();
+  		}
+#endif
 
 		/// <summary>
 		/// Gets the row specified by the primary key value.

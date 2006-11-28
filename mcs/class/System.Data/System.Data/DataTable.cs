@@ -1692,8 +1692,9 @@ namespace System.Data {
                 /// </summary>
 		public void Load (IDataReader reader)
 		{
-			if (reader == null)
-				return;
+			if (reader == null) {
+				throw new ArgumentNullException ("Value cannot be null. Parameter name: reader");
+			}
                         Load (reader, LoadOption.PreserveChanges);
 		}
 
@@ -1704,8 +1705,9 @@ namespace System.Data {
                 /// </summary>
 		public void Load (IDataReader reader, LoadOption loadOption)
 		{
-			if (reader == null)
-				return;
+			if (reader == null) {
+				throw new ArgumentNullException ("Value cannot be null. Parameter name: reader");
+			}
                         bool prevEnforceConstr = this.EnforceConstraints;
                         try {
                                 this.EnforceConstraints = false;
@@ -1726,8 +1728,9 @@ namespace System.Data {
 
 		public virtual void Load (IDataReader reader, LoadOption loadOption, FillErrorEventHandler errorHandler)
 		{
-			if (reader == null)
-				return;
+			if (reader == null) {
+				throw new ArgumentNullException ("Value cannot be null. Parameter name: reader");
+			}
                         bool prevEnforceConstr = this.EnforceConstraints;
                         try {
                                 this.EnforceConstraints = false;
@@ -2490,6 +2493,9 @@ namespace System.Data {
 
 		public void WriteXmlSchema (Stream stream)
 		{
+			if (TableName == "") {
+				throw new InvalidOperationException ("Cannot serialize the DataTable. DataTable name is not set.");
+			}
 			XmlWriterSettings s = GetWriterSettings ();
 			s.OmitXmlDeclaration = false;
 			WriteXmlSchema (XmlWriter.Create (stream, s));
@@ -2497,6 +2503,9 @@ namespace System.Data {
 
 		public void WriteXmlSchema (TextWriter writer)
 		{
+			if (TableName == "") {
+				throw new InvalidOperationException ("Cannot serialize the DataTable. DataTable name is not set.");
+			}
 			XmlWriterSettings s = GetWriterSettings ();
 			s.OmitXmlDeclaration = false;
 			WriteXmlSchema (XmlWriter.Create (writer, s));
@@ -2504,6 +2513,9 @@ namespace System.Data {
 
 		public void WriteXmlSchema (XmlWriter writer)
 		{
+			if (TableName == "") {
+				throw new InvalidOperationException ("Cannot serialize the DataTable. DataTable name is not set.");
+			}
 			DataSet ds = DataSet;
 			DataSet tmp = null;
 			try {
@@ -2516,7 +2528,12 @@ namespace System.Data {
 				col.Add (this);
 				DataTable [] tables = new DataTable [col.Count];
 				for (int i = 0; i < col.Count; i++) tables[i] = col[i];
-				XmlSchemaWriter.WriteXmlSchema (writer, tables, null, TableName, ds.DataSetName);
+				string tableName;
+				if (ds.Namespace == "")
+					tableName = TableName;
+				else
+					tableName = ds.Namespace + "_x003A_" + TableName;
+				XmlSchemaWriter.WriteXmlSchema (writer, tables, null, tableName, ds.DataSetName);
 			} finally {
 				if (tmp != null)
 					ds.Tables.Remove (this);
@@ -2525,6 +2542,12 @@ namespace System.Data {
 
 		public void WriteXmlSchema (string fileName)
 		{
+			if (fileName == "") {
+				throw new ArgumentException ("Empty path name is not legal.");
+			}
+			if (TableName == "") {
+				throw new InvalidOperationException ("Cannot serialize the DataTable. DataTable name is not set.");
+			}
 			XmlWriter xw = null;
 			try {
 				XmlWriterSettings s = GetWriterSettings ();
@@ -2532,13 +2555,17 @@ namespace System.Data {
 				xw = XmlWriter.Create (fileName, s);
 				WriteXmlSchema (xw);
 			} finally {
-				if (xw != null)
+				if (xw != null) {
 					xw.Close ();
+				}
 			}
 		}
 
 		public void WriteXmlSchema (Stream stream, bool writeHierarchy)
 		{
+			if (TableName == "") {
+				throw new InvalidOperationException ("Cannot serialize the DataTable. DataTable name is not set.");
+			}
 			XmlWriterSettings s = GetWriterSettings ();
 			s.OmitXmlDeclaration = false;
 			WriteXmlSchema (XmlWriter.Create (stream, s), writeHierarchy);
@@ -2546,6 +2573,9 @@ namespace System.Data {
 
 		public void WriteXmlSchema (TextWriter writer, bool writeHierarchy)
 		{
+			if (TableName == "") {
+				throw new InvalidOperationException ("Cannot serialize the DataTable. DataTable name is not set.");
+			}
 			XmlWriterSettings s = GetWriterSettings ();
 			s.OmitXmlDeclaration = false;
 			WriteXmlSchema (XmlWriter.Create (writer, s), writeHierarchy);
@@ -2553,6 +2583,9 @@ namespace System.Data {
 
 		public void WriteXmlSchema (XmlWriter writer, bool writeHierarchy)
 		{
+			if (TableName == "") {
+				throw new InvalidOperationException ("Cannot serialize the DataTable. DataTable name is not set.");
+			}
 			if (writeHierarchy == false) {
 				WriteXmlSchema (writer);
 			}
@@ -2566,11 +2599,31 @@ namespace System.Data {
 					}
 					writer.WriteStartDocument ();
 					//XmlSchemaWriter.WriteXmlSchema (ds, writer);
-					DataTable [] tables = new DataTable [ds.Tables.Count];
-					DataRelation [] relations = new DataRelation [ds.Relations.Count];
-					for (int i = 0; i < ds.Tables.Count; i++) tables[i] = ds.Tables[i];
-					for (int i = 0; i < ds.Relations.Count; i++) relations[i] = ds.Relations[i];
-					XmlSchemaWriter.WriteXmlSchema (writer, tables, relations, TableName, ds.DataSetName);
+					//DataTable [] tables = new DataTable [ds.Tables.Count];
+					DataTable [] tables = null;
+					//DataRelation [] relations =  new DataRelation [ds.Relations.Count];
+					//for (int i = 0; i < ds.Relations.Count; i++) {
+					//	relations[i] = ds.Relations[i];
+					//}
+					DataRelation [] relations = null;
+					if (ChildRelations.Count > 0) {
+						relations = new DataRelation [ChildRelations.Count];
+						for (int i = 0; i < ChildRelations.Count; i++) {
+							relations [i] = ChildRelations [i];
+						}
+						tables = new DataTable [ds.Tables.Count];
+						for (int i = 0; i < ds.Tables.Count; i++) tables [i] = ds.Tables [i];
+					} else {
+						tables = new DataTable [1];
+						tables [0] = this;
+					}
+
+					string tableName;
+					if (ds.Namespace == "")
+						tableName = TableName;
+					else
+						tableName = ds.Namespace + "_x003A_" + TableName;
+					XmlSchemaWriter.WriteXmlSchema (writer, tables, relations, tableName, ds.DataSetName);
 				} finally {
 					if (tmp != null)
 						ds.Tables.Remove (this);
@@ -2580,6 +2633,12 @@ namespace System.Data {
 
 		public void WriteXmlSchema (string fileName, bool writeHierarchy)
 		{
+			if (fileName == "") {
+				throw new ArgumentException ("Empty path name is not legal.");
+			}
+			if (TableName == "") {
+				throw new InvalidOperationException ("Cannot serialize the DataTable. DataTable name is not set.");
+			}
 			XmlWriter xw = null;
 			try {
 				XmlWriterSettings s = GetWriterSettings ();

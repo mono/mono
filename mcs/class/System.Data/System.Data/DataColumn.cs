@@ -786,15 +786,6 @@ namespace System.Data {
 
 		#region Methods
 		
-/* ??
-		[MonoTODO]
-		protected internal void CheckNotAllowNull() {
-		}
-
-		[MonoTODO]
-		protected void CheckUnique() {
-		}
-*/
 		[MonoTODO]
 		internal DataColumn Clone() {
 			DataColumn copy = new DataColumn ();

@@ -1,3 +1,32 @@
+2006-11-28  Nagappan A  <anagappan@novell.com>
+
+	* DataRelation.cs (DataRelation): Added 2.0 profile constructor to
+	take parentTableNameSpace and childTableNameSpace as argument.
+	(FinishInit): Update parentTableNameSpace and childTableNameSpace,
+	when the string is not empty in 2.0 profile.
+
+	* DataRowCollection.cs: Implemented Count public property.
+	Added !NET_2_0 for List protected property, as it has been removed
+	in 2.0 prifle.
+	(IndexOf): Implemented new public method.
+	(CopyTo): Implemented new public override method.
+	(GetEnumerator): Implemented new public override method.
+
+	* DataTable.cs (Load): Throw ArgumentNullException, when reader
+	argument is null.
+	(WriteXmlSchema): Throw InvalidOperationException, when table name
+	is empty. When DataSet Namespace is set, append that with '_x003A_'
+	and table name.
+
+	* DataSet.cs (Load): Throw ArgumentNullException, when reader
+	argument is null.
+
+	* XmlSchemaWriter.cs (WriteSchema): Modified UseCurrentCulture to
+	UseCurrentLocale.
+	(WriteDataSetElement): Added minOccurs attribute.
+	(WriteConstraints): Check for tables length, if > 1 then add the
+	relations to XmlSchema.
+
 2006-11-21  Nagappan A  <anagappan@novell.com>
 
 	* DataView.cs: Added public event Initialized.
