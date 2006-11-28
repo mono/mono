@@ -90,7 +90,6 @@ namespace MonoTests.System.Web {
 
 		[Test]
 		[Category("NunitWeb")]
-		[Category("NotWorking")]   // Uses WebTest.Run, which is broken
 		public void AddNode ()
 		{
 			new WebTest (new HandlerInvoker (AddNode_delegate)).Run ();
@@ -120,7 +119,6 @@ namespace MonoTests.System.Web {
 
 		[Test]
 		[Category("NunitWeb")]
-		[Category("NotWorking")]   // Uses WebTest.Run, which is broken
 		public void AddNode2_nullParent ()
 		{
 			new WebTest (new HandlerInvoker (AddNode2_nullParent_delegate)).Run ();
@@ -134,7 +132,6 @@ namespace MonoTests.System.Web {
 
 		[Test]
 		[Category("NunitWeb")]
-		[Category("NotWorking")]   // Uses WebTest.Run, which is broken
 		public void AddNode2 ()
 		{
 			new WebTest (new HandlerInvoker (AddNode2_delegate)).Run ();
@@ -149,7 +146,6 @@ namespace MonoTests.System.Web {
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category("NotWorking")]   // Uses WebTest.Run, which is broken
 		public void IsAccessibleFrom1 ()
 		{
 			new WebTest (new HandlerInvoker (IsAccessibleFrom1_delegate)).Run ();
@@ -165,7 +161,6 @@ namespace MonoTests.System.Web {
 		}
 		[Test]
 		[Category ("NunitWeb")]
-		[Category("NotWorking")]   // Uses WebTest.Run, which is broken
 		public void IsAccessibleFrom2 ()
 		{
 			//new WebTest (new HandlerInvoker (IsAccessibleFrom2_delegate)).Run ();
