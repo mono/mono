@@ -10,7 +10,7 @@
     <AssemblyName>Mainsoft.Web</AssemblyName>
     <JDKName>1.5.0_05</JDKName>
     <GHProjectType>1</GHProjectType>
-    <GHProjectKind>framework</GHProjectKind>
+    <GHProjectKind>runtime</GHProjectKind>
     <Version>2.0</Version>
     <RootNamespace>Mainsoft.Web</RootNamespace>
     <jarserver>iap2</jarserver>
