@@ -1402,7 +1402,7 @@ namespace MonoTests.System.Data
 
 #if NET_2_0
 		[Test]
-		public void TestWriteXmlSchema1()
+		public void TestWriteXmlSchema1 ()
 		{
 			DataTable dt = new DataTable("TestWriteXmlSchema");
 			dt.Columns.Add("Col1", typeof(int));
@@ -1430,14 +1430,14 @@ namespace MonoTests.System.Data
 			AssertEquals ("test#02", "<xs:schema id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#03", "  <xs:element name=\"NewDataSet\" msdata:IsDataSet=\"true\" msdata:MainDataTable=\"TestWriteXmlSchema\" msdata:UseCurrentCulture=\"true\">", substring);
+			AssertEquals ("test#03", "  <xs:element name=\"NewDataSet\" msdata:IsDataSet=\"true\" msdata:MainDataTable=\"TestWriteXmlSchema\" msdata:UseCurrentLocale=\"true\">", substring);
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#04", "    <xs:complexType>", substring);
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#05", "      <xs:choice maxOccurs=\"unbounded\">", substring);
+			AssertEquals ("test#05", "      <xs:choice minOccurs=\"0\" maxOccurs=\"unbounded\">", substring);
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -1519,14 +1519,14 @@ namespace MonoTests.System.Data
 			AssertEquals ("test#02", "<xs:schema id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#03", "  <xs:element name=\"NewDataSet\" msdata:IsDataSet=\"true\" msdata:MainDataTable=\"TestWriteXmlSchema\" msdata:UseCurrentCulture=\"true\">", substring);
+			AssertEquals ("test#03", "  <xs:element name=\"NewDataSet\" msdata:IsDataSet=\"true\" msdata:MainDataTable=\"TestWriteXmlSchema\" msdata:UseCurrentLocale=\"true\">", substring);
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#04", "    <xs:complexType>", substring);
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#05", "      <xs:choice maxOccurs=\"unbounded\">", substring);
+			AssertEquals ("test#05", "      <xs:choice minOccurs=\"0\" maxOccurs=\"unbounded\">", substring);
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -1623,14 +1623,14 @@ namespace MonoTests.System.Data
 			AssertEquals ("test#02", "<xs:schema id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#03", "  <xs:element name=\"NewDataSet\" msdata:IsDataSet=\"true\" msdata:MainDataTable=\"TestWriteXmlSchema\" msdata:UseCurrentCulture=\"true\">", substring);
+			AssertEquals ("test#03", "  <xs:element name=\"NewDataSet\" msdata:IsDataSet=\"true\" msdata:MainDataTable=\"TestWriteXmlSchema\" msdata:UseCurrentLocale=\"true\">", substring);
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			AssertEquals ("test#04", "    <xs:complexType>", substring);
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#05", "      <xs:choice maxOccurs=\"unbounded\">", substring);
+			AssertEquals ("test#05", "      <xs:choice minOccurs=\"0\" maxOccurs=\"unbounded\">", substring);
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -2832,7 +2832,7 @@ namespace MonoTests.System.Data
 		#region Read/Write XML Tests
 
 		[Test]
-		[Category ("NotWorking")]
+		//[Category ("NotWorking")]
 		public void ReadXmlSchema () {
 			DataTable Table = new DataTable ();
 			Table.ReadXmlSchema ("Test/System.Data/own_schema1.xsd");
@@ -2926,7 +2926,7 @@ namespace MonoTests.System.Data
 			xmlData += "<xs:schema id=\"SiteConfiguration\" targetNamespace=\"http://tempuri.org/PortalCfg.xsd\" xmlns:mstns=\"http://tempuri.org/PortalCfg.xsd\" xmlns=\"http://tempuri.org/PortalCfg.xsd\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" attributeFormDefault=\"qualified\" elementFormDefault=\"qualified\">";
 			xmlData += "<xs:element name=\"SiteConfiguration\" msdata:IsDataSet=\"true\" msdata:EnforceConstraints=\"False\">";
 			xmlData += "<xs:complexType>";
-			xmlData += "<xs:choice maxOccurs=\"unbounded\">";
+			xmlData += "<xs:choice  minOccurs=\"0\" maxOccurs=\"unbounded\">";
 			xmlData += "<xs:element name=\"Tab\">";
 			xmlData += "<xs:complexType>";
 			xmlData += "<xs:sequence>";
@@ -3004,7 +3004,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		//[Category ("NotWorking")]
 		public void ReadWriteXmlSchema_ByFileName () {
 			string sTempFileName1 = "tmpDataSet_ReadWriteXml_43899-1.xml";
 			string sTempFileName2 = "tmpDataSet_ReadWriteXml_43899-2.xml";
@@ -3139,7 +3139,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void WriteXmlSchema () {
 			DataSet ds = new DataSet ();
 			ds.ReadXml ("Test/System.Data/region.xml");
@@ -3218,7 +3217,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void WriteXmlSchema2 () {
 			string xml = @"<myDataSet xmlns='NetFrameWork'><myTable><id>0</id><item>item 0</item></myTable><myTable><id>1</id><item>item 1</item></myTable><myTable><id>2</id><item>item 2</item></myTable><myTable><id>3</id><item>item 3</item></myTable><myTable><id>4</id><item>item 4</item></myTable><myTable><id>5</id><item>item 5</item></myTable><myTable><id>6</id><item>item 6</item></myTable><myTable><id>7</id><item>item 7</item></myTable><myTable><id>8</id><item>item 8</item></myTable><myTable><id>9</id><item>item 9</item></myTable></myDataSet>";
 			string schema = @"<?xml version='1.0' encoding='utf-16'?>
@@ -3275,7 +3273,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void WriteXmlSchema3 () {
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <xs:schema id=""ExampleDataSet"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
@@ -3318,7 +3315,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void WriteXmlSchema4 () {
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
@@ -3359,7 +3355,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void WriteXmlSchema5 () {
 			string xmlschema1 = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
@@ -3485,7 +3480,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void WriteXmlSchema6 () {
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
@@ -3583,7 +3577,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void WriteXmlSchema_Relations_ForeignKeys () {
 		        MemoryStream ms1 = null;
 		        MemoryStream ms2 = null;
@@ -3655,7 +3648,7 @@ namespace MonoTests.System.Data
 		[Test]
 		[Category ("NotWorking")]
 		public void WriteXmlSchema_DifferentNamespace () {
-			string schema = @"<xs:schema id='NewDataSet' targetNamespace='urn:bar' xmlns:mstns='urn:bar' xmlns='urn:bar' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' attributeFormDefault='qualified' elementFormDefault='qualified' xmlns:app1='urn:baz' xmlns:app2='urn:foo' msdata:schemafragmentcount='3'>
+			string schema = @"<?xml version='1.0' encoding='utf-16'?>\n<xs:schema id='NewDataSet' targetNamespace='urn:bar' xmlns:mstns='urn:bar' xmlns='urn:bar' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' attributeFormDefault='qualified' elementFormDefault='qualified' xmlns:app1='urn:baz' xmlns:app2='urn:foo' msdata:schemafragmentcount='3'>
   <xs:import namespace='urn:foo' />
   <xs:import namespace='urn:baz' />
   <xs:element name='NewDataSet' msdata:IsDataSet='true' msdata:MainDataTable='urn_x003A_foo_x003A_NS1Table' msdata:UseCurrentLocale='true'>
@@ -3715,9 +3708,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		// WriteXmlSchema doesn't have overload wityh 2 parameters in System.Data
-		// and is commented-out TWICE below
 		public void WriteXmlSchema_Hierarchy () {
 			DataSet ds = new DataSet ();
 			DataTable table1 = new DataTable ();
@@ -3736,113 +3726,119 @@ namespace MonoTests.System.Data
 			    new DataColumn[] { table2.Columns[1] }, true);
 
 			StringWriter writer1 = new StringWriter ();
-			//table1.WriteXmlSchema (writer1, false);
-			string expected1 = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<xs:schema id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">\r\n  <xs:element name=\"NewDataSet\" msdata:IsDataSet=\"true\" msdata:MainDataTable=\"Table1\" msdata:UseCurrentLocale=\"true\">\r\n    <xs:complexType>\r\n      <xs:choice minOccurs=\"0\" maxOccurs=\"unbounded\">\r\n        <xs:element name=\"Table1\">\r\n          <xs:complexType>\r\n            <xs:sequence>\r\n              <xs:element name=\"ID\" type=\"xs:int\" />\r\n              <xs:element name=\"Name\" type=\"xs:string\" minOccurs=\"0\" />\r\n            </xs:sequence>\r\n          </xs:complexType>\r\n        </xs:element>\r\n      </xs:choice>\r\n    </xs:complexType>\r\n    <xs:unique name=\"Constraint1\" msdata:PrimaryKey=\"true\">\r\n      <xs:selector xpath=\".//Table1\" />\r\n      <xs:field xpath=\"ID\" />\r\n    </xs:unique>\r\n  </xs:element>\r\n</xs:schema>";
+			table1.WriteXmlSchema (writer1, false);
+			string expected1 = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\n<xs:schema id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">\n  <xs:element name=\"NewDataSet\" msdata:IsDataSet=\"true\" msdata:MainDataTable=\"Table1\" msdata:UseCurrentLocale=\"true\">\n    <xs:complexType>\n      <xs:choice minOccurs=\"0\" maxOccurs=\"unbounded\">\n        <xs:element name=\"Table1\">\n          <xs:complexType>\n            <xs:sequence>\n              <xs:element name=\"ID\" type=\"xs:int\" />\n              <xs:element name=\"Name\" type=\"xs:string\" minOccurs=\"0\" />\n            </xs:sequence>\n          </xs:complexType>\n        </xs:element>\n      </xs:choice>\n    </xs:complexType>\n    <xs:unique name=\"Constraint1\" msdata:PrimaryKey=\"true\">\n      <xs:selector xpath=\".//Table1\" />\n      <xs:field xpath=\"ID\" />\n    </xs:unique>\n  </xs:element>\n</xs:schema>";
 			AssertEquals ("#1", expected1, writer1.ToString());
 
 			StringWriter writer2 = new StringWriter ();
-			//table1.WriteXmlSchema (writer2, true);
-			string expected2 = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<xs:schema id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">\r\n  <xs:element name=\"NewDataSet\" msdata:IsDataSet=\"true\" msdata:MainDataTable=\"Table1\" msdata:UseCurrentLocale=\"true\">\r\n    <xs:complexType>\r\n      <xs:choice minOccurs=\"0\" maxOccurs=\"unbounded\">\r\n        <xs:element name=\"Table1\">\r\n          <xs:complexType>\r\n            <xs:sequence>\r\n              <xs:element name=\"ID\" type=\"xs:int\" />\r\n              <xs:element name=\"Name\" type=\"xs:string\" minOccurs=\"0\" />\r\n            </xs:sequence>\r\n          </xs:complexType>\r\n        </xs:element>\r\n        <xs:element name=\"Table2\">\r\n          <xs:complexType>\r\n            <xs:sequence>\r\n              <xs:element name=\"OrderID\" type=\"xs:int\" />\r\n              <xs:element name=\"CustomerID\" type=\"xs:int\" minOccurs=\"0\" />\r\n              <xs:element name=\"OrderDate\" type=\"xs:dateTime\" minOccurs=\"0\" />\r\n            </xs:sequence>\r\n          </xs:complexType>\r\n        </xs:element>\r\n      </xs:choice>\r\n    </xs:complexType>\r\n    <xs:unique name=\"Constraint1\" msdata:PrimaryKey=\"true\">\r\n      <xs:selector xpath=\".//Table1\" />\r\n      <xs:field xpath=\"ID\" />\r\n    </xs:unique>\r\n    <xs:unique name=\"Table2_Constraint1\" msdata:ConstraintName=\"Constraint1\" msdata:PrimaryKey=\"true\">\r\n      <xs:selector xpath=\".//Table2\" />\r\n      <xs:field xpath=\"OrderID\" />\r\n    </xs:unique>\r\n    <xs:keyref name=\"CustomerOrder\" refer=\"Constraint1\">\r\n      <xs:selector xpath=\".//Table2\" />\r\n      <xs:field xpath=\"CustomerID\" />\r\n    </xs:keyref>\r\n  </xs:element>\r\n</xs:schema>";
+			table1.WriteXmlSchema (writer2, true);
+			string expected2 = "<?xml version=\"1.0\" encoding=\"utf-16\"?>\n<xs:schema id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">\n  <xs:element name=\"NewDataSet\" msdata:IsDataSet=\"true\" msdata:MainDataTable=\"Table1\" msdata:UseCurrentLocale=\"true\">\n    <xs:complexType>\n      <xs:choice minOccurs=\"0\" maxOccurs=\"unbounded\">\n        <xs:element name=\"Table1\">\n          <xs:complexType>\n            <xs:sequence>\n              <xs:element name=\"ID\" type=\"xs:int\" />\n              <xs:element name=\"Name\" type=\"xs:string\" minOccurs=\"0\" />\n            </xs:sequence>\n          </xs:complexType>\n        </xs:element>\n        <xs:element name=\"Table2\">\n          <xs:complexType>\n            <xs:sequence>\n              <xs:element name=\"OrderID\" type=\"xs:int\" />\n              <xs:element name=\"CustomerID\" type=\"xs:int\" minOccurs=\"0\" />\n              <xs:element name=\"OrderDate\" type=\"xs:dateTime\" minOccurs=\"0\" />\n            </xs:sequence>\n          </xs:complexType>\n        </xs:element>\n      </xs:choice>\n    </xs:complexType>\n    <xs:unique name=\"Constraint1\" msdata:PrimaryKey=\"true\">\n      <xs:selector xpath=\".//Table1\" />\n      <xs:field xpath=\"ID\" />\n    </xs:unique>\n    <xs:unique name=\"Table2_Constraint1\" msdata:ConstraintName=\"Constraint1\" msdata:PrimaryKey=\"true\">\n      <xs:selector xpath=\".//Table2\" />\n      <xs:field xpath=\"OrderID\" />\n    </xs:unique>\n    <xs:keyref name=\"CustomerOrder\" refer=\"Constraint1\">\n      <xs:selector xpath=\".//Table2\" />\n      <xs:field xpath=\"CustomerID\" />\n    </xs:keyref>\n  </xs:element>\n</xs:schema>";
 			AssertEquals ("#2", expected2, writer2.ToString ());
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		//[Category ("NotWorking")]
 		// WriteXmlSchema doesn't have overload wityh 2 parameters in System.Data
 		// and is commented-out TWICE below
-		public void ReadWriteXmlSchema () {
-			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/store.xsd");
+		public void ReadWriteXmlSchema()
+		{
+			DataSet ds = new DataSet();
+			ds.ReadXmlSchema("Test/System.Data/store.xsd");
 			// check dataset properties before testing write
-			AssertDataSet ("ds", ds, "NewDataSet", 3, 2);
-			AssertDataTable ("tab1", ds.Tables[0], "bookstore", 1, 0, 0, 1, 1, 1);
-			AssertDataTable ("tab2", ds.Tables[1], "book", 5, 0, 1, 1, 2, 1);
-			AssertDataTable ("tab3", ds.Tables[2], "author", 3, 0, 1, 0, 1, 0);
+			AssertDataSet("ds", ds, "NewDataSet", 3, 2);
+			AssertDataTable("tab1", ds.Tables[0], "bookstore", 1, 0, 0, 1, 1, 1);
+			AssertDataTable("tab2", ds.Tables[1], "book", 5, 0, 1, 1, 2, 1);
+			AssertDataTable("tab3", ds.Tables[2], "author", 3, 0, 1, 0, 1, 0);
 			// FIXME: currently order is not compatible. Use name as index
-			AssertDataRelation ("rel1", ds.Relations["book_author"], "book_author", true, new string[] { "book_Id" }, new string[] { "book_Id" }, true, true);
-			AssertDataRelation ("rel2", ds.Relations["bookstore_book"], "bookstore_book", true, new string[] { "bookstore_Id" }, new string[] { "bookstore_Id" }, true, true);
+			AssertDataRelation("rel1", ds.Relations["book_author"], "book_author", true, new string[] { "book_Id" }, new string[] { "book_Id" }, true, true);
+			AssertDataRelation("rel2", ds.Relations["bookstore_book"], "bookstore_book", true, new string[] { "bookstore_Id" }, new string[] { "bookstore_Id" }, true, true);
 
-			ds.ReadXml ("Test/System.Data/region.xml", XmlReadMode.InferSchema);
-			ds.Relations.Clear (); // because can not call WriteXmlSchema with nested relations.
+			ds.ReadXml("Test/System.Data/region.xml", XmlReadMode.InferSchema);
+			ds.Relations.Clear(); // because can not call WriteXmlSchema with nested relations.
 
-			TextWriter writer1 = new StringWriter ();
-			ds.Tables[0].WriteXmlSchema (writer1);
-			string TextString1 = GetNormalizedSchema (writer1.ToString ());
+			TextWriter writer1 = new StringWriter();
+			ds.Tables[0].WriteXmlSchema(writer1);
+			//string TextString1 = GetNormalizedSchema(writer1.ToString());
+			string TextString1 = writer1.ToString();
 			string expected1 = @"<?xml version=""1.0"" encoding=""utf-16""?>" +
-@"<xs:schema id=""Root"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">" +
+@"<xs:schema id=""Root"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">" +
   @"<xs:complexType name=""bookstoreType"">" +
   @"</xs:complexType>" +
   @"<xs:element name=""bookstore"" type=""bookstoreType"" />" +
-  @"<xs:element msdata:IsDataSet=""true"" msdata:MainDataTable=""bookstore"" msdata:UseCurrentLocale=""true"" name=""Root"">" +
+  @"<xs:element name=""Root"" msdata:IsDataSet=""true"" msdata:MainDataTable=""bookstore"" msdata:UseCurrentLocale=""true"">" +
     @"<xs:complexType>" +
-      @"<xs:choice maxOccurs=""unbounded"" minOccurs=""0"">" +
-	@"<xs:element ref=""bookstore"" />" +
+      @"<xs:choice minOccurs=""0"" maxOccurs=""unbounded"">" +
+    @"<xs:element ref=""bookstore"" />" +
       @"</xs:choice>" +
     @"</xs:complexType>" +
   @"</xs:element>" +
 @"</xs:schema>";
-			AssertEquals ("#1", expected1, TextString1.Replace("\r\n","").Replace("  ",""));
+			NUnit.Framework.Assert.AreEqual(expected1.Replace("\n", ""),
+							TextString1.Replace("\r\n", "").Replace("  ", "").Replace("\n", ""), "#1");
 
-			TextWriter writer2 = new StringWriter ();
-			//ds.Tables[1].WriteXmlSchema (writer2,false);
-			string TextString2 = GetNormalizedSchema (writer2.ToString ());
+			TextWriter writer2 = new StringWriter();
+			ds.Tables[1].WriteXmlSchema(writer2, false);
+			//string TextString2 = GetNormalizedSchema(writer2.ToString());
+			string TextString2 = writer2.ToString();
 			string expected2 = @"<?xml version=""1.0"" encoding=""utf-16""?>" +
-@"<xs:schema id=""Root"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">" +
+@"<xs:schema id=""Root"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">" +
   @"<xs:complexType name=""bookType"">" +
     @"<xs:sequence>" +
-      @"<xs:element msdata:Ordinal=""1"" name=""title"" type=""xs:string"" />" +
-      @"<xs:element msdata:Ordinal=""2"" name=""price"" type=""xs:decimal"" />" +
+      @"<xs:element name=""title"" type=""xs:string"" msdata:Ordinal=""1"" />" +
+      @"<xs:element name=""price"" type=""xs:decimal"" msdata:Ordinal=""2"" />" +
     @"</xs:sequence>" +
     @"<xs:attribute name=""genre"" type=""xs:string"" />" +
     @"<xs:attribute name=""bookstore_Id"" type=""xs:int"" use=""prohibited"" />" +
   @"</xs:complexType>" +
   @"<xs:element name=""book"" type=""bookType"" />" +
-  @"<xs:element msdata:IsDataSet=""true"" msdata:MainDataTable=""book"" msdata:UseCurrentLocale=""true"" name=""Root"">" +
+  @"<xs:element name=""Root"" msdata:IsDataSet=""true"" msdata:MainDataTable=""book"" msdata:UseCurrentLocale=""true"">" +
     @"<xs:complexType>" +
-      @"<xs:choice maxOccurs=""unbounded"" minOccurs=""0"">" +
-	@"<xs:element ref=""book"" />" +
+      @"<xs:choice minOccurs=""0"" maxOccurs=""unbounded"">" +
+    @"<xs:element ref=""book"" />" +
       @"</xs:choice>" +
     @"</xs:complexType>" +
   @"</xs:element>" +
 @"</xs:schema>";
-			AssertEquals ("#2", expected2, TextString2.Replace ("\r\n", "").Replace ("  ", ""));
-			
-			TextWriter writer3 = new StringWriter ();
-			ds.Tables[2].WriteXmlSchema (writer3);
-			string TextString3 = GetNormalizedSchema (writer3.ToString ());
+			NUnit.Framework.Assert.AreEqual(expected2, TextString2.Replace("\r\n", "").Replace("  ", ""), "#2");
+
+			TextWriter writer3 = new StringWriter();
+			ds.Tables[2].WriteXmlSchema(writer3);
+			//string TextString3 = GetNormalizedSchema(writer3.ToString());
+			string TextString3 = writer3.ToString();
 			string expected3 = @"<?xml version=""1.0"" encoding=""utf-16""?>" +
-@"<xs:schema id=""Root"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">" +
+@"<xs:schema id=""Root"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">" +
   @"<xs:complexType name=""authorName"">" +
     @"<xs:sequence>" +
-      @"<xs:element msdata:Ordinal=""0"" name=""first-name"" type=""xs:string"" />" +
-      @"<xs:element msdata:Ordinal=""1"" name=""last-name"" type=""xs:string"" />" +
+      @"<xs:element name=""first-name"" type=""xs:string"" msdata:Ordinal=""0"" />" +
+      @"<xs:element name=""last-name"" type=""xs:string"" msdata:Ordinal=""1"" />" +
     @"</xs:sequence>" +
     @"<xs:attribute name=""book_Id"" type=""xs:int"" use=""prohibited"" />" +
   @"</xs:complexType>" +
   @"<xs:element name=""author"" type=""authorName"" />" +
-  @"<xs:element msdata:IsDataSet=""true"" msdata:MainDataTable=""author"" msdata:UseCurrentLocale=""true"" name=""Root"">" +
+  @"<xs:element name=""Root"" msdata:IsDataSet=""true"" msdata:MainDataTable=""author"" msdata:UseCurrentLocale=""true"">" +
     @"<xs:complexType>" +
-      @"<xs:choice maxOccurs=""unbounded"" minOccurs=""0"">" +
+      @"<xs:choice minOccurs=""0"" maxOccurs=""unbounded"">" +
         @"<xs:element ref=""author"" />" +
       @"</xs:choice>" +
     @"</xs:complexType>" +
   @"</xs:element>" +
 @"</xs:schema>";
-			AssertEquals ("#3", expected3, TextString3.Replace ("\r\n", "").Replace ("  ", ""));
-			
-			TextWriter writer4 = new StringWriter ();
-			ds.Tables[3].WriteXmlSchema (writer4);
-			string TextString4 = GetNormalizedSchema (writer4.ToString ());
+			NUnit.Framework.Assert.AreEqual(expected3, TextString3.Replace("\r\n", "").Replace("  ", ""), "#3");
+
+			TextWriter writer4 = new StringWriter();
+			ds.Tables[3].WriteXmlSchema(writer4);
+			//string TextString4 = GetNormalizedSchema(writer4.ToString());
+			string TextString4 = writer4.ToString();
 			string expected4 = @"<?xml version=""1.0"" encoding=""utf-16""?>" +
-@"<xs:schema id=""Root"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">" +
-  @"<xs:element msdata:IsDataSet=""true"" msdata:MainDataTable=""Region"" msdata:UseCurrentLocale=""true"" name=""Root"">" +
+@"<xs:schema id=""Root"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">" +
+  @"<xs:element name=""Root"" msdata:IsDataSet=""true"" msdata:MainDataTable=""Region"" msdata:UseCurrentLocale=""true"">" +
     @"<xs:complexType>" +
-      @"<xs:choice maxOccurs=""unbounded"" minOccurs=""0"">" +
+      @"<xs:choice minOccurs=""0"" maxOccurs=""unbounded"">" +
         @"<xs:element name=""Region"">" +
           @"<xs:complexType>" +
             @"<xs:sequence>" +
-              @"<xs:element minOccurs=""0"" name=""RegionID"" type=""xs:string"" />" +
-              @"<xs:element minOccurs=""0"" name=""RegionDescription"" type=""xs:string"" />" +
+              @"<xs:element name=""RegionID"" type=""xs:string"" minOccurs=""0"" />" +
+              @"<xs:element name=""RegionDescription"" type=""xs:string"" minOccurs=""0"" />" +
             @"</xs:sequence>" +
           @"</xs:complexType>" +
         @"</xs:element>" +
@@ -3850,11 +3846,11 @@ namespace MonoTests.System.Data
     @"</xs:complexType>" +
   @"</xs:element>" +
 @"</xs:schema>";
-			AssertEquals ("#4", expected4, TextString4.Replace ("\r\n", "").Replace ("  ", ""));
+			NUnit.Framework.Assert.AreEqual(expected4, TextString4.Replace("\r\n", "").Replace("  ", ""), "#4");
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		//[Category ("NotWorking")]
 		public void ReadWriteXmlSchema_IgnoreSchema () {
 			DataSet ds = new DataSet ();
 			ds.ReadXmlSchema ("Test/System.Data/store.xsd");
@@ -3872,39 +3868,41 @@ namespace MonoTests.System.Data
 
 			TextWriter writer1 = new StringWriter ();
 			ds.Tables[0].WriteXmlSchema (writer1);
-			string TextString1 = GetNormalizedSchema (writer1.ToString ());
+			//string TextString1 = GetNormalizedSchema (writer1.ToString ());
+			string TextString1 = writer1.ToString ();
 			string expected1 = @"<?xml version=""1.0"" encoding=""utf-16""?>" +
-@"<xs:schema id=""NewDataSet"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">" +
+@"<xs:schema id=""NewDataSet"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">" +
   @"<xs:complexType name=""bookstoreType"">" +
   @"</xs:complexType>" +
   @"<xs:element name=""bookstore"" type=""bookstoreType"" />" +
-  @"<xs:element msdata:IsDataSet=""true"" msdata:MainDataTable=""bookstore"" msdata:UseCurrentLocale=""true"" name=""NewDataSet"">" +
+  @"<xs:element name=""NewDataSet"" msdata:IsDataSet=""true"" msdata:MainDataTable=""bookstore"" msdata:UseCurrentLocale=""true"">" +
     @"<xs:complexType>" +
-      @"<xs:choice maxOccurs=""unbounded"" minOccurs=""0"">" +
+      @"<xs:choice minOccurs=""0"" maxOccurs=""unbounded"">" +
 	@"<xs:element ref=""bookstore"" />" +
       @"</xs:choice>" +
     @"</xs:complexType>" +
   @"</xs:element>" +
 @"</xs:schema>";
-			AssertEquals ("#1", expected1, TextString1.Replace ("\r\n", "").Replace ("  ", ""));
+			Console.WriteLine ("{0} - {1}", TextString1, expected1);
+			AssertEquals ("#1", expected1, TextString1.Replace ("\r\n", "").Replace ("  ", "").Replace ("\n", ""));
 
 			TextWriter writer2 = new StringWriter ();
-			//ds.Tables[1].WriteXmlSchema (writer2, false);
+			ds.Tables[1].WriteXmlSchema (writer2, false);
 			string TextString2 = GetNormalizedSchema (writer2.ToString ());
 			string expected2 = @"<?xml version=""1.0"" encoding=""utf-16""?>" +
-@"<xs:schema id=""NewDataSet"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">" +
+@"<xs:schema id=""NewDataSet"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">" +
   @"<xs:complexType name=""bookType"">" +
     @"<xs:sequence>" +
-      @"<xs:element msdata:Ordinal=""1"" name=""title"" type=""xs:string"" />" +
-      @"<xs:element msdata:Ordinal=""2"" name=""price"" type=""xs:decimal"" />" +
+      @"<xs:element name=""title"" type=""xs:string"" msdata:Ordinal=""1"" />" +
+      @"<xs:element name=""price"" type=""xs:decimal"" msdata:Ordinal=""2"" />" +
     @"</xs:sequence>" +
     @"<xs:attribute name=""genre"" type=""xs:string"" />" +
     @"<xs:attribute name=""bookstore_Id"" type=""xs:int"" use=""prohibited"" />" +
   @"</xs:complexType>" +
   @"<xs:element name=""book"" type=""bookType"" />" +
-  @"<xs:element msdata:IsDataSet=""true"" msdata:MainDataTable=""book"" msdata:UseCurrentLocale=""true"" name=""NewDataSet"">" +
+  @"<xs:element name=""NewDataSet"" msdata:IsDataSet=""true"" msdata:MainDataTable=""book"" msdata:UseCurrentLocale=""true"">" +
     @"<xs:complexType>" +
-      @"<xs:choice maxOccurs=""unbounded"" minOccurs=""0"">" +
+      @"<xs:choice minOccurs=""0"" maxOccurs=""unbounded"">" +
 	@"<xs:element ref=""book"" />" +
       @"</xs:choice>" +
     @"</xs:complexType>" +
@@ -3916,18 +3914,18 @@ namespace MonoTests.System.Data
 			ds.Tables[2].WriteXmlSchema (writer3);
 			string TextString3 = GetNormalizedSchema (writer3.ToString ());
 			string expected3 = @"<?xml version=""1.0"" encoding=""utf-16""?>" +
-@"<xs:schema id=""NewDataSet"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">" +
+@"<xs:schema id=""NewDataSet"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">" +
   @"<xs:complexType name=""authorName"">" +
     @"<xs:sequence>" +
-      @"<xs:element msdata:Ordinal=""0"" name=""first-name"" type=""xs:string"" />" +
-      @"<xs:element msdata:Ordinal=""1"" name=""last-name"" type=""xs:string"" />" +
+      @"<xs:element name=""first-name"" type=""xs:string"" msdata:Ordinal=""0"" />" +
+      @"<xs:element name=""last-name"" type=""xs:string"" msdata:Ordinal=""1"" />" +
     @"</xs:sequence>" +
     @"<xs:attribute name=""book_Id"" type=""xs:int"" use=""prohibited"" />" +
   @"</xs:complexType>" +
   @"<xs:element name=""author"" type=""authorName"" />" +
-  @"<xs:element msdata:IsDataSet=""true"" msdata:MainDataTable=""author"" msdata:UseCurrentLocale=""true"" name=""NewDataSet"">" +
+  @"<xs:element name=""NewDataSet"" msdata:IsDataSet=""true"" msdata:MainDataTable=""author"" msdata:UseCurrentLocale=""true"">" +
     @"<xs:complexType>" +
-      @"<xs:choice maxOccurs=""unbounded"" minOccurs=""0"">" +
+      @"<xs:choice minOccurs=""0"" maxOccurs=""unbounded"">" +
 	@"<xs:element ref=""author"" />" +
       @"</xs:choice>" +
     @"</xs:complexType>" +
@@ -3947,7 +3945,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ReadWriteXmlSchema_2 () {
 			DataSet ds = new DataSet ("dataset");
 			ds.Tables.Add ("table1");
@@ -3981,12 +3978,18 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void ReadWriteXmlSchemaExp_NoTableName () {
 			DataTable dtw = new DataTable ();
 			MemoryStream ms = new MemoryStream ();
 			dtw.WriteXmlSchema (ms);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ReadWriteXmlSchemaExp_NoFileName () {
+			DataTable dtw = new DataTable ();
+			dtw.WriteXmlSchema ("");
 		}
 
 		[Test]

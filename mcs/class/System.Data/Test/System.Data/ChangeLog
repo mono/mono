@@ -1,3 +1,27 @@
+2006-11-28  Nagappan A  <anagappan@novell.com>
+
+	* DataTableTest.cs (TestWriteXmlSchema1): Modified the expected
+	output same as MS.NET 2.0 output.
+	(TestWriteXmlSchema2, TestWriteXmlSchema3): Modified the expected
+	output same as MS.NET 2.0 output.
+	(WriteXmlSchema, WriteXmlSchema2, WriteXmlSchema3): Updated the tests
+	to work. Removed NotWorking attribute.
+	(WriteXmlSchema4, WriteXmlSchema5, WriteXmlSchema6): Updated the tests
+	to work. Removed NotWorking attribute.
+	(WriteXmlSchema_Relations_ForeignKeys): Updated the tests to
+	work. Removed NotWorking attribute.
+	(ReadWriteXmlSchema_2, ReadWriteXmlSchemaExp_NoTableName): Updated
+	the tests to work. Removed NotWorking attribute.
+	(ReadWriteXmlSchemaExp_NoFileName): Added new tests.
+
+	* DataSetTest.cs: Updated the tests to work with 2.0
+	profile. Expected 2.0 and 1.0 outputs are different with respect
+	to XML Schema.
+
+	* DataRowCollectionTest.cs (IndexOf): API is implemented and so
+	removed NotWorking attribute.
+	(IndexOfTest): Added new test to test IndexOf API.
+
 2006-11-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataSetReadXmlTest.cs: Added NotWorking test for bug #80048.

@@ -221,7 +221,11 @@ namespace MonoTests.System.Data
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
 //			AssertEquals ("test#03", "  <xs:element name=\"test_dataset\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\">", substring);
+#if !NET_2_0
 			AssertEquals ("test#03", "  <xs:element msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\" name=\"test_dataset\">", substring);
+#else
+			AssertEquals ("test#03", "  <xs:element msdata:IsDataSet=\"true\" msdata:UseCurrentLocale=\"true\" name=\"test_dataset\">", substring);
+#endif
 
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -229,7 +233,7 @@ namespace MonoTests.System.Data
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#05", "      <xs:choice maxOccurs=\"unbounded\">", substring);
+			AssertEquals ("test#05", "      <xs:choice maxOccurs=\"unbounded\" minOccurs=\"0\">", substring);
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -573,7 +577,11 @@ namespace MonoTests.System.Data
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
 //			AssertEquals ("test#03", "  <xs:element name=\"Root\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\">", substring);
+#if !NET_2_0
 			AssertEquals ("test#03", "  <xs:element msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\" name=\"Root\">", substring);
+#else
+			AssertEquals ("test#03", "  <xs:element msdata:IsDataSet=\"true\" msdata:UseCurrentLocale=\"true\" name=\"Root\">", substring);
+#endif
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -581,7 +589,7 @@ namespace MonoTests.System.Data
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#05", "      <xs:choice maxOccurs=\"unbounded\">", substring);
+			AssertEquals ("test#05", "      <xs:choice maxOccurs=\"unbounded\" minOccurs=\"0\">", substring);
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -766,7 +774,7 @@ namespace MonoTests.System.Data
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#25", "      <xs:choice maxOccurs=\"unbounded\">", substring);
+			AssertEquals ("test#25", "      <xs:choice maxOccurs=\"unbounded\" minOccurs=\"0\">", substring);
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -921,7 +929,7 @@ namespace MonoTests.System.Data
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#25", "      <xs:choice maxOccurs=\"unbounded\">", substring);
+			AssertEquals ("test#25", "      <xs:choice maxOccurs=\"unbounded\" minOccurs=\"0\">", substring);
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -989,7 +997,7 @@ namespace MonoTests.System.Data
   <xs:import namespace='urn:foo' schemaLocation='_app2.xsd' />
   <xs:element name='NewDataSet' msdata:IsDataSet='true' msdata:Locale='fi-FI'>
     <xs:complexType>
-      <xs:choice maxOccurs='unbounded'>
+      <xs:choice minOccurs='0' maxOccurs='unbounded'>
         <xs:element ref='app2:NS1Table' />
         <xs:element name='NS2Table'>
           <xs:complexType>
@@ -1044,7 +1052,13 @@ namespace MonoTests.System.Data
 		{
 			// see GetReady() for current culture
 
-			string xml = "<?xml version='1.0' encoding='utf-16'?><DataSet><xs:schema id='DS' xmlns='' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'><xs:element name='DS' msdata:IsDataSet='true' msdata:Locale='fi-FI'><xs:complexType><xs:choice maxOccurs='unbounded' /></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1' /></DataSet>";
+			string xml = "<?xml version='1.0' encoding='utf-16'?><DataSet><xs:schema id='DS' xmlns='' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'><xs:element name='DS' msdata:IsDataSet='true' " + 
+#if !NET_2_0
+			  "msdata:Locale='fi-FI'"
+#else
+			  "msdata:UseCurrentLocale='true'"
+#endif
+			  + "><xs:complexType><xs:choice minOccurs='0' maxOccurs='unbounded' /></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1' /></DataSet>";
 			DataSet ds = new DataSet ();
 			ds.DataSetName = "DS";
 			XmlSerializer ser = new XmlSerializer (typeof (DataSet));
@@ -1094,7 +1108,7 @@ namespace MonoTests.System.Data
 		// bug #68007
 		public void SerializeDataSet3 ()
 		{
-			string xml = @"<?xml version=""1.0"" encoding=""utf-8""?><DataSet><xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata""><xs:element name=""Example"" msdata:IsDataSet=""true""><xs:complexType><xs:choice maxOccurs=""unbounded""><xs:element name=""Packages""><xs:complexType><xs:attribute name=""ID"" type=""xs:int"" use=""required"" /><xs:attribute name=""ShipDate"" type=""xs:dateTime"" /><xs:attribute name=""Message"" type=""xs:string"" /><xs:attribute name=""Handlers"" type=""xs:int"" /></xs:complexType></xs:element></xs:choice></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" xmlns:diffgr=""urn:schemas-microsoft-com:xml-diffgram-v1""><Example><Packages diffgr:id=""Packages1"" msdata:rowOrder=""0"" ID=""0"" ShipDate=""2004-10-11T17:46:18.6962302-05:00"" Message=""Received with no breakage!"" Handlers=""3"" /><Packages diffgr:id=""Packages2"" msdata:rowOrder=""1"" ID=""1"" /></Example></diffgr:diffgram></DataSet>";
+			string xml = @"<?xml version=""1.0"" encoding=""utf-8""?><DataSet><xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata""><xs:element name=""Example"" msdata:IsDataSet=""true""><xs:complexType><xs:choice maxOccurs=""unbounded"" minOccurs=""0""><xs:element name=""Packages""><xs:complexType><xs:attribute name=""ID"" type=""xs:int"" use=""required"" /><xs:attribute name=""ShipDate"" type=""xs:dateTime"" /><xs:attribute name=""Message"" type=""xs:string"" /><xs:attribute name=""Handlers"" type=""xs:int"" /></xs:complexType></xs:element></xs:choice></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" xmlns:diffgr=""urn:schemas-microsoft-com:xml-diffgram-v1""><Example><Packages diffgr:id=""Packages1"" msdata:rowOrder=""0"" ID=""0"" ShipDate=""2004-10-11T17:46:18.6962302-05:00"" Message=""Received with no breakage!"" Handlers=""3"" /><Packages diffgr:id=""Packages2"" msdata:rowOrder=""1"" ID=""1"" /></Example></diffgr:diffgram></DataSet>";
 
 			DataSet ds = new DataSet ("Example");
 
@@ -1490,9 +1504,15 @@ namespace MonoTests.System.Data
 			string xml = @"<myDataSet xmlns='NetFrameWork'><myTable><id>0</id><item>item 0</item></myTable><myTable><id>1</id><item>item 1</item></myTable><myTable><id>2</id><item>item 2</item></myTable><myTable><id>3</id><item>item 3</item></myTable><myTable><id>4</id><item>item 4</item></myTable><myTable><id>5</id><item>item 5</item></myTable><myTable><id>6</id><item>item 6</item></myTable><myTable><id>7</id><item>item 7</item></myTable><myTable><id>8</id><item>item 8</item></myTable><myTable><id>9</id><item>item 9</item></myTable></myDataSet>";
 			string schema = @"<?xml version='1.0' encoding='utf-16'?>
 <xs:schema id='myDataSet' targetNamespace='NetFrameWork' xmlns:mstns='NetFrameWork' xmlns='NetFrameWork' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' attributeFormDefault='qualified' elementFormDefault='qualified'>
-  <xs:element name='myDataSet' msdata:IsDataSet='true' msdata:Locale='fi-FI'>
+  <xs:element name='myDataSet' msdata:IsDataSet='true' " +
+#if NET_2_0
+			"msdata:UseCurrentLocale='true'"
+#else
+			"msdata:Locale='fi-FI'"
+#endif
+			+ @">
     <xs:complexType>
-      <xs:choice maxOccurs='unbounded'>
+      <xs:choice minOccurs='0' maxOccurs='unbounded'>
         <xs:element name='myTable'>
           <xs:complexType>
             <xs:sequence>
@@ -1547,9 +1567,15 @@ namespace MonoTests.System.Data
 		{
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <xs:schema id=""ExampleDataSet"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
-  <xs:element name=""ExampleDataSet"" msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"">
+  <xs:element name=""ExampleDataSet"" msdata:IsDataSet=""true"" ";
+#if NET_2_0
+			xmlschema = xmlschema + "msdata:UseCurrentLocale=\"true\"";
+#else
+			xmlschema = xmlschema + "msdata:Locale=\"fi-FI\"";
+#endif
+			xmlschema = xmlschema + @">
     <xs:complexType>
-      <xs:choice maxOccurs=""unbounded"">
+      <xs:choice minOccurs=""0"" maxOccurs=""unbounded"">
         <xs:element name=""ExampleDataTable"">
           <xs:complexType>
             <xs:attribute name=""PrimaryKeyColumn"" type=""xs:int"" use=""required"" />
@@ -1590,9 +1616,15 @@ namespace MonoTests.System.Data
 		{
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
-  <xs:element name=""Example"" msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"">
+";
+#if NET_2_0
+			xmlschema = xmlschema + "  <xs:element name=\"Example\" msdata:IsDataSet=\"true\" msdata:UseCurrentLocale=\"true\"";
+#else
+			xmlschema = xmlschema + "  <xs:element name=\"Example\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\"";
+#endif
+			xmlschema = xmlschema + @">
     <xs:complexType>
-      <xs:choice maxOccurs=""unbounded"">
+      <xs:choice minOccurs=""0"" maxOccurs=""unbounded"">
         <xs:element name=""MyType"">
           <xs:complexType>
             <xs:attribute name=""ID"" type=""xs:int"" use=""required"" />
@@ -1632,9 +1664,15 @@ namespace MonoTests.System.Data
 		{
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
-  <xs:element name=""Example"" msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"">
+"+
+#if NET_2_0
+"  <xs:element name=\"Example\" msdata:IsDataSet=\"true\" msdata:UseCurrentLocale=\"true\""
+#else
+"  <xs:element name=\"Example\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\""
+#endif
+			  + @">
     <xs:complexType>
-      <xs:choice maxOccurs=""unbounded"">
+      <xs:choice minOccurs=""0"" maxOccurs=""unbounded"">
         <xs:element name=""StandAlone"">
           <xs:complexType>
             <xs:attribute name=""ID"" type=""xs:int"" use=""required"" />
@@ -1740,9 +1778,15 @@ namespace MonoTests.System.Data
 		{
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
-  <xs:element name=""Example"" msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"">
+"+
+#if NET_2_0
+			  @"  <xs:element name=""Example"" msdata:IsDataSet=""true"" msdata:UseCurrentLocale=""true"""
+#else
+			  @"  <xs:element name=""Example"" msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"""
+#endif
+			  + @">
     <xs:complexType>
-      <xs:choice maxOccurs=""unbounded"">
+      <xs:choice minOccurs=""0"" maxOccurs=""unbounded"">
         <xs:element name=""MyType"">
           <xs:complexType>
             <xs:attribute name=""Desc"">
@@ -1798,9 +1842,15 @@ namespace MonoTests.System.Data
 		{
 			string xml = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <xs:schema id=""NewDataSet"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" xmlns:msprop=""urn:schemas-microsoft-com:xml-msprop"">
-  <xs:element name=""NewDataSet"" msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"" msprop:version=""version 2.1"">
+" +
+#if NET_2_0
+@"  <xs:element name=""NewDataSet"" msdata:IsDataSet=""true"" msdata:UseCurrentLocale=""true"" msprop:version=""version 2.1"">"
+#else
+@"  <xs:element name=""NewDataSet"" msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"" msprop:version=""version 2.1"">"
+#endif
+			  + @"
     <xs:complexType>
-      <xs:choice maxOccurs=""unbounded"">
+      <xs:choice minOccurs=""0"" maxOccurs=""unbounded"">
         <xs:element name=""Foo"">
           <xs:complexType>
             <xs:sequence>
@@ -1834,9 +1884,15 @@ namespace MonoTests.System.Data
 
 			string xml = @"<Example>
   <xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
-    <xs:element name=""Example"" msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"">
+" +
+#if NET_2_0
+@"    <xs:element name=""Example"" msdata:IsDataSet=""true"" msdata:UseCurrentLocale=""true"">"
+#else
+@"    <xs:element name=""Example"" msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"">"
+#endif
+			  + @"
       <xs:complexType>
-        <xs:choice maxOccurs=""unbounded"">
+        <xs:choice minOccurs=""0"" maxOccurs=""unbounded"">
           <xs:element name=""Dimension"">
             <xs:complexType>
               <xs:sequence>

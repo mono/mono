@@ -750,8 +750,6 @@ namespace MonoTests.System.Data
 
 #if NET_2_0
 		[Test]
-		[Category ("NotWorking")]
-		// IndexOf does not exist in System.Data and is commented-out bellow
 		public void IndexOf () {
 			DataSet ds = new DataSet ();
 
@@ -782,11 +780,40 @@ namespace MonoTests.System.Data
 			DataRow dr5 = dt.NewRow ();
 			dr5[0] = "e";
 
-			//int index = ds.Tables[0].Rows.IndexOf (dr3);
-			//AssertEquals ("IndexOf-Yes", 2, index);
+			int index = ds.Tables[0].Rows.IndexOf (dr3);
+			AssertEquals ("IndexOf-Yes", 2, index);
 			
-			//index = ds.Tables[0].Rows.IndexOf (dr5);
-			//AssertEquals ("IndexOf-No", -1, index);
+			index = ds.Tables[0].Rows.IndexOf (dr5);
+			AssertEquals ("IndexOf-No", -1, index);
+		}
+	        [Test]
+		public void IndexOfTest()
+		{
+			DataTable dt = new DataTable("TestWriteXmlSchema");
+			dt.Columns.Add("Col1", typeof(int));
+			dt.Columns.Add("Col2", typeof(int));
+			DataRow dr = dt.NewRow();
+			dr[0] = 10;
+			dr[1] = 20;
+			dt.Rows.Add(dr);
+			DataRow dr1 = dt.NewRow();
+			dr1[0] = 10;
+			dr1[1] = 20;
+			dt.Rows.Add(dr1);
+			DataRow dr2 = dt.NewRow();
+			dr2[0] = 10;
+			dr2[1] = 20;
+			dt.Rows.Add(dr2);
+			NUnit.Framework.Assert.AreEqual (1, dt.Rows.IndexOf (dr1));
+			DataTable dt1 = new DataTable("HelloWorld");
+			dt1.Columns.Add("T1", typeof(int));
+			dt1.Columns.Add("T2", typeof(int));
+			DataRow dr3 = dt1.NewRow();
+			dr3[0] = 10;
+			dr3[1] = 20;
+			dt1.Rows.Add(dr3);
+			NUnit.Framework.Assert.AreEqual (-1, dt.Rows.IndexOf (dr3));
+			NUnit.Framework.Assert.AreEqual (-1, dt.Rows.IndexOf (null));
 		}
 #endif
 	}
