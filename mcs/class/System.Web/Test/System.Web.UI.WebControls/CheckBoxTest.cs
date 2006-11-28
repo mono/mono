@@ -386,6 +386,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 		[Test]
 		[Category ("NunitWeb")]
+		[Category("NotWorking")]   // Uses WebTest.Run, which is broken
 		public void LoadPostData ()  //Just flow and not implementation detail
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (LoadPostData_Load));
