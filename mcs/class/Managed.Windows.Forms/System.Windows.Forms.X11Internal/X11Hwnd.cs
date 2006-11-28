@@ -245,11 +245,19 @@ namespace System.Windows.Forms.X11Internal {
 
 		public void Update ()
 		{
-			if (!Visible || !expose_pending || !Mapped)
-				return;
+			try {
+				Queue.Lock ();
+				if (!Visible || !PendingExpose || !Mapped)
+					return;
 
-			display.SendMessage (ClientWindow, Msg.WM_PAINT, IntPtr.Zero, IntPtr.Zero);
-			Queue.RemovePaint (this);
+				// XXX this SendMessage call should probably not be inside the lock
+				display.SendMessage (ClientWindow, Msg.WM_PAINT, IntPtr.Zero, IntPtr.Zero);
+				
+				PendingExpose = false;
+			}
+			finally {
+				Queue.Unlock ();
+			}
 		}
 
 		public void MenuToScreen (ref int x, ref int y)
@@ -258,11 +266,16 @@ namespace System.Windows.Forms.X11Internal {
 			int	dest_y_return;
 			IntPtr	child;
 
-			Xlib.XTranslateCoordinates (display.Handle, WholeWindow, display.RootWindow.Handle,
+			Console.Write ("MenuToScreen ({0}, {1}) =>", x, y);
+
+			Xlib.XTranslateCoordinates (display.Handle,
+						    WholeWindow, display.RootWindow.Handle,
 						    x, y, out dest_x_return, out dest_y_return, out child);
 
 			x = dest_x_return;
 			y = dest_y_return;
+
+			Console.WriteLine ("({0}, {1})", x, y);
 		}
 
 		public virtual void PropertyChanged (XEvent xevent)
@@ -324,97 +337,182 @@ namespace System.Windows.Forms.X11Internal {
 					      PropertyMode.Replace, ref x11_opacity, 1);
 		}
 
-		private void AddExpose (bool client, int x, int y, int width, int height)
+		public IntPtr DefWndProc (ref Message msg)
 		{
-			// Don't waste time
-			if ((x > Width) || (y > Height) || ((x + width) < 0) || ((y + height) < 0)) {
-				return;
-			}
+			switch ((Msg)msg.Msg) {
+			case Msg.WM_PAINT:
+				Queue.Lock ();
+				PendingExpose = false;
+				Queue.Unlock ();
+				return IntPtr.Zero;
 
-			// Keep the invalid area as small as needed
-			if ((x + width) > Width) {
-				width = Width - x;
-			}
+			case Msg.WM_NCPAINT:
+				Queue.Lock ();
+				PendingNCExpose = false;
+				Queue.Unlock ();
+				return IntPtr.Zero;
 
-			if ((y + height) > Height) {
-				height = Height - y;
-			}
+			case Msg.WM_CONTEXTMENU:
+				if (Parent != null)
+					display.SendMessage (Parent.ClientWindow, Msg.WM_CONTEXTMENU, msg.WParam, msg.LParam);
+				return IntPtr.Zero;
 
-			if (client) {
-				AddInvalidArea(x, y, width, height);
-				if (!expose_pending) {
-					if (!nc_expose_pending)
-						Queue.AddPaint (this);
-					expose_pending = true;
+			case Msg.WM_MOUSEWHEEL:
+				if (Parent != null) {
+					display.SendMessage (Parent.ClientWindow, Msg.WM_MOUSEWHEEL, msg.WParam, msg.LParam);
+					if (msg.Result == IntPtr.Zero)
+						return IntPtr.Zero;
 				}
-			}
-			else {
-				Console.WriteLine ("nc area needs repainting from {0}", Environment.StackTrace);
+				return IntPtr.Zero;
 
-				AddNcInvalidArea (x, y, width, height);
-				
-				if (!nc_expose_pending) {
-					if (!expose_pending)
-						Queue.AddPaint (this);
-					nc_expose_pending = true;
+			case Msg.WM_SETCURSOR:
+				X11Hwnd parent = (X11Hwnd)Parent;
+				// Pass to parent window first
+				while ((parent != null) && (msg.Result == IntPtr.Zero)) {
+					msg.Result = NativeWindow.WndProc (parent.Handle, Msg.WM_SETCURSOR, msg.HWnd, msg.LParam);
+					parent = (X11Hwnd)Parent;
 				}
+
+				if (msg.Result == IntPtr.Zero) {
+					IntPtr handle;
+
+					switch((HitTest)(msg.LParam.ToInt32() & 0xffff)) {
+					case HitTest.HTBOTTOM:		handle = Cursors.SizeNS.handle; break;
+					case HitTest.HTBORDER:		handle = Cursors.SizeNS.handle; break;
+					case HitTest.HTBOTTOMLEFT:	handle = Cursors.SizeNESW.handle; break;
+					case HitTest.HTBOTTOMRIGHT:	handle = Cursors.SizeNWSE.handle; break;
+					case HitTest.HTERROR:
+						if ((msg.LParam.ToInt32() >> 16) == (int)Msg.WM_LBUTTONDOWN)
+							display.AudibleAlert();
+						handle = Cursors.Default.handle;
+						break;
+
+					case HitTest.HTHELP:		handle = Cursors.Help.handle; break;
+					case HitTest.HTLEFT:		handle = Cursors.SizeWE.handle; break;
+					case HitTest.HTRIGHT:		handle = Cursors.SizeWE.handle; break;
+					case HitTest.HTTOP:		handle = Cursors.SizeNS.handle; break;
+					case HitTest.HTTOPLEFT:		handle = Cursors.SizeNWSE.handle; break;
+					case HitTest.HTTOPRIGHT:	handle = Cursors.SizeNESW.handle; break;
+
+#if SameAsDefault
+					case HitTest.HTGROWBOX:
+					case HitTest.HTSIZE:
+					case HitTest.HTZOOM:
+					case HitTest.HTVSCROLL:
+					case HitTest.HTSYSMENU:
+					case HitTest.HTREDUCE:
+					case HitTest.HTNOWHERE:
+					case HitTest.HTMAXBUTTON:
+					case HitTest.HTMINBUTTON:
+					case HitTest.HTMENU:
+					case HitTest.HSCROLL:
+					case HitTest.HTBOTTOM:
+					case HitTest.HTCAPTION:
+					case HitTest.HTCLIENT:
+					case HitTest.HTCLOSE:
+#endif
+					default: handle = Cursors.Default.handle; break;
+					}
+
+					display.SetCursor (msg.HWnd, handle);
+				}
+				return (IntPtr)1;
+
+			default:
+				return IntPtr.Zero;
 			}
 		}
 
-		private void AddConfigureNotify (XEvent xevent)
+
+		public void AddExpose (bool client, int x, int y, int width, int height)
 		{
-			// We drop configure events for Client windows
-			if ((xevent.ConfigureEvent.window != WholeWindow) || (xevent.ConfigureEvent.window != xevent.ConfigureEvent.xevent))
-				return;
+			try {
+				Queue.Lock ();
+				// Don't waste time
+				if ((x > Width) || (y > Height) || ((x + width) <= 0) || ((y + height) <= 0))
+					return;
 
-			if (!reparented) {
-				X = xevent.ConfigureEvent.x;
-				Y = xevent.ConfigureEvent.y;
-			} else {
-				// This sucks ass, part 1
-				// Every WM does the ConfigureEvents of toplevel windows different, so there's
-				// no standard way of getting our adjustment. 
-				// The code below is needed for KDE and FVWM, the 'whacky_wm' part is for metacity
-				// Several other WMs do their decorations different yet again and we fail to deal 
-				// with that, since I couldn't find any frigging commonality between them.
-				// The only sane WM seems to be KDE
+				// Keep the invalid area as small as needed
+				if ((x + width) > Width)
+					width = Width - x;
 
-				if (!xevent.ConfigureEvent.send_event) {
-					IntPtr	dummy_ptr;
+				if ((y + height) > Height)
+					height = Height - y;
 
-					int trans_x;
-					int trans_y;
+				if (client) {
+					AddInvalidArea(x, y, width, height);
+					PendingExpose = true;
+				}
+				else {
+					AddNcInvalidArea (x, y, width, height);
+					PendingNCExpose = true;
+				}
+			}
+			finally {
+				Queue.Unlock ();
+			}
+		}
 
-					Xlib.XTranslateCoordinates (display.Handle, WholeWindow, display.RootWindow.Handle,
-								    -xevent.ConfigureEvent.x, -xevent.ConfigureEvent.y,
-								    out trans_x, out trans_y, out dummy_ptr);
+		public void AddConfigureNotify (XEvent xevent)
+		{
+			try {
+				Queue.Lock ();
+				// We drop configure events for Client windows
+				if ((xevent.ConfigureEvent.window != WholeWindow) || (xevent.ConfigureEvent.window != xevent.ConfigureEvent.xevent))
+					return;
 
-					X = trans_x;
-					Y = trans_y;
-				} else {
-					// This is a synthetic event, coordinates are in root space
+				if (!reparented) {
 					X = xevent.ConfigureEvent.x;
 					Y = xevent.ConfigureEvent.y;
-					if (whacky_wm) {
-						int frame_left;
-						int frame_top;
+				} else {
+					// This sucks ass, part 1
+					// Every WM does the ConfigureEvents of toplevel windows different, so there's
+					// no standard way of getting our adjustment. 
+					// The code below is needed for KDE and FVWM, the 'whacky_wm' part is for metacity
+					// Several other WMs do their decorations different yet again and we fail to deal 
+					// with that, since I couldn't find any frigging commonality between them.
+					// The only sane WM seems to be KDE
 
-						FrameExtents (out frame_left, out frame_top);
-						X -= frame_left;
-						Y -= frame_top;
+					if (!xevent.ConfigureEvent.send_event) {
+						IntPtr	dummy_ptr;
+
+						int trans_x;
+						int trans_y;
+
+						Xlib.XTranslateCoordinates (display.Handle, WholeWindow, display.RootWindow.Handle,
+									    -xevent.ConfigureEvent.x, -xevent.ConfigureEvent.y,
+									    out trans_x, out trans_y, out dummy_ptr);
+
+						X = trans_x;
+						Y = trans_y;
+					} else {
+						// This is a synthetic event, coordinates are in root space
+						X = xevent.ConfigureEvent.x;
+						Y = xevent.ConfigureEvent.y;
+						if (whacky_wm) {
+							int frame_left;
+							int frame_top;
+
+							FrameExtents (out frame_left, out frame_top);
+							X -= frame_left;
+							Y -= frame_top;
+						}
+					}
+				}
+
+				Width = xevent.ConfigureEvent.width;
+				Height = xevent.ConfigureEvent.height;
+				ClientRect = Rectangle.Empty;
+
+				lock (configure_lock) {
+					if (!configure_pending) {
+						Queue.AddConfigureUnlocked (this);
+						configure_pending = true;
 					}
 				}
 			}
-
-			Width = xevent.ConfigureEvent.width;
-			Height = xevent.ConfigureEvent.height;
-			ClientRect = Rectangle.Empty;
-
-			lock (configure_lock) {
-				if (!configure_pending) {
-					Queue.EnqueueUnlocked (xevent);
-					configure_pending = true;
-				}
+			finally {
+				Queue.Unlock ();
 			}
 		}
 
@@ -436,16 +534,12 @@ namespace System.Windows.Forms.X11Internal {
 		{
 			switch (xevent.type) {
 			case XEventName.Expose:
-				Queue.Lock ();
 				AddExpose (xevent.ExposeEvent.window == ClientWindow,
 					   xevent.ExposeEvent.x, xevent.ExposeEvent.y,
 					   xevent.ExposeEvent.width, xevent.ExposeEvent.height);
-				Queue.Unlock ();
 				break;
 			case XEventName.ConfigureNotify:
-				Queue.Lock ();
 				AddConfigureNotify (xevent);
-				Queue.Unlock ();
 				break;
 			case XEventName.KeyPress:
 			case XEventName.KeyRelease:
@@ -453,8 +547,9 @@ namespace System.Windows.Forms.X11Internal {
 			case XEventName.ButtonRelease:
 				Queue.Lock ();
 				Queue.NeedDispatchIdle = true;
+				Queue.EnqueueUnlocked (xevent);
 				Queue.Unlock ();
-				goto default;
+				break;
 			default:
 				Queue.Enqueue (xevent);
 				break;
@@ -475,21 +570,53 @@ namespace System.Windows.Forms.X11Internal {
 			AddExpose (false, 0, 0, Width, Height);
 		}
 
+		// XXX this assumes the queue lock is held
+		public bool PendingNCExpose {
+			get { return nc_expose_pending; }
+			set {
+				if (nc_expose_pending == value)
+					return;
+				nc_expose_pending = value;
+
+				if (nc_expose_pending && !expose_pending)
+					Queue.AddPaintUnlocked (this);
+				else if (!nc_expose_pending && !expose_pending)
+					Queue.RemovePaintUnlocked (this);
+			}
+		}
+
+		// XXX this assumes the queue lock is held
+		public bool PendingExpose {
+			get { return expose_pending; }
+			set {
+				if (expose_pending == value)
+					return;
+				expose_pending = value;
+
+				if (expose_pending && !nc_expose_pending)
+					Queue.AddPaintUnlocked (this);
+				else if (!expose_pending && !nc_expose_pending)
+					Queue.RemovePaintUnlocked (this);
+			}
+		}
+
 		public PaintEventArgs PaintEventStart (bool client)
 		{
 			PaintEventArgs paint_event;
 			Graphics dc;
 
-			/* make sure the XEventThread doesn't try to call hwnd.EnqueueEvent
-			   (which calls AddExpose) while we're in here. */
-			try {
-				Queue.Lock ();
-				if (client) {
-					dc = Graphics.FromHwnd (ClientWindow);
+			/* the Queue.Lock/Unlock calls make sure the
+			   XEventThread doesn't try to call
+			   hwnd.EnqueueEvent (which calls AddExpose)
+			   while we're in here. */
+			if (client) {
+				dc = Graphics.FromHwnd (ClientWindow);
 
-					Region clip_region = new Region ();
-					clip_region.MakeEmpty();
+				Region clip_region = new Region ();
+				clip_region.MakeEmpty();
 
+				try {
+					Queue.Lock ();
 					foreach (Rectangle r in ClipRectangles)
 						clip_region.Union (r);
 
@@ -498,17 +625,24 @@ namespace System.Windows.Forms.X11Internal {
 
 					dc.Clip = clip_region;
 					paint_event = new PaintEventArgs(dc, Invalid);
-					expose_pending = false;
+					PendingExpose = false;
 
 					ClearInvalidArea();
-
-					drawing_stack.Push (paint_event);
-					drawing_stack.Push (dc);
-
-					return paint_event;
 				}
-				else {
-					dc = Graphics.FromHwnd (WholeWindow);
+				finally {
+					Queue.Unlock ();
+				}
+
+				drawing_stack.Push (paint_event);
+				drawing_stack.Push (dc);
+
+				return paint_event;
+			}
+			else {
+				dc = Graphics.FromHwnd (WholeWindow);
+
+				try {
+					Queue.Lock ();
 
 					if (!nc_invalid.IsEmpty) {
 						dc.SetClip (nc_invalid);
@@ -517,18 +651,18 @@ namespace System.Windows.Forms.X11Internal {
 					else {
 						paint_event = new PaintEventArgs(dc, new Rectangle(0, 0, width, height));
 					}
-					nc_expose_pending = false;
+					PendingNCExpose = false;
 
 					ClearNcInvalidArea ();
-
-					drawing_stack.Push (paint_event);
-					drawing_stack.Push (dc);
-
-					return paint_event;
 				}
-			}
-			finally {
-				Queue.Unlock ();
+				finally {
+					Queue.Unlock ();
+				}
+
+				drawing_stack.Push (paint_event);
+				drawing_stack.Push (dc);
+
+				return paint_event;
 			}
 		}
 
@@ -643,18 +777,16 @@ namespace System.Windows.Forms.X11Internal {
 			// FIXME - debug this with Menus
 
 			rect = new Rectangle(ncp.rgrc1.left, ncp.rgrc1.top, ncp.rgrc1.right - ncp.rgrc1.left, ncp.rgrc1.bottom - ncp.rgrc1.top);
-			if (ClientRect != rect) {
-				ClientRect = rect;
+			ClientRect = rect;
 
-				if (Visible) {
-					if ((rect.Width < 1) || (rect.Height < 1))
-						Xlib.XMoveResizeWindow (display.Handle, ClientWindow, -5, -5, 1, 1);
-					else
-						Xlib.XMoveResizeWindow (display.Handle, ClientWindow, rect.X, rect.Y, rect.Width, rect.Height);
-
-					InvalidateNC ();
-				}
+			if (Visible) {
+				if ((rect.Width < 1) || (rect.Height < 1))
+					Xlib.XMoveResizeWindow (display.Handle, ClientWindow, -5, -5, 1, 1);
+				else
+					Xlib.XMoveResizeWindow (display.Handle, ClientWindow, rect.X, rect.Y, rect.Width, rect.Height);
 			}
+
+			InvalidateNC ();
 		}
 
 		public void RequestNCRecalc ()
@@ -942,10 +1074,15 @@ namespace System.Windows.Forms.X11Internal {
 			int	dest_y_return;
 			IntPtr	child;
 
-			Xlib.XTranslateCoordinates (display.Handle, ClientWindow, display.RootWindow.Handle, x, y, out dest_x_return, out dest_y_return, out child);
+			Console.Write ("ClientToScreen ({0}, {1}) =>", x, y);
+			Xlib.XTranslateCoordinates (display.Handle,
+						    ClientWindow, display.RootWindow.Handle,
+						    x, y, out dest_x_return, out dest_y_return, out child);
 
 			x = dest_x_return;
 			y = dest_y_return;
+
+			Console.WriteLine ("({0}, {1})", x, y);
 		}
 
 		public void ScreenToClient (ref int x, ref int y)
@@ -954,12 +1091,15 @@ namespace System.Windows.Forms.X11Internal {
 			int	dest_y_return;
 			IntPtr	child;
 
+			Console.Write ("ScreenToClient ({0}, {1}) =>", x, y);
 			Xlib.XTranslateCoordinates (display.Handle,
 						    display.RootWindow.Handle, ClientWindow,
 						    x, y, out dest_x_return, out dest_y_return, out child);
 
 			x = dest_x_return;
 			y = dest_y_return;
+
+			Console.WriteLine ("({0}, {1})", x, y);
 		}
 
 
@@ -969,12 +1109,18 @@ namespace System.Windows.Forms.X11Internal {
 			int	dest_y_return;
 			IntPtr	child;
 
+			Console.Write ("ScreenToMenu ({0}, {1}) =>", x, y);
+
+			Console.WriteLine ("x,y = {0},{1}", X, Y);
+
 			Xlib.XTranslateCoordinates (display.Handle,
 						    display.RootWindow.Handle, WholeWindow,
 						    x, y, out dest_x_return, out dest_y_return, out child);
 
 			x = dest_x_return;
 			y = dest_y_return;
+
+			Console.WriteLine ("({0}, {1})", x, y);
 		}
 
 		public void ScrollWindow (Rectangle area, int XAmount, int YAmount, bool with_children)
@@ -1142,6 +1288,12 @@ namespace System.Windows.Forms.X11Internal {
 
 		public void SetPosition (int x, int y, int width, int height)
 		{
+			// Win32 automatically changes negative width/height to 0.
+			if (width < 0)
+				width = 0;
+			if (height < 0)
+				height = 0;
+
 			// X requires a sanity check for width & height; otherwise it dies
 			if (zero_sized && width > 0 && height > 0) {
 				if (Visible) {

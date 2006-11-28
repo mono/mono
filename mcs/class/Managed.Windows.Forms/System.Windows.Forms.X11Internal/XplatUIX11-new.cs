@@ -76,11 +76,6 @@ namespace System.Windows.Forms.X11Internal {
 
 		static Hashtable MessageQueues; // Holds our thread-specific X11ThreadQueues
 
-		// Cursors
-		static IntPtr LastCursorWindow; // The last window we set the cursor on
-		static IntPtr LastCursorHandle; // The handle that was last set on LastCursorWindow
-		static IntPtr OverrideCursorHandle; // The cursor that is set to override any other cursors
-
 		X11Display display;
 
 		#endregion	// Local Variables
@@ -393,115 +388,14 @@ namespace System.Windows.Forms.X11Internal {
 			return display.DefineStdCursor (id);
 		}
 
-		internal override IntPtr DefWndProc(ref Message msg) {
-			switch ((Msg)msg.Msg) {
-				case Msg.WM_PAINT: {
-					Hwnd hwnd;
+		internal override IntPtr DefWndProc(ref Message msg)
+		{
+			X11Hwnd hwnd = (X11Hwnd)Hwnd.GetObjectFromWindow(msg.HWnd);
 
-					hwnd = Hwnd.GetObjectFromWindow(msg.HWnd);
-					if (hwnd != null) {
-						hwnd.expose_pending = false;
-					}
+			if (hwnd == null)
+				return IntPtr.Zero;
 
-					return IntPtr.Zero;
-				}
-
-				case Msg.WM_NCPAINT: {
-					Hwnd hwnd;
-
-					hwnd = Hwnd.GetObjectFromWindow(msg.HWnd);
-					if (hwnd != null) {
-						hwnd.nc_expose_pending = false;
-					}
-
-					return IntPtr.Zero;
-				}
-
-				case Msg.WM_CONTEXTMENU: {
-					Hwnd hwnd;
-
-					hwnd = Hwnd.GetObjectFromWindow(msg.HWnd);
-
-					if ((hwnd != null) && (hwnd.parent != null)) {
-						SendMessage(hwnd.parent.client_window, Msg.WM_CONTEXTMENU, msg.WParam, msg.LParam);
-					}
-					return IntPtr.Zero;
-				}
-
-				case Msg.WM_MOUSEWHEEL: {
-					Hwnd hwnd;
-
-					hwnd = Hwnd.GetObjectFromWindow(msg.HWnd);
-
-					if ((hwnd != null) && (hwnd.parent != null)) {
-						SendMessage(hwnd.parent.client_window, Msg.WM_MOUSEWHEEL, msg.WParam, msg.LParam);
-						if (msg.Result == IntPtr.Zero) {
-							return IntPtr.Zero;
-						}
-					}
-					return IntPtr.Zero;
-				}
-
-				case Msg.WM_SETCURSOR: {
-					Hwnd	hwnd;
-
-					hwnd = Hwnd.GetObjectFromWindow(msg.HWnd);
-					if (hwnd == null)
-						break; // not sure how this happens, but it does
-
-					// Pass to parent window first
-					while ((hwnd.parent != null) && (msg.Result == IntPtr.Zero)) {
-						hwnd = hwnd.parent;
-						msg.Result = NativeWindow.WndProc(hwnd.Handle, Msg.WM_SETCURSOR, msg.HWnd, msg.LParam);
-					}
-
-					if (msg.Result == IntPtr.Zero) {
-						IntPtr handle;
-
-						switch((HitTest)(msg.LParam.ToInt32() & 0xffff)) {
-						case HitTest.HTBOTTOM:		handle = Cursors.SizeNS.handle; break;
-						case HitTest.HTBORDER:		handle = Cursors.SizeNS.handle; break;
-						case HitTest.HTBOTTOMLEFT:	handle = Cursors.SizeNESW.handle; break;
-						case HitTest.HTBOTTOMRIGHT:	handle = Cursors.SizeNWSE.handle; break;
-						case HitTest.HTERROR:
-							if ((msg.LParam.ToInt32() >> 16) == (int)Msg.WM_LBUTTONDOWN) {
-								AudibleAlert();
-							}
-							handle = Cursors.Default.handle;
-							break;
-
-						case HitTest.HTHELP:		handle = Cursors.Help.handle; break;
-						case HitTest.HTLEFT:		handle = Cursors.SizeWE.handle; break;
-						case HitTest.HTRIGHT:		handle = Cursors.SizeWE.handle; break;
-						case HitTest.HTTOP:		handle = Cursors.SizeNS.handle; break;
-						case HitTest.HTTOPLEFT:		handle = Cursors.SizeNWSE.handle; break;
-						case HitTest.HTTOPRIGHT:	handle = Cursors.SizeNESW.handle; break;
-
-#if SameAsDefault
-						case HitTest.HTGROWBOX:
-						case HitTest.HTSIZE:
-						case HitTest.HTZOOM:
-						case HitTest.HTVSCROLL:
-						case HitTest.HTSYSMENU:
-						case HitTest.HTREDUCE:
-						case HitTest.HTNOWHERE:
-						case HitTest.HTMAXBUTTON:
-						case HitTest.HTMINBUTTON:
-						case HitTest.HTMENU:
-						case HitTest.HSCROLL:
-						case HitTest.HTBOTTOM:
-						case HitTest.HTCAPTION:
-						case HitTest.HTCLIENT:
-						case HitTest.HTCLOSE:
-#endif
-						default: handle = Cursors.Default.handle; break;
-						}
-						SetCursor(msg.HWnd, handle);
-					}
-					return (IntPtr)1;
-				}
-			}
-			return IntPtr.Zero;
+			return hwnd.DefWndProc (ref msg);
 		}
 
 		internal override void DestroyCaret (IntPtr handle)
@@ -535,7 +429,7 @@ namespace System.Windows.Forms.X11Internal {
 
 		internal override IntPtr DispatchMessage(ref MSG msg)
 		{
-			return NativeWindow.WndProc(msg.hwnd, msg.message, msg.wParam, msg.lParam);
+			return display.DispatchMessage (ref msg);
 		}
 
 		internal override void DrawReversibleRectangle (IntPtr handle, Rectangle rect, int line_width)
@@ -546,27 +440,10 @@ namespace System.Windows.Forms.X11Internal {
 				hwnd.DrawReversibleRectangle (rect, line_width);
 		}
 
-		// XXX this should be shared with other non-win32 backends
-		// XXX perhaps after addressing the OverrideCursorHandle stuff.
 		internal override void DoEvents ()
 		{
-			MSG	msg = new MSG ();
-			X11ThreadQueue queue;
-
-			if (OverrideCursorHandle != IntPtr.Zero) {
-				OverrideCursorHandle = IntPtr.Zero;
-			}
-
-			queue = ThreadQueue(Thread.CurrentThread);
-
-			queue.DispatchIdle = false;
-
-			while (PeekMessage(queue, ref msg, IntPtr.Zero, 0, 0, (uint)PeekMessageFlags.PM_REMOVE)) {
-				TranslateMessage (ref msg);
-				DispatchMessage (ref msg);
-			}
-
-			queue.DispatchIdle = true;
+			X11ThreadQueue queue = ThreadQueue (Thread.CurrentThread);
+			display.DoEvents (queue);
 		}
 
 		internal override void EnableWindow (IntPtr handle, bool Enable)
@@ -776,12 +653,13 @@ namespace System.Windows.Forms.X11Internal {
 		{
 			X11Hwnd hwnd = (X11Hwnd)Hwnd.ObjectFromHandle(handle);
 
-			hwnd.MenuToScreen (ref x, ref y);
+			if (hwnd != null)
+				hwnd.MenuToScreen (ref x, ref y);
 		}
 
 		internal override void OverrideCursor (IntPtr cursor)
 		{
-			OverrideCursorHandle = cursor;
+			display.OverrideCursor = cursor;
 		}
 
 		internal override PaintEventArgs PaintEventStart (IntPtr handle, bool client)
@@ -909,35 +787,7 @@ namespace System.Windows.Forms.X11Internal {
 
 		internal override void SetCursor (IntPtr handle, IntPtr cursor)
 		{
-			// XXX this needs moving
-#if false
-			Hwnd	hwnd;
-
-			if (OverrideCursorHandle == IntPtr.Zero) {
-				if ((LastCursorWindow == handle) && (LastCursorHandle == cursor)) {
-					return;
-				}
-
-				LastCursorHandle = cursor;
-				LastCursorWindow = handle;
-
-				hwnd = Hwnd.ObjectFromHandle(handle);
-				lock (XlibLock) {
-					if (cursor != IntPtr.Zero) {
-						XDefineCursor(DisplayHandle, hwnd.whole_window, cursor);
-					} else {
-						XUndefineCursor(DisplayHandle, hwnd.whole_window);
-					}
-					XFlush(DisplayHandle);
-				}
-				return;
-			}
-
-			hwnd = Hwnd.ObjectFromHandle(handle);
-			lock (XlibLock) {
-				XDefineCursor(DisplayHandle, hwnd.whole_window, OverrideCursorHandle);
-			}
-#endif
+			display.SetCursor (handle, cursor);
 		}
 
 		internal override void SetCursorPos (IntPtr handle, int x, int y)

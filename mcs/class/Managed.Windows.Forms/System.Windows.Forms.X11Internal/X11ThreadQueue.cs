@@ -35,6 +35,7 @@ namespace System.Windows.Forms.X11Internal {
 
 		XQueue xqueue;
 		PaintQueue paint_queue;
+		ConfigureQueue configure_queue;
 		ArrayList timer_list;
 		Thread thread;
 		bool quit_posted;
@@ -43,12 +44,13 @@ namespace System.Windows.Forms.X11Internal {
 		object lockobj = new object ();
 
 		static readonly int InitialXEventSize = 100;
-		static readonly int InitialPaintSize = 50;
+		static readonly int InitialQueueSize = 50;
 
 		public X11ThreadQueue (Thread thread)
 		{
 			xqueue = new XQueue (InitialXEventSize);
-			paint_queue = new PaintQueue(InitialPaintSize);
+			paint_queue = new PaintQueue (InitialQueueSize);
+			configure_queue = new ConfigureQueue (InitialQueueSize);
 			timer_list = new ArrayList ();
 			this.thread = thread;
 			this.quit_posted = false;
@@ -85,9 +87,9 @@ namespace System.Windows.Forms.X11Internal {
 				return true;
 			}
 
-			if (paint_queue.Count > 0) {
-				xevent = paint_queue.Dequeue ();
-				return true;
+			if (paint_queue.Count > 0 || configure_queue.Count > 0) {
+				xevent = new XEvent ();
+				return false;
 			}
 
 			// both queues are empty.  go to sleep until NextTimeout
@@ -116,21 +118,41 @@ namespace System.Windows.Forms.X11Internal {
 			}
 		}
 
+		public void RemovePaintUnlocked (Hwnd hwnd)
+		{
+			paint_queue.Remove (hwnd);
+		}
+
 		public void RemovePaint (Hwnd hwnd)
 		{
 			lock (lockobj) {
-				paint_queue.Remove (hwnd);
+				RemovePaintUnlocked (hwnd);
 			}
+		}
+
+		public void AddPaintUnlocked (Hwnd hwnd)
+		{
+			paint_queue.Enqueue (hwnd);
 		}
 
 		public void AddPaint (Hwnd hwnd)
 		{
 			lock (lockobj) {
-				Console.WriteLine ("adding paint event");
-				paint_queue.Enqueue (hwnd);
-				// wake up any thread blocking in DequeueUnlocked
-				Monitor.PulseAll (lockobj);
+				AddPaintUnlocked (hwnd);
 			}
+		}
+
+		public void AddConfigureUnlocked (Hwnd hwnd)
+		{
+			configure_queue.Enqueue (hwnd);
+		}
+
+		public ConfigureQueue Configure {
+			get { return configure_queue; }
+		}
+
+		public PaintQueue Paint {
+			get { return paint_queue; }
 		}
 
 		public void Lock ()
@@ -150,22 +172,20 @@ namespace System.Windows.Forms.X11Internal {
 
 			foreach (Timer timer in timer_list) {
 				int next = (int) (timer.Expires - now).TotalMilliseconds;
-				if (next < 0) {
+				if (next < 0)
 					return 0; // Have a timer that has already expired
-				}
 
-				if (next < timeout) {
+				if (next < timeout)
 					timeout = next;
-				}
 			}
+
 			if (timeout < Timer.Minimum) {
 				timeout = Timer.Minimum;
 			}
 
-#if false
-			if (timeout > 1000)
-				timeout = 1000;
-#endif
+			if (timeout == Int32.MaxValue)
+				timeout = Timeout.Infinite;
+
 			return timeout;
 		}
 
@@ -236,6 +256,65 @@ namespace System.Windows.Forms.X11Internal {
 			set { quit_posted = value; }
 		}
 
+		public class ConfigureQueue {
+			private ArrayList	hwnds;
+			
+			public ConfigureQueue (int size) {
+				hwnds = new ArrayList(size);
+			}
+
+			public int Count {
+				get { return hwnds.Count; }
+			}
+
+			public void Enqueue (Hwnd hwnd)
+			{
+				if (hwnds.Contains (hwnd)) {
+					Console.WriteLine ("hwnds can only appear in the configure queue once.");
+					Console.WriteLine (Environment.StackTrace);
+					return;
+				}
+				hwnds.Add(hwnd);
+			}
+
+			public void Remove(Hwnd hwnd)
+			{
+				hwnds.Remove(hwnd);
+			}
+
+			public XEvent Peek ()
+			{
+				if (hwnds.Count == 0)
+					throw new Exception ("Attempt to dequeue empty queue.");
+
+				X11Hwnd hwnd = (X11Hwnd)hwnds[0];
+
+				XEvent xevent = new XEvent ();
+				xevent.AnyEvent.type = XEventName.ConfigureNotify;
+
+				xevent.ConfigureEvent.window = hwnd.ClientWindow;
+				xevent.ConfigureEvent.x = hwnd.X;
+				xevent.ConfigureEvent.y = hwnd.Y;
+				xevent.ConfigureEvent.width = hwnd.Width;
+				xevent.ConfigureEvent.height = hwnd.Height;
+				
+				return xevent;
+			}
+
+			public XEvent Dequeue ()
+			{
+				if (hwnds.Count == 0)
+					throw new Exception ("Attempt to dequeue empty queue.");
+
+				// populate the xevent
+				XEvent xevent = Peek ();
+
+				hwnds.RemoveAt(0);
+
+				return xevent;
+			}
+		}
+
 		public class PaintQueue {
 
 			private ArrayList	hwnds;
@@ -250,14 +329,17 @@ namespace System.Windows.Forms.X11Internal {
 
 			public void Enqueue (Hwnd hwnd)
 			{
+				if (hwnds.Contains (hwnd)) {
+					Console.WriteLine ("hwnds can only appear in the paint queue once.");
+					Console.WriteLine (Environment.StackTrace);
+					return;
+				}
 				hwnds.Add(hwnd);
 			}
 
 			public void Remove(Hwnd hwnd)
 			{
-				if (!hwnd.expose_pending && !hwnd.nc_expose_pending) {
-					hwnds.Remove(hwnd);
-				}
+				hwnds.Remove(hwnd);
 			}
 
 			public XEvent Peek ()
@@ -265,22 +347,23 @@ namespace System.Windows.Forms.X11Internal {
 				if (hwnds.Count == 0)
 					throw new Exception ("Attempt to dequeue empty queue.");
 
-				Hwnd hwnd = (Hwnd)hwnds[0];
+				X11Hwnd hwnd = (X11Hwnd)hwnds[0];
 
 				XEvent xevent = new XEvent ();
+
 				xevent.AnyEvent.type = XEventName.Expose;
 
-				if (hwnd.expose_pending) {
-					xevent.ExposeEvent.window = hwnd.client_window;
-					return xevent;
+				if (hwnd.PendingExpose) {
+					xevent.ExposeEvent.window = hwnd.ClientWindow;
 				} else {
-					xevent.ExposeEvent.window = hwnd.whole_window;
+					xevent.ExposeEvent.window = hwnd.WholeWindow;
 					xevent.ExposeEvent.x = hwnd.nc_invalid.X;
 					xevent.ExposeEvent.y = hwnd.nc_invalid.Y;
 					xevent.ExposeEvent.width = hwnd.nc_invalid.Width;
 					xevent.ExposeEvent.height = hwnd.nc_invalid.Height;
-					return xevent;
 				}
+
+				return xevent;
 			}
 
 			public XEvent Dequeue ()
@@ -291,11 +374,11 @@ namespace System.Windows.Forms.X11Internal {
 				// populate the xevent
 				XEvent xevent = Peek ();
 
-				Hwnd hwnd = (Hwnd)hwnds[0];
+				X11Hwnd hwnd = (X11Hwnd)hwnds[0];
 
 				// We only remove the event from the queue if we have one expose left since
 				// a single entry in our queue may be for both NC and Client exposed
-				if ( !(hwnd.nc_expose_pending && hwnd.expose_pending))
+				if ( !(hwnd.PendingNCExpose && hwnd.PendingExpose))
 					hwnds.RemoveAt(0);
 
 				return xevent;

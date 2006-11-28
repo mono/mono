@@ -1,3 +1,47 @@
+2006-11-28  Chris Toshok  <toshok@ximian.com>
+
+	* X11Display.cs (XEventThread): move to a polling strategy again,
+	since XNextEvent locks the display - without this, nothing can
+	happen with any toplevel X call until there's an event.  So we
+	poll on the XConnectionNumber, then consume all available events
+	before polling again.
+	(DispatchMessage): move this here.
+	(SetCursor): same.
+	(OverrideCursor): same.
+	(RedirectMsgToEnabledAncestor): make this code work for any XEvent
+	by removing the XEvent from the arg list.
+	(GetMessage): pretty major overhaul.  we now have a 3 loops.  We
+	loop over all the X events in the queue until there aren't any,
+	calling AddExpose and AddConfigureNotify for Expose and Configure
+	events respectively.  Those methods end up queueing up special
+	"events" in the thread queue's Paint and Configure queues.  Once
+	the X event loop is finished, we check to see if there are pending
+	configure/paint events, and handle any that are present.
+	(DoEvents): move here.
+
+	* X11ThreadQueue.cs: make DequeueUnlocked only dequeue X events.
+	if there are no x events and there *are* paint or configure
+	events, return early.  add a "configure queue" which is almost
+	identical to the "paint queue" except for the events it generates.
+	this needs refactoring so the code can be shared.
+
+	* XplatUIX11-new.cs: move the DefWndProc to X11Hwnd.  Move
+	SetCursor, OverrideCursor, DispatchMessage and DoEvents to
+	X11Display.
+
+	* X11Hwnd.cs (Update): do all this under the queue lock..
+	theorize about whether or not the SendMessage (WM_PAINT) should be
+	called from under the lock.
+	(DefWndProc): move this here.
+	(PendingExpose,PendingNCExpose): new properties, which should
+	eventually be pushed into Hwnd (and made abstract?)  Move all the
+	queue manipulation here.
+	(PaintEventStart): restrict the queue lock code a bit more.
+	(PerformNCCalc): remove the optimization - it keeps client windows
+	from resizing along with their parent.
+	(SetPosition): track change Rolf made to XplatUIX11.cs on
+	2006-11-22.
+
 2006-11-21  Chris Toshok  <toshok@ximian.com>
 
 	* X11Hwnd.cs: the IntPtr atom change broke the Array.Sort stuff I
