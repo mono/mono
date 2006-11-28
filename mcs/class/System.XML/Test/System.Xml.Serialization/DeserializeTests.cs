@@ -3,8 +3,10 @@
 //
 // Author:
 //	Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+//	Hagit Yidov <hagity@mainsoft.com>
 //
 // (C) 2003 Atsushi Enomoto
+// (C) 2005 Mainsoft Corporation (http://www.mainsoft.com)
 //
 //
 using System;
@@ -273,7 +275,242 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (ItemsChoiceType.In, v.ItemsElementName[0], "#7");
 			Assert.AreEqual (ItemsChoiceType.Es, v.ItemsElementName[1], "#8");
 		}
-		
+
+		#region GenericsDeseralizationTests
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestDeserializeGenSimpleClassString () {
+			Deserialize (typeof (GenSimpleClass<string>), "<GenSimpleClassOfString xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />");
+			Assert.AreEqual (typeof (GenSimpleClass<string>), result.GetType ());
+			Deserialize (typeof (GenSimpleClass<string>), "<GenSimpleClassOfString xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>hello</something></GenSimpleClassOfString>");
+			GenSimpleClass<string> simple = result as GenSimpleClass<string>;
+			Assert.AreEqual ("hello", simple.something);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestDeserializeGenSimpleClassBool () {
+			Deserialize (typeof (GenSimpleClass<bool>), "<GenSimpleClassOfBoolean xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>false</something></GenSimpleClassOfBoolean>");
+			Assert.AreEqual (typeof (GenSimpleClass<bool>), result.GetType ());
+			Deserialize (typeof (GenSimpleClass<bool>), "<GenSimpleClassOfBoolean xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>true</something></GenSimpleClassOfBoolean>");
+			GenSimpleClass<bool> simple = result as GenSimpleClass<bool>;
+			Assert.AreEqual (true, simple.something);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestDeserializeGenSimpleStructInt () {
+			Deserialize (typeof (GenSimpleStruct<int>), "<GenSimpleStructOfInt32 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>0</something></GenSimpleStructOfInt32>");
+			Assert.AreEqual (typeof (GenSimpleStruct<int>), result.GetType ());
+			Deserialize (typeof (GenSimpleStruct<int>), "<GenSimpleStructOfInt32 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>123</something></GenSimpleStructOfInt32>");
+			GenSimpleStruct<int> simple = new GenSimpleStruct<int>(0);
+			if (result != null)
+				simple = (GenSimpleStruct<int>) result;
+			Assert.AreEqual (123, simple.something);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestDeserializeGenListClassString () {
+			Deserialize (typeof (GenListClass<string>), "<GenListClassOfString xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><somelist></somelist></GenListClassOfString>");
+			Assert.AreEqual (typeof (GenListClass<string>), result.GetType ());
+			Deserialize (typeof (GenListClass<string>), "<GenListClassOfString xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><somelist><string>Value1</string><string>Value2</string></somelist></GenListClassOfString>");
+			GenListClass<string> genlist = result as GenListClass<string>;
+			Assert.AreEqual ("Value1", genlist.somelist[0]);
+			Assert.AreEqual ("Value2", genlist.somelist[1]);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestDeserializeGenListClassFloat () {
+			Deserialize (typeof (GenListClass<float>), "<GenListClassOfSingle xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><somelist></somelist></GenListClassOfSingle>");
+			Assert.AreEqual (typeof (GenListClass<float>), result.GetType ());
+			Deserialize (typeof (GenListClass<float>), "<GenListClassOfSingle xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><somelist><float>1</float><float>2.2</float></somelist></GenListClassOfSingle>");
+			GenListClass<float> genlist = result as GenListClass<float>;
+			Assert.AreEqual (1, genlist.somelist[0]);
+			Assert.AreEqual (2.2F, genlist.somelist[1]);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestDeserializeGenListClassList () {
+			Deserialize (typeof(GenListClass<GenListClass<int>>), "<GenListClassOfGenListClassOfInt32 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><somelist></somelist></GenListClassOfGenListClassOfInt32>");
+			Assert.AreEqual (typeof (GenListClass<GenListClass<int>>), result.GetType ());
+			Deserialize (typeof(GenListClass<GenListClass<int>>), "<GenListClassOfGenListClassOfInt32 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><somelist><GenListClassOfInt32><somelist><int>1</int><int>2</int></somelist></GenListClassOfInt32><GenListClassOfInt32><somelist><int>10</int><int>20</int></somelist></GenListClassOfInt32></somelist></GenListClassOfGenListClassOfInt32>");
+			GenListClass<GenListClass<int>> genlist = result as GenListClass<GenListClass<int>>;
+			Assert.AreEqual (1, genlist.somelist[0].somelist[0]);
+			Assert.AreEqual (2, genlist.somelist[0].somelist[1]);
+			Assert.AreEqual (10, genlist.somelist[1].somelist[0]);
+			Assert.AreEqual (20, genlist.somelist[1].somelist[1]);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestDeserializeGenListClassArray () {
+			Deserialize (typeof (GenListClass<GenArrayClass<char>>), "<GenListClassOfGenArrayClassOfChar xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><somelist></somelist></GenListClassOfGenArrayClassOfChar>");
+			Assert.AreEqual (typeof (GenListClass<GenArrayClass<char>>), result.GetType ());
+			Deserialize (typeof (GenListClass<GenArrayClass<char>>), "<GenListClassOfGenArrayClassOfChar xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><somelist><GenArrayClassOfChar><arr><char>97</char><char>98</char><char>0</char></arr></GenArrayClassOfChar><GenArrayClassOfChar><arr><char>100</char><char>101</char><char>102</char></arr></GenArrayClassOfChar></somelist></GenListClassOfGenArrayClassOfChar>");
+			GenListClass<GenArrayClass<char>> genlist = result as GenListClass<GenArrayClass<char>>;
+			Assert.AreEqual ('a', genlist.somelist[0].arr[0]);
+			Assert.AreEqual ('b', genlist.somelist[0].arr[1]);
+			Assert.AreEqual ('d', genlist.somelist[1].arr[0]);
+			Assert.AreEqual ('e', genlist.somelist[1].arr[1]);
+			Assert.AreEqual ('f', genlist.somelist[1].arr[2]);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestDeserializeGenTwoClassCharDouble () {
+			Deserialize (typeof (GenTwoClass<char, double>), "<GenTwoClassOfCharDouble xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something1>0</something1><something2>0</something2></GenTwoClassOfCharDouble>");
+			Assert.AreEqual (typeof (GenTwoClass<char, double>), result.GetType ());
+			Deserialize (typeof (GenTwoClass<char, double>), "<GenTwoClassOfCharDouble xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something1>97</something1><something2>2.2</something2></GenTwoClassOfCharDouble>");
+			GenTwoClass<char, double> gentwo = result as GenTwoClass<char, double>;
+			Assert.AreEqual ('a', gentwo.something1);
+			Assert.AreEqual (2.2, gentwo.something2);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestDeserializeGenDerivedClassDecimalShort () {
+			Deserialize (typeof (GenDerivedClass<decimal, short>), "<GenDerivedClassOfDecimalInt16 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something2>0</something2><another1>0</another1><another2>0</another2></GenDerivedClassOfDecimalInt16>");
+			Assert.AreEqual (typeof (GenDerivedClass<decimal, short>), result.GetType ());
+			Deserialize (typeof (GenDerivedClass<decimal, short>), "<GenDerivedClassOfDecimalInt16 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something1>Value1</something1><something2>1</something2><another1>1.1</another1><another2>-22</another2></GenDerivedClassOfDecimalInt16>");
+			GenDerivedClass<decimal, short> derived = result as GenDerivedClass<decimal, short>;
+			Assert.AreEqual ("Value1", derived.something1);
+			Assert.AreEqual (1, derived.something2);
+			Assert.AreEqual (1.1M, derived.another1);
+			Assert.AreEqual (-22, derived.another2);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestDeserializeGenDerivedSecondClassByteUlong () {
+			Deserialize (typeof (GenDerived2Class<byte, ulong>), "<GenDerived2ClassOfByteUInt64 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something1>0</something1><something2>0</something2><another1>0</another1><another2>0</another2></GenDerived2ClassOfByteUInt64>");
+			Assert.AreEqual (typeof (GenDerived2Class<byte, ulong>), result.GetType ());
+			Deserialize (typeof (GenDerived2Class<byte, ulong>), "<GenDerived2ClassOfByteUInt64 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something1>1</something1><something2>222</something2><another1>111</another1><another2>222222</another2></GenDerived2ClassOfByteUInt64>");
+			GenDerived2Class<byte, ulong> derived2 = result as GenDerived2Class<byte, ulong>;
+			Assert.AreEqual (1, derived2.something1);
+			Assert.AreEqual (222, derived2.something2);
+			Assert.AreEqual (111, derived2.another1);
+			Assert.AreEqual (222222, derived2.another2);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestDeserializeGenNestedClass () {
+			Deserialize (typeof (GenNestedClass<string, int>.InnerClass<bool>), "<InnerClassOfStringInt32Boolean xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><inner>0</inner><something>false</something></InnerClassOfStringInt32Boolean>");
+			Assert.AreEqual (typeof (GenNestedClass<string, int>.InnerClass<bool>), result.GetType ());
+			Deserialize (typeof (GenNestedClass<string, int>.InnerClass<bool>), "<InnerClassOfStringInt32Boolean xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><inner>5</inner><something>true</something></InnerClassOfStringInt32Boolean>");
+			GenNestedClass<string, int>.InnerClass<bool> nested = result as GenNestedClass<string, int>.InnerClass<bool>;
+			Assert.AreEqual (5, nested.inner);
+			Assert.AreEqual (true, nested.something);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestDeserializeGenListClassListNested () {
+			Deserialize (typeof (GenListClass<GenListClass<GenNestedClass<int, int>.InnerClass<string>>>),
+				"<GenListClassOfGenListClassOfInnerClassOfInt32Int32String xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><somelist></somelist></GenListClassOfGenListClassOfInnerClassOfInt32Int32String>");
+			Assert.AreEqual (typeof (GenListClass<GenListClass<GenNestedClass<int, int>.InnerClass<string>>>), result.GetType ());
+			Deserialize (typeof (GenListClass<GenListClass<GenNestedClass<int, int>.InnerClass<string>>>),
+				"<GenListClassOfGenListClassOfInnerClassOfInt32Int32String xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><somelist><GenListClassOfInnerClassOfInt32Int32String><somelist><InnerClassOfInt32Int32String><inner>1</inner><something>ONE</something></InnerClassOfInt32Int32String><InnerClassOfInt32Int32String><inner>2</inner><something>TWO</something></InnerClassOfInt32Int32String></somelist></GenListClassOfInnerClassOfInt32Int32String><GenListClassOfInnerClassOfInt32Int32String><somelist><InnerClassOfInt32Int32String><inner>30</inner><something>THIRTY</something></InnerClassOfInt32Int32String></somelist></GenListClassOfInnerClassOfInt32Int32String></somelist></GenListClassOfGenListClassOfInnerClassOfInt32Int32String>");
+			GenListClass<GenListClass<GenNestedClass<int, int>.InnerClass<string>>> genlist =
+				result as GenListClass<GenListClass<GenNestedClass<int, int>.InnerClass<string>>>;
+			Assert.AreEqual (1, genlist.somelist[0].somelist[0].inner);
+			Assert.AreEqual ("ONE", genlist.somelist[0].somelist[0].something);
+			Assert.AreEqual (2, genlist.somelist[0].somelist[1].inner);
+			Assert.AreEqual ("TWO", genlist.somelist[0].somelist[1].something);
+			Assert.AreEqual (30, genlist.somelist[1].somelist[0].inner);
+			Assert.AreEqual ("THIRTY", genlist.somelist[1].somelist[0].something);
+		}
+
+		public enum Myenum { one, two, three, four, five, six };
+		[Test]
+		[Category ("NotWorking")]
+		public void TestDeserializeGenArrayClassEnum () {
+			Deserialize (typeof (GenArrayClass<Myenum>), "<GenArrayClassOfMyenum xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><arr><Myenum>one</Myenum><Myenum>one</Myenum><Myenum>one</Myenum></arr></GenArrayClassOfMyenum>");
+			Assert.AreEqual (typeof (GenArrayClass<Myenum>), result.GetType ());
+			Deserialize (typeof (GenArrayClass<Myenum>), "<GenArrayClassOfMyenum xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><arr><Myenum>one</Myenum><Myenum>three</Myenum><Myenum>five</Myenum></arr></GenArrayClassOfMyenum>");
+			GenArrayClass<Myenum> genarr = result as GenArrayClass<Myenum>;
+			Assert.AreEqual (Myenum.one, genarr.arr[0]);
+			Assert.AreEqual (Myenum.three, genarr.arr[1]);
+			Assert.AreEqual (Myenum.five, genarr.arr[2]);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestDeserializeGenArrayClassStruct () {
+			Deserialize (typeof (GenArrayClass<GenSimpleStruct<uint>>), "<GenArrayClassOfGenSimpleStructOfUInt32 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><arr><GenSimpleStructOfUInt32>0</GenSimpleStructOfUInt32><GenSimpleStructOfUInt32>0</GenSimpleStructOfUInt32><GenSimpleStructOfUInt32>0</GenSimpleStructOfUInt32></arr></GenArrayClassOfGenSimpleStructOfUInt32>");
+			Assert.AreEqual (typeof (GenArrayClass<GenSimpleStruct<uint>>), result.GetType ());
+			Deserialize (typeof (GenArrayClass<GenSimpleStruct<uint>>), "<GenArrayClassOfGenSimpleStructOfUInt32 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><arr><GenSimpleStructOfUInt32><something>111</something></GenSimpleStructOfUInt32><GenSimpleStructOfUInt32><something>222</something></GenSimpleStructOfUInt32><GenSimpleStructOfUInt32><something>333</something></GenSimpleStructOfUInt32></arr></GenArrayClassOfGenSimpleStructOfUInt32>");
+			GenArrayClass<GenSimpleStruct<uint>> genarr = result as GenArrayClass<GenSimpleStruct<uint>>;
+			Assert.AreEqual (111, genarr.arr[0].something);
+			Assert.AreEqual (222, genarr.arr[1].something);
+			Assert.AreEqual (333, genarr.arr[2].something);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestDeserializeGenArrayClassList () {
+			Deserialize (typeof (GenArrayClass<GenListClass<string>>), "<GenArrayClassOfGenListClassOfString xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><arr><GenListClassOfString>0</GenListClassOfString><GenListClassOfString>0</GenListClassOfString><GenListClassOfString>0</GenListClassOfString></arr></GenArrayClassOfGenListClassOfString>");
+			Assert.AreEqual (typeof (GenArrayClass<GenListClass<string>>), result.GetType ());
+			Deserialize (typeof (GenArrayClass<GenListClass<string>>), "<GenArrayClassOfGenListClassOfString xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><arr><GenListClassOfString><somelist><string>list1-val1</string><string>list1-val2</string></somelist></GenListClassOfString><GenListClassOfString><somelist><string>list2-val1</string><string>list2-val2</string><string>list2-val3</string><string>list2-val4</string></somelist></GenListClassOfString><GenListClassOfString><somelist><string>list3val</string></somelist></GenListClassOfString></arr></GenArrayClassOfGenListClassOfString>");
+			GenArrayClass<GenListClass<string>> genarr = result as GenArrayClass<GenListClass<string>>;
+			Assert.AreEqual ("list1-val1", genarr.arr[0].somelist[0]);
+			Assert.AreEqual ("list1-val2", genarr.arr[0].somelist[1]);
+			Assert.AreEqual ("list2-val1", genarr.arr[1].somelist[0]);
+			Assert.AreEqual ("list2-val2", genarr.arr[1].somelist[1]);
+			Assert.AreEqual ("list2-val3", genarr.arr[1].somelist[2]);
+			Assert.AreEqual ("list2-val4", genarr.arr[1].somelist[3]);
+			Assert.AreEqual ("list3val", genarr.arr[2].somelist[0]);
+			// The code below checks for DotNet bug (see corresponding test in XmlSerializerTests).
+			Deserialize (typeof (GenArrayClass<GenListClass<string>>), "<GenArrayClassOfGenListClassOfString xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><arr><GenListClassOfString><somelist><string>list1-val1</string><string>list1-val2</string><string>list3val</string></somelist></GenListClassOfString><GenListClassOfString><somelist><string>list2-val1</string><string>list2-val2</string><string>list2-val3</string><string>list2-val4</string></somelist></GenListClassOfString><GenListClassOfString><somelist></somelist></GenListClassOfString></arr></GenArrayClassOfGenListClassOfString>");
+			GenArrayClass<GenListClass<string>> genarr2 = result as GenArrayClass<GenListClass<string>>;
+			Assert.AreEqual ("list1-val1", genarr2.arr[0].somelist[0]);
+			Assert.AreEqual ("list1-val2", genarr2.arr[0].somelist[1]);
+			/**/Assert.AreEqual ("list3val", genarr2.arr[0].somelist[2]);
+			Assert.AreEqual ("list2-val1", genarr2.arr[1].somelist[0]);
+			Assert.AreEqual ("list2-val2", genarr2.arr[1].somelist[1]);
+			Assert.AreEqual ("list2-val3", genarr2.arr[1].somelist[2]);
+			Assert.AreEqual ("list2-val4", genarr2.arr[1].somelist[3]);
+			//Assert.AreEqual ("list3val", genarr2.arr[2].somelist[0]);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestDeserializeGenComplexStruct () {
+			Deserialize (typeof (GenComplexStruct<int, string>), "<GenComplexStructOfInt32String xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>0</something><simpleclass><something>0</something></simpleclass><simplestruct><something>0</something></simplestruct><listclass><somelist></somelist></listclass><arrayclass><arr><int>0</int><int>0</int><int>0</int></arr></arrayclass><twoclass><something1>0</something1></twoclass><derivedclass><something2>0</something2><another1>0</another1></derivedclass><derived2><something1>0</something1><another1>0</another1></derived2><nestedouter><outer>0</outer></nestedouter><nestedinner><something>0</something></nestedinner></GenComplexStructOfInt32String>");
+			Assert.AreEqual (typeof (GenComplexStruct<int, string>), result.GetType ());
+			Deserialize (typeof (GenComplexStruct<int, string>), "<GenComplexStructOfInt32String xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>123</something><simpleclass><something>456</something></simpleclass><simplestruct><something>789</something></simplestruct><listclass><somelist><int>100</int><int>200</int></somelist></listclass><arrayclass><arr><int>11</int><int>22</int><int>33</int></arr></arrayclass><twoclass><something1>10</something1><something2>Ten</something2></twoclass><derivedclass><something1>two</something1><something2>2</something2><another1>1</another1><another2>one</another2></derivedclass><derived2><something1>4</something1><something2>four</something2><another1>3</another1><another2>three</another2></derived2><nestedouter><outer>5</outer></nestedouter><nestedinner><inner>six</inner><something>6</something></nestedinner></GenComplexStructOfInt32String>");
+			GenComplexStruct<int, string> complex = new GenComplexStruct<int, string> (0);
+			if (result != null)
+				complex = (GenComplexStruct<int, string>) result;
+			Assert.AreEqual (123, complex.something);
+			Assert.AreEqual (456, complex.simpleclass.something);
+			Assert.AreEqual (789, complex.simplestruct.something);
+			Assert.AreEqual (100, complex.listclass.somelist[0]);
+			Assert.AreEqual (200, complex.listclass.somelist[1]);
+			Assert.AreEqual (11, complex.arrayclass.arr[0]);
+			Assert.AreEqual (22, complex.arrayclass.arr[1]);
+			Assert.AreEqual (33, complex.arrayclass.arr[2]);
+			Assert.AreEqual (10, complex.twoclass.something1);
+			Assert.AreEqual ("Ten", complex.twoclass.something2);
+			Assert.AreEqual (1, complex.derivedclass.another1);
+			Assert.AreEqual ("one", complex.derivedclass.another2);
+			Assert.AreEqual ("two", complex.derivedclass.something1);
+			Assert.AreEqual (2, complex.derivedclass.something2);
+			Assert.AreEqual (3, complex.derived2.another1);
+			Assert.AreEqual ("three", complex.derived2.another2);
+			Assert.AreEqual (4, complex.derived2.something1);
+			Assert.AreEqual ("four", complex.derived2.something2);
+			Assert.AreEqual (5, complex.nestedouter.outer);
+			Assert.AreEqual ("six", complex.nestedinner.inner);
+			Assert.AreEqual (6, complex.nestedinner.something);
+		}
+
+		#endregion //GenericsDeseralizationTests
+
 		[Test]
 		public void TestDeserializeCollection ()
 		{
@@ -397,7 +634,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (0, cont.Collection4.Count, "#E2");
 			Assert.AreEqual ("root", cont.Collection4.Container, "#E3");
 		}
-
+		
 		[Test]
 		public void TestDeserializeObjectNilCollectionsAreNotNull ()
 		{
@@ -698,196 +935,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // DefaultValue should not be used when deserializing
-		public void TestDeserialize_Field ()
-		{
-			Field f = null;
-
-			f = (Field) Deserialize (typeof (Field),
-				string.Format (CultureInfo.InvariantCulture, "<?xml version='1.0' encoding='utf-16'?>" +
-				"<field xmlns:xsd='{0}' xmlns:xsi='{1}' flag1='' flag2='' flag4='' modifiers='public' modifiers2='public' modifiers4='public' />",
-				XmlSchemaNamespace, XmlSchemaInstanceNamespace));
-			Assert.AreEqual ((FlagEnum) 0, f.Flags1, "#A1");
-			Assert.AreEqual ((FlagEnum) 0, f.Flags2, "#A2");
-			Assert.AreEqual ((FlagEnum) 0, f.Flags3, "#A3");
-			Assert.AreEqual ((FlagEnum) 0, f.Flags4, "#A4");
-			Assert.AreEqual (MapModifiers.Public, f.Modifiers, "#A5");
-			Assert.AreEqual (MapModifiers.Public, f.Modifiers2, "#A6");
-			Assert.AreEqual (MapModifiers.Public, f.Modifiers3, "#A7");
-			Assert.AreEqual (MapModifiers.Public, f.Modifiers4, "#A8");
-			Assert.AreEqual (MapModifiers.Public, f.Modifiers5, "#A9");
-			Assert.IsNull (f.Names, "#A10");
-			Assert.IsNull (f.Street, "#A11");
-
-			f = (Field) Deserialize (typeof (Field),
-				string.Format (CultureInfo.InvariantCulture, "<?xml version='1.0' encoding='utf-16'?>" +
-				"<field xmlns:xsd='{0}' xmlns:xsi='{1}' flag3='two' flag4='' modifiers='protected' modifiers2='public' />",
-				XmlSchemaNamespace, XmlSchemaInstanceNamespace));
-			Assert.AreEqual ((FlagEnum) 0, f.Flags1, "#B1");
-			Assert.AreEqual ((FlagEnum) 0, f.Flags2, "#B2");
-			Assert.AreEqual (FlagEnum.e2, f.Flags3, "#B3");
-			Assert.AreEqual ((FlagEnum) 0, f.Flags4, "#B4");
-			Assert.AreEqual (MapModifiers.Protected, f.Modifiers, "#B5");
-			Assert.AreEqual (MapModifiers.Public, f.Modifiers2, "#B6");
-			Assert.AreEqual (MapModifiers.Public, f.Modifiers3, "#B7");
-			Assert.AreEqual (MapModifiers.Public, f.Modifiers4, "#B8");
-			Assert.AreEqual (MapModifiers.Public, f.Modifiers5, "#B9");
-			Assert.IsNull (f.Names, "#B10");
-			Assert.IsNull (f.Street, "#B11");
-
-			f = (Field) Deserialize (typeof (Field),
-				string.Format (CultureInfo.InvariantCulture, "<?xml version='1.0' encoding='utf-16'?>" +
-				"<field xmlns:xsd='{0}' xmlns:xsi='{1}' flag1='two' flag2='two' flag4='' modifiers='public' modifiers2='protected' modifiers3='protected' modifiers4='public' modifiers5='protected' />",
-				XmlSchemaNamespace, XmlSchemaInstanceNamespace));
-			Assert.AreEqual (FlagEnum.e2, f.Flags1, "#C1");
-			Assert.AreEqual (FlagEnum.e2, f.Flags2, "#C2");
-			Assert.AreEqual ((FlagEnum) 0, f.Flags3, "#C3");
-			Assert.AreEqual ((FlagEnum) 0, f.Flags4, "#C4");
-			Assert.AreEqual (MapModifiers.Public, f.Modifiers, "#C5");
-			Assert.AreEqual (MapModifiers.Protected, f.Modifiers2, "#C6");
-			Assert.AreEqual (MapModifiers.Protected, f.Modifiers3, "#C7");
-			Assert.AreEqual (MapModifiers.Public, f.Modifiers4, "#C8");
-			Assert.AreEqual (MapModifiers.Protected, f.Modifiers5, "#C9");
-			Assert.IsNull (f.Names, "#C10");
-			Assert.IsNull (f.Street, "#C11");
-
-			try {
-				f = (Field) Deserialize (typeof (Field),
-					string.Format (CultureInfo.InvariantCulture, "<?xml version='1.0' encoding='utf-16'?>" +
-					"<field xmlns:xsd='{0}' xmlns:xsi='{1}' flag2='444' />",
-					XmlSchemaNamespace, XmlSchemaInstanceNamespace));
-				Assert.Fail ("#D1");
-			} catch (InvalidOperationException ex) {
-				// There was an error generating the XML document
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#D2");
-				Assert.IsNotNull (ex.Message, "#D3");
-				Assert.IsNotNull (ex.InnerException, "#D4");
-
-				// '444' is not a valid value for MonoTests.System.Xml.TestClasses.FlagEnum
-				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#D5");
-				Assert.IsNotNull (ex.InnerException.Message, "#D6");
-				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'444'") != -1, "#D7");
-				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (FlagEnum).FullName) != -1, "#D8");
-				Assert.IsNull (ex.InnerException.InnerException, "#D9");
-			}
-
-			try {
-				f = (Field) Deserialize (typeof (Field),
-					string.Format (CultureInfo.InvariantCulture, "<?xml version='1.0' encoding='utf-16'?>" +
-					"<field xmlns:xsd='{0}' xmlns:xsi='{1}' flag2='Garbage' />",
-					XmlSchemaNamespace, XmlSchemaInstanceNamespace));
-				Assert.Fail ("#E1");
-			} catch (InvalidOperationException ex) {
-				// There was an error generating the XML document
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#E2");
-				Assert.IsNotNull (ex.Message, "#E3");
-				Assert.IsNotNull (ex.InnerException, "#E4");
-
-				// 'Garbage' is not a valid value for MonoTests.System.Xml.TestClasses.FlagEnum
-				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#E5");
-				Assert.IsNotNull (ex.InnerException.Message, "#E6");
-				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'Garbage'") != -1, "#E7");
-				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (FlagEnum).FullName) != -1, "#E8");
-				Assert.IsNull (ex.InnerException.InnerException, "#E9");
-			}
-
-			try {
-				f = (Field) Deserialize (typeof (Field),
-					string.Format (CultureInfo.InvariantCulture, "<?xml version='1.0' encoding='utf-16'?>" +
-					"<field xmlns:xsd='{0}' xmlns:xsi='{1}' flag2='{2}' />",
-					XmlSchemaNamespace, XmlSchemaInstanceNamespace, ((int) FlagEnum.e2).ToString (CultureInfo.InvariantCulture)));
-				Assert.Fail ("#F1");
-			} catch (InvalidOperationException ex) {
-				// There was an error generating the XML document
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#F2");
-				Assert.IsNotNull (ex.Message, "#F3");
-				Assert.IsNotNull (ex.InnerException, "#F4");
-
-				// '2' is not a valid value for MonoTests.System.Xml.TestClasses.FlagEnum
-				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#F5");
-				Assert.IsNotNull (ex.InnerException.Message, "#F6");
-				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'2'") != -1, "#F7");
-				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (FlagEnum).FullName) != -1, "#F8");
-				Assert.IsNull (ex.InnerException.InnerException, "#F9");
-			}
-		}
-
-		[Test]
-		[Category ("NotDotNet")] // MS.NET does not allow SoapAttribute backed by enum ??
-		public void TestDeserialize_Field_Encoded ()
-		{
-			Field_Encoded f = null;
-
-			f = (Field_Encoded) DeserializeEncoded (typeof (Field_Encoded),
-				string.Format (CultureInfo.InvariantCulture, "<?xml version='1.0' encoding='utf-16'?>" +
-				"<q1:field xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' flag1='' flag2='' flag4='' modifiers='PuBlIc' modifiers2='PuBlIc' modifiers4='PuBlIc' xmlns:q1='{2}' />",
-				XmlSchemaNamespace, XmlSchemaInstanceNamespace, ANamespace));
-			Assert.AreEqual ((FlagEnum_Encoded) 0, f.Flags1, "#A1");
-			Assert.AreEqual ((FlagEnum_Encoded) 0, f.Flags2, "#A2");
-			Assert.AreEqual (FlagEnum_Encoded.e1 | FlagEnum_Encoded.e2, f.Flags3, "#A3");
-			Assert.AreEqual ((FlagEnum_Encoded) 0, f.Flags4, "#A4");
-			Assert.AreEqual (MapModifiers.Public, f.Modifiers, "#A5");
-			Assert.AreEqual (MapModifiers.Public, f.Modifiers2, "#A6");
-			Assert.AreEqual (MapModifiers.Public, f.Modifiers3, "#A7");
-			Assert.AreEqual (MapModifiers.Public, f.Modifiers4, "#A8");
-			Assert.AreEqual (MapModifiers.Public, f.Modifiers5, "#A9");
-			Assert.IsNull (f.Names, "#A10");
-			Assert.IsNull (f.Street, "#A11");
-
-			f = (Field_Encoded) DeserializeEncoded (typeof (Field_Encoded),
-				string.Format (CultureInfo.InvariantCulture, "<?xml version='1.0' encoding='utf-16'?>" +
-				"<q1:field xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' flag3='two' flag4='' modifiers='Protected' modifiers2='PuBlIc' xmlns:q1='{2}' />",
-				XmlSchemaNamespace, XmlSchemaInstanceNamespace, ANamespace));
-			Assert.AreEqual (FlagEnum_Encoded.e1, f.Flags1, "#B1");
-			Assert.AreEqual (FlagEnum_Encoded.e1, f.Flags2, "#B2");
-			Assert.AreEqual (FlagEnum_Encoded.e2, f.Flags3, "#B3");
-			Assert.AreEqual ((FlagEnum_Encoded) 0, f.Flags4, "#B4");
-			Assert.AreEqual (MapModifiers.Protected, f.Modifiers, "#B5");
-			Assert.AreEqual (MapModifiers.Public, f.Modifiers2, "#B6");
-			Assert.AreEqual (MapModifiers.Public, f.Modifiers3, "#B7");
-			Assert.AreEqual (MapModifiers.Protected, f.Modifiers4, "#B8");
-			Assert.AreEqual (MapModifiers.Public, f.Modifiers5, "#B9");
-			Assert.IsNull (f.Names, "#B10");
-			Assert.IsNull (f.Street, "#B11");
-
-			f = (Field_Encoded) DeserializeEncoded (typeof (Field_Encoded),
-				string.Format (CultureInfo.InvariantCulture, "<?xml version='1.0' encoding='utf-16'?>" +
-				"<q1:field xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' flag1='two' flag2='two' flag4='' modifiers='PuBlIc' modifiers2='Protected' modifiers3='Protected' modifiers4='PuBlIc' modifiers5='Protected' xmlns:q1='{2}' />",
-				XmlSchemaNamespace, XmlSchemaInstanceNamespace, ANamespace));
-			Assert.AreEqual (FlagEnum_Encoded.e2, f.Flags1, "#C1");
-			Assert.AreEqual (FlagEnum_Encoded.e2, f.Flags2, "#C2");
-			Assert.AreEqual (FlagEnum_Encoded.e1 | FlagEnum_Encoded.e2, f.Flags3, "#C3");
-			Assert.AreEqual ((FlagEnum_Encoded) 0, f.Flags4, "#C4");
-			Assert.AreEqual (MapModifiers.Public, f.Modifiers, "#C5");
-			Assert.AreEqual (MapModifiers.Protected, f.Modifiers2, "#C6");
-			Assert.AreEqual (MapModifiers.Protected, f.Modifiers3, "#C7");
-			Assert.AreEqual (MapModifiers.Public, f.Modifiers4, "#C8");
-			Assert.AreEqual (MapModifiers.Protected, f.Modifiers5, "#C9");
-			Assert.IsNull (f.Names, "#C10");
-			Assert.IsNull (f.Street, "#C11");
-
-			try {
-				f = (Field_Encoded) DeserializeEncoded (typeof (Field_Encoded),
-					string.Format (CultureInfo.InvariantCulture, "<?xml version='1.0' encoding='utf-16'?>" +
-					"<q1:field xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' flag2='444' flag3='555' flag4='' modifiers='666' modifiers2='777' modifiers4='888' modifiers5='999' xmlns:q1='{2}' />",
-					XmlSchemaNamespace, XmlSchemaInstanceNamespace, ANamespace));
-				Assert.Fail ("#D1");
-			} catch (InvalidOperationException ex) {
-				// There was an error generating the XML document
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#D2");
-				Assert.IsNotNull (ex.Message, "#D3");
-				Assert.IsNotNull (ex.InnerException, "#D4");
-
-				// '444' is not a valid value for MonoTests.System.Xml.TestClasses.FlagEnum_Encoded
-				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#D5");
-				Assert.IsNotNull (ex.InnerException.Message, "#D6");
-				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'444'") != -1, "#D7");
-				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (FlagEnum_Encoded).FullName) != -1, "#D8");
-				Assert.IsNull (ex.InnerException.InnerException, "#D9");
-			}
-		}
-
-		[Test]
 		public void TestDeserialize_FlagEnum ()
 		{
 			FlagEnum e;
@@ -953,175 +1000,6 @@ namespace MonoTests.System.XmlSerialization
 				Assert.IsNotNull (ex.InnerException.Message, "#D5");
 				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'something'") != -1, "#D6");
 				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (FlagEnum).FullName) != -1, "#D7");
-			}
-		}
-
-		[Test]
-		public void TestDeserialize_Group ()
-		{
-			string xml = string.Format (CultureInfo.InvariantCulture,
-				"<Wrapper>" +
-				"<Group xmlns:xsd='{0}' xmlns:xsi='{1}' xmlns:d2p1='http://www.cpandl.com' CreationDate='2002-05-02' d2p1:GroupName='.NET' GroupNumber='ZDI=' id='id1'>" +
-				"<PosInt xsi:type='xsd:nonNegativeInteger'>10000</PosInt>" +
-				"<Grouptype xsi:type='GroupType'>Small</Grouptype>" +
-				"<MyVehicle href='#id2' />" +
-				"</Group>" +
-				"<Car xmlns:d2p1='{1}' id='id2' d2p1:type='Car'>" +
-				"<licenseNumber xmlns:q1='{0}' d2p1:type='q1:string'>1234566</licenseNumber>" +
-				"<makeDate xmlns:q2='{0}' d2p1:type='q2:date'>0001-01-01</makeDate>" +
-				"</Car>" +
-				"</Wrapper>",
-				"http://www.w3.org/2001/XMLSchema", "http://www.w3.org/2001/XMLSchema-instance");
-
-			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
-			xtr.ReadStartElement ("Wrapper");
-
-			Group group = (Group) DeserializeEncoded (typeof (Group), xtr);
-
-			Assert.AreEqual (new DateTime (2002, 5, 2), group.Today, "#A1");
-			Assert.AreEqual (".NET", group.GroupName, "#A2");
-			Assert.AreEqual (new byte [] { 0x64, 0x32 }, group.GroupNumber, "#A3");
-			Assert.AreEqual (GroupType.A, group.Grouptype, "#A4");
-			Assert.AreEqual ("10000", group.PostitiveInt, "#A5");
-			Assert.IsFalse (group.IgnoreThis, "#A6");
-			Assert.IsNotNull (group.MyVehicle, "#A7");
-			Assert.AreEqual (typeof (Car), group.MyVehicle.GetType (), "#A8");
-			Assert.AreEqual ("1234566", group.MyVehicle.licenseNumber, "#A9");
-			Assert.AreEqual (new DateTime (1, 1, 1), group.MyVehicle.makeDate, "#A10");
-			Assert.IsNull (group.MyVehicle.weight, "#A11");
-
-			xml = string.Format (CultureInfo.InvariantCulture,
-				"<Wrapper>" +
-				"<Group xmlns:xsd='{0}' xmlns:xsi='{1}' CreationDate='2002-05-02' GroupNumber='ZDI=' id='id1'>" +
-				"<PosInt xsi:type='xsd:nonNegativeInteger'>10000</PosInt>" +
-				"<Grouptype xsi:type='GroupType'>Large</Grouptype>" +
-				"<MyVehicle href='#id2' />" +
-				"</Group>" +
-				"<Car xmlns:d2p1='{1}' id='id2' d2p1:type='Car'>" +
-				"<weight xmlns:q2='{0}' d2p1:type='q2:string'>450</weight>" +
-				"</Car>" +
-				"</Wrapper>",
-				"http://www.w3.org/2001/XMLSchema", "http://www.w3.org/2001/XMLSchema-instance");
-
-			xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
-			xtr.ReadStartElement ("Wrapper");
-
-			group = (Group) DeserializeEncoded (typeof (Group), xtr);
-
-			Assert.AreEqual (new DateTime (2002, 5, 2), group.Today, "#B1");
-			Assert.IsNull (group.GroupName, "#B2");
-			Assert.AreEqual (new byte [] { 0x64, 0x32 }, group.GroupNumber, "#B3");
-			Assert.AreEqual (GroupType.B, group.Grouptype, "#B4");
-			Assert.AreEqual ("10000", group.PostitiveInt, "#B5");
-			Assert.IsFalse (group.IgnoreThis, "#B6");
-			Assert.IsNotNull (group.MyVehicle, "#B7");
-			Assert.AreEqual (typeof (Car), group.MyVehicle.GetType (), "#B8");
-			Assert.IsNull (group.MyVehicle.licenseNumber, "#B9");
-			Assert.AreEqual (DateTime.MinValue, group.MyVehicle.makeDate, "#B10");
-			Assert.AreEqual ("450", group.MyVehicle.weight, "#B11");
-
-			xml = string.Format (CultureInfo.InvariantCulture,
-				"<Wrapper>" +
-				"<Group xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' />" +
-				"</Wrapper>",
-				"http://www.w3.org/2001/XMLSchema", "http://www.w3.org/2001/XMLSchema-instance");
-
-			xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
-			xtr.ReadStartElement ("Wrapper");
-
-			group = (Group) DeserializeEncoded (typeof (Group), xtr);
-
-			Assert.AreEqual (DateTime.MinValue, group.Today, "#C1");
-			Assert.IsNull (group.GroupName, "#C2");
-			Assert.AreEqual (null, group.GroupNumber, "#C3");
-			Assert.AreEqual (GroupType.A, group.Grouptype, "#C4");
-			Assert.IsNull (group.PostitiveInt, "#C5");
-			Assert.IsFalse (group.IgnoreThis, "#C6");
-			Assert.IsNull (group.MyVehicle, "#C7");
-
-			xml = string.Format (CultureInfo.InvariantCulture,
-				"<Wrapper>" +
-				"<Group xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1'>" +
-				"<Grouptype xsi:type='GroupType'>666</Grouptype>" +
-				"</Group>" +
-				"</Wrapper>",
-				"http://www.w3.org/2001/XMLSchema", "http://www.w3.org/2001/XMLSchema-instance");
-
-			xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
-			xtr.ReadStartElement ("Wrapper");
-
-			try {
-				group = (Group) DeserializeEncoded (typeof (Group), xtr);
-				Assert.Fail ("#D1");
-			} catch (InvalidOperationException ex) {
-				// There is an error in XML document (1, 174)
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#D2");
-				Assert.IsNotNull (ex.Message, "#D3");
-				Assert.IsNotNull (ex.InnerException, "#D4");
-
-				// '666' is not a valid value for GroupType
-				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#D5");
-				Assert.IsNotNull (ex.InnerException.Message, "#D6");
-				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'666'") != -1, "#D7");
-				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (GroupType).Name) != -1, "#D8");
-				Assert.IsNull (ex.InnerException.InnerException, "#D9");
-			}
-
-			xml = string.Format (CultureInfo.InvariantCulture,
-				"<Wrapper>" +
-				"<Group xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1'>" +
-				"<Grouptype xsi:type='GroupType'>Garbage</Grouptype>" +
-				"</Group>" +
-				"</Wrapper>",
-				"http://www.w3.org/2001/XMLSchema", "http://www.w3.org/2001/XMLSchema-instance");
-
-			xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
-			xtr.ReadStartElement ("Wrapper");
-
-			try {
-				group = (Group) DeserializeEncoded (typeof (Group), xtr);
-				Assert.Fail ("#E1");
-			} catch (InvalidOperationException ex) {
-				// There is an error in XML document (1, 178)
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#E2");
-				Assert.IsNotNull (ex.Message, "#E3");
-				Assert.IsNotNull (ex.InnerException, "#E4");
-
-				// 'Garbage' is not a valid value for GroupType
-				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#E5");
-				Assert.IsNotNull (ex.InnerException.Message, "#E6");
-				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'Garbage'") != -1, "#E7");
-				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (GroupType).Name) != -1, "#E8");
-				Assert.IsNull (ex.InnerException.InnerException, "#E9");
-			}
-
-			xml = string.Format (CultureInfo.InvariantCulture,
-				"<Wrapper>" +
-				"<Group xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1'>" +
-				"<Grouptype xsi:type='GroupType'>{2}</Grouptype>" +
-				"</Group>" +
-				"</Wrapper>",
-				"http://www.w3.org/2001/XMLSchema", "http://www.w3.org/2001/XMLSchema-instance",
-				((int) GroupType.B).ToString (CultureInfo.InvariantCulture));
-
-			xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
-			xtr.ReadStartElement ("Wrapper");
-
-			try {
-				group = (Group) DeserializeEncoded (typeof (Group), xtr);
-				Assert.Fail ("#F1");
-			} catch (InvalidOperationException ex) {
-				// There is an error in XML document (1, 172)
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#F2");
-				Assert.IsNotNull (ex.Message, "#F3");
-				Assert.IsNotNull (ex.InnerException, "#F4");
-
-				// '1' is not a valid value for GroupType
-				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#F5");
-				Assert.IsNotNull (ex.InnerException.Message, "#F6");
-				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'1'") != -1, "#F7");
-				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (GroupType).Name) != -1, "#F8");
-				Assert.IsNull (ex.InnerException.InnerException, "#F9");
 			}
 		}
 

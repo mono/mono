@@ -1,10 +1,12 @@
 //
 // System.Xml.XmlSerializerTestClasses
 //
-// Author:
+// Authors:
 //   Erik LeBel <eriklebel@yahoo.ca>
+//   Hagit Yidov <hagity@mainsoft.com>
 //
 // (C) 2003 Erik LeBel
+// (C) 2005 Mainsoft Corporation (http://www.mainsoft.com)
 //
 // Classes to use in the testing of the XmlSerializer
 //
@@ -15,6 +17,7 @@ using System.Collections;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using System.Collections.Generic;
 
 namespace MonoTests.System.Xml.TestClasses
 {
@@ -58,9 +61,79 @@ namespace MonoTests.System.Xml.TestClasses
 		[XmlIgnore]
 		e4 = 4
 	}
-	
-	public class SimpleClass
-	{
+
+	#region GenericsTestClasses
+
+	public class GenSimpleClass<T> {
+		public T something = default(T);
+	}
+
+	public struct GenSimpleStruct<T> {
+		public T something;
+		public GenSimpleStruct (int dummy) {
+			something = default (T);
+		}
+	}
+
+	public class GenListClass<T> {
+		public List<T> somelist = new List<T> ();	 
+	}
+
+	public class GenArrayClass<T> {
+		public T[] arr = new T[3];
+	}
+
+	public class GenTwoClass<T1, T2> {
+		public T1 something1 = default (T1);
+		public T2 something2 = default (T2);
+	}
+
+	public class GenDerivedClass<T1, T2> : GenTwoClass<string, int> {
+		public T1 another1 = default (T1);
+		public T2 another2 = default (T2);
+	}
+
+	public class GenDerived2Class<T1, T2> : GenTwoClass<T1, T2> {
+		public T1 another1 = default (T1);
+		public T2 another2 = default (T2);
+	}
+
+	public class GenNestedClass<TO, TI> {
+		public TO outer = default (TO);
+		public class InnerClass<T> {
+			public TI inner = default (TI);
+			public T something = default (T);
+		}
+	}
+
+	public struct GenComplexStruct<T1,T2> {
+		public T1 something;
+		public GenSimpleClass<T1> simpleclass;
+		public GenSimpleStruct<T1> simplestruct;
+		public GenListClass<T1> listclass;
+		public GenArrayClass<T1> arrayclass;
+		public GenTwoClass<T1, T2> twoclass;
+		public GenDerivedClass<T1, T2> derivedclass;
+		public GenDerived2Class<T1, T2> derived2;
+		public GenNestedClass<T1, T2> nestedouter;
+		public GenNestedClass<T1, T2>.InnerClass<T1> nestedinner;
+		public GenComplexStruct (int dummy) {
+			something = default (T1);
+			simpleclass = new GenSimpleClass<T1> ();
+			simplestruct = new GenSimpleStruct<T1> ();
+			listclass = new GenListClass<T1> ();
+			arrayclass = new GenArrayClass<T1> ();
+			twoclass = new GenTwoClass<T1,T2> ();
+			derivedclass = new GenDerivedClass<T1, T2> ();
+			derived2 = new GenDerived2Class<T1, T2> ();
+			nestedouter = new GenNestedClass<T1, T2> ();
+			nestedinner = new GenNestedClass<T1, T2>.InnerClass<T1> ();
+		}
+	}
+
+	#endregion // GenericsTestClasses
+
+	public class SimpleClass {
 		public string something = null;
 	}
 
@@ -200,7 +273,6 @@ namespace MonoTests.System.Xml.TestClasses
 	public enum MapModifiers
 	{
 		[XmlEnum("public")]
-		[SoapEnum ("PuBlIc")]
 		Public = 0,
 		[XmlEnum("protected")]
 		Protected = 1,
@@ -692,62 +764,5 @@ namespace MonoTests.System.Xml.TestClasses
 
 		private bool _isEmptySpecified;
 	}
-
-	public class Group
-	{
-		[SoapAttribute (Namespace = "http://www.cpandl.com")]
-		public string GroupName;
-
-		[SoapAttribute (DataType = "base64Binary")]
-		public Byte [] GroupNumber;
-
-		[SoapAttribute (DataType = "date", AttributeName = "CreationDate")]
-		public DateTime Today;
-
-		[SoapElement (DataType = "nonNegativeInteger", ElementName = "PosInt")]
-		public string PostitiveInt;
-
-		[SoapIgnore]
-		public bool IgnoreThis;
-
-		[DefaultValue (GroupType.B)]
-		public GroupType Grouptype;
-		public Vehicle MyVehicle;
-
-		[SoapInclude (typeof (Car))]
-		public Vehicle myCar (string licNumber)
-		{
-			Vehicle v;
-			if (licNumber == string.Empty) {
-				v = new Car();
-				v.licenseNumber = "!!!!!!";
-			} else {
-				v = new Car();
-				v.licenseNumber = licNumber;
-			}
-			return v;
-		}
-	}
-
-	[SoapInclude (typeof (Car))]
-	public abstract class Vehicle
-	{
-		public string licenseNumber;
-		[SoapElement (DataType = "date")]
-		public DateTime makeDate;
-		[DefaultValue ("450")]
-		public string weight;
-	}
-
-	public class Car: Vehicle
-	{
-	}
-
-	public enum GroupType
-	{
-		[SoapEnum ("Small")]
-		A,
-		[SoapEnum ("Large")]
-		B
-	}
 }
+
