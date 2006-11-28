@@ -200,7 +200,7 @@ namespace MonoTests.SystemWeb.Framework
 		/// </summary>
 		public static void Unload ()
 		{
-#if aaa&&  !TARGET_JVM
+#if !TARGET_JVM
 			if (host == null)
 				return;
 
