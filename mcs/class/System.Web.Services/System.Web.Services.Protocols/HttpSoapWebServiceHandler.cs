@@ -296,10 +296,26 @@ namespace System.Web.Services.Protocols
 
 				if (message.Exception == null)
 					WebServiceHelper.WriteSoapMessage (xtw, methodInfo, SoapHeaderDirection.Out, message.OutParameters, message.Headers, soap12);
-				else if (methodInfo != null)
-					WebServiceHelper.WriteSoapMessage (xtw, methodInfo, SoapHeaderDirection.Fault, new Fault (message.Exception), message.Headers, soap12);
-				else
-					WebServiceHelper.WriteSoapMessage (xtw, SoapBindingUse.Literal, Fault.Serializer, null, new Fault (message.Exception), null, soap12);
+				else if (methodInfo != null) {
+#if NET_2_0
+					if (soap12)
+						WebServiceHelper.WriteSoapMessage (xtw, methodInfo, SoapHeaderDirection.Fault, new Soap12Fault (message.Exception), message.Headers, soap12);
+					else
+#endif
+					{
+						WebServiceHelper.WriteSoapMessage (xtw, methodInfo, SoapHeaderDirection.Fault, new Fault (message.Exception), message.Headers, soap12);
+					}
+				}
+				else {
+#if NET_2_0
+					if (soap12)
+						WebServiceHelper.WriteSoapMessage (xtw, SoapBindingUse.Literal, Soap12Fault.Serializer, null, new Soap12Fault (message.Exception), null, soap12);
+					else
+#endif
+					{
+						WebServiceHelper.WriteSoapMessage (xtw, SoapBindingUse.Literal, Fault.Serializer, null, new Fault (message.Exception), null, soap12);
+					}
+				}
 
 				if (bufferResponse)
 				{

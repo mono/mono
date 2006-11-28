@@ -379,12 +379,12 @@ namespace System.Web.Services.Protocols {
 			return null;
 		}
 		
-		public XmlSerializer GetBodySerializer (SoapHeaderDirection dir)
+		public XmlSerializer GetBodySerializer (SoapHeaderDirection dir, bool soap12)
 		{
 			switch (dir) {
 				case SoapHeaderDirection.In: return RequestSerializer;
 				case SoapHeaderDirection.Out: return ResponseSerializer;
-				case SoapHeaderDirection.Fault: return Fault.Serializer;
+				case SoapHeaderDirection.Fault: return soap12 ? Soap12Fault.Serializer : Fault.Serializer;
 				default: return null;
 			}
 		}

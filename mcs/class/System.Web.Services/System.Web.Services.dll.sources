@@ -125,6 +125,8 @@ System.Web.Services.Description/WebServicesInteroperability.cs
 System.Web.Services.Protocols/Methods.cs
 System.Web.Services.Protocols/AnyReturnReader.cs
 System.Web.Services.Protocols/Fault.cs
+System.Web.Services.Protocols/Fault12.cs
+System.Web.Services.Protocols/Fault12Serializer.cs
 System.Web.Services.Protocols/HtmlFormParameterReader.cs
 System.Web.Services.Protocols/HtmlFormParameterWriter.cs
 System.Web.Services.Protocols/HttpGetClientProtocol.cs

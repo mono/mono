@@ -105,7 +105,7 @@ namespace System.Web.Services.Protocols
 		public static void WriteSoapMessage (XmlTextWriter xtw, SoapMethodStubInfo method, SoapHeaderDirection dir, object bodyContent, SoapHeaderCollection headers, bool soap12)
 		{
 			SoapBindingUse methodUse = dir == SoapHeaderDirection.Fault ? SoapBindingUse.Literal : method.Use;
-			XmlSerializer bodySerializer = method.GetBodySerializer (dir);
+			XmlSerializer bodySerializer = method.GetBodySerializer (dir, soap12);
 			XmlSerializer headerSerializer = method.GetHeaderSerializer (dir);
 			object[] headerArray = method.GetHeaderValueArray (dir, headers);
 			WriteSoapMessage (xtw, methodUse, bodySerializer, headerSerializer, bodyContent, headerArray, soap12);
@@ -147,7 +147,7 @@ namespace System.Web.Services.Protocols
 
 		public static void ReadSoapMessage (XmlTextReader xmlReader, SoapMethodStubInfo method, SoapHeaderDirection dir, out object body, out SoapHeaderCollection headers)
 		{
-			XmlSerializer bodySerializer = method.GetBodySerializer (dir);
+			XmlSerializer bodySerializer = method.GetBodySerializer (dir, false);// no need to worry about soap12 arg since no call for Fault anyways here.
 			XmlSerializer headerSerializer = method.GetHeaderSerializer (dir);
 			ReadSoapMessage (xmlReader, bodySerializer, headerSerializer, out body, out headers);
 		}
@@ -174,7 +174,7 @@ namespace System.Web.Services.Protocols
 			xmlReader.MoveToContent ();
 			
 			if (xmlReader.LocalName == "Fault" && xmlReader.NamespaceURI == ns)
-				bodySerializer = Fault.Serializer;
+				bodySerializer = ns == Soap12EnvelopeNamespace ? Soap12Fault.Serializer : Fault.Serializer;
 
 			body = bodySerializer.Deserialize (xmlReader);
 		}

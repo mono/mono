@@ -1,3 +1,13 @@
+2006-11-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Fault12.cs, fault-12.genxs, Fault12Serializer.cs :
+	  SOAP 1.2 Fault serializer and its generation sources.
+	* SoapException.cs :
+	  Fixed .ctor() whose initialization was incorrect.
+	* WebServiceHelper.cs, Methods.cs, HttpSoapWebServiceHandler.cs,
+	  SoapHttpClientProtocol.cs :
+	  handle SOAP 1.2 Fault.
+
 2006-11-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SoapHeader.cs WebServiceHelper.cs SoapClientMessage.cs

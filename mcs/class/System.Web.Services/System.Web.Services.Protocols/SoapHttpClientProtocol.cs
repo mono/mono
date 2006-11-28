@@ -291,7 +291,32 @@ namespace System.Web.Services.Protocols
 				WebServiceHelper.ReadSoapMessage (xml_reader, msi, SoapHeaderDirection.Out, out content, out headers);
 			}
 
-			
+#if NET_2_0
+			if (content is Soap12Fault)
+			{
+				Soap12Fault fault = (Soap12Fault) content;
+				Soap12FaultReasonText text =
+					fault.Reason != null &&
+					fault.Reason.Texts != null &&
+					fault.Reason.Texts.Length > 0 ?
+					fault.Reason.Texts [0] : null;
+				XmlNode detail = (fault.Detail == null) ? null :
+					(fault.Detail.Children != null &&
+					fault.Detail.Children.Length > 0) ?
+					(XmlNode) fault.Detail.Children [0] :
+					(fault.Detail.Attributes != null &&
+					fault.Detail.Attributes.Length > 0) ?
+					fault.Detail.Attributes [0] : null;
+				SoapFaultSubCode subcode = Soap12Fault.GetSoapFaultSubCode (fault.Code.Subcode);
+				SoapException ex = new SoapException (
+					text != null ? text.Value : null,
+					fault.Code.Value, null, fault.Role,
+					text != null ? text.XmlLang : null,
+					detail, subcode, null);
+				message.SetException (ex);
+			}
+			else
+#endif
 			if (content is Fault)
 			{
 				Fault fault = (Fault) content;
