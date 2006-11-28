@@ -393,7 +393,6 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void Page_ValidatorTest1 ()
 		{
@@ -431,7 +430,6 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void Page_ValidatorTest2 ()
 		{
@@ -493,7 +491,6 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void Page_ValidatorTest4 ()
 		{
@@ -538,7 +535,6 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void Page_ValidatorTest5 ()
 		{
@@ -583,7 +579,6 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void Page_ValidatorTest6 ()
 		{
@@ -639,7 +634,6 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void Page_ValidatorTest7 ()
 		{
@@ -696,7 +690,6 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void Page_Lifecycle ()
 		{
