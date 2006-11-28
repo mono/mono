@@ -1,3 +1,8 @@
+2006-11-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CaseInsensitiveComparerTest.cs: Added tests for bug #80082 and bug
+	#80076. Improved existing tests.
+
 2006-08-08  Duncan Mak  <duncan@novell.com>
 
 	* ReadOnlyCollectionBaseTest.cs (TestZeroCountOnNew): Add test for
