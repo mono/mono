@@ -1,3 +1,9 @@
+2006-11-28  Nagappan A  <anagappan@novell.com>
+
+	* XmlDataDocument.cs (StringToObject): Modify
+	XmlConvert.ToDateTime to use XmlDateTimeSerializationMode, as the
+	default ToDataTime method id obsolete.
+
 2006-04-19  Senganal T <tsenganal@novell.com>
 
 	* XmlDataDocument.cs : 
