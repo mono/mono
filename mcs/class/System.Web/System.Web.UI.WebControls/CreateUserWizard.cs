@@ -1485,10 +1485,7 @@ namespace System.Web.UI.WebControls
 
 		private string GeneratePassword ()
 		{
-			// FIXME:
-			// Generate an actual password!
-			
-			return "password";
+			return Membership.GeneratePassword (8, 3);
 		}
 
 		#endregion
