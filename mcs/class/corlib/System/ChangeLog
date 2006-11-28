@@ -1,3 +1,7 @@
+2006-11-27  Jonathan Chambers  <joncham@gmail.com>
+
+	* __ComObject.cs: Removed IDispatchMono.
+	
 2006-11-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TermInfoDriver.cs:

@@ -188,7 +188,7 @@ namespace System
 		{
 			get
 			{
-				IntPtr pUnk = GetInterface (typeof (IDispatchMono));
+				IntPtr pUnk = GetInterface (typeof (IDispatch));
 				if (pUnk == IntPtr.Zero)
 					throw new InvalidComObjectException ("COM object that has been separated from its underlying RCW cannot be used.");
 				return pUnk;
@@ -209,11 +209,6 @@ namespace System
 			{
 				return new Guid ("00020400-0000-0000-C000-000000000046");
 			}
-		}
-
-		[Guid ("00020400-0000-0000-C000-000000000046")]
-		internal interface IDispatchMono
-		{
 		}
 
 		public override bool Equals (object obj)

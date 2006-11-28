@@ -1,3 +1,8 @@
+2006-11-27  Jonathan Chambers  <joncham@gmail.com>
+
+	* corlib.dll.sources: Added Mono.Interop/IUnknown.cs
+	and Mono.Interop/IDispatch.cs.
+	
 2006-11-01  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* corlib_test.dll.sources: Added unit tests and CAS tests for 
