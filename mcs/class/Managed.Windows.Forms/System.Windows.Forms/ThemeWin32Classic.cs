@@ -4745,10 +4745,20 @@ namespace System.Windows.Forms
 			Color titlebar_color = Color.FromArgb (255, 0, 0, 255);
 			
 			if (wm.HasBorders) {
+				Pen pen = new Pen(ColorControl, 1);
 				Rectangle borders = new Rectangle (0, 0, form.Width, form.Height);
 				// The 3d border is only 2 pixels wide, so we draw the innermost pixel ourselves
 				dc.DrawRectangle (new Pen (ColorControl, 1), 2, 2, form.Width - 5, form.Height - 5);
 				ControlPaint.DrawBorder3D (dc, borders,	Border3DStyle.Raised);
+				
+				if (!wm.IsMaximized) {
+					borders.Y += tbheight + bdwidth;
+					borders.X += bdwidth;
+					borders.Height -= tbheight + bdwidth * 2 + 1;
+					borders.Width -= bdwidth * 2 + 1;
+					
+					dc.DrawRectangle (pen, borders);
+				}
 			}
 
 			Color color = ThemeEngine.Current.ColorControlDark;
@@ -4780,7 +4790,7 @@ namespace System.Windows.Forms
 				format.LineAlignment = StringAlignment.Center;
 
 				if (tb.IntersectsWith (clip))
-                    dc.DrawString(form.Text, WindowBorderFont,
+					dc.DrawString (form.Text, WindowBorderFont,
 						ThemeEngine.Current.ResPool.GetSolidBrush (Color.White),
 						tb, format);
 			}
@@ -4829,7 +4839,7 @@ namespace System.Windows.Forms
 			dc.FillRectangle (SystemBrushes.Control, button.Rectangle);
 
 			ControlPaint.DrawCaptionButton (dc, button.Rectangle,
-					button.Caption, ButtonState.Normal);
+					button.Caption, button.State);
 		}
 
 		#region ControlPaint

@@ -53,6 +53,8 @@ namespace System.Windows.Forms {
 		private FormPos sizing_edge;
 		internal Rectangle virtual_position;
 
+		private bool is_mouse_down_menu;
+		
 		public class TitleButton {
 			public Rectangle Rectangle;
 			public ButtonState State;
@@ -130,7 +132,7 @@ namespace System.Windows.Forms {
 			get { return TitleBarHeight - 5; }
 		}
 
-		public bool HandleMessage (ref Message m)
+		public virtual bool HandleMessage (ref Message m)
 		{
 			switch ((Msg)m.Msg) {
 
@@ -210,10 +212,18 @@ namespace System.Windows.Forms {
 				HandleNCLButtonDown (ref m);
 				return true;
 
+			case Msg.WM_NCMOUSEMOVE:
+				HandleNCMouseMove (ref m);
+				return true;
+				
 			case Msg.WM_NCLBUTTONDBLCLK:
 				HandleNCLButtonDblClick (ref m);
 				break;
 
+			case Msg.WM_NCMOUSELEAVE:
+				HandleNCMouseLeave (ref m);
+				break;
+			
 			case Msg.WM_MOUSE_LEAVE:
 				FormMouseLeave (ref m);
 				break;
@@ -272,19 +282,81 @@ namespace System.Windows.Forms {
 			CreateButtons ();
 		}
 
-		public void HandleMenuMouseDown (MainMenu menu, int x, int y)
+		public bool HandleMenuMouseDown (MainMenu menu, int x, int y)
 		{
 			Point pt = MenuTracker.ScreenToMenu (menu, new Point (x, y));
 
+			is_mouse_down_menu = false;
 			foreach (TitleButton button in title_buttons) {
-				if (button != null && button.Rectangle.Contains (pt)) {
-					button.Clicked (this, EventArgs.Empty);
-					button.State = ButtonState.Pushed;
-					return;
+				if (button != null) {
+					if (button.Rectangle.Contains (pt)) {
+						button.State = ButtonState.Pushed;
+						is_mouse_down_menu = true;
+					} else {
+						button.State = ButtonState.Normal;
+					}
 				}
 			}
+			XplatUI.InvalidateNC (menu.GetForm().Handle);
+			return is_mouse_down_menu;
 		}
 
+		public void HandleMenuMouseUp (MainMenu menu, int x, int y)
+		{
+			Point pt = MenuTracker.ScreenToMenu (menu, new Point(x, y));
+
+			foreach (TitleButton button in title_buttons) {
+				if (button != null) {
+					if (button.Rectangle.Contains (pt)) {
+						button.Clicked (this, EventArgs.Empty);
+						button.State = ButtonState.Pushed;
+					} else {
+						button.State = ButtonState.Normal;
+					}
+				}
+			}
+			XplatUI.InvalidateNC (menu.GetForm().Handle);
+			is_mouse_down_menu = false;
+			return;
+		}
+		
+		public void HandleMenuMouseLeave(MainMenu menu, int x, int y)
+		{
+			Point pt = MenuTracker.ScreenToMenu (menu, new Point(x, y));
+
+			foreach (TitleButton button in title_buttons) {
+				if (button != null) {
+					button.State = ButtonState.Normal;
+				}
+			}
+			XplatUI.InvalidateNC (menu.GetForm().Handle);
+			return;
+		}
+		
+		public void HandleMenuMouseMove (MainMenu menu, int x, int y)
+		{
+			Point pt = MenuTracker.ScreenToMenu (menu, new Point (x, y));
+			
+			if (!is_mouse_down_menu)
+				return;
+				
+			bool any_change = false;
+			foreach (TitleButton button in title_buttons) {
+				if (button == null) 
+					continue;
+				
+				if (button.Rectangle.Contains(pt)) {
+					any_change |= button.State != ButtonState.Pushed;
+					button.State = ButtonState.Pushed;
+				} else {
+					any_change |= button.State != ButtonState.Normal;
+					button.State = ButtonState.Normal;
+				}
+			}
+			if (any_change)
+				XplatUI.InvalidateNC (menu.GetForm().Handle);
+		}
+		
 		public virtual void SetWindowState (FormWindowState old_state, FormWindowState window_state)
 		{
 		}
@@ -384,6 +456,40 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
+		protected virtual bool HandleNCMouseLeave (ref Message m)
+		{
+			int x = Control.LowOrder ((int)m.LParam.ToInt32 ());
+			int y = Control.HighOrder ((int)m.LParam.ToInt32 ());
+
+			NCPointToClient (ref x, ref y);
+			FormPos pos = FormPosForCoords (x, y);
+
+			if (pos != FormPos.TitleBar) {
+				HandleTitleBarLeave (x, y);
+				return true;
+			}
+
+			return true;
+		}
+		
+		protected virtual bool HandleNCMouseMove (ref Message m)
+		{
+
+			int x = Control.LowOrder((int)m.LParam.ToInt32( ));
+			int y = Control.HighOrder((int)m.LParam.ToInt32( ));
+
+			NCPointToClient (ref x, ref y);
+			FormPos pos = FormPosForCoords (x, y);
+
+			if (pos == FormPos.TitleBar) {
+				HandleTitleBarMove (x, y);
+				return true;
+			}
+
+			return true;
+			
+		}
+		
 		protected virtual bool HandleNCLButtonDown (ref Message m)
 		{
 			Activate ();
@@ -391,6 +497,8 @@ namespace System.Windows.Forms {
 			start = Cursor.Position;
 			virtual_position = form.Bounds;
 
+			is_mouse_down_menu = false;
+			
 			int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
 			int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
 			
@@ -421,8 +529,46 @@ namespace System.Windows.Forms {
 		{
 		}
 		
+		protected virtual void HandleTitleBarLeave (int x, int y)
+		{
+			is_mouse_down_menu = false;
+		}
+		
+		protected virtual void HandleTitleBarMove (int x, int y)
+		{
+			if (!is_mouse_down_menu)
+				return;
+			
+			bool any_change = false;
+			foreach (TitleButton button in title_buttons) {
+				if (button == null)
+					continue;
+				
+				if (button.Rectangle.Contains (x, y)) {
+					any_change |= button.State != ButtonState.Pushed;
+					button.State = ButtonState.Pushed;
+				} else {
+					any_change |= button.State != ButtonState.Normal;
+					button.State = ButtonState.Normal;
+				}
+			}
+			if (any_change)
+				XplatUI.InvalidateNC (form.Handle);
+		}
+		
 		protected virtual void HandleTitleBarUp (int x, int y)
 		{
+			is_mouse_down_menu = false;
+			
+			foreach (TitleButton button in title_buttons) {
+				if (button == null)
+					continue;
+					
+				button.State = ButtonState.Normal;
+				if (button.Rectangle.Contains (x, y)) {
+					button.Clicked (this, EventArgs.Empty);
+				} 
+			}
 		}
 		
 		protected virtual void HandleTitleBarDown (int x, int y)
@@ -430,6 +576,8 @@ namespace System.Windows.Forms {
 			foreach (TitleButton button in title_buttons) {
 				if (button != null && button.Rectangle.Contains (x, y)) {
 					button.State = ButtonState.Pushed;
+					XplatUI.InvalidateNC (form.Handle);
+					is_mouse_down_menu = true;
 					return;
 				}
 			}
@@ -611,13 +759,6 @@ namespace System.Windows.Forms {
 			NCPointToClient (ref x, ref y);
 			FormPos pos = FormPosForCoords (x, y);
 
-			foreach (TitleButton button in title_buttons) {
-				if (button != null && button.Rectangle.Contains (x, y)) {
-					button.Clicked (this, EventArgs.Empty);
-					return true;
-				}
-			}
-
 			if (pos == FormPos.TitleBar) {
 				HandleTitleBarUp (x, y);
 				return true;
@@ -632,9 +773,8 @@ namespace System.Windows.Forms {
 				return;
 
 			dc.FillRectangle (SystemBrushes.Control, button.Rectangle);
-
 			ControlPaint.DrawCaptionButton (dc, button.Rectangle,
-					button.Caption, ButtonState.Normal);
+					button.Caption, button.State);
 		}
 
 		public virtual void DrawMaximizedButtons (object sender, PaintEventArgs pe)

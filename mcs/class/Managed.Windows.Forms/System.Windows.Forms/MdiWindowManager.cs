@@ -28,6 +28,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 
@@ -76,11 +77,14 @@ namespace System.Windows.Forms {
 		{
 			if (form.window_state == FormWindowState.Minimized)
 				IconicBounds = form.Bounds;
+			XplatUI.RequestNCRecalc (mdi_container.Handle);
 			form.MdiParent.MdiContainer.SizeScrollBars ();
 		}
 
 		private void FormSizeChangedHandler (object sender, EventArgs e)
 		{
+			XplatUI.RequestNCRecalc (form.MdiParent.MdiContainer.Handle);
+			XplatUI.RequestNCRecalc (form.Handle);
 			form.MdiParent.MdiContainer.SizeScrollBars ();
 		}
 	
@@ -124,8 +128,14 @@ namespace System.Windows.Forms {
 				MainMenu clone = (MainMenu) parent.Menu.CloneMenu ();
 				res.MergeMenu (clone);
 			}
-
-			res.MenuItems.Add (new MenuItem ()); // Dummy item to get the menu height correct
+			
+			if (form.Menu != null) {
+				MainMenu clone = (MainMenu) form.Menu.CloneMenu ();
+				res.MergeMenu (clone);
+			}
+			
+			if (res.MenuItems.Count == 0)
+				res.MenuItems.Add (new MenuItem ()); // Dummy item to get the menu height correct
 			
 			res.SetForm (parent);
 			return res;
@@ -253,7 +263,7 @@ namespace System.Windows.Forms {
 
 		public override void SetWindowState (FormWindowState old_state, FormWindowState window_state)
 		{
-			if (this.mdi_container.SetWindowStates (this, window_state))
+			if (this.mdi_container.SetWindowStates (this))
 				return;
 			
 			if (prev_window_state == window_state)
@@ -292,6 +302,7 @@ namespace System.Windows.Forms {
 
 			form.ResetCursor ();
 			XplatUI.RequestNCRecalc (mdi_container.Parent.Handle);
+			XplatUI.RequestNCRecalc (form.Handle);
 			mdi_container.SizeScrollBars ();
 		}
 
@@ -315,7 +326,7 @@ namespace System.Windows.Forms {
 			y += TitleBarHeight;
 			FormPos pos = FormPosForCoords (x, y);
 
-			if (pos != FormPos.TitleBar)
+			if (pos != FormPos.TitleBar && pos != FormPos.Top)
 				return;
 
 			form.WindowState = FormWindowState.Maximized;
@@ -324,11 +335,7 @@ namespace System.Windows.Forms {
 		private void FormClosed (object sender, EventArgs e)
 		{
 			mdi_container.CloseChildForm (form);
-			if (form.WindowState == FormWindowState.Maximized) {
-				XplatUI.RequestNCRecalc (mdi_container.Parent.Handle);
-				mdi_container.ParentForm.PerformLayout();
-				XplatUI.SendMessage(mdi_container.ParentForm.Handle, Msg.WM_NCPAINT, IntPtr.Zero, new IntPtr(1)); 
-			}
+			XplatUI.RequestNCRecalc (mdi_container.Parent.Handle);
 			mdi_container.SizeScrollBars ();
 		}
 
@@ -413,6 +420,59 @@ namespace System.Windows.Forms {
 			start = Cursor.Position;
 		}
 
+		public override bool HandleMessage (ref Message m)
+		{
+			switch ((Msg)m.Msg) {
+			case Msg.WM_NCMOUSEMOVE:
+				XplatUI.RequestAdditionalWM_NCMessages (form.Handle, true, true);
+				break;
+				
+			case Msg.WM_NCCALCSIZE:
+				XplatUIWin32.NCCALCSIZE_PARAMS ncp;
+
+				if (m.WParam == (IntPtr)1) {
+					ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure (m.LParam,
+							typeof(XplatUIWin32.NCCALCSIZE_PARAMS));
+
+					int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
+					if (!IsMaximized)
+						bw++;
+
+					if (HasBorders) {
+						ncp.rgrc1.top += TitleBarHeight + bw;
+						if (!IsMaximized) {
+							ncp.rgrc1.left += bw;
+							ncp.rgrc1.bottom -= bw;
+							ncp.rgrc1.right -= bw;
+						} else {
+							ncp.rgrc1.left += 1;
+							ncp.rgrc1.bottom -= 2; 
+							ncp.rgrc1.right -= 3;
+						}
+					}
+					
+					if (ncp.rgrc1.bottom < ncp.rgrc1.top)
+						ncp.rgrc1.bottom = ncp.rgrc1.top + 1;
+						
+					Marshal.StructureToPtr (ncp, m.LParam, true);
+				}
+
+				return false;
+
+			//case Msg.WM_NCPAINT:
+			//        PaintEventArgs pe = XplatUI.PaintEventStart (form.Handle, false);
+
+			//        Rectangle clip;
+			//        clip = new Rectangle (0, 0, form.Width, form.Height);
+
+			//        ThemeEngine.Current.DrawManagedWindowDecorations (pe.Graphics, clip, this);
+			//        XplatUI.PaintEventEnd (form.Handle, false);
+			//        return true;
+			}
+		
+			return base.HandleMessage (ref m);
+		}
+	
 		protected override void DrawVirtualPosition (Rectangle virtual_position)
 		{
 			ClearVirtualPosition ();
@@ -446,7 +506,7 @@ namespace System.Windows.Forms {
 		{
 			if (mdi_container.ActiveMdiChild != form) {
 				mdi_container.ActivateChild (form);
-				mdi_container.SetWindowStates (this, form.WindowState);
+				mdi_container.SetWindowStates (this);
 			}
 			base.Activate ();
 		}

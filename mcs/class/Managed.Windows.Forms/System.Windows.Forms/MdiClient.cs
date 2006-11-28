@@ -29,6 +29,7 @@
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 	[DesignTimeVisible(false)]
@@ -47,8 +48,9 @@ namespace System.Windows.Forms {
 		private LayoutEventHandler initial_layout_handler;
 		private bool setting_windowstates = false;
 		internal ArrayList mdi_child_list;
-        private string form_text;
-        private bool setting_form_text;
+		private string form_text;
+		private bool setting_form_text;
+		internal ArrayList original_order = new ArrayList (); // The order the child forms are added (used by the main menu to show the window menu)
 
 		#endregion	// Local Variables
 
@@ -152,6 +154,38 @@ namespace System.Windows.Forms {
 				}
 			}
 			*/
+			switch ((Msg)m.Msg) {
+			case Msg.WM_NCCALCSIZE:
+				XplatUIWin32.NCCALCSIZE_PARAMS	ncp;
+
+				if (m.WParam == (IntPtr) 1) {
+					ncp = (XplatUIWin32.NCCALCSIZE_PARAMS) Marshal.PtrToStructure (m.LParam,
+							typeof (XplatUIWin32.NCCALCSIZE_PARAMS));
+
+					int bw = 2;
+
+					ncp.rgrc1.top += bw;
+					ncp.rgrc1.bottom -= bw;
+					ncp.rgrc1.left += bw;
+					ncp.rgrc1.right -= bw;
+					
+					Marshal.StructureToPtr (ncp, m.LParam, true);
+				}
+
+				break;
+
+			case Msg.WM_NCPAINT:
+				PaintEventArgs pe = XplatUI.PaintEventStart (Handle, false);
+
+				Rectangle clip;
+				clip = new Rectangle (0, 0, Width, Height);
+
+				ControlPaint.DrawBorder3D (pe.Graphics, clip, Border3DStyle.Sunken);
+				XplatUI.PaintEventEnd (Handle, false);
+				m.Result = IntPtr.Zero;
+				return ;
+			}
+
 			base.WndProc (ref m);
 		}
 
@@ -159,6 +193,8 @@ namespace System.Windows.Forms {
 		{
 			base.OnResize (e);
 
+			if (Parent != null)
+				XplatUI.InvalidateNC (Parent.Handle);
 			// Should probably make this into one loop
 			SizeScrollBars ();
 			ArrangeWindows ();
@@ -253,6 +289,8 @@ namespace System.Windows.Forms {
 					hbar.Visible = false;
 				if (vbar != null)
 					vbar.Visible = false;
+				if (sizegrip != null)
+					sizegrip.Visible = false;
 				return;
 			}
 				
@@ -354,13 +392,15 @@ namespace System.Windows.Forms {
 			int virtual_left = Math.Min (left, 0);
 			int virtual_right = Math.Max (right, right_edge);
 			int diff = (virtual_right - virtual_left) - right_edge;
+
 			hbar.Left = 0;
-			hbar.Top = Height - hbar.Height;
-			hbar.Width = Width - (vert_vis ? SystemInformation.VerticalScrollBarWidth : 0);
+			hbar.Top = ClientRectangle.Bottom - hbar.Height;
+			hbar.Width = ClientRectangle.Width - (vert_vis ? SystemInformation.VerticalScrollBarWidth : 0);
 			hbar.LargeChange = 50;
-			hbar.Maximum = diff + 51;
+			hbar.Maximum = diff + 51 + (vert_vis ? SystemInformation.VerticalScrollBarWidth : 0);
 			hbar.Value = -virtual_left;
 			hbar.ValueChanged += new EventHandler (HBarValueChanged);
+			XplatUI.SetZOrder (hbar.Handle, IntPtr.Zero, true, false);
 			initializing_scrollbars = false;
 		}
 
@@ -370,13 +410,15 @@ namespace System.Windows.Forms {
 			int virtual_top = Math.Min (top, 0);
 			int virtual_bottom = Math.Max (bottom, bottom_edge);
 			int diff = (virtual_bottom - virtual_top) - bottom_edge;
+			
 			vbar.Top = 0;
-			vbar.Left = Width - vbar.Width;
-			vbar.Height = Height - (horz_vis ? SystemInformation.HorizontalScrollBarHeight : 0);
+			vbar.Left = ClientRectangle.Right - vbar.Width;
+			vbar.Height = ClientRectangle.Height - (horz_vis ? SystemInformation.HorizontalScrollBarHeight : 0);
 			vbar.LargeChange = 50;
-			vbar.Maximum = diff + 51;
-			vbar.Value = -virtual_top;
+			vbar.Minimum = virtual_top;
+			vbar.Maximum = diff + 51 + (horz_vis ? SystemInformation.HorizontalScrollBarHeight : 0);
 			vbar.ValueChanged += new EventHandler (VBarValueChanged);
+			XplatUI.SetZOrder (vbar.Handle, IntPtr.Zero, true, false);
 			initializing_scrollbars = false;
 		}
 
@@ -554,24 +596,21 @@ namespace System.Windows.Forms {
 				return;
 
 			Form current = (Form) Controls [0];
-
+			form.SuspendLayout ();
 			form.BringToFront ();
-
+			if (vbar != null && vbar.Visible)
+				XplatUI.SetZOrder (vbar.Handle, IntPtr.Zero, true, false);
+			if (hbar != null && hbar.Visible)
+				XplatUI.SetZOrder (hbar.Handle, IntPtr.Zero, true, false);
+			SetWindowStates ((MdiWindowManager) form.window_manager);
+			form.ResumeLayout (false);
 			if (current != form) {
-				Message m = new Message ();
-				m.Msg = (int) Msg.WM_NCPAINT;
-				m.HWnd = current.Handle;
-				m.LParam = IntPtr.Zero;
-				m.WParam = new IntPtr (1);
-				XplatUI.SendMessage (ref m);
-
-				m.HWnd = form.Handle;
-				XplatUI.SendMessage (ref m);
-				this.SetWindowStates ((MdiWindowManager) form.window_manager, form.WindowState);
+				XplatUI.InvalidateNC (current.Handle);
+				XplatUI.InvalidateNC (form.Handle);
 			}
 		}
 		
-		internal bool SetWindowStates (MdiWindowManager wm, FormWindowState window_state)
+		internal bool SetWindowStates (MdiWindowManager wm)
 		{
 		/*
 			MDI WindowState behaviour:
@@ -618,8 +657,11 @@ namespace System.Windows.Forms {
 				form.WindowState = FormWindowState.Maximized;
 			}
 			SetParentText(false);
-			SizeScrollBars();
+			
 			XplatUI.RequestNCRecalc(ParentForm.Handle);
+			XplatUI.RequestNCRecalc (Handle);
+
+			SizeScrollBars ();
 
 			setting_windowstates = false;
 

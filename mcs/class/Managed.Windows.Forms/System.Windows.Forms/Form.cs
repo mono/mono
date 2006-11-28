@@ -552,6 +552,7 @@ namespace System.Windows.Forms {
 					throw new ArgumentException ();
 
 				if (mdi_parent != null) {
+					mdi_parent.MdiContainer.original_order.Remove (this);
 					mdi_parent.MdiContainer.Controls.Remove (this);
 				}
 
@@ -559,6 +560,7 @@ namespace System.Windows.Forms {
 					mdi_parent = value;
 					window_manager = new MdiWindowManager (this,
 							mdi_parent.MdiContainer);
+					mdi_parent.MdiContainer.original_order.Add (this);
 					mdi_parent.MdiContainer.Controls.Add (this);
 
 					RecreateHandle ();
@@ -1873,17 +1875,46 @@ namespace System.Windows.Forms {
 					}
 
 					if (ActiveMaximizedMdiChild != null) {
-						ActiveMaximizedMdiChild.HandleMenuMouseDown (ActiveMenu,
+						if (ActiveMaximizedMdiChild.HandleMenuMouseDown (ActiveMenu,
 								LowOrder ((int) m.LParam.ToInt32 ()),
-								HighOrder ((int) m.LParam.ToInt32 ()));
+								HighOrder ((int) m.LParam.ToInt32 ()))) {
+							// Don't let base process this message, otherwise we won't
+							// get a WM_NCLBUTTONUP.
+							return;
+						}
 					}
 					base.WndProc(ref m);
 					return;
 				}
+				case Msg.WM_NCLBUTTONUP: {
+					if (ActiveMaximizedMdiChild != null) {
+						ActiveMaximizedMdiChild.HandleMenuMouseUp (ActiveMenu,
+								LowOrder ((int)m.LParam.ToInt32 ()),
+								HighOrder ((int)m.LParam.ToInt32 ()));
+					}
+					base.WndProc (ref m);
+					return;
+				}
 
+				case Msg.WM_NCMOUSELEAVE: {
+					if (ActiveMaximizedMdiChild != null) {
+						ActiveMaximizedMdiChild.HandleMenuMouseLeave(ActiveMenu,
+								LowOrder((int)m.LParam.ToInt32()),
+								HighOrder((int)m.LParam.ToInt32()));
+					}
+					base.WndProc(ref m);
+					return;
+				}
+				
 				case Msg.WM_NCMOUSEMOVE: {
 					if (XplatUI.IsEnabled (Handle) && ActiveMenu != null) {
 						ActiveMenu.OnMouseMove(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 0));
+					}
+					
+					if (ActiveMaximizedMdiChild != null) {
+						ActiveMaximizedMdiChild.HandleMenuMouseMove (ActiveMenu,
+								LowOrder ((int)m.LParam.ToInt32 ()),
+								HighOrder ((int)m.LParam.ToInt32 ()));
 					}
 					base.WndProc(ref m);
 					return;

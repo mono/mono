@@ -1,3 +1,51 @@
+2006-11-28  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* XplatUIStructs.cs: 
+	- Added WM_NCMOUSEHOVER and WM_NCMOUSELEAVE.
+	
+	* XplatUIWin32.cs: 
+	- Added TME_NONCLIENT to TMEFlags.
+	- Handles WM_NCMOUSEMOVE in GetMessage to 
+	  generate WM_NCMOUSEHOVER and WM_NCMOUSELEAVE messages.
+
+	* MdiWindowManager:
+	- Now merges mdi child menu to parent menu when maximized.
+	- Recalculate NC areas of both mdi child and mdi parent. 
+	  Fixes #79757 (4).
+	  on window state and size changes.Fixes #79844 (3).
+	- Handle WM_NCCALCSIZE to properly calculate borders.
+
+	* Form.cs:
+	- Add/remove to the mdi containers list of mdi children 
+	  in the order they are added.
+	- Pass on WM_NCLBUTTONUP, WM_NCMOUSEMOVE and WM_NCMOUSELEAVE 
+	  to the maximized mdi child.
+	
+	* InternalWindowManager.cs:
+	- Only execute a click on the control buttons on the mouse up,
+	  not on the mouse down. Show the state of the button 
+	  (was only showing Normal state, never Pressed state). The
+	  pressed button now follows the mouse (if you click the Close 
+	  button and move the mouse over the Maximize button, the 
+	  Maximize button will be shown as pressed). Since Win32 does
+	  not generate WM_NCLBUTTONUP if you release the button outside
+	  of the nc area, we need to handle WM_NCMOUSELEAVE and treat
+	  it as a mouse up.
+	
+	* ThemeWin32Classic.cs:
+	- Draw a missing border around mdi child forms. Fixes #79844 (2).
+
+	* MdiClient.cs:
+	- Added a list of forms which contains the order the forms are
+	  added to the mdi parent.
+	- Handle WM_NCPAINT to properly draw a 3D border. Fixes #79844 (2).
+	- Handle WM_NCCALCSIZE to properly calculate the 3D border.
+	- If the active form changes set the scrollbars to the top
+	  of the Z order, otherwise the form could hide them.
+	- Scrollbars are now sized according to ClientSize, not 
+	  to Size, and they take into account the other scrollbar
+	  to determine maximum.
+	
 2006-11-28  Rolf Bjarne Kvinge <RKvinge@novell.com>
 	
 	* XplatUI.cs:
