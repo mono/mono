@@ -263,7 +263,6 @@ namespace Microsoft.Win32
 		/// <summary>
 		///	Create a sub key.
 		/// </summary>
-		[MonoTODO("RegistryPermission")]
 		public RegistryKey CreateSubKey (string subkey)
 		{
 			AssertKeyStillValid ();
