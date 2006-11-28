@@ -1,3 +1,13 @@
+2006-11-27  Jonathan Chambers  <joncham@gmail.com>
+  
+	* marshal.c: 
+		(mono_marshal_emit_managed_wrapper): Level of indirection for 
+		mono_marshal_get_managed_wrapper so that a wrapper for a managed method
+		can be generated without a delegate class.
+		(mono_marshal_get_managed_wrapper): Move wrapper logic to mono_marshal_emit_managed_wrapper.
+	
+	Signed-off-by: Jonathan Chambers <joncham@gmail.com>
+
 2006-11-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* console-io.c: add the 'signal' call removed by mistake. Fixes bug
