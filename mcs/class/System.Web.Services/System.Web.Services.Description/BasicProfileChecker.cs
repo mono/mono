@@ -3,6 +3,7 @@
 //
 // Author:
 //   Lluis Sanchez (lluis@novell.com)
+//   Atsushi Enomoto (atsushi@ximian.com)
 //
 // Copyright (C) Novell, Inc., 2004
 //
@@ -31,6 +32,7 @@
 #if NET_2_0
 
 using System.Xml.Schema;
+using System.Xml.Serialization;
 using System.Xml;
 using System.Collections;
 
@@ -71,7 +73,11 @@ namespace System.Web.Services.Description
 		
 		public override void Check (ConformanceCheckContext ctx, ServiceDescription value)
 		{
-			
+			// R4005
+			if (value.Namespaces != null)
+				foreach (XmlQualifiedName qname in value.Namespaces.ToArray ())
+					if (qname.Namespace == "http://www.w3.org/XML/1998/namespace")
+						ctx.ReportRuleViolation (value, BasicProfileRules.R4005);
 		}
 		
 		public override void Check (ConformanceCheckContext ctx, ServiceDescriptionFormatExtension value)
@@ -95,13 +101,16 @@ namespace System.Web.Services.Description
 		
 		public override void Check (ConformanceCheckContext ctx, Message value)
 		{
-			// TODO: R2113
 		}
 		
 		public override void Check (ConformanceCheckContext ctx, Binding value)
 		{
 			SoapBinding sb = (SoapBinding) value.Extensions.Find (typeof(SoapBinding));
-			if (sb == null || sb.Transport == null || sb.Transport == "") {
+			if (sb == null) {
+				ctx.ReportRuleViolation (value, BasicProfileRules.R2401);
+				return;
+			}
+			if (sb.Transport == null || sb.Transport == "") {
 				ctx.ReportRuleViolation (value, BasicProfileRules.R2701);
 				return;
 			}
@@ -402,64 +411,64 @@ namespace System.Web.Services.Description
 	
 	internal class BasicProfileRules
 	{
-	
-	// 3.2 Conformance of Services, Consumers and Registries
-	
+		#region "Basic Profile 1.1 Section 4 (Service Description)"
+
+	// 4.1 Required Description
 		// Can't check: R0001
-		
-	// 3.3 Conformance Annotation in Descriptions
-	
-		// Can't check: R0002, R0003
-	
-	// 3.4 Conformance Annotation in Messages
-	
-		// Can't check: R0004, R0005, R0006, R0007
-		
-	// 3.5 Conformance Annotation in Registry Data
-	
-		// UDDI related: R3020, R3030, R3021, R3005, R3004.
-		
-	// 4.1 XML Representation of SOAP Messages
-		
-		// Rules not related to service description
-		
-	// 4.2 SOAP Processing Model
-	
-		// Rules not related to service description
-		
-	// 4.3 Use of SOAP in HTTP
-	
-		// Rules not related to service description
-		
-	// 5.1 Document structure
-	
+
+	// 4.2 Document Structure
+
+		// R2028, R2029: schema conformance, depends on underlying XML
+
 		public static readonly ConformanceRule R2001 = new ConformanceRule (
 			"R2001", 
 			"A DESCRIPTION MUST only use the WSDL \"import\" statement to import another WSDL description",
 			"");
-			
+
+		// FIXME: R2803
+
 		public static readonly ConformanceRule R2002 = new ConformanceRule (
 			"R2002", 
 			"To import XML Schema Definitions, a DESCRIPTION MUST use the XML Schema \"import\" statement",
 			"");
-			
+
+		// R2003: depends on ServiceDescription raw XML.
+		// R2004, R2009, R2010, R2011: requires schema resolution
+
 		public static readonly ConformanceRule R2007 = new ConformanceRule (
 			"R2007", 
 			"A DESCRIPTION MUST specify a non-empty location attribute on the wsdl:import element",
 			"");
-			
+
+		// R2008: denotes a possibility that cannot be verified.
+
+		// R2022, R2023, R4004: depends on underlying XML
+
+		public static readonly ConformanceRule R4005 = new ConformanceRule (
+			"R4005",
+			"A DESCRIPTION SHOULD NOT contain the namespace declaration xmlns:xml=\"http://www.w3.org/XML/1998/namespace\"",
+			"");
+
+		// R4002, R4003: depends on underlying XML
+
 		public static readonly ConformanceRule R2005 = new ConformanceRule (
 			"R2005", 
 			"The targetNamespace attribute on the wsdl:definitions element of a description that is being imported MUST have same the value as the namespace attribute on the wsdl:import element in the importing DESCRIPTION",
 			"");
 
+		// R2030: is satisfied by API nature (DocumentableItem).
+
+		// R2025: cannot be checked.
+
 		public static readonly ConformanceRule R2026 = new ConformanceRule (
 			"R2026", 
 			"A DESCRIPTION SHOULD NOT include extension elements with a wsdl:required attribute value of \"true\" on any WSDL construct (wsdl:binding,  wsdl:portType, wsdl:message, wsdl:types or wsdl:import) that claims conformance to the Profile",
 			"");
-			
-	// 5.2 Types
-	
+
+		// R2027: is about the CONSUMER, cannot be checked.
+
+	// 4.3 Types
+
 		public static readonly ConformanceRule R2101 = new ConformanceRule (
 			"R2101", 
 			"A DESCRIPTION MUST NOT use QName references to elements in namespaces that have been neither imported, nor defined in the referring WSDL document",
@@ -485,61 +494,69 @@ namespace System.Web.Services.Description
 			"In a DESCRIPTION, array declarations MUST NOT use wsdl:arrayType attribute in the type declaration",
 			"");
 			
-		// R2112: Suggestion.
-		// R2113: Not related to servide description
-		// R2114: Suggestion.
-		
-	// 5.3 Messages
+		// FIXME: R2112
+
+		// R2113: is about ENVELOPE.
+
+		// R2114: is satisfied by our processor.
+
+	// 4.4 Messages
 	
 		public static readonly ConformanceRule R2201 = new ConformanceRule (
 			"R2201", 
 			"A document-literal binding in a DESCRIPTION MUST, in each of its soapbind:body element(s), have at most one part listed in the parts attribute, if the parts attribute is specified",
+			"");
+
+		public static readonly ConformanceRule R2209 = new ConformanceRule (
+			"R2209", 
+			"A wsdl:binding in a DESCRIPTION SHOULD bind every wsdl:part of a wsdl:message in the wsdl:portType to which it refers to one of soapbind:body, soapbind:header, soapbind:fault  or soapbind:headerfault",
 			"");
 		
 		public static readonly ConformanceRule R2210 = new ConformanceRule (
 			"R2210", 
 			"If a document-literal binding in a DESCRIPTION does not specify the parts attribute on a soapbind:body element, the corresponding abstract wsdl:message MUST define zero or one wsdl:parts",
 			"");
-		
+
+		// R2202: Suggestion.
+
 		public static readonly ConformanceRule R2203 = new ConformanceRule (
 			"R2203", 
 			"An rpc-literal binding in a DESCRIPTION MUST refer, in its soapbind:body element(s), only to wsdl:part element(s) that have been defined using the type attribute",
 			"");
-		
+
+		// R2211: Related to message structure
+		// R2207: Optional
+
 		public static readonly ConformanceRule R2204 = new ConformanceRule (
 			"R2204", 
 			"A document-literal binding in a DESCRIPTION MUST refer, in each of its soapbind:body element(s), only to wsdl:part element(s) that have been defined using the element attribute",
 			"");
-		
+
+		// R2208: Optional
+		// FIXME: R2212, R2213, R2214
+
 		public static readonly ConformanceRule R2205 = new ConformanceRule (
 			"R2205", 
 			"A wsdl:binding in a DESCRIPTION MUST refer, in each of its soapbind:header, soapbind:headerfault and soapbind:fault elements, only to wsdl:part element(s) that have been defined using the element attribute",
 			"");
-		
-		public static readonly ConformanceRule R2209 = new ConformanceRule (
-			"R2209", 
-			"A wsdl:binding in a DESCRIPTION SHOULD bind every wsdl:part of a wsdl:message in the wsdl:portType to which it refers to one of soapbind:body, soapbind:header, soapbind:fault  or soapbind:headerfault",
-			"");
-		
+
 		public static readonly ConformanceRule R2206 = new ConformanceRule (
 			"R2206", 
 			"A wsdl:message in a DESCRIPTION containing a wsdl:part that uses the element attribute MUST refer, in that attribute, to a global element declaration",
 			"");
-		
-		// R2211: Related to message structure
-		// R2202: Suggestion.
-		// R2207: Optional
-		// R2208: Optional
-		
-	// 5.4 Port Types
-	
-		// TODO
-	
-	// 5.5 Bindings
-	
-		// TODO
-			
-	// 5.6 SOAP Binding
+
+	// 4.5 Port Types
+
+		// FIXME: R2301, R2302, R2303, R2304, R2305, R2306
+
+	// 4.6 Bindings
+
+		public static readonly ConformanceRule R2401 = new ConformanceRule (
+			"R2401", 
+			"A wsdl:binding element in a DESCRIPTION MUST use WSDL SOAP Binding as defined in WSDL 1.1 Section 3.",
+			"");
+
+	// 4.7 SOAP Binding
 		
 		public static readonly ConformanceRule R2701 = new ConformanceRule (
 			"R2701", 
@@ -561,31 +578,22 @@ namespace System.Web.Services.Description
 			"A wsdl:binding in a DESCRIPTION MUST use the value of \"literal\" for the use attribute in all soapbind:body, soapbind:fault, soapbind:header and soapbind:headerfault elements",
 			"");
 			
-		// R2707: Interpretation rule: A wsdl:binding in a DESCRIPTION that contains one or more  soapbind:body, soapbind:fault, soapbind:header or  soapbind:headerfault elements that do not specify the use attribute MUST be interpreted as though the value "literal" had been specified in each case
 		// R2709: Suggestion.
-		
-		// TODO
+
+		// FIXME: R2710, R2711, R2712, R2714, R2750, R2727,
+		// R2716, R2717, R2726, R2718, R2719, R2740, R2741,
+		// R2742, R2743, R2720, R2749, R2721, R2754, R2722,
+		// R2723, R2707, R2724, R2725, R2729, R2735, R2755,
+		// R2737, R2738, R2739, R2753, R2751, R2752, R2744,
+		// R2745, R2747, R2748
+
+	// 4.8 Use of XML Schema
+
+		// R2800: satisfied by API nature.
+		// R2801: ditto.
+
+		#endregion
 	}
-	
-	/* 
-		The following rules cannot be checked:
-		R2002, R2003, R4004, R4003, R2022, R2023, R2004, R2010, R2011
-			There is no access to the unerlying xml 
-			
-		The following are suggestions:
-		R2008, R2112
-		
-		The following are optional
-		R4002, R2020, R2021, R2024, R2114
-		
-		Can't be checked:
-		R2025
-		
-		Process related
-		R2027
-		
-		TODO: section 5.3
-	*/
 }
 
 #endif
