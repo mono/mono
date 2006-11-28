@@ -1,3 +1,12 @@
+2006-11-28  Marek Habersack  <grendello@gmail.com>
+
+	* SectionGroupInfo.cs: Implement merging of section groups with
+	the same names and parents.
+
+	* ConfigInfo.cs: Add an abstract method for merging sections.
+
+	* SectionInfo.cs: Add implementation of an abstract base method
+
 2006-08-23  Konstantin Triger <kostat@mainsoft.com>
 
 	* SectionInfo.cs: refactoring - remove unneeded bool? usage.

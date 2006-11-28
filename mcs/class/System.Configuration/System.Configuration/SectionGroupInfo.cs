@@ -198,9 +198,9 @@ namespace System.Configuration
 
 				if (name == "section")
 					cinfo = new SectionInfo ();
-				else if (name == "sectionGroup")
+				else if (name == "sectionGroup") {
 					cinfo = new SectionGroupInfo ();
-				else
+				} else
 					ThrowException ("Unrecognized element: " + reader.Name, reader);
 					
 				cinfo.ReadConfig (cfg, streamName, reader);
@@ -210,6 +210,9 @@ namespace System.Configuration
 				if (actInfo != null) {
 					if (actInfo.GetType () != cinfo.GetType ())
 						ThrowException ("A section or section group named '" + cinfo.Name + "' already exists", reader);
+					// Merge all the new data
+					actInfo.Merge (cinfo);
+					
 					// Make sure that this section is saved in this configuration file:
 					actInfo.StreamName = streamName;
 				}
@@ -340,9 +343,33 @@ namespace System.Configuration
 				if (data != null)
 					return data;
 			}
+			// It might be in the root section group
 			return null;
 		}
 
+		internal override void Merge (ConfigInfo newData)
+		{
+			SectionGroupInfo data = newData as SectionGroupInfo;
+			if (data == null)
+				return;
+			ConfigInfo actInfo;
+			if (data.sections != null && data.sections.Count > 0)
+				foreach (string key in data.sections.AllKeys) {
+					actInfo = sections[key];
+					if (actInfo != null)
+						continue;
+					sections.Add (key, data.sections[key]);
+				}
+			
+			if (data.groups != null && data.sections.Count > 0)
+				foreach (string key in data.groups.AllKeys) {
+					actInfo = groups[key];
+					if (actInfo != null)
+						continue;
+					groups.Add (key, data.groups[key]);
+				}
+		}
+		
 		public void WriteRootData (XmlWriter writer, Configuration config, ConfigurationSaveMode mode)
 		{
 			WriteContent (writer, config, mode, false);

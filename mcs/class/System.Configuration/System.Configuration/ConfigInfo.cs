@@ -80,6 +80,8 @@ namespace System.Configuration {
 		public abstract void WriteConfig (Configuration cfg, XmlWriter writer, ConfigurationSaveMode mode);
 		public abstract void ReadData (Configuration config, XmlTextReader reader, bool overrideAllowed);
 		public abstract void WriteData (Configuration config, XmlWriter writer, ConfigurationSaveMode mode);
+		
+		internal abstract void Merge (ConfigInfo data);
 	}
 }
 

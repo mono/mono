@@ -207,6 +207,9 @@ namespace System.Configuration
 				tr.Close ();*/
 			}
 		}
+		
+		internal override void Merge (ConfigInfo data)
+		{}
 	}
 }
 
