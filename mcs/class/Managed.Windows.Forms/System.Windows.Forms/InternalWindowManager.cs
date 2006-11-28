@@ -322,8 +322,6 @@ namespace System.Windows.Forms {
 		
 		public void HandleMenuMouseLeave(MainMenu menu, int x, int y)
 		{
-			Point pt = MenuTracker.ScreenToMenu (menu, new Point(x, y));
-
 			foreach (TitleButton button in title_buttons) {
 				if (button != null) {
 					button.State = ButtonState.Normal;

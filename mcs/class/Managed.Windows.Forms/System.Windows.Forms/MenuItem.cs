@@ -568,7 +568,6 @@ namespace System.Windows.Forms
 					}
 					
 					// Add new forms and update state for existing forms.
-					MenuItem previous = null;
 					for ( int i = 0; i < mdicontainer.original_order.Count; i++) {
 						Form mdichild = (Form) mdicontainer.original_order [i];
 						MenuItem item;

@@ -1,5 +1,10 @@
 2006-11-28  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* MenuItem.cs: Fixed a warning.
+	* InternalWindowManager: Fixed a warning.
+
+2006-11-28  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* MenuItem.cs:
 	- When cloning a menu also clone MdiList and clone the 
 	  window menu items properly (as the forms and menuitems
