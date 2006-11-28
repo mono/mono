@@ -277,7 +277,9 @@ namespace System.Web.Compilation
 			}
 
 			isApplication = tparser.DefaultDirectiveName == "application";
-
+#if NET_2_0
+			tparser.RegisterConfigControls ();
+#endif
 			Parse ();
 
 			BaseCompiler compiler = GetCompilerFromType ();

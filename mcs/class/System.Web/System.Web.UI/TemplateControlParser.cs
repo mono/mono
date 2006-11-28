@@ -56,7 +56,7 @@ namespace System.Web.UI {
 		protected TemplateControlParser ()
 		{
 		}
-
+		
 		internal override void ProcessMainAttributes (Hashtable atts)
 		{
 			autoEventWireup = GetBool (atts, "AutoEventWireup", PagesConfig.AutoEventWireup);
@@ -102,10 +102,7 @@ namespace System.Web.UI {
 					if (atts.Count != 0)
 						ThrowParseException ("Unknown attribute: " + GetOneKey (atts));
 
-					AddImport (ns);
-					Assembly ass = AddAssemblyByName (assembly);
-					AddDependency (ass.Location);
-					RootBuilder.Foundry.RegisterFoundry (tagprefix, ass, ns);
+					RegisterNamespace (tagprefix, ns, assembly);
 					return;
 				}
 
@@ -121,28 +118,7 @@ namespace System.Web.UI {
 				if (!src.EndsWith (".ascx"))
 					ThrowParseException ("Source file extension for controls must be .ascx");
 
-				string realpath = MapPath (src);
-				if (!File.Exists (realpath))
-					throw new ParseException (Location, "Could not find file \"" 
-						+ realpath + "\".");
-
-				string vpath = UrlUtils.Combine (BaseVirtualDir, src);
-				Type type = null;
-				AddDependency (realpath);
-				try {
-					ArrayList other_deps = new ArrayList ();
-					type = UserControlParser.GetCompiledType (vpath, realpath, other_deps, Context);
-					foreach (string s in other_deps) {
-						AddDependency (s);
-					}
-				} catch (ParseException pe) {
-					if (this is UserControlParser)
-						throw new ParseException (Location, pe.Message, pe);
-					throw;
-				}
-
-				AddAssembly (type.Assembly, true);
-				RootBuilder.Foundry.RegisterFoundry (tagprefix, tagname, type);
+				RegisterCustomControl (tagprefix, tagname, src);
 				return;
 			}
 

@@ -30,6 +30,7 @@
 
 using System.CodeDom.Compiler;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Security.Permissions;
@@ -67,6 +68,7 @@ namespace System.Web.UI {
 		string oc_header, oc_custom, oc_param, oc_controls;
 		bool oc_shared;
 		OutputCacheLocation oc_location;
+		CultureInfo invariantCulture = CultureInfo.InvariantCulture;
 #if NET_2_0
 		string src;
 		string partialClassName;
@@ -77,6 +79,9 @@ namespace System.Web.UI {
 		internal TemplateParser ()
 		{
 			imports = new ArrayList ();
+#if NET_2_0
+			AddNamespaces (imports);
+#else
 			imports.Add ("System");
 			imports.Add ("System.Collections");
 			imports.Add ("System.Collections.Specialized");
@@ -85,12 +90,12 @@ namespace System.Web.UI {
 			imports.Add ("System.Text.RegularExpressions");
 			imports.Add ("System.Web");
 			imports.Add ("System.Web.Caching");
-			imports.Add ("System.Resources"); // should perhaps be conditional on App_Global/LocalResources existence?
 			imports.Add ("System.Web.Security");
 			imports.Add ("System.Web.SessionState");
 			imports.Add ("System.Web.UI");
 			imports.Add ("System.Web.UI.WebControls");
 			imports.Add ("System.Web.UI.HtmlControls");
+#endif
 
 			assemblies = new ArrayList ();
 #if NET_2_0
@@ -116,7 +121,7 @@ namespace System.Web.UI {
 
 			language = CompilationConfig.DefaultLanguage;
 		}
-
+		
 		internal void AddApplicationAssembly ()
 		{
 			string location = Context.ApplicationInstance.AssemblyLocation;
@@ -127,6 +132,78 @@ namespace System.Web.UI {
 
 		protected abstract Type CompileIntoType ();
 
+#if NET_2_0
+		void AddNamespaces (ArrayList imports)
+		{
+			if (BuildManager.HaveResources)
+				imports.Add ("System.Resources");
+			
+			PagesSection pages = WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
+			if (pages == null)
+				return;
+
+			NamespaceCollection namespaces = pages.Namespaces;
+			if (namespaces == null || namespaces.Count == 0)
+				return;
+
+			foreach (NamespaceInfo nsi in namespaces)
+				imports.Add (nsi.Namespace);
+		}
+		
+		internal void RegisterConfigControls ()
+		{
+			PagesSection pages = WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
+			if (pages == null)
+				return;
+
+			TagPrefixCollection controls = pages.Controls;
+			if (controls == null || controls.Count == 0)
+				return;
+
+			foreach (TagPrefixInfo tpi in controls) {
+				if (!String.IsNullOrEmpty (tpi.TagName))
+					RegisterCustomControl (tpi.TagPrefix, tpi.TagName, tpi.Source);
+				else if (!String.IsNullOrEmpty (tpi.Namespace))
+					RegisterNamespace (tpi.TagPrefix, tpi.Namespace, tpi.Assembly);
+			}
+		}
+#endif
+		
+		internal void RegisterCustomControl (string tagPrefix, string tagName, string src)
+		{
+			string realpath = MapPath (src);
+			if (String.Compare (realpath, inputFile, false, invariantCulture) == 0)
+				return;
+			
+			if (!File.Exists (realpath))
+				throw new ParseException (Location, "Could not find file \"" + realpath + "\".");
+			string vpath = UrlUtils.Combine (BaseVirtualDir, src);
+			Type type = null;
+			AddDependency (realpath);
+			try {
+				ArrayList other_deps = new ArrayList ();
+				type = UserControlParser.GetCompiledType (vpath, realpath, other_deps, Context);
+				foreach (string s in other_deps) {
+					AddDependency (s);
+				}
+			} catch (ParseException pe) {
+				if (this is UserControlParser)
+					throw new ParseException (Location, pe.Message, pe);
+				throw;
+			}
+
+			AddAssembly (type.Assembly, true);
+			RootBuilder.Foundry.RegisterFoundry (tagPrefix, tagName, type);
+		}
+
+		internal void RegisterNamespace (string tagPrefix, string ns, string assembly)
+		{
+			AddImport (ns);
+			Assembly ass = AddAssemblyByName (assembly);
+			AddDependency (ass.Location);
+			RootBuilder.Foundry.RegisterFoundry (tagPrefix, ass, ns);
+		}
+		
 		internal virtual void HandleOptions (object obj)
 		{
 		}

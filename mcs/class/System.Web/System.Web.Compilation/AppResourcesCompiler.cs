@@ -123,6 +123,7 @@ namespace System.Web.Compilation
 			} else {
 				WebConfigurationManager.ExtraAssemblies.Add(ret.PathToAssembly);
 				BuildManager.TopLevelAssemblies.Add (ret.CompiledAssembly);
+				BuildManager.HaveResources = true;
 			}
 			
 			return ret;

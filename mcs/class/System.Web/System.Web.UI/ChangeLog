@@ -1,3 +1,16 @@
+2006-11-28  Marek Habersack  <grendello@gmail.com>
+
+	* TemplateControlParser.cs: Use the new TemplateParser methods to
+	register controls/namespaces
+
+	* TemplateParser.cs: Implement support for the
+	system.web/pages/namespaces collection instead of hard-coding the
+	namespaces into the source.
+	Refactoring: added two internal methods to handle both the
+	system.web/pages/controls registration and the Register directive.
+	Added a new internal method to pull the system.web/pages/controls
+	collection before parsing.
+
 2006-11-27  Marek Habersack  <grendello@gmail.com>
 
 	* SimpleWebHandlerParser.cs: Added support for looking up types in

@@ -46,6 +46,7 @@ namespace System.Web.Compilation {
 	public sealed class BuildManager {
 		private static List<string> AppCode_Assemblies = new List<string>();
 		private static List<Assembly> TopLevel_Assemblies = new List<Assembly>();
+		private static bool haveResources;
 		
 		internal BuildManager ()
 		{
@@ -201,18 +202,17 @@ namespace System.Web.Compilation {
 
 		// Assemblies built from the App_Code directory
 		public static IList CodeAssemblies {
-			get {
-				return AppCode_Assemblies;
-			}
+			get { return AppCode_Assemblies; }
 		}
 
-		internal static IList TopLevelAssemblies 
-		{
-			get {
-				return TopLevel_Assemblies;
-			}
+		internal static IList TopLevelAssemblies {
+			get { return TopLevel_Assemblies; }
 		}
-		
+
+		internal static bool HaveResources {
+			get { return haveResources; }
+			set { haveResources = value; }
+		}
 	}
 }
 
