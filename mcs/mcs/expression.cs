@@ -3723,15 +3723,14 @@ namespace Mono.CSharp {
 			RootScopeInfo host = null;
 			ToplevelBlock toplevel = block.Toplevel;
 			while (toplevel != null) {
-				if (toplevel.IsLocalParameter (name)) {
-					host = toplevel.RootScope;
+				if (toplevel.IsLocalParameter (name))
 					break;
-				}
 
 				toplevel = toplevel.Container;
 			}
 
-			variable = host.AddParameter (par, idx);
+			ScopeInfo scope = toplevel.CreateScopeInfo ();
+			variable = scope.AddParameter (par, idx);
 			type = variable.Type;
 			return true;
 		}
