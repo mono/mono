@@ -126,10 +126,6 @@ namespace System.Windows.Forms {
 		#endregion
 
 		#region	Static Methods
-		public void SetObjectWindow(Hwnd obj, IntPtr window) {
-			windows[window] = obj;
-		}
-
 		public static Hwnd ObjectFromWindow(IntPtr window) {
 			Hwnd rv;
 			lock (windows) {
@@ -275,9 +271,11 @@ namespace System.Windows.Forms {
 
 				zombie = false;
 
-				lock (windows) {
-					if (windows[client_window] == null) {
-						windows[client_window] = this;
+				if (client_window != IntPtr.Zero) {
+					lock (windows) {
+						if (windows[client_window] == null) {
+							windows[client_window] = this;
+						}
 					}
 				}
 			}
@@ -519,9 +517,11 @@ namespace System.Windows.Forms {
 
 				zombie = false;
 
-				lock (windows) {
-					if (windows[whole_window] == null) {
-						windows[whole_window] = this;
+				if (whole_window != IntPtr.Zero) {
+					lock (windows) {
+						if (windows[whole_window] == null) {
+							windows[whole_window] = this;
+						}
 					}
 				}
 			}

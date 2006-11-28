@@ -1,3 +1,9 @@
+2006-11-27  Chris Toshok  <toshok@ximian.com>
+
+	* Hwnd.cs: only add the hwnd to the windows hash in
+	set_WholeWindow and set_ClientWindow if whole_window/client_window
+	are not IntPtr.Zero.  also, remove the unused SetObjectWindow.
+
 2006-11-27  Mike Kestner  <mkestner@novell.com>
 
 	* ComboBox.cs: remove redundant OnDropDown call.  It is called
