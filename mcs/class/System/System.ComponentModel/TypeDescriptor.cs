@@ -399,12 +399,29 @@ public sealed class TypeDescriptor
 		return GetEditor (component, editorBaseType, false);
 	}
 
-	[MonoTODO]
 	public static object GetEditor (object component, Type editorBaseType, bool noCustomTypeDesc)
 	{
+		if (component == null)
+			throw new ArgumentNullException ("component");
+		if (editorBaseType == null)
+			throw new ArgumentNullException ("editorBaseType");
+		
 		if (!noCustomTypeDesc && (component is ICustomTypeDescriptor))
 			return ((ICustomTypeDescriptor) component).GetEditor (editorBaseType);
-		throw new NotImplementedException ();
+
+		object [] atts = component.GetType ().GetCustomAttributes (typeof (EditorAttribute), true);
+		if (atts.Length == 0)
+			return null;
+		string target = editorBaseType.AssemblyQualifiedName;
+		
+		foreach (EditorAttribute ea in atts){
+			if (ea.EditorBaseTypeName == target){
+				Type t = Type.GetType (ea.EditorTypeName, true);
+
+				return Activator.CreateInstance (t);
+			}
+		}
+		return null;
 	}
 
 	public static EventDescriptorCollection GetEvents (object component)

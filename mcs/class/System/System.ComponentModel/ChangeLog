@@ -1,3 +1,8 @@
+2006-11-28  Miguel de Icaza  <miguel@novell.com>
+
+	* TypeDescriptor.cs: This implementation is really from Gonzalo,
+	he dictated to me :-)
+
 2006-11-20  Nagappan A  <anagappan@novell.com>
 
 	* ISupportInitializeNotification.cs: New Interface file to support
