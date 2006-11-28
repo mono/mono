@@ -1,4 +1,8 @@
 
+Tue Nov 28 21:24:55 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: handle also boxing of r4 values (bug #80024).
+
 Tue Nov 28 19:45:44 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c: force indirect calls until we reserve
