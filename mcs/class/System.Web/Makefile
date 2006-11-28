@@ -174,14 +174,14 @@ endif
 run-aaa: test
 	$(TEST_RUNTIME) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) \
 	/output:TestResult-$(PROFILE).log /include:aaa /xml:TestResult-$(PROFILE).xml $(test_assemblies) || ok=false; \
- 	(echo ''; cat TestResult-$(PROFILE).log) | sed '1,/^Tests run: /d'; \
- 	$$ok
+	(echo ''; cat TestResult-$(PROFILE).log) | sed '1,/^Tests run: /d'; \
+	$$ok
 
 run-nunitweb: test
 	$(TEST_RUNTIME) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) \
 	/output:TestResult-$(PROFILE).log /include:NunitWeb /xml:TestResult-$(PROFILE).xml $(test_assemblies) || ok=false; \
- 	(echo ''; cat TestResult-$(PROFILE).log) | sed '1,/^Tests run: /d'; \
- 	$$ok
+	(echo ''; cat TestResult-$(PROFILE).log) | sed '1,/^Tests run: /d'; \
+	$$ok
 
 run-nunitweb-ondotnet: test
 	$(TEST_HARNESS) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) \
