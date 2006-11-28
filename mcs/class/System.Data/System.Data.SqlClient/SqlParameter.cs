@@ -809,7 +809,7 @@ namespace System.Data.SqlClient {
 		}
 
 #if NET_2_0
-                [MonoTODO]
+		[MonoTODO ("Not implemented")]
                 public override void ResetDbType ()
                 {
                         throw new NotImplementedException ();

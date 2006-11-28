@@ -248,55 +248,54 @@ namespace System.Data
 			return attributes;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented.   Always returns String.Empty")]
 		string ICustomTypeDescriptor.GetClassName ()
 		{
 			return "";
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Not implemented.   Always returns null")]
 		string ICustomTypeDescriptor.GetComponentName ()
 		{
 			return null;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented.   Always returns null")]
 		TypeConverter ICustomTypeDescriptor.GetConverter ()
 		{
 			return null;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented.   Always returns null")]
 		EventDescriptor ICustomTypeDescriptor.GetDefaultEvent ()
 		{
 			return null;
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Not implemented.   Always returns null")]
 		PropertyDescriptor ICustomTypeDescriptor.GetDefaultProperty ()
 		{
 			return null;
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Not implemented.   Always returns null")]
 		object ICustomTypeDescriptor.GetEditor (Type editorBaseType)
 		{
 			return null;
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Not implemented.   Always returns an empty collection")]
 		EventDescriptorCollection ICustomTypeDescriptor.GetEvents ()
 		{
 			return new EventDescriptorCollection(null);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented.   Always returns an empty collection")]
 		EventDescriptorCollection ICustomTypeDescriptor.GetEvents (Attribute [] attributes)
 		{
 			return new EventDescriptorCollection(null);
 		}
 
-		[MonoTODO]
 		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties ()
 		{
 			if (DataView == null) {
@@ -308,7 +307,7 @@ namespace System.Data
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("It currently reports more descriptors than necessary")]
 		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties (Attribute [] attributes)
 		{
 			PropertyDescriptorCollection descriptors;
@@ -331,14 +330,14 @@ namespace System.Data
 		#region IDataErrorInfo implementation
 
 		string IDataErrorInfo.Error {
-			[MonoTODO]
+			[MonoTODO("Not implemented, always returns String.Empty")]
 			get {
 				return ""; // FIXME
 			}
 		}
 
 		string IDataErrorInfo.this[string columnName] {
-			[MonoTODO]
+			[MonoTODO("Not implemented, always returns String.Empty")]
 			get {
 				return ""; // FIXME
 			}
@@ -351,7 +350,6 @@ namespace System.Data
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		[MonoTODO ("to be tested..")]
 		void OnPropertyChanged (string propertyName)
 		{
 			if (PropertyChanged != null) {

@@ -391,5 +391,13 @@ namespace System.Data
 			if (ListChanged != null)
 				ListChanged (sender, args);
 		}
+
+#if NET_2_0
+		public override int Count {
+			get {
+				return base.Count;
+			}
+		}
+#endif
 	}
 }

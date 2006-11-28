@@ -1,3 +1,7 @@
+2006-11-28  Miguel de Icaza  <miguel@novell.com>
+
+	* Rationalize use of MonoTODO as well.
+
 2006-11-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* System.Data20.vmwcsproj: added OleDbFactory.cs
