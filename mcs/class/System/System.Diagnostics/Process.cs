@@ -1043,6 +1043,7 @@ namespace System.Diagnostics {
 			Process process=new Process();
 			bool ret;
 
+			process.StartInfo = startInfo;
 			ret=Start_common(startInfo, process);
 			
 			if(ret==true) {

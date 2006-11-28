@@ -1,3 +1,8 @@
+2006-11-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Process.cs: the Process returned by the static Start method never had
+	the right ProcessStartInfo. Fixes bug #80019.
+
 2006-10-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DiagnosticsConfigurationHandler.cs : be more skeptic on
