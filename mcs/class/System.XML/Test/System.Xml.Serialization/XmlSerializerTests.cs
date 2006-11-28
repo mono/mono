@@ -1,12 +1,10 @@
 //
 // System.Xml.XmlSerializerTests
 //
-// Authors:
+// Author:
 //   Erik LeBel <eriklebel@yahoo.ca>
-//   Hagit Yidov <hagity@mainsoft.com>
 //
 // (C) 2003 Erik LeBel
-// (C) 2005 Mainsoft Corporation (http://www.mainsoft.com)
 //
 //
 // NOTES:
@@ -33,6 +31,9 @@ using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 
 using NUnit.Framework;
 
@@ -43,8 +44,6 @@ namespace MonoTests.System.XmlSerialization
 	[TestFixture]
 	public class XmlSerializerTests
 	{
-		const string XmlSchemaNamespace = "http://www.w3.org/2001/XMLSchema";
-		const string XmlSchemaInstanceNamespace = "http://www.w3.org/2001/XMLSchema-instance";
 		const string SoapEncodingNamespace = "http://schemas.xmlsoap.org/soap/encoding/";
 		const string WsdlTypesNamespace = "http://microsoft.com/wsdl/types/";
 		const string ANamespace = "some:urn";
@@ -54,58 +53,64 @@ namespace MonoTests.System.XmlSerialization
 		XmlTextWriter xtw;
 		XmlSerializer xs;
 
-		private void SetUpWriter()
+		private void SetUpWriter ()
 		{
 			sw = new StringWriter ();
 			xtw = new XmlTextWriter (sw);
 			xtw.QuoteChar = '\'';
 			xtw.Formatting = Formatting.None;
 		}
-		
-		private string WriterText 
-		{
-			get
-			{
-				string val = sw.GetStringBuilder().ToString();
-				int offset = val.IndexOf('>') + 1;
-				val = val.Substring(offset);
-				return Infoset(val);
+
+		private string WriterText {
+			get {
+				string val = sw.GetStringBuilder ().ToString ();
+				int offset = val.IndexOf ('>') + 1;
+				val = val.Substring (offset);
+				return Infoset (val);
 			}
 		}
 
-		private void Serialize(object o)
+		private void Serialize (object o)
 		{
-			SetUpWriter();
-			xs = new XmlSerializer(o.GetType());
-			xs.Serialize(xtw, o);
-		}
-		
-		private void Serialize(object o, Type type)
-		{
-			SetUpWriter();
-			xs = new XmlSerializer(type);
-			xs.Serialize(xtw, o);
+			SetUpWriter ();
+			xs = new XmlSerializer (o.GetType ());
+			xs.Serialize (xtw, o);
 		}
 
-		private void Serialize(object o, XmlSerializerNamespaces ns)
+		private void Serialize (object o, Type type)
 		{
-			SetUpWriter();
-			xs = new XmlSerializer(o.GetType());
-			xs.Serialize(xtw, o, ns);
+			SetUpWriter ();
+			xs = new XmlSerializer (type);
+			xs.Serialize (xtw, o);
 		}
 
-		private void Serialize(object o, XmlAttributeOverrides ao)
+		private void Serialize (object o, XmlSerializerNamespaces ns)
 		{
-			SetUpWriter();
-			xs = new XmlSerializer(o.GetType(), ao);
-			xs.Serialize(xtw, o);
+			SetUpWriter ();
+			xs = new XmlSerializer (o.GetType ());
+			xs.Serialize (xtw, o, ns);
 		}
-		
-		private void Serialize(object o, XmlRootAttribute root)
+
+		private void Serialize (object o, XmlAttributeOverrides ao)
 		{
-			SetUpWriter();
-			xs = new XmlSerializer(o.GetType(), root);
-			xs.Serialize(xtw, o);
+			SetUpWriter ();
+			xs = new XmlSerializer (o.GetType (), ao);
+			xs.Serialize (xtw, o);
+		}
+
+		private void Serialize (object o, XmlAttributeOverrides ao, string defaultNamespace)
+		{
+			SetUpWriter ();
+			xs = new XmlSerializer (o.GetType (), ao, Type.EmptyTypes,
+				(XmlRootAttribute) null, defaultNamespace);
+			xs.Serialize (xtw, o);
+		}
+
+		private void Serialize (object o, XmlRootAttribute root)
+		{
+			SetUpWriter ();
+			xs = new XmlSerializer (o.GetType (), root);
+			xs.Serialize (xtw, o);
 		}
 
 		private void Serialize (object o, XmlTypeMapping typeMapping)
@@ -120,10 +125,33 @@ namespace MonoTests.System.XmlSerialization
 			SerializeEncoded (o, o.GetType ());
 		}
 
+		private void SerializeEncoded (object o, SoapAttributeOverrides ao)
+		{
+			XmlTypeMapping mapping = CreateSoapMapping (o.GetType (), ao);
+			SetUpWriter ();
+			xs = new XmlSerializer (mapping);
+			xs.Serialize (xtw, o);
+		}
+
+		private void SerializeEncoded (object o, SoapAttributeOverrides ao, string defaultNamespace)
+		{
+			XmlTypeMapping mapping = CreateSoapMapping (o.GetType (), ao, defaultNamespace);
+			SetUpWriter ();
+			xs = new XmlSerializer (mapping);
+			xs.Serialize (xtw, o);
+		}
+
 		private void SerializeEncoded (object o, Type type)
 		{
 			XmlTypeMapping mapping = CreateSoapMapping (type);
 			SetUpWriter ();
+			xs = new XmlSerializer (mapping);
+			xs.Serialize (xtw, o);
+		}
+
+		private void SerializeEncoded (XmlTextWriter xtw, object o, Type type)
+		{
+			XmlTypeMapping mapping = CreateSoapMapping (type);
 			xs = new XmlSerializer (mapping);
 			xs.Serialize (xtw, o);
 		}
@@ -140,90 +168,98 @@ namespace MonoTests.System.XmlSerialization
 
 		// test basic types ////////////////////////////////////////////////////////
 		[Test]
-		public void TestSerializeInt()
+		public void TestSerializeInt ()
 		{
-			Serialize(10);
-			Assert.AreEqual (Infoset("<int>10</int>"), WriterText);
+			Serialize (10);
+			Assert.AreEqual (Infoset ("<int>10</int>"), WriterText);
 		}
 
 		[Test]
-		public void TestSerializeBool()
+		public void TestSerializeBool ()
 		{
-			Serialize(true);
+			Serialize (true);
 			Assert.AreEqual (Infoset ("<boolean>true</boolean>"), WriterText);
-			
-			Serialize(false);
+
+			Serialize (false);
 			Assert.AreEqual (Infoset ("<boolean>false</boolean>"), WriterText);
 		}
-		
+
 		[Test]
-		public void TestSerializeString()
+		public void TestSerializeString ()
 		{
-			Serialize("hello");
+			Serialize ("hello");
 			Assert.AreEqual (Infoset ("<string>hello</string>"), WriterText);
 		}
 
 		[Test]
-		public void TestSerializeEmptyString()
+		public void TestSerializeEmptyString ()
 		{
-			Serialize(String.Empty);
+			Serialize (String.Empty);
 			Assert.AreEqual (Infoset ("<string />"), WriterText);
 		}
-		
+
 		[Test]
-		public void TestSerializeNullObject()
+		public void TestSerializeNullObject ()
 		{
-			Serialize(null, typeof(object));
-			Assert.AreEqual (Infoset ("<anyType xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:nil='true' />"), WriterText);
+			Serialize (null, typeof (object));
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<anyType xmlns:xsd='{0}' xmlns:xsi='{1}' xsi:nil='true' />",
+				XmlSchema.Namespace, XmlSchema.InstanceNamespace)), WriterText);
 		}
 
 		[Test]
 		[Ignore ("The generated XML is not exact but it is equivalent")]
-		public void TestSerializeNullString()
+		public void TestSerializeNullString ()
 		{
-			Serialize(null, typeof(string));
-			Assert.AreEqual (Infoset ("<string xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:nil='true' />"), WriterText);
+			Serialize (null, typeof (string));
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<string xmlns:xsd='{0}' xmlns:xsi='{1}' xsi:nil='true' />",
+				XmlSchema.Namespace, XmlSchema.InstanceNamespace)), WriterText);
 		}
-			
+
 		[Test]
-		public void TestSerializeIntArray()
+		public void TestSerializeIntArray ()
 		{
-			Serialize(new int[] {1, 2, 3, 4});
-			Assert.AreEqual (Infoset ("<ArrayOfInt xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><int>1</int><int>2</int><int>3</int><int>4</int></ArrayOfInt>"), WriterText);
+			Serialize (new int [] { 1, 2, 3, 4 });
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<ArrayOfInt xmlns:xsd='{0}' xmlns:xsi='{1}'><int>1</int><int>2</int><int>3</int><int>4</int></ArrayOfInt>",
+				XmlSchema.Namespace, XmlSchema.InstanceNamespace)), WriterText);
 		}
-		
+
 		[Test]
-		public void TestSerializeEmptyArray()
+		public void TestSerializeEmptyArray ()
 		{
-			Serialize(new int[] {});
-			Assert.AreEqual (Infoset ("<ArrayOfInt xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText);
+			Serialize (new int [] { });
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<ArrayOfInt xmlns:xsd='{0}' xmlns:xsi='{1}' />",
+				XmlSchema.Namespace, XmlSchema.InstanceNamespace)), WriterText);
 		}
-		
+
 		[Test]
-		public void TestSerializeChar()
+		public void TestSerializeChar ()
 		{
-			Serialize('A');
+			Serialize ('A');
 			Assert.AreEqual (Infoset ("<char>65</char>"), WriterText);
-			
-			Serialize('\0');
+
+			Serialize ('\0');
 			Assert.AreEqual (Infoset ("<char>0</char>"), WriterText);
-			
-			Serialize('\n');
+
+			Serialize ('\n');
 			Assert.AreEqual (Infoset ("<char>10</char>"), WriterText);
-			
-			Serialize('\uFF01');
+
+			Serialize ('\uFF01');
 			Assert.AreEqual (Infoset ("<char>65281</char>"), WriterText);
 		}
-		
+
 		[Test]
-		public void TestSerializeFloat()
+		public void TestSerializeFloat ()
 		{
-			Serialize(10.78);
+			Serialize (10.78);
 			Assert.AreEqual (Infoset ("<double>10.78</double>"), WriterText);
-			
-			Serialize(-1e8);
+
+			Serialize (-1e8);
 			Assert.AreEqual (Infoset ("<double>-100000000</double>"), WriterText);
-			
+
 			// FIXME test INF and other boundary conditions that may exist with floats
 		}
 
@@ -245,33 +281,33 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
 				"<SimpleEnumeration d1p1:type='SimpleEnumeration' xmlns:d1p1='{0}'>SECOND</SimpleEnumeration>",
-				XmlSchemaInstanceNamespace), sw.ToString ());
+				XmlSchema.InstanceNamespace), sw.ToString ());
 		}
 
 		[Test]
-		public void TestSerializeEnumeration()
+		public void TestSerializeEnumeration ()
 		{
-			Serialize(SimpleEnumeration.FIRST);
+			Serialize (SimpleEnumeration.FIRST);
 			Assert.AreEqual (Infoset ("<SimpleEnumeration>FIRST</SimpleEnumeration>"), WriterText, "#1");
-			
-			Serialize(SimpleEnumeration.SECOND);
+
+			Serialize (SimpleEnumeration.SECOND);
 			Assert.AreEqual (Infoset ("<SimpleEnumeration>SECOND</SimpleEnumeration>"), WriterText, "#2");
 		}
 
 		[Test]
-		public void TestSerializeEnumeration_Encoded()
+		public void TestSerializeEnumeration_Encoded ()
 		{
 			SerializeEncoded (SimpleEnumeration.FIRST);
-			Assert.AreEqual (string.Format(CultureInfo.InvariantCulture,
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
 				"<SimpleEnumeration d1p1:type='SimpleEnumeration' xmlns:d1p1='{0}'>FIRST</SimpleEnumeration>",
-				XmlSchemaInstanceNamespace), sw.ToString (), "#B1");
+				XmlSchema.InstanceNamespace), sw.ToString (), "#B1");
 
 			SerializeEncoded (SimpleEnumeration.SECOND);
-			Assert.AreEqual (string.Format(CultureInfo.InvariantCulture,
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
 				"<SimpleEnumeration d1p1:type='SimpleEnumeration' xmlns:d1p1='{0}'>SECOND</SimpleEnumeration>",
-				XmlSchemaInstanceNamespace), sw.ToString (), "#B2");
+				XmlSchema.InstanceNamespace), sw.ToString (), "#B2");
 		}
 
 		[Test]
@@ -343,115 +379,115 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
 				"<EnumDefaultValue d1p1:type='EnumDefaultValue' xmlns:d1p1='{0}' />",
-				XmlSchemaInstanceNamespace), sw.ToString (), "#1");
+				XmlSchema.InstanceNamespace), sw.ToString (), "#1");
 
 			SerializeEncoded (new SimpleEnumeration ());
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
 				"<SimpleEnumeration d1p1:type='SimpleEnumeration' xmlns:d1p1='{0}'>FIRST</SimpleEnumeration>",
-				XmlSchemaInstanceNamespace), sw.ToString (), "#2");
+				XmlSchema.InstanceNamespace), sw.ToString (), "#2");
 
 			SerializeEncoded (3, typeof (EnumDefaultValue));
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
 				"<EnumDefaultValue d1p1:type='EnumDefaultValue' xmlns:d1p1='{0}'>e3</EnumDefaultValue>",
-				XmlSchemaInstanceNamespace), sw.ToString (), "#3");
+				XmlSchema.InstanceNamespace), sw.ToString (), "#3");
 
 			SerializeEncoded (EnumDefaultValue.e3, typeof (EnumDefaultValue));
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
 				"<EnumDefaultValue d1p1:type='EnumDefaultValue' xmlns:d1p1='{0}'>e3</EnumDefaultValue>",
-				XmlSchemaInstanceNamespace), sw.ToString (), "#4");
+				XmlSchema.InstanceNamespace), sw.ToString (), "#4");
 
 			SerializeEncoded (EnumDefaultValue.e1 | EnumDefaultValue.e2, typeof (EnumDefaultValue));
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
 				"<EnumDefaultValue d1p1:type='EnumDefaultValue' xmlns:d1p1='{0}'>e3</EnumDefaultValue>",
-				XmlSchemaInstanceNamespace), sw.ToString (), "#5");
+				XmlSchema.InstanceNamespace), sw.ToString (), "#5");
 
 			SerializeEncoded (EnumDefaultValue.e1 | EnumDefaultValue.e2 | EnumDefaultValue.e3, typeof (EnumDefaultValue));
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
 				"<EnumDefaultValue d1p1:type='EnumDefaultValue' xmlns:d1p1='{0}'>e3</EnumDefaultValue>",
-				XmlSchemaInstanceNamespace), sw.ToString (), "#6");
+				XmlSchema.InstanceNamespace), sw.ToString (), "#6");
 
 			SerializeEncoded (EnumDefaultValue.e1 | EnumDefaultValue.e3, typeof (EnumDefaultValue));
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
 				"<EnumDefaultValue d1p1:type='EnumDefaultValue' xmlns:d1p1='{0}'>e3</EnumDefaultValue>",
-				XmlSchemaInstanceNamespace), sw.ToString (), "#7");
+				XmlSchema.InstanceNamespace), sw.ToString (), "#7");
 
 			SerializeEncoded (EnumDefaultValue.e2 | EnumDefaultValue.e3, typeof (EnumDefaultValue));
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
 				"<EnumDefaultValue d1p1:type='EnumDefaultValue' xmlns:d1p1='{0}'>e3</EnumDefaultValue>",
-				XmlSchemaInstanceNamespace), sw.ToString (), "#8");
+				XmlSchema.InstanceNamespace), sw.ToString (), "#8");
 
 			SerializeEncoded (3, typeof (FlagEnum));
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
 				"<FlagEnum d1p1:type='FlagEnum' xmlns:d1p1='{0}'>e1 e2</FlagEnum>",
-				XmlSchemaInstanceNamespace), sw.ToString (), "#9");
+				XmlSchema.InstanceNamespace), sw.ToString (), "#9");
 
 			SerializeEncoded (5, typeof (FlagEnum));
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
 				"<FlagEnum d1p1:type='FlagEnum' xmlns:d1p1='{0}'>e1 e4</FlagEnum>",
-				XmlSchemaInstanceNamespace), sw.ToString (), "#10");
+				XmlSchema.InstanceNamespace), sw.ToString (), "#10");
 
 			SerializeEncoded (FlagEnum.e4, typeof (FlagEnum));
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
 				"<FlagEnum d1p1:type='FlagEnum' xmlns:d1p1='{0}'>e4</FlagEnum>",
-				XmlSchemaInstanceNamespace), sw.ToString (), "#11");
+				XmlSchema.InstanceNamespace), sw.ToString (), "#11");
 
 			SerializeEncoded (FlagEnum.e1 | FlagEnum.e2, typeof (FlagEnum));
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
 				"<FlagEnum d1p1:type='FlagEnum' xmlns:d1p1='{0}'>e1 e2</FlagEnum>",
-				XmlSchemaInstanceNamespace), sw.ToString (), "#12");
+				XmlSchema.InstanceNamespace), sw.ToString (), "#12");
 
 			SerializeEncoded (FlagEnum.e1 | FlagEnum.e2 | FlagEnum.e4, typeof (FlagEnum));
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
 				"<FlagEnum d1p1:type='FlagEnum' xmlns:d1p1='{0}'>e1 e2 e4</FlagEnum>",
-				XmlSchemaInstanceNamespace), sw.ToString (), "#13");
+				XmlSchema.InstanceNamespace), sw.ToString (), "#13");
 
 			SerializeEncoded (FlagEnum.e1 | FlagEnum.e4, typeof (FlagEnum));
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
 				"<FlagEnum d1p1:type='FlagEnum' xmlns:d1p1='{0}'>e1 e4</FlagEnum>",
-				XmlSchemaInstanceNamespace), sw.ToString (), "#14");
+				XmlSchema.InstanceNamespace), sw.ToString (), "#14");
 
 			SerializeEncoded (FlagEnum.e2 | FlagEnum.e4, typeof (FlagEnum));
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
 				"<FlagEnum d1p1:type='FlagEnum' xmlns:d1p1='{0}'>e2 e4</FlagEnum>",
-				XmlSchemaInstanceNamespace), sw.ToString (), "#15");
+				XmlSchema.InstanceNamespace), sw.ToString (), "#15");
 
 			SerializeEncoded (3, typeof (EnumDefaultValueNF));
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
 				"<EnumDefaultValueNF d1p1:type='EnumDefaultValueNF' xmlns:d1p1='{0}'>e3</EnumDefaultValueNF>",
-				XmlSchemaInstanceNamespace), sw.ToString (), "#16");
+				XmlSchema.InstanceNamespace), sw.ToString (), "#16");
 
 			SerializeEncoded (EnumDefaultValueNF.e2, typeof (EnumDefaultValueNF));
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
 				"<EnumDefaultValueNF d1p1:type='EnumDefaultValueNF' xmlns:d1p1='{0}'>e2</EnumDefaultValueNF>",
-				XmlSchemaInstanceNamespace), sw.ToString (), "#17");
+				XmlSchema.InstanceNamespace), sw.ToString (), "#17");
 
 			SerializeEncoded (2, typeof (ZeroFlagEnum));
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
 				"<ZeroFlagEnum d1p1:type='ZeroFlagEnum' xmlns:d1p1='{0}'>e2</ZeroFlagEnum>",
-				XmlSchemaInstanceNamespace), sw.ToString (), "#18");
+				XmlSchema.InstanceNamespace), sw.ToString (), "#18");
 
 			SerializeEncoded (new ZeroFlagEnum ()); // enum actually has a field with value 0
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
 				"<ZeroFlagEnum d1p1:type='ZeroFlagEnum' xmlns:d1p1='{0}'>e0</ZeroFlagEnum>",
-				XmlSchemaInstanceNamespace), sw.ToString (), "#19");
+				XmlSchema.InstanceNamespace), sw.ToString (), "#19");
 		}
 
 		[Test]
@@ -576,7 +612,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (Infoset ("<EnumDefaultValueNF>15</EnumDefaultValueNF>"), WriterText);
 #endif
 		}
- 
+
 		[Test]
 		public void TestSerializeEnumDefaultValueNF_InvalidValue3 ()
 		{
@@ -622,6 +658,270 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
+		public void TestSerializeField ()
+		{
+			Field f = new Field ();
+			Serialize (f, typeof (Field));
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<field xmlns:xsd='{0}' xmlns:xsi='{1}' flag1='' flag2='' flag3=''" +
+				" flag4='' modifiers='public' modifiers2='public' modifiers4='public' />",
+				XmlSchema.Namespace, XmlSchema.InstanceNamespace)), WriterText, "#A");
+
+			f.Flags1 = FlagEnum.e1;
+			f.Flags2 = FlagEnum.e1;
+			f.Flags3 = FlagEnum.e2;
+			f.Modifiers = MapModifiers.Protected;
+			f.Modifiers2 = MapModifiers.Public;
+			f.Modifiers3 = MapModifiers.Public;
+			f.Modifiers4 = MapModifiers.Protected;
+			f.Modifiers5 = MapModifiers.Public;
+			Serialize (f, typeof (Field));
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<field xmlns:xsd='{0}' xmlns:xsi='{1}' flag3='two' flag4=''" +
+				" modifiers='protected' modifiers2='public' />",
+				XmlSchema.Namespace, XmlSchema.InstanceNamespace)), WriterText, "#B");
+
+			f.Flags1 = (FlagEnum) 1;
+			f.Flags1 = FlagEnum.e2;
+			f.Flags2 = FlagEnum.e2;
+			f.Flags3 = FlagEnum.e1 | FlagEnum.e2;
+			f.Modifiers = MapModifiers.Public;
+			f.Modifiers2 = MapModifiers.Protected;
+			f.Modifiers3 = MapModifiers.Protected;
+			f.Modifiers4 = MapModifiers.Public;
+			f.Modifiers5 = MapModifiers.Protected;
+			Serialize (f, typeof (Field));
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<field xmlns:xsd='{0}' xmlns:xsi='{1}' flag1='two' flag2='two'" +
+				" flag4='' modifiers='public' modifiers2='protected'" +
+				" modifiers3='protected' modifiers4='public'" +
+				" modifiers5='protected' />",
+				XmlSchema.Namespace, XmlSchema.InstanceNamespace)), WriterText, "#C");
+
+			f.Flags1 = FlagEnum.e1 | FlagEnum.e2;
+			f.Flags2 = FlagEnum.e2;
+			f.Flags3 = FlagEnum.e4;
+			f.Flags4 = FlagEnum.e1 | FlagEnum.e2 | FlagEnum.e4;
+			f.Modifiers3 = MapModifiers.Public;
+			f.Modifiers4 = MapModifiers.Protected;
+			f.Modifiers5 = MapModifiers.Public;
+			f.Names = new string [] { "a", "b" };
+			Serialize (f, typeof (Field));
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<field xmlns:xsd='{0}' xmlns:xsi='{1}' flag1='one two' flag2='two'" +
+				" flag3='four' flag4='one two four' modifiers='public'" +
+				" modifiers2='protected' names='a b' />",
+				XmlSchema.Namespace, XmlSchema.InstanceNamespace)), WriterText, "#D");
+
+			f.Flags2 = (FlagEnum) 444;
+			f.Flags3 = (FlagEnum) 555;
+			f.Modifiers = (MapModifiers) 666;
+			f.Modifiers2 = (MapModifiers) 777;
+			f.Modifiers3 = (MapModifiers) 0;
+			f.Modifiers4 = (MapModifiers) 888;
+			f.Modifiers5 = (MapModifiers) 999;
+#if NET_2_0
+			try {
+				Serialize (f, typeof (Field));
+				Assert.Fail ("#E1");
+			} catch (InvalidOperationException ex) {
+				// There was an error generating the XML document
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#E2");
+				Assert.IsNotNull (ex.Message, "#E3");
+				Assert.IsNotNull (ex.InnerException, "#E4");
+
+				// Instance validation error: '444' is not a valid value for
+				// MonoTests.System.Xml.TestClasses.FlagEnum
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#E5");
+				Assert.IsNotNull (ex.InnerException.Message, "#E6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'444'") != -1, "#E7");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (FlagEnum).FullName) != -1, "#E8");
+				Assert.IsNull (ex.InnerException.InnerException, "#E9");
+			}
+#else
+			Serialize (f, typeof (Field));
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<field xmlns:xsd='{0}' xmlns:xsi='{1}' flag1='one two' flag2='444'" +
+				" flag3='555' flag4='one two four' modifiers='666' modifiers2='777'" +
+				" modifiers4='888' modifiers5='999' names='a b' />",
+				XmlSchema.Namespace, XmlSchema.InstanceNamespace)), WriterText, "#E");
+#endif
+		}
+
+		[Test]
+		[Category ("NotDotNet")] // MS bug
+		public void TestSerializeField_Encoded ()
+		{
+			Field_Encoded f = new Field_Encoded ();
+			SerializeEncoded (f, typeof (Field_Encoded));
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+#if NET_2_0
+				"<q1:field xmlns:xsi='{1}' xmlns:xsd='{0}' id='id1' flag1=''" +
+				" flag2='' flag3='' flag4='' modifiers='PuBlIc'" +
+				" modifiers2='PuBlIc' modifiers4='PuBlIc' xmlns:q1='some:urn' />",
+#else
+				"<q1:field xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' flag1=''" +
+				" flag2='' flag3='' flag4='' modifiers='PuBlIc'" +
+				" modifiers2='PuBlIc' modifiers4='PuBlIc' xmlns:q1='some:urn' />",
+#endif
+				XmlSchema.Namespace, XmlSchema.InstanceNamespace),
+				sw.GetStringBuilder ().ToString (), "#A");
+
+			f.Flags1 = FlagEnum_Encoded.e1;
+			f.Flags2 = FlagEnum_Encoded.e1;
+			f.Flags3 = FlagEnum_Encoded.e2;
+			f.Modifiers = MapModifiers.Protected;
+			f.Modifiers2 = MapModifiers.Public;
+			f.Modifiers3 = MapModifiers.Public;
+			f.Modifiers4 = MapModifiers.Protected;
+			f.Modifiers5 = MapModifiers.Public;
+			SerializeEncoded (f, typeof (Field_Encoded));
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+#if NET_2_0
+				"<q1:field xmlns:xsi='{1}' xmlns:xsd='{0}' id='id1' flag3='two'" +
+				" flag4='' modifiers='Protected' modifiers2='PuBlIc'" +
+				" xmlns:q1='some:urn' />",
+#else
+				"<q1:field xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' flag3='two'" +
+				" flag4='' modifiers='Protected' modifiers2='PuBlIc'" +
+				" xmlns:q1='some:urn' />",
+#endif
+				XmlSchema.Namespace, XmlSchema.InstanceNamespace),
+				sw.GetStringBuilder ().ToString (), "#B");
+
+			f.Flags1 = FlagEnum_Encoded.e2;
+			f.Flags2 = FlagEnum_Encoded.e2;
+			f.Flags3 = FlagEnum_Encoded.e1 | FlagEnum_Encoded.e2;
+			f.Modifiers = MapModifiers.Public;
+			f.Modifiers2 = MapModifiers.Protected;
+			f.Modifiers3 = MapModifiers.Protected;
+			f.Modifiers4 = MapModifiers.Public;
+			f.Modifiers5 = MapModifiers.Protected;
+			SerializeEncoded (f, typeof (Field_Encoded));
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+#if NET_2_0
+				"<q1:field xmlns:xsi='{1}' xmlns:xsd='{0}' id='id1' flag1='two'" +
+				" flag2='two' flag4='' modifiers='PuBlIc' modifiers2='Protected'" +
+				" modifiers3='Protected' modifiers4='PuBlIc' modifiers5='Protected'" +
+				" xmlns:q1='some:urn' />",
+#else
+				"<q1:field xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' flag1='two'" +
+				" flag2='two' flag4='' modifiers='PuBlIc' modifiers2='Protected'" +
+				" modifiers3='Protected' modifiers4='PuBlIc' modifiers5='Protected'" +
+				" xmlns:q1='some:urn' />",
+#endif
+ 				XmlSchema.Namespace, XmlSchema.InstanceNamespace),
+				sw.GetStringBuilder ().ToString (), "#C");
+
+			f.Flags1 = (FlagEnum_Encoded) 1;
+			f.Flags2 = (FlagEnum_Encoded) 444;
+			f.Flags3 = (FlagEnum_Encoded) 555;
+			f.Modifiers = (MapModifiers) 666;
+			f.Modifiers2 = (MapModifiers) 777;
+			f.Modifiers3 = (MapModifiers) 0;
+			f.Modifiers4 = (MapModifiers) 888;
+			f.Modifiers5 = (MapModifiers) 999;
+#if NET_2_0
+			try {
+#endif
+			SerializeEncoded (f, typeof (Field_Encoded));
+#if NET_2_0
+				Assert.Fail ("#D1");
+			} catch (InvalidOperationException ex) {
+				// There was an error generating the XML document
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#D2");
+				Assert.IsNotNull (ex.Message, "#D3");
+				Assert.IsNotNull (ex.InnerException, "#D4");
+
+				// Instance validation error: '444' is not a valid value for
+				// MonoTests.System.Xml.TestClasses.FlagEnum_Encoded
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#D5");
+				Assert.IsNotNull (ex.InnerException.Message, "#D6");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("'444'") != -1, "#D7");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf (typeof (FlagEnum_Encoded).FullName) != -1, "#D8");
+				Assert.IsNull (ex.InnerException.InnerException, "#D9");
+			}
+#else
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+				"<q1:field xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' flag2='444'" +
+				" flag3='555' flag4='' modifiers='666' modifiers2='777'" +
+				" modifiers4='888' modifiers5='999' xmlns:q1='some:urn' />",
+				XmlSchema.Namespace, XmlSchema.InstanceNamespace),
+				sw.GetStringBuilder ().ToString (), "#D");
+#endif
+		}
+
+		[Test]
+		public void TestSerializeGroup ()
+		{
+			Group myGroup = new Group ();
+			myGroup.GroupName = ".NET";
+
+			Byte [] hexByte = new Byte [] { 0x64, 0x32 };
+			myGroup.GroupNumber = hexByte;
+
+			DateTime myDate = new DateTime (2002, 5, 2);
+			myGroup.Today = myDate;
+			myGroup.PostitiveInt = "10000";
+			myGroup.IgnoreThis = true;
+			Car thisCar = (Car) myGroup.myCar ("1234566");
+			myGroup.MyVehicle = thisCar;
+
+			SetUpWriter ();
+			xtw.WriteStartDocument (true);
+			xtw.WriteStartElement ("Wrapper");
+			SerializeEncoded (xtw, myGroup, typeof (Group));
+			xtw.WriteEndElement ();
+			xtw.Close ();
+
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<Wrapper>" +
+				"<Group xmlns:xsd='{0}' xmlns:xsi='{1}' xmlns:d2p1='http://www.cpandl.com' CreationDate='2002-05-02' d2p1:GroupName='.NET' GroupNumber='ZDI=' id='id1'>" +
+				"<PosInt xsi:type='xsd:nonNegativeInteger'>10000</PosInt>" +
+				"<Grouptype xsi:type='GroupType'>Small</Grouptype>" +
+				"<MyVehicle href='#id2' />" +
+				"</Group>" +
+				"<Car xmlns:d2p1='{1}' id='id2' d2p1:type='Car'>" +
+				"<licenseNumber xmlns:q1='{0}' d2p1:type='q1:string'>1234566</licenseNumber>" +
+				"<makeDate xmlns:q2='{0}' d2p1:type='q2:date'>0001-01-01</makeDate>" +
+				"</Car>" +
+				"</Wrapper>",
+				XmlSchema.Namespace, XmlSchema.InstanceNamespace)),
+				WriterText, "#1");
+
+			myGroup.GroupName = null;
+			myGroup.Grouptype = GroupType.B;
+			myGroup.MyVehicle.licenseNumber = null;
+			myGroup.MyVehicle.weight = "450";
+
+			SetUpWriter ();
+			xtw.WriteStartDocument (true);
+			xtw.WriteStartElement ("Wrapper");
+			SerializeEncoded (xtw, myGroup, typeof (Group));
+			xtw.WriteEndElement ();
+			xtw.Close ();
+
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<Wrapper>" +
+				"<Group xmlns:xsd='{0}' xmlns:xsi='{1}' CreationDate='2002-05-02' GroupNumber='ZDI=' id='id1'>" +
+				"<PosInt xsi:type='xsd:nonNegativeInteger'>10000</PosInt>" +
+				"<Grouptype xsi:type='GroupType'>Large</Grouptype>" +
+				"<MyVehicle href='#id2' />" +
+				"</Group>" +
+				"<Car xmlns:d2p1='{1}' id='id2' d2p1:type='Car'>" +
+				"<makeDate xmlns:q1='{0}' d2p1:type='q1:date'>0001-01-01</makeDate>" +
+				"<weight xmlns:q2='{0}' d2p1:type='q2:string'>450</weight>" +
+				"</Car>" +
+				"</Wrapper>",
+				XmlSchema.Namespace, XmlSchema.InstanceNamespace)),
+				WriterText, "#2");
+		}
+
+		[Test]
 		public void TestSerializeZeroFlagEnum_InvalidValue ()
 		{
 #if NET_2_0
@@ -643,38 +943,38 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		public void TestSerializeQualifiedName()
+		public void TestSerializeQualifiedName ()
 		{
-			Serialize(new XmlQualifiedName("me", "home.urn"));
+			Serialize (new XmlQualifiedName ("me", "home.urn"));
 			Assert.AreEqual (Infoset ("<QName xmlns:q1='home.urn'>q1:me</QName>"), WriterText);
 		}
-		
+
 		[Test]
-		public void TestSerializeBytes()
+		public void TestSerializeBytes ()
 		{
-			Serialize((byte)0xAB);
+			Serialize ((byte) 0xAB);
 			Assert.AreEqual (Infoset ("<unsignedByte>171</unsignedByte>"), WriterText);
-			
-			Serialize((byte)15);
+
+			Serialize ((byte) 15);
 			Assert.AreEqual (Infoset ("<unsignedByte>15</unsignedByte>"), WriterText);
 		}
-		
+
 		[Test]
-		public void TestSerializeByteArrays()
+		public void TestSerializeByteArrays ()
 		{
-			Serialize(new byte[] {});
+			Serialize (new byte [] { });
 			Assert.AreEqual (Infoset ("<base64Binary />"), WriterText);
-			
-			Serialize(new byte[] {0xAB, 0xCD});
+
+			Serialize (new byte [] { 0xAB, 0xCD });
 			Assert.AreEqual (Infoset ("<base64Binary>q80=</base64Binary>"), WriterText);
 		}
-		
+
 		[Test]
-		public void TestSerializeDateTime()
+		public void TestSerializeDateTime ()
 		{
-			DateTime d = new DateTime();
-			Serialize(d);
-			
+			DateTime d = new DateTime ();
+			Serialize (d);
+
 			TimeZone tz = TimeZone.CurrentTimeZone;
 			TimeSpan off = tz.GetUtcOffset (d);
 			string sp = string.Format ("{0}{1:00}:{2:00}", off.Ticks >= 0 ? "+" : "", off.Hours, off.Minutes);
@@ -695,413 +995,160 @@ namespace MonoTests.System.XmlSerialization
 		}
 		*/
 
-		#region GenericsSeralizationTests
-
-		[Test]
-		[Category ("NotWorking")]
-		public void TestSerializeGenSimpleClassString () {
-			GenSimpleClass<string> simple = new GenSimpleClass<string> ();
-			Serialize (simple);
-			Assert.AreEqual (Infoset ("<GenSimpleClassOfString xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText);
-
-			simple.something = "hello";
-
-			Serialize (simple);
-			Assert.AreEqual (Infoset ("<GenSimpleClassOfString xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>hello</something></GenSimpleClassOfString>"), WriterText);
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		public void TestSerializeGenSimpleClassBool () {
-			GenSimpleClass<bool> simple = new GenSimpleClass<bool> ();
-			Serialize (simple);
-			Assert.AreEqual (Infoset ("<GenSimpleClassOfBoolean xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>false</something></GenSimpleClassOfBoolean>"), WriterText);
-
-			simple.something = true;
-
-			Serialize (simple);
-			Assert.AreEqual (Infoset ("<GenSimpleClassOfBoolean xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>true</something></GenSimpleClassOfBoolean>"), WriterText);
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		public void TestSerializeGenSimpleStructInt () {
-			GenSimpleStruct<int> simple = new GenSimpleStruct<int> (0);
-			Serialize (simple);
-			Assert.AreEqual (Infoset ("<GenSimpleStructOfInt32 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>0</something></GenSimpleStructOfInt32>"), WriterText);
-
-			simple.something = 123;
-
-			Serialize (simple);
-			Assert.AreEqual (Infoset ("<GenSimpleStructOfInt32 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>123</something></GenSimpleStructOfInt32>"), WriterText);
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		public void TestSerializeGenListClassString () {
-			GenListClass<string> genlist = new GenListClass<string> ();
-			Serialize (genlist);
-			Assert.AreEqual (Infoset ("<GenListClassOfString xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><somelist></somelist></GenListClassOfString>"), WriterText);
-
-			genlist.somelist.Add ("Value1");
-			genlist.somelist.Add ("Value2");
-
-			Serialize (genlist);
-			Assert.AreEqual (Infoset ("<GenListClassOfString xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><somelist><string>Value1</string><string>Value2</string></somelist></GenListClassOfString>"), WriterText);
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		public void TestSerializeGenListClassFloat () {
-			GenListClass<float> genlist = new GenListClass<float> ();
-			Serialize (genlist);
-			Assert.AreEqual (Infoset ("<GenListClassOfSingle xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><somelist></somelist></GenListClassOfSingle>"), WriterText);
-
-			genlist.somelist.Add (1);
-			genlist.somelist.Add (2.2F);
-
-			Serialize (genlist);
-			Assert.AreEqual (Infoset ("<GenListClassOfSingle xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><somelist><float>1</float><float>2.2</float></somelist></GenListClassOfSingle>"), WriterText);
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		public void TestSerializeGenListClassList () {
-			GenListClass<GenListClass<int>> genlist = new GenListClass<GenListClass<int>> ();
-			Serialize (genlist);
-			Assert.AreEqual (Infoset ("<GenListClassOfGenListClassOfInt32 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><somelist></somelist></GenListClassOfGenListClassOfInt32>"), WriterText);
-
-			GenListClass<int> inlist1 = new GenListClass<int> ();
-			inlist1.somelist.Add (1);
-			inlist1.somelist.Add (2);
-			GenListClass<int> inlist2 = new GenListClass<int> ();
-			inlist2.somelist.Add (10);
-			inlist2.somelist.Add (20);
-			genlist.somelist.Add (inlist1);
-			genlist.somelist.Add (inlist2);
-
-			Serialize (genlist);
-			Assert.AreEqual (Infoset ("<GenListClassOfGenListClassOfInt32 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><somelist><GenListClassOfInt32><somelist><int>1</int><int>2</int></somelist></GenListClassOfInt32><GenListClassOfInt32><somelist><int>10</int><int>20</int></somelist></GenListClassOfInt32></somelist></GenListClassOfGenListClassOfInt32>"), WriterText);
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		public void TestSerializeGenListClassArray () {
-			GenListClass<GenArrayClass<char>> genlist = new GenListClass<GenArrayClass<char>> ();
-			Serialize (genlist);
-			Assert.AreEqual (Infoset ("<GenListClassOfGenArrayClassOfChar xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><somelist></somelist></GenListClassOfGenArrayClassOfChar>"), WriterText);
-
-			GenArrayClass<char> genarr1 = new GenArrayClass<char> ();
-			genarr1.arr[0] = 'a';
-			genarr1.arr[1] = 'b';
-			genlist.somelist.Add (genarr1);
-			GenArrayClass<char> genarr2 = new GenArrayClass<char> ();
-			genarr2.arr[0] = 'd';
-			genarr2.arr[1] = 'e';
-			genarr2.arr[2] = 'f';
-			genlist.somelist.Add (genarr2);
-
-			Serialize (genlist);
-			Assert.AreEqual (Infoset ("<GenListClassOfGenArrayClassOfChar xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><somelist><GenArrayClassOfChar><arr><char>97</char><char>98</char><char>0</char></arr></GenArrayClassOfChar><GenArrayClassOfChar><arr><char>100</char><char>101</char><char>102</char></arr></GenArrayClassOfChar></somelist></GenListClassOfGenArrayClassOfChar>"), WriterText);
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		public void TestSerializeGenTwoClassCharDouble () {
-			GenTwoClass<char, double> gentwo = new GenTwoClass<char, double> ();
-			Serialize (gentwo);
-			Assert.AreEqual (Infoset ("<GenTwoClassOfCharDouble xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something1>0</something1><something2>0</something2></GenTwoClassOfCharDouble>"), WriterText);
-
-			gentwo.something1 = 'a';
-			gentwo.something2 = 2.2;
-
-			Serialize (gentwo);
-			Assert.AreEqual (Infoset ("<GenTwoClassOfCharDouble xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something1>97</something1><something2>2.2</something2></GenTwoClassOfCharDouble>"), WriterText);
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		public void TestSerializeGenDerivedClassDecimalShort () {
-			GenDerivedClass<decimal, short> derived = new GenDerivedClass<decimal, short> ();
-			Serialize (derived);
-			Assert.AreEqual (Infoset ("<GenDerivedClassOfDecimalInt16 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something2>0</something2><another1>0</another1><another2>0</another2></GenDerivedClassOfDecimalInt16>"), WriterText);
-
-			derived.something1 = "Value1";
-			derived.something2 = 1;
-			derived.another1 = 1.1M;
-			derived.another2 = -22;
-
-			Serialize (derived);
-			Assert.AreEqual (Infoset ("<GenDerivedClassOfDecimalInt16 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something1>Value1</something1><something2>1</something2><another1>1.1</another1><another2>-22</another2></GenDerivedClassOfDecimalInt16>"), WriterText);
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		public void TestSerializeGenDerivedSecondClassByteUlong () {
-			GenDerived2Class<byte, ulong> derived2 = new GenDerived2Class<byte, ulong> ();
-			Serialize (derived2);
-			Assert.AreEqual (Infoset ("<GenDerived2ClassOfByteUInt64 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something1>0</something1><something2>0</something2><another1>0</another1><another2>0</another2></GenDerived2ClassOfByteUInt64>"), WriterText);
-
-			derived2.something1 = 1;
-			derived2.something2 = 222;
-			derived2.another1 = 111;
-			derived2.another2 = 222222;
-
-			Serialize (derived2);
-			Assert.AreEqual (Infoset ("<GenDerived2ClassOfByteUInt64 xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something1>1</something1><something2>222</something2><another1>111</another1><another2>222222</another2></GenDerived2ClassOfByteUInt64>"), WriterText);
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		public void TestSerializeGenNestedClass () {
-			GenNestedClass<string, int>.InnerClass<bool> nested = 
-				new GenNestedClass<string, int>.InnerClass<bool> ();
-			Serialize (nested);
-			Assert.AreEqual (Infoset ("<InnerClassOfStringInt32Boolean xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><inner>0</inner><something>false</something></InnerClassOfStringInt32Boolean>"), WriterText);
-
-			nested.inner = 5;
-			nested.something = true;
-
-			Serialize (nested);
-			Assert.AreEqual (Infoset ("<InnerClassOfStringInt32Boolean xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><inner>5</inner><something>true</something></InnerClassOfStringInt32Boolean>"), WriterText);
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		public void TestSerializeGenListClassListNested () {
-			GenListClass<GenListClass<GenNestedClass<int, int>.InnerClass<string>>> genlist =
-				new GenListClass<GenListClass<GenNestedClass<int, int>.InnerClass<string>>> ();
-			Serialize (genlist);
-			Assert.AreEqual (Infoset ("<GenListClassOfGenListClassOfInnerClassOfInt32Int32String xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><somelist></somelist></GenListClassOfGenListClassOfInnerClassOfInt32Int32String>"), WriterText);
-
-			GenListClass<GenNestedClass<int, int>.InnerClass<string>> inlist1 =
-				new GenListClass<GenNestedClass<int, int>.InnerClass<string>> ();
-			GenNestedClass<int, int>.InnerClass<string> inval1 = new GenNestedClass<int, int>.InnerClass<string> ();
-			inval1.inner = 1;
-			inval1.something = "ONE";
-			inlist1.somelist.Add (inval1);
-			GenNestedClass<int, int>.InnerClass<string> inval2 = new GenNestedClass<int, int>.InnerClass<string> ();
-			inval2.inner = 2;
-			inval2.something = "TWO";
-			inlist1.somelist.Add (inval2);
-			GenListClass<GenNestedClass<int, int>.InnerClass<string>> inlist2 =
-				new GenListClass<GenNestedClass<int, int>.InnerClass<string>> ();
-			GenNestedClass<int, int>.InnerClass<string> inval3 = new GenNestedClass<int, int>.InnerClass<string> ();
-			inval3.inner = 30;
-			inval3.something = "THIRTY";
-			inlist2.somelist.Add (inval3);
-			genlist.somelist.Add (inlist1);
-			genlist.somelist.Add (inlist2);
-
-			Serialize (genlist);
-			Assert.AreEqual (Infoset ("<GenListClassOfGenListClassOfInnerClassOfInt32Int32String xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><somelist><GenListClassOfInnerClassOfInt32Int32String><somelist><InnerClassOfInt32Int32String><inner>1</inner><something>ONE</something></InnerClassOfInt32Int32String><InnerClassOfInt32Int32String><inner>2</inner><something>TWO</something></InnerClassOfInt32Int32String></somelist></GenListClassOfInnerClassOfInt32Int32String><GenListClassOfInnerClassOfInt32Int32String><somelist><InnerClassOfInt32Int32String><inner>30</inner><something>THIRTY</something></InnerClassOfInt32Int32String></somelist></GenListClassOfInnerClassOfInt32Int32String></somelist></GenListClassOfGenListClassOfInnerClassOfInt32Int32String>"), WriterText);
-		}
-
-		public enum Myenum { one, two, three, four, five, six };
-		[Test]
-		[Category ("NotWorking")]
-		public void TestSerializeGenArrayClassEnum () {
-			GenArrayClass<Myenum> genarr = new GenArrayClass<Myenum> ();
-			Serialize (genarr);
-			Assert.AreEqual (Infoset ("<GenArrayClassOfMyenum xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><arr><Myenum>one</Myenum><Myenum>one</Myenum><Myenum>one</Myenum></arr></GenArrayClassOfMyenum>"), WriterText);
-
-			genarr.arr[0] = Myenum.one;
-			genarr.arr[1] = Myenum.three;
-			genarr.arr[2] = Myenum.five;
-
-			Serialize (genarr);
-			Assert.AreEqual (Infoset ("<GenArrayClassOfMyenum xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><arr><Myenum>one</Myenum><Myenum>three</Myenum><Myenum>five</Myenum></arr></GenArrayClassOfMyenum>"), WriterText);
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		public void TestSerializeGenArrayStruct () {
-			GenArrayClass<GenSimpleStruct<uint>> genarr = new GenArrayClass<GenSimpleStruct<uint>> ();
-			Serialize (genarr);
-			Assert.AreEqual ("<:GenArrayClassOfGenSimpleStructOfUInt32 http://www.w3.org/2000/xmlns/:xsd='http://www.w3.org/2001/XMLSchema' http://www.w3.org/2000/xmlns/:xsi='http://www.w3.org/2001/XMLSchema-instance'><:arr><:GenSimpleStructOfUInt32><:something>0</></><:GenSimpleStructOfUInt32><:something>0</></><:GenSimpleStructOfUInt32><:something>0</></></></>", WriterText);
-
-			GenSimpleStruct<uint> genstruct = new GenSimpleStruct<uint> ();
-			genstruct.something = 111;
-			genarr.arr[0] = genstruct;
-			genstruct.something = 222;
-			genarr.arr[1] = genstruct;
-			genstruct.something = 333;
-			genarr.arr[2] = genstruct;
-
-			Serialize (genarr);
-			Assert.AreEqual ("<:GenArrayClassOfGenSimpleStructOfUInt32 http://www.w3.org/2000/xmlns/:xsd='http://www.w3.org/2001/XMLSchema' http://www.w3.org/2000/xmlns/:xsi='http://www.w3.org/2001/XMLSchema-instance'><:arr><:GenSimpleStructOfUInt32><:something>111</></><:GenSimpleStructOfUInt32><:something>222</></><:GenSimpleStructOfUInt32><:something>333</></></></>", WriterText);
-		}
-
-		[Test]
-		[Category ("NotDotNet")]
-		// There is a bug in DotNet for this scenario, see comment below. 
-		[Category ("NotWorking")]
-		public void TestSerializeGenArrayList () {
-			GenArrayClass<GenListClass<string>> genarr = new GenArrayClass<GenListClass<string>> ();
-			Serialize (genarr);
-			Assert.AreEqual ("<:GenArrayClassOfGenListClassOfString http://www.w3.org/2000/xmlns/:xsd='http://www.w3.org/2001/XMLSchema' http://www.w3.org/2000/xmlns/:xsi='http://www.w3.org/2001/XMLSchema-instance'><:arr><:GenListClassOfString http://www.w3.org/2001/XMLSchema-instance:nil='true'></><:GenListClassOfString http://www.w3.org/2001/XMLSchema-instance:nil='true'></><:GenListClassOfString http://www.w3.org/2001/XMLSchema-instance:nil='true'></></></>", WriterText);
-
-			GenListClass<string> genlist1 = new GenListClass<string> ();
-			genlist1.somelist.Add ("list1-val1");
-			genlist1.somelist.Add ("list1-val2");
-			genarr.arr[0] = genlist1;
-			GenListClass<string> genlist2 = new GenListClass<string> ();
-			genlist2.somelist.Add ("list2-val1");
-			genlist2.somelist.Add ("list2-val2");
-			genlist2.somelist.Add ("list2-val3");
-			genlist2.somelist.Add ("list2-val4");
-			genarr.arr[1] = genlist2;
-			GenListClass<string> genlist3 = new GenListClass<string> ();
-			genlist1.somelist.Add ("list3val");
-			genarr.arr[2] = genlist3;
-
-			Serialize (genarr);
-			Assert.AreEqual ("<:GenArrayClassOfGenListClassOfString http://www.w3.org/2000/xmlns/:xsd='http://www.w3.org/2001/XMLSchema' http://www.w3.org/2000/xmlns/:xsi='http://www.w3.org/2001/XMLSchema-instance'><:arr><:GenListClassOfString><:somelist><:string>list1-val1</><:string>list1-val2</><:GenListClassOfString><:somelist><:string>list2-val1</><:string>list2-val2</><:string>list2-val3</><:string>list2-val4</></><:GenListClassOfString><:somelist><:string>list3val</></></></>", WriterText);
-			// Following is the DotNet result which is a bug, where member 
-			// of the third list is wrongly added to the first list.  
-			//Assert.AreEqual ("<:GenArrayClassOfGenListClassOfString http://www.w3.org/2000/xmlns/:xsd='http://www.w3.org/2001/XMLSchema' http://www.w3.org/2000/xmlns/:xsi='http://www.w3.org/2001/XMLSchema-instance'><:arr><:GenListClassOfString><:somelist><:string>list1-val1</><:string>list1-val2</><:string>list3val</></></><:GenListClassOfString><:somelist><:string>list2-val1</><:string>list2-val2</><:string>list2-val3</><:string>list2-val4</></></><:GenListClassOfString><:somelist></></></></>", WriterText);
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		public void TestSerializeGenComplexStruct () {
-			GenComplexStruct<int, string> complex = new GenComplexStruct<int, string> (0);
-			Serialize (complex);
-			Assert.AreEqual ("<:GenComplexStructOfInt32String http://www.w3.org/2000/xmlns/:xsd='http://www.w3.org/2001/XMLSchema' http://www.w3.org/2000/xmlns/:xsi='http://www.w3.org/2001/XMLSchema-instance'><:something>0</><:simpleclass><:something>0</></><:simplestruct><:something>0</></><:listclass><:somelist></></><:arrayclass><:arr><:int>0</><:int>0</><:int>0</></></><:twoclass><:something1>0</></><:derivedclass><:something2>0</><:another1>0</></><:derived2><:something1>0</><:another1>0</></><:nestedouter><:outer>0</></><:nestedinner><:something>0</></></>", WriterText);
-			
-			complex.something = 123;
-			complex.simpleclass.something = 456;
-			complex.simplestruct.something = 789;
-			GenListClass<int> genlist = new GenListClass<int>();
-			genlist.somelist.Add (100);
-			genlist.somelist.Add (200);
-			complex.listclass = genlist;
-			GenArrayClass<int> genarr = new GenArrayClass<int> ();
-			genarr.arr[0] = 11;
-			genarr.arr[1] = 22;
-			genarr.arr[2] = 33;
-			complex.arrayclass = genarr;
-			complex.twoclass.something1 = 10;
-			complex.twoclass.something2 = "Ten";
-			complex.derivedclass.another1 = 1;
-			complex.derivedclass.another2 = "one";
-			complex.derivedclass.something1 = "two";
-			complex.derivedclass.something2 = 2;
-			complex.derived2.another1 = 3;
-			complex.derived2.another2 = "three";
-			complex.derived2.something1 = 4;
-			complex.derived2.something2 = "four";
-			complex.nestedouter.outer = 5;
-			complex.nestedinner.inner = "six";
-			complex.nestedinner.something = 6;
-
-			Serialize (complex);
-			Assert.AreEqual ("<:GenComplexStructOfInt32String http://www.w3.org/2000/xmlns/:xsd='http://www.w3.org/2001/XMLSchema' http://www.w3.org/2000/xmlns/:xsi='http://www.w3.org/2001/XMLSchema-instance'><:something>123</><:simpleclass><:something>456</></><:simplestruct><:something>789</></><:listclass><:somelist><:int>100</><:int>200</></></><:arrayclass><:arr><:int>11</><:int>22</><:int>33</></></><:twoclass><:something1>10</><:something2>Ten</></><:derivedclass><:something1>two</><:something2>2</><:another1>1</><:another2>one</></><:derived2><:something1>4</><:something2>four</><:another1>3</><:another2>three</></><:nestedouter><:outer>5</></><:nestedinner><:inner>six</><:something>6</></></>", WriterText);
-		}
-
-		#endregion //GenericsSeralizationTests
-
 		// test basic class serialization /////////////////////////////////////		
 		[Test]
-		public void TestSerializeSimpleClass()
+		public void TestSerializeSimpleClass ()
 		{
-			SimpleClass simple = new SimpleClass();
-			Serialize(simple);
+			SimpleClass simple = new SimpleClass ();
+			Serialize (simple);
 			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText);
-			
+
 			simple.something = "hello";
-			
-			Serialize(simple);
+
+			Serialize (simple);
 			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>hello</something></SimpleClass>"), WriterText);
 		}
 
 		[Test]
-		public void TestSerializeStringCollection()
+		public void TestSerializeStringCollection ()
 		{
-			StringCollection strings = new StringCollection();
-			Serialize(strings);
+			StringCollection strings = new StringCollection ();
+			Serialize (strings);
 			Assert.AreEqual (Infoset ("<ArrayOfString xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText);
-			
-			strings.Add("hello");
-			strings.Add("goodbye");
-			Serialize(strings);
+
+			strings.Add ("hello");
+			strings.Add ("goodbye");
+			Serialize (strings);
 			Assert.AreEqual (Infoset ("<ArrayOfString xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><string>hello</string><string>goodbye</string></ArrayOfString>"), WriterText);
 		}
-		
+
 		[Test]
-		public void TestSerializePlainContainer()
+		public void TestSerializeOptionalValueTypeContainer ()
 		{
-			StringCollectionContainer container = new StringCollectionContainer();
-			Serialize(container);
+			XmlAttributeOverrides overrides = new XmlAttributeOverrides ();
+			XmlAttributes attr;
+			OptionalValueTypeContainer optionalValue = new OptionalValueTypeContainer ();
+
+			Serialize (optionalValue);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+#if NET_2_0
+				"<optionalValue xmlns:xsi='{1}' xmlns:xsd='{0}' xmlns='{2}' />",
+#else
+				"<optionalValue xmlns:xsd='{0}' xmlns:xsi='{1}' xmlns='{2}' />",
+#endif
+				XmlSchema.Namespace, XmlSchema.InstanceNamespace, AnotherNamespace),
+				sw.ToString (), "#1");
+
+			attr = new XmlAttributes ();
+
+			// remove the DefaultValue attribute on the Flags member
+			overrides.Add (typeof (OptionalValueTypeContainer), "Flags", attr);
+			// remove the DefaultValue attribute on the Attributes member
+			overrides.Add (typeof (OptionalValueTypeContainer), "Attributes", attr);
+
+			Serialize (optionalValue, overrides);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+#if NET_2_0
+				"<optionalValue xmlns:xsi='{1}' xmlns:xsd='{0}' xmlns='{2}'>" +
+#else
+				"<optionalValue xmlns:xsd='{0}' xmlns:xsi='{1}' xmlns='{2}'>" +
+#endif
+				"<Attributes xmlns='{3}'>one four</Attributes>" +
+				"</optionalValue>", XmlSchema.Namespace, XmlSchema.InstanceNamespace,
+				AnotherNamespace, ANamespace), sw.ToString (), "#2");
+
+			optionalValue.FlagsSpecified = true;
+			Serialize (optionalValue, overrides);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version='1.0' encoding='utf-16'?>" +
+#if NET_2_0
+				"<optionalValue xmlns:xsi='{1}' xmlns:xsd='{0}' xmlns='{2}'>" +
+#else
+				"<optionalValue xmlns:xsd='{0}' xmlns:xsi='{1}' xmlns='{2}'>" +
+#endif
+				"<Attributes xmlns='{3}'>one four</Attributes>" +
+				"<Flags xmlns='{3}'>one</Flags>" +
+				"</optionalValue>",
+				XmlSchema.Namespace, XmlSchema.InstanceNamespace, AnotherNamespace,
+				ANamespace), sw.ToString (), "#3");
+		}
+
+		[Test]
+		public void TestSerializePlainContainer ()
+		{
+			StringCollectionContainer container = new StringCollectionContainer ();
+			Serialize (container);
 			Assert.AreEqual (Infoset ("<StringCollectionContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><Messages /></StringCollectionContainer>"), WriterText);
-			
-			container.Messages.Add("hello");
-			container.Messages.Add("goodbye");
-			Serialize(container);
+
+			container.Messages.Add ("hello");
+			container.Messages.Add ("goodbye");
+			Serialize (container);
 			Assert.AreEqual (Infoset ("<StringCollectionContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><Messages><string>hello</string><string>goodbye</string></Messages></StringCollectionContainer>"), WriterText);
 		}
 
 		[Test]
-		public void TestSerializeArrayContainer()
+		public void TestSerializeArrayContainer ()
 		{
-			ArrayContainer container = new ArrayContainer();
-			Serialize(container);
+			ArrayContainer container = new ArrayContainer ();
+			Serialize (container);
 			Assert.AreEqual (Infoset ("<ArrayContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText);
-			
-			container.items = new object[] {10, 20};
-			Serialize(container);
+
+			container.items = new object [] { 10, 20 };
+			Serialize (container);
 			Assert.AreEqual (Infoset ("<ArrayContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' ><items><anyType xsi:type='xsd:int'>10</anyType><anyType xsi:type='xsd:int'>20</anyType></items></ArrayContainer>"), WriterText);
-			
-			container.items = new object[] {10, "hello"};
-			Serialize(container);
+
+			container.items = new object [] { 10, "hello" };
+			Serialize (container);
 			Assert.AreEqual (Infoset ("<ArrayContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' ><items><anyType xsi:type='xsd:int'>10</anyType><anyType xsi:type='xsd:string'>hello</anyType></items></ArrayContainer>"), WriterText);
 		}
-		
+
 		[Test]
-		public void TestSerializeClassArrayContainer()
+		public void TestSerializeClassArrayContainer ()
 		{
-			ClassArrayContainer container = new ClassArrayContainer();
-			Serialize(container);
+			ClassArrayContainer container = new ClassArrayContainer ();
+			Serialize (container);
 			Assert.AreEqual (Infoset ("<ClassArrayContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText);
-			
-			SimpleClass simple1 = new SimpleClass();
+
+			SimpleClass simple1 = new SimpleClass ();
 			simple1.something = "hello";
-			SimpleClass simple2 = new SimpleClass();
+			SimpleClass simple2 = new SimpleClass ();
 			simple2.something = "hello";
-			container.items = new SimpleClass[2];
-			container.items[0] = simple1;
-			container.items[1] = simple2;
-			Serialize(container);
+			container.items = new SimpleClass [2];
+			container.items [0] = simple1;
+			container.items [1] = simple2;
+			Serialize (container);
 			Assert.AreEqual (Infoset ("<ClassArrayContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' ><items><SimpleClass><something>hello</something></SimpleClass><SimpleClass><something>hello</something></SimpleClass></items></ClassArrayContainer>"), WriterText);
 		}
-		
+
 		// test basic attributes ///////////////////////////////////////////////
 		[Test]
-		public void TestSerializeSimpleClassWithXmlAttributes()
+		public void TestSerializeSimpleClassWithXmlAttributes ()
 		{
-			SimpleClassWithXmlAttributes simple = new SimpleClassWithXmlAttributes();
-			Serialize(simple);
+			SimpleClassWithXmlAttributes simple = new SimpleClassWithXmlAttributes ();
+			Serialize (simple);
 			Assert.AreEqual (Infoset ("<simple xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText);
 
 			simple.something = "hello";
-			Serialize(simple);
+			Serialize (simple);
 			Assert.AreEqual (Infoset ("<simple xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' member='hello' />"), WriterText);
 		}
-		
+
 		// test overrides ///////////////////////////////////////////////////////
 		[Test]
-		public void TestSerializeSimpleClassWithOverrides()
+		public void TestSerializeSimpleClassWithOverrides ()
 		{
 			// Also tests XmlIgnore
-			XmlAttributeOverrides overrides = new XmlAttributeOverrides();
-			
-			XmlAttributes attr = new XmlAttributes();
+			XmlAttributeOverrides overrides = new XmlAttributeOverrides ();
+
+			XmlAttributes attr = new XmlAttributes ();
 			attr.XmlIgnore = true;
-			overrides.Add(typeof(SimpleClassWithXmlAttributes), "something", attr);
-			
-			SimpleClassWithXmlAttributes simple = new SimpleClassWithXmlAttributes();
+			overrides.Add (typeof (SimpleClassWithXmlAttributes), "something", attr);
+
+			SimpleClassWithXmlAttributes simple = new SimpleClassWithXmlAttributes ();
 			simple.something = "hello";
-			Serialize(simple, overrides);
+			Serialize (simple, overrides);
 			Assert.AreEqual (Infoset ("<simple xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText);
 		}
 
@@ -1139,232 +1186,231 @@ namespace MonoTests.System.XmlSerialization
 
 		// test xmlText //////////////////////////////////////////////////////////
 		[Test]
-		public void TestSerializeXmlTextAttribute()
+		public void TestSerializeXmlTextAttribute ()
 		{
-			SimpleClass simple = new SimpleClass();
+			SimpleClass simple = new SimpleClass ();
 			simple.something = "hello";
-			
-			XmlAttributeOverrides overrides = new XmlAttributeOverrides();
-			XmlAttributes attr = new XmlAttributes();
-			overrides.Add(typeof(SimpleClass), "something", attr);
-			
-			attr.XmlText = new XmlTextAttribute();
-			Serialize(simple, overrides);
-			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>hello</SimpleClass>"), WriterText, "#1");
-			
-			attr.XmlText = new XmlTextAttribute(typeof(string));
-			Serialize(simple, overrides);
-			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>hello</SimpleClass>"), WriterText, "#2");
-			
-			try {
-				attr.XmlText = new XmlTextAttribute(typeof(byte[]));
-				Serialize(simple, overrides);
-				Assert.Fail("XmlText.Type does not match the type it serializes: this should have failed");
-			} catch (InvalidOperationException ex) {
-				// FIXME
 
-				/*
-				// there was an error reflecting type 'MonoTests.System.Xml.TestClasses.SimpleClass'.
-				Assert.IsNotNull (ex.Message, "#A1");
-				Assert.IsTrue (ex.Message.IndexOf (typeof (SimpleClass).FullName) != -1, "#A2");
+			XmlAttributeOverrides overrides = new XmlAttributeOverrides ();
+			XmlAttributes attr = new XmlAttributes ();
+			overrides.Add (typeof (SimpleClass), "something", attr);
+
+			attr.XmlText = new XmlTextAttribute ();
+			Serialize (simple, overrides);
+			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>hello</SimpleClass>"), WriterText, "#1");
+
+			attr.XmlText = new XmlTextAttribute (typeof (string));
+			Serialize (simple, overrides);
+			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>hello</SimpleClass>"), WriterText, "#2");
+
+			try {
+				attr.XmlText = new XmlTextAttribute (typeof (byte []));
+				Serialize (simple, overrides);
+				Assert.Fail ("#A1: XmlText.Type does not match the type it serializes: this should have failed");
+			} catch (InvalidOperationException ex) {
+				// there was an error reflecting type 'MonoTests.System.Xml.TestClasses.SimpleClass'
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+				Assert.IsNotNull (ex.Message, "#A3");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (SimpleClass).FullName) != -1, "#A4");
+				Assert.IsNotNull (ex.InnerException, "#A5");
 
 				// there was an error reflecting field 'something'.
-				Assert.IsNotNull (ex.InnerException, "#A3");
-				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#A4");
-				Assert.IsNotNull (ex.InnerException.Message, "#A5");
-				Assert.IsTrue (ex.InnerException.Message.IndexOf ("something") != -1, "#A6");
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#A6");
+				Assert.IsNotNull (ex.InnerException.Message, "#A7");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("something") != -1, "#A8");
+				Assert.IsNotNull (ex.InnerException.InnerException, "#A9");
 
 				// the type for XmlText may not be specified for primitive types.
-				Assert.IsNotNull (ex.InnerException.InnerException, "#A7");
-				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#A8");
-				Assert.IsNotNull (ex.InnerException.Message, "#A9");
-
-				Assert.IsNull (ex.InnerException.InnerException.InnerException, "#A10");
-				*/
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.InnerException.GetType (), "#A10");
+				Assert.IsNotNull (ex.InnerException.InnerException.Message, "#A11");
+				Assert.IsNull (ex.InnerException.InnerException.InnerException, "#A12");
 			}
-			
+
 			try {
-				attr.XmlText = new XmlTextAttribute();
+				attr.XmlText = new XmlTextAttribute ();
 				attr.XmlText.DataType = "sometype";
-				Serialize(simple, overrides);
-				Assert.Fail("XmlText.DataType does not match the type it serializes: this should have failed");
+				Serialize (simple, overrides);
+				Assert.Fail ("#B1: XmlText.DataType does not match the type it serializes: this should have failed");
 			} catch (InvalidOperationException ex) {
-				// there was an error reflecting type 'MonoTests.System.Xml.TestClasses.SimpleClass'.
-				Assert.IsNotNull (ex.Message, "#B1");
-				Assert.IsTrue (ex.Message.IndexOf (typeof (SimpleClass).FullName) != -1, "#B2");
+				// There was an error reflecting type 'MonoTests.System.Xml.TestClasses.SimpleClass'.
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.Message, "#B3");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (SimpleClass).FullName) != -1, "#B4");
+				Assert.IsNotNull (ex.InnerException, "#B5");
 
-				// there was an error reflecting field 'something'.
-				Assert.IsNotNull (ex.InnerException, "#B3");
-				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#B4");
-				Assert.IsNotNull (ex.InnerException.Message, "#B5");
-				Assert.IsTrue (ex.InnerException.Message.IndexOf ("something") != -1, "#B6");
+				// There was an error reflecting field 'something'.
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.GetType (), "#B6");
+				Assert.IsNotNull (ex.InnerException.Message, "#B7");
+				Assert.IsTrue (ex.InnerException.Message.IndexOf ("something") != -1, "#B8");
+				Assert.IsNotNull (ex.InnerException.InnerException, "#B9");
 
-				// there was an error reflecting type 'System.String'.
-				Assert.IsNotNull (ex.InnerException.InnerException, "#B7");
-				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.InnerException.GetType (), "#B8");
-				Assert.IsNotNull (ex.InnerException.InnerException.Message, "#B9");
-				Assert.IsTrue (ex.InnerException.InnerException.Message.IndexOf (typeof (string).FullName) != -1, "#B10");
+				//FIXME
+				/*
+				// There was an error reflecting type 'System.String'.
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.InnerException.GetType (), "#B10");
+				Assert.IsNotNull (ex.InnerException.InnerException.Message, "#B11");
+				Assert.IsTrue (ex.InnerException.InnerException.Message.IndexOf (typeof (string).FullName) != -1, "#B12");
+				Assert.IsNotNull (ex.InnerException.InnerException.InnerException, "#B13");
 
 				// Value 'sometype' cannot be used for the XmlElementAttribute.DataType property. 
 				// The datatype 'http://www.w3.org/2001/XMLSchema:sometype' is missing.
-				Assert.IsNotNull (ex.InnerException.InnerException.InnerException, "#B11");
-				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.InnerException.InnerException.GetType (), "#B12");
-				Assert.IsNotNull (ex.InnerException.InnerException.InnerException.Message, "#B13");
-				Assert.IsTrue (ex.InnerException.InnerException.InnerException.Message.IndexOf ("http://www.w3.org/2001/XMLSchema:sometype") != -1, "#B14");
-			} catch (NotSupportedException ex) {
-				// FIXME: we should report InvalidOperationException
+				Assert.AreEqual (typeof (InvalidOperationException), ex.InnerException.InnerException.InnerException.GetType (), "#B14");
+				Assert.IsNotNull (ex.InnerException.InnerException.InnerException.Message, "#B15");
+				Assert.IsTrue (ex.InnerException.InnerException.InnerException.Message.IndexOf ("http://www.w3.org/2001/XMLSchema:sometype") != -1, "#B16");
+				Assert.IsNull (ex.InnerException.InnerException.InnerException.InnerException, "#B17");
+				*/
 			}
 		}
-		
+
 		// test xmlRoot //////////////////////////////////////////////////////////
 		[Test]
-		public void TestSerializeXmlRootAttribute()
+		public void TestSerializeXmlRootAttribute ()
 		{
 			// constructor override & element name
-			XmlRootAttribute root = new XmlRootAttribute();
+			XmlRootAttribute root = new XmlRootAttribute ();
 			root.ElementName = "renamed";
-			
-			SimpleClassWithXmlAttributes simpleWithAttributes = new SimpleClassWithXmlAttributes();
-			Serialize(simpleWithAttributes, root);
+
+			SimpleClassWithXmlAttributes simpleWithAttributes = new SimpleClassWithXmlAttributes ();
+			Serialize (simpleWithAttributes, root);
 			Assert.AreEqual (Infoset ("<renamed xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText);
-			
+
 			SimpleClass simple = null;
 			root.IsNullable = false;
 			try {
-				Serialize(simple, root);
-				Assert.Fail("Cannot serialize null object if XmlRoot's IsNullable == false");
+				Serialize (simple, root);
+				Assert.Fail ("Cannot serialize null object if XmlRoot's IsNullable == false");
 			} catch (NullReferenceException) {
 			}
-			
+
 			root.IsNullable = true;
 			try {
-				Serialize(simple, root);
-				Assert.Fail("Cannot serialize null object if XmlRoot's IsNullable == true");
+				Serialize (simple, root);
+				Assert.Fail ("Cannot serialize null object if XmlRoot's IsNullable == true");
 			} catch (NullReferenceException) {
 			}
-			
-			simple = new SimpleClass();
+
+			simple = new SimpleClass ();
 			root.ElementName = null;
 			root.Namespace = "some.urn";
-			Serialize(simple, root);
+			Serialize (simple, root);
 			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns='some.urn' />"), WriterText);
 		}
-		
+
 		[Test]
-		public void TestSerializeXmlRootAttributeOnMember()
-		{			
+		public void TestSerializeXmlRootAttributeOnMember ()
+		{
 			// nested root
-			XmlAttributeOverrides overrides = new XmlAttributeOverrides();
-			XmlAttributes childAttr = new XmlAttributes();
-			childAttr.XmlRoot = new XmlRootAttribute("simple");
-			overrides.Add(typeof(SimpleClass), childAttr);
-			
-			XmlAttributes attr = new XmlAttributes();
-			attr.XmlRoot = new XmlRootAttribute("simple");
-			overrides.Add(typeof(ClassArrayContainer), attr);
-			
-			ClassArrayContainer container = new ClassArrayContainer();
-			container.items = new SimpleClass[1];
-			container.items[0] = new SimpleClass();
-			Serialize(container, overrides);
+			XmlAttributeOverrides overrides = new XmlAttributeOverrides ();
+			XmlAttributes childAttr = new XmlAttributes ();
+			childAttr.XmlRoot = new XmlRootAttribute ("simple");
+			overrides.Add (typeof (SimpleClass), childAttr);
+
+			XmlAttributes attr = new XmlAttributes ();
+			attr.XmlRoot = new XmlRootAttribute ("simple");
+			overrides.Add (typeof (ClassArrayContainer), attr);
+
+			ClassArrayContainer container = new ClassArrayContainer ();
+			container.items = new SimpleClass [1];
+			container.items [0] = new SimpleClass ();
+			Serialize (container, overrides);
 			Assert.AreEqual (Infoset ("<simple xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' ><items><SimpleClass /></items></simple>"), WriterText);
-			
+
 			// FIXME test data type
 		}
-		
+
 		// test XmlAttribute /////////////////////////////////////////////////////
 		[Test]
-		public void TestSerializeXmlAttributeAttribute()
-		{	
+		public void TestSerializeXmlAttributeAttribute ()
+		{
 			// null
-			XmlAttributeOverrides overrides = new XmlAttributeOverrides();
-			XmlAttributes attr = new XmlAttributes();
-			attr.XmlAttribute = new XmlAttributeAttribute();
-			overrides.Add(typeof(SimpleClass), "something", attr);
-			
-			SimpleClass simple = new SimpleClass();;
-			Serialize(simple, overrides);
+			XmlAttributeOverrides overrides = new XmlAttributeOverrides ();
+			XmlAttributes attr = new XmlAttributes ();
+			attr.XmlAttribute = new XmlAttributeAttribute ();
+			overrides.Add (typeof (SimpleClass), "something", attr);
+
+			SimpleClass simple = new SimpleClass (); ;
+			Serialize (simple, overrides);
 			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText, "#1");
-			
+
 			// regular
 			simple.something = "hello";
-			Serialize(simple, overrides);
+			Serialize (simple, overrides);
 			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' something='hello' />"), WriterText, "#2");
-			
+
 			// AttributeName
 			attr.XmlAttribute.AttributeName = "somethingelse";
-			Serialize(simple, overrides);
+			Serialize (simple, overrides);
 			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' somethingelse='hello' />"), WriterText, "#3");
-			
+
 			// Type
 			// FIXME this should work, shouldnt it?
 			// attr.XmlAttribute.Type = typeof(string);
 			// Serialize(simple, overrides);
 			// Assert(WriterText.EndsWith(" something='hello' />"));
-			
+
 			// Namespace
 			attr.XmlAttribute.Namespace = "some:urn";
-			Serialize(simple, overrides);
+			Serialize (simple, overrides);
 			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' d1p1:somethingelse='hello' xmlns:d1p1='some:urn' />"), WriterText, "#4");
-			
+
 			// FIXME DataType
 			// FIXME XmlSchemaForm Form
-			
+
 			// FIXME write XmlQualifiedName as attribute
 		}
-		
+
 		// test XmlElement ///////////////////////////////////////////////////////
 		[Test]
-		public void TestSerializeXmlElementAttribute()
+		public void TestSerializeXmlElementAttribute ()
 		{
-			XmlAttributeOverrides overrides = new XmlAttributeOverrides();
-			XmlAttributes attr = new XmlAttributes();
-			XmlElementAttribute element = new XmlElementAttribute();
-			attr.XmlElements.Add(element);
-			overrides.Add(typeof(SimpleClass), "something", attr);
-			
+			XmlAttributeOverrides overrides = new XmlAttributeOverrides ();
+			XmlAttributes attr = new XmlAttributes ();
+			XmlElementAttribute element = new XmlElementAttribute ();
+			attr.XmlElements.Add (element);
+			overrides.Add (typeof (SimpleClass), "something", attr);
+
 			// null
-			SimpleClass simple = new SimpleClass();;
-			Serialize(simple, overrides);
+			SimpleClass simple = new SimpleClass (); ;
+			Serialize (simple, overrides);
 			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText, "#1");
-			
+
 			// not null
 			simple.something = "hello";
-			Serialize(simple, overrides);
+			Serialize (simple, overrides);
 			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>hello</something></SimpleClass>"), WriterText, "#2");
-			
+
 			//ElementName
 			element.ElementName = "saying";
-			Serialize(simple, overrides);
+			Serialize (simple, overrides);
 			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><saying>hello</saying></SimpleClass>"), WriterText, "#3");
-			
+
 			//IsNullable
 			element.IsNullable = false;
 			simple.something = null;
-			Serialize(simple, overrides);
+			Serialize (simple, overrides);
 			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText, "#4");
-			
+
 			element.IsNullable = true;
 			simple.something = null;
-			Serialize(simple, overrides);
+			Serialize (simple, overrides);
 			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><saying xsi:nil='true' /></SimpleClass>"), WriterText, "#5");
-			
+
 			//Namespace
 			element.ElementName = null;
 			element.IsNullable = false;
 			element.Namespace = "some:urn";
 			simple.something = "hello";
-			Serialize(simple, overrides);
+			Serialize (simple, overrides);
 			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something xmlns='some:urn'>hello</something></SimpleClass>"), WriterText, "#6");
-			
+
 			//FIXME DataType
 			//FIXME Form
 			//FIXME Type
 		}
-		
+
 		// test XmlElementAttribute with arrays and collections //////////////////
 		[Test]
-		public void TestSerializeCollectionWithXmlElementAttribute()
+		public void TestSerializeCollectionWithXmlElementAttribute ()
 		{
 			// the rule is:
 			// if no type is specified or the specified type 
@@ -1373,78 +1419,351 @@ namespace MonoTests.System.XmlSerialization
 			// if the type does not match, or matches the collection itself,
 			//    create a base wrapping element for the member, and then
 			//    wrap each collection item in its own wrapping element based on type.
-			
-			XmlAttributeOverrides overrides = new XmlAttributeOverrides();
-			XmlAttributes attr = new XmlAttributes();
-			XmlElementAttribute element = new XmlElementAttribute();
-			attr.XmlElements.Add(element);
-			overrides.Add(typeof(StringCollectionContainer), "Messages", attr);
-			
+
+			XmlAttributeOverrides overrides = new XmlAttributeOverrides ();
+			XmlAttributes attr = new XmlAttributes ();
+			XmlElementAttribute element = new XmlElementAttribute ();
+			attr.XmlElements.Add (element);
+			overrides.Add (typeof (StringCollectionContainer), "Messages", attr);
+
 			// empty collection & no type info in XmlElementAttribute
-			StringCollectionContainer container = new StringCollectionContainer();
-			Serialize(container, overrides);
+			StringCollectionContainer container = new StringCollectionContainer ();
+			Serialize (container, overrides);
 			Assert.AreEqual (Infoset ("<StringCollectionContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText, "#1");
-			
+
 			// non-empty collection & no type info in XmlElementAttribute
-			container.Messages.Add("hello");
-			Serialize(container, overrides);
+			container.Messages.Add ("hello");
+			Serialize (container, overrides);
 			Assert.AreEqual (Infoset ("<StringCollectionContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><Messages>hello</Messages></StringCollectionContainer>"), WriterText, "#2");
-			
+
 			// non-empty collection & only type info in XmlElementAttribute
-			element.Type = typeof(StringCollection);
-			Serialize(container, overrides);
+			element.Type = typeof (StringCollection);
+			Serialize (container, overrides);
 			Assert.AreEqual (Infoset ("<StringCollectionContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><Messages><string>hello</string></Messages></StringCollectionContainer>"), WriterText, "#3");
-			
+
 			// non-empty collection & only type info in XmlElementAttribute
-			element.Type = typeof(string);
-			Serialize(container, overrides);
+			element.Type = typeof (string);
+			Serialize (container, overrides);
 			Assert.AreEqual (Infoset ("<StringCollectionContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><Messages>hello</Messages></StringCollectionContainer>"), WriterText, "#4");
-			
+
 			// two elements
-			container.Messages.Add("goodbye");
+			container.Messages.Add ("goodbye");
 			element.Type = null;
-			Serialize(container, overrides);
+			Serialize (container, overrides);
 			Assert.AreEqual (Infoset ("<StringCollectionContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><Messages>hello</Messages><Messages>goodbye</Messages></StringCollectionContainer>"), WriterText, "#5");
 		}
-		
+
 		// test DefaultValue /////////////////////////////////////////////////////
 		[Test]
-		public void TestSerializeDefaultValueAttribute()
+		public void TestSerializeDefaultValueAttribute ()
 		{
-			XmlAttributeOverrides overrides = new XmlAttributeOverrides();
-			
-			XmlAttributes attr = new XmlAttributes();
+			XmlAttributeOverrides overrides = new XmlAttributeOverrides ();
+
+			XmlAttributes attr = new XmlAttributes ();
 			string defaultValueInstance = "nothing";
 			attr.XmlDefaultValue = defaultValueInstance;
-			overrides.Add(typeof(SimpleClass), "something", attr);
-			
+			overrides.Add (typeof (SimpleClass), "something", attr);
+
 			// use the default
-			SimpleClass simple = new SimpleClass();
-			Serialize(simple, overrides);
-			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText, "#1");
-			
+			SimpleClass simple = new SimpleClass ();
+			Serialize (simple, overrides);
+			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText, "#A1");
+
 			// same value as default
 			simple.something = defaultValueInstance;
-			Serialize(simple, overrides);
-			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText, "#2");
-			
+			Serialize (simple, overrides);
+			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText, "#A2");
+
 			// some other value
 			simple.something = "hello";
-			Serialize(simple, overrides);
-			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>hello</something></SimpleClass>"), WriterText, "#3");
+			Serialize (simple, overrides);
+			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something>hello</something></SimpleClass>"), WriterText, "#A3");
+
+			overrides = new XmlAttributeOverrides ();
+			attr = new XmlAttributes ();
+			attr.XmlAttribute = new XmlAttributeAttribute ();
+			attr.XmlDefaultValue = defaultValueInstance;
+			overrides.Add (typeof (SimpleClass), "something", attr);
+
+			// use the default
+			simple = new SimpleClass ();
+			Serialize (simple, overrides);
+			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText, "#B1");
+
+			// same value as default
+			simple.something = defaultValueInstance;
+			Serialize (simple, overrides);
+			Assert.AreEqual (Infoset ("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText, "#B2");
+
+			// some other value
+			simple.something = "hello";
+			Serialize (simple, overrides);
+			Assert.AreEqual (Infoset ("<SimpleClass something='hello' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText, "#B3");
+
+			overrides = new XmlAttributeOverrides ();
+			attr = new XmlAttributes ();
+			attr.XmlAttribute = new XmlAttributeAttribute ("flagenc");
+			overrides.Add (typeof (TestDefault), "flagencoded", attr);
+
+			// use the default
+			TestDefault testDefault = new TestDefault ();
+			Serialize (testDefault);
+			Assert.AreEqual (Infoset ("<testDefault xmlns='urn:myNS' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText, "#C1");
+
+			// use the default with overrides
+			Serialize (testDefault, overrides);
+			Assert.AreEqual (Infoset ("<testDefault flagenc='e1 e4' xmlns='urn:myNS' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText, "#C2");
+
+			overrides = new XmlAttributeOverrides ();
+			attr = new XmlAttributes ();
+			attr.XmlAttribute = new XmlAttributeAttribute ("flagenc");
+			attr.XmlDefaultValue = (FlagEnum_Encoded.e1 | FlagEnum_Encoded.e4); // add default again
+			overrides.Add (typeof (TestDefault), "flagencoded", attr);
+
+			// use the default with overrides
+			Serialize (testDefault, overrides);
+			Assert.AreEqual (Infoset ("<testDefault xmlns='urn:myNS' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText, "#C3");
+
+			// use the default with overrides and default namspace
+			Serialize (testDefault, overrides, AnotherNamespace);
+			Assert.AreEqual (Infoset ("<testDefault xmlns='urn:myNS' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText, "#C4");
+
+			// non-default values
+			testDefault.strDefault = "Some Text";
+			testDefault.boolT = false;
+			testDefault.boolF = true;
+			testDefault.decimalval = 20m;
+			testDefault.flag = FlagEnum.e2;
+			testDefault.flagencoded = FlagEnum_Encoded.e2 | FlagEnum_Encoded.e1;
+			Serialize (testDefault);
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<testDefault xmlns='urn:myNS' xmlns:xsd='{0}' xmlns:xsi='{1}'>" +
+				"    <strDefault>Some Text</strDefault>" +
+				"    <boolT>false</boolT>" +
+				"    <boolF>true</boolF>" +
+				"    <decimalval>20</decimalval>" +
+				"    <flag>two</flag>" +
+				"    <flagencoded>e1 e2</flagencoded>" +
+				"</testDefault>", XmlSchema.Namespace, XmlSchema.InstanceNamespace)),
+				WriterText, "#C5");
+
+			Serialize (testDefault, overrides);
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<testDefault flagenc='e1 e2' xmlns='urn:myNS' xmlns:xsd='{0}' xmlns:xsi='{1}'>" +
+				"    <strDefault>Some Text</strDefault>" +
+				"    <boolT>false</boolT>" +
+				"    <boolF>true</boolF>" +
+				"    <decimalval>20</decimalval>" +
+				"    <flag>two</flag>" +
+				"</testDefault>", XmlSchema.Namespace, XmlSchema.InstanceNamespace)),
+				WriterText, "#C6");
+
+			Serialize (testDefault, overrides, AnotherNamespace);
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<testDefault flagenc='e1 e2' xmlns='urn:myNS' xmlns:xsd='{0}' xmlns:xsi='{1}'>" +
+				"    <strDefault>Some Text</strDefault>" +
+				"    <boolT>false</boolT>" +
+				"    <boolF>true</boolF>" +
+				"    <decimalval>20</decimalval>" +
+				"    <flag>two</flag>" +
+				"</testDefault>", XmlSchema.Namespace, XmlSchema.InstanceNamespace)),
+				WriterText, "#C7");
+
+			attr = new XmlAttributes ();
+			XmlTypeAttribute xmlType = new XmlTypeAttribute ("flagenum");
+			xmlType.Namespace = "yetanother:urn";
+			attr.XmlType = xmlType;
+			overrides.Add (typeof (FlagEnum_Encoded), attr);
+
+			Serialize (testDefault, overrides, AnotherNamespace);
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<testDefault flagenc='e1 e2' xmlns='urn:myNS' xmlns:xsd='{0}' xmlns:xsi='{1}'>" +
+				"    <strDefault>Some Text</strDefault>" +
+				"    <boolT>false</boolT>" +
+				"    <boolF>true</boolF>" +
+				"    <decimalval>20</decimalval>" +
+				"    <flag>two</flag>" +
+				"</testDefault>", XmlSchema.Namespace, XmlSchema.InstanceNamespace)),
+				WriterText, "#C8");
+
+			attr = new XmlAttributes ();
+			attr.XmlType = new XmlTypeAttribute ("testDefault");
+			overrides.Add (typeof (TestDefault), attr);
+
+			Serialize (testDefault, overrides, AnotherNamespace);
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<testDefault flagenc='e1 e2' xmlns='{2}' xmlns:xsd='{0}' xmlns:xsi='{1}'>" +
+				"    <strDefault>Some Text</strDefault>" +
+				"    <boolT>false</boolT>" +
+				"    <boolF>true</boolF>" +
+				"    <decimalval>20</decimalval>" +
+				"    <flag>two</flag>" +
+				"</testDefault>", XmlSchema.Namespace, XmlSchema.InstanceNamespace,
+				AnotherNamespace)), WriterText, "#C9");
 		}
-		
+
+		[Test]
+		[Category ("NotWorking")] // SerializationCodeGenerator outputs wrong xsi:type for flagencoded in #C1
+		public void TestSerializeDefaultValueAttribute_Encoded ()
+		{
+			SoapAttributeOverrides overrides = new SoapAttributeOverrides ();
+			SoapAttributes attr = new SoapAttributes ();
+			attr.SoapAttribute = new SoapAttributeAttribute ();
+			string defaultValueInstance = "nothing";
+			attr.SoapDefaultValue = defaultValueInstance;
+			overrides.Add (typeof (SimpleClass), "something", attr);
+
+			// use the default
+			SimpleClass simple = new SimpleClass ();
+			SerializeEncoded (simple, overrides);
+			Assert.AreEqual (Infoset ("<SimpleClass id='id1' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText, "#A1");
+
+			// same value as default
+			simple.something = defaultValueInstance;
+			SerializeEncoded (simple, overrides);
+			Assert.AreEqual (Infoset ("<SimpleClass id='id1' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText, "#A2");
+
+			// some other value
+			simple.something = "hello";
+			SerializeEncoded (simple, overrides);
+			Assert.AreEqual (Infoset ("<SimpleClass id='id1' something='hello' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText, "#A3");
+
+			attr.SoapAttribute = null;
+			attr.SoapElement = new SoapElementAttribute ();
+
+			// use the default
+			simple = new SimpleClass ();
+			SerializeEncoded (simple, overrides);
+			Assert.AreEqual (Infoset ("<SimpleClass id='id1' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText, "#B1");
+
+			// same value as default
+			simple.something = defaultValueInstance;
+			SerializeEncoded (simple, overrides);
+			Assert.AreEqual (Infoset ("<SimpleClass id='id1' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something xsi:type='xsd:string'>nothing</something></SimpleClass>"), WriterText, "#B2");
+
+			// some other value
+			simple.something = "hello";
+			SerializeEncoded (simple, overrides);
+			Assert.AreEqual (Infoset ("<SimpleClass id='id1' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><something xsi:type='xsd:string'>hello</something></SimpleClass>"), WriterText, "#B3");
+
+			overrides = new SoapAttributeOverrides ();
+			attr = new SoapAttributes ();
+			attr.SoapElement = new SoapElementAttribute ("flagenc");
+			overrides.Add (typeof (TestDefault), "flagencoded", attr);
+
+			// use the default (from MS KB325691)
+			TestDefault testDefault = new TestDefault ();
+			SerializeEncoded (testDefault);
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<q1:testDefault id='id1' xmlns:q1='urn:myNS' xmlns:xsd='{0}' xmlns:xsi='{1}'>" +
+				"    <strDefault xsi:type='xsd:string'>Default Value</strDefault>" +
+				"    <boolT xsi:type='xsd:boolean'>true</boolT>" +
+				"    <boolF xsi:type='xsd:boolean'>false</boolF>" +
+				"    <decimalval xsi:type='xsd:decimal'>10</decimalval>" +
+				"    <flag xsi:type='FlagEnum'>e1 e4</flag>" +
+				"    <flagencoded xsi:type='flagenum'>one four</flagencoded>" +
+				"</q1:testDefault>", XmlSchema.Namespace, XmlSchema.InstanceNamespace)),
+				WriterText, "#C1");
+
+			SerializeEncoded (testDefault, overrides);
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<q1:testDefault id='id1' xmlns:q1='urn:myNS' xmlns:xsd='{0}' xmlns:xsi='{1}'>" +
+				"    <strDefault xsi:type='xsd:string'>Default Value</strDefault>" +
+				"    <boolT xsi:type='xsd:boolean'>true</boolT>" +
+				"    <boolF xsi:type='xsd:boolean'>false</boolF>" +
+				"    <decimalval xsi:type='xsd:decimal'>10</decimalval>" +
+				"    <flag xsi:type='FlagEnum'>e1 e4</flag>" +
+				"    <flagenc xsi:type='flagenum'>one four</flagenc>" +
+				"</q1:testDefault>", XmlSchema.Namespace, XmlSchema.InstanceNamespace)),
+				WriterText, "#C2");
+
+			SerializeEncoded (testDefault, overrides, AnotherNamespace);
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<q1:testDefault id='id1' xmlns:q1='urn:myNS' xmlns:xsd='{0}' xmlns:xsi='{1}'>" +
+				"    <strDefault xsi:type='xsd:string'>Default Value</strDefault>" +
+				"    <boolT xsi:type='xsd:boolean'>true</boolT>" +
+				"    <boolF xsi:type='xsd:boolean'>false</boolF>" +
+				"    <decimalval xsi:type='xsd:decimal'>10</decimalval>" +
+				"    <flag xmlns:q2='{2}' xsi:type='q2:FlagEnum'>e1 e4</flag>" +
+				"    <flagenc xmlns:q3='{2}' xsi:type='q3:flagenum'>one four</flagenc>" +
+				"</q1:testDefault>", XmlSchema.Namespace, XmlSchema.InstanceNamespace,
+				AnotherNamespace)), WriterText, "#C3");
+
+			// non-default values
+			testDefault.strDefault = "Some Text";
+			testDefault.boolT = false;
+			testDefault.boolF = true;
+			testDefault.decimalval = 20m;
+			testDefault.flag = FlagEnum.e2;
+			testDefault.flagencoded = FlagEnum_Encoded.e2 | FlagEnum_Encoded.e1;
+			SerializeEncoded (testDefault);
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<q1:testDefault id='id1' xmlns:q1='urn:myNS' xmlns:xsd='{0}' xmlns:xsi='{1}'>" +
+				"    <strDefault xsi:type='xsd:string'>Some Text</strDefault>" +
+				"    <boolT xsi:type='xsd:boolean'>false</boolT>" +
+				"    <boolF xsi:type='xsd:boolean'>true</boolF>" +
+				"    <decimalval xsi:type='xsd:decimal'>20</decimalval>" +
+				"    <flag xsi:type='FlagEnum'>e2</flag>" +
+				"    <flagencoded xsi:type='flagenum'>one two</flagencoded>" +
+				"</q1:testDefault>", XmlSchema.Namespace, XmlSchema.InstanceNamespace)),
+				WriterText, "#C4");
+
+			SerializeEncoded (testDefault, overrides);
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<q1:testDefault id='id1' xmlns:q1='urn:myNS' xmlns:xsd='{0}' xmlns:xsi='{1}'>" +
+				"    <strDefault xsi:type='xsd:string'>Some Text</strDefault>" +
+				"    <boolT xsi:type='xsd:boolean'>false</boolT>" +
+				"    <boolF xsi:type='xsd:boolean'>true</boolF>" +
+				"    <decimalval xsi:type='xsd:decimal'>20</decimalval>" +
+				"    <flag xsi:type='FlagEnum'>e2</flag>" +
+				"    <flagenc xsi:type='flagenum'>one two</flagenc>" +
+				"</q1:testDefault>", XmlSchema.Namespace, XmlSchema.InstanceNamespace)),
+				WriterText, "#C5");
+
+			attr = new SoapAttributes ();
+			attr.SoapType = new SoapTypeAttribute ("flagenum", "yetanother:urn");
+			overrides.Add (typeof (FlagEnum_Encoded), attr);
+
+			SerializeEncoded (testDefault, overrides, AnotherNamespace);
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<q1:testDefault id='id1' xmlns:q1='urn:myNS' xmlns:xsd='{0}' xmlns:xsi='{1}'>" +
+				"    <strDefault xsi:type='xsd:string'>Some Text</strDefault>" +
+				"    <boolT xsi:type='xsd:boolean'>false</boolT>" +
+				"    <boolF xsi:type='xsd:boolean'>true</boolF>" +
+				"    <decimalval xsi:type='xsd:decimal'>20</decimalval>" +
+				"    <flag xmlns:q2='{2}' xsi:type='q2:FlagEnum'>e2</flag>" +
+				"    <flagenc xmlns:q3='yetanother:urn' xsi:type='q3:flagenum'>one two</flagenc>" +
+				"</q1:testDefault>", XmlSchema.Namespace, XmlSchema.InstanceNamespace,
+				AnotherNamespace)), WriterText, "#C6");
+
+			attr = new SoapAttributes ();
+			attr.SoapType = new SoapTypeAttribute ("testDefault");
+			overrides.Add (typeof (TestDefault), attr);
+
+			SerializeEncoded (testDefault, overrides, AnotherNamespace);
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
+				"<q1:testDefault id='id1' xmlns:q1='{2}' xmlns:xsd='{0}' xmlns:xsi='{1}'>" +
+				"    <strDefault xsi:type='xsd:string'>Some Text</strDefault>" +
+				"    <boolT xsi:type='xsd:boolean'>false</boolT>" +
+				"    <boolF xsi:type='xsd:boolean'>true</boolF>" +
+				"    <decimalval xsi:type='xsd:decimal'>20</decimalval>" +
+				"    <flag xsi:type='q1:FlagEnum'>e2</flag>" +
+				"    <flagenc xmlns:q2='yetanother:urn' xsi:type='q2:flagenum'>one two</flagenc>" +
+				"</q1:testDefault>", XmlSchema.Namespace, XmlSchema.InstanceNamespace,
+				AnotherNamespace)), WriterText, "#C7");
+		}
+
 		// test XmlEnum //////////////////////////////////////////////////////////
 		[Test]
-		public void TestSerializeXmlEnumAttribute()
+		public void TestSerializeXmlEnumAttribute ()
 		{
-			Serialize(XmlSchemaForm.Qualified);
+			Serialize (XmlSchemaForm.Qualified);
 			Assert.AreEqual (Infoset ("<XmlSchemaForm>qualified</XmlSchemaForm>"), WriterText, "#1");
-			
-			Serialize(XmlSchemaForm.Unqualified);
+
+			Serialize (XmlSchemaForm.Unqualified);
 			Assert.AreEqual (Infoset ("<XmlSchemaForm>unqualified</XmlSchemaForm>"), WriterText, "#2");
 		}
-		
+
 		[Test]
 		public void TestSerializeXmlEnumAttribute_IgnoredValue ()
 		{
@@ -1473,49 +1792,49 @@ namespace MonoTests.System.XmlSerialization
 		public void TestSerializeXmlNodeArray ()
 		{
 			XmlDocument doc = new XmlDocument ();
-			Serialize (new XmlNode [] { doc.CreateAttribute("at"), doc.CreateElement("elem1"), doc.CreateElement("elem2") }, typeof(object));
+			Serialize (new XmlNode [] { doc.CreateAttribute ("at"), doc.CreateElement ("elem1"), doc.CreateElement ("elem2") }, typeof (object));
 			Assert.AreEqual (Infoset ("<anyType at=\"\"><elem1/><elem2/></anyType>"), WriterText);
 		}
-		
+
 		[Test]
 		public void TestSerializeXmlElement ()
 		{
 			XmlDocument doc = new XmlDocument ();
-			Serialize (doc.CreateElement("elem"), typeof(XmlElement));
+			Serialize (doc.CreateElement ("elem"), typeof (XmlElement));
 			Assert.AreEqual (Infoset ("<elem/>"), WriterText);
 		}
-		
+
 		[Test]
 		public void TestSerializeXmlElementSubclass ()
 		{
 			XmlDocument doc = new XmlDocument ();
-			Serialize (new MyElem (doc), typeof(XmlElement));
+			Serialize (new MyElem (doc), typeof (XmlElement));
 			Assert.AreEqual (Infoset ("<myelem aa=\"1\"/>"), WriterText, "#1");
-			
-			Serialize (new MyElem (doc), typeof(MyElem));
+
+			Serialize (new MyElem (doc), typeof (MyElem));
 			Assert.AreEqual (Infoset ("<myelem aa=\"1\"/>"), WriterText, "#2");
 		}
-		
+
 		[Test]
 		public void TestSerializeXmlCDataSection ()
 		{
 			XmlDocument doc = new XmlDocument ();
 			CDataContainer c = new CDataContainer ();
-			c.cdata = doc.CreateCDataSection("data section contents");
+			c.cdata = doc.CreateCDataSection ("data section contents");
 			Serialize (c);
 			Assert.AreEqual (Infoset ("<CDataContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><cdata><![CDATA[data section contents]]></cdata></CDataContainer>"), WriterText);
 		}
-		
+
 		[Test]
 		public void TestSerializeXmlNode ()
 		{
 			XmlDocument doc = new XmlDocument ();
 			NodeContainer c = new NodeContainer ();
-			c.node = doc.CreateTextNode("text");
+			c.node = doc.CreateTextNode ("text");
 			Serialize (c);
 			Assert.AreEqual (Infoset ("<NodeContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><node>text</node></NodeContainer>"), WriterText);
 		}
-		
+
 		[Test]
 		public void TestSerializeChoice ()
 		{
@@ -1531,41 +1850,41 @@ namespace MonoTests.System.XmlSerialization
 			Serialize (ch);
 			Assert.AreEqual (Infoset ("<Choices xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><ChoiceTwo>choice text</ChoiceTwo></Choices>"), WriterText, "#3");
 		}
-		
+
 		[Test]
 		public void TestSerializeNamesWithSpaces ()
 		{
-			TestSpace ts = new TestSpace();
+			TestSpace ts = new TestSpace ();
 			ts.elem = 4;
 			ts.attr = 5;
 			Serialize (ts);
 			Assert.AreEqual (Infoset ("<Type_x0020_with_x0020_space xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' Attribute_x0020_with_x0020_space='5'><Element_x0020_with_x0020_space>4</Element_x0020_with_x0020_space></Type_x0020_with_x0020_space>"), WriterText);
 		}
-		
+
 		[Test]
 		public void TestSerializeReadOnlyProps ()
 		{
-			ReadOnlyProperties ts = new ReadOnlyProperties();
+			ReadOnlyProperties ts = new ReadOnlyProperties ();
 			Serialize (ts);
 			Assert.AreEqual (Infoset ("<ReadOnlyProperties xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText);
 		}
-		
+
 		[Test]
-		public void TestSerializeIList()
+		public void TestSerializeIList ()
 		{
-			clsPerson k = new clsPerson();
-			k.EmailAccounts = new ArrayList();
-			k.EmailAccounts.Add("a");
-			k.EmailAccounts.Add("b");
+			clsPerson k = new clsPerson ();
+			k.EmailAccounts = new ArrayList ();
+			k.EmailAccounts.Add ("a");
+			k.EmailAccounts.Add ("b");
 			Serialize (k);
 			Assert.AreEqual (Infoset ("<clsPerson xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><EmailAccounts><anyType xsi:type=\"xsd:string\">a</anyType><anyType xsi:type=\"xsd:string\">b</anyType></EmailAccounts></clsPerson>"), WriterText);
 		}
-		
+
 		[Test]
 		public void TestSerializeArrayEnc ()
 		{
 			SoapReflectionImporter imp = new SoapReflectionImporter ();
-			XmlTypeMapping map = imp.ImportTypeMapping (typeof(ArrayClass));
+			XmlTypeMapping map = imp.ImportTypeMapping (typeof (ArrayClass));
 			XmlSerializer ser = new XmlSerializer (map);
 			StringWriter sw = new StringWriter ();
 			XmlTextWriter tw = new XmlTextWriter (sw);
@@ -1573,27 +1892,27 @@ namespace MonoTests.System.XmlSerialization
 			ser.Serialize (tw, new ArrayClass ());
 			tw.WriteEndElement ();
 		}
-		
+
 		[Test]
-		public void TestIncludeType()
+		public void TestIncludeType ()
 		{
 			// Test for bug #76049
 			XmlReflectionImporter imp = new XmlReflectionImporter ();
-			XmlTypeMapping map = imp.ImportTypeMapping (typeof(object));
-			imp.IncludeType (typeof(TestSpace));
+			XmlTypeMapping map = imp.ImportTypeMapping (typeof (object));
+			imp.IncludeType (typeof (TestSpace));
 			XmlSerializer ser = new XmlSerializer (map);
 			ser.Serialize (new StringWriter (), new TestSpace ());
 		}
-		
+
 		[Test]
-		public void TestSerializeChoiceArray()
+		public void TestSerializeChoiceArray ()
 		{
 			CompositeValueType v = new CompositeValueType ();
 			v.Init ();
 			Serialize (v);
 			Assert.AreEqual (Infoset ("<?xml version=\"1.0\" encoding=\"utf-16\"?><CompositeValueType xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><In>1</In><Es>2</Es></CompositeValueType>"), WriterText);
 		}
-		
+
 		[Test]
 		public void TestArrayAttributeWithDataType ()
 		{
@@ -1614,14 +1933,14 @@ namespace MonoTests.System.XmlSerialization
 			res += "<a xsi:type=\"SubclassTestSub\"/></SubclassTestContainer>";
 			Assert.AreEqual (Infoset (res), WriterText);
 		}
-		
+
 		[Test]
-		[ExpectedException (typeof(InvalidOperationException))]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestArrayAttributeWithWrongDataType ()
 		{
 			Serialize (new ArrayAttributeWithWrongType ());
 		}
-		
+
 		[Test]
 		[Category ("NotWorking")]
 		public void TestSerializePrimitiveTypesContainer ()
@@ -1639,8 +1958,8 @@ namespace MonoTests.System.XmlSerialization
 				"<Index>56</Index>" +
 				"<Password>8w8=</Password>" +
 				"<PathSeparatorCharacter>47</PathSeparatorCharacter>" +
-				"</PrimitiveTypesContainer>", XmlSchemaNamespace, 
-				XmlSchemaInstanceNamespace), sw.ToString (), "#1");
+				"</PrimitiveTypesContainer>", XmlSchema.Namespace,
+				XmlSchema.InstanceNamespace), sw.ToString (), "#1");
 
 			SerializeEncoded (new PrimitiveTypesContainer ());
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
@@ -1655,8 +1974,8 @@ namespace MonoTests.System.XmlSerialization
 				"<Index xsi:type='xsd:unsignedByte'>56</Index>" +
 				"<Password xsi:type='xsd:base64Binary'>8w8=</Password>" +
 				"<PathSeparatorCharacter xmlns:q2='{3}' xsi:type='q2:char'>47</PathSeparatorCharacter>" +
-				"</q1:PrimitiveTypesContainer>", XmlSchemaNamespace, 
-				XmlSchemaInstanceNamespace, AnotherNamespace, WsdlTypesNamespace), 
+				"</q1:PrimitiveTypesContainer>", XmlSchema.Namespace,
+				XmlSchema.InstanceNamespace, AnotherNamespace, WsdlTypesNamespace),
 				sw.ToString (), "#2");
 		}
 
@@ -1668,13 +1987,13 @@ namespace MonoTests.System.XmlSerialization
 			t1.p1.Init ();
 			t1.p2 = new PrintTypeResponse ();
 			t1.p2.Init ();
-			
+
 			TestSchemaForm2 t2 = new TestSchemaForm2 ();
 			t2.p1 = new PrintTypeResponse ();
 			t2.p1.Init ();
 			t2.p2 = new PrintTypeResponse ();
 			t2.p2.Init ();
-			
+
 			Serialize (t1);
 			string res = "";
 			res += "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
@@ -1730,7 +2049,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (Infoset (res), WriterText);
 
 			XmlReflectionImporter imp = new XmlReflectionImporter ();
-			XmlTypeMapping map = imp.ImportTypeMapping (typeof(TestSchemaForm1), "urn:extra");
+			XmlTypeMapping map = imp.ImportTypeMapping (typeof (TestSchemaForm1), "urn:extra");
 			Serialize (t1, map);
 			res = "";
 			res += "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
@@ -1759,7 +2078,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (Infoset (res), WriterText);
 
 			imp = new XmlReflectionImporter ();
-			map = imp.ImportTypeMapping (typeof(TestSchemaForm2), "urn:extra");
+			map = imp.ImportTypeMapping (typeof (TestSchemaForm2), "urn:extra");
 			Serialize (t2, map);
 			res = "";
 			res += "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
@@ -1793,7 +2112,7 @@ namespace MonoTests.System.XmlSerialization
 		public void CDataTextNodes ()
 		{
 			XmlSerializer ser = new XmlSerializer (typeof (CDataTextNodesType));
-			ser.UnknownNode += new XmlNodeEventHandler(CDataTextNodes_BadNode);
+			ser.UnknownNode += new XmlNodeEventHandler (CDataTextNodes_BadNode);
 			string xml = @"<CDataTextNodesType>
   <foo><![CDATA[
 (?<filename>^([A-Z]:)?[^\(]+)\((?<line>\d+),(?<column>\d+)\):
@@ -1802,6 +2121,53 @@ namespace MonoTests.System.XmlSerialization
 	]]></foo>
 </CDataTextNodesType>";
 			ser.Deserialize (new XmlTextReader (xml, XmlNodeType.Document, null));
+		}
+
+#if NET_2_0
+		[Test]
+		public void GenerateSerializerGenerics ()
+		{
+			XmlReflectionImporter imp = new XmlReflectionImporter ();
+			Type type = typeof (List<int>);
+			XmlSerializer.GenerateSerializer (
+				new Type [] {type},
+				new XmlTypeMapping [] {imp.ImportTypeMapping (type)});
+		}
+
+		[Test]
+		public void Nullable ()
+		{
+			XmlSerializer ser = new XmlSerializer (typeof (int?));
+			int? nullableType = 5;
+			sw = new StringWriter ();
+			xtw = new XmlTextWriter (sw);
+			ser.Serialize (xtw, nullableType);
+			xtw.Close ();
+			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?><int>5</int>", sw.ToString ());
+			int? i = (int?) ser.Deserialize (new StringReader (sw.ToString ()));
+			Assert.AreEqual (5, i);
+		}
+#endif
+
+		[Test] // bug #79989, #79990
+		public void SerializeHexBinary()
+		{
+			XmlSerializer ser = new XmlSerializer (typeof (HexBinary));
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter xtw = new XmlTextWriter (sw);
+			ser.Serialize (xtw, new HexBinary ());
+			xtw.Close ();
+			string expected = @"<?xml version=""1.0"" encoding=""utf-16""?><HexBinary xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" Data=""010203"" />";
+			Assert.AreEqual (expected, sw.ToString ());
+			HexBinary h = (HexBinary) ser.Deserialize (new StringReader (sw.ToString ()));
+			Assert.AreEqual (new byte [] {1, 2, 3}, h.Data);
+		}
+
+		[XmlRoot ("HexBinary")]
+		public class HexBinary
+		{
+			[XmlAttribute (DataType = "hexBinary")]
+			public byte [] Data = new byte [] {1, 2, 3};
 		}
 
 		public class CDataTextNodesType
@@ -1821,7 +2187,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		// Helper methods
-				
+
 		public static string Infoset (string sx)
 		{
 			XmlDocument doc = new XmlDocument ();
@@ -1830,54 +2196,64 @@ namespace MonoTests.System.XmlSerialization
 			GetInfoset (doc.DocumentElement, sb);
 			return sb.ToString ();
 		}
-		
+
 		public static string Infoset (XmlNode nod)
 		{
 			StringBuilder sb = new StringBuilder ();
 			GetInfoset (nod, sb);
 			return sb.ToString ();
 		}
-		
+
 		static void GetInfoset (XmlNode nod, StringBuilder sb)
 		{
-			switch (nod.NodeType)
-			{
-				case XmlNodeType.Attribute:
-					if (nod.LocalName == "xmlns" && nod.NamespaceURI == "http://www.w3.org/2000/xmlns/") return;
-					sb.Append (" " + nod.NamespaceURI + ":" + nod.LocalName + "='" + nod.Value + "'");
-					break;
-					
-				case XmlNodeType.Element:
-					XmlElement elem = (XmlElement) nod;
-					sb.Append ("<" + elem.NamespaceURI + ":" + elem.LocalName);
-					
-					ArrayList ats = new ArrayList ();
-					foreach (XmlAttribute at in elem.Attributes)
-						ats.Add (at.LocalName + " " + at.NamespaceURI);
-						
-					ats.Sort ();
-						
-					foreach (string name in ats)
-					{
-						string[] nn = name.Split (' ');
-						GetInfoset (elem.Attributes[nn[0],nn[1]], sb);
-					}
-						
-					sb.Append (">");
-					foreach (XmlNode cn in elem.ChildNodes)
-						GetInfoset (cn, sb);
-					sb.Append ("</>");
-					break;
-					
-				default:
-					sb.Append (nod.OuterXml);
-					break;
+			switch (nod.NodeType) {
+			case XmlNodeType.Attribute:
+				if (nod.LocalName == "xmlns" && nod.NamespaceURI == "http://www.w3.org/2000/xmlns/") return;
+				sb.Append (" " + nod.NamespaceURI + ":" + nod.LocalName + "='" + nod.Value + "'");
+				break;
+
+			case XmlNodeType.Element:
+				XmlElement elem = (XmlElement) nod;
+				sb.Append ("<" + elem.NamespaceURI + ":" + elem.LocalName);
+
+				ArrayList ats = new ArrayList ();
+				foreach (XmlAttribute at in elem.Attributes)
+					ats.Add (at.LocalName + " " + at.NamespaceURI);
+
+				ats.Sort ();
+
+				foreach (string name in ats) {
+					string [] nn = name.Split (' ');
+					GetInfoset (elem.Attributes [nn [0], nn [1]], sb);
+				}
+
+				sb.Append (">");
+				foreach (XmlNode cn in elem.ChildNodes)
+					GetInfoset (cn, sb);
+				sb.Append ("</>");
+				break;
+
+			default:
+				sb.Append (nod.OuterXml);
+				break;
 			}
 		}
 
 		static XmlTypeMapping CreateSoapMapping (Type type)
 		{
 			SoapReflectionImporter importer = new SoapReflectionImporter ();
+			return importer.ImportTypeMapping (type);
+		}
+
+		static XmlTypeMapping CreateSoapMapping (Type type, SoapAttributeOverrides ao)
+		{
+			SoapReflectionImporter importer = new SoapReflectionImporter (ao);
+			return importer.ImportTypeMapping (type);
+		}
+
+		static XmlTypeMapping CreateSoapMapping (Type type, SoapAttributeOverrides ao, string defaultNamespace)
+		{
+			SoapReflectionImporter importer = new SoapReflectionImporter (ao, defaultNamespace);
 			return importer.ImportTypeMapping (type);
 		}
 	}

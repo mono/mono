@@ -1,8 +1,76 @@
-2006-11-28  Hagit Yidov  <hagity@xmainsoft.com>
+2006-11-22  Atsushi Enomoto  <atsushi@ximian.com>
 
-	* XmlSerializerTests.cs : added tests for serialization of generic types.
-	* DeserializeTests.cs : added tests for deserialization of generic types.
-	* XmlSerializerTestClasses.cs : added classes for tests which use generic types.
+	* XmlSerializerTests.cs : added test for hexBinary.
+
+2006-11-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlReflectionImporterTests.cs : added test for class that contains
+	  nullable value type field whose XmlElementAttribute IsNullable.
+
+2006-11-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializerTests.cs : added test for nullable type.
+
+2006-11-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializerTests.cs : test for basic generic type support with
+	  code generation.
+
+2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializerImplementationTests.cs :
+	  another custom implementation case.
+
+2006-11-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaExporterTests.cs :
+	  fixed almost all test cases which expected totally wrong schemas.
+	  Schema elements are all nillable unless it is of value type.
+
+2006-11-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaImporterTests.cs :
+	  added DefaultTypeTopLevelElementImportsAllComplexTypes().
+
+2006-11-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaImporterTests.cs :
+	  added ImportComplexDerivationByExtension().
+
+2006-11-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaImporterTests.cs :
+	  added AnyTypeTopLevelElementImportsAllComplexTypes().
+
+2006-11-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaImporterTests.cs : added ImportTypeMapping() test for
+	  nonexistent name.
+
+2006-11-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CodeIdentifiersTests.cs : new test.
+
+2006-11-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializerImplementationTests.cs : new testfixture.
+
+2006-10-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlSerializerTests.cs: Added a few tests. Fixed coding style.
+
+2006-10-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DeserializeTest.cs: Added several tests.
+	* XmlSerializerTestClasses.cs: Added test classes for encoded SOAP.
+	* XmlSerializerTests.cs: Added new tests and fixed existing test.
+	* XmlReflectionImporterTests.cs: Added test for invalid default
+	values.
+	* SoapReflectionImporterTests.cs: Fixed numbering of tests.
+
+2006-10-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SoapReflectionImporterTests.cs: Added tests for bug #78206.
 
 2006-05-30  Atsushi Enomoto  <atsushi@ximian.com>
 
