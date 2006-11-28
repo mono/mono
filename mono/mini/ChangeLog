@@ -1,4 +1,9 @@
 
+Tue Nov 28 20:04:34 GMT 2006 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-arm.c: workaround bugs in the libc definition
+	of struct ucontext.
+
 Mon Nov 27 15:13:41 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* inssel.brg: fixes from me and Mark Mason.
