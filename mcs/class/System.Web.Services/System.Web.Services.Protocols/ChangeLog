@@ -1,5 +1,9 @@
 2006-11-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Fault12.cs : they should be all internal.
+
+2006-11-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Fault12.cs, fault-12.genxs, Fault12Serializer.cs :
 	  SOAP 1.2 Fault serializer and its generation sources.
 	* SoapException.cs :

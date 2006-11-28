@@ -55,7 +55,7 @@ namespace System.Web.Services.Protocols
 {
 	[XmlRoot ("Fault", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
 	[XmlType ("Fault", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
-	public class Soap12Fault
+	internal class Soap12Fault
 	{
 		// dummy constructor to not be rejected by genxs.
 		public Soap12Fault ()
@@ -127,7 +127,7 @@ namespace System.Web.Services.Protocols
 	}
 
 	[XmlType ("Code", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
-	public class Soap12FaultCode
+	internal class Soap12FaultCode
 	{
 		public XmlQualifiedName Value;
 
@@ -135,14 +135,14 @@ namespace System.Web.Services.Protocols
 	}
 
 	[XmlType ("Reason", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
-	public class Soap12FaultReason
+	internal class Soap12FaultReason
 	{
 		[XmlElement ("Text", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
 		public Soap12FaultReasonText [] Texts;
 	}
 
 	[XmlType ("Text", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
-	public class Soap12FaultReasonText
+	internal class Soap12FaultReasonText
 	{
 		[XmlAttribute ("lang", Namespace = "http://www.w3.org/XML/1998/namespace")]
 		public string XmlLang;
@@ -152,7 +152,7 @@ namespace System.Web.Services.Protocols
 	}
 
 	[XmlType ("Detail", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
-	public class Soap12FaultDetail
+	internal class Soap12FaultDetail
 	{
 		[XmlAnyAttribute]
 		public XmlAttribute [] Attributes;
