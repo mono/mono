@@ -896,11 +896,14 @@ namespace MonoTests.System.Web.UI {
 		//}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void InitializeCulture ()
 		{
+#if DOT_NET
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageCultureTest.aspx", "PageCultureTest.aspx");
+#else
 			WebTest.CopyResource (GetType (), "PageCultureTest.aspx", "PageCultureTest.aspx");
+#endif
 			WebTest t = new WebTest ("PageCultureTest.aspx");
 			string PageRenderHtml = t.Run ();
 			ArrayList eventlist = t.UserData as ArrayList;

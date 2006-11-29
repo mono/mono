@@ -1,3 +1,7 @@
+2006-11-29 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Page.cs: InitializeCulture method is called before OnPreInit.
+
 2006-11-28  Marek Habersack  <grendello@gmail.com>
 
 	* TemplateControlParser.cs: Use the new TemplateParser methods to
