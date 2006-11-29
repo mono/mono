@@ -135,7 +135,6 @@ namespace System.Windows.Forms {
 			control.Validating += new CancelEventHandler (ControlValidatingHandler);
 
 			this.control = control;
-			control.DataBindings.Add (this);
 		}
 
 		internal void Check (BindingContext binding_context)

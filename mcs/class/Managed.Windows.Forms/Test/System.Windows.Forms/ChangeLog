@@ -1,3 +1,7 @@
+2006-11-29  Chris Toshok  <toshok@ximian.com>
+
+	* BindingTest.cs: add two new tests.
+
 2006-11-28  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* TrackBar.cs: Changed SizeTest and OrientationTest 

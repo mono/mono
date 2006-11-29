@@ -126,6 +126,38 @@ namespace MonoTests.System.Windows.Forms {
 			Console.WriteLine (Environment.StackTrace);
 			eventcount++;
 		}
+
+		[Test]
+		public void DataBindingCountTest1 ()
+		{
+			Control c = new Control ();
+			Assert.AreEqual (0, c.DataBindings.Count, "1");
+			c.DataBindings.Add (new Binding ("Text", c, "Name"));
+			Assert.AreEqual (1, c.DataBindings.Count, "2");
+
+			Binding b = c.DataBindings[0];
+			Assert.AreEqual (c, b.Control, "3");
+			Assert.AreEqual (c, b.DataSource, "4");
+			Assert.AreEqual ("Text", b.PropertyName, "5");
+			Assert.AreEqual ("Name", b.BindingMemberInfo.BindingField, "6");
+		}
+
+		[Test]
+		public void DataBindingCountTest2 ()
+		{
+			Control c = new Control ();
+			Control c2 = new Control ();
+			Assert.AreEqual (0, c.DataBindings.Count, "1");
+			c.DataBindings.Add (new Binding ("Text", c2, "Name"));
+			Assert.AreEqual (1, c.DataBindings.Count, "2");
+			Assert.AreEqual (0, c2.DataBindings.Count, "3");
+
+			Binding b = c.DataBindings[0];
+			Assert.AreEqual (c, b.Control, "4");
+			Assert.AreEqual (c2, b.DataSource, "5");
+			Assert.AreEqual ("Text", b.PropertyName, "6");
+			Assert.AreEqual ("Name", b.BindingMemberInfo.BindingField, "7");
+		}
 	}
 
 }
