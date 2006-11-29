@@ -1,102 +1,188 @@
-rem @echo off
+@echo off
 REM ********************************************************
 REM This batch file receives the follwing parameters:
 REM build/rebuild (optional): should the solution file be rebuilded 
 REM                             or just builded before test run (default is rebuild)
-REM example run-tests build 
+REM output files name prefix (mandratory) : prefix for naming output xml files
+REM test fixture name (optional) : if you want to run some particular test fixture
+REM directory to run tests (optional)
+REM path back to root directory (opposite to previous param)
+REM example run-tests build GhTests Test.Sys.Drawing Test\DrawingTest\Test ..\..\..\
 REM will cause to build (and not rebuild) test solutions,
+REM running Test.Sys.Drawing fixture in directory Test\DrawingTest\Test
+REM with output files named GhTests.Net.xml and GhTests.GH.xml
 REM ********************************************************
 
 IF "%JAVA_HOME%"=="" GOTO ENVIRONMENT_EXCEPTION
 
 IF "%VMW_HOME%"=="" GOTO ENVIRONMENT_EXCEPTION
-IF "%GHROOT%"=="" set GHROOT=%VMW_HOME%
 
-REM ********************************************************
-REM Set parameters
-REM ********************************************************
+
 
 IF "%1"=="" (
 	set BUILD_OPTION=rebuild
 ) ELSE (
 	set BUILD_OPTION=%1
 )
-set OUTPUT_FILE_PREFIX=GH_TEST
+
+REM ********************************************************
+REM Set parameters
+REM ********************************************************
+
+set OUTPUT_FILE_PREFIX=System
+set RUNNING_FIXTURE=MonoTests.System
+set TEST_SOLUTION=Test\System.Test20.sln
+set TEST_ASSEMBLY=System.Test.jar
+set PROJECT_CONFIGURATION=Debug_Java20
+set APP_CONFIG_FILE=app_test_2.0.config
+
+
+set startDate=%date%
+set startTime=%time%
+set sdy=%startDate:~10%
+set /a sdm=1%startDate:~4,2% - 100
+set /a sdd=1%startDate:~7,2% - 100
+set /a sth=%startTime:~0,2%
+set /a stm=1%startTime:~3,2% - 100
+set /a sts=1%startTime:~6,2% - 100
+set TIMESTAMP=%sdy%_%sdm%_%sdd%_%sth%_%stm%
+
+set NUNIT_OPTIONS=/exclude:NotWorking,ValueAdd,CAS,InetAccess
 
 
 REM ********************************************************
 REM @echo Set environment
 REM ********************************************************
 
-set JGAC_PATH=%VMW_HOME%\jgac\vmw4j2ee_110
-set RUNTIME_CLASSPATH=%JGAC_PATH%\mscorlib.jar;%JGAC_PATH%\System.jar;%JGAC_PATH%\System.Xml.jar;%JGAC_PATH%\J2SE.Helpers.jar;
-set NUNIT_OPTIONS=/exclude=NotWorking,CAS,InetAccess
-set PROJECT_CONFIGURATION=Debug_Java20
-set GH_OUTPUT_XML=nunit_results.xml
-set NUNIT_PATH=..\..\nunit20
-set NUNIT_CLASSPATH=%NUNIT_PATH%\nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.framework.jar;%NUNIT_PATH%\nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.util.jar;%NUNIT_PATH%\nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.core.jar;%NUNIT_PATH%\nunit-console\bin\%PROJECT_CONFIGURATION%\nunit-console.jar
+set JGAC_PATH=%VMW_HOME%\jgac\vmw4j2ee_110\
+set JAVA_HOME=%VMW_HOME%\jre5
+
+set RUNTIME_CLASSPATH=%JGAC_PATH%mscorlib.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.Xml.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.Drawing.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.Configuration.jar
+set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%J2SE.Helpers.jar
+set NUNIT_OPTIONS=/exclude=NotWorking
+
+if "%GH_VERSION%"=="" (
+	set GH_VERSION=0_0_0_0
+)
+
+set COMMON_PREFIX=%TIMESTAMP%_%OUTPUT_FILE_PREFIX%.GH_%GH_VERSION%.1.%USERNAME%
+set GH_OUTPUT_XML=%COMMON_PREFIX%.xml
+set BUILD_LOG=%COMMON_PREFIX%.build.log
+set RUN_LOG=%COMMON_PREFIX%.run.log
+
+set NUNIT_PATH=..\..\nunit20\
+set NUNIT_CLASSPATH=%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.framework.jar
+set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.util.jar
+set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit.core.jar
+set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%NUNIT_PATH%nunit-console\bin\%PROJECT_CONFIGURATION%\nunit-console.jar
+set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;.
+set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%TEST_ASSEMBLY%
+
 set CLASSPATH="%RUNTIME_CLASSPATH%;%NUNIT_CLASSPATH%"
+
+REM ********************************************************
+@echo Building GH solution...
+REM ********************************************************
+
+rem devenv %TEST_SOLUTION% /%BUILD_OPTION% %PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.txt 2<&1
+msbuild %TEST_SOLUTION% /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%BUILD_LOG% 2<&1
+
+IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
 REM ********************************************************
 @echo Building NUnit solution...
 REM ********************************************************
 
 if "%NUNIT_BUILD%" == "DONE" goto NUNITSKIP
-msbuild %NUNIT_PATH%\nunit20.java.sln /t:%BUILD_OPTION% /p:configuration=%PROJECT_CONFIGURATION% >build.log.txt 2<&1
 
-IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
+REM devenv ..\..\nunit20\nunit.java.sln /%BUILD_OPTION% %PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.txt 2<&1
+msbuild ..\..\nunit20\nunit20.java.sln /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%BUILD_LOG% 2<&1
 
-set NUNIT_BUILD=DONE
+goto NUNITREADY
 
 :NUNITSKIP
 echo Skipping NUnit Build...
 
+:NUNITREADY
+set NUNIT_BUILD=DONE
 
-
-REM ********************************************************
-@echo Build XmlTool
-REM ********************************************************
-set XML_TOOL_PATH=..\..\tools\mono-xmltool
-msbuild %XML_TOOL_PATH%\XmlTool20.sln /p:configuration=Debug >>build.log.txt 2<&1
-IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
-copy %XML_TOOL_PATH%\bin\Debug\xmltool20.exe .
-copy %XML_TOOL_PATH%\nunit_transform.xslt .
-
-REM ********************************************************
-@echo Building GH solution...
-REM ********************************************************
-msbuild System-tests20.sln /t:%BUILD_OPTION% /p:configuration=%PROJECT_CONFIGURATION% >>build.log.txt 2<&1
 IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 
 REM ********************************************************
 @echo Running GH tests...
 REM ********************************************************
-@echo on
-"%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi /xml=%GH_OUTPUT_XML% bin\%PROJECT_CONFIGURATION%\System_tests.jar %NUNIT_OPTIONS%   >run.log.txt 2<&1
-@echo off
+
+REM ********************************************************
+@echo Running fixture "%RUNNING_FIXTURE%"
+REM ********************************************************
+
+copy %BACK_TO_ROOT_DIR%Test\bin\%PROJECT_CONFIGURATION%\%TEST_ASSEMBLY% .
+copy %APP_CONFIG_FILE% nunit-console.exe.config
+
+set TMPDIR=%TMP%
+
+REM @echo on
+"%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi %TEST_ASSEMBLY% /fixture=%RUNNING_FIXTURE%  %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUN_LOG% 2<&1
+REM @echo off
+
+REM ********************************************************
+@echo Build XmlTool
+REM ********************************************************
+set XML_TOOL_PATH=..\..\tools\mono-xmltool
+
+if "%XMLTOOL_BUILD%" == "DONE" goto XMLTOOLSKIP
+
+REM devenv %XML_TOOL_PATH%\XmlTool.sln /%BUILD_OPTION% %PROJECT_CONFIGURATION% >>%RUNNING_FIXTURE%_build.log.txt 2<&1
+msbuild %XML_TOOL_PATH%\XmlTool20.vmwcsproj /t:%BUILD_OPTION% /p:Configuration=%PROJECT_CONFIGURATION% >>%BUILD_LOG% 2<&1
+
+IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
+
+goto XMLTOOLREADY
+
+:XMLTOOLSKIP
+echo Skipping XmlToll build...
+
+:XMLTOOLREADY
+set XMLTOOL_BUILD=DONE
+
+copy %XML_TOOL_PATH%\bin\%PROJECT_CONFIGURATION%\xmltool.exe .
+copy %XML_TOOL_PATH%\nunit_transform.xslt .
 
 REM ********************************************************
 @echo Analyze and print results
 REM ********************************************************
 @echo on
-xmltool20.exe --transform nunit_transform.xslt %GH_OUTPUT_XML%
+xmltool.exe --transform nunit_transform.xslt %GH_OUTPUT_XML%
 @echo off
 
 :FINALLY
 GOTO END
 
 :ENVIRONMENT_EXCEPTION
-@echo This test requires environment variables JAVA_HOME and VMW_HOME to be defined
+@echo This test requires environment variable VMW_HOME to be defined
 GOTO END
 
 :BUILD_EXCEPTION
-popd
-@echo Error in building solutions. See build.log.txt for details...
+@echo Error in building solutions. See %BUILD_LOG% for details...
+REM EXIT 1
 GOTO END
 
 :RUN_EXCEPTION
-popd
-@echo Error in running fixture. See run.log.txt for details...
+@echo Error in running fixture %RUNNING_FIXTURE%. See %RUN_LOG% for details...
+REM EXIT 1
+GOTO END
+
+:USAGE
+@echo Parameters: "[build|rebuild]"
 GOTO END
 
 :END
+copy %RUN_LOG% ..\
+copy %BUILD_LOG% ..\
+copy %GH_OUTPUT_XML% ..\
+
+REM EXIT 0
