@@ -1,3 +1,8 @@
+2006-11-29 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* AbstractDBConnection.cs: fixed ExecuteDbDataReader, wrong exception
+	if executiong on closed connection
+
 2006-08-24 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* AbstractDBConnection.cs: fixed GetSyntaxPatterns, configuration

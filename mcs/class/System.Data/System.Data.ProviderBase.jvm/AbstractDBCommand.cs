@@ -813,15 +813,15 @@ namespace System.Data.ProviderBase
 				throw ExceptionHelper.ConnectionNotInitialized("ExecuteReader");
 			}
 
-			IDbTransaction transaction = Transaction;
-			if ((transaction != null && transaction.Connection != connection) ||
-				(transaction == null && !connection.JdbcConnection.getAutoCommit())) {
-				throw ExceptionHelper.TransactionNotInitialized();
-			}
-
 			connection.IsExecuting = true;
 
 			try {
+				IDbTransaction transaction = Transaction;
+				if ((transaction != null && transaction.Connection != connection) ||
+					(transaction == null && !connection.JdbcConnection.getAutoCommit ())) {
+					throw ExceptionHelper.TransactionNotInitialized ();
+				}
+
 				Behavior = behavior;
 
 				PrepareInternalParameters();			
