@@ -879,10 +879,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[MonoTODO("Throw InvalidPrinterException")]
 		protected override void CreateHandle() {
-			if (this.Document != null && !this.Document.PrinterSettings.IsValid) {
-				throw new InvalidPrinterException(this.Document.PrinterSettings);
-			}
+
+//			if (this.Document != null && !this.Document.PrinterSettings.IsValid) {
+//				throw new InvalidPrinterException(this.Document.PrinterSettings);
+//			}
 			base.CreateHandle ();
 		}
 

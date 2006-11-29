@@ -1,3 +1,13 @@
+2006-11-29  Andreia Gaita  <avidigal@novell.com>
+	
+	* Form.cs: Revert previous change (remove call UpdateBounds
+	from form constructor), because it messes with the handle creation
+	order, and that one needs lots and lots of love.
+	* PrintPreviewDialog.cs: Revert change to CreateHandle (add check
+	for valid printer and throw InvalidPrinterException if document
+	is set but printer not valid), adding a MonoTODO. Once 
+	handle creation is done properly, we can put this back in.
+
 2006-11-28  Everaldo Canuto  <everaldo@simios.org>
 
 	* MenuItem.cs: Create a invalidate method for menu item, to be

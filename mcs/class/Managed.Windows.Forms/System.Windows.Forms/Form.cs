@@ -177,6 +177,9 @@ namespace System.Windows.Forms {
 			owned_forms = new Form.ControlCollection(this);
 			transparency_key = Color.Empty;
 
+			// FIXME: this should disappear just as soon as the handle creation is done in the right place (here is too soon()
+			UpdateBounds();
+
 		}
 		#endregion	// Public Constructor & Destructor
 
