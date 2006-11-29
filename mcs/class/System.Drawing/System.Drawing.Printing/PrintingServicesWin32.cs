@@ -296,11 +296,13 @@ namespace System.Drawing.Printing
 		// Properties
 		internal override string DefaultPrinter {
 			get {
-            			StringBuilder name = new StringBuilder (1024);
-            			int length = name.Capacity;
+				StringBuilder name = new StringBuilder (1024);
+				int length = name.Capacity;
 
-            			Win32GetDefaultPrinter (name, ref length);
-				return name.ToString ();
+				if (Win32GetDefaultPrinter (name, ref length) > 0)
+					if (this.IsPrinterValid(name.ToString(), false))
+						return name.ToString ();
+				return String.Empty;
 			}
 		}
 
@@ -313,10 +315,14 @@ namespace System.Drawing.Printing
 				string s;
 
 				// Determine space need it
-        			Win32EnumPrinters (2 /* PRINTER_ENUM_LOCAL */,
-            				null, 2, IntPtr.Zero, 0, ref cbNeeded, ref printers);
+        		Win32EnumPrinters (2 /* PRINTER_ENUM_LOCAL */,
+            			null, 2, IntPtr.Zero, 0, ref cbNeeded, ref printers);
 
-            			ptr = buff = Marshal.AllocHGlobal ((int) cbNeeded);
+				if (cbNeeded <= 0)
+					return col;
+
+       			ptr = buff = Marshal.AllocHGlobal ((int) cbNeeded);
+
 				try {
 					// Give us the printer list
 					Win32EnumPrinters (2 /* PRINTER_ENUM_LOCAL */,

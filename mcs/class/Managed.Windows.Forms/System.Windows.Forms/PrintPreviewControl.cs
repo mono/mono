@@ -111,8 +111,6 @@ namespace System.Windows.Forms {
 			get { return document; }
 			set {
 				document = value;
-				document.PrintController = new PrintControllerWithStatusDialog (controller);
-				InvalidatePreview ();
 			}
 		}
 		[DefaultValue(1)]
@@ -184,6 +182,7 @@ namespace System.Windows.Forms {
 					return;
 
 				if (page_infos == null) {
+					document.PrintController = new PrintControllerWithStatusDialog (controller);
 					document.Print ();
 					page_infos = controller.GetPreviewPageInfo ();
 				}

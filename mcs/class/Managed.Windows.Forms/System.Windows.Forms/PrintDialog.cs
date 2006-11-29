@@ -82,7 +82,7 @@ namespace System.Windows.Forms
 
 		public override void Reset ()
 		{
-			current_settings = new PrinterSettings ();
+			current_settings = null;
 			AllowPrintToFile = true;
 			AllowSelection = false;
 			AllowSomePages = false;

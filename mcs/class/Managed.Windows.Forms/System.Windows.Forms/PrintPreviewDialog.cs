@@ -530,9 +530,6 @@ namespace System.Windows.Forms {
 			get { return print_preview.Document; }
 			set {
 				print_preview.Document = value;
-				print_preview.GeneratePreview ();
-				pageUpDown.Minimum = print_preview.page_infos.Length > 0 ? 1 : 0;
-				pageUpDown.Maximum = print_preview.page_infos.Length;
 			}
 		}
 
@@ -883,6 +880,9 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void CreateHandle() {
+			if (this.Document != null && !this.Document.PrinterSettings.IsValid) {
+				throw new InvalidPrinterException(this.Document.PrinterSettings);
+			}
 			base.CreateHandle ();
 		}
 

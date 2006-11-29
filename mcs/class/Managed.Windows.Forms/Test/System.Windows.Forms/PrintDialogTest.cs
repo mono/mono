@@ -38,8 +38,7 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class PrintDialogTest
 	{
-		[Test]
-		[Category ("NotWorking")]
+		[Test]		
 		public void DefaultValues ()
 		{
 			PrintDialog pd = new PrintDialog ();

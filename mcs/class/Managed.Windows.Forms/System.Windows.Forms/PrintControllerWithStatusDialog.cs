@@ -86,16 +86,22 @@ namespace System.Windows.Forms
 		}
 
 		public override void OnStartPrint(PrintDocument document, PrintEventArgs e) {
-			currentPage = 0;
-			dialog.Show();
-			if (document.PrinterSettings.PrintToFile) {
-				SaveFileDialog d = new SaveFileDialog ();
-				if (d.ShowDialog () != DialogResult.OK)
-					// Windows throws a Win32Exception here.
-					throw new Exception ("The operation was canceled by the user");
-				Set_PrinterSettings_PrintFileName (document.PrinterSettings, d.FileName);
+			try {
+				currentPage = 0;
+				dialog.Show();
+				if (document.PrinterSettings.PrintToFile) {
+					SaveFileDialog d = new SaveFileDialog ();
+					if (d.ShowDialog () != DialogResult.OK)
+						// Windows throws a Win32Exception here.
+						throw new Exception ("The operation was canceled by the user");
+					Set_PrinterSettings_PrintFileName (document.PrinterSettings, d.FileName);
+				}
+				underlyingController.OnStartPrint (document, e);
 			}
-			underlyingController.OnStartPrint (document, e);
+			catch {
+				dialog.Hide ();
+				throw;
+			}
 		}
 
 		#endregion	// Protected Instance Methods

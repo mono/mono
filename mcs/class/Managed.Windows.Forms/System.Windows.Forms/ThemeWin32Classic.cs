@@ -2911,6 +2911,8 @@ namespace System.Windows.Forms
 		{
 			int padding = 8;
 			PreviewPageInfo[] pis = preview.page_infos;
+			if (pis == null)
+				return;
 
 			int page_x, page_y;
 

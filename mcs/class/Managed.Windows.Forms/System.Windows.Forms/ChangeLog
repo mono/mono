@@ -1,3 +1,24 @@
+2006-11-28  Andreia Gaita  <avidigal@novell.com>
+
+	* Form.cs: Removed call to UpdateBounds on Form
+	constructor, it was causing a call to CreateHandle
+	before it was supposed to.
+	* PrintControllerWithStatusDialog: Applied patch
+	by Chris Toshok to hide controller when there are
+	no printers available.
+	PrintDialog.cs: initialize printer settings to 
+	null - correct DefaultValues test #5
+	* PrintPreviewControl.cs: Move PrintController
+	initialization to GeneratePreview
+	* PrintPreviewDialog.cs: 
+	- Remove Preview generation	from Document_set(). It is 
+	called on OnPaint
+	- Throw InvalidPrinterException on CreateHandle if
+	a Document is set but there are no printers or 
+	printer is not valid.
+	* ThemeWin32Classic: don't paint PrintPreviewControl
+	if there is nothing to paint	
+
 2006-11-28  Miguel de Icaza  <miguel@novell.com>
 
 	* Form.cs: Add another popular method.

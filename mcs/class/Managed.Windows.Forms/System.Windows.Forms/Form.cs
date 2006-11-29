@@ -85,7 +85,7 @@ namespace System.Windows.Forms {
 		#region Private & Internal Methods
 		static Form ()
 		{
-			default_icon = (Icon)Locale.GetResource("mono.ico");
+			default_icon = Locale.GetResource("mono.ico") as Icon;
 		}
 
 		// warning: this is only hooked up when an mdi container is created.
@@ -177,7 +177,6 @@ namespace System.Windows.Forms {
 			owned_forms = new Form.ControlCollection(this);
 			transparency_key = Color.Empty;
 
-			UpdateBounds();
 		}
 		#endregion	// Public Constructor & Destructor
 

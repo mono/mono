@@ -44,17 +44,19 @@ namespace System.Drawing.Printing
 #endif
 	public class PageSettings : ICloneable
 	{
-		internal bool _Color;
-		internal bool _Landscape;
-		internal PaperSize _PaperSize;
-		internal PaperSource _PaperSource;
-		internal PrinterResolution _PrinterResolution;
-		float _HardMarginX;
-		float _HardMarginY;
-		RectangleF _PrintableArea;
+		internal bool color;
+		internal bool landscape;
+		internal PaperSize paperSize;
+		internal PaperSource paperSource;
+		internal PrinterResolution printerResolution;
+
 		// create a new default Margins object (is 1 inch for all margins)
-		Margins _Margins = new Margins();
-		PrinterSettings _PrinterSettings;
+		Margins margins = new Margins();
+
+		float hardMarginX;
+		float hardMarginY;
+		RectangleF printableArea;
+		PrinterSettings printerSettings;
 		
 		public PageSettings() : this(new PrinterSettings())
 		{
@@ -64,11 +66,11 @@ namespace System.Drawing.Printing
 		{
 			PrinterSettings = printerSettings;
 			
-			Color = printerSettings.DefaultPageSettings._Color;
-			Landscape = printerSettings.DefaultPageSettings._Landscape;
-			PaperSize = printerSettings.DefaultPageSettings._PaperSize;
-			PaperSource = printerSettings.DefaultPageSettings._PaperSource;
-			PrinterResolution = printerSettings.DefaultPageSettings._PrinterResolution;
+			this.color = printerSettings.DefaultPageSettings.color;
+			this.landscape = printerSettings.DefaultPageSettings.landscape;
+			this.paperSize = printerSettings.DefaultPageSettings.paperSize;
+			this.paperSource = printerSettings.DefaultPageSettings.paperSource;
+			this.printerResolution = printerSettings.DefaultPageSettings.printerResolution;
 		}
 		
 		// used by PrinterSettings.DefaultPageSettings
@@ -76,122 +78,122 @@ namespace System.Drawing.Printing
 		{
 			PrinterSettings = printerSettings;
 			
-			_Color = color;
-			_Landscape = landscape;
-			_PaperSize = paperSize;
-			_PaperSource = paperSource;
-			_PrinterResolution = printerResolution;
+			this.color = color;
+			this.landscape = landscape;
+			this.paperSize = paperSize;
+			this.paperSource = paperSource;
+			this.printerResolution = printerResolution;
 		}
 
 		//props
 		public Rectangle Bounds{
 			get{
-				int width = this.PaperSize.Width;
-				int height = this.PaperSize.Height;
+				int width = this.paperSize.Width;
+				int height = this.paperSize.Height;
 				
-				width -= this.Margins.Left + this.Margins.Right;
-				height -= this.Margins.Top + this.Margins.Bottom;
+				width -= this.margins.Left + this.margins.Right;
+				height -= this.margins.Top + this.margins.Bottom;
 				
-				if (this.Landscape) {
+				if (this.landscape) {
 					// swap width and height
 					int tmp = width;
 					width = height;
 					height = tmp;
 				}
-				return new Rectangle (Margins.Left, Margins.Top, width, height);
+				return new Rectangle (this.margins.Left, this.margins.Top, width, height);
 			}
 		}
 		
 		public bool Color{
 			get{
-				if (!this._PrinterSettings.IsValid)
-					throw new InvalidPrinterException(this._PrinterSettings);
-				return _Color;
+				if (!this.printerSettings.IsValid)
+					throw new InvalidPrinterException(this.printerSettings);
+				return color;
 			}
 			set{
-				_Color = value;
+				color = value;
 			}
 		}
 		
 		public bool Landscape {
 			get{
-				if (!this._PrinterSettings.IsValid)
-					throw new InvalidPrinterException(this._PrinterSettings);
-				return _Landscape;
+				if (!this.printerSettings.IsValid)
+					throw new InvalidPrinterException(this.printerSettings);
+				return landscape;
 			}
 			set{
-				_Landscape = value;
+				landscape = value;
 			}
 		}
 		
 		public Margins Margins{
 			get{
-				if (!this._PrinterSettings.IsValid)
-					throw new InvalidPrinterException(this._PrinterSettings);
-				return _Margins;
+				if (!this.printerSettings.IsValid)
+					throw new InvalidPrinterException(this.printerSettings);
+				return margins;
 			}
 			set{
-				_Margins = value;
+				margins = value;
 			}
 		}
 		
 		public PaperSize PaperSize{
 			get{
-				if (!this._PrinterSettings.IsValid)
-					throw new InvalidPrinterException(this._PrinterSettings);
-				return _PaperSize;
+				if (!this.printerSettings.IsValid)
+					throw new InvalidPrinterException(this.printerSettings);
+				return paperSize;
 			}
 			set{
-				_PaperSize = value;
+				paperSize = value;
 			}
 		}
 		
 		public PaperSource PaperSource{
 			get{
-				if (!this._PrinterSettings.IsValid)
-					throw new InvalidPrinterException(this._PrinterSettings);
-				return _PaperSource;
+				if (!this.printerSettings.IsValid)
+					throw new InvalidPrinterException(this.printerSettings);
+				return paperSource;
 			}
 			set{
-				_PaperSource = value;
+				paperSource = value;
 			}
 		}
 		
 		public PrinterResolution PrinterResolution{
 			get{
-				if (!this._PrinterSettings.IsValid)
-					throw new InvalidPrinterException(this._PrinterSettings);
-				return _PrinterResolution;
+				if (!this.printerSettings.IsValid)
+					throw new InvalidPrinterException(this.printerSettings);
+				return printerResolution;
 			}
 			set{
-				_PrinterResolution = value;
+				printerResolution = value;
 			}
 		}
 		
 		public PrinterSettings PrinterSettings{
 			get{
-				return _PrinterSettings;
+				return printerSettings;
 			}
 			set{
-				_PrinterSettings = value;
+				printerSettings = value;
 			}
 		}		
 #if NET_2_0
 		public float HardMarginX {
 			get {
-				return _HardMarginX;
+				return hardMarginX;
 			}
 		}
 		
 		public float HardMarginY {
 			get {
-				return _HardMarginY;
+				return hardMarginY;
 			}
 		}
 		
 		public RectangleF PrintableArea {
 			get {
-				return _PrintableArea;
+				return printableArea;
 			}
 		}
 #endif
@@ -200,14 +202,14 @@ namespace System.Drawing.Printing
 		public object Clone ()
 		{
 			// We do a deep copy
-			PrinterResolution pres = new PrinterResolution (_PrinterResolution.X, _PrinterResolution.Y, _PrinterResolution.Kind);
-			PaperSource psource = new PaperSource (_PaperSource.SourceName, _PaperSource.Kind);
-			PaperSize psize = new PaperSize (_PaperSize.PaperName, _PaperSize.Width, _PaperSize.Height);
-			psize.SetKind (_PaperSize.Kind);
+			PrinterResolution pres = new PrinterResolution (this.printerResolution.X, this.printerResolution.Y, this.printerResolution.Kind);
+			PaperSource psource = new PaperSource (this.paperSource.SourceName, this.paperSource.Kind);
+			PaperSize psize = new PaperSize (this.paperSize.PaperName, this.paperSize.Width, this.paperSize.Height);
+			psize.SetKind (this.paperSize.Kind);
 
-			PageSettings ps = new PageSettings (PrinterSettings, Color, Landscape,
+			PageSettings ps = new PageSettings (this.printerSettings, this.color, this.landscape,
 					psize, psource, pres);
-			ps.Margins = (Margins) _Margins.Clone ();
+			ps.Margins = (Margins) this.margins.Clone ();
 			return ps;
 		}
 
@@ -232,7 +234,7 @@ namespace System.Drawing.Printing
 			ret += ", PrinterResolution={5}";
 			ret += "]";
 			
-			return String.Format(ret, this.Color, this.Landscape, this.Margins, this.PaperSize, this.PaperSource, this.PrinterResolution);
+			return String.Format(ret, this.color, this.landscape, this.margins, this.paperSize, this.paperSource, this.printerResolution);
 		}
 	}
 }

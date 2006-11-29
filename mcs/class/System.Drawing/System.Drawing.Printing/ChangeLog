@@ -1,3 +1,17 @@
+2006-11-28  Andreia Gaita  <avidigal@novell.com>
+
+	* PageSettings.cs: 
+	- internal member name changes to help
+	out with intelisense. 
+	- Use internal members directly instead of using
+	corresponding properties so that exceptions are not thrown
+	* PrintingServicesWin32:
+	- Only return DefaultPrinter if it is actually valid. This
+	is because Win32GetDefaultPrinter returns a printer name
+	even if PrintSpooler is stopped (which should  behave the
+	same way as if there are no printers installed)
+	- Do not try to allocate if EnumPrinters returns 0
+	
 2006-11-25 Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* PrintingServicesUnix.cs: Implements GetPrintDialogInfo
