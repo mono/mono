@@ -3720,18 +3720,17 @@ namespace Mono.CSharp {
 			if (!am.IsIterator && block.Toplevel.IsLocalParameter (name))
 				return true;
 
-			AnonymousMethodHost host = null;
+			RootScopeInfo host = null;
 			ToplevelBlock toplevel = block.Toplevel;
 			while (toplevel != null) {
-				if (toplevel.IsLocalParameter (name)) {
-					host = toplevel.AnonymousMethodHost;
+				if (toplevel.IsLocalParameter (name))
 					break;
-				}
 
 				toplevel = toplevel.Container;
 			}
 
-			variable = host.AddParameter (par, idx);
+			ScopeInfo scope = toplevel.CreateScopeInfo ();
+			variable = scope.AddParameter (par, idx);
 			type = variable.Type;
 			return true;
 		}
@@ -6682,8 +6681,9 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				AnonymousMethodHost host = block.Toplevel.AnonymousMethodHost;
-				if ((host != null) && (!is_struct || host.IsIterator)) {
+				RootScopeInfo host = block.Toplevel.RootScope;
+				if ((host != null) && !ec.IsConstructor &&
+				    (!is_struct || host.IsIterator)) {
 					variable = host.CaptureThis ();
 					type = variable.Type;
 					is_struct = false;

@@ -1035,7 +1035,7 @@ namespace Mono.CSharp {
 
 		public LocalInfo (DeclSpace ds, Block block, Location l)
 		{
-			VariableType = ds.TypeBuilder;
+			VariableType = ds.IsGeneric ? ds.CurrentType : ds.TypeBuilder;
 			Block = block;
 			Location = l;
 		}
@@ -1043,8 +1043,6 @@ namespace Mono.CSharp {
 		public void ResolveVariable (EmitContext ec)
 		{
 			Block theblock = Block;
-			while (theblock.Implicit)
-				theblock = theblock.Parent;
 			if (theblock.ScopeInfo != null)
 				var = theblock.ScopeInfo.GetCapturedVariable (this);
 
@@ -1860,11 +1858,8 @@ namespace Mono.CSharp {
 
 		public ScopeInfo CreateScopeInfo ()
 		{
-			if (Implicit)
-				return Parent.CreateScopeInfo ();
-
 			if (ScopeInfo == null)
-				ScopeInfo = new ScopeInfo (Toplevel.AnonymousMethodHost, this);
+				ScopeInfo = ScopeInfo.CreateScope (this);
 
 			return ScopeInfo;
 		}
@@ -2002,7 +1997,7 @@ namespace Mono.CSharp {
 		//
 		public virtual void EmitMeta (EmitContext ec)
 		{
-			Report.Debug (64, "BLOCK EMIT META", this, Toplevel, ScopeInfo, ec);
+			Report.Debug (64, "BLOCK EMIT META", this, Parent, Toplevel, ScopeInfo, ec);
 			if (ScopeInfo != null) {
 				scope_init = ScopeInfo.GetScopeInitializer (ec);
 				Report.Debug (64, "BLOCK EMIT META #1", this, Toplevel, ScopeInfo,
@@ -2280,7 +2275,8 @@ namespace Mono.CSharp {
 		ToplevelBlock child;	
 		GenericMethod generic;
 		FlowBranchingToplevel top_level_branching;
-		AnonymousMethodHost anonymous_method_host;
+		AnonymousContainer anonymous_container;
+		RootScopeInfo root_scope;
 
 		public bool HasVarargs {
 			get { return (flags & Flags.HasVarargs) != 0; }
@@ -2302,22 +2298,22 @@ namespace Mono.CSharp {
 		public bool CompleteContexts (EmitContext ec)
 		{
 			Report.Debug (64, "TOPLEVEL COMPLETE CONTEXTS", this,
-				      container, anonymous_method_host);
+				      container, root_scope);
 
-			if (anonymous_method_host != null)
-				anonymous_method_host.LinkScopes ();
+			if (root_scope != null)
+				root_scope.LinkScopes ();
 
-			if ((container == null) && (anonymous_method_host != null)) {
+			if ((container == null) && (root_scope != null)) {
 				Report.Debug (64, "TOPLEVEL COMPLETE CONTEXTS #1", this,
-					      anonymous_method_host);
+					      root_scope);
 
-				if (anonymous_method_host.DefineType () == null)
+				if (root_scope.DefineType () == null)
 					return false;
-				if (!anonymous_method_host.ResolveType ())
+				if (!root_scope.ResolveType ())
 					return false;
-				if (!anonymous_method_host.ResolveMembers ())
+				if (!root_scope.ResolveMembers ())
 					return false;
-				if (!anonymous_method_host.DefineMembers ())
+				if (!root_scope.DefineMembers ())
 					return false;
 			}
 
@@ -2334,6 +2330,11 @@ namespace Mono.CSharp {
 
 		public Block ContainerBlock {
 			get { return container; }
+		}
+
+		public AnonymousContainer AnonymousContainer {
+			get { return anonymous_container; }
+			set { anonymous_container = value; }
 		}
 
 		//
@@ -2401,61 +2402,39 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public AnonymousMethodHost CreateAnonymousMethodHost (TypeContainer host)
+		public RootScopeInfo CreateRootScope (TypeContainer host)
 		{
-			if (anonymous_method_host != null)
-				return anonymous_method_host;
+			if (root_scope != null)
+				return root_scope;
 
-			if (Container != null)
-				anonymous_method_host = new AnonymousMethodHost (
-					this, Container.anonymous_method_host, null, StartLocation);
-			else
-				anonymous_method_host = new AnonymousMethodHost (
+			if (Container == null)
+				root_scope = new RootScopeInfo (
 					this, host, generic, StartLocation);
 
-			ScopeInfo = anonymous_method_host;
-			return anonymous_method_host;
+			ScopeInfo = root_scope;
+			return root_scope;
 		}
 
-		public void CreateIteratorHost (AnonymousMethodHost root_scope)
+		public void CreateIteratorHost (RootScopeInfo root)
 		{
-			Report.Debug (64, "CREATE ITERATOR HOST", this, root_scope,
-				      container, anonymous_method_host);
+			Report.Debug (64, "CREATE ITERATOR HOST", this, root,
+				      container, root_scope);
 
-			if ((container != null) || (anonymous_method_host != null))
+			if ((container != null) || (root_scope != null))
 				throw new InternalErrorException ();
 
-			ScopeInfo = anonymous_method_host = root_scope;
+			ScopeInfo = root_scope = root;
 		}
 
-		public AnonymousMethodHost AnonymousMethodHost {
+		public RootScopeInfo RootScope {
 			get {
-				if (anonymous_method_host != null)
-					return anonymous_method_host;
+				if (root_scope != null)
+					return root_scope;
 				else if (Container != null)
-					return Container.AnonymousMethodHost;
+					return Container.RootScope;
 				else
 					return null;
 			}
-		}
-
-		public void EmitScopeInstance (EmitContext ec, ScopeInfo scope)
-		{
-			AnonymousMethodHost root_scope = AnonymousMethodHost;
-
-			root_scope.EmitScopeInstance (ec);
-			while (root_scope != scope.Host) {
-				ec.ig.Emit (OpCodes.Ldfld, root_scope.ParentLink.FieldBuilder);
-				root_scope = root_scope.ParentHost;
-
-				if (root_scope == null)
-					throw new InternalErrorException (
-						"Never found scope {0} starting at block {1}",
-						scope, ec.CurrentBlock.ID);
-			}
-
-			if (scope != scope.Host)
-				scope.ScopeInstance.Emit (ec);
 		}
 
 		public FlowBranchingToplevel TopLevelBranching {
@@ -2476,11 +2455,6 @@ namespace Mono.CSharp {
 			container = new_parent;
 			Parent = new_parent;
 			new_parent.child = this;
-
-#if FIXME
-			if (container != null)
-				container.AddAnonymousChild (this);
-#endif
 		}
 
 		//
@@ -2626,8 +2600,9 @@ namespace Mono.CSharp {
 
 		public override string ToString ()
 		{
-			return String.Format ("{0} ({1}:{2}{3})", GetType (), ID, StartLocation,
-					      anonymous_method_host);
+			return String.Format ("{0} ({1}:{2}{3}:{4})", GetType (), ID, StartLocation,
+					      root_scope, anonymous_container != null ?
+					      anonymous_container.Scope : null);
 		}
 	}
 	

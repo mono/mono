@@ -1,3 +1,19 @@
+2006-11-29  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (Constructor.Emit): Correctly handle anonymous methods;
+	we need to emit the scope initializer before calling the base .ctor.
+
+	* anonymous.cs: Merged back from the new anonymous methods branch.
+	(AnonymousMethodHost): Renamed to `RootScopeInfo'.
+
+	* expression.cs (ParameterReference.DoResolveBase): Create a
+	"normal" ScopeInfo when capturing parameters rather than using the
+	root scope; this makes things work with anonymous methods having
+	parameters.
+
+	* statement.cs
+	(ToplevelBlock.AnonymousMethodHost): Renamed into `RootScope'.
+
 2006-11-22  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #79987

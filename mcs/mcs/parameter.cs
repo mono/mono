@@ -348,8 +348,8 @@ namespace Mono.CSharp {
 
 		public void ResolveVariable (ToplevelBlock toplevel, int idx)
 		{
-			if (toplevel.AnonymousMethodHost != null)
-				var = toplevel.AnonymousMethodHost.GetCapturedParameter (this);
+			if (toplevel.RootScope != null)
+				var = toplevel.RootScope.GetCapturedParameter (this);
 			if (var == null)
 				var = new ParameterVariable (this, idx);
 		}

@@ -124,7 +124,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class IteratorHost : AnonymousMethodHost
+	public class IteratorHost : RootScopeInfo
 	{
 		public readonly Iterator Iterator;
 
@@ -229,6 +229,27 @@ namespace Mono.CSharp {
 			return base.DoResolveMembers ();
 		}
 
+		public void CaptureScopes ()
+		{
+			Report.Debug (128, "DEFINE ITERATOR HOST", this, scopes);
+
+			foreach (ScopeInfo si in scopes)
+				CaptureScope (si);
+
+			foreach (ScopeInfo si in scopes) {
+				if (!si.Define ())
+					throw new InternalErrorException ();
+				if (si.DefineType () == null)
+					throw new InternalErrorException ();
+				if (!si.ResolveType ())
+					throw new InternalErrorException ();
+				if (!si.ResolveMembers ())
+					throw new InternalErrorException ();
+				if (!si.DefineMembers ())
+					throw new InternalErrorException ();
+			}
+		}
+
 		protected override bool DoDefineMembers ()
 		{
 			if (!base.DoDefineMembers ())
@@ -320,7 +341,7 @@ namespace Mono.CSharp {
 			return new IteratorHostInitializer (this);
 		}
 
-		protected class IteratorHostInitializer : AnonymousMethodHostInitializer
+		protected class IteratorHostInitializer : RootScopeInitializer
 		{
 			new public readonly IteratorHost Host;
 			protected Iterator.State state;
@@ -781,7 +802,11 @@ namespace Mono.CSharp {
 			get { return true; }
 		}
 
-		public override AnonymousMethodHost RootScope {
+		public override RootScopeInfo RootScope {
+			get { return IteratorHost; }
+		}
+
+		public override ScopeInfo Scope {
 			get { return IteratorHost; }
 		}
 
@@ -890,8 +915,12 @@ namespace Mono.CSharp {
 
 		protected override Method DoCreateMethodHost (EmitContext ec)
 		{
+			Report.Debug (128, "CREATE METHOD HOST", this, IteratorHost);
+
+			IteratorHost.CaptureScopes ();
+
 			return new AnonymousMethodMethod (
-				this, null, TypeManager.system_boolean_expr,
+				this, RootScope, null, TypeManager.system_boolean_expr,
 				Modifiers.PUBLIC, new MemberName ("MoveNext", Location),
 				Parameters.EmptyReadOnlyParameters);
 		}
