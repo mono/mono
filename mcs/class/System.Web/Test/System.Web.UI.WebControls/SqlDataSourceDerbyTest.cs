@@ -241,6 +241,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			string deleteSql = @"DELETE FROM Table1";
 
 			OleDbConnection connection = new OleDbConnection (_connectionString);
+			connection.Open ();
 			try {
 				DbCommand dc = connection.CreateCommand ();
 				dc.CommandText = deleteSql;

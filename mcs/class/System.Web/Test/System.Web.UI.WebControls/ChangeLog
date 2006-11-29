@@ -1,3 +1,7 @@
+2006-11-29  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* SqlDataSourceDerbyTest.cs: fixed connection on db init
+
 2006-11-28  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ObjectDataSourceTest.cs: fixed exception message checking
