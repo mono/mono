@@ -155,6 +155,7 @@ System/IDisposable.cs
 System/IFormatProvider.cs
 System/IFormattable.cs
 System/IndexOutOfRangeException.cs
+System/InsufficientMemoryException.cs
 System/Int16.cs
 System/Int32.cs
 System/Int64.cs

@@ -1,3 +1,10 @@
+2006-11-28  Duncan Mak  <duncan@novell.com>
+
+	* ArgumentNullException.cs (.ctor): Added new constructor that's
+	new in .NET 2.0.
+
+	* InsufficientMemoryException.cs: Added missing 2.0 exception.
+	
 2006-11-27  Jonathan Chambers  <joncham@gmail.com>
 
 	* __ComObject.cs: Removed IDispatchMono.

@@ -46,7 +46,11 @@ namespace System.IO {
 			Dispose(true);
 		}
 
+#if NET_2_0
+		public void Dispose ()
+#else
 		void System.IDisposable.Dispose()
+#endif			
 		{
 			Dispose(true);
 		}

@@ -1,3 +1,7 @@
+2006-11-28  Duncan Mak  <duncan@novell.com>
+
+	* TextReader.cs (Dispose): Expose as public in NET_2_0.
+
 2006-11-26  Miguel de Icaza  <miguel@novell.com>
 
 	* DriveInfo.cs, DriveType.cs: Add a couple of classes for
