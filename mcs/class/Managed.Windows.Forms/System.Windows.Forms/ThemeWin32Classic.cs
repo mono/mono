@@ -4063,18 +4063,21 @@ namespace System.Windows.Forms
 
 		protected virtual void DrawToolBarToggleButtonBackground (Graphics dc, ToolBarButton button)
 		{
+			Brush brush;
 			Rectangle area = button.Rectangle;
 			area.X += ToolBarImageGripWidth;
 			area.Y += ToolBarImageGripWidth;
 			area.Width -= 2 * ToolBarImageGripWidth;
 			area.Height -= 2 * ToolBarImageGripWidth;
-
+			
 			if (button.Pushed)
-				dc.FillRectangle (SystemBrushes.ControlLightLight, area);
+				brush = (Brush) ResPool.GetHatchBrush (HatchStyle.Percent50, ColorScrollBar, ColorControlLightLight);
 			else if (button.PartialPush)
-				dc.FillRectangle (SystemBrushes.ControlLight, area);
+				brush = SystemBrushes.ControlLight;
 			else
-				dc.FillRectangle (SystemBrushes.Control, area);
+				brush = SystemBrushes.Control;
+			 
+			dc.FillRectangle (brush, area);
 		}
 
 		protected virtual void DrawToolBarDropDownArrow (Graphics dc, ToolBarButton button, bool is_flat)

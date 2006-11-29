@@ -1,3 +1,8 @@
+2006-11-28  Everaldo Canuto  <everaldo@simios.org>
+
+	* ThemeWin32Classic.cs: Paint toolbar toggle button background 
+	with dotted brush.	Fixes #79564
+	
 2006-11-28  Andreia Gaita  <avidigal@novell.com>
 
 	* Form.cs: Removed call to UpdateBounds on Form
