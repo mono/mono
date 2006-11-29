@@ -1,3 +1,7 @@
+2006-11-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* System.Windows.Forms.dll.sources: Add NumericTextBox.cs.
+
 2006-11-09  Alexander Olk  <alex.olk@googlemail.com>
 
 	* System.Windows.Forms_test.dll.sources: Added CommonDialogsTest.cs.
