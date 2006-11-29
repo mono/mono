@@ -12,7 +12,7 @@ namespace MonoTests.SystemWeb.Framework
 		/// <see cref="HandlerInvoker"/>
 		/// </summary>
 		/// <seealso cref="HandlerInvoker"/>
-		public const string FAKE_PAGE = "page.fake";
+		public const string FAKE_PAGE = "My.ashx";
 		/// <summary>
 		/// An empty page for generic usage.
 		/// </summary>

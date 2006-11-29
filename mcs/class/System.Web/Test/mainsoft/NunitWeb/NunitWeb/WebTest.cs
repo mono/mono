@@ -390,6 +390,8 @@ namespace MonoTests.SystemWeb.Framework
 
 		private static void CopyResources ()
 		{
+			CopyResource (typeof (WebTest), "My.ashx", "My.ashx");
+			CopyResource (typeof (WebTest), "Global.asax", "Global.asax");
 #if VISUAL_STUDIO
 			CopyResource (typeof (WebTest),
 				"MonoTests.SystemWeb.Framework.Resources.Web.config",

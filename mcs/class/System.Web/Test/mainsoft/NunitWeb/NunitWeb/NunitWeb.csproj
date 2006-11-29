@@ -61,18 +61,18 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Web.config" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\MyPage.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\My.master" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\MyPageWithMaster.aspx">
+    <EmbeddedResource Include="Resources\MyPageWithMaster.aspx"/>
+    <EmbeddedResource Include ="Resources\Global.asax">
+      <LogicalName>Global.asax</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include ="Resources\My.ashx">
+      <LogicalName>My.ashx</LogicalName>
+    </EmbeddedResource>
+
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\MainsoftWebTest\HtmlCompare.csproj">
