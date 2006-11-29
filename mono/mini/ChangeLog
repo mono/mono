@@ -1,5 +1,10 @@
 2006-11-29  Mark Mason  <mason@broadcom.com>
 
+	* basic-calls.cs: additional tests for passing
+	structures as function arguments.
+
+2006-11-29  Mark Mason  <mason@broadcom.com>
+
 	* mini-mips.h: disable custom exception handling
 	* mini-mips.c: throw/rethrow should use jalr to call
 	exception stubs.  Fixed bug with passing structures
