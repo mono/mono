@@ -1,4 +1,9 @@
 
+Wed Nov 29 20:28:17 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: fixed typo in the soft-float ldind.r4 handling
+	(bug #80086).
+
 Wed Nov 29 11:33:03 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c, mini.h, driver.c: added --runtime command line
