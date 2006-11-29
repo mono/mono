@@ -1,3 +1,10 @@
+2006-11-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* PageSetupDialog.cs: Validate the margins and set them in
+	PageSettings. 
+	* NumericTextBox.cs: New class to mimic the behavior of the
+	textboxes used in the printing dialogs.
+
 2006-11-29  Andreia Gaita  <avidigal@novell.com>
 	
 	* Form.cs: Revert previous change (remove call UpdateBounds

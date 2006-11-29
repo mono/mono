@@ -46,9 +46,6 @@ namespace System.Windows.Forms {
 		private PageSettings page_settings;
 		private PrinterSettings printer_settings;
 		private Margins	min_margins;
-		private Margins	default_margins = UseYardPound ?
-			new Margins (yard_pound_default, yard_pound_default, yard_pound_default, yard_pound_default) :
-			new Margins (meter_default, meter_default, meter_default, meter_default);
 		private bool allow_margins;
 		private bool allow_orientation;
 		private bool allow_paper;
@@ -71,10 +68,10 @@ namespace System.Windows.Forms {
 		private Label label_top;
 		private Label label_right;
 		private Label label_bottom;
-		private TextBox textbox_left;
-		private TextBox textbox_top;
-		private TextBox textbox_right;
-		private TextBox textbox_bottom;
+		private NumericTextBox textbox_left;
+		private NumericTextBox textbox_top;
+		private NumericTextBox textbox_right;
+		private NumericTextBox textbox_bottom;
 		private ComboBox combobox_source;
 		private ComboBox combobox_size;
 		private PrinterForm printer_helper_form;
@@ -221,10 +218,10 @@ namespace System.Windows.Forms {
 			this.label_top = new System.Windows.Forms.Label();
 			this.label_right = new System.Windows.Forms.Label();
 			this.label_bottom = new System.Windows.Forms.Label();
-			this.textbox_left = new System.Windows.Forms.TextBox();
-			this.textbox_top = new System.Windows.Forms.TextBox();
-			this.textbox_right = new System.Windows.Forms.TextBox();
-			this.textbox_bottom = new System.Windows.Forms.TextBox();
+			this.textbox_left = new System.Windows.Forms.NumericTextBox();
+			this.textbox_top = new System.Windows.Forms.NumericTextBox();
+			this.textbox_right = new System.Windows.Forms.NumericTextBox();
+			this.textbox_bottom = new System.Windows.Forms.NumericTextBox();
 			this.groupbox_paper.SuspendLayout();
 			this.groupbox_orientation.SuspendLayout();
 			this.groupbox_margin.SuspendLayout();
@@ -383,15 +380,13 @@ namespace System.Windows.Forms {
 			this.textbox_left.Name = "textbox_left";
 			this.textbox_left.Size = new System.Drawing.Size(48, 20);
 			this.textbox_left.TabIndex = 4;
-			this.textbox_left.Text = ToLocalizedLength (default_margins.Left);
 			// 
 			// textbox_top
-			// 
+			//
 			this.textbox_top.Location = new System.Drawing.Point(57, 54);
 			this.textbox_top.Name = "textbox_top";
 			this.textbox_top.Size = new System.Drawing.Size(48, 20);
 			this.textbox_top.TabIndex = 5;
-			this.textbox_top.Text = ToLocalizedLength (default_margins.Top);
 			// 
 			// textbox_right
 			// 
@@ -399,7 +394,6 @@ namespace System.Windows.Forms {
 			this.textbox_right.Name = "textbox_right";
 			this.textbox_right.Size = new System.Drawing.Size(48, 20);
 			this.textbox_right.TabIndex = 6;
-			this.textbox_right.Text = ToLocalizedLength (default_margins.Right);
 			// 
 			// textbox_bottom
 			// 
@@ -407,7 +401,6 @@ namespace System.Windows.Forms {
 			this.textbox_bottom.Name = "textbox_bottom";
 			this.textbox_bottom.Size = new System.Drawing.Size(48, 20);
 			this.textbox_bottom.TabIndex = 7;
-			this.textbox_bottom.Text = ToLocalizedLength (default_margins.Bottom);
 			// 
 			// Form3
 			// 
@@ -457,11 +450,18 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private string ToLocalizedLength (int marginsUnit)
+		private double ToLocalizedLength (int marginsUnit)
 		{
-			return (UseYardPound ?
-				marginsUnit / 100 :
-				marginsUnit / 3.937 / 100).ToString ();
+			return UseYardPound ?
+				marginsUnit / 100.0 :
+				marginsUnit / 10.0;
+		}
+
+		private int FromLocalizedLength (double marginsUnit)
+		{
+			return UseYardPound ?
+				(int) (marginsUnit * 100.0) :
+				(int) (marginsUnit * 3.937);
 		}
 
 		private string LocalizedLengthUnit ()
@@ -492,12 +492,25 @@ namespace System.Windows.Forms {
 			if (ShowHelp)
 				ShowHelpButton ();
 
+			Margins page_margins = PageSettings.Margins;
+			Margins min_margins = MinMargins;
+
+			// Update margin data
+			textbox_top.Text = ToLocalizedLength (page_margins.Top).ToString ();
+			textbox_bottom.Text = ToLocalizedLength (page_margins.Bottom).ToString ();
+			textbox_left.Text = ToLocalizedLength (page_margins.Left).ToString ();
+			textbox_right.Text = ToLocalizedLength (page_margins.Right).ToString ();
+			textbox_top.Min = ToLocalizedLength (min_margins.Top);
+			textbox_bottom.Min = ToLocalizedLength (min_margins.Bottom);
+			textbox_left.Min = ToLocalizedLength (min_margins.Left);
+			textbox_right.Min = ToLocalizedLength (min_margins.Right);
+
 			button_printer.Enabled = AllowPrinter && PrinterSettings != null;
 			groupbox_orientation.Enabled = AllowOrientation;
 			groupbox_paper.Enabled = AllowPaper;
 			groupbox_margin.Enabled = AllowMargins;
 		}
-		
+
 		private void OnClickOkButton (object sender, EventArgs e)
 		{			
 			if (combobox_size.SelectedItem != null) {
@@ -517,6 +530,13 @@ namespace System.Windows.Forms {
 					}
 				}
 			}
+
+			Margins margins = new Margins ();
+			margins.Top = FromLocalizedLength (textbox_top.Value);
+			margins.Bottom = FromLocalizedLength (textbox_bottom.Value);
+			margins.Left = FromLocalizedLength (textbox_left.Value);
+			margins.Right = FromLocalizedLength (textbox_right.Value);
+			PageSettings.Margins = margins;
 
 			PageSettings.Landscape = radio_landscape.Checked;
 			form.DialogResult = DialogResult.OK;
