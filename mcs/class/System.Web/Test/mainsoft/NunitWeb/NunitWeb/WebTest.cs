@@ -21,6 +21,14 @@ namespace MonoTests.SystemWeb.Framework
 	[Serializable]
 	public class WebTest
 	{
+		/// <summary>
+		/// Thrown when trying to copy a resource after appdomain was created. Please call
+		/// WebTest.Unload before copying resource.
+		/// </summary>
+		public class DomainUpException : Exception
+		{
+		}
+
 		object _userData;
 		/// <summary>
 		/// Any user-defined data. Must be serializable to pass between appdomains.
@@ -96,24 +104,7 @@ namespace MonoTests.SystemWeb.Framework
 		private static MyHost Host
 		{
 			get {
-				if (host != null)
-					return host;
-#if !TARGET_JVM
-				host = AppDomain.CurrentDomain.GetData (HOST_INSTANCE_NAME) as MyHost;
-				if (host != null)
-					return host;
-				try {
-					host = new MyHost (); //Fake instance to make EnsureHosting happy
-					host = InitHosting ();
-
-				}
-				catch {
-					host = null; //Remove the fake instance if CreateHosting failed
-					throw;
-				}
-#else
-				host = new MyHost ();
-#endif
+				EnsureHosting ();
 				return host;
 			}
 		}
@@ -205,6 +196,11 @@ namespace MonoTests.SystemWeb.Framework
 				return;
 
 			AppDomain oldDomain = host.AppDomain;
+			if (oldDomain == AppDomain.CurrentDomain)
+			{
+				Console.Error.WriteLine ("Some nasty runtime bug happened");
+				throw new Exception ("Some nasty runtime bug happened");
+			}
 			host = null;
 			AppDomain.CurrentDomain.SetData (HOST_INSTANCE_NAME, null);
 			AppDomain.Unload (oldDomain);
@@ -269,7 +265,63 @@ namespace MonoTests.SystemWeb.Framework
 		}
 
 
+		/// <summary>
+		/// Copy a resource embedded in the assembly into the web application
+		/// </summary>
+		/// <param name="type">A type in the assembly that contains the embedded resource.</param>
+		/// <param name="resourceName">The name of the resource.</param>
+		/// <param name="targetUrl">The URL where the resource will be available</param>
+		/// <exception cref="System.ArgumentException">Thrown when resource with name resourceName is not found.</exception>
+		/// <example><code>CopyResource (GetType (), "Default.skin", "App_Themes/Black/Default.skin");</code></example>
+		public static void CopyResource (Type type, string resourceName, string targetUrl)
+		{
 #if !TARGET_JVM
+			EnsureWorkingDirectories ();
+			CheckDomainIsDown ();
+			EnsureDirectoryExists (Path.Combine (baseDir,
+				Path.GetDirectoryName (targetUrl)));
+			using (Stream source = type.Assembly.GetManifestResourceStream (resourceName)) {
+				if (source == null)
+					throw new ArgumentException ("resource not found: " + resourceName, "resourceName");
+				using (FileStream target = new FileStream (Path.Combine (baseDir, targetUrl), FileMode.Create)) {
+					byte[] array = new byte[source.Length];
+					source.Read (array, 0, array.Length);
+					target.Write (array, 0, array.Length);
+				}
+			}
+#endif
+		}
+
+		private static void EnsureHosting ()
+		{
+			if (host != null)
+				return;
+#if TARGET_JVM
+			host = new MyHost ();
+			return;
+#else
+			host = AppDomain.CurrentDomain.GetData (HOST_INSTANCE_NAME) as MyHost;
+			if (host != null)
+				return;
+			CopyResources ();
+			foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies ())
+				LoadAssemblyRecursive (ass);
+
+			foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies ())
+				CopyAssembly (ass, binDir);
+
+			host = (MyHost) ApplicationHost.CreateApplicationHost (typeof (MyHost), VIRTUAL_BASE_DIR, baseDir);
+			AppDomain.CurrentDomain.SetData (HOST_INSTANCE_NAME, host);
+			host.AppDomain.SetData (HOST_INSTANCE_NAME, host);
+#endif
+		}
+
+#if !TARGET_JVM
+		const string VIRTUAL_BASE_DIR = "/NunitWeb";
+		private static string baseDir;
+		private static string binDir;
+		const string HOST_INSTANCE_NAME = "MonoTests/SysWeb/Framework/Host";
+
 		static void LoadAssemblyRecursive (Assembly ass)
 		{
 			if (ass.GlobalAssemblyCache)
@@ -299,10 +351,10 @@ namespace MonoTests.SystemWeb.Framework
 			string newfn = Path.Combine (dir, Path.GetFileName (oldfn));
 			if (File.Exists (newfn))
 				return;
+			EnsureDirectoryExists (dir);
 			File.Copy (oldfn, newfn);
 		}
-#endif
-
+		
 		private static void EnsureDirectoryExists (string directory)
 		{
 			if (directory == string.Empty)
@@ -313,66 +365,27 @@ namespace MonoTests.SystemWeb.Framework
 			Directory.CreateDirectory (directory);
 		}
 
-		/// <summary>
-		/// Copy a resource embedded in the assembly into the web application
-		/// </summary>
-		/// <param name="type">A type in the assembly that contains the embedded resource.</param>
-		/// <param name="resourceName">The name of the resource.</param>
-		/// <param name="targetUrl">The URL where the resource will be available</param>
-		/// <exception cref="System.ArgumentException">Thrown when resource with name resourceName is not found.</exception>
-		/// <example><code>CopyResource (GetType (), "Default.skin", "App_Themes/Black/Default.skin");</code></example>
-		public static void CopyResource (Type type, string resourceName, string targetUrl)
+		private static void CheckDomainIsDown ()
 		{
-#if !TARGET_JVM
-			if (targetUrl.IndexOf ("web.config") != -1 ||
-			    targetUrl.IndexOf ("Web.config") != -1)
-				Console.WriteLine ("URL: {0} at {1}", targetUrl, Environment.StackTrace);
-			EnsureHosting ();
-			EnsureDirectoryExists (Path.Combine (baseDir,
-				Path.GetDirectoryName (targetUrl)));
-			using (Stream source = type.Assembly.GetManifestResourceStream (resourceName)) {
-				if (source == null)
-					throw new ArgumentException ("resource not found: " + resourceName, "resourceName");
-				using (FileStream target = new FileStream (Path.Combine (baseDir, targetUrl), FileMode.Create)) {
-					byte[] array = new byte[source.Length];
-					source.Read (array, 0, array.Length);
-					target.Write (array, 0, array.Length);
-				}
-			}
-#endif
+			if (host != null)
+				throw new DomainUpException ();
 		}
 
-		private static void EnsureHosting ()
+		private static void EnsureWorkingDirectories ()
 		{
-			MyHost h = Host;
+			if (baseDir != null)
+				return;
+			CreateWorkingDirectories ();
 		}
 
-#if !TARGET_JVM
-		const string VIRTUAL_BASE_DIR = "/NunitWeb";
-		private static string baseDir;
-		private static string binDir;
-		const string HOST_INSTANCE_NAME = "MonoTests/SysWeb/Framework/Host";
-
-		private static MyHost InitHosting ()
+		private static void CreateWorkingDirectories ()
 		{
 			string tmpFile = Path.GetTempFileName ();
 			File.Delete (tmpFile);
-			Directory.CreateDirectory (tmpFile);
 			baseDir = tmpFile;
-			binDir = Directory.CreateDirectory (Path.Combine (baseDir, "bin")).FullName;
-
-			CopyResources ();
-			File.Create (Path.Combine (baseDir, "page.fake"));
-			foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies ())
-				LoadAssemblyRecursive (ass);
-
-			foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies ())
-				CopyAssembly (ass, binDir);
-
-			MyHost host = (MyHost) ApplicationHost.CreateApplicationHost (typeof (MyHost), VIRTUAL_BASE_DIR, baseDir);
-			AppDomain.CurrentDomain.SetData (HOST_INSTANCE_NAME, host);
-			host.AppDomain.SetData (HOST_INSTANCE_NAME, host);
-			return host;
+			Directory.CreateDirectory (tmpFile);
+			binDir = Path.Combine (baseDir, "bin");
+			Directory.CreateDirectory (binDir);
 		}
 
 		private static void CopyResources ()
@@ -393,26 +406,6 @@ namespace MonoTests.SystemWeb.Framework
 			CopyResource (typeof (WebTest),
 				"MonoTests.SystemWeb.Framework.Resources.My.master",
 				"My.master");
-//#if TARGET_JVM
-//                        CopyResource (typeof (WebTest),
-//                                "MonoTests.SystemWeb.Framework.Resources.assemblies.global.asax.xml",
-//                                "assemblies/global.asax.xml");
-//                        CopyResource (typeof (WebTest),
-//                                "MonoTests.SystemWeb.Framework.Resources.assemblies.mypage.aspx.xml",
-//                                "assemblies/mypage.aspx.xml");
-//                        CopyResource (typeof (WebTest),
-//                                "MonoTests.SystemWeb.Framework.Resources.assemblies.hnnefdht.dll.ghres",
-//                                "assemblies/hnnefdht/dll.ghres");
-//                        CopyResource (typeof (WebTest),
-//                                "MonoTests.SystemWeb.Framework.Resources.assemblies.hnnefdht.hnnefdhtAttrib.class",
-//                                "assemblies/hnnefdht/hnnefdhtAttrib.class");
-////			CopyResource (typeof (WebTest),
-////				"MonoTests.SystemWeb.Framework.Resources.assemblies.hnnefdht.ASP.MyPage_aspx_MyPage_aspxAttrib.class",
-////				"assemblies/hnnefdht/ASP/MyPage_aspx$MyPage_aspxAttrib.class");
-////			CopyResource (typeof (WebTest),
-////				"MonoTests.SystemWeb.Framework.Resources.assemblies.hnnefdht.ASP.MyPage_aspx.class",
-////				"assemblies/hnnefdht/ASP/MyPage_aspx.class");
-//#endif
 #else
 			CopyResource (typeof (WebTest), "Web.mono.config", "Web.config");
 			CopyResource (typeof (WebTest), "MyPage.aspx", "MyPage.aspx");
