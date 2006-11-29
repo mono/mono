@@ -1,3 +1,7 @@
+2006-11-29  Yoni Klain   <yonik@mainsoft.com>
+
+	* MakeFile added new resources ListControlPage.aspx for ListControlTest.cs
+
 2006-11-28  Miguel de Icaza  <miguel@novell.com>
 
 	* Rationalize the user of MonoTODOs.  

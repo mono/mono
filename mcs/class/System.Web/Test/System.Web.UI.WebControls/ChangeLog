@@ -1,3 +1,7 @@
+2006-11-27  Yoni Klain         <yonik@mainsoft.com>
+
+	* ListControlTest.cs: added new test for 2.0 
+
 2006-11-29  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* SqlDataSourceDerbyTest.cs: fixed connection on db init
