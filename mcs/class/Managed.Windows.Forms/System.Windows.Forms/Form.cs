@@ -1182,7 +1182,7 @@ namespace System.Windows.Forms {
 				return;
 
 #if NET_2_0
-			FormClosingEventArgs ce = new FormClosingEventArgs (CloseReason.FormOwnerClosing, true);
+			FormClosingEventArgs ce = new FormClosingEventArgs (CloseReason.FormOwnerClosing, false);
 		        OnFormClosing (ce);
 			if (ce.Cancel)
 				return;
