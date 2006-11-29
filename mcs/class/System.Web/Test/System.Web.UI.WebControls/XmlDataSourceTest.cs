@@ -99,13 +99,6 @@ namespace MonoTests.System.Web.UI.WebControls
 #endif
 		}
 
-		[SetUp]
-		
-		public void SetupTestCase ()
-		{
-			Thread.Sleep (100);
-		}
-
 		[Test]
 		public void Defaults ()
 		{

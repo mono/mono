@@ -123,6 +123,19 @@ namespace MonoTests.System.Web.UI.WebControls
 	[TestFixture]
 	public class MenuTest
 	{	
+
+		[TestFixtureSetUp]
+		public void SetUp ()
+		{
+#if DOT_NET
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.menuclass.aspx", "menuclass.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PostBackMenuTest.aspx", "PostBackMenuTest.aspx");
+#else
+			WebTest.CopyResource (GetType (), "menuclass.aspx", "menuclass.aspx");
+			WebTest.CopyResource (GetType (), "PostBackMenuTest.aspx", "PostBackMenuTest.aspx");
+#endif
+		}
+
 		[Test]
 		public void Menu_DefaultProperties ()
 		{
@@ -1325,8 +1338,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureTearDown]
 		public void TearDown ()
 		{
-			Thread.Sleep (100);
-		        WebTest.Unload ();
+	        WebTest.Unload ();
 		}
 	
 		// A simple Template class to wrap an image.
@@ -1350,13 +1362,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			}
 		}
 		[Test]
+		[Category ("NunitWeb")]
 		public void MenuClass ()
 		{
-#if DOT_NET
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.menuclass.aspx", "menuclass.aspx");
-#else
-			WebTest.CopyResource (GetType (), "menuclass.aspx", "menuclass.aspx");
-#endif
 			string res = new WebTest ("menuclass.aspx").Run ();
 			string menua_pattern="<table[^>]*class=\"[^\"]*menua[^\"]*\"[^>]*>";
 			Assert.IsTrue (Regex.IsMatch (res, ".*"+menua_pattern+".*",
@@ -1371,11 +1379,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NunitWeb")]
 		public void Menu_PostBack ()
 		{
-#if DOT_NET
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PostBackMenuTest.aspx", "PostBackMenuTest.aspx");
-#else
-			WebTest.CopyResource (GetType (), "PostBackMenuTest.aspx", "PostBackMenuTest.aspx");
-#endif
 			WebTest t = new WebTest ("PostBackMenuTest.aspx");
 			string str = t.Run ();
 			FormRequest fr = new FormRequest (t.Response, "form1");

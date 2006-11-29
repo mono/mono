@@ -1,3 +1,7 @@
+2006-11-29  Igor Zelmanovich   <igorz@mainsoft.com>
+
+	* FormsAuthenticationTest.cs: fixed NunitWeb tests.
+
 2006-07-10  Andrew Skiba  <andrews@mainsoft.com>
 
 	* FormsAuthenticationTest.cs: run 2 tests in web context, so they

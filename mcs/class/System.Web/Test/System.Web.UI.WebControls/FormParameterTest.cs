@@ -97,6 +97,12 @@ namespace MonoTests.System.Web.UI.WebControls
 	[TestFixture]
 	public class FormParameterTest
 	{
+		[TestFixtureTearDown]
+		public void Unload ()
+		{
+			WebTest.Unload ();
+		}
+
 		[Test]
 		public void FormParameter_DefaultProperties ()
 		{
@@ -139,6 +145,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}		
 
 		[Test]
+		[Category("NunitWeb")]
 		public void FormParameter_Evaluate()
 		{
 			WebTest t = new WebTest(PageInvoker.CreateOnInit(InitForm));

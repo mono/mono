@@ -132,6 +132,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			}
 		}
 
+		[TestFixtureTearDown]
+		public void Unload ()
+		{
+			WebTest.Unload ();
+		}
+
 		[Test]
 		public void DataBoundControl_GetData () {
 			Page p = new Page ();

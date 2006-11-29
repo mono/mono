@@ -1,5 +1,9 @@
 2006-11-29  Igor Zelmanovich   <igorz@mainsoft.com>
 
+	* PageTest.cs: fixed NunitWeb tests.
+
+2006-11-29  Igor Zelmanovich   <igorz@mainsoft.com>
+
 	* PageTest.cs: removed NotWorking attributes.
 
 2006-11-29  Igor Zelmanovich   <igorz@mainsoft.com>

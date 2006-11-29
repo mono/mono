@@ -1,3 +1,13 @@
+2006-11-29  Igor Zelmanovich   <igorz@mainsoft.com>
+
+	* CreateUserWizardTest.cs: fixed NunitWeb tests.
+	* DetailsViewTest.cs: fixed NunitWeb tests.
+	* FormParameterTest.cs: fixed NunitWeb tests.
+	* FormViewTest.cs: fixed NunitWeb tests.
+	* MenuTest.cs: fixed NunitWeb tests.
+	* WizardStepBaseTest.cs: fixed NunitWeb tests.
+	* XmlDataSourceTest.cs: fixed NunitWeb tests.
+
 2006-11-27  Yoni Klain         <yonik@mainsoft.com>
 
 	* ListControlTest.cs: added new test for 2.0 

@@ -1383,15 +1383,8 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		[TestFixtureTearDown]
 		public void TearDown ()
 		{
-			Thread.Sleep (100);
-		        //WebTest.Unload ();
+			WebTest.Unload ();
 		}
-	
-		//[TestFixtureStartUp]
-		//public void StartUp ()
-		//{
-		//	WebTest.CopyResource (GetType (), "FormView.aspx", "FormView.aspx");
-		//}
 
 		[Test]
 		[Category("NunitWeb")]

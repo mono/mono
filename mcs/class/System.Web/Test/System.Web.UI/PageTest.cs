@@ -60,12 +60,10 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		#if NET_2_0 
-		// MONO BUG - have no difinition for AsyncMode
-		//public new bool AsyncMode
-		//{
-		//        get { return base.AsyncMode; }
-		//        set { base.AsyncMode = value; }
-		//}
+		public new bool AsyncMode {
+			get { return base.AsyncMode; }
+			set { base.AsyncMode = value; }
+		}
 
 		public new object GetWrappedFileDependencies(string[] virtualFileDependencies)
 		{
@@ -77,11 +75,15 @@ namespace MonoTests.System.Web.UI {
 			base.InitOutputCache (cacheSettings);
 		}
 
-		// MONO BUG - have no difinition for UniqueFilePathSuffix
-		//public new string UniqueFilePathSuffix
-		//{
-		//        get { return base.UniqueFilePathSuffix; }
-		//}
+		public new string UniqueFilePathSuffix {
+			get { return base.UniqueFilePathSuffix; }
+		}
+
+		public new char IdSeparator {
+			get {
+				return base.IdSeparator;
+			}
+		}
 		#endif
 	}
 
@@ -110,10 +112,22 @@ namespace MonoTests.System.Web.UI {
 	[TestFixture]	
 	public class PageTest {
 
-		[SetUp]
+		[TestFixtureSetUp]
 		public void SetUpTest ()
 		{
-			Thread.Sleep (100);
+#if DOT_NET
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageCultureTest.aspx", "PageCultureTest.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageLifecycleTest.aspx", "PageLifecycleTest.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageValidationTest.aspx", "PageValidationTest.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.AsyncPage.aspx", "AsyncPage.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.AsyncPage.aspx", "AsyncPage.aspx");
+#else
+			WebTest.CopyResource (GetType (), "PageCultureTest.aspx", "PageCultureTest.aspx");
+			WebTest.CopyResource (GetType (), "PageLifecycleTest.aspx", "PageLifecycleTest.aspx");
+			WebTest.CopyResource (GetType (), "PageValidationTest.aspx", "PageValidationTest.aspx");
+			WebTest.CopyResource (GetType (), "AsyncPage.aspx", "AsyncPage.aspx");
+			WebTest.CopyResource (GetType (), "AsyncPage.aspx", "AsyncPage.aspx");
+#endif
 		}
 
 		[Test]
@@ -396,11 +410,6 @@ namespace MonoTests.System.Web.UI {
 		[Category ("NunitWeb")]
 		public void Page_ValidatorTest1 ()
 		{
-#if DOT_NET
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageValidationTest.aspx", "PageValidationTest.aspx");
-#else
-			WebTest.CopyResource (GetType (), "PageValidationTest.aspx", "PageValidationTest.aspx");
-#endif
 
 			WebTest t = new WebTest ("PageValidationTest.aspx");
 			string PageRenderHtml = t.Run ();
@@ -433,11 +442,6 @@ namespace MonoTests.System.Web.UI {
 		[Category ("NunitWeb")]
 		public void Page_ValidatorTest2 ()
 		{
-#if DOT_NET
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageValidationTest.aspx", "PageValidationTest.aspx");
-#else
-			WebTest.CopyResource (GetType (), "PageValidationTest.aspx", "PageValidationTest.aspx");
-#endif
 
 			WebTest t = new WebTest ("PageValidationTest.aspx");
 			string PageRenderHtml = t.Run ();
@@ -494,11 +498,6 @@ namespace MonoTests.System.Web.UI {
 		[Category ("NunitWeb")]
 		public void Page_ValidatorTest4 ()
 		{
-#if DOT_NET
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageValidationTest.aspx", "PageValidationTest.aspx");
-#else
-			WebTest.CopyResource (GetType (), "PageValidationTest.aspx", "PageValidationTest.aspx");
-#endif
 
 			WebTest t = new WebTest ("PageValidationTest.aspx");
 			string PageRenderHtml = t.Run ();
@@ -538,11 +537,6 @@ namespace MonoTests.System.Web.UI {
 		[Category ("NunitWeb")]
 		public void Page_ValidatorTest5 ()
 		{
-#if DOT_NET
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageValidationTest.aspx", "PageValidationTest.aspx");
-#else
-			WebTest.CopyResource (GetType (), "PageValidationTest.aspx", "PageValidationTest.aspx");
-#endif
 
 			WebTest t = new WebTest ("PageValidationTest.aspx");
 			string PageRenderHtml = t.Run ();
@@ -582,11 +576,6 @@ namespace MonoTests.System.Web.UI {
 		[Category ("NunitWeb")]
 		public void Page_ValidatorTest6 ()
 		{
-#if DOT_NET
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageValidationTest.aspx", "PageValidationTest.aspx");
-#else
-			WebTest.CopyResource (GetType (), "PageValidationTest.aspx", "PageValidationTest.aspx");
-#endif
 
 			WebTest t = new WebTest ("PageValidationTest.aspx");
 			string PageRenderHtml = t.Run ();
@@ -637,11 +626,6 @@ namespace MonoTests.System.Web.UI {
 		[Category ("NunitWeb")]
 		public void Page_ValidatorTest7 ()
 		{
-#if DOT_NET
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageValidationTest.aspx", "PageValidationTest.aspx");
-#else
-			WebTest.CopyResource (GetType (), "PageValidationTest.aspx", "PageValidationTest.aspx");
-#endif
 
 			WebTest t = new WebTest ("PageValidationTest.aspx");
 			string PageRenderHtml = t.Run ();
@@ -693,11 +677,6 @@ namespace MonoTests.System.Web.UI {
 		[Category ("NunitWeb")]
 		public void Page_Lifecycle ()
 		{
-#if DOT_NET
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageLifecycleTest.aspx", "PageLifecycleTest.aspx");
-#else
-			WebTest.CopyResource (GetType (), "PageLifecycleTest.aspx", "PageLifecycleTest.aspx");
-#endif
 
 			WebTest t = new WebTest ("PageLifecycleTest.aspx");
 			string PageRenderHtml = t.Run ();
@@ -717,12 +696,11 @@ namespace MonoTests.System.Web.UI {
 			Assert.AreEqual ("OnUnload", eventlist[9], "Live Cycle Flow #10");
 		}
 
-/*              // MONO BUG - No difinition to AddOnPreRenderCompleteAsync
 		[Test]
 		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
 		public void AddOnPreRenderCompleteAsync ()
 		{
-			WebTest.CopyResource (GetType (), "AsyncPage.aspx", "AsyncPage.aspx");
 			WebTest t = new WebTest ("AsyncPage.aspx");
 			t.Invoker = PageInvoker.CreateOnLoad (AddOnPreRenderCompleteAsync_Load);
 			string str = t.Run ();
@@ -741,7 +719,6 @@ namespace MonoTests.System.Web.UI {
 		[Category ("NunitWeb")]
 		public void ExecuteRegisteredAsyncTasks ()
 		{
-			WebTest.CopyResource (GetType (), "AsyncPage.aspx", "AsyncPage.aspx");
 			WebTest t = new WebTest ("AsyncPage.aspx");
 			t.Invoker = PageInvoker.CreateOnLoad (ExecuteRegisteredAsyncTasks_Load);
 			string str = t.Run ();
@@ -805,27 +782,26 @@ namespace MonoTests.System.Web.UI {
 				WebTest.CurrentTest.UserData = list;
 			}
 		}
-*/
 
-		// MONO BUG - have no difinition for AsyncMode
-		//[Test]
-		//public void AsyncMode ()
-		//{
-		//        TestPage p = new TestPage ();
-		//        Assert.AreEqual (false, p.AsyncMode, "AsyncMode#1");
-		//        p.AsyncMode = true;
-		//        Assert.AreEqual (true, p.AsyncMode, "AsyncMode#2");
-		//}
+		[Test]
+		[Category ("NotWorking")]
+		public void AsyncMode ()
+		{
+			TestPage p = new TestPage ();
+			Assert.AreEqual (false, p.AsyncMode, "AsyncMode#1");
+			p.AsyncMode = true;
+			Assert.AreEqual (true, p.AsyncMode, "AsyncMode#2");
+		}
 
-		// MONO BUG - have no difinition for AsyncTimeout
-		//[Test]
-		//public void AsyncTimeout ()
-		//{
-		//        Page p = new Page ();
-		//        Assert.AreEqual (45, ((TimeSpan) p.AsyncTimeout).Seconds , "AsyncTimeout#1");
-		//        p.AsyncTimeout = new TimeSpan (0, 0, 50);
-		//        Assert.AreEqual (50, ((TimeSpan) p.AsyncTimeout).Seconds, "AsyncTimeout#2");
-		//}
+		[Test]
+		[Category ("NotWorking")]
+		public void AsyncTimeout ()
+		{
+			Page p = new Page ();
+			Assert.AreEqual (45, ((TimeSpan) p.AsyncTimeout).Seconds, "AsyncTimeout#1");
+			p.AsyncTimeout = new TimeSpan (0, 0, 50);
+			Assert.AreEqual (50, ((TimeSpan) p.AsyncTimeout).Seconds, "AsyncTimeout#2");
+		}
 
 		[Test]
 		public void ClientQueryString ()
@@ -840,13 +816,13 @@ namespace MonoTests.System.Web.UI {
 			Assert.AreEqual (typeof(ClientScriptManager), p.ClientScript.GetType(), "ClientScriptManager");
 		}
 
-		// MONO BUG - have no difinition for CreateHtmlTextWriterFromType
-		//[Test]
-		//public void CreateHtmlTextWriterFromType ()
-		//{
-		//        HtmlTextWriter writer = Page.CreateHtmlTextWriterFromType (null, typeof (HtmlTextWriter));
-		//        Assert.IsNotNull (writer, "CreateHtmlTextWriterFromType Failed");
-		//}
+		[Test]
+		[Category ("NotWorking")]
+		public void CreateHtmlTextWriterFromType ()
+		{
+			HtmlTextWriter writer = Page.CreateHtmlTextWriterFromType (null, typeof (HtmlTextWriter));
+			Assert.IsNotNull (writer, "CreateHtmlTextWriterFromType Failed");
+		}
 
 		[Test]
 		public void EnableEventValidation ()
@@ -887,23 +863,17 @@ namespace MonoTests.System.Web.UI {
 			Assert.AreEqual ("fake.aspx", ((String[]) list)[1], "GetWrappedFileDependencie#4");
 		}
 
-		// MONO BUG - have no difinition for IdSeparator
-		//[Test]
-		//public void IdSeparator ()
-		//{
-		//        Page p = new Page ();
-		//        Assert.AreEqual ('$', p.IdSeparator, "IdSeparator");
-		//}
+		[Test]
+		public void IdSeparator () 
+		{
+			TestPage p = new TestPage ();
+			Assert.AreEqual ('$', p.IdSeparator, "IdSeparator");
+		}
 
 		[Test]
 		[Category ("NunitWeb")]
 		public void InitializeCulture ()
 		{
-#if DOT_NET
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageCultureTest.aspx", "PageCultureTest.aspx");
-#else
-			WebTest.CopyResource (GetType (), "PageCultureTest.aspx", "PageCultureTest.aspx");
-#endif
 			WebTest t = new WebTest ("PageCultureTest.aspx");
 			string PageRenderHtml = t.Run ();
 			ArrayList eventlist = t.UserData as ArrayList;
@@ -923,13 +893,13 @@ namespace MonoTests.System.Web.UI {
 			Assert.AreEqual ("OnUnload", eventlist[10], "Live Cycle Flow #10");
 		}
 
-		// MONO BUG - have no difinition for IsAsync
-		//[Test]
-		//public void IsAsync ()
-		//{
-		//        Page p = new Page ();
-		//        Assert.AreEqual (false, p.IsAsync, "IsAsync");
-		//}
+		[Test]
+		[Category ("NotWorking")]
+		public void IsAsync ()
+		{
+			Page p = new Page ();
+			Assert.AreEqual (false, p.IsAsync, "IsAsync");
+		}
 
 		[Test]
 		public void IsCallback ()
@@ -990,15 +960,15 @@ namespace MonoTests.System.Web.UI {
 			Assert.AreEqual ("test", p.MasterPageFile, "MasterPageFile#2");
 		}
 
-		// MONO BUG - have no difinition for MaxPageStateFieldLength
-		//[Test]
-		//public void MaxPageStateFieldLength ()
-		//{
-		//        Page p = new Page ();
-		//        Assert.AreEqual (-1, p.MaxPageStateFieldLength, "MaxPageStateFieldLength#1");
-		//        p.MaxPageStateFieldLength = 10;
-		//        Assert.AreEqual (10, p.MaxPageStateFieldLength, "MaxPageStateFieldLength#2");
-		//}
+		[Test]
+		[Category ("NotWorking")]
+		public void MaxPageStateFieldLength ()
+		{
+			Page p = new Page ();
+			Assert.AreEqual (-1, p.MaxPageStateFieldLength, "MaxPageStateFieldLength#1");
+			p.MaxPageStateFieldLength = 10;
+			Assert.AreEqual (10, p.MaxPageStateFieldLength, "MaxPageStateFieldLength#2");
+		}
 
 		[Test]
 		public void PageAdapter ()
@@ -1013,15 +983,15 @@ namespace MonoTests.System.Web.UI {
 			// NUnit.Framework limitation for server.transfer	
 		}
 
-		// MONO BUG - have no difinition for RegisterRequiresViewStateEncryption
-		//[Test]
-		//public void RegisterRequiresViewStateEncryption ()
-		//{
-		//        Page p = new Page ();
-		//        p.ViewStateEncryptionMode = ViewStateEncryptionMode.Always;
-		//        p.RegisterRequiresViewStateEncryption();
-		//        // No changes after the Encryption 
-		//}
+		[Test]
+		[Category ("NotWorking")]
+		public void RegisterRequiresViewStateEncryption ()
+		{
+			Page p = new Page ();
+			p.ViewStateEncryptionMode = ViewStateEncryptionMode.Always;
+			p.RegisterRequiresViewStateEncryption ();
+			// No changes after the Encryption 
+		}
 
 		[Test]
 		public void Theme ()
@@ -1032,25 +1002,25 @@ namespace MonoTests.System.Web.UI {
 			Assert.AreEqual ("Theme.skin",p.Theme, "Theme#2");
 		}
 
-		// MONO BUG - have no difinition for UniqueFilePathSuffix
-		//[Test]
-		//public void UniqueFilePathSuffix ()
-		//{
-		//        TestPage p = new TestPage ();
-		//        if (!p.UniqueFilePathSuffix.StartsWith ("__ufps=")) {
-		//                Assert.Fail ("UniqueFilePathSuffix");
-		//        }
-		//}
+		[Test]
+		[Category ("NotWorking")]
+		public void UniqueFilePathSuffix ()
+		{
+			TestPage p = new TestPage ();
+			if (!p.UniqueFilePathSuffix.StartsWith ("__ufps=")) {
+				Assert.Fail ("UniqueFilePathSuffix");
+			}
+		}
 
-		// MONO BUG - have no difinition for RegisterRequiresViewStateEncryption
-		//[Test]
-		//public void ViewStateEncryptionModeTest ()
-		//{
-		//        Page p = new Page ();
-		//        Assert.AreEqual (ViewStateEncryptionMode.Auto, p.ViewStateEncryptionMode, "ViewStateEncryptionMode#1");
-		//        p.ViewStateEncryptionMode = ViewStateEncryptionMode.Never;
-		//        Assert.AreEqual (ViewStateEncryptionMode.Never, p.ViewStateEncryptionMode, "ViewStateEncryptionMode#2");
-		//}
+		[Test]
+		[Category ("NotWorking")]
+		public void ViewStateEncryptionModeTest ()
+		{
+			Page p = new Page ();
+			Assert.AreEqual (ViewStateEncryptionMode.Auto, p.ViewStateEncryptionMode, "ViewStateEncryptionMode#1");
+			p.ViewStateEncryptionMode = ViewStateEncryptionMode.Never;
+			Assert.AreEqual (ViewStateEncryptionMode.Never, p.ViewStateEncryptionMode, "ViewStateEncryptionMode#2");
+		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
@@ -1058,12 +1028,6 @@ namespace MonoTests.System.Web.UI {
 		{
 			Page p = new Page ();
 			p.GetDataItem ();
-		}
-
-		[TestFixtureTearDown]
-		public void TearDown ()
-		{
-			WebTest.Unload ();
 		}
 
 		#region help_classes
@@ -1096,5 +1060,11 @@ namespace MonoTests.System.Web.UI {
 		}
 		#endregion
 #endif
+
+		[TestFixtureTearDown]
+		public void TearDown ()
+		{
+			WebTest.Unload ();
+		}
 	}
 }

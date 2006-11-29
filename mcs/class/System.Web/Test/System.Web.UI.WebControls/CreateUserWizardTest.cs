@@ -135,10 +135,11 @@ namespace MonoTests.System.Web.UI.WebControls
 	[TestFixture]
 	public class CreateUserWizardTest
 	{
-		[SetUp]
-		public void TestSetup ()
+
+		[TestFixtureTearDown]
+		public void Unload ()
 		{
-			Thread.Sleep (150);
+			WebTest.Unload ();
 		}
 
 		[Test]

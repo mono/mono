@@ -86,6 +86,12 @@ namespace MonoTests.System.Web.UI.WebControls
 	{
 		private bool event_checker;
 
+		[TestFixtureTearDown]
+		public void TearDown ()
+		{
+			WebTest.Unload ();
+		}
+
 		[Test]
 		public void WizardStepBase_DefaultProperty ()
 		{

@@ -350,12 +350,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			myds.Add ("Item4");
 			myds.Add ("Item5");
 			myds.Add ("Item6");
-		}
 
-		
-		[SetUp]
-		public void setup ()
-		{
 #if VISUAL_STUDIO
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.FooterTemplateTest.aspx",
 				"FooterTemplateTest.aspx");
@@ -1970,7 +1965,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (DetailsViewMode.Edit, view.CurrentMode, "DetailsView_CurrentMode#2");
 		}
 
-		[TearDown]
+		[TestFixtureTearDown]
 		public void Tear ()
 		{
 			WebTest.Unload ();

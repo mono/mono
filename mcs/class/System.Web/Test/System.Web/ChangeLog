@@ -1,3 +1,7 @@
+2006-11-29  Igor Zelmanovich   <igorz@mainsoft.com>
+
+	* StaticSiteMapProviderTest.cs: fixed NunitWeb tests.
+
 2006-11-05 Andrew Skiba <andrews@mainsoft.com>
 
 	* HttpWorkerRequestTest.cs: use IntPtr.Zero instead of (IntPtr) 0

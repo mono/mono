@@ -174,6 +174,12 @@ namespace MonoTests.System.Web {
 			n.Roles = null;
 			bool b = p.IsAccessibleToUser (HttpContext.Current, n);
 		}
+
+		[TestFixtureTearDown]
+		public void TearDown ()
+		{
+			WebTest.Unload ();
+		}
 	}
 }
 

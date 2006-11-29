@@ -129,5 +129,11 @@ namespace MonoTests.System.Web.Security {
 			FormsAuthentication.RedirectToLoginPage (String.Empty);
 		}
 #endif
+
+		[TestFixtureTearDown]
+		public void TestFixtureTearDown()
+		{
+			WebTest.Unload();
+		}
 	}
 }
