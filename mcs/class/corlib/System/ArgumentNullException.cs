@@ -59,6 +59,13 @@ namespace System
 			HResult = Result;
 		}
 
+#if NET_2_0		
+		public ArgumentNullException (string message, Exception innerException)
+		: base (message, innerException)
+		{
+		}
+#endif		
+
 		protected ArgumentNullException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
