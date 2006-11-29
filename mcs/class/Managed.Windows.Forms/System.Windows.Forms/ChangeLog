@@ -1,5 +1,11 @@
 2006-11-28  Everaldo Canuto  <everaldo@simios.org>
 
+	* ToolBar.cs: Fixes and simplify toolbar button layout, it 
+	fixes bug #80070 and some other problem on toolbar buttons
+	layout.
+
+2006-11-28  Everaldo Canuto  <everaldo@simios.org>
+
 	* ThemeWin32Classic.cs: Paint toolbar toggle button background 
 	with dotted brush.	Fixes #79564
 	

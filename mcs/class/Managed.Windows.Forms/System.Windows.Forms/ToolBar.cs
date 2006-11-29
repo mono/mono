@@ -493,7 +493,8 @@ namespace System.Windows.Forms
 
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
 		{
-			if ((specified & BoundsSpecified.Height) != 0)
+			// New height requested
+			if (!AutoSize && (requested_height != height) && ((specified & BoundsSpecified.Height) != BoundsSpecified.None)) 
 				requested_height = height;
 			
 			base.SetBoundsCore (x, y, width, height, specified);
@@ -875,79 +876,61 @@ namespace System.Windows.Forms
 
 		bool Layout ()
 		{
+			if (Parent == null)
+				return false;
+			
 			bool changed = false;
 			Theme theme = ThemeEngine.Current;
 			int x = theme.ToolBarGripWidth;
 			int y = theme.ToolBarGripWidth;
 
-			Size button_size = AdjustedButtonSize;
+			int ht = AdjustedButtonSize.Height + theme.ToolBarGripWidth;
 
-			int ht = button_size.Height + theme.ToolBarGripWidth;
+			int separator_index = -1;
 
-			if (Wrappable && Parent != null) {
-				int separator_index = -1;
+			for (int i = 0; i < buttons.Count; i++) {
+				ToolBarButton button = buttons [i];
 
-				for (int i = 0; i < buttons.Count; i++) {
-					ToolBarButton button = buttons [i];
+				if (!button.Visible)
+					continue;
 
-					if (!button.Visible)
-						continue;
-
-					if (size_specified && (button.Style != ToolBarButtonStyle.Separator)) {
-						if (button.Layout (button_size))
-							changed = true;
-					}
-					else {
-						if (button.Layout ())
-							changed = true;
-					}
-
-					bool is_separator = button.Style == ToolBarButtonStyle.Separator;
-
-					if (x + button.Rectangle.Width < Width || is_separator) {
-						if (button.Location.X != x || button.Location.Y != y)
-							changed = true;
-						button.Location = new Point (x, y);
-						x += button.Rectangle.Width;
-						if (is_separator)
-							separator_index = i;
-					} else if (separator_index > 0) { 
-						i = separator_index;
-						separator_index = -1;
-						x = theme.ToolBarGripWidth;
-						y += ht; 
-					} else {
-						x = theme.ToolBarGripWidth;
-						y += ht; 
-						if (button.Location.X != x || button.Location.Y != y)
-							changed = true;
-						button.Location = new Point (x, y);
-						x += button.Rectangle.Width;
-					}
+				if (size_specified && (button.Style != ToolBarButtonStyle.Separator)) {
+					if (button.Layout (button_size))
+						changed = true;
 				}
-				if (AutoSize)
-					Height = y + ht;
-			} else {
-				if (AutoSize)
-					Height = ht;
-				else
-					Height = DefaultSize.Height;
-				foreach (ToolBarButton button in buttons) {
-					if (size_specified) {
-						if (button.Layout (button_size))
-							changed = true;
-					}
-					else {
-						if (button.Layout ())
-							changed = true;
-					}
+				else {
+					if (button.Layout ())
+						changed = true;
+				}
+
+				bool is_separator = button.Style == ToolBarButtonStyle.Separator;
+
+				if (x + button.Rectangle.Width < Width || is_separator || !Wrappable) {
+					if (button.Location.X != x || button.Location.Y != y)
+						changed = true;
+					button.Location = new Point (x, y);
+					x += button.Rectangle.Width;
+					if (is_separator)
+						separator_index = i;
+				} else if (separator_index > 0) { 
+					i = separator_index;
+					separator_index = -1;
+					x = theme.ToolBarGripWidth;
+					y += ht; 
+				} else {
+					x = theme.ToolBarGripWidth;
+					y += ht; 
 					if (button.Location.X != x || button.Location.Y != y)
 						changed = true;
 					button.Location = new Point (x, y);
 					x += button.Rectangle.Width;
 				}
 			}
-
+			if (AutoSize)
+				Height = ht + (Wrappable ? y : 0);
+			else
+				Height = requested_height;
+			
 			return changed;
 		}
  		#endregion Private Methods
