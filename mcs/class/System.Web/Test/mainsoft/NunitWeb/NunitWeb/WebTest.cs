@@ -192,19 +192,22 @@ namespace MonoTests.SystemWeb.Framework
 		public static void Unload ()
 		{
 #if !TARGET_JVM
-			if (host == null)
-				return;
-
-			AppDomain oldDomain = host.AppDomain;
-			if (oldDomain == AppDomain.CurrentDomain)
-			{
-				Console.Error.WriteLine ("Some nasty runtime bug happened");
-				throw new Exception ("Some nasty runtime bug happened");
+			if (host != null) {
+				AppDomain oldDomain = host.AppDomain;
+				if (oldDomain == AppDomain.CurrentDomain)
+				{
+					Console.Error.WriteLine ("Some nasty runtime bug happened");
+					throw new Exception ("Some nasty runtime bug happened");
+				}
+				host = null;
+				AppDomain.CurrentDomain.SetData (HOST_INSTANCE_NAME, null);
+				AppDomain.Unload (oldDomain);
 			}
-			host = null;
-			AppDomain.CurrentDomain.SetData (HOST_INSTANCE_NAME, null);
-			AppDomain.Unload (oldDomain);
-			Directory.Delete (baseDir, true);
+			if (baseDir != null) {
+				Directory.Delete (baseDir, true);
+				baseDir = null;
+				binDir = null;
+			}
 #endif
 		}
 
