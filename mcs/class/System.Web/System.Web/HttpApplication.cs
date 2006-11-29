@@ -818,7 +818,9 @@ namespace System.Web {
 					context.Handler = null;
 					factory = null;
 				}
-				
+#if NET_2_0
+				context.PopHandler ();
+#endif
 				if (begin_iar != null){
 					try {
 						begin_iar.Complete ();
@@ -892,6 +894,9 @@ namespace System.Web {
 			try {
 				handler = GetHandler (context);
 				context.Handler = handler;
+#if NET_2_0
+				context.PushHandler (handler);
+#endif
 			} catch (FileNotFoundException fnf){
 				if (context.Request.IsLocal)
 					ProcessError (new HttpException (404, String.Format ("File not found {0}", fnf.FileName), fnf));

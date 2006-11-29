@@ -85,7 +85,14 @@ namespace System.Web {
 		bool sliding_expiration;
 		int duration;
 		bool allow_response_in_browser_history;
-                
+                bool allow_server_caching = true;
+		bool set_no_store = false;
+		bool set_no_transform = false;
+		bool valid_until_expires = false;
+		
+		// always false in 1.x
+		bool omit_vary_star = false;
+		
 #endregion
 
                 internal event CacheabilityUpdatedCallback CacheabilityUpdated;
@@ -100,6 +107,10 @@ namespace System.Web {
 			get { return vary_by_params; }
 		}
 
+		internal bool AllowServerCaching {
+			get { return allow_server_caching; }
+		}
+		
 		internal int Duration {
 			get { return duration; }
 			set { duration = value; }
@@ -117,6 +128,15 @@ namespace System.Web {
 			get { return validation_callbacks; }
 		}
 
+		// always false in 1.x
+		internal bool OmitVaryStar {
+			get { return omit_vary_star; }
+		}
+
+		internal bool ValidUntilExpires {
+			get { return valid_until_expires; }
+		}
+		
 #endregion // Properties
 
 #region Methods
@@ -243,22 +263,19 @@ namespace System.Web {
 			HaveMaxAge = true;
 		}
 
-		[MonoTODO ("Not implemented")]
 		public void SetNoServerCaching ()
 		{
-			throw new NotImplementedException (); 
+			allow_server_caching = false;
 		}
 
-		[MonoTODO ("Not implemented")]
 		public void SetNoStore ()
 		{
-			throw new NotImplementedException (); 
+			set_no_store = true;
 		}
 
-		[MonoTODO ("Not implemented")]
 		public void SetNoTransforms ()
 		{
-			throw new NotImplementedException (); 
+			set_no_transform = true;
 		}
 
 		public void SetProxyMaxAge (TimeSpan delta)
@@ -287,10 +304,9 @@ namespace System.Web {
 			sliding_expiration = slide;
 		}
 
-		[MonoTODO ("Not implemented")]
 		public void SetValidUntilExpires (bool validUntilExpires)
 		{
-			throw new NotImplementedException (); 
+			valid_until_expires = validUntilExpires;
 		}
 
 		public void SetVaryByCustom (string custom)
@@ -352,6 +368,11 @@ namespace System.Web {
 				headers.Add (new UnknownResponseHeader ("Expires", expires));
 			}
 
+			if (set_no_store)
+				cc = String.Format ("{0}, no-store", cc);
+			if (set_no_transform)
+				cc = String.Format ("{0}, no-transform", cc);
+			
 			headers.Add (new UnknownResponseHeader ("Cache-Control", cc));
 						
 			if (etag != null)
@@ -369,10 +390,9 @@ namespace System.Web {
 
 		}
 #if NET_2_0
-		[MonoTODO ("Not implemented")]
 		public void SetOmitVaryStar (bool omit)
 		{
-			throw new NotImplementedException (); 
+			omit_vary_star = omit;
 		}
 #endif
 		

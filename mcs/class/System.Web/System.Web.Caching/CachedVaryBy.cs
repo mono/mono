@@ -48,7 +48,7 @@ namespace System.Web.Caching {
 		internal CachedVaryBy (HttpCachePolicy policy, string key)
 		{
 			prms = policy.VaryByParams.GetParamNames ();
-			headers = policy.VaryByHeaders.GetHeaderNames ();
+			headers = policy.VaryByHeaders.GetHeaderNames (policy.OmitVaryStar);
 			custom = policy.GetVaryByCustom ();
 			this.key = key;
 			item_list = new ArrayList ();

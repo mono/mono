@@ -35,6 +35,7 @@ using System.Web.UI;
 using System.Web.Util;
 using System.Collections.Specialized;
 using System.Security.Permissions;
+using System.Text;
 
 namespace System.Web {
 
@@ -124,6 +125,9 @@ namespace System.Web {
 			IHttpHandler handler = context.ApplicationInstance.GetHandler (context);
 			TextWriter previous = null;
 			try {
+#if NET_2_0
+				context.PushHandler (handler);
+#endif
 				previous = response.SetTextWriter (output);
 				if (!(handler is IHttpAsyncHandler)) {
 					handler.ProcessRequest (context);
@@ -142,6 +146,9 @@ namespace System.Web {
 				response.SetTextWriter (previous);
 				if (!preserveQuery)
 					request.SetForm (oldForm);
+#if NET_2_0
+				context.PopHandler ();
+#endif
 			}
 		}
 
@@ -201,7 +208,88 @@ namespace System.Web {
 		{
 			throw new NotImplementedException ();
 		}
+
+		public static byte[] UrlTokenDecode (string input)
+		{
+			if (input == null)
+				throw new ArgumentNullException ("input");
+			if (input.Length < 1)
+				return new byte[0];
+			byte[] bytes = Encoding.ASCII.GetBytes (input);
+			int inputLength = input.Length - 1;
+			int equalsCount = (int)(((char)bytes[inputLength]) - 0x30);
+			char[] ret = new char[inputLength + equalsCount];
+			int i = 0;
+			for (; i < inputLength; i++) {
+				switch ((char)bytes[i]) {
+					case '-':
+						ret[i] = '+';
+						break;
+
+					case '_':
+						ret[i] = '/';
+						break;
+
+					default:
+						ret[i] = (char)bytes[i];
+						break;
+				}
+			}
+			while (equalsCount > 0) {
+				ret[i++] = '=';
+				equalsCount--;
+			}
+			
+			return Convert.FromBase64CharArray (ret, 0, ret.Length);
+		}
+
+		public static string UrlTokenEncode (byte[] input)
+		{
+			if (input == null)
+				throw new ArgumentNullException ("input");
+			if (input.Length < 1)
+				return String.Empty;
+			string base64 = Convert.ToBase64String (input);
+			int retlen;
+			if (base64 == null || (retlen = base64.Length) == 0)
+				return String.Empty;
+
+			// MS.NET implementation seems to process the base64
+			// string before returning. It replaces the chars:
+			//
+			//  + with -
+			//  / with _
+			//
+			// Then removes trailing ==, which may appear in the
+			// base64 string, and replaces them with a single digit
+			// that's the count of removed '=' characters (0 if none
+			// were removed)
+			int equalsCount = 0x30;
+			while (retlen > 0 && base64[retlen - 1] == '=') {
+				equalsCount++;
+				retlen--;
+			}
+			char[] chars = new char[retlen + 1];
+			chars[retlen] = (char)equalsCount;
+			for (int i = 0; i < retlen; i++) {
+				switch (base64[i]) {
+					case '+':
+						chars[i] = '-';
+						break;
+
+					case '/':
+						chars[i] = '_';
+						break;
+					
+					default:
+						chars[i] = base64[i];
+						break;
+				}
+			}
+			return new string (chars);
+		}
 #endif
+
 		public string UrlDecode (string s)
 		{
 			return HttpUtility.UrlDecode (s);

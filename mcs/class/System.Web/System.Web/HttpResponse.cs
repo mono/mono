@@ -97,6 +97,10 @@ namespace System.Web {
 		//
 		internal object FlagEnd = new object ();
 
+#if NET_2_0
+		bool is_request_being_redirected;
+#endif
+		
 		internal HttpResponse ()
 		{
 			output_stream = new HttpResponseStream (this);
@@ -264,9 +268,8 @@ namespace System.Web {
 			}
 		}
 #if NET_2_0
-		[MonoTODO ("Not implemented")]
 		public bool IsRequestBeingRedirected {
-			get { throw new NotImplementedException (); }
+			get { return is_request_being_redirected; }
 		}
 #endif
 		public TextWriter Output {
@@ -737,7 +740,9 @@ namespace System.Web {
 		{
 			if (headers_sent)
 				throw new HttpException ("header have been already sent");
-
+#if NET_2_0
+			is_request_being_redirected = true;
+#endif
 			ClearHeaders ();
 			ClearContent ();
 			
@@ -752,6 +757,9 @@ namespace System.Web {
 			
 			if (endResponse)
 				End ();
+#if NET_2_0
+			is_request_being_redirected = false;
+#endif
 		}
 
 		public static void RemoveOutputCacheItem (string path)

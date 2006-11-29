@@ -1,3 +1,29 @@
+2006-11-29  Marek Habersack  <grendello@gmail.com>
+
+	* HttpApplication.cs: Make use of the handler stack implemented
+	in HttpContext.
+
+	* HttpCacheVaryByHeaders.cs: Optionally omit the vary:* header
+	value in the 2.0 profile.
+
+	* HttpServerUtility.cs: Make use of the handler stack implemented
+	in HttpContext.
+	Implemented the UrlToken{Encode,Decode} 2.0 methods.
+
+	* HttpResponse.cs: Implemented the IsRequestBeingRedirected
+	property.
+
+	* HttpContext.cs: Implemented the CurrentHandler and PreviousHandler
+	methods, together with helper functions to handle the handler
+	stack.
+	GetSection(string) should be present only in the 2.0 profile.
+
+	* HttpCachePolicy.cs: implement the SetNoServerCaching,
+	SetNoStore, SetNoTransforms, SetValidUntilExpires and
+	SetOmitVaryStar methods.
+	Added code to set the no-store and no-transform options of the
+	Cache-Control header.
+
 2006-11-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpServerUtility.cs: don't prepend extra '?' when the original url

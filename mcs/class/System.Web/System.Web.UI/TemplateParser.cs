@@ -281,6 +281,10 @@ namespace System.Web.UI {
 
 			cmp = String.Compare ("OutputCache", directive, true);
 			if (cmp == 0) {
+				HttpResponse response = HttpContext.Current.Response;
+				if (response != null)
+					response.Cache.SetValidUntilExpires (true);
+				
 				output_cache = true;
 				
 				if (atts ["Duration"] == null)

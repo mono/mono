@@ -77,11 +77,11 @@ namespace System.Web {
 #endif
 		}
 
-		internal string[] GetHeaderNames ()
+		internal string[] GetHeaderNames (bool omitVaryStar)
 		{
 			string[] names;
 
-			if (vary_by_unspecified) {
+			if (vary_by_unspecified && !omitVaryStar) {
 				names = new string[1];
 				names[0] = "*";
 			}

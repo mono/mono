@@ -42,6 +42,7 @@ using System.Web.SessionState;
 using System.Web.UI;
 using System.Web.Util;
 #if NET_2_0
+using System.Collections.Generic;
 using System.Reflection;
 using System.Resources;
 using System.Web.Profile;
@@ -71,6 +72,7 @@ namespace System.Web {
 		DateTime time_stamp = DateTime.UtcNow;
 #if NET_2_0
 		ProfileBase profile = null;
+		LinkedList<IHttpHandler> handlers;
 #endif
 #if TARGET_JVM // No remoting support (CallContext) yet in Grasshopper
 		static LocalDataStoreSlot _ContextSlot = Thread.GetNamedDataSlot ("Context");
@@ -279,14 +281,46 @@ namespace System.Web {
 		}
 
 #if NET_2_0
-		[MonoTODO ("Not implemented")]
-		public IHttpHandler CurrentHandler {
-			get { throw new NotImplementedException (); }
+		internal void PushHandler (IHttpHandler handler)
+		{
+			if (handler == null)
+				return;
+			if (handlers == null)
+				handlers = new LinkedList <IHttpHandler> ();
+			handlers.AddLast (handler);
 		}
 
-		[MonoTODO ("Not implemented")]
+		internal void PopHandler ()
+		{
+			if (handlers == null || handlers.Count == 0)
+				return;
+			handlers.RemoveLast ();
+		}
+		
+		IHttpHandler GetCurrentHandler ()
+		{
+			if (handlers == null || handlers.Count == 0)
+				return null;
+			
+			return handlers.Last.Value;
+		}
+
+		IHttpHandler GetPreviousHandler ()
+		{
+			if (handlers == null || handlers.Count <= 1)
+				return null;
+			LinkedListNode <IHttpHandler> previous = handlers.Last.Previous;
+			if (previous != null)
+				return previous.Value;
+			return null;
+		}
+		
+		public IHttpHandler CurrentHandler {
+			get { return GetCurrentHandler (); }
+		}
+
 		public IHttpHandler PreviousHandler {
-			get { throw new NotImplementedException (); }
+			get { return GetPreviousHandler (); }
 		}
 
 		public ProfileBase Profile {
@@ -428,14 +462,9 @@ namespace System.Web {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Only implemented for ASP.NET 2.x applications")]
 		public object GetSection (string name)
 		{
-#if NET_2_0
 			return WebConfigurationManager.GetSection (name);
-#else
-			throw new NotImplementedException ();
-#endif
 		}
 #endif
 		object IServiceProvider.GetService (Type service)
