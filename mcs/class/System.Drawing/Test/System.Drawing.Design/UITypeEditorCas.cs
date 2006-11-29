@@ -35,6 +35,8 @@ using System.Security;
 using System.Security.Permissions;
 using System.Security.Policy;
 
+using MonoTests.System.Drawing.Design;
+
 namespace MonoCasTests.System.Drawing.Design {
 
 	[TestFixture]
@@ -42,6 +44,7 @@ namespace MonoCasTests.System.Drawing.Design {
 	public class UITypeEditorCas {
 
 		private ConstructorInfo ctor;
+		private UITypeEditorTest unit;
 
 		[TestFixtureSetUp]
 		public void FixtureSetUp ()
@@ -49,6 +52,9 @@ namespace MonoCasTests.System.Drawing.Design {
 			// this executes at fulltrust
 			ConstructorInfo[] infos = typeof (UITypeEditor).GetConstructors ();
 			ctor = infos[0];
+
+			unit = new UITypeEditorTest ();
+			unit.FixtureSetUp ();
 		}
 
 		[SetUp]
@@ -64,6 +70,24 @@ namespace MonoCasTests.System.Drawing.Design {
 		{
 			new UITypeEditor ();
 		}
+
+		[Test]
+		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+		public void UnitTests ()
+		{
+			unit.DefaultValues ();
+		}
+
+#if !TARGET_JVM
+		[Test]
+		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+		public void UnitTests_PaintValue ()
+		{
+			unit.PaintValue_PaintValueEventArgs_Null ();
+			unit.PaintValue_PaintValueEventArgs ();
+			unit.PaintValue ();
+		}
+#endif
 
 		// we use reflection to call UITypeEditor class as it's protected by a 
 		// LinkDemand (which will be converted into full demand, i.e. a stack 
