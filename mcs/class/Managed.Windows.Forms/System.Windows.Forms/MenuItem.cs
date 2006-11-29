@@ -531,7 +531,7 @@ namespace System.Windows.Forms
 
 		internal virtual void Invalidate ()
 		{
-			if ((Parent != null) && (Parent is MainMenu))
+			if ((Parent != null) && (Parent is MainMenu) && Parent.Wnd != null)
 				XplatUI.RequestNCRecalc (Parent.Wnd.FindForm ().Handle);
 		}
 

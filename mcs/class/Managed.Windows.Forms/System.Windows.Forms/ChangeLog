@@ -1,5 +1,10 @@
 2006-11-29  Chris Toshok  <toshok@ximian.com>
 
+	* MenuItem.cs: fix the NRE when we assign text (and therefore call
+	Invalidate) before the mainmenu has been assigned to a control.
+
+2006-11-29  Chris Toshok  <toshok@ximian.com>
+
 	* DataGrid.cs: detect when we should be double the double click
 	row/column autosize stuff, although that codepath has yet to be
 	written.  part of the work for bug #79891.
