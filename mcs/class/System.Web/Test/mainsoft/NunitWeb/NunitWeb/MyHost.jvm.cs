@@ -81,7 +81,17 @@ new Uri ("http://localhost:59598/NunitWebTest/"),
 
 			WebResponse response = null;
 			try {
-				response = wr.GetResponse ();
+				try {
+					response = wr.GetResponse ();
+				}
+				catch (WebException we) {
+					//StreamReader sr = new StreamReader (we.Response.GetResponseStream ());
+					//throw new WebException (we.Message + Environment.NewLine
+					//        + "Response:" + Environment.NewLine + sr.ReadToEnd (), we);
+					response = we.Response;
+					if (((HttpWebResponse) response).StatusCode == HttpStatusCode.OK)
+						throw;//so we don't have a false positive test
+				}
 
 				Exception e = (Exception) Deserialize (
 					response.Headers[EXCEPTION_HEADER]);
@@ -89,12 +99,7 @@ new Uri ("http://localhost:59598/NunitWebTest/"),
 					RethrowException (e);
 
 				t.UserData = Deserialize (response.Headers[USER_HEADER]);
-				t.Response = t.Request.ExtractResponse (response);
-			}
-			catch (WebException we) {
-				StreamReader sr = new StreamReader (we.Response.GetResponseStream ());
-				throw new WebException (we.Message + Environment.NewLine
-					+ "Response:" + Environment.NewLine + sr.ReadToEnd (), we);
+					t.Response = t.Request.ExtractResponse (response);
 			}
 			finally {
 				if (response != null)
