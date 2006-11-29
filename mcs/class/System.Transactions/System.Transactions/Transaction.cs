@@ -100,7 +100,6 @@ namespace System.Transactions
 			}
 		}
 
-		[MonoTODO]
 		public Transaction Clone ()
 		{
 			return new Transaction (this);
@@ -122,7 +121,7 @@ namespace System.Transactions
 			return d;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Only SinglePhase commit supported for durable resource managers.")]
 		[PermissionSetAttribute (SecurityAction.LinkDemand)]
 		public Enlistment EnlistDurable (Guid manager,
 			IEnlistmentNotification notification,
@@ -131,7 +130,7 @@ namespace System.Transactions
 			throw new NotImplementedException ("Only SinglePhase commit supported for durable resource managers.");
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Only Local Transaction Manager supported. Cannot have more than 1 durable resource per transaction. Only EnlistmentOptions.None supported yet.")]
 		[PermissionSetAttribute (SecurityAction.LinkDemand)]
 		public Enlistment EnlistDurable (Guid manager,
 			ISinglePhaseNotification notification,
@@ -158,7 +157,7 @@ namespace System.Transactions
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("EnlistmentOptions being ignored")]
 		public Enlistment EnlistVolatile (
 			IEnlistmentNotification notification,
 			EnlistmentOptions options)
@@ -166,7 +165,7 @@ namespace System.Transactions
 			return EnlistVolatileInternal (notification, options);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("EnlistmentOptions being ignored")]
 		public Enlistment EnlistVolatile (
 			ISinglePhaseNotification notification,
 			EnlistmentOptions options)

@@ -74,7 +74,7 @@ namespace System.Transactions
 			CommitInternal ();
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		void ISerializable.GetObjectData (SerializationInfo info,
 			StreamingContext context)
 		{

@@ -25,13 +25,11 @@ namespace System.Transactions
 			this.enlisted = enlisted;
 		}
 
-		[MonoTODO]
 		public void Aborted ()
 		{
 			Aborted (null);
 		}
 
-		[MonoTODO]
 		public void Aborted (Exception e)
 		{
 			tx.Rollback (e, enlisted);
@@ -44,13 +42,13 @@ namespace System.Transactions
 			committed = true;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public void InDoubt ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public void InDoubt (Exception e)
 		{
 			throw new NotImplementedException ();

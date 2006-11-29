@@ -12,6 +12,7 @@ using System.Runtime.Serialization;
 
 namespace System.Transactions
 {
+	[MonoTODO ("Not supported yet")]
 	[Serializable]
 	public sealed class DependentTransaction : Transaction, ISerializable
 	{

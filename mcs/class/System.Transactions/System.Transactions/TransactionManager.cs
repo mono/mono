@@ -23,7 +23,7 @@ namespace System.Transactions
 			get { return defaultTimeout; }
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public static HostCurrentTransactionCallback HostCurrentCallback {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
@@ -33,13 +33,13 @@ namespace System.Transactions
 			get { return maxTimeout; }
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public static void RecoveryComplete (Guid manager)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented")]
 		public static Enlistment Reenlist (Guid manager,
 			byte[] recoveryInfo,
 			IEnlistmentNotification notification)

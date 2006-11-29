@@ -49,7 +49,7 @@ namespace System.Transactions
 		{
 		}
 
-		[MonoTODO]
+		[MonoTODO ("EnterpriseServicesInteropOption not supported.")]
 		public TransactionScope (Transaction transaction,
 			TimeSpan timeout, DTCOption opt)
 		{
@@ -62,7 +62,7 @@ namespace System.Transactions
 		{
 		}
 
-		[MonoTODO]
+		[MonoTODO ("No TimeoutException is thrown")]
 		public TransactionScope (TransactionScopeOption option,
 			TimeSpan timeout)
 		{
@@ -76,7 +76,7 @@ namespace System.Transactions
 		{
 		}
 
-		[MonoTODO]
+		[MonoTODO ("EnterpriseServicesInteropOption not supported")]
 		public TransactionScope (TransactionScopeOption scopeOption,
 			TransactionOptions options,
 			DTCOption opt)

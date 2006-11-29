@@ -22,7 +22,6 @@ namespace System.Transactions
 			done = false;
 		}
 
-		[MonoTODO]
 		public void Done ()
 		{
 			done = true;

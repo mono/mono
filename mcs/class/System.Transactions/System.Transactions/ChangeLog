@@ -1,3 +1,14 @@
+2006-11-29  Ankit Jain  <jankit@novell.com>
+
+	* DependentTransaction.cs:
+	* TransactionScope.cs:
+	* Enlist.cs:
+	* TransactionManager.cs:
+	* Transaction.cs:
+	* SinglePhaseEnlistment.cs:
+	* CommittableTransaction.cs:
+	Remove bogus MonoTODOs. Add meaninful messages to MonoTODOs.
+
 2006-11-20  Raja R Harinath  <rharinath@novell.com>
 
 	* Transaction.cs (operator==, operator!=): Implement.
