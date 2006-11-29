@@ -32,8 +32,7 @@ class Foo<T> {
   // comparison will be false...
 
   public String Fmt() {
-    if (x is INullableValue && ((INullableValue)x).HasValue
-	|| !(x is INullableValue) && x != null)
+    if (x != null)
       return x.ToString();
     else
       return "null";

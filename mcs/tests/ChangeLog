@@ -1,3 +1,7 @@
+2006-11-29  Martin Baulig  <martin@ximian.com>
+
+	* gtest-134.cs: Fixed.
+
 2006-11-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* test-539.cs, gtest-297.cs: Added tests for bug #79810.
