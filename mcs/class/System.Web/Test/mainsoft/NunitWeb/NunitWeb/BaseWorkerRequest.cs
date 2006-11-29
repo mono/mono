@@ -4,6 +4,7 @@ using System.Web.Hosting;
 using System.IO;
 using System.Collections;
 using System.Reflection;
+using System.Net;
 
 namespace MonoTests.SystemWeb.Framework
 {
@@ -53,6 +54,30 @@ namespace MonoTests.SystemWeb.Framework
 				else
 					foreignData[type] = value;
 			}
+		}
+
+		HttpStatusCode _statusCode;
+		string _statusDescription;
+		/// <summary>
+		/// Overriden to store the status code.
+		/// </summary>
+		/// <param name="statusCode"></param>
+		/// <param name="statusDescription"></param>
+		public override void SendStatus (int statusCode, string statusDescription)
+		{
+			_statusCode = (HttpStatusCode) statusCode;
+			_statusDescription = statusDescription;
+			base.SendStatus (statusCode, statusDescription);
+		}
+
+		internal HttpStatusCode StatusCode
+		{
+			get { return _statusCode; }
+		}
+
+		internal string StatusDescription
+		{
+			get { return _statusDescription; }
 		}
 	}
 }

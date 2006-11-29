@@ -157,6 +157,8 @@ namespace MonoTests.SystemWeb.Framework
 			wr.Close ();
 			Response r = new Response ();
 			r.Body = wr.ToString ();
+			r.StatusCode = br.StatusCode;
+			r.StatusDescription = br.StatusDescription;
 			return r;
 		}
 
@@ -170,6 +172,9 @@ namespace MonoTests.SystemWeb.Framework
 		public virtual Response ExtractResponse (WebResponse response)
 		{
 			Response r = new Response ();
+			r.StatusCode = ((HttpWebResponse)response).StatusCode;
+			r.StatusDescription = ((HttpWebResponse) response).StatusDescription;
+				
 			byte [] b = new byte [response.ContentLength];
 			using (Stream s = response.GetResponseStream ()) {
 				StreamReader sr = new StreamReader(s);
