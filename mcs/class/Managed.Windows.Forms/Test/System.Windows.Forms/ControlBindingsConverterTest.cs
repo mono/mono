@@ -31,13 +31,13 @@ namespace MonoTests.System.Windows.Forms.Design
 
 			Assert.IsNotNull (cvt, "1");
 
-			Assert.AreEqual (true, cvt.GetPropertiesSupported (null));
+			Assert.IsTrue (cvt.GetPropertiesSupported (null), "2");
 			
 			PropertyDescriptorCollection props = cvt.GetProperties (null, col, null);
 			
-			Assert.AreEqual (3, props.Count, "2");
+			Assert.AreEqual (3, props.Count, "3");
 
-			Assert.AreEqual ("Tag", props[0].Name, "3");
+			Assert.AreEqual ("Tag", props[0].Name, "4");
 			Console.WriteLine (props[0].GetType());
 			Console.WriteLine ("tag value = {0}", props[0].GetValue (col));
 			Console.WriteLine ("tag converter = {0}", props[0].Converter);
@@ -49,7 +49,7 @@ namespace MonoTests.System.Windows.Forms.Design
 			Console.WriteLine ("tag displaynem = {0}", props[0].DisplayName);
 			Console.WriteLine ("tag has {0} attributes", props[0].Attributes.Count);
 
-			Assert.AreEqual ("Text", props[1].Name, "4");
+			Assert.AreEqual ("Text", props[1].Name, "5");
 			Console.WriteLine (props[1].GetType());
 			Console.WriteLine ("text value = {0}", props[1].GetValue (col));
 			Console.WriteLine ("text converter = {0}", props[1].Converter);
@@ -61,7 +61,7 @@ namespace MonoTests.System.Windows.Forms.Design
 			Console.WriteLine ("text displaynem = {0}", props[1].DisplayName);
 			Console.WriteLine ("text has {0} attributes", props[1].Attributes.Count);
 
-			Assert.AreEqual ("(Advanced)", props[2].Name, "5");
+			Assert.AreEqual ("(Advanced)", props[2].Name, "6");
 			Console.WriteLine (props[2].GetType());
 			Console.WriteLine ("advanced value = {0}", props[2].GetValue (col));
 			TypeConverter propcvt = props[2].Converter;
