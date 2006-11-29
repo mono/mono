@@ -1,4 +1,11 @@
 
+Wed Nov 29 11:33:03 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini.h, driver.c: added --runtime command line
+	option to select a different runtime than the autodetected one.
+	* jit.h: added API for embedders to initialize with a specific
+	runtime version.
+
 Tue Nov 28 21:24:55 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: handle also boxing of r4 values (bug #80024).
