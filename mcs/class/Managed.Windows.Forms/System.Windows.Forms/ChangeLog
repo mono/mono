@@ -1,5 +1,11 @@
 2006-11-29  Chris Toshok  <toshok@ximian.com>
 
+	* DataGrid.cs: detect when we should be double the double click
+	row/column autosize stuff, although that codepath has yet to be
+	written.  part of the work for bug #79891.
+
+2006-11-29  Chris Toshok  <toshok@ximian.com>
+
 	* Binding.cs (SetControl): fix unit test.
 
 2006-11-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>

@@ -1497,21 +1497,31 @@ namespace System.Windows.Forms
 				break;
 
 			case HitTestType.ColumnResize:
-				resize_column = testinfo.Column;
-				column_resize_active = true;
-				resize_column_x = e.X;
-				resize_column_width_delta = 0;
-				EndEdit ();
-				DrawResizeLineVert (resize_column_x);
+				if (e.Clicks == 2) {
+					// double click column resize goes here
+				}
+				else {
+					resize_column = testinfo.Column;
+					column_resize_active = true;
+					resize_column_x = e.X;
+					resize_column_width_delta = 0;
+					EndEdit ();
+					DrawResizeLineVert (resize_column_x);
+				}
 				break;
 
 			case HitTestType.RowResize:
-				resize_row = testinfo.Row;
-				row_resize_active = true;
-				resize_row_y = e.Y;
-				resize_row_height_delta = 0;
-				EndEdit ();
-				DrawResizeLineHoriz (resize_row_y);
+				if (e.Clicks == 2) {
+					// double click row resize goes here
+				}
+				else {
+					resize_row = testinfo.Row;
+					row_resize_active = true;
+					resize_row_y = e.Y;
+					resize_row_height_delta = 0;
+					EndEdit ();
+					DrawResizeLineHoriz (resize_row_y);
+				}
 				break;
 
 			case HitTestType.Caption:
