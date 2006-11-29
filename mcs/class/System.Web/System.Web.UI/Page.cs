@@ -1844,7 +1844,91 @@ return true;
 			_title = null;
 		}
 	}
+
+	[MonoTODO("Not Implemented")]
+	protected bool AsyncMode {
+		get {
+			throw new NotImplementedException ();
+		}
+		set {
+			throw new NotImplementedException ();
+		}
+	}
+
+	[MonoTODO ("Not Implemented")]
+	public TimeSpan AsyncTimeout {
+		get {
+			throw new NotImplementedException ();
+		}
+		set {
+			throw new NotImplementedException ();
+		}
+	}
+
+	[MonoTODO ("Not Implemented")]
+	public bool IsAsync {
+		get {
+			throw new NotImplementedException ();
+		}
+	}
 	
+	[MonoTODO ("Not Implemented")]
+	protected internal virtual string UniqueFilePathSuffix {
+		get {
+			throw new NotImplementedException ();
+		}
+	}
+
+	[MonoTODO ("Not Implemented")]
+	public int MaxPageStateFieldLength {
+		get {
+			throw new NotImplementedException ();
+		}
+		set {
+			throw new NotImplementedException ();
+		}
+	}
+
+	[MonoTODO ("Not Implemented")]
+	public ViewStateEncryptionMode ViewStateEncryptionMode {
+		get {
+			throw new NotImplementedException ();
+		}
+		set {
+			throw new NotImplementedException ();
+		}
+	}
+
+	[MonoTODO ("Not Implemented")]
+	public void AddOnPreRenderCompleteAsync (BeginEventHandler beginHandler, EndEventHandler endHandler)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO ("Not Implemented")]
+	public void AddOnPreRenderCompleteAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, Object state)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO ("Not Implemented")]
+	public void ExecuteRegisteredAsyncTasks ()
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO ("Not Implemented")]
+	public static HtmlTextWriter CreateHtmlTextWriterFromType (TextWriter tw, Type writerType)
+	{
+		throw new NotImplementedException ();
+	}
+
+	[MonoTODO ("Not Implemented")]
+	public void RegisterRequiresViewStateEncryption ()
+	{
+		throw new NotImplementedException ();
+	}
+
 	void ApplyMasterPage ()
 	{
 		if (masterPageFile != null && masterPageFile.Length > 0) {

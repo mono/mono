@@ -1,5 +1,20 @@
 2006-11-29 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Page.cs: added missing methods and properties:
+	AsyncMode
+	AsyncTimeout
+	IsAsync
+	UniqueFilePathSuffix
+	MaxPageStateFieldLength
+	ViewStateEncryptionMode
+	AddOnPreRenderCompleteAsync
+	AddOnPreRenderCompleteAsync
+	ExecuteRegisteredAsyncTasks
+	CreateHtmlTextWriterFromType
+	RegisterRequiresViewStateEncryption
+
+2006-11-29 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Page.cs: Master property returns null when no HttpContext.
 
 2006-11-29 Igor Zelmanovich <igorz@mainsoft.com>
