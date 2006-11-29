@@ -1873,6 +1873,9 @@ return true;
 	[BrowsableAttribute (false)]
 	public MasterPage Master {
 		get {
+			if (Context == null || String.IsNullOrEmpty (masterPageFile))
+				return null;
+
 			if (masterPage == null)
 				masterPage = MasterPage.CreateMasterPage (this, Context, masterPageFile, contentTemplates);
 

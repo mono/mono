@@ -965,7 +965,6 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category("NunitWeb")]
 		public void Master ()
 		{
@@ -974,7 +973,7 @@ namespace MonoTests.System.Web.UI {
 			WebTest t = new WebTest ("MyPageWithMaster.aspx");
 			t.Invoker = PageInvoker.CreateOnLoad (Master_Load);
 			t.Run ();
-			Assert.AreEqual ("ASP.my_master", t.UserData.ToString (), "Master#2");
+			Assert.AreEqual ("asp.my_master", t.UserData.ToString ().ToLower(), "Master#2");
 		}
 
 		public static void Master_Load (Page p)
