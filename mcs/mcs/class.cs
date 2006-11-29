@@ -2549,11 +2549,6 @@ namespace Mono.CSharp {
 			if (base_type != null && !AttributeTester.IsClsCompliant (base_type)) {
 				Report.Error (3009, Location, "`{0}': base type `{1}' is not CLS-compliant", GetSignatureForError (), TypeManager.CSharpName (base_type));
 			}
-
-			if (!Parent.IsClsComplianceRequired ()) {
-				Report.Error (3018, Location, "`{0}' cannot be marked as CLS-compliant because it is a member of non CLS-compliant type `{1}'", 
-					GetSignatureForError (), Parent.GetSignatureForError ());
-			}
 			return true;
 		}
 
@@ -3654,10 +3649,28 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		// TODO: create a special method for operators only to make code better
 		protected bool IsDuplicateImplementation (MethodCore method)
 		{
-			if (method == this || !(method.MemberName.Equals (MemberName)))
+			if (method == this)
 				return false;
+
+			Operator op2 = null;
+			Operator op1 = null;
+
+			if (!(method.MemberName.Equals (MemberName)))
+			{
+				op1 = this as Operator;
+				if (op1 == null || !(op1.OperatorType == Operator.OpType.Explicit || op1.OperatorType == Operator.OpType.Implicit))
+					return false;
+
+				op2 = method as Operator;
+				if (op2 == null || !(op2.OperatorType == Operator.OpType.Explicit || op2.OperatorType == Operator.OpType.Implicit))
+					return false;
+			} else {
+				op1 = this as Operator;
+				op2 = method as Operator;
+			}
 
 			Type[] param_types = method.ParameterTypes;
 			// This never happen. Rewrite this as Equal
@@ -3683,7 +3696,7 @@ namespace Mono.CSharp {
 				equal = false;
 
 			// TODO: make operator compatible with MethodCore to avoid this
-			if (this is Operator && method is Operator) {
+			if (op1 != null && op2 != null) {
 				if (MemberType != method.MemberType)
 					equal = false;
 			}
@@ -7661,7 +7674,7 @@ namespace Mono.CSharp {
 				 int mod_flags, Parameters parameters,
 				 ToplevelBlock block, Attributes attrs, Location loc)
 			: base (parent, null, ret_type, mod_flags, AllowedModifiers, false,
-				new MemberName ("op_" + type, loc), attrs, parameters)
+				new MemberName ("op_" + type.ToString(), loc), attrs, parameters)
 		{
 			OperatorType = type;
 			Block = block;
@@ -7711,6 +7724,10 @@ namespace Mono.CSharp {
 				Report.Error (558, Location, "User-defined operator `{0}' must be declared static and public", GetSignatureForError ());
 				return false;
 			}
+
+			// imlicit and explicit operator of same types are not allowed
+			if (OperatorType == OpType.Explicit || OperatorType == OpType.Implicit)
+				MarkForDuplicationCheck ();
 
 			if (!base.Define ())
 				return false;

@@ -1,3 +1,7 @@
+2006-11-29  Martin Baulig  <martin@ximian.com>
+
+	Merged everything from SVN HEAD back.
+
 2006-11-28  Martin Baulig  <martin@ximian.com>
 
 	Milestone II: We are ready to merge things back.
@@ -25,6 +29,56 @@
 2006-11-16  Martin Baulig  <martin@ximian.com>
 
 	**** The anonymous methods branch starts here ****
+
+2006-11-22  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #79987
+	* class.cs (VerifyClsCompliance): Move redundant CLS compliance attribute
+	check to a base class.
+	* decl.cs (VerifyClsCompliance): Warn that CLS compliance cannot be tested
+	only when assembly has missing attribute.
+	* report.cs: Update.
+
+2006-11-21  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-tokenizer.cs: Merged with gmcs version.
+
+2006-11-20  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-tokenizer.cs,
+	* cs-parser.jay: Better error message when partial keyword is misplaced.
+
+2006-11-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	A fix for bug #79810
+	report.cs: CS1058 only applies to 2.0 profile (gmcs).
+	codegen.cs: on 2.0 profile, non-exception throwables are wrapped in
+	a RuntimeWrappedException by default.
+
+2006-11-18  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #79843
+	* delegate.cs (Delegate.VerifyMethod): Fixed covariance and contravariance
+	implementation.
+	(DelegateCreation.Error_NoMatchingMethodForDelegate): Ditto.
+
+2006-11-18  Marek Safar  <marek.safar@gmail.com>
+
+	* driver.cs, namespace.cs: Uses faster IndexOf version.
+
+2006-11-17  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #79941
+	* class.cs (MemberCore.IsDuplicateImplementation): Add more tricks for
+	operators.
+	(Operator.Define): Implicit/Explicit operator of same type is duplicate
+	even if internal name is different.
+	* convert.cs (GetConversionOperator): Replaced EmitContext with parentType.
+	(UserDefinedConversion): Simplified as the operators cannot be internal.
+	* ecore.cs (Error_ValueCannotBeConverted): Take account of user
+	conversions.
+	(MethodLookup): Replaced EmitContext with parentType.
+	* expression.cs: Updated.
 
 2006-11-09  Raja R Harinath  <rharinath@novell.com>
 
