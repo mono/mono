@@ -327,8 +327,11 @@ namespace Mono.CSharp {
 			Report.Debug (128, "CAPTURE SCOPE", this, GetType (), child, child.GetType ());
 			if (child == this)
 				throw new InternalErrorException ();
-			CapturedScope captured = new CapturedScope (this, child);
-			captured_scopes.Add (child, captured);
+			CapturedScope captured = (CapturedScope) captured_scopes [child];
+			if (captured == null) {
+				captured = new CapturedScope (this, child);
+				captured_scopes.Add (child, captured);
+			}
 			return captured;
 		}
 
