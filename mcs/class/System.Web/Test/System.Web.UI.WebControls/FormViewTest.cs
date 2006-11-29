@@ -1529,6 +1529,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 		[Test]
 		[Category ("NotDotNet")] // becaue Naming container: use "FormView1$....." for DotNet
+		[Category ("NunitWeb")]
 		public void FormView_EditPostback ()
 		{
 			WebTest t = new WebTest ("FormViewInsertEditDelete.aspx");
@@ -1677,6 +1678,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 		[Test]
 		[Category ("NotDotNet")] // becaue Naming container: use "FormView1$....." for DotNet
+		[Category ("NunitWeb")] 
 		public void FormView_InsertPostback ()
 		{
 			WebTest t = new WebTest ("FormViewInsertEditDelete.aspx");
@@ -1750,6 +1752,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 		[Test]
 		[Category ("NotDotNet")] // becaue Naming container: use "FormView1$DeleteButton" for DotNet
+		[Category ("NunitWeb")]
 		public void FormView_DeleteAndEmptyTemplatePostback ()
 		{
 			WebTest t = new WebTest ("FormViewInsertEditDelete.aspx");
