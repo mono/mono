@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -634,8 +634,6 @@
     <Compile Include="System.Net.NetworkInformation\NetworkChange.cs" />
     <Compile Include="System.Net.NetworkInformation\NetworkInformationAccess.cs" />
     <Compile Include="System.Net.NetworkInformation\NetworkInformationException.cs" />
-    <Compile Include="System.Net.NetworkInformation\NetworkInformationPermission.cs" />
-    <Compile Include="System.Net.NetworkInformation\NetworkInformationPermissionAttribute.cs" />
     <Compile Include="System.Net.NetworkInformation\NetworkInterface.cs" />
     <Compile Include="System.Net.NetworkInformation\NetworkInterfaceComponent.cs" />
     <Compile Include="System.Net.NetworkInformation\NetworkInterfaceType.cs" />
@@ -708,8 +706,6 @@
     <Compile Include="System.Net\Dns.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Net\DnsPermission.cs" />
-    <Compile Include="System.Net\DnsPermissionAttribute.cs" />
     <Compile Include="System.Net\DownloadDataCompletedEventArgs.cs" />
     <Compile Include="System.Net\DownloadDataCompletedEventHandler.cs" />
     <Compile Include="System.Net\DownloadProgressChangedEventArgs.cs" />
@@ -719,7 +715,6 @@
     <Compile Include="System.Net\EndPoint.cs" />
     <Compile Include="System.Net\EndPointListener.cs" />
     <Compile Include="System.Net\EndPointManager.cs" />
-    <Compile Include="System.Net\EndpointPermission.cs" />
     <Compile Include="System.Net\FileWebRequest.cs" />
     <Compile Include="System.Net\FileWebRequestCreator.cs" />
     <Compile Include="System.Net\FileWebResponse.cs" />
@@ -779,8 +774,6 @@
     <Compile Include="System.Net\ServicePoint.cs" />
     <Compile Include="System.Net\ServicePointManager.cs" />
     <Compile Include="System.Net\SocketAddress.cs" />
-    <Compile Include="System.Net\SocketPermission.cs" />
-    <Compile Include="System.Net\SocketPermissionAttribute.cs" />
     <Compile Include="System.Net\TransportType.cs" />
     <Compile Include="System.Net\UploadDataCompletedEventArgs.cs" />
     <Compile Include="System.Net\UploadDataCompletedEventHandler.cs" />
@@ -799,8 +792,6 @@
     <Compile Include="System.Net\WebException.cs" />
     <Compile Include="System.Net\WebExceptionStatus.cs" />
     <Compile Include="System.Net\WebHeaderCollection.cs" />
-    <Compile Include="System.Net\WebPermission.cs" />
-    <Compile Include="System.Net\WebPermissionAttribute.cs" />
     <Compile Include="System.Net\WebProxy.cs" />
     <Compile Include="System.Net\WebRequest.cs" />
     <Compile Include="System.Net\WebRequestMethods.cs" />
@@ -855,10 +846,7 @@
     <Compile Include="System.Security.Cryptography\OidCollection.cs" />
     <Compile Include="System.Security.Cryptography\OidEnumerator.cs" />
     <Compile Include="System.Security.Permissions\PermissionHelper.cs" />
-    <Compile Include="System.Security.Permissions\ResourcePermissionBase.cs" />
     <Compile Include="System.Security.Permissions\ResourcePermissionBaseEntry.cs" />
-    <Compile Include="System.Security.Permissions\StorePermission.cs" />
-    <Compile Include="System.Security.Permissions\StorePermissionAttribute.cs" />
     <Compile Include="System.Security.Permissions\StorePermissionFlags.cs" />
     <Compile Include="System.Text.RegularExpressions\arch.cs" />
     <Compile Include="System.Text.RegularExpressions\cache.cs" />
@@ -890,8 +878,6 @@
     <Compile Include="System.Timers\ElapsedEventHandler.cs" />
     <Compile Include="System.Timers\Timer.cs" />
     <Compile Include="System.Timers\TimersDescriptionAttribute.cs" />
-    <Compile Include="System.Web\AspNetHostingPermission.cs" />
-    <Compile Include="System.Web\AspNetHostingPermissionAttribute.cs" />
     <Compile Include="System.Web\AspNetHostingPermissionLevel.cs" />
     <Compile Include="System\DefaultUriParser.cs" />
     <Compile Include="System\FileStyleUriParser.cs" />
