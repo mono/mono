@@ -36,6 +36,8 @@ System.Drawing/TestImageFormatConverter.cs
 System.Drawing/TestIconConverter.cs
 System.Drawing/TestIcon.cs
 System.Drawing/TextureBrushTest.cs
+System.Drawing.Design/TestToolboxItem.cs
+System.Drawing.Design/UITypeEditorTest.cs
 System.Drawing.Drawing2D/GraphicsPathTest.cs
 System.Drawing.Drawing2D/LinearGradientBrushTest.cs
 System.Drawing.Drawing2D/PathDataTest.cs
@@ -68,7 +70,6 @@ System.Drawing/RegionCas.cs
 System.Drawing.Design/CategoryNameCollectionCas.cs
 System.Drawing.Design/PaintValueEventArgsCas.cs
 System.Drawing.Design/PropertyValueUIItemCas.cs
-System.Drawing.Design/TestToolboxItem.cs
 System.Drawing.Design/ToolboxComponentsCreatedEventArgsCas.cs
 System.Drawing.Design/ToolboxComponentsCreatingEventArgsCas.cs
 System.Drawing.Design/ToolboxItemCas.cs
