@@ -1,4 +1,13 @@
 
+Wed Nov 29 22:01:46 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* profiler.c: provide defaults if none are set.
+
+Tue Nov 28 12:54:51 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, attrdefs.h: new public header file with
+	constants for attributes for use by embedders.
+
 Tue Nov 28 11:44:52 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: GetFields () fix for bug #80064.
