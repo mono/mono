@@ -287,6 +287,7 @@ namespace System.Windows.Forms
 					separator = false;
 
 				ProcessMnemonic ();
+				Invalidate ();
 			}
 		}
 
@@ -527,6 +528,12 @@ namespace System.Windows.Forms
 		#endregion Public Methods
 
 		#region Private Methods
+
+		internal virtual void Invalidate ()
+		{
+			if ((Parent != null) && (Parent is MainMenu))
+				XplatUI.RequestNCRecalc (Parent.Wnd.FindForm ().Handle);
+		}
 
 		internal void PerformPopup ()
 		{

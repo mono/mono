@@ -1,5 +1,11 @@
 2006-11-28  Everaldo Canuto  <everaldo@simios.org>
 
+	* MenuItem.cs: Create a invalidate method for menu item, to be
+	calling from set text, it make text changes to imadiate update
+	on screen. Fixes #80013. 
+	
+2006-11-28  Everaldo Canuto  <everaldo@simios.org>
+
 	* ToolBar.cs: Fixes and simplify toolbar button layout, it 
 	fixes bug #80070 and some other problem on toolbar buttons
 	layout.
