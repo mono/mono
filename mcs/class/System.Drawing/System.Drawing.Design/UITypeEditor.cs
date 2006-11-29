@@ -36,8 +36,7 @@ namespace System.Drawing.Design
 {
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
-	public class UITypeEditor
-	{
+	public class UITypeEditor {
 
 		public UITypeEditor()
 		{
@@ -49,22 +48,27 @@ namespace System.Drawing.Design
 			// We already stated that we can't edit ;)
 			return value;
 		}
-		public object EditValue(IServiceProvider provider, object value)
+
+		public object EditValue (IServiceProvider provider, object value)
 		{
 			return EditValue (null, provider, value);
 		}
+
 		public virtual UITypeEditorEditStyle GetEditStyle (ITypeDescriptorContext context)
 		{
 			return UITypeEditorEditStyle.None;
 		}
+
 		public UITypeEditorEditStyle GetEditStyle ()
 		{
 			return GetEditStyle (null);
 		}
+
 		public bool GetPaintValueSupported ()
 		{
 			return GetPaintValueSupported (null);
 		}
+
 		public virtual bool GetPaintValueSupported (ITypeDescriptorContext context)
 		{
 			return false;
@@ -74,6 +78,7 @@ namespace System.Drawing.Design
 		{
 			PaintValue (new PaintValueEventArgs (null, value, canvas, rectangle));
 		}
+
 		public virtual void PaintValue (PaintValueEventArgs e)
 		{
 			// LAMESPEC: Did not find info in the docs if this should do something here.
@@ -83,9 +88,8 @@ namespace System.Drawing.Design
 		}
 #endif
 #if NET_2_0
-		[MonoTODO]
 		public virtual bool IsDropDownResizable {
-			get { throw new NotImplementedException (); }
+			get { return false; }
 		}
 #endif
 	}
