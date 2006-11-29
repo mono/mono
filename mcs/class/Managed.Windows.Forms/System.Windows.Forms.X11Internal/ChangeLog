@@ -1,3 +1,32 @@
+2006-11-29  Chris Toshok  <toshok@ximian.com>
+
+	* X11ThreadQueue.cs (EnqueueUnlocked): add the switch motionnotify
+	compression/NeedDispatchIdle assignment found in X11Hwnd here.
+	(RemovePaintUnlocked): nuke
+	(AddPaintUnlocked): nuke
+	(AddConfigureUnlocked): rename to AddConfigure.
+
+	Add some debug stuff to HwndEventQueue so we can see the stack
+	trace of where the hwnd was added to the queue, in case we somehow
+	try to add it multiple times.
+
+	* X11Hwnd.cs (AddExpose): there's no need for this to have locks
+	around it - it should only ever be called from operations on the
+	hwnd's thread (from ScrollWindow, from GetMessage, from
+	Invalidate).
+	(AddConfigureNotify): same goes here.
+	(HandleConfigureNotify): remove configure_lock reference.
+	(EnqueueEvent): nuke this.
+	(PaintEventStart): remove locking.
+	(ScrollWindow): remove locking.
+	
+	also, remove all references to
+	AddPaintUnlocked/RemovePaintUnlocked/AddConfigureUnlocked.  since
+	we don't need to lock around them, there's not need.
+	
+	* X11Display.cs (XEventThread) switch from hwnd.EnqueueEvent to
+	hwnd.Queue.Enqueue.
+
 2006-11-28  Chris Toshok  <toshok@ximian.com>
 
 	* X11ThreadQueue.cs: factor out all the commonality from

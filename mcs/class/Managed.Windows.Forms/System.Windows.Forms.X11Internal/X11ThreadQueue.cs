@@ -67,6 +67,25 @@ namespace System.Windows.Forms.X11Internal {
 
 		public void EnqueueUnlocked (XEvent xevent)
 		{
+			switch (xevent.type) {
+			case XEventName.KeyPress:
+			case XEventName.KeyRelease:
+			case XEventName.ButtonPress:
+			case XEventName.ButtonRelease:
+				NeedDispatchIdle = true;
+				break;
+			case XEventName.MotionNotify:
+				if (xqueue.Count > 0) {
+					XEvent peek = xqueue.Peek ();
+					if (peek.AnyEvent.type == XEventName.MotionNotify)
+						return; // we've already got a pending motion notify.
+				}
+
+				// otherwise fall through and enqueue
+				// the event.
+				break;
+			}
+
 			xqueue.Enqueue (xevent);
 			// wake up any thread blocking in DequeueUnlocked
 			Monitor.PulseAll (lockobj);
@@ -118,31 +137,17 @@ namespace System.Windows.Forms.X11Internal {
 			}
 		}
 
-		public void RemovePaintUnlocked (Hwnd hwnd)
+		public void RemovePaint (Hwnd hwnd)
 		{
 			paint_queue.Remove (hwnd);
 		}
 
-		public void RemovePaint (Hwnd hwnd)
-		{
-			lock (lockobj) {
-				RemovePaintUnlocked (hwnd);
-			}
-		}
-
-		public void AddPaintUnlocked (Hwnd hwnd)
+		public void AddPaint (Hwnd hwnd)
 		{
 			paint_queue.Enqueue (hwnd);
 		}
 
-		public void AddPaint (Hwnd hwnd)
-		{
-			lock (lockobj) {
-				AddPaintUnlocked (hwnd);
-			}
-		}
-
-		public void AddConfigureUnlocked (Hwnd hwnd)
+		public void AddConfigure (Hwnd hwnd)
 		{
 			configure_queue.Enqueue (hwnd);
 		}
@@ -258,10 +263,15 @@ namespace System.Windows.Forms.X11Internal {
 
 		public abstract class HwndEventQueue {
 			protected ArrayList hwnds;
-			
+#if DebugHwndEventQueue
+			protected ArrayList stacks;
+#endif
 			public HwndEventQueue (int size)
 			{
-				hwnds = new ArrayList(size);
+				hwnds = new ArrayList (size);
+#if DebugHwndEventQueue
+				stacks = new ArrayList (size);
+#endif
 			}
 
 			public int Count {
@@ -271,15 +281,28 @@ namespace System.Windows.Forms.X11Internal {
 			public void Enqueue (Hwnd hwnd)
 			{
 				if (hwnds.Contains (hwnd)) {
+#if DebugHwndEventQueue
 					Console.WriteLine ("hwnds can only appear in the queue once.");
 					Console.WriteLine (Environment.StackTrace);
+					Console.WriteLine ("originally added here:");
+					Console.WriteLine (stacks[hwnds.IndexOf (hwnd)]);
+#endif
+
 					return;
 				}
 				hwnds.Add(hwnd);
+#if DebugHwndEventQueue
+				stacks.Add(Environment.StackTrace);
+#endif
 			}
 
 			public void Remove(Hwnd hwnd)
 			{
+#if DebugHwndEventQueue
+				int index = hwnds.IndexOf(hwnd);
+				if (index != -1)
+					stacks.RemoveAt(index);
+#endif
 				hwnds.Remove(hwnd);
 			}
 
@@ -294,6 +317,9 @@ namespace System.Windows.Forms.X11Internal {
 				XEvent xevent = Peek ();
 
 				hwnds.RemoveAt(0);
+#if DebugHwndEventQueue
+				stacks.RemoveAt(0);
+#endif
 
 				return xevent;
 			}

@@ -1730,7 +1730,7 @@ namespace System.Windows.Forms.X11Internal {
 
 					X11Hwnd hwnd = (X11Hwnd)Hwnd.GetObjectFromWindow(xevent.AnyEvent.window);
 					if (hwnd != null)
-						hwnd.EnqueueEvent (xevent);
+						hwnd.Queue.Enqueue (xevent);
 #if __MonoCS__
 				}
 #endif
