@@ -602,6 +602,48 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void CreateHandleTest2 ()
+		{
+			// This should eventually test all operations
+			// that can be performed on a control (within
+			// reason)
+			Control c = new Control ();
+
+			Assert.IsFalse (c.IsHandleCreated, "0");
+
+			c.Width = 100;
+			Assert.IsFalse (c.IsHandleCreated, "1");
+
+			c.Height = 100;
+			Assert.IsFalse (c.IsHandleCreated, "2");
+
+			c.Name = "hi";
+			Assert.IsFalse (c.IsHandleCreated, "3");
+
+			c.Left = 5;
+			Assert.IsFalse (c.IsHandleCreated, "5");
+
+			c.Top = 5;
+			Assert.IsFalse (c.IsHandleCreated, "6");
+
+			c.Location = new Point (1,1);
+			Assert.IsFalse (c.IsHandleCreated, "7");
+
+			c.Region = new Region ();
+			Assert.IsFalse (c.IsHandleCreated, "8");
+
+			c.Size = new Size (100, 100);
+			Assert.IsFalse (c.IsHandleCreated, "9");
+
+			c.Text = "bye";
+			Assert.IsFalse (c.IsHandleCreated, "10");
+
+			c.Visible = !c.Visible;
+			Assert.IsFalse (c.IsHandleCreated, "11");
+		}
+
+		[Test]
 		public void CreateGraphicsTest ()
 		{
 			Graphics g = null;
