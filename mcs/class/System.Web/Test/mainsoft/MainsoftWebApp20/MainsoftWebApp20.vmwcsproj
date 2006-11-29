@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Debug_Java20\</OutputPath>
@@ -102,11 +102,6 @@
       <HintPath>..\NunitWeb\NunitWeb\bin\Debug_Java20\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NunitWeb, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\NunitWeb\NunitWeb\bin\Debug_Java20\NunitWeb.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="rt, Version=0.0.0.0, Culture=neutral">
       <Private>False</Private>
     </Reference>
@@ -128,6 +123,9 @@
     <Content Include="XMLDataSourceTest4.aspx" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
     <Compile Include="MyPage.aspx.cs">
       <DependentUpon>MyPage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -148,12 +146,20 @@
   <ItemGroup>
     <Content Include="App_Themes\Theme1\Theme1.skin" />
     <Content Include="App_Themes\Theme1\WizardTest.skin" />
+    <Content Include="Global.asax" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\TestMonoWeb20.vmwcsproj">
       <Project>{7180B7A7-D0AB-4397-AC0A-CDB1A9DE6417}</Project>
       <Name>TestMonoWeb20</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NunitWeb\NunitWeb\NunitWeb20.vmwcsproj">
+      <Project>{DC2320EB-CC91-4648-AF2B-8937F6794A14}</Project>
+      <Name>NunitWeb20</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="My.ashx" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
