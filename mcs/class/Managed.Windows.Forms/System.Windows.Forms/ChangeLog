@@ -1,3 +1,9 @@
+2006-11-28  Miguel de Icaza  <miguel@novell.com>
+
+	* Form.cs: Add another popular method.
+
+	* TabPage.cs: ditto.
+
 2006-11-28  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* MenuItem.cs: Fixed a warning.

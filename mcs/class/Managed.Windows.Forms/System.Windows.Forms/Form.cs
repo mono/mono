@@ -1182,6 +1182,12 @@ namespace System.Windows.Forms {
 			if (!is_visible)
 				return;
 
+#if NET_2_0
+			FormClosingEventArgs ce = new FormClosingEventArgs (CloseReason.FormOwnerClosing, true);
+		        OnFormClosing (ce);
+			if (ce.Cancel)
+				return;
+#endif
 			XplatUI.SendMessage(this.Handle, Msg.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
 		}
 
@@ -2125,6 +2131,24 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public new Point Location {
+			get {
+				return base.Location;
+			}
+
+			set {
+				base.Location = value;
+			}
+		}
+
+		public event FormClosingEventHandler FormClosing;
+		public event FormClosedEventHandler FormClosed;
+		
+		protected virtual void OnFormClosing (FormClosingEventArgs e)
+		{
+			if (FormClosing != null)
+				FormClosing (this, e);
+		}
 #endif
 	}
 }

@@ -267,6 +267,17 @@ namespace System.Windows.Forms {
 
 		#endregion	// Events
 
+#if NET_2_0
+		public new Point Location {
+			get {
+				return base.Location;
+			}
+
+			set {
+				base.Location = value;
+			}
+		}
+#endif
 		#region Class TabPageControlCollection
 		public class TabPageControlCollection : ControlCollection {
 
@@ -283,6 +294,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		#endregion	// Class TabPageControlCollection
+
 	}
 
 	

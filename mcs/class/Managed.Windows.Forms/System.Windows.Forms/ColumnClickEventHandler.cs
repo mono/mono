@@ -23,10 +23,6 @@
 //	Ravindra (rkumar@novell.com)
 //
 
-
-// COMPLETE
-
-
 namespace System.Windows.Forms
 {
 #if !NET_2_0
