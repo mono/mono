@@ -64,6 +64,7 @@ namespace System.Xml.Xsl
 		int lineNumber;
 		int linePosition;
 		string sourceUri;
+		string templateFrames;
 
 		#endregion
 
@@ -91,6 +92,7 @@ namespace System.Xml.Xsl
 			lineNumber = info.GetInt32 ("lineNumber");
 			linePosition = info.GetInt32 ("linePosition");
 			sourceUri = info.GetString ("sourceUri");
+			templateFrames = info.GetString ("templateFrames");
 		}
 
 		internal XsltException (string msgFormat, string message, Exception innerException, int lineNumber, int linePosition, string sourceUri)
@@ -132,7 +134,7 @@ namespace System.Xml.Xsl
 
 		public override string Message {
 			get {
-				return base.Message;
+				return templateFrames != null ? base.Message + templateFrames : base.Message;
 			}
 		}
 
@@ -155,6 +157,12 @@ namespace System.Xml.Xsl
 			info.AddValue ("lineNumber", lineNumber);
 			info.AddValue ("linePosition", linePosition);
 			info.AddValue ("sourceUri", sourceUri);
+			info.AddValue ("templateFrames", templateFrames);
+		}
+
+		internal void AddTemplateFrame (string frame)
+		{
+			templateFrames += frame;
 		}
 
 		#endregion

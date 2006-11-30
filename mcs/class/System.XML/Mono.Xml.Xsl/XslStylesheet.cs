@@ -64,6 +64,8 @@ namespace Mono.Xml.Xsl {
 
 		XslTemplateTable templates;
 
+		string baseURI;
+
 		// stylesheet attributes
 		string version;
 		XmlQualifiedName [] extensionElementPrefixes;
@@ -107,6 +109,10 @@ namespace Mono.Xml.Xsl {
 			get { return templates; }
 		}
 
+		public string BaseURI {
+			get { return baseURI; }
+		}
+
 		public string Version {
 			get { return version; }
 		}
@@ -120,6 +126,7 @@ namespace Mono.Xml.Xsl {
 			c.PushStylesheet (this);
 			
 			templates = new XslTemplateTable (this);
+			baseURI = c.Input.BaseURI;
 
 			// move to root element
 			while (c.Input.NodeType != XPathNodeType.Element)

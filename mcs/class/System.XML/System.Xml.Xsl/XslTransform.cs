@@ -42,6 +42,25 @@ using Mono.Xml.Xsl;
 namespace System.Xml.Xsl {
 	public sealed class XslTransform {
 
+		internal static readonly bool TemplateStackFrameError;
+		internal static readonly TextWriter TemplateStackFrameOutput;
+
+		static XslTransform ()
+		{
+			string env = Environment.GetEnvironmentVariable ("MONO_XSLT_STACK_FRAME");
+			switch (env) {
+			case "stdout":
+				TemplateStackFrameOutput = Console.Out;
+				break;
+			case "stderr":
+				TemplateStackFrameOutput = Console.Error;
+				break;
+			case "error":
+				TemplateStackFrameError = true;
+				break;
+			}
+		}
+
 		CompiledStylesheet s;
 		XmlResolver xmlResolver = new XmlUrlResolver ();
 

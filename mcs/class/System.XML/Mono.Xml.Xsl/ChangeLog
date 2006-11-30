@@ -1,3 +1,8 @@
+2006-11-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslStylesheet.cs, XslTemplate.cs : added XSLT stack frame debug
+	  support, based on the patch by Michael Meeks.
+
 2006-04-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslTransformProcessor.cs : push current node context after iterating

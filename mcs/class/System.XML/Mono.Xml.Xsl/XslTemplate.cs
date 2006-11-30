@@ -350,9 +350,45 @@ namespace Mono.Xml.Xsl {
 				c.Input.MoveToParent ();
 			}
 		}
-		
+
+		string LocationMessage {
+			get {
+				XslCompiledElementBase op = (XslCompiledElementBase) content;
+				return String.Format (" from\nxsl:template {0} at {1} ({2},{3})", Match, style.BaseURI, op.LineNumber, op.LinePosition);
+			}
+		}
+
+		void AppendTemplateFrame (XsltException ex)
+		{
+			ex.AddTemplateFrame (LocationMessage);
+		}
+
 		public virtual void Evaluate (XslTransformProcessor p, Hashtable withParams)
 		{
+			if (XslTransform.TemplateStackFrameError) {
+				try {
+					EvaluateCore (p, withParams);
+				} catch (XsltException ex) {
+					AppendTemplateFrame (ex);
+					throw ex;
+				} catch (Exception ex) {
+					// Note that this catch causes different
+					// type of error to be thrown (esp.
+					// this causes NUnit test regression).
+					XsltException e = new XsltException ("Error during XSLT processing: ", null, p.CurrentNode);
+					AppendTemplateFrame (e);
+					throw e;
+				}
+			}
+			else
+				EvaluateCore (p, withParams);
+		}
+
+		void EvaluateCore (XslTransformProcessor p, Hashtable withParams)
+		{
+			if (XslTransform.TemplateStackFrameOutput != null)
+				XslTransform.TemplateStackFrameOutput.WriteLine (LocationMessage);
+
 			p.PushStack (stackSize);
 
 			if (parameters != null) {
