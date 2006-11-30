@@ -1,3 +1,7 @@
+2006-11-30  Yoni Klain         <yonik@mainsoft.com>
+
+	* PanelTest.cs: added new test for 2.0 
+
 2006-11-29  Igor Zelmanovich   <igorz@mainsoft.com>
 
 	* CreateUserWizardTest.cs: fixed NunitWeb tests.
