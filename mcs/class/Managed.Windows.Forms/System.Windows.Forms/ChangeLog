@@ -1,7 +1,7 @@
 2006-11-30  Mike Kestner  <mkestner@novell.com>
 
 	* ComboBox.cs: fix the scrollbar mouse event forwarding in the 
-	grabbed listbox.  Fixes #80036.
+	grabbed listbox.  Fixes #80036 and #80101.
 
 2006-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com>
 
