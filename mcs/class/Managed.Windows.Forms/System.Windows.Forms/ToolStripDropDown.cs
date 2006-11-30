@@ -64,7 +64,7 @@ namespace System.Windows.Forms
 				if (value == allow_transparency)
 					return;
 
-				if (XplatUI.SupportsTransparency ()) {
+				if ((XplatUI.SupportsTransparency () & TransparencySupport.Set) != 0) {
 					allow_transparency = value;
 
 					if (value) 

@@ -1,3 +1,7 @@
+2006-11-29  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripDropDown.cs: Fix for SupportsTransparency change.
+
 2006-11-29  Chris Toshok  <toshok@ximian.com>
 
 	* XplatUIWin32.cs (GetWindowTransparency): check return value of
