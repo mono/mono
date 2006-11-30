@@ -204,6 +204,7 @@
 #define _cnm_dump_(to_t, from) do {} while (0)
 #endif
 
+#ifdef DEBUG
 #define _cnm_return_val_if_overflow(to_t,from,val)  G_STMT_START {   \
     gint64  sf = (gint64) from;                                      \
     guint64 uf = (guint64) from;                                     \
@@ -214,6 +215,11 @@
       return (val);                                                  \
     }                                                                \
   } G_STMT_END
+#else /* !def DEBUG */
+/* don't do an overflow checking */
+#define _cnm_return_val_if_overflow(to_t,from,val)  G_STMT_START {   \
+  } G_STMT_END
+#endif /* def DEBUG */
 
 int Mono_Posix_FromAccessModes (int x, int *r)
 {
