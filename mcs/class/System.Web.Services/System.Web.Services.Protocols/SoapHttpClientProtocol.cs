@@ -299,7 +299,7 @@ namespace System.Web.Services.Protocols
 					fault.Reason != null &&
 					fault.Reason.Texts != null &&
 					fault.Reason.Texts.Length > 0 ?
-					fault.Reason.Texts [0] : null;
+					fault.Reason.Texts [fault.Reason.Texts.Length - 1] : null;
 				XmlNode detail = (fault.Detail == null) ? null :
 					(fault.Detail.Children != null &&
 					fault.Detail.Children.Length > 0) ?

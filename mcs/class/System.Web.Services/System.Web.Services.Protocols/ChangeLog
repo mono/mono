@@ -1,3 +1,8 @@
+2006-11-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SoapHttpClientProtocol.cs : looks like (only) the last Text is used
+	  instead of the first one in .net.
+
 2006-11-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Fault12.cs : they should be all internal.
