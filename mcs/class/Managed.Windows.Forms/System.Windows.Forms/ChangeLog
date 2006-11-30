@@ -1,3 +1,8 @@
+2006-11-30  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: You can still change the selected text on a read
+	only textbox.
+
 2006-11-30  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Tweak 2.0 layout properties.
@@ -245,6 +250,15 @@
 
 	* Hwnd.cs: remove the setters for ExposePending and
 	NCExposePending - noone uses them.
+
+2006-11-27  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: new param for ReplaceSelection which determines
+	whether we select the new selection, or set the cursor to the end
+	of the new selection.
+	* TextBoxBase.cs: Use new param for ReplaceSelection.  When
+	pasting, select the new text.
+	* RichTextBox.cs: Use new param for ReplaceSelection.
 
 2006-11-27  Jackson Harper  <jackson@ximian.com>
 
