@@ -1,3 +1,11 @@
+2006-11-30  Everaldo Canuto  <everaldo@simios.org>
+
+	* ToolBar.cs:
+	- Fix an regression in ButtonSize.
+	- Get ImeMode default value change to "Disable".
+	- Get ShowTooltips default value change to true, default value is 
+	"false" but after make a test in .NET we get "true" result as default.
+	
 2006-11-29  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripDropDown.cs: Fix for SupportsTransparency change.

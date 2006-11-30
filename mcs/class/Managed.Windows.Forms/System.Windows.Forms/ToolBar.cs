@@ -320,7 +320,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		ImeMode ime_mode;
+		ImeMode ime_mode = ImeMode.Disable;
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -348,7 +348,8 @@ namespace System.Windows.Forms
 			}
 		}
 
-		bool show_tooltips = false;
+		// Default value is "false" but after make a test in .NET we get "true" result as default.  
+		bool show_tooltips = true;
 
 		[DefaultValue (false)]
 		[Localizable (true)]
@@ -876,9 +877,6 @@ namespace System.Windows.Forms
 
 		bool Layout ()
 		{
-			if (Parent == null)
-				return false;
-			
 			bool changed = false;
 			Theme theme = ThemeEngine.Current;
 			int x = theme.ToolBarGripWidth;
@@ -926,6 +924,10 @@ namespace System.Windows.Forms
 					x += button.Rectangle.Width;
 				}
 			}
+			
+			if (Parent == null)
+				return changed;
+			
 			if (AutoSize)
 				Height = ht + (Wrappable ? y : 0);
 			else
