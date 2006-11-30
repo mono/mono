@@ -300,7 +300,6 @@ namespace System.Threading {
 			threadstart=start;
 		}
 
-		[MonoTODO]
 #if NET_2_0
 		[Obsolete ("Deprecated in favor of GetApartmentState, SetApartmentState and TrySetApartmentState.")]
 #endif
@@ -310,6 +309,7 @@ namespace System.Threading {
 			}
 			
 			set {
+				// FIXME: Implement setter.
 			}
 		}
 
@@ -555,13 +555,13 @@ namespace System.Threading {
 			}
 		}
 
-		[MonoTODO]
 		public ThreadPriority Priority {
 			get {
 				return(ThreadPriority.Lowest);
 			}
 			
 			set {
+				// FIXME: Implement setter.
 			}
 		}
 
@@ -843,28 +843,28 @@ namespace System.Threading {
 			get { return (int)thread_id; }
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void BeginCriticalRegion ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static void EndCriticalRegion ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void BeginThreadAffinity ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void EndThreadAffinity ()
 		{
@@ -881,13 +881,11 @@ namespace System.Threading {
 		// instead and have the property call these.
 		
 		
-		[MonoTODO]
 		public ApartmentState GetApartmentState ()
 		{
 			return this.ApartmentState;
 		}
 
-		[MonoTODO]
 		public void SetApartmentState (ApartmentState state)
 		{
 			this.ApartmentState = state;

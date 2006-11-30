@@ -151,7 +151,7 @@ namespace System.Threading {
 			return (ar != null);
 		}
 		
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 		public static RegisteredWaitHandle UnsafeRegisterWaitForSingleObject (WaitHandle waitObject,
 			WaitOrTimerCallback callBack, object state, int millisecondsTimeOutInterval,
@@ -160,7 +160,7 @@ namespace System.Threading {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 		public static RegisteredWaitHandle UnsafeRegisterWaitForSingleObject (WaitHandle waitObject,
 			WaitOrTimerCallback callBack, object state, long millisecondsTimeOutInterval,
@@ -169,7 +169,7 @@ namespace System.Threading {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 		public static RegisteredWaitHandle UnsafeRegisterWaitForSingleObject (WaitHandle waitObject,
 			WaitOrTimerCallback callBack, object state, TimeSpan timeout,
@@ -178,7 +178,7 @@ namespace System.Threading {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		[CLSCompliant (false)]
 		[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 		public static RegisteredWaitHandle UnsafeRegisterWaitForSingleObject (WaitHandle waitObject,
