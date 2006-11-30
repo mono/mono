@@ -237,11 +237,11 @@ namespace System.Windows.Forms {
 					return;
 				}
 
-				if ((XplatUI.SupportsTransparency() & TransparencySupport.Set) != 0) {
-					allow_transparency = value;
+				allow_transparency = value;
 
-					if (value) {
-						if (IsHandleCreated) {
+				if (value) {
+					if (IsHandleCreated) {
+						if ((XplatUI.SupportsTransparency() & TransparencySupport.Set) != 0) {
 							XplatUI.SetWindowTransparency(Handle, Opacity, TransparencyKey);
 						}
 					} else {
@@ -925,7 +925,8 @@ namespace System.Windows.Forms {
 
 				AllowTransparency = true;
 				UpdateStyles();
-				XplatUI.SetWindowTransparency(Handle, Opacity, transparency_key);
+				if ((XplatUI.SupportsTransparency () & TransparencySupport.Set) != 0)
+					XplatUI.SetWindowTransparency(Handle, Opacity, transparency_key);
 			}
 		}
 

@@ -1,5 +1,12 @@
 2006-11-29  Chris Toshok  <toshok@ximian.com>
 
+	* Form.cs (set_TransparencyKey): only call SetWindowTransparency
+	if it's supported.
+	(set_AllowTransparency): reorder things a little so that the
+	WS_EX_LAYERED style is removed properly.
+
+2006-11-29  Chris Toshok  <toshok@ximian.com>
+
 	[ totally cosmetic eye-candy feature, fixes bug #80089 ]
 	
 	* Form.cs: only call the XplatUI transparency method (get/set) if
