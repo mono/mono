@@ -337,6 +337,7 @@ namespace System.Windows.Forms {
 			mdi_container.CloseChildForm (form);
 			XplatUI.RequestNCRecalc (mdi_container.Parent.Handle);
 			mdi_container.SizeScrollBars ();
+			mdi_container.SetParentText (false);
 		}
 
 		/*
