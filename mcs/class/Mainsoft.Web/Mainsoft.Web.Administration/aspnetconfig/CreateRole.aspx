@@ -100,7 +100,7 @@
         <tr>
             <td style="height: 80px" valign="top">
                 <br />
-                <img src="Images/untitled.bmp" /> &nbsp;
+                    <asp:Image runat="server" id="Img" /> &nbsp;
                     Are you sure you want to delete the role: "<%= Role %>"?
                 <br />
             </td>

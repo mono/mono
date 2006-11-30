@@ -1,4 +1,5 @@
 using System;
+using System.Resources;
 using System.Data;
 using System.Configuration;
 using System.Collections;
@@ -7,7 +8,6 @@ using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
-
 
 namespace Mainsoft.Web.Administration
 {
@@ -35,8 +35,10 @@ namespace Mainsoft.Web.Administration
 		protected override void OnInit (EventArgs e)
 		{
 			if (!(allowRemoteConfiguration || Request.IsLocal)) {
-				Server.Transfer ("SecurError.aspx");
+				Server.Transfer ("~/aspnetconfig/SecurError.aspx");
 			}
+
+
 			base.OnInit (e);
 		}
 
@@ -51,6 +53,9 @@ namespace Mainsoft.Web.Administration
 			if (HttpContext.Current.Request.Url.ToString ().IndexOf ("Default.aspx") == -1) {
 				Back.Enabled = true;
 			}
+
+			Img.ImageUrl = this.Page.ClientScript.GetWebResourceUrl (typeof(Util), "Mainsoft.Web.Administration.resources.mainsoft.jpg");
+
 		}
 
 		protected void Button1_Click (object sender, EventArgs e)

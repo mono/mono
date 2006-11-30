@@ -24,7 +24,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. --%>
 <%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/aspnetconfig/Util.Master" CodeBehind="EditUser.aspx.cs" Inherits="Mainsoft.Web.Administration.EditUser" %>
-<%@ Register TagPrefix="custom" TagName="searcher" Src="Controls/Searcher.ascx" %>
+<%@ Register TagPrefix="custom" TagName="searcher" Src="~/Controls/Searcher.ascx" %>
 <asp:Content runat="server" ID="main" ContentPlaceHolderID="Main">
     <asp:MultiView ID="MultiView1" runat="server" ActiveViewIndex="0">
         <asp:View ID="updateUser" runat="server" >

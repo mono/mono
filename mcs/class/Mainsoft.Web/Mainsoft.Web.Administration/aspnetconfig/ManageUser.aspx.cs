@@ -49,6 +49,12 @@ namespace Mainsoft.Web.Administration
 			
 		}
 
+		protected override void OnInit (EventArgs e)
+		{
+			Img.ImageUrl = this.Page.ClientScript.GetWebResourceUrl (typeof (ManageUser), "Mainsoft.Web.Administration.resources.untitled.bmp");
+			base.OnInit (e);
+		}
+
 		protected override void OnPreRender (EventArgs e)
 		{
 			if (IsPostBack) {

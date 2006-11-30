@@ -55,6 +55,12 @@ namespace Mainsoft.Web.Administration
 			Roles_gv.DataBind ();
 		}
 
+		protected override void OnInit (EventArgs e)
+		{
+			Img.ImageUrl = this.Page.ClientScript.GetWebResourceUrl (typeof (CreateRole), "Mainsoft.Web.Administration.resources.untitled.bmp");
+			base.OnInit (e);
+		}
+
 		protected void Page_Load (object sender, EventArgs e)
 		{
 

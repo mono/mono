@@ -25,7 +25,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. --%>
 <%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/aspnetconfig/Util.Master" CodeBehind="ManageUser.aspx.cs" Inherits="Mainsoft.Web.Administration.ManageUser" %>
 <%@ Register tagprefix="custom" namespace="Mainsoft.Web.Administration" Assembly="Mainsoft.Web.Administration"  %>
-<%@ Register TagPrefix="custom" TagName="searcher" Src="Controls/Searcher.ascx" %>
+<%@ Register TagPrefix="custom" TagName="searcher" Src="~/Controls/Searcher.ascx" %>
 
 <asp:Content runat="server" ID="main" ContentPlaceHolderID="Main">
 <asp:MultiView ID="mv" ActiveViewIndex="0" runat="server">
@@ -126,7 +126,7 @@
         <tr>
             <td style="height: 80px" valign="top">
                 <br />
-                <img src="Images/untitled.bmp" /> &nbsp;
+                <asp:Image runat="server" ID="Img" /> &nbsp;
                 Are you sure you want to delete the user: "<%= User_name %>"? <br />
                 All information for this user will be deleted, including the user name, the user's membership in roles, and any profile property values associated with this user. 
                 <br /><br /><br />

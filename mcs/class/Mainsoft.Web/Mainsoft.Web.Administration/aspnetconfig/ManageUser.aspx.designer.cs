@@ -21,6 +21,7 @@ namespace Mainsoft.Web.Administration {
         protected Mainsoft.Web.Administration.Searcher srch;
         protected System.Web.UI.WebControls.HyperLink HyperLink1;
         protected System.Web.UI.WebControls.View quest;
+        protected System.Web.UI.WebControls.Image Img;
         protected System.Web.UI.WebControls.Button yes;
         protected System.Web.UI.WebControls.Button no;
     }

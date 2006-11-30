@@ -19,6 +19,7 @@ namespace Mainsoft.Web.Administration {
         protected System.Web.UI.WebControls.GridView Roles_gv;
         protected System.Web.UI.WebControls.ObjectDataSource ObjectDataSource1;
         protected System.Web.UI.WebControls.View yesno;
+        protected System.Web.UI.WebControls.Image Img;
         protected System.Web.UI.WebControls.Button yes;
         protected System.Web.UI.WebControls.Button no;
     }
