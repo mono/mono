@@ -188,39 +188,52 @@ namespace Mono.CSharp {
 					String.Format ("LookupConstantValue: This should never be reached {0} {1}", Type, type));
 			}
 
-			Constant retval;
-			if (type == TypeManager.int32_type)
-				retval = new IntConstant ((int) constant_value, loc);
-			else if (type == TypeManager.uint32_type)
-				retval = new UIntConstant ((uint) constant_value, loc);
-			else if (type == TypeManager.int64_type)
-				retval = new LongConstant ((long) constant_value, loc);
-			else if (type == TypeManager.uint64_type)
-				retval = new ULongConstant ((ulong) constant_value, loc);
-			else if (type == TypeManager.float_type)
-				retval = new FloatConstant ((float) constant_value, loc);
-			else if (type == TypeManager.double_type)
-				retval = new DoubleConstant ((double) constant_value, loc);
-			else if (type == TypeManager.string_type)
-				retval = new StringConstant ((string) constant_value, loc);
-			else if (type == TypeManager.short_type)
-				retval = new ShortConstant ((short) constant_value, loc);
-			else if (type == TypeManager.ushort_type)
-				retval = new UShortConstant ((ushort) constant_value, loc);
-			else if (type == TypeManager.sbyte_type)
-				retval = new SByteConstant ((sbyte) constant_value, loc);
-			else if (type == TypeManager.byte_type)
-				retval = new ByteConstant ((byte) constant_value, loc);
-			else if (type == TypeManager.char_type)
-				retval = new CharConstant ((char) constant_value, loc);
-			else if (type == TypeManager.bool_type)
-				retval = new BoolConstant ((bool) constant_value, loc);
-			else if (type == TypeManager.decimal_type)
-				retval = new DecimalConstant ((decimal) constant_value, loc);
-			else
-				throw new Exception ("LookupConstantValue: Unhandled constant type: " + type);
-			
-			return retval;
+			return CreateConstant (type, constant_value, loc);
+		}
+
+		///  Returns a constant instance based on Type
+		///  The returned value is already resolved.
+		public static Constant CreateConstant (Type t, object v, Location loc)
+		{
+			if (t == TypeManager.int32_type)
+				return new IntConstant ((int) v, loc);
+			if (t == TypeManager.string_type)
+				return new StringConstant ((string) v, loc);
+			if (t == TypeManager.uint32_type)
+				return new UIntConstant ((uint) v, loc);
+			if (t == TypeManager.int64_type)
+				return new LongConstant ((long) v, loc);
+			if (t == TypeManager.uint64_type)
+				return new ULongConstant ((ulong) v, loc);
+			if (t == TypeManager.float_type)
+				return new FloatConstant ((float) v, loc);
+			if (t == TypeManager.double_type)
+				return new DoubleConstant ((double) v, loc);
+			if (t == TypeManager.short_type)
+				return new ShortConstant ((short)v, loc);
+			if (t == TypeManager.ushort_type)
+				return new UShortConstant ((ushort)v, loc);
+			if (t == TypeManager.sbyte_type)
+				return new SByteConstant ((sbyte)v, loc);
+			if (t == TypeManager.byte_type)
+				return new ByteConstant ((byte)v, loc);
+			if (t == TypeManager.char_type)
+				return new CharConstant ((char)v, loc);
+			if (t == TypeManager.bool_type)
+				return new BoolConstant ((bool) v, loc);
+			if (t == TypeManager.decimal_type)
+				return new DecimalConstant ((decimal) v, loc);
+			if (TypeManager.IsEnumType (t)) {
+				Type real_type = TypeManager.TypeToCoreType (v.GetType ());
+				if (real_type == t)
+					real_type = System.Enum.GetUnderlyingType (real_type);
+				return new EnumConstant (CreateConstant (real_type, v, loc), t);
+			} 
+			if (v == null && !TypeManager.IsValueType (t))
+				return new EmptyConstantCast (new NullConstant (loc), t);
+
+			throw new Exception ("Unknown type for constant (" + t +
+					"), details: " + v);
 		}
 
 		protected static void CheckRange (bool inCheckedContext, ulong value, ulong max)
@@ -1612,7 +1625,7 @@ namespace Mono.CSharp {
 	}
 
 	public class FloatConstant : Constant {
-		public readonly float Value;
+		public float Value;
 
 		public FloatConstant (float v, Location loc):
 			base (loc)
@@ -1728,7 +1741,7 @@ namespace Mono.CSharp {
 	}
 
 	public class DoubleConstant : Constant {
-		public readonly double Value;
+		public double Value;
 
 		public DoubleConstant (double v, Location loc):
 			base (loc)
