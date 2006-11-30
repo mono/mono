@@ -1,3 +1,7 @@
+2006-11-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MenuItemTest.cs: Added test for Text property.
+
 2006-11-29  Chris Toshok  <toshok@ximian.com>
 
 	* BindingTest.cs: add two new tests.

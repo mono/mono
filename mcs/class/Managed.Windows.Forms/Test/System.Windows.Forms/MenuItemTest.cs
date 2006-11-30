@@ -24,11 +24,11 @@
 //
 //
 
-
 using System;
-using System.Windows.Forms;
 using System.Drawing;
 using System.Reflection;
+using System.Windows.Forms;
+
 using NUnit.Framework;
 
 namespace MonoTests.System.Windows.Forms
@@ -41,28 +41,26 @@ namespace MonoTests.System.Windows.Forms
 		{
 			MenuItem mi = new MenuItem ();
 
-			Assert.AreEqual (false, mi.BarBreak, "DefaultValues#1");
-			Assert.AreEqual (false, mi.Break, "DefaultValues#2");
-			Assert.AreEqual (false, mi.Checked, "DefaultValues#3");
-			Assert.AreEqual (false, mi.DefaultItem, "DefaultValues#4");
-			Assert.AreEqual (true, mi.Enabled, "DefaultValues#5");
+			Assert.IsFalse (mi.BarBreak, "DefaultValues#1");
+			Assert.IsFalse (mi.Break, "DefaultValues#2");
+			Assert.IsFalse (mi.Checked, "DefaultValues#3");
+			Assert.IsFalse (mi.DefaultItem, "DefaultValues#4");
+			Assert.IsTrue (mi.Enabled, "DefaultValues#5");
 			Assert.AreEqual (-1, mi.Index, "DefaultValues#6");
-			Assert.AreEqual (false, mi.IsParent, "DefaultValues#7");
-
-			// TODO: MDI is not completed  yet
-			//Assert.AreEqual (, mi.MdiList, "DefaultValues#8");
+			Assert.IsFalse (mi.IsParent, "DefaultValues#7");
+			Assert.IsFalse (mi.MdiList, "DefaultValues#8");
 
 			Assert.AreEqual (0, mi.MergeOrder, "DefaultValues#9");
 			Assert.AreEqual (MenuMerge.Add, mi.MergeType, "DefaultValues#10");
 			Assert.AreEqual ('\0', mi.Mnemonic, "DefaultValues#11");
 
-			Assert.AreEqual (false, mi.OwnerDraw, "DefaultValues#12");
-			Assert.AreEqual (null, mi.Parent, "DefaultValues#13");
-			Assert.AreEqual (false, mi.RadioCheck, "DefaultValues#14");
+			Assert.IsFalse (mi.OwnerDraw, "DefaultValues#12");
+			Assert.IsNull (mi.Parent, "DefaultValues#13");
+			Assert.IsFalse (mi.RadioCheck, "DefaultValues#14");
 			Assert.AreEqual (Shortcut.None, mi.Shortcut, "DefaultValues#15");
-			Assert.AreEqual (true, mi.ShowShortcut, "DefaultValues#16");
+			Assert.IsTrue (mi.ShowShortcut, "DefaultValues#16");
 			Assert.AreEqual (string.Empty, mi.Text, "DefaultValues#17");
-			Assert.AreEqual (true, mi.Visible, "DefaultValues#18");
+			Assert.IsTrue (mi.Visible, "DefaultValues#18");
 		}
 
 		[Test]
@@ -73,28 +71,23 @@ namespace MonoTests.System.Windows.Forms
 			MenuItem subitem2 = new MenuItem ("SubItem2");
 			MenuItem subitem3 = new MenuItem ("SubItem3");
 
-			{
-				mi = new MenuItem ("Item1");
-				Assert.AreEqual ("Item1", mi.Text, "Constructor#1");
-			}
+			mi = new MenuItem ("Item1");
+			Assert.AreEqual ("Item1", mi.Text, "Constructor#1");
 
-			{
-				mi = new MenuItem ("Item2", new MenuItem [] {subitem1,
-					subitem2, subitem3});
+			mi = new MenuItem ("Item2", new MenuItem [] {subitem1,
+				subitem2, subitem3});
 
-				Assert.AreEqual ("Item2", mi.Text, "Constructor#2");
-				Assert.AreEqual (3, mi.MenuItems.Count, "Constructor#3");
+			Assert.AreEqual ("Item2", mi.Text, "Constructor#2");
+			Assert.AreEqual (3, mi.MenuItems.Count, "Constructor#3");
 
-				Assert.AreEqual ("SubItem1", mi.MenuItems[0].Text, "Constructor#4");
-				Assert.AreEqual (mi, mi.MenuItems[0].Parent, "Constructor#5");
+			Assert.AreEqual ("SubItem1", mi.MenuItems[0].Text, "Constructor#4");
+			Assert.AreEqual (mi, mi.MenuItems[0].Parent, "Constructor#5");
 
-				Assert.AreEqual ("SubItem2", mi.MenuItems[1].Text, "Constructor#6");
-				Assert.AreEqual (mi, mi.MenuItems[1].Parent, "Constructor#7");
+			Assert.AreEqual ("SubItem2", mi.MenuItems[1].Text, "Constructor#6");
+			Assert.AreEqual (mi, mi.MenuItems[1].Parent, "Constructor#7");
 
-				Assert.AreEqual ("SubItem3", mi.MenuItems[2].Text, "Constructor#8");
-				Assert.AreEqual (mi, mi.MenuItems[2].Parent, "Constructor#9");
-			}
-
+			Assert.AreEqual ("SubItem3", mi.MenuItems[2].Text, "Constructor#8");
+			Assert.AreEqual (mi, mi.MenuItems[2].Parent, "Constructor#9");
 		}
 
 		[Test]
@@ -167,5 +160,40 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("Compare... (6)", first_menu.MenuItems[12].Text, "ItemMerge#11");
 		}
 
+		[Test]
+		public void Text ()
+		{
+			MenuItem mi1 = new MenuItem ();
+			mi1.Text = "A1";
+			Assert.AreEqual ("A1", mi1.Text, "#1");
+
+			MenuItem mi2 = new MenuItem ();
+			mi2.Text = "A2a";
+			Assert.AreEqual ("A2a", mi2.Text, "#2");
+
+			mi1.MenuItems.Add (mi2);
+			mi2.Text = "A2b";
+			Assert.AreEqual ("A2b", mi2.Text, "#3");
+
+			MainMenu mainMenu = new MainMenu ();
+			mainMenu.MenuItems.Add (mi1);
+
+			mi1.Text = "B1";
+			Assert.AreEqual ("B1", mi1.Text, "#4");
+			mi2.Text = "B2";
+			Assert.AreEqual ("B2", mi2.Text, "#5");
+
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Menu = mainMenu;
+			form.Show ();
+
+			Assert.AreEqual ("B1", mi1.Text, "#6");
+			Assert.AreEqual ("B2", mi2.Text, "#7");
+			mi1.Text = "C1";
+			Assert.AreEqual ("C1", mi1.Text, "#8");
+			mi2.Text = "C2";
+			Assert.AreEqual ("C2", mi2.Text, "#9");
+		}
 	}
 }
