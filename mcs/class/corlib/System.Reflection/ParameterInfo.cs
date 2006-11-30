@@ -233,12 +233,12 @@ namespace System.Reflection
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual Type[] GetOptionalCustomModifiers () {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual Type[] GetRequiredCustomModifiers () {
 			throw new NotImplementedException ();
 		}

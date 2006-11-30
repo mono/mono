@@ -172,14 +172,14 @@ namespace System.Reflection {
 		}
 
 		[CLSCompliant(false)]
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual object GetValueDirect (TypedReference obj)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[CLSCompliant(false)]
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual void SetValueDirect (TypedReference obj, object value)
 		{
 			throw new NotImplementedException ();
@@ -224,12 +224,12 @@ namespace System.Reflection {
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual Type[] GetOptionalCustomModifiers () {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual Type[] GetRequiredCustomModifiers () {
 			throw new NotImplementedException ();
 		}

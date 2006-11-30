@@ -45,7 +45,6 @@ namespace System.Reflection
 		protected Type generic_type;
 		bool initialized;
 
-		[MonoTODO]
 		internal MonoGenericClass ()
 			: base (null)
 		{

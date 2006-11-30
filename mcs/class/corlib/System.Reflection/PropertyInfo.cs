@@ -104,22 +104,22 @@ namespace System.Reflection {
 		public abstract void SetValue (object obj, object value, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture);
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual Type[] GetOptionalCustomModifiers () {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual Type[] GetRequiredCustomModifiers () {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual object GetConstantValue () {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual object GetRawConstantValue() {
 			throw new NotImplementedException ();
 		}

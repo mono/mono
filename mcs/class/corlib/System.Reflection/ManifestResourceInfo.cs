@@ -51,17 +51,14 @@ namespace System.Reflection
 			_filename = filename;
 			_location = location;
 		}
-		[MonoTODO]
 		public virtual string FileName {
 			get { return _filename; }
 		}
 
-		[MonoTODO]
 		public virtual Assembly ReferencedAssembly {
 			get { return _assembly; }
 		}
 
-		[MonoTODO]
 		public virtual ResourceLocation ResourceLocation {
 			get { return _location; }
 		}
