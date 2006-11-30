@@ -35,9 +35,12 @@ namespace System.Windows.Forms.X11Internal {
 	{
 		X11Display display;
 
-		bool refetch_wm_state = true;
+		bool refetch_window_type = true;
+		bool refetch_window_opacity = true;
+
 		IntPtr[] wm_state = new IntPtr[0];
 		IntPtr[] window_type = new IntPtr[0];
+		double trans = 1.0;
 
 		string text;
 		X11ThreadQueue queue;
@@ -278,6 +281,8 @@ namespace System.Windows.Forms.X11Internal {
 		{
 			if (xevent.PropertyEvent.atom == display.Atoms._NET_WM_WINDOW_TYPE) {
 				// we need to recache our WINDOW_TYPE on the next query
+				refetch_window_type = true;
+				window_type = null;
 			}
 			else if (xevent.PropertyEvent.atom == display.Atoms._NET_WM_STATE) {
 				// we need to recache our WM_STATE on the next query
@@ -286,9 +291,11 @@ namespace System.Windows.Forms.X11Internal {
 				// update our Text property
 			}
 			else if (xevent.PropertyEvent.atom == display.Atoms._NET_WM_WINDOW_OPACITY) {
-				// update the Hwnd's opacity
+				// we need to recache our _NET_WM_WINDOW_OPACITY on the next query.
+				refetch_window_opacity = true;
 			}
 			// else we don't care about it
+
 		}
 
 		public void SetIcon (Icon icon)
@@ -317,6 +324,38 @@ namespace System.Windows.Forms.X11Internal {
 					      PropertyMode.Replace, data, size);
 		}
 
+		public double GetWindowTransparency ()
+		{
+			if (refetch_window_opacity) {
+				trans = 1.0;
+
+				IntPtr actual_atom;
+				int actual_format;
+				IntPtr nitems;
+				IntPtr bytes_after;
+				IntPtr prop = IntPtr.Zero;
+
+				IntPtr w = WholeWindow;
+				if (reparented)
+					w = display.XGetParent (WholeWindow);
+
+				Xlib.XGetWindowProperty (display.Handle, w,
+							 display.Atoms._NET_WM_WINDOW_OPACITY, IntPtr.Zero, new IntPtr (16), false,
+							 display.Atoms.XA_CARDINAL,
+							 out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+				
+				if (((long)nitems == 1) && (prop != IntPtr.Zero)) {
+					int x11_opacity = Marshal.ReadInt32(prop, 0);
+					trans = ((double)x11_opacity) / 0xffffffff;
+				}
+
+				if (prop != IntPtr.Zero) {
+					Xlib.XFree(prop);
+				}
+			}
+
+			return trans;
+		}
 
 		public void SetWindowTransparency (double transparency, Color key)
 		{
@@ -741,11 +780,11 @@ namespace System.Windows.Forms.X11Internal {
 		
 		public void FrameExtents (out int left, out int top)
 		{
-			IntPtr			actual_atom;
-			int			actual_format;
-			IntPtr			nitems;
-			IntPtr			bytes_after;
-			IntPtr			prop = IntPtr.Zero;
+			IntPtr actual_atom;
+			int actual_format;
+			IntPtr nitems;
+			IntPtr bytes_after;
+			IntPtr prop = IntPtr.Zero;
 
 			Xlib.XGetWindowProperty (display.Handle, WholeWindow,
 						 display.Atoms._NET_FRAME_EXTENTS, IntPtr.Zero, new IntPtr (16), false,
@@ -1514,7 +1553,14 @@ namespace System.Windows.Forms.X11Internal {
 		}
 
 		public IntPtr WINDOW_TYPE {
-			get { return window_type.Length > 0 ? window_type[0] : IntPtr.Zero; }
+			get {
+				if (refetch_window_type) {
+					window_type = GetAtomListProperty (display.Atoms._NET_WM_WINDOW_TYPE);
+					refetch_window_type = false;
+				}
+
+				return window_type.Length > 0 ? window_type[0] : IntPtr.Zero;
+			}
 			set {
 				Set_WINDOW_TYPE (new IntPtr[] {value}, 1);
 			}
@@ -1522,6 +1568,11 @@ namespace System.Windows.Forms.X11Internal {
 
 		public void Set_WINDOW_TYPE (IntPtr[] value, int count)
 		{
+			if (refetch_window_type) {
+				window_type = GetAtomListProperty (display.Atoms._NET_WM_WINDOW_TYPE);
+				refetch_window_type = false;
+			}
+
 			if (ArrayDifferent (window_type, value)) {
 				window_type = value;
 				Xlib.XChangeProperty (display.Handle, WholeWindow,

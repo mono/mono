@@ -4841,6 +4841,11 @@ namespace System.Windows.Forms {
 			SetWMStyles(hwnd, cp);
 		}
 
+		internal override double GetWindowTransparency(IntPtr handle)
+		{
+			return 1.0;
+		}
+
 		internal override void SetWindowTransparency(IntPtr handle, double transparency, Color key) {
 			Hwnd	hwnd;
 			IntPtr	opacity;
@@ -4919,9 +4924,9 @@ namespace System.Windows.Forms {
 			return (Object) ThreadQueue(thread);
 		}
 
-		internal override bool SupportsTransparency() {
+		internal override TransparencySupport SupportsTransparency() {
 			// We need to check if the x compositing manager is running
-			return true;
+			return TransparencySupport.Set;
 		}
 
 		internal override bool SystrayAdd(IntPtr handle, string tip, Icon icon, out ToolTip tt) {

@@ -1,5 +1,36 @@
 2006-11-29  Chris Toshok  <toshok@ximian.com>
 
+	[ totally cosmetic eye-candy feature, fixes bug #80089 ]
+	
+	* Form.cs: only call the XplatUI transparency method (get/set) if
+	SupportsTransparency says it's supported. Otherwise fallback to
+	doing nothing (in the set case) or returning the instance field we
+	cache (in the get case).
+
+	* XplatUIStructs.cs: add TransparencySupport flag enum.
+	
+	* XplatUIDriver.cs: add abstract GetWindowTransparency, and track
+	change to SupportsTransparency.
+
+	* XplatUIOSX.cs: stub out GetWindowTransparency, and return
+	TransparencySupport.None from SupportsTransparency.
+
+	* XplatUIX11.cs: Stub out GetWindowTransparency, and return
+	TransparencySupport.Set from SupportsTransparency.
+
+	* XplatUIWin32.cs: implement GetWindowTransparency calling
+	GetLayeredWindowAttributes, and implement SupportsTransparency by
+	checking whether or not both
+	GetWindowTransparency/SetWindowTransparency are available
+	entrypoints.  We need to do this since SetWindowTransparency is
+	available as of win2k, but GetWindowTransparency requires winxp.
+	yay win32 api.
+
+	* XplatUI.cs: Add GetWindowTransparency, and change
+	SupportsTransparency to allow for either/both Get/Set.
+
+2006-11-29  Chris Toshok  <toshok@ximian.com>
+
 	* DataGrid.cs: keep from going into an infinite loop redrawing a
 	datagrid that has no datasource.  Fixes bug #80033.
 

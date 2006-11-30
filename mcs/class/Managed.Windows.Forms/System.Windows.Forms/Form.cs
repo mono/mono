@@ -237,7 +237,7 @@ namespace System.Windows.Forms {
 					return;
 				}
 
-				if (XplatUI.SupportsTransparency()) {
+				if ((XplatUI.SupportsTransparency() & TransparencySupport.Set) != 0) {
 					allow_transparency = value;
 
 					if (value) {
@@ -726,6 +726,11 @@ namespace System.Windows.Forms {
 		[MWFCategory("Window Style")]
 		public double Opacity {
 			get {
+				if (IsHandleCreated) {
+					if ((XplatUI.SupportsTransparency () & TransparencySupport.Get) != 0)
+						return XplatUI.GetWindowTransparency (Handle);
+				}
+
 				return opacity;
 			}
 
@@ -736,7 +741,8 @@ namespace System.Windows.Forms {
 
 				if (IsHandleCreated) {
 					UpdateStyles();
-					XplatUI.SetWindowTransparency(Handle, opacity, TransparencyKey);
+					if ((XplatUI.SupportsTransparency () & TransparencySupport.Set) != 0)
+						XplatUI.SetWindowTransparency(Handle, opacity, TransparencyKey);
 				}
 			}
 		}
@@ -1400,7 +1406,7 @@ namespace System.Windows.Forms {
 
 			UpdateBounds();
 
-			if (XplatUI.SupportsTransparency()) {
+			if ((XplatUI.SupportsTransparency() & TransparencySupport.Set) != 0) {
 				if (allow_transparency) {
 					XplatUI.SetWindowTransparency(Handle, Opacity, TransparencyKey);
 				}

@@ -502,10 +502,10 @@ namespace System.Windows.Forms.X11Internal {
 			}
 		}
 
-		public bool SupportsTransparency ()
+		public TransparencySupport SupportsTransparency ()
 		{
 			// compiz adds _NET_WM_WINDOW_OPACITY to _NET_SUPPORTED on the root window, check for that
-			return ((IList)root_hwnd._NET_SUPPORTED).Contains (Atoms._NET_WM_WINDOW_OPACITY);
+			return ((IList)root_hwnd._NET_SUPPORTED).Contains (Atoms._NET_WM_WINDOW_OPACITY) ? TransparencySupport.GetSet : TransparencySupport.None;
 		}
 
 		public void SendAsyncMethod (AsyncMethodData method)

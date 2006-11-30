@@ -1213,7 +1213,17 @@ namespace System.Windows.Forms {
 			Win32SetWindowLong(handle, WindowLong.GWL_EXSTYLE, (uint)cp.ExStyle);
 		}
 
-		
+		internal override double GetWindowTransparency(IntPtr handle)
+		{
+			LayeredWindowAttributes lwa;
+			COLORREF clrRef;
+			byte alpha;
+
+			Win32GetLayeredWindowAttributes (handle, out clrRef, out alpha, out lwa);
+
+			return ((double)alpha) / 255.0;
+		}
+
 		internal override void SetWindowTransparency(IntPtr handle, double transparency, Color key) {
 			LayeredWindowAttributes lwa = LayeredWindowAttributes.LWA_ALPHA;
 			byte opacity = (byte)(transparency*255);
@@ -1230,9 +1240,39 @@ namespace System.Windows.Forms {
 			Win32SetLayeredWindowAttributes(handle, clrRef, opacity, lwa);
 		}
 
-		internal override bool SupportsTransparency() {
-			// We might check with the OS, but I think we're only >=W2k
-			return true;
+		TransparencySupport support;
+		bool queried_transparency_support;
+		internal override TransparencySupport SupportsTransparency() {
+			if (queried_transparency_support)
+				return support;
+
+			bool flag;
+			support = TransparencySupport.None;
+
+			flag = true;
+			try {
+				Win32SetLayeredWindowAttributes (IntPtr.Zero, new COLORREF (), 255, LayeredWindowAttributes.LWA_ALPHA);
+			}
+			catch (EntryPointNotFoundException) { flag = false; }
+			catch { /* swallow everything else */ }
+
+			if (flag) support |= TransparencySupport.Set;
+
+			flag = true;
+			try {
+				LayeredWindowAttributes lwa;
+				COLORREF clrRef;
+				byte alpha;
+
+				Win32GetLayeredWindowAttributes (IntPtr.Zero, out clrRef, out alpha, out lwa);
+			}
+			catch (EntryPointNotFoundException) { flag = false; }
+			catch { /* swallow everything else */ }
+
+			if (flag) support |= TransparencySupport.Get;
+
+			queried_transparency_support = true;
+			return support;
 		}
 
 		internal override void UpdateWindow(IntPtr handle) {
@@ -2577,6 +2617,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="SetLayeredWindowAttributes", CallingConvention=CallingConvention.StdCall)]
 		private extern static uint Win32SetLayeredWindowAttributes (IntPtr hwnd, COLORREF crKey, byte bAlpha, LayeredWindowAttributes dwFlags);
+
+		[DllImport ("user32.dll", EntryPoint="GetLayeredWindowAttributes", CallingConvention=CallingConvention.StdCall)]
+		private extern static uint Win32GetLayeredWindowAttributes (IntPtr hwnd, out COLORREF pcrKey, out byte pbAlpha, out LayeredWindowAttributes pwdFlags);
 
 		[DllImport ("gdi32.dll", EntryPoint="DeleteObject", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32DeleteObject(IntPtr o);

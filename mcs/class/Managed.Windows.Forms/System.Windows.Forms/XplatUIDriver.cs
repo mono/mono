@@ -159,8 +159,9 @@ namespace System.Windows.Forms {
 
 		internal abstract void SetWindowStyle(IntPtr handle, CreateParams cp);
 
+		internal abstract double GetWindowTransparency(IntPtr handle);
 		internal abstract void SetWindowTransparency(IntPtr handle, double transparency, Color key);
-		internal abstract bool SupportsTransparency();
+		internal abstract TransparencySupport SupportsTransparency();
 
 		internal virtual void SetAllowDrop (IntPtr handle, bool value)
 		{

@@ -427,6 +427,14 @@ namespace System.Windows.Forms {
 		internal object refobject;
 	}
 
+	[Flags]
+	internal enum TransparencySupport {
+		None = 0x00,
+		Get = 0x01,
+		Set = 0x02,
+		GetSet = 0x03
+	}
+
 	internal enum WindowActiveFlags {
 		WA_INACTIVE		= 0,
 		WA_ACTIVE		= 1,

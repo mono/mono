@@ -1709,8 +1709,13 @@ namespace System.Windows.Forms {
 		internal override void SetWindowTransparency(IntPtr handle, double transparency, Color key) {
 		}
 
-		internal override bool SupportsTransparency() {
-			return false;
+		internal override double GetWindowTransparency(IntPtr handle)
+		{
+			return 1.0;
+		}
+
+		internal override TransparencySupport SupportsTransparency() {
+			return TransparencySupport.None;
 		}
 		
 		internal override bool SetZOrder(IntPtr handle, IntPtr after_handle, bool Top, bool Bottom) {

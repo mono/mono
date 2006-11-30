@@ -1,5 +1,17 @@
 2006-11-29  Chris Toshok  <toshok@ximian.com>
 
+	* X11Hwnd.cs: implement GetWindowTransparency, and also add
+	caching for WINDOW_TYPE and _NET_WM_WINDOW_OPACITY.  We invalidate
+	the cache when we get a PropertyNotify on that atom.
+
+	* X11Display.cs: return GetSet from SupportsTransparency if we
+	have a compositor running.  otherwise return None.
+
+	* XplatUIX11-new.cs: pass SupportsTransparency off onto the
+	X11Display, and pass GetWindowTransparency off onto the X11Hwnd.
+
+2006-11-29  Chris Toshok  <toshok@ximian.com>
+
 	* X11ThreadQueue.cs (EnqueueUnlocked): add the switch motionnotify
 	compression/NeedDispatchIdle assignment found in X11Hwnd here.
 	(RemovePaintUnlocked): nuke

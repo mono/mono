@@ -921,7 +921,17 @@ namespace System.Windows.Forms.X11Internal {
 			}
 		}
 
-		internal override void SetWindowTransparency(IntPtr handle, double transparency, Color key)
+		internal override double GetWindowTransparency (IntPtr handle)
+		{
+			X11Hwnd hwnd = (X11Hwnd)Hwnd.ObjectFromHandle(handle);
+
+			if (hwnd != null)
+				return hwnd.GetWindowTransparency ();
+			else
+				return 0.0;
+		}
+
+		internal override void SetWindowTransparency (IntPtr handle, double transparency, Color key)
 		{
 			X11Hwnd hwnd = (X11Hwnd)Hwnd.ObjectFromHandle(handle);
 
@@ -951,7 +961,7 @@ namespace System.Windows.Forms.X11Internal {
 			return (object) ThreadQueue(thread);
 		}
 
-		internal override bool SupportsTransparency()
+		internal override TransparencySupport SupportsTransparency()
 		{
 			return display.SupportsTransparency ();
 		}

@@ -869,6 +869,14 @@ namespace System.Windows.Forms {
 			driver.SetWindowStyle(handle, cp);
 		}
 
+		internal static double GetWindowTransparency (IntPtr handle)
+		{
+			#if DriverDebug
+				Console.WriteLine("SetWindowTransparency({0}): Called", Window(handle));
+			#endif
+			return driver.GetWindowTransparency(handle);
+		}
+
 		internal static void SetWindowTransparency(IntPtr handle, double transparency, Color key) 
 		{
 			#if DriverDebug
@@ -905,7 +913,7 @@ namespace System.Windows.Forms {
 			return driver.StartLoop(thread);
 		}
 
-		internal static bool SupportsTransparency() {
+		internal static TransparencySupport SupportsTransparency() {
 			#if DriverDebug
 				Console.WriteLine("SupportsTransparency(): Called, result={0}", driver.SupportsTransparency());
 			#endif
