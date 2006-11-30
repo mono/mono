@@ -1,5 +1,10 @@
 2006-11-29  Chris Toshok  <toshok@ximian.com>
 
+	* DataGrid.cs: keep from going into an infinite loop redrawing a
+	datagrid that has no datasource.  Fixes bug #80033.
+
+2006-11-29  Chris Toshok  <toshok@ximian.com>
+
 	* MenuItem.cs: fix the NRE when we assign text (and therefore call
 	Invalidate) before the mainmenu has been assigned to a control.
 

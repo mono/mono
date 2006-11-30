@@ -242,6 +242,7 @@ namespace System.Windows.Forms
 		object datasource;
 		string datamember;
 		CurrencyManager list_manager;
+		bool refetch_list_manager = true;
 		bool _readonly;
 		DataGridRelationshipRow[] rows;
 
@@ -574,6 +575,7 @@ namespace System.Windows.Forms
 					if (list_manager != null)
 						list_manager = null;
 					datamember = value;
+					refetch_list_manager = true;
 				}
 			}
 		}
@@ -594,6 +596,7 @@ namespace System.Windows.Forms
 
 					if (list_manager != null)
 						list_manager = null;
+					refetch_list_manager = true;
 				}
 			}
 		}
@@ -708,8 +711,10 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected internal CurrencyManager ListManager {
 			get {
-				if (list_manager == null)
+				if (list_manager == null && refetch_list_manager) {
 					SetDataSource (datasource, datamember);
+					refetch_list_manager = false;
+				}
 
 				return list_manager;
 			}
