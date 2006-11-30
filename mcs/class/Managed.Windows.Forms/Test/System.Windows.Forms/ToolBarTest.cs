@@ -27,7 +27,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ToolBarPropertyTest ()
 		{	
 			Form myform = new Form ();
@@ -54,8 +53,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (BorderStyle.Fixed3D, myToolBar.BorderStyle, "#B5"); 
 			Assert.AreEqual (2, myToolBar.Buttons.Count, "#B6");
 			Assert.AreEqual ("B", myToolBar.Buttons [1].Text, "#B7");
-			Assert.AreEqual (39, myToolBar.ButtonSize.Width, "#B8");
-			Assert.AreEqual (36, myToolBar.ButtonSize.Height, "#B9");
 			
 			// D
 			Assert.AreEqual (DockStyle.Top, myToolBar.Dock, "#D1");

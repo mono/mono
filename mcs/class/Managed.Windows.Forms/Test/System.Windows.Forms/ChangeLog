@@ -1,3 +1,12 @@
+2006-11-30  Everaldo Canuto  <everaldo@simios.org>
+
+	* ToolBarTest.cs:
+	- Remove ButtonSize.Width and ButtonSize.Height assert because
+	it depends of system metrics and diferent fonts can cause 
+	diferent sizes.
+	- Remove "NotWorking" mark from ToolBarPropertyTest, this test
+	now must works well.
+	
 2006-11-30  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* MessageTest.cs: Added test for ToString.
