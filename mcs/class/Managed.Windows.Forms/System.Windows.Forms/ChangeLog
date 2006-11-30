@@ -2,6 +2,8 @@
 
 	* TextBoxBase.cs: You can still change the selected text on a read
 	only textbox.
+	* TextControl.cs: Lower magic number for wrap calculations. This
+	lets text get closer to the right (far) edge.
 
 2006-11-30  Jonathan Pobst  <monkey@jpobst.com>
 
