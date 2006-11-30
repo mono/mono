@@ -1,3 +1,8 @@
+2006-11-30  Mike Kestner  <mkestner@novell.com>
+
+	* ComboBox.cs: fix the scrollbar mouse event forwarding in the 
+	grabbed listbox.  Fixes #80036.
+
 2006-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com>
 
 	* Message.cs: Changed ToString() to match MS.

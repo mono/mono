@@ -1516,32 +1516,29 @@ namespace System.Windows.Forms
 
 				public void FireMouseDown (MouseEventArgs e) 
 				{
-					if (Visible) {
-						e = TranslateEvent (e);
-						if (ClientRectangle.Contains (e.X, e.Y))
-							OnMouseDown (e);
-					}
+					if (!Visible) 
+						return;
+
+					e = TranslateEvent (e);
+					OnMouseDown (e);
 				}	
 				
-				public bool FireMouseUp (MouseEventArgs e) 
+				public void FireMouseUp (MouseEventArgs e) 
 				{
-					if (Visible) {
-						e = TranslateEvent (e);
-						if (ClientRectangle.Contains (e.X, e.Y)) {
-							OnMouseUp (e);
-							return true;
-						}
-					}
-					return false;
+					if (!Visible)
+						return;
+
+					e = TranslateEvent (e);
+					OnMouseUp (e);
 				}
 				
 				public void FireMouseMove (MouseEventArgs e) 
 				{
-					if (Visible) {
-						e = TranslateEvent (e);
-						if (ClientRectangle.Contains (e.X, e.Y))
-							OnMouseMove (e);
-					}
+					if (!Visible)
+						return;
+
+					e = TranslateEvent (e);
+					OnMouseMove (e);
 				}			
 				
 				MouseEventArgs TranslateEvent (MouseEventArgs e)
@@ -1800,10 +1797,23 @@ namespace System.Windows.Forms
 				Invalidate ();
 			}			
 
+			bool scrollbar_grabbed = false;
+
+			bool InScrollBar {
+				get {
+					if (vscrollbar_ctrl == null || !vscrollbar_ctrl.is_visible)
+						return false;
+
+					return vscrollbar_ctrl.Bounds.Contains (PointToClient (Control.MousePosition));
+				}
+			}
+
 			protected override void OnMouseDown (MouseEventArgs e)
 			{
-				if (vscrollbar_ctrl != null)
+				if (InScrollBar) {
 					vscrollbar_ctrl.FireMouseDown (e);
+					scrollbar_grabbed = true;
+				}
 			}
 
 			protected override void OnMouseMove (MouseEventArgs e)
@@ -1811,33 +1821,38 @@ namespace System.Windows.Forms
 				if (owner.DropDownStyle == ComboBoxStyle.Simple)
 					return;
 
+				if (scrollbar_grabbed || (!Capture && InScrollBar)) {
+					vscrollbar_ctrl.FireMouseMove (e);
+					return;
+				}
+
 				Point pt = PointToClient (Control.MousePosition);
 				int index = IndexFromPointDisplayRectangle (pt.X, pt.Y);
 
-    				if (index != -1) {
+    				if (index != -1)
 					HighlightedIndex = index;
-					return;
-				}
-				
-				if (vscrollbar_ctrl != null)
-					vscrollbar_ctrl.FireMouseMove (e);
 			}
 			
 			protected override void OnMouseUp (MouseEventArgs e)
 			{
 	    			int index = IndexFromPointDisplayRectangle (e.X, e.Y);
 
-    				if (index == -1) {    					
-					if (vscrollbar_ctrl == null || !vscrollbar_ctrl.FireMouseUp (e))
-		    				HideWindow ();
-				} else {
-					owner.SelectedIndex = index;
-					owner.OnSelectionChangeCommitted (new EventArgs ());
-					HideWindow ();
+				if (scrollbar_grabbed) {
+					vscrollbar_ctrl.FireMouseUp (e);
+					scrollbar_grabbed = false;
+					if (index != -1)
+						HighlightedIndex = index;
+					return;
 				}
 
-	    			if (vscrollbar_ctrl != null)
-		    			vscrollbar_ctrl.FireMouseUp (e);
+    				if (index == -1) {    					
+		    			HideWindow ();
+					return;
+				}
+
+				owner.SelectedIndex = index;
+				owner.OnSelectionChangeCommitted (new EventArgs ());
+				HideWindow ();
 			}
 
 			internal override void OnPaintInternal (PaintEventArgs pevent)
