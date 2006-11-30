@@ -1,3 +1,8 @@
+2006-11-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Web.Services.dll.sources :
+	  added BasicProfileViolationEnumerator.cs.
+
 2006-11-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Web.Services.dll.sources : added SOAP 1.2 Fault serializer

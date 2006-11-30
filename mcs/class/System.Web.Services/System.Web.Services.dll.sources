@@ -29,6 +29,7 @@ System.Web.Services.Configuration/XmlFormatExtensionPrefixAttribute.cs
 System.Web.Services.Description/BasicProfileChecker.cs
 System.Web.Services.Description/BasicProfileViolation.cs
 System.Web.Services.Description/BasicProfileViolationCollection.cs
+System.Web.Services.Description/BasicProfileViolationEnumerator.cs
 System.Web.Services.Description/Binding.cs
 System.Web.Services.Description/BindingCollection.cs
 System.Web.Services.Description/ConformanceChecker.cs

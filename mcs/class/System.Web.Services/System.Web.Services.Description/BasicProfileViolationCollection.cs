@@ -31,21 +31,34 @@
 #if NET_2_0
 
 using System.Collections;
+using System.Collections.Generic;
 
 namespace System.Web.Services.Description
 {
-	public class BasicProfileViolationCollection: CollectionBase
+	public class BasicProfileViolationCollection
+		: CollectionBase, IEnumerable<BasicProfileViolation>
 	{
+		int generation;
+
 		public BasicProfileViolationCollection ()
 		{
 		}
-		
+
+		IEnumerator<BasicProfileViolation> IEnumerable<BasicProfileViolation>.GetEnumerator ()
+		{
+			return new BasicProfileViolationEnumerator (this);
+		}
+
+		internal int Generation {
+			get { return generation; }
+		}
+
 		public BasicProfileViolation this [int index] {
 			get { return (BasicProfileViolation) List [index]; }
 			set { List [index] = value; }
 		}
-		
-		public int Add (BasicProfileViolation violation)
+
+		internal int Add (BasicProfileViolation violation)
 		{
 			return List.Add (violation);
 		}
@@ -67,6 +80,7 @@ namespace System.Web.Services.Description
 
 		public void Insert (int index, BasicProfileViolation violation)
 		{
+			generation++;
 			List.Insert (index, violation);
 		}
 		

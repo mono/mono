@@ -1,3 +1,8 @@
+2006-11-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BasicProfileViolationEnumerator.cs : new missing 2.0 class.
+	* BasicProfileViolationCollection.cs : use it.
+
 2006-11-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BasicProfileChecker.cs : reviewed and updated some of the
