@@ -182,12 +182,12 @@ namespace System.Reflection.Emit {
 			return this;
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public override object[] GetCustomAttributes (bool inherit) {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public override object[] GetCustomAttributes (Type attributeType,
 													  bool inherit) {
 			throw new NotImplementedException ();
@@ -240,7 +240,7 @@ namespace System.Reflection.Emit {
 			return method.Invoke (obj, parameters);
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public override bool IsDefined (Type attributeType, bool inherit) {
 			throw new NotImplementedException ();
 		}
@@ -307,7 +307,7 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public override ParameterInfo ReturnParameter {
 			get {
 				throw new NotImplementedException ();
@@ -320,7 +320,7 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public override ICustomAttributeProvider ReturnTypeCustomAttributes {
 			get {
 				throw new NotImplementedException ();

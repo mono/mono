@@ -170,7 +170,6 @@ namespace System.Reflection.Emit {
 			return false;
 		}*/
 
-		[MonoTODO]
 		public override Type UnderlyingSystemType {
 			get {
 

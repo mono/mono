@@ -97,7 +97,7 @@ namespace System.Reflection.Emit {
 									   (CallingConvention)0, returnType, 
 									   parameterTypes);
 		}
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public static SignatureHelper GetPropertySigHelper( Module mod, Type returnType, Type[] parameterTypes)
 		{
 			throw new NotImplementedException ();
@@ -115,17 +115,20 @@ namespace System.Reflection.Emit {
 				arguments [0] = clsArgument;
 			}
 		}
-		[MonoTODO]
+
+		[MonoTODO("Not implemented")]
 		public void AddSentinel ()
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
+
+		[MonoTODO("Not implemented")]
 		public override bool Equals (object obj)
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
+
+		[MonoTODO("Not implemented")]
 		public override int GetHashCode ()
 		{
 			throw new NotImplementedException ();

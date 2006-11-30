@@ -951,7 +951,7 @@ namespace System.Reflection.Emit {
 			Emit (OpCodes.Throw);
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public void UsingNamespace (String usingNamespace)
 		{
 			throw new NotImplementedException ();

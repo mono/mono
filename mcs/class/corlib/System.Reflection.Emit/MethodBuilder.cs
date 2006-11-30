@@ -143,7 +143,7 @@ namespace System.Reflection.Emit {
 			get { return call_conv; }
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public string Signature {
 			get {
 				throw new NotImplementedException ();

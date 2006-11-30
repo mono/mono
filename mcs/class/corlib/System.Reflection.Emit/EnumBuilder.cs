@@ -354,13 +354,13 @@ namespace System.Reflection.Emit {
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public override Type[] GetGenericArguments ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public override bool ContainsGenericParameters {
 			get {
 				throw new NotImplementedException ();
