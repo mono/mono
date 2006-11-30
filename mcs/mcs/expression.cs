@@ -194,161 +194,154 @@ namespace Mono.CSharp {
 			Error_OperatorCannotBeApplied (loc, OperName (Oper), t);
 		}
 
+		/// <remarks>
+		///   The result has been already resolved:
+		///
+		///   FIXME: a minus constant -128 sbyte cant be turned into a
+		///   constant byte.
+		/// </remarks>
+		static Expression TryReduceNegative (Constant expr)
+		{
+			Expression e = null;
+
+			if (expr is IntConstant)
+				e = new IntConstant (-((IntConstant) expr).Value, expr.Location);
+			else if (expr is UIntConstant){
+				uint value = ((UIntConstant) expr).Value;
+
+				if (value < 2147483649)
+					return new IntConstant (-(int)value, expr.Location);
+				else
+					e = new LongConstant (-value, expr.Location);
+			}
+			else if (expr is LongConstant)
+				e = new LongConstant (-((LongConstant) expr).Value, expr.Location);
+			else if (expr is ULongConstant){
+				ulong value = ((ULongConstant) expr).Value;
+
+				if (value < 9223372036854775809)
+					return new LongConstant(-(long)value, expr.Location);
+			}
+			else if (expr is FloatConstant)
+				e = new FloatConstant (-((FloatConstant) expr).Value, expr.Location);
+			else if (expr is DoubleConstant)
+				e = new DoubleConstant (-((DoubleConstant) expr).Value, expr.Location);
+			else if (expr is DecimalConstant)
+				e = new DecimalConstant (-((DecimalConstant) expr).Value, expr.Location);
+			else if (expr is ShortConstant)
+				e = new IntConstant (-((ShortConstant) expr).Value, expr.Location);
+			else if (expr is UShortConstant)
+				e = new IntConstant (-((UShortConstant) expr).Value, expr.Location);
+			else if (expr is SByteConstant)
+				e = new IntConstant (-((SByteConstant) expr).Value, expr.Location);
+			else if (expr is ByteConstant)
+				e = new IntConstant (-((ByteConstant) expr).Value, expr.Location);
+			return e;
+		}
+
 		// <summary>
 		//   This routine will attempt to simplify the unary expression when the
-		//   argument is a constant.
+		//   argument is a constant.  The result is returned in `result' and the
+		//   function returns true or false depending on whether a reduction
+		//   was performed or not
 		// </summary>
-		Constant TryReduceConstant (EmitContext ec, Constant e)
+		bool Reduce (EmitContext ec, Constant e, out Expression result)
 		{
 			Type expr_type = e.Type;
 			
 			switch (Oper){
-				case Operator.UnaryPlus:
-					// Unary numeric promotions
-					if (expr_type == TypeManager.byte_type)
-						return new IntConstant (((ByteConstant)e).Value, e.Location);
-					if (expr_type == TypeManager.sbyte_type)
-						return new IntConstant (((SByteConstant)e).Value, e.Location);
-					if (expr_type == TypeManager.short_type)
-						return new IntConstant (((ShortConstant)e).Value, e.Location);
-					if (expr_type == TypeManager.ushort_type)
-						return new IntConstant (((UShortConstant)e).Value, e.Location);
-					if (expr_type == TypeManager.char_type)
-						return new IntConstant (((CharConstant)e).Value, e.Location);
-
-					// Predefined operators
-					if (expr_type == TypeManager.int32_type || expr_type == TypeManager.uint32_type ||
-						expr_type == TypeManager.int64_type || expr_type == TypeManager.uint64_type ||
-						expr_type == TypeManager.float_type || expr_type == TypeManager.double_type ||
-						expr_type == TypeManager.decimal_type)
-					{
-						return e;
-					}
-
-					return null;
+			case Operator.UnaryPlus:
+				if (expr_type == TypeManager.bool_type){
+					result = null;
+					Error23 (expr_type);
+					return false;
+				}
 				
-				case Operator.UnaryNegation:
-					// Unary numeric promotions
-					if (expr_type == TypeManager.byte_type)
-						return new IntConstant (-((ByteConstant)e).Value, e.Location);
-					if (expr_type == TypeManager.sbyte_type)
-						return new IntConstant (-((SByteConstant)e).Value, e.Location);
-					if (expr_type == TypeManager.short_type)
-						return new IntConstant (-((ShortConstant)e).Value, e.Location);
-					if (expr_type == TypeManager.ushort_type)
-						return new IntConstant (-((UShortConstant)e).Value, e.Location);
-					if (expr_type == TypeManager.char_type)
-						return new IntConstant (-((CharConstant)e).Value, e.Location);
-
-					// Predefined operators
-					if (expr_type == TypeManager.int32_type) {
-						int value = ((IntConstant)e).Value;
-						if (value == int.MinValue) {
-							if (ec.ConstantCheckState) {
-								ConstantFold.Error_CompileTimeOverflow (loc);
-								return null;
-							}
-							return e;
-						}
-						return new IntConstant (-value, e.Location);
-					}
-					if (expr_type == TypeManager.int64_type) {
-						long value = ((LongConstant)e).Value;
-						if (value == long.MinValue) {
-							if (ec.ConstantCheckState) {
-								ConstantFold.Error_CompileTimeOverflow (loc);
-								return null;
-							}
-							return e;
-						}
-						return new LongConstant (-value, e.Location);
-					}
-
-					if (expr_type == TypeManager.uint32_type) {
-						UIntLiteral uil = e as UIntLiteral;
-						if (uil != null) {
-							if (uil.Value == 2147483648)
-								return new IntLiteral (int.MinValue, e.Location);
-							return new LongLiteral (-uil.Value, e.Location);
-						}
-						return new LongConstant (-((UIntConstant)e).Value, e.Location);
-					}
-
-					if (expr_type == TypeManager.uint64_type) {
-						ULongLiteral ull = e as ULongLiteral;
-						if (ull != null && ull.Value == 9223372036854775808)
-							return new LongLiteral (long.MinValue, e.Location);
-						return null;
-					}
-
-					if (expr_type == TypeManager.float_type) {
-						FloatLiteral fl = e as FloatLiteral;
-						// For better error reporting
-						if (fl != null) {
-							fl.Value = -fl.Value;
-							return fl;
-						}
-						return new FloatConstant (-((FloatConstant)e).Value, e.Location);
-					}
-					if (expr_type == TypeManager.double_type) {
-						DoubleLiteral dl = e as DoubleLiteral;
-						// For better error reporting
-						if (dl != null) {
-							dl.Value = -dl.Value;
-							return dl;
-						}
-
-						return new DoubleConstant (-((DoubleConstant)e).Value, e.Location);
-					}
-					if (expr_type == TypeManager.decimal_type)
-						return new DecimalConstant (-((DecimalConstant)e).Value, e.Location);
-
-					return null;
+				result = e;
+				return true;
 				
-				case Operator.LogicalNot:
-					if (expr_type != TypeManager.bool_type)
-						return null;
+			case Operator.UnaryNegation:
+				result = TryReduceNegative (e);
+				return result != null;
+				
+			case Operator.LogicalNot:
+				if (expr_type != TypeManager.bool_type) {
+					result = null;
+					Error23 (expr_type);
+					return false;
+				}
+				
+				BoolConstant b = (BoolConstant) e;
+				result = new BoolConstant (!(b.Value), b.Location);
+				return true;
+				
+			case Operator.OnesComplement:
+				if (!((expr_type == TypeManager.int32_type) ||
+				      (expr_type == TypeManager.uint32_type) ||
+				      (expr_type == TypeManager.int64_type) ||
+				      (expr_type == TypeManager.uint64_type) ||
+				      (expr_type.IsSubclassOf (TypeManager.enum_type)))){
+
+					result = null;
+					if (Convert.ImplicitConversionExists (ec, e, TypeManager.int32_type)){
+						result = new Cast (new TypeExpression (TypeManager.int32_type, loc), e, loc);
+						result = result.Resolve (ec);
+					} else if (Convert.ImplicitConversionExists (ec, e, TypeManager.uint32_type)){
+						result = new Cast (new TypeExpression (TypeManager.uint32_type, loc), e, loc);
+						result = result.Resolve (ec);
+					} else if (Convert.ImplicitConversionExists (ec, e, TypeManager.int64_type)){
+						result = new Cast (new TypeExpression (TypeManager.int64_type, loc), e, loc);
+						result = result.Resolve (ec);
+					} else if (Convert.ImplicitConversionExists (ec, e, TypeManager.uint64_type)){
+						result = new Cast (new TypeExpression (TypeManager.uint64_type, loc), e, loc);
+						result = result.Resolve (ec);
+					}
+
+					if (result == null || !(result is Constant)){
+						result = null;
+						Error23 (expr_type);
+						return false;
+					}
+
+					expr_type = result.Type;
+					e = (Constant) result;
+				}
+
+				if (e is EnumConstant){
+					EnumConstant enum_constant = (EnumConstant) e;
+					Expression reduced;
 					
-					BoolConstant b = (BoolConstant) e;
-					return new BoolConstant (!(b.Value), b.Location);
-				
-				case Operator.OnesComplement:
-					// Unary numeric promotions
-					if (expr_type == TypeManager.byte_type)
-						return new IntConstant (~((ByteConstant)e).Value, e.Location);
-					if (expr_type == TypeManager.sbyte_type)
-						return new IntConstant (~((SByteConstant)e).Value, e.Location);
-					if (expr_type == TypeManager.short_type)
-						return new IntConstant (~((ShortConstant)e).Value, e.Location);
-					if (expr_type == TypeManager.ushort_type)
-						return new IntConstant (~((UShortConstant)e).Value, e.Location);
-					if (expr_type == TypeManager.char_type)
-						return new IntConstant (~((CharConstant)e).Value, e.Location);
-
-					// Predefined operators
-					if (expr_type == TypeManager.int32_type)
-						return new IntConstant (~((IntConstant)e).Value, e.Location);
-					if (expr_type == TypeManager.uint32_type)
-						return new UIntConstant (~((UIntConstant)e).Value, e.Location);
-					if (expr_type == TypeManager.int64_type)
-						return new LongConstant (~((LongConstant)e).Value, e.Location);
-					if (expr_type == TypeManager.uint64_type)
-						return new ULongConstant (~((UIntConstant)e).Value, e.Location);
-					if (e is EnumConstant) {
-						e = TryReduceConstant (ec, ((EnumConstant)e).Child);
-						if (e != null)
-							e = new EnumConstant (e, expr_type);
-						return e;
+					if (Reduce (ec, enum_constant.Child, out reduced)){
+						result = new EnumConstant ((Constant) reduced, enum_constant.Type);
+						return true;
+					} else {
+						result = null;
+						return false;
 					}
-					return null;
+				}
 
-				case Operator.AddressOf:
-					return e;
-					//return false;
+				if (expr_type == TypeManager.int32_type){
+					result = new IntConstant (~ ((IntConstant) e).Value, e.Location);
+				} else if (expr_type == TypeManager.uint32_type){
+					result = new UIntConstant (~ ((UIntConstant) e).Value, e.Location);
+				} else if (expr_type == TypeManager.int64_type){
+					result = new LongConstant (~ ((LongConstant) e).Value, e.Location);
+				} else if (expr_type == TypeManager.uint64_type){
+					result = new ULongConstant (~ ((ULongConstant) e).Value, e.Location);
+				} else {
+					result = null;
+					Error23 (expr_type);
+					return false;
+				}
+				return true;
 
-				case Operator.Indirection:
-					return e;
-					//return false;
+			case Operator.AddressOf:
+				result = this;
+				return false;
+
+			case Operator.Indirection:
+				result = this;
+				return false;
 			}
 			throw new Exception ("Can not constant fold: " + Oper.ToString());
 		}
@@ -360,21 +353,24 @@ namespace Mono.CSharp {
 			//
 
 			// Attempt to use a constant folding operation.
-			Constant cexpr = Expr as Constant;
-			if (cexpr != null) {
-				cexpr = TryReduceConstant (ec, cexpr);
-				if (cexpr != null) {
-					return cexpr;
-				}
+			if (Expr is Constant){
+				Expression result;
+				
+				if (Reduce (ec, (Constant) Expr, out result))
+					return result;
 			}
 
 			//
 			// Step 2: Perform Operator Overload location
 			//
 			Type expr_type = Expr.Type;
-			string op_name = oper_names [(int) Oper];
+			Expression mg;
+			string op_name;
+			
+			op_name = oper_names [(int) Oper];
 
-			Expression mg = MemberLookup (ec.ContainerType, expr_type, op_name, MemberTypes.Method, AllBindingFlags, loc);
+			mg = MemberLookup (ec.ContainerType, expr_type, op_name, MemberTypes.Method, AllBindingFlags, loc);
+			
 			if (mg != null) {
 				Expression e = StaticCallExpr.MakeSimpleCall (
 					ec, (MethodGroupExpr) mg, Expr, loc);
@@ -387,6 +383,12 @@ namespace Mono.CSharp {
 				return e;
 			}
 
+			// Only perform numeric promotions on:
+			// +, - 
+
+			if (expr_type == null)
+				return null;
+			
 			switch (Oper){
 			case Operator.LogicalNot:
 				if (expr_type != TypeManager.bool_type) {
@@ -401,31 +403,34 @@ namespace Mono.CSharp {
 				return this;
 
 			case Operator.OnesComplement:
-				// Unary numeric promotions
-				if (expr_type == TypeManager.byte_type || expr_type == TypeManager.sbyte_type ||
-					expr_type == TypeManager.short_type || expr_type == TypeManager.ushort_type ||
-					expr_type == TypeManager.char_type) 
-				{
-					type = TypeManager.int32_type;
-					return new EmptyCast (this, type);
+				if (!((expr_type == TypeManager.int32_type) ||
+				      (expr_type == TypeManager.uint32_type) ||
+				      (expr_type == TypeManager.int64_type) ||
+				      (expr_type == TypeManager.uint64_type) ||
+				      (expr_type.IsSubclassOf (TypeManager.enum_type)))){
+					Expression e;
+
+					e = Convert.ImplicitConversion (ec, Expr, TypeManager.int32_type, loc);
+					if (e != null)
+						goto ok;
+					e = Convert.ImplicitConversion (ec, Expr, TypeManager.uint32_type, loc);
+					if (e != null)
+						goto ok;
+					e = Convert.ImplicitConversion (ec, Expr, TypeManager.int64_type, loc);
+					if (e != null)
+						goto ok;
+					e = Convert.ImplicitConversion (ec, Expr, TypeManager.uint64_type, loc);
+					if (e != null)
+						goto ok;
+					Error23 (expr_type);
+					return null;
+				ok:
+					Expr = e;
+					expr_type = e.Type;
 				}
 
-				// Predefined operators
-				if (expr_type == TypeManager.int32_type || expr_type == TypeManager.uint32_type ||
-					expr_type == TypeManager.int64_type || expr_type == TypeManager.uint64_type ||
-					TypeManager.IsEnumType (expr_type))
-				{
-					type = expr_type;
-					return this;
-				}
-
-				type = TypeManager.int32_type;
-				Expr = Convert.ImplicitUserConversion(ec, Expr, type, loc);
-				if (Expr != null)
-					return this;
-
-				Error23 (expr_type);
-				return null;
+				type = expr_type;
+				return this;
 
 			case Operator.AddressOf:
 				if (!ec.InUnsafe) {
@@ -494,65 +499,91 @@ namespace Mono.CSharp {
 				return new Indirection (Expr, loc);
 			
 			case Operator.UnaryPlus:
-				// Unary numeric promotions
-				if (expr_type == TypeManager.byte_type || expr_type == TypeManager.sbyte_type ||
-					expr_type == TypeManager.short_type || expr_type == TypeManager.ushort_type ||
-					expr_type == TypeManager.char_type) 
-				{
-					return new EmptyCast (Expr, TypeManager.int32_type);
-				}
-
-				// Predefined operators
-				if (expr_type == TypeManager.int32_type || expr_type == TypeManager.uint32_type ||
-					expr_type == TypeManager.int64_type || expr_type == TypeManager.uint64_type ||
-					expr_type == TypeManager.float_type || expr_type == TypeManager.double_type ||
-					expr_type == TypeManager.decimal_type)
-				{
-					return Expr;
-				}
-
-				Expr = Convert.ImplicitUserConversion(ec, Expr, TypeManager.int32_type, loc);
-				if (Expr != null) {
-					 // Becausew we can completely ignore unary +
-					return Expr;
-				}
-
-				Error23 (expr_type);
-				return null;
+				//
+				// A plus in front of something is just a no-op, so return the child.
+				//
+				return Expr;
 
 			case Operator.UnaryNegation:
 				//
+				// Deals with -literals
+				// int     operator- (int x)
+				// long    operator- (long x)
+				// float   operator- (float f)
+				// double  operator- (double d)
+				// decimal operator- (decimal d)
+				//
+				Expression expr = null;
+
+				//
 				// transform - - expr into expr
 				//
-				Unary u = Expr as Unary;
-				if (u != null && u.Oper == Operator.UnaryNegation) {
-					return u.Expr;
+				if (Expr is Unary){
+					Unary unary = (Unary) Expr;
+					
+					if (unary.Oper == Operator.UnaryNegation)
+						return unary.Expr;
 				}
 
-				// Unary numeric promotions
-				if (expr_type == TypeManager.byte_type || expr_type == TypeManager.sbyte_type ||
-					expr_type == TypeManager.short_type || expr_type == TypeManager.ushort_type ||
-					expr_type == TypeManager.char_type) 
-				{
-					type = TypeManager.int32_type;
-					return new EmptyCast (this, type);
+				//
+				// perform numeric promotions to int,
+				// long, double.
+				//
+				//
+				// The following is inneficient, because we call
+				// ImplicitConversion too many times.
+				//
+				// It is also not clear if we should convert to Float
+				// or Double initially.
+				//
+				if (expr_type == TypeManager.uint32_type){
+					//
+					// FIXME: handle exception to this rule that
+					// permits the int value -2147483648 (-2^31) to
+					// bt wrote as a decimal interger literal
+					//
+					type = TypeManager.int64_type;
+					Expr = Convert.ImplicitConversion (ec, Expr, type, loc);
+					return this;
 				}
 
-				// Predefined operators
-				if (expr_type == TypeManager.int32_type || expr_type == TypeManager.uint32_type ||
-					expr_type == TypeManager.int64_type ||
-					expr_type == TypeManager.float_type || expr_type == TypeManager.double_type ||
-					expr_type == TypeManager.decimal_type)
-				{
+				if (expr_type == TypeManager.uint64_type){
+					//
+					// FIXME: Handle exception of `long value'
+					// -92233720368547758087 (-2^63) to be wrote as
+					// decimal integer literal.
+					//
+					Error23 (expr_type);
+					return null;
+				}
+
+				if (expr_type == TypeManager.float_type){
 					type = expr_type;
+					Expr = Convert.ImplicitConversion (ec, Expr, type, loc);
+					return this;
+				}
+				
+				expr = Convert.ImplicitConversion (ec, Expr, TypeManager.int32_type, loc);
+				if (expr != null){
+					Expr = expr;
+					type = expr.Type;
+					return this;
+				} 
+
+				expr = Convert.ImplicitConversion (ec, Expr, TypeManager.int64_type, loc);
+				if (expr != null){
+					Expr = expr;
+					type = expr.Type;
 					return this;
 				}
 
-				type = TypeManager.int32_type;
-				Expr = Convert.ImplicitUserConversion(ec, Expr, type, loc);
-				if (Expr != null)
+				expr = Convert.ImplicitConversion (ec, Expr, TypeManager.double_type, loc);
+				if (expr != null){
+					Expr = expr;
+					type = expr.Type;
 					return this;
-
+				}
+				
 				Error23 (expr_type);
 				return null;
 			}
