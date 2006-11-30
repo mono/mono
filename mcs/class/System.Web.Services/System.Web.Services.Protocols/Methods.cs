@@ -504,7 +504,7 @@ namespace System.Web.Services.Protocols {
 		internal XmlReflectionImporter 	xmlImporter;
 		internal SoapReflectionImporter soapImporter;
 
-		public SoapTypeStubInfo (LogicalTypeInfo logicalTypeInfo)
+		public SoapTypeStubInfo (ServerType logicalTypeInfo)
 		: base (logicalTypeInfo)
 		{
 			xmlImporter = new XmlReflectionImporter ();

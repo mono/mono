@@ -1,5 +1,14 @@
 2006-11-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServerType.cs : Now LogicalTypeInfo became this type to implement
+	  this class (and SoapTypeStubInfo to SoapServerType later).
+	* TypeStubManager.cs : so, split LogicalTypeInfo from here.
+	* XmlReturnReader.cs, XmlReturnWriter.cs, Methods.cs,
+	  HttpSimpleTypeStubInfo.cs, HttpGetTypeStubInfo.cs,
+	  HttpPostTypeStubInfo.cs : LogicalTypeInfo -> ServerType.
+
+2006-11-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SoapHttpClientProtocol.cs : looks like (only) the last Text is used
 	  instead of the first one in .net.
 
