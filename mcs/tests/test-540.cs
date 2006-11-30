@@ -61,6 +61,10 @@ public class Constraint
 		int b = -lm;
 		if (b != -22)
 			return 2;
+		
+		uint ua = 2;
+		if (-ua != -2)
+			return 3;
 
 		System.Console.WriteLine ("OK");
 		return 0;
