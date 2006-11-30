@@ -1,3 +1,20 @@
+2006-11-29  Ivan N. Zlatev <contact@i-nz.net>
+
+	* MemberDescriptor.cs, ReflectionPropertyDescriptor.cs: 1) The
+	ReflectionPropretyDescriptor must be able to operate with non
+	public properties.
+
+	2) The current implementation ignores the fact that the component
+	can be in design mode. In design mode some of the properties (the
+	design-time ones) are supposed to be redirected to the
+	designer. The component which should be used to access the
+	property is retrieved by using MemberDescriptor.GetInvokee
+	(implemented in the patch). Updated the
+	ReflectorPropertyDescriptor to use GetInvokee to decide which
+	component should it use.
+
+	Reviewed by: Miguel de Icaza
+
 2006-11-28  Miguel de Icaza  <miguel@novell.com>
 
 	* TypeDescriptor.cs: This implementation is really from Gonzalo,

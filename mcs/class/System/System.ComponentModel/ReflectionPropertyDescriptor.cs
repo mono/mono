@@ -3,8 +3,8 @@
 //
 // Author:
 //  Lluis Sanchez Gual (lluis@ximian.com)
-//
-// (C) Novell, Inc.  
+//  Ivan N. Zlatev (contact i-nZ.net)
+// (C) Novell, Inc.
 //
 
 //
@@ -15,10 +15,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -40,42 +40,43 @@ namespace System.ComponentModel
 	{
 		PropertyInfo _member;
 		Type _componentType;
-		
+
 		public ReflectionPropertyDescriptor (Type componentType, PropertyDescriptor oldPropertyDescriptor, Attribute [] attributes)
 		: base (oldPropertyDescriptor, attributes)
 		{
 			_componentType = componentType;
 		}
-							 
+
 		public ReflectionPropertyDescriptor (Type componentType, string name, Type type, Attribute [] attributes)
 		: base (name, attributes)
 		{
 			_componentType = componentType;
 		}
-							 
+
 		public ReflectionPropertyDescriptor (PropertyInfo info)
 		: base (info.Name, (Attribute[])info.GetCustomAttributes (true))
 		{
 			_member = info;
 			_componentType = _member.DeclaringType;
 		}
-		
+
 		PropertyInfo GetPropertyInfo ()
 		{
 			if (_member == null) {
-				_member = _componentType.GetProperty (Name);
+				_member = _componentType.GetProperty (Name, BindingFlags.GetProperty |  BindingFlags.NonPublic |
+									BindingFlags.Public | BindingFlags.Instance);
 				if (_member == null)
 					throw new ArgumentException ("Accessor methods for the " + Name + " property are missing");
 			}
 			return _member;
-		}		
+		}
 
-		public override Type ComponentType 
-		{ 
+		public override Type ComponentType
+		{
 			get { return _componentType; }
 		}
 
-		public override bool IsReadOnly 
+		public override bool IsReadOnly
 		{
 			get
 			{
@@ -89,36 +90,37 @@ namespace System.ComponentModel
 			}
 		}
 
-		public override Type PropertyType 
+		public override Type PropertyType
 		{
 			get
 			{
 				return GetPropertyInfo ().PropertyType;
 			}
 		}
-		
+
 		public override object GetValue (object component)
 		{
+			component = MemberDescriptor.GetInvokee (_componentType, component);			
 			return GetPropertyInfo ().GetValue (component, null);
 		}
-		
+
 		DesignerTransaction CreateTransaction (object obj)
 		{
 			IComponent com = obj as IComponent;
 			if (com == null || com.Site == null)
 				return null;
-			
+
 			IDesignerHost dh = (IDesignerHost) com.Site.GetService (typeof(IDesignerHost));
 			if (dh == null)
 				return null;
-			
+
 			DesignerTransaction tran = dh.CreateTransaction ();
 			IComponentChangeService ccs = (IComponentChangeService) com.Site.GetService (typeof(IComponentChangeService));
 			if (ccs != null)
 				ccs.OnComponentChanging (com, this);
 			return tran;
 		}
-		
+
 		void EndTransaction (object obj, DesignerTransaction tran, object oldValue, object newValue, bool commit)
 		{
 			if (tran == null) {
@@ -126,7 +128,7 @@ namespace System.ComponentModel
 				OnValueChanged (obj, new PropertyChangedEventArgs (Name));
 				return;
 			}
-			
+
 			if (commit) {
 				IComponent com = obj as IComponent;
 				IComponentChangeService ccs = (IComponentChangeService) com.Site.GetService (typeof(IComponentChangeService));
@@ -138,14 +140,16 @@ namespace System.ComponentModel
 			} else
 				tran.Cancel ();
 		}
-		
+
 		public override void SetValue (object component, object value)
 		{
 			DesignerTransaction tran = CreateTransaction (component);
-			object old = GetValue (component);
 			
+			object propertyHolder = MemberDescriptor.GetInvokee (_componentType, component);
+			object old = GetValue (propertyHolder);
+
 			try {
-				GetPropertyInfo ().SetValue (component, value, null);
+				GetPropertyInfo ().SetValue (propertyHolder, value, null);
 				EndTransaction (component, tran, old, value, true);
 			} catch {
 				EndTransaction (component, tran, old, value, false);
@@ -155,26 +159,30 @@ namespace System.ComponentModel
 
 		public override void ResetValue (object component)
 		{
+			object propertyHolder = MemberDescriptor.GetInvokee (_componentType, component);
+			
 			DefaultValueAttribute attrib = ((DefaultValueAttribute) Attributes[typeof (DefaultValueAttribute)]);
-			if (attrib != null) 
-				SetValue (component, attrib.Value); 
-			
+			if (attrib != null)
+				SetValue (propertyHolder, attrib.Value);
+
 			DesignerTransaction tran = CreateTransaction (component);
-			object old = GetValue (component);
-			
+			object old = GetValue (propertyHolder);
+
 			try {
-				MethodInfo mi = component.GetType().GetMethod ("Reset" + Name, Type.EmptyTypes);
+				MethodInfo mi = propertyHolder.GetType().GetMethod ("Reset" + Name, Type.EmptyTypes);
 				if (mi != null)
-					mi.Invoke (component, null);
-				EndTransaction (component, tran, old, GetValue (component), true);
+					mi.Invoke (propertyHolder, null);
+				EndTransaction (component, tran, old, GetValue (propertyHolder), true);
 			} catch {
-				EndTransaction (component, tran, old, GetValue (component), false);
+				EndTransaction (component, tran, old, GetValue (propertyHolder), false);
 				throw;
 			}
 		}
 
 		public override bool CanResetValue (object component)
 		{
+			component = MemberDescriptor.GetInvokee (_componentType, component);
+			
 			DefaultValueAttribute attrib = ((DefaultValueAttribute) Attributes[typeof (DefaultValueAttribute)]);
 			if (attrib != null) {
 				object current = GetValue (component);
@@ -197,6 +205,8 @@ namespace System.ComponentModel
 
 		public override bool ShouldSerializeValue (object component)
 		{
+			component = MemberDescriptor.GetInvokee (_componentType, component);
+			
 			DefaultValueAttribute attrib = ((DefaultValueAttribute) Attributes[typeof (DefaultValueAttribute)]);
 			if (attrib != null) {
 				object current = GetValue (component);

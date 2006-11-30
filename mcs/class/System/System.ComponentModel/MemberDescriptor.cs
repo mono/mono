@@ -4,6 +4,7 @@
 // Author:
 //  Miguel de Icaza (miguel@ximian.com)
 //  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//  Ivan N. Zlatev <contact@i-nz.net>
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 // (C) 2003 Andreas Nahr
@@ -17,10 +18,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -34,18 +35,19 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.ComponentModel.Design;
 
 namespace System.ComponentModel
 {
 
     [ComVisible (true)]
-    public abstract class MemberDescriptor 
+    public abstract class MemberDescriptor
     {
 
         private string name;
         private Attribute [] attrs;
         private AttributeCollection attrCollection;
-		
+
         protected MemberDescriptor (string name, Attribute [] attrs)
         {
             this.name = name;
@@ -69,15 +71,15 @@ namespace System.ComponentModel
             attrs = reference.AttributeArray;
         }
 
-        protected virtual Attribute [] AttributeArray 
+        protected virtual Attribute [] AttributeArray
         {
-            get 
+            get
             {
-				if (attrs == null) 
+				if (attrs == null)
 				{
 					ArrayList list = new ArrayList ();
 					FillAttributes (list);
-					
+
 					ArrayList filtered = new ArrayList ();
 					foreach (Attribute at in list) {
 						bool found = false;
@@ -88,11 +90,11 @@ namespace System.ComponentModel
 					}
 					attrs = (Attribute[]) filtered.ToArray (typeof(Attribute));
 				}
-				
+
                 return attrs;
             }
 
-            set 
+            set
             {
                 attrs = value;
             }
@@ -105,7 +107,7 @@ namespace System.ComponentModel
 
         public virtual AttributeCollection Attributes
         {
-            get 
+            get
             {
                 if (attrCollection == null)
                     attrCollection = CreateAttributeCollection ();
@@ -117,18 +119,18 @@ namespace System.ComponentModel
         {
             return new AttributeCollection (AttributeArray);
         }
-			
-        public virtual string Category 
+
+        public virtual string Category
         {
-            get 
+            get
             {
                 return ((CategoryAttribute) Attributes [typeof (CategoryAttribute)]).Category;
             }
         }
 
-        public virtual string Description 
+        public virtual string Description
         {
-            get 
+            get
             {
                 foreach (Attribute attr in AttributeArray)
                 {
@@ -139,9 +141,9 @@ namespace System.ComponentModel
             }
         }
 
-        public virtual bool DesignTimeOnly 
+        public virtual bool DesignTimeOnly
         {
-            get 
+            get
             {
                 foreach (Attribute attr in AttributeArray)
                 {
@@ -153,25 +155,25 @@ namespace System.ComponentModel
             }
         }
 
-        public virtual string DisplayName 
+        public virtual string DisplayName
         {
-            get 
+            get
             {
                 return name;
             }
         }
 
-        public virtual string Name 
+        public virtual string Name
         {
-            get 
+            get
             {
                 return name;
             }
         }
 
-        public virtual bool IsBrowsable 
+        public virtual bool IsBrowsable
         {
-            get 
+            get
             {
                 foreach (Attribute attr in AttributeArray)
                 {
@@ -183,15 +185,15 @@ namespace System.ComponentModel
             }
         }
 
-        protected virtual int NameHashCode 
+        protected virtual int NameHashCode
         {
-            get 
+            get
             {
                 return name.GetHashCode ();
             }
         }
 
-        public override int GetHashCode() 
+        public override int GetHashCode()
         {
             return base.GetHashCode ();
         }
@@ -200,7 +202,7 @@ namespace System.ComponentModel
         {
 			MemberDescriptor other = obj as MemberDescriptor;
             if (other == null) return false;
-			
+
             return other.name == name;
         }
 
@@ -212,15 +214,21 @@ namespace System.ComponentModel
                 return null;
         }
 
-        [MonoTODO]
         protected static object GetInvokee(Type componentClass, object component)
         {
-            // FIXME WHAT should that do???
-			
-			// Lluis: Checked with VS.NET and it always return the component, even if
-			// it has its own designer set with DesignerAttribute. So, no idea
-			// what this should do.
-            return component;
+		if (component is IComponent) {
+			ISite site = ((IComponent) component).Site;
+			if (site != null && site.DesignMode) {
+				IDesignerHost host = site.GetService (typeof (IDesignerHost)) as IDesignerHost;
+				if (host != null) {
+					IDesigner designer = host.GetDesigner ((IComponent) component);
+					if (designer != null && componentClass.IsInstanceOfType (designer)) {
+						component = designer;
+					}
+				}
+			}
+		}
+		return component;
         }
 
         protected static MethodInfo FindMethod(Type componentClass, string name, 
