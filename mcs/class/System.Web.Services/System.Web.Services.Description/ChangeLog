@@ -1,5 +1,10 @@
 2006-11-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SoapProtocolReflector.cs : Added alias HeaderInfo to
+	  SoapHeaderMapping. Renamed some properties.
+
+2006-11-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpSimpleProtocolReflector.cs : LogicalTypeInfo -> ServerType.
 
 2006-11-30  Atsushi Enomoto  <atsushi@ximian.com>

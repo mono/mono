@@ -29,6 +29,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using HeaderInfo = System.Web.Services.Protocols.SoapHeaderMapping;
+
 using System.ComponentModel;
 using System.IO;
 using System.Web.Services;
@@ -206,7 +208,7 @@ namespace System.Web.Services.Protocols {
 			Headers.Clear ();
 			foreach (HeaderInfo hi in headers) 
 			{
-				if ((hi.Direction & direction) != 0 && !hi.IsUnknownHeader) 
+				if ((hi.Direction & direction) != 0 && !hi.Custom) 
 				{
 					SoapHeader headerVal = hi.GetHeaderValue (target) as SoapHeader;
 					if (headerVal != null)
@@ -222,7 +224,7 @@ namespace System.Web.Services.Protocols {
 				HeaderInfo hinfo = FindHeader (headersInfo, header.GetType ());
 				if (hinfo != null) {
 					hinfo.SetHeaderValue (target, header);
-					header.DidUnderstand = !hinfo.IsUnknownHeader;
+					header.DidUnderstand = !hinfo.Custom;
 				}
 			}
 		}
@@ -234,7 +236,7 @@ namespace System.Web.Services.Protocols {
 			foreach (HeaderInfo headerInfo in headersInfo) {
 				if (headerInfo.HeaderType == headerType)
 					return headerInfo;
-				else if (headerInfo.IsUnknownHeader) 
+				else if (headerInfo.Custom) 
 					unknownHeaderInfo = headerInfo;
 			}
 			return unknownHeaderInfo;

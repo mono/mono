@@ -29,6 +29,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using HeaderInfo = System.Web.Services.Protocols.SoapHeaderMapping;
+
 using System.Reflection;
 using System.Collections;
 using System.Xml;
@@ -223,7 +225,7 @@ namespace System.Web.Services.Protocols {
 				
 				HeaderInfo header = new HeaderInfo (mems[0], att);
 				allHeaderList.Add (header);
-				if (!header.IsUnknownHeader) {
+				if (!header.Custom) {
 					if ((header.Direction & SoapHeaderDirection.In) != 0)
 						inHeaderList.Add (header);
 					if ((header.Direction & SoapHeaderDirection.Out) != 0)
@@ -426,64 +428,6 @@ namespace System.Web.Services.Protocols {
 			return hs;
 		}
 	}
-
-	internal class HeaderInfo
-	{
-		internal MemberInfo Member;
-		internal SoapHeaderAttribute AttributeInfo;
-		internal Type HeaderType;
-		internal bool IsUnknownHeader;
-
-		public HeaderInfo (MemberInfo member, SoapHeaderAttribute attributeInfo)
-		{
-			Member = member;
-			AttributeInfo = attributeInfo;
-			if (Member is PropertyInfo) HeaderType = ((PropertyInfo)Member).PropertyType;
-			else HeaderType = ((FieldInfo)Member).FieldType;
-			
-			if (HeaderType == typeof(SoapHeader) || HeaderType == typeof(SoapUnknownHeader) ||
-				HeaderType == typeof(SoapHeader[]) || HeaderType == typeof(SoapUnknownHeader[]))
-			{
-				IsUnknownHeader = true;
-			}
-			else if (!typeof(SoapHeader).IsAssignableFrom (HeaderType))
-				throw new InvalidOperationException (string.Format ("Header members type must be a SoapHeader subclass"));
-		}
-		
-		public object GetHeaderValue (object ob)
-		{
-			if (Member is PropertyInfo) return ((PropertyInfo)Member).GetValue (ob, null);
-			else return ((FieldInfo)Member).GetValue (ob);
-		}
-
-		public void SetHeaderValue (object ob, SoapHeader header)
-		{
-			object value = header;
-			if (IsUnknownHeader && HeaderType.IsArray)
-			{
-				SoapUnknownHeader uheader = header as SoapUnknownHeader;
-				SoapUnknownHeader[] array = (SoapUnknownHeader[]) GetHeaderValue (ob);
-				if (array == null || array.Length == 0) {
-					value = new SoapUnknownHeader[] { uheader };
-				}
-				else {
-					SoapUnknownHeader[] newArray = new SoapUnknownHeader [array.Length+1];
-					Array.Copy (array, newArray, array.Length);
-					newArray [array.Length] = uheader;
-					value = newArray;
-				}
-			}
-			
-			if (Member is PropertyInfo) ((PropertyInfo)Member).SetValue (ob, value, null);
-			else ((FieldInfo)Member).SetValue (ob, value);
-		}
-		
-		public SoapHeaderDirection Direction
-		{
-			get { return AttributeInfo.Direction; }
-		}
-	}
-
 
 	//
 	// Holds the metadata loaded from the type stub, as well as

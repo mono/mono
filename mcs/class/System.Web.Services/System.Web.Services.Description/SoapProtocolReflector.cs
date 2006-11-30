@@ -95,9 +95,9 @@ namespace System.Web.Services.Description {
 			AddOperationMsgBindings (method, OperationBinding.Input);
 			AddOperationMsgBindings (method, OperationBinding.Output);
 
-			foreach (HeaderInfo hf in method.Headers)
+			foreach (SoapHeaderMapping hf in method.Headers)
 			{
-				if (hf.IsUnknownHeader) continue;
+				if (hf.Custom) continue;
 				
 				Message msg = new Message ();
 				msg.Name = Operation.Name + hf.HeaderType.Name;

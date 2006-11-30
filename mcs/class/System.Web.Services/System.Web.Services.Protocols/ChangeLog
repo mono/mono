@@ -1,5 +1,13 @@
 2006-11-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SoapHeaderMapping.cs : Now HeaderInfo became this type to implement
+	  this class. Remapped some members (e.g. IsUnknownHeader -> Custom).
+	* Methods.cs : so, split HeaderInfo from here.
+	* SoapMessage.cs : Added alias HeaderInfo to SoapHeaderMapping.
+	  Renamed some properties.
+
+2006-11-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServerType.cs : Now LogicalTypeInfo became this type to implement
 	  this class (and SoapTypeStubInfo to SoapServerType later).
 	* TypeStubManager.cs : so, split LogicalTypeInfo from here.
