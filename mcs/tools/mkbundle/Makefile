@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 PROGRAM = $(topdir)/class/lib/$(PROFILE)/mkbundle.exe
 
-OTHER_RES = template.c template_z.c
+OTHER_RES = template.c template_z.c template_main.c
 
 RESOURCE_FILES = $(OTHER_RES)
 

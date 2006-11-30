@@ -30,6 +30,7 @@ class MakeBundle {
 	static string config_dir = null;
 	static string style = "linux";
 	static bool compress;
+	static bool nomain;
 	
 	static int Main (string [] args)
 	{
@@ -111,6 +112,9 @@ class MakeBundle {
 				break;
 			case "-z":
 				compress = true;
+				break;
+			case "--nomain":
+				nomain = true;
 				break;
 			default:
 				sources.Add (args [i]);
@@ -333,8 +337,16 @@ class MakeBundle {
 			StreamReader s = new StreamReader (template_stream);
 			string template = s.ReadToEnd ();
 			tc.Write (template);
-			tc.Close ();
+
+			if (!nomain) {
+				Stream template_main_stream = Assembly.GetAssembly (typeof(MakeBundle)).GetManifestResourceStream ("template_main.c");
+				StreamReader st = new StreamReader (template_main_stream);
+				string maintemplate = st.ReadToEnd ();
+				tc.Write (maintemplate);
+			}
 			
+			tc.Close ();
+
 			if (compile_only)
 				return;
 
@@ -482,6 +494,7 @@ class MakeBundle {
 				   "    --config F      Bundle system config file `F'\n" +
 				   "    --config-dir D  Set MONO_CFG_DIR to `D'\n" +
 				   "    --static        Statically link to mono libs\n" +
+				   "    --nomain        Don't include a main() function, for libraries\n" +
 				   "    -z              Compress the assemblies before embedding.\n");
 	}
 

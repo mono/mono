@@ -1,3 +1,12 @@
+2006-11-29  Joshua Tauberer  <jit@occams.info>
+
+	* mkbundle.cs: Added --nomain option to create the host.c file
+	  without a main() function so that it can be used in libraries.
+	* Added: template_main.c, the template for the main() function.
+	* template(_z).c: Factored out the main() method bits and left
+	  a mono_mkbundle_init() function which is called from main(),
+	  or should be called by the user library.
+
 2006-11-01  Robert Jordan  <robertj@gmx.net>
 
 	* Makefile: Enable the NET_2_0 build.
