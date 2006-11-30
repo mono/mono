@@ -1,3 +1,8 @@
+2006-11-30  Mike Kestner  <mkestner@novell.com>
+
+	* ComboBox.cs: fixes for LargeChange and Maximum to get the 
+	scroll range correct.  Fixes #79994.
+
 2006-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com>
 
 	* MdiWindowManager.cs: Update main form's text when

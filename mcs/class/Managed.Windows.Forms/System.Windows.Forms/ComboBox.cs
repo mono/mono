@@ -1639,6 +1639,8 @@ namespace System.Windows.Forms
 					}
 				}
 				
+				page_size = height / owner.ItemHeight;
+
 				if (owner.Items.Count <= owner.MaxDropDownItems) {					
 					if (vscrollbar_ctrl != null)
 						vscrollbar_ctrl.Visible = false;
@@ -1658,8 +1660,11 @@ namespace System.Windows.Forms
 							
 					vscrollbar_ctrl.Location = new Point (width - vscrollbar_ctrl.Width - BorderWidth - 1, 0);
 
-					vscrollbar_ctrl.Maximum = owner.Items.Count - (owner.DropDownStyle == ComboBoxStyle.Simple ? page_size : owner.maxdrop_items);
-					vscrollbar_ctrl.LargeChange = owner.MaxDropDownItems - 1;
+					vscrollbar_ctrl.Maximum = owner.Items.Count - 2;
+					int large = (owner.DropDownStyle == ComboBoxStyle.Simple ? page_size : owner.maxdrop_items) - 1;
+					if (large < 0)
+						large = 0;
+					vscrollbar_ctrl.LargeChange = large;
 					show_scrollbar = vscrollbar_ctrl.Visible = true;
 
 					int hli = HighlightedIndex;
@@ -1678,7 +1683,6 @@ namespace System.Windows.Forms
 					textarea_drawable.Width -= vscrollbar_ctrl.Width;
 
 				last_item = LastVisibleItem ();
-				page_size = textarea_drawable.Height / owner.ItemHeight;
 			}			
 
 			private void Draw (Rectangle clip, Graphics dc)
@@ -1866,7 +1870,7 @@ namespace System.Windows.Forms
 				if (delta == 0 || vscrollbar_ctrl == null || !vscrollbar_ctrl.Visible)
 					return;
 
-				int max = vscrollbar_ctrl.Maximum;//- (page_size) + 1;
+				int max = owner.Items.Count - page_size;
 
 				int val = vscrollbar_ctrl.Value + delta;
 				if (val > max)
