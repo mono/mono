@@ -330,7 +330,6 @@ namespace Mono.CSharp {
 			}
 			
 			Expression e = (this is EnumConstant) ? ((EnumConstant)this).Child : this;
-			Console.WriteLine ("Converting {0} -> {1}", Type.ToString (), target.ToString());
 			bool b = Convert.ExplicitNumericConversion (e, target) != null;
 
 			if (b || Convert.ExplicitReferenceConversionExists (Type, target) ||
@@ -537,64 +536,6 @@ namespace Mono.CSharp {
 		{
 			eclass = ExprClass.Invalid;
 			type = null;
-		}
-
-		/// <summary>
-		///   Returns a literalized version of a literal FieldInfo
-		/// </summary>
-		///
-		/// <remarks>
-		///   The possible return values are:
-		///      IntConstant, UIntConstant
-		///      LongLiteral, ULongConstant
-		///      FloatConstant, DoubleConstant
-		///      StringConstant
-		///
-		///   The value returned is already resolved.
-		/// </remarks>
-		public static Constant Constantify (object v, Type t)
-		{
-			if (t == TypeManager.int32_type)
-				return new IntConstant ((int) v, Location.Null);
-			else if (t == TypeManager.uint32_type)
-				return new UIntConstant ((uint) v, Location.Null);
-			else if (t == TypeManager.int64_type)
-				return new LongConstant ((long) v, Location.Null);
-			else if (t == TypeManager.uint64_type)
-				return new ULongConstant ((ulong) v, Location.Null);
-			else if (t == TypeManager.float_type)
-				return new FloatConstant ((float) v, Location.Null);
-			else if (t == TypeManager.double_type)
-				return new DoubleConstant ((double) v, Location.Null);
-			else if (t == TypeManager.string_type)
-				return new StringConstant ((string) v, Location.Null);
-			else if (t == TypeManager.short_type)
-				return new ShortConstant ((short)v, Location.Null);
-			else if (t == TypeManager.ushort_type)
-				return new UShortConstant ((ushort)v, Location.Null);
-			else if (t == TypeManager.sbyte_type)
-				return new SByteConstant ((sbyte)v, Location.Null);
-			else if (t == TypeManager.byte_type)
-				return new ByteConstant ((byte)v, Location.Null);
-			else if (t == TypeManager.char_type)
-				return new CharConstant ((char)v, Location.Null);
-			else if (t == TypeManager.bool_type)
-				return new BoolConstant ((bool) v, Location.Null);
-			else if (t == TypeManager.decimal_type)
-				return new DecimalConstant ((decimal) v, Location.Null);
-			else if (TypeManager.IsEnumType (t)){
-				Type real_type = TypeManager.TypeToCoreType (v.GetType ());
-				if (real_type == t)
-					real_type = System.Enum.GetUnderlyingType (real_type);
-
-				Constant e = Constantify (v, real_type);
-
-				return new EnumConstant (e, t);
-			} else if (v == null && !TypeManager.IsValueType (t))
-				return new NullLiteral (Location.Null);
-			else
-				throw new Exception ("Unknown type for constant (" + t +
-						     "), details: " + v);
 		}
 
 		/// <summary>
@@ -3196,7 +3137,7 @@ namespace Mono.CSharp {
 						ic.CheckObsoleteness (loc);
 				}
 
-				return ic.Value;
+				return ic.CreateConstantReference (loc);
 			}
 			
 			if (t.IsPointer && !ec.InUnsafe) {
