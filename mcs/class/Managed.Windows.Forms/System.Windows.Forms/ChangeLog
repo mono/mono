@@ -1,5 +1,11 @@
 2006-11-29  Chris Toshok  <toshok@ximian.com>
 
+	* XplatUIWin32.cs (GetWindowTransparency): check return value of
+	GetLayeredWindowAttributes.  if it's 0, return 1.0, as
+	SetWindowTransparency hasn't been called.
+
+2006-11-29  Chris Toshok  <toshok@ximian.com>
+
 	* Form.cs (set_TransparencyKey): only call SetWindowTransparency
 	if it's supported.
 	(set_AllowTransparency): reorder things a little so that the

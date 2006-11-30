@@ -1219,7 +1219,8 @@ namespace System.Windows.Forms {
 			COLORREF clrRef;
 			byte alpha;
 
-			Win32GetLayeredWindowAttributes (handle, out clrRef, out alpha, out lwa);
+			if (0 == Win32GetLayeredWindowAttributes (handle, out clrRef, out alpha, out lwa))
+				return 1.0;
 
 			return ((double)alpha) / 255.0;
 		}
