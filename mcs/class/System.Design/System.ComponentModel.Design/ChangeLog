@@ -1,3 +1,10 @@
+2006-11-29  Miguel de Icaza  <miguel@novell.com>
+
+	* ComponentDesigner.cs: Remove a few exceptions being thrown from
+	a few popular calls.   This will just make code that is
+	automatically generated to run, it will not actually provide any
+	real designer functionality.
+
 2005-10-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ComponentDesigner.cs: Added a call to GC.SuppressFinalize in Dispose

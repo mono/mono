@@ -6,6 +6,12 @@
 //
 // (C) 2003 Martin Willemoes Hansen
 //
+// An implementation should be derived from the description here:
+// "Writing Custom Designers for .NET Components"
+//
+// http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dndotnet/html/custdsgnrdotnet.asp
+//
+//
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -36,28 +42,36 @@ namespace System.ComponentModel.Design
 	{
 		protected sealed class ShadowPropertyCollection
 		{
-			public object this[string propertyName]
-			{
-				[MonoTODO]
-				get { throw new NotImplementedException (); }
+			Hashtable collection;
+			
+			public object this[string propertyName] {
+				get {
+					if (collection == null)
+						return null;
+					
+					return collection [propertyName];
+				}
 
-				[MonoTODO]
-				set { throw new NotImplementedException (); }
+				set {
+					if (collection == null)
+						collection = new Hashtable ();
+					
+					collection [propertyName] = value;
+				}
 			}
 
-			[MonoTODO]
 			public bool Contains (string propertyName)
 			{
-				throw new NotImplementedException ();
-			}
+				if (collection == null)
+					return null;
 
-			[MonoTODO]
-			~ShadowPropertyCollection ()
-			{
+				return collection.Contains (propertyName);
 			}
 		}
 
-		[MonoTODO]
+		IComponent component;
+		ShadowPropertyCollection shadow_property_collection;
+		
 		public ComponentDesigner ()
 		{
 		}
@@ -104,39 +118,41 @@ namespace System.ComponentModel.Design
 
 		public IComponent Component
 		{
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				return component;
+			}
 		}
 
 		public virtual DesignerVerbCollection Verbs
 		{
 			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				if (verbs == null) 
+					verbs = new DesignerVerbCollection();
+
+				return verbs;
+			}
 		}
 
-		[MonoTODO]
 		public void Dispose ()
 		{
+			Dispose (true);
 			GC.SuppressFinalize (this);
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected virtual void Dispose (bool disposing)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented, currently does nothing")]
 		public virtual void DoDefaultAction ()
 		{
-			throw new NotImplementedException ();
+			
 		}
 
-		[MonoTODO]
 		public virtual void Initialize (IComponent component)
 		{
-			throw new NotImplementedException ();
+			this.component = component;
 		}
 
 		[MonoTODO]
@@ -166,14 +182,17 @@ namespace System.ComponentModel.Design
 
 		protected ShadowPropertyCollection ShadowProperties
 		{
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				if (shadow_property_collection == null)
+					shadow_property_collection = new ShadowPropertyCollection ();
+				return shadow_property_collection;
+			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("No designers services are provided in Mono")]
 		protected virtual object GetService (Type serviceType)
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
 		[MonoTODO]
@@ -218,19 +237,19 @@ namespace System.ComponentModel.Design
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Currently no event is raised")]
 		protected void RaiseComponentChanged (MemberDescriptor member, object oldValue, object newValue)
 		{
-			throw new NotImplementedException ();
+			// FIXME: Should notify the IComponentChangeService
+			// that this component has changed
 		}
 
-		[MonoTODO]
+		[MonoTODO("Currently no event is raised")]
 		protected void RaiseComponentChanging (MemberDescriptor member)
 		{
-			throw new NotImplementedException ();
+			
 		}
 
-		[MonoTODO]
 		~ComponentDesigner ()
 		{
 		}
