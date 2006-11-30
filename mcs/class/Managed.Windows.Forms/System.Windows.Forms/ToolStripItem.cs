@@ -45,7 +45,6 @@ namespace System.Windows.Forms
 		private ToolStripItemAlignment alignment;
 		private bool auto_size;
 		private bool auto_tool_tip;
-		private bool available;
 		private Color back_color;
 		private Rectangle bounds;
 		private bool can_select;
@@ -59,7 +58,7 @@ namespace System.Windows.Forms
 		private ContentAlignment image_align;
 		private int image_index;
 		private ToolStripItemImageScaling image_scaling;
-		protected bool is_pressed;
+		internal bool is_pressed;
 		private bool is_selected;
 		private Padding margin;
 		private string name;
@@ -74,7 +73,7 @@ namespace System.Windows.Forms
 		private bool visible;
 
 		private ToolStrip parent;
-		internal Size text_size;
+		private Size text_size;
 		#endregion
 
 		#region Public Constructors
@@ -93,7 +92,6 @@ namespace System.Windows.Forms
 			this.alignment = ToolStripItemAlignment.Left;
 			this.auto_size = true;
 			this.auto_tool_tip = this.DefaultAutoToolTip;
-			this.available = true;
 			this.back_color = Control.DefaultBackColor;
 			this.display_style = this.DefaultDisplayStyle;
 			this.dock = DockStyle.None;
@@ -114,8 +112,8 @@ namespace System.Windows.Forms
 			this.visible = true;
 
 			this.Click = onClick;
-			this.can_select = this is ToolStripMenuItem ? true : false;
-			OnLayout (new LayoutEventArgs (null, ""));
+			this.can_select = this is ToolStripMenuItem || this is ToolStripDropDownButton || this is ToolStripSplitButton ? true : false;
+			OnLayout (new LayoutEventArgs (null, string.Empty));
 		}
 		#endregion
 
@@ -243,6 +241,9 @@ namespace System.Windows.Forms
 				// ToolStripLabels don't have a border
 				if (this is ToolStripLabel)
 					return new Rectangle (0, 0, this.bounds.Width, this.bounds.Height);
+
+				if (this is ToolStripDropDownButton && (this as ToolStripDropDownButton).ShowDropDownArrow)
+					return new Rectangle (2, 2, this.bounds.Width - 13, this.bounds.Height - 4);
 
 				return new Rectangle (2, 2, this.bounds.Width - 4, this.bounds.Height - 4);
 			}
@@ -377,6 +378,13 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Localizable (true)]
+		[MonoTODO ("Stub, doesn't actually do anything yet.")]
+		public Color ImageTransparentColor {
+			get { return Color.Transparent; }
+			set { }
+		}
+		
 		[Browsable (false)]
 		public bool IsOnDropDown {
 			get {
@@ -615,6 +623,11 @@ namespace System.Windows.Forms
 		{
 			return new ToolStripItemAccessibleObject (this);
 		}
+
+		protected override void Dispose (bool disposing)
+		{
+			base.Dispose (disposing);
+		}
 		
 		protected virtual void OnAvailableChanged (EventArgs e)
 		{
@@ -675,20 +688,20 @@ namespace System.Windows.Forms
 		protected virtual void OnMouseDown (MouseEventArgs e)
 		{
 			if (this.Enabled) {
-				if (MouseDown != null) MouseDown (this, e);
 				this.is_pressed = true;
 				this.Invalidate ();
+				if (MouseDown != null) MouseDown (this, e);
 			}
 		}
 
 		protected virtual void OnMouseEnter (EventArgs e)
 		{
-			if (MouseEnter != null) MouseEnter (this, e);
-			
 			if (this.CanSelect) {
 				this.is_selected = true;
 				this.Invalidate ();
 			}
+			
+			if (MouseEnter != null) MouseEnter (this, e);
 		}
 
 		protected virtual void OnMouseHover (EventArgs e)
@@ -699,13 +712,13 @@ namespace System.Windows.Forms
 
 		protected virtual void OnMouseLeave (EventArgs e)
 		{
-			if (MouseLeave != null) MouseLeave (this, e);
-			
 			if (this.CanSelect) {
 				this.is_selected = false;
 				this.is_pressed = false;
 				this.Invalidate ();
 			}
+			
+			if (MouseLeave != null) MouseLeave (this, e);
 		}
 
 		protected virtual void OnMouseMove (MouseEventArgs e)
@@ -717,9 +730,9 @@ namespace System.Windows.Forms
 		protected virtual void OnMouseUp (MouseEventArgs e)
 		{
 			if (this.Enabled) {
-				if (MouseUp != null) MouseUp (this, e);
 				this.is_pressed = false;
 				this.Invalidate ();
+				if (MouseUp != null) MouseUp (this, e);
 			}
 		}
 
@@ -805,7 +818,7 @@ namespace System.Windows.Forms
 			if (!this.auto_size || this is ToolStripControlHost)
 				return;
 
-			this.text_size = TextRenderer.MeasureText (this.Text, this.Font);
+			this.text_size = TextRenderer.MeasureText (this.Text, this.Font, Size.Empty, TextFormatFlags.HidePrefix);
 			//this.text_size.Width += 6;
 
 			Size final_size = this.CalculatePreferredSize (Size.Empty);
@@ -876,12 +889,22 @@ namespace System.Windows.Forms
 				preferred_size.Width += 4;
 			}
 			
+			// Account for ToolStripDropDownButton's drop down arrow
+			if (this is ToolStripDropDownButton && (this as ToolStripDropDownButton).ShowDropDownArrow)
+				preferred_size.Width += 9;
+				
 			if (preferred_size.Width < 23)
 				preferred_size.Width = 23;		// There seems to be a minimum width of 23
+
 			return preferred_size;
 		}
 
 		internal void CalculateTextAndImageRectangles (out Rectangle text_rect, out Rectangle image_rect)
+		{
+			this.CalculateTextAndImageRectangles (this.ContentRectangle, out text_rect, out image_rect);
+		}
+		
+		internal void CalculateTextAndImageRectangles (Rectangle contentRectangle, out Rectangle text_rect, out Rectangle image_rect)
 		{
 			text_rect = Rectangle.Empty;
 			image_rect = Rectangle.Empty;
@@ -891,17 +914,17 @@ namespace System.Windows.Forms
 					break;
 				case ToolStripItemDisplayStyle.Text:
 					if (this.text != string.Empty)
-						text_rect = AlignInRectangle (this.ContentRectangle, this.text_size, this.text_align);
+						text_rect = AlignInRectangle (contentRectangle, this.text_size, this.text_align);
 					break;
 				case ToolStripItemDisplayStyle.Image:
 					if (this.image != null)
-						image_rect = AlignInRectangle (this.ContentRectangle, this.image.Size, this.image_align);
+						image_rect = AlignInRectangle (contentRectangle, this.image.Size, this.image_align);
 					break;
 				case ToolStripItemDisplayStyle.ImageAndText:
 					if (this.text != string.Empty && this.image == null)
-						text_rect = AlignInRectangle (this.ContentRectangle, this.text_size, this.text_align);
+						text_rect = AlignInRectangle (contentRectangle, this.text_size, this.text_align);
 					else if (this.text == string.Empty && this.image != null)
-						image_rect = AlignInRectangle (this.ContentRectangle, this.image.Size, this.image_align);
+						image_rect = AlignInRectangle (contentRectangle, this.image.Size, this.image_align);
 					else if (this.text == string.Empty && this.image == null)
 						break;
 					else {
@@ -910,33 +933,33 @@ namespace System.Windows.Forms
 
 						switch (this.text_image_relation) {
 							case TextImageRelation.Overlay:
-								text_rect = AlignInRectangle (this.ContentRectangle, this.text_size, this.text_align);
-								image_rect = AlignInRectangle (this.ContentRectangle, this.image.Size, this.image_align);
+								text_rect = AlignInRectangle (contentRectangle, this.text_size, this.text_align);
+								image_rect = AlignInRectangle (contentRectangle, this.image.Size, this.image_align);
 								break;
 							case TextImageRelation.ImageAboveText:
-								text_area = new Rectangle (this.ContentRectangle.Left, this.ContentRectangle.Bottom - (text_size.Height - 4), this.ContentRectangle.Width, text_size.Height - 4);
-								image_area = new Rectangle (this.ContentRectangle.Left, this.ContentRectangle.Top, this.ContentRectangle.Width, this.ContentRectangle.Height - text_area.Height);
+								text_area = new Rectangle (contentRectangle.Left, contentRectangle.Bottom - (text_size.Height - 4), contentRectangle.Width, text_size.Height - 4);
+								image_area = new Rectangle (contentRectangle.Left, contentRectangle.Top, contentRectangle.Width, contentRectangle.Height - text_area.Height);
 
 								text_rect = AlignInRectangle (text_area, this.text_size, this.text_align);
 								image_rect = AlignInRectangle (image_area, this.image.Size, this.image_align);
 								break;
 							case TextImageRelation.TextAboveImage:
-								text_area = new Rectangle (this.ContentRectangle.Left, this.ContentRectangle.Top, this.ContentRectangle.Width, text_size.Height - 4);
-								image_area = new Rectangle (this.ContentRectangle.Left, text_area.Bottom, this.ContentRectangle.Width, this.ContentRectangle.Height - text_area.Height);
+								text_area = new Rectangle (contentRectangle.Left, contentRectangle.Top, contentRectangle.Width, text_size.Height - 4);
+								image_area = new Rectangle (contentRectangle.Left, text_area.Bottom, contentRectangle.Width, contentRectangle.Height - text_area.Height);
 
 								text_rect = AlignInRectangle (text_area, this.text_size, this.text_align);
 								image_rect = AlignInRectangle (image_area, this.image.Size, this.image_align);
 								break;
 							case TextImageRelation.ImageBeforeText:
-								text_area = new Rectangle (this.ContentRectangle.Right - this.text_size.Width, this.ContentRectangle.Top, this.text_size.Width, this.ContentRectangle.Height);
-								image_area = new Rectangle (this.ContentRectangle.Left, this.ContentRectangle.Top, text_area.Left - this.ContentRectangle.Left, this.ContentRectangle.Height);
+								text_area = new Rectangle (contentRectangle.Right - this.text_size.Width, contentRectangle.Top, this.text_size.Width, contentRectangle.Height);
+								image_area = new Rectangle (contentRectangle.Left, contentRectangle.Top, text_area.Left - contentRectangle.Left, contentRectangle.Height);
 
 								text_rect = AlignInRectangle (text_area, this.text_size, this.text_align);
 								image_rect = AlignInRectangle (image_area, this.image.Size, this.image_align);
 								break;
 							case TextImageRelation.TextBeforeImage:
-								text_area = new Rectangle (this.ContentRectangle.Left, this.ContentRectangle.Top, this.text_size.Width, this.ContentRectangle.Height);
-								image_area = new Rectangle (text_area.Right, this.ContentRectangle.Top, this.ContentRectangle.Width - text_area.Width, this.ContentRectangle.Height);
+								text_area = new Rectangle (contentRectangle.Left, contentRectangle.Top, this.text_size.Width, contentRectangle.Height);
+								image_area = new Rectangle (text_area.Right, contentRectangle.Top, contentRectangle.Width - text_area.Width, contentRectangle.Height);
 
 								text_rect = AlignInRectangle (text_area, this.text_size, this.text_align);
 								image_rect = AlignInRectangle (image_area, this.image.Size, this.image_align);

@@ -723,7 +723,7 @@ namespace System.Windows.Forms
 			minimum_size = new Size();
 			preferred_size = new Size();
 			margin = this.DefaultMargin;
-			layout_engine = new Layout.DefaultLayout();
+			layout_engine = this.LayoutEngine;
 #endif
 
 			control_style = ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | 
@@ -2185,7 +2185,7 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 		public virtual Layout.LayoutEngine LayoutEngine {
-			get { return this.layout_engine; }
+			get { return new Layout.DefaultLayout (); }
 		} 
 #endif
 

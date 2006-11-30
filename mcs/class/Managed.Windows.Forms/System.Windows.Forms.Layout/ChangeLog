@@ -1,3 +1,7 @@
+2006-11-30  Jonathan Pobst <monkey@jpobst.com>
+	* ArrangedElementCollection.cs: Make constructor internal.
+	* FlowLayout.cs: Make work with ToolStrip.
+
 2006-10-02  Jonathan Pobst <monkey@jpobst.com>
 	* ArrangedElementCollection.cs: Initial commit.
 

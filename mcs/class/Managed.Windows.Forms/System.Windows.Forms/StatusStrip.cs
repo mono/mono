@@ -40,14 +40,13 @@ namespace System.Windows.Forms
 	{
 		private ToolStripLayoutStyle layout_style;
 		private bool sizing_grip;
-		private bool stretch;
 		
 		public StatusStrip ()
 		{
 			this.GripStyle = ToolStripGripStyle.Hidden;
 			this.layout_style = ToolStripLayoutStyle.Table;
 			this.sizing_grip = false;
-			this.stretch = true;
+			base.stretch = true;
 		}
 
 		#region Public Properties

@@ -37,44 +37,71 @@ namespace System.Windows.Forms
 	{
 		public override bool Layout (object container, LayoutEventArgs args)
 		{
-			ToolStrip ts = (ToolStrip)container;
+			if (container is ToolStrip)
+			{
+				ToolStrip ts = (ToolStrip)container;
 
-			if (ts.Orientation == Orientation.Horizontal) {
+				if (ts.Orientation == Orientation.Horizontal) {
+					int x = ts.DisplayRectangle.Left;
+					if (!(ts is MenuStrip))
+						x += 2;
+					int y = ts.DisplayRectangle.Top;
+
+					foreach (ToolStripItem tsi in ts.Items) {
+						if (!tsi.Visible)
+							continue;
+							
+						Rectangle new_bounds = new Rectangle ();
+
+						x += tsi.Margin.Left;
+
+						new_bounds.Location = new Point (x, y + (tsi is ToolStripSeparator ? 0 : tsi.Margin.Top));
+						new_bounds.Height = ts.DisplayRectangle.Height - tsi.Margin.Vertical;
+						new_bounds.Width = tsi.GetPreferredSize (new Size (0, new_bounds.Height)).Width;
+
+						tsi.SetBounds (new_bounds);
+
+						x += new_bounds.Width + tsi.Margin.Right;
+					}
+				}
+				else {
+					int x = ts.DisplayRectangle.Left;
+					int y = ts.DisplayRectangle.Top + 2;
+
+					foreach (ToolStripItem tsi in ts.Items) {
+						if (!tsi.Visible)
+							continue;
+						
+						Rectangle new_bounds = new Rectangle ();
+
+						y += tsi.Margin.Top;
+
+						new_bounds.Location = new Point (x + (tsi is ToolStripSeparator ? 0 : tsi.Margin.Left), y);
+						new_bounds.Width = ts.DisplayRectangle.Width - tsi.Margin.Horizontal - 3;
+						new_bounds.Height = tsi.GetPreferredSize (new Size (new_bounds.Width, 0)).Height;
+
+						tsi.SetBounds (new_bounds);
+
+						y += new_bounds.Height + tsi.Margin.Bottom;
+					}
+				}
+			} else	{
+				ToolStripContentPanel ts = (ToolStripContentPanel)container;
 				int x = ts.DisplayRectangle.Left;
-				if (!(ts is MenuStrip))
-					x += 2;
 				int y = ts.DisplayRectangle.Top;
 
-				foreach (ToolStripItem tsi in ts.Items) {
+				foreach (ToolStrip tsi in ts.Controls) {
 					Rectangle new_bounds = new Rectangle ();
 
 					x += tsi.Margin.Left;
 
-					new_bounds.Location = new Point (x, y + (tsi is ToolStripSeparator ? 0 : tsi.Margin.Top));
+					new_bounds.Location = new Point (x, y + tsi.Margin.Top);
 					new_bounds.Height = ts.DisplayRectangle.Height - tsi.Margin.Vertical;
 					new_bounds.Width = tsi.GetPreferredSize (new Size (0, new_bounds.Height)).Width;
 
-					tsi.SetBounds (new_bounds);
+					tsi.Width = new_bounds.Width + 12;
 
 					x += new_bounds.Width + tsi.Margin.Right;
-				}
-			}
-			else {
-				int x = ts.DisplayRectangle.Left;
-				int y = ts.DisplayRectangle.Top + 2;
-
-				foreach (ToolStripItem tsi in ts.Items) {
-					Rectangle new_bounds = new Rectangle ();
-
-					y += tsi.Margin.Top;
-
-					new_bounds.Location = new Point (x + (tsi is ToolStripSeparator ? 0 : tsi.Margin.Left), y);
-					new_bounds.Width = ts.DisplayRectangle.Width - tsi.Margin.Horizontal - 3;
-					new_bounds.Height = tsi.GetPreferredSize (new Size (new_bounds.Width, 0)).Height;
-
-					tsi.SetBounds (new_bounds);
-
-					y += new_bounds.Height + tsi.Margin.Bottom;
 				}
 			}
 

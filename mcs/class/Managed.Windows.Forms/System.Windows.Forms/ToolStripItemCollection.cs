@@ -89,9 +89,12 @@ namespace System.Windows.Forms
 
 			value.Owner = owner;
 			value.Parent = owner;
+			
+			int index = base.Add (value);
+			
 			owner.PerformLayout ();
 			owner.OnItemAdded (new ToolStripItemEventArgs (value));
-			return base.Add (value);
+			return index;
 		}
 
 		public ToolStripItem Add (string text, Image image)

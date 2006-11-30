@@ -1848,7 +1848,7 @@ namespace System.Windows.Forms {
 				case Msg.WM_SYSCOMMAND: {
 					// Let *Strips know the app's title bar was clicked
 					if (XplatUI.IsEnabled (Handle))
-						ToolStripMenuTracker.FireAppClicked ();
+						ToolStripManager.FireAppClicked ();
 						
 					base.WndProc(ref m);
 					break;
@@ -1860,11 +1860,6 @@ namespace System.Windows.Forms {
 						OnActivated(EventArgs.Empty);
 					} else {
 						OnDeactivate(EventArgs.Empty);
-#if NET_2_0
-						// Let *Strips know the app lost focus
-						if (XplatUI.IsEnabled (Handle))
-							ToolStripMenuTracker.FireAppFocusChanged ();
-#endif
 					}
 					return;
 				}
@@ -2067,8 +2062,18 @@ namespace System.Windows.Forms {
 				case Msg.WM_MOUSEACTIVATE: {
 					// Let *Strips know the form or another control has been clicked
 					if (XplatUI.IsEnabled (Handle))
-						ToolStripMenuTracker.FireAppClicked ();
+						ToolStripManager.FireAppClicked ();
 						
+					base.WndProc (ref m);
+					break;				
+				}
+				
+				case Msg.WM_ACTIVATEAPP: {
+					// Let *Strips know the app lost focus
+					if (m.WParam == (IntPtr)0) 
+						if (XplatUI.IsEnabled (Handle))
+							ToolStripManager.FireAppFocusChanged (this);
+							
 					base.WndProc (ref m);
 					break;				
 				}

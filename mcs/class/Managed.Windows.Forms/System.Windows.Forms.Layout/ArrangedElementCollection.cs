@@ -35,7 +35,7 @@ namespace System.Windows.Forms.Layout
 	{
 		private ArrayList list;
 
-		public ArrangedElementCollection ()
+		internal ArrangedElementCollection ()
 		{
 			this.list = new ArrayList ();
 		}

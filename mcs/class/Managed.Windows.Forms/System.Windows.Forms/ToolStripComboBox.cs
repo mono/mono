@@ -56,6 +56,12 @@ namespace System.Windows.Forms
 			get { return (ComboBox)base.Control; }
 		}
 
+		[MonoTODO ("Stub, will not actually affect anything.")]
+		public int DropDownHeight {
+			get { return 50; }
+			set { }
+		}
+		
 		[DefaultValue (ComboBoxStyle.DropDown)]
 		public ComboBoxStyle DropDownStyle {
 			get { return this.ComboBox.DropDownStyle; }

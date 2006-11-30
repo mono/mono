@@ -35,6 +35,8 @@ namespace System.Windows.Forms.Layout
 {
 	class FlowLayout : LayoutEngine
 	{
+		private static FlowLayoutSettings default_settings = new FlowLayoutSettings ();
+		
 		public FlowLayout ()
 		{
 		}
@@ -46,8 +48,16 @@ namespace System.Windows.Forms.Layout
 
 		public override bool Layout (object container, LayoutEventArgs args)
 		{
+			if (container is ToolStripPanel)
+				return false;
+				
 			Control parent = container as Control;
-			FlowLayoutSettings settings = (parent as FlowLayoutPanel).LayoutSettings;
+			
+			FlowLayoutSettings settings;
+			if (parent is FlowLayoutPanel)
+				settings = (parent as FlowLayoutPanel).LayoutSettings;
+			else
+				settings = default_settings;
 
 			// Nothing to layout, exit method
 			if (parent.Controls.Count == 0) return false;
@@ -108,7 +118,7 @@ namespace System.Windows.Forms.Layout
 					default:
 						// Decide if it's time to start a new row
 						// - Our settings must be WrapContents, and we ran out of room or the previous control's FlowBreak == true
-						if (settings.WrapContents)
+						if (settings.WrapContents  && !(parent is ToolStripPanel))
 							if ((parentDisplayRectangle.Width - currentLocation.X) < (c.Width + c.Margin.Left + c.Margin.Right) || forceFlowBreak) {
 
 								currentLocation.Y = FinishRow (rowControls);

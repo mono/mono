@@ -39,42 +39,37 @@ namespace System.Windows.Forms
 	public class MenuStrip : ToolStrip
 	{
 		private bool can_overflow;
-		private bool stretch;
 
 		public MenuStrip () : base ()
 		{
 			this.GripStyle = ToolStripGripStyle.Hidden;
 			this.stretch = true;
+			this.Dock = DockStyle.Top;
 		}
 
 		#region Public Properties
 		[DefaultValue (false)]
-		public bool CanOverflow
-		{
+		public bool CanOverflow {
 			get { return this.can_overflow; }
 			set { this.can_overflow = value; }
 		}
 
 		[DefaultValue (ToolStripGripStyle.Hidden)]
-		public ToolStripGripStyle GripStyle
-		{
+		public ToolStripGripStyle GripStyle {
 			get { return base.GripStyle; }
 			set { base.GripStyle = value; }
 		}
 
 		[DefaultValue (false)]
-		public bool ShowItemToolTips
-		{
+		public bool ShowItemToolTips {
 			get { return base.ShowItemToolTips; }
 			set { base.ShowItemToolTips = value; }
 		}
 
-		[MonoTODO ()]
 		[DefaultValue (true)]
-		public bool Stretch
-		{
-			get { return this.stretch; }
-			set { this.stretch = value; }
+		public bool Stretch {
+			get { return base.stretch; }
+			set { base.stretch = value; }
 		}
 		#endregion
 
@@ -121,8 +116,8 @@ namespace System.Windows.Forms
 		internal void FireMenuActivate ()
 		{
 			// The tracker lets us know when the form is clicked or loses focus
-			ToolStripMenuTracker.AppClicked += new EventHandler (ToolStripMenuTracker_AppClicked);
-			ToolStripMenuTracker.AppFocusChange += new EventHandler (ToolStripMenuTracker_AppFocusChange);
+			ToolStripManager.AppClicked += new EventHandler (ToolStripMenuTracker_AppClicked);
+			ToolStripManager.AppFocusChange += new EventHandler (ToolStripMenuTracker_AppFocusChange);
 			
 			this.OnMenuActivate (EventArgs.Empty);
 		}
@@ -130,8 +125,8 @@ namespace System.Windows.Forms
 		internal void FireMenuDeactivate ()
 		{
 			// Detach from the tracker
-			ToolStripMenuTracker.AppClicked -= new EventHandler (ToolStripMenuTracker_AppClicked); ;
-			ToolStripMenuTracker.AppFocusChange -= new EventHandler (ToolStripMenuTracker_AppFocusChange);
+			ToolStripManager.AppClicked -= new EventHandler (ToolStripMenuTracker_AppClicked); ;
+			ToolStripManager.AppFocusChange -= new EventHandler (ToolStripMenuTracker_AppFocusChange);
 		
 			this.OnMenuDeactivate (EventArgs.Empty);
 		}

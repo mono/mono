@@ -87,7 +87,7 @@ namespace System.Windows.Forms
 		}
 
 		public override bool Pressed {
-			get { return base.Pressed && this.HasDropDownItems; }
+			get { return base.Pressed || this.DropDown.Visible; }
 		}
 		#endregion
 

@@ -43,31 +43,31 @@ namespace System.Windows.Forms
 
 		public FlowLayoutPanel () : base ()
 		{
-			settings = new FlowLayoutSettings (this);
-			layout_engine = settings.LayoutEngine;
 		}
 
 		#region Properties
 		[Localizable (true)]
 		[DefaultValue (FlowDirection.LeftToRight)]
 		public FlowDirection FlowDirection {
-			get { return settings.FlowDirection; }
-			set { settings.FlowDirection = value; }
+			get { return LayoutSettings.FlowDirection; }
+			set { LayoutSettings.FlowDirection = value; }
 		}
 
 		[LocalizableAttribute (true)]
 		[DefaultValue (true)]
 		public bool WrapContents {
-			get { return settings.WrapContents; }
-			set { settings.WrapContents = value; }
+			get { return LayoutSettings.WrapContents; }
+			set { LayoutSettings.WrapContents = value; }
 		}
 
 		public override LayoutEngine LayoutEngine {
-			get { return layout_engine; }
+			get { return this.LayoutSettings.LayoutEngine; }
 		}
 
 		internal FlowLayoutSettings LayoutSettings {
-			get { return this.settings; }
+			get { if (this.settings == null)
+				this.settings = new FlowLayoutSettings ();
+			return this.settings; }
 		}
 		#endregion
 

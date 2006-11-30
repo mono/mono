@@ -1,5 +1,5 @@
 //
-// FlowLayoutSettings.cs
+// ContextMenuStrip.cs
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,62 +25,43 @@
 // Authors:
 //	Jonathan Pobst (monkey@jpobst.com)
 //
-
 #if NET_2_0
-using System.Windows.Forms.Layout;
 using System.ComponentModel;
-using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
-	[DefaultProperty ("FlowDirection")]
-	public class FlowLayoutSettings : LayoutSettings
+	[ComVisible (true)]
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	public class ContextMenuStrip : ToolStripDropDownMenu
 	{
-		private FlowDirection flow_direction;
-		private bool wrap_contents;
-		private LayoutEngine layout_engine;
-		private Dictionary<object, bool> flow_breaks;
+		private Control source_control;
 
-		internal FlowLayoutSettings ()
+		#region Public Construtors
+		public ContextMenuStrip () : base ()
 		{
-			layout_engine = new FlowLayout ();
-			flow_breaks = new Dictionary<object, bool> ();
-			wrap_contents = true;
-			flow_direction = FlowDirection.LeftToRight;
 		}
-
-		#region Public Properties
-		[DefaultValue (FlowDirection.LeftToRight)]
-		public FlowDirection FlowDirection {
-			get { return this.flow_direction; }
-			set { this.flow_direction = value; }
-		}
-
-		public override LayoutEngine LayoutEngine {
-			get { return layout_engine; }
-		}
-
-		[DefaultValue (true)]
-		public bool WrapContents {
-			get { return this.wrap_contents; }
-			set { this.wrap_contents = value; }
+		
+		public ContextMenuStrip (IContainer container) : base ()
+		{
 		}
 		#endregion
 
-		#region Public Methods
-		public bool GetFlowBreak (Object child)
+		#region Public Properties
+		public Control SourceControl {
+			get { return this.source_control; }
+		}
+		#endregion
+
+		#region Protected Methods
+		protected override void Dispose (bool disposing)
 		{
-			bool retval;
-
-			if (flow_breaks.TryGetValue (child, out retval))
-				return retval;
-
-			return false;
+			base.Dispose (disposing);
 		}
 
-		public void SetFlowBreak (Object child, bool value)
+		protected override void SetVisibleCore (bool value)
 		{
-			flow_breaks[child] = value;
+			base.SetVisibleCore (value);
 		}
 		#endregion
 	}

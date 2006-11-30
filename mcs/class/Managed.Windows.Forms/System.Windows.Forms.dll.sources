@@ -116,6 +116,7 @@ System.Windows.Forms/ContainerControl.cs
 System.Windows.Forms/ContentsResizedEventArgs.cs
 System.Windows.Forms/ContentsResizedEventHandler.cs
 System.Windows.Forms/ContextMenu.cs
+System.Windows.Forms/ContextMenuStrip.cs
 System.Windows.Forms/Control.cs
 System.Windows.Forms/ControlBindingsCollection.cs
 System.Windows.Forms/ControlEventArgs.cs
@@ -614,11 +615,13 @@ System.Windows.Forms/ToolStripArrowRenderEventArgs.cs
 System.Windows.Forms/ToolStripArrowRenderEventHandler.cs
 System.Windows.Forms/ToolStripButton.cs
 System.Windows.Forms/ToolStripComboBox.cs
+System.Windows.Forms/ToolStripContainer.cs
 System.Windows.Forms/ToolStripContentPanel.cs
 System.Windows.Forms/ToolStripContentPanelRenderEventArgs.cs
 System.Windows.Forms/ToolStripContentPanelRenderEventHandler.cs
 System.Windows.Forms/ToolStripControlHost.cs
 System.Windows.Forms/ToolStripDropDown.cs
+System.Windows.Forms/ToolStripDropDownButton.cs
 System.Windows.Forms/ToolStripDropDownCloseReason.cs
 System.Windows.Forms/ToolStripDropDownClosedEventArgs.cs
 System.Windows.Forms/ToolStripDropDownClosedEventHandler.cs
@@ -626,6 +629,7 @@ System.Windows.Forms/ToolStripDropDownClosingEventArgs.cs
 System.Windows.Forms/ToolStripDropDownClosingEventHandler.cs
 System.Windows.Forms/ToolStripDropDownDirection.cs
 System.Windows.Forms/ToolStripDropDownItem.cs
+System.Windows.Forms/ToolStripDropDownMenu.cs
 System.Windows.Forms/ToolStripGripDisplayStyle.cs
 System.Windows.Forms/ToolStripGripRenderEventArgs.cs
 System.Windows.Forms/ToolStripGripRenderEventHandler.cs
@@ -650,12 +654,13 @@ System.Windows.Forms/ToolStripItemTextRenderEventArgs.cs
 System.Windows.Forms/ToolStripItemTextRenderEventHandler.cs
 System.Windows.Forms/ToolStripLabel.cs
 System.Windows.Forms/ToolStripLayoutStyle.cs
+System.Windows.Forms/ToolStripManager.cs
 System.Windows.Forms/ToolStripManagerRenderMode.cs
 System.Windows.Forms/ToolStripMenuItem.cs
-System.Windows.Forms/ToolStripMenuTracker.cs
 System.Windows.Forms/ToolStripPanel.cs
 System.Windows.Forms/ToolStripPanelRenderEventArgs.cs
 System.Windows.Forms/ToolStripPanelRenderEventHandler.cs
+System.Windows.Forms/ToolStripPanelRow.cs
 System.Windows.Forms/ToolStripProfessionalRenderer.cs
 System.Windows.Forms/ToolStripProgressBar.cs
 System.Windows.Forms/ToolStripRenderer.cs
@@ -665,6 +670,7 @@ System.Windows.Forms/ToolStripRenderMode.cs
 System.Windows.Forms/ToolStripSeparator.cs
 System.Windows.Forms/ToolStripSeparatorRenderEventArgs.cs
 System.Windows.Forms/ToolStripSeparatorRenderEventHandler.cs
+System.Windows.Forms/ToolStripSplitButton.cs
 System.Windows.Forms/ToolStripSplitStackLayout.cs
 System.Windows.Forms/ToolStripStatusLabel.cs
 System.Windows.Forms/ToolStripStatusLabelBorderSides.cs

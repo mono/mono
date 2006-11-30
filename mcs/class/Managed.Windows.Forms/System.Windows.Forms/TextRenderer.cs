@@ -44,6 +44,9 @@ namespace System.Windows.Forms
 		[MonoTODO("This should be correct for Windows, other platforms need a more accurate fallback method than the one provided")]
 		public static void DrawText (IDeviceContext dc, string text, Font font, Rectangle bounds, Color foreColor, TextFormatFlags flags)
 		{
+			if (text == null || text.Length == 0)
+				return;
+				
 			if (Environment.OSVersion.Platform == PlatformID.Win32NT || Environment.OSVersion.Platform == PlatformID.Win32Windows) {
 				Rectangle new_bounds = bounds;
 				new_bounds.Offset ((int)(dc as Graphics).Transform.OffsetX + 0, (int)(dc as Graphics).Transform.OffsetY + 0);
@@ -149,6 +152,44 @@ namespace System.Windows.Forms
 				Size retval = g.MeasureString(text,font).ToSize();
 				if (retval.Width > 0) retval.Width += 6;
 				return retval;	
+			}
+		}
+
+		[MonoTODO ("This should be correct for Windows, other platforms need a more accurate fallback method than the one provided")]
+		public static Size MeasureText (string text, Font font, Size proposedSize, TextFormatFlags flags)
+		{
+			if (Environment.OSVersion.Platform == PlatformID.Win32NT || Environment.OSVersion.Platform == PlatformID.Win32Windows) {
+				if ((flags & TextFormatFlags.HidePrefix) == TextFormatFlags.HidePrefix)
+				{
+					text = text.Replace ("&", "");
+				}
+				
+				Bitmap b = new Bitmap (5, 5);
+				Graphics g = Graphics.FromImage (b);
+
+				IntPtr hdc = g.GetHdc ();
+
+				if (font != null)
+					SelectObject (hdc, font.ToHfont ());
+
+				VisualStyles.UXTheme.SIZE text_size = new System.Windows.Forms.VisualStyles.UXTheme.SIZE ();
+
+				GetTextExtentPoint32 (hdc, text, text.Length, out text_size);
+
+				g.ReleaseHdc ();
+
+				Size retval = text_size.ToSize ();
+				//retval.Height += 4;
+				if (retval.Width > 0) retval.Width += 6;
+				return retval;
+			}
+			else {
+				Bitmap b = new Bitmap (5, 5);
+				Graphics g = Graphics.FromImage (b);
+
+				Size retval = g.MeasureString (text, font).ToSize ();
+				if (retval.Width > 0) retval.Width += 6;
+				return retval;
 			}
 		}
 		#endregion

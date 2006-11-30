@@ -1,3 +1,10 @@
+2006-11-30  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Tweak 2.0 layout properties.
+	* Form.cs: Switch ToolStripMenuTracker hooks to ToolStripManager.
+	* TextRenderer.cs: Add a new overload.
+	* ToolStrip*: Huge amount of changes and new features.
+
 2006-11-30  Mike Kestner  <mkestner@novell.com>
 
 	* ComboBox.cs: fixes for LargeChange and Maximum to get the 

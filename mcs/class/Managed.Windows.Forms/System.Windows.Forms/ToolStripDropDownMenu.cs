@@ -1,5 +1,5 @@
 //
-// FlowLayoutSettings.cs
+// ToolStripDropDownMenu.cs
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,62 +25,65 @@
 // Authors:
 //	Jonathan Pobst (monkey@jpobst.com)
 //
-
 #if NET_2_0
-using System.Windows.Forms.Layout;
+using System.Drawing;
 using System.ComponentModel;
-using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Windows.Forms.Layout;
 
 namespace System.Windows.Forms
 {
-	[DefaultProperty ("FlowDirection")]
-	public class FlowLayoutSettings : LayoutSettings
+	[ComVisible (true)]
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	public class ToolStripDropDownMenu : ToolStripDropDown
 	{
-		private FlowDirection flow_direction;
-		private bool wrap_contents;
-		private LayoutEngine layout_engine;
-		private Dictionary<object, bool> flow_breaks;
+		private ToolStripLayoutStyle layout_style;
+		private bool show_check_margin;
+		private bool show_image_margin;
 
-		internal FlowLayoutSettings ()
+		#region Public Constructors
+		public ToolStripDropDownMenu () : base ()
 		{
-			layout_engine = new FlowLayout ();
-			flow_breaks = new Dictionary<object, bool> ();
-			wrap_contents = true;
-			flow_direction = FlowDirection.LeftToRight;
-		}
-
-		#region Public Properties
-		[DefaultValue (FlowDirection.LeftToRight)]
-		public FlowDirection FlowDirection {
-			get { return this.flow_direction; }
-			set { this.flow_direction = value; }
-		}
-
-		public override LayoutEngine LayoutEngine {
-			get { return layout_engine; }
-		}
-
-		[DefaultValue (true)]
-		public bool WrapContents {
-			get { return this.wrap_contents; }
-			set { this.wrap_contents = value; }
+			this.layout_style = ToolStripLayoutStyle.Flow;
+			this.show_image_margin = true;
 		}
 		#endregion
 
-		#region Public Methods
-		public bool GetFlowBreak (Object child)
-		{
-			bool retval;
-
-			if (flow_breaks.TryGetValue (child, out retval))
-				return retval;
-
-			return false;
+		#region Public Properties
+		public override Rectangle DisplayRectangle {
+			get { return base.DisplayRectangle; }
 		}
 
-		public void SetFlowBreak (Object child, bool value)
+		public override LayoutEngine LayoutEngine {
+			get { return base.LayoutEngine; }
+		}
+		
+		public ToolStripLayoutStyle LayoutStyle {
+			get { return this.layout_style; }
+			set { this.layout_style = value; }
+		}
+		
+		public bool ShowCheckMargin {
+			get { return this.show_check_margin; }
+			set { this.show_check_margin = value; }
+		}
+
+		public bool ShowImageMargin {
+			get { return this.show_image_margin; }
+			set { this.show_image_margin = value; }
+		}
+		#endregion
+
+		#region Protected Properties
+		protected override Padding DefaultPadding {
+			get { return base.DefaultPadding; }
+		}
+		#endregion
+
+		#region Protected Methods
+		protected internal override ToolStripItem CreateDefaultItem (string text, Image image, EventHandler onClick)
 		{
-			flow_breaks[child] = value;
+			return base.CreateDefaultItem (text, image, onClick);
 		}
 		#endregion
 	}

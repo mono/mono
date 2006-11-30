@@ -37,6 +37,7 @@ namespace System.Windows.Forms
 	{
 		private CheckState checked_state;
 		private bool check_on_click;
+		private Keys shortcut_keys = Keys.None;
 
 		#region Public Constructors
 		public ToolStripMenuItem ()
@@ -100,8 +101,8 @@ namespace System.Windows.Forms
 			set {
 				if (this.checked_state != (value ? CheckState.Checked : CheckState.Unchecked)) {
 					this.checked_state = value ? CheckState.Checked : CheckState.Unchecked;
-					this.OnCheckedChanged (EventArgs.Empty);
 					this.Invalidate ();
+					this.OnCheckedChanged (EventArgs.Empty);
 				}
 			}
 		}
@@ -123,14 +124,21 @@ namespace System.Windows.Forms
 					throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for CheckState", value));
 
 				this.checked_state = value;
-				OnCheckStateChanged (EventArgs.Empty);
 				this.Invalidate ();
+				this.OnCheckStateChanged (EventArgs.Empty);
 			}
 		}
 
 		public override bool Enabled {
 			get { return base.Enabled; }
 			set { base.Enabled = value; }
+		}
+		
+		[MonoTODO ("Keyboard navigation not implemented.")]
+		[Localizable (true)]
+		public Keys ShortcutKeys {
+			get { return this.shortcut_keys; }
+			set { this.shortcut_keys = value; }
 		}
 		#endregion
 
@@ -151,7 +159,7 @@ namespace System.Windows.Forms
 		#region Protected Methods
 		protected override ToolStripDropDown CreateDefaultDropDown ()
 		{
-			return base.CreateDefaultDropDown ();
+			return new ToolStripDropDownMenu ();
 		}
 
 		protected override void Dispose (bool disposing)
@@ -174,14 +182,14 @@ namespace System.Windows.Forms
 			if (!this.Enabled)
 				return;
 				
-			base.OnClick (e);
-
 			if (this.IsOnDropDown) {
 				if (this.HasDropDownItems)
 					return;
 
 				this.HideDropDown (ToolStripDropDownCloseReason.ItemClicked);
+				
 				(this.Parent as ToolStripDropDown).Close (ToolStripDropDownCloseReason.ItemClicked);
+				ToolStripManager.FireAppFocusChanged (this.Parent);
 
 				Object parent = this.Parent;
 
@@ -202,6 +210,8 @@ namespace System.Windows.Forms
 
 			if (this.check_on_click)
 				this.Checked = !this.Checked;
+
+			base.OnClick (e);
 		}
 
 		protected override void OnDropDownHide (EventArgs e)
@@ -221,19 +231,19 @@ namespace System.Windows.Forms
 
 		protected override void OnMouseDown (MouseEventArgs e)
 		{
-			base.OnMouseDown (e);
-
 			if (this.HasDropDownItems)
 				if (!this.DropDown.Visible)
 					this.ShowDropDown ();
+
+			base.OnMouseDown (e);
 		}
 
 		protected override void OnMouseEnter (EventArgs e)
 		{
-			base.OnMouseEnter (e);
-
 			if (this.IsOnDropDown && this.HasDropDownItems)
 				this.ShowDropDown ();
+
+			base.OnMouseEnter (e);
 		}
 
 		protected override void OnMouseLeave (EventArgs e)

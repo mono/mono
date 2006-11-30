@@ -47,14 +47,17 @@ namespace System.Windows.Forms
 		private ToolStripGripDisplayStyle grip_display_style;
 		private Padding grip_margin;
 		private ToolStripGripStyle grip_style;
+		private ImageList image_list;
 		private Size image_scaling_size;
 		private ToolStripItemCollection items;
 		private LayoutEngine layout_engine;
+		private LayoutSettings layout_settings;
 		private ToolStripLayoutStyle layout_style;
 		private Orientation orientation;
 		private ToolStripRenderer renderer;
 		private ToolStripRenderMode render_mode;
 		private bool show_item_tool_tips;
+		internal bool stretch;
 
 		private ToolStripItem mouse_currently_over;
 		private bool menu_selected;
@@ -72,20 +75,21 @@ namespace System.Windows.Forms
 			SetStyle (ControlStyles.SupportsTransparentBackColor, true);
 			SetStyle (ControlStyles.AllPaintingInWmPaint, true);
 
-			this.AutoSize = false;
+			this.AutoSize = true;
 			this.back_color = Control.DefaultBackColor;
 			this.dock_style = this.DefaultDock;
 			this.fore_color = Control.DefaultForeColor;
 			this.grip_display_style = ToolStripGripDisplayStyle.Vertical;
 			this.grip_margin = this.DefaultGripMargin;
 			this.grip_style = ToolStripGripStyle.Visible;
+			this.image_list = new ImageList ();
 			this.image_scaling_size = new Size (16, 16);
 			this.items = new ToolStripItemCollection (this, items);
 			this.layout_engine = new ToolStripSplitStackLayout ();
 			this.layout_style = ToolStripLayoutStyle.HorizontalStackWithOverflow;
 			this.orientation = Orientation.Horizontal;
 			this.Padding = this.DefaultPadding;
-			this.renderer = new ToolStripProfessionalRenderer ();
+			this.renderer = null;
 			this.render_mode = ToolStripRenderMode.ManagerRenderMode;
 			this.show_item_tool_tips = this.DefaultShowItemToolTips;
 
@@ -186,6 +190,11 @@ namespace System.Windows.Forms
 			}
 		}
 
+		public ImageList ImageList {
+			get { return this.image_list; }
+			set { this.image_list = value; }
+		}
+		
 		public Size ImageScalingSize {
 			get { return this.image_scaling_size; }
 			set { this.image_scaling_size = value; }
@@ -194,8 +203,8 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		public bool IsDropDown {
 			get {
-				//if (this is ToolStripDropDown)
-				//        return true;
+				if (this is ToolStripDropDown)
+					return true;
 
 				return false;
 			}
@@ -206,9 +215,14 @@ namespace System.Windows.Forms
 		}
 
 		public override LayoutEngine LayoutEngine {
-			get { return this.layout_engine; }
+			get { return new ToolStripSplitStackLayout(); }
 		}
 
+		public LayoutSettings LayoutSettings {
+			get { return this.layout_settings; }
+			set { this.layout_settings = value; }
+		}
+		
 		public ToolStripLayoutStyle LayoutStyle {
 			get { return layout_style; }
 			set {
@@ -227,7 +241,12 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		public ToolStripRenderer Renderer {
-			get { return this.renderer; }
+			get { 
+				if (this.render_mode == ToolStripRenderMode.ManagerRenderMode)
+					return ToolStripManager.Renderer;
+					
+				return this.renderer; 
+			}
 			set { this.renderer = value; }
 		}
 
@@ -252,6 +271,17 @@ namespace System.Windows.Forms
 			get { return this.show_item_tool_tips; }
 			set { this.show_item_tool_tips = value; }
 		}
+		
+		public bool Stretch {
+			get { return this.stretch; }
+			set { this.stretch = value; }
+		}
+		
+		[DefaultValue (false)]
+		public bool TabStop {
+			get { return base.TabStop; }
+			set { base.TabStop = value; }
+		}
 		#endregion
 
 		#region Protected Properties
@@ -268,7 +298,7 @@ namespace System.Windows.Forms
 		public ToolStripItem GetItemAt (Point point)
 		{
 			foreach (ToolStripItem tsi in this.items)
-				if (tsi.Bounds.Contains (point))
+				if (tsi.Visible && tsi.Bounds.Contains (point))
 					return tsi;
 
 			return null;
@@ -306,7 +336,7 @@ namespace System.Windows.Forms
 
 		public override string ToString ()
 		{
-			return String.Format ("System.Windows.Forms.ToolStrip, Name: {0}, Items: {1}", this.name, this.items.Count.ToString ());
+			return String.Format ("{0}, Name: {1}, Items: {2}", base.ToString(), this.name, this.items.Count.ToString ());
 		}
 		#endregion
 
@@ -409,8 +439,6 @@ namespace System.Windows.Forms
 
 		protected override void OnMouseDown (MouseEventArgs mea)
 		{
-			base.OnMouseDown (mea);
-
 			if (mouse_currently_over != null)
 			{
 				if (this is MenuStrip && !(mouse_currently_over as ToolStripMenuItem).HasDropDownItems) {
@@ -437,22 +465,22 @@ namespace System.Windows.Forms
 			
 			if (this is MenuStrip)
 				this.Capture = false;
+
+			base.OnMouseDown (mea);
 		}
 
 		protected override void OnMouseLeave (EventArgs e)
 		{
-			base.OnMouseLeave (e);
-
 			if (mouse_currently_over != null) {
 				mouse_currently_over.FireEvent (e, ToolStripItemEventType.MouseLeave);
 				mouse_currently_over = null;
 			}
+
+			base.OnMouseLeave (e);
 		}
 
 		protected override void OnMouseMove (MouseEventArgs mea)
 		{
-			base.OnMouseMove (mea);
-
 			ToolStripItem tsi = this.GetItemAt (mea.X, mea.Y);
 
 			if (tsi != null) {
@@ -486,12 +514,12 @@ namespace System.Windows.Forms
 					mouse_currently_over = null;
 				}
 			}
+
+			base.OnMouseMove (mea);
 		}
 
 		protected override void OnMouseUp (MouseEventArgs mea)
 		{
-			base.OnMouseUp (mea);
-
 			if (mouse_currently_over != null) {
 				mouse_currently_over.FireEvent (mea, ToolStripItemEventType.MouseUp);
 
@@ -511,6 +539,8 @@ namespace System.Windows.Forms
 
 			if (this is MenuStrip && need_to_release_menu)
 				this.HideMenus (true, ToolStripDropDownCloseReason.ItemClicked);
+
+			base.OnMouseUp (mea);
 		}
 
 		protected override void OnPaint (PaintEventArgs e)
@@ -538,14 +568,14 @@ namespace System.Windows.Forms
 			Rectangle affected_bounds = new Rectangle (new Point (0, 0), this.Size);
 			Rectangle connected_area = Rectangle.Empty;
 
-			if (this is ToolStripDropDown && !(this as ToolStripDropDown).OwnerItem.IsOnDropDown)
+			if (this is ToolStripDropDown && (this as ToolStripDropDown).OwnerItem != null && !(this as ToolStripDropDown).OwnerItem.IsOnDropDown)
 				connected_area = new Rectangle (1, 0, (this as ToolStripDropDown).OwnerItem.Width - 2, 2);
 			
 			ToolStripRenderEventArgs e = new ToolStripRenderEventArgs (pevent.Graphics, this, affected_bounds, Color.Empty);
 			e.InternalConnectedArea = connected_area;
 			
-			this.renderer.DrawToolStripBackground (e);
-			this.renderer.DrawToolStripBorder (e);
+			this.Renderer.DrawToolStripBackground (e);
+			this.Renderer.DrawToolStripBorder (e);
 		}
 
 		protected internal virtual void OnPaintGrip (PaintEventArgs e)
@@ -559,7 +589,7 @@ namespace System.Windows.Forms
 					e.Graphics.TranslateTransform (0, 2);
 			}
 			
-			this.renderer.DrawGrip (new ToolStripGripRenderEventArgs (e.Graphics, this, this.GripRectangle, this.grip_display_style, this.grip_style));
+			this.Renderer.DrawGrip (new ToolStripGripRenderEventArgs (e.Graphics, this, this.GripRectangle, this.grip_display_style, this.grip_style));
 			e.Graphics.ResetTransform ();
 		}
 
@@ -639,15 +669,15 @@ namespace System.Windows.Forms
 		#region Private Methods
 		private void DoAutoSize ()
 		{
-			if (this.AutoSize == true)
-				this.Size = GetPreferredSize ();
+			if (this.AutoSize == true && this.Dock == DockStyle.None)
+				this.Size = GetPreferredSize (Size.Empty);
 		}
 
-		private Size GetPreferredSize ()
+		public override Size GetPreferredSize (Size proposedSize)
 		{
 			Size new_size = Size.Empty;
 
-			if (this.orientation == Orientation.Horizontal) {
+			if (this.orientation == Orientation.Vertical) {
 				foreach (ToolStripItem tsi in this.items)
 					if (tsi.GetPreferredSize (Size.Empty).Height + tsi.Margin.Top + tsi.Margin.Bottom > new_size.Height)
 						new_size.Height = tsi.GetPreferredSize (Size.Empty).Height + tsi.Margin.Top + tsi.Margin.Bottom;
@@ -656,13 +686,13 @@ namespace System.Windows.Forms
 				new_size.Width = this.Width;
 			} else {
 				foreach (ToolStripItem tsi in this.items) 
-					if (tsi.GetPreferredSize (Size.Empty).Width + tsi.Margin.Left + tsi.Margin.Right > new_size.Width)
-						new_size.Width = tsi.GetPreferredSize (Size.Empty).Width + tsi.Margin.Left + tsi.Margin.Right;
+					if (tsi.Visible)
+						new_size.Width += tsi.GetPreferredSize (Size.Empty).Width + tsi.Margin.Left + tsi.Margin.Right;
 
-				new_size.Width += this.Padding.Left + this.Padding.Right;
 				new_size.Height = this.Height;
 			}
 
+			new_size.Width += (this.GripRectangle.Width + this.GripMargin.Horizontal + this.Padding.Horizontal + 4);
 			return new_size;
 		}
 		

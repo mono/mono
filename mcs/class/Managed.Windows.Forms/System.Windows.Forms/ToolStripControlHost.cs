@@ -239,6 +239,14 @@ namespace System.Windows.Forms
 		{
 			return this.Control.AccessibilityObject;
 		}
+
+		protected override void Dispose (bool disposing)
+		{
+			base.Dispose (disposing);
+			
+			if (!control.IsDisposed)
+				control.Dispose ();
+		}
 		
 		protected override void OnBoundsChanged ()
 		{

@@ -30,6 +30,8 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
+using System.Windows.Forms.Layout;
+using System.Collections;
 
 namespace System.Windows.Forms
 {
@@ -37,6 +39,359 @@ namespace System.Windows.Forms
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	public class ToolStripPanel : ContainerControl, IComponent, IDisposable
 	{
+		private bool done_first_layout;
+		private bool locked;
+		private Orientation orientation;
+		private ToolStripRenderer renderer;
+		private ToolStripRenderMode render_mode;
+		private Padding row_margin;
+		private ToolStripPanelRowCollection rows;
+		
+		public ToolStripPanel () : base ()
+		{
+			base.AutoSize = true;
+			this.locked = false;
+			this.renderer = null;
+			this.render_mode = ToolStripRenderMode.ManagerRenderMode;
+			this.rows = new ToolStripPanelRowCollection (this);
+		}
+
+		#region Public Properties
+		[Browsable (false)]
+		public override bool AllowDrop {
+			get { return base.AllowDrop; }
+			set { base.AllowDrop = value; }
+		}
+		
+		[Browsable (false)]
+		public override bool AutoScroll {
+			get { return base.AutoScroll; }
+			set { base.AutoScroll = value; }
+		}
+		
+		[Browsable (false)]
+		public Size AutoScrollMargin {
+			get { return base.AutoScrollMargin; }
+			set { base.AutoScrollMargin = value; }
+		}
+
+		[Browsable (false)]
+		public Size AutoScrollMinSize {
+			get { return base.AutoScrollMinSize; }
+			set { base.AutoScrollMinSize = value; }
+		}
+
+		[Browsable (false)]
+		public override bool AutoSize {
+			get { return base.AutoSize; }
+			set { base.AutoSize = value; }
+		}
+
+		public override DockStyle Dock {
+			get { return base.Dock; }
+			set { base.Dock = value; }
+		}
+
+		public override LayoutEngine LayoutEngine {
+			get { return new Layout.FlowLayout (); }
+		}
+
+		public bool Locked {
+			get { return this.locked; }
+			set { this.locked = value; }
+		}
+
+		public Orientation Orientation {
+			get { return this.orientation; }
+			set { this.orientation = value; }
+		}
+
+		[Browsable (false)]
+		public ToolStripRenderer Renderer {
+			get {
+				if (this.render_mode == ToolStripRenderMode.ManagerRenderMode)
+					return ToolStripManager.Renderer;
+
+				return this.renderer;
+			}
+			set { this.renderer = value; }
+		}
+
+		public ToolStripRenderMode RenderMode {
+			get { return this.render_mode; }
+			set {
+				if (!Enum.IsDefined (typeof (ToolStripRenderMode), value))
+					throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for ToolStripRenderMode", value));
+
+				if (value == ToolStripRenderMode.Custom && this.renderer == null)
+					throw new NotSupportedException ("Must set Renderer property before setting RenderMode to Custom");
+				if (value == ToolStripRenderMode.Professional || value == ToolStripRenderMode.System)
+					this.renderer = new ToolStripProfessionalRenderer ();
+
+				this.render_mode = value;
+			}
+		}
+		
+		public Padding RowMargin {
+			get { return this.row_margin; }
+			set { this.row_margin = value; }
+		}
+		
+		public ToolStripPanelRow[] Rows {
+			get { 
+				ToolStripPanelRow[] retval = new ToolStripPanelRow [this.rows.Count];
+				this.rows.CopyTo (retval, 0); 
+				return retval;	
+			}
+		}
+
+		[Browsable (false)]
+		public int TabIndex {
+			get { return base.TabIndex; }
+			set { base.TabIndex = value; }
+		}
+
+		[Browsable (false)]
+		public bool TabStop {
+			get { return base.TabStop; }
+			set { base.TabStop = value; }
+		}
+		
+		[Browsable (false)]
+		public override string Text {
+			get { return base.Text; }
+			set { base.Text = value; }
+		}
+		#endregion
+
+		#region Protected Properties
+		protected override Padding DefaultMargin {
+			get { return new Padding (0); }
+		}
+		#endregion
+
+		#region Public Methods
+		public void BeginInit ()
+		{
+		}
+		
+		public void EndInit ()
+		{
+		}
+		
+		public ToolStripPanelRow PointToRow (Point clientLocation)
+		{
+			foreach (ToolStripPanelRow row in this.rows)
+				if (row.Bounds.Contains (clientLocation))
+					return row;
+					
+			return null;
+		}
+		#endregion
+
+		#region Protected Methods
+		protected override void Dispose (bool disposing)
+		{
+			base.Dispose (disposing);
+		}
+
+		protected override void OnControlAdded (ControlEventArgs e)
+		{
+			base.OnControlAdded (e);
+
+			if (done_first_layout)
+				this.AddControlToRows (e.Control);
+		}
+
+		protected override void OnControlRemoved (ControlEventArgs e)
+		{
+			base.OnControlRemoved (e);
+			
+			foreach (ToolStripPanelRow row in this.rows)
+				if (row.controls.Contains (e.Control))
+					row.OnControlRemoved (e.Control, 0);
+		}
+
+		protected override void OnDockChanged (EventArgs e)
+		{
+			base.OnDockChanged (e);
+		}
+
+		protected override void OnLayout (LayoutEventArgs levent)
+		{
+			if (this.Width == 0)
+				return;
+
+			if (!done_first_layout && (this.FindForm() == null || this.Visible == false))
+				return;
+				
+			Point position = this.DisplayRectangle.Location;
+			
+			foreach (ToolStripPanelRow row in this.rows) {
+				row.SetBounds (new Rectangle (position, new Size (this.Width, row.Bounds.Height)));
+
+				position.Y += row.Bounds.Height;
+			}
+			
+			if (!done_first_layout)
+			{
+				foreach (ToolStrip ts in this.Controls)
+					this.AddControlToRows (ts);
+			
+				done_first_layout = true;
+				this.OnLayout (levent);
+				return;
+			}
+
+			int height = 0;
+
+			foreach (ToolStripPanelRow row in this.rows)
+				height += row.Bounds.Height;
+
+			if (height != this.Height)
+				this.Height = height;
+
+			this.Invalidate (FindBackgroundRegion ());
+		}
+
+		protected override void OnPaintBackground (PaintEventArgs pevent)
+		{
+			base.OnPaintBackground (pevent);
+
+			this.Renderer.DrawToolStripPanelBackground (new ToolStripPanelRenderEventArgs (pevent.Graphics, this));
+		}
+
+		protected override void OnParentChanged (EventArgs e)
+		{
+			base.OnParentChanged (e);
+		}
+		
+		protected virtual void OnRendererChanged (EventArgs e)
+		{
+			if (RendererChanged != null) RendererChanged (this, e);
+		}
+		#endregion
+		
+		#region Public Events
+		public event EventHandler AutoSizeChanged;
+		public event EventHandler RendererChanged;
+		[Browsable (false)]
+		public event EventHandler TabIndexChanged;
+		[Browsable (false)]
+		public event EventHandler TabStopChanged;
+		[Browsable (false)]
+		public event EventHandler TextChanged;
+		#endregion
+
+		#region Private Methods
+		private void AddControlToRows (Control control)
+		{
+			if (this.rows.Count > 0)
+				if (this.rows[this.rows.Count - 1].CanMove ((ToolStrip)control)) {
+					this.rows[this.rows.Count - 1].OnControlAdded (control, 0);
+					return;
+				}
+
+			ToolStripPanelRow new_row = new ToolStripPanelRow (this);
+			new_row.SetBounds (new Rectangle (0, 0, this.Width, 25));
+			this.rows.Add (new_row);
+			new_row.OnControlAdded (control, 0);
+		}
+		
+		private Region FindBackgroundRegion ()
+		{
+			Region r = new Region (this.bounds);
+
+			foreach (Control c in this.Controls)
+				r.Exclude (c.bounds);
+
+			return r;
+		}
+		#endregion
+
+		#region Nested Classes
+		[ComVisible (false)]
+		public class ToolStripPanelRowCollection : ArrangedElementCollection, IList, ICollection, IEnumerable
+		{
+			private ToolStripPanel owner;
+			
+			public ToolStripPanelRowCollection (ToolStripPanel owner) : base ()
+			{
+				this.owner = owner;
+			}
+			
+			public ToolStripPanelRowCollection (ToolStripPanel owner, ToolStripPanelRow[] value) : this (owner)
+			{
+				if (value != null)
+					foreach (ToolStripPanelRow tspr in value)
+						this.Add (tspr);
+			}
+			
+			public virtual ToolStripPanelRow this [int index] {
+				get { return (ToolStripPanelRow)base[index]; }
+			}
+
+			#region Public Methods
+			public int Add (ToolStripPanelRow value)
+			{
+				return base.Add (value);
+			}
+			
+			public void AddRange (ToolStripPanelRowCollection value)
+			{
+				if (value == null)
+					throw new ArgumentNullException ("value");
+
+				foreach (ToolStripPanelRow tspr in value)
+					this.Add (tspr);
+			}
+			
+			public void AddRange (ToolStripPanelRow[] value)
+			{
+				if (value == null)
+					throw new ArgumentNullException ("value");
+
+				foreach (ToolStripPanelRow tspr in value)
+					this.Add (tspr);
+			}
+			
+			public virtual void Clear ()
+			{
+				base.Clear ();
+			}
+			
+			public bool Contains (ToolStripPanelRow value)
+			{
+				return base.Contains (value);
+			}
+			
+			public void CopyTo (ToolStripPanelRow[] array, int index)
+			{
+				base.CopyTo (array, index);
+			}
+			
+			public int IndexOf (ToolStripPanelRow value)
+			{
+				return base.IndexOf (value);
+			}
+			
+			public void Insert (int index, ToolStripPanelRow value)
+			{
+				base.Insert (index, value);
+			}
+			
+			public void Remove (ToolStripPanelRow value)
+			{
+				base.Remove (value);
+			}
+			
+			public void RemoveAt (int index)
+			{
+				base.RemoveAt (index);
+			}
+			#endregion
+		}
+		#endregion
 	}
 }
 #endif

@@ -51,6 +51,7 @@ namespace System.Windows.Forms
 
 			this.auto_close = true;
 			is_visible = false;
+			Hwnd.ObjectFromHandle (this.Handle).no_activate = true;
 			this.GripStyle = ToolStripGripStyle.Hidden;
 		}
 		#endregion
@@ -184,7 +185,12 @@ namespace System.Windows.Forms
 
 		public ToolStripItem OwnerItem {
 			get { return this.owner_item; }
-			set { this.owner_item = value; }
+			set { this.owner_item = value; 
+				
+				if (this.owner_item != null)
+					if (this.owner_item.Owner != null)
+						this.Renderer = this.owner_item.Owner.Renderer;
+			}
 		}
 		
 		public Region Region {
@@ -280,9 +286,13 @@ namespace System.Windows.Forms
 			if (!this.auto_close && reason != ToolStripDropDownCloseReason.CloseCalled)
 				return;
 
+			// Detach from the tracker
+			ToolStripManager.AppClicked -= new EventHandler (ToolStripMenuTracker_AppClicked); ;
+			ToolStripManager.AppFocusChange -= new EventHandler (ToolStripMenuTracker_AppFocusChange);
+
 			// Owner MenuItem needs to be told to redraw (it's no longer selected)
 			if (owner_item != null)
-				(owner_item as ToolStripMenuItem).Invalidate ();
+				owner_item.Invalidate ();
 
 			// Recursive hide all child dropdowns
 			foreach (ToolStripItem tsi in this.Items)
@@ -302,7 +312,11 @@ namespace System.Windows.Forms
 			
 			if (e.Cancel)
 				return;
-				
+
+			// The tracker lets us know when the form is clicked or loses focus
+			ToolStripManager.AppClicked += new EventHandler (ToolStripMenuTracker_AppClicked);
+			ToolStripManager.AppFocusChange += new EventHandler (ToolStripMenuTracker_AppFocusChange);
+
 			base.Show ();
 			
 			this.OnOpened (EventArgs.Empty);
@@ -326,6 +340,12 @@ namespace System.Windows.Forms
 		{
 			this.Location = new Point (x, y);
 			Show ();
+		}
+		
+		public void Show (Control control, int x, int y)
+		{
+			Show (control, new Point (x, y));
+			
 		}
 		#endregion
 
@@ -410,6 +430,9 @@ namespace System.Windows.Forms
 		protected override void OnParentChanged (EventArgs e)
 		{
 			base.OnParentChanged (e);
+			
+			if (parent is ToolStrip)
+				this.Renderer = (parent as ToolStrip).Renderer;
 		}
 
 		protected override void OnVisibleChanged (EventArgs e)
@@ -444,33 +467,7 @@ namespace System.Windows.Forms
 
 		protected override void SetVisibleCore (bool value)
 		{
-			// Copied from Control.cs, changed XPlatUI.SetVisible(,,) to NO_ACTIVATE
-			if (value != is_visible) {
-				if (value && (window.Handle == IntPtr.Zero) || !is_created)
-					CreateControl ();
-
-				is_visible = value;
-
-				if (IsHandleCreated)
-					XplatUI.SetVisible (Handle, value, false);
-
-				OnVisibleChanged (EventArgs.Empty);
-
-				if (value == false && parent != null && Focused) {
-					Control container;
-
-					// Need to start at parent, GetContainerControl might return ourselves if we're a container
-					container = (Control)parent.GetContainerControl ();
-					
-					if (container != null)
-						container.SelectNextControl (this, true, true, true, true);
-				}
-
-				if (parent != null)
-					parent.PerformLayout (this, "visible");
-				else
-					PerformLayout (this, "visible");
-			}
+			base.SetVisibleCore (value);
 		}
 
 		protected override void WndProc (ref Message m)
@@ -537,6 +534,18 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public event CancelEventHandler Validating;
+		#endregion
+
+		#region Private Methods
+		private void ToolStripMenuTracker_AppFocusChange (object sender, EventArgs e)
+		{
+			this.Close (ToolStripDropDownCloseReason.AppFocusChange);
+		}
+
+		private void ToolStripMenuTracker_AppClicked (object sender, EventArgs e)
+		{
+			this.Close (ToolStripDropDownCloseReason.AppClicked);
+		}
 		#endregion
 	}
 }
