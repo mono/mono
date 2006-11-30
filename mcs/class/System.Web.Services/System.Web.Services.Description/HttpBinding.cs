@@ -54,7 +54,7 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 
-		[XmlAttribute ("verb", DataType = "NMTOKEN")]
+		[XmlAttribute ("verb")]
 		public string Verb { 	
 			get { return verb; }
 			set { verb = value; }

@@ -63,7 +63,7 @@ namespace System.Web.Services.Description {
 		// LAMESPEC: .NET says that the default value is SoapBindingStyle.Document but
 		// reflection shows this attribute is SoapBindingStyle.Default
 
-		[DefaultValue (SoapBindingStyle.Default)]
+		[DefaultValue (SoapBindingStyle.Document)]
 		[XmlAttribute ("style")]
 		public SoapBindingStyle Style {
 			get { return style; }

@@ -1,5 +1,11 @@
 2006-11-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SoapHeaderFaultBinding.cs, NamedItem.cs, SoapBinding.cs,
+	  MimeXmlBinding.cs, SoapBodyBinding.cs, MimeContentBinding.cs,
+	  SoapHeaderBinding.cs, HttpBinding.cs: cosmetic 2.0 API fixes.
+
+2006-11-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* BasicProfileViolationEnumerator.cs : new missing 2.0 class.
 	* BasicProfileViolationCollection.cs : use it.
 

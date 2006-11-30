@@ -87,7 +87,7 @@ namespace System.Web.Services.Description {
 			}
 		}
 
-		[XmlAttribute ("parts", DataType = "NMTOKENS")]
+		[XmlAttribute ("parts")]
 		public string PartsString {
 			get { return partsString; }
 			set {

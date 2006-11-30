@@ -83,7 +83,7 @@ namespace System.Web.Services.Description {
 			set { ns = value; }
 		}
 
-		[XmlAttribute ("part", DataType = "NMTOKEN")]
+		[XmlAttribute ("part")]
 		public string Part {
 			get { return part; }
 			set { part = value; }

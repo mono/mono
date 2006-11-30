@@ -52,7 +52,7 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 
-		[XmlAttribute ("part", DataType = "NMTOKEN")]
+		[XmlAttribute ("part")]
 		public string Part {
 			get { return part; }
 			set { part = value; }
