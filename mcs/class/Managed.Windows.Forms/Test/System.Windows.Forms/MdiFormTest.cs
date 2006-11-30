@@ -111,7 +111,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug 80038
-		[Category ("NotWorking")]
 		public void Text_ChildClose ()
 		{
 			Form main = new Form ();

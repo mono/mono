@@ -1,3 +1,7 @@
+2006-11-30  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* MdiFormTest.cs: Text_ChildClose is no longer NotWorking.
+	
 2006-11-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MenuItemTest.cs: Added test for Text property.
