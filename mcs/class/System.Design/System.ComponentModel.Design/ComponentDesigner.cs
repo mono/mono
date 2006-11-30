@@ -63,7 +63,7 @@ namespace System.ComponentModel.Design
 			public bool Contains (string propertyName)
 			{
 				if (collection == null)
-					return null;
+					return false;
 
 				return collection.Contains (propertyName);
 			}
@@ -71,6 +71,7 @@ namespace System.ComponentModel.Design
 
 		IComponent component;
 		ShadowPropertyCollection shadow_property_collection;
+		DesignerVerbCollection verbs;
 		
 		public ComponentDesigner ()
 		{

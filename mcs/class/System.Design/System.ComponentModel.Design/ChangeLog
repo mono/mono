@@ -1,3 +1,8 @@
+2006-11-30  Marek Habersack  <grendello@gmail.com>
+
+	* ComponentDesigner.cs: Add a missing 'verbs' variable and set the
+	correct return value for Contains.
+
 2006-11-29  Miguel de Icaza  <miguel@novell.com>
 
 	* ComponentDesigner.cs: Remove a few exceptions being thrown from
