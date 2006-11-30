@@ -923,8 +923,10 @@ namespace System.Web {
 				if (worker_request == null)
 					return String.Empty; // don't check security with an empty string!
 
-				if (physical_path == null)
-					physical_path = MapPath (CurrentExecutionFilePath);
+				if (physical_path == null) {
+					// Don't call HttpRequest.MapPath here, as that one *trims* the input
+					physical_path = worker_request.GetFilePathTranslated ();
+				}
 
 				if (SecurityManager.SecurityEnabled) {
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, physical_path).Demand ();
