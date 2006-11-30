@@ -237,6 +237,7 @@ namespace MonoTests.System.Windows.Forms
 		{
 			textBox.Text = "ABCDE";
 			textBox.SelectionLength = 4;
+			textBox.Copy ();
 			textBox.SelectionStart = textBox.SelectionStart + textBox.SelectionLength;
 			textBox.Paste ();
 			Assert.AreEqual ("ABCDABCD", textBox.Text, "#32");
