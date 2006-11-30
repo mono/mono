@@ -1,4 +1,9 @@
 
+Thu Nov 30 11:11:37 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: back out GetFields () fix until the serialization code is
+	fixed to not depend on the incorrect behaviour.
+
 Wed Nov 29 22:01:46 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* profiler.c: provide defaults if none are set.
