@@ -63,7 +63,7 @@ namespace System.Diagnostics
 		/// <summary>
 		/// Causes a breakpoint to be signaled to an attached debugger.
 		/// </summary>
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public static void Break()
 		{
 			throw new NotImplementedException();

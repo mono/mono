@@ -126,7 +126,6 @@ namespace System.Globalization
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		[System.Runtime.InteropServices.ComVisible(false)]
 		public virtual string NativeName {
 			get { return DisplayName; }

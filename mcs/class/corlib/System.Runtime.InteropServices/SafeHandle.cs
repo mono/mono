@@ -30,59 +30,59 @@ using System.Runtime.ConstrainedExecution;
 
 namespace System.Runtime.InteropServices
 {
-	[MonoTODO]
+	[MonoTODO("Not implemented")]
 	public abstract class SafeHandle : CriticalFinalizerObject, IDisposable {
 		protected IntPtr handle;
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		protected SafeHandle (IntPtr invalidHandleValue, bool ownsHandle)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public void Close () {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public void DangerousAddRef (ref bool success) {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public IntPtr DangerousGetHandle () {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public void DangerousRelease () {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public virtual void Dispose () {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public void SetHandleAsInvalid () {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		protected virtual void Dispose (bool disposing) {
 			throw new NotImplementedException ();
 		}
 
 		protected abstract bool ReleaseHandle ();
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		protected void SetHandle (IntPtr handle) {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public bool IsClosed {
 			get {
 				throw new NotImplementedException ();
