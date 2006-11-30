@@ -1,3 +1,7 @@
+2006-11-29  Joshua Tauberer  <jit@occams.info>
+
+	* mkbundle.1: Corrected minor errors, added --nomain option.
+
 2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* genxs.1 : introduced <baseSerializer> and <implementation>
