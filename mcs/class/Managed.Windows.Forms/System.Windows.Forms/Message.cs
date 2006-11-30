@@ -101,7 +101,7 @@ namespace System.Windows.Forms {
 		}
 
 		public override string ToString() {
-			return String.Format("[{0} {1} {2} {3}]", msg.ToString(), lParam.ToString(), wParam.ToString(), hwnd.ToString());
+			return String.Format ("msg=0x{0:x} ({1}) hwnd=0x{2:x} wparam=0x{3:x} lparam=0x{4:x} result=0x{5:x}", msg, ((Msg) msg).ToString (), hwnd.ToInt32 (), wParam.ToInt32 (), lParam.ToInt32 (), result.ToInt32 ());
 		}
 		#endregion	// Public Instance Methods
 	}

@@ -1,3 +1,7 @@
+2006-11-30  Rolf Bjarne Kvinge <RKvinge@novell.com>
+
+	* Message.cs: Changed ToString() to match MS.
+	
 2006-11-30  Jackson Harper  <jackson@ximian.com>
 
 	* TextBoxBase.cs: You can still change the selected text on a read
