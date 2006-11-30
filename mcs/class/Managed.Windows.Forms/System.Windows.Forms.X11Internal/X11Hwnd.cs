@@ -345,8 +345,8 @@ namespace System.Windows.Forms.X11Internal {
 							 out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 				
 				if (((long)nitems == 1) && (prop != IntPtr.Zero)) {
-					int x11_opacity = Marshal.ReadInt32(prop, 0);
-					trans = ((double)x11_opacity) / 0xffffffff;
+					uint x11_opacity = (uint)Marshal.ReadInt32(prop, 0);
+					trans = ((double)x11_opacity) / (uint)0xffffffff;
 				}
 
 				if (prop != IntPtr.Zero) {
