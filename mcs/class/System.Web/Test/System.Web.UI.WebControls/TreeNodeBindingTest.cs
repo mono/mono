@@ -42,9 +42,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 	[TestFixture]
 	public class TreeNodeBindingTest {
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void TreeNodeBinding_DefaultProperties () {
 			TreeNodeBinding tnb = new TreeNodeBinding ();
 			Assert.AreEqual (string.Empty, tnb.DataMember, "DataMember");
@@ -68,9 +65,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void TreeNodeBinding_AssignToDefaultProperties () {
 			TreeNodeBinding tnb = new TreeNodeBinding ();
 
