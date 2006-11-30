@@ -341,7 +341,6 @@ namespace System
 		}
 
 		// Methods
-		[MonoTODO]
 		public override DaylightTime GetDaylightChanges (int year)
 		{
 			if (year < 1 || year > 9999)

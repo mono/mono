@@ -45,7 +45,6 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void type_from_obj (MonoType type, Object obj);
 		
-		[MonoTODO]
 		internal MonoType (Object obj)
 		{
 			// this should not be used - lupus

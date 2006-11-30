@@ -489,25 +489,25 @@ namespace System {
 				return GetTypeCodeInternal (type);
 		}
 
-		[MonoTODO]
+		[MonoTODO("Mono does not support COM")]
 		public static Type GetTypeFromCLSID (Guid clsid)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Mono does not support COM")]
 		public static Type GetTypeFromCLSID (Guid clsid, bool throwOnError)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Mono does not support COM")]
 		public static Type GetTypeFromCLSID (Guid clsid, string server)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Mono does not support COM")]
 		public static Type GetTypeFromCLSID (Guid clsid, string server, bool throwOnError)
 		{
 			throw new NotImplementedException ();
@@ -518,25 +518,25 @@ namespace System {
 			return internal_from_handle (handle.Value);
 		}
 
-		[MonoTODO]
+		[MonoTODO("Mono does not support COM")]
 		public static Type GetTypeFromProgID (string progID)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Mono does not support COM")]
 		public static Type GetTypeFromProgID (string progID, bool throwOnError)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Mono does not support COM")]
 		public static Type GetTypeFromProgID (string progID, string server)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Mono does not support COM")]
 		public static Type GetTypeFromProgID (string progID, string server, bool throwOnError)
 		{
 			throw new NotImplementedException ();
@@ -1234,10 +1234,10 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern virtual Type MakePointerType ();
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public static Type ReflectionOnlyGetType (string typeName, 
-												  bool throwIfNotFound, 
-												  bool ignoreCase)
+							  bool throwIfNotFound, 
+							  bool ignoreCase)
 		{
 			throw new NotImplementedException ();
 		}

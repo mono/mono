@@ -73,7 +73,7 @@ namespace System
 		}
 
 #if NET_1_1
-		[MonoTODO]
+		[MonoTODO("Mono does not support COM")]
 		public static ObjectHandle CreateComInstanceFrom (string assemblyName, string typeName,
 		                                                  byte []hashValue, AssemblyHashAlgorithm hashAlgorithm)
 		{
