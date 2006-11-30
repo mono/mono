@@ -97,30 +97,30 @@ namespace System.Runtime.CompilerServices
 		}
 
 #if NET_2_0
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public static void ExecuteCodeWithGuaranteedCleanup (TryCode code, CleanupCode backoutCode, Object userData) {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void PrepareConstrainedRegions () {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void PrepareConstrainedRegionsNoOP () {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void ProbeForSufficientStack() {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public static void PrepareDelegate (Delegate d) {
 			if (d == null)
 				throw new ArgumentNullException ("d");
