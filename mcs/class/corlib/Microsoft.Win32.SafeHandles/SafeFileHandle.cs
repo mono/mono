@@ -40,14 +40,14 @@ namespace Microsoft.Win32.SafeHandles {
 			SetHandle (preexistingHandle);
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		public override bool IsInvalid {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not implemented")]
 		protected override bool ReleaseHandle ()
 		{
 			throw new NotImplementedException ();
