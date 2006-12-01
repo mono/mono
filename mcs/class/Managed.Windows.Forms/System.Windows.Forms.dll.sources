@@ -333,6 +333,7 @@ System.Windows.Forms/HorizontalAlignment.cs
 System.Windows.Forms/HtmlElementInsertionOrientation.cs
 System.Windows.Forms/Hwnd.cs
 System.Windows.Forms/IButtonControl.cs
+System.Windows.Forms/IBindableComponent.cs
 System.Windows.Forms/ICommandExecutor.cs
 System.Windows.Forms/IComponentEditorPageSite.cs
 System.Windows.Forms/IContainerControl.cs

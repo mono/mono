@@ -1,3 +1,7 @@
+2006-12-01  Chris Toshok  <toshok@ximian.com>
+
+	* System.Windows.Forms.dll.sources: add IBindableComponent.cs
+
 2006-11-30  Jonathan Pobst  <monkey@jpobst.com>
 
 	* System.Windows.Forms.dll.sources: Add
