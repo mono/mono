@@ -64,8 +64,21 @@ namespace System.Windows.Forms {
 			form.TextChanged += new EventHandler (FormTextChangedHandler);
 			form.SizeChanged += new EventHandler (FormSizeChangedHandler);
 			form.LocationChanged += new EventHandler (FormLocationChangedHandler);
+			form.VisibleChanged += new EventHandler (FormVisibleChangedHandler);
 			draw_maximized_buttons = new PaintEventHandler (DrawMaximizedButtons);
 			CreateIconMenus ();
+		}
+
+		private void FormVisibleChangedHandler (object sender, EventArgs e)
+		{
+			if (mdi_container == null)
+				return;
+				
+			if (form.Visible) {
+				mdi_container.ActivateChild (form);
+			} else if (mdi_container.Controls.Count > 1) {
+				mdi_container.ActivateActiveMdiChild ();
+			}
 		}
 
 		private void FormTextChangedHandler (object sender, EventArgs e)
@@ -282,6 +295,8 @@ namespace System.Windows.Forms {
 				MaximizedMenu.Paint -= draw_maximized_buttons;
 				break;
 			case FormWindowState.Maximized:
+				if (mdi_container.ActiveMdiChild != form)
+					mdi_container.ActivateChild (form);
 				CreateButtons ();
 				maximize_button.Caption = CaptionButton.Restore;
 				minimize_button.Caption = CaptionButton.Minimize;
@@ -335,9 +350,6 @@ namespace System.Windows.Forms {
 		private void FormClosed (object sender, EventArgs e)
 		{
 			mdi_container.CloseChildForm (form);
-			XplatUI.RequestNCRecalc (mdi_container.Parent.Handle);
-			mdi_container.SizeScrollBars ();
-			mdi_container.SetParentText (false);
 		}
 
 		/*

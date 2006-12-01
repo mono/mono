@@ -51,6 +51,7 @@ namespace System.Windows.Forms {
 		private string form_text;
 		private bool setting_form_text;
 		internal ArrayList original_order = new ArrayList (); // The order the child forms are added (used by the main menu to show the window menu)
+		private Form active_child;
 
 		#endregion	// Local Variables
 
@@ -556,7 +557,6 @@ namespace System.Windows.Forms {
 						} 
 					}
 				} while (!success);
-				Console.WriteLine("IconicBounds = {0}", rect);
 				wm.IconicBounds = rect;
 				form.Bounds = wm.IconicBounds;
 			}
@@ -574,6 +574,14 @@ namespace System.Windows.Forms {
 
 			Controls.Remove (form);
 			form.Close ();
+
+			XplatUI.RequestNCRecalc (Handle);
+			if (Controls.Count == 0) {
+				XplatUI.RequestNCRecalc (Parent.Handle);
+				ParentForm.PerformLayout ();
+			}
+			SizeScrollBars ();
+			SetParentText (false);
 		}
 
 		internal void ActivateNextChild ()
@@ -594,7 +602,10 @@ namespace System.Windows.Forms {
 		{
 			if (Controls.Count < 1)
 				return;
-
+			
+			if (ParentForm.is_changing_visible_state)
+				return;
+				
 			Form current = (Form) Controls [0];
 			form.SuspendLayout ();
 			form.BringToFront ();
@@ -605,9 +616,11 @@ namespace System.Windows.Forms {
 			SetWindowStates ((MdiWindowManager) form.window_manager);
 			form.ResumeLayout (false);
 			if (current != form) {
+				form.has_focus = false;
 				XplatUI.InvalidateNC (current.Handle);
 				XplatUI.InvalidateNC (form.Handle);
 			}
+			active_child = (Form) Controls [0];
 		}
 		
 		internal bool SetWindowStates (MdiWindowManager wm)
@@ -675,12 +688,46 @@ namespace System.Windows.Forms {
 
 		internal Form ActiveMdiChild {
 			get {
+#if NET_2_0
+				if (!ParentForm.Visible)
+					return null;
+#endif
 				if (Controls.Count < 1)
 					return null;
-				return (Form) Controls [0];
+					
+				if (!ParentForm.IsHandleCreated)
+					return null;
+				
+				if (!ParentForm.has_been_visible)
+					return null;
+					
+				if (!ParentForm.Visible)
+					return active_child;
+				
+				active_child = null;
+				for (int i = 0; i < Controls.Count; i++) {
+					if (Controls [i].Visible) {
+						active_child = (Form) Controls [i];
+						break;
+					}
+				}
+				return active_child;
 			}
 			set {
 				ActivateChild (value);
+			}
+		}
+		
+		internal void ActivateActiveMdiChild ()
+		{
+			if (ParentForm.is_changing_visible_state)
+				return;
+				
+			for (int i = 0; i < Controls.Count; i++) {
+				if (Controls [i].Visible) {
+					ActivateChild ((Form) Controls [i]);
+					return;
+				}
 			}
 		}
 	}

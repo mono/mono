@@ -79,6 +79,8 @@ namespace System.Windows.Forms {
 		Color				transparency_key;
 		internal MenuTracker		active_tracker;
 		private bool			is_loaded;
+		internal bool			is_changing_visible_state;
+		internal bool			has_been_visible;
 
 		#endregion	// Local Variables
 
@@ -458,6 +460,7 @@ namespace System.Windows.Forms {
 					Controls.Add(mdi_container);
 					ControlAdded += new ControlEventHandler (ControlAddedHandler);
 					mdi_container.SendToBack ();
+					mdi_container.SetParentText (true);
 				} else if (!value && mdi_container != null) {
 					Controls.Remove(mdi_container);
 					mdi_container = null;
@@ -1624,8 +1627,8 @@ namespace System.Windows.Forms {
 		protected override void OnTextChanged(EventArgs e) {
 			base.OnTextChanged (e);
 
-            if (mdi_container != null)
-                mdi_container.SetParentText(true);
+			if (mdi_container != null)
+				mdi_container.SetParentText(true);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -1773,7 +1776,10 @@ namespace System.Windows.Forms {
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void SetVisibleCore(bool value) {
+			is_changing_visible_state = true;
+			has_been_visible = value || has_been_visible;
 			base.SetVisibleCore (value);
+			is_changing_visible_state = false;
 		}
 
 		protected override void UpdateDefaultButton() {
