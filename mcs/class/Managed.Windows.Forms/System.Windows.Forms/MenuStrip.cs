@@ -88,12 +88,16 @@ namespace System.Windows.Forms
 
 		protected virtual void OnMenuActivate (EventArgs e)
 		{
-			if (MenuActivate != null) MenuActivate (this, e);
+			EventHandler eh = (EventHandler)(Events [MenuActivateEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnMenuDeactivate (EventArgs e)
 		{
-			if (MenuDeactivate != null) MenuDeactivate (this, e);
+			EventHandler eh = (EventHandler)(Events [MenuDeactivateEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override bool ProcessCmdKey (ref Message msg, Keys keyData)
@@ -108,8 +112,18 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Events
-		public event EventHandler MenuActivate;
-		public event EventHandler MenuDeactivate;
+		static object MenuActivateEvent = new object ();
+		static object MenuDeactivateEvent = new object ();
+
+		public event EventHandler MenuActivate {
+			add { Events.AddHandler (MenuActivateEvent, value); }
+			remove { Events.RemoveHandler (MenuActivateEvent, value); }
+		}
+
+		public event EventHandler MenuDeactivate {
+			add { Events.AddHandler (MenuDeactivateEvent, value); }
+			remove { Events.RemoveHandler (MenuDeactivateEvent, value); }
+		}
 		#endregion
 		
 		#region Internal Methods

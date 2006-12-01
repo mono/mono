@@ -94,11 +94,16 @@ namespace System.Windows.Forms
 
 		protected virtual void OnValueChanged (EventArgs args)
 		{
-			if (ValueChanged != null)
-				ValueChanged (this, args);
+			EventHandler eh = (EventHandler)(Events [ValueChangedEvent]);
+			if (eh != null)
+				eh (this, args);
 		}
 
-		public event EventHandler ValueChanged;
+		static object ValueChangedEvent = new object ();
+		public event EventHandler ValueChanged {
+			add { Events.AddHandler (ValueChangedEvent, value); }
+			remove { Events.RemoveHandler (ValueChangedEvent, value); }
+		}
 	}
 }
 

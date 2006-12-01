@@ -440,8 +440,12 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnDrawItem (DrawItemEventArgs e)
 		{
-			if (DrawItem != null && DrawMode == TabDrawMode.OwnerDrawFixed)
-				DrawItem (this, e);
+			if (DrawMode != TabDrawMode.OwnerDrawFixed)
+				return;
+
+			DrawItemEventHandler eh = (DrawItemEventHandler)(Events [DrawItemEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		internal void OnDrawItemInternal (DrawItemEventArgs e)
@@ -544,8 +548,9 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnSelectedIndexChanged (EventArgs e)
 		{
-			if (SelectedIndexChanged != null)
-				SelectedIndexChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [SelectedIndexChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		internal override void OnPaintInternal (PaintEventArgs pe)
@@ -1053,8 +1058,18 @@ namespace System.Windows.Forms {
 			remove { base.TextChanged -= value; }
 		}
 
-		public event DrawItemEventHandler DrawItem;
-		public event EventHandler SelectedIndexChanged;
+		static object DrawItemEvent = new object ();
+		static object SelectedIndexChangedEvent = new object ();
+
+		public event DrawItemEventHandler DrawItem {
+			add { Events.AddHandler (DrawItemEvent, value); }
+			remove { Events.RemoveHandler (DrawItemEvent, value); }
+		}
+
+		public event EventHandler SelectedIndexChanged {
+			add { Events.AddHandler (SelectedIndexChangedEvent, value); }
+			remove { Events.RemoveHandler (SelectedIndexChangedEvent, value); }
+		}
 		#endregion	// Events
 
 

@@ -121,10 +121,24 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		#endregion Public Instance Properties
 		
 		#region Events
+		static object DropDownButtonClickedEvent = new object ();
+		static object DialogButtonClickedEvent = new object ();
+		static object ToggleValueEvent = new object ();
 
-		public event EventHandler DropDownButtonClicked;
-		public event EventHandler DialogButtonClicked;
-		public event EventHandler ToggleValue;
+		public event EventHandler DropDownButtonClicked {
+			add { Events.AddHandler (DropDownButtonClickedEvent, value); }
+			remove { Events.RemoveHandler (DropDownButtonClickedEvent, value); }
+		}
+
+		public event EventHandler DialogButtonClicked {
+			add { Events.AddHandler (DialogButtonClickedEvent, value); }
+			remove { Events.RemoveHandler (DialogButtonClickedEvent, value); }
+		}
+
+		public event EventHandler ToggleValue {
+			add { Events.AddHandler (ToggleValueEvent, value); }
+			remove { Events.RemoveHandler (ToggleValueEvent, value); }
+		}
 		
 		#endregion Events
 		
@@ -140,21 +154,24 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			e.Graphics.DrawString("...", new Font(Font,FontStyle.Bold), Brushes.Black, 0,0);
 		}
 
-		private void dropdown_button_Click(object sender, System.EventArgs e) {
-			if (DropDownButtonClicked != null)
-				DropDownButtonClicked(this, EventArgs.Empty);
+		private void dropdown_button_Click(object sender, EventArgs e) {
+			EventHandler eh = (EventHandler)(Events [DropDownButtonClickedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
-		private void dialog_button_Click(object sender, System.EventArgs e) {
-			if (DialogButtonClicked != null)
-				DialogButtonClicked(this, EventArgs.Empty);
+		private void dialog_button_Click(object sender, EventArgs e) {
+			EventHandler eh = (EventHandler)(Events [DialogButtonClickedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		#endregion Private Helper Methods
 
 		private void textbox_DoubleClick(object sender, EventArgs e) {
-			if (ToggleValue != null)
-				ToggleValue(this, EventArgs.Empty);
+			EventHandler eh = (EventHandler)(Events [ToggleValueEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 	}
 }

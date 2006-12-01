@@ -545,10 +545,9 @@ namespace System.Windows.Forms
 		}
 
 		protected void OnSelectedItemChanged(object source, EventArgs e) {
-			EventHandler handler = SelectedItemChanged;
-
-			if (handler != null)
-				handler(source, e);
+			EventHandler eh = (EventHandler)(Events [SelectedItemChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void UpdateEditText() {
@@ -565,7 +564,11 @@ namespace System.Windows.Forms
 		#endregion	// Protected Instance Methods
 
 		#region Events
-		public event EventHandler SelectedItemChanged;
+		static object SelectedItemChangedEvent = new object ();
+		public event EventHandler SelectedItemChanged {
+			add { Events.AddHandler (SelectedItemChangedEvent, value); }
+			remove { Events.RemoveHandler (SelectedItemChangedEvent, value); }
+		}
 		#endregion	// Events
 	}
 }

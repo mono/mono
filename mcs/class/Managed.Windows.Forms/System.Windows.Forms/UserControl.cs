@@ -81,7 +81,9 @@ namespace System.Windows.Forms {
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnLoad(EventArgs e) {
-			if (Load != null) Load(this, e);
+			EventHandler eh = (EventHandler)(Events [LoadEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -96,11 +98,21 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Events
-		public event EventHandler	Load;
+		static object LoadEvent = new object ();
+		static object TextChangedEvent = new object ();
+
+		public event EventHandler Load {
+			add { Events.AddHandler (LoadEvent, value); }
+			remove { Events.RemoveHandler (LoadEvent, value); }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler	TextChanged;
+		public event EventHandler TextChanged {
+			add { Events.AddHandler (TextChangedEvent, value); }
+			remove { Events.RemoveHandler (TextChangedEvent, value); }
+		}
+
 		#endregion	// Events
 	}
 }

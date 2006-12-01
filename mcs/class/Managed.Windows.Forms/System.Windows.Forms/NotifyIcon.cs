@@ -36,7 +36,7 @@ namespace System.Windows.Forms {
 	[DefaultEvent("MouseDown")]
 	[Designer ("System.Windows.Forms.Design.NotifyIconDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ToolboxItemFilter("System.Windows.Forms", ToolboxItemFilterType.Allow)]
-	public sealed class NotifyIcon : System.ComponentModel.Component {
+	public sealed class NotifyIcon : Component {
 		#region Local Variables
 		private ContextMenu		context_menu;
 		private Icon			icon;
@@ -101,39 +101,39 @@ namespace System.Windows.Forms {
 					case Msg.WM_USER: {
 						switch ((Msg)m.LParam.ToInt32()) {
 							case Msg.WM_LBUTTONDOWN: {
-								HandleMouseDown(this, new MouseEventArgs(MouseButtons.Left, 1, Control.MousePosition.X, Control.MousePosition.Y, 0));
+								owner.OnMouseDown (new MouseEventArgs(MouseButtons.Left, 1, Control.MousePosition.X, Control.MousePosition.Y, 0));
 								return;
 							}
 
 							case Msg.WM_LBUTTONUP: {
-								HandleMouseUp(this, new MouseEventArgs(MouseButtons.Left, 1, Control.MousePosition.X, Control.MousePosition.Y, 0));
-								HandleClick(this, EventArgs.Empty);
+								owner.OnMouseUp (new MouseEventArgs(MouseButtons.Left, 1, Control.MousePosition.X, Control.MousePosition.Y, 0));
+								owner.OnClick (EventArgs.Empty);
 								return;
 							}
 
 							case Msg.WM_LBUTTONDBLCLK: {
-								HandleDoubleClick(this, EventArgs.Empty);
+								owner.OnDoubleClick (EventArgs.Empty);
 								return;
 							}
 
 							case Msg.WM_MOUSEMOVE: {
-								HandleMouseMove(this, new MouseEventArgs(MouseButtons.None, 1, Control.MousePosition.X, Control.MousePosition.Y, 0));
+								owner.OnMouseMove (new MouseEventArgs(MouseButtons.None, 1, Control.MousePosition.X, Control.MousePosition.Y, 0));
 								return;
 							}
 
 							case Msg.WM_RBUTTONDOWN: {
-								HandleMouseDown(this, new MouseEventArgs(MouseButtons.Right, 1, Control.MousePosition.X, Control.MousePosition.Y, 0));
+								owner.OnMouseDown (new MouseEventArgs(MouseButtons.Right, 1, Control.MousePosition.X, Control.MousePosition.Y, 0));
 								return;
 							}
 
 							case Msg.WM_RBUTTONUP: {
-								HandleMouseUp(this, new MouseEventArgs(MouseButtons.Right, 1, Control.MousePosition.X, Control.MousePosition.Y, 0));
-								HandleClick(this, EventArgs.Empty);
+								owner.OnMouseUp (new MouseEventArgs(MouseButtons.Right, 1, Control.MousePosition.X, Control.MousePosition.Y, 0));
+								owner.OnClick (EventArgs.Empty);
 								return;
 							}
 
 							case Msg.WM_RBUTTONDBLCLK: {
-								HandleDoubleClick(this, EventArgs.Empty);
+								owner.OnDoubleClick (EventArgs.Empty);
 								return;
 							}
 						}
@@ -181,38 +181,29 @@ namespace System.Windows.Forms {
 				owner.Recalculate ();
 			}
 
-			private void HandleClick(object sender, EventArgs e) {
-				if (owner.Click != null) {
-					owner.Click(owner, e);
-				}
+			private void HandleClick (object sender, EventArgs e)
+			{
+				owner.OnClick (e);
 			}
 
-			private void HandleDoubleClick(object sender, EventArgs e) {
-				if (owner.DoubleClick != null) {
-					owner.DoubleClick(owner, e);
-				}
+			private void HandleDoubleClick (object sender, EventArgs e)
+			{
+				owner.OnDoubleClick (e);
 			}
 
-			private void HandleMouseDown(object sender, MouseEventArgs e) {
-				if (owner.MouseDown != null) {
-					owner.MouseDown(owner, e);
-				}
+			private void HandleMouseDown (object sender, MouseEventArgs e)
+			{
+				owner.OnMouseDown (e);
 			}
 
-			private void HandleMouseUp(object sender, MouseEventArgs e) {
-				if ((e.Button & MouseButtons.Right) == MouseButtons.Right && owner.context_menu != null) {
-					owner.context_menu.Show(this, new Point(e.X, e.Y));
-				}
-
-				if (owner.MouseUp != null) {
-					owner.MouseUp(owner, e);
-				}
+			private void HandleMouseUp (object sender, MouseEventArgs e)
+			{
+				owner.OnMouseUp (e);
 			}
 
-			private void HandleMouseMove(object sender, MouseEventArgs e) {
-				if (owner.MouseMove != null) {
-					owner.MouseMove(owner, e);
-				}
+			private void HandleMouseMove (object sender, MouseEventArgs e)
+			{
+				owner.OnMouseMove (e);
 			}
 		}
 		#endregion	// NotifyIconWindow Class
@@ -228,6 +219,44 @@ namespace System.Windows.Forms {
 		#endregion	// Public Constructors
 
 		#region Private Methods
+		private void OnClick (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events [ClickEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
+		private void OnDoubleClick (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events [DoubleClickEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
+		private void OnMouseDown (MouseEventArgs e)
+		{
+			MouseEventHandler eh = (MouseEventHandler)(Events [MouseDownEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
+		private void OnMouseUp (MouseEventArgs e)
+		{
+			if ((e.Button & MouseButtons.Right) == MouseButtons.Right && context_menu != null)
+				context_menu.Show (window, new Point(e.X, e.Y));
+
+			MouseEventHandler eh = (MouseEventHandler)(Events [MouseUpEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
+		private void OnMouseMove (MouseEventArgs e)
+		{
+			MouseEventHandler eh = (MouseEventHandler)(Events [MouseMoveEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
 		private void Recalculate () 
 		{
 			window.CalculateIconRect ();
@@ -368,15 +397,39 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Events
-		[Category("Action")]
-		public event EventHandler	Click;
+		static object ClickEvent = new object ();
+		static object DoubleClickEvent = new object ();
+		static object MouseDownEvent = new object ();
+		static object MouseMoveEvent = new object ();
+		static object MouseUpEvent = new object ();
 
 		[Category("Action")]
-		public event EventHandler	DoubleClick;
+		public event EventHandler Click {
+			add { Events.AddHandler (ClickEvent, value); }
+			remove { Events.RemoveHandler (ClickEvent, value); }
+		}
 
-		public event MouseEventHandler	MouseDown;
-		public event MouseEventHandler	MouseMove;
-		public event MouseEventHandler	MouseUp;
+		[Category("Action")]
+		public event EventHandler DoubleClick {
+			add { Events.AddHandler (DoubleClickEvent, value); }
+			remove { Events.RemoveHandler (DoubleClickEvent, value); }
+		}
+
+		public event MouseEventHandler MouseDown {
+			add { Events.AddHandler (MouseDownEvent, value); }
+			remove { Events.RemoveHandler (MouseDownEvent, value); }
+		}
+
+		public event MouseEventHandler MouseMove {
+			add { Events.AddHandler (MouseMoveEvent, value); }
+			remove { Events.RemoveHandler (MouseMoveEvent, value); }
+		}
+
+		public event MouseEventHandler MouseUp {
+			add { Events.AddHandler (MouseUpEvent, value); }
+			remove { Events.RemoveHandler (MouseUpEvent, value); }
+		}
+
 		#endregion	// Events
 	}
 }

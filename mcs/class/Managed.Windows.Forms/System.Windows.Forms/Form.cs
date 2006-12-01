@@ -1454,23 +1454,23 @@ namespace System.Windows.Forms {
 			if (is_loaded)
 				SelectActiveControl ();
 
-			if (Activated != null) {
-				Activated(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [ActivatedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnClosed(EventArgs e) {
-			if (Closed != null) {
-				Closed(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [ClosedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnClosing(System.ComponentModel.CancelEventArgs e) {
-			if (Closing != null) {
-				Closing(this, e);
-			}
+			CancelEventHandler eh = (CancelEventHandler)(Events [ClosingEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -1495,9 +1495,9 @@ namespace System.Windows.Forms {
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnDeactivate(EventArgs e) {
-			if (Deactivate != null) {
-				Deactivate(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [DeactivateEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -1518,16 +1518,16 @@ namespace System.Windows.Forms {
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnInputLanguageChanged(InputLanguageChangedEventArgs e) {
-			if (InputLanguageChanged!=null) {
-				InputLanguageChanged(this, e);
-			}
+			InputLanguageChangedEventHandler eh = (InputLanguageChangedEventHandler)(Events [InputLanguageChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnInputLanguageChanging(InputLanguageChangingEventArgs e) {
-			if (InputLanguageChanging!=null) {
-				InputLanguageChanging(this, e);
-			}
+			InputLanguageChangingEventHandler eh = (InputLanguageChangingEventHandler)(Events [InputLanguageChangingEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -1537,9 +1537,9 @@ namespace System.Windows.Forms {
 				AutoScale = false;
 			}
 
-			if (Load != null) {
-				Load(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [LoadEvent]);
+			if (eh != null)
+				eh (this, e);
 
 			if (!IsMdiChild) {
 				switch (StartPosition) {
@@ -1560,44 +1560,44 @@ namespace System.Windows.Forms {
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnMaximizedBoundsChanged(EventArgs e) {
-			if (MaximizedBoundsChanged != null) {
-				MaximizedBoundsChanged(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [MaximizedBoundsChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnMaximumSizeChanged(EventArgs e) {
-			if (MaximumSizeChanged != null) {
-				MaximumSizeChanged(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [MaximumSizeChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnMdiChildActivate(EventArgs e) {
-			if (MdiChildActivate != null) {
-				MdiChildActivate(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [MdiChildActivateEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnMenuComplete(EventArgs e) {
-			if (MenuComplete != null) {
-				MenuComplete(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [MenuCompleteEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnMenuStart(EventArgs e) {
-			if (MenuStart != null) {
-				MenuStart(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [MenuStartEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnMinimumSizeChanged(EventArgs e) {
-			if (MinimumSizeChanged != null) {
-				MinimumSizeChanged(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [MinimumSizeChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -2112,19 +2112,85 @@ namespace System.Windows.Forms {
 		}
 		
 		#region Events
-		public event EventHandler Activated;
-		public event EventHandler Closed;
-		public event CancelEventHandler Closing;
-		public event EventHandler Deactivate;
-		public event InputLanguageChangedEventHandler InputLanguageChanged;
-		public event InputLanguageChangingEventHandler InputLanguageChanging;
-		public event EventHandler Load;
-		public event EventHandler MaximizedBoundsChanged;
-		public event EventHandler MaximumSizeChanged;
-		public event EventHandler MdiChildActivate;
-		public event EventHandler MenuComplete;
-		public event EventHandler MenuStart;
-		public event EventHandler MinimumSizeChanged;
+		static object ActivatedEvent = new object ();
+		static object ClosedEvent = new object ();
+		static object ClosingEvent = new object ();
+		static object DeactivateEvent = new object ();
+		static object InputLanguageChangedEvent = new object ();
+		static object InputLanguageChangingEvent = new object ();
+		static object LoadEvent = new object ();
+		static object MaximizedBoundsChangedEvent = new object ();
+		static object MaximumSizeChangedEvent = new object ();
+		static object MdiChildActivateEvent = new object ();
+		static object MenuCompleteEvent = new object ();
+		static object MenuStartEvent = new object ();
+		static object MinimumSizeChangedEvent = new object ();
+
+		public event EventHandler Activated {
+			add { Events.AddHandler (ActivatedEvent, value); }
+			remove { Events.RemoveHandler (ActivatedEvent, value); }
+		}
+
+		public event EventHandler Closed {
+			add { Events.AddHandler (ClosedEvent, value); }
+			remove { Events.RemoveHandler (ClosedEvent, value); }
+		}
+
+		public event CancelEventHandler Closing {
+			add { Events.AddHandler (ClosingEvent, value); }
+			remove { Events.RemoveHandler (ClosingEvent, value); }
+		}
+
+		public event EventHandler Deactivate {
+			add { Events.AddHandler (DeactivateEvent, value); }
+			remove { Events.RemoveHandler (DeactivateEvent, value); }
+		}
+
+		public event InputLanguageChangedEventHandler InputLanguageChanged {
+			add { Events.AddHandler (InputLanguageChangedEvent, value); }
+			remove { Events.RemoveHandler (InputLanguageChangedEvent, value); }
+		}
+
+		public event InputLanguageChangingEventHandler InputLanguageChanging {
+			add { Events.AddHandler (InputLanguageChangingEvent, value); }
+			remove { Events.RemoveHandler (InputLanguageChangingEvent, value); }
+		}
+
+		public event EventHandler Load {
+			add { Events.AddHandler (LoadEvent, value); }
+			remove { Events.RemoveHandler (LoadEvent, value); }
+		}
+
+		public event EventHandler MaximizedBoundsChanged {
+			add { Events.AddHandler (MaximizedBoundsChangedEvent, value); }
+			remove { Events.RemoveHandler (MaximizedBoundsChangedEvent, value); }
+		}
+
+		public event EventHandler MaximumSizeChanged {
+			add { Events.AddHandler (MaximumSizeChangedEvent, value); }
+			remove { Events.RemoveHandler (MaximumSizeChangedEvent, value); }
+		}
+
+		public event EventHandler MdiChildActivate {
+			add { Events.AddHandler (MdiChildActivateEvent, value); }
+			remove { Events.RemoveHandler (MdiChildActivateEvent, value); }
+		}
+
+		public event EventHandler MenuComplete {
+			add { Events.AddHandler (MenuCompleteEvent, value); }
+			remove { Events.RemoveHandler (MenuCompleteEvent, value); }
+		}
+
+		public event EventHandler MenuStart {
+			add { Events.AddHandler (MenuStartEvent, value); }
+			remove { Events.RemoveHandler (MenuStartEvent, value); }
+		}
+
+		public event EventHandler MinimumSizeChanged {
+			add { Events.AddHandler (MinimumSizeChangedEvent, value); }
+			remove { Events.RemoveHandler (MinimumSizeChangedEvent, value); }
+		}
+
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -2155,13 +2221,24 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public event FormClosingEventHandler FormClosing;
-		public event FormClosedEventHandler FormClosed;
+		static object FormClosingEvent = new object ();
+		static object FormClosedEvent = new object ();
+
+		public event FormClosingEventHandler FormClosing {
+			add { Events.AddHandler (FormClosingEvent, value); }
+			remove { Events.RemoveHandler (FormClosingEvent, value); }
+		}
+
+		public event FormClosedEventHandler FormClosed {
+			add { Events.AddHandler (FormClosedEvent, value); }
+			remove { Events.RemoveHandler (FormClosedEvent, value); }
+		}
 		
 		protected virtual void OnFormClosing (FormClosingEventArgs e)
 		{
-			if (FormClosing != null)
-				FormClosing (this, e);
+			FormClosingEventHandler eh = (FormClosingEventHandler)(Events [FormClosingEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 #endif
 	}

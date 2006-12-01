@@ -62,8 +62,19 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		new public event EventHandler AutoSizeChanged;
-		public event SplitterEventHandler SplitterMoved;
-		public event SplitterCancelEventHandler SplitterMoving;
+
+		static object SplitterMovedEvent = new object ();
+		static object SplitterMovingEvent = new object ();
+
+		public event SplitterEventHandler SplitterMoved {
+			add { Events.AddHandler (SplitterMovedEvent, value); }
+			remove { Events.RemoveHandler (SplitterMovedEvent, value); }
+		}
+
+		public event SplitterCancelEventHandler SplitterMoving {
+			add { Events.AddHandler (SplitterMovingEvent, value); }
+			remove { Events.RemoveHandler (SplitterMovingEvent, value); }
+		}
 		#endregion
 
 		#region Public Constructors
@@ -391,12 +402,16 @@ namespace System.Windows.Forms
 		#region Public Methods
 		public void OnSplitterMoved (SplitterEventArgs e)
 		{
-			if (SplitterMoved != null) SplitterMoved (this, e);
+			SplitterEventHandler eh = (SplitterEventHandler)(Events [SplitterMovedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		public void OnSplitterMoving (SplitterCancelEventArgs e)
 		{
-			if (SplitterMoving != null) SplitterMoving (this, e);
+			SplitterCancelEventHandler eh = (SplitterCancelEventHandler)(Events [SplitterMovingEvent]);
+			if (eh != null)
+				eh (this, e);
 
 			if (e.Cancel == true) {
 				e.SplitX = splitter.Location.X;

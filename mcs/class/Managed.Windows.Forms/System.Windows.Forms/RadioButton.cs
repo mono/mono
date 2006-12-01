@@ -152,9 +152,9 @@ namespace System.Windows.Forms {
 			set {
 				if (value != appearance) {
 					appearance = value;
-					if (AppearanceChanged != null) {
-						AppearanceChanged(this, EventArgs.Empty);
-					}
+					EventHandler eh = (EventHandler)(Events [AppearanceChangedEvent]);
+					if (eh != null)
+						eh (this, EventArgs.Empty);
 					Redraw();
 				}
 			}
@@ -276,9 +276,9 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual void OnCheckedChanged(EventArgs e) {
-			if (CheckedChanged != null) {
-				CheckedChanged(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [CheckedChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnClick(EventArgs e) {
@@ -317,8 +317,18 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Events
-		public event EventHandler	AppearanceChanged;
-		public event EventHandler	CheckedChanged;
+		static object AppearanceChangedEvent = new object ();
+		static object CheckedChangedEvent = new object ();
+
+		public event EventHandler AppearanceChanged {
+			add { Events.AddHandler (AppearanceChangedEvent, value); }
+			remove { Events.RemoveHandler (AppearanceChangedEvent, value); }
+		}
+
+		public event EventHandler CheckedChanged {
+			add { Events.AddHandler (CheckedChangedEvent, value); }
+			remove { Events.RemoveHandler (CheckedChangedEvent, value); }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]

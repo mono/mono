@@ -81,7 +81,12 @@ namespace System.Windows.Forms
 		private int focused_index;
 
 		#region Events
-		public event LinkLabelLinkClickedEventHandler LinkClicked;
+		static object LinkClickedEvent = new object ();
+
+		public event LinkLabelLinkClickedEventHandler LinkClicked {
+			add { Events.AddHandler (LinkClickedEvent, value); }
+			remove { Events.RemoveHandler (LinkClickedEvent, value); }
+		}
 		#endregion // Events
 
 		public LinkLabel ()
@@ -313,8 +318,9 @@ namespace System.Windows.Forms
 
 		protected virtual void OnLinkClicked (LinkLabelLinkClickedEventArgs e)
 		{
-			if (LinkClicked != null)
-				LinkClicked (this, e);
+			LinkLabelLinkClickedEventHandler eh = (LinkLabelLinkClickedEventHandler)(Events [LinkClickedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnLostFocus (EventArgs e)

@@ -1018,9 +1018,9 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual void OnContentsResized(ContentsResizedEventArgs e) {
-			if (ContentsResized != null) {
-				ContentsResized(this, e);
-			}
+			ContentsResizedEventHandler eh = (ContentsResizedEventHandler)(Events [ContentsResizedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnContextMenuChanged(EventArgs e) {
@@ -1036,28 +1036,28 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual void OnHScroll(EventArgs e) {
-			if (HScroll != null) {
-				HScroll(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [HScrollEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[MonoTODO("Determine when to call this")]
 		protected virtual void OnImeChange(EventArgs e) {
-			if (ImeChange != null) {
-				ImeChange(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [ImeChangeEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnLinkClicked(LinkClickedEventArgs e) {
-			if (LinkClicked != null) {
-				LinkClicked(this, e);
-			}
+			LinkClickedEventHandler eh = (LinkClickedEventHandler)(Events [LinkClickedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnProtected(EventArgs e) {
-			if (Protected != null) {
-				Protected(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [ProtectedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnRightToLeftChanged(EventArgs e) {
@@ -1065,9 +1065,9 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual void OnSelectionChanged(EventArgs e) {
-			if (SelectionChanged != null) {
-				SelectionChanged(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [SelectionChanged]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnSystemColorsChanged(EventArgs e) {
@@ -1090,11 +1090,22 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Events
+		static object ContentsResizedEvent = new object ();
+		static object HScrollEvent = new object ();
+		static object ImeChangeEvent = new object ();
+		static object LinkClickedEvent = new object ();
+		static object ProtectedEvent = new object ();
+		static object SelectionChangedEvent = new object ();
+		static object VScrollEvent = new object ();
+
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event EventHandler			BackgroundImageChanged;
 
-		public event ContentsResizedEventHandler	ContentsResized;
+		public event ContentsResizedEventHandler ContentsResized {
+			add { Events.AddHandler (ContentsResizedEvent, value); }
+			remove { Events.RemoveHandler (ContentsResizedEvent, value); }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -1154,10 +1165,25 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event GiveFeedbackEventHandler		GiveFeedback;
 
-		public event EventHandler			HScroll;
-		public event EventHandler			ImeChange;
-		public event LinkClickedEventHandler		LinkClicked;
-		public event EventHandler			Protected;
+		public event EventHandler HScroll {
+			add { Events.AddHandler (HScrollEvent, value); }
+			remove { Events.RemoveHandler (HScrollEvent, value); }
+		}
+
+		public event EventHandler ImeChange {
+			add { Events.AddHandler (ImeChangeEvent, value); }
+			remove { Events.RemoveHandler (ImeChangeEvent, value); }
+		}
+
+		public event LinkClickedEventHandler LinkClicked {
+			add { Events.AddHandler (LinkClickedEvent, value); }
+			remove { Events.RemoveHandler (LinkClickedEvent, value); }
+		}
+
+		public event EventHandler Protected {
+			add { Events.AddHandler (ProtectedEvent, value); }
+			remove { Events.RemoveHandler (ProtectedEvent, value); }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]

@@ -137,11 +137,36 @@ namespace System.Windows.Forms
 		}
 
 		#region Events
-		public event EventHandler Click;
-		public event DrawItemEventHandler DrawItem;
-		public event MeasureItemEventHandler MeasureItem;
-		public event EventHandler Popup;
-		public event EventHandler Select;
+		static object ClickEvent = new object ();
+		static object DrawItemEvent = new object ();
+		static object MeasureItemEvent = new object ();
+		static object PopupEvent = new object ();
+		static object SelectEvent = new object ();
+
+		public event EventHandler Click {
+			add { Events.AddHandler (ClickEvent, value); }
+			remove { Events.RemoveHandler (ClickEvent, value); }
+		}
+
+		public event DrawItemEventHandler DrawItem {
+			add { Events.AddHandler (DrawItemEvent, value); }
+			remove { Events.RemoveHandler (DrawItemEvent, value); }
+		}
+
+		public event MeasureItemEventHandler MeasureItem {
+			add { Events.AddHandler (MeasureItemEvent, value); }
+			remove { Events.RemoveHandler (MeasureItemEvent, value); }
+		}
+
+		public event EventHandler Popup {
+			add { Events.AddHandler (PopupEvent, value); }
+			remove { Events.RemoveHandler (PopupEvent, value); }
+		}
+
+		public event EventHandler Select {
+			add { Events.AddHandler (SelectEvent, value); }
+			remove { Events.RemoveHandler (SelectEvent, value); }
+		}
 		#endregion // Events
 
 		#region Public Properties
@@ -331,7 +356,7 @@ namespace System.Windows.Forms
 		
 		internal bool MeasureEventDefined {
 			get { 
-				if (ownerdraw == true && MeasureItem != null) {
+				if (ownerdraw == true && Events [MeasureItemEvent] != null) {
 					return true;
 				} else {
 					return false;
@@ -443,12 +468,14 @@ namespace System.Windows.Forms
 			Text = menuitem.Text;
 			Visible = menuitem.Visible;
 
+#if notyet
 			// Events
 			Click = menuitem.Click;
 			DrawItem = menuitem.DrawItem;
 			MeasureItem = menuitem.MeasureItem;
 			Popup = menuitem.Popup;
 			Select = menuitem.Select;
+#endif
 		}
 
 		protected override void Dispose (bool disposing)
@@ -471,15 +498,17 @@ namespace System.Windows.Forms
 
 		protected virtual void OnClick (EventArgs e)
 		{
-			if (Click != null)
-				Click (this, e);
+			EventHandler eh = (EventHandler)(Events [ClickEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnDrawItem (DrawItemEventArgs e)
 		{
 			if (OwnerDraw) {
-				if (DrawItem != null)
-					DrawItem (this, e);
+				DrawItemEventHandler eh = (DrawItemEventHandler)(Events [DrawItemEvent]);
+				if (eh != null)
+					eh (this, e);
 				return;
 			}
 
@@ -494,20 +523,26 @@ namespace System.Windows.Forms
 
 		protected virtual void OnMeasureItem (MeasureItemEventArgs e)
 		{
-			if (OwnerDraw && MeasureItem != null)
-				MeasureItem (this, e);
+			if (!OwnerDraw)
+				return;
+
+			MeasureItemEventHandler eh = (MeasureItemEventHandler)(Events [MeasureItemEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnPopup (EventArgs e)
 		{
-			if (Popup != null)
-				Popup (this, e);
+			EventHandler eh = (EventHandler)(Events [PopupEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnSelect (EventArgs e)
 		{
-			if (Select != null)
-				Select (this, e);
+			EventHandler eh = (EventHandler)(Events [SelectEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		public void PerformClick ()

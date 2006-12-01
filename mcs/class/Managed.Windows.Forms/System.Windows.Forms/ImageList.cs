@@ -93,7 +93,6 @@ namespace System.Windows.Forms
 #if NET_2_0
 		private object tag;
 #endif
-		private EventHandler recreateHandle;
 		private readonly ImageCollection images;
 		#endregion // Private Fields
 
@@ -971,8 +970,9 @@ namespace System.Windows.Forms
 		#region Private Instance Methods
 		private void OnRecreateHandle()
 		{
-			if (this.recreateHandle != null)
-				this.recreateHandle(this, EventArgs.Empty);
+			EventHandler eh = (EventHandler)(Events [RecreateHandleEvent]);
+			if (eh != null)
+				eh (this, EventArgs.Empty);
 		}
 
 #if NET_2_0
@@ -1143,16 +1143,13 @@ namespace System.Windows.Forms
 		#endregion // Protected Instance Methods
 
 		#region Events
+		static object RecreateHandleEvent = new object ();
+
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public event EventHandler RecreateHandle {
-			add {
-				this.recreateHandle += value;
-			}
-
-			remove {
-				this.recreateHandle -= value;
-			}
+			add { Events.AddHandler (RecreateHandleEvent, value); }
+			remove { Events.RemoveHandler (RecreateHandleEvent, value); }
 		}
 		#endregion // Events
 	}

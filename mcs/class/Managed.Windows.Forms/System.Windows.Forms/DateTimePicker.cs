@@ -484,18 +484,34 @@ namespace System.Windows.Forms {
 		#endregion 	// public methods
 		
 		#region public events
-		
+		static object CloseUpEvent = new object ();
+		static object DropDownEvent = new object ();
+		static object FormatChangedEvent = new object ();
+		static object ValueChangedEvent = new object ();
+
 		// raised when the monthcalendar is closed
-		public event EventHandler CloseUp;
+		public event EventHandler CloseUp {
+			add { Events.AddHandler (CloseUpEvent, value); }
+			remove { Events.RemoveHandler (CloseUpEvent, value); }
+		}
 		
 		// raised when the monthcalendar is opened
-		public event EventHandler DropDown;
+		public event EventHandler DropDown {
+			add { Events.AddHandler (DropDownEvent, value); }
+			remove { Events.RemoveHandler (DropDownEvent, value); }
+		}
 		
 		// raised when the format of the value is changed
-		public event EventHandler FormatChanged;
+		public event EventHandler FormatChanged {
+			add { Events.AddHandler (FormatChangedEvent, value); }
+			remove { Events.RemoveHandler (FormatChangedEvent, value); }
+		}
 		
 		// raised when the date Value is changed
-		public event EventHandler ValueChanged;
+		public event EventHandler ValueChanged {
+			add { Events.AddHandler (ValueChangedEvent, value); }
+			remove { Events.RemoveHandler (ValueChangedEvent, value); }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -615,16 +631,16 @@ namespace System.Windows.Forms {
 		
 		// raises the CloseUp event
 		protected virtual void OnCloseUp (EventArgs eventargs) {
-			if (this.CloseUp != null) {
-				this.CloseUp (this, eventargs);
-			}
+			EventHandler eh = (EventHandler)(Events [CloseUpEvent]);
+			if (eh != null)
+				eh (this, eventargs);
 		}
 		
 		// raise the drop down event
 		protected virtual void OnDropDown (EventArgs eventargs) {
-			if (this.DropDown != null) {
-				this.DropDown (this, eventargs);
-			}
+			EventHandler eh = (EventHandler)(Events [DropDownEvent]);
+			if (eh != null)
+				eh (this, eventargs);
 		}
 
 		protected override void OnFontChanged(EventArgs e) {
@@ -637,9 +653,9 @@ namespace System.Windows.Forms {
 		
 		// raises the format changed event
 		protected virtual void OnFormatChanged (EventArgs e) {
-			if (this.FormatChanged != null) {
-				this.FormatChanged (this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [FormatChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 		
 		// not sure why we're overriding this one 
@@ -649,9 +665,9 @@ namespace System.Windows.Forms {
 		
 		// raise the ValueChanged event
 		protected virtual void OnValueChanged (EventArgs eventargs) {
-			if (this.ValueChanged != null) {
-				this.ValueChanged (this, eventargs);
-			}
+			EventHandler eh = (EventHandler)(Events [ValueChangedEvent]);
+			if (eh != null)
+				eh (this, eventargs);
 		}
 		
 		// overridden to set the bounds of this control properly
@@ -989,9 +1005,10 @@ namespace System.Windows.Forms {
 			month_calendar.Focus ();
 
 			// fire any registered events
-			if (this.DropDown != null) {
-				this.DropDown (this, EventArgs.Empty);
-			}
+			// XXX should this just call OnDropDown?
+			EventHandler eh = (EventHandler)(Events [DropDownEvent]);
+			if (eh != null)
+				eh (this, EventArgs.Empty);
 		}
 		
 		// hide the month calendar

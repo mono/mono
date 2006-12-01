@@ -542,15 +542,15 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual void OnSplitterMoved(SplitterEventArgs sevent) {
-			if (SplitterMoved != null) {
-				SplitterMoved(this, sevent);
-			}
+			SplitterEventHandler eh = (SplitterEventHandler)(Events [SplitterMovedEvent]);
+			if (eh != null)
+				eh (this, sevent);
 		}
 
 		protected virtual void OnSplitterMoving(SplitterEventArgs sevent) {
-			if (SplitterMoving != null) {
-				SplitterMoving(this, sevent);
-			}
+			SplitterEventHandler eh = (SplitterEventHandler)(Events [SplitterMovingEvent]);
+			if (eh != null)
+				eh (this, sevent);
 		}
 
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
@@ -778,8 +778,18 @@ namespace System.Windows.Forms {
 			remove { base.TextChanged -= value; }
 		}
 
-		public event SplitterEventHandler SplitterMoved;
-		public event SplitterEventHandler SplitterMoving;
+		static object SplitterMovedEvent = new object ();
+		static object SplitterMovingEvent = new object ();
+
+		public event SplitterEventHandler SplitterMoved {
+			add { Events.AddHandler (SplitterMovedEvent, value); }
+			remove { Events.RemoveHandler (SplitterMovedEvent, value); }
+		}
+
+		public event SplitterEventHandler SplitterMoving {
+			add { Events.AddHandler (SplitterMovingEvent, value); }
+			remove { Events.RemoveHandler (SplitterMovingEvent, value); }
+		}
 		#endregion	// Events
 	}
 }

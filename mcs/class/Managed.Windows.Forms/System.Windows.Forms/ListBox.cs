@@ -131,6 +131,10 @@ namespace System.Windows.Forms
 		}
 
 		#region Events
+		static object DrawItemEvent = new object ();
+		static object MeasureItemEvent = new object ();
+		static object SelectedIndexChangedEvent = new object ();
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageChanged {
@@ -145,8 +149,15 @@ namespace System.Windows.Forms
 			remove { base.Click -= value; }
 		}
 
-		public event DrawItemEventHandler DrawItem;
-		public event MeasureItemEventHandler MeasureItem;
+		public event DrawItemEventHandler DrawItem {
+			add { Events.AddHandler (DrawItemEvent, value); }
+			remove { Events.RemoveHandler (DrawItemEvent, value); }
+		}
+
+		public event MeasureItemEventHandler MeasureItem {
+			add { Events.AddHandler (MeasureItemEvent, value); }
+			remove { Events.RemoveHandler (MeasureItemEvent, value); }
+		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -155,7 +166,10 @@ namespace System.Windows.Forms
 			remove { base.Paint -= value; }
 		}
 
-		public event EventHandler SelectedIndexChanged;
+		public event EventHandler SelectedIndexChanged {
+			add { Events.AddHandler (SelectedIndexChangedEvent, value); }
+			remove { Events.RemoveHandler (SelectedIndexChangedEvent, value); }
+		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -785,8 +799,10 @@ namespace System.Windows.Forms
 			switch (DrawMode) {
 			case DrawMode.OwnerDrawFixed:
 			case DrawMode.OwnerDrawVariable:
-				if (DrawItem != null)
-					DrawItem (this, e);
+				DrawItemEventHandler eh = (DrawItemEventHandler)(Events [DrawItemEvent]);
+				if (eh != null)
+					eh (this, e);
+
 				break;
 
 			default:
@@ -833,9 +849,10 @@ namespace System.Windows.Forms
 		{
 			if (draw_mode != DrawMode.OwnerDrawVariable)
 				return;
-				
-			if (MeasureItem != null)
-				MeasureItem (this, e);
+
+			MeasureItemEventHandler eh = (MeasureItemEventHandler)(Events [MeasureItemEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnParentChanged (EventArgs e)
@@ -854,8 +871,9 @@ namespace System.Windows.Forms
 		{
 			base.OnSelectedIndexChanged (e);
 
-			if (SelectedIndexChanged != null)
-				SelectedIndexChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [SelectedIndexChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnSelectedValueChanged (EventArgs e)

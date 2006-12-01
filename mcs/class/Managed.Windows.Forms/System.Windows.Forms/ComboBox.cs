@@ -109,11 +109,33 @@ namespace System.Windows.Forms
 			add { base.BackgroundImageChanged += value; }
 			remove { base.BackgroundImageChanged -= value; }
 		}
-		
-		public event DrawItemEventHandler DrawItem;		
-		public event EventHandler DropDown;		
-		public event EventHandler DropDownStyleChanged;		
-		public event MeasureItemEventHandler MeasureItem;
+
+		static object DrawItemEvent = new object ();
+		static object DropDownEvent = new object ();
+		static object DropDownStyleChangedEvent = new object ();
+		static object MeasureItemEvent = new object ();
+		static object SelectedIndexChangedEvent = new object ();
+		static object SelectionChangeCommittedEvent = new object ();
+
+		public event DrawItemEventHandler DrawItem {
+			add { Events.AddHandler (DrawItemEvent, value); }
+			remove { Events.RemoveHandler (DrawItemEvent, value); }
+		}
+
+		public event EventHandler DropDown {
+			add { Events.AddHandler (DropDownEvent, value); }
+			remove { Events.RemoveHandler (DropDownEvent, value); }
+		}
+
+		public event EventHandler DropDownStyleChanged {
+			add { Events.AddHandler (DropDownStyleChangedEvent, value); }
+			remove { Events.RemoveHandler (DropDownStyleChangedEvent, value); }
+		}
+
+		public event MeasureItemEventHandler MeasureItem {
+			add { Events.AddHandler (MeasureItemEvent, value); }
+			remove { Events.RemoveHandler (MeasureItemEvent, value); }
+		}
 		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -122,8 +144,16 @@ namespace System.Windows.Forms
 			remove { base.Paint -= value; }
 		}
 		
-		public event EventHandler SelectedIndexChanged;		
-		public event EventHandler SelectionChangeCommitted;
+		public event EventHandler SelectedIndexChanged {
+			add { Events.AddHandler (SelectedIndexChangedEvent, value); }
+			remove { Events.RemoveHandler (SelectedIndexChangedEvent, value); }
+		}
+
+		public event EventHandler SelectionChangeCommitted {
+			add { Events.AddHandler (SelectionChangeCommittedEvent, value); }
+			remove { Events.RemoveHandler (SelectionChangeCommittedEvent, value); }
+		}
+
 		#endregion Events
 
 		#region Public Properties
@@ -685,8 +715,9 @@ namespace System.Windows.Forms
 			switch (DrawMode) {
 			case DrawMode.OwnerDrawFixed:
 			case DrawMode.OwnerDrawVariable:
-				if (DrawItem != null)
-					DrawItem (this, e);
+				DrawItemEventHandler eh = (DrawItemEventHandler)(Events [DrawItemEvent]);
+				if (eh != null)
+					eh (this, e);
 				break;
 			default:
 				ThemeEngine.Current.DrawComboBoxItem (this, e);
@@ -696,14 +727,16 @@ namespace System.Windows.Forms
 
 		protected virtual void OnDropDown (EventArgs e)
 		{
-			if (DropDown != null)
-				DropDown (this, e);
+			EventHandler eh = (EventHandler)(Events [DropDownEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnDropDownStyleChanged (EventArgs e)
 		{
-			if (DropDownStyleChanged != null)
-				DropDownStyleChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [DropDownStyleChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnFontChanged (EventArgs e)
@@ -799,8 +832,9 @@ namespace System.Windows.Forms
 
 		protected virtual void OnMeasureItem (MeasureItemEventArgs e)
 		{
-			if (MeasureItem != null)
-				MeasureItem (this, e);
+			MeasureItemEventHandler eh = (MeasureItemEventHandler)(Events [MeasureItemEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnParentBackColorChanged (EventArgs e)
@@ -819,8 +853,9 @@ namespace System.Windows.Forms
 		{
 			base.OnSelectedIndexChanged (e);
 
-			if (SelectedIndexChanged != null)
-				SelectedIndexChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [SelectedIndexChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnSelectedItemChanged (EventArgs e)
@@ -835,8 +870,9 @@ namespace System.Windows.Forms
 
 		protected virtual void OnSelectionChangeCommitted (EventArgs e)
 		{
-			if (SelectionChangeCommitted != null)
-				SelectionChangeCommitted (this, e);
+			EventHandler eh = (EventHandler)(Events [SelectionChangeCommittedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void RefreshItem (int index)

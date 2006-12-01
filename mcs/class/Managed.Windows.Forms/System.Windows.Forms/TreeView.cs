@@ -83,17 +83,6 @@ namespace System.Windows.Forms {
 		private int update_stack;
 		private bool update_needed;
 		
-		private TreeViewEventHandler on_after_check;
-		private TreeViewEventHandler on_after_collapse;
-		private TreeViewEventHandler on_after_expand;
-		private NodeLabelEditEventHandler on_after_label_edit;
-		private TreeViewEventHandler on_after_select;
-		private TreeViewCancelEventHandler on_before_check;
-		private TreeViewCancelEventHandler on_before_collapse;
-		private TreeViewCancelEventHandler on_before_expand;
-		private NodeLabelEditEventHandler on_before_label_edit;
-		private TreeViewCancelEventHandler on_before_select;
-
 		private Pen dash;
 		private StringFormat string_format;
 
@@ -734,58 +723,69 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnItemDrag (ItemDragEventArgs e)
 		{
-			if (ItemDrag != null)
-				ItemDrag (this, e);
+			ItemDragEventHandler eh = (ItemDragEventHandler)(Events [ItemDragEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected internal virtual void OnAfterCheck (TreeViewEventArgs e) {
-			if (on_after_check != null)
-				on_after_check (this, e);
+			TreeViewEventHandler eh = (TreeViewEventHandler)(Events [AfterCheckEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected internal virtual void OnAfterCollapse (TreeViewEventArgs e) {
-			if (on_after_collapse != null)
-				on_after_collapse (this, e);
+			TreeViewEventHandler eh = (TreeViewEventHandler)(Events [AfterCollapseEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected internal virtual void OnAfterExpand (TreeViewEventArgs e) {
-			if (on_after_expand != null)
-				on_after_expand (this, e);
+			TreeViewEventHandler eh = (TreeViewEventHandler)(Events [AfterExpandEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnAfterLabelEdit (NodeLabelEditEventArgs e) {
-			if (on_after_label_edit != null)
-				on_after_label_edit (this, e);
+			NodeLabelEditEventHandler eh = (NodeLabelEditEventHandler)(Events [AfterLabelEditEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnAfterSelect (TreeViewEventArgs e) {
-			if (on_after_select != null)
-				on_after_select (this, e);
+			TreeViewEventHandler eh = (TreeViewEventHandler)(Events [AfterSelectEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected internal virtual void OnBeforeCheck (TreeViewCancelEventArgs e) {
-			if (on_before_check != null)
-				on_before_check (this, e);
+			TreeViewCancelEventHandler eh = (TreeViewCancelEventHandler)(Events [BeforeCheckEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected internal virtual void OnBeforeCollapse (TreeViewCancelEventArgs e) {
-			if (on_before_collapse != null)
-				on_before_collapse (this, e);
+			TreeViewCancelEventHandler eh = (TreeViewCancelEventHandler)(Events [BeforeCollapseEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected internal virtual void OnBeforeExpand (TreeViewCancelEventArgs e) {
-			if (on_before_expand != null)
-				on_before_expand (this, e);
+			TreeViewCancelEventHandler eh = (TreeViewCancelEventHandler)(Events [BeforeExpandEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnBeforeLabelEdit (NodeLabelEditEventArgs e) {
-			if (on_before_label_edit != null)
-				on_before_label_edit (this, e);
+			NodeLabelEditEventHandler eh = (NodeLabelEditEventHandler)(Events [BeforeLabelEditEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnBeforeSelect (TreeViewCancelEventArgs e) {
-			if (on_before_select != null)
-				on_before_select (this, e);
+			TreeViewCancelEventHandler eh = (TreeViewCancelEventHandler)(Events [BeforeSelectEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnHandleCreated (EventArgs e) {
@@ -1718,31 +1718,71 @@ namespace System.Windows.Forms {
 		#endregion	// Internal & Private Methods and Properties
 
 		#region Events
-		public event ItemDragEventHandler ItemDrag;
+		static object ItemDragEvent = new object ();
+		static object AfterCheckEvent = new object ();
+		static object AfterCollapseEvent = new object ();
+		static object AfterExpandEvent = new object ();
+		static object AfterLabelEditEvent = new object ();
+		static object AfterSelectEvent = new object ();
+		static object BeforeCheckEvent = new object ();
+		static object BeforeCollapseEvent = new object ();
+		static object BeforeExpandEvent = new object ();
+		static object BeforeLabelEditEvent = new object ();
+		static object BeforeSelectEvent = new object ();
+
+		public event ItemDragEventHandler ItemDrag {
+			add { Events.AddHandler (ItemDragEvent, value); }
+			remove { Events.RemoveHandler (ItemDragEvent, value); }
+		}
 
 		public event TreeViewEventHandler AfterCheck {
-			add { on_after_check += value; }
-			remove { on_after_check -= value; }
+			add { Events.AddHandler (AfterCheckEvent, value); }
+			remove { Events.RemoveHandler (AfterCheckEvent, value); }
 		}
 
 		public event TreeViewEventHandler AfterCollapse {
-			add { on_after_collapse += value; }
-			remove { on_after_collapse -= value; }
+			add { Events.AddHandler (AfterCollapseEvent, value); }
+			remove { Events.RemoveHandler (AfterCollapseEvent, value); }
 		}
 
 		public event TreeViewEventHandler AfterExpand {
-			add { on_after_expand += value; }
-			remove { on_after_expand -= value; }
+			add { Events.AddHandler (AfterExpandEvent, value); }
+			remove { Events.RemoveHandler (AfterExpandEvent, value); }
 		}
 
 		public event NodeLabelEditEventHandler AfterLabelEdit {
-			add { on_after_label_edit += value; }
-			remove { on_after_label_edit -= value; }
+			add { Events.AddHandler (AfterLabelEditEvent, value); }
+			remove { Events.RemoveHandler (AfterLabelEditEvent, value); }
 		}
 
 		public event TreeViewEventHandler AfterSelect {
-			add { on_after_select += value; }
-			remove { on_after_select -= value; }
+			add { Events.AddHandler (AfterSelectEvent, value); }
+			remove { Events.RemoveHandler (AfterSelectEvent, value); }
+		}
+
+		public event TreeViewEventHandler BeforeCheck {
+			add { Events.AddHandler (BeforeCheckEvent, value); }
+			remove { Events.RemoveHandler (BeforeCheckEvent, value); }
+		}
+
+		public event TreeViewEventHandler BeforeCollapse {
+			add { Events.AddHandler (BeforeCollapseEvent, value); }
+			remove { Events.RemoveHandler (BeforeCollapseEvent, value); }
+		}
+
+		public event TreeViewEventHandler BeforeExpand {
+			add { Events.AddHandler (BeforeExpandEvent, value); }
+			remove { Events.RemoveHandler (BeforeExpandEvent, value); }
+		}
+
+		public event NodeLabelEditEventHandler BeforeLabelEdit {
+			add { Events.AddHandler (BeforeLabelEditEvent, value); }
+			remove { Events.RemoveHandler (BeforeLabelEditEvent, value); }
+		}
+
+		public event TreeViewEventHandler BeforeSelect {
+			add { Events.AddHandler (BeforeSelectEvent, value); }
+			remove { Events.RemoveHandler (BeforeSelectEvent, value); }
 		}
 
 		[Browsable (false)]
@@ -1750,31 +1790,6 @@ namespace System.Windows.Forms {
 		public event EventHandler BackgroundImageChanged {
 			add { base.BackgroundImageChanged += value; }
 			remove { base.BackgroundImageChanged -= value; }
-		}
-
-		public event TreeViewCancelEventHandler BeforeCheck {
-			add { on_before_check += value; }
-			remove { on_before_check -= value; }
-		}
-
-		public event TreeViewCancelEventHandler BeforeCollapse {
-			add { on_before_collapse += value; }
-			remove { on_before_collapse -= value; }
-		}
-
-		public event TreeViewCancelEventHandler BeforeExpand {
-			add { on_before_expand += value; }
-			remove { on_before_expand -= value; }
-		}
-
-		public event NodeLabelEditEventHandler BeforeLabelEdit {
-			add { on_before_label_edit += value; }
-			remove { on_before_label_edit -= value; }
-		}
-
-		public event TreeViewCancelEventHandler BeforeSelect {
-			add { on_before_select += value; }
-			remove { on_before_select -= value; }
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]	

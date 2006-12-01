@@ -93,7 +93,18 @@ namespace System.Windows.Forms
 		internal Size text_size = Size.Empty;
 
 		#region Events
-		public event LabelEditEventHandler AfterLabelEdit;
+		static object AfterLabelEditEvent = new object ();
+		static object BeforeLabelEditEvent = new object ();
+		static object ColumnClickEvent = new object ();
+		static object ItemActivateEvent = new object ();
+		static object ItemCheckEvent = new object ();
+		static object ItemDragEvent = new object ();
+		static object SelectedIndexChangedEvent = new object ();
+
+		public event LabelEditEventHandler AfterLabelEdit {
+			add { Events.AddHandler (AfterLabelEditEvent, value); }
+			remove { Events.RemoveHandler (AfterLabelEditEvent, value); }
+		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -102,11 +113,30 @@ namespace System.Windows.Forms
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
-		public event LabelEditEventHandler BeforeLabelEdit;
-		public event ColumnClickEventHandler ColumnClick;
-		public event EventHandler ItemActivate;
-		public event ItemCheckEventHandler ItemCheck;
-		public event ItemDragEventHandler ItemDrag;
+		public event LabelEditEventHandler BeforeLabelEdit {
+			add { Events.AddHandler (BeforeLabelEditEvent, value); }
+			remove { Events.RemoveHandler (BeforeLabelEditEvent, value); }
+		}
+
+		public event ColumnClickEventHandler ColumnClick {
+			add { Events.AddHandler (ColumnClickEvent, value); }
+			remove { Events.RemoveHandler (ColumnClickEvent, value); }
+		}
+
+		public event EventHandler ItemActivate {
+			add { Events.AddHandler (ItemActivateEvent, value); }
+			remove { Events.RemoveHandler (ItemActivateEvent, value); }
+		}
+
+		public event ItemCheckEventHandler ItemCheck {
+			add { Events.AddHandler (ItemCheckEvent, value); }
+			remove { Events.RemoveHandler (ItemCheckEvent, value); }
+		}
+
+		public event ItemDragEventHandler ItemDrag {
+			add { Events.AddHandler (ItemDragEvent, value); }
+			remove { Events.RemoveHandler (ItemDragEvent, value); }
+		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -115,7 +145,10 @@ namespace System.Windows.Forms
 			remove { base.Paint -= value; }
 		}
 
-		public event EventHandler SelectedIndexChanged;
+		public event EventHandler SelectedIndexChanged {
+			add { Events.AddHandler (SelectedIndexChangedEvent, value); }
+			remove { Events.RemoveHandler (SelectedIndexChangedEvent, value); }
+		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -1329,8 +1362,8 @@ namespace System.Windows.Forms
 
 			void ItemsDoubleClick (object sender, EventArgs e)
 			{
-				if (owner.activation == ItemActivation.Standard && owner.ItemActivate != null)
-					owner.ItemActivate (this, e);
+				if (owner.activation == ItemActivation.Standard)
+					owner.OnItemActivate (EventArgs.Empty);
 			}
 
 			enum BoxSelect {
@@ -1991,20 +2024,23 @@ namespace System.Windows.Forms
 
 		protected virtual void OnAfterLabelEdit (LabelEditEventArgs e)
 		{
-			if (AfterLabelEdit != null)
-				AfterLabelEdit (this, e);
+			LabelEditEventHandler eh = (LabelEditEventHandler)(Events [AfterLabelEditEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnBeforeLabelEdit (LabelEditEventArgs e)
 		{
-			if (BeforeLabelEdit != null)
-				BeforeLabelEdit (this, e);
+			LabelEditEventHandler eh = (LabelEditEventHandler)(Events [BeforeLabelEditEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnColumnClick (ColumnClickEventArgs e)
 		{
-			if (ColumnClick != null)
-				ColumnClick (this, e);
+			ColumnClickEventHandler eh = (ColumnClickEventHandler)(Events [ColumnClickEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnEnabledChanged (EventArgs e)
@@ -2031,26 +2067,30 @@ namespace System.Windows.Forms
 
 		protected virtual void OnItemActivate (EventArgs e)
 		{
-			if (ItemActivate != null)
-				ItemActivate (this, e);
+			EventHandler eh = (EventHandler)(Events [ItemActivateEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnItemCheck (ItemCheckEventArgs ice)
 		{
-			if (ItemCheck != null)
-				ItemCheck (this, ice);
+			EventHandler eh = (EventHandler)(Events [ItemCheckEvent]);
+			if (eh != null)
+				eh (this, ice);
 		}
 
 		protected virtual void OnItemDrag (ItemDragEventArgs e)
 		{
-			if (ItemDrag != null)
-				ItemDrag (this, e);
+			EventHandler eh = (EventHandler)(Events [ItemDragEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnSelectedIndexChanged (EventArgs e)
 		{
-			if (SelectedIndexChanged != null)
-				SelectedIndexChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [SelectedIndexChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnSystemColorsChanged (EventArgs e)

@@ -106,19 +106,19 @@ namespace System.Windows.Forms {
 		#region Events
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event KeyEventHandler		KeyDown;
+		public event KeyEventHandler KeyDown;
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event KeyPressEventHandler	KeyPress;
+		public event KeyPressEventHandler KeyPress;
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event KeyEventHandler		KeyUp;
+		public event KeyEventHandler KeyUp;
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler		TextChanged;
+		public event EventHandler TextChanged;
 		#endregion
 	}
 }

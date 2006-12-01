@@ -1,3 +1,23 @@
+2006-12-01  Chris Toshok  <toshok@ximian.com>
+
+	* Button.cs, PropertyGridTextBox.cs, ComboBox.cs,
+	SplitContainer.cs, Control.cs, StatusStrip.cs,
+	DataGridTableStyle.cs, MenuItem.cs, DomainUpDown.cs, ImageList.cs,
+	NumericTextBox.cs, NumericUpDown.cs, Panel.cs, CommonDialog.cs,
+	DataGrid.cs, ScrollBar.cs, TrackBar.cs, PictureBox.cs,
+	DateTimePicker.cs, StatusBar.cs, Form.cs, PrintPreviewDialog.cs,
+	Label.cs, UserControl.cs, CheckBox.cs, RadioButton.cs,
+	LinkLabel.cs, ListControl.cs, PropertyGrid.cs, Splitter.cs,
+	MenuStrip.cs, FolderBrowserDialog.cs, NotifyIcon.cs,
+	TextBoxBase.cs, ListView.cs, DataGridBoolColumn.cs,
+	PrintPreviewControl.cs, RichTextBox.cs, ListBox.cs, TabControl.cs,
+	DataGridColumnStyle.cs, ContextMenu.cs, TreeView.cs:
+
+	do most of the work to convert our code over to use
+	System.ComponentModel.Component.Events for
+	adding/removing/dispatching events.
+
+
 2006-11-30  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridView.cs: Fix an ArgumentNullException reported 

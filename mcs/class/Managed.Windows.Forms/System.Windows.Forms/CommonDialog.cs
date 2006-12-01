@@ -119,9 +119,9 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual void OnHelpRequest(EventArgs e) {
-			if (HelpRequest != null) {
-				HelpRequest(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [HelpRequestEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual IntPtr OwnerWndProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam) {
@@ -132,7 +132,12 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Events
-		public event EventHandler HelpRequest;
+		static object HelpRequestEvent = new object ();
+
+		public event EventHandler HelpRequest {
+			add { Events.AddHandler (HelpRequestEvent, value); }
+			remove { Events.RemoveHandler (HelpRequestEvent, value); }
+		}
 		#endregion	// Events
 	}
 }

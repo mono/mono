@@ -125,8 +125,18 @@ namespace System.Windows.Forms
 			remove { base.TextChanged -= value; }
 		}
 
-		public event EventHandler Scroll;
-		public event EventHandler ValueChanged;
+		static object ScrollEvent = new object ();
+		static object ValueChangedEvent = new object ();
+
+		public event EventHandler Scroll {
+			add { Events.AddHandler (ScrollEvent, value); }
+			remove { Events.RemoveHandler (ScrollEvent, value); }
+		}
+
+		public event EventHandler ValueChanged {
+			add { Events.AddHandler (ValueChangedEvent, value); }
+			remove { Events.RemoveHandler (ValueChangedEvent, value); }
+		}
 		
 		#endregion // Events
 
@@ -351,10 +361,12 @@ namespace System.Windows.Forms
 				
 				if (position != value) {													
 					position = value;					
-					
-					if (ValueChanged != null)				
-						ValueChanged (this, new EventArgs ());
-						
+
+					// XXX any reason we don't call OnValueChanged here?
+					EventHandler eh = (EventHandler)(Events [ValueChangedEvent]);
+					if (eh != null)
+						eh (this, EventArgs.Empty);
+
 					Invalidate (thumb_area);
 				}				
 			}
@@ -442,14 +454,16 @@ namespace System.Windows.Forms
 
 		protected virtual void OnScroll (EventArgs e) 
 		{
-			if (Scroll != null) 
-				Scroll (this, e);
+			EventHandler eh = (EventHandler)(Events [ScrollEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnValueChanged (EventArgs e) 
 		{
-			if (ValueChanged != null) 
-				ValueChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [ValueChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		public void SetRange (int minValue, int maxValue)

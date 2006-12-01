@@ -760,21 +760,21 @@ namespace System.Windows.Forms {
 
 
 		protected virtual void OnAcceptsTabChanged(EventArgs e) {
-			if (AcceptsTabChanged != null) {
-				AcceptsTabChanged(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [AcceptsTabChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnAutoSizeChanged(EventArgs e) {
-			if (AutoSizeChanged != null) {
-				AutoSizeChanged(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [AutoSizeChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnBorderStyleChanged(EventArgs e) {
-			if (BorderStyleChanged != null) {
-				BorderStyleChanged(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [BorderStyleChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnFontChanged(EventArgs e) {
@@ -796,27 +796,27 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual void OnHideSelectionChanged(EventArgs e) {
-			if (HideSelectionChanged != null) {
-				HideSelectionChanged(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [HideSelectionChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnModifiedChanged(EventArgs e) {
-			if (ModifiedChanged != null) {
-				ModifiedChanged(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [ModifiedChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnMultilineChanged(EventArgs e) {
-			if (MultilineChanged != null) {
-				MultilineChanged(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [MultilineChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnReadOnlyChanged(EventArgs e) {
-			if (ReadOnlyChanged != null) {
-				ReadOnlyChanged(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [ReadOnlyChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override bool ProcessDialogKey(Keys keyData) {
@@ -1256,15 +1256,67 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Events
-		public event EventHandler	AcceptsTabChanged;
-		public event EventHandler	AutoSizeChanged;
+		static object AcceptsTabChangedEvent = new object ();
+		static object AutoSizeChangedEvent = new object ();
+		static object BorderStyleChangedEvent = new object ();
+		static object HideSelectionChangedEvent = new object ();
+		static object ModifiedChangedEvent = new object ();
+		static object MultilineChangedEvent = new object ();
+		static object ReadOnlyChangedEvent = new object ();
+		static object HScrolledEvent = new object ();
+		static object VScrolledEvent = new object ();
+
+		public event EventHandler AcceptsTabChanged {
+			add { Events.AddHandler (AcceptsTabChangedEvent, value); }
+			remove { Events.RemoveHandler (AcceptsTabChangedEvent, value); }
+		}
+
+		public event EventHandler AutoSizeChanged {
+			add { Events.AddHandler (AutoSizeChangedEvent, value); }
+			remove { Events.RemoveHandler (AutoSizeChangedEvent, value); }
+		}
+
+		public event EventHandler BorderStyleChanged {
+			add { Events.AddHandler (BorderStyleChangedEvent, value); }
+			remove { Events.RemoveHandler (BorderStyleChangedEvent, value); }
+		}
+
+		public event EventHandler HideSelectionChanged {
+			add { Events.AddHandler (HideSelectionChangedEvent, value); }
+			remove { Events.RemoveHandler (HideSelectionChangedEvent, value); }
+		}
+
+		public event EventHandler ModifiedChanged {
+			add { Events.AddHandler (ModifiedChangedEvent, value); }
+			remove { Events.RemoveHandler (ModifiedChangedEvent, value); }
+		}
+
+		public event EventHandler MultilineChanged {
+			add { Events.AddHandler (MultilineChangedEvent, value); }
+			remove { Events.RemoveHandler (MultilineChangedEvent, value); }
+		}
+
+		public event EventHandler ReadOnlyChanged {
+			add { Events.AddHandler (ReadOnlyChangedEvent, value); }
+			remove { Events.RemoveHandler (ReadOnlyChangedEvent, value); }
+		}
+
+		internal event EventHandler HScrolled {
+			add { Events.AddHandler (HScrolledEvent, value); }
+			remove { Events.RemoveHandler (HScrolledEvent, value); }
+		}
+
+		internal event EventHandler VScrolled {
+			add { Events.AddHandler (VScrolledEvent, value); }
+			remove { Events.RemoveHandler (VScrolledEvent, value); }
+		}
+
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageChanged {
 			add { base.BackgroundImageChanged += value; }
 			remove { base.BackgroundImageChanged -= value; }
 		}
-		public event EventHandler	BorderStyleChanged;
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public event EventHandler	Click {
@@ -1272,16 +1324,9 @@ namespace System.Windows.Forms {
 			remove { base.Click -= value; }
 		}
 
-		public event EventHandler	HideSelectionChanged;
-		public event EventHandler	ModifiedChanged;
-		public event EventHandler	MultilineChanged;
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event PaintEventHandler	Paint;
-		public event EventHandler	ReadOnlyChanged;
-
-		internal event EventHandler	HScrolled;
-		internal event EventHandler	VScrolled;
 		#endregion	// Events
 
 		#region Private Methods
@@ -1668,9 +1713,9 @@ namespace System.Windows.Forms {
 			}
 			document.UpdateCaret();
 
-			if (HScrolled != null) {
-				HScrolled(this, EventArgs.Empty);
-			}
+			EventHandler eh = (EventHandler)(Events [HScrolledEvent]);
+			if (eh != null)
+				eh (this, EventArgs.Empty);
 		}
 
 		private void vscroll_ValueChanged(object sender, EventArgs e) {
@@ -1686,9 +1731,9 @@ namespace System.Windows.Forms {
 			}
 			document.UpdateCaret();
 
-			if (VScrolled != null) {
-				VScrolled(this, EventArgs.Empty);
-			}
+			EventHandler eh = (EventHandler)(Events [VScrolledEvent]);
+			if (eh != null)
+				eh (this, EventArgs.Empty);
 		}
 
 		private void TextBoxBase_MouseMove(object sender, MouseEventArgs e) {

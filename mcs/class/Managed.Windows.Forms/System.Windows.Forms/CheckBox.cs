@@ -125,9 +125,7 @@ namespace System.Windows.Forms {
 			set {
 				if (value != appearance) {
 					appearance = value;
-					if (AppearanceChanged != null) {
-						AppearanceChanged(this, EventArgs.Empty);
-					}
+					OnAppearanceChanged (EventArgs.Empty);
 					Redraw();
 				}
 			}
@@ -268,21 +266,21 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual void OnAppearanceChanged(EventArgs e) {
-			if (AppearanceChanged != null) {
-				AppearanceChanged(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [AppearanceChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCheckedChanged(EventArgs e) {
-			if (CheckedChanged != null) {
-				CheckedChanged(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [CheckedChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCheckStateChanged(EventArgs e) {
-			if (CheckStateChanged != null) {
-				CheckStateChanged(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [CheckStateChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnClick(EventArgs e) {
@@ -332,9 +330,24 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Events
-		public event EventHandler	AppearanceChanged;
-		public event EventHandler	CheckedChanged;
-		public event EventHandler	CheckStateChanged;
+		static object AppearanceChangedEvent = new object ();
+		static object CheckedChangedEvent = new object ();
+		static object CheckStateChangedEvent = new object ();
+
+		public event EventHandler AppearanceChanged {
+			add { Events.AddHandler (AppearanceChangedEvent, value); }
+			remove { Events.RemoveHandler (AppearanceChangedEvent, value); }
+		}
+
+		public event EventHandler CheckedChanged {
+			add { Events.AddHandler (CheckedChangedEvent, value); }
+			remove { Events.RemoveHandler (CheckedChangedEvent, value); }
+		}
+
+		public event EventHandler CheckStateChanged {
+			add { Events.AddHandler (CheckStateChangedEvent, value); }
+			remove { Events.RemoveHandler (CheckStateChangedEvent, value); }
+		}
 		#endregion	// Events
 
 		#region Events

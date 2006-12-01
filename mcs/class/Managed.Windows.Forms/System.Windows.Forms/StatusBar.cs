@@ -199,8 +199,9 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual void OnDrawItem (StatusBarDrawItemEventArgs e) {
-			if (DrawItem != null)
-				DrawItem (this, e);
+			StatusBarDrawItemEventHandler eh = (StatusBarDrawItemEventHandler)(Events [DrawItemEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnHandleCreated (EventArgs e) {
@@ -236,8 +237,9 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual void OnPanelClick (StatusBarPanelClickEventArgs e) {
-			if (PanelClick != null)
-				PanelClick (this, e);
+			StatusBarPanelClickEventHandler eh = (StatusBarPanelClickEventHandler)(Events [PanelClickEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnResize (EventArgs e)
@@ -395,8 +397,18 @@ namespace System.Windows.Forms {
 			remove { base.Paint -= value; }
 		}
 
-		public event StatusBarDrawItemEventHandler DrawItem;
-		public event StatusBarPanelClickEventHandler PanelClick;
+		static object DrawItemEvent = new object ();
+		static object PanelClickEvent = new object ();
+
+		public event StatusBarDrawItemEventHandler DrawItem {
+			add { Events.AddHandler (DrawItemEvent, value); }
+			remove { Events.RemoveHandler (DrawItemEvent, value); }
+		}
+
+		public event StatusBarPanelClickEventHandler PanelClick {
+			add { Events.AddHandler (PanelClickEvent, value); }
+			remove { Events.RemoveHandler (PanelClickEvent, value); }
+		}
 		#endregion	// Events
 		
 

@@ -169,7 +169,13 @@ namespace System.Windows.Forms
 			remove { base.Paint -= value; }
 		}
 
-		public event ScrollEventHandler Scroll;
+		static object ScrollEvent = new object ();
+		static object ValueChangedEvent = new object ();
+
+		public event ScrollEventHandler Scroll {
+			add { Events.AddHandler (ScrollEvent, value); }
+			remove { Events.RemoveHandler (ScrollEvent, value); }
+		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -178,7 +184,10 @@ namespace System.Windows.Forms
 			remove { base.TextChanged -= value; }
 		}
 
-		public event EventHandler ValueChanged;
+		public event EventHandler ValueChanged {
+			add { Events.AddHandler (ValueChangedEvent, value); }
+			remove { Events.RemoveHandler (ValueChangedEvent, value); }
+		}
 		#endregion Events
 
 		public ScrollBar ()
@@ -510,7 +519,8 @@ namespace System.Windows.Forms
 
 		protected virtual void OnScroll (ScrollEventArgs event_args)
 		{
-			if (Scroll == null)
+			ScrollEventHandler eh = (ScrollEventHandler)(Events [ScrollEvent]);
+			if (eh == null)
 				return;
 
 			if (event_args.NewValue < Minimum) {
@@ -521,7 +531,7 @@ namespace System.Windows.Forms
 				event_args.NewValue = Maximum;
 			}
 
-			Scroll (this, event_args);
+			eh (this, event_args);
 		}
 
 		private void SendWMScroll(ScrollBarCommands cmd) {
@@ -536,9 +546,9 @@ namespace System.Windows.Forms
 
 		protected virtual void OnValueChanged (EventArgs e)
 		{
-			if (ValueChanged != null) {
-				ValueChanged (this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [ValueChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		public override string ToString()
@@ -1197,8 +1207,11 @@ namespace System.Windows.Forms
 			else {
 				position = pos; // Updates directly the value to avoid thumb pos update
 
-				if (ValueChanged != null)
-					ValueChanged (this, EventArgs.Empty);
+
+				// XXX some reason we don't call OnValueChanged?
+				EventHandler eh = (EventHandler)(Events [ValueChangedEvent]);
+				if (eh != null)
+					eh (this, EventArgs.Empty);
 			}
     		}
 

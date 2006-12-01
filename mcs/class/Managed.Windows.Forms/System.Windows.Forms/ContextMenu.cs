@@ -41,7 +41,11 @@ namespace System.Windows.Forms
 		private Control	src_control;
 
 		#region Events
-		public event EventHandler Popup;
+		static object PopupEvent = new object ();
+		public event EventHandler Popup {
+			add { Events.AddHandler (PopupEvent, value); }
+			remove { Events.RemoveHandler (PopupEvent, value); }
+		}
 		#endregion Events
 
 		public ContextMenu () : base (null)
@@ -73,8 +77,9 @@ namespace System.Windows.Forms
 				
 		protected internal virtual void OnPopup (EventArgs e)
 		{
-			if (Popup != null)
-				Popup (this, e);
+			EventHandler eh = (EventHandler)(Events [PopupEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 		
 		public void Show (Control control, Point pos)

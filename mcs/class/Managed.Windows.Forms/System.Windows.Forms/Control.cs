@@ -4347,53 +4347,69 @@ namespace System.Windows.Forms
 		#region OnXXX methods
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnBackColorChanged(EventArgs e) {
-			if (BackColorChanged!=null) BackColorChanged(this, e);
+			EventHandler eh = (EventHandler)(Events [BackColorChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentBackColorChanged(e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnBackgroundImageChanged(EventArgs e) {
-			if (BackgroundImageChanged!=null) BackgroundImageChanged(this, e);
+			EventHandler eh = (EventHandler)(Events [BackgroundImageChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentBackgroundImageChanged(e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnBindingContextChanged(EventArgs e) {
 			CheckDataBindings ();
-			if (BindingContextChanged!=null) {
-				BindingContextChanged(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [BindingContextChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentBindingContextChanged(e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnCausesValidationChanged(EventArgs e) {
-			if (CausesValidationChanged!=null) CausesValidationChanged(this, e);
+			EventHandler eh = (EventHandler)(Events [CausesValidationChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnChangeUICues(UICuesEventArgs e) {
-			if (ChangeUICues!=null) ChangeUICues(this, e);
+			UICuesEventHandler eh = (UICuesEventHandler)(Events [ChangeUICuesEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnClick(EventArgs e) {
-			if (Click!=null) Click(this, e);
+			EventHandler eh = (EventHandler)(Events [ClickEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnContextMenuChanged(EventArgs e) {
-			if (ContextMenuChanged!=null) ContextMenuChanged(this, e);
+			EventHandler eh = (EventHandler)(Events [ContextMenuChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnControlAdded(ControlEventArgs e) {
-			if (ControlAdded!=null) ControlAdded(this, e);
+			ControlEventHandler eh = (ControlEventHandler)(Events [ControlAddedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnControlRemoved(ControlEventArgs e) {
-			if (ControlRemoved!=null) ControlRemoved(this, e);
+			ControlEventHandler eh = (ControlEventHandler)(Events [ControlRemovedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -4403,37 +4419,51 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnCursorChanged(EventArgs e) {
-			if (CursorChanged!=null) CursorChanged(this, e);
+			EventHandler eh = (EventHandler)(Events [CursorChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnDockChanged(EventArgs e) {
-			if (DockChanged!=null) DockChanged(this, e);
+			EventHandler eh = (EventHandler)(Events [DockChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnDoubleClick(EventArgs e) {
-			if (DoubleClick!=null) DoubleClick(this, e);
+			EventHandler eh = (EventHandler)(Events [DoubleClickEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnDragDrop(DragEventArgs drgevent) {
-			if (DragDrop!=null) DragDrop(this, drgevent);
+			DragEventHandler eh = (DragEventHandler)(Events [DragDropEvent]);
+			if (eh != null)
+				eh (this, drgevent);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnDragEnter(DragEventArgs drgevent) {
-			if (DragEnter!=null) DragEnter(this, drgevent);
+			DragEventHandler eh = (DragEventHandler)(Events [DragEnterEvent]);
+			if (eh != null)
+				eh (this, drgevent);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnDragLeave(EventArgs e) {
-			if (DragLeave!=null) DragLeave(this, e);
+			EventHandler eh = (EventHandler)(Events [DragLeaveEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnDragOver(DragEventArgs drgevent) {
-			if (DragOver!=null) DragOver(this, drgevent);
+			DragEventHandler eh = (DragEventHandler)(Events [DragOverEvent]);
+			if (eh != null)
+				eh (this, drgevent);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -4449,9 +4479,9 @@ namespace System.Windows.Forms
 				Refresh();
 			}
 
-			if (EnabledChanged != null) {
-				EnabledChanged(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [EnabledChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 
 			for (int i=0; i<child_controls.Count; i++) {
 				child_controls[i].OnParentEnabledChanged(e);
@@ -4460,48 +4490,66 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnEnter(EventArgs e) {
-			if (Enter!=null) Enter(this, e);
+			EventHandler eh = (EventHandler)(Events [EnterEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnFontChanged(EventArgs e) {
-			if (FontChanged!=null) FontChanged(this, e);
+			EventHandler eh = (EventHandler)(Events [FontChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentFontChanged(e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnForeColorChanged(EventArgs e) {
-			if (ForeColorChanged!=null) ForeColorChanged(this, e);
+			EventHandler eh = (EventHandler)(Events [ForeColorChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentForeColorChanged(e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnGiveFeedback(GiveFeedbackEventArgs gfbevent) {
-			if (GiveFeedback!=null) GiveFeedback(this, gfbevent);
+			GiveFeedbackEventHandler eh = (GiveFeedbackEventHandler)(Events [GiveFeedbackEvent]);
+			if (eh != null)
+				eh (this, gfbevent);
 		}
 		
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnGotFocus(EventArgs e) {
-			if (GotFocus!=null) GotFocus(this, e);
+			EventHandler eh = (EventHandler)(Events [GotFocusEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnHandleCreated(EventArgs e) {
-			if (HandleCreated!=null) HandleCreated(this, e);
+			EventHandler eh = (EventHandler)(Events [HandleCreatedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnHandleDestroyed(EventArgs e) {
-			if (HandleDestroyed!=null) HandleDestroyed(this, e);
+			EventHandler eh = (EventHandler)(Events [HandleDestroyedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnHelpRequested(HelpEventArgs hevent) {
-			if (HelpRequested!=null) HelpRequested(this, hevent);
+			HelpEventHandler eh = (HelpEventHandler)(Events [HelpRequestedEvent]);
+			if (eh != null)
+				eh (this, hevent);
 		}
 
 		protected virtual void OnImeModeChanged(EventArgs e) {
-			if (ImeModeChanged!=null) ImeModeChanged(this, e);
+			EventHandler eh = (EventHandler)(Events [ImeModeChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -4527,83 +4575,116 @@ namespace System.Windows.Forms
 							invalid_region.Union (r);
 					}
 				}
-			if (Invalidated!=null) Invalidated(this, e);
+
+			InvalidateEventHandler eh = (InvalidateEventHandler)(Events [InvalidatedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected virtual void OnKeyDown(KeyEventArgs e) {			
-			if (KeyDown!=null) KeyDown(this, e);
+		protected virtual void OnKeyDown(KeyEventArgs e) {
+			KeyEventHandler eh = (KeyEventHandler)(Events [KeyDownEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnKeyPress(KeyPressEventArgs e) {
-			if (KeyPress!=null) KeyPress(this, e);
+			KeyPressEventHandler eh = (KeyPressEventHandler)(Events [KeyPressEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnKeyUp(KeyEventArgs e) {
-			if (KeyUp!=null) KeyUp(this, e);
+			KeyEventHandler eh = (KeyEventHandler)(Events [KeyUpEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnLayout(LayoutEventArgs levent) {
-			if (Layout!=null) Layout(this, levent);
+			LayoutEventHandler eh = (LayoutEventHandler)(Events [LayoutEvent]);
+			if (eh != null)
+				eh (this, levent);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnLeave(EventArgs e) {
-			if (Leave!=null) Leave(this, e);
+			EventHandler eh = (EventHandler)(Events [LeaveEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnLocationChanged(EventArgs e) {
 			OnMove(e);
-			if (LocationChanged!=null) LocationChanged(this, e);
+			EventHandler eh = (EventHandler)(Events [LocationChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnLostFocus(EventArgs e) {
-			if (LostFocus!=null) LostFocus(this, e);
+			EventHandler eh = (EventHandler)(Events [LostFocusEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnMouseDown(MouseEventArgs e) {
-			if (MouseDown!=null) MouseDown(this, e);
+			MouseEventHandler eh = (MouseEventHandler)(Events [MouseDownEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnMouseEnter(EventArgs e) {
-			if (MouseEnter!=null) MouseEnter(this, e);
+			EventHandler eh = (EventHandler)(Events [MouseEnterEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnMouseHover(EventArgs e) {
-			if (MouseHover!=null) MouseHover(this, e);
+			EventHandler eh = (EventHandler)(Events [MouseHoverEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnMouseLeave(EventArgs e) {
-			if (MouseLeave!=null) MouseLeave(this, e);
+			EventHandler eh = (EventHandler)(Events [MouseLeaveEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected virtual void OnMouseMove(MouseEventArgs e) {			
-			if (MouseMove!=null) MouseMove(this, e);
+		protected virtual void OnMouseMove(MouseEventArgs e) {
+			MouseEventHandler eh = (MouseEventHandler)(Events [MouseMoveEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnMouseUp(MouseEventArgs e) {
-			if (MouseUp!=null) MouseUp(this, e);
+			MouseEventHandler eh = (MouseEventHandler)(Events [MouseUpEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnMouseWheel(MouseEventArgs e) {
-			if (MouseWheel!=null) MouseWheel(this, e);
+			MouseEventHandler eh = (MouseEventHandler)(Events [MouseWheelEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnMove(EventArgs e) {
-			if (Move!=null) Move(this, e);
+			EventHandler eh = (EventHandler)(Events [MoveEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -4613,7 +4694,9 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnPaint(PaintEventArgs e) {
-			if (Paint!=null) Paint(this, e);
+			PaintEventHandler eh = (PaintEventHandler)(Events [PaintEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		internal virtual void OnPaintBackgroundInternal(PaintEventArgs e) {
@@ -4665,7 +4748,9 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnParentChanged(EventArgs e) {
-			if (ParentChanged!=null) ParentChanged(this, e);
+			EventHandler eh = (EventHandler)(Events [ParentChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -4708,12 +4793,16 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnQueryContinueDrag(QueryContinueDragEventArgs e) {
-			if (QueryContinueDrag!=null) QueryContinueDrag(this, e);
+			QueryContinueDragEventHandler eh = (QueryContinueDragEventHandler)(Events [QueryContinueDragEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnResize(EventArgs e) {
-			if (Resize!=null) Resize(this, e);
+			EventHandler eh = (EventHandler)(Events [ResizeEvent]);
+			if (eh != null)
+				eh (this, e);
 
 			PerformLayout(this, "bounds");
 
@@ -4724,7 +4813,9 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnRightToLeftChanged(EventArgs e) {
-			if (RightToLeftChanged!=null) RightToLeftChanged(this, e);
+			EventHandler eh = (EventHandler)(Events [RightToLeftChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentRightToLeftChanged(e);
 		}
 
@@ -4732,42 +4823,58 @@ namespace System.Windows.Forms
 		protected virtual void OnSizeChanged(EventArgs e) {
 			InvalidateBuffers ();
 			OnResize(e);
-			if (SizeChanged!=null) SizeChanged(this, e);
+			EventHandler eh = (EventHandler)(Events [SizeChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnStyleChanged(EventArgs e) {
-			if (StyleChanged!=null) StyleChanged(this, e);
+			EventHandler eh = (EventHandler)(Events [StyleChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnSystemColorsChanged(EventArgs e) {
-			if (SystemColorsChanged!=null) SystemColorsChanged(this, e);
+			EventHandler eh = (EventHandler)(Events [SystemColorsChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnTabIndexChanged(EventArgs e) {
-			if (TabIndexChanged!=null) TabIndexChanged(this, e);
+			EventHandler eh = (EventHandler)(Events [TabIndexChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnTabStopChanged(EventArgs e) {
-			if (TabStopChanged!=null) TabStopChanged(this, e);
+			EventHandler eh = (EventHandler)(Events [TabStopChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnTextChanged(EventArgs e) {
-			if (TextChanged!=null) TextChanged(this, e);
+			EventHandler eh = (EventHandler)(Events [TextChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnValidated(EventArgs e) {
-			if (Validated!=null) Validated(this, e);
+			EventHandler eh = (EventHandler)(Events [ValidatedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnValidating(System.ComponentModel.CancelEventArgs e) {
-			if (Validating!=null) Validating(this, e);
+			CancelEventHandler eh = (CancelEventHandler)(Events [ValidatingEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -4779,7 +4886,9 @@ namespace System.Windows.Forms
 				}
 			}
 
-			if (VisibleChanged!=null) VisibleChanged(this, e);
+			EventHandler eh = (EventHandler)(Events [VisibleChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 
 			// We need to tell our kids
 			for (int i=0; i<child_controls.Count; i++) {
@@ -4791,93 +4900,366 @@ namespace System.Windows.Forms
 		#endregion	// OnXXX methods
 
 		#region Events
-		public event EventHandler		BackColorChanged;
-		public event EventHandler		BackgroundImageChanged;
-		public event EventHandler		BindingContextChanged;
-		public event EventHandler		CausesValidationChanged;
-		public event UICuesEventHandler		ChangeUICues;
-		public event EventHandler		Click;
-		public event EventHandler		ContextMenuChanged;
+		static object BackColorChangedEvent = new object ();
+		static object BackgroundImageChangedEvent = new object ();
+		static object BindingContextChangedEvent = new object ();
+		static object CausesValidationChangedEvent = new object ();
+		static object ChangeUICuesEvent = new object ();
+		static object ClickEvent = new object ();
+		static object ContextMenuChangedEvent = new object ();
+		static object ControlAddedEvent = new object ();
+		static object ControlRemovedEvent = new object ();
+		static object CursorChangedEvent = new object ();
+		static object DockChangedEvent = new object ();
+		static object DoubleClickEvent = new object ();
+		static object DragDropEvent = new object ();
+		static object DragEnterEvent = new object ();
+		static object DragLeaveEvent = new object ();
+		static object DragOverEvent = new object ();
+		static object EnabledChangedEvent = new object ();
+		static object EnterEvent = new object ();
+		static object FontChangedEvent = new object ();
+		static object ForeColorChangedEvent = new object ();
+		static object GiveFeedbackEvent = new object ();
+		static object GotFocusEvent = new object ();
+		static object HandleCreatedEvent = new object ();
+		static object HandleDestroyedEvent = new object ();
+		static object HelpRequestedEvent = new object ();
+		static object ImeModeChangedEvent = new object ();
+		static object InvalidatedEvent = new object ();
+		static object KeyDownEvent = new object ();
+		static object KeyPressEvent = new object ();
+		static object KeyUpEvent = new object ();
+		static object LayoutEvent = new object ();
+		static object LeaveEvent = new object ();
+		static object LocationChangedEvent = new object ();
+		static object LostFocusEvent = new object ();
+		static object MouseDownEvent = new object ();
+		static object MouseEnterEvent = new object ();
+		static object MouseHoverEvent = new object ();
+		static object MouseLeaveEvent = new object ();
+		static object MouseMoveEvent = new object ();
+		static object MouseUpEvent = new object ();
+		static object MouseWheelEvent = new object ();
+		static object MoveEvent = new object ();
+		static object PaintEvent = new object ();
+		static object ParentChangedEvent = new object ();
+		static object QueryAccessibilityHelpEvent = new object ();
+		static object QueryContinueDragEvent = new object ();
+		static object ResizeEvent = new object ();
+		static object RightToLeftChangedEvent = new object ();
+		static object SizeChangedEvent = new object ();
+		static object StyleChangedEvent = new object ();
+		static object SystemColorsChangedEvent = new object ();
+		static object TabIndexChangedEvent = new object ();
+		static object TabStopChangedEvent = new object ();
+		static object TextChangedEvent = new object ();
+		static object ValidatedEvent = new object ();
+		static object ValidatingEvent = new object ();
+		static object VisibleChangedEvent = new object ();
+
+		public event EventHandler BackColorChanged {
+			add { Events.AddHandler (BackColorChangedEvent, value); }
+			remove { Events.RemoveHandler (BackColorChangedEvent, value); }
+		}
+
+		public event EventHandler BackgroundImageChanged {
+			add { Events.AddHandler (BackgroundImageChangedEvent, value); }
+			remove { Events.RemoveHandler (BackgroundImageChangedEvent, value); }
+		}
+
+		public event EventHandler BindingContextChanged {
+			add { Events.AddHandler (BindingContextChangedEvent, value); }
+			remove { Events.RemoveHandler (BindingContextChangedEvent, value); }
+		}
+
+		public event EventHandler CausesValidationChanged {
+			add { Events.AddHandler (CausesValidationChangedEvent, value); }
+			remove { Events.RemoveHandler (CausesValidationChangedEvent, value); }
+		}
+
+		public event UICuesEventHandler ChangeUICues {
+			add { Events.AddHandler (ChangeUICuesEvent, value); }
+			remove { Events.RemoveHandler (ChangeUICuesEvent, value); }
+		}
+
+		public event EventHandler Click {
+			add { Events.AddHandler (ClickEvent, value); }
+			remove { Events.RemoveHandler (ClickEvent, value); }
+		}
+
+		public event EventHandler ContextMenuChanged {
+			add { Events.AddHandler (ContextMenuChangedEvent, value); }
+			remove { Events.RemoveHandler (ContextMenuChangedEvent, value); }
+		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
-		public event ControlEventHandler	ControlAdded;
+		public event ControlEventHandler ControlAdded {
+			add { Events.AddHandler (ControlAddedEvent, value); }
+			remove { Events.RemoveHandler (ControlAddedEvent, value); }
+		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
-		public event ControlEventHandler	ControlRemoved;
+		public event ControlEventHandler ControlRemoved {
+			add { Events.AddHandler (ControlRemovedEvent, value); }
+			remove { Events.RemoveHandler (ControlRemovedEvent, value); }
+		}
 
 		[MWFDescription("Fired when the cursor for the control has been changed"), MWFCategory("PropertyChanged")]
-		public event EventHandler		CursorChanged;
-		public event EventHandler		DockChanged;
-		public event EventHandler		DoubleClick;
-		public event DragEventHandler		DragDrop;
-		public event DragEventHandler		DragEnter;
-		public event EventHandler		DragLeave;
-		public event DragEventHandler		DragOver;
-		public event EventHandler		EnabledChanged;
-		public event EventHandler		Enter;
-		public event EventHandler		FontChanged;
-		public event EventHandler		ForeColorChanged;
-		public event GiveFeedbackEventHandler	GiveFeedback;
+		public event EventHandler CursorChanged {
+			add { Events.AddHandler (CursorChangedEvent, value); }
+			remove { Events.RemoveHandler (CursorChangedEvent, value); }
+		}
+		public event EventHandler DockChanged {
+			add { Events.AddHandler (DockChangedEvent, value); }
+			remove { Events.RemoveHandler (DockChangedEvent, value); }
+		}
+      
+		public event EventHandler DoubleClick {
+			add { Events.AddHandler (DoubleClickEvent, value); }
+			remove { Events.RemoveHandler (DoubleClickEvent, value); }
+		}
+
+		public event DragEventHandler DragDrop {
+			add { Events.AddHandler (DragDropEvent, value); }
+			remove { Events.RemoveHandler (DragDropEvent, value); }
+		}
+
+		public event DragEventHandler DragEnter {
+			add { Events.AddHandler (DragEnterEvent, value); }
+			remove { Events.RemoveHandler (DragEnterEvent, value); }
+		}
+
+		public event EventHandler DragLeave {
+			add { Events.AddHandler (DragLeaveEvent, value); }
+			remove { Events.RemoveHandler (DragLeaveEvent, value); }
+		}
+
+		public event DragEventHandler DragOver {
+			add { Events.AddHandler (DragOverEvent, value); }
+			remove { Events.RemoveHandler (DragOverEvent, value); }
+		}
+	       
+		public event EventHandler EnabledChanged {
+			add { Events.AddHandler (EnabledChangedEvent, value); }
+			remove { Events.RemoveHandler (EnabledChangedEvent, value); }
+		}
+
+		public event EventHandler Enter {
+			add { Events.AddHandler (EnterEvent, value); }
+			remove { Events.RemoveHandler (EnterEvent, value); }
+		}
+
+		public event EventHandler FontChanged {
+			add { Events.AddHandler (FontChangedEvent, value); }
+			remove { Events.RemoveHandler (FontChangedEvent, value); }
+		}
+
+		public event EventHandler ForeColorChanged {
+			add { Events.AddHandler (ForeColorChangedEvent, value); }
+			remove { Events.RemoveHandler (ForeColorChangedEvent, value); }
+		}
+
+		public event GiveFeedbackEventHandler GiveFeedback {
+			add { Events.AddHandler (GiveFeedbackEvent, value); }
+			remove { Events.RemoveHandler (GiveFeedbackEvent, value); }
+		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
-		public event EventHandler		GotFocus;
+		public event EventHandler GotFocus {
+			add { Events.AddHandler (GotFocusEvent, value); }
+			remove { Events.RemoveHandler (GotFocusEvent, value); }
+		}
+
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
-		public event EventHandler		HandleCreated;
+		public event EventHandler HandleCreated {
+			add { Events.AddHandler (HandleCreatedEvent, value); }
+			remove { Events.RemoveHandler (HandleCreatedEvent, value); }
+		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
-		public event EventHandler		HandleDestroyed;
+		public event EventHandler HandleDestroyed {
+			add { Events.AddHandler (HandleDestroyedEvent, value); }
+			remove { Events.RemoveHandler (HandleDestroyedEvent, value); }
+		}
 
-		public event HelpEventHandler		HelpRequested;
-		public event EventHandler		ImeModeChanged;
+		public event HelpEventHandler HelpRequested {
+			add { Events.AddHandler (HelpRequestedEvent, value); }
+			remove { Events.RemoveHandler (HelpRequestedEvent, value); }
+		}
 
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[Browsable(false)]
-		public event InvalidateEventHandler	Invalidated;
-
-		public event KeyEventHandler		KeyDown;
-		public event KeyPressEventHandler	KeyPress;
-		public event KeyEventHandler		KeyUp;
-		public event LayoutEventHandler		Layout;
-		public event EventHandler		Leave;
-		public event EventHandler		LocationChanged;
-
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		[Browsable(false)]
-		public event EventHandler		LostFocus;
-
-		public event MouseEventHandler		MouseDown;
-		public event EventHandler		MouseEnter;
-		public event EventHandler		MouseHover;
-		public event EventHandler		MouseLeave;
-		public event MouseEventHandler		MouseMove;
-		public event MouseEventHandler		MouseUp;
+		public event EventHandler ImeModeChanged {
+			add { Events.AddHandler (ImeModeChangedEvent, value); }
+			remove { Events.RemoveHandler (ImeModeChangedEvent, value); }
+		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
-		public event MouseEventHandler		MouseWheel;
+		public event InvalidateEventHandler Invalidated {
+			add { Events.AddHandler (InvalidatedEvent, value); }
+			remove { Events.RemoveHandler (InvalidatedEvent, value); }
+		}
 
-		public event EventHandler		Move;
-		public event PaintEventHandler		Paint;
-		public event EventHandler		ParentChanged;
-		public event QueryAccessibilityHelpEventHandler	QueryAccessibilityHelp;
-		public event QueryContinueDragEventHandler	QueryContinueDrag;
-		public event EventHandler		Resize;
-		public event EventHandler		RightToLeftChanged;
-		public event EventHandler		SizeChanged;
-		public event EventHandler		StyleChanged;
-		public event EventHandler		SystemColorsChanged;
-		public event EventHandler		TabIndexChanged;
-		public event EventHandler		TabStopChanged;
-		public event EventHandler		TextChanged;
-		public event EventHandler		Validated;
-		public event CancelEventHandler		Validating;
-		public event EventHandler		VisibleChanged;
+		public event KeyEventHandler KeyDown {
+			add { Events.AddHandler (KeyDownEvent, value); }
+			remove { Events.RemoveHandler (KeyDownEvent, value); }
+		}
+
+		public event KeyPressEventHandler KeyPress {
+			add { Events.AddHandler (KeyPressEvent, value); }
+			remove { Events.RemoveHandler (KeyPressEvent, value); }
+		}
+
+		public event KeyEventHandler KeyUp {
+			add { Events.AddHandler (KeyUpEvent, value); }
+			remove { Events.RemoveHandler (KeyUpEvent, value); }
+		}
+
+		public event LayoutEventHandler Layout {
+			add { Events.AddHandler (LayoutEvent, value); }
+			remove { Events.RemoveHandler (LayoutEvent, value); }
+		}
+
+		public event EventHandler Leave {
+			add { Events.AddHandler (LeaveEvent, value); }
+			remove { Events.RemoveHandler (LeaveEvent, value); }
+		}
+
+		public event EventHandler LocationChanged {
+			add { Events.AddHandler (LocationChangedEvent, value); }
+			remove { Events.RemoveHandler (LocationChangedEvent, value); }
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		public event EventHandler LostFocus {
+			add { Events.AddHandler (LostFocusEvent, value); }
+			remove { Events.RemoveHandler (LostFocusEvent, value); }
+		}
+
+		public event MouseEventHandler MouseDown {
+			add { Events.AddHandler (MouseDownEvent, value); }
+			remove { Events.RemoveHandler (MouseDownEvent, value); }
+		}
+
+		public event EventHandler MouseEnter {
+			add { Events.AddHandler (MouseEnterEvent, value); }
+			remove { Events.RemoveHandler (MouseEnterEvent, value); }
+		}
+
+		public event EventHandler MouseHover {
+			add { Events.AddHandler (MouseHoverEvent, value); }
+			remove { Events.RemoveHandler (MouseHoverEvent, value); }
+		}
+
+		public event EventHandler MouseLeave {
+			add { Events.AddHandler (MouseLeaveEvent, value); }
+			remove { Events.RemoveHandler (MouseLeaveEvent, value); }
+		}
+
+		public event MouseEventHandler MouseMove {
+			add { Events.AddHandler (MouseMoveEvent, value); }
+			remove { Events.RemoveHandler (MouseMoveEvent, value); }
+		}
+
+		public event MouseEventHandler MouseUp {
+			add { Events.AddHandler (MouseUpEvent, value); }
+			remove { Events.RemoveHandler (MouseUpEvent, value); }
+		}
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		public event MouseEventHandler MouseWheel {
+			add { Events.AddHandler (MouseWheelEvent, value); }
+			remove { Events.RemoveHandler (MouseWheelEvent, value); }
+		}
+
+		public event EventHandler Move {
+			add { Events.AddHandler (MoveEvent, value); }
+			remove { Events.RemoveHandler (MoveEvent, value); }
+		}
+
+		public event PaintEventHandler Paint {
+			add { Events.AddHandler (PaintEvent, value); }
+			remove { Events.RemoveHandler (PaintEvent, value); }
+		}
+
+		public event EventHandler ParentChanged {
+			add { Events.AddHandler (ParentChangedEvent, value); }
+			remove { Events.RemoveHandler (ParentChangedEvent, value); }
+		}
+
+		public event QueryAccessibilityHelpEventHandler QueryAccessibilityHelp {
+			add { Events.AddHandler (QueryAccessibilityHelpEvent, value); }
+			remove { Events.RemoveHandler (QueryAccessibilityHelpEvent, value); }
+		}
+
+		public event QueryContinueDragEventHandler QueryContinueDrag {
+			add { Events.AddHandler (QueryContinueDragEvent, value); }
+			remove { Events.RemoveHandler (QueryContinueDragEvent, value); }
+		}
+
+		public event EventHandler Resize {
+			add { Events.AddHandler (ResizeEvent, value); }
+			remove { Events.RemoveHandler (ResizeEvent, value); }
+		}
+
+		public event EventHandler RightToLeftChanged {
+			add { Events.AddHandler (RightToLeftChangedEvent, value); }
+			remove { Events.RemoveHandler (RightToLeftChangedEvent, value); }
+		}
+
+		public event EventHandler SizeChanged {
+			add { Events.AddHandler (SizeChangedEvent, value); }
+			remove { Events.RemoveHandler (SizeChangedEvent, value); }
+		}
+
+		public event EventHandler StyleChanged {
+			add { Events.AddHandler (StyleChangedEvent, value); }
+			remove { Events.RemoveHandler (StyleChangedEvent, value); }
+		}
+
+		public event EventHandler SystemColorsChanged {
+			add { Events.AddHandler (SystemColorsChangedEvent, value); }
+			remove { Events.RemoveHandler (SystemColorsChangedEvent, value); }
+		}
+
+		public event EventHandler TabIndexChanged {
+			add { Events.AddHandler (TabIndexChangedEvent, value); }
+			remove { Events.RemoveHandler (TabIndexChangedEvent, value); }
+		}
+
+		public event EventHandler TabStopChanged {
+			add { Events.AddHandler (TabStopChangedEvent, value); }
+			remove { Events.RemoveHandler (TabStopChangedEvent, value); }
+		}
+
+		public event EventHandler TextChanged {
+			add { Events.AddHandler (TextChangedEvent, value); }
+			remove { Events.RemoveHandler (TextChangedEvent, value); }
+		}
+
+		public event EventHandler Validated {
+			add { Events.AddHandler (ValidatedEvent, value); }
+			remove { Events.RemoveHandler (ValidatedEvent, value); }
+		}
+
+		public event CancelEventHandler Validating {
+			add { Events.AddHandler (ValidatingEvent, value); }
+			remove { Events.RemoveHandler (ValidatingEvent, value); }
+		}
+
+		public event EventHandler VisibleChanged {
+			add { Events.AddHandler (VisibleChangedEvent, value); }
+			remove { Events.RemoveHandler (VisibleChangedEvent, value); }
+		}
+
 		#endregion	// Events
 	}
 }

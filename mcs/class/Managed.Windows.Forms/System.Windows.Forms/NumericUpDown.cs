@@ -326,9 +326,9 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual void OnValueChanged(EventArgs e) {
-			if (ValueChanged != null) {
-				ValueChanged(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [ValueChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected void ParseEditText() {
@@ -451,20 +451,29 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-        protected override void OnLostFocus(EventArgs e) {
-            base.OnLostFocus(e);
-            if (this.UserEdit)
-                this.UpdateEditText();
-        }
+		protected override void OnLostFocus(EventArgs e) {
+			base.OnLostFocus(e);
+			if (this.UserEdit)
+				this.UpdateEditText();
+		}
 #endif
 		#endregion	// Protected Instance Methods
 
 		#region Events
-		public event EventHandler ValueChanged;
+		static object ValueChangedEvent = new object ();
+		static object TextChangedEvent = new object ();
+
+		public event EventHandler ValueChanged {
+			add { Events.AddHandler (ValueChangedEvent, value); }
+			remove { Events.RemoveHandler (ValueChangedEvent, value); }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler TextChanged;
+		public event EventHandler TextChanged {
+			add { Events.AddHandler (TextChangedEvent, value); }
+			remove { Events.RemoveHandler (TextChangedEvent, value); }
+		}
 		#endregion	// Events
 	}
 }

@@ -176,9 +176,9 @@ namespace System.Windows.Forms
 						table_style.DataGrid.Invalidate ();
 					}
 					
-					if (AlignmentChanged != null) {
-						AlignmentChanged (this, EventArgs.Empty);
-					}					
+					EventHandler eh = (EventHandler)(Events [AlignmentChangedEvent]);
+					if (eh != null)
+						eh (this, EventArgs.Empty);
 				}
 			}
 		}
@@ -222,9 +222,9 @@ namespace System.Windows.Forms
 					
 					Invalidate ();
 
-					if (HeaderTextChanged != null) {
-						HeaderTextChanged (this, EventArgs.Empty);
-					}
+					EventHandler eh = (EventHandler)(Events [HeaderTextChangedEvent]);
+					if (eh != null)
+						eh (this, EventArgs.Empty);
 				}
 			}
 		}
@@ -239,9 +239,9 @@ namespace System.Windows.Forms
 				if (value != mapping_name) {
 					mapping_name = value;
 
-					if (MappingNameChanged != null) {
-						MappingNameChanged (this, EventArgs.Empty);
-					}
+					EventHandler eh = (EventHandler)(Events [MappingNameChangedEvent]);
+					if (eh != null)
+						eh (this, EventArgs.Empty);
 				}
 			}
 		}
@@ -259,9 +259,9 @@ namespace System.Windows.Forms
 						table_style.DataGrid.Invalidate ();
 					}
 
-					if (NullTextChanged != null) {
-						NullTextChanged (this, EventArgs.Empty);
-					}
+					EventHandler eh = (EventHandler)(Events [NullTextChangedEvent]);
+					if (eh != null)
+						eh (this, EventArgs.Empty);
 				}
 			}
 		}
@@ -277,9 +277,9 @@ namespace System.Windows.Forms
 				if (value != property_descriptor) {
 					property_descriptor = value;					
 
-					if (PropertyDescriptorChanged != null) {
-						PropertyDescriptorChanged (this, EventArgs.Empty);
-					}
+					EventHandler eh = (EventHandler)(Events [PropertyDescriptorChangedEvent]);
+					if (eh != null)
+						eh (this, EventArgs.Empty);
 				}
 			}
 		}
@@ -297,9 +297,9 @@ namespace System.Windows.Forms
 						table_style.DataGrid.CalcAreasAndInvalidate ();
 					}
 					
-					if (ReadOnlyChanged != null) {
-						ReadOnlyChanged (this, EventArgs.Empty);
-					}
+					EventHandler eh = (EventHandler)(Events [ReadOnlyChangedEvent]);
+					if (eh != null)
+						eh (this, EventArgs.Empty);
 				}
 			}
 		}
@@ -318,9 +318,9 @@ namespace System.Windows.Forms
 						table_style.DataGrid.CalcAreasAndInvalidate ();
 					}
 
-					if (WidthChanged != null) {
-						WidthChanged (this, EventArgs.Empty);
-					}
+					EventHandler eh = (EventHandler)(Events [WidthChangedEvent]);
+					if (eh != null)
+						eh (this, EventArgs.Empty);
 				}
 			}
 		}
@@ -582,17 +582,56 @@ namespace System.Windows.Forms
 
 
 		#region Events
-		public event EventHandler AlignmentChanged;
-		public event EventHandler FontChanged;
-		public event EventHandler HeaderTextChanged;
-		public event EventHandler MappingNameChanged;
-		public event EventHandler NullTextChanged;
+		static object AlignmentChangedEvent = new object ();
+		static object FontChangedEvent = new object ();
+		static object HeaderTextChangedEvent = new object ();
+		static object MappingNameChangedEvent = new object ();
+		static object NullTextChangedEvent = new object ();
+		static object PropertyDescriptorChangedEvent = new object ();
+		static object ReadOnlyChangedEvent = new object ();
+		static object WidthChangedEvent = new object ();
+
+		public event EventHandler AlignmentChanged {
+			add { Events.AddHandler (AlignmentChangedEvent, value); }
+			remove { Events.RemoveHandler (AlignmentChangedEvent, value); }
+		}
+
+		public event EventHandler FontChanged {
+			add { Events.AddHandler (FontChangedEvent, value); }
+			remove { Events.RemoveHandler (FontChangedEvent, value); }
+		}
+
+		public event EventHandler HeaderTextChanged {
+			add { Events.AddHandler (HeaderTextChangedEvent, value); }
+			remove { Events.RemoveHandler (HeaderTextChangedEvent, value); }
+		}
+
+		public event EventHandler MappingNameChanged {
+			add { Events.AddHandler (MappingNameChangedEvent, value); }
+			remove { Events.RemoveHandler (MappingNameChangedEvent, value); }
+		}
+
+		public event EventHandler NullTextChanged {
+			add { Events.AddHandler (NullTextChangedEvent, value); }
+			remove { Events.RemoveHandler (NullTextChangedEvent, value); }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public event EventHandler PropertyDescriptorChanged;
-		public event EventHandler ReadOnlyChanged;
-		public event EventHandler WidthChanged;
+		public event EventHandler PropertyDescriptorChanged {
+			add { Events.AddHandler (PropertyDescriptorChangedEvent, value); }
+			remove { Events.RemoveHandler (PropertyDescriptorChangedEvent, value); }
+		}
+
+		public event EventHandler ReadOnlyChanged {
+			add { Events.AddHandler (ReadOnlyChangedEvent, value); }
+			remove { Events.RemoveHandler (ReadOnlyChangedEvent, value); }
+		}
+
+		public event EventHandler WidthChanged {
+			add { Events.AddHandler (WidthChangedEvent, value); }
+			remove { Events.RemoveHandler (WidthChangedEvent, value); }
+		}
 		#endregion	// Events
 	}
 }

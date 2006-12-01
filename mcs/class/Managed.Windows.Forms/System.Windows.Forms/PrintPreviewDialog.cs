@@ -895,217 +895,127 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event EventHandler BackColorChanged {
-			add {
-				base.BackColorChanged += value;
-			}
-
-			remove {
-				base.BackColorChanged -= value;
-			}
+			add { base.BackColorChanged += value; }
+			remove { base.BackColorChanged -= value; }
 		}
  
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event EventHandler BackgroundImageChanged {
-			add {
-				base.BackgroundImageChanged += value;
-			}
-
-			remove {
-				base.BackgroundImageChanged -= value;
-			}
+			add { base.BackgroundImageChanged += value; }
+			remove { base.BackgroundImageChanged -= value; }
 		}
  
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event EventHandler CausesValidationChanged {
-			add {
-				base.CausesValidationChanged += value;
-			}
-
-			remove {
-				base.CausesValidationChanged -= value;
-			}
+			add { base.CausesValidationChanged += value; }
+			remove { base.CausesValidationChanged -= value; }
 		}
  
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event EventHandler ContextMenuChanged {
-			add {
-				base.ContextMenuChanged += value;
-			}
-
-			remove {
-				base.ContextMenuChanged -= value;
-			}
+			add { base.ContextMenuChanged += value; }
+			remove { base.ContextMenuChanged -= value; }
 		}
  
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event EventHandler CursorChanged {
-			add {
-				base.CursorChanged += value;
-			}
-
-			remove {
-				base.CursorChanged -= value;
-			}
+			add { base.CursorChanged += value; }
+			remove { base.CursorChanged -= value; }
 		}
  
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event EventHandler DockChanged {
-			add {
-				base.DockChanged += value;
-			}
-
-			remove {
-				base.DockChanged -= value;
-			}
+			add { base.DockChanged += value; }
+			remove { base.DockChanged -= value; }
 		}
  
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event EventHandler EnabledChanged {
-			add {
-				base.EnabledChanged += value;
-			}
-
-			remove {
-				base.EnabledChanged -= value;
-			}
+			add { base.EnabledChanged += value; }
+			remove { base.EnabledChanged -= value; }
 		}
  
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event EventHandler FontChanged {
-			add {
-				base.FontChanged += value;
-			}
-
-			remove {
-				base.FontChanged -= value;
-			}
+			add { base.FontChanged += value; }
+			remove { base.FontChanged -= value; }
 		}
  
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event EventHandler ForeColorChanged {
-			add {
-				base.ForeColorChanged += value;
-			}
-
-			remove {
-				base.ForeColorChanged -= value;
-			}
+			add { base.ForeColorChanged += value; }
+			remove { base.ForeColorChanged -= value; }
 		}
  
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event EventHandler ImeModeChanged {
-			add {
-				base.ImeModeChanged += value;
-			}
-
-			remove {
-				base.ImeModeChanged -= value;
-			}
+			add { base.ImeModeChanged += value; }
+			remove { base.ImeModeChanged -= value; }
 		}
  
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event EventHandler LocationChanged {
-			add {
-				base.LocationChanged += value;
-			}
-
-			remove {
-				base.LocationChanged -= value;
-			}
+			add { base.LocationChanged += value; }
+			remove { base.LocationChanged -= value; }
 		}
  
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event EventHandler MaximumSizeChanged {
-			add {
-				base.MaximumSizeChanged += value;
-			}
-
-			remove {
-				base.MaximumSizeChanged -= value;
-			}
+			add { base.MaximumSizeChanged += value; }
+			remove { base.MaximumSizeChanged -= value; }
 		}
  
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event EventHandler MinimumSizeChanged {
-			add {
-				base.MinimumSizeChanged += value;
-			}
-
-			remove {
-				base.MinimumSizeChanged -= value;
-			}
+			add { base.MinimumSizeChanged += value; }
+			remove { base.MinimumSizeChanged -= value; }
 		}
  
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event EventHandler RightToLeftChanged {
-			add {
-				base.RightToLeftChanged += value;
-			}
-
-			remove {
-				base.RightToLeftChanged -= value;
-			}
+			add { base.RightToLeftChanged += value; }
+			remove { base.RightToLeftChanged -= value; }
 		}
  
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event EventHandler SizeChanged {
-			add {
-				base.SizeChanged += value;
-			}
-
-			remove {
-				base.SizeChanged -= value;
-			}
+			add { base.SizeChanged += value; }
+			remove { base.SizeChanged -= value; }
 		}
  
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event EventHandler TabStopChanged {
-			add {
-				base.TabStopChanged += value;
-			}
-
-			remove {
-				base.TabStopChanged -= value;
-			}
+			add { base.TabStopChanged += value; }
+			remove { base.TabStopChanged -= value; }
 		}
  
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event EventHandler TextChanged {
-			add {
-				base.TextChanged += value;
-			}
-
-			remove {
-				base.TextChanged -= value;
-			}
+			add { base.TextChanged += value; }
+			remove { base.TextChanged -= value; }
 		}
  
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event EventHandler VisibleChanged {
-			add {
-				base.VisibleChanged += value;
-			}
-
-			remove {
-				base.VisibleChanged -= value;
-			}
+			add { base.VisibleChanged += value; }
+			remove { base.VisibleChanged -= value; }
 		}
 	}
 }

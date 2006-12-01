@@ -296,9 +296,14 @@ namespace System.Windows.Forms {
 		#endregion	// Internal Methods
 		
 		#region Events
+		static object HelpRequestEvent = new object ();
+
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler HelpRequest;
+		public event EventHandler HelpRequest {
+			add { Events.AddHandler (HelpRequestEvent, value); }
+			remove { Events.RemoveHandler (HelpRequestEvent, value); }
+		}
 		#endregion
 		
 		internal class FolderBrowserTreeView : TreeView

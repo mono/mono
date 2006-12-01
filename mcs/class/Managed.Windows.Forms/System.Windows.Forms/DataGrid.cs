@@ -1267,15 +1267,16 @@ namespace System.Windows.Forms
 
 		protected virtual void OnAllowNavigationChanged (EventArgs e)
 		{
-			if (AllowNavigationChanged != null) {
-				AllowNavigationChanged (this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [AllowNavigationChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
-		protected void OnBackButtonClicked (object sender,  EventArgs e)
+		protected void OnBackButtonClicked (object sender, EventArgs e)
 		{
-			if (BackButtonClick != null)
-				BackButtonClick (sender, e);
+			EventHandler eh = (EventHandler)(Events [BackButtonClickEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnBackColorChanged (EventArgs e)
@@ -1285,8 +1286,9 @@ namespace System.Windows.Forms
 
 		protected virtual void OnBackgroundColorChanged (EventArgs e)
 		{
-			if (BackgroundColorChanged != null)
-				BackgroundColorChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [BackgroundColorChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnBindingContextChanged (EventArgs e)
@@ -1298,26 +1300,30 @@ namespace System.Windows.Forms
 
 		protected virtual void OnBorderStyleChanged (EventArgs e)
 		{
-			if (BorderStyleChanged != null)
-				BorderStyleChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [BorderStyleChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCaptionVisibleChanged (EventArgs e)
 		{
-			if (CaptionVisibleChanged != null)
-				CaptionVisibleChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [CaptionVisibleChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnCurrentCellChanged (EventArgs e)
 		{
-			if (CurrentCellChanged != null)
-				CurrentCellChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [CurrentCellChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnDataSourceChanged (EventArgs e)
 		{
-			if (DataSourceChanged != null)
-				DataSourceChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [DataSourceChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnEnter (EventArgs e)
@@ -1327,8 +1333,9 @@ namespace System.Windows.Forms
 
 		protected virtual void OnFlatModeChanged (EventArgs e)
 		{
-			if (FlatModeChanged != null)
-				FlatModeChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [FlatModeChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnFontChanged (EventArgs e)
@@ -1711,8 +1718,9 @@ namespace System.Windows.Forms
 
 		protected void OnNavigate (NavigateEventArgs e)
 		{
-			if (Navigate != null)
-				Navigate (this, e);
+			EventHandler eh = (EventHandler)(Events [NavigateEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnPaint (PaintEventArgs pe)
@@ -1726,20 +1734,23 @@ namespace System.Windows.Forms
 
 		protected virtual void OnParentRowsLabelStyleChanged (EventArgs e)
 		{
-			if (ParentRowsLabelStyleChanged != null)
-				ParentRowsLabelStyleChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [ParentRowsLabelStyleChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnParentRowsVisibleChanged (EventArgs e)
 		{
-			if (ParentRowsVisibleChanged != null)
-				ParentRowsVisibleChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [ParentRowsVisibleChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnReadOnlyChanged (EventArgs e)
 		{
-			if (ReadOnlyChanged != null)
-				ReadOnlyChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [ReadOnlyChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnResize (EventArgs e)
@@ -1749,20 +1760,23 @@ namespace System.Windows.Forms
 
 		protected void OnRowHeaderClick (EventArgs e)
 		{
-			if (RowHeaderClick != null)
-				RowHeaderClick (this, e);
+			EventHandler eh = (EventHandler)(Events [RowHeaderClickEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected void OnScroll (EventArgs e)
 		{
-			if (Scroll != null)
-				Scroll (this, e);
+			EventHandler eh = (EventHandler)(Events [ScrollEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected void OnShowParentDetailsButtonClicked (object sender, EventArgs e)
 		{
-			if (ShowParentDetailsButtonClick != null)
-				ShowParentDetailsButtonClick (sender, e);
+			EventHandler eh = (EventHandler)(Events [ShowParentDetailsButtonClickEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override bool ProcessDialogKey (Keys keyData)
@@ -2488,9 +2502,36 @@ namespace System.Windows.Forms
 
 
 		#region Events
-		public event EventHandler AllowNavigationChanged;
-		public event EventHandler BackButtonClick;
-		public event EventHandler BackgroundColorChanged;
+		static object AllowNavigationChangedEvent = new object ();
+		static object BackButtonClickEvent = new object ();
+		static object BackgroundColorChangedEvent = new object ();
+		static object BorderStyleChangedEvent = new object ();
+		static object CaptionVisibleChangedEvent = new object ();
+		static object CurrentCellChangedEvent = new object ();
+		static object DataSourceChangedEvent = new object ();
+		static object FlatModeChangedEvent = new object ();
+		static object NavigateEvent = new object ();
+		static object ParentRowsLabelStyleChangedEvent = new object ();
+		static object ParentRowsVisibleChangedEvent = new object ();
+		static object ReadOnlyChangedEvent = new object ();
+		static object RowHeaderClickEvent = new object ();
+		static object ScrollEvent = new object ();
+		static object ShowParentDetailsButtonClickEvent = new object ();
+
+		public event EventHandler AllowNavigationChanged {
+			add { Events.AddHandler (AllowNavigationChangedEvent, value); }
+			remove { Events.RemoveHandler (AllowNavigationChangedEvent, value); }
+		}
+
+		public event EventHandler BackButtonClick {
+			add { Events.AddHandler (BackButtonClickEvent, value); }
+			remove { Events.RemoveHandler (BackButtonClickEvent, value); }
+		}
+
+		public event EventHandler BackgroundColorChanged {
+			add { Events.AddHandler (BackgroundColorChangedEvent, value); }
+			remove { Events.RemoveHandler (BackgroundColorChangedEvent, value); }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -2513,19 +2554,65 @@ namespace System.Windows.Forms
 			remove { base.CursorChanged -= value; }
 		}
 
-		public event EventHandler BorderStyleChanged;
-		public event EventHandler CaptionVisibleChanged;
-		public event EventHandler CurrentCellChanged;
-		public event EventHandler DataSourceChanged;
-		public event EventHandler FlatModeChanged;
-		public event NavigateEventHandler Navigate;
-		public event EventHandler ParentRowsLabelStyleChanged;
-		public event EventHandler ParentRowsVisibleChanged;
-		public event EventHandler ReadOnlyChanged;
-		protected event EventHandler RowHeaderClick;
-		public event EventHandler Scroll;
-		public event EventHandler ShowParentDetailsButtonClick;
+		public event EventHandler BorderStyleChanged {
+			add { Events.AddHandler (BorderStyleChangedEvent, value); }
+			remove { Events.RemoveHandler (BorderStyleChangedEvent, value); }
+		}
 
+		public event EventHandler CaptionVisibleChanged {
+			add { Events.AddHandler (CaptionVisibleChangedEvent, value); }
+			remove { Events.RemoveHandler (CaptionVisibleChangedEvent, value); }
+		}
+
+		public event EventHandler CurrentCellChanged {
+			add { Events.AddHandler (CurrentCellChangedEvent, value); }
+			remove { Events.RemoveHandler (CurrentCellChangedEvent, value); }
+		}
+
+		public event EventHandler DataSourceChanged {
+			add { Events.AddHandler (DataSourceChangedEvent, value); }
+			remove { Events.RemoveHandler (DataSourceChangedEvent, value); }
+		}
+
+		public event EventHandler FlatModeChanged {
+			add { Events.AddHandler (FlatModeChangedEvent, value); }
+			remove { Events.RemoveHandler (FlatModeChangedEvent, value); }
+		}
+
+		public event NavigateEventHandler Navigate {
+			add { Events.AddHandler (NavigateEvent, value); }
+			remove { Events.RemoveHandler (NavigateEvent, value); }
+		}
+
+		public event EventHandler ParentRowsLabelStyleChanged {
+			add { Events.AddHandler (ParentRowsLabelStyleChangedEvent, value); }
+			remove { Events.RemoveHandler (ParentRowsLabelStyleChangedEvent, value); }
+		}
+
+		public event EventHandler ParentRowsVisibleChanged {
+			add { Events.AddHandler (ParentRowsVisibleChangedEvent, value); }
+			remove { Events.RemoveHandler (ParentRowsVisibleChangedEvent, value); }
+		}
+
+		public event EventHandler ReadOnlyChanged {
+			add { Events.AddHandler (ReadOnlyChangedEvent, value); }
+			remove { Events.RemoveHandler (ReadOnlyChangedEvent, value); }
+		}
+
+		protected event EventHandler RowHeaderClick {
+			add { Events.AddHandler (RowHeaderClickEvent, value); }
+			remove { Events.RemoveHandler (RowHeaderClickEvent, value); }
+		}
+
+		public event EventHandler Scroll {
+			add { Events.AddHandler (ScrollEvent, value); }
+			remove { Events.RemoveHandler (ScrollEvent, value); }
+		}
+
+		public event EventHandler ShowParentDetailsButtonClick {
+			add { Events.AddHandler (ShowParentDetailsButtonClickEvent, value); }
+			remove { Events.RemoveHandler (ShowParentDetailsButtonClickEvent, value); }
+		}
 		#endregion	// Events
 
 

@@ -267,8 +267,9 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnStartPageChanged(EventArgs e)
 		{
-			if (StartPageChanged != null)
-				StartPageChanged(this, e);
+			EventHandler eh = (EventHandler)(Events [StartPageChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void WndProc(ref Message m)
@@ -278,7 +279,12 @@ namespace System.Windows.Forms {
 
 		#endregion // Protected Instance Methods
 
-		public event EventHandler StartPageChanged;
+		static object StartPageChangedEvent = new object ();
+
+		public event EventHandler StartPageChanged {
+			add { Events.AddHandler (StartPageChangedEvent, value); }
+			remove { Events.RemoveHandler (StartPageChangedEvent, value); }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]

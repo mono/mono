@@ -607,142 +607,142 @@ namespace System.Windows.Forms
 
 		protected virtual void OnAllowSortingChanged (EventArgs e)
 		{
-			if (AllowSortingChanged != null) {
-				AllowSortingChanged (this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [AllowSortingChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnAlternatingBackColorChanged (EventArgs e)
 		{
-			if (AlternatingBackColorChanged != null) {
-				AlternatingBackColorChanged (this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [AlternatingBackColorChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnBackColorChanged (EventArgs e)
 		{
-			if (BackColorChanged != null) {
-				BackColorChanged (this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [BackColorChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnColumnHeadersVisibleChanged (EventArgs e)
 		{
-			if (ColumnHeadersVisibleChanged != null) {
-				ColumnHeadersVisibleChanged (this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [ColumnHeadersVisibleChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnForeColorChanged (EventArgs e)
 		{
-			if (ForeColorChanged != null) {
-				ForeColorChanged (this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [ForeColorChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnGridLineColorChanged (EventArgs e)
 		{
-			if (GridLineColorChanged != null) {
-				GridLineColorChanged (this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [GridLineColorChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnGridLineStyleChanged (EventArgs e)
 		{
-			if (GridLineStyleChanged != null) {
-				GridLineStyleChanged (this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [GridLineStyleChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnHeaderBackColorChanged (EventArgs e)
 		{
-			if (HeaderBackColorChanged != null) {
-				HeaderBackColorChanged (this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [HeaderBackColorChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnHeaderFontChanged (EventArgs e)
 		{
-			if (HeaderFontChanged != null) {
-				HeaderFontChanged (this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [HeaderFontChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnHeaderForeColorChanged (EventArgs e)
 		{
-			if (HeaderForeColorChanged != null) {
-				HeaderForeColorChanged (this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [HeaderForeColorChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnLinkColorChanged (EventArgs e)
 		{
-			if (LinkColorChanged != null) {
-				LinkColorChanged (this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [LinkColorChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnLinkHoverColorChanged (EventArgs e)
 		{
-			if (LinkHoverColorChanged != null) {
-				LinkHoverColorChanged (this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [LinkHoverColorChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnMappingNameChanged (EventArgs e)
 		{
-			if (MappingNameChanged != null) {
-				MappingNameChanged(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [MappingNameChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnPreferredColumnWidthChanged (EventArgs e)
 		{
-			if (PreferredColumnWidthChanged != null) {
-				PreferredColumnWidthChanged (this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [PreferredColumnWidthChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnPreferredRowHeightChanged (EventArgs e)
 		{
-			if (PreferredRowHeightChanged != null) {
-				PreferredRowHeightChanged (this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [PreferredRowHeightChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnReadOnlyChanged (EventArgs e)
 		{
-			if (ReadOnlyChanged != null) {
-				ReadOnlyChanged (this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [ReadOnlyChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnRowHeadersVisibleChanged (EventArgs e)
 		{
-			if (RowHeadersVisibleChanged != null) {
-				RowHeadersVisibleChanged (this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [RowHeadersVisibleChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnRowHeaderWidthChanged (EventArgs e)
 		{
-			if (RowHeaderWidthChanged != null) {
-				RowHeaderWidthChanged (this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [RowHeaderWidthChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnSelectionBackColorChanged (EventArgs e)
 		{
-			if (SelectionBackColorChanged != null) {
-				SelectionBackColorChanged (this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [SelectionBackColorChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnSelectionForeColorChanged (EventArgs e)
 		{
-			if (SelectionForeColorChanged != null) {
-				SelectionForeColorChanged (this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [SelectionForeColorChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		public void ResetAlternatingBackColor ()
@@ -911,26 +911,126 @@ namespace System.Windows.Forms
 		#endregion Private Instance Properties
 
 		#region Events
-		public event EventHandler AllowSortingChanged;
-		public event EventHandler AlternatingBackColorChanged;
-		public event EventHandler BackColorChanged;
-		public event EventHandler ColumnHeadersVisibleChanged;
-		public event EventHandler ForeColorChanged;
-		public event EventHandler GridLineColorChanged;
-		public event EventHandler GridLineStyleChanged;
-		public event EventHandler HeaderBackColorChanged;
-		public event EventHandler HeaderFontChanged;
-		public event EventHandler HeaderForeColorChanged;
-		public event EventHandler LinkColorChanged;
-		public event EventHandler LinkHoverColorChanged;
-		public event EventHandler MappingNameChanged;
-		public event EventHandler PreferredColumnWidthChanged;
-		public event EventHandler PreferredRowHeightChanged;
-		public event EventHandler ReadOnlyChanged;
-		public event EventHandler RowHeadersVisibleChanged;
-		public event EventHandler RowHeaderWidthChanged;
-		public event EventHandler SelectionBackColorChanged;
-		public event EventHandler SelectionForeColorChanged;
+		static object AllowSortingChangedEvent = new object ();
+		static object AlternatingBackColorChangedEvent = new object ();
+		static object BackColorChangedEvent = new object ();
+		static object ColumnHeadersVisibleChangedEvent = new object ();
+		static object ForeColorChangedEvent = new object ();
+		static object GridLineColorChangedEvent = new object ();
+		static object GridLineStyleChangedEvent = new object ();
+		static object HeaderBackColorChangedEvent = new object ();
+		static object HeaderFontChangedEvent = new object ();
+		static object HeaderForeColorChangedEvent = new object ();
+		static object LinkColorChangedEvent = new object ();
+		static object LinkHoverColorChangedEvent = new object ();
+		static object MappingNameChangedEvent = new object ();
+		static object PreferredColumnWidthChangedEvent = new object ();
+		static object PreferredRowHeightChangedEvent = new object ();
+		static object ReadOnlyChangedEvent = new object ();
+		static object RowHeadersVisibleChangedEvent = new object ();
+		static object RowHeaderWidthChangedEvent = new object ();
+		static object SelectionBackColorChangedEvent = new object ();
+		static object SelectionForeColorChangedEvent = new object ();
+
+		public event EventHandler AllowSortingChanged {
+			add { Events.AddHandler (AllowSortingChangedEvent, value); }
+			remove { Events.RemoveHandler (AllowSortingChangedEvent, value); }
+		}
+
+		public event EventHandler AlternatingBackColorChanged {
+			add { Events.AddHandler (AlternatingBackColorChangedEvent, value); }
+			remove { Events.RemoveHandler (AlternatingBackColorChangedEvent, value); }
+		}
+
+		public event EventHandler BackColorChanged {
+			add { Events.AddHandler (BackColorChangedEvent, value); }
+			remove { Events.RemoveHandler (BackColorChangedEvent, value); }
+		}
+
+		public event EventHandler ColumnHeadersVisibleChanged {
+			add { Events.AddHandler (ColumnHeadersVisibleChangedEvent, value); }
+			remove { Events.RemoveHandler (ColumnHeadersVisibleChangedEvent, value); }
+		}
+
+		public event EventHandler ForeColorChanged {
+			add { Events.AddHandler (ForeColorChangedEvent, value); }
+			remove { Events.RemoveHandler (ForeColorChangedEvent, value); }
+		}
+
+		public event EventHandler GridLineColorChanged {
+			add { Events.AddHandler (GridLineColorChangedEvent, value); }
+			remove { Events.RemoveHandler (GridLineColorChangedEvent, value); }
+		}
+
+		public event EventHandler GridLineStyleChanged {
+			add { Events.AddHandler (GridLineStyleChangedEvent, value); }
+			remove { Events.RemoveHandler (GridLineStyleChangedEvent, value); }
+		}
+
+		public event EventHandler HeaderBackColorChanged {
+			add { Events.AddHandler (HeaderBackColorChangedEvent, value); }
+			remove { Events.RemoveHandler (HeaderBackColorChangedEvent, value); }
+		}
+
+		public event EventHandler HeaderFontChanged {
+			add { Events.AddHandler (HeaderFontChangedEvent, value); }
+			remove { Events.RemoveHandler (HeaderFontChangedEvent, value); }
+		}
+
+		public event EventHandler HeaderForeColorChanged {
+			add { Events.AddHandler (HeaderForeColorChangedEvent, value); }
+			remove { Events.RemoveHandler (HeaderForeColorChangedEvent, value); }
+		}
+
+		public event EventHandler LinkColorChanged {
+			add { Events.AddHandler (LinkColorChangedEvent, value); }
+			remove { Events.RemoveHandler (LinkColorChangedEvent, value); }
+		}
+
+		public event EventHandler LinkHoverColorChanged {
+			add { Events.AddHandler (LinkHoverColorChangedEvent, value); }
+			remove { Events.RemoveHandler (LinkHoverColorChangedEvent, value); }
+		}
+
+		public event EventHandler MappingNameChanged {
+			add { Events.AddHandler (MappingNameChangedEvent, value); }
+			remove { Events.RemoveHandler (MappingNameChangedEvent, value); }
+		}
+
+		public event EventHandler PreferredColumnWidthChanged {
+			add { Events.AddHandler (PreferredColumnWidthChangedEvent, value); }
+			remove { Events.RemoveHandler (PreferredColumnWidthChangedEvent, value); }
+		}
+
+		public event EventHandler PreferredRowHeightChanged {
+			add { Events.AddHandler (PreferredRowHeightChangedEvent, value); }
+			remove { Events.RemoveHandler (PreferredRowHeightChangedEvent, value); }
+		}
+
+		public event EventHandler ReadOnlyChanged {
+			add { Events.AddHandler (ReadOnlyChangedEvent, value); }
+			remove { Events.RemoveHandler (ReadOnlyChangedEvent, value); }
+		}
+
+		public event EventHandler RowHeadersVisibleChanged {
+			add { Events.AddHandler (RowHeadersVisibleChangedEvent, value); }
+			remove { Events.RemoveHandler (RowHeadersVisibleChangedEvent, value); }
+		}
+
+		public event EventHandler RowHeaderWidthChanged {
+			add { Events.AddHandler (RowHeaderWidthChangedEvent, value); }
+			remove { Events.RemoveHandler (RowHeaderWidthChangedEvent, value); }
+		}
+
+		public event EventHandler SelectionBackColorChanged {
+			add { Events.AddHandler (SelectionBackColorChangedEvent, value); }
+			remove { Events.RemoveHandler (SelectionBackColorChangedEvent, value); }
+		}
+
+		public event EventHandler SelectionForeColorChanged {
+			add { Events.AddHandler (SelectionForeColorChangedEvent, value); }
+			remove { Events.RemoveHandler (SelectionForeColorChangedEvent, value); }
+		}
 		#endregion	// Events
 	}
 }

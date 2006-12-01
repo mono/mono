@@ -56,10 +56,31 @@ namespace System.Windows.Forms
 		}
 
 		#region Events
-		public event EventHandler DataSourceChanged;
-		public event EventHandler DisplayMemberChanged;
-		public event EventHandler SelectedValueChanged;
-		public event EventHandler ValueMemberChanged;
+		static object DataSourceChangedEvent = new object ();
+		static object DisplayMemberChangedEvent = new object ();
+		static object SelectedValueChangedEvent = new object ();
+		static object ValueMemberChangedEvent = new object ();
+
+		public event EventHandler DataSourceChanged {
+			add { Events.AddHandler (DataSourceChangedEvent, value); }
+			remove { Events.RemoveHandler (DataSourceChangedEvent, value); }
+		}
+
+		public event EventHandler DisplayMemberChanged {
+			add { Events.AddHandler (DisplayMemberChangedEvent, value); }
+			remove { Events.RemoveHandler (DisplayMemberChangedEvent, value); }
+		}
+
+		public event EventHandler SelectedValueChanged {
+			add { Events.AddHandler (SelectedValueChangedEvent, value); }
+			remove { Events.RemoveHandler (SelectedValueChangedEvent, value); }
+		}
+
+		public event EventHandler ValueMemberChanged {
+			add { Events.AddHandler (ValueMemberChangedEvent, value); }
+			remove { Events.RemoveHandler (ValueMemberChangedEvent, value); }
+		}
+
 		#endregion // Events
 
 		#region .NET 2.0 Public Properties
@@ -263,14 +284,16 @@ namespace System.Windows.Forms
 
 		protected virtual void OnDataSourceChanged (EventArgs e)
 		{
-			if (DataSourceChanged != null)
-				DataSourceChanged (this,e);
+			EventHandler eh = (EventHandler)(Events [DataSourceChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnDisplayMemberChanged (EventArgs e)
 		{
-			if (DisplayMemberChanged != null)
-				DisplayMemberChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [DisplayMemberChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnSelectedIndexChanged (EventArgs e)
@@ -284,14 +307,16 @@ namespace System.Windows.Forms
 
 		protected virtual void OnSelectedValueChanged (EventArgs e)
 		{
-			if (SelectedValueChanged != null)
-				SelectedValueChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [SelectedValueChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnValueMemberChanged (EventArgs e)
 		{
-			if (ValueMemberChanged != null)
-				ValueMemberChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [ValueMemberChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected abstract void RefreshItem (int index);

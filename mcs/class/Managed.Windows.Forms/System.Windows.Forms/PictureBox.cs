@@ -240,8 +240,9 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnSizeModeChanged (EventArgs e)
 		{
-			if (SizeModeChanged != null)
-				SizeModeChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [SizeModeChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnEnabledChanged (EventArgs e)
@@ -439,7 +440,12 @@ namespace System.Windows.Forms {
 			remove { base.TextChanged -= value; }
 		}
 
-		public event EventHandler SizeModeChanged;
+		static object SizeModeChangedEvent = new object ();
+		public event EventHandler SizeModeChanged {
+			add { Events.AddHandler (SizeModeChangedEvent, value); }
+			remove { Events.RemoveHandler (SizeModeChangedEvent, value); }
+		}
+
 		#endregion	// Events
 	}
 }

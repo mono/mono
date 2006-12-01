@@ -55,7 +55,13 @@ namespace System.Windows.Forms
     		static SizeF req_witdthsize = new SizeF (0,0);
 
     		#region Events
-    		public event EventHandler AutoSizeChanged;
+		static object AutoSizeChangedEvent = new object ();
+		static object TextAlignChangedEvent = new object ();
+
+    		public event EventHandler AutoSizeChanged {
+			add { Events.AddHandler (AutoSizeChangedEvent, value); }
+			remove { Events.RemoveHandler (AutoSizeChangedEvent, value); }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
@@ -126,7 +132,10 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public event EventHandler TextAlignChanged;
+		public event EventHandler TextAlignChanged {
+			add { Events.AddHandler (TextAlignChangedEvent, value); }
+			remove { Events.RemoveHandler (TextAlignChangedEvent, value); }
+		}
 		#endregion
 
     		public Label ()
@@ -145,9 +154,6 @@ namespace System.Windows.Forms
 
 			CalcPreferredHeight ();
 			CalcPreferredWidth ();
-
-			AutoSizeChanged = null;
-    			TextAlignChanged = null;
 
 			SetStyle (ControlStyles.Selectable, false);
 			SetStyle (ControlStyles.ResizeRedraw | 
@@ -499,8 +505,9 @@ namespace System.Windows.Forms
 
     		protected virtual void OnAutoSizeChanged (EventArgs e)
 		{
-    			if (AutoSizeChanged != null)
-    				AutoSizeChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [AutoSizeChangedEvent]);
+			if (eh != null)
+				eh (this, e);
     		}
 
     		protected override void OnEnabledChanged (EventArgs e)
@@ -533,8 +540,9 @@ namespace System.Windows.Forms
 
     		protected virtual void OnTextAlignChanged (EventArgs e)
     		{
-    			if (TextAlignChanged != null)
-    				TextAlignChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [TextAlignChangedEvent]);
+			if (eh != null)
+				eh (this, e);
     		}
 
     		protected override void OnTextChanged (EventArgs e)

@@ -85,9 +85,9 @@ namespace System.Windows.Forms
 				if (value != allownull) {
 					allownull = value;
 
-					if (AllowNullChanged != null) {
-						AllowNullChanged (this, EventArgs.Empty);
-					}
+					EventHandler eh = (EventHandler)(Events [AllowNullChangedEvent]);
+					if (eh != null)
+						eh (this, EventArgs.Empty);
 				}
 			}
 		}
@@ -101,9 +101,9 @@ namespace System.Windows.Forms
 				if (value != falsevalue) {
 					falsevalue = value;
 
-					if (FalseValueChanged != null) {
-						FalseValueChanged (this, EventArgs.Empty);
-					}
+					EventHandler eh = (EventHandler)(Events [FalseValueChangedEvent]);
+					if (eh != null)
+						eh (this, EventArgs.Empty);
 				}
 			}
 		}
@@ -116,6 +116,8 @@ namespace System.Windows.Forms
 			set {
 				if (value != nullvalue) {
 					nullvalue = value;
+
+					// XXX no NullValueChangedEvent?  lame.
 				}
 			}
 		}
@@ -129,9 +131,9 @@ namespace System.Windows.Forms
 				if (value != truevalue) {
 					truevalue = value;
 
-					if (TrueValueChanged != null) {
-						TrueValueChanged (this, EventArgs.Empty);
-					}
+					EventHandler eh = (EventHandler)(Events [TrueValueChangedEvent]);
+					if (eh != null)
+						eh (this, EventArgs.Empty);
 				}
 			}
 		}
@@ -367,9 +369,24 @@ namespace System.Windows.Forms
 		#endregion Private Instance Methods
 
 		#region Events
-		public event EventHandler AllowNullChanged;
-		public event EventHandler FalseValueChanged;
-		public event EventHandler TrueValueChanged;
+		static object AllowNullChangedEvent = new object ();
+		static object FalseValueChangedEvent = new object ();
+		static object TrueValueChangedEvent = new object ();
+
+		public event EventHandler AllowNullChanged {
+			add { Events.AddHandler (AllowNullChangedEvent, value); }
+			remove { Events.RemoveHandler (AllowNullChangedEvent, value); }
+		}
+
+		public event EventHandler FalseValueChanged {
+			add { Events.AddHandler (FalseValueChangedEvent, value); }
+			remove { Events.RemoveHandler (FalseValueChangedEvent, value); }
+		}
+
+		public event EventHandler TrueValueChanged {
+			add { Events.AddHandler (TrueValueChangedEvent, value); }
+			remove { Events.RemoveHandler (TrueValueChangedEvent, value); }
+		}
 		#endregion	// Events
 	}
 }

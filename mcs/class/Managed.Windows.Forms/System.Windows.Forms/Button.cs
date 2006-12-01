@@ -45,7 +45,9 @@ namespace System.Windows.Forms {
 
 		#region	Internal methods
 		internal override void HaveDoubleClick() {
-			if (DoubleClick != null) DoubleClick(this, EventArgs.Empty);
+			EventHandler eh = (EventHandler)(Events [DoubleClickEvent]);
+			if (eh != null)
+				eh (this, EventArgs.Empty);
 		}
 		#endregion	// Internal methods
 
@@ -115,9 +117,14 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Events
+		static object DoubleClickEvent = new object ();
+
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public event EventHandler DoubleClick;
+		public event EventHandler DoubleClick {
+			add { Events.AddHandler (DoubleClickEvent, value); }
+			remove { Events.RemoveHandler (DoubleClickEvent, value); }
+		}
 		#endregion	// Events
 	}
 }

@@ -425,10 +425,10 @@ namespace System.Windows.Forms {
 				UpdateToolBarButtons();
 				ReflectObjects();
 				property_grid_view.Refresh();
-				
-				if (PropertySortChanged != null) {
-					PropertySortChanged(this, EventArgs.Empty);
-				}
+
+				EventHandler eh = (EventHandler)(Events [PropertySortChangedEvent]);
+				if (eh != null)
+					eh (this, EventArgs.Empty);
 			}
 		}
 
@@ -751,8 +751,9 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual void OnPropertyValueChanged (PropertyValueChangedEventArgs e) {
-			if (PropertyValueChanged != null) {
-				PropertyValueChanged(this, e);
+			PropertyValueChangedEventHandler eh = (PropertyValueChangedEventHandler)(Events [PropertyValueChangedEvent]);
+			if (eh != null) {
+				eh (this, e);
 				current_property_value = selected_grid_item.Value;
 			}
 		}
@@ -762,15 +763,15 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual void OnSelectedGridItemChanged (SelectedGridItemChangedEventArgs e) {
-			if (SelectedGridItemChanged != null) {
-				SelectedGridItemChanged(this, e);
-			}
+			SelectedGridItemChangedEventHandler eh = (SelectedGridItemChangedEventHandler)(Events [SelectedGridItemChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnSelectedObjectsChanged (EventArgs e) {
-			if (SelectedObjectsChanged != null) {
-				SelectedObjectsChanged(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [SelectedObjectsChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnSystemColorsChanged (EventArgs e) {
@@ -800,11 +801,36 @@ namespace System.Windows.Forms {
 		#endregion
 
 		#region Events
-		public event EventHandler PropertySortChanged;
-		public event PropertyTabChangedEventHandler PropertyTabChanged;
-		public event PropertyValueChangedEventHandler PropertyValueChanged;
-		public event SelectedGridItemChangedEventHandler SelectedGridItemChanged;
-		public event EventHandler SelectedObjectsChanged;
+		static object PropertySortChangedEvent = new object ();
+		static object PropertyTabChangedEvent = new object ();
+		static object PropertyValueChangedEvent = new object ();
+		static object SelectedGridItemChangedEvent = new object ();
+		static object SelectedObjectsChangedEvent = new object ();
+
+		public event EventHandler PropertySortChanged {
+			add { Events.AddHandler (PropertySortChangedEvent, value); }
+			remove { Events.RemoveHandler (PropertySortChangedEvent, value); }
+		}
+
+		public event PropertyTabChangedEventHandler PropertyTabChanged {
+			add { Events.AddHandler (PropertyTabChangedEvent, value); }
+			remove { Events.RemoveHandler (PropertyTabChangedEvent, value); }
+		}
+
+		public event PropertyValueChangedEventHandler PropertyValueChanged {
+			add { Events.AddHandler (PropertyValueChangedEvent, value); }
+			remove { Events.RemoveHandler (PropertyValueChangedEvent, value); }
+		}
+
+		public event SelectedGridItemChangedEventHandler SelectedGridItemChanged {
+			add { Events.AddHandler (SelectedGridItemChangedEvent, value); }
+			remove { Events.RemoveHandler (SelectedGridItemChangedEvent, value); }
+		}
+
+		public event EventHandler SelectedObjectsChanged {
+			add { Events.AddHandler (SelectedObjectsChangedEvent, value); }
+			remove { Events.RemoveHandler (SelectedObjectsChangedEvent, value); }
+		}
 		
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
