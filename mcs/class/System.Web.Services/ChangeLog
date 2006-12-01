@@ -1,3 +1,7 @@
+2006-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : added wsdl-1.1-soap.xsd to the build and distfiles.
+
 2006-11-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Web.Services.dll.sources :

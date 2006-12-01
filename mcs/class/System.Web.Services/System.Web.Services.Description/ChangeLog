@@ -1,5 +1,10 @@
 2006-12-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* wsdl-1.1-soap.xsd : new file. WSDL 1.1 SOAP binding schema.
+	* SoapBinding.cs: implement Schema property.
+
+2006-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ExtensionManager.cs : WebServicesSection.Instance -> .Current.
 
 2006-11-30  Atsushi Enomoto  <atsushi@ximian.com>
