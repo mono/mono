@@ -91,7 +91,11 @@ namespace System.Web.Services.Protocols
 			MethodInfo [] type_methods = Type.GetMethods (BindingFlags.Instance | BindingFlags.Public);
 			logicalMethods = LogicalMethodInfo.Create (type_methods, LogicalMethodTypes.Sync);
 		}
-		
+
+		internal bool UseEncoded {
+			get { return useEncoded; }
+		}
+
 		internal LogicalMethodInfo[] LogicalMethods
 		{
 			get { return logicalMethods; }

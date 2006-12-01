@@ -37,7 +37,7 @@ namespace System.Web.Services.Protocols
 #else
 	internal
 #endif
-	sealed class SoapHeaderMapping
+	sealed class SoapHeaderMapping // It used to be HeaderInfo class until Mono 1.2
 	{
 		MemberInfo member;
 		Type header_type;

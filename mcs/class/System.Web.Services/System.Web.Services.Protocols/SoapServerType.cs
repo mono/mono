@@ -54,14 +54,12 @@ namespace System.Web.Services.Protocols
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public bool ServiceDefaultIsEncoded {
-			get { throw new NotImplementedException (); }
+			get { return UseEncoded; }
 		}
 
-		[MonoTODO]
 		public string ServiceNamespace {
-			get { throw new NotImplementedException (); }
+			get { return WebServiceNamespace; }
 		}
 
 		[MonoTODO]

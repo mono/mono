@@ -1,5 +1,13 @@
 2006-12-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SoapServerMethod.cs : implemented based on SoapMethodStubInfo.
+	* ServerType.cs : added UseEncoded, used in SoapServerType.
+	* SoapServerType.cs : ServiceDefaultIsEncoded is base.UseEncoded,
+	  and ServiceNamespace is base.WebServiceNamespace.
+	* SoapHeaderMapping.cs : origin info.
+
+2006-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SoapDocumentationHandler.cs, SoapExtension.cs :
 	  WebServicesSection.Instance -> .Current.
 
