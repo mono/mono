@@ -1,3 +1,8 @@
+2006-12-01  Lluis Sanchez Gual <lluis@novell.com> 
+
+	* MessageFormatter.cs: Include the logical context in the message when
+	  throwing an exception. Fixes a compatibility issue with MS.NET.
+
 2006-10-29  Robert Jordan  <robertj@gmx.net>
 
 	* ObjectWriter.cs, ObjectReader [NET_2_0]:

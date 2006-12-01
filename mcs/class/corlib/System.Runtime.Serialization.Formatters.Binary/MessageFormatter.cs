@@ -154,11 +154,12 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			// Type of return value
 
 			ReturnTypeTag returnTypeTag;
+			MethodFlags contextFlag = MethodFlags.ExcludeLogicalCallContext;
 
 			if (resp.Exception != null) {
 				returnTypeTag = ReturnTypeTag.Exception | ReturnTypeTag.Null;
-				info = new object[] {resp.Exception};
 				internalProperties = MethodReturnDictionary.InternalExceptionKeys;
+				infoArrayLength = 1;
 			}
 			else if (resp.ReturnValue == null) {
 				returnTypeTag = ReturnTypeTag.Null;
@@ -173,16 +174,13 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 			// Message flags
 
-			MethodFlags contextFlag;
 			MethodFlags formatFlag;
 
-			if ((resp.LogicalCallContext != null) && resp.LogicalCallContext.HasInfo && ((returnTypeTag & ReturnTypeTag.Exception) == 0)) 
+			if ((resp.LogicalCallContext != null) && resp.LogicalCallContext.HasInfo) 
 			{
 				contextFlag = MethodFlags.IncludesLogicalCallContext;
 				infoArrayLength++;
 			}
-			else
-				contextFlag = MethodFlags.ExcludeLogicalCallContext;
 
 			if (resp.Properties.Count > internalProperties.Length && ((returnTypeTag & ReturnTypeTag.Exception) == 0))
 			{
@@ -242,6 +240,9 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				object[] infoArray = new object[infoArrayLength];
 				int n = 0;
 
+				if ((returnTypeTag & ReturnTypeTag.Exception) != 0)
+					infoArray[n++] = resp.Exception;
+				
 				if (formatFlag == MethodFlags.ArgumentsInMultiArray)
 					infoArray[n++] = resp.Args;
 
@@ -412,6 +413,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 				if ((typeTag & ReturnTypeTag.Exception) > 0) {
 					exception = (Exception) msgInfo[0];
+					if (hasContextInfo) callContext = (LogicalCallContext)msgInfo[1];
 				}
 				else if ((flags & MethodFlags.NoArguments) > 0 || (flags & MethodFlags.PrimitiveArguments) > 0) {
 					int n = 0;
