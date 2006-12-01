@@ -1,5 +1,10 @@
 2006-12-01  Chris Toshok  <toshok@ximian.com>
 
+	* TreeView.cs: doh, the Begin* events should be
+	TreeViewCancelEventHandler.
+
+2006-12-01  Chris Toshok  <toshok@ximian.com>
+
 	* Form.cs: Form.ControlCollection already stores off the
 	form_owner field.  don't access the base class's internal "owner"
 	field.

@@ -1760,17 +1760,17 @@ namespace System.Windows.Forms {
 			remove { Events.RemoveHandler (AfterSelectEvent, value); }
 		}
 
-		public event TreeViewEventHandler BeforeCheck {
+		public event TreeViewCancelEventHandler BeforeCheck {
 			add { Events.AddHandler (BeforeCheckEvent, value); }
 			remove { Events.RemoveHandler (BeforeCheckEvent, value); }
 		}
 
-		public event TreeViewEventHandler BeforeCollapse {
+		public event TreeViewCancelEventHandler BeforeCollapse {
 			add { Events.AddHandler (BeforeCollapseEvent, value); }
 			remove { Events.RemoveHandler (BeforeCollapseEvent, value); }
 		}
 
-		public event TreeViewEventHandler BeforeExpand {
+		public event TreeViewCancelEventHandler BeforeExpand {
 			add { Events.AddHandler (BeforeExpandEvent, value); }
 			remove { Events.RemoveHandler (BeforeExpandEvent, value); }
 		}
@@ -1780,7 +1780,7 @@ namespace System.Windows.Forms {
 			remove { Events.RemoveHandler (BeforeLabelEditEvent, value); }
 		}
 
-		public event TreeViewEventHandler BeforeSelect {
+		public event TreeViewCancelEventHandler BeforeSelect {
 			add { Events.AddHandler (BeforeSelectEvent, value); }
 			remove { Events.RemoveHandler (BeforeSelectEvent, value); }
 		}
