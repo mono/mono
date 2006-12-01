@@ -1,3 +1,9 @@
+2006-12-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SmtpClient.cs: Added MonoTODO for missing SSL/TLS support and 
+	updated existing MonoTODO (or changed them to FIXME) to be clearer
+	for anyone using the API.
+
 2006-10-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SmtpException.cs: Fix visibility on .ctor(SerializationInfo,

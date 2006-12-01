@@ -80,7 +80,7 @@ namespace System.Net.Mail {
 		{
 		}
 
-		[MonoTODO ("Load default settings from configuration.")]
+		[MonoTODO ("Default settings aren't loaded from configuration files.")]
 		public SmtpClient (string host, int port)
 		{
 			// FIXME: load from configuration
@@ -102,7 +102,7 @@ namespace System.Net.Mail {
 
 		#region Properties
 
-		[MonoTODO]
+		[MonoTODO ("SSL/TLS support isn't available.")]
 		public X509CertificateCollection ClientCertificates {
 			get { return clientCertificates; }
 		}
@@ -117,6 +117,7 @@ namespace System.Net.Mail {
 			set { deliveryMethod = value; }
 		}
 
+		[MonoTODO ("SSL/TLS support isn't available.")]
 		public bool EnableSsl {
 			get { return enableSsl; }
 			set { enableSsl = value; }
@@ -124,7 +125,7 @@ namespace System.Net.Mail {
 
 		public string Host {
 			get { return host; }
-			[MonoTODO ("Check to make sure an email is not being sent.")]
+			// FIXME: Check to make sure an email is not being sent.
 			set {
 				if (value == null)
 					throw new ArgumentNullException ();
@@ -141,7 +142,7 @@ namespace System.Net.Mail {
 
 		public int Port {
 			get { return port; }
-			[MonoTODO ("Check to make sure an email is not being sent.")]
+			// FIXME: Check to make sure an email is not being sent.
 			set { 
 				if (value <= 0)
 					throw new ArgumentOutOfRangeException ();
@@ -156,7 +157,7 @@ namespace System.Net.Mail {
 
 		public int Timeout {
 			get { return timeout; }
-			[MonoTODO ("Check to make sure an email is not being sent.")]
+			// FIXME: Check to make sure an email is not being sent.
 			set { 
 				if (value < 0)
 					throw new ArgumentOutOfRangeException ();
@@ -164,7 +165,7 @@ namespace System.Net.Mail {
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("This property is current ignored.")]
 		public bool UseDefaultCredentials {
 			get { return useDefaultCredentials; }
 			set { useDefaultCredentials = value; }
@@ -222,7 +223,7 @@ namespace System.Net.Mail {
 			return response;
 		}
 
-		[MonoTODO ("Need to work on message attachments.")]
+		[MonoTODO ("Message attachments support is incomplete.")]
 		public void Send (MailMessage message)
 		{
 			// Block while sending
