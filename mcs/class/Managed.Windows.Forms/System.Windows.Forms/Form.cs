@@ -315,16 +315,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		// new property so we can change the DesignerSerializationVisibility
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		[Localizable(true)]
-		public Size ClientSize {
-			get {
-				return base.ClientSize;
-			}
-
-			set {
-				base.ClientSize = value;
-			}
+		public new Size ClientSize {
+			get { return base.ClientSize; }
+			set { base.ClientSize = value; }
 		}
 
 		[DefaultValue(true)]
@@ -810,16 +806,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		// new property so we can set the DesignerSerializationVisibility
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[Localizable(false)]
-		public Size Size {
-			get {
-				return base.Size;
-			}
-
-			set {
-				base.Size = value;
-			}
+		public new Size Size {
+			get { return base.Size; }
+			set { base.Size = value; }
 		}
 
 		[MonoTODO("Trigger something when GripStyle is set")]
@@ -873,17 +865,13 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		// new property so we can set EditorBrowsable to never
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public int TabIndex {
-			get {
-				return base.TabIndex;
-			}
-
-			set {
-				base.TabIndex = value;
-			}
+		public new int TabIndex {
+			get { return base.TabIndex; }
+			set { base.TabIndex = value; }
 		}
 
 		[Browsable(false)]

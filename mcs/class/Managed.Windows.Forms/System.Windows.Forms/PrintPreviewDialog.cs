@@ -280,52 +280,36 @@ namespace System.Windows.Forms {
 			previous_checked_menu_item = clicked_item;
 		}
 
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public IButtonControl AcceptButton {
-			get {
-				return base.AcceptButton;
-			}
-
-			set {
-				base.AcceptButton = value;
-			}
+		public new IButtonControl AcceptButton {
+			get { return base.AcceptButton; }
+			set { base.AcceptButton = value; }
 		}
 
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public string AccessibleDescription {
-			get {
-				return base.AccessibleDescription;
-			}
-
-			set {
-				base.AccessibleDescription = value;
-			}
+		public new string AccessibleDescription {
+			get { return base.AccessibleDescription; }
+			set { base.AccessibleDescription = value; }
 		}
  
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public string AccessibleName {
-			get {
-				return base.AccessibleName;
-			}
-
-			set {
-				base.AccessibleName = value;
-			}
+		public new string AccessibleName {
+			get { return base.AccessibleName; }
+			set { base.AccessibleName = value; }
 		}
  
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public AccessibleRole AccessibleRole {
-			get {
-				return base.AccessibleRole;
-			}
-
-			set {
-				base.AccessibleRole = value;
-			}
+		public new AccessibleRole AccessibleRole {
+			get { return base.AccessibleRole; }
+			set { base.AccessibleRole = value; }
 		}
  
 		[Browsable(false)]
@@ -351,17 +335,13 @@ namespace System.Windows.Forms {
 				base.Anchor = value;
 			}
 		}
- 
+
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public bool AutoScale {
-			get {
-				return base.AutoScale;
-			}
-
-			set {
-				base.AutoScale = value;
-			}
+		public new bool AutoScale {
+			get { return base.AutoScale; }
+			set { base.AutoScale = value; }
 		}
 
 		[Browsable(false)]
@@ -388,28 +368,20 @@ namespace System.Windows.Forms {
 			}
 		}
  
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public Size AutoScrollMargin {
-			get {
-				return base.AutoScrollMargin;
-			}
-
-			set {
-				base.AutoScrollMargin = value;
-			}
+		public new Size AutoScrollMargin {
+			get { return base.AutoScrollMargin; }
+			set { base.AutoScrollMargin = value; }
 		}
 
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public Size AutoScrollMinSize {
-			get {
-				return base.AutoScrollMinSize;
-			}
-
-			set {
-				base.AutoScrollMinSize = value;
-			}
+		public new Size AutoScrollMinSize {
+			get { return base.AutoScrollMinSize; }
+			set { base.AutoScrollMinSize = value; }
 		}
  
 		[Browsable(false)]
@@ -436,28 +408,20 @@ namespace System.Windows.Forms {
 			}
 		}
  
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public IButtonControl CancelButton {
-			get {
-				return base.CancelButton;
-			}
-
-			set {
-				base.CancelButton = value;
-			}
+		public new IButtonControl CancelButton {
+			get { return base.CancelButton; }
+			set { base.CancelButton = value; }
 		}
  
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public bool CausesValidation {
-			get {
-				return base.CausesValidation;
-			}
-
-			set {
-				base.CausesValidation = value;
-			}
+		public new bool CausesValidation {
+			get { return base.CausesValidation; }
+			set { base.CausesValidation = value; }
 		}
  
 		[Browsable(false)]
@@ -472,16 +436,12 @@ namespace System.Windows.Forms {
 			}
 		}
  
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public bool ControlBox {
-			get {
-				return base.ControlBox;
-			}
-
-			set {
-				base.ControlBox = value;
-			}
+		public new bool ControlBox {
+			get { return base.ControlBox; }
+			set { base.ControlBox = value; }
 		}
  
 		[Browsable(false)]
@@ -496,12 +456,11 @@ namespace System.Windows.Forms {
 			}
 		}
  
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public ControlBindingsCollection DataBindings {
-			get {
-				return base.DataBindings;
-			}
+		public new ControlBindingsCollection DataBindings {
+			get { return base.DataBindings; }
 		}
  
 		[Browsable(false)]
@@ -516,12 +475,11 @@ namespace System.Windows.Forms {
 			}
 		}
  
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public DockPaddingEdges DockPadding {
-			get {
-				return base.DockPadding;
-			}
+		public new DockPaddingEdges DockPadding {
+			get { return base.DockPadding; }
 		}
  
 		
@@ -533,9 +491,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public bool Enabled {
+		public new bool Enabled {
 			get { return base.Enabled; }
 			set { base.Enabled = value; }
 		}
@@ -564,156 +523,109 @@ namespace System.Windows.Forms {
 			}
 		}
  
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public FormBorderStyle FormBorderStyle {
-			get {
-				return base.FormBorderStyle;
-			}
-
-			set {
-				base.FormBorderStyle = value;
-			}
+		public new FormBorderStyle FormBorderStyle {
+			get { return base.FormBorderStyle; }
+			set { base.FormBorderStyle = value; }
 		}
  
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public bool HelpButton {
-			get {
-				return base.HelpButton;
-			}
-
-			set {
-				base.HelpButton = value;
-			}
+		public new bool HelpButton {
+			get { return base.HelpButton; }
+			set { base.HelpButton = value; }
 		}
- 
+
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public Icon Icon {
-			get {
-				return base.Icon;
-			}
-
-			set {
-				base.Icon = value;
-			}
+		public new Icon Icon {
+			get { return base.Icon; }
+			set { base.Icon = value; }
 		}
  
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public ImeMode ImeMode {
-			get {
-				return base.ImeMode;
-			}
-
-			set {
-				base.ImeMode = value;
-			}
+		public new ImeMode ImeMode {
+			get { return base.ImeMode; }
+			set { base.ImeMode = value; }
 		}
  
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public bool IsMdiContainer {
-			get {
-				return base.IsMdiContainer;
-			}
-
-			set {
-				base.IsMdiContainer = value;
-			}
+		public new bool IsMdiContainer {
+			get { return base.IsMdiContainer; }
+			set { base.IsMdiContainer = value; }
 		}
  
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public bool KeyPreview {
-			get {
-				return base.KeyPreview;
-			}
-
-			set {
-				base.KeyPreview = value;
-			}
+		public new bool KeyPreview {
+			get { return base.KeyPreview; }
+			set { base.KeyPreview = value; }
 		}
  
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public Point Location {
-			get {
-				return base.Location;
-			}
-
-			set {
-				base.Location = value;
-			}
+		public new Point Location {
+			get { return base.Location; }
+			set { base.Location = value; }
 		}
  
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public bool MaximizeBox {
-			get {
-				return base.MaximizeBox;
-			}
-
-			set {
-				base.MaximizeBox = value;
-			}
+		public new bool MaximizeBox {
+			get { return base.MaximizeBox; }
+			set { base.MaximizeBox = value; }
 		}
  
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public Size MaximumSize {
-			get {
-				return base.MaximumSize;
-			}
-
-			set {
-				base.MaximumSize = value;
-			}
+		public new Size MaximumSize {
+			get { return base.MaximumSize; }
+			set { base.MaximumSize = value; }
 		}
  
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public MainMenu Menu {
-			get {
-				return base.Menu;
-			}
-
-			set {
-				base.Menu = value;
-			}
+		public new MainMenu Menu {
+			get { return base.Menu; }
+			set { base.Menu = value; }
 		}
  
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[DefaultValue(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public bool MinimizeBox {
-			get {
-				return base.MinimizeBox;
-			}
-
-			set {
-				base.MinimizeBox = value;
-			}
+		public new bool MinimizeBox {
+			get { return base.MinimizeBox; }
+			set { base.MinimizeBox = value; }
 		}
  
+		// new property so we can set EditorBrowsable to never.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public Size MinimumSize {
+		public new Size MinimumSize {
 			get { return base.MinimumSize; }
 			set { base.MinimumSize = value; }
 		}
  
+		// new property so we can set Browsable/EditorBrowsable.
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public double Opacity {
-			get {
-				return base.Opacity;
-			}
-
-			set {
-				base.Opacity = value;
-			}
+		public new double Opacity {
+			get { return base.Opacity; }
+			set { base.Opacity = value; }
 		}
  
 		[Browsable(false)]
@@ -734,78 +646,54 @@ namespace System.Windows.Forms {
 			}
 		}
  
+		// new property so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[DefaultValue(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public bool ShowInTaskbar {
-			get {
-				return base.ShowInTaskbar;
-			}
-
-			set {
-				base.ShowInTaskbar = value;
-			}
+		public new bool ShowInTaskbar {
+			get { return base.ShowInTaskbar; }
+			set { base.ShowInTaskbar = value; }
 		}
  
+		// new property so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public Size Size {
-			get {
-				return base.Size;
-			}
-
-			set {
-				base.Size = value;
-			}
+		public new Size Size {
+			get { return base.Size; }
+			set { base.Size = value; }
 		}
  
+		// new property so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[DefaultValue(SizeGripStyle.Hide)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public SizeGripStyle SizeGripStyle {
-			get {
-				return base.SizeGripStyle;
-			}
-
-			set {
-				base.SizeGripStyle = value;
-			}
+		public new SizeGripStyle SizeGripStyle {
+			get { return base.SizeGripStyle; }
+			set { base.SizeGripStyle = value; }
 		}
  
+		// new property so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public FormStartPosition StartPosition {
-			get {
-				return base.StartPosition;
-			}
-
-			set {
-				base.StartPosition = value;
-			}
+		public new FormStartPosition StartPosition {
+			get { return base.StartPosition; }
+			set { base.StartPosition = value; }
 		}
  
+		// new property so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public bool TabStop {
-			get {
-				return base.TabStop;
-			}
-
-			set {
-				base.TabStop = value;
-			}
+		public new bool TabStop {
+			get { return base.TabStop; }
+			set { base.TabStop = value; }
 		}
  
+		// new property so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public object Tag {
-			get {
-				return base.Tag;
-			}
-
-			set {
-				base.Tag = value;
-			}
+		public new object Tag {
+			get { return base.Tag; }
+			set { base.Tag = value; }
 		}
  
 		[Browsable(false)]
@@ -820,28 +708,20 @@ namespace System.Windows.Forms {
 			}
 		}
  
+		// new property so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public bool TopMost {
-			get {
-				return base.TopMost;
-			}
-
-			set {
-				base.TopMost = value;
-			}
+		public new bool TopMost {
+			get { return base.TopMost; }
+			set { base.TopMost = value; }
 		}
  
+		// new property so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public Color TransparencyKey {
-			get {
-				return base.TransparencyKey;
-			}
-
-			set {
-				base.TransparencyKey = value;
-			}
+		public new Color TransparencyKey {
+			get { return base.TransparencyKey; }
+			set { base.TransparencyKey = value; }
 		}
  
 		[DefaultValue(false)]
@@ -855,28 +735,20 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		// new property so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public bool Visible {
-			get {
-				return base.Visible;
-			}
-
-			set {
-				base.Visible = value;
-			}
+		public new bool Visible {
+			get { return base.Visible; }
+			set { base.Visible = value; }
 		}
  
+		// new property so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public FormWindowState WindowState {
-			get {
-				return base.WindowState;
-			}
-
-			set {
-				base.WindowState = value;
-			}
+		public new FormWindowState WindowState {
+			get { return base.WindowState; }
+			set { base.WindowState = value; }
 		}
 
 		[MonoTODO("Throw InvalidPrinterException")]
@@ -892,128 +764,146 @@ namespace System.Windows.Forms {
 			base.OnClosing (e);
 		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler BackColorChanged {
+		public new event EventHandler BackColorChanged {
 			add { base.BackColorChanged += value; }
 			remove { base.BackColorChanged -= value; }
 		}
  
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler BackgroundImageChanged {
+		public new event EventHandler BackgroundImageChanged {
 			add { base.BackgroundImageChanged += value; }
 			remove { base.BackgroundImageChanged -= value; }
 		}
  
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler CausesValidationChanged {
+		public new event EventHandler CausesValidationChanged {
 			add { base.CausesValidationChanged += value; }
 			remove { base.CausesValidationChanged -= value; }
 		}
  
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler ContextMenuChanged {
+		public new event EventHandler ContextMenuChanged {
 			add { base.ContextMenuChanged += value; }
 			remove { base.ContextMenuChanged -= value; }
 		}
  
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler CursorChanged {
+		public new event EventHandler CursorChanged {
 			add { base.CursorChanged += value; }
 			remove { base.CursorChanged -= value; }
 		}
  
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler DockChanged {
+		public new event EventHandler DockChanged {
 			add { base.DockChanged += value; }
 			remove { base.DockChanged -= value; }
 		}
  
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler EnabledChanged {
+		public new event EventHandler EnabledChanged {
 			add { base.EnabledChanged += value; }
 			remove { base.EnabledChanged -= value; }
 		}
  
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler FontChanged {
+		public new event EventHandler FontChanged {
 			add { base.FontChanged += value; }
 			remove { base.FontChanged -= value; }
 		}
  
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler ForeColorChanged {
+		public new event EventHandler ForeColorChanged {
 			add { base.ForeColorChanged += value; }
 			remove { base.ForeColorChanged -= value; }
 		}
  
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler ImeModeChanged {
+		public new event EventHandler ImeModeChanged {
 			add { base.ImeModeChanged += value; }
 			remove { base.ImeModeChanged -= value; }
 		}
  
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler LocationChanged {
+		public new event EventHandler LocationChanged {
 			add { base.LocationChanged += value; }
 			remove { base.LocationChanged -= value; }
 		}
  
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler MaximumSizeChanged {
+		public new event EventHandler MaximumSizeChanged {
 			add { base.MaximumSizeChanged += value; }
 			remove { base.MaximumSizeChanged -= value; }
 		}
  
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler MinimumSizeChanged {
+		public new event EventHandler MinimumSizeChanged {
 			add { base.MinimumSizeChanged += value; }
 			remove { base.MinimumSizeChanged -= value; }
 		}
  
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler RightToLeftChanged {
+		public new event EventHandler RightToLeftChanged {
 			add { base.RightToLeftChanged += value; }
 			remove { base.RightToLeftChanged -= value; }
 		}
  
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler SizeChanged {
+		public new event EventHandler SizeChanged {
 			add { base.SizeChanged += value; }
 			remove { base.SizeChanged -= value; }
 		}
  
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler TabStopChanged {
+		public new event EventHandler TabStopChanged {
 			add { base.TabStopChanged += value; }
 			remove { base.TabStopChanged -= value; }
 		}
  
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler TextChanged {
+		public new event EventHandler TextChanged {
 			add { base.TextChanged += value; }
 			remove { base.TextChanged -= value; }
 		}
  
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler VisibleChanged {
+		public new event EventHandler VisibleChanged {
 			add { base.VisibleChanged += value; }
 			remove { base.VisibleChanged -= value; }
 		}

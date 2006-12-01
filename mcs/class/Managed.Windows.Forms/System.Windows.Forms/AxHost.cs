@@ -164,11 +164,8 @@ namespace System.Windows.Forms {
 			#endregion	// AxHost.StateConverter Class
 		#endregion	// AxHost Subclasses
 
-		string text;
-
 		#region Protected Constructors
 		protected AxHost(string clsid) {
-			text = "";
 			throw new NotImplementedException("COM/ActiveX support is not implemented");
 		}
 
@@ -324,17 +321,13 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException("COM/ActiveX support is not implemented");
 			}
 		}
-		
+
+		// new property so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override string Text {
-			get {
-				return text;
-			}
-
-			set {
-				text = value;
-			}
+			get { return base.Text; }
+			set { base.Text = value; }
 		}
 		#endregion	// Protected Constructors
 		
@@ -611,155 +604,304 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Events
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler		BackColorChanged;
+		public new event EventHandler BackColorChanged {
+			add { base.BackColorChanged += value; }
+			remove { base.BackColorChanged -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler		BackgroundImageChanged;
+		public new event EventHandler BackgroundImageChanged {
+			add { base.BackgroundImageChanged += value; }
+			remove { base.BackgroundImageChanged -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler		BindingContextChanged;
+		public new event EventHandler BindingContextChanged {
+			add { base.BindingContextChanged += value; }
+			remove { base.BindingContextChanged -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event UICuesEventHandler		ChangeUICues;
+		public new event UICuesEventHandler ChangeUICues {
+			add { base.ChangeUICues += value; }
+			remove { base.ChangeUICues -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler		Click;
+		public new event EventHandler Click {
+			add { base.Click += value; }
+			remove { base.Click -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler		ContextMenuChanged;
+		public new event EventHandler ContextMenuChanged {
+			add { base.ContextMenuChanged += value; }
+			remove { base.ContextMenuChanged -= value; }
+		}
+	
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler		CursorChanged;
+		public new event EventHandler CursorChanged {
+			add { base.CursorChanged += value; }
+			remove { base.CursorChanged -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler		DoubleClick;
+		public new event EventHandler DoubleClick {
+			add { base.DoubleClick += value; }
+			remove { base.DoubleClick -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event DragEventHandler		DragDrop;
+		public new event DragEventHandler DragDrop {
+			add { base.DragDrop += value; }
+			remove { base.DragDrop -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event DragEventHandler		DragEnter;
+		public new event DragEventHandler DragEnter {
+			add { base.DragEnter += value; }
+			remove { base.DragEnter -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler		DragLeave;
+		public new event EventHandler DragLeave {
+			add { base.DragLeave += value; }
+			remove { base.DragLeave -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event DragEventHandler		DragOver;
+		public new event DragEventHandler DragOver {
+			add { base.DragOver += value; }
+			remove { base.DragOver -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler		EnabledChanged;
+		public new event EventHandler EnabledChanged {
+			add { base.EnabledChanged += value; }
+			remove { base.EnabledChanged -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler		FontChanged;
+		public new event EventHandler FontChanged {
+			add { base.FontChanged += value; }
+			remove { base.FontChanged -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler		ForeColorChanged;
+		public new event EventHandler ForeColorChanged {
+			add { base.ForeColorChanged += value; }
+			remove { base.ForeColorChanged -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event GiveFeedbackEventHandler	GiveFeedback;
+		public new event GiveFeedbackEventHandler GiveFeedback {
+			add { base.GiveFeedback += value; }
+			remove { base.GiveFeedback -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event HelpEventHandler		HelpRequested;
+		public new event HelpEventHandler HelpRequested {
+			add { base.HelpRequested += value; }
+			remove { base.HelpRequested -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler		ImeModeChanged;
+		public new event EventHandler ImeModeChanged {
+			add { base.ImeModeChanged += value; }
+			remove { base.ImeModeChanged -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event KeyEventHandler		KeyDown;
+		public new event KeyEventHandler KeyDown {
+			add { base.KeyDown += value; }
+			remove { base.KeyDown -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event KeyPressEventHandler	KeyPress;
+		public new event KeyPressEventHandler KeyPress {
+			add { base.KeyPress += value; }
+			remove { base.KeyPress -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event KeyEventHandler		KeyUp;
+		public new event KeyEventHandler KeyUp {
+			add { base.KeyUp += value; }
+			remove { base.KeyUp -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event LayoutEventHandler		Layout;
+		public new event LayoutEventHandler Layout {
+			add { base.Layout += value; }
+			remove { base.Layout -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event MouseEventHandler		MouseDown;
+		public new event MouseEventHandler MouseDown {
+			add { base.MouseDown += value; }
+			remove { base.MouseDown -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler		MouseEnter;
+		public new event EventHandler MouseEnter {
+			add { base.MouseEnter += value; }
+			remove { base.MouseEnter -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler		MouseHover;
+		public new event EventHandler MouseHover {
+			add { base.MouseHover += value; }
+			remove { base.MouseHover -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler		MouseLeave;
+		public new event EventHandler MouseLeave {
+			add { base.MouseLeave += value; }
+			remove { base.MouseLeave -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event MouseEventHandler		MouseMove;
+		public new event MouseEventHandler MouseMove {
+			add { base.MouseMove += value; }
+			remove { base.MouseMove -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event MouseEventHandler		MouseUp;
+		public new event MouseEventHandler MouseUp {
+			add { base.MouseUp += value; }
+			remove { base.MouseUp -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event MouseEventHandler		MouseWheel;
+		public new event MouseEventHandler MouseWheel {
+			add { base.MouseWheel += value; }
+			remove { base.MouseWheel -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event PaintEventHandler		Paint;
+		public new event PaintEventHandler Paint {
+			add { base.Paint += value; }
+			remove { base.Paint -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event QueryAccessibilityHelpEventHandler	QueryAccessibilityHelp;
+		public new event QueryAccessibilityHelpEventHandler QueryAccessibilityHelp {
+			add { base.QueryAccessibilityHelp += value; }
+			remove { base.QueryAccessibilityHelp -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event QueryContinueDragEventHandler	QueryContinueDrag;
+		public new event QueryContinueDragEventHandler QueryContinueDrag {
+			add { base.QueryContinueDrag += value; }
+			remove { base.QueryContinueDrag -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler		RightToLeftChanged;
+		public new event EventHandler RightToLeftChanged {
+			add { base.RightToLeftChanged += value; }
+			remove { base.RightToLeftChanged -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler		StyleChanged;
+		public new event EventHandler StyleChanged {
+			add { base.StyleChanged += value; }
+			remove { base.StyleChanged -= value; }
+		}
 
 #if !NET_2_0
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler		TabIndexChanged;
+		public new event EventHandler TabIndexChanged {
+			add { base.TabIndexChanged += value; }
+			remove { base.TabIndexChanged -= value; }
+		}
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler		TabStopChanged;
+		public new event EventHandler TabStopChanged {
+			add { base.TabStopChanged += value; }
+			remove { base.TabStopChanged -= value; }
+		}
 #endif
 
+		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler		TextChanged;
+		public new event EventHandler TextChanged {
+			add { base.TextChanged += value; }
+			remove { base.TextChanged -= value; }
+		}
 		#endregion	// Events
 
 		#region Delegates

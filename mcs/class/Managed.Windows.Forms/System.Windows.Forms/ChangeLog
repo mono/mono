@@ -1,3 +1,17 @@
+2006-12-01  Chris Toshok  <toshok@ximian.com>
+
+	* Form.cs: flag a few things as "new" to quiet some of the mcs
+	warnings.
+
+	* AxHost.cs: same.
+
+	* PrintPreviewDialog.cs: same.
+
+	* DataGridView.cs: fix a ton of corcompare warnings.  not all, but
+	now DGV isn't so horrible on the class status page.  also, move
+	all events to using System.ComponentModel.EventHandlerList.  my
+	wrists hurt.
+
 2006-12-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* MdiWindowManager.cs:
