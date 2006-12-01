@@ -22,21 +22,20 @@
 // Authors:
 //	Jackson Harper	jackson@ximian.com
 
-
 using System;
-using System.Data;
 using System.Collections;
 using System.ComponentModel;
+using System.Data;
 using System.Reflection;
 using System.Windows.Forms;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Windows.Forms {
-
+namespace MonoTests.System.Windows.Forms
+{
 	[TestFixture]
-	public class CurrencyManagerTest {
-
+	public class CurrencyManagerTest
+	{
 		[Test]
 		public void Defaults ()
 		{
@@ -108,6 +107,29 @@ namespace MonoTests.System.Windows.Forms {
 
 			// child list can't be created
 			cm = bc [dataset, "Table"] as CurrencyManager;
+		}
+
+		[Test] // bug #80107
+		[NUnit.Framework.Category ("NotWorking")]
+		public void DataView ()
+		{
+			DataView dv = new DataView ();
+
+			BindingContext bc = new BindingContext ();
+			CurrencyManager cm = bc [dv, string.Empty] as CurrencyManager;
+			Assert.IsNotNull (cm, "#A1");
+			Assert.AreEqual (0, cm.Count, "#A2");
+			Assert.AreEqual (-1, cm.Position, "#A3");
+
+			DataTable dt = new DataTable ("Testdata");
+			dt.Columns.Add ("A");
+			dt.Columns.Add ("B");
+			dt.Rows.Add (new object [] { "A1", "B1" });
+			dt.Rows.Add (new object [] { "A2", "B2" });
+			dv.Table = dt;
+
+			Assert.AreEqual (2, cm.Count, "#B1");
+			Assert.AreEqual (0, cm.Position, "#B2");
 		}
 
 		[Test]
@@ -965,4 +987,3 @@ namespace MonoTests.System.Windows.Forms {
 		}
 	}
 }
-
