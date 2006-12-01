@@ -1,3 +1,7 @@
+2006-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWriter.cs: remove unused WriteBytes method.
+
 2006-11-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: physical path comes from GetFilePathTranslated to
