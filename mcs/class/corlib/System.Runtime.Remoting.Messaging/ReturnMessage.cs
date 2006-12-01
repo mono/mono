@@ -78,6 +78,7 @@ namespace System.Runtime.Remoting.Messaging
 			if (request != null)
 				_methodBase = request.MethodBase;
 			_args = new object[0];	// .NET does this
+			_callCtx = request.LogicalCallContext;
 		}
 		
 		public int ArgCount {
