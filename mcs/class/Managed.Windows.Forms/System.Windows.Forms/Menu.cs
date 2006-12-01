@@ -48,6 +48,10 @@ namespace System.Windows.Forms
 		internal Control Wnd;
 		internal MenuTracker tracker;
 
+#if NET_2_0
+		internal object control_tag;
+#endif
+
 		public const int FindHandle = 0;
 		public const int FindShortcut = 1;
 
@@ -99,6 +103,23 @@ namespace System.Windows.Forms
 		public MenuItemCollection MenuItems {
 			get { return menu_items; }
 		}
+		
+#if NET_2_0
+		[Localizable(false)]
+		[Bindable(true)]
+		[TypeConverter(typeof(StringConverter))]
+		[DefaultValue(null)]
+		[MWFCategory("Data")]
+		public object Tag {
+			get {
+				return control_tag;
+			}
+
+			set {
+				control_tag = value;
+			}
+		}
+#endif
 
 		#endregion Public Properties
 

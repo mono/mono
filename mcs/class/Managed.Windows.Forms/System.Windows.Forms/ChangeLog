@@ -1,5 +1,9 @@
 2006-11-01  Everaldo Canuto  <everaldo@simios.org>
 
+	* Menu.cs: Tag property for 2.0.
+	
+2006-11-01  Everaldo Canuto  <everaldo@simios.org>
+
 	* ThemeWin32Classic.cs: Adjust menu separator drawing. 
 	
 2006-12-01  Chris Toshok  <toshok@ximian.com>
