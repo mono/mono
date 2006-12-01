@@ -881,7 +881,13 @@ namespace System
 		{
 			int i;
 
-			for (i = 0; i < values.Length; i++) {
+			// FIXME: I know this is somehow lame code. Probably
+			// it should iterate all the enum value and return
+			// the longest match. However right now I don't see
+			// anything but "1" and "10" - "12" that might match
+			// two or more values. (They are only abbrev month
+			// names, so do reverse order search). See bug #80094.
+			for (i = values.Length - 1; i >= 0; i--) {
 				if (s.Length - sPos < values[i].Length)
 					continue;
 				else if (values [i].Length == 0)
