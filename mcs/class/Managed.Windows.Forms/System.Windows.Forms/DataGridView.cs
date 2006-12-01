@@ -101,7 +101,6 @@ namespace System.Windows.Forms {
 		private DataGridViewColumn sortedColumn = null;
 		private SortOrder sortOrder;
 		private bool standardTab;
-		private string text;
 		private DataGridViewHeaderCell topLeftHeaderCell;
 		private Cursor userSetCursor;
 		private int verticalScrollingOffset;
@@ -938,9 +937,12 @@ namespace System.Windows.Forms {
 			set { standardTab = value; }
 		}
 
+		[Bindable (false)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override string Text {
-			get { return text; }
-			set { text = value; }
+			get { return base.text; }
+			set { base.text = value; }
 		}
 
 		public DataGridViewHeaderCell TopLeftHeaderCell {

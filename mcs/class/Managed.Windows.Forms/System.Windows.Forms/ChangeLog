@@ -1,3 +1,8 @@
+2006-11-30  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridView.cs: Fix an ArgumentNullException reported 
+	twice today in IRC.
+
 2006-11-30  Mike Kestner  <mkestner@novell.com>
 
 	* ComboBox.cs: fix the scrollbar mouse event forwarding in the 
