@@ -738,7 +738,7 @@ namespace System
 				break;
 			}
 			DateTimeFormatInfo info = (DateTimeFormatInfo) provider.GetFormat (typeof(DateTimeFormatInfo));
-			return GetDateTimeFormats (adjustutc, info.GetAllDateTimePatterns (format), info);
+			return GetDateTimeFormats (adjustutc, info.GetAllRawDateTimePatterns (format), info);
 		}
 
 		private string [] GetDateTimeFormats (bool adjustutc, string [] patterns, DateTimeFormatInfo dfi)
@@ -1060,10 +1060,10 @@ namespace System
 					else if (num == 1)
 						day = _ParseNumber (s, valuePos,0, 2, true, sloppy_parsing, out num_parsed);
 					else if (num == 2)
-						dayofweek = _ParseEnum (s, valuePos, dfi.AbbreviatedDayNames, out num_parsed);
+						dayofweek = _ParseEnum (s, valuePos, dfi.RawAbbreviatedDayNames, out num_parsed);
 					else
 					{
-						dayofweek = _ParseEnum (s, valuePos, dfi.DayNames, out num_parsed);
+						dayofweek = _ParseEnum (s, valuePos, dfi.RawDayNames, out num_parsed);
 						num = 3;
 					}
 					break;
@@ -1075,10 +1075,10 @@ namespace System
 					else if (num == 1)
 						month = _ParseNumber (s, valuePos, 0, 2, true, sloppy_parsing, out num_parsed);
 					else if (num == 2)
-						month = _ParseEnum (s, valuePos, dfi.AbbreviatedMonthNames , out num_parsed) + 1;
+						month = _ParseEnum (s, valuePos, dfi.RawAbbreviatedMonthNames , out num_parsed) + 1;
 					else
 					{
-						month = _ParseEnum (s, valuePos, dfi.MonthNames, out num_parsed) + 1;
+						month = _ParseEnum (s, valuePos, dfi.RawMonthNames, out num_parsed) + 1;
 						num = 3;
 					}
 					break;

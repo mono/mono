@@ -1,3 +1,8 @@
+2006-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeFormatInfo.cs : added some internal clone-less versions of
+	  string[] properties and methods.
+
 2006-11-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CompareInfo.cs : fixed wrong || with && for OrdinalIgnoreCase.
