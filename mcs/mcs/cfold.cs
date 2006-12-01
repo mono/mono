@@ -162,7 +162,7 @@ namespace Mono.CSharp {
 			return;
 		}
 
-		internal static void Error_CompileTimeOverflow (Location loc)
+		static void Error_CompileTimeOverflow (Location loc)
 		{
 			Report.Error (220, loc, "The operation overflows at compile time in checked mode");
 		}

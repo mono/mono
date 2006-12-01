@@ -28,7 +28,7 @@ namespace Mono.CSharp {
 		readonly Expression ValueExpr;
 		readonly EnumMember prev_member;
 
-		EnumConstant value;
+		Constant value;
 		bool in_transit;
 
 		// TODO: remove or simplify
@@ -149,7 +149,7 @@ namespace Mono.CSharp {
 			in_transit = true;
 
 			try {
-				value = (EnumConstant)prev_member.value.Increment ();
+				value = prev_member.value.Increment ();
 			}
 			catch (OverflowException) {
 				Report.Error (543, Location, "The enumerator value `{0}' is too large to fit in its type `{1}'",
@@ -193,13 +193,10 @@ namespace Mono.CSharp {
 
 		#region IConstant Members
 
-		public Constant CreateConstantReference (Location loc)
-		{
-			if (value == null)
-				return null;
-
-			return new EnumConstant (Constant.CreateConstant (value.Child.Type, value.Child.GetValue(), loc),
-				value.Type);
+		public Constant Value {
+			get {
+				return value;
+			}
 		}
 
 		#endregion

@@ -45,13 +45,12 @@ namespace Mono.CSharp {
 	}
 
 
-	public class NullConstant : Constant
+	public abstract class NullConstant : Constant
 	{
 		public NullConstant (Location loc):
 			base (loc)
 		{
 			eclass = ExprClass.Value;
-			type = TypeManager.null_type;
 		}
 		
 		override public string AsString ()
@@ -146,7 +145,7 @@ namespace Mono.CSharp {
 		{
 			if (TypeManager.IsGenericParameter (t)) {
 				Report.Error(403, loc,
-					"Cannot convert null to the type parameter `{0}' because it could be a value " +
+					"Cannot convert null to the type parameter `{0}' becaues it could be a value " +
 					"type. Consider using `default ({0})' instead", t.Name);
 			} else {
 				Report.Error(37, loc, "Cannot convert null to `{0}' because it is a value type",
