@@ -1,3 +1,12 @@
+2006-12-01  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: Do not update the view while inserting multiline
+	text. If we update the view we might wrap lines, before entering
+	the new lines, which causes the new line insertion calculations to
+	be totally fubared.
+	- Remove an old TODO
+	- Make debug output a little nicer
+	
 2006-12-01  Chris Toshok  <toshok@ximian.com>
 
 	* ToolBar.cs: revert the ImeMode fix here and add an XXX comment.

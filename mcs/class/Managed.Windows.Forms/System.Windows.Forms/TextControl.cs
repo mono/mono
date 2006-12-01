@@ -1021,7 +1021,9 @@ namespace System.Windows.Forms {
 
 			total = 1;
 
-			Console.Write("Line {0} [# {1}], Y: {2} Text {3}", line.line_no, line.GetHashCode(), line.Y, line.text != null ? line.text.ToString() : "undefined");
+			Console.Write("Line {0} [# {1}], Y: {2}, soft break: {3}, Text {4}",
+					line.line_no, line.GetHashCode(), line.Y, line.soft_break,
+					line.text != null ? line.text.ToString() : "undefined");
 
 			if (line.left == sentinel) {
 				Console.Write(", left = sentinel");
@@ -2078,7 +2080,9 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			string[]	ins;
 			int		insert_lines;
 			int		old_line_count;
-			
+
+			NoRecalc = true;
+
 			// The formatting at the insertion point is used for the inserted text
 			if (tag == null) {
 				tag = LineTag.FindTag(line, pos);
@@ -2115,6 +2119,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 				}
 			}
 
+			NoRecalc = false;
 			UpdateView(line, lines - old_line_count + 1, pos);
 
 			if (update_caret) {
@@ -2127,6 +2132,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 				}
 				DisplayCaret ();
 			}
+
 		}
 
 		// Inserts a character at the given position
@@ -2147,7 +2153,6 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			line.text.Insert(pos, s);
 			tag.length += len;
 
-			// TODO: sometimes getting a null tag here when pasting ???
 			tag = tag.next;
 			while (tag != null) {
 				tag.start += len;
