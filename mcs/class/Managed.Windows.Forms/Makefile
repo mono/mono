@@ -8,7 +8,7 @@ LIB_MCS_FLAGS = /unsafe \
 	/r:System.Drawing.dll /r:Accessibility.dll \
 	/r:System.Data.dll /r:Mono.Posix.dll \
 	@System.Windows.Forms.dll.resources \
-	/nowarn:649 /nowarn:169 /nowarn:67 /nowarn:114 -debug
+	-debug
 
 RESX_RESOURCES = \
 	resources/System.Windows.Forms.resources \
