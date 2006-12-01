@@ -19,6 +19,92 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class MdiFormTest
 	{
+		private Form main;
+		private Form child1;
+		private Form child2;
+		private Form child3;
+
+		[TearDown]
+		public void TearDown ()
+		{
+			if (main != null)
+				main.Dispose ();
+			if (child1 != null)
+				child1.Dispose ();
+			if (child2 != null)
+				child2.Dispose ();
+			if (child3 != null)
+				child3.Dispose ();
+			main = null;
+			child1 = null;
+			child2 = null;
+			child3 = null;
+		}
+	
+		// No attribute here since this is supposed to be called from 
+		// each test directly, not by nunit.
+		public void SetUp (bool only_create, bool only_text)
+		{
+			TearDown ();
+			main = new Form ();
+			child1 = new Form ();
+			child2 = new Form ();
+			child3 = new Form ();
+			
+			if (only_create)
+				return;
+
+			main.Text = main.Name = "main";
+			child1.Text = child1.Name = "child1";
+			child2.Text = child2.Name = "child2";
+			child3.Text = child3.Name = "child3";
+			
+			if (only_text)
+				return;
+
+			main.IsMdiContainer = true;
+		}
+
+
+		[Test]
+		public void IsMdiContainerTest ()
+		{
+			SetUp (false, true);
+
+			main.Visible = true;
+			main.Visible = false;
+			
+			main.IsMdiContainer = true;
+			
+			child1.MdiParent = main;
+
+			main.IsMdiContainer = false;
+
+			Assert.AreSame (null, main.ActiveMdiChild, "#1");
+
+			main.Visible = true;
+			Assert.AreSame (null, main.ActiveMdiChild, "#2");
+			
+			Assert.AreSame (null, main.MdiParent, "#3");
+
+			TearDown ();
+		}
+
+		[Category("NotWorking")]
+		[Test]
+		[ExpectedException(typeof(ArgumentException), "Cannot add a top level control to a control.")]
+		public void AddToControlsTest ()
+		{
+			SetUp (false, true);
+			
+			main.Visible = true;
+			main.Visible = false;
+
+			main.Controls.Add (child1);
+
+			TearDown ();
+		}
+
 		[Test]
 		public void Text ()
 		{
@@ -86,10 +172,7 @@ namespace MonoTests.System.Windows.Forms
 			main.Dispose ();
 		}
 
-		// Setting Text of the MDI containiner before setting IsMdiContainer to
-		// true causes #2 to fail on Mono
 		[Test]
-		[Category ("NotWorking")]
 		public void Text_MdiContainer ()
 		{
 			Form main = new Form ();
@@ -134,10 +217,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("main", main.Text, "#3");
 		}
 
-		// Setting WindowState to Maximized of a form, of which the handle is 
-		// already created, does not make it ActiveMdiChild
 		[Test]
-		[Category ("NotWorking")]
 		public void Text_Maximized ()
 		{
 			Form main = new Form ();
@@ -171,10 +251,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("main - [child1]", main.Text, "#4");
 		}
 
-		// Form.ActiveMdiChild should return null if handle is not yet created
-		// Depends on fix for bug #80020
 		[Test]
-		[Category("NotWorking")]
 		public void ActiveMdiChild ()
 		{
 			Form main, child1, child2;
@@ -218,6 +295,44 @@ namespace MonoTests.System.Windows.Forms
 			main.Close();
 		}
 
+		[Test]
+		public void ActiveMdiChild2 ()
+		{
+			SetUp (false, false);
+
+			child1.MdiParent = main;
+			child2.MdiParent = main;
+
+			main.Show ();
+			child1.Show ();
+			child2.Show ();
+			
+			child1.Activate ();
+			child1.Visible = false;
+			
+			Assert.AreSame (child2, main.ActiveMdiChild, "#1");
+
+			TearDown ();
+		}
+
+		[Test]
+		public void ActiveMdiChild3 ()
+		{
+			SetUp (false, false);
+			
+			child1.MdiParent = main;
+			child2.MdiParent = main;
+
+			main.Visible = true;
+			main.Visible = false;
+
+			Assert.AreSame (null, main.ActiveMdiChild, "#1");
+			//child2.Visible = true; This will cause StackOverflowException on MS.
+			main.Visible = true;
+			Assert.AreSame (null, main.ActiveMdiChild, "#2");
+
+			TearDown ();
+		}
 		[Test]
 		public void MdiChild_WindowState1 ()
 		{
