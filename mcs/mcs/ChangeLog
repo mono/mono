@@ -1,3 +1,9 @@
+2006-12-01  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #80108
+	* ecore.cs (EventExpr.EmitAddOrRemove): Don't crash when right side is not
+	compatible.
+
 2006-11-30  Marek Safar  <marek.safar@gmail.com>
 
 	Correct unary operators implementation (part I)

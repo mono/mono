@@ -4057,7 +4057,11 @@ namespace Mono.CSharp {
 
 		public void EmitAddOrRemove (EmitContext ec, Expression source)
 		{
-			BinaryDelegate source_del = (BinaryDelegate) source;
+			BinaryDelegate source_del = source as BinaryDelegate;
+			if (source_del == null) {
+				Emit (ec);
+				return;
+			}
 			Expression handler = source_del.Right;
 			
 			Argument arg = new Argument (handler, Argument.AType.Expression);
