@@ -1,5 +1,9 @@
 2006-12-01  Chris Toshok  <toshok@ximian.com>
 
+	* ToolBar.cs: revert the ImeMode fix here and add an XXX comment.
+
+2006-12-01  Chris Toshok  <toshok@ximian.com>
+
 	[ fix the majority of the CS0108 warnings we've been suppressing ]
 	
 	* TreeView.cs: mark BackgroundImageChanged as 'new'.
