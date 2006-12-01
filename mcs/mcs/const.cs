@@ -20,7 +20,7 @@ namespace Mono.CSharp {
 	{
 		void CheckObsoleteness (Location loc);
 		bool ResolveValue ();
-		Constant Value { get; }
+		Constant CreateConstantReference (Location loc);
 	}
 
 	public class Const : FieldMember, IConstant {
@@ -189,10 +189,12 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public Constant Value {
-			get {
-				return value;
-			}
+		public Constant CreateConstantReference (Location loc)
+		{
+			if (value == null)
+				return null;
+
+			return Constant.CreateConstant (value.Type, value.GetValue(), loc);
 		}
 
 		#endregion
@@ -201,14 +203,14 @@ namespace Mono.CSharp {
 	public class ExternalConstant : IConstant
 	{
 		FieldInfo fi;
-		Constant value;
+		object value;
 
 		public ExternalConstant (FieldInfo fi)
 		{
 			this.fi = fi;
 		}
 
-		private ExternalConstant (FieldInfo fi, Constant value):
+		private ExternalConstant (FieldInfo fi, object value):
 			this (fi)
 		{
 			this.value = value;
@@ -229,7 +231,7 @@ namespace Mono.CSharp {
 				return null;
 
 			IConstant ic = new ExternalConstant (fi,
-				new DecimalConstant (((System.Runtime.CompilerServices.DecimalConstantAttribute) attrs [0]).Value, Location.Null));
+				((System.Runtime.CompilerServices.DecimalConstantAttribute) attrs [0]).Value);
 
 			return ic;
 		}
@@ -251,20 +253,13 @@ namespace Mono.CSharp {
 			if (value != null)
 				return true;
 
-			if (fi.DeclaringType.IsEnum) {
-				value = Expression.Constantify (fi.GetValue (fi), TypeManager.EnumToUnderlying (fi.FieldType));
-				value = new EnumConstant (value, fi.DeclaringType);
-				return true;
-			}
-
-			value = Expression.Constantify (fi.GetValue (fi), fi.FieldType);
+			value = fi.GetValue (fi);
 			return true;
 		}
 
-		public Constant Value {
-			get {
-				return value;
-			}
+		public Constant CreateConstantReference (Location loc)
+		{
+			return Constant.CreateConstant (fi.FieldType, value, loc);
 		}
 
 		#endregion
