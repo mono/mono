@@ -396,7 +396,7 @@ namespace System.Windows.Forms
 		public Font CaptionFont {
 			get {
 				if (caption_font == null)
-					return Font;
+					return new Font (Font, FontStyle.Bold);
 
 				return caption_font;
 			}
@@ -2706,7 +2706,7 @@ namespace System.Windows.Forms
 			int new_col = column;
 			int width = 0;
 			
-			if (column > current_first_visiblecolumn) { // Going forward								
+			if (column > current_first_visiblecolumn) { // Going forward
 				for (new_col = column; new_col >= 0; new_col--){
 					if (CurrentTableStyle.GridColumnStyles[new_col].bound == false)
 						continue;
@@ -2717,9 +2717,9 @@ namespace System.Windows.Forms
 						//return new_col < CurrentTableStyle.GridColumnStyles.Count ? new_col + 1 : CurrentTableStyle.GridColumnStyles.Count;
 				}
 				return 0;
-			} else {				
+			} else {
 				return  column;
-			}			
+			}
 		}
 
 		bool in_calc_grid_areas;
@@ -2910,7 +2910,6 @@ namespace System.Windows.Forms
 			else {
 				back_button_rect = parent_rows_button_rect = Rectangle.Empty;
 			}
-				
 		}
 
 		void CalcRowHeaders ()
@@ -3009,7 +3008,7 @@ namespace System.Windows.Forms
 			rect_rowhdr.Height = rows[row].Height;
 			rect_rowhdr.Y = rowhdrs_area.Y + rows[row].VerticalOffset - rows[FirstVisibleRow].VerticalOffset;
 			Invalidate (rect_rowhdr);
-		}	
+		}
 
 		internal void InvalidateColumn (DataGridColumnStyle column)
 		{

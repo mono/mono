@@ -92,6 +92,15 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (null, dg.Site, "Site property");
 			Assert.AreEqual (string.Empty, dg.Text, "Text property");
 			Assert.AreEqual (0, dg.VisibleColumnCount, "VisibleColumnCount property");
+
+			// Font
+			Assert.IsFalse (dg.Font.Bold, "Font Bold");
+#if NET_2_0
+			Assert.IsTrue (dg.Font.IsSystemFont, "Font IsSystemFont");
+#endif
+			Assert.IsFalse (dg.Font.Italic, "Font Italic");
+			Assert.IsFalse (dg.Font.Strikeout, "Font Strikeout");
+			Assert.IsFalse (dg.Font.Underline, "Font Underline");
 		}
 
 		[Test]
@@ -145,6 +154,63 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void CaptionFont ()
+		{
+			DataGrid dg = new DataGrid ();
+
+			// default values
+			Assert.IsTrue (dg.CaptionFont.Bold, "#A1");
+			Assert.AreEqual (dg.CaptionFont.FontFamily, dg.Font.FontFamily, "#A2");
+			Assert.AreEqual (dg.CaptionFont.Height, dg.Font.Height, "#A3");
+#if NET_2_0
+			Assert.AreEqual (dg.CaptionFont.IsSystemFont, dg.Font.IsSystemFont, "#A4");
+#endif
+			Assert.AreEqual (dg.CaptionFont.Italic, dg.Font.Italic, "#A5");
+			Assert.AreEqual (dg.CaptionFont.Name, dg.Font.Name, "#A6");
+			Assert.AreEqual (dg.CaptionFont.Size, dg.Font.Size, "#A7");
+			Assert.AreEqual (dg.CaptionFont.SizeInPoints, dg.Font.SizeInPoints, "#A8");
+			Assert.AreEqual (dg.CaptionFont.Strikeout, dg.Font.Strikeout, "#A9");
+			Assert.AreEqual (dg.CaptionFont.Underline, dg.Font.Underline, "#A10");
+			Assert.AreEqual (dg.CaptionFont.Unit, dg.Font.Unit, "#A11");
+
+			// modifying Font affects CaptionFont, except for FontStyle
+			dg.Font = new Font (dg.Font.FontFamily, 3, FontStyle.Italic);
+			Assert.IsTrue (dg.CaptionFont.Bold, "#B1");
+			Assert.IsFalse (dg.Font.Bold, "#B2");
+			Assert.IsFalse (dg.CaptionFont.Italic, "#B3");
+			Assert.IsTrue (dg.Font.Italic, "#B4");
+			Assert.AreEqual (3, dg.Font.SizeInPoints, "#B5");
+			Assert.AreEqual (dg.CaptionFont.SizeInPoints, dg.Font.SizeInPoints, "#B6");
+
+			// explicitly setting CaptionFont removes link between CaptionFont
+			// and Font
+			dg.CaptionFont = dg.Font;
+			Assert.AreSame (dg.CaptionFont, dg.Font, "#C1");
+			dg.Font = new Font (dg.Font.FontFamily, 7, FontStyle.Bold);
+			Assert.IsFalse (dg.CaptionFont.Bold, "#C2");
+			Assert.IsTrue (dg.Font.Bold, "#C3");
+			Assert.AreEqual (7, dg.Font.SizeInPoints, "#C4");
+			Assert.AreEqual (3, dg.CaptionFont.SizeInPoints, "#C5");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void HeaderFont ()
+		{
+			DataGrid dg = new DataGrid ();
+			dg.Font = new Font (dg.Font, FontStyle.Italic);
+			Assert.AreSame (dg.HeaderFont, dg.Font, "#1");
+
+			// explicitly setting HeaderFont removes link between HeaderFont
+			// and Font
+			dg.HeaderFont = dg.Font;
+			Assert.AreSame (dg.HeaderFont, dg.Font, "#2");
+			dg.Font = new Font (dg.Font, FontStyle.Regular);
+			Assert.IsTrue (dg.HeaderFont.Italic, "#3");
+			Assert.IsFalse (dg.Font.Italic, "#4");
+		}
+
+		[Test]
 		public void TestParentRowsLabelStyleChangedEvent ()
 		{
 			DataGrid dg = new DataGrid ();
@@ -175,9 +241,9 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		public void OnEventHandler (object sender, EventArgs e)
-	        {
-	            	eventhandled = true;
-	        }
+		{
+			eventhandled = true;
+		}
 
 		// Property exceptions
 
@@ -258,7 +324,7 @@ namespace MonoTests.System.Windows.Forms
 
 		[Test]
 		public void ResetHeaderFontMethod ()
-		{			
+		{
 		}
 
 		[Test]
@@ -268,12 +334,12 @@ namespace MonoTests.System.Windows.Forms
 			DataGrid dg2 = new DataGrid ();
 			dg2.HeaderForeColor = Color.Red;
 			dg2.ResetHeaderForeColor ();
-			Assert.AreEqual (dg.HeaderForeColor, dg2.HeaderForeColor, "A1");			
+			Assert.AreEqual (dg.HeaderForeColor, dg2.HeaderForeColor, "A1");
 		}
 
 		[Test]
 		public void ResetLinkColorMethod ()
-		{						
+		{
 			DataGrid dg = new DataGrid ();
 			DataGrid dg2 = new DataGrid ();
 			dg2.LinkColor = Color.Red;
