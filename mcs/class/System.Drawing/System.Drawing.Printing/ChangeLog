@@ -1,3 +1,9 @@
+2006-12-01 Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* PrintingServicesWin32.cs: Fixes paper sizes reading. The POINT 
+	structure is 8 bytes long not 4. This fixes margins calculations 
+	(based on the paper size) that were badly broken. 
+
 2006-11-28  Andreia Gaita  <avidigal@novell.com>
 
 	* PageSettings.cs: 
