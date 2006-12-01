@@ -132,7 +132,7 @@ namespace System.Windows.Forms {
 				if (Contains (value))
 					return;
 				AddToList (value);
-				((Form)value).owner=(Form)owner;
+				((Form)value).owner=form_owner;
 			}
 
 			public override void Remove(Control value) {

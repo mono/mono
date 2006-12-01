@@ -285,10 +285,10 @@ namespace System.Windows.Forms
 		[ListBindable(false)]
 		public class ControlCollection : IList, ICollection, ICloneable, IEnumerable {
 			#region	ControlCollection Local Variables
-			private ArrayList	list;
-			internal ArrayList	impl_list;
-			private Control []	all_controls;
-			internal Control	owner;
+			ArrayList list;
+			ArrayList impl_list;
+			Control[] all_controls;
+			Control owner;
 			#endregion	// ControlCollection Local Variables
 
 			#region ControlCollection Public Constructor

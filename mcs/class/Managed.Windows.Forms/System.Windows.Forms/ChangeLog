@@ -1,5 +1,14 @@
 2006-12-01  Chris Toshok  <toshok@ximian.com>
 
+	* Form.cs: Form.ControlCollection already stores off the
+	form_owner field.  don't access the base class's internal "owner"
+	field.
+
+	* Control.cs: make all the fields in Control.ControlCollection
+	private.  there's no need for any internal fields here.
+
+2006-12-01  Chris Toshok  <toshok@ximian.com>
+
 	* DataGrid.cs: call SetDataSource instead of CalcGridAreas in
 	OnHandleCreated.  Fixes bug #80109.
 
