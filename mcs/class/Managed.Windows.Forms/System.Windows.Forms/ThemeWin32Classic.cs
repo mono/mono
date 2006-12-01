@@ -55,7 +55,8 @@ namespace System.Windows.Forms
 		protected static StringFormat string_format_menu_shortcut;
 		protected static StringFormat string_format_menu_menubar_text;
 		static ImageAttributes imagedisabled_attributes = null;
-		const int SEPARATOR_HEIGHT = 5;
+		const int SEPARATOR_HEIGHT = 6;
+		const int SEPARATOR_MIN_WIDTH = 20;
 		const int SM_CXBORDER = 1;
 		const int SM_CYBORDER = 1;		
     		const int MENU_TAB_SPACE = 8;		// Pixels added to the width of an item because of a tab
@@ -2035,8 +2036,8 @@ namespace System.Windows.Forms
 			}
 
 			if (item.Separator == true) {
-				item.Height = SEPARATOR_HEIGHT / 2;
-				item.Width = -1;
+				item.Height = SEPARATOR_HEIGHT;
+				item.Width = SEPARATOR_MIN_WIDTH;
 				return;
 			}
 			
@@ -2134,7 +2135,7 @@ namespace System.Windows.Forms
 			}
 
 			menu.Width = x;
-
+			
 			//space for border
 			menu.Width += 2;
 			menu.Height += 2;
@@ -2198,11 +2199,13 @@ namespace System.Windows.Forms
 				string_format = string_format_menu_text;
 
 			if (item.Separator == true) {
+				int liney = e.Bounds.Y + (e.Bounds.Height / 2);
+				
 				e.Graphics.DrawLine (SystemPens.ControlDark,
-					e.Bounds.X, e.Bounds.Y, e.Bounds.X + e.Bounds.Width, e.Bounds.Y);
+					e.Bounds.X, liney, e.Bounds.X + e.Bounds.Width, liney);
 
 				e.Graphics.DrawLine (SystemPens.ControlLight,
-					e.Bounds.X, e.Bounds.Y + 1, e.Bounds.X + e.Bounds.Width, e.Bounds.Y + 1);
+					e.Bounds.X, liney + 1, e.Bounds.X + e.Bounds.Width, liney + 1);
 
 				return;
 			}
