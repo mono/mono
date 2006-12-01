@@ -1352,7 +1352,7 @@ namespace System.Windows.Forms
 		protected override void OnHandleCreated (EventArgs e)
 		{
 			base.OnHandleCreated (e);
-			CalcGridAreas ();
+			SetDataSource (datasource, datamember);
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e)

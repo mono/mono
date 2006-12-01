@@ -1,5 +1,10 @@
 2006-12-01  Chris Toshok  <toshok@ximian.com>
 
+	* DataGrid.cs: call SetDataSource instead of CalcGridAreas in
+	OnHandleCreated.  Fixes bug #80109.
+
+2006-12-01  Chris Toshok  <toshok@ximian.com>
+
 	* Button.cs, PropertyGridTextBox.cs, ComboBox.cs,
 	SplitContainer.cs, Control.cs, StatusStrip.cs,
 	DataGridTableStyle.cs, MenuItem.cs, DomainUpDown.cs, ImageList.cs,
