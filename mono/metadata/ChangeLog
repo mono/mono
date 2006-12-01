@@ -1,3 +1,6 @@
+2006-11-30  Paolo Molaro (lupus@ximian.com)
+
+	* metadata.c, marshal.c: locking fixes when writing to image->mempool.
 
 Thu Nov 30 11:11:37 CET 2006 Paolo Molaro <lupus@ximian.com>
 
