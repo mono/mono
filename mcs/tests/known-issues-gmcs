@@ -12,5 +12,3 @@ test-539.cs IGNORE	# In 2.0 profile, RuntimeCompatilityAttribute is added by def
 
 gtest-230.cs
 gtest-291.cs IGNORE
-
-test-540.cs

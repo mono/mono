@@ -1,3 +1,7 @@
+2006-12-01  Raja R Harinath  <rharinath@novell.com>
+
+	* test-541.cs, gtest-298.cs: New tests based on #79972.
+
 2006-11-29  Martin Baulig  <martin@ximian.com>
 
 	* gtest-134.cs: Fixed.
