@@ -1,3 +1,7 @@
+2006-12-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DateTimeTest.cs: Added test for bug #80094. Remoted trailing tabs.
+
 2006-11-26  Miguel de Icaza  <miguel@novell.com>
 
 	* DecimalTest.cs: Add new tests for TryParse.

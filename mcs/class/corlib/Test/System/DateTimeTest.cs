@@ -83,9 +83,10 @@ public class DateTimeTest : Assertion
 	[TearDown]
 	public void TearDown ()
 	{
-		Thread.CurrentThread.CurrentCulture = oldcult;		
+		Thread.CurrentThread.CurrentCulture = oldcult;
 	}
-	
+
+	[Test]
 	public void TestCtors ()
 	{
 		DateTime t1 = new DateTime (2002,2,25);
@@ -127,7 +128,7 @@ public class DateTimeTest : Assertion
 	[Test]
 	public void Fields ()
 	{
-		AssertEquals ("J01", 3155378975999999999L, DateTime.MaxValue.Ticks);					
+		AssertEquals ("J01", 3155378975999999999L, DateTime.MaxValue.Ticks);
 		AssertEquals ("J02", 0, DateTime.MinValue.Ticks);
 	}
 	
@@ -146,7 +147,7 @@ public class DateTimeTest : Assertion
 		AssertEquals ("K05", 25, t1.Day);
 		AssertEquals ("K06", 15, t1.Hour);
 		AssertEquals ("K07", 25, t1.Minute);
-		AssertEquals ("K08", 13, t1.Second);		
+		AssertEquals ("K08", 13, t1.Second);
 	}
 	
 	[Test]
@@ -173,19 +174,19 @@ public class DateTimeTest : Assertion
 		AssertEquals ("L01", 28, t1.Day);
 		AssertEquals ("L02", 15, t1.Hour);
 		AssertEquals ("L03", 25, t1.Minute);
-		AssertEquals ("L04", 13, t1.Second);		
+		AssertEquals ("L04", 13, t1.Second);
 		
 		t1 = t1.AddDays (1.9);
 		AssertEquals ("L05", 2, t1.Day);
 		AssertEquals ("L06", 13, t1.Hour);
 		AssertEquals ("L07", 1, t1.Minute);
-		AssertEquals ("L08", 13, t1.Second);		
+		AssertEquals ("L08", 13, t1.Second);
 
 		t1 = t1.AddDays (0.2);
 		AssertEquals ("L09", 2, t1.Day);
 		AssertEquals ("L10", 17, t1.Hour);
 		AssertEquals ("L11", 49, t1.Minute);
-		AssertEquals ("L12", 13, t1.Second);				
+		AssertEquals ("L12", 13, t1.Second);
 	}
 	
 	[Test]
@@ -212,19 +213,19 @@ public class DateTimeTest : Assertion
 		AssertEquals ("N01", 26, t1.Day);
 		AssertEquals ("N02", 1, t1.Hour);
 		AssertEquals ("N03", 25, t1.Minute);
-		AssertEquals ("N04", 13, t1.Second);		
+		AssertEquals ("N04", 13, t1.Second);
 		
 		t1 = t1.AddHours (-3.7);
 		AssertEquals ("N05", 25, t1.Day);
 		AssertEquals ("N06", 21, t1.Hour);
 		AssertEquals ("N07", 43, t1.Minute);
-		AssertEquals ("N08", 13, t1.Second);		
+		AssertEquals ("N08", 13, t1.Second);
 
 		t1 = t1.AddHours (3.732);
 		AssertEquals ("N09", 26, t1.Day);
 		AssertEquals ("N10", 1, t1.Hour);
 		AssertEquals ("N11", 27, t1.Minute);
-		AssertEquals ("N12", 8, t1.Second);				
+		AssertEquals ("N12", 8, t1.Second);
 	}
 	
 	[Test]
@@ -242,7 +243,7 @@ public class DateTimeTest : Assertion
 		DateTime t1 = new DateTime (myTicks [1]);
 		t1.AddHours (-9E100);
 	}
-	                                          
+
 	[Test]
 	public void AddMilliseconds ()
 	{
@@ -251,19 +252,19 @@ public class DateTimeTest : Assertion
 		AssertEquals ("O01", 21, t1.Day);
 		AssertEquals ("O02", 9, t1.Hour);
 		AssertEquals ("O03", 11, t1.Minute);
-		AssertEquals ("O04", 53, t1.Second);		
+		AssertEquals ("O04", 53, t1.Second);
 		
 		t1 = t1.AddMilliseconds (-19E10);
 		AssertEquals ("O05", 13, t1.Day);
 		AssertEquals ("O06", 7, t1.Hour);
 		AssertEquals ("O07", 25, t1.Minute);
-		AssertEquals ("O08", 13, t1.Second);		
+		AssertEquals ("O08", 13, t1.Second);
 
 		t1 = t1.AddMilliseconds (15.623);
 		AssertEquals ("O09", 13, t1.Day);
 		AssertEquals ("O10", 7, t1.Hour);
 		AssertEquals ("O11", 25, t1.Minute);
-		AssertEquals ("O12", 13, t1.Second);				
+		AssertEquals ("O12", 13, t1.Second);
 	}
 
 	[Test]
@@ -282,7 +283,7 @@ public class DateTimeTest : Assertion
 		t1.AddMilliseconds (-9E100);
 	}
 
-
+	[Test]
 	public void TestToString ()
 	{
 		DateTime t1 = new DateTime (myTicks[2]);
@@ -346,6 +347,7 @@ public class DateTimeTest : Assertion
 		AssertEquals("C32", " d", t1.ToString (" \\d"));
 	}
 
+	[Test]
 	public void TestParseExact3 ()
 	{
 		DateTime t1 = DateTime.ParseExact ("2002-02-25 04:25:13Z", "u", null);
@@ -374,6 +376,7 @@ public class DateTimeTest : Assertion
 			DateTimeStyles.AllowInnerWhite);
 	}
 
+	[Test]
 	public void TestParseExact ()
 	{
 		// Standard patterns
@@ -601,6 +604,7 @@ public class DateTimeTest : Assertion
 		AssertEquals ("Literal1.Ticks", 632563395270000000, t1.Ticks);
 	}
 
+	[Test]
 	[Ignore ("need to fix tests that run on different timezones")]
 	public void TestParse2 ()
 	{
@@ -610,6 +614,7 @@ public class DateTimeTest : Assertion
 
 	}
 	
+	[Test]
 	public void TestParse ()
 	{
 		// Standard patterns
@@ -699,6 +704,7 @@ public class DateTimeTest : Assertion
 		AssertEquals ("H18", t2.Ticks, t1.Ticks);
 	}
 
+	[Test]
 	public void TestParse3 ()
 	{
 		string s = "Wednesday, 09 June 2004";
@@ -1325,6 +1331,24 @@ public class DateTimeTest : Assertion
 		DateTime dt = DateTime.Parse ("2004-05-26T03:29:01-07:00 foo");
 		dt = TimeZone.CurrentTimeZone.ToUniversalTime (dt);
 		AssertEquals ("DateTime.Parse not exact", 632211641410000000, dt.Ticks);
+	}
+
+	[Test]
+	public void ParseExact_Bug80094 ()
+	{
+		// we can safely change the curernt culture, as the original value will
+		// be restored on TearDown
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("ja-JP");
+		string y = string.Format ("{0}-{1}-{2} {3}", DateTime.Now.Year.ToString (),
+			"11", "29", "06:34");
+		DateTime date = DateTime.ParseExact (y, "yyyy-MMM-dd hh:mm", null);
+		AssertEquals ("#1", DateTime.Now.Year, date.Year);
+		AssertEquals ("#2", 11, date.Month);
+		AssertEquals ("#3", 29, date.Day);
+		AssertEquals ("#4", 6, date.Hour);
+		AssertEquals ("#5", 34, date.Minute);
+		AssertEquals ("#6", 0, date.Second);
+		AssertEquals ("#7", 0, date.Millisecond);
 	}
 
 	[Test]
