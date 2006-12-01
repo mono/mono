@@ -65,7 +65,7 @@ namespace System.Web.Services.Description
 //			RegisterExtensionType (typeof (SoapHeaderFaultBinding));
 			RegisterExtensionType (typeof (SoapOperationBinding));
 #if NET_2_0
-			foreach (TypeElement el in WebServicesSection.Instance.ServiceDescriptionFormatExtensionTypes)
+			foreach (TypeElement el in WebServicesSection.Current.ServiceDescriptionFormatExtensionTypes)
 				RegisterExtensionType (el.Type);
 #else
 			foreach (Type type in WSConfig.Instance.FormatExtensionTypes)
@@ -156,7 +156,7 @@ namespace System.Web.Services.Description
 		public static ArrayList BuildExtensionImporters ()
 		{
 #if NET_2_0
-			return BuildExtensionList (WebServicesSection.Instance.SoapExtensionImporterTypes);
+			return BuildExtensionList (WebServicesSection.Current.SoapExtensionImporterTypes);
 #else
 			return BuildExtensionList (WSConfig.Instance.ExtensionImporterTypes);
 #endif
@@ -165,7 +165,7 @@ namespace System.Web.Services.Description
 		public static ArrayList BuildExtensionReflectors ()
 		{
 #if NET_2_0
-			return BuildExtensionList (WebServicesSection.Instance.SoapExtensionReflectorTypes);
+			return BuildExtensionList (WebServicesSection.Current.SoapExtensionReflectorTypes);
 #else
 			return BuildExtensionList (WSConfig.Instance.ExtensionReflectorTypes);
 #endif
