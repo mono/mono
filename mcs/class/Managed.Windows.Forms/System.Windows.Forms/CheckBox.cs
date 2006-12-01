@@ -351,9 +351,12 @@ namespace System.Windows.Forms {
 		#endregion	// Events
 
 		#region Events
+		// XXX have a look at this and determine if it
+		// manipulates base.DoubleClick, and see if
+		// HaveDoubleClick can just call OnDoubleClick.
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler DoubleClick;
+		public new event EventHandler DoubleClick;
 		#endregion	// Events
 	}
 }

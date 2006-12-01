@@ -132,10 +132,6 @@ namespace System.Windows.Forms {
 			this.TabStop = true;
 		}
 
-		internal override void HaveDoubleClick() {
-			if (DoubleClick != null) DoubleClick(this, EventArgs.Empty);
-		}
-
 		internal override void Draw (PaintEventArgs pe) {
 			ThemeEngine.Current.DrawRadioButton (pe.Graphics, this.ClientRectangle, this);
 		}
@@ -332,7 +328,10 @@ namespace System.Windows.Forms {
 
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler	DoubleClick;
+		public new event EventHandler DoubleClick {
+			add { base.DoubleClick += value; }
+			remove { base.DoubleClick -= value; }
+		}
 		#endregion	// Events
 	}
 }

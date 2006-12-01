@@ -299,14 +299,9 @@ namespace System.Windows.Forms {
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public bool TabStop {
-			get {
-				return base.TabStop;
-			}
-
-			set {
-				base.TabStop = value;
-			}
+		public new bool TabStop {
+			get { return base.TabStop; }
+			set { base.TabStop = value; }
 		}
 
 		[Bindable(false)]

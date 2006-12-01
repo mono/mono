@@ -267,8 +267,8 @@ namespace System.Windows.Forms
 				
 				OnDropDownStyleChanged (EventArgs.Empty);
     				
-				Layout ();
-				UpdateBounds ();
+				LayoutComboBox ();
+				UpdateComboBoxBounds ();
 				Refresh ();
     			}
 		}
@@ -335,7 +335,7 @@ namespace System.Windows.Forms
 					return;
 
     				integral_height = value;
-				UpdateBounds ();
+				UpdateComboBoxBounds ();
     				Refresh ();
 			}
 		}
@@ -356,8 +356,8 @@ namespace System.Windows.Forms
 				item_height_specified = true;
 				item_height = value;
 				if (IntegralHeight)
-					UpdateBounds ();
-				Layout ();
+					UpdateComboBoxBounds ();
+				LayoutComboBox ();
 				Refresh ();
 			}
 		}
@@ -524,7 +524,7 @@ namespace System.Windows.Forms
 				SelectedIndex = -1;
 				if (sorted) {
 					Items.Sort ();
-					Layout ();
+					LayoutComboBox ();
 				}
     			}
     		}
@@ -752,9 +752,9 @@ namespace System.Windows.Forms
 			}
 
 			if (IntegralHeight)
-				UpdateBounds ();
+				UpdateComboBoxBounds ();
 
-			Layout ();
+			LayoutComboBox ();
 		}
 
 		protected override void OnForeColorChanged (EventArgs e)
@@ -813,7 +813,7 @@ namespace System.Windows.Forms
 			if (textbox_ctrl != null)
 				Controls.AddImplicit (textbox_ctrl);
 
-			Layout ();
+			LayoutComboBox ();
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e)
@@ -844,7 +844,7 @@ namespace System.Windows.Forms
 
 		protected override void OnResize (EventArgs e)
 		{			
-			Layout ();
+			LayoutComboBox ();
 			if (listbox_ctrl != null)
 				listbox_ctrl.CalcListBoxArea ();
 		}
@@ -988,7 +988,7 @@ namespace System.Windows.Forms
 			set {}
 		}
 		
-		void Layout ()
+		void LayoutComboBox ()
 		{			
 			int border = ThemeEngine.Current.Border3DSize.Width;
 
@@ -1265,7 +1265,7 @@ namespace System.Windows.Forms
     			process_textchanged_event = true;
     		}
 		
-		void UpdateBounds ()
+		void UpdateComboBoxBounds ()
 		{
 			if (requested_height != -1)
 				SetBounds (0, 0, 0, requested_height, BoundsSpecified.Height);

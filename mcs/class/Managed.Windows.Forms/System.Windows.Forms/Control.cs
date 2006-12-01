@@ -187,9 +187,13 @@ namespace System.Windows.Forms
 		
 		#region Public Classes
 		[ComVisible(true)]
-		public class ControlAccessibleObject : AccessibleObject {			
+		public class ControlAccessibleObject : AccessibleObject {
+			Control owner;
+
 			#region ControlAccessibleObject Constructors
-			public ControlAccessibleObject(Control ownerControl) {
+			public ControlAccessibleObject(Control ownerControl)
+				: base (ownerControl)
+			{
 				this.owner = ownerControl;
 			}
 			#endregion	// ControlAccessibleObject Constructors

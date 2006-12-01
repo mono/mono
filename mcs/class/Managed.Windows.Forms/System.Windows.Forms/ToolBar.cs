@@ -112,7 +112,9 @@ namespace System.Windows.Forms
 			foreground_color = ThemeEngine.Current.DefaultControlForeColor;
 			buttons = new ToolBarButtonCollection (this);
 			dock_style = DockStyle.Top;
-			
+
+			ImeMode = ImeMode.Disable;
+
 			GotFocus += new EventHandler (FocusChanged);
 			LostFocus += new EventHandler (FocusChanged);
 			MouseDown += new MouseEventHandler (ToolBar_MouseDown);
@@ -320,19 +322,11 @@ namespace System.Windows.Forms
 			}
 		}
 
-		ImeMode ime_mode = ImeMode.Disable;
-
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new ImeMode ImeMode {
-			get { return ime_mode; }
-			set {
-				if (value == ime_mode)
-					return;
-
-				ime_mode = value;
-				OnImeModeChanged (EventArgs.Empty);
-			}
+			get { return base.ImeMode; }
+			set { base.ImeMode = value; }
 		}
 
 		[Browsable (false)]
@@ -805,7 +799,7 @@ namespace System.Windows.Forms
 		{
 			bool invalidate = true;
 			if (recalculate) {
-				invalidate = Layout ();
+				invalidate = LayoutToolBar ();
 			}
 
 			if (force || invalidate)
@@ -875,7 +869,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		bool Layout ()
+		bool LayoutToolBar ()
 		{
 			bool changed = false;
 			Theme theme = ThemeEngine.Current;

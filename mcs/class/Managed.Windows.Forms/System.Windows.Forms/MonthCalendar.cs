@@ -328,20 +328,9 @@ namespace System.Windows.Forms {
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public ImeMode ImeMode {
-			get {
-				return ime_mode;
-			}
-
-			set {
-				if (ime_mode != value) {
-					ime_mode = value;
-
-					if (ImeModeChanged != null) {
-						ImeModeChanged(this, EventArgs.Empty);
-					}
-				}
-			}
+		public new ImeMode ImeMode {
+			get { return base.ImeMode; }
+			set { base.ImeMode = value; }
 		}
 
 		// the maximum date allowed to be selected on this month calendar
@@ -1005,21 +994,27 @@ namespace System.Windows.Forms {
 
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler BackgroundImageChanged;
+		public new event EventHandler BackgroundImageChanged {
+			add { base.BackgroundImageChanged += value; }
+			remove { base.BackgroundImageChanged -= value; }
+		}
 
 		// this event is overridden to supress it from being fired
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler Click;
+		public new event EventHandler Click;
 
 		// this event is overridden to supress it from being fired
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler DoubleClick;
+		public new event EventHandler DoubleClick;
 
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler ImeModeChanged;
+		public new event EventHandler ImeModeChanged {
+			add { base.ImeModeChanged += value; }
+			remove { base.ImeModeChanged -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -1027,7 +1022,10 @@ namespace System.Windows.Forms {
 
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler TextChanged;
+		public new event EventHandler TextChanged {
+			add { base.TextChanged += value; }
+			remove { base.TextChanged -= value; }
+		}
 		#endregion	// public events
 
 		#region internal properties

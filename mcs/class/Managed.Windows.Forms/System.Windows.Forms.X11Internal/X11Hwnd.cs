@@ -43,7 +43,7 @@ namespace System.Windows.Forms.X11Internal {
 		double trans = 1.0;
 
 		string text;
-		X11ThreadQueue queue;
+		new X11ThreadQueue queue;
 
 		const EventMask SelectInputMask = (EventMask.ButtonPressMask | 
 						   EventMask.ButtonReleaseMask | 

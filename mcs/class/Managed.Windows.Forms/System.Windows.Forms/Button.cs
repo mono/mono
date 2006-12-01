@@ -119,9 +119,13 @@ namespace System.Windows.Forms {
 		#region Events
 		static object DoubleClickEvent = new object ();
 
+		// XXX this and HaveDoubleClick above need to be
+		// looked at.. it's far more likely that this just
+		// uses base.DoubleClick, and HaveDoubleClick goes
+		// away in favor of calls to OnDoubleClick.
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public event EventHandler DoubleClick {
+		public new event EventHandler DoubleClick {
 			add { Events.AddHandler (DoubleClickEvent, value); }
 			remove { Events.RemoveHandler (DoubleClickEvent, value); }
 		}

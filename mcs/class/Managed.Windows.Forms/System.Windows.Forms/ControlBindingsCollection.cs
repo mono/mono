@@ -81,11 +81,11 @@ namespace System.Windows.Forms {
 			return res;
 		}
 
-		public void Clear() {
+		public new void Clear() {
 			base.Clear();
 		}
 
-		public void Remove(Binding binding) {
+		public new void Remove(Binding binding) {
 			if (binding == null) {
 				throw new NullReferenceException("The binding is null");
 			}
@@ -93,7 +93,7 @@ namespace System.Windows.Forms {
 			base.Remove(binding);
 		}
 
-		public void RemoveAt(int index) {
+		public new void RemoveAt(int index) {
 			if (index < 0 || index >= base.List.Count) {
 				throw new ArgumentOutOfRangeException("index");
 			}

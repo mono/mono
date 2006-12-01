@@ -81,7 +81,7 @@ namespace System.Windows.Forms {
 				if (value == Dock)
 					return;
 				base.Dock = value;
-				Update ();
+				UpdateStatusBar ();
 			}
 		}
 
@@ -92,7 +92,7 @@ namespace System.Windows.Forms {
 				if (value == Font)
 					return;
 				base.Font = value;
-				Update ();
+				UpdateStatusBar ();
 			}
 		}
 
@@ -128,7 +128,7 @@ namespace System.Windows.Forms {
 				if (show_panels == value)
 					return;
 				show_panels = value;
-				Update ();
+				UpdateStatusBar ();
 			}
 		}
 
@@ -139,7 +139,7 @@ namespace System.Windows.Forms {
 				if (sizing_grip == value)
 					return;
 				sizing_grip = value;
-				Update ();
+				UpdateStatusBar ();
 			}
 		}
 
@@ -156,7 +156,7 @@ namespace System.Windows.Forms {
 				if (value == Text)
 					return;
 				base.Text = value;
-				Update ();
+				UpdateStatusBar ();
 			}
 			
 		}
@@ -249,7 +249,7 @@ namespace System.Windows.Forms {
 			if (Width <= 0 || Height <= 0)
 				return;
 
-			Update ();
+			UpdateStatusBar ();
 		}
 
 		protected override void WndProc(ref Message m) {
@@ -268,11 +268,11 @@ namespace System.Windows.Forms {
 		internal void UpdatePanel (StatusBarPanel panel)
 		{
 			if (panel.AutoSize == StatusBarPanelAutoSize.Contents) {
-				Update ();
+				UpdateStatusBar ();
 				return;
 			}
 
-			Update ();
+			UpdateStatusBar ();
 		}
 
 		internal void UpdatePanelContents (StatusBarPanel panel)
@@ -285,7 +285,7 @@ namespace System.Windows.Forms {
 			Invalidate (new Rectangle (panel.X + 2, 2, panel.Width - 4, bounds.Height - 4));
 		}
 
-		internal void Update ()
+		void UpdateStatusBar ()
 		{
 			CalcPanelSizes ();
 			Refresh ();

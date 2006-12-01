@@ -461,7 +461,6 @@ namespace System.Windows.Forms {
 
 		#region Events
 		static object ValueChangedEvent = new object ();
-		static object TextChangedEvent = new object ();
 
 		public event EventHandler ValueChanged {
 			add { Events.AddHandler (ValueChangedEvent, value); }
@@ -470,9 +469,9 @@ namespace System.Windows.Forms {
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler TextChanged {
-			add { Events.AddHandler (TextChangedEvent, value); }
-			remove { Events.RemoveHandler (TextChangedEvent, value); }
+		public new event EventHandler TextChanged {
+			add { base.TextChanged += value; }
+			remove { base.TextChanged -= value; }
 		}
 		#endregion	// Events
 	}

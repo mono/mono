@@ -1100,7 +1100,10 @@ namespace System.Windows.Forms {
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler			BackgroundImageChanged;
+		public new event EventHandler BackgroundImageChanged {
+			add { base.BackgroundImageChanged += value; }
+			remove { base.BackgroundImageChanged -= value; }
+		}
 
 		public event ContentsResizedEventHandler ContentsResized {
 			add { Events.AddHandler (ContentsResizedEvent, value); }
@@ -1109,61 +1112,47 @@ namespace System.Windows.Forms {
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler			DoubleClick;
-
-		[Browsable(false)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event DragEventHandler DragDrop {
-			add {
-				base.DragDrop += value;
-			}
-
-			remove {
-				base.DragDrop -= value;
-			}
+		public new event EventHandler DoubleClick {
+			add { base.DoubleClick += value; }
+			remove { base.DoubleClick -= value; }
 		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event DragEventHandler DragEnter {
-			add {
-				base.DragEnter += value;
-			}
-
-			remove {
-				base.DragEnter -= value;
-			}
+		public new event DragEventHandler DragDrop {
+			add { base.DragDrop += value; }
+			remove { base.DragDrop -= value; }
 		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event EventHandler DragLeave {
-			add {
-				base.DragLeave += value;
-			}
+		public new event DragEventHandler DragEnter {
+			add { base.DragEnter += value; }
+			remove { base.DragEnter -= value; }
+		}
 
-			remove {
-				base.DragLeave -= value;
-			}
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler DragLeave {
+			add { base.DragLeave += value; }
+			remove { base.DragLeave -= value; }
 		}
 
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event DragEventHandler DragOver {
-			add {
-				base.DragOver += value;
-			}
-
-			remove {
-				base.DragOver -= value;
-			}
+		public new event DragEventHandler DragOver {
+			add { base.DragOver += value; }
+			remove { base.DragOver -= value; }
 		}
 
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event GiveFeedbackEventHandler		GiveFeedback;
+		public new event GiveFeedbackEventHandler GiveFeedback {
+			add { base.GiveFeedback += value; }
+			remove { base.GiveFeedback -= value; }
+		}
 
 		public event EventHandler HScroll {
 			add { Events.AddHandler (HScrollEvent, value); }
@@ -1187,7 +1176,11 @@ namespace System.Windows.Forms {
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event QueryContinueDragEventHandler	QueryContinueDrag;
+		public new event QueryContinueDragEventHandler QueryContinueDrag {
+			add { base.QueryContinueDrag += value; }
+			remove { base.QueryContinueDrag -= value; }
+		}
+
 		public event EventHandler			SelectionChanged;
 		public event EventHandler			VScroll;
 		#endregion	// Events

@@ -1074,7 +1074,7 @@ namespace System.Windows.Forms {
 
 
 		#region Class TaControl.ControlCollection
-		public class ControlCollection : System.Windows.Forms.Control.ControlCollection {
+		public new class ControlCollection : System.Windows.Forms.Control.ControlCollection {
 
 			private TabControl owner;
 			private ArrayList list = new ArrayList ();

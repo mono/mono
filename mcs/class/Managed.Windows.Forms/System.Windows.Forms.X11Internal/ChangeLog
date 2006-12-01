@@ -1,3 +1,7 @@
+2006-12-01  Chris Toshok  <toshok@ximian.com>
+
+	* X11Hwnd.cs: need to mark queue as "new" to quiet mcs.
+
 2006-11-29  Chris Toshok  <toshok@ximian.com>
 
 	* X11Hwnd.cs: implement GetWindowTransparency, and also add

@@ -1787,7 +1787,7 @@ namespace System.Windows.Forms {
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]	
-		public event EventHandler BackgroundImageChanged {
+		public new event EventHandler BackgroundImageChanged {
 			add { base.BackgroundImageChanged += value; }
 			remove { base.BackgroundImageChanged -= value; }
 		}

@@ -364,7 +364,7 @@ namespace System.Windows.Forms
 
 		#endregion Private Methods
 
-		public class ObjectCollection : ListBox.ObjectCollection
+		public new class ObjectCollection : ListBox.ObjectCollection
 		{		
 			private CheckedListBox owner;
 

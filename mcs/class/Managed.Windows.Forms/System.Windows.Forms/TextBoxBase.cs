@@ -1319,14 +1319,15 @@ namespace System.Windows.Forms {
 		}
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public event EventHandler	Click {
+		public new event EventHandler Click {
 			add { base.Click += value; }
 			remove { base.Click -= value; }
 		}
 
+		// XXX should this not manipulate base.Paint?
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public event PaintEventHandler	Paint;
+		public new event PaintEventHandler Paint;
 		#endregion	// Events
 
 		#region Private Methods

@@ -391,27 +391,17 @@ namespace System.Windows.Forms
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public Size AutoScrollMargin {
-			get {
-				return base.AutoScrollMargin;
-			}
-
-			set {
-				base.AutoScrollMargin = value;
-			}
+		public new Size AutoScrollMargin {
+			get { return base.AutoScrollMargin; }
+			set { base.AutoScrollMargin = value; }
 		}
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public Size AutoScrollMinSize {
-			get {
-				return base.AutoScrollMinSize;
-			}
-
-			set {
-				base.AutoScrollMinSize = value;
-			}
+		public new Size AutoScrollMinSize {
+			get { return base.AutoScrollMinSize; }
+			set { base.AutoScrollMinSize = value; }
 		}
 
 		public override Color BackColor {
@@ -460,10 +450,8 @@ namespace System.Windows.Forms
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public DockPaddingEdges DockPadding {
-			get {
-				return base.DockPadding;
-			}
+		public new DockPaddingEdges DockPadding {
+			get { return base.DockPadding; }
 		}
 
 		[Browsable(false)]

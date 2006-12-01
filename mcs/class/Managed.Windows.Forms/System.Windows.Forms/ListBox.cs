@@ -82,7 +82,6 @@ namespace System.Windows.Forms
 		private bool suspend_layout;
 		private bool ctrl_pressed = false;
 		private bool shift_pressed = false;
-		private bool has_focus = false;
 		private bool explicit_item_height = false;
 		private int top_index = 0;
 		private int last_visible_index = 0;
@@ -207,7 +206,7 @@ namespace System.Windows.Forms
 			get { return InternalBorderStyle; }
 			set { 
 				InternalBorderStyle = value; 
-				UpdateBounds ();
+				UpdateListBoxBounds ();
 			}
 		}
 
@@ -313,7 +312,7 @@ namespace System.Windows.Forms
 					return;
 
     				integral_height = value;
-				UpdateBounds ();
+				UpdateListBoxBounds ();
 			}
 		}
 
@@ -338,8 +337,8 @@ namespace System.Windows.Forms
 
 				item_height = value;
 				if (IntegralHeight)
-					UpdateBounds ();
-				Layout ();
+					UpdateListBoxBounds ();
+				LayoutListBox ();
 			}
 		}
 
@@ -361,7 +360,7 @@ namespace System.Windows.Forms
 					throw new ArgumentException ("A multicolumn ListBox cannot have a variable-sized height.");
 					
     				multicolumn = value;
-				Layout ();
+				LayoutListBox ();
 			}
 		}
 
@@ -631,7 +630,7 @@ namespace System.Windows.Forms
 		public void EndUpdate ()
 		{
 			suspend_layout = false;
-			Layout ();
+			LayoutListBox ();
 			base.Refresh ();
 		}
 
@@ -824,8 +823,8 @@ namespace System.Windows.Forms
 				SizeF sz = DeviceContext.MeasureString ("The quick brown Fox", Font);
 				item_height = (int) sz.Height;
 				if (IntegralHeight)
-					UpdateBounds ();
-				Layout ();
+					UpdateListBoxBounds ();
+				LayoutListBox ();
 			}
 		}
 
@@ -837,7 +836,7 @@ namespace System.Windows.Forms
 			Controls.AddImplicit (vscrollbar);
 			Controls.AddImplicit (hscrollbar);
 			ResumeLayout ();
-			Layout ();
+			LayoutListBox ();
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e)
@@ -864,7 +863,7 @@ namespace System.Windows.Forms
 		{
 			base.OnResize (e);
 			if (canvas_size.IsEmpty || MultiColumn)
-				Layout ();
+				LayoutListBox ();
 		}
 
 		protected override void OnSelectedIndexChanged (EventArgs e)
@@ -988,7 +987,7 @@ namespace System.Windows.Forms
 
 		private Size canvas_size;
 
-		private void Layout ()
+		private void LayoutListBox ()
 		{
 			if (!IsHandleCreated || suspend_layout)
 				return;
@@ -1360,16 +1359,12 @@ namespace System.Windows.Forms
 		
 		private void OnGotFocus (object sender, EventArgs e) 			
 		{			
-			has_focus = true;			
-			
 			if (FocusedItem != -1)
 				InvalidateItem (FocusedItem);
 		}		
 		
 		private void OnLostFocus (object sender, EventArgs e) 			
 		{			
-			has_focus = false;
-			
 			if (FocusedItem != -1)
 				InvalidateItem (FocusedItem);
 		}		
@@ -1812,12 +1807,12 @@ namespace System.Windows.Forms
 			if (!IsHandleCreated || suspend_layout)
 				return;
 
-			Layout ();
+			LayoutListBox ();
 
 			base.Refresh ();
 		}
 
-		private void UpdateBounds ()
+		private void UpdateListBoxBounds ()
 		{
 			if (requested_height == -1)
 				return;
