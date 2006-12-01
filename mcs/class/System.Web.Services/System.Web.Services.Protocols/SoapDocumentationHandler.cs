@@ -77,7 +77,7 @@ namespace System.Web.Services.Protocols
 				return;
 				
 #if NET_2_0
-			string help = WebServicesSection.Instance.WsdlHelpGenerator.Href;
+			string help = WebServicesSection.Current.WsdlHelpGenerator.Href;
 			string path = Path.GetDirectoryName (ConfigurationManager.OpenMachineConfiguration().FilePath);
 #else
 			string help = WSConfig.Instance.WsdlHelpPage;

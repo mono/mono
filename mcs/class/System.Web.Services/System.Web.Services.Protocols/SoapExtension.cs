@@ -116,7 +116,7 @@ namespace System.Web.Services.Protocols {
 			globalExtensions = new ArrayList[2];
 			
 #if NET_2_0
-			SoapExtensionTypeElementCollection exts = WebServicesSection.Instance.SoapExtensionTypes;
+			SoapExtensionTypeElementCollection exts = WebServicesSection.Current.SoapExtensionTypes;
 #else
 			ArrayList exts = WSConfig.Instance.ExtensionTypes;
 			if (exts == null) return;
