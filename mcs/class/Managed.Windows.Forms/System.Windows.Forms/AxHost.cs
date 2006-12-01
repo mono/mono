@@ -596,13 +596,6 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Protected Instance Methods
 
-		#region	Private Instance Methods
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		private bool ShouldSerializeContainingControl() {
-			throw new NotImplementedException("COM/ActiveX support is not implemented");
-		}
-		#endregion	// Protected Instance Methods
-
 		#region Events
 		// new event so we can set Browsable/EditorBrowsable
 		[Browsable(false)]

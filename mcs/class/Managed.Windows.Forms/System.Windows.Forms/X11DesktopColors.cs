@@ -42,9 +42,9 @@ namespace System.Windows.Forms {
 
 		[StructLayout(LayoutKind.Sequential)]	
 		internal struct GObjectStruct {
-			IntPtr	Instance;
-			IntPtr	ref_count;
-			IntPtr	data;
+			public IntPtr Instance;
+			public IntPtr ref_count;
+			public IntPtr data;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
@@ -275,8 +275,8 @@ namespace System.Windows.Forms {
 		[DllImport(libgtk)]
 		static extern IntPtr gtk_menu_new ();
 
-		[DllImport(libgtk)]
-		static extern IntPtr gtk_menu_item_new_with_label (string label);
+		//[DllImport(libgtk)]
+		//static extern IntPtr gtk_menu_item_new_with_label (string label);
 
 		[DllImport(libgtk)]
 		static extern void gtk_widget_ensure_style (IntPtr raw);

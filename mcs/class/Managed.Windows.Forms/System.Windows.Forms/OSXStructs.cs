@@ -502,8 +502,8 @@ namespace System.Windows.Forms {
 	
 	internal struct MouseTrackingRegionID
 	{
-		uint signature;
-		uint id;
+		public uint signature;
+		public uint id;
 		
 		public MouseTrackingRegionID (uint signature, uint id) {
 			this.signature = signature;

@@ -38,7 +38,7 @@ namespace System.Windows.Forms {
 			#region Local Variables
 			private string	type;
 			private object	data;
-			private bool	autoconvert;
+			//private bool	autoconvert;
 			internal Entry	next;
 			#endregion	// Local Variables
 
@@ -46,7 +46,7 @@ namespace System.Windows.Forms {
 			internal Entry(string type, object data, bool autoconvert) {
 				this.type = type;
 				this.data = data;
-				this.autoconvert = autoconvert;
+				//this.autoconvert = autoconvert;
 			}
 			#endregion	// Constructors
 

@@ -34,7 +34,6 @@ namespace System.Windows.Forms {
 	public class Timer : Component {
 
 		private bool enabled;
-		private IContainer container;
 		private int interval = 100;
 		private DateTime expires;
 		internal Thread thread;
@@ -140,9 +139,6 @@ namespace System.Windows.Forms {
 			base.Dispose (disposing);
 			Enabled = false;
 		}
-
-		private bool has_last_fire = false;
-		private DateTime last_fire;
 
 		internal void TickHandler (object sender, EventArgs e)
 		{

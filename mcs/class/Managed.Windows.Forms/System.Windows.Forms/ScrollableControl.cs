@@ -35,8 +35,6 @@ namespace System.Windows.Forms {
 	[Designer ("System.Windows.Forms.Design.ScrollableControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class ScrollableControl : Control {
 		#region Local Variables
-		private bool			auto_vscroll;
-		private bool			auto_hscroll;
 		private bool			hscroll_visible;
 		private bool			vscroll_visible;
 		private bool			force_hscroll_visible;
@@ -219,8 +217,6 @@ namespace System.Windows.Forms {
 			SetStyle(ControlStyles.ContainerControl, true);
 			SetStyle(ControlStyles.AllPaintingInWmPaint, false);
 			auto_scroll = false;
-			auto_hscroll = false;
-			auto_vscroll = false;
 			hscroll_visible = false;
 			vscroll_visible = false;
 			force_hscroll_visible = false;

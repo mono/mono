@@ -43,8 +43,7 @@ namespace System.Windows.Forms {
 		#region Fields
 		private Image	image;
 		private PictureBoxSizeMode size_mode;
-		private bool	redraw;
-		private bool	recalc;
+		//private bool	recalc;
 		private bool	allow_drop;
 		private Image	initial_image;
 		private int	no_update;
@@ -55,8 +54,7 @@ namespace System.Windows.Forms {
 		#region Public Constructor
 		public PictureBox ()
 		{
-			redraw = true;
-			recalc = true;
+			//recalc = true;
 			allow_drop = false;
 #if NET_2_0
 			SetStyle (ControlStyles.OptimizedDoubleBuffer, true);
@@ -258,7 +256,6 @@ namespace System.Windows.Forms {
 		protected override void OnResize (EventArgs e)
 		{
 			base.OnResize (e);
-			redraw = true;
 
 			if (size_mode == PictureBoxSizeMode.CenterImage || size_mode == PictureBoxSizeMode.StretchImage)
 				Refresh ();
@@ -311,8 +308,7 @@ namespace System.Windows.Forms {
 
 		private void Redraw (bool recalc)
 		{
-			redraw = true;
-			this.recalc = recalc;
+			//this.recalc = recalc;
 		}
 
 		private void OnAnimateImage (object sender, EventArgs e)

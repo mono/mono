@@ -208,7 +208,7 @@ namespace System.Windows.Forms {
 		private static GrabStruct	Grab;			//
 
 		// State
-		private static Point		MousePosition;		// Last position of mouse, in screen coords
+		Point		mouse_position;		// Last position of mouse, in screen coords
 		internal static MouseButtons	MouseState;		// Last state of mouse buttons
 
 		// 'Constants'
@@ -488,7 +488,7 @@ namespace System.Windows.Forms {
 				ModalWindows = new Stack(3);
 
 				MouseState = MouseButtons.None;
-				MousePosition = new Point(0, 0);
+				mouse_position = new Point(0, 0);
 
 				Caret.Timer = new Timer();
 				Caret.Timer.Interval = 500;		// FIXME - where should this number come from?
@@ -1923,6 +1923,12 @@ namespace System.Windows.Forms {
 			}
 		} 
 
+		internal override Point MousePosition {
+			get {
+				return mouse_position;
+			}
+		}
+
 		internal override Size MouseHoverSize {
 			get {
 				return new Size (1, 1);
@@ -3183,15 +3189,15 @@ namespace System.Windows.Forms {
 					}
 
 					msg.lParam=(IntPtr) (xevent.ButtonEvent.y << 16 | xevent.ButtonEvent.x);
-					MousePosition.X = xevent.ButtonEvent.x;
-					MousePosition.Y = xevent.ButtonEvent.y;
+					mouse_position.X = xevent.ButtonEvent.x;
+					mouse_position.Y = xevent.ButtonEvent.y;
 
 					if (!hwnd.Enabled) {
 						IntPtr dummy;
 
 						msg.hwnd = hwnd.EnabledHwnd;
 						XTranslateCoordinates(DisplayHandle, xevent.AnyEvent.window, Hwnd.ObjectFromHandle(msg.hwnd).ClientWindow, xevent.ButtonEvent.x, xevent.ButtonEvent.y, out xevent.ButtonEvent.x, out xevent.ButtonEvent.y, out dummy);
-						msg.lParam = (IntPtr)(MousePosition.Y << 16 | MousePosition.X);
+						msg.lParam = (IntPtr)(mouse_position.Y << 16 | mouse_position.X);
 					}
 
 					if (Grab.Hwnd != IntPtr.Zero) {
@@ -3286,7 +3292,7 @@ namespace System.Windows.Forms {
 
 						msg.hwnd = hwnd.EnabledHwnd;
 						XTranslateCoordinates(DisplayHandle, xevent.AnyEvent.window, Hwnd.ObjectFromHandle(msg.hwnd).ClientWindow, xevent.ButtonEvent.x, xevent.ButtonEvent.y, out xevent.ButtonEvent.x, out xevent.ButtonEvent.y, out dummy);
-						msg.lParam = (IntPtr)(MousePosition.Y << 16 | MousePosition.X);
+						msg.lParam = (IntPtr)(mouse_position.Y << 16 | mouse_position.X);
 					}
 
 					if (Grab.Hwnd != IntPtr.Zero) {
@@ -3294,8 +3300,8 @@ namespace System.Windows.Forms {
 					}
 
 					msg.lParam=(IntPtr) (xevent.ButtonEvent.y << 16 | xevent.ButtonEvent.x);
-					MousePosition.X = xevent.ButtonEvent.x;
-					MousePosition.Y = xevent.ButtonEvent.y;
+					mouse_position.X = xevent.ButtonEvent.x;
+					mouse_position.Y = xevent.ButtonEvent.y;
 					break;
 				}
 
@@ -3322,21 +3328,21 @@ namespace System.Windows.Forms {
 
 							msg.hwnd = hwnd.EnabledHwnd;
 							XTranslateCoordinates(DisplayHandle, xevent.AnyEvent.window, Hwnd.ObjectFromHandle(msg.hwnd).ClientWindow, xevent.MotionEvent.x, xevent.MotionEvent.y, out xevent.MotionEvent.x, out xevent.MotionEvent.y, out dummy);
-							msg.lParam = (IntPtr)(MousePosition.Y << 16 | MousePosition.X);
+							msg.lParam = (IntPtr)(mouse_position.Y << 16 | mouse_position.X);
 						}
 
-						MousePosition.X = xevent.MotionEvent.x;
-						MousePosition.Y = xevent.MotionEvent.y;
+						mouse_position.X = xevent.MotionEvent.x;
+						mouse_position.Y = xevent.MotionEvent.y;
 
 						if ((HoverState.Timer.Enabled) &&
-						    (((MousePosition.X + HoverState.Size.Width) < HoverState.X) ||
-						    ((MousePosition.X - HoverState.Size.Width) > HoverState.X) ||
-						    ((MousePosition.Y + HoverState.Size.Height) < HoverState.Y) ||
-						    ((MousePosition.Y - HoverState.Size.Height) > HoverState.Y))) {
+						    (((mouse_position.X + HoverState.Size.Width) < HoverState.X) ||
+						    ((mouse_position.X - HoverState.Size.Width) > HoverState.X) ||
+						    ((mouse_position.Y + HoverState.Size.Height) < HoverState.Y) ||
+						    ((mouse_position.Y - HoverState.Size.Height) > HoverState.Y))) {
 							HoverState.Timer.Stop();
 							HoverState.Timer.Start();
-							HoverState.X = MousePosition.X;
-							HoverState.Y = MousePosition.Y;
+							HoverState.X = mouse_position.X;
+							HoverState.Y = mouse_position.Y;
 						}
 
 						break;
@@ -3354,7 +3360,7 @@ namespace System.Windows.Forms {
 						if (!hwnd.Enabled) {
 							msg.hwnd = hwnd.EnabledHwnd;
 							XTranslateCoordinates(DisplayHandle, xevent.AnyEvent.window, Hwnd.ObjectFromHandle(msg.hwnd).ClientWindow, xevent.MotionEvent.x, xevent.MotionEvent.y, out xevent.MotionEvent.x, out xevent.MotionEvent.y, out dummy);
-							msg.lParam = (IntPtr)(MousePosition.Y << 16 | MousePosition.X);
+							msg.lParam = (IntPtr)(mouse_position.Y << 16 | mouse_position.X);
 						}
 
 						// The hit test is sent in screen coordinates
@@ -3367,8 +3373,8 @@ namespace System.Windows.Forms {
 								IntPtr.Zero, msg.lParam).ToInt32 ();
 						NativeWindow.WndProc(hwnd.client_window, Msg.WM_SETCURSOR, msg.hwnd, (IntPtr)ht);
 
-						MousePosition.X = xevent.MotionEvent.x;
-						MousePosition.Y = xevent.MotionEvent.y;
+						mouse_position.X = xevent.MotionEvent.x;
+						mouse_position.Y = xevent.MotionEvent.y;
 					}
 
 					break;
@@ -4064,8 +4070,8 @@ namespace System.Windows.Forms {
 			}
 
 			HoverState.Timer.Enabled = true;
-			HoverState.X = MousePosition.X;
-			HoverState.Y = MousePosition.Y;
+			HoverState.X = mouse_position.X;
+			HoverState.Y = mouse_position.Y;
 			HoverState.Window = handle;
 		}
 

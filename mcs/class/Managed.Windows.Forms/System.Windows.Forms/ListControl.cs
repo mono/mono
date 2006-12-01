@@ -40,7 +40,9 @@ namespace System.Windows.Forms
 		private BindingMemberInfo value_member;
 		private string display_member;
 		private CurrencyManager data_manager;
+#if NET_2_0
 		private bool formatting_enabled;
+#endif
 
 		protected ListControl ()
 		{			

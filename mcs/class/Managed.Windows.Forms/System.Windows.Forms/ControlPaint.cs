@@ -50,14 +50,6 @@ namespace System.Windows.Forms {
 		#endregion	// Private Enumerations
 
 		#region Helpers
-		private static Color Win32ToColor(int Win32Color) {
-			return(Color.FromArgb(
-				(int)(Win32Color) & 0xff0000 >> 16,		// blue
-				(int)(Win32Color) & 0xff00 >> 8,		// green
-				(int)(Win32Color) & 0xff			// red
-			));
-		}
-
 		internal static void Color2HBS(Color color, out int h, out int l, out int s) {
 			int	r;
 			int	g;

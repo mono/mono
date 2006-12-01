@@ -231,11 +231,11 @@ namespace System.Windows.Forms
 
 		internal class UpDownTextBox : TextBox {
 
-			private UpDownBase owner;
+			//private UpDownBase owner;
 
 			public UpDownTextBox (UpDownBase owner)
 			{
-				this.owner = owner;
+				//this.owner = owner;
 
 				SetStyle (ControlStyles.FixedWidth, false);
 			}
@@ -252,13 +252,16 @@ namespace System.Windows.Forms
 				else
 					document.CaretLostFocus ();
 			}
-            protected override void OnGotFocus(EventArgs e) {
-                this.parent.OnGotFocusInternal(e);
-            }
 
-            protected override void OnLostFocus(EventArgs e) {
-                this.parent.OnLostFocusInternal(e);
-            }
+			protected override void OnGotFocus(EventArgs e)
+			{
+				this.parent.OnGotFocusInternal(e);
+			}
+
+			protected override void OnLostFocus(EventArgs e)
+			{
+				this.parent.OnLostFocusInternal(e);
+			}
 		}
 
 		#region Local Variables

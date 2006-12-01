@@ -728,12 +728,6 @@ namespace System.Windows.Forms {
 			return ret;
 		}
 
-		[DllImport ("libX11", EntryPoint="XLookupKeysym")]
-		private static extern IntPtr XLookupKeysymX11(ref XEvent xevent, int index);
-		private static XKeySym XLookupKeysym(ref XEvent xevent, int index) {
-			return (XKeySym)XLookupKeysymX11(ref xevent, index).ToInt32();
-		}
-
 		[DllImport ("libX11")]
 		private static extern IntPtr XGetKeyboardMapping (IntPtr display, byte first_keycode, int keycode_count, 
 				out int keysyms_per_keycode_return);

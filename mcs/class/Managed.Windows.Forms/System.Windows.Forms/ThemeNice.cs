@@ -973,7 +973,7 @@ namespace System.Windows.Forms
 			format.Dispose ();
 		}
 		
-		void DrawToolBarButton (Graphics dc, ToolBar control, ToolBarButton button, StringFormat format)
+		protected override void DrawToolBarButton (Graphics dc, ToolBar control, ToolBarButton button, StringFormat format)
 		{
 			bool is_flat = control.Appearance == ToolBarAppearance.Flat;
 			
@@ -1036,7 +1036,7 @@ namespace System.Windows.Forms
 			Internal_DrawButton (dc, buttonRectangle, BorderColor);
 		}
 		
-		void DrawToolBarSeparator (Graphics dc, ToolBarButton button)
+		protected override void DrawToolBarSeparator (Graphics dc, ToolBarButton button)
 		{
 			Rectangle area = button.Rectangle;
 			int offset = (int) ResPool.GetPen (ColorControl).Width + 1;
@@ -1044,7 +1044,7 @@ namespace System.Windows.Forms
 			dc.DrawLine (ResPool.GetPen (ColorControlLight), area.X + offset, area.Y, area.X + offset, area.Bottom);
 		}
 		
-		void DrawToolBarDropDownArrow (Graphics dc, ToolBarButton button, bool is_flat)
+		protected override void DrawToolBarDropDownArrow (Graphics dc, ToolBarButton button, bool is_flat)
 		{
 			Rectangle rect = button.Rectangle;
 			rect.X = button.Rectangle.Right - ToolBarDropDownWidth;
@@ -1072,7 +1072,7 @@ namespace System.Windows.Forms
 			dc.FillPolygon (SystemBrushes.ControlText, vertices);
 		}
 		
-		void DrawToolBarButtonContents (Graphics dc, ToolBar control, ToolBarButton button, StringFormat format)
+		protected override void DrawToolBarButtonContents (Graphics dc, ToolBar control, ToolBarButton button, StringFormat format)
 		{
 			if (button.Image != null) {
 				int x = button.ImageRectangle.X + ToolBarImageGripWidth;

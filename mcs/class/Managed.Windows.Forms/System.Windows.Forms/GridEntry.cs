@@ -40,7 +40,6 @@ namespace System.Windows.Forms.PropertyGridInternal
 		private GridItem parent;
 		private PropertyDescriptor property_descriptor;
 		private object[] selected_objects;
-		private string label;
 		private int top;
 		private Rectangle plus_minus_bounds;
 		private Rectangle bounds;

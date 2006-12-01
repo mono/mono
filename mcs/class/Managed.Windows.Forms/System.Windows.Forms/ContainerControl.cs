@@ -35,7 +35,6 @@ using System.Drawing;
 namespace System.Windows.Forms {
 	public class ContainerControl : ScrollableControl, IContainerControl {
 		private Control		active_control;
-		private Control		focused_control;
 		private Control		unvalidated_control;
 
 		// This is an internal hack that allows some container controls
@@ -49,7 +48,6 @@ namespace System.Windows.Forms {
 		#region Public Constructors
 		public ContainerControl() {
 			active_control = null;
-			focused_control = null;
 			unvalidated_control = null;
 			ControlRemoved += new ControlEventHandler(OnControlRemoved);
 #if NET_2_0

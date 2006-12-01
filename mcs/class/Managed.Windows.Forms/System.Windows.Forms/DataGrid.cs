@@ -262,7 +262,6 @@ namespace System.Windows.Forms
 		bool from_positionchanged_handler;
 
 		/* editing state */
-		Control editingControl;
 		bool cursor_in_add_row;
 		bool add_row_changed;
 		bool is_editing;		// Current cell is edit mode
@@ -958,7 +957,6 @@ namespace System.Windows.Forms
 				ListManager.CancelCurrentEdit ();
 			}
 
-			editingControl = null;
 			is_changing = false;
 			is_editing = false;
 		}
@@ -985,7 +983,6 @@ namespace System.Windows.Forms
 		protected internal virtual void ColumnStartedEditing (Control editingControl)
 		{
 			ColumnStartedEditing (editingControl.Bounds);
-			this.editingControl = editingControl;
 		}
 
 		protected internal virtual void ColumnStartedEditing (Rectangle bounds)
@@ -1031,7 +1028,6 @@ namespace System.Windows.Forms
 				gridColumn.ConcedeFocus ();
 			}
 
-			editingControl = null;
 			if (is_editing || is_changing) {
 				is_editing = false;
 				is_changing = false;

@@ -51,8 +51,7 @@ namespace System.Windows.Forms {
 		private const uint DV_E_FORMATETC		= unchecked((uint)0x80040064);
 
 		// To call function pointers
-		private static MethodInfo			GetDataMethod;
-		private static object[]				GetDataArgs;
+		//private static object[]				GetDataArgs;
 
 		// IDataObject Delegates
 		private static QueryInterfaceDelegate		DOQueryInterface;
@@ -383,14 +382,14 @@ namespace System.Windows.Forms {
 
 			private static bool		Initialized;
 			private static MethodInfo	GetDataMethod;
-			private static MethodInfo	GetDataHereMethod;
+			//private static MethodInfo	GetDataHereMethod;
 			private static MethodInfo	QueryGetDataMethod;
-			private static MethodInfo	GetCanonicalFormatEtcMethod;
-			private static MethodInfo	SetDataMethod;
-			private static MethodInfo	EnumFormatEtcMethod;
-			private static MethodInfo	DAdviseMethod;
-			private static MethodInfo	DUnadviseMethod;
-			private static MethodInfo	EnumDAdviseMethod;
+			//private static MethodInfo	GetCanonicalFormatEtcMethod;
+			//private static MethodInfo	SetDataMethod;
+			//private static MethodInfo	EnumFormatEtcMethod;
+			//private static MethodInfo	DAdviseMethod;
+			//private static MethodInfo	DUnadviseMethod;
+			//private static MethodInfo	EnumDAdviseMethod;
 			private static object[]		MethodArguments;
 
 			private IDataObjectUnmanaged	vtbl;
@@ -426,14 +425,14 @@ namespace System.Windows.Forms {
 
 				MethodArguments = new object[6];
 				GetDataMethod = CreateFuncPtrInterface(assembly_builder, "GetData", typeof(uint), 3);
-				GetDataHereMethod = CreateFuncPtrInterface(assembly_builder, "GetDataHere", typeof(uint), 3);
+				//GetDataHereMethod = CreateFuncPtrInterface(assembly_builder, "GetDataHere", typeof(uint), 3);
 				QueryGetDataMethod = CreateFuncPtrInterface(assembly_builder, "QueryGetData", typeof(uint), 2);
-				GetCanonicalFormatEtcMethod = CreateFuncPtrInterface(assembly_builder, "GetCanonicalFormatEtc", typeof(uint), 3);
-				SetDataMethod = CreateFuncPtrInterface(assembly_builder, "SetData", typeof(uint), 4);
-				EnumFormatEtcMethod = CreateFuncPtrInterface(assembly_builder, "EnumFormatEtc", typeof(uint), 3);
-				DAdviseMethod = CreateFuncPtrInterface(assembly_builder, "DAdvise", typeof(uint), 5);
-				DUnadviseMethod = CreateFuncPtrInterface(assembly_builder, "DUnadvise", typeof(uint), 2);
-				EnumDAdviseMethod = CreateFuncPtrInterface(assembly_builder, "EnumDAdvise", typeof(uint), 2);
+				//GetCanonicalFormatEtcMethod = CreateFuncPtrInterface(assembly_builder, "GetCanonicalFormatEtc", typeof(uint), 3);
+				//SetDataMethod = CreateFuncPtrInterface(assembly_builder, "SetData", typeof(uint), 4);
+				//EnumFormatEtcMethod = CreateFuncPtrInterface(assembly_builder, "EnumFormatEtc", typeof(uint), 3);
+				//DAdviseMethod = CreateFuncPtrInterface(assembly_builder, "DAdvise", typeof(uint), 5);
+				//DUnadviseMethod = CreateFuncPtrInterface(assembly_builder, "DUnadvise", typeof(uint), 2);
+				//EnumDAdviseMethod = CreateFuncPtrInterface(assembly_builder, "EnumDAdvise", typeof(uint), 2);
 
 				Initialized = true;
 			}
@@ -1079,8 +1078,8 @@ namespace System.Windows.Forms {
 		[DllImport ("ole32.dll", EntryPoint="DoDragDrop", CallingConvention=CallingConvention.StdCall)]
 		private extern static uint Win32DoDragDrop(IntPtr pDataObject, IntPtr pDropSource, IntPtr dwOKEffect, ref IntPtr pdwEffect);
 
-		[DllImport ("shell32.dll", EntryPoint="DragAcceptFiles", CallingConvention=CallingConvention.StdCall)]
-		private extern static int Win32DragAcceptFiles(IntPtr Window, bool fAccept);
+		//[DllImport ("shell32.dll", EntryPoint="DragAcceptFiles", CallingConvention=CallingConvention.StdCall)]
+		//private extern static int Win32DragAcceptFiles(IntPtr Window, bool fAccept);
 
 		[DllImport ("ole32.dll", EntryPoint="OleInitialize", CallingConvention=CallingConvention.StdCall)]
 		private extern static int Win32OleInitialize(IntPtr pvReserved);

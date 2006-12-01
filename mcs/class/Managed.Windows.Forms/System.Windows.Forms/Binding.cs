@@ -43,10 +43,6 @@ namespace System.Windows.Forms {
 		private PropertyDescriptor control_property;
 		private PropertyDescriptor is_null_desc;
 
-		private EventDescriptor changed_event;
-		private EventHandler property_value_changed_handler;
-		private object event_current; // The manager.Current as far as the changed_event knows
-
 		private object data;
 		private Type data_type;
 

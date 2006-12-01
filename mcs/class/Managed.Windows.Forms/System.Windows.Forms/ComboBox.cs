@@ -70,12 +70,10 @@ namespace System.Windows.Forms
 
 		[ComVisible(true)]
 		public class ChildAccessibleObject : AccessibleObject {
-			private ComboBox	owner;
-			private IntPtr		handle;
 
-			public ChildAccessibleObject (ComboBox owner, IntPtr handle) {
-				this.owner = owner;
-				this.handle = handle;
+			public ChildAccessibleObject (ComboBox owner, IntPtr handle)
+				: base (owner)
+			{
 			}
 
 			public override string Name {

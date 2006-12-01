@@ -105,12 +105,13 @@ namespace System.Windows.Forms
 		[ComVisible(true)]
 		public class DomainUpDownAccessibleObject : ControlAccessibleObject {
 			#region DomainUpDownAccessibleObject Local Variables
-			private Control	owner;
+			//private Control	owner;
 			#endregion	// DomainUpDownAccessibleObject Local Variables
 
 			#region DomainUpDownAccessibleObject Constructors
-			public DomainUpDownAccessibleObject(Control owner) : base(owner) {
-				this.owner = owner;
+			public DomainUpDownAccessibleObject(Control owner) : base(owner)
+			{
+				//this.owner = owner;
 			}
 			#endregion	// DomainUpDownAccessibleObject Constructors
 

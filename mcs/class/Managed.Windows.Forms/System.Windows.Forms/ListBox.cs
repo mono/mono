@@ -71,7 +71,6 @@ namespace System.Windows.Forms
 		private SelectedIndexCollection selected_indices;		
 		private SelectedObjectCollection selected_items;
 		private ArrayList selection = new ArrayList ();
-		private ArrayList display_selection = new ArrayList ();
 		private SelectionMode selection_mode = SelectionMode.One;
 		private bool sorted = false;
 		private bool use_tabstops = true;
@@ -1914,13 +1913,6 @@ namespace System.Windows.Forms
 		{
 			internal class ListObjectComparer : IComparer
 			{
-				private ListBox owner;
-			
-				public ListObjectComparer (ListBox owner)
-				{
-					this.owner = owner;
-				}
-				
 				public int Compare (object a, object b)
 				{
 					string str1 = a.ToString ();
@@ -2102,7 +2094,7 @@ namespace System.Windows.Forms
 
 			internal void Sort ()
 			{
-				object_items.Sort (new ListObjectComparer (owner));
+				object_items.Sort (new ListObjectComparer ());
 			}
 
 			#endregion Private Methods

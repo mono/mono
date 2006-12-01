@@ -73,7 +73,7 @@ namespace System.Windows.Forms {
 		static readonly Color scrollbar_gradient_first_color = Color.FromArgb( 248, 247, 245 );
 		static readonly Color scrollbar_gradient_second_color = Color.FromArgb( 234, 229, 224 );
 		
-		static readonly Color arrow_color = Color.FromArgb( 16, 16, 16 );
+		new static readonly Color arrow_color = Color.FromArgb( 16, 16, 16 );
 		
 		static readonly Color tab_border_color = Color.FromArgb( 166, 151, 138 );
 		static readonly Color tab_not_selected_gradient_first_color = Color.FromArgb( 227, 223, 220 );
@@ -95,7 +95,7 @@ namespace System.Windows.Forms {
 		
 		static readonly Color combobox_border_color = Color.FromArgb( 159, 146, 132 );
 		static readonly Color combobox_focus_border_color = Color.FromArgb( 70, 91, 110 );
-		static readonly Color combobox_focus_inner_border_color = Color.FromArgb( 167, 198, 225 );
+		//static readonly Color combobox_focus_inner_border_color = Color.FromArgb( 167, 198, 225 );
 		static readonly Color combobox_button_second_gradient_color = Color.FromArgb( 226, 220, 213 );
 		
 		static readonly Color progressbar_edge_dot_color = Color.FromArgb( 219, 212, 205 );
@@ -113,7 +113,7 @@ namespace System.Windows.Forms {
 		static readonly Color trackbar_inner_second_gradient_color = Color.FromArgb( 223, 215, 208 );
 		static readonly Color trackbar_inner_pressed_second_gradient_color = Color.FromArgb( 224, 217, 210 );
 		
-		static readonly Color disabled_color_foreground = Color.FromArgb( 182, 180, 173 );
+		//static readonly Color disabled_color_foreground = Color.FromArgb( 182, 180, 173 );
 		
 		static readonly Color active_caption = Color.FromArgb( 85, 152, 215 );
 		

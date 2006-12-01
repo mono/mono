@@ -49,7 +49,6 @@ namespace System.Windows.Forms
 		private int small_change;
 		internal int scrollbutton_height;
 		internal int scrollbutton_width;
-		private ScrollBars type;
 		private Rectangle first_arrow_area = new Rectangle ();		// up or left
 		private Rectangle second_arrow_area = new Rectangle ();		// down or right
 		private Rectangle thumb_pos = new Rectangle ();
@@ -68,7 +67,6 @@ namespace System.Windows.Forms
 		internal bool vert;
 		internal bool implicit_control;
 		private int lastclick_pos;		// Position of the last button-down event
-		private int lastclick_pos_thumb;	// Position of the last button-down event relative to the thumb
 		private int thumbclick_offset;		// Position of the last button-down event relative to the thumb edge
 		private Rectangle dirty;
 
@@ -955,7 +953,6 @@ namespace System.Windows.Forms
 				if (thumb_size > 0 && thumb_area.Contains (e.X, e.Y)) {
 
 					if (vert) {
-						lastclick_pos_thumb = e.Y - thumb_pos.Y;
 						lastclick_pos = e.Y;
 
 						if (e.Y > thumb_pos.Y + thumb_pos.Height) {
@@ -976,7 +973,6 @@ namespace System.Windows.Forms
 						}
 					} else {
 
-						lastclick_pos_thumb = e.X - thumb_pos.X;
 						lastclick_pos = e.X;
 
 						if (e.X > thumb_pos.X + thumb_pos.Width) {

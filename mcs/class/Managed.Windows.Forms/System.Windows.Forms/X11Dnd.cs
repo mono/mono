@@ -299,12 +299,12 @@ namespace System.Windows.Forms {
 		private IntPtr XdndActionCopy;
 		private IntPtr XdndActionMove;
 		private IntPtr XdndActionLink;
-		private IntPtr XdndActionPrivate;
-		private IntPtr XdndActionList;
-		private IntPtr XdndActionDescription;
-		private IntPtr XdndActionAsk;
+		//private IntPtr XdndActionPrivate;
+		//private IntPtr XdndActionList;
+		//private IntPtr XdndActionDescription;
+		//private IntPtr XdndActionAsk;
 
-		private State state;
+		//private State state;
 
 		private int converts_pending;
 		private bool position_recieved;
@@ -314,7 +314,6 @@ namespace System.Windows.Forms {
 		private IntPtr toplevel;
 		private DataObject data;
 
-		private IntPtr drag_action;
 		private Control control;
 		private int pos_x, pos_y;
 		private DragDropEffects allowed;
@@ -324,7 +323,8 @@ namespace System.Windows.Forms {
 		private Cursor CursorCopy;
 		private Cursor CursorMove;
 		private Cursor CursorLink;
-		private IntPtr CurrentCursorHandle;
+		// check out the TODO below
+		//private IntPtr CurrentCursorHandle;
 		
 		public X11Dnd (IntPtr display)
 		{
@@ -393,7 +393,7 @@ namespace System.Windows.Forms {
 				return;
 
 			if (drag_data.State == DragState.Beginning) {
-				state = State.Accepting;
+				//state = State.Accepting;
 			} else if (drag_data.State != DragState.None) {
 
 				if (drag_data.WillAccept) {
@@ -507,23 +507,6 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		// DEBUG CODE REMOVE
-		private string GetText (IntPtr handle) {
-			string text = String.Empty;
-			IntPtr	textptr;
-
-			textptr = IntPtr.Zero;
-
-			XplatUIX11.XFetchName (display, handle, ref textptr);
-			if (textptr != IntPtr.Zero) {
-				text = Marshal.PtrToStringAnsi(textptr);
-				XplatUIX11.XFree (textptr);
-			}
-
-			return text;
-		}
-
-			
 		// return true if the event is handled here
 		public bool HandleClientMessage (ref XEvent xevent)
 		{
@@ -765,7 +748,7 @@ namespace System.Windows.Forms {
 							EventMask.ButtonPressMask |
 							EventMask.ButtonReleaseMask,
 							cursor.Handle, IntPtr.Zero);
-					CurrentCursorHandle = cursor.Handle;
+					//CurrentCursorHandle = cursor.Handle;
 					//}	
 			}
 			return true;
@@ -984,10 +967,10 @@ namespace System.Windows.Forms {
 			XdndActionCopy = XplatUIX11.XInternAtom (display, "XdndActionCopy", false);
 			XdndActionMove = XplatUIX11.XInternAtom (display, "XdndActionMove", false);
 			XdndActionLink = XplatUIX11.XInternAtom (display, "XdndActionLink", false);
-			XdndActionPrivate = XplatUIX11.XInternAtom (display, "XdndActionPrivate", false);
-			XdndActionList = XplatUIX11.XInternAtom (display, "XdndActionList", false);
-			XdndActionDescription = XplatUIX11.XInternAtom (display, "XdndActionDescription", false);
-			XdndActionAsk = XplatUIX11.XInternAtom (display, "XdndActionAsk", false);
+			//XdndActionPrivate = XplatUIX11.XInternAtom (display, "XdndActionPrivate", false);
+			//XdndActionList = XplatUIX11.XInternAtom (display, "XdndActionList", false);
+			//XdndActionDescription = XplatUIX11.XInternAtom (display, "XdndActionDescription", false);
+			//XdndActionAsk = XplatUIX11.XInternAtom (display, "XdndActionAsk", false);
 
 			foreach (MimeHandler handler in MimeHandlers) {
 				handler.Type = XplatUIX11.XInternAtom (display, handler.Name, false);

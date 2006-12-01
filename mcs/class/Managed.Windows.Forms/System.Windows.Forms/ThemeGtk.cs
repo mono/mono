@@ -98,9 +98,9 @@ namespace System.Windows.Forms
 
 		[StructLayout(LayoutKind.Sequential)]	
 		internal struct GObjectStruct {
-			IntPtr	Instance;
-			IntPtr	ref_count;
-			IntPtr	data;
+			public IntPtr Instance;
+			public IntPtr ref_count;
+			public IntPtr data;
 		}
 
 
@@ -150,34 +150,34 @@ namespace System.Windows.Forms
 		[DllImport("libgdk-x11-2.0.so")]
 		static extern bool gdk_init_check(IntPtr argc, IntPtr argv);	
 		
-		[DllImport("libgdk-x11-2.0.so")]
-		static extern IntPtr gdk_pixmap_new (IntPtr drawable, int width, int height, int depth);
+		//[DllImport("libgdk-x11-2.0.so")]
+		//static extern IntPtr gdk_pixmap_new (IntPtr drawable, int width, int height, int depth);
 		
-		[DllImport("libgdk-x11-2.0.so")]
-		static extern IntPtr gdk_pixbuf_get_from_drawable (IntPtr dest, IntPtr drawable_src, IntPtr cmap,
-								   int src_x, int src_y, int dest_x, int dest_y, int width, int height);
+		//[DllImport("libgdk-x11-2.0.so")]
+		//static extern IntPtr gdk_pixbuf_get_from_drawable (IntPtr dest, IntPtr drawable_src, IntPtr cmap,
+		//						   int src_x, int src_y, int dest_x, int dest_y, int width, int height);
 		
-		[DllImport("libgdk-x11-2.0.so")]
-		static extern bool gdk_pixbuf_save_to_buffer (IntPtr pixbuf, out IntPtr buffer, out UIntPtr buffer_size, string type, out IntPtr error, IntPtr option_dummy);
+		//[DllImport("libgdk-x11-2.0.so")]
+		//static extern bool gdk_pixbuf_save_to_buffer (IntPtr pixbuf, out IntPtr buffer, out UIntPtr buffer_size, string type, out IntPtr error, IntPtr option_dummy);
 		
-		[DllImport("libgdk-x11-2.0.so")]
-		static extern IntPtr gdk_drawable_get_colormap (IntPtr drawable);
+		//[DllImport("libgdk-x11-2.0.so")]
+		//static extern IntPtr gdk_drawable_get_colormap (IntPtr drawable);
 		
-		[DllImport("libgdk-x11-2.0.so")]
-		static extern IntPtr gdk_colormap_get_system ();
+		//[DllImport("libgdk-x11-2.0.so")]
+		//static extern IntPtr gdk_colormap_get_system ();
 		
-		[DllImport("libgdk-x11-2.0.so")]
-		static extern IntPtr gdk_pixbuf_new (int colorspace, bool has_alpha, int bits_per_sample, int width, int height);
+		//[DllImport("libgdk-x11-2.0.so")]
+		//static extern IntPtr gdk_pixbuf_new (int colorspace, bool has_alpha, int bits_per_sample, int width, int height);
 		
-		[DllImport("libgdk-x11-2.0.so")]
-		static extern IntPtr gdk_gc_new (IntPtr drawable);
+		//[DllImport("libgdk-x11-2.0.so")]
+		//static extern IntPtr gdk_gc_new (IntPtr drawable);
 		
 		/* glib imports*/
-		[DllImport("libglib-2.0.so")]
-		static extern void g_free (IntPtr mem);
+		//[DllImport("libglib-2.0.so")]
+		//static extern void g_free (IntPtr mem);
 		
-		[DllImport("libgobject-2.0.so")]
-		static extern void g_object_unref (IntPtr nativeObject);
+		//[DllImport("libgobject-2.0.so")]
+		//static extern void g_object_unref (IntPtr nativeObject);
 
 		/* GTK imports */		
 		[DllImport("libgtk-x11-2.0.so")]
@@ -198,8 +198,8 @@ namespace System.Windows.Forms
 		[DllImport("libgtk-x11-2.0.so")]
 		static extern IntPtr gtk_style_attach (IntPtr raw, IntPtr window);
 
-		[DllImport("libgtk-x11-2.0.so")]
-		static extern IntPtr gtk_rc_style_new ();
+		//[DllImport("libgtk-x11-2.0.so")]
+		//static extern IntPtr gtk_rc_style_new ();
 
 		[DllImport("libgtk-x11-2.0.so")]
 		static extern IntPtr gtk_invisible_new ();
@@ -210,8 +210,8 @@ namespace System.Windows.Forms
 		[DllImport("libgtk-x11-2.0.so")]
 		static extern IntPtr gtk_widget_get_style (IntPtr raw);
 
-		[DllImport("libgtk-x11-2.0.so")]
-		static extern void gtk_style_detach (IntPtr raw);
+		//[DllImport("libgtk-x11-2.0.so")]
+		//static extern void gtk_style_detach (IntPtr raw);
 		
 		[DllImport("libgtk-x11-2.0.so")]
 		static extern IntPtr gtk_button_new ();
@@ -238,8 +238,8 @@ namespace System.Windows.Forms
 		static extern void gtk_range_set_value (IntPtr range, double value);
 
 		/* GTK Drawing */
-		[DllImport("libgtk-x11-2.0.so")]
-		static extern void gtk_paint_handle (IntPtr style, IntPtr window, int state_type, int shadow_type, IntPtr area, IntPtr widget, string detail, int x, int y, int width, int height, int orientation);
+		//[DllImport("libgtk-x11-2.0.so")]
+		//static extern void gtk_paint_handle (IntPtr style, IntPtr window, int state_type, int shadow_type, IntPtr area, IntPtr widget, string detail, int x, int y, int width, int height, int orientation);
 
 		[DllImport("libgtk-x11-2.0.so")]
 		static extern void gtk_paint_arrow (IntPtr style, IntPtr window, int state_type, int shadow_type, 
@@ -257,11 +257,11 @@ namespace System.Windows.Forms
 		static extern void gtk_paint_flat_box (IntPtr style, IntPtr window, int state_type, int shadow_type,
 						       IntPtr area, IntPtr widget, string detail, int x, int y, int width, int height);
 		
-		[DllImport("libgtk-x11-2.0.so")]
-		static extern void gtk_paint_hline(IntPtr style, IntPtr window, int state_type, IntPtr area, IntPtr widget, string detail, int x1, int x2, int y);
+		//[DllImport("libgtk-x11-2.0.so")]
+		//static extern void gtk_paint_hline(IntPtr style, IntPtr window, int state_type, IntPtr area, IntPtr widget, string detail, int x1, int x2, int y);
 		
-		[DllImport("libgtk-x11-2.0.so")]
-		static extern void gtk_paint_vline(IntPtr style, IntPtr window, int state_type, IntPtr area, IntPtr widget, string detail, int y1, int y2, int x);
+		//[DllImport("libgtk-x11-2.0.so")]
+		//static extern void gtk_paint_vline(IntPtr style, IntPtr window, int state_type, IntPtr area, IntPtr widget, string detail, int y1, int y2, int x);
 		
 		[DllImport("libgtk-x11-2.0.so")]
 		static extern void gtk_paint_check(IntPtr style, IntPtr window, int state_type, int shadow_type, IntPtr area, IntPtr widget, string detail, int x, int y, int width, int height);

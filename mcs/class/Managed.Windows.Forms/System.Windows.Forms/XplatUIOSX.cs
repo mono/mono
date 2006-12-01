@@ -56,7 +56,7 @@ namespace System.Windows.Forms {
 
 		// Mouse 
 		private static MouseButtons MouseState;
-		private static Point MousePosition;
+		Point mouse_position;
 		private static Hwnd MouseWindow;
 		
 		// OSX Specific
@@ -159,7 +159,7 @@ namespace System.Windows.Forms {
 			Hover.X = -1;
 			Hover.Y = -1;
 			MouseState = MouseButtons.None;
-			MousePosition = Point.Empty;
+			mouse_position = Point.Empty;
 				
 			// Initialize the Caret
 			Caret.Timer = new Timer ();
@@ -211,7 +211,7 @@ namespace System.Windows.Forms {
 		}
 		
 		private void HoverCallback (object sender, EventArgs e) {
-			if ((Hover.X == MousePosition.X) && (Hover.Y == MousePosition.Y)) {
+			if ((Hover.X == mouse_position.X) && (Hover.Y == mouse_position.Y)) {
 				MSG msg = new MSG ();
 				msg.hwnd = Hover.Hwnd;
 				msg.message = Msg.WM_MOUSEHOVER;
@@ -406,8 +406,8 @@ namespace System.Windows.Forms {
 					msg.message = Msg.WM_MOUSEMOVE;
 					msg.lParam = (IntPtr) ((ushort)window_pt.y << 16 | (ushort)window_pt.x);
 					msg.wParam = GetMousewParam (0);
-					MousePosition.X = (int)window_pt.x;
-					MousePosition.Y = (int)window_pt.y;
+					mouse_position.X = (int)window_pt.x;
+					mouse_position.Y = (int)window_pt.y;
 					
 					Hover.Hwnd = msg.hwnd;
 					Hover.Timer.Enabled = true;
@@ -539,8 +539,8 @@ namespace System.Windows.Forms {
 					msg.wParam = (IntPtr)wparam;
 						
 					msg.lParam = (IntPtr) ((ushort)point.y << 16 | (ushort)point.x);
-					MousePosition.X = (int)point.x;
-					MousePosition.Y = (int)point.y;
+					mouse_position.X = (int)point.x;
+					mouse_position.Y = (int)point.y;
 					//NativeWindow.WndProc (msg.hwnd, msg.message, msg.lParam, msg.wParam);
 					MessageQueue.Enqueue (msg);
 					
@@ -565,8 +565,8 @@ namespace System.Windows.Forms {
 					ushort button = 0;
 					GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamMouseButton, OSXConstants.EventParamType.typeMouseButton, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (ushort)), IntPtr.Zero, ref button);
 					if (button == 2) {
-						point.x = (short)MousePosition.X;
-						point.y = (short)MousePosition.Y;
+						point.x = (short)mouse_position.X;
+						point.y = (short)mouse_position.Y;
 					}
 					
 					msg.hwnd = hwnd.Handle;
@@ -594,8 +594,8 @@ namespace System.Windows.Forms {
 					msg.wParam = (IntPtr)wparam;
 						
 					msg.lParam = (IntPtr) ((ushort)point.y << 16 | (ushort)point.x);
-					MousePosition.X = (int)point.x;
-					MousePosition.Y = (int)point.y;
+					mouse_position.X = (int)point.x;
+					mouse_position.Y = (int)point.y;
 					NativeWindow.WndProc (msg.hwnd, msg.message, msg.wParam, msg.lParam);
 					
 					TrackControl (handle, trackpoint, IntPtr.Zero);
@@ -1836,6 +1836,12 @@ namespace System.Windows.Forms {
 		internal override SizeF GetAutoScaleSize(Font font) {
 			throw new NotImplementedException();
 		}
+
+		internal override Point MousePosition {
+			get {
+				return mouse_position;
+			}
+		}
 		#endregion
 		
 		#region System information
@@ -1931,8 +1937,8 @@ namespace System.Windows.Forms {
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern void SetRect (ref IntPtr r, short left, short top, short right, short bottom);
 
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int CreateEvent (IntPtr allocator, uint classid, uint kind, double when, uint attributes, ref IntPtr outEvent);
+		//[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		//static extern int CreateEvent (IntPtr allocator, uint classid, uint kind, double when, uint attributes, ref IntPtr outEvent);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
                 static extern int InstallEventHandler (IntPtr window, CarbonEventDelegate handlerProc, uint numtypes, EventTypeSpec [] typeList, IntPtr userData, IntPtr handlerRef);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
@@ -1974,8 +1980,8 @@ namespace System.Windows.Forms {
 		static extern int GetEventParameter (IntPtr evt, OSXConstants.EventParamName inName, OSXConstants.EventParamType inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref QDPoint outData);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int SetEventParameter (IntPtr evt, OSXConstants.EventParamName inName, OSXConstants.EventParamType inType, uint bufSize, ref short outData);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int SetEventParameter (IntPtr evt, OSXConstants.EventParamName inName, OSXConstants.EventParamType inType, uint bufSize, ref IntPtr outData);
+		//[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		//static extern int SetEventParameter (IntPtr evt, OSXConstants.EventParamName inName, OSXConstants.EventParamType inType, uint bufSize, ref IntPtr outData);
 
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern void CGContextFlush (IntPtr cgc);
@@ -2017,10 +2023,10 @@ namespace System.Windows.Forms {
 		static extern int SetPortWindowPort (IntPtr hWnd);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int GetGlobalMouse (ref QDPoint outData);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int GlobalToLocal (ref QDPoint outData);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int LocalToGlobal (ref QDPoint outData);
+		//[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		//static extern int GlobalToLocal (ref QDPoint outData);
+		//[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		//static extern int LocalToGlobal (ref QDPoint outData);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int TrackControl (IntPtr handle, QDPoint point, IntPtr data);
 		
@@ -2061,14 +2067,14 @@ namespace System.Windows.Forms {
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern void CGContextScaleCTM (IntPtr ctx, double tx, double ty);
 
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int SetWindowContentColor (IntPtr hWnd, ref RGBColor backColor);
+		//[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		//static extern int SetWindowContentColor (IntPtr hWnd, ref RGBColor backColor);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int TrackMouseLocationWithOptions (IntPtr port, int options, double eventtimeout, ref QDPoint point, ref IntPtr modifier, ref MouseTrackingResult status);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int CreateMouseTrackingRegion (IntPtr windowref, IntPtr rgn, IntPtr clip, int options, MouseTrackingRegionID rid, IntPtr refcon, IntPtr evttargetref, ref IntPtr mousetrackref);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int ReleaseMouseTrackingRegion (IntPtr region_handle);
+		//[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		//static extern int CreateMouseTrackingRegion (IntPtr windowref, IntPtr rgn, IntPtr clip, int options, MouseTrackingRegionID rid, IntPtr refcon, IntPtr evttargetref, ref IntPtr mousetrackref);
+		//[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		//static extern int ReleaseMouseTrackingRegion (IntPtr region_handle);
 		
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int CFRelease (IntPtr wHnd);

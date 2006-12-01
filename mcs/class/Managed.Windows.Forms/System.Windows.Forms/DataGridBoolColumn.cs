@@ -51,7 +51,6 @@ namespace System.Windows.Forms
 		private object truevalue;
 		private Hashtable checkboxes_state;
 		CheckState oldState;
-		int row;
 
 		#endregion	// Local Variables
 
@@ -162,7 +161,6 @@ namespace System.Windows.Forms
 
 		protected internal override void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string instantText,  bool cellIsVisible)
 		{
-			row = rowNum;
 			oldState = GetState (source, rowNum);
 			SetState (rowNum, oldState | CheckState.Selected);
 			grid.Invalidate (grid.GetCurrentCellBounds ());
@@ -348,7 +346,6 @@ namespace System.Windows.Forms
 
 		internal override void OnMouseDown (MouseEventArgs e, int row, int column)
 		{
-			this.row = row;
 			NextState (row, column);
 		}
 
