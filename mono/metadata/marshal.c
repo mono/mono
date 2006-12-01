@@ -1014,6 +1014,7 @@ mono_mb_create_method (MonoMethodBuilder *mb, MonoMethodSignature *signature, in
 
 	mp = mb->method->klass->image->mempool;
 
+	mono_loader_lock ();
 	if (mb->dynamic) {
 		method = mb->method;
 
@@ -1086,6 +1087,7 @@ mono_mb_create_method (MonoMethodBuilder *mb, MonoMethodSignature *signature, in
 	printf ("%s\n", mono_disasm_code (&marshal_dh, method, mb->code, mb->code + mb->pos));
 #endif
 
+	mono_loader_unlock ();
 	return method;
 }
 
