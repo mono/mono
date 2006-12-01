@@ -133,44 +133,44 @@ namespace System.Windows.Forms {
 		private static IntPtr WM_PROTOCOLS;
 		private static IntPtr WM_DELETE_WINDOW;
 		private static IntPtr WM_TAKE_FOCUS;
-		private static IntPtr _NET_SUPPORTED;
-		private static IntPtr _NET_CLIENT_LIST;
-		private static IntPtr _NET_NUMBER_OF_DESKTOPS;
-		private static IntPtr _NET_DESKTOP_GEOMETRY;
-		private static IntPtr _NET_DESKTOP_VIEWPORT;
+		//private static IntPtr _NET_SUPPORTED;
+		//private static IntPtr _NET_CLIENT_LIST;
+		//private static IntPtr _NET_NUMBER_OF_DESKTOPS;
+		//private static IntPtr _NET_DESKTOP_GEOMETRY;
+		//private static IntPtr _NET_DESKTOP_VIEWPORT;
 		private static IntPtr _NET_CURRENT_DESKTOP;
-		private static IntPtr _NET_DESKTOP_NAMES;
+		//private static IntPtr _NET_DESKTOP_NAMES;
 		private static IntPtr _NET_ACTIVE_WINDOW;
 		private static IntPtr _NET_WORKAREA;
-		private static IntPtr _NET_SUPPORTING_WM_CHECK;
-		private static IntPtr _NET_VIRTUAL_ROOTS;
-		private static IntPtr _NET_DESKTOP_LAYOUT;
-		private static IntPtr _NET_SHOWING_DESKTOP;
-		private static IntPtr _NET_CLOSE_WINDOW;
-		private static IntPtr _NET_MOVERESIZE_WINDOW;
-		private static IntPtr _NET_WM_MOVERESIZE;
-		private static IntPtr _NET_RESTACK_WINDOW;
-		private static IntPtr _NET_REQUEST_FRAME_EXTENTS;
+		//private static IntPtr _NET_SUPPORTING_WM_CHECK;
+		//private static IntPtr _NET_VIRTUAL_ROOTS;
+		//private static IntPtr _NET_DESKTOP_LAYOUT;
+		//private static IntPtr _NET_SHOWING_DESKTOP;
+		//private static IntPtr _NET_CLOSE_WINDOW;
+		//private static IntPtr _NET_MOVERESIZE_WINDOW;
+		//private static IntPtr _NET_WM_MOVERESIZE;
+		//private static IntPtr _NET_RESTACK_WINDOW;
+		//private static IntPtr _NET_REQUEST_FRAME_EXTENTS;
 		private static IntPtr _NET_WM_NAME;
-		private static IntPtr _NET_WM_VISIBLE_NAME;
-		private static IntPtr _NET_WM_ICON_NAME;
-		private static IntPtr _NET_WM_VISIBLE_ICON_NAME;
-		private static IntPtr _NET_WM_DESKTOP;
+		//private static IntPtr _NET_WM_VISIBLE_NAME;
+		//private static IntPtr _NET_WM_ICON_NAME;
+		//private static IntPtr _NET_WM_VISIBLE_ICON_NAME;
+		//private static IntPtr _NET_WM_DESKTOP;
 		private static IntPtr _NET_WM_WINDOW_TYPE;
 		private static IntPtr _NET_WM_STATE;
-		private static IntPtr _NET_WM_ALLOWED_ACTIONS;
-		private static IntPtr _NET_WM_STRUT;
-		private static IntPtr _NET_WM_STRUT_PARTIAL;
-		private static IntPtr _NET_WM_ICON_GEOMETRY;
+		//private static IntPtr _NET_WM_ALLOWED_ACTIONS;
+		//private static IntPtr _NET_WM_STRUT;
+		//private static IntPtr _NET_WM_STRUT_PARTIAL;
+		//private static IntPtr _NET_WM_ICON_GEOMETRY;
 		private static IntPtr _NET_WM_ICON;
-		private static IntPtr _NET_WM_PID;
-		private static IntPtr _NET_WM_HANDLED_ICONS;
+		//private static IntPtr _NET_WM_PID;
+		//private static IntPtr _NET_WM_HANDLED_ICONS;
 		private static IntPtr _NET_WM_USER_TIME;
 		private static IntPtr _NET_FRAME_EXTENTS;
-		private static IntPtr _NET_WM_PING;
-		private static IntPtr _NET_WM_SYNC_REQUEST;
+		//private static IntPtr _NET_WM_PING;
+		//private static IntPtr _NET_WM_SYNC_REQUEST;
 		private static IntPtr _NET_SYSTEM_TRAY_S;
-		private static IntPtr _NET_SYSTEM_TRAY_ORIENTATION;
+		//private static IntPtr _NET_SYSTEM_TRAY_ORIENTATION;
 		private static IntPtr _NET_SYSTEM_TRAY_OPCODE;
 		private static IntPtr _NET_WM_STATE_MAXIMIZED_HORZ;
 		private static IntPtr _NET_WM_STATE_MAXIMIZED_VERT;
@@ -178,22 +178,22 @@ namespace System.Windows.Forms {
 		private static IntPtr _XEMBED_INFO;
 		private static IntPtr _MOTIF_WM_HINTS;
 		private static IntPtr _NET_WM_STATE_SKIP_TASKBAR;
-		private static IntPtr _NET_WM_STATE_ABOVE;
-		private static IntPtr _NET_WM_STATE_MODAL;
+		//private static IntPtr _NET_WM_STATE_ABOVE;
+		//private static IntPtr _NET_WM_STATE_MODAL;
 		private static IntPtr _NET_WM_STATE_HIDDEN;
 		private static IntPtr _NET_WM_CONTEXT_HELP;
 		private static IntPtr _NET_WM_WINDOW_OPACITY;
-		private static IntPtr _NET_WM_WINDOW_TYPE_DESKTOP;
-		private static IntPtr _NET_WM_WINDOW_TYPE_DOCK;
-		private static IntPtr _NET_WM_WINDOW_TYPE_TOOLBAR;
-		private static IntPtr _NET_WM_WINDOW_TYPE_MENU;
+		//private static IntPtr _NET_WM_WINDOW_TYPE_DESKTOP;
+		//private static IntPtr _NET_WM_WINDOW_TYPE_DOCK;
+		//private static IntPtr _NET_WM_WINDOW_TYPE_TOOLBAR;
+		//private static IntPtr _NET_WM_WINDOW_TYPE_MENU;
 		private static IntPtr _NET_WM_WINDOW_TYPE_UTILITY;
-		private static IntPtr _NET_WM_WINDOW_TYPE_SPLASH;
-		private static IntPtr _NET_WM_WINDOW_TYPE_DIALOG;
+		//private static IntPtr _NET_WM_WINDOW_TYPE_SPLASH;
+		//private static IntPtr _NET_WM_WINDOW_TYPE_DIALOG;
 		private static IntPtr _NET_WM_WINDOW_TYPE_NORMAL;
 		private static IntPtr CLIPBOARD;
 		private static IntPtr PRIMARY;
-		private static IntPtr DIB;
+		//private static IntPtr DIB;
 		private static IntPtr OEMTEXT;
 		private static IntPtr UNICODETEXT;
 		private static IntPtr TARGETS;
@@ -506,44 +506,6 @@ namespace System.Windows.Forms {
 				throw new ArgumentNullException("Display", "Could not open display (X-Server required. Check you DISPLAY environment variable)");
 			}
 		}
-
-		internal static void Where() {
-			Console.WriteLine("Here: {0}\n", WhereString());
-		}
-
-		internal static string WhereString() {
-			StackTrace	stack;
-			StackFrame	frame;
-			string		newline;
-			string		unknown;
-			StringBuilder	sb;
-			MethodBase	method;
-
-			newline = String.Format("{0}\t {1} ", Environment.NewLine, Locale.GetText("at"));
-			unknown = Locale.GetText("<unknown method>");
-			sb = new StringBuilder();
-			stack = new StackTrace(true);
-
-			for (int i = 0; i < stack.FrameCount; i++) {
-				frame = stack.GetFrame(i);
-				sb.Append(newline);
-
-				method = frame.GetMethod();
-				if (method != null) {
-					#if not
-						sb.AppendFormat(frame.ToString());
-					#endif
-					if (frame.GetFileLineNumber() != 0) {
-						sb.AppendFormat("{0}.{1} () [{2}:{3}]", method.DeclaringType.FullName, method.Name, Path.GetFileName(frame.GetFileName()), frame.GetFileLineNumber());
-					} else {
-						sb.AppendFormat("{0}.{1} ()", method.DeclaringType.FullName, method.Name);
-					}
-				} else { 
-					sb.Append(unknown);
-				}
-			}
-			return sb.ToString();
- 		}
 		#endregion	// Internal Methods
 
 		#region Private Methods
@@ -559,44 +521,44 @@ namespace System.Windows.Forms {
 				"WM_PROTOCOLS",
 				"WM_DELETE_WINDOW",
 				"WM_TAKE_FOCUS",
-				"_NET_SUPPORTED",
-				"_NET_CLIENT_LIST",
-				"_NET_NUMBER_OF_DESKTOPS",
-				"_NET_DESKTOP_GEOMETRY",
-				"_NET_DESKTOP_VIEWPORT",
+				//"_NET_SUPPORTED",
+				//"_NET_CLIENT_LIST",
+				//"_NET_NUMBER_OF_DESKTOPS",
+				//"_NET_DESKTOP_GEOMETRY",
+				//"_NET_DESKTOP_VIEWPORT",
 				"_NET_CURRENT_DESKTOP",
-				"_NET_DESKTOP_NAMES",
+				//"_NET_DESKTOP_NAMES",
 				"_NET_ACTIVE_WINDOW",
 				"_NET_WORKAREA",
-				"_NET_SUPPORTING_WM_CHECK",
-				"_NET_VIRTUAL_ROOTS",
-				"_NET_DESKTOP_LAYOUT",
-				"_NET_SHOWING_DESKTOP",
-				"_NET_CLOSE_WINDOW",
-				"_NET_MOVERESIZE_WINDOW",
-				"_NET_WM_MOVERESIZE",
-				"_NET_RESTACK_WINDOW",
-				"_NET_REQUEST_FRAME_EXTENTS",
+				//"_NET_SUPPORTING_WM_CHECK",
+				//"_NET_VIRTUAL_ROOTS",
+				//"_NET_DESKTOP_LAYOUT",
+				//"_NET_SHOWING_DESKTOP",
+				//"_NET_CLOSE_WINDOW",
+				//"_NET_MOVERESIZE_WINDOW",
+				//"_NET_WM_MOVERESIZE",
+				//"_NET_RESTACK_WINDOW",
+				//"_NET_REQUEST_FRAME_EXTENTS",
 				"_NET_WM_NAME",
-				"_NET_WM_VISIBLE_NAME",
-				"_NET_WM_ICON_NAME",
-				"_NET_WM_VISIBLE_ICON_NAME",
-				"_NET_WM_DESKTOP",
+				//"_NET_WM_VISIBLE_NAME",
+				//"_NET_WM_ICON_NAME",
+				//"_NET_WM_VISIBLE_ICON_NAME",
+				//"_NET_WM_DESKTOP",
 				"_NET_WM_WINDOW_TYPE",
 				"_NET_WM_STATE",
-				"_NET_WM_ALLOWED_ACTIONS",
-				"_NET_WM_STRUT",
-				"_NET_WM_STRUT_PARTIAL",
-				"_NET_WM_ICON_GEOMETRY",
+				//"_NET_WM_ALLOWED_ACTIONS",
+				//"_NET_WM_STRUT",
+				//"_NET_WM_STRUT_PARTIAL",
+				//"_NET_WM_ICON_GEOMETRY",
 				"_NET_WM_ICON",
-				"_NET_WM_PID",
-				"_NET_WM_HANDLED_ICONS",
+				//"_NET_WM_PID",
+				//"_NET_WM_HANDLED_ICONS",
 				"_NET_WM_USER_TIME",
 				"_NET_FRAME_EXTENTS",
-				"_NET_WM_PING",
-				"_NET_WM_SYNC_REQUEST",
+				//"_NET_WM_PING",
+				//"_NET_WM_SYNC_REQUEST",
 				"_NET_SYSTEM_TRAY_OPCODE",
-				"_NET_SYSTEM_TRAY_ORIENTATION",
+				//"_NET_SYSTEM_TRAY_ORIENTATION",
 				"_NET_WM_STATE_MAXIMIZED_HORZ",
 				"_NET_WM_STATE_MAXIMIZED_VERT",
 				"_NET_WM_STATE_HIDDEN",
@@ -604,17 +566,17 @@ namespace System.Windows.Forms {
 				"_XEMBED_INFO",
 				"_MOTIF_WM_HINTS",
 				"_NET_WM_STATE_SKIP_TASKBAR",
-				"_NET_WM_STATE_ABOVE",
-				"_NET_WM_STATE_MODAL",
+				//"_NET_WM_STATE_ABOVE",
+				//"_NET_WM_STATE_MODAL",
 				"_NET_WM_CONTEXT_HELP",
 				"_NET_WM_WINDOW_OPACITY",
-				"_NET_WM_WINDOW_TYPE_DESKTOP",
-				"_NET_WM_WINDOW_TYPE_DOCK",
-				"_NET_WM_WINDOW_TYPE_TOOLBAR",
-				"_NET_WM_WINDOW_TYPE_MENU",
+				//"_NET_WM_WINDOW_TYPE_DESKTOP",
+				//"_NET_WM_WINDOW_TYPE_DOCK",
+				//"_NET_WM_WINDOW_TYPE_TOOLBAR",
+				//"_NET_WM_WINDOW_TYPE_MENU",
 				"_NET_WM_WINDOW_TYPE_UTILITY",
-				"_NET_WM_WINDOW_TYPE_DIALOG",
-				"_NET_WM_WINDOW_TYPE_SPLASH",
+				//"_NET_WM_WINDOW_TYPE_DIALOG",
+				//"_NET_WM_WINDOW_TYPE_SPLASH",
 				"_NET_WM_WINDOW_TYPE_NORMAL",
 				"CLIPBOARD",
 				"PRIMARY",
@@ -633,44 +595,44 @@ namespace System.Windows.Forms {
 			WM_PROTOCOLS = atoms [off++];
 			WM_DELETE_WINDOW = atoms [off++];
 			WM_TAKE_FOCUS = atoms [off++];
-			_NET_SUPPORTED = atoms [off++];
-			_NET_CLIENT_LIST = atoms [off++];
-			_NET_NUMBER_OF_DESKTOPS = atoms [off++];
-			_NET_DESKTOP_GEOMETRY = atoms [off++];
-			_NET_DESKTOP_VIEWPORT = atoms [off++];
+			//_NET_SUPPORTED = atoms [off++];
+			//_NET_CLIENT_LIST = atoms [off++];
+			//_NET_NUMBER_OF_DESKTOPS = atoms [off++];
+			//_NET_DESKTOP_GEOMETRY = atoms [off++];
+			//_NET_DESKTOP_VIEWPORT = atoms [off++];
 			_NET_CURRENT_DESKTOP = atoms [off++];
-			_NET_DESKTOP_NAMES = atoms [off++];
+			//_NET_DESKTOP_NAMES = atoms [off++];
 			_NET_ACTIVE_WINDOW = atoms [off++];
 			_NET_WORKAREA = atoms [off++];
-			_NET_SUPPORTING_WM_CHECK = atoms [off++];
-			_NET_VIRTUAL_ROOTS = atoms [off++];
-			_NET_DESKTOP_LAYOUT = atoms [off++];
-			_NET_SHOWING_DESKTOP = atoms [off++];
-			_NET_CLOSE_WINDOW = atoms [off++];
-			_NET_MOVERESIZE_WINDOW = atoms [off++];
-			_NET_WM_MOVERESIZE = atoms [off++];
-			_NET_RESTACK_WINDOW = atoms [off++];
-			_NET_REQUEST_FRAME_EXTENTS = atoms [off++];
+			//_NET_SUPPORTING_WM_CHECK = atoms [off++];
+			//_NET_VIRTUAL_ROOTS = atoms [off++];
+			//_NET_DESKTOP_LAYOUT = atoms [off++];
+			//_NET_SHOWING_DESKTOP = atoms [off++];
+			//_NET_CLOSE_WINDOW = atoms [off++];
+			//_NET_MOVERESIZE_WINDOW = atoms [off++];
+			//_NET_WM_MOVERESIZE = atoms [off++];
+			//_NET_RESTACK_WINDOW = atoms [off++];
+			//_NET_REQUEST_FRAME_EXTENTS = atoms [off++];
 			_NET_WM_NAME = atoms [off++];
-			_NET_WM_VISIBLE_NAME = atoms [off++];
-			_NET_WM_ICON_NAME = atoms [off++];
-			_NET_WM_VISIBLE_ICON_NAME = atoms [off++];
-			_NET_WM_DESKTOP = atoms [off++];
+			//_NET_WM_VISIBLE_NAME = atoms [off++];
+			//_NET_WM_ICON_NAME = atoms [off++];
+			//_NET_WM_VISIBLE_ICON_NAME = atoms [off++];
+			//_NET_WM_DESKTOP = atoms [off++];
 			_NET_WM_WINDOW_TYPE = atoms [off++];
 			_NET_WM_STATE = atoms [off++];
-			_NET_WM_ALLOWED_ACTIONS = atoms [off++];
-			_NET_WM_STRUT = atoms [off++];
-			_NET_WM_STRUT_PARTIAL = atoms [off++];
-			_NET_WM_ICON_GEOMETRY = atoms [off++];
+			//_NET_WM_ALLOWED_ACTIONS = atoms [off++];
+			//_NET_WM_STRUT = atoms [off++];
+			//_NET_WM_STRUT_PARTIAL = atoms [off++];
+			//_NET_WM_ICON_GEOMETRY = atoms [off++];
 			_NET_WM_ICON = atoms [off++];
-			_NET_WM_PID = atoms [off++];
-			_NET_WM_HANDLED_ICONS = atoms [off++];
+			//_NET_WM_PID = atoms [off++];
+			//_NET_WM_HANDLED_ICONS = atoms [off++];
 			_NET_WM_USER_TIME = atoms [off++];
 			_NET_FRAME_EXTENTS = atoms [off++];
-			_NET_WM_PING = atoms [off++];
-			_NET_WM_SYNC_REQUEST = atoms [off++];
+			//_NET_WM_PING = atoms [off++];
+			//_NET_WM_SYNC_REQUEST = atoms [off++];
 			_NET_SYSTEM_TRAY_OPCODE = atoms [off++];
-			_NET_SYSTEM_TRAY_ORIENTATION = atoms [off++];
+			//_NET_SYSTEM_TRAY_ORIENTATION = atoms [off++];
 			_NET_WM_STATE_MAXIMIZED_HORZ = atoms [off++];
 			_NET_WM_STATE_MAXIMIZED_VERT = atoms [off++];
 			_NET_WM_STATE_HIDDEN = atoms [off++];
@@ -678,17 +640,17 @@ namespace System.Windows.Forms {
 			_XEMBED_INFO = atoms [off++];
 			_MOTIF_WM_HINTS = atoms [off++];
 			_NET_WM_STATE_SKIP_TASKBAR = atoms [off++];
-			_NET_WM_STATE_ABOVE = atoms [off++];
-			_NET_WM_STATE_MODAL = atoms [off++];
+			//_NET_WM_STATE_ABOVE = atoms [off++];
+			//_NET_WM_STATE_MODAL = atoms [off++];
 			_NET_WM_CONTEXT_HELP = atoms [off++];
 			_NET_WM_WINDOW_OPACITY = atoms [off++];
-			_NET_WM_WINDOW_TYPE_DESKTOP = atoms [off++];
-			_NET_WM_WINDOW_TYPE_DOCK = atoms [off++];
-			_NET_WM_WINDOW_TYPE_TOOLBAR = atoms [off++];
-			_NET_WM_WINDOW_TYPE_MENU = atoms [off++];
+			//_NET_WM_WINDOW_TYPE_DESKTOP = atoms [off++];
+			//_NET_WM_WINDOW_TYPE_DOCK = atoms [off++];
+			//_NET_WM_WINDOW_TYPE_TOOLBAR = atoms [off++];
+			//_NET_WM_WINDOW_TYPE_MENU = atoms [off++];
 			_NET_WM_WINDOW_TYPE_UTILITY = atoms [off++];
-			_NET_WM_WINDOW_TYPE_DIALOG = atoms [off++];
-			_NET_WM_WINDOW_TYPE_SPLASH = atoms [off++];
+			//_NET_WM_WINDOW_TYPE_DIALOG = atoms [off++];
+			//_NET_WM_WINDOW_TYPE_SPLASH = atoms [off++];
 			_NET_WM_WINDOW_TYPE_NORMAL = atoms [off++];
 			CLIPBOARD = atoms [off++];
 			PRIMARY = atoms [off++];
@@ -699,7 +661,7 @@ namespace System.Windows.Forms {
 			PostAtom = atoms [off++];
 			HoverState.Atom = atoms [off++];
 
-			DIB = (IntPtr)Atom.XA_PIXMAP;
+			//DIB = (IntPtr)Atom.XA_PIXMAP;
 			_NET_SYSTEM_TRAY_S = XInternAtom (DisplayHandle, "_NET_SYSTEM_TRAY_S" + ScreenNo.ToString(), false);
 		}
 
@@ -1016,10 +978,6 @@ namespace System.Windows.Forms {
 			XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_ICON, (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, data, size);
 		}
 
-		private IntPtr ImageToPixmap(Image image) {
-			return IntPtr.Zero;
-		}
-
 		private void WakeupMain () {
 			wake.Send (new byte [] { 0xFF });
 		}
@@ -1097,66 +1055,6 @@ namespace System.Windows.Forms {
 					hwnd.nc_expose_pending = true;
 				}
 			}
-		}
-
-		private void WholeToScreen(IntPtr handle, ref int x, ref int y) {
-			int	dest_x_return;
-			int	dest_y_return;
-			IntPtr	child;
-			Hwnd	hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle(handle);
-
-			lock (XlibLock) {
-				XTranslateCoordinates(DisplayHandle, hwnd.whole_window, RootWindow, x, y, out dest_x_return, out dest_y_return, out child);
-			}
-
-			x = dest_x_return;
-			y = dest_y_return;
-		}
-
-		private void AbsoluteGeometry(IntPtr window, out int ret_x, out int ret_y, out int width, out int height) {
-			IntPtr	root;
-			IntPtr	win;
-			IntPtr	parent;
-			IntPtr	children;
-			int	x;
-			int	y;
-			int	w;
-			int	h;
-			int	absX;
-			int	absY;
-			int	b;
-			int	d;
-			int	nchildren;
-
-			absX = 0;
-			absY = 0;
-			win = window;
-			width = 0;
-			height = 0;
-			do {
-				XGetGeometry(DisplayHandle, win, out root, out x, out y, out w, out h, out b, out d);
-				if (win == window) {
-					width = w;
-					height = h;
-				}
-				absX += x;
-				absY += y;
-				if (XQueryTree(DisplayHandle, win, out root, out parent,  out children, out nchildren) == 0) {
-					break;
-				}
-
-				if (children != IntPtr.Zero) {
-					XFree(children);
-				}
-				win = parent;
-			} while (win != root);
-
-			ret_x = absX;
-			ret_y = absY;
-
-//Console.WriteLine("Absolute pos for window {0} = {1},{2} {3}x{4}", XplatUI.Window(window), ret_x, ret_y, width, height);
 		}
 
 		private void FrameExtents(IntPtr window, out int left, out int top) {
@@ -1672,7 +1570,7 @@ namespace System.Windows.Forms {
 			if (ErrorExceptions) {
 				throw new XException(error_event.display, error_event.resourceid, error_event.serial, error_event.error_code, error_event.request_code, error_event.minor_code);
 			} else {
-				Console.WriteLine("X11 Error encountered: {0}{1}\n", XException.GetMessage(error_event.display, error_event.resourceid, error_event.serial, error_event.error_code, error_event.request_code, error_event.minor_code), WhereString());
+				Console.WriteLine("X11 Error encountered: {0}{1}\n", XException.GetMessage(error_event.display, error_event.resourceid, error_event.serial, error_event.error_code, error_event.request_code, error_event.minor_code), Environment.StackTrace);
 			}
 			return 0;
 		}

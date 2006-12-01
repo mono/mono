@@ -1,3 +1,12 @@
+2006-12-01  Chris Toshok  <toshok@ximian.com>
+
+	* XplatUI.cs, XplatUIWin32.cs, XplatUIGTK.cs: nuke
+	the Where/WhereString stuff.  it's easy enough to CWL
+	Environment.StackTrace.
+
+	* XplatUIX11.cs: same, but also fix up a lot of mcs warnings about
+	unused private fields.
+
 2006-12-01  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: Do not update the view while inserting multiline

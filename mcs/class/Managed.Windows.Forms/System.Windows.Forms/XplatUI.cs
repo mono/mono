@@ -970,10 +970,6 @@ namespace System.Windows.Forms {
 		internal static void Version() {
 			Console.WriteLine("Xplat version $Revision: $");
 		}
-
-		internal static void Where() {
-			XplatUIX11.Where();
-		}
 		#endregion	// Public Static Methods
 
 		#region	Delegates

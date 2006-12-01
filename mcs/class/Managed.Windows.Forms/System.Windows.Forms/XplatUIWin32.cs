@@ -2459,10 +2459,6 @@ namespace System.Windows.Forms {
 		
 		internal override event EventHandler Idle;
 
-		// Santa's little helper
-		static void Where() {
-			Console.WriteLine("Here: {0}", new StackTrace().ToString());
-		}
 		#endregion	// Public Static Methods
 
 		#region Win32 Imports

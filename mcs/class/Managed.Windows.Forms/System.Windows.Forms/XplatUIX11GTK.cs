@@ -711,46 +711,6 @@ namespace System.Windows.Forms {
 				throw new ArgumentNullException ("Display", "Could not open display (X-Server required. Check you DISPLAY environment variable)");
 			}
 		}
-		
-		internal static void Where ()
-		{
-			Console.WriteLine ("Here: {0}\n", WhereString ());
-		}
-		
-		internal static string WhereString ()
-		{
-			StackTrace	stack;
-			StackFrame	frame;
-			string		newline;
-			string		unknown;
-			StringBuilder	sb;
-			MethodBase	method;
-			
-			newline = String.Format ("{0}\t {1} ", Environment.NewLine, Locale.GetText ("at"));
-			unknown = Locale.GetText ("<unknown method>");
-			sb = new StringBuilder ();
-			stack = new StackTrace (true);
-			
-			for (int i = 0; i < stack.FrameCount; i++) {
-				frame = stack.GetFrame (i);
-				sb.Append (newline);
-				
-				method = frame.GetMethod ();
-				if (method != null) {
-					#if not
-						sb.AppendFormat(frame.ToString());
-					#endif
-					if (frame.GetFileLineNumber () != 0) {
-						sb.AppendFormat ("{0}.{1} () [{2}:{3}]", method.DeclaringType.FullName, method.Name, Path.GetFileName (frame.GetFileName ()), frame.GetFileLineNumber ());
-					} else {
-						sb.AppendFormat ("{0}.{1} ()", method.DeclaringType.FullName, method.Name);
-					}
-				} else { 
-					sb.Append (unknown);
-				}
-			}
-			return sb.ToString ();
- 		}
 		#endregion	// Internal Methods
 		
 		#region Private Methods
@@ -1506,7 +1466,7 @@ namespace System.Windows.Forms {
 			if (ErrorExceptions) {
 				throw new XException (error_event.display, error_event.resourceid, error_event.serial, error_event.error_code, error_event.request_code, error_event.minor_code);
 			} else {
-				Console.WriteLine ("X11 Error encountered: {0}{1}\n", XException.GetMessage (error_event.display, error_event.resourceid, error_event.serial, error_event.error_code, error_event.request_code, error_event.minor_code), WhereString ());
+				Console.WriteLine ("X11 Error encountered: {0}{1}\n", XException.GetMessage (error_event.display, error_event.resourceid, error_event.serial, error_event.error_code, error_event.request_code, error_event.minor_code), Environment.StackTrace);
 			}
 			return 0;
 		}
