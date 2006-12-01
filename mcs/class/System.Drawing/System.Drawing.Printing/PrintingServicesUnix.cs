@@ -333,7 +333,9 @@ namespace System.Drawing.Printing
 					return string.Empty;
 
 				str = cupsGetDefault ();
-				return Marshal.PtrToStringAnsi (str);
+				if (str == IntPtr.Zero)
+					return Marshal.PtrToStringAnsi (str);
+				return String.Empty;
 			}
 		}
 
