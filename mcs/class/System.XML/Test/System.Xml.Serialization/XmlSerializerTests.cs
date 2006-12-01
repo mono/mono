@@ -2143,7 +2143,8 @@ namespace MonoTests.System.XmlSerialization
 			xtw = new XmlTextWriter (sw);
 			ser.Serialize (xtw, nullableType);
 			xtw.Close ();
-			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?><int>5</int>", sw.ToString ());
+			string expected = "<?xml version=\"1.0\" encoding=\"utf-16\"?><int>5</int>";
+			Assert.AreEqual (Infoset (expected), WriterText);
 			int? i = (int?) ser.Deserialize (new StringReader (sw.ToString ()));
 			Assert.AreEqual (5, i);
 		}
@@ -2153,14 +2154,106 @@ namespace MonoTests.System.XmlSerialization
 		public void SerializeHexBinary()
 		{
 			XmlSerializer ser = new XmlSerializer (typeof (HexBinary));
-			StringWriter sw = new StringWriter ();
+			sw = new StringWriter ();
 			XmlTextWriter xtw = new XmlTextWriter (sw);
 			ser.Serialize (xtw, new HexBinary ());
 			xtw.Close ();
 			string expected = @"<?xml version=""1.0"" encoding=""utf-16""?><HexBinary xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" Data=""010203"" />";
-			Assert.AreEqual (expected, sw.ToString ());
+			Assert.AreEqual (Infoset (expected), WriterText);
 			HexBinary h = (HexBinary) ser.Deserialize (new StringReader (sw.ToString ()));
 			Assert.AreEqual (new byte [] {1, 2, 3}, h.Data);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void XmlArrayAttributeOnInt ()
+		{
+			new XmlSerializer (typeof (XmlArrayOnInt));
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")] // hmm, why?
+		public void XmlArrayAttributeUnqualifiedWithNamespace ()
+		{
+			new XmlSerializer (typeof (XmlArrayUnqualifiedWithNamespace));
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void XmlArrayItemAttributeUnqualifiedWithNamespace ()
+		{
+			new XmlSerializer (typeof (XmlArrayItemUnqualifiedWithNamespace));
+		}
+
+		[Test] // bug #78042
+		public void XmlArrayAttributeOnArray ()
+		{
+			XmlSerializer ser = new XmlSerializer (typeof (XmlArrayOnArray));
+			sw = new StringWriter ();
+			XmlTextWriter xtw = new XmlTextWriter (sw);
+			ser.Serialize (xtw, new XmlArrayOnArray ());
+			xtw.Close ();
+			string expected = @"<?xml version=""1.0"" encoding=""utf-16""?><XmlArrayOnArray xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns=""urn:foo""><Sane xmlns=""""><string xmlns=""urn:foo"">foo</string><string xmlns=""urn:foo"">bar</string></Sane><Mids xmlns=""""><ArrayItemInXmlArray xmlns=""urn:foo""><Whee xmlns=""""><string xmlns=""urn:gyabo"">foo</string><string xmlns=""urn:gyabo"">bar</string></Whee></ArrayItemInXmlArray></Mids></XmlArrayOnArray>";
+			Assert.AreEqual (Infoset (expected), WriterText);
+		}
+
+		[Test]
+		public void XmlArrayAttributeOnCollection ()
+		{
+			XmlSerializer ser = new XmlSerializer (typeof (XmlArrayOnArrayList));
+			XmlArrayOnArrayList inst = new XmlArrayOnArrayList ();
+			inst.Sane.Add ("abc");
+			inst.Sane.Add (1);
+			sw = new StringWriter ();
+			XmlTextWriter xtw = new XmlTextWriter (sw);
+			ser.Serialize (xtw, inst);
+			xtw.Close ();
+			string expected = @"<?xml version=""1.0"" encoding=""utf-16""?><XmlArrayOnArrayList xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns=""urn:foo""><Sane xmlns=""""><anyType xsi:type=""xsd:string"" xmlns=""urn:foo"">abc</anyType><anyType xsi:type=""xsd:int"" xmlns=""urn:foo"">1</anyType></Sane></XmlArrayOnArrayList>";
+			Assert.AreEqual (Infoset (expected), WriterText);
+		}
+
+		public class XmlArrayOnInt
+		{
+			[XmlArray]
+			public int Bogus;
+		}
+
+		public class XmlArrayUnqualifiedWithNamespace
+		{
+			[XmlArray (Namespace = "", Form = XmlSchemaForm.Unqualified)]
+			public ArrayList Sane = new ArrayList ();
+		}
+
+		public class XmlArrayItemUnqualifiedWithNamespace
+		{
+			[XmlArrayItem ("foo", Namespace = "", Form = XmlSchemaForm.Unqualified)]
+			public ArrayList Sane = new ArrayList ();
+		}
+
+		[XmlRoot (Namespace = "urn:foo")]
+		public class XmlArrayOnArrayList
+		{
+			[XmlArray (Form = XmlSchemaForm.Unqualified)]
+			public ArrayList Sane = new ArrayList ();
+		}
+
+		[XmlRoot (Namespace = "urn:foo")]
+		public class XmlArrayOnArray
+		{
+			[XmlArray (Form = XmlSchemaForm.Unqualified)]
+			public string [] Sane = new string [] {"foo", "bar"};
+
+			[XmlArray (Form = XmlSchemaForm.Unqualified)]
+			public ArrayItemInXmlArray [] Mids =
+				new ArrayItemInXmlArray [] {new ArrayItemInXmlArray ()};
+		}
+
+		[XmlType (Namespace="urn:gyabo")]
+		public class ArrayItemInXmlArray 
+		{
+			[XmlArray (Form = XmlSchemaForm.Unqualified)]
+			public string [] Whee = new string [] {"foo", "bar"};
 		}
 
 		[XmlRoot ("HexBinary")]

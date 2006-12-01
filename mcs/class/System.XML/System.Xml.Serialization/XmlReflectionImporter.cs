@@ -475,12 +475,16 @@ namespace System.Xml.Serialization {
 
 			foreach (XmlArrayItemAttribute att in atts.XmlArrayItems)
 			{
+				if (att.Namespace != null && att.Form == XmlSchemaForm.Unqualified)
+					throw new InvalidOperationException ("XmlArrayItemAttribute.Form must not be Unqualified when it has an explicit Namespace value.");
 				if (att.NestingLevel != nestingLevel) continue;
 				Type elemType = (att.Type != null) ? att.Type : itemType;
 				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (null, TypeTranslator.GetTypeData(elemType, att.DataType));
 				elem.Namespace = att.Namespace != null ? att.Namespace : defaultNamespace;
 				if (elem.Namespace == null) elem.Namespace = "";
 				elem.Form = att.Form;
+				if (att.Form == XmlSchemaForm.Unqualified)
+					elem.Namespace = string.Empty;
 				elem.IsNullable = att.IsNullable && CanBeNull (elem.TypeData);
 				elem.NestingLevel = att.NestingLevel;
 
@@ -780,6 +784,13 @@ namespace System.Xml.Serialization {
 			XmlAttributes atts = rmember.XmlAttributes;
 			TypeData typeData = TypeTranslator.GetTypeData (rmember.MemberType);
 
+			if (atts.XmlArray != null) {
+				if (atts.XmlArray.Namespace != null && atts.XmlArray.Form == XmlSchemaForm.Unqualified)
+					throw new InvalidOperationException ("XmlArrayAttribute.Form must not be Unqualified when it has an explicit Namespace value.");
+				if (typeData.SchemaType != SchemaTypes.Array)
+					throw new InvalidOperationException ("XmlArrayAttribute can be applied to members of array or collection type.");
+			}
+
 			if (atts.XmlAnyAttribute != null)
 			{
 				if ( (rmember.MemberType.FullName == "System.Xml.XmlAttribute[]") ||
@@ -856,7 +867,10 @@ namespace System.Xml.Serialization {
 				{
 					// A flat list
 
-					// TODO: check that it does not have XmlArrayAttribute
+					// check that it does not have XmlArrayAttribute
+					if (atts.XmlArray != null)
+						throw new InvalidOperationException ("XmlArrayAttribute cannot be used with members which also attributed with XmlElementAttribute or XmlTextAttribute.");
+
 					XmlTypeMapMemberFlatList member = new XmlTypeMapMemberFlatList ();
 					member.ListMap = new ListMap ();
 					member.ListMap.ItemInfo = ImportElementInfo (declaringType, XmlConvert.EncodeLocalName (rmember.MemberName), defaultNamespace, typeData.ListItemType, member, atts);
@@ -874,10 +888,17 @@ namespace System.Xml.Serialization {
 					member.ElementInfo = new XmlTypeMapElementInfoList();
 					XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (member, typeData);
 					elem.ElementName = XmlConvert.EncodeLocalName((atts.XmlArray != null && atts.XmlArray.ElementName.Length != 0) ? atts.XmlArray.ElementName : rmember.MemberName);
+					// note that it could be changed below (when Form is Unqualified)
 					elem.Namespace = (atts.XmlArray != null && atts.XmlArray.Namespace != null) ? atts.XmlArray.Namespace : defaultNamespace;
 					elem.MappedType = ImportListMapping (rmember.MemberType, null, elem.Namespace, atts, 0);
 					elem.IsNullable = (atts.XmlArray != null) ? atts.XmlArray.IsNullable : false;
 					elem.Form = (atts.XmlArray != null) ? atts.XmlArray.Form : XmlSchemaForm.Qualified;
+					// This is a bit tricky, but is done
+					// after filling descendant members, so
+					// that array items could be serialized
+					// with proper namespace.
+					if (atts.XmlArray != null && atts.XmlArray.Form == XmlSchemaForm.Unqualified)
+						elem.Namespace = String.Empty;
 
 					member.ElementInfo.Add (elem);
 					mapMember = member;

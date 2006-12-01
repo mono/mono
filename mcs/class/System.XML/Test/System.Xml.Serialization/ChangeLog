@@ -1,3 +1,7 @@
+2006-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializerTests.cs : added tests for XmlArrayAttribute support.
+
 2006-11-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializerTests.cs : added test for hexBinary.
