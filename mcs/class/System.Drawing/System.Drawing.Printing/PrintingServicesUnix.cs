@@ -304,6 +304,7 @@ namespace System.Drawing.Printing
 			get {
 			  	int n_printers;
 				IntPtr dests = IntPtr.Zero, ptr_printers, ptr_printer;
+				int cups_dests_size = Marshal.SizeOf(typeof(CUPS_DESTS));
 				string str;
 				PrinterSettings.StringCollection col = new PrinterSettings.StringCollection (new string[] {});
 
@@ -317,7 +318,7 @@ namespace System.Drawing.Printing
 					ptr_printer = (IntPtr) Marshal.ReadInt32 (ptr_printers);
 					str = Marshal.PtrToStringAnsi (ptr_printer);
 					Marshal.FreeHGlobal (ptr_printer);
-					ptr_printers = new IntPtr (ptr_printers.ToInt64 () + 20 /*size of CUPS_DEST*/);
+					ptr_printers = new IntPtr (ptr_printers.ToInt64 () + cups_dests_size);
 					col.Add (str);
 				}
 				Marshal.FreeHGlobal (dests);
@@ -459,6 +460,8 @@ namespace System.Drawing.Printing
 			CUPS_OPTIONS options;
 			string str;
 			IntPtr dests = IntPtr.Zero, ptr_printers, ptr_printer, ptr_options;
+			int cups_dests_size = Marshal.SizeOf(typeof(CUPS_DESTS));
+			int options_size = Marshal.SizeOf(typeof(CUPS_OPTIONS));
 			
 			if (cups_installed == false)
 				return;
@@ -469,7 +472,7 @@ namespace System.Drawing.Printing
 			for (int i = 0; i < printers; i++) {
 				cups_dests = (CUPS_DESTS) Marshal.PtrToStructure (ptr_printers, typeof (CUPS_DESTS));
 				str = Marshal.PtrToStringAnsi (cups_dests.name);
-				ptr_printers = new IntPtr (ptr_printers.ToInt64 () + 20 /*size of CUPS_DEST*/);
+				ptr_printers = new IntPtr (ptr_printers.ToInt64 () + cups_dests_size);
 				if (str != printer)
 					continue;
 
@@ -483,7 +486,7 @@ namespace System.Drawing.Printing
 						if (str == "printer-info")
 							comment = Marshal.PtrToStringAnsi (options.val);
 					}
-					ptr_options = new IntPtr (ptr_options.ToInt64 () + 8 /*size of CUPS_DEST*/);
+					ptr_options = new IntPtr (ptr_options.ToInt64 () + options_size);
 				}
 				
 			}
