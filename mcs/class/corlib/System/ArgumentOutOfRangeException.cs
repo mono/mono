@@ -75,6 +75,13 @@ namespace System
 			actual_value = info.GetString ("ActualValue");
 		}
 
+#if NET_2_0
+		public ArgumentOutOfRangeException (string message, Exception innerException)
+		: base (message, innerException)
+		{
+		}
+#endif
+
 		// Properties
 		public virtual object ActualValue {
 			get {

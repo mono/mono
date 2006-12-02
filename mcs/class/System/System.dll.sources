@@ -154,6 +154,8 @@ System.Collections.Specialized/ProcessStringDictionary.cs
 System.Collections.Specialized/StringCollection.cs
 System.Collections.Specialized/StringDictionary.cs
 System.Collections.Specialized/StringEnumerator.cs
+System.ComponentModel/AddingNewEventArgs.cs
+System.ComponentModel/AddingNewEventHandler.cs
 System.ComponentModel/AmbientValueAttribute.cs
 System.ComponentModel/ArrayConverter.cs
 System.ComponentModel/AsyncCompletedEventArgs.cs
