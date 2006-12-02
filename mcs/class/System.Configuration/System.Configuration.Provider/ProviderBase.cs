@@ -36,12 +36,22 @@ namespace System.Configuration.Provider
 {
 	public abstract class ProviderBase
 	{
+		bool alreadyInitialized;
+		
 		protected ProviderBase ()
 		{
 		}
 		
 		public virtual void Initialize (string name, NameValueCollection config)
 		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (name.Length == 0)
+				throw new ArgumentException ("name must not be empty");
+			if (alreadyInitialized)
+				throw new InvalidOperationException ("Provider has already been initialized");
+			alreadyInitialized = true;
+			
 			_name = name;
 
 			if (config != null)
