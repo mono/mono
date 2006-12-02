@@ -1,5 +1,12 @@
 2006-12-01  Andreia Gaita  <avidigal@novell.com>
 
+	* PrintingServicesUnix: *properly* check return value from 
+	cupsGetDefault. If there are no default printers set, 
+	check if there are installed printers, and use that.
+	Hopefully fixes #79835
+
+2006-12-01  Andreia Gaita  <avidigal@novell.com>
+
 	* PrintingServicesUnix: check return value from cupsGetDefault.
 	Hopefully fixes #79835
 

@@ -333,8 +333,11 @@ namespace System.Drawing.Printing
 					return string.Empty;
 
 				str = cupsGetDefault ();
-				if (str == IntPtr.Zero)
+				if (str != IntPtr.Zero)
 					return Marshal.PtrToStringAnsi (str);
+				PrinterSettings.StringCollection printers = this.InstalledPrinters;
+				if (printers.Count > 0)
+					return printers[0];
 				return String.Empty;
 			}
 		}
