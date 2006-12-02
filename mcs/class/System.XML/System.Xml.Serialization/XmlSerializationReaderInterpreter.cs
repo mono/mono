@@ -39,6 +39,7 @@ namespace System.Xml.Serialization
 		XmlMapping _typeMap;
 		SerializationFormat _format;
 		static readonly XmlQualifiedName AnyType = new XmlQualifiedName("anyType", System.Xml.Schema.XmlSchema.Namespace);
+		static readonly object [] empty_array = new object [0];
 
 		public XmlSerializationReaderInterpreter(XmlMapping typeMap)
 		{
@@ -115,6 +116,16 @@ namespace System.Xml.Serialization
 
 			if (typeMap.HasWrapperElement)
 			{
+				// bug #79988: out parameters need to be initialized if they 
+				// are value types
+				ArrayList members = ((ClassMap) typeMap.ObjectMap).AllMembers;
+				for (int n = 0; n < members.Count; n++) {
+					XmlTypeMapMember mem = (XmlTypeMapMember) members [n];
+					if (!mem.IsReturnValue && mem.TypeData.IsValueType)
+						SetMemberValueFromAttr (mem, parameters, CreateInstance (
+							mem.TypeData.Type), true);
+				}
+
 				if (_format == SerializationFormat.Encoded)
 				{
 					while (Reader.NodeType == System.Xml.XmlNodeType.Element)
@@ -125,7 +136,7 @@ namespace System.Xml.Serialization
 						Reader.MoveToContent ();
 					}
 				}
-				
+
 				while (Reader.NodeType != System.Xml.XmlNodeType.EndElement) 
 				{
 					if (Reader.IsStartElement(typeMap.ElementName, typeMap.Namespace) 
@@ -718,6 +729,11 @@ namespace System.Xml.Serialization
 				MethodInfo mi = type.GetMethod ("Add", new Type[] {listType.ListItemType} );
 				mi.Invoke (list, new object[] { value });
 			}
+		}
+
+		object CreateInstance (Type type)
+		{
+			return Activator.CreateInstance (type, empty_array);
 		}
 
 		object CreateList (Type listType)

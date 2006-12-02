@@ -1409,6 +1409,17 @@ namespace System.Xml.Serialization
 				}
 				else
 				{
+					// bug #79988: out parameters need to be initialized if 
+					// they are value types
+					ClassMap classMap = (ClassMap) typeMap.ObjectMap;
+					ArrayList members = classMap.AllMembers;
+					for (int n = 0; n < members.Count; n++) {
+						XmlTypeMapMember mem = (XmlTypeMapMember) members [n];
+						if (!mem.IsReturnValue && mem.TypeData.IsValueType)
+							GenerateSetMemberValueFromAttr (mem, "parameters",
+								"new " + mem.TypeData.FullTypeName + "()", true);
+					}
+
 					WriteLine ("while (Reader.NodeType != System.Xml.XmlNodeType.EndElement)");
 					WriteLineInd ("{");
 					WriteLine ("if (Reader.IsStartElement(" + GetLiteral(typeMap.ElementName) + ", " + GetLiteral(typeMap.Namespace) + "))");
