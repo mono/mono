@@ -1,3 +1,7 @@
+2006-12-02  Miguel de Icaza  <miguel@novell.com>
+
+	* SafeHandle.cs: Implement this class.
+	
 2006-10-06  Jonathan Chambers  <joncham@gmail.com>
 
 	* ExtensibleClassFactory.cs: Implement RegisterObjectCreationCallback.

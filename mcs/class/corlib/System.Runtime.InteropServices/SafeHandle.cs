@@ -22,6 +22,14 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+// Notes:
+//     This code is only API complete, but it lacks the runtime support
+//     for CriticalFinalizerObject and any P/Invoke wrapping that might
+//     happen.
+//
+//     For details, see:
+//     http://blogs.msdn.com/cbrumme/archive/2004/02/20/77460.aspx
+//
 
 #if NET_2_0
 using System;
@@ -30,62 +38,101 @@ using System.Runtime.ConstrainedExecution;
 
 namespace System.Runtime.InteropServices
 {
-	[MonoTODO("Not implemented")]
 	public abstract class SafeHandle : CriticalFinalizerObject, IDisposable {
+		object handle_lock = new object ();
 		protected IntPtr handle;
-
-		[MonoTODO("Not implemented")]
+		IntPtr invalid_handle_value;
+		int refcount = 0;
+		bool owns_handle;
+		
 		protected SafeHandle (IntPtr invalidHandleValue, bool ownsHandle)
 		{
-			throw new NotImplementedException ();
+			invalid_handle_value = invalidHandleValue;
+			owns_handle = ownsHandle;
+			refcount = 1;
 		}
 
-		[MonoTODO("Not implemented")]
-		public void Close () {
-			throw new NotImplementedException ();
+		public void Close ()
+		{
+			lock (handle_lock){
+				refcount--;
+				if (refcount == 0){
+					ReleaseHandle ();
+					handle = invalid_handle_value;
+				}
+			}
 		}
 
-		[MonoTODO("Not implemented")]
-		public void DangerousAddRef (ref bool success) {
-			throw new NotImplementedException ();
+		//
+		// I do not know when we could not be able to increment the
+		// reference count and set success to false.   It might just
+		// be a convention used for the following code pattern:
+		//
+		// bool release = false
+		// try { x.DangerousAddRef (ref release); ... }
+		// finally { if (release) x.DangerousRelease (); }
+		//
+		public void DangerousAddRef (ref bool success)
+		{
+			lock (handle_lock){
+				refcount++;
+				success = true;
+			}
 		}
 
-		[MonoTODO("Not implemented")]
-		public IntPtr DangerousGetHandle () {
-			throw new NotImplementedException ();
+		public IntPtr DangerousGetHandle ()
+		{
+			return handle;
 		}
 
-		[MonoTODO("Not implemented")]
-		public void DangerousRelease () {
-			throw new NotImplementedException ();
+		public void DangerousRelease ()
+		{
+			lock (handle_lock){
+				refcount--;
+				if (refcount == 0)
+					ReleaseHandle ();
+			}
 		}
 
-		[MonoTODO("Not implemented")]
-		public virtual void Dispose () {
-			throw new NotImplementedException ();
+		public virtual void Dispose ()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
-		[MonoTODO("Not implemented")]
-		public void SetHandleAsInvalid () {
-			throw new NotImplementedException ();
+		//
+		// See documentation, this invalidates the handle without
+		// closing it.
+		//
+		public void SetHandleAsInvalid ()
+		{
+			handle = invalid_handle_value;
 		}
 		
-		[MonoTODO("Not implemented")]
-		protected virtual void Dispose (bool disposing) {
-			throw new NotImplementedException ();
+		protected virtual void Dispose (bool disposing)
+		{
+			if (disposing)
+				Close ();
+			else {
+				//
+				// The docs say `never call this with disposing=false',
+				// the question is whether:
+				//   * The runtime will ever call Dipose(false) for SafeHandles (special runtime case)
+				//   * Whether we should just call ReleaseHandle regardless?
+				// 
+			}
 		}
 
 		protected abstract bool ReleaseHandle ();
 
-		[MonoTODO("Not implemented")]
-		protected void SetHandle (IntPtr handle) {
-			throw new NotImplementedException ();
+		protected void SetHandle (IntPtr handle)
+		{
+			this.handle = handle;
 		}
 
-		[MonoTODO("Not implemented")]
 		public bool IsClosed {
 			get {
-				throw new NotImplementedException ();
+				return refcount == 0;
 			}
 		}
 

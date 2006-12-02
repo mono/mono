@@ -41,13 +41,6 @@ namespace Microsoft.Win32.SafeHandles {
 		}
 
 		[MonoTODO("Not implemented")]
-		public override bool IsInvalid {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO("Not implemented")]
 		protected override bool ReleaseHandle ()
 		{
 			throw new NotImplementedException ();
