@@ -1,3 +1,9 @@
+2006-12-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SystemIconsTest.cs: New. Unit tests for SystemIcons. Note that the
+	icons provided here behave differently than normal icons (can't be 
+	disposed).
+
 2006-11-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestImageFormatConverter.cs: Add test cases for ConvertFrom (long 
