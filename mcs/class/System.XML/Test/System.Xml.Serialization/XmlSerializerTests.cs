@@ -500,8 +500,7 @@ namespace MonoTests.System.XmlSerialization
 			try {
 				Serialize ("b", typeof (EnumDefaultValue));
 				Assert.Fail ("#A1");
-			}
-			catch (InvalidOperationException ex) {
+			} catch (InvalidOperationException ex) {
 				Assert.IsNotNull (ex.InnerException, "#A2");
 				Assert.AreEqual (typeof (InvalidCastException), ex.InnerException.GetType (), "#A3");
 			}
@@ -509,8 +508,7 @@ namespace MonoTests.System.XmlSerialization
 			try {
 				Serialize ("e1", typeof (EnumDefaultValue));
 				Assert.Fail ("#B1");
-			}
-			catch (InvalidOperationException ex) {
+			} catch (InvalidOperationException ex) {
 				Assert.IsNotNull (ex.InnerException, "#B2");
 				Assert.AreEqual (typeof (InvalidCastException), ex.InnerException.GetType (), "#B3");
 			}
@@ -518,8 +516,7 @@ namespace MonoTests.System.XmlSerialization
 			try {
 				Serialize ("e1,e2", typeof (EnumDefaultValue));
 				Assert.Fail ("#C1");
-			}
-			catch (InvalidOperationException ex) {
+			} catch (InvalidOperationException ex) {
 				Assert.IsNotNull (ex.InnerException, "#C2");
 				Assert.AreEqual (typeof (InvalidCastException), ex.InnerException.GetType (), "#C3");
 			}
@@ -527,8 +524,7 @@ namespace MonoTests.System.XmlSerialization
 			try {
 				Serialize (string.Empty, typeof (EnumDefaultValue));
 				Assert.Fail ("#D1");
-			}
-			catch (InvalidOperationException ex) {
+			} catch (InvalidOperationException ex) {
 				Assert.IsNotNull (ex.InnerException, "#D2");
 				Assert.AreEqual (typeof (InvalidCastException), ex.InnerException.GetType (), "#D3");
 			}
@@ -536,8 +532,7 @@ namespace MonoTests.System.XmlSerialization
 			try {
 				Serialize ("1", typeof (EnumDefaultValue));
 				Assert.Fail ("#E1");
-			}
-			catch (InvalidOperationException ex) {
+			} catch (InvalidOperationException ex) {
 				Assert.IsNotNull (ex.InnerException, "#E2");
 				Assert.AreEqual (typeof (InvalidCastException), ex.InnerException.GetType (), "#E3");
 			}
@@ -545,8 +540,7 @@ namespace MonoTests.System.XmlSerialization
 			try {
 				Serialize ("0", typeof (EnumDefaultValue));
 				Assert.Fail ("#F1");
-			}
-			catch (InvalidOperationException ex) {
+			} catch (InvalidOperationException ex) {
 				Assert.IsNotNull (ex.InnerException, "#F2");
 				Assert.AreEqual (typeof (InvalidCastException), ex.InnerException.GetType (), "#F3");
 			}
@@ -554,8 +548,7 @@ namespace MonoTests.System.XmlSerialization
 			try {
 				Serialize (new SimpleClass (), typeof (EnumDefaultValue));
 				Assert.Fail ("#G1");
-			}
-			catch (InvalidOperationException ex) {
+			} catch (InvalidOperationException ex) {
 				Assert.IsNotNull (ex.InnerException, "#G2");
 				Assert.AreEqual (typeof (InvalidCastException), ex.InnerException.GetType (), "#G3");
 			}
@@ -630,8 +623,7 @@ namespace MonoTests.System.XmlSerialization
 			try {
 				Serialize ("b", typeof (EnumDefaultValueNF));
 				Assert.Fail ("#A1");
-			}
-			catch (InvalidOperationException ex) {
+			} catch (InvalidOperationException ex) {
 				Assert.IsNotNull (ex.InnerException, "#A2");
 				Assert.AreEqual (typeof (InvalidCastException), ex.InnerException.GetType (), "#A3");
 			}
@@ -639,8 +631,7 @@ namespace MonoTests.System.XmlSerialization
 			try {
 				Serialize ("e2", typeof (EnumDefaultValueNF));
 				Assert.Fail ("#B1");
-			}
-			catch (InvalidOperationException ex) {
+			} catch (InvalidOperationException ex) {
 				Assert.IsNotNull (ex.InnerException, "#B2");
 				Assert.AreEqual (typeof (InvalidCastException), ex.InnerException.GetType (), "#B3");
 			}
@@ -648,8 +639,7 @@ namespace MonoTests.System.XmlSerialization
 			try {
 				Serialize (string.Empty, typeof (EnumDefaultValueNF));
 				Assert.Fail ("#C1");
-			}
-			catch (InvalidOperationException ex) {
+			} catch (InvalidOperationException ex) {
 				Assert.IsNotNull (ex.InnerException, "#C2");
 				Assert.AreEqual (typeof (InvalidCastException), ex.InnerException.GetType (), "#C3");
 			}
@@ -657,8 +647,7 @@ namespace MonoTests.System.XmlSerialization
 			try {
 				Serialize ("1", typeof (EnumDefaultValueNF));
 				Assert.Fail ("#D1");
-			}
-			catch (InvalidOperationException ex) {
+			} catch (InvalidOperationException ex) {
 				Assert.IsNotNull (ex.InnerException, "#D2");
 				Assert.AreEqual (typeof (InvalidCastException), ex.InnerException.GetType (), "#D3");
 			}
@@ -666,8 +655,7 @@ namespace MonoTests.System.XmlSerialization
 			try {
 				Serialize ("0", typeof (EnumDefaultValueNF));
 				Assert.Fail ("#E1");
-			}
-			catch (InvalidOperationException ex) {
+			} catch (InvalidOperationException ex) {
 				Assert.IsNotNull (ex.InnerException, "#E2");
 				Assert.AreEqual (typeof (InvalidCastException), ex.InnerException.GetType (), "#E3");
 			}
@@ -777,11 +765,11 @@ namespace MonoTests.System.XmlSerialization
 				" flag2='' flag3='' flag4='' modifiers='PuBlIc'" +
 				" modifiers2='PuBlIc' modifiers4='PuBlIc' xmlns:q1='some:urn' />",
 #else
- "<q1:field xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' flag1=''" +
+				"<q1:field xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' flag1=''" +
 				" flag2='' flag3='' flag4='' modifiers='PuBlIc'" +
 				" modifiers2='PuBlIc' modifiers4='PuBlIc' xmlns:q1='some:urn' />",
 #endif
- XmlSchema.Namespace, XmlSchema.InstanceNamespace),
+				XmlSchema.Namespace, XmlSchema.InstanceNamespace),
 				sw.GetStringBuilder ().ToString (), "#A");
 
 			f.Flags1 = FlagEnum_Encoded.e1;
@@ -800,11 +788,11 @@ namespace MonoTests.System.XmlSerialization
 				" flag4='' modifiers='Protected' modifiers2='PuBlIc'" +
 				" xmlns:q1='some:urn' />",
 #else
- "<q1:field xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' flag3='two'" +
+				"<q1:field xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' flag3='two'" +
 				" flag4='' modifiers='Protected' modifiers2='PuBlIc'" +
 				" xmlns:q1='some:urn' />",
 #endif
- XmlSchema.Namespace, XmlSchema.InstanceNamespace),
+				XmlSchema.Namespace, XmlSchema.InstanceNamespace),
 				sw.GetStringBuilder ().ToString (), "#B");
 
 			f.Flags1 = FlagEnum_Encoded.e2;
@@ -824,12 +812,12 @@ namespace MonoTests.System.XmlSerialization
 				" modifiers3='Protected' modifiers4='PuBlIc' modifiers5='Protected'" +
 				" xmlns:q1='some:urn' />",
 #else
- "<q1:field xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' flag1='two'" +
+				"<q1:field xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' flag1='two'" +
 				" flag2='two' flag4='' modifiers='PuBlIc' modifiers2='Protected'" +
 				" modifiers3='Protected' modifiers4='PuBlIc' modifiers5='Protected'" +
 				" xmlns:q1='some:urn' />",
 #endif
- XmlSchema.Namespace, XmlSchema.InstanceNamespace),
+				XmlSchema.Namespace, XmlSchema.InstanceNamespace),
 				sw.GetStringBuilder ().ToString (), "#C");
 
 			f.Flags1 = (FlagEnum_Encoded) 1;
@@ -1051,9 +1039,9 @@ namespace MonoTests.System.XmlSerialization
 #if NET_2_0
 				"<optionalValue xmlns:xsi='{1}' xmlns:xsd='{0}' xmlns='{2}' />",
 #else
- "<optionalValue xmlns:xsd='{0}' xmlns:xsi='{1}' xmlns='{2}' />",
+				"<optionalValue xmlns:xsd='{0}' xmlns:xsi='{1}' xmlns='{2}' />",
 #endif
- XmlSchema.Namespace, XmlSchema.InstanceNamespace, AnotherNamespace),
+				XmlSchema.Namespace, XmlSchema.InstanceNamespace, AnotherNamespace),
 				sw.ToString (), "#1");
 
 			attr = new XmlAttributes ();
@@ -1069,9 +1057,9 @@ namespace MonoTests.System.XmlSerialization
 #if NET_2_0
 				"<optionalValue xmlns:xsi='{1}' xmlns:xsd='{0}' xmlns='{2}'>" +
 #else
- "<optionalValue xmlns:xsd='{0}' xmlns:xsi='{1}' xmlns='{2}'>" +
+				"<optionalValue xmlns:xsd='{0}' xmlns:xsi='{1}' xmlns='{2}'>" +
 #endif
- "<Attributes xmlns='{3}'>one four</Attributes>" +
+				"<Attributes xmlns='{3}'>one four</Attributes>" +
 				"</optionalValue>", XmlSchema.Namespace, XmlSchema.InstanceNamespace,
 				AnotherNamespace, ANamespace), sw.ToString (), "#2");
 
@@ -1082,9 +1070,9 @@ namespace MonoTests.System.XmlSerialization
 #if NET_2_0
 				"<optionalValue xmlns:xsi='{1}' xmlns:xsd='{0}' xmlns='{2}'>" +
 #else
- "<optionalValue xmlns:xsd='{0}' xmlns:xsi='{1}' xmlns='{2}'>" +
+				"<optionalValue xmlns:xsd='{0}' xmlns:xsi='{1}' xmlns='{2}'>" +
 #endif
- "<Attributes xmlns='{3}'>one four</Attributes>" +
+				"<Attributes xmlns='{3}'>one four</Attributes>" +
 				"<Flags xmlns='{3}'>one</Flags>" +
 				"</optionalValue>",
 				XmlSchema.Namespace, XmlSchema.InstanceNamespace, AnotherNamespace,
@@ -1223,8 +1211,7 @@ namespace MonoTests.System.XmlSerialization
 				attr.XmlText = new XmlTextAttribute (typeof (byte[]));
 				Serialize (simple, overrides);
 				Assert.Fail ("#A1: XmlText.Type does not match the type it serializes: this should have failed");
-			}
-			catch (InvalidOperationException ex) {
+			} catch (InvalidOperationException ex) {
 				// there was an error reflecting type 'MonoTests.System.Xml.TestClasses.SimpleClass'
 				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
 				Assert.IsNotNull (ex.Message, "#A3");
@@ -1248,8 +1235,7 @@ namespace MonoTests.System.XmlSerialization
 				attr.XmlText.DataType = "sometype";
 				Serialize (simple, overrides);
 				Assert.Fail ("#B1: XmlText.DataType does not match the type it serializes: this should have failed");
-			}
-			catch (InvalidOperationException ex) {
+			} catch (InvalidOperationException ex) {
 				// There was an error reflecting type 'MonoTests.System.Xml.TestClasses.SimpleClass'.
 				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
 				Assert.IsNotNull (ex.Message, "#B3");
@@ -1297,16 +1283,14 @@ namespace MonoTests.System.XmlSerialization
 			try {
 				Serialize (simple, root);
 				Assert.Fail ("Cannot serialize null object if XmlRoot's IsNullable == false");
-			}
-			catch (NullReferenceException) {
+			} catch (NullReferenceException) {
 			}
 
 			root.IsNullable = true;
 			try {
 				Serialize (simple, root);
 				Assert.Fail ("Cannot serialize null object if XmlRoot's IsNullable == true");
-			}
-			catch (NullReferenceException) {
+			} catch (NullReferenceException) {
 			}
 
 			simple = new SimpleClass ();
