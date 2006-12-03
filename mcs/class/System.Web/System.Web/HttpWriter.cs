@@ -161,6 +161,16 @@ namespace System.Web {
 
 			response.Flush ();
 		}
+
+		public void WriteBytes (byte [] buffer, int index, int count)
+		{
+			output_stream.Write (buffer, index, count);
+
+			if (response.buffer)
+				return;
+
+			response.Flush ();
+		}
 	}
 }
 

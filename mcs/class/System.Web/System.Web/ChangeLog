@@ -1,3 +1,7 @@
+2006-12-03 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* HttpWriter.cs: reverted r38835.
+
 2006-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWriter.cs: remove unused WriteBytes method.
