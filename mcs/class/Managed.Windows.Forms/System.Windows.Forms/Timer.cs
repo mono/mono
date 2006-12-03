@@ -38,6 +38,9 @@ namespace System.Windows.Forms {
 		private DateTime expires;
 		internal Thread thread;
 
+#if NET_2_0
+		internal object control_tag;
+#endif
 		internal static readonly int Minimum = 15;
 
 		public Timer ()
@@ -93,6 +96,23 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
+		
+#if NET_2_0
+		[Localizable(false)]
+		[Bindable(true)]
+		[TypeConverter(typeof(StringConverter))]
+		[DefaultValue(null)]
+		[MWFCategory("Data")]
+		public object Tag {
+			get {
+				return control_tag;
+			}
+
+			set {
+				control_tag = value;
+			}
+		}
+#endif
 
 		public void Start ()
 		{
