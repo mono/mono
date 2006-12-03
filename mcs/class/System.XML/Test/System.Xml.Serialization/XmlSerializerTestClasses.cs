@@ -1,10 +1,12 @@
 //
 // System.Xml.XmlSerializerTestClasses
 //
-// Author:
+// Authors:
 //   Erik LeBel <eriklebel@yahoo.ca>
+//   Hagit Yidov <hagity@mainsoft.com>
 //
 // (C) 2003 Erik LeBel
+// (C) 2005 Mainsoft Corporation (http://www.mainsoft.com)
 //
 // Classes to use in the testing of the XmlSerializer
 //
@@ -15,6 +17,7 @@ using System.Collections;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using System.Collections.Generic;
 
 namespace MonoTests.System.Xml.TestClasses
 {
@@ -25,7 +28,8 @@ namespace MonoTests.System.Xml.TestClasses
 	public enum EnumDefaultValueNF { e1 = 1, e2 = 2, e3 = 3 }
 
 	[Flags]
-	public enum FlagEnum { 
+	public enum FlagEnum
+	{
 		[XmlEnum ("one")]
 		e1 = 1,
 		[XmlEnum ("two")]
@@ -47,7 +51,8 @@ namespace MonoTests.System.Xml.TestClasses
 	}
 
 	[Flags]
-	public enum ZeroFlagEnum {
+	public enum ZeroFlagEnum
+	{
 		[XmlEnum ("zero")]
 		e0 = 0,
 		[XmlEnum ("o<n>e")]
@@ -58,7 +63,90 @@ namespace MonoTests.System.Xml.TestClasses
 		[XmlIgnore]
 		e4 = 4
 	}
-	
+
+	#region GenericsTestClasses
+
+	public class GenSimpleClass<T>
+	{
+		public T something = default (T);
+	}
+
+	public struct GenSimpleStruct<T>
+	{
+		public T something;
+		public GenSimpleStruct (int dummy)
+		{
+			something = default (T);
+		}
+	}
+
+	public class GenListClass<T>
+	{
+		public List<T> somelist = new List<T> ();
+	}
+
+	public class GenArrayClass<T>
+	{
+		public T[] arr = new T[3];
+	}
+
+	public class GenTwoClass<T1, T2>
+	{
+		public T1 something1 = default (T1);
+		public T2 something2 = default (T2);
+	}
+
+	public class GenDerivedClass<T1, T2> : GenTwoClass<string, int>
+	{
+		public T1 another1 = default (T1);
+		public T2 another2 = default (T2);
+	}
+
+	public class GenDerived2Class<T1, T2> : GenTwoClass<T1, T2>
+	{
+		public T1 another1 = default (T1);
+		public T2 another2 = default (T2);
+	}
+
+	public class GenNestedClass<TO, TI>
+	{
+		public TO outer = default (TO);
+		public class InnerClass<T>
+		{
+			public TI inner = default (TI);
+			public T something = default (T);
+		}
+	}
+
+	public struct GenComplexStruct<T1, T2>
+	{
+		public T1 something;
+		public GenSimpleClass<T1> simpleclass;
+		public GenSimpleStruct<T1> simplestruct;
+		public GenListClass<T1> listclass;
+		public GenArrayClass<T1> arrayclass;
+		public GenTwoClass<T1, T2> twoclass;
+		public GenDerivedClass<T1, T2> derivedclass;
+		public GenDerived2Class<T1, T2> derived2;
+		public GenNestedClass<T1, T2> nestedouter;
+		public GenNestedClass<T1, T2>.InnerClass<T1> nestedinner;
+		public GenComplexStruct (int dummy)
+		{
+			something = default (T1);
+			simpleclass = new GenSimpleClass<T1> ();
+			simplestruct = new GenSimpleStruct<T1> ();
+			listclass = new GenListClass<T1> ();
+			arrayclass = new GenArrayClass<T1> ();
+			twoclass = new GenTwoClass<T1, T2> ();
+			derivedclass = new GenDerivedClass<T1, T2> ();
+			derived2 = new GenDerived2Class<T1, T2> ();
+			nestedouter = new GenNestedClass<T1, T2> ();
+			nestedinner = new GenNestedClass<T1, T2>.InnerClass<T1> ();
+		}
+	}
+
+	#endregion // GenericsTestClasses
+
 	public class SimpleClass
 	{
 		public string something = null;
@@ -66,28 +154,28 @@ namespace MonoTests.System.Xml.TestClasses
 
 	public class StringCollection : CollectionBase
 	{
-		public void Add (String parameter) 
+		public void Add (String parameter)
 		{
 			List.Insert (Count, parameter);
 		}
-			
-		public String this [int index]
+
+		public String this[int index]
 		{
 			get
-			{ 
+			{
 				if (index < 0 || index > Count)
 					throw new ArgumentOutOfRangeException ();
-					
-				return (String) List [index]; 
+
+				return (String) List[index];
 			}
-			set { List [index] = value; }
+			set { List[index] = value; }
 		}
 	}
-	
+
 	public class StringCollectionContainer
 	{
-		StringCollection messages = new StringCollection();
-		
+		StringCollection messages = new StringCollection ();
+
 		public StringCollection Messages
 		{
 			get { return messages; }
@@ -96,22 +184,22 @@ namespace MonoTests.System.Xml.TestClasses
 
 	public class ArrayContainer
 	{
-		public object [] items = null;
+		public object[] items = null;
 	}
-	
+
 	public class ClassArrayContainer
 	{
-		public SimpleClass [] items = null;
+		public SimpleClass[] items = null;
 	}
-	
-	[XmlRoot("simple")]
+
+	[XmlRoot ("simple")]
 	public class SimpleClassWithXmlAttributes
 	{
-		[XmlAttribute("member")]
+		[XmlAttribute ("member")]
 		public string something = null;
 	}
-	
-	[XmlRoot("field")]
+
+	[XmlRoot ("field")]
 	public class Field
 	{
 		[XmlAttribute ("flag1")]
@@ -129,17 +217,17 @@ namespace MonoTests.System.Xml.TestClasses
 		[XmlAttribute ("flag4")]
 		public FlagEnum Flags4;
 
-		[XmlAttribute("modifiers")]
+		[XmlAttribute ("modifiers")]
 		public MapModifiers Modifiers;
 
-		[XmlAttribute ("modifiers2", Form=XmlSchemaForm.Unqualified)]
+		[XmlAttribute ("modifiers2", Form = XmlSchemaForm.Unqualified)]
 		public MapModifiers Modifiers2;
 
 		[XmlAttribute ("modifiers3")]
 		[DefaultValue (0)]
 		public MapModifiers Modifiers3;
 
-		[XmlAttribute ("modifiers4", Form=XmlSchemaForm.Unqualified)]
+		[XmlAttribute ("modifiers4", Form = XmlSchemaForm.Unqualified)]
 		[DefaultValue (MapModifiers.Protected)]
 		public MapModifiers Modifiers4;
 
@@ -199,89 +287,94 @@ namespace MonoTests.System.Xml.TestClasses
 	[Flags]
 	public enum MapModifiers
 	{
-		[XmlEnum("public")]
+		[XmlEnum ("public")]
 		[SoapEnum ("PuBlIc")]
 		Public = 0,
-		[XmlEnum("protected")]
+		[XmlEnum ("protected")]
 		Protected = 1,
 	}
 
 	public class MyList : ArrayList
 	{
 		object container;
-		
+
 		// NOTE: MyList has no public constructor
-		public MyList (object container) : base()
+		public MyList (object container)
+			: base ()
 		{
 			this.container = container;
 		}
 	}
-	
+
 	public class Container
 	{
 		public MyList Items;
-		
-		public Container () {
-			Items = new MyList(this);
+
+		public Container ()
+		{
+			Items = new MyList (this);
 		}
 	}
-	
+
 	public class Container2
 	{
 		public MyList Items;
-		
-		public Container2 () {
+
+		public Container2 ()
+		{
 		}
-		
-		public Container2 (bool b) {
-			Items = new MyList(this);
+
+		public Container2 (bool b)
+		{
+			Items = new MyList (this);
 		}
 	}
 
-	public class MyElem: XmlElement
+	public class MyElem : XmlElement
 	{
-		public MyElem (XmlDocument doc): base ("","myelem","", doc)
+		public MyElem (XmlDocument doc)
+			: base ("", "myelem", "", doc)
 		{
-			SetAttribute ("aa","1");
+			SetAttribute ("aa", "1");
 		}
 
 		[XmlAttribute]
-		public int kk=1;
+		public int kk = 1;
 	}
 
-	public class MyDocument: XmlDocument
+	public class MyDocument : XmlDocument
 	{
 		public MyDocument ()
 		{
 		}
 
 		[XmlAttribute]
-		public int kk=1;
+		public int kk = 1;
 	}
-	
+
 	public class CDataContainer
 	{
 		public XmlCDataSection cdata;
 	}
-	
+
 	public class NodeContainer
 	{
 		public XmlNode node;
 	}
-	
+
 	public class Choices
 	{
-		[XmlElementAttribute("ChoiceZero", typeof(string), IsNullable=false)]
-		[XmlElementAttribute("ChoiceOne", typeof(string), IsNullable=false)]
-		[XmlElementAttribute("ChoiceTwo", typeof(string), IsNullable=false)]
-		[XmlChoiceIdentifier("ItemType")]
+		[XmlElementAttribute ("ChoiceZero", typeof (string), IsNullable = false)]
+		[XmlElementAttribute ("ChoiceOne", typeof (string), IsNullable = false)]
+		[XmlElementAttribute ("ChoiceTwo", typeof (string), IsNullable = false)]
+		[XmlChoiceIdentifier ("ItemType")]
 		public string MyChoice;
 
 		[XmlIgnore]
 		public ItemChoiceType ItemType;
 	}
-	
-	[XmlType(IncludeInSchema = false)]
+
+	[XmlType (IncludeInSchema = false)]
 	public enum ItemChoiceType
 	{
 		ChoiceZero,
@@ -289,43 +382,46 @@ namespace MonoTests.System.Xml.TestClasses
 		StrangeOne,
 		ChoiceTwo,
 	}
-	
+
 	public class WrongChoices
 	{
-		[XmlElementAttribute("ChoiceZero", typeof(string), IsNullable=false)]
-		[XmlElementAttribute("StrangeOne", typeof(string), IsNullable=false)]
-		[XmlElementAttribute("ChoiceTwo", typeof(string), IsNullable=false)]
-		[XmlChoiceIdentifier("ItemType")]
+		[XmlElementAttribute ("ChoiceZero", typeof (string), IsNullable = false)]
+		[XmlElementAttribute ("StrangeOne", typeof (string), IsNullable = false)]
+		[XmlElementAttribute ("ChoiceTwo", typeof (string), IsNullable = false)]
+		[XmlChoiceIdentifier ("ItemType")]
 		public string MyChoice;
 
 		[XmlIgnore]
 		public ItemChoiceType ItemType;
 	}
-	
+
 	[XmlType ("Type with space")]
 	public class TestSpace
 	{
-	   [XmlElement (ElementName = "Element with space")]
-	   public int elem;
-	    
-	   [XmlAttribute (AttributeName = "Attribute with space")]
-	   public int attr; 
+		[XmlElement (ElementName = "Element with space")]
+		public int elem;
+
+		[XmlAttribute (AttributeName = "Attribute with space")]
+		public int attr;
 	}
 
 	[Serializable]
-	public class ReadOnlyProperties {
+	public class ReadOnlyProperties
+	{
 		string[] strArr = new string[2] { "string1", "string2" };
 
-		public string[] StrArr {
+		public string[] StrArr
+		{
 			get { return strArr; }
 		}
-		
-		public string dat {
+
+		public string dat
+		{
 			get { return "fff"; }
-		} 
+		}
 	}
-	
-	[XmlRoot("root")]
+
+	[XmlRoot ("root")]
 	public class ListDefaults
 	{
 		public ListDefaults ()
@@ -333,73 +429,74 @@ namespace MonoTests.System.Xml.TestClasses
 			ed = new SimpleClass ();
 			str = "hola";
 		}
-		
-	    public ArrayList list2;
-	    
-	    public MyList list3;
-	    
-	    public string[] list4;
-	    
-		[XmlElement("e", typeof(SimpleClass))]
-	    public ArrayList list5;
-	    
+
+		public ArrayList list2;
+
+		public MyList list3;
+
+		public string[] list4;
+
+		[XmlElement ("e", typeof (SimpleClass))]
+		public ArrayList list5;
+
 		[DefaultValue (null)]
-	    public SimpleClass ed;
-	    
+		public SimpleClass ed;
+
 		[DefaultValue (null)]
-	    public string str; 
+		public string str;
 	}
-	
+
 	public class clsPerson
 	{
 		public IList EmailAccounts;
 	}
-	
+
 	public class ArrayClass
 	{
-		public object names = new object[] { "un","dos" };
+		public object names = new object[] { "un", "dos" };
 	}
-	
+
 	public class CompositeValueType
 	{
 		public void Init ()
 		{
-	   		Items = new object[] { 1, 2 };
-	   		ItemsElementName = new ItemsChoiceType[] { ItemsChoiceType.In, ItemsChoiceType.Es };
+			Items = new object[] { 1, 2 };
+			ItemsElementName = new ItemsChoiceType[] { ItemsChoiceType.In, ItemsChoiceType.Es };
 		}
-	   
-		[XmlElementAttribute("Es", typeof(int))]
-		[XmlElementAttribute("In", typeof(int))]
-		[XmlChoiceIdentifierAttribute("ItemsElementName")]
+
+		[XmlElementAttribute ("Es", typeof (int))]
+		[XmlElementAttribute ("In", typeof (int))]
+		[XmlChoiceIdentifierAttribute ("ItemsElementName")]
 		public object[] Items;
-	   
-		[XmlElementAttribute("ItemsElementName")]
-		[XmlIgnoreAttribute()]
+
+		[XmlElementAttribute ("ItemsElementName")]
+		[XmlIgnoreAttribute ()]
 		public ItemsChoiceType[] ItemsElementName;
 	}
 
-	public enum ItemsChoiceType {
-	   In, Es
+	public enum ItemsChoiceType
+	{
+		In, Es
 	}
-	
+
 	public class ArrayAttributeWithType
 	{
-		[XmlAttribute (DataType="anyURI")]
-		public string[] at = new string [] { "a","b" };
+		[XmlAttribute (DataType = "anyURI")]
+		public string[] at = new string[] { "a", "b" };
 
-		[XmlAttribute (DataType="base64Binary")]
-		public byte[][] bin1 = new byte[][] { new byte[]{1,2},  new byte[]{1,2}};
-		
-		[XmlAttribute (DataType="base64Binary")]
-		public byte[] bin2 = new byte[] { 1,2 };
+		[XmlAttribute (DataType = "base64Binary")]
+		public byte[][] bin1 = new byte[][] { new byte[] { 1, 2 }, new byte[] { 1, 2 } };
+
+		[XmlAttribute (DataType = "base64Binary")]
+		public byte[] bin2 = new byte[] { 1, 2 };
 	}
-	
+
 	public class ArrayAttributeWithWrongType
 	{
-		[XmlAttribute (DataType="int")]
-		public string[] at = new string [] { "a","b" };
+		[XmlAttribute (DataType = "int")]
+		public string[] at = new string[] { "a", "b" };
 	}
-	
+
 	[XmlType ("Container")]
 	public class EntityContainer
 	{
@@ -407,78 +504,88 @@ namespace MonoTests.System.Xml.TestClasses
 		EntityCollection collection2;
 		EntityCollection collection3 = new EntityCollection ("root");
 		EntityCollection collection4 = new EntityCollection ("root");
-		
-		[XmlArray (IsNullable=true)]
-		public EntityCollection Collection1 {
+
+		[XmlArray (IsNullable = true)]
+		public EntityCollection Collection1
+		{
 			get { return collection1; }
 			set { collection1 = value; collection1.Container = "assigned"; }
 		}
-		
-		[XmlArray (IsNullable=false)]
-		public EntityCollection Collection2 {
+
+		[XmlArray (IsNullable = false)]
+		public EntityCollection Collection2
+		{
 			get { return collection2; }
 			set { collection2 = value; collection2.Container = "assigned"; }
 		}
-		
-		[XmlArray (IsNullable=true)]
-		public EntityCollection Collection3 {
+
+		[XmlArray (IsNullable = true)]
+		public EntityCollection Collection3
+		{
 			get { return collection3; }
 			set { collection3 = value; collection3.Container = "assigned"; }
 		}
-		
-		[XmlArray (IsNullable=false)]
-		public EntityCollection Collection4 {
+
+		[XmlArray (IsNullable = false)]
+		public EntityCollection Collection4
+		{
 			get { return collection4; }
 			set { collection4 = value; collection4.Container = "assigned"; }
 		}
 	}
-	
+
 	[XmlType ("Container")]
 	public class ArrayEntityContainer
 	{
 		Entity[] collection1;
 		Entity[] collection2;
-		Entity[] collection3 = new Entity [0];
-		Entity[] collection4 = new Entity [0];
-		
-		[XmlArray (IsNullable=true)]
-		public Entity[] Collection1 {
+		Entity[] collection3 = new Entity[0];
+		Entity[] collection4 = new Entity[0];
+
+		[XmlArray (IsNullable = true)]
+		public Entity[] Collection1
+		{
 			get { return collection1; }
 			set { collection1 = value; }
 		}
-		
-		[XmlArray (IsNullable=false)]
-		public Entity[] Collection2 {
+
+		[XmlArray (IsNullable = false)]
+		public Entity[] Collection2
+		{
 			get { return collection2; }
 			set { collection2 = value; }
 		}
-		
-		[XmlArray (IsNullable=true)]
-		public Entity[] Collection3 {
+
+		[XmlArray (IsNullable = true)]
+		public Entity[] Collection3
+		{
 			get { return collection3; }
 			set { collection3 = value; }
 		}
-		
-		[XmlArray (IsNullable=false)]
-		public Entity[] Collection4 {
+
+		[XmlArray (IsNullable = false)]
+		public Entity[] Collection4
+		{
 			get { return collection4; }
 			set { collection4 = value; }
 		}
 	}
-	
+
 	public class Entity
 	{
 		private string _name = string.Empty;
 		private string _parent = null;
 
 		[XmlAttribute]
-		public string Name {
+		public string Name
+		{
 			get { return _name; }
 			set { _name = value; }
 		}
 
-		[XmlIgnore] 
-		public string Parent {
+		[XmlIgnore]
+		public string Parent
+		{
 			get { return _parent; }
 			set { _parent = value; }
 		}
@@ -497,17 +604,18 @@ namespace MonoTests.System.Xml.TestClasses
 			_container = c;
 		}
 
-		public string Container {
+		public string Container
+		{
 			get { return _container; }
 			set { _container = value; }
 		}
 
 		public int Add (Entity value)
 		{
-			if(_container != null)
+			if (_container != null)
 				value.Parent = _container;
 
-			return base.Add(value);
+			return base.Add (value);
 		}
 
 		public new Entity this[int index]
@@ -516,60 +624,64 @@ namespace MonoTests.System.Xml.TestClasses
 			set { base[index] = value; }
 		}
 	}
-	
+
 	[XmlType ("Container")]
 	public class ObjectWithReadonlyCollection
 	{
 		EntityCollection collection1 = new EntityCollection ("root");
-		
-		public EntityCollection Collection1 {
+
+		public EntityCollection Collection1
+		{
 			get { return collection1; }
 		}
 	}
-	
+
 	[XmlType ("Container")]
 	public class ObjectWithReadonlyNulCollection
 	{
 		EntityCollection collection1;
-		
-		public EntityCollection Collection1 {
+
+		public EntityCollection Collection1
+		{
 			get { return collection1; }
 		}
 	}
-	
+
 	[XmlType ("Container")]
 	public class ObjectWithReadonlyArray
 	{
-		Entity[] collection1 = new Entity [0];
-		
-		public Entity[] Collection1 {
+		Entity[] collection1 = new Entity[0];
+
+		public Entity[] Collection1
+		{
 			get { return collection1; }
 		}
 	}
-	
-	[XmlInclude (typeof(SubclassTestSub))]
+
+	[XmlInclude (typeof (SubclassTestSub))]
 	public class SubclassTestBase
 	{
 	}
-	
-	public class SubclassTestSub: SubclassTestBase
+
+	public class SubclassTestSub : SubclassTestBase
 	{
 	}
-	
+
 	public class SubclassTestExtra
 	{
 	}
-	
+
 	public class SubclassTestContainer
 	{
-		[XmlElement ("a", typeof(SubclassTestBase))]
-		[XmlElement ("b", typeof(SubclassTestExtra))]
+		[XmlElement ("a", typeof (SubclassTestBase))]
+		[XmlElement ("b", typeof (SubclassTestExtra))]
 		public object data;
 	}
 
 	public class DictionaryWithIndexer : DictionaryBase
 	{
-		public TimeSpan this[int index] {
+		public TimeSpan this[int index]
+		{
 			get { return TimeSpan.MinValue; }
 		}
 
@@ -578,8 +690,8 @@ namespace MonoTests.System.Xml.TestClasses
 		}
 	}
 
-	[XmlRoot(Namespace="some:urn")]
-	[SoapTypeAttribute (Namespace="another:urn")]
+	[XmlRoot (Namespace = "some:urn")]
+	[SoapTypeAttribute (Namespace = "another:urn")]
 	public class PrimitiveTypesContainer
 	{
 		public PrimitiveTypesContainer ()
@@ -597,49 +709,51 @@ namespace MonoTests.System.Xml.TestClasses
 		public byte[] Password;
 		public char PathSeparatorCharacter;
 	}
-	
+
 	public class TestSchemaForm1
 	{
 		public PrintTypeResponse p1;
-		
-		[XmlElement(Namespace="urn:oo")]
+
+		[XmlElement (Namespace = "urn:oo")]
 		public PrintTypeResponse p2;
 	}
 
-	[XmlType (Namespace="urn:testForm")]
+	[XmlType (Namespace = "urn:testForm")]
 	public class TestSchemaForm2
 	{
 		public PrintTypeResponse p1;
-		
-		[XmlElement(Namespace="urn:oo")]
+
+		[XmlElement (Namespace = "urn:oo")]
 		public PrintTypeResponse p2;
 	}
 
-	[XmlType (Namespace="urn:responseTypes")]
-	public class PrintTypeResponse {
-		[XmlElement (Form=XmlSchemaForm.Unqualified, IsNullable=true)]
-	    public OutputType result;
-	    public PrintTypeResponse intern;
-	    
-	    public void Init ()
-	    {
-	    	result = new OutputType ();
-	    	result.data = "data1";
-	    	intern = new PrintTypeResponse ();
-	    	intern.result = new OutputType ();
-	    	intern.result.data = "data2";
-	    }
+	[XmlType (Namespace = "urn:responseTypes")]
+	public class PrintTypeResponse
+	{
+		[XmlElement (Form = XmlSchemaForm.Unqualified, IsNullable = true)]
+		public OutputType result;
+		public PrintTypeResponse intern;
+
+		public void Init ()
+		{
+			result = new OutputType ();
+			result.data = "data1";
+			intern = new PrintTypeResponse ();
+			intern.result = new OutputType ();
+			intern.result.data = "data2";
+		}
 	}
 
-	[XmlType (Namespace="urn:responseTypes")]
-	public class OutputType {
-	    
-		[XmlElement (Form=XmlSchemaForm.Unqualified, IsNullable=true)]
-	    public string data;
+	[XmlType (Namespace = "urn:responseTypes")]
+	public class OutputType
+	{
+
+		[XmlElement (Form = XmlSchemaForm.Unqualified, IsNullable = true)]
+		public string data;
 	}
 
-	[XmlRootAttribute ("testDefault", Namespace="urn:myNS", IsNullable=false)]
-	[SoapType("testDefault", Namespace="urn:myNS")]
+	[XmlRootAttribute ("testDefault", Namespace = "urn:myNS", IsNullable = false)]
+	[SoapType ("testDefault", Namespace = "urn:myNS")]
 	public class TestDefault
 	{
 		public string str;
@@ -663,8 +777,8 @@ namespace MonoTests.System.Xml.TestClasses
 		public FlagEnum_Encoded flagencoded = (FlagEnum_Encoded.e1 | FlagEnum_Encoded.e4);
 	}
 
-	[XmlType ("optionalValueType", Namespace="some:urn")]
-	[XmlRootAttribute ("optionalValue", Namespace="another:urn", IsNullable=false)]
+	[XmlType ("optionalValueType", Namespace = "some:urn")]
+	[XmlRootAttribute ("optionalValue", Namespace = "another:urn", IsNullable = false)]
 	public class OptionalValueTypeContainer
 	{
 		[DefaultValue (FlagEnum.e1 | FlagEnum.e4)]
@@ -682,7 +796,8 @@ namespace MonoTests.System.Xml.TestClasses
 
 		[XmlIgnore]
 		[SoapIgnore]
-		public bool IsEmptySpecified {
+		public bool IsEmptySpecified
+		{
 			get { return _isEmptySpecified; }
 			set { _isEmptySpecified = value; }
 		}
@@ -699,7 +814,7 @@ namespace MonoTests.System.Xml.TestClasses
 		public string GroupName;
 
 		[SoapAttribute (DataType = "base64Binary")]
-		public Byte [] GroupNumber;
+		public Byte[] GroupNumber;
 
 		[SoapAttribute (DataType = "date", AttributeName = "CreationDate")]
 		public DateTime Today;
@@ -719,10 +834,11 @@ namespace MonoTests.System.Xml.TestClasses
 		{
 			Vehicle v;
 			if (licNumber == string.Empty) {
-				v = new Car();
+				v = new Car ();
 				v.licenseNumber = "!!!!!!";
-			} else {
-				v = new Car();
+			}
+			else {
+				v = new Car ();
 				v.licenseNumber = licNumber;
 			}
 			return v;
@@ -739,7 +855,7 @@ namespace MonoTests.System.Xml.TestClasses
 		public string weight;
 	}
 
-	public class Car: Vehicle
+	public class Car : Vehicle
 	{
 	}
 

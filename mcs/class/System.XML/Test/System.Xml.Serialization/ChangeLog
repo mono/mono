@@ -1,3 +1,9 @@
+2006-12-03  Hagit Yidov  <hagity@xmainsoft.com>
+
+	* XmlSerializerTests.cs : added tests for serialization of generic types.
+	* DeserializeTests.cs : added tests for deserialization of generic types.
+	* XmlSerializerTestClasses.cs : added classes for tests which use generic types.
+
 2006-12-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializerTests.cs : added tests for XmlArrayAttribute support.
