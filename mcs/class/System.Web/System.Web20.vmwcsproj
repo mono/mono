@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
 		<Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
 		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -11,7 +11,8 @@
 		<AssemblyName>System.Web</AssemblyName>
 		<JDKName>1.5.0_05</JDKName>
 		<GHProjectType>1</GHProjectType>
-		<GHProjectKind>framework</GHProjectKind>
+		<!-- workaqround that should be changed to be "framework" when we will be able to compile without MS refs -->
+		<GHProjectKind>runtime</GHProjectKind>
 		<Version>2.0</Version>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
