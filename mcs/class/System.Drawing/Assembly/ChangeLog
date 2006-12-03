@@ -1,3 +1,7 @@
+2006-12-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.ico: Add mono icon to be included in SystemIcons.
+
 2006-06-07  Kornél Pál  <kornelpal@gmail.com>
 
 	* AssemblyInfo.cs: Use Consts.FxFileVersion for AssemblyFileVersion.
