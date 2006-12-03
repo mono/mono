@@ -1,3 +1,13 @@
+2006-12-02  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* error.ico: New. Error icon required for SystemIcons.
+	* information.ico: New. Information icon required for SystemIcons.
+	* mono.ico: New. Mono icon used for Application and WinLogo in 
+	SystemIcons.
+	* question.ico: New. Question icon required for SystemIcons.
+	* warning.ico: New. Warning icon required for SystemIcons.
+	* Makefile: Add all icons as resources in the assembly.
+
 2006-11-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* System.Drawing_test.dll.sources: Add new unit test
