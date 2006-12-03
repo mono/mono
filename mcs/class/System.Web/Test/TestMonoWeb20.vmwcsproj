@@ -15,7 +15,7 @@
     <Version>2.0</Version>
     <StartupObject>
     </StartupObject>
-    <jarserver>iap2</jarserver>
+    <jarserver>ipa</jarserver>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -102,19 +102,9 @@
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
-    <Reference Include="HtmlCompare, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mainsoft\MainsoftWebTest\bin\Debug_Java20\HtmlCompare.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="nunit.framework, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="NunitWeb, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>mainsoft\NunitWeb\NunitWeb\bin\Debug_Java20\NunitWeb.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System">
@@ -279,14 +269,12 @@
     <Compile Include="System.Web.UI.WebControls\ListItemTest.cs" />
     <Compile Include="System.Web.UI.WebControls\LiteralTest.cs" />
     <Compile Include="System.Web.UI.WebControls\LoginNameTest.cs">
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\LoginStatusTest.cs" />
     <Compile Include="System.Web.UI.WebControls\LoginTest.cs" />
     <Compile Include="System.Web.UI.WebControls\LoginViewTest.cs" />
     <Compile Include="System.Web.UI.WebControls\MappingUrlTest.cs" />
     <Compile Include="System.Web.UI.WebControls\MasterPageTest.cs">
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\MenuTest.cs" />
     <Compile Include="System.Web.UI.WebControls\MonthChangedEventArgsTest.cs" />
@@ -328,7 +316,6 @@
     </Compile>
     <Compile Include="System.Web.UI.WebControls\TableRowTest.cs" />
     <Compile Include="System.Web.UI.WebControls\TableSectionStyleTest.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\TableStyleTest.cs">
       <SubType>Component</SubType>
@@ -364,7 +351,6 @@
     <Compile Include="System.Web.UI\ChtmlTextWriterTest.cs" />
     <Compile Include="System.Web.UI\CleanHtmlTextWriter.cs" />
     <Compile Include="System.Web.UI\ClientScriptManagerTest.cs">
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="System.Web.UI\ControlCollectionTest.cs" />
     <Compile Include="System.Web.UI\ControlTest.cs" />
@@ -416,6 +402,16 @@
     <None Include="System.Web.UI\ChangeLog" />
     <None Include="System.Web.Util\ChangeLog" />
     <None Include="System.Web\ChangeLog" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="mainsoft\MainsoftWebTest\HtmlCompare20.vmwcsproj">
+      <Project>{C3375963-9409-41A1-ADD2-1076F5A90BDE}</Project>
+      <Name>HtmlCompare20</Name>
+    </ProjectReference>
+    <ProjectReference Include="mainsoft\NunitWeb\NunitWeb\NunitWeb20.vmwcsproj">
+      <Project>{DC2320EB-CC91-4648-AF2B-8937F6794A14}</Project>
+      <Name>NunitWeb20</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="System.Web.Compilation\" />
