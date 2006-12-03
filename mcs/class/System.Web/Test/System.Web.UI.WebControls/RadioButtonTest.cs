@@ -4,6 +4,7 @@
 //
 // Author:
 //	Dick Porter  <dick@ximian.com>
+//      Yoni Klain   <yonik@mainsoft.com>
 //
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
@@ -34,6 +35,8 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using NUnit.Framework;
+using MonoTests.SystemWeb.Framework;
+using System.Collections;
 
 namespace MonoTests.System.Web.UI.WebControls {
 
@@ -48,6 +51,12 @@ namespace MonoTests.System.Web.UI.WebControls {
 			base.Render (writer);
 			return writer.InnerWriter.ToString ();
 		}
+#if NET_2_0
+		public new void RaisePostDataChangedEvent ()
+		{
+			base.RaisePostDataChangedEvent ();
+		}
+#endif
 	}
 
 	[TestFixture]
@@ -138,7 +147,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		
 		/* Segfaults on ms runtime */
 		[Test]
-		[Category ("NotDotNet")]
 		public void Render ()
 		{
 			TestRadioButton r = new TestRadioButton ();
@@ -168,7 +176,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			b2.GroupName = "mono";
 			Page p = new Page ();
 #if NET_2_0
-            p.EnableEventValidation = false;
+			p.EnableEventValidation = false;
 #endif
 			p.ID = "MyPage";
 			p.Controls.Add (b1);
@@ -178,5 +186,149 @@ namespace MonoTests.System.Web.UI.WebControls {
 			string t2 = b2.Render ();
 			Assert.IsTrue (t2.IndexOf ("name=\"mono\"") != -1, "#02");
 		}
+
+#if NET_2_0
+		[Test]
+		public void RaisePostDataChangedEvent ()
+		{
+			TestRadioButton b = new TestRadioButton ();
+			b.CheckedChanged += new EventHandler (b_CheckedChanged);
+			Assert.AreEqual (false, eventCheckedChanged, "before");
+			b.RaisePostDataChangedEvent ();
+			Assert.AreEqual (true, eventCheckedChanged, "after");
+		}
+
+		bool eventCheckedChanged;
+		void b_CheckedChanged (object sender, EventArgs e)
+		{
+			eventCheckedChanged = true;
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void RaisePostDataChangedEvent_PostBack ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnInit (RaisePostDataChangedEvent_Init));
+			string html = t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("RadioButton1");
+			fr.Controls["__EVENTTARGET"].Value = "RadioButton1";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			fr.Controls["RadioButton1"].Value = "RadioButton1";
+			t.Request = fr;
+			t.Run ();
+			if (t.UserData == null)
+				Assert.Fail ("RaisePostDataChangedEvent Failed#1");
+			Assert.AreEqual ("CheckedChanged", (string) t.UserData, "RaisePostDataChangedEvent Failed#2");
+		}
+
+		public static void RaisePostDataChangedEvent_Init (Page p)
+		{
+			TestRadioButton b = new TestRadioButton ();
+			b.ID = "RadioButton1";
+			b.CheckedChanged+=new EventHandler(event_CheckedChanged);
+			p.Form.Controls.Add (b);
+		}
+
+		public static void event_CheckedChanged (object sender, EventArgs e)
+		{
+			WebTest.CurrentTest.UserData = "CheckedChanged";
+		}
+
+		#region help_class
+		class Poker : RadioButton
+		{
+			protected override bool LoadPostData (string postDataKey, global::System.Collections.Specialized.NameValueCollection postCollection)
+			{
+				if (WebTest.CurrentTest.UserData == null) {
+					ArrayList list = new ArrayList ();
+					list.Add ("LoadPostData");
+					WebTest.CurrentTest.UserData = list;
+				}
+				else {
+					ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+					if (list == null)
+						throw new NullReferenceException ();
+					list.Add ("LoadPostData");
+					WebTest.CurrentTest.UserData = list;
+				}
+				return base.LoadPostData (postDataKey, postCollection);
+			}
+
+			protected override void OnLoad (EventArgs e)
+			{
+				if (WebTest.CurrentTest.UserData == null) {
+					ArrayList list = new ArrayList ();
+					list.Add ("ControlLoad");
+					WebTest.CurrentTest.UserData = list;
+				}
+				else {
+					ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+					if (list == null)
+						throw new NullReferenceException ();
+					list.Add ("ControlLoad");
+					WebTest.CurrentTest.UserData = list;
+				}
+				base.OnLoad (e);
+			}
+		}
+		#endregion
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void LoadPostData ()  //Just flow and not implementation detail
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (LoadPostData_Load));
+			string html = t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "RadioButton1";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			t.Run ();
+
+			ArrayList eventlist = t.UserData as ArrayList;
+			if (eventlist == null)
+				Assert.Fail ("User data does not been created fail");
+			Assert.AreEqual ("ControlLoad", eventlist[0], "Live Cycle Flow #1");
+			Assert.AreEqual ("PageLoad", eventlist[1], "Live Cycle Flow #2");
+			Assert.AreEqual ("ControlLoad", eventlist[2], "Live Cycle Flow #3");
+			Assert.AreEqual ("LoadPostData", eventlist[3], "Live Cycle Flow #4");
+
+		}
+
+		public static void LoadPostData_Load (Page p)
+		{
+			Poker b = new Poker();
+			b.ID = "RadioButton1";
+			p.Form.Controls.Add (b);
+			if (p.IsPostBack) {
+				if (WebTest.CurrentTest.UserData == null) {
+					ArrayList list = new ArrayList ();
+					list.Add ("PageLoad");
+					WebTest.CurrentTest.UserData = list;
+				}
+				else {
+					ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+					if (list == null)
+						throw new NullReferenceException ();
+					list.Add ("PageLoad");
+					WebTest.CurrentTest.UserData = list;
+				}
+			}
+		}
+
+
+		[TestFixtureTearDown]
+		public void TearDown ()
+		{
+			WebTest.Unload ();
+		}
+#endif
 	}
 }
