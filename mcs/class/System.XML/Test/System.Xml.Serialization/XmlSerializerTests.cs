@@ -1913,10 +1913,9 @@ namespace MonoTests.System.XmlSerialization
 			tw.WriteEndElement ();
 		}
 
-		[Test]
+		[Test] // bug #76049
 		public void TestIncludeType ()
 		{
-			// Test for bug #76049
 			XmlReflectionImporter imp = new XmlReflectionImporter ();
 			XmlTypeMapping map = imp.ImportTypeMapping (typeof (object));
 			imp.IncludeType (typeof (TestSpace));
@@ -1971,9 +1970,9 @@ namespace MonoTests.System.XmlSerialization
 #if NET_2_0
 				"<PrimitiveTypesContainer xmlns:xsi='{1}' xmlns:xsd='{0}' xmlns='some:urn'>" +
 #else
- "<PrimitiveTypesContainer xmlns:xsd='{0}' xmlns:xsi='{1}' xmlns='some:urn'>" +
+				"<PrimitiveTypesContainer xmlns:xsd='{0}' xmlns:xsi='{1}' xmlns='some:urn'>" +
 #endif
- "<Number>2004</Number>" +
+				"<Number>2004</Number>" +
 				"<Name>some name</Name>" +
 				"<Index>56</Index>" +
 				"<Password>8w8=</Password>" +
@@ -1987,9 +1986,9 @@ namespace MonoTests.System.XmlSerialization
 #if NET_2_0
 				"<q1:PrimitiveTypesContainer xmlns:xsi='{1}' xmlns:xsd='{0}' id='id1' xmlns:q1='{2}'>" +
 #else
- "<q1:PrimitiveTypesContainer xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' xmlns:q1='{2}'>" +
+				"<q1:PrimitiveTypesContainer xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' xmlns:q1='{2}'>" +
 #endif
- "<Number xsi:type='xsd:int'>2004</Number>" +
+				"<Number xsi:type='xsd:int'>2004</Number>" +
 				"<Name xsi:type='xsd:string'>some name</Name>" +
 				"<Index xsi:type='xsd:unsignedByte'>56</Index>" +
 				"<Password xsi:type='xsd:base64Binary'>8w8=</Password>" +
@@ -2127,8 +2126,7 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (Infoset (res), WriterText);
 		}
 
-		// bug #78536
-		[Test]
+		[Test] // bug #78536
 		public void CDataTextNodes ()
 		{
 			XmlSerializer ser = new XmlSerializer (typeof (CDataTextNodesType));
@@ -2235,6 +2233,7 @@ namespace MonoTests.System.XmlSerialization
 
 		#region GenericsSeralizationTests
 
+#if NET_2_0
 		[Test]
 		[Category ("NotWorking")]
 		public void TestSerializeGenSimpleClassString ()
@@ -2552,6 +2551,7 @@ namespace MonoTests.System.XmlSerialization
 			Serialize (complex);
 			Assert.AreEqual ("<:GenComplexStructOfInt32String http://www.w3.org/2000/xmlns/:xsd='http://www.w3.org/2001/XMLSchema' http://www.w3.org/2000/xmlns/:xsi='http://www.w3.org/2001/XMLSchema-instance'><:something>123</><:simpleclass><:something>456</></><:simplestruct><:something>789</></><:listclass><:somelist><:int>100</><:int>200</></></><:arrayclass><:arr><:int>11</><:int>22</><:int>33</></></><:twoclass><:something1>10</><:something2>Ten</></><:derivedclass><:something1>two</><:something2>2</><:another1>1</><:another2>one</></><:derived2><:something1>4</><:something2>four</><:another1>3</><:another2>three</></><:nestedouter><:outer>5</></><:nestedinner><:inner>six</><:something>6</></></>", WriterText);
 		}
+#endif
 
 		#endregion //GenericsSeralizationTests
 

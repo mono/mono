@@ -12,12 +12,14 @@
 //
 
 using System;
-using System.ComponentModel;
 using System.Collections;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
+using System.ComponentModel;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using System.Collections.Generic;
 
 namespace MonoTests.System.Xml.TestClasses
 {
@@ -66,6 +68,7 @@ namespace MonoTests.System.Xml.TestClasses
 
 	#region GenericsTestClasses
 
+#if NET_2_0
 	public class GenSimpleClass<T>
 	{
 		public T something = default (T);
@@ -144,6 +147,7 @@ namespace MonoTests.System.Xml.TestClasses
 			nestedinner = new GenNestedClass<T1, T2>.InnerClass<T1> ();
 		}
 	}
+#endif
 
 	#endregion // GenericsTestClasses
 
