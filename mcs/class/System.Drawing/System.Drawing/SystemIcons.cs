@@ -4,9 +4,10 @@
 // Authors:
 //   Dennis Hayes (dennish@Raytek.com)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,26 +31,57 @@
 
 namespace System.Drawing {
 
-	[MonoTODO ("Not implemented. All properties return null.")]
 	public sealed class SystemIcons {
 
 		private SystemIcons ()
 		{
 		}
 
-		public static Icon Application { get { return LoadIcon();} }
-		public static Icon Asterisk { get { return LoadIcon();} }
-		public static Icon Error { get { return LoadIcon();} }
-		public static Icon Exclamation { get { return LoadIcon();} }
-		public static Icon Hand { get { return LoadIcon();} }
-		public static Icon Information { get { return LoadIcon();} }
-		public static Icon Question { get { return LoadIcon();} }
-		public static Icon Warning { get { return LoadIcon();} }
-		public static Icon WinLogo { get { return LoadIcon();} }
+		public static Icon Application {
+			get { return LoadIcon ("mono.ico"); }
+		}
 
-		private static Icon LoadIcon ()
+		// note: same as Information
+		public static Icon Asterisk {
+			get { return LoadIcon ("information.ico"); }
+		}
+
+		// note: same as Hand
+		public static Icon Error {
+			get { return LoadIcon ("error.ico"); }
+		}
+
+		// same as Warning
+		public static Icon Exclamation {
+			get { return LoadIcon ("warning.ico"); }
+		}
+
+		// note: same as Error
+		public static Icon Hand {
+			get { return LoadIcon ("error.ico"); }
+		}
+
+		// note: same as Asterisk
+		public static Icon Information {
+			get { return LoadIcon ("information.ico"); }
+		}
+
+		public static Icon Question {
+			get { return LoadIcon ("question.ico"); }
+		}
+
+		// note: same as Exclamation
+		public static Icon Warning {
+			get { return LoadIcon ("warning.ico"); }
+		}
+
+		public static Icon WinLogo {
+			get { return LoadIcon ("mono.ico"); }
+		}
+
+		private static Icon LoadIcon (string name)
 		{
-			return null;
+			return new Icon (typeof (SystemIcons), name);
 		}
 	}
 }

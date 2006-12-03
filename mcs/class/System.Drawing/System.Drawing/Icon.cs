@@ -172,9 +172,10 @@ namespace System.Drawing
 
 		public Icon (Type type, string resource)
 		{
-			using (Stream s = type.Assembly.GetManifestResourceStream (type, resource)) {
+			using (Stream s = type.Assembly.GetManifestResourceStream (resource)) {
 				if (s == null) {
-					throw new FileNotFoundException ("Resource name was not found: `" + resource + "'");
+					string msg = Locale.GetText ("Resource '{0}' was not found.", resource);
+					throw new FileNotFoundException (msg);
 				}
 				InitFromStreamWithSize (s, 32, 32);		// 32x32 is default
 			}

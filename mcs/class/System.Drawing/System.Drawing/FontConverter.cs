@@ -49,7 +49,7 @@ namespace System.Drawing
 
 		~FontConverter ()
 		{
-				
+			// required to match API definition
 		}	
 
 		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)

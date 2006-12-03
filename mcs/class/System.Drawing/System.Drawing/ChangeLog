@@ -1,3 +1,12 @@
+2006-12-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FontConverter.cs: Add a comment why the empty finalizer is required.
+	* gdipFunctions.cs: Remove warning from build (unused variable).
+	* Icon.cs: Fix .ctor accepting a type - the type is to find the 
+	assembly, not the type of the ressource.
+	* SystemIcons.cs: Load some icons from the assembly (all the same Mono
+	icon for tonight).
+
 2006-11-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BufferedGraphicsContext.cs: Better MonoTODO.
