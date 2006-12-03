@@ -95,6 +95,13 @@ namespace System.Web.Security
 
 			context.SkipAuthorization = (reqPath == loginPath);
 			
+#if NET_2_0
+			//TODO: need to check that the handler is System.Web.Handlers.AssemblyResourceLoader type
+			string filePath = context.Request.FilePath;
+			if (filePath.Length > 15 && String.CompareOrdinal ("WebResource.axd", 0, filePath, filePath.Length - 15, 15) == 0)
+				context.SkipAuthorization = true;
+#endif
+
 			FormsAuthenticationEventArgs formArgs = new FormsAuthenticationEventArgs (context);
 			if (Authenticate != null)
 				Authenticate (this, formArgs);
