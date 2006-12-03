@@ -24,6 +24,9 @@ namespace MonoTests.System.XmlSerialization
 	[TestFixture]
 	public class XmlSchemaExporterTests
 	{
+		const string ANamespace = "some:urn";
+		const string AnotherNamespace = "another:urn";
+
 		private XmlSchemas Export (Type type)
 		{
 			return Export (type, string.Empty);
@@ -399,8 +402,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // Mono does not translate default values to corresponding enum fields
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 		public void ExportClass_Field ()
 		{
 			XmlSchemas schemas = Export (typeof (Field), "NSField");
@@ -412,12 +413,17 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSField\" elementFormDefault=\"qualified\" targetNamespace=\"NSField\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"field\" type=\"tns:Field\" />{0}" +
+				"  <xs:element name=\"field\" nillable=\"true\" type=\"tns:Field\" />{0}" +
 				"  <xs:complexType name=\"Field\">{0}" +
+				"    <xs:attribute default=\"one\" name=\"flag1\" type=\"tns:FlagEnum\" />{0}" +
+				"    <xs:attribute default=\"one\" name=\"flag2\" type=\"tns:FlagEnum\" />{0}" +
+				"    <xs:attribute default=\"one two\" form=\"qualified\" name=\"flag3\" type=\"tns:FlagEnum\" />{0}" +
+				"    <xs:attribute name=\"flag4\" type=\"tns:FlagEnum\" use=\"required\" />{0}" +
 				"    <xs:attribute name=\"modifiers\" type=\"tns:MapModifiers\" use=\"required\" />{0}" +
 				"    <xs:attribute form=\"unqualified\" name=\"modifiers2\" type=\"tns:MapModifiers\" use=\"required\" />{0}" +
-				"    <xs:attribute default=\"0\" name=\"modifiers3\" type=\"tns:MapModifiers\" />{0}" +
-				"    <xs:attribute default=\"0\" form=\"unqualified\" name=\"modifiers4\" type=\"tns:MapModifiers\" />{0}" +
+				"    <xs:attribute default=\"public\" name=\"modifiers3\" type=\"tns:MapModifiers\" />{0}" +
+				"    <xs:attribute default=\"protected\" form=\"unqualified\" name=\"modifiers4\" type=\"tns:MapModifiers\" />{0}" +
+				"    <xs:attribute default=\"public\" form=\"qualified\" name=\"modifiers5\" type=\"tns:MapModifiers\" />{0}" +
 				"    <xs:attribute name=\"names\">{0}" +
 				"      <xs:simpleType>{0}" +
 				"        <xs:list itemType=\"xs:string\" />{0}" +
@@ -425,6 +431,17 @@ namespace MonoTests.System.XmlSerialization
 				"    </xs:attribute>{0}" +
 				"    <xs:attribute name=\"street\" type=\"xs:string\" />{0}" +
 				"  </xs:complexType>{0}" +
+				"  <xs:simpleType name=\"FlagEnum\">{0}" +
+				"    <xs:list>{0}" +
+				"      <xs:simpleType>{0}" +
+				"        <xs:restriction base=\"xs:string\">{0}" +
+				"          <xs:enumeration value=\"one\" />{0}" +
+				"          <xs:enumeration value=\"two\" />{0}" +
+				"          <xs:enumeration value=\"four\" />{0}" +
+				"        </xs:restriction>{0}" +
+				"      </xs:simpleType>{0}" +
+				"    </xs:list>{0}" +
+				"  </xs:simpleType>{0}" +
 				"  <xs:simpleType name=\"MapModifiers\">{0}" +
 				"    <xs:list>{0}" +
 				"      <xs:simpleType>{0}" +
@@ -446,12 +463,17 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-				"  <xs:element name=\"field\" type=\"Field\" />{0}" +
+				"  <xs:element name=\"field\" nillable=\"true\" type=\"Field\" />{0}" +
 				"  <xs:complexType name=\"Field\">{0}" +
+				"    <xs:attribute default=\"one\" name=\"flag1\" type=\"FlagEnum\" />{0}" +
+				"    <xs:attribute default=\"one\" name=\"flag2\" type=\"FlagEnum\" />{0}" +
+				"    <xs:attribute default=\"one two\" form=\"qualified\" name=\"flag3\" type=\"FlagEnum\" />{0}" +
+				"    <xs:attribute name=\"flag4\" type=\"FlagEnum\" use=\"required\" />{0}" +
 				"    <xs:attribute name=\"modifiers\" type=\"MapModifiers\" use=\"required\" />{0}" +
 				"    <xs:attribute form=\"unqualified\" name=\"modifiers2\" type=\"MapModifiers\" use=\"required\" />{0}" +
-				"    <xs:attribute default=\"0\" name=\"modifiers3\" type=\"MapModifiers\" />{0}" +
-				"    <xs:attribute default=\"0\" form=\"unqualified\" name=\"modifiers4\" type=\"MapModifiers\" />{0}" +
+				"    <xs:attribute default=\"public\" name=\"modifiers3\" type=\"MapModifiers\" />{0}" +
+				"    <xs:attribute default=\"protected\" form=\"unqualified\" name=\"modifiers4\" type=\"MapModifiers\" />{0}" +
+				"    <xs:attribute default=\"public\" form=\"qualified\" name=\"modifiers5\" type=\"MapModifiers\" />{0}" +
 				"    <xs:attribute name=\"names\">{0}" +
 				"      <xs:simpleType>{0}" +
 				"        <xs:list itemType=\"xs:string\" />{0}" +
@@ -459,6 +481,17 @@ namespace MonoTests.System.XmlSerialization
 				"    </xs:attribute>{0}" +
 				"    <xs:attribute name=\"street\" type=\"xs:string\" />{0}" +
 				"  </xs:complexType>{0}" +
+				"  <xs:simpleType name=\"FlagEnum\">{0}" +
+				"    <xs:list>{0}" +
+				"      <xs:simpleType>{0}" +
+				"        <xs:restriction base=\"xs:string\">{0}" +
+				"          <xs:enumeration value=\"one\" />{0}" +
+				"          <xs:enumeration value=\"two\" />{0}" +
+				"          <xs:enumeration value=\"four\" />{0}" +
+				"        </xs:restriction>{0}" +
+				"      </xs:simpleType>{0}" +
+				"    </xs:list>{0}" +
+				"  </xs:simpleType>{0}" +
 				"  <xs:simpleType name=\"MapModifiers\">{0}" +
 				"    <xs:list>{0}" +
 				"      <xs:simpleType>{0}" +
@@ -716,9 +749,7 @@ namespace MonoTests.System.XmlSerialization
 
 		[Test]
 		[Category ("NotWorking")] // Mono does not generate the <xs:choice> node
-		[Category ("NotDotNet")] // Mono bug ##77117 and MS.NET randomly modifies the order of the elements!
-		//
-		// Huh? The above comment makes no sense. Why could you complain about that !?
+		[Category ("NotDotNet")] // MS.NET randomly modifies the order of the elements!
 		public void ExportClass_Choices ()
 		{
 			XmlSchemas schemas = Export (typeof (Choices), "NSChoices");
@@ -765,7 +796,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // mark it NotWorking until fixes have landed in svn
 #if ONLY_1_1
 		[Category ("NotDotNet")] // MS.NET 1.x does not escape spaces in a type name, bug is fixed in .NET 2.0
 #endif
@@ -806,6 +836,107 @@ namespace MonoTests.System.XmlSerialization
 				"    <xs:attribute name=\"Attribute_x0020_with_x0020_space\" type=\"xs:int\" use=\"required\" />{0}" +
 				"  </xs:complexType>{0}" +
 				"</xs:schema>", Environment.NewLine), sw.ToString (), "#4");
+		}
+
+		[Test]
+		public void ExportClass_OptionalValueTypeContainer ()
+		{
+			XmlAttributeOverrides overrides;
+			XmlAttributes attr;
+
+			XmlSchemas schemas = Export (typeof (OptionalValueTypeContainer));
+			Assert.AreEqual (2, schemas.Count, "#1");
+
+			StringWriter sw = new StringWriter ();
+			schemas[0].Write (sw);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
+				"<xs:schema xmlns:tns=\"{1}\" elementFormDefault=\"qualified\" targetNamespace=\"{1}\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
+				"  <xs:import namespace=\"{2}\" />{0}" +
+				"  <xs:element name=\"optionalValue\" xmlns:q1=\"{2}\" type=\"q1:optionalValueType\" />{0}" +
+				"</xs:schema>", Environment.NewLine, AnotherNamespace, ANamespace),
+				sw.ToString (), "#2");
+
+			sw.GetStringBuilder ().Length = 0;
+			schemas[1].Write (sw);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
+				"<xs:schema xmlns:tns=\"{1}\" elementFormDefault=\"qualified\" targetNamespace=\"{1}\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
+				"  <xs:complexType name=\"optionalValueType\">{0}" +
+				"    <xs:sequence>{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" default=\"one four\" name=\"Attributes\" type=\"tns:FlagEnum\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" default=\"one\" name=\"Flags\" type=\"tns:FlagEnum\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" default=\"false\" name=\"IsEmpty\" type=\"xs:boolean\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" default=\"false\" name=\"IsNull\" type=\"xs:boolean\" />{0}" +
+				"    </xs:sequence>{0}" +
+				"  </xs:complexType>{0}" +
+				"  <xs:simpleType name=\"FlagEnum\">{0}" +
+				"    <xs:list>{0}" +
+				"      <xs:simpleType>{0}" +
+				"        <xs:restriction base=\"xs:string\">{0}" +
+				"          <xs:enumeration value=\"one\" />{0}" +
+				"          <xs:enumeration value=\"two\" />{0}" +
+				"          <xs:enumeration value=\"four\" />{0}" +
+				"        </xs:restriction>{0}" +
+				"      </xs:simpleType>{0}" +
+				"    </xs:list>{0}" +
+				"  </xs:simpleType>{0}" +
+				"</xs:schema>", Environment.NewLine, ANamespace), sw.ToString (), "#3");
+
+			overrides = new XmlAttributeOverrides ();
+			attr = new XmlAttributes ();
+
+			// remove the DefaultValue attribute on the Flags member
+			overrides.Add (typeof (OptionalValueTypeContainer), "Flags", attr);
+			// remove the DefaultValue attribute on the Attributes member
+			overrides.Add (typeof (OptionalValueTypeContainer), "Attributes", attr);
+			// remove the DefaultValue attribute on the IsEmpty member
+			overrides.Add (typeof (OptionalValueTypeContainer), "IsEmpty", attr);
+			// remove the DefaultValue attribute on the IsNull member
+			overrides.Add (typeof (OptionalValueTypeContainer), "IsNull", attr);
+
+			schemas = Export (typeof (OptionalValueTypeContainer), overrides, "urn:myNS");
+			Assert.AreEqual (2, schemas.Count, "#4");
+
+			sw.GetStringBuilder ().Length = 0;
+			schemas[0].Write (sw);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
+				"<xs:schema xmlns:tns=\"{1}\" elementFormDefault=\"qualified\" targetNamespace=\"{1}\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
+				"  <xs:import namespace=\"{2}\" />{0}" +
+				"  <xs:element name=\"optionalValue\" xmlns:q1=\"{2}\" type=\"q1:optionalValueType\" />{0}" +
+				"</xs:schema>", Environment.NewLine, AnotherNamespace, ANamespace),
+				sw.ToString (), "#5");
+
+			sw.GetStringBuilder ().Length = 0;
+			schemas[1].Write (sw);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
+				"<xs:schema xmlns:tns=\"{1}\" elementFormDefault=\"qualified\" targetNamespace=\"{1}\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
+				"  <xs:complexType name=\"optionalValueType\">{0}" +
+				"    <xs:sequence>{0}" +
+				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" name=\"Attributes\" type=\"tns:FlagEnum\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"Flags\" type=\"tns:FlagEnum\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"IsEmpty\" type=\"xs:boolean\" />{0}" +
+				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" name=\"IsNull\" type=\"xs:boolean\" />{0}" +
+				"    </xs:sequence>{0}" +
+				"  </xs:complexType>{0}" +
+				"  <xs:simpleType name=\"FlagEnum\">{0}" +
+				"    <xs:list>{0}" +
+				"      <xs:simpleType>{0}" +
+				"        <xs:restriction base=\"xs:string\">{0}" +
+				"          <xs:enumeration value=\"one\" />{0}" +
+				"          <xs:enumeration value=\"two\" />{0}" +
+				"          <xs:enumeration value=\"four\" />{0}" +
+				"        </xs:restriction>{0}" +
+				"      </xs:simpleType>{0}" +
+				"    </xs:list>{0}" +
+				"  </xs:simpleType>{0}" +
+				"</xs:schema>", Environment.NewLine, ANamespace), sw.ToString (), "#6");
 		}
 
 		[Test]
@@ -983,7 +1114,7 @@ namespace MonoTests.System.XmlSerialization
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"names\" />{0}" +
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#4");
+				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
 
 			schemas = Export (typeof (ArrayClass));
 			Assert.AreEqual (1, schemas.Count, "#3");
@@ -1076,6 +1207,165 @@ namespace MonoTests.System.XmlSerialization
 				"  </xs:complexType>{0}" +
 				"  <xs:complexType name=\"TimeSpan\" />{0}" +
 				"</xs:schema>", Environment.NewLine), sw.ToString (), "#4");
+		}
+
+		[Test]
+		public void ExportClass_TestDefault ()
+		{
+			XmlSchemas schemas = Export (typeof (TestDefault));
+			Assert.AreEqual (1, schemas.Count, "#1");
+
+			StringWriter sw = new StringWriter ();
+			schemas [0].Write (sw);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
+				"<xs:schema xmlns:tns=\"urn:myNS\" elementFormDefault=\"qualified\" targetNamespace=\"urn:myNS\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
+				"  <xs:element name=\"testDefault\" type=\"tns:TestDefault\" />{0}" +
+				"  <xs:complexType name=\"TestDefault\">{0}" +
+				"    <xs:sequence>{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"str\" type=\"xs:string\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" default=\"Default Value\" name=\"strDefault\" type=\"xs:string\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" default=\"true\" name=\"boolT\" type=\"xs:boolean\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" default=\"false\" name=\"boolF\" type=\"xs:boolean\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" default=\"10\" name=\"decimalval\" type=\"xs:decimal\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" default=\"one four\" name=\"flag\" type=\"tns:FlagEnum\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" default=\"e1 e4\" name=\"flagencoded\" type=\"tns:FlagEnum_Encoded\" />{0}" +
+				"    </xs:sequence>{0}" +
+				"  </xs:complexType>{0}" +
+				"  <xs:simpleType name=\"FlagEnum\">{0}" +
+				"    <xs:list>{0}" +
+				"      <xs:simpleType>{0}" +
+				"        <xs:restriction base=\"xs:string\">{0}" +
+				"          <xs:enumeration value=\"one\" />{0}" +
+				"          <xs:enumeration value=\"two\" />{0}" +
+				"          <xs:enumeration value=\"four\" />{0}" +
+				"        </xs:restriction>{0}" +
+				"      </xs:simpleType>{0}" +
+				"    </xs:list>{0}" +
+				"  </xs:simpleType>{0}" +
+				"  <xs:simpleType name=\"FlagEnum_Encoded\">{0}" +
+				"    <xs:list>{0}" +
+				"      <xs:simpleType>{0}" +
+				"        <xs:restriction base=\"xs:string\">{0}" +
+				"          <xs:enumeration value=\"e1\" />{0}" +
+				"          <xs:enumeration value=\"e2\" />{0}" +
+				"          <xs:enumeration value=\"e4\" />{0}" +
+				"        </xs:restriction>{0}" +
+				"      </xs:simpleType>{0}" +
+				"    </xs:list>{0}" +
+				"  </xs:simpleType>{0}" +
+				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
+
+			schemas = Export (typeof (TestDefault), "NSTestDefault");
+			Assert.AreEqual (1, schemas.Count, "#3");
+
+			sw.GetStringBuilder ().Length = 0;
+			schemas [0].Write (sw);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
+				"<xs:schema xmlns:tns=\"urn:myNS\" elementFormDefault=\"qualified\" targetNamespace=\"urn:myNS\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
+				"  <xs:element name=\"testDefault\" type=\"tns:TestDefault\" />{0}" +
+				"  <xs:complexType name=\"TestDefault\">{0}" +
+				"    <xs:sequence>{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"str\" type=\"xs:string\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" default=\"Default Value\" name=\"strDefault\" type=\"xs:string\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" default=\"true\" name=\"boolT\" type=\"xs:boolean\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" default=\"false\" name=\"boolF\" type=\"xs:boolean\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" default=\"10\" name=\"decimalval\" type=\"xs:decimal\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" default=\"one four\" name=\"flag\" type=\"tns:FlagEnum\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" default=\"e1 e4\" name=\"flagencoded\" type=\"tns:FlagEnum_Encoded\" />{0}" +
+				"    </xs:sequence>{0}" +
+				"  </xs:complexType>{0}" +
+				"  <xs:simpleType name=\"FlagEnum\">{0}" +
+				"    <xs:list>{0}" +
+				"      <xs:simpleType>{0}" +
+				"        <xs:restriction base=\"xs:string\">{0}" +
+				"          <xs:enumeration value=\"one\" />{0}" +
+				"          <xs:enumeration value=\"two\" />{0}" +
+				"          <xs:enumeration value=\"four\" />{0}" +
+				"        </xs:restriction>{0}" +
+				"      </xs:simpleType>{0}" +
+				"    </xs:list>{0}" +
+				"  </xs:simpleType>{0}" +
+				"  <xs:simpleType name=\"FlagEnum_Encoded\">{0}" +
+				"    <xs:list>{0}" +
+				"      <xs:simpleType>{0}" +
+				"        <xs:restriction base=\"xs:string\">{0}" +
+				"          <xs:enumeration value=\"e1\" />{0}" +
+				"          <xs:enumeration value=\"e2\" />{0}" +
+				"          <xs:enumeration value=\"e4\" />{0}" +
+				"        </xs:restriction>{0}" +
+				"      </xs:simpleType>{0}" +
+				"    </xs:list>{0}" +
+				"  </xs:simpleType>{0}" +
+				"</xs:schema>", Environment.NewLine), sw.ToString (), "#4");
+		}
+
+		[Test]
+		public void ExportClass_TestDefault_Overrides ()
+		{
+			XmlAttributeOverrides overrides = new XmlAttributeOverrides ();
+			XmlAttributes attr = new XmlAttributes ();
+			XmlTypeAttribute xmlType = new XmlTypeAttribute ("flagenum");
+			xmlType.Namespace = "yetanother:urn";
+			attr.XmlType = xmlType;
+			overrides.Add (typeof (FlagEnum_Encoded), attr);
+
+			XmlSchemas schemas = Export (typeof (TestDefault), overrides, "NSTestDefault");
+			Assert.AreEqual (2, schemas.Count, "#1");
+
+			StringWriter sw = new StringWriter ();
+			schemas [0].Write (sw);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
+				"<xs:schema xmlns:tns=\"urn:myNS\" elementFormDefault=\"qualified\" targetNamespace=\"urn:myNS\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
+				"  <xs:import namespace=\"yetanother:urn\" />{0}" +
+				"  <xs:element name=\"testDefault\" type=\"tns:TestDefault\" />{0}" +
+				"  <xs:complexType name=\"TestDefault\">{0}" +
+				"    <xs:sequence>{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"str\" type=\"xs:string\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" default=\"Default Value\" name=\"strDefault\" type=\"xs:string\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" default=\"true\" name=\"boolT\" type=\"xs:boolean\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" default=\"false\" name=\"boolF\" type=\"xs:boolean\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" default=\"10\" name=\"decimalval\" type=\"xs:decimal\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" default=\"one four\" name=\"flag\" type=\"tns:FlagEnum\" />{0}" +
+				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" default=\"e1 e4\" name=\"flagencoded\" xmlns:q1=\"yetanother:urn\" type=\"q1:flagenum\" />{0}" +
+				"    </xs:sequence>{0}" +
+				"  </xs:complexType>{0}" +
+				"  <xs:simpleType name=\"FlagEnum\">{0}" +
+				"    <xs:list>{0}" +
+				"      <xs:simpleType>{0}" +
+				"        <xs:restriction base=\"xs:string\">{0}" +
+				"          <xs:enumeration value=\"one\" />{0}" +
+				"          <xs:enumeration value=\"two\" />{0}" +
+				"          <xs:enumeration value=\"four\" />{0}" +
+				"        </xs:restriction>{0}" +
+				"      </xs:simpleType>{0}" +
+				"    </xs:list>{0}" +
+				"  </xs:simpleType>{0}" +
+				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
+
+			sw.GetStringBuilder ().Length = 0;
+			schemas [1].Write (sw);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
+				"<xs:schema xmlns:tns=\"yetanother:urn\" elementFormDefault=\"qualified\" targetNamespace=\"yetanother:urn\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
+				"  <xs:simpleType name=\"flagenum\">{0}" +
+				"    <xs:list>{0}" +
+				"      <xs:simpleType>{0}" +
+				"        <xs:restriction base=\"xs:string\">{0}" +
+				"          <xs:enumeration value=\"e1\" />{0}" +
+				"          <xs:enumeration value=\"e2\" />{0}" +
+				"          <xs:enumeration value=\"e4\" />{0}" +
+				"        </xs:restriction>{0}" +
+				"      </xs:simpleType>{0}" +
+				"    </xs:list>{0}" +
+				"  </xs:simpleType>{0}" +
+				"</xs:schema>", Environment.NewLine), sw.ToString (), "#3");
 		}
 
 		[Test]
@@ -1759,7 +2049,8 @@ namespace MonoTests.System.XmlSerialization
 					"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 					"<xs:schema xmlns:tns=\"{1}\" elementFormDefault=\"qualified\" targetNamespace=\"{1}\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 					"  <xs:element name=\"{2}\" {3}type=\"xs:{2}\" />{0}" +
-					"</xs:schema>", Environment.NewLine, typeDesc.Type.Name, typeDesc.XmlType, typeDesc.IsNillable ? "nillable=\"true\" " : String.Empty),
+					"</xs:schema>", Environment.NewLine, typeDesc.Type.Name, typeDesc.XmlType, 
+					typeDesc.IsNillable ? "nillable=\"true\" " : ""),
 					sw.ToString (), typeDesc.Type.FullName + "#2");
 
 				schemas = Export (typeDesc.Type);
@@ -1772,7 +2063,8 @@ namespace MonoTests.System.XmlSerialization
 					"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 					"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 					"  <xs:element name=\"{1}\" {2}type=\"xs:{1}\" />{0}" +
-					"</xs:schema>", Environment.NewLine, typeDesc.XmlType, typeDesc.IsNillable ? "nillable=\"true\" " : String.Empty),
+					"</xs:schema>", Environment.NewLine, typeDesc.XmlType, 
+					typeDesc.IsNillable ? "nillable=\"true\" " : ""),
 					sw.ToString (), typeDesc.Type.FullName + "#4");
 			}
 		}
@@ -1835,30 +2127,27 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if NET_2_0
-		[Category ("NotWorking")] // in 2.0 profile, QName must be nillable
-#endif
 		public void ExportXsdPrimitive_Arrays ()
 		{
 			ArrayList types = new ArrayList ();
-			types.Add (new TypeDescription (typeof (sbyte[]), true, "byte", "Byte"));
-			types.Add (new TypeDescription (typeof (bool[]), true, "boolean", "Boolean"));
-			types.Add (new TypeDescription (typeof (short[]), true, "short", "Short"));
-			types.Add (new TypeDescription (typeof (int[]), true, "int", "Int"));
-			types.Add (new TypeDescription (typeof (long[]), true, "long", "Long"));
-			types.Add (new TypeDescription (typeof (float[]), true, "float", "Float"));
-			types.Add (new TypeDescription (typeof (double[]), true, "double", "Double"));
-			types.Add (new TypeDescription (typeof (decimal[]), true, "decimal", "Decimal"));
-			types.Add (new TypeDescription (typeof (ushort[]), true, "unsignedShort", "UnsignedShort"));
-			types.Add (new TypeDescription (typeof (uint[]), true, "unsignedInt", "UnsignedInt"));
-			types.Add (new TypeDescription (typeof (ulong[]), true, "unsignedLong", "UnsignedLong"));
-			types.Add (new TypeDescription (typeof (DateTime[]), true, "dateTime", "DateTime"));
+			types.Add (new TypeDescription (typeof (sbyte[]), true, "byte", "Byte", true));
+			types.Add (new TypeDescription (typeof (bool[]), true, "boolean", "Boolean", true));
+			types.Add (new TypeDescription (typeof (short[]), true, "short", "Short", true));
+			types.Add (new TypeDescription (typeof (int[]), true, "int", "Int", true));
+			types.Add (new TypeDescription (typeof (long[]), true, "long", "Long", true));
+			types.Add (new TypeDescription (typeof (float[]), true, "float", "Float", true));
+			types.Add (new TypeDescription (typeof (double[]), true, "double", "Double", true));
+			types.Add (new TypeDescription (typeof (decimal[]), true, "decimal", "Decimal", true));
+			types.Add (new TypeDescription (typeof (ushort[]), true, "unsignedShort", "UnsignedShort", true));
+			types.Add (new TypeDescription (typeof (uint[]), true, "unsignedInt", "UnsignedInt", true));
+			types.Add (new TypeDescription (typeof (ulong[]), true, "unsignedLong", "UnsignedLong", true));
+			types.Add (new TypeDescription (typeof (DateTime[]), true, "dateTime", "DateTime", true));
 #if NET_2_0
-			types.Add (new TypeDescription (typeof (XmlQualifiedName[]), true, "QName", "QName", true));
+			types.Add (new TypeDescription (typeof (XmlQualifiedName[]), true, "QName", "QName", true, true));
 #else
-			types.Add (new TypeDescription (typeof (XmlQualifiedName[]), true, "QName", "QName"));
+			types.Add (new TypeDescription (typeof (XmlQualifiedName[]), true, "QName", "QName", true));
 #endif
-			types.Add (new TypeDescription (typeof (string[]), true, "string", "String", true));
+			types.Add (new TypeDescription (typeof (string[]), true, "string", "String", true, true));
 
 			foreach (TypeDescription typeDesc in types) {
 				XmlSchemas schemas = Export (typeDesc.Type, typeDesc.Type.Name);
@@ -1870,15 +2159,16 @@ namespace MonoTests.System.XmlSerialization
 				Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 					"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 					"<xs:schema xmlns:tns=\"{1}\" elementFormDefault=\"qualified\" targetNamespace=\"{1}\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-					"  <xs:element name=\"ArrayOf{2}\" nillable=\"true\" type=\"tns:ArrayOf{2}\" />{0}" +
+					"  <xs:element name=\"ArrayOf{2}\" {5}type=\"tns:ArrayOf{2}\" />{0}" +
 					"  <xs:complexType name=\"ArrayOf{2}\">{0}" +
 					"    <xs:sequence>{0}" +
-					"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"{3}\" {5}type=\"{4}:{3}\" />{0}" +
+					"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"{3}\" {6}type=\"{4}:{3}\" />{0}" +
 					"    </xs:sequence>{0}" +
 					"  </xs:complexType>{0}" +
 					"</xs:schema>", Environment.NewLine, typeDesc.Type.Name, typeDesc.ArrayType, typeDesc.XmlType, 
-					typeDesc.XsdType ? "xs" : "tns", typeDesc.IsNillable ? "nillable=\"true\" " : ""),
-					sw.ToString (), typeDesc.Type.FullName + "#2");
+					typeDesc.XsdType ? "xs" : "tns", typeDesc.IsNillable ? "nillable=\"true\" " : "",
+					typeDesc.IsElementNillable ? "nillable=\"true\" " : ""),
+					sw.ToString (), typeDesc.Type.FullName + "#2" + "|" + typeDesc.IsNillable);
 
 				schemas = Export (typeDesc.Type);
 				Assert.AreEqual (1, schemas.Count, typeDesc.Type.FullName + "#3");
@@ -1889,14 +2179,15 @@ namespace MonoTests.System.XmlSerialization
 				Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 					"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 					"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
-					"  <xs:element name=\"ArrayOf{1}\" nillable=\"true\" type=\"ArrayOf{1}\" />{0}" +
+					"  <xs:element name=\"ArrayOf{1}\" {4}type=\"ArrayOf{1}\" />{0}" +
 					"  <xs:complexType name=\"ArrayOf{1}\">{0}" +
 					"    <xs:sequence>{0}" +
-					"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"{2}\" {4}type=\"{3}:{2}\" />{0}" +
+					"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"{2}\" {5}type=\"{3}:{2}\" />{0}" +
 					"    </xs:sequence>{0}" +
 					"  </xs:complexType>{0}" +
 					"</xs:schema>", Environment.NewLine, typeDesc.ArrayType, typeDesc.XmlType,
-					typeDesc.XsdType ? "xs" : "tns", typeDesc.IsNillable ? "nillable=\"true\" " : ""),
+					typeDesc.XsdType ? "xs" : "tns", typeDesc.IsNillable ? "nillable=\"true\" " : "",
+					typeDesc.IsElementNillable ? "nillable=\"true\" " : ""),
 					sw.ToString (), typeDesc.Type.FullName + "#4");
 			}
 		}
@@ -2276,13 +2567,19 @@ namespace MonoTests.System.XmlSerialization
 			{
 			}
 
-			public TypeDescription (Type type, bool xsdType, string xmlType, string arrayType, bool isNillable)
+			public TypeDescription (Type type, bool xsdType, string xmlType, string arrayType, bool isNillable) :
+				this (type, xsdType, xmlType, arrayType, isNillable, false)
+			{
+			}
+
+			public TypeDescription (Type type, bool xsdType, string xmlType, string arrayType, bool isNillable, bool isElementNillable)
 			{
 				_type = type;
 				_xsdType = xsdType;
 				_xmlType = xmlType;
 				_arrayType = arrayType;
 				_isNillable = isNillable;
+				_isElementNillable = isElementNillable;
 			}
 
 			public Type Type {
@@ -2305,11 +2602,16 @@ namespace MonoTests.System.XmlSerialization
 				get { return _isNillable; }
 			}
 
+			public bool IsElementNillable {
+				get { return _isElementNillable; }
+			}
+
 			private Type _type;
 			private bool _xsdType;
 			private string _xmlType;
 			private string _arrayType;
 			private bool _isNillable;
+			private bool _isElementNillable;
 		}
 
 		public class StructContainer

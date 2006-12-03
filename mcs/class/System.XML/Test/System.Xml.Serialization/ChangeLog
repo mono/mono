@@ -1,3 +1,7 @@
+2006-12-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlSchemaExporterTests.cs: Added tests for (part of) bug #78214.
+
 2006-12-03  Hagit Yidov  <hagity@xmainsoft.com>
 
 	* XmlSerializerTests.cs : added tests for serialization of generic types.

@@ -1,3 +1,14 @@
+2006-12-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlSchemaExporter.cs: Emit xml name of enum-based default values.
+	Set XmlSchemaAttribute.Use to Required if no default value is defined,
+	and member is not an optional value type. Element should have minOccurs
+	1 if value type member has default value. Output flag enum type as
+	xsd list with restriction.
+	* XmlReflectionImporter.cs: Removed special casing of enums. Instead
+	of passing namespace of XmlAttribute to ImportTypeMapping, use the
+	default namespace for importing the member type.
+
 2006-12-02  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SerializationCodeGenerator.cs: Initialize out parameters if they

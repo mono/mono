@@ -398,7 +398,13 @@ namespace System.Xml.Serialization {
 		XmlSchemaAttribute GetSchemaAttribute (XmlSchema currentSchema, XmlTypeMapMemberAttribute attinfo, bool isTypeMember)
 		{
 			XmlSchemaAttribute sat = new XmlSchemaAttribute ();
-			if (attinfo.DefaultValue != System.DBNull.Value) sat.DefaultValue = XmlCustomFormatter.ToXmlString (attinfo.TypeData, attinfo.DefaultValue);
+			if (attinfo.DefaultValue != System.DBNull.Value) {
+				sat.DefaultValue = ExportDefaultValue (attinfo.TypeData,
+					attinfo.MappedType, attinfo.DefaultValue);
+			} else {
+				if (!attinfo.IsOptionalValueType && attinfo.TypeData.IsValueType)
+					sat.Use = XmlSchemaUse.Required;
+			}
 
 			ImportNamespace (currentSchema, attinfo.Namespace);
 
@@ -416,7 +422,7 @@ namespace System.Xml.Serialization {
 				{
 					ImportNamespace (currentSchema, attinfo.DataTypeNamespace);
 					ExportEnumSchema (attinfo.MappedType);
-					sat.SchemaTypeName = new XmlQualifiedName (attinfo.TypeData.XmlType, attinfo.DataTypeNamespace);;
+					sat.SchemaTypeName = new XmlQualifiedName (attinfo.TypeData.XmlType, attinfo.DataTypeNamespace);
 				}
 				else if (attinfo.TypeData.SchemaType == SchemaTypes.Array && TypeTranslator.IsPrimitive (attinfo.TypeData.ListItemType))
 				{
@@ -471,9 +477,9 @@ namespace System.Xml.Serialization {
 			{
 				selem.MaxOccurs = 1;
 				selem.MinOccurs = einfo.IsNullable ? 1 : 0;
-				
-				if ((einfo.TypeData.IsValueType && einfo.Member != null && !einfo.Member.IsOptionalValueType) || encodedFormat) 
-					selem.MinOccurs = 1;
+
+				if ((defaultValue == DBNull.Value && einfo.TypeData.IsValueType && einfo.Member != null && !einfo.Member.IsOptionalValueType) || encodedFormat)
+ 					selem.MinOccurs = 1;
 			}
 
 			XmlSchema memberSchema = null;
@@ -490,8 +496,9 @@ namespace System.Xml.Serialization {
 				selem.Name = einfo.ElementName;
 
 				if (defaultValue != System.DBNull.Value)
-					selem.DefaultValue = XmlCustomFormatter.ToXmlString (einfo.TypeData, defaultValue);
-					
+					selem.DefaultValue = ExportDefaultValue (einfo.TypeData,
+						einfo.MappedType, defaultValue);
+
 				if (einfo.Form != XmlSchemaForm.Qualified)
 					selem.Form = einfo.Form;
 
@@ -639,6 +646,16 @@ namespace System.Xml.Serialization {
 			}
 		}
 
+		string ExportDefaultValue (TypeData typeData, XmlTypeMapping map, object defaultValue)
+		{
+			if (typeData.SchemaType == SchemaTypes.Enum) {
+				EnumMap enumMap = (EnumMap) map.ObjectMap;
+				// get corresponding xml name
+				return enumMap.GetXmlName (map.TypeFullName, defaultValue);
+		}
+			return XmlCustomFormatter.ToXmlString (typeData, defaultValue);
+		}
+
 		void ExportDerivedSchema(XmlTypeMapping map) {
 			if (IsMapExported (map)) return;
 			SetMapExported (map);
@@ -676,7 +693,16 @@ namespace System.Xml.Serialization {
 				ef.Value = emem.XmlName;
 				rest.Facets.Add (ef);
 			}
-			stype.Content = rest;
+
+			if (emap.IsFlags) {
+				XmlSchemaSimpleTypeList slist = new XmlSchemaSimpleTypeList ();
+				XmlSchemaSimpleType restrictionType = new XmlSchemaSimpleType ();
+				restrictionType.Content = rest;
+				slist.ItemType = restrictionType;
+				stype.Content = slist;
+			} else {
+				stype.Content = rest;
+			}
 		}
 
 		XmlQualifiedName ExportArraySchema (XmlTypeMapping map, string defaultNamespace)

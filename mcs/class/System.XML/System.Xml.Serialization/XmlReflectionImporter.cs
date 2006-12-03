@@ -263,7 +263,7 @@ namespace System.Xml.Serialization {
 
 			if (atts.XmlType != null)
 			{
-				if (atts.XmlType.Namespace != null && typeData.SchemaType != SchemaTypes.Enum)
+				if (atts.XmlType.Namespace != null)
 					typeNamespace = atts.XmlType.Namespace;
 
 				if (atts.XmlType.TypeName != null && atts.XmlType.TypeName != string.Empty)
@@ -835,8 +835,8 @@ namespace System.Xml.Serialization {
 				mapAttribute.AttributeName = XmlConvert.EncodeLocalName (mapAttribute.AttributeName);
 
 				if (typeData.IsComplexType)
-					mapAttribute.MappedType = ImportTypeMapping (typeData.Type, null, mapAttribute.Namespace);
-				
+					mapAttribute.MappedType = ImportTypeMapping (typeData.Type, null, defaultNamespace);
+
 				if (atts.XmlAttribute.Namespace != null && atts.XmlAttribute.Namespace != defaultNamespace)
 				{
 					if (atts.XmlAttribute.Form == XmlSchemaForm.Unqualified)
