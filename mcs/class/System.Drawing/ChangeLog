@@ -1,3 +1,9 @@
+2006-12-03  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Makefile: Switch to icons available in Assembly/
+	* System.Drawing_test.dll.sources: Add SystemIcons unit tests to the 
+	build.
+
 2006-12-02  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* error.ico: New. Error icon required for SystemIcons.

@@ -5,9 +5,9 @@ SUBDIRS =
 LIBRARY = System.Drawing.dll
 
 LIB_MCS_FLAGS = /unsafe /r:$(corlib) /r:System.dll /nowarn:649 /nowarn:169 \
-	-resource:mono.ico,mono.ico -resource:information.ico,information.ico \
-	-resource:error.ico,error.ico -resource:warning.ico,warning.ico \
-	-resource:question.ico,question.ico
+	-resource:Assembly/Mono.ico,Mono.ico -resource:Assembly/Information.ico,Information.ico \
+	-resource:Assembly/Error.ico,Error.ico -resource:Assembly/Warning.ico,Warning.ico \
+	-resource:Assembly/Question.ico,Question.ico
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -define:TEST -resource:Test/resources/indexed.png,indexed.png \
 	 /r:System.Drawing.dll -nowarn:0618 -nowarn:219 -nowarn:169 -nowarn:1595
@@ -37,8 +37,13 @@ EXTRA_DISTFILES = Test/resources/indexed.png	\
 	Test/System.Drawing/bitmaps/smiley.ico	\
 	Test/System.Drawing/bitmaps/VisualPng1.ico	\
 	Test/System.Drawing/bitmaps/VisualPng.ico	\
-	error.ico \
-	information.ico	\
-	mono.ico	\
-	question.ico	\
-	warning.ico
+	Assembly/Application.ico	\
+	Assembly/Asterisk.ico		\
+	Assembly/Error.ico		\
+	Assembly/Exclamation.ico	\
+	Assembly/Hand.ico		\
+	Assembly/Information.ico	\
+	Assembly/Question.ico		\
+	Assembly/Warning.ico		\
+	Assembly/WinLogo.ico		\
+	Assembly/Mono.ico
