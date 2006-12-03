@@ -96,6 +96,7 @@ namespace System.Drawing
 		private ushort id;
 		private IconImage [] imageData;
 		bool destroyIcon = true;
+		bool undisposable;
 			
 		private Icon ()
 		{
@@ -155,6 +156,7 @@ namespace System.Drawing
 					}
 				}
 			}
+			winHandle = (IntPtr) 1; // fake handle
 		}
 
 		public Icon (Stream stream) : this (stream, 32, 32) 
@@ -202,6 +204,18 @@ namespace System.Drawing
 			}
                 }
 
+		internal Icon (string resourceName, bool undisposable)
+		{
+			using (Stream s = typeof (Icon).Assembly.GetManifestResourceStream (resourceName)) {
+				if (s == null) {
+					string msg = Locale.GetText ("Resource '{0}' was not found.", resourceName);
+					throw new FileNotFoundException (msg);
+				}
+				InitFromStreamWithSize (s, 32, 32);		// 32x32 is default
+			}
+			this.undisposable = true;
+		}
+
 		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			MemoryStream ms = new MemoryStream ();
@@ -236,8 +250,10 @@ namespace System.Drawing
 		public void Dispose ()
 		{
 #if !TARGET_JVM
-			DisposeIcon ();
-			GC.SuppressFinalize(this);
+			if (!undisposable) {
+				DisposeIcon ();
+				GC.SuppressFinalize(this);
+			}
 #endif
 		}
 #if !TARGET_JVM
@@ -324,7 +340,8 @@ namespace System.Drawing
 			}
 		}
 
-		public Bitmap ToBitmap() {
+		public Bitmap ToBitmap ()
+		{
 			IconImage		ii;
 			BitmapInfoHeader	bih;
 			int			ncolors;
@@ -333,6 +350,9 @@ namespace System.Drawing
 			ColorPalette		pal;
 			int			biHeight;
 			int			bytesPerLine;
+
+			if (winHandle == IntPtr.Zero)
+				throw new ObjectDisposedException ("handle");
 
 			if (imageData == null) {
 				return new Bitmap(32, 32);
@@ -581,6 +601,7 @@ namespace System.Drawing
 			}			
 
 			reader.Close();
+			winHandle = (IntPtr) 1; // fake handle
 		}
 	}
 }

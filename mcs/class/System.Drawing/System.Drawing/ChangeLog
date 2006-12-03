@@ -1,3 +1,10 @@
+2006-12-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Icon.cs: Add a new ctor that returns undisposable Icon instances 
+	(required when used from SystemIcons). Added a dispose check in 
+	ToBitmap (many other are missing).
+	* SystemIcons.cs: Change icons to the one already in SVN.
+
 2006-12-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FontConverter.cs: Add a comment why the empty finalizer is required.
