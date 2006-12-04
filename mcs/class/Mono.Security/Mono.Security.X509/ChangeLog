@@ -1,3 +1,7 @@
+2006-12-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate.cs: Added support for inherited DSA key parameters.
+
 2006-11-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Store.cs: Add new Open method to access any certificate store
