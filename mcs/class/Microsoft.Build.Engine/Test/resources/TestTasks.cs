@@ -28,14 +28,7 @@
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
-public class SimpleTask : Task {
-	public override bool Execute ()
-	{
-		return true;
-	}
-}
-
-public class OutputTestTast : Task {
+public class OutputTestTask : Task {
 	public override bool Execute ()
 	{
 		return true;
@@ -44,5 +37,34 @@ public class OutputTestTast : Task {
 	[Output]
 	public string Property {
 		get { return "some_text"; }
+	}
+}
+
+public class RequiredTestTask : Task {
+	public override bool Execute ()
+	{
+		return true;
+	}
+
+	string property;
+
+	[Required]
+	public string Property {
+		set { property = value; }
+	}
+}
+
+
+public class TrueTestTask : Task {
+	public override bool Execute ()
+	{
+		return true;
+	}
+}
+
+public class FalseTestTask : Task {
+	public override bool Execute ()
+	{
+		return false;
 	}
 }
