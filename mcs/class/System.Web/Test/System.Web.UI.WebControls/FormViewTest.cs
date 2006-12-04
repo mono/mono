@@ -341,6 +341,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureSetUp]
 		public void setup ()
 		{
+			TestMyData.InitData();  
 			myds.Add ("Item1");
 			myds.Add ("Item2");
 			myds.Add ("Item3");
@@ -500,9 +501,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-#if TARGET_JVM //BUG #6484
-		[Category ("NotWorking")]
-#endif
+//#if TARGET_JVM //BUG #6484
+//                [Category ("NotWorking")]
+//#endif
 		public void FormView_ItemsProperties ()
 		{
 			Poker p = new Poker ();
@@ -581,9 +582,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-#if TARGET_JVM //BUG #6484
-		[Category ("NotWorking")]
-#endif
+//#if TARGET_JVM //BUG #6484
+//                [Category ("NotWorking")]
+//#endif
 		public void FormView_InitializePager ()
 		{
 			Poker fv = new Poker ();
@@ -599,9 +600,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 		
 		[Test]
-#if TARGET_JVM //BUG #6484
-		[Category ("NotWorking")]
-#endif
+//#if TARGET_JVM //BUG #6484
+//                [Category ("NotWorking")]
+//#endif
 		public void FormView_CreateRow ()
 		{
 			Poker fv = new Poker ();
@@ -625,9 +626,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-#if TARGET_JVM //BUG #6484
-		[Category ("NotWorking")]
-#endif
+//#if TARGET_JVM //BUG #6484
+//                [Category ("NotWorking")]
+//#endif
 		public void FormView_CreateTable ()
 		{
 			Poker fv = new Poker ();
@@ -694,9 +695,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-#if TARGET_JVM //BUG #6484
-		[Category ("NotWorking")]
-#endif
+//#if TARGET_JVM //BUG #6484
+//                [Category ("NotWorking")]
+//#endif
 		public void FormView_PrepareControlHierarcy ()
 		{
 			Poker fv = new Poker ();
@@ -799,9 +800,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-#if TARGET_JVM //BUG #6484
-		[Category ("NotWorking")]
-#endif
+//#if TARGET_JVM //BUG #6484
+//                [Category ("NotWorking")]
+//#endif
 		public void FormView_DataBind ()
 		{
 			Poker fv = new Poker ();
@@ -819,9 +820,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		private bool isDeleted = false;
 
 		[Test]
-#if TARGET_JVM //BUG #6484
-		[Category ("NotWorking")]
-#endif
+//#if TARGET_JVM //BUG #6484
+//                [Category ("NotWorking")]
+//#endif
 		public void FormView_DeleteItem ()
 		{
 			Poker fv = new Poker ();
@@ -862,9 +863,9 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		private bool updateItem = false;
 		[Test]
-#if TARGET_JVM //BUG #6484
-		[Category ("NotWorking")]
-#endif
+//#if TARGET_JVM //BUG #6484
+//                [Category ("NotWorking")]
+//#endif
 		public void FormView_UpdateItem ()
 		{
 			Poker fv = new Poker ();
@@ -979,9 +980,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-#if TARGET_JVM //BUG #6484
-		[Category ("NotWorking")]
-#endif
+//#if TARGET_JVM //BUG #6484
+//                [Category ("NotWorking")]
+//#endif
 		public void FormView_BubbleEvent ()
 		{
 			FormViewCommandEventArgs com;
@@ -1406,9 +1407,9 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 		[Test]
 		[Category ("NunitWeb")]
-#if TARGET_JVM //BUG #6518
-		[Category ("NotWorking")]
-#endif
+//#if TARGET_JVM //BUG #6518
+//                [Category ("NotWorking")]
+//#endif
 		public void FormView_RenderSimpleTemplate()
 		{
 			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();			
@@ -1433,9 +1434,9 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 		[Test]
 		[Category ("NunitWeb")]
-#if TARGET_JVM //BUG #6518
-		[Category ("NotWorking")]
-#endif
+//#if TARGET_JVM //BUG #6518
+//                [Category ("NotWorking")]
+//#endif
 		public void FormView_RenderFooterAndPager()
 		{
 			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();			
@@ -1464,9 +1465,9 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 		[Test]
 		[Category ("NunitWeb")]
-#if TARGET_JVM //BUG #6518
-		[Category ("NotWorking")]
-#endif
+//#if TARGET_JVM //BUG #6518
+//                [Category ("NotWorking")]
+//#endif
 		public void FormView_RenderWithHeader()
 		{
 			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();
@@ -1490,9 +1491,9 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 		[Test]
 		[Category ("NunitWeb")]
-#if TARGET_JVM //BUG #6518
-		[Category ("NotWorking")]
-#endif
+//#if TARGET_JVM //BUG #6518
+//                [Category ("NotWorking")]
+//#endif
 		public void FormView_Render ()
 		{
 			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();
@@ -1826,9 +1827,9 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		}
 
 		[Test]
-#if TARGET_JVM //BUG #6484
-		[Category("NotWorking")]
-#endif
+//#if TARGET_JVM //BUG #6484
+//                [Category("NotWorking")]
+//#endif
 		public void FormView_CreateDataSourceSelectArguments2 () {
 			DataSourceView view;
 			Page p = new Page ();
@@ -1887,9 +1888,9 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		}
 
 		[Test]
-#if TARGET_JVM //BUG #6484
-		[Category ("NotWorking")]
-#endif
+//#if TARGET_JVM //BUG #6484
+//                [Category ("NotWorking")]
+//#endif
 		public void FormView_GetPostBackOptions () {
 			FormView fv = new FormView ();
 			fv.Page = new Page ();
@@ -1953,32 +1954,37 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			PostBackOptions options = ((IPostBackContainer) fv).GetPostBackOptions (null);
 		}
 	}
-	
+
 	public class TestMyData
 	{
-		static IList<int> str = new List<int> (new int[] { 1, 2, 3, 4, 5, 6 });
+		static IList<int> str = new List<int>();
+		//str.(new int[] { 1, 2, 3, 4, 5, 6 });
 
-
-		public static IList<int> GetMyList ()
+		public static void InitData()
+		{
+			for (int i=1;i<7;i++)
+				str.Add (i);
+		}
+		public static IList<int> GetMyList()
 		{
 			return str;
 		}
 
-		public static int UpdateList (int index,int value)
+		public static int UpdateList(int index, int value)
 		{
 			str[index] = value;
 			return str[index];
 		}
 
-		public static int InsertList (int value)
+		public static int InsertList(int value)
 		{
-			str.Add (value);
+			str.Add(value);
 			return value;
 		}
 
-		public static void DeleteList (int value)
+		public static void DeleteList(int value)
 		{
-			str.Remove (value);
+			str.Remove(value);
 		}
 
 	}

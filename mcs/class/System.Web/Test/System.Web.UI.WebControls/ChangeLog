@@ -1,3 +1,7 @@
+2006-12-04 Merav Sudri   <meravs@mainsoft.com>
+
+	* FormViewTest.cs: Removing "NotWorking" attributes. 
+
 2006-12-03  Yoni Klain         <yonik@mainsoft.com>
 
 	* RadioButtonTest.cs: added new test for 2.0 
