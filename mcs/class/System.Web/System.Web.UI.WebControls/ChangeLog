@@ -1,3 +1,7 @@
+2006-12-14 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DataGridPagerStyle.cs: chenged values of DataGridPagerStyles flags.
+
 2006-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CreateUserWizard.cs: implement GeneratePassword based on Membership.

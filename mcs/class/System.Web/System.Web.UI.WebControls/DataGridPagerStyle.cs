@@ -36,12 +36,12 @@ namespace System.Web.UI.WebControls {
 		[Flags]
 		enum DataGridPagerStyles
 		{
-			Mode = 0x00010000,
-			NextPageText = 0x00020000,
-			PageButtonCount = 0x00040000,
-			Position = 0x00080000,
-			PrevPageText = 0x00100000,
-			Visible = 0x00200000
+			Mode = 0x00100000,
+			NextPageText = 0x00200000,
+			PageButtonCount = 0x00400000,
+			Position = 0x00800000,
+			PrevPageText = 0x01000000,
+			Visible = 0x02000000
 		}
 
 		#region Constructors
