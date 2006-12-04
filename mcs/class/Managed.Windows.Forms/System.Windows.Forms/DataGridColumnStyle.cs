@@ -149,7 +149,7 @@ namespace System.Windows.Forms
 			mapping_name  = string.Empty;
 			null_text = def_null_text;
 			accesible_object = new DataGridColumnHeaderAccessibleObject (this);
-			_readonly = false;
+			_readonly = prop == null ? false : prop.IsReadOnly;
 			width = -1;
 			grid = null;
 			is_default = false;
@@ -276,6 +276,8 @@ namespace System.Windows.Forms
 			set {
 				if (value != property_descriptor) {
 					property_descriptor = value;					
+
+					_readonly = property_descriptor == null ? false : property_descriptor.IsReadOnly;
 
 					EventHandler eh = (EventHandler)(Events [PropertyDescriptorChangedEvent]);
 					if (eh != null)

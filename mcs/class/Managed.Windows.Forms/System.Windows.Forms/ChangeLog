@@ -1,5 +1,11 @@
 2006-12-04  Chris Toshok  <toshok@ximian.com>
 
+	* DataGridColumnStyle.cs: set the column's readonly property
+	initially based on the property descriptor's IsReadOnly.  Fixes
+	bug #80044.
+
+2006-12-04  Chris Toshok  <toshok@ximian.com>
+
 	* ComboBox.cs: wrap the dropdown style changing work in
 	SuspendLayout/ResumeLayout.  Fixes bug #79968.
 
