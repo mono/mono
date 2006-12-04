@@ -1,5 +1,14 @@
 2006-12-04  Chris Toshok  <toshok@ximian.com>
 
+	* DataGridTextBoxColumn.cs: remove some spew.
+
+	* DataGridColumnStyle.cs (SetColumnValueAtRow): this seems right
+	but some part of me is saying "it shouldn't be here.."  At any
+	rate, it fixes bug #80046.  Call IEditableObject.EndEdit after
+	setting the value.
+
+2006-12-04  Chris Toshok  <toshok@ximian.com>
+
 	* DataGridColumnStyle.cs (SetDataGrid): call CheckValidDataSource
 	to reassign the propertydescriptor.
 

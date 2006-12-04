@@ -139,7 +139,6 @@ namespace System.Windows.Forms
 				}
 			}
 			catch (Exception e) {
-				Console.WriteLine ("exception!?!?!?! {0}", e);
 				return false;
 			}
 			
