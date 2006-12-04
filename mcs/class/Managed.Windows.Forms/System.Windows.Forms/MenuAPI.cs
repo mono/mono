@@ -37,12 +37,13 @@ namespace System.Windows.Forms {
 	internal class MenuTracker {
 
 		internal bool active;
+		internal bool popup_active;
 		internal bool popdown_menu;
 		public Menu CurrentMenu;
 		public Menu TopMenu;
 		Form grab_control;
 
-	    	public MenuTracker (Menu top_menu)
+	    public MenuTracker (Menu top_menu)
 		{
 			TopMenu = CurrentMenu = top_menu;
 			foreach (MenuItem item in TopMenu.MenuItems)
@@ -79,6 +80,7 @@ namespace System.Windows.Forms {
 		void Deactivate ()
 		{
 			active = false;
+			popup_active = false;
 			grab_control.ActiveTracker = null;
 			keynav_state = KeyNavState.Idle;
 			if (TopMenu is ContextMenu) {
@@ -86,16 +88,7 @@ namespace System.Windows.Forms {
 				DeselectItem (TopMenu.SelectedItem);
 				puw.HideWindow ();
 			} else {
-#if false
-				MenuItem item = TopMenu.SelectedItem;
-				if (item.IsPopup)
-					HideSubPopups (item);
-
-				Menu menu = item.Parent;
-				menu.InvalidateItem (item);
-#else
 				DeselectItem (TopMenu.SelectedItem);
-#endif
 			}
 			CurrentMenu = TopMenu;
 		}
@@ -138,19 +131,17 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			if (item != null && !item.Enabled)
+			if (!item.Enabled)
 				return;
-
-			popdown_menu = active;
 			
-			SelectItem (item.Parent, item, item.IsPopup);
-			if (item.IsPopup) {
-				active = true;
-				item.Parent.InvalidateItem (item);
-			} else if (item.Parent is MainMenu){
+			popdown_menu = active && item.VisibleItems;
+			
+			if (item.IsPopup || (item.Parent is MainMenu)) {
 				active = true;
 				item.Parent.InvalidateItem (item);
 			}
+			
+			SelectItem (item.Parent, item, item.IsPopup);
 			grab_control.ActiveTracker = this;
 		}
 
@@ -163,11 +154,28 @@ namespace System.Windows.Forms {
 
 			grab_control.ActiveTracker = (active || item != null) ? this : null;
 
-			Rectangle top_bounds = new Rectangle(0, 0, TopMenu.Rect.Width, TopMenu.Rect.Height);
-			if (item == null && (!active || top_bounds.Contains (ScreenToMenu (TopMenu, new Point (args.X, args.Y)))))
-				DeselectItem (TopMenu.SelectedItem);
-			else
-				MoveSelection (item);
+			if (item == null) {
+				MenuItem old_item = CurrentMenu.SelectedItem;
+				
+				if  ((active && old_item.IsPopup && old_item.VisibleItems) || (keynav_state == KeyNavState.Navigating))
+					return;
+
+				/* Select parent menu when move outside of menu item */
+				if (old_item.Parent is MenuItem) {
+					MenuItem new_item = (old_item.Parent as MenuItem);
+					if (new_item.IsPopup) {
+						SelectItem (new_item.Parent, new_item, false);
+						return;
+					}
+				}
+				if (CurrentMenu != TopMenu)
+					CurrentMenu = CurrentMenu.parent_menu;
+								
+				DeselectItem (old_item);
+			} else {
+				SelectItem (item.Parent, item, active && item.IsPopup && popup_active && (CurrentMenu.SelectedItem != item));
+				keynav_state = KeyNavState.Idle;
+			}
 		}
 
 		public void OnMouseUp (MouseEventArgs args)
@@ -177,36 +185,23 @@ namespace System.Windows.Forms {
 			
 			MenuItem item = GetItemAtXY (args.X, args.Y);
 
+			/* the user released the mouse button outside the menu */
 			if (item == null) {
-				/* the user released the mouse button outside the menu */
 				Deactivate ();
+				return;
 			}
-			else {
-				/* hide the menu when popdown */
-				if (popdown_menu || !item.IsPopup)
-					Deactivate ();
+			
+			if (!item.Enabled)
+				return;
+			
+			/* hide the menu when popdown */
+			if (popdown_menu || !item.IsPopup)
+				Deactivate ();
 				
-				/* Perform click when is not a popup */
-				if (!item.IsPopup)
-					item.PerformClick ();
-			}
-		}
-
-		void MoveSelection (MenuItem item)
-		{
-			if (item == null) {
-				if (CurrentMenu.SelectedItem.IsPopup || (keynav_state == KeyNavState.Navigating))
-					return;
-				MenuItem old_item = CurrentMenu.SelectedItem;
-				if (CurrentMenu != TopMenu)
-					CurrentMenu = CurrentMenu.parent_menu;
-				DeselectItem (old_item);
-			} else {
-				if (item.Parent != CurrentMenu.SelectedItem)
-					DeselectItem (CurrentMenu.SelectedItem);
-				CurrentMenu = item.Parent;
-				SelectItem (CurrentMenu, item, active && item.IsPopup);
-				keynav_state = KeyNavState.Idle;
+			/* Perform click when is not a popup */
+			if (!item.IsPopup) {
+				DeselectItem (item);
+				item.PerformClick ();
 			}
 		}
 
@@ -264,18 +259,23 @@ namespace System.Windows.Forms {
 
 		void SelectItem (Menu menu, MenuItem item, bool execute)
 		{
-			MenuItem prev_item = menu.SelectedItem;
+			MenuItem prev_item = CurrentMenu.SelectedItem;
 			
-			if (prev_item != item) {
+			if (prev_item != item.Parent) {
 				DeselectItem (prev_item);
-				if (CurrentMenu != menu)
-					CurrentMenu = menu;
-				item.Selected = true;
-				menu.InvalidateItem (item);
-				item.PerformSelect ();					
+				if ((CurrentMenu != menu) && (prev_item.Parent != item) && (prev_item.Parent is MenuItem)) {
+					DeselectItem (prev_item.Parent as MenuItem);
+				}
 			}
 
-			if (execute)
+			if (CurrentMenu != menu)
+				CurrentMenu = menu;
+			item.Selected = true;
+			menu.InvalidateItem (item);
+			if (popup_active)
+				item.PerformSelect ();
+
+			if ((execute) && ((prev_item == null) || (item != prev_item.Parent)))
 				ExecFocusedItem (menu, item);
 		}
 
@@ -288,7 +288,7 @@ namespace System.Windows.Forms {
 				return;
 
 			if (!item.Enabled)
-			 	return;			 
+			 	return;
 			 	
 			if (item.IsPopup) {				
 				ShowSubPopup (menu, item);
@@ -304,11 +304,17 @@ namespace System.Windows.Forms {
 			if (item.Enabled == false)
 				return;
 
-			if (item.Wnd != null)
-				item.Wnd.Dispose ();
-				
-			item.PerformPopup ();
+			if (!popdown_menu || !item.VisibleItems) 
+				item.PerformPopup ();
+			
+			if (item.VisibleItems == false)
+				return;
 
+			if (item.Wnd != null) {
+				item.Wnd.Dispose ();
+			}
+
+			popup_active = true;
 			PopUpWindow puw = new PopUpWindow (item);
 			
 			Point pnt;

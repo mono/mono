@@ -1,3 +1,24 @@
+2006-11-02  Everaldo Canuto  <everaldo@simios.org>
+	
+	* MenuAPI.cs:
+	- Changes to fix behavior in Menu control, some reported in #80097
+	and other detected during behavior refactory like a select event
+	problems.
+	- Remove unneded "if's" conditions.
+	- Created an internal to flag when popup is active in control, we need 
+	it because in .NET you can have menu active but without popup active
+	when you active menu using popup without visible items.
+	- Mimic win32 behavior for Select and Popup events.  
+	- Dont open popup menu when you dont have visible subitems.
+	- Do nothing when click on disabled menu item.
+	- Some small changes to follow the coding style guidelines.
+	- Unselect menu only when another control gives focus. Fixes #80097.
+	- Remove unused code.
+	
+	* MenuItem.cs: internal VisibleItems method to check if menu
+	theres visible subitems, it will be usefull to fix some 
+	behavior in Menu control.
+	
 2006-11-01  Everaldo Canuto  <everaldo@simios.org>
 	
 	* Timer.cs: Tag property for 2.0 profile.

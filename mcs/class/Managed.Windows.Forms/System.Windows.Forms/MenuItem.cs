@@ -401,6 +401,17 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		internal bool VisibleItems {
+			get { 
+				if (menu_items != null) {
+					foreach (MenuItem mi in menu_items)
+						if (mi.Visible)
+							return true;
+				}
+				return false;
+			}
+		}
+
 		internal new int Width {
 			get { return bounds.Width; }
 			set { bounds.Width = value; }
