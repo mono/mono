@@ -147,7 +147,7 @@ namespace Microsoft.Build.Utilities
 			process.StartInfo.RedirectStandardOutput = true;
 			process.StartInfo.UseShellExecute = false;
 			
-			Log.LogMessage (MessageImportance.Low, String.Format ("Tool {0} execution started with arguments: {1}",
+			Log.LogMessage (MessageImportance.Normal, String.Format ("Tool {0} execution started with arguments: {1}",
 				filename, arguments));
 			
 			process.Start ();
@@ -156,7 +156,7 @@ namespace Microsoft.Build.Utilities
 			exitCode = process.ExitCode;
 			
 			while ((line = process.StandardError.ReadLine ()) != null) {
-				LogEventsFromTextOutput (line, MessageImportance.Normal);
+				LogEventsFromTextOutput (line);
 			}
 			
 			Log.LogMessage (MessageImportance.Low, String.Format ("Tool {0} execution finished.", filename));
@@ -165,10 +165,8 @@ namespace Microsoft.Build.Utilities
 		}
 		
 		
-		// FIXME: use importance
 		[MonoTODO]
-		protected virtual void LogEventsFromTextOutput (string singleLine,
-								MessageImportance importance)
+		protected virtual void LogEventsFromTextOutput (string singleLine)
 		{
 			string filename, origin, category, code, subcategory, text;
 			int lineNumber, columnNumber, endLineNumber, endColumnNumber;

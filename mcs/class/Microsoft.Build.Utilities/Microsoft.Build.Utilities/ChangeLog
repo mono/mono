@@ -1,3 +1,7 @@
+2006-12-04  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* ToolTask.cs: Changed importance to Normal.
+
 2006-10-08  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* TaskLoggingHelper.cs: Changed "" to String.Empty.
