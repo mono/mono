@@ -2152,6 +2152,20 @@ namespace MonoTests.System.XmlSerialization
 		}
 #endif
 
+		[Test]
+		public void SerializeBase64Binary()
+		{
+			XmlSerializer ser = new XmlSerializer (typeof (Base64Binary));
+			sw = new StringWriter ();
+			XmlTextWriter xtw = new XmlTextWriter (sw);
+			ser.Serialize (xtw, new Base64Binary ());
+			xtw.Close ();
+			string expected = @"<?xml version=""1.0"" encoding=""utf-16""?><Base64Binary xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" Data=""AQID"" />";
+			Assert.AreEqual (Infoset (expected), WriterText);
+			Base64Binary h = (Base64Binary) ser.Deserialize (new StringReader (sw.ToString ()));
+			Assert.AreEqual (new byte [] {1, 2, 3}, h.Data);
+		}
+
 		[Test] // bug #79989, #79990
 		public void SerializeHexBinary ()
 		{
@@ -2580,6 +2594,13 @@ namespace MonoTests.System.XmlSerialization
 		{
 			[XmlArray (Form = XmlSchemaForm.Unqualified)]
 			public string[] Whee = new string[] { "foo", "bar" };
+		}
+
+		[XmlRoot ("Base64Binary")]
+		public class Base64Binary
+		{
+			[XmlAttribute (DataType = "base64Binary")]
+			public byte [] Data = new byte [] {1, 2, 3};
 		}
 
 		[XmlRoot ("HexBinary")]

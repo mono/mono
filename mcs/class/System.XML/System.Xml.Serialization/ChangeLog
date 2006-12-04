@@ -1,3 +1,10 @@
+2006-12-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationCodeGenerator.cs, XmlCustomFormatter.cs :
+	  GenerateToXmlString() needed hexBinary support as well. Since
+	  XmlConvert.[To|From]BinHexString() are internal, use reflection.
+	  Really fixed bug #79989 and #79990 for generated serializers.
+
 2006-12-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlSchemaExporter.cs: Emit xml name of enum-based default values.

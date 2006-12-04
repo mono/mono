@@ -305,6 +305,7 @@ namespace System.Xml.Serialization {
 				case "guid": return "XmlConvert.ToString (" + value + ")";
 				case "base64":
 				case "base64Binary": return value + " == null ? String.Empty : Convert.ToBase64String (" + value + ")";
+				case "hexBinary": return value + " == null ? String.Empty : ToBinHexString (" + value + ")";
 				case "duration": return "XmlConvert.ToString (" + value + ")";
 				case "NMTOKEN":
 				case "Name":
@@ -344,6 +345,7 @@ namespace System.Xml.Serialization {
 				case "guid": return "XmlConvert.ToGuid (" + value + ")";
 				case "base64:":
 				case "base64Binary": return "Convert.FromBase64String (" + value + ")";
+				case "hexBinary": return "FromBinHexString (" + value + ")";
 				case "duration": return "XmlConvert.ToTimeSpan (" + value + ")";
 				default: return value;
 			}

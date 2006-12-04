@@ -454,6 +454,12 @@ namespace System.Xml.Serialization
 				WriteLine ("internal class " + writerClassName + " : XmlSerializationWriter");
 			WriteLineInd ("{");
 			WriteLine ("const string xmlNamespace = \"http://www.w3.org/2000/xmlns/\";");
+			// ToBinHexString() is not public, so use reflection here.
+			WriteLine ("static readonly System.Reflection.MethodInfo toBinHexStringMethod = typeof (XmlConvert).GetMethod (\"ToBinHexString\", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic, null, new Type [] {typeof (byte [])}, null);");
+			WriteLine ("static string ToBinHexString (byte [] input)");
+			WriteLineInd ("{");
+			WriteLine ("return input == null ? null : (string) toBinHexStringMethod.Invoke (null, new object [] {input});");
+			WriteLineUni ("}");
 			
 			for (int n=0; n<maps.Count; n++)
 			{
@@ -1284,6 +1290,12 @@ namespace System.Xml.Serialization
 			else
 				WriteLine ("internal class " + readerClassName + " : XmlSerializationReader");
 			WriteLineInd ("{");
+			// FromBinHexString() is not public, so use reflection here.
+			WriteLine ("static readonly System.Reflection.MethodInfo fromBinHexStringMethod = typeof (XmlConvert).GetMethod (\"FromBinHexString\", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic, null, new Type [] {typeof (string)}, null);");
+			WriteLine ("static byte [] FromBinHexString (string input)");
+			WriteLineInd ("{");
+			WriteLine ("return input == null ? null : (byte []) fromBinHexStringMethod.Invoke (null, new object [] {input});");
+			WriteLineUni ("}");
 
 			_mapsToGenerate = new ArrayList ();
 			_fixupCallbacks = new ArrayList ();
