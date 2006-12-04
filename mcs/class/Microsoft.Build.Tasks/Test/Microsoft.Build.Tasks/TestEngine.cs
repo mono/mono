@@ -1,5 +1,5 @@
 //
-// Consts.cs
+// TestEngine.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
@@ -26,17 +26,50 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections;
+using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
-public static class Consts {
-	public static string BinPath {
-		get {
-			// FIXME: it should check for runtime not OS
-			int p = (int) Environment.OSVersion.Platform;
-			if (p == 4 || p == 128)
-				return "../../tools/xbuild/xbuild";
-			else
-				return ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version20);
+namespace MonoTests.Microsoft.Build.Tasks {
+
+	public class TestEngine : IBuildEngine {
+		public bool BuildProjectFile (string projectFileName, string[] targetNames, IDictionary globalProperties,
+					      IDictionary targetOutputs)
+		{
+			return true;
+		}
+
+		public void LogCustomEvent (CustomBuildEventArgs e)
+		{
+		}
+
+		public void LogErrorEvent (BuildErrorEventArgs e)
+		{
+		}
+
+		public void LogMessageEvent (BuildMessageEventArgs e)
+		{
+		}
+
+		public void LogWarningEvent (BuildWarningEventArgs e)
+		{
+		}
+
+		public int ColumnNumberOfTaskNode {
+			get { return 0; }
+		}
+
+		public bool ContinueOnError {
+			get { return true; }
+		}
+
+		public int LineNumberOfTaskNode {
+			get { return 0; }
+		}
+
+		public string ProjectFileOfTaskNode {
+			get { return String.Empty; }
 		}
 	}
+
 }
