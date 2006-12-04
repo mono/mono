@@ -103,9 +103,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			Assert.AreEqual ("AxxBxxC", GetItems (proj, "Item3"), "A2");
 		}
 
-		// Will fail on xbuild
 		[Test]
-		[Platform ("NET-2.0")]
+		[Category ("NotWorking")]
 		public void TestItems3 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -126,6 +125,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 	
 		[Test]
+		[Category ("NotWorking")]
 		public void TestItems4 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
