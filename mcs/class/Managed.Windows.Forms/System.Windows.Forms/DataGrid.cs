@@ -309,10 +309,11 @@ namespace System.Windows.Forms
 
 			dataSourceStack = new Stack ();
 
+			// back these out until we figure out what's going on with ResourceImageLoader and the call to MakeTransparent
 			back_button_image = ResourceImageLoader.Get ("go-previous.png");
-			back_button_image.MakeTransparent (Color.Transparent);
+			//back_button_image.MakeTransparent (Color.Transparent);
 			parent_rows_button_image = ResourceImageLoader.Get ("go-top.png");
-			parent_rows_button_image.MakeTransparent (Color.Transparent);
+			//parent_rows_button_image.MakeTransparent (Color.Transparent);
 		}
 
 		#endregion	// Public Constructor
