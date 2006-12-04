@@ -435,6 +435,7 @@ namespace System.Windows.Forms
 			get { return caption_visible; }
 			set {
 				if (caption_visible != value) {
+					EndEdit ();
 					caption_visible = value;
 					CalcAreasAndInvalidate ();
 					OnCaptionVisibleChanged (EventArgs.Empty);
