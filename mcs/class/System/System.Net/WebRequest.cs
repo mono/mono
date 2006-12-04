@@ -243,8 +243,12 @@ namespace System.Net
 			return new WebProxy ();
 		}
 #endif
-
-		void ISerializable.GetObjectData (SerializationInfo serializationInfo,
+#if TARGET_JVM
+		public virtual void GetObjectData
+#else
+		void ISerializable.GetObjectData
+#endif
+		(SerializationInfo serializationInfo,
 		   				  StreamingContext streamingContext)
 		{
 			throw new NotSupportedException ();

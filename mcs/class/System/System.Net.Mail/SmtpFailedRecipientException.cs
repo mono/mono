@@ -94,11 +94,12 @@ namespace System.Net.Mail {
 		public override void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
 		}
-
+#if !TARGET_JVM //remove private implementation
 		[MonoTODO]
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
 		}
+#endif
 
 		#endregion // Methods
 	}

@@ -75,13 +75,20 @@ namespace System.Net
 		{
 			throw new NotSupportedException ();
 		}
-		
+#if TARGET_JVM //enable overrides for extenders
+		public virtual void Dispose()
+#else
 		void IDisposable.Dispose()
+#endif
 		{
 			Close ();
 		}
-		
-		void ISerializable.GetObjectData (SerializationInfo serializationInfo,
+#if TARGET_JVM //enable overrides for extenders
+		public virtual void GetObjectData
+#else
+		void ISerializable.GetObjectData
+#endif
+			(SerializationInfo serializationInfo,
 		   				  StreamingContext streamingContext)
 		{
 			throw new NotSupportedException ();
