@@ -220,7 +220,9 @@ namespace System.Windows.Forms
 
 				if (dropdown_style == value)
 					return;					
-									
+
+				SuspendLayout ();
+
 				if (dropdown_style == ComboBoxStyle.Simple) {
 					if (listbox_ctrl != null) {						
 						Controls.RemoveImplicit (listbox_ctrl);
@@ -263,6 +265,7 @@ namespace System.Windows.Forms
 					}
 				}
 				
+				ResumeLayout ();
 				OnDropDownStyleChanged (EventArgs.Empty);
     				
 				LayoutComboBox ();
