@@ -1,3 +1,11 @@
+2006-12-04  Chris Toshok  <toshok@ximian.com>
+
+	* RTF.cs: remove unused fields.
+
+	* Style.cs: remove unused field.
+
+	* Charset.cs: remove unused field.
+
 2006-10-27  Jackson Harper  <jackson@ximian.com>
 
 	* TextMap.cs: Since we map udieresis as a standard char we need to

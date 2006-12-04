@@ -42,7 +42,6 @@ namespace System.Windows.Forms.RTF {
 		private Major		major;
 		private Minor		minor;
 		private int		param;
-		private int		format;
 		private StringBuilder	text_buffer;
 		private int		line_num;
 		private int		line_pos;
@@ -58,8 +57,6 @@ namespace System.Windows.Forms.RTF {
 		private bool		bump_line;
 
 		private Font		font_list;
-		private Color		color_list;
-		private Style		style_list;
 
 		private Charset		cur_charset;
 		private Stack		charset_stack;

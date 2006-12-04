@@ -35,7 +35,6 @@ namespace System.Windows.Forms.RTF {
 		private CharsetFlags	flags;
 		private Charcode	code;
 		private string		file;
-		private bool		loaded;
 		#endregion	// Local Variables
 
 		#region Public Constructors
@@ -43,7 +42,6 @@ namespace System.Windows.Forms.RTF {
 			flags = CharsetFlags.Read | CharsetFlags.Switch;
 			id = CharsetType.General;
 			file = string.Empty;
-			loaded = false;
 			this.ReadMap();
 		}
 		#endregion	// Public Constructors
@@ -98,7 +96,6 @@ namespace System.Windows.Forms.RTF {
 			set {
 				if (file != value) {
 					file = value;
-					loaded = false;
 				}
 			}
 		}

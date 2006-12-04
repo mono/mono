@@ -57,7 +57,9 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		private ImplicitVScrollBar vbar;
 		private StringFormat string_format;
 		private Font bold_font;
+#if !DOUBLEBUFFER
 		private int cached_splitter_location;
+#endif
 		#endregion
 
 		#region Contructors
@@ -138,10 +140,12 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			Invalidate (new Rectangle (0, item.Top, SplitterLocation, row_height));
 		}
 
+#if !DOUBLEBUFFER
 		void InvalidateGridItem (GridItem item)
 		{
 			Invalidate (new Rectangle (0, item.Top, Width, row_height));
 		}
+#endif
 
 		void CalcHeightOfGridItems (GridItemCollection col, ref int amount)
 		{
@@ -532,7 +536,9 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					grid_textbox_Show (property_grid.SelectedGridItem);
 				}
 
+#if !DOUBLEBUFFER
 				cached_splitter_location = SplitterLocation;
+#endif
 			}
 			get {
 				return splitter_percent;

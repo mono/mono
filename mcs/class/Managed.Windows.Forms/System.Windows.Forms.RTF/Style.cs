@@ -38,7 +38,6 @@ namespace System.Windows.Forms.RTF {
 		private int		num;
 		private int		based_on;
 		private int		next_par;
-		private int		se_list;
 		private bool		expanding;
 		private StyleElement	elements;
 		private Style		next;

@@ -155,11 +155,6 @@ namespace System.Windows.Forms {
 				onCurrentChangedHandler (this, e);
 			}
 		}
-
-		private void PropertyChangedHandler (object sender, EventArgs e)
-		{
-			OnCurrentChanged (EventArgs.Empty);
-		}
 	}
 }
 

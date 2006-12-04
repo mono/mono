@@ -704,8 +704,11 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		protected void OnComComponentNameChanged(ComponentRenameEventArgs e) {
-			throw new NotImplementedException();
+		protected void OnComComponentNameChanged(ComponentRenameEventArgs e)
+		{
+			ComponentRenameEventHandler eh = (ComponentRenameEventHandler)(Events [ComComponentNameChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnFontChanged(EventArgs e) {
@@ -880,11 +883,10 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
-		[MonoTODO]
-		private event ComponentRenameEventHandler com_component_name_changed;
+		static object ComComponentNameChangedEvent = new object ();
 		event ComponentRenameEventHandler ComponentModel.Com2Interop.IComPropertyBrowser.ComComponentNameChanged {
-			add { com_component_name_changed += value; }
-			remove { com_component_name_changed -= value; }
+			add { Events.AddHandler (ComComponentNameChangedEvent, value); }
+			remove { Events.RemoveHandler (ComComponentNameChangedEvent, value); }
 		}
 		#endregion	// Com2Interop.IComPropertyBrowser Interface
 
