@@ -34,8 +34,6 @@ namespace System.Windows.Forms {
 
 	internal class MdiWindowManager : InternalWindowManager {
 
-		private static readonly int MdiBorderStyle = 0xFFFF;
-
 		private MainMenu merged_menu;
 		private MainMenu maximized_menu;
 		private MenuItem icon_menu;
@@ -51,7 +49,6 @@ namespace System.Windows.Forms {
 		private Rectangle prev_bounds;
 
 		internal Rectangle IconicBounds;
-		internal int mdi_index;
 
 		public MdiWindowManager (Form form, MdiClient mdi_container) : base (form)
 		{

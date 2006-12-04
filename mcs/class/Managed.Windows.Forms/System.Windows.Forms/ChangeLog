@@ -1,4 +1,9 @@
 2006-12-04  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* MdiClient.cs: 
+	* MdiWindowManager: Removed unused fields and methods.
+	
+2006-12-04  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 	
 	* StatusBar.cs: Update all panels when a AutoSize=Contents
 	panel needs updating.

@@ -45,7 +45,6 @@ namespace System.Windows.Forms {
 		private bool lock_sizing;
 		private bool initializing_scrollbars;
 		private int prev_bottom;
-		private LayoutEventHandler initial_layout_handler;
 		private bool setting_windowstates = false;
 		internal ArrayList mdi_child_list;
 		private string form_text;
@@ -489,11 +488,6 @@ namespace System.Windows.Forms {
 			}
 
 			prev_bottom = Bottom;
-		}
-
-		private void FormLocationChanged (object sender, EventArgs e)
-		{
-			SizeScrollBars ();
 		}
 
 		internal void ArrangeIconicWindows ()
