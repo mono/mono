@@ -65,6 +65,566 @@ namespace MonoTests.System.Windows.Forms
 			main.IsMdiContainer = true;
 		}
 
+		[Category("NotWorking")]
+		[Test]
+		public void StartLocationTest1 ()
+		{
+			SetUp (false, false);
+
+			child1.MdiParent = main;
+			child2.MdiParent = main;
+
+			child1.Visible = true;
+			child2.Visible = true;
+
+			main.Show ();
+			
+			Assert.AreEqual ("{X=0,Y=0}", child1.Location.ToString (), "#1");
+			Assert.AreEqual ("{X=22,Y=22}", child2.Location.ToString (), "#2");
+
+			TearDown ();
+		}
+
+		[Category("NotWorking")]
+		[Test]
+		public void StartLocationTest2 ()
+		{
+			SetUp (false, false);
+
+			child1.MdiParent = main;
+			child2.MdiParent = main;
+
+			child1.StartPosition = FormStartPosition.Manual;
+
+			child1.Visible = true;
+			child2.Visible = true;
+
+			main.Show ();
+			
+			Assert.AreEqual ("{X=0,Y=0}", child1.Location.ToString (), "#1");
+			Assert.AreEqual ("{X=22,Y=22}", child2.Location.ToString (), "#2");
+
+			TearDown ();
+		}
+
+
+		[Category("NotWorking")]
+		[Test]
+		public void StartLocationTest3 ()
+		{
+			SetUp (false, false);
+
+			child1.MdiParent = main;
+			child2.MdiParent = main;
+
+			child2.StartPosition = FormStartPosition.Manual;
+
+			child1.Visible = true;
+			child2.Visible = true;
+
+			main.Show ();
+			
+			Assert.AreEqual ("{X=0,Y=0}", child1.Location.ToString (), "#1");
+			Assert.AreEqual ("{X=0,Y=0}", child2.Location.ToString (), "#2");
+
+			TearDown ();
+		}
+
+		[Category("NotWorking")]
+		[Test]
+		public void StartLocationTest4 ()
+		{
+			SetUp (false, false);
+
+			child1.MdiParent = main;
+			child2.MdiParent = main;
+
+			child1.StartPosition = FormStartPosition.Manual;
+			child2.StartPosition = FormStartPosition.Manual;
+
+			child1.Visible = true;
+			child2.Visible = true;
+
+			main.Show ();
+			
+			Assert.AreEqual ("{X=0,Y=0}", child1.Location.ToString (), "#1");
+			Assert.AreEqual ("{X=0,Y=0}", child2.Location.ToString (), "#2");
+
+			TearDown ();
+		}
+
+		[Category("NotWorking")]
+		[Test]
+		public void StartLocationTest5 ()
+		{
+			SetUp (false, false);
+
+			child1.MdiParent = main;
+			child2.MdiParent = main;
+			child3.MdiParent = main;
+
+			child2.StartPosition = FormStartPosition.Manual;
+
+			child1.Visible = true;
+			child2.Visible = true;
+			child3.Visible = true;
+
+			main.Show ();
+			
+			Assert.AreEqual ("{X=0,Y=0}", child1.Location.ToString (), "#1");
+			Assert.AreEqual ("{X=0,Y=0}", child2.Location.ToString (), "#2");
+			Assert.AreEqual ("{X=44,Y=44}", child3.Location.ToString (), "#3");
+
+			TearDown ();
+		}
+
+		[Category("NotWorking")]
+		[Test]
+		public void StartLocationTest6 ()
+		{
+			SetUp (false, false);
+
+			child1.MdiParent = main;
+			child2.MdiParent = main;
+			child3.MdiParent = main;
+
+			child2.StartPosition = FormStartPosition.CenterParent;
+
+			child1.Visible = true;
+			child2.Visible = true;
+			child3.Visible = true;
+
+			main.Show ();
+			
+			Assert.AreEqual ("{X=0,Y=0}", child1.Location.ToString (), "#1");
+			Assert.AreEqual ("{X=22,Y=22}", child2.Location.ToString (), "#2");
+			Assert.AreEqual ("{X=44,Y=44}", child3.Location.ToString (), "#3");
+
+			TearDown ();
+		}
+
+		[Category("NotWorking")]
+		[Test]
+		public void StartLocationTest7 ()
+		{
+			SetUp (false, false);
+
+			child1.MdiParent = main;
+			child2.MdiParent = main;
+			child3.MdiParent = main;
+
+			child2.StartPosition = FormStartPosition.CenterScreen;
+
+			child1.Visible = true;
+			child2.Visible = true;
+			child3.Visible = true;
+
+			main.Show ();
+			
+			Assert.AreEqual ("{X=0,Y=0}", child1.Location.ToString (), "#1");
+			Assert.AreEqual ("{X=0,Y=0}", child2.Location.ToString (), "#2");
+			Assert.AreEqual ("{X=44,Y=44}", child3.Location.ToString (), "#3");
+
+			TearDown ();
+		}
+
+		[Category("NotWorking")]
+		[Test]
+		public void StartLocationTest8 ()
+		{
+			SetUp (false, false);
+
+			child1.MdiParent = main;
+			child2.MdiParent = main;
+			child3.MdiParent = main;
+
+			child2.StartPosition = FormStartPosition.WindowsDefaultBounds;
+
+			child1.Visible = true;
+			child2.Visible = true;
+			child3.Visible = true;
+
+			main.Show ();
+			
+			Assert.AreEqual ("{X=0,Y=0}", child1.Location.ToString (), "#1");
+			Assert.AreEqual ("{X=22,Y=22}", child2.Location.ToString (), "#2");
+			Assert.AreEqual ("{X=44,Y=44}", child3.Location.ToString (), "#3");
+
+			TearDown ();
+		}
+
+		[Category("NotWorking")]
+		[Test]
+		public void StartLocationTest9 ()
+		{
+			SetUp (false, false);
+
+			child1.MdiParent = main;
+			child2.MdiParent = main;
+			child3.MdiParent = main;
+
+			child2.StartPosition = FormStartPosition.WindowsDefaultLocation;
+
+			child1.Visible = true;
+			child2.Visible = true;
+			child3.Visible = true;
+
+			main.Show ();
+			
+			Assert.AreEqual ("{X=0,Y=0}", child1.Location.ToString (), "#1");
+			Assert.AreEqual ("{X=22,Y=22}", child2.Location.ToString (), "#2");
+			Assert.AreEqual ("{X=44,Y=44}", child3.Location.ToString (), "#3");
+
+			TearDown ();
+		}
+		
+		[Category("NotWorking")]
+		[Test]
+		public void StartLocationTest10 ()
+		{
+			SetUp (false, false);
+
+			child1.MdiParent = main;
+			child2.MdiParent = main;
+			child3.MdiParent = main;
+
+			child2.StartPosition = FormStartPosition.Manual;
+			child2.Location = new Point (123, 123);
+
+			child1.Visible = true;
+			child2.Visible = true;
+			child3.Visible = true;
+
+			main.Show ();
+			
+			Assert.AreEqual ("{X=0,Y=0}", child1.Location.ToString (), "#1");
+			Assert.AreEqual ("{X=123,Y=123}", child2.Location.ToString (), "#2");
+			Assert.AreEqual ("{X=44,Y=44}", child3.Location.ToString (), "#3");
+
+			TearDown ();
+		}
+
+		[Category("NotWorking")]
+		[Test]
+		public void StartLocationTest11 ()
+		{
+			SetUp (false, false);
+
+			child1.MdiParent = main;
+			child2.MdiParent = main;
+			child3.MdiParent = main;
+
+			child2.Location = new Point (123, 123);
+
+			Assert.AreEqual ("{X=123,Y=123}", child2.Location.ToString (), "#0");
+
+			child1.Visible = true;
+			child2.Visible = true;
+			child3.Visible = true;
+
+			Assert.AreEqual ("{X=123,Y=123}", child2.Location.ToString (), "#0");
+
+			main.Show ();
+			
+			Assert.AreEqual ("{X=0,Y=0}", child1.Location.ToString (), "#1");
+			Assert.AreEqual ("{X=22,Y=22}", child2.Location.ToString (), "#2");
+			Assert.AreEqual ("{X=44,Y=44}", child3.Location.ToString (), "#3");
+
+			TearDown ();
+		}
+
+		[Category("NotWorking")]
+		[Test]
+		public void StartLocationTest12 ()
+		{
+			SetUp (false, false);
+
+			child1.MdiParent = main;
+			child2.MdiParent = main;
+			child3.MdiParent = main;
+
+			child1.Visible = true;
+			//child2.Visible = true;
+			child3.Visible = true;
+
+			main.Show ();
+			
+			Assert.AreEqual ("{X=0,Y=0}", child1.Location.ToString (), "#1");
+			Assert.AreEqual ("{X=0,Y=0}", child2.Location.ToString (), "#2");
+			Assert.AreEqual ("{X=22,Y=22}", child3.Location.ToString (), "#3");
+
+			child2.Visible = true;
+			Assert.AreEqual ("{X=44,Y=44}", child2.Location.ToString (), "#4");
+
+			child1.Visible = false;
+			child1.Visible = true;
+			Assert.AreEqual ("{X=66,Y=66}", child1.Location.ToString (), "#1");
+
+			TearDown ();
+		}
+
+		[Category("NotWorking")]
+		[Test]
+		public void StartLocationTest13 ()
+		{
+			SetUp (false, false);
+
+			child1.MdiParent = main;
+			child2.MdiParent = main;
+			child3.MdiParent = main;
+
+			child1.Visible = true;
+			//child2.Visible = true;
+			child3.Visible = true;
+
+			main.Show ();
+			
+			Assert.AreEqual ("{X=0,Y=0}", child1.Location.ToString (), "#1");
+			Assert.AreEqual ("{X=0,Y=0}", child2.Location.ToString (), "#2");
+			Assert.AreEqual ("{X=22,Y=22}", child3.Location.ToString (), "#3");
+
+			child2.Visible = true;
+			Assert.AreEqual ("{X=44,Y=44}", child2.Location.ToString (), "#4");
+
+			child1.Visible = false;
+			child1.Visible = true;
+			Assert.AreEqual ("{X=66,Y=66}", child1.Location.ToString (), "#5");
+			
+			child3.Visible = true;
+			Assert.AreEqual ("{X=22,Y=22}", child3.Location.ToString (), "#6");
+
+			// MDI Child size does not seem to affect layout.
+			// Size 500,500
+			child2.Visible = false;
+			child2.Size = new Size (500, 500);
+			child2.Visible = true;
+			Assert.AreEqual ("{X=88,Y=88}", child2.Location.ToString (), "#7");
+
+			child2.Visible = false;
+			child2.Visible = true;
+			Assert.AreEqual ("{X=0,Y=0}", child2.Location.ToString (), "#8");
+			
+			child2.Visible = false;
+			child2.Visible = true;
+			Assert.AreEqual ("{X=22,Y=22}", child2.Location.ToString (), "#9");
+
+			// Size 5,5
+			child2.Visible = false;
+			child2.Size = new Size (5, 5);
+			child2.Visible = true;
+			Assert.AreEqual ("{X=44,Y=44}", child2.Location.ToString (), "#10");
+
+			child2.Visible = false;
+			child2.Visible = true;
+			Assert.AreEqual ("{X=66,Y=66}", child2.Location.ToString (), "#11");
+			
+			child2.Visible = false;
+			child2.Visible = true;
+			Assert.AreEqual ("{X=88,Y=88}", child2.Location.ToString (), "#12");
+
+			child2.Visible = false;
+			child2.Visible = true;
+			Assert.AreEqual ("{X=0,Y=0}", child2.Location.ToString (), "#13");
+
+			TearDown ();
+		}
+
+		[Category("NotWorking")]
+		[Test]
+		public void StartLocationTest14 ()
+		{
+			SetUp (false, false);
+
+			child1.MdiParent = main;
+			child2.MdiParent = main;
+			child3.MdiParent = main;
+
+			child2.StartPosition = FormStartPosition.Manual;
+			child2.Location = new Point (44, 44);
+			child1.Visible = true;
+			child2.Visible = true;
+			child3.Visible = true;
+
+			main.Show ();
+			
+			Assert.AreEqual ("{X=0,Y=0}", child1.Location.ToString (), "#1");
+			Assert.AreEqual ("{X=44,Y=44}", child2.Location.ToString (), "#2");
+			Assert.AreEqual ("{X=44,Y=44}", child3.Location.ToString (), "#3");
+
+			child1.Visible = false;
+			child1.Visible = true;
+			Assert.AreEqual ("{X=66,Y=66}", child1.Location.ToString (), "#4");
+
+			TearDown ();
+		}
+
+		[Test]
+		public void StartLocationTest15 ()
+		{
+			SetUp (false, false);
+
+			child1.MdiParent = main;
+			child2.MdiParent = main;
+			child3.MdiParent = main;
+
+			main.Show ();
+
+			child1.Visible = true;
+			child2.Visible = true;
+			child2.Location = new Point (22, 44);
+			child3.Visible = true;
+
+			Assert.AreEqual ("{X=0,Y=0}", child1.Location.ToString (), "#1");
+			Assert.AreEqual ("{X=22,Y=44}", child2.Location.ToString (), "#2");
+			Assert.AreEqual ("{X=44,Y=44}", child3.Location.ToString (), "#3");
+
+			child1.Visible = false;
+			child1.Visible = true;
+			Assert.AreEqual ("{X=66,Y=66}", child1.Location.ToString (), "#4");
+
+			TearDown ();
+		}
+
+		[Category("NotWorking")]
+		[Test]
+		public void StartLocationTest16 ()
+		{
+			SetUp (false, false);
+
+			child1.MdiParent = main;
+			child2.MdiParent = main;
+			child3.MdiParent = main;
+
+			child1.Visible = true;
+			child2.Visible = true;
+			child2.Location = new Point (22, 44);
+			child3.Visible = true;
+
+			main.Show ();
+			
+			Assert.AreEqual ("{X=0,Y=0}", child1.Location.ToString (), "#1");
+			Assert.AreEqual ("{X=22,Y=22}", child2.Location.ToString (), "#2");
+			Assert.AreEqual ("{X=44,Y=44}", child3.Location.ToString (), "#3");
+
+			child1.Visible = false;
+			child1.Visible = true;
+			Assert.AreEqual ("{X=66,Y=66}", child1.Location.ToString (), "#4");
+
+			TearDown ();
+		}
+		
+		[Category("NotWorking")]
+		[Test]
+		public void StartLocationTest17 ()
+		{
+			SetUp (false, false);
+
+			child1.MdiParent = main;
+			child2.MdiParent = main;
+			child3.MdiParent = main;
+
+			child1.Visible = true;
+			child2.Visible = true;
+
+			main.Show ();
+			
+			Assert.AreEqual ("{X=0,Y=0}", child1.Location.ToString (), "#1");
+			Assert.AreEqual ("{X=22,Y=22}", child2.Location.ToString (), "#2");
+			Assert.AreEqual ("{X=0,Y=0}", child3.Location.ToString (), "#3");
+
+			child2.Visible = false;
+			child3.Visible = true;
+
+			Assert.AreEqual ("{X=44,Y=44}", child3.Location.ToString (), "#4");
+
+			TearDown ();
+		}
+
+		[Category("NotWorking")]
+		[Test]
+		public void StartLocationTest18 ()
+		{
+			SetUp (false, false);
+
+			child1.MdiParent = main;
+			child2.MdiParent = main;
+			child3.MdiParent = main;
+
+			child1.Visible = true;
+			child2.Visible = true;
+
+			main.Show ();
+			
+			Assert.AreEqual ("{X=0,Y=0}", child1.Location.ToString (), "#1");
+			Assert.AreEqual ("{X=22,Y=22}", child2.Location.ToString (), "#2");
+			Assert.AreEqual ("{X=0,Y=0}", child3.Location.ToString (), "#3");
+
+			child2.Visible = false;
+			child2.Close ();
+			child2.Dispose ();
+			child2 = null;
+
+			child3.Visible = true;
+
+			Assert.AreEqual ("{X=44,Y=44}", child3.Location.ToString (), "#4");
+
+			TearDown ();
+		}
+
+		[Category("NotWorking")]		
+		[Test]
+		public void StartLocationTest19 ()
+		{
+			SetUp (false, false);
+
+			child1.MdiParent = main;
+			child2.MdiParent = main;
+			child3.MdiParent = main;
+
+			child1.Visible = true;
+			child2.Visible = true;
+			child3.Visible = true;
+
+			child1.StartPosition = FormStartPosition.Manual;
+			child2.StartPosition = FormStartPosition.Manual;
+			child3.StartPosition = FormStartPosition.Manual;
+
+			main.Show ();
+			
+			Assert.AreEqual ("{X=0,Y=0}", child1.Location.ToString (), "#1");
+			Assert.AreEqual ("{X=0,Y=0}", child2.Location.ToString (), "#2");
+			Assert.AreEqual ("{X=0,Y=0}", child3.Location.ToString (), "#3");
+
+			TearDown ();
+		}
+
+		[Test]
+		public void StartSizeTest1 ()
+		{
+			SetUp (false, false);
+
+			child1.MdiParent = main;
+			child2.MdiParent = main;
+			child3.MdiParent = main;
+
+			main.Show ();
+			
+			Assert.AreEqual ("{Width=300, Height=300}", main.Size.ToString (), "#1");
+			Assert.AreEqual ("{Width=300, Height=300}", child1.Size.ToString (), "#2");
+			Assert.AreEqual ("{Width=300, Height=300}", child2.Size.ToString (), "#3");
+			Assert.AreEqual ("{Width=300, Height=300}", child3.Size.ToString (), "#4");
+
+			child1.Visible = true;
+			child2.Visible = true;
+			child3.Visible = true;
+
+			Assert.AreEqual ("{Width=300, Height=300}", main.Size.ToString (), "#1");
+			Assert.AreEqual ("{Width=300, Height=300}", child1.Size.ToString (), "#2");
+			Assert.AreEqual ("{Width=300, Height=300}", child2.Size.ToString (), "#3");
+			Assert.AreEqual ("{Width=300, Height=300}", child3.Size.ToString (), "#4");
+
+			TearDown ();
+		}
 
 		[Test]
 		public void IsMdiContainerTest ()
