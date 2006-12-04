@@ -42,9 +42,7 @@ namespace MonoTests.System.Windows.Forms
 		[Category("Printing")]
 		public void DefaultValues ()
 		{
-			Console.WriteLine (1);
 			PrintDialog pd = new PrintDialog ();
-			Console.WriteLine (2);
 
 			Assert.IsTrue (pd.AllowPrintToFile, "#1");
 			Assert.IsFalse (pd.AllowSelection, "#2");
