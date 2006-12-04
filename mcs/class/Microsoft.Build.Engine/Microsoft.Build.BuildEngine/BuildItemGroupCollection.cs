@@ -50,11 +50,12 @@ namespace Microsoft.Build.BuildEngine {
 			if (array == null)
 				throw new ArgumentNullException ("array");
 			if (index < 0)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new 
+					IndexOutOfRangeException ("Index was outside the bounds of the array.");
 			if (array.Rank > 1)
 				throw new ArgumentException ("array is multidimensional");
 			if ((array.Length > 0) && (index >= array.Length))
-				throw new ArgumentException ("index is equal or greater than array.Length");
+				throw new IndexOutOfRangeException ("Index was outside the bounds of the array.");
 			if (index + this.Count > array.Length)
 				throw new ArgumentException ("Not enough room from index to end of array for this BuildItemGroupCollection");
 		

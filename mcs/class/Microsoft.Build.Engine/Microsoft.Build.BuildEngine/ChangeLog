@@ -1,3 +1,9 @@
+2006-12-04  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Import.cs: Check for project.FullFileName (Path.DirectoryName would
+	throw an exception).
+	* BuildItemGroupCollection.cs: Changed exception types.
+
 2006-10-14  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Engine.cs: Removed redundant cast.

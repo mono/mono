@@ -63,7 +63,7 @@ namespace Microsoft.Build.BuildEngine {
 			
 			file = evaluatedProjectPath = (string) exp.ConvertTo (typeof (string));
 
-			if (Path.IsPathRooted (EvaluatedProjectPath) == false) {
+			if (!Path.IsPathRooted (EvaluatedProjectPath) && project.FullFileName != String.Empty) {
 				string dir;
 				if (originalProject == null)
 					dir = Path.GetDirectoryName (project.FullFileName);
