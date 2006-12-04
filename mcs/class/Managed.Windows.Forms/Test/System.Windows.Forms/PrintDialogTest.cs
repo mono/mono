@@ -39,9 +39,12 @@ namespace MonoTests.System.Windows.Forms
 	public class PrintDialogTest
 	{
 		[Test]		
+		[Category("Printing")]
 		public void DefaultValues ()
 		{
+			Console.WriteLine (1);
 			PrintDialog pd = new PrintDialog ();
+			Console.WriteLine (2);
 
 			Assert.IsTrue (pd.AllowPrintToFile, "#1");
 			Assert.IsFalse (pd.AllowSelection, "#2");
@@ -54,6 +57,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category("Printing")]
 		public void DocumentTest ()
 		{
 			PrintDialog pd = new PrintDialog ();
@@ -79,6 +83,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category("Printing")]
 		public void PrinterSettingsTest ()
 		{
 			PrintDialog pd = new PrintDialog ();
