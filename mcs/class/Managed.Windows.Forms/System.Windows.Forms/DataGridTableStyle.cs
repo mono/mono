@@ -878,8 +878,6 @@ namespace System.Windows.Forms
 
 			for (int i = 0; i < propcol.Count; i++)
 			{
-				Console.WriteLine ("Creating column {0}", propcol[i].Name);
-
 				// The column style is already provided by the user
 				st = column_styles[propcol[i].Name];
 				if (st != null) {
@@ -890,26 +888,19 @@ namespace System.Windows.Forms
 					st.bound = true;
 					continue;
 				}
-				else
-					Console.WriteLine (1);
 
-				if (onlyBind == true) {
-					Console.WriteLine (2);
+				if (onlyBind == true)
 					continue;
-				}
 
 				if (typeof (IBindingList).IsAssignableFrom (propcol[i].PropertyType)) {
-					Console.WriteLine (3);
 					table_relations.Add (propcol[i].Name);
 				} else {
-					Console.WriteLine (4);
 					st = CreateGridColumn (propcol[i],  true);
 					st.bound = true;
 					st.grid = datagrid;
 					st.MappingName = propcol[i].Name;
 					st.HeaderText = propcol[i].Name;
 					st.Width = CurrentPreferredColumnWidth;
-					Console.WriteLine ("st.PropertyDescriptor == {0}", st.PropertyDescriptor);
 					column_styles.Add (st);
 				}
 			}
