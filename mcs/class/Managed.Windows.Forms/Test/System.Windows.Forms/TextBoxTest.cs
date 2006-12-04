@@ -166,6 +166,7 @@ namespace MonoTests.System.Windows.Forms
 		public void AppendText_Multiline_LF ()
 		{
 			TextBox textBox = new TextBox ();
+			textBox.Multiline = true;
 			textBox.Text = "ha";
 			textBox.AppendText ("hi\n\n");
 			textBox.AppendText ("ho\n");
@@ -201,7 +202,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ClearUndoTest ()
 		{
 			textBox.Text = "TextBox1";
@@ -266,7 +266,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void UndoTest1 ()
 		{
 			textBox.Text = "ABCDE";
@@ -274,6 +273,7 @@ namespace MonoTests.System.Windows.Forms
 			textBox.Copy ();
 			textBox.SelectionStart = textBox.SelectionStart + textBox.SelectionLength;
 			textBox.Paste ();
+			Console.WriteLine ("pre paste text:  {0}", textBox.Text);
 			textBox.Undo ();
 			Assert.AreEqual ("ABCDE", textBox.Text, "#36");
 		}
@@ -297,7 +297,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #79909
-		[Category ("NotWorking")]
 		public void MultilineText ()
 		{
 			string text = "line1\n\nline2\nline3\r\nline4";

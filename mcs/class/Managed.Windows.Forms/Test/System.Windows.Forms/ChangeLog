@@ -1,3 +1,7 @@
+2006-12-04  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxTest: More of these tests work now.
+
 2006-12-04  Chris Toshok  <toshok@ximian.com>
 
 	* PrintDialogTest.cs: add [Category("Printing")] to all these
