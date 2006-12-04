@@ -51,8 +51,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
-		[Ignore ("Too messy test")]
-		// FIXME: split it to several tests and add more tests
 		public void TestItems1 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -61,25 +59,14 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<ItemGroup>
-						<Item0 Include=""A"" />
-						<Item1 Include=""A;B;C"" />
-						<Item2 Include=""@(Item1);A;D"" />
-						<Item3 Include=""@(Item2)"" Exclude=""A"" />
-						<Item4 Include=""@(Item1);Q"" Exclude=""@(Item2)"" />
-						<Item5 Include=""@(Item1)"" Exclude=""@(Item2)"" />
-						<Item6 Include=""@(Item2)"" Exclude=""@(Item1)"" />
+						<Item0 Include='A' />
+						<Item1 Include='A;B;C' />
+						<Item2 Include='@(Item1);A;D' />
+						<Item3 Include='@(Item2)' Exclude='A' />
+						<Item4 Include='@(Item1);Q' Exclude='@(Item2)' />
+						<Item5 Include='@(Item1)' Exclude='@(Item2)' />
+						<Item6 Include='@(Item2)' Exclude='@(Item1)' />
 
-						<ItemOrig Include=""A\B.txt;A\C.txt;B\B.zip;B\C.zip"" />
-						<ItemT1 Include=""@(Item1->'%(Identity)')"" />
-						<ItemT2 Include=""@(Item1->'%(Identity)%(Identity)')"" />
-						<ItemT3 Include=""@(Item1->'(-%(Identity)-)')"" />
-						<ItemT4 Include=""@(ItemOrig->'%(Extension)')"" />
-						<ItemT5 Include=""@(ItemOrig->'%(Filename)/%(Extension)')"" />
-						<ItemT6 Include=""@(ItemOrig->'%(RelativeDir)X/%(Filename)')"" />
-						
-						<ItemS1 Include=""@(Item1,'-')"" />
-						<ItemS2 Include=""@(Item1,'xx')"" />
-						<ItemS3 Include=""@(Item1, '-')"" />
 					</ItemGroup>
 				</Project>
 			";
@@ -92,6 +79,74 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			Assert.AreEqual ("Q", GetItems (proj, "Item4"), "A5");
 			Assert.AreEqual ("", GetItems (proj, "Item5"), "A6");
 			Assert.AreEqual ("D", GetItems (proj, "Item6"), "A7");
+		}
+
+		[Test]
+		public void TestItems2 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemGroup>
+						<Item1 Include='A;B;C' />
+						<Item2 Include=""@(Item1,'-')"" />
+						<Item3 Include=""@(Item1,'xx')"" />
+					</ItemGroup>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+
+			Assert.AreEqual ("A-B-C", GetItems (proj, "Item2"), "A1");
+			Assert.AreEqual ("AxxBxxC", GetItems (proj, "Item3"), "A2");
+		}
+
+		// Will fail on xbuild
+		[Test]
+		[Platform ("NET-2.0")]
+		public void TestItems3 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ItemGroup>
+						<Item1 Include='A;B;C' />
+						<Item2 Include=""@(Item1, '-')"" />
+					</ItemGroup>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+
+			Assert.AreEqual ("A-B-C", GetItems (proj, "Item2"), "A1");
+		}
+	
+		[Test]
+		public void TestItems4 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+						<Item1 Include='A;B;C' />
+						<Item2 Include=""A\B.txt;A\C.txt;B\B.zip;B\C.zip"" />
+						<ItemT1 Include=""@(Item1->'%(Identity)')"" />
+						<ItemT2 Include=""@(Item1->'%(Identity)%(Identity)')"" />
+						<ItemT3 Include=""@(Item1->'(-%(Identity)-)')"" />
+						<ItemT4 Include=""@(Item2->'%(Extension)')"" />
+						<ItemT5 Include=""@(Item2->'%(Filename)/%(Extension)')"" />
+						<ItemT6 Include=""@(Item2->'%(RelativeDir)X/%(Filename)')"" />
+					</ItemGroup>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
 
 			Assert.AreEqual ("A;B;C", GetItems (proj, "ItemT1"), "A8");
 			Assert.AreEqual ("AA;BB;CC", GetItems (proj, "ItemT2"), "A9");
@@ -100,10 +155,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			Assert.AreEqual ("B/.txt;C/.txt;B/.zip;C/.zip", GetItems (proj, "ItemT5"), "A12");
 			Assert.AreEqual (@"A\X/B;A\X/C;B\X/B;B\X/C", GetItems (proj, "ItemT6"), "A13");
 
-			Assert.AreEqual ("A-B-C", GetItems (proj, "ItemS1"), "A14");
-			Assert.AreEqual ("AxxBxxC", GetItems (proj, "ItemS2"), "A15");
-			// Will fail.
-			Assert.AreEqual ("A-B-C", GetItems (proj, "ItemS3"), "A16");
 		}
 	}
 }
