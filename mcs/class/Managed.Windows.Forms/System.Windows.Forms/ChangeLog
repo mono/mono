@@ -1,3 +1,22 @@
+2006-12-04  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: Default selection length is -1, need to do some
+	more testing on windows to see when this is used for the property.
+	- Redid the Lines [] property to that we properly remove soft line
+	breaks
+	- added support for preserving carriage returns
+	-  CanUndo is not a variable like 'is undo enabled' it just returns
+	true if there is undo operations available.
+	- AppendText doesn't need to grab the last tag itself anymore,
+	this happens automatically when we move the cursor.
+	* TextControl.cs: Add CompoundActions to the undo class. This
+	allows combining the other operations into one big option.  ie a
+	paste will combine { delete old, insert new, move cursor }
+	- Add InsertString undo operation
+	- New method for deleting multiline text
+	- Add carriage returns to lines. So we can preserve carriage
+	returns when text is 'roundtripped'
+
 2006-12-04  Chris Toshok  <toshok@ximian.com>
 
 	* DataGrid.cs (CalcCellsArea): cells_area.Width/Height are at a

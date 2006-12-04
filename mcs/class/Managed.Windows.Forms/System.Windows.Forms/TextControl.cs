@@ -117,6 +117,7 @@ namespace System.Windows.Forms {
 		internal int			indent;			// Left indent for the first line
 		internal int			hanging_indent;		// Hanging indent (left indent for all but the first line)
 		internal int			right_indent;		// Right indent for all lines
+		internal bool carriage_return;
 
 
 		// Stuff that's important for the tree
@@ -501,8 +502,8 @@ namespace System.Windows.Forms {
 
 					if (pos == len) {
 						line = doc.GetLine(this.line_no + 1);
-						if ((line != null) && (line.soft_break)) {
-							// Pull the previous line back into this one
+						if ((line != null) && soft_break) {
+							// Pull the two lines together
 							doc.Combine(this.line_no, this.line_no + 1);
 							len = this.text.Length;
 							retval = true;
@@ -1021,7 +1022,7 @@ namespace System.Windows.Forms {
 
 			total = 1;
 
-			Console.Write("Line {0} [# {1}], Y: {2}, soft break: {3}, Text {4}",
+			Console.Write("Line {0} [# {1}], Y: {2}, soft: {3},  Text {4}",
 					line.line_no, line.GetHashCode(), line.Y, line.soft_break,
 					line.text != null ? line.text.ToString() : "undefined");
 
@@ -2080,6 +2081,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			string[]	ins;
 			int		insert_lines;
 			int		old_line_count;
+			bool carriage_return = false;
 
 			NoRecalc = true;
 
@@ -2092,27 +2094,41 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 
 			ins = s.Split(new char[] {'\n'});
 
-			for (int j = 0; j < ins.Length; j++) {
-				if (ins[j].EndsWith("\r")) {
-					ins[j] = ins[j].Substring(0, ins[j].Length - 1);
-				}
-			}
-
 			insert_lines = ins.Length;
 			old_line_count = lines;
-			
+
 			// Bump the text at insertion point a line down if we're inserting more than one line
 			if (insert_lines > 1) {
 				Split(line, pos);
+				line.soft_break = false;
 				// Remainder of start line is now in base_line + 1
+			}
+
+			if (ins [0].EndsWith ("\r")) {
+				ins [0] = ins[0].Substring (0, ins[0].Length - 1);
+				carriage_return = true;
 			}
 
 			// Insert the first line
 			InsertString(tag, pos, ins[0]);
 
+			if (carriage_return) {
+				Line l = GetLine (base_line);
+				l.carriage_return = true;
+			}
+
 			if (insert_lines > 1) {
 				for (i = 1; i < insert_lines; i++) {
+					carriage_return = false;
+					if (ins [i].EndsWith ("\r")) {
+						ins [i] = ins[i].Substring (0, ins[i].Length - 1);
+						carriage_return = true;
+					}
 					Add(base_line + i, ins[i], line.alignment, tag.font, tag.color);
+					if (carriage_return) {
+						Line l = GetLine (base_line + i);
+						l.carriage_return = true;
+					}
 				}
 				if (!s.EndsWith("\n\n")) {
 					this.Combine(base_line + (lines - old_line_count) - 1, base_line + lines - old_line_count);
@@ -2132,7 +2148,6 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 				}
 				DisplayCaret ();
 			}
-
 		}
 
 		// Inserts a character at the given position
@@ -2153,6 +2168,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			line.text.Insert(pos, s);
 			tag.length += len;
 
+			// TODO: sometimes getting a null tag here when pasting ???
 			tag = tag.next;
 			while (tag != null) {
 				tag.start += len;
@@ -2248,6 +2264,43 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			}
 		}
 
+		internal void DeleteMultiline (Line start_line, int pos, int length)
+		{
+			Marker start = new Marker ();
+			Marker end = new Marker ();
+			int start_index = LineTagToCharIndex (start_line, pos);
+
+			start.line = start_line;
+			start.pos = pos;
+			start.tag = LineTag.FindTag (start_line, pos);
+
+			CharIndexToLineTag (start_index + length, out end.line,
+					out end.tag, out end.pos);
+
+			if (start.line == end.line) {
+				DeleteChars (start.tag, pos, end.pos - pos);
+			} else {
+
+				// Delete first and last lines
+				DeleteChars (start.tag, start.pos, start.line.text.Length - start.pos);
+				DeleteChars (end.line.tags, 0, end.pos);
+
+				int current = start.line.line_no + 1;
+				if (current < end.line.line_no) {
+					for (int i = end.line.line_no - 1; i >= current; i--) {
+						Delete (i);
+					}
+				}
+
+				// BIG FAT WARNING - selection_end.line might be stale due 
+				// to the above Delete() call. DONT USE IT before hitting the end of this method!
+
+				// Join start and end
+				Combine (start.line.line_no, current);
+			}
+		}
+
+		
 		// Deletes n characters at the given position; it will not delete past line limits
 		// pos is 0-based
 		internal void DeleteChars(LineTag tag, int pos, int count) {
@@ -2535,6 +2588,9 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 
 				new_line = GetLine(line.line_no + 1);
 
+				line.carriage_return = false;
+				new_line.carriage_return = line.carriage_return;
+				
 				if (soft) {
 					if (move_caret) {
 						caret.line = new_line;
@@ -2565,6 +2621,10 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 
 			// Now transfer our tags from this line to the next
 			new_line = GetLine(line.line_no + 1);
+
+			line.carriage_return = false;
+			new_line.carriage_return = line.carriage_return;
+
 			line.recalc = true;
 			new_line.recalc = true;
 
@@ -3303,6 +3363,8 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 		internal void ReplaceSelection(string s, bool select_new) {
 			int		i;
 
+			undo.BeginCompoundAction ();
+
 			int selection_start_pos = LineTagToCharIndex (selection_start.line, selection_start.pos);
 			// First, delete any selected text
 			if ((selection_start.pos != selection_end.pos) || (selection_start.line != selection_end.line)) {
@@ -3344,7 +3406,8 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			}
 
 			Insert(selection_start.line, null, selection_start.pos, true, s);
-
+			undo.RecordInsertString (selection_start.line, selection_start.pos, s);
+			
 			if (!select_new) {
 				CharIndexToLineTag(selection_start_pos + s.Length, out selection_start.line,
 						out selection_start.tag, out selection_start.pos);
@@ -3370,6 +3433,8 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 
 				SetSelectionVisible (true);
 			}
+
+			undo.EndCompoundAction ();
 		}
 
 		internal void CharIndexToLineTag(int index, out Line line_out, out LineTag tag_out, out int pos) {
@@ -3827,8 +3892,6 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 						line.align_shift = viewport_width - (int)line.widths[line.text.Length] - 1;
 					}
 				}
-
-				Y += line.height;
 
 				if (line_no > lines) {
 					break;
@@ -4564,6 +4627,8 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			DeleteChars,
 			CursorMove,
 			Mark,
+			CompoundBegin,
+			CompoundEnd,
 		}
 
 		internal class Action {
@@ -4653,23 +4718,40 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 
 		internal void Undo() {
 			Action action;
+			int compound_stack = 0;
 
 			if (undo_actions.Count == 0) {
 				return;
 			}
 
-			action = (Action)undo_actions.Pop();
+			
 
-			// Put onto redo stack
-			redo_actions.Push(action);
+			do {
+				action = (Action)undo_actions.Pop();
 
-			// Do the thing
-			switch(action.type) {
+				// Put onto redo stack
+				redo_actions.Push(action);
+
+				// Do the thing
+				switch(action.type) {
+				case ActionType.CompoundEnd:
+					compound_stack++;
+					break;
+
+				case ActionType.CompoundBegin:
+					compound_stack--;
+					break;
+
+				case ActionType.InsertString:
+					document.DeleteMultiline (document.GetLine (action.line_no),
+							action.pos, ((string) action.data).Length + 1);
+					break;
+
 				case ActionType.InsertChar: {
 					// FIXME - implement me
 					break;
 				}
-
+					
 				case ActionType.DeleteChars: {
 					this.Insert(document.GetLine(action.line_no), action.pos, (Line)action.data);
 					Undo();	// Grab the cursor location
@@ -4699,7 +4781,8 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 					//if (document.CaretMoved != null) document.CaretMoved(this, EventArgs.Empty);
 					break;
 				}
-			}
+				}
+			} while (compound_stack > 0);
 		}
 
 		internal void Redo() {
@@ -4710,6 +4793,23 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 		#endregion	// Internal Methods
 
 		#region Private Methods
+
+		public void BeginCompoundAction ()
+		{
+			Action cb = new Action ();
+			cb.type = ActionType.CompoundBegin;
+
+			undo_actions.Push (cb);
+		}
+
+		public void EndCompoundAction ()
+		{
+			Action ce = new Action ();
+			ce.type = ActionType.CompoundEnd;
+
+			undo_actions.Push (ce);
+		}
+
 		// pos = 1-based
 		public void RecordDeleteChars(Line line, int pos, int length) {
 			RecordDelete(line, pos, line, pos + length - 1);
@@ -4731,6 +4831,18 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			// Record the cursor position before, since the actions will occur in reverse order
 			RecordCursor();
 			undo_actions.Push(a);
+		}
+
+		public void RecordInsertString (Line line, int pos, string str)
+		{
+			Action a = new Action ();
+
+			a.type = ActionType.InsertString;
+			a.data = str;
+			a.line_no = line.line_no;
+			a.pos = pos;
+
+			undo_actions.Push (a);
 		}
 
 		public void RecordCursor() {

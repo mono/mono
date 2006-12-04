@@ -34,6 +34,7 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Collections;
 
 namespace System.Windows.Forms {
 	[DefaultEvent("TextChanged")]
@@ -63,7 +64,7 @@ namespace System.Windows.Forms {
 		internal Timer			scroll_timer;
 		internal bool			richtext;
 		internal bool			show_selection;		// set to true to always show selection, even if no focus is set
-		internal int			selection_length;	// set to the user-specified selection length, or -1 if none
+		internal int			selection_length = -1;	// set to the user-specified selection length, or -1 if none
 		internal int			requested_height;
 		internal int			canvas_width;
 		internal int			canvas_height;
@@ -252,7 +253,7 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool CanUndo {
 			get {
-				return undo;
+				return document.undo.UndoLevels != 0;
 			}
 		}
 
@@ -294,24 +295,32 @@ namespace System.Windows.Forms {
 		[MWFCategory("Appearance")]
 		public string[] Lines {
 			get {
-				string[]	lines;
-				int		i;
-				int		l;
+				int count;
+				ArrayList lines;
 
-				l = document.Lines;
+				count = document.Lines;
 
 				// Handle empty document
-				if ((l == 1) && (document.GetLine(1).text.Length == 0)) {
-					return new string[0];
+				if ((count == 1) && (document.GetLine (1).text.Length == 0)) {
+					return new string [0];
 				}
 
-				lines = new string[l];
+				lines = new ArrayList ();
 
-				for (i = 1; i <= l; i++) {
-					lines[i - 1] = document.GetLine(i).text.ToString();
+				int i = 1;
+				while (i <= count) {
+					Line line;
+					StringBuilder lt = new StringBuilder ();
+
+					do {
+						line = document.GetLine (i++);
+						lt.Append (line.text.ToString ());
+					} while (line.soft_break && i < count);
+
+					lines.Add (lt.ToString ());	
 				}
 
-				return lines;
+				return (string []) lines.ToArray (typeof (string));
 			}
 
 			set {
@@ -324,10 +333,30 @@ namespace System.Windows.Forms {
 				l = value.Length;
 				brush = ThemeEngine.Current.ResPool.GetSolidBrush(this.ForeColor);
 
+				document.NoRecalc = true;
 				for (i = 0; i < l; i++) {
+
+					// Don't add the last line if it is just an empty line feed
+					// the line feed is reflected in the previous line's soft_break = false
+					if (i == l - 1 && value [i].Length == 0)
+						break;
+
+					bool carriage_return = false;
+					if (value [i].EndsWith ("\r")) {
+						value [i] = value [i].Substring (0, value [i].Length - 1);
+						carriage_return = true;
+					}
+
 					document.Add(i+1, CaseAdjust(value[i]), alignment, Font, brush);
+					if (carriage_return) {
+						Line line = document.GetLine (i + 1);
+						line.carriage_return = true;
+					}
 				}
-				CalculateDocument();
+
+				document.NoRecalc = false;
+
+				// CalculateDocument();
 				OnTextChanged(EventArgs.Empty);
 			}
 		}
@@ -383,6 +412,9 @@ namespace System.Windows.Forms {
 						requested_height = -1;
 					}
 
+					if (parent != null)
+						parent.PerformLayout ();
+
 					OnMultilineChanged(EventArgs.Empty);
 				}
 
@@ -400,6 +432,8 @@ namespace System.Windows.Forms {
 						document.PasswordChar = "";
 					}
 				}
+
+				CalculateDocument ();
 			}
 		}
 
@@ -446,7 +480,10 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual int SelectionLength {
 			get {
-				return document.SelectionLength();
+				int res = document.SelectionLength ();
+				if (res == 0)
+					res = -1;
+				return res;
 			}
 
 			set {
@@ -520,6 +557,8 @@ namespace System.Windows.Forms {
 							sb.Append (Environment.NewLine);
 						line = document.GetLine (i);
 						sb.Append(line.text.ToString());
+						if (line.carriage_return)
+							sb.Append ("\r");
 					}
 					sb.Append(document.GetLine(document.Lines).text.ToString());
 					return sb.ToString();
@@ -538,13 +577,8 @@ namespace System.Windows.Forms {
 
 						lines = value.Split(new char[] {'\n'});
 
-						for (int i = 0; i < lines.Length; i++) {
-							if (lines[i].EndsWith("\r")) {
-								lines[i] = lines[i].Substring(0, lines[i].Length - 1);
-							}
-						}
 						this.Lines = lines;
-
+							
 						document.PositionCaret (document.GetLine (1), 0);
 						document.SetSelectionToCaret (true);
 
@@ -628,14 +662,9 @@ namespace System.Windows.Forms {
 		#region Public Instance Methods
 		public void AppendText(string text) {
 			if (multiline) {
-				// Grab the formatting for the last element
-				document.MoveCaret(CaretDirection.CtrlEnd);
-				// grab the end tag
-				if (document.CaretTag.next != null) {
-					document.CaretTag = document.CaretTag.next;
-				}
-				document.Insert(document.CaretLine, document.CaretTag, document.CaretPosition, false, text);
 
+				document.MoveCaret(CaretDirection.CtrlEnd);				
+				document.Insert (document.caret.line, document.caret.tag, document.caret.pos, false, text);
 				CalculateDocument();
 			} else {
 				document.MoveCaret(CaretDirection.CtrlEnd);
@@ -645,9 +674,7 @@ namespace System.Windows.Forms {
 			}
 
 			document.MoveCaret(CaretDirection.CtrlEnd);
-			document.SetSelectionStart(document.CaretLine, document.CaretPosition);
-			document.SetSelectionEnd(document.CaretLine, document.CaretPosition);
-			selection_length = -1;
+			document.SetSelectionToCaret (true);
 
 			OnTextChanged(EventArgs.Empty);
 		}
@@ -1639,7 +1666,7 @@ namespace System.Windows.Forms {
 			Invalidate();
 		}
 
-		internal void CalculateScrollBars() {
+		internal void CalculateScrollBars () {
 			// FIXME - need separate calculations for center and right alignment
 
 			if (!multiline) {
@@ -1648,23 +1675,21 @@ namespace System.Windows.Forms {
 			}
 
 			if (document.Width >= document.ViewPortWidth) {
+				hscroll.SetValues (0, Math.Max (1, document.Width), -1,
+						document.ViewPortWidth < 0 ? 0 : document.ViewPortWidth);
 				hscroll.Enabled = true;
-				hscroll.Minimum = 0;
-				hscroll.LargeChange = document.ViewPortWidth < 0 ? 0 : document.ViewPortWidth;
-				hscroll.Maximum = document.Width;
 			} else {
-				hscroll.Maximum = document.ViewPortWidth;
 				hscroll.Enabled = false;
+				hscroll.Maximum = document.ViewPortWidth;
 			}
 
 			if (document.Height >= document.ViewPortHeight) {
+				vscroll.SetValues (0, Math.Max (1, document.Height), -1,
+						document.ViewPortHeight < 0 ? 0 : document.ViewPortHeight);
 				vscroll.Enabled = true;
-				vscroll.Minimum = 0;
-				vscroll.LargeChange = document.ViewPortHeight < 0 ? 0 : document.ViewPortHeight;
-				vscroll.Maximum = document.Height;
 			} else {
-				vscroll.Maximum = document.ViewPortHeight;
 				vscroll.Enabled = false;
+				vscroll.Maximum = document.ViewPortHeight;
 			}
 
 
