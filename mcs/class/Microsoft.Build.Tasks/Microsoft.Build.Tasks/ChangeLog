@@ -1,5 +1,11 @@
 2006-12-04  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
+	* ManagedCompiler.cs: AddCommandLineCommands (): Changes according to
+	new tests. CheckAllReferences (): Added a null check.
+	* AL.cs (AddResponseFileCommands): Changes according to new tests.
+
+2006-12-04  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
 	* MSBuild.cs: Added MonoTODO.
 	* MakeDir.cs: Added logging.
 	* Exec.cs: Added FIXME and commented unused variables.

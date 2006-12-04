@@ -51,23 +51,27 @@ namespace Microsoft.Build.Tasks {
 			commandLine.AppendSwitchIfNotNull ("/baseaddress:", BaseAddress);
 			commandLine.AppendSwitchIfNotNull ("/company:", CompanyName);
 			commandLine.AppendSwitchIfNotNull ("/configuration:", Configuration);
-			commandLine.AppendSwitchIfNotNull ("/copyright:", Copyright);
 			commandLine.AppendSwitchIfNotNull ("/culture:", Culture);
-			if (DelaySign == true)
-				commandLine.AppendSwitch ("/delaysign");
+			commandLine.AppendSwitchIfNotNull ("/copyright:", Copyright);
+			if (Bag ["DelaySign"] != null)
+				if (DelaySign)
+					commandLine.AppendSwitch ("/delaysign+");
+				else
+					commandLine.AppendSwitch ("/delaysign-");
+			commandLine.AppendSwitchIfNotNull ("/description:", Description);
 			if (EmbedResources != null)
 				foreach (ITaskItem item in EmbedResources)
-					commandLine.AppendSwitchIfNotNull ("/embedresource:", item.ItemSpec);
+					commandLine.AppendSwitchIfNotNull ("/embed:", item.ItemSpec);
 			commandLine.AppendSwitchIfNotNull ("/evidence:", EvidenceFile);
 			commandLine.AppendSwitchIfNotNull ("/fileversion:", FileVersion);
 			commandLine.AppendSwitchIfNotNull ("/flags:", Flags);
-			if (GenerateFullPaths == true)
+			if (GenerateFullPaths)
 				commandLine.AppendSwitch ("/fullpaths");
 			commandLine.AppendSwitchIfNotNull ("/keyname:", KeyContainer);
 			commandLine.AppendSwitchIfNotNull ("/keyfile:", KeyFile);
 			if (LinkResources != null)
 				foreach (ITaskItem item in LinkResources)
-					commandLine.AppendSwitchIfNotNull ("/linkresource:", item.ItemSpec);
+					commandLine.AppendSwitchIfNotNull ("/link:", item.ItemSpec);
 			commandLine.AppendSwitchIfNotNull ("/main:", MainEntryPoint);
 			if (OutputAssembly != null)
 				commandLine.AppendSwitchIfNotNull ("/out:", OutputAssembly.ItemSpec);

@@ -44,6 +44,8 @@ namespace Microsoft.Build.Tasks {
 		protected internal override void AddCommandLineCommands (
 						 CommandLineBuilderExtension commandLine)
 		{
+			if (NoConfig)
+				commandLine.AppendSwitch ("/noconfig");
 		}
 
 		[MonoTODO]
@@ -52,12 +54,20 @@ namespace Microsoft.Build.Tasks {
 		{
 			commandLine.AppendSwitchIfNotNull ("/lib:", AdditionalLibPaths, ",");
 			commandLine.AppendSwitchIfNotNull ("/addmodule:", AddModules, ",");
-			//commandLine.AppendSwitchIfNotNull ("/codepage:", CodePage.ToString ());
-			//debugType
+			if (Bag ["CodePage"] != null)
+				commandLine.AppendSwitchIfNotNull ("/codepage:", CodePage.ToString ());
+			commandLine.AppendSwitchIfNotNull ("/debug:", DebugType);
 			commandLine.AppendSwitchIfNotNull ("/define:", DefineConstants);
-			//delaySign
-			if (EmitDebugInformation)
-				commandLine.AppendSwitch ("/debug");
+			if (Bag ["DelaySign"] != null)
+				if (DelaySign)
+					commandLine.AppendSwitch ("/delaysign+");
+				else
+					commandLine.AppendSwitch ("/delaysign-");
+			if (Bag ["EmitDebugInformation"] != null)
+				if (EmitDebugInformation)
+					commandLine.AppendSwitch ("/debug+");
+				else
+					commandLine.AppendSwitch ("/debug-");
 			//fileAlignment
 			commandLine.AppendSwitchIfNotNull ("/keycontainer:", KeyContainer);
 			commandLine.AppendSwitchIfNotNull ("/keyfile:", KeyFile);
@@ -68,10 +78,13 @@ namespace Microsoft.Build.Tasks {
 				}
 			}
 			commandLine.AppendSwitchIfNotNull ("/main:", MainEntryPoint);
-			if (NoConfig)
-				commandLine.AppendSwitch ("/noconfig");
-			if (Optimize)
-				commandLine.AppendSwitch ("/optimize");
+			if (NoLogo)
+				commandLine.AppendSwitch ("/nologo");
+			if (Bag ["Optimize"] != null)
+				if (Optimize)
+					commandLine.AppendSwitch ("/optimize+");
+				else
+					commandLine.AppendSwitch ("/optimize-");
 			if (OutputAssembly != null)
 				commandLine.AppendSwitchIfNotNull ("/out:", OutputAssembly.ItemSpec);
 			if (References != null) {
@@ -96,8 +109,11 @@ namespace Microsoft.Build.Tasks {
 			}
 			if (TargetType != null)
 				commandLine.AppendSwitchIfNotNull ("/target:", TargetType);
-			if (TreatWarningsAsErrors)
-				commandLine.AppendSwitch ("/warnaserror");
+			if (Bag ["TreatWarningsAsErrors"] != null)
+				if (TreatWarningsAsErrors)
+					commandLine.AppendSwitch ("/warnaserror+");
+				else
+					commandLine.AppendSwitch ("/warnaserror-");
 			commandLine.AppendSwitchIfNotNull ("/win32icon:", Win32Icon);
 			commandLine.AppendSwitchIfNotNull ("/win32res:", Win32Resource);
 		}
@@ -105,9 +121,10 @@ namespace Microsoft.Build.Tasks {
 		[MonoTODO]
 		protected bool CheckAllReferencesExistOnDisk ()
 		{
-			foreach (ITaskItem item in (ITaskItem[])Bag ["References"]) 
-				if (File.Exists (item.GetMetadata ("FullPath")) == false)
-					return false;
+			if (Bag ["References"] != null)
+				foreach (ITaskItem item in (ITaskItem[]) Bag ["References"])
+					if (!File.Exists (item.GetMetadata ("FullPath")))
+						return false;
 			return true;
 		}
 
@@ -248,6 +265,7 @@ namespace Microsoft.Build.Tasks {
 
 		public ITaskItem[] Sources {
 			get { return (ITaskItem[]) Bag ["Sources"]; }
+			// FIXME: setting sources changes OutputAssembly
 			set { Bag ["Sources"] = value; }
 		}
 
