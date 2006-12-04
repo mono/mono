@@ -56,6 +56,14 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void MinimumWidth4 ()
+		{
+			StatusBarPanel p = new StatusBarPanel ();
+			p.MinWidth = -50;
+		}
+
+		[Test]
 		public void MinWidth_AutoSize_None ()
 		{
 			StatusBarPanel p = new StatusBarPanel ();

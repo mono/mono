@@ -1,5 +1,10 @@
 2006-12-04  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* StatusBarPanelTest.cs: Added a test for invalid
+	minimum widths.
+	
+2006-12-04  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* MdiFormTest.cs: Change a few tests to dispose of
 	the form when the test is finished.
 

@@ -47,7 +47,6 @@ namespace System.Windows.Forms {
 		private StatusBarPanelBorderStyle border_style = StatusBarPanelBorderStyle.Sunken;
 		private StatusBarPanelStyle style = StatusBarPanelStyle.Text;
 		private int width = 100;
-		private int twidth = -1;
 		private int min_width = 10;
 		internal int X;
 		#endregion	// Local Variables
@@ -114,6 +113,7 @@ namespace System.Windows.Forms {
 				min_width = value;
 				if (min_width > width)
 					width = min_width;
+				
 				Invalidate ();
 			}
 		}
@@ -127,7 +127,7 @@ namespace System.Windows.Forms {
 					throw new ArgumentException ("value");
 
 				if (initializing)
-					twidth = value;
+					width = value;
 				else
 					SetWidth(value);
 				
@@ -208,11 +208,12 @@ namespace System.Windows.Forms {
 
 		public void EndInit ()
 		{
-			if (!initializing || twidth == -1)
+			if (!initializing)
 				return;
-
-			SetWidth(twidth);
-			twidth = -1;
+			
+			if (min_width > width)
+				width = min_width;
+			
 			initializing = false;
 		}
 	}

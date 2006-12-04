@@ -278,6 +278,7 @@ namespace System.Windows.Forms {
 		internal void UpdatePanelContents (StatusBarPanel panel)
 		{
 			if (panel.AutoSize == StatusBarPanelAutoSize.Contents) {
+				UpdateStatusBar ();
 				Invalidate ();
 				return;
 			}
