@@ -1,6 +1,8 @@
 2006-12-04  Jackson Harper  <jackson@ximian.com>
 
 	* TextBoxTest: More of these tests work now.
+	- Add a test to ensure that recieving focus selects all of the
+	text
 
 2006-12-04  Chris Toshok  <toshok@ximian.com>
 

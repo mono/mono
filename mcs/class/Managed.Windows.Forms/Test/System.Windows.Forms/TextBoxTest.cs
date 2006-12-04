@@ -259,6 +259,15 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void FocusSelectsAllTest ()
+		{
+			textBox.Text = "This is a sample test.";
+			textBox.CreateControl ();
+			textBox.Focus ();
+			Assert.AreEqual ("This is a sample test.", textBox.SelectedText, "#34");
+		}
+
+		[Test]
 		public void ToStringTest ()
 		{
 			Assert.AreEqual ("System.Windows.Forms.TextBox, Text: ", textBox.ToString(), "#35");
