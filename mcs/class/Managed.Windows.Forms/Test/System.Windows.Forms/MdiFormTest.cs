@@ -458,6 +458,7 @@ namespace MonoTests.System.Windows.Forms
 			TearDown ();
 		}
 
+		[Category("NotWorking")]
 		[Test]
 		public void StartLocationTest15 ()
 		{
