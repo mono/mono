@@ -3888,6 +3888,8 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 					}
 				}
 
+				Y += line.height;
+
 				if (line_no > lines) {
 					break;
 				}
