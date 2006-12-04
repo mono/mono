@@ -242,7 +242,7 @@ namespace System.Windows.Forms {
 
 		protected override void OnGotFocus(EventArgs e) {
 			has_focus=true;
-			Invalidate();
+			SelectAll ();
 			base.OnGotFocus (e);
 		}
 
