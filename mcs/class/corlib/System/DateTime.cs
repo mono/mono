@@ -432,7 +432,7 @@ namespace System
 			{
 				long now = GetNow ();
 				DateTime dt = new DateTime (now);
-				
+
 				if ((now - last_now) > TimeSpan.TicksPerMinute){
 					to_local_time_span_object = TimeZone.CurrentTimeZone.GetLocalTimeDiff (dt);
 					last_now = now;
@@ -440,7 +440,11 @@ namespace System
 				}
 
 				// This is boxed, so we avoid locking.
-				return dt + (TimeSpan) to_local_time_span_object;
+				DateTime ret = dt + (TimeSpan) to_local_time_span_object;
+#if NET_2_0
+				ret.kind = DateTimeKind.Local;
+#endif
+				return ret;
 			}
 		}
 
