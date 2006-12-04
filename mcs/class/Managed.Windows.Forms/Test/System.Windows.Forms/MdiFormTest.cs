@@ -751,6 +751,8 @@ namespace MonoTests.System.Windows.Forms
 			child.Show ();
 
 			Assert.AreEqual ("main - [child]", main.Text, "#2");
+
+			main.Dispose ();
 		}
 
 		[Test] // bug 80038
@@ -775,6 +777,8 @@ namespace MonoTests.System.Windows.Forms
 
 			child.Close ();
 			Assert.AreEqual ("main", main.Text, "#3");
+
+			main.Dispose ();
 		}
 
 		[Test]
@@ -809,6 +813,8 @@ namespace MonoTests.System.Windows.Forms
 			child1.WindowState = FormWindowState.Maximized;
 
 			Assert.AreEqual ("main - [child1]", main.Text, "#4");
+
+			main.Dispose ();
 		}
 
 		[Test]
