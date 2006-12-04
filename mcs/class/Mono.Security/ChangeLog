@@ -1,3 +1,8 @@
+2006-12-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Security_test.dll.sources: Added X509Certificate unit tests to
+	the build.
+
 2006-01-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Security_test.dll.sources: Added Mono.Security.X509.Extensions.
