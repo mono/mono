@@ -313,7 +313,7 @@ namespace System.Windows.Forms {
 					do {
 						line = document.GetLine (i++);
 						lt.Append (line.text.ToString ());
-					} while (line.soft_break && i < count);
+					} while (line.soft_break && i <= count);
 
 					lines.Add (lt.ToString ());	
 				}

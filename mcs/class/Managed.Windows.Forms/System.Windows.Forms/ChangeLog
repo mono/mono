@@ -1,3 +1,7 @@
+2006-12-04  Jackson Harper  <jackson@ximian.com>
+
+	* TextBoxBase.cs: Fix off by one, since these are one-based.
+
 2006-12-04  Chris Toshok  <toshok@ximian.com>
 
 	* DataGridTextBoxColumn.cs: remove some spew.
