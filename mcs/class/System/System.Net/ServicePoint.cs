@@ -100,17 +100,17 @@ namespace System.Net
 
 		public int CurrentConnections {
 			get {
-				lock (locker) {
-					return currentConnections;
-				}
+				return currentConnections;
 			}
 		}
 
 		public DateTime IdleSince {
 			get {
-				lock (locker) {
-					return idleSince;
-				}
+				return idleSince;
+			}
+			internal set {
+				lock (locker)
+					idleSince = value;
 			}
 		}
 		

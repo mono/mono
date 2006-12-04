@@ -260,7 +260,7 @@ namespace System.Net
 					ServicePoint sp = (ServicePoint) e.Value;
 					if (sp.CurrentConnections == 0) {
 						while (list.ContainsKey (sp.IdleSince))
-							sp.IdleSince.AddMilliseconds (1);
+							sp.IdleSince = sp.IdleSince.AddMilliseconds (1);
 						list.Add (sp.IdleSince, sp.Address);
 					}
 				}

@@ -1,3 +1,8 @@
+2006-12-04  Konstantin Triger  <kostat@mainsoft.com>
+
+	* ServicePointManager.cs: correct assignment typo.
+	* ServicePoint.cs: Remove unneeded locks for getters, add internal setter.
+
 2006-11-27  Miguel de Icaza  <miguel@novell.com>
 
 	* WebRequest.cs: Instead of throwing NotImplemented exceptions,
