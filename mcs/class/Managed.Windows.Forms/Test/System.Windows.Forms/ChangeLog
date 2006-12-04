@@ -1,3 +1,7 @@
+2006-12-04  Everaldo Canuto  <everaldo@simios.org>
+
+	* LabelTest.cs: Add tests for sizes, test for bug #80137.
+
 2006-12-01  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* MdiFormTest.cs: All current NotWorking tests are now

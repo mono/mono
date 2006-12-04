@@ -50,6 +50,49 @@ namespace MonoTests.System.Windows.Forms
 
 			f.Dispose ();
 		}
+		
+		[Test]
+		public void SizesTest ()
+		{
+			Form myform = new Form ();
+			Label l1 = new Label (); l1.Text = "Test";
+			Label l2 = new Label (); l2.Text = "Test";
+			Label l3 = new Label (); l3.Text = "Test three";
+			Label l4 = new Label (); l4.Text = String.Format ("Test four{0}with line breaks", Environment.NewLine);
+			myform.Controls.Add (l1);
+			myform.Controls.Add (l2);
+			myform.Controls.Add (l3);
+			myform.Controls.Add (l4);
+			myform.Show ();
+			
+			l2.Font = new Font (l1.Font.FontFamily, l1.Font.Size + 5, l1.Font.Style);
+			
+			// Height: autosize = false
+			Assert.AreEqual (l1.Height, l2.Height, "#1");
+			Assert.AreEqual (l1.Height, l3.Height, "#2");
+			Assert.AreEqual (l1.Height, l4.Height, "#3");
+			
+			// Width: autosize = false			
+			Assert.AreEqual (l1.Width, l2.Width, "#4");
+			Assert.AreEqual (l1.Width, l3.Width, "#5");
+			Assert.AreEqual (l1.Width, l4.Width, "#6");
+			
+			l1.AutoSize = true; 
+			l2.AutoSize = true;
+			l3.AutoSize = true;
+			l4.AutoSize = true;
+			
+			// Height: autosize = false
+			Assert.IsFalse (l1.Height.Equals (l2.Height), "#7");
+			Assert.IsTrue (l1.Height.Equals (l3.Height), "#8");
+			Assert.IsTrue (l1.Height.Equals (l4.Height), "#9");
+			
+			// Width: autosize = false
+			Assert.IsFalse (l1.Width.Equals (l2.Width), "#10");
+			Assert.IsFalse (l1.Width.Equals (l3.Width), "#11");
+			
+			myform.Dispose();
+		}
 
 		[Test]
 		public void BoundsTest ()
