@@ -37,15 +37,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 	public class BuildPropertyTest {
 		
 		BuildProperty	bp;
-		string		binPath;
 		Engine		engine;
 		Project		project;
-		
-		[SetUp]
-		public void SetUp ()
-		{
-			binPath = "../../tools/xbuild/xbuild";
-		}
 		
 		[Test]
 		public void TestCtor1 ()
@@ -112,7 +105,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 		
 		[Test]
-		[Ignore ("Not implemented")]
+		[Category ("NotWorking")]
 		public void TestClone3 ()
 		{
 			BuildProperty a,b;
@@ -125,7 +118,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
                                 </Project>
                         ";
 
-                        engine = new Engine (binPath);
+                        engine = new Engine (Consts.BinPath);
 
                         project = engine.CreateNewProject ();
                         project.LoadXml (documentString);
@@ -140,7 +133,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Ignore ("Not implemented")]
+		[Category ("NotWorking")]
 		public void TestClone4 ()
 		{
 			BuildProperty a,b;
@@ -153,7 +146,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
                                 </Project>
                         ";
 
-                        engine = new Engine (binPath);
+                        engine = new Engine (Consts.BinPath);
 
                         project = engine.CreateNewProject ();
                         project.LoadXml (documentString);
@@ -168,7 +161,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Ignore ("Not implemented")]
+		[Category ("NotWorking")]
 		public void TestClone5 ()
 		{
 			BuildProperty a,b;
@@ -182,7 +175,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
                                 </Project>
                         ";
 
-                        engine = new Engine (binPath);
+                        engine = new Engine (Consts.BinPath);
 
                         project = engine.CreateNewProject ();
                         project.LoadXml (documentString);
@@ -201,7 +194,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Ignore ("Not implemented")]
+		[Category ("NotWorking")]
 		public void TestClone6 ()
 		{
 			BuildProperty a,b;
@@ -215,7 +208,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
                                 </Project>
                         ";
 
-                        engine = new Engine (binPath);
+                        engine = new Engine (Consts.BinPath);
 
                         project = engine.CreateNewProject ();
                         project.LoadXml (documentString);

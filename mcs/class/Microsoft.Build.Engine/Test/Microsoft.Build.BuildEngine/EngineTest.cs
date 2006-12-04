@@ -34,18 +34,11 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 	public class EngineTest {
 
 		Engine engine;
-		string binPath;
-
-		[SetUp]
-		public void SetUp ()
-		{
-			binPath = "../../tools/xbuild/xbuild";
-		}
 
 		[Test]
 		public void TestCtor ()
 		{
-			engine = new Engine (binPath);
+			engine = new Engine (Consts.BinPath);
 		}
 
 		[Test]
@@ -62,15 +55,15 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		[Test]
 		public void TestBinPath ()
 		{
-			engine = new Engine (binPath);
+			engine = new Engine (Consts.BinPath);
 
-			Assert.AreEqual (binPath, engine.BinPath, "A1");
+			Assert.AreEqual (Consts.BinPath, engine.BinPath, "A1");
 		}
 
 		[Test]
 		public void TestBuildEnabled ()
 		{
-			engine = new Engine (binPath);
+			engine = new Engine (Consts.BinPath);
 
 			Assert.AreEqual (true, engine.BuildEnabled, "A1");
 		}
@@ -78,7 +71,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		[Test]
 		public void TestOnlyLogCriticalEvents ()
 		{
-			engine = new Engine (binPath);
+			engine = new Engine (Consts.BinPath);
 
 			Assert.AreEqual (false, engine.OnlyLogCriticalEvents, "A1");
 		}
@@ -96,7 +89,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		[Test]
 		public void TestGlobalProperties ()
 		{
-			engine = new Engine (binPath);
+			engine = new Engine (Consts.BinPath);
 			Project project;
 
 			Assert.IsNotNull (engine.GlobalProperties, "A1");

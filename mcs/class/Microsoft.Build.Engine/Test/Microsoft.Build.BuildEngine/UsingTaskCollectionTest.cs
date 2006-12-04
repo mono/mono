@@ -36,15 +36,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
 	public class UsingTaskCollectionTest {
 		
-		string		binPath;
 		Engine		engine;
 		Project		project;
-		
-		[SetUp]
-		public void SetUp ()
-		{
-			binPath = "../../tools/xbuild/xbuild";
-		}
 		
 		[Test]
 		public void TestAssemblyFile1 ()
@@ -58,7 +51,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				</Project>
 			";
 
-                        engine = new Engine (binPath);
+                        engine = new Engine (Consts.BinPath);
 
                         project = engine.CreateNewProject ();
                         project.LoadXml (documentString);
@@ -80,7 +73,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				</Project>
 			";
 
-			engine = new Engine (binPath);
+			engine = new Engine (Consts.BinPath);
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
 			

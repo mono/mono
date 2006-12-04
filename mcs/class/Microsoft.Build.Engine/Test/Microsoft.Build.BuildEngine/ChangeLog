@@ -1,3 +1,14 @@
+2006-12-04  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildPropertyGroupTest.cs, UsingTaskCollectionTest.cs,
+	BuildPropertyGroupCollectionTest.cs, BuildPropertyGroupTest.cs,
+	EngineTest.cs, UsingTaskTest.cs, Consts.cs: Added platform dependent
+	BinPath.
+	* ProjectTest.cs: New tests.
+	* BuildTaskTest.cs, TargetTest.cs, ImportCollectionTest.cs,
+	BuildItemGroupTest.cs, TargetCollectionTest.cs,
+	BuildItemGroupCollectionTest.cs, ImportTest.cs: Added.
+
 2006-10-06  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildItemTest.cs:

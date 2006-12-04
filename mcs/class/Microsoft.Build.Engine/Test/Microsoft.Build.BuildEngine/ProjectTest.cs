@@ -29,6 +29,8 @@ using System;
 using System.Collections;
 using System.Xml;
 using Microsoft.Build.BuildEngine;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using NUnit.Framework;
 
 namespace MonoTests.Microsoft.Build.BuildEngine {
@@ -54,7 +56,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Ignore ("Known bug")]
+		[Category ("NotWorking")]
 		public void TestBuild1 ()
 		{
 			Engine engine;
@@ -64,7 +66,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string documentString = @"
 				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
 					<Target Name='Main'>
-						<Message Text='Text' />
+						<Microsoft.Build.Tasks.Message Text='Text' />
 					</Target>
 				</Project>
 			";
@@ -73,9 +75,151 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
 
-			Assert.AreEqual (true, project.Build (new string[] { "Main" }, hashtable));
+			Assert.AreEqual (true, project.Build (new string[] { "Main" }, hashtable), "A1");
+			Assert.AreEqual (1, hashtable.Count, "A2");
+		}
+
+		[Test]
+		public void TestGlobalProperties1 ()
+		{
+			Engine engine;
+			Project project;
 			
-			Assert.AreEqual (1, hashtable.Count);
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+				</Project>
+			";
+			
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Assert.AreEqual (0, project.GlobalProperties.Count, "A1");
+		}
+
+		[Test]
+		public void TestGlobalProperties2 ()
+		{
+			Engine engine;
+			Project project;
+			
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+				</Project>
+			";
+			
+			engine = new Engine (Consts.BinPath);
+			engine.GlobalProperties.SetProperty ("Property", "Value");
+			
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Assert.AreEqual (1, project.GlobalProperties.Count, "A1");
+			Assert.AreEqual ("Property", project.GlobalProperties ["Property"].Name, "A2");
+			Assert.AreEqual ("Value", project.GlobalProperties ["Property"].Value, "A3");
+			Assert.AreEqual ("Value", project.GlobalProperties ["Property"].FinalValue, "A4");
+			Assert.AreEqual ("Property", project.EvaluatedProperties ["Property"].Name, "A2");
+			Assert.AreEqual ("Value", project.EvaluatedProperties ["Property"].Value, "A3");
+			Assert.AreEqual ("Value", project.EvaluatedProperties ["Property"].FinalValue, "A4");
+		}
+
+		[Test]
+		[Ignore ("NullRefException under MS .NET 2.0")]
+		public void TestGlobalProperties3 ()
+		{
+			Engine engine;
+			Project project;
+			
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+				</Project>
+			";
+			
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.GlobalProperties = null;
+		}
+
+		[Test]
+		[Ignore ("NullRefException under MS .NET 2.0")]
+		public void TestGlobalProperties4 ()
+		{
+			Engine engine;
+			Project project;
+			
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<PropertyGroup>
+						<Property>a</Property>
+					</PropertyGroup>
+				</Project>
+			";
+			
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			BuildPropertyGroup[] groups = new BuildPropertyGroup [1];
+			project.PropertyGroups.CopyTo (groups, 0);
+
+			project.GlobalProperties = groups [0];
+			project.GlobalProperties = project.EvaluatedProperties;
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestGlobalProperties5 ()
+		{
+			Engine engine;
+			Project project;
+			
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<PropertyGroup>
+						<Property>a</Property>
+					</PropertyGroup>
+				</Project>
+			";
+			
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			BuildPropertyGroup[] groups = new BuildPropertyGroup [1];
+			project.PropertyGroups.CopyTo (groups, 0);
+			project.GlobalProperties = groups [0];
+		}
+
+		[Test]
+		public void TestParentEngine ()
+		{
+			Engine engine;
+			Project project;
+			
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+
+			Assert.AreEqual (engine, project.ParentEngine, "A1");
+		}
+		
+		[Test]
+		public void TestSchemaFile ()
+		{
+			Engine engine;
+			Project project;
+			
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+				</Project>
+			";
+			
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Assert.IsNull (project.SchemaFile, "A1");
 		}
 	}
 }

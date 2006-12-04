@@ -1,5 +1,5 @@
 //
-// BuildPropertyGroupCollectionTest.cs
+// BuildItemGroupCollectionTest.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
@@ -34,7 +34,7 @@ using NUnit.Framework;
 
 namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
-	public class BuildPropertyGroupCollectionTest {
+	public class BuildItemGroupCollectionTest {
 		
 		Engine			engine;
 		Project			project;
@@ -45,9 +45,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		{
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<PropertyGroup>
-						<Name>Value</Name>
-					</PropertyGroup>
+					<ItemGroup>
+						<Name Include='Value' />
+					</ItemGroup>
 				</Project>
 			";
 
@@ -56,7 +56,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
 			
-			project.PropertyGroups.CopyTo (null, 0);
+			project.ItemGroups.CopyTo (null, 0);
 		}
 
 		[Test]
@@ -66,9 +66,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		{
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<PropertyGroup>
-						<Name>Value</Name>
-					</PropertyGroup>
+					<ItemGroup>
+						<Name Include='Value' />
+					</ItemGroup>
 				</Project>
 			";
 
@@ -77,7 +77,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
 			
-			project.PropertyGroups.CopyTo (new BuildPropertyGroup [1], -1);
+			project.ItemGroups.CopyTo (new BuildItemGroup [1], -1);
 		}
 
 		[Test]
@@ -86,9 +86,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		{
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<PropertyGroup>
-						<Name>Value</Name>
-					</PropertyGroup>
+					<ItemGroup>
+						<Name Include='Value' />
+					</ItemGroup>
 				</Project>
 			";
 
@@ -97,8 +97,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
 			
-			project.PropertyGroups.CopyTo (new BuildPropertyGroup [][] { new BuildPropertyGroup [] {
-				new BuildPropertyGroup ()}}, 0);
+			project.ItemGroups.CopyTo (new BuildItemGroup [][] { new BuildItemGroup [] {
+				new BuildItemGroup ()}}, 0);
 		}
 
 		[Test]
@@ -108,9 +108,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		{
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<PropertyGroup>
-						<Name>Value</Name>
-					</PropertyGroup>
+					<ItemGroup>
+						<Name Include='Value' />
+					</ItemGroup>
 				</Project>
 			";
 
@@ -119,7 +119,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
 			
-			project.PropertyGroups.CopyTo (new BuildPropertyGroup [1], 2);
+			project.ItemGroups.CopyTo (new BuildItemGroup [1], 2);
 		}
 
 		[Test]
@@ -129,9 +129,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		{
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<PropertyGroup>
-						<Name>Value</Name>
-					</PropertyGroup>
+					<ItemGroup>
+						<Name Include='Value' />
+					</ItemGroup>
 				</Project>
 			";
 
@@ -140,7 +140,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
 			
-			project.PropertyGroups.CopyTo (new BuildPropertyGroup [1], 1);
+			project.ItemGroups.CopyTo (new BuildItemGroup [1], 1);
 		}
 
 	}

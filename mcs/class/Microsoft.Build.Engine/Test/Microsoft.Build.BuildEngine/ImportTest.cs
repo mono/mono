@@ -1,5 +1,5 @@
 //
-// BuildPropertyGroupTest.cs
+// ImportTest.cs
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
@@ -34,31 +34,18 @@ using NUnit.Framework;
 
 namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
-	public class BuildPropertyGroupTest {
+	public class ImportTest {
 		
-		BuildPropertyGroup	bpg;
 		Engine			engine;
 		Project			project;
 		
 		[Test]
-		public void TestAssignment ()
-		{
-			bpg = new BuildPropertyGroup ();
-			
-			Assert.AreEqual (0, bpg.Count);
-			Assert.AreEqual (false, bpg.IsImported);
-		}
-		
-		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"Properties in persisted property groups cannot be accessed by name.")]
-		public void TestClone1 ()
+		[Category ("NotWorking")]
+		public void TestAdd1 ()
 		{
                         string documentString = @"
                                 <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-                                	<PropertyGroup>
-                                		<Name>Value</Name>
-                                	</PropertyGroup>
+					<Import Project='Test/resources/Import.csproj'/>
                                 </Project>
                         ";
 
@@ -67,54 +54,51 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
                         project = engine.CreateNewProject ();
                         project.LoadXml (documentString);
 
-			IEnumerator en = project.PropertyGroups.GetEnumerator ();
-			en.MoveNext ();
-			bpg = (BuildPropertyGroup) en.Current;
-			Assert.AreEqual ("Value", bpg ["Name"].Value, "A3");
+			Import[] t = new Import [1];
+			project.Imports.CopyTo (t, 0);
+
+			Assert.IsNull (t [0].Condition, "A1");
+			Assert.AreEqual (false, t [0].IsImported, "A2");
+			Assert.AreEqual ("Test/resources/Import.csproj", t [0].ProjectPath, "A3");
+			Assert.IsNotNull (t [0].EvaluatedProjectPath, "A4");
+			// FIXME: why there is no IsNotEmpty () in Mono NUnit?
+			Assert.IsTrue (String.Empty != t [0].EvaluatedProjectPath, "A5");
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"This method is only valid for persisted <System.Object[]> elements.")]
-		public void TestAddNewProperty1 ()
+		[ExpectedException (typeof (InvalidProjectFileException),
+			"The required attribute \"Project\" is missing from element <Import>.  ")]
+		[Category ("NotWorking")]
+		public void TestAdd2 ()
 		{
-			string name = "name";
-			string value = "value";
-		
-			bpg = new BuildPropertyGroup ();
-			
-			bpg.AddNewProperty (name, value);
-		}
-		
-		[Test]
-		public void TestClear ()
-		{
-			bpg = new BuildPropertyGroup ();
-			
-			bpg.SetProperty ("a", "b");
-			Assert.AreEqual (1, bpg.Count, "A1");
-			bpg.Clear ();
-			Assert.AreEqual (0, bpg.Count, "A2");
+                        string documentString = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<Import Project=''/>
+                                </Project>
+                        ";
+
+                        engine = new Engine (Consts.BinPath);
+
+                        project = engine.CreateNewProject ();
+                        project.LoadXml (documentString);
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"Cannot set a condition on an object not represented by an XML element in the project file.")]
-		public void TestCondition1 ()
+		[Category ("NotWorking")]
+		public void TestAdd3 ()
 		{
-			string condition = "condition";
-		
-			bpg = new BuildPropertyGroup ();
-		
-			bpg.Condition = condition;
-		}
+                        string documentString = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<Import Project='Test/resources/SelfImport.csproj'/>
+                                </Project>
+                        ";
 
-		[Test]
-		public void TestCondition2 ()
-		{
-			bpg = new BuildPropertyGroup ();
-		
-			Assert.AreEqual (String.Empty, bpg.Condition, "A1");
+                        engine = new Engine (Consts.BinPath);
+
+                        project = engine.CreateNewProject ();
+                        project.LoadXml (documentString);
+
+			Assert.AreEqual (1, project.Imports.Count, "A1");
 		}
 	}
 }

@@ -25,8 +25,18 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
+using Microsoft.Build.Utilities;
+
 public static class Consts {
 	public static string BinPath {
-		get { return "../../tools/xbuild/xbuild"; }
+		get {
+			// FIXME: it should check for runtime not OS
+			int p = (int) Environment.OSVersion.Platform;
+			if (p == 4 || p == 128)
+				return "../../tools/xbuild/xbuild";
+			else
+				return ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version20);
+		}
 	}
 }
