@@ -32,11 +32,13 @@
 
 namespace System {
 
-	public delegate void EventHandler (object sender, EventArgs e);
-		
 #if NET_2_0
+	[Serializable]
 	public delegate void EventHandler <TEventArgs> (object sender, TEventArgs e) where TEventArgs : EventArgs;
+
+	[Serializable]
 #endif
+	public delegate void EventHandler (object sender, EventArgs e);
 
 }
 
