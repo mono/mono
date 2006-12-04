@@ -2286,7 +2286,7 @@ namespace System.Windows.Forms
 			}
 
 			/* Draw arrow */
-			if (item.MenuBar == false && item.IsPopup || item.MdiList) {
+			if (item.MenuBar == false && (item.IsPopup || item.MdiList)) {
 
 				int cx = MenuCheckSize.Width;
 				int cy = MenuCheckSize.Height;
