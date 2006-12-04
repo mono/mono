@@ -110,7 +110,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #80107
-		[NUnit.Framework.Category ("NotWorking")]
 		public void DataView ()
 		{
 			DataView dv = new DataView ();

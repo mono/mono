@@ -14,3 +14,16 @@ is empty, consume the paint queue.  This has the added benefit of
 making the paint queue a ThreadQueue local thing - no locking will be
 needed on it, since the only thing touching it will be the thread
 running the message pump.
+
+why do we /nowarn:108?  we lose tons of possibly important warnings due to that...
+
+more event work:
+
+CheckedListBox:  nothing done.
+DataGridView*: nothing done.
+FileDialog: nothing done.
+GridColumnStylesCollection: nothing done, no Component inheritance
+GridTableStylesCollection: nothing done, no Component inheritance
+MenuItem: what do we do about CloneMenu?  we can't have assignment of events like that (look for the #if notyet)
+MonthCalendar: nothing done.
+Panel: nothing done.  see whether the events should be "new" or now..

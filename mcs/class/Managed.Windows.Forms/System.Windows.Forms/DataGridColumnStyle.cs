@@ -141,6 +141,8 @@ namespace System.Windows.Forms
 
 		public DataGridColumnStyle (PropertyDescriptor prop)
 		{
+			Console.WriteLine ("creating datagridcolumnstyle {1} with prop == {0}", prop, GetHashCode ());
+
 			property_descriptor = prop;
 
 			fontheight = -1;
@@ -274,6 +276,8 @@ namespace System.Windows.Forms
 				return property_descriptor;
 			}
 			set {
+				Console.WriteLine ("setting propertydescriptor to {0}", value);
+
 				if (value != property_descriptor) {
 					property_descriptor = value;					
 
@@ -491,6 +495,11 @@ namespace System.Windows.Forms
 			grid = value;
 
 			property_descriptor = null;
+
+#if false
+			if (value.ListManager != null)
+				CheckValidDataSource (value.ListManager);
+#endif
 		}
 
 		protected virtual void SetDataGridInColumn (DataGrid value)

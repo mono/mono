@@ -88,18 +88,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
 		internal void SetDataSource (object data_source)
 		{
 			if (this.data_source is IBindingList)
 				((IBindingList)this.data_source).ListChanged -= new ListChangedEventHandler (ListChangedHandler);
-			if (this.data_source is DataView) {
-				DataView dataview = (DataView)this.data_source;
-				dataview.Table.Columns.CollectionChanged  -= new CollectionChangeEventHandler (MetaDataChangedHandler);
-				dataview.Table.ChildRelations.CollectionChanged  -= new CollectionChangeEventHandler (MetaDataChangedHandler);
-				dataview.Table.ParentRelations.CollectionChanged  -= new CollectionChangeEventHandler (MetaDataChangedHandler);
-				dataview.Table.Constraints.CollectionChanged -= new CollectionChangeEventHandler (MetaDataChangedHandler);
-			}
 
 			if (data_source is IListSource)
 				data_source = ((IListSource)data_source).GetList();
@@ -111,13 +103,6 @@ namespace System.Windows.Forms {
 			listposition = -1;
 			if (this.data_source is IBindingList)
 				((IBindingList)this.data_source).ListChanged += new ListChangedEventHandler (ListChangedHandler);
-			if (this.data_source is DataView) {
-				DataView dataview = (DataView)this.data_source;
-				dataview.Table.Columns.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);
-				dataview.Table.ChildRelations.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);
-				dataview.Table.ParentRelations.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);
-				dataview.Table.Constraints.CollectionChanged += new CollectionChangeEventHandler (MetaDataChangedHandler);
-			}
 
 			list = (IList)data_source;
 
@@ -172,7 +157,7 @@ namespace System.Windows.Forms {
                         get { return binding_suspended; }
                 }
 
-                [MonoTODO ("this needs re-addressing once DataViewManager.AllowNew is implemented")]
+                // XXX this needs re-addressing once DataViewManager.AllowNew is implemented
                 internal bool CanAddRows {
                 	get {
 				/* if we're readonly, don't even bother checking if we can add new rows */
@@ -328,15 +313,20 @@ namespace System.Windows.Forms {
 			return TypeDescriptor.GetProperties (t, att);
 		}
 
-		private void MetaDataChangedHandler (object sender, CollectionChangeEventArgs e)
+		private void OnMetaDataChanged (EventArgs args)
 		{
 			if (MetaDataChanged != null)
-				MetaDataChanged (this, EventArgs.Empty);
+				MetaDataChanged (this, args);
 		}
 
 		private void ListChangedHandler (object sender, ListChangedEventArgs e)
 		{
 			switch (e.ListChangedType) {
+			case ListChangedType.PropertyDescriptorAdded:
+			case ListChangedType.PropertyDescriptorDeleted:
+			case ListChangedType.PropertyDescriptorChanged:
+				OnMetaDataChanged (EventArgs.Empty);
+				break;
 			case ListChangedType.ItemDeleted:
 				if (listposition == e.NewIndex) {
 					listposition = e.NewIndex - 1;

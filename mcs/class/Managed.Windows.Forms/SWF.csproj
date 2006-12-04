@@ -724,6 +724,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\ContextMenuStrip.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\Control.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1804,6 +1809,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\IBindableComponent.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ICommandExecutor.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2405,6 +2415,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\NotifyIcon.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\NumericTextBox.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -3209,6 +3224,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\ToolStripContainer.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ToolStripContentPanel.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -3230,6 +3250,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ToolStripDropDown.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ToolStripDropDownButton.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -3265,6 +3290,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ToolStripDropDownItem.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ToolStripDropDownMenu.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -3389,17 +3419,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\ToolStripManager.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ToolStripManagerRenderMode.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\ToolStripMenuItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\ToolStripMenuTracker.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -3415,6 +3445,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ToolStripPanelRenderEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ToolStripPanelRow.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -3460,6 +3495,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ToolStripSeparatorRenderEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ToolStripSplitButton.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -4035,6 +4075,46 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms.VisualStyles\VisualStyleState.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.X11Internal\X11Atoms.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.X11Internal\X11Display.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.X11Internal\X11Exception.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.X11Internal\X11Hwnd.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.X11Internal\X11RootHwnd.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.X11Internal\X11ThreadQueue.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.X11Internal\Xlib.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.X11Internal\XplatUIX11-new.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
