@@ -31,6 +31,7 @@
 using System.ComponentModel;
 using System.Security.Principal;
 using System.Web;
+using System.Web.Services.Protocols;
 using System.Web.SessionState;
 
 namespace System.Web.Services {
@@ -40,6 +41,10 @@ namespace System.Web.Services {
 
 		HttpContext _context;
 
+#if NET_2_0
+		SoapProtocolVersion _soapVersion;
+#endif
+
 		#endregion // Fields
 
 		#region Constructors
@@ -47,6 +52,11 @@ namespace System.Web.Services {
 		public WebService ()
 		{
 			_context = HttpContext.Current;
+#if NET_2_0
+			object o = _context.Items ["WebServiceSoapVersion"];
+			if (o is SoapProtocolVersion)
+				_soapVersion = (SoapProtocolVersion) o;
+#endif
 		}
 		
 		#endregion // Constructors
@@ -90,11 +100,10 @@ namespace System.Web.Services {
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public System.Web.Services.Protocols.SoapProtocolVersion SoapVersion {
-			get { throw new NotImplementedException (); }
+			get { return _soapVersion; }
 		}
 #endif
 

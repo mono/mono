@@ -206,7 +206,27 @@ namespace System.Web.Services.Protocols
 			request.ContentType = message.ContentType + "; charset=utf-8";
 			return request;
 		}
-		
+
+#if NET_2_0
+		[MonoTODO]
+		protected virtual
+#endif
+		XmlReader GetReaderForMessage (
+			SoapClientMessage message, int bufferSize)
+		{
+			throw new NotImplementedException ();
+		}
+
+#if NET_2_0
+		[MonoTODO]
+		protected virtual
+#endif
+		XmlWriter GetWriterForMessage (
+			SoapClientMessage message, int bufferSize)
+		{
+			throw new NotImplementedException ();
+		}
+
 		void SendRequest (Stream s, SoapClientMessage message, SoapExtension[] extensions)
 		{
 			using (s) {

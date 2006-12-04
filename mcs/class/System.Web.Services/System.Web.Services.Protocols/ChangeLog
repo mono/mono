@@ -1,3 +1,9 @@
+2006-12-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AnyReturnReader.cs : not sure why, but the build must have been
+	  broken, and now it is exposed.
+	* SoapHttpClientProtocol.cs : added missing members, left as MonoTODO.
+
 2006-12-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AnyReturnReader.cs : implemented, it does almost nothing.

@@ -192,10 +192,14 @@ namespace System.Web.Services.Description {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		static readonly char [] whitespaces = new char [] {' ', '\t', '\n', '\r'};
+
 		protected virtual bool IsSoapEncodingPresent (string uriList)
 		{
-			throw new NotImplementedException ();
+			foreach (string s in uriList.Split (whitespaces))
+				if (s == "http://schemas.xmlsoap.org/soap/encoding/")
+					return true;
+			return false;
 		}
 
 		protected override CodeMemberMethod GenerateMethod ()

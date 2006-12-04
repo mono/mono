@@ -47,7 +47,7 @@ namespace System.Web.Services.Protocols {
 
 		public override object GetInitializer (LogicalMethodInfo methodInfo)
 		{
-			// do nothing
+			return null;
 		}
 
 		public override void Initialize (object o)
