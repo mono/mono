@@ -73,7 +73,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TextBoxPropertyTest ()
 		{
 			Assert.AreEqual (false, textBox.AcceptsReturn, "#21");
