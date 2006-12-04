@@ -1,4 +1,7 @@
+Microsoft.Build.Tasks/ALTest.cs
 Microsoft.Build.Tasks/Consts.cs
 Microsoft.Build.Tasks/ErrorTest.cs
+Microsoft.Build.Tasks/ManagedCompilerTest.cs
 Microsoft.Build.Tasks/MessageTest.cs
+Microsoft.Build.Tasks/TestEngine.cs
 Microsoft.Build.Tasks/WarningTest.cs
