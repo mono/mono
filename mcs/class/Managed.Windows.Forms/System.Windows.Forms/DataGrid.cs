@@ -2850,7 +2850,11 @@ namespace System.Windows.Forms
 			cells_area.X = ClientRectangle.X + rowhdrs_area.Width;
 			cells_area.Y = columnhdrs_area.Y + columnhdrs_area.Height;
 			cells_area.Width = ClientRectangle.X + ClientRectangle.Width - cells_area.X;
+			if (cells_area.Width < 0)
+				cells_area.Width = 0;
 			cells_area.Height = ClientRectangle.Y + ClientRectangle.Height - cells_area.Y;
+			if (cells_area.Height < 0)
+				cells_area.Height = 0;
 		}
 
 		void CalcColumnHeaders ()

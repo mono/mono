@@ -1,3 +1,8 @@
+2006-12-04  Chris Toshok  <toshok@ximian.com>
+
+	* DataGrid.cs (CalcCellsArea): cells_area.Width/Height are at a
+	minimum 0.  Fixes the scrollbar exception in bug #80136.
+
 2006-12-04  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* MdiClient.cs: 
@@ -26,6 +31,11 @@
 	* MenuItem.cs: Use an already existing list of mdi children
 	to get the correct order of children and remove the other
 	redundant list.
+
+2006-12-04  Chris Toshok  <toshok@ximian.com>
+
+	* DataGridColumnStyle.cs (SetDataGrid): call CheckValidDataSource
+	to reassign the propertydescriptor.
 
 2006-12-04  Chris Toshok  <toshok@ximian.com>
 
