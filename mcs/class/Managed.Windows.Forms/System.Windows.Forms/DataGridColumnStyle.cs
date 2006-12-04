@@ -492,10 +492,8 @@ namespace System.Windows.Forms
 
 			property_descriptor = null;
 
-#if false
 			if (value.ListManager != null)
 				CheckValidDataSource (value.ListManager);
-#endif
 		}
 
 		protected virtual void SetDataGridInColumn (DataGrid value)
