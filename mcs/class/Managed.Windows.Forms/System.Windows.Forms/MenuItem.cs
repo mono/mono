@@ -610,10 +610,13 @@ namespace System.Windows.Forms
 					if (mdicontainer == null)
 						break;
 
+					
 					// Remove closed forms
-					foreach (MenuItem item in mdilist_items.Keys) {
+					MenuItem[] items = new MenuItem[mdilist_items.Count];
+					mdilist_items.Keys.CopyTo (items, 0);
+					foreach (MenuItem item in items) {
 						Form mdichild = (Form) mdilist_items [item];
-						if (!mdicontainer.original_order.Contains (mdichild)) {
+						if (!mdicontainer.mdi_child_list.Contains(mdichild)) {
 							mdilist_items.Remove (item);
 							mdilist_forms.Remove (mdichild);
 							MenuItems.Remove (item);
@@ -621,8 +624,8 @@ namespace System.Windows.Forms
 					}
 					
 					// Add new forms and update state for existing forms.
-					for ( int i = 0; i < mdicontainer.original_order.Count; i++) {
-						Form mdichild = (Form) mdicontainer.original_order [i];
+					for (int i = 0; i < mdicontainer.mdi_child_list.Count; i++) {
+						Form mdichild = (Form)mdicontainer.mdi_child_list[i];
 						MenuItem item;
 						if (mdilist_forms.Contains (mdichild)) {
 							item = (MenuItem) mdilist_forms [mdichild];

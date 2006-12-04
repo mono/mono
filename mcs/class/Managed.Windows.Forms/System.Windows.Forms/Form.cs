@@ -553,7 +553,6 @@ namespace System.Windows.Forms {
 					throw new ArgumentException ();
 
 				if (mdi_parent != null) {
-					mdi_parent.MdiContainer.original_order.Remove (this);
 					mdi_parent.MdiContainer.Controls.Remove (this);
 				}
 
@@ -561,8 +560,8 @@ namespace System.Windows.Forms {
 					mdi_parent = value;
 					window_manager = new MdiWindowManager (this,
 							mdi_parent.MdiContainer);
-					mdi_parent.MdiContainer.original_order.Add (this);
 					mdi_parent.MdiContainer.Controls.Add (this);
+					mdi_parent.MdiContainer.Controls.SetChildIndex (this, 0);
 
 					RecreateHandle ();
 

@@ -50,7 +50,6 @@ namespace System.Windows.Forms {
 		internal ArrayList mdi_child_list;
 		private string form_text;
 		private bool setting_form_text;
-		internal ArrayList original_order = new ArrayList (); // The order the child forms are added (used by the main menu to show the window menu)
 		private Form active_child;
 
 		#endregion	// Local Variables
@@ -62,7 +61,6 @@ namespace System.Windows.Forms {
 			
 			public ControlCollection(MdiClient owner) : base(owner) {
 				this.owner = owner;
-				owner.mdi_child_list = new ArrayList ();
 			}
 
 			public override void Add(Control value) {
@@ -96,6 +94,7 @@ namespace System.Windows.Forms {
 		#region Public Constructors
 		public MdiClient()
 		{
+			mdi_child_list = new ArrayList ();
 			BackColor = SystemColors.AppWorkspace;
 			Dock = DockStyle.Fill;
 			SetStyle (ControlStyles.Selectable, false);
