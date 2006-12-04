@@ -5,6 +5,14 @@
 
 2006-12-04  Jackson Harper  <jackson@ximian.com>
 
+	* TextBoxBase.cs:
+	* TextControl.cs: Remove some unused variables.  Maybe this will
+	patch things up between mike and I.
+	- don't split lines less then one char wide, if the viewport is
+	that small text won't be visible anyways.
+	
+2006-12-04  Jackson Harper  <jackson@ximian.com>
+
 	* TextBoxBase.cs: Default selection length is -1, need to do some
 	more testing on windows to see when this is used for the property.
 	- Redid the Lines [] property to that we properly remove soft line

@@ -47,7 +47,6 @@ namespace System.Windows.Forms {
 		internal bool			auto_size;
 		internal bool			backcolor_set;
 		internal CharacterCasing	character_casing;
-		internal bool			undo;
 		internal bool			hide_selection;
 		internal int			max_length;
 		internal bool			modified;
@@ -88,7 +87,6 @@ namespace System.Windows.Forms {
 			auto_size = true;
 			border_style = BorderStyle.Fixed3D;
 			character_casing = CharacterCasing.Normal;
-			undo = false;
 			hide_selection = true;
 			max_length = 32767;
 			modified = false;
@@ -570,7 +568,6 @@ namespace System.Windows.Forms {
 					return;
 
 				if ((value != null) && (value != "")) {
-					Line	line;
 
 					if (multiline) {
 						string[]	lines;
@@ -1602,8 +1599,6 @@ namespace System.Windows.Forms {
 		}
 
 		private void TextBoxBase_MouseWheel(object sender, MouseEventArgs e) {
-			Line	line;
-			int	line_no;
 
 			if (!vscroll.Enabled) {
 				return;

@@ -481,7 +481,7 @@ namespace System.Windows.Forms {
 						len = this.text.Length;
 						retval = true;
 						wrapped = true;
-					} else if ((widths[pos] + w) > (doc.viewport_width - this.right_indent)) {
+					} else if (pos > 1 && (widths[pos] + w) > (doc.viewport_width - this.right_indent)) {
 						// No suitable wrap position was found so break right in the middle of a word
 						tag.width = tag.width + w;
 						doc.Split(this, tag, pos, this.soft_break);
@@ -732,7 +732,6 @@ namespace System.Windows.Forms {
 		private Line		document;
 		private int		lines;
 		private Line		sentinel;
-		private Line		last_found;
 		private int		document_id;
 		private Random		random = new Random();
 		internal string		password_char;
@@ -793,7 +792,6 @@ namespace System.Windows.Forms {
 			sentinel.color = LineColor.Black;
 
 			document = sentinel;
-			last_found = sentinel;
 
 			// We always have a blank line
 			owner.HandleCreated += new EventHandler(owner_HandleCreated);
@@ -1387,7 +1385,6 @@ namespace System.Windows.Forms {
 		internal void Empty() {
 
 			document = sentinel;
-			last_found = sentinel;
 			lines = 0;
 
 			// We always have a blank line
@@ -2870,8 +2867,6 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 				RebalanceAfterDelete(line2);
 
 			this.lines--;
-
-			last_found = sentinel;
 		}
 
 		// Invalidate a section of the document to trigger redraw
