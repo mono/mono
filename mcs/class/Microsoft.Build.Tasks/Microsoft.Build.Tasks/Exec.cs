@@ -47,8 +47,8 @@ namespace Microsoft.Build.Tasks {
 		string		stdOutEncoding;
 		string		workingDirectory;
 		
-		Process		process;
-		int		executionTime;
+		//Process		process;
+		//int		executionTime;
 		
 		public Exec ()
 		{
@@ -102,6 +102,9 @@ namespace Microsoft.Build.Tasks {
 			else
 				return true;
 		}*/
+		
+		// FIXME: we need to write another ExecuteTool and RealExecute that will collect std output and
+		// make it available through Outputs property
 		
 		[MonoTODO]
 		protected override int ExecuteTool (string pathToTool,
@@ -164,7 +167,7 @@ namespace Microsoft.Build.Tasks {
 		}
 
 		protected override Encoding StandardErrorEncoding {
-			get { return Console.Error.Encoding; }
+			get { return base.StandardErrorEncoding; }
 		}
 		
 		protected override MessageImportance StandardErrorLoggingImportance {
@@ -172,7 +175,7 @@ namespace Microsoft.Build.Tasks {
 		}
 
 		protected override Encoding StandardOutputEncoding {
-			get { return Console.Out.Encoding; }
+			get { return base.StandardOutputEncoding; }
 		}
 		
 		protected override MessageImportance StandardOutputLoggingImportance {

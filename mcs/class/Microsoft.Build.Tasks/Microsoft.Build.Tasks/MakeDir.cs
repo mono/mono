@@ -52,6 +52,7 @@ namespace Microsoft.Build.Tasks {
 				try {
 					Directory.CreateDirectory (directory.GetMetadata ("FullPath"));
 					temporaryDirectoriesCreated.Add (directory);
+					Log.LogMessage (MessageImportance.High, "Created directory \"{0}\"", directory.ItemSpec);
 				}
 				catch (Exception ex) {
 					Log.LogErrorFromException (ex);
