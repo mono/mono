@@ -40,7 +40,7 @@ namespace Microsoft.Build.BuildEngine {
 	
 		internal TargetCollection (Project project)
 		{
-			this.targetsByName = new Dictionary <string, Target> ();
+			this.targetsByName = new Dictionary <string, Target> (StringComparer.InvariantCultureIgnoreCase);
 			//this.parentProject = project;
 		}
 

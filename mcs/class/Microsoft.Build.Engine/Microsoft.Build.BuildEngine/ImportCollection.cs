@@ -56,16 +56,14 @@ namespace Microsoft.Build.BuildEngine {
 			imports.Add (import);
 		}
 		
-		[MonoTODO]
 		public void CopyTo (Array array, int index)
 		{
-			throw new NotImplementedException ();
+			imports.CopyTo ((Import[]) array, index);
 		}
 		
-		[MonoTODO]
 		public void CopyTo (Import[] array, int index)
 		{
-			throw new NotImplementedException ();
+			imports.CopyTo (array, index);
 		}
 		
 		public IEnumerator GetEnumerator ()

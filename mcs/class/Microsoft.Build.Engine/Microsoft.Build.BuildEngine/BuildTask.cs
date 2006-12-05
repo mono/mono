@@ -89,7 +89,6 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 
-		[MonoTODO]
 		public string[] GetParameterNames ()
 		{
 			List <string> tempNames = new List <string> ();
@@ -105,26 +104,30 @@ namespace Microsoft.Build.BuildEngine {
 			return tempNames.ToArray ();
 		}
 		
-		[MonoTODO]
 		public string GetParameterValue (string attributeName)
 		{
+			if (attributeName == "Condition")
+				throw new ArgumentException ("Condition attribute cannot be accessed using this method.");
+			if (attributeName == "ContinueOnError")
+				throw new ArgumentException ("ContinueOnError attribute cannot be accessed using this method.");
+
 			return taskElement.GetAttribute (attributeName);
 		}
 		
-		[MonoTODO]
 		public void SetParameterValue (string parameterName,
 					       string parameterValue)
 		{
 			SetParameterValue (parameterName, parameterValue, false);
 		}
 		
-		[MonoTODO]
 		public void SetParameterValue (string parameterName,
 					       string parameterValue,
 					       bool treatParameterValueAsLiteral)
 		{
-			// FIXME: use expression for parameterValue
-			taskElement.SetAttribute (parameterName, parameterValue);
+			if (treatParameterValueAsLiteral)
+				taskElement.SetAttribute (parameterName, Utilities.Escape (parameterValue));
+			else
+				taskElement.SetAttribute (parameterName, parameterValue);
 		}
 		
 		private void LogTaskStarted ()
@@ -165,7 +168,6 @@ namespace Microsoft.Build.BuildEngine {
 			return parameters;
 		}
 		
-		[MonoTODO]
 		public string Condition {
 			get {
 				return taskElement.GetAttribute ("Condition");
@@ -179,10 +181,12 @@ namespace Microsoft.Build.BuildEngine {
 		public bool ContinueOnError {
 			get {
 				string str = taskElement.GetAttribute ("ContinueOnError");
-				if (str == String.Empty) {
+				if (str == String.Empty)
 					return false;
-				} else {
-					return Boolean.Parse (str);
+				else {
+					OldExpression exp = new OldExpression (parentTarget.Project);
+					exp.ParseSource (str);
+					return (bool) exp.ConvertTo (typeof (bool));
 				}
 			}
 			set {

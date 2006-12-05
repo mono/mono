@@ -1,3 +1,18 @@
+2006-12-05  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildTask.cs: Remove [MonoTODO], add exception throwing in
+	GetParameterValue (), use expressions in ContinueOnError.
+	* ConditionFactorException.cs: Throw InvalidProjectFileException ()
+	instead of InvalidOperationException ().
+	* ImportCollection.cs: Implement CopyTo ().
+	* Target.cs: Remove redundant variables (XmlAttributes), return
+	String.Empty in DependsOnTargets, add a null check in RemoveTask ().
+	* BuildItemGroup.cs, BuildPropertyGroup.cs: Remove [MonoTODO].
+	* Import.cs: Throw an exception when file does not exist.
+	* Target.cs: Use StringComparer.InvariantCultureIgnoreCase.
+	* ConditionTokenizer.cs: Treat '-' as beginning of a number. We'll
+	need to treat item as a token probably
+
 2006-12-04  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Import.cs: Check for project.FullFileName (Path.DirectoryName would

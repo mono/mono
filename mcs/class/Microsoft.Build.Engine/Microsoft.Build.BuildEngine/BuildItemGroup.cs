@@ -90,7 +90,6 @@ namespace Microsoft.Build.BuildEngine {
 			return AddNewItem (itemName, itemInclude, false);
 		}
 		
-		// FIXME: use expression
 		[MonoTODO]
 		public BuildItem AddNewItem (string itemName,
 					     string itemInclude,
@@ -113,10 +112,8 @@ namespace Microsoft.Build.BuildEngine {
 			buildItems.Add (buildItem);
 		}
 
-		[MonoTODO]
 		public void Clear ()
 		{
-			//FIXME: should this remove all build items?
 			buildItems = new List <BuildItem> ();
 		}
 
@@ -133,13 +130,11 @@ namespace Microsoft.Build.BuildEngine {
 			return buildItems.GetEnumerator ();
 		}
 
-		[MonoTODO]
 		public void RemoveItem (BuildItem itemToRemove)
 		{
 			buildItems.Remove (itemToRemove);
 		}
 
-		[MonoTODO]
 		public void RemoveItemAt (int index)
 		{
 			buildItems.RemoveAt (index);

@@ -171,7 +171,9 @@ namespace Microsoft.Build.BuildEngine {
 				return;
 			}
 			
-			if (Char.IsDigit (ch)) {
+			// FIXME: looks like a hack: if '-' is here '->' won't be tokenized
+			// maybe we should treat item reference as a token
+			if (Char.IsDigit (ch) || ch == '-') {
 				StringBuilder sb = new StringBuilder ();
 				
 				sb.Append (ch);

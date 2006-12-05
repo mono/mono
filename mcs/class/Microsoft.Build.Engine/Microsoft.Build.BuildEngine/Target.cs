@@ -38,8 +38,6 @@ namespace Microsoft.Build.BuildEngine {
 	
 		BatchingImpl	batchingImpl;
 		BuildState	buildState;
-		XmlAttribute	condition;
-		XmlAttribute	dependsOnTargets;
 		Engine		engine;
 		bool		isImported;
 		string		name;
@@ -57,8 +55,6 @@ namespace Microsoft.Build.BuildEngine {
 
 			this.targetElement = targetElement;
 			this.name = targetElement.GetAttribute ("Name");
-			this.condition = targetElement.GetAttributeNode ("Condition");
-			this.dependsOnTargets = targetElement.GetAttributeNode ("DependsOnTargets");
 
 			this.project = project;
 			this.engine = project.ParentEngine;
@@ -86,13 +82,10 @@ namespace Microsoft.Build.BuildEngine {
 			bool result;
 		
 			buildState = BuildState.Started;
-			if (dependsOnTargets == null) {
-				;
-			} else if (dependsOnTargets.Value == String.Empty) {
-				;
-			} else {
+
+			if (DependsOnTargets != String.Empty) {
 				OldExpression dependencies = new OldExpression (Project);
-				dependencies.ParseSource (dependsOnTargets.Value);
+				dependencies.ParseSource (DependsOnTargets);
 				
 				string[] targetsToBuildFirst = (string[]) dependencies.ConvertTo (typeof (string[]));
 				foreach (string target in targetsToBuildFirst) {
@@ -193,25 +186,19 @@ namespace Microsoft.Build.BuildEngine {
 
 		public void RemoveTask (BuildTask buildTask)
 		{
+			if (buildTask == null)
+				throw new ArgumentNullException ("buildTask");
 			buildTasks.Remove (buildTask);
 		}
 
 		public string Condition {
-			get { return condition.Value; }
-			set { condition.Value = value; }
+			get { return targetElement.GetAttribute ("Condition"); }
+			set { targetElement.SetAttribute ("Condition", value); }
 		}
 
 		public string DependsOnTargets {
-			get {
-				if (dependsOnTargets == null)
-					return null;
-				else
-					return dependsOnTargets.Value;
-			}
-			set {
-				if (dependsOnTargets != null)
-					dependsOnTargets.Value = value;
-			}
+			get { return targetElement.GetAttribute ("DependsOnTargets"); }
+			set { targetElement.SetAttribute ("DependsOnTargets", value); }
 		}
 
 		public bool IsImported {

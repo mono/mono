@@ -77,7 +77,7 @@ namespace Microsoft.Build.BuildEngine {
 			else if (falseValues [evaluatedToken.Value] != null)
 				return false;
 			else
-				throw new InvalidOperationException ();
+				throw new InvalidProjectFileException ();
 		}
 		
 		public override float NumberEvaluate (Project context)

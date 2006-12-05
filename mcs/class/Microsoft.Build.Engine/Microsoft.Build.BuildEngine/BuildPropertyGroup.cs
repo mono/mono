@@ -119,7 +119,6 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 		
-		[MonoTODO]
 		public void Clear ()
 		{
 			if (FromXml)

@@ -50,7 +50,7 @@ namespace Microsoft.Build.BuildEngine {
 			this.originalProject = originalProject;
 
 			if (ProjectPath == String.Empty)
-				throw new InvalidProjectFileException ("Project attribute must be specified.");
+				throw new InvalidProjectFileException ("Project required attribute \"Project\" is missing from element <Import>.");
 		}
 
 		internal void Evaluate ()
@@ -72,10 +72,8 @@ namespace Microsoft.Build.BuildEngine {
 				file = Path.Combine (dir, EvaluatedProjectPath);
 			}
 
-			// FIXME: loggers anybody?
 			if (!File.Exists (file)) {
-				Console.WriteLine ("Imported file {0} doesn't exist.", file);
-				return;
+				throw new InvalidProjectFileException (String.Format ("Imported project: \"{0}\" does not exist.", file));
 			}
 			
 			ImportedProject importedProject = new ImportedProject ();
@@ -85,7 +83,10 @@ namespace Microsoft.Build.BuildEngine {
 		}
 		
 		public string Condition {
-			get { return importElement.GetAttribute ("Condition"); }
+			get {
+				string s = importElement.GetAttribute ("Condition");
+				return s == String.Empty ? null : s;
+			}
 		}
 		
 		public string EvaluatedProjectPath {
