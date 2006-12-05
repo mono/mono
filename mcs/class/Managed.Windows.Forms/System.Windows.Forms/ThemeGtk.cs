@@ -600,7 +600,7 @@ namespace System.Windows.Forms
 			#endif
 
 			// Now the text
-			if (button.text != null && button.text != String.Empty)
+			if (button.Text != null && button.Text != String.Empty)
 				ButtonBase_DrawText (button, dc);
 		}
 		

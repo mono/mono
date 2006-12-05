@@ -89,7 +89,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnMouseMove(MouseEventArgs e) {
-			if (this.is_captured) {
+			if (Capture) {
 				int	delta_x;
 				int	delta_y;
 				Point	current_point;

@@ -161,7 +161,7 @@ namespace System.Windows.Forms
 				ButtonBase_DrawFocus(button, dc);
 			
 			// Now the text
-			if (button.text != null && button.text != String.Empty)
+			if (button.Text != null && button.Text != String.Empty)
 				ButtonBase_DrawText(button, dc);
 		}
 
@@ -389,12 +389,12 @@ namespace System.Windows.Forms
 			}
 			
 			if (button.Enabled) {					
-				dc.DrawString(button.text, button.Font, ResPool.GetSolidBrush (button.ForeColor), text_rect, button.text_format);
+				dc.DrawString(button.Text, button.Font, ResPool.GetSolidBrush (button.ForeColor), text_rect, button.text_format);
 			} else {
 				if (button.FlatStyle == FlatStyle.Flat || button.FlatStyle == FlatStyle.Popup) {
-					dc.DrawString(button.text, button.Font, ResPool.GetSolidBrush (ColorGrayText), text_rect, button.text_format);
+					dc.DrawString(button.Text, button.Font, ResPool.GetSolidBrush (ColorGrayText), text_rect, button.text_format);
 				} else {
-					CPDrawStringDisabled (dc, button.text, button.Font, button.BackColor, text_rect, button.text_format);
+					CPDrawStringDisabled (dc, button.Text, button.Font, button.BackColor, text_rect, button.text_format);
 				}
 			}
 		}
@@ -4202,7 +4202,7 @@ namespace System.Windows.Forms
 		public override void DrawToolTip(Graphics dc, Rectangle clip_rectangle, ToolTip.ToolTipWindow control) {
 			dc.FillRectangle(SystemBrushes.Info, control.client_rect);
 			dc.DrawRectangle(SystemPens.WindowFrame, 0, 0, control.Width-1, control.Height-1);
-			dc.DrawString(control.text, control.Font, ResPool.GetSolidBrush(this.ColorInfoText), control.client_rect, control.string_format);
+			dc.DrawString(control.Text, control.Font, ResPool.GetSolidBrush(this.ColorInfoText), control.client_rect, control.string_format);
 		}
 
 		public override Size ToolTipSize(ToolTip.ToolTipWindow tt, string text) {

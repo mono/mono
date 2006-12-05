@@ -61,68 +61,69 @@ namespace System.Windows.Forms
 
 		// Basic
 		internal Rectangle		bounds;			// bounding rectangle for control (client area + decorations)
-		private Rectangle		explicit_bounds;	// explicitly set bounds
+		Rectangle explicit_bounds; // explicitly set bounds
 		internal object			creator_thread;		// thread that created the control
 		internal ControlNativeWindow	window;			// object for native window handle
-		internal string			name;			// for object naming
+		string name; // for object naming
 
 		// State
-		internal bool			is_created;		// true if OnCreateControl has been sent
+		bool is_created; // true if OnCreateControl has been sent
 		internal bool			has_focus;		// true if control has focus
 		internal bool			is_visible;		// true if control is visible
 		internal bool			is_entered;		// is the mouse inside the control?
 		internal bool			is_enabled;		// true if control is enabled (usable/not grayed out)
 		internal bool			is_accessible;		// true if the control is visible to accessibility applications
-		internal bool			is_captured;		// tracks if the control has captured the mouse
+		bool is_captured; // tracks if the control has captured the mouse
 		internal bool			is_toplevel;		// tracks if the control is a toplevel window
-		internal bool			is_recreating;		// tracks if the handle for the control is being recreated
-		internal bool			causes_validation;	// tracks if validation is executed on changes
+		bool is_recreating; // tracks if the handle for the control is being recreated
+		bool causes_validation; // tracks if validation is executed on changes
 		internal bool 			is_focusing;		// tracks if Focus has been called on the control and has not yet finished
-		internal int			tab_index;		// position in tab order of siblings
+		int tab_index; // position in tab order of siblings
 		internal bool			tab_stop = true;	// is the control a tab stop?
-		internal bool			is_disposed;		// has the window already been disposed?
+		bool is_disposed; // has the window already been disposed?
 		internal Size			client_size;		// size of the client area (window excluding decorations)
 		internal Rectangle		client_rect;		// rectangle with the client area (window excluding decorations)
 		internal ControlStyles		control_style;		// rather win32-specific, style bits for control
 		internal ImeMode		ime_mode = ImeMode.Inherit;
-		internal bool			layout_pending;		// true if our parent needs to re-layout us
+		bool layout_pending; // true if our parent needs to re-layout us
 		internal object			control_tag;		// object that contains data about our control
 		internal int			mouse_clicks;		// Counter for mouse clicks
 		internal Cursor			cursor;			// Cursor for the window
 		internal bool			allow_drop;		// true if the control accepts droping objects on it   
-		internal Region			clip_region;		// User-specified clip region for the window
+		Region clip_region; // User-specified clip region for the window
 
 		// Visuals
 		internal Color			foreground_color;	// foreground color for control
 		internal Color			background_color;	// background color for control
 		internal Image			background_image;	// background image for control
 		internal Font			font;			// font for control
-		internal string			text;			// window/title text for control
+		string			text;			// window/title text for control
 		internal BorderStyle		border_style;		// Border style of control
 
 		// Layout
+		int layout_suspended;
 		internal AnchorStyles		anchor_style;		// anchoring requirements for our control
 		internal DockStyle		dock_style;		// docking requirements for our control (supercedes anchoring)
 		internal int			dist_left;		// distance to the left border of the parent
-		internal int			dist_top;		// distance to the top border of the parent
-		internal int			dist_right;		// distance to the right border of the parent
-		internal int			dist_bottom;		// distance to the bottom border of the parent
+		int dist_top; // distance to the top border of the parent
+		int dist_right; // distance to the right border of the parent
+		int dist_bottom; // distance to the bottom border of the parent
 
 		// to be categorized...
 		static internal ArrayList	controls = new ArrayList();  // All of the application's controls, in a flat list
 		internal ControlCollection	child_controls;		// our children
 		internal Control		parent;			// our parent control
-		internal AccessibleObject	accessibility_object;	// object that contains accessibility information about our control
-		internal BindingContext		binding_context;	// TODO
+		AccessibleObject accessibility_object; // object that contains accessibility information about our control
+		BindingContext binding_context;
 		internal RightToLeft		right_to_left;		// drawing direction for control
-		internal int			layout_suspended;
 		internal ContextMenu		context_menu;		// Context menu associated with the control
 
-		private Graphics		dc_mem;			// Graphics context for double buffering
-		private Bitmap			bmp_mem;		// Bitmap for double buffering control
-		private Region                  invalid_region;
+		// double buffering
+		Graphics dc_mem; // Graphics context for double buffering
+		Bitmap bmp_mem; // Bitmap for double buffering control
+		Region invalid_region;
 
-		private ControlBindingsCollection data_bindings;
+		ControlBindingsCollection data_bindings;
 
 #if NET_2_0
 		internal bool use_compatible_text_rendering;

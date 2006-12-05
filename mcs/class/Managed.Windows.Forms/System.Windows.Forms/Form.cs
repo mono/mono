@@ -1796,7 +1796,7 @@ namespace System.Windows.Forms {
 			switch((Msg)m.Msg) {
 				case Msg.WM_DESTROY: {
 					base.WndProc(ref m);
-					if (!is_recreating) {
+					if (!RecreatingHandle) {
 						this.closing = true;
 					}
 					return;

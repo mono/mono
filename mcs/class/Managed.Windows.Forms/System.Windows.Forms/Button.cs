@@ -82,7 +82,7 @@ namespace System.Windows.Forms {
 		}
 
 		public override string ToString() {
-			return base.ToString() + ", Text: " + this.text;
+			return base.ToString() + ", Text: " + this.Text;
 		}
 		#endregion	// Public Instance Methods
 

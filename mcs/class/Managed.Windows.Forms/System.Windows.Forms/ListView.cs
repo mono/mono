@@ -593,15 +593,13 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override string Text {
-			get { return text; } 
+			get { return base.Text; } 
 			set {
-				if (value == text)
+				if (value == base.Text)
 					return;
 
-				text = value;
+				base.Text = value;
 				this.Redraw (true);
-
-				OnTextChanged (EventArgs.Empty);
 			}
 		}
 
