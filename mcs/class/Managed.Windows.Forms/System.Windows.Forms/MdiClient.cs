@@ -100,6 +100,12 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Public Constructors
 
+		internal bool HorizontalScrollbarVisible {
+			get { return hbar != null && hbar.Visible; }
+		}
+		internal bool VerticalScrollbarVisible {
+			get { return vbar != null && vbar.Visible; }
+		}
 
 		internal void SetParentText(bool text_changed)
 		{
@@ -292,9 +298,6 @@ namespace System.Windows.Forms {
 					sizegrip.Visible = false;
 				return;
 			}
-				
-			bool hbar_required = false;
-			bool vbar_required = false;
 
 			int right = 0;
 			int left = 0;
@@ -307,57 +310,43 @@ namespace System.Windows.Forms {
 				if (child.Right > right)
 					right = child.Right;
 				if (child.Left < left) {
-					hbar_required = true;
 					left = child.Left;
 				}
 				
 				if (child.Bottom > bottom)
 					bottom = child.Bottom;
 				if (child.Top < 0) {
-					vbar_required = true;
 					top = child.Top;
 				}
 			}
 
-			int first_right = Width;
-			int first_bottom = Height;
-			int right_edge = first_right;
-			int bottom_edge = first_bottom;
-			int prev_right_edge;
-			int prev_bottom_edge;
+			int available_width = ClientSize.Width;
+			int available_height = ClientSize.Height;
 
 			bool need_hbar = false;
 			bool need_vbar = false;
 
-			do {
-				prev_right_edge = right_edge;
-				prev_bottom_edge = bottom_edge;
+			if (right - left > available_width || left < 0) {
+				need_hbar = true;
+				available_height -= SystemInformation.HorizontalScrollBarHeight;
+			}
+			if (bottom - top > available_height || top < 0) {
+				need_vbar = true;
+				available_width -= SystemInformation.VerticalScrollBarWidth;
 
-				if (hbar_required || right > right_edge) {
+				if (!need_hbar && (right - left > available_width || left < 0)) {
 					need_hbar = true;
-					bottom_edge = first_bottom - SystemInformation.HorizontalScrollBarHeight;
-				} else {
-					need_hbar = false;
-					bottom_edge = first_bottom;
+					available_height -= SystemInformation.HorizontalScrollBarHeight;
 				}
-
-				if (vbar_required || bottom > bottom_edge) {
-					need_vbar = true;
-					right_edge = first_right - SystemInformation.VerticalScrollBarWidth;
-				} else {
-					need_vbar = false;
-					right_edge = first_right;
-				}
-
-			} while (right_edge != prev_right_edge || bottom_edge != prev_bottom_edge);
-
+			}
+			
 			if (need_hbar) {
 				if (hbar == null) {
 					hbar = new ImplicitHScrollBar ();
 					Controls.AddImplicit (hbar);
 				}
 				hbar.Visible = true;
-				CalcHBar (left, right, right_edge, need_vbar);
+				CalcHBar (left, right, need_vbar);
 			} else if (hbar != null)
 				hbar.Visible = false;
 
@@ -367,7 +356,7 @@ namespace System.Windows.Forms {
 					Controls.AddImplicit (vbar);
 				}
 				vbar.Visible = true;
-				CalcVBar (top, bottom, bottom_edge, need_hbar);
+				CalcVBar (top, bottom, need_hbar);
 			} else if (vbar != null)
 				vbar.Visible = false;
 
@@ -385,39 +374,39 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void CalcHBar (int left, int right, int right_edge, bool vert_vis)
+		private void CalcHBar (int left, int right, bool vert_vis)
 		{
 			initializing_scrollbars = true;
-			int virtual_left = Math.Min (left, 0);
-			int virtual_right = Math.Max (right, right_edge);
-			int diff = (virtual_right - virtual_left) - right_edge;
 
 			hbar.Left = 0;
 			hbar.Top = ClientRectangle.Bottom - hbar.Height;
 			hbar.Width = ClientRectangle.Width - (vert_vis ? SystemInformation.VerticalScrollBarWidth : 0);
 			hbar.LargeChange = 50;
-			hbar.Maximum = diff + 51 + (vert_vis ? SystemInformation.VerticalScrollBarWidth : 0);
-			hbar.Value = -virtual_left;
+			hbar.Minimum = Math.Min (left, 0);
+			hbar.Maximum = Math.Max (right - ClientSize.Width + 51 + (vert_vis ? SystemInformation.VerticalScrollBarWidth : 0), 0);
+			hbar.Value = 0;
+			hbar_value = 0;
 			hbar.ValueChanged += new EventHandler (HBarValueChanged);
 			XplatUI.SetZOrder (hbar.Handle, IntPtr.Zero, true, false);
+			
 			initializing_scrollbars = false;
 		}
 
-		private void CalcVBar (int top, int bottom, int bottom_edge, bool horz_vis)
+		private void CalcVBar (int top, int bottom, bool horz_vis)
 		{
 			initializing_scrollbars = true;
-			int virtual_top = Math.Min (top, 0);
-			int virtual_bottom = Math.Max (bottom, bottom_edge);
-			int diff = (virtual_bottom - virtual_top) - bottom_edge;
 			
 			vbar.Top = 0;
 			vbar.Left = ClientRectangle.Right - vbar.Width;
 			vbar.Height = ClientRectangle.Height - (horz_vis ? SystemInformation.HorizontalScrollBarHeight : 0);
 			vbar.LargeChange = 50;
-			vbar.Minimum = virtual_top;
-			vbar.Maximum = diff + 51 + (horz_vis ? SystemInformation.HorizontalScrollBarHeight : 0);
+			vbar.Minimum = Math.Min (top, 0);
+			vbar.Maximum = Math.Max (bottom - ClientSize.Height + 51 + (horz_vis ? SystemInformation.HorizontalScrollBarHeight : 0), 0);
+			vbar.Value = 0;
+			vbar_value = 0;
 			vbar.ValueChanged += new EventHandler (VBarValueChanged);
 			XplatUI.SetZOrder (vbar.Handle, IntPtr.Zero, true, false);
+			
 			initializing_scrollbars = false;
 		}
 
@@ -432,15 +421,15 @@ namespace System.Windows.Forms {
 			lock_sizing = true;
 
 			try {
+				int diff = hbar_value - hbar.Value;
 				foreach (Form child in Controls) {
-					child.Left += hbar_value - hbar.Value;
+					child.Left += diff;
 				}
 			} finally {
 				lock_sizing = false;
 			}
 
 			hbar_value = hbar.Value;
-			lock_sizing = false;
 		}
 
 		private void VBarValueChanged (object sender, EventArgs e)
@@ -454,15 +443,15 @@ namespace System.Windows.Forms {
 			lock_sizing = true;
 
 			try {
+				int diff = vbar_value - vbar.Value;
 				foreach (Form child in Controls) {
-					child.Top += vbar_value - vbar.Value;
+					child.Top += diff;
 				}
 			} finally {
 				lock_sizing = false;
 			}
 
 			vbar_value = vbar.Value;
-			lock_sizing = false;
 		}
 
 		private void ArrangeWindows ()

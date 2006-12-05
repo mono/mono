@@ -425,6 +425,14 @@ namespace System.Windows.Forms {
 
 			int x = virtual_position.X + move.X;
 			int y = virtual_position.Y + move.Y;
+		
+			Rectangle client = mdi_container.ClientRectangle;
+			if (mdi_container.VerticalScrollbarVisible)
+				client.Width -= SystemInformation.VerticalScrollBarWidth;
+			if (mdi_container.HorizontalScrollbarVisible)
+				client.Height -= SystemInformation.HorizontalScrollBarHeight;
+			if (!client.Contains (new Point(x + clicked_point.X, y + clicked_point.Y)))
+				return;
 
 			UpdateVP (x, y, form.Width, form.Height);
 			start = Cursor.Position;

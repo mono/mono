@@ -1,5 +1,22 @@
 2006-12-05  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* InternalWindowManager.cs:
+	- Save the point where the title bar is clicked.
+	
+	* MdiWindowManager.cs:
+	- Only allow moving of the window as long as the 
+	clicked point on the title bar does not get out of
+	MdiClient's rectangle. Fixes #79982.
+	
+	* MdiClient.cs:
+	- Added Horizontal/VerticalScrollbarVisible.
+	- Simplified the scrollbar sizing algorithm.
+	- Cache the difference in scrolled value in
+	H/VBarValueChanged and move the calculation out
+	of the for loop.
+
+2006-12-05  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* Control.cs: Make the Console.WriteLine in WndProc 
 	write more info.
 

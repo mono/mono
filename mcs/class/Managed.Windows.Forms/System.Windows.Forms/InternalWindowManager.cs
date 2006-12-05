@@ -50,6 +50,7 @@ namespace System.Windows.Forms {
 		// moving windows
 		internal Point start;
 		internal State state;
+		protected Point clicked_point;
 		private FormPos sizing_edge;
 		internal Rectangle virtual_position;
 
@@ -584,6 +585,7 @@ namespace System.Windows.Forms {
 				return;
 
 			state = State.Moving;
+			clicked_point = new Point(x, y);
 			form.Capture = true;
 		}
 
