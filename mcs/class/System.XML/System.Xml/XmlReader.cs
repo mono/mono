@@ -487,7 +487,7 @@ namespace System.Xml
 			if (i >= AttributeCount)
 				throw new ArgumentOutOfRangeException ();
 			MoveToFirstAttribute ();
-			for (int a = 1; a < i; a++)
+			for (int a = 0; a < i; a++)
 				MoveToNextAttribute ();
 		}
 #else

@@ -1,5 +1,9 @@
 2006-12-05  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPathNavigatorReaderTests.cs : added test for MoveToAttribute(int).
+
+2006-12-05  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPathNavigatorTests.cs : added test for XPath navigator editor's
 	  LookupPrefix().
 

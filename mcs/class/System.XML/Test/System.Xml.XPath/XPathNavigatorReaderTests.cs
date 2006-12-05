@@ -664,6 +664,21 @@ namespace MonoTests.System.Xml.XPath
 			nav.MoveToFirstChild ();
 			nav.ReadSubtree ();
 		}
+
+		[Test]
+		public void ReadSubtreeAttributesByIndex ()
+		{
+			XmlWriter xw;
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<u:Timestamp u:Id='ID1' xmlns:u='urn:foo'></u:Timestamp>");
+			XmlReader r = doc.CreateNavigator ().ReadSubtree ();
+			r.Read ();
+			r.MoveToAttribute (0);
+			if (r.LocalName != "Id")
+				r.MoveToAttribute (1);
+				if (r.LocalName != "Id")
+					Assert.Fail ("Should move to the attribute.");
+		}
 	}
 }
 
