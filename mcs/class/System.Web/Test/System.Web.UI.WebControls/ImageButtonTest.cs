@@ -192,18 +192,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Category ("NotWorking")]
 		public void ValidationGroup ()
 		{
-// 3) MonoTests.System.Web.UI.WebControls.ImageButtonTest.ValidationGroup : NUnit.Framework.AssertionException: Validation script not created
-//   at NUnit.Framework.Assert.Fail (System.String message, System.Object[] args) [0x00000]
-//   at NUnit.Framework.Assert.Fail (System.String message) [0x00000]
-//   at MonoTests.System.Web.UI.WebControls.ImageButtonTest.ValidationGroup_Load (System.Web.UI.Page p) [0x00000]
-//   at (wrapper delegate-invoke) System.MulticastDelegate:invoke_void_Page (System.Web.UI.Page)
-//   at MonoTests.SystemWeb.Framework.PageInvoker.Invoke (MonoTests.SystemWeb.Framework.PageDelegate callback) [0x00000]   ----> NUnit.Framework.AssertionException : Validation script not created^M
-//   at System.Runtime.Remoting.Proxies.RealProxy.PrivateInvoke (System.Runtime.Remoting.Proxies.RealProxy rp, IMessage msg, System.Exception& exc, System.Object[]& out_args) [0x00188] in /home/cvs/mcs/class/corlib/System.Runtime.Remoting.Proxies/RealProxy.cs:221
-// --AssertionException
-//   at MonoTests.System.Web.UI.WebControls.ImageButtonTest.ValidationGroup_Load (System.Web.UI.Page p) [0x00000]
-//   at (wrapper delegate-invoke) System.MulticastDelegate:invoke_void_Page (System.Web.UI.Page)
-//   at MonoTests.SystemWeb.Framework.PageInvoker.Invoke (MonoTests.SystemWeb.Framework.PageDelegate callback) [0x00000]
-// 			
 			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
 			WebTest t = new WebTest ("NoEventValidation.aspx");
 			t.Invoker = PageInvoker.CreateOnLoad (ValidationGroup_Load);
@@ -298,12 +286,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			}
 		}
 
-		[Test]
-		public void RaisePostDataChangedEvent ()
-		{
-			// This protected method empty for to be ovveriden by developer 
-			// and not called by Page and Control lifecycle 
-		}
 #endif
 
 		[Test]
