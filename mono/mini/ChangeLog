@@ -1,3 +1,11 @@
+
+Tue Dec 5 17:54:50 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, jit-icalls.h, jit-icalls.c: remove the 
+	ves_array_element_address() jit icall and use a generated
+	managed method instead (which is about 4 times faster for a rank 3
+	array access).
+
 2006-11-29  Mark Mason  <mason@broadcom.com>
 
 	* basic-calls.cs: additional tests for passing
