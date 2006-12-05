@@ -138,10 +138,6 @@ namespace System.Windows.Forms
 				if (allow_sorting != value) {
 					allow_sorting = value;
 					OnAllowSortingChanged (EventArgs.Empty);
-
-					if (datagrid != null) {
-						datagrid.Refresh ();
-					}
 				}
 			}
 		}
@@ -155,10 +151,6 @@ namespace System.Windows.Forms
 				if (alternating_backcolor != value) {
 					alternating_backcolor = value;
 					OnAlternatingBackColorChanged (EventArgs.Empty);
-
-					if (datagrid != null) {
-						datagrid.Refresh ();
-					}
 				}
 			}
 		}
@@ -173,10 +165,6 @@ namespace System.Windows.Forms
 					backcolor = value;
 					// XXX This should be OnBackColorChanged, MS made a c&p error, I think
 					OnForeColorChanged (EventArgs.Empty);
-
-					if (datagrid != null) {
-						datagrid.Refresh ();
-					}
 				}
 			}
 		}
@@ -191,10 +179,6 @@ namespace System.Windows.Forms
 				if (columnheaders_visible != value) {
 					columnheaders_visible = value;
 					OnColumnHeadersVisibleChanged (EventArgs.Empty);
-
-					if (datagrid != null) {
-						datagrid.Refresh ();
-					}
 				}
 			}
 		}
@@ -224,10 +208,6 @@ namespace System.Windows.Forms
 					forecolor = value;
 					// XXX This should be OnForeColorChanged, MS made a c&p error, I think
 					OnBackColorChanged (EventArgs.Empty);
-
-					if (datagrid != null) {
-						datagrid.Refresh ();
-					}
 				}
 			}
 		}
@@ -247,10 +227,6 @@ namespace System.Windows.Forms
 				if (gridline_color != value) {
 					gridline_color = value;
 					OnGridLineColorChanged (EventArgs.Empty);
-
-					if (datagrid != null) {
-						datagrid.Refresh ();
-					}
 				}
 			}
 		}
@@ -265,10 +241,6 @@ namespace System.Windows.Forms
 				if (gridline_style != value) {
 					gridline_style = value;
 					OnGridLineStyleChanged (EventArgs.Empty);
-
-					if (datagrid != null) {
-						datagrid.Refresh ();
-					}
 				}
 			}
 		}
@@ -286,10 +258,6 @@ namespace System.Windows.Forms
 				if (header_backcolor != value) {
 					header_backcolor = value;
 					OnHeaderBackColorChanged (EventArgs.Empty);
-
-					if (datagrid != null) {
-						datagrid.Refresh ();
-					}
 				}
 			}
 		}
@@ -308,10 +276,6 @@ namespace System.Windows.Forms
 				if (header_font != value) {
 					header_font = value;
 					OnHeaderFontChanged (EventArgs.Empty);
-
-					if (datagrid != null) {
-						datagrid.Refresh ();
-					}
 				}
 			}
 		}
@@ -324,11 +288,6 @@ namespace System.Windows.Forms
 
 				if (header_forecolor != value) {
 					header_forecolor = value;
-
-					if (datagrid != null) {
-						datagrid.Refresh ();
-					}
-
 					OnHeaderForeColorChanged (EventArgs.Empty);
 				}
 			}
@@ -342,11 +301,6 @@ namespace System.Windows.Forms
 
 				if (link_color != value) {
 					link_color = value;
-
-					if (datagrid != null) {
-						datagrid.Refresh ();
-					}
-
 					OnLinkColorChanged (EventArgs.Empty);
 				}
 			}

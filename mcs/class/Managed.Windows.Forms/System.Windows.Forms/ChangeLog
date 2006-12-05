@@ -1,5 +1,17 @@
 2006-12-04  Chris Toshok  <toshok@ximian.com>
 
+	* DataGridTableStyle.cs: remove the gross calling of
+	datagrid.Refresh from here.  It's a broken idea and it doesn't
+	work anyway.
+
+	* DataGrid.cs: instead, just register/unregister from the
+	DataGridTableStyle events in CurrentTableStyle.  we play it
+	conservatively and EndEdit + CalcAreasAndInvalidate on any event,
+	even though some would most likely not require it.  Fixes bug
+	#80115 (and one portion of #80117 as a side effect).
+
+2006-12-04  Chris Toshok  <toshok@ximian.com>
+
 	* DataGrid.cs (set_CaptionVisible): EndEdit before doing the work
 	so the textbox (if any) goes away.  Fixes bug #80117.
 

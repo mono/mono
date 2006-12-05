@@ -870,9 +870,18 @@ namespace System.Windows.Forms
 		internal DataGridTableStyle CurrentTableStyle {
 			get { return current_style; }
 			set {
-				current_style = value;
-				current_style.DataGrid = this;
-				CalcAreasAndInvalidate ();
+				if (current_style != value) {
+					if (current_style != null)
+						DisconnectTableStyleEvents ();
+
+					current_style = value;
+
+					if (current_style != null) {
+						current_style.DataGrid = this;
+						ConnectTableStyleEvents ();
+					}
+					CalcAreasAndInvalidate ();
+				}
 			}
 		}
 
@@ -2158,6 +2167,61 @@ namespace System.Windows.Forms
 			list_manager.PositionChanged -= new EventHandler (OnListManagerPositionChanged);
 			list_manager.ItemChanged -= new ItemChangedEventHandler (OnListManagerItemChanged);
 		}
+
+		void DisconnectTableStyleEvents ()
+		{
+			current_style.AllowSortingChanged -= new EventHandler (TableStyleChanged);
+			current_style.AlternatingBackColorChanged -= new EventHandler (TableStyleChanged);
+			current_style.BackColorChanged -= new EventHandler (TableStyleChanged);
+			current_style.ColumnHeadersVisibleChanged -= new EventHandler (TableStyleChanged);
+			current_style.ForeColorChanged -= new EventHandler (TableStyleChanged);
+			current_style.GridLineColorChanged -= new EventHandler (TableStyleChanged);
+			current_style.GridLineStyleChanged -= new EventHandler (TableStyleChanged);
+			current_style.HeaderBackColorChanged -= new EventHandler (TableStyleChanged);
+			current_style.HeaderFontChanged -= new EventHandler (TableStyleChanged);
+			current_style.HeaderForeColorChanged -= new EventHandler (TableStyleChanged);
+			current_style.LinkColorChanged -= new EventHandler (TableStyleChanged);
+			current_style.LinkHoverColorChanged -= new EventHandler (TableStyleChanged);
+			current_style.MappingNameChanged -= new EventHandler (TableStyleChanged);
+			current_style.PreferredColumnWidthChanged -= new EventHandler (TableStyleChanged);
+			current_style.PreferredRowHeightChanged -= new EventHandler (TableStyleChanged);
+			current_style.ReadOnlyChanged -= new EventHandler (TableStyleChanged);
+			current_style.RowHeadersVisibleChanged -= new EventHandler (TableStyleChanged);
+			current_style.RowHeaderWidthChanged -= new EventHandler (TableStyleChanged);
+			current_style.SelectionBackColorChanged -= new EventHandler (TableStyleChanged);
+			current_style.SelectionForeColorChanged -= new EventHandler (TableStyleChanged);
+		}
+
+		void ConnectTableStyleEvents ()
+		{
+			current_style.AllowSortingChanged += new EventHandler (TableStyleChanged);
+			current_style.AlternatingBackColorChanged += new EventHandler (TableStyleChanged);
+			current_style.BackColorChanged += new EventHandler (TableStyleChanged);
+			current_style.ColumnHeadersVisibleChanged += new EventHandler (TableStyleChanged);
+			current_style.ForeColorChanged += new EventHandler (TableStyleChanged);
+			current_style.GridLineColorChanged += new EventHandler (TableStyleChanged);
+			current_style.GridLineStyleChanged += new EventHandler (TableStyleChanged);
+			current_style.HeaderBackColorChanged += new EventHandler (TableStyleChanged);
+			current_style.HeaderFontChanged += new EventHandler (TableStyleChanged);
+			current_style.HeaderForeColorChanged += new EventHandler (TableStyleChanged);
+			current_style.LinkColorChanged += new EventHandler (TableStyleChanged);
+			current_style.LinkHoverColorChanged += new EventHandler (TableStyleChanged);
+			current_style.MappingNameChanged += new EventHandler (TableStyleChanged);
+			current_style.PreferredColumnWidthChanged += new EventHandler (TableStyleChanged);
+			current_style.PreferredRowHeightChanged += new EventHandler (TableStyleChanged);
+			current_style.ReadOnlyChanged += new EventHandler (TableStyleChanged);
+			current_style.RowHeadersVisibleChanged += new EventHandler (TableStyleChanged);
+			current_style.RowHeaderWidthChanged += new EventHandler (TableStyleChanged);
+			current_style.SelectionBackColorChanged += new EventHandler (TableStyleChanged);
+			current_style.SelectionForeColorChanged += new EventHandler (TableStyleChanged);
+		}
+
+		void TableStyleChanged (object sender, EventArgs args)
+		{
+			EndEdit ();
+			CalcAreasAndInvalidate ();
+		}
+
 
 		private void EnsureCellVisibility (DataGridCell cell)
 		{
