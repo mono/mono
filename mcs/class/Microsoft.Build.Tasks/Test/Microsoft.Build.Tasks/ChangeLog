@@ -1,3 +1,7 @@
+2006-12-05  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* ManagedCompiler (TestSources ()): Enabled.
+
 2006-12-04  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* ALTest.cs, ManagedCompilerTest.cs: New tests.

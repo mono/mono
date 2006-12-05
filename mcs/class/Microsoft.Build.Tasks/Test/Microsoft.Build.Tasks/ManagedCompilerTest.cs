@@ -555,7 +555,6 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestSources ()
 		{
 			MCExtended mc = new MCExtended ();
