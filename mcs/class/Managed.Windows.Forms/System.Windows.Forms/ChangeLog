@@ -1,3 +1,19 @@
+2006-12-05  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: Redo Insert a little so that it use IndexOf
+	instead of Split, this prevents it from messing up on things like
+	\n\n\n. Also more effecient since the split array doesn't need to
+	be created.
+	* TextBoxBase.cs: AppendText doesnt handle multiline and non
+	multiline text differently, this is the first of many fixes that
+	will make multiline/non-multiline the same thing as far as the
+	TextBoxBase is concerned.
+	- Don't split the text and insert lines, this can lose some line
+	endings (like is the last line a soft or hard break). Instead use
+	the new Insert.
+	- Fix an off by one when combining all the lines in the Text
+	getter.
+
 2006-12-05  Chris Toshok  <toshok@ximian.com>
 
 	* ButtonBase.cs: a few changes:

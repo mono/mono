@@ -2067,84 +2067,97 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 
 		}
 
-		internal void Insert(Line line, int pos, string s) {
-			Insert(line, null, pos, false, s);
+		private void InsertLineString (Line line, int pos, string s)
+		{
+			bool carriage_return = false;
+
+			if (s.EndsWith ("\r")) {
+				s = s.Substring (0, s.Length - 1);
+				carriage_return = true;
+			}
+
+			InsertString (line, pos, s);
+
+			if (carriage_return) {
+				Line l = GetLine (line.line_no);
+				l.carriage_return = true;
+			}
 		}
 
 		// Insert multi-line text at the given position; use formatting at insertion point for inserted text
-		internal void Insert(Line line, LineTag tag, int pos, bool update_caret, string s) {
-			int		i;
-			int		base_line;
-			string[]	ins;
-			int		insert_lines;
-			int		old_line_count;
-			bool carriage_return = false;
-
+		internal void Insert(Line line, int pos, bool update_caret, string s) {
+			int break_index;
+			int base_line;
+			int old_line_count;
+			int count = 1;
+			LineTag tag = LineTag.FindTag (line, pos);
+			
 			NoRecalc = true;
 
-			// The formatting at the insertion point is used for the inserted text
-			if (tag == null) {
-				tag = LineTag.FindTag(line, pos);
-			}
-
 			base_line = line.line_no;
-
-			ins = s.Split(new char[] {'\n'});
-
-			insert_lines = ins.Length;
 			old_line_count = lines;
 
+			break_index = s.IndexOf ('\n');
+
 			// Bump the text at insertion point a line down if we're inserting more than one line
-			if (insert_lines > 1) {
+			if (break_index > -1) {
 				Split(line, pos);
 				line.soft_break = false;
 				// Remainder of start line is now in base_line + 1
 			}
 
-			if (ins [0].EndsWith ("\r")) {
-				ins [0] = ins[0].Substring (0, ins[0].Length - 1);
-				carriage_return = true;
-			}
+			if (break_index == -1)
+				break_index = s.Length;
 
-			// Insert the first line
-			InsertString(tag, pos, ins[0]);
+			InsertLineString (line, pos, s.Substring (0, break_index));
+			break_index++;
 
-			if (carriage_return) {
-				Line l = GetLine (base_line);
-				l.carriage_return = true;
-			}
+			while (break_index < s.Length) {
+				bool soft = false;
+				int next_break = s.IndexOf ('\n', break_index);
+				int adjusted_next_break;
+				bool carriage_return = false;
 
-			if (insert_lines > 1) {
-				for (i = 1; i < insert_lines; i++) {
-					carriage_return = false;
-					if (ins [i].EndsWith ("\r")) {
-						ins [i] = ins[i].Substring (0, ins[i].Length - 1);
-						carriage_return = true;
-					}
-					Add(base_line + i, ins[i], line.alignment, tag.font, tag.color);
-					if (carriage_return) {
-						Line l = GetLine (base_line + i);
-						l.carriage_return = true;
-					}
+				if (next_break == -1) {
+					next_break = s.Length;
+					soft = true;
 				}
-				if (!s.EndsWith("\n\n")) {
-					this.Combine(base_line + (lines - old_line_count) - 1, base_line + lines - old_line_count);
+
+				adjusted_next_break = next_break;
+				if (s [next_break - 1] == '\r') {
+					adjusted_next_break--;
+					carriage_return = true;
 				}
+
+				string line_text = s.Substring (break_index, adjusted_next_break - break_index);
+				Add (base_line + count, line_text, line.alignment, tag.font, tag.color);
+
+				if (carriage_return) {
+					Line last = GetLine (base_line + count);
+					last.carriage_return = true;
+
+					if (soft)
+						last.soft_break = true;
+				} else if (soft) {
+					Line last = GetLine (base_line + count);
+					last.soft_break = true;
+				}
+
+				count++;
+				break_index = next_break + 1;
 			}
 
 			NoRecalc = false;
+
 			UpdateView(line, lines - old_line_count + 1, pos);
 
 			if (update_caret) {
 				// Move caret to the end of the inserted text
-				if (insert_lines > 1) {
-					Line l = GetLine (line.line_no + lines - old_line_count);
-					PositionCaret(l, l.text.Length);
-				} else {
-					PositionCaret(line, pos + ins[0].Length);
-				}
+				Line l = GetLine (line.line_no + lines - old_line_count);
+				PositionCaret(l, l.text.Length);
 				DisplayCaret ();
 			}
+
 		}
 
 		// Inserts a character at the given position
@@ -3400,7 +3413,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 				}
 			}
 
-			Insert(selection_start.line, null, selection_start.pos, true, s);
+			Insert(selection_start.line, selection_start.pos, true, s);
 			undo.RecordInsertString (selection_start.line, selection_start.pos, s);
 			
 			if (!select_new) {
