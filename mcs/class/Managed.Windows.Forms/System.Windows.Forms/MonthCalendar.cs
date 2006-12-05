@@ -920,16 +920,16 @@ namespace System.Windows.Forms {
 
 		// raises the date changed event
 		protected virtual void OnDateChanged (DateRangeEventArgs drevent) {
-			if (this.DateChanged != null) {
-				this.DateChanged (this, drevent);
-			}
+			EventHandler eh = (EventHandler)(Events [DateChangedEvent]);
+			if (eh != null)
+				eh (this, drevent);
 		}
 
 		// raises the DateSelected event
 		protected virtual void OnDateSelected (DateRangeEventArgs drevent) {
-			if (this.DateSelected != null) {
-				this.DateSelected (this, drevent);
-			}
+			EventHandler eh = (EventHandler)(Events [DateSelectedEvent]);
+			if (eh != null)
+				eh (this, drevent);
 		}
 
 		protected override void OnFontChanged (EventArgs e) {
@@ -984,13 +984,21 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region public events
+		static object DateChangedEvent = new object ();
+		static object DateSelectedEvent = new object ();
 
 		// fired when the date is changed (either explicitely or implicitely)
 		// when navigating the month selector
-		public event DateRangeEventHandler DateChanged;
+		public event DateRangeEventHandler DateChanged {
+			add { Events.AddHandler (DateChangedEvent, value); }
+			remove { Events.RemoveHandler (DateChangedEvent, value); }
+		}
 
 		// fired when the user explicitely clicks on date to select it
-		public event DateRangeEventHandler DateSelected;
+		public event DateRangeEventHandler DateSelected {
+			add { Events.AddHandler (DateSelectedEvent, value); }
+			remove { Events.RemoveHandler (DateSelectedEvent, value); }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -1000,11 +1008,13 @@ namespace System.Windows.Forms {
 		}
 
 		// this event is overridden to supress it from being fired
+		// XXX check this out
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler Click;
 
 		// this event is overridden to supress it from being fired
+		// XXX check this out
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler DoubleClick;
@@ -1016,6 +1026,7 @@ namespace System.Windows.Forms {
 			remove { base.ImeModeChanged -= value; }
 		}
 
+		// XXX check this out
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event PaintEventHandler Paint;

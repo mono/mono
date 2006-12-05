@@ -52,6 +52,8 @@ namespace System.Windows.Forms
 		}
 
 		#region events
+		static object ItemCheckEvent = new object ();
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler Click {
@@ -94,7 +96,10 @@ namespace System.Windows.Forms
 			remove { base.ValueMemberChanged -= value; }
 		}
 
-		public event ItemCheckEventHandler ItemCheck;
+		public event ItemCheckEventHandler ItemCheck {
+			add { Events.AddHandler (ItemCheckEvent, value); }
+			remove { Events.RemoveHandler (ItemCheckEvent, value); }
+		}
 		#endregion Events
 
 		#region Public Properties
@@ -252,8 +257,9 @@ namespace System.Windows.Forms
 
 		protected virtual void OnItemCheck (ItemCheckEventArgs ice)
 		{
-			if (ItemCheck != null)
-				ItemCheck (this, ice);
+			ItemCheckEventHandler eh = (ItemCheckEventHandler)(Events [ItemCheckEvent]);
+			if (eh != null)
+				eh (this, ice);
 		}
 
 		protected override void OnKeyPress (KeyPressEventArgs e)

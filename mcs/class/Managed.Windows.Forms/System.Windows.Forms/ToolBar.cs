@@ -52,6 +52,9 @@ namespace System.Windows.Forms
 		#endregion Instance Variables
 
 		#region Events
+		static object ButtonClickEvent = new object ();
+		static object ButtonDropDownEvent = new object ();
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackColorChanged {
@@ -66,8 +69,15 @@ namespace System.Windows.Forms
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
-		public event ToolBarButtonClickEventHandler ButtonClick;
-		public event ToolBarButtonClickEventHandler ButtonDropDown;
+		public event ToolBarButtonClickEventHandler ButtonClick {
+			add { Events.AddHandler (ButtonClickEvent, value); }
+			remove {Events.RemoveHandler (ButtonClickEvent, value); }
+		}
+
+		public event ToolBarButtonClickEventHandler ButtonDropDown {
+			add { Events.AddHandler (ButtonDropDownEvent, value); }
+			remove {Events.RemoveHandler (ButtonDropDownEvent, value); }
+		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -452,14 +462,16 @@ namespace System.Windows.Forms
 
 			e.Button.Invalidate ();
 
-			if (ButtonClick != null)
-				ButtonClick (this, e);
+			ToolBarButtonClickEventHandler eh = (ToolBarButtonClickEventHandler)(Events [ButtonClickEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnButtonDropDown (ToolBarButtonClickEventArgs e) 
 		{
-			if (ButtonDropDown != null)
-				ButtonDropDown (this, e);
+			ToolBarButtonClickEventHandler eh = (ToolBarButtonClickEventHandler)(Events [ButtonDropDownEvent]);
+			if (eh != null)
+				eh (this, e);
 
 			if (e.Button.DropDownMenu == null)
 				return;

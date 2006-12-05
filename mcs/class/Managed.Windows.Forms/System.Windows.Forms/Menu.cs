@@ -74,8 +74,9 @@ namespace System.Windows.Forms
 
 		internal virtual void OnMenuChanged (EventArgs e)
 		{
-			if (MenuChanged != null)
-				MenuChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [MenuChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		[BrowsableAttribute(false)]
@@ -295,8 +296,12 @@ namespace System.Windows.Forms
 		}
 
 		#endregion Public Methods
+		static object MenuChangedEvent = new object ();
 
-		internal event EventHandler MenuChanged;
+		internal event EventHandler MenuChanged {
+			add { Events.AddHandler (MenuChangedEvent, value); }
+			remove { Events.RemoveHandler (MenuChangedEvent, value); }
+		}
 
 		[ListBindable(false)]
 		public class MenuItemCollection : IList, ICollection, IEnumerable

@@ -1839,8 +1839,9 @@ namespace System.Windows.Forms
 			
 			protected void OnEditingFinished (EventArgs e)
 			{
-				if (EditingFinished != null)
-					EditingFinished (this, EventArgs.Empty);
+				EventHandler eh = (EventHandler)(Events [EditingFinishedEvent]);
+				if (eh != null)
+					eh (this, e);
 			}
 			
 			private void ResizeTextBoxWidth (int new_width)
@@ -1879,7 +1880,11 @@ namespace System.Windows.Forms
 				Size = DefaultSize;
 			}
 			
-			public event EventHandler EditingFinished;
+			static object EditingFinishedEvent = new object ();
+			public event EventHandler EditingFinished {
+				add { Events.AddHandler (EditingFinishedEvent, value); }
+				remove { Events.RemoveHandler (EditingFinishedEvent, value); }
+			}
 		}
 
 		internal override void OnPaintInternal (PaintEventArgs pe)

@@ -120,8 +120,9 @@ namespace System.Windows.Forms
 
 			ThemeEngine.Current.DrawMenuBar (pe.Graphics, this, rect);
 
-			if (Paint != null)
-				Paint (this, pe);
+			PaintEventHandler eh = (PaintEventHandler)(Events [PaintEvent]);
+			if (eh != null)
+				eh (this, pe);
 		}
 
 		internal override void InvalidateItem (MenuItem item)
@@ -162,7 +163,12 @@ namespace System.Windows.Forms
 			tracker.OnMotion (args);
 		}
 
-		internal event PaintEventHandler Paint;
+		static object PaintEvent = new object ();
+
+		internal event PaintEventHandler Paint {
+			add { Events.AddHandler (PaintEvent, value); }
+			remove { Events.RemoveHandler (PaintEvent, value); }
+		}
 
 		#endregion Private Methods
 	}

@@ -255,9 +255,9 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual void OnTextAlignChanged(EventArgs e) {
-			if (TextAlignChanged != null) {
-				TextAlignChanged(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [TextAlignChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void WndProc(ref Message m) {
@@ -266,7 +266,12 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Events
-		public event EventHandler TextAlignChanged;
+		static object TextAlignChangedEvent = new object ();
+
+		public event EventHandler TextAlignChanged {
+			add { Events.AddHandler (TextAlignChangedEvent, value); }
+			remove { Events.RemoveHandler (TextAlignChangedEvent, value); }
+		}
 		#endregion	// Events
 
 		#region Private Methods
