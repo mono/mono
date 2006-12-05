@@ -1,3 +1,9 @@
+2006-12-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: call MapPath on the HttpWorkerRequest so that if
+	FilePath is changed we get the new physical path, not the one of the
+	original request. Fixes bug #80152.
+
 2006-12-03 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* HttpWriter.cs: reverted r38835.
