@@ -32,10 +32,14 @@ using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.Tasks {
 	public abstract class TaskExtension : Task {
+
+		internal TaskExtension ()
+		{
+		}
+
 		public new TaskLoggingHelper Log {
 			get { return base.Log; }
 		}
-		internal TaskExtension () {}
 	}
 }
 

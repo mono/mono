@@ -32,6 +32,7 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.Tasks {
 	public abstract class ManagedCompiler : ToolTaskExtension {
@@ -265,8 +266,11 @@ namespace Microsoft.Build.Tasks {
 
 		public ITaskItem[] Sources {
 			get { return (ITaskItem[]) Bag ["Sources"]; }
-			// FIXME: setting sources changes OutputAssembly
-			set { Bag ["Sources"] = value; }
+			set {
+				Bag ["Sources"] = value;
+				if (Bag ["OutputAssembly"] == null && value != null && value.Length >= 1)
+					Bag ["OutputAssembly"] = new TaskItem (String.Format ("{0}.exe", value [0].ItemSpec));
+			}
 		}
 
 		protected override Encoding StandardOutputEncoding {

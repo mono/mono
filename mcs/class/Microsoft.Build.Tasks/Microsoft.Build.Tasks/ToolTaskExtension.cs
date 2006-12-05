@@ -32,6 +32,10 @@ using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.Tasks {
 	public abstract class ToolTaskExtension : ToolTask {
+
+		internal ToolTaskExtension ()
+		{
+		}
 	
 		Hashtable bag;
 
@@ -88,8 +92,6 @@ namespace Microsoft.Build.Tasks {
 		public new TaskLoggingHelper Log {
 			get { return base.Log; }
 		}
-
-		internal ToolTaskExtension () {}
 	}
 }
 

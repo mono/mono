@@ -119,7 +119,7 @@ namespace Microsoft.Build.Tasks
 				throw new NotImplementedException ();
 			}
 			set {
-				throw new NotImplementedException();
+				throw new NotImplementedException ();
 			}
 		}
 
@@ -144,7 +144,7 @@ namespace Microsoft.Build.Tasks
 		}
 
 		[MonoTODO]
-		protected virtual StringDictionary EnvironmentOverride {
+		protected override StringDictionary EnvironmentOverride {
 			get {
 				throw new NotImplementedException ();
 			}

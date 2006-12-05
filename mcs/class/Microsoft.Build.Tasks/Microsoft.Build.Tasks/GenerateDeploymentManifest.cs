@@ -31,6 +31,7 @@
 
 using System;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Tasks.Deployment.ManifestUtilities;
 using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.Tasks
@@ -183,12 +184,12 @@ namespace Microsoft.Build.Tasks
 			throw new NotImplementedException ();
 		}
 		
-		protected override bool OnManifestLoaded(Microsoft.Build.Tasks.Deployment.ManifestUtilities.Manifest manifest)
+		protected override bool OnManifestLoaded (Manifest manifest)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		protected override bool OnManifestResolved(Microsoft.Build.Tasks.Deployment.ManifestUtilities.Manifest manifest)
+		protected override bool OnManifestResolved (Manifest manifest)
 		{
 			throw new NotImplementedException ();
 		}

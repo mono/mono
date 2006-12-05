@@ -1,3 +1,13 @@
+2006-12-05  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* VCBuild.cs: Changed formatting and changed EnvironmentOverride to
+	override from virtual. (corcompare didn't notice the difference)
+	* ToolTaskExtension.cs, TaskExtension.cs: Moved ctors to the beginning
+	of the file.
+	* GenerateDeploymentManifest.cs: Added "using";
+	* ManagedCompiler.cs: Set OutputAssembly when it's empty and Sources
+	is set.
+
 2006-12-04  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* ManagedCompiler.cs: AddCommandLineCommands (): Changes according to
