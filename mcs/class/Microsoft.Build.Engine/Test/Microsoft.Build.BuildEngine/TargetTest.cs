@@ -40,7 +40,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		Project			project;
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void TestFromXml1 ()
 		{
                         string documentString = @"
@@ -192,7 +191,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
-		[Category ("NotWorking")]
 		public void TestRemoveTask2 ()
 		{
                         string documentString = @"

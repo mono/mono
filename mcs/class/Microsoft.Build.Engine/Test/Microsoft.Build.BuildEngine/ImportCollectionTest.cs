@@ -41,7 +41,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		
 		[Test]
 		[ExpectedException (typeof (InvalidProjectFileException))]
-		[Category ("NotWorking")]
 		public void TestAdd1 ()
 		{
                         string documentString = @"
@@ -96,7 +95,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-		[Category ("NotWorking")]
 		public void TestCopyTo2 ()
 		{
                         string documentString = @"
@@ -133,7 +131,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		[Category ("NotWorking")]
 		public void TestCopyTo4 ()
 		{
                         string documentString = @"
@@ -152,7 +149,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		[Category ("NotWorking")]
 		public void TestCopyTo5 ()
 		{
                         string documentString = @"

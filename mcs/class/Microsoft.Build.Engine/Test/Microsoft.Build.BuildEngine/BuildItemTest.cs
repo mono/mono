@@ -32,145 +32,145 @@ using Microsoft.Build.Utilities;
 using NUnit.Framework;
 
 namespace MonoTests.Microsoft.Build.BuildEngine {
-    [TestFixture]
-    public class BuildItemTest {
+	[TestFixture]
+	public class BuildItemTest {
 
-        BuildItem item;
+		BuildItem item;
+	
+		[Test]
+		public void TestCtor1 ()
+		{
+			string itemName = "itemName";
+			string itemInclude = "a;b;c";
+	
+			item = new BuildItem (itemName, itemInclude);
+	
+			Assert.AreEqual (itemInclude, item.FinalItemSpec, "A1");
+			Assert.AreEqual (itemInclude, item.Include, "A2");
+			Assert.AreEqual (String.Empty, item.Exclude, "A3");
+			Assert.AreEqual (String.Empty, item.Condition, "A4");
+			Assert.AreEqual (false, item.IsImported, "A5");
+			Assert.AreEqual (itemName, item.Name, "A6");
+		}
+	
+		[Test]
+		public void TestCtor2 ()
+		{
+			string itemName = "itemName";
+			string itemSpec = "a;b;c";
+			// result of Utilities.Escape (itemSpec)
+			string escapedInclude = "a%3bb%3bc";
+			ITaskItem taskItem = new TaskItem (itemSpec);
 
-        [Test]
-        public void TestCtor1 ()
-        {
-            string itemName = "itemName";
-            string itemInclude = "a;b;c";
+			item = new BuildItem (itemName, taskItem);
+	
+			Assert.AreEqual (itemSpec, item.FinalItemSpec, "A1");
+			Assert.AreEqual (escapedInclude, item.Include, "A2");
+			Assert.AreEqual (String.Empty, item.Exclude, "A3");
+			Assert.AreEqual (String.Empty, item.Condition, "A4");
+			Assert.AreEqual (false, item.IsImported, "A5");
+			Assert.AreEqual (itemName, item.Name, "A6");
+		}
+	
+		[Test]
+		public void TestCopyCustomMetadataTo1 ()
+		{
+			BuildItem source, destination;
+			string itemName1 = "a";
+			string itemName2 = "b";
+			string itemInclude = "a;b;c";
+			string metadataName = "name";
+			string metadataValue = "value";
 
-            item = new BuildItem (itemName, itemInclude);
+			source = new BuildItem (itemName1, itemInclude);
+			destination = new BuildItem (itemName2, itemInclude);
 
-            Assert.AreEqual (itemInclude, item.FinalItemSpec, "A1");
-            Assert.AreEqual (itemInclude, item.Include, "A2");
-            Assert.AreEqual (String.Empty, item.Exclude, "A3");
-            Assert.AreEqual (String.Empty, item.Condition, "A4");
-            Assert.AreEqual (false, item.IsImported, "A5");
-            Assert.AreEqual (itemName, item.Name, "A6");
-        }
+			source.SetMetadata (metadataName, metadataValue);
 
-        [Test]
-        public void TestCtor2 ()
-        {
-            string itemName = "itemName";
-            string itemSpec = "a;b;c";
-            // result of Utilities.Escape (itemSpec)
-            string escapedInclude = "a%3bb%3bc";
-            ITaskItem taskItem = new TaskItem (itemSpec);
+			source.CopyCustomMetadataTo (destination);
 
-            item = new BuildItem (itemName, taskItem);
+			Assert.AreEqual (metadataValue, destination.GetMetadata (metadataName), "A1");
+			Assert.AreEqual (metadataValue, destination.GetEvaluatedMetadata (metadataName), "A2");
+		}
 
-            Assert.AreEqual (itemSpec, item.FinalItemSpec, "A1");
-            Assert.AreEqual (escapedInclude, item.Include, "A2");
-            Assert.AreEqual (String.Empty, item.Exclude, "A3");
-            Assert.AreEqual (String.Empty, item.Condition, "A4");
-            Assert.AreEqual (false, item.IsImported, "A5");
-            Assert.AreEqual (itemName, item.Name, "A6");
-        }
+		// NOTE: it's weird that they don't throw ArgumentNullException
+		[Test]
+		[Ignore ("MS throws NullRefException")]
+		public void TestCopyCustomMetadataTo2 ()
+		{
+			BuildItem item = new BuildItem ("name", "include");
+			item.SetMetadata ("name", "value");
+			
+			item.CopyCustomMetadataTo (null);
+		}
 
-        [Test]
-        public void TestCopyCustomMetadataTo1 ()
-        {
-            BuildItem source, destination;
-            string itemName1 = "a";
-            string itemName2 = "b";
-            string itemInclude = "a;b;c";
-            string metadataName = "name";
-            string metadataValue = "value";
+		[Test]
+		public void TestHasMetadata ()
+		{
+			string itemName = "a";
+			string itemInclude = "a";
+			string metadataName = "name";
 
-            source = new BuildItem (itemName1, itemInclude);
-            destination = new BuildItem (itemName2, itemInclude);
+			item = new BuildItem (itemName, itemInclude);
 
-            source.SetMetadata (metadataName, metadataValue);
-
-            source.CopyCustomMetadataTo (destination);
-
-            Assert.AreEqual (metadataValue, destination.GetMetadata (metadataName), "A1");
-            Assert.AreEqual (metadataValue, destination.GetEvaluatedMetadata (metadataName), "A2");
-        }
-        
-        // NOTE: it's weird that they don't throw ArgumentNullException
-        [Test]
-	[Ignore ("MS throws NullRefException")]
-        public void TestCopyCustomMetadataTo2 ()
-        {
-        	BuildItem item = new BuildItem ("name", "include");
-        	item.SetMetadata ("name", "value");
-        	
-        	item.CopyCustomMetadataTo (null);
-        }
-
-        [Test]
-        public void TestHasMetadata ()
-        {
-            string itemName = "a";
-            string itemInclude = "a";
-            string metadataName = "name";
-
-            item = new BuildItem (itemName, itemInclude);
-
-            Assert.AreEqual (false, item.HasMetadata (metadataName), "A1");
+			Assert.AreEqual (false, item.HasMetadata (metadataName), "A1");
             
-            item.SetMetadata (metadataName, "value");
+			item.SetMetadata (metadataName, "value");
 
-            Assert.AreEqual (true, item.HasMetadata (metadataName), "A2");
-        }
+			Assert.AreEqual (true, item.HasMetadata (metadataName), "A2");
+		}
 
-        [Test]
-        public void TestGetMetadata ()
-        {
-            string itemName = "a";
-            string itemInclude = "a";
-            string metadataName = "name";
-            string metadataValue = "a;b;c";
+		[Test]
+		public void TestGetMetadata ()
+		{
+			string itemName = "a";
+			string itemInclude = "a";
+			string metadataName = "name";
+			string metadataValue = "a;b;c";
 
-            item = new BuildItem (itemName, itemInclude);
+			item = new BuildItem (itemName, itemInclude);
 
-            Assert.AreEqual (String.Empty, item.GetMetadata (metadataName), "A1");
+			Assert.AreEqual (String.Empty, item.GetMetadata (metadataName), "A1");
 
-            item.SetMetadata (metadataName, metadataValue);
+			item.SetMetadata (metadataName, metadataValue);
 
-            Assert.AreEqual (metadataValue, item.GetMetadata (metadataName), "A2");
-        }
+			Assert.AreEqual (metadataValue, item.GetMetadata (metadataName), "A2");
+		}
 
-        [Test]
-        public void TestGetEvaluatedMetadata ()
-        {
-            string itemName = "a";
-            string itemInclude = "a";
-            string metadataName = "name";
-            string metadataValue = "a;b;c";
+		[Test]
+		public void TestGetEvaluatedMetadata ()
+		{
+			string itemName = "a";
+			string itemInclude = "a";
+			string metadataName = "name";
+			string metadataValue = "a;b;c";
 
-            item = new BuildItem (itemName, itemInclude);
+			item = new BuildItem (itemName, itemInclude);
 
-            Assert.AreEqual (String.Empty, item.GetEvaluatedMetadata (metadataName), "A1");
+			Assert.AreEqual (String.Empty, item.GetEvaluatedMetadata (metadataName), "A1");
 
-            item.SetMetadata (metadataName, metadataValue);
+			item.SetMetadata (metadataName, metadataValue);
 
-            Assert.AreEqual (metadataValue, item.GetEvaluatedMetadata (metadataName), "A2");
-        }
+			Assert.AreEqual (metadataValue, item.GetEvaluatedMetadata (metadataName), "A2");
+		}
 
-        [Test]
-        public void TestRemoveMetadata ()
-        {
-            string itemName = "a";
-            string itemInclude = "a";
-            string metadataName = "name";
-            string metadataValue = "a;b;c";
+		[Test]
+		public void TestRemoveMetadata ()
+		{
+			string itemName = "a";
+			string itemInclude = "a";
+			string metadataName = "name";
+			string metadataValue = "a;b;c";
 
-            item = new BuildItem (itemName, itemInclude);
+			item = new BuildItem (itemName, itemInclude);
 
-            item.SetMetadata (metadataName, metadataValue);
+			item.SetMetadata (metadataName, metadataValue);
 
-            Assert.AreEqual (true, item.HasMetadata (metadataName), "A1");
+			Assert.AreEqual (true, item.HasMetadata (metadataName), "A1");
 
-            item.RemoveMetadata (metadataName);
+			item.RemoveMetadata (metadataName);
 
-            Assert.AreEqual (false, item.HasMetadata (metadataName), "A2");
-        }
-    }
+			Assert.AreEqual (false, item.HasMetadata (metadataName), "A2");
+		}
+	}
 }

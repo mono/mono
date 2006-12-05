@@ -46,7 +46,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestFromXml ()
 		{
 			Engine engine;
@@ -145,7 +144,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestGetParameterValue2 ()
 		{
 			Engine engine;
@@ -226,7 +224,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestSetParameterValue2 ()
 		{
 			Engine engine;

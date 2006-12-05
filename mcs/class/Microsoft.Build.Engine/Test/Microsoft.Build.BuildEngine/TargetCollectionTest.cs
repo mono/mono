@@ -190,7 +190,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void TestExists1 ()
 		{
                         string documentString = @"

@@ -40,7 +40,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		Project			project;
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void TestAdd1 ()
 		{
                         string documentString = @"
@@ -66,9 +65,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidProjectFileException),
-			"The required attribute \"Project\" is missing from element <Import>.  ")]
-		[Category ("NotWorking")]
+		[ExpectedException (typeof (InvalidProjectFileException))]
 		public void TestAdd2 ()
 		{
                         string documentString = @"
