@@ -691,23 +691,23 @@ namespace MonoTests.System.Data
 
 			DataSet ds = new DataSet ();
 			ds.ReadXml (new StringReader (xml));
-			AssertEquals ("#1", 1, ds.Tables.Count);
-			AssertEquals ("#2", "Table", ds.Tables [0].TableName);
-			AssertEquals ("#3", 4, ds.Tables [0].Columns.Count);
-			AssertEquals ("#4a", "Name", ds.Tables [0].Columns [0].ColumnName);
-			AssertEquals ("#4b", 0, ds.Tables [0].Columns [0].Ordinal);
-			AssertEquals ("#5a", "FirstName", ds.Tables [0].Columns [1].ColumnName);
-			AssertEquals ("#5b", 1, ds.Tables [0].Columns [1].Ordinal);
+			NUnit.Framework.Assert.AreEqual (1, ds.Tables.Count, "#1");
+			NUnit.Framework.Assert.AreEqual ("Table", ds.Tables [0].TableName, "#2");
+			NUnit.Framework.Assert.AreEqual (4, ds.Tables [0].Columns.Count, "#3");
+			NUnit.Framework.Assert.AreEqual ("Name", ds.Tables [0].Columns [0].ColumnName, "#4a");
+			NUnit.Framework.Assert.AreEqual (0, ds.Tables [0].Columns [0].Ordinal, "#4b");
+			NUnit.Framework.Assert.AreEqual ("FirstName", ds.Tables [0].Columns [1].ColumnName, "#5a");
+			NUnit.Framework.Assert.AreEqual (1, ds.Tables [0].Columns [1].Ordinal, "#5b");
 #if NET_2_0
-			AssertEquals ("#6a", "Address", ds.Tables [0].Columns [2].ColumnName);
-			AssertEquals ("#6b", 2, ds.Tables [0].Columns [2].Ordinal);
-			AssertEquals ("#7a", "Income", ds.Tables [0].Columns [3].ColumnName);
-			AssertEquals ("#7b", 3, ds.Tables [0].Columns [3].Ordinal);
+			NUnit.Framework.Assert.AreEqual ("Address", ds.Tables [0].Columns [2].ColumnName, "#6a");
+			NUnit.Framework.Assert.AreEqual (2, ds.Tables [0].Columns [2].Ordinal, "#6b");
+			NUnit.Framework.Assert.AreEqual ("Income", ds.Tables [0].Columns [3].ColumnName, "#7a");
+			NUnit.Framework.Assert.AreEqual (3, ds.Tables [0].Columns [3].Ordinal, "#7b");
 #else
-			AssertEquals ("#6a", "Income", ds.Tables [0].Columns [2].ColumnName);
-			AssertEquals ("#6b", 2, ds.Tables [0].Columns [2].Ordinal);
-			AssertEquals ("#7a", "Address", ds.Tables [0].Columns [3].ColumnName);
-			AssertEquals ("#7b", 3, ds.Tables [0].Columns [3].Ordinal);
+			NUnit.Framework.Assert.AreEqual ("Income", ds.Tables [0].Columns [2].ColumnName, "#6a");
+			NUnit.Framework.Assert.AreEqual (2, ds.Tables [0].Columns [2].Ordinal, "#6b");
+			NUnit.Framework.Assert.AreEqual ("Address", ds.Tables [0].Columns [3].ColumnName, "#7a");
+			NUnit.Framework.Assert.AreEqual (3, ds.Tables [0].Columns [3].Ordinal, "#7b");
 #endif
 		}
 
@@ -732,33 +732,33 @@ namespace MonoTests.System.Data
 			DataSet ds = new DataSet ();
 			ds.ReadXml (new StringReader (xml));
 #if NET_2_0
-			AssertEquals ("#1", 1, ds.Tables.Count);
-			AssertEquals ("#2", "Table", ds.Tables [0].TableName);
-			AssertEquals ("#3", 3, ds.Tables [0].Columns.Count);
-			AssertEquals ("#4a", "Name", ds.Tables [0].Columns [0].ColumnName);
-			AssertEquals ("#4b", 0, ds.Tables [0].Columns [0].Ordinal);
-			AssertEquals ("#5a", "FirstName", ds.Tables [0].Columns [1].ColumnName);
-			AssertEquals ("#5b", 1, ds.Tables [0].Columns [1].Ordinal);
-			AssertEquals ("#6a", "Income", ds.Tables [0].Columns [2].ColumnName);
-			AssertEquals ("#6b", 2, ds.Tables [0].Columns [2].Ordinal);
+			NUnit.Framework.Assert.AreEqual (1, ds.Tables.Count, "#1");
+			NUnit.Framework.Assert.AreEqual ("Table", ds.Tables [0].TableName, "#2");
+			NUnit.Framework.Assert.AreEqual (3, ds.Tables [0].Columns.Count, "#3");
+			NUnit.Framework.Assert.AreEqual ("Name", ds.Tables [0].Columns [0].ColumnName, "#4a");
+			NUnit.Framework.Assert.AreEqual (0, ds.Tables [0].Columns [0].Ordinal, "#4b");
+			NUnit.Framework.Assert.AreEqual ("FirstName", ds.Tables [0].Columns [1].ColumnName, "#5a");
+			NUnit.Framework.Assert.AreEqual (1, ds.Tables [0].Columns [1].Ordinal, "#5b");
+			NUnit.Framework.Assert.AreEqual ("Income", ds.Tables [0].Columns [2].ColumnName, "#6a");
+			NUnit.Framework.Assert.AreEqual (2, ds.Tables [0].Columns [2].Ordinal, "#6b");
 #else
-			AssertEquals ("#1", 2, ds.Tables.Count);
-			AssertEquals ("#2", "Table", ds.Tables [0].TableName);
-			AssertEquals ("#3", 3, ds.Tables [0].Columns.Count);
-			AssertEquals ("#4a", "Name", ds.Tables [0].Columns [0].ColumnName);
-			AssertEquals ("#4b", 0, ds.Tables [0].Columns [0].Ordinal);
-			AssertEquals ("#5a", "Table_Id", ds.Tables [0].Columns [1].ColumnName);
-			AssertEquals ("#5b", 1, ds.Tables [0].Columns [1].Ordinal);
-			AssertEquals ("#6a", "Income", ds.Tables [0].Columns [2].ColumnName);
-			AssertEquals ("#6b", 2, ds.Tables [0].Columns [2].Ordinal);
-			AssertEquals ("#7", "FirstName", ds.Tables [1].TableName);
-			AssertEquals ("#8", 3, ds.Tables [1].Columns.Count);
-			AssertEquals ("#9a", "space", ds.Tables [1].Columns [0].ColumnName);
-			AssertEquals ("#9b", 0, ds.Tables [1].Columns [0].Ordinal);
-			AssertEquals ("#10a", "FirstName_Text", ds.Tables [1].Columns [1].ColumnName);
-			AssertEquals ("#10b", 1, ds.Tables [1].Columns [1].Ordinal);
-			AssertEquals ("#11a", "Table_Id", ds.Tables [1].Columns [2].ColumnName);
-			AssertEquals ("#11b", 2, ds.Tables [1].Columns [2].Ordinal);
+			NUnit.Framework.Assert.AreEqual (2, ds.Tables.Count, "#1");
+			NUnit.Framework.Assert.AreEqual ("Table", ds.Tables [0].TableName, "#2");
+			NUnit.Framework.Assert.AreEqual (3, ds.Tables [0].Columns.Count, "#3");
+			NUnit.Framework.Assert.AreEqual ("Name", ds.Tables [0].Columns [0].ColumnName, "#4a");
+			NUnit.Framework.Assert.AreEqual (0, ds.Tables [0].Columns [0].Ordinal, "#4b");
+			NUnit.Framework.Assert.AreEqual ("Table_Id", ds.Tables [0].Columns [1].ColumnName, "#5a");
+			NUnit.Framework.Assert.AreEqual (1, ds.Tables [0].Columns [1].Ordinal, "#5b");
+			NUnit.Framework.Assert.AreEqual ("Income", ds.Tables [0].Columns [2].ColumnName, "#6a");
+			NUnit.Framework.Assert.AreEqual (2, ds.Tables [0].Columns [2].Ordinal, "#6b");
+			NUnit.Framework.Assert.AreEqual ("FirstName", ds.Tables [1].TableName, "#7");
+			NUnit.Framework.Assert.AreEqual (3, ds.Tables [1].Columns.Count, "#8");
+			NUnit.Framework.Assert.AreEqual ("space", ds.Tables [1].Columns [0].ColumnName, "#9a");
+			NUnit.Framework.Assert.AreEqual (0, ds.Tables [1].Columns [0].Ordinal, "#9b");
+			NUnit.Framework.Assert.AreEqual ("FirstName_Text", ds.Tables [1].Columns [1].ColumnName, "#10a");
+			NUnit.Framework.Assert.AreEqual (1, ds.Tables [1].Columns [1].Ordinal, "#10b");
+			NUnit.Framework.Assert.AreEqual ("Table_Id", ds.Tables [1].Columns [2].ColumnName, "#11a");
+			NUnit.Framework.Assert.AreEqual (2, ds.Tables [1].Columns [2].Ordinal, "#11b");
 #endif
 		}
 	}

@@ -42,6 +42,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
 using MonoTests.System.Data.Utils;
 using System.Collections;
+using System.Threading;
 
 namespace MonoTests.System.Data
 {
@@ -3004,7 +3005,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		//[Category ("NotWorking")]
 		public void ReadWriteXmlSchema_ByFileName () {
 			string sTempFileName1 = "tmpDataSet_ReadWriteXml_43899-1.xml";
 			string sTempFileName2 = "tmpDataSet_ReadWriteXml_43899-2.xml";

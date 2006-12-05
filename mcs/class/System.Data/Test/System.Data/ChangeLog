@@ -1,5 +1,11 @@
 2006-12-05  Nagappan A  <anagappan@novell.com>
 
+	* DataSetReadXmlTest.cs (ColumnOrder, XmlSpace): Modified
+	AssertEquals to NUnit.Framework.Assert.AreEqual.
+
+	* DataTableTest.cs (ReadWriteXmlSchema_ByFileName): Fixed Not
+	Working test case and made it working.
+
 	* DataColumnCollectionTest.cs (CaseSensitiveIndexOfTest): To test
 	case sensitive column name with IndexOf member function.
 
