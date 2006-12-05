@@ -123,13 +123,14 @@ namespace System.Windows.Forms {
 		}
 
 		private void RedrawEvent(object sender, System.EventArgs e) {
-			Redraw();
+			Invalidate();
 		}
 
 		#endregion	// Private Properties and Methods
 
 		#region Public Constructors
-		protected ButtonBase() : base() {
+		protected ButtonBase() : base()
+		{
 			flat_style	= FlatStyle.Standard;
 			image_index	= -1;
 			image		= null;
@@ -138,18 +139,13 @@ namespace System.Windows.Forms {
 			ime_mode        = ImeMode.Disable;
 			text_alignment	= ContentAlignment.MiddleCenter;
 			is_default	= false;
-			is_entered	= false;
 			is_pressed	= false;
-			has_focus	= false;
 			text_format	= new StringFormat();
 			text_format.Alignment = StringAlignment.Center;
 			text_format.LineAlignment = StringAlignment.Center;
 			text_format.HotkeyPrefix = HotkeyPrefix.Show;
 
 			TextChanged+=new System.EventHandler(RedrawEvent);
-			ForeColorChanged+=new EventHandler(RedrawEvent);
-			BackColorChanged+=new System.EventHandler(RedrawEvent);
-			FontChanged+=new EventHandler(RedrawEvent);
 			SizeChanged+=new EventHandler(RedrawEvent);
 
 			SetStyle(ControlStyles.ResizeRedraw | 
@@ -177,7 +173,7 @@ namespace System.Windows.Forms {
 
 			set {
 				flat_style = value;
-				Redraw();
+				Invalidate();
 			}
 		}
 		
@@ -190,7 +186,7 @@ namespace System.Windows.Forms {
 
 			set {
 				image = value;
-				Redraw();
+				Invalidate();
 			}
 		}
 
@@ -204,7 +200,7 @@ namespace System.Windows.Forms {
 
 			set {
 				image_alignment=value;
-				Redraw();
+				Invalidate();
 			}
 		}
 
@@ -223,7 +219,7 @@ namespace System.Windows.Forms {
 
 			set {
 				image_index=value;
-				Redraw();
+				Invalidate();
 			}
 		}
 
@@ -241,7 +237,7 @@ namespace System.Windows.Forms {
 						image=null;
 					}
 				}
-				Redraw();
+				Invalidate();
 			}
 		}
 
@@ -269,61 +265,52 @@ namespace System.Windows.Forms {
 				if (text_alignment != value) {
 					text_alignment = value;
 					switch(text_alignment) {
-						case ContentAlignment.TopLeft: {
-							text_format.Alignment=StringAlignment.Near;
-							text_format.LineAlignment=StringAlignment.Near;
-							break;
-						}
+					case ContentAlignment.TopLeft:
+						text_format.Alignment=StringAlignment.Near;
+						text_format.LineAlignment=StringAlignment.Near;
+						break;
 
-						case ContentAlignment.TopCenter: {
-							text_format.Alignment=StringAlignment.Center;
-							text_format.LineAlignment=StringAlignment.Near;
-							break;
-						}
+					case ContentAlignment.TopCenter:
+						text_format.Alignment=StringAlignment.Center;
+						text_format.LineAlignment=StringAlignment.Near;
+						break;
 
-						case ContentAlignment.TopRight: {
-							text_format.Alignment=StringAlignment.Far;
-							text_format.LineAlignment=StringAlignment.Near;
-							break;
-						}
+					case ContentAlignment.TopRight:
+						text_format.Alignment=StringAlignment.Far;
+						text_format.LineAlignment=StringAlignment.Near;
+						break;
 
-						case ContentAlignment.MiddleLeft: {
-							text_format.Alignment=StringAlignment.Near;
-							text_format.LineAlignment=StringAlignment.Center;
-							break;
-						}
+					case ContentAlignment.MiddleLeft:
+						text_format.Alignment=StringAlignment.Near;
+						text_format.LineAlignment=StringAlignment.Center;
+						break;
 
-						case ContentAlignment.MiddleCenter: {
-							text_format.Alignment=StringAlignment.Center;
-							text_format.LineAlignment=StringAlignment.Center;
-							break;
-						}
+					case ContentAlignment.MiddleCenter:
+						text_format.Alignment=StringAlignment.Center;
+						text_format.LineAlignment=StringAlignment.Center;
+						break;
 
-						case ContentAlignment.MiddleRight: {
-							text_format.Alignment=StringAlignment.Far;
-							text_format.LineAlignment=StringAlignment.Center;
-							break;
-						}
+					case ContentAlignment.MiddleRight:
+						text_format.Alignment=StringAlignment.Far;
+						text_format.LineAlignment=StringAlignment.Center;
+						break;
 
-						case ContentAlignment.BottomLeft: {
-							text_format.Alignment=StringAlignment.Near;
-							text_format.LineAlignment=StringAlignment.Far;
-							break;
-						}
+					case ContentAlignment.BottomLeft:
+						text_format.Alignment=StringAlignment.Near;
+						text_format.LineAlignment=StringAlignment.Far;
+						break;
 
-						case ContentAlignment.BottomCenter: {
-							text_format.Alignment=StringAlignment.Center;
-							text_format.LineAlignment=StringAlignment.Far;
-							break;
-						}
+					case ContentAlignment.BottomCenter:
+						text_format.Alignment=StringAlignment.Center;
+						text_format.LineAlignment=StringAlignment.Far;
+						break;
 
-						case ContentAlignment.BottomRight: {
-							text_format.Alignment=StringAlignment.Far;
-							text_format.LineAlignment=StringAlignment.Far;
-							break;
-						}
+					case ContentAlignment.BottomRight:
+						text_format.Alignment=StringAlignment.Far;
+						text_format.LineAlignment=StringAlignment.Far;
+						break;
 					}
-					Redraw();
+					Invalidate();
 				}
 			}
 		}
@@ -357,7 +344,7 @@ namespace System.Windows.Forms {
 			set {
 				if (is_default != value) {
 					is_default = true;
-					Redraw();
+					Invalidate();
 				}
 			}
 		}
@@ -374,13 +361,11 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnEnabledChanged(EventArgs e) {
-			Redraw();
 			base.OnEnabledChanged(e);
 		}
 
 		protected override void OnGotFocus(EventArgs e) {
-			has_focus=true;
-			Redraw();
+			Invalidate();
 			base.OnGotFocus(e);
 		}
 
@@ -404,8 +389,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnLostFocus(EventArgs e) {
-			has_focus=false;
-			Redraw();
+			Invalidate();
 			base.OnLostFocus(e);
 		}
 
@@ -413,23 +397,21 @@ namespace System.Windows.Forms {
 			if (is_enabled && ((mevent.Button & MouseButtons.Left) != 0)) {
 				is_pressed = true;
 				this.Capture = true;
-				Redraw();
+				Invalidate();
 			}
 
 			base.OnMouseDown(mevent);
 		}
 
 		protected override void OnMouseEnter(EventArgs e) {
-			is_entered=true;
 			if ( is_enabled )
-				Redraw();
+				Invalidate();
 			base.OnMouseEnter(e);
 		}
 
 		protected override void OnMouseLeave(EventArgs e) {
-			is_entered=false;
 			if ( is_enabled )
-				Redraw();
+				Invalidate();
 			base.OnMouseLeave(e);
 		}
 
@@ -455,7 +437,7 @@ namespace System.Windows.Forms {
 			}
 
 			if (redraw) {
-				Redraw();
+				Invalidate();
 			}
 
 			base.OnMouseMove(mevent);
@@ -466,9 +448,9 @@ namespace System.Windows.Forms {
 				this.Capture = false;
 				if (is_pressed) {
 					is_pressed = false;
-					Redraw();
+					Invalidate();
 				} else if ((this.flat_style == FlatStyle.Flat) || (this.flat_style == FlatStyle.Popup)) {
-					Redraw();
+					Invalidate();
 				}
 
 				if (mevent.X>=0 && mevent.Y>=0 && mevent.X<this.client_size.Width && mevent.Y<=this.client_size.Height) {
@@ -492,7 +474,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnTextChanged(EventArgs e) {
-			Redraw();
+			Invalidate();
 			base.OnTextChanged(e);
 		}
 
@@ -507,7 +489,7 @@ namespace System.Windows.Forms {
 
 		protected void ResetFlagsandPaint() {
 			// Nothing to do; MS internal
-			// Should we do Redraw (); ?
+			// Should we do Invalidate (); ?
 		}
 
 		protected override void WndProc(ref Message m) {

@@ -1,3 +1,26 @@
+2006-12-05  Chris Toshok  <toshok@ximian.com>
+
+	* ButtonBase.cs: a few changes:
+
+	- don't reinitialize internal Control fields in the ctor when they
+	have the same values as Control sets them.
+
+	- don't set has_focus in OnGotFocus/OnLostFocus.  Control does
+	this before calling those methods.
+
+	- we don't need to call Refresh for anything.  use Invalidate
+	instead.
+
+	- OnEnabledChanged doesn't need to redraw at all - Control.cs
+	calls Refresh in its OnEnabledChanged.
+	
+	- several of the events we were registered for in the ctor to
+	redraw ourselves already include calls to Invalidate in the
+	property setters that raise the events.  remove the extra
+	invalidation.
+
+	- reformat a switch statement that was 83274658 columns wide.
+	
 2006-12-05  Mike Kestner  <mkestner@novell.com>
 
 	* ComboBox.cs: fix a unit test regression from a TextBox
