@@ -33,6 +33,8 @@ using System;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using Mono.Data;
+using System.Configuration;
 
 using NUnit.Framework;
 
@@ -777,6 +779,25 @@ namespace MonoTests.System.Data.SqlClient
 				} catch (InvalidOperationException e) {
 				}
 			}
+		}
+
+		[Test]
+		public void CreateViewSSPITest ()
+		{
+			SqlConnection conn = new SqlConnection (ConfigurationSettings.AppSettings ["SSPIConnString"]);
+			conn.Open ();
+
+			string sql = "create view MONO_TEST_VIEW as select * from Numeric_family";
+
+			SqlCommand dbcmd = new SqlCommand( sql, conn );
+			dbcmd.ExecuteNonQuery();
+
+			sql = "drop view MONO_TEST_VIEW";
+
+			dbcmd = new SqlCommand( sql, conn );
+			dbcmd.ExecuteNonQuery();
+
+			conn.Close();
 		}
 
 		[Test]
