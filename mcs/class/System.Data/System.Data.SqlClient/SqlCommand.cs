@@ -369,7 +369,13 @@ namespace System.Data.SqlClient {
 						Connection.Tds.Execute (sql2.ToString ());
 					break;
 				case CommandType.Text:
-					string sql = String.Format ("{0}{1};{2}", sql1.ToString (), CommandText, sql2.ToString ());
+					//string sql = String.Format ("{0}{1};{2}", sql1.ToString (), CommandText, sql2.ToString ());
+					string sql;
+					if (sql2.Length > 0) {
+						sql = String.Format ("{0}{1};{2}", sql1.ToString (), CommandText, sql2.ToString ());
+					} else {
+						sql = String.Format ("{0}{1}", sql1.ToString (), CommandText);
+					}
 					Connection.Tds.Execute (sql, parms, CommandTimeout, wantResults);
 					break;
 				}

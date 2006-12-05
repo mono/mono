@@ -1,3 +1,9 @@
+2006-12-05  Nagappan A  <anagappan@novell.com>
+
+	* SqlCommand.cs (Execute): If sql2 length is greater than 0, then
+	add ';' and the respective sql2 string and then execute the
+	string. Fixes bug # 79880.
+
 2006-08-30  Nagappan A  <anagappan@novell.com>
 
 	* SqlConnection.cs: Implemented SqlConnection.GetSchema ().
