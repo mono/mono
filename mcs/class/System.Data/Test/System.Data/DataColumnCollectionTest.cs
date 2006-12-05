@@ -584,5 +584,15 @@ namespace MonoTests.System.Data
 			AssertEquals ("test#01", "System.Data.DataColumnCollection", Cols.ToString ());
 		}
 		
+		[Test]
+		public void CaseSensitiveIndexOfTest ()
+		{
+			DataTable dt = new DataTable ("TestCaseSensitiveIndexOf");
+			dt.Columns.Add ("nom_colonne1", typeof (string));
+			dt.Columns.Add ("NOM_COLONNE1", typeof (string));
+			dt.Columns.Remove ("nom_colonne1");
+			int i=dt.Columns.IndexOf ("nom_colonne1"); 
+			NUnit.Framework.Assert.AreEqual (0, dt.Columns.IndexOf ("nom_colonne1"));
+		}
 	}
 }
