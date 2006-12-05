@@ -40,6 +40,20 @@ using System.Collections;
 using System.ComponentModel;
 
 namespace System.Data {
+
+	internal class Doublet
+	{
+		public Doublet (int count, string columnname)
+		{
+			this.count = count;
+			this.columnNames.Add (columnname);
+		}
+		// Number of case insensitive column name
+		public int count;
+		// Array of exact column names
+		public ArrayList columnNames = new ArrayList ();
+	}
+	
 	[Editor ("Microsoft.VSDesigner.Data.Design.ColumnsCollectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 #if !NET_2_0
@@ -52,6 +66,8 @@ namespace System.Data {
 #endif
 	class DataColumnCollection : InternalDataCollectionBase
 	{
+		//This hashtable maps between unique lower case column name to a doublet containing column ref and column count (case insensitive)
+		private Hashtable columnNameCount = new Hashtable ();
 		//This hashtable maps between column name to DataColumn object.
 		private Hashtable columnFromName = new Hashtable();
 		//This ArrayList contains the auto-increment columns names
@@ -168,8 +184,21 @@ namespace System.Data {
 			if (columnFromName.Contains(name))
 				throw new DuplicateNameException("A DataColumn named '" + name + "' already belongs to this DataTable.");
 
-			columnFromName[name] = column;
-
+			columnFromName [name] = column;	
+			// Get existing doublet
+			Doublet d = (Doublet) columnNameCount [name.ToLower ()];
+			if (d != null) {
+				// Add reference count
+				d.count++;
+				// Add a new name
+				d.columnNames.Add (name);
+			} else {
+				// no existing doublet 
+				// create one
+				d = new Doublet (1, name);
+				columnNameCount [name.ToLower ()] = d;
+			}
+			
 			if (name.StartsWith("Column") && name == MakeName(defaultColumnIndex + 1))
 			{
 				do
@@ -177,14 +206,25 @@ namespace System.Data {
 					defaultColumnIndex++;
 				}
 				while (Contains(MakeName(defaultColumnIndex + 1)));
-			}
+			}			
 		}
 
 		internal void UnregisterName(string name)
 		{
 			if (columnFromName.Contains(name))
 				columnFromName.Remove(name);
-
+	
+			// Get the existing doublet
+			Doublet d = (Doublet) columnNameCount [name.ToLower ()];
+			if (d != null) {
+				// decrease reference count
+				d.count--;	
+				d.columnNames.Remove (name);
+				// remove doublet if no more references
+				if (d.count == 0 )
+					columnNameCount.Remove (name.ToLower ());
+			}
+			
 			if (name.StartsWith("Column") && name == MakeName(defaultColumnIndex - 1))
 			{
 				do
@@ -639,22 +679,21 @@ namespace System.Data {
 
 		private int IndexOf (string name, bool error)
 		{
-			int count = 0, match = -1;
-			for (int i = 0; i < List.Count; i++)
-			{
-				String name2 = ((DataColumn) List[i]).ColumnName;
-				if (String.Compare (name, name2, true) == 0)
-				{
-					if (String.Compare (name, name2, false) == 0)
-						return i;
-					match = i;
-					count++;
+			// exact case matching has already be done by the caller
+			// Get existing doublet
+			Doublet d = (Doublet) columnNameCount [name.ToLower ()];
+			if (d != null) {
+				if (d.count == 1)	{
+					// There's only one
+					// return index of the column from the only column name of the doublet
+					return base.List.IndexOf (columnFromName [d.columnNames [0]]);
+				} else if (d.count > 1 && error) {
+					// there's more than one, exception!
+					throw new ArgumentException ("There is no match for the name in the same case and there are multiple matches in different case.");
 				}
+				else 
+					return -1;
 			}
-			if (count == 1)
-				return match;
-			if (count > 1 && error)
-				throw new ArgumentException ("There is no match for the name in the same case and there are multiple matches in different case.");
 			return -1;
 		}
 		

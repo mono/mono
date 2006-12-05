@@ -1,3 +1,8 @@
+2006-11-28 	Hubert FONGARNAND, FrÃ©dÃ©ric Mestayer <informatique.internet@fiducial.fr>
+
+	* DataColumnCollection.cs : Improved Column searching when not
+	using exact column name (case sensitivity). Fixes bug # 80075.
+
 2006-11-28  Nagappan A  <anagappan@novell.com>
 
 	* XmlSchemaDataImporter.cs: Fixed 2.0 profile compilation
