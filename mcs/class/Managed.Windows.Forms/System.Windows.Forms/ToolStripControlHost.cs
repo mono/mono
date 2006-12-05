@@ -91,7 +91,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public ToolStripItemDisplayStyle DisplayStyle {
+		public new ToolStripItemDisplayStyle DisplayStyle {
 			get { return base.DisplayStyle; }
 			set { base.DisplayStyle = value; }
 		}
@@ -99,7 +99,7 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DefaultValue (false)]
-		public bool DoubleClickEnabled {
+		public new bool DoubleClickEnabled {
 			get { return this.double_click_enabled; }
 			set { this.double_click_enabled = value; }
 		}
@@ -143,21 +143,21 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public ContentAlignment ImageAlign {
+		public new ContentAlignment ImageAlign {
 			get { return this.image_align; }
 			set { this.image_align = value; }
 		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public ToolStripItemImageScaling ImageScaling {
+		public new ToolStripItemImageScaling ImageScaling {
 			get { return this.image_scaling; }
 			set { this.image_scaling = value; }
 		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public Color ImageTransparentColor {
+		public new Color ImageTransparentColor {
 			get { return this.image_transparent_color; }
 			set { this.image_transparent_color = value; }
 		}
@@ -186,14 +186,14 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public ContentAlignment TextAlign {
+		public new ContentAlignment TextAlign {
 			get { return this.text_align; }
 			set { this.text_align = value; }
 		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public TextImageRelation TextImageRelation {
+		public new TextImageRelation TextImageRelation {
 			get { return this.text_image_relation; }
 			set { this.text_image_relation = value; }
 		}
@@ -352,7 +352,7 @@ namespace System.Windows.Forms
 		#region Public Events
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler DisplayStyleChanged;
+		public new event EventHandler DisplayStyleChanged;
 		public event EventHandler Enter;
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]

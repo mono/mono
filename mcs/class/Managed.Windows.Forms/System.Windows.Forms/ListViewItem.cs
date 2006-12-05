@@ -453,18 +453,6 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		Rectangle CheckRect {
-			get { return this.checkbox_rect; }
-		}
-
-		Rectangle IconRect {
-			get { return this.icon_rect; }
-		}
-
-		Rectangle LabelRect {
-			get { return this.label_rect; }
-		}
-
 		internal Point Location {
 			set {
 				if (bounds.X == value.X && bounds.Y == value.Y)

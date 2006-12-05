@@ -122,28 +122,28 @@ namespace System.Windows.Forms
 		#region Public Events
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event KeyEventHandler KeyDown;
+		public new event KeyEventHandler KeyDown;
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event KeyPressEventHandler KeyPress;
+		public new event KeyPressEventHandler KeyPress;
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event KeyEventHandler KeyUp;
+		public new event KeyEventHandler KeyUp;
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler LocationChanged;
+		public new event EventHandler LocationChanged;
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler OwnerChanged;
+		public new event EventHandler OwnerChanged;
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler TextChanged;
+		public new event EventHandler TextChanged;
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler Validated;
+		public new event EventHandler Validated;
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event CancelEventHandler Validating;
+		public new event CancelEventHandler Validating;
 		#endregion
 	}
 }

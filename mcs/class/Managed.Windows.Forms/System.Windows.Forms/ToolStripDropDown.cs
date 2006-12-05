@@ -99,7 +99,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public ContextMenu ContextMenu {
+		public new ContextMenu ContextMenu {
 			get { return null; }
 			set { }
 		}
@@ -136,35 +136,35 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public ToolStripGripDisplayStyle GripDisplayStyle {
+		public new ToolStripGripDisplayStyle GripDisplayStyle {
 			get { return ToolStripGripDisplayStyle.Vertical; }
 			set { }
 		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public Padding GripMargin {
+		public new Padding GripMargin {
 			get { return Padding.Empty; }
 			set { }
 		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public Rectangle GripRectangle {
+		public new Rectangle GripRectangle {
 			get { return Rectangle.Empty; }
 			set { }
 		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public ToolStripGripStyle GripStyle {
+		public new ToolStripGripStyle GripStyle {
 			get { return base.GripStyle; }
 			set { base.GripStyle = value; }
 		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public Point Location {
+		public new Point Location {
 			get { return base.Location; }
 			set { base.Location = value; }
 		}
@@ -193,7 +193,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		public Region Region {
+		public new Region Region {
 			get { return base.Region; }
 			set { base.Region = value; }
 		}
@@ -206,14 +206,14 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public bool Stretch {
+		public new bool Stretch {
 			get { return false; }
 			set { }
 		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public int TabIndex {
+		public new int TabIndex {
 			get { return 0; }
 			set { }
 		}
@@ -224,7 +224,7 @@ namespace System.Windows.Forms
 		}
 		
 		[Localizable (true)]
-		public bool Visible {
+		public new bool Visible {
 			get { return base.Visible; }
 			set { base.Visible = value; }
 		}
@@ -305,7 +305,7 @@ namespace System.Windows.Forms
 			this.OnClosed (new ToolStripDropDownClosedEventArgs (reason));
 		}
 
-		public void Show ()
+		public new void Show ()
 		{
 			CancelEventArgs e = new CancelEventArgs ();
 			this.OnOpening (e);
@@ -485,55 +485,55 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Events
-		public event EventHandler BackgroundImageChanged;
+		public new event EventHandler BackgroundImageChanged;
 		public event EventHandler BackgroundImageLayoutChanged;
-		public event EventHandler BindingContextChanged;
-		public event UICuesEventHandler ChangeUICues;
+		public new event EventHandler BindingContextChanged;
+		public new event UICuesEventHandler ChangeUICues;
 		public event ToolStripDropDownClosedEventHandler Closed;
 		public event ToolStripDropDownClosingEventHandler Closing;
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler ContextMenuChanged;
+		public new event EventHandler ContextMenuChanged;
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public event EventHandler ContextMenuStripChanged;
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler DockChanged;
-		public event EventHandler Enter;
-		public event EventHandler FontChanged;
-		public event EventHandler ForeColorChanged;
+		public new event EventHandler DockChanged;
+		public new event EventHandler Enter;
+		public new event EventHandler FontChanged;
+		public new event EventHandler ForeColorChanged;
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event GiveFeedbackEventHandler GiveFeedback;
-		public event HelpEventHandler HelpRequested;
-		public event EventHandler ImeModeChanged;
-		public event KeyEventHandler KeyDown;
-		public event KeyPressEventHandler KeyPress;
-		public event KeyEventHandler KeyUp;
-		public event EventHandler Leave;
+		public new event GiveFeedbackEventHandler GiveFeedback;
+		public new event HelpEventHandler HelpRequested;
+		public new event EventHandler ImeModeChanged;
+		public new event KeyEventHandler KeyDown;
+		public new event KeyPressEventHandler KeyPress;
+		public new event KeyEventHandler KeyUp;
+		public new event EventHandler Leave;
 		public event EventHandler Opened;
 		public event CancelEventHandler Opening;
 		public event EventHandler RegionChanged;
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public event ScrollEventHandler Scroll;
-		public event EventHandler StyleChanged;
+		public new event EventHandler StyleChanged;
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler TabIndexChanged;
+		public new event EventHandler TabIndexChanged;
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler TabStopChanged;
+		public new event EventHandler TabStopChanged;
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler TextChanged;
+		public new event EventHandler TextChanged;
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler Validated;
+		public new event EventHandler Validated;
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event CancelEventHandler Validating;
+		public new event CancelEventHandler Validating;
 		#endregion
 
 		#region Private Methods

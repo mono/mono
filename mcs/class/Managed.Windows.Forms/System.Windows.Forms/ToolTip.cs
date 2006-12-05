@@ -34,7 +34,11 @@ using System.Drawing;
 namespace System.Windows.Forms {
 	[ProvideProperty ("ToolTip", typeof(System.Windows.Forms.Control))]
 	[ToolboxItemFilter("System.Windows.Forms", ToolboxItemFilterType.Allow)]
-	public sealed class ToolTip : System.ComponentModel.Component, System.ComponentModel.IExtenderProvider {
+	public
+#if !NET_2_0
+	sealed
+#endif
+	class ToolTip : System.ComponentModel.Component, System.ComponentModel.IExtenderProvider {
 		#region Local variables
 		internal bool		is_active;
 		internal int		automatic_delay;

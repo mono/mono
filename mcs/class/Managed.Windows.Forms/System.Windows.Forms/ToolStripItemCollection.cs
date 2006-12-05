@@ -54,7 +54,7 @@ namespace System.Windows.Forms
 		#region Public Properties
 		public override bool IsReadOnly { get { return base.IsReadOnly; } }
 		
-		public virtual ToolStripItem this[int index] { get { return (ToolStripItem)base[index]; } }
+		public new virtual ToolStripItem this[int index] { get { return (ToolStripItem)base[index]; } }
 		
 		public virtual ToolStripItem this[string key] {
 			get {
@@ -141,7 +141,7 @@ namespace System.Windows.Forms
 			this.owner.ResumeLayout ();
 		}
 
-		public virtual void Clear ()
+		public new virtual void Clear ()
 		{
 			if (this.IsReadOnly)
 				throw new NotSupportedException ("This collection is read-only");
@@ -221,7 +221,7 @@ namespace System.Windows.Forms
 			owner.PerformLayout ();
 		}
 
-		public void RemoveAt (int index)
+		public new void RemoveAt (int index)
 		{
 			if (this.IsReadOnly)
 				throw new NotSupportedException ("This collection is read-only");

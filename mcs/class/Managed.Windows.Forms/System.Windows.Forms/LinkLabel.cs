@@ -68,7 +68,6 @@ namespace System.Windows.Forms
 		private LinkCollection link_collection;
 		internal Link[] sorted_links;
 		private bool link_visited;
-		private bool link_click;
 		internal Piece[] pieces;
 		internal Font link_font;
 		private Cursor override_cursor;
@@ -94,7 +93,6 @@ namespace System.Windows.Forms
 			LinkArea = new LinkArea (0, -1);
 			link_behavior = LinkBehavior.SystemDefault;
 			link_visited = false;
-			link_click = false;
 			pieces = null;
 			link_font = null;			
 			focused_index = -1;
@@ -992,7 +990,7 @@ namespace System.Windows.Forms
 		}
 #if NET_2_0
 
-		public bool UseCompatibleTextRendering {
+		public new bool UseCompatibleTextRendering {
 			get {
 				return use_compatible_text_rendering;
 			}

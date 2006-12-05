@@ -254,7 +254,7 @@ namespace System.Windows.Forms
 		#region Public Events
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler DoubleClick;
+		public new event EventHandler DoubleClick;
 		public event EventHandler DropDown;
 		public event EventHandler DropDownClosed;
 		public event EventHandler DropDownStyleChanged;

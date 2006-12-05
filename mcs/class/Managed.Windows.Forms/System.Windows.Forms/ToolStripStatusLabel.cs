@@ -73,7 +73,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
-		public ToolStripItemAlignment Alignment {
+		public new ToolStripItemAlignment Alignment {
 			get { return base.Alignment; }
 			set { base.Alignment = value; }
 		}

@@ -174,7 +174,7 @@ namespace System.Windows.Forms
 		[DefaultValue(false)]
 		[Localizable(true)]
 		[RefreshProperties(RefreshProperties.All)]
-    		public virtual bool AutoSize {
+    		public new virtual bool AutoSize {
     			get { return autosize; }
     			set {
     				if (autosize == value)

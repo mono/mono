@@ -52,7 +52,7 @@ namespace System.Windows.Forms
 		#region Public Properties
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public bool AutoToolTip {
+		public new bool AutoToolTip {
 			get { return this.auto_tool_tip; }
 			set { this.auto_tool_tip = value; }
 		}
@@ -61,14 +61,14 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public ToolStripItemDisplayStyle DisplayStyle {
+		public new ToolStripItemDisplayStyle DisplayStyle {
 			get { return this.display_style; }
 			set { this.display_style = value; }
 		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public bool DoubleClickEnabled {
+		public new bool DoubleClickEnabled {
 			get { return this.double_click_enabled; }
 			set { this.double_click_enabled = value; }
 		}
@@ -96,7 +96,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public ContentAlignment ImageAlign {
+		public new ContentAlignment ImageAlign {
 			get { return this.image_align; }
 			set {
 				if (!Enum.IsDefined (typeof (ContentAlignment), value))
@@ -108,7 +108,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public int ImageIndex {
+		public new int ImageIndex {
 			get { return this.image_index; }
 			set {
 				if (value < -1)
@@ -120,7 +120,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public ToolStripItemImageScaling ImageScaling {
+		public new ToolStripItemImageScaling ImageScaling {
 			get { return this.image_scaling; }
 			set { this.image_scaling = value; }
 		}
@@ -134,7 +134,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public ContentAlignment TextAlign {
+		public new ContentAlignment TextAlign {
 			get { return this.text_align; }
 			set {
 				if (!Enum.IsDefined (typeof (ContentAlignment), value))
@@ -146,14 +146,14 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public TextImageRelation TextImageRelation {
+		public new TextImageRelation TextImageRelation {
 			get { return this.text_image_relation; }
 			set { this.text_image_relation = value;	}
 		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public string ToolTipText {
+		public new string ToolTipText {
 			get { return this.tool_tip_text; }
 			set { this.tool_tip_text = value; }
 		}
@@ -211,15 +211,15 @@ namespace System.Windows.Forms
 		#region Public Events
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler DisplayStyleChanged;
+		public new event EventHandler DisplayStyleChanged;
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler EnabledChanged;
+		public new event EventHandler EnabledChanged;
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler TextChanged;
+		public new event EventHandler TextChanged;
 		#endregion
 	}
 }

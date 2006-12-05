@@ -1135,12 +1135,6 @@ namespace System.Windows.Forms
                         CalculateScrollBars ();
 		}
 
-		bool HaveModKeys {
-			get {
-				return (XplatUI.State.ModifierKeys & (Keys.Control | Keys.Shift)) != 0;
-			}
-		}
-
 		private bool KeySearchString (KeyEventArgs ke)
 		{
 			int current_tickcnt = Environment.TickCount;

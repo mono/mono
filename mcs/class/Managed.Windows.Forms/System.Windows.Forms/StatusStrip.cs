@@ -62,22 +62,22 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		public ToolStripGripStyle GripStyle {
+		public new ToolStripGripStyle GripStyle {
 			get { return base.GripStyle; }
 			set { base.GripStyle = value; }
 		}
 		
-		public ToolStripLayoutStyle LayoutStyle {	
+		public new ToolStripLayoutStyle LayoutStyle {	
 			get { return this.layout_style; }
 			set { this.layout_style = value; }
 		}
 		
-		public Padding Padding {
+		public new Padding Padding {
 			get { return base.Padding; }
 			set { base.Padding = value; }
 		}
 		
-		public bool ShowItemToolTips {
+		public new bool ShowItemToolTips {
 			get { return base.ShowItemToolTips; }
 			set { base.ShowItemToolTips = value; }
 		}
@@ -91,7 +91,7 @@ namespace System.Windows.Forms
 			set { this.sizing_grip = value; }
 		}
 		
-		public bool Stretch {
+		public new bool Stretch {
 			get { return this.stretch; }
 			set { this.stretch = value; }
 		}

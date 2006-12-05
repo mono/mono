@@ -281,11 +281,11 @@ namespace System.Windows.Forms {
 		#region Class TabPageControlCollection
 		public class TabPageControlCollection : ControlCollection {
 
-			private TabPage owner;
+			//private TabPage owner;
 
 			public TabPageControlCollection (TabPage owner) : base (owner)
 			{
-				this.owner = owner;
+				//this.owner = owner;
 			}
 
 			public override void Add (Control value)

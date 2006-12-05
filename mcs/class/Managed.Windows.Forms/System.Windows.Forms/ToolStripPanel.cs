@@ -37,7 +37,7 @@ namespace System.Windows.Forms
 {
 	[ComVisible (true)]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
-	public class ToolStripPanel : ContainerControl, IComponent, IDisposable
+	public class ToolStripPanel : ContainerControl, IComponent, IDisposable, IBindableComponent, IDropTarget
 	{
 		private bool done_first_layout;
 		private bool locked;
@@ -70,13 +70,13 @@ namespace System.Windows.Forms
 		}
 		
 		[Browsable (false)]
-		public Size AutoScrollMargin {
+		public new Size AutoScrollMargin {
 			get { return base.AutoScrollMargin; }
 			set { base.AutoScrollMargin = value; }
 		}
 
 		[Browsable (false)]
-		public Size AutoScrollMinSize {
+		public new Size AutoScrollMinSize {
 			get { return base.AutoScrollMinSize; }
 			set { base.AutoScrollMinSize = value; }
 		}
@@ -146,13 +146,13 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
-		public int TabIndex {
+		public new int TabIndex {
 			get { return base.TabIndex; }
 			set { base.TabIndex = value; }
 		}
 
 		[Browsable (false)]
-		public bool TabStop {
+		public new bool TabStop {
 			get { return base.TabStop; }
 			set { base.TabStop = value; }
 		}
@@ -276,11 +276,11 @@ namespace System.Windows.Forms
 		public event EventHandler AutoSizeChanged;
 		public event EventHandler RendererChanged;
 		[Browsable (false)]
-		public event EventHandler TabIndexChanged;
+		public new event EventHandler TabIndexChanged;
 		[Browsable (false)]
-		public event EventHandler TabStopChanged;
+		public new event EventHandler TabStopChanged;
 		[Browsable (false)]
-		public event EventHandler TextChanged;
+		public new event EventHandler TextChanged;
 		#endregion
 
 		#region Private Methods
@@ -313,11 +313,11 @@ namespace System.Windows.Forms
 		[ComVisible (false)]
 		public class ToolStripPanelRowCollection : ArrangedElementCollection, IList, ICollection, IEnumerable
 		{
-			private ToolStripPanel owner;
+			//private ToolStripPanel owner;
 			
 			public ToolStripPanelRowCollection (ToolStripPanel owner) : base ()
 			{
-				this.owner = owner;
+				//this.owner = owner;
 			}
 			
 			public ToolStripPanelRowCollection (ToolStripPanel owner, ToolStripPanelRow[] value) : this (owner)
@@ -327,7 +327,7 @@ namespace System.Windows.Forms
 						this.Add (tspr);
 			}
 			
-			public virtual ToolStripPanelRow this [int index] {
+			public new virtual ToolStripPanelRow this [int index] {
 				get { return (ToolStripPanelRow)base[index]; }
 			}
 
@@ -355,7 +355,7 @@ namespace System.Windows.Forms
 					this.Add (tspr);
 			}
 			
-			public virtual void Clear ()
+			public new virtual void Clear ()
 			{
 				base.Clear ();
 			}
@@ -385,7 +385,7 @@ namespace System.Windows.Forms
 				base.Remove (value);
 			}
 			
-			public void RemoveAt (int index)
+			public new void RemoveAt (int index)
 			{
 				base.RemoveAt (index);
 			}

@@ -74,7 +74,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
-		public bool AutoToolTip {
+		public new bool AutoToolTip {
 			get { return base.AutoToolTip; }
 			set { base.AutoToolTip = value; }
 		}

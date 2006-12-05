@@ -48,13 +48,6 @@ namespace System.Windows.Forms {
 			this.imageCollection = imageCollection;
 		}
 
-		static int GetInt (Stream st)
-		{
-			byte [] bytes = new byte [4];
-			st.Read (bytes, 0, 4);
-			return (bytes [0] + (bytes [1] << 8) + (bytes [2] << 16) + (bytes [3] << 24));
-		}
-
 		private ImageListStreamer (SerializationInfo info, StreamingContext context)
 		{
 			byte [] data = (byte []) info.GetValue ("Data", typeof (byte []));

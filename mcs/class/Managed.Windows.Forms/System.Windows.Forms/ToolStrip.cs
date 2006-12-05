@@ -152,7 +152,7 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
-		public Color ForeColor {
+		public new Color ForeColor {
 			get { return this.fore_color; }
 			set { this.fore_color = value; }
 		}
@@ -278,7 +278,7 @@ namespace System.Windows.Forms
 		}
 		
 		[DefaultValue (false)]
-		public bool TabStop {
+		public new bool TabStop {
 			get { return base.TabStop; }
 			set { base.TabStop = value; }
 		}
@@ -656,7 +656,7 @@ namespace System.Windows.Forms
 		#region Public Events
 		public event EventHandler AutoSizeChanged;
 		[Browsable (false)]
-		public event EventHandler ForeColorChanged;
+		public new event EventHandler ForeColorChanged;
 		public event ToolStripItemEventHandler ItemAdded;
 		public event ToolStripItemClickedEventHandler ItemClicked;
 		public event ToolStripItemEventHandler ItemRemoved;

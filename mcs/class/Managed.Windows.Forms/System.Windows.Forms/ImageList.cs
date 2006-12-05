@@ -974,48 +974,6 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, EventArgs.Empty);
 		}
-
-#if NET_2_0
-		// For use in Designers
-		private void ResetColorDepth()
-		{
-			this.ColorDepth = DefaultColorDepth;
-		}
-
-		// For use in Designers
-		private void ResetImageSize()
-		{
-			this.ImageSize = DefaultImageSize;
-		}
-
-		// For use in Designers
-		private void ResetTransparentColor()
-		{
-			this.TransparentColor = DefaultTransparentColor;
-		}
-
-		// For use in Designers
-		private bool ShouldSerializeColorDepth()
-		{
-			// ColorDepth is serialized in ImageStream when non-empty.
-			// It is serialized even if it has its default value when empty.
-			return images.Empty;
-		}
-
-		// For use in Designers
-		private bool ShouldSerializeImageSize()
-		{
-			// ImageSize is serialized in ImageStream when non-empty.
-			// It is serialized even if it has its default value when empty.
-			return images.Empty;
-		}
-
-		// For use in Designers
-		private bool ShouldSerializeTransparentColor()
-		{
-			return this.TransparentColor != DefaultTransparentColor;
-		}
-#endif
 		#endregion // Private Instance Methods
 
 		#region Public Instance Properties

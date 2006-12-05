@@ -31,7 +31,7 @@ using System.Drawing;
 
 namespace System.Windows.Forms {
 
-	public class DataGridViewRowPostPaintEventArgs : HandledEventArgs {
+	public class DataGridViewRowPostPaintEventArgs : EventArgs {
 
 		private DataGridView dataGridView;
 		private Graphics graphics;

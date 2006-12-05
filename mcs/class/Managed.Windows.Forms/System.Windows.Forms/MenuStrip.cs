@@ -55,19 +55,19 @@ namespace System.Windows.Forms
 		}
 
 		[DefaultValue (ToolStripGripStyle.Hidden)]
-		public ToolStripGripStyle GripStyle {
+		public new ToolStripGripStyle GripStyle {
 			get { return base.GripStyle; }
 			set { base.GripStyle = value; }
 		}
 
 		[DefaultValue (false)]
-		public bool ShowItemToolTips {
+		public new bool ShowItemToolTips {
 			get { return base.ShowItemToolTips; }
 			set { base.ShowItemToolTips = value; }
 		}
 
 		[DefaultValue (true)]
-		public bool Stretch {
+		public new bool Stretch {
 			get { return base.stretch; }
 			set { base.stretch = value; }
 		}

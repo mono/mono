@@ -81,25 +81,25 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
-		public Size AutoScrollMargin {
+		public new Size AutoScrollMargin {
 			get { return base.AutoScrollMargin; }
 			set { base.AutoScrollMargin = value; }
 		}
 
 		[Browsable (false)]
-		public Size AutoScrollMinSize {
+		public new Size AutoScrollMinSize {
 			get { return base.AutoScrollMinSize; }
 			set { base.AutoScrollMinSize = value; }
 		}
 		
 		[Browsable (false)]
-		public Color BackColor {
+		public new Color BackColor {
 			get { return base.BackColor; }
 			set { base.BackColor = value; }
 		}
 		
 		[Browsable (false)]
-		public Image BackgroundImage {
+		public new Image BackgroundImage {
 			get { return base.BackgroundImage; }
 			set { base.BackgroundImage = value; }
 		}
@@ -116,7 +116,7 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
-		public bool CausesValidation {
+		public new bool CausesValidation {
 			get { return base.CausesValidation; }
 			set { base.CausesValidation = value; }
 		}
@@ -127,7 +127,7 @@ namespace System.Windows.Forms
 		}
 		
 		[Browsable (false)]
-		public ControlCollection Controls {
+		public new ControlCollection Controls {
 			get { return base.Controls; }
 		}
 		
@@ -138,7 +138,7 @@ namespace System.Windows.Forms
 		}
 		
 		[Browsable (false)]
-		public Color ForeColor {
+		public new Color ForeColor {
 			get { return base.ForeColor; }
 			set { base.ForeColor = value; }
 		}
@@ -197,19 +197,19 @@ namespace System.Windows.Forms
 
 		#region Public Events
 		[Browsable (false)]
-		public event EventHandler BackColorChanged;
+		public new event EventHandler BackColorChanged;
 		[Browsable (false)]
-		public event EventHandler BackgroundImageChanged;
+		public new event EventHandler BackgroundImageChanged;
 		[Browsable (false)]
 		public event EventHandler BackgroundImageLayoutChanged;
 		[Browsable (false)]
-		public event EventHandler CausesValidationChanged;
+		public new event EventHandler CausesValidationChanged;
 		[Browsable (false)]
 		public event EventHandler ContextMenuStripChanged;
 		[Browsable (false)]
-		public event EventHandler CursorChanged;
+		public new event EventHandler CursorChanged;
 		[Browsable (false)]
-		public event EventHandler ForeColorChanged;
+		public new event EventHandler ForeColorChanged;
 		#endregion
 	}
 }

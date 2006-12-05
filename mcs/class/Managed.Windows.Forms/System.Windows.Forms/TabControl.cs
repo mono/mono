@@ -49,7 +49,6 @@ namespace System.Windows.Forms {
 		private TabPageCollection tab_pages;
 		private bool show_tool_tips;
 		private TabSizeMode size_mode;
-		private Rectangle display_rect;
 		private bool show_slider = false;
 		private ButtonState right_slider_state;
 		private ButtonState left_slider_state;
@@ -181,7 +180,7 @@ namespace System.Windows.Forms {
 		}
 
 		[Localizable(true)]
-		public Point Padding {
+		public new Point Padding {
 			get { return padding; }
 			set {
 				if (value.X < 0 || value.Y < 0)
@@ -362,12 +361,6 @@ namespace System.Windows.Forms {
 
 		internal ButtonState LeftSliderState {
 			get { return left_slider_state; }
-		}
-
-		private Size DefaultItemSize {
-			get {
-				return ThemeEngine.Current.TabControlDefaultItemSize;
-			}
 		}
 
 		#endregion	// Internal Properties
@@ -1079,7 +1072,6 @@ namespace System.Windows.Forms {
 		public new class ControlCollection : System.Windows.Forms.Control.ControlCollection {
 
 			private TabControl owner;
-			private ArrayList list = new ArrayList ();
 
 			public ControlCollection (TabControl owner) : base (owner)
 			{

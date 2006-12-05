@@ -39,11 +39,11 @@ namespace System.Windows.Forms
 	[ClassInterfaceAttribute (ClassInterfaceType.AutoDispatch)]
 	public sealed class SplitterPanel : Panel
 	{
-		private SplitContainer owner;
+		//private SplitContainer owner;
 
 		public SplitterPanel (SplitContainer owner)
 		{
-			this.owner = owner;
+			//this.owner = owner;
 		}
 
 		#region Public Properties

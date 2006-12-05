@@ -192,7 +192,13 @@ namespace System.Windows.Forms {
 		[Localizable(true)]
 		[RefreshProperties(RefreshProperties.Repaint)]
 		[MWFCategory("Behavior")]
-		public virtual bool AutoSize {
+		public
+#if NET_2_0
+		override
+#else
+		virtual
+#endif
+		bool AutoSize {
 			get {
 				return auto_size;
 			}

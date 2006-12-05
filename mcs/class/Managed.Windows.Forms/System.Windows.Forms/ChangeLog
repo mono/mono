@@ -1,3 +1,81 @@
+2006-12-04  Chris Toshok  <toshok@ximian.com>
+
+	* LinkLabel.cs: fix up compiler warnings.
+
+	* TableLayoutSettings.cs: same.
+
+	* TreeView.cs: same.
+
+	* ToolBar.cs: same.
+
+	* TabControl.cs: same.
+
+	* RichTextBox.cs: same.
+
+	* ListViewItem.cs: same.
+
+	* PropertyGrid.cs: same.
+
+	* DataGridViewRowPostPaintEventArgs.cs: corcompare fix.
+
+	* ToolTip.cs same.
+
+	* TextRenderer.cs: fix up compiler warnings.
+
+	* Label.cs: same.
+
+	* Form.cs: corcompare fixes.
+
+	* PictureBox.cs: fix up compiler warnings.
+
+	* ImageListStreamer.cs: same.
+
+	* TrackBar.cs: corcompare fix.
+
+	* Control.cs: fix up compiler warnings.
+
+	* SplitterPanel.cs: same.
+
+	* NumericTextBox.cs: same.
+
+	* ImageList.cs: same.
+
+	* StatusStrip.cs: same.
+
+	* ProgressBar.cs: corcompare fix.
+
+	* ToolStripButton.cs: fix up compiler warnings.
+
+	* ToolStripStatusLabel.cs: same.
+
+	* ToolStripSplitButton.cs: same.
+
+	* ToolStripSeparator.cs: same.
+
+	* ToolStripProgressBar.cs: same.
+
+	* ToolStripDropDownMenu.cs: same
+
+	* ToolStripDropDown.cs: same.
+
+	* ToolStripDropDownButton.cs: same.
+
+	* ToolStrip.cs: same.
+
+	* ToolStripControlHost.cs: same.
+
+	* ToolStripContentPanel.cs: same.
+
+	* ToolStripDropDown.cs: same.
+
+	* ToolStripContainer.cs: same.
+
+	* ToolStripPanel.cs: same, and add "new" where we need it to work
+	with the new ArrangedElementCollection.
+
+	* ToolStripItemCollection.cs: add "new" where we need it to work
+	with the new ArrangedElementCollection.
+
 2006-12-04  Andreia Gaita <avidigal@novell.com>
 
 	* TabControl.cs: Fix default tab selection to after TabControl

@@ -192,7 +192,7 @@ namespace System.Windows.Forms
 		#region Public Properties
 
 		[DefaultValue (true)]
-		public bool AutoSize {
+		public new bool AutoSize {
 			get { return autosize; }
 			set { autosize = value;}
 		}

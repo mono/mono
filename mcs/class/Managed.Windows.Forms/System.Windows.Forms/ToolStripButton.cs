@@ -75,7 +75,7 @@ namespace System.Windows.Forms
 		#region Public Properties
 		[MonoTODO ("Need 2.0 ToolTip to implement tool tips.")]
 		[DefaultValue (true)]
-		public bool AutoToolTip {
+		public new bool AutoToolTip {
 			get { return base.AutoToolTip; }
 			set { base.AutoToolTip = value; }
 		}

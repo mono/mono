@@ -44,7 +44,6 @@ namespace System.Windows.Forms {
 		private Image	image;
 		private PictureBoxSizeMode size_mode;
 		//private bool	recalc;
-		private bool	allow_drop;
 		private Image	initial_image;
 		private int	no_update;
 		#endregion	// Fields
@@ -55,7 +54,6 @@ namespace System.Windows.Forms {
 		public PictureBox ()
 		{
 			//recalc = true;
-			allow_drop = false;
 #if NET_2_0
 			SetStyle (ControlStyles.OptimizedDoubleBuffer, true);
 #else
@@ -197,14 +195,8 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override bool AllowDrop {
-			get {
-				return allow_drop;
-			}
-			set {
-				if (allow_drop != value) {
-					allow_drop = value;
-				}
-			}
+			get { return base.AllowDrop; }
+			set { base.AllowDrop = value; }
 		}
 		#endregion	// Public Properties
 

@@ -266,14 +266,14 @@ namespace System.Windows.Forms
 		[DllImport ("gdi32")]
 		private extern static IntPtr SelectObject (IntPtr hDC, IntPtr hObject);
 
-		[DllImport ("gdi32")]
-		static extern int SetBkColor (IntPtr hdc, int crColor);
+		//[DllImport ("gdi32")]
+		//static extern int SetBkColor (IntPtr hdc, int crColor);
 
 		[DllImport ("gdi32")]
 		static extern int SetBkMode (IntPtr hdc, int iBkMode);
 
-		[DllImport ("gdi32")]
-		static extern bool GetTextExtentExPoint (IntPtr hdc, string lpszStr, int cchString, int nMaxExtent, IntPtr lpnFit, IntPtr alpDx, out VisualStyles.UXTheme.SIZE lpSize);
+		//[DllImport ("gdi32")]
+		//static extern bool GetTextExtentExPoint (IntPtr hdc, string lpszStr, int cchString, int nMaxExtent, IntPtr lpnFit, IntPtr alpDx, out VisualStyles.UXTheme.SIZE lpSize);
 
 		[DllImport ("gdi32")]
 		static extern bool GetTextExtentPoint32 (IntPtr hdc, string lpString, int cbString, out VisualStyles.UXTheme.SIZE lpSize);

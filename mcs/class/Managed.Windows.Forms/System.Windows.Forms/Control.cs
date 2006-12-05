@@ -125,14 +125,14 @@ namespace System.Windows.Forms
 		private ControlBindingsCollection data_bindings;
 
 #if NET_2_0
-		internal bool			use_compatible_text_rendering;
-		static internal bool		verify_thread_handle;
-		private Padding			padding;
-		private Size			maximum_size;
-		private Size			minimum_size;
-		private Size			preferred_size;
-		private Padding			margin;
-		internal Layout.LayoutEngine	layout_engine;
+		internal bool use_compatible_text_rendering;
+		static bool verify_thread_handle;
+		Padding padding;
+		Size maximum_size;
+		Size minimum_size;
+		Size preferred_size;
+		Padding margin;
+		Layout.LayoutEngine layout_engine;
 #endif
 
 		#endregion	// Local Variables
@@ -2957,12 +2957,14 @@ namespace System.Windows.Forms
 			PerformLayout(null, null);
 		}
 
+#if !NET_2_0
 		private void SetImplicitBounds (int x, int y, int width, int height)
 		{
 			Rectangle saved_bounds = explicit_bounds;
 			SetBounds (x, y, width, height);
 			explicit_bounds = saved_bounds;
 		}
+#endif
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public void PerformLayout(Control affectedControl, string affectedProperty) {

@@ -63,13 +63,13 @@ namespace System.Windows.Forms
 		}
 		
 		[Browsable (false)]
-		public Size AutoScrollMargin {
+		public new Size AutoScrollMargin {
 			get { return base.AutoScrollMargin; }
 			set { base.AutoScrollMargin = value; }
 		}
 		
 		[Browsable (false)]
-		public Size AutoScrollMinSize {
+		public new Size AutoScrollMinSize {
 			get { return base.AutoScrollMinSize; }
 			set { base.AutoScrollMinSize = value; }
 		}
@@ -90,7 +90,7 @@ namespace System.Windows.Forms
 		}
 		
 		[Browsable (false)]
-		public bool CausesValidation {
+		public new bool CausesValidation {
 			get { return base.CausesValidation; }
 			set { base.CausesValidation = value; }
 		}
@@ -102,7 +102,7 @@ namespace System.Windows.Forms
 		}
 		
 		[Browsable (false)]
-		public Point Location {
+		public new Point Location {
 			get { return base.Location; }
 			set { base.Location = value; }
 		}
@@ -120,7 +120,7 @@ namespace System.Windows.Forms
 		}
 		
 		[Browsable (false)]
-		public string Name {
+		public new string Name {
 			get { return base.Name; }
 			set { base.Name = value; }
 		}
@@ -156,13 +156,13 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
-		public int TabIndex {
+		public new int TabIndex {
 			get { return base.TabIndex; }
 			set { base.TabIndex = value; }
 		}
 		
 		[Browsable (false)]
-		public bool TabStop {
+		public new bool TabStop {
 			get { return base.TabStop; }
 			set { base.TabStop = value; }
 		}
@@ -194,17 +194,17 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		public event EventHandler AutoSizeChanged;
 		[Browsable (false)]
-		public event EventHandler CausesValidationChanged;
+		public new event EventHandler CausesValidationChanged;
 		[Browsable (false)]
-		public event EventHandler DockChanged;
+		public new event EventHandler DockChanged;
 		public event EventHandler Load;
 		[Browsable (false)]
-		public event EventHandler LocationChanged;
+		public new event EventHandler LocationChanged;
 		public event EventHandler RendererChanged;
 		[Browsable (false)]
-		public event EventHandler TabIndexChanged;
+		public new event EventHandler TabIndexChanged;
 		[Browsable (false)]
-		public event EventHandler TabStopChanged;
+		public new event EventHandler TabStopChanged;
 		#endregion
 	}
 }

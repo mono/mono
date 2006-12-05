@@ -58,7 +58,7 @@ namespace System.Windows.Forms
 			get { return base.LayoutEngine; }
 		}
 		
-		public ToolStripLayoutStyle LayoutStyle {
+		public new ToolStripLayoutStyle LayoutStyle {
 			get { return this.layout_style; }
 			set { this.layout_style = value; }
 		}

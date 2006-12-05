@@ -57,7 +57,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		protected void OnLostFocus (EventArgs args)
+		protected override void OnLostFocus (EventArgs args)
 		{
 			// Update to the last valid value
 			string val = Value.ToString ();

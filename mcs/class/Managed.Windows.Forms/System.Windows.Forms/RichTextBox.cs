@@ -1065,7 +1065,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual void OnSelectionChanged(EventArgs e) {
-			EventHandler eh = (EventHandler)(Events [SelectionChanged]);
+			EventHandler eh = (EventHandler)(Events [SelectionChangedEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
@@ -1079,9 +1079,9 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual void OnVScroll(EventArgs e) {
-			if (VScroll != null) {
-				VScroll(this, e);
-			}
+			EventHandler eh = (EventHandler)(Events [VScrollEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void WndProc(ref Message m) {
@@ -1181,8 +1181,15 @@ namespace System.Windows.Forms {
 			remove { base.QueryContinueDrag -= value; }
 		}
 
-		public event EventHandler			SelectionChanged;
-		public event EventHandler			VScroll;
+		public event EventHandler SelectionChanged {
+			add { Events.AddHandler (SelectionChangedEvent, value); }
+			remove { Events.RemoveHandler (SelectionChangedEvent, value); }
+		}
+
+		public event EventHandler VScroll {
+			add { Events.AddHandler (VScrollEvent, value); }
+			remove { Events.RemoveHandler (VScrollEvent, value); }
+		}
 		#endregion	// Events
 
 		#region Private Methods

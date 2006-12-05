@@ -23,6 +23,7 @@
 //
 // (C) 2004 Novell, Inc.
 //
+
 #if NET_2_0
 using System;
 using System.ComponentModel;
@@ -31,8 +32,9 @@ using System.Windows.Forms.Layout;
 
 namespace System.Windows.Forms {
 
-	public class TableLayoutSettings : LayoutSettings {
-		TableLayoutPanel panel;
+	[Serializable]
+	public sealed class TableLayoutSettings : LayoutSettings {
+		//TableLayoutPanel panel;
 		ColumnStyleCollection column_style;
 		TableLayoutPanelGrowStyle grow_style;
 		int column_count;
@@ -43,7 +45,7 @@ namespace System.Windows.Forms {
 		
 		internal TableLayoutSettings (TableLayoutPanel panel)
 		{
-			this.panel = panel;
+			//this.panel = panel;
 			column_count = 0;
 			row_count = 0;
 			grow_style = TableLayoutPanelGrowStyle.AddRows;

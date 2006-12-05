@@ -253,7 +253,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+#else
 		[DefaultValue(true)]
+#endif
 		[MWFCategory("Layout")]
 		public bool AutoScale {
 			get {
@@ -514,7 +517,11 @@ namespace System.Windows.Forms {
 		[Localizable(true)]
 		[RefreshProperties(RefreshProperties.Repaint)]
 		[MWFCategory("Layout")]
-		public Size MaximumSize {
+		public
+#if NET_2_0
+		override
+#endif
+		Size MaximumSize {
 			get {
 				return maximum_size;
 			}
@@ -685,11 +692,17 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if !NET_2_0
 		[DefaultValue("{Width=0, Height=0}")]
+#endif
 		[Localizable(true)]
 		[RefreshProperties(RefreshProperties.Repaint)]
 		[MWFCategory("Layout")]
-		public Size MinimumSize {
+		public
+#if NET_2_0
+		override
+#endif
+		Size MinimumSize {
 			get {
 				return minimum_size;
 			}

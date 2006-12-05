@@ -1155,28 +1155,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void DrawLinesToNext (TreeNode node, Graphics dc, Rectangle clip, Pen dash, int x, int y)
-		{
-			int middle = y + (ActualItemHeight / 2);
-
-			if (node.NextNode != null) {
-				int top = (node.Nodes.Count > 0 && show_plus_minus ? middle + 4 : middle);
-				int ncap = (node.NextNode.Nodes.Count > 0 && show_plus_minus ? 4 : 8);
-				int bottom = Math.Min (node.NextNode.GetY () + ncap, clip.Bottom);
-
-				dc.DrawLine (dash, x - indent + 9, top, x - indent + 9, bottom);
-			}
-
-			if (node.IsExpanded && node.Nodes.Count > 0) {
-				int top = node.Bounds.Bottom;
-				int ncap = (node.Nodes [0].Nodes.Count > 0 && show_plus_minus ? 4 : 8);
-				int bottom = Math.Min (node.Nodes [0].GetY () + ncap, clip.Bottom);
-				int nx = node.Nodes [0].GetLinesX ();
-
-				dc.DrawLine (dash, nx - indent + 9, top, nx - indent + 9, bottom);
-			}
-		}
-
 		private void DrawNodeImage (TreeNode node, Graphics dc, Rectangle clip, int x, int y)
 		{
 			// Rectangle r = new Rectangle (x, y + 2, ImageList.ImageSize.Width, ImageList.ImageSize.Height);
@@ -1267,12 +1245,6 @@ namespace System.Windows.Forms {
 			if (node.NodeFont == null)
 				font = Font;
 			return (int) DeviceContext.MeasureString (node.Text, font, 0, string_format).Width + 3;
-		}
-
-		private bool ShowSelection {
-			get {
-				return Focused || !hide_selection;
-			}
 		}
 
 		private void DrawSelectionAndFocus(TreeNode node, Graphics dc, Rectangle r)

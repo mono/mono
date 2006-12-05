@@ -73,7 +73,6 @@ namespace System.Windows.Forms {
 		internal Panel help_panel;
 		internal Label help_title_label;
 		internal Label help_description_label;
-		private ContextMenu context_menu;
 		private MenuItem reset_menuitem;
 		private MenuItem description_menuitem;
 		private object current_property_value;
@@ -130,7 +129,7 @@ namespace System.Windows.Forms {
 			alphabetic_toolbarbutton = new ToolBarButton();
 			separator_toolbarbutton = new ToolBarButton();
 			propertypages_toolbarbutton = new ToolBarButton();
-			context_menu = new ContextMenu();
+			ContextMenu context_menu = new ContextMenu();
 
 			toolbar_imagelist = new ImageList();
 			toolbar_imagelist.ColorDepth = ColorDepth.Depth32Bit;

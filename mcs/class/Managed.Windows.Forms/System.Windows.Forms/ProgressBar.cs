@@ -34,7 +34,11 @@ using System.Drawing.Drawing2D;
 namespace System.Windows.Forms
 {
 	[DefaultProperty ("Value")]
-	public sealed class ProgressBar : Control
+	public
+#if !NET_2_0
+	sealed
+#endif
+	class ProgressBar : Control
 	{
 		#region Local Variables
 		private int maximum;

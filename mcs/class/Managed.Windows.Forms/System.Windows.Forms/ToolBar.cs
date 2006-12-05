@@ -163,7 +163,7 @@ namespace System.Windows.Forms
 
 		[DefaultValue (true)]
 		[Localizable (true)]
-		public bool AutoSize {
+		public new bool AutoSize {
 			get { return autosize; }
 			set {
 				if (value == autosize)
