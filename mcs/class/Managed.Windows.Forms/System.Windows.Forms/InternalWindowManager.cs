@@ -33,9 +33,6 @@ using System.Runtime.InteropServices;
 namespace System.Windows.Forms {
 
 	internal class InternalWindowManager {
-
-		private static Color titlebar_color;
-
 		private Size MinTitleBarSize = new Size (115, 25);
 
 		internal Form form;
@@ -97,7 +94,6 @@ namespace System.Windows.Forms {
 
 		public InternalWindowManager (Form form)
 		{
-			titlebar_color = Color.FromArgb (255, 0, 0, 255);
 			this.form = form;
 
 			form.SizeChanged += new EventHandler (FormSizeChangedHandler);

@@ -1,4 +1,8 @@
 2006-12-05  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+	
+	* InternalWindowManager.cs: Remove an unused field.
+	
+2006-12-05  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* InternalWindowManager.cs:
 	- Save the point where the title bar is clicked.
