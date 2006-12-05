@@ -482,7 +482,8 @@ namespace System.Windows.Forms
 				if (dropdown_style == ComboBoxStyle.DropDownList) 
 					return 0;
 				
-				return textbox_ctrl.SelectionLength;
+				int result = textbox_ctrl.SelectionLength;
+				return result == -1 ? 0 : result;
 			}
 			set {
 				if (dropdown_style == ComboBoxStyle.DropDownList) 
