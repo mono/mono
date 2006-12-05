@@ -75,14 +75,15 @@ namespace System.Windows.Forms
 			SetStyle (ControlStyles.SupportsTransparentBackColor, true);
 			SetStyle (ControlStyles.AllPaintingInWmPaint, true);
 
-			this.AutoSize = true;
+			this.SuspendLayout ();
+			base.AutoSize = true;
 			this.back_color = Control.DefaultBackColor;
 			this.dock_style = this.DefaultDock;
+			base.Font = new Font ("Tahoma", 8.25f);
 			this.fore_color = Control.DefaultForeColor;
 			this.grip_display_style = ToolStripGripDisplayStyle.Vertical;
 			this.grip_margin = this.DefaultGripMargin;
 			this.grip_style = ToolStripGripStyle.Visible;
-			this.image_list = new ImageList ();
 			this.image_scaling_size = new Size (16, 16);
 			this.items = new ToolStripItemCollection (this, items);
 			this.layout_engine = new ToolStripSplitStackLayout ();
@@ -92,7 +93,8 @@ namespace System.Windows.Forms
 			this.renderer = null;
 			this.render_mode = ToolStripRenderMode.ManagerRenderMode;
 			this.show_item_tool_tips = this.DefaultShowItemToolTips;
-
+			base.TabStop = false;
+			this.ResumeLayout ();
 			DoAutoSize ();
 		}
 		#endregion
@@ -105,12 +107,22 @@ namespace System.Windows.Forms
 				base.dock_style = DockStyle.None;
 			}
 		}
+
+		public override bool AutoSize {
+			get { return base.AutoSize; }
+			set { base.AutoSize = value; }
+		}
 		
 		new public Color BackColor {
 			get { return this.back_color; }
 			set { this.back_color = value; }
 		}
 
+		public override Cursor Cursor {
+			get { return base.Cursor; }
+			set { base.Cursor = value; this.OnCursorChanged (EventArgs.Empty); }
+		}
+		
 		public override Rectangle DisplayRectangle {
 			get {
 				if (this.orientation == Orientation.Horizontal)
@@ -151,10 +163,25 @@ namespace System.Windows.Forms
 			}
 		}
 
+		public override Font Font {
+			get { return base.Font; }
+			set { 
+				if (base.Font != value) {
+					base.Font = value; 
+					this.PerformLayout (); 
+				}
+			}
+		}
+		
 		[Browsable (false)]
 		public new Color ForeColor {
 			get { return this.fore_color; }
-			set { this.fore_color = value; }
+			set { 
+				if (this.fore_color != value) {
+					this.fore_color = value; 
+					this.OnForeColorChanged (EventArgs.Empty); 
+				}
+			}
 		}
 
 		[Browsable (false)]
@@ -164,7 +191,12 @@ namespace System.Windows.Forms
 
 		public Padding GripMargin {
 			get { return this.grip_margin; }
-			set { this.grip_margin = value; }
+			set { 
+				if (this.grip_margin != value) {
+					this.grip_margin = value; 
+					this.PerformLayout (); 
+				}
+			}
 		}
 
 		[Browsable (false)]
@@ -182,11 +214,14 @@ namespace System.Windows.Forms
 
 		[DefaultValue (ToolStripGripStyle.Visible)]
 		public ToolStripGripStyle GripStyle {
-			get { return grip_style; }
+			get { return this.grip_style; }
 			set {
-				if (!Enum.IsDefined (typeof (ToolStripGripStyle), value))
-					throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for ToolStripGripStyle", value));
-				grip_style = value;
+				if (this.grip_style != value) {
+					if (!Enum.IsDefined (typeof (ToolStripGripStyle), value))
+						throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for ToolStripGripStyle", value));
+					this.grip_style = value;
+					this.PerformLayout ();
+				}
 			}
 		}
 
@@ -226,11 +261,14 @@ namespace System.Windows.Forms
 		public ToolStripLayoutStyle LayoutStyle {
 			get { return layout_style; }
 			set {
-				if (!Enum.IsDefined (typeof (ToolStripLayoutStyle), value))
-					throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for ToolStripLayoutStyle", value));
+				if (this.layout_style != value) {
+					if (!Enum.IsDefined (typeof (ToolStripLayoutStyle), value))
+						throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for ToolStripLayoutStyle", value));
 
-				this.layout_style = value;
-				DoAutoSize ();
+					this.layout_style = value;
+					this.PerformLayout ();
+					this.OnLayoutStyleChanged (EventArgs.Empty);
+				}
 			}
 		}
 
@@ -247,7 +285,14 @@ namespace System.Windows.Forms
 					
 				return this.renderer; 
 			}
-			set { this.renderer = value; }
+			set { 
+				if (this.renderer != value) {
+					this.renderer = value; 
+					this.render_mode = ToolStripRenderMode.Custom;
+					this.PerformLayout ();
+					this.OnRendererChange (EventArgs.Empty);
+				}
+			}
 		}
 
 		public ToolStripRenderMode RenderMode {
@@ -259,7 +304,7 @@ namespace System.Windows.Forms
 				if (value == ToolStripRenderMode.Custom && this.renderer == null)
 					throw new NotSupportedException ("Must set Renderer property before setting RenderMode to Custom");
 				if (value == ToolStripRenderMode.Professional || value == ToolStripRenderMode.System)
-					this.renderer = new ToolStripProfessionalRenderer ();
+					this.Renderer = new ToolStripProfessionalRenderer ();
 
 				this.render_mode = value;
 			}
@@ -336,7 +381,7 @@ namespace System.Windows.Forms
 
 		public override string ToString ()
 		{
-			return String.Format ("{0}, Name: {1}, Items: {2}", base.ToString(), this.name, this.items.Count.ToString ());
+			return String.Format ("{0}, Name: {1}, Items: {2}", base.ToString(), this.Name, this.items.Count.ToString ());
 		}
 		#endregion
 
@@ -431,6 +476,13 @@ namespace System.Windows.Forms
 		protected virtual void OnLayoutCompleted (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [LayoutCompletedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
+		protected virtual void OnLayoutStyleChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events[LayoutStyleChangedEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
@@ -680,6 +732,11 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (AutoSizeChangedEvent, value); }
 		}
 
+		public new event EventHandler CursorChanged {
+			add { base.CursorChanged += value; }
+			remove { base.CursorChanged -= value; }
+		}
+
 		[Browsable (false)]
 		public new event EventHandler ForeColorChanged {
 			add { base.ForeColorChanged += value; }
@@ -764,6 +821,13 @@ namespace System.Windows.Forms
 				if (tsi.Visible)
 					tsi.DropDown.Close ();
 		}
+
+		//private void OnCursorChanged (EventArgs e)
+		//{
+		//        EventHandler eh = (EventHandler)(Events[CursorChangedEvent]);
+		//        if (eh != null)
+		//                eh (this, e);
+		//}
 		#endregion
 	}
 }

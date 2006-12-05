@@ -122,8 +122,8 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		new public string Name {
-			get { return base.name; }
-			set { base.name = value; }
+			get { return base.Name; }
+			set { base.Name = value; }
 		}
 
 		[Browsable (false)]

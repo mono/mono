@@ -104,10 +104,11 @@ namespace System.Windows.Forms
 		int layout_suspended;
 		internal AnchorStyles		anchor_style;		// anchoring requirements for our control
 		internal DockStyle		dock_style;		// docking requirements for our control (supercedes anchoring)
+		// Please leave the next 4 as internal until DefaultLayout (2.0) is rewritten
 		internal int			dist_left;		// distance to the left border of the parent
-		int dist_top; // distance to the top border of the parent
-		int dist_right; // distance to the right border of the parent
-		int dist_bottom; // distance to the bottom border of the parent
+		internal int			dist_top; // distance to the top border of the parent
+		internal int			dist_right; // distance to the right border of the parent
+		internal int			dist_bottom; // distance to the bottom border of the parent
 
 		// to be categorized...
 		static internal ArrayList	controls = new ArrayList();  // All of the application's controls, in a flat list

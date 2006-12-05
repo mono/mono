@@ -55,7 +55,7 @@ namespace System.Windows.Forms
 
 		public ToolStripControlHost (Control c, string name) : this (c)
 		{
-			this.control.name = name;
+			this.control.Name = name;
 		}
 		#endregion
 

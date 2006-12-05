@@ -1,3 +1,11 @@
+2006-12-05  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Revert dist_top, dist_right, and dist_bottom to 
+	internal until I can rewrite DefaultLayout.
+	* ToolStrip.cs: Fix build error and some general cleaning.
+	* ToolStripControlHost.cs, SplitterPanel.cs, DataGridView.cs:
+	Fix build errors caused by making some of Control's fields private.
+
 2006-12-05  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: Redo Insert a little so that it use IndexOf

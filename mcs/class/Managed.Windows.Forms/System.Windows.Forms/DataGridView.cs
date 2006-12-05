@@ -1069,8 +1069,8 @@ namespace System.Windows.Forms {
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override string Text {
-			get { return base.text; }
-			set { base.text = value; }
+			get { return base.Text; }
+			set { base.Text = value; }
 		}
 
 		[Browsable (false)]
