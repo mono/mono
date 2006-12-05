@@ -963,7 +963,7 @@ namespace System.Windows.Forms {
 
 		#region Private Helper Methods
 
-		public GridItem FindFirstItem (GridItem root)
+		private GridItem FindFirstItem (GridItem root)
 		{
 			if (root.GridItemType == GridItemType.Property)
 				return root;
