@@ -31,7 +31,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (false, textBox.AcceptsTab, "#1a");
 			textBox.Multiline = true;
 			textBox.AcceptsTab = true;
-			SendKeys.SendWait ("^%");
+			//	SendKeys.SendWait ("^%");
 			Assert.AreEqual (true, textBox.AcceptsTab, "#1b");
 			Assert.AreEqual (true, textBox.AutoSize, "#2");
 			Assert.AreEqual ("Window", textBox.BackColor.Name, "#3a");
@@ -131,7 +131,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")] // bug #79799
 		public void AppendText_Multiline_CRLF ()
 		{
 			TextBox textBox = new TextBox ();
@@ -161,11 +160,10 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")] // bug #79799
 		public void AppendText_Multiline_LF ()
 		{
 			TextBox textBox = new TextBox ();
-			textBox.Multiline = true;
+
 			textBox.Text = "ha";
 			textBox.AppendText ("hi\n\n");
 			textBox.AppendText ("ho\n");
@@ -309,7 +307,6 @@ namespace MonoTests.System.Windows.Forms
 		{
 			string text = "line1\n\nline2\nline3\r\nline4";
 
-			textBox.Multiline = true;
 			textBox.Size = new Size (300, 168);
 			textBox.Text = text;
 
