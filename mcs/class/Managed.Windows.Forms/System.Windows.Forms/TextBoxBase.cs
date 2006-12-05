@@ -547,26 +547,19 @@ namespace System.Windows.Forms {
 					return string.Empty;
 				}
 
-				if (!multiline) {
-					return document.Root.text.ToString();
-				} else {
-					StringBuilder	sb;
-					int		i;
+				StringBuilder sb = new StringBuilder();
 
-					sb = new StringBuilder();
-
-					Line line = null;
-					for (i = 1; i < document.Lines; i++) {
-						if (line != null && !line.soft_break)
-							sb.Append (Environment.NewLine);
-						line = document.GetLine (i);
-						sb.Append(line.text.ToString());
-						if (line.carriage_return)
-							sb.Append ("\r");
-					}
-					sb.Append(document.GetLine(document.Lines).text.ToString());
-					return sb.ToString();
+				Line line = null;
+				for (int i = 1; i <= document.Lines; i++) {
+					if (line != null && line.carriage_return)
+						sb.Append ("\r");
+					if (line != null && !line.soft_break)
+						sb.Append (Environment.NewLine);
+					line = document.GetLine (i);
+					sb.Append(line.text.ToString());
 				}
+
+				return sb.ToString();
 			}
 
 			set {
@@ -575,27 +568,14 @@ namespace System.Windows.Forms {
 
 				if ((value != null) && (value != "")) {
 
-					if (multiline) {
-						string[]	lines;
+					document.Empty ();
 
-						lines = value.Split(new char[] {'\n'});
-
-						this.Lines = lines;
+					document.Insert (document.GetLine (1), 0, false, value);
 							
-						document.PositionCaret (document.GetLine (1), 0);
-						document.SetSelectionToCaret (true);
+					document.PositionCaret (document.GetLine (1), 0);
+					document.SetSelectionToCaret (true);
 
-						ScrollToCaret ();
-					} else {
-						document.Clear();
-						document.Add(1, CaseAdjust(value), alignment, Font, ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor));
-						CalculateDocument();
-
-						document.PositionCaret (document.GetLine (1), 0);
-						document.SetSelectionToCaret (true);
-
-						ScrollToCaret ();
-					}
+					ScrollToCaret ();
 				} else {
 					document.Empty();
 					CalculateDocument();
@@ -664,17 +644,17 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Methods
 		public void AppendText(string text) {
-			if (multiline) {
+			//if (multiline) {
 
 				document.MoveCaret(CaretDirection.CtrlEnd);				
-				document.Insert (document.caret.line, document.caret.tag, document.caret.pos, false, text);
-				CalculateDocument();
-			} else {
-				document.MoveCaret(CaretDirection.CtrlEnd);
-				document.InsertStringAtCaret(text, true);
+				document.Insert (document.caret.line, /* document.caret.tag, */ document.caret.pos, false, text);
+				//	CalculateDocument();
+				//} else {
+				//	document.MoveCaret(CaretDirection.CtrlEnd);
+				//	document.InsertStringAtCaret(text, true);
 
-				Invalidate();
-			}
+				//	Invalidate();
+				// }
 
 			document.MoveCaret(CaretDirection.CtrlEnd);
 			document.SetSelectionToCaret (true);
