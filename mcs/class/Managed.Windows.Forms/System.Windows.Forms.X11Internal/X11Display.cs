@@ -1260,6 +1260,7 @@ namespace System.Windows.Forms.X11Internal {
 			Grab.Confined = false;
 		}
 
+#if notyet
 		private void TranslatePropertyToClipboard (IntPtr property)
 		{
 			IntPtr actual_atom;
@@ -1290,6 +1291,7 @@ namespace System.Windows.Forms.X11Internal {
 				Xlib.XFree(prop);
 			}
 		}
+#endif
 
 		// XXX should we be using @handle instead of Atoms.CLIPBOARD here?
 		public int[] ClipboardAvailableFormats (IntPtr handle)
@@ -1727,6 +1729,23 @@ namespace System.Windows.Forms.X11Internal {
 #endif
 					XEvent xevent = new XEvent ();
 					Xlib.XNextEvent (display, ref xevent);
+
+					// this is kind of a gross place to put this, but we don't know about the
+					// key repeat state in X11ThreadQueue, nor to we want the queue code calling
+					// XPeekEvent.
+					if (!detectable_key_auto_repeat &&
+					    xevent.type == XEventName.KeyRelease &&
+					    Xlib.XPending (display) > 0) {
+
+						XEvent nextevent = new XEvent ();
+						Xlib.XPeekEvent (display, ref nextevent);
+
+						if (nextevent.type == XEventName.KeyPress &&
+						    nextevent.KeyEvent.keycode == xevent.KeyEvent.keycode &&
+						    nextevent.KeyEvent.time == xevent.KeyEvent.time) {
+							continue;
+						}
+					}
 
 					X11Hwnd hwnd = (X11Hwnd)Hwnd.GetObjectFromWindow(xevent.AnyEvent.window);
 					if (hwnd != null)
