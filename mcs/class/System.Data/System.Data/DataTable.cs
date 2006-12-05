@@ -2549,15 +2549,15 @@ namespace System.Data {
 			if (TableName == "") {
 				throw new InvalidOperationException ("Cannot serialize the DataTable. DataTable name is not set.");
 			}
-			XmlWriter xw = null;
+			XmlTextWriter writer = null;
 			try {
 				XmlWriterSettings s = GetWriterSettings ();
 				s.OmitXmlDeclaration = false;
-				xw = XmlWriter.Create (fileName, s);
-				WriteXmlSchema (xw);
+				writer = new XmlTextWriter (fileName, null);
+				WriteXmlSchema (writer);
 			} finally {
-				if (xw != null) {
-					xw.Close ();
+				if (writer != null) {
+					writer.Close ();
 				}
 			}
 		}
@@ -2640,15 +2640,16 @@ namespace System.Data {
 			if (TableName == "") {
 				throw new InvalidOperationException ("Cannot serialize the DataTable. DataTable name is not set.");
 			}
-			XmlWriter xw = null;
+			XmlTextWriter writer = null;
 			try {
 				XmlWriterSettings s = GetWriterSettings ();
 				s.OmitXmlDeclaration = false;
-				xw = XmlWriter.Create (fileName, s);
-				WriteXmlSchema (xw, writeHierarchy);
+				writer = new XmlTextWriter (fileName, null);
+				WriteXmlSchema (writer, writeHierarchy);
 			} finally {
-				if (xw != null)
-					xw.Close ();
+				if (writer != null) {
+					writer.Close ();
+				}
 			}
 		}
 #endif
