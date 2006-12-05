@@ -116,9 +116,31 @@ namespace Mono.Security.X509 {
 			}
 		}
 
+		public void Import (X509Crl crl) 
+		{
+			CheckStore (_storePath, true);
+
+			string filename = Path.Combine (_storePath, GetUniqueName (crl));
+			if (!File.Exists (filename)) {
+				using (FileStream fs = File.OpenWrite (filename)) {
+					byte[] data = crl.RawData;
+					fs.Write (data, 0, data.Length);
+					fs.Close ();
+				}
+			}
+		}
+
 		public void Remove (X509Certificate certificate) 
 		{
 			string filename = Path.Combine (_storePath, GetUniqueName (certificate));
+			if (File.Exists (filename)) {
+				File.Delete (filename);
+			}
+		}
+
+		public void Remove (X509Crl crl) 
+		{
+			string filename = Path.Combine (_storePath, GetUniqueName (crl));
 			if (File.Exists (filename)) {
 				File.Delete (filename);
 			}
@@ -128,28 +150,50 @@ namespace Mono.Security.X509 {
 
 		private string GetUniqueName (X509Certificate certificate) 
 		{
-			string method = null;
-			byte[] name = null;
-
-			// We prefer Subject Key Identifier as the unique name
-			// as it will provide faster lookups
-			X509Extension ext = certificate.Extensions ["2.5.29.14"];
-			if (ext != null) {
-				SubjectKeyIdentifierExtension ski = new SubjectKeyIdentifierExtension (ext);
-				name = ski.Identifier;
-				method = "ski";
-			}
-			else {
+			string method;
+			byte[] name = GetUniqueName (certificate.Extensions);
+			if (name == null) {
 				method = "tbp"; // thumbprint
 				name = certificate.Hash;
+			} else {
+				method = "ski";
 			}
+			return GetUniqueName (method, name, ".cer");
+		}
 
+		private string GetUniqueName (X509Crl crl) 
+		{
+			string method;
+			byte[] name = GetUniqueName (crl.Extensions);
+			if (name == null) {
+				method = "tbp"; // thumbprint
+				name = crl.Hash;
+			} else {
+				method = "ski";
+			}
+			return GetUniqueName (method, name, ".crl");
+		}
+
+		private byte[] GetUniqueName (X509ExtensionCollection extensions) 
+		{
+			// We prefer Subject Key Identifier as the unique name
+			// as it will provide faster lookups
+			X509Extension ext = extensions ["2.5.29.14"];
+			if (ext == null)
+				return null;
+
+			SubjectKeyIdentifierExtension ski = new SubjectKeyIdentifierExtension (ext);
+			return ski.Identifier;
+		}
+
+		private string GetUniqueName (string method, byte[] name, string fileExtension) 
+		{
 			StringBuilder sb = new StringBuilder (method);
 			sb.Append ("-");
 			foreach (byte b in name) {
 				sb.Append (b.ToString ("X2", CultureInfo.InvariantCulture));
 			}
-			sb.Append (".cer");
+			sb.Append (fileExtension);
 
 			return sb.ToString ();
 		}

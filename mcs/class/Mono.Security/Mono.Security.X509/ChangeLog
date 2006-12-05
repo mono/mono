@@ -1,3 +1,12 @@
+2006-12-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509CRL.cs: Expose the Hash and RawData properties to make it easier
+	to support CRL into stores.
+	* X509Store.cs: Add support to Import and Remove CRL from stores. 
+	Refactor the code to get unique identificators.
+	* X509Stores.cs: Change default, for Open, to stores that supports 
+	CRLs.
+
 2006-12-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate.cs: Added support for inherited DSA key parameters.

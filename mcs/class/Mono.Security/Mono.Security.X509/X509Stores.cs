@@ -138,7 +138,7 @@ namespace Mono.Security.X509 {
 			if (!create && !Directory.Exists (path))
 				return null;
 
-			return new X509Store (path, false);
+			return new X509Store (path, true);
 		}
 
 		// names

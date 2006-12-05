@@ -4,9 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (C) 2004 Novell (http://www.novell.com)
-//
-
+// Copyright (C) 2004,2006 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -123,6 +121,7 @@ namespace Mono.Security.X509 {
 		private byte[] signature;
 		private X509ExtensionCollection extensions;
 		private byte[] encoded;
+		private byte[] hash_value;
 
 		public X509Crl (byte[] crl) 
 		{
@@ -214,6 +213,18 @@ namespace Mono.Security.X509 {
 			get { return extensions; }
 		}
 
+		public byte[] Hash {
+			get {
+				if (hash_value == null) {
+					ASN1 encodedCRL = new ASN1 (encoded);
+					byte[] toBeSigned = encodedCRL [0].GetBytes ();
+					HashAlgorithm ha = HashAlgorithm.Create (GetHashName ());
+					hash_value = ha.ComputeHash (toBeSigned);
+				}
+				return hash_value;
+			}
+		}
+
 		public string IssuerName {
 			get { return issuer; }
 		}
@@ -236,6 +247,10 @@ namespace Mono.Security.X509 {
 					return null;
 				return (byte[]) signature.Clone ();
 			}
+		}
+
+		public byte[] RawData {
+			get { return (byte[]) encoded.Clone (); }
 		}
 
 		public byte Version {
@@ -329,12 +344,24 @@ namespace Mono.Security.X509 {
 			}
 		}
 
-		private byte[] GetHash (string hashName) 
+		private string GetHashName ()
 		{
-			ASN1 encodedCRL = new ASN1 (encoded);
-			byte[] toBeSigned = encodedCRL [0].GetBytes ();
-			HashAlgorithm ha = HashAlgorithm.Create (hashName);
-			return ha.ComputeHash (toBeSigned);
+			switch (signatureOID) {
+			// MD2 with RSA encryption 
+			case "1.2.840.113549.1.1.2":
+				// maybe someone installed MD2 ?
+				return "MD2";
+			// MD5 with RSA encryption 
+			case "1.2.840.113549.1.1.4":
+				return "MD5";
+			// SHA-1 with DSA
+			case "1.2.840.10040.4.3":
+			// SHA-1 with RSA Encryption 
+			case "1.2.840.113549.1.1.5":
+				return "SHA1";
+			default:
+				throw new CryptographicException ("Unsupported hash algorithm: " + signatureOID);
+			}
 		}
 
 		internal bool VerifySignature (DSA dsa) 
@@ -343,8 +370,7 @@ namespace Mono.Security.X509 {
 				throw new CryptographicException ("Unsupported hash algorithm: " + signatureOID);
 			DSASignatureDeformatter v = new DSASignatureDeformatter (dsa);
 			// only SHA-1 is supported
-			string hashName = "SHA1";
-			v.SetHashAlgorithm (hashName);
+			v.SetHashAlgorithm ("SHA1");
 			ASN1 sign = new ASN1 (signature);
 			if ((sign == null) || (sign.Count != 2))
 				return false;
@@ -354,32 +380,14 @@ namespace Mono.Security.X509 {
 			byte[] sig = new byte [40];
 			Buffer.BlockCopy (part1, 0, sig, (20 - part1.Length), part1.Length);
 			Buffer.BlockCopy (part2, 0, sig, (40 - part2.Length), part2.Length);
-			return v.VerifySignature (GetHash (hashName), sig);
+			return v.VerifySignature (Hash, sig);
 		}
 
 		internal bool VerifySignature (RSA rsa) 
 		{
 			RSAPKCS1SignatureDeformatter v = new RSAPKCS1SignatureDeformatter (rsa);
-			string hashName = null;
-			switch (signatureOID) {
-				// MD2 with RSA encryption 
-				case "1.2.840.113549.1.1.2":
-					// maybe someone installed MD2 ?
-					hashName = "MD2";
-					break;
-				// MD5 with RSA encryption 
-				case "1.2.840.113549.1.1.4":
-					hashName = "MD5";
-					break;
-				// SHA-1 with RSA Encryption 
-				case "1.2.840.113549.1.1.5":
-					hashName = "SHA1";
-					break;
-				default:
-					throw new CryptographicException ("Unsupported hash algorithm: " + signatureOID);
-			}
-			v.SetHashAlgorithm (hashName);
-			return v.VerifySignature (GetHash (hashName), signature);
+			v.SetHashAlgorithm (GetHashName ());
+			return v.VerifySignature (Hash, signature);
 		}
 
 		public bool VerifySignature (AsymmetricAlgorithm aa) 
