@@ -148,6 +148,7 @@ namespace Mono.Tools {
 					return stores.OtherPeople;
 				case X509Stores.Names.IntermediateCA:
 					return stores.IntermediateCA;
+				case "Root": // special case (same as trusted root)
 				case X509Stores.Names.TrustedRoot:
 					return stores.TrustedRoot;
 				case X509Stores.Names.Untrusted:
@@ -247,8 +248,13 @@ namespace Mono.Tools {
 						coll.Count, store.Name);
 					break;
 				case ObjectType.CRL:
-					// TODO ArrayList list = LoadCRLs (file);
-					throw new NotImplementedException ("Adding CRL not yet supported");
+					ArrayList list = LoadCRLs (file);
+					foreach (X509Crl crl in list) {
+						store.Import (crl);
+					}
+					Console.WriteLine ("{0} CRL(s) added to store {1}.", 
+						list.Count, store.Name);
+					break;
 				default:
 					throw new NotSupportedException (type.ToString ());
 			}
