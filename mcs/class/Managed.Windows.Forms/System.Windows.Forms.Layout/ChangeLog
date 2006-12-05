@@ -1,3 +1,10 @@
+2006-12-04  Chris Toshok  <toshok@ximian.com>
+
+	* ArrangedElementCollection.cs: fix up corcompare for this file.
+	we need to make all the interface methods explicit, not public,
+	and add internal methods that can be called from the subclasses
+	(we also call them from the explicit implementations.)
+
 2006-11-30  Jonathan Pobst <monkey@jpobst.com>
 	* ArrangedElementCollection.cs: Make constructor internal.
 	* FlowLayout.cs: Make work with ToolStrip.

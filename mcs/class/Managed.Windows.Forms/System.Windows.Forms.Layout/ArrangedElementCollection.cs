@@ -71,57 +71,101 @@ namespace System.Windows.Forms.Layout
 		#endregion
 
 		#region IList Members
-		public int Add (object value)
+		int IList.Add (object value)
+		{
+			return Add (value);
+		}
+
+		internal int Add (object value)
 		{
 			return list.Add (value);
 		}
 
-		public void Clear ()
+		void IList.Clear ()
+		{
+			Clear ();
+		}
+
+		internal void Clear ()
 		{
 			list.Clear ();
 		}
 
-		public bool Contains (object value)
+		bool IList.Contains (object value)
+		{
+			return Contains (value);
+		}
+
+		internal bool Contains (object value)
 		{
 			return list.Contains (value);
 		}
 
-		public int IndexOf (object value)
+		int IList.IndexOf (object value)
+		{
+			return IndexOf (value);
+		}
+
+		internal int IndexOf (object value)
 		{
 			return list.IndexOf (value);
 		}
 
-		public void Insert (int index, object value)
+		void IList.Insert (int index, object value)
+		{
+			Insert (index, value);
+		}
+
+		internal void Insert (int index, object value)
 		{
 			list.Insert (index, value);
 		}
 
-		public bool IsFixedSize {
+		bool IList.IsFixedSize {
+			get { return this.IsFixedSize; }
+		}
+
+		internal bool IsFixedSize {
 			get { return list.IsFixedSize; }
 		}
 
-		public void Remove (object value)
+		void IList.Remove (object value)
+		{
+			Remove (value);
+		}
+
+		internal void Remove (object value)
 		{
 			list.Remove (value);
 		}
 
-		public void RemoveAt (int index)
+		void IList.RemoveAt (int index)
+		{
+			RemoveAt (index);
+		}
+
+		internal void RemoveAt (int index)
 		{
 			list.RemoveAt (index);
 		}
 
-		public object this[int index] {
+		object IList.this[int index] {
+			get { return this[index]; }
+			set { this[index] = value; }
+		}
+
+		internal object this[int index] {
 			get { return list[index]; }
 			set { list[index] = value; }
 		}
 		#endregion
 
 		#region ICollection Members
-		public bool IsSynchronized {
+		bool ICollection.IsSynchronized {
 			get { return list.IsSynchronized; }
 		}
 
-		public object SyncRoot {
+		object ICollection.SyncRoot {
 			get { return list.IsSynchronized; }
 		}
 		#endregion
