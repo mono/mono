@@ -35,6 +35,7 @@ using System.Web.UI.WebControls;
 using MonoTests.SystemWeb.Framework;
 
 using NUnit.Framework;
+using MonoTests.stand_alone.WebHarness;
 
 namespace MonoTests.System.Web.UI.WebControls {
 
@@ -61,6 +62,14 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			return base.CreateControlStyle ();
 		}
+#if NET_2_0
+		protected override void RaisePostBackEvent (string argument)
+		{
+			WebTest.CurrentTest.UserData = "RaisePostBackEvent";
+			base.RaisePostBackEvent (argument);
+		}
+#endif
+
 	}
 
 	[TestFixture]
@@ -95,8 +104,34 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual ("table", t.Tag, "TagName");
 			Assert.AreEqual (0, t.Attributes.Count, "Attributes.Count-2");
 			Assert.AreEqual (0, t.StateBag.Count, "ViewState.Count-2");
+#if NET_2_0
+			Assert.AreEqual (String.Empty, t.Caption, "Caption");
+			Assert.AreEqual (TableCaptionAlign.NotSet, t.CaptionAlign, "CaptionAlign");
+#endif
+
+		}
+#if NET_2_0
+		[Test]
+		public void Caption ()
+		{
+			TestTable t = new TestTable ();
+			t.Caption = "CaptionText";
+			string html = t.Render ();
+			string orig = "<table border=\"0\"><caption>CaptionText</caption></table>";
+			HtmlDiff.AssertAreEqual (orig, html, "Caption");
 		}
 
+		[Test]
+		public void CaptionAlign ()
+		{
+			TestTable t = new TestTable ();
+			t.Caption = "CaptionText";
+			t.CaptionAlign = TableCaptionAlign.Left; 
+			string html = t.Render ();
+			string orig = "<table border=\"0\"><caption align=\"Left\">CaptionText</caption></table>";
+			HtmlDiff.AssertAreEqual (orig, html, "CaptionAlign");
+		}
+#endif
 		[Test]
 		public void NullProperties ()
 		{
@@ -526,5 +561,37 @@ namespace MonoTests.System.Web.UI.WebControls {
 			string s = writer.InnerWriter.ToString ();
 			Assert.AreEqual ("<table border=\"0\">\n", s, "tr");
 		}
+
+#if NET_2_0
+		[Test]
+		[Category ("NotWorking")]
+		[Category("NunitWeb")] // Note: No event fired , only flow been checked.
+		public void RaisePostBackEvent ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (RaisePostBackEvent__Init));
+			string str = t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls["__EVENTTARGET"].Value = "Table";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			t.Request = fr;
+			t.Run ();
+			Assert.AreEqual ("RaisePostBackEvent", (String) t.UserData, "RaisePostBackEvent");
+		}
+
+		public static void RaisePostBackEvent__Init (Page page)
+		{
+			TestTable t = new TestTable ();
+			t.ID = "Table";
+			page.Form.Controls.Add (t);
+		}
+
+		[TestFixtureTearDown]
+		public void TearDown ()
+		{
+			WebTest.Unload ();
+		}
+#endif
 	}
 }

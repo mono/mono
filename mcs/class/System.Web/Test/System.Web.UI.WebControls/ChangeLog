@@ -1,5 +1,9 @@
 2006-12-05  Yoni Klain         <yonik@mainsoft.com>
 
+	* TableTest.cs: added new test for 2.0 
+
+2006-12-05  Yoni Klain         <yonik@mainsoft.com>
+
 	* XmlTest.cs: added new test for 2.0 
 
 2006-12-05  Yoni Klain         <yonik@mainsoft.com>
