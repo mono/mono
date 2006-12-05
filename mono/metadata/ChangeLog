@@ -1,4 +1,8 @@
 
+Tue Dec 5 19:19:34 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: fix leak found by Robert Jordan.
+
 Tue Dec 5 17:53:10 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* marshal.c, marshal.h: generate managed method to access an element
