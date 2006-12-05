@@ -561,6 +561,8 @@ namespace System.Windows.Forms {
 
 		internal override void OnGotFocusInternal(EventArgs e) {
 			has_focus = true;
+			if (selected_index == -1 && this.tab_pages.Count > 0)
+				this.SelectedIndex = 0;
 			if (selected_index != -1)
 				Invalidate(GetTabRect(selected_index));
 			base.OnGotFocusInternal (e);
@@ -1094,13 +1096,7 @@ namespace System.Windows.Forms {
 
 				page.SetVisible (false);
 				base.Add (value);
-				if (Count == 1) {
-					owner.SelectedIndex = 0;
-				} else {
-					// Setting the selected index will calc the tab rows so
-					// we don't need to do it again
-					owner.Redraw ();
-				}
+				owner.Redraw ();
 			}
 
 			public override void Remove (Control value)
