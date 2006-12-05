@@ -204,7 +204,8 @@ namespace System.Web.Hosting {
 		}
 
 		public override string GetPathInfo () {
-			return _pathInfo != null ? _pathInfo : _HttpServletRequest.getPathInfo();
+			string pathInfo = _pathInfo != null ? _pathInfo : _HttpServletRequest.getPathInfo();
+			return pathInfo != null ? pathInfo : String.Empty;
 		}
 
 		public override string GetQueryString () {
