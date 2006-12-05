@@ -1,3 +1,10 @@
+2006-12-05  Raja R Harinath  <rharinath@novell.com>
+
+	* DataSetAssertion.cs: Don't derive from 'Assertion'.  Modernize.
+	* DataSetInferXmlSchemaTest.cs, DataSetReadXmlSchemaTest.cs,
+	DataSetReadXmlTest.cs, DataSetTest.cs, DataTableLoadRowTest.cs,
+	DataTableReaderTest.cs, DataTableTest.cs: Modernize.
+
 2006-12-05  Nagappan A  <anagappan@novell.com>
 
 	* DataSetReadXmlTest.cs (ColumnOrder, XmlSpace): Modified

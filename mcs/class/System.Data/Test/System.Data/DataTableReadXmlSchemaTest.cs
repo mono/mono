@@ -300,7 +300,7 @@ namespace MonoTests.System.Data
 			ds.Tables[0].ReadXmlSchema (new StringReader (xs));
 			DataTable dt = ds.Tables [0];
 			AssertDataTable ("dt", dt, "Root", 2, 0, 0, 0, 0, 0);
-			AssertEquals ("ja-JP", dt.Locale.Name); // DataTable's Locale comes from msdata:Locale
+			Assert.AreEqual ("ja-JP", dt.Locale.Name); // DataTable's Locale comes from msdata:Locale
 			AssertDataColumn ("col1", dt.Columns [0], "Attr", true, false, 0, 1, "Attr", MappingType.Attribute, typeof (Int64), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 			AssertDataColumn ("col2", dt.Columns [1], "Child", false, false, 0, 1, "Child", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
 		}

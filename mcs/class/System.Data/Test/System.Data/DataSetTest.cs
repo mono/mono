@@ -45,8 +45,6 @@ using System.Globalization;
 using System.Threading;
 using System.Text;
 
-using AssertType = NUnit.Framework.Assert;
-
 namespace MonoTests.System.Data
 {
 	[TestFixture]
@@ -78,13 +76,13 @@ namespace MonoTests.System.Data
 		public void Properties ()
 		{
 			DataSet ds = new DataSet ();
-			AssertEquals ("default namespace", String.Empty, ds.Namespace);
+			Assert.AreEqual (String.Empty, ds.Namespace, "default namespace");
 			ds.Namespace = null; // setting null == setting ""
-			AssertEquals ("after setting null to namespace", String.Empty, ds.Namespace);
+			Assert.AreEqual (String.Empty, ds.Namespace, "after setting null to namespace");
 
-			AssertEquals ("default prefix", String.Empty, ds.Prefix);
+			Assert.AreEqual (String.Empty, ds.Prefix, "default prefix");
 			ds.Prefix = null; // setting null == setting ""
-			AssertEquals ("after setting null to prefix", String.Empty, ds.Prefix);
+			Assert.AreEqual (String.Empty, ds.Prefix, "after setting null to prefix");
 		}
 
 		[Test]
@@ -93,85 +91,85 @@ namespace MonoTests.System.Data
 			DataSet ds = new DataSet ();
 			ds.ReadXmlSchema ("Test/System.Data/own_schema.xsd");
 			
-			AssertEquals ("test#01", 2, ds.Tables.Count);
+			Assert.AreEqual (2, ds.Tables.Count, "test#01");
 			DataTable Table = ds.Tables [0];
-			AssertEquals ("test#02", "test_table", Table.TableName);
-			AssertEquals ("test#03", "", Table.Namespace);
-			AssertEquals ("test#04", 2, Table.Columns.Count);
-			AssertEquals ("test#05", 0, Table.Rows.Count);
-			AssertEquals ("test#06", false, Table.CaseSensitive);
-			AssertEquals ("test#07", 1, Table.Constraints.Count);
-			AssertEquals ("test#08", "", Table.Prefix);
+			Assert.AreEqual ("test_table", Table.TableName, "test#02");
+			Assert.AreEqual ("", Table.Namespace, "test#03");
+			Assert.AreEqual (2, Table.Columns.Count, "test#04");
+			Assert.AreEqual (0, Table.Rows.Count, "test#05");
+			Assert.IsFalse (Table.CaseSensitive, "test#06");
+			Assert.AreEqual (1, Table.Constraints.Count, "test#07");
+			Assert.AreEqual ("", Table.Prefix, "test#08");
 			
 			Constraint cons = Table.Constraints [0];
-			AssertEquals ("test#09", "Constraint1", cons.ConstraintName.ToString ());
-			AssertEquals ("test#10", "Constraint1", cons.ToString ());
+			Assert.AreEqual ("Constraint1", cons.ConstraintName.ToString (), "test#09");
+			Assert.AreEqual ("Constraint1", cons.ToString (), "test#10");
 			
 			DataColumn column = Table.Columns [0];
-			AssertEquals ("test#11", true, column.AllowDBNull);
-			AssertEquals ("test#12", false, column.AutoIncrement);
-			AssertEquals ("test#13", 0L, column.AutoIncrementSeed);
-			AssertEquals ("test#14", 1L, column.AutoIncrementStep);
-			AssertEquals ("test#15", "test", column.Caption);
-			AssertEquals ("test#16", "Element", column.ColumnMapping.ToString ());
-			AssertEquals ("test#17", "first", column.ColumnName);
-			AssertEquals ("test#18", "System.String", column.DataType.ToString ());
-			AssertEquals ("test#19", "test_default_value", column.DefaultValue.ToString ());
-			AssertEquals ("test#20", false, column.DesignMode);
-			AssertEquals ("test#21", "", column.Expression);
-			AssertEquals ("test#22", 100, column.MaxLength);
-			AssertEquals ("test#23", "", column.Namespace);
-			AssertEquals ("test#24", 0, column.Ordinal);
-			AssertEquals ("test#25", "", column.Prefix);
-			AssertEquals ("test#26", false, column.ReadOnly);
-			AssertEquals ("test#27", true, column.Unique);
+			Assert.IsTrue (column.AllowDBNull, "test#11");
+			Assert.IsFalse (column.AutoIncrement, "test#12");
+			Assert.AreEqual (0L, column.AutoIncrementSeed, "test#13");
+			Assert.AreEqual (1L, column.AutoIncrementStep, "test#14");
+			Assert.AreEqual ("test", column.Caption, "test#15");
+			Assert.AreEqual ("Element", column.ColumnMapping.ToString (), "test#16");
+			Assert.AreEqual ("first", column.ColumnName, "test#17");
+			Assert.AreEqual ("System.String", column.DataType.ToString (), "test#18");
+			Assert.AreEqual ("test_default_value", column.DefaultValue.ToString (), "test#19");
+			Assert.IsFalse (column.DesignMode, "test#20");
+			Assert.AreEqual ("", column.Expression, "test#21");
+			Assert.AreEqual (100, column.MaxLength, "test#22");
+			Assert.AreEqual ("", column.Namespace, "test#23");
+			Assert.AreEqual (0, column.Ordinal, "test#24");
+			Assert.AreEqual ("", column.Prefix, "test#25");
+			Assert.IsFalse (column.ReadOnly, "test#26");
+			Assert.IsTrue (column.Unique, "test#27");
 						
 			DataColumn column2 = Table.Columns [1];
-			AssertEquals ("test#28", true, column2.AllowDBNull);
-			AssertEquals ("test#29", false, column2.AutoIncrement);
-			AssertEquals ("test#30", 0L, column2.AutoIncrementSeed);
-			AssertEquals ("test#31", 1L, column2.AutoIncrementStep);
-			AssertEquals ("test#32", "second", column2.Caption);
-			AssertEquals ("test#33", "Element", column2.ColumnMapping.ToString ());
-			AssertEquals ("test#34", "second", column2.ColumnName);
-			AssertEquals ("test#35", "System.Data.SqlTypes.SqlGuid", column2.DataType.ToString ());
-			AssertEquals ("test#36", "", column2.DefaultValue.ToString ());
-			AssertEquals ("test#37", false, column2.DesignMode);
-			AssertEquals ("test#38", "", column2.Expression);
-			AssertEquals ("test#39", -1, column2.MaxLength);
-			AssertEquals ("test#40", "", column2.Namespace);
-			AssertEquals ("test#41", 1, column2.Ordinal);
-			AssertEquals ("test#42", "", column2.Prefix);
-			AssertEquals ("test#43", false, column2.ReadOnly);
-			AssertEquals ("test#44", false, column2.Unique);
+			Assert.IsTrue (column2.AllowDBNull, "test#28");
+			Assert.IsFalse (column2.AutoIncrement, "test#29");
+			Assert.AreEqual (0L, column2.AutoIncrementSeed, "test#30");
+			Assert.AreEqual (1L, column2.AutoIncrementStep, "test#31");
+			Assert.AreEqual ("second", column2.Caption, "test#32");
+			Assert.AreEqual ("Element", column2.ColumnMapping.ToString (), "test#33");
+			Assert.AreEqual ("second", column2.ColumnName, "test#34");
+			Assert.AreEqual ("System.Data.SqlTypes.SqlGuid", column2.DataType.ToString (), "test#35");
+			Assert.AreEqual ("", column2.DefaultValue.ToString (), "test#36");
+			Assert.IsFalse (column2.DesignMode, "test#37");
+			Assert.AreEqual ("", column2.Expression, "test#38");
+			Assert.AreEqual (-1, column2.MaxLength, "test#39");
+			Assert.AreEqual ("", column2.Namespace, "test#40");
+			Assert.AreEqual (1, column2.Ordinal, "test#41");
+			Assert.AreEqual ("", column2.Prefix, "test#42");
+			Assert.IsFalse (column2.ReadOnly, "test#43");
+			Assert.IsFalse (column2.Unique, "test#44");
 			
 			DataTable Table2 = ds.Tables [1];
-			AssertEquals ("test#45", "second_test_table", Table2.TableName);
-			AssertEquals ("test#46", "", Table2.Namespace);
-			AssertEquals ("test#47", 1, Table2.Columns.Count);
-			AssertEquals ("test#48", 0, Table2.Rows.Count);
-			AssertEquals ("test#49", false, Table2.CaseSensitive);
-			AssertEquals ("test#50", 1, Table2.Constraints.Count);
-			AssertEquals ("test#51", "", Table2.Prefix);
+			Assert.AreEqual ("second_test_table", Table2.TableName, "test#45");
+			Assert.AreEqual ("", Table2.Namespace, "test#46");
+			Assert.AreEqual (1, Table2.Columns.Count, "test#47");
+			Assert.AreEqual (0, Table2.Rows.Count, "test#48");
+			Assert.IsFalse (Table2.CaseSensitive, "test#49");
+			Assert.AreEqual (1, Table2.Constraints.Count, "test#50");
+			Assert.AreEqual ("", Table2.Prefix, "test#51");
 			
 			DataColumn column3 = Table2.Columns [0];
-			AssertEquals ("test#52", true, column3.AllowDBNull);
-			AssertEquals ("test#53", false, column3.AutoIncrement);
-			AssertEquals ("test#54", 0L, column3.AutoIncrementSeed);
-			AssertEquals ("test#55", 1L, column3.AutoIncrementStep);
-			AssertEquals ("test#56", "second_first", column3.Caption);
-			AssertEquals ("test#57", "Element", column3.ColumnMapping.ToString ());
-			AssertEquals ("test#58", "second_first", column3.ColumnName);
-			AssertEquals ("test#59", "System.String", column3.DataType.ToString ());
-			AssertEquals ("test#60", "default_value", column3.DefaultValue.ToString ());
-			AssertEquals ("test#61", false, column3.DesignMode);
-			AssertEquals ("test#62", "", column3.Expression);
-			AssertEquals ("test#63", 100, column3.MaxLength);
-			AssertEquals ("test#64", "", column3.Namespace);
-			AssertEquals ("test#65", 0, column3.Ordinal);
-			AssertEquals ("test#66", "", column3.Prefix);
-			AssertEquals ("test#67", false, column3.ReadOnly);
-			AssertEquals ("test#68", true, column3.Unique);
+			Assert.IsTrue (column3.AllowDBNull, "test#52");
+			Assert.IsFalse (column3.AutoIncrement, "test#53");
+			Assert.AreEqual (0L, column3.AutoIncrementSeed, "test#54");
+			Assert.AreEqual (1L, column3.AutoIncrementStep, "test#55");
+			Assert.AreEqual ("second_first", column3.Caption, "test#56");
+			Assert.AreEqual ("Element", column3.ColumnMapping.ToString (), "test#57");
+			Assert.AreEqual ("second_first", column3.ColumnName, "test#58");
+			Assert.AreEqual ("System.String", column3.DataType.ToString (), "test#59");
+			Assert.AreEqual ("default_value", column3.DefaultValue.ToString (), "test#60");
+			Assert.IsFalse (column3.DesignMode, "test#61");
+			Assert.AreEqual ("", column3.Expression, "test#62");
+			Assert.AreEqual (100, column3.MaxLength, "test#63");
+			Assert.AreEqual ("", column3.Namespace, "test#64");
+			Assert.AreEqual (0, column3.Ordinal, "test#65");
+			Assert.AreEqual ("", column3.Prefix, "test#66");
+			Assert.IsFalse (column3.ReadOnly, "test#67");
+			Assert.IsTrue (column3.Unique, "test#68");
 		}
 
 		[Test]
@@ -209,206 +207,206 @@ namespace MonoTests.System.Data
 
 			string substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#01", "<?xml version=\"1.0\" encoding=\"utf-16\"?>", substring);
+			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?>", substring, "test#01");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-//			AssertEquals ("test#02", "<xs:schema id=\"test_dataset\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
-			AssertEquals ("test#02", "<xs:schema id=\"test_dataset\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
+//			Assert.AreEqual ("<xs:schema id=\"test_dataset\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring, "test#02");
+			Assert.AreEqual ("<xs:schema id=\"test_dataset\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring, "test#02");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-//			AssertEquals ("test#03", "  <xs:element name=\"test_dataset\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\">", substring);
+//			Assert.AreEqual ("  <xs:element name=\"test_dataset\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\">", substring, "test#03");
 #if !NET_2_0
-			AssertEquals ("test#03", "  <xs:element msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\" name=\"test_dataset\">", substring);
+			Assert.AreEqual ("  <xs:element msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\" name=\"test_dataset\">", substring, "test#03");
 #else
-			AssertEquals ("test#03", "  <xs:element msdata:IsDataSet=\"true\" msdata:UseCurrentLocale=\"true\" name=\"test_dataset\">", substring);
+			Assert.AreEqual ("  <xs:element msdata:IsDataSet=\"true\" msdata:UseCurrentLocale=\"true\" name=\"test_dataset\">", substring, "test#03");
 #endif
 
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#04", "    <xs:complexType>", substring);
+			Assert.AreEqual ("    <xs:complexType>", substring, "test#04");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#05", "      <xs:choice maxOccurs=\"unbounded\" minOccurs=\"0\">", substring);
+			Assert.AreEqual ("      <xs:choice maxOccurs=\"unbounded\" minOccurs=\"0\">", substring, "test#05");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#06", "        <xs:element name=\"test_table\">", substring);
+			Assert.AreEqual ("        <xs:element name=\"test_table\">", substring, "test#06");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#07", "          <xs:complexType>", substring);
+			Assert.AreEqual ("          <xs:complexType>", substring, "test#07");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#08", "            <xs:sequence>", substring);
-			
-			substring = TextString.Substring (0, TextString.IndexOf(EOL));
-			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			// This is original DataSet.WriteXmlSchema() output
-//			AssertEquals ("test#09", "              <xs:element name=\"first\" msdata:Caption=\"test\" default=\"test_default_value\" minOccurs=\"0\">", substring);
-			AssertEquals ("test#09", "              <xs:element default=\"test_default_value\" minOccurs=\"0\" msdata:Caption=\"test\" name=\"first\">", substring);
-			
-			substring = TextString.Substring (0, TextString.IndexOf(EOL));
-			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#10", "                <xs:simpleType>", substring);
-			
-			substring = TextString.Substring (0, TextString.IndexOf(EOL));
-			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#11", "                  <xs:restriction base=\"xs:string\">", substring);
-			
-			substring = TextString.Substring (0, TextString.IndexOf(EOL));
-			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#12", "                    <xs:maxLength value=\"100\" />", substring);
-			
-			substring = TextString.Substring (0, TextString.IndexOf(EOL));
-			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#13", "                  </xs:restriction>", substring);
-			
-			substring = TextString.Substring (0, TextString.IndexOf(EOL));
-			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#14", "                </xs:simpleType>", substring);
-			
-			substring = TextString.Substring (0, TextString.IndexOf(EOL));
-			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#15", "              </xs:element>", substring);
+			Assert.AreEqual ("            <xs:sequence>", substring, "test#08");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-//			AssertEquals ("test#16", "              <xs:element name=\"second\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" type=\"xs:string\" minOccurs=\"0\" />", substring);
+//			Assert.AreEqual ("              <xs:element name=\"first\" msdata:Caption=\"test\" default=\"test_default_value\" minOccurs=\"0\">", substring, "test#09");
+			Assert.AreEqual ("              <xs:element default=\"test_default_value\" minOccurs=\"0\" msdata:Caption=\"test\" name=\"first\">", substring, "test#09");
+			
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.AreEqual ("                <xs:simpleType>", substring, "test#10");
+			
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.AreEqual ("                  <xs:restriction base=\"xs:string\">", substring, "test#11");
+			
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.AreEqual ("                    <xs:maxLength value=\"100\" />", substring, "test#12");
+			
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.AreEqual ("                  </xs:restriction>", substring, "test#13");
+			
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.AreEqual ("                </xs:simpleType>", substring, "test#14");
+			
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.AreEqual ("              </xs:element>", substring, "test#15");
+			
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			// This is original DataSet.WriteXmlSchema() output
+//			Assert.AreEqual ("              <xs:element name=\"second\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" type=\"xs:string\" minOccurs=\"0\" />", substring, "test#16");
 #if NET_2_0
-			AssertEquals ("test#16", "              <xs:element minOccurs=\"0\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" name=\"second\" type=\"xs:string\" />", substring);
+			Assert.AreEqual ("              <xs:element minOccurs=\"0\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" name=\"second\" type=\"xs:string\" />", substring, "test#16");
 #else
-			AssertEquals ("test#16", "              <xs:element minOccurs=\"0\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" name=\"second\" type=\"xs:string\" />", substring);
+			Assert.AreEqual ("              <xs:element minOccurs=\"0\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" name=\"second\" type=\"xs:string\" />", substring, "test#16");
 #endif
 			if (substring.IndexOf ("<xs:element") < 0)
-				Fail ("test#16: " + substring);
+				Assert.Fail ("test#16: " + substring);
 			if (substring.IndexOf ("name=\"second\"") < 0)
-				Fail ("test#16: " + substring);
+				Assert.Fail ("test#16: " + substring);
 			if (substring.IndexOf ("msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=") < 0)
-				Fail ("test#16: " + substring);
+				Assert.Fail ("test#16: " + substring);
 			if (substring.IndexOf ("type=\"xs:string\"") < 0)
-				Fail ("test#16: " + substring);
+				Assert.Fail ("test#16: " + substring);
 			if (substring.IndexOf ("minOccurs=\"0\"") < 0)
-				Fail ("test#16: " + substring);
+				Assert.Fail ("test#16: " + substring);
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#17", "            </xs:sequence>", substring);
+			Assert.AreEqual ("            </xs:sequence>", substring, "test#17");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#18", "          </xs:complexType>", substring);
+			Assert.AreEqual ("          </xs:complexType>", substring, "test#18");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#19", "        </xs:element>", substring);
+			Assert.AreEqual ("        </xs:element>", substring, "test#19");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#20", "        <xs:element name=\"second_test_table\">", substring);
+			Assert.AreEqual ("        <xs:element name=\"second_test_table\">", substring, "test#20");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#21", "          <xs:complexType>", substring);
+			Assert.AreEqual ("          <xs:complexType>", substring, "test#21");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#22", "            <xs:sequence>", substring);
+			Assert.AreEqual ("            <xs:sequence>", substring, "test#22");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-//			AssertEquals ("test#23", "              <xs:element name=\"second_first\" default=\"default_value\" minOccurs=\"0\">", substring);
-			AssertEquals ("test#23", "              <xs:element default=\"default_value\" minOccurs=\"0\" name=\"second_first\">", substring);
+//			Assert.AreEqual ("              <xs:element name=\"second_first\" default=\"default_value\" minOccurs=\"0\">", substring, "test#23");
+			Assert.AreEqual ("              <xs:element default=\"default_value\" minOccurs=\"0\" name=\"second_first\">", substring, "test#23");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#24", "                <xs:simpleType>", substring);
+			Assert.AreEqual ("                <xs:simpleType>", substring, "test#24");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#25", "                  <xs:restriction base=\"xs:string\">", substring);
+			Assert.AreEqual ("                  <xs:restriction base=\"xs:string\">", substring, "test#25");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#26", "                    <xs:maxLength value=\"100\" />", substring);
+			Assert.AreEqual ("                    <xs:maxLength value=\"100\" />", substring, "test#26");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#27", "                  </xs:restriction>", substring);
+			Assert.AreEqual ("                  </xs:restriction>", substring, "test#27");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#28", "                </xs:simpleType>", substring);
+			Assert.AreEqual ("                </xs:simpleType>", substring, "test#28");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#29", "              </xs:element>", substring);
+			Assert.AreEqual ("              </xs:element>", substring, "test#29");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#30", "            </xs:sequence>", substring);
+			Assert.AreEqual ("            </xs:sequence>", substring, "test#30");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#31", "          </xs:complexType>", substring);
+			Assert.AreEqual ("          </xs:complexType>", substring, "test#31");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#32", "        </xs:element>", substring);
+			Assert.AreEqual ("        </xs:element>", substring, "test#32");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#33", "      </xs:choice>", substring);
+			Assert.AreEqual ("      </xs:choice>", substring, "test#33");
 
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#34", "    </xs:complexType>", substring);
+			Assert.AreEqual ("    </xs:complexType>", substring, "test#34");
 
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#36", "    <xs:unique name=\"Constraint1\">", substring);
+			Assert.AreEqual ("    <xs:unique name=\"Constraint1\">", substring, "test#36");
 
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#37", "      <xs:selector xpath=\".//test_table\" />", substring);
+			Assert.AreEqual ("      <xs:selector xpath=\".//test_table\" />", substring, "test#37");
 
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#38", "      <xs:field xpath=\"first\" />", substring);
+			Assert.AreEqual ("      <xs:field xpath=\"first\" />", substring, "test#38");
 
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#39", "    </xs:unique>", substring);
+			Assert.AreEqual ("    </xs:unique>", substring, "test#39");
 
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-//			AssertEquals ("test#40", "    <xs:unique name=\"second_test_table_Constraint1\" msdata:ConstraintName=\"Constraint1\">", substring);
-			AssertEquals ("test#40", "    <xs:unique msdata:ConstraintName=\"Constraint1\" name=\"second_test_table_Constraint1\">", substring);
+//			Assert.AreEqual ("    <xs:unique name=\"second_test_table_Constraint1\" msdata:ConstraintName=\"Constraint1\">", substring, "test#40");
+			Assert.AreEqual ("    <xs:unique msdata:ConstraintName=\"Constraint1\" name=\"second_test_table_Constraint1\">", substring, "test#40");
 
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#41", "      <xs:selector xpath=\".//second_test_table\" />", substring);
+			Assert.AreEqual ("      <xs:selector xpath=\".//second_test_table\" />", substring, "test#41");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#42", "      <xs:field xpath=\"second_first\" />", substring);
+			Assert.AreEqual ("      <xs:field xpath=\"second_first\" />", substring, "test#42");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#43", "    </xs:unique>", substring);
+			Assert.AreEqual ("    </xs:unique>", substring, "test#43");
 			
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#44", "  </xs:element>", substring);			
-			AssertEquals ("test#45", "</xs:schema>", TextString);
+			Assert.AreEqual ("  </xs:element>", substring, "test#44");			
+			Assert.AreEqual ("</xs:schema>", TextString, "test#45");
 		}
 		
 		[Test]
@@ -422,50 +420,50 @@ namespace MonoTests.System.Data
 			string TextString = writer.ToString ();
                         string substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        AssertEquals ("test#01", "<Root>", substring);
+                        Assert.AreEqual ("<Root>", substring, "test#01");
 
                         substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        AssertEquals ("test#02", "  <Region>", substring);
+                        Assert.AreEqual ("  <Region>", substring, "test#02");
 			
                         substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        AssertEquals ("test#03", "    <RegionID>1</RegionID>", substring);
+                        Assert.AreEqual ("    <RegionID>1</RegionID>", substring, "test#03");
 			// Here the end of line is text markup "\n"
                         substring = TextString.Substring (0, TextString.IndexOf('\n'));
                         TextString = TextString.Substring (TextString.IndexOf('\n') + 1);
-                        AssertEquals ("test#04", "    <RegionDescription>Eastern", substring);
+                        Assert.AreEqual ("    <RegionDescription>Eastern", substring, "test#04");
 
                         substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        AssertEquals ("test#05", "   </RegionDescription>", substring);
+                        Assert.AreEqual ("   </RegionDescription>", substring, "test#05");
 
                         substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        AssertEquals ("test#06", "  </Region>", substring);
+                        Assert.AreEqual ("  </Region>", substring, "test#06");
 
                         substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        AssertEquals ("test#07", "  <Region>", substring);
+                        Assert.AreEqual ("  <Region>", substring, "test#07");
 			
                         substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        AssertEquals ("test#08", "    <RegionID>2</RegionID>", substring);
+                        Assert.AreEqual ("    <RegionID>2</RegionID>", substring, "test#08");
 
 			// Here the end of line is text markup "\n"
                         substring = TextString.Substring (0, TextString.IndexOf('\n'));
                         TextString = TextString.Substring (TextString.IndexOf('\n') + 1);
-                        AssertEquals ("test#09", "    <RegionDescription>Western", substring);
+                        Assert.AreEqual ("    <RegionDescription>Western", substring, "test#09");
 
                         substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        AssertEquals ("test#10", "   </RegionDescription>", substring);
+                        Assert.AreEqual ("   </RegionDescription>", substring, "test#10");
 
                         substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        AssertEquals ("test#11", "  </Region>", substring);
+                        Assert.AreEqual ("  </Region>", substring, "test#11");
 
-                        AssertEquals ("test#11", "</Root>", TextString);
+                        Assert.AreEqual ("</Root>", TextString, "test#11");
 		}
 
 		[Test]
@@ -478,12 +476,12 @@ namespace MonoTests.System.Data
 			ds.WriteXml (writer);
 		
 			string TextString = writer.ToString ();
-                        AssertEquals ("test#01", "<NewDataSet />", TextString);
+                        Assert.AreEqual ("<NewDataSet />", TextString, "test#01");
 
 			ds.WriteXml (writer, XmlWriteMode.DiffGram);
 			TextString = writer.ToString ();
 			
-			AssertEquals ("test#02", "<NewDataSet /><diffgr:diffgram xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:diffgr=\"urn:schemas-microsoft-com:xml-diffgram-v1\" />", TextString);
+			Assert.AreEqual ("<NewDataSet /><diffgr:diffgram xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:diffgr=\"urn:schemas-microsoft-com:xml-diffgram-v1\" />", TextString, "test#02");
 
 			
 			ds = new DataSet ();
@@ -496,59 +494,59 @@ namespace MonoTests.System.Data
 			TextString = writer.ToString ();
                         string substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#03", "<NewDataSet /><diffgr:diffgram xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:diffgr=\"urn:schemas-microsoft-com:xml-diffgram-v1\" /><diffgr:diffgram xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:diffgr=\"urn:schemas-microsoft-com:xml-diffgram-v1\">",substring);
+			Assert.AreEqual ("<NewDataSet /><diffgr:diffgram xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:diffgr=\"urn:schemas-microsoft-com:xml-diffgram-v1\" /><diffgr:diffgram xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:diffgr=\"urn:schemas-microsoft-com:xml-diffgram-v1\">", substring, "test#03");
 
                       	substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#04", "  <Root>", substring);
+			Assert.AreEqual ("  <Root>", substring, "test#04");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#05", "    <Region diffgr:id=\"Region1\" msdata:rowOrder=\"0\" diffgr:hasChanges=\"inserted\">", substring);
+			Assert.AreEqual ("    <Region diffgr:id=\"Region1\" msdata:rowOrder=\"0\" diffgr:hasChanges=\"inserted\">", substring, "test#05");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#06", "      <RegionID>64</RegionID>", substring);
+			Assert.AreEqual ("      <RegionID>64</RegionID>", substring, "test#06");
 
 			// not EOL but literal '\n'
 		        substring = TextString.Substring (0, TextString.IndexOf('\n'));
                         TextString = TextString.Substring (TextString.IndexOf('\n') + 1);
-			AssertEquals ("test#07", "      <RegionDescription>Eastern", substring);
+			Assert.AreEqual ("      <RegionDescription>Eastern", substring, "test#07");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#07", "   </RegionDescription>", substring);
+			Assert.AreEqual ("   </RegionDescription>", substring, "test#07");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#08", "    </Region>", substring);
+			Assert.AreEqual ("    </Region>", substring, "test#08");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#09", "    <Region diffgr:id=\"Region2\" msdata:rowOrder=\"1\" diffgr:hasChanges=\"inserted\">", substring);
+			Assert.AreEqual ("    <Region diffgr:id=\"Region2\" msdata:rowOrder=\"1\" diffgr:hasChanges=\"inserted\">", substring, "test#09");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#10", "      <RegionID>2</RegionID>", substring);
+			Assert.AreEqual ("      <RegionID>2</RegionID>", substring, "test#10");
 
 			// not EOL but literal '\n'
 		        substring = TextString.Substring (0, TextString.IndexOf('\n'));
                         TextString = TextString.Substring (TextString.IndexOf('\n') + 1);
-			AssertEquals ("test#11", "      <RegionDescription>Western", substring);
+			Assert.AreEqual ("      <RegionDescription>Western", substring, "test#11");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#12", "   </RegionDescription>", substring);
+			Assert.AreEqual ("   </RegionDescription>", substring, "test#12");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#13", "    </Region>", substring);
+			Assert.AreEqual ("    </Region>", substring, "test#13");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#14", "  </Root>", substring);
+			Assert.AreEqual ("  </Root>", substring, "test#14");
 			
-			AssertEquals ("test#15", "</diffgr:diffgram>", TextString);
+			Assert.AreEqual ("</diffgr:diffgram>", TextString, "test#15");
 		}
 
 		[Test]
@@ -565,81 +563,81 @@ namespace MonoTests.System.Data
 		        
 		        string substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#01", "<?xml version=\"1.0\" encoding=\"utf-16\"?>", substring);
+			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?>", substring, "test#01");
 		        
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-//			AssertEquals ("test#02", "<xs:schema id=\"Root\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
-			AssertEquals ("test#02", "<xs:schema id=\"Root\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
+//			Assert.AreEqual ("<xs:schema id=\"Root\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring, "test#02");
+			Assert.AreEqual ("<xs:schema id=\"Root\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring, "test#02");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-//			AssertEquals ("test#03", "  <xs:element name=\"Root\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\">", substring);
+//			Assert.AreEqual ("  <xs:element name=\"Root\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\">", substring, "test#03");
 #if !NET_2_0
-			AssertEquals ("test#03", "  <xs:element msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\" name=\"Root\">", substring);
+			Assert.AreEqual ("  <xs:element msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\" name=\"Root\">", substring, "test#03");
 #else
-			AssertEquals ("test#03", "  <xs:element msdata:IsDataSet=\"true\" msdata:UseCurrentLocale=\"true\" name=\"Root\">", substring);
+			Assert.AreEqual ("  <xs:element msdata:IsDataSet=\"true\" msdata:UseCurrentLocale=\"true\" name=\"Root\">", substring, "test#03");
 #endif
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#04", "    <xs:complexType>", substring);
+			Assert.AreEqual ("    <xs:complexType>", substring, "test#04");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#05", "      <xs:choice maxOccurs=\"unbounded\" minOccurs=\"0\">", substring);
+			Assert.AreEqual ("      <xs:choice maxOccurs=\"unbounded\" minOccurs=\"0\">", substring, "test#05");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#06", "        <xs:element name=\"Region\">", substring);
+			Assert.AreEqual ("        <xs:element name=\"Region\">", substring, "test#06");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#07", "          <xs:complexType>", substring);
+			Assert.AreEqual ("          <xs:complexType>", substring, "test#07");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#08", "            <xs:sequence>", substring);
+			Assert.AreEqual ("            <xs:sequence>", substring, "test#08");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-//			AssertEquals ("test#09", "              <xs:element name=\"RegionID\" type=\"xs:string\" minOccurs=\"0\" />", substring);
-			AssertEquals ("test#09", "              <xs:element minOccurs=\"0\" name=\"RegionID\" type=\"xs:string\" />", substring);
+//			Assert.AreEqual ("              <xs:element name=\"RegionID\" type=\"xs:string\" minOccurs=\"0\" />", substring, "test#09");
+			Assert.AreEqual ("              <xs:element minOccurs=\"0\" name=\"RegionID\" type=\"xs:string\" />", substring, "test#09");
 
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-//			AssertEquals ("test#10", "              <xs:element name=\"RegionDescription\" type=\"xs:string\" minOccurs=\"0\" />", substring);
-			AssertEquals ("test#10", "              <xs:element minOccurs=\"0\" name=\"RegionDescription\" type=\"xs:string\" />", substring);
+//			Assert.AreEqual ("              <xs:element name=\"RegionDescription\" type=\"xs:string\" minOccurs=\"0\" />", substring, "test#10");
+			Assert.AreEqual ("              <xs:element minOccurs=\"0\" name=\"RegionDescription\" type=\"xs:string\" />", substring, "test#10");
 
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#11", "            </xs:sequence>", substring);
+			Assert.AreEqual ("            </xs:sequence>", substring, "test#11");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#12", "          </xs:complexType>", substring);
+			Assert.AreEqual ("          </xs:complexType>", substring, "test#12");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#13", "        </xs:element>", substring);
+			Assert.AreEqual ("        </xs:element>", substring, "test#13");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#14", "      </xs:choice>", substring);
+			Assert.AreEqual ("      </xs:choice>", substring, "test#14");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#15", "    </xs:complexType>", substring);
+			Assert.AreEqual ("    </xs:complexType>", substring, "test#15");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#16", "  </xs:element>", substring);
+			Assert.AreEqual ("  </xs:element>", substring, "test#16");
 
-			AssertEquals ("test#17", "</xs:schema>", TextString);
+			Assert.AreEqual ("</xs:schema>", TextString, "test#17");
 		}
 		
 		[Test]
@@ -665,134 +663,134 @@ namespace MonoTests.System.Data
 
 		        string substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#01", "<?xml version=\"1.0\" encoding=\"utf-16\"?>", substring);
+			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?>", substring, "test#01");
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-//			AssertEquals ("test#02", "<xs:schema id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
-			AssertEquals ("test#02", "<xs:schema id=\"NewDataSet\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
+//			Assert.AreEqual ("<xs:schema id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring, "test#02");
+			Assert.AreEqual ("<xs:schema id=\"NewDataSet\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring, "test#02");
 
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#03", "  <xs:complexType name=\"bookstoreType\">", substring);
+			Assert.AreEqual ("  <xs:complexType name=\"bookstoreType\">", substring, "test#03");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#04", "    <xs:sequence>", substring);
+			Assert.AreEqual ("    <xs:sequence>", substring, "test#04");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-//			AssertEquals ("test#05", "      <xs:element name=\"book\" type=\"bookType\" minOccurs=\"0\" maxOccurs=\"unbounded\" />", substring);
-			AssertEquals ("test#05", "      <xs:element maxOccurs=\"unbounded\" minOccurs=\"0\" name=\"book\" type=\"bookType\" />", substring);
+//			Assert.AreEqual ("      <xs:element name=\"book\" type=\"bookType\" minOccurs=\"0\" maxOccurs=\"unbounded\" />", substring, "test#05");
+			Assert.AreEqual ("      <xs:element maxOccurs=\"unbounded\" minOccurs=\"0\" name=\"book\" type=\"bookType\" />", substring, "test#05");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#06", "    </xs:sequence>", substring);
+			Assert.AreEqual ("    </xs:sequence>", substring, "test#06");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#07", "  </xs:complexType>", substring);
+			Assert.AreEqual ("  </xs:complexType>", substring, "test#07");
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#08", "  <xs:complexType name=\"bookType\">", substring);
+			Assert.AreEqual ("  <xs:complexType name=\"bookType\">", substring, "test#08");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#09", "    <xs:sequence>", substring);
+			Assert.AreEqual ("    <xs:sequence>", substring, "test#09");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-//			AssertEquals ("test#10", "      <xs:element name=\"title\" type=\"xs:string\" msdata:Ordinal=\"1\" />", substring);
+//			Assert.AreEqual ("      <xs:element name=\"title\" type=\"xs:string\" msdata:Ordinal=\"1\" />", substring, "test#10");
 			
-			AssertEquals ("test#10", "      <xs:element msdata:Ordinal=\"1\" name=\"title\" type=\"xs:string\" />", substring);
+			Assert.AreEqual ("      <xs:element msdata:Ordinal=\"1\" name=\"title\" type=\"xs:string\" />", substring, "test#10");
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-//			AssertEquals ("test#11", "      <xs:element name=\"price\" type=\"xs:decimal\" msdata:Ordinal=\"2\" />", substring);
-			AssertEquals ("test#11", "      <xs:element msdata:Ordinal=\"2\" name=\"price\" type=\"xs:decimal\" />", substring);
+//			Assert.AreEqual ("      <xs:element name=\"price\" type=\"xs:decimal\" msdata:Ordinal=\"2\" />", substring, "test#11");
+			Assert.AreEqual ("      <xs:element msdata:Ordinal=\"2\" name=\"price\" type=\"xs:decimal\" />", substring, "test#11");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-//			AssertEquals ("test#12", "      <xs:element name=\"author\" type=\"authorName\" minOccurs=\"0\" maxOccurs=\"unbounded\" />", substring);
-			AssertEquals ("test#12", "      <xs:element maxOccurs=\"unbounded\" minOccurs=\"0\" name=\"author\" type=\"authorName\" />", substring);
+//			Assert.AreEqual ("      <xs:element name=\"author\" type=\"authorName\" minOccurs=\"0\" maxOccurs=\"unbounded\" />", substring, "test#12");
+			Assert.AreEqual ("      <xs:element maxOccurs=\"unbounded\" minOccurs=\"0\" name=\"author\" type=\"authorName\" />", substring, "test#12");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#13", "    </xs:sequence>", substring);
+			Assert.AreEqual ("    </xs:sequence>", substring, "test#13");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#14", "    <xs:attribute name=\"genre\" type=\"xs:string\" />", substring);
+			Assert.AreEqual ("    <xs:attribute name=\"genre\" type=\"xs:string\" />", substring, "test#14");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#15", "  </xs:complexType>", substring);
+			Assert.AreEqual ("  </xs:complexType>", substring, "test#15");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#16", "  <xs:complexType name=\"authorName\">", substring);
+			Assert.AreEqual ("  <xs:complexType name=\"authorName\">", substring, "test#16");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#17", "    <xs:sequence>", substring);
+			Assert.AreEqual ("    <xs:sequence>", substring, "test#17");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#18", "      <xs:element name=\"first-name\" type=\"xs:string\" />", substring);
+			Assert.AreEqual ("      <xs:element name=\"first-name\" type=\"xs:string\" />", substring, "test#18");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#19", "      <xs:element name=\"last-name\" type=\"xs:string\" />", substring);
+			Assert.AreEqual ("      <xs:element name=\"last-name\" type=\"xs:string\" />", substring, "test#19");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#20", "    </xs:sequence>", substring);
+			Assert.AreEqual ("    </xs:sequence>", substring, "test#20");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#21", "  </xs:complexType>", substring);
+			Assert.AreEqual ("  </xs:complexType>", substring, "test#21");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#22", "  <xs:element name=\"bookstore\" type=\"bookstoreType\" />", substring);
+			Assert.AreEqual ("  <xs:element name=\"bookstore\" type=\"bookstoreType\" />", substring, "test#22");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-//			AssertEquals ("test#23", "  <xs:element name=\"NewDataSet\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\">", substring);
-			AssertEquals ("test#23", "  <xs:element msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\" name=\"NewDataSet\">", substring);
+//			Assert.AreEqual ("  <xs:element name=\"NewDataSet\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\">", substring, "test#23");
+			Assert.AreEqual ("  <xs:element msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\" name=\"NewDataSet\">", substring, "test#23");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#24", "    <xs:complexType>", substring);
+			Assert.AreEqual ("    <xs:complexType>", substring, "test#24");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#25", "      <xs:choice maxOccurs=\"unbounded\" minOccurs=\"0\">", substring);
+			Assert.AreEqual ("      <xs:choice maxOccurs=\"unbounded\" minOccurs=\"0\">", substring, "test#25");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#26", "        <xs:element ref=\"bookstore\" />", substring);
+			Assert.AreEqual ("        <xs:element ref=\"bookstore\" />", substring, "test#26");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#27", "      </xs:choice>", substring);
+			Assert.AreEqual ("      </xs:choice>", substring, "test#27");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#28", "    </xs:complexType>", substring);
+			Assert.AreEqual ("    </xs:complexType>", substring, "test#28");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#29", "  </xs:element>", substring);
+			Assert.AreEqual ("  </xs:element>", substring, "test#29");
 
-			AssertEquals ("test#30", "</xs:schema>", TextString);
+			Assert.AreEqual ("</xs:schema>", TextString, "test#30");
 		}
 		
 		[Test]
@@ -821,169 +819,169 @@ namespace MonoTests.System.Data
 		        
 		        string substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#01", "<?xml version=\"1.0\" encoding=\"utf-16\"?>", substring);
+			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?>", substring, "test#01");
 		        
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-//			AssertEquals ("test#02", "<xs:schema id=\"Root\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring);
-			AssertEquals ("test#02", "<xs:schema id=\"Root\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring);
+//			Assert.AreEqual ("<xs:schema id=\"Root\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring, "test#02");
+			Assert.AreEqual ("<xs:schema id=\"Root\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">", substring, "test#02");
 		        
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#03", "  <xs:complexType name=\"bookstoreType\">", substring);
+			Assert.AreEqual ("  <xs:complexType name=\"bookstoreType\">", substring, "test#03");
 		        
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#04", "    <xs:sequence>", substring);
-		        
-		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			// This is original DataSet.WriteXmlSchema() output
-//			AssertEquals ("test#05", "      <xs:element name=\"book\" type=\"bookType\" minOccurs=\"0\" maxOccurs=\"unbounded\" />", substring);
-			AssertEquals ("test#05", "      <xs:element maxOccurs=\"unbounded\" minOccurs=\"0\" name=\"book\" type=\"bookType\" />", substring);
-		        
-		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#06", "    </xs:sequence>", substring);
-		        
-		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#07", "  </xs:complexType>", substring);
-		        
-		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#08", "  <xs:complexType name=\"bookType\">", substring);
-		        
-		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#09", "    <xs:sequence>", substring);
+			Assert.AreEqual ("    <xs:sequence>", substring, "test#04");
 		        
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-//			AssertEquals ("test#10", "      <xs:element name=\"title\" type=\"xs:string\" msdata:Ordinal=\"1\" />", substring);
-			AssertEquals ("test#10", "      <xs:element msdata:Ordinal=\"1\" name=\"title\" type=\"xs:string\" />", substring);
+//			Assert.AreEqual ("      <xs:element name=\"book\" type=\"bookType\" minOccurs=\"0\" maxOccurs=\"unbounded\" />", substring, "test#05");
+			Assert.AreEqual ("      <xs:element maxOccurs=\"unbounded\" minOccurs=\"0\" name=\"book\" type=\"bookType\" />", substring, "test#05");
+		        
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.AreEqual ("    </xs:sequence>", substring, "test#06");
+		        
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.AreEqual ("  </xs:complexType>", substring, "test#07");
+		        
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.AreEqual ("  <xs:complexType name=\"bookType\">", substring, "test#08");
+		        
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.AreEqual ("    <xs:sequence>", substring, "test#09");
 		        
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-//			AssertEquals ("test#11", "      <xs:element name=\"price\" type=\"xs:decimal\" msdata:Ordinal=\"2\" />", substring);
-			AssertEquals ("test#11", "      <xs:element msdata:Ordinal=\"2\" name=\"price\" type=\"xs:decimal\" />", substring);
+//			Assert.AreEqual ("      <xs:element name=\"title\" type=\"xs:string\" msdata:Ordinal=\"1\" />", substring, "test#10");
+			Assert.AreEqual ("      <xs:element msdata:Ordinal=\"1\" name=\"title\" type=\"xs:string\" />", substring, "test#10");
+		        
+		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
+                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			// This is original DataSet.WriteXmlSchema() output
+//			Assert.AreEqual ("      <xs:element name=\"price\" type=\"xs:decimal\" msdata:Ordinal=\"2\" />", substring, "test#11");
+			Assert.AreEqual ("      <xs:element msdata:Ordinal=\"2\" name=\"price\" type=\"xs:decimal\" />", substring, "test#11");
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-//			AssertEquals ("test#12", "      <xs:element name=\"author\" type=\"authorName\" minOccurs=\"0\" maxOccurs=\"unbounded\" />", substring);
-			AssertEquals ("test#12", "      <xs:element maxOccurs=\"unbounded\" minOccurs=\"0\" name=\"author\" type=\"authorName\" />", substring);
+//			Assert.AreEqual ("      <xs:element name=\"author\" type=\"authorName\" minOccurs=\"0\" maxOccurs=\"unbounded\" />", substring, "test#12");
+			Assert.AreEqual ("      <xs:element maxOccurs=\"unbounded\" minOccurs=\"0\" name=\"author\" type=\"authorName\" />", substring, "test#12");
 	
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#13", "    </xs:sequence>", substring);
+			Assert.AreEqual ("    </xs:sequence>", substring, "test#13");
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#14", "    <xs:attribute name=\"genre\" type=\"xs:string\" />", substring);
+			Assert.AreEqual ("    <xs:attribute name=\"genre\" type=\"xs:string\" />", substring, "test#14");
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#15", "  </xs:complexType>", substring);
+			Assert.AreEqual ("  </xs:complexType>", substring, "test#15");
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#16", "  <xs:complexType name=\"authorName\">", substring);
+			Assert.AreEqual ("  <xs:complexType name=\"authorName\">", substring, "test#16");
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#17", "    <xs:sequence>", substring);
+			Assert.AreEqual ("    <xs:sequence>", substring, "test#17");
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#18", "      <xs:element name=\"first-name\" type=\"xs:string\" />", substring);
+			Assert.AreEqual ("      <xs:element name=\"first-name\" type=\"xs:string\" />", substring, "test#18");
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#19", "      <xs:element name=\"last-name\" type=\"xs:string\" />", substring);
+			Assert.AreEqual ("      <xs:element name=\"last-name\" type=\"xs:string\" />", substring, "test#19");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#20", "    </xs:sequence>", substring);
+			Assert.AreEqual ("    </xs:sequence>", substring, "test#20");
 		
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#21", "  </xs:complexType>", substring);
+			Assert.AreEqual ("  </xs:complexType>", substring, "test#21");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#22", "  <xs:element name=\"bookstore\" type=\"bookstoreType\" />", substring);
+			Assert.AreEqual ("  <xs:element name=\"bookstore\" type=\"bookstoreType\" />", substring, "test#22");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-//			AssertEquals ("test#23", "  <xs:element name=\"Root\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\">", substring);
-			AssertEquals ("test#23", "  <xs:element msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\" name=\"Root\">", substring);
+//			Assert.AreEqual ("  <xs:element name=\"Root\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\">", substring, "test#23");
+			Assert.AreEqual ("  <xs:element msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\" name=\"Root\">", substring, "test#23");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#24", "    <xs:complexType>", substring);
+			Assert.AreEqual ("    <xs:complexType>", substring, "test#24");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#25", "      <xs:choice maxOccurs=\"unbounded\" minOccurs=\"0\">", substring);
+			Assert.AreEqual ("      <xs:choice maxOccurs=\"unbounded\" minOccurs=\"0\">", substring, "test#25");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#26", "        <xs:element ref=\"bookstore\" />", substring);
+			Assert.AreEqual ("        <xs:element ref=\"bookstore\" />", substring, "test#26");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#27", "        <xs:element name=\"Region\">", substring);
+			Assert.AreEqual ("        <xs:element name=\"Region\">", substring, "test#27");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#28", "          <xs:complexType>", substring);
+			Assert.AreEqual ("          <xs:complexType>", substring, "test#28");
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#29", "            <xs:sequence>", substring);
+			Assert.AreEqual ("            <xs:sequence>", substring, "test#29");
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-//			AssertEquals ("test#30", "              <xs:element name=\"RegionID\" type=\"xs:string\" minOccurs=\"0\" />", substring);
-			AssertEquals ("test#30", "              <xs:element minOccurs=\"0\" name=\"RegionID\" type=\"xs:string\" />", substring);
+//			Assert.AreEqual ("              <xs:element name=\"RegionID\" type=\"xs:string\" minOccurs=\"0\" />", substring, "test#30");
+			Assert.AreEqual ("              <xs:element minOccurs=\"0\" name=\"RegionID\" type=\"xs:string\" />", substring, "test#30");
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// This is original DataSet.WriteXmlSchema() output
-//			AssertEquals ("test#31", "              <xs:element name=\"RegionDescription\" type=\"xs:string\" minOccurs=\"0\" />", substring);
-			AssertEquals ("test#31", "              <xs:element minOccurs=\"0\" name=\"RegionDescription\" type=\"xs:string\" />", substring);
+//			Assert.AreEqual ("              <xs:element name=\"RegionDescription\" type=\"xs:string\" minOccurs=\"0\" />", substring, "test#31");
+			Assert.AreEqual ("              <xs:element minOccurs=\"0\" name=\"RegionDescription\" type=\"xs:string\" />", substring, "test#31");
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#32", "            </xs:sequence>", substring);
+			Assert.AreEqual ("            </xs:sequence>", substring, "test#32");
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#33", "          </xs:complexType>", substring);
+			Assert.AreEqual ("          </xs:complexType>", substring, "test#33");
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#34", "        </xs:element>", substring);
+			Assert.AreEqual ("        </xs:element>", substring, "test#34");
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#35", "      </xs:choice>", substring);
+			Assert.AreEqual ("      </xs:choice>", substring, "test#35");
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#36", "    </xs:complexType>", substring);
+			Assert.AreEqual ("    </xs:complexType>", substring, "test#36");
 			
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			AssertEquals ("test#37", "  </xs:element>", substring);
+			Assert.AreEqual ("  </xs:element>", substring, "test#37");
 
-			AssertEquals ("test#38", "</xs:schema>", TextString);
+			Assert.AreEqual ("</xs:schema>", TextString, "test#38");
 		}
 
 		[Test]
@@ -1027,7 +1025,7 @@ namespace MonoTests.System.Data
 			ds.WriteXmlSchema (xw);
 
 			string result = sw.ToString ();
-			AssertEquals (schema, result.Replace ("\r\n", "\n"));
+			Assert.AreEqual (result.Replace ("\r\n", "\n"), schema);
 		}
 
 		[Test]
@@ -1044,7 +1042,7 @@ namespace MonoTests.System.Data
 			StringWriter sw = new StringWriter ();
 			ds.WriteXml (new XmlTextWriter (sw));
 			string xml = @"<DS xmlns=""urn:foo""><tab><TEST>test</TEST></tab></DS>";
-			AssertEquals (xml, sw.ToString ());
+			Assert.AreEqual (xml, sw.ToString ());
 		}
 
 		[Test]
@@ -1068,7 +1066,7 @@ namespace MonoTests.System.Data
 			ser.Serialize (xw, ds);
 
 			string result = sw.ToString ();
-			AssertEquals (xml, result.Replace ("\r\n", "\n"));
+			Assert.AreEqual (result.Replace ("\r\n", "\n"), xml);
 		}
 
 		// bug #70961
@@ -1160,7 +1158,7 @@ namespace MonoTests.System.Data
 
 			string result = sw.ToString ();
 
-			AssertEquals (xml, result);
+			Assert.AreEqual (xml, result);
 		}
 
 		[Test]
@@ -1199,7 +1197,7 @@ namespace MonoTests.System.Data
 			ds.WriteXml (sw, XmlWriteMode.DiffGram);
 			string xml = sw.ToString ();
 			string result = new StreamReader ("Test/System.Data/DataSetReadXmlTest1.xml", Encoding.ASCII).ReadToEnd ();
-			AssertEquals ("#01", result, xml);
+			Assert.AreEqual (result, xml, "#01");
 
 			// load diffgram above
 			ds.ReadXml (new StringReader (sw.ToString ()));
@@ -1207,7 +1205,7 @@ namespace MonoTests.System.Data
 			ds.WriteXml (sw, XmlWriteMode.WriteSchema);
 			xml = sw.ToString ();
 			result = new StreamReader ("Test/System.Data/DataSetReadXmlTest2.xml", Encoding.ASCII).ReadToEnd ();
-			AssertEquals ("#02", result, xml);
+			Assert.AreEqual (result, xml, "#02");
 		}
 		*/
 
@@ -1268,33 +1266,33 @@ namespace MonoTests.System.Data
                                                                                                     
                         //Testing Copy ()
                         DataSet copySet = set.Copy ();
-                        AssertEquals ("#A01", set.CaseSensitive, copySet.CaseSensitive);
-			AssertEquals ("#A02", set.DataSetName, copySet.DataSetName);
-                        AssertEquals ("#A03", set.EnforceConstraints, copySet.EnforceConstraints);
-                        AssertEquals ("#A04", set.HasErrors, copySet.HasErrors);
-                        AssertEquals ("#A05", set.Namespace, copySet.Namespace);
-                        AssertEquals ("#A06", set.Prefix, copySet.Prefix);
-                        AssertEquals ("#A07", set.Relations.Count, copySet.Relations.Count);
-                        AssertEquals ("#A08", set.Tables.Count, copySet.Tables.Count);
-                        AssertEquals ("#A09", set.ExtendedProperties ["TimeStamp"], copySet.ExtendedProperties ["TimeStamp"]);
+                        Assert.AreEqual (set.CaseSensitive, copySet.CaseSensitive, "#A01");
+			Assert.AreEqual (set.DataSetName, copySet.DataSetName, "#A02");
+                        Assert.AreEqual (set.EnforceConstraints, copySet.EnforceConstraints, "#A03");
+                        Assert.AreEqual (set.HasErrors, copySet.HasErrors, "#A04");
+                        Assert.AreEqual (set.Namespace, copySet.Namespace, "#A05");
+                        Assert.AreEqual (set.Prefix, copySet.Prefix, "#A06");
+                        Assert.AreEqual (set.Relations.Count, copySet.Relations.Count, "#A07");
+                        Assert.AreEqual (set.Tables.Count, copySet.Tables.Count, "#A08");
+                        Assert.AreEqual (set.ExtendedProperties ["TimeStamp"], copySet.ExtendedProperties ["TimeStamp"], "#A09");
                         for (int i = 0;i < copySet.Tables.Count; i++) {
-                                AssertEquals ("#A10", set.Tables [i].Rows.Count, copySet.Tables [i].Rows.Count);
-                                AssertEquals ("#A11", set.Tables [i].Columns.Count, copySet.Tables [i].Columns.Count);
+                                Assert.AreEqual (set.Tables [i].Rows.Count, copySet.Tables [i].Rows.Count, "#A10");
+                                Assert.AreEqual (set.Tables [i].Columns.Count, copySet.Tables [i].Columns.Count, "#A11");
                         }
                         //Testing Clone ()
                         copySet = set.Clone ();
-                        AssertEquals ("#A12", set.CaseSensitive, copySet.CaseSensitive);
-                        AssertEquals ("#A13", set.DataSetName, copySet.DataSetName);
-                        AssertEquals ("#A14", set.EnforceConstraints, copySet.EnforceConstraints);
-                        AssertEquals ("#A15", false, copySet.HasErrors);
-                        AssertEquals ("#A16", set.Namespace, copySet.Namespace);
-                        AssertEquals ("#A17", set.Prefix, copySet.Prefix);
-                        AssertEquals ("#A18", set.Relations.Count, copySet.Relations.Count);
-                        AssertEquals ("#A19", set.Tables.Count, copySet.Tables.Count);
-                        AssertEquals ("#A20", set.ExtendedProperties ["TimeStamp"], copySet.ExtendedProperties ["TimeStamp"]);
+                        Assert.AreEqual (set.CaseSensitive, copySet.CaseSensitive, "#A12");
+                        Assert.AreEqual (set.DataSetName, copySet.DataSetName, "#A13");
+                        Assert.AreEqual (set.EnforceConstraints, copySet.EnforceConstraints, "#A14");
+                        Assert.IsFalse (copySet.HasErrors, "#A15");
+                        Assert.AreEqual (set.Namespace, copySet.Namespace, "#A16");
+                        Assert.AreEqual (set.Prefix, copySet.Prefix, "#A17");
+                        Assert.AreEqual (set.Relations.Count, copySet.Relations.Count, "#A18");
+                        Assert.AreEqual (set.Tables.Count, copySet.Tables.Count, "#A19");
+                        Assert.AreEqual (set.ExtendedProperties ["TimeStamp"], copySet.ExtendedProperties ["TimeStamp"], "#A20");
                         for (int i = 0;i < copySet.Tables.Count; i++) {
-                                AssertEquals ("#A21", 0, copySet.Tables [i].Rows.Count);
-                                AssertEquals ("#A22", set.Tables [i].Columns.Count, copySet.Tables [i].Columns.Count);
+                                Assert.AreEqual (0, copySet.Tables [i].Rows.Count, "#A21");
+                                Assert.AreEqual (set.Tables [i].Columns.Count, copySet.Tables [i].Columns.Count, "#A22");
                         }
 		}
 
@@ -1342,40 +1340,40 @@ namespace MonoTests.System.Data
 			ds.Tables["Files"].Constraints.Add(fk);		
 			ds.EnforceConstraints = true;
 
-			AssertEquals ("#1", 1, ds.Tables["Directories"].Constraints.Count);
-			AssertEquals ("#2", 1, ds.Tables["Files"].Constraints.Count);
+			Assert.AreEqual (1, ds.Tables["Directories"].Constraints.Count, "#1");
+			Assert.AreEqual (1, ds.Tables["Files"].Constraints.Count, "#2");
 
 			// check clone works fine
 			DataSet cloned_ds = ds.Clone ();
-			AssertEquals ("#3", 1, cloned_ds.Tables["Directories"].Constraints.Count);
-			AssertEquals ("#4", 1, cloned_ds.Tables["Files"].Constraints.Count);
+			Assert.AreEqual (1, cloned_ds.Tables["Directories"].Constraints.Count, "#3");
+			Assert.AreEqual (1, cloned_ds.Tables["Files"].Constraints.Count, "#4");
 
 			ForeignKeyConstraint clonedFk =  (ForeignKeyConstraint)cloned_ds.Tables["Files"].Constraints[0];
-			AssertEquals ("#5", "FK_Test", clonedFk.ConstraintName);
-			AssertEquals ("#6", 1, clonedFk.Columns.Length);
-			AssertEquals ("#7", "DirectoryID", clonedFk.Columns[0].ColumnName);
+			Assert.AreEqual ("FK_Test", clonedFk.ConstraintName, "#5");
+			Assert.AreEqual (1, clonedFk.Columns.Length, "#6");
+			Assert.AreEqual ("DirectoryID", clonedFk.Columns[0].ColumnName, "#7");
 
 			UniqueConstraint clonedUc = (UniqueConstraint)cloned_ds.Tables ["Directories"].Constraints[0];
 			UniqueConstraint origUc = (UniqueConstraint)ds.Tables ["Directories"].Constraints[0];
-			AssertEquals ("#8", origUc.ConstraintName, clonedUc.ConstraintName);
-			AssertEquals ("#9", 1, clonedUc.Columns.Length);
-			AssertEquals ("#10", "UID", clonedUc.Columns[0].ColumnName);
+			Assert.AreEqual (origUc.ConstraintName, clonedUc.ConstraintName, "#8");
+			Assert.AreEqual (1, clonedUc.Columns.Length, "#9");
+			Assert.AreEqual ("UID", clonedUc.Columns[0].ColumnName, "#10");
 
 			// check copy works fine
 			DataSet copy_ds = ds.Copy ();
-			AssertEquals ("#11", 1, copy_ds.Tables["Directories"].Constraints.Count);
-			AssertEquals ("#12", 1, copy_ds.Tables["Files"].Constraints.Count);
+			Assert.AreEqual (1, copy_ds.Tables["Directories"].Constraints.Count, "#11");
+			Assert.AreEqual (1, copy_ds.Tables["Files"].Constraints.Count, "#12");
 
 			ForeignKeyConstraint copyFk =  (ForeignKeyConstraint)copy_ds.Tables["Files"].Constraints[0];
-			AssertEquals ("#13", "FK_Test", copyFk.ConstraintName);
-			AssertEquals ("#14", 1, copyFk.Columns.Length);
-			AssertEquals ("#15", "DirectoryID", copyFk.Columns[0].ColumnName);
+			Assert.AreEqual ("FK_Test", copyFk.ConstraintName, "#13");
+			Assert.AreEqual (1, copyFk.Columns.Length, "#14");
+			Assert.AreEqual ("DirectoryID", copyFk.Columns[0].ColumnName, "#15");
 
 			UniqueConstraint copyUc = (UniqueConstraint)copy_ds.Tables ["Directories"].Constraints[0];
 			origUc = (UniqueConstraint)ds.Tables ["Directories"].Constraints[0];
-			AssertEquals ("#16", origUc.ConstraintName, copyUc.ConstraintName);
-			AssertEquals ("#17", 1, copyUc.Columns.Length);
-			AssertEquals ("#18", "UID", copyUc.Columns[0].ColumnName);
+			Assert.AreEqual (origUc.ConstraintName, copyUc.ConstraintName, "#16");
+			Assert.AreEqual (1, copyUc.Columns.Length, "#17");
+			Assert.AreEqual ("UID", copyUc.Columns[0].ColumnName, "#18");
 		}
 
 		[Test]
@@ -1416,7 +1414,7 @@ namespace MonoTests.System.Data
 			ds.Relations.Add (rel);
 			StringWriter sw = new StringWriter ();
 			ds.WriteXml (sw);
-			AssertEquals (xml, sw.ToString ().Replace ("\r\n", "\n"));
+			Assert.AreEqual (sw.ToString ().Replace ("\r\n", "\n"), xml);
 		}
 
 		[Test]
@@ -1438,7 +1436,7 @@ namespace MonoTests.System.Data
     <col3>sample text 2</col3>
   </table2>
 </set>";
-			AssertEquals (result, sr.ReadToEnd ().Replace ("\r\n", "\n"));
+			Assert.AreEqual (sr.ReadToEnd ().Replace ("\r\n", "\n"), result);
 		}
 
 		[Test]
@@ -1455,7 +1453,7 @@ namespace MonoTests.System.Data
 			ds.Tables [0].Rows.Add (new object [] {"content string."});
 			StringWriter sw = new StringWriter ();
 			ds.WriteXml (sw);
-			AssertEquals (xml, sw.ToString ().Replace ("\r\n", "\n"));
+			Assert.AreEqual (sw.ToString ().Replace ("\r\n", "\n"), xml);
 		}
 
 		[Test]
@@ -1473,7 +1471,7 @@ namespace MonoTests.System.Data
 			XmlTextWriter xtw = new XmlTextWriter (sw);
 			xtw.QuoteChar = '\'';
 			ds.WriteXml (xtw);
-			AssertEquals (xml, sw.ToString ());
+			Assert.AreEqual (xml, sw.ToString ());
 		}
 
 		// bug #53959.
@@ -1495,7 +1493,7 @@ namespace MonoTests.System.Data
 			xtw.QuoteChar = '\'';
 			ds.WriteXml (xtw);
 			xtw.Flush ();
-			AssertEquals (input, sw.ToString ().Replace ("\r\n", "\n"));
+			Assert.AreEqual (input, sw.ToString ().Replace ("\r\n", "\n"));
 		}
 
 		[Test] // bug #60469
@@ -1549,7 +1547,7 @@ namespace MonoTests.System.Data
 			OriginalDataSet.WriteXml (xtw);
 			string result = sw.ToString ();
 
-			AssertEquals (xml, result);
+			Assert.AreEqual (xml, result);
 
 			sw = new StringWriter ();
 			xtw = new XmlTextWriter (sw);
@@ -1558,7 +1556,7 @@ namespace MonoTests.System.Data
 			result = sw.ToString ();
 
 			result = result.Replace ("\r\n", "\n").Replace ('"', '\'');
-			AssertEquals (schema, result);
+			Assert.AreEqual (schema, result);
 		}
 
 		// bug #66366
@@ -1607,7 +1605,7 @@ namespace MonoTests.System.Data
 
 			string result = sw.ToString ();
 
-			AssertEquals (xmlschema, result.Replace ("\r\n", "\n"));
+			Assert.AreEqual (result.Replace ("\r\n", "\n"), xmlschema);
 		}
 
 		// bug #67792.
@@ -1655,7 +1653,7 @@ namespace MonoTests.System.Data
 
 			string result = sw.ToString ();
 
-			AssertEquals (xmlschema, result.Replace ("\r\n", "\n"));
+			Assert.AreEqual (result.Replace ("\r\n", "\n"), xmlschema);
 		}
 
 		// bug # 68432
@@ -1769,7 +1767,7 @@ namespace MonoTests.System.Data
 
 			string result = sw.ToString ();
 
-			AssertEquals (xmlschema, result.Replace ("\r\n", "\n"));
+			Assert.AreEqual (result.Replace ("\r\n", "\n"), xmlschema);
 		}
 
 		// bug #67793
@@ -1818,7 +1816,7 @@ namespace MonoTests.System.Data
 
 			string result = sw.ToString ();
 
-			AssertEquals (xmlschema, result.Replace ("\r\n", "\n"));
+			Assert.AreEqual (result.Replace ("\r\n", "\n"), xmlschema);
 		}
 
 		// bug #68008
@@ -1833,7 +1831,7 @@ namespace MonoTests.System.Data
 			dt.Rows.Add (new object [] {"foo", "bar"});
 			StringWriter sw = new StringWriter ();
 			ds.WriteXmlSchema (sw);
-			Assert (sw.ToString ().IndexOf ("xmlns=\"\"") > 0);
+			Assert.IsTrue (sw.ToString ().IndexOf ("xmlns=\"\"") > 0);
 		}
 
 		// bug #61233
@@ -1874,7 +1872,7 @@ namespace MonoTests.System.Data
 
 			string result = sw.ToString ();
 
-			AssertEquals (xml, result.Replace ("\r\n", "\n"));
+			Assert.AreEqual (result.Replace ("\r\n", "\n"), xml);
 		}
 
 		[Test]
@@ -2017,7 +2015,7 @@ namespace MonoTests.System.Data
 
 			string result = sw.ToString ();
 
-			AssertEquals (xml, result.Replace ("\r\n", "\n"));
+			Assert.AreEqual (result.Replace ("\r\n", "\n"), xml);
 		}
 
 		[Test]
@@ -2046,12 +2044,14 @@ namespace MonoTests.System.Data
 			XmlTextReader reader = new XmlTextReader (sr);
 			XmlSerializer serializer1 = new XmlSerializer (typeof (DataSet));
 			DataSet ds = serializer1.Deserialize (reader) as DataSet;
-                        AssertEquals ("deserialization after modification does not give original values",
+                        Assert.AreEqual (
                                 prevDs.Tables[0].Rows [0][0,DataRowVersion.Original].ToString (), 
-				ds.Tables[0].Rows [0][0,DataRowVersion.Original].ToString ());
-                        AssertEquals ("deserialization after modification oes not give current values",
+				ds.Tables[0].Rows [0][0,DataRowVersion.Original].ToString (),
+				"deserialization after modification does not give original values");
+                        Assert.AreEqual (
                                 prevDs.Tables[0].Rows [0][0,DataRowVersion.Current].ToString (), 
-				ds.Tables[0].Rows [0][0,DataRowVersion.Current].ToString ());
+				ds.Tables[0].Rows [0][0,DataRowVersion.Current].ToString (),
+				"deserialization after modification oes not give current values");
                 }
 
                 /// <summary>
@@ -2085,8 +2085,8 @@ namespace MonoTests.System.Data
                         } catch (Exception e) {
                                 throw (new Exception ("Exception should not have been thrown at Clear method" + e.ToString ()));
                         }
-                        Assertion.AssertEquals ("parent table rows should not exist!", 0, parent.Rows.Count);
-                        Assertion.AssertEquals ("child table rows should not exist!", 0, child.Rows.Count);
+                        Assert.AreEqual (0, parent.Rows.Count, "parent table rows should not exist!");
+                        Assert.AreEqual (0, child.Rows.Count, "child table rows should not exist!");
                 }
 
 		[Test]
@@ -2094,7 +2094,7 @@ namespace MonoTests.System.Data
 		{
 			MyDataSet ds1 = new MyDataSet();
                         MyDataSet ds = (MyDataSet)(ds1.Clone());
-                     	AssertEquals("A#01",2,MyDataSet.count);
+                     	Assert.AreEqual (2, MyDataSet.count, "A#01");
 		}
 
 		#region DataSet.GetChanges Tests
@@ -2131,17 +2131,17 @@ namespace MonoTests.System.Data
 			child.Rows [1]["parent"] = 4;
 			DataSet changes = ds.GetChanges ();
 			DataRow row = changes.Tables ["parent"].Rows[0];
-			AssertType.AreEqual ((int) parent.Rows [3][0], (int) row [0], "#RT1");
-			AssertType.AreEqual (1, changes.Tables ["parent"].Rows.Count, "#RT2 only get parent row with current version");
+			Assert.AreEqual ((int) parent.Rows [3][0], (int) row [0], "#RT1");
+			Assert.AreEqual (1, changes.Tables ["parent"].Rows.Count, "#RT2 only get parent row with current version");
 			ds.RejectChanges ();
 
 			// delete a child row and get changes.
 			child.Rows [0].Delete ();
 			changes = ds.GetChanges ();
 			
-			AssertType.AreEqual (changes.Tables.Count, 2, "#RT3 Should import parent table as well");
-			AssertType.AreEqual (1, changes.Tables ["parent"].Rows.Count, "#RT4 only get parent row with original version");
-			AssertType.AreEqual (1, (int) changes.Tables ["parent"].Rows [0][0], "#RT5 parent row based on original version");
+			Assert.AreEqual (changes.Tables.Count, 2, "#RT3 Should import parent table as well");
+			Assert.AreEqual (1, changes.Tables ["parent"].Rows.Count, "#RT4 only get parent row with original version");
+			Assert.AreEqual (1, (int) changes.Tables ["parent"].Rows [0][0], "#RT5 parent row based on original version");
 		}
 		#endregion // DataSet.GetChanges Tests
 
@@ -2177,20 +2177,15 @@ namespace MonoTests.System.Data
 			
 			parent.Rows [0] ["name"] = "mono changed test 1";
 			
-			Assertion.AssertEquals ("#RT1 child should not be modified", 
-						DataRowState.Unchanged,
-						parent.Rows [0].GetChildRows (relation) [0].RowState);
+			Assert.AreEqual (DataRowState.Unchanged, parent.Rows [0].GetChildRows (relation) [0].RowState,
+					 "#RT1 child should not be modified");
 
 			ds.RejectChanges ();
 			parent.Rows [0] ["id"] = "4";
 			
 			DataRow childRow =  parent.Rows [0].GetChildRows (relation) [0];
-			Assertion.AssertEquals ("#RT2 child should be modified", 
-						DataRowState.Modified,
-						childRow.RowState);
-			Assertion.AssertEquals ("#RT3 child should point to modified row", 
-						4,
-						(int) childRow ["parent"]);
+			Assert.AreEqual (DataRowState.Modified, childRow.RowState, "#RT2 child should be modified");
+			Assert.AreEqual (4, (int) childRow ["parent"], "#RT3 child should point to modified row");
 		}
 
 		[Test] // from bug #76480
@@ -2213,9 +2208,9 @@ namespace MonoTests.System.Data
 			StringWriter writer = new StringWriter ();
 			data.WriteXml (writer, XmlWriteMode.WriteSchema);
 			string xml = writer.ToString ();
-			Assert ("#1", xml.IndexOf ("name=\"col.2_x003C_hi_x002F__x003E_\"") > 0);
-			Assert ("#2", xml.IndexOf ("name=\"_x0023_col3\"") > 0);
-			Assert ("#3", xml.IndexOf ("<col.2_x003C_hi_x002F__x003E_>hi there</col.2_x003C_hi_x002F__x003E_>") > 0);
+			Assert.IsTrue (xml.IndexOf ("name=\"col.2_x003C_hi_x002F__x003E_\"") > 0, "#1");
+			Assert.IsTrue (xml.IndexOf ("name=\"_x0023_col3\"") > 0, "#2");
+			Assert.IsTrue (xml.IndexOf ("<col.2_x003C_hi_x002F__x003E_>hi there</col.2_x003C_hi_x002F__x003E_>") > 0, "#3");
 
 			// read xml
 			DataSet data2 = new DataSet();
@@ -2258,19 +2253,14 @@ namespace MonoTests.System.Data
 			// For First CreateDataReader Overload
 			localSetup ();
 			DataTableReader dtr = ds.CreateDataReader ();
-			Assert ("HasRows", dtr.HasRows);
+			Assert.IsTrue (dtr.HasRows, "HasRows");
 			int ti = 0;
 			do {
-				AssertEquals ("CountCols-" + ti,
-					ds.Tables[ti].Columns.Count,
-					dtr.FieldCount);
+				Assert.AreEqual (ds.Tables[ti].Columns.Count, dtr.FieldCount, "CountCols-" + ti);
 				int ri = 0;
 				while (dtr.Read ()) {
-					for (int i = 0; i < dtr.FieldCount; i++) {
-						AssertEquals ("RowData-"+ti+"-"+ri+"-"+i,
-							ds.Tables[ti].Rows[ri][i],
-							dtr[i]);
-					}
+					for (int i = 0; i < dtr.FieldCount; i++)
+						Assert.AreEqual (ds.Tables[ti].Rows[ri][i], dtr[i], "RowData-"+ti+"-"+ri+"-"+i);
 					ri++;
 				}
 				ti++;
@@ -2283,19 +2273,14 @@ namespace MonoTests.System.Data
 			// compare to ds.Tables
 			localSetup ();
 			DataTableReader dtr = ds.CreateDataReader (dt1, dt2);
-			Assert ("HasRows", dtr.HasRows);
+			Assert.IsTrue (dtr.HasRows, "HasRows");
 			int ti = 0;
 			do {
-			        AssertEquals ("CountCols-" + ti,
-			                ds.Tables[ti].Columns.Count,
-			                dtr.FieldCount);
+			        Assert.AreEqual (ds.Tables[ti].Columns.Count, dtr.FieldCount, "CountCols-" + ti);
 			        int ri = 0;
 			        while (dtr.Read ()) {
-			                for (int i = 0; i < dtr.FieldCount; i++) {
-			                        AssertEquals ("RowData-" + ti + "-" + ri + "-" + i,
-			                                ds.Tables[ti].Rows[ri][i],
-			                                dtr[i]);
-			                }
+			                for (int i = 0; i < dtr.FieldCount; i++)
+			                        Assert.AreEqual (ds.Tables[ti].Rows[ri][i], dtr[i], "RowData-" + ti + "-" + ri + "-" + i);
 			                ri++;
 			        }
 			        ti++;
@@ -2309,22 +2294,24 @@ namespace MonoTests.System.Data
 			localSetup ();
 			ds.Tables.Clear ();
 			DataTableReader dtr = ds.CreateDataReader (dt1, dt2);
-			Assert ("HasRows", dtr.HasRows);
+			Assert.IsTrue (dtr.HasRows, "HasRows");
+			string name = "dt1";
 			DataTable dtn = dt1;
 			do {
-			        AssertEquals ("CountCols-",
-			                dtn.Columns.Count,
-			                dtr.FieldCount);
+			        Assert.AreEqual (dtn.Columns.Count, dtr.FieldCount, "CountCols-" + name);
 			        int ri = 0;
 			        while (dtr.Read ()) {
-			                for (int i = 0; i < dtr.FieldCount; i++) {
-			                        AssertEquals ("RowData-" + ri + "-" + i,
-			                                dtn.Rows[ri][i],
-			                                dtr[i]);
-			                }
+			                for (int i = 0; i < dtr.FieldCount; i++)
+			                        Assert.AreEqual (dtn.Rows[ri][i], dtr[i], "RowData-" + name + "-" + ri + "-" + i);
 			                ri++;
 			        }
-			        dtn = dt2;
+				if (dtn == dt1) {
+					dtn = dt2;
+					name = "dt2";
+				} else {
+					dtn = null;
+					name = null;
+				}
 			} while (dtr.NextResult ());
 		}
 
@@ -2351,8 +2338,8 @@ namespace MonoTests.System.Data
 		private int fillErrCounter;
 		private void fillErrorHandler (object sender, FillErrorEventArgs e) {
 			e.Continue = fillErr[fillErrCounter].contFlag;
-			AssertEquals ("fillErr-T", fillErr[fillErrCounter].tableName, e.DataTable.TableName);
-			AssertEquals ("fillErr-C", fillErr[fillErrCounter].contFlag, e.Continue);
+			Assert.AreEqual (fillErr[fillErrCounter].tableName, e.DataTable.TableName, "fillErr-T");
+			Assert.AreEqual (fillErr[fillErrCounter].contFlag, e.Continue, "fillErr-C");
 			fillErrCounter++;
 		}
 
@@ -2443,11 +2430,11 @@ namespace MonoTests.System.Data
 			dsLoad.Tables.Add (table2);
 			DataTableReader dtr = ds.CreateDataReader ();
 			dsLoad.Load (dtr, LoadOption.PreserveChanges, "Second", "First");
-			AssertEquals ("Tables", 2, dsLoad.Tables.Count);
-			AssertEquals ("T1-Rows", 3, dsLoad.Tables[0].Rows.Count);
-			AssertEquals ("T1-Columns", 3, dsLoad.Tables[0].Columns.Count);
-			AssertEquals ("T2-Rows", 3, dsLoad.Tables[1].Rows.Count);
-			AssertEquals ("T2-Columns", 2, dsLoad.Tables[1].Columns.Count);
+			Assert.AreEqual (2, dsLoad.Tables.Count, "Tables");
+			Assert.AreEqual (3, dsLoad.Tables[0].Rows.Count, "T1-Rows");
+			Assert.AreEqual (3, dsLoad.Tables[0].Columns.Count, "T1-Columns");
+			Assert.AreEqual (3, dsLoad.Tables[1].Rows.Count, "T2-Rows");
+			Assert.AreEqual (2, dsLoad.Tables[1].Columns.Count, "T2-Columns");
 		}
 
 		[Test]
@@ -2460,19 +2447,19 @@ namespace MonoTests.System.Data
 			dsLoad.Tables.Add (table2);
 			DataTableReader dtr = ds.CreateDataReader ();
 			dsLoad.Load (dtr, LoadOption.Upsert, "Third", "Fourth");
-			AssertEquals ("Tables", 4, dsLoad.Tables.Count);
-			AssertEquals ("T1-Name", "First", dsLoad.Tables[0].TableName);
-			AssertEquals ("T1-Rows", 0, dsLoad.Tables[0].Rows.Count);
-			AssertEquals ("T1-Columns", 0, dsLoad.Tables[0].Columns.Count);
-			AssertEquals ("T2-Name", "Second", dsLoad.Tables[1].TableName);
-			AssertEquals ("T2-Rows", 0, dsLoad.Tables[1].Rows.Count);
-			AssertEquals ("T2-Columns", 0, dsLoad.Tables[1].Columns.Count);
-			AssertEquals ("T3-Name", "Third", dsLoad.Tables[2].TableName);
-			AssertEquals ("T3-Rows", 3, dsLoad.Tables[2].Rows.Count);
-			AssertEquals ("T3-Columns", 2, dsLoad.Tables[2].Columns.Count);
-			AssertEquals ("T4-Name", "Fourth", dsLoad.Tables[3].TableName);
-			AssertEquals ("T4-Rows", 3, dsLoad.Tables[3].Rows.Count);
-			AssertEquals ("T4-Columns", 3, dsLoad.Tables[3].Columns.Count);
+			Assert.AreEqual (4, dsLoad.Tables.Count, "Tables");
+			Assert.AreEqual ("First", dsLoad.Tables[0].TableName, "T1-Name");
+			Assert.AreEqual (0, dsLoad.Tables[0].Rows.Count, "T1-Rows");
+			Assert.AreEqual (0, dsLoad.Tables[0].Columns.Count, "T1-Columns");
+			Assert.AreEqual ("Second", dsLoad.Tables[1].TableName, "T2-Name");
+			Assert.AreEqual (0, dsLoad.Tables[1].Rows.Count, "T2-Rows");
+			Assert.AreEqual (0, dsLoad.Tables[1].Columns.Count, "T2-Columns");
+			Assert.AreEqual ("Third", dsLoad.Tables[2].TableName, "T3-Name");
+			Assert.AreEqual (3, dsLoad.Tables[2].Rows.Count, "T3-Rows");
+			Assert.AreEqual (2, dsLoad.Tables[2].Columns.Count, "T3-Columns");
+			Assert.AreEqual ("Fourth", dsLoad.Tables[3].TableName, "T4-Name");
+			Assert.AreEqual (3, dsLoad.Tables[3].Rows.Count, "T4-Rows");
+			Assert.AreEqual (3, dsLoad.Tables[3].Columns.Count, "T4-Columns");
 		}
 
 		[Test]
@@ -2490,38 +2477,33 @@ namespace MonoTests.System.Data
 			dsLoad.Tables.Add (table2);
 			DataTableReader dtr = ds.CreateDataReader ();
 			dsLoad.Load (dtr, LoadOption.OverwriteChanges, "Third", "First");
-			AssertEquals ("Tables", 3, dsLoad.Tables.Count);
-			AssertEquals ("T1-Name", "First", dsLoad.Tables[0].TableName);
-			AssertEquals ("T1-Rows", 4, dsLoad.Tables[0].Rows.Count);
-			AssertEquals ("T1-Columns", 4, dsLoad.Tables[0].Columns.Count);
-			AssertEquals ("T2-Name", "Second", dsLoad.Tables[1].TableName);
-			AssertEquals ("T2-Rows", 2, dsLoad.Tables[1].Rows.Count);
-			AssertEquals ("T2-Columns", 1, dsLoad.Tables[1].Columns.Count);
-			AssertEquals ("T3-Name", "Third", dsLoad.Tables[2].TableName);
-			AssertEquals ("T3-Rows", 3, dsLoad.Tables[2].Rows.Count);
-			AssertEquals ("T3-Columns", 2, dsLoad.Tables[2].Columns.Count);
+			Assert.AreEqual (3, dsLoad.Tables.Count, "Tables");
+			Assert.AreEqual ("First", dsLoad.Tables[0].TableName, "T1-Name");
+			Assert.AreEqual (4, dsLoad.Tables[0].Rows.Count, "T1-Rows");
+			Assert.AreEqual (4, dsLoad.Tables[0].Columns.Count, "T1-Columns");
+			Assert.AreEqual ("Second", dsLoad.Tables[1].TableName, "T2-Name");
+			Assert.AreEqual (2, dsLoad.Tables[1].Rows.Count, "T2-Rows");
+			Assert.AreEqual (1, dsLoad.Tables[1].Columns.Count, "T2-Columns");
+			Assert.AreEqual ("Third", dsLoad.Tables[2].TableName, "T3-Name");
+			Assert.AreEqual (3, dsLoad.Tables[2].Rows.Count, "T3-Rows");
+			Assert.AreEqual (2, dsLoad.Tables[2].Columns.Count, "T3-Columns");
 		}
 
 		private void CompareTables (DataSet dsLoad) {
-			AssertEquals ("NumTables",
-				ds.Tables.Count, dsLoad.Tables.Count);
+			Assert.AreEqual (ds.Tables.Count, dsLoad.Tables.Count, "NumTables");
 			for (int tc = 0; tc < dsLoad.Tables.Count; tc++) {
-				AssertEquals ("Table" + tc + "-NumCols",
-					ds.Tables[tc].Columns.Count,
-					dsLoad.Tables[tc].Columns.Count);
-				AssertEquals ("Table" + tc + "-NumRows",
-					ds.Tables[tc].Rows.Count,
-					dsLoad.Tables[tc].Rows.Count);
+				Assert.AreEqual (ds.Tables[tc].Columns.Count, dsLoad.Tables[tc].Columns.Count, "Table" + tc + "-NumCols");
+				Assert.AreEqual (ds.Tables[tc].Rows.Count, dsLoad.Tables[tc].Rows.Count, "Table" + tc + "-NumRows");
 				for (int cc = 0; cc < dsLoad.Tables[tc].Columns.Count; cc++) {
-					AssertEquals ("Table" + tc + "-" + "Col" + cc + "-Name",
-						ds.Tables[tc].Columns[cc].ColumnName,
-						dsLoad.Tables[tc].Columns[cc].ColumnName);
+					Assert.AreEqual (ds.Tables[tc].Columns[cc].ColumnName,
+							 dsLoad.Tables[tc].Columns[cc].ColumnName,
+							 "Table" + tc + "-" + "Col" + cc + "-Name");
 				}
 				for (int rc = 0; rc < dsLoad.Tables[tc].Rows.Count; rc++) {
 					for (int cc = 0; cc < dsLoad.Tables[tc].Columns.Count; cc++) {
-						AssertEquals ("Table" + tc + "-Row" + rc + "-Col" + cc + "-Data",
-							ds.Tables[tc].Rows[rc].ItemArray[cc],
-							dsLoad.Tables[tc].Rows[rc].ItemArray[cc]);
+						Assert.AreEqual (ds.Tables[tc].Rows[rc].ItemArray[cc],
+								 dsLoad.Tables[tc].Rows[rc].ItemArray[cc],
+								 "Table" + tc + "-Row" + rc + "-Col" + cc + "-Data");
 					}
 				}
 			}

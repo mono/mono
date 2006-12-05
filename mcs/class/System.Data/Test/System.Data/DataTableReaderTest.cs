@@ -249,8 +249,8 @@ namespace MonoTests.System.Data
                         DataTableReader reader = new DataTableReader (dt);
                         try {
                         
-                                Assert.AreEqual (false, reader.Read (), "#1 there are no rows");
-                                Assert.AreEqual (false, reader.NextResult (), "#2 there are no further resultsets");
+                                Assert.IsFalse (reader.Read (), "#1 there are no rows");
+                                Assert.IsFalse (reader.NextResult (), "#2 there are no further resultsets");
                         } finally {
                                 if (reader != null && !reader.IsClosed)
                                         reader.Close ();
@@ -479,7 +479,7 @@ namespace MonoTests.System.Data
                                 dt.Rows.Add (new object [] {8, "mono 8"});
                                 dt.AcceptChanges ();
                                 bool success = reader.Read ();
-                                Assert.AreEqual (false, success, "#2 is always invalid");
+                                Assert.IsFalse (success, "#2 is always invalid");
 
                                 // clear when reader is not read yet
                                 reader.Close ();
@@ -488,7 +488,7 @@ namespace MonoTests.System.Data
                                 dt.Rows.Add (new object [] {8, "mono 8"});
                                 dt.AcceptChanges ();
                                 success = reader.Read ();
-                                Assert.AreEqual (true, success, "#3 should add");
+                                Assert.IsTrue (success, "#3 should add");
                         } finally {
                                 if (reader != null && !reader.IsClosed)
                                         reader.Close ();

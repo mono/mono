@@ -331,10 +331,10 @@ namespace MonoTests.System.Data
 			DataSet ds = new DataSet ();
 			ds.ReadXmlSchema (new StringReader (xs));
 			AssertDataSet ("ds", ds, "NewDataSet", 1, 0);
-			AssertEquals ("fi-FI", ds.Locale.Name); // DataSet's Locale comes from current thread
+			Assert.AreEqual ("fi-FI", ds.Locale.Name); // DataSet's Locale comes from current thread
 			DataTable dt = ds.Tables [0];
 			AssertDataTable ("dt", dt, "Root", 2, 0, 0, 0, 0, 0);
-			AssertEquals ("ja-JP", dt.Locale.Name); // DataTable's Locale comes from msdata:Locale
+			Assert.AreEqual ("ja-JP", dt.Locale.Name); // DataTable's Locale comes from msdata:Locale
 			AssertDataColumn ("col1", dt.Columns [0], "Attr", true, false, 0, 1, "Attr", MappingType.Attribute, typeof (Int64), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 			AssertDataColumn ("col2", dt.Columns [1], "Child", false, false, 0, 1, "Child", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
 		}
@@ -383,19 +383,19 @@ namespace MonoTests.System.Data
 			string xs = String.Format (xsbase, constraints, String.Empty, String.Empty);
 			DataSet ds = new DataSet ();
 			ds.ReadXmlSchema (new StringReader (xs));
-			AssertEquals (1, ds.Relations.Count);
+			Assert.AreEqual (1, ds.Relations.Count);
 
 			// Constraints on another global element - just ignored
 			xs = String.Format (xsbase, String.Empty, constraints, String.Empty);
 			ds = new DataSet ();
 			ds.ReadXmlSchema (new StringReader (xs));
-			AssertEquals (0, ds.Relations.Count);
+			Assert.AreEqual (0, ds.Relations.Count);
 
 			// Constraints on local element - just ignored
 			xs = String.Format (xsbase, String.Empty, String.Empty, constraints);
 			ds = new DataSet ();
 			ds.ReadXmlSchema (new StringReader (xs));
-			AssertEquals (0, ds.Relations.Count);
+			Assert.AreEqual (0, ds.Relations.Count);
 		}
 
 		[Test]
@@ -751,7 +751,7 @@ namespace MonoTests.System.Data
 			col.AutoIncrementSeed = -1;
 			col.AutoIncrementStep = -1;
 			tbl.Columns.Add("data", typeof(string));
-			Assert (ds.GetXmlSchema ().IndexOf ("AutoIncrementStep") > 0);
+			Assert.IsTrue (ds.GetXmlSchema ().IndexOf ("AutoIncrementStep") > 0);
 		}
 
 		[Test]

@@ -40,7 +40,7 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Data
 {
-	public class DataSetAssertion : Assertion
+	public class DataSetAssertion
 	{
 		public string GetNormalizedSchema (string source)
 		{
@@ -96,21 +96,21 @@ namespace MonoTests.System.Data
 
 		public void AssertDataSet (string label, DataSet ds, string name, int tableCount, int relCount)
 		{
-			AssertEquals (label + ".DataSetName", name, ds.DataSetName);
-			AssertEquals (label + ".TableCount", tableCount, ds.Tables.Count);
+			Assert.AreEqual (name, ds.DataSetName, label + ".DataSetName");
+			Assert.AreEqual (tableCount, ds.Tables.Count, label + ".TableCount");
 			if (relCount >= 0)
-				AssertEquals (label + ".RelationCount", relCount, ds.Relations.Count);
+				Assert.AreEqual (relCount, ds.Relations.Count, label + ".RelationCount");
 		}
 
 		public void AssertDataTable (string label, DataTable dt, string name, int columnCount, int rowCount, int parentRelationCount, int childRelationCount, int constraintCount, int primaryKeyLength)
 		{
-			AssertEquals (label + ".TableName", name, dt.TableName);
-			AssertEquals (label + ".ColumnCount", columnCount, dt.Columns.Count);
-			AssertEquals (label + ".RowCount", rowCount, dt.Rows.Count);
-			AssertEquals (label + ".ParentRelCount", parentRelationCount, dt.ParentRelations.Count);
-			AssertEquals (label + ".ChildRelCount", childRelationCount, dt.ChildRelations.Count);
-			AssertEquals (label + ".ConstraintCount", constraintCount, dt.Constraints.Count);
-			AssertEquals (label + ".PrimaryKeyLength", primaryKeyLength, dt.PrimaryKey.Length);
+			Assert.AreEqual (name, dt.TableName, label + ".TableName");
+			Assert.AreEqual (columnCount, dt.Columns.Count, label + ".ColumnCount");
+			Assert.AreEqual (rowCount, dt.Rows.Count, label + ".RowCount");
+			Assert.AreEqual (parentRelationCount, dt.ParentRelations.Count, label + ".ParentRelCount");
+			Assert.AreEqual (childRelationCount, dt.ChildRelations.Count, label + ".ChildRelCount");
+			Assert.AreEqual (constraintCount, dt.Constraints.Count, label + ".ConstraintCount");
+			Assert.AreEqual (primaryKeyLength, dt.PrimaryKey.Length, label + ".PrimaryKeyLength");
 		}
 
 		public void AssertReadXml (DataSet ds, string label, string xml, XmlReadMode readMode, XmlReadMode resultMode, string datasetName, int tableCount)
@@ -127,46 +127,45 @@ namespace MonoTests.System.Data
 		public void AssertReadXml (DataSet ds, string label, string xml, XmlReadMode readMode, XmlReadMode resultMode, string datasetName, int tableCount, ReadState state, string readerLocalName, string readerNS)
 		{
 			XmlReader xtr = new XmlTextReader (xml, XmlNodeType.Element, null);
-			AssertEquals (label + ".return", resultMode, ds.ReadXml (xtr, readMode));
+			Assert.AreEqual (resultMode, ds.ReadXml (xtr, readMode), label + ".return");
 			AssertDataSet (label + ".dataset", ds, datasetName, tableCount, -1);
-			AssertEquals (label + ".readstate", state, xtr.ReadState);
+			Assert.AreEqual (state, xtr.ReadState, label + ".readstate");
 			if (readerLocalName != null)
-				AssertEquals (label + ".reader-localName",
-					readerLocalName, xtr.LocalName);
+				Assert.AreEqual (readerLocalName, xtr.LocalName, label + ".reader-localName");
 			if (readerNS != null)
-				AssertEquals (label + ".reader-ns", readerNS, xtr.NamespaceURI);
+				Assert.AreEqual (readerNS, xtr.NamespaceURI, label + ".reader-ns");
 		}
 
 		public void AssertDataRelation (string label, DataRelation rel, string name, bool nested,
 			string [] parentColNames, string [] childColNames,
 			bool existsUK, bool existsFK)
 		{
-			AssertEquals (label + ".Name", name, rel.RelationName);
-			AssertEquals (label + ".Nested", nested, rel.Nested);
+			Assert.AreEqual (name, rel.RelationName, label + ".Name");
+			Assert.AreEqual (nested, rel.Nested, label + ".Nested");
 			for (int i = 0; i < parentColNames.Length; i++)
-				AssertEquals (label + ".parentColumn_" + i, parentColNames [i], rel.ParentColumns [i].ColumnName);
-			AssertEquals (label + ".ParentColCount", parentColNames.Length, rel.ParentColumns.Length);
+				Assert.AreEqual (parentColNames [i], rel.ParentColumns [i].ColumnName, label + ".parentColumn_" + i);
+			Assert.AreEqual (parentColNames.Length, rel.ParentColumns.Length, label + ".ParentColCount");
 			for (int i = 0; i < childColNames.Length; i++)
-				AssertEquals (label + ".childColumn_" + i, childColNames [i], rel.ChildColumns [i].ColumnName);
-			AssertEquals (label + ".ChildColCount", childColNames.Length, rel.ChildColumns.Length);
+				Assert.AreEqual (childColNames [i], rel.ChildColumns [i].ColumnName, label + ".childColumn_" + i);
+			Assert.AreEqual (childColNames.Length, rel.ChildColumns.Length, label + ".ChildColCount");
 			if (existsUK)
-				AssertNotNull (label + ".uniqKeyExists", rel.ParentKeyConstraint);
+				Assert.IsNotNull (rel.ParentKeyConstraint, label + ".uniqKeyExists");
 			else
-				AssertNull (label + ".uniqKeyNotExists", rel.ParentKeyConstraint);
+				Assert.IsNull (rel.ParentKeyConstraint, label + ".uniqKeyNotExists");
 			if (existsFK)
-				AssertNotNull (label + ".fkExists", rel.ChildKeyConstraint);
+				Assert.IsNotNull (rel.ChildKeyConstraint, label + ".fkExists");
 			else
-				AssertNull (label + ".fkNotExists", rel.ChildKeyConstraint);
+				Assert.IsNull (rel.ChildKeyConstraint, label + ".fkNotExists");
 		}
 
 		public void AssertUniqueConstraint (string label, UniqueConstraint uc, 
 			string name, bool isPrimaryKey, string [] colNames)
 		{
-			AssertEquals (label + ".name", name, uc.ConstraintName);
-			AssertEquals (label + ".pkey", isPrimaryKey, uc.IsPrimaryKey);
+			Assert.AreEqual (name, uc.ConstraintName, label + ".name");
+			Assert.AreEqual (isPrimaryKey, uc.IsPrimaryKey, label + ".pkey");
 			for (int i = 0; i < colNames.Length; i++)
-				AssertEquals (label + ".column_" + i, colNames [i], uc.Columns [i].ColumnName);
-			AssertEquals (label + ".colCount", colNames.Length, uc.Columns.Length);
+				Assert.AreEqual (colNames [i], uc.Columns [i].ColumnName, label + ".column_" + i);
+			Assert.AreEqual (colNames.Length, uc.Columns.Length, label + ".colCount");
 		}
 
 		public void AssertForeignKeyConstraint (string label,
@@ -174,16 +173,16 @@ namespace MonoTests.System.Data
 			AcceptRejectRule acceptRejectRule, Rule delRule, Rule updateRule,
 			string [] colNames, string [] relColNames)
 		{
-			AssertEquals (label + ".name", name, fk.ConstraintName);
-			AssertEquals (label + ".acceptRejectRule", acceptRejectRule, fk.AcceptRejectRule);
-			AssertEquals (label + ".delRule", delRule, fk.DeleteRule);
-			AssertEquals (label + ".updateRule", updateRule, fk.UpdateRule);
+			Assert.AreEqual (name, fk.ConstraintName, label + ".name");
+			Assert.AreEqual (acceptRejectRule, fk.AcceptRejectRule, label + ".acceptRejectRule");
+			Assert.AreEqual (delRule, fk.DeleteRule, label + ".delRule");
+			Assert.AreEqual (updateRule, fk.UpdateRule, label + ".updateRule");
 			for (int i = 0; i < colNames.Length; i++)
-				AssertEquals (label + ".column_" + i, colNames [i], fk.Columns [i].ColumnName);
-			AssertEquals (label + ".colCount", colNames.Length, fk.Columns.Length);
+				Assert.AreEqual (colNames [i], fk.Columns [i].ColumnName, label + ".column_" + i);
+			Assert.AreEqual (colNames.Length, fk.Columns.Length, label + ".colCount");
 			for (int i = 0; i < relColNames.Length; i++)
-				AssertEquals (label + ".relatedColumn_" + i, relColNames [i], fk.RelatedColumns [i].ColumnName);
-			AssertEquals (label + ".relatedColCount", relColNames.Length, fk.RelatedColumns.Length);
+				Assert.AreEqual (relColNames [i], fk.RelatedColumns [i].ColumnName, label + ".relatedColumn_" + i);
+			Assert.AreEqual (relColNames.Length, fk.RelatedColumns.Length, label + ".relatedColCount");
 		}
 
 		public void AssertDataColumn (string label, DataColumn col, 
@@ -194,23 +193,23 @@ namespace MonoTests.System.Data
 			int maxLength, string ns, int ordinal, string prefix, 
 			bool readOnly, bool unique)
 		{
-			AssertEquals (label + "ColumnName: " , colName, col.ColumnName);
-			AssertEquals (label + "AllowDBNull? " , allowDBNull, col.AllowDBNull);
-			AssertEquals (label + "AutoIncrement? " , autoIncr, col.AutoIncrement);
-			AssertEquals (label + "  Seed: " , autoIncrSeed, col.AutoIncrementSeed);
-			AssertEquals (label + "  Step: " , autoIncrStep, col.AutoIncrementStep);
-			AssertEquals (label + "Caption " , caption, col.Caption);
-			AssertEquals (label + "Mapping: " , colMap, col.ColumnMapping);
-			AssertEquals (label + "Type: " , type, col.DataType);
-			AssertEquals (label + "DefaultValue: " , defaultValue, col.DefaultValue);
-			AssertEquals (label + "Expression: " , expression, col.Expression);
-			AssertEquals (label + "MaxLength: " , maxLength, col.MaxLength);
-			AssertEquals (label + "Namespace: " , ns, col.Namespace);
+			Assert.AreEqual (colName, col.ColumnName, label + "ColumnName: " );
+			Assert.AreEqual (allowDBNull, col.AllowDBNull, label + "AllowDBNull? " );
+			Assert.AreEqual (autoIncr, col.AutoIncrement, label + "AutoIncrement? " );
+			Assert.AreEqual (autoIncrSeed, col.AutoIncrementSeed, label + "  Seed: " );
+			Assert.AreEqual (autoIncrStep, col.AutoIncrementStep, label + "  Step: " );
+			Assert.AreEqual (caption, col.Caption, label + "Caption " );
+			Assert.AreEqual (colMap, col.ColumnMapping, label + "Mapping: " );
+			Assert.AreEqual (type, col.DataType, label + "Type: " );
+			Assert.AreEqual (defaultValue, col.DefaultValue, label + "DefaultValue: " );
+			Assert.AreEqual (expression, col.Expression, label + "Expression: " );
+			Assert.AreEqual (maxLength, col.MaxLength, label + "MaxLength: " );
+			Assert.AreEqual (ns, col.Namespace, label + "Namespace: " );
 			if (ordinal >= 0)
-				AssertEquals (label + "Ordinal: " , ordinal, col.Ordinal);
-			AssertEquals (label + "Prefix: " , prefix, col.Prefix);
-			AssertEquals (label + "ReadOnly: " , readOnly, col.ReadOnly);
-			AssertEquals (label + "Unique: " , unique, col.Unique);
+				Assert.AreEqual (ordinal, col.Ordinal, label + "Ordinal: " );
+			Assert.AreEqual (prefix, col.Prefix, label + "Prefix: " );
+			Assert.AreEqual (readOnly, col.ReadOnly, label + "ReadOnly: " );
+			Assert.AreEqual (unique, col.Unique, label + "Unique: " );
 		}
 	}
 }

@@ -196,12 +196,12 @@ namespace MonoTests.System.Data
 			// namespaces
 			ds = GetDataSet (xml14, null);
 			AssertDataSet ("xml14", ds, "root", 0, 0);
-			AssertEquals ("p", ds.Prefix);
-			AssertEquals ("urn:foo", ds.Namespace);
+			Assert.AreEqual ("p", ds.Prefix);
+			Assert.AreEqual ("urn:foo", ds.Namespace);
 
 			ds = GetDataSet (xml17, null);
 			AssertDataSet ("xml17", ds, "root", 0, 0);
-			AssertEquals ("urn:foo", ds.Namespace);
+			Assert.AreEqual ("urn:foo", ds.Namespace);
 		}
 
 		[Test]
@@ -528,7 +528,7 @@ namespace MonoTests.System.Data
 			ds.WriteXml(sw);
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml (sw.ToString ());
-			AssertEquals (2, doc.DocumentElement.ChildNodes.Count);
+			Assert.AreEqual (2, doc.DocumentElement.ChildNodes.Count);
 		}
 	}
 }

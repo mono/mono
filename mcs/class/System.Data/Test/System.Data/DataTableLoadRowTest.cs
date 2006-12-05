@@ -96,10 +96,10 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual ("mono test", dt.Rows [1] [1], "#2 should change the current");
 				Assert.AreEqual ("mono 2", dt.Rows [1] [1, DataRowVersion.Original], "#3 should not change original");
 				Assert.AreEqual (DataRowState.Modified, dt.Rows [1].RowState, "#4 should change state");
-				Assert.AreEqual (true, rowChanging, "#ev1 row changing not called");
+				Assert.IsTrue (rowChanging, "#ev1 row changing not called");
 				Assert.AreEqual (dt.Rows [1], rowInAction_Changing, "#ev2 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.Change, rowAction_Changing, "#ev3 row action is not Change");
-				Assert.AreEqual (true, rowChanged, "#ev4 row changed not called");
+				Assert.IsTrue (rowChanged, "#ev4 row changed not called");
 				Assert.AreEqual (dt.Rows [1], rowInAction_Changed, "#ev5 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.Change, rowAction_Changed, "#ev6 row action is not Change");
                 
@@ -111,10 +111,10 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual ("mono test 2", dt.Rows [1] [1], "#c1 should change the current");
 				Assert.AreEqual ("mono 2", dt.Rows [1] [1, DataRowVersion.Original], "#c2 should not change original");
 				Assert.AreEqual (DataRowState.Modified, dt.Rows [1].RowState, "#c3 should not change state");
-				Assert.AreEqual (true, rowChanging, "#ev11 row changing not called");
+				Assert.IsTrue (rowChanging, "#ev11 row changing not called");
 				Assert.AreEqual (dt.Rows [1], rowInAction_Changing, "#ev12 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.Change, rowAction_Changing, "#ev13 row action is not Change");
-				Assert.AreEqual (true, rowChanged, "#ev14 row changed not called");
+				Assert.IsTrue (rowChanged, "#ev14 row changed not called");
 				Assert.AreEqual (dt.Rows [1], rowInAction_Changed, "#ev15 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.Change, rowAction_Changed, "#ev16 row action is not Change");
                 
@@ -126,10 +126,10 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual ("mono test 2", dt.Rows [1] [1], "#c4 should not change the current");
 				Assert.AreEqual ("mono test 2", dt.Rows [1] [1, DataRowVersion.Original], "#c5 should not change original");
 				Assert.AreEqual (DataRowState.Unchanged, dt.Rows [1].RowState, "#c6 should not change state");
-				Assert.AreEqual (true, rowChanging, "#ev21 row changing not called");
+				Assert.IsTrue (rowChanging, "#ev21 row changing not called");
 				Assert.AreEqual (dt.Rows [1], rowInAction_Changing, "#ev22 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.Nothing, rowAction_Changing, "#ev13 row action is not Nothing");
-				Assert.AreEqual (true, rowChanged, "#ev24 row changed not called");
+				Assert.IsTrue (rowChanged, "#ev24 row changed not called");
 				Assert.AreEqual (dt.Rows [1], rowInAction_Changed, "#ev25 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.Nothing, rowAction_Changed, "#ev26 row action is not Nothing");
                 
@@ -138,10 +138,10 @@ namespace MonoTests.System.Data.SqlClient
 				ResetEventFlags ();
 				dt.LoadDataRow (new object [] { 2, "mono test 3" }, LoadOption.Upsert);
 				Assert.AreEqual (DataRowState.Modified, dt.Rows [1].RowState, "#c7 should not change state");
-				Assert.AreEqual (true, rowChanging, "#ev31 row changing not called");
+				Assert.IsTrue (rowChanging, "#ev31 row changing not called");
 				Assert.AreEqual (dt.Rows [1], rowInAction_Changing, "#ev32 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.Change, rowAction_Changing, "#ev33 row action is not Change");
-				Assert.AreEqual (true, rowChanged, "#ev34 row changed not called");
+				Assert.IsTrue (rowChanged, "#ev34 row changed not called");
 				Assert.AreEqual (dt.Rows [1], rowInAction_Changed, "#ev35 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.Change, rowAction_Changed, "#ev36 row action is not Change");
                 
@@ -156,10 +156,10 @@ namespace MonoTests.System.Data.SqlClient
 					Assert.Fail ("#c9 should have thrown version not found exception");
 				} catch (VersionNotFoundException) { }
 				Assert.AreEqual (DataRowState.Added, dt.Rows [3].RowState, "#c10 should not change state");
-				Assert.AreEqual (true, rowChanging, "#ev41 row changing not called");
+				Assert.IsTrue (rowChanging, "#ev41 row changing not called");
 				Assert.AreEqual (dt.Rows [3], rowInAction_Changing, "#ev42 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.Change, rowAction_Changing, "#ev43 row action is not Change");
-				Assert.AreEqual (true, rowChanged, "#ev44 row changed not called");
+				Assert.IsTrue (rowChanged, "#ev44 row changed not called");
 				Assert.AreEqual (dt.Rows [3], rowInAction_Changed, "#ev45 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.Change, rowAction_Changed, "#ev46 row action is not Change");
                 
@@ -173,10 +173,10 @@ namespace MonoTests.System.Data.SqlClient
 					Assert.Fail ("#c12 should have thrown version not found exception");
 				} catch (VersionNotFoundException) { }
 				Assert.AreEqual (DataRowState.Added, dt.Rows [4].RowState, "#c13 should change state");
-				Assert.AreEqual (true, rowChanging, "#ev51 row changing not called");
+				Assert.IsTrue (rowChanging, "#ev51 row changing not called");
 				Assert.AreEqual (dt.Rows [4], rowInAction_Changing, "#ev52 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.Add, rowAction_Changing, "#ev53 row action is not Change");
-				Assert.AreEqual (true, rowChanged, "#ev54 row changed not called");
+				Assert.IsTrue (rowChanged, "#ev54 row changed not called");
 				Assert.AreEqual (dt.Rows [4], rowInAction_Changed, "#ev55 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.Add, rowAction_Changed, "#ev56 row action is not Change");
                 
@@ -193,10 +193,10 @@ namespace MonoTests.System.Data.SqlClient
 					Assert.Fail ("#c16 expected version not found exception ");
 				} catch (VersionNotFoundException) { }
 				Assert.AreEqual (DataRowState.Added, dt.Rows [5].RowState, "#c17 should change state");
-				Assert.AreEqual (true, rowChanging, "#ev61 row changing not called");
+				Assert.IsTrue (rowChanging, "#ev61 row changing not called");
 				Assert.AreEqual (dt.Rows [5], rowInAction_Changing, "#ev62 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.Add, rowAction_Changing, "#ev63 row action is not Change");
-				Assert.AreEqual (true, rowChanged, "#ev64 row changed not called");
+				Assert.IsTrue (rowChanged, "#ev64 row changed not called");
 				Assert.AreEqual (dt.Rows [5], rowInAction_Changed, "#ev65 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.Add, rowAction_Changed, "#ev66 row action is not Change");
                 
@@ -230,10 +230,10 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual ("mono test", dt.Rows [1] [1], "#3 should change the current");
 				Assert.AreEqual ("mono test", dt.Rows [1] [1, DataRowVersion.Original], "#4 should change the original");
 				Assert.AreEqual (DataRowState.Unchanged, dt.Rows [1].RowState, "#5 has not changed the row state");
-				Assert.AreEqual (true, rowChanging, "#ltoc11 row changing not called");
+				Assert.IsTrue (rowChanging, "#ltoc11 row changing not called");
 				Assert.AreEqual (dt.Rows [1], rowInAction_Changing, "#ltoc12 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.ChangeCurrentAndOriginal, rowAction_Changing, "#ltoc13 row action is not Change");
-				Assert.AreEqual (true, rowChanged, "#ltoc14 row changed not called");
+				Assert.IsTrue (rowChanged, "#ltoc14 row changed not called");
 				Assert.AreEqual (dt.Rows [1], rowInAction_Changed, "#ltoc15 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.ChangeCurrentAndOriginal, rowAction_Changed, "#ltoc16 row action is not Change");
 
@@ -250,10 +250,10 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual ("mono test 2", dt.Rows [1] [1], "#c1 should change the current");
 				Assert.AreEqual ("mono test 2", dt.Rows [1] [1, DataRowVersion.Original], "#c2 should change original");
 				Assert.AreEqual (DataRowState.Unchanged, dt.Rows [1].RowState, "#c3 should not change state");
-				Assert.AreEqual (true, rowChanging, "#ltoc21 row changing not called");
+				Assert.IsTrue (rowChanging, "#ltoc21 row changing not called");
 				Assert.AreEqual (dt.Rows [1], rowInAction_Changing, "#ltoc22 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.ChangeCurrentAndOriginal, rowAction_Changing, "#ltoc23 row action is not Change");
-				Assert.AreEqual (true, rowChanged, "#ltoc24 row changed not called");
+				Assert.IsTrue (rowChanged, "#ltoc24 row changed not called");
 				Assert.AreEqual (dt.Rows [1], rowInAction_Changed, "#ltoc25 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.ChangeCurrentAndOriginal, rowAction_Changed, "#ltoc26 row action is not Change");
 
@@ -265,10 +265,10 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual ("mono test 2", dt.Rows [1] [1], "#c4 should change the current");
 				Assert.AreEqual ("mono test 2", dt.Rows [1] [1, DataRowVersion.Original], "#c5 should change original");
 				Assert.AreEqual (DataRowState.Unchanged, dt.Rows [1].RowState, "#c6 should not change state");
-				Assert.AreEqual (true, rowChanging, "#ltoc31 row changing not called");
+				Assert.IsTrue (rowChanging, "#ltoc31 row changing not called");
 				Assert.AreEqual (dt.Rows [1], rowInAction_Changing, "#ltoc32 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.ChangeCurrentAndOriginal, rowAction_Changing, "#ltoc33 row action is not Change");
-				Assert.AreEqual (true, rowChanged, "#ltoc34 row changed not called");
+				Assert.IsTrue (rowChanged, "#ltoc34 row changed not called");
 				Assert.AreEqual (dt.Rows [1], rowInAction_Changed, "#ltoc35 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.ChangeCurrentAndOriginal, rowAction_Changed, "#ltoc36 row action is not Change");
 
@@ -279,10 +279,10 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual ("mono 4", dt.Rows [3] [1], "#c8 should change the current");
 				Assert.AreEqual ("mono 4", dt.Rows [3] [1, DataRowVersion.Original], "#c9 should change the original");
 				Assert.AreEqual (DataRowState.Unchanged, dt.Rows [3].RowState, "#c10 should not change state");
-				Assert.AreEqual (true, rowChanging, "#ltoc41 row changing not called");
+				Assert.IsTrue (rowChanging, "#ltoc41 row changing not called");
 				Assert.AreEqual (dt.Rows [3], rowInAction_Changing, "#ltoc42 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.ChangeCurrentAndOriginal, rowAction_Changing, "#ltoc43 row action is not Change");
-				Assert.AreEqual (true, rowChanged, "#ltoc44 row changed not called");
+				Assert.IsTrue (rowChanged, "#ltoc44 row changed not called");
 				Assert.AreEqual (dt.Rows [3], rowInAction_Changed, "#ltoc45 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.ChangeCurrentAndOriginal, rowAction_Changed, "#ltoc46 row action is not Change");
 
@@ -293,10 +293,10 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual ("mono 5", dt.Rows [4] [1], "#c11 should change the current");
 				Assert.AreEqual ("mono 5", dt.Rows [4] [1, DataRowVersion.Original], "#c12 should change original");
 				Assert.AreEqual (DataRowState.Unchanged, dt.Rows [4].RowState, "#c13 should change state");
-				Assert.AreEqual (true, rowChanging, "#ltoc51 row changing not called");
+				Assert.IsTrue (rowChanging, "#ltoc51 row changing not called");
 				Assert.AreEqual (dt.Rows [4], rowInAction_Changing, "#ltoc52 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.ChangeCurrentAndOriginal, rowAction_Changing, "#ltoc53 row action is not Change");
-				Assert.AreEqual (true, rowChanged, "#ltoc54 row changed not called");
+				Assert.IsTrue (rowChanged, "#ltoc54 row changed not called");
 				Assert.AreEqual (dt.Rows [4], rowInAction_Changed, "#ltoc55 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.ChangeCurrentAndOriginal, rowAction_Changed, "#ltoc56 row action is not Change");
 
@@ -310,10 +310,10 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual ("mono 51", dt.Rows [4] [1], "#c15 should change the current");
 				Assert.AreEqual ("mono 51", dt.Rows [4] [1, DataRowVersion.Original], "#c16 should change the current");
 				Assert.AreEqual (DataRowState.Unchanged, dt.Rows [4].RowState, "#c17 should change state");
-				Assert.AreEqual (true, rowChanging, "#ltoc61 row changing not called");
+				Assert.IsTrue (rowChanging, "#ltoc61 row changing not called");
 				Assert.AreEqual (dt.Rows [4], rowInAction_Changing, "#ltoc62 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.ChangeCurrentAndOriginal, rowAction_Changing, "#ltoc63 row action is not Change");
-				Assert.AreEqual (true, rowChanged, "#ltoc64 row changed not called");
+				Assert.IsTrue (rowChanged, "#ltoc64 row changed not called");
 				Assert.AreEqual (dt.Rows [4], rowInAction_Changed, "#ltoc65 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.ChangeCurrentAndOriginal, rowAction_Changed, "#ltoc66 row action is not Change");
 
@@ -345,10 +345,10 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual ("mono test", dt.Rows [1] [1], "#2 should change the current");
 				Assert.AreEqual ("mono test", dt.Rows [1] [1, DataRowVersion.Original], "#3 should change the original");
 				Assert.AreEqual (DataRowState.Unchanged, dt.Rows [1].RowState, "#4 has not changed the row state");
-				Assert.AreEqual (true, rowChanging, "#ltpc11 row changing not called");
+				Assert.IsTrue (rowChanging, "#ltpc11 row changing not called");
 				Assert.AreEqual (dt.Rows [1], rowInAction_Changing, "#ltpc12 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.ChangeCurrentAndOriginal, rowAction_Changing, "#ltpc13 row action is not Change");
-				Assert.AreEqual (true, rowChanged, "#ltpc14 row changed not called");
+				Assert.IsTrue (rowChanged, "#ltpc14 row changed not called");
 				Assert.AreEqual (dt.Rows [1], rowInAction_Changed, "#ltpc15 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.ChangeCurrentAndOriginal, rowAction_Changed, "#ltpc16 row action is not Change");
 
@@ -359,10 +359,10 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual ("mono 4", dt.Rows [3] [1], "#6 should change the current");
 				Assert.AreEqual ("mono 4", dt.Rows [3] [1, DataRowVersion.Original], "#7 should change the original");
 				Assert.AreEqual (DataRowState.Unchanged, dt.Rows [3].RowState, "#8 has not changed the row state");
-				Assert.AreEqual (true, rowChanging, "#ltpc21 row changing not called");
+				Assert.IsTrue (rowChanging, "#ltpc21 row changing not called");
 				Assert.AreEqual (dt.Rows [3], rowInAction_Changing, "#ltpc22 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.ChangeCurrentAndOriginal, rowAction_Changing, "#ltpc23 row action is not Change");
-				Assert.AreEqual (true, rowChanged, "#ltpc24 row changed not called");
+				Assert.IsTrue (rowChanged, "#ltpc24 row changed not called");
 				Assert.AreEqual (dt.Rows [3], rowInAction_Changed, "#ltpc25 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.ChangeCurrentAndOriginal, rowAction_Changed, "#ltpc16 row action is not Change");
 
@@ -377,10 +377,10 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual ("mono 5", dt.Rows [4] [1], "#10 should not change the current");
 				Assert.AreEqual ("mono test", dt.Rows [4] [1, DataRowVersion.Original], "#11 should change the original");
 				Assert.AreEqual (DataRowState.Modified, dt.Rows [4].RowState, "#12 has not changed the row state");
-				Assert.AreEqual (true, rowChanging, "#ltpc31 row changing not called");
+				Assert.IsTrue (rowChanging, "#ltpc31 row changing not called");
 				Assert.AreEqual (dt.Rows [4], rowInAction_Changing, "#ltpc32 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.ChangeOriginal, rowAction_Changing, "#ltpc33 row action is not Change");
-				Assert.AreEqual (true, rowChanged, "#ltpc34 row changed not called");
+				Assert.IsTrue (rowChanged, "#ltpc34 row changed not called");
 				Assert.AreEqual (dt.Rows [4], rowInAction_Changed, "#ltpc35 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.ChangeOriginal, rowAction_Changed, "#ltpc36 row action is not Change");
 
@@ -394,10 +394,10 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual (5, dt.Rows.Count, "#13 should not add a new row");
 				Assert.AreEqual ("mono deleted", dt.Rows [1] [1, DataRowVersion.Original], "#14 should change the original");
 				Assert.AreEqual (DataRowState.Deleted, dt.Rows [1].RowState, "#15 has not changed the row state");
-				Assert.AreEqual (true, rowChanging, "#ltpc41 row changing not called");
+				Assert.IsTrue (rowChanging, "#ltpc41 row changing not called");
 				Assert.AreEqual (dt.Rows [1], rowInAction_Changing, "#ltpc42 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.ChangeOriginal, rowAction_Changing, "#ltoc43 row action is not Change");
-				Assert.AreEqual (true, rowChanged, "#ltpc44 row changed not called");
+				Assert.IsTrue (rowChanged, "#ltpc44 row changed not called");
 				Assert.AreEqual (dt.Rows [1], rowInAction_Changed, "#ltpc45 this row is not intended to change");
 				Assert.AreEqual (DataRowAction.ChangeOriginal, rowAction_Changed, "#ltpc46 row action is not Change");
 
