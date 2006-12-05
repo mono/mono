@@ -244,8 +244,10 @@ namespace System.Windows.Forms
 					
 					CreateComboListBox ();
 
-					if (IsHandleCreated)
+					if (IsHandleCreated) {
 						Controls.AddImplicit (listbox_ctrl);
+						listbox_ctrl.Visible = true;
+					}
 				} else {
 					show_dropdown_button = true;
 					button_state = ButtonState.Normal;
@@ -808,9 +810,11 @@ namespace System.Windows.Forms
 		{
 			base.OnHandleCreated (e);
 
-			if (listbox_ctrl != null)
+			if (listbox_ctrl != null) {
 				Controls.AddImplicit (listbox_ctrl);
-			
+				listbox_ctrl.Visible = true;
+			}
+
 			if (textbox_ctrl != null)
 				Controls.AddImplicit (textbox_ctrl);
 
@@ -1268,8 +1272,13 @@ namespace System.Windows.Forms
 		
 		void UpdateComboBoxBounds ()
 		{
-			if (requested_height != -1)
-				SetBounds (0, 0, 0, requested_height, BoundsSpecified.Height);
+			if (requested_height == -1)
+				return;
+
+			// Save the requested height since set bounds can destroy it
+			int save_height = requested_height;
+			SetBounds (0, 0, 0, requested_height, BoundsSpecified.Height);
+			requested_height = save_height;
 		}
 
 		private void UpdatedItems ()

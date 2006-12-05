@@ -1,3 +1,9 @@
+2006-12-05  Mike Kestner  <mkestner@novell.com>
+
+	* ComboBox.cs: fix some Simple mode regressions.  Set Visible on the
+	listbox after AddImplicit calls since it defaults to hidden. Add a 
+	hack to preserve requested heights across DropDownStyle changes.
+
 2006-12-05  Jonathan Pobst  <monkey@jpobst.com>
 
 	* PropertyGrid.cs: Hide FindFirstItem method from public API.
