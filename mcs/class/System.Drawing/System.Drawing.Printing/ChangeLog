@@ -1,3 +1,9 @@
+2006-12-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* PrintingServicesUnix.cs: Add "landscape" option
+	when using PaperSettings.Landscape set to true. Also
+	swap the width and height for the postscript file.
+
 2006-12-01  Andreia Gaita  <avidigal@novell.com>
 
 	* PrintingServicesUnix: Proper size structure use for 64 bit

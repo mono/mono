@@ -266,9 +266,19 @@ namespace System.Drawing.Printing
 			else
 				name = settings.PrintFileName;
 
+			PaperSize psize = default_page_settings.PaperSize;
+			int width, height;
+			if (default_page_settings.Landscape) { // Swap in case of landscape
+				width = psize.Height;
+				height = psize.Width;
+			} else {
+				width = psize.Width;
+				height = psize.Height;
+			}
+
 			GdipGetPostScriptGraphicsContext (name,
-				default_page_settings.PaperSize.Width / 100 * 72,
-				default_page_settings.PaperSize.Height / 100 * 72, 
+				width / 100 * 72,
+				height / 100 * 72, 
 				// Harcoded dpy's
 				300, 300, ref graphics);
 
@@ -293,7 +303,8 @@ namespace System.Drawing.Printing
 				"copies=" + printer_settings.Copies + " " + 
 				"Collate=" + printer_settings.Collate + " " +
 				"ColorModel=" + (page_settings.Color ? "Color" : "Black") + " " +
-				"PageSize=" + String.Format ("Custom.{0}x{1}", width, height);
+				"PageSize=" + String.Format ("Custom.{0}x{1}", width, height) + " " +
+				"landscape=" + page_settings.Landscape;
 
 			return cupsParseOptions (options_string, 0, ref options);
 		}
