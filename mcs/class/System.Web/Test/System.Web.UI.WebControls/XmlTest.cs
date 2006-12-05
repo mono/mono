@@ -37,6 +37,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Xml;
 using System.Xml.Xsl;
+using System.Xml.XPath;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -148,12 +149,26 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("", xml.TransformSource, "V8");
 
 			Assert.AreEqual (null, xml.Transform, "V9");
+#if NET_2_0
+			Assert.AreEqual (false, xml.EnableTheming, "EnableTheming");
+#endif
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Xml_Values_NotWorking ()
+		{
+			Xml xml = new Xml ();
+#if NET_2_0
+			Assert.AreEqual (String.Empty, xml.SkinID, "SkinID");
+			Assert.AreEqual (null, xml.XPathNavigator, "XPathNavigator");
+#endif
 		}
 
 		// Tests that invalid documents can be set before rendering.
 		[Test] 
-        [Category ("NotWorking")]
-        public void Xml_InvalidDocument ()
+		[Category ("NotWorking")]
+		public void Xml_InvalidDocument ()
 		{
 			Xml xml = new Xml ();
 			xml.DocumentContent = "Hey";
@@ -248,7 +263,156 @@ namespace MonoTests.System.Web.UI.WebControls
 			xml.DoAdd (new LiteralControl ("<test></test>"));
 		}
 
+#if NET_2_0
+		class CustomXPathNavigator : XPathNavigator
+		{
+			public override string BaseURI
+			{
+				get { return "Test"; }
+			}
+
+			#region fake
+			public override XPathNavigator Clone ()
+			{
+				throw new Exception ("The method or operation is not implemented.");
+			}
+
+			public override bool IsEmptyElement
+			{
+				get { throw new Exception ("The method or operation is not implemented."); }
+			}
+
+			public override bool IsSamePosition (XPathNavigator other)
+			{
+				throw new Exception ("The method or operation is not implemented.");
+			}
+
+			public override string LocalName
+			{
+				get { throw new Exception ("The method or operation is not implemented."); }
+			}
+
+			public override bool MoveTo (XPathNavigator other)
+			{
+				throw new Exception ("The method or operation is not implemented.");
+			}
+
+			public override bool MoveToFirstAttribute ()
+			{
+				throw new Exception ("The method or operation is not implemented.");
+			}
+
+			public override bool MoveToFirstChild ()
+			{
+				throw new Exception ("The method or operation is not implemented.");
+			}
+
+			public override bool MoveToFirstNamespace (XPathNamespaceScope namespaceScope)
+			{
+				throw new Exception ("The method or operation is not implemented.");
+			}
+
+			public override bool MoveToId (string id)
+			{
+				throw new Exception ("The method or operation is not implemented.");
+			}
+
+			public override bool MoveToNext ()
+			{
+				throw new Exception ("The method or operation is not implemented.");
+			}
+
+			public override bool MoveToNextAttribute ()
+			{
+				throw new Exception ("The method or operation is not implemented.");
+			}
+
+			public override bool MoveToNextNamespace (XPathNamespaceScope namespaceScope)
+			{
+				throw new Exception ("The method or operation is not implemented.");
+			}
+
+			public override bool MoveToParent ()
+			{
+				throw new Exception ("The method or operation is not implemented.");
+			}
+
+			public override bool MoveToPrevious ()
+			{
+				throw new Exception ("The method or operation is not implemented.");
+			}
+
+			public override string Name
+			{
+				get { throw new Exception ("The method or operation is not implemented."); }
+			}
+
+			public override XmlNameTable NameTable
+			{
+				get { throw new Exception ("The method or operation is not implemented."); }
+			}
+
+			public override string NamespaceURI
+			{
+				get { throw new Exception ("The method or operation is not implemented."); }
+			}
+
+			public override XPathNodeType NodeType
+			{
+				get { throw new Exception ("The method or operation is not implemented."); }
+			}
+
+			public override string Prefix
+			{
+				get { throw new Exception ("The method or operation is not implemented."); }
+			}
+
+			public override string Value
+			{
+				get { throw new Exception ("The method or operation is not implemented."); }
+			}
+			#endregion
+		}
+
+		[Test]
+		[Category ("NotWorking")] // Not implemented
+		public void XPathNavigable_1 ()
+		{
+			Xml xml = new Xml ();
+			XmlDocument doc = new XmlDocument ();
+			xml.XPathNavigator = doc.CreateNavigator ();
+			Assert.IsNotNull (xml.XPathNavigator);
+		}
+
 		
+		[Test]
+		[Category ("NotWorking")] // Not implemented
+		public void XPathNavigable_2 ()
+		{
+			Xml xml = new Xml ();
+			xml.XPathNavigator = new CustomXPathNavigator();
+			Assert.AreEqual ("Test", xml.XPathNavigator.BaseURI, "XPathNavigable_2");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void Focus ()
+		{
+			Xml xml = new Xml ();
+			xml.Focus ();
+		}
+		
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void SkinID ()
+		{
+			Xml xml = new Xml ();
+			xml.SkinID = "Fake";
+		}
+#endif
 	}
 }
 
