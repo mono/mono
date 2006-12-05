@@ -47,7 +47,7 @@ namespace System.Windows.Forms.RTF {
 		private int		line_pos;
 
 		private char		pushed_char;
-		private StringBuilder	pushed_text_buffer;
+		//private StringBuilder	pushed_text_buffer;
 		private TokenClass	pushed_class;
 		private Major		pushed_major;
 		private Minor		pushed_minor;
@@ -86,7 +86,7 @@ namespace System.Windows.Forms.RTF {
 			source = new StreamReader(stream);
 
 			text_buffer = new StringBuilder(1024);
-			pushed_text_buffer = new StringBuilder(1024);
+			//pushed_text_buffer = new StringBuilder(1024);
 
 			rtf_class = TokenClass.None;
 			pushed_class = TokenClass.None;
@@ -522,7 +522,7 @@ SkipCRLF:
 			this.pushed_major = this.major;
 			this.pushed_minor = this.minor;
 			this.pushed_param = this.param;
-			this.pushed_text_buffer = new StringBuilder(this.text_buffer.ToString());
+			//this.pushed_text_buffer = new StringBuilder(this.text_buffer.ToString());
 		}
 
 		public TokenClass PeekToken() {
