@@ -39,13 +39,16 @@ using System.Web.UI;
 using System.Globalization;
 using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
+using System.Drawing;
+using System.Collections;
 
 
 namespace MonoTests.System.Web.UI.WebControls {
 
 	[TestFixture]
-	public class RadioButtonListTest {
-
+	public class RadioButtonListTest
+	{
+		#region help_classes
 		public class TestRadioButtonList : RadioButtonList {
 			public StateBag StateBag {
 				get { return base.ViewState; }
@@ -58,6 +61,75 @@ namespace MonoTests.System.Web.UI.WebControls {
 				return writer.InnerWriter.ToString ();
 			}
 		}
+
+#if NET_2_0
+		class PokerRadioButtonList : RadioButtonList
+		{
+			public StateBag StateBag
+			{
+				get { return base.ViewState; }
+			}
+
+			public string Render ()
+			{
+				HtmlTextWriter writer = new HtmlTextWriter (new StringWriter ());
+				base.Render (writer);
+				return writer.InnerWriter.ToString ();
+			}
+
+			protected override Style GetItemStyle (ListItemType itemType, int repeatIndex)
+			{
+				Style s = new Style ();
+				s.BackColor = Color.Red;
+				s.BorderStyle = BorderStyle.Solid;
+				WebTest.CurrentTest.UserData = "GetItemStyle";
+				return s;
+			}
+
+			public new bool HasFooter
+			{
+				get
+				{
+					return base.HasFooter;
+				}
+			}
+
+			public new bool HasHeader
+			{
+				get
+				{
+					return base.HasHeader;
+				}
+			}
+
+			public new bool HasSeparators
+			{
+				get
+				{
+					return base.HasSeparators;
+				}
+			}
+
+			public new int RepeatedItemCount
+			{
+				get
+				{
+					return base.RepeatedItemCount;
+				}
+			}
+
+			protected override void RaisePostDataChangedEvent ()
+			{
+				base.RaisePostDataChangedEvent ();
+			}
+
+			public void DoRaisePostDataChangedEvent ()
+			{
+				base.RaisePostDataChangedEvent ();
+			}
+		}
+#endif
+		#endregion
 
 		[Test]
 		public void RadioButtonList_Constructor ()
@@ -243,6 +315,206 @@ namespace MonoTests.System.Web.UI.WebControls {
 			IPostBackDataHandler handler = (IPostBackDataHandler) rbl;
 			Assert.AreEqual (false, handler.LoadPostData ("XXX", nvc), "#01");
 		}
+
+		
+#if NET_2_0
+		[Test]
+		[Category ("NotWorking")]
+		public void Defaults_NotWorking ()
+		{
+			PokerRadioButtonList r = new PokerRadioButtonList ();
+			Assert.AreEqual (0, r.RepeatedItemCount, "RepeatedItemCount");
+			Assert.AreEqual (false, r.HasFooter, "HasFooter");
+			Assert.AreEqual (false, r.HasHeader, "HasHeader");
+			Assert.AreEqual (false, r.HasSeparators, "HasSeparators");
+		}
+		
+		[Test]
+		[Category ("NunitWeb")]
+		public void GetItemStyle ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (GetItemStyle_Load));
+			string html = t.Run ();
+			string ctrl = HtmlDiff.GetControlFromPageHtml (html);
+			if (ctrl == string.Empty)
+				Assert.Fail ("RadioButtonList not created fail");
+			Assert.AreEqual ("GetItemStyle", (string) t.UserData, "GetItemStyle not done");
+			if (ctrl.IndexOf ("<td style=\"background-color:Red;border-style:Solid;\">") == -1)
+				Assert.Fail ("RadioButtonList style not rendered");
+		}
+
+		public static void GetItemStyle_Load (Page p)
+		{
+			PokerRadioButtonList rbl = new PokerRadioButtonList ();
+			rbl.Items.Add (new ListItem ("Uno", "1"));
+			rbl.Items.Add (new ListItem ("Dos", "2"));
+			rbl.Items.Add (new ListItem ("Tres", "3"));
+			p.Form.Controls.Add (new LiteralControl (HtmlDiff.BEGIN_TAG));
+			p.Form.Controls.Add (rbl);
+			p.Form.Controls.Add (new LiteralControl (HtmlDiff.END_TAG));
+		}
+
+		[Test]
+		public void  RaisePostDataChangedEvent ()
+		{
+			PokerRadioButtonList r = new PokerRadioButtonList ();
+			r.SelectedIndexChanged += new EventHandler (r_SelectedIndexChanged);
+			Assert.AreEqual (false, eventSelectedIndexChanged, "Before");
+			r.DoRaisePostDataChangedEvent ();
+			Assert.AreEqual (true, eventSelectedIndexChanged, "After");
+		}
+
+		bool eventSelectedIndexChanged;
+		void r_SelectedIndexChanged (object sender, EventArgs e)
+		{
+			eventSelectedIndexChanged = true;
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void RaisePostDataChangedEvent_PostBack ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnInit (RaisePostDataChangedEvent_Init));
+			string html = t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("RadioButtonList1");
+
+			fr.Controls["__EVENTTARGET"].Value = "RadioButtonList1";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			fr.Controls["RadioButtonList1"].Value = "test";
+			t.Request = fr;
+			t.Run ();
+			if (t.UserData == null)
+				Assert.Fail ("RaisePostDataChangedEvent Failed#1");
+			Assert.AreEqual ("SelectedIndexChanged", (string) t.UserData, "RaisePostDataChangedEvent Failed#2");
+		}
+
+		public static void RaisePostDataChangedEvent_Init (Page p)
+		{
+			TestRadioButtonList r = new TestRadioButtonList ();
+			r.ID = "RadioButtonList1";
+			r.Items.Add (new ListItem ("test", "test"));
+			r.SelectedIndexChanged += new EventHandler (event_SelectedIndexChanged);
+			p.Form.Controls.Add (r);
+		}
+
+		public static void event_SelectedIndexChanged (object sender, EventArgs e)
+		{
+			WebTest.CurrentTest.UserData = "SelectedIndexChanged";	
+		}
+
+		#region help_class
+		class Poker : RadioButtonList
+		{
+			protected override bool LoadPostData (string postDataKey, global::System.Collections.Specialized.NameValueCollection postCollection)
+			{
+				if (WebTest.CurrentTest.UserData == null) {
+					ArrayList list = new ArrayList ();
+					list.Add ("LoadPostData");
+					WebTest.CurrentTest.UserData = list;
+				}
+				else {
+					ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+					if (list == null)
+						throw new NullReferenceException ();
+					list.Add ("LoadPostData");
+					WebTest.CurrentTest.UserData = list;
+				}
+				return base.LoadPostData (postDataKey, postCollection);
+			}
+			
+			protected override void OnLoad (EventArgs e)
+			{
+				if (WebTest.CurrentTest.UserData == null) {
+					ArrayList list = new ArrayList ();
+					list.Add ("ControlLoad");
+					WebTest.CurrentTest.UserData = list;
+				}
+				else {
+					ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+					if (list == null)
+						throw new NullReferenceException ();
+					list.Add ("ControlLoad");
+					WebTest.CurrentTest.UserData = list;
+				}
+				base.OnLoad (e);
+			}
+		}
+		#endregion
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void LoadPostData ()  //Just flow and not implementation detail
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (LoadPostData_Load));
+			string html = t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("RadioButtonList1");
+
+			fr.Controls["__EVENTTARGET"].Value = "RadioButtonList1";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			fr.Controls["RadioButtonList1"].Value = "test";
+			t.Request = fr;
+			t.Run ();
+
+			ArrayList eventlist = t.UserData as ArrayList;
+			if (eventlist == null)
+				Assert.Fail ("User data does not been created fail");
+			Assert.AreEqual ("ControlLoad", eventlist[0], "Live Cycle Flow #1");
+			Assert.AreEqual ("PageLoad", eventlist[1], "Live Cycle Flow #2");
+			Assert.AreEqual ("ControlLoad", eventlist[2], "Live Cycle Flow #3");
+			Assert.AreEqual ("LoadPostData", eventlist[3], "Live Cycle Flow #4");
+
+		}
+
+		public static void LoadPostData_Load (Page p)
+		{
+			Poker b = new Poker ();
+			b.ID = "RadioButtonList1";
+			b.Items.Add (new ListItem ("test", "test"));
+			p.Form.Controls.Add (b);
+			if (p.IsPostBack) {
+				if (WebTest.CurrentTest.UserData == null) {
+					ArrayList list = new ArrayList ();
+					list.Add ("PageLoad");
+					WebTest.CurrentTest.UserData = list;
+				}
+				else {
+					ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+					if (list == null)
+						throw new NullReferenceException ();
+					list.Add ("PageLoad");
+					WebTest.CurrentTest.UserData = list;
+				}
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")] //Not implemented 
+		public void RepeatedItemCount ()
+		{
+			PokerRadioButtonList r = new PokerRadioButtonList ();
+			Assert.AreEqual (0, r.RepeatedItemCount, "RepeatedItemCount#1");
+			r.Items.Add (new ListItem ("Uno", "1"));
+			Assert.AreEqual (1, r.RepeatedItemCount, "RepeatedItemCount#2");
+			r.Items.Add (new ListItem ("Dos", "2"));
+			Assert.AreEqual (2, r.RepeatedItemCount, "RepeatedItemCount#3");
+			r.Items.Remove (r.Items[1]);
+			Assert.AreEqual (1, r.RepeatedItemCount, "RepeatedItemCount#4");
+		}
+
+		[TestFixtureTearDown]
+		public void TearDown ()
+		{
+			WebTest.Unload ();
+		}
+#endif
 	}
 }
 
