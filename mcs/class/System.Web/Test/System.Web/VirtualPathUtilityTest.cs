@@ -437,6 +437,48 @@ namespace MonoTests.System.Web {
 		{
 			Assert.AreEqual ("/", VPU.ToAbsolute ("/"));
 		}
+
+		[Test]
+		public void ToAbsolute8 ()
+		{
+			Assert.AreEqual ("/", VPU.ToAbsolute ("/", "/ROOT"));
+			Assert.AreEqual ("/blah/blah/", VPU.ToAbsolute ("/blah//blah//", "/ROOT"));
+			Assert.AreEqual ("/blah/blah/", VPU.ToAbsolute ("/blah\\blah/", "/ROOT"));
+		}
+
+		[Test]
+		public void ToAbsolute9 ()
+		{
+			Assert.AreEqual ("/ROOT/", VPU.ToAbsolute ("~/", "/ROOT"));
+			Assert.AreEqual ("/ROOT/blah", VPU.ToAbsolute ("~/blah", "/ROOT/"));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToAbsolute10 ()
+		{
+			VPU.ToAbsolute ("../blah", "/ROOT");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToAbsolute11 ()
+		{
+			VPU.ToAbsolute ("blah", "/ROOT");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToAbsolute12 ()
+		{
+			VPU.ToAbsolute ("~/blah", "ROOT");
+		}
+
+		[Test]
+		public void ToAbsolute13 ()
+		{
+			Assert.AreEqual ("/blah", VPU.ToAbsolute ("/blah", "ROOT"));
+		}
 	}
 }
 

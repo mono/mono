@@ -1,3 +1,7 @@
+2006-12-05  Igor Zelmanovich   <igorz@mainsoft.com>
+
+	* VirtualPathUtilityTest.cs: new tests added.
+
 2006-11-29  Igor Zelmanovich   <igorz@mainsoft.com>
 
 	* StaticSiteMapProviderTest.cs: fixed NunitWeb tests.

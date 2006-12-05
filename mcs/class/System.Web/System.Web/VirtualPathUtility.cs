@@ -155,6 +155,10 @@ namespace System.Web {
 			return ToAbsolute (virtualPath,apppath);
 		}
 
+		// If virtualPath is: 
+		// Absolute, the ToAbsolute method returns the virtual path with no changes.
+		// Application relative, the ToAbsolute method adds applicationPath to the beginning of the virtual path.
+		// Not rooted, the ToAbsolute method raises an ArgumentOutOfRangeException exception.
 		public static string ToAbsolute (string virtualPath, string applicationPath)
 		{
 			if (applicationPath == null || applicationPath == "")
@@ -163,13 +167,16 @@ namespace System.Web {
 			if (virtualPath == null || virtualPath == "")
 				throw new ArgumentNullException ("virtualPath");
 
-			if (virtualPath.StartsWith (".."))
+			if (virtualPath.Length > 1 && virtualPath [0] == '~' && virtualPath [1] == '/') {
+				if (applicationPath [0] != '/')
+					throw new ArgumentException ("appPath is not rooted", "applicationPath");
+				return UrlUtils.RemoveDoubleSlashes ((applicationPath + virtualPath.Substring (1)).Replace ('\\', '/'));
+			}
+
+			if (virtualPath [0] != '/')
 				throw new ArgumentException (String.Format ("Relative path not allowed: '{0}'", virtualPath));
 
-			if (applicationPath [0] != '/')
-				throw new ArgumentOutOfRangeException ("appPath is not rooted", "applicationPath");
-
-			return UrlUtils.Combine (applicationPath, virtualPath);
+			return UrlUtils.RemoveDoubleSlashes (virtualPath.Replace ('\\', '/'));
 
 		}
 

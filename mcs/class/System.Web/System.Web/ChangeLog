@@ -1,3 +1,7 @@
+2006-12-05 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* VirtualPathUtility.cs: fixed: ToAbsolute() method.
+
 2006-12-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: call MapPath on the HttpWorkerRequest so that if
