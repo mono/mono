@@ -1963,8 +1963,8 @@ namespace MonoTests.System.Data
 			dt.Rows.Add(new object[] {"sss"});
 			Assert.IsFalse (dt.IsInitialized, "TableInitialized #05");
 			dt.EndInit ();
-			NUnit.Framework.Assert.IsTrue (dt.IsInitialized, "TableInitialized #06");
-			NUnit.Framework.Assert.IsTrue (tableInitialized, "TableInitialized #07");
+			Assert.IsTrue (dt.IsInitialized, "TableInitialized #06");
+			Assert.IsTrue (tableInitialized, "TableInitialized #07");
 			dt.Initialized -= new EventHandler (OnTableInitialized);
 		}
 
@@ -3686,8 +3686,7 @@ namespace MonoTests.System.Data
     @"</xs:complexType>" +
   @"</xs:element>" +
 @"</xs:schema>";
-			NUnit.Framework.Assert.AreEqual(expected1.Replace("\n", ""),
-							TextString1.Replace("\r\n", "").Replace("  ", "").Replace("\n", ""), "#1");
+			Assert.AreEqual(expected1.Replace("\n", ""), TextString1.Replace("\r\n", "").Replace("  ", "").Replace("\n", ""), "#1");
 
 			TextWriter writer2 = new StringWriter();
 			ds.Tables[1].WriteXmlSchema(writer2, false);
@@ -3712,7 +3711,7 @@ namespace MonoTests.System.Data
     @"</xs:complexType>" +
   @"</xs:element>" +
 @"</xs:schema>";
-			NUnit.Framework.Assert.AreEqual(expected2, TextString2.Replace("\r\n", "").Replace("  ", ""), "#2");
+			Assert.AreEqual(expected2, TextString2.Replace("\r\n", "").Replace("  ", ""), "#2");
 
 			TextWriter writer3 = new StringWriter();
 			ds.Tables[2].WriteXmlSchema(writer3);
@@ -3736,7 +3735,7 @@ namespace MonoTests.System.Data
     @"</xs:complexType>" +
   @"</xs:element>" +
 @"</xs:schema>";
-			NUnit.Framework.Assert.AreEqual(expected3, TextString3.Replace("\r\n", "").Replace("  ", ""), "#3");
+			Assert.AreEqual(expected3, TextString3.Replace("\r\n", "").Replace("  ", ""), "#3");
 
 			TextWriter writer4 = new StringWriter();
 			ds.Tables[3].WriteXmlSchema(writer4);
@@ -3759,7 +3758,7 @@ namespace MonoTests.System.Data
     @"</xs:complexType>" +
   @"</xs:element>" +
 @"</xs:schema>";
-			NUnit.Framework.Assert.AreEqual(expected4, TextString4.Replace("\r\n", "").Replace("  ", ""), "#4");
+			Assert.AreEqual(expected4, TextString4.Replace("\r\n", "").Replace("  ", ""), "#4");
 		}
 
 		[Test]

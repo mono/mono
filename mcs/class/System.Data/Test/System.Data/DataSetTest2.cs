@@ -34,8 +34,6 @@ using System.Data;
 using MonoTests.System.Data.Utils;
 using System.Xml;
 
-using AssertType = NUnit.Framework.Assert;
-
 namespace MonoTests_System.Data
 {
 	[TestFixture] public class DataSetTest2

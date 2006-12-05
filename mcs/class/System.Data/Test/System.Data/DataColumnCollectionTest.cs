@@ -41,7 +41,7 @@ using System.Xml;
 namespace MonoTests.System.Data
 {
 	[TestFixture]
-	public class DataColumnCollectionTest : Assertion
+	public class DataColumnCollectionTest
 	{
 		private DataTable _tbl;
 
@@ -70,130 +70,130 @@ namespace MonoTests.System.Data
 			Cols.Add ();
 	        	
 	        	C = Cols [0];
-			AssertEquals ("test#01", true, C.AllowDBNull);
-			AssertEquals ("test#02", false, C.AutoIncrement);
-			AssertEquals ("test#03", 0L, C.AutoIncrementSeed);
-			AssertEquals ("test#04", 1L, C.AutoIncrementStep);
-			AssertEquals ("test#05", "Column1", C.Caption);
-			AssertEquals ("test#06", "Element", C.ColumnMapping.ToString ());
-			AssertEquals ("test#07", "Column1", C.ColumnName);
-			AssertEquals ("test#08", true, C.Container == null);
-			AssertEquals ("test#09", typeof (string), C.DataType);
-			AssertEquals ("test#10", DBNull.Value, C.DefaultValue);
-			AssertEquals ("test#11", false, C.DesignMode);
-			AssertEquals ("test#12", "", C.Expression);
-			AssertEquals ("test#13", 0, C.ExtendedProperties.Count);
-			AssertEquals ("test#14", -1, C.MaxLength);
-			AssertEquals ("test#15", "", C.Namespace);
-			AssertEquals ("test#16", 0, C.Ordinal);
-			AssertEquals ("test#17", "", C.Prefix);
-			AssertEquals ("test#18", false, C.ReadOnly);
-			AssertEquals ("test#19", null, C.Site);
-			AssertEquals ("test#20", "test_table", C.Table.TableName);
-			AssertEquals ("test#21", "Column1", C.ToString ());
-			AssertEquals ("test#22", false, C.Unique);
+			Assert.IsTrue (C.AllowDBNull, "test#01");
+			Assert.IsFalse (C.AutoIncrement, "test#02");
+			Assert.AreEqual (0L, C.AutoIncrementSeed, "test#03");
+			Assert.AreEqual (1L, C.AutoIncrementStep, "test#04");
+			Assert.AreEqual ("Column1", C.Caption, "test#05");
+			Assert.AreEqual ("Element", C.ColumnMapping.ToString (), "test#06");
+			Assert.AreEqual ("Column1", C.ColumnName, "test#07");
+			Assert.IsNull (C.Container, "test#08");
+			Assert.AreEqual (typeof (string), C.DataType, "test#09");
+			Assert.AreEqual (DBNull.Value, C.DefaultValue, "test#10");
+			Assert.IsFalse (C.DesignMode, "test#11");
+			Assert.AreEqual ("", C.Expression, "test#12");
+			Assert.AreEqual (0, C.ExtendedProperties.Count, "test#13");
+			Assert.AreEqual (-1, C.MaxLength, "test#14");
+			Assert.AreEqual ("", C.Namespace, "test#15");
+			Assert.AreEqual (0, C.Ordinal, "test#16");
+			Assert.AreEqual ("", C.Prefix, "test#17");
+			Assert.IsFalse (C.ReadOnly, "test#18");
+			Assert.IsNull (C.Site, "test#19");
+			Assert.AreEqual ("test_table", C.Table.TableName, "test#20");
+			Assert.AreEqual ("Column1", C.ToString (), "test#21");
+			Assert.IsFalse (C.Unique, "test#22");
 
 			C = Cols [1];
-			AssertEquals ("test#23", true, C.AllowDBNull);
-			AssertEquals ("test#24", false, C.AutoIncrement);
-			AssertEquals ("test#25", 0L, C.AutoIncrementSeed);
-			AssertEquals ("test#26", 1L, C.AutoIncrementStep);
-			AssertEquals ("test#27", "Column2", C.Caption);
-			AssertEquals ("test#28", "Element", C.ColumnMapping.ToString ());
-			AssertEquals ("test#29", "Column2", C.ColumnName);
-			AssertEquals ("test#30", true, C.Container == null);
-			AssertEquals ("test#31", typeof (string), C.DataType);
-			AssertEquals ("test#32", DBNull.Value, C.DefaultValue);
-			AssertEquals ("test#33", false, C.DesignMode);
-			AssertEquals ("test#34", "", C.Expression);
-			AssertEquals ("test#35", 0, C.ExtendedProperties.Count);
-			AssertEquals ("test#36", -1, C.MaxLength);
-			AssertEquals ("test#37", "", C.Namespace);
-			AssertEquals ("test#38", 1, C.Ordinal);
-			AssertEquals ("test#39", "", C.Prefix);
-			AssertEquals ("test#40", false, C.ReadOnly);
-			AssertEquals ("test#41", null, C.Site);
-			AssertEquals ("test#42", "test_table", C.Table.TableName);
-			AssertEquals ("test#43", "Column2", C.ToString ());
-			AssertEquals ("test#44", false, C.Unique);
+			Assert.IsTrue (C.AllowDBNull, "test#23");
+			Assert.IsFalse (C.AutoIncrement, "test#24");
+			Assert.AreEqual (0L, C.AutoIncrementSeed, "test#25");
+			Assert.AreEqual (1L, C.AutoIncrementStep, "test#26");
+			Assert.AreEqual ("Column2", C.Caption, "test#27");
+			Assert.AreEqual ("Element", C.ColumnMapping.ToString (), "test#28");
+			Assert.AreEqual ("Column2", C.ColumnName, "test#29");
+			Assert.IsNull (C.Container, "test#30");
+			Assert.AreEqual (typeof (string), C.DataType, "test#31");
+			Assert.AreEqual (DBNull.Value, C.DefaultValue, "test#32");
+			Assert.IsFalse (C.DesignMode, "test#33");
+			Assert.AreEqual ("", C.Expression, "test#34");
+			Assert.AreEqual (0, C.ExtendedProperties.Count, "test#35");
+			Assert.AreEqual (-1, C.MaxLength, "test#36");
+			Assert.AreEqual ("", C.Namespace, "test#37");
+			Assert.AreEqual (1, C.Ordinal, "test#38");
+			Assert.AreEqual ("", C.Prefix, "test#39");
+			Assert.IsFalse (C.ReadOnly, "test#40");
+			Assert.IsNull (C.Site, "test#41");
+			Assert.AreEqual ("test_table", C.Table.TableName, "test#42");
+			Assert.AreEqual ("Column2", C.ToString (), "test#43");
+			Assert.IsFalse (C.Unique, "test#44");
 
 			Cols.Add ("test1", typeof (int), "");
 			Cols.Add ("test2", typeof (string), "Column1 + Column2");
 
 			C = Cols [2];
-			AssertEquals ("test#45", true, C.AllowDBNull);
-			AssertEquals ("test#46", false, C.AutoIncrement);
-			AssertEquals ("test#47", 0L, C.AutoIncrementSeed);
-			AssertEquals ("test#48", 1L, C.AutoIncrementStep);
-			AssertEquals ("test#49", "test1", C.Caption);
-			AssertEquals ("test#50", "Element", C.ColumnMapping.ToString ());
-			AssertEquals ("test#51", "test1", C.ColumnName);
-			AssertEquals ("test#52", true, C.Container == null);
-			AssertEquals ("test#53", typeof (int), C.DataType);
-			AssertEquals ("test#54", DBNull.Value, C.DefaultValue);
-			AssertEquals ("test#55", false, C.DesignMode);
-			AssertEquals ("test#56", "", C.Expression);
-			AssertEquals ("test#57", 0, C.ExtendedProperties.Count);
-			AssertEquals ("test#58", -1, C.MaxLength);
-			AssertEquals ("test#59", "", C.Namespace);
-			AssertEquals ("test#60", 2, C.Ordinal);
-			AssertEquals ("test#61", "", C.Prefix);
-			AssertEquals ("test#62", false, C.ReadOnly);
-			AssertEquals ("test#63", null, C.Site);
-			AssertEquals ("test#64", "test_table", C.Table.TableName);
-			AssertEquals ("test#65", "test1", C.ToString ());
-			AssertEquals ("test#66", false, C.Unique);
+			Assert.IsTrue (C.AllowDBNull, "test#45");
+			Assert.IsFalse (C.AutoIncrement, "test#46");
+			Assert.AreEqual (0L, C.AutoIncrementSeed, "test#47");
+			Assert.AreEqual (1L, C.AutoIncrementStep, "test#48");
+			Assert.AreEqual ("test1", C.Caption, "test#49");
+			Assert.AreEqual ("Element", C.ColumnMapping.ToString (), "test#50");
+			Assert.AreEqual ("test1", C.ColumnName, "test#51");
+			Assert.IsNull (C.Container, "test#52");
+			Assert.AreEqual (typeof (int), C.DataType, "test#53");
+			Assert.AreEqual (DBNull.Value, C.DefaultValue, "test#54");
+			Assert.IsFalse (C.DesignMode, "test#55");
+			Assert.AreEqual ("", C.Expression, "test#56");
+			Assert.AreEqual (0, C.ExtendedProperties.Count, "test#57");
+			Assert.AreEqual (-1, C.MaxLength, "test#58");
+			Assert.AreEqual ("", C.Namespace, "test#59");
+			Assert.AreEqual (2, C.Ordinal, "test#60");
+			Assert.AreEqual ("", C.Prefix, "test#61");
+			Assert.IsFalse (C.ReadOnly, "test#62");
+			Assert.IsNull (C.Site, "test#63");
+			Assert.AreEqual ("test_table", C.Table.TableName, "test#64");
+			Assert.AreEqual ("test1", C.ToString (), "test#65");
+			Assert.IsFalse (C.Unique, "test#66");
 
 			C = Cols [3];
-			AssertEquals ("test#67", true, C.AllowDBNull);
-			AssertEquals ("test#68", false, C.AutoIncrement);
-			AssertEquals ("test#69", 0L, C.AutoIncrementSeed);
-			AssertEquals ("test#70", 1L, C.AutoIncrementStep);
-			AssertEquals ("test#71", "test2", C.Caption);
-			AssertEquals ("test#72", "Element", C.ColumnMapping.ToString ());
-			AssertEquals ("test#73", "test2", C.ColumnName);
-			AssertEquals ("test#74", true, C.Container == null);
-			AssertEquals ("test#75", typeof (string), C.DataType);
-			AssertEquals ("test#76", DBNull.Value, C.DefaultValue);
-			AssertEquals ("test#77", false, C.DesignMode);
-			AssertEquals ("test#78", "Column1 + Column2", C.Expression);
-			AssertEquals ("test#79", 0, C.ExtendedProperties.Count);
-			AssertEquals ("test#80", -1, C.MaxLength);
-			AssertEquals ("test#81", "", C.Namespace);
-			AssertEquals ("test#82", 3, C.Ordinal);
-			AssertEquals ("test#83", "", C.Prefix);
-			AssertEquals ("test#84", true, C.ReadOnly);
-			AssertEquals ("test#85", null, C.Site);
-			AssertEquals ("test#86", "test_table", C.Table.TableName);
-			AssertEquals ("test#87", "test2 + Column1 + Column2", C.ToString ());
-			AssertEquals ("test#88", false, C.Unique); 
+			Assert.IsTrue (C.AllowDBNull, "test#67");
+			Assert.IsFalse (C.AutoIncrement, "test#68");
+			Assert.AreEqual (0L, C.AutoIncrementSeed, "test#69");
+			Assert.AreEqual (1L, C.AutoIncrementStep, "test#70");
+			Assert.AreEqual ("test2", C.Caption, "test#71");
+			Assert.AreEqual ("Element", C.ColumnMapping.ToString (), "test#72");
+			Assert.AreEqual ("test2", C.ColumnName, "test#73");
+			Assert.IsNull (C.Container, "test#74");
+			Assert.AreEqual (typeof (string), C.DataType, "test#75");
+			Assert.AreEqual (DBNull.Value, C.DefaultValue, "test#76");
+			Assert.IsFalse (C.DesignMode, "test#77");
+			Assert.AreEqual ("Column1 + Column2", C.Expression, "test#78");
+			Assert.AreEqual (0, C.ExtendedProperties.Count, "test#79");
+			Assert.AreEqual (-1, C.MaxLength, "test#80");
+			Assert.AreEqual ("", C.Namespace, "test#81");
+			Assert.AreEqual (3, C.Ordinal, "test#82");
+			Assert.AreEqual ("", C.Prefix, "test#83");
+			Assert.IsTrue (C.ReadOnly, "test#84");
+			Assert.IsNull (C.Site, "test#85");
+			Assert.AreEqual ("test_table", C.Table.TableName, "test#86");
+			Assert.AreEqual ("test2 + Column1 + Column2", C.ToString (), "test#87");
+			Assert.IsFalse (C.Unique, "test#88"); 
 
 			C = new DataColumn ("test3", typeof (int));
 			Cols.Add (C);
 
 			C = Cols [4];
-			AssertEquals ("test#89", true, C.AllowDBNull);
-			AssertEquals ("test#90", false, C.AutoIncrement);
-			AssertEquals ("test#91", 0L, C.AutoIncrementSeed);
-			AssertEquals ("test#92", 1L, C.AutoIncrementStep);
-			AssertEquals ("test#93", "test3", C.Caption);
-			AssertEquals ("test#94", "Element", C.ColumnMapping.ToString ());
-			AssertEquals ("test#95", "test3", C.ColumnName);
-			AssertEquals ("test#96", true, C.Container == null);
-			AssertEquals ("test#97", typeof (int), C.DataType);
-			AssertEquals ("test#98", DBNull.Value, C.DefaultValue);
-			AssertEquals ("test#99", false, C.DesignMode);
-			AssertEquals ("test#100", "", C.Expression);
-			AssertEquals ("test#101", 0, C.ExtendedProperties.Count);
-			AssertEquals ("test#102", -1, C.MaxLength);
-			AssertEquals ("test#103", "", C.Namespace);
-			AssertEquals ("test#104", 4, C.Ordinal);
-			AssertEquals ("test#105", "", C.Prefix);
-			AssertEquals ("test#106", false, C.ReadOnly);
-			AssertEquals ("test#107", null, C.Site);
-			AssertEquals ("test#108", "test_table", C.Table.TableName);
-			AssertEquals ("test#109", "test3", C.ToString ());
-			AssertEquals ("test#110", false, C.Unique); 
+			Assert.IsTrue (C.AllowDBNull, "test#89");
+			Assert.IsFalse (C.AutoIncrement, "test#90");
+			Assert.AreEqual (0L, C.AutoIncrementSeed, "test#91");
+			Assert.AreEqual (1L, C.AutoIncrementStep, "test#92");
+			Assert.AreEqual ("test3", C.Caption, "test#93");
+			Assert.AreEqual ("Element", C.ColumnMapping.ToString (), "test#94");
+			Assert.AreEqual ("test3", C.ColumnName, "test#95");
+			Assert.IsNull (C.Container, "test#96");
+			Assert.AreEqual (typeof (int), C.DataType, "test#97");
+			Assert.AreEqual (DBNull.Value, C.DefaultValue, "test#98");
+			Assert.IsFalse (C.DesignMode, "test#99");
+			Assert.AreEqual ("", C.Expression, "test#100");
+			Assert.AreEqual (0, C.ExtendedProperties.Count, "test#101");
+			Assert.AreEqual (-1, C.MaxLength, "test#102");
+			Assert.AreEqual ("", C.Namespace, "test#103");
+			Assert.AreEqual (4, C.Ordinal, "test#104");
+			Assert.AreEqual ("", C.Prefix, "test#105");
+			Assert.IsFalse (C.ReadOnly, "test#106");
+			Assert.IsNull (C.Site, "test#107");
+			Assert.AreEqual ("test_table", C.Table.TableName, "test#108");
+			Assert.AreEqual ("test3", C.ToString (), "test#109");
+			Assert.IsFalse (C.Unique, "test#110"); 
 		}
 
 		[Test]
@@ -206,9 +206,9 @@ namespace MonoTests.System.Data
 
 			try {
 				Cols.Add (C);
-				Fail ("test#01");
+				Assert.Fail ("test#01");
 			} catch (Exception e) {
-				AssertEquals ("test#02", typeof (ArgumentNullException), e.GetType ());
+				Assert.AreEqual (typeof (ArgumentNullException), e.GetType (), "test#02");
 			}
 
 			C = new DataColumn ("test");
@@ -216,36 +216,36 @@ namespace MonoTests.System.Data
 
 			try {
 				Cols.Add (C);
-				Fail ("test#04");
+				Assert.Fail ("test#04");
 			} catch (ArgumentException e) {
-//				AssertEquals ("test#05", typeof (ArgumentException), e.GetType ());
-//				AssertEquals ("test#06", "Column 'test' already belongs to this or another DataTable.", e.Message);
+//				Assert.AreEqual (typeof (ArgumentException), e.GetType (), "test#05");
+//				Assert.AreEqual ("Column 'test' already belongs to this or another DataTable.", e.Message, "test#06");
 			}
 
 			try {
 				Table2.Columns.Add (C);
-				Fail ("test#07");
+				Assert.Fail ("test#07");
 			} catch (ArgumentException e) {
-//				AssertEquals ("test#08", typeof (ArgumentException), e.GetType ());
-//				AssertEquals ("test#09", "Column 'test' already belongs to this or another DataTable.", e.Message);
+//				Assert.AreEqual (typeof (ArgumentException), e.GetType (), "test#08");
+//				Assert.AreEqual ("Column 'test' already belongs to this or another DataTable.", e.Message, "test#09");
 			}
 
 			DataColumn C2 = new DataColumn ("test");
 
 			try {
 				Cols.Add (C2);
-				Fail ("test#10");
+				Assert.Fail ("test#10");
 			} catch (DuplicateNameException e) {
-//				AssertEquals ("test#11", typeof (DuplicateNameException), e.GetType ());
-//				AssertEquals ("test#12", "A DataColumn named 'test' already belongs to this DataTable.", e.Message);
+//				Assert.AreEqual (typeof (DuplicateNameException), e.GetType (), "test#11");
+//				Assert.AreEqual ("A DataColumn named 'test' already belongs to this DataTable.", e.Message, "test#12");
 			}
 
 			try {
 				Cols.Add ("test2", typeof (string), "substring ('fdsafewq', 2)");
-				Fail ("test#13");
+				Assert.Fail ("test#13");
 			} catch (InvalidExpressionException e) {
-//				AssertEquals ("test#14", true, e is InvalidExpressionException);
-//				AssertEquals ("test#15", "Expression 'substring ('fdsafewq', 2)' is invalid.", e.Message);
+//				Assert.IsTrue (e is InvalidExpressionException, "test#14");
+//				Assert.AreEqual ("Expression 'substring ('fdsafewq', 2)' is invalid.", e.Message, "test#15");
 			}
 		}
 
@@ -270,52 +270,52 @@ namespace MonoTests.System.Data
 			Cols.AddRange (ColArray);
 
 			C = Cols [0];
-			AssertEquals ("test#01", true, C.AllowDBNull);
-			AssertEquals ("test#02", false, C.AutoIncrement);
-			AssertEquals ("test#03", 0L, C.AutoIncrementSeed);
-			AssertEquals ("test#04", 1L, C.AutoIncrementStep);
-			AssertEquals ("test#05", "test1", C.Caption);
-			AssertEquals ("test#06", "Element", C.ColumnMapping.ToString ());
-			AssertEquals ("test#07", "test1", C.ColumnName);
-			AssertEquals ("test#08", true, C.Container == null);
-			AssertEquals ("test#09", typeof (string), C.DataType);
-			AssertEquals ("test#10", DBNull.Value, C.DefaultValue);
-			AssertEquals ("test#11", false, C.DesignMode);
-			AssertEquals ("test#12", "", C.Expression);
-			AssertEquals ("test#13", 0, C.ExtendedProperties.Count);
-			AssertEquals ("test#14", -1, C.MaxLength);
-			AssertEquals ("test#15", "", C.Namespace);
-			AssertEquals ("test#16", 0, C.Ordinal);
-			AssertEquals ("test#17", "", C.Prefix);
-			AssertEquals ("test#18", false, C.ReadOnly);
-			AssertEquals ("test#19", null, C.Site);
-			AssertEquals ("test#20", "test_table", C.Table.TableName);
-			AssertEquals ("test#21", "test1", C.ToString ());
-			AssertEquals ("test#22", false, C.Unique);
+			Assert.IsTrue (C.AllowDBNull, "test#01");
+			Assert.IsFalse (C.AutoIncrement, "test#02");
+			Assert.AreEqual (0L, C.AutoIncrementSeed, "test#03");
+			Assert.AreEqual (1L, C.AutoIncrementStep, "test#04");
+			Assert.AreEqual ("test1", C.Caption, "test#05");
+			Assert.AreEqual ("Element", C.ColumnMapping.ToString (), "test#06");
+			Assert.AreEqual ("test1", C.ColumnName, "test#07");
+			Assert.IsNull (C.Container, "test#08");
+			Assert.AreEqual (typeof (string), C.DataType, "test#09");
+			Assert.AreEqual (DBNull.Value, C.DefaultValue, "test#10");
+			Assert.IsFalse (C.DesignMode, "test#11");
+			Assert.AreEqual ("", C.Expression, "test#12");
+			Assert.AreEqual (0, C.ExtendedProperties.Count, "test#13");
+			Assert.AreEqual (-1, C.MaxLength, "test#14");
+			Assert.AreEqual ("", C.Namespace, "test#15");
+			Assert.AreEqual (0, C.Ordinal, "test#16");
+			Assert.AreEqual ("", C.Prefix, "test#17");
+			Assert.IsFalse (C.ReadOnly, "test#18");
+			Assert.IsNull (C.Site, "test#19");
+			Assert.AreEqual ("test_table", C.Table.TableName, "test#20");
+			Assert.AreEqual ("test1", C.ToString (), "test#21");
+			Assert.IsFalse (C.Unique, "test#22");
 
 			C = Cols [1];
-			AssertEquals ("test#01", false, C.AllowDBNull);
-			AssertEquals ("test#02", false, C.AutoIncrement);
-			AssertEquals ("test#03", 0L, C.AutoIncrementSeed);
-			AssertEquals ("test#04", 1L, C.AutoIncrementStep);
-			AssertEquals ("test#05", "Test_caption", C.Caption);
-			AssertEquals ("test#06", "Element", C.ColumnMapping.ToString ());
-			AssertEquals ("test#07", "test2", C.ColumnName);
-			AssertEquals ("test#08", true, C.Container == null);
-			AssertEquals ("test#09", typeof (XmlReader), C.DataType);
-			AssertEquals ("test#10", DBNull.Value, C.DefaultValue);
-			AssertEquals ("test#11", false, C.DesignMode);
-			AssertEquals ("test#12", "", C.Expression);
-			AssertEquals ("test#13", 0, C.ExtendedProperties.Count);
-			AssertEquals ("test#14", -1, C.MaxLength);
-			AssertEquals ("test#15", "", C.Namespace);
-			AssertEquals ("test#16", 1, C.Ordinal);
-			AssertEquals ("test#17", "", C.Prefix);
-			AssertEquals ("test#18", false, C.ReadOnly);
-			AssertEquals ("test#19", null, C.Site);
-			AssertEquals ("test#20", "test_table", C.Table.TableName);
-			AssertEquals ("test#21", "test2", C.ToString ());
-			AssertEquals ("test#22", false, C.Unique);
+			Assert.IsFalse (C.AllowDBNull, "test#01");
+			Assert.IsFalse (C.AutoIncrement, "test#02");
+			Assert.AreEqual (0L, C.AutoIncrementSeed, "test#03");
+			Assert.AreEqual (1L, C.AutoIncrementStep, "test#04");
+			Assert.AreEqual ("Test_caption", C.Caption, "test#05");
+			Assert.AreEqual ("Element", C.ColumnMapping.ToString (), "test#06");
+			Assert.AreEqual ("test2", C.ColumnName, "test#07");
+			Assert.IsNull (C.Container, "test#08");
+			Assert.AreEqual (typeof (XmlReader), C.DataType, "test#09");
+			Assert.AreEqual (DBNull.Value, C.DefaultValue, "test#10");
+			Assert.IsFalse (C.DesignMode, "test#11");
+			Assert.AreEqual ("", C.Expression, "test#12");
+			Assert.AreEqual (0, C.ExtendedProperties.Count, "test#13");
+			Assert.AreEqual (-1, C.MaxLength, "test#14");
+			Assert.AreEqual ("", C.Namespace, "test#15");
+			Assert.AreEqual (1, C.Ordinal, "test#16");
+			Assert.AreEqual ("", C.Prefix, "test#17");
+			Assert.IsFalse (C.ReadOnly, "test#18");
+			Assert.IsNull (C.Site, "test#19");
+			Assert.AreEqual ("test_table", C.Table.TableName, "test#20");
+			Assert.AreEqual ("test2", C.ToString (), "test#21");
+			Assert.IsFalse (C.Unique, "test#22");
 		}
 
 		[Test]
@@ -329,22 +329,22 @@ namespace MonoTests.System.Data
 
 			// LAMESPEC: MSDN says that if C doesn't belong to Cols
 			// Exception is thrown.
-			AssertEquals ("test#01", false, Cols.CanRemove (C));
+			Assert.IsFalse (Cols.CanRemove (C), "test#01");
 
 			Cols.Add (C);
-			AssertEquals ("test#02", true, Cols.CanRemove (C));
+			Assert.IsTrue (Cols.CanRemove (C), "test#02");
 
 			C = new DataColumn ();
 			C.Expression = "test1 + 2";
 			Cols.Add (C);
 
 			C = Cols ["test2"];
-			AssertEquals ("test#03", false, Cols.CanRemove (C));
+			Assert.IsFalse (Cols.CanRemove (C), "test#03");
 
 			C = new DataColumn ("t");
 			Table2.Columns.Add (C);
 			DataColumnCollection Cols2 = Table2.Columns;
-			AssertEquals ("test#04", true, Cols2.CanRemove (C));
+			Assert.IsTrue (Cols2.CanRemove (C), "test#04");
 
 			DataRelation Rel = new DataRelation ("Rel", Table.Columns [0], Table2.Columns [0]);
 			DataSet Set = new DataSet ();
@@ -352,8 +352,8 @@ namespace MonoTests.System.Data
 			Set.Tables.Add (Table2);
 			Set.Relations.Add (Rel);
 
-			AssertEquals ("test#05", false, Cols2.CanRemove (C));
-			AssertEquals ("test#06", false, Cols.CanRemove (null));
+			Assert.IsFalse (Cols2.CanRemove (C), "test#05");
+			Assert.IsFalse (Cols.CanRemove (null), "test#06");
 		}
 
 		[Test]
@@ -371,7 +371,7 @@ namespace MonoTests.System.Data
 			Cols.Add ("testi");
 
 			Cols.Clear ();
-			AssertEquals ("test#01", 0, Cols.Count);
+			Assert.AreEqual (0, Cols.Count, "test#01");
 
 			Cols.Add ();
 			Cols.Add ("testi");
@@ -382,10 +382,10 @@ namespace MonoTests.System.Data
 			Set.Relations.Add (Rel);
 			try {
 				Cols.Clear ();
-				Fail ("test#02");
+				Assert.Fail ("test#02");
 			} catch (Exception e) {
-				AssertEquals ("test#03", typeof (ArgumentException), e.GetType ());
-				AssertEquals ("test#04", "Cannot remove this column, because it is part of the parent key for relationship Rel.", e.Message);
+				Assert.AreEqual (typeof (ArgumentException), e.GetType (), "test#03");
+				Assert.AreEqual ("Cannot remove this column, because it is part of the parent key for relationship Rel.", e.Message, "test#04");
 			}
 		}
 
@@ -398,7 +398,7 @@ namespace MonoTests.System.Data
 
 			//shudnt throw an exception.
 			table.Columns.Clear ();
-			AssertEquals ("#1", 0, table.Columns.Count);
+			Assert.AreEqual (0, table.Columns.Count, "#1");
 		}
 
 		[Test]
@@ -410,14 +410,14 @@ namespace MonoTests.System.Data
 			Cols.Add ("test");
 			Cols.Add ("tesT2");
 
-			AssertEquals ("test#01", true, Cols.Contains ("test"));
-			AssertEquals ("test#02", false, Cols.Contains ("_test"));
-			AssertEquals ("test#03", true, Cols.Contains ("TEST"));
+			Assert.IsTrue (Cols.Contains ("test"), "test#01");
+			Assert.IsFalse (Cols.Contains ("_test"), "test#02");
+			Assert.IsTrue (Cols.Contains ("TEST"), "test#03");
 			Table.CaseSensitive = true;
-			AssertEquals ("test#04", true, Cols.Contains ("TEST"));
-			AssertEquals ("test#05", true, Cols.Contains ("test2"));
-			AssertEquals ("test#06", false, Cols.Contains ("_test2"));
-			AssertEquals ("test#07", true, Cols.Contains ("TEST2"));
+			Assert.IsTrue (Cols.Contains ("TEST"), "test#04");
+			Assert.IsTrue (Cols.Contains ("test2"), "test#05");
+			Assert.IsFalse (Cols.Contains ("_test2"), "test#06");
+			Assert.IsTrue (Cols.Contains ("TEST2"), "test#07");
 		}
 
 		[Test]
@@ -433,21 +433,21 @@ namespace MonoTests.System.Data
 
 			DataColumn [] array = new DataColumn [4];
 			Cols.CopyTo (array, 0);
-			AssertEquals ("test#01", 4, array.Length);
-			AssertEquals ("test#02", "test", array [0].ColumnName);
-			AssertEquals ("test#03", "test2", array [1].ColumnName);
-			AssertEquals ("test#04", "test3", array [2].ColumnName);
-			AssertEquals ("test#05", "test4", array [3].ColumnName);
+			Assert.AreEqual (4, array.Length, "test#01");
+			Assert.AreEqual ("test", array [0].ColumnName, "test#02");
+			Assert.AreEqual ("test2", array [1].ColumnName, "test#03");
+			Assert.AreEqual ("test3", array [2].ColumnName, "test#04");
+			Assert.AreEqual ("test4", array [3].ColumnName, "test#05");
 
 			array = new DataColumn [6];
 			Cols.CopyTo (array, 2);
-			AssertEquals ("test#06", 6, array.Length);
-			AssertEquals ("test#07", "test", array [2].ColumnName);
-			AssertEquals ("test#08", "test2", array [3].ColumnName);
-			AssertEquals ("test#09", "test3", array [4].ColumnName);
-			AssertEquals ("test#10", "test4", array [5].ColumnName);
-			AssertEquals ("test#11", null, array [0]);
-			AssertEquals ("test#12", null, array [1]);
+			Assert.AreEqual (6, array.Length, "test#06");
+			Assert.AreEqual ("test", array [2].ColumnName, "test#07");
+			Assert.AreEqual ("test2", array [3].ColumnName, "test#08");
+			Assert.AreEqual ("test3", array [4].ColumnName, "test#09");
+			Assert.AreEqual ("test4", array [5].ColumnName, "test#10");
+			Assert.IsNull (array [0], "test#11");
+			Assert.IsNull (array [1], "test#12");
 		}
 
 		[Test]
@@ -458,12 +458,12 @@ namespace MonoTests.System.Data
 			DataColumnCollection Cols = Table.Columns;
 			DataColumnCollection Cols2 = Table2.Columns;
 
-			AssertEquals ("test#01", false, Cols.Equals (Cols2));
-			AssertEquals ("test#02", false, Cols2.Equals (Cols));
-			AssertEquals ("test#03", false, Object.Equals (Cols, Cols2));
-			AssertEquals ("test#04", true, Cols.Equals (Cols));
-			AssertEquals ("test#05", true, Cols2.Equals (Cols2));
-			AssertEquals ("test#06", true, Object.Equals (Cols2, Cols2));
+			Assert.IsFalse (Cols.Equals (Cols2), "test#01");
+			Assert.IsFalse (Cols2.Equals (Cols), "test#02");
+			Assert.IsFalse (Object.Equals (Cols, Cols2), "test#03");
+			Assert.IsTrue (Cols.Equals (Cols), "test#04");
+			Assert.IsTrue (Cols2.Equals (Cols2), "test#05");
+			Assert.IsTrue (Object.Equals (Cols2, Cols2), "test#06");
 		}
 
 		[Test]
@@ -477,15 +477,15 @@ namespace MonoTests.System.Data
 			Cols.Add ("test3");
 			Cols.Add ("test4");
 
-			AssertEquals ("test#01", 0, Cols.IndexOf ("test"));
-			AssertEquals ("test#02", 1, Cols.IndexOf ("TEST2"));
+			Assert.AreEqual (0, Cols.IndexOf ("test"), "test#01");
+			Assert.AreEqual (1, Cols.IndexOf ("TEST2"), "test#02");
 			Table.CaseSensitive = true;
-			AssertEquals ("test#03", 1, Cols.IndexOf ("TEST2"));
+			Assert.AreEqual (1, Cols.IndexOf ("TEST2"), "test#03");
 
-			AssertEquals ("test#04", 3, Cols.IndexOf (Cols [3]));
+			Assert.AreEqual (3, Cols.IndexOf (Cols [3]), "test#04");
 			DataColumn C = new DataColumn ("error");
-			AssertEquals ("test#05", -1, Cols.IndexOf (C));
-			AssertEquals ("test#06", -1, Cols.IndexOf ("_error_"));
+			Assert.AreEqual (-1, Cols.IndexOf (C), "test#05");
+			Assert.AreEqual (-1, Cols.IndexOf ("_error_"), "test#06");
 		}
 
 		[Test]
@@ -499,18 +499,18 @@ namespace MonoTests.System.Data
 			Cols.Add ("test3");
 			Cols.Add ("test4");
 
-			AssertEquals ("test#01", 4, Cols.Count);
+			Assert.AreEqual (4, Cols.Count, "test#01");
 			Cols.Remove ("test2");
-			AssertEquals ("test#02", 3, Cols.Count);
+			Assert.AreEqual (3, Cols.Count, "test#02");
 			Cols.Remove ("TEST3");
-			AssertEquals ("test#03", 2, Cols.Count);
+			Assert.AreEqual (2, Cols.Count, "test#03");
 
 			try {
 				Cols.Remove ("_test_");
-				Fail ("test#04");
+				Assert.Fail ("test#04");
 			} catch (Exception e) {
-				AssertEquals ("test#05", typeof (ArgumentException), e.GetType ());
-				AssertEquals ("test#06", "Column '_test_' does not belong to table test_table.", e.Message);
+				Assert.AreEqual (typeof (ArgumentException), e.GetType (), "test#05");
+				Assert.AreEqual ("Column '_test_' does not belong to table test_table.", e.Message, "test#06");
 			}
 
 			Cols.Add ();
@@ -518,18 +518,18 @@ namespace MonoTests.System.Data
 			Cols.Add ();
 			Cols.Add ();
 
-			AssertEquals ("test#07", 6, Cols.Count);
+			Assert.AreEqual (6, Cols.Count, "test#07");
 			Cols.Remove (Cols [0]);
 			Cols.Remove (Cols [0]);
-			AssertEquals ("test#08", 4, Cols.Count);
-			AssertEquals ("test#09", "Column1", Cols [0].ColumnName);
+			Assert.AreEqual (4, Cols.Count, "test#08");
+			Assert.AreEqual ("Column1", Cols [0].ColumnName, "test#09");
 
 			try {
 				Cols.Remove (new DataColumn ("Column10"));
-				Fail ("test#10");
+				Assert.Fail ("test#10");
 			} catch (Exception e) {
-				AssertEquals ("test#11", typeof (ArgumentException), e.GetType ());
-				AssertEquals ("test#12", "Cannot remove a column that doesn't belong to this table.", e.Message);
+				Assert.AreEqual (typeof (ArgumentException), e.GetType (), "test#11");
+				Assert.AreEqual ("Cannot remove a column that doesn't belong to this table.", e.Message, "test#12");
 			}
 
 			Cols.Add ();
@@ -537,21 +537,21 @@ namespace MonoTests.System.Data
 			Cols.Add ();
 			Cols.Add ();
 
-			AssertEquals ("test#13", 8, Cols.Count);
+			Assert.AreEqual (8, Cols.Count, "test#13");
 			Cols.RemoveAt (7);
 			Cols.RemoveAt (1);
 			Cols.RemoveAt (0);
 			Cols.RemoveAt (0);
-			AssertEquals ("test#14", 4, Cols.Count);
-			AssertEquals ("test#15", "Column4", Cols [0].ColumnName);
-			AssertEquals ("test#16", "Column5", Cols [1].ColumnName);
+			Assert.AreEqual (4, Cols.Count, "test#14");
+			Assert.AreEqual ("Column4", Cols [0].ColumnName, "test#15");
+			Assert.AreEqual ("Column5", Cols [1].ColumnName, "test#16");
 
 			try {
 				Cols.RemoveAt (10);
-				Fail ("test#17");
+				Assert.Fail ("test#17");
 			} catch (Exception e) {
-				AssertEquals ("test#18", typeof (IndexOutOfRangeException), e.GetType ());
-				AssertEquals ("test#19", "Cannot find column 10.", e.Message);
+				Assert.AreEqual (typeof (IndexOutOfRangeException), e.GetType (), "test#18");
+				Assert.AreEqual ("Cannot find column 10.", e.Message, "test#19");
 			}
 		}
 
@@ -581,7 +581,7 @@ namespace MonoTests.System.Data
 			Cols.Add ("test");
 			Cols.Add ("test2");
 			Cols.Add ("test3");
-			AssertEquals ("test#01", "System.Data.DataColumnCollection", Cols.ToString ());
+			Assert.AreEqual ("System.Data.DataColumnCollection", Cols.ToString (), "test#01");
 		}
 		
 		[Test]
@@ -592,7 +592,7 @@ namespace MonoTests.System.Data
 			dt.Columns.Add ("NOM_COLONNE1", typeof (string));
 			dt.Columns.Remove ("nom_colonne1");
 			int i=dt.Columns.IndexOf ("nom_colonne1"); 
-			NUnit.Framework.Assert.AreEqual (0, dt.Columns.IndexOf ("nom_colonne1"));
+			Assert.AreEqual (0, dt.Columns.IndexOf ("nom_colonne1"));
 		}
 	}
 }

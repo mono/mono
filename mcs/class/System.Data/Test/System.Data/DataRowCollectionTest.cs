@@ -39,7 +39,7 @@ using System.Data;
 namespace MonoTests.System.Data
 {
 	[TestFixture]
-	public class DataRowCollectionTest : Assertion
+	public class DataRowCollectionTest
 	{
 		private DataTable _tbl;	
 
@@ -60,25 +60,25 @@ namespace MonoTests.System.Data
                         _tbl.Columns.Add(col);
                         _tbl.Rows.Add(_tbl.NewRow());
 
-                        AssertEquals("test#01" , 0, Convert.ToInt32(_tbl.Rows[0]["Auto"] ));
+                        Assert.AreEqual (0, Convert.ToInt32(_tbl.Rows[0]["Auto"] ), "test#01" );
                                 
                         _tbl.Rows.Add(_tbl.NewRow());
-                       	AssertEquals("test#02" , 1, Convert.ToInt32(_tbl.Rows[1]["Auto"] ));
+                       	Assert.AreEqual (1, Convert.ToInt32(_tbl.Rows[1]["Auto"] ), "test#02" );
                 	
                 	col.AutoIncrement = false;
-                	AssertEquals("test#03" , 1, Convert.ToInt32(_tbl.Rows[1]["Auto"] ));
+                	Assert.AreEqual (1, Convert.ToInt32(_tbl.Rows[1]["Auto"] ), "test#03" );
 
                         _tbl.Rows.Add(_tbl.NewRow());
-                       	AssertEquals("test#04" , DBNull.Value, _tbl.Rows[2]["Auto"]);
+                       	Assert.AreEqual (DBNull.Value, _tbl.Rows[2]["Auto"], "test#04" );
 
                 	col.AutoIncrement = true;
 			col.AutoIncrementSeed = 10;
                 	col.AutoIncrementStep = 2;
                 	
                         _tbl.Rows.Add(_tbl.NewRow());
-                       	AssertEquals("test#05" , 10, Convert.ToInt32(_tbl.Rows[3]["Auto"] ));
+                       	Assert.AreEqual (10, Convert.ToInt32(_tbl.Rows[3]["Auto"] ), "test#05" );
                         _tbl.Rows.Add(_tbl.NewRow());
-                       	AssertEquals("test#06" , 12, Convert.ToInt32(_tbl.Rows[4]["Auto"] ));
+                       	Assert.AreEqual (12, Convert.ToInt32(_tbl.Rows[4]["Auto"] ), "test#06" );
 
 			col = new DataColumn ("Auto2");
                 	col.DataType = typeof(string);
@@ -88,16 +88,16 @@ namespace MonoTests.System.Data
                 	_tbl.Columns.Add (col);
                 	
                 	_tbl.Rows.Add(_tbl.NewRow());
-                	AssertEquals ("test#07", typeof (int), _tbl.Columns [1].DataType);
-                       	AssertEquals ("test#08" , typeof (int), _tbl.Rows[5]["Auto2"].GetType ());
+                	Assert.AreEqual (typeof (int), _tbl.Columns [1].DataType, "test#07");
+                       	Assert.AreEqual (typeof (int), _tbl.Rows[5]["Auto2"].GetType (), "test#08" );
 
 			col = new DataColumn ("Auto3");
                 	col.AutoIncrement = true;
                 	col.AutoIncrementSeed = 0;
                 	col.AutoIncrementStep = 1;
 	               	col.DataType = typeof(string);
-                	AssertEquals ("test#09", typeof (string), col.DataType);
-                	AssertEquals ("test#10", false, col.AutoIncrement);
+                	Assert.AreEqual (typeof (string), col.DataType, "test#09");
+                	Assert.IsFalse (col.AutoIncrement, "test#10");
                 }
 
 		[Test]
@@ -109,11 +109,11 @@ namespace MonoTests.System.Data
 			DataRowCollection Rows = _tbl.Rows;
 			
 			Rows.Add (Row);
-			AssertEquals ("test#01", 1, Rows.Count);
-			AssertEquals ("test#02", false, Rows.IsReadOnly);
-			AssertEquals ("test#03", false, Rows.IsSynchronized);
+			Assert.AreEqual (1, Rows.Count, "test#01");
+			Assert.IsFalse (Rows.IsReadOnly, "test#02");
+			Assert.IsFalse (Rows.IsSynchronized, "test#03");
 #if !TARGET_JVM
-			AssertEquals ("test#04", "System.Data.DataRowCollection", Rows.ToString ());
+			Assert.AreEqual ("System.Data.DataRowCollection", Rows.ToString (), "test#04");
 #endif
 			
 			string [] cols = new string [2];
@@ -125,32 +125,32 @@ namespace MonoTests.System.Data
 			cols [1] = "else";
 			Rows.Add (cols);
 			
-			AssertEquals ("test#05", 3, Rows.Count);
+			Assert.AreEqual (3, Rows.Count, "test#05");
 #if !TARGET_JVM
-			AssertEquals ("test#06", "System.Data.DataRow",  Rows [0].ToString ());
+			Assert.AreEqual ("System.Data.DataRow",  Rows [0].ToString (), "test#06");
 #endif
-			AssertEquals ("test#07", DBNull.Value, Rows [0] [0]);
-			AssertEquals ("test#08", DBNull.Value, Rows [0] [1]);
-			AssertEquals ("test#09", "first", Rows [1] [0]);
-			AssertEquals ("test#10", "something", Rows [2] [0]);
-			AssertEquals ("test#11", "second", Rows [1] [1]);
-			AssertEquals ("test#12", "else", Rows [2] [1]);
+			Assert.AreEqual (DBNull.Value, Rows [0] [0], "test#07");
+			Assert.AreEqual (DBNull.Value, Rows [0] [1], "test#08");
+			Assert.AreEqual ("first", Rows [1] [0], "test#09");
+			Assert.AreEqual ("something", Rows [2] [0], "test#10");
+			Assert.AreEqual ("second", Rows [1] [1], "test#11");
+			Assert.AreEqual ("else", Rows [2] [1], "test#12");
 			
 			try {
 				Rows.Add (Row);
-				Fail ("test#13");
+				Assert.Fail ("test#13");
 			} catch (Exception e) {
-				AssertEquals ("test#14", typeof (ArgumentException), e.GetType ());
-				AssertEquals ("test#15", "This row already belongs to this table.", e.Message);
+				Assert.AreEqual (typeof (ArgumentException), e.GetType (), "test#14");
+				Assert.AreEqual ("This row already belongs to this table.", e.Message, "test#15");
 			}
 			
 			try {
 				Row = null;
 				Rows.Add (Row);
-				Fail ("test#16");
+				Assert.Fail ("test#16");
 			} catch (Exception e) {
-				AssertEquals ("test#17", typeof (ArgumentNullException), e.GetType ());
-				//AssertEquals ("test#18", "'row' argument cannot be null.\r\nParameter name: row", e.Message);
+				Assert.AreEqual (typeof (ArgumentNullException), e.GetType (), "test#17");
+				//Assert.AreEqual ("'row' argument cannot be null.\r\nParameter name: row", e.Message, "test#18");
 			}
 			
 			DataColumn Column = new DataColumn ("not_null");
@@ -164,10 +164,10 @@ namespace MonoTests.System.Data
 			
 			try {
 				Rows.Add (cols);
-				Fail ("test#19");
+				Assert.Fail ("test#19");
 			} catch (Exception e) {
-				AssertEquals ("test#20", typeof (NoNullAllowedException), e.GetType ());
-				//AssertEquals ("test#21", "Column 'not_null' does not allow nulls.", e.Message);
+				Assert.AreEqual (typeof (NoNullAllowedException), e.GetType (), "test#20");
+				//Assert.AreEqual ("Column 'not_null' does not allow nulls.", e.Message, "test#21");
 			}
 			
 			Column = _tbl.Columns [0];			
@@ -180,10 +180,10 @@ namespace MonoTests.System.Data
 			
 			try {
 				Rows.Add (cols);
-				Fail ("test#22");
+				Assert.Fail ("test#22");
 			} catch (Exception e) {
-				AssertEquals ("test#23", typeof (ConstraintException), e.GetType ());
-				AssertEquals ("test#24", "Column 'Column1' is constrained to be unique.  Value 'first' is already present.", e.Message);
+				Assert.AreEqual (typeof (ConstraintException), e.GetType (), "test#23");
+				Assert.AreEqual ("Column 'Column1' is constrained to be unique.  Value 'first' is already present.", e.Message, "test#24");
 			}
 		       
 			Column = new DataColumn ("integer");
@@ -198,10 +198,10 @@ namespace MonoTests.System.Data
 			
 			try {
 				Rows.Add (obs);
-				Fail ("test#25");
+				Assert.Fail ("test#25");
 			} catch (ArgumentException e) {
 				// LAMESPEC: MSDN says this exception is InvalidCastException
-//				AssertEquals ("test#26", typeof (ArgumentException), e.GetType ());
+//				Assert.AreEqual (typeof (ArgumentException), e.GetType (), "test#26");
 			}
 
 			object [] obs1 = new object [5];
@@ -212,9 +212,9 @@ namespace MonoTests.System.Data
 			obs1 [4] = "Extra";
 			try {
 				Rows.Add (obs1);
-				Fail ("test#27");
+				Assert.Fail ("test#27");
 			} catch (Exception e) {
-				AssertEquals ("test#28", typeof(ArgumentException), e.GetType ());
+				Assert.AreEqual (typeof(ArgumentException), e.GetType (), "test#28");
 			}
 		}
 
@@ -235,21 +235,21 @@ namespace MonoTests.System.Data
 
                         // null test & missing columns
                         DataRow r = t.Rows.Add (new object [] { null, null});
-                        AssertEquals ("#ABV1", 10, (int) r [0]);
-                        AssertEquals ("#ABV2", "testme", (string) r [1]);
-                        AssertEquals ("#ABV3", DBNull.Value, r [2]);
+                        Assert.AreEqual (10, (int) r [0], "#ABV1");
+                        Assert.AreEqual ("testme", (string) r [1], "#ABV2");
+                        Assert.AreEqual (DBNull.Value, r [2], "#ABV3");
 
                         // dbNull test
                         r = t.Rows.Add (new object [] { DBNull.Value, DBNull.Value, DBNull.Value});
-                        AssertEquals ("#ABV4", DBNull.Value, r [0]);
-                        AssertEquals ("#ABV5", DBNull.Value, r [1]);
-                        AssertEquals ("#ABV6", DBNull.Value, r [2]);
+                        Assert.AreEqual (DBNull.Value, r [0], "#ABV4");
+                        Assert.AreEqual (DBNull.Value, r [1], "#ABV5");
+                        Assert.AreEqual (DBNull.Value, r [2], "#ABV6");
 
                         // ai test & no default value test
                         r = t.Rows.Add (new object [] { null, null, null});
-                        AssertEquals ("#ABV7", 15, (int) r [0]);
-                        AssertEquals ("#ABV8", "testme", (string) r [1]);
-                        AssertEquals ("#ABV9", DBNull.Value, r [2]);
+                        Assert.AreEqual (15, (int) r [0], "#ABV7");
+                        Assert.AreEqual ("testme", (string) r [1], "#ABV8");
+                        Assert.AreEqual (DBNull.Value, r [2], "#ABV9");
                 }
 		
 		[Test]
@@ -276,11 +276,11 @@ namespace MonoTests.System.Data
 			cols [1] = "3,1";
 			Rows.Add (cols);
 			
-			AssertEquals ("test#01", 3, Rows.Count);
+			Assert.AreEqual (3, Rows.Count, "test#01");
 			Rows.Clear ();
 			
 			// hmm... TODO: better tests
-			AssertEquals ("test#02", 0, Rows.Count);
+			Assert.AreEqual (0, Rows.Count, "test#02");
 			
 			cols [0] = "1";
 			cols [1] = "1,1";
@@ -314,13 +314,13 @@ namespace MonoTests.System.Data
 			
 			try {
 				Rows.Clear ();
-				Fail ("test#03");
+				Assert.Fail ("test#03");
 			} catch (InvalidConstraintException) {
 			}
 			
-			AssertEquals ("test#06", 3, Table.Rows.Count);
+			Assert.AreEqual (3, Table.Rows.Count, "test#06");
 			Table.Rows.Clear ();
-			AssertEquals ("test#07", 0, Table.Rows.Count);
+			Assert.AreEqual (0, Table.Rows.Count, "test#07");
 		}
 		
 		[Test]
@@ -356,46 +356,46 @@ namespace MonoTests.System.Data
 			Rows [3] [1] = "test3";
 			Rows [3] [2] = 3;
 			
-			AssertEquals ("test#01", 3, _tbl.Columns.Count);
-			AssertEquals ("test#02", 4, _tbl.Rows.Count);
-			AssertEquals ("test#03", 0, _tbl.Rows [0] [0]);
-			AssertEquals ("test#04", 1, _tbl.Rows [1] [0]);
-			AssertEquals ("test#05", 2, _tbl.Rows [2] [0]);
-			AssertEquals ("test#06", 3, _tbl.Rows [3] [0]);
+			Assert.AreEqual (3, _tbl.Columns.Count, "test#01");
+			Assert.AreEqual (4, _tbl.Rows.Count, "test#02");
+			Assert.AreEqual (0, _tbl.Rows [0] [0], "test#03");
+			Assert.AreEqual (1, _tbl.Rows [1] [0], "test#04");
+			Assert.AreEqual (2, _tbl.Rows [2] [0], "test#05");
+			Assert.AreEqual (3, _tbl.Rows [3] [0], "test#06");
 			
 			try {
 				Rows.Contains (1);
-				Fail ("test#07");
+				Assert.Fail ("test#07");
 			} catch (Exception e) {
-				AssertEquals ("test#08", typeof (MissingPrimaryKeyException), e.GetType ());
-				AssertEquals ("test#09", "Table doesn't have a primary key.", e.Message);			
+				Assert.AreEqual (typeof (MissingPrimaryKeyException), e.GetType (), "test#08");
+				Assert.AreEqual ("Table doesn't have a primary key.", e.Message, "test#09");			
 			}
 			
 			_tbl.PrimaryKey = new DataColumn [] {_tbl.Columns [0]};
-			AssertEquals ("test#10", true, Rows.Contains (1));
-			AssertEquals ("test#11", true, Rows.Contains (2));
-			AssertEquals ("test#12", false, Rows.Contains (4));
+			Assert.IsTrue (Rows.Contains (1), "test#10");
+			Assert.IsTrue (Rows.Contains (2), "test#11");
+			Assert.IsFalse (Rows.Contains (4), "test#12");
 			
 			try {
 				Rows.Contains (new object [] {64, "test0"});
-				Fail ("test#13");
+				Assert.Fail ("test#13");
 			} catch (Exception e) {
-				AssertEquals ("test#14", typeof (ArgumentException), e.GetType ());
-				AssertEquals ("test#15", "Expecting 1 value(s) for the key being indexed, but received 2 value(s).", e.Message);
+				Assert.AreEqual (typeof (ArgumentException), e.GetType (), "test#14");
+				Assert.AreEqual ("Expecting 1 value(s) for the key being indexed, but received 2 value(s).", e.Message, "test#15");
 			}
 			
 			_tbl.PrimaryKey = new DataColumn [] {_tbl.Columns [0], _tbl.Columns [1]};
-			AssertEquals ("test#16", false, Rows.Contains (new object [] {64, "test0"}));
-			AssertEquals ("test#17", false, Rows.Contains (new object [] {0, "test1"}));
-			AssertEquals ("test#18", true, Rows.Contains (new object [] {1, "test1"}));
-			AssertEquals ("test#19", true, Rows.Contains (new object [] {2, "test2"}));
+			Assert.IsFalse (Rows.Contains (new object [] {64, "test0"}), "test#16");
+			Assert.IsFalse (Rows.Contains (new object [] {0, "test1"}), "test#17");
+			Assert.IsTrue (Rows.Contains (new object [] {1, "test1"}), "test#18");
+			Assert.IsTrue (Rows.Contains (new object [] {2, "test2"}), "test#19");
 			
 			try {
 				Rows.Contains (new object [] {2});
-				Fail ("test#20");
+				Assert.Fail ("test#20");
 			} catch (Exception e) {
-				AssertEquals ("test#21", typeof (ArgumentException), e.GetType ());
-				AssertEquals ("test#22", "Expecting 2 value(s) for the key being indexed, but received 1 value(s).", e.Message);
+				Assert.AreEqual (typeof (ArgumentException), e.GetType (), "test#21");
+				Assert.AreEqual ("Expecting 2 value(s) for the key being indexed, but received 1 value(s).", e.Message, "test#22");
 			}
 		}
 		
@@ -420,25 +420,25 @@ namespace MonoTests.System.Data
 			
 			try {
 				Rows.CopyTo (dr, 4);
-				Fail ("test#01");
+				Assert.Fail ("test#01");
 			} catch (Exception e) {			
-				AssertEquals ("test#02", typeof (ArgumentException), e.GetType ());
-				//AssertEquals ("test#03", "Destination array was not long enough.  Check destIndex and length, and the array's lower bounds.", e.Message);
+				Assert.AreEqual (typeof (ArgumentException), e.GetType (), "test#02");
+				//Assert.AreEqual ("Destination array was not long enough.  Check destIndex and length, and the array's lower bounds.", e.Message, "test#03");
 			}
 			
 			dr = new DataRow [11];
 			Rows.CopyTo (dr, 4);
 			
-			AssertEquals ("test#04", null, dr [0]);
-			AssertEquals ("test#05", null, dr [1]);
-			AssertEquals ("test#06", null, dr [2]);
-			AssertEquals ("test#07", null, dr [3]);
-			AssertEquals ("test#08", "1", dr [4] [0]);
-			AssertEquals ("test#09", "2", dr [5] [0]);
-			AssertEquals ("test#10", "3", dr [6] [0]);
-			AssertEquals ("test#11", "4", dr [7] [0]);
-			AssertEquals ("test#12", "5", dr [8] [0]);
-			AssertEquals ("test#13", "6", dr [9] [0]);
+			Assert.IsNull (dr [0], "test#04");
+			Assert.IsNull (dr [1], "test#05");
+			Assert.IsNull (dr [2], "test#06");
+			Assert.IsNull (dr [3], "test#07");
+			Assert.AreEqual ("1", dr [4] [0], "test#08");
+			Assert.AreEqual ("2", dr [5] [0], "test#09");
+			Assert.AreEqual ("3", dr [6] [0], "test#10");
+			Assert.AreEqual ("4", dr [7] [0], "test#11");
+			Assert.AreEqual ("5", dr [8] [0], "test#12");
+			Assert.AreEqual ("6", dr [9] [0], "test#13");
 		}
 		
 		[Test]
@@ -460,9 +460,9 @@ namespace MonoTests.System.Data
 			
 			DataRowCollection Rows2 = _tbl.Rows;
 			
-			AssertEquals ("test#01", true, Rows2.Equals (Rows1));
-			AssertEquals ("test#02", true, Rows1.Equals (Rows2));
-			AssertEquals ("test#03", true, Rows1.Equals (Rows1));
+			Assert.IsTrue (Rows2.Equals (Rows1), "test#01");
+			Assert.IsTrue (Rows1.Equals (Rows2), "test#02");
+			Assert.IsTrue (Rows1.Equals (Rows1), "test#03");
 			
 			DataTable Table = new DataTable ();
 			Table.Columns.Add ();
@@ -478,10 +478,10 @@ namespace MonoTests.System.Data
 			Rows3.Add (new object [] {"6", "6", "6"});
 			Rows3.Add (new object [] {"7", "7", "7"});
 			
-			AssertEquals ("test#04", false, Rows3.Equals (Rows1));
-			AssertEquals ("test#05", false, Rows3.Equals (Rows2));
-			AssertEquals ("test#06", false, Rows1.Equals (Rows3));
-			AssertEquals ("test#07", false, Rows2.Equals (Rows3));
+			Assert.IsFalse (Rows3.Equals (Rows1), "test#04");
+			Assert.IsFalse (Rows3.Equals (Rows2), "test#05");
+			Assert.IsFalse (Rows1.Equals (Rows3), "test#06");
+			Assert.IsFalse (Rows2.Equals (Rows3), "test#07");
 		}
 		
 		[Test]
@@ -507,55 +507,55 @@ namespace MonoTests.System.Data
 			
 			try {
 				Rows.Find (1);
-				Fail ("test#01");
+				Assert.Fail ("test#01");
 			} catch (Exception e) {
-				AssertEquals ("test#02", typeof (MissingPrimaryKeyException), e.GetType ());
-				AssertEquals ("test#03", "Table doesn't have a primary key.", e.Message);              
+				Assert.AreEqual (typeof (MissingPrimaryKeyException), e.GetType (), "test#02");
+				Assert.AreEqual ("Table doesn't have a primary key.", e.Message, "test#03");              
 			}
 			
 			_tbl.PrimaryKey = new DataColumn [] {_tbl.Columns [0]};
 			DataRow row = Rows.Find (1);
-			AssertEquals ("test#04", 1L, row [0]);
+			Assert.AreEqual (1L, row [0], "test#04");
 			row = Rows.Find (2);			
-			AssertEquals ("test#05", 2L, row [0]);
+			Assert.AreEqual (2L, row [0], "test#05");
 			row = Rows.Find ("2");
-			AssertEquals ("test#06", 2L, row [0]);
+			Assert.AreEqual (2L, row [0], "test#06");
 			
 			try {
 				row = Rows.Find ("test");
-				Fail ("test#07");
+				Assert.Fail ("test#07");
 			} catch (Exception e) {
-				AssertEquals ("test#08", typeof (FormatException), e.GetType ());
-				//AssertEquals ("test#09", "Input string was not in a correct format.", e.Message);
+				Assert.AreEqual (typeof (FormatException), e.GetType (), "test#08");
+				//Assert.AreEqual ("Input string was not in a correct format.", e.Message, "test#09");
 			}
 			
 			String tes = null;			
 			row = Rows.Find (tes);			
-			AssertEquals ("test#10", null, row);
+			Assert.IsNull (row, "test#10");
 			_tbl.PrimaryKey = null;
 			
 			try {
 				Rows.Find (new object [] {1, "fir"});
-				Fail ("test#11");
+				Assert.Fail ("test#11");
 			} catch (Exception e) {
-				AssertEquals ("test#12", typeof (MissingPrimaryKeyException), e.GetType ());
-				AssertEquals ("tets#13", "Table doesn't have a primary key.", e.Message);
+				Assert.AreEqual (typeof (MissingPrimaryKeyException), e.GetType (), "test#12");
+				Assert.AreEqual ("Table doesn't have a primary key.", e.Message, "tets#13");
 			}
 			
 			_tbl.PrimaryKey = new DataColumn [] {_tbl.Columns [0], _tbl.Columns [1]};
 			
 			try {
 				Rows.Find (1);
-				Fail ("test#14");
+				Assert.Fail ("test#14");
 			} catch (Exception e) {
-				AssertEquals ("test#15", typeof (ArgumentException), e.GetType ());
-				AssertEquals ("test#16", "Expecting 2 value(s) for the key being indexed, but received 1 value(s).", e.Message);
+				Assert.AreEqual (typeof (ArgumentException), e.GetType (), "test#15");
+				Assert.AreEqual ("Expecting 2 value(s) for the key being indexed, but received 1 value(s).", e.Message, "test#16");
 			}
 			
 			row = Rows.Find (new object [] {1, "fir"});
-			AssertEquals ("test#16", null, row);
+			Assert.IsNull (row, "test#16");
 			row = Rows.Find (new object [] {1, "first"});
-			AssertEquals ("test#17", 1L, row [0]);
+			Assert.AreEqual (1L, row [0], "test#17");
 		}
 		
 		[Test]
@@ -586,7 +586,7 @@ namespace MonoTests.System.Data
 
 			DataRow row = (DataRow) ds.Tables [0].Rows.Find (new object [] {"a"});
 			
-			AssertNotNull (row);
+			Assert.IsNotNull (row);
 		}
 		
 		[Test]
@@ -609,15 +609,15 @@ namespace MonoTests.System.Data
 			
 			try {
 				Rows.InsertAt (Row, -1);
-				Fail ("test#01");
+				Assert.Fail ("test#01");
 			} catch (Exception e) {
-				AssertEquals ("test#02", typeof (IndexOutOfRangeException), e.GetType ());
-				AssertEquals ("test#03", "The row insert position -1 is invalid.", e.Message);
+				Assert.AreEqual (typeof (IndexOutOfRangeException), e.GetType (), "test#02");
+				Assert.AreEqual ("The row insert position -1 is invalid.", e.Message, "test#03");
 			}
 			
 			Rows.InsertAt (Row, 0);
-			AssertEquals ("test#04", "e", Rows [0][0]);
-			AssertEquals ("test#05", "a", Rows [1][0]);
+			Assert.AreEqual ("e", Rows [0][0], "test#04");
+			Assert.AreEqual ("a", Rows [1][0], "test#05");
 			
 			Row = _tbl.NewRow ();
 			Row [0] = "f";
@@ -625,7 +625,7 @@ namespace MonoTests.System.Data
 			Row [2] = "fff";
 			
 			Rows.InsertAt (Row, 5);
-			AssertEquals ("test#06", "f", Rows [5][0]);
+			Assert.AreEqual ("f", Rows [5][0], "test#06");
 			
 			Row = _tbl.NewRow ();
 			Row [0] = "g";
@@ -633,15 +633,15 @@ namespace MonoTests.System.Data
 			Row [2] = "ggg";
 
 			Rows.InsertAt (Row, 500);
-			AssertEquals ("test#07", "g", Rows [6][0]);
+			Assert.AreEqual ("g", Rows [6][0], "test#07");
 
 			try {
                                 Rows.InsertAt (Row, 6);	//Row already belongs to the table
-                                Fail ("test#08");
+                                Assert.Fail ("test#08");
                         }
                         catch (Exception e) {
-                                AssertEquals ("test#09", typeof (ArgumentException), e.GetType ());
-                                AssertEquals ("test#10", "This row already belongs to this table.", e.Message);
+                                Assert.AreEqual (typeof (ArgumentException), e.GetType (), "test#09");
+                                Assert.AreEqual ("This row already belongs to this table.", e.Message, "test#10");
                         }
 
 			DataTable table = new DataTable ();
@@ -652,11 +652,11 @@ namespace MonoTests.System.Data
 			table.Rows.Add (Row);
 			try {
 				Rows.InsertAt (Row, 6);
-				Fail ("test#11");
+				Assert.Fail ("test#11");
 			}
 			catch (Exception e) {
-				AssertEquals ("test#12", typeof (ArgumentException), e.GetType ());
-				AssertEquals ("test#13", "This row already belongs to another table.", e.Message);
+				Assert.AreEqual (typeof (ArgumentException), e.GetType (), "test#12");
+				Assert.AreEqual ("This row already belongs to another table.", e.Message, "test#13");
 			}
 
 			table = new DataTable ();
@@ -674,16 +674,16 @@ namespace MonoTests.System.Data
                         Row ["Name"] = "aaa";
 			try {
 				table.Rows.InsertAt (Row, 1);
-				Fail ("test#14");
+				Assert.Fail ("test#14");
 			}
 			catch (Exception e) {
-				AssertEquals ("test#15", typeof (ConstraintException), e.GetType ());
+				Assert.AreEqual (typeof (ConstraintException), e.GetType (), "test#15");
 			}
 			try {
 				table.Rows.InsertAt (null, 1);
 			}
 			catch (Exception e) {
-				AssertEquals ("test#16", typeof (ArgumentNullException), e.GetType ());
+				Assert.AreEqual (typeof (ArgumentNullException), e.GetType (), "test#16");
 			}
 		}
 		
@@ -700,52 +700,52 @@ namespace MonoTests.System.Data
 			Rows.Add (new object [] {"c", "cc", "ccc"});
 			Rows.Add (new object [] {"d", "dd", "ddd"});
 			
-			AssertEquals ("test#01", 4, _tbl.Rows.Count);
+			Assert.AreEqual (4, _tbl.Rows.Count, "test#01");
 			
 			Rows.Remove (_tbl.Rows [1]);
-			AssertEquals ("test#02", 3, _tbl.Rows.Count);
-			AssertEquals ("test#03", "a", _tbl.Rows [0] [0]);
-			AssertEquals ("test#04", "c", _tbl.Rows [1] [0]);
-			AssertEquals ("test#05", "d", _tbl.Rows [2] [0]);
+			Assert.AreEqual (3, _tbl.Rows.Count, "test#02");
+			Assert.AreEqual ("a", _tbl.Rows [0] [0], "test#03");
+			Assert.AreEqual ("c", _tbl.Rows [1] [0], "test#04");
+			Assert.AreEqual ("d", _tbl.Rows [2] [0], "test#05");
 			
 			try {
 				Rows.Remove (null);
-				Fail ("test#06");
+				Assert.Fail ("test#06");
 			} catch (Exception e) {
-				AssertEquals ("test#07", typeof (IndexOutOfRangeException), e.GetType ());
-				AssertEquals ("test#08", "The given datarow is not in the current DataRowCollection.", e.Message);
+				Assert.AreEqual (typeof (IndexOutOfRangeException), e.GetType (), "test#07");
+				Assert.AreEqual ("The given datarow is not in the current DataRowCollection.", e.Message, "test#08");
 			}
 			
 			DataRow Row = new DataTable ().NewRow ();
 			
 			try {
 				Rows.Remove (Row);
-				Fail ("test#09");
+				Assert.Fail ("test#09");
 			} catch (Exception e) {
-				AssertEquals ("test#10", typeof (IndexOutOfRangeException), e.GetType ());
-				AssertEquals ("test#11", "The given datarow is not in the current DataRowCollection.", e.Message);
+				Assert.AreEqual (typeof (IndexOutOfRangeException), e.GetType (), "test#10");
+				Assert.AreEqual ("The given datarow is not in the current DataRowCollection.", e.Message, "test#11");
 			}
 			
 			try {
 				Rows.RemoveAt (-1);
-				Fail ("test#12");
+				Assert.Fail ("test#12");
 			} catch (Exception e) {
-				AssertEquals ("test#13", typeof (IndexOutOfRangeException), e.GetType ());
-				AssertEquals ("test#14", "There is no row at position -1.", e.Message);
+				Assert.AreEqual (typeof (IndexOutOfRangeException), e.GetType (), "test#13");
+				Assert.AreEqual ("There is no row at position -1.", e.Message, "test#14");
 			}
 			
 			try { 
 				Rows.RemoveAt (64);
-				Fail ("test#15");
+				Assert.Fail ("test#15");
 			} catch (Exception e) {
-				AssertEquals ("test#16", typeof (IndexOutOfRangeException), e.GetType ());
-				AssertEquals ("test#17", "There is no row at position 64.", e.Message);
+				Assert.AreEqual (typeof (IndexOutOfRangeException), e.GetType (), "test#16");
+				Assert.AreEqual ("There is no row at position 64.", e.Message, "test#17");
 			}
 			
 			Rows.RemoveAt (0);
 			Rows.RemoveAt (1);
-			AssertEquals ("test#18", 1, Rows.Count);
-			AssertEquals ("test#19", "c", Rows [0] [0]);
+			Assert.AreEqual (1, Rows.Count, "test#18");
+			Assert.AreEqual ("c", Rows [0] [0], "test#19");
 		}
 
 #if NET_2_0
@@ -781,10 +781,10 @@ namespace MonoTests.System.Data
 			dr5[0] = "e";
 
 			int index = ds.Tables[0].Rows.IndexOf (dr3);
-			AssertEquals ("IndexOf-Yes", 2, index);
+			Assert.AreEqual (2, index, "IndexOf-Yes");
 			
 			index = ds.Tables[0].Rows.IndexOf (dr5);
-			AssertEquals ("IndexOf-No", -1, index);
+			Assert.AreEqual (-1, index, "IndexOf-No");
 		}
 	        [Test]
 		public void IndexOfTest()
@@ -804,7 +804,7 @@ namespace MonoTests.System.Data
 			dr2[0] = 10;
 			dr2[1] = 20;
 			dt.Rows.Add(dr2);
-			NUnit.Framework.Assert.AreEqual (1, dt.Rows.IndexOf (dr1));
+			Assert.AreEqual (1, dt.Rows.IndexOf (dr1));
 			DataTable dt1 = new DataTable("HelloWorld");
 			dt1.Columns.Add("T1", typeof(int));
 			dt1.Columns.Add("T2", typeof(int));
@@ -812,8 +812,8 @@ namespace MonoTests.System.Data
 			dr3[0] = 10;
 			dr3[1] = 20;
 			dt1.Rows.Add(dr3);
-			NUnit.Framework.Assert.AreEqual (-1, dt.Rows.IndexOf (dr3));
-			NUnit.Framework.Assert.AreEqual (-1, dt.Rows.IndexOf (null));
+			Assert.AreEqual (-1, dt.Rows.IndexOf (dr3));
+			Assert.AreEqual (-1, dt.Rows.IndexOf (null));
 		}
 #endif
 	}

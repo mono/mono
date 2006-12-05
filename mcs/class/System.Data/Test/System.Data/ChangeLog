@@ -1,5 +1,7 @@
 2006-12-05  Raja R Harinath  <rharinath@novell.com>
 
+	* DataColumnCollectionTest.cs, DataRowCollectionTest.cs: Modernize.
+
 	* DataSetAssertion.cs: Don't derive from 'Assertion'.  Modernize.
 	* DataSetInferXmlSchemaTest.cs, DataSetReadXmlSchemaTest.cs,
 	DataSetReadXmlTest.cs, DataSetTest.cs, DataTableLoadRowTest.cs,
