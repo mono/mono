@@ -232,32 +232,44 @@ namespace System.Windows.Forms
 		#region Protected Methods
 		protected virtual void OnAcceptsTabChanged (EventArgs e)
 		{
-			if (AcceptsTabChanged != null) AcceptsTabChanged (this, e);
+			EventHandler eh = (EventHandler)Events [AcceptsTabChangedEvent];
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnBorderStyleChanged (EventArgs e)
 		{
-			if (BorderStyleChanged != null) BorderStyleChanged (this, e);
+			EventHandler eh = (EventHandler)Events [BorderStyleChangedEvent];
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnHideSelectionChanged (EventArgs e)
 		{
-			if (HideSelectionChanged != null) HideSelectionChanged (this, e);
+			EventHandler eh = (EventHandler)Events [HideSelectionChangedEvent];
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnModifiedChanged (EventArgs e)
 		{
-			if (ModifiedChanged != null) ModifiedChanged (this, e);
+			EventHandler eh = (EventHandler)Events [ModifiedChangedEvent];
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnMultilineChanged (EventArgs e)
 		{
-			if (MultilineChanged != null) MultilineChanged (this, e);
+			EventHandler eh = (EventHandler)Events [MultilineChangedEvent];
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnReadOnlyChanged (EventArgs e)
 		{
-			if (ReadOnlyChanged != null) ReadOnlyChanged (this, e);
+			EventHandler eh = (EventHandler)Events [ReadOnlyChangedEvent];
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnSubscribeControlEvents (Control control)
@@ -280,21 +292,52 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Events
-		public event EventHandler AcceptsTabChanged;
-		public event EventHandler BorderStyleChanged;
-		public event EventHandler HideSelectionChanged;
-		public event EventHandler ModifiedChanged;
+		static object AcceptsTabChangedEvent = new object ();
+		static object BorderStyleChangedEvent = new object ();
+		static object HideSelectionChangedEvent = new object ();
+		static object ModifiedChangedEvent = new object ();
+		static object MultilineChangedEvent = new object ();
+		static object ReadOnlyChangedEvent = new object ();
+		static object TextBoxTextAlignChangedEvent = new object ();
+
+		public event EventHandler AcceptsTabChanged {
+			add { Events.AddHandler (AcceptsTabChangedEvent, value); }
+			remove {Events.RemoveHandler (AcceptsTabChangedEvent, value); }
+		}
+		public event EventHandler BorderStyleChanged {
+			add { Events.AddHandler (BorderStyleChangedEvent, value); }
+			remove {Events.RemoveHandler (BorderStyleChangedEvent, value); }
+		}
+		public event EventHandler HideSelectionChanged {
+			add { Events.AddHandler (HideSelectionChangedEvent, value); }
+			remove {Events.RemoveHandler (HideSelectionChangedEvent, value); }
+		}
+		public event EventHandler ModifiedChanged {
+			add { Events.AddHandler (ModifiedChangedEvent, value); }
+			remove {Events.RemoveHandler (ModifiedChangedEvent, value); }
+		}
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler MultilineChanged;
-		public event EventHandler ReadOnlyChanged;
-		public event EventHandler TextBoxTextAlignChanged;
+		public event EventHandler MultilineChanged {
+			add { Events.AddHandler (MultilineChangedEvent, value); }
+			remove {Events.RemoveHandler (MultilineChangedEvent, value); }
+		}
+		public event EventHandler ReadOnlyChanged {
+			add { Events.AddHandler (ReadOnlyChangedEvent, value); }
+			remove {Events.RemoveHandler (ReadOnlyChangedEvent, value); }
+		}
+		public event EventHandler TextBoxTextAlignChanged {
+			add { Events.AddHandler (TextBoxTextAlignChangedEvent, value); }
+			remove {Events.RemoveHandler (TextBoxTextAlignChangedEvent, value); }
+		}
 		#endregion
 
 		#region Private Methods
 		private void HandleTextAlignChanged (object sender, EventArgs e)
 		{
-			if (TextBoxTextAlignChanged != null) TextBoxTextAlignChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [TextBoxTextAlignChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		private void HandleReadOnlyChanged (object sender, EventArgs e)

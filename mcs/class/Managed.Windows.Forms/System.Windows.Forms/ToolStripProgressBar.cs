@@ -122,28 +122,59 @@ namespace System.Windows.Forms
 		#region Public Events
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event KeyEventHandler KeyDown;
+		public new event KeyEventHandler KeyDown {
+			add { base.KeyDown += value; }
+			remove { base.KeyDown -= value; }
+		}
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event KeyPressEventHandler KeyPress;
+		public new event KeyPressEventHandler KeyPress {
+			add { base.KeyPress += value; }
+			remove { base.KeyPress -= value; }
+		}
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event KeyEventHandler KeyUp;
+		public new event KeyEventHandler KeyUp {
+			add { base.KeyUp += value; }
+			remove { base.KeyUp -= value; }
+		}
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler LocationChanged;
+		public new event EventHandler LocationChanged {
+			add { base.LocationChanged += value; }
+			remove { base.LocationChanged -= value; }
+		}
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler OwnerChanged;
+		public new event EventHandler OwnerChanged {
+			add { base.OwnerChanged += value; }
+			remove { base.OwnerChanged -= value; }
+		}
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler TextChanged;
+		public new event EventHandler TextChanged {
+			add { base.TextChanged += value; }
+			remove { base.TextChanged -= value; }
+		}
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler Validated;
+		public new event EventHandler Validated {
+			add { base.Validated += value; }
+			remove { base.Validated -= value; }
+		}
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event CancelEventHandler Validating;
+		public new event CancelEventHandler Validating {
+			add { base.Validating += value; }
+			remove { base.Validating -= value; }
+		}
 		#endregion
 	}
 }

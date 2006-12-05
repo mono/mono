@@ -208,22 +208,30 @@ namespace System.Windows.Forms
 		#region Protected Methods
 		protected virtual void OnDropDown (EventArgs e)
 		{
-			if (DropDown != null) DropDown (this, e);
+			EventHandler eh = (EventHandler)(Events [DropDownEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnDropDownClosed (EventArgs e)
 		{
-			if (DropDownClosed != null) DropDownClosed (this, e);
+			EventHandler eh = (EventHandler)(Events [DropDownClosedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnDropDownStyleChanged (EventArgs e)
 		{
-			if (DropDownStyleChanged != null) DropDownStyleChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [DropDownStyleChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnSelectedIndexChanged (EventArgs e)
 		{
-			if (SelectedIndexChanged != null) SelectedIndexChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [SelectedIndexChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnSelectionChangeCommitted (EventArgs e)
@@ -242,7 +250,9 @@ namespace System.Windows.Forms
 
 		protected virtual void OnTextUpdate (EventArgs e)
 		{
-			if (TextUpdate != null) TextUpdate (this, e);
+			EventHandler eh = (EventHandler)(Events [TextUpdateEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnUnsubscribeControlEvents (Control control)
@@ -252,14 +262,43 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Events
+		static object DropDownEvent = new object ();
+		static object DropDownClosedEvent = new object ();
+		static object DropDownStyleChangedEvent = new object ();
+		static object SelectedIndexChangedEvent = new object ();
+		static object TextUpdateEvent = new object ();
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler DoubleClick;
-		public event EventHandler DropDown;
-		public event EventHandler DropDownClosed;
-		public event EventHandler DropDownStyleChanged;
-		public event EventHandler SelectedIndexChanged;
-		public event EventHandler TextUpdate;
+		public new event EventHandler DoubleClick {
+			add { base.DoubleClick += value; }
+			remove { base.DoubleClick -= value; }
+		}
+
+		public event EventHandler DropDown {
+			add { Events.AddHandler (DropDownEvent, value); }
+			remove { Events.RemoveHandler (DropDownEvent, value); }
+		}
+
+		public event EventHandler DropDownClosed {
+			add { Events.AddHandler (DropDownClosedEvent, value); }
+			remove { Events.RemoveHandler (DropDownClosedEvent, value); }
+		}
+
+		public event EventHandler DropDownStyleChanged {
+			add { Events.AddHandler (DropDownStyleChangedEvent, value); }
+			remove { Events.RemoveHandler (DropDownStyleChangedEvent, value); }
+		}
+
+		public event EventHandler SelectedIndexChanged {
+			add { Events.AddHandler (SelectedIndexChangedEvent, value); }
+			remove { Events.RemoveHandler (SelectedIndexChangedEvent, value); }
+		}
+
+		public event EventHandler TextUpdate {
+			add { Events.AddHandler (TextUpdateEvent, value); }
+			remove { Events.RemoveHandler (TextUpdateEvent, value); }
+		}
 		#endregion
 
 		#region Private Methods

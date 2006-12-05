@@ -260,12 +260,16 @@ namespace System.Windows.Forms
 		
 		protected virtual void OnEnter (EventArgs e)
 		{
-			if (Enter != null) Enter (this, e);
+			EventHandler eh = (EventHandler)(Events [EnterEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnGotFocus (EventArgs e)
 		{
-			if (GotFocus != null) GotFocus (this, e);
+			EventHandler eh = (EventHandler)(Events [GotFocusEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 		
 		protected virtual void OnHostedControlResize (EventArgs e)
@@ -274,17 +278,23 @@ namespace System.Windows.Forms
 		
 		protected virtual void OnKeyDown (KeyEventArgs e)
 		{
-			if (KeyDown != null) KeyDown (this, e);
+			KeyEventHandler eh = (KeyEventHandler)(Events [KeyDownEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 		
 		protected virtual void OnKeyPress (KeyPressEventArgs e)
 		{
-			if (KeyPress != null) KeyPress (this, e);
+			KeyPressEventHandler eh = (KeyPressEventHandler)(Events [KeyPressEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 		
 		protected virtual void OnKeyUp (KeyEventArgs e)
 		{
-			if (KeyUp != null) KeyUp (this, e);
+			KeyEventHandler eh = (KeyEventHandler)(Events [KeyUpEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnLayout (LayoutEventArgs e)
@@ -297,12 +307,16 @@ namespace System.Windows.Forms
 		
 		protected virtual void OnLeave (EventArgs e)
 		{
-			if (Leave != null) Leave (this, e);
+			EventHandler eh = (EventHandler)(Events [LeaveEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 		
 		protected virtual void OnLostFocus (EventArgs e)
 		{
-			if (LostFocus != null) LostFocus (this, e);
+			EventHandler eh = (EventHandler)(Events [LostFocusEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnPaint (PaintEventArgs e)
@@ -340,32 +354,85 @@ namespace System.Windows.Forms
 		
 		protected virtual void OnValidated (EventArgs e)
 		{
-			if (Validated != null) Validated (this, e);
+			EventHandler eh = (EventHandler)(Events [ValidatedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 		
 		protected virtual void OnValidating (CancelEventArgs e)
 		{
-			if (Validating != null) Validating (this, e);
+			CancelEventHandler eh = (CancelEventHandler)(Events [ValidatingEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 		#endregion
 
 		#region Public Events
+		static object EnterEvent = new object ();
+		static object GotFocusEvent = new object ();
+		static object KeyDownEvent = new object ();
+		static object KeyPressEvent = new object ();
+		static object KeyUpEvent = new object ();
+		static object LeaveEvent = new object ();
+		static object LostFocusEvent = new object ();
+		static object ValidatedEvent = new object ();
+		static object ValidatingEvent = new object ();
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler DisplayStyleChanged;
-		public event EventHandler Enter;
+		public new event EventHandler DisplayStyleChanged {
+			add { base.DisplayStyleChanged += value; }
+			remove { base.DisplayStyleChanged -= value; }
+		}
+
+		public event EventHandler Enter {
+			add { Events.AddHandler (EnterEvent, value); }
+			remove { Events.RemoveHandler (EnterEvent, value); }
+		}
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public event EventHandler GotFocus;
-		public event KeyEventHandler KeyDown;
-		public event KeyPressEventHandler KeyPress;
-		public event KeyEventHandler KeyUp;
-		public event EventHandler Leave;
+		public event EventHandler GotFocus {
+			add { Events.AddHandler (GotFocusEvent, value); }
+			remove { Events.RemoveHandler (GotFocusEvent, value); }
+		}
+
+		public event KeyEventHandler KeyDown {
+			add { Events.AddHandler (KeyDownEvent, value); }
+			remove { Events.RemoveHandler (KeyDownEvent, value); }
+		}
+
+		public event KeyPressEventHandler KeyPress {
+			add { Events.AddHandler (KeyPressEvent, value); }
+			remove { Events.RemoveHandler (KeyPressEvent, value); }
+		}
+
+		public event KeyEventHandler KeyUp {
+			add { Events.AddHandler (KeyUpEvent, value); }
+			remove { Events.RemoveHandler (KeyUpEvent, value); }
+		}
+
+		public event EventHandler Leave {
+			add { Events.AddHandler (LeaveEvent, value); }
+			remove { Events.RemoveHandler (LeaveEvent, value); }
+		}
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public event EventHandler LostFocus;
-		public event EventHandler Validated;
-		public event CancelEventHandler Validating;
+		public event EventHandler LostFocus {
+			add { Events.AddHandler (LostFocusEvent, value); }
+			remove { Events.RemoveHandler (LostFocusEvent, value); }
+		}
+
+		public event EventHandler Validated {
+			add { Events.AddHandler (ValidatedEvent, value); }
+			remove { Events.RemoveHandler (ValidatedEvent, value); }
+		}
+
+		public event CancelEventHandler Validating {
+			add { Events.AddHandler (ValidatingEvent, value); }
+			remove { Events.RemoveHandler (ValidatingEvent, value); }
+		}
 		#endregion
 
 		#region Private Methods

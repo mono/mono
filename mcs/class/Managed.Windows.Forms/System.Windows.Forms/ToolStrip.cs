@@ -398,17 +398,23 @@ namespace System.Windows.Forms
 
 		protected internal virtual void OnItemAdded (ToolStripItemEventArgs e)
 		{
-			if (ItemAdded != null) ItemAdded (this, e);
+			ToolStripItemEventHandler eh = (ToolStripItemEventHandler)(Events [ItemAddedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnItemClicked (ToolStripItemClickedEventArgs e)
 		{
-			if (ItemClicked != null) ItemClicked (this, e);
+			ToolStripItemClickedEventHandler eh = (ToolStripItemClickedEventHandler)(Events [ItemClickedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected internal virtual void OnItemRemoved (ToolStripItemEventArgs e)
 		{
-			if (ItemRemoved != null) ItemRemoved (this, e);
+			ToolStripItemEventHandler eh = (ToolStripItemEventHandler)(Events [ItemRemovedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnLayout (LayoutEventArgs e)
@@ -424,7 +430,9 @@ namespace System.Windows.Forms
 
 		protected virtual void OnLayoutCompleted (EventArgs e)
 		{
-			if (LayoutCompleted != null) LayoutCompleted (this, e);
+			EventHandler eh = (EventHandler)(Events [LayoutCompletedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnLeave (EventArgs e)
@@ -580,7 +588,9 @@ namespace System.Windows.Forms
 
 		protected internal virtual void OnPaintGrip (PaintEventArgs e)
 		{
-			if (PaintGrip != null) PaintGrip (this, e);
+			PaintEventHandler eh = (PaintEventHandler)(Events [PaintGripEvent]);
+			if (eh != null)
+				eh (this, e);
 
 			if (!(this is MenuStrip)) {
 				if (this.orientation == Orientation.Horizontal)
@@ -595,7 +605,9 @@ namespace System.Windows.Forms
 
 		protected virtual void OnRendererChange (EventArgs e)
 		{
-			if (RendererChanged != null) RendererChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [RendererChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnRightToLeftChanged (EventArgs e)
@@ -654,16 +666,60 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Events
-		public event EventHandler AutoSizeChanged;
+		static object AutoSizeChangedEvent = new object ();
+		static object ItemAddedEvent = new object ();
+		static object ItemClickedEvent = new object ();
+		static object ItemRemovedEvent = new object ();
+		static object LayoutCompletedEvent = new object ();
+		static object LayoutStyleChangedEvent = new object ();
+		static object PaintGripEvent = new object ();
+		static object RendererChangedEvent = new object ();
+
+		public event EventHandler AutoSizeChanged {
+			add { Events.AddHandler (AutoSizeChangedEvent, value); }
+			remove { Events.RemoveHandler (AutoSizeChangedEvent, value); }
+		}
+
 		[Browsable (false)]
-		public new event EventHandler ForeColorChanged;
-		public event ToolStripItemEventHandler ItemAdded;
-		public event ToolStripItemClickedEventHandler ItemClicked;
-		public event ToolStripItemEventHandler ItemRemoved;
-		public event EventHandler LayoutCompleted;
-		public event EventHandler LayoutStyleChanged;
-		public event PaintEventHandler PaintGrip;
-		public event EventHandler RendererChanged;
+		public new event EventHandler ForeColorChanged {
+			add { base.ForeColorChanged += value; }
+			remove { base.ForeColorChanged -= value; }
+		}
+
+		public event ToolStripItemEventHandler ItemAdded {
+			add { Events.AddHandler (ItemAddedEvent, value); }
+			remove { Events.RemoveHandler (ItemAddedEvent, value); }
+		}
+
+		public event ToolStripItemClickedEventHandler ItemClicked {
+			add { Events.AddHandler (ItemClickedEvent, value); }
+			remove { Events.RemoveHandler (ItemClickedEvent, value); }
+		}
+
+		public event ToolStripItemEventHandler ItemRemoved {
+			add { Events.AddHandler (ItemRemovedEvent, value); }
+			remove { Events.RemoveHandler (ItemRemovedEvent, value); }
+		}
+
+		public event EventHandler LayoutCompleted {
+			add { Events.AddHandler (LayoutCompletedEvent, value); }
+			remove { Events.RemoveHandler (LayoutCompletedEvent, value); }
+		}
+
+		public event EventHandler LayoutStyleChanged {
+			add { Events.AddHandler (LayoutStyleChangedEvent, value); }
+			remove { Events.RemoveHandler (LayoutStyleChangedEvent, value); }
+		}
+
+		public event PaintEventHandler PaintGrip {
+			add { Events.AddHandler (PaintGripEvent, value); }
+			remove { Events.RemoveHandler (PaintGripEvent, value); }
+		}
+
+		public event EventHandler RendererChanged {
+			add { Events.AddHandler (RendererChangedEvent, value); }
+			remove { Events.RemoveHandler (RendererChangedEvent, value); }
+		}
 		#endregion
 
 		#region Private Methods

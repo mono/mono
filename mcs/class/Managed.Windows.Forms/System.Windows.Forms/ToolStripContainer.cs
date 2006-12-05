@@ -196,20 +196,50 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Events
+		static object BackgroundImageLayoutChangedEvent = new object ();
+		static object ContextMenuStripChangedEvent = new object ();
+
 		[Browsable (false)]
-		public new event EventHandler BackColorChanged;
+		public new event EventHandler BackColorChanged {
+			add { base.BackColorChanged += value; }
+			remove { base.BackColorChanged -= value; }
+		}
+
 		[Browsable (false)]
-		public new event EventHandler BackgroundImageChanged;
+		public new event EventHandler BackgroundImageChanged {
+			add { base.BackgroundImageChanged += value; }
+			remove { base.BackgroundImageChanged -= value; }
+		}
+
 		[Browsable (false)]
-		public event EventHandler BackgroundImageLayoutChanged;
+		public event EventHandler BackgroundImageLayoutChanged {
+			add { Events.AddHandler (BackgroundImageLayoutChangedEvent, value); }
+			remove { Events.RemoveHandler (BackgroundImageLayoutChangedEvent, value); }
+		}
+
 		[Browsable (false)]
-		public new event EventHandler CausesValidationChanged;
+		public new event EventHandler CausesValidationChanged {
+			add { base.CausesValidationChanged += value; }
+			remove { base.CausesValidationChanged -= value; }
+		}
+
 		[Browsable (false)]
-		public event EventHandler ContextMenuStripChanged;
+		public event EventHandler ContextMenuStripChanged {
+			add { Events.AddHandler (ContextMenuStripChangedEvent, value); }
+			remove { Events.RemoveHandler (ContextMenuStripChangedEvent, value); }
+		}
+
 		[Browsable (false)]
-		public new event EventHandler CursorChanged;
+		public new event EventHandler CursorChanged {
+			add { base.CursorChanged += value; }
+			remove { base.CursorChanged -= value; }
+		}
+
 		[Browsable (false)]
-		public new event EventHandler ForeColorChanged;
+		public new event EventHandler ForeColorChanged {
+			add { base.ForeColorChanged += value; }
+			remove { base.ForeColorChanged -= value; }
+		}
 		#endregion
 	}
 }

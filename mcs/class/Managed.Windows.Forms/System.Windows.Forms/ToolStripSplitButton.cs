@@ -151,7 +151,9 @@ namespace System.Windows.Forms
 		
 		public virtual void OnButtonDoubleClick (EventArgs e)
 		{
-			if (ButtonDoubleClick != null) ButtonDoubleClick (this, e);
+			EventHandler eh = (EventHandler)(Events [ButtonDoubleClickEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 		
 		public void PerformButtonClick ()
@@ -174,12 +176,16 @@ namespace System.Windows.Forms
 		
 		protected virtual void OnButtonClick (EventArgs e)
 		{
-			if (ButtonClick != null) ButtonClick (this, e);
+			EventHandler eh = (EventHandler)Events [ButtonClickEvent];
+			if (eh != null)
+				eh (this, e);
 		}
 		
 		protected virtual void OnDefaultItemChanged (EventArgs e)
 		{
-			if (DefaultItemChanged != null) DefaultItemChanged (this, e);
+			EventHandler eh = (EventHandler)Events [DefaultItemChangedEvent];
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnMouseDown (MouseEventArgs e)
@@ -253,9 +259,22 @@ namespace System.Windows.Forms
 		#endregion
 		
 		#region Public Events
-		public event EventHandler ButtonClick;
-		public event EventHandler ButtonDoubleClick;
-		public event EventHandler DefaultItemChanged;
+		static object ButtonClickEvent = new object ();
+		static object ButtonDoubleClickEvent = new object ();
+		static object DefaultItemChangedEvent = new object ();
+
+		public event EventHandler ButtonClick {
+			add { Events.AddHandler (ButtonClickEvent, value); }
+			remove {Events.RemoveHandler (ButtonClickEvent, value); }
+		}
+		public event EventHandler ButtonDoubleClick {
+			add { Events.AddHandler (ButtonDoubleClickEvent, value); }
+			remove {Events.RemoveHandler (ButtonDoubleClickEvent, value); }
+		}
+		public event EventHandler DefaultItemChanged {
+			add { Events.AddHandler (DefaultItemChangedEvent, value); }
+			remove {Events.RemoveHandler (DefaultItemChangedEvent, value); }
+		}
 		#endregion
 	}
 }

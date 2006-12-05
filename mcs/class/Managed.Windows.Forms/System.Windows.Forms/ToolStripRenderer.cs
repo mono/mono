@@ -28,6 +28,7 @@
 #if NET_2_0
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 
@@ -138,87 +139,258 @@ namespace System.Windows.Forms
 		protected internal virtual void InitializePanel (ToolStripPanel toolStripPanel) {}
 
 		protected virtual void OnRenderArrow (ToolStripArrowRenderEventArgs e)
-		{ if (RenderArrow != null) RenderArrow (this, e); }
+		{
+			ToolStripArrowRenderEventHandler eh = (ToolStripArrowRenderEventHandler)Events [RenderArrowEvent];
+			if (eh != null)
+				eh (this, e);
+		}
 
 		protected virtual void OnRenderButtonBackground (ToolStripItemRenderEventArgs e)
-		{ if (RenderButtonBackground != null) RenderButtonBackground (this, e); }
+		{
+			ToolStripItemRenderEventHandler eh = (ToolStripItemRenderEventHandler)Events [RenderButtonBackgroundEvent];
+			if (eh != null)
+				eh (this, e);
+		}
 
 		protected virtual void OnRenderDropDownButtonBackground (ToolStripItemRenderEventArgs e)
-		{ if (RenderDropDownButtonBackground != null) RenderDropDownButtonBackground (this, e); }
+		{
+			ToolStripItemRenderEventHandler eh = (ToolStripItemRenderEventHandler)Events [RenderDropDownButtonBackgroundEvent];
+			if (eh != null)
+				eh (this, e);
+		}
 		
 		protected virtual void OnRenderGrip (ToolStripGripRenderEventArgs e)
-		{ if (RenderGrip != null) RenderGrip (this, e); }
+		{
+			ToolStripGripRenderEventHandler eh = (ToolStripGripRenderEventHandler)Events [RenderGripEvent];
+			if (eh != null)
+				eh (this, e);
+		}
 
 		protected virtual void OnRenderImageMargin (ToolStripRenderEventArgs e)
-		{ if (RenderImageMargin != null) RenderImageMargin (this, e); }
+		{
+			ToolStripRenderEventHandler eh = (ToolStripRenderEventHandler)Events [RenderImageMarginEvent];
+			if (eh != null)
+				eh (this, e);
+		}
 
 		protected virtual void OnRenderItemBackground (ToolStripItemRenderEventArgs e)
-		{ if (RenderItemBackground != null) RenderItemBackground (this, e); }
+		{
+			ToolStripItemRenderEventHandler eh = (ToolStripItemRenderEventHandler)Events [RenderItemBackgroundEvent];
+			if (eh != null)
+				eh (this, e);
+		}
 
 		protected virtual void OnRenderItemCheck (ToolStripItemImageRenderEventArgs e)
-		{ if (RenderItemCheck != null) RenderItemCheck (this, e); }
+		{
+			ToolStripItemImageRenderEventHandler eh = (ToolStripItemImageRenderEventHandler)Events [RenderItemCheckEvent];
+			if (eh != null)
+				eh (this, e);
+		}
 
 		protected virtual void OnRenderItemImage (ToolStripItemImageRenderEventArgs e)
-		{ if (RenderItemImage != null) RenderItemImage (this, e); }
+		{
+			ToolStripItemImageRenderEventHandler eh = (ToolStripItemImageRenderEventHandler)Events [RenderItemImageEvent];
+			if (eh != null)
+				eh (this, e);
+		}
 
 		protected virtual void OnRenderItemText (ToolStripItemTextRenderEventArgs e)
-		{ if (RenderItemText != null) RenderItemText (this, e); }
+		{
+			ToolStripItemTextRenderEventHandler eh = (ToolStripItemTextRenderEventHandler)Events [RenderItemTextEvent];
+			if (eh != null)
+				eh (this, e);
+		}
 
 		protected virtual void OnRenderLabelBackground (ToolStripItemRenderEventArgs e)
-		{ if (RenderLabelBackground != null) RenderLabelBackground (this, e); }
+		{
+			ToolStripItemRenderEventHandler eh = (ToolStripItemRenderEventHandler)Events [RenderLabelBackgroundEvent];
+			if (eh != null)
+				eh (this, e);
+		}
 
 		protected virtual void OnRenderMenuItemBackground (ToolStripItemRenderEventArgs e)
-		{ if (RenderMenuItemBackground != null) RenderMenuItemBackground (this, e); }
+		{
+			ToolStripItemRenderEventHandler eh = (ToolStripItemRenderEventHandler)Events [RenderMenuItemBackgroundEvent];
+			if (eh != null)
+				eh (this, e);
+		}
 
 		protected virtual void OnRenderOverflowButtonBackground (ToolStripItemRenderEventArgs e)
-		{ if (RenderOverflowButtonBackground != null) RenderOverflowButtonBackground (this, e); }
+		{
+			ToolStripItemRenderEventHandler eh = (ToolStripItemRenderEventHandler)Events [RenderOverflowButtonBackgroundEvent];
+			if (eh != null)
+				eh (this, e);
+		}
 
 		protected virtual void OnRenderSeparator (ToolStripSeparatorRenderEventArgs e)
-		{ if (RenderSeparator != null) RenderSeparator (this, e); }
+		{
+			ToolStripSeparatorRenderEventHandler eh = (ToolStripSeparatorRenderEventHandler)Events [RenderSeparatorEvent];
+			if (eh != null)
+				eh (this, e);
+		}
 
 		protected virtual void OnRenderSplitButtonBackground (ToolStripItemRenderEventArgs e)
-		{ if (RenderSplitButtonBackground != null) RenderSplitButtonBackground (this, e); }
+		{
+			ToolStripItemRenderEventHandler eh = (ToolStripItemRenderEventHandler)Events [RenderSplitButtonBackgroundEvent];
+			if (eh != null)
+				eh (this, e);
+		}
 
 		protected virtual void OnRenderStatusStripSizingGrip (ToolStripRenderEventArgs e)
-		{ if (RenderStatusStripSizingGrip != null) RenderStatusStripSizingGrip (this, e); }
+		{
+			ToolStripRenderEventHandler eh = (ToolStripRenderEventHandler)Events [RenderStatusStripSizingGripEvent];
+			if (eh != null)
+				eh (this, e);
+		}
 
 		protected virtual void OnRenderToolStripBackground (ToolStripRenderEventArgs e)
-		{ if (RenderToolStripBackground != null) RenderToolStripBackground (this, e); }
+		{
+			ToolStripRenderEventHandler eh = (ToolStripRenderEventHandler)Events [RenderToolStripBackgroundEvent];
+			if (eh != null)
+				eh (this, e);
+		}
 
 		protected virtual void OnRenderToolStripBorder (ToolStripRenderEventArgs e)
-		{ if (RenderToolStripBorder != null) RenderToolStripBorder (this, e); }
+		{
+			ToolStripRenderEventHandler eh = (ToolStripRenderEventHandler)Events [RenderToolStripBorderEvent];
+			if (eh != null)
+				eh (this, e);
+		}
 
 		protected virtual void OnRenderToolStripContentPanelBackground (ToolStripContentPanelRenderEventArgs e)
-		{ if (RenderToolStripContentPanelBackground != null) RenderToolStripContentPanelBackground (this, e); }
+		{
+			ToolStripContentPanelRenderEventHandler eh = (ToolStripContentPanelRenderEventHandler)Events [RenderToolStripContentPanelBackgroundEvent];
+			if (eh != null)
+				eh (this, e);
+		}
 
 		protected virtual void OnRenderToolStripPanelBackground (ToolStripPanelRenderEventArgs e)
-		{ if (RenderToolStripPanelBackground != null) RenderToolStripPanelBackground (this, e); }
+		{
+			ToolStripPanelRenderEventHandler eh = (ToolStripPanelRenderEventHandler)Events [RenderToolStripPanelBackgroundEvent];
+			if (eh != null)
+				eh (this, e);
+		}
 
 		protected virtual void OnRenderToolStripStatusLabelBackground (ToolStripItemRenderEventArgs e)
-		{ if (RenderToolStripStatusLabelBackground != null) RenderToolStripStatusLabelBackground (this, e); }
+		{
+			ToolStripItemRenderEventHandler eh = (ToolStripItemRenderEventHandler)Events [RenderToolStripStatusLabelBackgroundEvent];
+			if (eh != null)
+				eh (this, e);
+		}
 		#endregion
 
 		#region Public Events
-		public event ToolStripArrowRenderEventHandler RenderArrow;
-		public event ToolStripItemRenderEventHandler RenderButtonBackground;
-		public event ToolStripItemRenderEventHandler RenderDropDownButtonBackground;
-		public event ToolStripGripRenderEventHandler RenderGrip;
-		public event ToolStripRenderEventHandler RenderImageMargin;
-		public event ToolStripItemRenderEventHandler RenderItemBackground;
-		public event ToolStripItemImageRenderEventHandler RenderItemCheck;
-		public event ToolStripItemImageRenderEventHandler RenderItemImage;
-		public event ToolStripItemTextRenderEventHandler RenderItemText;
-		public event ToolStripItemRenderEventHandler RenderLabelBackground;
-		public event ToolStripItemRenderEventHandler RenderMenuItemBackground;
-		public event ToolStripItemRenderEventHandler RenderOverflowButtonBackground;
-		public event ToolStripSeparatorRenderEventHandler RenderSeparator;
-		public event ToolStripItemRenderEventHandler RenderSplitButtonBackground;
-		public event ToolStripRenderEventHandler RenderStatusStripSizingGrip;
-		public event ToolStripRenderEventHandler RenderToolStripBackground;
-		public event ToolStripRenderEventHandler RenderToolStripBorder;
-		public event ToolStripContentPanelRenderEventHandler RenderToolStripContentPanelBackground;
-		public event ToolStripPanelRenderEventHandler RenderToolStripPanelBackground;
-		public event ToolStripItemRenderEventHandler RenderToolStripStatusLabelBackground;
+		EventHandlerList events;
+
+		EventHandlerList Events {
+			get {
+				if (events == null)
+					events = new EventHandlerList ();
+				return events;
+			}
+		}
+
+		static object RenderArrowEvent = new object ();
+		static object RenderButtonBackgroundEvent = new object ();
+		static object RenderDropDownButtonBackgroundEvent = new object ();
+		static object RenderGripEvent = new object ();
+		static object RenderImageMarginEvent = new object ();
+		static object RenderItemBackgroundEvent = new object ();
+		static object RenderItemCheckEvent = new object ();
+		static object RenderItemImageEvent = new object ();
+		static object RenderItemTextEvent = new object ();
+		static object RenderLabelBackgroundEvent = new object ();
+		static object RenderMenuItemBackgroundEvent = new object ();
+		static object RenderOverflowButtonBackgroundEvent = new object ();
+		static object RenderSeparatorEvent = new object ();
+		static object RenderSplitButtonBackgroundEvent = new object ();
+		static object RenderStatusStripSizingGripEvent = new object ();
+		static object RenderToolStripBackgroundEvent = new object ();
+		static object RenderToolStripBorderEvent = new object ();
+		static object RenderToolStripContentPanelBackgroundEvent = new object ();
+		static object RenderToolStripPanelBackgroundEvent = new object ();
+		static object RenderToolStripStatusLabelBackgroundEvent = new object ();
+
+		public event ToolStripArrowRenderEventHandler RenderArrow {
+			add { Events.AddHandler (RenderArrowEvent, value); }
+			remove {Events.RemoveHandler (RenderArrowEvent, value); }
+		}
+		public event ToolStripItemRenderEventHandler RenderButtonBackground {
+			add { Events.AddHandler (RenderButtonBackgroundEvent, value); }
+			remove {Events.RemoveHandler (RenderButtonBackgroundEvent, value); }
+		}
+		public event ToolStripItemRenderEventHandler RenderDropDownButtonBackground {
+			add { Events.AddHandler (RenderDropDownButtonBackgroundEvent, value); }
+			remove {Events.RemoveHandler (RenderDropDownButtonBackgroundEvent, value); }
+		}
+		public event ToolStripGripRenderEventHandler RenderGrip {
+			add { Events.AddHandler (RenderGripEvent, value); }
+			remove {Events.RemoveHandler (RenderGripEvent, value); }
+		}
+		public event ToolStripRenderEventHandler RenderImageMargin {
+			add { Events.AddHandler (RenderImageMarginEvent, value); }
+			remove {Events.RemoveHandler (RenderImageMarginEvent, value); }
+		}
+		public event ToolStripItemRenderEventHandler RenderItemBackground {
+			add { Events.AddHandler (RenderItemBackgroundEvent, value); }
+			remove {Events.RemoveHandler (RenderItemBackgroundEvent, value); }
+		}
+		public event ToolStripItemImageRenderEventHandler RenderItemCheck {
+			add { Events.AddHandler (RenderItemCheckEvent, value); }
+			remove {Events.RemoveHandler (RenderItemCheckEvent, value); }
+		}
+		public event ToolStripItemImageRenderEventHandler RenderItemImage {
+			add { Events.AddHandler (RenderItemImageEvent, value); }
+			remove {Events.RemoveHandler (RenderItemImageEvent, value); }
+		}
+		public event ToolStripItemTextRenderEventHandler RenderItemText {
+			add { Events.AddHandler (RenderItemTextEvent, value); }
+			remove {Events.RemoveHandler (RenderItemTextEvent, value); }
+		}
+		public event ToolStripItemRenderEventHandler RenderLabelBackground {
+			add { Events.AddHandler (RenderLabelBackgroundEvent, value); }
+			remove {Events.RemoveHandler (RenderLabelBackgroundEvent, value); }
+		}
+		public event ToolStripItemRenderEventHandler RenderMenuItemBackground {
+			add { Events.AddHandler (RenderMenuItemBackgroundEvent, value); }
+			remove {Events.RemoveHandler (RenderMenuItemBackgroundEvent, value); }
+		}
+		public event ToolStripItemRenderEventHandler RenderOverflowButtonBackground {
+			add { Events.AddHandler (RenderOverflowButtonBackgroundEvent, value); }
+			remove {Events.RemoveHandler (RenderOverflowButtonBackgroundEvent, value); }
+		}
+		public event ToolStripSeparatorRenderEventHandler RenderSeparator {
+			add { Events.AddHandler (RenderSeparatorEvent, value); }
+			remove {Events.RemoveHandler (RenderSeparatorEvent, value); }
+		}
+		public event ToolStripItemRenderEventHandler RenderSplitButtonBackground {
+			add { Events.AddHandler (RenderSplitButtonBackgroundEvent, value); }
+			remove {Events.RemoveHandler (RenderSplitButtonBackgroundEvent, value); }
+		}
+		public event ToolStripRenderEventHandler RenderStatusStripSizingGrip {
+			add { Events.AddHandler (RenderStatusStripSizingGripEvent, value); }
+			remove {Events.RemoveHandler (RenderStatusStripSizingGripEvent, value); }
+		}
+		public event ToolStripRenderEventHandler RenderToolStripBackground {
+			add { Events.AddHandler (RenderToolStripBackgroundEvent, value); }
+			remove {Events.RemoveHandler (RenderToolStripBackgroundEvent, value); }
+		}
+		public event ToolStripRenderEventHandler RenderToolStripBorder {
+			add { Events.AddHandler (RenderToolStripBorderEvent, value); }
+			remove {Events.RemoveHandler (RenderToolStripBorderEvent, value); }
+		}
+		public event ToolStripContentPanelRenderEventHandler RenderToolStripContentPanelBackground {
+			add { Events.AddHandler (RenderToolStripContentPanelBackgroundEvent, value); }
+			remove {Events.RemoveHandler (RenderToolStripContentPanelBackgroundEvent, value); }
+		}
+		public event ToolStripPanelRenderEventHandler RenderToolStripPanelBackground {
+			add { Events.AddHandler (RenderToolStripPanelBackgroundEvent, value); }
+			remove {Events.RemoveHandler (RenderToolStripPanelBackgroundEvent, value); }
+		}
+		public event ToolStripItemRenderEventHandler RenderToolStripStatusLabelBackground {
+			add { Events.AddHandler (RenderToolStripStatusLabelBackgroundEvent, value); }
+			remove {Events.RemoveHandler (RenderToolStripStatusLabelBackgroundEvent, value); }
+		}
 		#endregion
 	}
 }

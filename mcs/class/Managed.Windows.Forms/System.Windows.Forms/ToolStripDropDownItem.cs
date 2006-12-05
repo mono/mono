@@ -150,7 +150,9 @@ namespace System.Windows.Forms
 
 		protected internal virtual void OnDropDownClosed (EventArgs e)
 		{
-			if (DropDownClosed != null) DropDownClosed (this, e);
+			EventHandler eh = (EventHandler)(Events [DropDownClosedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnDropDownHide (EventArgs e)
@@ -159,12 +161,16 @@ namespace System.Windows.Forms
 
 		protected internal virtual void OnDropDownItemClicked (ToolStripItemClickedEventArgs e)
 		{
-			if (DropDownItemClicked != null) DropDownItemClicked (this, e);
+			ToolStripItemClickedEventHandler eh = (ToolStripItemClickedEventHandler)(Events [DropDownClosedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected internal virtual void OnDropDownOpened (EventArgs e)
 		{
-			if (DropDownOpened != null) DropDownOpened (this, e);
+			EventHandler eh = (EventHandler)(Events [DropDownOpenedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnDropDownShow (EventArgs e)
@@ -178,10 +184,30 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Events
-		public event EventHandler DropDownClosed;
-		public event ToolStripItemClickedEventHandler DropDownItemClicked;
-		public event EventHandler DropDownOpened;
-		public event EventHandler DropDownOpening;
+		static object DropDownClosedEvent = new object ();
+		static object DropDownItemClickedEvent = new object ();
+		static object DropDownOpenedEvent = new object ();
+		static object DropDownOpeningEvent = new object ();
+
+		public event EventHandler DropDownClosed {
+			add { Events.AddHandler (DropDownClosedEvent, value); }
+			remove { Events.RemoveHandler (DropDownClosedEvent, value); }
+		}
+
+		public event ToolStripItemClickedEventHandler DropDownItemClicked {
+			add { Events.AddHandler (DropDownItemClickedEvent, value); }
+			remove { Events.RemoveHandler (DropDownItemClickedEvent, value); }
+		}
+
+		public event EventHandler DropDownOpened {
+			add { Events.AddHandler (DropDownOpenedEvent, value); }
+			remove { Events.RemoveHandler (DropDownOpenedEvent, value); }
+		}
+
+		public event EventHandler DropDownOpening {
+			add { Events.AddHandler (DropDownOpeningEvent, value); }
+			remove { Events.RemoveHandler (DropDownOpeningEvent, value); }
+		}
 		#endregion
 
 		#region Internal Methods

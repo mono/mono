@@ -211,15 +211,24 @@ namespace System.Windows.Forms
 		#region Public Events
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler DisplayStyleChanged;
+		public new event EventHandler DisplayStyleChanged {
+			add { base.DisplayStyleChanged += value; }
+			remove { base.DisplayStyleChanged -= value; }
+		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler EnabledChanged;
+		public new event EventHandler EnabledChanged {
+			add { base.EnabledChanged += value; }
+			remove { base.EnabledChanged -= value; }
+		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler TextChanged;
+		public new event EventHandler TextChanged {
+			add { base.TextChanged += value; }
+			remove { base.TextChanged -= value; }
+		}
 		#endregion
 	}
 }

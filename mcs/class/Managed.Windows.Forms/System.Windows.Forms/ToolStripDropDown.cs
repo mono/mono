@@ -362,12 +362,16 @@ namespace System.Windows.Forms
 
 		protected virtual void OnClosed (ToolStripDropDownClosedEventArgs e)
 		{
-			if (Closed != null) Closed (this, e);
+			ToolStripDropDownClosedEventHandler eh = (ToolStripDropDownClosedEventHandler)(Events [ClosedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnClosing (ToolStripDropDownClosingEventArgs e)
 		{
-			if (Closing != null) Closing (this, e);
+			ToolStripDropDownClosingEventHandler eh = (ToolStripDropDownClosingEventHandler)(Events [ClosingEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnHandleCreated (EventArgs e)
@@ -419,12 +423,16 @@ namespace System.Windows.Forms
 
 		protected virtual void OnOpened (EventArgs e)
 		{
-			if (Opened != null) Opened (this, e);
+			EventHandler eh = (EventHandler)(Events [OpenedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnOpening (CancelEventArgs e)
 		{
-			if (Opening != null) Opening (this, e);
+			CancelEventHandler eh = (CancelEventHandler)(Events [OpeningEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnParentChanged (EventArgs e)
@@ -485,55 +493,178 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Events
-		public new event EventHandler BackgroundImageChanged;
-		public event EventHandler BackgroundImageLayoutChanged;
-		public new event EventHandler BindingContextChanged;
-		public new event UICuesEventHandler ChangeUICues;
-		public event ToolStripDropDownClosedEventHandler Closed;
-		public event ToolStripDropDownClosingEventHandler Closing;
+		static object BackgroundImageLayoutChangedEvent = new object ();
+		static object ClosedEvent = new object ();
+		static object ClosingEvent = new object ();
+		static object ContextMenuStripChangedEvent = new object ();
+		static object OpenedEvent = new object ();
+		static object OpeningEvent = new object ();
+		static object RegionChangedEvent = new object ();
+		static object ScrollEvent = new object ();
+
+		public new event EventHandler BackgroundImageChanged {
+			add { base.BackgroundImageChanged += value; }
+			remove { base.BackgroundImageChanged -= value; }
+		}
+
+		public event EventHandler BackgroundImageLayoutChanged {
+			add { Events.AddHandler (BackgroundImageLayoutChangedEvent, value); }
+			remove { Events.RemoveHandler (BackgroundImageLayoutChangedEvent, value); }
+		}
+
+		public new event EventHandler BindingContextChanged {
+			add { base.BindingContextChanged += value; }
+			remove { base.BindingContextChanged -= value; }
+		}
+		public new event UICuesEventHandler ChangeUICues {
+			add { base.ChangeUICues += value; }
+			remove { base.ChangeUICues -= value; }
+		}
+
+		public event ToolStripDropDownClosedEventHandler Closed {
+			add { Events.AddHandler (ClosedEvent, value); }
+			remove { Events.RemoveHandler (ClosedEvent, value); }
+		}
+
+		public event ToolStripDropDownClosingEventHandler Closing {
+			add { Events.AddHandler (ClosingEvent, value); }
+			remove { Events.RemoveHandler (ClosingEvent, value); }
+		}
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler ContextMenuChanged;
+		public new event EventHandler ContextMenuChanged {
+			add { base.ContextMenuChanged += value; }
+			remove { base.ContextMenuChanged -= value; }
+		}
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event EventHandler ContextMenuStripChanged;
+		public event EventHandler ContextMenuStripChanged {
+			add { Events.AddHandler (ContextMenuStripChangedEvent, value); }
+			remove { Events.RemoveHandler (ContextMenuStripChangedEvent, value); }
+		}
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler DockChanged;
-		public new event EventHandler Enter;
-		public new event EventHandler FontChanged;
-		public new event EventHandler ForeColorChanged;
+		public new event EventHandler DockChanged {
+			add { base.DockChanged += value; }
+			remove { base.DockChanged -= value; }
+		}
+
+		public new event EventHandler Enter {
+			add { base.Enter += value; }
+			remove { base.Enter -= value; }
+		}
+
+		public new event EventHandler FontChanged {
+			add { base.FontChanged += value; }
+			remove { base.FontChanged -= value; }
+		}
+
+		public new event EventHandler ForeColorChanged {
+			add { base.ForeColorChanged += value; }
+			remove { base.ForeColorChanged -= value; }
+		}
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event GiveFeedbackEventHandler GiveFeedback;
-		public new event HelpEventHandler HelpRequested;
-		public new event EventHandler ImeModeChanged;
-		public new event KeyEventHandler KeyDown;
-		public new event KeyPressEventHandler KeyPress;
-		public new event KeyEventHandler KeyUp;
-		public new event EventHandler Leave;
-		public event EventHandler Opened;
-		public event CancelEventHandler Opening;
-		public event EventHandler RegionChanged;
+		public new event GiveFeedbackEventHandler GiveFeedback {
+			add { base.GiveFeedback += value; }
+			remove { base.GiveFeedback -= value; }
+		}
+
+		public new event HelpEventHandler HelpRequested {
+			add { base.HelpRequested += value; }
+			remove { base.HelpRequested -= value; }
+		}
+
+		public new event EventHandler ImeModeChanged {
+			add { base.ImeModeChanged += value; }
+			remove { base.ImeModeChanged -= value; }
+		}
+
+		public new event KeyEventHandler KeyDown {
+			add { base.KeyDown += value; }
+			remove { base.KeyDown -= value; }
+		}
+
+		public new event KeyPressEventHandler KeyPress {
+			add { base.KeyPress += value; }
+			remove { base.KeyPress -= value; }
+		}
+
+		public new event KeyEventHandler KeyUp {
+			add { base.KeyUp += value; }
+			remove { base.KeyUp -= value; }
+		}
+
+		public new event EventHandler Leave {
+			add { base.Leave += value; }
+			remove { base.Leave -= value; }
+		}
+
+		public event EventHandler Opened {
+			add { Events.AddHandler (OpenedEvent, value); }
+			remove { Events.RemoveHandler (OpenedEvent, value); }
+		}
+
+		public event CancelEventHandler Opening {
+			add { Events.AddHandler (OpeningEvent, value); }
+			remove { Events.RemoveHandler (OpeningEvent, value); }
+		}
+
+		public event EventHandler RegionChanged {
+			add { Events.AddHandler (RegionChangedEvent, value); }
+			remove { Events.RemoveHandler (RegionChangedEvent, value); }
+		}
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public event ScrollEventHandler Scroll;
-		public new event EventHandler StyleChanged;
+		public event ScrollEventHandler Scroll {
+			add { Events.AddHandler (ScrollEvent, value); }
+			remove { Events.RemoveHandler (ScrollEvent, value); }
+		}
+
+		public new event EventHandler StyleChanged {
+			add { base.StyleChanged += value; }
+			remove { base.StyleChanged -= value; }
+		}
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler TabIndexChanged;
+		public new event EventHandler TabIndexChanged {
+			add { base.TabIndexChanged += value; }
+			remove { base.TabIndexChanged -= value; }
+		}
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler TabStopChanged;
+		public new event EventHandler TabStopChanged {
+			add { base.TabStopChanged += value; }
+			remove { base.TabStopChanged -= value; }
+		}
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler TextChanged;
+		public new event EventHandler TextChanged {
+			add { base.TextChanged += value; }
+			remove { base.TextChanged -= value; }
+		}
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler Validated;
+		public new event EventHandler Validated {
+			add { base.Validated += value; }
+			remove { base.Validated -= value; }
+		}
+
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event CancelEventHandler Validating;
+		public new event CancelEventHandler Validating {
+			add { base.Validating += value; }
+			remove { base.Validating -= value; }
+		}
 		#endregion
 
 		#region Private Methods

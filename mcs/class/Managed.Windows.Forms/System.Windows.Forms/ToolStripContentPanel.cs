@@ -176,7 +176,9 @@ namespace System.Windows.Forms
 		
 		protected virtual void OnLoad (EventArgs e)
 		{
-			if (Load != null) Load (this, e);
+			EventHandler eh = (EventHandler)(Events [LoadEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnPaintBackground (PaintEventArgs pevent)
@@ -186,25 +188,62 @@ namespace System.Windows.Forms
 		
 		protected virtual void OnRendererChanged (EventArgs e)
 		{
-			if (RendererChanged != null) RendererChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [RendererChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 		#endregion
 
 		#region Public Events
+		static object AutoSizeChangedEvent = new object ();
+		static object LoadEvent = new object ();
+		static object RendererChangedEvent = new object ();
+
 		[Browsable (false)]
-		public event EventHandler AutoSizeChanged;
+		public event EventHandler AutoSizeChanged {
+			add { Events.AddHandler (AutoSizeChangedEvent, value); }
+			remove { Events.RemoveHandler (AutoSizeChangedEvent, value); }
+		}
+
 		[Browsable (false)]
-		public new event EventHandler CausesValidationChanged;
+		public new event EventHandler CausesValidationChanged {
+			add { base.CausesValidationChanged += value; }
+			remove { base.CausesValidationChanged -= value; }
+		}
+
 		[Browsable (false)]
-		public new event EventHandler DockChanged;
-		public event EventHandler Load;
+		public new event EventHandler DockChanged {
+			add { base.DockChanged += value; }
+			remove { base.DockChanged -= value; }
+		}
+
+		public event EventHandler Load {
+			add { Events.AddHandler (LoadEvent, value); }
+			remove { Events.RemoveHandler (LoadEvent, value); }
+		}
+
 		[Browsable (false)]
-		public new event EventHandler LocationChanged;
-		public event EventHandler RendererChanged;
+		public new event EventHandler LocationChanged {
+			add { base.LocationChanged += value; }
+			remove { base.LocationChanged -= value; }
+		}
+
+		public event EventHandler RendererChanged {
+			add { Events.AddHandler (RendererChangedEvent, value); }
+			remove { Events.RemoveHandler (RendererChangedEvent, value); }
+		}
+
 		[Browsable (false)]
-		public new event EventHandler TabIndexChanged;
+		public new event EventHandler TabIndexChanged {
+			add { base.TabIndexChanged += value; }
+			remove { base.TabIndexChanged -= value; }
+		}
+
 		[Browsable (false)]
-		public new event EventHandler TabStopChanged;
+		public new event EventHandler TabStopChanged {
+			add { base.TabStopChanged += value; }
+			remove { base.TabStopChanged -= value; }
+		}
 		#endregion
 	}
 }

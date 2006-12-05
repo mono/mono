@@ -111,7 +111,7 @@ namespace System.Windows.Forms
 			this.text_image_relation = TextImageRelation.ImageBeforeText;
 			this.visible = true;
 
-			this.Click = onClick;
+			this.Click += onClick;
 			this.can_select = this is ToolStripMenuItem || this is ToolStripDropDownButton || this is ToolStripSplitButton ? true : false;
 			OnLayout (new LayoutEventArgs (null, string.Empty));
 		}
@@ -631,12 +631,16 @@ namespace System.Windows.Forms
 		
 		protected virtual void OnAvailableChanged (EventArgs e)
 		{
-			if (AvailableChanged != null) AvailableChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [AvailableChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnBackColorChanged (EventArgs e)
 		{
-			if (BackColorChanged != null) BackColorChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [BackColorChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnBoundsChanged ()
@@ -646,17 +650,23 @@ namespace System.Windows.Forms
 
 		protected virtual void OnClick (EventArgs e)
 		{
-			if (Click != null) Click (this, e);
+			EventHandler eh = (EventHandler)(Events [ClickEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnDisplayStyleChanged (EventArgs e)
 		{
-			if (DisplayStyleChanged != null) DisplayStyleChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [DisplayStyleChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnDoubleClick (EventArgs e)
 		{
-			if (DoubleClick != null) DoubleClick (this, e);
+			EventHandler eh = (EventHandler)(Events [DoubleClickEvent]);
+			if (eh != null)
+				eh (this, e);
 
 			if (!double_click_enabled)
 				OnClick (e);
@@ -664,7 +674,9 @@ namespace System.Windows.Forms
 
 		protected virtual void OnEnabledChanged (EventArgs e)
 		{
-			if (EnabledChanged != null) EnabledChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [EnabledChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnFontChanged (EventArgs e)
@@ -673,7 +685,9 @@ namespace System.Windows.Forms
 
 		protected virtual void OnForeColorChanged (EventArgs e)
 		{
-			if (ForeColorChanged != null) ForeColorChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [ForeColorChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnLayout (LayoutEventArgs e)
@@ -682,7 +696,9 @@ namespace System.Windows.Forms
 
 		protected virtual void OnLocationChanged (EventArgs e)
 		{
-			if (LocationChanged != null) LocationChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [LocationChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnMouseDown (MouseEventArgs e)
@@ -690,7 +706,10 @@ namespace System.Windows.Forms
 			if (this.Enabled) {
 				this.is_pressed = true;
 				this.Invalidate ();
-				if (MouseDown != null) MouseDown (this, e);
+
+				MouseEventHandler eh = (MouseEventHandler)(Events [MouseDownEvent]);
+				if (eh != null)
+					eh (this, e);
 			}
 		}
 
@@ -700,14 +719,19 @@ namespace System.Windows.Forms
 				this.is_selected = true;
 				this.Invalidate ();
 			}
-			
-			if (MouseEnter != null) MouseEnter (this, e);
+
+			EventHandler eh = (EventHandler)(Events [MouseEnterEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnMouseHover (EventArgs e)
 		{
-			if (this.Enabled)
-				if (MouseHover != null) MouseHover (this, e);
+			if (this.Enabled) {
+				EventHandler eh = (EventHandler)(Events [MouseHoverEvent]);
+				if (eh != null)
+					eh (this, e);
+			}
 		}
 
 		protected virtual void OnMouseLeave (EventArgs e)
@@ -717,14 +741,19 @@ namespace System.Windows.Forms
 				this.is_pressed = false;
 				this.Invalidate ();
 			}
-			
-			if (MouseLeave != null) MouseLeave (this, e);
+
+			EventHandler eh = (EventHandler)(Events [MouseLeaveEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnMouseMove (MouseEventArgs e)
 		{
-			if (this.Enabled)
-				if (MouseMove != null) MouseMove (this, e);
+			if (this.Enabled) {
+				MouseEventHandler eh = (MouseEventHandler)(Events [MouseMoveEvent]);
+				if (eh != null)
+					eh (this, e);
+			}
 		}
 
 		protected virtual void OnMouseUp (MouseEventArgs e)
@@ -732,18 +761,25 @@ namespace System.Windows.Forms
 			if (this.Enabled) {
 				this.is_pressed = false;
 				this.Invalidate ();
-				if (MouseUp != null) MouseUp (this, e);
+
+				MouseEventHandler eh = (MouseEventHandler)(Events [MouseUpEvent]);
+				if (eh != null)
+					eh (this, e);
 			}
 		}
 
 		protected virtual void OnOwnerChanged (EventArgs e)
 		{
-			if (OwnerChanged != null) OwnerChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [OwnerChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnPaint (PaintEventArgs e)
 		{
-			if (Paint != null) Paint (this, e);
+			PaintEventHandler eh = (PaintEventHandler)(Events [PaintEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnParentChanged (ToolStrip oldParent, ToolStrip newParent)
@@ -752,12 +788,16 @@ namespace System.Windows.Forms
 		
 		protected virtual void OnTextChanged (EventArgs e)
 		{
-			if (TextChanged != null) TextChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [TextChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnVisibleChanged (EventArgs e)
 		{
-			if (VisibleChanged != null) VisibleChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [VisibleChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected internal virtual void SetBounds (Rectangle bounds)
@@ -770,25 +810,115 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Events
+		static object AvailableChangedEvent = new object ();
+		static object BackColorChangedEvent = new object ();
+		static object ClickEvent = new object ();
+		static object DisplayStyleChangedEvent = new object ();
+		static object DoubleClickEvent = new object ();
+		static object EnabledChangedEvent = new object ();
+		static object ForeColorChangedEvent = new object ();
+		static object LocationChangedEvent = new object ();
+		static object MouseDownEvent = new object ();
+		static object MouseEnterEvent = new object ();
+		static object MouseHoverEvent = new object ();
+		static object MouseLeaveEvent = new object ();
+		static object MouseMoveEvent = new object ();
+		static object MouseUpEvent = new object ();
+		static object OwnerChangedEvent = new object ();
+		static object PaintEvent = new object ();
+		static object TextChangedEvent = new object ();
+		static object VisibleChangedEvent = new object ();
+
 		[Browsable (false)]
-		public event EventHandler AvailableChanged;
-		public event EventHandler BackColorChanged;
-		public event EventHandler Click;
-		public event EventHandler DisplayStyleChanged;
-		public event EventHandler DoubleClick;
-		public event EventHandler EnabledChanged;
-		public event EventHandler ForeColorChanged;
-		public event EventHandler LocationChanged;
-		public event MouseEventHandler MouseDown;
-		public event EventHandler MouseEnter;
-		public event EventHandler MouseHover;
-		public event EventHandler MouseLeave;
-		public event MouseEventHandler MouseMove;
-		public event MouseEventHandler MouseUp;
-		public event EventHandler OwnerChanged;
-		public event PaintEventHandler Paint;
-		public event EventHandler TextChanged;
-		public event EventHandler VisibleChanged;
+		public event EventHandler AvailableChanged {
+			add { Events.AddHandler (AvailableChangedEvent, value); }
+			remove {Events.RemoveHandler (AvailableChangedEvent, value); }
+		}
+
+		public event EventHandler BackColorChanged {
+			add { Events.AddHandler (BackColorChangedEvent, value); }
+			remove {Events.RemoveHandler (BackColorChangedEvent, value); }
+		}
+
+		public event EventHandler Click {
+			add { Events.AddHandler (ClickEvent, value); }
+			remove {Events.RemoveHandler (ClickEvent, value); }
+		}
+
+		public event EventHandler DisplayStyleChanged {
+			add { Events.AddHandler (DisplayStyleChangedEvent, value); }
+			remove {Events.RemoveHandler (DisplayStyleChangedEvent, value); }
+		}
+
+		public event EventHandler DoubleClick {
+			add { Events.AddHandler (DoubleClickEvent, value); }
+			remove {Events.RemoveHandler (DoubleClickEvent, value); }
+		}
+
+		public event EventHandler EnabledChanged {
+			add { Events.AddHandler (EnabledChangedEvent, value); }
+			remove {Events.RemoveHandler (EnabledChangedEvent, value); }
+		}
+
+		public event EventHandler ForeColorChanged {
+			add { Events.AddHandler (ForeColorChangedEvent, value); }
+			remove {Events.RemoveHandler (ForeColorChangedEvent, value); }
+		}
+
+		public event EventHandler LocationChanged {
+			add { Events.AddHandler (LocationChangedEvent, value); }
+			remove {Events.RemoveHandler (LocationChangedEvent, value); }
+		}
+
+		public event MouseEventHandler MouseDown {
+			add { Events.AddHandler (MouseDownEvent, value); }
+			remove {Events.RemoveHandler (MouseDownEvent, value); }
+		}
+
+		public event EventHandler MouseEnter {
+			add { Events.AddHandler (MouseEnterEvent, value); }
+			remove {Events.RemoveHandler (MouseEnterEvent, value); }
+		}
+
+		public event EventHandler MouseHover {
+			add { Events.AddHandler (MouseHoverEvent, value); }
+			remove {Events.RemoveHandler (MouseHoverEvent, value); }
+		}
+
+		public event EventHandler MouseLeave {
+			add { Events.AddHandler (MouseLeaveEvent, value); }
+			remove {Events.RemoveHandler (MouseLeaveEvent, value); }
+		}
+
+		public event MouseEventHandler MouseMove {
+			add { Events.AddHandler (MouseMoveEvent, value); }
+			remove {Events.RemoveHandler (MouseMoveEvent, value); }
+		}
+
+		public event MouseEventHandler MouseUp {
+			add { Events.AddHandler (MouseUpEvent, value); }
+			remove {Events.RemoveHandler (MouseUpEvent, value); }
+		}
+
+		public event EventHandler OwnerChanged {
+			add { Events.AddHandler (OwnerChangedEvent, value); }
+			remove {Events.RemoveHandler (OwnerChangedEvent, value); }
+		}
+
+		public event PaintEventHandler Paint {
+			add { Events.AddHandler (PaintEvent, value); }
+			remove {Events.RemoveHandler (PaintEvent, value); }
+		}
+
+		public event EventHandler TextChanged {
+			add { Events.AddHandler (TextChangedEvent, value); }
+			remove {Events.RemoveHandler (TextChangedEvent, value); }
+		}
+
+		public event EventHandler VisibleChanged {
+			add { Events.AddHandler (VisibleChangedEvent, value); }
+			remove {Events.RemoveHandler (VisibleChangedEvent, value); }
+		}
 		#endregion
 
 		#region Internal Methods

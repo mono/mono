@@ -268,19 +268,43 @@ namespace System.Windows.Forms
 		
 		protected virtual void OnRendererChanged (EventArgs e)
 		{
-			if (RendererChanged != null) RendererChanged (this, e);
+			EventHandler eh = (EventHandler)(Events [RendererChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 		#endregion
 		
 		#region Public Events
-		public event EventHandler AutoSizeChanged;
-		public event EventHandler RendererChanged;
+		static object AutoSizeChangedEvent = new object ();
+		static object RendererChangedEvent = new object ();
+
+		public event EventHandler AutoSizeChanged {
+			add { Events.AddHandler (AutoSizeChangedEvent, value); }
+			remove { Events.RemoveHandler (AutoSizeChangedEvent, value); }
+		}
+
+		public event EventHandler RendererChanged {
+			add { Events.AddHandler (RendererChangedEvent, value); }
+			remove { Events.RemoveHandler (RendererChangedEvent, value); }
+		}
+
 		[Browsable (false)]
-		public new event EventHandler TabIndexChanged;
+		public new event EventHandler TabIndexChanged {
+			add { base.TabIndexChanged += value; }
+			remove { base.TabIndexChanged -= value; }
+		}
+
 		[Browsable (false)]
-		public new event EventHandler TabStopChanged;
+		public new event EventHandler TabStopChanged {
+			add { base.TabStopChanged += value; }
+			remove { base.TabStopChanged -= value; }
+		}
+
 		[Browsable (false)]
-		public new event EventHandler TextChanged;
+		public new event EventHandler TextChanged {
+			add { base.TextChanged += value; }
+			remove { base.TextChanged -= value; }
+		}
 		#endregion
 
 		#region Private Methods
