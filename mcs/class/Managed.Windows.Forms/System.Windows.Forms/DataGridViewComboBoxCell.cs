@@ -238,10 +238,10 @@ namespace System.Windows.Forms {
 
 			private ArrayList list;
 
-			private DataGridViewComboBoxCell owner;
+			//private DataGridViewComboBoxCell owner;
 
 			public ObjectCollection (DataGridViewComboBoxCell owner) {
-				this.owner = owner;
+				//this.owner = owner;
 				list = new ArrayList();
 			}
 

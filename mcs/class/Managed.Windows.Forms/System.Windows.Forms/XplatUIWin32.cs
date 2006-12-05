@@ -63,7 +63,6 @@ namespace System.Windows.Forms {
 		private static int		scroll_height;
 		private static Hashtable	wm_nc_registered;
 
-		private static Win32DnD		DnD;
 		#endregion	// Local Variables
 
 		#region Private Structs
@@ -635,8 +634,6 @@ namespace System.Windows.Forms {
 
 			// Handle singleton stuff first
 			ref_count=0;
-
-			DnD = new Win32DnD();
 
 			mouse_state = MouseButtons.None;
 			mouse_position = Point.Empty;

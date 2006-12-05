@@ -169,7 +169,8 @@ namespace System.Windows.Forms {
 		private static readonly Guid IID_IDropSource = new Guid("00000121-0000-0000-C000-000000000046");
 		private static readonly Guid IID_IDropTarget = new Guid("00000122-0000-0000-C000-000000000046");
 
-		internal Win32DnD() {
+		static Win32DnD()
+		{
 			// Required for all other OLE functions to work
 			Win32OleInitialize(IntPtr.Zero);
 

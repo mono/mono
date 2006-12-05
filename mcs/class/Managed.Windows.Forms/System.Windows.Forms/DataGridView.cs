@@ -78,7 +78,7 @@ namespace System.Windows.Forms {
 		private string dataMember;
 		private object dataSource;
 		private DataGridViewCellStyle defaultCellStyle;
-		private Control editingControl;
+		//private Control editingControl;
 		private DataGridViewEditMode editMode;
 		private bool enableHeadersVisualStyles;
 		private DataGridViewCell firstDisplayedCell;
@@ -88,7 +88,7 @@ namespace System.Windows.Forms {
 		private Color gridColor = Color.FromKnownColor(KnownColor.ControlDarkDark);
 		private int horizontalScrollingOffset;
 		private bool isCurrentCellDirty;
-		private bool isCurrentRowDirty;
+		//private bool isCurrentRowDirty;
 		private bool multiSelect;
 		private bool readOnly;
 		private DataGridViewHeaderBorderStyle rowHeadersBorderStyle;

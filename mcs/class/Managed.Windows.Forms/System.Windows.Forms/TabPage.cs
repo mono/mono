@@ -40,7 +40,9 @@ namespace System.Windows.Forms {
 		private string tooltip_text = String.Empty;
 		private Rectangle tab_bounds;
 		private int row;
+#if NET_2_0
 		private bool use_visual_style_back_color;
+#endif
 		#endregion	// Fields
 		
 		#region Public Constructors

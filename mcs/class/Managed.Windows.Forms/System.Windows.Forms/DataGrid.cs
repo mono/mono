@@ -195,7 +195,8 @@ namespace System.Windows.Forms
 		static readonly Color	def_parentrowsfore_color = ThemeEngine.Current.DataGridParentRowsForeColor;
 
 		/* colors */
-		Color background_color;
+		// XXX this needs addressing. Control.background_color should not be internal.
+		new Color background_color;
 		Color caption_backcolor;
 		Color caption_forecolor;
 		Color parentrowsback_color;

@@ -1562,6 +1562,8 @@ namespace System.Windows.Forms {
 		
 		public DirComboBox (MWFVFS vfs)
 		{
+			this.vfs = vfs;
+
 			SuspendLayout ();
 			
 			DrawMode = DrawMode.OwnerDrawFixed;
@@ -1582,7 +1584,7 @@ namespace System.Windows.Forms {
 			myComputerDirComboboxItem = new DirComboBoxItem (imageList, 3, "My Computer", MWFVFS.MyComputerPrefix, indent);
 			networkDirComboboxItem = new DirComboBoxItem (imageList, 4, "My Network", MWFVFS.MyNetworkPrefix, indent);
 			
-			ArrayList al = vfs.GetMyComputerContent ();
+			ArrayList al = this.vfs.GetMyComputerContent ();
 			
 			foreach (FSEntry fsEntry in al) {
 				myComputerItems.Add (new DirComboBoxItem (MimeIconEngine.LargeIcons, fsEntry.IconIndex, fsEntry.Name, fsEntry.FullName, indent * 2));
@@ -1953,7 +1955,7 @@ namespace System.Windows.Forms {
 		public MWFFileView (MWFVFS vfs)
 		{
 			this.vfs = vfs;
-			vfs.RegisterUpdateDelegate (new MWFVFS.UpdateDelegate (RealFileViewUpdate), this);
+			this.vfs.RegisterUpdateDelegate (new MWFVFS.UpdateDelegate (RealFileViewUpdate), this);
 			
 			SuspendLayout ();
 			

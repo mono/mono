@@ -40,7 +40,9 @@ namespace System.Windows.Forms
 	[DefaultProperty("Document")]
 	public sealed class PrintDialog : CommonDialog {
 		PrintDocument document;
+#if NET_2_0
 		bool allow_current_page;
+#endif
 		bool allow_print_to_file;
 		bool allow_selection;
 		bool allow_some_pages;

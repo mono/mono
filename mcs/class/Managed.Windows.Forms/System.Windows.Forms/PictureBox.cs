@@ -44,7 +44,9 @@ namespace System.Windows.Forms {
 		private Image	image;
 		private PictureBoxSizeMode size_mode;
 		//private bool	recalc;
+#if NET_2_0
 		private Image	initial_image;
+#endif
 		private int	no_update;
 		#endregion	// Fields
 
@@ -211,7 +213,9 @@ namespace System.Windows.Forms {
 				StopAnimation ();
 				image = null;
 			}
+#if NET_2_0
 			initial_image = null;
+#endif
 
 			base.Dispose (disposing);
 		}

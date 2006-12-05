@@ -34,7 +34,6 @@ namespace System.Windows.Forms
 	public class PrintControllerWithStatusDialog : PrintController {
 		#region Local variables
 		PrintController underlyingController;
-		string dialogTitle;
 		PrintingDialog dialog;
 		int currentPage;
 		#endregion // Local variables

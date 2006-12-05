@@ -61,17 +61,17 @@ namespace System.Windows.Forms
 			set { draw_default = value; }
 		}
 
-		Graphics Graphics
+		public Graphics Graphics
 		{
 			get { return graphics; }
 		}
 
-		TreeNode Node
+		public TreeNode Node
 		{
 			get { return node; }
 		}
 
-		TreeNodeStates State
+		public TreeNodeStates State
 		{
 			get { return state; }
 		}

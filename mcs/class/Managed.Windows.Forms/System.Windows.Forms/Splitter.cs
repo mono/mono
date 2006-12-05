@@ -50,7 +50,8 @@ namespace System.Windows.Forms {
 		#region Local Variables
 		static private Cursor		splitter_ns;
 		static private Cursor		splitter_we;
-		private BorderStyle		border_style;
+		// XXX this "new" shouldn't be here.  Control shouldn't define border_style as internal.
+		new private BorderStyle		border_style;
 		private int			min_extra;
 		private int			min_size;
 		private int			split_position;		// Current splitter position

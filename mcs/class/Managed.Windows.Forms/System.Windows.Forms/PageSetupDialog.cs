@@ -38,8 +38,8 @@ namespace System.Windows.Forms {
 
 	[DefaultProperty("Document")]
 	public sealed class PageSetupDialog : CommonDialog {
-		const int yard_pound_default = 100;
-		static readonly int meter_default = (int) Math.Round (10 * 3.937 * 100);
+		//const int yard_pound_default = 100;
+		//static readonly int meter_default = (int) Math.Round (10 * 3.937 * 100);
 
 		#region Local variables
 		private PrintDocument document;

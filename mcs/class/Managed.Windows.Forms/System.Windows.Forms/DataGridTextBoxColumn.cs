@@ -138,7 +138,7 @@ namespace System.Windows.Forms
 						SetColumnValueAtRow (dataSource, rowNum, textbox.Text);
 				}
 			}
-			catch (Exception e) {
+			catch {
 				return false;
 			}
 			
