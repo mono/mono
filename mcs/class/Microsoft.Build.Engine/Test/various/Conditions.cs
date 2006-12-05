@@ -135,7 +135,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestCondition5 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -178,7 +177,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 		[Test]
 		[ExpectedException (typeof (InvalidProjectFileException))]
-		[Category ("NotWorking")]
 		public void TestIncorrectCondition1 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
