@@ -74,7 +74,8 @@ namespace Mono.Xml.XPath
 		XmlNode parent;
 		XmlNode current;
 		XmlNode nextSibling;
-		Stack nodeStack = new Stack ();
+		WriteState state;
+		XmlAttribute attribute;
 
 		public XmlDocumentInsertionWriter (XmlNode owner, XmlNode nextSibling)
 		{
@@ -96,28 +97,21 @@ namespace Mono.Xml.XPath
 			state = WriteState.Content;
 		}
 
-		WriteState state;
-		XmlAttribute attribute;
-
 		public override WriteState WriteState {
 			get { return state; }
 		}
 
 		public override void Close ()
 		{
-			while (nodeStack.Count > 0) {
-				XmlNode n = nodeStack.Pop () as XmlNode;
-				n.AppendChild (current);
-				current = n;
-			}
+			while (current.ParentNode != null)
+				current = current.ParentNode;
+
 			parent.InsertBefore ((XmlDocumentFragment) current, nextSibling);
 			if (Closed != null)
 				Closed (this);
 		}
 
 		internal event XmlWriterClosedEventHandler Closed;
-
-		internal XmlNode AppendedFirstChild;
 
 		public override void Flush ()
 		{
@@ -132,6 +126,8 @@ namespace Mono.Xml.XPath
 		{
 			if (state != WriteState.Content)
 				throw new InvalidOperationException ("Current state is not inside element. Cannot start attribute.");
+			if (prefix == null && ns != null && ns.Length > 0)
+				prefix = LookupPrefix (ns);
 			attribute = current.OwnerDocument.CreateAttribute (prefix, name, ns);
 			state = WriteState.Attribute;
 		}
@@ -156,17 +152,18 @@ namespace Mono.Xml.XPath
 
 		public override void WriteStartElement (string prefix, string name, string ns)
 		{
+			if (prefix == null && ns != null && ns.Length > 0)
+				prefix = LookupPrefix (ns);
 			XmlElement el = current.OwnerDocument.CreateElement (prefix, name, ns);
 			current.AppendChild (el);
-			nodeStack.Push (current);
 			current = el;
 		}
 
 		public override void WriteEndElement ()
 		{
-			if (nodeStack.Count == 0)
+			current = current.ParentNode;
+			if (current == null)
 				throw new InvalidOperationException ("No element is opened.");
-			current = nodeStack.Pop () as XmlNode;
 		}
 
 		public override void WriteFullEndElement ()
@@ -268,6 +265,8 @@ namespace Mono.Xml.XPath
 	internal class XmlDocumentAttributeWriter : XmlWriter
 	{
 		XmlElement element;
+		WriteState state;
+		XmlAttribute attribute;
 
 		public XmlDocumentAttributeWriter (XmlNode owner)
 		{
@@ -276,9 +275,6 @@ namespace Mono.Xml.XPath
 				throw new ArgumentException ("To write attributes, current node must be an element.");
 			state = WriteState.Content;
 		}
-
-		WriteState state;
-		XmlAttribute attribute;
 
 		public override WriteState WriteState {
 			get { return state; }
@@ -301,6 +297,8 @@ namespace Mono.Xml.XPath
 		{
 			if (state != WriteState.Content)
 				throw new InvalidOperationException ("Current state is not inside element. Cannot start attribute.");
+			if (prefix == null && ns != null && ns.Length > 0)
+				prefix = LookupPrefix (ns);
 			attribute = element.OwnerDocument.CreateAttribute (prefix, name, ns);
 			state = WriteState.Attribute;
 		}

@@ -1,3 +1,10 @@
+2006-12-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathEditableDocument.cs : those writers should lookup prefix when
+	  WriteStartElement/WriteStartAttribute are passed null prefix.
+	  Removed nodeStack in XmlDocumentInsertionWriter, since nodes are
+	  always added to current node immediately.
+
 2006-11-10  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigatorReader.cs : removed node type restriction on 

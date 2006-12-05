@@ -415,7 +415,8 @@ namespace System.Xml
 			while (node != null) {
 				if (node.Prefix == prefix)
 					return node.NamespaceURI;
-				if (node.Attributes != null) {
+				if (node.NodeType == XmlNodeType.Element &&
+				    ((XmlElement) node).HasAttributes) {
 					int count = node.Attributes.Count;
 					for (int i = 0; i < count; i++) {
 						XmlAttribute attr = node.Attributes [i];
@@ -453,13 +454,16 @@ namespace System.Xml
 				break;
 			}
 
-			while (node != null && node.Attributes != null) {
-				for (int i = 0; i < Attributes.Count; i++) {
-					XmlAttribute attr = Attributes [i];
-					if (attr.Prefix == "xmlns" && attr.Value == namespaceURI)
-						return attr.LocalName;
-					else if (attr.Name == "xmlns" && attr.Value == namespaceURI)
-						return String.Empty;
+			while (node != null) {
+				if (node.NodeType == XmlNodeType.Element &&
+				    ((XmlElement) node).HasAttributes) {
+					for (int i = 0; i < node.Attributes.Count; i++) {
+						XmlAttribute attr = node.Attributes [i];
+						if (attr.Prefix == "xmlns" && attr.Value == namespaceURI)
+							return attr.LocalName;
+						else if (attr.Name == "xmlns" && attr.Value == namespaceURI)
+							return String.Empty;
+					}
 				}
 				node = node.ParentNode;
 			}

@@ -4,9 +4,11 @@
 // Authors:
 //   Jason Diamond <jason@injektilo.org>
 //   Martin Willemoes Hansen <mwh@sysrq.dk>
+//   Atsushi Enomoto <atsushi@ximian.com>
 //
 // (C) 2002 Jason Diamond
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2004-2006 Novell, Inc.
 //
 
 using System;
@@ -591,6 +593,23 @@ namespace MonoTests.System.Xml
 			XPathNodeIterator iter = nav.Select ("/Abc/Foo/@attr");
 			iter.MoveNext ();
 			AssertEquals ("val&quot;1&#10;&gt;", iter.Current.InnerXml);
+		}
+
+		[Test]
+		public void WriterAttributePrefix ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			XmlWriter w = doc.CreateNavigator ().AppendChild ();
+			w.WriteStartElement ("foo");
+			w.WriteAttributeString ("xmlns", "x", "http://www.w3.org/2000/xmlns/", "urn:foo");
+			AssertEquals ("#0", "x", w.LookupPrefix ("urn:foo"));
+			w.WriteStartElement (null, "bar", "urn:foo");
+			w.WriteAttributeString (null, "ext", "urn:foo", "bah");
+			w.WriteEndElement ();
+			w.WriteEndElement ();
+			w.Close ();
+			AssertEquals ("#1", "x", doc.FirstChild.FirstChild.Prefix);
+			AssertEquals ("#2", "x", doc.FirstChild.FirstChild.Attributes [0].Prefix);
 		}
 #endif
 	}
