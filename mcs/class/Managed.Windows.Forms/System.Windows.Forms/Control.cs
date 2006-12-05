@@ -3981,7 +3981,7 @@ namespace System.Windows.Forms
 
 		protected virtual void WndProc(ref Message m) {
 #if debug
-			Console.WriteLine("Control {0} received message {1}", window.Handle == IntPtr.Zero ? this.Text : XplatUI.Window(window.Handle), (Msg)m.Msg);
+			Console.WriteLine("Control {0} received message {1}", window.Handle == IntPtr.Zero ? this.Text : XplatUI.Window(window.Handle), m.ToString ());
 #endif
 			if ((this.control_style & ControlStyles.EnableNotifyMessage) != 0) {
 				OnNotifyMessage(m);
