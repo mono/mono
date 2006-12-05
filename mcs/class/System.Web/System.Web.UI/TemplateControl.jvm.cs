@@ -137,6 +137,10 @@ namespace System.Web.UI {
 					string answer =  HttpRuntime.AppDomainAppVirtualPath;
 					if(tempSrcDir == null)
 						tempSrcDir = "";
+					
+					if (tempSrcDir.Length > 0 && tempSrcDir [tempSrcDir.Length - 1] == '/')
+						tempSrcDir = tempSrcDir.Substring (0, tempSrcDir.Length - 1);
+
 					if (tempSrcDir.StartsWith("/") || tempSrcDir.Length == 0)
 						_templateSourceDir =  answer + tempSrcDir;
 					else
