@@ -1,3 +1,7 @@
+2006-12-05  Yoni Klain         <yonik@mainsoft.com>
+
+	* TextBoxTest.cs: added new test for 2.0 
+
 2006-12-04 Merav Sudri   <meravs@mainsoft.com>
 
 	* FormViewTest.cs: Removing "NotWorking" attributes. 

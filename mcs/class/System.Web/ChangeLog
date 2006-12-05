@@ -1,3 +1,7 @@
+2006-12-05  Yoni Klain   <yonik@mainsoft.com>
+
+	* MakeFile added new resources TextBoxTestlPage.aspx for TextBoxTest.cs
+
 2006-11-29  Yoni Klain   <yonik@mainsoft.com>
 
 	* MakeFile added new resources ListControlPage.aspx for ListControlTest.cs

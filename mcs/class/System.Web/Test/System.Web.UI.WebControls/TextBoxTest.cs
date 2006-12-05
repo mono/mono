@@ -35,6 +35,9 @@ using System.Globalization;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using MonoTests.SystemWeb.Framework;
+using MonoTests.stand_alone.WebHarness;
+using System.Collections;
 
 namespace MonoTests.System.Web.UI.WebControls {
 	
@@ -74,8 +77,35 @@ namespace MonoTests.System.Web.UI.WebControls {
 			}			
 		}
 
+		[TestFixtureSetUp]
+		public void SetUp ()
+		{
+			WebTest.CopyResource (GetType (), "TextBoxTestlPage.aspx", "TextBoxTestlPage.aspx");
+			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
+		}
+
 		[Test]
-        [Category ("NotWorking")]
+		public void Defaults ()
+		{
+			Poker p = new Poker ();
+#if NET_2_0
+			Assert.AreEqual (string.Empty, p.ValidationGroup, "ValidationGroup");
+			Assert.AreEqual (false, p.CausesValidation, "CausesValidation");
+#endif
+		}
+
+		[Test]
+		[Category("NotWorking")]
+		public void Defaults_NotWorking ()
+		{
+			Poker p = new Poker ();
+#if NET_2_0
+			Assert.AreEqual (AutoCompleteType.None, p.AutoCompleteType, "AutoCompleteType");
+#endif
+		}
+
+		[Test]
+		[Category ("NotWorking")]
 		public void MultilineRenderEscape ()
 		{
 			Poker t = new Poker ();
@@ -87,7 +117,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			string exp = "<textarea name>&lt;/textarea&gt;</textarea>";
 #endif
 
-			Assert.AreEqual (exp, t.Render ());
+			HtmlDiff.AssertAreEqual(exp, t.Render (),"MultilineRenderEscape");
 		}
 
 
@@ -130,7 +160,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-        [Category ("NotWorking")]
+		[Category ("NotWorking")]
 		public void ValidationRender ()
 		{
 			/* test to show that the validation settings
@@ -144,7 +174,231 @@ namespace MonoTests.System.Web.UI.WebControls {
 			t.TextMode = TextBoxMode.MultiLine;
 
 			string exp = "<textarea rows=\"2\" cols=\"20\"></textarea>";
-			Assert.AreEqual (exp, t.Render ());
+			HtmlDiff.AssertAreEqual (exp, t.Render (),"ValidationRender");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void CausesValidation_ValidationGroup ()
+		{
+			WebTest t = new WebTest ("TextBoxTestlPage.aspx");
+			string str = t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("TextBox1");
+			fr.Controls["__EVENTTARGET"].Value = "TextBox1";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			fr.Controls["TextBox1"].Value = "TestValue";
+			t.Request = fr;
+			string html = t.Run ();
+
+			if (html.IndexOf ("Validate_validation_group") == -1)
+				Assert.Fail ("Validate not created");
+			if (html.IndexOf ("MyValidationGroup") == -1)
+				Assert.Fail ("Wrong validation group");
+		}
+
+		#region Help_class
+		public class PokerL : TextBox
+		{
+			public string Render ()
+			{
+				StringWriter sw = new StringWriter ();
+				sw.NewLine = "\n";
+				HtmlTextWriter writer = new HtmlTextWriter (sw);
+				base.Render (writer);
+				return writer.InnerWriter.ToString ();
+			}			
+
+			public new void RaisePostDataChangedEvent ()
+			{
+				base.RaisePostDataChangedEvent ();
+			}
+
+			protected override bool LoadPostData (string postDataKey, global::System.Collections.Specialized.NameValueCollection postCollection)
+			{
+				if (WebTest.CurrentTest.UserData == null) {
+					ArrayList list = new ArrayList ();
+					list.Add ("LoadPostData");
+					WebTest.CurrentTest.UserData = list;
+				}
+				else {
+					ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+					if (list == null)
+						throw new NullReferenceException ();
+					list.Add ("LoadPostData");
+					WebTest.CurrentTest.UserData = list;
+				}
+				return base.LoadPostData (postDataKey, postCollection);
+			}
+
+			protected override void OnLoad (EventArgs e)
+			{
+				if (this.Page.IsPostBack) {
+					if (WebTest.CurrentTest.UserData == null) {
+						ArrayList list = new ArrayList ();
+						list.Add ("ControlLoad");
+						WebTest.CurrentTest.UserData = list;
+					}
+					else {
+						ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+						if (list == null)
+							throw new NullReferenceException ();
+						list.Add ("ControlLoad");
+						WebTest.CurrentTest.UserData = list;
+					}
+				}
+				base.OnLoad (e);
+			}
+		}
+		#endregion
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
+		public void LoadPostData_Flow ()  //Just flow and not implementation detail
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (LoadPostData_Load));
+			string html = t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("pb");
+			fr.Controls["__EVENTTARGET"].Value = "pb";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			fr.Controls["pb"].Value = "TestValue";
+			t.Request = fr;
+			t.Run ();
+
+			ArrayList eventlist = t.UserData as ArrayList;
+			if (eventlist == null)
+				Assert.Fail ("User data does not been created fail");
+			Assert.AreEqual ("PageLoad", eventlist[0], "Live Cycle Flow #1");
+			Assert.AreEqual ("ControlLoad", eventlist[1], "Live Cycle Flow #2");
+			Assert.AreEqual ("LoadPostData", eventlist[2], "Live Cycle Flow #3");
+		}
+
+		public static void LoadPostData_Load (Page p)
+		{
+			PokerL b = new PokerL ();
+			b.AutoPostBack = true;
+			b.ID = "pb";
+			p.Form.Controls.Add (b);
+			if (p.IsPostBack) {
+				if (WebTest.CurrentTest.UserData == null) {
+					ArrayList list = new ArrayList ();
+					list.Add ("PageLoad");
+					WebTest.CurrentTest.UserData = list;
+				}
+				else {
+					ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+					if (list == null)
+						throw new NullReferenceException ();
+					list.Add ("PageLoad");
+					WebTest.CurrentTest.UserData = list;
+				}
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NunitWeb")]
+		public void LoadPostData ()  
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (LoadPostData__Load));
+			string html = t.Run ();
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls.Add ("pb");
+			fr.Controls["__EVENTTARGET"].Value = "pb";
+			fr.Controls["__EVENTARGUMENT"].Value = "";
+			fr.Controls["pb"].Value = "TestValue";
+			t.Request = fr;
+			html = t.Run ();
+
+			ArrayList eventlist = t.UserData as ArrayList;
+			if (eventlist == null)
+				Assert.Fail ("User data does not been created fail");
+			Assert.AreEqual ("ControlLoad", eventlist[0], "Live Cycle Flow #1");
+			Assert.AreEqual ("LoadPostData", eventlist[1], "Live Cycle Flow #2");
+			Assert.AreEqual ("TextChanged", eventlist[2], "Live Cycle Flow #3");
+
+			if (html.IndexOf ("TestValue") == -1)
+				Assert.Fail ("Wrong value failed");
+		}
+
+		public static void LoadPostData__Load (Page p)
+		{
+			PokerL b = new PokerL ();
+			b.ID = "pb";
+			p.Form.Controls.Add (b);
+			b.TextChanged += new EventHandler (b_TextChanged);
+			if (p.IsPostBack)
+				p.Response.Write (b.Text);
+		}
+
+		public static void b_TextChanged (object sender, EventArgs e)
+		{
+			if (WebTest.CurrentTest.UserData == null) {
+				ArrayList list = new ArrayList ();
+				list.Add ("TextChanged");
+				WebTest.CurrentTest.UserData = list;
+			}
+			else {
+				ArrayList list = WebTest.CurrentTest.UserData as ArrayList;
+				if (list == null)
+					throw new NullReferenceException ();
+				list.Add ("TextChanged");
+				WebTest.CurrentTest.UserData = list;
+			}
+		}
+
+		[Test]
+		public void RaisePostDataChangedEvent ()
+		{
+			PokerL p = new PokerL ();
+			p.TextChanged += new EventHandler (p_TextChanged);
+			Assert.AreEqual (false, eventTextChanged, "RaisePostDataChangedEvent#1");
+			p.RaisePostDataChangedEvent ();
+			Assert.AreEqual (true, eventTextChanged, "RaisePostDataChangedEvent#2");
+		}
+
+		bool eventTextChanged;
+		void  p_TextChanged(object sender, EventArgs e)
+		{
+			eventTextChanged = true;	
+		}
+
+		[Test]
+		[Category ("NotWorking")] // Not implemented
+		public void AutoCompleteType_Test ()
+		{
+			WebTest t = new WebTest ("NoEventValidation.aspx");
+			t = new WebTest (PageInvoker.CreateOnLoad (AutoCompleteType__Load));
+			string html = t.Run ();
+			string orig ="<input name=\"Poker\" type=\"text\" vcard_name=\"vCard.FirstName\" id=\"Poker\" />";
+			HtmlDiff.AssertAreEqual (orig, HtmlDiff.GetControlFromPageHtml (html), "AutoCompleteType");
+		}
+
+		public static void AutoCompleteType__Load (Page page)
+		{
+			LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
+			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
+
+			PokerL p = new PokerL ();
+			p.ID = "Poker";
+			p.AutoCompleteType = AutoCompleteType.FirstName;
+			page.Form.Controls.Add (lcb);
+			page.Form.Controls.Add (p);
+			page.Form.Controls.Add (lce);
+		}
+
+		[TestFixtureTearDown]
+		public void TearDown ()
+		{
+			WebTest.Unload ();
 		}
 #endif
 	}
