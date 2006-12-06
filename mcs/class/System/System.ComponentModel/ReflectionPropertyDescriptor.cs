@@ -157,6 +157,22 @@ namespace System.ComponentModel
 			}
 		}
 
+		MethodInfo FindPropertyMethod (object o, string method_name)
+		{
+			MethodInfo mi = null;
+			string name = method_name + Name;
+
+			foreach (MethodInfo m in o.GetType().GetMethods (BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)) {
+				// XXX should we really not check the return type of the method?
+				if (m.Name == name && m.GetParameters().Length == 0) {
+					mi = m;
+					break;
+				}
+			}
+
+			return mi;
+		}
+
 		public override void ResetValue (object component)
 		{
 			object propertyHolder = MemberDescriptor.GetInvokee (_componentType, component);
@@ -169,7 +185,7 @@ namespace System.ComponentModel
 			object old = GetValue (propertyHolder);
 
 			try {
-				MethodInfo mi = propertyHolder.GetType().GetMethod ("Reset" + Name, Type.EmptyTypes);
+				MethodInfo mi = FindPropertyMethod (propertyHolder, "Reset");
 				if (mi != null)
 					mi.Invoke (propertyHolder, null);
 				EndTransaction (component, tran, old, GetValue (propertyHolder), true);
@@ -195,10 +211,14 @@ namespace System.ComponentModel
 
 				return !attrib.Value.Equals (current);
 			} else {
-				MethodInfo mi = component.GetType().GetMethod ("ShouldPersist" + Name, Type.EmptyTypes);
+#if NET_2_0
+				if (!_member.CanWrite)
+					return false;
+#endif
+				MethodInfo mi = FindPropertyMethod (component, "ShouldPersist");
 				if (mi != null)
 					return (bool) mi.Invoke (component, null);
-				mi = component.GetType().GetMethod ("Reset" + Name, Type.EmptyTypes);
+				mi = FindPropertyMethod (component, "Reset");
 				return mi != null;
 			}
 		}
@@ -215,9 +235,10 @@ namespace System.ComponentModel
 				return !attrib.Value.Equals (current);
 			}
 			else {
-				MethodInfo mi = component.GetType().GetMethod ("ShouldSerialize" + Name, Type.EmptyTypes);
+				MethodInfo mi = FindPropertyMethod (component, "ShouldSerialize");
 				if (mi != null)
 					return (bool) mi.Invoke (component, null);
+
 				return true;
 			}
 		}

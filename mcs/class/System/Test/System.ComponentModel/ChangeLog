@@ -1,3 +1,8 @@
+2006-12-06  Chris Toshok  <toshok@ximian.com>
+
+	* PropertyDescriptorTests.cs: flesh out these tests more with some
+	for ShouldSerialize and CanReset.
+
 2006-11-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CollectionConverterTest.cs: More test cases.
