@@ -1,3 +1,7 @@
+2006-12-06  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* CreateUserWizardTest.cs: fixed postback tests button id
+
 2006-12-06  Yoni Klain         <yonik@mainsoft.com>
 
 	* LoginTest.cs  remove not relevant test; 
