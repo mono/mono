@@ -45,10 +45,14 @@ namespace MonoTests.System.Windows.Forms
 			
 			Assert.AreEqual (BorderStyle.Fixed3D, textBox.BorderStyle, "#5");
 			Assert.AreEqual (false, textBox.CanUndo, "#6a");
+
+			Clipboard.SetDataObject ("TEST");
 			textBox.Paste ();
 			Assert.AreEqual (true, textBox.CanUndo, "#6b");
+			textBox.Undo ();
 			textBox.ClearUndo ();
 			Assert.AreEqual (false, textBox.CanUndo, "#6c");
+
 			Assert.AreEqual ("WindowText", textBox.ForeColor.Name, "#7");
 			Assert.AreEqual (true, textBox.HideSelection, "#8");
 			Assert.AreEqual (1, textBox.Lines.Length, "#9");
@@ -325,6 +329,22 @@ namespace MonoTests.System.Windows.Forms
 			form.Show ();
 
 			Assert.AreEqual (text, textBox.Text, "#2");
+		}
+
+		
+		[Test]
+		public void ModifiedTest ()
+		{
+			Assert.AreEqual (true, textBox.Modified, "modified-1");
+
+			textBox.Modified = false;
+			Assert.AreEqual (false, textBox.Modified, "modified-2");
+
+			textBox.Modified = true;
+			Assert.AreEqual (true, textBox.Modified, "modified-2");
+
+			textBox.Text = "TEXT";
+			Assert.AreEqual (false, textBox.Modified, "modified-3");
 		}
 	}
 }
