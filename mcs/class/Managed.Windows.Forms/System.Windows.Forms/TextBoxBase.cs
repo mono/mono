@@ -89,7 +89,7 @@ namespace System.Windows.Forms {
 			character_casing = CharacterCasing.Normal;
 			hide_selection = true;
 			max_length = 32767;
-			modified = false;
+			modified = true;
 			multiline = false;
 			password_char = '\0';
 			read_only = false;
@@ -446,7 +446,16 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public int PreferredHeight {
 			get {
-				return this.Font.Height + 7;	// FIXME - consider border style as well
+				int bs = 0;
+				switch (border_style) {
+				case BorderStyle.FixedSingle:
+					bs = 2;
+					break;
+				case BorderStyle.Fixed3D:
+					bs = ThemeEngine.Current.Border3DSize.Width * 2;
+					break;
+				}
+				return this.Font.Height + 7 + bs;
 			}
 		}
 
@@ -581,6 +590,8 @@ namespace System.Windows.Forms {
 					CalculateDocument();
 				}
 
+				// set the var so OnModifiedChanged is not raised
+				modified = false;
 				OnTextChanged(EventArgs.Empty);
 			}
 		}

@@ -1,3 +1,10 @@
+2006-12-06  Jackson Harper  <jackson@ximian.com>
+
+	* TextControl.cs: Make this operation undoable.
+	* TextBoxBase.cs: Factor the border width into the preferred
+	height.
+	- implement Modified as per the spec.
+
 2006-12-06  Chris Toshok  <toshok@ximian.com>
 
 	* Timer.cs, Control.cs, Menu.cs: make control_tag private.

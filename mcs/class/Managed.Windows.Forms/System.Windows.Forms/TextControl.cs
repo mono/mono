@@ -2093,7 +2093,8 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 			LineTag tag = LineTag.FindTag (line, pos);
 			
 			NoRecalc = true;
-
+			undo.BeginCompoundAction ();
+			
 			base_line = line.line_no;
 			old_line_count = lines;
 
@@ -2158,6 +2159,7 @@ if (owner.backcolor_set || (owner.Enabled && !owner.read_only)) {
 				DisplayCaret ();
 			}
 
+			undo.EndCompoundAction ();
 		}
 
 		// Inserts a character at the given position
