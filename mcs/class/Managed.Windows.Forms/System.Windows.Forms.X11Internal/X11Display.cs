@@ -1023,7 +1023,7 @@ namespace System.Windows.Forms.X11Internal {
 		private void AccumulateDestroyedHandles (Control c, ArrayList list)
 		{
 			if (c != null) {
-				Control[] controls = c.child_controls.GetAllControls ();
+				Control[] controls = c.Controls.GetAllControls ();
 
 				if (c.IsHandleCreated && !c.IsDisposed) {
 					X11Hwnd hwnd = (X11Hwnd)Hwnd.ObjectFromHandle(c.Handle);

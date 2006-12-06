@@ -1,3 +1,8 @@
+2006-12-06  Chris Toshok  <toshok@ximian.com>
+
+	* X11Display.cs: make Control.child_controls private.  switch all
+	uses over to Control.Controls.
+
 2006-12-05  Chris Toshok  <toshok@ximian.com>
 
 	* X11Display.cs: fix some compiler warnings, and also re-include
