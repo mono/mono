@@ -62,6 +62,14 @@ namespace System.Web.UI.WebControls
 		public virtual bool ContainsListCollection {
 			get { return ListSourceHelper.ContainsListCollection (this); }
 		}
+
+		DataSourceView IDataSource.GetView (string viewName) {
+			return GetView (viewName);
+		}
+
+		ICollection IDataSource.GetViewNames () {
+			return GetViewNames ();
+		}
 		
 		event EventHandler IDataSource.DataSourceChanged {
 			add { ((IHierarchicalDataSource)this).DataSourceChanged += value; }
