@@ -46,7 +46,7 @@ namespace System.Windows.Forms.Layout
 			space = parent.DisplayRectangle;
 
 			// Deal with docking; go through in reverse, MS docs say that lowest Z-order is closest to edge
-			Control[] controls = parent.child_controls.GetAllControls ();
+			Control[] controls = parent.Controls.GetAllControls ();
 			for (int i = controls.Length - 1; i >= 0; i--) {
 				child = controls[i];
 
