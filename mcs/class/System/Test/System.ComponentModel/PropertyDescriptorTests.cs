@@ -79,6 +79,23 @@ namespace MonoTests.System.ComponentModel
 			}
 		}
 
+		class ShouldSerializeFalseEffectOnCanReset_test
+		{
+			public int Prop {
+				get { return 5; }
+				set { }
+			}
+
+			public bool ShouldSerializeProp()
+			{
+				return false;
+			}
+
+			public void ResetProp()
+			{
+			}
+		}
+
 		class NoSerializeOrResetProp_test
 		{
 			public int Prop {
@@ -228,6 +245,16 @@ namespace MonoTests.System.ComponentModel
 
 			Assert.IsFalse (p.CanResetValue (test), "1");
 			Assert.IsFalse (p.ShouldSerializeValue (test), "2");
+		}
+
+		[Test]
+		public void ShouldSerializeFalseEffectOnCanResetTest ()
+		{
+			PropertyDescriptor p = TypeDescriptor.GetProperties (typeof (ShouldSerializeFalseEffectOnCanReset_test))["Prop"];
+			ShouldSerializeFalseEffectOnCanReset_test test = new ShouldSerializeFalseEffectOnCanReset_test ();
+
+			Assert.IsFalse (p.ShouldSerializeValue (test), "1");
+			Assert.IsFalse (p.CanResetValue (test), "2");
 		}
 
 		[Test]

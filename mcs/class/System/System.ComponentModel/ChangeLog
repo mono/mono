@@ -1,5 +1,10 @@
 2006-12-06  Chris Toshok  <toshok@ximian.com>
 
+	* ReflectionPropertyDescriptor.cs: turns out if "ShouldSerialize*"
+	is present and returns false, "CanReset*" also returns false.
+
+2006-12-06  Chris Toshok  <toshok@ximian.com>
+
 	* ReflectionPropertyDescriptor.cs: ShouldSerializeValue should
 	return false if there's no ShouldSerialize method.
 

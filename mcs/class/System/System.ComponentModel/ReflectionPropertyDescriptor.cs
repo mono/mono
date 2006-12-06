@@ -218,6 +218,11 @@ namespace System.ComponentModel
 				MethodInfo mi = FindPropertyMethod (component, "ShouldPersist");
 				if (mi != null)
 					return (bool) mi.Invoke (component, null);
+
+				mi = FindPropertyMethod (component, "ShouldSerialize");
+				if (mi != null && !((bool) mi.Invoke (component, null)))
+					return false;
+
 				mi = FindPropertyMethod (component, "Reset");
 				return mi != null;
 			}
