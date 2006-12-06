@@ -565,8 +565,8 @@ namespace System.Windows.Forms
     		{
 			if (IsMnemonic(charCode, Text) == true) {
 				// Select item next in line in tab order
-				if (this.parent != null) {
-					parent.SelectNextControl(this, true, false, false, false);
+				if (this.Parent != null) {
+					Parent.SelectNextControl(this, true, false, false, false);
 				}
 				return true;
 			}

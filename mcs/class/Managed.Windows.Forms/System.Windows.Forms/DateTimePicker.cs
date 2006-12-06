@@ -1000,7 +1000,7 @@ namespace System.Windows.Forms {
 				align_area,
 				month_calendar.Size,
 				(this.DropDownAlign == LeftRightAlignment.Left));
-			month_calendar.parent = this.FindForm ();
+			month_calendar.Parent = this.FindForm ();
 			month_calendar.Show ();
 			month_calendar.Focus ();
 

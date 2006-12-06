@@ -255,12 +255,12 @@ namespace System.Windows.Forms
 
 			protected override void OnGotFocus(EventArgs e)
 			{
-				this.parent.OnGotFocusInternal(e);
+				this.Parent.OnGotFocusInternal(e);
 			}
 
 			protected override void OnLostFocus(EventArgs e)
 			{
-				this.parent.OnLostFocusInternal(e);
+				this.Parent.OnLostFocusInternal(e);
 			}
 		}
 

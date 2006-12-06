@@ -410,7 +410,7 @@ namespace System.Windows.Forms {
 				Console.WriteLine("Sizing limits: Min:{0}, Max:{1}", limit_min, limit_max);
 			#endif
 
-			pt = PointToScreen(parent.PointToClient(new Point(e.X, e.Y)));
+			pt = PointToScreen(Parent.PointToClient(new Point(e.X, e.Y)));
 
 			if (horizontal) {
 				split_position = pt.Y;
@@ -449,7 +449,7 @@ namespace System.Windows.Forms {
 			}
 
 			// We need our mouse coordinates relative to our parent
-			pt = PointToScreen(parent.PointToClient(new Point(e.X, e.Y)));
+			pt = PointToScreen(Parent.PointToClient(new Point(e.X, e.Y)));
 
 			// Grab our new coordinates
 			prev_split_position = split_position;
@@ -570,37 +570,37 @@ namespace System.Windows.Forms {
 		#region Private Properties and Methods
 		private Control AffectedControl {
 			get {
-				if (parent == null) {
+				if (Parent == null) {
 					return null;
 				}
 
 				// Doc says the first control preceeding us in the zorder 
-				for (int i = parent.Controls.GetChildIndex(this) + 1; i < parent.Controls.Count; i++) {
+				for (int i = Parent.Controls.GetChildIndex(this) + 1; i < Parent.Controls.Count; i++) {
 					switch(this.Dock) {
 						case DockStyle.Top: {
-							if (Top == parent.Controls[i].Bottom) {
-								return parent.Controls[i];
+							if (Top == Parent.Controls[i].Bottom) {
+								return Parent.Controls[i];
 							}
 							break;
 						}
 
 						case DockStyle.Bottom: {
-							if (Bottom == parent.Controls[i].Top) {
-								return parent.Controls[i];
+							if (Bottom == Parent.Controls[i].Top) {
+								return Parent.Controls[i];
 							}
 							break;
 						}
 
 						case DockStyle.Left: {
-							if (Left == parent.Controls[i].Right) {
-								return parent.Controls[i];
+							if (Left == Parent.Controls[i].Right) {
+								return Parent.Controls[i];
 							}
 							break;
 						}
 
 						case DockStyle.Right: {
-							if (Right == parent.Controls[i].Left) {
-								return parent.Controls[i];
+							if (Right == Parent.Controls[i].Left) {
+								return Parent.Controls[i];
 							}
 							break;
 						}
@@ -612,14 +612,14 @@ namespace System.Windows.Forms {
 
 		private Control FillerControl {
 			get {
-				if (parent == null) {
+				if (Parent == null) {
 					return null;
 				}
 
 				// Doc says the first control preceeding us in the zorder 
-				for (int i = parent.Controls.GetChildIndex(this) - 1; i >= 0; i--) {
-					if (parent.Controls[i].Dock == DockStyle.Fill) {
-						return parent.Controls[i];
+				for (int i = Parent.Controls.GetChildIndex(this) - 1; i >= 0; i--) {
+					if (Parent.Controls[i].Dock == DockStyle.Fill) {
+						return Parent.Controls[i];
 					}
 				}
 				return null;

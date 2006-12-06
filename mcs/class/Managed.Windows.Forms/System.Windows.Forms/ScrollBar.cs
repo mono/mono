@@ -533,11 +533,11 @@ namespace System.Windows.Forms
 		}
 
 		private void SendWMScroll(ScrollBarCommands cmd) {
-			if ((parent != null) && parent.IsHandleCreated) {
+			if ((Parent != null) && Parent.IsHandleCreated) {
 				if (vert) {
-					XplatUI.SendMessage(parent.Handle, Msg.WM_VSCROLL, (IntPtr)cmd, implicit_control ? IntPtr.Zero : Handle);
+					XplatUI.SendMessage(Parent.Handle, Msg.WM_VSCROLL, (IntPtr)cmd, implicit_control ? IntPtr.Zero : Handle);
 				} else {
-					XplatUI.SendMessage(parent.Handle, Msg.WM_HSCROLL, (IntPtr)cmd, implicit_control ? IntPtr.Zero : Handle);
+					XplatUI.SendMessage(Parent.Handle, Msg.WM_HSCROLL, (IntPtr)cmd, implicit_control ? IntPtr.Zero : Handle);
 				}
 			}
 		}

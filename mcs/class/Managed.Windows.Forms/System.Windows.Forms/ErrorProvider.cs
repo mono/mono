@@ -79,8 +79,8 @@ namespace System.Windows.Forms {
 					ep.container.Controls.Add(window);
 					ep.container.Controls.SetChildIndex(window, 0);
 				} else {
-					control.parent.Controls.Add(window);
-					control.parent.Controls.SetChildIndex(window, 0);
+					control.Parent.Controls.Add(window);
+					control.Parent.Controls.SetChildIndex(window, 0);
 				}
 
 				window.Paint += new PaintEventHandler(window_Paint);
@@ -248,7 +248,7 @@ namespace System.Windows.Forms {
 					// Dunno why this POS doesn't reliably blink
 					g = window.CreateGraphics();
 					if ((blink_count % 2) == 0) {
-						g.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(window.parent.BackColor), window.ClientRectangle);
+						g.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(window.Parent.BackColor), window.ClientRectangle);
 					} else {
 						g.DrawIcon(this.ep.icon, 0, 0);
 					}

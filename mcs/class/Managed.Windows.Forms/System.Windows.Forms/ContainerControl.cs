@@ -243,13 +243,13 @@ namespace System.Windows.Forms {
 			get {
 				Control parent;
 
-				parent = this.parent;
+				parent = this.Parent;
 
 				while (parent != null) {
 					if (parent is Form) {
 						return (Form)parent;
 					}
-					parent = parent.parent;
+					parent = parent.Parent;
 				}
 
 				return null;

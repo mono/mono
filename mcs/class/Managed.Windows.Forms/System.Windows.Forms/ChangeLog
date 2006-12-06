@@ -1,5 +1,28 @@
 2006-12-06  Chris Toshok  <toshok@ximian.com>
 
+	* System.Windows.Forms/GroupBox.cs,
+	System.Windows.Forms/AccessibleObject.cs,
+	System.Windows.Forms/ErrorProvider.cs,
+	System.Windows.Forms/Control.cs,
+	System.Windows.Forms/UpDownBase.cs,
+	System.Windows.Forms/ScrollBar.cs,
+	System.Windows.Forms/DateTimePicker.cs,
+	System.Windows.Forms/Form.cs, System.Windows.Forms/Label.cs,
+	System.Windows.Forms/ToolTip.cs,
+	System.Windows.Forms/RadioButton.cs,
+	System.Windows.Forms/LinkLabel.cs,
+	System.Windows.Forms/Splitter.cs,
+	System.Windows.Forms/TextBoxBase.cs,
+	System.Windows.Forms/ToolStripTextBox.cs,
+	System.Windows.Forms/ContainerControl.cs,
+	System.Windows.Forms/ThemeWin32Classic.cs,
+	System.Windows.Forms/SizeGrip.cs,
+	System.Windows.Forms/ToolStripDropDown.cs,
+	System.Windows.Forms/ScrollableControl.cs: Make Control.parent
+	private.  switch all uses over to Control.Parent.
+
+2006-12-06  Chris Toshok  <toshok@ximian.com>
+
 	* RichTextBox.cs: don't assign to has_focus in GotFocus/LostFocus.
 	Control does this before calling emitting these events.
 

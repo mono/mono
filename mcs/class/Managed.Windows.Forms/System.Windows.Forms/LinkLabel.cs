@@ -479,8 +479,8 @@ namespace System.Windows.Forms
 
 				focused_index = -1;
 
-				if (parent != null)
-					parent.SelectNextControl (this, forward, false, true, true);
+				if (Parent != null)
+					Parent.SelectNextControl (this, forward, false, true, true);
 			}
 		}
 

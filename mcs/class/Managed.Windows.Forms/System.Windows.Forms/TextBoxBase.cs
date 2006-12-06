@@ -416,8 +416,8 @@ namespace System.Windows.Forms {
 						requested_height = -1;
 					}
 
-					if (parent != null)
-						parent.PerformLayout ();
+					if (Parent != null)
+						Parent.PerformLayout ();
 
 					OnMultilineChanged(EventArgs.Empty);
 				}

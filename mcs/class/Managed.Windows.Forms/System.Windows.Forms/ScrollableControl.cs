@@ -469,7 +469,7 @@ namespace System.Windows.Forms {
 			y = activeControl.Top;
 
 			// Translate into coords relative to us
-			if (activeControl.parent != this) {
+			if (activeControl.Parent != this) {
 				activeControl.PointToScreen(ref x, ref y);
 				PointToClient(ref x, ref y);
 			}

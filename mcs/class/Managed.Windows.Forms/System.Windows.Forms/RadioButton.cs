@@ -117,7 +117,7 @@ namespace System.Windows.Forms {
 			}
 
 			// Remove tabstop property from and uncheck our radio-button siblings
-			c = this.parent;
+			c = this.Parent;
 			if (c != null) {
 				for (int i = 0; i < c.child_controls.Count; i++) {
 					if ((this != c.child_controls[i]) && (c.child_controls[i] is RadioButton)) {

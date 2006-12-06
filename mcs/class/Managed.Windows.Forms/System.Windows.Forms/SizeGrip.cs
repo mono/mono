@@ -84,8 +84,8 @@ namespace System.Windows.Forms {
 			
 			capture_point = Control.MousePosition;
 
-			window_w = parent.Width;
-			window_h = parent.Height;
+			window_w = Parent.Width;
+			window_h = Parent.Height;
 		}
 
 		protected override void OnMouseMove(MouseEventArgs e) {
@@ -99,7 +99,7 @@ namespace System.Windows.Forms {
 				delta_x = current_point.X - capture_point.X;
 				delta_y = current_point.Y - capture_point.Y;
 
-				this.parent.Size = new Size(window_w + delta_x, window_h + delta_y);
+				this.Parent.Size = new Size(window_w + delta_x, window_h + delta_y);
 				XplatUI.DoEvents();
 			}
 		}

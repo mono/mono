@@ -439,8 +439,8 @@ namespace System.Windows.Forms
 		{
 			base.OnParentChanged (e);
 			
-			if (parent is ToolStrip)
-				this.Renderer = (parent as ToolStrip).Renderer;
+			if (Parent is ToolStrip)
+				this.Renderer = (Parent as ToolStrip).Renderer;
 		}
 
 		protected override void OnVisibleChanged (EventArgs e)

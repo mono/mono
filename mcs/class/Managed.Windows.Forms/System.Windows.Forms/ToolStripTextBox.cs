@@ -393,7 +393,7 @@ namespace System.Windows.Forms
 			{
 				base.OnPaint (e);
 				if (this.Focused || is_entered || this.border_style == BorderStyle.FixedSingle) {
-					ToolStripRenderer tsr = (this.parent as ToolStrip).Renderer;
+					ToolStripRenderer tsr = (this.Parent as ToolStrip).Renderer;
 
 					if (tsr is ToolStripProfessionalRenderer)
 						using (Pen p = new Pen ((tsr as ToolStripProfessionalRenderer).ColorTable.ButtonSelectedBorder))

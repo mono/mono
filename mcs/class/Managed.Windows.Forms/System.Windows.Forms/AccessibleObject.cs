@@ -216,8 +216,8 @@ namespace System.Windows.Forms {
 			// Might not be too helpful to a blind dude trying to navigate. Instead we return
 			// our own object
 
-			if (owner.parent != null) {
-				index = owner.parent.child_controls.IndexOf(owner);
+			if (owner.Parent != null) {
+				index = owner.Parent.child_controls.IndexOf(owner);
 			} else {
 				index = -1;
 			}
@@ -225,10 +225,10 @@ namespace System.Windows.Forms {
 			switch (navdir) {
 				// Spatial navigation; limited to siblings
 				case AccessibleNavigation.Up: {
-					if (owner.parent != null) {
-						for (int i=0; i<owner.parent.child_controls.Count; i++) {
-							if ((owner != owner.parent.child_controls[i]) && (owner.parent.child_controls[i].Top<owner.Top)) {
-								return owner.parent.child_controls[i].AccessibilityObject;
+					if (owner.Parent != null) {
+						for (int i=0; i<owner.Parent.child_controls.Count; i++) {
+							if ((owner != owner.Parent.child_controls[i]) && (owner.Parent.child_controls[i].Top<owner.Top)) {
+								return owner.Parent.child_controls[i].AccessibilityObject;
 							}
 						}
 						
@@ -237,10 +237,10 @@ namespace System.Windows.Forms {
 				}
 
 				case AccessibleNavigation.Down: {
-					if (owner.parent != null) {
-						for (int i=0; i<owner.parent.child_controls.Count; i++) {
-							if ((owner != owner.parent.child_controls[i]) && (owner.parent.child_controls[i].Top>owner.Bottom)) {
-								return owner.parent.child_controls[i].AccessibilityObject;
+					if (owner.Parent != null) {
+						for (int i=0; i<owner.Parent.child_controls.Count; i++) {
+							if ((owner != owner.Parent.child_controls[i]) && (owner.Parent.child_controls[i].Top>owner.Bottom)) {
+								return owner.Parent.child_controls[i].AccessibilityObject;
 							}
 						}
 						
@@ -249,10 +249,10 @@ namespace System.Windows.Forms {
 				}
 
 				case AccessibleNavigation.Left: {
-					if (owner.parent != null) {
-						for (int i=0; i<owner.parent.child_controls.Count; i++) {
-							if ((owner != owner.parent.child_controls[i]) && (owner.parent.child_controls[i].Left<owner.Left)) {
-								return owner.parent.child_controls[i].AccessibilityObject;
+					if (owner.Parent != null) {
+						for (int i=0; i<owner.Parent.child_controls.Count; i++) {
+							if ((owner != owner.Parent.child_controls[i]) && (owner.Parent.child_controls[i].Left<owner.Left)) {
+								return owner.Parent.child_controls[i].AccessibilityObject;
 							}
 						}
 						
@@ -261,10 +261,10 @@ namespace System.Windows.Forms {
 				}
 
 				case AccessibleNavigation.Right: {
-					if (owner.parent != null) {
-						for (int i=0; i<owner.parent.child_controls.Count; i++) {
-							if ((owner != owner.parent.child_controls[i]) && (owner.parent.child_controls[i].Left>owner.Right)) {
-								return owner.parent.child_controls[i].AccessibilityObject;
+					if (owner.Parent != null) {
+						for (int i=0; i<owner.Parent.child_controls.Count; i++) {
+							if ((owner != owner.Parent.child_controls[i]) && (owner.Parent.child_controls[i].Left>owner.Right)) {
+								return owner.Parent.child_controls[i].AccessibilityObject;
 							}
 						}
 						
@@ -274,11 +274,11 @@ namespace System.Windows.Forms {
 
 				// Logical navigation
 				case AccessibleNavigation.Next: {
-					if (owner.parent != null) {
-						if ((index+1)<owner.parent.child_controls.Count) {
-							return owner.parent.child_controls[index+1].AccessibilityObject;
+					if (owner.Parent != null) {
+						if ((index+1)<owner.Parent.child_controls.Count) {
+							return owner.Parent.child_controls[index+1].AccessibilityObject;
 						} else {
-							return owner.parent.child_controls[0].AccessibilityObject;
+							return owner.Parent.child_controls[0].AccessibilityObject;
 						}
 					} else {
 						return owner.AccessibilityObject;
@@ -286,11 +286,11 @@ namespace System.Windows.Forms {
 				}
 
 				case AccessibleNavigation.Previous: {
-					if (owner.parent != null) {
+					if (owner.Parent != null) {
 						if (index>0) {
-							return owner.parent.child_controls[index-1].AccessibilityObject;
+							return owner.Parent.child_controls[index-1].AccessibilityObject;
 						} else {
-							return owner.parent.child_controls[owner.parent.child_controls.Count-1].AccessibilityObject;
+							return owner.Parent.child_controls[owner.Parent.child_controls.Count-1].AccessibilityObject;
 						}
 					} else {
 						return owner.AccessibilityObject;

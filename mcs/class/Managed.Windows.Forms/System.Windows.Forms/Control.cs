@@ -113,7 +113,7 @@ namespace System.Windows.Forms
 		// to be categorized...
 		static internal ArrayList	controls = new ArrayList();  // All of the application's controls, in a flat list
 		internal ControlCollection	child_controls;		// our children
-		internal Control		parent;			// our parent control
+		Control parent; // our parent control
 		AccessibleObject accessibility_object; // object that contains accessibility information about our control
 		BindingContext binding_context;
 		internal RightToLeft		right_to_left;		// drawing direction for control

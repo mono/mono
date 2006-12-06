@@ -433,8 +433,8 @@ namespace System.Windows.Forms {
 
 			m = Control.MousePosition;
 			c = new Point(control.Bounds.X, control.Bounds.Y);
-			if (control.parent != null) {
-				c = control.parent.PointToScreen(c);
+			if (control.Parent != null) {
+				c = control.Parent.PointToScreen(c);
 			}
 			cw = control.ClientSize;
 

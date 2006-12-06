@@ -3932,7 +3932,7 @@ namespace System.Windows.Forms
 				return res;
 			}
 
-			if (page.parent.Focused && is_selected) {
+			if (page.Parent.Focused && is_selected) {
 				CPDrawFocusRectangle (dc, interior, tab.ForeColor, tab.BackColor);
 			}
 

@@ -1367,8 +1367,8 @@ namespace System.Windows.Forms {
 			}
 
 			ctl = null;
-			if (parent != null) {
-				ctl = parent;
+			if (Parent != null) {
+				ctl = Parent;
 			} else if (owner != null) {
 				ctl = owner;
 			}
