@@ -604,14 +604,14 @@ namespace System.Windows.Forms {
 			int		extra_width;
 			int		extra_height;
 
-			num_of_children = child_controls.Count;
+			num_of_children = Controls.Count;
 			width = 0;
 			height = 0;
 			extra_width = dock_padding.Right;
 			extra_height = dock_padding.Bottom;
 
 			for (int i = 0; i < num_of_children; i++) {
-				child = child_controls[i];
+				child = Controls[i];
 				if (child.Dock == DockStyle.Right) {
 					extra_width += child.Width;
 				} else if (child.Dock == DockStyle.Bottom) {
@@ -625,7 +625,7 @@ namespace System.Windows.Forms {
 			}
 
 			for (int i = 0; i < num_of_children; i++) {
-				child = child_controls[i];
+				child = Controls[i];
 
 				switch(child.Dock) {
 					case DockStyle.Left: {
@@ -792,12 +792,12 @@ namespace System.Windows.Forms {
 
 			SuspendLayout();
 
-			num_of_children = child_controls.Count;
+			num_of_children = Controls.Count;
 
 			for (int i = 0; i < num_of_children; i++) {
-				child_controls[i].Left -= XOffset;
-				child_controls[i].Top -= YOffset;
-				// Is this faster? child_controls[i].Location -= new Size(XOffset, YOffset);
+				Controls[i].Left -= XOffset;
+				Controls[i].Top -= YOffset;
+				// Is this faster? Controls[i].Location -= new Size(XOffset, YOffset);
 			}
 
 			scroll_position.X += XOffset;

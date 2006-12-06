@@ -160,8 +160,8 @@ namespace System.Windows.Forms {
 
 		public virtual AccessibleObject GetChild(int index) {
 			if (owner!=null) {
-				if (index<owner.child_controls.Count) {
-					return owner.child_controls[index].AccessibilityObject;
+				if (index<owner.Controls.Count) {
+					return owner.Controls[index].AccessibilityObject;
 				}
 			}
 			return null;
@@ -169,7 +169,7 @@ namespace System.Windows.Forms {
 
 		public virtual int GetChildCount() {
 			if (owner!=null) {
-				return owner.child_controls.Count;
+				return owner.Controls.Count;
 			}
 			return -1;
 		}
@@ -217,7 +217,7 @@ namespace System.Windows.Forms {
 			// our own object
 
 			if (owner.Parent != null) {
-				index = owner.Parent.child_controls.IndexOf(owner);
+				index = owner.Parent.Controls.IndexOf(owner);
 			} else {
 				index = -1;
 			}
@@ -226,9 +226,9 @@ namespace System.Windows.Forms {
 				// Spatial navigation; limited to siblings
 				case AccessibleNavigation.Up: {
 					if (owner.Parent != null) {
-						for (int i=0; i<owner.Parent.child_controls.Count; i++) {
-							if ((owner != owner.Parent.child_controls[i]) && (owner.Parent.child_controls[i].Top<owner.Top)) {
-								return owner.Parent.child_controls[i].AccessibilityObject;
+						for (int i=0; i<owner.Parent.Controls.Count; i++) {
+							if ((owner != owner.Parent.Controls[i]) && (owner.Parent.Controls[i].Top<owner.Top)) {
+								return owner.Parent.Controls[i].AccessibilityObject;
 							}
 						}
 						
@@ -238,9 +238,9 @@ namespace System.Windows.Forms {
 
 				case AccessibleNavigation.Down: {
 					if (owner.Parent != null) {
-						for (int i=0; i<owner.Parent.child_controls.Count; i++) {
-							if ((owner != owner.Parent.child_controls[i]) && (owner.Parent.child_controls[i].Top>owner.Bottom)) {
-								return owner.Parent.child_controls[i].AccessibilityObject;
+						for (int i=0; i<owner.Parent.Controls.Count; i++) {
+							if ((owner != owner.Parent.Controls[i]) && (owner.Parent.Controls[i].Top>owner.Bottom)) {
+								return owner.Parent.Controls[i].AccessibilityObject;
 							}
 						}
 						
@@ -250,9 +250,9 @@ namespace System.Windows.Forms {
 
 				case AccessibleNavigation.Left: {
 					if (owner.Parent != null) {
-						for (int i=0; i<owner.Parent.child_controls.Count; i++) {
-							if ((owner != owner.Parent.child_controls[i]) && (owner.Parent.child_controls[i].Left<owner.Left)) {
-								return owner.Parent.child_controls[i].AccessibilityObject;
+						for (int i=0; i<owner.Parent.Controls.Count; i++) {
+							if ((owner != owner.Parent.Controls[i]) && (owner.Parent.Controls[i].Left<owner.Left)) {
+								return owner.Parent.Controls[i].AccessibilityObject;
 							}
 						}
 						
@@ -262,9 +262,9 @@ namespace System.Windows.Forms {
 
 				case AccessibleNavigation.Right: {
 					if (owner.Parent != null) {
-						for (int i=0; i<owner.Parent.child_controls.Count; i++) {
-							if ((owner != owner.Parent.child_controls[i]) && (owner.Parent.child_controls[i].Left>owner.Right)) {
-								return owner.Parent.child_controls[i].AccessibilityObject;
+						for (int i=0; i<owner.Parent.Controls.Count; i++) {
+							if ((owner != owner.Parent.Controls[i]) && (owner.Parent.Controls[i].Left>owner.Right)) {
+								return owner.Parent.Controls[i].AccessibilityObject;
 							}
 						}
 						
@@ -275,10 +275,10 @@ namespace System.Windows.Forms {
 				// Logical navigation
 				case AccessibleNavigation.Next: {
 					if (owner.Parent != null) {
-						if ((index+1)<owner.Parent.child_controls.Count) {
-							return owner.Parent.child_controls[index+1].AccessibilityObject;
+						if ((index+1)<owner.Parent.Controls.Count) {
+							return owner.Parent.Controls[index+1].AccessibilityObject;
 						} else {
-							return owner.Parent.child_controls[0].AccessibilityObject;
+							return owner.Parent.Controls[0].AccessibilityObject;
 						}
 					} else {
 						return owner.AccessibilityObject;
@@ -288,9 +288,9 @@ namespace System.Windows.Forms {
 				case AccessibleNavigation.Previous: {
 					if (owner.Parent != null) {
 						if (index>0) {
-							return owner.Parent.child_controls[index-1].AccessibilityObject;
+							return owner.Parent.Controls[index-1].AccessibilityObject;
 						} else {
-							return owner.Parent.child_controls[owner.Parent.child_controls.Count-1].AccessibilityObject;
+							return owner.Parent.Controls[owner.Parent.Controls.Count-1].AccessibilityObject;
 						}
 					} else {
 						return owner.AccessibilityObject;
@@ -298,16 +298,16 @@ namespace System.Windows.Forms {
 				}
 
 				case AccessibleNavigation.FirstChild: {
-					if (owner.child_controls.Count>0) {
-						return owner.child_controls[0].AccessibilityObject;
+					if (owner.Controls.Count>0) {
+						return owner.Controls[0].AccessibilityObject;
 					} else {
 						return owner.AccessibilityObject;
 					}
 				}
 
 				case AccessibleNavigation.LastChild: {
-					if (owner.child_controls.Count>0) {
-						return owner.child_controls[owner.child_controls.Count-1].AccessibilityObject;
+					if (owner.Controls.Count>0) {
+						return owner.Controls[owner.Controls.Count-1].AccessibilityObject;
 					} else {
 						return owner.AccessibilityObject;
 					}
@@ -340,13 +340,13 @@ namespace System.Windows.Forms {
 			Control	child;
 
 			if (parent != null) {
-				for (int i=0; i < parent.child_controls.Count; i++) {
-					child = parent.child_controls[i];
+				for (int i=0; i < parent.Controls.Count; i++) {
+					child = parent.Controls[i];
 					if ((child.AccessibilityObject.state & AccessibleStates.Focused) != 0) {
 						return child.AccessibilityObject;
 					}
 
-					if (child.child_controls.Count>0) {
+					if (child.Controls.Count>0) {
 						AccessibleObject result;
 
 						result = FindFocusControl(child);
@@ -363,12 +363,12 @@ namespace System.Windows.Forms {
 			Control	child;
 
 			if (parent != null) {
-				for (int i=0; i < parent.child_controls.Count; i++) {
-					child = parent.child_controls[i];
+				for (int i=0; i < parent.Controls.Count; i++) {
+					child = parent.Controls[i];
 					if ((child.AccessibilityObject.state & AccessibleStates.Selected) != 0) {
 						return child.AccessibilityObject;
 					}
-					if (child.child_controls.Count>0) {
+					if (child.Controls.Count>0) {
 						AccessibleObject result;
 
 						result = FindSelectedControl(child);
@@ -393,13 +393,13 @@ namespace System.Windows.Forms {
 				return parent;
 			}
 
-			for (int i=0; i < parent.child_controls.Count; i++) {
-				child=parent.child_controls[i];
+			for (int i=0; i < parent.Controls.Count; i++) {
+				child=parent.Controls[i];
 				child_point = child.PointToClient(hittest_point);
 				if (child.ClientRectangle.Contains(child_point)) {
 					return child;
 				}
-				if (child.child_controls.Count>0) {
+				if (child.Controls.Count>0) {
 					Control result;
 
 					result = FindHittestControl(child, x, y);

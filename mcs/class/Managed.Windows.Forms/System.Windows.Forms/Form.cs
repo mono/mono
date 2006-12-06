@@ -1718,7 +1718,7 @@ namespace System.Windows.Forms {
 				}
 
 				/* Now scale our children */
-				Control [] controls = child_controls.GetAllControls ();
+				Control [] controls = Controls.GetAllControls ();
 				for (int i=0; i < controls.Length; i++) {
 					controls[i].Scale(dx, dy);
 				}

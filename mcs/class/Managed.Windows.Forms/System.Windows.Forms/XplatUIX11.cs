@@ -1578,7 +1578,7 @@ namespace System.Windows.Forms {
 		private void AccumulateDestroyedHandles (Control c, ArrayList list)
 		{
 			if (c != null) {
-				Control[] controls = c.child_controls.GetAllControls ();
+				Control[] controls = c.Controls.GetAllControls ();
 
 				if (c.IsHandleCreated && !c.IsDisposed) {
 					Hwnd hwnd = Hwnd.ObjectFromHandle(c.Handle);

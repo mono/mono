@@ -1478,7 +1478,7 @@ namespace System.Windows.Forms {
 			Control[]	controls;
 			
 			if (c != null) {
-				controls = c.child_controls.GetAllControls ();
+				controls = c.Controls.GetAllControls ();
 				
 				for (i = 0; i < controls.Length; i++) {
 					if (controls [i].IsHandleCreated) {
