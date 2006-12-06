@@ -239,7 +239,7 @@ namespace System.ComponentModel
 				if (mi != null)
 					return (bool) mi.Invoke (component, null);
 
-				return true;
+				return false;
 			}
 		}
 	}

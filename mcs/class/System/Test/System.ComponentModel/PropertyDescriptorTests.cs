@@ -79,6 +79,13 @@ namespace MonoTests.System.ComponentModel
 			}
 		}
 
+		class NoSerializeOrResetProp_test
+		{
+			public int Prop {
+				get { return 5; }
+			}
+		}
+
 		class CanReset_public_test
 		{
 			int prop = 5;
@@ -211,6 +218,16 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (5, test.Prop, "2");
 			p.ResetValue (test);
 			Assert.AreEqual (10, test.Prop, "3");
+		}
+
+		[Test]
+		public void NoSerializeOrResetPropTest ()
+		{
+			PropertyDescriptor p = TypeDescriptor.GetProperties (typeof (NoSerializeOrResetProp_test))["Prop"];
+			NoSerializeOrResetProp_test test = new NoSerializeOrResetProp_test ();
+
+			Assert.IsFalse (p.CanResetValue (test), "1");
+			Assert.IsFalse (p.ShouldSerializeValue (test), "2");
 		}
 
 		[Test]

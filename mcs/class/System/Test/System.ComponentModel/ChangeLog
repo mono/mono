@@ -1,5 +1,11 @@
 2006-12-06  Chris Toshok  <toshok@ximian.com>
 
+	* PropertyDescriptorTests.cs: add a test for ShouldSerializeValue
+	and CanResetValue on a class without ShouldSerialize/Reset
+	methods.
+
+2006-12-06  Chris Toshok  <toshok@ximian.com>
+
 	* PropertyDescriptorTests.cs: flesh out these tests more with some
 	for ShouldSerialize and CanReset.
 
