@@ -204,28 +204,36 @@ namespace System.Windows.Forms {
 		public int SelectedIndex {
 			get { return selected_index; }
 			set {
-				if (selected_index == value) {
+
+				if (!this.IsHandleCreated) {
+					selected_index = value;
+					return;
+				}
+
+				if (value < -1) {
+					throw new ArgumentException ("'" + value + "' is not a valid value for 'value'. " +
+						"'value' must be greater than or equal to -1.");
+				}
+
+				if (value >= TabCount)
+					return;
+
+				if (value == selected_index) {
 					Invalidate(GetTabRect (selected_index));
 					return;
 				}
-				if (selected_index < -1) {
-					throw new ArgumentException ("'" + value + "' is not a valid value for 'value'. " +
-							"'value' must be greater than or equal to -1.");
-				}
-				if (value >= TabCount)
-					return;
 
 				SuspendLayout ();
 
 				Rectangle invalid = Rectangle.Empty;
 				bool refresh = false;
 				
-				if (-1 != value && show_slider && value < slider_pos) {
+				if (value != -1 && show_slider && value < slider_pos) {
 					slider_pos = value;
 					refresh = true;
 				}
 
-				if (-1 != value) {
+				if (value != -1) {
 					int le = TabPages [value].TabBounds.Right;
 					int re = ThemeEngine.Current.GetTabControlLeftScrollRect (this).Left;
 					if (show_slider && le > re) {
@@ -554,7 +562,7 @@ namespace System.Windows.Forms {
 
 		internal override void OnGotFocusInternal(EventArgs e) {
 			has_focus = true;
-			if (selected_index == -1 && this.tab_pages.Count > 0)
+			if (selected_index == -1 && this.TabCount > 0)
 				this.SelectedIndex = 0;
 			if (selected_index != -1)
 				Invalidate(GetTabRect(selected_index));
