@@ -196,6 +196,7 @@ namespace System.Web.SessionState {
 			command.CommandText = selectCommand;
 			command.Parameters.Add (CreateParam (command, DbType.String, "SessionID", id));
 			command.Parameters.Add (CreateParam (command, DbType.DateTime, "Expires", DateTime.Now ));
+			command.Prepare ();
 			return command.ExecuteReader ();
 		}
 
@@ -254,6 +255,7 @@ namespace System.Web.SessionState {
 			param.Add (CreateParam (command, DbType.Binary, "SessionData",
 						   session.SessionDictionary.ToByteArray ()));
 
+			command.Prepare ();
 			command.ExecuteNonQuery ();
 		}
 
@@ -288,6 +290,7 @@ namespace System.Web.SessionState {
 			param.Add (CreateParam (command, DbType.Binary, "SessionData",
 								dict.ToByteArray ()));
 
+			command.Prepare ();
 			command.ExecuteNonQuery ();
 		}
 
@@ -316,6 +319,7 @@ namespace System.Web.SessionState {
 			command.CommandText = deleteCommand;
 			param = command.Parameters;
 			param.Add (CreateParam (command, DbType.String, "SessionID", id));
+			command.Prepare ();
 			command.ExecuteNonQuery ();
 		}
 
