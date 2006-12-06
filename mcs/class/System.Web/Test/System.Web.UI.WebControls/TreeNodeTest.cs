@@ -73,9 +73,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 	public class TreeNodeTest {
 
 		[Test]
-#if TARGET_JVM //BUG #6497
-		[Category ("NotWorking")]
-#endif
 		public void TreeNode_DefaultProperties () {
 			PokerTreeNode tn = new PokerTreeNode ();
 			Assert.AreEqual (false, tn.Checked, "Checked");
@@ -241,9 +238,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-#if TARGET_JVM //BUG #6497; BUG #6502
-		[Category ("NotWorking")]
-#endif
 		public void TreeNode_ToggleExpandState ()
 		{
 			TreeNode node = new TreeNode ("node");

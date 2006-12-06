@@ -642,9 +642,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-#if TARGET_JVM	//BUG #6484
-		[Category ("NotWorking")]
-#endif
 		public void FormView_DataBind ()
 		{
 			PokerDetailsView dv = new PokerDetailsView ();
@@ -685,9 +682,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		private bool isDeleted = false;
 
 		[Test]
-#if TARGET_JVM	//BUG #6484
-		[Category ("NotWorking")]
-#endif
 		public void DetailsView_DeleteItemHandler ()
 		{
 			PokerDetailsView dv = new PokerDetailsView ();
@@ -840,9 +834,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-#if TARGET_JVM	//BUG #6484
-		[Category ("NotWorking")]
-#endif
 		public void DetailsView_CreateChildControls ()
 		{
 			PokerDetailsView dv = new PokerDetailsView ();			
@@ -1028,9 +1019,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-#if TARGET_JVM	//BUG #6484
-		[Category ("NotWorking")]
-#endif
 		public void DetailsView_InitializePager ()
 		{
 			PokerDetailsView dv = new PokerDetailsView ();
