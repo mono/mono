@@ -1,3 +1,12 @@
+2006-12-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X501Name.cs: Add decoding of RFC3280 mandatory and optional 
+	attributes types for dnQualifier, title, surname, givenName and 
+	initial.
+	* X520Attributes.cs: Add encoding of RFC3280 mandatory and 
+	optional attributes types for dnQualifier, title, surname, givenName 
+	and initial.
+
 2006-12-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate.cs: Resurrect the (fixed) support for [Issuer|

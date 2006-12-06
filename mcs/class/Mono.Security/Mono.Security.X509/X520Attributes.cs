@@ -266,6 +266,36 @@ namespace Mono.Security.X509 {
 			{
 			}
 		}
+
+		public class DnQualifier : AttributeTypeAndValue {
+
+			// (0x13) PRINTABLESTRING
+			public DnQualifier () : base ("2.5.4.46", 2, 0x13) 
+			{
+			}
+		}
+
+		public class Surname : AttributeTypeAndValue {
+
+			public Surname () : base ("2.5.4.4", 32768) 
+			{
+			}
+		}
+
+		public class GivenName : AttributeTypeAndValue {
+
+			public GivenName () : base ("2.5.4.42", 16) 
+			{
+			}
+		}
+
+		public class Initial : AttributeTypeAndValue {
+
+			public Initial () : base ("2.5.4.43", 5) 
+			{
+			}
+		}
+
 	}
         
 	/* From RFC3280
