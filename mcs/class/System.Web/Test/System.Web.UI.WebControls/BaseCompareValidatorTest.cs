@@ -492,6 +492,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 #if NET_2_0
 		[Test]
+		[Category ("NotWorking")]
 		public void CultureInvariantValues_1 ()
 		{
 			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US", false);
@@ -528,6 +529,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void CultureInvariantValues_2 ()
 		{
 

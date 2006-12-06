@@ -631,8 +631,7 @@ namespace MonoTests.System.Web.UI.WebControls {
         }
 
 
-		[Test]
-        [Category ("NotWorking")]
+	[Test]
         [ExpectedException(typeof(HttpException))]
 		public void LayoutTemplateException ()
 		{
@@ -781,49 +780,10 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		[Category ("NotWorking")] // NotImplementedException on Mono
-		public void SetDesignModeState_Null ()
-		{
-			TestLogin l = new TestLogin ();
-			l.SetDesignMode (null);
-			Hashtable ht = new Hashtable ();
-			l.SetDesignMode (ht); // empty
-			ht.Add ("mono", "http://www.go-mono.com");
-			ht.Add (this, l);
-			l.SetDesignMode (ht);
-			Assert.AreEqual (2, ht.Count, "Hashtable.Count");
-		}
-
-		[Test]
 		[Category ("NunitWeb")]
 		[Category("NotWorking")]
 		public void OnBubbleEvent ()
 		{
-//4) MonoTests.System.Web.UI.WebControls.LoginTest.OnBubbleEvent : System.TypeInitializationException : An exception was thrown by the type initializer for System.TypeInitializationException: An exception was thrown by the type initializer for System.Web.Security.Membership ---> System.Configuration.ConfigurationErrorsException: Could not find type: MonoTests.SystemWeb.Framework.FakeMembershipProvider () ()  at System.Web.Configuration.ProvidersHelper.InstantiateProvider (System.Configuration.ProviderSettings providerSettings, System.Type providerType) [0x00000]
-//  at System.Web.Configuration.ProvidersHelper.InstantiateProviders (System.Configuration.ProviderSettingsCollection configProviders, System.Configuration.Provider.ProviderCollection providers, System.Type providerType) [0x00000]
-//  at System.Web.Security.Membership..cctor () [0x00000] --- End of inner exception stack trace ---
-//
-//  at <0x00000> <unknown method>
-//  at System.Web.UI.WebControls.CreateUserWizard.InitMemberShipProvider () [0x00000]
-//  at System.Web.UI.WebControls.CreateUserWizard.get_MembershipProviderInternal () [0x00000]
-//  at System.Web.UI.WebControls.CreateUserWizard.get_QuestionAndAnswerRequired () [0x00000]
-//  at System.Web.UI.WebControls.CreateUserStepTemplate.System.Web.UI.ITemplate.InstantiateIn (System.Web.UI.Control container) [0x00000]
-//  at System.Web.UI.WebControls.BaseWizardContainer.InstatiateTemplate (ITemplate template) [0x00000]
-//  at System.Web.UI.WebControls.TemplatedWizardStep.InstantiateInContainer () [0x00000]
-//  at System.Web.UI.WebControls.Wizard.InstantiateTemplateStep (System.Web.UI.WebControls.TemplatedWizardStep step) [0x00000]
-//  at System.Web.UI.WebControls.CreateUserWizard.InstantiateTemplateStep (System.Web.UI.WebControls.TemplatedWizardStep step) [0x00000]
-//  at System.Web.UI.WebControls.Wizard.CreateControlHierarchy () [0x00000]
-//  at System.Web.UI.WebControls.CreateUserWizard.CreateControlHierarchy () [0x00000]
-//  at System.Web.UI.WebControls.Wizard.CreateChildControls () [0x00000]
-//  at System.Web.UI.WebControls.CreateUserWizard.CreateChildControls () [0x00000]
-//  at System.Web.UI.Control.EnsureChildControls () [0x00000]
-//  at System.Web.UI.Control.PreRenderRecursiveInternal () [0x00000]
-//  at System.Web.UI.Control.PreRenderRecursiveInternal () [0x00000]
-//  at System.Web.UI.Page.InternalProcessRequest () [0x00000]
-//  at System.Web.UI.Page.ProcessRequest (System.Web.HttpContext context) [0x00000]
-//  ----> System.TypeInitializationException : An exception was thrown by the type initializer for System.Web.Security.Membership
-//  ----> System.Configuration.ConfigurationErrorsException : Could not find type: MonoTests.SystemWeb.Framework.FakeMembershipProvider () ()
-//			
 			WebTest t = new WebTest (PageInvoker.CreateOnPreInit (_OnBubbleEvent));
 			string html = t.Run ();
 		}
@@ -867,32 +827,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		[Category("NotWorking")]
 		public void OnBubbleEvent_Authenticated_OnAuthenticate ()
 		{
-// 5) MonoTests.System.Web.UI.WebControls.LoginTest.OnBubbleEvent_Authenticated_OnAuthenticate : System.TypeInitializationException : An exception was thrown by the type initializer for System.TypeInitializationException: An exception was thrown by the type initializer for System.Web.Security.Membership ---> System.Configuration.ConfigurationErrorsException: Could not find type: MonoTests.SystemWeb.Framework.FakeMembershipProvider () ()
-//   at System.Web.Configuration.ProvidersHelper.InstantiateProvider (System.Configuration.ProviderSettings providerSettings, System.Type providerType) [0x00000]
-//   at System.Web.Configuration.ProvidersHelper.InstantiateProviders (System.Configuration.ProviderSettingsCollection configProviders, System.Configuration.Provider.ProviderCollection providers, System.Type providerType) [0x00000]
-//   at System.Web.Security.Membership..cctor () [0x00000] --- End of inner exception stack trace ---
-// 
-//   at <0x00000> <unknown method>
-//   at System.Web.UI.WebControls.CreateUserWizard.InitMemberShipProvider () [0x00000]
-//   at System.Web.UI.WebControls.CreateUserWizard.get_MembershipProviderInternal () [0x00000]
-//   at System.Web.UI.WebControls.CreateUserWizard.get_QuestionAndAnswerRequired () [0x00000]
-//   at System.Web.UI.WebControls.CreateUserStepTemplate.System.Web.UI.ITemplate.InstantiateIn (System.Web.UI.Control container) [0x00000]
-//   at System.Web.UI.WebControls.BaseWizardContainer.InstatiateTemplate (ITemplate template) [0x00000]
-//   at System.Web.UI.WebControls.TemplatedWizardStep.InstantiateInContainer () [0x00000]
-//   at System.Web.UI.WebControls.Wizard.InstantiateTemplateStep (System.Web.UI.WebControls.TemplatedWizardStep step) [0x00000]
-//   at System.Web.UI.WebControls.CreateUserWizard.InstantiateTemplateStep (System.Web.UI.WebControls.TemplatedWizardStep step) [0x00000]
-//   at System.Web.UI.WebControls.Wizard.CreateControlHierarchy () [0x00000]
-//   at System.Web.UI.WebControls.CreateUserWizard.CreateControlHierarchy () [0x00000]
-//   at System.Web.UI.WebControls.Wizard.CreateChildControls () [0x00000]
-//   at System.Web.UI.WebControls.CreateUserWizard.CreateChildControls () [0x00000]
-//   at System.Web.UI.Control.EnsureChildControls () [0x00000]
-//   at System.Web.UI.Control.PreRenderRecursiveInternal () [0x00000]
-//   at System.Web.UI.Control.PreRenderRecursiveInternal () [0x00000]
-//   at System.Web.UI.Page.InternalProcessRequest () [0x00000]
-//   at System.Web.UI.Page.ProcessRequest (System.Web.HttpContext context) [0x00000]
-//   ----> System.TypeInitializationException : An exception was thrown by the type initializer for System.Web.Security.Membership
-//   ----> System.Configuration.ConfigurationErrorsException : Could not find type: MonoTests.SystemWeb.Framework.FakeMembershipProvider () ()^M
-// 			
 			WebTest t = new WebTest (PageInvoker.CreateOnPreInit (_OnBubbleEvent_Authenticated_OnAuthenticate));
 			string html = t.Run ();
 		}
