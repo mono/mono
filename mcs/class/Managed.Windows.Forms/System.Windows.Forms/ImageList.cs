@@ -56,10 +56,6 @@
 // and ColorDepth that are treated as bugs and MS.NET 2.0 behavior is
 // implemented.
 //
-// MS.NET 2.0 initializes TransparentColor to Color.Transparent in
-// constructors but ResetTransparentColor and ShouldSerializeTransparentColor
-// default to Color.LightGray that is treated as a bug.
-//
 // MS.NET 2.0 does not clear keys when handle is destroyed that is treated as
 // a bug.
 //
@@ -974,6 +970,54 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, EventArgs.Empty);
 		}
+
+		// MS's TypeDescriptor stuff apparently uses
+		// non-public ShouldSerialize* methods, because it
+		// picks up this behavior even though the methods
+		// aren't public.  we can't make them private, though,
+		// without adding compiler warnings.  so, make then
+		// internal instead.
+
+		internal bool ShouldSerializeTransparentColor ()
+		{
+			return this.TransparentColor != Color.LightGray;
+		}
+
+		internal bool ShouldSerializeColorDepth()
+		{
+			// ColorDepth is serialized in ImageStream when non-empty.
+			// It is serialized even if it has its default value when empty.
+			return images.Empty;
+		}               
+
+		internal bool ShouldSerializeImageSize()
+		{
+			// ImageSize is serialized in ImageStream when non-empty.
+			// It is serialized even if it has its default value when empty.
+#if NET_2_0
+			return images.Empty;
+#else
+			return this.ImageSize != DefaultImageSize;
+#endif
+		}
+
+
+		internal void ResetColorDepth ()
+		{
+			this.ColorDepth = DefaultColorDepth;
+		}
+
+#if NET_2_0
+		internal void ResetImageSize ()
+		{
+			this.ImageSize = DefaultImageSize;
+		}
+
+		internal void ResetTransparentColor ()
+		{
+			this.TransparentColor = Color.LightGray;
+		}
+#endif
 		#endregion // Private Instance Methods
 
 		#region Public Instance Properties

@@ -1,3 +1,9 @@
+2006-12-06  Chris Toshok  <toshok@ximian.com>
+
+	* ImageList.cs: reinstate the ShouldSerialize*/Reset* methods,
+	with different semantics (some are present in both 1.1 and 2.0
+	profiles) so that we match MS's behavior in our unit tests.
+
 2006-12-06  Jackson Harper  <jackson@ximian.com>
 
 	* TextControl.cs: Make this operation undoable.
