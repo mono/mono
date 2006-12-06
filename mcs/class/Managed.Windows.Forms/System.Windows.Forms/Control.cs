@@ -86,7 +86,7 @@ namespace System.Windows.Forms
 		internal ControlStyles		control_style;		// rather win32-specific, style bits for control
 		internal ImeMode		ime_mode = ImeMode.Inherit;
 		bool layout_pending; // true if our parent needs to re-layout us
-		internal object			control_tag;		// object that contains data about our control
+		object control_tag; // object that contains data about our control
 		internal int			mouse_clicks;		// Counter for mouse clicks
 		internal Cursor			cursor;			// Cursor for the window
 		internal bool			allow_drop;		// true if the control accepts droping objects on it   

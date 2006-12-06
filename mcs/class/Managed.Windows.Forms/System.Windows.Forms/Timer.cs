@@ -39,7 +39,7 @@ namespace System.Windows.Forms {
 		internal Thread thread;
 
 #if NET_2_0
-		internal object control_tag;
+		object control_tag;
 #endif
 		internal static readonly int Minimum = 15;
 

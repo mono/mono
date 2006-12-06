@@ -49,7 +49,7 @@ namespace System.Windows.Forms
 		internal MenuTracker tracker;
 
 #if NET_2_0
-		internal object control_tag;
+		object control_tag;
 #endif
 
 		public const int FindHandle = 0;

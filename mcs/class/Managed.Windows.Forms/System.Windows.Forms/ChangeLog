@@ -1,5 +1,9 @@
 2006-12-06  Chris Toshok  <toshok@ximian.com>
 
+	* Timer.cs, Control.cs, Menu.cs: make control_tag private.
+
+2006-12-06  Chris Toshok  <toshok@ximian.com>
+
 	* Control.cs: make right_to_left and context_menu fields private.
 
 2006-12-06  Chris Toshok  <toshok@ximian.com>
