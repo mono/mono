@@ -51,7 +51,15 @@ namespace System.Web.UI.WebControls
 		{
 			return emptyNames;
 		}
-		
+
+		IList IListSource.GetList () {
+			return GetList ();
+		}
+
+		bool IListSource.ContainsListCollection	{
+			get { return ContainsListCollection; }
+		}
+
 		public virtual IList GetList ()
 		{
 			return ListSourceHelper.GetList (this);
