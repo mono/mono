@@ -52,6 +52,16 @@ namespace System.Web.UI.WebControls {
 		{
 			if (RenderUplevel) {
 				w.AddAttribute ("datatype", Type.ToString());
+
+#if NET_2_0
+				if (Page!=null && Type == ValidationDataType.Date) {
+					DateTimeFormatInfo dateTimeFormat = CultureInfo.CurrentUICulture.DateTimeFormat;
+					string pattern = dateTimeFormat.ShortDatePattern;
+					string dateorder = (pattern.StartsWith ("y", true, CultureInfo.InvariantCulture) ? "ymd" : (pattern.StartsWith ("m", true, CultureInfo.InvariantCulture) ? "mdy" : "dmy"));
+					Page.ClientScript.RegisterExpandoAttribute (ClientID, "dateorder", dateorder);
+					Page.ClientScript.RegisterExpandoAttribute (ClientID, "cutoffyear", dateTimeFormat.Calendar.TwoDigitYearMax.ToString());
+				}
+#endif
 			}
 
 			base.AddAttributesToRender (w);
@@ -265,4 +275,5 @@ namespace System.Web.UI.WebControls {
 	}
 
 }
+
 

@@ -1,5 +1,9 @@
 2006-12-06 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* BaseCompareValidator.cs: fixed: support for type=Date on client side.
+
+2006-12-06 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* TreeView.cs: fixed: support for event validation.
 
 2006-12-04 Igor Zelmanovich <igorz@mainsoft.com>
