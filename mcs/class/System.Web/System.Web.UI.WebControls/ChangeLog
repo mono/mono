@@ -1,5 +1,13 @@
 2006-12-06 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* AdRotator.cs: fixed: 
+	MSDN: The ImageUrl and NavigateUrl attributes can be a full URL, a 
+	root-relative path, or a relative path. If you use a root-relative path, 
+	the path is relative to the same Web site. If you use a relative path, 
+	the path is relative to the directory that contains the advertisement file.
+
+2006-12-06 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* BaseCompareValidator.cs: fixed: support for type=Date on client side.
 
 2006-12-06 Igor Zelmanovich <igorz@mainsoft.com>

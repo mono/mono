@@ -30,6 +30,7 @@ using System.Xml;
 using System.Collections;
 using System.ComponentModel;
 using System.Security.Permissions;
+using System.Web.Util;
 
 namespace System.Web.UI.WebControls {
 
@@ -105,21 +106,32 @@ namespace System.Web.UI.WebControls {
 			AdCreatedEventArgs e = createdargs;
 
 			base.AddAttributesToRender (w);
-			
-			if (e.NavigateUrl != null)
-				w.AddAttribute (HtmlTextWriterAttribute.Href, ResolveClientUrl (e.NavigateUrl));
-			w.AddAttribute (HtmlTextWriterAttribute.Target, Target);
+
+			if (e.NavigateUrl != null && e.NavigateUrl.Length > 0)
+				w.AddAttribute (HtmlTextWriterAttribute.Href, ResolveAdUrl (e.NavigateUrl));
+			if (Target != null && Target.Length > 0)
+				w.AddAttribute (HtmlTextWriterAttribute.Target, Target);
 			
 			w.RenderBeginTag (HtmlTextWriterTag.A);
 
-			if (e.NavigateUrl != null)
-				w.AddAttribute (HtmlTextWriterAttribute.Src, ResolveClientUrl (e.ImageUrl));
-			
+			if (e.NavigateUrl != null && e.NavigateUrl.Length > 0)
+				w.AddAttribute (HtmlTextWriterAttribute.Src, ResolveAdUrl (e.ImageUrl));
+
 			w.AddAttribute (HtmlTextWriterAttribute.Alt, e.AlternateText == null ? "" : e.AlternateText);
 			w.AddAttribute (HtmlTextWriterAttribute.Border, "0");
 			w.RenderBeginTag (HtmlTextWriterTag.Img);
 			w.RenderEndTag (); // img
 			w.RenderEndTag (); // a
+		}
+
+		string ResolveAdUrl (string url)
+		{
+			string path = url;
+			
+			if (AdvertisementFile != null && AdvertisementFile.Length > 0 && path [0] != '/' && path [0] != '~')
+				return UrlUtils.Combine (UrlUtils.GetDirectory (ResolveUrl (AdvertisementFile)), path);
+			
+			return ResolveUrl (path);
 		}
 
 		//
