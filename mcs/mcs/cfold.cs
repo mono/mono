@@ -14,6 +14,10 @@ namespace Mono.CSharp {
 
 	public class ConstantFold {
 
+		static Type[] binary_promotions = new Type[] { 
+			TypeManager.decimal_type, TypeManager.double_type, TypeManager.float_type,
+			TypeManager.uint64_type, TypeManager.int64_type, TypeManager.uint32_type };
+
 		//
 		// Performs the numeric promotions on the left and right expresions
 		// and desposits the results on `lc' and `rc'.
@@ -21,145 +25,21 @@ namespace Mono.CSharp {
 		// On success, the types of `lc' and `rc' on output will always match,
 		// and the pair will be one of:
 		//
-		//   (double, double)
-		//   (float, float)
-		//   (ulong, ulong)
-		//   (long, long)
-		//   (uint, uint)
-		//   (int, int)
-		//   (short, short)   (Happens with enumerations with underlying short type)
-		//   (ushort, ushort) (Happens with enumerations with underlying short type)
-		//
-		static void DoConstantNumericPromotions (EmitContext ec, Binary.Operator oper,
-							 ref Constant left, ref Constant right,
-							 Location loc)
+		static void DoBinaryNumericPromotions (ref Constant left, ref Constant right)
 		{
-			if (left is DoubleConstant || right is DoubleConstant){
-				//
-				// If either side is a double, convert the other to a double
-				//
-				if (!(left is DoubleConstant))
-					left = left.ToDouble (loc);
+			Type ltype = left.Type;
+			Type rtype = right.Type;
 
-				if (!(right is DoubleConstant))
-					right = right.ToDouble (loc);
-				return;
-			} else if (left is FloatConstant || right is FloatConstant) {
-				//
-				// If either side is a float, convert the other to a float
-				//
-				if (!(left is FloatConstant))
-					left = left.ToFloat (loc);
-
-				if (!(right is FloatConstant))
-					right = right.ToFloat (loc);
-;				return;
-			} else if (left is ULongConstant || right is ULongConstant){
-				//
-				// If either operand is of type ulong, the other operand is
-				// converted to type ulong.  or an error ocurrs if the other
-				// operand is of type sbyte, short, int or long
-				//
-#if WRONG
-				Constant match, other;
-#endif
-					
-				if (left is ULongConstant){
-#if WRONG
-					other = right;
-					match = left;
-#endif
-					if (!(right is ULongConstant))
-						right = right.ToULong (loc);
-				} else {
-#if WRONG
-					other = left;
-					match = right;
-#endif
-					left = left.ToULong (loc);
-				}
-
-#if WRONG
-				if (other is SByteConstant || other is ShortConstant ||
-				    other is IntConstant || other is LongConstant){
-					Binary.Error_OperatorAmbiguous
-						(loc, oper, other.Type, match.Type);
-					left = null;
-					right = null;
-				}
-#endif
-				return;
-			} else if (left is LongConstant || right is LongConstant){
-				//
-				// If either operand is of type long, the other operand is converted
-				// to type long.
-				//
-				if (!(left is LongConstant))
-					left = left.ToLong (loc);
-				else if (!(right is LongConstant))
-					right = right.ToLong (loc);
-				return;
-			} else if (left is UIntConstant || right is UIntConstant){
-				//
-				// If either operand is of type uint, and the other
-				// operand is of type sbyte, short or int, the operands are
-				// converted to type long.
-				//
-				Constant other;
-				if (left is UIntConstant)
-					other = right;
-				else
-					other = left;
-
-				// Nothing to do.
-				if (other is UIntConstant)
+			foreach (Type t in binary_promotions) {
+				if (t == ltype || t == rtype) {
+					left = left.ConvertImplicitly (t);
+					right = right.ConvertImplicitly (t);
 					return;
-
-				IntConstant ic = other as IntConstant;
-				if (ic != null){
-					if (ic.Value >= 0){
-						if (left == other)
-							left = new UIntConstant ((uint) ic.Value, ic.Location);
-						else
-							right = new UIntConstant ((uint) ic.Value, ic.Location);
-						return;
-					}
 				}
-				
-				if (other is SByteConstant || other is ShortConstant || ic != null){
-					left = left.ToLong (loc);
-					right = right.ToLong (loc);
-				} else {
-					left = left.ToUInt (loc);
-					right = left.ToUInt (loc);
-				}
-
-				return;
-			} else if (left is DecimalConstant || right is DecimalConstant) {
-				if (!(left is DecimalConstant))
-					left = left.ToDecimal (loc);
-				else if (!(right is DecimalConstant))
-					right = right.ToDecimal (loc);
-				return;
-			} else if (left is EnumConstant || right is EnumConstant){
-				if (left is EnumConstant)
-					left = ((EnumConstant) left).Child;
-				if (right is EnumConstant)
-					right = ((EnumConstant) right).Child;
-
-				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
-				return;
-
-			} else {
-				//
-				// Force conversions to int32
-				//
-				if (!(left is IntConstant))
-					left = left.ToInt (loc);
-				if (!(right is IntConstant))
-					right = right.ToInt (loc);
 			}
-			return;
+
+			left = left.ConvertImplicitly (TypeManager.int32_type);
+			right = right.ConvertImplicitly (TypeManager.int32_type);
 		}
 
 		internal static void Error_CompileTimeOverflow (Location loc)
@@ -172,7 +52,7 @@ namespace Mono.CSharp {
 		///
 		///   Returns null if the expression can not be folded.
 		/// </summary>
-		static public Expression BinaryFold (EmitContext ec, Binary.Operator oper,
+		static public Constant BinaryFold (EmitContext ec, Binary.Operator oper,
 						     Constant left, Constant right, Location loc)
 		{
 			if (left is EmptyConstantCast)
@@ -183,27 +63,10 @@ namespace Mono.CSharp {
 
 			Type lt = left.Type;
 			Type rt = right.Type;
-			Type result_type = null;
 			bool bool_res;
+			Constant result = null;
 
-			//
-			// Enumerator folding
-			//
-			if (rt == lt && left is EnumConstant)
-				result_type = lt;
-
-			//
-			// During an enum evaluation, we need to unwrap enumerations
-			//
-			if (ec.InEnumContext){
-				if (left is EnumConstant)
-					left = ((EnumConstant) left).Child;
-				
-				if (right is EnumConstant)
-					right = ((EnumConstant) right).Child;
-			}
-
-			if (left is BoolConstant && right is BoolConstant) {
+			if (lt == TypeManager.bool_type && lt == rt) {
 				bool lv = ((BoolConstant) left ).Value;
 				bool rv = ((BoolConstant) right).Value;
 				switch (oper) {
@@ -223,216 +86,150 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			Type wrap_as;
-			Constant result = null;
+			//
+			// During an enum evaluation, none of the rules are valid
+			// Not sure whether it is bug in csc or in documentation
+			//
+			if (ec.InEnumContext){
+				if (left is EnumConstant)
+					left = ((EnumConstant) left).Child;
+				
+				if (right is EnumConstant)
+					right = ((EnumConstant) right).Child;
+			} else if (left is EnumConstant && rt == lt) {
+				switch (oper){
+					///
+					/// E operator |(E x, E y);
+					/// E operator &(E x, E y);
+					/// E operator ^(E x, E y);
+					/// 
+					case Binary.Operator.BitwiseOr:
+					case Binary.Operator.BitwiseAnd:
+					case Binary.Operator.ExclusiveOr:
+						return BinaryFold (ec, oper, ((EnumConstant)left).Child,
+								((EnumConstant)right).Child, loc).TryReduce (ec, lt, loc);
+
+					///
+					/// U operator -(E x, E y);
+					/// 
+					case Binary.Operator.Subtraction:
+						result = BinaryFold (ec, oper, ((EnumConstant)left).Child, ((EnumConstant)right).Child, loc);
+						return result.TryReduce (ec, ((EnumConstant)left).Child.Type, loc);
+
+					///
+					/// bool operator ==(E x, E y);
+					/// bool operator !=(E x, E y);
+					/// bool operator <(E x, E y);
+					/// bool operator >(E x, E y);
+					/// bool operator <=(E x, E y);
+					/// bool operator >=(E x, E y);
+					/// 
+					case Binary.Operator.Equality:				
+					case Binary.Operator.Inequality:
+					case Binary.Operator.LessThan:				
+					case Binary.Operator.GreaterThan:
+					case Binary.Operator.LessThanOrEqual:				
+					case Binary.Operator.GreaterThanOrEqual:
+						return BinaryFold(ec, oper, ((EnumConstant)left).Child, ((EnumConstant)right).Child, loc);
+				}
+				return null;
+			}
+
 			switch (oper){
 			case Binary.Operator.BitwiseOr:
-				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
+				DoBinaryNumericPromotions (ref left, ref right);
 				if (left == null || right == null)
 					return null;
 
 				if (left is IntConstant){
-					IntConstant v;
 					int res = ((IntConstant) left).Value | ((IntConstant) right).Value;
 					
-					v = new IntConstant (res, left.Location);
-					if (result_type == null)
-						return v;
-					else
-						return new EnumConstant (v, result_type);
-				} else if (left is UIntConstant){
-					UIntConstant v;
+					return new IntConstant (res, left.Location);
+				}
+				if (left is UIntConstant){
 					uint res = ((UIntConstant)left).Value | ((UIntConstant)right).Value;
 					
-					v = new UIntConstant (res, left.Location);
-					if (result_type == null)
-						return v;
-					else
-						return new EnumConstant (v, result_type);
-				} else if (left is LongConstant){
-					LongConstant v;
+					return new UIntConstant (res, left.Location);
+				}
+				if (left is LongConstant){
 					long res = ((LongConstant)left).Value | ((LongConstant)right).Value;
 					
-					v = new LongConstant (res, left.Location);
-					if (result_type == null)
-						return v;
-					else
-						return new EnumConstant (v, result_type);
-				} else if (left is ULongConstant){
-					ULongConstant v;
+					return new LongConstant (res, left.Location);
+				}
+				if (left is ULongConstant){
 					ulong res = ((ULongConstant)left).Value |
 						((ULongConstant)right).Value;
 					
-					v = new ULongConstant (res, left.Location);
-					if (result_type == null)
-						return v;
-					else
-						return new EnumConstant (v, result_type);
-				} else if (left is UShortConstant){
-					UShortConstant v;
-					ushort res = (ushort) (((UShortConstant)left).Value |
-							       ((UShortConstant)right).Value);
-					
-					v = new UShortConstant (res, left.Location);
-					if (result_type == null)
-						return v;
-					else
-						return new EnumConstant (v, result_type);
-				} else if (left is ShortConstant){
-					ShortConstant v;
-					short res = (short) (((ShortConstant)left).Value |
-							     ((ShortConstant)right).Value);
-					
-					v = new ShortConstant (res, left.Location);
-					if (result_type == null)
-						return v;
-					else
-						return new EnumConstant (v, result_type);
+					return new ULongConstant (res, left.Location);
 				}
 				break;
 				
 			case Binary.Operator.BitwiseAnd:
-				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
+				DoBinaryNumericPromotions (ref left, ref right);
 				if (left == null || right == null)
 					return null;
 				
+				///
+				/// int operator &(int x, int y);
+				/// uint operator &(uint x, uint y);
+				/// long operator &(long x, long y);
+				/// ulong operator &(ulong x, ulong y);
+				///
 				if (left is IntConstant){
-					IntConstant v;
 					int res = ((IntConstant) left).Value & ((IntConstant) right).Value;
-					
-					v = new IntConstant (res, left.Location);
-					if (result_type == null)
-						return v;
-					else
-						return new EnumConstant (v, result_type);
-				} else if (left is UIntConstant){
-					UIntConstant v;
+					return new IntConstant (res, left.Location);
+				}
+				if (left is UIntConstant){
 					uint res = ((UIntConstant)left).Value & ((UIntConstant)right).Value;
-					
-					v = new UIntConstant (res, left.Location);
-					if (result_type == null)
-						return v;
-					else
-						return new EnumConstant (v, result_type);
-				} else if (left is LongConstant){
-					LongConstant v;
+					return new UIntConstant (res, left.Location);
+				}
+				if (left is LongConstant){
 					long res = ((LongConstant)left).Value & ((LongConstant)right).Value;
-					
-					v = new LongConstant (res, left.Location);
-					if (result_type == null)
-						return v;
-					else
-						return new EnumConstant (v, result_type);
-				} else if (left is ULongConstant){
-					ULongConstant v;
+					return new LongConstant (res, left.Location);
+				}
+				if (left is ULongConstant){
 					ulong res = ((ULongConstant)left).Value &
 						((ULongConstant)right).Value;
 					
-					v = new ULongConstant (res, left.Location);
-					if (result_type == null)
-						return v;
-					else
-						return new EnumConstant (v, result_type);
-				} else if (left is UShortConstant){
-					UShortConstant v;
-					ushort res = (ushort) (((UShortConstant)left).Value &
-							       ((UShortConstant)right).Value);
-					
-					v = new UShortConstant (res, left.Location);
-					if (result_type == null)
-						return v;
-					else
-						return new EnumConstant (v, result_type);
-				} else if (left is ShortConstant){
-					ShortConstant v;
-					short res = (short) (((ShortConstant)left).Value &
-							     ((ShortConstant)right).Value);
-					
-					v = new ShortConstant (res, left.Location);
-					if (result_type == null)
-						return v;
-					else
-						return new EnumConstant (v, result_type);
+					return new ULongConstant (res, left.Location);
 				}
 				break;
 
 			case Binary.Operator.ExclusiveOr:
-				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
+				DoBinaryNumericPromotions (ref left, ref right);
 				if (left == null || right == null)
 					return null;
 				
 				if (left is IntConstant){
-					IntConstant v;
 					int res = ((IntConstant) left).Value ^ ((IntConstant) right).Value;
-					
-					v = new IntConstant (res, left.Location);
-					if (result_type == null)
-						return v;
-					else
-						return new EnumConstant (v, result_type);
-				} else if (left is UIntConstant){
-					UIntConstant v;
+					return new IntConstant (res, left.Location);
+				}
+				if (left is UIntConstant){
 					uint res = ((UIntConstant)left).Value ^ ((UIntConstant)right).Value;
 					
-					v = new UIntConstant (res, left.Location);
-					if (result_type == null)
-						return v;
-					else
-						return new EnumConstant (v, result_type);
-				} else if (left is LongConstant){
-					LongConstant v;
+					return  new UIntConstant (res, left.Location);
+				}
+				if (left is LongConstant){
 					long res = ((LongConstant)left).Value ^ ((LongConstant)right).Value;
 					
-					v = new LongConstant (res, left.Location);
-					if (result_type == null)
-						return v;
-					else
-						return new EnumConstant (v, result_type);
-				} else if (left is ULongConstant){
-					ULongConstant v;
+					return new LongConstant (res, left.Location);
+				}
+				if (left is ULongConstant){
 					ulong res = ((ULongConstant)left).Value ^
 						((ULongConstant)right).Value;
 					
-					v = new ULongConstant (res, left.Location);
-					if (result_type == null)
-						return v;
-					else
-						return new EnumConstant (v, result_type);
-				} else if (left is UShortConstant){
-					UShortConstant v;
-					ushort res = (ushort) (((UShortConstant)left).Value ^
-							       ((UShortConstant)right).Value);
-					
-					v = new UShortConstant (res, left.Location);
-					if (result_type == null)
-						return v;
-					else
-						return new EnumConstant (v, result_type);
-				} else if (left is ShortConstant){
-					ShortConstant v;
-					short res = (short)(((ShortConstant)left).Value ^
-							    ((ShortConstant)right).Value);
-					
-					v = new ShortConstant (res, left.Location);
-					if (result_type == null)
-						return v;
-					else
-						return new EnumConstant (v, result_type);
+					return new ULongConstant (res, left.Location);
 				}
 				break;
 
 			case Binary.Operator.Addition:
-				bool left_is_string = left is StringConstant;
-				bool right_is_string = right is StringConstant;
-
 				//
 				// If both sides are strings, then concatenate, if
 				// one is a string, and the other is not, then defer
 				// to runtime concatenation
 				//
-				wrap_as = null;
-				if (left_is_string || right_is_string){
-					if (left_is_string && right_is_string)
+				if (lt == TypeManager.string_type || rt == TypeManager.string_type){
+					if (lt == TypeManager.string_type && rt == TypeManager.string_type)
 						return new StringConstant (
 							((StringConstant) left).Value +
 							((StringConstant) right).Value, left.Location);
@@ -444,28 +241,32 @@ namespace Mono.CSharp {
 				// handle "E operator + (E x, U y)"
 				// handle "E operator + (Y y, E x)"
 				//
-				// note that E operator + (E x, E y) is invalid
-				//
-				if (left is EnumConstant){
-					if (right is EnumConstant){
-						return null;
+				EnumConstant lc = left as EnumConstant;
+				EnumConstant rc = right as EnumConstant;
+				if (lc != null || rc != null){
+					if (lc == null) {
+						lc = rc;
+						lt = lc.Type;
+						right = left;
 					}
 
-					right = right.ToType (((EnumConstant) left).Child.Type);
+					// U has to be implicitly convetible to E.base
+					right = right.ConvertImplicitly (lc.Child.Type);
 					if (right == null)
 						return null;
 
-					wrap_as = left.Type;
-				} else if (right is EnumConstant){
-					left = left.ToType (((EnumConstant) right).Child.Type);
-					if (left == null)
+					result = BinaryFold (ec, oper, lc.Child, right, loc);
+					if (result == null)
 						return null;
 
-					wrap_as = right.Type;
+					result = result.TryReduce (ec, lt, loc);
+					if (result == null)
+						return null;
+
+					return new EnumConstant (result, lt);
 				}
 
-				result = null;
-				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
+				DoBinaryNumericPromotions (ref left, ref right);
 				if (left == null || right == null)
 					return null;
 
@@ -480,8 +281,9 @@ namespace Mono.CSharp {
 							res = unchecked (((DoubleConstant) left).Value +
 									 ((DoubleConstant) right).Value);
 						
-						result = new DoubleConstant (res, left.Location);
-					} else if (left is FloatConstant){
+						return new DoubleConstant (res, left.Location);
+					}
+					if (left is FloatConstant){
 						float res;
 						
 						if (ec.ConstantCheckState)
@@ -554,56 +356,39 @@ namespace Mono.CSharp {
 					Error_CompileTimeOverflow (loc);
 				}
 
-				if (wrap_as != null) {
-					try {
-						return result.TryReduce (ec, wrap_as, loc);
-					}
-					catch (OverflowException) {
-						return null;
-					}
-				}
-				else
-					return result;
+				return result;
 
 			case Binary.Operator.Subtraction:
 				//
 				// handle "E operator - (E x, U y)"
 				// handle "E operator - (Y y, E x)"
-				// handle "U operator - (E x, E y)"
 				//
-				wrap_as = null;
-				if (left is EnumConstant){
-					if (right is EnumConstant){
-						if (left.Type != right.Type) {
-							Binary.Error_OperatorCannotBeApplied (loc, "-", left.Type, right.Type);
-							return null;
-						}
-
-						wrap_as = TypeManager.EnumToUnderlying (left.Type);
-						right = ((EnumConstant) right).Child.ToType (wrap_as);
-						if (right == null)
-							return null;
-
-						left = ((EnumConstant) left).Child.ToType (wrap_as);
-						if (left == null)
-							return null;
+				lc = left as EnumConstant;
+				rc = right as EnumConstant;
+				if (lc != null || rc != null){
+					if (lc == null) {
+						lc = rc;
+						lt = lc.Type;
+						right = left;
 					}
-					else {
-						right = right.ToType (((EnumConstant) left).Child.Type);
-						if (right == null)
-							return null;
 
-						wrap_as = left.Type;
-					}
-				} else if (right is EnumConstant){
-					left = left.ToType (((EnumConstant) right).Child.Type);
-					if (left == null)
+					// U has to be implicitly convetible to E.base
+					right = right.ConvertImplicitly (lc.Child.Type);
+					if (right == null)
 						return null;
 
-					wrap_as = right.Type;
+					result = BinaryFold (ec, oper, lc.Child, right, loc);
+					if (result == null)
+						return null;
+
+					result = result.TryReduce (ec, lt, loc);
+					if (result == null)
+						return null;
+
+					return new EnumConstant (result, lt);
 				}
 
-				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
+				DoBinaryNumericPromotions (ref left, ref right);
 				if (left == null || right == null)
 					return null;
 
@@ -692,19 +477,10 @@ namespace Mono.CSharp {
 					Error_CompileTimeOverflow (loc);
 				}
 
-				if (wrap_as != null) {
-					try {
-						return result.TryReduce (ec, wrap_as, loc);
-					}
-					catch (OverflowException) {
-						return null;
-					}
-				}
-
 				return result;
 				
 			case Binary.Operator.Multiply:
-				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
+				DoBinaryNumericPromotions (ref left, ref right);
 				if (left == null || right == null)
 					return null;
 
@@ -795,7 +571,7 @@ namespace Mono.CSharp {
 				break;
 
 			case Binary.Operator.Division:
-				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
+				DoBinaryNumericPromotions (ref left, ref right);
 				if (left == null || right == null)
 					return null;
 
@@ -890,7 +666,7 @@ namespace Mono.CSharp {
 				break;
 				
 			case Binary.Operator.Modulus:
-				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
+				DoBinaryNumericPromotions (ref left, ref right);
 				if (left == null || right == null)
 					return null;
 
@@ -975,28 +751,23 @@ namespace Mono.CSharp {
 				// There is no overflow checking on left shift
 				//
 			case Binary.Operator.LeftShift:
-				IntConstant ic = right.ToInt (loc);
+				IntConstant ic = right.ConvertImplicitly (TypeManager.int32_type) as IntConstant;
 				if (ic == null){
 					Binary.Error_OperatorCannotBeApplied (loc, "<<", lt, rt);
 					return null;
 				}
+
 				int lshift_val = ic.Value;
+				if (left.Type == TypeManager.uint64_type)
+					return new ULongConstant (((ULongConstant)left).Value << lshift_val, left.Location);
+				if (left.Type == TypeManager.int64_type)
+					return new LongConstant (((LongConstant)left).Value << lshift_val, left.Location);
+				if (left.Type == TypeManager.uint32_type)
+					return new UIntConstant (((UIntConstant)left).Value << lshift_val, left.Location);
 
-				IntConstant lic;
-				if ((lic = left.ConvertToInt ()) != null)
-					return new IntConstant (lic.Value << lshift_val, left.Location);
-
-				UIntConstant luic;
-				if ((luic = left.ConvertToUInt ()) != null)
-					return new UIntConstant (luic.Value << lshift_val, left.Location);
-
-				LongConstant llc;
-				if ((llc = left.ConvertToLong ()) != null)
-					return new LongConstant (llc.Value << lshift_val, left.Location);
-
-				ULongConstant lulc;
-				if ((lulc = left.ConvertToULong ()) != null)
-					return new ULongConstant (lulc.Value << lshift_val, left.Location);
+				left = left.ConvertImplicitly (TypeManager.int32_type);
+				if (left.Type == TypeManager.int32_type)
+					return new IntConstant (((IntConstant)left).Value << lshift_val, left.Location);
 
 				Binary.Error_OperatorCannotBeApplied (loc, "<<", lt, rt);
 				break;
@@ -1005,28 +776,22 @@ namespace Mono.CSharp {
 				// There is no overflow checking on right shift
 				//
 			case Binary.Operator.RightShift:
-				IntConstant sic = right.ToInt (loc);
+				IntConstant sic = right.ConvertImplicitly (TypeManager.int32_type) as IntConstant;
 				if (sic == null){
 					Binary.Error_OperatorCannotBeApplied (loc, ">>", lt, rt);
 					return null;
 				}
 				int rshift_val = sic.Value;
+				if (left.Type == TypeManager.uint64_type)
+					return new ULongConstant (((ULongConstant)left).Value >> rshift_val, left.Location);
+				if (left.Type == TypeManager.int64_type)
+					return new LongConstant (((LongConstant)left).Value >> rshift_val, left.Location);
+				if (left.Type == TypeManager.uint32_type)
+					return new UIntConstant (((UIntConstant)left).Value >> rshift_val, left.Location);
 
-				IntConstant ric;
-				if ((ric = left.ConvertToInt ()) != null)
-					return new IntConstant (ric.Value >> rshift_val, left.Location);
-
-				UIntConstant ruic;
-				if ((ruic = left.ConvertToUInt ()) != null)
-					return new UIntConstant (ruic.Value >> rshift_val, left.Location);
-
-				LongConstant rlc;
-				if ((rlc = left.ConvertToLong ()) != null)
-					return new LongConstant (rlc.Value >> rshift_val, left.Location);
-
-				ULongConstant rulc;
-				if ((rulc = left.ConvertToULong ()) != null)
-					return new ULongConstant (rulc.Value >> rshift_val, left.Location);
+				left = left.ConvertImplicitly (TypeManager.int32_type);
+				if (left.Type == TypeManager.int32_type)
+					return new IntConstant (((IntConstant)left).Value >> rshift_val, left.Location);
 
 				Binary.Error_OperatorCannotBeApplied (loc, ">>", lt, rt);
 				break;
@@ -1052,7 +817,7 @@ namespace Mono.CSharp {
 					
 				}
 
-				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
+				DoBinaryNumericPromotions (ref left, ref right);
 				if (left == null || right == null)
 					return null;
 
@@ -1100,7 +865,8 @@ namespace Mono.CSharp {
 						((StringConstant) right).Value, left.Location);
 					
 				}
-				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
+
+				DoBinaryNumericPromotions (ref left, ref right);
 				if (left == null || right == null)
 					return null;
 
@@ -1129,7 +895,7 @@ namespace Mono.CSharp {
 				return new BoolConstant (bool_res, left.Location);
 
 			case Binary.Operator.LessThan:
-				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
+				DoBinaryNumericPromotions (ref left, ref right);
 				if (left == null || right == null)
 					return null;
 
@@ -1158,7 +924,7 @@ namespace Mono.CSharp {
 				return new BoolConstant (bool_res, left.Location);
 				
 			case Binary.Operator.GreaterThan:
-				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
+				DoBinaryNumericPromotions (ref left, ref right);
 				if (left == null || right == null)
 					return null;
 
@@ -1187,7 +953,7 @@ namespace Mono.CSharp {
 				return new BoolConstant (bool_res, left.Location);
 
 			case Binary.Operator.GreaterThanOrEqual:
-				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
+				DoBinaryNumericPromotions (ref left, ref right);
 				if (left == null || right == null)
 					return null;
 
@@ -1216,7 +982,7 @@ namespace Mono.CSharp {
 				return new BoolConstant (bool_res, left.Location);
 
 			case Binary.Operator.LessThanOrEqual:
-				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
+				DoBinaryNumericPromotions (ref left, ref right);
 				if (left == null || right == null)
 					return null;
 

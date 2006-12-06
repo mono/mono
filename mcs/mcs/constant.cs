@@ -72,110 +72,22 @@ namespace Mono.CSharp {
 
 		public Constant ImplicitConversionRequired (Type type, Location loc)
 		{
-			Constant c = ToType (type);
+			Constant c = ConvertImplicitly (type);
 			if (c == null)
 				Error_ValueCannotBeConverted (loc, type, false);
 			return c;
 		}
 
-		//
-		// The various ToXXXX conversion functions are used by the constant
-		// folding evaluator.   A null value is returned if the conversion is
-		// not possible.   
-		//
-		// Note: not all the patterns for catching `implicit_conv' are the same.
-		// some implicit conversions can never be performed between two types
-		// even if the conversion would be lossless (for example short to uint),
-		// but some conversions are explicitly permitted by the standard provided
-		// that there will be no loss of information (for example, int to uint).
-		//
-		public DoubleConstant ToDouble (Location loc)
+		public virtual Constant ConvertImplicitly (Type type)
 		{
-			DoubleConstant c = ConvertToDouble ();
-
-			if (c == null)
-				Error_ValueCannotBeConverted (loc, TypeManager.double_type, false);
-
-			return c;
-		}
-
-		public FloatConstant ToFloat (Location loc)
-		{
-			FloatConstant c = ConvertToFloat ();
-
-			if (c == null)
-				Error_ValueCannotBeConverted (loc, TypeManager.float_type, false);
-
-			return c;
-		}
-
-		public ULongConstant ToULong (Location loc)
-		{
-			ULongConstant c = ConvertToULong ();
-
-			if (c == null)
-				Error_ValueCannotBeConverted (loc, TypeManager.uint64_type, false);
-
-			return c;
-		}
-
-		public LongConstant ToLong (Location loc)
-		{
-			LongConstant c = ConvertToLong ();
-
-			if (c == null)
-				Error_ValueCannotBeConverted (loc, TypeManager.int64_type, false);
-
-			return c;
-		}
-		
-		public UIntConstant ToUInt (Location loc)
-		{
-			UIntConstant c = ConvertToUInt ();
-
-			if (c == null)
-				Error_ValueCannotBeConverted (loc, TypeManager.uint32_type, false);
-
-			return c;
-		}
-
-		public IntConstant ToInt (Location loc)
-		{
-			IntConstant c = ConvertToInt ();
-
-			if (c == null)
-				Error_ValueCannotBeConverted (loc, TypeManager.int32_type, false);
-
-			return c;
-		}
-
-		public DecimalConstant ToDecimal (Location loc)
-		{
-			DecimalConstant c = ConvertToDecimal ();
-
-			if (c == null)
-				Error_ValueCannotBeConverted (loc, TypeManager.decimal_type, false);
-
-			return c;
-		}
-
-		public virtual Constant ToType (Type type)
-		{
-			if (Type == type)
+			if (this.type == type)
 				return this;
 
 			if (type == TypeManager.object_type)
-				return this;
+				return new EmptyConstantCast (this, type);
 
-			if (!Convert.ImplicitStandardConversionExists (this, type)){
+			if (Convert.ImplicitNumericConversion (this, type) == null) 
 				return null;
-			}
-
-			// Special-case: The 0 literal can be converted to an enum value,
-			// and ImplicitStandardConversionExists will return true in that case.
-			if (IsZeroInteger && Type == TypeManager.int32_type && TypeManager.IsEnumType (type)) {
-				return new EnumConstant (this, type);
-			}
 
 			bool fail;			
 			object constant_value = TypeManager.ChangeType (GetValue (), type, out fail);
@@ -282,7 +194,8 @@ namespace Mono.CSharp {
 		/// Maybe ConvertTo name is better. It tries to convert `this' constant to target_type.
 		/// It throws OverflowException 
 		/// </summary>
-		public abstract Constant Reduce (bool inCheckedContext, Type target_type);
+		// DON'T CALL THIS METHOD DIRECTLY AS IT DOES NOT HANDLE ENUMS
+		public abstract Constant ConvertExplicitly (bool inCheckedContext, Type target_type);
 
 		/// <summary>
 		///   Attempts to do a compile-time folding of a constant cast.
@@ -290,12 +203,12 @@ namespace Mono.CSharp {
 		public Constant TryReduce (EmitContext ec, Type target_type, Location loc)
 		{
 			try {
-				return  TryReduce (ec, target_type);
+				return TryReduce (ec, target_type);
 			}
 			catch (OverflowException) {
 				Report.Error (221, loc, "Constant value `{0}' cannot be converted to a `{1}' (use `unchecked' syntax to override)",
 					GetValue ().ToString (), TypeManager.CSharpName (target_type));
-				throw;
+				return null;
 			}
 		}
 
@@ -312,43 +225,7 @@ namespace Mono.CSharp {
 				return new EnumConstant (c, target_type);
 			}
 
-			return Reduce (ec.ConstantCheckState, target_type);
-		}
-
-
-		public virtual DecimalConstant ConvertToDecimal ()
-		{
-			return null;
-		}
-		
-		public virtual DoubleConstant ConvertToDouble ()
-		{
-			return null;
-		}
-
-		public virtual FloatConstant ConvertToFloat ()
-		{
-			return null;
-		}
-
-		public virtual ULongConstant ConvertToULong ()
-		{
-			return null;
-		}
-
-		public virtual LongConstant ConvertToLong ()
-		{
-			return null;
-		}
-
-		public virtual UIntConstant ConvertToUInt ()
-		{
-			return null;
-		}
-
-		public virtual IntConstant ConvertToInt ()
-		{
-			return null;
+			return ConvertExplicitly (ec.ConstantCheckState, target_type);
 		}
 
 		public abstract Constant Increment ();
@@ -391,7 +268,7 @@ namespace Mono.CSharp {
 		public override void Error_ValueCannotBeConverted (Location loc, Type target, bool expl)
 		{
 			try {
-				Reduce (true, target);
+				ConvertExplicitly (true, target);
 				base.Error_ValueCannotBeConverted (loc, target, expl);
 			}
 			catch
@@ -454,7 +331,7 @@ namespace Mono.CSharp {
 			get { return Value == false; }
 		}
 
-		public override Constant Reduce (bool inCheckedContext, Type target_type)
+		public override Constant ConvertExplicitly (bool inCheckedContext, Type target_type)
 		{
 			return null;
 		}
@@ -487,36 +364,6 @@ namespace Mono.CSharp {
 			return Value;
 		}
 
-		public override DoubleConstant ConvertToDouble ()
-		{
-			return new DoubleConstant (Value, loc);
-		}
-
-		public override FloatConstant ConvertToFloat ()
-		{
-			return new FloatConstant (Value, loc);
-		}
-
-		public override ULongConstant ConvertToULong ()
-		{
-			return new ULongConstant (Value, loc);
-		}
-
-		public override LongConstant ConvertToLong ()
-		{
-			return new LongConstant (Value, loc);
-		}
-
-		public override UIntConstant ConvertToUInt ()
-		{
-			return new UIntConstant (Value, loc);
-		}
-
-		public override IntConstant ConvertToInt ()
-		{
-			return new IntConstant (Value, loc);
-		}
-
 		public override Constant Increment ()
 		{
 			return new ByteConstant (checked ((byte)(Value + 1)), loc);
@@ -538,7 +385,7 @@ namespace Mono.CSharp {
 			get { return Value == 0; }
 		}
 
-		public override Constant Reduce (bool inCheckedContext, Type target_type)
+		public override Constant ConvertExplicitly (bool inCheckedContext, Type target_type)
 		{
 			if (target_type == TypeManager.sbyte_type) {
 				CheckRange (inCheckedContext, Value, SByte.MinValue, SByte.MaxValue);
@@ -625,36 +472,6 @@ namespace Mono.CSharp {
 			return Value;
 		}
 
-		public override DoubleConstant ConvertToDouble ()
-		{
-			return new DoubleConstant (Value, loc);
-		}
-
-		public override FloatConstant ConvertToFloat ()
-		{
-			return new FloatConstant (Value, loc);
-		}
-
-		public override ULongConstant ConvertToULong ()
-		{
-			return new ULongConstant (Value, loc);
-		}
-
-		public override LongConstant ConvertToLong ()
-		{
-			return new LongConstant (Value, loc);
-		}
-
-		public override UIntConstant ConvertToUInt ()
-		{
-			return new UIntConstant (Value, loc);
-		}
-
-		public override IntConstant ConvertToInt ()
-		{
-			return new IntConstant (Value, loc);
-		}
-
 		public override Constant Increment ()
 		{
 			return new CharConstant (checked ((char)(Value + 1)), loc);
@@ -676,7 +493,7 @@ namespace Mono.CSharp {
 			get { return Value == '\0'; }
 		}
 
-		public override Constant Reduce (bool inCheckedContext, Type target_type)
+		public override Constant ConvertExplicitly (bool inCheckedContext, Type target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
 				CheckRange (inCheckedContext, Value, Byte.MinValue, Byte.MaxValue);
@@ -736,39 +553,6 @@ namespace Mono.CSharp {
 			return Value;
 		}
 
-		public override DoubleConstant ConvertToDouble ()
-		{
-			return new DoubleConstant (Value, loc);
-		}
-
-		public override FloatConstant ConvertToFloat ()
-		{
-			return new FloatConstant (Value, loc);
-		}
-
-		public override ULongConstant ConvertToULong ()
-		{
-			if (Value >= 0)
-				return new ULongConstant ((ulong) Value, loc);
-			
-			return null;
-		}
-
-		public override LongConstant ConvertToLong ()
-		{
-			return new LongConstant (Value, loc);
-		}
-
-		public override UIntConstant ConvertToUInt ()
-		{
-			return null;
-		}
-
-		public override IntConstant ConvertToInt ()
-		{
-			return new IntConstant (Value, loc);
-		}
-
 		public override Constant Increment ()
 		{
 		    return new SByteConstant (checked((sbyte)(Value + 1)), loc);
@@ -790,7 +574,7 @@ namespace Mono.CSharp {
 			get { return Value == 0; }
 		}
 
-		public override Constant Reduce (bool inCheckedContext, Type target_type)
+		public override Constant ConvertExplicitly (bool inCheckedContext, Type target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
 				CheckUnsigned (inCheckedContext, Value);
@@ -854,36 +638,6 @@ namespace Mono.CSharp {
 			return Value;
 		}
 
-		public override DoubleConstant ConvertToDouble ()
-		{
-			return new DoubleConstant (Value, loc);
-		}
-
-		public override FloatConstant ConvertToFloat ()
-		{
-			return new FloatConstant (Value, loc);
-		}
-
-		public override ULongConstant ConvertToULong ()
-		{
-			return null;
-		}
-
-		public override LongConstant ConvertToLong ()
-		{
-			return new LongConstant (Value, loc);
-		}
-
-		public override UIntConstant ConvertToUInt ()
-		{
-			return null;
-		}
-
-		public override IntConstant ConvertToInt ()
-		{
-			return new IntConstant (Value, loc);
-		}
-
 		public override Constant Increment ()
 		{
 			return new ShortConstant (checked((short)(Value + 1)), loc);
@@ -905,7 +659,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Constant Reduce (bool inCheckedContext, Type target_type)
+		public override Constant ConvertExplicitly (bool inCheckedContext, Type target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
 				CheckRange (inCheckedContext, Value, Byte.MinValue, Byte.MaxValue);
@@ -972,36 +726,6 @@ namespace Mono.CSharp {
 		{
 			return Value;
 		}
-
-		public override DoubleConstant ConvertToDouble ()
-		{
-			return new DoubleConstant (Value, loc);
-		}
-
-		public override FloatConstant ConvertToFloat ()
-		{
-			return new FloatConstant (Value, loc);
-		}
-
-		public override ULongConstant ConvertToULong ()
-		{
-			return new ULongConstant (Value, loc);
-		}
-
-		public override LongConstant ConvertToLong ()
-		{
-			return new LongConstant (Value, loc);
-		}
-
-		public override UIntConstant ConvertToUInt ()
-		{
-			return new UIntConstant (Value, loc);
-		}
-
-		public override IntConstant ConvertToInt ()
-		{
-			return new IntConstant (Value, loc);
-		}
 	
 		public override Constant Increment ()
 		{
@@ -1024,7 +748,7 @@ namespace Mono.CSharp {
 			get { return Value == 0; }
 		}
 
-		public override Constant Reduce (bool inCheckedContext, Type target_type)
+		public override Constant ConvertExplicitly (bool inCheckedContext, Type target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
 				CheckRange (inCheckedContext, Value, Byte.MinValue, Byte.MaxValue);
@@ -1139,47 +863,6 @@ namespace Mono.CSharp {
 			return Value;
 		}
 
-		public override DecimalConstant ConvertToDecimal()
-		{
-			return new DecimalConstant (Value, loc);
-		}
-
-		public override DoubleConstant ConvertToDouble ()
-		{
-			return new DoubleConstant (Value, loc);
-		}
-
-		public override FloatConstant ConvertToFloat ()
-		{
-			return new FloatConstant (Value, loc);
-		}
-
-		public override ULongConstant ConvertToULong ()
-		{
-			if (Value < 0)
-				return null;
-
-			return new ULongConstant ((ulong) Value, loc);
-		}
-
-		public override LongConstant ConvertToLong ()
-		{
-			return new LongConstant (Value, loc);
-		}
-
-		public override UIntConstant ConvertToUInt ()
-		{
-			if (Value < 0)
-				return null;
-
-			return new UIntConstant ((uint) Value, loc);
-		}
-
-		public override IntConstant ConvertToInt ()
-		{
-			return this;
-		}
-
 		public override Constant Increment ()
 		{
 			return new IntConstant (checked(Value + 1), loc);
@@ -1201,7 +884,7 @@ namespace Mono.CSharp {
 			get { return Value == 0; }
 		}
 
-		public override Constant Reduce (bool inCheckedContext, Type target_type)
+		public override Constant ConvertExplicitly (bool inCheckedContext, Type target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
 				CheckRange (inCheckedContext, Value, Byte.MinValue, Byte.MaxValue);
@@ -1270,36 +953,6 @@ namespace Mono.CSharp {
 			return Value;
 		}
 
-		public override DoubleConstant ConvertToDouble ()
-		{
-			return new DoubleConstant (Value, loc);
-		}
-
-		public override FloatConstant ConvertToFloat ()
-		{
-			return new FloatConstant (Value, loc);
-		}
-
-		public override ULongConstant ConvertToULong ()
-		{
-			return new ULongConstant (Value, loc);
-		}
-
-		public override LongConstant ConvertToLong ()
-		{
-			return new LongConstant (Value, loc);
-		}
-
-		public override UIntConstant ConvertToUInt ()
-		{
-			return this;
-		}
-
-		public override IntConstant ConvertToInt ()
-		{
-			return null;
-		}
-	
 		public override Constant Increment ()
 		{
 			return new UIntConstant (checked(Value + 1), loc);
@@ -1321,7 +974,7 @@ namespace Mono.CSharp {
 			get { return Value == 0; }
 		}
 
-		public override Constant Reduce (bool inCheckedContext, Type target_type)
+		public override Constant ConvertExplicitly (bool inCheckedContext, Type target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
 				CheckRange (inCheckedContext, Value, Char.MinValue, Char.MaxValue);
@@ -1399,39 +1052,6 @@ namespace Mono.CSharp {
 			return Value;
 		}
 
-		public override DoubleConstant ConvertToDouble ()
-		{
-			return new DoubleConstant (Value, loc);
-		}
-
-		public override FloatConstant ConvertToFloat ()
-		{
-			return new FloatConstant (Value, loc);
-		}
-
-		public override ULongConstant ConvertToULong ()
-		{
-			if (Value < 0)
-				return null;
-			
-			return new ULongConstant ((ulong) Value, loc);
-		}
-
-		public override LongConstant ConvertToLong ()
-		{
-			return this;
-		}
-
-		public override UIntConstant ConvertToUInt ()
-		{
-			return null;
-		}
-
-		public override IntConstant ConvertToInt ()
-		{
-			return null;
-		}
-
 		public override Constant Increment ()
 		{
 			return new LongConstant (checked(Value + 1), loc);
@@ -1453,7 +1073,7 @@ namespace Mono.CSharp {
 			get { return Value == 0; }
 		}
 
-		public override Constant Reduce (bool inCheckedContext, Type target_type)
+		public override Constant ConvertExplicitly (bool inCheckedContext, Type target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
 				CheckRange (inCheckedContext, Value, Byte.MinValue, Byte.MaxValue);
@@ -1527,36 +1147,6 @@ namespace Mono.CSharp {
 			return Value;
 		}
 
-		public override DoubleConstant ConvertToDouble ()
-		{
-			return new DoubleConstant (Value, loc);
-		}
-
-		public override FloatConstant ConvertToFloat ()
-		{
-			return new FloatConstant (Value, loc);
-		}
-
-		public override ULongConstant ConvertToULong ()
-		{
-			return this;
-		}
-
-		public override LongConstant ConvertToLong ()
-		{
-			return null;
-		}
-
-		public override UIntConstant ConvertToUInt ()
-		{
-			return null;
-		}
-
-		public override IntConstant ConvertToInt ()
-		{
-			return null;
-		}
-
 		public override Constant Increment ()
 		{
 			return new ULongConstant (checked(Value + 1), loc);
@@ -1578,7 +1168,7 @@ namespace Mono.CSharp {
 			get { return Value == 0; }
 		}
 
-		public override Constant Reduce (bool inCheckedContext, Type target_type)
+		public override Constant ConvertExplicitly (bool inCheckedContext, Type target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
 				CheckRange (inCheckedContext, Value, Byte.MaxValue);
@@ -1650,31 +1240,6 @@ namespace Mono.CSharp {
 			return Value;
 		}
 
-		public override DoubleConstant ConvertToDouble ()
-		{
-			return new DoubleConstant (Value, loc);
-		}
-
-		public override FloatConstant ConvertToFloat ()
-		{
-			return this;
-		}
-
-		public override LongConstant ConvertToLong ()
-		{
-			return null;
-		}
-
-		public override UIntConstant ConvertToUInt ()
-		{
-			return null;
-		}
-
-		public override IntConstant ConvertToInt ()
-		{
-			return null;
-		}
-
 		public override Constant Increment ()
 		{
 			return new FloatConstant (checked(Value + 1), loc);
@@ -1692,7 +1257,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Constant Reduce (bool inCheckedContext, Type target_type)
+		public override Constant ConvertExplicitly (bool inCheckedContext, Type target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
 				CheckRange (inCheckedContext, Value, byte.MinValue, byte.MaxValue);
@@ -1766,36 +1331,6 @@ namespace Mono.CSharp {
 			return Value;
 		}
 
-		public override DoubleConstant ConvertToDouble ()
-		{
-			return this;
-		}
-
-		public override FloatConstant ConvertToFloat ()
-		{
-			return null;
-		}
-
-		public override ULongConstant ConvertToULong ()
-		{
-			return null;
-		}
-
-		public override LongConstant ConvertToLong ()
-		{
-			return null;
-		}
-
-		public override UIntConstant ConvertToUInt ()
-		{
-			return null;
-		}
-
-		public override IntConstant ConvertToInt ()
-		{
-			return null;
-		}
-
 		public override Constant Increment ()
 		{
 			return new DoubleConstant (checked(Value + 1), loc);
@@ -1813,7 +1348,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Constant Reduce (bool inCheckedContext, Type target_type)
+		public override Constant ConvertExplicitly (bool inCheckedContext, Type target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
 				CheckRange (inCheckedContext, Value, Byte.MinValue, Byte.MaxValue);
@@ -1932,7 +1467,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Constant Reduce (bool inCheckedContext, Type target_type)
+		public override Constant ConvertExplicitly (bool inCheckedContext, Type target_type)
 		{
 			if (target_type == TypeManager.sbyte_type)
 				return new SByteConstant ((sbyte)Value, loc);
@@ -2009,7 +1544,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Constant Reduce (bool inCheckedContext, Type target_type)
+		public override Constant ConvertExplicitly (bool inCheckedContext, Type target_type)
 		{
 			return null;
 		}

@@ -5870,7 +5870,7 @@ namespace Mono.CSharp {
 			if (c == null)
 				return false;
 
-			IntConstant buffer_size_const = c.ToInt (Location);
+			IntConstant buffer_size_const = c.ImplicitConversionRequired (TypeManager.int32_type, Location) as IntConstant;
 			if (buffer_size_const == null)
 				return false;
 

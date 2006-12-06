@@ -94,7 +94,7 @@ namespace Mono.CSharp {
 			get { return true; }
 		}
 
-		public override Constant Reduce(bool inCheckedContext, Type target_type)
+		public override Constant ConvertExplicitly(bool inCheckedContext, Type target_type)
 		{
 			if (!TypeManager.IsValueType (target_type))
 				return new EmptyConstantCast (this, target_type);
@@ -102,7 +102,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public override Constant ToType(Type targetType)
+		public override Constant ConvertImplicitly (Type targetType)
 		{
 			if (!TypeManager.IsValueType (targetType))
 				return new EmptyConstantCast (this, targetType);
@@ -154,7 +154,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Constant ToType (Type targetType)
+		public override Constant ConvertImplicitly (Type targetType)
 		{
 			if (targetType.IsPointer)
 				return new EmptyConstantCast (NullPointer.Null, targetType);
@@ -172,7 +172,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			return base.ToType(targetType);
+			return base.ConvertImplicitly(targetType);
 		}
 
 	}
@@ -238,6 +238,22 @@ namespace Mono.CSharp {
 			type = TypeManager.int32_type;
 			return this;
 		}
+
+		public override Constant ConvertImplicitly (Type type)
+		{
+			///
+			/// The 0 literal can be converted to an enum value,
+			///
+			if (Value == 0 && TypeManager.IsEnumType (type)) {
+				Constant c = ConvertImplicitly (TypeManager.EnumToUnderlying (type));
+				if (c == null)
+					return null;
+
+				return new EnumConstant (c, type);
+			}
+			return base.ConvertImplicitly (type);
+		}
+
 	}
 
 	public class UIntLiteral : UIntConstant {

@@ -1368,14 +1368,9 @@ namespace Mono.CSharp {
 
 			Constant c = expr as Constant;
 			if (c != null) {
-				try {
-					c = c.TryReduce (ec, type, loc);
-					if (c != null)
-						return c;
-				}
-				catch (OverflowException) {
-					return null;
-				}
+				c = c.TryReduce (ec, type, loc);
+				if (c != null)
+					return c;
 			}
 
 			if (type.IsPointer && !ec.InUnsafe) {

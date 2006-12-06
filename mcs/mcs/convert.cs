@@ -4,6 +4,7 @@
 // Authors:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Ravi Pratap (ravi@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2001, 2002, 2003 Ximian, Inc.
 //
@@ -243,7 +244,7 @@ namespace Mono.CSharp {
 			// from the null type to any reference-type.
 			if (expr_type == TypeManager.null_type) {
 				NullConstant nc = (NullConstant)expr;
-				return nc.ToType(target_type);
+				return nc.ConvertImplicitly(target_type);
 			}
 
 			// from any class-type S to any interface-type T.

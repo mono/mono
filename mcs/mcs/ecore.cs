@@ -1387,9 +1387,9 @@ namespace Mono.CSharp {
 			return child.GetValue ();
 		}
 
-		public override Constant Reduce (bool inCheckedContext, Type target_type)
+		public override Constant ConvertExplicitly (bool inCheckedContext, Type target_type)
 		{
-			return child.Reduce (inCheckedContext, target_type);
+			return child.ConvertExplicitly (inCheckedContext, target_type);
 		}
 
 		public override Constant Increment ()
@@ -1412,9 +1412,9 @@ namespace Mono.CSharp {
 			child.Emit (ec);
 		}
 
-		public override Constant ToType (Type type)
+		public override Constant ConvertImplicitly (Type type)
 		{
-			return child.ToType (type);
+			return child.ConvertImplicitly (type);
 		}
 	}
 
@@ -1477,36 +1477,6 @@ namespace Mono.CSharp {
 			return Child.AsString ();
 		}
 
-		public override DoubleConstant ConvertToDouble ()
-		{
-			return Child.ConvertToDouble ();
-		}
-
-		public override FloatConstant ConvertToFloat ()
-		{
-			return Child.ConvertToFloat ();
-		}
-
-		public override ULongConstant ConvertToULong ()
-		{
-			return Child.ConvertToULong ();
-		}
-
-		public override LongConstant ConvertToLong ()
-		{
-			return Child.ConvertToLong ();
-		}
-
-		public override UIntConstant ConvertToUInt ()
-		{
-			return Child.ConvertToUInt ();
-		}
-
-		public override IntConstant ConvertToInt ()
-		{
-			return Child.ConvertToInt ();
-		}
-
 		public override Constant Increment()
 		{
 			return new EnumConstant (Child.Increment (), type);
@@ -1528,15 +1498,15 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Constant Reduce(bool inCheckedContext, Type target_type)
+		public override Constant ConvertExplicitly(bool inCheckedContext, Type target_type)
 		{
 			if (Child.Type == target_type)
 				return Child;
 
-			return Child.Reduce (inCheckedContext, target_type);
+			return Child.ConvertExplicitly (inCheckedContext, target_type);
 		}
 
-		public override Constant ToType (Type type)
+		public override Constant ConvertImplicitly (Type type)
 		{
 			if (Type == type) {
 				// This is workaround of mono bug. It can be removed when the latest corlib spreads enough
@@ -1544,7 +1514,7 @@ namespace Mono.CSharp {
 					return this;
 
 				if (type.UnderlyingSystemType != Child.Type)
-					Child = Child.ToType (type.UnderlyingSystemType);
+					Child = Child.ConvertImplicitly (type.UnderlyingSystemType);
 				return this;
 			}
 
@@ -1552,7 +1522,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			return Child.ToType (type);
+			return Child.ConvertImplicitly(type);
 		}
 
 	}

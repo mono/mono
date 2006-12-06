@@ -1,3 +1,19 @@
+2006-12-06  Marek Safar  <marek.safar@gmail.com>
+
+	Fixes the operators implementation (part II)
+
+	* cfold.cs (DoConstantNumericPromotions): Renamed to
+	DoBinaryNumericPromotions and simplified.
+	(BinaryFold): Couple of conversion fixes; simplified.
+
+	* constant.cs, ecore.cs, literal.cs
+	(ToType): Renamed to ConvertImplicitly.
+	(Reduce): Renamed to ConvertExplicitly.
+
+	* class.cs, convert.cs: Updated.
+
+	* expression.cs: TryReduce doesn't throw an exception.
+
 2006-12-01  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #80108
@@ -6,7 +22,7 @@
 
 2006-11-30  Marek Safar  <marek.safar@gmail.com>
 
-	Correct unary operators implementation (part I)
+	Fixes unary operators implementation (part I)
 	Also fixes #80026
 
 	* cfold.cs (Error_CompileTimeOverflow): Made internal

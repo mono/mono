@@ -143,8 +143,11 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			if (!prev_member.ResolveValue ())
+			if (!prev_member.ResolveValue ()) {
+				// Suppress cyclic error
+				prev_member.value = new EnumConstant (New.Constantify (parent_enum.UnderlyingType), parent_enum.TypeBuilder);
 				return false;
+			}
 
 			in_transit = true;
 
