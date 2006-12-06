@@ -24,11 +24,26 @@ public class Blah {
 	}
 	
 	enum AA : byte { a, b }
-	enum BB : ulong { x, y }
+	enum BB : ulong { x = ulong.MaxValue - 1, y }
 
 	const int myconstant = 30;
 
-	enum Compute { two = AA.b + B.y }
+	enum Compute : ulong { 
+		two = AA.b + B.y,
+		three = AA.b - B.y,
+		four = A.a * BB.x,
+		five = AA.b >> B.y,
+	}
+	
+	internal enum WindowAttributes : uint {
+		kWindowNoAttributes = 0,
+		kWindowCloseBoxAttribute = (1u << 0),
+		kWindowHorizontalZoomAttribute = (1u << 1),
+		kWindowVerticalZoomAttribute = (1u << 2),
+		kWindowCollapseBoxAttribute = (1u << 3),
+		kWindowNoConstrainAttribute = (1u << 31),
+		kWindowStandardFloatingAttributes = (kWindowCloseBoxAttribute | kWindowCollapseBoxAttribute)
+	}
 	
 	// The constant assignment follows a different path		
 	const Bar bar_assignment = 0;

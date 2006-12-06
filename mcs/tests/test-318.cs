@@ -25,6 +25,18 @@ public class Ev
         }
 }
 
+public interface EventInterface {
+	event EventHandler Event;
+}
+
+class Foo : EventInterface {
+	event EventHandler EventInterface.Event
+	{
+			add { }
+			remove { }
+	}
+}
+
 public class C {
     
 	public static void my_from_fixed(out int val)

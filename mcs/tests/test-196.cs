@@ -18,6 +18,10 @@ class X {
 	
 	static int Main ()
 	{
+		const byte b = 255;
+		const int i = b << int.MaxValue;
+		const int i2 = b << int.MaxValue;
+
 		return 0;
 	}
 }
