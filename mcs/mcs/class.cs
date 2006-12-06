@@ -7039,6 +7039,17 @@ namespace Mono.CSharp {
 			SetAssigned ();
 		}
 
+		public override bool Define()
+		{
+			if (!base.Define ())
+				return false;
+
+			if (IsExplicitImpl)
+				SetMemberIsUsed ();
+
+			return true;
+		}
+
 		public override string[] ValidAttributeTargets {
 			get {
 				return attribute_targets;
