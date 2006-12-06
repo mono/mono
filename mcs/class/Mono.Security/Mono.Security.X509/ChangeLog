@@ -1,5 +1,7 @@
-2006-12-05  Sebastien Pouliot  <sebastien@ximian.com> 
+2006-12-05  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* X509Certificate.cs: Resurrect the (fixed) support for [Issuer|
+	Subject]UniqueIdentifier, including new properties.
 	* X509CRL.cs: Fix DSA signature verification when numbers aren't 
 	exactly 20 bytes long (e.g. too short or negative with an extra 0x00).
 

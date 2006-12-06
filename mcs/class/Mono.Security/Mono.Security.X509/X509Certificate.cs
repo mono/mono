@@ -93,8 +93,8 @@ namespace Mono.Security.X509 {
 		private int version;
 		private byte[] serialnumber;
 
-//		private byte[] issuerUniqueID;
-//		private byte[] subjectUniqueID;
+		private byte[] issuerUniqueID;
+		private byte[] subjectUniqueID;
 		private X509ExtensionCollection extensions;
 
 		private static string encoding_error = Locale.GetText ("Input data cannot be coded as a valid certificate.");
@@ -180,17 +180,17 @@ namespace Mono.Security.X509 {
 					m_signaturealgoparams = null;
 
 				// Certificate / TBSCertificate / issuerUniqueID
-				ASN1 issuerUID = tbsCertificate.Element (tbs, 0xA1);
+				ASN1 issuerUID = tbsCertificate.Element (tbs, 0x81);
 				if (issuerUID != null) {
 					tbs++;
-//					issuerUniqueID = issuerUID.Value;
+					issuerUniqueID = issuerUID.Value;
 				}
 
 				// Certificate / TBSCertificate / subjectUniqueID
-				ASN1 subjectUID = tbsCertificate.Element (tbs, 0xA2);
+				ASN1 subjectUID = tbsCertificate.Element (tbs, 0x82);
 				if (subjectUID != null) {
 					tbs++;
-//					subjectUniqueID = subjectUID.Value;
+					subjectUniqueID = subjectUID.Value;
 				}
 
 				// Certificate / TBSCertificate / Extensions
@@ -464,6 +464,24 @@ namespace Mono.Security.X509 {
 		public bool WasCurrent (DateTime instant) 
 		{
 			return ((instant > ValidFrom) && (instant <= ValidUntil));
+		}
+
+		// uncommon v2 "extension"
+		public byte[] IssuerUniqueIdentifier {
+			get {
+				if (issuerUniqueID == null)
+					return null;
+				return (byte[]) issuerUniqueID.Clone ();
+			}
+		}
+
+		// uncommon v2 "extension"
+		public byte[] SubjectUniqueIdentifier {
+			get {
+				if (subjectUniqueID == null)
+					return null;
+				return (byte[]) subjectUniqueID.Clone ();
+			}
 		}
 
 		internal bool VerifySignature (DSA dsa) 
