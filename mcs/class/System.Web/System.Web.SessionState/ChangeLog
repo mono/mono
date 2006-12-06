@@ -1,7 +1,7 @@
 2006-12-06  Robert Jordan  <robertj@gmx.net>
 
 	* SessionSQLServerHandler.cs: Prepare the SQL statements.
-	Patch from Hubert FONGARNAND.
+	Patch from Hubert FONGARNAND. Fixes bug #80170.
 
 2006-10-12 Hubert FONGARNAND <informatique.internet@fiducial.fr>
 
