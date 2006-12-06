@@ -4200,9 +4200,9 @@ namespace System.Windows.Forms
 
 		#region ToolTip
 		public override void DrawToolTip(Graphics dc, Rectangle clip_rectangle, ToolTip.ToolTipWindow control) {
-			dc.FillRectangle(SystemBrushes.Info, control.client_rect);
+			dc.FillRectangle(SystemBrushes.Info, control.ClientRectangle);
 			dc.DrawRectangle(SystemPens.WindowFrame, 0, 0, control.Width-1, control.Height-1);
-			dc.DrawString(control.Text, control.Font, ResPool.GetSolidBrush(this.ColorInfoText), control.client_rect, control.string_format);
+			dc.DrawString(control.Text, control.Font, ResPool.GetSolidBrush(this.ColorInfoText), control.ClientRectangle, control.string_format);
 		}
 
 		public override Size ToolTipSize(ToolTip.ToolTipWindow tt, string text) {

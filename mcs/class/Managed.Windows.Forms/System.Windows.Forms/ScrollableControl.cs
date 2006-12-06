@@ -478,21 +478,21 @@ namespace System.Windows.Forms {
 			y += scroll_position.Y;
 
 			// Don't scroll if already visible
-			if ((activeControl.Left >= scroll_position.X) && (activeControl.Left < (scroll_position.X + client_size.Width)) &&
-			    (activeControl.Top >= scroll_position.Y) && (activeControl.Top < (scroll_position.Y + client_size.Height))) {
+			if ((activeControl.Left >= scroll_position.X) && (activeControl.Left < (scroll_position.X + ClientSize.Width)) &&
+			    (activeControl.Top >= scroll_position.Y) && (activeControl.Top < (scroll_position.Y + ClientSize.Height))) {
 				return;
 			}
 
 			// try to center
-			corner_x = Math.Max(0, x + activeControl.Width / 2 - client_size.Width / 2);
-			corner_y = Math.Max(0, y + activeControl.Height / 2- client_size.Height / 2);
+			corner_x = Math.Max(0, x + activeControl.Width / 2 - ClientSize.Width / 2);
+			corner_y = Math.Max(0, y + activeControl.Height / 2 - ClientSize.Height / 2);
 
 			if (hscroll_visible && (corner_x > hscrollbar.Maximum)) {
-				corner_x = Math.Max(0, hscrollbar.Maximum - client_size.Width);
+				corner_x = Math.Max(0, hscrollbar.Maximum - ClientSize.Width);
 			}
 
 			if (vscroll_visible && (corner_y > vscrollbar.Maximum)) {
-				corner_y = Math.Max(0, vscrollbar.Maximum - client_size.Height);
+				corner_y = Math.Max(0, vscrollbar.Maximum - ClientSize.Height);
 			}
 			if ((corner_x == scroll_position.X) && (corner_y == scroll_position.Y)) {
 				return;

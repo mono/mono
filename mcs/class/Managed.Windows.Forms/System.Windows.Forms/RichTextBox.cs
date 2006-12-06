@@ -92,12 +92,10 @@ namespace System.Windows.Forms {
 
 		#region Private & Internal Methods
 		private void RichTextBox_LostFocus(object sender, EventArgs e) {
-			has_focus = false;
 			Invalidate();
 		}
 
 		private void RichTextBox_GotFocus(object sender, EventArgs e) {
-			has_focus = true;
 			Invalidate();
 		}
 		#endregion	// Private & Internal Methods

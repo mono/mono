@@ -1,3 +1,21 @@
+2006-12-06  Chris Toshok  <toshok@ximian.com>
+
+	* RichTextBox.cs: don't assign to has_focus in GotFocus/LostFocus.
+	Control does this before calling emitting these events.
+
+	* TabControl.cs: same.
+
+	* ThemeWin32Classic.cs: use Control.ClientRectangle instead of
+	Control.client_rect.
+
+	* ButtonBase.cs: use the ClientSize property instead of the
+	client_size field.
+
+	* ScrollableControl.cs: same.
+
+	* Control.cs: another pass at making properties private.  also,
+	move the initialization of tab_stop to the ctor.
+
 2006-12-05  Andreia Gaita <avidigal@novell.com>
 
 	* TabControl.cs: Let the selected index be set freely if the 

@@ -419,7 +419,10 @@ namespace System.Windows.Forms {
 			bool	inside = false;
 			bool	redraw = false;
 
-			if (mevent.X>=0 && mevent.Y>=0 && mevent.X<this.client_size.Width && mevent.Y<=this.client_size.Height) {
+			if (mevent.X >= 0 &&
+			    mevent.Y >= 0 &&
+			    mevent.X < this.ClientSize.Width &&
+			    mevent.Y <= this.ClientSize.Height) {
 				inside = true;
 			}
 
@@ -453,7 +456,10 @@ namespace System.Windows.Forms {
 					Invalidate();
 				}
 
-				if (mevent.X>=0 && mevent.Y>=0 && mevent.X<this.client_size.Width && mevent.Y<=this.client_size.Height) {
+				if (mevent.X >= 0 &&
+				    mevent.Y >= 0 &&
+				    mevent.X < this.ClientSize.Width &&
+				    mevent.Y <= this.ClientSize.Height) {
 					OnClick(EventArgs.Empty);
 				}
 			}

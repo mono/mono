@@ -72,17 +72,17 @@ namespace System.Windows.Forms
 		internal bool			is_visible;		// true if control is visible
 		internal bool			is_entered;		// is the mouse inside the control?
 		internal bool			is_enabled;		// true if control is enabled (usable/not grayed out)
-		internal bool			is_accessible;		// true if the control is visible to accessibility applications
+		bool is_accessible; // true if the control is visible to accessibility applications
 		bool is_captured; // tracks if the control has captured the mouse
 		internal bool			is_toplevel;		// tracks if the control is a toplevel window
 		bool is_recreating; // tracks if the handle for the control is being recreated
 		bool causes_validation; // tracks if validation is executed on changes
-		internal bool 			is_focusing;		// tracks if Focus has been called on the control and has not yet finished
+		bool is_focusing; // tracks if Focus has been called on the control and has not yet finished
 		int tab_index; // position in tab order of siblings
-		internal bool			tab_stop = true;	// is the control a tab stop?
+		internal bool			tab_stop;		// is the control a tab stop?
 		bool is_disposed; // has the window already been disposed?
-		internal Size			client_size;		// size of the client area (window excluding decorations)
-		internal Rectangle		client_rect;		// rectangle with the client area (window excluding decorations)
+		Size client_size; // size of the client area (window excluding decorations)
+		Rectangle client_rect; // rectangle with the client area (window excluding decorations)
 		internal ControlStyles		control_style;		// rather win32-specific, style bits for control
 		internal ImeMode		ime_mode = ImeMode.Inherit;
 		bool layout_pending; // true if our parent needs to re-layout us
@@ -721,6 +721,7 @@ namespace System.Windows.Forms
 			dist_right = 0;
 			dist_top = 0;
 			dist_bottom = 0;
+			tab_stop = true;
 
 #if NET_2_0
 			use_compatible_text_rendering = Application.use_compatible_text_rendering;

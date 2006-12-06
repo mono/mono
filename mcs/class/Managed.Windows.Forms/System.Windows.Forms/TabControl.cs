@@ -561,7 +561,6 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void OnGotFocusInternal(EventArgs e) {
-			has_focus = true;
 			if (selected_index == -1 && this.TabCount > 0)
 				this.SelectedIndex = 0;
 			if (selected_index != -1)
@@ -571,7 +570,6 @@ namespace System.Windows.Forms {
 
 
 		internal override void OnLostFocusInternal(EventArgs e) {
-			has_focus = false;
 			if (selected_index != -1)
 				Invalidate(GetTabRect(selected_index));
 			base.OnLostFocusInternal (e);
