@@ -117,7 +117,14 @@ namespace System.Web.Security
 			if (cookie == null || (cookie.Expires != DateTime.MinValue && cookie.Expires < DateTime.Now))
 				return;
 
-			FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt (cookie.Value);
+			FormsAuthenticationTicket ticket = null;
+			try {
+				ticket = FormsAuthentication.Decrypt (cookie.Value);
+			}
+			catch (ArgumentException) {
+				// incorrect cookie value, suppress the exception
+				return;
+			}
 			if (ticket == null || (ticket.IsPersistent && ticket.Expired))
 				return;
 

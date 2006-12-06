@@ -1,3 +1,8 @@
+2006-12-06 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* FormsAuthenticationModule.cs: fixed OnAuthenticateRequest, suppress
+	exception on wrong ticket
+
 2006-12-03 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* FormsAuthenticationModule.cs: 
