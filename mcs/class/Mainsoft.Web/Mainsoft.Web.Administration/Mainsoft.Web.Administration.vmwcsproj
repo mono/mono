@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -16,7 +16,7 @@
     <RootNamespace>Mainsoft.Web.Administration</RootNamespace>
     <jarserver>iap2</jarserver>
     <ApplicationServerType>tomcat</ApplicationServerType>
-    <NoDeploy>true</NoDeploy>
+    <NoDeploy>false</NoDeploy>
     <NoAspDbManagement>true</NoAspDbManagement>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
@@ -24,11 +24,11 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;JAVA</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;JAVA;TARGET_JVM</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <BaseAddress>285212672</BaseAddress>
-    <SkipValidation>True</SkipValidation>
+    <SkipValidation>False</SkipValidation>
     <KeepIntermediate>False</KeepIntermediate>
     <TargetPlatform>0</TargetPlatform>
     <AdditionalClassPath>
@@ -39,7 +39,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\</OutputPath>
-    <DefineConstants>TRACE;JAVA</DefineConstants>
+    <DefineConstants>TRACE;JAVA;TARGET_JVM</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <BaseAddress>285212672</BaseAddress>
@@ -72,7 +72,7 @@
           <NTLMAuthentication>False</NTLMAuthentication>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties REFS-JarPath-mscorlib="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\mscorlib.jar" REFS-JarPath-system="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.jar" REFS-JarPath-system-data="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Data.jar" REFS-JarPath-system-web="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Web.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Xml.jar" />
+      <UserProperties REFS-JarPath-mscorlib="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\mscorlib.jar" REFS-JarPath-system="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.jar" REFS-JarPath-system-data="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Data.jar" REFS-JarPath-system-web="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Web.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Xml.jar" REFS-JarPath-system-configuration="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Configuration.jar" REFS-JarPath-system-drawing="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\System.Drawing.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\jai_imageio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\jai_core.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\jai_codec.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\clibwrapper_jiio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jgac\vmw4j2ee_110\mlibwrapper_jai.jar" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
@@ -80,18 +80,13 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="aspnetconfig\Controls\Searcher.ascx.cs">
-      <DependentUpon>Searcher.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="aspnetconfig\Controls\Searcher.ascx.designer.cs">
-      <DependentUpon>Searcher.ascx</DependentUpon>
-    </Compile>
     <Compile Include="aspnetconfig\CreateRole.aspx.cs">
       <DependentUpon>CreateRole.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -106,6 +101,7 @@
     <Compile Include="aspnetconfig\CreateUser.aspx.designer.cs">
       <DependentUpon>CreateUser.aspx</DependentUpon>
     </Compile>
+    <Compile Include="aspnetconfig\CustomXmlSiteMapProvider.cs" />
     <Compile Include="aspnetconfig\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -129,6 +125,7 @@
     </Compile>
     <Compile Include="aspnetconfig\GridButton.cs" />
     <Compile Include="aspnetconfig\GridCheckBox.cs" />
+    <Compile Include="aspnetconfig\HttpHandlersSectionHandler.cs" />
     <Compile Include="aspnetconfig\ManageRole.aspx.cs">
       <DependentUpon>ManageRole.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -144,6 +141,15 @@
       <DependentUpon>ManageUser.aspx</DependentUpon>
     </Compile>
     <Compile Include="aspnetconfig\RolesDS.cs" />
+    <Compile Include="aspnetconfig\SecurError.aspx.cs">
+      <DependentUpon>SecurError.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="aspnetconfig\SecurError.aspx.designer.cs">
+      <DependentUpon>SecurError.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="aspnetconfig\StrUtils.cs" />
+    <Compile Include="aspnetconfig\UrlUtils.cs" />
     <Compile Include="aspnetconfig\Util.Master.cs">
       <DependentUpon>Util.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -151,27 +157,35 @@
     <Compile Include="aspnetconfig\Util.Master.designer.cs">
       <DependentUpon>Util.Master</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Searcher.ascx.cs">
+      <DependentUpon>Searcher.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Searcher.ascx.designer.cs">
+      <DependentUpon>Searcher.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="aspnetconfig\Controls\Searcher.ascx" />
     <Content Include="aspnetconfig\CreateRole.aspx" />
     <Content Include="aspnetconfig\CreateUser.aspx" />
     <Content Include="aspnetconfig\Default.aspx" />
     <Content Include="aspnetconfig\EditUser.aspx" />
     <Content Include="aspnetconfig\Error.aspx" />
-    <Content Include="aspnetconfig\Images\mainsoft.jpg" />
-    <Content Include="aspnetconfig\Images\untitled.bmp" />
     <Content Include="aspnetconfig\Mainsoft.Web.Administration.css" />
     <Content Include="aspnetconfig\ManageRole.aspx" />
     <Content Include="aspnetconfig\ManageUser.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="aspnetconfig\SecurError.aspx" />
     <Content Include="aspnetconfig\Util.Master" />
-    <Content Include="aspnetconfig\Web.sitemap" />
+    <EmbeddedResource Include="aspnetconfig\Web.sitemap" />
+    <Content Include="Controls\Searcher.ascx" />
+    <EmbeddedResource Include="resources\mainsoft.jpg" />
+    <EmbeddedResource Include="resources\untitled.bmp" />
   </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>move /Y $(TargetDir)$(TargetName).war $(TargetDir)$(TargetName).jar</PostBuildEvent>
+    <PostBuildEvent>copy /Y $(TargetDir)$(TargetName).war $(TargetDir)$(TargetName).jar</PostBuildEvent>
   </PropertyGroup>
 </Project>

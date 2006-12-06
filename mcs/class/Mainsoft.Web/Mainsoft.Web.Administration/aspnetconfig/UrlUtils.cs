@@ -30,7 +30,10 @@
 //
 
 using System.Web.SessionState;
-namespace System.Web.Util {
+using System.Web;
+using System;
+
+namespace Mainsoft.Web.Util {
 	
 	internal class UrlUtils {
 

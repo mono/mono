@@ -32,7 +32,8 @@ using System;
 using System.Globalization;
 using System.Text;
 
-namespace System.Web.Util {
+namespace Mainsoft.Web.Util
+{
 	internal sealed class StrUtils {
 		static CultureInfo invariant = CultureInfo.InvariantCulture;
 		private StrUtils () { }

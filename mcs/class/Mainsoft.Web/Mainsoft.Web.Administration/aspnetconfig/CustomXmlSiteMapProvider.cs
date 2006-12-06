@@ -39,6 +39,9 @@ using System.Web.Util;
 using System.IO;
 using System.Web;
 using System;
+using Mainsoft.Web;
+using Mainsoft.Web.Configuration;
+using Mainsoft.Web.Util;
 
 namespace Mainsoft.Web.Administration
 {
@@ -99,12 +102,12 @@ namespace Mainsoft.Web.Administration
 		
 		string GetNonEmptyOptionalAttribute (XmlNode n, string name)
 		{
-			return System.Web.Configuration.HandlersUtil.ExtractAttributeValue (name, n, true);
+			return HandlersUtil.ExtractAttributeValue (name, n, true);
 		}
 		
 		string GetOptionalAttribute (XmlNode n, string name)
 		{
-			return System.Web.Configuration.HandlersUtil.ExtractAttributeValue (name, n, true, true);
+			return HandlersUtil.ExtractAttributeValue (name, n, true, true);
 		}
 		
 		SiteMapNode BuildSiteMapRecursive (XmlNode xmlNode)

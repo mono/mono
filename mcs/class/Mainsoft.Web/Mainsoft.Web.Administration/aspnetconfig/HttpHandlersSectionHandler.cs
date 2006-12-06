@@ -32,83 +32,11 @@ using System.Collections;
 using System.Configuration;
 using System.Xml;
 using System.Globalization;
+using System;
 
-namespace System.Web.Configuration
+namespace Mainsoft.Web.Configuration
 {
-	class HttpHandlersSectionHandler : IConfigurationSectionHandler
-	{
-		public virtual object Create (object parent, object configContext, XmlNode section)
-		{
-			HandlerFactoryConfiguration mapper;
-			
-			if (parent is HandlerFactoryConfiguration)
-				mapper = new HandlerFactoryConfiguration ((HandlerFactoryConfiguration) parent);
-			else
-				mapper = new HandlerFactoryConfiguration (null);
-			
-			if (section.Attributes != null && section.Attributes.Count != 0)
-				HandlersUtil.ThrowException ("Unrecognized attribute", section);
-
-			XmlNodeList httpHandlers = section.ChildNodes;
-			foreach (XmlNode child in httpHandlers) {
-				XmlNodeType ntype = child.NodeType;
-				if (ntype == XmlNodeType.Whitespace || ntype == XmlNodeType.Comment)
-					continue;
-
-				if (ntype != XmlNodeType.Element)
-					HandlersUtil.ThrowException ("Only elements allowed", child);
-				
-				string name = child.Name;
-				if (name == "clear") {
-					if (child.Attributes != null && child.Attributes.Count != 0)
-						HandlersUtil.ThrowException ("Unrecognized attribute", child);
-
-					mapper.Clear ();
-					continue;
-				}
-					
-				string verb = HandlersUtil.ExtractAttributeValue ("verb", child);
-				string path = HandlersUtil.ExtractAttributeValue ("path", child);
-				string validateStr = HandlersUtil.ExtractAttributeValue ("validate", child, true);
-				bool validate;
-				if (validateStr == null) {
-					validate = true;
-				} else {
-#if NET_2_0
-					validate = "true" == validateStr.ToLower (CultureInfo.InvariantCulture);
-					if (!validate && "false" != validateStr.ToLower (CultureInfo.InvariantCulture))
-#else
-					validate = validateStr == "true";
-					if (!validate && validateStr != "false")
-#endif
-						HandlersUtil.ThrowException (
-								"Invalid value for validate attribute.", child);
-				}
-
-				if (name == "add") {
-					string type = HandlersUtil.ExtractAttributeValue ("type", child);
-					if (child.Attributes != null && child.Attributes.Count != 0)
-						HandlersUtil.ThrowException ("Unrecognized attribute", child);
-
-					mapper.Add (verb, path, type, validate);
-					continue;
-				}
-
-				if (name == "remove") {
-					if (child.Attributes != null && child.Attributes.Count != 0)
-						HandlersUtil.ThrowException ("Unrecognized attribute", child);
-
-					if (validate && false == mapper.Remove (verb, path))
-						HandlersUtil.ThrowException ("There's no mapping to remove", child);
-					
-					continue;
-				}
-				HandlersUtil.ThrowException ("Unexpected element", child);
-			}
-
-			return mapper;
-		}
-	}
+	
 
 	internal class HandlersUtil
 	{
