@@ -1,3 +1,7 @@
+2006-12-06  Wade Berrier <wberrier@novell.com>
+
+	* configure.in: verion -> 1.1.13.8.2
+
 2006-07-19  Wade Berrier <wberrier@novell.com>
 
 	* scripts/mono-find-provides.in: Remove support for only scanning files in the gac.
