@@ -1,3 +1,7 @@
+2006-12-06  Yoni Klain   <yonik@mainsoft.com>
+
+	* ClientScriptManagerTest.cs: Change Render () for 2.0 definition
+
 2006-11-29  Igor Zelmanovich   <igorz@mainsoft.com>
 
 	* PageTest.cs: fixed NunitWeb tests.

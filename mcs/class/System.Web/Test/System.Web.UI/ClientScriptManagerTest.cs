@@ -66,8 +66,8 @@ namespace MonoTests.System.Web.UI
 		public void Set_Up ()
 		{
 #if DOT_NET
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.EventValidationTest1.aspx", "EventValidationTest1.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.EventValidationTest2.aspx", "EventValidationTest2.aspx");
+			WebTest.CopyResource (GetType (), "EventValidationTest1.aspx", "EventValidationTest1.aspx");
+			WebTest.CopyResource (GetType (), "EventValidationTest2.aspx", "EventValidationTest2.aspx");
 #else
 			WebTest.CopyResource (GetType (), "EventValidationTest1.aspx", "EventValidationTest1.aspx");
 			WebTest.CopyResource (GetType (), "EventValidationTest2.aspx", "EventValidationTest2.aspx");
@@ -218,12 +218,11 @@ namespace MonoTests.System.Web.UI
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")] // implementation specific
 		public void ClientScriptManager_RegisterOnSubmitStatement ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (RegisterOnSubmitStatement));
 			string html = t.Run ();
-			if (html.IndexOf ("WebForm_OnSubmit()") < 0)
+			if (html.IndexOf ("onsubmit") < 0)
 				Assert.Fail ("RegisterOnSubmitStatement");
 		}
 
