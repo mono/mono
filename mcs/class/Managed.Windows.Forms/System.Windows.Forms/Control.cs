@@ -97,7 +97,7 @@ namespace System.Windows.Forms
 		internal Color			background_color;	// background color for control
 		internal Image			background_image;	// background image for control
 		internal Font			font;			// font for control
-		string			text;			// window/title text for control
+		string text; // window/title text for control
 		internal BorderStyle		border_style;		// Border style of control
 
 		// Layout
@@ -116,8 +116,8 @@ namespace System.Windows.Forms
 		Control parent; // our parent control
 		AccessibleObject accessibility_object; // object that contains accessibility information about our control
 		BindingContext binding_context;
-		internal RightToLeft		right_to_left;		// drawing direction for control
-		internal ContextMenu		context_menu;		// Context menu associated with the control
+		RightToLeft right_to_left; // drawing direction for control
+		ContextMenu context_menu; // Context menu associated with the control
 
 		// double buffering
 		Graphics dc_mem; // Graphics context for double buffering
