@@ -925,7 +925,7 @@ namespace System.Web {
 
 				if (physical_path == null) {
 					// Don't call HttpRequest.MapPath here, as that one *trims* the input
-					physical_path = worker_request.GetFilePathTranslated ();
+					physical_path = worker_request.MapPath (FilePath);
 				}
 
 				if (SecurityManager.SecurityEnabled) {
@@ -1248,6 +1248,7 @@ namespace System.Web {
 		internal void SetFilePath (string path)
 		{
 			file_path = path;
+			physical_path = null;
 		}
 
 		internal void SetCurrentExePath (string path)
