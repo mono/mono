@@ -1,3 +1,10 @@
+2006-12-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509CertificateTest.cs: Add new test cases for [Issuer|Subject]
+	UniqueIdentifier properties.
+	* X509Crl.cs: Add test cases for CRL signature verification using a
+	certificate without a CA flag in it's BasicConstraintExtension.
+
 2006-12-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate.cs: New. Unit tests for X509Certificate when dealing
