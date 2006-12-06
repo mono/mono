@@ -1732,7 +1732,7 @@ namespace System.Web.UI.WebControls
 		
 		string GetClientEvent (TreeNode node, string ev)
 		{
-			return Page.ClientScript.GetPostBackClientHyperlink (this, ev + "|" + node.Path);
+			return Page.ClientScript.GetPostBackClientHyperlink (this, ev + "|" + node.Path, true);
 		}
 		
 		string GetClientExpandEvent (TreeNode node)
