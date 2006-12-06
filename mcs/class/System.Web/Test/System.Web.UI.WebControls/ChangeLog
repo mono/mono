@@ -4,6 +4,11 @@
 
 2006-12-06  Yoni Klain         <yonik@mainsoft.com>
 
+	* MenuTest.cs;GridViewTest.cs;CustomValidatorTest.cs;  
+	changes for 2.0 definition and category repaired.
+
+2006-12-06  Yoni Klain         <yonik@mainsoft.com>
+
 	* LoginTest.cs  remove not relevant test; 
 
 2006-12-05  Yoni Klain         <yonik@mainsoft.com>

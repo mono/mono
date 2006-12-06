@@ -39,6 +39,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
+using MonoTests.stand_alone.WebHarness;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -188,7 +189,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Render () {
 			CustomValidatorTestClass	c;
 			TextBox				t;
@@ -201,19 +201,43 @@ namespace MonoTests.System.Web.UI.WebControls
 			c.Display = ValidatorDisplay.Static;
 			c.Enabled = true;
 			c.EnableViewState = true;
-#if NET_2_0
-			Assert.AreEqual("&nbsp;", c.Render(), "R1");
-#else
+
+#if! NET_2_0
 			Assert.AreEqual("<span style=\"color:Red;\">aw shucks</span>", c.Render(), "R1");
 #endif
 
 			c.ClientValidationFunction = "Father to a sister of thought";
-#if NET_2_0
-			Assert.AreEqual("&nbsp;", c.Render(), "R2");
-#else
+#if! NET_2_0
 			Assert.AreEqual("<span style=\"color:Red;\">aw shucks</span>", c.Render(), "R2");
 #endif
 		}
+
+#if NET_2_0
+		class Poker : CustomValidator
+		{
+			public string Render ()
+			{
+				HtmlTextWriter writer;
+				writer = CustomValidatorTest.GetWriter ();
+				base.Render (writer);
+				return writer.InnerWriter.ToString ();
+			}
+		}
+
+		[Test]
+		public void Render_2_0 ()
+		{
+			Poker c = new Poker();
+			c.ErrorMessage = "aw shucks";
+			c.Display = ValidatorDisplay.Static;
+			c.Enabled = true;
+			c.EnableViewState = true;
+			string html = c.Render ();
+			HtmlDiff.AssertAreEqual ("<span style=\"color:Red;\">aw shucks</span>", html, "Render#1");
+		}
+
+		
+#endif
 
 		[Test]
 		public void EmptyControlName ()

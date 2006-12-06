@@ -359,7 +359,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			myds.Add ("Italy");
 			myds.Add ("Israel");
 			myds.Add ("Russia");
-
 		}
 
 		[Test]
@@ -860,15 +859,22 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")] 
-		// LAMESPEC: msdn talks about number of row created by this method
-		public void GridView_CreateChildControls_2 ()
+		public void GridView_CreateChildControls_1 ()
+		{
+			ArrayList l = new ArrayList(); 
+			PokerGridView g = new PokerGridView ();
+			Assert.AreEqual (0, g.DoCreateChildControls (l, false), "CreateChildControls#1");
+		}
+
+		[Test]
+		public void GridView_NullDS ()
 		{
 			PokerGridView g = new PokerGridView ();
-			g.DataSource = myds;
-			Assert.AreEqual (-1, g.DoCreateChildControls (myds, false), "CreateChildControls#2");
+			g.DataSource = null;
+			g.DataBind ();
+			Assert.AreEqual (0, g.Rows.Count, "NullDS");
 		}
-		
+
 		[Test]
 		public void GridView_CreateChildTable () {
 			PokerGridView g = new PokerGridView ();
@@ -1120,32 +1126,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		private bool sorted;
 		private bool sorting;
 		private bool unload;
-
-
-		[Test]
-		[Category ("NotWorking")]
-		public void GridView_EventsNotWorking ()
-		{
-			PokerGridView gv = new PokerGridView ();
-
-			Assert.AreEqual (false, gv.dataPropertyChanged, "BeforedataPropertyChanged");
-			gv.DataSource = myds;
-			// not initialized gv
-			Assert.AreEqual (true, gv.dataPropertyChanged, "AfterdataPropertyChanged");
-
-			gv.Init += new EventHandler (gv_Init);
-			gv.Load += new EventHandler (gv_Load);
-			
-			Assert.AreEqual (false, init, "BeforeInit");
-			gv.DoOnInit (new EventArgs ());
-			// page does not exist
-			Assert.AreEqual (true, init, "AfterInit");
-			
-			Assert.AreEqual (false, load, "BeforeLoad");
-			gv.DoOnLoad (new EventArgs ());
-			// page does not exist
-			Assert.AreEqual (true, load, "AfterLoad");
-		}
 
 		[Test]
 		public void GridView_Events ()

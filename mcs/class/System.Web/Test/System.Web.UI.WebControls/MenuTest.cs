@@ -887,66 +887,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		        p.Form.Controls.Add (menu);
 		        p.Form.Controls.Add (lce);
 		}
+
 	  	[Test]
-		[Category ("NunitWeb")]
-		[Category ("NotWorking")] // too implementation specific 
-		public void Menu_ItemsRender ()
-		{
-		        string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (_ItemsRender)).Run ();
-		        string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
-			string OriginControlHtml = @"<a href=""#ctl01_SkipLink""><img alt=""Skip Navigation Links"" src=""/NunitWeb/WebResource.axd?d=gZrz8lvSQfolS1pG07HX9g2&amp;t=632784640484505569"" width=""0"" height=""0"" 
-				style=""border-width:0px;"" /></a>
-				<table id=""ctl01"" class=""ctl01_2"" cellpadding=""0"" cellspacing=""0"" border=""0"">
-				<tr onmouseover=""Menu_HoverStatic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""ctl01n0"">
-				<td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-				<tr>
-				<td style=""white-space:nowrap;width:100%;""><a class=""ctl01_1"" href=""javascript:__doPostBack('ctl01','value1')"">root</a></td><td style=""width:0;"">
-				<img src=""/NunitWeb/WebResource.axd?d=jEQEPhExqNH3fus0nmWZ3pFNw-rGIVoBqrGqFcOqB1U1&amp;t=632784640484505569"" alt=""Expand root"" style=""border-style:none;vertical-align:middle;"" /></td>
-				</tr>
-				</table></td>
-				</tr>
-				</table><div id=""ctl01n0Items"" class=""ctl01_0"">
-				<table border=""0"" cellpadding=""0"" cellspacing=""0"">
-				<tr onmouseover=""Menu_HoverDynamic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""ctl01n1"">
-				<td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-				<tr>
-				<td style=""white-space:nowrap;width:100%;""><a class=""ctl01_1"" href=""javascript:__doPostBack('ctl01','value1\\value2')"">node1</a></td>
-				</tr>
-				</table></td>
-				</tr><tr onmouseover=""Menu_HoverDynamic(this)"" onmouseout=""Menu_Unhover(this)"" onkeyup=""Menu_Key(this)"" id=""ctl01n2"">
-				<td><table cellpadding=""0"" cellspacing=""0"" border=""0"" width=""100%"">
-				<tr>
-				<td style=""white-space:nowrap;width:100%;""><a class=""ctl01_1"" href=""javascript:__doPostBack('ctl01','value1\\value3')"">node2</a></td>
-				</tr>
-				</table></td>
-				</tr>
-				</table><div class=""ctl01_0"" id=""ctl01n0ItemsUp"" onmouseover=""PopOut_Up(this)"" onmouseout=""PopOut_Stop(this)"" style=""text-align:center;"">
-				<img src=""/NunitWeb/WebResource.axd?d=Kql4shtTcfCiKn_s1ZX6W6WIJmS2VsB7hDFw8oD-9I01&amp;t=632784640484505569"" alt=""Scroll up"" />
-				</div><div class=""ctl01_0"" id=""ctl01n0ItemsDn"" onmouseover=""PopOut_Down(this)"" onmouseout=""PopOut_Stop(this)"" style=""text-align:center;"">
-				<img src=""/NunitWeb/WebResource.axd?d=QxI-WSWnY8jfAZsv_BcOLFGj_CTJTI_bGi0dPzQPCtI1&amp;t=632784640484505569"" alt=""Scroll down"" />
-				</div>
-				</div><a id=""ctl01_SkipLink""></a>";
-
-		        HtmlDiff.AssertAreEqual(OriginControlHtml, RenderedControlHtml,"Render Items");
-		}
-
-		public static void _ItemsRender (Page p)
-		{
-		        LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
-		        LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
-		        Menu menu = new Menu ();
-		        MenuItem R = new MenuItem ("root", "value1");
-		        MenuItem N1 = new MenuItem ("node1", "value2");
-		        MenuItem N2 = new MenuItem ("node2", "value3");
-		        R.ChildItems.Add (N1);
-		        R.ChildItems.Add (N2);
-		        menu.Items.Add (R);
-		        p.Form.Controls.Add (lcb);
-		        p.Form.Controls.Add (menu);
-		        p.Form.Controls.Add (lce);
-		}
-
-		[Test]
 		[Category ("NunitWeb")]
 		public void Menu_RenderStaticItems () {
 			string RenderedPageHtml, RenderedControlHtml, OriginControlHtml;
