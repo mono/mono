@@ -48,7 +48,20 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual (0, bpg.Count);
 			Assert.AreEqual (false, bpg.IsImported);
 		}
-		
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException),
+			"This method is only valid for persisted <System.Object[]> elements.")]
+		public void TestAddNewProperty1 ()
+		{
+			string name = "name";
+			string value = "value";
+
+			bpg = new BuildPropertyGroup ();
+
+			bpg.AddNewProperty (name, value);
+		}
+
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException),
 			"Properties in persisted property groups cannot be accessed by name.")]
@@ -73,19 +86,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual ("Value", bpg ["Name"].Value, "A3");
 		}
 
-		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"This method is only valid for persisted <System.Object[]> elements.")]
-		public void TestAddNewProperty1 ()
-		{
-			string name = "name";
-			string value = "value";
-		
-			bpg = new BuildPropertyGroup ();
-			
-			bpg.AddNewProperty (name, value);
-		}
-		
 		[Test]
 		public void TestClear ()
 		{
@@ -115,6 +115,126 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			bpg = new BuildPropertyGroup ();
 		
 			Assert.AreEqual (String.Empty, bpg.Condition, "A1");
+		}
+
+		[Test]
+		public void TestGetEnumerator ()
+		{
+			BuildPropertyGroup bpg = new BuildPropertyGroup ();
+			bpg.SetProperty ("a", "c");
+			bpg.SetProperty ("b", "d");
+
+			IEnumerator e = bpg.GetEnumerator ();
+			e.MoveNext ();
+			Assert.AreEqual ("a", ((BuildProperty) e.Current).Name, "A1");
+			Assert.AreEqual ("c", ((BuildProperty) e.Current).Value, "A2");
+			Assert.AreEqual ("c", ((BuildProperty) e.Current).FinalValue, "A3");
+			e.MoveNext ();
+			Assert.AreEqual ("b", ((BuildProperty) e.Current).Name, "A4");
+			Assert.AreEqual ("d", ((BuildProperty) e.Current).Value, "A5");
+			Assert.AreEqual ("d", ((BuildProperty) e.Current).FinalValue, "A6");
+
+			Assert.IsFalse (e.MoveNext ());
+		}
+
+		[Test]
+		[Ignore ("NullRefException on MS .NET 2.0")]
+		public void TestRemoveProperty1 ()
+		{
+			BuildPropertyGroup bpg = new BuildPropertyGroup ();
+			bpg.RemoveProperty ((BuildProperty) null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestRemoveProperty2 ()
+		{
+			BuildPropertyGroup bpg = new BuildPropertyGroup ();
+			bpg.SetProperty ("a", "b");
+			bpg.SetProperty ("c", "d");
+
+			bpg.RemoveProperty ((string) null);
+		}
+
+		[Test]
+		public void TestRemoveProperty3 ()
+		{
+			BuildPropertyGroup bpg = new BuildPropertyGroup ();
+			bpg.SetProperty ("a", "b");
+			bpg.SetProperty ("c", "d");
+
+			bpg.RemoveProperty ("value_not_in_group");
+		}
+
+		[Test]
+		public void TestRemoveProperty4 ()
+		{
+			BuildPropertyGroup bpg = new BuildPropertyGroup ();
+			bpg.SetProperty ("a", "b");
+			bpg.SetProperty ("c", "d");
+
+			bpg.RemoveProperty (new BuildProperty ("name", "value"));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestSetProperty1 ()
+		{
+			BuildPropertyGroup bpg = new BuildPropertyGroup ();
+			bpg.SetProperty (null, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestSetProperty2 ()
+		{
+			BuildPropertyGroup bpg = new BuildPropertyGroup ();
+			bpg.SetProperty ("name", null);
+		}
+
+		[Test]
+		public void TestSetProperty3 ()
+		{
+			BuildPropertyGroup bpg = new BuildPropertyGroup ();
+			
+			bpg.SetProperty ("name", "$(A)");
+
+			BuildProperty bp = bpg ["name"];
+
+			Assert.AreEqual ("name", bp.Name, "A1");
+			Assert.AreEqual ("$(A)", bp.Value, "A2");
+			Assert.AreEqual ("$(A)", bp.FinalValue, "A3");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestSetProperty4 ()
+		{
+			BuildPropertyGroup bpg = new BuildPropertyGroup ();
+
+			bpg.SetProperty ("P1", "$(A)", true);
+			bpg.SetProperty ("P2", "$(A)", false);
+
+			BuildProperty b1 = bpg ["P1"];
+			BuildProperty b2 = bpg ["P2"];
+
+			Assert.AreEqual ("P1", b1.Name, "A1");
+			Assert.AreEqual (Utilities.Escape ("$(A)"), b1.Value, "A2");
+			Assert.AreEqual ("$(A)", b1.FinalValue, "A3");
+			Assert.AreEqual ("P2", b2.Name, "A4");
+			Assert.AreEqual ("$(A)", b2.Value, "A5");
+			Assert.AreEqual ("$(A)", b2.FinalValue, "A6");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException),
+			"The name \"1\" contains an invalid character \"1\".")]
+		[Category ("NotWorking")]
+		public void TestSetProperty5 ()
+		{
+			BuildPropertyGroup bpg = new BuildPropertyGroup ();
+
+			bpg.SetProperty ("1", "$(A)");
 		}
 	}
 }

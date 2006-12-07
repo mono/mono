@@ -285,5 +285,125 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			bt [0].ContinueOnError = false;
 			Assert.IsFalse (bt [0].ContinueOnError, "A4");
 		}
+
+		[Test]
+		public void TestAddOutputItem1 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<Target Name='T'>
+						<Message />
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Target [] t = new Target [1];
+			BuildTask [] bt;
+			project.Targets.CopyTo (t, 0);
+			bt = GetTasks (t [0]);
+
+			bt [0].AddOutputItem (null, null);
+		}
+
+		[Test]
+		public void TestAddOutputItem2 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<UsingTask
+						AssemblyFile='Test\resources\TestTasks.dll'
+						TaskName='OutputTestTask'
+					/>
+					<Target Name='T'>
+						<OutputTestTask />
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Target [] t = new Target [1];
+			BuildTask [] bt;
+			project.Targets.CopyTo (t, 0);
+			bt = GetTasks (t [0]);
+
+			bt [0].AddOutputItem ("Property", "ItemName");
+			project.Build ("T");
+
+			Assert.AreEqual ("ItemName", project.EvaluatedItems [0].Name, "A1");
+			Assert.AreEqual ("some_text", project.EvaluatedItems [0].FinalItemSpec, "A2");
+		}
+
+		[Test]
+		public void TestAddOutputProperty1 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<Target Name='T'>
+						<Message />
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Target [] t = new Target [1];
+			BuildTask [] bt;
+			project.Targets.CopyTo (t, 0);
+			bt = GetTasks (t [0]);
+
+			bt [0].AddOutputProperty (null, null);
+		}
+
+		[Test]
+		public void TestAddOutputProperty2 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<UsingTask
+						AssemblyFile='Test\resources\TestTasks.dll'
+						TaskName='OutputTestTask'
+					/>
+					<Target Name='T'>
+						<OutputTestTask />
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Target [] t = new Target [1];
+			BuildTask [] bt;
+			project.Targets.CopyTo (t, 0);
+			bt = GetTasks (t [0]);
+
+			bt [0].AddOutputProperty ("Property", "PropertyName");
+			project.Build ("T");
+
+			Assert.AreEqual ("some_text", project.EvaluatedProperties ["PropertyName"].Value, "A1");
+			Assert.AreEqual ("some_text", project.EvaluatedProperties ["PropertyName"].FinalValue, "A1");
+		}
 	}
 }

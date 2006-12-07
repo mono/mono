@@ -80,6 +80,110 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			IEnumerator en = project.UsingTasks.GetEnumerator ();
 			en.MoveNext ();
 		}
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestCopyTo1 ()
+		{
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<UsingTask
+						AssemblyFile='Test/resources/TestTasks.dll'
+						TaskName='SimpleTask'
+					/>
+				</Project>
+			";
 
+			engine = new Engine (Consts.BinPath);
+
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.UsingTasks.CopyTo (null, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void TestCopyTo2 ()
+		{
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<UsingTask
+						AssemblyFile='Test/resources/TestTasks.dll'
+						TaskName='SimpleTask'
+					/>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.UsingTasks.CopyTo (new UsingTask [1], -1);
+		}
+
+		[Test]
+		[Ignore ("Throws InvalidCastException on MS NET 2.0")]
+		public void TestCopyTo3 ()
+		{
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<UsingTask
+						AssemblyFile='Test/resources/TestTasks.dll'
+						TaskName='SimpleTask'
+					/>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.UsingTasks.CopyTo (new UsingTask [][] { new UsingTask [] {
+				null}}, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestCopyTo4 ()
+		{
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<UsingTask
+						AssemblyFile='Test/resources/TestTasks.dll'
+						TaskName='SimpleTask'
+					/>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.UsingTasks.CopyTo (new UsingTask [1], 2);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestCopyTo5 ()
+		{
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<UsingTask
+						AssemblyFile='Test/resources/TestTasks.dll'
+						TaskName='SimpleTask'
+					/>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.UsingTasks.CopyTo (new UsingTask [1], 1);
+		}
 	}
 }

@@ -69,8 +69,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 		
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException),
-			"Parameter \"propertyName\" cannot be null.")]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void TestCtor2 ()
 		{
 			bp = new BuildProperty (null, "value");
@@ -78,8 +77,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 		
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException),
-			"Parameter \"propertyValue\" cannot be null.")]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void TestCtor3 ()
 		{
 			bp = new BuildProperty ("name", null);

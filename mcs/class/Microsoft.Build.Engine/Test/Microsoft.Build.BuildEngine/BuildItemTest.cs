@@ -71,7 +71,42 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual (false, item.IsImported, "A5");
 			Assert.AreEqual (itemName, item.Name, "A6");
 		}
-	
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestCtor3 ()
+		{
+			new BuildItem (null, (string) null);
+		}
+
+		[Test]
+		[Ignore ("NullRefException on MS .NET 2.0")]
+		public void TestCtor4 ()
+		{
+			new BuildItem (null, (ITaskItem) null);
+		}
+
+		[Test]
+		public void TestCtor5 ()
+		{
+			new BuildItem (null, "something");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException),
+			"Parameter \"itemInclude\" cannot have zero length.")]
+		public void TestCtor6 ()
+		{
+			new BuildItem (null, String.Empty);
+		}
+
+		[Test]
+		[Ignore ("IndexOutOfRange on MS .NET 2.0")]
+		public void TestCtor7 ()
+		{
+			new BuildItem (String.Empty, "something");
+		}
+
 		[Test]
 		public void TestCopyCustomMetadataTo1 ()
 		{
@@ -155,7 +190,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		public void TestRemoveMetadata ()
+		public void TestRemoveMetadata1 ()
 		{
 			string itemName = "a";
 			string itemInclude = "a";
@@ -171,6 +206,53 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			item.RemoveMetadata (metadataName);
 
 			Assert.AreEqual (false, item.HasMetadata (metadataName), "A2");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestRemoveMetadata2 ()
+		{
+			item = new BuildItem ("name", "value");
+			item.RemoveMetadata (null);
+		}
+
+		[Test]
+		public void TestRemoveMetadata3 ()
+		{
+			item = new BuildItem ("name", "value");
+			item.RemoveMetadata ("undefined_metadata");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestSetMetadata1 ()
+		{
+			item = new BuildItem ("name", "include");
+			item.SetMetadata (null, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestSetMetadata2 ()
+		{
+			item = new BuildItem ("name", "include");
+			item.SetMetadata ("name", null);
+		}
+
+		[Test]
+		public void TestSetMetadata3 ()
+		{
+			item = new BuildItem ("name", "include");
+			item.SetMetadata ("a", "$(A)");
+			item.SetMetadata ("b", "$(A)", true);
+			item.SetMetadata ("c", "$(A)", false);
+
+			Assert.AreEqual ("$(A)", item.GetEvaluatedMetadata ("a"), "A1");
+			Assert.AreEqual ("$(A)", item.GetEvaluatedMetadata ("b"), "A2");
+			Assert.AreEqual ("$(A)", item.GetEvaluatedMetadata ("c"), "A3");
+			Assert.AreEqual ("$(A)", item.GetMetadata ("a"), "A4");
+			Assert.AreEqual (Utilities.Escape ("$(A)"), item.GetMetadata ("b"), "A5");
+			Assert.AreEqual ("$(A)", item.GetMetadata ("c"), "A6");
 		}
 	}
 }

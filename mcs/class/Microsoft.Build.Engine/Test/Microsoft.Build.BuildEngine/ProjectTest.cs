@@ -34,6 +34,42 @@ using Microsoft.Build.Utilities;
 using NUnit.Framework;
 
 namespace MonoTests.Microsoft.Build.BuildEngine {
+
+	class TestLogger : Logger {
+		int target_started_events = 0;
+		int target_finished_events = 0;
+
+		public override void Initialize (IEventSource eventSource)
+		{
+			eventSource.TargetStarted += new TargetStartedEventHandler(TargetStarted);
+			eventSource.TargetFinished += new TargetFinishedEventHandler(TargetFinished);
+			eventSource.MessageRaised += new BuildMessageEventHandler(Message);
+			eventSource.WarningRaised += new BuildWarningEventHandler(Warning);
+		}
+
+		void TargetStarted (object sender, TargetStartedEventArgs args)
+		{
+			target_started_events++;
+		}
+
+		void TargetFinished (object sender, TargetFinishedEventArgs args)
+		{
+			target_finished_events++;
+		}
+
+		void Message (object sender, BuildMessageEventArgs args)
+		{
+		}
+		
+		void Warning (object sender, BuildWarningEventArgs args)
+		{
+		}
+
+		public int TargetStartedEvents { get { return target_started_events; } }
+
+		public int TargetFinishedEvents { get { return target_finished_events; } }
+	}
+
 	[TestFixture]
 	public class ProjectTest {
 
@@ -51,8 +87,64 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				"<Project></Project>";
 			
 			engine = new Engine (Consts.BinPath);
+			DateTime time = DateTime.Now;
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
+
+			Assert.AreEqual (true, project.BuildEnabled, "A1");
+			Assert.AreEqual (String.Empty, project.DefaultTargets, "A2");
+			Assert.AreEqual (String.Empty, project.FullFileName, "A3");
+			Assert.AreEqual (false, project.IsDirty, "A4");
+			Assert.AreEqual (false, project.IsValidated, "A5");
+			Assert.AreEqual (engine, project.ParentEngine, "A6");
+			Assert.IsTrue (time <= project.TimeOfLastDirty, "A7");
+			Assert.IsTrue (String.Empty != project.Xml, "A8");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestAddNewItemGroup ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			BuildItemGroup big = project.AddNewItemGroup ();
+			Assert.IsNotNull (big, "A1");
+			Assert.AreEqual (String.Empty, big.Condition, "A2");
+			Assert.AreEqual (0, big.Count, "A3");
+			Assert.AreEqual (false, big.IsImported, "A4");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestAddNewPropertyGroup ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			BuildPropertyGroup bpg = project.AddNewPropertyGroup (false);
+			Assert.IsNotNull (bpg, "A1");
+			Assert.AreEqual (String.Empty, bpg.Condition, "A2");
+			Assert.AreEqual (0, bpg.Count, "A3");
+			Assert.AreEqual (false, bpg.IsImported, "A4");
 		}
 
 		[Test]
@@ -77,6 +169,147 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			Assert.AreEqual (true, project.Build (new string[] { "Main" }, hashtable), "A1");
 			Assert.AreEqual (1, hashtable.Count, "A2");
+		}
+
+		[Test]
+		public void TestBuild2 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<Target Name='T' Inputs='Test\resources\TestTasks.cs' Outputs='Test\resources\TestTasks.dll'>
+						<Message Text='text' />
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			TestLogger tl = new TestLogger ();
+			engine.RegisterLogger (tl);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.Build ("T");
+			project.Build ("T");
+
+			Assert.AreEqual (2, tl.TargetStartedEvents, "A1");
+			Assert.AreEqual (2, tl.TargetFinishedEvents, "A1");
+		}
+
+		[Test]
+		public void TestBuild3 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<Target Name='T' Inputs='Test\resources\TestTasks.cs' Outputs='Test\resources\TestTasks.dll'>
+						<Message Text='text' />
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			TestLogger tl = new TestLogger ();
+			engine.RegisterLogger (tl);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.Build (new string [1] { "T" }, null, BuildSettings.None);
+			project.Build (new string [1] { "T" }, null, BuildSettings.None);
+
+			Assert.AreEqual (2, tl.TargetStartedEvents, "A1");
+			Assert.AreEqual (2, tl.TargetFinishedEvents, "A1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestBuild4 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<Target Name='T' Inputs='Test\resources\TestTasks.cs' Outputs='Test\resources\TestTasks.dll'>
+						<Message Text='text' />
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			TestLogger tl = new TestLogger ();
+			engine.RegisterLogger (tl);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.Build (new string [1] { "T" }, null, BuildSettings.DoNotResetPreviouslyBuiltTargets);
+			project.Build (new string [1] { "T" }, null, BuildSettings.DoNotResetPreviouslyBuiltTargets);
+
+			Assert.AreEqual (1, tl.TargetStartedEvents, "A1");
+			Assert.AreEqual (1, tl.TargetFinishedEvents, "A1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestGetConditionedPropertyValues ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<PropertyGroup Condition='true'>
+						<A>A</A>
+						<B Condition='true'>A</B>
+					</PropertyGroup>
+					<PropertyGroup>
+						<C Condition='true'>A</C>
+						<C Condition='false'>B</C>
+						<C Condition='!false'>C</C>
+						<D>A</D>
+						<E Condition="" '$(C)' == 'A' "">E</E>
+					</PropertyGroup>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Assert.AreEqual (0, project.GetConditionedPropertyValues ("A").Length, "A1");
+			Assert.AreEqual (0, project.GetConditionedPropertyValues ("B").Length, "A2");
+			Assert.AreEqual (1, project.GetConditionedPropertyValues ("C").Length, "A3");
+			Assert.AreEqual (0, project.GetConditionedPropertyValues ("D").Length, "A4");
+			Assert.AreEqual (0, project.GetConditionedPropertyValues ("E").Length, "A5");
+			Assert.AreEqual ("A", project.GetConditionedPropertyValues ("C") [0], "A6");
+		}
+
+		[Test]
+		public void TestGetProjectExtensions ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<ProjectExtensions>
+						<Node>Text</Node>
+					</ProjectExtensions>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Assert.AreEqual (String.Empty, project.GetProjectExtensions (null), "A1");
+			Assert.AreEqual (String.Empty, project.GetProjectExtensions (String.Empty), "A2");
+			Assert.AreEqual (String.Empty, project.GetProjectExtensions ("something"), "A3");
+			Assert.AreEqual ("Text", project.GetProjectExtensions ("Node"), "A4");
 		}
 
 		[Test]
@@ -202,6 +435,35 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project = engine.CreateNewProject ();
 
 			Assert.AreEqual (engine, project.ParentEngine, "A1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestResetBuildStatus ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<Target Name='T' Inputs='Test\resources\TestTasks.cs' Outputs='Test\resources\TestTasks.dll'>
+						<Message Text='text' />
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			TestLogger tl = new TestLogger ();
+			engine.RegisterLogger (tl);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			project.Build ("T");
+			project.ResetBuildStatus ();
+			project.Build (new string [1] { "T" }, null, BuildSettings.DoNotResetPreviouslyBuiltTargets);
+
+			Assert.AreEqual (2, tl.TargetStartedEvents, "A1");
+			Assert.AreEqual (2, tl.TargetFinishedEvents, "A1");
 		}
 		
 		[Test]
