@@ -2,11 +2,10 @@
 // X509ChainElementCollection.cs - System.Security.Cryptography.X509Certificates.X509ChainElementCollection
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
+// Copyright (C) 2006 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -88,14 +87,23 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		// private stuff
 
-		internal void Add (X509Certificate2 certificate, X509ChainStatusFlags flags)
+		internal void Add (X509Certificate2 certificate)
 		{
-			_list.Add (new X509ChainElement (certificate, flags));
+			_list.Add (new X509ChainElement (certificate));
 		}
 
 		internal void Clear ()
 		{
 			_list.Clear ();
+		}
+
+		internal bool Contains (X509Certificate2 certificate)
+		{
+			for (int i=0; i < _list.Count; i++) {
+				if (certificate.Equals (( _list [i] as X509ChainElement).Certificate))
+					return true;
+			}
+			return false;
 		}
 	}
 }

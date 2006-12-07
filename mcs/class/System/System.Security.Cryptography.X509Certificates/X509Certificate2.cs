@@ -632,6 +632,13 @@ namespace System.Security.Cryptography.X509Certificates {
 			byte[] data = Load (fileName);
 			return GetCertContentType (data);
 		}
+
+		// internal stuff because X509Certificate2 isn't complete enough
+		// (maybe X509Certificate3 will be better?)
+
+		internal MX.X509Certificate MonoCertificate {
+			get { return _cert; }
+		}
 	}
 }
 

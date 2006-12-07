@@ -176,6 +176,51 @@ namespace System.Security.Cryptography.X509Certificates {
 			ASN1 sequence = new ASN1 (RawData);
 			name = MX.X501.ToString (sequence, true, ", ", true);
 		}
+
+		private static string Canonize (string s)
+		{
+			int i = s.IndexOf ('=');
+			StringBuilder r = new StringBuilder (s.Substring (0, i + 1));
+			// skip any white space starting the value
+			while (Char.IsWhiteSpace (s, ++i));
+			// ensure we skip white spaces at the end of the value
+			s = s.TrimEnd ();
+			// keep track of internal multiple spaces
+			bool space = false;
+			for (; i < s.Length; i++) {
+				if (space) {
+					space = Char.IsWhiteSpace (s, i);
+					if (space)
+						continue;
+				}
+				if (Char.IsWhiteSpace (s, i))
+					space = true;
+				r.Append (Char.ToUpperInvariant (s[i]));
+			}
+			return r.ToString ();
+		}
+
+		// of all X500DistinguishedNameFlags flags nothing can do a "correct" comparison :|
+		internal static bool AreEqual (X500DistinguishedName name1, X500DistinguishedName name2)
+		{
+			if (name1 == null)
+				return (name2 == null);
+			if (name2 == null)
+				return false;
+
+			X500DistinguishedNameFlags flags = X500DistinguishedNameFlags.UseNewLines | X500DistinguishedNameFlags.DoNotUseQuotes;
+			string[] split = new string[] { Environment.NewLine };
+			string[] parts1 = name1.Decode (flags).Split (split, StringSplitOptions.RemoveEmptyEntries);
+			string[] parts2 = name2.Decode (flags).Split (split, StringSplitOptions.RemoveEmptyEntries);
+			if (parts1.Length != parts2.Length)
+				return false;
+
+			for (int i = 0; i < parts1.Length; i++) {
+				if (Canonize (parts1[i]) != Canonize (parts2[i]))
+					return false;
+			}
+			return true;
+		}
 	}
 }
 

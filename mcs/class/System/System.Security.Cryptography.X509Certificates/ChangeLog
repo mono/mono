@@ -1,3 +1,19 @@
+2006-12-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X500DistinguishedName.cs: Add an internal method to compare 
+	(canonized) DN so the class can be used in X509Chain.
+	* X509Certificate2.cs: Expose the internal certificate (from Mono.
+	Security.dll) as X509Certificate2 isn't complete enough to implement
+	chaining.
+	* X509Chain.cs: A (working) *subset( of RFC3280 path building and 
+	validation. 
+	* X509ChainElementCollection.cs: Add help method Contains and change
+	Add not to require a flag parameter.
+	* X509ChainElement.cs: Keeps flags compressed (as flags!) and add
+	a method to uncompress them when validation is complete.
+	* X509Store.cs: Expose the internal store (from Mono.Security.dll) as
+	internal. Map Trust and Root as the same store (for compatibility).
+
 2006-11-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate2.cs: Modified Verify to use CryptoConfig to create

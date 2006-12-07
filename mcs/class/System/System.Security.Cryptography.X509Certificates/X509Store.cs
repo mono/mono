@@ -139,6 +139,10 @@ namespace System.Security.Cryptography.X509Certificates {
 			get { return ((_flags & OpenFlags.ReadWrite) == OpenFlags.ReadOnly); }
 		}
 
+		internal MX.X509Store Store {
+			get { return store; }
+		}
+
 		[MonoTODO ("Mono's stores are fully managed. Always returns IntPtr.Zero.")]
 		public IntPtr StoreHandle {
 			get { return IntPtr.Zero; }
@@ -203,8 +207,19 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (String.IsNullOrEmpty (_name))
 				throw new CryptographicException (Locale.GetText ("Invalid store name (null or empty)."));
 
+			/* keep existing Mono installations (pre 2.0) compatible with new stuff */
+			string name;
+			switch (_name) {
+			case "Root":
+				name = "Trust";
+				break;
+			default:
+				name = _name;
+				break;
+			}
+
 			bool create = ((flags & OpenFlags.OpenExistingOnly) != OpenFlags.OpenExistingOnly);
-			store = Factory.Open (_name, create);
+			store = Factory.Open (name, create);
 			if (store == null)
 				throw new CryptographicException (Locale.GetText ("Store {0} doesn't exists.", _name));
 			_flags = flags;
