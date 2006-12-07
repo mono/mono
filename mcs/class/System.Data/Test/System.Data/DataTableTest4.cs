@@ -1,5 +1,6 @@
 //Tests to check the behavior of ReadXml and WriteXml
 
+#if NET_2_0
 using System;
 using System.Data;
 using System.Collections;
@@ -1998,4 +1999,4 @@ namespace Monotests_System.Data
 		}
 	}
 }
-
+#endif

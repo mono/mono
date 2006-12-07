@@ -1,5 +1,5 @@
 //Tests to check the behavior of ReadXmlSchema and WriteXmlSchema
-
+#if NET_2_0
 using System;
 using System.Data;
 using System.Data.Odbc;
@@ -718,4 +718,4 @@ namespace Monotests_System.Data
 		}
 	}
 }
-
+#endif
