@@ -237,7 +237,12 @@ ChildColumnValue
 	;
 	
 ColumnName
-	: Identifier;
+	: Identifier
+	| ColumnName DOT Identifier
+	{
+		$$ = (string)$1 + "." + (string)$3;
+	}
+	;
 	
 RelationName
 	: Identifier;
