@@ -3987,364 +3987,359 @@ namespace System.Windows.Forms
 			}
 
 			switch((Msg)m.Msg) {
-				case Msg.WM_DESTROY: {
-					OnHandleDestroyed(EventArgs.Empty);
+			case Msg.WM_DESTROY: {
+				OnHandleDestroyed(EventArgs.Empty);
 #if DebugRecreate
-					IntPtr handle = window.Handle;
+				IntPtr handle = window.Handle;
 #endif
-					window.InvalidateHandle();
+				window.InvalidateHandle();
 
-					if (is_recreating) {
+				if (is_recreating) {
 #if DebugRecreate
-						Console.WriteLine ("Creating handle for {0:X}", handle.ToInt32());
+					Console.WriteLine ("Creating handle for {0:X}", handle.ToInt32());
 #endif
-						CreateHandle();
+					CreateHandle();
 #if DebugRecreate
-						Console.WriteLine (" + new handle = {0:X}", Handle.ToInt32());
+					Console.WriteLine (" + new handle = {0:X}", Handle.ToInt32());
 #endif
-						is_recreating = false;
+					is_recreating = false;
+				}
+				return;
+			}
+
+			case Msg.WM_WINDOWPOSCHANGED: {
+				if (Visible) {
+					Rectangle save_bounds = explicit_bounds;
+					UpdateBounds();
+					explicit_bounds = save_bounds;
+					if (GetStyle(ControlStyles.ResizeRedraw)) {
+						Invalidate();
 					}
+				}
+				return;
+			}
+
+			// Nice description of what should happen when handling WM_PAINT
+			// can be found here: http://pluralsight.com/wiki/default.aspx/Craig/FlickerFreeControlDrawing.html
+			// and here http://msdn.microsoft.com/msdnmag/issues/06/03/WindowsFormsPerformance/
+			case Msg.WM_PAINT: {
+				PaintEventArgs	paint_event;
+
+				paint_event = XplatUI.PaintEventStart(Handle, true);
+
+				if (paint_event == null) {
 					return;
 				}
 
-				case Msg.WM_WINDOWPOSCHANGED: {
-					if (Visible) {
-						Rectangle save_bounds = explicit_bounds;
-						UpdateBounds();
-						explicit_bounds = save_bounds;
-						if (GetStyle(ControlStyles.ResizeRedraw)) {
-							Invalidate();
-						}
-					}
-					return;
-				}
-
-				// Nice description of what should happen when handling WM_PAINT
-				// can be found here: http://pluralsight.com/wiki/default.aspx/Craig/FlickerFreeControlDrawing.html
-				// and here http://msdn.microsoft.com/msdnmag/issues/06/03/WindowsFormsPerformance/
-				case Msg.WM_PAINT: {
-					PaintEventArgs	paint_event;
-
-					paint_event = XplatUI.PaintEventStart(Handle, true);
-
-					if (paint_event == null) {
-						return;
-					}
-
-					if (invalid_region != null && !invalid_region.IsVisible (paint_event.ClipRectangle)) {
-						// Just blit the previous image
-						paint_event.Graphics.DrawImage (ImageBuffer, paint_event.ClipRectangle, paint_event.ClipRectangle, GraphicsUnit.Pixel);
-						XplatUI.PaintEventEnd(Handle, true);
-						return;
-					}
-
-					Graphics dc = null;
-					Graphics back_dc = null;
-					Bitmap backbuffer = null;
-					if (ThemeEngine.Current.DoubleBufferingSupported) {
-						if ((control_style & ControlStyles.DoubleBuffer) != 0) {
-							backbuffer = ImageBuffer;
-							back_dc = Graphics.FromImage (backbuffer);
-							dc = paint_event.SetGraphics (back_dc);
-						}
-					}
-
-					if (!GetStyle(ControlStyles.Opaque)) {
-						OnPaintBackground(paint_event);
-					}
-
-					// Button-derived controls choose to ignore their Opaque style, give them a chance to draw their background anyways
-					OnPaintBackgroundInternal(paint_event);
-
-					OnPaintInternal(paint_event);
-					if (!paint_event.Handled) {
-						OnPaint(paint_event);
-					}
-
-					if (ThemeEngine.Current.DoubleBufferingSupported)
-						if ((control_style & ControlStyles.DoubleBuffer) != 0) {
-							dc.DrawImage (ImageBuffer, paint_event.ClipRectangle, paint_event.ClipRectangle, GraphicsUnit.Pixel);
-							paint_event.SetGraphics (dc);
-							invalid_region.Exclude (paint_event.ClipRectangle);
-							back_dc.Dispose ();
-							if (backbuffer != bmp_mem)
-								backbuffer.Dispose();
-						}
-
+				if (invalid_region != null && !invalid_region.IsVisible (paint_event.ClipRectangle)) {
+					// Just blit the previous image
+					paint_event.Graphics.DrawImage (ImageBuffer, paint_event.ClipRectangle, paint_event.ClipRectangle, GraphicsUnit.Pixel);
 					XplatUI.PaintEventEnd(Handle, true);
-
 					return;
 				}
+
+				Graphics dc = null;
+				Graphics back_dc = null;
+				Bitmap backbuffer = null;
+				if (ThemeEngine.Current.DoubleBufferingSupported) {
+					if ((control_style & ControlStyles.DoubleBuffer) != 0) {
+						backbuffer = ImageBuffer;
+						back_dc = Graphics.FromImage (backbuffer);
+						dc = paint_event.SetGraphics (back_dc);
+					}
+				}
+
+				if (!GetStyle(ControlStyles.Opaque)) {
+					OnPaintBackground(paint_event);
+				}
+
+				// Button-derived controls choose to ignore their Opaque style, give them a chance to draw their background anyways
+				OnPaintBackgroundInternal(paint_event);
+
+				OnPaintInternal(paint_event);
+				if (!paint_event.Handled) {
+					OnPaint(paint_event);
+				}
+
+				if (ThemeEngine.Current.DoubleBufferingSupported)
+					if ((control_style & ControlStyles.DoubleBuffer) != 0) {
+						dc.DrawImage (ImageBuffer, paint_event.ClipRectangle, paint_event.ClipRectangle, GraphicsUnit.Pixel);
+						paint_event.SetGraphics (dc);
+						invalid_region.Exclude (paint_event.ClipRectangle);
+						back_dc.Dispose ();
+						if (backbuffer != bmp_mem)
+							backbuffer.Dispose();
+					}
+
+				XplatUI.PaintEventEnd(Handle, true);
+
+				return;
+			}
 					
-				case Msg.WM_ERASEBKGND: {
-					// The DefWndProc will never have to handle this, we always paint the background in managed code
-					// In theory this code would look at ControlStyles.AllPaintingInWmPaint and and call OnPaintBackground
-					// here but it just makes things more complicated...
-					m.Result = (IntPtr)1;
-					return;
+			case Msg.WM_ERASEBKGND: {
+				// The DefWndProc will never have to handle this, we always paint the background in managed code
+				// In theory this code would look at ControlStyles.AllPaintingInWmPaint and and call OnPaintBackground
+				// here but it just makes things more complicated...
+				m.Result = (IntPtr)1;
+				return;
+			}
+
+			case Msg.WM_LBUTTONUP: {
+				MouseEventArgs me;
+
+				me = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Left, 
+							 mouse_clicks, 
+							 LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+							 0);
+
+				HandleClick(mouse_clicks, me);
+				OnMouseUp (me);
+
+				if (InternalCapture) {
+					InternalCapture = false;
 				}
 
-				case Msg.WM_LBUTTONUP: {
-					MouseEventArgs me;
-
-					me = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Left, 
-						mouse_clicks, 
-						LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
-						0);
-
-					HandleClick(mouse_clicks, me);
-					OnMouseUp (me);
-
-					if (InternalCapture) {
-						InternalCapture = false;
-					}
-
-					if (mouse_clicks > 1) {
-						mouse_clicks = 1;
-					}
-					return;
+				if (mouse_clicks > 1) {
+					mouse_clicks = 1;
 				}
+				return;
+			}
 					
-				case Msg.WM_LBUTTONDOWN: {
-					if (CanSelect) {
-						Select (true, true);
-					}
-					InternalCapture = true;
-					OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-						mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
-						0));
-						
-					return;
+			case Msg.WM_LBUTTONDOWN: {
+				if (CanSelect) {
+					Select (true, true);
 				}
+				InternalCapture = true;
+				OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+								 mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+								 0));
+				
+				return;
+			}
 
-				case Msg.WM_LBUTTONDBLCLK: {
-					InternalCapture = true;
-					mouse_clicks++;
-					OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-						mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
-						0));
+			case Msg.WM_LBUTTONDBLCLK: {
+				InternalCapture = true;
+				mouse_clicks++;
+				OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+								 mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+								 0));
+				return;
+			}
 
-					return;
+			case Msg.WM_MBUTTONUP: {
+				MouseEventArgs me;
+
+				me = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Middle, 
+							 mouse_clicks, 
+							 LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+							 0);
+
+				HandleClick(mouse_clicks, me);
+				OnMouseUp (me);
+				if (InternalCapture) {
+					InternalCapture = false;
 				}
-
-				case Msg.WM_MBUTTONUP: {
-					MouseEventArgs me;
-
-					me = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Middle, 
-						mouse_clicks, 
-						LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
-						0);
-
-					HandleClick(mouse_clicks, me);
-					OnMouseUp (me);
-					if (InternalCapture) {
-						InternalCapture = false;
-					}
-					if (mouse_clicks > 1) {
-						mouse_clicks = 1;
-					}
-					return;
+				if (mouse_clicks > 1) {
+					mouse_clicks = 1;
 				}
+				return;
+			}
 					
-				case Msg.WM_MBUTTONDOWN: {					
-					InternalCapture = true;
-					OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-						mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
-						0));
-						
-					return;
+			case Msg.WM_MBUTTONDOWN: {					
+				InternalCapture = true;
+				OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+								 mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+								 0));
+				return;
+			}
+
+			case Msg.WM_MBUTTONDBLCLK: {
+				InternalCapture = true;
+				mouse_clicks++;
+				OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+								 mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+								 0));
+				return;
+			}
+
+			case Msg.WM_RBUTTONUP: {
+				MouseEventArgs	me;
+				Point		pt;
+
+				pt = new Point(LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()));
+				pt = PointToScreen(pt);
+
+				XplatUI.SendMessage(m.HWnd, Msg.WM_CONTEXTMENU, m.HWnd, (IntPtr)(pt.X + (pt.Y << 16)));
+
+				me = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Right, 
+							 mouse_clicks, 
+							 LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+							 0);
+
+				HandleClick(mouse_clicks, me);
+				OnMouseUp (me);
+
+				if (InternalCapture) {
+					InternalCapture = false;
 				}
 
-				case Msg.WM_MBUTTONDBLCLK: {
-					InternalCapture = true;
-					mouse_clicks++;
-					OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-						mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
-						0));
-					return;
+				if (mouse_clicks > 1) {
+					mouse_clicks = 1;
 				}
+				return;
+			}
+					
+			case Msg.WM_RBUTTONDOWN: {					
+				InternalCapture = true;
+				OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+								 mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+								 0));
+				return;
+			}
 
-				case Msg.WM_RBUTTONUP: {
-					MouseEventArgs	me;
-					Point		pt;
+			case Msg.WM_RBUTTONDBLCLK: {
+				InternalCapture = true;
+				mouse_clicks++;
+				OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+								 mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+								 0));
+				return;
+			}
+
+			case Msg.WM_CONTEXTMENU: {
+				if (context_menu != null) {
+					Point	pt;
 
 					pt = new Point(LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()));
-					pt = PointToScreen(pt);
-
-					XplatUI.SendMessage(m.HWnd, Msg.WM_CONTEXTMENU, m.HWnd, (IntPtr)(pt.X + (pt.Y << 16)));
-
-					me = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Right, 
-						mouse_clicks, 
-						LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
-						0);
-
-					HandleClick(mouse_clicks, me);
-					OnMouseUp (me);
-
-					if (InternalCapture) {
-						InternalCapture = false;
-					}
-
-					if (mouse_clicks > 1) {
-						mouse_clicks = 1;
-					}
+					context_menu.Show(this, PointToClient(pt));
 					return;
 				}
+
+				DefWndProc(ref m);
+				return;
+			}
+
+			case Msg.WM_MOUSEWHEEL: {				
+				DefWndProc(ref m);
+				OnMouseWheel (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+								  mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+								  HighOrder(m.WParam.ToInt32())));
+				return;
+			}
+
+
+			case Msg.WM_MOUSEMOVE: {					
+				OnMouseMove  (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+								  mouse_clicks, 
+								  LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+								  0));
+				return;
+			}
+
+			case Msg.WM_MOUSE_ENTER: {
+				if (is_entered) {
+					return;
+				}
+				is_entered = true;
+				OnMouseEnter(EventArgs.Empty);
+				return;
+			}
+
+			case Msg.WM_MOUSE_LEAVE: {
+				is_entered=false;
+				OnMouseLeave(EventArgs.Empty);
+				return;
+			}
+
+			case Msg.WM_MOUSEHOVER:	{
+				OnMouseHover(EventArgs.Empty);
+				return;
+			}
+
+			case Msg.WM_SYSKEYUP: {
+				if (ProcessKeyMessage(ref m)) {
+					m.Result = IntPtr.Zero;
+					return;
+				}
+
+				if ((m.WParam.ToInt32() & (int)Keys.KeyCode) == (int)Keys.Menu) {
+					Form	form;
+
+					form = FindForm();
+					if (form != null && form.ActiveMenu != null) {
+						form.ActiveMenu.ProcessCmdKey(ref m, (Keys)m.WParam.ToInt32());
+					}
+				}
+
+				DefWndProc (ref m);
+				return;
+			}
+
+			case Msg.WM_SYSKEYDOWN:
+			case Msg.WM_KEYDOWN:
+			case Msg.WM_KEYUP:
+			case Msg.WM_SYSCHAR:
+			case Msg.WM_CHAR: {
+				if (ProcessKeyMessage(ref m)) {
+					m.Result = IntPtr.Zero;
+					return;
+				}
+				DefWndProc (ref m);
+				return;
+			}
+
+			case Msg.WM_HELP: {
+				Point	mouse_pos;
+				if (m.LParam != IntPtr.Zero) {
+					HELPINFO	hi;
+
+					hi = new HELPINFO();
+
+					hi = (HELPINFO) Marshal.PtrToStructure (m.LParam, typeof (HELPINFO));
+					mouse_pos = new Point(hi.MousePos.x, hi.MousePos.y);
+				} else {
+					mouse_pos = Control.MousePosition;
+				}
+				OnHelpRequested(new HelpEventArgs(mouse_pos));
+				m.Result = (IntPtr)1;
+				return;
+			}
+
+			case Msg.WM_KILLFOCUS: {
+				this.has_focus = false;
+				OnLostFocusInternal (EventArgs.Empty);
+				return;
+			}
+
+			case Msg.WM_SETFOCUS: {
+				if (!has_focus) {
+					this.has_focus = true;
+					OnGotFocusInternal (EventArgs.Empty);
+				}
+				return;
+			}
 					
-				case Msg.WM_RBUTTONDOWN: {					
-					InternalCapture = true;
-					OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-						mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
-						0));
-					return;
-				}
+			case Msg.WM_SYSCOLORCHANGE: {
+				ThemeEngine.Current.ResetDefaults();
+				OnSystemColorsChanged(EventArgs.Empty);
+				return;
+			}
 
-				case Msg.WM_RBUTTONDBLCLK: {
-					InternalCapture = true;
-					mouse_clicks++;
-					OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-						mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
-						0));
-					return;
-				}
-
-				case Msg.WM_CONTEXTMENU: {
-					if (context_menu != null) {
-						Point	pt;
-
-						pt = new Point(LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()));
-						context_menu.Show(this, PointToClient(pt));
-						return;
-					}
-
+			case Msg.WM_SETCURSOR: {
+				if ((cursor == null) || ((HitTest)(m.LParam.ToInt32() & 0xffff) != HitTest.HTCLIENT)) {
 					DefWndProc(ref m);
 					return;
 				}
 
-				case Msg.WM_MOUSEWHEEL: {				
-					DefWndProc(ref m);
-					OnMouseWheel (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-						mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
-						HighOrder(m.WParam.ToInt32())));
-					return;
-				}
+				XplatUI.SetCursor(window.Handle, cursor.handle);
+				m.Result = (IntPtr)1;
 
-					
-				case Msg.WM_MOUSEMOVE: {					
-					OnMouseMove  (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-						mouse_clicks, 
-						LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
-						0));
-					return;
-				}
+				return;
+			}
 
-				case Msg.WM_MOUSE_ENTER: {
-					if (is_entered) {
-						return;
-					}
-					is_entered = true;
-					OnMouseEnter(EventArgs.Empty);
-					return;
-				}
-
-				case Msg.WM_MOUSE_LEAVE: {
-					is_entered=false;
-					OnMouseLeave(EventArgs.Empty);
-					return;
-				}
-
-				case Msg.WM_MOUSEHOVER:	{
-					OnMouseHover(EventArgs.Empty);
-					return;
-				}
-
-				case Msg.WM_SYSKEYUP: {
-					if (ProcessKeyMessage(ref m)) {
-						m.Result = IntPtr.Zero;
-						return;
-					}
-
-					if ((m.WParam.ToInt32() & (int)Keys.KeyCode) == (int)Keys.Menu) {
-						Form	form;
-
-						form = FindForm();
-						if (form != null && form.ActiveMenu != null) {
-							form.ActiveMenu.ProcessCmdKey(ref m, (Keys)m.WParam.ToInt32());
-						}
-					}
-
-					DefWndProc (ref m);
-					return;
-				}
-
-				case Msg.WM_SYSKEYDOWN:
-				case Msg.WM_KEYDOWN:
-				case Msg.WM_KEYUP:
-				case Msg.WM_SYSCHAR:
-				case Msg.WM_CHAR: {
-					if (ProcessKeyMessage(ref m)) {
-						m.Result = IntPtr.Zero;
-						return;
-					}
-					DefWndProc (ref m);
-					return;
-				}
-
-				case Msg.WM_HELP: {
-					Point	mouse_pos;
-					if (m.LParam != IntPtr.Zero) {
-						HELPINFO	hi;
-
-						hi = new HELPINFO();
-
-						hi = (HELPINFO) Marshal.PtrToStructure (m.LParam, typeof (HELPINFO));
-						mouse_pos = new Point(hi.MousePos.x, hi.MousePos.y);
-					} else {
-						mouse_pos = Control.MousePosition;
-					}
-					OnHelpRequested(new HelpEventArgs(mouse_pos));
-					m.Result = (IntPtr)1;
-					return;
-				}
-
-				case Msg.WM_KILLFOCUS: {
-					this.has_focus = false;
-					OnLostFocusInternal (EventArgs.Empty);
-					return;
-				}
-
-				case Msg.WM_SETFOCUS: {
-					if (!has_focus) {
-						this.has_focus = true;
-						OnGotFocusInternal (EventArgs.Empty);
-					}
-					return;
-				}
-					
-
-				case Msg.WM_SYSCOLORCHANGE: {
-					ThemeEngine.Current.ResetDefaults();
-					OnSystemColorsChanged(EventArgs.Empty);
-					return;
-				}
-					
-
-				case Msg.WM_SETCURSOR: {
-					if ((cursor == null) || ((HitTest)(m.LParam.ToInt32() & 0xffff) != HitTest.HTCLIENT)) {
-						DefWndProc(ref m);
-						return;
-					}
-
-					XplatUI.SetCursor(window.Handle, cursor.handle);
-					m.Result = (IntPtr)1;
-
-					return;
-				}
-
-				default: {
-					DefWndProc(ref m);	
-					return;
-				}
+			default:
+				DefWndProc(ref m);	
+				return;
 			}
 		}
 		#endregion	// Public Instance Methods
