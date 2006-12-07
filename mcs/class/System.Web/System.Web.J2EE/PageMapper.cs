@@ -31,6 +31,7 @@ using System.Web.Compilation;
 using System.Collections.Specialized;
 using System.Threading;
 using vmw.common;
+using System.Reflection;
 
 namespace System.Web.J2EE
 {
@@ -127,6 +128,15 @@ namespace System.Web.J2EE
 			}
 		}
 
+		private static String NormalizeName(string url)
+		{
+#if NET_2_0
+			url = System.Web.Util.UrlUtils.RemoveDoubleSlashes(url);
+#endif 
+			if (url.StartsWith(IAppDomainConfig.WAR_ROOT_SYMBOL))
+				url = url.Substring(IAppDomainConfig.WAR_ROOT_SYMBOL.Length);
+			return url;
+		}
 		private static ICachedXmlDoc CreateDocument()
 		{
 			return new CachedDocumentTypeStorage();
@@ -134,22 +144,26 @@ namespace System.Web.J2EE
 
 		public static Type GetObjectType(string url)
 		{
-#if NET_2_0
-			return GetCachedType(System.Web.Util.UrlUtils.RemoveDoubleSlashes(url));
-#else
-			return GetCachedType(url);
-#endif
+			return GetCachedType(NormalizeName(url));
 		}
 
-		private static Type GetCachedType(string url)
+		public static Assembly GetObjectAssembly(string url)
+		{
+			return GetCachedAssembly(NormalizeName(url));
+		}
+		private static Assembly GetCachedAssembly(string url)
 		{
 			ICachedXmlDoc doc = PageMapper.GetAssembliesCachedDocument();
-			
-			if (url.StartsWith(IAppDomainConfig.WAR_ROOT_SYMBOL))
-				url = url.Substring(IAppDomainConfig.WAR_ROOT_SYMBOL.Length);
-			
-			Type t = doc.Get(url);
+			Assembly t = doc.GetAssembly(url);
+			if (t == null)
+				throw new HttpException(404, "The requested resource (" + url + ") is not available.");
 
+			return t;
+		}
+		private static Type GetCachedType(string url)
+		{
+			ICachedXmlDoc doc = PageMapper.GetAssembliesCachedDocument();						
+			Type t = doc.GetType(url);
 			if (t == null)
 				throw new HttpException(404,"The requested resource (" + url + ") is not available.");
 
@@ -159,14 +173,15 @@ namespace System.Web.J2EE
 		#region ICachedXmlDoc interface
 		interface ICachedXmlDoc
 		{
-			Type Get(string key);
-			//bool ContainsKey(object key);
+			Type GetType(string key);
+			Assembly GetAssembly(string key);
 		}
 		#endregion
 
 		#region CachedDocumentTypeStorage class
 		class CachedDocumentTypeStorage : ICachedXmlDoc
 		{
+			private static readonly object _fuse = new object();
 			public static readonly ICachedXmlDoc DEFAULT_DOC =
 				new CachedDocumentTypeStorage(0);
 
@@ -183,9 +198,13 @@ namespace System.Web.J2EE
 				this(DEFAULT_PAGES_NUMBER)
 			{}
 
-			Type ICachedXmlDoc.Get(string o)
+			Type ICachedXmlDoc.GetType(string o)
 			{
-				return GetTypeByURL(o);
+				return GetMetaByURL(o).Type;
+			}
+			Assembly ICachedXmlDoc.GetAssembly(string o)
+			{
+				return GetMetaByURL(o).Assembly;
 			}
 
 			internal IDictionaryEnumerator GetEnumerator()
@@ -193,50 +212,140 @@ namespace System.Web.J2EE
 				return _table.GetEnumerator();				
 			}	
 
-			public Type GetTypeByURL(string url)
+			//rewamped for perfomance reasons
+			//It looks like issue is not important in development mode,
+			//but only will became important in production mode when dynamyc compilation will be enabled
+			//Anyway, locking whole table and compiling under lock looks odd
+			//spivak.December 07 2006
+			public MetaProvider GetMetaByURL(string url)
 			{
+#if !NO_GLOBAL_LOCK_ON_COMPILE
 				string lwUrl = url.ToLower();
 				lock (_table)
 				{
 					object retVal = _table[lwUrl];
 					if (retVal == null)
 					{
-						PageCompiler compiler = new PageCompiler(url);
-						retVal = compiler.GetCachedType();
+						retVal = PageCompiler.GetCompiler(url);
 						_table[lwUrl] = retVal;
 					}
 				
-					return (Type)retVal;
+					return (MetaProvider)retVal;
 				}
+
+#else
+				string lwUrl = url.ToLower();
+				if (!_table.ContainsKey(lwUrl))
+				{
+					lock (_table.SyncRoot)
+					{
+						if (_table.ContainsKey(lwUrl))
+							goto Fused;
+						_table[lwUrl] = _fuse;
+					}
+					try
+					{
+						MetaProvider meta = PageCompiler.GetCompiler(url);
+						lock (_table.SyncRoot)
+						{
+							return (MetaProvider)(_table[lwUrl] = meta);
+						}
+					}
+					catch(Exception e)
+					{
+						_table.Remove(lwUrl);
+					}
+				}				
+			Fused:
+				
+				while (_table[lwUrl] == _fuse) 
+					Thread.Sleep(10);
+
+				return !_table.ContainsKey(lwUrl)? PageCompiler.Error: (MetaProvider)_table[lwUrl];
+#endif
 			}
 		}
-		#endregion
+		
 
+		#endregion
 	}
 
-	public class PageCompiler
+	public interface  MetaProvider
+	{
+		Type Type { get;}
+		Assembly Assembly {get;}
+	}
+	public class PageCompiler : MetaProvider
 	{
 		private static readonly string PAGE_XPATH = "preserve";
 		private static readonly string ASSEM_ATTRIB_NAME = "assem";
 		private static readonly string TYPE_ATTRIB_NAME = "type";
 		private static string _parser = null;
+		private static PageCompiler _errorProvider = new PageCompiler();
 
 		private Type _type = null;
+		private Assembly _assembly = null;
 		private string _xmlDescriptor = null;
 		private string _url = null;
 		private string _session = null;
 
-		public PageCompiler(string url)
+		PageCompiler(string url)
 		{
 			_url = url;
 			_xmlDescriptor = GetDescFromUrl();
 			_session = DateTime.Now.Ticks.ToString();
+			LoadTypeAndAssem();
+		}
+		PageCompiler()
+		{
 		}
 
-		public Type GetCachedType()
+		public static PageCompiler Error
 		{
-			if (_type != null)
+			get 
+			{
+				return _errorProvider; 
+			}
+		}
+		public static PageCompiler GetCompiler(string url)
+		{
+			try{
+				return new PageCompiler(url);
+			}
+			catch(Exception e)
+			{
+				return Error;
+			}
+		}
+
+		Type MetaProvider.Type
+		{
+			get{
 				return _type;
+			}
+		}
+		Assembly MetaProvider.Assembly
+		{
+			get{
+				return _assembly;
+			}
+		}
+		private void LoadTypeAndAssem()
+		{
+			if (_assembly == null)
+			{
+				string typeName = GetCachedTypeName();
+				if (typeName != null)
+				{
+					if ((_type = Type.GetType(typeName)) != null)
+						_assembly = _type.Assembly;
+					else
+						_assembly = Assembly.Load(typeName);
+				}
+			}
+		}
+		public string GetCachedTypeName()
+		{
 			
 			string typeName = null;
 		
@@ -248,10 +357,10 @@ namespace System.Web.J2EE
 #if DEBUG
 				Console.WriteLine(descPath);
 #endif
-				Stream fs = (Stream)IOUtils.getStream("/" + descPath);
+				Stream fs = (Stream)IOUtils.getStreamRecursive("/" + descPath);
 				if (fs != null)
 				{
-					typeName = GetTypeFromDescStream(fs);
+					return  GetTypeFromDescStream(fs);
 				}
 			}
 			catch (Exception ex)
@@ -260,14 +369,14 @@ namespace System.Web.J2EE
 				Console.WriteLine(ex);
 #endif
 				//desc not in the war
-				typeName = null;
+				//typeName = null;
 			}
 
-			if (typeName != null)
-			{
-				_type = Type.GetType(typeName);
-				return _type;
-			}
+			//if (typeName != null)
+			//{
+			//    _type = Type.GetType(typeName);
+			//    return _type;
+			//}
 			
 			string fileName = Path.GetFileName(_url);
             
@@ -289,24 +398,27 @@ namespace System.Web.J2EE
 				}
 
 				//if the desciptor exists in the real app dir - get the type
-				try {
-					StreamReader sr = new StreamReader (HttpContext.Current.Request.MapPath ("/" + descPath));
-					typeName = GetTypeFromDescStream (sr.BaseStream);
-					sr.Close ();
+				try
+				{
+					StreamReader sr = new StreamReader(HttpContext.Current.Request.MapPath("/" + descPath));
+					typeName = GetTypeFromDescStream(sr.BaseStream);
+					sr.Close();
+					return typeName;
 				}
-				catch (Exception ex) {
-					Console.WriteLine (ex);
+				catch (Exception ex)
+				{
+					Console.WriteLine(ex);
 					throw ex;
 				}
 			}
 			else
 				typeName = "ASP.defaultwsdlhelpgenerator_jvm_aspx";
 
-			if (typeName != null)
-			{
-				_type = Type.GetType(typeName);
-				return _type;
-			}
+			//if (typeName != null)
+			//{
+			//    _type = Type.GetType(typeName);
+			//    return _type;
+			//}
 
 			return null;
 		}
