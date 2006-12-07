@@ -118,14 +118,14 @@ namespace System.Windows.Forms {
 
 			hscroll = new ImplicitHScrollBar();
 			hscroll.ValueChanged += new EventHandler(hscroll_ValueChanged);
-			hscroll.control_style &= ~ControlStyles.Selectable;
+			hscroll.SetStyle (ControlStyles.Selectable, false);
 			hscroll.Enabled = false;
 			hscroll.Visible = false;
 			hscroll.Maximum = Int32.MaxValue;
 
 			vscroll = new ImplicitVScrollBar();
 			vscroll.ValueChanged += new EventHandler(vscroll_ValueChanged);
-			vscroll.control_style &= ~ControlStyles.Selectable;
+			vscroll.SetStyle (ControlStyles.Selectable, false);
 			vscroll.Enabled = false;
 			vscroll.Visible = false;
 			vscroll.Maximum = Int32.MaxValue;
@@ -165,9 +165,19 @@ namespace System.Windows.Forms {
 
 		internal override void HandleClick(int clicks, MouseEventArgs me) {
 			// MS seems to fire the click event in spite of the styles they set
-			control_style |= ControlStyles.StandardClick | ControlStyles.StandardDoubleClick;
+			bool click_set = GetStyle (ControlStyles.StandardClick);
+			bool doubleclick_set = GetStyle (ControlStyles.StandardDoubleClick);
+
+			// so explicitly set them to true first
+			SetStyle (ControlStyles.StandardClick | ControlStyles.StandardDoubleClick, true);
+
 			base.HandleClick (clicks, me);
-			control_style ^= ControlStyles.StandardClick | ControlStyles.StandardDoubleClick;
+
+			// then revert to our previous state
+			if (!click_set)
+				SetStyle (ControlStyles.StandardClick, false);
+			if (!doubleclick_set)
+				SetStyle (ControlStyles.StandardDoubleClick, false);
 		}
 
 		#endregion	// Private and Internal Methods

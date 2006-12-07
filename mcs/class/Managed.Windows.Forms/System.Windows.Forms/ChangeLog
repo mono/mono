@@ -1,3 +1,14 @@
+2006-12-06  Chris Toshok  <toshok@ximian.com>
+
+	* Control.cs: make control_style private.
+
+	* TextBoxBase.cs: fix the HandleClick override.  it was explicitly
+	setting the styles to true, then setting them to false instead of
+	reverting to their previous values.
+
+	also, call SetStyle on the scrollbars instead of using
+	control_style directly.
+
 2006-12-06  Jonathan Pobst  <monkey@jpobst.com>
 
 	* FormCollection.cs: Implement. [2.0]

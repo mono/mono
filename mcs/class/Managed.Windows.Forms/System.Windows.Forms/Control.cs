@@ -83,7 +83,7 @@ namespace System.Windows.Forms
 		bool is_disposed; // has the window already been disposed?
 		Size client_size; // size of the client area (window excluding decorations)
 		Rectangle client_rect; // rectangle with the client area (window excluding decorations)
-		internal ControlStyles		control_style;		// rather win32-specific, style bits for control
+		ControlStyles control_style; // rather win32-specific, style bits for control
 		internal ImeMode		ime_mode = ImeMode.Inherit;
 		bool layout_pending; // true if our parent needs to re-layout us
 		object control_tag; // object that contains data about our control
@@ -3445,7 +3445,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		protected bool GetStyle(ControlStyles flag) {
+		protected internal bool GetStyle(ControlStyles flag) {
 			return (control_style & flag) != 0;
 		}
 
@@ -3808,7 +3808,7 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected void SetStyle(ControlStyles flag, bool value) {
+		protected internal void SetStyle(ControlStyles flag, bool value) {
 			if (value) {
 				control_style |= flag;
 			} else {
