@@ -137,13 +137,8 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override System.Drawing.Image BackgroundImage {
-			get {
-				return background_image;
-			}
-
-			set {
-				base.BackgroundImage = value;
-			}
+			get { return base.BackgroundImage; }
+			set { base.BackgroundImage = value; }
 		}
 
 		[DefaultValue(0)]

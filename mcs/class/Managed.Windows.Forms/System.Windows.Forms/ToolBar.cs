@@ -130,6 +130,7 @@ namespace System.Windows.Forms
 			MouseLeave += new EventHandler (ToolBar_MouseLeave);
 			MouseMove += new MouseEventHandler (ToolBar_MouseMove);
 			MouseUp += new MouseEventHandler (ToolBar_MouseUp);
+			BackgroundImageChanged += new EventHandler (ToolBar_BackgroundImageChanged);
 
 			TabStop = false;
 			
@@ -201,15 +202,8 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Image BackgroundImage {
-			get { return background_image; }
-			set {
-				if (value == background_image)
-					return;
-
-				background_image = value;
-				OnBackgroundImageChanged (EventArgs.Empty);
-				Redraw (false);
-			}
+			get { return base.BackgroundImage; }
+			set { base.BackgroundImage = value; }
 		}
 
 		[DefaultValue (BorderStyle.None)]
@@ -500,7 +494,7 @@ namespace System.Windows.Forms
 			if (Width <= 0 || Height <= 0 || !Visible)
 				return;
 
-			Redraw (true, background_image != null);
+			Redraw (true, BackgroundImage != null);
 		}
 
 		int requested_height = -1;
@@ -602,6 +596,11 @@ namespace System.Windows.Forms
 			if (curr_button != null)
 				curr_button.Hilight = false;
 			(enabled [next] as ToolBarButton).Hilight = true;
+		}
+
+		private void ToolBar_BackgroundImageChanged (object sender, EventArgs args)
+		{
+			Redraw (false);
 		}
 
 		private void ToolBar_MouseDown (object sender, MouseEventArgs me)

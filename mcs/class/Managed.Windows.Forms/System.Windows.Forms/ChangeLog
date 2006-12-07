@@ -1,5 +1,17 @@
 2006-12-06  Chris Toshok  <toshok@ximian.com>
 
+	* ListView.cs: the BackgroundImage override is just to set
+	attributes.  chain up to base.BackgroundImage.
+
+	* RichTextBox.cs: same.
+
+	* ToolBar.cs: same, but we need to also redraw the toolbar when it
+	changes, so instead a handler for BackgroundImageChanged.
+	
+	* Control.cs: make background_image private.
+
+2006-12-06  Chris Toshok  <toshok@ximian.com>
+
 	* ScrollBar.cs: change the assignment of cursor to Cursor.  not
 	sure we even need this assignment, but roll with it for now.
 

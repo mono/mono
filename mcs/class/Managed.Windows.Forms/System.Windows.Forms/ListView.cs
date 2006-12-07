@@ -303,14 +303,8 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Image BackgroundImage {
-			get { return background_image; }
-			set {
-				if (value == background_image)
-					return;
-
-				background_image = value;
-				OnBackgroundImageChanged (EventArgs.Empty);
-			}
+			get { return base.BackgroundImage; }
+			set { base.BackgroundImage = value; }
 		}
 
 		[DefaultValue (BorderStyle.Fixed3D)]

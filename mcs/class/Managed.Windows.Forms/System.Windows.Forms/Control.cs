@@ -95,7 +95,7 @@ namespace System.Windows.Forms
 		// Visuals
 		internal Color			foreground_color;	// foreground color for control
 		internal Color			background_color;	// background color for control
-		internal Image			background_image;	// background image for control
+		Image background_image; // background image for control
 		internal Font			font;			// font for control
 		string text; // window/title text for control
 		internal BorderStyle		border_style;		// Border style of control
