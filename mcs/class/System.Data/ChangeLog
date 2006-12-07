@@ -1,3 +1,9 @@
+2006-12-07  Nagappan A  <anagappan@novell.com>
+
+	* System.Data_test.dll.sources: Added
+	Mono.Data.SqlExpressions/DataColumnExpressionTest.cs,
+	System.Data/DataTableTest3.cs, System.Data/DataTableTest4.cs
+
 2006-11-28  Miguel de Icaza  <miguel@novell.com>
 
 	* Rationalize use of MonoTODO as well.

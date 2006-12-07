@@ -39,6 +39,8 @@ System.Data/DataSetInferXmlSchemaTest.cs
 System.Data/DataSetTypedDataSetTest.cs
 System.Data/DataTableTest.cs
 System.Data/DataTableTest2.cs
+System.Data/DataTableTest3.cs
+System.Data/DataTableTest4.cs
 System.Data/DataTableLoadRowTest.cs
 System.Data/DataTableReaderTest.cs
 System.Data/DataTableReadWriteXmlTest.cs
@@ -86,3 +88,4 @@ System.Data.SqlClient/SqlConnectionTest.cs
 System.Data.SqlClient/SqlConnectionStringBuilderTest.cs
 System.Data.SqlClient/SqlClientPermissionAttributeTest.cs
 System.Data.SqlClient/SqlClientPermissionTest.cs
+Mono.Data.SqlExpressions/DataColumnExpressionTest.cs
