@@ -1,5 +1,22 @@
 2006-12-06  Chris Toshok  <toshok@ximian.com>
 
+	[ I wanna be like BenM when I grow up ]
+	
+	* Hwnd.cs: create a single static Graphics object on the static
+	Bitmap we create.  use this for our text measurements.
+
+	* Control.cs (DeviceContext): stop using the backbuffer's dc_mem.
+	This was causing us to allocate a backbuffer for every control,
+	even when it wasn't flagged as double buffered.  Instead use the
+	single graphics instance.  This might have implications for
+	multithreaded applications.  If we run into problems we can switch
+	to creating 1 Graphics per control, on the static Hwnd bitmap.
+
+	this change nets us a 7M savings in private dirty mappings when
+	running FormsTest.exe.
+
+2006-12-06  Chris Toshok  <toshok@ximian.com>
+
 	* ToolTip.cs: use Visible instead of is_visible.
 
 	* TreeView.cs: same.

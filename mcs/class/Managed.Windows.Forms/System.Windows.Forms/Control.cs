@@ -915,12 +915,7 @@ namespace System.Windows.Forms
 		}
 
 		internal Graphics DeviceContext {
-			get { 
-				if (dc_mem == null) {
-					CreateBuffers(this.Width, this.Height);
-				}
-				return dc_mem;
-			}
+			get { return Hwnd.bmp_g; }
 		}
 
 		private void ImageBufferNeedsRedraw () {

@@ -75,6 +75,7 @@ namespace System.Windows.Forms {
 		internal bool		zombie; /* X11 only flag.  true if the X windows have been destroyed but we haven't been Disposed */
 		internal Region		user_clip;
 		internal static Bitmap	bmp = new Bitmap(1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+		internal static Graphics bmp_g = Graphics.FromImage (bmp);
 		internal XEventQueue	queue;
 		internal bool		no_activate;	// For Win32, popup windows will not steal focus
 		#endregion	// Local Variables
@@ -178,13 +179,8 @@ namespace System.Windows.Forms {
 
 			if (menu != null) {
 				int menu_height = menu.Rect.Height;
-				if (menu_height == 0) {
-					Graphics g;
-
-					g = Graphics.FromImage(bmp);
-					menu_height = ThemeEngine.Current.CalcMenuBarSize(g, menu, client_rect.Width);
-					g.Dispose();
-				}
+				if (menu_height == 0)
+					menu_height = ThemeEngine.Current.CalcMenuBarSize(bmp_g, menu, client_rect.Width);
 
 				rect.Y -= menu_height;
 				rect.Height += menu_height;
