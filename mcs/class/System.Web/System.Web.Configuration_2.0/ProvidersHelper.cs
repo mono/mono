@@ -34,14 +34,27 @@ using System.Configuration;
 using System.Configuration.Provider;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.IO;
+using System.Reflection;
 
 namespace System.Web.Configuration {
 
 	public static class ProvidersHelper
 	{
+		private static string privateBinPath = null;
+		
 		public static ProviderBase InstantiateProvider (ProviderSettings providerSettings, Type providerType)
 		{
 			Type settingsType = Type.GetType (providerSettings.Type);
+			if (settingsType == null && Directory.Exists (PrivateBinPath)) {
+				string [] binDlls = Directory.GetFiles (PrivateBinPath, "*.dll");
+				foreach (string s in binDlls) {
+					Assembly binA = Assembly.LoadFrom (s);
+					settingsType = binA.GetType (providerSettings.Type);
+					if (settingsType != null)
+						break;
+				}
+			}
 
 			if (settingsType == null)
 				throw new ConfigurationErrorsException (String.Format ("Could not find type: {0}", providerSettings.Type));
@@ -53,6 +66,18 @@ namespace System.Web.Configuration {
 			provider.Initialize (providerSettings.Name, providerSettings.Parameters);
 
 			return provider;
+		}
+
+		private static string PrivateBinPath {
+			get {
+				if (privateBinPath != null)
+					return privateBinPath;
+
+				AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
+				privateBinPath = Path.Combine (setup.ApplicationBase, setup.PrivateBinPath);
+
+				return privateBinPath;
+			}
 		}
 
 		public static void InstantiateProviders (ProviderSettingsCollection configProviders, ProviderCollection providers, Type providerType)
