@@ -203,7 +203,7 @@ namespace System.Windows.Forms
 			base.MouseMove += new MouseEventHandler (OnMouseMoveSB);
 			base.Resize += new EventHandler (OnResizeSB);
 			base.TabStop = false;
-			base.cursor = Cursors.Default;
+			base.Cursor = Cursors.Default;
 
 			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick
 #if NET_2_0

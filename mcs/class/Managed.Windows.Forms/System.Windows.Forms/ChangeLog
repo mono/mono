@@ -1,5 +1,12 @@
 2006-12-06  Chris Toshok  <toshok@ximian.com>
 
+	* ScrollBar.cs: change the assignment of cursor to Cursor.  not
+	sure we even need this assignment, but roll with it for now.
+
+	* Control.cs: make the cursor field private.
+
+2006-12-06  Chris Toshok  <toshok@ximian.com>
+
 	* Form.cs: we don't need to explicitly set ImeMode to
 	ImeMode.NoControl - that's a natural fallout of Control.ImeMode's
 	behavior in the face of ImeMode.Inherit.

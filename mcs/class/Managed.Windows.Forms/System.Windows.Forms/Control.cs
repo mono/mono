@@ -88,7 +88,7 @@ namespace System.Windows.Forms
 		bool layout_pending; // true if our parent needs to re-layout us
 		object control_tag; // object that contains data about our control
 		internal int			mouse_clicks;		// Counter for mouse clicks
-		internal Cursor			cursor;			// Cursor for the window
+		Cursor cursor; // Cursor for the window
 		internal bool			allow_drop;		// true if the control accepts droping objects on it   
 		Region clip_region; // User-specified clip region for the window
 
