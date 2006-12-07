@@ -104,7 +104,7 @@ namespace System.Windows.Forms {
 			auto_check = true;
 			radiobutton_alignment = ContentAlignment.MiddleLeft;
 			text_alignment = ContentAlignment.MiddleLeft;
-			tab_stop = false;
+			TabStop = false;
 		}
 		#endregion	// Public Constructors
 
@@ -209,13 +209,8 @@ namespace System.Windows.Forms {
 
 		[DefaultValue(false)]
 		public new bool TabStop {
-			get {
-				return tab_stop;
-			}
-
-			set {
-				tab_stop = value;
-			}
+			get { return base.TabStop; }
+			set { base.TabStop = value; }
 		}
 
 		[DefaultValue(ContentAlignment.MiddleLeft)]

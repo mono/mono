@@ -1,5 +1,9 @@
 2006-12-06  Chris Toshok  <toshok@ximian.com>
 
+	* RadioButtonTest.cs: add a couple of test involving TabStop.
+
+2006-12-06  Chris Toshok  <toshok@ximian.com>
+
 	* ImageListTest.cs: add a rather complicated series of assertions
 	about the imagelist ShouldSerialize/CanReset methods.  these pass
 	on MS and mono now, though.  yay.

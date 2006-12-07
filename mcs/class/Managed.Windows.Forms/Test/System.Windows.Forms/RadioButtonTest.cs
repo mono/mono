@@ -37,6 +37,25 @@ namespace MonoTests.System.Windows.Forms
 			rButton1.Text = "New RadioButton";
 			Assert.AreEqual ("New RadioButton", rButton1.Text, "#T1");
 			Assert.AreEqual (ContentAlignment.MiddleLeft, rButton1.TextAlign, "#T2");
+			Assert.IsFalse (rButton1.TabStop, "#T3");
+		}
+
+		bool event_received = false;
+		void rb_tabstop_changed (object sender, EventArgs e)
+		{
+			event_received = true;
+		}
+
+		[Test]
+		public void TabStopEventTest ()
+		{
+			RadioButton rb = new RadioButton ();
+
+			rb.TabStopChanged += new EventHandler (rb_tabstop_changed);
+
+			rb.TabStop = true;
+
+			Assert.IsTrue (event_received);
 		}
 
 		[Test]
