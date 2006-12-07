@@ -1,5 +1,22 @@
 2006-12-06  Chris Toshok  <toshok@ximian.com>
 
+	* Form.cs: we don't need to explicitly set ImeMode to
+	ImeMode.NoControl - that's a natural fallout of Control.ImeMode's
+	behavior in the face of ImeMode.Inherit.
+
+	* ButtonBase.cs: change DefaultImeMode to ImeMode.Disable, and
+	change the ctor's assignment to use ImeMode instead of ime_mode.
+
+	* Control.cs (get_ImeMode): don't assume DefaultImeMode ==
+	ImeModeInherit.  Only check for the parent's imemode (and return
+	NoControl if there is no parent) if ime_Mode == ImeMode.Inherit.
+	This fixes the button unit test, which sets both ImeMode and
+	DefaultImeMode to ImeMode.Disable.
+
+	also make the ime_mode field private.
+
+2006-12-06  Chris Toshok  <toshok@ximian.com>
+
 	* Control.cs: make control_style private.
 
 	* TextBoxBase.cs: fix the HandleClick override.  it was explicitly

@@ -84,7 +84,7 @@ namespace System.Windows.Forms
 		Size client_size; // size of the client area (window excluding decorations)
 		Rectangle client_rect; // rectangle with the client area (window excluding decorations)
 		ControlStyles control_style; // rather win32-specific, style bits for control
-		internal ImeMode		ime_mode = ImeMode.Inherit;
+		ImeMode ime_mode;
 		bool layout_pending; // true if our parent needs to re-layout us
 		object control_tag; // object that contains data about our control
 		internal int			mouse_clicks;		// Counter for mouse clicks
@@ -722,6 +722,7 @@ namespace System.Windows.Forms
 			dist_top = 0;
 			dist_bottom = 0;
 			tab_stop = true;
+			ime_mode = ImeMode.Inherit;
 
 #if NET_2_0
 			use_compatible_text_rendering = Application.use_compatible_text_rendering;
@@ -2123,12 +2124,12 @@ namespace System.Windows.Forms
 		[MWFCategory("Behavior")]
 		public ImeMode ImeMode {
 			get {
-				 if (ime_mode == DefaultImeMode) {
+				if (ime_mode == ImeMode.Inherit) {
                                 	if (parent != null)
                                                 return parent.ImeMode;
                                         else
                                                 return ImeMode.NoControl; // default value
-                                }
+				}
 				return ime_mode;
 			}
 

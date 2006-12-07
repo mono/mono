@@ -72,6 +72,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (myform.TopMost, "#36");
 			Assert.AreEqual (Color.Empty, myform.TransparencyKey, "#37");
 			Assert.AreEqual (FormWindowState.Normal, myform.WindowState, "#38");
+			Assert.AreEqual (ImeMode.NoControl, myform.ImeMode, "#39");
 			myform.Dispose ();
 		}
 

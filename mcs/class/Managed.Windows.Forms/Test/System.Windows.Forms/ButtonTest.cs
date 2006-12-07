@@ -57,6 +57,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (16, B1.ImageList.ImageSize.Width, "#3g");
 		}
 
+
 		[Test]
 		public void IMeModeTest ()
 		{
@@ -118,6 +119,12 @@ namespace MonoTests.System.Windows.Forms
 
 	[TestFixture]
 	public class ButtonInheritorTest : Button {
+
+		[Test]
+		public void DefaultImeModeTest ()
+		{
+			Assert.AreEqual (ImeMode.Disable, DefaultImeMode, "1");
+		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]

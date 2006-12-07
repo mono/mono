@@ -170,7 +170,6 @@ namespace System.Windows.Forms {
 			maximize_box = true;
 			help_button = false;
 			show_in_taskbar = true;
-			ime_mode = ImeMode.NoControl;
 			is_visible = false;
 			is_toplevel = true;
 			size_grip_style = SizeGripStyle.Auto;

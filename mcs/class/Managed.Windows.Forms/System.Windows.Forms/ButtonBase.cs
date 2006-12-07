@@ -136,7 +136,7 @@ namespace System.Windows.Forms {
 			image		= null;
 			image_list	= null;
 			image_alignment	= ContentAlignment.MiddleCenter;
-			ime_mode        = ImeMode.Disable;
+			ImeMode         = ImeMode.Disable;
 			text_alignment	= ContentAlignment.MiddleCenter;
 			is_default	= false;
 			is_pressed	= false;
@@ -244,13 +244,8 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new ImeMode ImeMode {
-			get {
-				return base.ImeMode;
-			}
-
-			set {
-				base.ImeMode = value;
-			}
+			get { return base.ImeMode; }
+			set { base.ImeMode = value; }
 		}
 
 		[Localizable(true)]
@@ -325,9 +320,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override ImeMode DefaultImeMode {
-			get {
-				return ImeMode.Inherit;
-			}
+			get { return ImeMode.Disable; }
 		}
 
 		protected override Size DefaultSize {
