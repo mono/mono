@@ -1796,14 +1796,101 @@ namespace System {
 			}
 		}
 
-		[MonoTODO]
 		public static string UnescapeDataString (string stringToUnescape)
 		{
 			if (stringToUnescape == null)
 				throw new ArgumentNullException ("stringToUnescape");
 
-			throw new NotImplementedException ();
+			if (stringToUnescape.IndexOf ('%') == -1 && stringToUnescape.IndexOf ('+') == -1)
+				return stringToUnescape;
+
+			StringBuilder output = new StringBuilder ();
+			long len = stringToUnescape.Length;
+			MemoryStream bytes = new MemoryStream ();
+			int xchar;
+
+			for (int i = 0; i < len; i++) {
+				if (stringToUnescape [i] == '%' && i + 2 < len && stringToUnescape [i + 1] != '%') {
+					if (stringToUnescape [i + 1] == 'u' && i + 5 < len) {
+						if (bytes.Length > 0) {
+							output.Append (GetChars (bytes, Encoding.UTF8));
+							bytes.SetLength (0);
+						}
+
+						xchar = GetChar (stringToUnescape, i + 2, 4);
+						if (xchar != -1) {
+							output.Append ((char) xchar);
+							i += 5;
+						}
+						else {
+							output.Append ('%');
+						}
+					}
+					else if ((xchar = GetChar (stringToUnescape, i + 1, 2)) != -1) {
+						bytes.WriteByte ((byte) xchar);
+						i += 2;
+					}
+					else {
+						output.Append ('%');
+					}
+					continue;
+				}
+
+				if (bytes.Length > 0) {
+					output.Append (GetChars (bytes, Encoding.UTF8));
+					bytes.SetLength (0);
+				}
+
+				output.Append (stringToUnescape [i]);
+			}
+
+			if (bytes.Length > 0) {
+				output.Append (GetChars (bytes, Encoding.UTF8));
+			}
+
+			bytes = null;
+			return output.ToString ();
 		}
+
+		private static int GetInt (byte b)
+		{
+			char c = (char) b;
+			if (c >= '0' && c <= '9')
+				return c - '0';
+
+			if (c >= 'a' && c <= 'f')
+				return c - 'a' + 10;
+
+			if (c >= 'A' && c <= 'F')
+				return c - 'A' + 10;
+
+			return -1;
+		}
+
+		private static int GetChar (string str, int offset, int length)
+		{
+			int val = 0;
+			int end = length + offset;
+			for (int i = offset; i < end; i++) {
+				char c = str [i];
+				if (c > 127)
+					return -1;
+
+				int current = GetInt ((byte) c);
+				if (current == -1)
+					return -1;
+				val = (val << 4) + current;
+			}
+
+			return val;
+		}
+
+		private static char [] GetChars (MemoryStream b, Encoding e)
+		{
+			return e.GetChars (b.GetBuffer (), 0, (int) b.Length);
+		}
+		
+
 #endif
 	}
 }

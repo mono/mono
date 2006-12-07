@@ -297,6 +297,14 @@ namespace MonoTests.System {
 			// it doesn't work. MS.NET also returns incorrect URI: ..303/?query
 			// Assert.AreEqual ("http://www.mono-project.com:303/foo?query", e.OriginalString, "#4");
 		}
+
+		[Test]
+		public void UnescapeDataString ()
+		{
+			Assert.AreEqual ("/new folder/", Uri.UnescapeDataString ("/new%20folder/"));
+			Assert.AreEqual ("/new folder/", Uri.UnescapeDataString ("/new%20%66older/"));
+			Assert.AreEqual ("/new+folder/", Uri.UnescapeDataString ("/new+folder/"));
+		}
 	}
 }
 
