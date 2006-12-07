@@ -940,7 +940,7 @@ namespace System.Windows.Forms {
 
 		internal void SetTop (TreeNode node)
 		{
-			if (!vbar.is_visible)
+			if (!vbar.Visible)
 				return;
 
 			TreeNode first = root_node.FirstNode;
@@ -959,7 +959,7 @@ namespace System.Windows.Forms {
 
 		internal void SetBottom (TreeNode node)
 		{
-			if (!vbar.is_visible)
+			if (!vbar.Visible)
 				return;
 
 			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (node);
@@ -1523,7 +1523,7 @@ namespace System.Windows.Forms {
 
 		private void MouseWheelHandler(object sender, MouseEventArgs e) {
 
-			if (vbar == null || !vbar.is_visible) {
+			if (vbar == null || !vbar.Visible) {
 				return;
 			}
 

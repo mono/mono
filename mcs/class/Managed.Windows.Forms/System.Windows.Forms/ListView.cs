@@ -883,7 +883,7 @@ namespace System.Windows.Forms
 
 			item_control.Height = ClientRectangle.Height - header_control.Height;
 
-			if (h_scroll.is_visible) {
+			if (h_scroll.Visible) {
 				h_scroll.Location = new Point (client_area.X, client_area.Bottom - h_scroll.Height);
 				h_scroll.Minimum = 0;
 
@@ -903,11 +903,11 @@ namespace System.Windows.Forms
 				item_control.Height -= h_scroll.Height;
 			}
 
-			if (header_control.is_visible)
+			if (header_control.Visible)
 				header_control.Width = ClientRectangle.Width;
 			item_control.Width = ClientRectangle.Width;
 
-			if (v_scroll.is_visible) {
+			if (v_scroll.Visible) {
 				v_scroll.Location = new Point (client_area.Right - v_scroll.Width, client_area.Y);
 				v_scroll.Minimum = 0;
 
