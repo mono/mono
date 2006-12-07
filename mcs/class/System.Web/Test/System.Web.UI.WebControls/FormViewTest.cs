@@ -1471,32 +1471,27 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		{
 			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();
 			string newHtmlValue = RenderedPageHtml.Substring (RenderedPageHtml.IndexOf ("test3") + 5, RenderedPageHtml.IndexOf ("test4") - RenderedPageHtml.IndexOf ("test3") - 5);
-			string origHtmlValue = @" <table cellspacing=""0"" cellpadding=""2"" border=""0"" id=""FormView3"" style=""color:Black;background-color:LightGoldenrodYellow;border-color:Tan;border-width:1px;border-style:solid;border-collapse:collapse;"">
-				<tr align=""center"" valign=""top"" style=""color:#C00000;background-color:Tan;font-weight:bold;"">
-				<td colspan=""2"">
-				<span id=""FormView3_Label5"">Header Template Test</span>
-				</td>
-				</tr><tr>
-				<td colspan=""2"">
-				<span id=""FormView3_Label4"">1</span>
-				</td>
-				</tr><tr align=""center"" style=""color:DarkSlateBlue;background-color:PaleGoldenrod;"">
-				<td colspan=""2""><table border=""0"">
-				<tr>
-				<td><span>1</span></td><td>
-				<a href=""javascript:__doPostBack('FormView3','Page$2')"" style=""color:DarkSlateBlue;"">2</a></td><td>
-				<a href=""javascript:__doPostBack('FormView3','Page$3')"" style=""color:DarkSlateBlue;"">3</a></td><td>
-				<a href=""javascript:__doPostBack('FormView3','Page$4')"" style=""color:DarkSlateBlue;"">4</a></td><td>
-				<a href=""javascript:__doPostBack('FormView3','Page$5')"" style=""color:DarkSlateBlue;"">5</a></td><td>
-				<a href=""javascript:__doPostBack('FormView3','Page$6')"" style=""color:DarkSlateBlue;"">6</a></td>
-				</tr><tr align=""right"" style=""color:#FFC0FF;background-color:Tan;"">
-				<td colspan=""2"">
-				<span id=""FormView3_Label6"">FormView Footer</span>
-				</td>
-				</tr>
-				</table></td>
-				</tr>
-				</table>";        
+			string origHtmlValue = @"<table cellspacing=""0"" cellpadding=""2"" border=""0"" id=""FormView3"" style=""color:Black;background-color:LightGoldenrodYellow;border-color:Tan;border-width:1px;border-style:solid;border-collapse:collapse;"">
+	<tr align=""center"" valign=""top"" style=""color:#C00000;background-color:Tan;font-weight:bold;"">
+		<td colspan=""2"">
+                <span id=""FormView3_Label5"">Header Template Test</span>
+            </td>
+	</tr><tr>
+		<td colspan=""2"">
+                <span id=""FormView3_Label4"">1</span>
+            </td>
+	</tr><tr align=""right"" style=""color:#FFC0FF;background-color:Tan;"">
+		<td colspan=""2"">
+                <span id=""FormView3_Label6"">FormView Footer</span>
+            </td>
+	</tr><tr align=""center"" style=""color:DarkSlateBlue;background-color:PaleGoldenrod;"">
+		<td colspan=""2""><table border=""0"">
+			<tr>
+				<td><span>1</span></td><td><a href=""javascript:__doPostBack('FormView3','Page$2')"" style=""color:DarkSlateBlue;"">2</a></td><td><a href=""javascript:__doPostBack('FormView3','Page$3')"" style=""color:DarkSlateBlue;"">3</a></td><td><a href=""javascript:__doPostBack('FormView3','Page$4')"" style=""color:DarkSlateBlue;"">4</a></td><td><a href=""javascript:__doPostBack('FormView3','Page$5')"" style=""color:DarkSlateBlue;"">5</a></td><td><a href=""javascript:__doPostBack('FormView3','Page$6')"" style=""color:DarkSlateBlue;"">6</a></td>
+			</tr>
+		</table></td>
+	</tr>
+</table>";        
 			HtmlDiff.AssertAreEqual (origHtmlValue, newHtmlValue, "RenderingDefaultPaging");
 		}
 		
@@ -1924,11 +1919,17 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 	public class TestMyData
 	{
-		static IList<int> str = new List<int>();
+		static IList<int> str;
 		//str.(new int[] { 1, 2, 3, 4, 5, 6 });
+
+		static TestMyData ()
+		{
+			InitData ();
+		}
 
 		public static void InitData()
 		{
+			str = new List<int> ();
 			for (int i=1;i<7;i++)
 				str.Add (i);
 		}

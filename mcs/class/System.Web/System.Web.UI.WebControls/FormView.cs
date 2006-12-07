@@ -964,11 +964,18 @@ namespace System.Web.UI.WebControls
 				if ((row.RowState & DataControlRowState.Edit) != 0) {
 					if (editItemTemplate != null)
 						editItemTemplate.InstantiateIn (cell);
+					else
+						row.Visible = false;
 				} else if ((row.RowState & DataControlRowState.Insert) != 0) {
 					if (insertItemTemplate != null)
 						insertItemTemplate.InstantiateIn (cell);
-				} else if (itemTemplate != null)
+					else
+						row.Visible = false;
+				}
+				else if (itemTemplate != null)
 					itemTemplate.InstantiateIn (cell);
+				else
+					row.Visible = false;
 			}
 			else if (row.RowType == DataControlRowType.EmptyDataRow)
 			{
