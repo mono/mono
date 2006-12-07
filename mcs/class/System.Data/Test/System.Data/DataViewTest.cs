@@ -345,14 +345,20 @@ namespace MonoTests.System.Data
 			dataView.AllowNew = true;
 			DataRowView drv = dataView.AddNew ();
 			AssertEquals ("test#01",ListChangedType.ItemAdded,listChangedArgs.ListChangedType);
-			AssertEquals ("test#02",drv["itemName"],dataView [dataView.Count - 1]["itemName"]);
+			AssertEquals ("test#02",-1,listChangedArgs.OldIndex);
+			AssertEquals ("test#03",5,listChangedArgs.NewIndex);
+			AssertEquals ("test#04",drv["itemName"],dataView [dataView.Count - 1]["itemName"]);
 			listChangedArgs = null;
 			drv["itemId"] = "item " + 1001;
 			drv["itemName"] = "name " + rndm.Next();
 			drv["itemPrice"] = "Rs. " + (rndm.Next() % 1000);
 			drv["itemCategory"] = "Cat " + ((rndm.Next() % 10) + 1);
 			// Actually no events are arisen when items are set.
-			AssertNull ("test#03", listChangedArgs);
+			AssertNull ("test#05", listChangedArgs);
+			drv.CancelEdit ();
+			AssertEquals ("test#06",ListChangedType.ItemDeleted,listChangedArgs.ListChangedType);
+			AssertEquals ("test#07",-1,listChangedArgs.OldIndex);
+			AssertEquals ("test#08",5,listChangedArgs.NewIndex);
 		}
 
 		[Test]
@@ -683,6 +689,65 @@ namespace MonoTests.System.Data
 		private void ListChanged (object o, ListChangedEventArgs e)
 		{
 			eventWriter.Write (" =====" + e.ListChangedType + ":" + e.NewIndex);
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
+		public void ComplexEventSequence2 ()
+		{
+			string result = @"setting table...
+---- OnListChanged PropertyDescriptorChanged,0,0
+----- UpdateIndex : True
+---- OnListChanged Reset,-1,-1
+table was set.
+---- OnListChanged PropertyDescriptorAdded,0,0
+ col1 added.
+---- OnListChanged PropertyDescriptorAdded,0,0
+ col2 added.
+---- OnListChanged PropertyDescriptorAdded,0,0
+ col3 added.
+---- OnListChanged Reset,-1,-1
+added tables to dataset
+---- OnListChanged PropertyDescriptorAdded,0,0
+added relation 1
+---- OnListChanged PropertyDescriptorAdded,0,0
+added relation 2
+---- OnListChanged PropertyDescriptorDeleted,0,0
+removed relation 2
+";
+
+			eventWriter = new StringWriter ();
+
+			DataSet ds = new DataSet ();
+			DataTable dt = new DataTable ("table");
+			DataTable dt2 = new DataTable ("table2");
+			ComplexEventSequence1View dv =
+				new ComplexEventSequence1View (dt, eventWriter);
+			dt.Columns.Add ("col1");
+			eventWriter.WriteLine (" col1 added.");
+			dt.Columns.Add ("col2");
+			eventWriter.WriteLine (" col2 added.");
+			dt.Columns.Add ("col3");
+			eventWriter.WriteLine (" col3 added.");
+
+			dt2.Columns.Add ("col1");
+			dt2.Columns.Add ("col2");
+			dt2.Columns.Add ("col3");
+
+			ds.Tables.Add (dt);
+			ds.Tables.Add (dt2);
+
+			eventWriter.WriteLine ("added tables to dataset");
+			ds.Relations.Add ("Relation", dt.Columns ["col1"], dt2.Columns ["col1"]);
+			eventWriter.WriteLine ("added relation 1");
+
+			DataRelation dr = ds.Relations.Add ("Relation2", dt2.Columns ["col2"], dt.Columns ["col2"]);
+			eventWriter.WriteLine ("added relation 2");
+
+			ds.Relations.Remove (dr);
+			eventWriter.WriteLine ("removed relation 2");
+
+			AssertEquals (result, eventWriter.ToString ().Replace ("\r\n", "\n"));
 		}
 
 		[Test]
