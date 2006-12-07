@@ -61,7 +61,7 @@ namespace System.Web {
 		const int HaveJavaScript = 13;
 		const int HaveMajorVersion = 14;
 		const int HaveMinorVersion = 15;
-		//const int HaveMSDomVersion = 16;
+		const int HaveMSDomVersion = 16;
 		const int HavePlatform = 17;
 		const int HaveTables = 18;
 		//const int HaveTagWriter = 19;
@@ -87,7 +87,7 @@ namespace System.Web {
 		bool javaScript;
 		int majorVersion;
 		double minorVersion;
-		//Version msDomVersion;
+		Version msDomVersion;
 		string platform;
 		bool tables;
 		//Type tagWriter;
@@ -282,7 +282,17 @@ namespace System.Web {
 
 		public Version MSDomVersion {
 			get {
-				return new Version (0, 0);
+				if (!Get (HaveMSDomVersion)) {
+					string ver_str;
+					Set (HaveMSDomVersion);
+					ver_str = this ["msdomversion"];
+					if (ver_str == null)
+						msDomVersion = new Version (0, 0);
+					else
+						msDomVersion = new Version (ver_str);
+				}
+
+				return msDomVersion;
 			}
 		}
 
