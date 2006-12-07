@@ -172,7 +172,6 @@ namespace MonoTests.System.Web.UI {
 		[Category ("NunitWeb")]
 		public void PageHeaderOnPreInit ()
 		{
-			Thread.Sleep (200); 
 			PageDelegate pd = new PageDelegate (Page_OnPreInit);
 			WebTest t = new WebTest (PageInvoker.CreateOnPreInit (pd));
 			string html = t.Run ();
@@ -181,8 +180,6 @@ namespace MonoTests.System.Web.UI {
 	                                PreInit
                                     </title></head>";
 			HtmlDiff.AssertAreEqual (origHtml, newHtml, "HeaderRenderInit");
-			Thread.Sleep (200); 
-			WebTest.Unload ();
 		}
 
 		public static void Page_OnPreInit (Page p)
@@ -195,7 +192,6 @@ namespace MonoTests.System.Web.UI {
 		[Category ("NunitWeb")]
 		public void PageHeaderInit ()
 		{
-			Thread.Sleep (200); 
 			PageDelegate pd = new PageDelegate (CheckHeader);
 			WebTest t = new WebTest (PageInvoker.CreateOnInit (pd));
 			string html = t.Run ();
@@ -204,8 +200,6 @@ namespace MonoTests.System.Web.UI {
 	                            Test
                                 </title></head>";
 			HtmlDiff.AssertAreEqual (origHtml, newHtml, "HeaderRenderInit");
-			Thread.Sleep (200); 
-			WebTest.Unload ();
 
 		}
 
@@ -213,7 +207,6 @@ namespace MonoTests.System.Web.UI {
 		[Category ("NunitWeb")]
 		public void PageHeaderInitComplete ()
 		{
-			Thread.Sleep (200); 
 			WebTest t = new WebTest ();
 			PageDelegates pd = new PageDelegates ();
 			pd.InitComplete = CheckHeader;
@@ -224,15 +217,12 @@ namespace MonoTests.System.Web.UI {
 	                            Test
                                 </title></head>";
 			HtmlDiff.AssertAreEqual (origHtml, newHtml, "HeaderRenderInitComplete");
-			Thread.Sleep (200); 
-			WebTest.Unload ();
 		}
 
 		[Test]
 		[Category ("NunitWeb")]
 		public void PageHeaderPreLoad ()
 		{
-			Thread.Sleep (200); 
 			WebTest t = new WebTest ();
 			PageDelegates pd = new PageDelegates ();
 			pd.PreLoad = CheckHeader;
@@ -243,15 +233,12 @@ namespace MonoTests.System.Web.UI {
 	                            Test
                                 </title></head>";
 			HtmlDiff.AssertAreEqual (origHtml, newHtml, "HeaderRenderPreLoad");
-			Thread.Sleep (200); 
-			WebTest.Unload ();
 		}
 
 		[Test]
 		[Category ("NunitWeb")]
 		public void PageHeaderLoad ()
 		{
-			Thread.Sleep (200); 
 			PageDelegate pd = new PageDelegate (CheckHeader);
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pd));
 			string html = t.Run ();
@@ -260,15 +247,12 @@ namespace MonoTests.System.Web.UI {
 	                            Test
                                 </title></head>";
 			HtmlDiff.AssertAreEqual (origHtml, newHtml, "HeaderRenderLoad");
-			Thread.Sleep (200); 
-			WebTest.Unload ();
 		}
 
 		[Test]
 		[Category ("NunitWeb")]
 		public void PageHeaderLoadComplete ()
 		{
-			Thread.Sleep (200); 
 			WebTest t = new WebTest ();
 			PageDelegates pd = new PageDelegates ();
 			pd.LoadComplete = CheckHeader;
@@ -279,15 +263,12 @@ namespace MonoTests.System.Web.UI {
 	                            Test
                                 </title></head>";
 			HtmlDiff.AssertAreEqual (origHtml, newHtml, "HeaderRenderLoadComplete");
-			Thread.Sleep (200); 
-			WebTest.Unload ();
 		}
 
 		[Test]
 		[Category ("NunitWeb")]
 		public void PageHeaderPreRender ()
 		{
-			Thread.Sleep (200);
 			WebTest t = new WebTest ();
 			PageDelegates pd = new PageDelegates ();
 			pd.PreRender = CheckHeader;
@@ -298,15 +279,12 @@ namespace MonoTests.System.Web.UI {
 	                            Test
                                 </title></head>";
 			HtmlDiff.AssertAreEqual (origHtml, newHtml, "HeaderRenderPreRender");
-			Thread.Sleep (200); 
-			WebTest.Unload ();
 		}
 
 		[Test]
 		[Category ("NunitWeb")]
 		public void PageHeaderPreRenderComplete ()
 		{
-			Thread.Sleep (200); 
 			WebTest t = new WebTest ();
 			PageDelegates pd = new PageDelegates ();
 			pd.PreRenderComplete = CheckHeader;
@@ -317,8 +295,6 @@ namespace MonoTests.System.Web.UI {
 	                            Test
                                 </title></head>";
 			HtmlDiff.AssertAreEqual (origHtml, newHtml, "HeaderRenderPreRenderComplete");
-			Thread.Sleep (200); 
-			WebTest.Unload ();
 		}
 
 
