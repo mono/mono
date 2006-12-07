@@ -268,6 +268,9 @@ namespace System.Windows.Forms.X11Internal {
 		public extern static IntPtr XCreatePixmapFromBitmapData(IntPtr display, IntPtr drawable, byte[] data, int width, int height, IntPtr fg, IntPtr bg, int depth);
 
 		[DllImport (libX11)]
+		public extern static IntPtr XCreatePixmap(IntPtr display, IntPtr d, int width, int height, int depth);
+
+		[DllImport (libX11)]
 		public extern static IntPtr XFreePixmap(IntPtr display, IntPtr pixmap);
 
 		[DllImport (libX11)]

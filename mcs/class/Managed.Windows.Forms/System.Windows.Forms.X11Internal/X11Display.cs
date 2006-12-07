@@ -2425,5 +2425,54 @@ namespace System.Windows.Forms.X11Internal {
 
 			queue.DispatchIdle = true;
 		}
+
+		// double buffering support
+		public void CreateOffscreenDrawable (IntPtr handle,
+						     int width, int height,
+						     out object offscreen_drawable,
+						     out Graphics offscreen_dc)
+		{
+			IntPtr root_out;
+			int x_out, y_out, width_out, height_out, border_width_out, depth_out;
+
+			Xlib.XGetGeometry (display, handle,
+					   out root_out,
+					   out x_out, out y_out,
+					   out width_out, out height_out,
+					   out border_width_out, out depth_out);
+
+			IntPtr pixmap = Xlib.XCreatePixmap (display, handle, width, height, depth_out);
+
+			offscreen_drawable = pixmap;
+
+			offscreen_dc = Graphics.FromHwnd (pixmap);
+		}
+
+		public void DestroyOffscreenDrawable (object offscreen_drawable,
+						      Graphics offscreen_dc)
+		{
+			Xlib.XFreePixmap (display, (IntPtr)offscreen_drawable);
+			offscreen_dc.Dispose ();
+		}
+
+		public void BlitFromOffscreen (IntPtr dest_handle,
+					       Graphics dest_dc,
+					       object offscreen_drawable,
+					       Graphics offscreen_dc,
+					       Rectangle r)
+		{
+			XGCValues gc_values;
+			IntPtr gc;
+
+			gc_values = new XGCValues();
+
+			gc = Xlib.XCreateGC (display, dest_handle, IntPtr.Zero, ref gc_values);
+
+			Xlib.XCopyArea (display, (IntPtr)offscreen_drawable, dest_handle,
+					gc, r.X, r.Y, r.Width, r.Height, r.X, r.Y);
+
+			Xlib.XFreeGC (display, gc);
+		}
+
 	}
 }

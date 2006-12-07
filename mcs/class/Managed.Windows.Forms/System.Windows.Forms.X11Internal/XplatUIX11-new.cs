@@ -1004,6 +1004,31 @@ namespace System.Windows.Forms.X11Internal {
 				hwnd.Update ();
 		}
 
+		internal override void CreateOffscreenDrawable (IntPtr handle,
+								int width, int height,
+								out object offscreen_drawable,
+								out Graphics offscreen_dc)
+		{
+			display.CreateOffscreenDrawable (handle, width, height,
+							 out offscreen_drawable, out offscreen_dc);
+		}
+
+		internal override void DestroyOffscreenDrawable (object offscreen_drawable,
+								 Graphics offscreen_dc)
+		{
+			display.DestroyOffscreenDrawable (offscreen_drawable,
+							  offscreen_dc);
+		}
+
+		internal override void BlitFromOffscreen (IntPtr dest_handle,
+							  Graphics dest_dc,
+							  object offscreen_drawable,
+							  Graphics offscreen_dc,
+							  Rectangle r)
+		{
+			display.BlitFromOffscreen (dest_handle, dest_dc, offscreen_drawable, offscreen_dc, r);
+		}
+
 		#endregion	// Public Static Methods
 
 		#region Events
