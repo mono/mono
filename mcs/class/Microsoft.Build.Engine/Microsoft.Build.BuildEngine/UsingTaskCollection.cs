@@ -57,15 +57,14 @@ namespace Microsoft.Build.BuildEngine {
 			usingTasks.Add (usingTask);
 		}
 		
-		[MonoTODO]
 		public void CopyTo (Array array, int index)
 		{
 			usingTasks.CopyTo ((UsingTask[]) array, index);
 		}
 		
-		[MonoTODO]
 		public void CopyTo (UsingTask[] array, int index)
 		{
+			usingTasks.CopyTo (array, index);
 		}
 		
 		public IEnumerator GetEnumerator ()

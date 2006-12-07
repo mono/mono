@@ -65,6 +65,11 @@ namespace Microsoft.Build.BuildEngine {
 
 		public BuildItem (string itemName, string itemInclude)
 		{
+			if (itemInclude == null)
+				throw new ArgumentNullException ("itemInclude");
+			if (itemInclude == String.Empty)
+				throw new ArgumentException ("Parameter \"itemInclude\" cannot have zero length.");
+
 			this.name = itemName;
 			this.finalItemSpec = itemInclude;
 			this.unevaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
@@ -113,8 +118,8 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (ReservedNameUtils.IsReservedMetadataName (metadataName))
 				return ReservedNameUtils.GetReservedMetadata (FinalItemSpec, metadataName);
-			else if (evaluatedMetadata.Contains (metadataName) == true)
-				return (string) evaluatedMetadata [metadataName];
+			else if (unevaluatedMetadata.Contains (metadataName))
+				return (string) unevaluatedMetadata [metadataName];
 			else
 				return String.Empty;
 		}
@@ -145,8 +150,6 @@ namespace Microsoft.Build.BuildEngine {
 			SetMetadata (metadataName, metadataValue, false);
 		}
 		
-		// FIXME: don't use expression when we treat it as literal
-		[MonoTODO]
 		public void SetMetadata (string metadataName,
 					 string metadataValue,
 					 bool treatMetadataValueAsLiteral)
@@ -162,14 +165,12 @@ namespace Microsoft.Build.BuildEngine {
 			
 			RemoveMetadata (metadataName);
 			
-			unevaluatedMetadata.Add (metadataName, metadataValue);
+			evaluatedMetadata.Add (metadataName, metadataValue);
 				
-			if (parentItemGroup != null && treatMetadataValueAsLiteral == false) {	
-				OldExpression finalValue = new OldExpression (parentItemGroup.Project);
-				finalValue.ParseSource (metadataValue);
-				evaluatedMetadata.Add (metadataName, (string) finalValue.ConvertTo (typeof (string)));
+			if (treatMetadataValueAsLiteral) {	
+				unevaluatedMetadata.Add (metadataName, Utilities.Escape (metadataValue));
 			} else
-				evaluatedMetadata.Add (metadataName, metadataValue);
+				unevaluatedMetadata.Add (metadataName, metadataValue);
 		}
 		
 		private void BindToXml (XmlElement xmlElement)

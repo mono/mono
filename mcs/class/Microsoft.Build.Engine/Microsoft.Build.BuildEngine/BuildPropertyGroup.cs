@@ -135,28 +135,37 @@ namespace Microsoft.Build.BuildEngine {
 
 		public IEnumerator GetEnumerator ()
 		{
-			if (properties != null) {
+			if (FromXml)
 				foreach (BuildProperty bp in properties)
 					yield return bp;
-			} else if (propertiesByName != null) {
+			else 
 				foreach (KeyValuePair <string, BuildProperty> kvp in propertiesByName)
 					yield return kvp.Value;
-			} else
-				throw new Exception ("PropertyGroup is not initialized.");
 		}
 
 		public void RemoveProperty (BuildProperty propertyToRemove)
 		{
-			if (properties == null)
-				throw new Exception ("PropertyGroup is not initialized.");
-			properties.Remove (propertyToRemove);
+			if (FromXml)
+				properties.Remove (propertyToRemove);
+			else {
+				foreach (KeyValuePair <string, BuildProperty> kvp in propertiesByName)
+					if (kvp.Value == propertyToRemove) {
+						propertiesByName.Remove (kvp.Key);
+						break;
+					}
+			}
 		}
 
 		public void RemoveProperty (string propertyName)
 		{
-			if (propertiesByName == null)
-				throw new Exception ("PropertyGroup is not initialized.");
-			propertiesByName.Remove (propertyName);
+			if (FromXml) {
+				foreach (BuildProperty bp in properties)
+					if (bp.Name == propertyName) {
+						properties.Remove (bp);
+						break;
+					}
+			} else
+				propertiesByName.Remove (propertyName);
 		}
 
 		public void SetProperty (string propertyName,
@@ -165,8 +174,6 @@ namespace Microsoft.Build.BuildEngine {
 			SetProperty (propertyName, propertyValue, false);
 		}
 		
-		// FIXME: use treatPropertyValueAsLiteral
-		[MonoTODO]
 		public void SetProperty (string propertyName,
 					 string propertyValue,
 					 bool treatPropertyValueAsLiteral)
@@ -175,7 +182,11 @@ namespace Microsoft.Build.BuildEngine {
 				BuildProperty bp = new BuildProperty (propertyName, propertyValue);
 				AddProperty (bp);
 			}
-			propertiesByName [propertyName].Value = propertyValue;
+
+			if (treatPropertyValueAsLiteral)
+				propertiesByName [propertyName].Value = Utilities.Escape (propertyValue);
+			else
+				propertiesByName [propertyName].Value = propertyValue;
 		}
 		
 		internal void Evaluate ()
@@ -210,12 +221,10 @@ namespace Microsoft.Build.BuildEngine {
 
 		public int Count {
 			get {
-				if (properties != null)
+				if (FromXml)
 					return properties.Count;
-				else if (propertiesByName != null)
-					return propertiesByName.Count;
 				else
-					throw new Exception ("PropertyGroup is not initialized.");
+					return propertiesByName.Count;
 			}
 		}
 

@@ -1,3 +1,33 @@
+2006-12-07  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildTask.cs: Implemented AddOutputItem () and AddOutputProperty ().
+
+	* UsingTaskCollection.cs: Removed [MonoTODO] and used CopyTo in CopyTo
+	(UsingTask[] array, int index)
+
+	* TaskEngine.cs: Reformatted PublishOutput () and added copying of
+	items to Project.EvaluatedItems in PublishItemGroup ();
+
+	* BuildItemGroup.cs: Added [MonoTODO].
+
+	* UsingTask.cs: Used expression for AssemblyFile to get around
+	problems with '\' and '/'.
+
+	* BuildItem.cs (ctor): Added null checks.
+	(GetMetadata): Return unevaluatedMetadata not evaluatedMetadata.
+	(SetMetadata): Don't escape evaluatedMetadata and escape
+	unevaluatedMetadata only when treatPropertyValueAsLiteral.
+
+	* BuildPropertyGroup.cs (GetEnumerator, Evaluate, RemoveProperty): Use
+	FromXml () instead of null checks.
+	(SetProperty): Escape propertyValue when it is literal.
+
+	* BuildProperty.cs: Changed exception message.
+
+	* Project.cs: Added XmlNamespaceManager and XmlNamespace internal
+	properties.
+	(GetProjectExtensions): Implemented.
+
 2006-12-05  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildTask.cs: Remove [MonoTODO], add exception throwing in

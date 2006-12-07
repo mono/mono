@@ -70,6 +70,9 @@ namespace Microsoft.Build.BuildEngine {
 		XmlDocument			xmlDocument;
 		bool				unloaded;
 
+		static XmlNamespaceManager	manager;
+		static string ns = "http://schemas.microsoft.com/developer/msbuild/2003";
+
 		public Project ()
 			: this (Engine.GlobalEngine)
 		{
@@ -185,7 +188,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			CheckUnloaded ();
 			if (targetNames.Length == 0) {
-				if (defaultTargets.Length != 0) {
+				if (defaultTargets != null && defaultTargets.Length != 0) {
 					targetNames = defaultTargets;
 				}
 				else if (firstTargetName != null) {
@@ -232,10 +235,18 @@ namespace Microsoft.Build.BuildEngine {
 			return (string) evaluatedProperties [propertyName];
 		}
 
-		[MonoTODO]
 		public string GetProjectExtensions (string id)
 		{
-			throw new NotImplementedException ();
+			if (id == null || id == String.Empty)
+				return String.Empty;
+
+			XmlNode node = xmlDocument.SelectSingleNode (String.Format ("/tns:Project/tns:ProjectExtensions/tns:{0}", id), XmlNamespaceManager);
+
+			// FIXME: InnerXml or InnerText?
+			if (node == null)
+				return String.Empty;
+			else
+				return node.InnerXml;
 		}
 
 		// Does the actual loading.
@@ -254,7 +265,7 @@ namespace Microsoft.Build.BuildEngine {
 			XmlReader xmlReader = XmlReader.Create (textReader, settings);
 			xmlDocument.Load (xmlReader);
 
-			if (xmlDocument.DocumentElement.GetAttribute ("xmlns") != "http://schemas.microsoft.com/developer/msbuild/2003") {
+			if (xmlDocument.DocumentElement.GetAttribute ("xmlns") != ns) {
 				throw new InvalidProjectFileException (
 					@"The default XML namespace of the project must be the MSBuild XML namespace." + 
 					" If the project is authored in the MSBuild 2003 format, please add " +
@@ -750,8 +761,27 @@ namespace Microsoft.Build.BuildEngine {
 			get { return xmlDocument.InnerXml; }
 		}
 		
+		internal static XmlNamespaceManager XmlNamespaceManager {
+			get {
+				if (manager == null) {
+					manager = new XmlNamespaceManager (new NameTable ());
+					manager.AddNamespace ("tns", ns);
+				}
+				
+				return manager;
+			}
+		}
+		
 		internal TaskDatabase TaskDatabase {
 			get { return taskDatabase; }
+		}
+		
+		internal XmlDocument XmlDocument {
+			get { return xmlDocument; }
+		}
+		
+		internal static string XmlNamespace {
+			get { return ns; }
 		}
 	}
 }

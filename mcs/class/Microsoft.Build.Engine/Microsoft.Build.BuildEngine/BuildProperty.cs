@@ -50,11 +50,9 @@ namespace Microsoft.Build.BuildEngine {
 			: this (propertyName, propertyValue, PropertyType.Normal)
 		{
 			if (propertyName == null)
-				throw new ArgumentNullException (null,
-					"Parameter \"propertyName\" cannot be null.");
+				throw new ArgumentNullException ("propertyName");
 			if (propertyValue == null)
-				throw new ArgumentNullException (null,
-					"Parameter \"propertyValue\" cannot be null.");
+				throw new ArgumentNullException ("propertyValue");
 		}
 
 		internal BuildProperty (string propertyName,

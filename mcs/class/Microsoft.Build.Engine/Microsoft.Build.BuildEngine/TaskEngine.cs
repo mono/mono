@@ -107,35 +107,36 @@ namespace Microsoft.Build.BuildEngine {
 			object		o;
 		
 			foreach (XmlNode xmlNode in taskElement.ChildNodes) {
-				if (xmlNode is XmlElement) {
-					xmlElement = (XmlElement) xmlNode;
+				if (!(xmlNode is XmlElement))
+					continue;
+			
+				xmlElement = (XmlElement) xmlNode;
+				
+				if (xmlElement.Name != "Output")
+					throw new InvalidProjectFileException ("Only Output elements can be Task's child nodes.");
+				if (xmlElement.GetAttribute ("ItemName") != String.Empty && xmlElement.GetAttribute ("PropertyName") != String.Empty)
+					throw new InvalidProjectFileException ("Only one of ItemName and PropertyName attributes can be specified.");
+				if (xmlElement.GetAttribute ("TaskParameter") == String.Empty)
+					throw new InvalidProjectFileException ("TaskParameter attribute must be specified.");
 					
-					if (xmlElement.Name != "Output")
-						throw new InvalidProjectFileException ("Only Output elements can be Task's child nodes.");
-					if (xmlElement.GetAttribute ("ItemName") != String.Empty && xmlElement.GetAttribute ("PropertyName") != String.Empty)
-						throw new InvalidProjectFileException ("Only one of ItemName and ProperytyName attributes can be specified.");
-					if (xmlElement.GetAttribute ("TaskParameter") == String.Empty)
-						throw new InvalidProjectFileException ("TaskParameter attribute must be specified.");
-						
-					taskParameter = xmlElement.GetAttribute ("TaskParameter");
-					itemName = xmlElement.GetAttribute ("ItemName");
-					propertyName = xmlElement.GetAttribute ("PropertyName");
-					
-					propertyInfo = taskType.GetProperty (taskParameter);
-					if (propertyInfo == null)
-						throw new Exception ("Could not get property info.");
-					if (propertyInfo.IsDefined (outputAttribute, false) == false)
-						throw new Exception ("This is not output property.");
-					
-					o = propertyInfo.GetValue (task, null);
-					if (o == null)
-						continue;
-					
-					if (itemName != String.Empty) {
-						PublishItemGroup (propertyInfo, o, itemName);
-					} else {
-						PublishProperty (propertyInfo, o, propertyName);
-					}
+				taskParameter = xmlElement.GetAttribute ("TaskParameter");
+				itemName = xmlElement.GetAttribute ("ItemName");
+				propertyName = xmlElement.GetAttribute ("PropertyName");
+				
+				propertyInfo = taskType.GetProperty (taskParameter);
+				if (propertyInfo == null)
+					throw new Exception ("Could not get property info.");
+				if (propertyInfo.IsDefined (outputAttribute, false) == false)
+					throw new Exception ("This is not output property.");
+				
+				o = propertyInfo.GetValue (task, null);
+				if (o == null)
+					continue;
+				
+				if (itemName != String.Empty) {
+					PublishItemGroup (propertyInfo, o, itemName);
+				} else {
+					PublishProperty (propertyInfo, o, propertyName);
 				}
 			}
 		}
@@ -150,6 +151,7 @@ namespace Microsoft.Build.BuildEngine {
 					       string itemName)
 		{
 			BuildItemGroup newItems = CollectItemGroup (propertyInfo, o, itemName);
+			
 			if (parentProject.EvaluatedItemsByName.Contains (itemName)) {
 				BuildItemGroup big = (BuildItemGroup) parentProject.EvaluatedItemsByName [itemName];
 				big.Clear ();
@@ -158,6 +160,8 @@ namespace Microsoft.Build.BuildEngine {
 			} else {
 				parentProject.EvaluatedItemsByName.Add (itemName, newItems);
 			}
+			foreach (BuildItem bi in newItems)
+				parentProject.EvaluatedItems.AddItem (bi);
 		}
 		
 		private void PublishProperty (PropertyInfo propertyInfo,

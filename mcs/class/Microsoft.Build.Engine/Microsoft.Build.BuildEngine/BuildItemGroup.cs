@@ -199,6 +199,8 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
+		
+		[MonoTODO]
 		public BuildItem this [int index] {
 			get {
 				return buildItems [index];

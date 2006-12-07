@@ -43,7 +43,6 @@ namespace Microsoft.Build.BuildEngine {
 		Target			parentTarget;
 		XmlElement		taskElement;
 	
-		// FIXME: implement
 		internal BuildTask (XmlElement taskElement, Target parentTarget)
 		{
 			if (taskElement == null)
@@ -59,12 +58,26 @@ namespace Microsoft.Build.BuildEngine {
 		public void AddOutputItem (string taskParameter,
 					   string itemName)
 		{
+			XmlElement element = parentTarget.Project.XmlDocument.CreateElement ("Output", Project.XmlNamespace);
+			taskElement.AppendChild (element);
+			
+			if (taskParameter != null)
+				element.SetAttribute ("TaskParameter", taskParameter);
+			if (itemName != null)
+				element.SetAttribute ("ItemName", itemName);
 		}
 		
 		[MonoTODO]
 		public void AddOutputProperty (string taskParameter,
 					       string propertyName)
 		{
+			XmlElement element = parentTarget.Project.XmlDocument.CreateElement ("Output", Project.XmlNamespace);
+			taskElement.AppendChild (element);
+			
+			if (taskParameter != null)
+				element.SetAttribute ("TaskParameter", taskParameter);
+			if (propertyName != null)
+				element.SetAttribute ("PropertyName", propertyName);
 		}
 		
 		[MonoTODO]
