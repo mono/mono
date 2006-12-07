@@ -485,7 +485,6 @@ namespace System.Windows.Forms {
 		protected override void OnVisibleChanged(EventArgs e) {
 			if (!Visible) {
 				is_pressed = false;
-				has_focus = false;
 				is_entered = false;
 			}
 			base.OnVisibleChanged(e);

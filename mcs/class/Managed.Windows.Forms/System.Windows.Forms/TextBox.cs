@@ -78,7 +78,6 @@ namespace System.Windows.Forms {
 
 		#region Private & Internal Methods
 		private void TextBox_LostFocus(object sender, EventArgs e) {
-			has_focus = false;
 			Invalidate();
 		}
 		#endregion	// Private & Internal Methods
@@ -241,7 +240,6 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnGotFocus(EventArgs e) {
-			has_focus=true;
 			SelectAll ();
 			base.OnGotFocus (e);
 		}
