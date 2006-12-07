@@ -370,7 +370,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnKeyDown(KeyEventArgs kevent) {
-			if (is_enabled && (kevent.KeyData == Keys.Space)) {
+			if (kevent.KeyData == Keys.Space) {
 				enter_state = is_entered;
 				is_entered = true;
 				OnMouseDown(new MouseEventArgs(MouseButtons.Left, 1, 2, 2, 0));
@@ -380,7 +380,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnKeyUp(KeyEventArgs kevent) {
-			if (is_enabled && (kevent.KeyData == Keys.Space)) {
+			if (kevent.KeyData == Keys.Space) {
 				OnMouseUp(new MouseEventArgs(MouseButtons.Left, 1, 2, 2, 0));
 				is_entered = enter_state;
 				kevent.Handled=true;
@@ -394,7 +394,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnMouseDown(MouseEventArgs mevent) {
-			if (is_enabled && ((mevent.Button & MouseButtons.Left) != 0)) {
+			if ((mevent.Button & MouseButtons.Left) != 0) {
 				is_pressed = true;
 				this.Capture = true;
 				Invalidate();
@@ -404,14 +404,12 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnMouseEnter(EventArgs e) {
-			if ( is_enabled )
-				Invalidate();
+			Invalidate();
 			base.OnMouseEnter(e);
 		}
 
 		protected override void OnMouseLeave(EventArgs e) {
-			if ( is_enabled )
-				Invalidate();
+			Invalidate();
 			base.OnMouseLeave(e);
 		}
 
