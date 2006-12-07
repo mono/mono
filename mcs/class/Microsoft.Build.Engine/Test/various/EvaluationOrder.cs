@@ -52,6 +52,33 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 		[Test]
 		[Category ("NotWorking")]
+		public void TestOrder0 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+						<Item Include='A' />
+					</ItemGroup>
+
+					<PropertyGroup>
+						<A>A</A>
+						<Property>@(Item)$(A)$(B)</Property>
+					</PropertyGroup>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+
+			Assert.AreEqual ("@(Item)A", proj.EvaluatedProperties ["Property"].FinalValue, "A1");
+			Assert.AreEqual ("@(Item)$(A)$(B)", proj.EvaluatedProperties ["Property"].Value, "A2");
+			Assert.AreEqual ("A", GetItems (proj, "Item"), "A3");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
 		public void TestOrder1 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
