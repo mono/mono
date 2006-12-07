@@ -99,3 +99,12 @@ $(test_lib).config: Test/test-config-file
 	cp $< $@
 
 CLEAN_FILES = $(test_lib).config
+
+# run the PKITS tests only if the data was installed/activated, otherwise ignore them
+ifeq (net_2_0, $(PROFILE))
+pkits_files := $(wildcard Test/System.Security.Cryptography.X509Certificates/pkits/hint)
+ifndef pkits_files
+TEST_HARNESS_EXCLUDES = /exclude:NotWorking,ValueAdd,CAS,InetAccess,PKITS
+TEST_HARNESS_EXCLUDES_ONDOTNET = /exclude:NotDotNet,CAS,PKITS
+endif
+endif
