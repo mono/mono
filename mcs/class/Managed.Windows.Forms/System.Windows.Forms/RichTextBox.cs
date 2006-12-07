@@ -873,6 +873,10 @@ namespace System.Windows.Forms {
 			}
 
 			InsertRTFFromStream(data, 0, 1);
+
+			document.PositionCaret (document.GetLine (1), 0);
+			document.SetSelectionToCaret (true);
+			ScrollToCaret ();
 		}
 
 		[MonoTODO("Make smarter RTF detection?")]

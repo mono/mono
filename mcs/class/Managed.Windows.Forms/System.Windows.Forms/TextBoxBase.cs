@@ -1374,7 +1374,7 @@ namespace System.Windows.Forms {
 
 		internal bool ShowSelection {
 			get {
-				if (show_selection) {
+				if (show_selection || !hide_selection) {
 					return true;
 				}
 
