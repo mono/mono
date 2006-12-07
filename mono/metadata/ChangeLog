@@ -1,4 +1,9 @@
 
+Thu Dec 7 15:20:31 CET 2006 Paolo Molaro <lupus@ximian.com>
+
+	* process.c: ProcessStartInfo may have only filename set and
+	arguments can be NULL.
+
 Tue Dec 5 19:19:34 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: fix leak found by Robert Jordan.
