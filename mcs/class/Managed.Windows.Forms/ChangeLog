@@ -1,3 +1,7 @@
+2006-12-06  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System.Windows.Forms.dll.sources: Added FormCollection.cs.
+
 2006-12-05  Jonathan Chambers  <joncham@gmail.com>
 
 	* System.Windows.Forms.dll.sources: Added DrawTreeNodeEventArgs.cs.

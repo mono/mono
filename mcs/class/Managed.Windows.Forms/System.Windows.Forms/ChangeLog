@@ -1,3 +1,7 @@
+2006-12-06  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FormCollection.cs: Implement. [2.0]
+
 2006-12-06  Chris Toshok  <toshok@ximian.com>
 
 	* Control.cs: make tab_stop private.

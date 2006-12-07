@@ -308,6 +308,7 @@ System.Windows.Forms/FormClosedEventArgs.cs
 System.Windows.Forms/FormClosedEventHandler.cs
 System.Windows.Forms/FormClosingEventArgs.cs
 System.Windows.Forms/FormClosingEventHandler.cs
+System.Windows.Forms/FormCollection.cs
 System.Windows.Forms/FormStartPosition.cs
 System.Windows.Forms/FormWindowState.cs
 System.Windows.Forms/FrameStyle.cs
