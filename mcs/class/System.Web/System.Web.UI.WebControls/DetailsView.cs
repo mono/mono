@@ -1169,7 +1169,6 @@ namespace System.Web.UI.WebControls
 		{
 			DetailsViewRow row = CreateRow (-1, DataControlRowType.EmptyDataRow, DataControlRowState.Normal);
 			TableCell cell = new TableCell ();
-			cell.ColumnSpan = 2;
 			
 			if (emptyDataTemplate != null)
 				emptyDataTemplate.InstantiateIn (cell);
@@ -1280,6 +1279,12 @@ namespace System.Web.UI.WebControls
 
 			table.Caption = Caption;
 			table.CaptionAlign = CaptionAlign;
+
+			// set visible for header and footer
+			TableCell headerCell = (TableCell) HeaderRow.Controls [0];
+			HeaderRow.Visible = headerCell.Text.Length > 0 || headerCell.Controls.Count > 0;
+			TableCell footerCell = (TableCell) FooterRow.Controls [0];
+			FooterRow.Visible = footerCell.Text.Length > 0 || footerCell.Controls.Count > 0;
 
 			foreach (DetailsViewRow row in table.Rows) {
 				switch (row.RowType) {

@@ -1277,6 +1277,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
 		public void DetailsView_EditPostback ()
 		{			
 			WebTest t = new WebTest ("DetailsViewDataActions.aspx");
@@ -1360,6 +1361,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
+		[Category ("NotWorking")]
 		public void DetailsView_InsertPostback ()
 		{
 			WebTest t = new WebTest ("DetailsViewDataActions.aspx");

@@ -16,7 +16,7 @@
                 Footer Template Test<asp:HyperLink ID="HyperLink1" runat="server" Text='<%# "Footer" %>'></asp:HyperLink>
             </FooterTemplate>
         </asp:DetailsView>
-        <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="GetMyData"
+        <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="CreateDataTable"
             TypeName="MonoTests.System.Web.UI.WebControls.TableObject"></asp:ObjectDataSource>
     
     </div>

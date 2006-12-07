@@ -101,7 +101,7 @@ namespace System.Web.UI.WebControls
 				EnsureForeColor ();
 			}
 
-			if (CommandName.Length > 0 || ButtonType == ButtonType.Button)
+			if (CommandName.Length > 0 || CommandArgument.Length > 0 || ButtonType == ButtonType.Button)
 			{
 				string postScript = null;
 				string callScript = null;
