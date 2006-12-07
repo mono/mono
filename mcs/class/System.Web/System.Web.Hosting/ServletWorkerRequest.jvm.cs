@@ -105,7 +105,7 @@ namespace System.Web.Hosting {
 					String.CompareOrdinal(requestURI, 0, contextPath, 0, contextPath.Length) == 0 ))
 				requestURI = contextPath + req.getServletPath();	
 
-			_requestUri = HttpUtility.UrlDecode(requestURI);
+			_requestUri = Uri.UnescapeDataString(requestURI);
 			const int dotInvokeLength = 7; //".invoke".Length
 			if (_requestUri.Length > dotInvokeLength &&
 				String.CompareOrdinal(".invoke", 0, _requestUri, 
