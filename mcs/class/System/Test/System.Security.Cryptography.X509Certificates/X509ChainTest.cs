@@ -62,6 +62,19 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			collection.Add (cert2);
 		}
 
+		// this method avoid having a dependance on the order of status
+		public void CheckChainStatus (X509ChainStatusFlags expected, X509ChainStatus[] status, string msg)
+		{
+			if ((expected == X509ChainStatusFlags.NoError) && (status.Length == 0))
+				return;
+
+			X509ChainStatusFlags actual = X509ChainStatusFlags.NoError;
+			foreach (X509ChainStatus s in status) {
+				actual |= s.Status;
+			}
+			Assert.AreEqual (expected, actual, msg);
+		}
+
 		private void CheckDefaultChain (X509Chain c)
 		{
 			Assert.AreEqual (0, c.ChainElements.Count, "ChainElements");
@@ -170,30 +183,17 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			switch (c.ChainPolicy.RevocationMode) {
 			case X509RevocationMode.Offline:
 			case X509RevocationMode.Online:
-				Assert.AreEqual (2, c.ChainElements[0].ChainElementStatus.Length, "ChainElements[0].ChainElementStatus");
-				Assert.AreEqual (X509ChainStatusFlags.RevocationStatusUnknown, c.ChainElements[0].ChainElementStatus[0].Status, "ChainElements[0].ChainElementStatus [0].Status");
-				Assert.IsNotNull (c.ChainElements[0].ChainElementStatus[0].StatusInformation, "ChainElements[0].ChainElementStatus [0].StatusInformation");
-				Assert.AreEqual (X509ChainStatusFlags.OfflineRevocation, c.ChainElements[0].ChainElementStatus[1].Status, "ChainElements[0].ChainElementStatus [1].Status");
-				Assert.IsNotNull (c.ChainElements[0].ChainElementStatus[1].StatusInformation, "ChainElements[0].ChainElementStatus [1].StatusInformation");
-
-				Assert.AreEqual (3, c.ChainStatus.Length, "ChainStatus");
-				Assert.AreEqual (X509ChainStatusFlags.PartialChain, c.ChainStatus[0].Status, "Status-0");
-				Assert.IsNotNull (c.ChainStatus[0].StatusInformation, "StatusInformation-0");
-				Assert.AreEqual (X509ChainStatusFlags.RevocationStatusUnknown, c.ChainStatus[1].Status, "Status-1");
-				Assert.IsNotNull (c.ChainStatus[1].StatusInformation, "StatusInformation-1");
-				Assert.AreEqual (X509ChainStatusFlags.OfflineRevocation, c.ChainStatus[2].Status, "Status-2");
-				Assert.IsNotNull (c.ChainStatus[2].StatusInformation, "StatusInformation-2");
+				CheckChainStatus (X509ChainStatusFlags.PartialChain | X509ChainStatusFlags.RevocationStatusUnknown | X509ChainStatusFlags.OfflineRevocation, c.ChainStatus, "c.ChainStatus");
+				CheckChainStatus (X509ChainStatusFlags.RevocationStatusUnknown | X509ChainStatusFlags.OfflineRevocation, c.ChainElements[0].ChainElementStatus, "c.ChainElements[0].ChainElementStatus");
 				break;
 			case X509RevocationMode.NoCheck:
-				Assert.AreEqual (0, c.ChainElements[0].ChainElementStatus.Length, "ChainElements[0].ChainElementStatus");
-				Assert.AreEqual (1, c.ChainStatus.Length, "ChainStatus");
-				Assert.AreEqual (X509ChainStatusFlags.PartialChain, c.ChainStatus[0].Status, "Status-0");
+				CheckChainStatus (X509ChainStatusFlags.PartialChain, c.ChainStatus, "c.ChainStatus");
+				CheckChainStatus (X509ChainStatusFlags.NoError, c.ChainElements[0].ChainElementStatus, "c.ChainElements[0].ChainElementStatus");
 				break;
 			}
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Build_Cert1_X509RevocationMode_Offline ()
 		{
 			X509Chain c = new X509Chain ();
@@ -207,7 +207,6 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 
 		[Test]
 		[Category ("InetAccess")]
-		[Category ("NotWorking")]
 		public void Build_Cert1_X509RevocationMode_Online ()
 		{
 			X509Chain c = new X509Chain ();
@@ -239,17 +238,8 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assert.AreEqual (String.Empty, c.ChainElements[0].Information, "ChainElements[0].Information");
 			Assert.AreEqual (cert2, c.ChainElements[0].Certificate, "ChainElements[0].Certificate");
 
-			Assert.AreEqual (2, c.ChainElements[0].ChainElementStatus.Length, "ChainElements[0].ChainElementStatus");
-			Assert.AreEqual (X509ChainStatusFlags.UntrustedRoot, c.ChainElements[0].ChainElementStatus[0].Status, "ChainElements[0].ChainElementStatus [0].Status");
-			Assert.IsNotNull (c.ChainElements[0].ChainElementStatus[0].StatusInformation, "ChainElements[0].ChainElementStatus [0].StatusInformation");
-			Assert.AreEqual (X509ChainStatusFlags.NotTimeValid, c.ChainElements[0].ChainElementStatus[1].Status, "ChainElements[0].ChainElementStatus [1].Status");
-			Assert.IsNotNull (c.ChainElements[0].ChainElementStatus[1].StatusInformation, "ChainElements[0].ChainElementStatus [1].StatusInformation");
-
-			Assert.AreEqual (2, c.ChainStatus.Length, "ChainStatus");
-			Assert.AreEqual (X509ChainStatusFlags.UntrustedRoot, c.ChainStatus[0].Status, "Status-0");
-			Assert.IsNotNull (c.ChainStatus[0].StatusInformation, "StatusInformation-0");
-			Assert.AreEqual (X509ChainStatusFlags.NotTimeValid, c.ChainStatus[1].Status, "Status-1");
-			Assert.IsNotNull (c.ChainStatus[1].StatusInformation, "StatusInformation-1");
+			CheckChainStatus (X509ChainStatusFlags.UntrustedRoot | X509ChainStatusFlags.NotTimeValid, c.ChainStatus, "c.ChainStatus");
+			CheckChainStatus (X509ChainStatusFlags.UntrustedRoot | X509ChainStatusFlags.NotTimeValid, c.ChainElements[0].ChainElementStatus, "c.ChainElements[0].ChainElementStatus");
 		}
 
 		[Test]
