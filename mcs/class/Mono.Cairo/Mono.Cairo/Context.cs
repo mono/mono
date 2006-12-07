@@ -584,6 +584,8 @@ namespace Cairo {
 						return new ImageSurface (surface, true);
 					case SurfaceType.XLib:
 						return new XlibSurface (surface, true);
+					case SurfaceType.Xcb:
+						return new XcbSurface (surface, true);
 					case SurfaceType.Win32:
 						return new Win32Surface (surface, true);
 #if CAIRO_1_2
@@ -591,6 +593,8 @@ namespace Cairo {
 						return new PdfSurface (surface, true);
 					case SurfaceType.PS:
 						return new PSSurface (surface, true);
+					case SurfaceType.DirectFB:
+						return new DirectFBSurface (surface, true);
 					case SurfaceType.Svg:
 						return new SvgSurface (surface, true);
 #endif

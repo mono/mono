@@ -1,3 +1,8 @@
+2006-12-07  Alp Toker  <alp@atoker.com>
+
+	* Mono.Cairo/Context.cs: Add GroupTarget cases for Xcb and DirectFB
+	surfaces.
+
 2006-09-19 Jordi Mas <jordimash@gmail.com>
 
 	* Surface.cs, Cairo.cs: the parameters for Show are X,Y not witdh 
