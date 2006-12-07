@@ -14,9 +14,9 @@
     <GHProjectKind>runtime</GHProjectKind>
     <Version>2.0</Version>
     <RootNamespace>Mainsoft.Web.Administration</RootNamespace>
-    <jarserver>iap2</jarserver>
+    <jarserver>ipa</jarserver>
     <ApplicationServerType>tomcat</ApplicationServerType>
-    <NoDeploy>false</NoDeploy>
+    <NoDeploy>true</NoDeploy>
     <NoAspDbManagement>true</NoAspDbManagement>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
@@ -28,7 +28,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <BaseAddress>285212672</BaseAddress>
-    <SkipValidation>False</SkipValidation>
+    <SkipValidation>True</SkipValidation>
     <KeepIntermediate>False</KeepIntermediate>
     <TargetPlatform>0</TargetPlatform>
     <AdditionalClassPath>
@@ -167,25 +167,26 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="aspnetconfig\CreateRole.aspx" />
-    <Content Include="aspnetconfig\CreateUser.aspx" />
-    <Content Include="aspnetconfig\Default.aspx" />
-    <Content Include="aspnetconfig\EditUser.aspx" />
-    <Content Include="aspnetconfig\Error.aspx" />
+    <None Include="aspnetconfig\CreateRole.aspx" />
+    <None Include="aspnetconfig\CreateUser.aspx" />
+    <None Include="aspnetconfig\Default.aspx" />
+    <None Include="aspnetconfig\EditUser.aspx" />
+    <None Include="aspnetconfig\Error.aspx" />
     <Content Include="aspnetconfig\Mainsoft.Web.Administration.css" />
-    <Content Include="aspnetconfig\ManageRole.aspx" />
-    <Content Include="aspnetconfig\ManageUser.aspx" />
+    <None Include="aspnetconfig\ManageRole.aspx" />
+    <None Include="aspnetconfig\ManageUser.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="aspnetconfig\SecurError.aspx" />
+    <None Include="aspnetconfig\SecurError.aspx" />
     <Content Include="aspnetconfig\Util.Master" />
     <EmbeddedResource Include="aspnetconfig\Web.sitemap" />
-    <Content Include="Controls\Searcher.ascx" />
+    <None Include="Controls\Searcher.ascx" />
     <EmbeddedResource Include="resources\mainsoft.jpg" />
     <EmbeddedResource Include="resources\untitled.bmp" />
   </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>copy /Y $(TargetDir)$(TargetName).war $(TargetDir)$(TargetName).jar</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>
