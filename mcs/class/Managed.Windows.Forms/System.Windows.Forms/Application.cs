@@ -142,6 +142,8 @@ namespace System.Windows.Forms {
 		private static InputLanguage		input_language		= InputLanguage.CurrentInputLanguage;
 		private static string			safe_caption_format	= "{1} - {0} - {2}";
 		private static ArrayList		message_filters		= new ArrayList();
+		private static FormCollection		forms			= new FormCollection ();
+
 #if NET_2_0
 		private static VisualStyleState visual_style_state = VisualStyleState.ClientAndNonClientAreasEnabled;
 #endif
@@ -151,7 +153,7 @@ namespace System.Windows.Forms {
 
 		#region Private Methods
 		private static void CloseForms(Thread thread) {
-			Control		c;
+			Form		f;
 			IEnumerator	control;
 			bool		all;
 
@@ -164,14 +166,15 @@ namespace System.Windows.Forms {
 				all = false;
 			}
 
-			control = Control.controls.GetEnumerator();
+			lock (forms) {
+				control = forms.GetEnumerator();
 
-			while (control.MoveNext()) {
-				c = (Control)control.Current;
-				if (c is Form) {
-					if (all || (thread == c.creator_thread)) {
-						if (c.IsHandleCreated) {
-							XplatUI.PostMessage(c.Handle, Msg.WM_CLOSE_INTERNAL, IntPtr.Zero, IntPtr.Zero);
+				while (control.MoveNext()) {
+					f = (Form)control.Current;
+					
+					if (all || (thread == f.creator_thread)) {
+						if (f.IsHandleCreated) {
+							XplatUI.PostMessage(f.Handle, Msg.WM_CLOSE_INTERNAL, IntPtr.Zero, IntPtr.Zero);
 						}
 						#if DebugRunLoop
 							Console.WriteLine("      Closing form {0}", c);
@@ -179,7 +182,6 @@ namespace System.Windows.Forms {
 					}
 				}
 			}
-
 		}
 		#endregion	// Private methods
 
@@ -467,24 +469,28 @@ namespace System.Windows.Forms {
 			#endif
 
 			if (Modal) {
-				Control c;
+				Form f;
 
 				toplevels = new Queue();
-				control = Control.controls.GetEnumerator();
+				
+				lock (forms) {
+					control = forms.GetEnumerator();
 
-				while (control.MoveNext()) {
-
-					c = (Control)control.Current;
-					if (c is Form && (c != context.MainForm)) {
-						if (c.IsHandleCreated && XplatUI.IsEnabled(c.Handle)) {
-							#if DebugRunLoop
-								Console.WriteLine("      Disabling form {0}", c);
-							#endif
-							XplatUI.EnableWindow(c.Handle, false);
-							toplevels.Enqueue(c);
+					while (control.MoveNext()) {
+						f = (Form)control.Current;
+						
+						if (f != context.MainForm) {
+							if (f.IsHandleCreated && XplatUI.IsEnabled(f.Handle)) {
+								#if DebugRunLoop
+									Console.WriteLine("      Disabling form {0}", c);
+								#endif
+								XplatUI.EnableWindow(f.Handle, false);
+								toplevels.Enqueue(f);
+							}
 						}
 					}
 				}
+				
 				// FIXME - need activate?
 				/* make sure the MainForm is enabled */
 				if (context.MainForm != null) {
@@ -617,5 +623,19 @@ namespace System.Windows.Forms {
 		public static event EventHandler	ThreadExit;
 		public static event ThreadExceptionEventHandler	ThreadException;
 		#endregion	// Events
+
+		#region Internal Methods
+		internal static void AddForm (Form f)
+		{
+			lock (forms)
+				forms.Add (f);
+		}
+		
+		internal static void RemoveForm (Form f)
+		{
+			lock (forms)
+				forms.Remove (f);
+		}
+		#endregion
 	}
 }

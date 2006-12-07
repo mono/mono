@@ -1,3 +1,12 @@
+2006-12-07  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Remove static ArrayList "controls" which maintained
+	a reference to every control created.
+	* Application.cs: Create a static FormCollection to maintain a reference
+	to every form created.  Use it in places that formerly enumerated through
+	the controls one looking for forms.
+	* Form.cs: Add and remove self from above FormCollection.
+
 2006-12-07  Alexander Olk  <alex.olk@googlemail.com>
 
 	* MimeIcon.cs: gdk_pixbuf_save_to_buffer is part of libgdk-pixbuf,

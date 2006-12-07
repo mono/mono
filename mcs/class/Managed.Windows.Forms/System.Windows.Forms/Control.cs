@@ -111,7 +111,6 @@ namespace System.Windows.Forms
 		internal int			dist_bottom; // distance to the bottom border of the parent
 
 		// to be categorized...
-		static internal ArrayList	controls = new ArrayList();  // All of the application's controls, in a flat list
 		ControlCollection child_controls; // our children
 		Control parent; // our parent control
 		AccessibleObject accessibility_object; // object that contains accessibility information about our control
@@ -800,13 +799,9 @@ namespace System.Windows.Forms
 				if (this.InvokeRequired) {
 					if (Application.MessageLoop) {
 						this.BeginInvokeInternal(new MethodInvoker(DestroyHandle), null, true);
-						this.BeginInvokeInternal(new RemoveDelegate(controls.Remove), new object[] {this}, true);
 					}
 				} else {
 					DestroyHandle();
-					lock (Control.controls) {
-						Control.controls.Remove(this);
-					}
 				}
 
 
@@ -3373,12 +3368,6 @@ namespace System.Windows.Forms
 			window.CreateHandle(CreateParams);
 
 			if (window.Handle != IntPtr.Zero) {
-				lock (Control.controls) {
-					if (!Control.controls.Contains(window.Handle)) {
-						Control.controls.Add(this);
-					}
-				}
-
 				creator_thread = Thread.CurrentThread;
 
 				XplatUI.EnableWindow(window.Handle, is_enabled);

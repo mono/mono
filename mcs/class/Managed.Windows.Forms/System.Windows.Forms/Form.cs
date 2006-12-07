@@ -1407,6 +1407,8 @@ namespace System.Windows.Forms {
 		protected override void CreateHandle() {
 			base.CreateHandle ();
 
+			Application.AddForm (this);
+			
 			UpdateBounds();
 
 			if ((XplatUI.SupportsTransparency() & TransparencySupport.Set) != 0) {
@@ -1448,6 +1450,8 @@ namespace System.Windows.Forms {
 			owned_forms.Clear ();
 			
 			base.Dispose (disposing);
+			
+			Application.RemoveForm (this);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
