@@ -73,8 +73,9 @@ internal class XmlTableWriter {
 			List<DataTable> changedTables = new List<DataTable>();
 			foreach (DataTable table in tables) {
 				DataTable changed = table.GetChanges(DataRowState.Modified | DataRowState.Deleted);
-				if (changed != null && changed.Rows.Count > 0)
+				if (changed != null && changed.Rows.Count > 0) {
 					changedTables.Add(changed);
+				}
 			}
 			if (changedTables.Count > 0) {
 				DataSet.WriteStartElement(writer, XmlWriteMode.DiffGram, XmlConstants.DiffgrNamespace, XmlConstants.DiffgrPrefix, "before");

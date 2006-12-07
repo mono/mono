@@ -1319,6 +1319,9 @@ namespace System.Data {
 						copyTable = Clone();
 					DataRow newRow = copyTable.NewNotInitializedRow();
 					row.CopyValuesToRow(newRow);
+#if NET_2_0
+					newRow.XmlRowID = row.XmlRowID;
+#endif
 					copyTable.Rows.AddInternal (newRow);
 				}
 			}
@@ -2017,7 +2020,6 @@ namespace System.Data {
 			return ReadXml (new XmlTextReader(reader));
 		}
 
-		[MonoTODO]
 		public XmlReadMode ReadXml (XmlReader reader)
 		{
 			// The documentation from MS for this method is rather
@@ -2038,8 +2040,104 @@ namespace System.Data {
 			//     msdata:MainDataTable attribute added to the
 			//     schema info to load into the appropriate
 			//     locations.
+			bool isPartOfDataSet = true;
+			bool isTableNameBlank = false;
+			XmlReadMode mode = XmlReadMode.ReadSchema;
+			DataSet dataSet = null;
+			DataSet ds = new DataSet ();
 
-			throw new NotImplementedException ();
+			reader.MoveToContent ();
+			if (Columns.Count > 0 && reader.LocalName != "diffgram") 
+				mode = ds.ReadXml (reader);
+			else if (Columns.Count > 0 && reader.LocalName == "diffgram") {
+				  try {
+					if (TableName == String.Empty)
+						isTableNameBlank = true;
+					if (DataSet == null) {
+						isPartOfDataSet = false;
+						ds.Tables.Add (this);
+						mode = ds.ReadXml (reader);
+					} else 
+						mode = DataSet.ReadXml (reader);
+				  } catch (Exception e) {
+				    if (e.Message == String.Format ("Cannot load diffGram. Table '{0}' is missing in the destination dataset",
+								    reader.LocalName)) {
+					mode = XmlReadMode.DiffGram;
+					if (isTableNameBlank)
+						TableName = String.Empty;
+				    }
+				  } finally {
+					if (!isPartOfDataSet)
+						ds.Tables.Remove (this);
+				  }
+				  return mode;
+			}
+			else {
+				mode = ds.ReadXml (reader, XmlReadMode.ReadSchema);
+			}
+			if (mode == XmlReadMode.InferSchema)
+				mode = XmlReadMode.IgnoreSchema;
+			if (DataSet == null) {
+				  isPartOfDataSet = false;
+				  dataSet = new DataSet ();
+				  if (TableName == String.Empty)
+					isTableNameBlank = true;
+				  dataSet.Tables.Add (this);
+			}
+
+			DenyXmlResolving (this, ds, mode, isTableNameBlank, isPartOfDataSet);
+			if (Columns.Count > 0 && TableName != ds.Tables [0].TableName) {
+				if (isPartOfDataSet == false)
+					dataSet.Tables.Remove (this);
+
+				if (isTableNameBlank && isPartOfDataSet == false)
+					TableName = String.Empty;
+				return mode;
+			}
+			else {
+				TableName = ds.Tables [0].TableName;
+			}
+
+			if (!isPartOfDataSet) {
+				if (Columns.Count > 0) {
+					dataSet.Merge (ds, true, MissingSchemaAction.Ignore);
+				} else {
+					dataSet.Merge (ds, true, MissingSchemaAction.AddWithKey);
+				}
+				if (ChildRelations.Count == 0) {
+					dataSet.Tables.Remove (this);
+				} else {
+					dataSet.DataSetName = ds.DataSetName;
+				}
+			} else {
+				if (Columns.Count > 0) {
+					DataSet.Merge (ds, true, MissingSchemaAction.Ignore);
+				} else {
+					DataSet.Merge (ds, true, MissingSchemaAction.AddWithKey);
+				}
+			}
+			return mode;
+		}
+
+		private void DenyXmlResolving (DataTable table, DataSet ds, XmlReadMode mode, bool isTableNameBlank, bool isPartOfDataSet)
+		{
+			if (ds.Tables.Count == 0 && table.Columns.Count == 0)
+				throw new InvalidOperationException ("DataTable does not support schema inference from XML");
+
+			if (table.Columns.Count == 0 && ds.Tables [0].TableName != table.TableName && isTableNameBlank == false)
+				throw new ArgumentException (String.Format ("DataTable '{0}' does not match to any DataTable in source",
+									    table.TableName));
+
+			if (table.Columns.Count > 0 && ds.Tables [0].TableName != table.TableName &&
+			    isTableNameBlank == false && mode == XmlReadMode.ReadSchema &&
+			    isPartOfDataSet == false) 
+				throw new ArgumentException (String.Format ("DataTable '{0}' does not match to any DataTable in source",
+									    table.TableName));
+
+			if (isPartOfDataSet == true && table.Columns.Count > 0 &&
+			    mode == XmlReadMode.ReadSchema && table.TableName != ds.Tables [0].TableName)
+				throw new ArgumentException (String.Format ("DataTable '{0}' does not match to any DataTable in source",
+									    table.TableName));
 		}
 
 		public void ReadXmlSchema (Stream stream)
@@ -2066,6 +2164,9 @@ namespace System.Data {
 
 		public void ReadXmlSchema (XmlReader reader)
 		{
+			if (this.Columns.Count > 0)
+				return;
+
 			DataSet ds = new DataSet ();
 			new XmlSchemaDataImporter (ds, reader).Process ();
 			DataTable target = null;
@@ -2445,21 +2546,19 @@ namespace System.Data {
 			//   is a wrapper dataset called DocumentElement.
 			
 			// Generate a list of tables to write.
-			List<DataTable> tables = new List<DataTable>();	
+			List <DataTable> tables = new List <DataTable> ();
 			if (writeHierarchy == false)
-				tables.Add(this);
+				tables.Add (this);
 			else
-				FindAllChildren(tables, this);
+				FindAllChildren (tables, this);
 
 			// If we're in a DataSet, generate a list of relations to write.
-			List<DataRelation> relations = new List<DataRelation>();
-			if (DataSet != null)
-			{
-				foreach(DataRelation relation in DataSet.Relations)
-				{
-					if(tables.Contains(relation.ParentTable) &&
-					   tables.Contains(relation.ChildTable))
-						relations.Add(relation);
+			List <DataRelation> relations = new List <DataRelation> ();
+			if (DataSet != null) {
+				foreach (DataRelation relation in DataSet.Relations) {
+					if (tables.Contains (relation.ParentTable) &&
+					   tables.Contains (relation.ChildTable))
+						relations.Add (relation);
 				}
 			}
 
