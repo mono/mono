@@ -57,7 +57,7 @@ namespace System.Windows.Forms
 		private ToolStripRenderer renderer;
 		private ToolStripRenderMode render_mode;
 		private bool show_item_tool_tips;
-		internal bool stretch;
+		private bool stretch;
 
 		private ToolStripItem mouse_currently_over;
 		private bool menu_selected;
@@ -71,13 +71,15 @@ namespace System.Windows.Forms
 
 		public ToolStrip (params ToolStripItem[] items) : base ()
 		{
+			SetStyle (ControlStyles.AllPaintingInWmPaint, true);
+			SetStyle (ControlStyles.OptimizedDoubleBuffer, true);
 			SetStyle (ControlStyles.Selectable, false);
 			SetStyle (ControlStyles.SupportsTransparentBackColor, true);
-			SetStyle (ControlStyles.AllPaintingInWmPaint, true);
 
 			this.SuspendLayout ();
 			base.AutoSize = true;
 			this.back_color = Control.DefaultBackColor;
+			base.CausesValidation = false;
 			this.dock_style = this.DefaultDock;
 			base.Font = new Font ("Tahoma", 8.25f);
 			this.fore_color = Control.DefaultForeColor;
@@ -118,9 +120,14 @@ namespace System.Windows.Forms
 			set { this.back_color = value; }
 		}
 
+		public new bool CausesValidation {
+			get { return base.CausesValidation; }
+			set { base.CausesValidation = value; }
+		}
+		
 		public override Cursor Cursor {
 			get { return base.Cursor; }
-			set { base.Cursor = value; this.OnCursorChanged (EventArgs.Empty); }
+			set { base.Cursor = value; }
 		}
 		
 		public override Rectangle DisplayRectangle {
@@ -142,7 +149,9 @@ namespace System.Windows.Forms
 		public override DockStyle Dock {
 			get { return base.Dock; }
 			set {
-				if (base.Dock != value) {			
+				if (base.Dock != value) {
+					if (!Enum.IsDefined (typeof (DockStyle), value))
+						throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for DockStyle", value));
 					base.Dock = value;
 					base.anchor_style = AnchorStyles.Left | AnchorStyles.Top;
 					
@@ -225,6 +234,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
+		[DefaultValue (null)]
 		public ImageList ImageList {
 			get { return this.image_list; }
 			set { this.image_list = value; }
@@ -253,6 +264,8 @@ namespace System.Windows.Forms
 			get { return new ToolStripSplitStackLayout(); }
 		}
 
+		[Browsable (false)]
+		[DefaultValue (null)]
 		public LayoutSettings LayoutSettings {
 			get { return this.layout_settings; }
 			set { this.layout_settings = value; }
@@ -290,7 +303,7 @@ namespace System.Windows.Forms
 					this.renderer = value; 
 					this.render_mode = ToolStripRenderMode.Custom;
 					this.PerformLayout ();
-					this.OnRendererChange (EventArgs.Empty);
+					this.OnRendererChanged (EventArgs.Empty);
 				}
 			}
 		}
@@ -317,7 +330,8 @@ namespace System.Windows.Forms
 			set { this.show_item_tool_tips = value; }
 		}
 		
-		public bool Stretch {
+		[DefaultValue (false)]
+		public virtual bool Stretch {
 			get { return this.stretch; }
 			set { this.stretch = value; }
 		}
@@ -621,6 +635,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void OnPaintBackground (PaintEventArgs pevent)
 		{
 			base.OnPaintBackground (pevent);
@@ -655,13 +670,14 @@ namespace System.Windows.Forms
 			e.Graphics.ResetTransform ();
 		}
 
-		protected virtual void OnRendererChange (EventArgs e)
+		protected virtual void OnRendererChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [RendererChangedEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void OnRightToLeftChanged (EventArgs e)
 		{
 			base.OnRightToLeftChanged (e);
@@ -727,9 +743,16 @@ namespace System.Windows.Forms
 		static object PaintGripEvent = new object ();
 		static object RendererChangedEvent = new object ();
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public event EventHandler AutoSizeChanged {
 			add { Events.AddHandler (AutoSizeChangedEvent, value); }
 			remove { Events.RemoveHandler (AutoSizeChangedEvent, value); }
+		}
+
+		public new event EventHandler CausesValidationChanged {
+			add { base.CausesValidationChanged += value; }
+			remove { base.CausesValidationChanged -= value; }
 		}
 
 		public new event EventHandler CursorChanged {

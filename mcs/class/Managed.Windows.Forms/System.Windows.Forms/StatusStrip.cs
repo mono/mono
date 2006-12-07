@@ -46,7 +46,7 @@ namespace System.Windows.Forms
 			this.GripStyle = ToolStripGripStyle.Hidden;
 			this.layout_style = ToolStripLayoutStyle.Table;
 			this.sizing_grip = false;
-			base.stretch = true;
+			base.Stretch = true;
 		}
 
 		#region Public Properties
@@ -92,8 +92,8 @@ namespace System.Windows.Forms
 		}
 		
 		public new bool Stretch {
-			get { return this.stretch; }
-			set { this.stretch = value; }
+			get { return this.Stretch; }
+			set { this.Stretch = value; }
 		}
 		#endregion
 

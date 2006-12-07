@@ -175,6 +175,12 @@ namespace System.Windows.Forms
 
 		protected virtual void OnRenderItemBackground (ToolStripItemRenderEventArgs e)
 		{
+			if (e.Item.BackgroundImage != null) {
+				Rectangle item_bounds = new Rectangle (0, 0, e.Item.Width, e.Item.Height);
+				e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (e.Item.BackColor), item_bounds);
+				DrawBackground (e.Graphics, item_bounds, e.Item.BackgroundImage, e.Item.BackgroundImageLayout);
+			}
+				
 			ToolStripItemRenderEventHandler eh = (ToolStripItemRenderEventHandler)Events [RenderItemBackgroundEvent];
 			if (eh != null)
 				eh (this, e);
@@ -390,6 +396,53 @@ namespace System.Windows.Forms
 		public event ToolStripItemRenderEventHandler RenderToolStripStatusLabelBackground {
 			add { Events.AddHandler (RenderToolStripStatusLabelBackgroundEvent, value); }
 			remove {Events.RemoveHandler (RenderToolStripStatusLabelBackgroundEvent, value); }
+		}
+		#endregion
+		
+		#region Private Methods
+		private void DrawBackground (Graphics g, Rectangle bounds, Image image, ImageLayout layout)
+		{
+			// Center and Tile don't matter if the image is larger than the control
+			if (layout == ImageLayout.Center || layout == ImageLayout.Tile)
+				if (image.Size.Width >= bounds.Size.Width && image.Size.Height >= bounds.Size.Height)
+					layout = ImageLayout.None;
+					
+			switch (layout) {
+				case ImageLayout.None:
+					g.DrawImageUnscaledAndClipped (image, bounds);
+					break;
+				case ImageLayout.Tile:
+					int x = 0;
+					int y = 0;
+					
+					while (y < bounds.Height) {
+						while (x < bounds.Width) {
+							g.DrawImageUnscaledAndClipped (image, bounds);
+							x += image.Width;	
+						}
+						x = 0;
+						y += image.Height;
+					}
+					break;
+				case ImageLayout.Center:
+					Rectangle r = new Rectangle ((bounds.Size.Width - image.Size.Width) / 2, (bounds.Size.Height - image.Size.Height) / 2, image.Width, image.Height);
+					g.DrawImageUnscaledAndClipped (image, r);
+					break;
+				case ImageLayout.Stretch:
+					g.DrawImage (image, bounds);
+					break;
+				case ImageLayout.Zoom:
+					if (((float)image.Height / (float)image.Width) < ((float)bounds.Height / (float)bounds.Width)) {
+						Rectangle rzoom = new Rectangle (0, 0, bounds.Width, (int)((float)bounds.Width * ((float)image.Height / (float)image.Width)));
+						rzoom.Y = (bounds.Height - rzoom.Height)/ 2;
+						g.DrawImage (image, rzoom);
+					} else {
+						Rectangle rzoom = new Rectangle (0, 0, (int)((float)bounds.Height * ((float)image.Width / (float)image.Height)), bounds.Height);
+						rzoom.X = (bounds.Width - rzoom.Width) / 2;
+						g.DrawImage (image, rzoom);
+					}
+					break;
+			}
 		}
 		#endregion
 	}

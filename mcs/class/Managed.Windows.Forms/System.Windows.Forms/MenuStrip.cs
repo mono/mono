@@ -43,7 +43,7 @@ namespace System.Windows.Forms
 		public MenuStrip () : base ()
 		{
 			this.GripStyle = ToolStripGripStyle.Hidden;
-			this.stretch = true;
+			this.Stretch = true;
 			this.Dock = DockStyle.Top;
 		}
 
@@ -68,8 +68,8 @@ namespace System.Windows.Forms
 
 		[DefaultValue (true)]
 		public new bool Stretch {
-			get { return base.stretch; }
-			set { base.stretch = value; }
+			get { return base.Stretch; }
+			set { base.Stretch = value; }
 		}
 		#endregion
 

@@ -29,52 +29,63 @@
 
 using System.Drawing;
 using System.ComponentModel;
+using System.Windows.Forms.Design;
 
 namespace System.Windows.Forms
 {
+	[ToolStripItemDesignerAvailability (ToolStripItemDesignerAvailability.ToolStrip | ToolStripItemDesignerAvailability.ContextMenuStrip)]
 	public class ToolStripSeparator : ToolStripItem
 	{
-		private bool auto_tool_tip;
-		private ToolStripItemDisplayStyle display_style;
-		private bool double_click_enabled;
-		private ContentAlignment image_align;
-		private int image_index;
-		private ToolStripItemImageScaling image_scaling;
-		private ContentAlignment text_align;
-		private TextImageRelation text_image_relation;
-		private string tool_tip_text;
-
-		public ToolStripSeparator ()
+		public ToolStripSeparator () : base ()
 		{
-			this.ForeColor = SystemColors.ControlDark;
 		}
 
 		#region Public Properties
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new bool AutoToolTip {
-			get { return this.auto_tool_tip; }
-			set { this.auto_tool_tip = value; }
+			get { return base.AutoToolTip; }
+			set { base.AutoToolTip = value; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public override Image BackgroundImage {
+			get { return base.BackgroundImage; }
+			set { base.BackgroundImage = value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public override ImageLayout BackgroundImageLayout {
+			get { return base.BackgroundImageLayout; }
+			set { base.BackgroundImageLayout = value; }
+		}
+		
 		public override bool CanSelect { get { return false; } }
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new ToolStripItemDisplayStyle DisplayStyle {
-			get { return this.display_style; }
-			set { this.display_style = value; }
+			get { return base.DisplayStyle; }
+			set { base.DisplayStyle = value; }
 		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new bool DoubleClickEnabled {
-			get { return this.double_click_enabled; }
-			set { this.double_click_enabled = value; }
+			get { return base.DoubleClickEnabled; }
+			set { base.DoubleClickEnabled = value; }
 		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override bool Enabled {
 			get { return base.Enabled; }
 			set { base.Enabled = value; }
@@ -82,6 +93,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override Font Font {
 			get { return base.Font; }
 			set { base.Font = value; }
@@ -89,6 +101,7 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override Image Image {
 			get { return base.Image; }
 			set { base.Image = value; }
@@ -96,37 +109,39 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new ContentAlignment ImageAlign {
-			get { return this.image_align; }
-			set {
-				if (!Enum.IsDefined (typeof (ContentAlignment), value))
-					throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for ContentAlignment", value));
-
-				this.image_align = value;
-			}
+			get { return base.ImageAlign; }
+			set { base.ImageAlign = value; }
 		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new int ImageIndex {
-			get { return this.image_index; }
-			set {
-				if (value < -1)
-					throw new ArgumentException ("ImageIndex cannot be less than -1");
-
-				this.image_index = value;
-			}
+			get { return base.ImageIndex; }
+			set { base.ImageIndex = value; }
 		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new ToolStripItemImageScaling ImageScaling {
-			get { return this.image_scaling; }
-			set { this.image_scaling = value; }
+			get { return base.ImageScaling; }
+			set { base.ImageScaling = value; }
 		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public new Color ImageTransparentColor {
+			get { return base.ImageTransparentColor; }
+			set { base.ImageTransparentColor = value; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override string Text {
 			get { return base.Text; }
 			set { base.Text = value; }
@@ -134,28 +149,26 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new ContentAlignment TextAlign {
-			get { return this.text_align; }
-			set {
-				if (!Enum.IsDefined (typeof (ContentAlignment), value))
-					throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for ContentAlignment", value));
-
-				this.text_align = value;
-			}
+			get { return base.TextAlign; }
+			set { base.TextAlign = value; }
 		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new TextImageRelation TextImageRelation {
-			get { return this.text_image_relation; }
-			set { this.text_image_relation = value;	}
+			get { return base.TextImageRelation; }
+			set { base.TextImageRelation = value; }
 		}
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new string ToolTipText {
-			get { return this.tool_tip_text; }
-			set { this.tool_tip_text = value; }
+			get { return base.ToolTipText; }
+			set { base.ToolTipText = value; }
 		}
 		#endregion
 
@@ -172,6 +185,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override AccessibleObject CreateAccessibilityInstance ()
 		{
 			ToolStripItemAccessibleObject ao = new ToolStripItemAccessibleObject (this);

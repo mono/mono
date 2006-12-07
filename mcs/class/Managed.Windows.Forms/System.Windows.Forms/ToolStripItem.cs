@@ -46,18 +46,22 @@ namespace System.Windows.Forms
 		private bool auto_size;
 		private bool auto_tool_tip;
 		private Color back_color;
+		private Image background_image;
+		private ImageLayout background_image_layout;
 		private Rectangle bounds;
 		private bool can_select;
 		private ToolStripItemDisplayStyle display_style;
 		private DockStyle dock;
 		private bool double_click_enabled;
 		private bool enabled;
+		private Size explicit_size;
 		private Font font;
 		private Color fore_color;
 		private Image image;
 		private ContentAlignment image_align;
 		private int image_index;
 		private ToolStripItemImageScaling image_scaling;
+		private Color image_transparent_color;
 		internal bool is_pressed;
 		private bool is_selected;
 		private Padding margin;
@@ -93,6 +97,8 @@ namespace System.Windows.Forms
 			this.auto_size = true;
 			this.auto_tool_tip = this.DefaultAutoToolTip;
 			this.back_color = Control.DefaultBackColor;
+			this.background_image_layout = ImageLayout.Tile;
+			this.can_select = true;
 			this.display_style = this.DefaultDisplayStyle;
 			this.dock = DockStyle.None;
 			this.enabled = true;
@@ -102,6 +108,7 @@ namespace System.Windows.Forms
 			this.image_align = ContentAlignment.MiddleCenter;
 			this.image_index = -1;
 			this.image_scaling = ToolStripItemImageScaling.SizeToFit;
+			this.image_transparent_color = Color.Empty;
 			this.margin = this.DefaultMargin;
 			this.name = name;
 			this.padding = this.DefaultPadding;
@@ -112,12 +119,13 @@ namespace System.Windows.Forms
 			this.visible = true;
 
 			this.Click += onClick;
-			this.can_select = this is ToolStripMenuItem || this is ToolStripDropDownButton || this is ToolStripSplitButton ? true : false;
 			OnLayout (new LayoutEventArgs (null, string.Empty));
 		}
 		#endregion
 
 		#region Public Properties
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public AccessibleObject AccessibilityObject {
 			get { 
 				if (this.accessibility_object == null)
@@ -126,7 +134,9 @@ namespace System.Windows.Forms
 				return this.accessibility_object;
 			}
 		}
-		
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public string AccessibleDefaultActionDescription {
 			get {
 				if (this.accessibility_object == null)
@@ -138,6 +148,7 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (true)]
+		[DefaultValue (null)]
 		public string AccessibleDescription {
 			get {
 				if (this.accessibility_object == null)
@@ -149,6 +160,7 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (true)]
+		[DefaultValue (null)]
 		public string AccessibleName {
 			get { 
 				if (this.accessibility_object == null)
@@ -159,6 +171,7 @@ namespace System.Windows.Forms
 			set { this.AccessibilityObject.Name = value; }
 		}
 		
+		[DefaultValue (AccessibleRole.Default)]
 		public AccessibleRole AccessibleRole {
 			get
 			{
@@ -210,6 +223,7 @@ namespace System.Windows.Forms
 						owner.PerformLayout (); 
 						
 					OnAvailableChanged (EventArgs.Empty); 
+					OnVisibleChanged (EventArgs.Empty);
 				}
 			}
 		}
@@ -221,6 +235,28 @@ namespace System.Windows.Forms
 					back_color = value;
 					OnBackColorChanged (EventArgs.Empty);
 					this.Invalidate ();
+				}
+			}
+		}
+
+		[Localizable (true)]
+		public virtual Image BackgroundImage {
+			get { return this.background_image; }
+			set { 
+				if (this.background_image != value) {
+					this.background_image = value;
+					this.Invalidate ();
+				}
+			}
+		}
+
+		[Localizable (true)]
+		public virtual ImageLayout BackgroundImageLayout {
+			get { return this.background_image_layout; }
+			set { 
+				if (this.background_image_layout != value) {
+					this.background_image_layout = value;
+					this.Invalidate (); 
 				}
 			}
 		}
@@ -321,13 +357,16 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public int Height {
-			get { return this.bounds.Height; }
+			get { return this.Size.Height; }
 			set { 
 				this.bounds.Height = value; 
+				this.explicit_size.Height = value;
+				if (this.visible) {
 				this.CalculateAutoSize ();
 				this.OnBoundsChanged ();
-				this.Invalidate (); 
+				this.Invalidate (); } 
 			}
 		}
 
@@ -355,11 +394,13 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (true)]
+		[Browsable (false)]
 		public int ImageIndex {
 			get { return this.image_index; }
 			set {
+				// Lamespec: MSDN says ArgumentException, tests say otherwise
 				if (value < -1)
-					throw new ArgumentException ("ImageIndex cannot be less than -1");
+					throw new ArgumentOutOfRangeException ("ImageIndex cannot be less than -1");
 
 				this.image_index = value;
 				this.CalculateAutoSize ();
@@ -381,8 +422,8 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		[MonoTODO ("Stub, doesn't actually do anything yet.")]
 		public Color ImageTransparentColor {
-			get { return Color.Transparent; }
-			set { }
+			get { return this.image_transparent_color; }
+			set { this.image_transparent_color = value; }
 		}
 		
 		[Browsable (false)]
@@ -404,6 +445,7 @@ namespace System.Windows.Forms
 		}
 
 		[DefaultValue (null)]
+		[Browsable (false)]
 		public string Name {
 			get { return this.name; }
 			set { this.name = value; }
@@ -447,17 +489,26 @@ namespace System.Windows.Forms
 
 		[Localizable (true)]
 		public virtual Size Size {
-			get { return this.bounds.Size; }
+			get { 
+				if (this.explicit_size != Size.Empty) 
+					return this.explicit_size; 
+					
+				return this.bounds.Size; 
+			}
 			set { 
 				this.bounds.Size = value; 
+				this.explicit_size = value;
+				
+				if (this.visible) {
 				this.CalculateAutoSize ();
-				OnBoundsChanged ();
+				OnBoundsChanged (); }
 			}
 		}
 
 		[Localizable (false)]
 		[Bindable (true)]
 		[DefaultValue (null)]
+		[TypeConverter (typeof (StringConverter))]
 		public Object Tag {
 			get { return this.tag; }
 			set { this.tag = value; }
@@ -525,12 +576,15 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public int Width {
-			get { return this.bounds.Width; }
+			get { return this.Size.Width; }
 			set { 
 				this.bounds.Width = value; 
+				this.explicit_size.Width = value;
+				if (this.visible) {
 				this.CalculateAutoSize (); 
-				this.OnBoundsChanged();
+				this.OnBoundsChanged(); }
 			}
 		}
 		#endregion
@@ -541,7 +595,7 @@ namespace System.Windows.Forms
 		protected internal virtual Padding DefaultMargin { get { return new Padding (0, 1, 0, 2); } }
 		protected virtual Padding DefaultPadding { get { return new Padding (); } }
 		protected virtual Size DefaultSize { get { return new Size (23, 23); } }
-		protected internal virtual bool DismissWhenClicked { get { return false; } }
+		protected internal virtual bool DismissWhenClicked { get { return true; } }
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		protected internal ToolStrip Parent {
@@ -552,7 +606,7 @@ namespace System.Windows.Forms
 				OnParentChanged(old_parent, this.parent);
 			}
 		}
-		protected internal virtual bool ShowKeyboardCues { get { return true; } }
+		protected internal virtual bool ShowKeyboardCues { get { return false; } }
 		#endregion
 
 		#region Public Methods
@@ -619,6 +673,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual AccessibleObject CreateAccessibilityInstance ()
 		{
 			return new ToolStripItemAccessibleObject (this);
@@ -636,6 +691,7 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnBackColorChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [BackColorChangedEvent]);
@@ -655,6 +711,7 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnDisplayStyleChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [DisplayStyleChangedEvent]);
@@ -679,10 +736,12 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnFontChanged (EventArgs e)
 		{
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnForeColorChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [ForeColorChangedEvent]);
@@ -777,6 +836,9 @@ namespace System.Windows.Forms
 
 		protected virtual void OnPaint (PaintEventArgs e)
 		{
+			if (this.Owner != null)
+				this.Owner.Renderer.DrawItemBackground (new ToolStripItemRenderEventArgs (e.Graphics, this));
+				
 			PaintEventHandler eh = (PaintEventHandler)(Events [PaintEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -785,7 +847,8 @@ namespace System.Windows.Forms
 		protected virtual void OnParentChanged (ToolStrip oldParent, ToolStrip newParent)
 		{
 		}
-		
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnTextChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [TextChangedEvent]);
@@ -948,7 +1011,7 @@ namespace System.Windows.Forms
 			if (!this.auto_size || this is ToolStripControlHost)
 				return;
 
-			this.text_size = TextRenderer.MeasureText (this.Text, this.Font, Size.Empty, TextFormatFlags.HidePrefix);
+			this.text_size = TextRenderer.MeasureText (this.Text == null ? string.Empty: this.text, this.Font, Size.Empty, TextFormatFlags.HidePrefix);
 			//this.text_size.Width += 6;
 
 			Size final_size = this.CalculatePreferredSize (Size.Empty);

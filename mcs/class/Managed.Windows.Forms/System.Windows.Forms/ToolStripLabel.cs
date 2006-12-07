@@ -29,9 +29,11 @@
 
 using System.Drawing;
 using System.ComponentModel;
+using System.Windows.Forms.Design;
 
 namespace System.Windows.Forms
 {
+	[ToolStripItemDesignerAvailability (ToolStripItemDesignerAvailability.ToolStrip)]
 	public class ToolStripLabel : ToolStripItem
 	{
 		private Color active_link_color;
@@ -43,12 +45,12 @@ namespace System.Windows.Forms
 
 		#region Public Constructors
 		public ToolStripLabel ()
-			: this (String.Empty, null, false, null, String.Empty)
+			: this (null, null, false, null, String.Empty)
 		{
 		}
 
 		public ToolStripLabel (Image image)
-			: this (String.Empty, image, false, null, String.Empty)
+			: this (null, image, false, null, String.Empty)
 		{
 		}
 
@@ -78,9 +80,9 @@ namespace System.Windows.Forms
 			this.active_link_color = Color.Red;
 			this.is_link = isLink;
 			this.link_behavior = LinkBehavior.SystemDefault;
-			this.link_color = Color.Blue;
+			this.link_color = Color.FromArgb (0, 0, 255);
 			this.link_visited = false;
-			this.visited_link_color = Color.Purple;
+			this.visited_link_color = Color.FromArgb (128, 0, 128);
 		}
 		#endregion
 
@@ -141,6 +143,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override AccessibleObject CreateAccessibilityInstance ()
 		{
 			ToolStripItemAccessibleObject ao = new ToolStripItemAccessibleObject (this);

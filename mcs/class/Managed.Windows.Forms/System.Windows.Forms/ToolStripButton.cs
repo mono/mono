@@ -30,9 +30,11 @@
 using System;
 using System.Drawing;
 using System.ComponentModel;
+using System.Windows.Forms.Design;
 
 namespace System.Windows.Forms
 {
+	[ToolStripItemDesignerAvailability (ToolStripItemDesignerAvailability.ToolStrip)]
 	public class ToolStripButton : ToolStripItem
 	{
 		private CheckState checked_state;
@@ -40,12 +42,12 @@ namespace System.Windows.Forms
 
 		#region Public Constructors
 		public ToolStripButton ()
-			: this (String.Empty, null, null, String.Empty)
+			: this (null, null, null, String.Empty)
 		{
 		}
 
 		public ToolStripButton (Image image)
-			: this (String.Empty, image, null, String.Empty)
+			: this (null, image, null, String.Empty)
 		{
 		}
 
@@ -73,7 +75,6 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
-		[MonoTODO ("Need 2.0 ToolTip to implement tool tips.")]
 		[DefaultValue (true)]
 		public new bool AutoToolTip {
 			get { return base.AutoToolTip; }
@@ -100,6 +101,7 @@ namespace System.Windows.Forms
 				if (this.checked_state != (value ? CheckState.Checked : CheckState.Unchecked)) {
 					this.checked_state = value ? CheckState.Checked : CheckState.Unchecked;
 					this.OnCheckedChanged (EventArgs.Empty);
+					this.OnCheckStateChanged (EventArgs.Empty);
 					this.Invalidate ();
 				}
 			}
@@ -115,12 +117,15 @@ namespace System.Windows.Forms
 		public CheckState CheckState {
 			get { return this.checked_state; }
 			set {
-				if (!Enum.IsDefined (typeof (CheckState), value))
-					throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for CheckState", value));
+				if (this.checked_state != value) {
+					if (!Enum.IsDefined (typeof (CheckState), value))
+						throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for CheckState", value));
 
-				this.checked_state = value;
-				OnCheckStateChanged (EventArgs.Empty);
-				this.Invalidate ();
+					this.checked_state = value;
+					this.OnCheckedChanged (EventArgs.Empty);
+					this.OnCheckStateChanged (EventArgs.Empty);
+					this.Invalidate ();
+				}
 			}
 		}
 		#endregion
@@ -137,6 +142,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Methods
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override AccessibleObject CreateAccessibilityInstance ()
 		{
 			ToolStripItemAccessibleObject ao = new ToolStripItemAccessibleObject (this);

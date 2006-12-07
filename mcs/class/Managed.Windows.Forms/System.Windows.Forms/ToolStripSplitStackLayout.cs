@@ -41,6 +41,9 @@ namespace System.Windows.Forms
 			{
 				ToolStrip ts = (ToolStrip)container;
 
+				if (ts.Items == null)
+					return false;
+					
 				if (ts.Orientation == Orientation.Horizontal) {
 					int x = ts.DisplayRectangle.Left;
 					if (!(ts is MenuStrip))
